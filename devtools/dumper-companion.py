@@ -105,6 +105,9 @@ BUFFERLEN = 102400
 SIZE_OF_BLOCK = 2048
 DIR_HEAD_TYPE = ">IIIII"
 FILE_ENTRY_TYPE = ">II4sIIIII32sII"
+MDS_HEADER = "<16s2sHH4xH8xI24xI12xII"
+MDS_SESSION_BLOCK = "<iiHBBHH4xI"
+MDS_TRACK = "<BBBBB7xIH18xIQII24x"
 
 class FileSystem(Enum):
     hybrid = "hybrid"
@@ -652,10 +655,11 @@ def convert_cue_to_iso(cue_path: Path, iso_path: Path) -> None:
     Converts a BIN/CUE image into an ISO image for the primary data track,
     and extracts any audio tracks to WAV format in the same directory.
     """
+    print("Converting CUE/BIN file to ISO ...")
     tracks = parse_cue_sheet(cue_path)
     if not tracks:
         raise ValueError("No valid tracks found in the CUE sheet.")
-
+    print(f"Parsed {len(tracks)} tracks from CUE")
     os.makedirs(iso_path.parent, exist_ok=True)
     data_track_extracted = False
 
@@ -708,6 +712,7 @@ def convert_cue_to_iso(cue_path: Path, iso_path: Path) -> None:
                     f"skip additional data track {track.number:02d}; only primary data track is supported."
                 )
                 continue
+            print(f"Dumping audio track {track.number:02d}")
             data_offset = 0
             payload_size = 2352
             out_path = iso_path.parent / f"{cue_path.stem}_track_{track.number:02d}.wav"
@@ -751,6 +756,333 @@ def convert_cue_to_iso(cue_path: Path, iso_path: Path) -> None:
                 payload = chunk[data_offset : data_offset + payload_size]
                 dst.write(payload)
 
+@dataclass
+class MdsFragment:
+    source_path: Optional[Path]
+    source_offset: int
+    fragment_length_sectors: int
+    main_data_size: int
+    subchannel_size: int
+    sector_stride: int
+    is_pregap: bool = False
+
+
+@dataclass
+class MdsTrack:
+    mode_raw: int
+    subchannel: int
+    adr_ctl: int
+    tno: int
+    point: int
+    extra_offset: int
+    sector_size: int
+    start_sector: int
+    start_offset: int
+    number_of_files: int
+    footer_offset: int
+
+    interpreted_mode: str = ""
+    pregap: int = 0
+    length: int = 0
+    fragments: List[MdsFragment] = field(default_factory=list)
+
+
+@dataclass
+class MdsSession:
+    session_start: int
+    session_end: int
+    session_number: int
+    num_all_blocks: int
+    num_nontrack_blocks: int
+    first_track: int
+    last_track: int
+    tracks_blocks_offset: int
+    leadout_length: int = 0
+
+    tracks: List[MdsTrack] = field(default_factory=list)
+
+
+@dataclass
+class MdsImage:
+    descriptor_path: Path
+    signature: bytes
+    version_major: int
+    version_minor: int
+    medium_type: int
+    num_sessions: int
+    bca_len: int
+    bca_data_offset: int
+    disc_structures_offset: int
+    sessions_blocks_offset: int
+    dpm_blocks_offset: int
+
+    sessions: List[MdsSession] = field(default_factory=list)
+
+
+def decode_track_mode(mode_raw: int) -> str:
+    mask = mode_raw & 0x0F
+    mode_mapping = {
+        0x00: "MODE2",
+        0x01: "AUDIO",
+        0x02: "MODE1",
+        0x03: "MODE2",
+        0x04: "MODE2_FORM1",
+        0x05: "MODE2_FORM2",
+        0x07: "MODE2",
+        0x08: "MODE2",
+        0x09: "AUDIO",
+        0x0A: "MODE1",
+        0x0B: "MODE2",
+        0x0C: "MODE2_FORM1",
+        0x0D: "MODE2_FORM2",
+        0x0F: "MODE2",
+    }
+
+    if mask not in mode_mapping:
+        raise NotImplementedError(
+            f"Unsupported or unknown MDS track mode: {mode_raw:02X}"
+        )
+    return mode_mapping[mask]
+
+
+def parse_mds(mds_path: Path) -> MdsImage:
+    with open(mds_path, "rb") as f:
+        header = f.read(88)
+        if len(header) != 88:
+            raise ValueError("Mds file doesn't contain valid header")
+
+        unpacked = struct.unpack(MDS_HEADER, header)
+        signature = unpacked[0]
+        if signature != b"MEDIA DESCRIPTOR":
+            raise ValueError(f"Invalid MDS signature: {signature!r}")
+
+        version = unpacked[1]
+        if version[0] != 0x01:
+            raise NotImplementedError(f"Unsupported MDS version")
+
+        image = MdsImage(
+            descriptor_path=mds_path,
+            signature=signature,
+            version_major=version[0],
+            version_minor=version[1],
+            medium_type=unpacked[2],
+            num_sessions=unpacked[3],
+            bca_len=unpacked[4],
+            bca_data_offset=unpacked[5],
+            disc_structures_offset=unpacked[6],
+            sessions_blocks_offset=unpacked[7],
+            dpm_blocks_offset=unpacked[8],
+        )
+
+        f.seek(image.sessions_blocks_offset)
+        prev_session_end = 0
+
+        for idx in range(image.num_sessions):
+            blockInfo = f.read(24)
+            if len(blockInfo) != 24:
+                continue
+
+            block_unpack = struct.unpack(MDS_SESSION_BLOCK, blockInfo)
+            session_start = block_unpack[0]
+            session_end = block_unpack[1]
+
+            if idx > 0:
+                image.sessions[-1].leadout_length = session_start - prev_session_end
+
+            prev_session_end = session_end
+
+            mds_session = MdsSession(
+                session_start=session_start,
+                session_end=session_end,
+                session_number=block_unpack[2],
+                num_all_blocks=block_unpack[3],
+                num_nontrack_blocks=block_unpack[4],
+                first_track=block_unpack[5],
+                last_track=block_unpack[6],
+                tracks_blocks_offset=block_unpack[7],
+            )
+            image.sessions.append(mds_session)
+
+        for session in image.sessions:
+            f.seek(session.tracks_blocks_offset)
+
+            for i in range(session.num_all_blocks):
+                track_bytes = f.read(80)
+                if len(track_bytes) != 80:
+                    raise ValueError("Incomplete track block")
+
+                track_unpack = struct.unpack(MDS_TRACK, track_bytes)
+
+                track = MdsTrack(
+                    mode_raw=track_unpack[0],
+                    subchannel=track_unpack[1],
+                    adr_ctl=track_unpack[2],
+                    tno=track_unpack[3],
+                    point=track_unpack[4],
+                    extra_offset=track_unpack[5],
+                    sector_size=track_unpack[6],
+                    start_sector=track_unpack[7],
+                    start_offset=track_unpack[8],
+                    number_of_files=track_unpack[9],
+                    footer_offset=track_unpack[10],
+                )
+
+                if 0 < track.point < 99:
+                    track.interpreted_mode = decode_track_mode(track.mode_raw)
+                    current_pos = f.tell()
+
+                    if track.extra_offset > 0 and image.medium_type in (
+                        0x00,
+                        0x01,
+                        0x02,
+                    ):
+                        f.seek(track.extra_offset)
+                        extra_bytes = f.read(8)
+                        if len(extra_bytes) == 8:
+                            track.pregap, track.length = struct.unpack(
+                                "<II", extra_bytes
+                            )
+
+                    resolved_paths = []
+                    if track.footer_offset > 0 and track.number_of_files > 0:
+                        for j in range(track.number_of_files):
+                            f.seek(track.footer_offset + (j * 16))
+                            footer_bytes = f.read(16)
+                            if len(footer_bytes) != 16:
+                                continue
+
+                            filename_offset, widechar_flag, _, _ = struct.unpack(
+                                "<IIII", footer_bytes
+                            )
+
+                            f.seek(filename_offset)
+                            name_bytes = bytearray()
+                            while True:
+                                char = f.read(2 if widechar_flag else 1)
+                                if not char or char == (
+                                    b"\x00\x00" if widechar_flag else b"\x00"
+                                ):
+                                    break
+                                name_bytes.extend(char)
+
+                            encoding = "utf-16-le" if widechar_flag else "ascii"
+                            declared_name = name_bytes.decode(encoding, errors="ignore")
+
+                            if declared_name.startswith("*."):
+                                resolved = image.descriptor_path.with_suffix(
+                                    declared_name[1:]
+                                )
+                            else:
+                                resolved = image.descriptor_path.parent / declared_name
+                            resolved_paths.append(resolved)
+
+                    subchannel_size = 96 if track.subchannel == 0x08 else 0
+                    main_data_size = track.sector_size - subchannel_size
+                    sector_stride = track.sector_size
+
+                    if track.pregap > 0:
+                        track.fragments.append(
+                            MdsFragment(
+                                source_path=None,
+                                source_offset=0,
+                                fragment_length_sectors=track.pregap,
+                                main_data_size=main_data_size,
+                                subchannel_size=subchannel_size,
+                                sector_stride=sector_stride,
+                                is_pregap=True,
+                            )
+                        )
+
+                    for j, path in enumerate(resolved_paths):
+                        source_offset = track.start_offset if j == 0 else 0
+
+                        if image.medium_type in (0x00, 0x01, 0x02):
+                            frag_length = track.length
+                        else:
+                            if not path.exists():
+                                raise FileNotFoundError(
+                                    f"Required image data file not found: {path}"
+                                )
+                            file_size = os.path.getsize(path)
+                            frag_length = (file_size - source_offset) // sector_stride
+
+                        track.fragments.append(
+                            MdsFragment(
+                                source_path=path,
+                                source_offset=source_offset,
+                                fragment_length_sectors=frag_length,
+                                main_data_size=main_data_size,
+                                subchannel_size=subchannel_size,
+                                sector_stride=sector_stride,
+                                is_pregap=False,
+                            )
+                        )
+
+                    session.tracks.append(track)
+                    f.seek(current_pos)
+                else:
+                    continue
+        return image
+
+
+def convert_mds_to_iso(mds_path: Path, iso_path: Path) -> None:
+    """
+    Converts an MDS image into an ISO image for the primary data track.
+    """
+    print("Converting MDS file to ISO ...")
+    image = parse_mds(mds_path)
+    if not image.sessions:
+        raise ValueError("No sessions found in MDS image.")
+
+    session = image.sessions[0]
+    print(f"Parsed {len(image.sessions)} session(s) and {len(session.tracks)} track(s) from MDS")
+    data_track = None
+
+    for track in session.tracks:
+        if "MODE1" in track.interpreted_mode or "MODE2" in track.interpreted_mode:
+            data_track = track
+            break
+
+    if not data_track:
+        raise ValueError("No primary data track found in MDS image.")
+
+    os.makedirs(iso_path.parent, exist_ok=True)
+    print(
+        f"Extracting Track {data_track.point:02d} ({data_track.interpreted_mode}) -> {iso_path.name}"
+    )
+
+    if data_track.sector_size >= 2352:
+        data_offset = 16 if "MODE1" in data_track.interpreted_mode else 24
+    else:
+        data_offset = 0
+
+    payload_size = 2048
+
+    with open(iso_path, "wb") as dst:
+        for fragment in data_track.fragments:
+            if fragment.is_pregap or fragment.source_path is None:
+                continue
+
+            with open(fragment.source_path, "rb") as src:
+                src.seek(fragment.source_offset)
+
+                for _ in range(fragment.fragment_length_sectors):
+                    chunk = src.read(fragment.sector_stride)
+
+                    if not chunk or len(chunk) < fragment.sector_stride:
+                        logging.warning(
+                            f"Reached early EOF on fragment: {fragment.source_path.name}"
+                        )
+                        break
+
+                    payload = chunk[data_offset : data_offset + payload_size]
+
+                    if len(payload) < payload_size:
+                        payload = payload.ljust(payload_size, b"\x00")
+
+                    dst.write(payload)
+
+
 def extract_iso(args: argparse.Namespace) -> None:
     temp_iso = None
     try:
@@ -775,6 +1107,15 @@ def extract_iso(args: argparse.Namespace) -> None:
             temp_iso = args.dir / f"{args.src.stem}.iso"
             
             convert_cue_to_iso(
+                args.src,
+                temp_iso
+            )
+            
+            args.src = temp_iso
+        elif args.src.suffix.lower() == ".mds":
+            temp_iso = args.dir / f"{args.src.stem}.iso"
+            
+            convert_mds_to_iso(
                 args.src,
                 temp_iso
             )
@@ -942,8 +1283,9 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
             if dopunycode:
                 filename = punyencode(filename)
 
-            iso_file_path = os.path.join(dirname, file)
+            iso_file_path = os.path.join(dirname, file).replace("\\", "/")
             out_file_path = os.path.join(pwd, filename)
+
             if not silent:
                 print(out_file_path)
             if dryrun:
@@ -1514,6 +1856,7 @@ def extract3do(args: argparse.Namespace) -> None:
         offset = 0
         for block in range(totalBlocks):
             if checkHeader(f, block, offset):
+                print("3DO image detected")
                 offset = block * SIZE_OF_BLOCK
                 f.seek(offset + 0x64)
                 root = f.read(4)
