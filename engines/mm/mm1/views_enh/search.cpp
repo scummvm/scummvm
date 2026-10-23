@@ -201,8 +201,15 @@ void Search::timeout() {
 		break;
 
 	case GET_TREASURE:
-		setMode(GET_ITEMS);
-		draw();
+		// Gold and gems are already awarded by drawTreasure(). If there are
+		// no item slots to show, close now rather than entering
+		// GET_ITEMS_DONE and requiring a second dismissal.
+		if (g_globals->_treasure.hasItems()) {
+			setMode(GET_ITEMS);
+			draw();
+		} else {
+			close();
+		}
 		break;
 
 	case GET_ITEMS:
@@ -387,7 +394,10 @@ void Search::drawTreasure() {
 	}
 
 	Sound::sound2(SOUND_5);
-	delaySeconds(2);
+
+	// Gold/gem-only loot stays visible for longer, unless the player
+	// dismisses it early with a keypress or mouse click
+	delaySeconds(g_globals->_treasure.hasItems() ? 2 : 7);
 }
 
 void Search::drawItem() {
