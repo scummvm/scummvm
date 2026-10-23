@@ -125,6 +125,7 @@
 #include "director/lingo/xlibs/q/qtcatmovieplayerxobj.h"
 #include "director/lingo/xlibs/q/qtsupport.h"
 #include "director/lingo/xlibs/q/qtmovie.h"
+#include "director/lingo/xlibs/q/qtversionxfcn.h"
 #include "director/lingo/xlibs/q/qtvr.h"
 #include "director/lingo/xlibs/q/quicktime.h"
 #include "director/lingo/xlibs/r/registercomponent.h"
@@ -134,6 +135,7 @@
 #include "director/lingo/xlibs/s/soundjam.h"
 #include "director/lingo/xlibs/s/spacemgr.h"
 #include "director/lingo/xlibs/s/stagetc.h"
+#include "director/lingo/xlibs/s/stagetocast.h"
 #include "director/lingo/xlibs/s/syscolor.h"
 #include "director/lingo/xlibs/s/savenrestorexobj.h"
 #include "director/lingo/xlibs/s/stagectl.h"
@@ -381,6 +383,7 @@ static const struct XLibProto {
 	XLIBDEF(QTMovie,			kXObj,			400),	// D4
 	XLIBDEF(QTSupport,			kXObj,			600),	// D4
 	XLIBDEF(QTVR,				kXObj,			400),	// D4
+	XLIBDEF(QTVersionXFCN,			kXObj,					300),	// D3
 	XLIBDEF(QtvrxtraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(Quicktime,			kXObj,			300),	// D3
 	XLIBDEF(RearWindowXObj,		kXObj,			300),	// D3
@@ -398,6 +401,7 @@ static const struct XLibProto {
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4
 	XLIBDEF(StageControlXObj,			kXObj,					300),	// D3
 	XLIBDEF(StageTCXObj,		kXObj,			400),	// D4
+	XLIBDEF(StageToCastXObj,			kXObj,					400),	// D4
 	XLIBDEF(StayToonedBallXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(StayToonedGlopXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(StayToonedHallXtra,			kXtraObj,					500),	// D5

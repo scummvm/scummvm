@@ -157,6 +157,7 @@ MODULE_OBJS = \
 	lingo/xlibs/q/qtcatmovieplayerxobj.o \
 	lingo/xlibs/q/qtmovie.o \
 	lingo/xlibs/q/qtsupport.o \
+	lingo/xlibs/q/qtversionxfcn.o \
 	lingo/xlibs/q/qtvr.o \
 	lingo/xlibs/q/quicktime.o \
 	lingo/xlibs/r/registercomponent.o \
@@ -168,6 +169,7 @@ MODULE_OBJS = \
 	lingo/xlibs/s/spacemgr.o \
 	lingo/xlibs/s/stagectl.o \
 	lingo/xlibs/s/stagetc.o \
+	lingo/xlibs/s/stagetocast.o \
 	lingo/xlibs/s/syscolor.o \
 	lingo/xlibs/t/temnotaxobj.o \
 	lingo/xlibs/t/tengu.o \
