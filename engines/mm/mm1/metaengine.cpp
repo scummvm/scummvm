@@ -165,18 +165,13 @@ static const KeysRecord ALL_RECORDS[] = {
 static void initKeymapPointers() {
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
 
-	if (!g_menuKeymap)
-		g_menuKeymap = mapper->getKeymap(kMenuKeymapId);
-	if (!g_minimalKeymap)
-		g_minimalKeymap = mapper->getKeymap(kMinimalKeymapId);
-	if (!g_partyKeymap)
-		g_partyKeymap = mapper->getKeymap(kPartyKeymapId);
-	if (!g_normalKeymap)
-		g_normalKeymap = mapper->getKeymap(kNormalKeymapId);
-	if (!g_combatKeymap)
-		g_combatKeymap = mapper->getKeymap(kCombatKeymapId);
-	if (!g_cheatsKeymap)
-		g_cheatsKeymap = mapper->getKeymap(kCheatsKeymapId);
+	// Always refetch, since keymaps are recreated each time the engine starts
+	g_menuKeymap = mapper->getKeymap(kMenuKeymapId);
+	g_minimalKeymap = mapper->getKeymap(kMinimalKeymapId);
+	g_partyKeymap = mapper->getKeymap(kPartyKeymapId);
+	g_normalKeymap = mapper->getKeymap(kNormalKeymapId);
+	g_combatKeymap = mapper->getKeymap(kCombatKeymapId);
+	g_cheatsKeymap = mapper->getKeymap(kCheatsKeymapId);
 }
 
 Common::KeymapArray MetaEngine::initKeymaps() {
