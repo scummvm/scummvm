@@ -95,6 +95,10 @@ void Search::draw() {
 		writeString(96, 32, STRING["enhdialogs.misc.go_back"]);
 		break;
 
+	case RESPONSE:
+		writeLine(_responseLine, _responseText, ALIGN_MIDDLE);
+		break;
+
 	case GET_TREASURE:
 		drawTreasure();
 		break;
@@ -280,14 +284,14 @@ void Search::detectMagicTrap2() {
 
 	if (c._class == PALADIN || c._class == CLERIC) {
 		Sound::sound(SOUND_2);
-		ScrollView::draw();
-		writeLine(2, STRING["dialogs.search.bad_class"], ALIGN_MIDDLE);
+		_responseLine = 2;
+		_responseText = STRING["dialogs.search.bad_class"];
 		delaySeconds(4);
 
 	} else if (c._sp == 0) {
 		Sound::sound(SOUND_2);
-		ScrollView::draw();
-		writeLine(2, STRING["dialogs.search.no_sp"], ALIGN_MIDDLE);
+		_responseLine = 2;
+		_responseText = STRING["dialogs.search.no_sp"];
 		delaySeconds(4);
 
 	} else {
@@ -296,12 +300,14 @@ void Search::detectMagicTrap2() {
 			g_globals->_treasure.getGems() ? 'Y' : 'N';
 		char trapped = g_globals->_treasure._trapType == 1 ? 'Y' : 'N';
 
-		ScrollView::draw();
-		writeLine(1, Common::String::format(
+		_responseLine = 1;
+		_responseText = Common::String::format(
 			STRING["dialogs.search.magic_trap"].c_str(),
-			magic, trapped), ALIGN_MIDDLE);
+			magic, trapped);
 		delaySeconds(8);
 	}
+
+	redraw();
 }
 
 bool Search::whoWillTry() {

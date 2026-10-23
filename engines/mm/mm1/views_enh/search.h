@@ -41,6 +41,8 @@ private:
 	OptionMode _optionMode = OMODE_OPEN;
 	byte _val1 = 0;
 	int _lineNum = 0;
+	Common::String _responseText;
+	int _responseLine = 1;
 	Shared::Xeen::SpriteResource _escSprite;
 
 	void setMode(Mode mode);
