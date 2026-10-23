@@ -48,7 +48,7 @@ private:
 	bool _block;
 	uint16 _curX;
 	uint16 _curY;
-	bool _fixedWith9;
+	bool _fixedWidth9;
 	uint16 _printDelay;
 	uint16 _printDelayCounter;
 	uint8 _color;
@@ -66,7 +66,7 @@ private:
 };
 
 TextRenderer_SCD::TextRenderer_SCD(Animator *animator) : TextRenderer(), _animator(animator), _textPtr(nullptr), _needDraw(false), _block(false), _printDelay(0), _printDelayCounter(0), _color(0),
-	_curX(0), _curY(0), _fixedWith9(false), _font(nullptr), _fontSize(0), _charWidthTable(nullptr), _charWidthTableSize(0), _pscr_byt8(0), _pscr_wd(0), _pscr_byt1(0), _pscr_byt2(0), _pscr_byt3(0) {
+	_curX(0), _curY(0), _fixedWidth9(false), _font(nullptr), _fontSize(0), _charWidthTable(nullptr), _charWidthTableSize(0), _pscr_byt8(0), _pscr_wd(0), _pscr_byt1(0), _pscr_byt2(0), _pscr_byt3(0) {
 }
 
 TextRenderer_SCD::~TextRenderer_SCD() {
@@ -142,7 +142,7 @@ void TextRenderer_SCD::draw() {
 					s += 2;
 					break;
 				case 0xF7:
-					_fixedWith9 = *s++ ? true : false;
+					_fixedWidth9 = *s++ ? true : false;
 					break;
 				default:
 					if (in < 32) {
@@ -155,7 +155,7 @@ void TextRenderer_SCD::draw() {
 
 						drawGlyph(in);
 
-						if (_fixedWith9) {
+						if (_fixedWidth9) {
 							_curX += 9;
 						} else {
 							if (in < _charWidthTableSize)
@@ -177,7 +177,7 @@ void TextRenderer_SCD::draw() {
 
 void TextRenderer_SCD::drawGlyph(uint16 ch) {
 	uint16 x = _curX;
-	if (_fixedWith9 && (ch == 17 || ch == 41))
+	if (_fixedWidth9 && (ch == 17 || ch == 41))
 		++x;
 
 	const uint8 *src = _font + (ch << 3);
