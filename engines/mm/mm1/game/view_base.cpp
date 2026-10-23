@@ -145,7 +145,9 @@ void ViewBase::forward(KeybindingAction action) {
 
 	//  Figure out direction mask
 	byte mask = maps._forwardMask;
-	if (action == KEYBIND_STRAFE_LEFT) {
+	if (action == KEYBIND_BACKWARDS) {
+		mask = maps._backwardsMask;
+	} else if (action == KEYBIND_STRAFE_LEFT) {
 		mask = maps._leftMask;
 	} else if (action == KEYBIND_STRAFE_RIGHT) {
 		mask = maps._rightMask;
@@ -198,31 +200,7 @@ void ViewBase::forward(KeybindingAction action) {
 }
 
 void ViewBase::backwards() {
-	Maps::Maps &maps = g_globals->_maps;
-	Maps::Map &map = *g_globals->_maps._currentMap;
-	Common::Point delta = g_maps->getMoveDelta(maps._backwardsMask);
-
-	if (!g_globals->_intangible) {
-		if (maps._currentWalls & maps._backwardsMask) {
-			Sound::sound(SOUND_1);
-			g_globals->_party.checkPartyDead();
-			return;
-		}
-		if (maps._currentState & 0x55 & maps._backwardsMask) {
-			Sound::sound(SOUND_1);
-			g_globals->_party.checkPartyDead();
-			return;
-		}
-	}
-
-	g_globals->_treasure.clear();
-
-	int maxVal = map[Maps::MAP_29];
-	if (g_engine->getRandomNumber(maxVal) == maxVal)
-		_stepRandom = true;
-
-	g_globals->_maps.step(delta);
-	update();
+	forward(KEYBIND_BACKWARDS);
 }
 
 void ViewBase::obstructed(byte mask) {
