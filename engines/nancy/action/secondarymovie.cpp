@@ -537,10 +537,9 @@ int PlaySecondaryMovie::beginRandomPause(const RandomSequence &seq) {
 		pauseMs += g_nancy->_randomSource->getRandomNumber(seq.maxPauseMs - seq.minPauseMs - 1);
 	}
 
+	// The movie holds its last frame for the length of the pause
 	_randomPauseMode = kPauseTimed;
 	_randomPauseEndTime = g_system->getMillis() + (uint32)MAX<int32>(0, pauseMs);
-	setVisible(false);
-	_mask.setVisible(false);
 	_decoder.pauseVideo(true);
 	return -1;
 }
