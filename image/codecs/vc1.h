@@ -47,7 +47,7 @@ namespace Image {
 struct VC1Ratio {
 	int num;
 	int den;
-	VC1Ratio(int numerator = 0, int denominator = 1) : num(numerator), den(denominator) {}
+	constexpr VC1Ratio(int numerator = 0, int denominator = 1) : num(numerator), den(denominator) {}
 };
 
 struct VC1Header {
