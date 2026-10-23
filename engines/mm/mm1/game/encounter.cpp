@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/data/monsters.h"
 #include "mm/mm1/maps/maps.h"
@@ -32,6 +34,12 @@ namespace MM1 {
 namespace Game {
 
 void Encounter::execute() {
+	if (g_events->isPresent("Combat") ||
+			g_events->isPresent("Encounter")) {
+		warning("MM1: Ignoring nested encounter request");
+		return;
+	}
+
 	if (!g_globals->_encountersOn)
 		return;
 
