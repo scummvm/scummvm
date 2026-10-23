@@ -170,6 +170,10 @@ Common::Error MM1Engine::synchronizeSave(Common::Serializer &s) {
 
 	// If we're loading a savegame, switch to the game view
 	if (s.isLoading()) {
+		// Discard any location animation retained by the enhanced
+		// GameView before restoring the saved game state
+		if (g_engine->isEnhanced())
+			g_events->send("View", GameMessage("LOCATION", -1));
 		g_events->replaceView("Game", true);
 	}
 

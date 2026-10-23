@@ -144,36 +144,39 @@ bool GameView::msgGame(const GameMessage &msg) {
 }
 
 void GameView::showLocation(int locationId) {
-	if (locationId == -1) {
+	// Loading a game can leave the previous location animation active.
+	// Safely close it before leaving or starting another location.
+	if (_anim) {
 		_anim->leave();
 		delete _anim;
 		_anim = nullptr;
-
-	} else {
-		assert(!_anim);
-		switch (locationId) {
-		case LOC_TRAINING:
-			_anim = new Animations::Training();
-			break;
-		case LOC_MARKET:
-			_anim = new Animations::Market();
-			break;
-		case LOC_TEMPLE:
-			_anim = new Animations::Temple();
-			break;
-		case LOC_BLACKSMITH:
-			_anim = new Animations::Blacksmith();
-			break;
-		case LOC_TAVERN:
-			_anim = new Animations::Tavern();
-			break;
-		default:
-			error("Unknown location type");
-			break;
-		}
-
-		_anim->enter();
 	}
+
+	if (locationId == -1)
+		return;
+
+	switch (locationId) {
+	case LOC_TRAINING:
+		_anim = new Animations::Training();
+		break;
+	case LOC_MARKET:
+		_anim = new Animations::Market();
+		break;
+	case LOC_TEMPLE:
+		_anim = new Animations::Temple();
+		break;
+	case LOC_BLACKSMITH:
+		_anim = new Animations::Blacksmith();
+		break;
+	case LOC_TAVERN:
+		_anim = new Animations::Tavern();
+		break;
+	default:
+		error("Unknown location type");
+		break;
+	}
+
+	_anim->enter();
 }
 
 void GameView::draw() {
