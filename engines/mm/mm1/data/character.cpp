@@ -357,30 +357,25 @@ Character::LevelIncrease Character::increaseLevel() {
 	_hp = _hpMax = _hpCurrent;
 
 	int gainedSpells = 0;
-	if (classNum < ARCHER) {
-		if (_level._base < 7)
-			gainedSpells = 0;
-		else if (_level._base == 7)
-			gainedSpells = 1;
-		else if (_level._base == 9)
-			gainedSpells = 2;
-		else if (_level._base == 11)
-			gainedSpells = 3;
-		else if (_level._base == 13)
-			gainedSpells = 4;
-	} else if (classNum < SORCERER) {
-		if (_level._base == 3)
-			gainedSpells = 2;
-		else if (_level._base == 5)
-			gainedSpells = 3;
-		else if (_level._base == 7)
-			gainedSpells = 4;
-		else if (_level._base == 9)
-			gainedSpells = 5;
-		else if (_level._base == 11)
-			gainedSpells = 6;
-		else if (_level._base == 13)
-			gainedSpells = 7;
+
+	// Clerics and Sorcerers gain a spell level at character levels
+	// 3, 5, 7, 9, 11 and 13, up to spell level 7.
+	if (_class == CLERIC || _class == SORCERER) {
+		if (_level._base >= 3 && _level._base <= 13 &&
+				(_level._base & 1))
+			gainedSpells = (_level._base + 1) / 2;
+
+	// Paladins and Archers begin casting at character level 7 and
+	// gain another spell level at 9, 11 and 13, up to spell level 4.
+	} else if (_class == PALADIN || _class == ARCHER) {
+		if (_level._base >= 7 && _level._base <= 13 &&
+				(_level._base & 1))
+			gainedSpells = (_level._base - 5) / 2;
+	}
+
+	if (gainedSpells) {
+		_spellLevel = gainedSpells;
+		updateSP();
 	}
 
 	LevelIncrease result;
@@ -460,7 +455,7 @@ void Character::updateSP() {
 	int personality = _personality._current;
 	int level = _level._current;
 	int index = 3;
-	AttributePair newSP;
+	AttributePair16 newSP;
 
 	// Spell points only relevant for spell casters
 	if (_spellLevel._current) {
