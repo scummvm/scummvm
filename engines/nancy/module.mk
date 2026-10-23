@@ -185,6 +185,37 @@ MODULE_OBJS = \
 # Nancy19 and newer, whose scenes are Lua scripts
 ifdef ENABLE_NANCY_V4
 MODULE_OBJS += \
+  box2d/Collision/b2BroadPhase.o \
+  box2d/Collision/b2CollideCircle.o \
+  box2d/Collision/b2CollidePoly.o \
+  box2d/Collision/b2Collision.o \
+  box2d/Collision/b2Distance.o \
+  box2d/Collision/b2PairManager.o \
+  box2d/Collision/b2TimeOfImpact.o \
+  box2d/Collision/Shapes/b2CircleShape.o \
+  box2d/Collision/Shapes/b2PolygonShape.o \
+  box2d/Collision/Shapes/b2Shape.o \
+  box2d/Common/b2BlockAllocator.o \
+  box2d/Common/b2Math.o \
+  box2d/Common/b2Settings.o \
+  box2d/Common/b2StackAllocator.o \
+  box2d/Dynamics/b2Body.o \
+  box2d/Dynamics/b2ContactManager.o \
+  box2d/Dynamics/b2Island.o \
+  box2d/Dynamics/b2World.o \
+  box2d/Dynamics/b2WorldCallbacks.o \
+  box2d/Dynamics/Contacts/b2CircleContact.o \
+  box2d/Dynamics/Contacts/b2Contact.o \
+  box2d/Dynamics/Contacts/b2ContactSolver.o \
+  box2d/Dynamics/Contacts/b2PolyAndCircleContact.o \
+  box2d/Dynamics/Contacts/b2PolyContact.o \
+  box2d/Dynamics/Joints/b2DistanceJoint.o \
+  box2d/Dynamics/Joints/b2GearJoint.o \
+  box2d/Dynamics/Joints/b2Joint.o \
+  box2d/Dynamics/Joints/b2MouseJoint.o \
+  box2d/Dynamics/Joints/b2PrismaticJoint.o \
+  box2d/Dynamics/Joints/b2PulleyJoint.o \
+  box2d/Dynamics/Joints/b2RevoluteJoint.o \
   script/api.o \
   script/bootapi.o \
   script/convo.o \
@@ -194,6 +225,7 @@ MODULE_OBJS += \
   script/luastate.o \
   script/mathtypes.o \
   script/particles.o \
+  script/physics.o \
   script/record.o \
   script/records.o \
   script/ref.o \

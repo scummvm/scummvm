@@ -56,8 +56,9 @@ enum RecordKind {
 	kRecordOverride		= 8,
 	kRecordParticle		= 9,
 	kRecordAnimOverlay	= 10,
+	kRecordPhysics		= 11,	// Nancy21
 
-	kNumRecordKinds		= 11
+	kNumRecordKinds		= 12
 };
 
 // What scripts call the kind ("NavLogic"), and the type of its objects ("ND.NavLogic")

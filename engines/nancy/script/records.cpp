@@ -37,6 +37,7 @@
 #include "engines/nancy/script/convo.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/particles.h"
+#include "engines/nancy/script/physics.h"
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/scenecontext.h"
@@ -66,7 +67,8 @@ static const RecordKindNames kRecordKindNames[kNumRecordKinds] = {
 	{ "Text", "ND.TextAR" },
 	{ "Override", "ND.OverrideAR" },
 	{ "Particle", "ND.ParticleAR" },
-	{ "AnimOverlay", "ND.AnimOvlAR" }
+	{ "AnimOverlay", "ND.AnimOvlAR" },
+	{ "Physics", "ND.PhysicsAR" }
 };
 
 const char *getRecordKindName(RecordKind kind) {
@@ -101,6 +103,8 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 		return new TextRecord(context);
 	case kRecordParticle:
 		return new ParticleRecord(context);
+	case kRecordPhysics:
+		return new PhysicsRecord(context);
 	default:
 		return nullptr;
 	}
