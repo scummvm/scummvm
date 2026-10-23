@@ -115,8 +115,6 @@ private:
 	void retainPreviousInteractionScene(const Common::String &mediaPath,
 		const char *source);
 	static Common::String argumentString(const ScriptArgument &argument);
-	static bool textAnswersMatch(const Common::String &entered,
-		const Common::String &expected);
 
 	RipperEngine *_engine;
 	CompiledScript _startup;

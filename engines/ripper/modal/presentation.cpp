@@ -87,35 +87,8 @@ uint ModalDialogManager::measureText(const Common::String &text,
 
 void ModalDialogManager::wrapText(const Common::String &text, uint maxWidth,
 		Common::Array<Common::String> &lines, PresentationStyle style) const {
-	lines.clear();
-	Common::String line;
-	Common::String word;
-	for (uint i = 0; i <= text.size(); ++i) {
-		const char character = i < text.size() ? text[i] : '\n';
-		if (character == '\r')
-			continue;
-		if (character != ' ' && character != '\n') {
-			word += character;
-			continue;
-		}
-
-		if (!word.empty()) {
-			const Common::String candidate = line.empty() ? word : line + " " + word;
-			if (!line.empty() && measureText(candidate, style) > maxWidth) {
-				lines.push_back(line);
-				line = word;
-			} else {
-				line = candidate;
-			}
-			word.clear();
-		}
-		if (character == '\n') {
-			lines.push_back(line);
-			line.clear();
-		}
-	}
-	if (lines.empty())
-		lines.push_back(Common::String());
+	BitmapFontRenderer::wrapText(
+		style == kPrimaryPresentation ? _primaryFont : _font, text, maxWidth, lines);
 }
 
 void ModalDialogManager::drawText(byte *screen, uint pitch, int x, int y,

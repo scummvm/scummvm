@@ -73,6 +73,8 @@ private:
 	RipperEngine *engine() const;
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;
+	void wrapText(const Common::String &text, uint maxWidth,
+		Common::Array<Common::String> &lines) const;
 	void drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text, byte color) const;
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;

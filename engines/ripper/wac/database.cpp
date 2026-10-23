@@ -159,6 +159,11 @@ uint WacDatabaseSession::measureText(const Common::String &text) const {
 	return _wac->measureText(text);
 }
 
+void WacDatabaseSession::wrapText(const Common::String &text, uint maxWidth,
+		Common::Array<Common::String> &lines) const {
+	BitmapFontRenderer::wrapText(_wac->_font, text, maxWidth, lines);
+}
+
 void WacDatabaseSession::drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text, byte color) const {
 	_wac->drawText(screen, pitch, x, y, text, color);

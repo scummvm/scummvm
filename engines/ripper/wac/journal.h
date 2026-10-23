@@ -35,8 +35,6 @@ public:
 	uint16 run(byte entryIndex, const Common::String &entryLabel);
 
 private:
-	void wrapText(const Common::String &text, uint maximumWidth,
-		Common::Array<Common::String> &lines) const;
 	bool drawTextPanel(const Common::Array<Common::String> &lines, uint progress,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
 	bool drawTextPanelLine(const Common::Array<Common::String> &lines,

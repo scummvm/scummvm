@@ -75,37 +75,6 @@ static const uint16 kWacDatabaseTextScrolled = 0xfffd;
 static const uint16 kNoAction = WacManager::kNoAction;
 static const uint16 kExitAction = WacManager::kExitAction;
 
-static bool wacJournalAnswersMatch(const Common::String &entered,
-		const Common::String &expected) {
-	uint enteredIndex = 0;
-	uint expectedIndex = 0;
-	while (true) {
-		while (enteredIndex < entered.size() &&
-				!Common::isAlnum((byte)entered[enteredIndex]))
-			++enteredIndex;
-		while (expectedIndex < expected.size() &&
-				!Common::isAlnum((byte)expected[expectedIndex]))
-			++expectedIndex;
-		if (enteredIndex == entered.size() || expectedIndex == expected.size())
-			break;
-		byte enteredCharacter = (byte)entered[enteredIndex++];
-		byte expectedCharacter = (byte)expected[expectedIndex++];
-		if (enteredCharacter >= 'A' && enteredCharacter <= 'Z')
-			enteredCharacter += 'a' - 'A';
-		if (expectedCharacter >= 'A' && expectedCharacter <= 'Z')
-			expectedCharacter += 'a' - 'A';
-		if (enteredCharacter != expectedCharacter)
-			return false;
-	}
-	while (enteredIndex < entered.size() &&
-			!Common::isAlnum((byte)entered[enteredIndex]))
-		++enteredIndex;
-	while (expectedIndex < expected.size() &&
-			!Common::isAlnum((byte)expected[expectedIndex]))
-		++expectedIndex;
-	return enteredIndex == entered.size() && expectedIndex == expected.size();
-}
-
 static void shuffleJournalLine(Common::String &line,
 		Common::RandomSource &randomSource) {
 	if (line.size() < 2)
@@ -121,39 +90,6 @@ static void shuffleJournalLine(Common::String &line,
 
 WacJournalPuzzle::WacJournalPuzzle(WacDatabaseSession *database) :
 		_database(database) {
-}
-
-void WacJournalPuzzle::wrapText(const Common::String &text, uint maximumWidth,
-		Common::Array<Common::String> &lines) const {
-	lines.clear();
-	Common::String line;
-	Common::String word;
-	for (uint index = 0; index <= text.size(); ++index) {
-		const char character = index < text.size() ? text[index] : '\n';
-		if (character == '\r')
-			continue;
-		if (character != ' ' && character != '\n') {
-			word += character;
-			continue;
-		}
-
-		if (!word.empty()) {
-			const Common::String candidate = line.empty() ? word : line + " " + word;
-			if (!line.empty() && _database->measureText(candidate) > maximumWidth) {
-				lines.push_back(line);
-				line = word;
-			} else {
-				line = candidate;
-			}
-			word.clear();
-		}
-		if (character == '\n') {
-			lines.push_back(line);
-			line.clear();
-		}
-	}
-	if (lines.empty())
-		lines.push_back(Common::String());
 }
 
 bool WacJournalPuzzle::drawTextPanel(
@@ -219,7 +155,7 @@ uint16 WacJournalPuzzle::run(byte entryIndex,
 	Common::Array<Common::String> sourceLines;
 	// The tertiary WAC text panel reserves five pixels on the left, twenty on
 	// the right, and two more on either side of the actual text rows.
-	wrapText(journalText,
+	_database->wrapText(journalText,
 		kWacTextPanelWidth - kWacDatabaseLeftInset -
 			kWacDatabaseRightInset - kWacDatabaseTextInset * 2,
 		sourceLines);
@@ -306,7 +242,7 @@ uint16 WacJournalPuzzle::run(byte entryIndex,
 			cancelled = true;
 			break;
 		}
-		if (!wacJournalAnswersMatch(enteredPassword, expectedPassword)) {
+		if (!textAnswersMatch(enteredPassword, expectedPassword)) {
 			debugC(2, kDebugWac,
 				"Ripper: WAC journal rejected decryption key resource=0x%x enteredLength=%u",
 				passwordResource, enteredPassword.size());

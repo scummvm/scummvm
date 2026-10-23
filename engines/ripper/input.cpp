@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "ripper/detection.h"
 
@@ -93,6 +94,37 @@ bool advanceKeyword(byte character, const char *keyword, uint &progress,
 	else
 		progress = restartOnFirstCharacter && character == keyword[0] ? 1 : 0;
 	return keyword[progress] == '\0';
+}
+
+bool textAnswersMatch(const Common::String &entered,
+		const Common::String &expected) {
+	uint enteredIndex = 0;
+	uint expectedIndex = 0;
+	while (true) {
+		while (enteredIndex < entered.size() &&
+				!Common::isAlnum((byte)entered[enteredIndex]))
+			++enteredIndex;
+		while (expectedIndex < expected.size() &&
+				!Common::isAlnum((byte)expected[expectedIndex]))
+			++expectedIndex;
+		if (enteredIndex == entered.size() || expectedIndex == expected.size())
+			break;
+		byte enteredCharacter = (byte)entered[enteredIndex++];
+		byte expectedCharacter = (byte)expected[expectedIndex++];
+		if (enteredCharacter >= 'A' && enteredCharacter <= 'Z')
+			enteredCharacter += 'a' - 'A';
+		if (expectedCharacter >= 'A' && expectedCharacter <= 'Z')
+			expectedCharacter += 'a' - 'A';
+		if (enteredCharacter != expectedCharacter)
+			return false;
+	}
+	while (enteredIndex < entered.size() &&
+			!Common::isAlnum((byte)entered[enteredIndex]))
+		++enteredIndex;
+	while (expectedIndex < expected.size() &&
+			!Common::isAlnum((byte)expected[expectedIndex]))
+		++expectedIndex;
+	return enteredIndex == entered.size() && expectedIndex == expected.size();
 }
 
 InputManager::InputManager(Common::EventManager *eventManager) : _eventManager(eventManager) {

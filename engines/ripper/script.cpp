@@ -92,7 +92,7 @@ public:
 			}
 			_textPending = false;
 			const bool matched = entryResult == ModalDialogManager::kTextEntryAccepted &&
-				ScriptManager::textAnswersMatch(_entered, _expected);
+				textAnswersMatch(_entered, _expected);
 			debugC(1, kDebugCyber,
 				"Ripper: scene text request completed script='%s' selector=%u accepted=%d matched=%d length=%u failureFrame=%u",
 				_script.getMemberName().c_str(), _requestSelector,
@@ -479,37 +479,6 @@ Common::String ScriptManager::argumentString(const ScriptArgument &argument) {
 	for (uint i = 0; i < argument.data.size() && argument.data[i] != 0; ++i)
 		value += (char)argument.data[i];
 	return value;
-}
-
-bool ScriptManager::textAnswersMatch(const Common::String &entered,
-		const Common::String &expected) {
-	uint enteredIndex = 0;
-	uint expectedIndex = 0;
-	while (true) {
-		while (enteredIndex < entered.size() &&
-				!Common::isAlnum((byte)entered[enteredIndex]))
-			++enteredIndex;
-		while (expectedIndex < expected.size() &&
-				!Common::isAlnum((byte)expected[expectedIndex]))
-			++expectedIndex;
-		if (enteredIndex == entered.size() || expectedIndex == expected.size())
-			break;
-		byte enteredCharacter = (byte)entered[enteredIndex++];
-		byte expectedCharacter = (byte)expected[expectedIndex++];
-		if (enteredCharacter >= 'A' && enteredCharacter <= 'Z')
-			enteredCharacter += 'a' - 'A';
-		if (expectedCharacter >= 'A' && expectedCharacter <= 'Z')
-			expectedCharacter += 'a' - 'A';
-		if (enteredCharacter != expectedCharacter)
-			return false;
-	}
-	while (enteredIndex < entered.size() &&
-			!Common::isAlnum((byte)entered[enteredIndex]))
-		++enteredIndex;
-	while (expectedIndex < expected.size() &&
-			!Common::isAlnum((byte)expected[expectedIndex]))
-		++expectedIndex;
-	return enteredIndex == entered.size() && expectedIndex == expected.size();
 }
 
 bool ScriptManager::isScenePlayed(const Common::String &scene) const {

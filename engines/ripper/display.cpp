@@ -253,6 +253,39 @@ uint BitmapFontRenderer::measureText(const BitmapFontAsset &font,
 	return width;
 }
 
+void BitmapFontRenderer::wrapText(const BitmapFontAsset &font,
+		const Common::String &text, uint maxWidth, Common::Array<Common::String> &lines) {
+	lines.clear();
+	Common::String line;
+	Common::String word;
+	for (uint i = 0; i <= text.size(); ++i) {
+		const char character = i < text.size() ? text[i] : '\n';
+		if (character == '\r')
+			continue;
+		if (character != ' ' && character != '\n') {
+			word += character;
+			continue;
+		}
+
+		if (!word.empty()) {
+			const Common::String candidate = line.empty() ? word : line + " " + word;
+			if (!line.empty() && measureText(font, candidate) > maxWidth) {
+				lines.push_back(line);
+				line = word;
+			} else {
+				line = candidate;
+			}
+			word.clear();
+		}
+		if (character == '\n') {
+			lines.push_back(line);
+			line.clear();
+		}
+	}
+	if (lines.empty())
+		lines.push_back(Common::String());
+}
+
 static void drawBitmapFontText(byte *pixels, uint pitch, const BitmapFontAsset &font,
 		int x, int y, const Common::String &text, byte color, const Common::Rect *clip) {
 	int drawX = x;

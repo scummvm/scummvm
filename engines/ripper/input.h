@@ -49,6 +49,7 @@ uint16 translateKeyToCommand(const Common::KeyState &key);
 Common::String formatKeyCommandLabel(uint16 command);
 bool advanceKeyword(byte character, const char *keyword, uint &progress,
 	bool restartOnFirstCharacter = false);
+bool textAnswersMatch(const Common::String &entered, const Common::String &expected);
 
 class InputManager {
 public:
