@@ -61,7 +61,12 @@ const MonsterTouchAction MonsterTouch::ACTIONS[25] = {
 
 bool MonsterTouch::monsterTouch(uint index, Common::String &line) {
 	line = "";
-	return (this->*ACTIONS[index])(line);
+
+	// Touch effect IDs are 1-based
+	if (index == 0 || index > ARRAYSIZE(ACTIONS))
+		return false;
+
+	return (this->*ACTIONS[index - 1])(line);
 }
 
 bool MonsterTouch::canPerform(int level) const {
