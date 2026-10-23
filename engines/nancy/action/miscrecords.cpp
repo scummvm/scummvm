@@ -1878,6 +1878,15 @@ void Rain::execute() {
 	}
 }
 
+// The rain stops once the record's dependencies don't hold anymore, e.g. in the
+// scenes that show something up close
+void Rain::updateGraphics() {
+	if (!_isActive && _areaIndex != -1) {
+		_areaIndex = -1;
+		setVisible(false);
+	}
+}
+
 void Rain::drawDrops() {
 	static const float kDistanceCurve = 0.85f;
 	static const float kDistanceFade = 0.75f;

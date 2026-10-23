@@ -789,6 +789,7 @@ public:
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
+	void updateGraphics() override;
 
 	bool isViewportRelative() const override { return true; }
 
