@@ -260,7 +260,8 @@ void Character::clear() {
 	_intelligence = _might = _personality = _endurance = 0;
 	_speed = _accuracy = _luck = 0;
 	_level = 1;
-	_age = _ageDayCtr = 0;
+	_age = 18;
+	_ageDayCtr = 0;
 	_exp = 0;
 	_sp = 0;
 	_spellLevel = 0;

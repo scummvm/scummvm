@@ -437,7 +437,7 @@ struct Character : public PrimaryAttributes {
 	Race _race = HUMAN;
 	CharacterClass _class = NONE;
 
-	byte _age = 0;
+	byte _age = 18;
 	int _ageDayCtr = 0;
 	AttributePair16 _sp;
 	AttributePair _spellLevel;
