@@ -24,15 +24,51 @@
 
 #include "backends/fs/atari/atari-fs-factory.h"
 #include "backends/fs/atari/atari-fs.h"
+#include "base/plugins.h"
 
 #include <mint/osbind.h>
 #include <unistd.h>	// getcwd
 
+// all engines enabled in this build, static and dynamic
+#undef PLUGIN_ENABLED_STATIC
+#define PLUGIN_ENABLED_STATIC(ID) PLUGIN_ENABLED(ID)
+#define LINK_PLUGIN(ID) #ID,
+static const char *const engineIds[] = {
+#include "engines/plugins_table.h"
+	nullptr
+};
+#undef LINK_PLUGIN
+
+// maps a name shortened by GEMDOS to 8+3 back to the original one, e.g. "parallac.plg" -> "parallaction.plg"
+static void addLongName(AtariFilesystemNode::FileHashMap &fileHashMap, const Common::String &name) {
+	const size_t dot = name.findLastOf('.');
+	const Common::String shortName = name.substr(0, MIN<size_t>(dot, 8)) + name.substr(dot, 4);
+
+	if (shortName != name)
+		fileHashMap[shortName] = name;
+}
+
 AtariFilesystemFactory::AtariFilesystemFactory() {
-	_fileHashMap["cryomni3.dat"] = "cryomni3d.dat";
-	_fileHashMap["neverhoo.dat"] = "neverhood.dat";
-	_fileHashMap["supernov.dat"] = "supernova.dat";
-	_fileHashMap["teenagen.dat"] = "teenagent.dat";
+	static const char *const otherNames[] = {
+		"detection.plg",
+		"fonts-cjk.dat",
+		"gui-icons.dat",
+		"residualvm.zip",
+		"scummclassic.zip",
+		"scummmodern.zip",
+		"scummremastered.zip"
+	};
+	for (const char *name : otherNames)
+		addLongName(_fileHashMap, name);
+
+	for (const char *const *engineId = engineIds; *engineId; ++engineId) {
+		Common::String name(*engineId);
+		name.toLowercase();
+
+		addLongName(_fileHashMap, name + ".plg");
+		addLongName(_fileHashMap, name + ".dat");
+		addLongName(_fileHashMap, name + ".zip");
+	}
 
 	uint32 drvMap = Drvmap();
 	for (int i = 0; i < 26; i++) {

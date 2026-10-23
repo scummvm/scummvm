@@ -25,6 +25,7 @@
 #if defined(DYNAMIC_MODULES) && defined(__MINT__) && defined(__ELF__) && defined(__mcoldfire__)
 
 #include "backends/plugins/firebee/firebee-provider.h"
+#include "backends/plugins/atari/atari-plugin.h"
 #include "backends/plugins/elf/m68k-loader.h"
 
 #include <mint/basepage.h>
@@ -86,7 +87,7 @@ protected:
 };
 
 Plugin *FireBeePluginProvider::createPlugin(const Common::FSNode &node) const {
-	return new TemplatedELFPlugin<FireBeeDLObject>(node.getPath());
+	return new AtariPlugin<FireBeeDLObject>(node);
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__MINT__) && defined(__ELF__) && defined(__mcoldfire__)

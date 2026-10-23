@@ -2,6 +2,14 @@
 
 DIST_FILES_PLATFORM := $(srcdir)/backends/platform/atari/readme.txt
 
+# renames files in the current directory not fitting into the 8+3 limit the same way GEMDOS shortens them
+RENAME_TO_8_3 := \
+	for f in *.*; \
+	do \
+		n=$$(echo "$${f%.*}" | cut -c1-8).$$(echo "$${f\#\#*.}" | cut -c1-3); \
+		[ "$$f" = "$$n" ] || mv "$$f" "$$n"; \
+	done
+
 LITE_DIR	:= scummvm-${VERSION}-atari-lite
 LITE_DATA	:= ${LITE_DIR}/data
 LITE_DOCS	:= ${LITE_DIR}/doc
@@ -29,7 +37,7 @@ ifneq ($(PLUGINS),)
 	$(MKDIR) ${LITE_DIR}/plugins
 	$(CP) $(PLUGINS) ${LITE_DIR}/plugins
 	$(STRIP) --strip-debug ${LITE_DIR}/plugins/*$(PLUGIN_SUFFIX)
-	! [ -f ${LITE_DIR}/plugins/detection$(PLUGIN_SUFFIX) ] || mv ${LITE_DIR}/plugins/detection$(PLUGIN_SUFFIX) ${LITE_DIR}/plugins/detectio$(PLUGIN_SUFFIX)
+	cd ${LITE_DIR}/plugins && $(RENAME_TO_8_3)
 endif
 
 	$(MKDIR) ${LITE_DOCS}
@@ -43,8 +51,7 @@ endif
 	$(RM) $(addsuffix .dat, $(addprefix ${LITE_DATA}/, achievements classicmacfonts encoding macgui))
 
 	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
-	! [ -f ${LITE_DATA}/supernova.dat ] || mv ${LITE_DATA}/supernova.dat ${LITE_DATA}/supernov.dat
-	! [ -f ${LITE_DATA}/teenagent.dat ] || mv ${LITE_DATA}/teenagent.dat ${LITE_DATA}/teenagen.dat
+	cd ${LITE_DATA} && $(RENAME_TO_8_3)
 
 	# readme.txt
 	$(CP) $(DIST_FILES_PLATFORM) ${LITE_DIR}
@@ -67,7 +74,7 @@ ifneq ($(PLUGINS),)
 	$(MKDIR) ${FULL_DIR}/plugins
 	$(CP) $(PLUGINS) ${FULL_DIR}/plugins
 	$(STRIP) --strip-debug ${FULL_DIR}/plugins/*$(PLUGIN_SUFFIX)
-	! [ -f ${FULL_DIR}/plugins/detection$(PLUGIN_SUFFIX) ] || mv ${FULL_DIR}/plugins/detection$(PLUGIN_SUFFIX) ${FULL_DIR}/plugins/detectio$(PLUGIN_SUFFIX)
+	cd ${FULL_DIR}/plugins && $(RENAME_TO_8_3)
 endif
 
 	$(MKDIR) ${FULL_DOCS}
@@ -81,10 +88,7 @@ endif
 	$(RM) $(addsuffix .dat, $(addprefix ${FULL_DATA}/, achievements classicmacfonts encoding hadesch_translations macgui prince_translation))
 
 	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
-	! [ -f ${FULL_DATA}/cryomni3d.dat ] || mv ${FULL_DATA}/cryomni3d.dat ${FULL_DATA}/cryomni3.dat
-	! [ -f ${FULL_DATA}/neverhood.dat ] || mv ${FULL_DATA}/neverhood.dat ${FULL_DATA}/neverhoo.dat
-	! [ -f ${FULL_DATA}/supernova.dat ] || mv ${FULL_DATA}/supernova.dat ${FULL_DATA}/supernov.dat
-	! [ -f ${FULL_DATA}/teenagent.dat ] || mv ${FULL_DATA}/teenagent.dat ${FULL_DATA}/teenagen.dat
+	cd ${FULL_DATA} && $(RENAME_TO_8_3)
 
 	$(MKDIR) ${FULL_THEMES}
 	$(CP) $(DIST_FILES_THEMES) ${FULL_THEMES}
@@ -98,6 +102,7 @@ endif
 		do \
 			unzip -q -d tmp "$$f" && $(RM) "$$f" && cd tmp && $(ZIP) -0 "../$$f" * && cd .. && $(RM_REC) tmp; \
 		done
+	cd ${FULL_THEMES} && $(RENAME_TO_8_3)
 
 	# readme.txt
 	$(CP) $(DIST_FILES_PLATFORM) ${FULL_DIR}
@@ -119,7 +124,7 @@ ifneq ($(PLUGINS),)
 	$(MKDIR) ${FB_DIR}/plugins
 	$(CP) $(PLUGINS) ${FB_DIR}/plugins
 	$(STRIP) --strip-debug ${FB_DIR}/plugins/*$(PLUGIN_SUFFIX)
-	! [ -f ${FB_DIR}/plugins/detection$(PLUGIN_SUFFIX) ] || mv ${FB_DIR}/plugins/detection$(PLUGIN_SUFFIX) ${FB_DIR}/plugins/detectio$(PLUGIN_SUFFIX)
+	cd ${FB_DIR}/plugins && $(RENAME_TO_8_3)
 endif
 
 	$(MKDIR) ${FB_DOCS}
@@ -131,6 +136,9 @@ endif
 	# remove unused files
 	$(RM) ${FB_DATA}/helpdialog.zip
 	$(RM) $(addsuffix .dat, $(addprefix ${FB_DATA}/, achievements classicmacfonts encoding hadesch_translations macgui prince_translation))
+
+	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
+	cd ${FB_DATA} && $(RENAME_TO_8_3)
 
 	$(MKDIR) ${FB_THEMES}
 	$(CP) $(DIST_FILES_THEMES) ${FB_THEMES}
@@ -144,6 +152,7 @@ endif
 		do \
 			unzip -q -d tmp "$$f" && $(RM) "$$f" && cd tmp && $(ZIP) -0 "../$$f" * && cd .. && $(RM_REC) tmp; \
 		done
+	cd ${FB_THEMES} && $(RENAME_TO_8_3)
 
 	# readme.txt
 	$(CP) $(DIST_FILES_PLATFORM) ${FB_DIR}

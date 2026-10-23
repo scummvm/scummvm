@@ -324,11 +324,7 @@ void PluginManagerUncached::init() {
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false); // empty the engine plugins
 
 #ifndef DETECTION_STATIC
-#ifdef PLUGIN_DETECTION_NAME
-Common::String detectPluginName = PLUGIN_DETECTION_NAME;
-#else
-Common::String detectPluginName = "detection";
-#endif
+	Common::String detectPluginName = "detection";
 #ifdef PLUGIN_SUFFIX
 	detectPluginName += PLUGIN_SUFFIX;
 #endif

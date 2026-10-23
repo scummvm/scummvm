@@ -5269,7 +5269,6 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 	mintelf)
 		_elf_loader=yes
 		append_var DEFINES "-DM68K_TARGET"
-		append_var DEFINES "-DPLUGIN_DETECTION_NAME=\\\"detectio\\\""
 		append_var CXXFLAGS "-fuse-cxa-atexit"
 		append_var DEFINES "-DELF_LOADER_CXA_ATEXIT"
 		append_var DEFINES "-DUNCACHED_PLUGINS"

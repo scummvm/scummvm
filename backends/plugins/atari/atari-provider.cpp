@@ -25,6 +25,7 @@
 #if defined(DYNAMIC_MODULES) && defined(__MINT__) && defined(__ELF__) && !defined(__mcoldfire__)
 
 #include "backends/plugins/atari/atari-provider.h"
+#include "backends/plugins/atari/atari-plugin.h"
 #include "backends/plugins/elf/m68k-loader.h"
 
 #include <mint/basepage.h>
@@ -82,7 +83,7 @@ protected:
 };
 
 Plugin *AtariPluginProvider::createPlugin(const Common::FSNode &node) const {
-	return new TemplatedELFPlugin<AtariDLObject>(node.getPath());
+	return new AtariPlugin<AtariDLObject>(node);
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__MINT__) && defined(__ELF__) && !defined(__mcoldfire__)
