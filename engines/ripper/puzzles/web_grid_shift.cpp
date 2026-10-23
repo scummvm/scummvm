@@ -59,9 +59,7 @@ static const uint kPreviewHoldTicks = 0x36;
 static const uint kFadeSteps = 9;
 static const char *const kCompletionKeyword = "zztop";
 
-// RunWebGridShiftPuzzleScene at 0x2cdce reads these as physical coordinates.
-// Its displayBaseY calculation subtracts the 50-pixel scene origin when it is
-// active, so adding kScenePresentationTop here would invert that translation.
+// Physical screen coordinates; do not add the 50-pixel scene origin.
 static const int kRowY[kGridSize] = {
 	26, 96, 166, 236, 306
 };
@@ -325,9 +323,9 @@ bool WebGridShiftPuzzle::shiftToCell(uint targetCell, bool autoPlay) {
 }
 
 int WebGridShiftPuzzle::targetForDirection(uint direction) const {
-	// RIPPER.LE maps the DOS arrow commands to the opposite physical direction:
-	// Up grows the row, Down shrinks it, Left grows the column, and Right
-	// shrinks it. The autoplay direction ids 1..4 use the same mapping.
+	// Arrow commands move opposite their physical direction: Up grows the
+	// row, Down shrinks it, Left grows the column, and Right shrinks it.
+	// Autoplay direction IDs 1..4 use the same mapping.
 	switch (direction) {
 	case 1:
 		return _currentRow < kGridSize - 1 ?
@@ -545,8 +543,6 @@ Common::String WebGridShiftPuzzle::orderString() const {
 }
 
 WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 maps action 19 to
-	// RunWebGridShiftPuzzleScene at 0x2cdce.
 	if (!loadResources() || !captureGrid())
 		return kLoadFailed;
 
@@ -564,14 +560,11 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 	cursor->setVisible(false);
 	renderOrder(_tileOrder);
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered web grid shift puzzle function="
-		"RunWebGridShiftPuzzleScene@0x2cdce milestone=%u difficulty=%u "
+		"Ripper: entered web grid shift puzzle "
+		"milestone=%u difficulty=%u "
 		"autoplayMoves=%u help=0x%x grid=5x5 cell=85x70 "
 		"current=0,4 coordinates=physical",
 		completionFlag, puzzleLevel, autoMoveLimit, kHelpSelectionTable);
-	debugC(3, kDebugPuzzles,
-		"Ripper: web grid shift hidden keyword='%s' previewCommand=0x%04x",
-		kCompletionKeyword, kPreviewCommand);
 
 	Result result = kExited;
 	bool active = runAutoPlay(autoMoveLimit, completionFlag, result);
@@ -655,7 +648,7 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 	cursor->setVisible(savedCursorVisible);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left web grid shift puzzle result=%d milestone=%u "
 		"milestoneSet=%d current=%u,%u solved=%d quit=%d",
 		result, completionFlag,

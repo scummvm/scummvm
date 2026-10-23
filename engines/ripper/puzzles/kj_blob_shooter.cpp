@@ -61,7 +61,6 @@ static const uint16 kScreenshotCommand = 0x1900;
 static const uint kHelpSelectionTable = 0x1a8;
 static const byte kBlobTransparentColor = 4;
 
-// RIPPER.LE tables 0x31383 and 0x31397 store Y and X separately.
 static const int kBlobX[5] = { 185, 0, 0, 0, 210 };
 static const int kBlobY[5] = { 0, 0, 62, 0, 0 };
 static const int kScriptedHitX[5] = { 239, 75, 36, 164, 267 };
@@ -769,7 +768,7 @@ Scene::Result KjBlobShooter::run(uint completionFlag) {
 			"Ripper: restored KJ blob-shooter caller display size=%dx%d",
 			savedDisplay.bounds().width(), savedDisplay.bounds().height());
 	}
-	debugC(_result == kLoadFailed ? 1 : 2, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left KJ blob-shooter result=%d difficulty=%u "
 		"completionFlag=%u missed=%d destroyed=%d spawnDelay=%d",
 		_result, difficulty, completionFlag, _missedBlobs,

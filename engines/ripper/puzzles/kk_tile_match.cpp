@@ -65,9 +65,7 @@ static const char *const kBackgroundName = "base";
 static const char *const kClosedTileName = "big_s";
 static const char kCompletionKeyword[] = "asparagus";
 
-// g_kkPuzzleTilePositionPairs at 0x84474 contains scene Y followed by X.
-// RunKkTileMatchPuzzleScene at 0x2fa31 cancels the active 50-pixel scene
-// origin before it creates the 16 controls, so these are physical points.
+// Physical screen coordinates; the background fills the 640-by-400 screen.
 static const Common::Point kTilePositions[kTileCount] = {
 	Common::Point(49, 34), Common::Point(185, 34),
 	Common::Point(321, 34), Common::Point(457, 34),
@@ -632,9 +630,8 @@ bool KkTileMatchPuzzle::applyMove(uint selectedTile) {
 		snapshot[tile] = _slots[tile];
 		target[tile] = _slots[tile];
 	}
-	// ApplyKkPuzzleMoveTableAndAnimateSlots at 0x2ef09 snapshots all 16
-	// records before it walks the selected row. Keep this as a separate pass
-	// so a destination can safely name a later source slot.
+	// Snapshot all slots before applying the row: a destination can name
+	// a later source slot.
 	for (uint tile = 0; tile < kTileCount; ++tile) {
 		const int source = _moveTable[selectedTile][tile];
 		if (source >= 0) {
@@ -839,9 +836,6 @@ Common::String KkTileMatchPuzzle::slotStateString() const {
 }
 
 KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 routes action 25 to
-	// RunKkTileMatchPuzzleScene at 0x2fa31. RIPPER.LE owns KK.PL,
-	// reads KK%d.INI, and creates controls 0x672..0x681 over this 4x4 grid.
 	if (!_incomingDisplay.capture() || !loadConfiguration() || !loadAssets()) {
 		_incomingDisplay.restore();
 		return kLoadFailed;
@@ -857,10 +851,10 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setVisible(true);
 	applyPalette();
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered KK tile-match puzzle function=RunKkTileMatchPuzzleScene@0x2fa31 "
-		"completionFlag=%u controls=%u help=0x%x keyword='%s' states=[%s] puzzleHelp=%d",
+		"Ripper: entered KK tile-match puzzle "
+		"completionFlag=%u controls=%u help=0x%x states=[%s] puzzleHelp=%d",
 		completionFlag, kTileCount, kHelpSelectionTable,
-		kCompletionKeyword, slotStateString().c_str(),
+		slotStateString().c_str(),
 		_engine->isPuzzleHelpEnabled());
 
 	Result result = kExited;
@@ -946,9 +940,7 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 				}
 			}
 		}
-		// RunKkTileMatchPuzzleScene at 0x2fa31 services the active UI selection
-		// presentation on every idle pass. Submit unchanged frames too so
-		// ScummVM's software cursor remains visible and follows mouse motion.
+		// Present unchanged frames too so the software cursor follows idle input ticks.
 		presentScreen();
 		g_system->delayMillis(10);
 	}
@@ -960,7 +952,7 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left KK tile-match puzzle result=%d milestone=%u "
 		"milestoneSet=%d states=[%s] quit=%d",
 		result, completionFlag,

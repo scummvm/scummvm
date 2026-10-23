@@ -74,8 +74,7 @@ static const uint16 kHelpAction = 0x3b00;
 static const uint kHelpSelectionTable = 0x1a1;
 static const uint kNoLaunchFrame = 0xffffffff;
 
-// RunTableGateLeverPuzzleScene at 0x38eb8 normalizes RIPPER.LE's 1-based
-// records at 0x84720 once. These are the resulting zero-based links.
+// Zero-based path links; -1 ends a failed route and -2 reaches the exit.
 static const PathNode kPathNodes[kPathNodeCount] = {
 	{22, 486, 1}, {72, 486, 6}, {185, 487, 3}, {263, 485, -2},
 	{37, 446, 16}, {66, 446, 4}, {71, 455, 7}, {76, 446, 8},
@@ -110,8 +109,6 @@ static const PathNode kPathNodes[kPathNodeCount] = {
 	{44, 218, 76}, {55, 177, 96}, {146, 179, 99}
 };
 
-// The source node and two routes are the normalized records at 0x84a02.
-// Gate state zero selects route0 and state one selects route1.
 static const GateDefinition kGateDefinitions[kGateCount] = {
 	{68, 445, 6, 7, 5}, {226, 427, 13, 14, 12},
 	{66, 394, 16, 17, 114}, {111, 397, 25, 23, 115},
@@ -130,8 +127,6 @@ static const Common::Point kLeverPositions[kLeverCount] = {
 	Common::Point(533, 179 + kSceneOriginY)
 };
 
-// Dirty-region coordinates at 0x84ae4. RIPPER.LE reveals one indicator
-// after each lever activation and restores all five after a failed traversal.
 static const Common::Point kActivationPositions[kLeverCount] = {
 	Common::Point(537, 97 + kSceneOriginY),
 	Common::Point(531, 102 + kSceneOriginY),
@@ -547,10 +542,8 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 		"Ripper: entered table gate puzzle completionFlag=%u pathNodes=%u gates=%u levers=%u",
 		completionFlag, kPathNodeCount, kGateCount, kLeverCount);
 	_engine->getInput()->discardMouseTransitions();
-	// RunTableGateLeverPuzzleScene at 0x38eb8 [LE, instructions 0x3912a..0x39134] stores and dispatches
-	// cursor row 14 before activating the puzzle's UI-selection presentation.
-	// GBZ1 has just hidden the cursor, so reinstall the frame after the retained
-	// scene and overlay palette have been presented.
+	// GBZ1 hides the cursor. Reinstall its frame after presenting the
+	// retained scene and overlay palette.
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	playCue(1);
@@ -586,9 +579,7 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		updateCursor(mouse.position);
-		// RunTableGateLeverPuzzleScene at 0x38eb8 [LE] calls
-		// ServiceUiControlStateSelection at 0x4a912 at instruction 0x393f6. Present each cursor tick
-		// explicitly for ScummVM's software cursor.
+		// Present each cursor tick for the software cursor.
 		presentScreen();
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			if (isExitRegion(mouse.position)) {

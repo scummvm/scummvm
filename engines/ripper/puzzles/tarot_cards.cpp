@@ -59,9 +59,7 @@ static const char *const kBackgroundName = "bkgrnd2";
 static const char *const kMusicName = "reapsong";
 static const char *const kSceneCueNames[2] = { "tarot0", "tarot2" };
 
-// g_tarotCardSlotLayoutRows at 0x3e78d stores X/Y/card rows. RIPPER.LE
-// controller subtracts 90 from every Y coordinate before constructing
-// controls 0x672 through 0x680.
+// Logical scene coordinates; presentation adds the 50-pixel scene origin.
 static const Common::Point kSlotPositions[TarotCardsModel::kSlotCount] = {
 	Common::Point(73, 158), Common::Point(162, 158),
 	Common::Point(251, 158), Common::Point(337, 158),
@@ -382,8 +380,6 @@ Common::String TarotCardsPuzzle::stateString() const {
 }
 
 TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 routes action 23 to
-	// RunTarotCardPuzzleScene at 0x3eece with the completion flag in EAX.
 	if (!_incomingDisplay.capture())
 		return kLoadFailed;
 
@@ -413,7 +409,7 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 	const uint32 timeLimitMillis =
 		_timeLimitSeconds * 18 * kDosTickMillis;
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered tarot puzzle function=RunTarotCardPuzzleScene@0x3eece milestone=%u library='%s' controls=0x672..0x680 target=[8,3,9,7,2,1] timeLimitSeconds=%u music=%d",
+		"Ripper: entered tarot puzzle milestone=%u library='%s' controls=0x672..0x680 timeLimitSeconds=%u music=%d",
 		completionFlag, kLibraryName, _timeLimitSeconds, musicStarted);
 
 	Result result = kExited;
@@ -493,7 +489,7 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setVisible(false);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left tarot puzzle result=%d milestone=%u milestoneSet=%d held=%u state=[%s] quit=%d",
 		result, completionFlag,
 		_engine->getMilestones()->isSet(completionFlag),

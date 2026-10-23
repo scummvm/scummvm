@@ -75,9 +75,7 @@ static const char *const kAudioNames[kAudioCueCount] = {
 	"aztec0", "aztec2", "aztec3"
 };
 
-// g_horusWordPuzzleLetterControlOrigins at 0x3e82f stores these physical
-// X/Y pairs. RunHorusWordPuzzleScene at 0x3f976 cancels the scene's 50-pixel
-// presentation origin before creating controls 0x672 through 0x68b.
+// Physical screen coordinates; the background fills the 640-by-400 screen.
 static const Common::Point kLetterPositions[kLetterCount] = {
 	Common::Point(148, 136), Common::Point(146, 94),
 	Common::Point(146, 51), Common::Point(181, 6),
@@ -94,8 +92,6 @@ static const Common::Point kLetterPositions[kLetterCount] = {
 	Common::Point(152, 218), Common::Point(149, 176)
 };
 
-// g_astHorusFallingLetterStates at 0x84dbc stores the five final letter
-// anchors. RIPPER.LE applies EGYPT.RTP at phase * 10 over this display region.
 static const Common::Point kWordPositions[kWordLength] = {
 	Common::Point(228, 347), Common::Point(264, 347),
 	Common::Point(299, 347), Common::Point(334, 347),
@@ -425,7 +421,7 @@ bool HorusWordPuzzle::playCue(uint cue, uint volume, bool loop) {
 		_library.createReadStreamForMember(kAudioNames[cue]);
 	const bool result = _engine->getMedia()->playSoundEffectStream(
 		stream, kAudioNames[cue], _audioHandles[cue], volume, loop);
-	debugC(result ? 3 : 2, kDebugPuzzles,
+	debugC(result ? 3 : 1, kDebugPuzzles,
 		"Ripper: Horus word audio cue=%u name='%s' volume=%u "
 		"loop=%d success=%d", cue, kAudioNames[cue], volume, loop,
 		result);
@@ -568,8 +564,6 @@ bool HorusWordPuzzle::stepAnimation(uint32 now) {
 }
 
 HorusWordPuzzle::Result HorusWordPuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 routes action 20 to
-	// RunHorusWordPuzzleScene at 0x3f976 with the completion flag in EAX.
 	if (!_incomingDisplay.capture())
 		return kLoadFailed;
 
@@ -599,14 +593,11 @@ HorusWordPuzzle::Result HorusWordPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	render();
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered Horus word puzzle function="
-		"RunHorusWordPuzzleScene@0x3f976 milestone=%u library='%s' "
+		"Ripper: entered Horus word puzzle "
+		"milestone=%u library='%s' "
 		"controls=%u slots=%u help=0x%x puzzleHelp=%d",
 		completionFlag, kLibraryName, kLetterCount, kWordLength,
 		kHelpSelectionTable, _engine->isPuzzleHelpEnabled());
-	debugC(3, kDebugPuzzles,
-		"Ripper: Horus word retail target='%s' controls=0x672..0x68b",
-		kTargetWord);
 
 	Result result = kExited;
 	bool active = true;
@@ -675,7 +666,7 @@ HorusWordPuzzle::Result HorusWordPuzzle::run(uint completionFlag) {
 	_incomingDisplay.restore();
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left Horus word puzzle result=%d milestone=%u "
 		"milestoneSet=%d word='%s' exitRequested=%d quit=%d",
 		result, completionFlag,

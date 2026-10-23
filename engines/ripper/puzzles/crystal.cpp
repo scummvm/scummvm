@@ -376,9 +376,8 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 	}
 
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered crystal puzzle pieces=%u grid=%ux%u completionFlag=%u keyword='%s'",
-		kPieceCount, kGridColumns, ARRAYSIZE(kGridRowY), completionFlag,
-		kCompletionKeyword);
+		"Ripper: entered crystal puzzle pieces=%u grid=%ux%u completionFlag=%u",
+		kPieceCount, kGridColumns, ARRAYSIZE(kGridRowY), completionFlag);
 	_engine->getInput()->discardMouseTransitions();
 	seedInitialPieces(readPuzzleLevel());
 	render();

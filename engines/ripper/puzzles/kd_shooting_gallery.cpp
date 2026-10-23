@@ -155,7 +155,7 @@ bool KdShootingGallery::loadConfig(uint difficulty) {
 	_config.points[0] = configInt(ini, "SCORE", "points1");
 	_config.points[1] = configInt(ini, "SCORE", "points2");
 	_config.goal = configInt(ini, "SCORE", "goal");
-	// RunKdShootingGalleryScene reads penalty but never uses it in the score.
+	// The configured penalty does not affect the score.
 	_config.unusedPenalty = configInt(ini, "SCORE", "penalty");
 	_config.rapidFireTicks = configInt(ini, "WEAPON", "rapid fire");
 	_config.weaponDischarge = configInt(ini, "WEAPON", "discharge");
@@ -284,9 +284,7 @@ const PresentationRegion *KdShootingGallery::findHitRegion(
 		const PresentationFrameRegion &frame, const Common::Point &point) const {
 	for (uint i = 0; i < frame.regions.size(); ++i) {
 		const PresentationRegion &region = frame.regions[i];
-		// The KD.DAT values and the hit-test in RunKdShootingGalleryScene at
-		// 0x3288e use the same vertical/horizontal record order as combat:
-		// type, y, x, height, width.
+		// KD.DAT region fields are type, y, x, height, width.
 		const Common::Rect bounds(region.coordinate2, region.coordinate1,
 			region.coordinate2 + region.extent2,
 			region.coordinate1 + region.extent1);
@@ -863,7 +861,7 @@ Scene::Result KdShootingGallery::run(uint completionFlag) {
 			!markSolved(completionFlag, "kd-shooting-gallery"))
 		_result = kLoadFailed;
 	finish("kd-shooting-gallery-exit", 0, true);
-	debugC(_result == kLoadFailed ? 1 : 2, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left KD shooting-gallery result=%d difficulty=%u completionFlag=%u score=%d",
 		_result, difficulty, completionFlag, currentScore());
 	return _result;

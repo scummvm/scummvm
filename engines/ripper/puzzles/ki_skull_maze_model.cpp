@@ -31,7 +31,7 @@ KiSkullMazeModel::KiSkullMazeModel() :
 }
 
 uint KiSkullMazeModel::nextRandom15() {
-	// GenerateRandomInt15 at 0x49a2f uses the Microsoft-compatible LCG.
+	// The puzzle's configured seeds depend on this exact random sequence.
 	_randomSeed = _randomSeed * 0x41c64e6dU + 0x3039U;
 	return (_randomSeed >> 16) & 0x7fff;
 }

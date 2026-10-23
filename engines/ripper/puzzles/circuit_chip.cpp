@@ -57,9 +57,8 @@ static const uint kCircuitManualFlag = 0x55;
 static const uint kCircuitManualResource = 0xb6;
 static const char *const kCompletionKeyword = "theory";
 
-// RunCircuitChipPlacementPuzzleScene at 0x28aa4 reads both tables as
-// scene-space Y followed by physical X. The scene is a 640-by-400
-// presentation, so no 50-pixel scene origin is added here.
+// This puzzle fills the 640-by-400 screen, so these physical coordinates
+// do not include a 50-pixel scene origin.
 static const Common::Point kSourcePositions[kChipCount] = {
 	Common::Point(460, 22),
 	Common::Point(460, 322),
@@ -106,8 +105,6 @@ static const uint kSlotConnectorTypes[kChipCount] = {
 	16, 6, 12, 6, 16, 9, 12, 12, 9, 12, 6, 16, 16, 9, 9, 6
 };
 
-// g_circuitPuzzleExpectedChipBySlot at 0x25db1 stores one-based chip
-// numbers. This normalized table is zero based.
 static const uint kExpectedChipBySlot[kChipCount] = {
 	13, 3, 10, 5, 14, 15, 4, 0, 6, 11, 8, 1, 12, 7, 2, 9
 };
@@ -130,14 +127,10 @@ static const char *const kAudioNames[6] = {
 };
 
 static Common::Rect circuitManualBounds() {
-	// RunCircuitChipPlacementPuzzleScene loads X=0x72, Y=0x15e,
-	// width=0x113, and height=0x32 for resource 0xb6.
 	return Common::Rect(114, 350, 389, 400);
 }
 
 static Common::Rect circuitManualMediaBounds() {
-	// The RunMediaSequence call at 0x28ed2 presents the 320-by-76
-	// ED_WAC.SMK patch at physical X=0x5c, Y=0x144.
 	return Common::Rect(92, 324, 412, 400);
 }
 
@@ -624,8 +617,6 @@ Common::String CircuitChipPuzzle::placementString() const {
 }
 
 CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 maps action 1 to
-	// RunCircuitChipPlacementPuzzleScene at 0x28aa4.
 	if (!_incomingDisplay.capture() || !loadAssets()) {
 		_incomingDisplay.restore();
 		return kLoadFailed;
@@ -654,8 +645,6 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 	if (_manualAvailable) {
 		_engine->getMedia()->playSoundEffect(kAudioNames[5],
 			_audioHandles[5]);
-		// RunCircuitChipPlacementPuzzleScene passes physical Y=0x144 in
-		// EBX and X=0x5c in ECX to RunMediaSequence.
 		if (!_engine->getMedia()->play("ed_wac.smk", false, 92, 324))
 			warning("Ripper: circuit puzzle WAC presentation failed");
 		else if (!captureManualBacking()) {
@@ -677,17 +666,11 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 	cursor->setVisible(true);
 	render();
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered circuit chip puzzle function="
-		"RunCircuitChipPlacementPuzzleScene@0x28aa4 "
+		"Ripper: entered circuit chip puzzle "
 		"milestone=%u help=0x%x chips=16 slots=16 "
 		"manualFlag=0x%x manualAvailable=%d coordinates=physical",
 		completionFlag, kHelpSelectionTable, kCircuitManualFlag,
 		_engine->getMilestones()->isSet(kCircuitManualFlag));
-	debugC(1, kDebugPuzzles,
-		"Ripper: circuit chip puzzle solution oneBased="
-		"14,4,11,6,15,16,5,1,7,12,9,2,13,8,3,10 "
-		"keyword='%s'",
-		kCompletionKeyword);
 
 	Result result = kExited;
 	bool active = true;
@@ -783,7 +766,7 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 	cursor->setVisible(savedCursorVisible);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left circuit chip puzzle result=%d milestone=%u "
 		"milestoneSet=%d groups=%u draggedChip=%d quit=%d",
 		result, completionFlag,

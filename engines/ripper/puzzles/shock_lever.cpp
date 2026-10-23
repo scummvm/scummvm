@@ -63,8 +63,6 @@ static const char *const kBackgroundName = "screen";
 static const char *const kSubmitName = "down";
 static const char kCheatKeyword[] = "sparky";
 
-// g_shockLeverPuzzleLeverControlOrigins at 0x3ac07 stores the three
-// screen-space X/Y pairs copied by RunShockLeverPuzzleScene at 0x3affb.
 static const Common::Point kLeverPositions[kLeverCount] = {
 	Common::Point(258, 96 + kSceneOriginY),
 	Common::Point(305, 96 + kSceneOriginY),
@@ -78,9 +76,6 @@ static const char *const kOutcomeMediaNames[4] = {
 };
 
 static const Common::Point kSubmitPosition(222, 252 + kSceneOriginY);
-// ServiceShockPuzzleScreenPlayback at 0x3ad26 posts SCREENN's dirty region at
-// logical x=0x114, y=3. The shared scene presentation adds the physical
-// 50-pixel toolbar origin to y.
 static const Common::Point kScreenMediaPosition(276, 3);
 
 static bool isExitPoint(const Common::Point &point) {
@@ -228,10 +223,8 @@ bool ShockLeverPuzzle::drawBackground() {
 }
 
 void ShockLeverPuzzle::restoreLeverBackings(byte *screen, uint pitch) const {
-	// AnimateShockLeverToFrame at 0x3ad98 opens a scoped display backing before
-	// copying each transparent lever frame, then posts that complete dirty
-	// region. Restore the corresponding SCREEN pixels before compositing the
-	// replacement frame so transparent pixels cannot retain the prior pose.
+	// Restore the SCREEN backing before drawing each transparent lever frame
+	// so transparent pixels cannot retain the prior pose.
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
 		if (_leverFrames[lever].empty())
 			continue;
@@ -692,8 +685,6 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 		case kCheatCommand:
 			_solved = true;
 			result = kSolved;
-			// RunShockLeverPuzzleScene at 0x3affb [LE, instruction 0x3b90b] sets the supplied flag
-			// before presenting M_2 on the hidden-keyword path.
 			if (!markSolved(completionFlag, "shock-lever-keyword")) {
 				result = kLoadFailed;
 			} else {

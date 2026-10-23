@@ -64,9 +64,7 @@ static const byte kSkullTransparentColor = 0xff;
 static const byte kManTransparentColor = 0x2f;
 static const char kCompletionKeyword[] = "pretzel";
 
-// RunKiSkullMazePuzzleScene at 0x2ff55 creates its 64 controls from
-// g_kiPuzzleTileYPositions at 0x844f4 and g_kiPuzzleTileXPositions at
-// 0x84574 after cancelling the scene origin. These are physical points.
+// Physical screen coordinates; the background fills the 640-by-400 screen.
 static const Common::Point kCellPositions[KiSkullMazeModel::kCellCount] = {
 	Common::Point(47, 180), Common::Point(76, 207),
 	Common::Point(107, 234), Common::Point(137, 261),
@@ -102,8 +100,6 @@ static const Common::Point kCellPositions[KiSkullMazeModel::kCellCount] = {
 	Common::Point(514, 202), Common::Point(546, 229)
 };
 
-// RIPPER.LE tables 0x2ea0e and 0x2ea18 use display-service Y/X order. Their Y
-// values include the tile and idle-player height corrections made at setup.
 static const int kManInitialYOffsets[5] = {0, -36, -5, -35, -6};
 static const int kManXOffsets[5] = {-6, -7, -32, -21, 3};
 
@@ -437,8 +433,6 @@ Common::Point KiSkullMazePuzzle::playerPosition(uint direction,
 		uint originCell) const {
 	if (originCell >= KiSkullMazeModel::kCellCount || direction >= 5)
 		return Common::Point();
-	// RIPPER.LE applies these per-direction offsets in display-service Y/X
-	// order; kManInitialYOffsets already include the vertical corrections.
 	const int adjustedY = _lids[0].height / 2 -
 		_manAnimations[0].height + 6;
 	return Common::Point(
@@ -719,7 +713,7 @@ void KiSkullMazePuzzle::playCue(uint cue) {
 	const Common::String path = Common::String::format("ki_%u.wav", cue);
 	const bool success = _engine->getMedia()->playSoundEffect(path,
 		_audioHandles[cue]);
-	debugC(success ? 3 : 2, kDebugPuzzles,
+	debugC(success ? 3 : 1, kDebugPuzzles,
 		"Ripper: KI skull-maze audio cue=%u path='%s' success=%d",
 		cue, path.c_str(), success);
 }
@@ -748,8 +742,6 @@ void KiSkullMazePuzzle::cleanup(uint savedSelectionIndex,
 }
 
 KiSkullMazePuzzle::Result KiSkullMazePuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 routes action 18 to
-	// RunKiSkullMazePuzzleScene at 0x2ff55 with the completion flag in EAX.
 	if (!_incomingDisplay.capture() || !loadConfiguration() || !loadAssets()) {
 		_incomingDisplay.restore();
 		return kLoadFailed;
@@ -775,8 +767,8 @@ KiSkullMazePuzzle::Result KiSkullMazePuzzle::run(uint completionFlag) {
 	_hazardDelayTicks = _config.initialHazardDelayTicks;
 	_nextHazardMillis = now + _hazardDelayTicks * kDosTickMillis;
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered KI skull-maze puzzle function="
-		"RunKiSkullMazePuzzleScene@0x2ff55 milestone=%u grid=8x8 "
+		"Ripper: entered KI skull-maze puzzle "
+		"milestone=%u grid=8x8 "
 		"controls=0x672..0x6b1 help=0x%x start=%u seed=%u "
 		"frameRate=%u hazardDelayTicks=%u puzzleHelp=%d",
 		completionFlag, kHelpSelectionTable, _model.currentCell(),
@@ -785,7 +777,7 @@ KiSkullMazePuzzle::Result KiSkullMazePuzzle::run(uint completionFlag) {
 	const Common::Point startPlayerPosition = playerPosition(0,
 		_model.currentCell());
 	debugC(2, kDebugPuzzles,
-		"Ripper: KI skull-maze retail start cell=%u ordinal=%u "
+		"Ripper: KI skull-maze start cell=%u ordinal=%u "
 		"lidAnchor=%d,%d playerTopLeft=%d,%d idleSize=%ux%u",
 		_model.currentCell(), _model.currentCell() + 1,
 		kCellPositions[_model.currentCell()].x,
@@ -868,7 +860,7 @@ KiSkullMazePuzzle::Result KiSkullMazePuzzle::run(uint completionFlag) {
 	}
 
 	cleanup(savedSelectionIndex, savedCursorVisible);
-	debugC(result == kLoadFailed ? 1 : 2, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left KI skull-maze puzzle result=%d milestone=%u "
 		"milestoneSet=%d current=%u blocked=%u terminal=%u quit=%d",
 		result, completionFlag,

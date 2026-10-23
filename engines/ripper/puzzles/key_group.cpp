@@ -380,8 +380,6 @@ Common::String KeyGroupPuzzle::targetStateString() const {
 }
 
 KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 maps both actions 16 and 60 to
-	// RunKeyGroupPuzzleScene at 0x3ca1f with the caller-supplied flag in EAX.
 	if (!_incomingDisplay.capture() || !loadAssets()) {
 		_incomingDisplay.restore();
 		return kLoadFailed;
@@ -402,13 +400,11 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 		return kLoadFailed;
 	}
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered key group puzzle function=RunKeyGroupPuzzleScene@0x3ca1f "
+		"Ripper: entered key group puzzle "
 		"milestone=%u sourceControls=%u targetControls=%u help=0x%x "
-		"keyword='%s' target=[%s]",
+		"target=[%s]",
 		completionFlag, kSourceSlotCount, kTargetSlotCount,
-		kHelpSelectionTable, kCompletionKeyword, targetStateString().c_str());
-	debugC(3, kDebugPuzzles,
-		"Ripper: key group retail solution=[0,4,10,15,1,13,16,5,9,7,18,19,14,11]");
+		kHelpSelectionTable, targetStateString().c_str());
 
 	Result result = kExited;
 	bool active = true;
@@ -522,7 +518,7 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left key group puzzle result=%d milestone=%u milestoneSet=%d "
 		"held=%d target=[%s] quit=%d",
 		result, completionFlag,

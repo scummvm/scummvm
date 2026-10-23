@@ -29,7 +29,6 @@ struct BoardOffset {
 	int column;
 };
 
-// g_boardMoveOffsetPointerTable at 0x40d98 selects these four tables.
 static const BoardOffset kKingOffsets[] = {
 	{-1, 0}, {0, -1}, {0, 1}, {1, 0}
 };
@@ -44,8 +43,6 @@ static const BoardOffset kLeapOffsets[] = {
 	{0, 2}, {2, -2}, {2, 0}, {2, 2}
 };
 
-// InitializeBoardPuzzleState at 0x40fa1 copies these 42 signed bytes from
-// 0x40c32. Positive pieces move first.
 static const int8 kInitialPosition[BoardGameModel::kCellCount] = {
 	-1,  0, -4,  0,  0,  0,
 	-2, -4,  0, -2, -2,  0,
@@ -121,9 +118,8 @@ void BoardGameModel::legalDestinations(int source,
 		const int column = sourceColumn + offsets[offset].column;
 		if (row < 0 || row >= kRowCount || column < 0 ||
 				column >= kColumnCount) {
-			// TryGetLegalBoardMoveDestination at 0x41c1e maps a runner
-			// crossing a side edge inside its far three rows to the shared
-			// off-board destination 42. Vertical exits are never legal.
+			// Runners can leave through a side edge inside their far three rows.
+			// All such exits share the off-board destination; vertical exits are illegal.
 			if ((type == 2 || type == 3) && row == sourceRow &&
 					(column < 0 || column >= kColumnCount) &&
 					((piece < 0 && sourceRow >= 4) ||

@@ -66,9 +66,6 @@ static const uint16 kEscapeCommand = 0x1b;
 static const uint16 kHelpCommand = 0x3b00;
 static const uint16 kScreenshotCommand = 0x4400;
 
-// g_astBoardArrangementRuntimePositions at 0x84b39 stores scene-space Y
-// followed by X for each piece. ScummVM normalizes those pairs to physical
-// screen points here.
 static const Common::Point kInitialPositions[kPieceCount] = {
 	Common::Point(103, 13 + kSceneOriginY),
 	Common::Point(168, 13 + kSceneOriginY),
@@ -339,9 +336,6 @@ void BoardArrangementPuzzle::finishDrag() {
 		piece, _positions[piece].x, _positions[piece].y);
 }
 
-// The RunBoardArrangementPuzzleScene validation block at 0x3a889 uses
-// UiControlState fields stored as Y, X, height, width. The positions and frames
-// below are normalized to ScummVM's X, Y, width, height ordering.
 bool BoardArrangementPuzzle::isSolved(bool logPairs) const {
 	bool solved = true;
 	for (uint order = 0; order + 1 < ARRAYSIZE(kValidationOrder); ++order) {
@@ -475,10 +469,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 		if (redraw)
 			render();
 		else {
-			// RunBoardArrangementPuzzleScene at 0x39d8f services
-			// ServiceUiControlStateSelection on every idle loop while the
-			// selection presentation is active. Submit unchanged puzzle frames
-			// too so ScummVM's software cursor tracks those input ticks.
+			// Present unchanged frames too so the software cursor follows idle input ticks.
 			presentScreen();
 		}
 		g_system->delayMillis(10);
@@ -494,7 +485,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
 	const bool arrangementSolved = isSolved(false);
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left board arrangement puzzle result=%d "
 		"arrangementSolved=%d milestone=%u milestoneSet=%d quit=%d",
 		result, arrangementSolved, completionFlag,

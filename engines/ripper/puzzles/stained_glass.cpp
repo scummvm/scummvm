@@ -63,10 +63,8 @@ static const char *const kTransitionMaskName = "frame3.pcx";
 static const char *const kAmbientName = "g-puzzle.wav";
 static const char kCompletionKeyword[] = "headache";
 
-// g_stainedGlassPuzzleTilePositionTable at 0x843f0 stores ordinary X/Y
-// pairs. RunStainedGlassPuzzleScene at 0x2e366 cancels a 50-pixel scene
-// presentation offset before creating the controls, so these coordinates are
-// physical even when the preceding media used the scene viewport.
+// Physical screen coordinates, even when the preceding media used
+// the scene viewport.
 static const Common::Point kTilePositions[kTileCount] = {
 	Common::Point(277, 5),
 	Common::Point(228, 54), Common::Point(326, 54),
@@ -143,8 +141,7 @@ bool StainedGlassPuzzle::loadConfiguration() {
 					name.c_str(), section.c_str(), key.c_str(), value.c_str());
 				return false;
 			}
-			// LoadStainedGlassPuzzleMoveTable at 0x2da64 leaves a
-			// destination unchanged when the INI lookup returns zero.
+			// A zero INI value leaves the destination unchanged.
 			_moveTable[row][destination] = source == 0 ? -1 : (int)source - 1;
 			active = true;
 		}
@@ -363,7 +360,7 @@ void StainedGlassPuzzle::renderTransition(const uint *previousOrder,
 		drawFrame(pixels, screen->pitch, _tiles[tile], x, y);
 	}
 	// FRAME3.PCX is a stencil: transparent pixels expose moving pieces; other
-	// pixels restore the GLASS.PCX lattice (RIPPER.LE 0x2dc23).
+	// pixels restore the GLASS.PCX lattice.
 	for (uint y = 0; y < _transitionMask.height; ++y) {
 		for (uint x = 0; x < _transitionMask.width; ++x) {
 			const uint offset = y * _transitionMask.width + x;
@@ -611,10 +608,6 @@ void StainedGlassPuzzle::clearDisplay() {
 }
 
 StainedGlassPuzzle::Result StainedGlassPuzzle::run(uint completionFlag) {
-	// RunStainedGlassPuzzleScene at 0x2e366 owns STGLASS.PL, loads the move
-	// table from STGLASSn.INI, and creates controls 0x672..0x681. It begins
-	// from identity order, previews the solved image, then animates to the
-	// configured initial permutation.
 	if (!_incomingDisplay.capture() || !loadConfiguration() || !loadAssets() ||
 			!buildPuzzleBacking()) {
 		_incomingDisplay.restore();
@@ -634,10 +627,10 @@ StainedGlassPuzzle::Result StainedGlassPuzzle::run(uint completionFlag) {
 	if (!playAmbient())
 		warning("Ripper: could not start stained glass ambient audio");
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered stained glass puzzle function=RunStainedGlassPuzzleScene@0x2e366 "
-		"completionFlag=%u controls=%u help=0x%x keyword='%s' order=[%s]",
+		"Ripper: entered stained glass puzzle "
+		"completionFlag=%u controls=%u help=0x%x order=[%s]",
 		completionFlag, kTileCount, kHelpSelectionTable,
-		kCompletionKeyword, orderString(_currentOrder).c_str());
+		orderString(_currentOrder).c_str());
 
 	Result result = kExited;
 	bool active = showInitialPreview();
@@ -724,7 +717,7 @@ StainedGlassPuzzle::Result StainedGlassPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left stained glass puzzle result=%d milestone=%u "
 		"milestoneSet=%d order=[%s] quit=%d",
 		result, completionFlag,
