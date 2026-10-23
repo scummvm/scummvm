@@ -45,12 +45,15 @@ static uint combatMessageDelayFrames() {
 #define BOTTOM_Y 120
 #define LINE_H 8
 #define MONSTER_H 7
+#define COMBAT_LOG_VISIBLE_LINES 16
+#define COMBAT_LOG_MAX_LINES 240
 
 Combat::Combat() : ScrollView("Combat") {
 }
 
 void Combat::setMode(Mode newMode) {
 	_mode = newMode;
+	_combatModeLogged = false;
 	_modeDrawn = false;
 	clearButtons();
 
@@ -96,12 +99,14 @@ bool Combat::msgGame(const GameMessage &msg) {
 	if (msg._name == "COMBAT") {
 		// Clear combat data
 		clear();
+		clearCombatLog();
 
 		// The combat loop may request a partial redraw before this view
 		// receives focus, so ensure the first draw is a complete one
 		_firstDraw = true;
 
 		loadMonsters();
+		addEncounterToCombatLog();
 		setupCanAttacks();
 		setupHandicap();
 
@@ -121,12 +126,20 @@ bool Combat::msgGame(const GameMessage &msg) {
 
 	} else if (msg._name == "EXCHANGE" && msg._value != -1) {
 		int charNum = msg._value;
-		if (g_globals->_combatParty[charNum] != g_globals->_currCharacter)
+		if (g_globals->_combatParty[charNum] != g_globals->_currCharacter) {
+			addCombatLog(Common::String::format("%s exchanges places with %s.",
+				g_globals->_currCharacter->_name,
+				g_globals->_combatParty[charNum]->_name));
 			exchangeWith(charNum);
+		}
 		return true;
 
 	} else if (msg._name == "SELECT_SPELL_TARGET") {
 		setOption(OPTION_SPELL_TARGET);
+		return true;
+
+	} else if (msg._name == "COMBAT_LOG") {
+		addCombatLog(msg._stringValue);
 		return true;
 
 	} else if (msg._name == "DISABLE_ATTACKS") {
@@ -139,6 +152,10 @@ bool Combat::msgGame(const GameMessage &msg) {
 
 void Combat::draw() {
 	_modeDrawn = true;
+	if (_combatLogVisible) {
+		drawCombatLog();
+		return;
+	}
 
 	if (_firstDraw) {
 		_firstDraw = false;
@@ -156,6 +173,8 @@ void Combat::draw() {
 		writeMonsters();
 		resetBottom();
 		highlightNextRound();
+		if (beginCombatLogEvent())
+			addCombatLog(Common::String::format("-- Round %d --", _roundNum));
 		delayFrames(combatMessageDelayFrames());
 		return;
 	case MONSTER_ADVANCES:
@@ -163,6 +182,10 @@ void Combat::draw() {
 		writeString(STRING["dialogs.combat.advances"]);
 		writeRound();
 		writeMonsters();
+		if (beginCombatLogEvent())
+			addCombatLog(Common::String::format("%s %s",
+				_monsterName.c_str(),
+				STRING["dialogs.combat.advances"].c_str()));
 		delayFrames(combatMessageDelayFrames());
 		return;
 	case MONSTERS_AFFECTED:
@@ -288,11 +311,46 @@ void Combat::timeout() {
 }
 
 bool Combat::msgKeypress(const KeypressMessage &msg) {
-	// Ignore input until the current mode has been displayed, otherwise
-	// a quick keypress can skip a message before it's ever been shown
 	if (!_modeDrawn)
 		return true;
 
+
+	if (_combatLogVisible) {
+		switch (msg.keycode) {
+		case Common::KEYCODE_l:
+		case Common::KEYCODE_ESCAPE:
+			closeCombatLog();
+			break;
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_PAGEUP:
+			scrollCombatLog(msg.keycode == Common::KEYCODE_UP ? -1 :
+				-COMBAT_LOG_VISIBLE_LINES);
+			break;
+		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_PAGEDOWN:
+			scrollCombatLog(msg.keycode == Common::KEYCODE_DOWN ? 1 :
+				COMBAT_LOG_VISIBLE_LINES);
+			break;
+		case Common::KEYCODE_HOME:
+			_combatLogTop = 0;
+			redraw();
+			break;
+		case Common::KEYCODE_END:
+			_combatLogTop = MAX(0,
+				(int)_combatLogLines.size() - COMBAT_LOG_VISIBLE_LINES);
+			redraw();
+			break;
+		default:
+			break;
+		}
+		return true;
+	}
+
+	if (_mode == SELECT_OPTION && _option == OPTION_NONE &&
+			msg.keycode == Common::KEYCODE_l) {
+		openCombatLog();
+		return true;
+	}
 	if (endDelay())
 		return true;
 
@@ -356,6 +414,30 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	if (!_modeDrawn)
 		return true;
 
+
+	if (_combatLogVisible) {
+		switch (msg._action) {
+		case KEYBIND_COMBAT_LOG:
+		case KEYBIND_ESCAPE:
+			closeCombatLog();
+			break;
+		case KEYBIND_COMBAT_LOG_UP:
+			scrollCombatLog(-1);
+			break;
+		case KEYBIND_COMBAT_LOG_DOWN:
+			scrollCombatLog(1);
+			break;
+		default:
+			break;
+		}
+		return true;
+	}
+
+	if (_mode == SELECT_OPTION && _option == OPTION_NONE &&
+			msg._action == KEYBIND_COMBAT_LOG) {
+		openCombatLog();
+		return true;
+	}
 	if (endDelay())
 		return true;
 
@@ -396,6 +478,8 @@ bool Combat::msgAction(const ActionMessage &msg) {
 		attack();
 		break;
 	case KEYBIND_COMBAT_BLOCK:
+		addCombatLog(Common::String::format("%s blocks.",
+			g_globals->_currCharacter->_name));
 		block();
 		break;
 	case KEYBIND_COMBAT_CAST:
@@ -417,12 +501,17 @@ bool Combat::msgAction(const ActionMessage &msg) {
 		addView("QuickRef");
 		break;
 	case KEYBIND_COMBAT_RETREAT:
+		addCombatLog(Common::String::format("%s attempts to retreat.",
+			g_globals->_currCharacter->_name));
 		retreat();
 		break;
 	case KEYBIND_COMBAT_SHOOT:
 		shoot();
 		break;
 	case KEYBIND_COMBAT_USE:
+		addCombatLog(Common::String::format(
+			"%s prepares to use an item.",
+			g_globals->_currCharacter->_name));
 		use();
 		break;
 	default:
@@ -433,6 +522,12 @@ bool Combat::msgAction(const ActionMessage &msg) {
 }
 
 bool Combat::msgMouseUp(const MouseUpMessage &msg) {
+	if (_combatLogVisible) {
+		if (msg._button == MouseMessage::MB_RIGHT)
+			closeCombatLog();
+		return true;
+	}
+
 	if (msg._button != MouseMessage::MB_LEFT)
 		return ScrollView::msgMouseUp(msg);
 
@@ -449,6 +544,12 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 
 	if (_mode == SELECT_OPTION && _option == OPTION_NONE) {
 		// Check for option buttons being pressed
+		Common::Rect logButton = getOptionButtonRect(2, 2);
+		if (logButton.contains(localPos)) {
+			msgAction(ActionMessage(KEYBIND_COMBAT_LOG));
+			return true;
+		}
+
 		for (int col = 0; col < 3; ++col) {
 			for (int row = 0; row < 3; ++row) {
 				if (col != 2 || row != 2) {
@@ -564,7 +665,120 @@ void Combat::writeAllOptions() {
 	writeOption(1, 0, 'E', STRING["enhdialogs.combat.exchange"]);
 	writeOption(1, 1, 'U', STRING["enhdialogs.combat.use"]);
 	writeOption(1, 2, 'B', STRING["enhdialogs.combat.block"]);
+
+	writeOption(2, 2, 'L', "\x01""37Log");
 }
+
+void Combat::drawCombatLog() {
+	ScrollView::draw();
+	setReduced(false);
+	setTextColor(0);
+
+	writeString(0, 0, "Combat Log", ALIGN_MIDDLE);
+
+	if (_combatLogLines.empty()) {
+		writeString(0, 36, "No combat actions have been recorded yet.",
+			ALIGN_MIDDLE);
+	} else {
+		const int end = MIN((int)_combatLogLines.size(),
+			_combatLogTop + COMBAT_LOG_VISIBLE_LINES);
+		for (int i = _combatLogTop; i < end; ++i)
+			writeString(4, 18 + (i - _combatLogTop) * 9,
+				_combatLogLines[i]);
+
+		writeString(300, 164, Common::String::format("%d-%d / %d",
+			_combatLogTop + 1, end, (int)_combatLogLines.size()),
+			ALIGN_RIGHT);
+	}
+
+	writeString(0, 174, "Up/Down: Scroll    L/Esc: Return", ALIGN_MIDDLE);
+}
+
+void Combat::openCombatLog() {
+	_combatLogVisible = true;
+	_combatLogTop = MAX(0,
+		(int)_combatLogLines.size() - COMBAT_LOG_VISIBLE_LINES);
+	redraw();
+}
+
+void Combat::closeCombatLog() {
+	_combatLogVisible = false;
+	redraw();
+}
+
+void Combat::scrollCombatLog(int delta) {
+	const int maxTop = MAX(0,
+		(int)_combatLogLines.size() - COMBAT_LOG_VISIBLE_LINES);
+	_combatLogTop = CLIP(_combatLogTop + delta, 0, maxTop);
+	redraw();
+}
+
+void Combat::clearCombatLog() {
+	_combatLogLines.clear();
+	_combatLogTop = 0;
+	_combatLogVisible = false;
+	_combatModeLogged = false;
+}
+
+void Combat::addCombatLog(const Common::String &text) {
+	if (text.empty())
+		return;
+
+	const bool wasReduced = _fontReduced;
+	setReduced(false);
+	Common::StringArray wrapped = splitLines(text, 292);
+	setReduced(wasReduced);
+
+	for (const Common::String &line : wrapped)
+		_combatLogLines.push_back(line);
+
+	while (_combatLogLines.size() > COMBAT_LOG_MAX_LINES)
+		_combatLogLines.remove_at(0);
+}
+
+void Combat::addCombatLog(const LineArray &lines) {
+	for (const Line &line : lines) {
+		if (!line._text.empty())
+			addCombatLog(line._text);
+	}
+}
+
+void Combat::addEncounterToCombatLog() {
+	addCombatLog("Combat begins.");
+	addCombatLog("Enemies:");
+
+	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
+		bool alreadyListed = false;
+		for (uint j = 0; j < i; ++j) {
+			if (_remainingMonsters[j]->_name == _remainingMonsters[i]->_name) {
+				alreadyListed = true;
+				break;
+			}
+		}
+		if (alreadyListed)
+			continue;
+
+		uint count = 0;
+		for (uint j = i; j < _remainingMonsters.size(); ++j) {
+			if (_remainingMonsters[j]->_name == _remainingMonsters[i]->_name)
+				++count;
+		}
+
+		addCombatLog(Common::String::format("  %u x %s", count,
+			_remainingMonsters[i]->_name.c_str()));
+	}
+
+	addCombatLog(Common::String::format("-- Round %d --", _roundNum));
+}
+
+bool Combat::beginCombatLogEvent() {
+	if (_combatModeLogged)
+		return false;
+
+	_combatModeLogged = true;
+	return true;
+}
+
 
 void Combat::writeDelaySelect() {
 	writeBottomText(0, 0, STRING["dialogs.combat.set_delay"]);
@@ -851,6 +1065,13 @@ void Combat::writeMonsterEffects() {
 			STRING["dialogs.combat.overcome"]);
 
 	writeMonsters();
+
+	if (beginCombatLogEvent()) {
+		if (_monstersRegenerate)
+			addCombatLog("The monsters regenerate.");
+		if (_monstersResistSpells)
+			addCombatLog("The monsters overcome spell effects.");
+	}
 }
 
 void Combat::writeMonsterAction(bool flees) {
@@ -864,6 +1085,9 @@ void Combat::writeMonsterAction(bool flees) {
 		].c_str());
 
 	writeBottomText(0, 0, message);
+
+	if (beginCombatLogEvent())
+		addCombatLog(message);
 }
 
 void Combat::writeMonsterSpell() {
@@ -876,6 +1100,9 @@ void Combat::writeMonsterSpell() {
 		writeBottomText(MAX<int>(line.x, 0), MAX<int>(line.y, 0),
 			line._text, line._align);
 	}
+
+	if (beginCombatLogEvent())
+		addCombatLog(_monsterSpellLines);
 }
 
 void Combat::writeMonsterAttack() {
@@ -892,7 +1119,12 @@ void Combat::writeMonsterAttack() {
 		c._name
 	);
 	writeBottomText(0, 0, line);
-	writeBottomText(0, 1, getAttackString());
+	const Common::String attackResult = getAttackString();
+	writeBottomText(0, 1, attackResult);
+
+	Common::StringArray combatLogEvent;
+	combatLogEvent.push_back(line);
+	combatLogEvent.push_back(attackResult);
 
 	if (_damage) {
 		// Attacks wake up sleeping characters
@@ -904,12 +1136,21 @@ void Combat::writeMonsterAttack() {
 		// adjust the damage amount. Another reason why we
 		// can't actually apply damage until here
 		int yp = 2;
-		if (monsterTouch(line))
+		if (monsterTouch(line)) {
 			writeBottomText(0, yp++, line);
+			combatLogEvent.push_back(line);
+		}
 
 		Common::String damageStr = subtractDamageFromChar();
-		if (!damageStr.empty())
+		if (!damageStr.empty()) {
 			writeBottomText(0, yp, damageStr);
+			combatLogEvent.push_back(damageStr);
+		}
+	}
+
+	if (beginCombatLogEvent()) {
+		for (const Common::String &logLine : combatLogEvent)
+			addCombatLog(logLine);
 	}
 }
 
@@ -922,6 +1163,9 @@ void Combat::writeInfiltration() {
 	writeBottomText(0, 0, line);
 	Sound::sound(SOUND_2);
 	Sound::sound(SOUND_2);
+
+	if (beginCombatLogEvent())
+		addCombatLog(line);
 }
 
 void Combat::writeWaitsForOpening() {
@@ -932,6 +1176,9 @@ void Combat::writeWaitsForOpening() {
 
 	resetBottom();
 	writeBottomText(0, 0, line);
+
+	if (beginCombatLogEvent())
+		addCombatLog(line);
 }
 
 void Combat::writeSpellResult() {
@@ -939,6 +1186,9 @@ void Combat::writeSpellResult() {
 		const Line &l = _spellResult._lines[i];
 		writeBottomText(l.x, l.y, l._text);
 	}
+
+	if (beginCombatLogEvent())
+		addCombatLog(_spellResult._lines);
 }
 
 void Combat::checkMonsterSpellDone() {
@@ -988,6 +1238,7 @@ void Combat::writeMessage() {
 
 void Combat::writeCharAttackDamage() {
 	resetBottom();
+	const bool wasShooting = _isShooting;
 
 	writeBottomText(0, 0, Common::String::format("%s %s %s",
 		g_globals->_currCharacter->_name,
@@ -1004,10 +1255,24 @@ void Combat::writeCharAttackDamage() {
 			_monsterP->_name.c_str(),
 			STRING["dialogs.combat.goes_down"].c_str()));
 	}
+
+	if (beginCombatLogEvent()) {
+		addCombatLog(Common::String::format("%s %s %s",
+			g_globals->_currCharacter->_name,
+			STRING[wasShooting ? "dialogs.combat.shoots" :
+				"dialogs.combat.attacks"].c_str(),
+			_monsterP->_name.c_str()));
+		addCombatLog(getAttackString());
+		if (_monsterP->_status == MONFLAG_DEAD)
+			addCombatLog(Common::String::format("%s %s",
+				_monsterP->_name.c_str(),
+				STRING["dialogs.combat.goes_down"].c_str()));
+	}
 }
 
 void Combat::writeCharAttackNoEffect() {
 	resetBottom();
+	const bool wasShooting = _isShooting;
 
 	writeBottomText(0, 0, Common::String::format("%s %s %s",
 		g_globals->_currCharacter->_name,
@@ -1018,6 +1283,15 @@ void Combat::writeCharAttackNoEffect() {
 	_isShooting = false;
 
 	writeBottomText(0, 1, STRING["dialogs.combat.weapon_no_effect"]);
+
+	if (beginCombatLogEvent()) {
+		addCombatLog(Common::String::format("%s %s %s",
+			g_globals->_currCharacter->_name,
+			STRING[wasShooting ? "dialogs.combat.shoots" :
+				"dialogs.combat.attacks"].c_str(),
+			_monsterP->_name.c_str()));
+		addCombatLog(STRING["dialogs.combat.weapon_no_effect"]);
+	}
 }
 
 Common::String Combat::getAttackString() {

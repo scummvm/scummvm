@@ -227,6 +227,18 @@ void CastSpell::castSpell(Character *target) {
 	};
 
 	Character &c = *g_globals->_currCharacter;
+	if (isInCombat()) {
+		const Common::String spellName = _spellIndex < 47 ?
+			STRING[Common::String::format("spells.cleric.%d", _spellIndex)] :
+			STRING[Common::String::format("spells.wizard.%d", _spellIndex - 47)];
+		const Common::String logLine = target ?
+			Common::String::format("%s casts %s on %s.", c._name,
+				spellName.c_str(), target->_name) :
+			Common::String::format("%s casts %s.", c._name,
+				spellName.c_str());
+		send("Combat", GameMessage("COMBAT_LOG", logLine));
+	}
+
 	c._sp._current = MAX((int)c._sp._current - _requiredSp, 0);
 	c._gems = MAX((int)c._gems - _requiredGems, 0);
 

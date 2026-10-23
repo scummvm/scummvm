@@ -85,6 +85,11 @@ static const KeybindingRecord COMBAT_KEYS[] = {
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_COMBAT_USE, "COMBAT_USE", _s("Use"), "u", nullptr },
 
+	{ KEYBIND_COMBAT_LOG, "COMBAT_LOG", _s("Combat log"), "l", nullptr },
+	{ KEYBIND_COMBAT_LOG_UP, "COMBAT_LOG_UP", _s("Combat log up"), "UP", nullptr },
+	{ KEYBIND_COMBAT_LOG_DOWN, "COMBAT_LOG_DOWN", _s("Combat log down"), "DOWN", nullptr },
+	{ KEYBIND_ESCAPE, "COMBAT_LOG_CLOSE", _s("Close combat log"), "ESCAPE", nullptr },
+
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_DELAY, "DELAY", _s("Delay"), "d", nullptr },
 	// I18N: Combat command in Might & Magic 1
