@@ -99,7 +99,7 @@ Common::Error Window::loadInitialMovie() {
 	// load startup movie
 	Common::Path startupPath = g_director->getStartupPath();
 	if (!startupPath.empty()) {
-		Common::SeekableReadStream *const stream = SearchMan.createReadStreamForMember(startupPath);
+		Common::SeekableReadStream *const stream = Common::MacResManager::openFileOrDataFork(startupPath);
 		if (stream) {
 			uint size = stream->size();
 			char *script = (char *)calloc(size + 1, 1);
@@ -278,7 +278,7 @@ Common::SharedPtr<Archive> DirectorEngine::openArchive(const Common::Path &path)
 }
 
 void Window::loadINIStream() {
-	Common::SeekableReadStream *iniStream = SearchMan.createReadStreamForMember("LINGO.INI");
+	Common::SeekableReadStream *iniStream = Common::MacResManager::openFileOrDataFork("LINGO.INI");
 	if (iniStream) {
 		char *script = (char *)calloc(iniStream->size() + 1, 1);
 		iniStream->read(script, iniStream->size());
@@ -297,7 +297,7 @@ void Window::loadINIStream() {
 }
 
 Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
-	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(movie);
+	Common::SeekableReadStream *exeStream = Common::MacResManager::openFileOrDataFork(movie);
 	if (!exeStream) {
 		debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Failed to open file '%s'", movie.toString().c_str());
 		return nullptr;
@@ -408,7 +408,7 @@ Archive *DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 			if (!SearchMan.hasFile(Common::Path(mmmFileName_, g_director->_dirSeparator)))
 				warning("DirectorEngine::loadEXEv3(): Failed to find MMM '%s'", mmmFileName_.c_str());
 			else {
-				Common::SeekableReadStream *const mmmFile_ = SearchMan.createReadStreamForMember(Common::Path(mmmFileName_, g_director->_dirSeparator));
+				Common::SeekableReadStream *const mmmFile_ = Common::MacResManager::openFileOrDataFork(Common::Path(mmmFileName_, g_director->_dirSeparator));
 				uint32 mmmFileSize_ = mmmFile_->size();
 				if (mmmSize_ != mmmFileSize_)
 					warning("DirectorEngine::loadEXEv3(): File size for '%s' doesn't match. Got %d (0x%x), want %d (0x%x)", mmmFileName_.c_str(), mmmFileSize_, mmmFileSize_, mmmSize_, mmmSize_);
@@ -650,7 +650,7 @@ ProjectorArchive::ProjectorArchive(Common::Path path)
 Common::SeekableReadStream *ProjectorArchive::createBufferedReadStream() {
 	const uint32 READ_BUFFER_SIZE = 1024 * 100;
 
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_path);
+	Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(_path);
 	if (!stream) {
 		warning("ProjectorArchive::createBufferedReadStream(): Cannot open %s", _path.toString().c_str());
 		return nullptr;
@@ -665,12 +665,16 @@ ProjectorArchive::~ProjectorArchive() {
 
 bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	bool bigEndian = false, found = false;
-	uint32 off, tag, rifxOffset;
+	uint32 off = 0;
 
-	stream->seek(-4, SEEK_END);
-	off = stream->readUint32LE();
-	stream->seek(off);
-	tag = stream->readUint32BE();
+	uint32 tag = stream->readUint32BE();
+	if ((tag & 0xffff0000) == MKTAG('M', 'Z', 0, 0)) {
+		// Windows projector: start offset of the movie data is glommed on the end
+		stream->seek(-4, SEEK_END);
+		off = stream->readUint32LE();
+		stream->seek(off);
+		tag = stream->readUint32BE();
+	}
 
 	// Check whether we got a 'PJ' tag while ignoring the version and accounting for endianness
 	if (((tag & 0xffff0000) != MKTAG('P','J', 0, 0)) && ((tag & 0x0000ffff) != MKTAG(0, 0, 'J','P'))) {
@@ -678,7 +682,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	rifxOffset = stream->readUint32LE();
+	uint32 rifxOffset = stream->readUint32LE();
 
 	// if value is bigger than the stream size this is most likely a endianness issue.
 	if (rifxOffset > stream->size()) {
@@ -727,8 +731,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	stream->seek(dictOff + 24);
 	uint32 cnt = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 
-	// Correction for when there is only a single element present according to the dict
-	uint8 offsetDict = bigEndian && cnt == 1 ? 2 : 0;
+	uint8 offsetDict = bigEndian ? 2 : 0;
 	bool oBigEndian = bigEndian;
 
 	// For 16-bit win projector
@@ -738,7 +741,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		bigEndian = true;
 	}
 
-	debugC(1, kDebugLoading, "Dict off: 0x%x, Size: 0x%x cnt: %d", dictOff, size, cnt);
+	debugC(1, kDebugLoading, "Dict off: 0x%x, size: 0x%x, cnt: %d", dictOff, size, cnt);
 
 	uint32 pt = (cnt * 8) + (64 - offsetDict);
 	Common::StringArray arr(cnt);
@@ -752,6 +755,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 
 		uint32 namelen = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 		arr[i] = stream->readString(0, namelen);
+		debugC(1, kDebugLoading, "Key[%d] = %s", i, arr[i].c_str());
 
 		if (i < cnt - 1) {
 			int sub = (namelen % 4) ? (namelen % 4) : 4;
@@ -825,7 +829,7 @@ Common::SeekableReadStream *ProjectorArchive::createReadStreamForMember(const Co
 	debugC(3, kDebugLoading, "ProjectorArchive::createReadStreamForMember(): Opening built-in file '%s' @ 0x%08x, %d bytes",
 		path.toString().c_str(), fDesc->_value.offset, fDesc->_value.size);
 
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_path);
+	Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(_path);
 
 	stream->seek(fDesc->_value.offset, SEEK_SET);
 	byte *data = (byte *)malloc(fDesc->_value.size);
