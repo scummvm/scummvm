@@ -220,7 +220,7 @@ void Maps::synchronizeCurrent(Common::Serializer &s) {
 
 	if (s.isLoading()) {
 		updateMasksOffsets();
-		changeMap(_id, _section);
+		changeMap(_id, _section, true);
 	}
 }
 
@@ -234,6 +234,8 @@ void Maps::select(uint16 id, byte section) {
 
 void Maps::display(uint16 id, byte section) {
 	select(id, section);
+	for (uint i = 0; i < MAP_SIZE; ++i)
+		_currentMap->_visited[i] &= ~(VISITED_TRANSIENT_STATE | VISITED_REWARD_CLAIMED);
 	loadTiles();
 	g_events->send("Game", GameMessage("UPDATE"));
 }
@@ -412,9 +414,21 @@ void Maps::step(const Common::Point &delta) {
 	changeMap(id, section);
 }
 
-void Maps::changeMap(uint16 id, byte section) {
-	// At this point, a new map is being entered
+void Maps::changeMap(uint16 id, byte section, bool loadingSave) {
+	// A genuine transition starts a fresh visit, so rewards can be claimed
+	// again. Loading a save retains claimed rewards and other visit-local
+	// scripted state
 	select(id, section);
+
+	for (uint i = 0; i < MAP_SIZE; ++i) {
+		if (loadingSave && (_currentMap->_visited[i] & VISITED_REWARD_CLAIMED))
+			_currentMap->_states[i] &= ~CELL_SPECIAL;
+		else if (!loadingSave)
+			_currentMap->_visited[i] &= ~(VISITED_TRANSIENT_STATE | VISITED_REWARD_CLAIMED);
+	}
+	if (loadingSave)
+		_currentMap->restoreVisitState();
+
 	loadTiles();
 
 	visitedTile();
@@ -431,6 +445,11 @@ void Maps::visitedTile() {
 void Maps::clearSpecial() {
 	_currentState &= ~CELL_SPECIAL;
 	_currentMap->_states[_mapOffset] &= ~CELL_SPECIAL;
+}
+
+void Maps::clearSpecialAndRememberReward() {
+	_currentMap->_visited[_mapOffset] |= VISITED_REWARD_CLAIMED;
+	clearSpecial();
 }
 
 Common::Point Maps::getMoveDelta(byte mask) {

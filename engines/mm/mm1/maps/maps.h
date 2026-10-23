@@ -47,7 +47,11 @@ enum StateFlag {
 
 enum Visited {
 	VISITED_NONE = 0, VISITED_NORMAL = 1, VISITED_SPECIAL = 2,
-	VISITED_EXIT = 3, VISITED_BUSINESS = 4	
+	VISITED_EXIT = 3, VISITED_BUSINESS = 4,
+	// Visit-local scripted state. Serialized so save/load can preserve the
+	// current map visit, but cleared when the map is entered normally again
+	VISITED_TRANSIENT_STATE = 0x20,
+	VISITED_REWARD_CLAIMED = 0x40
 };
 
 /**
@@ -174,7 +178,7 @@ public:
 	 * Called when a map is left to load a new one
 	 * and trigger the 3d view to update
 	 */
-	void changeMap(uint16 id, byte section);
+	void changeMap(uint16 id, byte section, bool loadingSave = false);
 
 	/**
 	 * Mark a tile as visited
@@ -187,6 +191,11 @@ public:
 	 * that trigger combat after the first time
 	 */
 	void clearSpecial();
+
+	/**
+	 * Disables a claimed reward for save/load during this map visit
+	 */
+	void clearSpecialAndRememberReward();
 
 	/**
 	 * Gets the moveement delta given a direction mask

@@ -151,6 +151,13 @@ public:
 	virtual void special() = 0;
 
 	/**
+	 * Restores visit-local scripted state after loading a save. Overlay data
+	 * itself is reloaded from disk, so maps with mutable switches can rebuild
+	 * those values from already-serialized visitation metadata here.
+	 */
+	virtual void restoreVisitState() {}
+
+	/**
 	 * Returns true if mapping is allowed in enhanced mode.
 	 * This is to prevent places like the desert where the
 	 * players shouldn't be able to see where they are

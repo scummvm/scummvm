@@ -119,6 +119,7 @@ void Map36::special07() {
 }
 
 void Map36::special11() {
+	g_maps->clearSpecialAndRememberReward();
 	g_globals->_treasure.setGems(30);
 	special07();
 }
