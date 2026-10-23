@@ -186,8 +186,7 @@ static void drawWaveform(Graphics::Surface &screen,
 		bounds.left, bounds.right - 1);
 	const int end = CLIP<int>(selection->end,
 		start + 1, bounds.right);
-	// RIPPER.LE write mode 3 at 0x25006 uses XOR; redrawing the old span at
-	// 0x25265 restores its pixels before the new span is drawn.
+	// XOR the highlight so the waveform remains visible through it.
 	xorRect(screen, Common::Rect(start, bounds.top, end, bounds.bottom),
 		kWacDatabaseBackground ^ kWacVoiceLockSelectionColor);
 }
@@ -195,9 +194,8 @@ static void drawWaveform(Graphics::Surface &screen,
 static void drawEditorWaveform(Graphics::Surface &screen,
 		const WacVoiceLockPcm &pcm, const Common::Rect &bounds,
 		const Common::Array<WacVoiceLockEditorSegment> &segments) {
-	// RunWacVoiceLockPuzzleScene at 0x24ba4 [LE, instruction 0x25403] copies each selected source
-	// rectangle to the next editor column. Preserve those pixel widths rather
-	// than scaling the growing PCM assembly across the complete panel.
+	// Preserve each source span's pixel width as segments accumulate
+	// instead of scaling the assembled audio to fill the editor panel.
 	clearWaveform(screen, bounds);
 	int left = bounds.left;
 	for (uint segmentIndex = 0; segmentIndex < segments.size() &&
@@ -246,7 +244,7 @@ bool WacVoiceLockRenderer::restoreSourceSelectionDragBacking(
 		state.sourceSelectionDragBackingPosition.y);
 	g_system->unlockScreen();
 	debugC(3, kDebugWac,
-		"Ripper: WAC voice-lock restored transient drag backing position=%d,%d size=%dx%d function=UpdateTransientPresentationOverlay@0x2a1ff",
+		"Ripper: WAC voice-lock restored transient drag backing position=%d,%d size=%dx%d",
 		state.sourceSelectionDragBackingPosition.x,
 		state.sourceSelectionDragBackingPosition.y,
 		state.sourceSelectionDragBackingWidth,
@@ -260,8 +258,7 @@ bool WacVoiceLockRenderer::restoreSourceSelectionDragBacking(
 bool WacVoiceLockRenderer::drawPresentation(
 		const WacVoiceLockPcm &sourcePcm,
 		WacVoiceLockEditorState &state) const {
-	// UpdateTransientPresentationOverlay at 0x2a1ff restores the saved display
-	// rectangle before capturing and drawing at the new position.
+	// Restore the previous backing before capturing and drawing at the new position.
 	if (!restoreSourceSelectionDragBacking(state))
 		return false;
 	if (!_database->engine()->getModalDialog()->drawRetainedTitlePanelText(
@@ -407,7 +404,7 @@ bool WacVoiceLockRenderer::drawPresentation(
 			destinationLeft, destinationTop);
 		g_system->unlockScreen();
 		debugC(3, kDebugWac,
-			"Ripper: WAC voice-lock captured transient drag backing position=%d,%d size=%dx%d function=UpdateTransientPresentationOverlay@0x2a1ff",
+			"Ripper: WAC voice-lock captured transient drag backing position=%d,%d size=%dx%d",
 			destinationLeft, destinationTop,
 			state.sourceSelectionDragBackingWidth,
 			state.sourceSelectionDragBackingHeight);

@@ -181,9 +181,6 @@ void WacManager::serviceIdleWindowAnimations() {
 			continue;
 		drawBitmap(_idleWindowAnimations[slot][_idleWindowFrame[slot]],
 			kWacIdleWindowX[slot], kWacIdleWindowY[slot]);
-		debugC(11, kDebugWac,
-			"Ripper: WAC idle window slot=%u frame=%u position=%d,%d",
-			slot, _idleWindowFrame[slot], kWacIdleWindowX[slot], kWacIdleWindowY[slot]);
 		_idleWindowFrame[slot] = (_idleWindowFrame[slot] + 1) %
 			_idleWindowAnimations[slot].size();
 	}
@@ -201,9 +198,7 @@ int WacManager::findControl(const Common::Point &point) const {
 
 uint16 WacManager::serviceFrontEndControls(const MouseState &mouse,
 		uint fallbackCursor, bool updateCursor) {
-	// RunWacFrontEndLoop at 0x21865 leaves these four UiControlState records in
-	// the shared list. ServiceWacSceneInputAction at 0x21eef therefore services
-	// them from every WAC subscene, not only from the front page.
+	// Bottom-row controls stay active while a WAC subscene owns input.
 	const int hoveredControl = findControl(mouse.position);
 	if (hoveredControl != _hoveredControl) {
 		_hoveredControl = hoveredControl;
@@ -377,8 +372,7 @@ bool WacManager::dispatchAction(uint16 action) {
 		return false;
 	if (result == kDatabaseAction) {
 		if (_demoVariant) {
-			// The demo RunWacFrontEndLoop at 0x1c085 routes 0x2000 directly to
-			// RunWacMugSelectionScene at 0x1c58e; the demo has no database list.
+			// The demo has no database list.
 			BrokenMugPuzzle puzzle(_engine);
 			const BrokenMugPuzzle::Result puzzleResult = puzzle.run();
 			drawFrontEnd();
@@ -419,8 +413,6 @@ void WacManager::run() {
 		return;
 	}
 
-	// RunWacFrontEndLoop at 0x21865 owns a modal chooser registry and restores
-	// the borrowed scene presentation after its 0x1900 or Escape exit action.
 	debugC(1, kDebugWac, "Ripper: entered WAC front-end loop");
 	_engine->getInput()->discardMouseTransitions();
 	_hoveredControl = -1;
@@ -434,7 +426,7 @@ void WacManager::run() {
 		Audio::SoundHandle updateHandle;
 		const bool played = _engine->getMedia()->playSoundEffect(
 			kWacNotebookUpdateAudio, updateHandle);
-		debugC(played ? 1 : 2, kDebugWac,
+		debugC(played ? 2 : 1, kDebugWac,
 			"Ripper: consumed WAC notebook update notification audio='%s' played=%d",
 			kWacNotebookUpdateAudio, played);
 		_notebookUpdatePending = false;

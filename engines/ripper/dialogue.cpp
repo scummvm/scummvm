@@ -30,16 +30,13 @@ static const byte kRetailSelectedTextColor = 4;
 static const byte kDemoNormalBackgroundColor = 0;
 static const byte kDemoNormalTextColor = 253;
 static const byte kDemoSelectedBackgroundColor = 250;
-// RIP.EXE template byte 254 is a glyph lookup, not a palette index; MENUB
-// resolves it to gray index 7.
+// MENUB resolves demo text-color glyph 254 to gray palette index 7.
 static const byte kDemoSelectedTextColor = 7;
 static const uint16 kEnterCommand = 0x0d;
 static const uint16 kUpCommand = 0x4800;
 static const uint16 kDownCommand = 0x5000;
 
 bool DialogueChooser::initialize(ResourceManager &resources, bool retailPresentation) {
-	// RIP.EXE template 0x68d08 has a different palette mapping from RIPPER.LE's
-	// template initialized at 0x1196f.
 	_normalBackgroundColor = retailPresentation ?
 		kRetailNormalBackgroundColor : kDemoNormalBackgroundColor;
 	_normalTextColor = retailPresentation ?
@@ -98,10 +95,6 @@ void DialogueChooser::draw(bool captureBacking) {
 				(y - _backingBounds.top) * _backingBounds.width(),
 				screen->getBasePtr(_backingBounds.left, y), _backingBounds.width());
 		}
-		debugC(11, kDebugDialogue,
-			"Ripper: captured dialogue chooser backing bounds=%d,%d,%d,%d",
-			_backingBounds.left, _backingBounds.top,
-			_backingBounds.width(), _backingBounds.height());
 	}
 	const uint renderedPixelCount = _chooserBounds.width() * _chooserBounds.height();
 	const bool rebuildVisual = _visualDirty || _renderedChoicePixels.size() != renderedPixelCount;

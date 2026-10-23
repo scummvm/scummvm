@@ -128,9 +128,6 @@ bool Milestones::hasRipperIdentity() const {
 }
 
 bool Milestones::selectRipperIdentity(uint candidate, const char *source) {
-	// SeedRandomFreePersistentFlag6To9 at 0x106c0 chooses among candidate
-	// bytes 0x38..0x3b in the persistent settings blob. RIPPER.LE defaults all
-	// four bytes to zero, making flags 6 through 9 equally eligible.
 	const uint candidateCount =
 		kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
 	if (candidate >= candidateCount) {
@@ -149,7 +146,7 @@ bool Milestones::selectRipperIdentity(uint candidate, const char *source) {
 
 	debugC(2, kDebugMilestones,
 		"Ripper: selected Ripper identity flag=%u label='%s' candidates=%u-%u "
-		"retail=SeedRandomFreePersistentFlag6To9@0x106c0 source=%s",
+		"source=%s",
 		selectedFlag, label(selectedFlag).c_str(), kMilestoneFirstRipperIdentity,
 		kMilestoneLastRipperIdentity, source ? source : "unknown");
 	return true;
@@ -160,8 +157,7 @@ bool Milestones::syncGame(Common::Serializer &serializer) {
 		memset(_flags, 0, sizeof(_flags));
 
 	uint setCount = 0;
-	// RIPPER.LE packs this store into 125 bytes. Ripper's existing
-	// ScummVM save format writes one byte per flag, so retain that layout.
+	// Keep one byte per flag for compatibility with existing ScummVM saves.
 	for (uint flag = 0; flag < kFlagCount; ++flag) {
 		byte value = isSet(flag) ? 1 : 0;
 		serializer.syncAsByte(value);
@@ -180,9 +176,6 @@ bool Milestones::syncGame(Common::Serializer &serializer) {
 }
 
 void Milestones::debugState(const char *source) const {
-	// LoadStartupKeyedTextTable at 0x1f169 enumerates every numeric key in
-	// MILESTON.DEF. Keep the detailed ScummVM dump limited to those same
-	// definitions rather than printing all 1,000 bits in the backing store.
 	for (uint flag = 0; flag < _labels.size(); ++flag) {
 		if (_labels[flag].empty())
 			continue;

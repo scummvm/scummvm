@@ -199,10 +199,6 @@ void WacDatabaseSession::serviceDatabaseCornerAnimation(bool textPanelActive) {
 	if (textPanelActive)
 		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
 			kWacMediaLeft, kWacMediaTop);
-	debugC(11, kDebugWac,
-		"Ripper: WAC chooser corners frame=%u database=%d,%d textPanel=%d",
-		_databaseCornerAlternate ? 15 : 0, kWacDatabaseLeft, kWacDatabaseTop,
-		textPanelActive);
 	_databaseCornerAlternate = !_databaseCornerAlternate;
 	_databaseCornerLastMillis = now;
 	_wac->_engine->getCursor()->refresh();
@@ -246,13 +242,11 @@ void WacDatabaseSession::drawDatabase() const {
 		return;
 	}
 
-		for (int y = bounds.top; y < bounds.bottom; ++y)
+	for (int y = bounds.top; y < bounds.bottom; ++y)
 		memset(screen->getBasePtr(bounds.left, y), kWacDatabaseBackground,
 			bounds.width());
 	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
-	// TileChooserControlFrame at 0x54fbe walks RIPPER.LE's presentation
-	// transposed coordinate pair. In screen coordinates WACMNU0..8 are the
-	// row-major top, middle, and bottom frame tiles.
+	// WACMNU0..8 are the row-major top, middle, and bottom frame tiles.
 	if (_wac->_databaseSkin.size() >= kWacDatabaseFrameTileCount) {
 		const int tileWidth = _wac->_databaseSkin[0].width;
 		const int tileHeight = _wac->_databaseSkin[0].height;
@@ -571,10 +565,6 @@ bool WacDatabaseSession::drawDatabaseTextPanel(uint bodyResourceId,
 }
 
 uint16 WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId) {
-	// RunCenteredTextPanelUntilExitAction at 0x2330c creates the untitled
-	// 330-by-222 panel from the same tertiary WACMNU chooser template used by
-	// contextual WAC help, then leaves the database chooser plus persistent WAC
-	// controls active around its input loop.
 	const Common::Rect bounds(kWacMediaLeft, kWacMediaTop,
 		kWacMediaLeft + kWacTextPanelWidth, kWacMediaTop + kWacTextPanelHeight);
 	uint firstVisible = 0;
@@ -618,9 +608,6 @@ uint16 WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyR
 		"Ripper: left WAC database text panel entry=%u resource=0x%x result=0x%x firstLine=%u",
 		entry.originalIndex(), bodyResourceId, result, firstVisible);
 	if (entry.originalIndex() == 5) {
-		// RunWacInventorySelectionLoop at 0x2252a sets flag 0x10a after the
-		// entry 5 centered-text viewer returns and before dispatching another
-		// selected row.
 		_wac->_engine->getMilestones()->set(kMilestoneReadJournalEntry7,
 			true, "wac-database-text");
 		debugC(2, kDebugWac,
@@ -640,8 +627,6 @@ uint16 WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyR
 }
 
 uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
-	// RunWacInventorySelectionLoop at 0x2252a clears the left media viewport
-	// before dispatching every selected database row.
 	clearDatabaseMediaViewport();
 	if (entry.catalog->handler == kWacDatabaseHandlerBrokenMug) {
 		debugC(2, kDebugWac,
@@ -655,12 +640,10 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 			result = puzzle.run();
 		}
 		debugC(1, kDebugWac,
-			"Ripper: WAC database entry=1 label='%s' RunWacMugSelectionScene result=%d",
+			"Ripper: WAC database entry=1 label='%s' broken mug result=%d",
 			entry.label.c_str(), result);
 		if (result == BrokenMugPuzzle::kSolved) {
-			// RunWacMugSelectionScene at 0x236b9 replaces the active row's text
-			// pointer with resource 0xde after setting flags 0x47 and 0x48. The
-			// visible row keeps dispatch entry 1 for this chooser session.
+			// Replace this session's label while keeping the Broken Mug dispatch ID.
 			const WacDatabaseCatalogEntry *completedCatalog =
 				getWacDatabaseCatalogEntry(2);
 			const Common::String &completedLabel =
@@ -680,7 +663,7 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 			"Ripper: WAC database retaining chooser while presenting completed Broken Mug");
 		const bool played = BrokenMugPuzzle::playCompletionMedia(_wac->_engine);
 		debugC(1, kDebugWac,
-			"Ripper: WAC database entry=2 label='%s' PlayMugSelectionCompletionMedia success=%d",
+			"Ripper: WAC database entry=2 label='%s' completion media success=%d",
 			entry.label.c_str(), played);
 		_wac->drawFrontEnd();
 		drawDatabase();
@@ -701,8 +684,6 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		return viewer.run(entry.originalIndex(), entry.label, path);
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerConditionalStillImage) {
-		// RunWacInventorySelectionLoop at 0x2252a case 8 selects WACINV8A
-		// when shared flag 8 is set and WACINV8B otherwise.
 		const bool alternate = _wac->_engine->getMilestones()->isSet(
 			entry.catalog->presentationFlag);
 		const Common::String path = alternate ? entry.catalog->imagePath :
@@ -721,8 +702,6 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 			entry.catalog->presentationFlag, entry.catalog->completionFlag);
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerLoopingMedia) {
-		// RIPPER.LE loads these WACINV sequences from INTERFAC.PL, centers them
-		// in the 350x282 viewport, and loops while persistent controls stay active.
 		const Common::String path = Common::String::format(
 			"wacinv%u.smk", entry.originalIndex());
 		WacDatabaseMediaCallback callback(this, entry.originalIndex());
@@ -752,10 +731,7 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		return kNoAction;
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerConfiguredMediaWithVoiceover) {
-		// RIPPER.LE case 25 combines both RIP_GAME names with the configured scene
-		// path at 0x22971..0x229a5, then passes the optional scene-library handle
-		// to RunStaticMediaScreenWithOptionalVoiceover at 0x2339d. The installed
-		// data keeps both files loose under PATHS/scene.
+		// RIP_GAME assets are loose files under PATHS/scene.
 		ResourceManager *resources = _wac->_engine->getResources();
 		Common::SeekableReadStream *mediaStream = resources ?
 			resources->createReadStreamForPath(entry.catalog->imagePath) : nullptr;
@@ -790,8 +766,6 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		return runDatabaseTextPanel(entry, entry.catalog->contentResourceId);
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerRetailNoOp) {
-		// RIPPER.LE has no cases for entries 18 and 27 through 29;
-		// only the shared viewport clear above is observable.
 		debugC(2, kDebugWac,
 			"Ripper: WAC database entry=%u label='%s' completed retail no-op",
 			entry.originalIndex(), entry.label.c_str());
@@ -896,8 +870,7 @@ uint16 WacDatabaseSession::run() {
 				}
 			}
 		}
-		// RunWacSceneInputLoopUntilExitAction at 0x221e3 services the software
-		// selection presentation every tick while the inventory chooser is active.
+		// Present idle ticks too so the software cursor follows mouse motion.
 		presentScreen();
 		g_system->delayMillis(10);
 	}

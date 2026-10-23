@@ -59,19 +59,19 @@ static const int kSolvedTolerance = 5;
 static const int kCompletionX = 143;
 static const int kCompletionY = 111;
 
-static const int kInitialX[kPieceCount] = {
+static const int kInitialY[kPieceCount] = {
 	122, 220, 216, 61, 54, 114, 160, 207, 230
 };
 
-static const int kInitialY[kPieceCount] = {
+static const int kInitialX[kPieceCount] = {
 	258, 260, 94, 94, 254, 164, 123, 228, 155
 };
 
-static const int kSolvedDeltaX[kPieceCount] = {
+static const int kSolvedDeltaY[kPieceCount] = {
 	0, -6, 31, -2, 68, 5, 31, 64, 65
 };
 
-static const int kSolvedDeltaY[kPieceCount] = {
+static const int kSolvedDeltaX[kPieceCount] = {
 	0, -36, -2, 15, 16, -24, -2, 4, 55
 };
 
@@ -124,10 +124,7 @@ bool BrokenMugPuzzle::loadPiece(uint pieceIndex) {
 		piece.frames.push_back(Common::move(frame));
 	}
 
-	// RunWacMugSelectionScene stores the first coordinate in UiControlState +0
-	// and the second at +2. RIPPER.LE's WAC display path consumes that pair in
-	// transposed screen order, as it does for the chooser frame controls.
-	piece.position = Common::Point(kInitialY[pieceIndex], kInitialX[pieceIndex]);
+	piece.position = Common::Point(kInitialX[pieceIndex], kInitialY[pieceIndex]);
 	piece.orientation = kInitialOrientation;
 	debugC(2, kDebugWac,
 		"Ripper: loaded broken mug piece=%u control=0x%x frames=%u size=%ux%u position=%d,%d orientation=%u",
@@ -293,8 +290,8 @@ bool BrokenMugPuzzle::isSolved() const {
 	for (uint pieceIndex = 1; pieceIndex < kPieceCount; ++pieceIndex) {
 		const int deltaX = _pieces[pieceIndex].position.x - anchor.x;
 		const int deltaY = _pieces[pieceIndex].position.y - anchor.y;
-		if (ABS(deltaX - kSolvedDeltaY[pieceIndex]) > kSolvedTolerance ||
-			ABS(deltaY - kSolvedDeltaX[pieceIndex]) > kSolvedTolerance)
+		if (ABS(deltaX - kSolvedDeltaX[pieceIndex]) > kSolvedTolerance ||
+			ABS(deltaY - kSolvedDeltaY[pieceIndex]) > kSolvedTolerance)
 			return false;
 	}
 	return true;

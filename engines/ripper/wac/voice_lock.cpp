@@ -114,14 +114,9 @@ WacVoiceLockPuzzle::WacVoiceLockPuzzle(WacDatabaseSession *database) :
 
 uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		const Common::String &entryLabel) {
-	// RunWacVoiceLockPuzzleScene at 0x24ba4 creates a 340-by-116 source
-	// waveform panel at physical 50,50. Flag 0x54 adds the equally sized
-	// editor panel at 50,176 and Play/Clear/Quantize controls at y=293.
 	ResourceManager *resources = _database->engine()->getResources();
 	const Common::Rect sourcePanel(50, 50, 390, 166);
 	const Common::Rect editorPanel(50, 176, 390, 292);
-	// The control record stores axes opposite to Common::Rect. Its +0x0a and
-	// +0x0e fields are client X and width (RIPPER.LE 0x25b73).
 	const Common::Rect sourceWaveform(
 		sourcePanel.left + kWacVoiceLockClientLeftInset,
 		sourcePanel.top + kWacVoiceLockClientTopInset,
@@ -199,13 +194,13 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 	_database->engine()->getCursor()->dispatchSelectionIndexChange(
 		kWacDefaultCursor);
 	debugC(1, kDebugWac,
-		"Ripper: entered WAC voice-lock puzzle entry=%u label='%s' function=RunWacVoiceLockPuzzleScene@0x24ba4 editor=%d flag=0x%x sourcePanel=%d,%d,%d,%d editorPanel=%d,%d,%d,%d",
+		"Ripper: entered WAC voice-lock puzzle entry=%u label='%s' editor=%d flag=0x%x sourcePanel=%d,%d,%d,%d editorPanel=%d,%d,%d,%d",
 		entryIndex, entryLabel.c_str(), editorAvailable,
 		kMilestoneWacAudioEditorAvailable,
 		sourcePanel.left, sourcePanel.top, sourcePanel.width(), sourcePanel.height(),
 		editorPanel.left, editorPanel.top, editorPanel.width(), editorPanel.height());
 	debugC(2, kDebugWac,
-		"Ripper: loaded WAC voice-lock source='voxlok.wav' bytes=%u rate=%u flags=0x%x buttons=%u sourceClient=%d,%d,%dx%d insets=%d,%d,%d,%d solutionTable=0x215d1 tolerance=%u",
+		"Ripper: loaded WAC voice-lock source='voxlok.wav' bytes=%u rate=%u flags=0x%x buttons=%u sourceClient=%d,%d,%dx%d insets=%d,%d,%d,%d tolerance=%u",
 		sourcePcm.data.size(), sourcePcm.sampleRate, sourcePcm.flags,
 		buttonAssets.size(), sourceWaveform.left, sourceWaveform.top,
 		sourceWaveform.width(), sourceWaveform.height(),
@@ -284,10 +279,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 					sourceSelection.end);
 				const int selectionRight = MAX(sourceSelection.start,
 					sourceSelection.end);
-				// RunWacVoiceLockPuzzleScene at 0x24ba4 [LE, instruction 0x2505c] checks the BIOS
-				// shift state when adjusting the highlighted endpoints. A
-				// plain press within the retained highlight starts the
-				// transient drag that can be dropped onto the editor.
+				// Shift adjusts the highlight; a plain press inside it starts a drag.
 				if (sourceSelectionActive && !shiftHeld &&
 						x >= selectionLeft && x <= selectionRight) {
 					draggingSourceSelection = true;
@@ -370,9 +362,6 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		} else if (draggingSourceSelection &&
 				(mouse.released & kMouseButtonLeft) != 0) {
 			state.resetSourceDrag();
-			// RIPPER.LE destroys the transient overlay at 0x252d6; its
-			// audio span is appended only after the editor-control bounds
-			// check at 0x25307 succeeds.
 			if (sourceSelectionActive &&
 					editorPanel.contains(mouse.position)) {
 				const uint assembledOffset = assembledAudio.size();
@@ -574,10 +563,9 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		warning("Ripper: could not restore WAC voice-lock transient drag backing");
 	if (solved) {
 		_database->engine()->getCursor()->setVisible(false);
+		// Clear the bands outside the completion movie's 640x300 viewport.
 		g_system->fillScreen(0);
 		presentScreen();
-		debugC(2, kDebugWac,
-			"Ripper: cleared WAC voice-lock completion display before media='accesed.avi' bounds=0,0,640,400 command=0x14 function=ClearGenericVideoLogicalPage@0x45ed8");
 		const bool played =
 			_database->engine()->getMedia()->play("accesed.avi", true);
 		_database->engine()->getMilestones()->set(

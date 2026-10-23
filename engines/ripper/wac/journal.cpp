@@ -110,8 +110,6 @@ static void shuffleJournalLine(Common::String &line,
 		Common::RandomSource &randomSource) {
 	if (line.size() < 2)
 		return;
-	// RunWacJournalRevealScene performs twenty random byte swaps per wrapped
-	// line on entry and again while each unrevealed row remains visible.
 	for (uint iteration = 0; iteration < 20; ++iteration) {
 		const uint first = randomSource.getRandomNumber(line.size() - 1);
 		const uint second = randomSource.getRandomNumber(line.size() - 1);
@@ -203,9 +201,6 @@ bool WacJournalPuzzle::drawTextPanelLine(
 
 uint16 WacJournalPuzzle::run(byte entryIndex,
 		const Common::String &entryLabel) {
-	// RunWacJournalRevealScene at 0x24261 owns control 0x7b2. It wraps resource
-	// 0xaf once, scrambles those row buffers in place, and restores one original
-	// row after the current section's 36-tick delay while flags 0xfa+n permit it.
 	const Common::String &journalText =
 		_database->resourceString(kWacJournalTextResource);
 	const Common::String &prompt =
@@ -270,11 +265,11 @@ uint16 WacJournalPuzzle::run(byte entryIndex,
 
 	_database->engine()->getInput()->discardMouseTransitions();
 	debugC(1, kDebugWac,
-		"Ripper: entered WAC journal scene entry=%u label='%s' function=RunWacJournalRevealScene@0x24261 lines=%u unlocked=%d revealed=%u section=%u passwordResource=0x%x",
+		"Ripper: entered WAC journal scene entry=%u label='%s' lines=%u unlocked=%d revealed=%u section=%u passwordResource=0x%x",
 		entryIndex, entryLabel.c_str(), sourceLines.size(), unlocked,
 		revealedLines, revealFlagIndex, passwordResource);
 	debugC(2, kDebugWac,
-		"Ripper: WAC journal chooser geometry panel=%d,%d,%d,%d progress=%d,%d password=%d,%d,%d,%d source=RunWacJournalRevealScene@0x24538",
+		"Ripper: WAC journal chooser geometry panel=%d,%d,%d,%d progress=%d,%d password=%d,%d,%d,%d",
 		kWacMediaLeft, kWacMediaTop, kWacTextPanelWidth, kWacTextPanelHeight,
 		kWacJournalProgressLeft, kWacJournalProgressTop,
 		kWacMediaLeft, kWacJournalTextEntryTop,
@@ -282,9 +277,7 @@ uint16 WacJournalPuzzle::run(byte entryIndex,
 
 	bool cancelled = false;
 	while (!unlocked && !_database->engine()->shouldQuit()) {
-		// RunWacJournalRevealScene at 0x24261 [LE, instruction 0x24538] places the password control five
-		// pixels below the journal panel. Its -1 size request produces one
-		// 14-pixel row plus the WAC heading, bottom, and frame insets.
+		// The single-row password control includes the WAC heading and frame insets.
 		const Common::Rect entryBounds(kWacMediaLeft, kWacJournalTextEntryTop,
 			kWacMediaLeft + kWacJournalTextEntryWidth,
 			kWacJournalTextEntryTop + kWacJournalTextEntryHeight);

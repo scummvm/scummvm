@@ -74,8 +74,6 @@ bool WacStillImageViewer::load(const Common::String &path) {
 		return false;
 
 	_image = Common::move(image);
-	// RIPPER.LE opens a tall PCX on its final 0x11a-row slice. The top-down
-	// buffer therefore begins at height minus the viewport height.
 	_scrollOffset = _image.height > kWacMediaHeight ?
 		_image.height - kWacMediaHeight : 0;
 	_scrollControl = 0;
@@ -202,8 +200,6 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 		const Common::String &entryLabel, const Common::String &imagePath,
 		const Common::String &mediaPath, uint presentationFlag,
 		uint completionFlag) {
-	// RIPPER.LE's presentation variant aligns X to four pixels and exposes its
-	// WACVID1A/B control only while flag 0x57 is set.
 	const bool hasOptionalPresentation = !mediaPath.empty();
 	const bool presentationAvailable = hasOptionalPresentation &&
 		_database->engine()->getMilestones()->isSet(presentationFlag);
@@ -241,10 +237,8 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 
 	_database->engine()->getInput()->discardMouseTransitions();
 	debugC(1, kDebugWac,
-		"Ripper: entered WAC still-image viewer entry=%u label='%s' function=%s image='%s' scrollable=%d presentation='%s' available=%d gate=0x%x completion=0x%x control=%d,%d,%d,%d",
-		entryIndex, entryLabel.c_str(), hasOptionalPresentation ?
-			"RunWacStillImageScreenWithOptionalPresentation@0x22a32" :
-			"RunWacStillImageScreenWithOptionalAudio@0x22f1f",
+		"Ripper: entered WAC still-image viewer entry=%u label='%s' image='%s' scrollable=%d presentation='%s' available=%d gate=0x%x completion=0x%x control=%d,%d,%d,%d",
+		entryIndex, entryLabel.c_str(),
 		imagePath.c_str(), _image.height > kWacMediaHeight,
 		mediaPath.c_str(), presentationAvailable, presentationFlag,
 		completionFlag, presentationBounds.left, presentationBounds.top,
@@ -304,8 +298,7 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 				_database->drawBitmap(presentationFrames[0],
 					presentationBounds.left, presentationBounds.top);
 				if (presentationHover) {
-					// RIPPER.LE temporarily forces video mode 1 around
-					// RunMediaPresentation, then sets the caller-supplied EBX flag.
+					// Mode 1 keeps the paired movie at the still image's scale.
 					RipperSettings *settings =
 						_database->engine()->getSettings();
 					const uint savedVideoMode = settings->getVideoMode();
