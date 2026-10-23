@@ -36,6 +36,9 @@ void OSystem_SDL_Atari::initBackend() {
 	if (!ConfMan.hasKey("themepath", Common::ConfigManager::kApplicationDomain))
 		ConfMan.setPath("themepath", "themes", Common::ConfigManager::kApplicationDomain);
 
+	if (!ConfMan.hasKey("audio_buffer_size", Common::ConfigManager::kApplicationDomain))
+		ConfMan.setInt("audio_buffer_size", 2048, Common::ConfigManager::kApplicationDomain);
+
 	OSystem_POSIX::initBackend();
 }
 
