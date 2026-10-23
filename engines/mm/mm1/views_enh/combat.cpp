@@ -790,44 +790,48 @@ void Combat::highlightNextRound() {
 }
 
 void Combat::writeMonsterEffects() {
+	resetBottom();
+
+	int line = 0;
 	if (_monstersRegenerate)
-		writeString(0, 21, STRING["dialogs.combat.regenerate"]);
+		writeBottomText(0, line++,
+			STRING["dialogs.combat.regenerate"]);
 
-	if (_monstersResistSpells) {
-		if (_textPos.y != 21)
-			_textPos.y = 20;
-
-		writeString(0, _textPos.y + 1, STRING["dialogs.combat.overcome"]);
-	}
+	if (_monstersResistSpells)
+		writeBottomText(0, line,
+			STRING["dialogs.combat.overcome"]);
 
 	writeMonsters();
 }
 
 void Combat::writeMonsterAction(bool flees) {
 	resetBottom();
-	writeString(0, 20, _monsterName);
-	writeChar(' ');
-	writeString(STRING[flees ?
-		"dialogs.combat.monster_flees" : "dialogs.combat.monster_wanders"
-	]);
+
+	const Common::String message = Common::String::format(
+		"%s %s", _monsterName.c_str(),
+		STRING[flees ?
+			"dialogs.combat.monster_flees" :
+			"dialogs.combat.monster_wanders"
+		].c_str());
+
+	writeBottomText(0, 0, message);
 }
 
 void Combat::writeMonsterSpell() {
 	resetBottom();
 
-	for (int i = 0, y = 0; i < (int)_monsterSpellLines.size() &&
-		_monsterSpellLines[i].y > y;
-		y = _monsterSpellLines[i].y, ++i) {
-		Common::String text = _monsterSpellLines[i]._text;
-		size_t idx;
-		while ((idx = text.findFirstOf(' ')) != Common::String::npos)
-			text.deleteChar(idx);
-
-		writeString(0, _monsterSpellLines[i].y, text);
+	for (int i = 0, y = -2; i < (int)_monsterSpellLines.size() &&
+			_monsterSpellLines[i].y > y;
+			y = _monsterSpellLines[i].y, ++i) {
+		const Line &line = _monsterSpellLines[i];
+		writeBottomText(MAX<int>(line.x, 0), MAX<int>(line.y, 0),
+			line._text, line._align);
 	}
 }
 
 void Combat::writeMonsterAttack() {
+	resetBottom();
+
 	Common::String monsterName = _monsterP->_name;
 	Common::String attackStyle = STRING[Common::String::format(
 		"dialogs.combat.attack_types.%d", _monsterAttackStyle)];
