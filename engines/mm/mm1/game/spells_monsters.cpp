@@ -676,12 +676,16 @@ void SpellsMonsters::setCondition(byte newCondition) {
 }
 
 void SpellsMonsters::handlePartyEffects() {
+	Character *priorCharacter = g_globals->_currCharacter;
+
 	add(':');
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		g_globals->_currCharacter = &g_globals->_party[i];
 		writeConditionEffect();
 	}
+
+	g_globals->_currCharacter = priorCharacter;
 }
 
 void SpellsMonsters::handlePartyDamage() {
