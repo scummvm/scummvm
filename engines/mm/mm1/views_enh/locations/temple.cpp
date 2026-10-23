@@ -154,10 +154,16 @@ bool Temple::msgAction(const ActionMessage &msg) {
 }
 
 bool Temple::msgGame(const GameMessage &msg) {
-	Location::msgGame(msg);
 	if (msg._name == "UPDATE")
 		updateCosts();
+
+	Location::msgGame(msg);
 	return true;
+}
+
+void Temple::charSwitched(Character *priorChar) {
+	updateCosts();
+	PartyView::charSwitched(priorChar);
 }
 
 void Temple::updateCosts() {
@@ -210,6 +216,7 @@ void Temple::restoreHealth() {
 			--c._endurance;
 		}
 
+		updateCosts();
 		redraw();
 	}
 }
@@ -227,6 +234,7 @@ void Temple::uncurseItems() {
 			}
 		}
 
+		updateCosts();
 		redraw();
 	}
 }
@@ -235,8 +243,9 @@ void Temple::restoreAlignment() {
 	if (subtractGold(_alignmentCost)) {
 		Character &c = *g_globals->_currCharacter;
 		c._alignment = c._alignmentInitial;
-		c._alignmentCtr = ALIGNMENT_VALS[c._alignment];
+		c._alignmentCtr = ALIGNMENT_VALS[c._alignment - 1];
 
+		updateCosts();
 		redraw();
 	}
 }
