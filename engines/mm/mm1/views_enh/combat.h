@@ -35,6 +35,7 @@ private:
 	uint _attackableCount = 0;
 	InfoMessage _spellResult;
 	bool _firstDraw = false;
+	bool _modeDrawn = false;
 	// Combat options that have sub-option selection
 	enum SelectedOption {
 		OPTION_NONE, OPTION_DELAY, OPTION_EXCHANGE,

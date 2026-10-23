@@ -40,6 +40,7 @@ Combat::Combat() : ScrollView("Combat") {
 
 void Combat::setMode(Mode newMode) {
 	_mode = newMode;
+	_modeDrawn = false;
 	clearButtons();
 
 	if (newMode == SELECT_OPTION) {
@@ -126,6 +127,8 @@ bool Combat::msgGame(const GameMessage &msg) {
 }
 
 void Combat::draw() {
+	_modeDrawn = true;
+
 	if (_firstDraw) {
 		_firstDraw = false;
 		if (_mode != SELECT_OPTION) {
@@ -274,6 +277,11 @@ void Combat::timeout() {
 }
 
 bool Combat::msgKeypress(const KeypressMessage &msg) {
+	// Ignore input until the current mode has been displayed, otherwise
+	// a quick keypress can skip a message before it's ever been shown
+	if (!_modeDrawn)
+		return true;
+
 	if (endDelay())
 		return true;
 
@@ -334,6 +342,9 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Combat::msgAction(const ActionMessage &msg) {
+	if (!_modeDrawn)
+		return true;
+
 	if (endDelay())
 		return true;
 
