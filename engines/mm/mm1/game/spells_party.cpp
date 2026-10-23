@@ -733,12 +733,12 @@ SpellResult SpellsParty::wizard25_levitate() {
 }
 
 SpellResult SpellsParty::wizard26_power() {
-	g_globals->_currCharacter->_might._current += getRandomNumber(4);
+	_destChar->_might._current += getRandomNumber(4);
 	return SR_SUCCESS_DONE;
 }
 
 SpellResult SpellsParty::wizard27_quickness() {
-	g_globals->_currCharacter->_speed._current += getRandomNumber(4);
+	_destChar->_speed._current += getRandomNumber(4);
 	return SR_SUCCESS_DONE;
 }
 
