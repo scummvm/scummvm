@@ -762,6 +762,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	bool cursorSetFromScript() const override { return true; }
 	bool canHaveHotspot() const override { return true; }
 
 protected:
@@ -817,6 +818,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	bool cursorSetFromScript() const override { return true; }
 	bool canHaveHotspot() const override { return true; }
 
 protected:
