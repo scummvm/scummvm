@@ -408,42 +408,49 @@ void Search::drawTreasure() {
 
 void Search::drawItem() {
 	Treasure &treasure = g_globals->_treasure;
-	int itemId = treasure.removeItem();
 	_lineNum = 0;
 
-	// Iterate through any treasure items
-	if (itemId != 0) {
-		// Find a person with free backpack space for the item
+	// Only remove the treasure item once somebody can carry it,
+	// otherwise it's lost when every backpack is full
+	if (treasure.hasItems()) {
+		Character *recipient = nullptr;
+
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
+			if (!c._backpack.full()) {
+				recipient = &c;
+				break;
+			}
+		}
 
-			// Check if character has backpack space
-			if (c._backpack.full())
-				continue;
+		if (!recipient) {
+			// Leave the item so it can be collected by Searching again
+			// once a backpack slot has been freed
+			writeLine(_lineNum++, "Party inventory is full!", ALIGN_MIDDLE);
+			setMode(GET_ITEMS_DONE);
+			delaySeconds(7);
+			return;
+		}
 
+		const int itemId = treasure.removeItem();
+		if (itemId != 0) {
 			Item *item = g_globals->_items.getItem(itemId);
-			c._backpack.add(itemId, item->_maxCharges);
+			recipient->_backpack.add(itemId, item->_maxCharges);
 
-			// Add line for found item
 			writeLine(_lineNum++, Common::String::format(
 				STRING["dialogs.search.found_item"].c_str(),
-				c._name,
+				recipient->_name,
 				item->_name.c_str()
 			));
 
 			if (treasure.hasItems()) {
 				delaySeconds(2);
 				return;
-			} else {
-				// Finished final item, so go down below to switch to items done
-				break;
 			}
 		}
 	}
 
-	// At this point we've either displayed the up to 3 item
-	// lines (in addition to gold and/or gems), or the party's backpacks
-	// were completely full up. Wait for 7 seconds and close the view
+	// Finished the final item
 	setMode(GET_ITEMS_DONE);
 	delaySeconds(7);
 }
