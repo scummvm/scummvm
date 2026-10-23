@@ -417,7 +417,8 @@ void Spellbook::updateChar() {
 		knownCount = 0;
 	} else {
 		knownCount = (c._spellLevel._current < 5) ?
-			c._spellLevel * 8 - 1 : 31 + (c._spellLevel - 4) * 5;
+			c._spellLevel._current * 8 :
+			32 + (c._spellLevel._current - 4) * 5;
 	}
 
 	_favoriteAssignMode = false;
