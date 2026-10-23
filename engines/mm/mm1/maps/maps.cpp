@@ -274,8 +274,8 @@ void Maps::loadTown(TownId townId) {
 	}
 
 	byte &visited = _currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x];
-	if (!visited)
-		visited = VISITED_NORMAL;
+	if (!(visited & 0x7f))
+		visited = (visited & 0x80) | VISITED_NORMAL;
 }
 
 void Maps::town15setup() {
@@ -384,8 +384,8 @@ void Maps::turnAround() {
 void Maps::step(const Common::Point &delta) {
 	_mapPos += delta;
 	byte &visited = _currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x];
-	if (!visited) {
-		visited = VISITED_NORMAL;
+	if (!(visited & 0x7f)) {
+		visited = (visited & 0x80) | VISITED_NORMAL;
 	}
 
 	int section = 0, id = 0;
@@ -424,8 +424,8 @@ void Maps::changeMap(uint16 id, byte section) {
 
 void Maps::visitedTile() {
 	byte &visited = _currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x];
-	if (!visited)
-		visited = VISITED_NORMAL;
+	if (!(visited & 0x7f))
+		visited = (visited & 0x80) | VISITED_NORMAL;
 }
 
 void Maps::clearSpecial() {

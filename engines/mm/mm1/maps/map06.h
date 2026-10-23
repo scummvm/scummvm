@@ -43,6 +43,7 @@ private:
 	void special13();
 	void special26();
 	void slide();
+	void clearEncounterProgress();
 
 	const SpecialFn SPECIAL_FN[27] = {
 		&Map06::special00,
@@ -75,6 +76,8 @@ private:
 	};
 public:
 	Map06() : Map(6, "cave2", 0x1, 1) {}
+
+	int completedEncounters() const;
 
 	/**
 	 * Handles all special stuff that happens on the map

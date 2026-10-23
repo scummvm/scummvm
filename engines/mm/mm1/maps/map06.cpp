@@ -31,7 +31,7 @@ namespace Maps {
 
 #define VAL1 446
 #define VAL2 447
-#define VAL3 329
+#define ENCOUNTER_COMPLETE 0x80
 
 static const byte MONSTER_ID1[13] = {
 	2, 1, 8, 9, 5, 9, 2, 7, 15, 4, 11, 1, 5
@@ -177,7 +177,15 @@ void Map06::special10() {
 void Map06::special13() {
 	Game::Encounter &enc = g_globals->_encounters;
 	g_maps->clearSpecial();
-	_data[VAL3]++;
+
+	// Record completion in the map visitation data, which is serialized
+	// in savegames, so progress survives saving and loading
+	byte &visited = _visited[g_maps->_mapOffset];
+	if (visited & ENCOUNTER_COMPLETE) {
+		checkPartyDead();
+		return;
+	}
+	visited |= ENCOUNTER_COMPLETE;
 
 	int monsterCount = getRandomNumber(5);
 
@@ -189,17 +197,42 @@ void Map06::special13() {
 	for (int i = 0; i < monsterCount; ++i)
 		enc.addMonster(id1, id2);
 
+	// Without manual mode, execute() discards the scripted monsters
+	// and generates an unrelated random encounter
+	enc._manual = true;
 	enc.execute();
 }
 
 void Map06::special26() {
-	if (_data[VAL3]) {
+	if (completedEncounters() < 13) {
 		send(SoundMessage(STRING["maps.map06.wizard"]));
 	} else {
 		g_globals->_treasure.setGold(12000);
 		g_globals->_treasure._items[1] = BRONZE_KEY_ID;
 		g_globals->_treasure._items[2] = getRandomNumber(12) + 182;
+		clearEncounterProgress();
 		g_events->addAction(KEYBIND_SEARCH);
+	}
+}
+
+int Map06::completedEncounters() const {
+	int result = 0;
+
+	// The thirteen challenges occupy map rows 0 through 12
+	for (int y = 0; y < 13; ++y) {
+		for (int x = 0; x < MAP_W; ++x) {
+			if (_visited[y * MAP_W + x] & ENCOUNTER_COMPLETE)
+				++result;
+		}
+	}
+
+	return result;
+}
+
+void Map06::clearEncounterProgress() {
+	for (int y = 0; y < 13; ++y) {
+		for (int x = 0; x < MAP_W; ++x)
+			_visited[y * MAP_W + x] &= ~ENCOUNTER_COMPLETE;
 	}
 }
 

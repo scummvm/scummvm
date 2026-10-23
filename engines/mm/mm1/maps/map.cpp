@@ -131,16 +131,19 @@ void Map::unlockDoor() {
 }
 
 void Map::visitedSpecial() {
-	if (!_visited[g_maps->_mapOffset])
-		_visited[g_maps->_mapOffset] = VISITED_SPECIAL;
+	byte &visited = _visited[g_maps->_mapOffset];
+	if (!(visited & 0x7f))
+		visited = (visited & 0x80) | VISITED_SPECIAL;
 }
 
 void Map::visitedExit() {
-	_visited[g_maps->_mapOffset] = VISITED_EXIT;
+	byte &visited = _visited[g_maps->_mapOffset];
+	visited = (visited & 0x80) | VISITED_EXIT;
 }
 
 void Map::visitedBusiness() {
-	_visited[g_maps->_mapOffset] = VISITED_BUSINESS;
+	byte &visited = _visited[g_maps->_mapOffset];
+	visited = (visited & 0x80) | VISITED_BUSINESS;
 }
 
 } // namespace Maps
