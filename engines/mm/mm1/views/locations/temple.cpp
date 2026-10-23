@@ -112,7 +112,7 @@ void Temple::changeCharacter(uint index) {
 		_isEradicated = true;
 	} else if (c._condition & BAD_CONDITION) {
 		_healCost = HEAL_COST2[townNum];
-	} else if (c._condition || c._hp < c._hpMax) {
+	} else if (c._condition || c._hpCurrent < c._hpMax) {
 		_healCost = HEAL_COST3[townNum];
 	}
 
@@ -168,7 +168,8 @@ void Temple::restoreHealth() {
 	if (subtractGold(_healCost)) {
 		Character &c = *g_globals->_currCharacter;
 		c._condition = FINE;
-		c._hpCurrent = c._hp;
+		c._hpMax = c._hp;
+		c._hpCurrent = c._hpMax;
 
 		if (_isEradicated) {
 			c._age += 10;
