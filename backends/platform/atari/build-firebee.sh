@@ -11,7 +11,7 @@ FASTCALL=false
 PLUGINS=true
 export CXXFLAGS="-mcpu=5475"
 export LDFLAGS="-mcpu=5475"
-#export CXXFLAGS="-m68020-60"
+#export CXXFLAGS="-m68020-60 -mtune=68060"
 #export LDFLAGS="-m68020-60"
 
 CPU_DIR=$(${PLATFORM}-gcc ${CXXFLAGS} -print-multi-directory)
