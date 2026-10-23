@@ -38,7 +38,7 @@
 */
 
 /*
- * Altered for ScummVM: uses the system headers through ScummVM.
+ * Altered for ScummVM: uses the system headers through ScummVM; no variables shadow others.
  */
 
 #include "b2BroadPhase.h"
@@ -305,14 +305,14 @@ uint16 b2BroadPhase::CreateProxy(const b2AABB& aabb, void* userData)
 		// Adjust the all the affected bound indices.
 		for (int32 index = lowerIndex; index < boundCount + 2; ++index)
 		{
-			b2Proxy* proxy = m_proxyPool + bounds[index].proxyId;
+			b2Proxy* boundProxy = m_proxyPool + bounds[index].proxyId;
 			if (bounds[index].IsLower())
 			{
-				proxy->lowerBounds[axis] = (uint16)index;
+				boundProxy->lowerBounds[axis] = (uint16)index;
 			}
 			else
 			{
-				proxy->upperBounds[axis] = (uint16)index;
+				boundProxy->upperBounds[axis] = (uint16)index;
 			}
 		}
 	}
@@ -367,14 +367,14 @@ void b2BroadPhase::DestroyProxy(int32 proxyId)
 		// Fix bound indices.
 		for (int32 index = lowerIndex; index < boundCount - 2; ++index)
 		{
-			b2Proxy* proxy = m_proxyPool + bounds[index].proxyId;
+			b2Proxy* boundProxy = m_proxyPool + bounds[index].proxyId;
 			if (bounds[index].IsLower())
 			{
-				proxy->lowerBounds[axis] = (uint16)index;
+				boundProxy->lowerBounds[axis] = (uint16)index;
 			}
 			else
 			{
-				proxy->upperBounds[axis] = (uint16)index;
+				boundProxy->upperBounds[axis] = (uint16)index;
 			}
 		}
 

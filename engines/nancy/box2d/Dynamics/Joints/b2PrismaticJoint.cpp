@@ -37,6 +37,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+ * Altered for ScummVM: no variables shadow others.
+ */
+
 #include "b2PrismaticJoint.h"
 #include "../b2Body.h"
 #include "../b2World.h"
@@ -243,7 +247,7 @@ void b2PrismaticJoint::SolveVelocityConstraints(const b2TimeStep& step)
 		m_motorForce = b2Clamp(m_motorForce + motorForce, -m_maxMotorForce, m_maxMotorForce);
 		motorForce = m_motorForce - oldMotorForce;
 
-		float32 P = B2FORCE_SCALE(step.dt) * motorForce;
+		P = B2FORCE_SCALE(step.dt) * motorForce;
 		b1->m_linearVelocity += (invMass1 * P) * m_motorJacobian.linear1;
 		b1->m_angularVelocity += invI1 * P * m_motorJacobian.angular1;
 
@@ -274,7 +278,7 @@ void b2PrismaticJoint::SolveVelocityConstraints(const b2TimeStep& step)
 			limitForce = m_limitForce - oldLimitForce;
 		}
 
-		float32 P = B2FORCE_SCALE(step.dt) * limitForce;
+		P = B2FORCE_SCALE(step.dt) * limitForce;
 
 		b1->m_linearVelocity += (invMass1 * P) * m_motorJacobian.linear1;
 		b1->m_angularVelocity += invI1 * P * m_motorJacobian.angular1;
@@ -331,11 +335,11 @@ bool b2PrismaticJoint::SolvePositionConstraints()
 	// Solve linear limit constraint.
 	if (m_enableLimit && m_limitState != e_inactiveLimit)
 	{
-		b2Vec2 r1 = b2Mul(b1->GetXForm().R, m_localAnchor1 - b1->GetLocalCenter());
-		b2Vec2 r2 = b2Mul(b2->GetXForm().R, m_localAnchor2 - b2->GetLocalCenter());
-		b2Vec2 p1 = b1->m_sweep.c + r1;
-		b2Vec2 p2 = b2->m_sweep.c + r2;
-		b2Vec2 d = p2 - p1;
+		r1 = b2Mul(b1->GetXForm().R, m_localAnchor1 - b1->GetLocalCenter());
+		r2 = b2Mul(b2->GetXForm().R, m_localAnchor2 - b2->GetLocalCenter());
+		p1 = b1->m_sweep.c + r1;
+		p2 = b2->m_sweep.c + r2;
+		d = p2 - p1;
 		b2Vec2 ax1 = b2Mul(b1->GetXForm().R, m_localXAxis1);
 
 		float32 translation = b2Dot(ax1, d);

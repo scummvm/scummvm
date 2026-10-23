@@ -37,6 +37,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+ * Altered for ScummVM: no variables shadow others.
+ */
+
 #include "b2RevoluteJoint.h"
 #include "../b2Body.h"
 #include "../b2World.h"
@@ -202,9 +206,9 @@ void b2RevoluteJoint::SolveVelocityConstraints(const b2TimeStep& step)
 		m_motorForce = b2Clamp(m_motorForce + motorForce, -m_maxMotorTorque, m_maxMotorTorque);
 		motorForce = m_motorForce - oldMotorForce;
 
-		float32 P = step.dt * motorForce;
-		b1->m_angularVelocity -= b1->m_invI * P;
-		b2->m_angularVelocity += b2->m_invI * P;
+		float32 P1 = step.dt * motorForce;
+		b1->m_angularVelocity -= b1->m_invI * P1;
+		b2->m_angularVelocity += b2->m_invI * P1;
 	}
 
 	if (m_enableLimit && m_limitState != e_inactiveLimit)
@@ -229,9 +233,9 @@ void b2RevoluteJoint::SolveVelocityConstraints(const b2TimeStep& step)
 			limitForce = m_limitForce - oldLimitForce;
 		}
 
-		float32 P = step.dt * limitForce;
-		b1->m_angularVelocity -= b1->m_invI * P;
-		b2->m_angularVelocity += b2->m_invI * P;
+		float32 P1 = step.dt * limitForce;
+		b1->m_angularVelocity -= b1->m_invI * P1;
+		b2->m_angularVelocity += b2->m_invI * P1;
 	}
 }
 
