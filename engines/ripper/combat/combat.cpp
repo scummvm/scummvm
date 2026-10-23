@@ -113,8 +113,6 @@ void CombatEncounter::queueAlternateAmbient() {
 	if (!path || !*path)
 		return;
 	if (_engine->getMedia()->playSoundEffect(path, _ambientHandle, 100, false)) {
-		// QueueRandomAudioTriggerPairEntry at 0x313ec installs itself as the
-		// completion callback for the randomly selected Ratini loop descriptor.
 		debugC(3, kDebugCombat,
 			"Ripper: combat alternate ambient queued type='%s' index=%u path='%s'",
 			_definition.name, index, path);
@@ -187,11 +185,8 @@ void CombatEncounter::applyIncomingAttack(byte attack, bool shieldHeld,
 		shieldDamage = shieldBefore - _meterPercent[kShieldMeter];
 		queueCue(_shieldHitSounds[damageIndex]);
 		_paletteEffect = kPaletteShield;
-		// RunCombatEncounterScene applies the shield hit before its timed drain.
 		updateMeter(kShieldMeter, now, false, true);
 	} else {
-		// The unshielded branch recharges the inactive shield before damaging
-		// player health.
 		updateMeter(kShieldMeter, now, true, false);
 		_meterPercent[kHealthMeter] = MAX<int>(0,
 			_meterPercent[kHealthMeter] - _meterConfig[kHealthMeter].damage[damageIndex]);
@@ -374,18 +369,16 @@ void CombatEncounter::advanceEffects() {
 	}
 }
 
-void CombatEncounter::drawOverlay(const Common::Point &point, bool targetActive,
+void CombatEncounter::drawOverlay(const Common::Point &point,
 		bool enemyAttackActive) {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return;
 	byte *pixels = (byte *)screen->getPixels();
-	// RunCombatEncounterScene at 0x31436 presents COMBAT0.BBM at
-	// 320 - bitmapWidth. The meter anchors are local to that right-hand panel.
+	// Meter anchors are relative to the right-hand status panel.
 	const int panelX = _combatFrames.empty() ? 0 :
 		(int)kLogicalWidth - (int)_combatFrames[0].width;
-	// RIPPER.LE composites effects and crosshairs first, then presents
-	// the already-composed COMBAT0 status surface over them at 0x32790.
+	// Draw the status panel over effects and crosshairs so they cannot cover it.
 	drawEffects(pixels, screen->pitch);
 	drawCrosshair(pixels, screen->pitch, point);
 	if (!_combatFrames.empty())
@@ -401,12 +394,6 @@ void CombatEncounter::drawOverlay(const Common::Point &point, bool targetActive,
 		_overlayLogged = true;
 	}
 	g_system->unlockScreen();
-	debugC(11, kDebugCombat,
-		"Ripper: drew combat overlay point=%d,%d target=%d attack=%d lastHit=%d weaponHeld=%d shieldHeld=%d health=%d creature=%d weapon=%d shield=%d",
-		point.x, point.y, targetActive, enemyAttackActive, _lastShotHit,
-		_weaponHeld, _shieldHeld, _meterPercent[kHealthMeter],
-		_meterPercent[kCreatureMeter], _meterPercent[kWeaponMeter],
-		_meterPercent[kShieldMeter]);
 }
 
 uint16 CombatEncounter::serviceKeyboard() {
@@ -451,9 +438,7 @@ uint16 CombatEncounter::serviceKeyboard() {
 }
 
 uint16 CombatEncounter::service(uint frame) {
-	// RunCombatEncounterScene at 0x31436 services one DAT state record before
-	// advancing the active Smacker, so MediaPlayer's one-based callback frame
-	// maps back to the zero-based frame table here.
+	// DAT state precedes the decoded frame; callback frames are one based.
 	if (!_activeScene || _activeScene->frames.empty())
 		return kEncounterFailureCommand;
 	const uint frameIndex = MIN<uint>(frame == 0 ? 0 : frame - 1,
@@ -488,8 +473,6 @@ uint16 CombatEncounter::service(uint frame) {
 
 	_paletteEffect = shieldHeld ? kPaletteShield : kPaletteNormal;
 	const uint32 now = g_system->getMillis(true);
-	// RunCombatEncounterScene at 0x31436 services timed health/creature
-	// changes, the incoming attack and shield branch, then the player weapon.
 	updateMeter(kHealthMeter, now, true, true);
 	updateMeter(kCreatureMeter, now, true, true);
 	applyIncomingAttack(state.attack, shieldHeld, now, frameIndex);
@@ -503,8 +486,7 @@ uint16 CombatEncounter::service(uint frame) {
 		updateMeter(kWeaponMeter, now, true, false);
 	serviceWeapon(state, point, weaponHeld, now, frameIndex);
 	updateContinuousAudio(state);
-	const bool targetActive = findHitRegion(state, point) != nullptr;
-	drawOverlay(point, targetActive, state.attack != 0);
+	drawOverlay(point, state.attack != 0);
 	advanceEffects();
 
 	if (_meterPercent[kCreatureMeter] == 0) {
@@ -552,8 +534,6 @@ uint CombatEncounter::chooseNextScene() {
 	if (_scenes.size() <= 1)
 		return 0;
 	if (_definition.atkiniSceneRouting && _scenes.size() >= 6) {
-		// RunCombatEncounterScene at 0x31436 [LE, instruction 0x324a7] uses the tables at 0x3134c
-		// and 0x31358 to keep the six ATKINI scenes moving between groups.
 		static const uint sceneGroupOne[] = { 0, 4, 5 };
 		static const uint sceneGroupTwo[] = { 1, 2, 3 };
 		if (_activeSceneIndex == 3 || _activeSceneIndex == 4)
@@ -567,8 +547,6 @@ uint CombatEncounter::chooseNextScene() {
 Scene::Result CombatEncounter::run(uint completionFlag) {
 	prepare("combat-entry", 14, false);
 	_completionFlag = completionFlag;
-	// RunCombatEncounterScene at 0x31436 [LE, instruction 0x31563] reads g_combatLevelSetting once and
-	// formats the encounter's numbered INI before loading any combat resources.
 	const uint difficulty = _engine->getSettings()->getCombatLevel();
 	const Common::String configName = selectConfigName(difficulty);
 	debugC(1, kDebugCombat,
@@ -637,7 +615,7 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 			!_engine->getMilestones()->set(completionFlag, true, "combat-encounter"))
 		_encounterResult = kLoadFailed;
 	finish("combat-exit", 0, true);
-	debugC(_encounterResult == kLoadFailed ? 1 : 2, kDebugCombat,
+	debugC(1, kDebugCombat,
 		"Ripper: left combat encounter type='%s' result=%d difficulty=%u completionFlag=%u",
 		_definition.name, _encounterResult, difficulty, completionFlag);
 	return _encounterResult;

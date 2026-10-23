@@ -69,8 +69,6 @@ static bool isButtonPoint(uint button, const Common::Point &point) {
 }
 
 static bool isExitPoint(const Common::Point &point) {
-	// RunGymSelectorScene at 0x3c64b builds the exit control at scene-space
-	// (0, 0) with width 166 and height 300. The scene viewport starts at y=50.
 	return point.x >= 0 && point.x < 166 && point.y >= 50 && point.y < 350;
 }
 
@@ -310,7 +308,7 @@ GymScene::Result GymScene::run(uint completionFlag) {
 
 	prepare("gym-selector-entry", kDefaultCursor, true);
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered gym selector scene function=RunGymSelectorScene@0x3c64b "
+		"Ripper: entered gym selector scene "
 		"milestone=%u initialState=0 introState=4 help=0x%x",
 		completionFlag, kHelpResource);
 
@@ -377,7 +375,7 @@ GymScene::Result GymScene::run(uint completionFlag) {
 	stopAllAudio();
 	_engine->getCursor()->setSelectionIndex(0);
 	finish("gym-selector-exit", 0, true);
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left gym selector scene result=%d milestone=%u state=%u "
 		"command=0x%04x selectedTarget=%d quit=%d",
 		result, completionFlag, _currentState, command, selectedTarget,

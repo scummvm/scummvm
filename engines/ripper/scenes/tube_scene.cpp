@@ -180,8 +180,7 @@ void TubeScene::updateCursor(const Common::Point &point) {
 
 uint16 TubeScene::serviceInventory() {
 	uint usedUnlockFlag = 0;
-	// ExecuteUnlockSelectionChoice compares items 2..4 with the GAZ2 frame
-	// label. Those are the three tubes consumed by RunTubeSwitchScene.
+	// The GAZ2 use label accepts the three tubes in inventory slots 2..4.
 	const Inventory::Result inventoryResult =
 		_engine->getInventory()->run("GAZ2", -1, &usedUnlockFlag);
 	if (inventoryResult == Inventory::kLoadFailed)
@@ -371,7 +370,7 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 
 	stopAudio();
 	finish("tube-exit", 0, false);
-	debugC(result == kLoadFailed ? 2 : 1, kDebugScene,
+	debugC(1, kDebugScene,
 		"Ripper: left tube switch scene result=%d installed=%u milestone=%u quit=%d",
 		result, _tubeCount, completionFlag, _engine->shouldQuit());
 	return result;

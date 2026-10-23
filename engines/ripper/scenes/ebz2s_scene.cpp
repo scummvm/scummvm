@@ -82,7 +82,7 @@ Ebz2sScene::Result Ebz2sScene::run(uint sceneArgument) {
 			grantFlag = kBugUnlockFlag;
 
 		debugC(1, kDebugScene,
-			"Ripper: entered EBZ2S action menu function=RunEbz2sUnlockGatedActionMenuScene@0x36783 "
+			"Ripper: entered EBZ2S action menu "
 			"toolbarMask=0x%03x grantFlag=%d bug=%d,%d eyeball=%d,%d",
 			kToolbarMask, grantFlag,
 			milestones->isSet(kBugUnlockFlag),
@@ -145,7 +145,7 @@ Ebz2sScene::Result Ebz2sScene::run(uint sceneArgument) {
 
 	resetSelection();
 	finish("ebz2s-exit", 0, false);
-	debugC(result == kLoadFailed ? 1 : 2, kDebugScene,
+	debugC(1, kDebugScene,
 		"Ripper: left EBZ2S action menu result=%d bugConsumed=%d eyeballConsumed=%d quit=%d",
 		result,
 		_engine->getMilestones()->isSet(kBugConsumedFlag),

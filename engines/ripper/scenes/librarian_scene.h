@@ -49,7 +49,7 @@ private:
 	void rebuildChoices();
 	const Choice *findAvailableChoice(uint16 id) const;
 	void serviceLoopAudio(uint frame);
-	void presentDialogueOverlay(uint frame);
+	void presentDialogueOverlay();
 	uint16 serviceInput();
 	void updateCursor(const Common::Point &point);
 	void stopAllAudio();

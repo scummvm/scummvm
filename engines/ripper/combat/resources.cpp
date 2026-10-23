@@ -95,9 +95,7 @@ bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &sc
 		regionCount += sourceFrame.regions.size();
 		for (uint i = 0; i < sourceFrame.regions.size(); ++i) {
 			const PresentationRegion &source = sourceFrame.regions[i];
-			// The hit-test loop at 0x320d0 compares the first coordinate pair
-			// with the logical pointer Y and the second pair with pointer X.
-			// DAT regions therefore store type, y, x, height, width.
+			// DAT regions store type, y, x, height, width.
 			const int y = source.coordinate1;
 			const int x = source.coordinate2;
 			const int height = source.extent1;
@@ -123,8 +121,7 @@ bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &sc
 bool CombatEncounter::loadFrameCues(const Common::String &name, SceneData &scene) {
 	Common::File file;
 	if (!file.open(Common::Path(name))) {
-		// LoadPresentationFrameAudioCueMap at 0x3574a returns its zero-filled
-		// two-byte-per-frame allocation when the optional PRJ cannot be opened.
+		// PRJ files are optional; an absent map leaves every frame silent.
 		scene.frameCues.resize(scene.frames.size());
 		debugC(2, kDebugCombat,
 			"Ripper: combat frame-audio map absent file='%s' frames=%u cues=0",

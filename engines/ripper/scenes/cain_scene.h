@@ -46,7 +46,7 @@ private:
 	static const Choice *choiceTable();
 	static uint choiceCount();
 	const Choice *findAvailableChoice(uint16 id) const;
-	void presentDialogueOverlay(uint frame);
+	void presentDialogueOverlay();
 	uint16 serviceInput();
 	void updateCursor(const Common::Point &point);
 	void stopAllAudio();

@@ -33,9 +33,8 @@ namespace Ripper {
 
 namespace {
 
-// RunWoffordInteractiveMediaScene loads these entries from the Cyber asset
-// container. Keep the directory qualified because loose installations also
-// contain the unrelated SCENE/WOFFORD1.WAV.
+// Keep the Cyber directory qualified: loose installations also contain
+// the unrelated SCENE/WOFFORD1.WAV.
 static const char *const kSceneMedia = "cyber/wofford.smk";
 static const char *const kAudioCues[4] = {
 	"cyber/wofford0.wav", "cyber/wofford1.wav",
@@ -47,8 +46,6 @@ static const uint kChoiceCursor = 16;
 static const uint kBusyCursor = 19;
 static const uint kLoopStartFrame = 1;
 static const uint kChoiceArmFrame = 20;
-// SetAudioTriggerHandlePackedVolume receives stereo value 0x70a270a2 at
-// 0x2ad75; each 0x70a2 channel rounds to 88% of the signed 16-bit range.
 static const uint kOpeningCueVolume = 88;
 
 static const uint16 kEscapeCommand = 0x1b;
@@ -56,9 +53,8 @@ static const uint16 kFirstChoiceCommand = 0x672;
 static const uint16 kSecondChoiceCommand = 0x673;
 static const uint16 kFailureCommand = 0x7ffd;
 
-// g_woffordControlLayoutRows at 0x2a824 stores the controls in
-// transposed scene coordinates. The first row must retain priority because it
-// lies inside the second row's full-presentation rectangle.
+// The first control must retain priority because it lies inside the
+// second control's full-presentation rectangle.
 static bool isFirstChoicePoint(const Common::Point &point) {
 	return point.x >= 205 && point.x < 416 && point.y >= 203 && point.y < 296;
 }
@@ -118,8 +114,6 @@ uint16 WoffordScene::service(uint frame) {
 			command, frame);
 	}
 
-	// ServiceWoffordMediaSequenceCallback at 0x2aaf5 arms the controls and
-	// queues descriptor 1 when the one-based playback frame reaches 0x14.
 	if (frame == kChoiceArmFrame && !_choiceCueArmed) {
 		_choiceCueArmed = true;
 		if (!startFollowupCue(1, "frame-20"))
@@ -160,8 +154,6 @@ void WoffordScene::stopAllAudio() {
 }
 
 WoffordScene::Result WoffordScene::run(uint completionFlag) {
-	// RunWoffordInteractiveMediaScene at 0x2ac04 sets the action argument in
-	// the shared milestone bitset before constructing the temporary controls.
 	if (!_engine->getMilestones()->set(completionFlag, true,
 			"cyber-wofford-media"))
 		return kLoadFailed;
@@ -187,7 +179,7 @@ WoffordScene::Result WoffordScene::run(uint completionFlag) {
 
 	stopAllAudio();
 	finish("wofford-media-exit", -1, false);
-	debugC(result == kExited ? 1 : 2, kDebugCyber,
+	debugC(1, kDebugCyber,
 		"Ripper: left Wofford media scene result=%d command=0x%04x armed=%d quit=%d",
 		result, command, _choiceCueArmed, _engine->shouldQuit());
 	return result;

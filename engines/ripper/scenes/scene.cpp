@@ -32,9 +32,6 @@ Scene::Scene(RipperEngine *engine) : _engine(engine),
 }
 
 void Scene::prepare(const char *reason, uint cursorIndex, bool cursorVisible) {
-	// RunKaDialogueScene at 0x2aef5, RunCainDialogueScene at 0x2c160, and
-	// RunTubeSwitchScene at 0x25e18 preserve the incoming indexed palette and
-	// replace the active control/chooser ownership while their local loop runs.
 	_engine->getToolbar()->leave();
 	if (_chooser.isPending())
 		_chooser.dismissForSceneTransition(reason);

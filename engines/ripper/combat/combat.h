@@ -152,7 +152,7 @@ private:
 		const Common::Point &point) const;
 	void spawnEffect(byte group, const Common::Point &point);
 	void advanceEffects();
-	void drawOverlay(const Common::Point &point, bool targetActive,
+	void drawOverlay(const Common::Point &point,
 		bool enemyAttackActive);
 	void drawFrameScaled(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;

@@ -107,9 +107,6 @@ bool LibrarianScene::initialize() {
 }
 
 void LibrarianScene::rebuildChoices() {
-	// RunKaDialogueScene at 0x2aef5 builds this list from GAMETEXT.TF entries
-	// 0xaa..0xad and RIPPER.LE's 0x14a..0x14d progress bits, then passes the
-	// resulting item model to the same chooser control 0x4e2 used by opcode 0x17.
 	if (_chooser.isPending())
 		_chooser.dismissForSceneTransition("ka-choice-rebuild");
 	else
@@ -134,8 +131,7 @@ void LibrarianScene::rebuildChoices() {
 	if (_conversationStarted && !_choices.empty()) {
 		for (uint i = 0; i < _choices.size(); ++i) {
 			const uint textResource = _choices[i]->textResource;
-			// ResolveStartupResourceString at 0x1f7a2 treats GAMETEXT.TF
-			// resource IDs as one-based offsets.
+			// GAMETEXT.TF resource IDs are one based.
 			_chooser.appendChoice(_gameText[textResource - 1], _choices[i]->id);
 		}
 		_chooser.activateChoices("ka-dialogue");
@@ -166,8 +162,6 @@ bool LibrarianScene::startVoice(const char *path, const char *source) {
 		_chooser.dismissForSceneTransition("ka-voice-start");
 	_choices.clear();
 	_hoveredControl = -1;
-	// RunKaDialogueScene selects and stores row 0x13 at 0x2b31c/0x2b326
-	// for choice voices and at 0x2b4bf/0x2b4c9 for the talk control.
 	_engine->getCursor()->setSelectionIndex(kVoiceCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kVoiceCursor);
 	debugC(2, kDebugDialogue,
@@ -202,8 +196,6 @@ bool LibrarianScene::serviceVoiceCompletion() {
 }
 
 void LibrarianScene::serviceLoopAudio(uint frame) {
-	// RIPPER.LE's Ka loop queues descriptors 2, 1, and 0 at frames 1, 28,
-	// and 45, using the packed 25%, 20%, and 10% volumes initialized at entry.
 	for (uint i = 0; i < ARRAYSIZE(kLoopCueFrames); ++i) {
 		if (frame != kLoopCueFrames[i])
 			continue;
@@ -215,17 +207,13 @@ void LibrarianScene::serviceLoopAudio(uint frame) {
 	}
 }
 
-void LibrarianScene::presentDialogueOverlay(uint frame) {
+void LibrarianScene::presentDialogueOverlay() {
 	if (!_chooser.isPending())
 		return;
 
-	// RunKaDialogueScene at 0x2aef5 advances the packetized frame, acquires
-	// the UI presentation overlay, submits a complete dirty-region update, and
-	// only then advances KA_LOOP.SMK. Draw the shared chooser in the callback;
-	// MediaPlayer submits the fully composited frame after this returns.
+	// Draw the chooser before MediaPlayer submits the composited frame.
+	// Presenting the movie first would make the chooser flash.
 	_chooser.draw(true);
-	debugC(11, kDebugDialogue,
-		"Ripper: composited Ka dialogue chooser above loop frame=%u", frame);
 }
 
 void LibrarianScene::updateCursor(const Common::Point &point) {
@@ -309,7 +297,7 @@ uint16 LibrarianScene::service(uint frame) {
 		if (!serviceVoiceCompletion())
 			return kFailureCommand;
 		updateCursor(_engine->getInput()->peekMouseState().position);
-		presentDialogueOverlay(frame);
+		presentDialogueOverlay();
 		return MediaSequenceCallback::kContinueRefreshPalette;
 	}
 	uint16 command = serviceInput();
@@ -330,7 +318,7 @@ uint16 LibrarianScene::service(uint frame) {
 		if (_conversationStarted)
 			rebuildChoices();
 		updateCursor(_engine->getInput()->peekMouseState().position);
-		presentDialogueOverlay(frame);
+		presentDialogueOverlay();
 		return MediaSequenceCallback::kContinueRefreshPalette;
 	} else if (command >= kChoiceCommandBase &&
 			command < kChoiceCommandBase + kChoiceCount) {
@@ -346,7 +334,7 @@ uint16 LibrarianScene::service(uint frame) {
 			choiceId, choice->flag, choice->textResource, choice->audioPath);
 		command = 0;
 	}
-	presentDialogueOverlay(frame);
+	presentDialogueOverlay();
 	if (command != 0) {
 		debugC(2, kDebugDialogue,
 			"Ripper: Ka dialogue input command=0x%04x frame=%u choices=%u voicePending=%d",
@@ -376,13 +364,12 @@ LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 		finish("ka-load-failure", -1, false);
 		return kLoadFailed;
 	}
-	// RunKaDialogueScene at 0x2aef5 issues display command 0x14 after
-	// KA_DECK.AVI. ClearGenericVideoLogicalPage at 0x45ed8 zeroes the page so
-	// KA_LOOP.SMK's 640x300 palette cannot recolor stale pixels in the bands.
+	// Clear the full display so KA_LOOP.SMK's palette cannot recolor
+	// stale pixels in the bands outside its 640x300 viewport.
 	g_system->fillScreen(0);
 	presentScreen();
 	debugC(2, kDebugDialogue,
-		"Ripper: cleared Ka deck display before loop media='%s' source=display-command-0x14",
+		"Ripper: cleared Ka deck display before loop media='%s'",
 		kLoopMedia);
 	_engine->getMedia()->playSoundEffect("library3.wav", _ambientHandle, 100, true);
 
@@ -394,7 +381,7 @@ LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 
 	stopAllAudio();
 	finish("ka-exit", -1, false);
-	debugC(result == kExited ? 1 : 2, kDebugDialogue,
+	debugC(1, kDebugDialogue,
 		"Ripper: left Ka dialogue scene result=%d conversationStarted=%d choices=%u quit=%d",
 		result, _conversationStarted, _choices.size(), _engine->shouldQuit());
 	return result;
