@@ -49,6 +49,9 @@ enum KeybindingAction {
 	KEYBIND_SPELL,
 	KEYBIND_UNLOCK,
 	KEYBIND_QUICKREF,
+	KEYBIND_ACTIVE_QUEST,
+	KEYBIND_QUEST_PREVIOUS,
+	KEYBIND_QUEST_NEXT,
 	KEYBIND_VERSION,
 	KEYBIND_MENU,
 	KEYBIND_MINIMAP,
@@ -96,7 +99,8 @@ enum KeybindingMode {
 	KBMODE_MINIMAL,     ///< Keys for when doing text entry
 	KBMODE_PARTY_MENUS, ///< Keys for menus that allow switching party members
 	KBMODE_NORMAL,      ///< Keys available when normal in-game
-	KBMODE_COMBAT       ///< Keys when in combat mode
+	KBMODE_COMBAT,      ///< Keys when in combat mode
+	KBMODE_QUEST_LOG    ///< Keys when viewing the quest log
 };
 
 class MetaEngine {

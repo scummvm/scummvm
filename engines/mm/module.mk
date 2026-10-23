@@ -138,6 +138,7 @@ MODULE_OBJS += \
 	mm1/views/trap.o \
 	mm1/views/unlock.o \
 	mm1/views/wheel_spin.o \
+	mm1/views_enh/active_quest.o \
 	mm1/views_enh/spells/cast_spell.o \
 	mm1/views_enh/spells/spellbook.o \
 	mm1/views_enh/spells/detect_magic.o \

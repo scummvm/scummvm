@@ -65,6 +65,16 @@ static const KeybindingRecord PARTY_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const KeybindingRecord QUEST_LOG_KEYS[] = {
+	// I18N: ESC key
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr },
+	// I18N: Return key
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", nullptr },
+	{ KEYBIND_QUEST_PREVIOUS, "QUEST_PREVIOUS", _s("Previous quest"), "UP", nullptr },
+	{ KEYBIND_QUEST_NEXT, "QUEST_NEXT", _s("Next quest"), "DOWN", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
+
 static const KeybindingRecord COMBAT_KEYS[] = {
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_COMBAT_ATTACK, "COMBAT_ATTACK", _s("Attack"), "a", nullptr },
@@ -124,6 +134,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	// I18N: Action of hero party in Might & Magic 1
 	{ KEYBIND_UNLOCK, "UNLOCK", _s("Unlock"), "u", nullptr },
 	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick reference"), "q", nullptr },
+	{ KEYBIND_ACTIVE_QUEST, "ACTIVE_QUEST", _s("Show active quest"), "k", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
@@ -140,6 +151,7 @@ static const char *const kMinimalKeymapId = "mm1_minimal";
 static const char *const kPartyKeymapId = "mm1_party";
 static const char *const kNormalKeymapId = "mm1_normal";
 static const char *const kCombatKeymapId = "mm1_combat";
+static const char *const kQuestLogKeymapId = "mm1_quest_log";
 static const char *const kCheatsKeymapId = "mm1_cheats";
 
 static Common::Keymap *g_menuKeymap = nullptr;
@@ -147,6 +159,7 @@ static Common::Keymap *g_minimalKeymap = nullptr;
 static Common::Keymap *g_partyKeymap = nullptr;
 static Common::Keymap *g_normalKeymap = nullptr;
 static Common::Keymap *g_combatKeymap = nullptr;
+static Common::Keymap *g_questLogKeymap = nullptr;
 static Common::Keymap *g_cheatsKeymap = nullptr;
 
 struct KeysRecord {
@@ -161,6 +174,7 @@ static const KeysRecord ALL_RECORDS[] = {
 	{ kNormalKeymapId,  _s("Might and Magic 1 - Main"), NORMAL_KEYS },
 	{ kPartyKeymapId,   _s("Might and Magic 1 - Party"), PARTY_KEYS },
 	{ kCombatKeymapId,  _s("Might and Magic 1 - Combat"), COMBAT_KEYS },
+	{ kQuestLogKeymapId, _s("Might and Magic 1 - Quest Log"), QUEST_LOG_KEYS },
 #if 0
 	{ kCheatsKeymapId,  _s("Might and Magic 1 - Cheats"), CHEAT_KEYS },
 #endif
@@ -176,6 +190,7 @@ static void initKeymapPointers() {
 	g_partyKeymap = mapper->getKeymap(kPartyKeymapId);
 	g_normalKeymap = mapper->getKeymap(kNormalKeymapId);
 	g_combatKeymap = mapper->getKeymap(kCombatKeymapId);
+	g_questLogKeymap = mapper->getKeymap(kQuestLogKeymapId);
 	g_cheatsKeymap = mapper->getKeymap(kCheatsKeymapId);
 }
 
@@ -224,6 +239,8 @@ static bool isKeymapEnabledForMode(const Common::Keymap *keymap, KeybindingMode 
 		return mode == KBMODE_NORMAL;
 	if (keymap == g_combatKeymap)
 		return mode == KBMODE_COMBAT;
+	if (keymap == g_questLogKeymap)
+		return mode == KBMODE_QUEST_LOG;
 	if (keymap == g_cheatsKeymap)
 		return mode == KBMODE_NORMAL;
 
@@ -239,6 +256,7 @@ void MetaEngine::setKeybindingMode(KeybindingMode mode) {
 		g_partyKeymap,
 		g_normalKeymap,
 		g_combatKeymap,
+		g_questLogKeymap,
 		g_cheatsKeymap
 	};
 

@@ -90,6 +90,9 @@ bool Game::msgAction(const ActionMessage &msg) {
 	case KEYBIND_QUICKREF:
 		addView("QuickRef");
 		return true;
+	case KEYBIND_ACTIVE_QUEST:
+		addView("ActiveQuest");
+		return true;
 	case KEYBIND_REST:
 		addView("Rest");
 		return true;

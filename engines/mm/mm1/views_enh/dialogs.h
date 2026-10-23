@@ -39,6 +39,7 @@
 #include "mm/mm1/views_enh/game_messages.h"
 #include "mm/mm1/views_enh/main_menu.h"
 #include "mm/mm1/views_enh/map_popup.h"
+#include "mm/mm1/views_enh/active_quest.h"
 #include "mm/mm1/views_enh/protect.h"
 #include "mm/mm1/views_enh/quick_ref.h"
 #include "mm/mm1/views_enh/rest.h"
@@ -166,6 +167,7 @@ private:
 	ViewsEnh::GameMessages _gameMessages;
 	ViewsEnh::MainMenu _mainMenu;
 	ViewsEnh::MapPopup _mapPopup;
+	ViewsEnh::ActiveQuest _activeQuest;
 	ViewsEnh::Protect _protect;
 	ViewsEnh::QuickRef _quickRef;
 	ViewsEnh::Rest _rest;
