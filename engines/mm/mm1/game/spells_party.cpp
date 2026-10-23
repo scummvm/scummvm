@@ -139,6 +139,13 @@ SpellResult SpellsParty::cast(uint spell, Character *destChar) {
 	assert(spell < SPELLS_COUNT);
 	_destChar = destChar;
 
+	// Don't carry damage or resistance data between spells
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1 = 0;
+	ss._resistanceIndex = 0;
+	ss._resistanceTypeOrTargetCount = RESISTANCE_MAGIC;
+	ss._damage = 0;
+
 	return SPELLS[spell]();
 }
 
