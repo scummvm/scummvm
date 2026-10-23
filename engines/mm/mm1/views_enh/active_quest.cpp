@@ -260,6 +260,37 @@ void addRanalou(Common::Array<QuestLogEntry> &entries, bool done) {
 		details);
 }
 
+byte partyQuestHistory(int mapIndex) {
+	const Maps::Map &map = *g_maps->getMap(mapIndex);
+	byte result = 0;
+	for (int i = 0; i < 7; ++i) {
+		if (map._visited[15 * MAP_W + i] & 0x80)
+			result |= 1 << i;
+	}
+	return result;
+}
+
+void addRulerHistory(Common::Array<QuestLogEntry> &entries,
+		byte flags, int firstQuest) {
+	if (flags & 0x80)
+		flags |= 0x7f;
+	for (int i = 0; i < 7; ++i) {
+		if (!(flags & (1 << i)))
+			continue;
+		Common::String title, details;
+		setFormalQuestText(title, details, firstQuest + i);
+		addEntry(entries, true,
+			Common::String::format("%s #%d", title.c_str(), i + 1),
+			details + " Completed.");
+	}
+}
+
+void addCompletedRulerQuests(Common::Array<QuestLogEntry> &entries) {
+	addRulerHistory(entries, partyFlags(10) | partyQuestHistory(43), 1);
+	addRulerHistory(entries, partyFlags(8) | partyQuestHistory(35), 8);
+	addRulerHistory(entries, partyFlags(9) | partyQuestHistory(36), 15);
+}
+
 void addOtherReliableCompletions(Common::Array<QuestLogEntry> &entries) {
 	if (g_globals->_party.hasItem(KINGS_PASS_ID))
 		addEntry(entries, true, "The King's Pass", "Obtained the King's Pass from Percella.");
@@ -275,6 +306,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	addRanalou(entries, false);
 
 	// Completed history follows and remains selectable with Up/Down
+	addCompletedRulerQuests(entries);
 	addCourier(entries, true);
 	addAlamarStory(entries, true);
 	addRanalou(entries, true);
