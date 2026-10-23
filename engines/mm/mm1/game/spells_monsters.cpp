@@ -641,22 +641,23 @@ void SpellsMonsters::writeConditionEffect() {
 	if (!charAffected() || !isEffective() || !testElementalResistance())
 		return;
 
-	if (g_globals->_spellsState._damage == 0) {
+	const byte condition = g_globals->_spellsState._damage;
+	setCondition(condition);
+
+	if (condition == 0) {
 		effectNum = 10;
-	} else if (g_globals->_spellsState._damage & BAD_CONDITION) {
-		if (!(g_globals->_spellsState._damage & (BAD_CONDITION | DEAD)))
-			effectNum = 7;
-		else if (!(g_globals->_spellsState._damage & (BAD_CONDITION | STONE)))
-			effectNum = 8;
-		else if (g_globals->_spellsState._damage == ERADICATED)
-			effectNum = 9;
-		else
-			effectNum = 10;
+	} else if (condition == ERADICATED) {
+		effectNum = 9;
+	} else if (condition == (BAD_CONDITION | DEAD)) {
+		effectNum = 7;
+	} else if (condition == (BAD_CONDITION | STONE)) {
+		effectNum = 8;
 	} else {
+		// Lowest set condition bit selects the message
 		effectNum = 0;
 
-		for (byte bitset = g_globals->_spellsState._damage; bitset & 1;
-			++effectNum, bitset >>= 1) {
+		for (byte bitset = condition; !(bitset & 1);
+				++effectNum, bitset >>= 1) {
 		}
 	}
 
