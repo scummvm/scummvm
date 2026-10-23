@@ -112,7 +112,7 @@ void Trade::setMode(TradeMode mode) {
 	switch (_mode) {
 	case TRADE_OPTIONS:
 		addButton(&_btnIcons, Common::Point(80, 0), 32, Common::KEYCODE_g);
-		addButton(&_btnIcons, Common::Point(158, 0), 34, Common::KEYCODE_d);
+		addButton(&_btnIcons, Common::Point(158, 0), 34, Common::KEYCODE_m);
 		addButton(&_btnIcons, Common::Point(80, 20), 36, Common::KEYCODE_f);
 		addButton(&_btnIcons, Common::Point(158, 20), 26, Common::KEYCODE_i);
 		addButton(&g_globals->_escSprites, Common::Point(0, 20), 0, KEYBIND_ESCAPE);
