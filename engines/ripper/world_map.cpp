@@ -221,8 +221,8 @@ void WorldMap::draw() const {
 }
 
 int WorldMap::findVisibleLocation(const Common::Point &point) const {
-	if (point.x < kLocationListLeft || point.x >= kLocationListRight ||
-		point.y < kLocationListTop || point.y >= kLocationListBottom)
+	if (!Common::Rect(kLocationListLeft, kLocationListTop,
+		kLocationListRight, kLocationListBottom).contains(point))
 		return -1;
 	const uint rowHeight = _font.lineHeight + 2;
 	const uint relativeRow = (point.y - kLocationListTop) / rowHeight;

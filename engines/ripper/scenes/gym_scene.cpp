@@ -62,14 +62,13 @@ static const uint16 kFailureCommand = 0x7ffd;
 
 static bool isButtonPoint(uint button, const Common::Point &point) {
 	return button < ARRAYSIZE(kButtonLeft) &&
-		point.x >= kButtonLeft[button] &&
-		point.x < kButtonLeft[button] + kButtonWidth[button] &&
-		point.y >= kButtonTop[button] &&
-		point.y < kButtonTop[button] + kButtonHeight[button];
+		Common::Rect(kButtonLeft[button], kButtonTop[button],
+			kButtonLeft[button] + kButtonWidth[button],
+			kButtonTop[button] + kButtonHeight[button]).contains(point);
 }
 
 static bool isExitPoint(const Common::Point &point) {
-	return point.x >= 0 && point.x < 166 && point.y >= 50 && point.y < 350;
+	return Common::Rect(0, 50, 166, 350).contains(point);
 }
 
 } // End of anonymous namespace

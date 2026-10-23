@@ -56,11 +56,11 @@ static const uint16 kFailureCommand = 0x7ffd;
 // The first control must retain priority because it lies inside the
 // second control's full-presentation rectangle.
 static bool isFirstChoicePoint(const Common::Point &point) {
-	return point.x >= 205 && point.x < 416 && point.y >= 203 && point.y < 296;
+	return Common::Rect(205, 203, 416, 296).contains(point);
 }
 
 static bool isSecondChoicePoint(const Common::Point &point) {
-	return point.x >= 16 && point.x < 618 && point.y >= 73 && point.y < 335;
+	return Common::Rect(16, 73, 618, 335).contains(point);
 }
 
 } // End of anonymous namespace

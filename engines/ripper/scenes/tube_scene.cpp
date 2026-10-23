@@ -58,12 +58,12 @@ static const uint16 kReloadCommand = 0x7ff0;
 static const uint16 kFailureCommand = 0x7ffd;
 
 static bool isSwitchPoint(const Common::Point &point) {
-	return point.x >= kSwitchLeft && point.x < kSwitchLeft + kSwitchWidth &&
-		point.y >= kSwitchTop && point.y < kSwitchTop + kSwitchHeight;
+	return Common::Rect(kSwitchLeft, kSwitchTop,
+		kSwitchLeft + kSwitchWidth, kSwitchTop + kSwitchHeight).contains(point);
 }
 
 static bool isExitPoint(const Common::Point &point) {
-	return point.x >= 115 && point.x < 515 && point.y >= 115 && point.y < 325;
+	return Common::Rect(115, 115, 515, 325).contains(point);
 }
 
 } // End of anonymous namespace

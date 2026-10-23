@@ -225,8 +225,8 @@ void CainScene::updateCursor(const Common::Point &point) {
 	if (_chooser.contains(point)) {
 		hovered = 1;
 		cursor = kChoiceCursor;
-	} else if (talkEnabled && point.x >= kTalkLeft && point.x < kTalkRight &&
-			point.y >= kTalkTop && point.y < kTalkBottom) {
+	} else if (talkEnabled && Common::Rect(kTalkLeft, kTalkTop,
+			kTalkRight, kTalkBottom).contains(point)) {
 		hovered = 0;
 		cursor = kTalkCursor;
 	}

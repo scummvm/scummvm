@@ -232,12 +232,12 @@ void LibrarianScene::updateCursor(const Common::Point &point) {
 	if (_chooser.contains(point)) {
 		hovered = 2;
 		cursor = kChoiceCursor;
-	} else if (startEnabled && point.x >= kStartLeft && point.x < kStartRight &&
-			point.y >= kStartTop && point.y < kStartBottom) {
+	} else if (startEnabled && Common::Rect(kStartLeft, kStartTop,
+			kStartRight, kStartBottom).contains(point)) {
 		hovered = 0;
 		cursor = kStartCursor;
-	} else if (cardEnabled && point.x >= kCardLeft && point.x < kCardRight &&
-			point.y >= kCardTop && point.y < kCardBottom) {
+	} else if (cardEnabled && Common::Rect(kCardLeft, kCardTop,
+			kCardRight, kCardBottom).contains(point)) {
 		hovered = 1;
 		cursor = kCardCursor;
 	}
