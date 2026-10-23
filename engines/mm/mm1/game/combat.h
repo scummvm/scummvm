@@ -76,6 +76,7 @@ protected:
 	Mode _mode = SELECT_OPTION;
 
 	int _destMonsterNum = 0;
+	int _selectedSpellMonster = -1;
 	int _monstersDestroyedCtr = 0;
 	bool _turnUndeadUsed = false;
 	bool _divineInterventionUsed = false;
@@ -322,6 +323,9 @@ public:
 
 	void iterateMonsters1();
 	void iterateMonsters2();
+	void iterateSelectedMonster1();
+	void iterateSelectedMonster2();
+	bool setSpellTarget(int monsterNum);
 	void resetDestMonster();
 
 	// Cleric spells that need access to internal fields

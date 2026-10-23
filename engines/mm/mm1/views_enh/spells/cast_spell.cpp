@@ -102,6 +102,9 @@ bool CastSpell::msgKeypress(const KeypressMessage &msg) {
 				spellError();
 			} else if (hasCharTarget()) {
 				addView("CharacterSelect");
+			} else if (hasMonsterTarget()) {
+				close();
+				send("Combat", GameMessage("SELECT_SPELL_TARGET"));
 			} else {
 				close();
 				castSpell();
@@ -141,6 +144,9 @@ bool CastSpell::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "CHAR_SELECTED" && msg._value != -1) {
 		close();
 		castSpell(&g_globals->_party[msg._value]);
+
+	} else if (msg._name == "MONSTER_SELECTED" && msg._value != -1) {
+		castSpell();
 	}
 
 	return true;
@@ -166,6 +172,41 @@ void CastSpell::updateSelectedSpell() {
 void CastSpell::charSwitched(Character *priorChar) {
 	PartyView::charSwitched(priorChar);
 	updateSelectedSpell();
+}
+
+bool CastSpell::hasMonsterTarget() {
+	if (!isInCombat())
+		return false;
+
+	// Spells that affect a single chosen monster
+	switch (_spellIndex) {
+	// Cleric
+	case 2:		// Blind
+	case 10:	// Pain
+	case 14:	// Silence
+	case 15:	// Suggestion
+	case 20:	// Produce Flame
+	case 21:	// Produce Frost
+	case 46:	// Sun Ray
+
+	// Wizard
+	case 49:	// Energy Blast
+	case 50:	// Flame Arrow
+	case 55:	// Electric Arrow
+	case 56:	// Hypnotize
+	case 57:	// Identify Monster
+	case 62:	// Scare
+	case 71:	// Acid Arrow
+	case 72:	// Cold Beam
+	case 73:	// Feeble Mind
+	case 74:	// Freeze
+	case 81:	// Finger of Death
+	case 85:	// Disintegration
+		return true;
+
+	default:
+		return false;
+	}
 }
 
 void CastSpell::castSpell(Character *target) {

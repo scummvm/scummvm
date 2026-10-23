@@ -73,6 +73,7 @@ void Combat::clear() {
 	_timesHit = 0;
 	_isShooting = false;
 
+	_selectedSpellMonster = -1;
 	_turnUndeadUsed = false;
 	_divineInterventionUsed = false;
 	_monstersDestroyedCtr = 0;
@@ -920,8 +921,20 @@ bool Combat::monsterTouch(Common::String &line) {
 }
 
 void Combat::iterateMonsters1() {
+	_selectedSpellMonster = -1;
 	_destMonsterNum = 0;
 	_spellMonsterCount = _remainingMonsters.size();
+	iterateMonsters1Inner();
+}
+
+void Combat::iterateSelectedMonster1() {
+	if (!setSpellTarget(_selectedSpellMonster)) {
+		spellFailed();
+		return;
+	}
+
+	_spellMonsterCount = _remainingMonsters.size();
+	g_globals->_spellsState._resistanceTypeOrTargetCount = 1;
 	iterateMonsters1Inner();
 }
 
@@ -997,8 +1010,20 @@ void Combat::iterateMonsters1Inner() {
 }
 
 void Combat::iterateMonsters2() {
+	_selectedSpellMonster = -1;
 	_destMonsterNum = 0;
 	_spellMonsterCount = _remainingMonsters.size();
+	iterateMonsters2Inner();
+}
+
+void Combat::iterateSelectedMonster2() {
+	if (!setSpellTarget(_selectedSpellMonster)) {
+		spellFailed();
+		return;
+	}
+
+	_spellMonsterCount = _remainingMonsters.size();
+	g_globals->_spellsState._resistanceTypeOrTargetCount = 1;
 	iterateMonsters2Inner();
 }
 
@@ -1090,15 +1115,31 @@ void Combat::iterateMonsters2Inner() {
 }
 
 void Combat::characterDone() {
+	// Spell damage marks defeated monsters dead but does not remove them
+	removeDeadMonsters();
+	_selectedSpellMonster = -1;
 	g_globals->_combatParty[_currentChar]->_checked = true;
 	combatLoop();
 }
 
 void Combat::resetDestMonster() {
+	_selectedSpellMonster = -1;
 	_destMonsterNum = 0;
 	_monsterP = _remainingMonsters[0];
 	monsterIndexOf();
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_15;
+}
+
+bool Combat::setSpellTarget(int monsterNum) {
+	if (monsterNum < 0 ||
+			monsterNum >= (int)_remainingMonsters.size())
+		return false;
+
+	_selectedSpellMonster = monsterNum;
+	_destMonsterNum = monsterNum;
+	monsterSetPtr(monsterNum);
+	monsterIndexOf();
+	return true;
 }
 
 void Combat::spellFailed() {
@@ -1194,6 +1235,7 @@ void Combat::fireball2() {
 	ss._damage = 0;
 
 	// Fireball affects up to five monsters outside hand-to-hand range
+	_selectedSpellMonster = -1;
 	_destMonsterNum = _attackersCount;
 	_spellMonsterCount = _remainingMonsters.size();
 	ss._resistanceTypeOrTargetCount = MIN(

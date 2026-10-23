@@ -38,7 +38,7 @@ private:
 	// Combat options that have sub-option selection
 	enum SelectedOption {
 		OPTION_NONE, OPTION_DELAY, OPTION_EXCHANGE,
-		OPTION_FIGHT, OPTION_SHOOT
+		OPTION_FIGHT, OPTION_SHOOT, OPTION_SPELL_TARGET
 	};
 	SelectedOption _option = OPTION_NONE;
 
@@ -52,6 +52,7 @@ private:
 	void writeAttackOptions();
 	void writeCastOption();
 	void writeShootOption();
+	void writeSpellTargetSelect();
 
 	void clearSurface() override;
 	void clearBottom();

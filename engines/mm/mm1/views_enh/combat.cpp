@@ -108,6 +108,10 @@ bool Combat::msgGame(const GameMessage &msg) {
 			exchangeWith(charNum);
 		return true;
 
+	} else if (msg._name == "SELECT_SPELL_TARGET") {
+		setOption(OPTION_SPELL_TARGET);
+		return true;
+
 	} else if (msg._name == "DISABLE_ATTACKS") {
 		disableAttacks();
 		return true;
@@ -271,6 +275,20 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 			}
 			break;
 
+		case OPTION_SPELL_TARGET:
+			if (msg.keycode >= Common::KEYCODE_a &&
+					msg.keycode < (int)(Common::KEYCODE_a +
+					_remainingMonsters.size())) {
+				int monsterNum = msg.keycode - Common::KEYCODE_a;
+
+				if (setSpellTarget(monsterNum)) {
+					_option = OPTION_NONE;
+					send("CastSpell",
+						GameMessage("MONSTER_SELECTED", monsterNum));
+				}
+			}
+			break;
+
 		case OPTION_DELAY:
 			if (msg.keycode >= Common::KEYCODE_0 &&
 				msg.keycode <= Common::KEYCODE_9) {
@@ -404,7 +422,8 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 	}
 
 	if (_mode == SELECT_OPTION && (_option == OPTION_SHOOT ||
-			_option == OPTION_FIGHT)) {
+			_option == OPTION_FIGHT ||
+			_option == OPTION_SPELL_TARGET)) {
 		// Check for entries in the monster list being pressed
 		if (localPos.x >= MONSTERS_X && localPos.x < 310
 				&& localPos.y >= 0 && localPos.y < 100) {
@@ -441,6 +460,9 @@ void Combat::writeOptions() {
 		break;
 	case OPTION_SHOOT:
 		writeShootSelect();
+		break;
+	case OPTION_SPELL_TARGET:
+		writeSpellTargetSelect();
 		break;
 	default:
 		break;
@@ -511,6 +533,14 @@ void Combat::writeShootSelect() {
 
 	writeBottomText(0, 1, Common::String::format(
 		STRING["dialogs.combat.shoot_which"].c_str(), 'A' + _attackableCount - 1),
+		ALIGN_MIDDLE);
+}
+
+void Combat::writeSpellTargetSelect() {
+	_attackableCount = _remainingMonsters.size();
+
+	writeBottomText(0, 1, Common::String::format(
+		"Target which (A-%c)?", 'A' + _attackableCount - 1),
 		ALIGN_MIDDLE);
 }
 

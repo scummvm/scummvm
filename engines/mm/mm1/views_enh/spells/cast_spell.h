@@ -47,6 +47,7 @@ private:
 	 * Casts the selected spell
 	 */
 	void castSpell(Character *target = nullptr);
+	bool hasMonsterTarget();
 
 	/**
 	 * Handles spell errors
