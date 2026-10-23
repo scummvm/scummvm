@@ -54,7 +54,7 @@ bool Monsters::load() {
 		Common::String line = f.readLine();
 		assert(line.size() > 20 && line[0] == '"' && line[16] == '"');
 
-		mon._name = Common::String(line.c_str() + 1, line.c_str() + 15);
+		mon._name = Common::String(line.c_str() + 1, line.c_str() + 16);
 		while (mon._name.hasSuffix(" "))
 			mon._name.deleteLastChar();
 
