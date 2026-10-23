@@ -21,6 +21,7 @@
 #include "ripper/script/compiled_script.h"
 
 #include "common/debug.h"
+#include "common/endian.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 
@@ -47,7 +48,7 @@ bool CompiledScript::canRead(uint32 offset, uint32 size) const {
 }
 
 uint16 CompiledScript::readUint16(uint32 offset) const {
-	return (uint16)_data[offset] | ((uint16)_data[offset + 1] << 8);
+	return READ_LE_UINT16(_data.data() + offset);
 }
 
 int16 CompiledScript::readSint16(uint32 offset) const {
@@ -55,10 +56,7 @@ int16 CompiledScript::readSint16(uint32 offset) const {
 }
 
 uint32 CompiledScript::readUint32(uint32 offset) const {
-	return (uint32)_data[offset] |
-		((uint32)_data[offset + 1] << 8) |
-		((uint32)_data[offset + 2] << 16) |
-		((uint32)_data[offset + 3] << 24);
+	return READ_LE_UINT32(_data.data() + offset);
 }
 
 Common::String CompiledScript::getString(uint32 offset) const {
