@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/protect.h"
+#include "mm/mm1/game/combat.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -60,14 +61,45 @@ void Protect::draw() {
 	}
 
 	// The rest
+	const int slowCasts = g_globals->_combat ?
+		g_globals->_combat->getSlowCasts() : 0;
 	for (int i = 8; i < 18; ++i) {
-		if (i == 13)
-			yp += 8;
+		if (i == 13) {
+			if (slowCasts == 1) {
+				writeString(0, yp += 8,
+					"Slow - enemy Speed halved", ALIGN_MIDDLE);
+			} else if (slowCasts > 1) {
+				writeString(0, yp += 8, Common::String::format(
+					"Slow x%d - Speed halved per cast", slowCasts),
+					ALIGN_MIDDLE);
+			} else {
+				yp += 8;
+			}
+		}
 
 		if (g_globals->_activeSpells._arr[i]) {
 			Common::String line = STRING[Common::String::format(
 				"dialogs.protect.%d", i + 1)];
-			if (i == 17) {
+			if (i == 8) {
+				line += Common::String::format(" +%d AC",
+					g_globals->_activeSpells._arr[i]);
+			} else if (i == 9) {
+				line += " - prevents falls";
+			} else if (i == 10) {
+				line += " - allows water travel";
+			} else if (i == 11) {
+				line += " - prevents surprise";
+			} else if (i == 12) {
+				line += " 100%";
+			} else if (i == 13) {
+				line += " +1 hit/damage";
+			} else if (i == 14) {
+				line += " +3 AC vs attacks";
+			} else if (i == 15) {
+				line += " -8 missile damage";
+			} else if (i == 16) {
+				line += " -50% damage";
+			} else if (i == 17) {
 				line += Common::String::format("%d %s",
 					g_globals->_activeSpells._arr[17],
 					STRING["dialogs.protect.to_attacks"].c_str()
@@ -75,6 +107,51 @@ void Protect::draw() {
 			}
 
 			writeString(0, yp += 8, line, ALIGN_MIDDLE);
+		}
+	}
+
+	const int weakenCasts = g_globals->_combat ?
+		g_globals->_combat->getWeakenCasts() : 0;
+	if (weakenCasts == 1) {
+		writeString(0, yp += 8, "Weaken - enemy AC -1", ALIGN_MIDDLE);
+	} else if (weakenCasts > 1) {
+		writeString(0, yp += 8, Common::String::format(
+			"Weaken x%d - enemy AC -%d", weakenCasts, weakenCasts),
+			ALIGN_MIDDLE);
+	}
+
+	// Character-specific combat boosts. Multiple boosts on one character are
+	// combined into one compact row to preserve room in the Protect window.
+	if (g_globals->_combat) {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Common::String effects;
+			const int heroism = g_globals->_combat->getHeroismBonus(i);
+			const int power = g_globals->_combat->getPowerBonus(i);
+			const int quickness = g_globals->_combat->getQuicknessBonus(i);
+
+			if (heroism) {
+				effects = Common::String::format(
+					g_globals->_combat->isSuperHeroism(i) ?
+					"Super Heroism +%d Level" : "Heroism +%d Level",
+					heroism);
+			}
+			if (power >= 0) {
+				if (!effects.empty())
+					effects += ", ";
+				effects += Common::String::format("Power +%d Might", power);
+			}
+			if (quickness >= 0) {
+				if (!effects.empty())
+					effects += ", ";
+				effects += Common::String::format(
+					"Quickness +%d Speed", quickness);
+			}
+
+			if (!effects.empty()) {
+				writeString(0, yp += 8, Common::String::format("%s: %s",
+					g_globals->_party[i]._name, effects.c_str()),
+					ALIGN_MIDDLE);
+			}
 		}
 	}
 }

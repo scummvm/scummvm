@@ -77,6 +77,12 @@ void Combat::clear() {
 	_turnUndeadUsed = false;
 	_divineInterventionUsed = false;
 	_monstersDestroyedCtr = 0;
+	_slowCasts = 0;
+	_weakenCasts = 0;
+	Common::fill(&_heroismBonus[0], &_heroismBonus[MAX_PARTY_SIZE], 0);
+	Common::fill(&_heroismIsSuper[0], &_heroismIsSuper[MAX_PARTY_SIZE], false);
+	Common::fill(&_powerBonus[0], &_powerBonus[MAX_PARTY_SIZE], -1);
+	Common::fill(&_quicknessBonus[0], &_quicknessBonus[MAX_PARTY_SIZE], -1);
 
 	// TODO: clear everything
 
@@ -1384,15 +1390,67 @@ void Combat::makeRoom() {
 		g_globals->_combatParty[i]->_canAttack = true;
 }
 
+int Combat::getHeroismBonus(uint index) const {
+	return index < MAX_PARTY_SIZE ? _heroismBonus[index] : 0;
+}
+
+bool Combat::isSuperHeroism(uint index) const {
+	return index < MAX_PARTY_SIZE && _heroismIsSuper[index];
+}
+
+int Combat::getPowerBonus(uint index) const {
+	return index < MAX_PARTY_SIZE ? _powerBonus[index] : -1;
+}
+
+int Combat::getQuicknessBonus(uint index) const {
+	return index < MAX_PARTY_SIZE ? _quicknessBonus[index] : -1;
+}
+
+void Combat::recordHeroism(Character *character, int bonus, bool isSuper) {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (&g_globals->_party[i] == character) {
+			_heroismBonus[i] = bonus;
+			_heroismIsSuper[i] = isSuper;
+			return;
+		}
+	}
+}
+
+void Combat::recordPower(Character *character, int bonus) {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (&g_globals->_party[i] == character) {
+			if (_powerBonus[i] < 0)
+				_powerBonus[i] = 0;
+			_powerBonus[i] += bonus;
+			return;
+		}
+	}
+}
+
+void Combat::recordQuickness(Character *character, int bonus) {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (&g_globals->_party[i] == character) {
+			if (_quicknessBonus[i] < 0)
+				_quicknessBonus[i] = 0;
+			_quicknessBonus[i] += bonus;
+			return;
+		}
+	}
+}
+
 void Combat::slow() {
 	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		monsterSetPtr(i);
 		_monsterP->_speed = MAX(_monsterP->_speed / 2, 1);
 	}
+
+	// Slow can be cast repeatedly; record this only for the current battle
+	++_slowCasts;
 }
 
 void Combat::weaken() {
 	SpellsState &ss = g_globals->_spellsState;
+	++_weakenCasts;
 
 	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		monsterSetPtr(i);
@@ -1662,6 +1720,13 @@ void Combat::endCombat() {
 }
 
 void Combat::combatDone() {
+	_slowCasts = 0;
+	_weakenCasts = 0;
+	Common::fill(&_heroismBonus[0], &_heroismBonus[MAX_PARTY_SIZE], 0);
+	Common::fill(&_heroismIsSuper[0], &_heroismIsSuper[MAX_PARTY_SIZE], false);
+	Common::fill(&_powerBonus[0], &_powerBonus[MAX_PARTY_SIZE], -1);
+	Common::fill(&_quicknessBonus[0], &_quicknessBonus[MAX_PARTY_SIZE], -1);
+
 	// Reset several active spells
 	g_globals->_activeSpells._s.bless = 0;
 	g_globals->_activeSpells._s.invisbility = 0;

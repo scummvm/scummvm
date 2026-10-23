@@ -224,8 +224,11 @@ SpellResult SpellsParty::cleric22_heroism() {
 		_destChar->_level._current != _destChar->_level._base)
 		return SR_FAILED;
 
+	const int priorLevel = _destChar->_level._current;
 	_destChar->_level._current = MIN(
 		(int)_destChar->_level._current + 2, 255);
+	g_globals->_combat->recordHeroism(_destChar,
+		_destChar->_level._current - priorLevel, false);
 	restoreHp(6);
 	return SR_SUCCESS_DONE;
 }
@@ -391,8 +394,11 @@ SpellResult SpellsParty::cleric47_superHeroism() {
 	if (_destChar->_level._current != _destChar->_level._base)
 		return SR_FAILED;
 
+	const int priorLevel = _destChar->_level._current;
 	_destChar->_level._current = MIN(
 		(int)_destChar->_level._current + 3, 255);
+	g_globals->_combat->recordHeroism(_destChar,
+		_destChar->_level._current - priorLevel, true);
 	restoreHp(10);
 	return SR_SUCCESS_DONE;
 }
@@ -741,12 +747,16 @@ SpellResult SpellsParty::wizard25_levitate() {
 }
 
 SpellResult SpellsParty::wizard26_power() {
-	_destChar->_might._current += getRandomNumber(4);
+	const int bonus = getRandomNumber(4);
+	_destChar->_might._current += bonus;
+	g_globals->_combat->recordPower(_destChar, bonus);
 	return SR_SUCCESS_DONE;
 }
 
 SpellResult SpellsParty::wizard27_quickness() {
-	_destChar->_speed._current += getRandomNumber(4);
+	const int bonus = getRandomNumber(4);
+	_destChar->_speed._current += bonus;
+	g_globals->_combat->recordQuickness(_destChar, bonus);
 	return SR_SUCCESS_DONE;
 }
 

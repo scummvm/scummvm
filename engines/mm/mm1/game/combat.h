@@ -81,6 +81,14 @@ protected:
 	bool _turnUndeadUsed = false;
 	bool _divineInterventionUsed = false;
 	size_t _spellMonsterCount = 0;
+	// Transient combat-only display state; never serialized
+	int _slowCasts = 0;
+	int _weakenCasts = 0;
+	int _heroismBonus[MAX_PARTY_SIZE] = {};
+	bool _heroismIsSuper[MAX_PARTY_SIZE] = {};
+	// -1 means the spell has not been cast; a real roll may be zero
+	int _powerBonus[MAX_PARTY_SIZE] = {};
+	int _quicknessBonus[MAX_PARTY_SIZE] = {};
 
 	int _monsterAttackStyle = -1;
 
@@ -334,6 +342,16 @@ public:
 	void paralyze();
 	bool divineIntervention();
 	void holyWord();
+
+	int getSlowCasts() const { return _slowCasts; }
+	int getWeakenCasts() const { return _weakenCasts; }
+	int getHeroismBonus(uint index) const;
+	bool isSuperHeroism(uint index) const;
+	int getPowerBonus(uint index) const;
+	int getQuicknessBonus(uint index) const;
+	void recordHeroism(Character *character, int bonus, bool isSuper);
+	void recordPower(Character *character, int bonus);
+	void recordQuickness(Character *character, int bonus);
 
 	// Wizard spells that need access to internal fields
 	void identifyMonster();
