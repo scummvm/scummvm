@@ -21,7 +21,6 @@
 #include "ripper/puzzles/table_gate.h"
 
 #include "common/debug.h"
-#include "common/file.h"
 #include "common/formats/ini-file.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -165,9 +164,8 @@ void TableGatePuzzle::restoreBackground() const {
 bool TableGatePuzzle::loadConfiguration() {
 	const uint puzzleLevel = CLIP<uint>(_engine->getSettings()->getPuzzleLevel(), 1, 3);
 	const Common::String filename = Common::String::format("tblini%u.ini", puzzleLevel);
-	Common::File file;
 	Common::INIFile ini;
-	if (!file.open(Common::Path(filename)) || !ini.loadFromStream(file)) {
+	if (!ini.loadFromFile(Common::Path(filename))) {
 		warning("Ripper: could not load table gate puzzle configuration '%s'", filename.c_str());
 		return false;
 	}

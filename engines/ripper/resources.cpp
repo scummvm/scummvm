@@ -678,9 +678,8 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 	_gameTextLoaded = false;
 	_searchDirectories.clear();
 
-	Common::File iniFile;
 	Common::INIFile ini;
-	if (!iniFile.open("ripper.ini") || !ini.loadFromStream(iniFile)) {
+	if (!ini.loadFromFile("ripper.ini")) {
 		warning("Ripper: could not load RIPPER.INI");
 		return false;
 	}
@@ -703,7 +702,6 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 		soundLibrary.c_str());
 	Common::String puzzleDirectory;
 	ini.getKey("puzzle", "paths", puzzleDirectory);
-	puzzleDirectory.trim();
 	static const char *const searchDirectoryKeys[] = {
 		"scene",
 		"puzzle",
@@ -713,7 +711,6 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 	for (uint i = 0; i < ARRAYSIZE(searchDirectoryKeys); ++i) {
 		Common::String directory;
 		if (ini.getKey(searchDirectoryKeys[i], "paths", directory)) {
-			directory.trim();
 			if (!directory.empty())
 				_searchDirectories.push_back(directory);
 		}

@@ -21,7 +21,6 @@
 #include "ripper/puzzles/crystal.h"
 
 #include "common/debug.h"
-#include "common/file.h"
 #include "common/formats/ini-file.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
@@ -274,11 +273,10 @@ bool CrystalPuzzle::isSolved() const {
 }
 
 uint CrystalPuzzle::readPuzzleLevel() const {
-	Common::File iniFile;
 	Common::INIFile ini;
 	Common::String value;
 	uint puzzleLevel = kDefaultPuzzleLevel;
-	if (iniFile.open("ripper.ini") && ini.loadFromStream(iniFile) &&
+	if (ini.loadFromFile("ripper.ini") &&
 			ini.getKey("puzzle level", "game", value)) {
 		const uint64 configuredLevel = value.asUint64();
 		if (configuredLevel >= 1 && configuredLevel <= 3)
