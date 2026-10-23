@@ -572,7 +572,7 @@ bool Combat::monsterChanges() {
 }
 
 void Combat::proc2() {
-	int threshold = getMonsterIndex() * 8 + 20;
+	int threshold = MAX((int)_monsterP->_level - 1, 0) * 8 + 20;
 	int val = getRandomNumber(100);
 
 	_val9 = (val != 100 && val <= threshold) ? 1 : 0;
