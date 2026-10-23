@@ -85,6 +85,10 @@ bool Combat::msgGame(const GameMessage &msg) {
 		// Clear combat data
 		clear();
 
+		// The combat loop may request a partial redraw before this view
+		// receives focus, so ensure the first draw is a complete one
+		_firstDraw = true;
+
 		loadMonsters();
 		setupCanAttacks();
 		setupHandicap();
