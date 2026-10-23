@@ -197,7 +197,7 @@ enum Clues {
 	kClueEarlyQInterview                   =  92, // Restored Content: Audio Recording. Original: (Intangible) - Identity Reveal for Dektora
 	kClueStrangeScale1                     =  93, // Object
 	kClueDektoraInterview1                 =  94, // Audio Recording
-	kClueSuspectDektora                    =  95, // Restored Content: Audio Recording. Original: (Intangible, Unobtained)
+	kClueSuspectDektora                    =  95, // (Intangible) - Acquired in Restored Content. Original: Unobtained - Not checked in KIA - added to many actors DBs
 	kClueDektoraInterview2                 =  96, // Audio Recording - About belt and dragonflies
 	kClueDektoraInterview3                 =  97, // Audio Recording - About vase (flowers)
 	kClueDektorasCard                      =  98, // Object

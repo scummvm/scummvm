@@ -467,12 +467,6 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorEarlyQ, 140);
 		KIA_Play_Actor_Dialogue(kActorEarlyQ, 150);
 		break;
-	case kClueSuspectDektora: // restored content
-		// "Oh, come on, McCoy. Have you seen my girls? Besides, I heard him talking to Dektora.
-		// They got friends who are gonna help them get Off-World. I'm telling you, they got a whole
-		// little Replicant love fest going on."
-		KIA_Play_Actor_Dialogue(kActorEarlyQ, 250);
-		break;
 	case kClueStrangeScale1:
 		KIA_Play_Slice_Model(kModelAnimationStrangeScale);
 		break;
