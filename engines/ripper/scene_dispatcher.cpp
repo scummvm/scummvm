@@ -24,9 +24,7 @@
 #include "common/system.h"
 
 #include "ripper/briefing.h"
-#include "ripper/combat/atkini.h"
-#include "ripper/combat/mechini.h"
-#include "ripper/combat/ratini.h"
+#include "ripper/combat/combat.h"
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
 #include "ripper/detection.h"
@@ -212,8 +210,8 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		return scene.run(argument) != Ebz2sScene::kLoadFailed;
 	}
 	if (action == kSceneActionMechiniCombat) {
-		MechiniEncounter encounter(engine);
-		return encounter.run(argument) != MechiniEncounter::kLoadFailed;
+		CombatEncounter encounter(engine, kMechiniDefinition);
+		return encounter.run(argument) != CombatEncounter::kLoadFailed;
 	}
 	if (action == kSceneActionKeyGroupPuzzle ||
 			action == kSceneActionKeyGroupPuzzleAlias) {
@@ -229,12 +227,12 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		return puzzle.run(argument) != KiSkullMazePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionRatiniCombat) {
-		RatiniEncounter encounter(engine);
-		return encounter.run(argument) != RatiniEncounter::kLoadFailed;
+		CombatEncounter encounter(engine, kRatiniDefinition);
+		return encounter.run(argument) != CombatEncounter::kLoadFailed;
 	}
 	if (action == kSceneActionAtkiniCombat) {
-		AtkiniEncounter encounter(engine);
-		return encounter.run(argument) != AtkiniEncounter::kLoadFailed;
+		CombatEncounter encounter(engine, kAtkiniDefinition);
+		return encounter.run(argument) != CombatEncounter::kLoadFailed;
 	}
 	if (action == kSceneActionWebGridShiftPuzzle) {
 		WebGridShiftPuzzle puzzle(engine);

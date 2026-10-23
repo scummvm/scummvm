@@ -44,6 +44,10 @@ struct CombatEncounterDefinition {
 	bool atkiniSceneRouting;
 };
 
+extern const CombatEncounterDefinition kMechiniDefinition;
+extern const CombatEncounterDefinition kRatiniDefinition;
+extern const CombatEncounterDefinition kAtkiniDefinition;
+
 class CombatEncounter : public Scene, public MediaSequenceCallback {
 public:
 	explicit CombatEncounter(RipperEngine *engine,

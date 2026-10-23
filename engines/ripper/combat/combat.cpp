@@ -28,6 +28,51 @@
 
 namespace Ripper {
 
+const CombatEncounterDefinition kMechiniDefinition = {
+	"mechini",
+	"mechini%u.ini",
+	nullptr,
+	"mechwav0.wav",
+	{ nullptr, nullptr },
+	"mechwav1.wav",
+	"mechwav3.wav",
+	"mechwav2.wav",
+	{ "mechexp0.pl", "mechexp1.pl" },
+	"crshr",
+	0x1a5,
+	false
+};
+
+const CombatEncounterDefinition kRatiniDefinition = {
+	"ratini",
+	"ratini%u.ini",
+	"ratini1.ini",
+	"",
+	{ "loop3.wav", "loop4.wav" },
+	"",
+	"mechwav3.wav",
+	"mechwav2.wav",
+	{ "ratexp0.pl", "ratexp1.pl" },
+	"ratcr",
+	0x1ba,
+	false
+};
+
+const CombatEncounterDefinition kAtkiniDefinition = {
+	"atkini",
+	"atkini%u.ini",
+	"atkini1.ini",
+	"weap2c1.wav",
+	{ nullptr, nullptr },
+	"mechwav1.wav",
+	"mechwav3.wav",
+	"mechwav2.wav",
+	{ "atkexp0.pl", "atkexp1.pl" },
+	"atkcr",
+	0x1ba,
+	true
+};
+
 namespace {
 
 static const uint kLogicalWidth = 320;

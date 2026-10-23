@@ -2,11 +2,8 @@ MODULE := engines/ripper
 
 MODULE_OBJS := \
 	briefing.o \
-	combat/atkini.o \
 	combat/combat.o \
 	combat/resources.o \
-	combat/mechini.o \
-	combat/ratini.o \
 	console.o \
 	controls.o \
 	cursor.o \
