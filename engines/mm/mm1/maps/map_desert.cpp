@@ -96,7 +96,10 @@ void MapDesert::desert() {
 
 		case 199:
 		case 200:
-			g_globals->_encounters.execute();
+			msg._callback = []() {
+				g_globals->_encounters.execute();
+			};
+			msg._delaySeconds = 3;
 			break;
 
 		default:
