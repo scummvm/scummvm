@@ -29,7 +29,6 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/surface.h"
-#include "video/smk_decoder.h"
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
@@ -37,6 +36,7 @@
 #include "ripper/input.h"
 #include "ripper/ini.h"
 #include "ripper/media.h"
+#include "ripper/media/smacker_decoder.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
@@ -321,22 +321,7 @@ bool KiSkullMazePuzzle::loadAnimation(const Common::String &path,
 		return false;
 	}
 
-	animation.frames.clear();
-	animation.frames.reserve(decoder.getFrameCount());
-	while (!decoder.endOfVideo()) {
-		const Graphics::Surface *surface = decoder.decodeNextFrame();
-		if (!surface)
-			break;
-		BitmapAssetFrame frame;
-		frame.width = surface->w;
-		frame.height = surface->h;
-		frame.pixels.resize((uint32)frame.width * frame.height);
-		for (uint y = 0; y < frame.height; ++y) {
-			memcpy(frame.pixels.data() + y * frame.width,
-				surface->getBasePtr(0, y), frame.width);
-		}
-		animation.frames.push_back(Common::move(frame));
-	}
+	cacheSmackerFrames(decoder, animation.frames);
 	if (animation.frames.empty())
 		return false;
 	animation.width = animation.frames[0].width;

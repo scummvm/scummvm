@@ -42,16 +42,8 @@ public:
 	Result run(uint completionFlag) override;
 
 private:
-	struct AnimationFrame {
-		uint16 width;
-		uint16 height;
-		Common::Array<byte> pixels;
-
-		AnimationFrame() : width(0), height(0) {}
-	};
-
 	struct FlipAnimation {
-		Common::Array<AnimationFrame> frames;
+		Common::Array<BitmapAssetFrame> frames;
 		bool loaded;
 
 		FlipAnimation() : loaded(false) {}
@@ -111,8 +103,6 @@ private:
 	bool loadConfiguration();
 	bool loadAssets();
 	bool loadFlipAnimation(uint state);
-	void drawAnimationFrame(byte *screen, uint pitch,
-		const AnimationFrame &frame, int x, int y) const;
 	void drawSlot(byte *screen, uint pitch, const Slot &slot,
 		const Common::Point &position) const;
 	void renderBoard() const;

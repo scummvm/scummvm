@@ -21,10 +21,16 @@
 #ifndef RIPPER_MEDIA_SMACKER_DECODER_H
 #define RIPPER_MEDIA_SMACKER_DECODER_H
 
+#include "common/array.h"
 #include "common/str.h"
 #include "video/smk_decoder.h"
 
 namespace Ripper {
+
+struct BitmapAssetFrame;
+
+void cacheSmackerFrames(Video::SmackerDecoder &decoder,
+	Common::Array<BitmapAssetFrame> &frames);
 
 class RipperSmackerDecoder : public Video::SmackerDecoder {
 public:

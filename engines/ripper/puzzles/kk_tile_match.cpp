@@ -26,13 +26,13 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
-#include "video/smk_decoder.h"
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
+#include "ripper/media/smacker_decoder.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
@@ -401,21 +401,7 @@ bool KkTileMatchPuzzle::loadFlipAnimation(uint state) {
 		return false;
 	}
 
-	animation.frames.reserve(decoder.getFrameCount());
-	while (!decoder.endOfVideo()) {
-		const Graphics::Surface *surface = decoder.decodeNextFrame();
-		if (!surface)
-			break;
-		AnimationFrame frame;
-		frame.width = surface->w;
-		frame.height = surface->h;
-		frame.pixels.resize((uint32)frame.width * frame.height);
-		for (uint y = 0; y < frame.height; ++y) {
-			memcpy(frame.pixels.data() + y * frame.width,
-				surface->getBasePtr(0, y), frame.width);
-		}
-		animation.frames.push_back(Common::move(frame));
-	}
+	cacheSmackerFrames(decoder, animation.frames);
 	if (animation.frames.size() < 2) {
 		warning("Ripper: KK tile-match animation '%s' has only %u frames",
 			name.c_str(), animation.frames.size());
@@ -432,23 +418,6 @@ bool KkTileMatchPuzzle::loadFlipAnimation(uint state) {
 	return true;
 }
 
-void KkTileMatchPuzzle::drawAnimationFrame(byte *screen, uint pitch,
-		const AnimationFrame &frame, int x, int y) const {
-	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
-		const int destinationY = y + sourceY;
-		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
-			continue;
-		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
-			const int destinationX = x + sourceX;
-			if (destinationX < 0 || destinationX >= kRipperScreenWidth)
-				continue;
-			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
-			if (pixel != kAnimationTransparentColor)
-				screen[destinationY * pitch + destinationX] = pixel;
-		}
-	}
-}
-
 void KkTileMatchPuzzle::drawSlot(byte *screen, uint pitch, const Slot &slot,
 		const Common::Point &position) const {
 	if (!slot.active) {
@@ -461,8 +430,10 @@ void KkTileMatchPuzzle::drawSlot(byte *screen, uint pitch, const Slot &slot,
 		return;
 	const FlipAnimation &animation = _flipAnimations[slot.state - 1];
 	if (slot.frame < animation.frames.size()) {
-		drawAnimationFrame(screen, pitch, animation.frames[slot.frame],
-			position.x, position.y);
+		IndexedBitmapRenderer::drawBitmap(screen, pitch, animation.frames[slot.frame],
+			position.x, position.y,
+			Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight),
+			kAnimationTransparentColor);
 	}
 }
 

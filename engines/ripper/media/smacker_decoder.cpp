@@ -26,8 +26,29 @@
 #include "graphics/surface.h"
 
 #include "ripper/detection.h"
+#include "ripper/resources.h"
 
 namespace Ripper {
+
+void cacheSmackerFrames(Video::SmackerDecoder &decoder,
+		Common::Array<BitmapAssetFrame> &frames) {
+	frames.clear();
+	frames.reserve(decoder.getFrameCount());
+	while (!decoder.endOfVideo()) {
+		const Graphics::Surface *surface = decoder.decodeNextFrame();
+		if (!surface)
+			break;
+		BitmapAssetFrame frame;
+		frame.width = surface->w;
+		frame.height = surface->h;
+		frame.pixels.resize((uint32)frame.width * frame.height);
+		for (uint y = 0; y < frame.height; ++y) {
+			memcpy(frame.pixels.data() + y * frame.width,
+				surface->getBasePtr(0, y), frame.width);
+		}
+		frames.push_back(Common::move(frame));
+	}
+}
 
 class RipperSmackerDecoder::RipperSmackerVideoTrack : public SmackerVideoTrack {
 public:
