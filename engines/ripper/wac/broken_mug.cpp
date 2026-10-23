@@ -190,9 +190,9 @@ void BrokenMugPuzzle::render() {
 	for (int y = 0; y < screen->h; ++y)
 		memcpy(screen->getBasePtr(0, y),
 			_backgroundDisplay.pixels().data() + y * screen->w, screen->w);
-	for (int y = kViewportTop; y < kViewportBottom; ++y)
-		memset(screen->getBasePtr(kViewportLeft, y), kViewportFillColor,
-			kViewportRight - kViewportLeft);
+	screen->fillRect(Common::Rect(kViewportLeft, kViewportTop,
+		kViewportRight, kViewportBottom),
+		kViewportFillColor);
 	for (int order = (int)_frontToBack.size() - 1; order >= 0; --order) {
 		const Piece &piece = _pieces[_frontToBack[order]];
 		drawPiece((byte *)screen->getPixels(), screen->pitch, piece, currentFrame(piece));
@@ -304,9 +304,9 @@ bool BrokenMugPuzzle::playCompletionMedia(RipperEngine *engine) {
 			g_system->unlockScreen();
 		return false;
 	}
-	for (int y = kViewportTop; y < kViewportBottom; ++y)
-		memset(screen->getBasePtr(kViewportLeft, y), kViewportFillColor,
-			kViewportRight - kViewportLeft);
+	screen->fillRect(Common::Rect(kViewportLeft, kViewportTop,
+		kViewportRight, kViewportBottom),
+		kViewportFillColor);
 	g_system->unlockScreen();
 	presentScreen();
 

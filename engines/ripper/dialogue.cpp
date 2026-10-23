@@ -104,10 +104,9 @@ void DialogueChooser::draw(bool captureBacking) {
 			const bool hasChoice = _chooser.resolveVisibleRow(visibleRow, choiceIndex);
 			const int row = _chooserBounds.top + visibleRow * kChoiceRowHeight;
 			const bool selected = hasChoice && choiceIndex == _chooser.selectedIndex();
-			for (int y = row; y < row + kChoiceRowHeight; ++y)
-				memset(screen->getBasePtr(_chooserBounds.left, y),
-					selected ? _selectedBackgroundColor : _normalBackgroundColor,
-					_chooserBounds.width());
+			screen->fillRect(Common::Rect(_chooserBounds.left, row,
+				_chooserBounds.right, row + kChoiceRowHeight),
+				selected ? _selectedBackgroundColor : _normalBackgroundColor);
 			if (!hasChoice)
 				continue;
 			int x = _chooserBounds.left + kChoiceHorizontalPadding;
@@ -466,10 +465,8 @@ void DialogueChooser::rebuildPresentationBands(const char *reason) const {
 
 	// Controlled AVI restores only the 640x300 scene page. Clear the uncovered
 	// indexed bands before the next palette; SMK keeps its complete final frame.
-	for (int y = 0; y < kSceneTop; ++y)
-		memset(screen->getBasePtr(0, y), 0, 640);
-	for (int y = kSceneBottom; y < 400; ++y)
-		memset(screen->getBasePtr(0, y), 0, 640);
+	screen->fillRect(Common::Rect(0, 0, 640, kSceneTop), 0);
+	screen->fillRect(Common::Rect(0, kSceneBottom, 640, 400), 0);
 	g_system->unlockScreen();
 	debugC(2, kDebugDialogue,
 		"Ripper: rebuilt dialogue presentation bands reason=%s top=0..%d bottom=%d..399",

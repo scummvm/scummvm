@@ -269,10 +269,10 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 	IndexedBitmapRenderer::drawNineSlice(pixels, screen->pitch, _skin,
 		_menuBounds, screenBounds);
 	// Keep the tiled MNU heading visible behind the title.
-	for (int y = _menuBounds.top + kHeadingHeight;
-			y < _menuBounds.bottom - kBottomPadding; ++y)
-		memset(screen->getBasePtr(_menuBounds.left + kLeftPadding, y),
-			kContentColor, _menuBounds.width() - kLeftPadding - kRightPadding);
+	screen->fillRect(Common::Rect(_menuBounds.left + kLeftPadding,
+		_menuBounds.top + kHeadingHeight, _menuBounds.right - kRightPadding,
+		_menuBounds.bottom - kBottomPadding),
+		kContentColor);
 	const Common::String &title = _gameText[2];
 	drawText(pixels, screen->pitch,
 		_menuBounds.left + (_menuBounds.width() - measureText(title)) / 2,

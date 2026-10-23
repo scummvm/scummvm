@@ -308,24 +308,21 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	} else if (sceneEntryStyle) {
 		// v1.05 media text has no MENUB descriptors. Its client uses palette
 		// index zero and resolves the glyph color to nearest white per branch.
-		for (int y = bounds.top; y < bounds.bottom; ++y)
-			memset(screen->getBasePtr(bounds.left, y),
-				kSceneEntryBackgroundColor, bounds.width());
+		screen->fillRect(bounds, kSceneEntryBackgroundColor);
 	} else if (wacStyle) {
 		// WACMNU tiles retain the textured heading and frame over the black client.
-		for (int y = bounds.top; y < bounds.bottom; ++y)
-			memset(screen->getBasePtr(bounds.left, y), kWacModalBackgroundColor,
-				bounds.width());
+		screen->fillRect(bounds, kWacModalBackgroundColor);
 		drawFrame(pixels, screen->pitch, bounds, style);
 	} else {
 		drawFrame(pixels, screen->pitch, bounds, style);
-		for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
-			memset(screen->getBasePtr(bounds.left + leftPadding, y),
-				kModalBackgroundColor, bounds.width() - leftPadding - rightPadding);
+		if (bounds.height() > 4)
+			screen->fillRect(Common::Rect(bounds.left + leftPadding, bounds.top + 2,
+				bounds.right - rightPadding, bounds.bottom - 2),
+				kModalBackgroundColor);
 		if (!title.empty()) {
-			for (int y = bounds.top + 2; y < bounds.top + headingHeight; ++y)
-				memset(screen->getBasePtr(bounds.left + leftPadding, y),
-					kModalHeadingColor, bounds.width() - leftPadding - rightPadding);
+			screen->fillRect(Common::Rect(bounds.left + leftPadding, bounds.top + 2,
+				bounds.right - rightPadding, bounds.top + headingHeight),
+				kModalHeadingColor);
 		}
 	}
 	if (!title.empty()) {
@@ -448,9 +445,7 @@ bool ModalDialogManager::drawRetainedPlainTextButton(uint titleResourceId,
 			g_system->unlockScreen();
 		return false;
 	}
-	for (int y = bounds.top; y < bounds.bottom; ++y)
-		memset(screen->getBasePtr(bounds.left, y), backgroundColor,
-			bounds.width());
+	screen->fillRect(bounds, backgroundColor);
 	drawText((byte *)screen->getPixels(), screen->pitch,
 		bounds.left + (bounds.width() - measureText(title)) / 2,
 		bounds.top + (bounds.height() - _font.lineHeight) / 2,
@@ -567,9 +562,10 @@ bool ModalDialogManager::drawRetainedTextPanelLine(
 		const byte backgroundColor = wacStyle ?
 			kWacModalBackgroundColor : (sceneEntryStyle ?
 				kSceneEntryBackgroundColor : kModalBackgroundColor);
-		for (int y = rowTop; y < rowBottom; ++y)
-			memset(screen->getBasePtr(clientLeft, y),
-				backgroundColor, clientWidth);
+		if (rowTop < rowBottom)
+			screen->fillRect(Common::Rect(clientLeft, rowTop,
+				clientLeft + clientWidth, rowBottom),
+				backgroundColor);
 	}
 	drawText((byte *)screen->getPixels(), screen->pitch,
 		clientLeft + horizontalInset,

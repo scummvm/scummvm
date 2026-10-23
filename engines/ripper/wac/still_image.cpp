@@ -114,9 +114,9 @@ void WacStillImageViewer::draw() const {
 		return;
 	}
 
-	for (int y = kWacMediaTop; y < kWacMediaTop + kWacMediaHeight; ++y)
-		memset(screen->getBasePtr(kWacMediaLeft, y), kWacDatabaseBackground,
-			kWacMediaWidth);
+	screen->fillRect(Common::Rect(kWacMediaLeft, kWacMediaTop,
+		kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight),
+		kWacDatabaseBackground);
 	const uint copyWidth = MIN<uint>(_image.width, kWacMediaWidth);
 	const uint copyHeight = MIN<uint>(
 		_image.height - _scrollOffset, kWacMediaHeight);

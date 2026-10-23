@@ -213,8 +213,7 @@ void WebGridShiftPuzzle::renderShift(uint targetCell, uint progress) const {
 		clip = Common::Rect(kColumnX[_currentCol], kRowY[first],
 			kColumnX[_currentCol] + kCellWidth, kRowY[last] + kCellHeight);
 	}
-	for (int y = clip.top; y < clip.bottom; ++y)
-		memset(screen->getBasePtr(clip.left, y), 0, clip.width());
+	screen->fillRect(clip, 0);
 
 	if (horizontal) {
 		for (uint column = first; column <= last; ++column) {

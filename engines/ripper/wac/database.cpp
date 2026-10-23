@@ -247,9 +247,7 @@ void WacDatabaseSession::drawDatabase() const {
 		return;
 	}
 
-	for (int y = bounds.top; y < bounds.bottom; ++y)
-		memset(screen->getBasePtr(bounds.left, y), kWacDatabaseBackground,
-			bounds.width());
+	screen->fillRect(bounds, kWacDatabaseBackground);
 	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
 	// WACMNU0..8 are the row-major top, middle, and bottom frame tiles.
 	if (_wac->_databaseSkin.size() >= kWacDatabaseFrameTileCount) {
@@ -315,9 +313,9 @@ void WacDatabaseSession::clearDatabaseMediaViewport() {
 			g_system->unlockScreen();
 		return;
 	}
-	for (int y = kWacMediaTop; y < kWacMediaTop + kWacMediaHeight; ++y)
-		memset(screen->getBasePtr(kWacMediaLeft, y), kWacDatabaseBackground,
-			kWacMediaWidth);
+	screen->fillRect(Common::Rect(kWacMediaLeft, kWacMediaTop,
+		kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight),
+		kWacDatabaseBackground);
 	g_system->unlockScreen();
 }
 

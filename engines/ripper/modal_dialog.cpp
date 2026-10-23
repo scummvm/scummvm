@@ -173,15 +173,14 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	const byte textColor = wacStyle ? kWacModalTextColor :
 		(sceneEntryStyle ? _sceneEntryTextColor : kModalTextColor);
 	if (wacStyle) {
-		for (int y = bounds.top; y < bounds.bottom; ++y)
-			memset(screen->getBasePtr(bounds.left, y), backgroundColor,
-				bounds.width());
+		screen->fillRect(bounds, backgroundColor);
 		drawFrame(pixels, screen->pitch, bounds, style);
 	} else if (!sceneEntryStyle) {
 		drawFrame(pixels, screen->pitch, bounds, style);
-		for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
-			memset(screen->getBasePtr(bounds.left + kTextEntryPadding, y),
-				backgroundColor, bounds.width() - kTextEntryPadding * 2);
+		if (bounds.height() > 4)
+			screen->fillRect(Common::Rect(bounds.left + kTextEntryPadding, bounds.top + 2,
+				bounds.right - kTextEntryPadding, bounds.bottom - 2),
+				backgroundColor);
 	}
 
 	int textTop;
@@ -245,15 +244,13 @@ void ModalDialogManager::drawBinaryPrompt(const Common::String &prompt,
 
 	byte *pixels = (byte *)screen->getPixels();
 	drawFrame(pixels, screen->pitch, bounds, kMenubPresentation);
-	for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
-		memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
-			kModalBackgroundColor,
-			bounds.width() - kModalLeftPadding - kModalRightPadding);
-	for (int y = bounds.top + 2;
-			y < bounds.top + kModalHeadingTopPadding; ++y)
-		memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
-			kModalHeadingColor,
-			bounds.width() - kModalLeftPadding - kModalRightPadding);
+	screen->fillRect(Common::Rect(bounds.left + kModalLeftPadding, bounds.top + 2,
+		bounds.right - kModalRightPadding, bounds.bottom - 2),
+		kModalBackgroundColor);
+	screen->fillRect(Common::Rect(bounds.left + kModalLeftPadding, bounds.top + 2,
+		bounds.right - kModalRightPadding,
+		bounds.top + kModalHeadingTopPadding),
+		kModalHeadingColor);
 
 	const int contentWidth =
 		bounds.width() - kModalLeftPadding - kModalRightPadding;
@@ -267,10 +264,9 @@ void ModalDialogManager::drawBinaryPrompt(const Common::String &prompt,
 		const int rowTop = bounds.top + kModalHeadingTopPadding +
 			option * kModalRowHeight;
 		if (option == selectedIndex) {
-			for (int y = rowTop; y < rowTop + kModalRowHeight; ++y)
-				memset(screen->getBasePtr(
-					bounds.left + kModalLeftPadding, y),
-					kModalSelectedBackgroundColor, contentWidth);
+			screen->fillRect(Common::Rect(bounds.left + kModalLeftPadding, rowTop,
+				bounds.right - kModalRightPadding, rowTop + kModalRowHeight),
+				kModalSelectedBackgroundColor);
 		}
 		drawText(pixels, screen->pitch,
 			bounds.left + kModalLeftPadding +

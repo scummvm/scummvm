@@ -93,8 +93,9 @@ bool MediaPlayer::displayScenePcx(const Common::String &path) {
 			g_system->unlockScreen();
 		return false;
 	}
-	for (int y = kScenePresentationTop; y < kScenePresentationTop + 300; ++y)
-		memset(screen->getBasePtr(0, y), 0, 640);
+	screen->fillRect(Common::Rect(0, kScenePresentationTop,
+		640, kScenePresentationTop + 300),
+		0);
 	const int x = (640 - surface->w) / 2;
 	for (int y = 0; y < surface->h; ++y)
 		memcpy(screen->getBasePtr(x, kScenePresentationTop + y),
@@ -133,8 +134,7 @@ bool MediaPlayer::displayInterfacePcx(const Common::String &path) {
 	}
 	const int copyWidth = frame.width < screen->w ? frame.width : screen->w;
 	const int copyHeight = frame.height < screen->h ? frame.height : screen->h;
-	for (int y = 0; y < screen->h; ++y)
-		memset(screen->getBasePtr(0, y), 0, screen->w);
+	screen->fillRect(screen->getRect(), 0);
 	for (int y = 0; y < copyHeight; ++y)
 		memcpy(screen->getBasePtr(0, y), frame.pixels.data() + y * frame.width,
 			copyWidth);

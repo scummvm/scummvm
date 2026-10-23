@@ -59,9 +59,7 @@ static void clearWaveform(Graphics::Surface &screen,
 		const Common::Rect &bounds) {
 	if (bounds.isEmpty())
 		return;
-	for (int y = bounds.top; y < bounds.bottom; ++y)
-		memset(screen.getBasePtr(bounds.left, y), kWacDatabaseBackground,
-			bounds.width());
+	screen.fillRect(bounds, kWacDatabaseBackground);
 }
 
 static void drawWaveformSpan(Graphics::Surface &screen,

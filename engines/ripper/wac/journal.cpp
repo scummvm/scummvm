@@ -110,9 +110,9 @@ bool WacJournalPuzzle::drawTextPanel(
 			g_system->unlockScreen();
 		return false;
 	}
-	for (int y = bounds.bottom; y < kWacMediaTop + kWacMediaHeight; ++y)
-		memset(screen->getBasePtr(kWacMediaLeft, y), kWacDatabaseBackground,
-			kWacMediaWidth);
+	screen->fillRect(Common::Rect(kWacMediaLeft, bounds.bottom,
+		kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight),
+		kWacDatabaseBackground);
 	const Common::String progressText = Common::String::format("%s %u%%",
 		_database->resourceString(kWacJournalProgressResource).c_str(), progress);
 	_database->drawText((byte *)screen->getPixels(), screen->pitch,

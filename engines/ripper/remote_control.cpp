@@ -256,19 +256,17 @@ bool RemoteControlManager::run() {
 			return;
 		}
 		byte *pixels = (byte *)screen->getPixels();
-		for (int y = 0; y < kLabelHeight; ++y)
-			memset(pixels + (kLabelY + y) * screen->pitch + kLabelX,
-				kLabelBackgroundColor, kLabelWidth);
+		screen->fillRect(Common::Rect(kLabelX, kLabelY,
+			kLabelX + kLabelWidth, kLabelY + kLabelHeight),
+			kLabelBackgroundColor);
 		drawText(pixels, screen->pitch, kLabelX, kLabelY,
 			_labels[selectedSlider]);
 		const uint filledTicks = _engine->getSettings()->getFilledTickCount(
 			(RipperSettings::Slider)selectedSlider);
 		for (uint tick = 0; tick < 10; ++tick) {
-			for (int y = 0; y < kTickHeight; ++y)
-				memset(pixels + (kTickY + y) * screen->pitch +
-					kTickX + tick * kTickSpacing,
-					tick < filledTicks ? kFilledTickColor : kEmptyTickColor,
-					kTickWidth);
+			screen->fillRect(Common::Rect(kTickX + tick * kTickSpacing, kTickY,
+				kTickX + tick * kTickSpacing + kTickWidth, kTickY + kTickHeight),
+				tick < filledTicks ? kFilledTickColor : kEmptyTickColor);
 		}
 		g_system->unlockScreen();
 		debugC(2, kDebugGeneral,
