@@ -763,6 +763,7 @@ void Combat::clearPartyArea() {
 }
 
 void Combat::writeDefeat() {
+	const Common::Rect oldBounds = _bounds;
 	Common::String line1 = STRING["dialogs.combat.defeating1"];
 	Common::String line2 = STRING["dialogs.combat.defeating2"];
 	line1 = Common::String(line1.c_str() + 1, line1.c_str() + line1.size() - 2);
@@ -775,6 +776,9 @@ void Combat::writeDefeat() {
 	writeLine(0, line1, ALIGN_MIDDLE);
 	writeLine(2, line2, ALIGN_MIDDLE);
 	writeLine(4, line3, ALIGN_MIDDLE);
+
+	// Restore the combat view's size for any later combat screens
+	setBounds(oldBounds);
 }
 
 void Combat::highlightNextRound() {
