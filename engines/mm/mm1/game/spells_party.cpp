@@ -754,8 +754,8 @@ SpellResult SpellsParty::wizard28_scare() {
 }
 
 SpellResult SpellsParty::wizard31_fireball() {
-	g_globals->_combat->fireball();
-	return SR_SUCCESS_SILENT;
+	return g_globals->_combat->fireball() ?
+		SR_SUCCESS_SILENT : SR_FAILED;
 }
 
 SpellResult SpellsParty::wizard32_fly() {

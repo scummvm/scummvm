@@ -1193,12 +1193,21 @@ void Combat::summonLightning2() {
 
 void Combat::fireball2() {
 	SpellsState &ss = g_globals->_spellsState;
+
 	ss._mmVal1 = 1;
 	ss._resistanceIndex = 1;
-	ss._resistanceTypeOrTargetCount = 5;
 	ss._damage = 0;
 
-	levelAdjust();
+	// Fireball affects up to five monsters outside hand-to-hand range
+	_destMonsterNum = _attackersCount;
+	_spellMonsterCount = _remainingMonsters.size();
+	ss._resistanceTypeOrTargetCount = MIN(
+		5, (int)_remainingMonsters.size() - _destMonsterNum);
+
+	for (uint i = 0; i < g_globals->_currCharacter->_level._current; ++i)
+		ss._damage += getRandomNumber(6);
+
+	iterateMonsters2Inner();
 }
 
 void Combat::levelAdjust() {
@@ -1314,29 +1323,13 @@ void Combat::identifyMonster() {
 }
 #undef COL2
 
-void Combat::fireball() {
-	SpellsState &ss = g_globals->_spellsState;
+bool Combat::fireball() {
+	// Fireball cannot target monsters engaged in hand-to-hand combat
+	if (_attackersCount >= (int)_remainingMonsters.size())
+		return false;
 
-	if (_destMonsterNum < _attackersCount) {
-		Common::String line1 = Common::String::format("%s %s",
-			g_globals->_currCharacter->_name,
-			STRING["spells.casts_spell"].c_str());
-
-		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
-		ss._mmVal1++;
-		ss._resistanceIndex++;
-		ss._resistanceTypeOrTargetCount++;
-		handlePartyDamage();
-
-		InfoMessage msg(0, 0, line1);
-		msg._delaySeconds = 3;
-		msg._callback = []() {
-			g_globals->_combat->fireball2();
-		};
-		displaySpellResult(msg);
-	} else {
-		fireball2();
-	}
+	fireball2();
+	return true;
 }
 
 void Combat::lightningBolt() {

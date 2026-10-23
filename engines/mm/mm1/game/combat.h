@@ -333,7 +333,7 @@ public:
 
 	// Wizard spells that need access to internal fields
 	void identifyMonster();
-	void fireball();
+	bool fireball();
 	void lightningBolt();
 	void makeRoom();
 	void slow();
