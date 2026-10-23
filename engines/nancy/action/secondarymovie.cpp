@@ -700,6 +700,27 @@ int PlaySecondaryMovie::rollNextSequence() {
 	return -1;
 }
 
+// Movies whose data is damaged, and fails to decode in other players too
+struct BrokenMovie {
+	GameType gameType;
+	const char *name;
+};
+
+static const BrokenMovie kBrokenMovies[] = {
+	{ kGameTypeNancy14, "OFF0007_Water_OVLANIM" },
+	{ kGameTypeNancy17, "LIB_BaANIM" }	// scenes 2613, 2661 and 2663
+};
+
+static bool isBrokenMovie(const Common::Path &videoName) {
+	for (const BrokenMovie &movie : kBrokenMovies) {
+		if (g_nancy->getGameType() == movie.gameType && videoName.baseName().equalsIgnoreCase(movie.name)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // Orders a frame field that may still hold a sentinel: -1 is the movie's own
 // first frame, -2 its last.
 static int32 orderSentinelFrame(uint16 frame) {
@@ -1230,8 +1251,8 @@ void PlaySecondaryMovie::execute() {
 
 	switch (_state) {
 	case kBegin:
-		// WORKAROUND: Skip playing a known broken overlay animation in Nancy14
-		if (g_nancy->getGameType() == kGameTypeNancy14 && _videoName.baseName().equalsIgnoreCase("OFF0007_Water_OVLANIM")) {
+		// WORKAROUND: Skip playing the movies that fail to decode
+		if (isBrokenMovie(_videoName)) {
 			_isDone = true;
 			return;
 		}
