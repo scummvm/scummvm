@@ -213,12 +213,25 @@ void CastSpell::castSpell(Character *target) {
 	if (_spellIndex == -1)
 		return;
 
+	// During combat, results are shown by the Combat view. An exploration
+	// InfoMessage would draw the dungeon or outdoor scene over the battle
+	auto showResult = [this](const Common::String &msg) {
+		if (isInCombat()) {
+			Common::String result = spellResultMessage(msg);
+			GameMessage gameMsg("SPELL_RESULT", result);
+			gameMsg._value = 20 - (result.size() / 2);
+			g_events->send("Combat", gameMsg);
+		} else {
+			g_events->send(InfoMessage(msg));
+		}
+	};
+
 	Character &c = *g_globals->_currCharacter;
 	c._sp._current = MAX((int)c._sp._current - _requiredSp, 0);
 	c._gems = MAX((int)c._gems - _requiredGems, 0);
 
 	if (!isMagicAllowed()) {
-		g_events->send(InfoMessage(STRING["spells.magic_doesnt_work"]));
+		showResult(STRING["spells.magic_doesnt_work"]);
 
 	} else {
 		// Cast the spell
@@ -226,11 +239,11 @@ void CastSpell::castSpell(Character *target) {
 
 		switch (result) {
 		case Game::SR_FAILED:
-			g_events->send(InfoMessage(STRING["spells.failed"]));
+			showResult(STRING["spells.failed"]);
 			break;
 
 		case Game::SR_SUCCESS_DONE:
-			g_events->send(InfoMessage(STRING["spells.done"]));
+			showResult(STRING["spells.done"]);
 			break;
 
 		default:

@@ -96,6 +96,7 @@ bool Combat::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "SPELL_RESULT") {
 		assert(msg._value >= 0 && msg._value < 40);
 		_spellResult._lines.clear();
+		_spellResult._callback = nullptr;
 		_spellResult._lines.push_back(Line(msg._value, 1, msg._stringValue));
 		_spellResult._delaySeconds = 3;
 
@@ -301,9 +302,13 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 			break;
 		}
 	} else if (_mode == SPELL_RESULT && !isDelayActive()) {
-		// Displaying a spell result that required waiting for keypress
-		assert(_spellResult._callback);
-		_spellResult._callback();
+		// Displaying a spell result that required waiting for keypress.
+		// Some results, such as Holy Word and the cast spell Done/Failed
+		// messages, have no callback and simply finish the character's turn
+		if (_spellResult._callback)
+			_spellResult._callback();
+		else
+			block();
 
 	} else if (isDelayActive()) {
 		// In all other modes, if a delay is active, any keypress
