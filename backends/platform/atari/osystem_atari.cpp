@@ -342,25 +342,25 @@ void OSystem_Atari::initBackend() {
 #ifdef DISABLE_FANCY_THEMES
 	// On the lite build force "None" as the opl driver, i.e. do not attempt
 	// to emulate anything by default.
-	if (!ConfMan.hasKey("opl_driver")) {
-		ConfMan.set("opl_driver", "null");
+	if (!ConfMan.hasKey("opl_driver", Common::ConfigManager::kApplicationDomain)) {
+		ConfMan.set("opl_driver", "null", Common::ConfigManager::kApplicationDomain);
 	}
 	// On the lite build force "STMIDI" as the audio driver, i.e. do not attempt
 	// to emulate anything by default.
-	if (!ConfMan.hasKey("music_driver")) {
-		ConfMan.set("music_driver", "stmidi");
+	if (!ConfMan.hasKey("music_driver", Common::ConfigManager::kApplicationDomain)) {
+		ConfMan.set("music_driver", "stmidi", Common::ConfigManager::kApplicationDomain);
 	}
-	if (!ConfMan.hasKey("gm_device")) {
-		ConfMan.set("gm_device", "auto");
+	if (!ConfMan.hasKey("gm_device", Common::ConfigManager::kApplicationDomain)) {
+		ConfMan.set("gm_device", "auto", Common::ConfigManager::kApplicationDomain);
 	}
-	if (!ConfMan.hasKey("mt32_device")) {
-		ConfMan.set("mt32_device", "auto");
+	if (!ConfMan.hasKey("mt32_device", Common::ConfigManager::kApplicationDomain)) {
+		ConfMan.set("mt32_device", "auto", Common::ConfigManager::kApplicationDomain);
 	}
 #endif
 	// This produces hard pause even in most optimised engines
 	// and even on CT60...
-	if (!ConfMan.hasKey("autosave_period")) {
-		ConfMan.setInt("autosave_period", 0);
+	if (!ConfMan.hasKey("autosave_period", Common::ConfigManager::kApplicationDomain)) {
+		ConfMan.setInt("autosave_period", 0, Common::ConfigManager::kApplicationDomain);
 	}
 
 	_mixerManager = new AtariMixerManager();

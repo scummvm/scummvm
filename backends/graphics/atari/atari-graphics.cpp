@@ -219,17 +219,17 @@ AtariGraphicsManager::AtariGraphicsManager()
 	// make the standard GUI renderer default (!DISABLE_FANCY_THEMES implies anti-aliased rendering in ThemeEngine.cpp)
 	// (and without DISABLE_FANCY_THEMES we can't use 640x480 themes)
 	const char *standardThemeEngineName = GUI::ThemeEngine::findModeConfigName(GUI::ThemeEngine::kGfxStandard);
-	if (!ConfMan.hasKey("gui_renderer"))
-		ConfMan.set("gui_renderer", standardThemeEngineName);
+	if (!ConfMan.hasKey("gui_renderer", Common::ConfigManager::kApplicationDomain))
+		ConfMan.set("gui_renderer", standardThemeEngineName, Common::ConfigManager::kApplicationDomain);
 
 	// make the built-in theme default to avoid long loading times
-	if (!ConfMan.hasKey("gui_theme"))
-		ConfMan.set("gui_theme", "builtin");
+	if (!ConfMan.hasKey("gui_theme", Common::ConfigManager::kApplicationDomain))
+		ConfMan.set("gui_theme", "builtin", Common::ConfigManager::kApplicationDomain);
 
 #ifndef DISABLE_FANCY_THEMES
 	// make "themes" the default theme path
-	if (!ConfMan.hasKey("themepath"))
-		ConfMan.setPath("themepath", "themes");
+	if (!ConfMan.hasKey("themepath", Common::ConfigManager::kApplicationDomain))
+		ConfMan.setPath("themepath", "themes", Common::ConfigManager::kApplicationDomain);
 #endif
 
 	ConfMan.flushToDisk();
