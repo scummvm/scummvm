@@ -59,6 +59,9 @@ void Map24::special01() {
 		STRING["maps.map24.kilburn"],
 		[]() {
 			Map24 &map = *static_cast<Map24 *>(g_maps->_currentMap);
+			// Meeting Kilburn satisfies Lord Ironfist's second quest
+			for (uint i = 0; i < g_globals->_party.size(); ++i)
+				g_globals->_party[i]._flags[7] |= CHARFLAG7_2;
 			if (!map.addItem(MAP_OF_DESERT_ID)) {
 				g_maps->clearSpecial();
 				map.none160();
