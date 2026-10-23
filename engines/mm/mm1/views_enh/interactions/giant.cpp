@@ -39,7 +39,8 @@ bool Giant::msgFocus(const FocusMessage &msg) {
 	PartyView::msgFocus(msg);
 
 	_charSelected = false;
-	addText(STRING["maps.map30.giant"]);
+	addText("Statue of a giant holding the Scale of Judgement. "
+		"Who will climb on (F1-F6)?");
 	return true;
 }
 

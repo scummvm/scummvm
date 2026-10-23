@@ -48,7 +48,7 @@ void Resistances::draw() {
 	Sound::sound(SOUND_2);
 
 	if (!_charSelected) {
-		writeString(0, 1, STRING["maps.map02.morango"]);
+		writeString(0, 1, "Morango the Mystic asks:\nWho shall I measure (F1-F6)?");
 
 	} else {
 		Character &c = *g_globals->_currCharacter;

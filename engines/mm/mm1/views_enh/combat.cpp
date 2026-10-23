@@ -493,8 +493,8 @@ void Combat::writeDelaySelect() {
 
 void Combat::writeExchangeSelect() {
 	writeBottomText(0, 1, Common::String::format(
-		STRING["dialogs.combat.exchange_places"].c_str(),
-		'0' + g_globals->_combatParty.size()),
+		"Exchange places with (F1-F%d)",
+		(int)g_globals->_combatParty.size()),
 		ALIGN_MIDDLE);
 }
 

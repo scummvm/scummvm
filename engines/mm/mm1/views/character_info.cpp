@@ -75,15 +75,13 @@ void CharacterInfo::draw() {
 			_textPos.x = (i % 2) == 0 ? 1 : 22;
 			_textPos.y = 15 + (i / 2);
 			writeChar(c._condition ? '*' : ' ');
-			writeChar('1' + i);
-			writeString(") ");
+			writeString(Common::String::format("F%d) ", (int)i + 1));
 			writeString(c._name);
 		}
 
 		writeString(10, 20, Common::String::format(
-			STRING["dialogs.character.trade_with"].c_str(),
-			(int)g_globals->_party.size()
-		));
+			"Trade with character (F1-F%d)",
+			(int)g_globals->_party.size()));
 		break;
 
 	case TRADE_KIND:

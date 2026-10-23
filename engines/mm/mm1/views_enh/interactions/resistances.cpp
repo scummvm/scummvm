@@ -35,7 +35,7 @@ Resistances::Resistances() : Interaction("Resistances", 4) {
 bool Resistances::msgFocus(const FocusMessage &msg) {
 	PartyView::msgFocus(msg);
 
-	addText(STRING["maps.map02.morango"]);
+	addText("Morango the Mystic asks:\nWho shall I measure (F1-F6)?");
 	return true;
 }
 

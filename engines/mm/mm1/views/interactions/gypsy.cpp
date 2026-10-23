@@ -70,7 +70,7 @@ void Gypsy::modeChanged(bool allowSelection) {
 void Gypsy::draw() {
 	clearSurface();
 	if (!_character) {
-		writeString(0, 1, STRING["maps.map23.gypsy"]);
+		writeString(0, 1, "A toothless Gypsy seer asks:\nWho would like to hear their sign (F1-F6)?");
 
 	} else {
 		Common::String line = Common::String::format(

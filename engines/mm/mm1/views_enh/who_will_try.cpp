@@ -62,8 +62,7 @@ void WhoWillTry::draw() {
 	PartyView::draw();
 
 	writeString(0, 0, Common::String::format(
-		STRING["dialogs.misc.who_will_try"].c_str(),
-		'0' + g_globals->_party.size()));
+		"Who will try?\nF1-F%d", (int)g_globals->_party.size()));
 }
 
 bool WhoWillTry::msgAction(const ActionMessage &msg) {

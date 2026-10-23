@@ -125,9 +125,8 @@ void CastSpell::draw() {
 
 	case SELECT_CHAR:
 		writeString(22, 3, Common::String::format(
-			STRING["spells.cast_on_char"].c_str(),
-			(int)g_globals->_party.size()
-		));
+			"Cast on character (F1-F%d)",
+			(int)g_globals->_party.size()));
 		break;
 
 	case PRESS_ENTER:

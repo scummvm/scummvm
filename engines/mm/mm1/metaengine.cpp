@@ -56,12 +56,12 @@ static const KeybindingRecord MENU_KEYS[] = {
 };
 
 static const KeybindingRecord PARTY_KEYS[] = {
-	{ KEYBIND_VIEW_PARTY1, "PARTY1", _s("View party member 1"), "1", nullptr },
-	{ KEYBIND_VIEW_PARTY2, "PARTY2", _s("View party member 2"), "2", nullptr },
-	{ KEYBIND_VIEW_PARTY3, "PARTY3", _s("View party member 3"), "3", nullptr },
-	{ KEYBIND_VIEW_PARTY4, "PARTY4", _s("View party member 4"), "4", nullptr },
-	{ KEYBIND_VIEW_PARTY5, "PARTY5", _s("View party member 5"), "5", nullptr },
-	{ KEYBIND_VIEW_PARTY6, "PARTY6", _s("View party member 6"), "6", nullptr },
+	{ KEYBIND_VIEW_PARTY1, "PARTY1", _s("View party member 1"), "F1", nullptr },
+	{ KEYBIND_VIEW_PARTY2, "PARTY2", _s("View party member 2"), "F2", nullptr },
+	{ KEYBIND_VIEW_PARTY3, "PARTY3", _s("View party member 3"), "F3", nullptr },
+	{ KEYBIND_VIEW_PARTY4, "PARTY4", _s("View party member 4"), "F4", nullptr },
+	{ KEYBIND_VIEW_PARTY5, "PARTY5", _s("View party member 5"), "F5", nullptr },
+	{ KEYBIND_VIEW_PARTY6, "PARTY6", _s("View party member 6"), "F6", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 

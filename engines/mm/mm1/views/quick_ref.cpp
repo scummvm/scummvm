@@ -86,9 +86,8 @@ void QuickRef::draw() {
 		printCondition();
 	}
 
-	writeString(12, 21, "'1'-'");
-	writeNumber(g_globals->_party.size());
-	writeString("' ");
+	writeString(12, 21, Common::String::format("F1-F%d ",
+		(int)g_globals->_party.size()));
 	writeString(STRING["dialogs.quick_ref.to_view"]);
 
 	escToGoBack();

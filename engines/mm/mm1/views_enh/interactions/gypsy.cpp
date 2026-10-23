@@ -36,7 +36,7 @@ bool Gypsy::msgFocus(const FocusMessage &msg) {
 	PartyView::msgFocus(msg);
 
 	_charSelected = false;
-	addText(STRING["maps.map23.gypsy"]);
+	addText("A toothless Gypsy seer asks:\nWho would like to hear their sign (F1-F6)?");
 	return true;
 }
 
