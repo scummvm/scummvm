@@ -684,10 +684,10 @@ void Combat::checkMonsterActions() {
 
 	// Chosen character was incapitated, so scan through party
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		c = g_globals->_party[i];
+		Character &candidate = g_globals->_party[i];
 
-		if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS))) {
-			g_globals->_currCharacter = &c;
+		if (!(candidate._condition & (BAD_CONDITION | UNCONSCIOUS))) {
+			g_globals->_currCharacter = &candidate;
 			monsterAttackShooting();
 			return;
 		}
@@ -1234,12 +1234,12 @@ bool Combat::divineIntervention() {
 	c._age = age;
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		c = g_globals->_party[i];
+		Character &partyMember = g_globals->_party[i];
 
-		if (c._condition != ERADICATED) {
-			c._condition = 0;
-			c._hpCurrent = c._hp;
-			c._hpMax = c._hpCurrent;
+		if (partyMember._condition != ERADICATED) {
+			partyMember._condition = 0;
+			partyMember._hpCurrent = partyMember._hp;
+			partyMember._hpMax = partyMember._hpCurrent;
 		}
 	}
 
