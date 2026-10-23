@@ -1545,7 +1545,7 @@ void Combat::selectMonsterTarget() {
 			}
 		}
 		_partyIndex = idx;
-		Character &c = g_globals->_party[_partyIndex];
+		Character &c = *g_globals->_combatParty[_partyIndex];
 		g_globals->_currCharacter = &c;
 
 		if (!(c._condition & BAD_CONDITION) && !(c._condition & UNCONSCIOUS)) {
@@ -1584,6 +1584,7 @@ void Combat::exchangeWith(int charNum) {
 	g_globals->_combatParty[_currentChar]->_checked = true;
 	Character *c1 = g_globals->_combatParty[_currentChar];
 	Character *c2 = g_globals->_combatParty[charNum];
+	SWAP(c1->_canAttack, c2->_canAttack);
 	g_globals->_combatParty[_currentChar] = c2;
 	g_globals->_combatParty[charNum] = c1;
 
