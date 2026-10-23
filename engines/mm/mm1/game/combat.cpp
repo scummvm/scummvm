@@ -1135,7 +1135,7 @@ void Combat::turnUndead() {
 
 			if ((monster->_resistUndead & IS_UNDEAD) &&
 					(getRandomNumber(20) + g_globals->_currCharacter->_level) >=
-					(_remainingMonsters[i]->_hp * 2 + 10)) {
+					(monster->_level * 2 + 10)) {
 				destroyMonster();
 				++_monstersDestroyedCtr;
 			}
