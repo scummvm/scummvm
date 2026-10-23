@@ -557,8 +557,13 @@ void Character::rest() {
 	if (_condition & BAD_CONDITION)
 		return;
 
-	updateSP();
+	// Restore temporary attribute and level drains before recalculating
+	// maximum SP. Food and disease still determine recovery below.
+	const int currentSP = _sp._current;
 	updateAttributes();
+	updateSP();
+	_sp._current = MIN(currentSP, (int)_sp._base);
+
 	updateAC();
 	updateResistances();
 
