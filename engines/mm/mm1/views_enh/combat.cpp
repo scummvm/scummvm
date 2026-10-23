@@ -878,13 +878,8 @@ void Combat::fight() {
 }
 
 void Combat::shoot() {
-	if (_allowShoot) {
-		if (_remainingMonsters.size() < 2) {
-			attackMonsterPhysical();
-		} else {
-			setOption(OPTION_SHOOT);
-		}
-	}
+	if (_allowShoot)
+		setOption(OPTION_SHOOT);
 }
 
 void Combat::writeMessage() {
