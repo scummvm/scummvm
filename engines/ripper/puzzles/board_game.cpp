@@ -20,6 +20,7 @@
 
 #include "ripper/puzzles/board_game.h"
 
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/stream.h"
@@ -122,15 +123,6 @@ static const byte kRenderOrder[BoardGameModel::kCellCount] = {
 	29, 0, 7, 14, 21, 28, 35, 6, 13, 20, 27, 34, 41, 12,
 	19, 26, 33, 40, 18, 25, 32, 39, 24, 31, 38, 30, 37, 36
 };
-
-static bool containsDestination(const Common::Array<int> &destinations,
-		int destination) {
-	for (uint i = 0; i < destinations.size(); ++i) {
-		if (destinations[i] == destination)
-			return true;
-	}
-	return false;
-}
 
 static Common::String moveString(const BoardGameModel::Move &move) {
 	return Common::String::format("%d..%d", move.source, move.destination);
@@ -418,7 +410,8 @@ void BoardGamePuzzle::updateCursor(const Common::Point &point) {
 	} else if (hitCode >= 0 && hitCode <= BoardGameModel::kOffBoardDestination) {
 		if (_selectedCell >= 0 ?
 				(hitCode == _selectedCell ||
-				 containsDestination(_legalDestinations, hitCode)) :
+				 Common::find(_legalDestinations.begin(), _legalDestinations.end(),
+					hitCode) != _legalDestinations.end()) :
 				(hitCode < BoardGameModel::kCellCount &&
 				 _model.pieceAt(hitCode) > 0))
 			cursor = kSelectionCursor;
@@ -805,7 +798,8 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 					stopCue(kSelectionCue);
 					render();
 				} else if (_selectedCell >= 0 &&
-						containsDestination(_legalDestinations, hitCode)) {
+						Common::find(_legalDestinations.begin(), _legalDestinations.end(),
+							hitCode) != _legalDestinations.end()) {
 					if (!applyPlayerMove(hitCode)) {
 						result = kLoadFailed;
 						active = false;

@@ -20,6 +20,8 @@
 
 #include "ripper/puzzles/board_game_model.h"
 
+#include "common/algorithm.h"
+
 namespace Ripper {
 
 namespace {
@@ -53,15 +55,6 @@ static const int8 kInitialPosition[BoardGameModel::kCellCount] = {
 	 0,  0,  0,  4,  0,  1
 };
 
-static bool containsDestination(const Common::Array<int> &destinations,
-		int destination) {
-	for (uint i = 0; i < destinations.size(); ++i) {
-		if (destinations[i] == destination)
-			return true;
-	}
-	return false;
-}
-
 } // End of anonymous namespace
 
 BoardGameModel::BoardGameModel() : _sideToMove(1), _result(0) {
@@ -84,7 +77,7 @@ int BoardGameModel::pieceAt(int cell) const {
 
 void BoardGameModel::appendDestination(Common::Array<int> &destinations,
 		int destination) const {
-	if (!containsDestination(destinations, destination))
+	if (Common::find(destinations.begin(), destinations.end(), destination) == destinations.end())
 		destinations.push_back(destination);
 }
 
@@ -166,7 +159,7 @@ void BoardGameModel::legalDestinations(int source,
 bool BoardGameModel::isLegalMove(const Move &move) const {
 	Common::Array<int> destinations;
 	legalDestinations(move.source, destinations);
-	return containsDestination(destinations, move.destination);
+	return Common::find(destinations.begin(), destinations.end(), move.destination) != destinations.end();
 }
 
 void BoardGameModel::legalMoves(Common::Array<Move> &moves,
