@@ -213,6 +213,7 @@ private:
 	// Nancy17 tooltips are drawn on top of every panel
 	RenderObject _tooltipWindow{kTooltipZ};
 	const Control *_hoveredControl = nullptr;
+	uint16 _heldArrowKeys = 0;	// the input of the last frame, to tell when an arrow key goes down
 	Tooltip *_hoveredTooltip = nullptr;
 	const Control *_tooltipControl = nullptr;
 	uint32 _tooltipHoverStart = 0;

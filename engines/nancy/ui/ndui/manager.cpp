@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/events.h"
 #include "common/memstream.h"
 
 #include "engines/nancy/nancy.h"
@@ -274,7 +275,23 @@ InvButton *Manager::findItemButton(int16 itemID) const {
 	return nullptr;
 }
 
+// The keymapper turns the arrow keys into movement, so they never arrive as keys
+struct ArrowKey {
+	uint16 input;
+	Common::KeyCode key;
+};
+
+static const ArrowKey kArrowKeys[] = {
+	{ NancyInput::kMoveLeft, Common::KEYCODE_LEFT },
+	{ NancyInput::kMoveRight, Common::KEYCODE_RIGHT },
+	{ NancyInput::kMoveUp, Common::KEYCODE_UP },
+	{ NancyInput::kMoveDown, Common::KEYCODE_DOWN }
+};
+
 void Manager::handleInput(NancyInput &input) {
+	const uint16 heldArrowKeys = _heldArrowKeys;
+	_heldArrowKeys = input.input;
+
 	// The dialog on top gets what gets typed
 	for (int i = _panels.size() - 1; i >= 0; --i) {
 		EditBox *editBox = _panels[i]->getKeyboardFocus();
@@ -283,7 +300,16 @@ void Manager::handleInput(NancyInput &input) {
 				editBox->handleKey(key);
 			}
 
+			// The arrow keys move the caret, not the player
+			for (const ArrowKey &arrowKey : kArrowKeys) {
+				if ((input.input & arrowKey.input) && !(heldArrowKeys & arrowKey.input)) {
+					editBox->handleKey(Common::KeyState(arrowKey.key, 0, g_nancy->getEventManager()->getModifierState()));
+				}
+			}
+
 			input.otherKbdInput.clear();
+			input.input &= ~(NancyInput::kMoveUp | NancyInput::kMoveDown | NancyInput::kMoveLeft |
+				NancyInput::kMoveRight | NancyInput::kMoveFastModifier);
 			break;
 		}
 	}
