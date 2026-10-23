@@ -39,6 +39,18 @@ namespace {
 
 static const int kScenePresentationTop = 50;
 
+SmackerPlaybackPlan makeWacInterfaceSequencePlan(const Common::Rect &centerBounds,
+		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command) {
+	SmackerPlaybackPlan plan;
+	plan.placement.centerBounds = centerBounds;
+	plan.palette.patchInterfacePalette = false;
+	plan.palette.patchWacMediaPalette = true;
+	plan.loop.loopStartFrame = loopStartFrame;
+	plan.callback.sequenceCallback = callback;
+	plan.callback.sequenceCommand = command;
+	return plan;
+}
+
 } // End of anonymous namespace
 
 bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, int y,
@@ -187,13 +199,8 @@ bool MediaPlayer::playWacInterfaceSequence(const Common::String &path,
 		"Ripper: entering WAC interface sequence media='%s' centerBounds=%d,%d,%d,%d palette=10..149 loopStartFrame=%u callback=%d",
 		path.c_str(), centerBounds.left, centerBounds.top, centerBounds.right,
 		centerBounds.bottom, loopStartFrame, callback != nullptr);
-	SmackerPlaybackPlan plan;
-	plan.placement.centerBounds = centerBounds;
-	plan.palette.patchInterfacePalette = false;
-	plan.palette.patchWacMediaPalette = true;
-	plan.loop.loopStartFrame = loopStartFrame;
-	plan.callback.sequenceCallback = callback;
-	plan.callback.sequenceCommand = command;
+	const SmackerPlaybackPlan plan = makeWacInterfaceSequencePlan(
+		centerBounds, loopStartFrame, callback, command);
 	Common::String source;
 	return playValidatedSmacker(
 		openSource(path, kSourceInterfaceLibrary, source), path,
@@ -207,13 +214,8 @@ bool MediaPlayer::playWacInterfaceSequenceStream(Common::SeekableReadStream *str
 		"Ripper: entering streamed WAC interface sequence media='%s' centerBounds=%d,%d,%d,%d palette=10..149 loopStartFrame=%u callback=%d",
 		name.c_str(), centerBounds.left, centerBounds.top, centerBounds.right,
 		centerBounds.bottom, loopStartFrame, callback != nullptr);
-	SmackerPlaybackPlan plan;
-	plan.placement.centerBounds = centerBounds;
-	plan.palette.patchInterfacePalette = false;
-	plan.palette.patchWacMediaPalette = true;
-	plan.loop.loopStartFrame = loopStartFrame;
-	plan.callback.sequenceCallback = callback;
-	plan.callback.sequenceCommand = command;
+	const SmackerPlaybackPlan plan = makeWacInterfaceSequencePlan(
+		centerBounds, loopStartFrame, callback, command);
 	return playValidatedSmacker(stream, name,
 		"streamed WAC interface sequence", plan);
 }
