@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
@@ -15,6 +36,10 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
+
+/*
+ * Altered for ScummVM: removed the fixed-point and Nintendo DS code.
+ */
 
 #include "b2Island.h"
 #include "b2Body.h"
@@ -164,18 +189,6 @@ void b2Island::Solve(const b2TimeStep& step, const b2Vec2& gravity, bool correct
 		b->m_angularVelocity *= b2Clamp(1.0f - step.dt * b->m_angularDamping, 0.0f, 1.0f);
 
 		// Check for large velocities.
-#ifdef TARGET_FLOAT32_IS_FIXED
-				// Fixed point code written this way to prevent
-				// overflows, float code is optimized for speed
-
-		float32 vMagnitude = b->m_linearVelocity.Length();
-		if(vMagnitude > b2_maxLinearVelocity) {
-			b->m_linearVelocity *= b2_maxLinearVelocity/vMagnitude;
-		}
-		b->m_angularVelocity = b2Clamp(b->m_angularVelocity, 
-			-b2_maxAngularVelocity, b2_maxAngularVelocity);
-
-#else
 
 		if (b2Dot(b->m_linearVelocity, b->m_linearVelocity) > b2_maxLinearVelocitySquared)
 		{
@@ -193,7 +206,6 @@ void b2Island::Solve(const b2TimeStep& step, const b2Vec2& gravity, bool correct
 				b->m_angularVelocity = b2_maxAngularVelocity;
 			}
 		}
-#endif
 
 	}
 
@@ -277,10 +289,8 @@ void b2Island::Solve(const b2TimeStep& step, const b2Vec2& gravity, bool correct
 	{
 		float32 minSleepTime = B2_FLT_MAX;
 
-#ifndef TARGET_FLOAT32_IS_FIXED
 		const float32 linTolSqr = b2_linearSleepTolerance * b2_linearSleepTolerance;
 		const float32 angTolSqr = b2_angularSleepTolerance * b2_angularSleepTolerance;
-#endif
 
 		for (int32 i = 0; i < m_bodyCount; ++i)
 		{
@@ -297,14 +307,8 @@ void b2Island::Solve(const b2TimeStep& step, const b2Vec2& gravity, bool correct
 			}
 
 			if ((b->m_flags & b2Body::e_allowSleepFlag) == 0 ||
-#ifdef TARGET_FLOAT32_IS_FIXED
-				b2Abs(b->m_angularVelocity) > b2_angularSleepTolerance ||
-				b2Abs(b->m_linearVelocity.x) > b2_linearSleepTolerance ||
-				b2Abs(b->m_linearVelocity.y) > b2_linearSleepTolerance)
-#else
 				b->m_angularVelocity * b->m_angularVelocity > angTolSqr ||
 				b2Dot(b->m_linearVelocity, b->m_linearVelocity) > linTolSqr)
-#endif
 			{
 				b->m_sleepTime = 0.0f;
 				minSleepTime = 0.0f;

@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
@@ -16,6 +37,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+ * Altered for ScummVM: removed the fixed-point and Nintendo DS code; uses the system headers through ScummVM.
+ */
+
 #ifndef B2_BROAD_PHASE_H
 #define B2_BROAD_PHASE_H
 
@@ -29,14 +54,9 @@ Bullet (http:/www.bulletphysics.com).
 #include "../Common/b2Settings.h"
 #include "b2Collision.h"
 #include "b2PairManager.h"
-#include <climits>
 
-#ifdef TARGET_FLOAT32_IS_FIXED
-#define	B2BROADPHASE_MAX	(USHRT_MAX/2)
-#else
 #define	B2BROADPHASE_MAX	USHRT_MAX
 
-#endif
 
 const uint16 b2_invalid = B2BROADPHASE_MAX;
 const uint16 b2_nullEdge = B2BROADPHASE_MAX;

@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*
 * Copyright (c) 2007 Erin Catto http://www.gphysics.com
 *
@@ -15,6 +36,10 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
+
+/*
+ * Altered for ScummVM: removed the fixed-point and Nintendo DS code.
+ */
 
 #include "b2Collision.h"
 #include "Shapes/b2CircleShape.h"
@@ -91,9 +116,6 @@ static int32 ProcessThree(b2Vec2* x1, b2Vec2* x2, b2Vec2* p1s, b2Vec2* p2s, b2Ve
 
 	float32 n = b2Cross(ab, ac);
 
-#ifdef TARGET_FLOAT32_IS_FIXED
-	n = (n < 0.0)? -1.0 : ((n > 0.0)? 1.0 : 0.0);
-#endif
 
 	// Should not be in edge ab region.
 	float32 vc = n * b2Cross(a, b);
@@ -132,16 +154,11 @@ static int32 ProcessThree(b2Vec2* x1, b2Vec2* x2, b2Vec2* p1s, b2Vec2* p2s, b2Ve
 	b2Assert(denom > 0.0f);
 	denom = 1.0f / denom;
 
-#ifdef TARGET_FLOAT32_IS_FIXED
-	*x1 = denom * (va * p1s[0] + vb * p1s[1] + vc * p1s[2]);
-	*x2 = denom * (va * p2s[0] + vb * p2s[1] + vc * p2s[2]);
-#else
 	float32 u = va * denom;
 	float32 v = vb * denom;
 	float32 w = 1.0f - u - v;
 	*x1 = u * p1s[0] + v * p1s[1] + w * p1s[2];
 	*x2 = u * p2s[0] + v * p2s[1] + w * p2s[2];
-#endif
 	return 3;
 }
 
@@ -236,11 +253,7 @@ float32 DistanceGeneric(b2Vec2* x1, b2Vec2* x2,
 			maxSqr = b2Max(maxSqr, b2Dot(points[i], points[i]));
 		}
 
-#ifdef TARGET_FLOAT32_IS_FIXED
-		if (pointCount == 3 || vSqr <= 5.0*B2_FLT_EPSILON * maxSqr)
-#else
 		if (pointCount == 3 || vSqr <= 100.0f * B2_FLT_EPSILON * maxSqr)
-#endif
 		{
 			g_GJK_Iterations = iter;
 			v = *x2 - *x1;

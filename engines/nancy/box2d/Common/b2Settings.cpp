@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
@@ -16,8 +37,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+ * Altered for ScummVM: b2Alloc keeps its memory aligned for 64-bit systems.
+ */
+
 #include "b2Settings.h"
-#include <cstdlib>
 
 b2Version b2_version = {2, 0, 1};
 
@@ -26,13 +50,15 @@ int32 b2_byteCount = 0;
 
 
 // Memory allocators. Modify these to use your own allocator.
+static const int32 b2_allocHeaderSize = 16;
+
 void* b2Alloc(int32 size)
 {
-	size += 4;
+	size += b2_allocHeaderSize;
 	b2_byteCount += size;
 	char* bytes = (char*)malloc(size);
 	*(int32*)bytes = size;
-	return bytes + 4;
+	return bytes + b2_allocHeaderSize;
 }
 
 void b2Free(void* mem)
@@ -43,7 +69,7 @@ void b2Free(void* mem)
 	}
 
 	char* bytes = (char*)mem;
-	bytes -= 4;
+	bytes -= b2_allocHeaderSize;
 	int32 size = *(int32*)bytes;
 	b2Assert(b2_byteCount >= size);
 	b2_byteCount -= size;

@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
@@ -16,10 +37,14 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+ * Altered for ScummVM: sorts with Common::sort instead of std::sort.
+ */
+
 #include "b2PairManager.h"
 #include "b2BroadPhase.h"
 
-#include <algorithm>
+#include "common/algorithm.h"
 
 // Thomas Wang's hash, see: http://www.concentric.net/~Ttwang/tech/inthash.htm
 // This assumes proxyId1 and proxyId2 are 16-bit.
@@ -339,7 +364,7 @@ void b2PairManager::ValidateBuffer()
 #ifdef _DEBUG
 	b2Assert(m_pairBufferCount <= m_pairCount);
 
-	std::sort(m_pairBuffer, m_pairBuffer + m_pairBufferCount);
+	Common::sort(m_pairBuffer, m_pairBuffer + m_pairBufferCount);
 
 	for (int32 i = 0; i < m_pairBufferCount; ++i)
 	{

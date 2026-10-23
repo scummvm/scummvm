@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
@@ -16,52 +37,21 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+ * Altered for ScummVM: removed the fixed-point and Nintendo DS code; checks for NaN and infinity without the C library, and drops b2Random, which only the testbed used.
+ */
+
 #ifndef B2_MATH_H
 #define B2_MATH_H
 
 #include "b2Settings.h"
-#include <cmath>
-#include <cfloat>
-#include <cstdlib>
 
-#include <stdio.h>
-
-#ifdef TARGET_FLOAT32_IS_FIXED
-
-inline Fixed b2Min(const Fixed& a, const Fixed& b)
-{
-  return a < b ? a : b;
-}
-
-inline Fixed b2Max(const Fixed& a, const Fixed& b)
-{
-  return a > b ? a : b;
-}
-
-inline Fixed b2Clamp(Fixed a, Fixed low, Fixed high)
-{
-	return b2Max(low, b2Min(a, high));
-}
-
-inline bool b2IsValid(Fixed x)
-{
-	return true;
-}
-
-#define	b2Sqrt(x)	sqrt(x)
-#define	b2Atan2(y, x)	atan2(y, x)
-
-#else
 
 /// This function is used to ensure that a floating point number is
 /// not a NaN or infinity.
 inline bool b2IsValid(float32 x)
 {
-#ifdef _MSC_VER
-	return _finite(x) != 0;
-#else
-	return finite(x) != 0;
-#endif
+	return x == x && x <= B2_FLT_MAX && x >= -B2_FLT_MAX;
 }
 
 /// This is a approximate yet fast inverse square-root.
@@ -84,7 +74,6 @@ inline float32 b2InvSqrt(float32 x)
 #define	b2Sqrt(x)	sqrtf(x)
 #define	b2Atan2(y, x)	atan2f(y, x)
 
-#endif
 
 inline float32 b2Abs(float32 a)
 {
@@ -131,20 +120,7 @@ struct b2Vec2
 	/// Get the length of this vector (the norm).
 	float32 Length() const
 	{
-#ifdef TARGET_FLOAT32_IS_FIXED
-		float est = b2Abs(x) + b2Abs(y);
-		if(est == 0.0f) {
-			return 0.0;
-		} else if(est < 0.1) {
-			return (1.0/256.0) * b2Vec2(x<<8, y<<8).Length();
-		} else if(est < 180.0f) {
-			return b2Sqrt(x * x + y * y);
-		} else {
-			return 256.0 * (b2Vec2(x>>8, y>>8).Length());
-		}
-#else
 		return b2Sqrt(x * x + y * y);
-#endif 
 	}
 
 	/// Get the length squared. For performance, use this instead of
@@ -155,34 +131,6 @@ struct b2Vec2
 	}
 
 	/// Convert this vector into a unit vector. Returns the length.
-#ifdef TARGET_FLOAT32_IS_FIXED
-	float32 Normalize()
-	{
-		float32 length = Length();
-		if (length < B2_FLT_EPSILON)
-		{
-			return 0.0f;
-		} 
-#ifdef NORMALIZE_BY_INVERT_MULTIPLY
-		if (length < (1.0/16.0)) {
-			x = x << 4;
-			y = y << 4;
-			return (1.0/16.0)*Normalize();
-		} else if(length > 16.0) {
-			x = x >> 4;
-			y = y >> 4;
-			return 16.0*Normalize();
-		}
-		float32 invLength = 1.0f / length;
-		x *= invLength;
-		y *= invLength;
-#else
-		x /= length;
-		y /= length;
-#endif
-		return length;
-	}
-#else
 	float32 Normalize()
 	{
 		float32 length = Length();
@@ -196,7 +144,6 @@ struct b2Vec2
 
 		return length;
 	}
-#endif
 
 	/// Does this vector contain finite coordinates?
 	bool IsValid() const
@@ -273,72 +220,6 @@ struct b2Mat22
 		return b2Atan2(col1.y, col1.x);
 	}
 
-#ifdef TARGET_FLOAT32_IS_FIXED
-
-	/// Compute the inverse of this matrix, such that inv(A) * A = identity.
-	b2Mat22 Invert() const
-	{
-		float32 a = col1.x, b = col2.x, c = col1.y, d = col2.y;
-		float32 det = a * d - b * c;
-		b2Mat22 B;
-		int n = 0;
-
-		if(b2Abs(det) <= (B2_FLT_EPSILON<<8))
-		{
-			n = 3;
-			a = a<<n; b = b<<n; 
-			c = c<<n; d = d<<n;
-			det = a * d - b * c;
-			b2Assert(det != 0.0f);
-			det = float32(1) / det;
-			B.col1.x = ( det * d) << n;	B.col2.x = (-det * b) << n;
-			B.col1.y = (-det * c) << n;	B.col2.y = ( det * a) << n;
-		} 
-		else
-		{
-			n = (b2Abs(det) >= 16.0)? 4 : 0;
-			b2Assert(det != 0.0f);
-			det = float32(1<<n) / det;
-			B.col1.x = ( det * d) >> n;	B.col2.x = (-det * b) >> n;
-			B.col1.y = (-det * c) >> n;	B.col2.y = ( det * a) >> n;
-		}
-		
-		return B;
-	}
-
-	// Solve A * x = b
-	b2Vec2 Solve(const b2Vec2& b) const
-	{
-		float32 a11 = col1.x, a12 = col2.x, a21 = col1.y, a22 = col2.y;
-		float32 det = a11 * a22 - a12 * a21;
-		int n = 0;
-		b2Vec2 x;
-
-		
-		if(b2Abs(det) <= (B2_FLT_EPSILON<<8))
-		{
-			n = 3;
-			a11 = col1.x<<n; a12 = col2.x<<n;
-			a21 = col1.y<<n; a22 = col2.y<<n;
-			det = a11 * a22 - a12 * a21;
-			b2Assert(det != 0.0f);
-			det = float32(1) / det;
-			x.x = (det * (a22 * b.x - a12 * b.y)) << n;
-			x.y = (det * (a11 * b.y - a21 * b.x)) << n;
-		} 
-		else 
-		{
-			n = (b2Abs(det) >= 16.0) ? 4 : 0;
-			b2Assert(det != 0.0f);
-			det = float32(1<<n) / det;
-			x.x = (det * (a22 * b.x - a12 * b.y)) >> n;
-			x.y = (det * (a11 * b.y - a21 * b.x)) >> n;
-		}
-
-		return x;
-	}
-
-#else
 	b2Mat22 Invert() const
 	{
 		float32 a = col1.x, b = col2.x, c = col1.y, d = col2.y;
@@ -364,7 +245,6 @@ struct b2Mat22
 		x.y = det * (a11 * b.y - a21 * b.x);
 		return x;
 	}
-#endif
 
 	b2Vec2 col1, col2;
 };
@@ -590,26 +470,6 @@ template<typename T> inline void b2Swap(T& a, T& b)
 	T tmp = a;
 	a = b;
 	b = tmp;
-}
-
-#define	RAND_LIMIT	32767
-
-// Random number in range [-1,1]
-inline float32 b2Random()
-{
-	float32 r = (float32)(rand() & (RAND_LIMIT));
-	r /= RAND_LIMIT;
-	r = 2.0f * r - 1.0f;
-	return r;
-}
-
-/// Random floating point number in range [lo, hi]
-inline float32 b2Random(float32 lo, float32 hi)
-{
-	float32 r = (float32)(rand() & (RAND_LIMIT));
-	r /= RAND_LIMIT;
-	r = (hi - lo) * r + lo;
-	return r;
 }
 
 /// "Next Largest Power of 2

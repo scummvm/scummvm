@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
@@ -16,53 +37,26 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+ * Altered for ScummVM: removed the fixed-point and Nintendo DS code; uses the integer types of ScummVM and its system headers, spells out the float limits, and B2_NOT_USED no longer makes statements without effect.
+ */
+
 #ifndef B2_SETTINGS_H
 #define B2_SETTINGS_H
 
-#include <assert.h>
-#include <math.h>
+#include "common/scummsys.h"
 
-#define B2_NOT_USED(x) x
+#define B2_NOT_USED(x) ((void)(x))
 #define b2Assert(A) assert(A)
 
 
-// need to include NDS jtypes.h instead of 
-// usual typedefs because NDS jtypes defines
-// them slightly differently, oh well.
-#ifdef TARGET_IS_NDS
-
-#include "jtypes.h"
-
-#else
-
-typedef signed char	int8;
-typedef signed short int16;
-typedef signed int int32;
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int uint32;
-
-#endif
-
-#ifdef	TARGET_FLOAT32_IS_FIXED
-
-#include "Fixed.h"
-
-typedef Fixed float32;
-#define	B2_FLT_MAX	FIXED_MAX
-#define	B2_FLT_EPSILON	FIXED_EPSILON
-#define	B2FORCE_SCALE(x)	((x)<<7)
-#define	B2FORCE_INV_SCALE(x)	((x)>>7)
-
-#else
+// The integer types are those of ScummVM
 
 typedef float float32;
-#define	B2_FLT_MAX	FLT_MAX
-#define	B2_FLT_EPSILON	FLT_EPSILON
+#define	B2_FLT_MAX	3.402823466e+38F
+#define	B2_FLT_EPSILON	1.192092896e-07F
 #define	B2FORCE_SCALE(x)	(x)
 #define	B2FORCE_INV_SCALE(x)	(x)
-
-#endif
 
 const float32 b2_pi = 3.14159265359f;
 
@@ -108,19 +102,13 @@ const float32 b2_maxAngularCorrection = 8.0f / 180.0f * b2_pi;			// 8 degrees
 
 /// The maximum linear velocity of a body. This limit is very large and is used
 /// to prevent numerical problems. You shouldn't need to adjust this.
-#ifdef TARGET_FLOAT32_IS_FIXED
-const float32 b2_maxLinearVelocity = 100.0f;
-#else
 const float32 b2_maxLinearVelocity = 200.0f;
 const float32 b2_maxLinearVelocitySquared = b2_maxLinearVelocity * b2_maxLinearVelocity;
-#endif
 
 /// The maximum angular velocity of a body. This limit is very large and is used
 /// to prevent numerical problems. You shouldn't need to adjust this.
 const float32 b2_maxAngularVelocity = 250.0f;
-#ifndef TARGET_FLOAT32_IS_FIXED
 const float32 b2_maxAngularVelocitySquared = b2_maxAngularVelocity * b2_maxAngularVelocity;
-#endif
 
 /// This scale factor controls how fast overlap is resolved. Ideally this would be 1 so
 /// that overlap is removed in one time step. However using values close to 1 often lead
