@@ -652,7 +652,7 @@ Common::Rect Combat::getOptionButtonRect(uint col, uint row) {
 
 	const int x = 80 + col * 80;
 	const int y = (19 * LINE_H) + row * BTN_SIZE;
-	return Common::Rect(x, y, x + BTN_SIZE, y + BTN_SIZE);
+	return Common::Rect(x, y, x + 80, y + BTN_SIZE);
 }
 
 void Combat::writeOption(uint col, uint row, char c, const Common::String &msg) {
