@@ -418,7 +418,10 @@ void Character::updateAttributes() {
 }
 
 void Character::updateAC() {
-	int ac = _ac._base;
+	// Leather Skin stores the caster's level as a party-wide AC bonus.
+	// Rebuild from base so repeated updates don't stack it.
+	int ac = _ac._base +
+		g_globals->_activeSpells._s.leather_skin;
 
 	if (_speed >= 40)
 		ac += 9;

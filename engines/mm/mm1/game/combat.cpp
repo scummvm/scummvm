@@ -1485,7 +1485,9 @@ void Combat::monsterAttackInner() {
 	Encounter &enc = g_globals->_encounters;
 	Character &c = *g_globals->_currCharacter;
 
-	_destAC = c._ac._base;
+	// Include the Leather Skin bonus in the enemy hit roll
+	_destAC = c._ac._base +
+		g_globals->_activeSpells._s.leather_skin;
 	int monsterIndex = getMonsterIndex();
 	_attackerLevel = enc._monsterList[monsterIndex]._level * 2 + 4;
 
