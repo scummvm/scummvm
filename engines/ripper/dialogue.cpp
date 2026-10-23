@@ -416,10 +416,8 @@ void DialogueChooser::updateLayout() {
 Common::Rect DialogueChooser::visualBounds() const {
 	Common::Rect bounds = _chooserBounds;
 	if (hasScrollArrows() && _choices.size() > _chooser.visibleCount()) {
-		bounds.left = MIN(bounds.left, MIN(_upArrowBounds.left, _downArrowBounds.left));
-		bounds.top = MIN(bounds.top, MIN(_upArrowBounds.top, _downArrowBounds.top));
-		bounds.right = MAX(bounds.right, MAX(_upArrowBounds.right, _downArrowBounds.right));
-		bounds.bottom = MAX(bounds.bottom, MAX(_upArrowBounds.bottom, _downArrowBounds.bottom));
+		bounds.extend(_upArrowBounds);
+		bounds.extend(_downArrowBounds);
 	}
 	return bounds;
 }

@@ -136,17 +136,15 @@ void WebGridShiftPuzzle::drawTileClipped(Graphics::Surface &screen, uint tile,
 	if (tile >= kCellCount || _tiles[tile].size() != kCellWidth * kCellHeight)
 		return;
 
-	const int left = MAX<int>(x, clip.left);
-	const int top = MAX<int>(y, clip.top);
-	const int right = MIN<int>(x + kCellWidth, clip.right);
-	const int bottom = MIN<int>(y + kCellHeight, clip.bottom);
-	if (left >= right || top >= bottom)
+	const Common::Rect visible = Common::Rect(x, y, x + kCellWidth, y + kCellHeight)
+		.findIntersectingRect(clip);
+	if (visible.isEmpty())
 		return;
 
-	for (int destinationY = top; destinationY < bottom; ++destinationY) {
+	for (int destinationY = visible.top; destinationY < visible.bottom; ++destinationY) {
 		const byte *source = _tiles[tile].data() +
-			(destinationY - y) * kCellWidth + left - x;
-		memcpy(screen.getBasePtr(left, destinationY), source, right - left);
+			(destinationY - y) * kCellWidth + visible.left - x;
+		memcpy(screen.getBasePtr(visible.left, destinationY), source, visible.width());
 	}
 }
 
