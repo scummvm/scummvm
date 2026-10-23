@@ -451,6 +451,25 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 		}
 	}
 
+	if (_mode == SELECT_OPTION && _option == OPTION_NONE) {
+		const KeybindingAction STATIC_ACTIONS[4] = {
+			KEYBIND_DELAY, KEYBIND_PROTECT, KEYBIND_QUICKREF,
+			(KeybindingAction)(KEYBIND_VIEW_PARTY1 + _currentChar)
+		};
+
+		// Delay, Protect, Quick Reference and View Character occupy
+		// the four static command rows on the left side of combat
+		for (int row = 0; row < 4; ++row) {
+			Common::Rect r(0, (7 + row) * LINE_H,
+				80, (8 + row) * LINE_H);
+
+			if (r.contains(localPos)) {
+				msgAction(ActionMessage(STATIC_ACTIONS[row]));
+				return true;
+			}
+		}
+	}
+
 	if (_mode == SELECT_OPTION && (_option == OPTION_SHOOT ||
 			_option == OPTION_FIGHT ||
 			_option == OPTION_SPELL_TARGET)) {
