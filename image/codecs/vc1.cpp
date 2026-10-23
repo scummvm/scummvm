@@ -4733,7 +4733,7 @@ static void x8_setup_spatial_compensation(const uint8 *src, uint8 *dst, ptrdiff_
 		sum += avg * 9;
 	} else {
 		// the edge pixel, in the top line and left column
-		uint8 c = *(src - 1 - stride);
+		c = *(src - 1 - stride);
 		dst[area3] = c;
 		sum += c;
 		// edge pixel is not part of min/max
@@ -5740,13 +5740,13 @@ static void x8_vlc_init(void) {
 	int i;
 
 	// set ac tables
-	for (int i = 0; i < 2; i++)
+	for (i = 0; i < 2; i++)
 		for (int j = 0; j < 2; j++)
 			for (int k = 0; k < 8; k++)
 				j_ac_vlc[i][j][k] = x8_init_vlc(AC_VLC_BITS, 77, x8_ac_quant_table[i][j][k]);
 
 	// set dc tables
-	for (int i = 0; i < 2; i++)
+	for (i = 0; i < 2; i++)
 		for (int j = 0; j < 8; j++)
 			j_dc_vlc[i][j] = x8_init_vlc(DC_VLC_BITS, 34, x8_dc_quant_table[i][j]);
 
@@ -12491,7 +12491,7 @@ static int vc1_decode_b_mb_intfr(VC1Context *v) {
 					dir = bmvtype == BMV_TYPE_BACKWARD;
 					ff_vc1_pred_mv_intfr(v, 0, 0, 0, 1, v->range_x, v->range_y, dir);
 					if (mvsw) {
-						int dir2 = dir;
+						dir2 = dir;
 						if (mvsw)
 							dir2 = !dir;
 						for (i = 0; i < 2; i++) {
@@ -13396,8 +13396,8 @@ static void guess_mv(ERContext *s) {
 		if (f == MV_FROZEN)
 			num_avail++;
 		else if (s->last_pic.f->data[0] && s->last_pic.motion_val[0]) {
-			const int mb_y = mb_xy / s->mb_stride;
-			const int mb_x = mb_xy % s->mb_stride;
+			mb_y = mb_xy / s->mb_stride;
+			mb_x = mb_xy % s->mb_stride;
 			const int mot_index = (mb_x + mb_y * mot_stride) * mot_step;
 			s->cur_pic.motion_val[0][mot_index][0] = s->last_pic.motion_val[0][mot_index][0];
 			s->cur_pic.motion_val[0][mot_index][1] = s->last_pic.motion_val[0][mot_index][1];
@@ -13450,8 +13450,8 @@ static void guess_mv(ERContext *s) {
 		for (pass = 0; (changed || pass < 2) && pass < 10; pass++) {
 			changed = 0;
 			for (blocklist_index = 0; blocklist_index < blocklist_length; blocklist_index++) {
-				const int mb_x = blocklist[blocklist_index][0];
-				const int mb_y = blocklist[blocklist_index][1];
+				mb_x = blocklist[blocklist_index][0];
+				mb_y = blocklist[blocklist_index][1];
 				const int mb_xy = mb_x + mb_y * mb_stride;
 				int mv_predictor[8][2];
 				int ref[8];
@@ -13641,8 +13641,8 @@ static void guess_mv(ERContext *s) {
 		next_blocklist_length = 0;
 
 		for (blocklist_index = 0; blocklist_index < blocklist_length; blocklist_index++) {
-			const int mb_x = blocklist[blocklist_index][0];
-			const int mb_y = blocklist[blocklist_index][1];
+			mb_x = blocklist[blocklist_index][0];
+			mb_y = blocklist[blocklist_index][1];
 			const int mb_xy = mb_x + mb_y * mb_stride;
 
 			if (fixed[mb_xy] & (MV_CHANGED | MV_UNCHANGED | MV_FROZEN)) {
@@ -13850,7 +13850,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 
 		for (i = s->mb_num - 1; i >= 0; i--) {
 			const int mb_xy = s->mb_index2xy[i];
-			int error = s->error_status_table[mb_xy];
+			error = s->error_status_table[mb_xy];
 
 			if (error & (1 << error_type))
 				end_ok = 1;
@@ -13870,7 +13870,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 
 		for (i = s->mb_num - 1; i >= 0; i--) {
 			const int mb_xy = s->mb_index2xy[i];
-			int error = s->error_status_table[mb_xy];
+			error = s->error_status_table[mb_xy];
 
 			if (error & ER_AC_END)
 				end_ok = 0;
@@ -13913,7 +13913,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 	for (error_type = 1; error_type <= 3; error_type++) {
 		for (i = s->mb_num - 1; i >= 0; i--) {
 			const int mb_xy = s->mb_index2xy[i];
-			int error = s->error_status_table[mb_xy];
+			error = s->error_status_table[mb_xy];
 
 			if (!s->mbskip_table || !s->mbskip_table[mb_xy]) // FIXME partition specific
 				distance++;
@@ -13950,7 +13950,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 	if (!s->partitioned_frame) {
 		for (i = 0; i < s->mb_num; i++) {
 			const int mb_xy = s->mb_index2xy[i];
-			int error = s->error_status_table[mb_xy];
+			error = s->error_status_table[mb_xy];
 			if (error & ER_MB_ERROR)
 				error |= ER_MB_ERROR;
 			s->error_status_table[mb_xy] = error;
@@ -13960,7 +13960,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 	dc_error = ac_error = mv_error = 0;
 	for (i = 0; i < s->mb_num; i++) {
 		const int mb_xy = s->mb_index2xy[i];
-		int error = s->error_status_table[mb_xy];
+		error = s->error_status_table[mb_xy];
 		if (error & ER_DC_ERROR)
 			dc_error++;
 		if (error & ER_AC_ERROR)
@@ -13982,7 +13982,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 	guessed_mb_type = is_intra_likely ? MB_TYPE_INTRA4x4 : (MB_TYPE_16x16 | (false ? MB_TYPE_L0 : MB_TYPE_FORWARD_MV));
 	for (i = 0; i < s->mb_num; i++) {
 		const int mb_xy = s->mb_index2xy[i];
-		int error = s->error_status_table[mb_xy];
+		error = s->error_status_table[mb_xy];
 		if (!((error & ER_DC_ERROR) && (error & ER_MV_ERROR)))
 			continue;
 
@@ -14006,7 +14006,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 			const int mv_dir = dir ? MV_DIR_BACKWARD : MV_DIR_FORWARD;
 			int mv_type;
 
-			int error = s->error_status_table[mb_xy];
+			error = s->error_status_table[mb_xy];
 
 			if (IS_INTRA(mb_type))
 				continue; // intra
@@ -14043,7 +14043,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 				const int mb_type = s->cur_pic.mb_type[mb_xy];
 				int mv_dir = MV_DIR_FORWARD | MV_DIR_BACKWARD;
 
-				int error = s->error_status_table[mb_xy];
+				error = s->error_status_table[mb_xy];
 
 				if (IS_INTRA(mb_type))
 					continue;
@@ -14142,7 +14142,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 			const int mb_xy = mb_x + mb_y * s->mb_stride;
 			const int mb_type = s->cur_pic.mb_type[mb_xy];
 
-			int error = s->error_status_table[mb_xy];
+			error = s->error_status_table[mb_xy];
 
 			if (IS_INTER(mb_type))
 				continue;
@@ -14177,7 +14177,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 	/* clean a few tables */
 	for (i = 0; i < s->mb_num; i++) {
 		const int mb_xy = s->mb_index2xy[i];
-		int error = s->error_status_table[mb_xy];
+		error = s->error_status_table[mb_xy];
 
 		if (s->mbskip_table && s->cur_pic.f->pict_type != AV_PICTURE_TYPE_B &&
 			(error & (ER_DC_ERROR | ER_MV_ERROR | ER_AC_ERROR))) {
