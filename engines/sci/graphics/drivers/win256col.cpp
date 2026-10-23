@@ -20,6 +20,7 @@
  */
 
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "sci/graphics/drivers/gfxdriver_intern.h"
@@ -28,12 +29,13 @@ namespace Sci {
 
 class WindowsGfx256ColorsDriver final : public UpscaledGfxDriver {
 public:
-	WindowsGfx256ColorsDriver(bool coloredDosStyleCursors, bool smallWindow, bool rgbRendering);
+	WindowsGfx256ColorsDriver(bool coloredDosStyleCursors, bool smallWindow, bool uniformPixels, bool rgbRendering);
 	~WindowsGfx256ColorsDriver() override {}
 	bool initScreen(const Graphics::PixelFormat *format) override;
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getRealCoords(Common::Point &pos) const override;
+	uint16 getHiResBoxHeight(uint16 height) const override;
 	void setColorMap(const byte *colorMap) override { _colorMap = colorMap; }
 	void setFlags(uint32 flags) override;
 	void clearFlags(uint32 flags) override;
@@ -50,18 +52,20 @@ private:
 	const byte *_colorMap;
 	const bool _smallWindow;
 	const bool _dosStyleCursors;
+	// Draws the lowres graphics at 640x400 instead of stretching them to 640x440
+	const bool _uniformPixels;
 	uint16 _vScaleMult2;
 };
 
-WindowsGfx256ColorsDriver::WindowsGfx256ColorsDriver(bool coloredDosStyleCursors, bool smallWindow,bool rgbRendering) :
-	UpscaledGfxDriver(smallWindow ? 320 : 640, smallWindow ? 240 : 440, 1, coloredDosStyleCursors && !smallWindow, rgbRendering), _dosStyleCursors(coloredDosStyleCursors), _smallWindow(smallWindow),
-		_renderLine(nullptr), _renderLine2(nullptr), _flags(0), _colorMap(nullptr), _vScaleMult2(smallWindow ? 1 : 2) {
+WindowsGfx256ColorsDriver::WindowsGfx256ColorsDriver(bool coloredDosStyleCursors, bool smallWindow, bool uniformPixels, bool rgbRendering) :
+	UpscaledGfxDriver(smallWindow ? 320 : 640, smallWindow ? 240 : (uniformPixels ? 400 : 440), 1, coloredDosStyleCursors && !smallWindow, rgbRendering), _dosStyleCursors(coloredDosStyleCursors), _smallWindow(smallWindow),
+		_uniformPixels(uniformPixels && !smallWindow), _renderLine(nullptr), _renderLine2(nullptr), _flags(0), _colorMap(nullptr), _vScaleMult2(smallWindow ? 1 : 2) {
 	_virtualW = 320;
 	_virtualH = 200;
 	if (smallWindow)
 		_hScaleMult = 1;
-	_vScaleMult = _smallWindow ? 6 : 11;
-	_vScaleDiv = 5;
+	_vScaleMult = _smallWindow ? 6 : (_uniformPixels ? 2 : 11);
+	_vScaleDiv = _uniformPixels ? 1 : 5;
 }
 
 void largeWindowRenderLine(byte *&dst, const byte *src, int pitch, int w, int ty) {
@@ -147,6 +151,13 @@ bool WindowsGfx256ColorsDriver::initScreen(const Graphics::PixelFormat *format) 
 	if (!UpscaledGfxDriver::initScreen(format))
 		return false;
 
+	// The hires graphics have square pixels, so a 640x400 screen must not get corrected to 4:3
+	if (_uniformPixels && g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
+		g_system->endGFXTransaction();
+	}
+
 	_renderLine = _smallWindow ? &smallWindowRenderLine : &largeWindowRenderLine;
 	_renderLine2 = _smallWindow ? &renderLineDummy : &hiresRenderLine;
 
@@ -165,6 +176,9 @@ void WindowsGfx256ColorsDriver::copyRectToScreen(const byte *src, int srcX, int 
 	if (_flags & kMovieMode) {
 		destX = (_screenW >> 1) - (w & ~1) * _hScaleMult / 2;
 		destY = (_screenH >> 1) - (h & ~1) * _vScaleMult2 / 2;
+		// Keep the movie out of the area above the picture (the top 20 rows), since the scripts won't redraw that area afterwards
+		if (_uniformPixels)
+			destY = MAX<int>(0, MIN<int>(destY + 10, _screenH - (h & ~1) * _vScaleMult2));
 	}
 
 	src += (srcY * pitch + srcX * _srcPixelSize);
@@ -205,7 +219,15 @@ void WindowsGfx256ColorsDriver::replaceCursor(const void *cursor, uint w, uint h
 }
 
 Common::Point WindowsGfx256ColorsDriver::getRealCoords(Common::Point &pos) const {
+	if (_uniformPixels)
+		return UpscaledGfxDriver::getRealCoords(pos);
 	return Common::Point(pos.x * _hScaleMult, pos.y * _vScaleMult2 + (pos.y + 4) / 5);
+}
+
+uint16 WindowsGfx256ColorsDriver::getHiResBoxHeight(uint16 height) const {
+	// The hires graphics are made for the 11/5 vertical stretch, so they need
+	// about 10% more lowres rows here (rounding up)
+	return _uniformPixels ? (height * 11 + 9) / 10 : height;
 }
 
 void WindowsGfx256ColorsDriver::setFlags(uint32 flags) {
@@ -233,6 +255,17 @@ void WindowsGfx256ColorsDriver::clearFlags(uint32 flags) {
 void WindowsGfx256ColorsDriver::renderBitmap(const byte *src, int pitch, int dx, int dy, int w, int h, int &realWidth, int &realHeight) {
 	assert(_renderLine);
 
+	if (_uniformPixels) {
+		byte *dst = _scaledBitmap + dy * _vScaleMult2 * _screenW * _srcPixelSize + dx * _hScaleMult * _srcPixelSize;
+		for (int i = 0; i < h; ++i) {
+			largeWindowRenderLineMovie(dst, src, _screenW, w, nullptr);
+			src += pitch;
+		}
+		realWidth = w * _hScaleMult;
+		realHeight = h * _vScaleMult2;
+		return;
+	}
+
 	byte *dst = _scaledBitmap + (dy * _vScaleMult2 + (dy + 4) / 5) * _screenW * _srcPixelSize + dx *_hScaleMult * _srcPixelSize;
 	const byte *dstart = dst;
 	dy = (dy + 4) % 5;
@@ -257,7 +290,8 @@ GfxDriver *WindowsGfx256ColorsDriver_create(int rgbRendering, ...) {
 	bool winCursors = (va_arg(args, int) != 0);
 	va_end(args);
 
-	return new WindowsGfx256ColorsDriver(!winCursors, config == 0, rgbRendering != 0);
+	bool uniformPixels = ConfMan.hasKey("hires_uniform_pixels") && ConfMan.getBool("hires_uniform_pixels");
+	return new WindowsGfx256ColorsDriver(!winCursors, config == 0, uniformPixels, rgbRendering != 0);
 }
 
 } // End of namespace Sci

@@ -60,6 +60,8 @@ public:
 	virtual byte remapTextColor(byte color) const { return color; }
 	virtual void setColorMap(const byte *colorMap) {}
 	virtual Common::Point getRealCoords(Common::Point &pos) const { return pos; }
+	// Returns how many lowres rows a box for hires graphics needs to cover the given number of rows from the original layout
+	virtual uint16 getHiResBoxHeight(uint16 height) const { return height; }
 	virtual void setFlags(uint32 flags) {}
 	virtual void clearFlags(uint32 flags) {}
 	virtual bool supportsPalIntensity() const = 0;

@@ -127,6 +127,7 @@ public:
 	int bitsGetDataSize(Common::Rect rect, byte mask);
 	void bitsSave(Common::Rect rect, byte mask, byte *memoryPtr);
 	void bitsGetRect(const byte *memoryPtr, Common::Rect *destRect);
+	byte bitsGetMask(const byte *memoryPtr);
 	void bitsRestore(const byte *memoryPtr);
 
 	void scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);

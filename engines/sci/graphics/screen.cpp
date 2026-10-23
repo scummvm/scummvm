@@ -598,6 +598,10 @@ void GfxScreen::bitsGetRect(const byte *memoryPtr, Common::Rect *destRect) {
 	memcpy(destRect, memoryPtr, sizeof(Common::Rect));
 }
 
+byte GfxScreen::bitsGetMask(const byte *memoryPtr) {
+	return memoryPtr[sizeof(Common::Rect)];
+}
+
 void GfxScreen::bitsRestore(const byte *memoryPtr) {
 	Common::Rect rect;
 	byte mask;
