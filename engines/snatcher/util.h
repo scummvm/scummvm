@@ -36,6 +36,7 @@ enum BCDResolution {
 };
 
 extern uint32 makeBCDTimeStamp(uint32 msecs, BCDResolution res);
+extern uint32 decodeBCDTimeStamp(uint32 bcdTime, BCDResolution res);
 extern uint8 toBCD(uint8 v);
 
 extern void rngReset();

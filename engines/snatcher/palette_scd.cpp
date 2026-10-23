@@ -88,7 +88,8 @@ private:
 	Common::Array<HINTFunc*> _hINTProcs;
 	const HINTFunc *_hINTHandler;
 
-	void setHINTHandler(uint8 num);
+	void setHINTHandler(int8 num);
+	bool isValidHINTHandler() const { return _hINTHandler != nullptr && _hINTHandler->isValid(); }
 
 	void hIntHandler_dummy(Graphics::SegaRenderer*) {}
 	void hIntHandler_characterChatPortraitPalette(Graphics::SegaRenderer *sr);
@@ -258,14 +259,17 @@ void SCDPalette::update() {
 		return;
 
 	if (_gfxState.getVar(11) == 0xFF) {
-		_gfxState.setFlag(7, 0);
+		if (isValidHINTHandler()) {
+			_gfxState.setFlag(7, 0);
+			setHINTHandler(-1);
+		}
 		_gfxState.setVar(11, 0);
 	} else if (_gfxState.getVar(11)) {
 		setHINTHandler(0);
 	}
 
 	bool palChanged = false;
-	if (_gfxState.testFlag(7, 0) || _gfxState.getVar(11)) {
+	if (_gfxState.testFlag(7, 0) || (_gfxState.getVar(11))) {
 		Common::copy<const uint16*, uint16*>(_colors, &_colors[64], _colors2);
 		palChanged = true;
 	}
@@ -289,7 +293,7 @@ void SCDPalette::update() {
 
 void SCDPalette::hINTCallback(void *segaRenderer) {
 	Graphics::SegaRenderer *sr = static_cast<Graphics::SegaRenderer*>(segaRenderer);
-	if (_gfxState.getVar(11) && _hINTHandler && _hINTHandler->isValid()) {
+	if (_gfxState.getVar(11) && isValidHINTHandler()) {
 		(*_hINTHandler)(sr);
 		updateSystemPalette();
 		sr->setRenderColorTable(_sysPalette, 0, 64);
@@ -493,10 +497,12 @@ void SCDPalette::fadeStep(uint16 *modColor, uint16 toR, uint16 toG, uint16 toB) 
 	*modColor = (r | g | b);
 }
 
-void SCDPalette::setHINTHandler(uint8 num) {
-	if (num < _hINTProcs.size())
+void SCDPalette::setHINTHandler(int8 num) {
+	if (num < 0)
+		_hINTHandler = nullptr;
+	else if (num < _hINTProcs.size())
 		_hINTHandler = _hINTProcs[num];
-	 else
+	else
 		error("%s(): Invalid HINT handler %d", __FUNCTION__, num);
 	_transitionStep = 0;
 }
