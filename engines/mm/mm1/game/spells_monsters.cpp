@@ -75,6 +75,7 @@ void SpellsMonsters::castMonsterSpell(const Common::String &monsterName, int spe
 	// All spell messages start with the monster who casts it
 	_lines.clear();
 	_lines.push_back(Line(monsterName));
+	add(' ');
 
 	(this->*SPELLS[spellNum - 1])();
 }
