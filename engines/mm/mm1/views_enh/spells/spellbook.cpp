@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/spells/spellbook.h"
+#include "common/config-manager.h"
 #include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/globals.h"
 
@@ -112,21 +113,24 @@ void Spellbook::draw() {
 		const int yp = 15 + 9 * i;
 		writeString(0, yp, Common::String::format("%c", (i == 9) ? '0' : '1' + i));
 
-		const int spellIndex = _topIndex + i;
+		const int displayIndex = _topIndex + i;
 
 		if (_count == 0) {
 			if (i == 0) {
 				setTextColor(37);
 				writeString(12, yp, STRING["enhdialogs.spellbook.non_caster"]);
 			}
-		} else if (spellIndex < _count) {
+		} else if (displayIndex < _count) {
+			const int spellIndex = _spellOrder[displayIndex];
+
 			// Spell requirements
 			int lvl, num;
 			getSpellLevelNum(CATEGORY_SPELLS_COUNT * (_isWizard ? 1 : 0) + spellIndex, lvl, num);
 			setSpell(g_globals->_currCharacter, lvl, num);
 
-			setTextColor((spellIndex == _selectedIndex) ? 15 :
-				(canCast() ? 37 : 1));
+			const int textColor = (displayIndex == _selectedIndex) ? 15 :
+				(canCast() ? 37 : 1);
+			setTextColor(textColor);
 
 			// Spell name and requirements
 			Common::String spellName = STRING[Common::String::format(
@@ -134,7 +138,19 @@ void Spellbook::draw() {
 				_isWizard ? "wizard" : "cleric",
 				spellIndex
 			)];
-			writeString(12, yp, spellName);
+
+			// Mark the spell being assigned, and existing favorites
+			if (_favoriteAssignMode && spellIndex == _favoriteAssignSpell) {
+				setTextColor(15);
+				writeString(7, yp, "X");
+				setTextColor(textColor);
+			} else if (isFavorite(spellIndex)) {
+				setTextColor(15);
+				writeString(7, yp, "*");
+				setTextColor(textColor);
+			}
+
+			writeString(14, yp, spellName);
 			writeString(152, yp, Common::String::format("%d/%d",
 				_requiredSp, _requiredGems), ALIGN_RIGHT);
 		}
@@ -143,12 +159,24 @@ void Spellbook::draw() {
 
 bool Spellbook::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode >= Common::KEYCODE_0 && msg.keycode <= Common::KEYCODE_9) {
-		int newIndex = _topIndex + (msg.keycode == Common::KEYCODE_0 ?
-			9 : msg.keycode - Common::KEYCODE_1);
-		if (newIndex < _count) {
-			_selectedIndex = newIndex;
-			redraw();
+		const int shortcut = (msg.keycode == Common::KEYCODE_0) ?
+			9 : msg.keycode - Common::KEYCODE_1;
+
+		if (_favoriteAssignMode) {
+			assignFavoriteSlot(shortcut);
+		} else {
+			const int newIndex = _topIndex + shortcut;
+			if (newIndex < _count) {
+				_selectedIndex = newIndex;
+				redraw();
+			}
 		}
+	} else if (msg.keycode == Common::KEYCODE_x) {
+		if (_favoriteAssignMode)
+			removeFavorite(_favoriteAssignSpell);
+		else
+			beginFavoriteAssignment();
+
 	} else if (msg.keycode == Common::KEYCODE_PAGEUP) {
 		if (_topIndex > 0) {
 			_topIndex = MAX(_topIndex - 10, 0);
@@ -210,6 +238,169 @@ bool Spellbook::msgGame(const GameMessage &msg) {
 	}
 }
 
+Common::String Spellbook::favoritesKey(int slot) const {
+	// Favorites are stored per character, identified by name and class
+	const Common::String name = g_globals->_currCharacter->_name;
+	uint32 hash = 2166136261U;
+
+	for (uint i = 0; i < name.size(); ++i) {
+		hash ^= (byte)name[i];
+		hash *= 16777619U;
+	}
+
+	return Common::String::format(
+		"mm1_spell_favorite_%08x_%d_slot_%d",
+		hash, (int)g_globals->_currCharacter->_class, slot);
+}
+
+void Spellbook::loadFavorites() {
+	for (int slot = 0; slot < 10; ++slot) {
+		const Common::String key = favoritesKey(slot);
+
+		// Stored value is spell index + 1; zero means unused slot
+		const int value = ConfMan.hasKey(key) ? ConfMan.getInt(key) : 0;
+		_favoriteSlots[slot] = value - 1;
+
+		if (_favoriteSlots[slot] < -1 ||
+				_favoriteSlots[slot] >= CATEGORY_SPELLS_COUNT)
+			_favoriteSlots[slot] = -1;
+	}
+}
+
+void Spellbook::saveFavorites() const {
+	for (int slot = 0; slot < 10; ++slot)
+		ConfMan.setInt(favoritesKey(slot), _favoriteSlots[slot] + 1);
+
+	ConfMan.flushToDisk();
+}
+
+int Spellbook::favoriteSlot(int spellIndex) const {
+	for (int slot = 0; slot < 10; ++slot) {
+		if (_favoriteSlots[slot] == spellIndex)
+			return slot;
+	}
+
+	return -1;
+}
+
+bool Spellbook::isFavorite(int spellIndex) const {
+	return favoriteSlot(spellIndex) != -1;
+}
+
+void Spellbook::beginFavoriteAssignment() {
+	if (_selectedIndex < 0 || _selectedIndex >= _count)
+		return;
+
+	_favoriteAssignSpell = _spellOrder[_selectedIndex];
+	_favoriteAssignMode = true;
+	redraw();
+}
+
+void Spellbook::assignFavoriteSlot(int slot) {
+	if (!_favoriteAssignMode || slot < 0 || slot >= 10 ||
+			_favoriteAssignSpell < 0)
+		return;
+
+	const int spellIndex = _favoriteAssignSpell;
+	const int knownCount = _count;
+
+	// Moving an existing favorite removes its previous assignment
+	for (int i = 0; i < 10; ++i) {
+		if (_favoriteSlots[i] == spellIndex)
+			_favoriteSlots[i] = -1;
+	}
+
+	_favoriteSlots[slot] = spellIndex;
+	saveFavorites();
+
+	_favoriteAssignMode = false;
+	_favoriteAssignSpell = -1;
+	buildSpellOrder(knownCount);
+
+	// Keep the newly assigned spell highlighted
+	_selectedIndex = 0;
+	for (int i = 0; i < _count; ++i) {
+		if (_spellOrder[i] == spellIndex) {
+			_selectedIndex = i;
+			break;
+		}
+	}
+
+	_topIndex = (_selectedIndex / 10) * 10;
+	redraw();
+}
+
+void Spellbook::removeFavorite(int spellIndex) {
+	const int knownCount = _count;
+	bool changed = false;
+
+	for (int slot = 0; slot < 10; ++slot) {
+		if (_favoriteSlots[slot] == spellIndex) {
+			_favoriteSlots[slot] = -1;
+			changed = true;
+		}
+	}
+
+	_favoriteAssignMode = false;
+	_favoriteAssignSpell = -1;
+
+	if (changed)
+		saveFavorites();
+
+	buildSpellOrder(knownCount);
+
+	_selectedIndex = 0;
+	for (int i = 0; i < _count; ++i) {
+		if (_spellOrder[i] == spellIndex) {
+			_selectedIndex = i;
+			break;
+		}
+	}
+
+	_topIndex = (_selectedIndex / 10) * 10;
+	redraw();
+}
+
+void Spellbook::buildSpellOrder(int knownCount) {
+	_spellOrder.clear();
+
+	bool used[CATEGORY_SPELLS_COUNT] = { false };
+	int nextNormal = 0;
+
+	// The first ten visible entries correspond directly to shortcuts
+	// 1-0. A favorite assigned to a slot is fixed to that exact row
+	for (int slot = 0; slot < 10 &&
+			(int)_spellOrder.size() < knownCount; ++slot) {
+		const int favorite = _favoriteSlots[slot];
+
+		if (favorite >= 0 && favorite < knownCount && !used[favorite]) {
+			_spellOrder.push_back(favorite);
+			used[favorite] = true;
+			continue;
+		}
+
+		// Fill an unused slot with the next ordinary spell, keeping
+		// assigned favorites reserved for their own shortcut rows
+		while (nextNormal < knownCount &&
+				(used[nextNormal] || isFavorite(nextNormal)))
+			++nextNormal;
+
+		if (nextNormal < knownCount) {
+			_spellOrder.push_back(nextNormal);
+			used[nextNormal] = true;
+			++nextNormal;
+		}
+	}
+
+	// Append every remaining spell in normal order
+	for (int spellIndex = 0; spellIndex < knownCount; ++spellIndex) {
+		if (!used[spellIndex])
+			_spellOrder.push_back(spellIndex);
+	}
+
+	_count = (int)_spellOrder.size();
+}
+
 void Spellbook::updateChar() {
 	// Refresh the cast spell side dialog for new character
 	send("CastSpell", GameMessage("UPDATE"));
@@ -221,25 +412,44 @@ void Spellbook::updateChar() {
 	const Character &c = *g_globals->_currCharacter;
 	_isWizard = c._class == SORCERER || c._class == ARCHER;
 
-	_selectedIndex = (g_events->isInCombat() ? c._combatSpell : c._nonCombatSpell) % CATEGORY_SPELLS_COUNT;
-	if (_selectedIndex == -1)
-		_selectedIndex = 0;
-	_topIndex = (_selectedIndex / 10) * 10;
-
+	int knownCount;
 	if (c._spellLevel._current == 0) {
-		_count = 0;
+		knownCount = 0;
 	} else {
-		_count = (c._spellLevel._current < 5) ?
+		knownCount = (c._spellLevel._current < 5) ?
 			c._spellLevel * 8 - 1 : 31 + (c._spellLevel - 4) * 5;
 	}
 
-	// And finally, update the display
+	_favoriteAssignMode = false;
+	_favoriteAssignSpell = -1;
+	loadFavorites();
+	buildSpellOrder(knownCount);
+
+	// Reopen on the page containing the previously selected spell
+	const int selectedSpell = (g_events->isInCombat() ?
+		c._combatSpell : c._nonCombatSpell) % CATEGORY_SPELLS_COUNT;
+
+	_selectedIndex = 0;
+	if (selectedSpell >= 0) {
+		for (int i = 0; i < _count; ++i) {
+			if (_spellOrder[i] == selectedSpell) {
+				_selectedIndex = i;
+				break;
+			}
+		}
+	}
+
+	_topIndex = (_selectedIndex / 10) * 10;
 	redraw();
 }
 
 void Spellbook::spellSelected() {
 	Character &c = *g_globals->_currCharacter;
-	int spellIndex = (_isWizard ? CATEGORY_SPELLS_COUNT : 0) + _selectedIndex;
+	if (_selectedIndex < 0 || _selectedIndex >= _count)
+		return;
+
+	int spellIndex = (_isWizard ? CATEGORY_SPELLS_COUNT : 0) +
+		_spellOrder[_selectedIndex];
 
 	// Set the selected spell for the character
 	c.setSpellNumber(spellIndex);

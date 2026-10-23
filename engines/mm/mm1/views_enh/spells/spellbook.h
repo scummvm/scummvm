@@ -40,6 +40,22 @@ private:
 	bool _isWizard = false;
 	int _topIndex = 0, _count = 0;
 	int _selectedIndex = -1;
+	Common::Array<int> _spellOrder;
+	int _favoriteSlots[10] = {
+		-1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+	};
+	bool _favoriteAssignMode = false;
+	int _favoriteAssignSpell = -1;
+
+	void buildSpellOrder(int knownCount);
+	Common::String favoritesKey(int slot) const;
+	void loadFavorites();
+	void saveFavorites() const;
+	int favoriteSlot(int spellIndex) const;
+	bool isFavorite(int spellIndex) const;
+	void beginFavoriteAssignment();
+	void assignFavoriteSlot(int slot);
+	void removeFavorite(int spellIndex);
 
 	/**
 	 * Loads buttons for the dialog
