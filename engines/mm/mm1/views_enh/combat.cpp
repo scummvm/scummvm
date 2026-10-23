@@ -152,6 +152,16 @@ void Combat::draw() {
 		delaySeconds(2);
 		return;
 	case MONSTER_SPELL:
+		// Monster spell effects can cycle several messages through the same
+		// row. Rebuild the complete combat frame so the previous message (or
+		// an underlying dungeon/outdoor redraw) cannot remain on screen
+		clearSurface();
+		writeStaticContent();
+		writeHandicap();
+		writeRound();
+		writePartyNumbers();
+		writeMonsters();
+		writeParty();
 		writeMonsterSpell();
 		delaySeconds(2);
 		return;
