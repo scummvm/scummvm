@@ -1370,9 +1370,6 @@ void Combat::weaken() {
 
 bool Combat::web() {
 	SpellsState &ss = g_globals->_spellsState;
-	if (_destMonsterNum < _attackersCount)
-		return false;
-
 	ss._mmVal1++;
 	ss._resistanceIndex = 0;
 	ss._resistanceTypeOrTargetCount = 5;
