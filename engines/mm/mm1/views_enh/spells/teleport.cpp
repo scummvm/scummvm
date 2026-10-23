@@ -79,13 +79,13 @@ bool Teleport::msgKeypress(const KeypressMessage &msg) {
 		redraw();
 	}
 
-	return true;
+	return false;
 }
 
 bool Teleport::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
 	case KEYBIND_ESCAPE:
-		close();
+		g_events->replaceView("Game", true);
 		return true;
 
 	case KEYBIND_SELECT:
@@ -104,7 +104,7 @@ void Teleport::teleport() {
 	Maps::Maps &maps = *g_maps;
 	Maps::Map &map = *maps._currentMap;
 
-	close();
+	g_events->replaceView("Game", true);
 	if (map[Maps::MAP_FLAGS] & 2) {
 		g_events->send(SoundMessage(STRING["spells.failed"]));
 
