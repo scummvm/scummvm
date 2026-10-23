@@ -56,8 +56,16 @@ const MonsterTouchAction MonsterTouch::ACTIONS[25] = {
 	&MonsterTouch::action24
 };
 
-#define LINE(ACTION) line = Common::String::format("    %s%s", \
-	STRING["monster_actions.and"].c_str(), STRING[ACTION].c_str())
+static Common::String formatMonsterAction(const Common::String &action) {
+	Common::String conjunction = STRING["monster_actions.and"];
+	if (!conjunction.empty() && conjunction.firstChar() == '!')
+		conjunction.deleteChar(0);
+
+	return Common::String::format("    %s%s!",
+		conjunction.c_str(), action.c_str());
+}
+
+#define LINE(ACTION) line = formatMonsterAction(STRING[ACTION])
 
 bool MonsterTouch::monsterTouch(uint index, Common::String &line) {
 	line = "";
@@ -149,7 +157,7 @@ bool MonsterTouch::action06(Common::String &line) {
 bool MonsterTouch::action07(Common::String &line) {
 	if (damageType5()) {
 		setCondition(3);
-		LINE("monster_actions.cures_paralysis");
+		LINE("monster_actions.causes_paralysis");
 		return true;
 	}
 
@@ -336,7 +344,7 @@ bool MonsterTouch::action20(Common::String &line) {
 		}
 	}
 
-	LINE("monster_actions.drains_abilities");
+	LINE("monster_actions.drains_ability");
 	return true;
 }
 
@@ -345,7 +353,7 @@ bool MonsterTouch::action21(Common::String &line) {
 
 	if (canPerform(2)) {
 		c._backpack.clear();
-		LINE("monster_actions.steals_backpack");
+		line = formatMonsterAction("steals backpack");
 		return true;
 
 	} else {
