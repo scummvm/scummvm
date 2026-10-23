@@ -240,7 +240,6 @@ bool Combat::canMonsterCast() const {
 void Combat::dispelParty() {
 	g_globals->_activeSpells.clear();
 	Character *tmpC = g_globals->_currCharacter;
-	Monster *tmpM = _monsterP;
 
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
 		Character &c = *g_globals->_combatParty[i];
@@ -255,12 +254,8 @@ void Combat::dispelParty() {
 
 	g_globals->_currCharacter = tmpC;
 
-	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
-		monsterSetPtr(i);
+	for (uint i = 0; i < _remainingMonsters.size(); ++i)
 		_remainingMonsters[i]->_status = 0;
-	}
-
-	_monsterP = tmpM;
 }
 
 void Combat::combatLoop(bool checkMonstersFirst) {
