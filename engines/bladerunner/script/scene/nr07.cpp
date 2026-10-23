@@ -74,7 +74,17 @@ bool SceneScriptNR07::ClickedOnActor(int actorId) {
 		if (Game_Flag_Query(kFlagNR07McCoyIsCop)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(1100, -1, 3, 8); // VOIGT-KAMPFF
 			DM_Add_To_List_Never_Repeat_Once_Selected(1110, 8, -1, -1); // CRYSTAL
-			if (Actor_Clue_Query(kActorMcCoy, kClueSuspectDektora)) {
+			bool canAskAboutMoonbus = Actor_Clue_Query(kActorMcCoy, kClueSuspectDektora);
+			if (!canAskAboutMoonbus && _vm->_cutContent) {
+				// Can also ask this if McCoy saw Clovis at the moonbus and with Dektora.
+				canAskAboutMoonbus = (
+					Actor_Clue_Query(kActorMcCoy, kClueGaffsInformation)
+						|| Actor_Clue_Query(kActorMcCoy, kClueCrystalsCase))
+					&& Actor_Clue_Query(kActorMcCoy, kClueClovisAtMoonbus)
+					&& (Actor_Clue_Query(kActorMcCoy, kClueIzosFriend)
+						|| Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom));
+			}
+			if (canAskAboutMoonbus) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1120, 3, 6, 7); // MOONBUS
 			}
 			if (Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)) {
