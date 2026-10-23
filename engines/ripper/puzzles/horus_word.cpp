@@ -28,6 +28,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
@@ -61,7 +62,6 @@ static const byte kPuzzleHelpFutureColor = 254;
 static const byte kPuzzleHelpRecommendedColor = 255;
 static const uint kPuzzleHelpFutureDitherMask = 7;
 static const uint kPuzzleHelpRecommendedDitherMask = 3;
-static const int kPuzzleHelpBorderWidth = 2;
 
 static const char *const kLibraryName = "egypt.pl";
 static const char *const kBackgroundName = "bkgrnd";
@@ -177,22 +177,11 @@ void HorusWordPuzzle::DebugHelper::draw(
 			kPuzzleHelpRecommendedDitherMask : kPuzzleHelpFutureDitherMask;
 		const Common::Point &position = kLetterPositions[letter];
 		const BitmapAssetFrame &button = puzzle._buttons[letter];
-		const int left = MAX<int>(position.x, 0);
-		const int top = MAX<int>(position.y, 0);
-		const int right = MIN<int>(position.x + button.width,
-			kRipperScreenWidth);
-		const int bottom = MIN<int>(position.y + button.height,
-			kRipperScreenHeight);
-		for (int y = top; y < bottom; ++y) {
-			for (int x = left; x < right; ++x) {
-				const bool border = x - left < kPuzzleHelpBorderWidth ||
-					right - x <= kPuzzleHelpBorderWidth ||
-					y - top < kPuzzleHelpBorderWidth ||
-					bottom - y <= kPuzzleHelpBorderWidth;
-				if (border || ((x + y) & ditherMask) == 0)
-					screen[y * pitch + x] = color;
-			}
-		}
+		IndexedBitmapRenderer::drawHintRect(screen, pitch,
+			Common::Rect(position.x, position.y, position.x + button.width,
+				position.y + button.height),
+			Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight),
+			color, ditherMask);
 	}
 }
 

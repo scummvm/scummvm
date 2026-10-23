@@ -18,6 +18,7 @@
 #include "graphics/surface.h"
 
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
@@ -289,23 +290,8 @@ void CombatEncounter::serviceWeapon(const FrameState &frame, const Common::Point
 
 void CombatEncounter::drawFrameScaled(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y) const {
-	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
-		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
-			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
-			if (pixel == frame.transparentColor)
-				continue;
-			const int targetX = (x + sourceX) * kDisplayScale;
-			const int targetY = (y + sourceY) * kDisplayScale;
-			for (uint dy = 0; dy < kDisplayScale; ++dy) {
-				if (targetY + (int)dy < 0 || targetY + (int)dy >= (int)g_system->getHeight())
-					continue;
-				for (uint dx = 0; dx < kDisplayScale; ++dx) {
-					if (targetX + (int)dx >= 0 && targetX + (int)dx < (int)g_system->getWidth())
-						screen[(targetY + dy) * pitch + targetX + dx] = pixel;
-				}
-			}
-		}
-	}
+	IndexedBitmapRenderer::drawBitmap2x(screen, pitch, frame, x, y,
+		Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()));
 }
 
 void CombatEncounter::drawMeters(byte *screen, uint pitch, int panelX) const {

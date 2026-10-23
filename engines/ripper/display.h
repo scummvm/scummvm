@@ -64,6 +64,15 @@ public:
 	static bool drawBitmap(byte *pixels, uint pitch,
 		const BitmapAssetFrame &bitmap, int x, int y,
 		const Common::Rect &clip);
+	static bool drawBitmap(byte *pixels, uint pitch,
+		const BitmapAssetFrame &bitmap, int x, int y,
+		const Common::Rect &clip, byte transparentColor);
+	static bool drawBitmap2x(byte *pixels, uint pitch,
+		const BitmapAssetFrame &bitmap, int x, int y,
+		const Common::Rect &clip);
+	static void drawHintRect(byte *pixels, uint pitch,
+		const Common::Rect &bounds, const Common::Rect &clip,
+		byte color, uint ditherMask);
 	static bool drawNineSlice(byte *pixels, uint pitch,
 		const Common::Array<BitmapAssetFrame> &skin,
 		const Common::Rect &bounds, const Common::Rect &clip);

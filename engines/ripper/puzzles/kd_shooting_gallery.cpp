@@ -29,6 +29,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/ini.h"
 #include "ripper/media.h"
@@ -626,26 +627,8 @@ uint16 KdShootingGallery::service(uint frame) {
 
 void KdShootingGallery::drawBitmapScaled(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y) const {
-	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
-		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
-			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
-			if (pixel == frame.transparentColor)
-				continue;
-			const int targetX = (x + sourceX) * kDisplayScale;
-			const int targetY = (y + sourceY) * kDisplayScale;
-			for (uint scaleY = 0; scaleY < kDisplayScale; ++scaleY) {
-				if (targetY + (int)scaleY < 0 ||
-						targetY + (int)scaleY >= g_system->getHeight())
-					continue;
-				for (uint scaleX = 0; scaleX < kDisplayScale; ++scaleX) {
-					if (targetX + (int)scaleX >= 0 &&
-							targetX + (int)scaleX < g_system->getWidth()) {
-						screen[(targetY + scaleY) * pitch + targetX + scaleX] = pixel;
-					}
-				}
-			}
-		}
-	}
+	IndexedBitmapRenderer::drawBitmap2x(screen, pitch, frame, x, y,
+		Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()));
 }
 
 void KdShootingGallery::drawTextScaled(byte *screen, uint pitch,

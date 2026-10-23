@@ -100,8 +100,6 @@ private:
 	bool loadBitmap(const Common::String &path, BitmapAssetFrame &frame,
 		bool pcx);
 	bool loadAnimation(const Common::String &path, Animation &animation);
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y, byte transparentColor) const;
 	void render() const;
 	Common::Point playerPosition(uint direction, uint originCell) const;
 	int findCell(const Common::Point &point) const;

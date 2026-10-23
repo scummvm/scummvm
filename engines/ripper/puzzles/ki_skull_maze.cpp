@@ -33,6 +33,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/ini.h"
 #include "ripper/media.h"
@@ -58,7 +59,6 @@ static const uint kPuzzleHelpSearchDepth = 32;
 static const uint kPuzzleHelpSearchNodeLimit = 100000;
 static const byte kPuzzleHelpRecommendedColor = 255;
 static const uint kPuzzleHelpDitherMask = 3;
-static const int kPuzzleHelpBorderWidth = 2;
 static const byte kSkullTransparentColor = 0xff;
 static const byte kManTransparentColor = 0x2f;
 static const char kCompletionKeyword[] = "pretzel";
@@ -219,22 +219,11 @@ void KiSkullMazePuzzle::DebugHelper::draw(
 		return;
 
 	const Common::Point &position = kCellPositions[_recommendedCell];
-	const int left = MAX<int>(position.x, 0);
-	const int top = MAX<int>(position.y, 0);
-	const int right = MIN<int>(position.x + puzzle._lids[0].width,
-		kRipperScreenWidth);
-	const int bottom = MIN<int>(position.y + puzzle._lids[0].height,
-		kRipperScreenHeight);
-	for (int y = top; y < bottom; ++y) {
-		for (int x = left; x < right; ++x) {
-			const bool border = x - left < kPuzzleHelpBorderWidth ||
-				right - x <= kPuzzleHelpBorderWidth ||
-				y - top < kPuzzleHelpBorderWidth ||
-				bottom - y <= kPuzzleHelpBorderWidth;
-			if (border || ((x + y) & kPuzzleHelpDitherMask) == 0)
-				screen[y * pitch + x] = kPuzzleHelpRecommendedColor;
-		}
-	}
+	IndexedBitmapRenderer::drawHintRect(screen, pitch,
+		Common::Rect(position.x, position.y, position.x + puzzle._lids[0].width,
+			position.y + puzzle._lids[0].height),
+		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight),
+		kPuzzleHelpRecommendedColor, kPuzzleHelpDitherMask);
 }
 
 KiSkullMazePuzzle::Config::Config() :
@@ -400,24 +389,6 @@ bool KiSkullMazePuzzle::loadAssets() {
 	return true;
 }
 
-void KiSkullMazePuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y,
-		byte transparentColor) const {
-	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
-		const int destinationY = y + sourceY;
-		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
-			continue;
-		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
-			const int destinationX = x + sourceX;
-			if (destinationX < 0 || destinationX >= kRipperScreenWidth)
-				continue;
-			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
-			if (pixel != transparentColor)
-				screen[destinationY * pitch + destinationX] = pixel;
-		}
-	}
-}
-
 Common::Point KiSkullMazePuzzle::playerPosition(uint direction,
 		uint originCell) const {
 	if (originCell >= KiSkullMazeModel::kCellCount || direction >= 5)
@@ -439,6 +410,7 @@ void KiSkullMazePuzzle::render() const {
 		return;
 	}
 
+	const Common::Rect clip(0, 0, kRipperScreenWidth, kRipperScreenHeight);
 	byte *screen = (byte *)surface->getPixels();
 	for (uint y = 0; y < _background.height; ++y) {
 		memcpy(screen + y * surface->pitch,
@@ -447,22 +419,20 @@ void KiSkullMazePuzzle::render() const {
 	}
 	for (uint cell = 0; cell < KiSkullMazeModel::kCellCount; ++cell) {
 		const uint state = _model.cellState(cell);
-		drawFrame(screen, surface->pitch, _lids[state],
-			kCellPositions[cell].x, kCellPositions[cell].y,
-			_lids[state].transparentColor);
+		IndexedBitmapRenderer::drawBitmap(screen, surface->pitch, _lids[state],
+			kCellPositions[cell].x, kCellPositions[cell].y, clip);
 	}
 
 	const BitmapAssetFrame &skull =
 		_skullAnimation.frames[_skullFrame % _skullAnimation.frames.size()];
-	drawFrame(screen, surface->pitch, skull,
+	IndexedBitmapRenderer::drawBitmap(screen, surface->pitch, skull,
 		kRipperScreenWidth - _skullAnimation.width, 0,
-		kSkullTransparentColor);
+		clip, kSkullTransparentColor);
 	for (uint index = 0; index < ARRAYSIZE(kSkullForegroundCells); ++index) {
 		const uint cell = kSkullForegroundCells[index];
 		const uint state = _model.cellState(cell);
-		drawFrame(screen, surface->pitch, _lids[state],
-			kCellPositions[cell].x, kCellPositions[cell].y,
-			_lids[state].transparentColor);
+		IndexedBitmapRenderer::drawBitmap(screen, surface->pitch, _lids[state],
+			kCellPositions[cell].x, kCellPositions[cell].y, clip);
 	}
 
 	const uint direction = _movementDirection;
@@ -472,8 +442,8 @@ void KiSkullMazePuzzle::render() const {
 		MIN<uint>(_movementFrame, man.frames.size() - 1);
 	const Common::Point position = playerPosition(direction,
 		direction == 0 ? _model.currentCell() : _movementOriginCell);
-	drawFrame(screen, surface->pitch, man.frames[frame], position.x,
-		position.y, kManTransparentColor);
+	IndexedBitmapRenderer::drawBitmap(screen, surface->pitch, man.frames[frame],
+		position.x, position.y, clip, kManTransparentColor);
 	_debugHelper.draw(*this, screen, surface->pitch);
 	g_system->unlockScreen();
 	presentScreen();

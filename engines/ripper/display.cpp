@@ -112,6 +112,13 @@ void IndexedDisplaySnapshot::clear() {
 bool IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
 		const BitmapAssetFrame &bitmap, int x, int y,
 		const Common::Rect &clip) {
+	return drawBitmap(pixels, pitch, bitmap, x, y, clip,
+		bitmap.transparentColor);
+}
+
+bool IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
+		const BitmapAssetFrame &bitmap, int x, int y,
+		const Common::Rect &clip, byte transparentColor) {
 	const uint32 expectedPixels = (uint32)bitmap.width * bitmap.height;
 	if (!pixels || pitch == 0 || bitmap.width == 0 || bitmap.height == 0 ||
 			bitmap.pixels.size() != expectedPixels || clip.isEmpty() ||
@@ -135,11 +142,59 @@ bool IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
 				destinationX < destinationRight; ++destinationX) {
 			const uint sourceX = destinationX - x;
 			const byte pixel = bitmap.pixels[sourceY * bitmap.width + sourceX];
-			if (pixel != bitmap.transparentColor)
+			if (pixel != transparentColor)
 				pixels[destinationY * pitch + destinationX] = pixel;
 		}
 	}
 	return true;
+}
+
+bool IndexedBitmapRenderer::drawBitmap2x(byte *pixels, uint pitch,
+		const BitmapAssetFrame &bitmap, int x, int y,
+		const Common::Rect &clip) {
+	const uint32 expectedPixels = (uint32)bitmap.width * bitmap.height;
+	if (!pixels || pitch == 0 || bitmap.width == 0 || bitmap.height == 0 ||
+			bitmap.pixels.size() != expectedPixels || clip.isEmpty() ||
+			clip.left < 0 || clip.top < 0 || (uint)clip.right > pitch)
+		return false;
+
+	for (uint sourceY = 0; sourceY < bitmap.height; ++sourceY) {
+		for (uint sourceX = 0; sourceX < bitmap.width; ++sourceX) {
+			const byte pixel = bitmap.pixels[sourceY * bitmap.width + sourceX];
+			if (pixel == bitmap.transparentColor)
+				continue;
+			const int targetX = (x + sourceX) * 2;
+			const int targetY = (y + sourceY) * 2;
+			for (int dy = 0; dy < 2; ++dy) {
+				if (targetY + dy < clip.top || targetY + dy >= clip.bottom)
+					continue;
+				for (int dx = 0; dx < 2; ++dx) {
+					if (targetX + dx >= clip.left && targetX + dx < clip.right)
+						pixels[(targetY + dy) * pitch + targetX + dx] = pixel;
+				}
+			}
+		}
+	}
+	return true;
+}
+
+void IndexedBitmapRenderer::drawHintRect(byte *pixels, uint pitch,
+		const Common::Rect &bounds, const Common::Rect &clip,
+		byte color, uint ditherMask) {
+	if (!pixels || clip.isEmpty() || clip.left < 0 || clip.top < 0 ||
+			(uint)clip.right > pitch || !bounds.intersects(clip))
+		return;
+	Common::Rect visible = bounds;
+	visible.clip(clip);
+	// The two-pixel border follows the clipped bounds, not the original rectangle.
+	for (int y = visible.top; y < visible.bottom; ++y) {
+		for (int x = visible.left; x < visible.right; ++x) {
+			const bool border = x - visible.left < 2 || visible.right - x <= 2 ||
+				y - visible.top < 2 || visible.bottom - y <= 2;
+			if (border || ((x + y) & ditherMask) == 0)
+				pixels[y * pitch + x] = color;
+		}
+	}
 }
 
 bool IndexedBitmapRenderer::drawNineSlice(byte *pixels, uint pitch,

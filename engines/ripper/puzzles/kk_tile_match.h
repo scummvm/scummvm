@@ -111,8 +111,6 @@ private:
 	bool loadConfiguration();
 	bool loadAssets();
 	bool loadFlipAnimation(uint state);
-	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
 	void drawAnimationFrame(byte *screen, uint pitch,
 		const AnimationFrame &frame, int x, int y) const;
 	void drawSlot(byte *screen, uint pitch, const Slot &slot,

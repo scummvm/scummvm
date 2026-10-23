@@ -30,6 +30,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
@@ -57,7 +58,6 @@ static const uint kPuzzleHelpSearchDepth = 6;
 static const uint kPuzzleHelpSearchNodeLimit = 100000;
 static const byte kPuzzleHelpRecommendedColor = 255;
 static const uint kPuzzleHelpDitherMask = 3;
-static const int kPuzzleHelpBorderWidth = 2;
 static const byte kAnimationTransparentColor = 0xff;
 static const char *const kLibraryName = "kk.pl";
 static const char *const kBackgroundName = "base";
@@ -255,22 +255,11 @@ void KkTileMatchPuzzle::DebugHelper::draw(
 		return;
 
 	const Common::Point &position = kTilePositions[_recommendedTile];
-	const int left = MAX<int>(position.x, 0);
-	const int top = MAX<int>(position.y, 0);
-	const int right = MIN<int>(position.x + puzzle._closedTile.width,
-		kRipperScreenWidth);
-	const int bottom = MIN<int>(position.y + puzzle._closedTile.height,
-		kRipperScreenHeight);
-	for (int y = top; y < bottom; ++y) {
-		for (int x = left; x < right; ++x) {
-			const bool border = x - left < kPuzzleHelpBorderWidth ||
-				right - x <= kPuzzleHelpBorderWidth ||
-				y - top < kPuzzleHelpBorderWidth ||
-				bottom - y <= kPuzzleHelpBorderWidth;
-			if (border || ((x + y) & kPuzzleHelpDitherMask) == 0)
-				screen[y * pitch + x] = kPuzzleHelpRecommendedColor;
-		}
-	}
+	IndexedBitmapRenderer::drawHintRect(screen, pitch,
+		Common::Rect(position.x, position.y, position.x + puzzle._closedTile.width,
+			position.y + puzzle._closedTile.height),
+		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight),
+		kPuzzleHelpRecommendedColor, kPuzzleHelpDitherMask);
 }
 
 KkTileMatchPuzzle::KkTileMatchPuzzle(RipperEngine *engine) :
@@ -443,23 +432,6 @@ bool KkTileMatchPuzzle::loadFlipAnimation(uint state) {
 	return true;
 }
 
-void KkTileMatchPuzzle::drawBitmap(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
-	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
-		const int destinationY = y + sourceY;
-		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
-			continue;
-		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
-			const int destinationX = x + sourceX;
-			if (destinationX < 0 || destinationX >= kRipperScreenWidth)
-				continue;
-			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
-			if (pixel != frame.transparentColor)
-				screen[destinationY * pitch + destinationX] = pixel;
-		}
-	}
-}
-
 void KkTileMatchPuzzle::drawAnimationFrame(byte *screen, uint pitch,
 		const AnimationFrame &frame, int x, int y) const {
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
@@ -480,7 +452,9 @@ void KkTileMatchPuzzle::drawAnimationFrame(byte *screen, uint pitch,
 void KkTileMatchPuzzle::drawSlot(byte *screen, uint pitch, const Slot &slot,
 		const Common::Point &position) const {
 	if (!slot.active) {
-		drawBitmap(screen, pitch, _closedTile, position.x, position.y);
+		IndexedBitmapRenderer::drawBitmap(screen, pitch, _closedTile,
+			position.x, position.y,
+			Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 		return;
 	}
 	if (slot.state == 0 || slot.state > kMaximumState)
