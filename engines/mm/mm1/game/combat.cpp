@@ -1657,6 +1657,10 @@ void Combat::use() {
 	g_events->send("CharacterInfo", GameMessage("USE"));
 }
 
+void Combat::endCombat() {
+	combatDone();
+}
+
 void Combat::combatDone() {
 	// Reset several active spells
 	g_globals->_activeSpells._s.bless = 0;

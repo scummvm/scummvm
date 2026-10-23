@@ -346,6 +346,11 @@ public:
 	bool acidRain();
 	void fingerOfDeath();
 	void disintegration();
+
+	/**
+	 * End combat through the interface-specific cleanup path
+	 */
+	void endCombat();
 };
 
 } // namespace Game

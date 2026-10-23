@@ -870,8 +870,8 @@ SpellResult SpellsParty::wizard48_timeDistortion() {
 	if (getRandomNumber(100) < map[Maps::MAP_DISPEL_THRESHOLD])
 		return SR_FAILED;
 
-	// End combat by closing the combat view
-	g_events->focusedView()->close();
+	// End combat through the normal cleanup and view-transition path
+	g_globals->_combat->endCombat();
 	return SR_SUCCESS_SILENT;
 }
 
