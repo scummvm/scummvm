@@ -24,6 +24,8 @@
 #include "common/textconsole.h"
 #include "snatcher/util.h"
 
+#include "common/array.h"
+
 namespace Snatcher {
 namespace Util {
 
@@ -83,6 +85,10 @@ uint8 toBCD(uint8 v) {
 	return (v / 10) << 4 | (v % 10);
 }
 
+uint8 fromBCD(uint8 v) {
+	return (v >> 4) * 10 + (v & 0x0F);
+}
+
 uint32 makeBCDTimeStamp(uint32 msecs, BCDResolution res) {
 	uint32 hrs = toBCD((msecs / 3600000) % 24);
 	uint32 min = toBCD((msecs / 60000) % 60);
@@ -94,6 +100,25 @@ uint32 makeBCDTimeStamp(uint32 msecs, BCDResolution res) {
 
 	// BCD time code mm:ss:ff:md (md = mode (irrelevant to us): 00 = CD-DA, 01 = CD-ROM mode 1, 02 = CD-ROM mode 2)
 	return ((min & 0xFF) << 24) | ((sec & 0xFF) << 16) | ((frm & 0xFF) << 8);
+}
+
+uint32 decodeBCDTimeStamp(uint32 bcdTime, BCDResolution res) {
+	bcdTime >>= 8;
+	uint32 r = 0;
+
+	if (res == kBCD_MMSSFR) {
+		r += (fromBCD(bcdTime) * 27) / 2;
+		bcdTime >>= 8;
+	}
+	r += (fromBCD(bcdTime) * 1000);
+	bcdTime >>= 8;
+	r += (fromBCD(bcdTime) * 60000);
+	bcdTime >>= 8;
+
+	if (res == kBCD_HHMMSS)
+		r += (fromBCD(bcdTime) * 3600000);
+
+	return r;
 }
 
 union RNDC {
