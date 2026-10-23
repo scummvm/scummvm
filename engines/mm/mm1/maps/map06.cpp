@@ -32,6 +32,8 @@ namespace Maps {
 #define VAL1 446
 #define VAL2 447
 #define ENCOUNTER_COMPLETE 0x80
+#define QUEST_ACTIVE_OFFSET (15 * MAP_W + 15)
+#define QUEST_COMPLETE_OFFSET (15 * MAP_W + 13)
 
 static const byte MONSTER_ID1[13] = {
 	2, 1, 8, 9, 5, 9, 2, 7, 15, 4, 11, 1, 5
@@ -178,6 +180,10 @@ void Map06::special13() {
 	Game::Encounter &enc = g_globals->_encounters;
 	g_maps->clearSpecial();
 
+	// Encounter progress also starts the side quest if the wizard
+	// hasn't been spoken to first
+	_visited[QUEST_ACTIVE_OFFSET] |= ENCOUNTER_COMPLETE;
+
 	// Record completion in the map visitation data, which is serialized
 	// in savegames, so progress survives saving and loading
 	byte &visited = _visited[g_maps->_mapOffset];
@@ -205,12 +211,16 @@ void Map06::special13() {
 
 void Map06::special26() {
 	if (completedEncounters() < 13) {
+		// Talking to the wizard starts the tracked side quest
+		_visited[QUEST_ACTIVE_OFFSET] |= ENCOUNTER_COMPLETE;
 		send(SoundMessage(STRING["maps.map06.wizard"]));
 	} else {
 		g_globals->_treasure.setGold(12000);
 		g_globals->_treasure._items[1] = BRONZE_KEY_ID;
 		g_globals->_treasure._items[2] = getRandomNumber(12) + 182;
 		clearEncounterProgress();
+		_visited[QUEST_ACTIVE_OFFSET] &= ~ENCOUNTER_COMPLETE;
+		_visited[QUEST_COMPLETE_OFFSET] |= ENCOUNTER_COMPLETE;
 		g_events->addAction(KEYBIND_SEARCH);
 	}
 }
@@ -227,6 +237,15 @@ int Map06::completedEncounters() const {
 	}
 
 	return result;
+}
+
+bool Map06::crazedWizardQuestActive() const {
+	return (_visited[QUEST_ACTIVE_OFFSET] & ENCOUNTER_COMPLETE) ||
+		completedEncounters() != 0;
+}
+
+bool Map06::crazedWizardQuestCompleted() const {
+	return (_visited[QUEST_COMPLETE_OFFSET] & ENCOUNTER_COMPLETE) != 0;
 }
 
 void Map06::clearEncounterProgress() {

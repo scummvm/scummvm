@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views_enh/active_quest.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/maps/map06.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/metaengine.h"
 
@@ -36,6 +37,10 @@ struct QuestLogEntry {
 	Common::String _title;
 	Common::String _details;
 };
+
+Maps::Map06 &crazedWizardMap() {
+	return *static_cast<Maps::Map06 *>(g_maps->getMap(6));
+}
 
 byte partyFlags(int index) {
 	byte result = 0;
@@ -94,6 +99,26 @@ void addFormalQuest(Common::Array<QuestLogEntry> &entries) {
 	setFormalQuestText(title, details, questNum);
 	if (!title.empty())
 		addEntry(entries, false, title, details);
+}
+
+void addCrazedWizard(Common::Array<QuestLogEntry> &entries, bool done) {
+	Maps::Map06 &map = crazedWizardMap();
+	if (done != map.crazedWizardQuestCompleted())
+		return;
+	if (!done && !map.crazedWizardQuestActive())
+		return;
+
+	const int count = map.completedEncounters();
+	if (done) {
+		addEntry(entries, true, "Crazed Wizard",
+			"Defeated all 13 challenge encounters and collected the reward.");
+	} else if (count < 13) {
+		addEntry(entries, false, "Crazed Wizard",
+			Common::String::format("Defeat the 13 challenge encounters. Progress: %d/13.", count));
+	} else {
+		addEntry(entries, false, "Crazed Wizard",
+			"All 13 encounters are complete. Return to the Crazed Wizard.");
+	}
 }
 
 void addCourier(Common::Array<QuestLogEntry> &entries, bool done) {
@@ -301,12 +326,14 @@ void addOtherReliableCompletions(Common::Array<QuestLogEntry> &entries) {
 void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	// Active objectives always appear first
 	addFormalQuest(entries);
+	addCrazedWizard(entries, false);
 	addCourier(entries, false);
 	addAlamarStory(entries, false);
 	addRanalou(entries, false);
 
 	// Completed history follows and remains selectable with Up/Down
 	addCompletedRulerQuests(entries);
+	addCrazedWizard(entries, true);
 	addCourier(entries, true);
 	addAlamarStory(entries, true);
 	addRanalou(entries, true);

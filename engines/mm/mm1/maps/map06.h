@@ -78,6 +78,8 @@ public:
 	Map06() : Map(6, "cave2", 0x1, 1) {}
 
 	int completedEncounters() const;
+	bool crazedWizardQuestActive() const;
+	bool crazedWizardQuestCompleted() const;
 
 	/**
 	 * Handles all special stuff that happens on the map
