@@ -138,7 +138,9 @@ exit_loop:
 
 		// Add monster details to list
 		_monsterLevel = _monsterSummaries[i]._level;
-		const Monster &srcMons = (*g_globals->_monsters)[_monsterSummaries[i]._num];
+		const Monster &srcMons = (*g_globals->_monsters)[
+			(_monsterSummaries[i]._level - 1) * 16 +
+			_monsterSummaries[i]._num];
 		_monsterList.push_back(srcMons);
 		Monster &mons = _monsterList.back();
 		mons._level = _monsterSummaries[i]._level;
