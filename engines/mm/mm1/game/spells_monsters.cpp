@@ -112,7 +112,7 @@ void SpellsMonsters::spell03_fire() {
 
 void SpellsMonsters::spell04_blindness() {
 	if (casts()) {
-		add(STRING["monster_spells.blindness"]);
+		add("blindness");
 		++g_globals->_spellsState._mmVal1;
 		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._damage = 2;
@@ -186,9 +186,9 @@ void SpellsMonsters::spell10_lightningBolt() {
 }
 
 void SpellsMonsters::spell11_strangeGas() {
-	add(Common::String::format("%s %s",
+	add(Common::String::format("%s%s",
 		STRING["monster_spells.breathes"].c_str(),
-		STRING["monster_spells.strange_gas"].c_str()));
+		"strange gas"));
 	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_POISON;
 	g_globals->_spellsState._damage = BAD_CONDITION | STONE;
@@ -263,7 +263,7 @@ void SpellsMonsters::spell16_acidArrow() {
 }
 
 void SpellsMonsters::spell17_elements() {
-	add(STRING["monster_spells.call_elements"]);
+	add("calls upon the elements");
 	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._damage = getRandomNumber(21) + 39;
 
@@ -566,13 +566,13 @@ bool SpellsMonsters::testElementalResistance() {
 void SpellsMonsters::writeDamage() {
 	add(STRING["monster_spells.takes"]);
 	add(Common::String::format("%d ", _damage));
-	add(STRING[_damage > 1 ? "monster_spells.points" : "monster_spells.point"]);
+	add(STRING[_damage > 1 ? "dialogs.combat.points" : "dialogs.combat.point"]);
 	add(' ');
 
 	if (_lines.back()._text.size() >= 30)
 		add('!');
 	else
-		add(STRING["monster_spells.of_damage"]);
+		add(STRING["dialogs.combat.of_damage"]);
 }
 
 void SpellsMonsters::proc9() {
