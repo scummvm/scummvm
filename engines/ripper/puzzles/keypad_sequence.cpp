@@ -52,8 +52,6 @@ static const uint kDosTickMillis = 55;
 
 static const int kMediaX = 100;
 static const int kCodeX = 142;
-// RunKeypadSequencePuzzleScene at 0x3bd30 loads ECX=0x8e and
-// EBX=g_presentationViewportTopY+0x109 before initializing control 0x672.
 static const int kCodeY = 265 + kSceneOriginY;
 static const int kBlinkX = 126;
 static const int kBlinkY = 213 + kSceneOriginY;
@@ -62,7 +60,6 @@ static const int kSlotX[kSequenceLength] = {
 	169, 181, 193, 205, 217, 229, 241, 253, 265
 };
 
-// g_astKeypadButtonPositions at 0x84b8e stores scene-space Y/X pairs.
 static const Common::Point kKeyPositions[kKeyCount] = {
 	Common::Point(138,  38 + kSceneOriginY),
 	Common::Point(188,  37 + kSceneOriginY),
@@ -146,8 +143,7 @@ bool KeypadSequencePuzzle::loadAssets() {
 }
 
 bool KeypadSequencePuzzle::captureEntryDisplay() {
-	// RIPPER.LE clears an off-screen page at 0x3bd64. Clearing ScummVM's one
-	// framebuffer here would erase the retained JB_DOOR frame.
+	// Clearing ScummVM's single framebuffer would erase the retained JB_DOOR frame.
 	return _baseDisplay.capture();
 }
 
@@ -179,7 +175,7 @@ bool KeypadSequencePuzzle::closeKeypad() {
 	const bool result = _engine->getMedia()->playScene(kCloseMedia, kMediaX, 0,
 		false, false, false);
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result ? 1 : 2, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: closed keypad sequence presentation media='%s' success=%d",
 		kCloseMedia, result);
 	return result;
@@ -405,8 +401,6 @@ void KeypadSequencePuzzle::stopAudio() {
 }
 
 KeypadSequencePuzzle::Result KeypadSequencePuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 maps action 34 to
-	// RunKeypadSequencePuzzleScene at 0x3bd30.
 	if (!loadAssets() || !captureEntryDisplay())
 		return kLoadFailed;
 
@@ -419,12 +413,9 @@ KeypadSequencePuzzle::Result KeypadSequencePuzzle::run(uint completionFlag) {
 	resetEntry();
 	render();
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered keypad sequence puzzle function="
-		"RunKeypadSequencePuzzleScene@0x3bd30 milestone=%u "
+		"Ripper: entered keypad sequence puzzle milestone=%u "
 		"help=0x%x controls=12 sequenceLength=9",
 		completionFlag, kHelpSelectionTable);
-	debugC(3, kDebugPuzzles,
-		"Ripper: keypad sequence retail solution=450144286");
 
 	Result result = kExited;
 	bool active = true;
@@ -497,7 +488,7 @@ KeypadSequencePuzzle::Result KeypadSequencePuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left keypad sequence puzzle result=%d milestone=%u "
 		"milestoneSet=%d opened=%d quit=%d",
 		result, completionFlag,

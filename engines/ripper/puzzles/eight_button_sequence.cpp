@@ -58,7 +58,6 @@ static const char *const kBackgroundMedia = "xarmed.smk";
 static const Common::Point kBackgroundPosition(248, 204);
 static const Common::Point kSuccessDarkPosition(276, 241 + kSceneOriginY);
 
-// g_astEightButtonInputPositions at 0x84e31 stores scene-space Y/X pairs.
 static const Common::Point kButtonPositions[kButtonCount] = {
 	Common::Point(230, 107 + kSceneOriginY),
 	Common::Point(285, 107 + kSceneOriginY),
@@ -70,7 +69,6 @@ static const Common::Point kButtonPositions[kButtonCount] = {
 	Common::Point(373, 152 + kSceneOriginY)
 };
 
-// g_astEightButtonFeedbackDirtyRegions at 0x84e51 also stores Y/X pairs.
 static const Common::Point kFeedbackPositions[kSequenceLength] = {
 	Common::Point(237, 40 + kSceneOriginY),
 	Common::Point(265, 40 + kSceneOriginY),
@@ -80,8 +78,6 @@ static const Common::Point kFeedbackPositions[kSequenceLength] = {
 	Common::Point(386, 43 + kSceneOriginY)
 };
 
-// RunEightButtonSequencePuzzleScene at 0x4043d captures this exact region
-// before drawing entry markers, then uses that backing to clear the row.
 static Common::Rect feedbackBounds() {
 	return Common::Rect(233, 36 + kSceneOriginY,
 		233 + 180, 36 + kSceneOriginY + 30);
@@ -234,7 +230,7 @@ bool EightButtonSequencePuzzle::playCue(uint cue) {
 	const Common::String path = Common::String::format("bnkwav%u.wav", cue);
 	const bool result = _engine->getMedia()->playSoundEffect(
 		path, _audioHandles[cue]);
-	debugC(result ? 3 : 2, kDebugPuzzles,
+	debugC(result ? 3 : 1, kDebugPuzzles,
 		"Ripper: eight-button sequence audio cue=%u path='%s' success=%d",
 		cue, path.c_str(), result);
 	return result;
@@ -441,8 +437,6 @@ void EightButtonSequencePuzzle::stopAudio() {
 
 EightButtonSequencePuzzle::Result EightButtonSequencePuzzle::run(
 		uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 maps action 61 to
-	// RunEightButtonSequencePuzzleScene at 0x4043d.
 	if (!loadAssets() || !captureBackings())
 		return kLoadFailed;
 
@@ -457,14 +451,11 @@ EightButtonSequencePuzzle::Result EightButtonSequencePuzzle::run(
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered eight-button sequence puzzle function="
-		"RunEightButtonSequencePuzzleScene@0x4043d milestone=%u "
+		"Ripper: entered eight-button sequence puzzle milestone=%u "
 		"help=0x%x controls=%u sequenceLength=%u media='%s' position=%d,%d",
 		completionFlag, kHelpSelectionTable, kButtonCount, kSequenceLength,
 		kBackgroundMedia, kBackgroundPosition.x,
 		kBackgroundPosition.y + kSceneOriginY);
-	debugC(3, kDebugPuzzles,
-		"Ripper: eight-button sequence retail solution=226481");
 
 	uint16 command = 0;
 	Common::SeekableReadStream *stream =
@@ -484,7 +475,7 @@ EightButtonSequencePuzzle::Result EightButtonSequencePuzzle::run(
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(_result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left eight-button sequence puzzle result=%d command=0x%04x "
 		"milestone=%u milestoneSet=%d entered='%s' quit=%d",
 		_result, command, completionFlag,

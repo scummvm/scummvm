@@ -57,8 +57,6 @@ static const uint16 kExitCommand = 0x1b;
 static const uint16 kHelpCommand = 0x3b00;
 static const uint kHelpSelectionTable = 0x1a3;
 
-// g_gcCshPuzzleChoiceControlRecords at 0x84700 stores y, x, width,
-// and height in display-service Y/X order.
 static const ChoiceLayout kChoiceLayouts[kChoiceCount] = {
 	{52,  91, 10, 10},
 	{54, 111, 10, 10},
@@ -66,7 +64,6 @@ static const ChoiceLayout kChoiceLayouts[kChoiceCount] = {
 	{56, 139,  9,  8}
 };
 
-// g_gcCshPuzzleSequenceSlotDirtyRegions at 0x846ec stores y/x pairs.
 static const Common::Point kSequenceSlotPositions[kSequenceLength] = {
 	Common::Point(424, 42 + kSceneOriginY),
 	Common::Point(440, 42 + kSceneOriginY),
@@ -74,15 +71,11 @@ static const Common::Point kSequenceSlotPositions[kSequenceLength] = {
 	Common::Point(470, 42 + kSceneOriginY)
 };
 
-// The display command at 0x38959 captures this exact backing strip before
-// input begins; the reset path at 0x38d3a restores it after the reverse pass.
 static const int kSequenceBackingX = 421;
 static const int kSequenceBackingY = 51 + kSceneOriginY;
 static const int kSequenceBackingWidth = 98;
 static const int kSequenceBackingHeight = 5;
 
-// The two Escape controls created by RunGcCshFourChoiceSequencePuzzleScene
-// at 0x38871 use these Y/X/width/height values.
 static const int kLeftExitY = 0x9a + kSceneOriginY;
 static const int kLeftExitWidth = 0x9f;
 static const int kLeftExitHeight = 0x92;
@@ -221,8 +214,7 @@ bool GcCshPuzzle::playChoice(uint choice, uint sequenceSlot) {
 	_engine->getCursor()->setVisible(false);
 	playCue(0);
 	const Common::String media = Common::String::format("gc_csh%u.avi", choice);
-	// RunGcCshFourChoiceSequencePuzzleScene at 0x38871 [LE, instruction 0x38b88] uses the generic
-	// uncontrolled RunMediaPresentation path, leaving its final IAVF display.
+	// Leave the choice movie's final frame behind the selection animation.
 	if (!_engine->getMedia()->play(media, false, 0, 64, true)) {
 		warning("Ripper: could not play GC/CSH choice media '%s'", media.c_str());
 		_engine->getCursor()->refresh();
@@ -315,7 +307,7 @@ uint16 GcCshPuzzle::serviceInput() {
 
 GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered GC/CSH puzzle completionFlag=%u helpTable=0x%x target=2,3,4,2",
+		"Ripper: entered GC/CSH puzzle completionFlag=%u helpTable=0x%x",
 		completionFlag, kHelpSelectionTable);
 	if (!loadAssets() || !captureBackground())
 		return kLoadFailed;
@@ -324,8 +316,7 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 	uint enteredChoiceCount = 0;
 	Result result = kExited;
 	_engine->getInput()->discardMouseTransitions();
-	// GCZ1 hides the cursor and replaces its palette. Reinstall row 14 even if
-	// it was selected before the movie (RIPPER.LE 0x38986..0x389a2).
+	// GCZ1 hides the cursor and replaces its palette, so reapply the selected row.
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	_engine->getCursor()->refresh();
@@ -337,7 +328,7 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 		if (!serviceEngineEvents())
 			break;
 		const uint16 command = serviceInput();
-		// This private loop must present every poll so CursorMan tracks changes.
+		// Present every input poll so the software cursor tracks changes.
 		presentScreen();
 		_engine->getInput()->drainKeys();
 		if (command == kHelpCommand) {
@@ -371,7 +362,6 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 					solved = false;
 			}
 			if (solved) {
-				// RIPPER.LE resets all four entries after a match; solved state survives.
 				if (!resetSequence(enteredChoices, enteredChoiceCount)) {
 					result = kLoadFailed;
 					break;
@@ -382,7 +372,7 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 				}
 				result = kSolved;
 				debugC(1, kDebugPuzzles,
-					"Ripper: completed GC/CSH puzzle milestone=%u sequence=2,3,4,2",
+					"Ripper: completed GC/CSH puzzle milestone=%u",
 					completionFlag);
 				break;
 			}

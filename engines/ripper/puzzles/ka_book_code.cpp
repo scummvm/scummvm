@@ -106,9 +106,6 @@ void KaBookCodePuzzle::drawPrompt(const Common::String &typedCode) {
 }
 
 KaBookCodePuzzle::Result KaBookCodePuzzle::run() {
-	// RunKaBookCodeEntryPrompt at 0x2bc33 owns the KA_PUZ.PCX display,
-	// KA_KEY.WAV feedback, seven input cells, and HC2021R comparison. Its caller
-	// in RunKaDialogueScene only consumes the returned solved/failed state.
 	if (!loadAssets())
 		return kLoadFailed;
 

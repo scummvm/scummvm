@@ -103,8 +103,6 @@ void RolodexPuzzle::stopAllAudio() {
 }
 
 void RolodexPuzzle::serviceAudio(uint frame) {
-	// ServiceRolodexMediaSequenceCallback at 0x27e38 starts the four
-	// rolo%d.wav descriptors at these exact media-sequence frame counters.
 	if (_activeSequence == 0) {
 		if (frame == 1)
 			startAudio(2);
@@ -200,8 +198,6 @@ RolodexPuzzle::Result RolodexPuzzle::run(uint completionFlag) {
 		if (_activeSequence > 6)
 			_activeSequence = 1;
 		if (_activeSequence == 6) {
-			// RunRolodexSequencePuzzleScene at 0x280ae [LE, instruction 0x28328] sets the caller's
-			// named flag before starting the sixth sequence.
 			if (!markSolved(completionFlag, "rolodex-puzzle")) {
 				result = kLoadFailed;
 				break;

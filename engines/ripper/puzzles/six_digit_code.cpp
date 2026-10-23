@@ -58,9 +58,6 @@ static const int kSceneHeight = 300;
 
 static const byte kSolution[kDigitCount] = {1, 8, 5, 6, 2, 1};
 
-// g_astSixDigitControlLayouts at 0x84d5c stores scene-space Y/X/control-id
-// triples. Entries 0..9 are the matching digit controls; 10 and 11 are Enter
-// and clear.
 static const Common::Point kControlPositions[kControlCount] = {
 	Common::Point(346, 242 + kSceneOriginY),
 	Common::Point(232, 217 + kSceneOriginY),
@@ -76,7 +73,6 @@ static const Common::Point kControlPositions[kControlCount] = {
 	Common::Point(306, 181 + kSceneOriginY)
 };
 
-// g_astSixDigitDirtyRegions at 0x84da4 stores the six scene-space Y/X pairs.
 static const Common::Point kDigitPositions[kDigitCount] = {
 	Common::Point(261, 148 + kSceneOriginY),
 	Common::Point(275, 148 + kSceneOriginY),
@@ -220,7 +216,7 @@ bool SixDigitCodePuzzle::playCue(uint cue) {
 	const Common::String path = Common::String::format("bnkwav%u.wav", cue);
 	const bool result = _engine->getMedia()->playSoundEffect(
 		path, _audioHandles[cue]);
-	debugC(result ? 3 : 2, kDebugPuzzles,
+	debugC(result ? 3 : 1, kDebugPuzzles,
 		"Ripper: six-digit code audio cue=%u path='%s' success=%d",
 		cue, path.c_str(), result);
 	return result;
@@ -309,8 +305,6 @@ void SixDigitCodePuzzle::stopAudio() {
 }
 
 SixDigitCodePuzzle::Result SixDigitCodePuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 maps action 21 to
-	// RunSixDigitCodePuzzleScene at 0x3e913.
 	if (!loadAssets() || !_baseDisplay.capture())
 		return kLoadFailed;
 
@@ -383,7 +377,7 @@ SixDigitCodePuzzle::Result SixDigitCodePuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left six-digit code puzzle result=%d milestone=%u "
 		"milestoneSet=%d entered='%s' quit=%d",
 		result, completionFlag,

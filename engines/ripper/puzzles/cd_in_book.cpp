@@ -67,17 +67,11 @@ static const char *const kAudioNames[kAudioCueCount] = {
 	"buton.wav", "butoff.wav", "buzer.wav"
 };
 
-// RunCdInBookButtonSequencePuzzleScene at 0x28427 reads these button
-// coordinates from the twelve integers at 0x25d29. The stored Y coordinates
-// are scene-relative and become physical screen coordinates after adding 50.
 static const Position kButtonPositions[kButtonCount] = {
 	{315, 57}, {372, 88}, {359, 153},
 	{281, 173}, {246, 118}, {254, 66}
 };
 
-// The eight dirty-region origins at 0x25d59 identify the P07.BBM feedback
-// markers. RIPPER.LE chooses GenerateRandomInt15() & 7 after each of the
-// first five button presses, so the same marker may be removed more than once.
 static const Position kFeedbackPositions[kFeedbackMarkerCount] = {
 	{366, 262}, {372, 264}, {371, 269}, {378, 271},
 	{364, 273}, {377, 276}, {356, 276}, {362, 278}
@@ -357,9 +351,6 @@ bool CdInBookPuzzle::resetFailedAttempt() {
 }
 
 CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
-	// RunCdInBookButtonSequencePuzzleScene at 0x28427 owns CDINBOOK.PL,
-	// controls 0x672..0x677, the six-entry answer at 0x25d99, and the supplied
-	// completion flag. Escape and either side control leave that flag clear.
 	IndexedDisplaySnapshot incomingDisplay;
 	if (!incomingDisplay.capture())
 		return kLoadFailed;
@@ -443,6 +434,7 @@ CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
 						button + 1, attemptLength, kSequenceLength, correctEntries);
 
 					if (attemptLength < kSequenceLength) {
+						// Marker selection allows repeats, including markers already hidden.
 						removeFeedbackMarker(_random.getRandomNumber(
 							kFeedbackMarkerCount - 1));
 					} else if (correctEntries == kSequenceLength) {

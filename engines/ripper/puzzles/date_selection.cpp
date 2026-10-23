@@ -291,8 +291,6 @@ uint16 DateSelectionPuzzle::service(uint frame) {
 }
 
 DateSelectionPuzzle::Result DateSelectionPuzzle::run(uint completionFlag) {
-	// DispatchSceneEntryAction at 0x36892 maps action 17 to
-	// RunDateSelectionPuzzleScene at 0x3d5ed.
 	if (!loadAssets())
 		return kLoadFailed;
 
@@ -310,8 +308,7 @@ DateSelectionPuzzle::Result DateSelectionPuzzle::run(uint completionFlag) {
 		_result = kLoadFailed;
 
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered date-selection puzzle function="
-		"RunDateSelectionPuzzleScene@0x3d5ed milestone=%u help=0x%x "
+		"Ripper: entered date-selection puzzle milestone=%u help=0x%x "
 		"progressFlags=%u,%u,%u maxLength=%u",
 		completionFlag, kHelpSelectionTable, kFirstDateFlag,
 		kSecondDateFlag, kRemainingDatesFlag, kMaximumDateLength);
@@ -359,7 +356,7 @@ DateSelectionPuzzle::Result DateSelectionPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(_result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+	debugC(1, kDebugPuzzles,
 		"Ripper: left date-selection puzzle result=%d milestone=%u milestoneSet=%d "
 		"progress=%d,%d,%d quit=%d",
 		_result, completionFlag,
