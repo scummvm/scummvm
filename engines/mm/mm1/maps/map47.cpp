@@ -30,6 +30,10 @@ namespace MM1 {
 namespace Maps {
 
 #define ARRAY1 250
+#define QUEST_CLERICS_TONE_OFFSET (15 * MAP_W + 10)
+#define QUEST_CLERICS_COMPLETE_OFFSET (15 * MAP_W + 13)
+#define QUEST_CLERICS_ACTIVE_OFFSET (15 * MAP_W + 15)
+#define QUEST_LOG_FLAG 0x80
 
 void Map47::special() {
 	// Scan for special actions on the map cell
@@ -68,6 +72,10 @@ void Map47::special01() {
 			Map47 &map = *static_cast<Map47 *>(g_maps->_currentMap);
 			int toneNum = g_events->getRandomNumber(6);
 			if (toneNum < 4) {
+				// Record the tone for the quest and its Quest Log progress
+				map._data[ARRAY1 + toneNum - 1] = 1;
+				map._visited[QUEST_CLERICS_TONE_OFFSET +
+					toneNum - 1] |= QUEST_LOG_FLAG;
 				g_events->send(SoundMessage(STRING[
 					Common::String::format("maps.map47.tones.%d", toneNum)]));
 			} else {
@@ -78,12 +86,36 @@ void Map47::special01() {
 }
 
 void Map47::special02() {
-	if (_data[ARRAY1] && _data[ARRAY1 + 1] && _data[ARRAY1 + 2]) {
+	// Tones are also kept in the saved visit data, since the overlay
+	// data is reloaded from disk when a save is loaded
+	bool heard[3];
+	for (int i = 0; i < 3; ++i) {
+		heard[i] = _data[ARRAY1 + i] ||
+			(_visited[QUEST_CLERICS_TONE_OFFSET + i] & QUEST_LOG_FLAG);
+	}
+
+	if (heard[0] && heard[1] && heard[2]) {
 		send(SoundMessage(STRING["maps.map47.clerics3"]));
+		_visited[QUEST_CLERICS_COMPLETE_OFFSET] |= QUEST_LOG_FLAG;
+		_visited[QUEST_CLERICS_ACTIVE_OFFSET] &= ~QUEST_LOG_FLAG;
+
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
 			c._flags[11] = CHARFLAG11_CLERICS;
 		}
+
+		// Another advancement requires hearing all three tones again
+		for (int i = 0; i < 3; ++i) {
+			_data[ARRAY1 + i] = 0;
+			_visited[QUEST_CLERICS_TONE_OFFSET + i] &= ~QUEST_LOG_FLAG;
+		}
+	} else {
+		// Speaking to the Clerics starts the optional advancement quest
+		_visited[QUEST_CLERICS_ACTIVE_OFFSET] |= QUEST_LOG_FLAG;
+		send(SoundMessage(
+			0, 1, STRING["maps.map47.clerics1"],
+			0, 2, STRING["maps.map47.clerics2"]
+		));
 	}
 }
 

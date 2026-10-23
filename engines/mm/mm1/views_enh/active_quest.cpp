@@ -31,6 +31,13 @@ namespace ViewsEnh {
 
 namespace {
 
+enum ClericsQuestStorage {
+	CLERICS_TONE_OFFSET = 15 * MAP_W + 10,
+	CLERICS_COMPLETE_OFFSET = 15 * MAP_W + 13,
+	CLERICS_ACTIVE_OFFSET = 15 * MAP_W + 15,
+	CLERICS_LOG_FLAG = 0x80
+};
+
 struct QuestLogEntry {
 	bool _completed = false;
 	Common::String _summary;
@@ -40,6 +47,10 @@ struct QuestLogEntry {
 
 Maps::Map06 &crazedWizardMap() {
 	return *static_cast<Maps::Map06 *>(g_maps->getMap(6));
+}
+
+Maps::Map &clericsMap() {
+	return *g_maps->getMap(47);
 }
 
 byte partyFlags(int index) {
@@ -118,6 +129,45 @@ void addCrazedWizard(Common::Array<QuestLogEntry> &entries, bool done) {
 	} else {
 		addEntry(entries, false, "Crazed Wizard",
 			"All 13 encounters are complete. Return to the Crazed Wizard.");
+	}
+}
+
+bool clericsCompleted() {
+	if (clericsMap()._visited[CLERICS_COMPLETE_OFFSET] & CLERICS_LOG_FLAG)
+		return true;
+	return (partyFlags(11) & CHARFLAG11_CLERICS) != 0;
+}
+
+int clericsTones() {
+	int result = 0;
+	for (int i = 0; i < 3; ++i) {
+		if (clericsMap()._visited[CLERICS_TONE_OFFSET + i] & CLERICS_LOG_FLAG)
+			++result;
+	}
+	return result;
+}
+
+void addClerics(Common::Array<QuestLogEntry> &entries, bool done) {
+	const bool completed = clericsCompleted();
+	const bool active =
+		(clericsMap()._visited[CLERICS_ACTIVE_OFFSET] & CLERICS_LOG_FLAG) != 0;
+
+	// The Clerics advancement is repeatable. A previous completion belongs
+	// in history, but must not suppress a later active 0/3..3/3 cycle.
+	if (done) {
+		if (!completed)
+			return;
+	} else {
+		if (!active)
+			return;
+	}
+
+	if (done) {
+		addEntry(entries, true, "Clerics of the South",
+			"Heard all three gong tones and returned to the Clerics of the South.");
+	} else {
+		addEntry(entries, false, "Clerics of the South",
+			Common::String::format("Hear all three gong tones in the Dragadune Ruins, then return to the Clerics. Progress: %d/3.", clericsTones()));
 	}
 }
 
@@ -327,6 +377,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	// Active objectives always appear first
 	addFormalQuest(entries);
 	addCrazedWizard(entries, false);
+	addClerics(entries, false);
 	addCourier(entries, false);
 	addAlamarStory(entries, false);
 	addRanalou(entries, false);
@@ -334,6 +385,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	// Completed history follows and remains selectable with Up/Down
 	addCompletedRulerQuests(entries);
 	addCrazedWizard(entries, true);
+	addClerics(entries, true);
 	addCourier(entries, true);
 	addAlamarStory(entries, true);
 	addRanalou(entries, true);
