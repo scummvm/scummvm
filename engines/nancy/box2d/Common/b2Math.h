@@ -85,10 +85,10 @@ inline float32 b2Abs(float32 a)
 struct b2Vec2
 {
 	/// Default constructor does nothing (for performance).
-	b2Vec2() {}
+	constexpr b2Vec2() = default;
 
 	/// Construct using coordinates.
-	b2Vec2(float32 x, float32 y) : x(x), y(y) {}
+	constexpr b2Vec2(float32 x, float32 y) : x(x), y(y) {}
 
 	/// Set this vector to all zeros.
 	void SetZero() { x = 0.0f; y = 0.0f; }
@@ -151,27 +151,23 @@ struct b2Vec2
 		return b2IsValid(x) && b2IsValid(y);
 	}
 
-	float32 x, y;
+	float32 x = 0.0f, y = 0.0f;
 };
 
 /// A 2-by-2 matrix. Stored in column-major order.
 struct b2Mat22
 {
 	/// The default constructor does nothing (for performance).
-	b2Mat22() {}
+	constexpr b2Mat22() = default;
 
 	/// Construct this matrix using columns.
-	b2Mat22(const b2Vec2& c1, const b2Vec2& c2)
+	constexpr b2Mat22(const b2Vec2& c1, const b2Vec2& c2) : col1(c1), col2(c2)
 	{
-		col1 = c1;
-		col2 = c2;
 	}
 
 	/// Construct this matrix using scalars.
-	b2Mat22(float32 a11, float32 a12, float32 a21, float32 a22)
+	constexpr b2Mat22(float32 a11, float32 a12, float32 a21, float32 a22) : col1({a11, a21}), col2({a12, a22})
 	{
-		col1.x = a11; col1.y = a21;
-		col2.x = a12; col2.y = a22;
 	}
 
 	/// Construct this matrix using an angle. This matrix becomes
@@ -254,10 +250,10 @@ struct b2Mat22
 struct b2XForm
 {
 	/// The default constructor does nothing (for performance).
-	b2XForm() {}
+	constexpr b2XForm() = default;
 
 	/// Initialize using a position vector and a rotation matrix.
-	b2XForm(const b2Vec2& position, const b2Mat22& R) : position(position), R(R) {}
+	constexpr b2XForm(const b2Vec2& position, const b2Mat22& R) : position(position), R(R) {}
 
 	/// Set this to the identity transform.
 	void SetIdentity()
