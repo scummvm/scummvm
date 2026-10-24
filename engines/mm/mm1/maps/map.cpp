@@ -105,10 +105,16 @@ void Map::reduceHP() {
 }
 
 void Map::updateGame() {
+	// Scripted same-map teleports often assign _mapPos directly and then
+	// call updateGame(), bypassing Maps::step(). Discover the landing square
+	// before repainting, so the minimap can draw it immediately
+	g_maps->visitedTile();
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 void Map::redrawGame() {
+	// Keep redraw-only relocation paths consistent with updateGame()
+	g_maps->visitedTile();
 	g_events->send("Game", GameMessage("REDRAW"));
 }
 
@@ -139,6 +145,11 @@ void Map::visitedSpecial() {
 void Map::visitedExit() {
 	byte &visited = _visited[g_maps->_mapOffset];
 	visited = (visited & 0x80) | VISITED_EXIT;
+
+	// Show the exit marker before an entrance prompt can immediately move
+	// the party to another map, otherwise the source map's minimap would
+	// never be repainted
+	g_events->redrawViews();
 }
 
 void Map::visitedBusiness() {
