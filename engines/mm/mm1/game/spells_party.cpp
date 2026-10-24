@@ -941,9 +941,24 @@ SpellResult SpellsParty::wizard62_disintegration() {
 }
 
 SpellResult SpellsParty::wizard63_etherialize() {
-	g_events->draw();
-	g_maps->_currentState = 0;
-	g_maps->step(Common::Point(1, 0));
+	Maps::Maps &maps = *g_maps;
+
+	// Etherealize moves exactly one square in the direction the party is
+	// facing, ignoring walls and special barriers
+	const Common::Point delta = maps.getMoveDelta(maps._forwardMask);
+	const Common::Point newPos = maps._mapPos + delta;
+
+	// Maps::step() performs its own changeMap() and UPDATE when crossing a
+	// map boundary. On an in-map move, refresh the Game view so the current
+	// square's walls and state match the new position
+	const bool crossesMapBoundary =
+		newPos.x < 0 || newPos.y < 0 ||
+		newPos.x >= MAP_W || newPos.y >= MAP_H;
+
+	maps.step(delta);
+
+	if (!crossesMapBoundary)
+		g_events->send("Game", GameMessage("UPDATE"));
 
 	return SR_SUCCESS_SILENT;
 }
