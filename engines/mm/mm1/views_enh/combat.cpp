@@ -1370,10 +1370,25 @@ void Combat::displaySpellResult(const InfoMessage &msg) {
 }
 
 void Combat::combatDone() {
+	// Okrim's map script expects a second processing of his square after
+	// victory, but the square was already cleared before combat. Detect a
+	// real victory here and hand off directly to his ghost
+	const bool okrimVictory = _mode == DEFEATED_MONSTERS &&
+		g_maps->_mapId == 37 && g_maps->_mapPos == Common::Point(12, 12);
+
+	if (okrimVictory) {
+		// Map37::VAL1. Set only after victory so fleeing can't satisfy it
+		(*g_maps->_currentMap)[232] = 1;
+		g_maps->clearSpecial();
+	}
+
 	Game::Combat::combatDone();
 
 	close();
 	g_events->send("Game", GameMessage("UPDATE"));
+
+	if (okrimVictory)
+		g_events->addView("Ghost");
 }
 
 } // namespace ViewsEnh

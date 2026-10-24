@@ -98,14 +98,16 @@ void Map37::special03() {
 
 void Map37::special04() {
 	Game::Encounter &enc = g_globals->_encounters;
-	g_maps->clearSpecial();
 
 	if (_data[VAL1]) {
+		// Okrim has actually been defeated. Consume the square for this
+		// map visit and present his post-battle ghost interaction
+		g_maps->clearSpecial();
 		g_events->addView("Ghost");
 
 	} else {
-		_data[VAL1]++;
-
+		// Don't mark Okrim defeated before combat. The combat view sets
+		// VAL1 only after a real victory, so retreating can't skip him
 		enc.clearMonsters();
 		enc.addMonster(19, 12);
 		for (int i = 1; i < 4; ++i)
