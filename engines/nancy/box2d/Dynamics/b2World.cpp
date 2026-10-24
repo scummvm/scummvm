@@ -862,6 +862,11 @@ void b2World::DrawShape(b2Shape* shape, const b2XForm& xf, const b2Color& color,
 			}
 		}
 		break;
+	
+	case e_unknownShape:
+	case e_shapeTypeCount:
+		b2Assert(false);
+		break;
 	}
 }
 
