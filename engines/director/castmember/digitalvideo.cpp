@@ -468,8 +468,12 @@ bool DigitalVideoCastMember::endOfVideo() {
 	// No decoder or channel means nothing is playing; avoid a null deref.
 	if (!_video || !_channel)
 		return false;
+	// A stopTime of 0 means it was never initialised (e.g. the video was
+	// started via Lingo's movieRate rather than via startVideo()), so only
+	// honour the decoder's own end-of-stream in that case.
 	return (_video->endOfVideo() ||
-			(getMovieCurrentTimeMillis() >= (uint)(_channel->_stopTime*1000/getTimeScale())));
+			(_channel->_stopTime > 0 &&
+			 getMovieCurrentTimeMillis() >= (uint)(_channel->_stopTime*1000/getTimeScale())));
 }
 
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
@@ -669,6 +673,9 @@ void DigitalVideoCastMember::setMovieRate(double rate) {
 	}
 
 	_channel->_movieRate = rate;
+
+	if (_channel->_stopTime == 0)
+		_channel->_stopTime = getMovieTotalTime();
 
 	if (rate < 0.0)
 		warning("STUB: DigitalVideoCastMember::setMovieRate(%g)", rate);
