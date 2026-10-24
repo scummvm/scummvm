@@ -29,8 +29,6 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define VAL1 379
-
 void Map53::special() {
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < 15; ++i) {
@@ -52,11 +50,13 @@ void Map53::special() {
 }
 
 void Map53::special00() {
-	send(SoundMessage(STRING["maps.wall_painted"]));
-	if (!_data[VAL1]) {
+	// Keep offering the White Queen Idol until the party actually has it.
+	// The old private map byte could suppress the reward even though the
+	// idol never reached the party
+	if (!g_globals->_party.hasItem(W_QUEEN_IDOL_ID))
 		g_globals->_treasure._items[2] = W_QUEEN_IDOL_ID;
-		_data[VAL1]++;
-	}
+
+	send(SoundMessage(STRING["maps.wall_painted"]));
 }
 
 void Map53::special01() {
