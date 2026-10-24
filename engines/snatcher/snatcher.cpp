@@ -493,7 +493,6 @@ void SnatcherEngine::updateMainState(GameState &state) {
 			_cmdQueue->writeUInt16(state.script.curGfxScript & 0xFF);
 			_cmdQueue->writeUInt16(0x07);
 			_cmdQueue->writeUInt16(_snd->fmGetStatus().music);
-			//_cmdQueue->appendRestoreData();
 			_snd->pcmBlock(_snd->pcmGetStatus().blocked);
 			_snd->reduceVolume2(_snd->fmGetStatus().reduceVol2);
 			_snd->cdaRestore();
