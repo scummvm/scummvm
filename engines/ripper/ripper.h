@@ -22,6 +22,7 @@
 #define RIPPER_RIPPER_H
 
 #include "common/array.h"
+#include "common/noncopyable.h"
 #include "common/ptr.h"
 #include "common/random.h"
 #include "engines/engine.h"
@@ -51,6 +52,16 @@ class WorldMap;
 
 class RipperEngine : public Engine {
 public:
+	class SaveLoadScope : private Common::NonCopyable {
+	public:
+		explicit SaveLoadScope(RipperEngine &engine, bool allowed = false);
+		~SaveLoadScope();
+
+	private:
+		RipperEngine &_engine;
+		const bool _wasAllowed;
+	};
+
 	RipperEngine(OSystem *system, const ADGameDescription *gameDescription);
 	~RipperEngine() override;
 
@@ -115,6 +126,7 @@ private:
 	Common::ScopedPtr<WacManager> _wac;
 	Common::ScopedPtr<WorldMap> _worldMap;
 	bool _gameplayStarted;
+	bool _saveLoadAllowed;
 	bool _puzzleHelpEnabled;
 };
 

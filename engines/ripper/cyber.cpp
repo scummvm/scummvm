@@ -160,6 +160,7 @@ bool CyberManager::restoreAudio(const Common::Array<byte> &state) const {
 }
 
 CyberManager::Result CyberManager::run() {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Session session;
 	if (!suspendSession(session))
 		return kLoadFailed;
@@ -192,6 +193,7 @@ CyberManager::Result CyberManager::run() {
 
 CyberManager::Result CyberManager::runProgram(uint action,
 		const char *scriptBaseName, uint argument) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Session session;
 	if (!suspendSession(session))
 		return kLoadFailed;

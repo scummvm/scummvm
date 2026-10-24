@@ -45,17 +45,31 @@ static const uint32 kPaletteSize = 256 * 3;
 
 } // End of anonymous namespace
 
+RipperEngine::SaveLoadScope::SaveLoadScope(RipperEngine &engine, bool allowed) :
+		_engine(engine), _wasAllowed(engine._saveLoadAllowed) {
+	_engine._saveLoadAllowed = allowed;
+	if (allowed != _wasAllowed)
+		debugC(3, kDebugSaveLoad, "Ripper: save/load scope allowed=%d", allowed);
+}
+
+RipperEngine::SaveLoadScope::~SaveLoadScope() {
+	if (_engine._saveLoadAllowed != _wasAllowed)
+		debugC(3, kDebugSaveLoad, "Ripper: restored save/load scope allowed=%d", _wasAllowed);
+	_engine._saveLoadAllowed = _wasAllowed;
+}
+
 bool RipperEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return _gameplayStarted && _scripts->canSaveGame();
+	return _saveLoadAllowed && _gameplayStarted && _scripts->canSaveGame();
 }
 
 bool RipperEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return _scripts != nullptr;
+	return _saveLoadAllowed && (!_gameplayStarted || _scripts->canSaveGame());
 }
 
 Common::Error RipperEngine::saveGameState(int slot, const Common::String &desc,
 		bool isAutosave) {
-	if (slot < 0 || slot > getAutosaveSlot() || (!isAutosave && slot == getAutosaveSlot()))
+	if (!canSaveGameStateCurrently() || slot < 0 || slot > getAutosaveSlot() ||
+			(!isAutosave && slot == getAutosaveSlot()))
 		return Common::kWritingFailed;
 	const Common::String saveDescription = desc.substr(0, 60);
 	debugC(1, kDebugSaveLoad,
@@ -69,7 +83,7 @@ Common::Error RipperEngine::saveGameState(int slot, const Common::String &desc,
 }
 
 Common::Error RipperEngine::loadGameState(int slot) {
-	if (slot < 0 || slot > getAutosaveSlot())
+	if (!canLoadGameStateCurrently() || slot < 0 || slot > getAutosaveSlot())
 		return Common::kReadingFailed;
 	debugC(1, kDebugSaveLoad, "Ripper: restoring save slot=%d", slot);
 	const Common::Error result = Engine::loadGameState(slot);
@@ -120,6 +134,9 @@ Common::Error RipperEngine::saveGameStream(Common::WriteStream *stream, bool isA
 }
 
 Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	if (!canLoadGameStateCurrently())
+		return Common::kReadingFailed;
+
 	Common::Serializer serializer(stream, nullptr);
 	if (!serializer.matchBytes(kRipperSaveMagic, sizeof(kRipperSaveMagic)) ||
 			!serializer.syncVersion(kRipperSaveVersion) ||

@@ -408,6 +408,7 @@ void WacManager::drawText(byte *screen, uint pitch, int x, int y,
 }
 
 void WacManager::run() {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (!_initialized || !captureDisplay()) {
 		warning("Ripper: WAC front end could not capture the active presentation");
 		return;

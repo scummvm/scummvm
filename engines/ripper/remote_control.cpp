@@ -229,6 +229,7 @@ bool RemoteControlManager::handleCommand(uint16 command, uint &selectedSlider) {
 }
 
 bool RemoteControlManager::run() {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (!_initialized || !captureDisplay())
 		return false;
 	debugC(1, kDebugGeneral,

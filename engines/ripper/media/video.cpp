@@ -93,6 +93,8 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 		bool &advanceSegment,
 		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop, bool allowSceneHelp,
 		const Common::String &name) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine,
+		allowSceneHelp && _engine->canLoadGameStateCurrently());
 	skipToEnd = false;
 	advanceSegment = false;
 	if (_input->pollEvents()) {

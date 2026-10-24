@@ -55,6 +55,7 @@ SmackerPlaybackPlan makeWacInterfaceSequencePlan(const Common::Rect &centerBound
 
 bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, int y,
 		bool sceneViewport, const Common::String &presentationText) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	// Route WAV entries through blocking audio before either video
 	// path. That loop always permits Escape, independent of AVI controls.
 	if (path.hasSuffixIgnoreCase(".wav")) {

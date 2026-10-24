@@ -79,7 +79,7 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 			(gameDescription->flags & ADGF_DEMO) != 0)),
 		_toolbar(new ToolbarManager(this)),
 		_wac(new WacManager(this)), _worldMap(new WorldMap(this)),
-		_gameplayStarted(false), _puzzleHelpEnabled(false) {
+		_gameplayStarted(false), _saveLoadAllowed(false), _puzzleHelpEnabled(false) {
 	setDebugger(new Console(this));
 }
 
@@ -230,6 +230,7 @@ Common::Error RipperEngine::run() {
 	if (!_worldMap->initialize(*_resources))
 		return Common::kReadingFailed;
 
+	SaveLoadScope saveLoad(*this, true);
 	_cursor->setVisible(false);
 	bool startGameplay = isDemo;
 	if (isDemo) {

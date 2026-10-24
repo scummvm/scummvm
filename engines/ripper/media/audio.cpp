@@ -46,6 +46,7 @@ static const uint kBlockingAudioCursor = 0x13;
 
 bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 		const Common::String &presentationText, int displayTop) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Common::String source;
 	Common::SeekableReadStream *audioStream =
 		openSource(path, kSourceBlockingAudio, source);

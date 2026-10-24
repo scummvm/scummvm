@@ -396,6 +396,7 @@ void ModalDialogManager::finishTextEntry(Common::String &text) {
 
 ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 		Common::String &text) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (!_textEntryActive)
 		return kTextEntryFailed;
 	if (_engine->getInput()->pollEvents()) {
@@ -559,6 +560,7 @@ bool ModalDialogManager::runText(const Common::String &title,
 
 bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 		bool defaultFirstOption) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	const Common::String &prompt = resourceString(promptResourceId);
 	Common::String options[kBinaryPromptOptionCount] = {
 		resourceString(kBinaryPromptYesResourceId),
@@ -714,6 +716,7 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 		const Common::String &body, uint bodyResourceId, const char *source,
 		bool retainSceneCursorRegions, PresentationStyle style,
 		PaletteBehavior paletteBehavior) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (!_initialized || title.empty() || !captureDisplay()) {
 		warning("Ripper: could not present modal text source='%s'", source);
 		return false;

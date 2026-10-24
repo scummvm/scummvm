@@ -218,7 +218,7 @@ ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _demoScrip
 }
 
 bool ScriptManager::canSaveGame() const {
-	return !_runtime.cyberActive && _runtime.awaitingInteraction && _runtime.pendingSceneMember.empty() &&
+	return !_runtime.cyberActive && _runtime.awaitingInteraction && !hasPendingSceneTransition() &&
 		_runtime.activeFrame < _runtime.activeScript.getFrames().size();
 }
 
@@ -568,6 +568,7 @@ uint ScriptManager::resolveFrameIndex(const CompiledScript &script,
 
 void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
 		uint interactionCount) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (_engine->getInput()->pollEvents())
 		_engine->quitGame();
 	_engine->getInput()->discardMouseTransitions();
@@ -613,6 +614,7 @@ void ScriptManager::bindBa0Frame(uint frameIndex) {
 
 bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame, uint commandStart) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Common::Array<ScriptCommand> commands;
 	result = 0;
 	if (nextFrame)
@@ -1097,6 +1099,7 @@ bool ScriptManager::acceptConcurrentRuntimeExit(int result,
 }
 
 bool ScriptManager::runStartupPath() {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (_startup.getFrames().empty() || _runtime.activeScript.getFrames().empty())
 		return false;
 

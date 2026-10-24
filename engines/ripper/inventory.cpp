@@ -481,6 +481,7 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 
 Inventory::Result Inventory::run(const Common::String &sceneLabel,
 		int initialUnlockFlag, uint *usedUnlockFlag) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (usedUnlockFlag)
 		*usedUnlockFlag = 0;
 	_engine->getInput()->drainKeys();

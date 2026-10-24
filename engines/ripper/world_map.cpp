@@ -332,6 +332,7 @@ Common::String WorldMap::resolveTargetScript(uint locationIndex, uint chapter) c
 }
 
 bool WorldMap::run(Common::String &targetScript, uint &chapter) {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	targetScript.clear();
 	chapter = 0;
 	if (!_initialized || !_savedDisplay.capture())

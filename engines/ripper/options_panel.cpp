@@ -649,6 +649,7 @@ bool OptionsPanelManager::runDemo() {
 }
 
 bool OptionsPanelManager::run() {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	return _demoVariant ? runDemo() : runRetail();
 }
 

@@ -97,6 +97,7 @@ MainMenu::MainMenu(RipperEngine *engine) : _engine(engine) {
 }
 
 MainMenuAction MainMenu::run() {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Common::SeekableReadStream *stream =
 		_engine->getResources()->interface().createReadStreamForMember("rip_open.smk");
 	if (!stream) {

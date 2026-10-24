@@ -213,6 +213,7 @@ void BriefingManager::restoreBacking() {
 }
 
 bool BriefingManager::activate() {
+	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	const uint selector = _selector;
 	clear();
 	_engine->getCursor()->setVisible(false);

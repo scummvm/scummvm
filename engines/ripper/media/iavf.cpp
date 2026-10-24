@@ -203,6 +203,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 	if (result && completedFinalSegment && audioActive &&
 			!_engine->shouldQuit() && !_engine->getScripts()->hasPendingSceneTransition() &&
 			_mixer->isSoundHandleActive(audioHandle)) {
+		RipperEngine::SaveLoadScope saveLoad(*_engine);
 		const uint32 targetAudioMs = (uint32)((uint64)(movie.audio.size() - audioTimelineOffset) *
 			1000 / audioByteRate);
 		debugC(2, kDebugVideo,
