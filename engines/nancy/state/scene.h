@@ -436,6 +436,7 @@ private:
 	// character's are the live ones (_flags plus the inventory box order, and
 	// UIResourceData::values); the others are parked in the same puzzle data.
 	void storeCharacterInventory(uint characterIndex);
+	void showInventoryButtons();
 	void loadCharacterInventory(uint characterIndex);
 	void storeCharacterResources(uint characterIndex);
 	void loadCharacterResources(uint characterIndex);

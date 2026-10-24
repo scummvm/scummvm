@@ -1436,7 +1436,31 @@ bool Scene::changePlayerCharacter(uint characterIndex) {
 	loadCharacterInventory(characterIndex);
 	loadCharacterResources(characterIndex);
 
+	// The inventory panel was filled in before the swap, with the items of the
+	// outgoing character
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	if (_ndui && playerChar) {
+		const Common::Array<byte> &previousItems = playerChar->getInventory(previousCharacter).items;
+		for (uint i = 0; i < previousItems.size(); ++i) {
+			if (previousItems[i] == g_nancy->_true) {
+				_ndui->showInventoryItem(i, false);
+			}
+		}
+
+		showInventoryButtons();
+	}
+
 	return true;
+}
+
+void Scene::showInventoryButtons() {
+	// The most recent items come first
+	const Common::Array<int16> &order = _inventoryBox.getOrder();
+	for (int i = (int)order.size() - 1; i >= 0; --i) {
+		if (order[i] != -1 && _flags.items[order[i]] == g_nancy->_true) {
+			_ndui->showInventoryItem(order[i], true);
+		}
+	}
 }
 
 void Scene::inheritBrotherProgress(uint characterIndex) {
@@ -3132,13 +3156,7 @@ void Scene::initUI() {
 		_ndui->createPhoneBook();
 	}
 
-	// The most recent items come first
-	const Common::Array<int16> &order = _inventoryBox.getOrder();
-	for (int i = (int)order.size() - 1; i >= 0; --i) {
-		if (order[i] != -1 && _flags.items[order[i]] == g_nancy->_true) {
-			_ndui->showInventoryItem(order[i], true);
-		}
-	}
+	showInventoryButtons();
 
 	// Nancy17 has no prep records; the script that runs when a character takes
 	// over starts the streams that fill the journal and the task list
@@ -3187,13 +3205,7 @@ void Scene::onScriptedUILoaded() {
 	_ndui->createItemButtons();
 	Script::showPlayerEntries();
 
-	// The most recent items come first
-	const Common::Array<int16> &order = _inventoryBox.getOrder();
-	for (int i = (int)order.size() - 1; i >= 0; --i) {
-		if (order[i] != -1 && _flags.items[order[i]] == g_nancy->_true) {
-			_ndui->showInventoryItem(order[i], true);
-		}
-	}
+	showInventoryButtons();
 
 	_ndui->restoreState(((UIStateData *)getPuzzleData(UIStateData::getTag()))->changes);
 	_ndui->applyMatteColor();
