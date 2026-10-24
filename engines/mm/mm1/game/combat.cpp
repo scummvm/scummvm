@@ -1278,12 +1278,13 @@ bool Combat::divineIntervention() {
 	if (c._alignment != c._alignmentInitial || _divineInterventionUsed)
 		return false;
 
-	_divineInterventionUsed = true;
-	int age = (int)c._level + 5;
-	if (age > 255)
+	// Casting ages the caster by five years
+	const int newAge = (int)c._age + 5;
+	if (newAge > 255)
 		return false;
 
-	c._age = age;
+	_divineInterventionUsed = true;
+	c._age = newAge;
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &partyMember = g_globals->_party[i];
