@@ -70,6 +70,7 @@ void Keeper::viewAction() {
 	case 4:
 		if (!_isWorthy) {
 			leave();
+			map.sorpigalInn();
 		} else {
 			addText(STRING["maps.map54.keeper6"]);
 			redraw();
@@ -78,6 +79,7 @@ void Keeper::viewAction() {
 
 	default:
 		leave();
+		map.sorpigalInn();
 		break;
 	}
 }
