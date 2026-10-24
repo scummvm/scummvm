@@ -592,6 +592,15 @@ SpellResult SpellsParty::cleric65_townPortal() {
 		}
 	);
 
+	msg._largeMessage = true;
+	msg._lines.push_back(Line(Common::String::format("1) %s  2) %s",
+		STRING["stats.towns.1"].c_str(), STRING["stats.towns.2"].c_str())));
+	msg._lines.push_back(Line(Common::String::format("3) %s  4) %s",
+		STRING["stats.towns.3"].c_str(), STRING["stats.towns.4"].c_str())));
+	msg._lines.push_back(Line(Common::String::format("5) %s",
+		STRING["stats.towns.5"].c_str())));
+	g_events->send(msg);
+
 	return SR_SUCCESS_SILENT;
 }
 
