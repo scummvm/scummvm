@@ -28,6 +28,7 @@ namespace MM1 {
 namespace ViewsEnh {
 
 #define FONT_HEIGHT 8
+#define LINE_HEIGHT 10
 
 ScrollText::ScrollText(const Common::String &name) :
 		ScrollView(name) {
@@ -40,6 +41,65 @@ ScrollText::ScrollText(const Common::String &name, UIElement *owner) :
 void ScrollText::setBounds(const Common::Rect &r) {
 	ScrollView::setBounds(r);
 	_rowCount = _innerBounds.height() / FONT_HEIGHT;
+
+	if (_scrolling)
+		setScrolling(true);
+}
+
+size_t ScrollText::visibleLineCount() const {
+	const int height = _innerBounds.height();
+	if (height < FONT_HEIGHT)
+		return 0;
+
+	return (height - FONT_HEIGHT) / LINE_HEIGHT + 1;
+}
+
+void ScrollText::setScrolling(bool enabled) {
+	_scrolling = enabled;
+	if (!_scrolling) {
+		_topLine = 0;
+		return;
+	}
+
+	const size_t visible = visibleLineCount();
+	const size_t maxTop = (_lines.size() > visible) ?
+		_lines.size() - visible : 0;
+	if (_topLine > maxTop)
+		_topLine = maxTop;
+}
+
+bool ScrollText::canScrollUp() const {
+	return _scrolling && _topLine != 0;
+}
+
+bool ScrollText::canScrollDown() const {
+	if (!_scrolling)
+		return false;
+
+	const size_t visible = visibleLineCount();
+	return _topLine + visible < _lines.size();
+}
+
+bool ScrollText::scrollLines(int delta) {
+	if (!_scrolling || !delta)
+		return false;
+
+	const size_t visible = visibleLineCount();
+	const size_t maxTop = (_lines.size() > visible) ?
+		_lines.size() - visible : 0;
+	int newTop = (int)_topLine + delta;
+
+	if (newTop < 0)
+		newTop = 0;
+	if ((size_t)newTop > maxTop)
+		newTop = (int)maxTop;
+
+	if ((size_t)newTop == _topLine)
+		return false;
+
+	_topLine = (size_t)newTop;
+	redraw();
+	return true;
 }
 
 void ScrollText::addLine(const Common::String &str,
@@ -61,7 +121,6 @@ void ScrollText::addLine(const Common::String &str,
 
 void ScrollText::addText(const Common::String &s,
 		int lineNum, byte color, TextAlign align, int xp) {
-	const int LINE_HEIGHT = 10;
 	Common::String str = s;
 
 	if (lineNum == -1)
@@ -80,10 +139,27 @@ void ScrollText::addText(const Common::String &s,
 void ScrollText::draw() {
 	ScrollView::draw();
 
-	// Iterate through displaying any text
-	for (Lines::const_iterator i = begin(); i != end(); ++i) {
-		setTextColor(i->_color);
-		writeString(i->_pos.x, i->_pos.y, i->_str, i->_align);
+	if (!_scrolling) {
+		// Existing behavior for ordinary ScrollText users.
+		for (Lines::const_iterator i = begin(); i != end(); ++i) {
+			setTextColor(i->_color);
+			writeString(i->_pos.x, i->_pos.y, i->_str, i->_align);
+		}
+		return;
+	}
+
+	// Scrollable text is clipped by line: only lines whose complete glyph
+	// height fits inside the message's inner bounds are drawn.
+	const size_t visible = visibleLineCount();
+	const size_t endLine = (_topLine + visible < _lines.size()) ?
+		_topLine + visible : _lines.size();
+
+	for (size_t idx = _topLine; idx < endLine; ++idx) {
+		const Line &line = _lines[idx];
+		Common::Point pt = line._pos;
+		pt.y -= (int)_topLine * LINE_HEIGHT;
+		setTextColor(line._color);
+		writeString(pt.x, pt.y, line._str, line._align);
 	}
 }
 

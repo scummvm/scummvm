@@ -59,9 +59,11 @@ void GameMessages::draw() {
 }
 
 bool GameMessages::msgFocus(const FocusMessage &msg) {
-	MetaEngine::setKeybindingMode(_callback || _keyCallback ?
-		KeybindingMode::KBMODE_MENUS :
-		KeybindingMode::KBMODE_NORMAL);
+	MetaEngine::setKeybindingMode(isScrolling() ?
+		KeybindingMode::KBMODE_QUEST_LOG :
+		(_callback || _keyCallback ?
+			KeybindingMode::KBMODE_MENUS :
+			KeybindingMode::KBMODE_NORMAL));
 	return true;
 }
 
@@ -88,6 +90,16 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 	for (const auto &line : msg._lines)
 		addText(line._text, -1, 0, (line.x > 0) ? ALIGN_MIDDLE : line._align, 0);
 
+	// Long Enhanced messages used to draw every wrapped line even after the
+	// text had passed the bottom of the scroll frame. Enable vertical scrolling
+	// only when the wrapped text actually overflows the current message box.
+	setScrolling(lineCount() > visibleLineCount());
+	MetaEngine::setKeybindingMode(isScrolling() ?
+		KeybindingMode::KBMODE_QUEST_LOG :
+		(_callback || _keyCallback ?
+			KeybindingMode::KBMODE_MENUS :
+			KeybindingMode::KBMODE_NORMAL));
+
 	if (msg._delaySeconds)
 		delaySeconds(msg._delaySeconds);
 
@@ -95,6 +107,28 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 }
 
 bool GameMessages::msgKeypress(const KeypressMessage &msg) {
+	if (isScrolling()) {
+		const int page = visibleLineCount() > 1 ?
+			(int)visibleLineCount() - 1 : 1;
+
+		switch (msg.keycode) {
+		case Common::KEYCODE_UP:
+			scrollLines(-1);
+			return true;
+		case Common::KEYCODE_DOWN:
+			scrollLines(1);
+			return true;
+		case Common::KEYCODE_PAGEUP:
+			scrollLines(-page);
+			return true;
+		case Common::KEYCODE_PAGEDOWN:
+			scrollLines(page);
+			return true;
+		default:
+			break;
+		}
+	}
+
 	if (_keyCallback) {
 		_keyCallback(msg);
 
@@ -120,6 +154,19 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool GameMessages::msgAction(const ActionMessage &msg) {
+	if (isScrolling()) {
+		switch (msg._action) {
+		case KEYBIND_QUEST_PREVIOUS:
+			scrollLines(-1);
+			return true;
+		case KEYBIND_QUEST_NEXT:
+			scrollLines(1);
+			return true;
+		default:
+			break;
+		}
+	}
+
 	if (_callback || _keyCallback) {
 		switch (msg._action) {
 		case KEYBIND_ESCAPE:
@@ -153,18 +200,34 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 }
 
 bool GameMessages::msgMouseDown(const MouseDownMessage &msg) {
-	// If yes/no prompting, also pass events to buttons view
 	if (_callback)
 		return send("MessagesYesNo", msg);
 
-	return msgAction(ActionMessage(msg._button == MouseMessage::MB_RIGHT ?
-		KEYBIND_ESCAPE : KEYBIND_SELECT));
+	// Consume normal dialogue clicks here. Advance on mouse release so
+	// one physical click can never advance two dialogue pages.
+	return msg._button == MouseMessage::MB_LEFT ||
+		msg._button == MouseMessage::MB_RIGHT;
 }
 
 bool GameMessages::msgMouseUp(const MouseUpMessage &msg) {
-	// If yes/no prompting, also pass events to buttons view
 	if (_callback)
 		return send("MessagesYesNo", msg);
+
+	if (msg._button == MouseMessage::MB_LEFT) {
+		// For a long message, left-click advances by a page until the last
+		// page is visible. A further click then performs the normal close.
+		if (isScrolling() && canScrollDown()) {
+			const int page = visibleLineCount() > 1 ?
+				(int)visibleLineCount() - 1 : 1;
+			scrollLines(page);
+			return true;
+		}
+		return msgAction(ActionMessage(KEYBIND_SELECT));
+	}
+
+	if (msg._button == MouseMessage::MB_RIGHT)
+		return msgAction(ActionMessage(KEYBIND_ESCAPE));
+
 	return false;
 }
 

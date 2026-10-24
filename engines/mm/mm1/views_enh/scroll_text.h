@@ -51,6 +51,8 @@ public:
 private:
 	size_t _rowCount = 0;
 	Lines _lines;
+	bool _scrolling = false;
+	size_t _topLine = 0;
 public:
 	ScrollText(const Common::String &name);
 	ScrollText(const Common::String &name, UIElement *owner);
@@ -66,10 +68,31 @@ public:
 	Lines::const_iterator end() const { return _lines.end(); }
 
 	/**
+	 * Returns the number of wrapped text lines.
+	 */
+	size_t lineCount() const { return _lines.size(); }
+
+	/**
+	 * Returns how many text lines fit wholly inside the current inner bounds.
+	 */
+	size_t visibleLineCount() const;
+
+	/**
+	 * Enable or disable vertical scrolling. Scrolling is opt-in so existing
+	 * ScrollText users retain their current drawing behavior.
+	 */
+	void setScrolling(bool enabled);
+	bool isScrolling() const { return _scrolling; }
+	bool canScrollUp() const;
+	bool canScrollDown() const;
+	bool scrollLines(int delta);
+
+	/**
 	 * Clear the lines
 	 */
 	void clear() {
 		_lines.clear();
+		_topLine = 0;
 	}
 
 	/**
