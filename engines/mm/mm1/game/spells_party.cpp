@@ -502,19 +502,25 @@ SpellResult SpellsParty::cleric61_moonRay() {
 }
 
 SpellResult SpellsParty::cleric62_raiseDead() {
-	if ((_destChar->_condition == ERADICATED) ||
-		(_destChar->_condition & (BAD_CONDITION | DEAD)) ==
+	// Raise Dead only works on a dead character. Eradicated
+	// characters need Resurrection
+	if (_destChar->_condition == ERADICATED ||
+		(_destChar->_condition & (BAD_CONDITION | DEAD)) !=
 		(BAD_CONDITION | DEAD))
 		return SR_FAILED;
+
 	int rnd = g_engine->getRandomNumber(100);
 	if (rnd == 100) {
-		// This is such a minute chance, why even have it?
+		// A remote chance of eradicating the character instead
+		_destChar->_condition = ERADICATED;
+		_destChar->_hpCurrent = 0;
 		Sound::sound(SOUND_3);
 		return SR_FAILED;
 	} else if (rnd > 90) {
 		return SR_FAILED;
 	}
 
+	// A character who was both dead and stoned is raised, but stays stoned
 	if (_destChar->_condition == (BAD_CONDITION | DEAD | STONE))
 		_destChar->_condition = BAD_CONDITION | STONE;
 	else
