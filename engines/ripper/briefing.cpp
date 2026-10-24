@@ -49,8 +49,7 @@ static bool isImplementedBriefingSelector(uint selector) {
 
 BriefingManager::BriefingManager(RipperEngine *engine) : _engine(engine),
 		_lastFrameMillis(0), _frameIndex(0), _selector(0), _armed(false),
-		_initialized(false), _hovered(false) {
-	memset(_announcedSelectors, 0, sizeof(_announcedSelectors));
+		_initialized(false), _hovered(false), _announcedSelectors(0) {
 }
 
 BriefingManager::~BriefingManager() {
@@ -94,7 +93,7 @@ bool BriefingManager::arm(uint selector, bool playNotification) {
 		warning("Ripper: unsupported briefing selector %u", selector);
 		return false;
 	}
-	if (_announcedSelectors[selector]) {
+	if (_announcedSelectors & (1U << selector)) {
 		debugC(2, kDebugScene,
 			"Ripper: briefing selector=%u already announced; trigger not rearmed", selector);
 		return true;
@@ -102,7 +101,7 @@ bool BriefingManager::arm(uint selector, bool playNotification) {
 	if (_armed)
 		clear();
 
-	_announcedSelectors[selector] = true;
+	_announcedSelectors |= 1U << selector;
 	_selector = selector;
 	_frameIndex = 0;
 	_lastFrameMillis = g_system->getMillis(true);
@@ -121,29 +120,25 @@ bool BriefingManager::arm(uint selector, bool playNotification) {
 	return true;
 }
 
-bool BriefingManager::restore(bool armed, uint selector) {
-	_engine->getMedia()->stopSoundEffect(_alertHandle);
-	_backing.clear();
-	if (armed && !isImplementedBriefingSelector(selector)) {
-		warning("Ripper: cannot restore unsupported briefing selector %u", selector);
-		_armed = false;
-		_selector = 0;
-		_frameIndex = 0;
-		_hovered = false;
+bool BriefingManager::restore(bool armed, uint selector, uint16 announcedSelectors) {
+	if ((announcedSelectors & ~0x1feU) != 0 ||
+			(armed && (!isImplementedBriefingSelector(selector) ||
+				(announcedSelectors & (1U << selector)) == 0))) {
+		warning("Ripper: cannot restore briefing selector=%u announced=0x%03x",
+			selector, announcedSelectors);
 		return false;
 	}
-	_armed = armed && _initialized && selector != 0 &&
-		selector < ARRAYSIZE(_announcedSelectors);
+	_engine->getMedia()->stopSoundEffect(_alertHandle);
+	_backing.clear();
+	_announcedSelectors = announcedSelectors;
+	_armed = armed && _initialized;
 	_selector = _armed ? selector : 0;
 	_frameIndex = 0;
 	_lastFrameMillis = g_system->getMillis(true);
 	_hovered = false;
-	if (_armed) {
-		_announcedSelectors[_selector] = true;
-		debugC(2, kDebugSaveLoad,
-			"Ripper: restored armed briefing trigger selector=%u control=0x4e1",
-			_selector);
-	}
+	debugC(2, kDebugSaveLoad,
+		"Ripper: restored briefing armed=%d selector=%u announced=0x%03x",
+		_armed, _selector, _announcedSelectors);
 	return true;
 }
 

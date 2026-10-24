@@ -279,6 +279,7 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	byte awaitingInteraction = _runtime.awaitingInteraction ? 1 : 0;
 	byte briefingArmed = _briefing->isArmed() ? 1 : 0;
 	uint32 briefingSelector = _briefing->getSelector();
+	uint16 announcedSelectors = serializer.isSaving() ? _briefing->getAnnouncedSelectors() : 0;
 
 	serializer.syncString(ba0Member);
 	serializer.syncAsUint32LE(activeFrame);
@@ -290,6 +291,12 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	serializer.syncAsByte(awaitingInteraction);
 	serializer.syncAsByte(briefingArmed);
 	serializer.syncAsUint32LE(briefingSelector);
+	serializer.syncAsUint16LE(announcedSelectors, 6);
+	if (serializer.isLoading() && serializer.getVersion() < 6 &&
+			briefingArmed != 0 && briefingSelector < 9)
+		announcedSelectors = 1U << briefingSelector;
+	if (briefingArmed > 1)
+		return false;
 	if (serializer.isLoading() && (ba0Member.empty() || ba0Member.size() > 128 ||
 			concurrentMember.size() > 128 || concurrentEntry.size() > 128 ||
 			previousFrame.size() > 128))
@@ -352,7 +359,7 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	_runtime.activeFrame = activeFrame;
 	_runtime.frontEndActionMask = serializer.getVersion() >= 4 ? frontEndActionMask : 0xffff;
 	_runtime.awaitingInteraction = awaitingInteraction != 0;
-	if (!_briefing->restore(briefingArmed != 0, briefingSelector))
+	if (!_briefing->restore(briefingArmed != 0, briefingSelector, announcedSelectors))
 		return false;
 	_runtime.pendingSceneMember.clear();
 	_runtime.pendingSceneEntryLabel.clear();

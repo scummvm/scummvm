@@ -29,6 +29,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/milestones.h"
+#include "ripper/puzzles/state.h"
 #include "ripper/scene_audio.h"
 #include "ripper/script.h"
 
@@ -37,7 +38,7 @@ namespace Ripper {
 namespace {
 
 static const char kRipperSaveMagic[] = { 'R', 'S', 'A', 'V' };
-static const uint32 kRipperSaveVersion = 5;
+static const uint32 kRipperSaveVersion = 6;
 static const uint32 kRipperMinimumSaveVersion = 2;
 static const uint16 kScreenWidth = 640;
 static const uint16 kScreenHeight = 400;
@@ -99,7 +100,8 @@ Common::Error RipperEngine::saveGameStream(Common::WriteStream *stream, bool isA
 	Common::Serializer serializer(nullptr, stream);
 	if (!serializer.matchBytes(kRipperSaveMagic, sizeof(kRipperSaveMagic)) ||
 			!serializer.syncVersion(kRipperSaveVersion) ||
-			!_scripts->syncGame(serializer) || !_sceneAudio->syncGame(serializer))
+			!_scripts->syncGame(serializer) || !_sceneAudio->syncGame(serializer) ||
+			!_puzzleState->syncGame(serializer))
 		return Common::kWritingFailed;
 
 	uint16 width = kScreenWidth;
@@ -145,9 +147,11 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		return Common::kReadingFailed;
 	}
 	const uint32 saveVersion = serializer.getVersion();
-	if (!_scripts->syncGame(serializer) || !_sceneAudio->syncGame(serializer))
+	PuzzleState puzzleState;
+	if (!_scripts->syncGame(serializer) || !_sceneAudio->syncGame(serializer) ||
+			!puzzleState.syncGame(serializer))
 		return Common::kReadingFailed;
-	if (saveVersion < kRipperSaveVersion && !_milestones->hasRipperIdentity()) {
+	if (saveVersion < 5 && !_milestones->hasRipperIdentity()) {
 		debugC(1, kDebugSaveLoad,
 			"Ripper: repairing legacy save version=%u without a Ripper identity",
 			saveVersion);
@@ -168,9 +172,10 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Array<byte> palette;
 	palette.resize(kPaletteSize);
 	serializer.syncBytes(palette.data(), palette.size());
-	if (serializer.err())
+	if (serializer.err() || stream->eos())
 		return Common::kReadingFailed;
 
+	*_puzzleState = puzzleState;
 	g_system->copyRectToScreen(pixels.data(), kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);
 	presentScreen();

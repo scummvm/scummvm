@@ -15,6 +15,10 @@
 
 #include "common/rect.h"
 
+namespace Common {
+class Serializer;
+}
+
 namespace Ripper {
 
 struct ClockPuzzleState {
@@ -40,6 +44,8 @@ struct KeyGroupPuzzleState {
 };
 
 struct PuzzleState {
+	bool syncGame(Common::Serializer &serializer);
+
 	ClockPuzzleState clock;
 	BoardArrangementPuzzleState boardArrangement;
 	KeyGroupPuzzleState keyGroup;

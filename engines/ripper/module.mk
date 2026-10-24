@@ -56,6 +56,7 @@ MODULE_OBJS := \
 	puzzles/shock_lever.o \
 	puzzles/six_digit_code.o \
 	puzzles/stained_glass.o \
+	puzzles/state.o \
 	puzzles/table_gate.o \
 	puzzles/tarot_cards.o \
 	puzzles/tarot_cards_model.o \

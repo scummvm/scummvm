@@ -45,7 +45,7 @@ public:
 
 	bool initialize(ResourceManager &resources, bool demoVariant);
 	bool arm(uint selector, bool playNotification = true);
-	bool restore(bool armed, uint selector);
+	bool restore(bool armed, uint selector, uint16 announcedSelectors);
 	void clear();
 	void prepareForSceneTransition();
 	BriefingServiceResult service(const MouseState &mouse);
@@ -53,6 +53,7 @@ public:
 
 	bool isArmed() const { return _armed; }
 	uint getSelector() const { return _selector; }
+	uint16 getAnnouncedSelectors() const { return _announcedSelectors; }
 
 private:
 	void advanceAnimation(uint32 now);
@@ -72,7 +73,7 @@ private:
 	bool _armed;
 	bool _initialized;
 	bool _hovered;
-	bool _announcedSelectors[9];
+	uint16 _announcedSelectors;
 };
 
 } // End of namespace Ripper
