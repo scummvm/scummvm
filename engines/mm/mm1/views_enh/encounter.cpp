@@ -197,10 +197,12 @@ void Encounter::timeout() {
 		break;
 
 	case BATTLE:
-		// Switch to combat view
+		// Finish the underlying game redraw before starting combat,
+		// and don't redraw this closed Encounter afterwards
 		close();
+		g_events->drawElements();
 		send("Combat", GameMessage("COMBAT"));
-		break;
+		return;
 
 	default:
 		break;
