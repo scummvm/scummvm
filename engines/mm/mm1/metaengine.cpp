@@ -75,6 +75,19 @@ static const KeybindingRecord QUEST_LOG_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const KeybindingRecord BESTIARY_KEYS[] = {
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Close bestiary"), "ESCAPE", nullptr },
+	{ KEYBIND_BESTIARY, "BESTIARY_CLOSE", _s("Close bestiary"), "n", nullptr },
+	{ KEYBIND_SELECT, "SELECT", _s("Show monster image"), "RETURN", nullptr },
+	{ KEYBIND_BESTIARY_UP, "BESTIARY_UP", _s("Previous monster"), "UP", nullptr },
+	{ KEYBIND_BESTIARY_DOWN, "BESTIARY_DOWN", _s("Next monster"), "DOWN", nullptr },
+	{ KEYBIND_BESTIARY_PAGEUP, "BESTIARY_PAGEUP", _s("Previous page"), "PAGEUP", nullptr },
+	{ KEYBIND_BESTIARY_PAGEDOWN, "BESTIARY_PAGEDOWN", _s("Next page"), "PAGEDOWN", nullptr },
+	{ KEYBIND_BESTIARY_HOME, "BESTIARY_HOME", _s("First monster"), "HOME", nullptr },
+	{ KEYBIND_BESTIARY_END, "BESTIARY_END", _s("Last monster"), "END", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
+
 static const KeybindingRecord COMBAT_KEYS[] = {
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_COMBAT_ATTACK, "COMBAT_ATTACK", _s("Attack"), "a", nullptr },
@@ -152,6 +165,7 @@ static const char *const kPartyKeymapId = "mm1_party";
 static const char *const kNormalKeymapId = "mm1_normal";
 static const char *const kCombatKeymapId = "mm1_combat";
 static const char *const kQuestLogKeymapId = "mm1_quest_log";
+static const char *const kBestiaryKeymapId = "mm1_bestiary";
 static const char *const kCheatsKeymapId = "mm1_cheats";
 
 static Common::Keymap *g_menuKeymap = nullptr;
@@ -160,6 +174,7 @@ static Common::Keymap *g_partyKeymap = nullptr;
 static Common::Keymap *g_normalKeymap = nullptr;
 static Common::Keymap *g_combatKeymap = nullptr;
 static Common::Keymap *g_questLogKeymap = nullptr;
+static Common::Keymap *g_bestiaryKeymap = nullptr;
 static Common::Keymap *g_cheatsKeymap = nullptr;
 
 struct KeysRecord {
@@ -175,6 +190,7 @@ static const KeysRecord ALL_RECORDS[] = {
 	{ kPartyKeymapId,   _s("Might and Magic 1 - Party"), PARTY_KEYS },
 	{ kCombatKeymapId,  _s("Might and Magic 1 - Combat"), COMBAT_KEYS },
 	{ kQuestLogKeymapId, _s("Might and Magic 1 - Quest Log"), QUEST_LOG_KEYS },
+	{ kBestiaryKeymapId, _s("Might and Magic 1 - Bestiary"), BESTIARY_KEYS },
 #if 0
 	{ kCheatsKeymapId,  _s("Might and Magic 1 - Cheats"), CHEAT_KEYS },
 #endif
@@ -191,6 +207,7 @@ static void initKeymapPointers() {
 	g_normalKeymap = mapper->getKeymap(kNormalKeymapId);
 	g_combatKeymap = mapper->getKeymap(kCombatKeymapId);
 	g_questLogKeymap = mapper->getKeymap(kQuestLogKeymapId);
+	g_bestiaryKeymap = mapper->getKeymap(kBestiaryKeymapId);
 	g_cheatsKeymap = mapper->getKeymap(kCheatsKeymapId);
 }
 
@@ -214,11 +231,15 @@ Common::KeymapArray MetaEngine::initKeymaps() {
 				act->addDefaultInputMapping(r->_joy);
 			if (r->_action == KEYBIND_SELECT)
 				act->addDefaultInputMapping("SPACE");
+			if (recPtr->_keys == BESTIARY_KEYS && r->_action == KEYBIND_SELECT)
+				act->addDefaultInputMapping("KP_ENTER");
 
 			if (r->_action == KEYBIND_FORWARDS || r->_action == KEYBIND_BACKWARDS ||
 					r->_action == KEYBIND_TURN_LEFT || r->_action == KEYBIND_TURN_RIGHT ||
-					r->_action == KEYBIND_STRAFE_LEFT || r->_action == KEYBIND_STRAFE_RIGHT)
-				// Allow movement actions to be triggered on keyboard repeats
+					r->_action == KEYBIND_STRAFE_LEFT || r->_action == KEYBIND_STRAFE_RIGHT ||
+					r->_action == KEYBIND_BESTIARY_UP || r->_action == KEYBIND_BESTIARY_DOWN ||
+					r->_action == KEYBIND_BESTIARY_PAGEUP || r->_action == KEYBIND_BESTIARY_PAGEDOWN)
+				// Allow movement and list actions to be triggered on keyboard repeats
 				act->allowKbdRepeats();
 
 			keyMap->addAction(act);
@@ -241,6 +262,8 @@ static bool isKeymapEnabledForMode(const Common::Keymap *keymap, KeybindingMode 
 		return mode == KBMODE_COMBAT;
 	if (keymap == g_questLogKeymap)
 		return mode == KBMODE_QUEST_LOG;
+	if (keymap == g_bestiaryKeymap)
+		return mode == KBMODE_BESTIARY;
 	if (keymap == g_cheatsKeymap)
 		return mode == KBMODE_NORMAL;
 
@@ -257,6 +280,7 @@ void MetaEngine::setKeybindingMode(KeybindingMode mode) {
 		g_normalKeymap,
 		g_combatKeymap,
 		g_questLogKeymap,
+		g_bestiaryKeymap,
 		g_cheatsKeymap
 	};
 

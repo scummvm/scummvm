@@ -43,6 +43,10 @@ enum KeybindingAction {
 	KEYBIND_MAP,
 	KEYBIND_ORDER,
 	KEYBIND_PROTECT,
+	KEYBIND_BESTIARY,
+	KEYBIND_BESTIARY_UP, KEYBIND_BESTIARY_DOWN,
+	KEYBIND_BESTIARY_PAGEUP, KEYBIND_BESTIARY_PAGEDOWN,
+	KEYBIND_BESTIARY_HOME, KEYBIND_BESTIARY_END,
 	KEYBIND_REST,
 	KEYBIND_SEARCH,
 	KEYBIND_BASH,
@@ -100,7 +104,8 @@ enum KeybindingMode {
 	KBMODE_PARTY_MENUS, ///< Keys for menus that allow switching party members
 	KBMODE_NORMAL,      ///< Keys available when normal in-game
 	KBMODE_COMBAT,      ///< Keys when in combat mode
-	KBMODE_QUEST_LOG    ///< Keys when viewing the quest log
+	KBMODE_QUEST_LOG,   ///< Keys when viewing the quest log
+	KBMODE_BESTIARY     ///< Keys when viewing the bestiary
 };
 
 class MetaEngine {
