@@ -62,7 +62,7 @@ void Map34::special01() {
 		STRING["maps.passage_outside1"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 15);
-			g_maps->changeMap(0xf01, 2);
+			g_maps->changeMapFromExit(0xf01, 2);
 		}
 	));
 }

@@ -92,7 +92,7 @@ void Map11::special00() {
 		STRING["maps.map11.ladder"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 2);
-			g_maps->changeMap(0xf04, 2);
+			g_maps->changeMapFromExit(0xf04, 2);
 		}
 	));
 }

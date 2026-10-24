@@ -155,7 +155,7 @@ void Map14::special04() {
 			STRING["maps.map14.passage"],
 			[]() {
 				g_maps->_mapPos = Common::Point(4, 4);
-				g_maps->changeMap(0x706, 3);
+				g_maps->changeMapFromExit(0x706, 3);
 			}
 		));
 	} else {

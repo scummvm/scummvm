@@ -61,7 +61,7 @@ void Map07::special00() {
 		STRING["maps.stairs_up"],
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 15);
-			g_maps->changeMap(0xc03, 1);
+			g_maps->changeMapFromExit(0xc03, 1);
 		}
 	));
 }
@@ -72,7 +72,7 @@ void Map07::special01() {
 		STRING["maps.map07.portal"],
 		[]() {
 			g_maps->_mapPos = Common::Point(2, 7);
-			g_maps->changeMap(0x202, 1);
+			g_maps->changeMapFromExit(0x202, 1);
 		}
 	));
 }

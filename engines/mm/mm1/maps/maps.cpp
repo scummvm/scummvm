@@ -454,6 +454,23 @@ void Maps::changeMap(uint16 id, byte section, bool loadingSave) {
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
+void Maps::changeMapFromExit(uint16 id, byte section) {
+	// Run the normal transition first. Unlike calling the destination
+	// special(), this can't bounce the party straight back through
+	// stairs and doors, or show a second transition prompt
+	changeMap(id, section);
+
+	// changeMap() records a newly entered destination as VISITED_NORMAL.
+	// This change came through an entrance or exit, so keep the metadata
+	// bits and correct only the tile type to VISITED_EXIT
+	byte &visited = _currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x];
+	visited = (visited & 0xf0) | VISITED_EXIT;
+
+	// changeMap() has already sent the normal Game UPDATE. Repaint once
+	// more so the enhanced minimap shows the exit immediately
+	g_events->redrawViews();
+}
+
 void Maps::visitedTile() {
 	byte &visited = _currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x];
 	if (!(visited & 0x7f))

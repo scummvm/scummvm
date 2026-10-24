@@ -60,7 +60,7 @@ void Map45::special01() {
 		STRING["maps.map45.passage"],
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 12);
-			g_maps->changeMap(5, 1);
+			g_maps->changeMapFromExit(5, 1);
 		}
 	));
 }
@@ -75,7 +75,7 @@ void Map45::special03() {
 	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
-			g_maps->changeMap(0x107, 1);
+			g_maps->changeMapFromExit(0x107, 1);
 		}
 	));
 }
@@ -86,7 +86,7 @@ void Map45::special04() {
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {
-			g_maps->changeMap(0xa00, 3);
+			g_maps->changeMapFromExit(0xa00, 3);
 		}
 	));
 }

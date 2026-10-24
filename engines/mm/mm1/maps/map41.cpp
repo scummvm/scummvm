@@ -58,7 +58,7 @@ void Map41::special01() {
 		STRING["maps.map41.stairs_up"],
 		[]() {
 			g_maps->_mapPos = Common::Point(14, 2);
-			g_maps->changeMap(0x101, 2);
+			g_maps->changeMapFromExit(0x101, 2);
 		}
 	));
 }
@@ -69,7 +69,7 @@ void Map41::special02() {
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {
-			g_maps->changeMap(0x704, 3);
+			g_maps->changeMapFromExit(0x704, 3);
 		}
 	));
 }

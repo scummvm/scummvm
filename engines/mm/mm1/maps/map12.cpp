@@ -59,7 +59,7 @@ void Map12::special00() {
 		STRING["maps.map12.ladder_up"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 13);
-			g_maps->changeMap(0x106, 2);
+			g_maps->changeMapFromExit(0x106, 2);
 		}
 	));
 }

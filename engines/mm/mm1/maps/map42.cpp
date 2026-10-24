@@ -139,7 +139,7 @@ void Map42::special15() {
 	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
-			g_maps->changeMap(0xf04, 3);
+			g_maps->changeMapFromExit(0xf04, 3);
 		}
 	));
 }

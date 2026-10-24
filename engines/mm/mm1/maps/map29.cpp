@@ -95,7 +95,7 @@ void Map29::special00() {
 		STRING["maps.map29.algary"],
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 15);
-			g_maps->changeMap(0x203, 1);
+			g_maps->changeMapFromExit(0x203, 1);
 		}
 	));
 }

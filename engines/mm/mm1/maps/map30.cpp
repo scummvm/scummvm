@@ -76,7 +76,7 @@ void Map30::special00() {
 		STRING["maps.map30.passage"],
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 7);
-			g_maps->changeMap(0x802, 1);
+			g_maps->changeMapFromExit(0x802, 1);
 		}
 	));
 }
@@ -88,7 +88,7 @@ void Map30::special01() {
 		STRING["maps.map30.ruins"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 15);
-			g_maps->changeMap(0x107, 3);
+			g_maps->changeMapFromExit(0x107, 3);
 		}
 	));
 }

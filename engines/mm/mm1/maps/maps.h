@@ -181,6 +181,13 @@ public:
 	void changeMap(uint16 id, byte section, bool loadingSave = false);
 
 	/**
+	 * Change maps through a known entrance/exit/stair transition and
+	 * mark the destination arrival square as an exit without firing
+	 * the destination square's special action
+	 */
+	void changeMapFromExit(uint16 id, byte section);
+
+	/**
 	 * Mark a tile as visited
 	 */
 	void visitedTile();

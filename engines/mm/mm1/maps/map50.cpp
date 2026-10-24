@@ -60,7 +60,7 @@ void Map50::special01() {
 		STRING["maps.passage_outside1"],
 		[]() {
 			g_maps->_mapPos = Common::Point(10, 5);
-			g_maps->changeMap(0x11b, 2);
+			g_maps->changeMapFromExit(0x11b, 2);
 		}
 	));
 }
@@ -71,7 +71,7 @@ void Map50::special02() {
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {
-			g_maps->changeMap(0x701, 3);
+			g_maps->changeMapFromExit(0x701, 3);
 		}
 	));
 }
@@ -82,7 +82,7 @@ void Map50::special03() {
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {
-			g_maps->changeMap(0xe00, 3);
+			g_maps->changeMapFromExit(0xe00, 3);
 		}
 	));
 }
@@ -93,7 +93,7 @@ void Map50::special04() {
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {
-			g_maps->changeMap(0x201, 3);
+			g_maps->changeMapFromExit(0x201, 3);
 		}
 	));
 }

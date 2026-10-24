@@ -58,7 +58,7 @@ void Map18::special00() {
 		STRING["maps.map18.passage"],
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 7);
-			g_maps->changeMap(0xb1a, 1);
+			g_maps->changeMapFromExit(0xb1a, 1);
 		}
 	));
 }
@@ -67,7 +67,7 @@ void Map18::special01() {
 	visitedExit();
 	if (_data[VAL1] & 0x80) {
 		g_maps->_mapPos = Common::Point(0, 7);
-		g_maps->changeMap(0x508, 3);
+		g_maps->changeMapFromExit(0x508, 3);
 
 	} else if (_data[VAL1] != 0) {
 		_data[VAL1] = 0;
@@ -94,7 +94,7 @@ void Map18::special02() {
 	visitedExit();
 	if (_data[VAL2] & 0x80) {
 		g_maps->_mapPos = Common::Point(7, 15);
-		g_maps->changeMap(0xf08, 3);
+		g_maps->changeMapFromExit(0xf08, 3);
 
 	} else if (_data[VAL2] != 0) {
 		_data[VAL2] = 0;
@@ -122,7 +122,7 @@ void Map18::special03() {
 	send(SoundMessage(STRING["maps.map18.ruins"],
 		[]() {
 			g_maps->_mapPos = Common::Point(2, 2);
-			g_maps->changeMap(0xf03, 3);
+			g_maps->changeMapFromExit(0xf03, 3);
 		}
 	));
 }
@@ -158,7 +158,7 @@ void Map18::special08() {
 		STRING["maps.map18.cave"],
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 7);
-			g_maps->changeMap(0x202, 1);
+			g_maps->changeMapFromExit(0x202, 1);
 		}
 	));
 }

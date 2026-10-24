@@ -58,7 +58,7 @@ void Map05::special00() {
 	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
-			g_maps->changeMap(0x604, 1);
+			g_maps->changeMapFromExit(0x604, 1);
 		}
 	));
 }
@@ -114,7 +114,7 @@ void Map05::special07() {
 		[]() {
 			g_maps->_mapPos.x = 8;
 			g_maps->_mapPos.y = 8;
-			g_maps->changeMap(1, 1);
+			g_maps->changeMapFromExit(1, 1);
 		}
 	));
 }

@@ -68,7 +68,7 @@ void Map19::special01() {
 		STRING["maps.map19.cave"],
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 0);
-			g_maps->changeMap(0xa00, 1);
+			g_maps->changeMapFromExit(0xa00, 1);
 		}
 	));
 }
@@ -79,7 +79,7 @@ void Map19::special02() {
 		STRING["maps.map19.stairs_down"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 1);
-			g_maps->changeMap(0xf02, 3);
+			g_maps->changeMapFromExit(0xf02, 3);
 		}
 	));
 }

@@ -166,7 +166,7 @@ void Map25::special00() {
 		STRING["maps.map25.portal"],
 		[]() {
 			g_maps->_mapPos = Common::Point(12, 4);
-			g_maps->changeMap(0x201, 3);
+			g_maps->changeMapFromExit(0x201, 3);
 		}
 	));
 }
@@ -179,7 +179,7 @@ void Map25::special01() {
 			STRING["maps.map25.key"],
 			[]() {
 				g_maps->_mapPos = Common::Point(7, 5);
-				g_maps->changeMap(0x212, 1);
+				g_maps->changeMapFromExit(0x212, 1);
 			}
 		));
 	}

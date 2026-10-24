@@ -98,7 +98,7 @@ void Map06::special00() {
 		STRING["maps.passage_outside2"],
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 11);
-			g_maps->changeMap(0xa11, 2);
+			g_maps->changeMapFromExit(0xa11, 2);
 		}
 	));
 }
@@ -109,7 +109,7 @@ void Map06::special01() {
 		STRING["maps.map06.portal"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 0);
-			g_maps->changeMap(0xc01, 1);
+			g_maps->changeMapFromExit(0xc01, 1);
 		}
 	));
 }

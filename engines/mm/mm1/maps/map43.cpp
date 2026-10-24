@@ -76,7 +76,7 @@ void Map43::special01() {
 			STRING["maps.map43.exit"],
 			[]() {
 				g_maps->_mapPos = Common::Point(9, 13);
-				g_maps->changeMap(0x101, 2);
+				g_maps->changeMapFromExit(0x101, 2);
 			}
 		));
 	} else {

@@ -92,7 +92,7 @@ void Map00::special04() {
 		STRING["maps.passage_outside1"],
 		[]() {
 			g_maps->_mapPos = Common::Point(10, 10);
-			g_maps->changeMap(0xa11, 2);
+			g_maps->changeMapFromExit(0xa11, 2);
 		}
 	));
 }
@@ -118,7 +118,7 @@ void Map00::special09() {
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {
-			g_maps->changeMap(0xa11, 1);
+			g_maps->changeMapFromExit(0xa11, 1);
 		}
 	));
 }
@@ -215,7 +215,7 @@ void Map00::special23() {
 		[](const Common::KeyState &keyState) {
 			g_events->focusedView()->close();
 			if (!g_globals->_activeSpells._s.levitate)
-				g_maps->changeMap(0xa11, 1);
+				g_maps->changeMapFromExit(0xa11, 1);
 		}
 	));
 }

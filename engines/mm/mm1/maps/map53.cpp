@@ -69,7 +69,7 @@ void Map53::special03() {
 	send(SoundMessage(
 		STRING["maps.map53.ladder"],
 		[]() {
-			g_maps->changeMap(0xf01, 3);
+			g_maps->changeMapFromExit(0xf01, 3);
 		}
 	));
 }

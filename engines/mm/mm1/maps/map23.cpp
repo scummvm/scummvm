@@ -66,7 +66,7 @@ void Map23::special00() {
 		STRING["maps.map23.passage"],
 		[]() {
 			g_maps->_mapPos = Common::Point(12, 0);
-			g_maps->changeMap(0x604, 1);
+			g_maps->changeMapFromExit(0x604, 1);
 		}
 	));
 }
@@ -77,7 +77,7 @@ void Map23::special01() {
 		STRING["maps.map23.cave"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 0);
-			g_maps->changeMap(1, 1);
+			g_maps->changeMapFromExit(1, 1);
 		}
 	));
 }

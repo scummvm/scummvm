@@ -68,7 +68,7 @@ void Map38::special03() {
 		STRING["maps.stairs_up"],
 		[]() {
 			g_maps->_mapPos.x = 0;
-			g_maps->changeMap(0xf03, 3);
+			g_maps->changeMapFromExit(0xf03, 3);
 		}
 	));
 }

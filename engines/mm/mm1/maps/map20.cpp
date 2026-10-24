@@ -75,7 +75,7 @@ void Map20::special00() {
 		STRING["maps.map20.stairs_down"],
 		[]() {
 			g_maps->_mapPos = Common::Point(1, 15);
-			g_maps->changeMap(0xc03, 1);
+			g_maps->changeMapFromExit(0xc03, 1);
 		}
 	));
 }
@@ -86,7 +86,7 @@ void Map20::special01() {
 		STRING["maps.map20.cave"],
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 0);
-			g_maps->changeMap(0x51b, 1);
+			g_maps->changeMapFromExit(0x51b, 1);
 		}
 	));
 }
@@ -198,7 +198,7 @@ void Map20::special08() {
 
 void Map20::goToCastle() {
 	g_maps->_mapPos = Common::Point(15, 8);
-	g_maps->changeMap(0xa11, 3);
+	g_maps->changeMapFromExit(0xa11, 3);
 }
 
 } // namespace Maps

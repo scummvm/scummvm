@@ -67,7 +67,7 @@ void Map32::special00() {
 			0, 2, STRING["maps.map32.key"],
 			[]() {
 				g_maps->_mapPos = Common::Point(7, 0);
-				g_maps->changeMap(0xb1a, 3);
+				g_maps->changeMapFromExit(0xb1a, 3);
 			}
 		));
 	}
@@ -82,7 +82,7 @@ void Map32::special02() {
 
 	if (_data[VAL2] & 0x80) {
 		g_maps->_mapPos = Common::Point(0, 7);
-		g_maps->changeMap(0xb07, 3);
+		g_maps->changeMapFromExit(0xb07, 3);
 
 	} else if (_data[VAL2] != 0) {
 		_data[VAL2] = 0;

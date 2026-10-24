@@ -238,7 +238,7 @@ void Map28::special01() {
 		STRING["maps.map28.cave"],
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 8);
-			g_maps->changeMap(0x601, 1);
+			g_maps->changeMapFromExit(0x601, 1);
 		}
 	));
 }

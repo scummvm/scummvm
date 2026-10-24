@@ -63,7 +63,7 @@ void Map49::special01() {
 		STRING["maps.passage_outside1"],
 		[]() {
 			g_maps->_mapPos = Common::Point(14, 7);
-			g_maps->changeMap(0xb1a, 2);
+			g_maps->changeMapFromExit(0xb1a, 2);
 		}
 	));
 }
@@ -72,7 +72,7 @@ void Map49::special02() {
 	visitedExit();
 
 	g_maps->_mapPos = Common::Point(15, 7);
-	g_maps->changeMap(0xb1a, 2);
+	g_maps->changeMapFromExit(0xb1a, 2);
 	send(SoundMessage(STRING["maps.map49.chute"]));
 }
 
@@ -124,7 +124,7 @@ void Map49::special07() {
 	reduceHP();
 	reduceHP();
 	g_maps->_mapPos = Common::Point(4, 7);
-	g_maps->changeMap(0xb1a, 2);
+	g_maps->changeMapFromExit(0xb1a, 2);
 
 	send(SoundMessage(STRING["maps.map49.catapult"]));
 }

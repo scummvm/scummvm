@@ -97,7 +97,7 @@ void Map02::special04() {
 		STRING["maps.passage_outside2"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 7);
-			g_maps->changeMap(0x801, 2);
+			g_maps->changeMapFromExit(0x801, 2);
 		}
 	));
 }
@@ -159,7 +159,7 @@ void Map02::special15() {
 
 			uint16 id = PORTAL_DEST_ID[index];
 			byte section = PORTAL_DEST_SECTION[index];
-			g_maps->changeMap(id, section);
+			g_maps->changeMapFromExit(id, section);
 		}
 	));
 }

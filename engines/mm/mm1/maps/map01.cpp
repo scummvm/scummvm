@@ -91,7 +91,7 @@ void Map01::special04() {
 		STRING["maps.passage_outside2"],
 		[]() {
 			g_maps->_mapPos = Common::Point(3, 3);
-			g_maps->changeMap(0x101, 2);
+			g_maps->changeMapFromExit(0x101, 2);
 		}
 	));
 }
@@ -152,7 +152,7 @@ void Map01::special09() {
 		STRING["maps.stairs_down"],
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 0);
-			g_maps->changeMap(0xc01, 1);
+			g_maps->changeMapFromExit(0xc01, 1);
 		}
 	));
 }

@@ -71,7 +71,7 @@ void Map36::special01() {
 		STRING["maps.map36.exit"],
 		[]() {
 			g_maps->_mapPos = Common::Point(11, 2);
-			g_maps->changeMap(0xa00, 2);
+			g_maps->changeMapFromExit(0xa00, 2);
 		}
 	));
 }
@@ -80,7 +80,7 @@ void Map36::special02() {
 	visitedExit();
 
 	g_maps->_mapPos = Common::Point(12, 2);
-	g_maps->changeMap(0xa00, 2);
+	g_maps->changeMapFromExit(0xa00, 2);
 	send(SoundMessage(STRING["maps.map36.slide"]));
 }
 
@@ -106,7 +106,7 @@ void Map36::special06() {
 	visitedExit();
 
 	g_maps->_mapPos = Common::Point(7, 4);
-	g_maps->changeMap(0x705, 3);
+	g_maps->changeMapFromExit(0x705, 3);
 	send(SoundMessage(STRING["maps.map36.pit"]));
 }
 

@@ -152,7 +152,7 @@ void Map33::special01() {
 		STRING["maps.map33.building"],
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 0);
-			g_maps->changeMap(0xf01, 3);
+			g_maps->changeMapFromExit(0xf01, 3);
 		}
 	));
 }

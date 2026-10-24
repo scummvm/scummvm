@@ -114,7 +114,7 @@ void Map04::special04() {
 			[]() {
 				g_maps->_mapPos.x = 13;
 				g_maps->_mapPos.y = 1;
-				g_maps->changeMap(0xa00, 2);
+				g_maps->changeMapFromExit(0xa00, 2);
 			}
 		));
 	} else {
@@ -152,7 +152,7 @@ void Map04::special09() {
 			[]() {
 				g_maps->_mapPos.x = 0;
 				g_maps->_mapPos.y = 7;
-				g_maps->changeMap(0x202, 1);
+				g_maps->changeMapFromExit(0x202, 1);
 			}
 		));
 	} else {
