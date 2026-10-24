@@ -22,7 +22,13 @@
 #define RIPPER_SCENE_AUDIO_H
 
 #include "audio/mixer.h"
+#include "common/noncopyable.h"
+#include "common/ptr.h"
 #include "common/str.h"
+
+namespace Audio {
+class AudioStream;
+}
 
 namespace Common {
 class Serializer;
@@ -34,24 +40,6 @@ namespace Ripper {
 class RipperEngine;
 
 class SceneAudioManager {
-public:
-	SceneAudioManager(RipperEngine *engine, Audio::Mixer *mixer);
-	~SceneAudioManager();
-
-	bool load(const Common::String &path, bool preserve);
-	bool configure(const Common::String &key, uint volumePercent, uint triggerFrame,
-		byte control);
-	void clear(const Common::String &key);
-	void stop(const Common::String &key);
-	void setVolume(const Common::String &key, uint targetVolumePercent,
-		uint startFrame, uint timing);
-	void service(uint frame);
-	void resetTriggers();
-	void clearAll(bool includePreserved);
-	bool isActive() const;
-	bool syncGame(Common::Serializer &serializer);
-
-private:
 	struct Slot {
 		Common::String path;
 		Common::String key;
@@ -74,11 +62,44 @@ private:
 	};
 
 	static const uint kSlotCount = 20;
+
+public:
+	SceneAudioManager(RipperEngine *engine, Audio::Mixer *mixer);
+	~SceneAudioManager();
+
+	bool load(const Common::String &path, bool preserve);
+	bool configure(const Common::String &key, uint volumePercent, uint triggerFrame,
+		byte control);
+	void clear(const Common::String &key);
+	void stop(const Common::String &key);
+	void setVolume(const Common::String &key, uint targetVolumePercent,
+		uint startFrame, uint timing);
+	void service(uint frame);
+	void resetTriggers();
+	void clearAll(bool includePreserved);
+	bool isActive() const;
+
+	struct SaveState : private Common::NonCopyable {
+		SaveState();
+		~SaveState();
+
+		Slot slots[kSlotCount];
+		bool active[kSlotCount];
+		Common::ScopedPtr<Audio::AudioStream> streams[kSlotCount];
+	};
+
+	bool syncGame(Common::Serializer &serializer);
+	bool syncGame(Common::Serializer &serializer, SaveState &state);
+	void applySaveState(SaveState &state);
+
+private:
 	static Common::String keyFromPath(const Common::String &path);
 	Slot *find(const Common::String &key);
 	const Slot *find(const Common::String &key) const;
 	Common::SeekableReadStream *openSource(const Common::String &path) const;
+	Audio::AudioStream *prepareStream(const Slot &slot) const;
 	bool start(Slot &slot);
+	void start(Slot &slot, Audio::AudioStream *stream);
 	void clearSlot(Slot &slot);
 	void applyVolume(Slot &slot);
 	Common::String describeSlots() const;

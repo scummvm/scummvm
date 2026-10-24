@@ -120,10 +120,14 @@ bool BriefingManager::arm(uint selector, bool playNotification) {
 	return true;
 }
 
+bool BriefingManager::isValidRestore(bool armed, uint selector, uint16 announcedSelectors) {
+	return (announcedSelectors & ~0x1feU) == 0 &&
+		(!armed || (isImplementedBriefingSelector(selector) &&
+			(announcedSelectors & (1U << selector)) != 0));
+}
+
 bool BriefingManager::restore(bool armed, uint selector, uint16 announcedSelectors) {
-	if ((announcedSelectors & ~0x1feU) != 0 ||
-			(armed && (!isImplementedBriefingSelector(selector) ||
-				(announcedSelectors & (1U << selector)) == 0))) {
+	if (!isValidRestore(armed, selector, announcedSelectors)) {
 		warning("Ripper: cannot restore briefing selector=%u announced=0x%03x",
 			selector, announcedSelectors);
 		return false;

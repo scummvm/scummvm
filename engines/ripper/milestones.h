@@ -83,6 +83,7 @@ public:
 	bool hasRipperIdentity() const;
 	bool selectRipperIdentity(uint candidate, const char *source);
 	bool syncGame(Common::Serializer &serializer);
+	void restoreFlags(const Milestones &state) { memcpy(_flags, state._flags, sizeof(_flags)); }
 	void setChangeObserver(MilestoneObserver *observer) { _observer = observer; }
 
 	const Common::String &label(uint flag) const;

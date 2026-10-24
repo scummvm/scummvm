@@ -26,6 +26,8 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "ripper/dialogue.h"
+#include "ripper/milestones.h"
 #include "ripper/script/compiled_script.h"
 #include "ripper/script/scene_runtime.h"
 
@@ -38,7 +40,6 @@ namespace Ripper {
 class BriefingManager;
 class ResourceManager;
 class RipperEngine;
-class DialogueChooser;
 class SceneActionDispatcher;
 
 class ScriptManager {
@@ -80,7 +81,22 @@ public:
 	void restoreFromCyber(SceneRuntimeState &snapshot);
 	bool startCyberScript(const Common::String &memberName);
 	bool canSaveGame() const;
+
+	struct SaveState {
+		explicit SaveState(const ScriptManager &scripts);
+
+		SceneRuntimeState runtime;
+		Milestones milestones;
+		DialogueChooser dialogue;
+		Common::Array<Common::String> playedScenes;
+		byte briefingArmed;
+		uint32 briefingSelector;
+		uint16 announcedSelectors;
+	};
+
 	bool syncGame(Common::Serializer &serializer);
+	bool syncGame(Common::Serializer &serializer, SaveState &state);
+	bool applySaveState(SaveState &state);
 	void logRuntimeFailure(const char *reason) const;
 
 	const CompiledScript &getActiveScript() const { return _runtime.activeScript; }

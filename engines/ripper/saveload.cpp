@@ -147,17 +147,13 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		return Common::kReadingFailed;
 	}
 	const uint32 saveVersion = serializer.getVersion();
+	ScriptManager::SaveState scriptState(*_scripts);
+	SceneAudioManager::SaveState audioState;
 	PuzzleState puzzleState;
-	if (!_scripts->syncGame(serializer) || !_sceneAudio->syncGame(serializer) ||
+	if (!_scripts->syncGame(serializer, scriptState) ||
+			!_sceneAudio->syncGame(serializer, audioState) ||
 			!puzzleState.syncGame(serializer))
 		return Common::kReadingFailed;
-	if (saveVersion < 5 && !_milestones->hasRipperIdentity()) {
-		debugC(1, kDebugSaveLoad,
-			"Ripper: repairing legacy save version=%u without a Ripper identity",
-			saveVersion);
-		if (!selectRandomRipperIdentity("legacy-save-migration"))
-			return Common::kReadingFailed;
-	}
 
 	uint16 width = 0;
 	uint16 height = 0;
@@ -175,6 +171,20 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	if (serializer.err() || stream->eos())
 		return Common::kReadingFailed;
 
+	if (saveVersion < 5 && !scriptState.milestones.hasRipperIdentity()) {
+		debugC(1, kDebugSaveLoad,
+			"Ripper: repairing legacy save version=%u without a Ripper identity",
+			saveVersion);
+		const uint candidateCount =
+			kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
+		if (!scriptState.milestones.selectRipperIdentity(
+				_randomSource.getRandomNumber(candidateCount - 1), "legacy-save-migration"))
+			return Common::kReadingFailed;
+	}
+
+	if (!_scripts->applySaveState(scriptState))
+		return Common::kReadingFailed;
+	_sceneAudio->applySaveState(audioState);
 	*_puzzleState = puzzleState;
 	g_system->copyRectToScreen(pixels.data(), kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);

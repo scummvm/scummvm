@@ -130,21 +130,33 @@ Common::String SceneAudioManager::describeSlots() const {
 	return description;
 }
 
-bool SceneAudioManager::start(Slot &slot) {
-	if (_mixer->isSoundHandleActive(slot.handle))
-		return true;
+Audio::AudioStream *SceneAudioManager::prepareStream(const Slot &slot) const {
 	Common::SeekableReadStream *file = openSource(slot.path);
 	if (!file) {
 		warning("Ripper: could not start audio slot key='%s' path='%s' slots=[%s]",
 			slot.key.c_str(), slot.path.c_str(), describeSlots().c_str());
-		return false;
+		return nullptr;
 	}
 	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 	if (!wavStream)
-		return false;
+		return nullptr;
 	Audio::AudioStream *stream = wavStream;
 	if ((slot.control & 1) != 0)
 		stream = Audio::makeLoopingAudioStream(wavStream, 0);
+	return stream;
+}
+
+bool SceneAudioManager::start(Slot &slot) {
+	if (_mixer->isSoundHandleActive(slot.handle))
+		return true;
+	Audio::AudioStream *stream = prepareStream(slot);
+	if (!stream)
+		return false;
+	start(slot, stream);
+	return true;
+}
+
+void SceneAudioManager::start(Slot &slot, Audio::AudioStream *stream) {
 	const byte volume = (byte)(slot.volumePercent * Audio::Mixer::kMaxChannelVolume / 100);
 	// Looping scene beds use music volume; one-shot triggers use SFX volume.
 	const Audio::Mixer::SoundType soundType = (slot.control & 1) ?
@@ -154,7 +166,6 @@ bool SceneAudioManager::start(Slot &slot) {
 		"Ripper: started audio slot key='%s' path='%s' volume=%u trigger=%u control=%u loop=%d active=%d",
 		slot.key.c_str(), slot.path.c_str(), slot.volumePercent, slot.triggerFrame,
 		slot.control, (slot.control & 1) != 0, _mixer->isSoundHandleActive(slot.handle));
-	return true;
 }
 
 bool SceneAudioManager::configure(const Common::String &key, uint volumePercent,
@@ -330,7 +341,23 @@ bool SceneAudioManager::isActive() const {
 	return false;
 }
 
+SceneAudioManager::SaveState::SaveState() {
+	memset(active, 0, sizeof(active));
+}
+
+SceneAudioManager::SaveState::~SaveState() {
+}
+
 bool SceneAudioManager::syncGame(Common::Serializer &serializer) {
+	SaveState state;
+	if (!syncGame(serializer, state))
+		return false;
+	if (serializer.isLoading())
+		applySaveState(state);
+	return true;
+}
+
+bool SceneAudioManager::syncGame(Common::Serializer &serializer, SaveState &state) {
 	if (serializer.getVersion() <= 2) {
 		Common::String audioPath;
 		byte active = 0;
@@ -342,95 +369,112 @@ bool SceneAudioManager::syncGame(Common::Serializer &serializer) {
 		serializer.syncAsByte(loop);
 		if (serializer.err() || audioPath.size() > 256 || volumePercent > 100)
 			return false;
-		clearAll(true);
-		if (!audioPath.empty() && !load(audioPath, false))
-			return false;
-		Slot *slot = audioPath.empty() ? nullptr : &_slots[0];
-		if (slot) {
-			slot->volumePercent = volumePercent;
-			slot->targetVolumePercent = volumePercent;
-			slot->control = loop != 0 ? 1 : 0;
-		}
-		if (active != 0 && slot && !start(*slot))
-			return false;
-		debugC(1, kDebugSaveLoad,
-			"Ripper: restored legacy scene audio path='%s' active=%d volume=%u loop=%d",
-			audioPath.c_str(), active != 0, volumePercent, loop != 0);
-		return true;
-	}
+		if (serializer.isSaving())
+			return true;
+		Slot &slot = state.slots[0];
+		slot.path = audioPath;
+		slot.key = keyFromPath(audioPath);
+		slot.occupied = !audioPath.empty();
+		slot.volumePercent = volumePercent;
+		slot.targetVolumePercent = volumePercent;
+		slot.control = loop != 0 ? 1 : 0;
+		state.active[0] = active != 0;
+	} else {
+		for (uint i = 0; i < kSlotCount; ++i) {
+			Slot &slot = state.slots[i];
+			if (serializer.isSaving())
+				slot = _slots[i];
+			Common::String path = serializer.isSaving() ? slot.path : Common::String();
+			byte occupied = slot.occupied ? 1 : 0;
+			byte preserve = slot.preserve ? 1 : 0;
+			byte active = slot.occupied && _mixer->isSoundHandleActive(slot.handle) ? 1 : 0;
+			uint32 volumePercent = slot.volumePercent;
+			uint32 targetVolumePercent = slot.targetVolumePercent;
+			uint32 triggerFrame = slot.triggerFrame;
+			uint32 volumeStartFrame = slot.volumeStartFrame;
+			uint32 volumeTiming = slot.volumeTiming;
+			uint32 volumeRampStep = slot.volumeRampStep;
+			uint32 volumeRampProgress = slot.volumeRampProgress;
+			int32 volumeRampDirection = slot.volumeRampDirection;
+			byte control = slot.control;
+			byte volumeRampPending = slot.volumeRampPending ? 1 : 0;
+			byte sparseVolumeRamp = slot.sparseVolumeRamp ? 1 : 0;
 
-	if (serializer.isLoading())
-		clearAll(true);
+			serializer.syncString(path);
+			serializer.syncAsByte(occupied);
+			serializer.syncAsByte(preserve);
+			serializer.syncAsByte(active);
+			serializer.syncAsUint32LE(volumePercent);
+			serializer.syncAsUint32LE(targetVolumePercent);
+			serializer.syncAsUint32LE(triggerFrame);
+			serializer.syncAsUint32LE(volumeStartFrame);
+			serializer.syncAsUint32LE(volumeTiming);
+			serializer.syncAsUint32LE(volumeRampStep);
+			serializer.syncAsUint32LE(volumeRampProgress);
+			serializer.syncAsSint32LE(volumeRampDirection);
+			serializer.syncAsByte(control);
+			serializer.syncAsByte(volumeRampPending);
+			serializer.syncAsByte(sparseVolumeRamp);
+			if (serializer.err() || path.size() > 256 || (occupied != 0 && path.empty()) ||
+					occupied > 1 || preserve > 1 || active > 1 || volumePercent > 100 ||
+					targetVolumePercent > 100 || volumeRampDirection < -1 ||
+					volumeRampDirection > 1 || volumeRampPending > 1 || sparseVolumeRamp > 1)
+				return false;
+			if (serializer.isSaving() || occupied == 0)
+				continue;
+			slot.path = path;
+			slot.key = keyFromPath(path);
+			slot.occupied = true;
+			slot.preserve = preserve != 0;
+			slot.volumePercent = volumePercent;
+			slot.targetVolumePercent = targetVolumePercent;
+			slot.triggerFrame = triggerFrame;
+			slot.volumeStartFrame = volumeStartFrame;
+			slot.volumeTiming = volumeTiming;
+			slot.volumeRampStep = volumeRampStep;
+			slot.volumeRampProgress = volumeRampProgress;
+			slot.volumeRampDirection = volumeRampDirection;
+			slot.control = control;
+			slot.volumeRampPending = volumeRampPending != 0;
+			slot.sparseVolumeRamp = sparseVolumeRamp != 0;
+			state.active[i] = active != 0;
+		}
+	}
+	if (serializer.err())
+		return false;
+	if (serializer.isLoading()) {
+		for (uint i = 0; i < kSlotCount; ++i) {
+			const Slot &slot = state.slots[i];
+			if (!slot.occupied)
+				continue;
+			if (state.active[i]) {
+				state.streams[i].reset(prepareStream(slot));
+				if (!state.streams[i])
+					return false;
+			} else {
+				Common::ScopedPtr<Common::SeekableReadStream> file(openSource(slot.path));
+				if (!file)
+					return false;
+			}
+		}
+	}
+	return true;
+}
+
+void SceneAudioManager::applySaveState(SaveState &state) {
+	clearAll(true);
 	uint restoredSlots = 0;
 	for (uint i = 0; i < kSlotCount; ++i) {
-		Slot &slot = _slots[i];
-		Common::String path = serializer.isSaving() ? slot.path : Common::String();
-		byte occupied = slot.occupied ? 1 : 0;
-		byte preserve = slot.preserve ? 1 : 0;
-		byte active = slot.occupied && _mixer->isSoundHandleActive(slot.handle) ? 1 : 0;
-		uint32 volumePercent = slot.volumePercent;
-		uint32 targetVolumePercent = slot.targetVolumePercent;
-		uint32 triggerFrame = slot.triggerFrame;
-		uint32 volumeStartFrame = slot.volumeStartFrame;
-		uint32 volumeTiming = slot.volumeTiming;
-		uint32 volumeRampStep = slot.volumeRampStep;
-		uint32 volumeRampProgress = slot.volumeRampProgress;
-		int32 volumeRampDirection = slot.volumeRampDirection;
-		byte control = slot.control;
-		byte volumeRampPending = slot.volumeRampPending ? 1 : 0;
-		byte sparseVolumeRamp = slot.sparseVolumeRamp ? 1 : 0;
-
-		serializer.syncString(path);
-		serializer.syncAsByte(occupied);
-		serializer.syncAsByte(preserve);
-		serializer.syncAsByte(active);
-		serializer.syncAsUint32LE(volumePercent);
-		serializer.syncAsUint32LE(targetVolumePercent);
-		serializer.syncAsUint32LE(triggerFrame);
-		serializer.syncAsUint32LE(volumeStartFrame);
-		serializer.syncAsUint32LE(volumeTiming);
-		serializer.syncAsUint32LE(volumeRampStep);
-		serializer.syncAsUint32LE(volumeRampProgress);
-		serializer.syncAsSint32LE(volumeRampDirection);
-		serializer.syncAsByte(control);
-		serializer.syncAsByte(volumeRampPending);
-		serializer.syncAsByte(sparseVolumeRamp);
-		if (serializer.err() || path.size() > 256 || (occupied != 0 && path.empty()) ||
-				occupied > 1 || preserve > 1 || active > 1 || volumePercent > 100 ||
-				targetVolumePercent > 100 || volumeRampDirection < -1 ||
-				volumeRampDirection > 1 || volumeRampPending > 1 || sparseVolumeRamp > 1)
-			return false;
-		if (serializer.isSaving() || occupied == 0)
+		_slots[i] = Common::move(state.slots[i]);
+		if (!_slots[i].occupied)
 			continue;
-		Common::ScopedPtr<Common::SeekableReadStream> file(openSource(path));
-		if (!file)
-			return false;
-		Slot &restored = _slots[i];
-		restored.path = path;
-		restored.key = keyFromPath(path);
-		restored.occupied = true;
-		restored.preserve = preserve != 0;
-		restored.volumePercent = volumePercent;
-		restored.targetVolumePercent = targetVolumePercent;
-		restored.triggerFrame = triggerFrame;
-		restored.volumeStartFrame = volumeStartFrame;
-		restored.volumeTiming = volumeTiming;
-		restored.volumeRampStep = volumeRampStep;
-		restored.volumeRampProgress = volumeRampProgress;
-		restored.volumeRampDirection = volumeRampDirection;
-		restored.control = control;
-		restored.volumeRampPending = volumeRampPending != 0;
-		restored.sparseVolumeRamp = sparseVolumeRamp != 0;
-		if (active != 0 && !start(restored))
-			return false;
+		if (state.streams[i])
+			start(_slots[i], state.streams[i].release());
 		++restoredSlots;
 	}
-	if (serializer.isLoading()) {
-		debugC(1, kDebugSaveLoad,
-			"Ripper: restored named audio slots=%u active=%d slots=[%s]",
-			restoredSlots, isActive(), describeSlots().c_str());
-	}
-	return !serializer.err();
+	debugC(1, kDebugSaveLoad,
+		"Ripper: restored named audio slots=%u active=%d slots=[%s]",
+		restoredSlots, isActive(), describeSlots().c_str());
 }
 
 } // End of namespace Ripper

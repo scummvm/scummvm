@@ -45,6 +45,7 @@ public:
 
 	bool initialize(ResourceManager &resources, bool demoVariant);
 	bool arm(uint selector, bool playNotification = true);
+	static bool isValidRestore(bool armed, uint selector, uint16 announcedSelectors);
 	bool restore(bool armed, uint selector, uint16 announcedSelectors);
 	void clear();
 	void prepareForSceneTransition();

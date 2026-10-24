@@ -269,17 +269,36 @@ void ScriptManager::logRuntimeFailure(const char *reason) const {
 		_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
 }
 
+ScriptManager::SaveState::SaveState(const ScriptManager &scripts) :
+		runtime(scripts._runtime), milestones(*scripts._engine->getMilestones()),
+		dialogue(*scripts._dialogue), playedScenes(scripts._playedScenes),
+		briefingArmed(scripts._briefing->isArmed() ? 1 : 0),
+		briefingSelector(scripts._briefing->getSelector()),
+		announcedSelectors(scripts._briefing->getAnnouncedSelectors()) {
+	// Candidate migrations must not notify the live milestone observer.
+	milestones.setChangeObserver(nullptr);
+}
+
 bool ScriptManager::syncGame(Common::Serializer &serializer) {
-	Common::String ba0Member = serializer.isSaving() ? _runtime.activeScript.getMemberName() : Common::String();
-	Common::String concurrentMember = serializer.isSaving() ? _runtime.concurrentScript.getMemberName() : Common::String();
-	Common::String concurrentEntry = serializer.isSaving() ? _runtime.concurrentEntryLabel : Common::String();
-	Common::String previousFrame = serializer.isSaving() ? _runtime.previousFrameLabel : Common::String();
-	uint32 activeFrame = _runtime.activeFrame;
-	uint16 frontEndActionMask = _runtime.frontEndActionMask;
-	byte awaitingInteraction = _runtime.awaitingInteraction ? 1 : 0;
-	byte briefingArmed = _briefing->isArmed() ? 1 : 0;
-	uint32 briefingSelector = _briefing->getSelector();
-	uint16 announcedSelectors = serializer.isSaving() ? _briefing->getAnnouncedSelectors() : 0;
+	SaveState state(*this);
+	return syncGame(serializer, state) &&
+		(serializer.isSaving() || applySaveState(state));
+}
+
+bool ScriptManager::syncGame(Common::Serializer &serializer, SaveState &state) {
+	SceneRuntimeState &runtime = state.runtime;
+	Common::String ba0Member = serializer.isSaving() ? runtime.activeScript.getMemberName() : Common::String();
+	Common::String concurrentMember = serializer.isSaving() ? runtime.concurrentScript.getMemberName() : Common::String();
+	Common::String concurrentEntry = serializer.isSaving() ? runtime.concurrentEntryLabel : Common::String();
+	Common::String previousFrame = serializer.isSaving() ? runtime.previousFrameLabel : Common::String();
+	uint32 activeFrame = runtime.activeFrame;
+	uint16 frontEndActionMask = runtime.frontEndActionMask;
+	byte awaitingInteraction = runtime.awaitingInteraction ? 1 : 0;
+	byte &briefingArmed = state.briefingArmed;
+	uint32 &briefingSelector = state.briefingSelector;
+	uint16 &announcedSelectors = state.announcedSelectors;
+	if (serializer.isLoading())
+		announcedSelectors = 0;
 
 	serializer.syncString(ba0Member);
 	serializer.syncAsUint32LE(activeFrame);
@@ -295,46 +314,47 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	if (serializer.isLoading() && serializer.getVersion() < 6 &&
 			briefingArmed != 0 && briefingSelector < 9)
 		announcedSelectors = 1U << briefingSelector;
-	if (briefingArmed > 1)
+	if (briefingArmed > 1 || awaitingInteraction > 1 ||
+			!BriefingManager::isValidRestore(briefingArmed != 0, briefingSelector, announcedSelectors))
 		return false;
 	if (serializer.isLoading() && (ba0Member.empty() || ba0Member.size() > 128 ||
 			concurrentMember.size() > 128 || concurrentEntry.size() > 128 ||
 			previousFrame.size() > 128))
 		return false;
 
-	if (!_engine->getMilestones()->syncGame(serializer))
+	if (!state.milestones.syncGame(serializer))
 		return false;
 
-	uint32 playedSceneCount = _playedScenes.size();
+	uint32 playedSceneCount = state.playedScenes.size();
 	serializer.syncAsUint32LE(playedSceneCount);
 	if (serializer.isLoading()) {
 		if (playedSceneCount > 4096)
 			return false;
-		_playedScenes.clear();
-		_playedScenes.resize(playedSceneCount);
+		state.playedScenes.clear();
+		state.playedScenes.resize(playedSceneCount);
 	}
 	for (uint i = 0; i < playedSceneCount; ++i) {
-		serializer.syncString(_playedScenes[i]);
-		if (serializer.isLoading() && _playedScenes[i].size() > 128)
+		serializer.syncString(state.playedScenes[i]);
+		if (serializer.isLoading() && state.playedScenes[i].size() > 128)
 			return false;
 	}
 
-	uint32 interactionCount = _runtime.activeInteractionEnabled.size();
+	uint32 interactionCount = runtime.activeInteractionEnabled.size();
 	serializer.syncAsUint32LE(interactionCount);
 	if (serializer.isLoading()) {
 		if (interactionCount > 255)
 			return false;
-		_runtime.activeInteractionEnabled.clear();
-		_runtime.activeInteractionEnabled.resize(interactionCount);
+		runtime.activeInteractionEnabled.clear();
+		runtime.activeInteractionEnabled.resize(interactionCount);
 	}
 	for (uint i = 0; i < interactionCount; ++i) {
-		byte enabled = _runtime.activeInteractionEnabled[i] ? 1 : 0;
+		byte enabled = runtime.activeInteractionEnabled[i] ? 1 : 0;
 		serializer.syncAsByte(enabled);
 		if (serializer.isLoading())
-			_runtime.activeInteractionEnabled[i] = enabled != 0;
+			runtime.activeInteractionEnabled[i] = enabled != 0;
 	}
 
-	if (!_dialogue->syncGame(serializer) || serializer.err())
+	if (!state.dialogue.syncGame(serializer) || serializer.err())
 		return false;
 	if (serializer.isSaving())
 		return true;
@@ -351,22 +371,31 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 			!restoredConcurrent.load(_engine->getResources()->scripts(), concurrentMember))
 		return false;
 
-	_runtimeRestorePending = true;
-	_runtime.activeScript = Common::move(restoredBa0);
-	_runtime.concurrentScript = Common::move(restoredConcurrent);
-	_runtime.concurrentEntryLabel = concurrentEntry;
-	_runtime.previousFrameLabel = previousFrame;
-	_runtime.activeFrame = activeFrame;
-	_runtime.frontEndActionMask = serializer.getVersion() >= 4 ? frontEndActionMask : 0xffff;
-	_runtime.awaitingInteraction = awaitingInteraction != 0;
-	if (!_briefing->restore(briefingArmed != 0, briefingSelector, announcedSelectors))
+	runtime.activeScript = Common::move(restoredBa0);
+	runtime.concurrentScript = Common::move(restoredConcurrent);
+	runtime.concurrentEntryLabel = concurrentEntry;
+	runtime.previousFrameLabel = previousFrame;
+	runtime.activeFrame = activeFrame;
+	runtime.frontEndActionMask = serializer.getVersion() >= 4 ? frontEndActionMask : 0xffff;
+	runtime.awaitingInteraction = awaitingInteraction != 0;
+	runtime.pendingSceneMember.clear();
+	runtime.pendingSceneEntryLabel.clear();
+	runtime.clearPreservedAudioOnTransition = false;
+	runtime.hoveredInteraction = -1;
+	runtime.resumeLoadedPresentation = !state.dialogue.isPending() &&
+		runtime.activeScript.getFrames()[runtime.activeFrame].presentationType == 1;
+	return true;
+}
+
+bool ScriptManager::applySaveState(SaveState &state) {
+	if (!_briefing->restore(state.briefingArmed != 0, state.briefingSelector,
+			state.announcedSelectors))
 		return false;
-	_runtime.pendingSceneMember.clear();
-	_runtime.pendingSceneEntryLabel.clear();
-	_runtime.clearPreservedAudioOnTransition = false;
-	_runtime.hoveredInteraction = -1;
-	_runtime.resumeLoadedPresentation = !_dialogue->isPending() &&
-		_runtime.activeScript.getFrames()[_runtime.activeFrame].presentationType == 1;
+	_engine->getMilestones()->restoreFlags(state.milestones);
+	_runtime = Common::move(state.runtime);
+	_playedScenes = Common::move(state.playedScenes);
+	*_dialogue = Common::move(state.dialogue);
+	_runtimeRestorePending = true;
 	_engine->getToolbar()->leave();
 	_engine->getCursor()->setVisible(false);
 	debugC(1, kDebugSaveLoad,
