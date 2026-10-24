@@ -500,7 +500,7 @@ void SCDPalette::fadeStep(uint16 *modColor, uint16 toR, uint16 toG, uint16 toB) 
 void SCDPalette::setHINTHandler(int8 num) {
 	if (num < 0)
 		_hINTHandler = nullptr;
-	else if (num < _hINTProcs.size())
+	else if (num < (int)_hINTProcs.size())
 		_hINTHandler = _hINTProcs[num];
 	else
 		error("%s(): Invalid HINT handler %d", __FUNCTION__, num);
