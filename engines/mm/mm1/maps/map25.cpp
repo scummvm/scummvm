@@ -116,7 +116,25 @@ void Map25::special() {
 		}
 		break;
 
-	default:
+	default: {
+		// Only the six marked wrecks and the Jolly Raven
+		// should display the shipwreck search prompt
+		static const uint16 SHIPWRECK_OFFSETS[] = {
+			142, 155, 161, 179, 185, 197, 216
+		};
+		bool isShipwreck = false;
+		for (uint i = 0; i < ARRAYSIZE(SHIPWRECK_OFFSETS); ++i) {
+			if (g_maps->_mapOffset == SHIPWRECK_OFFSETS[i]) {
+				isShipwreck = true;
+				break;
+			}
+		}
+
+		if (!isShipwreck) {
+			none160();
+			break;
+		}
+
 		send(SoundMessage(
 			STRING["maps.map25.ship"],
 			[]() {
@@ -138,6 +156,7 @@ void Map25::special() {
 			}
 		));
 		break;
+	}
 	}
 }
 
