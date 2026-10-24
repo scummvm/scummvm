@@ -197,7 +197,7 @@ enum Clues {
 	kClueEarlyQInterview                   =  92, // Restored Content: Audio Recording. Original: (Intangible) - Identity Reveal for Dektora
 	kClueStrangeScale1                     =  93, // Object
 	kClueDektoraInterview1                 =  94, // Audio Recording
-	kClueSuspectDektora                    =  95, // (Intangible) - UNOBTAINED - Not checked in KIA - added to many actors DBs
+	kClueSuspectDektora                    =  95, // (Intangible) - Acquired in Restored Content. Original: Unobtained - Not checked in KIA - added to many actors DBs
 	kClueDektoraInterview2                 =  96, // Audio Recording - About belt and dragonflies
 	kClueDektoraInterview3                 =  97, // Audio Recording - About vase (flowers)
 	kClueDektorasCard                      =  98, // Object
@@ -948,7 +948,7 @@ enum Flags {
 	kFlagBB12toBB08                           = 507, // is never checked
 	kFlagNR07Entered                          = 508,
 	kFlagBB11SadikFight                       = 509,
-	kFlagNotUsed510                           = 510, // is never set
+	kFlagNotUsed510                           = 510, // has no use
 	kFlagDR05ExplodedEntered                  = 511,
 	// 512 is never used
 	// 513 is never used
