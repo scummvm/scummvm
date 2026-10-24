@@ -25,6 +25,7 @@
 #include "mm/mm1/maps/map17.h"
 #include "mm/mm1/maps/map23.h"
 #include "mm/mm1/maps/map28.h"
+#include "mm/mm1/maps/map29.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/metaengine.h"
 
@@ -62,6 +63,10 @@ Maps::Map17 &colorBridgeMap() {
 
 Maps::Map23 &gypsyMap() {
 	return *static_cast<Maps::Map23 *>(g_maps->getMap(23));
+}
+
+Maps::Map29 &ogMap() {
+	return *static_cast<Maps::Map29 *>(g_maps->getMap(29));
 }
 
 byte partyFlags(int index) {
@@ -321,6 +326,36 @@ void addAlamarStory(Common::Array<QuestLogEntry> &entries, bool done) {
 	}
 }
 
+void addOg(Common::Array<QuestLogEntry> &entries, bool done) {
+	Maps::Map29 &map = ogMap();
+	const bool completed = map.ogQuestCompleted();
+	const bool hasBlack = g_globals->_party.hasItem(B_QUEEN_IDOL_ID);
+	const bool hasWhite = g_globals->_party.hasItem(W_QUEEN_IDOL_ID);
+	const bool started = completed || map.ogQuestVisited();
+
+	if (done != completed || (!done && !started))
+		return;
+
+	if (done) {
+		addEntry(entries, true, "Restore Og's Sight",
+			"Restored Og's sight using the Black Queen Idol and White Queen Idol.");
+		return;
+	}
+
+	Common::String details;
+	if (hasBlack && hasWhite) {
+		details = "Both Queen Idols found. Bring them to Og in D4 and solve his chess challenge.";
+	} else if (hasBlack) {
+		details = "Black Queen Idol found. Find the White Queen Idol, then return to Og in D4.";
+	} else if (hasWhite) {
+		details = "White Queen Idol found. Find the Black Queen Idol, then return to Og in D4.";
+	} else {
+		details = "Find the Black Queen Idol and White Queen Idol, then return to Og in D4.";
+	}
+
+	addEntry(entries, false, "Restore Og's Sight", details);
+}
+
 void addSigns(Common::Array<QuestLogEntry> &entries, bool done) {
 	const bool gypsySeen = gypsyMap().gypsyVisited();
 	const bool hoodedSeen = colorBridgeMap().colorBridgeVisited();
@@ -453,6 +488,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	addClerics(entries, false);
 	addCourier(entries, false);
 	addAlamarStory(entries, false);
+	addOg(entries, false);
 	addSigns(entries, false);
 	addRanalou(entries, false);
 	addArenko(entries, false);
@@ -463,6 +499,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	addClerics(entries, true);
 	addCourier(entries, true);
 	addAlamarStory(entries, true);
+	addOg(entries, true);
 	addSigns(entries, true);
 	addRanalou(entries, true);
 	addArenko(entries, true);

@@ -57,6 +57,14 @@ public:
 	 * Chess answer handler
 	 */
 	void chessAnswer(const Common::String &answer);
+
+	/**
+	 * Og side-quest state. The completion marker reuses the high metadata
+	 * bit of Og's existing visited cell, so the save format is unchanged
+	 */
+	bool ogQuestVisited() const;
+	bool ogQuestCompleted() const;
+	void markOgQuestCompleted();
 };
 
 } // namespace Maps

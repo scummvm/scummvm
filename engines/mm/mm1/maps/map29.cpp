@@ -31,6 +31,11 @@ namespace Maps {
 
 #define ANSWER_OFFSET 67
 #define BEAST_FLAG 110
+// Og is the D4 special at (7,1). Use the fixed visit-data cell rather than
+// reading _data, since the overlay data isn't loaded until this map is
+// entered but the Quest Log can be opened anywhere
+#define OG_CELL_OFFSET (1 * MAP_W + 7)
+#define OG_QUEST_LOG_FLAG 0x80
 
 void Map29::special() {
 	Game::Encounter &enc = g_globals->_encounters;
@@ -180,6 +185,7 @@ void Map29::chessAnswer(const Common::String &answer) {
 			16, 2, STRING["maps.map19.correct"],
 			[]() {
 				MM1::Maps::Map29 &map29 = *static_cast<MM1::Maps::Map29 *>(g_maps->_currentMap);
+				map29.markOgQuestCompleted();
 
 				for (uint i = 0; i < g_globals->_party.size(); ++i) {
 					Character &c = g_globals->_party[i];
@@ -211,6 +217,18 @@ void Map29::begone() {
 	);
 	msg._delaySeconds = 2;
 	send(msg);
+}
+
+bool Map29::ogQuestVisited() const {
+	return (_visited[OG_CELL_OFFSET] & 0x7f) != 0;
+}
+
+bool Map29::ogQuestCompleted() const {
+	return (_visited[OG_CELL_OFFSET] & OG_QUEST_LOG_FLAG) != 0;
+}
+
+void Map29::markOgQuestCompleted() {
+	_visited[OG_CELL_OFFSET] |= OG_QUEST_LOG_FLAG;
 }
 
 } // namespace Maps
