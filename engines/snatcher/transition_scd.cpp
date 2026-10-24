@@ -22,7 +22,7 @@
 
 #include "snatcher/graphics.h"
 #include "snatcher/transition.h"
-#include "common/endian.h"
+#include "common/stream.h"
 #include "graphics/segagfx.h"
 
 namespace Snatcher {
@@ -111,6 +111,10 @@ public:
 
 	void hINTCallback(void *segaRenderer) override;
 
+	void saveState(Common::SeekableWriteStream *out) override;
+	void loadState(Common::SeekableReadStream *in) override;
+	void postLoadProcess() override;
+
 private:
 	void processCmdInternal();
 	void processTransition();
@@ -131,21 +135,22 @@ private:
 	uint8 _lineScrollOp;
 	uint8 _nextStepExt;
 	uint8 _lastStepExt;
-	int16 _restoreDlgTab;
-	int16 _transitionType;
+	uint8 _restoreDlgTab;
+	uint8 _transitionType;
+	uint8 _subPara;
 	int16 _transitionState;
 	int16 _transitionState2;
 	int16 _transitionStep;
 	int16 _tmpScrollOffset;
-	int16 _subPara;
 	int16 _lineScrollOpState;
 	int16 _lineScrollTimer1;
 	int16 _lineScrollTimer2;
 	int16 _lineScrollTimer3;
 	int16 _lineScrollTimer4;
 	int16 _lineScrollTimer5;
-	uint16 _trs__DB;
 	bool _useEngineScrollOffsets;
+
+	uint8 *_saveData;
 
 private:
 	typedef Common::Functor1Mem<int, void, TransitionManager_SCD> TrsFunc;
@@ -213,20 +218,23 @@ private:
 
 TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0),
 	_transitionStep(0), _trsCommandExt(0), _trsCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _lineScrollOpState(0), _lineScrollTimer1(0),
-		_lineScrollTimer2(0), _lineScrollTimer3(0), _lineScrollTimer4(0), _lineScrollTimer5(0), _trs__DB(0), _lineScrollOp(0), _restoreDlgTab(0), _transitionType(0), _transitionState(0),
-			_transitionState2(0), _tmpScrollOffset(0), _subPara(0), _useEngineScrollOffsets(false), _hINTHandler(nullptr), _hINTHandlerNext(nullptr) {
+		_lineScrollTimer2(0), _lineScrollTimer3(0), _lineScrollTimer4(0), _lineScrollTimer5(0), _lineScrollOp(0), _restoreDlgTab(0), _transitionType(0), _transitionState(0),
+			_transitionState2(0), _tmpScrollOffset(0), _subPara(0), _useEngineScrollOffsets(false), _hINTHandler(nullptr), _hINTHandlerNext(nullptr), _saveData(nullptr) {
 	_internalState = new ScrollInternalState[4];
 	assert(_internalState);
 	_internalState[kVertA].setFactor(-1);
 	_internalState[kVertB].setFactor(-1);
 	_hScrollTable = new int16[0x200]();
 	assert(_hScrollTable);
+	_saveData = new uint8[40]();
+	assert(_saveData);
 	makeFunctions();
 }
 
 TransitionManager_SCD::~TransitionManager_SCD() {
 	delete[] _internalState;
 	delete[] _hScrollTable;
+	delete[] _saveData;
 	_hINTHandler = _hINTHandlerNext = nullptr;
 	for (Common::Array<TrsFunc*>::const_iterator i = _trsProcs.begin(); i != _trsProcs.end(); ++i)
 		delete *i;
@@ -328,6 +336,111 @@ void TransitionManager_SCD::hINTCallback(void *segaRenderer) {
 		(*_hINTHandler)(static_cast<Graphics::SegaRenderer *>(segaRenderer));
 }
 
+void TransitionManager_SCD::saveState(Common::SeekableWriteStream *out) {
+	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
+
+	//out->writeByte(_scrollType);
+	//out->writeByte(_trsCommandExt);
+	//out->writeByte(_trsCommand);
+	//out->writeByte(_resetCommand);
+	//out->writeByte(_nextStep);
+	//out->writeByte(_lastStep);
+	out->writeByte(_lineScrollOp);
+	/* out->writeByte(_nextStepExt);
+	out->writeByte(_lastStepExt);
+	out->writeByte(_restoreDlgTab);
+	out->writeByte(_transitionType);
+	out->writeByte(_subPara);
+	out->writeSint16BE(_transitionState);
+	out->writeSint16BE(_transitionState2);
+	out->writeSint16BE(_transitionStep);
+	out->writeSint16BE(_tmpScrollOffset);
+	out->writeSint16BE(_lineScrollOpState);
+	for (int i = 0; i < 4; ++i) {
+		out->writeSint16BE(_result.realOffsets[i]);
+		out->writeSint16BE(_result.unmodifiedOffsets[i]);
+	}
+
+	uint8 v = _result.busy ? 1: 0;
+	v = (v << 1) | (_result.disableVScroll ? 1 : 0);
+	v = (v << 1) | (_result.verbsTabVisible ? 1 : 0);
+	v = (v << 1) | (_result.hInt.enable ? 1 : 0);
+	v = (v << 1) | (_result.hInt.needUpdate ? 1 : 0);
+	v = (v << 1) | (_useEngineScrollOffsets ? 1 : 0);
+	out->writeByte(v);
+	out->writeByte(_result.hInt.counter);*/
+}
+
+void TransitionManager_SCD::loadState(Common::SeekableReadStream *in) {
+	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
+		error("%s(): Save file invalid or corrupt", __FUNCTION__);
+	//in->read(_saveData, 40);
+	in->read(_saveData, 1);
+}
+
+void TransitionManager_SCD::postLoadProcess() {
+	const uint8 *s = _saveData;
+	_lineScrollOp = *s++;
+	if (_lineScrollOp == 4)
+		doCommand(_lineScrollOp);
+	/*
+	_scrollType = *s++;
+	_trsCommandExt = *s++;
+	_trsCommand = *s++;
+	_resetCommand = *s++;
+	_nextStep = *s++;
+	_lastStep = *s++;
+	_lineScrollOp = *s++;
+	/* _nextStepExt = *s++;
+	_lastStepExt = *s++;
+	_restoreDlgTab = *s++;
+	_transitionType = *s++;
+	_subPara = *s++;
+
+	_transitionState = READ_BE_INT16(s);
+	s += 2;
+	_transitionState2 = READ_BE_INT16(s);
+	s += 2;
+	_transitionStep = READ_BE_INT16(s);
+	s += 2;
+	_tmpScrollOffset = READ_BE_INT16(s);
+	s += 2;
+	_lineScrollOpState = READ_BE_INT16(s);
+	s += 2;
+	for (int i = 0; i < 4; ++i) {
+		_result.realOffsets[i] = READ_BE_INT16(s);
+		s += 2;
+		_result.unmodifiedOffsets[i] = READ_BE_INT16(s);
+		s += 2;
+	}
+
+	uint8 v = *s++;
+	_result.hInt.counter = *s;
+
+	_useEngineScrollOffsets = v & 1;
+	v >>= 1;
+	_result.hInt.needUpdate = v & 1;
+	v >>= 1;
+	_result.hInt.enable = v & 1;
+	v >>= 1;
+	_result.verbsTabVisible = v & 1;
+	v >>= 1;
+	_result.disableVScroll = v & 1;
+	v >>= 1;
+	_result.busy = v & 1;
+
+	if (_lineScrollOp) {
+		v = _nextStep;
+		_nextStep = _lineScrollOp;
+		lineScrollInit();
+		_nextStep = v;
+	}
+
+	int subPara = _subPara;
+	for (_subPara = 0; _subPara < subPara; )
+		processCmdInternal();*/
+}
+
 void TransitionManager_SCD::processCmdInternal() {
 	if ((_nextStep != _lastStep || _lastStep == 0) && _nextStep != 0) {
 		if (_nextStep == 0xFF || _nextStep == 0xFC) {
@@ -426,9 +539,9 @@ void TransitionManager_SCD::resetVars(int groupFlags) {
 	if (groupFlags & 0x02) {
 		_lineScrollOp = 0;
 		_lineScrollOpState = 0;
-		_trs__DB = 0;
 		_nextStepExt = _lastStepExt = 0;
-		_transitionType = _transitionState = _tmpScrollOffset = _subPara = 0;
+		_transitionType = _subPara = 0;
+		_transitionState = _tmpScrollOffset = 0;
 		_result.verbsTabVisible = false;
 		_restoreDlgTab = 0;
 	}
@@ -1005,7 +1118,7 @@ void TransitionManager_SCD::lineScrollInit() {
 	_nextStep = 0;
 	_hScrollTableLen = 128;
 	_useEngineScrollOffsets = false;
-	_lineScrollTimer1 = _lineScrollTimer3 = _lineScrollTimer5 = 0;
+	_lineScrollTimer1 = _lineScrollTimer2 = _lineScrollTimer3 = _lineScrollTimer4 = _lineScrollTimer5 = 0;
 	Common::fill<int16*>(_hScrollTable, &_hScrollTable[0x100], 0);
 	_result.lineScrollMode = true;
 }

@@ -26,6 +26,7 @@
 #include "common/platform.h"
 #include "snatcher/info.h"
 #include "snatcher/resource.h"
+#include "snatcher/saveflags.h"
 
 class OSystem;
 
@@ -107,7 +108,7 @@ public:
 		kAnimParaRelSpeedY,
 		kAnimParaPalette,
 		kAnimParaTarget,
-		kAnimParaF18,
+		kAnimParaOvrTile,
 		kAnimParaF1c,
 		kAnimParaTimeStamp,
 		kAnimParaPhase,
@@ -150,8 +151,8 @@ public:
 	bool busy(int type) const;
 	uint16 frameCount() const;
 
-	void loadState(Common::SeekableReadStream *in, bool onlyTempData);
-	void saveState(Common::SeekableWriteStream *out, bool onlyTempData);
+	void loadState(Common::SeekableReadStream *in, SaveFlags flags);
+	void saveState(Common::SeekableWriteStream *out, SaveFlags flags);
 	void postLoadProcess();
 
 	void createMouseCursor();
@@ -226,6 +227,8 @@ private:
 	uint8 _verbAreaType;
 
 	uint8 *_animSaveLoadData;
+	//Common::SharedPtr<const uint8> _animSaveLoadDataExt;
+	bool _animSaveLoadDataExt;
 
 	uint8 *_screen;
 	Animator *_animator;

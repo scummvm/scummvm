@@ -294,6 +294,10 @@ void ActionSequenceHandler::setDifficulty(uint16 setting) {
 	_enemySpeed = setting;
 }
 
+bool ActionSequenceHandler::canSaveHere() const {
+	return !_active;
+}
+
 void ActionSequenceHandler::resetVars() {
 	_weaponState = 0;
 	_handleShotPhase = 0;

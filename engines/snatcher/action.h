@@ -56,6 +56,8 @@ public:
 
 	const Result &getResult() const { return _result; }
 
+	bool canSaveHere() const;
+
 private:
 	void resetVars();
 	void initStage();
