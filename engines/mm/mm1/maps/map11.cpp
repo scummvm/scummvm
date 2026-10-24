@@ -56,7 +56,25 @@ void Map11::special() {
 		pit();
 
 	} else {
-		if (_data[VAL1] == 66 && _data[VAL2] == 74) {
+		auto upperDial = [](byte c) -> byte {
+			return (c >= 'a' && c <= 'z') ? c - ('a' - 'A') : c;
+		};
+
+		// The dials are stored in VAL2 and VAL3. A copy of whether each is
+		// correct is kept in the saved visit data, since the overlay data
+		// is reloaded from disk when a save is loaded
+		const byte dial1 = upperDial(_data[VAL2]);
+		const byte dial2 = upperDial(_data[VAL3]);
+		const bool rawStable = dial1 == 'B' && dial2 == 'J';
+		const bool savedStable = (_visited[3 * MAP_W + 6] & 0x80) != 0 &&
+			(_visited[3 * MAP_W + 8] & 0x80) != 0;
+
+		if (rawStable) {
+			_visited[3 * MAP_W + 6] |= 0x80;
+			_visited[3 * MAP_W + 8] |= 0x80;
+		}
+
+		if (rawStable || savedStable) {
 			g_maps->_mapPos = Common::Point(7, 11);
 		} else {
 			g_maps->_mapPos.x = getRandomNumber(15);
@@ -146,8 +164,11 @@ void Map11::selectDial(int dialIndex) {
 			if (ks.keycode >= Common::KEYCODE_a &&
 					ks.keycode <= Common::KEYCODE_z) {
 				Map11 &map = *static_cast<Map11 *>(g_maps->_currentMap);
+				// Derive the letter from the keycode, since KeyState::ascii
+				// can be 0 or the wrong case depending on the backend
+				const char c = 'A' + (ks.keycode - Common::KEYCODE_a);
 				g_events->close();
-				map.setDialChar(ks.ascii);
+				map.setDialChar(c);
 				map.none160();
 			}
 		}
@@ -168,7 +189,18 @@ void Map11::challenge() {
 }
 
 void Map11::setDialChar(char c) {
+	if (c >= 'a' && c <= 'z')
+		c -= 'a' - 'A';
+
 	_data[VAL2 + _dialIndex] = c;
+
+	const int visitedOffset = (_dialIndex == 0) ?
+		3 * MAP_W + 6 : 3 * MAP_W + 8;
+	const char target = (_dialIndex == 0) ? 'B' : 'J';
+	if (c == target)
+		_visited[visitedOffset] |= 0x80;
+	else
+		_visited[visitedOffset] &= ~0x80;
 }
 
 void Map11::clue() {

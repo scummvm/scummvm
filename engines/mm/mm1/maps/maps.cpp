@@ -428,6 +428,14 @@ void Maps::changeMap(uint16 id, byte section, bool loadingSave) {
 	}
 	if (loadingSave)
 		_currentMap->restoreVisitState();
+
+	// The Volcano stabilizer settings are visit-local, but must survive a
+	// save and load made during the same visit. Clear them only on a
+	// genuine re-entry
+	if (!loadingSave && _mapId == 11) {
+		_currentMap->_visited[3 * MAP_W + 6] &= ~0x80;
+		_currentMap->_visited[3 * MAP_W + 8] &= ~0x80;
+	}
 	if (loadingSave && _mapId == 4) {
 		// The theft count lives in overlay data that is reloaded from disk,
 		// so rebuild it from the claimed treasure squares
