@@ -38,19 +38,30 @@ bool ColorQuestions::msgFocus(const FocusMessage &msg) {
 	ScrollView::msgFocus(msg);
 	_showingResponse = false;
 
-	// Find first non-incapacitated party member
+	// Find first non-incapacitated party member.
 	_charIndex = -1;
 	moveToNextChar();
+
+	// The original view indexed the party unconditionally in draw().
+	// Guard an empty/no-eligible party so opening the Hooded Figure quiz
+	// can never dereference past the party array.
+	if (_charIndex < 0 || _charIndex >= (int)g_globals->_party.size()) {
+		close();
+		g_globals->_party.checkPartyDead();
+		return true;
+	}
 
 	return true;
 }
 
 void ColorQuestions::draw() {
-	// Highlight next character to answer question
+	if (_charIndex < 0 || _charIndex >= (int)g_globals->_party.size())
+		return;
+
+	// Highlight next character to answer question.
 	g_globals->_currCharacter = &g_globals->_party[_charIndex];
 	g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
 
-	// Draw view
 	ScrollView::draw();
 	setReduced(false);
 
@@ -61,12 +72,10 @@ void ColorQuestions::draw() {
 		for (int option = 0; option < 8; ++option) {
 			Common::String prefix = Common::String::format("%c) ", '1' + option);
 			writeString(20 + 105 * (option % 2), 10 + (option / 2) * 8, prefix, ALIGN_RIGHT);
-			writeString(STRING[Common::String::format("colors.%d", option + 1)]);
+			writeString(STRING[Common::String::format("colors.%d", option)]);
 		}
-
 	} else {
 		const Character &c = g_globals->_party[_charIndex];
-
 		Common::String result = STRING[c.hasBadCondition() ?
 			"maps.map17.wrong" : "maps.map17.correct"];
 		writeLine(1, result, ALIGN_MIDDLE);
@@ -77,27 +86,35 @@ bool ColorQuestions::msgKeypress(const KeypressMessage &msg) {
 	if (endDelay())
 		return true;
 
-	if (!_showingResponse && msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_9) {
-		Maps::Map17 &map = *static_cast<Maps::Map17 *>(g_maps->_currentMap);
-		map[COLOR] = msg.ascii - '1';
+	if (_charIndex < 0 || _charIndex >= (int)g_globals->_party.size())
+		return true;
+
+	if (!_showingResponse && msg.keycode >= Common::KEYCODE_1 &&
+			msg.keycode <= Common::KEYCODE_8) {
+		Maps::Map17 *mapP = dynamic_cast<Maps::Map17 *>(g_maps->_currentMap);
+		if (!mapP) {
+			close();
+			return true;
+		}
+
+		Maps::Map17 &map = *mapP;
+		map[COLOR] = msg.keycode - Common::KEYCODE_1;
 
 		Character &c = g_globals->_party[_charIndex];
-		int color = c._flags[2] & 0xf;
+		const byte sign = c._flags[4];
 
-		// If a color hasn't been designated yet from talking to Gypsy,
-		// or it has but the wrong color is selected, eradicate them
-		if (!color || (color & 7) != map[COLOR]) {
+		// Gypsy stores the assigned sign in flag byte 4, not byte 2.
+		if (!(sign & CHARFLAG4_ASSIGNED) ||
+				(sign & CHARFLAG4_SIGN) != map[COLOR]) {
 			c._condition = ERADICATED;
 		} else {
 			map[CORRECT_ANSWERS]++;
 			c._flags[4] |= CHARFLAG4_80;
 		}
 
-		// Show the response
 		_showingResponse = true;
 		redraw();
 		delaySeconds(2);
-
 		return true;
 	}
 

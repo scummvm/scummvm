@@ -38,9 +38,15 @@ bool ColorQuestions::msgFocus(const FocusMessage &msg) {
 	TextView::msgFocus(msg);
 	_showingResponse = false;
 
-	// Find first non-incapacitated party member
+	// Find first non-incapacitated party member.
 	_charIndex = -1;
 	moveToNextChar();
+
+	if (_charIndex < 0 || _charIndex >= (int)g_globals->_party.size()) {
+		close();
+		g_globals->_party.checkPartyDead();
+		return true;
+	}
 
 	return true;
 }
@@ -48,13 +54,16 @@ bool ColorQuestions::msgFocus(const FocusMessage &msg) {
 void ColorQuestions::draw() {
 	clearSurface();
 
+	if (_charIndex < 0 || _charIndex >= (int)g_globals->_party.size())
+		return;
+
+	g_globals->_currCharacter = &g_globals->_party[_charIndex];
+
 	if (!_showingResponse) {
 		writeString(0, 0, STRING["maps.map17.color"]);
 		writeString(0, 2, STRING["maps.map17.options"]);
-
 	} else {
 		const Character &c = g_globals->_party[_charIndex];
-
 		Common::String result = STRING[c.hasBadCondition() ?
 			"maps.map17.wrong" : "maps.map17.correct"];
 		writeString(16, 2, result);
@@ -65,27 +74,35 @@ bool ColorQuestions::msgKeypress(const KeypressMessage &msg) {
 	if (endDelay())
 		return true;
 
-	if (!_showingResponse && msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_9) {
-		Maps::Map17 &map = *static_cast<Maps::Map17 *>(g_maps->_currentMap);
-		map[COLOR] = msg.ascii - '1';
+	if (_charIndex < 0 || _charIndex >= (int)g_globals->_party.size())
+		return true;
+
+	if (!_showingResponse && msg.keycode >= Common::KEYCODE_1 &&
+			msg.keycode <= Common::KEYCODE_8) {
+		Maps::Map17 *mapP = dynamic_cast<Maps::Map17 *>(g_maps->_currentMap);
+		if (!mapP) {
+			close();
+			return true;
+		}
+
+		Maps::Map17 &map = *mapP;
+		map[COLOR] = msg.keycode - Common::KEYCODE_1;
 
 		Character &c = g_globals->_party[_charIndex];
-		int color = c._flags[2] & 0xf;
+		const byte sign = c._flags[4];
 
-		// If a color hasn't been designated yet from talking to Gypsy,
-		// or it has but the wrong color is selected, eradicate them
-		if (!color || (color & 7) != map[COLOR]) {
+		// Gypsy stores the assigned sign in flag byte 4, not byte 2.
+		if (!(sign & CHARFLAG4_ASSIGNED) ||
+				(sign & CHARFLAG4_SIGN) != map[COLOR]) {
 			c._condition = ERADICATED;
 		} else {
 			map[CORRECT_ANSWERS]++;
 			c._flags[4] |= CHARFLAG4_80;
 		}
 
-		// Show the response
 		_showingResponse = true;
 		redraw();
 		delaySeconds(2);
-
 		return true;
 	}
 
