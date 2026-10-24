@@ -107,6 +107,10 @@ bool Combat::msgGame(const GameMessage &msg) {
 
 		loadMonsters();
 		addEncounterToCombatLog();
+		if (!g_globals->_encounters._preCombatLog.empty()) {
+			addCombatLog(g_globals->_encounters._preCombatLog);
+			g_globals->_encounters._preCombatLog.clear();
+		}
 		setupCanAttacks();
 		setupHandicap();
 

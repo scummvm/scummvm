@@ -23,6 +23,7 @@
 #define MM1_GAME_ENCOUNTER_H
 
 #include "common/array.h"
+#include "common/str.h"
 #include "mm/mm1/data/character.h"
 #include "mm/mm1/data/monsters.h"
 #include "mm/mm1/game/game_logic.h"
@@ -64,12 +65,13 @@ public:
 	byte _fleeThreshold = 0;
 	bool _manual = false;
 	int _levelIndex = 0;
+	Common::String _preCombatLog;
 
 public:
 	/**
 	 * Start an encounter
 	 */
-	void execute();
+	void execute(const Common::String &preCombatLog = Common::String());
 
 	/**
 	 * Chooses whether an encounter can be fled

@@ -33,12 +33,15 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
-void Encounter::execute() {
+void Encounter::execute(const Common::String &preCombatLog) {
 	if (g_events->isPresent("Combat") ||
 			g_events->isPresent("Encounter")) {
 		warning("MM1: Ignoring nested encounter request");
 		return;
 	}
+
+	// Clear stale event text, or retain text supplied by this encounter
+	_preCombatLog = preCombatLog;
 
 	if (!g_globals->_encountersOn)
 		return;

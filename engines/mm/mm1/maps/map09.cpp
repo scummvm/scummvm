@@ -199,22 +199,41 @@ void Map09::special18() {
 			0, 2, STRING["maps.map09.protection"]
 		));
 	} else {
-		g_globals->_currCharacter = &g_globals->_party[
-			getRandomNumber(g_globals->_party.size()) - 1
+		// getRandomNumber() is inclusive, so pass the last valid index
+		Character &victim = g_globals->_party[
+			getRandomNumber(g_globals->_party.size() - 1)
 		];
+		g_globals->_currCharacter = &victim;
 
-		if (!(g_globals->_currCharacter->_condition & BAD_CONDITION)) {
+		Common::String effectLine;
+		if (!(victim._condition & BAD_CONDITION)) {
 			// Chosen character is okay, so blast them
-			g_globals->_currCharacter->_condition = BAD_CONDITION | DEAD;
+			victim._condition = BAD_CONDITION | DEAD;
+			effectLine = Common::String::format("%s dies.", victim._name);
 		} else {
 			// Chosen character is disabled, so instead
 			// remove the SP from all members of the party
-			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			for (uint i = 0; i < g_globals->_party.size(); ++i)
 				g_globals->_party[i]._sp._current = 0;
-			}
+			effectLine = "The party's spell points are drained.";
 		}
 
-		g_globals->_encounters.execute();
+		// Keep the result until combat opens, then add it to the Combat
+		// Log. This state is deliberately not serialized
+		g_globals->_encounters._preCombatLog = Common::String::format(
+			"Psychic blast! %s", effectLine.c_str());
+
+		SoundMessage msg(
+			0, 1, STRING["maps.map09.psychic_blast"],
+			0, 2, effectLine,
+			[]() {
+				Common::String preCombatLog =
+					g_globals->_encounters._preCombatLog;
+				g_globals->_encounters.execute(preCombatLog);
+			}
+		);
+		msg._delaySeconds = 3;
+		send(msg);
 	}
 }
 
