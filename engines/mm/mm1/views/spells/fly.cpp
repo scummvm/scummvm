@@ -58,7 +58,7 @@ void Fly::draw() {
 
 bool Fly::msgKeypress(const KeypressMessage &msg) {
 	if (_mode == SELECT_X && msg.keycode >= Common::KEYCODE_a
-		&& msg.keycode <= Common::KEYCODE_d) {
+		&& msg.keycode <= Common::KEYCODE_e) {
 		// X map selected
 		_mode = SELECT_Y;
 		_xIndex = msg.keycode - Common::KEYCODE_a;
