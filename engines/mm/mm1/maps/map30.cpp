@@ -147,6 +147,11 @@ Common::String Map30::worthy() {
 		}
 	}
 
+	// Mark that this character has claimed the Statue's result, for the
+	// Quest Log. The unused high bit of the prisoner flag byte is
+	// already saved, so no save format change is needed
+	c._flags[1] |= CHARFLAG1_WORTHY;
+
 	c._worthiness = 0;
 	return line;
 }
