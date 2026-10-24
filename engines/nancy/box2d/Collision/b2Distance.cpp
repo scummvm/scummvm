@@ -355,22 +355,22 @@ float32 b2Distance(b2Vec2* x1, b2Vec2* x2,
 
 	if (type1 == e_circleShape && type2 == e_circleShape)
 	{
-		return DistanceCC(x1, x2, (b2CircleShape*)shape1, xf1, (b2CircleShape*)shape2, xf2);
+		return DistanceCC(x1, x2, (const b2CircleShape*)shape1, xf1, (const b2CircleShape*)shape2, xf2);
 	}
 	
 	if (type1 == e_polygonShape && type2 == e_circleShape)
 	{
-		return DistancePC(x1, x2, (b2PolygonShape*)shape1, xf1, (b2CircleShape*)shape2, xf2);
+		return DistancePC(x1, x2, (const b2PolygonShape*)shape1, xf1, (const b2CircleShape*)shape2, xf2);
 	}
 
 	if (type1 == e_circleShape && type2 == e_polygonShape)
 	{
-		return DistancePC(x2, x1, (b2PolygonShape*)shape2, xf2, (b2CircleShape*)shape1, xf1);
+		return DistancePC(x2, x1, (const b2PolygonShape*)shape2, xf2, (const b2CircleShape*)shape1, xf1);
 	}
 
 	if (type1 == e_polygonShape && type2 == e_polygonShape)
 	{
-		return DistanceGeneric(x1, x2, (b2PolygonShape*)shape1, xf1, (b2PolygonShape*)shape2, xf2);
+		return DistanceGeneric(x1, x2, (const b2PolygonShape*)shape1, xf1, (const b2PolygonShape*)shape2, xf2);
 	}
 
 	return 0.0f;
