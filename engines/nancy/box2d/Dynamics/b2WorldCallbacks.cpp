@@ -40,8 +40,6 @@
 #include "b2WorldCallbacks.h"
 #include "../Collision/Shapes/b2Shape.h"
 
-b2ContactFilter b2_defaultFilter;
-
 // Return true if contact calculations should be performed between these two shapes.
 // If you implement your own collision filter you may want to build from this implementation.
 bool b2ContactFilter::ShouldCollide(b2Shape* shape1, b2Shape* shape2)

@@ -55,7 +55,7 @@ b2World::b2World(const b2AABB& worldAABB, const b2Vec2& gravity, bool doSleep)
 {
 	m_destructionListener = NULL;
 	m_boundaryListener = NULL;
-	m_contactFilter = &b2_defaultFilter;
+	m_contactFilter = &m_defaultFilter;
 	m_contactListener = NULL;
 	m_debugDraw = NULL;
 
@@ -106,6 +106,11 @@ void b2World::SetBoundaryListener(b2BoundaryListener* listener)
 void b2World::SetContactFilter(b2ContactFilter* filter)
 {
 	m_contactFilter = filter;
+}
+
+void b2World::SetDefaultContactFilter()
+{
+	m_contactFilter = &m_defaultFilter;
 }
 
 void b2World::SetContactListener(b2ContactListener* listener)
