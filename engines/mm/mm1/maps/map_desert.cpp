@@ -61,8 +61,11 @@ void MapDesert::desert() {
 		}
 	}
 
-	if (deadCount)
+	if (deadCount) {
 		g_events->findView("GameParty")->redraw();
+		if (g_globals->_party.checkPartyDead())
+			return;
+	}
 
 	switch (_randomMode) {
 	case RND_BASIC:
