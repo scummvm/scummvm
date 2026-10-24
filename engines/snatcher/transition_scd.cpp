@@ -226,7 +226,7 @@ TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : 
 	_internalState[kVertB].setFactor(-1);
 	_hScrollTable = new int16[0x200]();
 	assert(_hScrollTable);
-	_saveData = new uint8[40]();
+	_saveData = new uint8[2]();
 	assert(_saveData);
 	makeFunctions();
 }
@@ -338,43 +338,12 @@ void TransitionManager_SCD::hINTCallback(void *segaRenderer) {
 
 void TransitionManager_SCD::saveState(Common::SeekableWriteStream *out) {
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
-
-	//out->writeByte(_scrollType);
-	//out->writeByte(_trsCommandExt);
-	//out->writeByte(_trsCommand);
-	//out->writeByte(_resetCommand);
-	//out->writeByte(_nextStep);
-	//out->writeByte(_lastStep);
 	out->writeByte(_lineScrollOp);
-	/* out->writeByte(_nextStepExt);
-	out->writeByte(_lastStepExt);
-	out->writeByte(_restoreDlgTab);
-	out->writeByte(_transitionType);
-	out->writeByte(_subPara);
-	out->writeSint16BE(_transitionState);
-	out->writeSint16BE(_transitionState2);
-	out->writeSint16BE(_transitionStep);
-	out->writeSint16BE(_tmpScrollOffset);
-	out->writeSint16BE(_lineScrollOpState);
-	for (int i = 0; i < 4; ++i) {
-		out->writeSint16BE(_result.realOffsets[i]);
-		out->writeSint16BE(_result.unmodifiedOffsets[i]);
-	}
-
-	uint8 v = _result.busy ? 1: 0;
-	v = (v << 1) | (_result.disableVScroll ? 1 : 0);
-	v = (v << 1) | (_result.verbsTabVisible ? 1 : 0);
-	v = (v << 1) | (_result.hInt.enable ? 1 : 0);
-	v = (v << 1) | (_result.hInt.needUpdate ? 1 : 0);
-	v = (v << 1) | (_useEngineScrollOffsets ? 1 : 0);
-	out->writeByte(v);
-	out->writeByte(_result.hInt.counter);*/
 }
 
 void TransitionManager_SCD::loadState(Common::SeekableReadStream *in) {
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
-	//in->read(_saveData, 40);
 	in->read(_saveData, 1);
 }
 
@@ -383,62 +352,6 @@ void TransitionManager_SCD::postLoadProcess() {
 	_lineScrollOp = *s++;
 	if (_lineScrollOp == 4)
 		doCommand(_lineScrollOp);
-	/*
-	_scrollType = *s++;
-	_trsCommandExt = *s++;
-	_trsCommand = *s++;
-	_resetCommand = *s++;
-	_nextStep = *s++;
-	_lastStep = *s++;
-	_lineScrollOp = *s++;
-	/* _nextStepExt = *s++;
-	_lastStepExt = *s++;
-	_restoreDlgTab = *s++;
-	_transitionType = *s++;
-	_subPara = *s++;
-
-	_transitionState = READ_BE_INT16(s);
-	s += 2;
-	_transitionState2 = READ_BE_INT16(s);
-	s += 2;
-	_transitionStep = READ_BE_INT16(s);
-	s += 2;
-	_tmpScrollOffset = READ_BE_INT16(s);
-	s += 2;
-	_lineScrollOpState = READ_BE_INT16(s);
-	s += 2;
-	for (int i = 0; i < 4; ++i) {
-		_result.realOffsets[i] = READ_BE_INT16(s);
-		s += 2;
-		_result.unmodifiedOffsets[i] = READ_BE_INT16(s);
-		s += 2;
-	}
-
-	uint8 v = *s++;
-	_result.hInt.counter = *s;
-
-	_useEngineScrollOffsets = v & 1;
-	v >>= 1;
-	_result.hInt.needUpdate = v & 1;
-	v >>= 1;
-	_result.hInt.enable = v & 1;
-	v >>= 1;
-	_result.verbsTabVisible = v & 1;
-	v >>= 1;
-	_result.disableVScroll = v & 1;
-	v >>= 1;
-	_result.busy = v & 1;
-
-	if (_lineScrollOp) {
-		v = _nextStep;
-		_nextStep = _lineScrollOp;
-		lineScrollInit();
-		_nextStep = v;
-	}
-
-	int subPara = _subPara;
-	for (_subPara = 0; _subPara < subPara; )
-		processCmdInternal();*/
 }
 
 void TransitionManager_SCD::processCmdInternal() {

@@ -229,8 +229,6 @@ void SaveLoadManager::loadState(int slot, GameState &state) {
 	}
 
 	_vm->_scriptEngine->loadState(in, state.script, flags);
-	//if (!(flags & kSaveFlagsScriptedSave))
-	//	_vm->_cmdQueue->loadState(in);
 	_vm->gfx()->loadState(in, flags);
 	_vm->sound()->loadState(in, flags);
 	_vm->_ui->loadState(in, flags);
@@ -284,8 +282,6 @@ void SaveLoadManager::saveState(int slot, GameState &state, SaveFlags flags) {
 	}
 
 	_vm->_scriptEngine->saveState(out, state.script, flags);
-	//if (!(flags & kSaveFlagsScriptedSave))
-	//	_vm->_cmdQueue->saveState(out);
 	_vm->gfx()->saveState(out, flags);
 	_vm->sound()->saveState(out, flags);
 	_vm->_ui->saveState(out, flags);
