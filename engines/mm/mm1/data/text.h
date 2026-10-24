@@ -44,7 +44,7 @@ extern const char *const PROTECTION_NAMES[18];
 extern const char *const SEARCH_CONTAINERS[11];
 extern const char *const STATUE_NAMES[8];
 extern const char *const STATUE_MESSAGES[8];
-extern const char *const TAVERN_RUMORS[17];
+extern const char *const TAVERN_RUMORS[16];
 extern const char *const INGREDIENTS[7];
 extern const char *const INSPECTRON_QUESTS[7];
 extern const char *const IRONFIST_QUESTS[7];

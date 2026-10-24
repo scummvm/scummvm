@@ -132,7 +132,7 @@ void Tavern::listenForRumors() {
 	Common::String msg = "No rumors today.";
 	if (!g_globals->_heardRumor) {
 		g_globals->_heardRumor = true;
-		msg = TAVERN_RUMORS[g_engine->getRandomNumber(16)];
+		msg = TAVERN_RUMORS[g_engine->getRandomNumber(16) - 1];
 	}
 
 	displayMessage(msg);

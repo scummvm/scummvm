@@ -321,7 +321,7 @@ const char *const STATUE_MESSAGES[8] = {
 	"This beast once roamed the\nEnchanted Forest and now rules\na great fortress there"
 };
 
-const char *const TAVERN_RUMORS[17] = {
+const char *const TAVERN_RUMORS[16] = {
 	"All portals are connected",
 	"Sorpigal has 8 statues",
 	"The brothers live by docks",
@@ -335,7 +335,6 @@ const char *const TAVERN_RUMORS[17] = {
 	"Kilburn is near the wyvern peaks",
 	"A dragons breath is only as strong\x8b""as it's condition",
 	"The king is in seclusion",
-	"",
 	"The inner sanctum is a myth",
 	"The canine has the key",
 	"ScummVM is totally awesome!"
