@@ -24,6 +24,7 @@
 #include "graphics/fonts/ttf.h"
 #include "image/bmp.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/views_enh/game_frame.h"
 #include "mm/mm1/mm1.h"
 #include "mm/shared/utils/strings.h"
 #include "graphics/fontman.h"
@@ -98,6 +99,8 @@ bool Globals::load(bool isEnhanced) {
 				error("Could not load background");
 			}
 		}
+
+		ViewsEnh::decorateGameFrame(_gameBackground);
 
 		_symbols.load();
 

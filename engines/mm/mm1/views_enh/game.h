@@ -35,6 +35,7 @@ namespace ViewsEnh {
 
 class Game : public Views::TextView {
 private:
+	bool _bestiaryPressed = false;
 	ViewsEnh::GameView _view;
 	GameCommands _commands;
 	GameParty _party;
@@ -45,6 +46,8 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;

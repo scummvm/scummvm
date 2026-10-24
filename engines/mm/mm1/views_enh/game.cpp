@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "mm/mm1/views_enh/game.h"
+#include "mm/mm1/views_enh/game_frame.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/metaengine.h"
 #include "mm/mm1/mm1.h"
@@ -42,6 +43,7 @@ bool Game::msgFocus(const FocusMessage &msg) {
 }
 
 bool Game::msgUnfocus(const UnfocusMessage &msg) {
+	_bestiaryPressed = false;
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	return true;
 }
@@ -51,6 +53,28 @@ void Game::draw() {
 	s.blitFrom(g_globals->_gameBackground);
 
 	UIElement::draw();
+}
+
+bool Game::msgMouseDown(const MouseDownMessage &msg) {
+	if (isFocused() && msg._button == MouseMessage::MB_LEFT &&
+			bestiaryButtonBounds().contains(msg._pos)) {
+		_bestiaryPressed = true;
+		return true;
+	}
+
+	return TextView::msgMouseDown(msg);
+}
+
+bool Game::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button == MouseMessage::MB_LEFT && _bestiaryPressed) {
+		_bestiaryPressed = false;
+		if (isFocused() && bestiaryButtonBounds().contains(msg._pos))
+			addView("Bestiary");
+
+		return true;
+	}
+
+	return TextView::msgMouseUp(msg);
 }
 
 bool Game::msgKeypress(const KeypressMessage &msg) {
