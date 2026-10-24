@@ -181,23 +181,47 @@ void Map29::chessAnswer(const Common::String &answer) {
 	if (answer.equalsIgnoreCase(properAnswer)) {
 		redrawGame();
 
-		InfoMessage msg(
-			16, 2, STRING["maps.map19.correct"],
-			[]() {
-				MM1::Maps::Map29 &map29 = *static_cast<MM1::Maps::Map29 *>(g_maps->_currentMap);
-				map29.markOgQuestCompleted();
+		// Original MM1 behavior: the reward is committed immediately, the
+		// Queen Idols vanish, and Og explains both the +25,000 EXP reward and
+		// the Mt. Doom prisoner clue before the party is sent away.
+		markOgQuestCompleted();
 
-				for (uint i = 0; i < g_globals->_party.size(); ++i) {
-					Character &c = g_globals->_party[i];
-					c._exp += 25000;
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			c._exp += 25000;
+		}
+
+		auto consumeIdol = [](byte itemId) {
+			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+				Character &c = g_globals->_party[i];
+				int idx = c._backpack.indexOf(itemId);
+				if (idx != -1) {
+					c._backpack.removeAt(idx);
+					return;
 				}
 
+				idx = c._equipped.indexOf(itemId);
+				if (idx != -1) {
+					c._equipped.removeAt(idx);
+					return;
+				}
+			}
+		};
+		consumeIdol(B_QUEEN_IDOL_ID);
+		consumeIdol(W_QUEEN_IDOL_ID);
+
+		InfoMessage msg(
+			0, 0, "YOU HAVE RESTORED MY SIGHT! (+25000 EXP)",
+			0, 1, "I SEE AN IMPORTANT PRISONER IN A CASTLE ON MT. DOOM! HE HAS YOUR SIGHT.",
+			[](const Common::KeyState &) {
+				// Keep Og's reward/clue visible until the player dismisses it.
+				// Only then perform the original forced move toward the Algary exit.
+				g_events->focusedView()->close();
 				g_maps->_mapPos.y = 7;
-				map29.updateGame();
+				g_maps->_currentMap->updateGame();
 			}
 		);
-
-		msg._delaySeconds = 2;
+		msg._largeMessage = true;
 		send(msg);
 		Sound::sound(SOUND_3);
 		Sound::sound(SOUND_3);
