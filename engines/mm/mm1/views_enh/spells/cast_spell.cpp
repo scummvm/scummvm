@@ -73,6 +73,10 @@ void CastSpell::draw() {
 	Common::String spellName = STRING["enhdialogs.cast_spell.none"];
 	if (spellNum >= 0 && spellNum < 47) {
 		spellName = STRING[Common::String::format("spells.cleric.%d", spellNum)];
+
+		// Cleric 2-5 gives fire protection, but the string is "Ice"
+		if (spellNum == 12)
+			spellName = "Protection From Fire";
 	} else if (spellNum >= 47) {
 		spellName = STRING[Common::String::format("spells.wizard.%d", spellNum - 47)];
 	}
@@ -228,9 +232,11 @@ void CastSpell::castSpell(Character *target) {
 
 	Character &c = *g_globals->_currCharacter;
 	if (isInCombat()) {
-		const Common::String spellName = _spellIndex < 47 ?
+		Common::String spellName = _spellIndex < 47 ?
 			STRING[Common::String::format("spells.cleric.%d", _spellIndex)] :
 			STRING[Common::String::format("spells.wizard.%d", _spellIndex - 47)];
+		if (_spellIndex == 12)
+			spellName = "Protection From Fire";
 		const Common::String logLine = target ?
 			Common::String::format("%s casts %s on %s.", c._name,
 				spellName.c_str(), target->_name) :

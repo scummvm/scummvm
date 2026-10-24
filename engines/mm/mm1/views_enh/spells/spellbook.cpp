@@ -139,6 +139,10 @@ void Spellbook::draw() {
 				spellIndex
 			)];
 
+			// Cleric 2-5 gives fire protection, but the string is "Ice"
+			if (!_isWizard && spellIndex == 12)
+				spellName = "Protection From Fire";
+
 			// Mark the spell being assigned, and existing favorites
 			if (_favoriteAssignMode && spellIndex == _favoriteAssignSpell) {
 				setTextColor(15);
