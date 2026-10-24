@@ -49,6 +49,11 @@ private:
 	void checkCharacter();
 
 	/**
+	 * Recalculate training fields after selecting another character
+	 */
+	void charSwitched(Character *priorChar) override;
+
+	/**
 	 * Validates if training is allowed, then trains.
 	 */
 	void train();

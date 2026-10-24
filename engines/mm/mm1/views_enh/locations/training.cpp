@@ -37,8 +37,11 @@ Training::Training() : Location("Training", LOC_TRAINING) {
 }
 
 bool Training::msgFocus(const FocusMessage &msg) {
-	Location::msgFocus(msg);
+	if (!g_globals->_currCharacter && !g_globals->_party.empty())
+		g_globals->_currCharacter = &g_globals->_party[0];
+
 	checkCharacter();
+	Location::msgFocus(msg);
 	return true;
 }
 
@@ -74,10 +77,16 @@ void Training::draw() {
 }
 
 bool Training::msgGame(const GameMessage &msg) {
-	Location::msgGame(msg);
 	if (msg._name == "UPDATE")
 		checkCharacter();
+
+	Location::msgGame(msg);
 	return true;
+}
+
+void Training::charSwitched(Character *priorChar) {
+	checkCharacter();
+	PartyView::charSwitched(priorChar);
 }
 
 bool Training::msgKeypress(const KeypressMessage &msg) {
