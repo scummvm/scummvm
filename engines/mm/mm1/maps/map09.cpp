@@ -95,7 +95,10 @@ void Map09::special06() {
 		Character &c = g_globals->_party[i];
 		if (!(c._flags[11] & CHARFLAG11_GOT_ACCURACY)) {
 			c._flags[11] |= CHARFLAG11_GOT_ACCURACY;
-			c._might._base = MIN((int)c._accuracy._base + 4, 255);
+			if (c._accuracy._base < 30) {
+				c._accuracy._current = c._accuracy._base =
+					c._accuracy._base + 4;
+			}
 		}
 	}
 
@@ -107,7 +110,10 @@ void Map09::special07() {
 		Character &c = g_globals->_party[i];
 		if (!(c._flags[11] & CHARFLAG11_GOT_SPEED)) {
 			c._flags[11] |= CHARFLAG11_GOT_SPEED;
-			c._might._base = MIN((int)c._speed._base + 4, 255);
+			if (c._speed._base < 30) {
+				c._speed._current = c._speed._base =
+					c._speed._base + 4;
+			}
 		}
 	}
 
