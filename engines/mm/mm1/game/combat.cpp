@@ -1492,7 +1492,11 @@ bool Combat::acidRain() {
 	for (int i = 0; i < 5; ++i)
 		ss._damage += getRandomNumber(10);
 
-	iterateMonsters2();
+	// Acid Rain affects only monsters outside hand-to-hand combat. Keep the
+	// starting monster chosen above instead of resetting it to the first one
+	_selectedSpellMonster = -1;
+	_spellMonsterCount = _remainingMonsters.size();
+	iterateMonsters2Inner();
 	return true;
 }
 
