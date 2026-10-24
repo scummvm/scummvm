@@ -579,7 +579,7 @@ SpellResult SpellsParty::cleric65_townPortal() {
 				maps._mapPos.y = TownData::TOWN_MAP_Y[townIndex];
 				maps.changeMap(
 					TownData::TOWN_MAP_ID1[townIndex] |
-					(TownData::TOWN_MAP_ID1[townIndex] << 8),
+					(TownData::TOWN_MAP_ID2[townIndex] << 8),
 					1);
 
 				g_events->close();
