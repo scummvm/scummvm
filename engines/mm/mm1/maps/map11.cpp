@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -85,13 +86,13 @@ void Map11::special() {
 		}
 
 		updateGame();
-		send(SoundMessage(STRING["maps.map11.poof"]));
+		send(SoundMessage("Poof! You've been teleported..."));
 	}
 }
 void Map11::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map11.ladder"],
+		"A ladder going up, take it (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 2);
 			g_maps->changeMapFromExit(0xf04, 2);
@@ -115,7 +116,9 @@ void Map11::special02() {
 }
 
 void Map11::special03() {
-	send(SoundMessage(STRING["maps.map11.sign"]));
+	send(SoundMessage(mapText("Painted in a black and white pattern,\n"
+		"a sign reads: The second part is the\n"
+		"most valuable.")));
 }
 
 void Map11::special04() {
@@ -124,7 +127,7 @@ void Map11::special04() {
 }
 
 void Map11::special05() {
-	send(SoundMessage(STRING["maps.map11.tip2"]));
+	send(SoundMessage(mapText("This cavern is random until the dials\nare set.")));
 }
 
 void Map11::special06() {
@@ -142,16 +145,14 @@ void Map11::special08() {
 
 void Map11::pit() {
 	if (g_globals->_activeSpells._s.levitate) {
-		Common::String msg = Common::String::format("%s %s",
-			STRING["maps.map10.pit"].c_str(),
-			STRING["maps.map10.levitation"].c_str());
+		Common::String msg = "Jagged slime pit! Levitation saved you.";
 		send(SoundMessage(msg));
 		Sound::sound(SOUND_3);
 
 	} else {
 		reduceHP();
 		reduceHP();
-		send(SoundMessage(STRING["maps.map10.pit"]));
+		send(SoundMessage("Jagged slime pit!"));
 		Sound::sound(SOUND_3);
 	}
 }
@@ -159,7 +160,7 @@ void Map11::pit() {
 void Map11::selectDial(int dialIndex) {
 	_dialIndex = dialIndex;
 	Common::String msg = Common::String::format(
-		STRING["maps.map11.dial"].c_str(), '1' + dialIndex);
+		"Stabilization dial #%c set (A-Z)?", '1' + dialIndex);
 
 	// Show the dial's current setting under the prompt
 	byte current = _data[VAL2 + dialIndex];
@@ -217,7 +218,7 @@ void Map11::setDialChar(char c) {
 	// Echo the chosen value below the original A-Z instruction so there is
 	// unambiguous visual feedback about what the engine recorded.
 	Common::String line1 = Common::String::format(
-		STRING["maps.map11.dial"].c_str(), '1' + _dialIndex);
+		"Stabilization dial #%c set (A-Z)?", '1' + _dialIndex);
 	Common::String line2 = Common::String::format("Selected: %c", c);
 	send(InfoMessage(0, 1, line1, 0, 2, line2));
 }

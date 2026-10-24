@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -50,14 +52,20 @@ void Map50::special() {
 }
 
 void Map50::special00() {
-	send(SoundMessage(STRING["maps.map50.message7"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"Etched in gold, message 7 reads:\n"
+			"These-and-that-must-can-\n"
+			"different-shall-have-from-a-jvc" :
+		"Etched in gold, message 7 reads:\n"
+			"These-and-that-must-can-different-\n"
+			"shall-have-from-a-jvc"));
 }
 
 void Map50::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.passage_outside1"],
+		"A passage leads outside, take it (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(10, 5);
 			g_maps->changeMapFromExit(0x11b, 2);
@@ -69,7 +77,7 @@ void Map50::special02() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0x701, 3);
 		}
@@ -80,7 +88,7 @@ void Map50::special03() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xe00, 3);
 		}
@@ -91,7 +99,7 @@ void Map50::special04() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0x201, 3);
 		}
@@ -143,31 +151,33 @@ void Map50::special15() {
 }
 
 void Map50::special16() {
-	send(SoundMessage(STRING["maps.map50.sign1"]));
+	send(SoundMessage(mapText("Club Dead...\nThe antidote to humanization!")));
 }
 
 void Map50::special17() {
-	send(SoundMessage(STRING["maps.map50.sign2"]));
+	send(SoundMessage("Temple of the Old Order"));
 }
 
 void Map50::special18() {
-	send(SoundMessage(STRING["maps.map50.sign3"]));
+	send(SoundMessage("Glass Room"));
 }
 
 void Map50::special19() {
-	send(SoundMessage(STRING["maps.map50.sign4"]));
+	send(SoundMessage("Ruby Room"));
 }
 
 void Map50::special20() {
-	send(SoundMessage(STRING["maps.map50.sign5"]));
+	send(SoundMessage("Twinkle Room"));
 }
 
 void Map50::special21() {
-	send(SoundMessage(STRING["maps.map50.sign6"]));
+	send(SoundMessage("Rainbow Room"));
 }
 
 void Map50::special22() {
-	send(SoundMessage(STRING["maps.wall_painted"]));
+	send(SoundMessage(mapText("The wall is painted from ceiling to\n"
+		"floor in a black and white checkered\n"
+		"pattern!")));
 }
 
 void Map50::special23() {
@@ -175,7 +185,7 @@ void Map50::special23() {
 		g_maps->_mapPos.y--;
 		updateGame();
 
-		send(SoundMessage(STRING["maps.map50.grate"]));
+		send(SoundMessage("The crystal grate repels you!"));
 	}
 }
 

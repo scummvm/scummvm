@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -46,7 +47,7 @@ void Map04::special() {
 
 	// Stealable treasure
 	send(SoundMessage(
-		STRING["maps.map04.treasure"],
+		"Town treasure, steal (Y/N)?",
 		[]() {
 			g_maps->clearSpecialAndRememberReward();
 			if ((*g_maps->_currentMap)[MAP04_TREASURE_STOLEN] < 255)
@@ -85,14 +86,16 @@ void Map04::special01() {
 		}
 
 		send(InfoMessage(
-			0, 0, STRING["maps.map04.agar1"],
-			0, 1, STRING["maps.map04.agar2"],
+			0, 0, mapText("The wizard Agar speaks:\n\n"),
+			0, 1, mapText("\"You have done well to bring me this\n"
+				"scroll. (+1000 exp) Now take it to my\n"
+				"protege Telgoran in Dusk.\""),
 			callback	
 		));
 	} else {
 		send(InfoMessage(
-			0, 0, STRING["maps.map04.agar1"],
-			0, 1, STRING["maps.map04.agar3"],
+			0, 0, mapText("The wizard Agar speaks:\n\n"),
+			0, 1, "\"I have no business with you. Begone!\"",
 			callback
 		));
 	}
@@ -110,7 +113,7 @@ void Map04::special04() {
 	visitedExit();
 	if (_data[MAP04_PASSAGE_OVERRIDE] || _data[MAP04_TREASURE_STOLEN] == 0) {
 		send(SoundMessage(
-			STRING["maps.passage_outside2"],
+			"Passage outside, exit (Y/N)?",
 			[]() {
 				g_maps->_mapPos.x = 13;
 				g_maps->_mapPos.y = 1;
@@ -141,14 +144,14 @@ void Map04::special08() {
 	g_maps->_mapPos.y = getRandomNumber(15);
 	redrawGame();
 
-	send(InfoMessage(0, 1, STRING["maps.poof"]));
+	send(InfoMessage(0, 1, "Poof!"));
 }
 
 void Map04::special09() {
 	visitedExit();
 	if (_data[MAP04_STAIRS_OVERRIDE] || _data[MAP04_TREASURE_STOLEN] == 0) {
 		send(SoundMessage(
-			STRING["maps.stairs_down"],
+			"Stairs going down! Take them (Y/N)?",
 			[]() {
 				g_maps->_mapPos.x = 0;
 				g_maps->_mapPos.y = 7;
@@ -163,15 +166,15 @@ void Map04::special09() {
 }
 
 void Map04::special10() {
-	showSign(STRING["maps.map04.market"]);
+	showSign("\"Four Star Foods\"");
 }
 
 void Map04::special11() {
-	showSign(STRING["maps.map04.blacksmith"]);
+	showSign("\"Current Trends Ironworks\"");
 }
 
 void Map04::special12() {
-	showSign(STRING["maps.map04.inn"]);
+	showSign("\"The Inn of Erliquin\"");
 }
 
 void Map04::special13() {
@@ -184,15 +187,15 @@ void Map04::special13() {
 }
 
 void Map04::special18() {
-	showSign(STRING["maps.map04.temple"]);
+	showSign("\"Temple Gauche\"");
 }
 
 void Map04::special20() {
-	showSign(STRING["maps.map04.tavern"]);
+	showSign("\"Tavern of Tall Tales\"");
 }
 
 void Map04::special21() {
-	showSign(STRING["maps.map04.training"]);
+	showSign("\"Superior Training\"");
 }
 
 } // namespace Maps

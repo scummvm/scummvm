@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -51,7 +52,7 @@ void Map31::special() {
 			g_maps->clearSpecial();
 			g_globals->_encounters.execute();
 		} else {
-			send(SoundMessage(STRING["maps.map31.poof"]));
+			send(SoundMessage("Poof!"));
 			g_maps->_mapPos = Common::Point(
 				getRandomNumber(15), getRandomNumber(15));
 			updateGame();
@@ -64,7 +65,7 @@ void Map31::special() {
 }
 
 void Map31::special00() {
-	send(SoundMessage(STRING["maps.map31.device"]));
+	send(SoundMessage(mapText("Strange alien device grants those who\nare worthy +4 intellect!")));
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
@@ -115,7 +116,7 @@ void Map31::encounter() {
 
 void Map31::hostile() {
 	SoundMessage msg(
-		STRING["maps.map31.flash"],
+		"A bright flash!",
 		[]() {
 			for (uint i = 0; i < g_globals->_party.size(); ++i) {
 				g_globals->_party[i]._condition = ERADICATED;
@@ -133,7 +134,9 @@ void Map31::neutral() {
 }
 
 void Map31::friendly() {
-	send(SoundMessage(STRING["maps.map31.varnlings"]));
+	send(SoundMessage(mapText("\"Varnlings take heed! our prisoner has\n"
+		"escaped and may be disguised as a noble.\n"
+		"Find his counterpart to expose him!\"")));
 	g_maps->clearSpecial();
 }
 

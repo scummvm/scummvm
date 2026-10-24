@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -50,18 +52,20 @@ void Map46::special() {
 }
 
 void Map46::special00() {
-	send(SoundMessage(STRING["maps.wall_painted"]));
+	send(SoundMessage(mapText("The wall is painted from ceiling to\n"
+		"floor in a black and white checkered\n"
+		"pattern!")));
 }
 
 void Map46::special01() {
-	send(SoundMessage(STRING["maps.map46.shakes"]));
+	send(SoundMessage("The ground shakes!"));
 }
 
 void Map46::special02() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0x705, 3);
 		}
@@ -72,7 +76,7 @@ void Map46::special03() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xf05, 3);
 		}
@@ -89,7 +93,9 @@ void Map46::special05() {
 }
 
 void Map46::special06() {
-	send(SoundMessage(STRING["maps.map46.clerics"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"Clerics of the South just below. Corak" :
+		"Clerics of the South just below-Corak"));
 }
 
 } // namespace Maps

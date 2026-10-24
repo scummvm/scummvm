@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -68,7 +70,7 @@ void Map36::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map36.exit"],
+		"Exit castle (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(11, 2);
 			g_maps->changeMapFromExit(0xa00, 2);
@@ -81,18 +83,20 @@ void Map36::special02() {
 
 	g_maps->_mapPos = Common::Point(12, 2);
 	g_maps->changeMapFromExit(0xa00, 2);
-	send(SoundMessage(STRING["maps.map36.slide"]));
+	send(SoundMessage("Slide!"));
 }
 
 void Map36::special03() {
-	send(SoundMessage(STRING["maps.map36.message"]));
+	send(SoundMessage(mapText("Etched in silver, message C reads:\niaci1;-2;0nu--g,not2")));
 }
 
 void Map36::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
 		g_maps->_mapPos.x--;
 		updateGame();
-		send(SoundMessage(STRING["maps.map36.begone"]));
+		send(SoundMessage(g_engine->isEnhanced() ?
+			"Castle guards exclaim, \"Begone peasants!\"" :
+			"Castle guards exclaim,\"Begone peasants!\""));
 	}
 }
 
@@ -107,11 +111,11 @@ void Map36::special06() {
 
 	g_maps->_mapPos = Common::Point(7, 4);
 	g_maps->changeMapFromExit(0x705, 3);
-	send(SoundMessage(STRING["maps.map36.pit"]));
+	send(SoundMessage("The pit of peril..."));
 }
 
 void Map36::special07() {
-	send(SoundMessage(STRING["maps.map36.vault"]));
+	send(SoundMessage("Empty vault, alarm!"));
 	_data[MAP_47] = 7;
 	_data[MAP_29] = 30;
 	for (int i = 0; i < 3; ++i)
@@ -163,7 +167,10 @@ void Map36::acceptQuest() {
 		}
 
 		send(SoundMessage(
-			STRING["maps.map36.hacker7"],
+			g_engine->isEnhanced() ?
+				"My brew is complete. Guards take their items and send them to the pit!" :
+				"My brew is complete, guards take their\n"
+					"items and send them to the pit!",
 			[](const Common::KeyState &) {
 				g_maps->_mapPos = Common::Point(11, 15);
 				g_maps->_currentMap->updateGame();
@@ -200,11 +207,11 @@ Common::String Map36::checkQuestComplete() {
 		}
 
 		return Common::String::format(
-			STRING["maps.map36.hacker6"].c_str(),
+			"Well done, quest complete! +%u exp",
 			QUEST_EXPERIENCE[qIndex]);
 	} else {
 		// The quest isn't yet complete
-		return STRING["maps.map36.hacker5"];
+		return mapText("\"Return not until thy quest is complete\"\n(leader should present items)");
 	}
 }
 
@@ -218,7 +225,7 @@ void Map36::brewComplete() {
 		c._backpack.clear();
 	}
 
-	send(SoundMessage(STRING["maps.map36.hacker6"]));
+	send(SoundMessage("Well done, quest complete! +%u exp"));
 	g_maps->_mapPos = Common::Point(12, 5);
 	g_maps->_mapPos.x--;
 	redrawGame();

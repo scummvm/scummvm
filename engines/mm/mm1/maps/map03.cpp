@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -86,11 +87,15 @@ void Map03::special01() {
 		}
 
 		InfoMessage info1(
-			0, 0, STRING["maps.map03.telgoran1"],
-			0, 1, STRING["maps.map03.telgoran2"],
+			0, 0, mapText("An elf dressed in robes approaches...\n\n"),
+			0, 1, mapText("\"Friends, I am Telgoran. This scroll you\n"
+				"have brought me will be very helpful\n"
+				"(+2500 exp) Here's 1500 gold for your\n"
+				"services. I'll tell you a secret, if\n"
+				"treasure is what you want...\""),
 			[](const Common::KeyState &) {
 				InfoMessage info2(
-					0, 1, STRING["maps.map03.telgoran3"],
+					0, 1, mapText("\"The brothers you must find...\nPortsmith and Algary are combined.\""),
 					[](const Common::KeyState &) {
 						g_events->close();
 					}
@@ -105,8 +110,8 @@ void Map03::special01() {
 
 	} else {
 		send(InfoMessage(
-			0, 0, STRING["maps.map03.telgoran1"],
-			0, 1, STRING["maps.map03.telgoran4"]
+			0, 0, mapText("An elf dressed in robes approaches...\n\n"),
+			0, 1, "\"You're not the couriers!\""
 		));
 	}
 
@@ -124,7 +129,7 @@ void Map03::special03() {
 void Map03::special04() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.passage_outside1"],
+		"A passage leads outside, take it (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(9, 11);
 			g_maps->changeMapFromExit(0x112, 2);
@@ -154,7 +159,7 @@ void Map03::special08() {
 void Map03::special09() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(14, 0);
 			g_maps->changeMapFromExit(5, 1);
@@ -163,15 +168,15 @@ void Map03::special09() {
 }
 
 void Map03::special10() {
-	showSign(STRING["maps.map03.market"]);
+	showSign("\"Fewlerd's Feed\"");
 }
 
 void Map03::special11() {
-	showSign(STRING["maps.map03.blacksmith"]);
+	showSign("\"Mystical Metal Works\"");
 }
 
 void Map03::special12() {
-	showSign(STRING["maps.map03.inn"]);
+	showSign("\"The Inn of Dusk\"");
 }
 
 void Map03::special13() {
@@ -204,23 +209,23 @@ void Map03::special15() {
 }
 
 void Map03::special18() {
-	showSign(STRING["maps.map03.temple"]);
+	showSign("\"Temple Geist\"");
 }
 
 void Map03::special20() {
-	showSign(STRING["maps.map03.tavern"]);
+	showSign("\"Casper's Fine Spirits\"");
 }
 
 void Map03::special21() {
-	showSign(STRING["maps.map03.training"]);
+	showSign("\"Clearman's Training\"");
 }
 
 void Map03::special27() {
-	showSign(STRING["maps.map03.forbidden_crypt"]);
+	showSign("\"Forbidden Crypt\"");
 }
 
 void Map03::special28() {
-	showSign(STRING["maps.map03.eternal_rest"]);
+	showSign("\"Eternal Rest Chamber\"");
 }
 
 } // namespace Maps

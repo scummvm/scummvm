@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -49,14 +50,20 @@ void Map48::orangoAnswer(const Common::String &answer) {
 		g_maps->_mapPos = Common::Point(8, 5);
 		g_maps->changeMap(0x604, 1);
 
-		SoundMessage msg(STRING["maps.map48.orango3"]);
+		SoundMessage msg(mapText("Agent Orango Seventeen reporting:\n"
+			"Imposter xx21a7-3 voided!\n"
+			"Starphase 5281.6 at 120-varn-161 pod #41\n"
+			"You are now rank 1 and eligible for\n"
+			"transfer. Find Inner Sanctum for new\n"
+			"assignment. The walls begin to fade...\n"
+			"(press space)"));
 		msg._largeMessage = true;
 		send(msg);
 
 	} else {
 		g_maps->_mapPos.x++;
 		updateGame();
-		send(SoundMessage(13, 2, STRING["maps.map48.orango2"]));
+		send(SoundMessage(13, 2, "Keep looking!"));
 	}
 }
 

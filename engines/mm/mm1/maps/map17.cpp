@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -68,7 +69,7 @@ void Map17::special() {
 	} else if (getRandomNumber(30) == 10) {
 		g_maps->_mapPos = Common::Point(15, 15);
 		updateGame();
-		send(SoundMessage(STRING["maps.map17.wave"]));
+		send(SoundMessage("A tidal wave sweeps the party away!"));
 
 	} else {
 		none160();
@@ -76,7 +77,7 @@ void Map17::special() {
 }
 
 void Map17::special00() {
-	send(SoundMessage(STRING["maps.map17.islands"]));
+	send(SoundMessage(mapText("Atop this peak 5 islands can be seen\nto the southeast")));
 }
 
 void Map17::special01() {
@@ -108,7 +109,10 @@ void Map17::special01() {
 	// All current party members know their Gypsy signs. Keep the original
 	// retryable bridge-prompt behavior: declining does not consume the special.
 	SoundMessage msg(
-		STRING["maps.map17.bridge"],
+		mapText("A wooden bridge extendes across the\n"
+			"ocean into the mist. A hooded figure\n"
+			"materializes, \"To cross you must each\n"
+			"answer a question, Accept (Y/N)?\""),
 		[]() {
 			g_events->addView("ColorQuestions");
 		}
@@ -149,8 +153,11 @@ void Map17::askQuestion(uint partyIndex) {
 
 	if (!(g_globals->_currCharacter->_condition & BAD_CONDITION)) {
 		InfoMessage msg(
-			0, 0, STRING["maps.map17.color"],
-			0, 2, STRING["maps.map17.options"],
+			0, 0, "What is your color (1-8)?",
+			0, 2, mapText("1) Red Thorac       2) Blue Ogram\n"
+				"3) Green Bagar      4) Yellow Limra\n"
+				"5) Purple Sagran    6) Orange Oolak\n"
+				"7) Black Dresidion  8) White Dilithium"),
 			[](const Common::KeyState &ks) {
 				Map17 &map = *static_cast<Map17 *>(g_maps->_currentMap);
 				if (ks.keycode >= Common::KEYCODE_1 &&
@@ -165,19 +172,22 @@ void Map17::askQuestion(uint partyIndex) {
 					// or it has but the wrong color is selected, eradicate them
 					if (!color || (color & 7) != map[COLOR]) {
 						c._condition = ERADICATED;
-						line = STRING["maps.map17.wrong"];
+						line = "Wrong!";
 					} else {
 						map[CORRECT_ANSWERS]++;
 						c._flags[4] |= CHARFLAG4_80;
-						line = STRING["maps.map17.correct"];
+						line = "Correct!";
 					}
 
 					Sound::sound(SOUND_3);
 					InfoMessage msg2;
 					msg2._largeMessage = true;
 					msg2._delaySeconds = 1;
-					msg2._lines.push_back(Line(0, 0, STRING["maps.map17.color"]));
-					msg2._lines.push_back(Line(0, 2, STRING["maps.map17.options"]));
+					msg2._lines.push_back(Line(0, 0, "What is your color (1-8)?"));
+					msg2._lines.push_back(Line(0, 2, mapText("1) Red Thorac       2) Blue Ogram\n"
+						"3) Green Bagar      4) Yellow Limra\n"
+						"5) Purple Sagran    6) Orange Oolak\n"
+						"7) Black Dresidion  8) White Dilithium")));
 					msg2._lines.push_back(Line(16, 6, line));
 					msg2._callback = []() {
 						Map17 &map17 = *static_cast<Map17 *>(g_maps->_currentMap);

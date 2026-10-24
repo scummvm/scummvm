@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -61,19 +62,19 @@ void Map00::special01() {
 
 	switch (g_maps->_forwardMask) {
 	case DIRMASK_E:
-		line2 = STRING["maps.map00.market"];
+		line2 = "\"Eulards Fine Foods\"";
 		x = 6;
 		break;
 	case DIRMASK_W:
-		line2 = STRING["maps.map00.blacksmith"];
+		line2 = "\"B and B Blacksmithing\"";
 		break;
 	default:
-		line2 = STRING["maps.map00.inn"];
+		line2 = "\"The Inn of Sorpigal\"";
 		break;
 	}
 
 	send(SoundMessage(
-		2, 0, STRING["maps.sign"],
+		2, 0, mapText("A sign above the door reads:\n"),
 		x, 1, line2
 	));
 }
@@ -89,7 +90,7 @@ void Map00::special03() {
 void Map00::special04() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.passage_outside1"],
+		"A passage leads outside, take it (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(10, 10);
 			g_maps->changeMapFromExit(0xa11, 2);
@@ -116,7 +117,7 @@ void Map00::special08() {
 void Map00::special09() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xa11, 1);
 		}
@@ -173,28 +174,28 @@ void Map00::special17() {
 
 void Map00::special18() {
 	send(SoundMessage(
-		2, 0, STRING["maps.sign"],
-		6, 1, STRING["maps.map00.temple"]
+		2, 0, mapText("A sign above the door reads:\n"),
+		6, 1, "Temple Moonshadow"
 	));
 }
 
 void Map00::special19() {
 	send(SoundMessage(
-		2, 0, STRING["maps.sign"],
-		6, 1, STRING["maps.map00.jail"]
+		2, 0, mapText("A sign above the door reads:\n"),
+		6, 1, "Jail. Keep Out!"
 	));
 }
 
 void Map00::special20() {
 	send(SoundMessage(
-		2, 0, STRING["maps.sign"],
-		6, 1, STRING["maps.map00.tavern"]
+		2, 0, mapText("A sign above the door reads:\n"),
+		6, 1, "Ye Olde Hogge Tavern"
 	));
 }
 void Map00::special21() {
 	send(SoundMessage(
-		2, 0, STRING["maps.sign"],
-		6, 1, STRING["maps.map00.training"]
+		2, 0, mapText("A sign above the door reads:\n"),
+		6, 1, "Otto's Training"
 	));
 }
 
@@ -207,9 +208,9 @@ void Map00::special22() {
 
 void Map00::special23() {
 	visitedExit();
-	Common::String msg = STRING["maps.map00.trapdoor"];
+	Common::String msg = "Trap door!";
 	if (g_globals->_activeSpells._s.levitate)
-		msg += STRING["maps.map00.levitate"];
+		msg += ", levitation saves you!";
 
 	send(SoundMessage(msg,
 		[](const Common::KeyState &keyState) {
@@ -222,7 +223,7 @@ void Map00::special23() {
 
 void Map00::searchStatue() {
 	send(SoundMessage(
-		STRING["maps.map00.statue"],
+		"There is a statue here. Search it (Y/N)?",
 		[]() {
 			Map &map = *g_maps->_currentMap;
 			g_events->send("Statue", GameMessage("STATUE", map[STATUE_VAL]));

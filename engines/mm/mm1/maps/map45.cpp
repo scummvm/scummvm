@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -50,14 +52,21 @@ void Map45::special() {
 }
 
 void Map45::special00() {
-	send(SoundMessage(STRING["maps.map45.message8"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"Etched in gold, message 8 reads:\n"
+			"The-are-quests,-increases-\n"
+			"identify,-apply.-locations,-end-\n"
+			"attained-my-sequel" :
+		"etched in gold, message 8 reads:\n"
+			"The-are-quests,-increases-identify,-\n"
+			"apply.-locations,-end-attained-my-sequel"));
 }
 
 void Map45::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map45.passage"],
+		"A cavernous passage, take it (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 12);
 			g_maps->changeMapFromExit(5, 1);
@@ -73,7 +82,7 @@ void Map45::special03() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0x107, 1);
 		}
@@ -84,7 +93,7 @@ void Map45::special04() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xa00, 3);
 		}
@@ -132,32 +141,37 @@ void Map45::special14() {
 }
 
 void Map45::special15() {
-	send(SoundMessage(STRING["maps.map45.sign1"]));
+	send(SoundMessage(mapText("painted in a black and white pattern,\n"
+		"a sign reads: The last part is the first")));
 }
 
 void Map45::special16() {
-	showSign(STRING["maps.map45.sign2"]);
+	showSign("\"Temple Wolf Pass\"");
 }
 
 void Map45::special18() {
-	showSign(STRING["maps.map45.sign3"]);
+	showSign("\"Cult of the New Order\"");
 }
 
 void Map45::special19() {
-	send(SoundMessage(STRING["maps.map45.walls"]));
+	send(SoundMessage("The Walls Glow Ominously"));
 }
 
 void Map45::special20() {
-	send(SoundMessage(STRING["maps.map45.message"]));
+	send(SoundMessage(mapText("Etched in stone:\n"
+		"\"28 days out. No food, low on supplies.\n"
+		"We fear the worst yet we continue-Corak")));
 }
 
 void Map45::special21() {
-	send(SoundMessage(STRING["maps.wall_painted"]));
+	send(SoundMessage(mapText("The wall is painted from ceiling to\n"
+		"floor in a black and white checkered\n"
+		"pattern!")));
 }
 
 void Map45::showSign(const Common::String &line) {
 	send(SoundMessage(
-		0, 1, STRING["maps.sign"],
+		0, 1, mapText("A sign above the door reads:\n"),
 		0, 2, line
 	));
 }

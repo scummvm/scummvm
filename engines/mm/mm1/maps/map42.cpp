@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -56,14 +58,21 @@ void Map42::special00() {
 }
 
 void Map42::special01() {
-	send(SoundMessage(STRING["maps.map42.message9"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"Etched in gold, message 9 reads:\n"
+			"Successful-that-training,-the-\n"
+			"worthy-the-visit-yet-inner-\n"
+			"reality,-order," :
+		"Etched in gold, message 9 reads:\n"
+			"Successful-that-training,-the-worthy-\n"
+			"the-visit-yet-inner-reality,-order,"));
 }
 
 void Map42::special02() {
 	Game::Encounter &enc = g_globals->_encounters;
 
 	if (_data[VAL1]) {
-		send(SoundMessage(STRING["maps.map42.defeated"]));
+		send(SoundMessage(mapText("The master of this stronghold\nhas been defeated!")));
 
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			g_globals->_party[i]._flags[5] |= CHARFLAG5_40;
@@ -83,7 +92,7 @@ void Map42::special02() {
 }
 
 void Map42::special03() {
-	send(SoundMessage(STRING["maps.map42.sign1"]));
+	send(SoundMessage(mapText("Enter the Maze of the Minotaur...\nIf you dare!")));
 }
 
 void Map42::special04() {
@@ -137,7 +146,7 @@ void Map42::special15() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xf04, 3);
 		}

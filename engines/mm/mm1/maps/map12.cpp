@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -56,7 +57,7 @@ void Map12::special() {
 void Map12::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map12.ladder_up"],
+		"Ladder up, climb (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 13);
 			g_maps->changeMapFromExit(0x106, 2);
@@ -65,12 +66,12 @@ void Map12::special00() {
 }
 
 void Map12::special01() {
-	Common::String line1 = STRING["maps.map12.lever"];
+	Common::String line1 = "Platinum lever protrudes from the wall.";
 	Common::String line2;
 
 	for (int i = 0; i < 9; ++i) {
 		if (!_data[SELECTIONS + i]) {
-			line2 = STRING["maps.map12.wont_budge"];
+			line2 = "It won't budge!";
 			break;
 		}
 	}
@@ -78,7 +79,7 @@ void Map12::special01() {
 	if (!line2.empty()) {
 		send(SoundMessage(0, 1, line1, 0, 2, line2));
 	} else {
-		line2 = STRING["maps.map12.pull_it"];
+		line2 = "Pull it (Y/N)?";
 		send(SoundMessage(
 			0, 1, line1,
 			0, 2, line2,
@@ -91,7 +92,7 @@ void Map12::special01() {
 				}
 
 				if (i < 9) {
-					g_events->send(SoundMessage(STRING["maps.map12.incorrect"]));
+					g_events->send(SoundMessage("Incorrect settings!"));
 
 				} else {
 					// Reward the party
@@ -107,7 +108,8 @@ void Map12::special01() {
 						c._exp += 2000;
 					}
 
-					g_events->send(SoundMessage(STRING["maps.map12.correct"]));
+					g_events->send(SoundMessage(mapText("You have mastered the magic square!\n"
+						"+2 int, +20 gems, +200 gold, +2000 exp")));
 				}
 			}
 		));
@@ -180,7 +182,7 @@ void Map12::special17() {
 
 void Map12::polyhedron(unsigned char side1, unsigned char side2) {
 	Common::String msg = Common::String::format(
-		STRING["maps.map12.polyhedron3"].c_str(), side1, side2);
+		"A glowing polyhedron is set on side %c%c", side1, side2);
 	send(SoundMessage(msg));
 }
 
@@ -203,11 +205,12 @@ void Map12::setPolyhedron(int polyIndex) {
 
 	if (_data[SELECTIONS + polyIndex]) {
 		Common::String msg = Common::String::format(
-			STRING["maps.map12.polyhedron2"].c_str(),
+			mapText("The polyhedron is set on %c\nSpin it (Y/N)?").c_str(),
 			_data[SELECTIONS + polyIndex]);
 		send(SoundMessage(msg, keyCallbackSpinPolyhedronTwo));
 	} else {
-		send(SoundMessage(STRING["maps.map12.polyhedron1"], keyCallbackSpinPolyhedronOne));
+		send(SoundMessage(mapText("Atop a crystal pyramid spins a glowing\n"
+			"polyhedron. Stop it on side (1-9)?"), keyCallbackSpinPolyhedronOne));
 	}
 }
 

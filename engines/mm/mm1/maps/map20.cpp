@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -72,7 +73,7 @@ void Map20::special() {
 void Map20::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map20.stairs_down"],
+		"Stairs going down, enter (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(1, 15);
 			g_maps->changeMapFromExit(0xc03, 1);
@@ -83,7 +84,7 @@ void Map20::special00() {
 void Map20::special01() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map20.cave"],
+		"A cave, enter (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 0);
 			g_maps->changeMapFromExit(0x51b, 1);
@@ -103,7 +104,7 @@ void Map20::special02() {
 		send("View", DrawGraphicMessage(6 + 65));
 
 		send(SoundMessage(
-			STRING["maps.map20.castle"],
+			"Castle White Wolf, enter (Y/N)?",
 			[]() {
 				Map20 &map = *static_cast<Map20 *>(g_maps->_currentMap);
 				map[CASTLE_STATE] = 0xff;
@@ -122,7 +123,7 @@ void Map20::special03() {
 	bool hasWhistle = g_globals->_party.hasItem(RUBY_WHISTLE_ID);
 
 	if (!hasWhistle) {
-		send(SoundMessage(STRING["maps.map20.temple"],
+		send(SoundMessage(mapText("An ancient temple converted to a\nstronghold has no apparent entrance."),
 			[](const Common::KeyState &) {
 				g_events->focusedView()->close();
 			}
@@ -131,11 +132,11 @@ void Map20::special03() {
 	}
 
 	send(
-		SoundMessage(STRING["maps.map20.temple"],
+		SoundMessage(mapText("An ancient temple converted to a\nstronghold has no apparent entrance."),
 		[](const Common::KeyState &) {
 			g_events->focusedView()->close();
 			g_events->send(SoundMessage(
-				STRING["maps.map20.whistle"],
+				mapText("Your ruby whistle begins to glow,\nblow it (0-9 times)?"),
 				[](const Common::KeyState &ks) {
 					if (ks.keycode == Common::KEYCODE_0) {
 						g_events->focusedView()->close();
@@ -143,7 +144,7 @@ void Map20::special03() {
 					} else if (ks.keycode == Common::KEYCODE_2) {
 						g_events->focusedView()->close();
 						g_events->send(SoundMessage(
-							STRING["maps.map20.stairs_down"],
+							"Stairs going down, enter (Y/N)?",
 							[]() {
 								for (uint i = 0; i < g_globals->_party.size(); ++i) {
 									g_globals->_currCharacter = &g_globals->_party[i];
@@ -168,11 +169,11 @@ void Map20::special03() {
 }
 
 void Map20::special04() {
-	send(SoundMessage(STRING["maps.map20.sign1"]));
+	send(SoundMessage("A sign pointing N. reads: White Wolf"));
 }
 
 void Map20::special05() {
-	send(SoundMessage(STRING["maps.map20.sign2"]));
+	send(SoundMessage("A sign pointing S. reads: Portsmith"));
 }
 
 void Map20::special06() {
@@ -181,7 +182,12 @@ void Map20::special06() {
 		g_globals->_currCharacter->_flags[5] |= CHARFLAG5_2;
 	}
 
-	SoundMessage info(0, 0, STRING["maps.map20.peak"]);
+	SoundMessage info(0, 0, "Atop this peak looking:\n"
+		"\n"
+		"N= A cave beyond White Wolf.\n"
+		"E= Large beasts above Wyvern Peaks!\n"
+		"S= Distant uncharted isles.\n"
+		"W= A pirate ship beyond Korin Bluffs.");
 	info._largeMessage = true;
 	send(info);
 }

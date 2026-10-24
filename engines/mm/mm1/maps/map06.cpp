@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -95,7 +96,7 @@ void Map06::special() {
 void Map06::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.passage_outside2"],
+		"Passage outside, exit (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 11);
 			g_maps->changeMapFromExit(0xa11, 2);
@@ -106,7 +107,7 @@ void Map06::special00() {
 void Map06::special01() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map06.portal"],
+		mapText("Shimmering blue and white portal,\nenter (Y/N)?"),
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 0);
 			g_maps->changeMapFromExit(0xc01, 1);
@@ -135,7 +136,7 @@ void Map06::special03() {
 void Map06::special04() {
 	if (_data[VAL2]) {
 		_data[VAL2] = 0;
-		send(SoundMessage(0, 1, STRING["maps.map06.acid"]));
+		send(SoundMessage(0, 1, "Splash! A pool of acid!"));
 
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
@@ -150,7 +151,7 @@ void Map06::special04() {
 
 void Map06::special06() {
 	send(SoundMessage(
-		STRING["maps.map06.button"],
+		"Button on the wall, press it (Y/N)?",
 		[]() {
 			Map06 &map = *static_cast<Map06 *>(g_maps->_currentMap);
 			byte &val1 = map[VAL1];
@@ -174,11 +175,11 @@ void Map06::special07() {
 	g_maps->_mapPos.x = 10;
 	g_maps->_mapPos.y = 11;
 	updateGame();
-	send(SoundMessage(17, 1, STRING["maps.poof"]));
+	send(SoundMessage(17, 1, "Poof!"));
 }
 
 void Map06::special09() {
-	send(SoundMessage(0, 1, STRING["maps.map06.banner"]));
+	send(SoundMessage(0, 1, mapText("A banner reads:\nCorridor of Endless Encounters!")));
 }
 
 void Map06::special10() {
@@ -223,7 +224,7 @@ void Map06::special26() {
 	if (completedEncounters() < 13) {
 		// Talking to the wizard starts the tracked side quest
 		_visited[QUEST_ACTIVE_OFFSET] |= ENCOUNTER_COMPLETE;
-		send(SoundMessage(STRING["maps.map06.wizard"]));
+		send(SoundMessage(mapText("A crazed wizard exclaims,\n\"Encounter the 13, win the prize!\"")));
 	} else {
 		g_globals->_treasure.setGold(12000);
 		g_globals->_treasure._items[1] = BRONZE_KEY_ID;
@@ -275,7 +276,7 @@ void Map06::restoreVisitState() {
 void Map06::slide() {
 	_data[VAL2]++;
 
-	SoundMessage msg(16, 1, STRING["maps.map06.slide"]);
+	SoundMessage msg(16, 1, "A slide!");
 	msg._delaySeconds = 2;
 	msg._callback = []() {
 		g_maps->_currentMap->updateGame();

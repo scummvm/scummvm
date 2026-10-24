@@ -24,10 +24,21 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
+
+static const char *const PASSWORDS[7] = {
+	"Musical",
+	"Tones",
+	"Together",
+	"Clerics",
+	"South",
+	"Deem",
+	"Worthy"
+};
 
 #define VAL1 75
 #define VAL2 111
@@ -49,7 +60,7 @@ void Map32::special() {
 	}
 
 	if (_walls[g_maps->_mapOffset] == 0x55 && g_maps->_mapPos.x < 13) {
-		send(SoundMessage(STRING["maps.map32.music"]));
+		send(SoundMessage("Distant harp music..."));
 	} else {
 		g_maps->clearSpecial();
 		g_globals->_encounters.execute();
@@ -60,11 +71,11 @@ void Map32::special00() {
 	visitedExit();
 
 	if (!g_globals->_party.hasItem(DIAMOND_KEY_ID)) {
-		send(SoundMessage(STRING["maps.map32.door"]));
+		send(SoundMessage("A diamond door!"));
 	} else {
 		send(SoundMessage(
-			0, 1, STRING["maps.map32.door"],
-			0, 2, STRING["maps.map32.key"],
+			0, 1, "A diamond door!",
+			0, 2, "Use your key (Y/N)?",
 			[]() {
 				g_maps->_mapPos = Common::Point(7, 0);
 				g_maps->changeMapFromExit(0xb1a, 3);
@@ -90,7 +101,7 @@ void Map32::special02() {
 	} else {
 		send("View", DrawGraphicMessage(65 + 6));
 		send(SoundMessage(
-			STRING["maps.map32.castle"],
+			"King Alamar's castle, enter (Y/N)?",
 			[]() {
 				Map32 &map = *static_cast<Map32 *>(g_maps->_currentMap);
 				map[VAL2] = 0xff;
@@ -111,13 +122,12 @@ void Map32::special04() {
 	}
 
 	Common::String line2 = Common::String::format("\"%s %s",
-		STRING[Common::String::format("maps.map32.passwords.%d",
-			_data[PASSWORD_INDEX])].c_str(),
-		STRING["maps.map32.password"].c_str()
+		PASSWORDS[_data[PASSWORD_INDEX]],
+		mapText("is the password for today,\nleave the area and change it i may!\"").c_str()
 	);
 
 	send(SoundMessage(
-		0, 1, STRING["maps.map32.heratio"],
+		0, 1, "Heratio Harper sings:",
 		0, 2, line2
 	));
 }
@@ -131,13 +141,12 @@ void Map32::special05() {
 
 void Map32::passwordEntered(const Common::String &password) {
 	if ((_data[PASSWORD_INDEX] & 0x80) ||
-		!password.equalsIgnoreCase(STRING[Common::String::format("maps.map32.passwords.%d",
-			_data[PASSWORD_INDEX])])) {
+		!password.equalsIgnoreCase(PASSWORDS[_data[PASSWORD_INDEX]])) {
 		g_maps->_mapPos.x--;
 		updateGame();
 
 	} else {
-		g_events->send(SoundMessage(STRING["maps.map32.correct"]));
+		g_events->send(SoundMessage("Correct! you may pass."));
 		_data[VAL1]++;
 		g_maps->clearSpecial();
 	}

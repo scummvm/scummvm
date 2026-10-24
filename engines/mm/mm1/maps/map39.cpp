@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -53,7 +55,13 @@ void Map39::special() {
 }
 
 void Map39::special00() {
-	send(SoundMessage(STRING["maps.map39.message6"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"Etched in gold, message 6 reads:\n"
+			"Book-done.-A-self-that-from-\n"
+			"key-you-be-to-seems" :
+		"Etched in gold, message 6 reads:\n"
+			"book-done.-a-self-that-from-key-you-\n"
+			"be-to-seems"));
 }
 
 void Map39::special01() {
@@ -64,7 +72,7 @@ void Map39::special01() {
 	}
 
 	send(SoundMessage(
-		STRING["maps.map39.stairs_up"],
+		"Stairs to surface, take them (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(9, 9);
 			g_maps->changeMapFromExit(0x703, 2);
@@ -76,7 +84,7 @@ void Map39::special02() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0x702, 3);
 		}
@@ -89,11 +97,11 @@ void Map39::special03() {
 
 void Map39::special04() {
 	if (g_globals->_party.hasItem(SILVER_KEY_ID)) {
-		send(SoundMessage(STRING["maps.map39.door_glows"]));
+		send(SoundMessage("A silver door, your silver key glows!"));
 	} else {
 		g_maps->_mapPos.y++;
 		updateGame();
-		send(SoundMessage(STRING["maps.map39.door_repels"]));
+		send(SoundMessage("A silver door repels you!"));
 	}
 }
 
@@ -138,7 +146,9 @@ void Map39::special14() {
 }
 
 void Map39::special18() {
-	send(SoundMessage(STRING["maps.wall_painted"]));
+	send(SoundMessage(mapText("The wall is painted from ceiling to\n"
+		"floor in a black and white checkered\n"
+		"pattern!")));
 }
 
 void Map39::riddleAnswered(const Common::String &answer) {
@@ -163,7 +173,7 @@ void Map39::riddleAnswered(const Common::String &answer) {
 		g_maps->_mapPos.x = 9;
 		updateGame();
 
-		send(InfoMessage(STRING["maps.map39.ruby2"]));
+		send(InfoMessage("Wrong!  A bright flash..."));
 	}
 }
 

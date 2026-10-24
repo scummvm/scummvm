@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -55,7 +57,7 @@ void Map18::special() {
 void Map18::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map18.passage"],
+		mapText("Cavernous passage to Erliquin,\ntake it (Y/N)?"),
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 7);
 			g_maps->changeMapFromExit(0xb1a, 1);
@@ -75,7 +77,7 @@ void Map18::special01() {
 	} else {
 		send("View", DrawGraphicMessage(65 + 6));
 		send(SoundMessage(
-			STRING["maps.map18.castle_south"],
+			"Castle Blackridge South, enter (Y/N)?",
 			[]() {
 				Map18 &map = *static_cast<Map18 *>(g_maps->_currentMap);
 				map[VAL1] = 0xff;
@@ -102,7 +104,7 @@ void Map18::special02() {
 	} else {
 		send("View", DrawGraphicMessage(65 + 6));
 		send(SoundMessage(
-			STRING["maps.map18.castle_north"],
+			"Castle Blackridge North, enter (Y/N)?",
 			[]() {
 				Map18 &map = *static_cast<Map18 *>(g_maps->_currentMap);
 				map[VAL2] = 0xff;
@@ -119,7 +121,10 @@ void Map18::special02() {
 
 void Map18::special03() {
 	visitedExit();
-	send(SoundMessage(STRING["maps.map18.ruins"],
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"Ancient ruins of a deserted wizard's lair show signs of recent use, enter (Y/N)?" :
+		"Ancient ruins of a deserted wizards lair\n"
+			"show signs of recent use, enter (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(2, 2);
 			g_maps->changeMapFromExit(0xf03, 3);
@@ -128,15 +133,21 @@ void Map18::special03() {
 }
 
 void Map18::special04() {
-	send(SoundMessage(STRING["maps.map18.sign1"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"A sign pointing S. reads:\n"
+			"Blackridge N." :
+		"A sign pointing S. reads: Blackridge N."));
 }
 
 void Map18::special05() {
-	send(SoundMessage(STRING["maps.map18.sign2"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"A sign pointing E. reads:\n"
+			"Blackridge S." :
+		"A sign pointing E. reads: Blackridge S."));
 }
 
 void Map18::special06() {
-	send(SoundMessage(STRING["maps.map18.sign3"]));
+	send(SoundMessage("A sign pointing E. reads: Erliquin"));
 }
 
 void Map18::special07() {
@@ -149,13 +160,13 @@ void Map18::special07() {
 	if (hasWonGame)
 		g_events->addView("WonGame");
 	else
-		send(SoundMessage(STRING["maps.map18.gates"]));
+		send(SoundMessage(mapText("The Gates to Another World!\n")));
 }
 
 void Map18::special08() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map18.cave"],
+		"A cave, enter (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 7);
 			g_maps->changeMapFromExit(0x202, 1);

@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -56,7 +57,7 @@ void Map09::special() {
 void Map09::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0x802, 1);
 		}
@@ -66,7 +67,7 @@ void Map09::special00() {
 void Map09::special01() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map09.passage_outside"],
+		"A cavernous passage, take it (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 0);
 			g_maps->changeMapFromExit(0xf05, 3);
@@ -102,7 +103,8 @@ void Map09::special06() {
 		}
 	}
 
-	g_events->send(SoundMessage(0, 1, STRING["maps.map09.accuracy"]));
+	g_events->send(SoundMessage(0, 1, mapText("The Prism of Precision grants those\n"
+		"who are worthy +4 accuracy!")));
 }
 
 void Map09::special07() {
@@ -117,7 +119,8 @@ void Map09::special07() {
 		}
 	}
 
-	g_events->send(SoundMessage(0, 1, STRING["maps.map09.agility"]));
+	g_events->send(SoundMessage(0, 1, mapText("The Flame of Agility grants those who\n"
+		"are worthy +4 speed!")));
 }
 
 void Map09::special08() {
@@ -127,13 +130,13 @@ void Map09::special08() {
 	}
 
 	send(SoundMessage(
-		0, 1, STRING["maps.map09.shrine1"],
+		0, 1, "The Shrine of Okzar, pray (Y/N)?",
 		[]() {
 			const Character &leader = g_globals->_party[0];
 
 			if (leader._alignment == leader._alignmentInitial) {
 				SoundMessage msg(
-					STRING["maps.map09.shrine2"],
+					"Your leader is of clear mind.",
 					[]() {
 						g_globals->_treasure._items[2] = g_events->getRandomNumber(26) + 120;
 						g_globals->_treasure.setGold(120);
@@ -145,7 +148,7 @@ void Map09::special08() {
 
 			} else {
 				SoundMessage msg(
-					STRING["maps.map09.shrine3"],
+					"Your leader is inconsistent. Begone!",
 					[]() {
 						// TODO: Check this is right. Original set y twice
 						g_maps->_mapPos = Common::Point(5, 13);
@@ -160,7 +163,7 @@ void Map09::special08() {
 }
 
 void Map09::special09() {
-	send(SoundMessage(0, 1, STRING["maps.map09.stalactites"]));
+	send(SoundMessage(0, 1, "Stalactites shower the party!"));
 	reduceHP();
 }
 
@@ -169,8 +172,8 @@ void Map09::special14() {
 
 	if (g_globals->_activeSpells._s.levitate) {
 		send(SoundMessage(
-			0, 1, STRING["maps.map09.pit"],
-			0, 2, STRING["maps.map09.levitation"]
+			0, 1, mapText("A pit of poisonous spikes!\n"),
+			0, 2, "Levitation saved you."
 		));
 	} else {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -182,7 +185,7 @@ void Map09::special14() {
 		}
 
 		SoundMessage msg(
-			STRING["maps.map09.pit"],
+			mapText("A pit of poisonous spikes!\n"),
 			[]() {
 				g_globals->_encounters.execute();
 			}
@@ -195,8 +198,8 @@ void Map09::special14() {
 void Map09::special18() {
 	if (g_globals->_activeSpells._s.psychic_protection) {
 		send(SoundMessage(
-			0, 1, STRING["maps.map09.psychic_blast"],
-			0, 2, STRING["maps.map09.protection"]
+			0, 1, mapText("Psychic blast!\n"),
+			0, 2, "Protection saved you."
 		));
 	} else {
 		// getRandomNumber() is inclusive, so pass the last valid index.
@@ -224,7 +227,7 @@ void Map09::special18() {
 			"Psychic blast! %s", effectLine.c_str());
 
 		SoundMessage msg(
-			0, 1, STRING["maps.map09.psychic_blast"],
+			0, 1, mapText("Psychic blast!\n"),
 			0, 2, effectLine,
 			[]() {
 				Common::String preCombatLog =
@@ -238,15 +241,17 @@ void Map09::special18() {
 }
 
 void Map09::special25() {
-	send(SoundMessage(0, 1, STRING["maps.map09.scrawl"]));
+	send(SoundMessage(0, 1, mapText("Scrawled in stone:\n"
+		"Character #1 leads the way.\n"
+		"Beware, traps abound!")));
 }
 
 void Map09::special26() {
-	send(SoundMessage(0, 1, STRING["maps.map09.corak_was_here"]));
+	send(SoundMessage(0, 1, "Corak was here"));
 }
 
 void Map09::special27() {
-	send(SoundMessage(0, 1, STRING["maps.map09.message"]));
+	send(SoundMessage(0, 1, mapText("Behind an old tapestry, a message\netched in gold reads: YICU2ME3")));
 }
 
 void Map09::portal(int index) {
@@ -254,7 +259,7 @@ void Map09::portal(int index) {
 	_portalIndex = index;
 
 	send(SoundMessage(
-		STRING["maps.map09.portal"],
+		"Blue and white portal, enter (Y/N)?",
 		[]() {
 			int idx = static_cast<Map09 *>(g_maps->_currentMap)->_portalIndex;
 			g_maps->_mapPos = Common::Point(MAP_DEST_X[idx], MAP_DEST_Y[idx]);

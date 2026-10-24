@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -68,7 +69,7 @@ void Map33::special() {
 			if (g_maps->_mapPos.y < 5 && g_maps->_forwardMask != DIRMASK_N) {
 				g_events->addKeypress((Common::KeyCode)149);
 			} else {
-				InfoMessage msg(0, 1, STRING["maps.map33.slime"]);
+				InfoMessage msg(0, 1, mapText("Ectoplasmic slime slushes beneath you!\n"));
 				Sound::sound(SOUND_2);
 
 				switch (getRandomNumber(200)) {
@@ -79,7 +80,7 @@ void Map33::special() {
 					if (!(c._condition & BAD_CONDITION)) {
 						c._condition |= SILENCED | PARALYZED | UNCONSCIOUS;
 						c._hpCurrent = 0;
-						msg._lines.push_back(Line(0, 2, STRING["maps.map33.quicksand"]));
+						msg._lines.push_back(Line(0, 2, "Quicksand!"));
 						Sound::sound(SOUND_3);
 					}
 					break;
@@ -105,7 +106,7 @@ void Map33::special() {
 				}
 			}
 		} else {
-			send(SoundMessage(STRING["maps.map33.tombstones"]));
+			send(SoundMessage("Toppled tombstones abound!"));
 		}
 	} else {
 		if (g_maps->_mapPos.y < 5) {
@@ -129,7 +130,7 @@ void Map33::special() {
 
 void Map33::special00() {
 	send(SoundMessage(
-		STRING["maps.map33.meeting"],
+		mapText("Dragon City, town meeting...\nDisrupt (Y/N)?"),
 		[]() {
 			Game::Encounter &enc = g_globals->_encounters;
 			g_maps->clearSpecial();
@@ -149,7 +150,7 @@ void Map33::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map33.building"],
+		mapText("The fabled building of gold,\nenter (Y/N)?"),
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 0);
 			g_maps->changeMapFromExit(0xf01, 3);
@@ -160,23 +161,23 @@ void Map33::special01() {
 void Map33::special02() {
 	_data[VAL1] = 12;
 	_data[VAL2] = 8;
-	search(STRING["maps.map33.coffin"]);
+	search("Unearthed coffin! Examine (Y/N)?");
 }
 
 void Map33::special03() {
 	_data[VAL1] = 10;
 	_data[VAL2] = 10;
-	search(STRING["maps.map33.crypt"]);
+	search("Open crypt! Examine (Y/N)?");
 }
 
 void Map33::special04() {
 	g_maps->clearSpecialAndRememberReward();
 
 	send(SoundMessage(
-		STRING["maps.map33.corpse"],
+		mapText("Half buried corpse asks for help!\nAssist (Y/N)?"),
 		[]() {
 			SoundMessage msg(
-				STRING["maps.map33.thanks"],
+				mapText("Thanks! It ain't easy being a corpse!\nTake these..."),
 				[](const Common::KeyState &) {
 					g_events->close();
 					g_globals->_treasure.setGems(50);

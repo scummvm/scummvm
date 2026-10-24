@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -57,7 +58,7 @@ void Map44::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.passage_outside1"],
+		"A passage leads outside, take it (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(12, 12);
 			g_maps->changeMapFromExit(0x112, 2);
@@ -69,7 +70,7 @@ void Map44::special02() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xf05, 3);
 		}
@@ -77,11 +78,11 @@ void Map44::special02() {
 }
 
 void Map44::special03() {
-	send(SoundMessage(STRING["maps.map44.message_f"]));
+	send(SoundMessage(mapText("Etched in silver, message F reads:\ntstst,e1,d-ds15a1drh")));
 }
 
 void Map44::special04() {
-	send(SoundMessage(STRING["maps.map44.clover"]));
+	send(SoundMessage(mapText("The green clover grants those who\nare worthy +4 luck!")));
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
@@ -102,7 +103,9 @@ void Map44::special05() {
 	}
 
 	send(SoundMessage(
-		STRING["maps.map44.fountain"],
+		mapText("The Fabulous Fabled Fountain of\n"
+			"Dragadune converts all gold into\n"
+			"experience, accept (Y/N)?"),
 		[]() {
 			Map44 &map = *static_cast<Map44 *>(g_maps->_currentMap);
 
@@ -118,11 +121,11 @@ void Map44::special05() {
 }
 
 void Map44::special06() {
-	send(SoundMessage(STRING["maps.map44.message"]));
+	send(SoundMessage(mapText("Carved in stone, a trivial message\nreads: i be me")));
 }
 
 void Map44::special07() {
-	send(SoundMessage(STRING["maps.map44.bones"]));
+	send(SoundMessage("Decayed bones crunch beneath you!"));
 }
 
 } // namespace Maps

@@ -23,11 +23,20 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
+
+static const char *const TONES[3] = {
+	"A loud tone resounds\n"
+		"throughout the room!",
+	"A sharp tone assaults your senses!",
+	"A mellow tone relaxes you."
+};
 
 #define ARRAY1 250
 #define QUEST_CLERICS_TONE_OFFSET (15 * MAP_W + 10)
@@ -57,17 +66,25 @@ void Map47::special() {
 		g_maps->_mapPos = Common::Point(
 			getRandomNumber(16) - 1, getRandomNumber(16) - 1);
 		updateGame();
-		send(SoundMessage(STRING["maps.map47.poof"]));
+		send(SoundMessage("Poof!"));
 	}
 }
 
 void Map47::special00() {
-	send(SoundMessage(STRING["maps.map47.message5"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"Etched in gold, message 5 reads:\n"
+			"Scoop:-the-discoveries-your-to-\n"
+			"return-the-your-for-dreams-is" :
+		"Etched in gold, message 5 reads:\n"
+			"Scoop:-the-discoveries-your-to-return-\n"
+			"the-your-for-dreams-is"));
 }
 
 void Map47::special01() {
 	send(SoundMessage(
-		STRING["maps.map47.gong"],
+		mapText("Covered with cryptic symbols, a large\n"
+			"brass gong hangs from the ceiling.\n"
+			"Strike it (Y/N)?"),
 		[]() {
 			Map47 &map = *static_cast<Map47 *>(g_maps->_currentMap);
 			int toneNum = g_events->getRandomNumber(6);
@@ -76,8 +93,7 @@ void Map47::special01() {
 				map._data[ARRAY1 + toneNum - 1] = 1;
 				map._visited[QUEST_CLERICS_TONE_OFFSET +
 					toneNum - 1] |= QUEST_LOG_FLAG;
-				g_events->send(SoundMessage(STRING[
-					Common::String::format("maps.map47.tones.%d", toneNum)]));
+				g_events->send(SoundMessage(mapText(TONES[toneNum - 1])));
 			} else {
 				map.poof();
 			}
@@ -95,7 +111,7 @@ void Map47::special02() {
 	}
 
 	if (heard[0] && heard[1] && heard[2]) {
-		send(SoundMessage(STRING["maps.map47.clerics3"]));
+		send(SoundMessage("\"We deem you worthy of advancement!\""));
 		_visited[QUEST_CLERICS_COMPLETE_OFFSET] |= QUEST_LOG_FLAG;
 		_visited[QUEST_CLERICS_ACTIVE_OFFSET] &= ~QUEST_LOG_FLAG;
 
@@ -118,8 +134,8 @@ void Map47::special02() {
 		// Speaking to the Clerics starts the optional advancement quest.
 		_visited[QUEST_CLERICS_ACTIVE_OFFSET] |= QUEST_LOG_FLAG;
 		send(SoundMessage(
-			0, 1, STRING["maps.map47.clerics1"],
-			0, 2, STRING["maps.map47.clerics2"]
+			0, 1, mapText("The Clerics of the South speak:\n"),
+			0, 2, "\"Hear the 3 tones and return!\""
 		));
 	}
 }
@@ -128,7 +144,7 @@ void Map47::special03() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xa00, 3);
 		}
@@ -136,7 +152,10 @@ void Map47::special03() {
 }
 
 void Map47::special04() {
-	send(SoundMessage(STRING["maps.map47.painting"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"On the right wall is a painting of a box, on the left a painting of a curtain." :
+		"On the right wall is a painting of a\n"
+			"box,on the left a painting of a curtain."));
 }
 
 void Map47::special05() {
@@ -193,7 +212,7 @@ void Map47::special17() {
 
 void Map47::special23() {
 	Common::String line = Common::String::format(
-		STRING["maps.map47.door_number"].c_str(),
+		"Door number %c",
 		'0' + (g_maps->_mapPos.x - 5)
 	);
 	send(SoundMessage(line));
@@ -208,7 +227,7 @@ void Map47::poof() {
 			getRandomNumber(16) - 1, getRandomNumber(16) - 1);
 		updateGame();
 
-		send(SoundMessage(STRING["maps.map47.poof"]));
+		send(SoundMessage("Poof!"));
 	}
 }
 

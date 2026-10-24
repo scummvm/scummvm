@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -64,14 +65,14 @@ void Map25::special() {
 		} else {
 			switch (getRandomNumber(100)) {
 			case 99:
-				send(SoundMessage(STRING["maps.map25.volcano"]));
+				send(SoundMessage("The volcano erupts!"));
 				reduceHP();
 				Sound::sound(SOUND_3);
 				break;
 
 			case 100: {
 				SoundMessage msg(
-					STRING["maps.map25.pirates"],
+					"Pirates attack!",
 					[]() {
 						Game::Encounter &enc = g_globals->_encounters;
 						int monsterCount = g_events->getRandomNumber(8) + 4;
@@ -101,7 +102,7 @@ void Map25::special() {
 			nativesAttack();
 		} else {
 			if (g_maps->_mapPos.x >= 10) {
-				SoundMessage msg(STRING["maps.map25.weeping"]);
+				SoundMessage msg("Mysterious weeping echoes throughout!");
 				if (getRandomNumber(100) >= 99) {
 					msg._delaySeconds = 3;
 					msg._callback = []() {
@@ -136,11 +137,11 @@ void Map25::special() {
 		}
 	}
 		send(SoundMessage(
-			STRING["maps.map25.ship"],
+			mapText("At the waters edge are the decaying\nremains of a large ship. Search (Y/N)?"),
 			[]() {
 				if (g_maps->_mapOffset == 216) {
 					g_maps->clearSpecialAndRememberReward();
-					g_events->send(SoundMessage(STRING["maps.map25.jolly_raven"]));
+					g_events->send(SoundMessage("The Jolly Raven!"));
 
 					for (uint i = 0; i < g_globals->_party.size(); ++i) {
 						g_globals->_currCharacter = &g_globals->_party[i];
@@ -162,7 +163,7 @@ void Map25::special() {
 void Map25::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map25.portal"],
+		"Portal of power, enter (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(12, 4);
 			g_maps->changeMapFromExit(0x201, 3);
@@ -175,7 +176,7 @@ void Map25::special01() {
 
 	if (g_globals->_party.hasItem(CORAL_KEY_ID)) {
 		send(InfoMessage(
-			STRING["maps.map25.key"],
+			mapText("Your coral key fits perfectly\nin the lock, enter (Y/N)?"),
 			[]() {
 				g_maps->_mapPos = Common::Point(7, 5);
 				g_maps->changeMapFromExit(0x212, 1);
@@ -190,7 +191,7 @@ void Map25::special02() {
 
 void Map25::nativesAttack() {
 	SoundMessage msg(
-		STRING["maps.map25.natives"],
+		"Crazed natives attack!",
 		[]() {
 			Game::Encounter &enc = g_globals->_encounters;
 			int monsterCount = g_events->getRandomNumber(6) + 7;

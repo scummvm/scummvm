@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -73,7 +74,7 @@ void Map43::special01() {
 		visitedExit();
 
 		send(SoundMessage(
-			STRING["maps.map43.exit"],
+			"Exit castle, (Y/N)?",
 			[]() {
 				g_maps->_mapPos = Common::Point(9, 13);
 				g_maps->changeMapFromExit(0x101, 2);
@@ -86,7 +87,7 @@ void Map43::special01() {
 
 void Map43::special02() {
 	send(SoundMessage(
-		STRING["maps.map43.button"],
+		"Button on the wall, push it (Y/N)?",
 		[]() {
 			Map43 &map = *static_cast<Map43 *>(g_maps->_currentMap);
 			map._states[101] = 17;
@@ -96,13 +97,13 @@ void Map43::special02() {
 }
 
 void Map43::special03() {
-	send(SoundMessage(STRING["maps.map43.message_b"]));
+	send(SoundMessage(mapText("Etched in silver, message B reads:\nrstia-,e1,;/11rn;/m-")));
 }
 
 void Map43::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
 		send(SoundMessage(
-			STRING["maps.map43.guards"],
+			mapText("Castle guards exclaim,\n\"No merchants pass! Begone peasants.\""),
 			[](const Common::KeyState &) {
 				g_events->focusedView()->close();
 				g_maps->_mapPos = Common::Point(9, 13);
@@ -138,11 +139,11 @@ void Map43::special06() {
 }
 
 void Map43::special07() {
-	send(SoundMessage(STRING["maps.map43.tower"]));
+	send(SoundMessage("The Tower"));
 }
 
 void Map43::special08() {
-	send(SoundMessage(STRING["maps.map43.throne_room"]));
+	send(SoundMessage("Throne Room"));
 }
 
 void Map43::updateFlags() {
@@ -215,11 +216,11 @@ Common::String Map43::checkQuestComplete() {
 		}
 
 		return Common::String::format(
-			STRING["maps.map43.ironfist5"].c_str(),
+			"Well done, quest complete! +%u exp",
 			QUEST_EXPERIENCE[qIndex]);
 	} else {
 		// The quest isn't yet complete
-		return STRING["maps.map43.ironfist3"];
+		return "\"Return not until thy quest is complete\"";
 	}
 }
 

@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -71,7 +72,7 @@ void Map35::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map35.exit"],
+		"Exit castle (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(14, 10);
 			g_maps->changeMapFromExit(0xa00, 2);
@@ -84,18 +85,18 @@ void Map35::special02() {
 
 	g_maps->_mapPos = Common::Point(14, 9);
 	g_maps->changeMapFromExit(0xa00, 2);
-	send(SoundMessage(STRING["maps.map35.slide"]));
+	send(SoundMessage("A slide!"));
 }
 
 void Map35::special03() {
-	send(SoundMessage(STRING["maps.map35.message"]));
+	send(SoundMessage(mapText("Etched in silver, message A reads:\natis-19-31ud54aeupi1")));
 }
 
 void Map35::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
 		g_maps->_mapPos.y++;
 		updateGame();
-		send(SoundMessage(STRING["maps.map35.merchant_pass"]));
+		send(SoundMessage(mapText("Castle guards exclaim\n\"No merchants pass! Begone peasants.\"")));
 	}
 }
 
@@ -112,7 +113,7 @@ void Map35::special06() {
 }
 
 void Map35::special07() {
-	send(SoundMessage(STRING["maps.map35.vault"]));
+	send(SoundMessage("Empty vault, alarm!"));
 	_data[VAL1] = 30;
 	_data[VAL2] = 7;
 }
@@ -192,11 +193,11 @@ Common::String Map35::checkQuestComplete() {
 		}
 
 		return Common::String::format(
-			STRING["maps.map35.inspectron5"].c_str(),
+			"Well done, quest complete! +%u exp",
 			QUEST_EXPERIENCE[qIndex]);
 	} else {
 		// The quest isn't yet complete
-		return STRING["maps.map35.inspectron3"];
+		return "\"Return not until thy quest is complete\"";
 	}
 }
 

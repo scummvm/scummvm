@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -63,7 +64,7 @@ void Map26::special00() {
 		}
 
 		SoundMessage msg(
-			STRING["maps.map26.scorpion"],
+			"Suddenly, a gargantuan scorpion attacks!",
 			[]() {
 				Map26 &map = *static_cast<Map26 *>(g_maps->_currentMap);
 				Game::Encounter &enc = g_globals->_encounters;
@@ -92,11 +93,11 @@ void Map26::special01() {
 
 void Map26::special02() {
 	send(SoundMessage(
-		STRING["maps.map26.trading_post"],
+		mapText("A small tribe of desert nomads have\nestablished a trading post here.\nTrade item (Y/N)?"),
 		[]() {
 			Character &c = g_globals->_party[0];
 			if (c._backpack.empty()) {
-				g_events->send(SoundMessage(STRING["maps.map26.nothing_to_trade"]));
+				g_events->send(SoundMessage("Your leader has nothing to trade!"));
 			} else {
 				c._backpack[0]._id = CACTUS_NECTAR_ID;
 				c._backpack[0]._charges = 10;
@@ -106,7 +107,7 @@ void Map26::special02() {
 }
 
 void Map26::special03() {
-	send(SoundMessage(STRING["maps.map26.kilburn"]));
+	send(SoundMessage("Kilburn, C-3 6-14"));
 }
 
 void Map26::addFlag() {

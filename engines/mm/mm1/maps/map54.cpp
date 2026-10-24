@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -58,8 +59,8 @@ void Map54::special00() {
 		updateGame();
 
 		send(SoundMessage(
-			0, 1, STRING["maps.map54.slot1"],
-			0, 2, STRING["maps.map54.slot2"]
+			0, 1, mapText("There's a small slot in the door.\n"),
+			0, 2, "No admittance!"
 		));
 		return;
 	}
@@ -73,16 +74,16 @@ void Map54::special00() {
 			updateGame();
 
 			send(SoundMessage(
-				0, 1, STRING["maps.map54.slot1"],
-				0, 2, STRING["maps.map54.slot3"]
+				0, 1, mapText("There's a small slot in the door.\n"),
+				0, 2, "Key card is rejected!"
 			));
 			return;
 		}
 	}
 
 	send(SoundMessage(
-		0, 1, STRING["maps.map54.slot1"],
-		0, 2, STRING["maps.map54.slot4"]
+		0, 1, mapText("There's a small slot in the door.\n"),
+		0, 2, "Key card is accepted!"
 	));
 }
 
@@ -107,7 +108,7 @@ void Map54::special05() {
 }
 
 void Map54::special06() {
-	send(SoundMessage(STRING["maps.map54.glow"]));
+	send(SoundMessage(mapText("The metallic room is dimly lit by\na pulsating white glow!")));
 }
 
 void Map54::special07() {
@@ -123,7 +124,7 @@ void Map54::projector(int index) {
 	sorpigalInn();
 
 	Common::String line = Common::String::format(
-		STRING["maps.map54.projector"].c_str(),
+		"Astral Projector # %c, zap!",
 		'1' + index);
 	send(SoundMessage(line));
 }

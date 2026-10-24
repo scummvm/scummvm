@@ -25,6 +25,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -54,7 +55,7 @@ void Map27::special() {
 }
 
 void Map27::special00() {
-	send(SoundMessage(STRING["maps.map27.pool"]));
+	send(SoundMessage(mapText("The pool of wisdom grants those who are\nworthy +4 personality.")));
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
@@ -69,13 +70,13 @@ void Map27::special00() {
 }
 
 void Map27::special01() {
-	send(SoundMessage(STRING["maps.map27.retreat"]));
+	send(SoundMessage("Clerical Retreat"));
 }
 
 void Map27::special02() {
 	send(SoundMessage(
 		0, 1, clerics('N'),
-		0, 2, STRING["maps.map27.cured"]
+		0, 2, "Your party is cured!"
 	));
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -92,7 +93,7 @@ void Map27::special02() {
 void Map27::special03() {
 	send(SoundMessage(
 		0, 1, clerics('E'),
-		0, 2, STRING["maps.map27.alignment"]
+		0, 2, "Your alignment is restored!"
 	));
 
 	TempleData alignmentData;
@@ -106,7 +107,7 @@ void Map27::special03() {
 void Map27::special04() {
 	send(SoundMessage(
 		0, 1, clerics('W'),
-		0, 2, STRING["maps.map27.curses"]
+		0, 2, "All curses are removed!"
 	));
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -129,12 +130,11 @@ void Map27::special04() {
 }
 
 void Map27::special05() {
-	send(SoundMessage(STRING["maps.map27.sign"]));
+	send(SoundMessage(mapText("The clerics of the S. shall deem you\nworthy, if you can find them!")));
 }
 
 Common::String Map27::clerics(char name) {
-	return Common::String::format("%s %c.",
-		STRING["maps.map27.clerics"].c_str(), name);
+	return Common::String::format("We are the clerics of the %c.", name);
 }
 
 } // namespace Maps

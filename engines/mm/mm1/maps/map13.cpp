@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -78,7 +80,7 @@ void Map13::special00() {
 	visitedExit();
 	_data[VAL1] = 0;
 	send(SoundMessage(
-		STRING["maps.map13.passage_outside"],
+		"A passage leads outdoors, exit (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 4);
 			g_maps->changeMapFromExit(0x703, 2);
@@ -102,8 +104,10 @@ void Map13::special02() {
 
 	if (g_globals->_activeSpells._s.levitate) {
 		send(SoundMessage(
-			0, 1, STRING["maps.map13.spike_pit"],
-			0, 2, STRING["maps.map13.levitation1"]
+			0, 1, mapText("A trap! A pit full of poisonous spikes\nopens below the party!\n"),
+			0, 2, g_engine->isEnhanced() ?
+				"Luckily, your levitation spell saved you!" :
+				"Luckily,your levitation spell saved you!"
 		));
 	} else if (!g_globals->_activeSpells._s.poison) {
 		reduceHP();
@@ -115,12 +119,12 @@ void Map13::special02() {
 				c._condition = POISONED;
 		}
 
-		send(SoundMessage(STRING["maps.map13.snake_pit"]));
+		send(SoundMessage("Snake pit! "));
 	}
 }
 
 void Map13::special06() {
-	send(SoundMessage(STRING["maps.map13.remains"]));
+	send(SoundMessage(mapText("Smashed remains of stone statues\nseem suspiciously lifelike.")));
 }
 
 void Map13::special10() {
@@ -130,8 +134,8 @@ void Map13::special10() {
 
 	if (g_globals->_activeSpells._s.levitate) {
 		send(InfoMessage(
-			0, 1, STRING["maps.map13.snake_pit"],
-			0, 2, STRING["maps.map13.levitation2"]
+			0, 1, "Snake pit! ",
+			0, 2, "Levitation saved you."
 		));
 		Sound::sound(SOUND_3);
 
@@ -145,7 +149,7 @@ void Map13::special10() {
 		}
 
 		InfoMessage msg(
-			0, 1, STRING["maps.map13.snake_pit"],
+			0, 1, "Snake pit! ",
 			[]() {
 				static_cast<Map13 *>(g_maps->_currentMap)->encounter(
 					g_events->getRandomNumber(3) + 10, 14, 1);

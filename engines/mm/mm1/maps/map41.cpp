@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -48,14 +50,22 @@ void Map41::special() {
 }
 
 void Map41::special00() {
-	send(SoundMessage(STRING["maps.map41.message3"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"Etched in gold, message 3 reads:\n"
+			"For-tasks-and-rating.-Be-from-\n"
+			"6th-frustrations!-The-to-in" :
+		"Etched in gold, message 3 reads:\n"
+			"For-tasks-and-rating.-be-from-6th-\n"
+			"frustrations!-the-to-in"));
 }
 
 void Map41::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map41.stairs_up"],
+		g_engine->isEnhanced() ?
+			"Spiralling stairs go up, take them (Y/N)?" :
+			"Spiralling stairs go up,take them (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(14, 2);
 			g_maps->changeMapFromExit(0x101, 2);
@@ -67,7 +77,7 @@ void Map41::special02() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0x704, 3);
 		}
@@ -79,7 +89,7 @@ void Map41::special03() {
 }
 
 void Map41::special04() {
-	send(SoundMessage(STRING["maps.map41.dung"]));
+	send(SoundMessage("Minotaur dung slushes beneath you!"));
 }
 
 void Map41::special05() {
@@ -123,40 +133,43 @@ void Map41::special14() {
 }
 
 void Map41::special16() {
-	showSign(STRING["maps.map41.sign1"]);
+	showSign("The Enchanted Chamber");
 }
 
 void Map41::special17() {
-	showSign(STRING["maps.map41.sign2"]);
+	showSign("Cleptomian Guild, do not disturb!");
 }
 
 void Map41::special18() {
-	showSign(STRING["maps.map41.sign3"]);
+	showSign("The Council of Strength is in session");
 }
 
 void Map41::special19() {
-	showSign(STRING["maps.map41.sign4"]);
+	showSign("The Uglies Club - Members only!");
 }
 
 void Map41::special20() {
-	showSign(STRING["maps.map41.sign5"]);
+	showSign("Specimen Tank - keep closed");
 }
 
 void Map41::special21() {
-	send(SoundMessage(STRING["maps.wall_painted"]));
+	send(SoundMessage(mapText("The wall is painted from ceiling to\n"
+		"floor in a black and white checkered\n"
+		"pattern!")));
 }
 
 void Map41::special22() {
-	send(SoundMessage(STRING["maps.map41.tapestry1"]));
+	send(SoundMessage(mapText("A tapestry on the wall depicts a gray\n"
+		"minotaur stomping on a group of knights.")));
 }
 
 void Map41::special23() {
-	send(SoundMessage(STRING["maps.map41.tapestry2"]));
+	send(SoundMessage(mapText("A tapestry on the wall depicts\na kingdom ruled by minotaurs")));
 }
 
 void Map41::showSign(const Common::String &line) {
 	send(SoundMessage(
-		0, 1, STRING["maps.sign"],
+		0, 1, mapText("A sign above the door reads:\n"),
 		0, 2, line
 	));
 }

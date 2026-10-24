@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -91,7 +92,7 @@ void Map16::special00() {
 		}
 
 		_data[VAL1]++;
-		SoundMessage msg(STRING["maps.map16.water"],
+		SoundMessage msg(mapText("The water erupts violently,\nrevealing a tremendous serpent"),
 			[]() {
 				Game::Encounter &enc = g_globals->_encounters;
 
@@ -111,7 +112,9 @@ void Map16::special00() {
 }
 
 void Map16::special01() {
-	send(SoundMessage(STRING["maps.map16.wheel"],
+	send(SoundMessage(mapText("Embedded in the side of the mountain is\n"
+		"a large wheel covered in strange and\n"
+		"archaic symbols. Spin the wheel (Y/N)?"),
 		[]() {
 			for (int i = 0; i < 20; ++i)
 				Sound::sound(SOUND_1);

@@ -30,12 +30,12 @@ namespace Maps {
 
 void MapDesert::desert() {
 	SoundMessage msg;
-	msg._lines.push_back(Line(0, 1, STRING["maps.desert.its_hot"]));
+	msg._lines.push_back(Line(0, 1, "It's hot... "));
 
 	// Check whether party has the desert map
 	bool hasMap = g_globals->_party.hasItem(MAP_OF_DESERT_ID);
 	if (!hasMap) {
-		msg._lines.push_back(Line(0, 2, STRING["maps.desert.lost"]));
+		msg._lines.push_back(Line(0, 2, "You're lost!!!"));
 		lost();
 	}
 
@@ -81,7 +81,7 @@ void MapDesert::desert() {
 		switch (getRandomNumber(200)) {
 		case 20:
 			msg._lines.push_back(Line(0, msg._lines.back().y + 1,
-				STRING["maps.desert.whirlwind"]));
+				"A whirlwind swoops the party away!"));
 			Sound::sound(SOUND_3);
 			g_maps->_mapPos = Common::Point(
 				getRandomNumber(15), getRandomNumber(15));
@@ -92,7 +92,7 @@ void MapDesert::desert() {
 
 		case 30:
 			msg._lines.push_back(Line(0, msg._lines.back().y + 1,
-				STRING["maps.desert.sandstorm"]));
+				"A violent sandstorm blasts the party!"));
 			Sound::sound(SOUND_3);
 			reduceHP();
 			break;

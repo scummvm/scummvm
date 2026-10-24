@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -66,7 +67,7 @@ void Map10::special() {
 void Map10::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.passage_outside1"],
+		"A passage leads outside, take it (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 7);
 			g_maps->changeMapFromExit(0x101, 2);
@@ -79,9 +80,13 @@ void Map10::special01() {
 	// Enhanced GameMessages view will provide vertical scrolling if wrapping
 	// still produces more lines than can fit in that frame.
 	SoundMessage msg(
-		STRING["maps.map10.ranalou1"],
+		mapText("\"I'm the wizard Ranalou. Are you here to\nuse the portals (Y/N)?\""),
 		[]() {
-			InfoMessage info(STRING["maps.map10.ranalou2"]);
+			InfoMessage info(mapText("\"Good! Inside this room are 6 portals,\n"
+				"each of which leads to a castle. The\n"
+				"Statue of Judgement requires you to find\n"
+				"one prisoner from each of these castles\n"
+				"before you may be found worthy.\""));
 			info._largeMessage = true;
 			g_events->send(info);
 			Sound::sound(SOUND_3);
@@ -92,7 +97,7 @@ void Map10::special01() {
 			g_maps->clearSpecial();
 		},
 		[]() {
-			g_events->send(SoundMessage(STRING["maps.map10.ranalou3"]));
+			g_events->send(SoundMessage("\"Then begone!\""));
 			g_maps->_mapPos = Common::Point(15, 0);
 			g_maps->_currentMap->updateGame();
 		}
@@ -105,7 +110,7 @@ void Map10::special02() {
 	int idx = g_maps->_mapPos.x;
 	g_maps->_mapPos = Common::Point(MAP_DEST_X[idx], MAP_DEST_Y[idx]);
 	g_maps->changeMap(MAP_DEST_ID[idx], MAP_DEST_SECTION[idx]);
-	send(SoundMessage(STRING["maps.map10.poof"]));
+	send(SoundMessage("Poof! you've been teleported..."));
 }
 
 void Map10::special17() {
@@ -135,9 +140,7 @@ void Map10::special23() {
 	g_maps->clearSpecial();
 
 	if (g_globals->_activeSpells._s.levitate) {
-		Common::String msg = Common::String::format("%s %s",
-			STRING["maps.map10.pit"].c_str(),
-			STRING["maps.map10.levitation"].c_str());
+		Common::String msg = "Jagged slime pit! Levitation saved you.";
 		send(SoundMessage(msg));
 		Sound::sound(SOUND_3);
 
@@ -146,7 +149,7 @@ void Map10::special23() {
 
 		if (getRandomNumber(4) == 4) {
 			SoundMessage msg(
-				0, 1, STRING["maps.map10.pit"],
+				0, 1, "Jagged slime pit!",
 				[]() {
 					g_globals->_encounters.execute();
 				}
@@ -156,14 +159,14 @@ void Map10::special23() {
 			Sound::sound(SOUND_3);
 
 		} else {
-			send(SoundMessage(STRING["maps.map10.pit"]));
+			send(SoundMessage("Jagged slime pit!"));
 			Sound::sound(SOUND_3);
 		}
 	}
 }
 
 void Map10::special29() {
-	send(SoundMessage(STRING["maps.map10.sign1"]));
+	send(SoundMessage(mapText("A sign:\n\nExperiment in progress, do not enter!")));
 }
 
 void Map10::special30() {
@@ -182,7 +185,7 @@ void Map10::special30() {
 }
 
 void Map10::special31() {
-	send(SoundMessage(STRING["maps.map10.sign2"]));
+	send(SoundMessage(mapText("A sign:\n\nAuthorized personnel only! Keep out.")));
 }
 
 void Map10::special32() {

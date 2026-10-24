@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -58,7 +59,7 @@ void Map07::special() {
 void Map07::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 15);
 			g_maps->changeMapFromExit(0xc03, 1);
@@ -69,7 +70,7 @@ void Map07::special00() {
 void Map07::special01() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map07.portal"],
+		"Blue and white portal, enter (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(2, 7);
 			g_maps->changeMapFromExit(0x202, 1);
@@ -93,11 +94,11 @@ void Map07::special02() {
 
 	g_maps->_mapPos.y--;
 	updateGame();
-	send(SoundMessage(0, 1, STRING["maps.map07.gate"]));
+	send(SoundMessage(0, 1, "Bronze grate repels you!"));
 }
 
 void Map07::special03() {
-	send(SoundMessage(0, 1, STRING["maps.map07.do_not_disturb"]));
+	send(SoundMessage(0, 1, mapText("\n\"Demons in conference, do not disturb!\"")));
 }
 
 void Map07::special04() {
@@ -164,7 +165,7 @@ void Map07::special13() {
 				c.loadFaceSprites();
 			}
 
-			g_events->send(SoundMessage(0, 1, STRING["maps.map07.reversal"]));
+			g_events->send(SoundMessage(0, 1, "Reversal!"));
 			Sound::sound(SOUND_3);
 		}
 	);
@@ -186,7 +187,7 @@ void Map07::special15() {
 		}
 	}
 
-	g_events->send(SoundMessage(0, 1, STRING["maps.map07.might"]));
+	g_events->send(SoundMessage(0, 1, "Those who are worthy +4 might!"));
 	Sound::sound(SOUND_3);
 }
 
@@ -214,7 +215,7 @@ void Map07::setMonsters(int id1, int id2) {
 }
 
 void Map07::poolYN(YNCallback callback) {
-	send(SoundMessage(STRING["maps.map07.pool"], callback));
+	send(SoundMessage("Glowing pool, step in (Y/N)?", callback));
 }
 
 void Map07::applyCondition(Condition cond) {
@@ -225,7 +226,7 @@ void Map07::applyCondition(Condition cond) {
 	}
 
 	Sound::sound(SOUND_3);
-	send(InfoMessage(0, 1, STRING["maps.map07.toxic"]));
+	send(InfoMessage(0, 1, "Toxic!"));
 }
 
 } // namespace Maps

@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -50,7 +52,9 @@ void Map51::special() {
 }
 
 void Map51::special00() {
-	send(SoundMessage(STRING["maps.wall_painted"]));
+	send(SoundMessage(mapText("The wall is painted from ceiling to\n"
+		"floor in a black and white checkered\n"
+		"pattern!")));
 }
 
 void Map51::special01() {
@@ -58,7 +62,10 @@ void Map51::special01() {
 		g_maps->_mapPos = Common::Point(
 			getRandomNumber(14), getRandomNumber(14));
 		updateGame();
-		send(SoundMessage(STRING["maps.map51.substance"]));
+		send(SoundMessage(g_engine->isEnhanced() ?
+			"Without experimental substance there is no hope... Poof!" :
+			"Without experimental substance\n"
+				"there is no hope...poof!"));
 	}
 }
 
@@ -66,7 +73,7 @@ void Map51::special02() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_down"],
+		"Stairs going down! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xe00, 3);
 		}
@@ -77,7 +84,7 @@ void Map51::special03() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xf01, 3);
 		}

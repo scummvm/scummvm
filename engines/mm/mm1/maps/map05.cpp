@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -56,7 +57,7 @@ void Map05::special() {
 void Map05::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0x604, 1);
 		}
@@ -95,12 +96,19 @@ void Map05::special05() {
 void Map05::special06() {
 	if (!g_globals->_party.hasItem(VELLUM_SCROLL_ID)) {
 		send(SoundMessage(
-			0, 1, STRING[!hasFlag() ? "maps.map05.man1" : "maps.map05.man2"],
+			0, 1, !hasFlag() ?
+				mapText("An elderly man behind a desk speaks:\n"
+					"\"i am in need of courier service\n"
+					"are you interested (Y/N)?\"") :
+				mapText("\"I see you haven't delivered my message,\n"
+					"Care to try again (Y/N)?\""),
 			[]() {
 				Map05 &map = *static_cast<Map05 *>(g_maps->_currentMap);
 				if (map.addScroll()) {
 					map.addFlag();
-					g_events->send(InfoMessage(0, 1, STRING["maps.map05.man3"]));
+					g_events->send(InfoMessage(0, 1, mapText("\"Good! take this scroll to the\n"
+						"wizard Agar in Erliquin and you shall\n"
+						"be rewarded.\"")));
 				}
 			}
 		));
@@ -110,7 +118,7 @@ void Map05::special06() {
 void Map05::special07() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map05.portal"],
+		mapText("A shimmering blue and white portal\nappears! Enter (Y/N)?"),
 		[]() {
 			g_maps->_mapPos.x = 8;
 			g_maps->_mapPos.y = 8;
@@ -121,14 +129,16 @@ void Map05::special07() {
 
 void Map05::special08() {
 	send(SoundMessage(
-		2, 1, STRING["maps.sign"],
-		10, 2, STRING["maps.map05.arena"]
+		2, 1, mapText("A sign above the door reads:\n"),
+		10, 2, "\"The Arena\""
 	));
 }
 
 void Map05::special09() {
 	send(SoundMessage(
-		0, 1, STRING["maps.map05.arena_inside"],
+		0, 1, mapText("Around the room there are several\n"
+			"balconies filled with cheering peasants\n"
+			"A man asks \"Will you participate (Y/N)?\""),
 		[]() {
 			Map05 &map = *static_cast<Map05 *>(g_maps->_currentMap);
 			map[MAP_47] = 2;
@@ -148,7 +158,7 @@ void Map05::special09() {
 }
 
 void Map05::special10() {
-	showMessage(STRING["maps.map05.message2"]);
+	showMessage("The jail above has many cells.");
 }
 
 void Map05::special11() {
@@ -156,7 +166,7 @@ void Map05::special11() {
 		g_maps->clearSpecial();
 		g_globals->_encounters.execute();
 	} else {
-		showMessage(STRING["maps.map05.message3"]);
+		showMessage("Don't turn around!");
 	}
 }
 
@@ -183,7 +193,7 @@ void Map05::encounter(int monsterId) {
 
 void Map05::showMessage(const Common::String &msg) {
 	send(SoundMessage(
-		0, 1, STRING["maps.map05.message1"],
+		0, 1, mapText("Scrawled on the wall, a message reads:\n"),
 		0, 2, msg
 	));
 }
@@ -199,7 +209,7 @@ bool Map05::addScroll() {
 		}
 	}
 
-	g_events->send(SoundMessage(8, 2, STRING["maps.map05.backpacks_full"]));
+	g_events->send(SoundMessage(8, 2, "*** Backpacks full ***"));
 	return false;
 }
 

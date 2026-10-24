@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -79,7 +80,8 @@ void Map14::special00() {
 			}
 		}
 
-		send(SoundMessage(STRING["maps.map14.surrounded"],
+		send(SoundMessage(mapText("You've been surrounded by the Dark Rider\n"
+			"and his men! He challenges you to a duel... accept (Y/N)?"),
 			[]() {
 				Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
 				map.encounter();
@@ -129,7 +131,7 @@ void Map14::special02() {
 		send("View", DrawGraphicMessage(65 + 6));
 
 		send(SoundMessage(
-			STRING["maps.map14.castle"],
+			mapText("The fabeled Castle Doom!\nWill you enter (Y/N)?"),
 			[]() {
 				Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
 				map[VAL3] = 0xff;
@@ -145,14 +147,14 @@ void Map14::special02() {
 }
 
 void Map14::special03() {
-	send(SoundMessage(STRING["maps.map14.words"]));
+	send(SoundMessage(mapText("Carved on a block of ice are the words:\nStart at 15-7 and walk to Doom!")));
 }
 
 void Map14::special04() {
 	visitedExit();
 	if (_data[VAL2]) {
 		send(SoundMessage(
-			STRING["maps.map14.passage"],
+			"A secret passage to Doom, take it (Y/N)?",
 			[]() {
 				g_maps->_mapPos = Common::Point(4, 4);
 				g_maps->changeMapFromExit(0x706, 3);
@@ -175,7 +177,7 @@ void Map14::special05() {
 		}
 	}
 
-	send(SoundMessage(STRING["maps.map14.pool"]));
+	send(SoundMessage(mapText("The pool of health grants those who are\nworthy +4 endurance!")));
 }
 
 } // namespace Maps

@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -60,7 +61,7 @@ void Map49::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.passage_outside1"],
+		"A passage leads outside, take it (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(14, 7);
 			g_maps->changeMapFromExit(0xb1a, 2);
@@ -73,17 +74,17 @@ void Map49::special02() {
 
 	g_maps->_mapPos = Common::Point(15, 7);
 	g_maps->changeMapFromExit(0xb1a, 2);
-	send(SoundMessage(STRING["maps.map49.chute"]));
+	send(SoundMessage("A chute..."));
 }
 
 void Map49::special03() {
-	send(SoundMessage(STRING["maps.map49.message_e"]));
+	send(SoundMessage(mapText("Etched in silver, message E reads:\noei/:1-33-1ek5;d-et,")));
 }
 
 void Map49::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
 		send(SoundMessage(
-			STRING["maps.map49.guards2"],
+			mapText("Kings guards approach.\n\"No King's Pass, no admittance!\""),
 			[](const Common::KeyState &) {
 				Map49 &map = *static_cast<Map49 *>(g_maps->_currentMap);
 				g_maps->_mapPos = Common::Point(
@@ -100,7 +101,7 @@ void Map49::special05() {
 	if (!g_globals->_party.hasItem(KINGS_PASS_ID)) {
 		g_maps->_mapPos.x++;
 		updateGame();
-		send(SoundMessage(STRING["maps.map49.guards2"]));
+		send(SoundMessage(mapText("Kings guards approach.\n\"No King's Pass, no admittance!\"")));
 
 	} else {
 		checkPartyDead();
@@ -126,7 +127,7 @@ void Map49::special07() {
 	g_maps->_mapPos = Common::Point(4, 7);
 	g_maps->changeMapFromExit(0xb1a, 2);
 
-	send(SoundMessage(STRING["maps.map49.catapult"]));
+	send(SoundMessage("A catapult ejects you from the tower!"));
 }
 
 void Map49::special08() {
@@ -135,7 +136,7 @@ void Map49::special08() {
 		reduceHP();
 	reduceHP();
 
-	messageEncounter(STRING["maps.map49.trap"]);
+	messageEncounter("Singe! Acid trap.");
 }
 
 void Map49::special09() {
@@ -144,11 +145,11 @@ void Map49::special09() {
 		reduceHP();
 	reduceHP();
 
-	messageEncounter(STRING["maps.map49.explosion"]);
+	messageEncounter("Boom! A fiery explosion.");
 }
 
 void Map49::special16() {
-	send(SoundMessage(STRING["maps.map49.scream"]));
+	send(SoundMessage("A loud scream from behind the door!"));
 }
 
 void Map49::special20() {
@@ -158,7 +159,7 @@ void Map49::special20() {
 }
 
 void Map49::special22() {
-	send(SoundMessage(STRING["maps.map49.throne_room"]));
+	send(SoundMessage("Throne Room"));
 }
 
 void Map49::messageEncounter(const Common::String &line) {

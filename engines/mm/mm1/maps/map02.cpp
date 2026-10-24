@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -59,8 +60,8 @@ void Map02::special00() {
 }
 
 void Map02::special01() {
-	Common::String line1 = STRING["maps.map02.zom1"];
-	Common::String line2 = STRING["maps.map02.zom3"];
+	Common::String line1 = mapText("\"I am Zom, astral brother of Zam.\n");
+	Common::String line2 = "You're not the couriers!\"";
 
 	bool hasCourier = false;
 	for (uint i = 0; i < g_globals->_party.size() && !hasCourier; ++i) {
@@ -73,7 +74,7 @@ void Map02::special01() {
 			c._flags[0] |= CHARFLAG0_COURIER3 | CHARFLAG0_ZOM_CLUE;
 		}
 
-		line2 = STRING["maps.map02.zom2"];
+		line2 = "My clue is 1-15.\"";
 	}
 
 	send(InfoMessage(
@@ -94,7 +95,7 @@ void Map02::special03() {
 void Map02::special04() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.passage_outside2"],
+		"Passage outside, exit (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 7);
 			g_maps->changeMapFromExit(0x801, 2);
@@ -119,28 +120,28 @@ void Map02::special08() {
 }
 
 void Map02::special09() {
-	showSign(STRING["maps.map02.docks"]);
+	showSign("\"Ye Old Docks\"");
 }
 
 void Map02::special10() {
-	showSign(STRING["maps.map02.market"]);
+	showSign("\"Arcon's Slop\"");
 }
 
 void Map02::special11() {
-	showSign(STRING["maps.map02.blacksmith"]);
+	showSign("\"Swampside Supplies\"");
 }
 
 void Map02::special12() {
-	showSign(STRING["maps.map02.inn"]);
+	showSign("\"The Inn of Algary\"");
 }
 
 void Map02::special13() {
-	send(SoundMessage(0, 1, STRING["maps.map02.zom0"]));
+	send(SoundMessage(0, 1, "Note: Zom 1,1"));
 }
 
 void Map02::special14() {
 	send(SoundMessage(
-		STRING["maps.map02.pit"],
+		"Swaze pit! jump in (Y/N)?",
 		[]() {
 			g_maps->_mapPos.x++;
 			g_globals->_encounters.execute();
@@ -151,7 +152,7 @@ void Map02::special14() {
 void Map02::special15() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map02.portal"],
+		"A magic portal! enter (Y/N)?",
 		[]() {
 			int index = g_maps->_mapPos.x - 9;
 			if (index < 0 || index >= 4)
@@ -167,15 +168,15 @@ void Map02::special15() {
 }
 
 void Map02::special18() {
-	showSign(STRING["maps.map02.temple"]);
+	showSign("\"Temple Half-Dead\"");
 }
 
 void Map02::special20() {
-	showSign(STRING["maps.map02.tavern"]);
+	showSign("\"Jolly Jester Tavern\"");
 }
 
 void Map02::special21() {
-	showSign(STRING["maps.map02.training"]);
+	showSign("\"Dragons Claw Training\"");
 }
 
 } // namespace Maps

@@ -82,7 +82,7 @@ void Map21::special00() {
 	}
 
 	SoundMessage msg(
-		STRING["maps.map21.ghostship"],
+		"Pirate Ghostship Anarchist!",
 		[]() {
 			Game::Encounter &enc = g_globals->_encounters;
 			enc.clearMonsters();
@@ -104,7 +104,7 @@ void Map21::special00() {
 
 void Map21::special01() {
 	send(SoundMessage(
-		STRING["maps.map21.free_trivia"],
+		"Free trivia chance, pull branch (Y/N)?",
 		[]() {
 			Map21 &map = *static_cast<Map21 *>(g_maps->_currentMap);
 			map[TRIVIA_ENABLED]++;
@@ -120,7 +120,7 @@ void Map21::special02() {
 		return;
 
 	send(SoundMessage(
-		STRING["maps.map21.trivia_island"],
+		"Trivia Island! 500 gold, enter (Y/N)?",
 		[]() {
 			MM1::Maps::Map &map = *g_maps->_currentMap;
 
@@ -137,7 +137,7 @@ void Map21::special02() {
 
 			g_maps->_mapPos.y++;
 			g_maps->_currentMap->updateGame();
-			g_events->send(SoundMessage(STRING["maps.map21.not_enough_gold"]));
+			g_events->send(SoundMessage("Not enough gold!"));
 		},
 		[]() {
 			g_maps->_mapPos.y++;

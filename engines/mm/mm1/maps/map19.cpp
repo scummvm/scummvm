@@ -23,6 +23,7 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
@@ -65,7 +66,7 @@ void Map19::special00() {
 void Map19::special01() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map19.cave"],
+		"There's a cave here, enter (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 0);
 			g_maps->changeMapFromExit(0xa00, 1);
@@ -76,7 +77,10 @@ void Map19::special01() {
 void Map19::special02() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map19.stairs_down"],
+		g_engine->isEnhanced() ?
+			"A descending staircase is the entrance to a warrior's stronghold, go in (Y/N)?" :
+			"A descending staircase is the entrance\n"
+				"to a warriors stronghold, go in (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 1);
 			g_maps->changeMapFromExit(0xf02, 3);
@@ -85,7 +89,7 @@ void Map19::special02() {
 }
 
 void Map19::special03() {
-	send(SoundMessage(STRING["maps.map19.carving"]));
+	send(SoundMessage("Carved on a tree: \"9-9 Raven's Lair\""));
 }
 
 void Map19::special04() {
@@ -135,7 +139,7 @@ void Map19::riddleAnswer(const Common::String &answer) {
 
 	if (answer.equalsIgnoreCase(properAnswer)) {
 		InfoMessage msg(
-			16, 2, STRING["maps.map19.correct"],
+			16, 2, "Correct!",
 			[]() {
 				g_maps->clearSpecial();
 
@@ -158,7 +162,7 @@ void Map19::riddleAnswer(const Common::String &answer) {
 	} else {
 		g_maps->_mapPos.x = 15;
 		updateGame();
-		send(SoundMessage(STRING["maps.map19.incorrect"]));
+		send(SoundMessage("Wrong, you're too young to understand."));
 	}
 }
 

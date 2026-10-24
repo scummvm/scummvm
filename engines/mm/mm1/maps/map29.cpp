@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -96,7 +97,7 @@ void Map29::special00() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map29.algary"],
+		"Algary, enter (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 15);
 			g_maps->changeMapFromExit(0x203, 1);
@@ -119,7 +120,9 @@ void Map29::special01() {
 		}
 
 		send(SoundMessage(
-			STRING["maps.map29.beast"],
+			mapText("A huge winged beast exclaims,\n"
+				"\"This swamp is quite dangerous. Fly you\n"
+				"to safety (Y/N)?\""),
 			[]() {
 				g_maps->_mapPos = Common::Point(12, 12);
 				g_maps->_currentMap->updateGame();
@@ -155,7 +158,7 @@ void Map29::special02() {
 
 void Map29::special03() {
 	SoundMessage msg(
-		STRING["maps.map29.attack"],
+		"Paul Pead and his men attack!",
 		[]() {
 			Game::Encounter &enc = g_globals->_encounters;
 			int monsterCount = g_events->getRandomNumber(5) + 6;
@@ -238,7 +241,7 @@ void Map29::chessAnswer(const Common::String &answer) {
 
 void Map29::begone() {
 	g_maps->_mapPos.y = 7;
-	SoundMessage msg(STRING["maps.map29.begone"],
+	SoundMessage msg("Og says, \"Begone!\"",
 		[]() {
 			g_maps->_currentMap->updateGame();
 		}

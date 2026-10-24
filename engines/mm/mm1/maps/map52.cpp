@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -50,7 +52,9 @@ void Map52::special() {
 }
 
 void Map52::special00() {
-	send(SoundMessage(STRING["maps.wall_painted"]));
+	send(SoundMessage(mapText("The wall is painted from ceiling to\n"
+		"floor in a black and white checkered\n"
+		"pattern!")));
 }
 
 void Map52::special01() {
@@ -58,14 +62,16 @@ void Map52::special01() {
 	g_maps->_mapPos = Common::Point(8, 1);
 	updateGame();
 
-	send(SoundMessage(STRING["maps.map52.summoned"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"You have been summoned... Poof!" :
+		"You have been summoned...poof!"));
 }
 
 void Map52::special03() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0x701, 3);
 		}
@@ -76,7 +82,7 @@ void Map52::special04() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xf01, 3);
 		}

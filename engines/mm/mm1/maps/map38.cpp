@@ -23,7 +23,9 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -48,15 +50,23 @@ void Map38::special() {
 		getRandomNumber(16) - 1);
 	// This random relocation bypasses updateGame()/redrawGame().
 	g_maps->visitedTile();
-	send(SoundMessage(STRING["maps.map38.ringing"]));
+	send(SoundMessage(mapText("A strange ringing sound startles\nthe party. You are teleported!")));
 }
 
 void Map38::special00() {
-	send(SoundMessage(STRING["maps.map38.message4"]));
+	send(SoundMessage(g_engine->isEnhanced() ?
+		"Etched in gold, message 4 reads:\n"
+			"Of-be-has-true-knowledge-plane-\n"
+			"a-level-to-reality-it" :
+		"Etched in gold, message 4 reads:'\n"
+			"of-be-has-true-knowledge-plane-a-level-'\n"
+			"to-reality-it"));
 }
 
 void Map38::special01() {
-	send(SoundMessage(STRING["maps.wall_painted"]));
+	send(SoundMessage(mapText("The wall is painted from ceiling to\n"
+		"floor in a black and white checkered\n"
+		"pattern!")));
 }
 
 void Map38::special02() {
@@ -67,7 +77,7 @@ void Map38::special03() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->_mapPos.x = 0;
 			g_maps->changeMapFromExit(0xf03, 3);
@@ -76,7 +86,9 @@ void Map38::special03() {
 }
 
 void Map38::special04() {
-	send(SoundMessage(STRING["maps.map38.banner"]));
+	send(SoundMessage(mapText("A banner reads:\n"
+		"the Labyrinth of Lazzeruth...\n"
+		"Few have entered, none have returned!")));
 }
 
 void Map38::special05() {
@@ -120,19 +132,25 @@ void Map38::special14() {
 }
 
 void Map38::special15() {
-	send(SoundMessage(STRING["maps.map38.face1"]));
+	send(SoundMessage(mapText("Inset in the wall, a stone face\nyells: \"My brain hurts!\"")));
 }
 
 void Map38::special16() {
-	send(SoundMessage(STRING["maps.map38.face2"]));
+	send(SoundMessage(mapText("Inset in the wall, a stone face\n"
+		"speaks: \"I would pay highly for a green\n"
+		"handled, pearl encrusted abelnuski.\"")));
 }
 
 void Map38::special17() {
-	send(SoundMessage(STRING["maps.map38.face3"]));
+	send(SoundMessage(mapText("Inset in the wall, a stone face\n"
+		"speaks: \"I see all, hear all,\n"
+		"know nothing...\"")));
 }
 
 void Map38::special18() {
-	send(SoundMessage(STRING["maps.map38.face4"]));
+	send(SoundMessage(mapText("Inset in the wall, a stone face\n"
+		"proclaims: \"Okrim is watching.\n"
+		"He studies your weaknesses!\"")));
 }
 
 } // namespace Maps

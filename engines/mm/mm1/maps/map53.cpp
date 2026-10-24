@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -56,18 +57,20 @@ void Map53::special00() {
 	if (!g_globals->_party.hasItem(W_QUEEN_IDOL_ID))
 		g_globals->_treasure._items[2] = W_QUEEN_IDOL_ID;
 
-	send(SoundMessage(STRING["maps.wall_painted"]));
+	send(SoundMessage(mapText("The wall is painted from ceiling to\n"
+		"floor in a black and white checkered\n"
+		"pattern!")));
 }
 
 void Map53::special01() {
-	send(SoundMessage(STRING["maps.map53.sign"]));
+	send(SoundMessage("Danger! Dungeon under construction."));
 }
 
 void Map53::special03() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map53.ladder"],
+		"A ladder going up, climb it (Y/N)?",
 		[]() {
 			g_maps->changeMapFromExit(0xf01, 3);
 		}

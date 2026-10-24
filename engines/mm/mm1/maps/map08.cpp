@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -64,7 +65,7 @@ void Map08::special() {
 void Map08::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 7);
 			g_maps->changeMapFromExit(0xb1a, 1);
@@ -75,7 +76,7 @@ void Map08::special00() {
 void Map08::special01() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.stairs_up"],
+		"Stairs going up! Take them (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(14, 1);
 			g_maps->changeMapFromExit(0xa00, 2);
@@ -105,7 +106,7 @@ void Map08::special06() {
 	if (_data[CODE_ARMED]) {
 		reduceHP();
 
-		send(InfoMessage(18, 2, STRING["maps.map08.zap"]));
+		send(InfoMessage(18, 2, "Zap!"));
 		Sound::sound(SOUND_3);
 	} else {
 		checkPartyDead();
@@ -114,7 +115,7 @@ void Map08::special06() {
 
 void Map08::special08() {
 	if (_data[CODE_ARMED]) {
-		send(InfoMessage(0, 1, STRING["maps.map08.dancing_lights"]));
+		send(InfoMessage(0, 1, mapText("Dancing lights flicker and crackel in\nthe area in front of you!")));
 		Sound::sound(SOUND_3);
 	} else {
 		checkPartyDead();
@@ -157,12 +158,12 @@ void Map08::correctCode() {
 	_states[119] ^= 0x10;
 	_states[120] ^= 1;
 
-	send(SoundMessage(STRING["maps.map08.good_code"]));
+	send(SoundMessage("\"Thank you, fields deactivated.\""));
 }
 
 void Map08::incorrectCode() {
 	SoundMessage msg(
-		STRING["maps.map08.bad_code"],
+		"\"Improper access code!\"",
 		[]() {
 			MM1::Maps::Map &map = *g_maps->_currentMap;
 			map[CODE_FAILURES]++;
@@ -176,8 +177,8 @@ void Map08::incorrectCode() {
 			}
 
 			InfoMessage msg2(
-				0, 1, STRING["maps.map08.bad_code"],
-				17, 2, STRING["maps.map08.alarm"],
+				0, 1, "\"Improper access code!\"",
+				17, 2, "Alarm!",
 				[]() {
 					g_globals->_encounters.execute();
 				}

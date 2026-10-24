@@ -146,12 +146,12 @@ void Map28::special() {
 
 	} else {
 		send(SoundMessage(
-			STRING["maps.map28.tree"],
+			"Climb tree (Y/N)?",
 			[]() {
 				Map28 &map = *static_cast<Map28 *>(g_maps->_currentMap);
 
 				if (!map[VAL2]) {
-					g_events->send(SoundMessage(STRING["maps.map28.nothing"]));
+					g_events->send(SoundMessage("Nothing here."));
 
 				} else {
 					g_maps->clearSpecial();
@@ -160,7 +160,7 @@ void Map28::special() {
 					int val = g_events->getRandomNumber(10);
 					switch (val) {
 					case 1:
-						g_events->send(SoundMessage(STRING["maps.map28.nothing"]));
+						g_events->send(SoundMessage("Nothing here."));
 						break;
 
 					case 2:
@@ -168,33 +168,33 @@ void Map28::special() {
 							Character &c = g_globals->_party[i];
 							c._food = MIN((int)c._food + 5, MAX_FOOD);
 						}
-						g_events->send(SoundMessage(STRING["maps.map28.food"]));
+						g_events->send(SoundMessage("+5 food"));
 						break;
 
 					case 3:
 						map.setCondition(POISONED);
 						map.reduceHpBase();
-						g_events->send(SoundMessage(STRING["maps.map28.thorns"]));
+						g_events->send(SoundMessage("Poison thorns"));
 						break;
 
 					case 4:
 						if (g_globals->_activeSpells._s.levitate) {
-							g_events->send(SoundMessage(STRING["maps.map28.nothing"]));
+							g_events->send(SoundMessage("Nothing here."));
 						} else {
 							map.reduceHpBase();
 							map.reduceHpBase();
-							g_events->send(SoundMessage(STRING["maps.map28.you_fell"]));
+							g_events->send(SoundMessage("You fell"));
 						}
 						break;
 
 					case 5:
-						g_events->send(SoundMessage(STRING["maps.map28.lightning"]));
+						g_events->send(SoundMessage("Lightning"));
 						break;
 
 					case 6:
 						map.setCondition(DISEASED);
 						map.reduceHpBase();
-						g_events->send(SoundMessage(STRING["maps.map28.lightning"]));
+						g_events->send(SoundMessage("Lightning"));
 						break;
 
 					case 7:
@@ -205,11 +205,11 @@ void Map28::special() {
 							}
 						}
 
-						g_events->send(SoundMessage(STRING["maps.map28.flash"]));
+						g_events->send(SoundMessage("Flash"));
 						break;
 
 					case 8:
-						g_events->send(SoundMessage(STRING["maps.map28.poof"]));
+						g_events->send(SoundMessage("Poof!"));
 						g_maps->_mapPos = Common::Point(
 							g_events->getRandomNumber(15),
 							g_events->getRandomNumber(15));
@@ -218,7 +218,7 @@ void Map28::special() {
 
 					default:
 						g_globals->_activeSpells._s.cursed = val;
-						g_events->send(SoundMessage(STRING["maps.map28.cursed"]));
+						g_events->send(SoundMessage("Cursed"));
 						break;
 					}
 				}
@@ -235,7 +235,7 @@ void Map28::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map28.cave"],
+		"A cave, enter (Y/N)?",
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 8);
 			g_maps->changeMapFromExit(0x601, 1);
@@ -244,7 +244,7 @@ void Map28::special01() {
 }
 
 void Map28::special02() {
-	send(SoundMessage(STRING["maps.map28.sign"]));
+	send(SoundMessage("Roadsign: Algary S.9"));
 }
 
 void Map28::setCondition(byte condition) {

@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -69,7 +70,12 @@ void Map22::special00() {
 	}
 
 	Sound::sound(SOUND_3);
-	InfoMessage msg(STRING["maps.map22.chest"]);
+	InfoMessage msg(mapText("You found a chest upon which an\n"
+		"inscription reads: Property of Xx!xx!\n"
+		"Inside you found a ruby whistle, 2000\n"
+		"gold and a note:\n"
+		"The stronghold lies at B-3,14-2\n"
+		"Blow twice to enter."));
 	msg._largeMessage = true;
 	send(msg);
 
@@ -100,12 +106,12 @@ void Map22::special00() {
 }
 
 void Map22::special01() {
-	send(SoundMessage(STRING["maps.map22.roadsign"]));
+	send(SoundMessage("Roadsign: Sorpigal S.17, W.1, N.2"));
 }
 
 void Map22::special02() {
 	send(SoundMessage(
-		STRING["maps.map22.wagons"],
+		"Deserted merchant wagons, search (Y/N)?",
 		[]() {
 			if (g_maps->_mapPos.x == 5) {
 				g_maps->clearSpecialAndRememberReward();
@@ -115,7 +121,7 @@ void Map22::special02() {
 			} else {
 				g_maps->clearSpecial();
 				InfoMessage msg1(
-					16, 2, STRING["maps.map22.ambush"],
+					16, 2, "Ambush!",
 					[]() {
 						Game::Encounter &enc = g_globals->_encounters;
 						int monsterCount = g_events->getRandomNumber(3);
@@ -142,7 +148,7 @@ void Map22::special02() {
 
 void Map22::special08() {
 	send(SoundMessage(
-		STRING["maps.map22.fountain"],
+		mapText("A fountain speaks:\n\"Will the party drink (Y/N)?\""),
 		[]() {
 			switch (g_maps->_mapPos.x) {
 			case 8:
@@ -151,7 +157,7 @@ void Map22::special08() {
 					g_globals->_party[i]._might._current += 50;
 
 				Sound::sound(SOUND_3);
-				g_events->send(SoundMessage(STRING["maps.map22.today_might"]));
+				g_events->send(SoundMessage("Today might!"));
 				break;
 
 			case 9:
@@ -160,7 +166,7 @@ void Map22::special08() {
 					g_globals->_party[i]._spellLevel._current += 7;
 
 				Sound::sound(SOUND_3);
-				g_events->send(SoundMessage(STRING["maps.map22.today_spells"]));
+				g_events->send(SoundMessage("Today spells!"));
 				break;
 
 			default:
@@ -172,7 +178,7 @@ void Map22::special08() {
 				}
 
 				Sound::sound(SOUND_3);
-				g_events->send(SoundMessage(STRING["maps.map22.poison"]));
+				g_events->send(SoundMessage("Arghhh... poison!"));
 				break;
 			}
 		}
