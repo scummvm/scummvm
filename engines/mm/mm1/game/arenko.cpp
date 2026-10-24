@@ -21,6 +21,7 @@
 
 #include "mm/mm1/game/arenko.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/maps/map28.h"
 
 
 namespace MM {
@@ -28,19 +29,34 @@ namespace MM1 {
 namespace Game {
 
 void Arenko::giveGold() {
+	Maps::Map28 &map = *static_cast<Maps::Map28 *>(g_maps->_currentMap);
+	if (map.arenkoQuestCompleted())
+		return;
+
 	g_globals->_treasure.setGold((getRandomNumber(8) + 8) * 256);
+	map.completeArenkoQuest();
 	g_maps->clearSpecial();
 	g_events->addAction(KEYBIND_SEARCH);
 }
 
 void Arenko::giveGems() {
+	Maps::Map28 &map = *static_cast<Maps::Map28 *>(g_maps->_currentMap);
+	if (map.arenkoQuestCompleted())
+		return;
+
 	g_globals->_treasure.setGems(getRandomNumber(50) + 200);
+	map.completeArenkoQuest();
 	g_maps->clearSpecial();
 	g_events->addAction(KEYBIND_SEARCH);
 }
 
 void Arenko::giveItem() {
+	Maps::Map28 &map = *static_cast<Maps::Map28 *>(g_maps->_currentMap);
+	if (map.arenkoQuestCompleted())
+		return;
+
 	g_globals->_treasure._items[2] = getRandomNumber(22) + 196;
+	map.completeArenkoQuest();
 	g_maps->clearSpecial();
 	g_events->addAction(KEYBIND_SEARCH);
 }

@@ -38,9 +38,9 @@ Arenko::Arenko() : TextView("Arenko") {
 bool Arenko::msgFocus(const FocusMessage &msg) {
 	MM1::Maps::Map28 &map = *static_cast<MM1::Maps::Map28 *>(g_maps->_currentMap);
 
-	if (!map[VAL1]) {
+	if (!map.arenkoQuestActive()) {
 		_line = STRING["maps.map28.arenko"];
-		map[VAL2] = 1;
+		map.startArenkoQuest();
 
 	} else if (map[VAL1] < 19) {
 		_line = STRING["maps.map28.keep_climbing"];

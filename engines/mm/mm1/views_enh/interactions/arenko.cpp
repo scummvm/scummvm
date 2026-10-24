@@ -39,9 +39,9 @@ bool Arenko::msgFocus(const FocusMessage &msg) {
 	Maps::Map28 &map = *static_cast<Maps::Map28 *>(g_maps->_currentMap);
 	clearButtons();
 
-	if (!map[VAL1]) {
+	if (!map.arenkoQuestActive()) {
 		addText(STRING["maps.map28.arenko"]);
-		map[VAL2] = 1;
+		map.startArenkoQuest();
 
 	} else if (map[VAL1] < 19) {
 		addText(STRING["maps.map28.keep_climbing"]);

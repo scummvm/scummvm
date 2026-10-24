@@ -31,6 +31,10 @@ namespace Maps {
 class Map28 : public Map {
 	typedef void (Map28:: *SpecialFn)();
 private:
+	byte arenkoStoredState() const;
+	void setArenkoStoredState(byte state);
+	void restoreArenkoQuest();
+
 	void special00();
 	void special01();
 	void special02();
@@ -44,6 +48,15 @@ private:
 	};
 public:
 	Map28() : Map(28, "aread3", 0x106, 2) {}
+
+	void load() override;
+
+	bool arenkoQuestActive() const;
+	bool arenkoQuestCompleted() const;
+	int arenkoClimbs() const;
+	void startArenkoQuest();
+	void recordArenkoClimb();
+	void completeArenkoQuest();
 
 	/**
 	 * Handles all special stuff that happens on the map
