@@ -31,6 +31,7 @@
 #include "ripper/detection.h"
 #include "ripper/display.h"
 #include "ripper/input.h"
+#include "ripper/media/playback_pause.h"
 #include "ripper/media/smacker_decoder.h"
 #include "ripper/ripper.h"
 #include "ripper/scene_audio.h"
@@ -111,26 +112,21 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 			_engine->getScripts()->isAwaitingInteraction() &&
 			_input->peekKey() == kReplayPreviousSceneCommand) {
 		_input->consumeKey();
-		const bool externalAudioActive = externalAudio &&
-			_mixer->isSoundHandleActive(*externalAudio);
-		decoder.pauseVideo(true);
-		if (externalAudioActive)
-			_mixer->pauseHandle(*externalAudio, true);
-		debugC(1, kDebugVideo,
-			"Ripper: Ctrl+R suspended interactive media='%s' frame=%d "
-			"paused=%d externalAudio=%d",
-			name.c_str(), decoder.getCurFrame(), paused,
-			externalAudioActive);
-		const bool replayed =
-			_engine->getScripts()->replayPreviousInteractionScene(
+		bool replayed;
+		{
+			ScopedPlaybackPause pause(decoder, *_mixer, externalAudio);
+			debugC(1, kDebugVideo,
+				"Ripper: Ctrl+R suspended interactive media='%s' frame=%d "
+				"paused=%d externalAudio=%d",
+				name.c_str(), decoder.getCurFrame(), paused,
+				pause.hasExternalAudio());
+			replayed = _engine->getScripts()->replayPreviousInteractionScene(
 				"interactive-media");
-		if (externalAudioActive)
-			_mixer->pauseHandle(*externalAudio, paused);
-		decoder.pauseVideo(paused);
+		}
 		debugC(1, kDebugVideo,
 			"Ripper: Ctrl+R restored interactive media='%s' frame=%d "
 			"paused=%d replayed=%d",
-			name.c_str(), decoder.getCurFrame(), paused, replayed);
+			name.c_str(), decoder.getCurFrame(), decoder.isPaused(), replayed);
 		return true;
 	}
 	if (allowSceneHelp && _input->peekKey() == kHelpCommand) {
@@ -151,27 +147,22 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 			_engine->getScripts()->resolveToolbarActionKey(command);
 		if (actionIndex >= 0) {
 			_input->consumeKey();
-			const bool externalAudioActive = externalAudio &&
-				_mixer->isSoundHandleActive(*externalAudio);
-			decoder.pauseVideo(true);
-			if (externalAudioActive)
-				_mixer->pauseHandle(*externalAudio, true);
-			debugC(2, kDebugVideo,
-				"Ripper: toolbar hotkey suspended interactive media='%s' frame=%d "
-				"command=0x%04x action=%u paused=%d toolbarPaused=%d externalAudio=%d",
-				name.c_str(), decoder.getCurFrame(), command, actionIndex + 1,
-				paused, suppressSceneMouseStop, externalAudioActive);
-			const bool dispatched = _engine->getScripts()->dispatchToolbarActionKey(
-				actionIndex, command, "interactive-media");
-			const bool restorePaused = paused || suppressSceneMouseStop;
-			if (externalAudioActive)
-				_mixer->pauseHandle(*externalAudio, restorePaused);
-			decoder.pauseVideo(restorePaused);
+			bool dispatched;
+			{
+				ScopedPlaybackPause pause(decoder, *_mixer, externalAudio);
+				debugC(2, kDebugVideo,
+					"Ripper: toolbar hotkey suspended interactive media='%s' frame=%d "
+					"command=0x%04x action=%u paused=%d toolbarPaused=%d externalAudio=%d",
+					name.c_str(), decoder.getCurFrame(), command, actionIndex + 1,
+					paused, suppressSceneMouseStop, pause.hasExternalAudio());
+				dispatched = _engine->getScripts()->dispatchToolbarActionKey(
+					actionIndex, command, "interactive-media");
+			}
 			debugC(2, kDebugVideo,
 				"Ripper: toolbar hotkey restored interactive media='%s' frame=%d "
 				"command=0x%04x action=%u paused=%d dispatched=%d",
 				name.c_str(), decoder.getCurFrame(), command, actionIndex + 1,
-				restorePaused, dispatched);
+				decoder.isPaused(), dispatched);
 			return dispatched;
 		}
 	}
