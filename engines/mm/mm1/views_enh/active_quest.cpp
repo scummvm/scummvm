@@ -24,6 +24,7 @@
 #include "mm/mm1/maps/map06.h"
 #include "mm/mm1/maps/map17.h"
 #include "mm/mm1/maps/map23.h"
+#include "mm/mm1/maps/map28.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/metaengine.h"
 
@@ -232,6 +233,27 @@ void addCourier(Common::Array<QuestLogEntry> &entries, bool done) {
 	addEntry(entries, done, "The Courier Mission", details);
 }
 
+void addArenko(Common::Array<QuestLogEntry> &entries, bool done) {
+	Maps::Map28 &map = *static_cast<Maps::Map28 *>(g_maps->getMap(28));
+	if (done != map.arenkoQuestCompleted())
+		return;
+	if (!done && !map.arenkoQuestActive())
+		return;
+
+	const int climbed = map.arenkoClimbs();
+	Common::String details;
+	if (done) {
+		details = "Climbed 19 trees and claimed Arenko's reward.";
+	} else if (climbed >= 19) {
+		details = "Trees climbed: 19/19. Return to Arenko for a reward.";
+	} else {
+		details = Common::String::format(
+				"Climb trees in D3. Progress: %d/19.", climbed);
+	}
+
+	addEntry(entries, done, "Arenko's Challenge", details);
+}
+
 void addAlamarStory(Common::Array<QuestLogEntry> &entries, bool done) {
 	const byte flags = partyFlags(13);
 	const bool won = (flags & CHARFLAG13_80) != 0;
@@ -433,6 +455,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	addAlamarStory(entries, false);
 	addSigns(entries, false);
 	addRanalou(entries, false);
+	addArenko(entries, false);
 
 	// Completed history follows and remains selectable with Up/Down
 	addCompletedRulerQuests(entries);
@@ -442,6 +465,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	addAlamarStory(entries, true);
 	addSigns(entries, true);
 	addRanalou(entries, true);
+	addArenko(entries, true);
 	addOtherReliableCompletions(entries);
 }
 
