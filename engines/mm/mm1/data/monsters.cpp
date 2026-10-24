@@ -51,6 +51,7 @@ bool Monsters::load() {
 
 	for (int lineNum = 0; lineNum < MONSTERS_COUNT; ++lineNum) {
 		Monster &mon = _monsters[lineNum];
+		mon._bestiaryId = lineNum + 1;
 		Common::String line = f.readLine();
 		assert(line.size() > 20 && line[0] == '"' && line[16] == '"');
 

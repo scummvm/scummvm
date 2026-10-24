@@ -160,6 +160,35 @@ bool MM1Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
+Common::Error MM1Engine::loadGameStream(Common::SeekableReadStream *stream) {
+	Common::Serializer s(stream, nullptr);
+	Common::Error result = synchronizeSave(s);
+
+	if (result.getCode() == Common::kNoError) {
+		if (stream->err())
+			return Common::kReadingFailed;
+
+		// Optional extension appended after the standard savegame data
+		g_globals->_bestiary.load(*stream);
+	}
+
+	return result;
+}
+
+Common::Error MM1Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	Common::Serializer s(nullptr, stream);
+	Common::Error result = synchronizeSave(s);
+
+	if (result.getCode() == Common::kNoError) {
+		// Keep the core savegame data intact and append the extension
+		g_globals->_bestiary.save(*stream);
+		if (stream->err())
+			return Common::kWritingFailed;
+	}
+
+	return result;
+}
+
 Common::Error MM1Engine::synchronizeSave(Common::Serializer &s) {
 	// Get/set the version
 	byte version = SAVEGAME_VERSION;

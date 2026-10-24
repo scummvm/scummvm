@@ -100,18 +100,12 @@ public:
 	/**
 	 * Load a savegame
 	 */
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return synchronizeSave(s);
-	}
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	/**
 	 * Save a savegame
 	 */
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
-		return synchronizeSave(s);
-	}
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 };
 
 extern MM1Engine *g_engine;

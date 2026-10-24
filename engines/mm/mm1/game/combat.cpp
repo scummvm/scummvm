@@ -99,6 +99,7 @@ void Combat::loadMonsters() {
 	// Set up hp and ac for the encounter monsters
 	for (uint i = 0; i < enc._monsterList.size(); ++i) {
 		Monster &mon = enc._monsterList[i];
+		g_globals->_bestiary.discover(mon._bestiaryId);
 		_monsterP = &mon;
 		int val = getRandomNumber(8);
 

@@ -78,6 +78,7 @@ enum MonsterCounter {
 };
 
 struct Monster {
+	uint16 _bestiaryId = 0;	// Database ID, independent of battle position
 	Common::String _name; // char _name[15];
 	byte _count;
 	byte _fleeThreshold;
