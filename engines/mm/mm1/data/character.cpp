@@ -719,6 +719,35 @@ size_t Character::getPerformanceTotal() const {
 		+ totalFlags;
 }
 
+uint32 Character::experienceForNextLevel() const {
+	if (_level._base >= MAX_LEVEL)
+		return 0;
+
+	uint32 expTotal;
+	const uint32 expAmount =
+		(_class == KNIGHT || _class == CLERIC || _class == ROBBER) ?
+		150000 : 200000;
+
+	if (_class == KNIGHT || _class == CLERIC || _class == ROBBER)
+		expTotal = 1500;
+	else
+		expTotal = 2000;
+
+	// The requirement doubles for each level up to level 8, after which
+	// each further level adds a fixed amount
+	for (int level = _level._base - 1, ctr = 0; level > 0; --level) {
+		expTotal *= 2;
+
+		if (++ctr >= 7) {
+			while (--level > 0)
+				expTotal += expAmount;
+			break;
+		}
+	}
+
+	return expTotal;
+}
+
 byte Character::statColor(int amount, int threshold) const {
 	if (amount < 1)
 		return 6;

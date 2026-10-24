@@ -580,6 +580,12 @@ struct Character : public PrimaryAttributes {
 	void loadFaceSprites();
 
 	/**
+	 * Experience required to train for the next level.
+	 * Uses the same progression as the Training Hall
+	 */
+	uint32 experienceForNextLevel() const;
+
+	/**
 	 * Returns the color to use in enhanced mode to
 	 * represent the color of a character attribute
 	 */

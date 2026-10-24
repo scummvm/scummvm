@@ -68,31 +68,17 @@ void Training::checkCharacter() {
 	_class = c._class;
 
 	if (_class == KNIGHT || _class == CLERIC || _class == ROBBER) {
-		_expTotal = 1500;
-		_expAmount = 150000;
-
 		if (_currLevel != 0) {
 			_cost = _currLevel >= 8 ? 3000 :
 				TRAINING_COSTS1[_currLevel - 1];
 		}
 	} else {
-		_expTotal = 2000;
-		_expAmount = 200000;
 		_cost = _currLevel >= 8 ? 4000 :
 			TRAINING_COSTS2[_currLevel - 1];
 	}
 
-	for (int level = _currLevel - 1, ctr = 0; level > 0; --level) {
-		_expTotal *= 16;
-
-		if (++ctr >= 7) {
-			while (--level > 0)
-				_expTotal += _expAmount;
-			break;
-		}
-	}
-
-	_remainingExp = _expTotal - c._exp;
+	_expTotal = c.experienceForNextLevel();
+	_remainingExp = (int)_expTotal - (int)c._exp;
 	_canTrain = _remainingExp <= 0;
 	_canAfford = (int)c._gold >= _cost;
 }
