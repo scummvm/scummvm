@@ -159,6 +159,9 @@ void Map35::acceptQuest() {
 			c._flags[8] = CHARFLAG8_80;
 			c._flags[5] = CHARFLAG5_80;
 		}
+
+		// Restart Inspectron's seven-quest cycle at quest #1
+		questNum = 8;
 	}
 
 	// Assign the quest to all party characters
