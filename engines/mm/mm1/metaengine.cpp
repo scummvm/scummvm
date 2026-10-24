@@ -112,7 +112,6 @@ static const KeybindingRecord COMBAT_KEYS[] = {
 	{ KEYBIND_COMBAT_LOG_UP, "COMBAT_LOG_UP", _s("Combat log up"), "UP", nullptr },
 	{ KEYBIND_COMBAT_LOG_DOWN, "COMBAT_LOG_DOWN", _s("Combat log down"), "DOWN", nullptr },
 	{ KEYBIND_ESCAPE, "COMBAT_LOG_CLOSE", _s("Close combat log"), "ESCAPE", nullptr },
-
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_DELAY, "DELAY", _s("Delay"), "d", nullptr },
 	// I18N: Combat command in Might & Magic 1
@@ -241,7 +240,7 @@ Common::KeymapArray MetaEngine::initKeymaps() {
 					r->_action == KEYBIND_STRAFE_LEFT || r->_action == KEYBIND_STRAFE_RIGHT ||
 					r->_action == KEYBIND_BESTIARY_UP || r->_action == KEYBIND_BESTIARY_DOWN ||
 					r->_action == KEYBIND_BESTIARY_PAGEUP || r->_action == KEYBIND_BESTIARY_PAGEDOWN)
-				// Allow movement and list actions to be triggered on keyboard repeats
+				// Allow movement actions to be triggered on keyboard repeats
 				act->allowKbdRepeats();
 
 			keyMap->addAction(act);

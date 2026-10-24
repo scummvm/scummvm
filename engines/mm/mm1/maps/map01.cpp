@@ -124,9 +124,14 @@ void Map01::special08() {
 		[](const Common::KeyState &) {
 			g_events->close();
 
-			// Consume the secret for this map visit, and record Lord
-			// Ironfist's quest #3 (discover the secret of Portsmith) at
-			// the discovery site. Winning the fight isn't required
+			// This is a one-shot special encounter for the current map visit.
+			// Consume the special when the encounter actually starts so winning
+			// the fight does not immediately trigger the Queen again.
+			// Consume the Portsmith secret for this visit and record
+			// Lord Ironfist quest #3 (Discover the Secret of Portsmith)
+			// at the actual discovery site. In the original game,
+			// discovering the secret is sufficient; full victory is
+			// not required.
 			g_maps->clearSpecial();
 			for (uint i = 0; i < g_globals->_party.size(); ++i)
 				g_globals->_party[i]._flags[7] |= CHARFLAG7_4;

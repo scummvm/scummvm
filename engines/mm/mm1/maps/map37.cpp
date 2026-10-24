@@ -101,13 +101,13 @@ void Map37::special04() {
 
 	if (_data[VAL1]) {
 		// Okrim has actually been defeated. Consume the square for this
-		// map visit and present his post-battle ghost interaction
+		// map visit and present his post-battle ghost interaction.
 		g_maps->clearSpecial();
 		g_events->addView("Ghost");
 
 	} else {
-		// Don't mark Okrim defeated before combat. The combat view sets
-		// VAL1 only after a real victory, so retreating can't skip him
+		// Do not mark Okrim defeated before combat. Enhanced combat sets
+		// VAL1 only after a real victory, so retreating cannot skip him.
 		enc.clearMonsters();
 		enc.addMonster(19, 12);
 		for (int i = 1; i < 4; ++i)

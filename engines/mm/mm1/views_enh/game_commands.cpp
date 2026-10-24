@@ -42,7 +42,7 @@ GameCommands::GameCommands(UIElement *owner) :
 
 	addButton(Common::Rect(235, 117, 259, 137), KEYBIND_MAP, 12, spr);
 	addButton(Common::Rect(260, 117, 284, 137), KEYBIND_QUICKREF, 16, spr);
-	// Complete the 3x3 command grid with the native Quest Log icon
+	// Complete the 3x3 command grid with a native Quest Log icon.
 	addButton(Common::Rect(286, 117, 310, 137), KEYBIND_ACTIVE_QUEST, 8, spr);
 
 	addButton(Common::Rect(109, 137, 122, 147), KEYBIND_MENU, 18, spr);

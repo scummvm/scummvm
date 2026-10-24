@@ -69,6 +69,9 @@ void Map11::special() {
 		const bool savedStable = (_visited[3 * MAP_W + 6] & 0x80) != 0 &&
 			(_visited[3 * MAP_W + 8] & 0x80) != 0;
 
+		// If the live overlay contains the correct settings, heal the
+		// save-safe mirror as well. This makes old/partially patched visits
+		// converge on one state without changing the save format.
 		if (rawStable) {
 			_visited[3 * MAP_W + 6] |= 0x80;
 			_visited[3 * MAP_W + 8] |= 0x80;
@@ -85,7 +88,6 @@ void Map11::special() {
 		send(SoundMessage(STRING["maps.map11.poof"]));
 	}
 }
-
 void Map11::special00() {
 	visitedExit();
 	send(SoundMessage(
@@ -173,8 +175,9 @@ void Map11::selectDial(int dialIndex) {
 			if (ks.keycode >= Common::KEYCODE_a &&
 					ks.keycode <= Common::KEYCODE_z) {
 				Map11 &map = *static_cast<Map11 *>(g_maps->_currentMap);
-				// Derive the letter from the keycode, since KeyState::ascii
-				// can be 0 or the wrong case depending on the backend
+				// Derive the selected letter from keycode, not KeyState::ascii.
+				// This avoids backend/keymapper differences where ascii may be 0
+				// or have unexpected case even though the A-Z keycode is valid.
 				const char c = 'A' + (ks.keycode - Common::KEYCODE_a);
 				g_events->close();
 				map.setDialChar(c);
@@ -211,7 +214,8 @@ void Map11::setDialChar(char c) {
 	else
 		_visited[visitedOffset] &= ~0x80;
 
-	// Echo the chosen value, so it's clear what was recorded
+	// Echo the chosen value below the original A-Z instruction so there is
+	// unambiguous visual feedback about what the engine recorded.
 	Common::String line1 = Common::String::format(
 		STRING["maps.map11.dial"].c_str(), '1' + _dialIndex);
 	Common::String line2 = Common::String::format("Selected: %c", c);

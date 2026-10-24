@@ -139,7 +139,7 @@ void Spellbook::draw() {
 				spellIndex
 			)];
 
-			// Cleric 2-5 gives fire protection, but the string is "Ice"
+			// MM1 Cleric 2-5 is Protection From Fire.
 			if (!_isWizard && spellIndex == 12)
 				spellName = "Protection From Fire";
 
@@ -162,9 +162,10 @@ void Spellbook::draw() {
 }
 
 bool Spellbook::msgKeypress(const KeypressMessage &msg) {
-	// Some keyboard paths report the navigation-labelled numpad keys as
-	// KP9 and KP3. Treat them as Page Up and Page Down only while Num Lock
-	// is off, so numeric keypad input still works with it on
+	// MM1-NUMPAD-PAGE-SCROLL: ScummVM reports the navigation-labelled
+	// numpad keys as KP9/KP3 on some Windows/SDL keyboard paths. Treat them
+	// as Page Up/Page Down only while Num Lock is OFF, preserving numeric
+	// keypad input while Num Lock is ON.
 	const bool pageUpKey = msg.keycode == Common::KEYCODE_PAGEUP ||
 		(msg.keycode == Common::KEYCODE_KP9 && !(msg.flags & Common::KBD_NUM));
 	const bool pageDownKey = msg.keycode == Common::KEYCODE_PAGEDOWN ||
@@ -269,7 +270,7 @@ void Spellbook::loadFavorites() {
 	for (int slot = 0; slot < 10; ++slot) {
 		const Common::String key = favoritesKey(slot);
 
-		// Stored value is spell index + 1; zero means unused slot
+		// Stored value is spell index + 1; zero means unused slot.
 		const int value = ConfMan.hasKey(key) ? ConfMan.getInt(key) : 0;
 		_favoriteSlots[slot] = value - 1;
 
@@ -316,12 +317,14 @@ void Spellbook::assignFavoriteSlot(int slot) {
 	const int spellIndex = _favoriteAssignSpell;
 	const int knownCount = _count;
 
-	// Moving an existing favorite removes its previous assignment
+	// Moving an existing favorite removes its previous assignment.
 	for (int i = 0; i < 10; ++i) {
 		if (_favoriteSlots[i] == spellIndex)
 			_favoriteSlots[i] = -1;
 	}
 
+	// Replacing a slot simply removes the previous spell's favorite
+	// assignment and puts this spell in that shortcut position.
 	_favoriteSlots[slot] = spellIndex;
 	saveFavorites();
 
@@ -329,7 +332,7 @@ void Spellbook::assignFavoriteSlot(int slot) {
 	_favoriteAssignSpell = -1;
 	buildSpellOrder(knownCount);
 
-	// Keep the newly assigned spell highlighted
+	// Keep the newly assigned spell highlighted.
 	_selectedIndex = 0;
 	for (int i = 0; i < _count; ++i) {
 		if (_spellOrder[i] == spellIndex) {
@@ -380,7 +383,7 @@ void Spellbook::buildSpellOrder(int knownCount) {
 	int nextNormal = 0;
 
 	// The first ten visible entries correspond directly to shortcuts
-	// 1-0. A favorite assigned to a slot is fixed to that exact row
+	// 1-0. A favorite assigned to a slot is fixed to that exact row.
 	for (int slot = 0; slot < 10 &&
 			(int)_spellOrder.size() < knownCount; ++slot) {
 		const int favorite = _favoriteSlots[slot];
@@ -391,8 +394,9 @@ void Spellbook::buildSpellOrder(int knownCount) {
 			continue;
 		}
 
-		// Fill an unused slot with the next ordinary spell, keeping
-		// assigned favorites reserved for their own shortcut rows
+		// Fill an unused favorite slot with the next ordinary spell,
+		// while reserving all explicitly assigned favorites for their
+		// designated shortcut positions.
 		while (nextNormal < knownCount &&
 				(used[nextNormal] || isFavorite(nextNormal)))
 			++nextNormal;
@@ -404,7 +408,7 @@ void Spellbook::buildSpellOrder(int knownCount) {
 		}
 	}
 
-	// Append every remaining spell in normal order
+	// Append every remaining spell in normal MM1 order.
 	for (int spellIndex = 0; spellIndex < knownCount; ++spellIndex) {
 		if (!used[spellIndex])
 			_spellOrder.push_back(spellIndex);
@@ -412,7 +416,6 @@ void Spellbook::buildSpellOrder(int knownCount) {
 
 	_count = (int)_spellOrder.size();
 }
-
 void Spellbook::updateChar() {
 	// Refresh the cast spell side dialog for new character
 	send("CastSpell", GameMessage("UPDATE"));
@@ -429,8 +432,8 @@ void Spellbook::updateChar() {
 		knownCount = 0;
 	} else {
 		knownCount = (c._spellLevel._current < 5) ?
-			c._spellLevel._current * 8 :
-			32 + (c._spellLevel._current - 4) * 5;
+				c._spellLevel._current * 8 :
+				32 + (c._spellLevel._current - 4) * 5;
 	}
 
 	_favoriteAssignMode = false;
@@ -462,7 +465,7 @@ void Spellbook::spellSelected() {
 		return;
 
 	int spellIndex = (_isWizard ? CATEGORY_SPELLS_COUNT : 0) +
-		_spellOrder[_selectedIndex];
+			_spellOrder[_selectedIndex];
 
 	// Set the selected spell for the character
 	c.setSpellNumber(spellIndex);

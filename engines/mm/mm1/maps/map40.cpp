@@ -59,9 +59,10 @@ void Map40::special() {
 
 		SoundMessage msg(STRING["maps.map40.conveyor_belt"]);
 		if (g_engine->isEnhanced()) {
-			// Enhanced messages normally forward the key that dismissed them
-			// back to the game, which would immediately trigger another
-			// forced step and message. Consume the dismissing input instead
+			// Enhanced messages have focus and normally forward the key used
+			// to dismiss them back to Game. On the conveyor that immediately
+			// triggers another forced step/message, making input feel stuck.
+			// Consume the dismissing input for this message instead.
 			msg._keyCallback = [](const Common::KeyState &) {
 				g_events->close();
 			};
@@ -107,8 +108,8 @@ void Map40::special04() {
 			Map40 &map = *static_cast<Map40 *>(g_maps->_currentMap);
 			map[VAL1]++;
 
-			// Remember the disabled conveyor across a save and load in
-			// this map visit. A normal map transition clears the marker
+			// Preserve the disabled conveyor across a ScummVM save/load in
+			// this map visit. A normal map transition clears this marker.
 			map._visited[g_maps->_mapOffset] |= VISITED_TRANSIENT_STATE;
 		}
 	));

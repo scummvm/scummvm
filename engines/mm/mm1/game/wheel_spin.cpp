@@ -89,7 +89,8 @@ void WheelSpin::spin() {
 		}
 
 		// Spinning the Wheel makes all four Great Beasts available again.
-		// Keep the Wheel marker (CHARFLAG2_80) and the upper bits
+		// Preserve CHARFLAG2_80 (the Wheel marker) and unrelated upper bits;
+		// only the four beast-completion flags are reset.
 		c._flags[2] &= ~(CHARFLAG2_1 | CHARFLAG2_2 |
 			CHARFLAG2_4 | CHARFLAG2_8);
 

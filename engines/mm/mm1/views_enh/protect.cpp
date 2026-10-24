@@ -154,6 +154,7 @@ void Protect::draw() {
 			}
 		}
 	}
+
 }
 
 bool Protect::msgAction(const ActionMessage &msg) {

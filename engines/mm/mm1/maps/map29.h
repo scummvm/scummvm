@@ -60,7 +60,7 @@ public:
 
 	/**
 	 * Og side-quest state. The completion marker reuses the high metadata
-	 * bit of Og's existing visited cell, so the save format is unchanged
+	 * bit of Og's existing visited cell, so save format version 1 is unchanged.
 	 */
 	bool ogQuestVisited() const;
 	bool ogQuestCompleted() const;

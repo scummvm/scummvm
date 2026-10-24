@@ -79,7 +79,6 @@ void Training::draw() {
 bool Training::msgGame(const GameMessage &msg) {
 	if (msg._name == "UPDATE")
 		checkCharacter();
-
 	Location::msgGame(msg);
 	return true;
 }

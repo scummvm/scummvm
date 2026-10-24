@@ -75,8 +75,9 @@ void Map10::special00() {
 }
 
 void Map10::special01() {
-	// Ranalou's long dialogue uses the large message frame. The enhanced
-	// messages view scrolls it if the wrapped text still doesn't fit
+	// Ranalou's long Enhanced dialogue uses the large message frame. The
+	// Enhanced GameMessages view will provide vertical scrolling if wrapping
+	// still produces more lines than can fit in that frame.
 	SoundMessage msg(
 		STRING["maps.map10.ranalou1"],
 		[]() {

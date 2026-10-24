@@ -41,6 +41,7 @@ static uint combatMessageDelayFrames() {
 	return ((uint)g_globals->_delay + 1) * FRAME_RATE / 2;
 }
 
+
 Combat::Combat() : TextView("Combat") {
 }
 

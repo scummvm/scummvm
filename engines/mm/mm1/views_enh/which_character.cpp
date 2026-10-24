@@ -66,7 +66,7 @@ bool WhichCharacter::msgAction(const ActionMessage &msg) {
 		if (charNum < g_globals->_party.size()) {
 			if (dynamic_cast<Combat *>(g_events->priorView()) != nullptr) {
 				// Apply the exchange before closing so Combat
-				// redraws the updated party order immediately
+				// redraws the updated party order immediately.
 				send("Combat", GameMessage("EXCHANGE", charNum));
 				close();
 			} else {

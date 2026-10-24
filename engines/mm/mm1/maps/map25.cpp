@@ -118,7 +118,7 @@ void Map25::special() {
 
 	default: {
 		// Only the six marked wrecks and the Jolly Raven
-		// should display the shipwreck search prompt
+		// should display the shipwreck search prompt.
 		static const uint16 SHIPWRECK_OFFSETS[] = {
 			142, 155, 161, 179, 185, 197, 216
 		};
@@ -134,7 +134,7 @@ void Map25::special() {
 			none160();
 			break;
 		}
-
+	}
 		send(SoundMessage(
 			STRING["maps.map25.ship"],
 			[]() {
@@ -156,7 +156,6 @@ void Map25::special() {
 			}
 		));
 		break;
-	}
 	}
 }
 

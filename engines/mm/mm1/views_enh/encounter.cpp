@@ -198,7 +198,7 @@ void Encounter::timeout() {
 
 	case BATTLE:
 		// Finish the underlying game redraw before starting combat,
-		// and don't redraw this closed Encounter afterwards
+		// and do not redraw this closed Encounter afterward.
 		close();
 		g_events->drawElements();
 		send("Combat", GameMessage("COMBAT"));

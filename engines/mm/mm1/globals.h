@@ -64,6 +64,7 @@ public:
 	bool _minimapOn = true;
 	Common::Array<SuggestedName> *_suggestedNames = nullptr;
 
+
 	// Console flags
 	bool _intangible = false;
 	bool _encountersOn = true;

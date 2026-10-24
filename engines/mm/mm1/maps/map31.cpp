@@ -68,7 +68,6 @@ void Map31::special00() {
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
-
 		if (!(c._flags[11] & CHARFLAG11_GOT_INTELLIGENCE)) {
 			c._flags[11] |= CHARFLAG11_GOT_INTELLIGENCE;
 			if (c._intelligence._base < 30) {

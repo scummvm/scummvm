@@ -99,18 +99,23 @@ void Map47::special02() {
 		_visited[QUEST_CLERICS_COMPLETE_OFFSET] |= QUEST_LOG_FLAG;
 		_visited[QUEST_CLERICS_ACTIVE_OFFSET] &= ~QUEST_LOG_FLAG;
 
+		// Vanilla MM1 behavior: becoming worthy recharges all seven
+		// permanent-stat locations by clearing their GOT_* bits.
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
 			c._flags[11] = CHARFLAG11_CLERICS;
 		}
 
-		// Another advancement requires hearing all three tones again
+		// Quest Log persistence must describe only the current tone cycle.
+		// After a successful Clerics turn-in, both temporary and persisted
+		// Loud/Sharp/Mellow state are cleared so another recharge requires
+		// hearing all three tones again.
 		for (int i = 0; i < 3; ++i) {
 			_data[ARRAY1 + i] = 0;
 			_visited[QUEST_CLERICS_TONE_OFFSET + i] &= ~QUEST_LOG_FLAG;
 		}
 	} else {
-		// Speaking to the Clerics starts the optional advancement quest
+		// Speaking to the Clerics starts the optional advancement quest.
 		_visited[QUEST_CLERICS_ACTIVE_OFFSET] |= QUEST_LOG_FLAG;
 		send(SoundMessage(
 			0, 1, STRING["maps.map47.clerics1"],

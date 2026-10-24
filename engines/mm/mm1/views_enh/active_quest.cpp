@@ -482,7 +482,7 @@ void addOtherReliableCompletions(Common::Array<QuestLogEntry> &entries) {
 }
 
 void buildQuestList(Common::Array<QuestLogEntry> &entries) {
-	// Active objectives always appear first
+	// Active objectives always appear first.
 	addFormalQuest(entries);
 	addCrazedWizard(entries, false);
 	addClerics(entries, false);
@@ -493,7 +493,7 @@ void buildQuestList(Common::Array<QuestLogEntry> &entries) {
 	addRanalou(entries, false);
 	addArenko(entries, false);
 
-	// Completed history follows and remains selectable with Up/Down
+	// Completed history follows and remains selectable with Up/Down.
 	addCompletedRulerQuests(entries);
 	addCrazedWizard(entries, true);
 	addClerics(entries, true);

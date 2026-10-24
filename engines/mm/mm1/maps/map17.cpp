@@ -80,8 +80,9 @@ void Map17::special00() {
 }
 
 void Map17::special01() {
-	// Record that the Hooded Figure / Color Bridge has been discovered,
-	// using a fixed bit in the saved visit data
+	// Record that the Hooded Figure / Color Bridge has been discovered using
+	// a fixed visited-cell metadata bit. This is safe even when the map is not
+	// later loaded; reward persistence uses 0x40, not this 0x80 metadata bit.
 	_visited[COLOR_BRIDGE_VISITED_OFFSET] |= COLOR_BRIDGE_DISCOVERED;
 
 	bool allAssigned = !g_globals->_party.empty();
@@ -93,8 +94,8 @@ void Map17::special01() {
 	}
 
 	if (!allAssigned) {
-		// Without a Gypsy sign the quiz can't be answered correctly, so
-		// don't open the Y/N and quiz chain in that state
+		// Without a Gypsy sign the Hooded Figure quiz cannot be answered
+		// correctly. Avoid opening the Y/N/quiz chain in this invalid state.
 		g_maps->clearSpecial();
 		SoundMessage info(
 			"The Hooded Figure bars the Color Bridge. "
@@ -104,9 +105,10 @@ void Map17::special01() {
 		return;
 	}
 
-	// Everyone knows their sign. Declining the bridge prompt doesn't
-	// consume the special, so the quiz can be retried
-	SoundMessage msg(STRING["maps.map17.bridge"],
+	// All current party members know their Gypsy signs. Keep the original
+	// retryable bridge-prompt behavior: declining does not consume the special.
+	SoundMessage msg(
+		STRING["maps.map17.bridge"],
 		[]() {
 			g_events->addView("ColorQuestions");
 		}

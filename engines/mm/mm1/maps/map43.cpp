@@ -31,8 +31,8 @@ namespace Maps {
 
 #define TREASURE_STATE 142
 
-// Ironfist's quest completions are recorded where they're discovered,
-// so inventory items are no longer used as surrogate proof
+// Lord Ironfist's quest completions are now recorded at the actual
+// discovery sites. Do not substitute inventory items as surrogate proof.
 static const byte MATCH_ITEMS[7] = {
 	0, 0, 0, 0, 0, 0, 0
 };
@@ -204,7 +204,7 @@ Common::String Map43::checkQuestComplete() {
 
 	if (leader._flags[7] & MATCH_FLAGS[qIndex] & 0x7f) {
 		// The quest was complete. Retain it in the Quest Log using
-		// the high bit of a reserved, already-serialized map cell
+		// the high bit of a reserved, already-serialized map cell.
 		_visited[15 * MAP_W + qIndex] |= 0x80;
 
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {

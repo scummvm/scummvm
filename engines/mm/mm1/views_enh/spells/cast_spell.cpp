@@ -74,7 +74,7 @@ void CastSpell::draw() {
 	if (spellNum >= 0 && spellNum < 47) {
 		spellName = STRING[Common::String::format("spells.cleric.%d", spellNum)];
 
-		// Cleric 2-5 gives fire protection, but the string is "Ice"
+		// MM1 Cleric 2-5 is Protection From Fire.
 		if (spellNum == 12)
 			spellName = "Protection From Fire";
 	} else if (spellNum >= 47) {
@@ -149,7 +149,8 @@ bool CastSpell::msgGame(const GameMessage &msg) {
 		close();
 		castSpell(&g_globals->_party[msg._value]);
 
-	} else if (msg._name == "MONSTER_SELECTED" && msg._value != -1) {
+	} else if (msg._name == "MONSTER_SELECTED" &&
+			msg._value != -1) {
 		castSpell();
 	}
 
@@ -229,7 +230,6 @@ void CastSpell::castSpell(Character *target) {
 			g_events->send(InfoMessage(msg));
 		}
 	};
-
 	Character &c = *g_globals->_currCharacter;
 	if (isInCombat()) {
 		Common::String spellName = _spellIndex < 47 ?
@@ -275,8 +275,8 @@ void CastSpell::spellError() {
 	Common::String msg = getSpellError();
 
 	if (isInCombat()) {
-		// A global drawElements() here can redraw the underlying
-		// dungeon/outdoor scene over the battle screen
+		// Keep spell errors inside Combat. A global drawElements() here can
+		// redraw the underlying dungeon/outdoor scene over the battle screen.
 		send("Combat", GameMessage("SPELL_RESULT", msg, 0));
 	} else {
 		g_events->drawElements();

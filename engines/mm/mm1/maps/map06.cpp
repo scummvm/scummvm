@@ -156,8 +156,9 @@ void Map06::special06() {
 			byte &val1 = map[VAL1];
 			val1 = val1 ? 0 : 1;
 
-			// The overlay byte is reloaded when a save is loaded, so
-			// remember this visit's OFF state on the button cell
+			// The original overlay byte is reloaded when a ScummVM save is
+			// loaded. Remember the current visit's OFF state on the button
+			// cell so a save/load does not reactivate the conveyors.
 			byte &visited = map._visited[g_maps->_mapOffset];
 			if (val1)
 				visited &= ~VISITED_TRANSIENT_STATE;
@@ -189,12 +190,12 @@ void Map06::special13() {
 	Game::Encounter &enc = g_globals->_encounters;
 	g_maps->clearSpecial();
 
-	// Encounter progress also starts the side quest if the wizard
-	// hasn't been spoken to first
+	// Encounter progress also initiates the side quest if the wizard
+	// has not been visited first. A hidden quest remains hidden.
 	_visited[QUEST_ACTIVE_OFFSET] |= ENCOUNTER_COMPLETE;
 
-	// Record completion in the map visitation data, which is serialized
-	// in savegames, so progress survives saving and loading
+	// Record completion in the map visitation data, which is serialized in
+	// savegames. This preserves progress when a game is saved and reloaded.
 	byte &visited = _visited[g_maps->_mapOffset];
 	if (visited & ENCOUNTER_COMPLETE) {
 		checkPartyDead();
@@ -212,8 +213,8 @@ void Map06::special13() {
 	for (int i = 0; i < monsterCount; ++i)
 		enc.addMonster(id1, id2);
 
-	// Without manual mode, execute() discards the scripted monsters
-	// and generates an unrelated random encounter
+	// The monster list above is scripted. Without manual mode execute()
+	// discards it and generates an unrelated random encounter.
 	enc._manual = true;
 	enc.execute();
 }
@@ -237,7 +238,8 @@ void Map06::special26() {
 int Map06::completedEncounters() const {
 	int result = 0;
 
-	// The thirteen challenges occupy map rows 0 through 12
+	// The thirteen challenges occupy map rows 0 through 12. Scanning
+	// those rows avoids depending on overlay data when another map is active.
 	for (int y = 0; y < 13; ++y) {
 		for (int x = 0; x < MAP_W; ++x) {
 			if (_visited[y * MAP_W + x] & ENCOUNTER_COMPLETE)

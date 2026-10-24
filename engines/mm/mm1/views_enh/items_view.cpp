@@ -51,7 +51,7 @@ void ItemsView::addButton(int frame, const Common::String &text,
 bool ItemsView::msgFocus(const FocusMessage &msg) {
 	PartyView::msgFocus(msg);
 
-	// F1-F6 switch party members while 1-6 remain available for items
+	// F1-F6 switch party members while 1-6 remain available for items.
 
 	_selectedItem = -1;
 	return true;

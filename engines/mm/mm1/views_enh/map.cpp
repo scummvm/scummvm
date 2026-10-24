@@ -54,7 +54,7 @@ void Map::draw() {
 			mazeY >= yStart; yp += MAP_TILE_H, --mazeY) {
 		for (int xp = MAP_BORDER_SIZE, mazeX = xStart;
 				mazeX < (xStart + totalX); xp += MAP_TILE_W, ++mazeX) {
-			// The high bit may contain map-specific persistent state
+			// The high bit may contain map-specific persistent state.
 			byte visited = map._visited[mazeY * MAP_W + mazeX] & 0x0f;
 
 			if (!visited) {

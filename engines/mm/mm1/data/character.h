@@ -508,8 +508,8 @@ struct Character : public PrimaryAttributes {
 	void gatherGold();
 
 	/**
-	 * Gathers gold, gems and food into the character, up to
-	 * their carrying limits
+	 * Original character-profile Gather command: gathers gold, gems and
+	 * food into the character up to their carrying limits.
 	 */
 	void gatherResources();
 
@@ -581,12 +581,12 @@ struct Character : public PrimaryAttributes {
 
 	/**
 	 * Experience required to train for the next level.
-	 * Uses the same progression as the Training Hall
+	 * Uses the same progression as the Training Hall.
 	 */
 	uint32 experienceForNextLevel() const;
 
 	/**
-	 * Returns true when current experience is sufficient for training
+	 * Returns true when current experience is sufficient for training.
 	 */
 	bool canLevelUp() const;
 

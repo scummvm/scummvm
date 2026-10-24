@@ -81,12 +81,12 @@ protected:
 	bool _turnUndeadUsed = false;
 	bool _divineInterventionUsed = false;
 	size_t _spellMonsterCount = 0;
-	// Transient combat-only display state; never serialized
+	// Transient combat-only display state; never serialized.
 	int _slowCasts = 0;
 	int _weakenCasts = 0;
 	int _heroismBonus[MAX_PARTY_SIZE] = {};
 	bool _heroismIsSuper[MAX_PARTY_SIZE] = {};
-	// -1 means the spell has not been cast; a real roll may be zero
+	// -1 means the spell has not been cast; a real roll may be zero.
 	int _powerBonus[MAX_PARTY_SIZE] = {};
 	int _quicknessBonus[MAX_PARTY_SIZE] = {};
 
@@ -365,9 +365,7 @@ public:
 	void fingerOfDeath();
 	void disintegration();
 
-	/**
-	 * End combat through the interface-specific cleanup path
-	 */
+	/** End combat through the interface-specific cleanup path. */
 	void endCombat();
 };
 

@@ -261,6 +261,7 @@ void Character::clear() {
 	_intelligence = _might = _personality = _endurance = 0;
 	_speed = _accuracy = _luck = 0;
 	_level = 1;
+	// MM1 characters begin at age 18.
 	_age = 18;
 	_ageDayCtr = 0;
 	_exp = 0;
@@ -290,7 +291,7 @@ void Character::clear() {
 
 void Character::gatherGold() {
 	// Gold is stored in the original MM1 24-bit range. Move as much as
-	// possible to this character and leave any overflow with its owner
+	// possible to this character and leave any overflow with its owner.
 	static const uint32 MAX_GOLD = 0xffffff;
 
 	if (_gold >= MAX_GOLD)
@@ -312,9 +313,9 @@ void Character::gatherGold() {
 }
 
 void Character::gatherResources() {
-	// Gather gold, gems and food, each only up to the destination
-	// character's carrying limit. Any excess stays with the source
-	// character instead of being destroyed
+	// Original Character Profile G: gather gold, gems and food, each only up
+	// to the destination character's carrying limit. Any excess stays with
+	// the source character instead of being destroyed.
 	gatherGold();
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -462,8 +463,8 @@ void Character::updateAttributes() {
 }
 
 void Character::updateAC() {
-	// Leather Skin stores the caster's level as a party-wide AC bonus.
-	// Rebuild from base so repeated updates don't stack it.
+	// Leather Skin stores the caster's current level as a party-wide
+	// AC bonus. Rebuild current AC from base so repeated updates do not stack.
 	int ac = _ac._base +
 		g_globals->_activeSpells._s.leather_skin;
 

@@ -61,7 +61,6 @@ bool Game::msgMouseDown(const MouseDownMessage &msg) {
 		_bestiaryPressed = true;
 		return true;
 	}
-
 	return TextView::msgMouseDown(msg);
 }
 
@@ -70,10 +69,8 @@ bool Game::msgMouseUp(const MouseUpMessage &msg) {
 		_bestiaryPressed = false;
 		if (isFocused() && bestiaryButtonBounds().contains(msg._pos))
 			addView("Bestiary");
-
 		return true;
 	}
-
 	return TextView::msgMouseUp(msg);
 }
 

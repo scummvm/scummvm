@@ -55,8 +55,8 @@ void Giant::charSwitched(Character *priorChar) {
 	addText(line);
 	Sound::sound(SOUND_2);
 
-	// The Statue may have changed XP and a primary attribute. Repaint any
-	// visible character views now rather than at a later refresh
+	// Map30 may have changed XP and a primary attribute. Repaint any visible
+	// character/party views immediately rather than waiting for a later refresh.
 	g_events->redrawViews();
 
 	delaySeconds(5);

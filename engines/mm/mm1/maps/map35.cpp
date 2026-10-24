@@ -160,7 +160,7 @@ void Map35::acceptQuest() {
 			c._flags[5] = CHARFLAG5_80;
 		}
 
-		// Restart Inspectron's seven-quest cycle at quest #1
+		// Restart Inspectron's seven-quest cycle at quest #1.
 		questNum = 8;
 	}
 
@@ -181,7 +181,7 @@ Common::String Map35::checkQuestComplete() {
 
 	if (leader._flags[5] & MATCH_FLAGS[qIndex] & 0x7f) {
 		// The quest was complete. Retain it in the Quest Log using
-		// the high bit of a reserved, already-serialized map cell
+		// the high bit of a reserved, already-serialized map cell.
 		_visited[15 * MAP_W + qIndex] |= 0x80;
 
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {

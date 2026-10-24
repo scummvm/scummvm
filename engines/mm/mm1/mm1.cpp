@@ -163,7 +163,6 @@ bool MM1Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 Common::Error MM1Engine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Serializer s(stream, nullptr);
 	Common::Error result = synchronizeSave(s);
-
 	if (result.getCode() == Common::kNoError) {
 		if (stream->err())
 			return Common::kReadingFailed;
@@ -171,21 +170,18 @@ Common::Error MM1Engine::loadGameStream(Common::SeekableReadStream *stream) {
 		// Optional extension appended after the standard savegame data
 		g_globals->_bestiary.load(*stream);
 	}
-
 	return result;
 }
 
 Common::Error MM1Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	Common::Serializer s(nullptr, stream);
 	Common::Error result = synchronizeSave(s);
-
 	if (result.getCode() == Common::kNoError) {
-		// Keep the core savegame data intact and append the extension
+		// Keep the version-1 core intact; append before standard save metadata.
 		g_globals->_bestiary.save(*stream);
 		if (stream->err())
 			return Common::kWritingFailed;
 	}
-
 	return result;
 }
 
@@ -200,7 +196,7 @@ Common::Error MM1Engine::synchronizeSave(Common::Serializer &s) {
 	// If we're loading a savegame, switch to the game view
 	if (s.isLoading()) {
 		// Discard any location animation retained by the enhanced
-		// GameView before restoring the saved game state
+		// GameView before restoring the saved game state.
 		if (g_engine->isEnhanced())
 			g_events->send("View", GameMessage("LOCATION", -1));
 		g_events->replaceView("Game", true);

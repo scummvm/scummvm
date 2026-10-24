@@ -82,8 +82,10 @@ bool Hacker::msgKeypress(const KeypressMessage &msg) {
 		if (msg.keycode == Common::KEYCODE_y) {
 			map.acceptQuest();
 
-			// Asking for an eighth quest is a punishment, which
-			// leaves the quest at zero
+			// Hacker's post-quest-7 branch is a punishment, not an eighth
+			// quest. acceptQuest() intentionally leaves _quest at zero there.
+			// Do not fall through to the normal quest ingredient lookup with
+			// an invalid negative index; Classic already guards this case.
 			if (!g_globals->_party[0]._quest) {
 				close();
 				return true;

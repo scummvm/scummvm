@@ -170,13 +170,14 @@ void Map::reduceHP() {
 void Map::updateGame() {
 	// Scripted same-map teleports often assign _mapPos directly and then
 	// call updateGame(), bypassing Maps::step(). Discover the landing square
-	// before repainting, so the minimap can draw it immediately
+	// before repainting so the Enhanced minimap can immediately draw it and
+	// the party arrow.
 	g_maps->visitedTile();
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 void Map::redrawGame() {
-	// Keep redraw-only relocation paths consistent with updateGame()
+	// Keep REDRAW-only relocation paths consistent with updateGame().
 	g_maps->visitedTile();
 	g_events->send("Game", GameMessage("REDRAW"));
 }

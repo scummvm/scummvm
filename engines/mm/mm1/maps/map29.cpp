@@ -31,9 +31,10 @@ namespace Maps {
 
 #define ANSWER_OFFSET 67
 #define BEAST_FLAG 110
-// Og is the D4 special at (7,1). Use the fixed visit-data cell rather than
-// reading _data, since the overlay data isn't loaded until this map is
-// entered but the Quest Log can be opened anywhere
+// Og is the D4 special at (7,1): visited-array offset 1 * 16 + 7 = 23.
+// Use the fixed cell index here rather than reading _data[53]. The overlay
+// _data array is not loaded until Map29 itself is entered, while the Quest
+// Log can be opened anywhere in the world.
 #define OG_CELL_OFFSET (1 * MAP_W + 7)
 #define OG_QUEST_LOG_FLAG 0x80
 

@@ -306,10 +306,11 @@ void CharacterInfo::drawStats() {
 			setTextColor(c.statColor(CURR[i], BASE[i]));
 			writeNumber(pt.x, pt.y, CURR[i]);
 
-			// Show an upward arrow after the experience when the character
-			// has enough to train for the next level. The font's right-arrow
-			// glyph is rotated to point up, in the colour used for SP == 0
+			// LEVEL-UP-READY: Experience is derived from current XP/level.
+			// Rotate the Xeen right-arrow glyph upward immediately after XP.
+			// Its color is exactly the color used for SP == 0.
 			if (i == 13 && c.canLevelUp()) {
+				// LEVEL-UP-ARROW-ROTATED-V3: rotate only this glyph, not the font.
 				XeenFont &font = _fontReduced ? g_globals->_fontReduced : g_globals->_fontNormal;
 				XeenFont::setColors(c.statColor(0, c._sp._base));
 				Graphics::ManagedSurface glyph, mask;
@@ -317,8 +318,7 @@ void CharacterInfo::drawStats() {
 				const int gh = font.getFontHeight() + 2;
 				glyph.create(gw, gh, Graphics::PixelFormat::createFormatCLUT8());
 				mask.create(gw, gh, Graphics::PixelFormat::createFormatCLUT8());
-				// Draw on two different backgrounds, so pixels the glyph
-				// really touched can be told apart from the background
+				// Two backgrounds distinguish untouched pixels from ALL palette colors.
 				glyph.clear(0);
 				mask.clear(255);
 				font.drawChar(&glyph, '^', 1, 1, 9);
@@ -343,7 +343,7 @@ void CharacterInfo::drawStats() {
 						for (int x = left; x <= right; ++x) {
 							const byte pixel = *(const byte *)glyph.getBasePtr(x, y);
 							if (pixel != *(const byte *)mask.getBasePtr(x, y)) continue;
-							// Counterclockwise: the rightmost source column becomes the top row
+							// Counterclockwise: rightmost source column becomes top row.
 							const int dx = destX + y - top;
 							const int dy = destY + right - x;
 							if (dx >= 0 && dx < s.w && dy >= 0 && dy < s.h)

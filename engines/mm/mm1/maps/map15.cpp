@@ -201,8 +201,8 @@ void Map15::cove() {
 			Map15 &map = *static_cast<Map15 *>(g_maps->_currentMap);
 			g_maps->clearSpecial();
 
-			// Discovering Pirate's Secret Cove satisfies Lord Ironfist's
-			// quest #4 for the whole party
+			// Discovering Pirate's Secret Cove satisfies
+			// Lord Ironfist quest #4 for the entire party.
 			for (uint i = 0; i < g_globals->_party.size(); ++i)
 				g_globals->_party[i]._flags[7] |= CHARFLAG7_8;
 

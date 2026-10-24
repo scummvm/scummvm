@@ -196,8 +196,9 @@ void Map33::search(const Common::String &msg) {
 			Game::Encounter &enc = g_globals->_encounters;
 			int monsterCount = g_events->getRandomNumber(6) + 7;
 
-			// Consume the special for this map visit before combat,
-			// so winning cannot immediately retrigger it
+			// The E4 coffin/crypt encounters are renewable only after leaving
+			// and re-entering the area. Consume the current special for this
+			// map visit before combat so winning cannot immediately retrigger it.
 			g_maps->clearSpecial();
 
 			enc.clearMonsters();

@@ -49,7 +49,7 @@ enum Visited {
 	VISITED_NONE = 0, VISITED_NORMAL = 1, VISITED_SPECIAL = 2,
 	VISITED_EXIT = 3, VISITED_BUSINESS = 4,
 	// Visit-local scripted state. Serialized so save/load can preserve the
-	// current map visit, but cleared when the map is entered normally again
+	// current map visit, but cleared when the map is entered normally again.
 	VISITED_TRANSIENT_STATE = 0x20,
 	VISITED_REWARD_CLAIMED = 0x40
 };
@@ -183,7 +183,7 @@ public:
 	/**
 	 * Change maps through a known entrance/exit/stair transition and
 	 * mark the destination arrival square as an exit without firing
-	 * the destination square's special action
+	 * the destination square's special action.
 	 */
 	void changeMapFromExit(uint16 id, byte section);
 
@@ -200,7 +200,7 @@ public:
 	void clearSpecial();
 
 	/**
-	 * Disables a claimed reward for save/load during this map visit
+	 * Disables a claimed reward for save/load during this map visit.
 	 */
 	void clearSpecialAndRememberReward();
 

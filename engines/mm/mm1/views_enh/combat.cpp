@@ -41,6 +41,7 @@ static uint combatMessageDelayFrames() {
 	return ((uint)g_globals->_delay + 1) * FRAME_RATE / 2;
 }
 
+
 #define MONSTERS_X 120
 #define BOTTOM_Y 120
 #define LINE_H 8
@@ -65,7 +66,7 @@ void Combat::setMode(Mode newMode) {
 	}
 
 	if (_mode == MONSTER_SPELL)
-		// Make a copy of monster spell 
+		// Make a copy of monster spell
 		_monsterSpellLines = getMonsterSpellMessage();
 
 	if (_mode != MONSTER_ADVANCES && _mode != MONSTER_ATTACK &&
@@ -197,9 +198,9 @@ void Combat::draw() {
 		delayFrames(combatMessageDelayFrames());
 		return;
 	case MONSTER_SPELL:
-		// Monster spell effects can cycle several messages through the same
-		// row. Rebuild the complete combat frame so the previous message (or
-		// an underlying dungeon/outdoor redraw) cannot remain on screen
+		// Monster spell effects can cycle several messages through the same row.
+		// Rebuild the complete combat frame so the previous message (or an
+		// underlying dungeon/outdoor redraw) cannot remain on screen.
 		clearSurface();
 		writeStaticContent();
 		writeHandicap();
@@ -397,9 +398,9 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 			break;
 		}
 	} else if (_mode == SPELL_RESULT && !isDelayActive()) {
-		// Displaying a spell result that required waiting for keypress.
-		// Some results, such as Holy Word and the cast spell Done/Failed
-		// messages, have no callback and simply finish the character's turn
+		// Match timeout() semantics. Some combat spells, notably Holy Word
+		// and Turn Undead, intentionally use a result message without a
+		// callback. In that case the casting character is simply done.
 		if (_spellResult._callback)
 			_spellResult._callback();
 		else
@@ -577,7 +578,7 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 		};
 
 		// Delay, Protect, Quick Reference and View Character occupy
-		// the four static command rows on the left side of combat
+		// the four static command rows on the left side of combat.
 		for (int row = 0; row < 4; ++row) {
 			Common::Rect r(0, (7 + row) * LINE_H,
 				80, (8 + row) * LINE_H);
@@ -821,9 +822,10 @@ void Combat::writeSpellTargetSelect() {
 	_attackableCount = _remainingMonsters.size();
 
 	writeBottomText(0, 1, Common::String::format(
-		"Target which (A-%c)?", 'A' + _attackableCount - 1),
-		ALIGN_MIDDLE);
+			"Target which (A-%c)?", 'A' + _attackableCount - 1),
+			ALIGN_MIDDLE);
 }
+
 
 void Combat::writeAttackOptions() {
 	writeOption(0, 0, 'A', STRING["dialogs.combat.attack"]);
@@ -985,7 +987,7 @@ void Combat::writeMonsterStatus(int monsterNum) {
 		int status;
 		if (statusBits == MONFLAG_DEAD) {
 			status = MON_DEAD;
-		} else {	
+		} else {
 			for (status = MON_PARALYZED; !(statusBits & 0x80);
 					++status, statusBits <<= 1) {
 			}
@@ -1056,7 +1058,7 @@ void Combat::highlightNextRound() {
 	Common::String s = Common::String::format("%s%d",
 		STRING["dialogs.combat.round"].c_str(),
 		_roundNum);
-	
+
 	for (uint i = 0; i < s.size(); ++i)
 		s.setChar(s[i] | 0x80, i);
 
@@ -1090,11 +1092,11 @@ void Combat::writeMonsterAction(bool flees) {
 	resetBottom();
 
 	const Common::String message = Common::String::format(
-		"%s %s", _monsterName.c_str(),
-		STRING[flees ?
-			"dialogs.combat.monster_flees" :
-			"dialogs.combat.monster_wanders"
-		].c_str());
+			"%s %s", _monsterName.c_str(),
+			STRING[flees ?
+				"dialogs.combat.monster_flees" :
+				"dialogs.combat.monster_wanders"
+			].c_str());
 
 	writeBottomText(0, 0, message);
 
@@ -1110,7 +1112,7 @@ void Combat::writeMonsterSpell() {
 			y = _monsterSpellLines[i].y, ++i) {
 		const Line &line = _monsterSpellLines[i];
 		writeBottomText(MAX<int>(line.x, 0), MAX<int>(line.y, 0),
-			line._text, line._align);
+				line._text, line._align);
 	}
 
 	if (beginCombatLogEvent())
@@ -1385,7 +1387,7 @@ void Combat::combatDone() {
 		g_maps->_mapId == 37 && g_maps->_mapPos == Common::Point(12, 12);
 
 	if (okrimVictory) {
-		// Map37::VAL1. Set only after victory so fleeing can't satisfy it
+		// Map37::VAL1. Set only after victory so fleeing cannot satisfy it.
 		(*g_maps->_currentMap)[232] = 1;
 		g_maps->clearSpecial();
 	}

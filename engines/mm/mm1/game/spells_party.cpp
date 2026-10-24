@@ -139,7 +139,8 @@ SpellResult SpellsParty::cast(uint spell, Character *destChar) {
 	assert(spell < SPELLS_COUNT);
 	_destChar = destChar;
 
-	// Don't carry damage or resistance data between spells
+	// Reset transient party-spell calculation state. These fields
+	// must never carry damage or resistance data between spells.
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1 = 0;
 	ss._resistanceIndex = 0;
@@ -502,8 +503,8 @@ SpellResult SpellsParty::cleric61_moonRay() {
 }
 
 SpellResult SpellsParty::cleric62_raiseDead() {
-	// Raise Dead only works on a dead character. Eradicated
-	// characters need Resurrection
+	// Raise Dead is valid only for a character who is actually Dead.
+	// Eradicated characters require Resurrection.
 	if (_destChar->_condition == ERADICATED ||
 		(_destChar->_condition & (BAD_CONDITION | DEAD)) !=
 		(BAD_CONDITION | DEAD))
@@ -511,16 +512,18 @@ SpellResult SpellsParty::cleric62_raiseDead() {
 
 	int rnd = g_engine->getRandomNumber(100);
 	if (rnd == 100) {
-		// A remote chance of eradicating the character instead
+		// Original spell description: a remote chance of eradicating
+		// the character instead of raising them.
 		_destChar->_condition = ERADICATED;
 		_destChar->_hpCurrent = 0;
 		Sound::sound(SOUND_3);
 		return SR_FAILED;
 	} else if (rnd > 90) {
+		// Moderate ordinary failure chance: target remains Dead.
 		return SR_FAILED;
 	}
 
-	// A character who was both dead and stoned is raised, but stays stoned
+	// A character who was both Dead and Stoned is raised but remains Stoned.
 	if (_destChar->_condition == (BAD_CONDITION | DEAD | STONE))
 		_destChar->_condition = BAD_CONDITION | STONE;
 	else
@@ -536,7 +539,7 @@ SpellResult SpellsParty::cleric63_rejuvinate() {
 		_destChar->_age = MAX((int)_destChar->_age - ageReduction, 0);
 		return SR_SUCCESS_DONE;
 	} else {
-		// Failed, increase the recipient's age
+		// Failed, increase the recipient's age.
 		_destChar->_age = MIN((int)_destChar->_age + 10, 200);
 		return SR_FAILED;
 	}
@@ -896,7 +899,7 @@ SpellResult SpellsParty::wizard48_timeDistortion() {
 	if (getRandomNumber(100) < map[Maps::MAP_DISPEL_THRESHOLD])
 		return SR_FAILED;
 
-	// End combat through the normal cleanup and view-transition path
+	// End combat through the normal cleanup and view-transition path.
 	g_globals->_combat->endCombat();
 	return SR_SUCCESS_SILENT;
 }
@@ -944,13 +947,13 @@ SpellResult SpellsParty::wizard63_etherialize() {
 	Maps::Maps &maps = *g_maps;
 
 	// Etherealize moves exactly one square in the direction the party is
-	// facing, ignoring walls and special barriers
+	// facing, ignoring walls and special barriers.
 	const Common::Point delta = maps.getMoveDelta(maps._forwardMask);
 	const Common::Point newPos = maps._mapPos + delta;
 
-	// Maps::step() performs its own changeMap() and UPDATE when crossing a
-	// map boundary. On an in-map move, refresh the Game view so the current
-	// square's walls and state match the new position
+	// Maps::step() performs its own changeMap() + UPDATE when crossing a
+	// map boundary. On an in-map move, explicitly refresh the Game view
+	// so _mapOffset, _currentWalls and _currentState match the new square.
 	const bool crossesMapBoundary =
 		newPos.x < 0 || newPos.y < 0 ||
 		newPos.x >= MAP_W || newPos.y >= MAP_H;
@@ -1014,7 +1017,7 @@ SpellResult SpellsParty::wizard75_prismaticLight() {
 		return SR_FAILED;
 
 	// Generate a new unpredictable effect for this cast rather
-	// than reusing state left behind by an earlier spell
+	// than reusing state left behind by an earlier spell.
 	ss._mmVal1 = getRandomNumber(100);
 	ss._resistanceIndex = 0;
 	ss._damage = 1;

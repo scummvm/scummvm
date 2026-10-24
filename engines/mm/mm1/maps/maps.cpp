@@ -415,9 +415,8 @@ void Maps::step(const Common::Point &delta) {
 }
 
 void Maps::changeMap(uint16 id, byte section, bool loadingSave) {
-	// A genuine transition starts a fresh visit, so rewards can be claimed
-	// again. Loading a save retains claimed rewards and other visit-local
-	// scripted state
+	// A genuine transition starts a fresh visit. Loading retains claimed
+	// rewards and other visit-local scripted state.
 	select(id, section);
 
 	for (uint i = 0; i < MAP_SIZE; ++i) {
@@ -446,7 +445,6 @@ void Maps::changeMap(uint16 id, byte section, bool loadingSave) {
 		}
 		(*_currentMap)[MAP04_TREASURE_STOLEN] = stolenCount;
 	}
-
 	loadTiles();
 
 	visitedTile();
@@ -456,18 +454,19 @@ void Maps::changeMap(uint16 id, byte section, bool loadingSave) {
 
 void Maps::changeMapFromExit(uint16 id, byte section) {
 	// Run the normal transition first. Unlike calling the destination
-	// special(), this can't bounce the party straight back through
-	// stairs and doors, or show a second transition prompt
+	// special(), this cannot bounce the party straight back through
+	// stairs/doors or show a second transition prompt.
 	changeMap(id, section);
 
-	// changeMap() records a newly entered destination as VISITED_NORMAL.
-	// This change came through an entrance or exit, so keep the metadata
-	// bits and correct only the tile type to VISITED_EXIT
+	// changeMap()->visitedTile() records a newly entered destination as
+	// VISITED_NORMAL. We know this particular map change came through an
+	// entrance/exit, so preserve metadata bits and correct only the tile
+	// type to VISITED_EXIT.
 	byte &visited = _currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x];
 	visited = (visited & 0xf0) | VISITED_EXIT;
 
-	// changeMap() has already sent the normal Game UPDATE. Repaint once
-	// more so the enhanced minimap shows the exit immediately
+	// changeMap() has already sent the normal Game UPDATE; repaint once
+	// more so the Enhanced minimap shows the white exit immediately.
 	g_events->redrawViews();
 }
 

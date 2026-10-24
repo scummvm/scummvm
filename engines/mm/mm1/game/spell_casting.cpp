@@ -120,12 +120,14 @@ void SpellCasting::setSpell(const Character *chr, int lvl, int num) {
 
 	int requiredGems = ABS(SPELLS_SP_GEMS[spellIndex]);
 
-	// Gem costs are real casting requirements, just like spell points
+	// Gem costs are real casting requirements, just like spell points.
+	// The error state already existed, but the resource check was missing,
+	// allowing gem-cost spells to be cast with too few (or zero) gems.
 	if (_spellState == SS_OK && requiredGems > chr->_gems)
 		_spellState = SS_NOT_ENOUGH_GEMS;
 
 	// Keep the enhanced spell dialog synchronized even when the spell
-	// cannot currently be afforded
+	// cannot currently be afforded.
 	_spellIndex = spellIndex;
 	_requiredSp = requiredSp;
 	_requiredGems = requiredGems;

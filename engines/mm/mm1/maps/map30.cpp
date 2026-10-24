@@ -138,18 +138,22 @@ Common::String Map30::worthy() {
 			STRING[Common::String::format("maps.map30.attributes.%d", attrNum)];
 		AttributePair &attrib = c.getAttribute(attrNum);
 
-		// Attributes with a base of 43 or more don't increase
+		// The Statue uses the same rule for all seven attributes. Apply the
+		// reward to both current and base immediately, but preserve the
+		// original MM1 threshold: attributes with base >= 43 do not increase.
 		if (attrib._base < 43) {
 			attrib._current = attrib._base = attrib._base + 3;
 			line += Common::String::format(", +3 %s", attrName.c_str());
 		} else {
+			// Do not falsely advertise +3 when the original cap blocks it.
 			line += Common::String::format(", %s unchanged", attrName.c_str());
 		}
 	}
 
-	// Mark that this character has claimed the Statue's result, for the
-	// Quest Log. The unused high bit of the prisoner flag byte is
-	// already saved, so no save format change is needed
+	// Custom Quest Log completion marker: this character has actually
+	// claimed the Statue of Judgement result after all six prisoners.
+	// CHARFLAG1_WORTHY already occupies the unused high bit in the
+	// serialized prisoner-quest flag byte; no save-format change needed.
 	c._flags[1] |= CHARFLAG1_WORTHY;
 
 	c._worthiness = 0;

@@ -662,7 +662,7 @@ void SpellsMonsters::writeConditionEffect() {
 	}
 
 	add(STRING[Common::String::format("spells.char_effects.%d",
-		effectNum)]);
+			effectNum)]);
 	add('!');
 }
 
@@ -686,6 +686,8 @@ void SpellsMonsters::handlePartyEffects() {
 		writeConditionEffect();
 	}
 
+	// Party-wide condition effects temporarily select each target.
+	// Restore the combat character that was active beforehand.
 	g_globals->_currCharacter = priorCharacter;
 }
 

@@ -40,7 +40,7 @@ void Encounter::execute(const Common::String &preCombatLog) {
 		return;
 	}
 
-	// Clear stale event text, or retain text supplied by this encounter
+	// Clear stale event text, or retain text supplied by this encounter.
 	_preCombatLog = preCombatLog;
 
 	if (!g_globals->_encountersOn)

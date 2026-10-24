@@ -206,8 +206,8 @@ void Search::timeout() {
 
 	case GET_TREASURE:
 		// Gold and gems are already awarded by drawTreasure(). If there are
-		// no item slots to show, close now rather than entering
-		// GET_ITEMS_DONE and requiring a second dismissal.
+		// no actual item slots left to show, close the Search view now rather
+		// than entering GET_ITEMS_DONE and requiring a second dismissal.
 		if (g_globals->_treasure.hasItems()) {
 			setMode(GET_ITEMS);
 			draw();
@@ -298,7 +298,8 @@ void Search::detectMagicTrap2() {
 		c._sp._current--;
 		char magic = g_globals->_treasure.hasItems() ||
 			g_globals->_treasure.getGems() ? 'Y' : 'N';
-		char trapped = g_globals->_treasure._trapType == 1 ? 'Y' : 'N';
+		char trapped =
+			g_globals->_treasure._trapType == 1 ? 'Y' : 'N';
 
 		_responseLine = 1;
 		_responseText = Common::String::format(
@@ -400,9 +401,9 @@ void Search::drawTreasure() {
 	}
 
 	Sound::sound2(SOUND_5);
-
-	// Gold/gem-only loot stays visible for longer, unless the player
-	// dismisses it early with a keypress or mouse click
+	// Preserve the normal 2-second handoff when actual items remain.
+	// Gold/gem-only loot stays visible for 7 seconds unless the player
+	// dismisses the active delay early with a keypress or mouse click.
 	delaySeconds(g_globals->_treasure.hasItems() ? 2 : 7);
 }
 
@@ -424,8 +425,8 @@ void Search::drawItem() {
 		}
 
 		if (!recipient) {
-			// Leave the item so it can be collected by Searching again
-			// once a backpack slot has been freed
+			// Keep the item in Treasure so it can be collected after the
+			// player frees a backpack slot and Searches again.
 			writeLine(_lineNum++, "Party inventory is full!", ALIGN_MIDDLE);
 			setMode(GET_ITEMS_DONE);
 			delaySeconds(7);
@@ -450,11 +451,10 @@ void Search::drawItem() {
 		}
 	}
 
-	// Finished the final item
+	// Finished the final item. Keep the existing acknowledgement timing.
 	setMode(GET_ITEMS_DONE);
 	delaySeconds(7);
 }
-
 void Search::setMode(Mode mode) {
 	_mode = mode;
 

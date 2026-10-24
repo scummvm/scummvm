@@ -445,10 +445,11 @@ void CharacterInventory::trade(const Common::String &mode, int amount, Character
 	Character &src = *g_globals->_currCharacter;
 
 	if (mode == "GEMS") {
-		// Gems are a 16-bit value (maximum 65,535). Keep the calculation
-		// wide enough for a five-digit entered amount, and limit the
-		// transfer to both the source balance and the destination capacity
-		// so that excess gems don't disappear
+		// Gems are serialized as uint16 (maximum 65,535).  Keep the
+		// calculation wide enough for a five-digit entered amount and cap
+		// the transfer to both the source balance and destination capacity.
+		// This prevents truncation above 65,535 and prevents excess gems
+		// from disappearing when the recipient is near the cap.
 		uint32 transfer = MIN<uint32>((uint32)amount, (uint32)src._gems);
 		transfer = MIN<uint32>(transfer, 0xffffU - (uint32)destChar->_gems);
 		src._gems -= (uint16)transfer;

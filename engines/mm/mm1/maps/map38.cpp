@@ -46,7 +46,7 @@ void Map38::special() {
 
 	g_maps->_mapPos = Common::Point(getRandomNumber(16) - 1,
 		getRandomNumber(16) - 1);
-	// This random relocation bypasses updateGame() and redrawGame()
+	// This random relocation bypasses updateGame()/redrawGame().
 	g_maps->visitedTile();
 	send(SoundMessage(STRING["maps.map38.ringing"]));
 }

@@ -199,7 +199,7 @@ void Map09::special18() {
 			0, 2, STRING["maps.map09.protection"]
 		));
 	} else {
-		// getRandomNumber() is inclusive, so pass the last valid index
+		// getRandomNumber() is inclusive, so pass the last valid index.
 		Character &victim = g_globals->_party[
 			getRandomNumber(g_globals->_party.size() - 1)
 		];
@@ -218,8 +218,8 @@ void Map09::special18() {
 			effectLine = "The party's spell points are drained.";
 		}
 
-		// Keep the result until combat opens, then add it to the Combat
-		// Log. This state is deliberately not serialized
+		// Preserve the result until combat opens, then consume it once in
+		// the Combat Log. This state is deliberately not serialized.
 		g_globals->_encounters._preCombatLog = Common::String::format(
 			"Psychic blast! %s", effectLine.c_str());
 
