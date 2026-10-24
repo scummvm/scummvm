@@ -498,6 +498,9 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	case KEYBIND_COMBAT_FIGHT:
 		fight();
 		break;
+	case KEYBIND_BESTIARY:
+		addView("Bestiary");
+		break;
 	case KEYBIND_PROTECT:
 		addView("Protect");
 		break;

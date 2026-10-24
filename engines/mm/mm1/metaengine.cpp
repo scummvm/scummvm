@@ -117,6 +117,7 @@ static const KeybindingRecord COMBAT_KEYS[] = {
 	{ KEYBIND_DELAY, "DELAY", _s("Delay"), "d", nullptr },
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_PROTECT, "PROTECT", _s("Protect"), "p", nullptr },
+	{ KEYBIND_BESTIARY, "BESTIARY", _s("Bestiary"), "n", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
