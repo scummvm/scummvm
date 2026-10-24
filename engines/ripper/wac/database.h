@@ -30,10 +30,8 @@
 namespace Ripper {
 
 class WacDatabaseMediaCallback;
-class WacJournalPuzzle;
 class WacManager;
 class WacStillImageViewer;
-class WacVoiceLockPuzzle;
 class WacVoiceLockRenderer;
 class RipperEngine;
 struct MouseState;
@@ -46,9 +44,7 @@ public:
 
 private:
 	friend class WacDatabaseMediaCallback;
-	friend class WacJournalPuzzle;
 	friend class WacStillImageViewer;
-	friend class WacVoiceLockPuzzle;
 	friend class WacVoiceLockRenderer;
 
 	struct DatabaseEntry {
@@ -69,6 +65,12 @@ private:
 	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
 	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
+	uint16 runJournal(byte entryIndex, const Common::String &entryLabel);
+	bool drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress,
+		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
+	bool drawJournalTextPanelLine(const Common::Array<Common::String> &lines,
+		uint firstVisible, uint visibleRows, uint lineIndex);
+	uint16 runVoiceLock(byte entryIndex, const Common::String &entryLabel);
 	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
 	RipperEngine *engine() const;
 	const Common::String &resourceString(uint resourceId) const;

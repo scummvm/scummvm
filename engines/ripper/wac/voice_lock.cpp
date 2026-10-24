@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/wac/voice_lock.h"
+#include "ripper/wac/database.h"
 
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
@@ -37,7 +37,6 @@
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
-#include "ripper/wac/database.h"
 #include "ripper/wac/wac.h"
 #include "ripper/wac/voice_lock_model.h"
 #include "ripper/wac/voice_lock_renderer.h"
@@ -108,13 +107,9 @@ static bool loadWacVoiceLockPcm(ResourceManager *resources,
 	return true;
 }
 
-WacVoiceLockPuzzle::WacVoiceLockPuzzle(WacDatabaseSession *database) :
-		_database(database) {
-}
-
-uint16 WacVoiceLockPuzzle::run(byte entryIndex,
+uint16 WacDatabaseSession::runVoiceLock(byte entryIndex,
 		const Common::String &entryLabel) {
-	ResourceManager *resources = _database->engine()->getResources();
+	ResourceManager *resources = engine()->getResources();
 	const Common::Rect sourcePanel(50, 50, 390, 166);
 	const Common::Rect editorPanel(50, 176, 390, 292);
 	const Common::Rect sourceWaveform(
@@ -137,10 +132,10 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		return kNoAction;
 	}
 
-	const bool editorAvailable = _database->engine()->getMilestones()->isSet(
+	const bool editorAvailable = engine()->getMilestones()->isSet(
 		kMilestoneWacAudioEditorAvailable);
 	WacVoiceLockEditorState state;
-	state.puzzleHelpEnabled = _database->engine()->isPuzzleHelpEnabled();
+	state.puzzleHelpEnabled = engine()->isPuzzleHelpEnabled();
 	Common::Array<WacVoiceLockSelection> &selections = state.selections;
 	Common::Array<WacVoiceLockEditorSegment> &editorSegments =
 		state.editorSegments;
@@ -169,7 +164,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 	int &playbackProgressColumn = state.playbackProgressColumn;
 	bool &puzzleHelpEnabled = state.puzzleHelpEnabled;
 	const uint savedCursor =
-		_database->engine()->getCursor()->getSelectionIndex();
+		engine()->getCursor()->getSelectionIndex();
 	Audio::SoundHandle audioHandle;
 
 	Common::Rect buttonBounds[3];
@@ -183,15 +178,15 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		buttonLeft += bitmap.width;
 	}
 
-	WacVoiceLockRenderer renderer(_database, buttonAssets, buttonBounds,
+	WacVoiceLockRenderer renderer(this, buttonAssets, buttonBounds,
 		sourcePanel, editorPanel, sourceWaveform, editorWaveform,
 		editorAvailable);
 
 	if (!renderer.drawPresentation(sourcePcm, state))
 		return kNoAction;
-	_database->engine()->getInput()->discardMouseTransitions();
-	_database->engine()->getCursor()->setSelectionIndex(kWacDefaultCursor);
-	_database->engine()->getCursor()->dispatchSelectionIndexChange(
+	engine()->getInput()->discardMouseTransitions();
+	engine()->getCursor()->setSelectionIndex(kWacDefaultCursor);
+	engine()->getCursor()->dispatchSelectionIndexChange(
 		kWacDefaultCursor);
 	debugC(1, kDebugWac,
 		"Ripper: entered WAC voice-lock puzzle entry=%u label='%s' editor=%d flag=0x%x sourcePanel=%d,%d,%d,%d editorPanel=%d,%d,%d,%d",
@@ -211,9 +206,9 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 	uint16 result = kNoAction;
 	bool redraw = false;
 	bool solved = false;
-	while (!_database->engine()->shouldQuit()) {
+	while (!engine()->shouldQuit()) {
 		MouseState mouse;
-		const uint16 command = _database->serviceDatabaseMediaInput(entryIndex,
+		const uint16 command = serviceDatabaseMediaInput(entryIndex,
 			nullptr, 0, 0, &mouse, true);
 		if (command == kWacDatabaseSelectionChanged || command == kExitAction ||
 				command == 0x1b) {
@@ -223,7 +218,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		if (command == MediaSequenceCallback::kContinueRefreshPalette)
 			redraw = true;
 		const bool nextPuzzleHelpEnabled =
-			_database->engine()->isPuzzleHelpEnabled();
+			engine()->isPuzzleHelpEnabled();
 		if (nextPuzzleHelpEnabled != puzzleHelpEnabled) {
 			puzzleHelpEnabled = nextPuzzleHelpEnabled;
 			debugC(2, kDebugWac,
@@ -259,9 +254,9 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 			sourceWaveformHover || editorWaveformHover;
 		const Common::Rect databaseBounds(kWacDatabaseLeft, kWacDatabaseTop,
 			kWacDatabaseRight, kWacDatabaseBottom);
-		_database->engine()->getCursor()->update(
+		engine()->getCursor()->update(
 			databaseBounds.contains(mouse.position) ||
-				_database->persistentControlHovered() ||
+				persistentControlHovered() ||
 				waveformHover || hoveredButton >= 0 ?
 				kWacControlCursor : kWacDefaultCursor);
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {
@@ -401,7 +396,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 				if (editorAvailable && !sourcePanelActive) {
 					if (!assembledAudio.empty())
 						started =
-							_database->engine()->getMedia()->playRawSoundEffect(
+							engine()->getMedia()->playRawSoundEffect(
 								assembledAudio, sourcePcm.sampleRate,
 								sourcePcm.flags, audioHandle);
 					playbackBytes = assembledAudio.size();
@@ -420,7 +415,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 					appendWacVoiceLockSelectionAudio(sourcePcm,
 						sourceSelection, sourceWaveform, selectedAudio);
 					started =
-						_database->engine()->getMedia()->playRawSoundEffect(
+						engine()->getMedia()->playRawSoundEffect(
 							selectedAudio, sourcePcm.sampleRate,
 							sourcePcm.flags, audioHandle);
 					playbackBytes = selectedAudio.size();
@@ -432,7 +427,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 						sourceSelection.start, sourceSelection.end,
 						selectedAudio.size(), started);
 				} else {
-					started = _database->engine()->getMedia()->playSoundEffect(
+					started = engine()->getMedia()->playSoundEffect(
 						quantized ? "voxlok1.wav" : "voxlok.wav",
 						audioHandle);
 					debugC(2, kDebugWac,
@@ -448,7 +443,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 				break;
 			}
 		case 1:
-			_database->engine()->getMedia()->stopSoundEffect(audioHandle);
+			engine()->getMedia()->stopSoundEffect(audioHandle);
 			state.clearEditor();
 				debugC(2, kDebugWac,
 					"Ripper: WAC voice-lock cleared assembled audio");
@@ -466,7 +461,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 					state.resetSourceDrag();
 					sourcePanelActive = true;
 					validateAfterPlayback = false;
-					_database->engine()->getMedia()->playSoundEffect(
+					engine()->getMedia()->playSoundEffect(
 						"wacjrnl.wav", audioHandle);
 					debugC(2, kDebugWac,
 						"Ripper: WAC voice-lock quantized source='voxlok1.wav' bytes=%u rate=%u retainedDrops=%u assembledBytes=%u puzzleHelpVisible=%d endpointTolerance=%u",
@@ -490,10 +485,10 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		}
 
 		const bool playbackActive =
-			_database->engine()->getMedia()->isSoundEffectActive(audioHandle);
+			engine()->getMedia()->isSoundEffectActive(audioHandle);
 		if (playbackProgressActive && playbackActive) {
 			const uint32 elapsed =
-				_database->engine()->getMedia()->getSoundEffectElapsedTime(
+				engine()->getMedia()->getSoundEffectElapsedTime(
 					audioHandle);
 			const int nextProgressColumn = MIN<int>(
 				playbackProgressBounds.width() - 1,
@@ -514,7 +509,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 			playbackProgressColumn = -1;
 			redraw = true;
 			Common::String sceneLabel;
-			ScriptManager *scripts = _database->engine()->getScripts();
+			ScriptManager *scripts = engine()->getScripts();
 			const uint activeFrame = scripts->getActiveFrame();
 			if (activeFrame < scripts->getActiveScript().getFrames().size())
 				sceneLabel = scripts->getActiveScript().getString(
@@ -558,17 +553,17 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		g_system->delayMillis(10);
 	}
 
-	_database->engine()->getMedia()->stopSoundEffect(audioHandle);
+	engine()->getMedia()->stopSoundEffect(audioHandle);
 	if (!renderer.restoreSourceSelectionDragBacking(state))
 		warning("Ripper: could not restore WAC voice-lock transient drag backing");
 	if (solved) {
-		_database->engine()->getCursor()->setVisible(false);
+		engine()->getCursor()->setVisible(false);
 		// Clear the bands outside the completion movie's 640x300 viewport.
 		g_system->fillScreen(0);
 		presentScreen();
 		const bool played =
-			_database->engine()->getMedia()->play("accesed.avi", true);
-		_database->engine()->getMilestones()->set(
+			engine()->getMedia()->play("accesed.avi", true);
+		engine()->getMilestones()->set(
 			kMilestoneSecretAnimalLabOpen, true, "wac-voice-lock");
 		result = kExitAction;
 		debugC(1, kDebugWac,
@@ -576,19 +571,19 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 			played, kMilestoneSecretAnimalLabOpen, selections.size());
 	}
 
-	_database->clearDatabaseMediaViewport();
-	_database->drawDatabase();
-	_database->engine()->getCursor()->setSelectionIndex(savedCursor);
-	_database->engine()->getCursor()->dispatchSelectionIndexChange(savedCursor);
-	_database->engine()->getInput()->discardMouseTransitions();
+	clearDatabaseMediaViewport();
+	drawDatabase();
+	engine()->getCursor()->setSelectionIndex(savedCursor);
+	engine()->getCursor()->dispatchSelectionIndexChange(savedCursor);
+	engine()->getInput()->discardMouseTransitions();
 	debugC(1, kDebugWac,
 		"Ripper: left WAC voice-lock puzzle entry=%u result=0x%x editor=%d quantized=%d selections=%u solved=%d",
 		entryIndex, result, editorAvailable, quantized,
 		selections.size(), solved);
 	if (result == kWacDatabaseSelectionChanged &&
-			_database->_databaseSelection < _database->_databaseEntries.size())
-		return _database->dispatchDatabaseEntry(
-			_database->_databaseEntries[_database->_databaseSelection]);
+			_databaseSelection < _databaseEntries.size())
+		return dispatchDatabaseEntry(
+			_databaseEntries[_databaseSelection]);
 	return result == kExitAction ? kExitAction : kNoAction;
 }
 

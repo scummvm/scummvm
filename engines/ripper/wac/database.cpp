@@ -38,9 +38,7 @@
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
 #include "ripper/wac/broken_mug.h"
-#include "ripper/wac/journal.h"
 #include "ripper/wac/still_image.h"
-#include "ripper/wac/voice_lock.h"
 
 namespace Ripper {
 
@@ -672,14 +670,10 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		drawDatabase();
 		return kNoAction;
 	}
-	if (entry.catalog->handler == kWacDatabaseHandlerJournal) {
-		WacJournalPuzzle puzzle(this);
-		return puzzle.run(entry.originalIndex(), entry.label);
-	}
-	if (entry.catalog->handler == kWacDatabaseHandlerVoiceLock) {
-		WacVoiceLockPuzzle puzzle(this);
-		return puzzle.run(entry.originalIndex(), entry.label);
-	}
+	if (entry.catalog->handler == kWacDatabaseHandlerJournal)
+		return runJournal(entry.originalIndex(), entry.label);
+	if (entry.catalog->handler == kWacDatabaseHandlerVoiceLock)
+		return runVoiceLock(entry.originalIndex(), entry.label);
 	if (entry.catalog->handler == kWacDatabaseHandlerStillImage) {
 		const Common::String path = Common::String::format(
 			"wacinv%u.pcx", entry.originalIndex());
