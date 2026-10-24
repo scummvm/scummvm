@@ -26,7 +26,6 @@
 #include "mm/mm1/globals.h"
 #include "mm/mm1/views_enh/game_frame.h"
 #include "mm/mm1/mm1.h"
-#include "mm/shared/utils/strings.h"
 #include "graphics/fontman.h"
 
 namespace MM {
@@ -63,9 +62,6 @@ bool Globals::load(bool isEnhanced) {
 		GUIErrorMessage(errMsg);
 		return false;
 	}
-
-	if (!_strings.load("strings_en.yml"))
-		return false;
 
 	if (!_font.load("font.bmp"))
 		return false;
@@ -129,34 +125,6 @@ bool Globals::load(bool isEnhanced) {
 	}
 
 	return true;
-}
-
-Common::String Globals::operator[](const Common::String &name) const {
-	bool isMapStr = name.hasPrefix("maps.map");
-
-	if (g_engine->isEnhanced()) {
-		if (isMapStr) {
-			// Map strings support having alternate versions in Enhanced version
-			Common::String altName = Common::String::format("maps.emap%s",
-				name.c_str() + 8);
-			if (_strings.contains(altName))
-				return _strings[altName];
-		}
-
-		if (name.hasPrefix("dialogs.")) {
-			Common::String altName = Common::String::format("enh%s", name.c_str());
-			if (_strings.contains(altName))
-				return _strings[altName];
-		}
-	}
-
-	assert(_strings.contains(name));
-	Common::String result = _strings[name];
-
-	if (g_engine->isEnhanced() && name.hasPrefix("maps."))
-		result = searchAndReplace(result, "\n", " ");
-
-	return result;
 }
 
 void Globals::synchronize(Common::Serializer &s) {

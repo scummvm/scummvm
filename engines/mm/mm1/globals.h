@@ -24,7 +24,6 @@
 
 #include "common/serializer.h"
 #include "graphics/font.h"
-#include "mm/shared/utils/strings_data.h"
 #include "mm/shared/utils/xeen_font.h"
 #include "mm/xeen/sprites.h"
 #include "mm/mm1/data/bestiary.h"
@@ -44,7 +43,6 @@ namespace MM1 {
 
 class Globals : public GameState {
 public:
-	StringsData _strings;
 	Roster _roster;
 	Common::Array<Character *> _combatParty;
 	Character *_currCharacter = nullptr;
@@ -97,19 +95,12 @@ public:
 	bool load(bool isEnhanced);
 
 	/**
-	 * Returns a string
-	 */
-	Common::String operator[](const Common::String &name) const;
-
-	/**
 	 * Saves global data to/from savegames
 	 */
 	void synchronize(Common::Serializer &s);
 };
 
 extern Globals *g_globals;
-
-#define STRING (*g_globals)
 
 } // namespace MM1
 } // namespace MM

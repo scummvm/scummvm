@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	shared/utils/bitmap_font.o \
 	shared/classic/pc_speaker.o \
 	shared/utils/strings.o \
-	shared/utils/strings_data.o \
 	shared/utils/xeen_font.o \
 	shared/xeen/cc_archive.o \
 	shared/xeen/file.o \
