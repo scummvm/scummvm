@@ -998,6 +998,12 @@ SpellResult SpellsParty::wizard75_prismaticLight() {
 	if (getRandomNumber(100) < 20)
 		return SR_FAILED;
 
+	// Generate a new unpredictable effect for this cast rather
+	// than reusing state left behind by an earlier spell
+	ss._mmVal1 = getRandomNumber(100);
+	ss._resistanceIndex = 0;
+	ss._damage = 1;
+
 	if (ss._mmVal1 < 50) {
 		uint count = getRandomNumber(4);
 		ss._damage <<= count;
