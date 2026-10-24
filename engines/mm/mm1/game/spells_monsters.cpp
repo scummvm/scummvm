@@ -99,7 +99,7 @@ void SpellsMonsters::spell02_energyBlast() {
 }
 
 void SpellsMonsters::spell03_fire() {
-	add("breathes  fire");
+	add("breathes fire");
 	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_FIRE;
 
@@ -225,7 +225,7 @@ void SpellsMonsters::spell13_fireball() {
 }
 
 void SpellsMonsters::spell14_fireBreath() {
-	add("breathes  fire");
+	add("breathes fire");
 	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_FIRE;
 
@@ -342,7 +342,7 @@ void SpellsMonsters::spell24_commandsEnergy() {
 }
 
 void SpellsMonsters::spell25_poison() {
-	add("breathes  poison");
+	add("breathes poison");
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_POISON;
 	g_globals->_spellsState._damage = g_globals->_encounters._monsterList[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._resistanceIndex;
@@ -352,7 +352,7 @@ void SpellsMonsters::spell25_poison() {
 }
 
 void SpellsMonsters::spell26_lightning() {
-	add("breathes  lightning");
+	add("breathes lightning");
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 	g_globals->_spellsState._damage = g_globals->_encounters._monsterList[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._resistanceIndex;
@@ -362,7 +362,7 @@ void SpellsMonsters::spell26_lightning() {
 }
 
 void SpellsMonsters::spell27_frost() {
-	add("breathes  frost");
+	add("breathes frost");
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_COLD;
 	g_globals->_spellsState._damage = g_globals->_encounters._monsterList[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._resistanceIndex;
@@ -372,7 +372,7 @@ void SpellsMonsters::spell27_frost() {
 }
 
 void SpellsMonsters::spell28_spikes() {
-	add("breathes  spikes");
+	add("breathes spikes");
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 	g_globals->_spellsState._damage = g_globals->_encounters._monsterList[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._resistanceIndex;
@@ -382,7 +382,7 @@ void SpellsMonsters::spell28_spikes() {
 }
 
 void SpellsMonsters::spell29_acid() {
-	add("breathes  acid");
+	add("breathes acid");
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_ACID;
 	g_globals->_spellsState._damage = g_globals->_encounters._monsterList[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._resistanceIndex;
@@ -392,7 +392,7 @@ void SpellsMonsters::spell29_acid() {
 }
 
 void SpellsMonsters::spell30_fire() {
-	add("breathes  fire");
+	add("breathes fire");
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_FIRE;
 	g_globals->_spellsState._damage = g_globals->_encounters._monsterList[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._resistanceIndex;
