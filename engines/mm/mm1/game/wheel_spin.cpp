@@ -88,6 +88,11 @@ void WheelSpin::spin() {
 			}
 		}
 
+		// Spinning the Wheel makes all four Great Beasts available again.
+		// Keep the Wheel marker (CHARFLAG2_80) and the upper bits
+		c._flags[2] &= ~(CHARFLAG2_1 | CHARFLAG2_2 |
+			CHARFLAG2_4 | CHARFLAG2_8);
+
 		_results.push_back(line);
 	}
 }
