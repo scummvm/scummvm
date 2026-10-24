@@ -513,6 +513,10 @@ bool Combat::monsterChanges() {
 	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		monsterSetPtr(i);
 
+		// Dead monsters stay dead until combat cleanup removes them
+		if (_remainingMonsters[i]->_status == MONFLAG_DEAD)
+			continue;
+
 		if ((_monsterP->_counterFlags & COUNTER_REGENERATE) &&
 			(_monsterP->_defaultHP != _remainingMonsters[i]->_hp)) {
 			_monstersRegenerate = true;
