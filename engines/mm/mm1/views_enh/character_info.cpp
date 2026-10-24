@@ -305,6 +305,54 @@ void CharacterInfo::drawStats() {
 		} else {
 			setTextColor(c.statColor(CURR[i], BASE[i]));
 			writeNumber(pt.x, pt.y, CURR[i]);
+
+			// Show an upward arrow after the experience when the character
+			// has enough to train for the next level. The font's right-arrow
+			// glyph is rotated to point up, in the colour used for SP == 0
+			if (i == 13 && c.canLevelUp()) {
+				XeenFont &font = _fontReduced ? g_globals->_fontReduced : g_globals->_fontNormal;
+				XeenFont::setColors(c.statColor(0, c._sp._base));
+				Graphics::ManagedSurface glyph, mask;
+				const int gw = font.getMaxCharWidth() + 2;
+				const int gh = font.getFontHeight() + 2;
+				glyph.create(gw, gh, Graphics::PixelFormat::createFormatCLUT8());
+				mask.create(gw, gh, Graphics::PixelFormat::createFormatCLUT8());
+				// Draw on two different backgrounds, so pixels the glyph
+				// really touched can be told apart from the background
+				glyph.clear(0);
+				mask.clear(255);
+				font.drawChar(&glyph, '^', 1, 1, 9);
+				font.drawChar(&mask, '^', 1, 1, 9);
+				int left = gw, top = gh, right = -1, bottom = -1;
+				for (int y = 0; y < gh; ++y) {
+					for (int x = 0; x < gw; ++x) {
+						if (*(const byte *)glyph.getBasePtr(x, y) == *(const byte *)mask.getBasePtr(x, y)) {
+							if (x < left) left = x;
+							if (x > right) right = x;
+							if (y < top) top = y;
+							if (y > bottom) bottom = y;
+						}
+					}
+				}
+				if (right >= left && bottom >= top) {
+					Graphics::ManagedSurface s = getSurface();
+					const int destX = _bounds.borderSize() + _textPos.x + 2;
+					const int destY = _bounds.borderSize() + _textPos.y +
+						(font.getFontHeight() - (right - left + 1)) / 2;
+					for (int y = top; y <= bottom; ++y) {
+						for (int x = left; x <= right; ++x) {
+							const byte pixel = *(const byte *)glyph.getBasePtr(x, y);
+							if (pixel != *(const byte *)mask.getBasePtr(x, y)) continue;
+							// Counterclockwise: the rightmost source column becomes the top row
+							const int dx = destX + y - top;
+							const int dy = destY + right - x;
+							if (dx >= 0 && dx < s.w && dy >= 0 && dy < s.h)
+								s.fillRect(Common::Rect(dx, dy, dx + 1, dy + 1), pixel);
+						}
+					}
+				}
+				XeenFont::setColors(_colorsNum);
+			}
 		}
 	}
 

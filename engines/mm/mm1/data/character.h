@@ -586,6 +586,11 @@ struct Character : public PrimaryAttributes {
 	uint32 experienceForNextLevel() const;
 
 	/**
+	 * Returns true when current experience is sufficient for training
+	 */
+	bool canLevelUp() const;
+
+	/**
 	 * Returns the color to use in enhanced mode to
 	 * represent the color of a character attribute
 	 */

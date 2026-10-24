@@ -748,6 +748,11 @@ uint32 Character::experienceForNextLevel() const {
 	return expTotal;
 }
 
+bool Character::canLevelUp() const {
+	return _level._base < MAX_LEVEL &&
+		_exp >= experienceForNextLevel();
+}
+
 byte Character::statColor(int amount, int threshold) const {
 	if (amount < 1)
 		return 6;
