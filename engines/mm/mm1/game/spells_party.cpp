@@ -613,7 +613,8 @@ SpellResult SpellsParty::cleric73_protectionFromElements() {
 }
 
 SpellResult SpellsParty::cleric74_resurrection() {
-	if (_destChar->_condition == ERADICATED)
+	// Only an eradicated character can be resurrected
+	if (_destChar->_condition != ERADICATED)
 		return SR_FAILED;
 
 	if (_destChar->_age < 10 || _destChar->_age > 200)
