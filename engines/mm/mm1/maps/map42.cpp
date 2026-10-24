@@ -152,10 +152,23 @@ void Map42::special17() {
 }
 
 void Map42::dogSuccess() {
+	bool alreadyCompleted = false;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-		c._flags[0] = CHARFLAG0_DOG_STATUE;
-		c._exp += 10000;
+		if (g_globals->_party[i]._flags[0] & CHARFLAG0_DOG_STATUE) {
+			alreadyCompleted = true;
+			break;
+		}
+	}
+
+	// The quest transition replaces the courier-stage byte with DOG_STATUE.
+	// Award the completion XP only on that first transition, so recovering a
+	// missed Gold Key later doesn't duplicate it
+	if (!alreadyCompleted) {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			c._flags[0] = CHARFLAG0_DOG_STATUE;
+			c._exp += 10000;
+		}
 	}
 
 	g_globals->_treasure._items[2] = GOLD_KEY_ID;

@@ -36,13 +36,25 @@ DogStatue::DogStatue() : TextView("DogStatue") {
 bool DogStatue::msgFocus(const FocusMessage &msg) {
 	Sound::sound(SOUND_2);
 
-	_completedQuests = false;
+	bool alreadyCompleted = false;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		if ((g_globals->_party[i]._flags[0] &
-			(CHARFLAG0_COURIER3 | CHARFLAG0_FOUND_CHEST | CHARFLAG0_40)) ==
-			(CHARFLAG0_COURIER3 | CHARFLAG0_FOUND_CHEST | CHARFLAG0_40)) {
-			_completedQuests = true;
+		if (g_globals->_party[i]._flags[0] & CHARFLAG0_DOG_STATUE) {
+			alreadyCompleted = true;
 			break;
+		}
+	}
+
+	_completedQuests = alreadyCompleted &&
+		!g_globals->_party.hasItem(GOLD_KEY_ID);
+
+	if (!alreadyCompleted) {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			if ((g_globals->_party[i]._flags[0] &
+				(CHARFLAG0_COURIER3 | CHARFLAG0_FOUND_CHEST | CHARFLAG0_40)) ==
+				(CHARFLAG0_COURIER3 | CHARFLAG0_FOUND_CHEST | CHARFLAG0_40)) {
+				_completedQuests = true;
+				break;
+			}
 		}
 	}
 
@@ -65,6 +77,12 @@ void DogStatue::draw() {
 }
 
 bool DogStatue::msgKeypress(const KeypressMessage &msg) {
+	if (_completedQuests) {
+		close();
+		g_events->addAction(KEYBIND_SEARCH);
+		return true;
+	}
+
 	if (msg.keycode == Common::KEYCODE_y || msg.keycode == Common::KEYCODE_n) {
 		MM1::Maps::Map42 &map = *static_cast<MM1::Maps::Map42 *>(g_maps->_currentMap);
 		close();
@@ -78,6 +96,12 @@ bool DogStatue::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool DogStatue::msgAction(const ActionMessage &msg) {
+	if (_completedQuests) {
+		close();
+		g_events->addAction(KEYBIND_SEARCH);
+		return true;
+	}
+
 	if (msg._action == KEYBIND_ESCAPE || msg._action == KEYBIND_SELECT) {
 		MM1::Maps::Map42 &map = *static_cast<MM1::Maps::Map42 *>(g_maps->_currentMap);
 		close();
