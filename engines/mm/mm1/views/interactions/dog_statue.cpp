@@ -65,14 +65,19 @@ void DogStatue::draw() {
 	MM1::Maps::Map42 &map = *static_cast<MM1::Maps::Map42 *>(g_maps->_currentMap);
 
 	clearSurface();
-	writeString(0, 0, STRING["maps.map42.statue1"]);
+	writeString(0, 0, "Standing atop a pedestal in the center\n"
+		"of the room is a statue of a small sable\n"
+		"and white dog. ");
 
 	if (_completedQuests) {
-		writeString(0, 2, STRING["maps.map42.statue2"]);
+		writeString(0, 2, "It comes to life and\n"
+			"speaks,\"Congratulations, you've\n"
+			"completed a major quest (+10000 exp)\n"
+			"Remember B.J.!\"");
 		map.dogSuccess();
 
 	} else {
-		writeString(0, 3, STRING["maps.map42.statue3"]);
+		writeString(0, 3, "Desecrate it (Y/N)?");
 	}
 }
 

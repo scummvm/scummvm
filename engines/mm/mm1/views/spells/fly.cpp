@@ -43,16 +43,16 @@ void Fly::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	writeString(9, 0, STRING["dialogs.spells.fly_to_x"]);
+	writeString(9, 0, "Fly to (A-E): ");
 	writeChar((_mode == SELECT_X) ? '_' : 'A' + _xIndex);
 
 	if (_mode == SELECT_Y || _mode == CAST) {
-		writeString(16, 1, STRING["dialogs.spells.fly_to_y"]);
+		writeString(16, 1, "(1-4): ");
 		writeChar((_mode == SELECT_Y) ? '_' : '1' + _yIndex);
 	}
 
 	if (_mode == CAST) {
-		writeString(24, 3, STRING["spells.enter_to_cast"]);
+		writeString(24, 3, "'Enter' to cast");
 	}
 }
 

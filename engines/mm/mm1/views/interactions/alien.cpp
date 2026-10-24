@@ -34,7 +34,9 @@ Alien::Alien() : TextView("Alien") {
 
 void Alien::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map31.alien"]);
+	writeString(0, 1, "Scattered remains of a metallic craft!\n"
+		"An alien grunts, \"Eep op oop!\"\n"
+		"Reaction: a)Hostile b)Neutral c)Friendly");
 }
 
 bool Alien::msgKeypress(const KeypressMessage &msg) {

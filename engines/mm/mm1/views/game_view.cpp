@@ -61,7 +61,7 @@ void GameView::draw() {
 		drawDialogMessage();
 		_dialogMessage.clear();
 	} else if (_isDark) {
-		writeString(9, 7, STRING["view.darkness"]);
+		writeString(9, 7, "  darkness");
 	}
 
 	if (!_descriptionLine.empty())

@@ -52,10 +52,10 @@ void Resistances::draw() {
 
 	} else {
 		Character &c = *g_globals->_currCharacter;
-		writeString(0, 1, STRING["maps.map02.resistances1"]);
+		writeString(0, 1, "% resistance for ");
 		writeString(c._name);
 		newLine();
-		writeString(0, 1, STRING["maps.map02.resistances2"]);
+		writeString(0, 1, "Magic     Fire     Cold       Elec\nAcid      Fear     Poison     Sleep");
 
 		writeNumber(6, 1, c._resistances._s._magic);
 		writeNumber(15, 1, c._resistances._s._fire);

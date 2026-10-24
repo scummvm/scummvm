@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/character_base.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/utils/strings.h"
 #include "mm/mm1/globals.h"
 
@@ -31,27 +32,27 @@ void CharacterBase::printStats() {
 	Character &re = *g_globals->_currCharacter;
 	printSummary();
 
-	writeString(0, 2, STRING["stats.attributes.int"]);
+	writeString(0, 2, "Int=");
 	writeNumber(re._intelligence);
 	_textPos.x = 8;
-	writeString(STRING["stats.attributes.level"]);
+	writeString("Level=");
 	writeNumber(re._level);
 	_textPos.x = 18;
-	writeString(STRING["stats.attributes.age"]);
+	writeString("Age=");
 	writeNumber(re._level);
 	_textPos.x = 27;
-	writeString(STRING["stats.attributes.exp"]);
+	writeString("Exp=");
 	writeNumber(re._exp);
 
 	newLine();
-	writeString(STRING["stats.attributes.mgt"]);
+	writeString("Mgt=");
 	writeNumber(re._might);
 
 	newLine();
-	writeString(STRING["stats.attributes.per"]);
+	writeString("Per=");
 	writeNumber(re._personality);
 	_textPos.x = 8;
-	writeString(STRING["stats.attributes.sp"]);
+	writeString("SP=");
 	writeNumber(re._sp._current);
 	_textPos.x = 16;
 	writeChar('/');
@@ -61,38 +62,38 @@ void CharacterBase::printStats() {
 	writeNumber(re._spellLevel._current);
 	writeChar(')');
 	_textPos.x = 26;
-	writeString(STRING["stats.attributes.gems"]);
+	writeString("Gems=");
 	writeNumber(re._gems);
 
 	newLine();
-	writeString(STRING["stats.attributes.end"]);
+	writeString("End=");
 	writeNumber(re._endurance);
 
 	newLine();
-	writeString(STRING["stats.attributes.spd"]);
+	writeString("Spd=");
 	writeNumber(re._speed);
 	_textPos.x = 8;
-	writeString(STRING["stats.attributes.hp"]);
+	writeString("HP=");
 	writeNumber(re._hpCurrent);
 	_textPos.x = 16;
 	writeChar('/');
 	writeNumber(re._hpMax);
 	_textPos.x = 26;
-	writeString(STRING["stats.attributes.gold"]);
+	writeString("Gold=");
 	writeNumber(re._gold);
 
 	newLine();
-	writeString(STRING["stats.attributes.acy"]);
+	writeString("Acy=");
 	writeNumber(re._accuracy);
 
 	newLine();
-	writeString(STRING["stats.attributes.luc"]);
+	writeString("Luc=");
 	writeNumber(re._luck);
 	_textPos.x = 8;
-	writeString(STRING["stats.attributes.ac"]);
+	writeString("AC=");
 	writeNumber(re._ac);
 	_textPos.x = 26;
-	writeString(STRING["stats.attributes.food"]);
+	writeString("Food=");
 	writeNumber(re._food);
 
 	newLine();
@@ -112,24 +113,24 @@ void CharacterBase::printSummary() {
 
 	_textPos.x++;
 	writeString((re._alignment >= GOOD && re._alignment <= EVIL) ?
-		STRING[Common::String::format("stats.alignments.%d", re._alignment)] :
-		STRING["stats.none"]
+		ALIGNMENT_NAMES[re._alignment - 1] :
+		"None"
 	);
 
 	if (re._race >= HUMAN && re._race <= HALF_ORC)
-		writeString(26, 0, STRING[Common::String::format("stats.races.%d", re._race)]);
+		writeString(26, 0, RACE_NAMES[re._race - 1]);
 	else
-		writeString(26, 0, STRING["stats.none"]);
+		writeString(26, 0, "None");
 
 	if (re._class >= KNIGHT && re._class <= ROBBER)
-		writeString(32, 0, STRING[Common::String::format("stats.classes.%d", re._class)]);
+		writeString(32, 0, CLASS_NAMES[re._class - 1]);
 	else
-		writeString(32, 0, STRING["stats.none"]);
+		writeString(32, 0, "None");
 }
 
 void CharacterBase::printCondition() {
 	Character &c = *g_globals->_currCharacter;
-	writeString(STRING["stats.attributes.cond"]);
+	writeString("Cond=");
 	_textPos.x++;
 
 	writeString(c.getConditionString());
@@ -137,7 +138,7 @@ void CharacterBase::printCondition() {
 
 void CharacterBase::printInventory() {
 	Character &re = *g_globals->_currCharacter;
-	writeString(0, 12, STRING["stats.inventory"]);
+	writeString(0, 12, "-----<Equipped>----------<Backpack>----");
 
 	// Print the equipped and backpack items
 	for (uint i = 0; i < INVENTORY_COUNT; ++i) {

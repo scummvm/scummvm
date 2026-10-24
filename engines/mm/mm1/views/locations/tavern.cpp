@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/locations/tavern.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -88,55 +89,50 @@ bool Tavern::msgAction(const ActionMessage &msg) {
 void Tavern::draw() {
 	Location::draw();
 
-	writeString(20, 1, STRING["dialogs.tavern.drink"]);
-	writeString(20, 2, STRING["dialogs.tavern.tip"]);
-	writeString(20, 3, STRING["dialogs.tavern.listen"]);
+	writeString(20, 1, "a) Have a drink\n");
+	writeString(20, 2, "b) Tip bartender\n");
+	writeString(20, 3, "c) Listen for rumors");
 }
 
 void Tavern::haveADrink() {
 	if (g_globals->_currCharacter->_condition) {
 		Sound::sound(SOUND_2);
-		displayMessage(STRING["dialogs.tavern.terrible"]);
+		displayMessage("You look terrible, go see the clerics.");
 	} else if (subtractGold(1)) {
 		if (++g_globals->_currCharacter->_numDrinks < 3 ||
 				g_engine->getRandomNumber(10) <
 				g_globals->_currCharacter->_endurance) {
-			displayMessage(STRING["dialogs.tavern.great_stuff"]);
+			displayMessage("Great stuff!");
 		} else {
 			if (!(g_globals->_currCharacter->_condition & BAD_CONDITION))
 				g_globals->_currCharacter->_condition |= POISONED;
 
 			Sound::sound(SOUND_2);
-			displayMessage(13, STRING["dialogs.tavern.you_feel_sick"]);
+			displayMessage(13, "You feel sick!!");
 		}
 	}
 }
 
 void Tavern::tipBartender() {
 	if (g_globals->_currCharacter->_condition) {
-		displayMessage(STRING["dialogs.tavern.go_see_clerics"]);
+		displayMessage("You look terrible, go see the clerics.");
 	} else if (subtractGold(1)) {
 		if (g_globals->_currCharacter->_numDrinks == 0) {
-			displayMessage(STRING["dialogs.tavern.have_a_drink"]);
+			displayMessage("Have a drink, then we'll talk.");
 		} else if (g_engine->getRandomNumber(3) != 3) {
-			displayMessage(STRING["dialogs.tavern.have_another_round"]);
+			displayMessage("Thanks a lot, have another round!");
 		} else {
 			int townNum = g_maps->_currentMap->dataByte(Maps::MAP_ID);
-			displayMessage(STRING[Common::String::format(
-				"dialogs.tavern.tips.%d_%d",
-				townNum, g_globals->_currCharacter->_numDrinks
-			)]);
+			displayMessage(TAVERN_TIPS[townNum - 1][g_globals->_currCharacter->_numDrinks - 1]);
 		}
 	}
 }
 
 void Tavern::listenForRumors() {
-	Common::String msg = STRING["dialogs.tavern.rumors.none"];
+	Common::String msg = "No rumors today.";
 	if (!g_globals->_heardRumor) {
 		g_globals->_heardRumor = true;
-		msg = STRING[Common::String::format(
-			"dialogs.tavern.rumors.%d",
-			g_engine->getRandomNumber(16))];
+		msg = TAVERN_RUMORS[g_engine->getRandomNumber(16)];
 	}
 
 	displayMessage(msg);

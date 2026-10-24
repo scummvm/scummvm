@@ -143,7 +143,7 @@ void TextView::escToGoBack(int x, int y) {
 	if (y == -1)
 		y = (_bounds.height() / FONT_SIZE) - 1;
 
-	writeString(x, y, STRING["dialogs.misc.go_back"]);
+	writeString(x, y, "'Esc' to go back");
 }
 
 void TextView::timeout() {

@@ -39,7 +39,13 @@ bool Leprechaun::msgFocus(const FocusMessage &msg) {
 
 void Leprechaun::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map00.leprechaun"]);
+	writeString(0, 1, "A tenacious leprechaun appears saying,\n"
+		"\"Traveling the roads is quite dangerous\n"
+		"save for the strong and courageous,\n"
+		"only 1 gem you lose and i'll send you\n"
+		"to the town you choose.\"\n"
+		"\n"
+		"'ESC' to go back      Which town (1-5)?");
 }
 
 bool Leprechaun::msgKeypress(const KeypressMessage &msg) {

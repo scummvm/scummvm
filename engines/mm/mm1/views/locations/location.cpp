@@ -33,7 +33,7 @@ namespace Locations {
 
 Location::Location(const Common::String &name) : TextView(name) {
 	_bounds = getLineBounds(17, 24);
-	_modeString = STRING["dialogs.location.gather"];
+	_modeString = "'g' gather gold\n'#' other char";
 }
 
 bool Location::msgGame(const GameMessage &msg) {
@@ -49,12 +49,12 @@ void Location::draw() {
 	clearSurface();
 	writeString(0, 0, g_globals->_currCharacter->_name);
 	newLine();
-	writeString(STRING["dialogs.location.gold"]);
+	writeString("gold= ");
 	writeNumber(g_globals->_currCharacter->_gold);
 	newLine();
 	newLine();
 	writeString(_modeString);
-	writeString(0, 6, STRING["dialogs.misc.go_back"]);
+	writeString(0, 6, "'Esc' to go back");
 }
 
 void Location::displayMessage(int x, const Common::String &msg) {
@@ -81,12 +81,12 @@ bool Location::subtractGold(uint amount) {
 
 void Location::notEnoughGold() {
 	Sound::sound(SOUND_2);
-	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
+	displayMessage("Not enough gold");
 }
 
 void Location::backpackFull() {
 	Sound::sound(SOUND_2);
-	displayMessage(STRING["dialogs.misc.backpack_full"]);
+	displayMessage("Backpack is full");
 }
 
 void Location::changeCharacter(uint index) {

@@ -40,7 +40,9 @@ bool LordArcher::msgFocus(const FocusMessage &msg) {
 
 void LordArcher::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map40.archer"]);
+	writeString(0, 1, "\"I am Lord Archer, the Raven,\n"
+		"I take from those who have and give to\n"
+		"those who have not! Submit (Y/N)?\"");
 }
 
 bool LordArcher::msgKeypress(const KeypressMessage &msg) {

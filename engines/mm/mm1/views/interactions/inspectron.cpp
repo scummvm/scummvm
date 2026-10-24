@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/interactions/inspectron.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/maps/map35.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -59,14 +60,14 @@ bool Inspectron::msgGame(const GameMessage &msg) {
 		if (questNum >= 8 && questNum <= 14)
 			line = map.checkQuestComplete();
 		else
-			line = STRING["maps.map35.inspectron4"];
+			line = "\"Sorry, but since you are currently\nquested, i can't engage your services.\"";
 
 		g_maps->_mapPos.y++;
 		map.redrawGame();
 
 		Sound::sound2(SOUND_2);
 		send(SoundMessage(
-			0, 1, STRING["maps.map35.inspectron1"],
+			0, 1, "Lord Inspectron speaks:\n",
 			0, 2, line
 		));
 	}
@@ -76,8 +77,8 @@ bool Inspectron::msgGame(const GameMessage &msg) {
 
 void Inspectron::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map35.inspectron1"]);
-	writeString(0, 2, STRING["maps.map35.inspectron2"]);
+	writeString(0, 1, "Lord Inspectron speaks:\n");
+	writeString(0, 2, "\"Your services are needed!\"Accept (Y/N)?");
 }
 
 bool Inspectron::msgKeypress(const KeypressMessage &msg) {
@@ -88,11 +89,8 @@ bool Inspectron::msgKeypress(const KeypressMessage &msg) {
 		close();
 
 		send(InfoMessage(
-			0, 1, STRING["maps.map35.inspectron1"],
-			0, 2, STRING[Common::String::format(
-				"maps.map35.quests.%d",
-				g_globals->_party[0]._quest - 8
-			)]
+			0, 1, "Lord Inspectron speaks:\n",
+			0, 2, INSPECTRON_QUESTS[g_globals->_party[0]._quest - 8]
 		));
 
 	} else if (msg.keycode == Common::KEYCODE_n) {

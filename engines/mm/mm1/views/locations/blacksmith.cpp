@@ -43,10 +43,10 @@ bool Blacksmith::msgFocus(const FocusMessage &msg) {
 void Blacksmith::draw() {
 	Location::draw();
 
-	writeString(22, 1, STRING["dialogs.blacksmith.a"]);
-	writeString(22, 2, STRING["dialogs.blacksmith.b"]);
-	writeString(22, 3, STRING["dialogs.blacksmith.c"]);
-	writeString(22, 4, STRING["dialogs.blacksmith.d"]);
+	writeString(22, 1, "a) buy weapons");
+	writeString(22, 2, "b) buy armor");
+	writeString(22, 3, "c) buy misc");
+	writeString(22, 4, "d) sell item");
 }
 
 bool Blacksmith::msgKeypress(const KeypressMessage &msg) {

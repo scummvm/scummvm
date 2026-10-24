@@ -41,7 +41,7 @@ void Arrested::draw() {
 	clearSurface();
 	Sound::sound(SOUND_2);
 
-	writeString(0, 1, STRING["maps.map04.guards"]);
+	writeString(0, 1, "Town guards: you're under arrest!\n\na)Attack b)Bribe c)Run d)Surrender");
 }
 
 bool Arrested::msgKeypress(const KeypressMessage &msg) {
@@ -74,7 +74,7 @@ void Arrested::surrender(int numYears) {
 	// Display sentence
 	clearSurface();
 	Sound::sound(SOUND_2);
-	writeString(0, 1, STRING["maps.map04.sentence"]);
+	writeString(0, 1, "High court sentence: Years= ");
 	writeNumber(numYears);
 
 	delaySeconds(3);

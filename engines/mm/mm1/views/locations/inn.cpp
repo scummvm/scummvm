@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/locations/inn.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -62,16 +63,15 @@ void Inn::draw() {
 	drawTextBorder();
 
 	writeString(10, 0, Common::String::format(
-		STRING["dialogs.inn.title"].c_str(),
+		"(%c) Inn of ",
 		'0' + g_globals->_startingTown));
-	writeString(STRING[Common::String::format(
-		"stats.towns.%d", g_globals->_startingTown)]);
+	writeString(TOWN_NAMES[g_globals->_startingTown - 1]);
 	escToGoBack();
 
 	if (_charNums.empty()) {
-		writeString(8, 5, STRING["dialogs.misc.no_characters"]);
+		writeString(8, 5, "No available characters");
 	} else {
-		writeString(10, 3, STRING["dialogs.misc.some_characters"]);
+		writeString(10, 3, "Available characters");
 
 		for (uint idx = 0; idx < _charNums.size(); ++idx) {
 			uint charNum = _charNums[idx];
@@ -90,15 +90,15 @@ void Inn::draw() {
 		Common::String range = Common::String::format("'A'-'%c' ",
 			'A' + _charNums.size() - 1);
 		writeString(13, 19, range);
-		writeString(STRING["dialogs.inn.to_view"]);
-		writeString(6, 20, STRING["dialogs.inn.ctrl"]);
+		writeString("to view");
+		writeString(6, 20, "(Ctrl)-");
 		writeString(range);
-		writeString(STRING["dialogs.inn.add_remove"]);
+		writeString("Add/Remove");
 
 		if (!_partyChars.empty())
-			writeString(13, 22, STRING["dialogs.inn.exit"]);
+			writeString(13, 22, "'x' Exit inn");
 		if (_partyChars.size() == 6)
-			writeString(10, 16, STRING["dialogs.inn.full"]);
+			writeString(10, 16, "*** Party is full ***");
 	}
 }
 

@@ -41,12 +41,12 @@ bool Dead::msgFocus(const FocusMessage &msg) {
 void Dead::draw() {
 	clearSurface();
 	writeLine(4);
-	writeString(11, 6, STRING["dialogs.dead.1"]);
-	writeString(7, 8, STRING["dialogs.dead.2"]);
-	writeString(7, 10, STRING["dialogs.dead.3"]);
-	writeString(8, 12, STRING["dialogs.dead.4"]);
-	writeString(8, 14, STRING["dialogs.dead.5"]);
-	writeString(10, 16, STRING["dialogs.dead.6"]);
+	writeString(11, 6, "The shadow of death");
+	writeString(7, 8, "has fallen upon your party!");
+	writeString(7, 10, "Fortunately, you may renew");
+	writeString(8, 12, "your quest from the last");
+	writeString(8, 14, "inn in which you stayed");
+	writeString(10, 16, "by pressing 'Enter'");
 	writeLine(18);
 }
 

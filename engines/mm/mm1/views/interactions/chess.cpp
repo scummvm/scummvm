@@ -41,7 +41,13 @@ bool Chess::msgFocus(const FocusMessage &msg) {
 
 void Chess::draw() {
 	clearSurface();
-	writeString(0, 0, STRING["maps.map29.chess"]);
+	writeString(0, 0, "Painted on these grounds is a black &\n"
+		"white checkered motif covered with\n"
+		"idols similar to the ones you carry.\n"
+		"a large being approaches...\n"
+		"Og speaks, \"Queen to queens level 3\"\n"
+		"\n"
+		"Response: ");
 	AnswerEntry::draw();
 }
 

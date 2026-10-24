@@ -39,11 +39,11 @@ Prisoner::Prisoner(const Common::String &name, const Common::String &line1,
 void Prisoner::draw() {
 	clearSurface();
 	writeString(0, 0, _line1);
-	writeString(0, 3, STRING["maps.prisoners.options1"]);
+	writeString(0, 3, "Options:  1) Set the prisoner free.\n");
 	_textPos.x = 10;
-	writeString(STRING["maps.prisoners.options2"]);
+	writeString("2) Torment the prisoner.\n");
 	_textPos.x = 10;
-	writeString(STRING["maps.prisoners.options3"]);
+	writeString("3) Leave without disturbing.");
 }
 
 bool Prisoner::msgFocus(const FocusMessage &msg) {
@@ -62,14 +62,14 @@ bool Prisoner::msgKeypress(const KeypressMessage &msg) {
 	int align;
 	switch (msg.keycode) {
 	case Common::KEYCODE_1:
-		line = STRING["maps.prisoners.flees"];
+		line = "The prisoner flees!";
 		align = _freeAlignment;
 		g_maps->clearSpecial();
 		flee();
 		break;
 
 	case Common::KEYCODE_2:
-		line = STRING["maps.prisoners.cowers"];
+		line = "The prisoner cowers!";
 		align = _leaveAlignment;
 		break;
 
@@ -108,32 +108,36 @@ void Prisoner::timeout() {
 /*------------------------------------------------------------------------*/
 
 ChildPrisoner::ChildPrisoner() :
-		Prisoner("ChildPrisoner", STRING["maps.prisoners.child"],
+		Prisoner("ChildPrisoner", "A small child shivers fearfully as you\napproach.\n\n",
 		CHARFLAG1_4, GOOD, EVIL) {
 }
 
 ManPrisoner::ManPrisoner() :
-	Prisoner("ManPrisoner", STRING["maps.prisoners.man"],
+	Prisoner("ManPrisoner", "Man in shackles moans in agony!\n\n",
 	CHARFLAG1_20, EVIL, GOOD) {
 }
 
 CloakedPrisoner::CloakedPrisoner() :
-	Prisoner("CloakedPrisoner", STRING["maps.prisoners.cloaked"],
+	Prisoner("CloakedPrisoner", "A mysterious cloaked figure, bound and\n"
+		"gagged, lies motionless in the corner.\n"
+		"\n",
 		CHARFLAG1_40, EVIL, GOOD) {
 }
 
 DemonPrisoner::DemonPrisoner() :
-	Prisoner("DemonPrisoner", STRING["maps.prisoners.demon"],
+	Prisoner("DemonPrisoner", "A vicious demon lunges at the party,\n"
+		"restrained only by a collar and chain!\n"
+		"\n",
 		CHARFLAG1_10, EVIL, GOOD) {
 }
 
 MutatedPrisoner::MutatedPrisoner() :
-	Prisoner("MutatedPrisoner", STRING["maps.prisoners.mutated"],
+	Prisoner("MutatedPrisoner", "Mutated creature chained to the floor\ngrunts as you approach.\n\n",
 		CHARFLAG1_2, GOOD, EVIL) {
 }
 
 MaidenPrisoner::MaidenPrisoner() :
-	Prisoner("MaidenPrisoner", STRING["maps.prisoners.maiden"],
+	Prisoner("MaidenPrisoner", "Inside a steel cage,a fair maiden weeps.\n\n",
 		CHARFLAG1_8, GOOD, EVIL) {
 }
 
@@ -150,14 +154,14 @@ VirginPrisoner::VirginPrisoner() : TextView("VirginPrisoner") {
 
 void VirginPrisoner::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map11.virgin"]);
+	writeString(0, 1, "A luscious virgin shackled to the wall!\na) Kiss her  b) Release her  c) Leave");
 }
 
 bool VirginPrisoner::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_a:
 		g_events->close();
-		g_events->send(SoundMessage(STRING["maps.map11.tip1"]));
+		g_events->send(SoundMessage("Try setting 1B,2J"));
 		break;
 	case Common::KEYCODE_b:
 		g_events->close();

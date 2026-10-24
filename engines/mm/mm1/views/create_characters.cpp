@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/create_characters.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 
@@ -184,21 +185,21 @@ void CreateCharacters::NewCharacter::setSP(int amount) {
 void CreateCharacters::draw() {
 	drawTextBorder();
 
-	writeString(10, 0, STRING["dialogs.create_characters.title"]);
-	writeString(3, 5, STRING["dialogs.create_characters.intellect"]);
-	writeString(3, 7, STRING["dialogs.create_characters.might"]);
-	writeString(3, 9, STRING["dialogs.create_characters.personality"]);
-	writeString(3, 11, STRING["dialogs.create_characters.endurance"]);
-	writeString(3, 13, STRING["dialogs.create_characters.speed"]);
-	writeString(3, 15, STRING["dialogs.create_characters.accuracy"]);
-	writeString(3, 17, STRING["dialogs.create_characters.luck"]);
+	writeString(10, 0, "Create New Characters");
+	writeString(3, 5, "intellect...=");
+	writeString(3, 7, "might.......=");
+	writeString(3, 9, "personality.=");
+	writeString(3, 11, "endurance...=");
+	writeString(3, 13, "speed.......=");
+	writeString(3, 15, "accuracy....=");
+	writeString(3, 17, "luck........=");
 	printAttributes();
 
 	switch (_state) {
 	case SELECT_CLASS:
 		printClasses();
 		if (g_globals->_roster.full())
-			writeString(9, 21, STRING["dialogs.create_characters.full"]);
+			writeString(9, 21, "*** Roster is Full ***");
 		escToGoBack();
 		break;
 
@@ -238,107 +239,107 @@ void CreateCharacters::printAttributes() {
 void CreateCharacters::printClasses() {
 	if (_newChar._classesAllowed[KNIGHT]) {
 		writeString(23, 5, "1) ");
-		writeString(STRING["stats.classes.1"]);
+		writeString("Knight");
 	}
 	if (_newChar._classesAllowed[PALADIN]) {
 		writeString(23, 6, "2) ");
-		writeString(STRING["stats.classes.2"]);
+		writeString("Paladin");
 	}
 	if (_newChar._classesAllowed[ARCHER]) {
 		writeString(23, 7, "3) ");
-		writeString(STRING["stats.classes.3"]);
+		writeString("Archer");
 	}
 	if (_newChar._classesAllowed[CLERIC]) {
 		writeString(23, 8, "4) ");
-		writeString(STRING["stats.classes.4"]);
+		writeString("Cleric");
 	}
 	if (_newChar._classesAllowed[SORCERER]) {
 		writeString(23, 9, "5) ");
-		writeString(STRING["stats.classes.5"]);
+		writeString("Sorcerer");
 	}
 	writeString(23, 10, "6) ");
-	writeString(STRING["stats.classes.6"]);
+	writeString("Robber");
 
-	writeString(22, 13, STRING["dialogs.create_characters.select_class"]);
+	writeString(22, 13, "Select class");
 	writeString(26, 15, "(1-6)");
-	writeString(21, 17, STRING["dialogs.create_characters.reroll"]);
+	writeString(21, 17, "'ent' to re-roll");
 }
 
 void CreateCharacters::printRaces() {
-	writeString(22, 5, STRING["dialogs.create_characters.class"]);
-	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
+	writeString(22, 5, "class.=");
+	writeString(CLASS_NAMES[_newChar._class - 1]);
 
 	writeString(23, 7, "1) ");
-	writeString(STRING["stats.races.1"]);
+	writeString("Human");
 	writeString(23, 8, "2) ");
-	writeString(STRING["stats.races.2"]);
+	writeString("Elf");
 	writeString(23, 9, "3) ");
-	writeString(STRING["stats.races.3"]);
+	writeString("Dwarf");
 	writeString(23, 10, "4) ");
-	writeString(STRING["stats.races.4"]);
+	writeString("Gnome");
 	writeString(23, 11, "5) ");
-	writeString(STRING["stats.races.5"]);
+	writeString("H-Orc");
 
-	writeString(22, 13, STRING["dialogs.create_characters.select_race"]);
+	writeString(22, 13, "Select a race");
 	writeString(26, 15, "(1-5)");
-	writeString(21, 17, STRING["dialogs.create_characters.start_over"]);
+	writeString(21, 17, "'esc' start over");
 }
 
 void CreateCharacters::printAlignments() {
-	writeString(22, 5, STRING["dialogs.create_characters.class"]);
-	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
-	writeString(22, 6, STRING["dialogs.create_characters.race"]);
-	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
+	writeString(22, 5, "class.=");
+	writeString(CLASS_NAMES[_newChar._class - 1]);
+	writeString(22, 6, "race..=");
+	writeString(RACE_NAMES[_newChar._race - 1]);
 
 	writeString(23, 8, "1) ");
-	writeString(STRING["stats.alignments.1"]);
+	writeString("Good");
 	writeString(23, 9, "2) ");
-	writeString(STRING["stats.alignments.2"]);
+	writeString("Neut");
 	writeString(23, 10, "3) ");
-	writeString(STRING["stats.alignments.3"]);
+	writeString("Evil");
 
-	writeString(21, 13, STRING["dialogs.create_characters.select_alignment"]);
+	writeString(21, 13, "Select alignment");
 	writeString(26, 15, "(1-3)");
-	writeString(21, 17, STRING["dialogs.create_characters.start_over"]);
+	writeString(21, 17, "'esc' start over");
 }
 
 void CreateCharacters::printSexes() {
-	writeString(22, 5, STRING["dialogs.create_characters.class"]);
-	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
-	writeString(22, 6, STRING["dialogs.create_characters.race"]);
-	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
-	writeString(22, 7, STRING["dialogs.create_characters.alignment"]);
-	writeString(STRING[Common::String::format("stats.alignments.%d", _newChar._alignment)]);
+	writeString(22, 5, "class.=");
+	writeString(CLASS_NAMES[_newChar._class - 1]);
+	writeString(22, 6, "race..=");
+	writeString(RACE_NAMES[_newChar._race - 1]);
+	writeString(22, 7, "algn..=");
+	writeString(ALIGNMENT_NAMES[_newChar._alignment - 1]);
 
 	writeString(23, 9, "1) ");
-	writeString(STRING["stats.sex.1"]);
+	writeString("Male");
 	writeString(23, 10, "2) ");
-	writeString(STRING["stats.sex.2"]);
+	writeString("Female");
 
-	writeString(23, 13, STRING["dialogs.create_characters.select_sex"]);
+	writeString(23, 13, "Select a sex");
 	writeString(26, 15, "(1-2)");
-	writeString(21, 17, STRING["dialogs.create_characters.start_over"]);
+	writeString(21, 17, "'esc' start over");
 }
 
 void CreateCharacters::printSummary(bool promptToSave) {
-	writeString(22, 5, STRING["dialogs.create_characters.class"]);
-	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
-	writeString(22, 6, STRING["dialogs.create_characters.race"]);
-	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
-	writeString(22, 7, STRING["dialogs.create_characters.alignment"]);
-	writeString(STRING[Common::String::format("stats.alignments.%d", _newChar._alignment)]);
-	writeString(22, 8, STRING["dialogs.create_characters.sex"]);
-	writeString(STRING[Common::String::format("stats.sex.%d", _newChar._sex)]);
+	writeString(22, 5, "class.=");
+	writeString(CLASS_NAMES[_newChar._class - 1]);
+	writeString(22, 6, "race..=");
+	writeString(RACE_NAMES[_newChar._race - 1]);
+	writeString(22, 7, "algn..=");
+	writeString(ALIGNMENT_NAMES[_newChar._alignment - 1]);
+	writeString(22, 8, "sex...=");
+	writeString(SEX_NAMES[_newChar._sex - 1]);
 
-	writeString(22, 11, STRING["dialogs.create_characters.name"]);
+	writeString(22, 11, "name:");
 	writeString(22, 13, _newChar._name);
 
 	if (promptToSave) {
-		writeString(22, 15, STRING["dialogs.create_characters.save_character"]);
+		writeString(22, 15, "Save character");
 		writeString(26, 17, "(Y/N)?");
 	} else {
 		writeChar('_');
-		writeString(21, 17, STRING["dialogs.create_characters.start_over"]);
+		writeString(21, 17, "'esc' start over");
 	}
 }
 

@@ -35,7 +35,7 @@ void DetectMagic::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	writeString(0, 0, STRING["dialogs.spells.detect_charges"]);
+	writeString(0, 0, "Magic (charges)");
 	_textPos.x = 20;
 	_textPos.y = 0;
 

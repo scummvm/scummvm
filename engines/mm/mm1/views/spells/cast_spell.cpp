@@ -100,11 +100,11 @@ void CastSpell::draw() {
 		return;
 
 	escToGoBack(0);
-	writeString(7, 0, STRING["dialogs.character.cast_spell"]);
+	writeString(7, 0, "cast spell:  level=");
 	if (_state >= SELECT_NUMBER) {
 		writeChar(' ');
 		writeNumber(_spellLevel);
-		writeString(19, 1, STRING["dialogs.character.number"]);
+		writeString(19, 1, "number=");
 	}
 
 	if (_state > SELECT_NUMBER) {
@@ -130,7 +130,7 @@ void CastSpell::draw() {
 		break;
 
 	case PRESS_ENTER:
-		writeString(24, 4, STRING["spells.enter_to_cast"]);
+		writeString(24, 4, "'Enter' to cast");
 		break;
 
 	case ENDING:
@@ -210,7 +210,7 @@ void CastSpell::performSpell(Character *chr) {
 	c._gems = MAX((int)c._gems - _requiredGems, 0);
 
 	if (!isMagicAllowed()) {
-		spellDone(STRING["spells.magic_doesnt_work"], 5);
+		spellDone("Magic doesn't work here", 5);
 	} else {
 		// Cast the spell
 		switch (Game::SpellsParty::cast(_spellIndex, chr)) {

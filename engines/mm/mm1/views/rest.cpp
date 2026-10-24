@@ -51,7 +51,7 @@ bool Rest::msgFocus(const FocusMessage &msg) {
 void Rest::draw() {
 	if (_mode == CONFIRM) {
 		clearSurface();
-		writeString(0, 0, STRING["dialogs.game.rest.rest_here"]);
+		writeString(0, 0, "Rest here (Y/N)?");
 	}
 }
 
@@ -84,7 +84,7 @@ bool Rest::msgAction(const ActionMessage &msg) {
 void Rest::tooDangerous() {
 	_mode = TOO_DANGEROUS;
 	clearSurface();
-	writeString(2, 0, STRING["dialogs.game.rest.too_dangerous"]);
+	writeString(2, 0, "*** Too dangerous to rest here!");
 	delaySeconds(3);
 }
 

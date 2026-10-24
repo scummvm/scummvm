@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/protect.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -28,7 +29,7 @@ namespace Views {
 
 void Protect::draw() {
 	clearSurface();
-	writeString(STRING["dialogs.protect.title"]);
+	writeString("Protect:  Spells currently active");
 	escToGoBack();
 
 	// Protection spells
@@ -37,15 +38,14 @@ void Protect::draw() {
 	for (int i = 0; i < 7; ++i) {
 		if (g_globals->_activeSpells._arr[i]) {
 			printProtectionFrom();
-			writeString(STRING[Common::String::format(
-				"dialogs.protect.%d", i + 1)]);
+			writeString(PROTECTION_NAMES[i]);
 			printProtectionLevel(i);
 		}
 	}
 
 	// Light spell
 	if (g_globals->_activeSpells._arr[7]) {
-		writeString(STRING["dialogs.protect.8"]);
+		writeString("Light (");
 		writeNumber(g_globals->_activeSpells._arr[7]);
 		writeChar(')');
 		newLine();
@@ -57,8 +57,7 @@ void Protect::draw() {
 			newLine();
 
 		if (g_globals->_activeSpells._arr[i]) {
-			writeString(STRING[Common::String::format(
-				"dialogs.protect.%d", i + 1)]);
+			writeString(PROTECTION_NAMES[i]);
 			newLine();
 		}
 	}
@@ -69,12 +68,12 @@ void Protect::draw() {
 	if (g_globals->_activeSpells._arr[17]) {
 		writeNumber(g_globals->_activeSpells._arr[17]);
 		_textPos.x++;
-		writeString(STRING["dialogs.protect.to_attacks"]);
+		writeString("to attacks");
 	}
 }
 
 void Protect::printProtectionFrom() {
-	writeString(STRING["dialogs.protect.protection"]);
+	writeString("Protection from");
 	_textPos.x = 17;
 }
 

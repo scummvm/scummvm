@@ -32,7 +32,7 @@ namespace Locations {
 
 BlacksmithBuyMisc::BlacksmithBuyMisc() :
 	BlacksmithSubview("BlacksmithBuyMisc") {
-	_modeString = STRING["dialogs.location.buy"];
+	_modeString = "'a'-'f' to buy\n(- = cant use)";
 }
 
 bool BlacksmithBuyMisc::msgFocus(const FocusMessage &msg) {
@@ -47,7 +47,7 @@ bool BlacksmithBuyMisc::msgFocus(const FocusMessage &msg) {
 void BlacksmithBuyMisc::draw() {
 	Location::draw();
 
-	writeString(23, 0, STRING["dialogs.blacksmith.misc"]);
+	writeString(23, 0, "misc       price");
 	drawItems();
 }
 

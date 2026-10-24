@@ -38,11 +38,13 @@ void VolcanoGod::draw() {
 
 	switch (_mode) {
 	case CHOOSE_OPTION:
-		writeString(0, 1, STRING["maps.map11.volcano_god"]);
+		writeString(0, 1, "The Volcano God bellows,\n"
+			"\"What do you seek here?\"\n"
+			"a) A challenge  b) A riddle  c) A clue");
 		break;
 
 	case ENTER_RESPONSE:
-		writeString(0, 1, STRING["maps.map11.question"]);
+		writeString(0, 1, "Who was brave yet failed?\n\nanswer:> ..........");
 		AnswerEntry::draw();
 		break;
 

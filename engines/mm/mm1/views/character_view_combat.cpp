@@ -40,8 +40,8 @@ bool CharacterViewCombat::msgUnfocus(const UnfocusMessage &msg) {
 void CharacterViewCombat::draw() {
 	CharacterBase::draw();
 
-	writeString(12, 22, Common::String::format("F1-F%d %s",
-		(int)g_globals->_combatParty.size(), STRING["dialogs.quick_ref.to_view"].c_str()));
+	writeString(12, 22, Common::String::format("F1-F%d to view",
+		(int)g_globals->_combatParty.size()));
 	escToGoBack();
 }
 

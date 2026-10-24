@@ -39,29 +39,29 @@ void Location::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	writeString(0, 0, STRING["dialogs.spells.location_loc"]);
+	writeString(0, 0, "Location: ");
 
 	v = map[Maps::MAP_TYPE];
 	if (v == 0xff) {
-		writeString(STRING["dialogs.spells.location_unknown"]);
+		writeString("Unknown");
 	} else {
 		if (v == 0) {
-			writeString(STRING["dialogs.spells.location_outdoors"]);
+			writeString("Outdoors");
 		} else if (!(v & 0x80)) {
 			writeChar('0' + map[37]);
-			writeString(STRING["dialogs.spells.location_under"]);
+			writeString("0' under");
 		} else if (v == 0xfe) {
-			writeString(STRING["dialogs.spells.location_town"]);
+			writeString("In town");
 		} else {
-			writeString(STRING["dialogs.spells.location_castle"]);
+			writeString("in castle");
 		}
 
-		writeString(21, 0, STRING["dialogs.spells.location_sector"]);
+		writeString(21, 0, "Map sector: ");
 		writeChar(map[Maps::MAP_SECTOR1] & 0x7f);
 		writeChar('-');
 		writeChar(map[Maps::MAP_SECTOR2] & 0x7f);
 
-		writeString(21, 1, STRING["dialogs.spells.location_surface_x"]);
+		writeString(21, 1, "Surface: ");
 		writeString("X=");
 
 		if (map[Maps::MAP_TYPE]) {
@@ -69,7 +69,7 @@ void Location::draw() {
 			writeString(35, 1, "Y=");
 			writeNumber(map[Maps::MAP_SURFACE_Y]);
 
-			writeString(22, 2, STRING["dialogs.spells.location_inside_x"]);
+			writeString(22, 2, "Inside: ");
 			writeString("X=");
 		}
 
@@ -77,7 +77,7 @@ void Location::draw() {
 		writeString(35, 2, "Y=");
 		writeNumber(maps._mapPos.y);
 
-		writeString(22, 3, STRING["dialogs.spells.location_facing"]);
+		writeString(22, 3, "Facing: ");
 		switch (maps._forwardMask) {
 		case Maps::DIRMASK_N:
 			writeChar('N');

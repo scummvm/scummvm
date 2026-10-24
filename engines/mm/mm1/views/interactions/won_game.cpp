@@ -36,8 +36,12 @@ WonGame::WonGame() : TextView("WonGame") {
 
 void WonGame::draw() {
 	clearSurface();
-	writeString(0, 0, STRING["maps.map18.gates"]);
-	writeString(0, 1, STRING["maps.map18.congratulations"]);
+	writeString(0, 0, "The Gates to Another World!\n");
+	writeString(0, 1, "Congratulations distinguished \n"
+		"travelers! The gates are now\n"
+		"open to you, in order to pass\n"
+		"through you must first find\n"
+		"Might and Magic Book Two !!!");
 	Sound::sound(SOUND_3);
 }
 

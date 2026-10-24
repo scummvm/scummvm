@@ -36,7 +36,7 @@ Lion::Lion() : AnswerEntry("Lion", Common::Point(11, 2), 10) {
 
 void Lion::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map32.statue"]);
+	writeString(0, 1, "Statue of a lion growls, \"Password?\"\nResponse:> ..........");
 	AnswerEntry::draw();
 }
 

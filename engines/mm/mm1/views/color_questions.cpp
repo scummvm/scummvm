@@ -60,12 +60,14 @@ void ColorQuestions::draw() {
 	g_globals->_currCharacter = &g_globals->_party[_charIndex];
 
 	if (!_showingResponse) {
-		writeString(0, 0, STRING["maps.map17.color"]);
-		writeString(0, 2, STRING["maps.map17.options"]);
+		writeString(0, 0, "What is your color (1-8)?");
+		writeString(0, 2, "1) Red Thorac       2) Blue Ogram\n"
+			"3) Green Bagar      4) Yellow Limra\n"
+			"5) Purple Sagran    6) Orange Oolak\n"
+			"7) Black Dresidion  8) White Dilithium");
 	} else {
 		const Character &c = g_globals->_party[_charIndex];
-		Common::String result = STRING[c.hasBadCondition() ?
-			"maps.map17.wrong" : "maps.map17.correct"];
+		Common::String result = (c.hasBadCondition() ? "Wrong!" : "Correct!");
 		writeString(16, 2, result);
 	}
 }

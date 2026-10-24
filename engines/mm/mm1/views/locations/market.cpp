@@ -82,10 +82,10 @@ bool Market::msgAction(const ActionMessage &msg) {
 void Market::draw() {
 	clearSurface();
 
-	writeString(0, 0, STRING["dialogs.market.special"]);
+	writeString(0, 0, "Special today,all you can eat! ");
 	writeNumber(_foodCost);
-	writeString(STRING["dialogs.market.gp"]);
-	writeString(10, 2, STRING["dialogs.market.will_you_pay"]);
+	writeString("GP/ea");
+	writeString(10, 2, "Will you pay (Y/N)?");
 }
 
 void Market::buyFood() {
@@ -97,8 +97,8 @@ void Market::buyFood() {
 
 	clearSurface();
 	writeString(10, 2, foodPurchased ?
-		STRING["dialogs.market.thankyou"] :
-		STRING["dialogs.market.no_gold"]
+		"Thank you, come again!" :
+		"No gold, no food!"
 	);
 
 	delaySeconds(3);

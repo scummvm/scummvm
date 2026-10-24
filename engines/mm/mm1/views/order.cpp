@@ -89,9 +89,9 @@ bool Order::msgAction(const ActionMessage &msg) {
 
 void Order::draw() {
 	clearSurface();
-	writeString(0, 0, STRING["dialogs.order.title"]);
-	writeString(0, 2, STRING["dialogs.misc.go_back"]);
-	writeString(17, 1, STRING["dialogs.order.old"]);
+	writeString(0, 0, " re-order party  new  1  2  3  4  5  6");
+	writeString(0, 2, "'Esc' to go back");
+	writeString(17, 1, "old");
 
 	_textPos.x = 21;
 	for (uint i = 0; i < _indexes.size(); ++i)

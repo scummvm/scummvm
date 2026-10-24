@@ -36,7 +36,7 @@ AccessCode::AccessCode() :
 
 void AccessCode::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map08.enter_code"]);
+	writeString(0, 1, "Covered with flashing lights the wall\nspeaks: \"Please enter access code:\"\n");
 	AnswerEntry::draw();
 }
 

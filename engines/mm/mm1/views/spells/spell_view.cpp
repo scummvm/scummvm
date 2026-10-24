@@ -32,7 +32,7 @@ namespace Spells {
 void SpellView::spellFailed() {
 	// Spell failed
 	clearSurface();
-	writeString(10, 2, Game::SpellCasting::spellResultMessage(STRING["spells.failed"]));
+	writeString(10, 2, Game::SpellCasting::spellResultMessage("Spell failed"));
 
 	Sound::sound(SOUND_2);
 	delaySeconds(3);
@@ -40,7 +40,7 @@ void SpellView::spellFailed() {
 
 void SpellView::spellDone() {
 	clearSurface();
-	writeString(14, 2, Game::SpellCasting::spellResultMessage(STRING["spells.done"]));
+	writeString(14, 2, Game::SpellCasting::spellResultMessage("Done"));
 	g_globals->_party.updateAC();
 
 	Sound::sound(SOUND_2);

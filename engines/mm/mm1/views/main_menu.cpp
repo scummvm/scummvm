@@ -29,16 +29,16 @@ namespace Views {
 
 void MainMenu::draw() {
 	drawTextBorder();
-	writeString(12, 4, STRING["dialogs.main_menu.title1"]);
-	writeString(6, 6, STRING["dialogs.main_menu.title2"]);
-	writeString(15, 9, STRING["dialogs.main_menu.title3"]);
-	writeString(15, 10, STRING["dialogs.main_menu.title4"]);
+	writeString(12, 4, "Might and Magic");
+	writeString(6, 6, "Secret of the Inner Sanctum");
+	writeString(15, 9, "Options");
+	writeString(15, 10, "-------");
 
-	writeString(5, 12, STRING["dialogs.main_menu.option1"]);
-	writeString(5, 14, STRING["dialogs.main_menu.option2"]);
-	writeString(5, 16, STRING["dialogs.main_menu.option3"]);
-	writeString(4, 22, STRING["dialogs.main_menu.copyright1"]);
-	writeString(10, 24, STRING["dialogs.main_menu.copyright2"]);
+	writeString(5, 12, "'C'.......Create New Characters");
+	writeString(5, 14, "'V'.......View All Characters");
+	writeString(5, 16, "'#'.......Go to Town");
+	writeString(4, 22, "Copr. 1986,1987-Jon Van Caneghem");
+	writeString(10, 24, "All Rights Reserved");
 }
 
 bool MainMenu::msgKeypress(const KeypressMessage &msg) {

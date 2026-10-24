@@ -36,7 +36,7 @@ void Duplication::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	writeString(10, 0, STRING["dialogs.character.which"]);
+	writeString(10, 0, "which item: 'a'-'f'?");
 }
 
 bool Duplication::msgKeypress(const KeypressMessage &msg) {

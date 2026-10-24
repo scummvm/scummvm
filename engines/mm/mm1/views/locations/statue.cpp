@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/locations/statue.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -71,11 +72,10 @@ void Statue::draw() {
 		_bounds = getLineBounds(20, 24);
 		clearSurface();
 
-		writeString(0, 1, STRING["dialogs.statues.stone"]);
-		writeString(STRING[Common::String::format(
-			"dialogs.statues.names.%d", _statueNum)]);
+		writeString(0, 1, "On this stone statue of ");
+		writeString(STATUE_NAMES[_statueNum]);
 		newLine();
-		writeString(STRING["dialogs.statues.plaque"]);
+		writeString("A plaque reads...");
 
 		++_pageNum;
 		delaySeconds(PAGE1_SECONDS);
@@ -86,8 +86,7 @@ void Statue::draw() {
 		_bounds = getLineBounds(17, 24);
 		clearSurface();
 
-		writeString(0, 0, STRING[Common::String::format(
-			"dialogs.statues.messages.%d", _statueNum)]);
+		writeString(0, 0, STATUE_MESSAGES[_statueNum]);
 
 		Sound::sound(SOUND_2);
 		++_pageNum;

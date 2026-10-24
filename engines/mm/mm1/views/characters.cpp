@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/characters.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/utils/strings.h"
 #include "mm/mm1/globals.h"
 
@@ -31,12 +32,12 @@ void Characters::draw() {
 	drawTextBorder();
 
 	Roster &roster = g_globals->_roster;
-	writeString(11, 0, STRING["dialogs.view_characters.title"]);
+	writeString(11, 0, "View all characters");
 	int lineNum = 0;
 	_charIndexes.clear();
 
 	if (g_globals->_roster.empty()) {
-		writeString(8, 5, STRING["dialogs.misc.no_characters"]);
+		writeString(8, 5, "No available characters");
 		escToGoBack();
 		return;
 	}
@@ -53,8 +54,8 @@ void Characters::draw() {
 			pad_string(level, 7);
 
 			Common::String className = (re._class >= KNIGHT && re._class <= ROBBER) ?
-				STRING[Common::String::format("stats.classes.%d", (int)re._class)] :
-				STRING["stats.none"];
+				CLASS_NAMES[(int)re._class - 1] :
+				"None";
 
 			// Form line like: A) charName...(1)L1  Knight
 			Common::String line = Common::String::format("(%c) %s%s%s",
@@ -67,9 +68,9 @@ void Characters::draw() {
 
 	// Print legend at the bottom
 	writeString(6, 22, Common::String::format(
-		STRING["dialogs.view_characters.legend1"].c_str(),
+		"'a'-'%c' to view a character",
 		'A' + (int)_charIndexes.size() - 1));
-	writeString(12, 24, STRING["dialogs.misc.go_back"]);
+	writeString(12, 24, "'Esc' to go back");
 }
 
 bool Characters::msgKeypress(const KeypressMessage &msg) {

@@ -32,13 +32,13 @@ namespace Locations {
 
 BlacksmithSellItem::BlacksmithSellItem() :
 	BlacksmithSubview("BlacksmithSellItem") {
-	_modeString = STRING["dialogs.location.sell"];
+	_modeString = "'a'-'f' to sell";
 }
 
 void BlacksmithSellItem::draw() {
 	Location::draw();
 
-	writeString(22, 0, STRING["dialogs.blacksmith.backpack"]);
+	writeString(22, 0, "backpack     price");
 	drawItems();
 }
 

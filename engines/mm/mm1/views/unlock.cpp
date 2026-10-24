@@ -74,7 +74,7 @@ void Unlock::draw() {
 	clearSurface();
 
 	writeString(4, 1, Common::String::format(
-		STRING["dialogs.misc.who_will_try"].c_str(),
+		"Who will try '1'-'%c'",
 		'0' + g_globals->_party.size()));
 	escToGoBack(0, 3);
 }
@@ -115,11 +115,11 @@ void Unlock::charSelected(uint charIndex) {
 
 		if (val < c._trapCtr) {
 			g_maps->_currentMap->unlockDoor();
-			send(InfoMessage(11, 1, STRING["dialogs.unlock.success"]));
+			send(InfoMessage(11, 1, "Success!"));
 
 		} else if (getRandomNumber(100) <
 				g_maps->_currentMap->dataByte(Maps::MAP_TRAP_THRESHOLD)) {
-			send(InfoMessage(8, 1, STRING["dialogs.unlock.failed"]));
+			send(InfoMessage(8, 1, "Unlock failed!"));
 
 		} else {
 			g_maps->_currentMap->unlockDoor();

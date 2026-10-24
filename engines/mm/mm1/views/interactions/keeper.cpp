@@ -49,7 +49,9 @@ void Keeper::draw() {
 	case 0:
 		_bounds = getLineBounds(20, 24);
 		clearSurface();
-		writeString(0, 1, STRING["maps.map54.keeper1"]);
+		writeString(0, 1, "A metallic panel slides open, revealing\n"
+			"a mysterious man in a white coat...\n"
+			"(Press Space to communicate)");
 		break;
 
 	case 1:
@@ -57,11 +59,30 @@ void Keeper::draw() {
 		isWorthy = map.isWorthy(perfTotal);
 
 		clearSurface();
-		writeString(10, 0, STRING["maps.map54.keeper2"]);
+		writeString(10, 0, ":::Inner Sanctum:::");
 		writeString(0, 2, Common::String::format(
-			STRING["maps.map54.keeper3"].c_str(), perfTotal));
-		writeString(0, 3, STRING[isWorthy ? "maps.map54.keeper5" :
-			"maps.map54.keeper4"]);
+			"In a serene voice, the data keeper says,\n"
+				"\"Welcome to your inner sanctum\n"
+				"Varnlings! I am very pleased that you've\n"
+				"made it this far. You are to be\n"
+				"commended. I've been monitoring your\n"
+				"progress.\" Turning to the strange\n"
+				"mechanical device, he inserts a flat\n"
+				"object into a slot. Your party's current\n"
+				"performance total=%u", perfTotal));
+		writeString(0, 3, isWorthy ?
+			"Excellent rating! This is a rare        occasion, for only a privileged few are given the "
+				"opportunity for transfer to\n"
+				"another V.A.R.N. (Vehicular Astropod\n"
+				"Research Nacelle). Return now to the\n"
+				"Inn of Sorpigal for rest and celebration\n"
+				"then continue on to your new assignment at the Gates To Another World...\"       (+50000 "
+				"exp for your accomplishment!)\n"
+				"----------------------------------------\n"
+				"Please send your performance total to\n"
+				"New World Computing, Inc.\n"
+				"  P. O. Box 2068  Van Nuys, CA  91404" :
+			"\"You are not yet worthy for transfer.   Return after defeating the imposter.\"");
 		break;
 
 	default:

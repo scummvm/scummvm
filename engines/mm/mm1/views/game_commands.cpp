@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/game_commands.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -28,8 +29,7 @@ namespace Views {
 
 void GameCommands::draw() {
 	for (int i = 1; i < 17; ++i)
-		writeString(31, i - 1, STRING[Common::String::format(
-			"dialogs.game.commands.%d", i)]);
+		writeString(31, i - 1, GAME_COMMANDS[i - 1]);
 }
 
 } // namespace Views

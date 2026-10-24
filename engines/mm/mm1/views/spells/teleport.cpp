@@ -42,16 +42,16 @@ void Teleport::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	writeString(10, 1, STRING["dialogs.spells.teleport_dir"]);
+	writeString(10, 1, "Direction (N,E,S,W): ");
 	writeChar((_mode == SELECT_DIRECTION) ? '_' : _direction);
 
 	if (_mode != SELECT_DIRECTION) {
-		writeString(11, 2, STRING["dialogs.spells.teleport_squares"]);
+		writeString(11, 2, "# of squares (0-9): ");
 		writeChar((_mode == SELECT_SQUARES) ? '_' : '0' + _squares);
 	}
 
 	if (_mode == CAST)
-		writeString(23, 4, STRING["spells.enter_to_cast"]);
+		writeString(23, 4, "'Enter' to cast");
 }
 
 bool Teleport::msgKeypress(const KeypressMessage &msg) {

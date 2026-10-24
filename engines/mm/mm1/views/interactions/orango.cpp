@@ -36,7 +36,13 @@ Orango::Orango() :
 
 void Orango::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map48.orango1"]);
+	writeString(0, 1, "A strange alien being in a shimmering\n"
+		"silver jumpsuit proclaims, \"This is a\n"
+		"soul maze and you are its prisoner!\n"
+		"To escape, you must find your captor's\n"
+		"name hidden within these walls.\"\n"
+		"\n"
+		"answer:>");
 	AnswerEntry::draw();
 }
 

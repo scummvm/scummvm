@@ -35,7 +35,9 @@ Ghost::Ghost() : TextView("Ghost") {
 
 void Ghost::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map37.okrim1"]);
+	writeString(0, 1, "A ghostlike figure rises from the body\n"
+		"of Okrim and speaks,\"In exchange for\n"
+		"my ring, forfeit a life. Accept (Y/N)?\"");
 }
 
 bool Ghost::msgKeypress(const KeypressMessage &msg) {
@@ -46,7 +48,7 @@ bool Ghost::msgKeypress(const KeypressMessage &msg) {
 			g_globals->_party[0]._condition = ERADICATED;
 		} else {
 			clearSurface();
-			writeString(0, 1, STRING["maps.map37.okrim2"]);
+			writeString(0, 1, "\"May the shadow of death greet you\nwith open arms!\"");
 
 			map[MM1::Maps::MAP_29] = 32;
 			map[MM1::Maps::MAP_47] = 8;

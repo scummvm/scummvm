@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/search.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/views/trap.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -43,8 +44,7 @@ bool Search::msgGame(const GameMessage &msg) {
 
 	} else {
 		// Otherwise send an info message to say nothing was found
-		Common::String line = STRING["dialogs.search.search"] +
-			STRING["dialogs.search.nothing"];
+		Common::String line = "Search: nothing";
 		send(InfoMessage(0, 1, line));
 	}
 
@@ -76,17 +76,16 @@ void Search::draw() {
 	switch (_mode) {
 	case INITIAL:
 		Sound::sound(SOUND_2);
-		line = STRING["dialogs.search.search"] +
-			STRING["dialogs.search.you_found"];
+		line = "Search: You found...";
 		writeString(0, 1, line);
 		delaySeconds(2);
 		break;
 
 	case OPTIONS:
-		writeString(1, 1, STRING["dialogs.search.options"]);
-		writeString(20, 1, STRING["dialogs.search.options1"]);
-		writeString(20, 2, STRING["dialogs.search.options2"]);
-		writeString(20, 3, STRING["dialogs.search.options3"]);
+		writeString(1, 1, "Options:");
+		writeString(20, 1, "1) Open It");
+		writeString(20, 2, "2) Find/Remove Trap");
+		writeString(20, 3, "3) Detect Magic/Trap");
 		escToGoBack(0, 3);
 		break;
 
@@ -101,7 +100,7 @@ void Search::draw() {
 
 	case WHO_WILL_TRY: {
 		line = Common::String::format(
-			STRING["dialogs.misc.who_will_try"].c_str(),
+			"Who will try '1'-'%c'",
 			'0' + g_globals->_party.size()
 		);
 		writeString(10, 1, line);
@@ -151,7 +150,7 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 			if ((g_globals->_currCharacter->_condition &
 				(BAD_CONDITION | DEAD | STONE | ASLEEP)) != 0) {
 				clearSurface();
-				writeString(3, 2, STRING["dialogs.search.check_condition"]);
+				writeString(3, 2, "*** Check condition ***");
 				delaySeconds(4);
 			} else {
 				switch (_optionMode) {
@@ -215,8 +214,7 @@ void Search::timeout() {
 
 		// Show the name of the container type in the game view
 		send("View", HeaderMessage(
-			STRING[Common::String::format("dialogs.search.containers.%d",
-				g_globals->_treasure._container)]
+			SEARCH_CONTAINERS[g_globals->_treasure._container]
 		));
 
 		// Display a graphic for the container type
@@ -307,13 +305,13 @@ void Search::detectMagicTrap2() {
 	if (c._class == PALADIN || c._class == CLERIC) {
 		Sound::sound(SOUND_2);
 		clearSurface();
-		writeString(6, 2, STRING["dialogs.search.bad_class"]);
+		writeString(6, 2, "*** Bad class ***");
 		delaySeconds(4);
 
 	} else if (c._sp == 0) {
 		Sound::sound(SOUND_2);
 		clearSurface();
-		writeString(6, 2, STRING["dialogs.search.no_sp"]);
+		writeString(6, 2, "*** No spell points ***");
 		delaySeconds(4);
 
 	} else {
@@ -324,7 +322,7 @@ void Search::detectMagicTrap2() {
 
 		clearSurface();
 		writeString(5, 1, Common::String::format(
-			STRING["dialogs.search.magic_trap"].c_str(),
+			"Magic (%c)  Trap (%c)",
 			magic, trapped));
 
 		delaySeconds(8);
@@ -355,7 +353,7 @@ void Search::getTreasure() {
 }
 
 void Search::drawTreasure() {
-	writeString(15, 0, STRING["dialogs.search.it_opens"]);
+	writeString(15, 0, "It opens!");
 
 	// Split up the gold across the party
 	uint32 goldPerPerson = g_globals->_treasure.getGold() /
@@ -372,7 +370,7 @@ void Search::drawTreasure() {
 	}
 	
 	writeString(0, 2, Common::String::format(
-		STRING["dialogs.search.each_share"].c_str(),
+		"each share is worth %d gold",
 		goldPerPerson));
 	g_globals->_treasure.setGold(0);
 
@@ -387,7 +385,7 @@ void Search::drawTreasure() {
 		Character &c = g_globals->_party[charNum];
 
 		writeString(0, _lineNum++, Common::String::format(
-			STRING["dialogs.search.found_gems"].c_str(),
+			"%s found %d gems",
 			c._name,
 			gems));
 		c._gems = MIN((int)c._gems + gems, 0xffff);
@@ -417,7 +415,7 @@ void Search::drawItem() {
 
 			// Add line for found item
 			writeString(0, _lineNum++, Common::String::format(
-				STRING["dialogs.search.found_item"].c_str(),
+				"%s found %s",
 				c._name,
 				item->_name.c_str()
 			));

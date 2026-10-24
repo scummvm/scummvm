@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/interactions/lord_ironfist.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/maps/map43.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -47,8 +48,8 @@ void LordIronfist::draw() {
 	clearSurface();
 
 	if (_canAccept) {
-		writeString(0, 1, STRING["maps.map43.ironfist1"]);
-		writeString(0, 2, STRING["maps.map43.ironfist2"]);
+		writeString(0, 1, "Lord Ironfist speaks:\n");
+		writeString(0, 2, "\"Your services are needed!\" Accept(Y/N)?");
 
 	} else {
 		int questNum = g_globals->_party[0]._quest;
@@ -57,14 +58,14 @@ void LordIronfist::draw() {
 		if (questNum < 8)
 			line = map.checkQuestComplete();
 		else
-			line = STRING["maps.map43.ironfist4"];
+			line = "\"Sorry, but since you are currently\nquested, i can't engage your services.\"";
 
 		g_maps->_mapPos.x++;
 		map.redrawGame();
 
 		clearSurface();
 		send(SoundMessage(
-			0, 1, STRING["maps.map43.ironfist1"],
+			0, 1, "Lord Ironfist speaks:\n",
 			0, 2, line
 		));
 		close();
@@ -80,10 +81,8 @@ bool LordIronfist::msgKeypress(const KeypressMessage &msg) {
 			map.acceptQuest();
 
 			send(InfoMessage(
-				0, 1, STRING["maps.map43.ironfist1"],
-				0, 2, STRING[Common::String::format(
-					"maps.map43.quests.%d",
-					g_globals->_party[0]._quest)]
+				0, 1, "Lord Ironfist speaks:\n",
+				0, 2, IRONFIST_QUESTS[g_globals->_party[0]._quest - 1]
 			));
 
 		} else if (msg.keycode == Common::KEYCODE_n) {

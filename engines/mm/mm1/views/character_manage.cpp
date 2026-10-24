@@ -33,19 +33,19 @@ void CharacterManage::draw() {
 
 	switch (_state) {
 	case DISPLAY:
-		writeString(6, 21, STRING["dialogs.view_character.rename"]);
-		writeString(6, 22, STRING["dialogs.view_character.delete"]);
+		writeString(6, 21, "(Ctrl)-'N' Re-name character");
+		writeString(6, 22, "(Ctrl)-'D' Delete character");
 		escToGoBack();
 		break;
 
 	case RENAME:
-		writeString(6, 21, STRING["dialogs.view_character.name"]);
+		writeString(6, 21, "Name: ");
 		writeString(_newName);
 		writeChar('_');
 		break;
 
 	case DELETE:
-		writeString(6, 21, STRING["dialogs.view_character.are_you_sure"]);
+		writeString(6, 21, "    Are you sure (Y/N)?          ");
 		break;
 	}
 }

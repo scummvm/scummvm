@@ -28,8 +28,8 @@ namespace Views {
 
 void AreYouReady::draw() {
 	drawTextBorder();
-	writeString(11, 11, STRING["dialogs.ready.1"]);
-	writeString(11, 13, STRING["dialogs.ready.2"]);
+	writeString(11, 11, "  Are you ready? ");
+	writeString(11, 13, "Then press Enter!");
 }
 
 bool AreYouReady::msgAction(const ActionMessage &msg) {

@@ -36,7 +36,13 @@ IcePrincess::IcePrincess() :
 
 void IcePrincess::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map19.ice_princess"]);
+	writeString(0, 1, "On a throne adorned with precious gems\n"
+		"the ice princess speaks,\n"
+		"\"Conqueror of worlds, maker of dreams\n"
+		"The greatest force of all, yet elusive\n"
+		"it seems.\"\n"
+		"\n"
+		"Answer:> ");
 	AnswerEntry::draw();
 }
 

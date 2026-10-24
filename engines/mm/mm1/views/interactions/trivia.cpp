@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/interactions/trivia.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/maps/map21.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -36,10 +37,8 @@ Trivia::Trivia() :
 
 bool Trivia::msgGame(const GameMessage &msg) {
 	if (msg._name == "TRIVIA") {
-		_question = STRING[Common::String::format(
-			"maps.map21.questions.%d", msg._value)];
-		_correctAnswer = STRING[Common::String::format(
-			"maps.map21.answers.%d", msg._value)];
+		_question = TRIVIA_QUESTIONS[msg._value];
+		_correctAnswer = TRIVIA_ANSWERS[msg._value];
 
 		open();
 		return true;
@@ -51,7 +50,7 @@ bool Trivia::msgGame(const GameMessage &msg) {
 void Trivia::draw() {
 	clearSurface();
 	writeString(0, 1, _question);
-	writeString(0, 7, STRING["maps.map21.answer"]);
+	writeString(0, 7, "Answer:> ..............");
 	AnswerEntry::draw();
 }
 
@@ -60,7 +59,7 @@ void Trivia::answerEntered() {
 
 	if (_answer.equalsIgnoreCase(_correctAnswer)) {
 		g_maps->clearSpecialAndRememberReward();
-		send(InfoMessage(STRING["maps.map21.correct"]));
+		send(InfoMessage("Correct! +50 gems"));
 		g_globals->_party[0]._gems = MIN(
 			(int)g_globals->_party[0]._gems + 50, 0xffff);
 		Sound::sound(SOUND_3);
@@ -68,7 +67,7 @@ void Trivia::answerEntered() {
 	} else {
 		g_maps->_mapPos.x = 15;
 		g_events->send("Game", GameMessage("UPDATE"));
-		send(InfoMessage(STRING["maps.map21.incorrect"]));
+		send(InfoMessage("Wrong!"));
 	}
 }
 

@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/interactions/gypsy.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -74,9 +75,8 @@ void Gypsy::draw() {
 
 	} else {
 		Common::String line = Common::String::format(
-			STRING["maps.map23.your_sign_is"].c_str(),
-			STRING[Common::String::format("colors.%d",
-				_character->_flags[4] & CHARFLAG4_SIGN)].c_str()
+			"\"Your sign is the %s\"",
+			COLOR_NAMES[_character->_flags[4] & CHARFLAG4_SIGN]
 		);
 
 		writeString(0, 1, line);

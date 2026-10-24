@@ -35,7 +35,13 @@ Ruby::Ruby() : AnswerEntry("Ruby", Common::Point(14, 7), 12) {
 
 void Ruby::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map39.ruby1"]);
+	writeString(0, 1, "In the center of the room, a huge ruby\n"
+		"stands atop a pedestal. hexagonally\n"
+		"shaped, it glows rhythmically!\n"
+		"Mesmerized by its light, you hear:\n"
+		"Glass that glitters, rubies that glow\n"
+		"When i twinkle, I cast a rainbow\n"
+		"What am i? :> ...............");
 	AnswerEntry::draw();
 }
 

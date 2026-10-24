@@ -60,22 +60,24 @@ void Alamar::draw() {
 	clearSurface();
 
 	if (_succeeded) {
-		writeString(0, 0, STRING["maps.map49.alamar1"]);
-		writeString(STRING["maps.map49.alamar3"]);
+		writeString(0, 0, "The omnipotent King Alamar speaks,\n\n");
+		writeString("\"My saviors, you're always welcome here!\n"
+			"You should find the Inner Sanctum...\n"
+			"Live long and prosper.\"");
 
 	} else if (map[HAS_EYE]) {
 		send("View", DrawGraphicMessage(65 + 7));
 		send("View", DrawGraphicMessage(65 + 8));
 
-		writeString(0, 0, STRING["maps.map49.alamar1"]);
-		writeString(STRING["maps.map49.alamar4"]);
+		writeString(0, 0, "The omnipotent King Alamar speaks,\n\n");
+		writeString("\"You've discovered my true identity!\nInto the soul maze you go...\"");
 
 		for (int i = 0; i < 6; ++i)
 			Sound::sound(SOUND_2);
 
 	} else {
-		writeString(0, 0, STRING["maps.map49.alamar1"]);
-		writeString(STRING["maps.map49.alamar2"]);
+		writeString(0, 0, "The omnipotent King Alamar speaks,\n\n");
+		writeString("\"Varnlings, I quest thee to find the\nCrypt of Carmenca. Away with you...\"");
 	}
 }
 
