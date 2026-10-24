@@ -336,6 +336,10 @@ void Combat::defeatedMonsters() {
 		setTreasure();
 	}
 
+	// Convert the highest defeated-monster treasure rating into the
+	// original random item rolls and container quality
+	selectTreasure();
+
 	// Count number of active characters
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
 		if (!(g_globals->_combatParty[i]->_condition & BAD_CONDITION))
@@ -414,7 +418,8 @@ void Combat::selectTreasure2(int count) {
 	byte itemId = TREASURES_ARR1[idx];
 	byte rndCount = TREASURES_ARR2[idx];
 
-	for (idx = 0; idx < count; ++idx)
+	// count is a 1-based treasure tier, with tier 1 at the family base
+	for (idx = 1; idx < count; ++idx)
 		itemId += rndCount;
 	itemId += getRandomNumber(rndCount) - 1;
 
