@@ -1096,7 +1096,9 @@ void Combat::iterateMonsters2Inner() {
 		}
 	}
 
-	updateMonsterStatus();
+	// A monster that wasn't affected by the spell takes no damage
+	if (affects)
+		updateMonsterStatus();
 
 	msg._delaySeconds = 3;
 
