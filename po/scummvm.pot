@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-22 16:59+0000\n"
+"POT-Creation-Date: 2026-10-24 06:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -331,7 +331,8 @@ msgstr ""
 #: engines/efh/metaengine.cpp:362 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:249 engines/kyra/gui/saveload_eob.cpp:633
 #: engines/kyra/gui/saveload_eob.cpp:666 engines/lab/metaengine.cpp:197
-#: engines/mm/mm1/metaengine.cpp:54 engines/parallaction/metaengine.cpp:169
+#: engines/mm/mm1/metaengine.cpp:54 engines/mm/mm1/metaengine.cpp:76
+#: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4526
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1244
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
@@ -351,7 +352,8 @@ msgstr ""
 #: engines/efh/metaengine.cpp:368 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:255 engines/kyra/gui/saveload_eob.cpp:633
 #: engines/kyra/gui/saveload_eob.cpp:666 engines/lab/metaengine.cpp:204
-#: engines/mm/mm1/metaengine.cpp:52 engines/parallaction/metaengine.cpp:175
+#: engines/mm/mm1/metaengine.cpp:52 engines/mm/mm1/metaengine.cpp:74
+#: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4526
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1250
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
@@ -4627,10 +4629,11 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:50 backends/platform/sdl/psp2/psp2.cpp:51
 #: engines/bagel/metaengine.cpp:64 engines/efh/metaengine.cpp:397
 #: engines/got/metaengine.cpp:76 engines/hypno/metaengine.cpp:449
-#: engines/mm/mm1/metaengine.cpp:50 engines/mm/mm1/metaengine.cpp:97
-#: engines/sherlock/metaengine.cpp:660 engines/sherlock/metaengine.cpp:672
-#: engines/sherlock/metaengine.cpp:1014 engines/supernova/metaengine.cpp:303
-#: engines/titanic/metaengine.cpp:233 engines/ultima/ultima0/metaengine.cpp:47
+#: engines/mm/mm1/metaengine.cpp:50 engines/mm/mm1/metaengine.cpp:72
+#: engines/mm/mm1/metaengine.cpp:129 engines/sherlock/metaengine.cpp:660
+#: engines/sherlock/metaengine.cpp:672 engines/sherlock/metaengine.cpp:1014
+#: engines/supernova/metaengine.cpp:303 engines/titanic/metaengine.cpp:233
+#: engines/ultima/ultima0/metaengine.cpp:47
 msgid "Select"
 msgstr ""
 
@@ -5907,7 +5910,7 @@ msgstr ""
 #: engines/access/metaengine.cpp:335 engines/access/metaengine.cpp:356
 #: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:342
 #: engines/efh/metaengine.cpp:462 engines/hdb/metaengine.cpp:237
-#: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:86
+#: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:113
 #: engines/petka/metaengine.cpp:151 engines/queen/metaengine.cpp:294
 #: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:129
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
@@ -6369,7 +6372,7 @@ msgstr ""
 #: engines/agos/metaengine.cpp:228 engines/dm/metaengine.cpp:132
 #: engines/hopkins/metaengine.cpp:294 engines/kyra/engine/eobcommon.cpp:383
 #: engines/kyra/engine/lol.cpp:517 engines/lab/metaengine.cpp:257
-#: engines/mm/mm1/metaengine.cpp:102 engines/mohawk/riven.cpp:901
+#: engines/mm/mm1/metaengine.cpp:134 engines/mohawk/riven.cpp:901
 #: engines/pegasus/pegasus.cpp:2740 engines/twine/metaengine.cpp:353
 #: engines/ultima/ultima0/metaengine.cpp:80
 #: engines/ultima/ultima8/metaengine.cpp:48
@@ -6384,7 +6387,7 @@ msgstr ""
 #: engines/agos/metaengine.cpp:234 engines/dm/metaengine.cpp:152
 #: engines/hopkins/metaengine.cpp:300 engines/kyra/engine/eobcommon.cpp:384
 #: engines/kyra/engine/lol.cpp:518 engines/lab/metaengine.cpp:271
-#: engines/mm/mm1/metaengine.cpp:103 engines/mohawk/riven.cpp:907
+#: engines/mm/mm1/metaengine.cpp:135 engines/mohawk/riven.cpp:907
 #: engines/pegasus/pegasus.cpp:2747 engines/twine/metaengine.cpp:346
 #: engines/ultima/ultima0/metaengine.cpp:81
 #: engines/ultima/ultima8/metaengine.cpp:49
@@ -6771,10 +6774,11 @@ msgstr ""
 #: engines/harold/metaengine.cpp:63 engines/hugo/metaengine.cpp:197
 #: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:282
 #: engines/mm/mm1/metaengine.cpp:42 engines/mm/mm1/metaengine.cpp:48
-#: engines/saga/metaengine.cpp:328 engines/tinsel/metaengine.cpp:258
-#: engines/tsage/metaengine.cpp:190 engines/tucker/metaengine.cpp:221
-#: engines/twine/metaengine.cpp:388 engines/ultima/ultima0/metaengine.cpp:40
-#: engines/vcruise/metaengine.cpp:164 engines/wintermute/keymapper_tables.h:63
+#: engines/mm/mm1/metaengine.cpp:70 engines/saga/metaengine.cpp:328
+#: engines/tinsel/metaengine.cpp:258 engines/tsage/metaengine.cpp:190
+#: engines/tucker/metaengine.cpp:221 engines/twine/metaengine.cpp:388
+#: engines/ultima/ultima0/metaengine.cpp:40 engines/vcruise/metaengine.cpp:164
+#: engines/wintermute/keymapper_tables.h:63
 msgid "Escape"
 msgstr ""
 
@@ -7555,13 +7559,13 @@ msgstr ""
 
 #: engines/colony/metaengine.cpp:124 engines/dm/metaengine.cpp:162
 #: engines/freescape/movement.cpp:54 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:104
+#: engines/mm/mm1/metaengine.cpp:136
 msgid "Strafe left"
 msgstr ""
 
 #: engines/colony/metaengine.cpp:131 engines/dm/metaengine.cpp:182
 #: engines/freescape/movement.cpp:62 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:105
+#: engines/mm/mm1/metaengine.cpp:137
 msgid "Strafe right"
 msgstr ""
 
@@ -7634,7 +7638,7 @@ msgstr ""
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
 #: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:70 engines/scumm/metaengine.cpp:1250
+#: engines/mm/mm1/metaengine.cpp:97 engines/scumm/metaengine.cpp:1250
 #: engines/ultima/ultima0/metaengine.cpp:82
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
@@ -7642,7 +7646,7 @@ msgid "Attack"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/crab/input/input.cpp:130 engines/mm/mm1/metaengine.cpp:72
+#: engines/crab/input/input.cpp:130 engines/mm/mm1/metaengine.cpp:99
 msgid "Block"
 msgstr ""
 
@@ -7681,10 +7685,11 @@ msgstr ""
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
-#: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
-#: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
-#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
-#: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:227
+#: engines/crab/input/input.cpp:221 engines/mm/mm1/metaengine.cpp:89
+#: engines/sherlock/metaengine.cpp:591 engines/sherlock/metaengine.cpp:902
+#: engines/sherlock/metaengine.cpp:1048 engines/supernova/metaengine.cpp:291
+#: engines/titanic/metaengine.cpp:271 engines/twine/metaengine.cpp:460
+#: engines/wintermute/keymapper_tables.h:227
 #: engines/wintermute/keymapper_tables.h:244
 #: engines/wintermute/keymapper_tables.h:675
 #: engines/wintermute/keymapper_tables.h:950
@@ -7697,10 +7702,10 @@ msgstr ""
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
-#: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
-#: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
-#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
-#: engines/wintermute/keymapper_tables.h:220
+#: engines/crab/input/input.cpp:226 engines/mm/mm1/metaengine.cpp:88
+#: engines/sherlock/metaengine.cpp:572 engines/sherlock/metaengine.cpp:917
+#: engines/sherlock/metaengine.cpp:1041 engines/supernova/metaengine.cpp:285
+#: engines/titanic/metaengine.cpp:264 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:236
 #: engines/wintermute/keymapper_tables.h:667
 #: engines/wintermute/keymapper_tables.h:943
@@ -8449,7 +8454,7 @@ msgid "Enable background music ported from the C64 version"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/freescape/movement.cpp:70 engines/mm/mm1/metaengine.cpp:84
+#: engines/freescape/movement.cpp:70 engines/mm/mm1/metaengine.cpp:111
 msgid "Shoot"
 msgstr ""
 
@@ -8609,7 +8614,7 @@ msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:397
-#: engines/kyra/engine/lol.cpp:519 engines/mm/mm1/metaengine.cpp:114
+#: engines/kyra/engine/lol.cpp:519 engines/mm/mm1/metaengine.cpp:147
 #: engines/ultima/nuvie/metaengine.cpp:195
 #: engines/ultima/nuvie/metaengine.cpp:200
 msgid "Rest"
@@ -10192,7 +10197,7 @@ msgstr ""
 msgid "Camp"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:392 engines/mm/mm1/metaengine.cpp:107
+#: engines/kyra/engine/eobcommon.cpp:392 engines/mm/mm1/metaengine.cpp:139
 msgid "Cast spell"
 msgstr ""
 
@@ -10233,7 +10238,7 @@ msgid "Attack 3"
 msgstr ""
 
 #: engines/kyra/engine/lol.cpp:512 engines/lab/metaengine.cpp:278
-#: engines/mm/mm1/metaengine.cpp:108 engines/mohawk/myst.cpp:606
+#: engines/mm/mm1/metaengine.cpp:140 engines/mohawk/myst.cpp:606
 #: engines/wintermute/keymapper_tables.h:1564
 #: engines/wintermute/keymapper_tables.h:1711
 #: engines/wintermute/keymapper_tables.h:1760
@@ -10775,103 +10780,167 @@ msgstr ""
 msgid "View party member 6"
 msgstr ""
 
+#: engines/mm/mm1/metaengine.cpp:77
+msgid "Previous quest"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:78
+msgid "Next quest"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:84
+msgid "Close bestiary"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:85
+msgid "Show monster image"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:86
+msgid "Previous monster"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:87
+msgid "Next monster"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:90
+msgid "First monster"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:91
+msgid "Last monster"
+msgstr ""
+
 #. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:74 engines/ultima/ultima4/metaengine.cpp:50
+#: engines/mm/mm1/metaengine.cpp:101 engines/ultima/ultima4/metaengine.cpp:50
 #: engines/ultima/nuvie/metaengine.cpp:194
 msgid "Cast"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:76
+#: engines/mm/mm1/metaengine.cpp:103
 msgid "Exchange"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:78
+#: engines/mm/mm1/metaengine.cpp:105
 msgid "Fight"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:80 engines/mm/mm1/metaengine.cpp:121
+#: engines/mm/mm1/metaengine.cpp:107 engines/mm/mm1/metaengine.cpp:154
 msgid "Quick reference"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:82
+#: engines/mm/mm1/metaengine.cpp:109
 msgid "Retreat"
 msgstr ""
 
+#: engines/mm/mm1/metaengine.cpp:115
+msgid "Combat log"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:116
+msgid "Combat log up"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:117
+msgid "Combat log down"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:118
+msgid "Close combat log"
+msgstr ""
+
 #. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:89
+#: engines/mm/mm1/metaengine.cpp:120
 msgid "Delay"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:91 engines/mm/mm1/metaengine.cpp:112
+#: engines/mm/mm1/metaengine.cpp:122 engines/mm/mm1/metaengine.cpp:144
 msgid "Protect"
 msgstr ""
 
+#: engines/mm/mm1/metaengine.cpp:123 engines/mm/mm1/metaengine.cpp:145
+msgid "Bestiary"
+msgstr ""
+
 #. I18N: Party arrangement command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/mm/mm1/metaengine.cpp:131
 msgid "Forwards"
 msgstr ""
 
 #. I18N: Party arrangement command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:101
+#: engines/mm/mm1/metaengine.cpp:133
 msgid "Backwards"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:109
+#: engines/mm/mm1/metaengine.cpp:141
 msgid "Toggle minimap"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:110
+#: engines/mm/mm1/metaengine.cpp:142
 msgid "Reorder party"
 msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to search the journal
-#: engines/mm/mm1/metaengine.cpp:116 engines/sherlock/metaengine.cpp:514
+#: engines/mm/mm1/metaengine.cpp:149 engines/sherlock/metaengine.cpp:514
 #: engines/sherlock/metaengine.cpp:961 engines/ultima/ultima4/metaengine.cpp:71
 msgid "Search"
 msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:118
+#: engines/mm/mm1/metaengine.cpp:151
 msgid "Bash"
 msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:120 engines/scumm/help.cpp:147
+#: engines/mm/mm1/metaengine.cpp:153 engines/scumm/help.cpp:147
 msgid "Unlock"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:128 engines/ultima/ultima4/metaengine.cpp:112
+#: engines/mm/mm1/metaengine.cpp:155
+msgid "Show active quest"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:162 engines/ultima/ultima4/metaengine.cpp:112
 msgid "Goto location"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:154
+#: engines/mm/mm1/metaengine.cpp:192
 msgid "Might and Magic 1 - Menus"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:155
+#: engines/mm/mm1/metaengine.cpp:193
 msgid "Might and Magic 1 - Minimal Keys"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:156
+#: engines/mm/mm1/metaengine.cpp:194
 msgid "Might and Magic 1 - Main"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:157
+#: engines/mm/mm1/metaengine.cpp:195
 msgid "Might and Magic 1 - Party"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:158
+#: engines/mm/mm1/metaengine.cpp:196
 msgid "Might and Magic 1 - Combat"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:160
+#: engines/mm/mm1/metaengine.cpp:197
+msgid "Might and Magic 1 - Quest Log"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:198
+msgid "Might and Magic 1 - Bestiary"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:200
 msgid "Might and Magic 1 - Cheats"
 msgstr ""
 
