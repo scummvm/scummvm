@@ -1168,11 +1168,11 @@ bool Combat::monsterLevelThreshold() const {
 }
 
 void Combat::turnUndead() {
-	if (_turnUndeadUsed) {
-		// Already been used in the current combat, can't be used again
-		displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
+	// It can only be used once per combat. Further casts have no effect
+	Common::String result = STRING["spells.no_effect"];
+	int resultX = 15;
 
-	} else {
+	if (!_turnUndeadUsed) {
 		_turnUndeadUsed = true;
 
 		for (uint i = 0; i < _remainingMonsters.size(); ++i) {
@@ -1187,11 +1187,15 @@ void Combat::turnUndead() {
 			}
 		}
 
-		if (_monstersDestroyedCtr)
-			displaySpellResult(InfoMessage(5, 1, STRING["spells.monsters_destroyed"]));
-		else
-			displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
+		if (_monstersDestroyedCtr) {
+			result = STRING["spells.monsters_destroyed"];
+			resultX = 5;
+		}
 	}
+
+	InfoMessage msg(resultX, 1, result);
+	msg._delaySeconds = 3;
+	displaySpellResult(msg);
 
 	g_globals->_combatParty[_currentChar]->_checked = true;
 }
@@ -1313,10 +1317,14 @@ void Combat::holyWord() {
 		}
 	}
 
-	if (_monstersDestroyedCtr)
-		displaySpellResult(InfoMessage(5, 1, STRING["spells.monsters_destroyed"]));
-	else
-		displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
+	// The result is timed, like the Turn Undead result
+	InfoMessage msg(_monstersDestroyedCtr ? 5 : 15, 1,
+		STRING[_monstersDestroyedCtr ? "spells.monsters_destroyed" : "spells.no_effect"]);
+	msg._delaySeconds = 3;
+	msg._callback = []() {
+		g_globals->_combat->characterDone();
+	};
+	displaySpellResult(msg);
 	g_globals->_combatParty[_currentChar]->_checked = true;
 }
 
