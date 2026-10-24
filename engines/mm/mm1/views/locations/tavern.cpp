@@ -123,7 +123,7 @@ void Tavern::tipBartender() {
 			displayMessage("Thanks a lot, have another round!");
 		} else {
 			int townNum = g_maps->_currentMap->dataByte(Maps::MAP_ID);
-			displayMessage(TAVERN_TIPS[townNum - 1][g_globals->_currCharacter->_numDrinks - 1]);
+			displayMessage(TAVERN_TIPS[townNum - 1][MIN(g_globals->_currCharacter->_numDrinks / 4, 3)]);
 		}
 	}
 }
