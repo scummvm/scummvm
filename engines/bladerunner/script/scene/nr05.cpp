@@ -308,7 +308,7 @@ void SceneScriptNR05::talkToEarlyQ() {
 			// Can ask this if McCoy saw her with Clovis (the prime suspect).
 			canAskAboutBlondWoman = Actor_Clue_Query(kActorMcCoy, kClueIzosFriend);
 		} else {
-			// McCoy can't get this clue prior to this event.
+			// A bug? McCoy can't get this clue prior to this event.
 			// This would also mean that Early Q already told McCoy about her identity.
 			canAskAboutBlondWoman = Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom);
 		}
@@ -371,8 +371,9 @@ void SceneScriptNR05::talkToEarlyQ() {
 			// are already set so this happens when talking in the "Surly" mode.
 			earlyQRevealsHerName = Game_Flag_Query(kFlagMcCoyAskedEarlyQAboutJewelry);
 		} else {
-			// This clue has no relation to Dektora's identity. Instead, it implies Grigorians
-			// connection to Crazy-legs Larry and the replicants who stole the car.
+			// A bug? This clue can't be obtained in the original version. Also, it has no relation 
+			// to Dektora's identity. Instead, it implies Grigorians connection to Crazy-legs Larry 
+			// and the replicants who stole the car.
 			earlyQRevealsHerName = Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote);
 		}
 		if (earlyQRevealsHerName) {
