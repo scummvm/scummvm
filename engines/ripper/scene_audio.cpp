@@ -402,8 +402,7 @@ bool SceneAudioManager::syncGame(Common::Serializer &serializer) {
 			return false;
 		if (serializer.isSaving() || occupied == 0)
 			continue;
-		Common::ScopedPtr<Common::SeekableReadStream> file(
-			_engine->getResources()->createReadStreamForPath(path));
+		Common::ScopedPtr<Common::SeekableReadStream> file(openSource(path));
 		if (!file)
 			return false;
 		Slot &restored = _slots[i];
