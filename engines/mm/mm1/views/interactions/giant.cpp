@@ -90,6 +90,10 @@ void Giant::charSelected(uint charIndex) {
 	writeString(0, 1, line);
 	Sound::sound(SOUND_2);
 
+	// The Statue may have changed XP and a primary attribute. Repaint any
+	// visible character views now rather than at a later refresh
+	g_events->redrawViews();
+
 	delaySeconds(5);
 }
 
