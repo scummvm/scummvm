@@ -70,6 +70,10 @@ static const KeybindingRecord QUEST_LOG_KEYS[] = {
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr },
 	// I18N: Return key
 	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", nullptr },
+	// I18N: N key for No
+	{ KEYBIND_KEY_N, "KEY_N", _s("No"), "n", nullptr },
+	// I18N: Y key for Yes
+	{ KEYBIND_KEY_Y, "KEY_Y", _s("Yes"), "y", nullptr },
 	{ KEYBIND_QUEST_PREVIOUS, "QUEST_PREVIOUS", _s("Previous quest"), "UP", nullptr },
 	{ KEYBIND_QUEST_NEXT, "QUEST_NEXT", _s("Next quest"), "DOWN", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
