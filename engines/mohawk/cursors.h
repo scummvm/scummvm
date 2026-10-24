@@ -23,6 +23,8 @@
 #define MOHAWK_CURSORS_H
 
 #include "common/scummsys.h"
+#include "common/hashmap.h"
+#include "common/rect.h"
 
 namespace Common {
 class MacResManager;
@@ -32,10 +34,14 @@ class String;
 }
 
 namespace Graphics {
+class MacCursor;
 struct WinCursorGroup;
 }
 
 #include "mohawk/resource.h"
+#ifdef ENABLE_ZOOMBINI
+#include "mohawk/zoombini_resource.h"
+#endif
 
 namespace Mohawk {
 
@@ -151,6 +157,43 @@ public:
 private:
 	MohawkArchive *_sysArchive;
 };
+
+#ifdef ENABLE_ZOOMBINI
+
+class MohawkEngine_Zoombini;
+
+/**
+ * The cursor manager for Zoombini resources
+ */
+class ZoombiniCursorManager : public CursorManager {
+public:
+	explicit ZoombiniCursorManager(MohawkEngine_Zoombini *vm);
+	~ZoombiniCursorManager() override;
+
+	/** Load and retain the fixed system CURS resources used by Zoombini. */
+	void preloadCursors();
+	/**
+	 * Set one of the retained system CURS resources.
+	 */
+	void setCursor(uint16 id) override;
+	/**
+	 * Load cursor from the page/system tBMP resource.
+	 * (e.g. for scroll button hover cursor on basecamps)
+	 */
+	void setShapeCursor(ZmbResource::ArchiveKind archiveKind, uint16 imageId, uint16 shapeIdx, const Common::Point &minusREGS = Common::Point());
+	bool hasSource() const override { return _vm != nullptr; }
+
+private:
+	static constexpr uint16 kFirstCursorResourceId = 1;
+	static constexpr uint16 kLastCursorResourceId = 5;
+
+	Graphics::MacCursor *loadCursor(uint16 id);
+
+	MohawkEngine_Zoombini *_vm;
+	Common::HashMap<uint16, Graphics::MacCursor *> _cachedCursors;
+};
+
+#endif
 
 // The cursor manager for Windows EXE's
 class WinCursorManager : public CursorManager {
