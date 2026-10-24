@@ -540,8 +540,11 @@ void Panel::saveState(Common::Array<UIStateData::Change> &changes) const {
 		return;
 	}
 
-	for (const Control *control : _controls) {
-		addStateChanges(changes, control->getName(), control->getInitialState(), control->isVisible(), control->isEnabled());
+	// Which inventory buttons are shown follows from the items of the character
+	if (_kind != kObjectInvPanel) {
+		for (const Control *control : _controls) {
+			addStateChanges(changes, control->getName(), control->getInitialState(), control->isVisible(), control->isEnabled());
+		}
 	}
 
 	addStateChanges(changes, getName(), _initialState, isVisible(), _enabled);
@@ -669,6 +672,20 @@ EditBox *Panel::getKeyboardFocus() const {
 	}
 
 	return nullptr;
+}
+
+bool Panel::isItemButton(const Common::String &name) const {
+	if (_kind != kObjectInvPanel) {
+		return false;
+	}
+
+	for (const Control *control : _controls) {
+		if (control->getName().equalsIgnoreCase(name)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 InvButton *Panel::findItemButton(int16 itemID) const {

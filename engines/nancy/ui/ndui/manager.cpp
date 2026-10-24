@@ -205,6 +205,12 @@ void Manager::saveState(Common::Array<UIStateData::Change> &changes) const {
 
 void Manager::restoreState(const Common::Array<UIStateData::Change> &changes) {
 	for (const UIStateData::Change &change : changes) {
+		// Older saved games have the inventory buttons too, which may not match
+		// the items: those are shown from the inventory itself
+		if (isItemButton(change.name)) {
+			continue;
+		}
+
 		takeAction(change.action, change.name, 0.0);
 	}
 
@@ -252,6 +258,16 @@ void Manager::destroyObject(const Common::String &name) {
 			return;
 		}
 	}
+}
+
+bool Manager::isItemButton(const Common::String &name) const {
+	for (const Panel *panel : _panels) {
+		if (panel->isItemButton(name)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 Panel *Manager::findPanel(const Common::String &name) const {

@@ -121,6 +121,7 @@ public:
 	Control *addNewControl(int32 type, Common::SeekableReadStream &stream);
 	bool removeControl(const Common::String &name);
 	InvButton *findItemButton(int16 itemID) const;
+	bool isItemButton(const Common::String &name) const;
 
 	// The edit box that gets typed into, when the panel is up
 	EditBox *getKeyboardFocus() const;

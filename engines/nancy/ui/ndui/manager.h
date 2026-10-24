@@ -200,6 +200,7 @@ private:
 	void setSaveScreenshot(const Graphics::ManagedSurface &image, const Common::Rect &src);
 
 	Panel *findPanel(const Common::String &name) const;
+	bool isItemButton(const Common::String &name) const;
 	InvButton *findItemButton(int16 itemID) const;
 
 	Common::Array<Panel *> _panels;
