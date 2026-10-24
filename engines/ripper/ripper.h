@@ -67,6 +67,7 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature feature) const override;
+	void syncSoundSettings() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;

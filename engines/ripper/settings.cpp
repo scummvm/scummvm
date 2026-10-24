@@ -28,6 +28,7 @@
 #include "graphics/paletteman.h"
 
 #include "ripper/detection.h"
+#include "ripper/ripper.h"
 #include "ripper/diagnostics/screen_presenter.h"
 
 namespace Ripper {
@@ -41,6 +42,10 @@ static const RipperSettings::Descriptor kSliderDescriptors[RipperSettings::kSlid
 	{   0, 200,  5, 100 },
 	{  80, 120, -2, 100 },
 	{   0, 200,  5, 100 }
+};
+
+static const char *const kAudioConfigKeys[] = {
+	"ripper_master_volume", "music_volume", "sfx_volume", "speech_volume"
 };
 
 static const char *const kVisualConfigKeys[] = {
@@ -65,8 +70,8 @@ static const char *const kDemoReservedToggleConfigKeys[] = {
 	"ripper_demo_option_4", "ripper_demo_option_5"
 };
 
-RipperSettings::RipperSettings(Audio::Mixer *mixer, bool demo) :
-		_mixer(mixer), _demo(demo), _videoMode(1),
+RipperSettings::RipperSettings(RipperEngine *engine, bool demo) :
+		_engine(engine), _demo(demo), _videoMode(1),
 		_combatLevel(2), _puzzleLevel(2), _bufferedVideo(false), _subtitles(demo),
 		_subtitleAutoScroll(false), _toolbarHelp(true), _toolbarPermanent(false),
 		_mouseSensitivity(100) {
@@ -93,17 +98,11 @@ int RipperSettings::percentToMixer(int volume) {
 }
 
 void RipperSettings::load() {
-	_values[kMasterVolume] = ConfMan.hasKey("ripper_master_volume") ?
-		ConfMan.getInt("ripper_master_volume") : kSliderDescriptors[kMasterVolume].defaultValue;
-	_values[kAmbientVolume] = mixerToPercent(ConfMan.getInt("music_volume"));
-	_values[kSfxVolume] = mixerToPercent(ConfMan.getInt("sfx_volume"));
-	_values[kVideoVolume] = mixerToPercent(ConfMan.getInt("speech_volume"));
-
 	for (uint i = kBrightness; i <= kTint; ++i) {
 		const char *key = kVisualConfigKeys[i - kBrightness];
 		_values[i] = ConfMan.hasKey(key) ? ConfMan.getInt(key) : kSliderDescriptors[i].defaultValue;
 	}
-	for (uint i = 0; i < kSliderCount; ++i)
+	for (uint i = kBrightness; i <= kTint; ++i)
 		_values[i] = CLIP<int>(_values[i], kSliderDescriptors[i].minimum,
 			kSliderDescriptors[i].maximum);
 
@@ -134,7 +133,7 @@ void RipperSettings::load() {
 		_actionKeys[i] = CLIP<int>(key, 0, 0xffff);
 	}
 
-	applyAudioVolumes();
+	_engine->syncSoundSettings();
 	debugC(1, kDebugGeneral,
 		"Ripper: loaded Remote Control settings master=%d ambient=%d sfx=%d video=%d brightness=%d color=%d contrast=%d tint=%d",
 		_values[kMasterVolume], _values[kAmbientVolume], _values[kSfxVolume],
@@ -148,10 +147,6 @@ void RipperSettings::load() {
 }
 
 void RipperSettings::save() {
-	ConfMan.setInt("ripper_master_volume", _values[kMasterVolume]);
-	ConfMan.setInt("music_volume", percentToMixer(_values[kAmbientVolume]));
-	ConfMan.setInt("sfx_volume", percentToMixer(_values[kSfxVolume]));
-	ConfMan.setInt("speech_volume", percentToMixer(_values[kVideoVolume]));
 	for (uint i = kBrightness; i <= kTint; ++i)
 		ConfMan.setInt(kVisualConfigKeys[i - kBrightness], _values[i]);
 	ConfMan.setBool("ripper_buffered_video", _bufferedVideo);
@@ -178,7 +173,10 @@ void RipperSettings::save() {
 void RipperSettings::resetDefaults() {
 	for (uint i = 0; i < kSliderCount; ++i)
 		_values[i] = kSliderDescriptors[i].defaultValue;
-	applyAudioVolumes();
+	for (uint i = kMasterVolume; i <= kVideoVolume; ++i)
+		ConfMan.setInt(kAudioConfigKeys[i], i == kMasterVolume ?
+			_values[i] : percentToMixer(_values[i]));
+	_engine->syncSoundSettings();
 	debugC(2, kDebugGeneral, "Ripper: restored Remote Control defaults");
 }
 
@@ -188,27 +186,36 @@ void RipperSettings::setValue(Slider slider, int value) {
 	if (_values[slider] == clampedValue)
 		return;
 	_values[slider] = clampedValue;
-	if (slider <= kVideoVolume)
-		applyAudioVolumes();
+	if (slider <= kVideoVolume) {
+		ConfMan.setInt(kAudioConfigKeys[slider], slider == kMasterVolume ?
+			clampedValue : percentToMixer(clampedValue));
+		_engine->syncSoundSettings();
+	}
 	debugC(2, slider <= kVideoVolume ? kDebugAudio : kDebugVideo,
 		"Ripper: Remote Control slider=%u value=%d", (uint)slider, clampedValue);
 }
 
-void RipperSettings::applyAudioVolumes() {
-	if (!_mixer)
-		return;
+void RipperSettings::syncSoundSettings() {
+	_values[kMasterVolume] = CLIP<int>(ConfMan.hasKey("ripper_master_volume") ?
+		ConfMan.getInt("ripper_master_volume") : kSliderDescriptors[kMasterVolume].defaultValue,
+		0, 100);
+	Audio::Mixer *mixer = _engine->_mixer;
 	const int master = _values[kMasterVolume];
-	const int ambient = percentToMixer(master * _values[kAmbientVolume] / 100);
-	const int sfx = percentToMixer(master * _values[kSfxVolume] / 100);
-	const int video = percentToMixer(master * _values[kVideoVolume] / 100);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, percentToMixer(master));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ambient);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, sfx);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, video);
-	debugC(3, kDebugAudio,
-		"Ripper: applied audio profiles master=%d ambient=%d sfx=%d video=%d mixer=%d,%d,%d",
+	const int ambient = mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+	const int sfx = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+	const int video = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
+	_values[kAmbientVolume] = mixerToPercent(ambient);
+	_values[kSfxVolume] = mixerToPercent(sfx);
+	_values[kVideoVolume] = mixerToPercent(video);
+	mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
+		Audio::Mixer::kMaxMixerVolume * master / 100);
+	mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ambient * master / 100);
+	mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, sfx * master / 100);
+	mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, video * master / 100);
+	debugC(2, kDebugAudio,
+		"Ripper: synchronized audio master=%d ambient=%d sfx=%d video=%d mixer=%d,%d,%d",
 		master, _values[kAmbientVolume], _values[kSfxVolume], _values[kVideoVolume],
-		ambient, sfx, video);
+		ambient * master / 100, sfx * master / 100, video * master / 100);
 }
 
 uint RipperSettings::getFilledTickCount(Slider slider) const {

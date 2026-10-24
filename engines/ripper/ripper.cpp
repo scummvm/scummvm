@@ -75,7 +75,7 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		_milestoneOverlay(new MilestoneOverlay(*_milestones, *_screenPresenter)),
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)),
-		_settings(new RipperSettings(_mixer,
+		_settings(new RipperSettings(this,
 			(gameDescription->flags & ADGF_DEMO) != 0)),
 		_toolbar(new ToolbarManager(this)),
 		_wac(new WacManager(this)), _worldMap(new WorldMap(this)),
@@ -94,6 +94,11 @@ bool RipperEngine::hasFeature(EngineFeature feature) const {
 
 bool RipperEngine::isDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
+}
+
+void RipperEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+	_settings->syncSoundSettings();
 }
 
 void RipperEngine::pauseEngineIntern(bool pause) {

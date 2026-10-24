@@ -24,11 +24,9 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 
-namespace Audio {
-class Mixer;
-}
-
 namespace Ripper {
+
+class RipperEngine;
 
 class RipperSettings {
 public:
@@ -70,7 +68,7 @@ public:
 		int defaultValue;
 	};
 
-	RipperSettings(Audio::Mixer *mixer, bool demo);
+	RipperSettings(RipperEngine *engine, bool demo);
 
 	void load();
 	void save();
@@ -104,11 +102,12 @@ public:
 	static const Descriptor &getDescriptor(Slider slider);
 
 private:
-	void applyAudioVolumes();
+	friend class RipperEngine;
+	void syncSoundSettings();
 	static int mixerToPercent(int volume);
 	static int percentToMixer(int volume);
 
-	Audio::Mixer *_mixer;
+	RipperEngine *_engine;
 	bool _demo;
 	int _values[kSliderCount];
 	uint16 _actionKeys[kActionKeyCount];
