@@ -116,7 +116,7 @@ void Map30::special03() {
 
 Common::String Map30::worthiness() {
 	Character &c = *g_globals->_currCharacter;
-	if ((c._flags[1] & ~CHARFLAG1_WORTHY) == ~CHARFLAG1_WORTHY)
+	if ((c._flags[1] & 0x7f) == 0x7f)
 		return worthy();
 	else
 		return unworthy();
@@ -128,18 +128,23 @@ Common::String Map30::worthy() {
 	c._exp += val;
 
 	Common::String line = Common::String::format(
-		STRING["maps.map30.worthy"].c_str(), '0' + (c._worthiness / 5));
+		STRING["maps.map30.worthy"].c_str(), c._worthiness / 32);
 	line = Common::String::format("%s%d %s",
 		line.c_str(), val, STRING["maps.map30.experience"].c_str());
 
 	if (c._worthiness & 0x80) {
 		int attrNum = getRandomNumber(7) - 1;
-		line += Common::String::format(", +3 %s",
-			STRING[Common::String::format("maps.map30.attributes.%d", attrNum)].c_str());
-
+		const Common::String attrName =
+			STRING[Common::String::format("maps.map30.attributes.%d", attrNum)];
 		AttributePair &attrib = c.getAttribute(attrNum);
-		if (attrib._base < 43)
+
+		// Attributes with a base of 43 or more don't increase
+		if (attrib._base < 43) {
 			attrib._current = attrib._base = attrib._base + 3;
+			line += Common::String::format(", +3 %s", attrName.c_str());
+		} else {
+			line += Common::String::format(", %s unchanged", attrName.c_str());
+		}
 	}
 
 	c._worthiness = 0;
