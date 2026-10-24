@@ -87,6 +87,7 @@ typedef Common::Functor2Mem<int16, int16*, int16, ScriptFunctions> ExternalScrip
 	_externalFuncNames.push_back(#x);
 void ScriptFunctions::setupExternalsTable() {
 
+	// ALL MADE engines have these first functions
 	External(sfSystemCall);
 	External(sfInitGraf);
 	External(sfRestoreGraf);
@@ -111,12 +112,41 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfHideMouseCursor);
 	External(sfShowMouseCursor);
 	External(sfGetMusicBeat);
+
+	// MANHOLE Floppy has nothing further.
+	if (_vm->getGameID() == GID_MANHOLE && (_vm->getFeatures() & GF_FLOPPY))
+		return;
+
+	// all others have at least this:
 	External(sfSetScreenLock);
+
+	if (_vm->getGameID() == GID_MANHOLE) {
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			// MANHOLE CD has cd playback functions next:
+			External(sfPlayCd);
+			External(sfStopCd);
+			External(sfGetCdStatus);
+			External(sfGetCdTime);
+		} else {
+			// FM TOWNS ver. has its own special funcs here
+			External(sfPlayMusic); // again??
+			External(sfUnknown);   // LoadPCM
+			External(sfUnknown);   // FlushPCM
+			External(sfPlayMusic); // a third one...
+		}
+		return;
+	}
+
+	// V2+ games follow.
 	External(sfAddSprite);
 	External(sfFreeAnim);
 	External(sfDrawSprite);
 	External(sfEraseSprites);
 	External(sfUpdateSprites);
+	// MANHOLE:NE DOS-V exits here.
+	if (_vm->getGameID() == GID_MANHOLE_NE && _vm->getLanguage() == Common::JA_JPN)
+		return;
+
 	External(sfGetTimer);
 	External(sfSetTimer);
 	External(sfResetTimer);
@@ -135,7 +165,7 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfSetSpriteGround);
 	External(sfLoadResText);
 
-	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_RODNEY) {
+	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_MANHOLE_NE || _vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_RODNEY) {
 		External(sfAddScreenMask);
 		External(sfSetSpriteMask);
 	} else if (_vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
@@ -147,66 +177,71 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfStopSound);
 	External(sfPlayVoice);
 
-	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RTZ ||
-		_vm->getGameID() == GID_RODNEY || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
-		External(sfPlayCd);
-		External(sfStopCd);
-		External(sfGetCdStatus);
-		External(sfGetCdTime);
-		External(sfPlayCdSegment);
-	}
+	// LGOP2 has no CD functions.
+	if (_vm->getGameID() == GID_LGOP2)
+		return;
 
-	if (_vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
-		External(sfPrintf);
-		External(sfClearMono);
-		External(sfGetSoundEnergy);
-		External(sfClearText);
-		External(sfAnimText);
-		External(sfGetTextWidth);
-		External(sfPlayMovie);
-		External(sfLoadSound);
-		External(sfLoadMusic);
-		External(sfLoadPicture);
-		External(sfSetMusicVolume);
-		External(sfRestartEvents);
-		External(sfPlaceSprite);
-		External(sfPlaceText);
-		External(sfDeleteChannel);
-		External(sfGetChannelType);
-		External(sfSetChannelState);
-		External(sfSetChannelLocation);
-		External(sfSetChannelContent);
-		External(sfSetExcludeArea);
-		External(sfSetSpriteExclude);
-		External(sfGetChannelState);
-		External(sfPlaceAnim);
-		External(sfSetAnimFrame);
-		External(sfGetAnimFrame);
-		External(sfGetAnimFrameCount);
-		External(sfGetPictureWidth);
-		External(sfGetPictureHeight);
-		External(sfSetSoundRate);
-		External(sfDrawAnimPic);
-		External(sfLoadAnim);
-		External(sfReadText);
-		External(sfReadMenu);
-		External(sfDrawMenu);
-		External(sfGetMenuCount);
-		External(sfSaveGame);
-		External(sfLoadGame);
-		External(sfGetGameDescription);
-		External(sfShakeScreen);
-		External(sfPlaceMenu);
-		External(sfSetSoundVolume);
-		External(sfGetSynthType);
-		External(sfIsSlowSystem);
-	}
+	External(sfPlayCd);
+	External(sfStopCd);
+	External(sfGetCdStatus);
+	External(sfGetCdTime);
+	External(sfPlayCdSegment);
 
-	if (_vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
-		External(sfMovieCall);
-		External(sfCursorXY);
-		External(sfSoundFile);
-	}
+	// return here for RODNEY and MANHOLE_NE
+	if (_vm->getGameID() == GID_MANHOLE_NE || _vm->getGameID() == GID_RODNEY)
+		return;
+
+	External(sfPrintf);
+	External(sfClearMono);
+	External(sfGetSoundEnergy);
+	External(sfClearText);
+	External(sfAnimText);
+	External(sfGetTextWidth);
+	External(sfPlayMovie);
+	External(sfLoadSound);
+	External(sfLoadMusic);
+	External(sfLoadPicture);
+	External(sfSetMusicVolume);
+	External(sfRestartEvents);
+	External(sfPlaceSprite);
+	External(sfPlaceText);
+	External(sfDeleteChannel);
+	External(sfGetChannelType);
+	External(sfSetChannelState);
+	External(sfSetChannelLocation);
+	External(sfSetChannelContent);
+	External(sfSetExcludeArea);
+	External(sfSetSpriteExclude);
+	External(sfGetChannelState);
+	External(sfPlaceAnim);
+	External(sfSetAnimFrame);
+	External(sfGetAnimFrame);
+	External(sfGetAnimFrameCount);
+	External(sfGetPictureWidth);
+	External(sfGetPictureHeight);
+	External(sfSetSoundRate);
+	External(sfDrawAnimPic);
+	External(sfLoadAnim);
+	External(sfReadText);
+	External(sfReadMenu);
+	External(sfDrawMenu);
+	External(sfGetMenuCount);
+	External(sfSaveGame);
+	External(sfLoadGame);
+	External(sfGetGameDescription);
+	External(sfShakeScreen);
+	External(sfPlaceMenu);
+	External(sfSetSoundVolume);
+	External(sfGetSynthType);
+	External(sfIsSlowSystem);
+
+	// v3 finished
+	if (_vm->getGameID() == GID_RTZ && _vm->getPlatform() == Common::kPlatformDOS)
+		return;
+
+	External(sfMovieCall);
+	External(sfCursorXY);
+	External(sfSoundFile);
 }
 #undef External
 
@@ -446,7 +481,7 @@ int16 ScriptFunctions::sfSetScreenLock(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfAddSprite(int16 argc, int16 *argv) {
-	if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+	if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_MANHOLE_NE || _vm->getGameID() == GID_RODNEY) {
 		return _vm->_screen->addToSpriteList(argv[2], argv[1], argv[0]);
 	} else {
 		// Unused in RTZ, RSBESTNDE, RSBUSYNDE
@@ -456,7 +491,7 @@ int16 ScriptFunctions::sfAddSprite(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfFreeAnim(int16 argc, int16 *argv) {
 	_vm->_screen->clearChannels();
-	if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+	if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_MANHOLE_NE || _vm->getGameID() == GID_RODNEY) {
 		_vm->_screen->clearSpriteList();
 	}
 	return 0;
@@ -465,7 +500,7 @@ int16 ScriptFunctions::sfFreeAnim(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfDrawSprite(int16 argc, int16 *argv) {
 	if (_vm->getGameID() == GID_RTZ) {
 		return _vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
-	} else if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+	} else if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_MANHOLE_NE || _vm->getGameID() == GID_RODNEY) {
 		SpriteListItem item = _vm->_screen->getFromSpriteList(argv[2]);
 		int16 channelIndex = _vm->_screen->drawSprite(item.index, argv[1] - item.xofs, argv[0] - item.yofs);
 		_vm->_screen->setChannelUseMask(channelIndex);
@@ -536,7 +571,7 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 
 	if (_vm->getGameID() == GID_RTZ) {
 		text = _vm->_dat->getObjectString(argv[argc - 1]);
-	} else if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+	} else if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_MANHOLE_NE || _vm->getGameID() == GID_RODNEY) {
 		text = _vm->_dat->getString(argv[argc - 1]);
 	}
 	// Unused in RSBESTNDE, RSBUSYNDE
@@ -1233,6 +1268,17 @@ int16 ScriptFunctions::sfSoundFile(int16 argc, int16 *argv) {
 
 	playSound(soundRes, true);
 
+	return 0;
+}
+
+// ///////////////////////////////////////
+
+int16 ScriptFunctions::sfUnknown(int16 argc, int16 *argv) {
+	// This is a placeholder for an unknown function.
+	//  It prints argc and argv.
+	warning("Unknown script function called: argc=%d", argc);
+	for (int i = 0; i < argc; i++)
+		warning(" argv[%d] = %d", i, argv[i]);
 	return 0;
 }
 

@@ -22,12 +22,13 @@
 // MIDI music class
 
 #include "made/music.h"
-#include "made/redreader.h"
 #include "made/resource.h"
 
 #include "audio/adlib_ms.h"
 #include "audio/midiparser.h"
 #include "audio/miles.h"
+
+#include "common/compression/kd_red.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -51,7 +52,7 @@ DOSMusicPlayer::DOSMusicPlayer(MadeEngine *vm, bool milesAudio) : _vm(vm), _pars
 				// Installing Return to Zork produces both a SAMPLE.AD and
 				// a SAMPLE.OPL file, but they are identical. The resource
 				// file appears to only contain SAMPLE.AD.
-				adLibInstrumentStream = RedReader::loadFromRed("rtzcd.red", "SAMPLE.AD");
+				adLibInstrumentStream = Common::RedReader::loadFromRed("rtzcd.red", "SAMPLE.AD");
 			}
 			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL", adLibInstrumentStream);
 			delete adLibInstrumentStream;
