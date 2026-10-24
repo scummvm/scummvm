@@ -54,7 +54,7 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 		classBit = ROBBER_BIT;
 		break;
 	default:
-		equipError = STRING["dialogs.character.wrong_class"];
+		equipError = "*** wrong class ***";
 		break;
 	}
 
@@ -62,7 +62,7 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 	const Item &item = g_globals->_currItem;
 
 	if (equipError.empty() && (item._disablements & classBit))
-		equipError = STRING["dialogs.character.wrong_class"];
+		equipError = "*** wrong class ***";
 	if (equipError.empty()) {
 		int alignBit = 0;
 		switch (c._alignment) {
@@ -76,17 +76,17 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 			alignBit = EVIL_BIT;
 			break;
 		default:
-			equipError = STRING["dialogs.character.wrong_alignment"];
+			equipError = "*** wrong alignment ***";
 			break;
 		}
 
 		if ((item._disablements & alignBit) && alignBit != NEUTRAL_BIT)
-			equipError = STRING["dialogs.character.wrong_alignment"];
+			equipError = "*** wrong alignment ***";
 	}
 
 	if (equipError.empty()) {
 		if (item._constBonus_id == IS_EQUIPPABLE) {
-			equipError = STRING["dialogs.character.not_equipped"];
+			equipError = "*** not equipped ***";
 			textPos.x = 10;
 		}
 	}
@@ -94,38 +94,38 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 	if (equipError.empty()) {
 		if (isWeapon(itemId)) {
 			if (c._equipped.hasWeapon() || c._equipped.hasTwoHanded())
-				equipError = STRING["dialogs.character.have_weapon"];
+				equipError = "*** already have weapon ***";
 		} else if (isMissile(itemId)) {
 			if (c._equipped.hasMissile()) {
-				equipError = STRING["dialogs.character.have_missile"];
+				equipError = "*** aready have missile weapon ***";
 				textPos.x = 3;
 			}
 		} else if (isTwoHanded(itemId)) {
 			if (c._equipped.hasShield()) {
-				equipError = STRING["dialogs.character.cannot_with_shield"];
+				equipError = "*** cannot with shield ***";
 				textPos.x = 7;
 			} else if (c._equipped.hasWeapon()) {
-				equipError = STRING["dialogs.character.have_weapon"];
+				equipError = "*** already have weapon ***";
 
 			}
 		} else if (isArmor(itemId)) {
 			if (c._equipped.hasArmor()) {
-				equipError = STRING["dialogs.character.have_armor"];
+				equipError = "*** already wearing armor ***";
 				textPos.x = 5;
 			}
 		} else if (isShield(itemId)) {
 			if (c._equipped.hasTwoHanded()) {
-				equipError = STRING["dialogs.character.cannot_two_handed"];
+				equipError = "*** cannot with two-handed weapon ***";
 				textPos.x = 1;
 			}
 		} else if (itemId == 255) {
-			equipError = STRING["dialogs.character.not_equipped"];
+			equipError = "*** not equipped ***";
 			textPos.x = 10;
 		}
 	}
 
 	if (equipError.empty() && c._equipped.full()) {
-		equipError = STRING["dialogs.character.full"];
+		equipError = "*** full ***";
 		textPos.x = 14;
 	}
 
@@ -136,7 +136,7 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 
 		if (item._constBonus_id != NO_EQUIP_BONUS) {
 			if (item._constBonus_id == IS_EQUIPPABLE) {
-				equipError = STRING["dialogs.character.not_equipped"];
+				equipError = "*** not equipped ***";
 				textPos.x = 10;
 			} else if (item._constBonus_id == EQUIP_CURSED) {
 				c._equipped[freeIndex]._charges += item._constBonus_value;
@@ -182,10 +182,10 @@ bool EquipRemove::removeItem(int index, Common::Point &textPos, Common::String &
 	g_globals->_items.getItem(itemId);
 	const Item &item = g_globals->_currItem;
 	if (item._constBonus_id == EQUIP_CURSED) {
-		removeError = STRING["dialogs.character.cursed"];
+		removeError = "*** cursed ***";
 		textPos.x = 13;
 	} else if (c._backpack.full()) {
-		removeError = STRING["dialogs.character.full"];
+		removeError = "*** full ***";
 		textPos.x = 14;
 	}
 

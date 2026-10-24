@@ -156,8 +156,8 @@ void stageEncounter() {
 
 void stageTripleBeepSpecial() {
 	g_events->send("GameMessages", InfoMessage(
-		0, 1, STRING["maps.map13.snake_pit"],
-		0, 2, STRING["maps.map13.levitation2"]
+		0, 1, "Snake pit! ",
+		0, 2, "Levitation saved you."
 	));
 	Sound::sound(SOUND_3);
 }
@@ -186,7 +186,7 @@ bool runSoundTestCase(const Common::String &testName) {
 		return stageWallBump();
 
 	} else if (!scumm_stricmp(testName.c_str(), "message")) {
-		g_events->send("GameMessages", SoundMessage(STRING["dialogs.search.nothing"]));
+		g_events->send("GameMessages", SoundMessage("nothing"));
 		return true;
 
 	} else if (!scumm_stricmp(testName.c_str(), "triple")) {

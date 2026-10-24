@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "mm/mm1/game/view_base.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/mm1.h"
@@ -114,8 +115,7 @@ bool ViewBase::msgGame(const GameMessage &msg) {
 		update();
 		return true;
 	} else if (msg._name == "LOCATION") {
-		_descriptionLine = STRING[Common::String::format(
-			"dialogs.location.titles.%d", msg._value)];
+		_descriptionLine = LOCATION_TITLES[msg._value];
 		draw();
 		return true;
 	}
@@ -176,7 +176,7 @@ void ViewBase::forward(KeybindingAction action) {
 			if (map.dataByte(Maps::MAP_30 + offset) == 4 &&
 				!g_globals->_activeSpells._s.walk_on_water) {
 				Sound::sound(SOUND_1);
-				_dialogMessage = STRING["movement.obstructed.cant_swim"];
+				_dialogMessage = " can't swim";
 				redraw();
 				return;
 			}
@@ -214,12 +214,11 @@ void ViewBase::obstructed(byte mask) {
 	else if (!(maps._currentWalls & mask & 0xaa))
 		index = 30;
 
-	_dialogMessage = STRING[Common::String::format(
-		"movement.obstructed.%d", map.dataByte(index))];
+	_dialogMessage = OBSTRUCTED_MESSAGES[map.dataByte(index)];
 }
 
 void ViewBase::barrier() {
-	_dialogMessage = STRING["movement.obstructed.barrier"];
+	_dialogMessage = "  barrier!  ";
 	Sound::sound(SOUND_1);
 }
 

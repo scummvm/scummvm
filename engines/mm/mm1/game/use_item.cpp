@@ -36,7 +36,7 @@ Common::String UseItem::combatUseItem(Inventory &inv, Inventory::Entry &invEntry
 	Item *item = g_globals->_items.getItem(invEntry._id);
 
 	if (!item->_tempBonus_id) {	
-		msg = STRING["dialogs.character.use_combat.no_special_power"];
+		msg = "No special power";
 
 	} else if (item->_constBonus_id == IS_EQUIPPABLE || isEquipped) {
 		if (invEntry._charges) {
@@ -58,14 +58,14 @@ Common::String UseItem::combatUseItem(Inventory &inv, Inventory::Entry &invEntry
 						&g_globals->_currCharacter->_backpack)->removeCharge(&invEntry);
 
 				g_globals->_party.updateAC();
-				msg = STRING["dialogs.character.use_combat.done"];
+				msg = "Done";
 				return "";
 			}
 		} else {
-			msg = STRING["dialogs.character.use_combat.no_charges_left"];
+			msg = "No charges left";
 		}
 	} else {
-		msg = STRING["dialogs.character.use_combat.not_equipped"];
+		msg = "Not equipped";
 	}
 
 	g_events->send("Combat", GameMessage("DISABLE_ATTACKS"));
@@ -79,7 +79,7 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 	Item *item = g_globals->_items.getItem(invEntry._id);
 
 	if (!item->_tempBonus_id) {
-		msg = STRING["dialogs.character.use_noncombat.no_special_power"];
+		msg = "*** No special power ***";
 
 	} else if (item->_constBonus_id == IS_EQUIPPABLE || isEquipped) {
 		if (invEntry._charges) {
@@ -91,10 +91,10 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 				SpellResult result = Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
 				switch (result) {
 				case SR_SUCCESS_DONE:
-					msg = STRING["spells.done"];
+					msg = "Done";
 					break;
 				case SR_FAILED:
-					msg = STRING["spells.failed"];
+					msg = "Spell failed";
 					break;
 				case SR_SUCCESS_SILENT:
 					break;
@@ -108,13 +108,13 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 						&g_globals->_currCharacter->_backpack)->removeCharge(&invEntry);
 
 				g_globals->_party.updateAC();
-				msg = STRING["spells.done"];
+				msg = "Done";
 			}
 		} else {
-			msg = STRING["dialogs.character.use_noncombat.no_charges_left"];
+			msg = "*** No charges left ***";
 		}
 	} else {
-		msg = STRING["dialogs.character.use_noncombat.not_equipped"];
+		msg = "*** Not equipped ***";
 	}
 
 	return msg;

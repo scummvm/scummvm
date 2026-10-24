@@ -63,7 +63,7 @@ void Rest::execute() {
 	}
 
 	g_events->send(InfoMessage(
-		STRING["dialogs.game.rest.rest_complete"]
+		"Rest complete: no encounters!"
 	));
 }
 

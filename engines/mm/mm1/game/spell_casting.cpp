@@ -172,22 +172,22 @@ Common::String SpellCasting::getSpellError() const {
 	Common::String msg;
 	switch (_spellState) {
 	case SS_NOT_ENOUGH_SP:
-		msg = STRING["dialogs.misc.not_enough_sp"];
+		msg = "Not enough spell points";
 		break;
 	case SS_NOT_ENOUGH_GEMS:
-		msg = STRING["dialogs.misc.not_enough_gems"];
+		msg = "Not enough gems";
 		break;
 	case SS_COMBAT_ONLY:
-		msg = STRING["spells.combat_only"];
+		msg = "Combat only";
 		break;
 	case SS_NONCOMBAT_ONLY:
-		msg = STRING["spells.noncombat_only"];
+		msg = "Non combat only";
 		break;
 	case SS_OUTDOORS_ONLY:
-		msg = STRING["spells.outdoors_only"];
+		msg = "Outdoor only";
 		break;
 	default:
-		msg = STRING["spells.done"];
+		msg = "Done";
 		break;
 	}
 

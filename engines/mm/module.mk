@@ -34,6 +34,7 @@ MODULE_OBJS += \
 	mm1/data/monsters.o \
 	mm1/data/party.o \
 	mm1/data/roster.o \
+	mm1/data/text.o \
 	mm1/data/text_parser.o \
 	mm1/data/trap.o \
 	mm1/data/treasure.o \

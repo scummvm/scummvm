@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/game/combat.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/game/spell_casting.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -958,9 +959,8 @@ void Combat::iterateSelectedMonster1() {
 
 
 void Combat::iterateMonsters1Inner() {
-	Common::String line1 = Common::String::format("%s %s",
-		g_globals->_currCharacter->_name,
-		STRING["spells.casts_spell"].c_str());
+	Common::String line1 = Common::String::format("%s casts a spell:",
+		g_globals->_currCharacter->_name);
 
 	_monsterP = _remainingMonsters[_destMonsterNum];
 	const Common::String monsterName = _monsterP->_name;
@@ -985,7 +985,7 @@ void Combat::iterateMonsters1Inner() {
 
 	Common::String effect;
 	if (!affects) {
-		effect = STRING["monster_spells.not_affected"];
+		effect = "is not affected!";
 
 	} else {
 		_monsterP->_status |= g_globals->_spellsState._damage;
@@ -997,8 +997,7 @@ void Combat::iterateMonsters1Inner() {
 				break;
 		}
 
-		effect = STRING[Common::String::format(
-			"spells.monster_effects.%d", effectNum)];
+		effect = MONSTER_EFFECTS[effectNum];
 	}
 
 	InfoMessage msg(
@@ -1048,9 +1047,8 @@ void Combat::iterateSelectedMonster2() {
 
 
 void Combat::iterateMonsters2Inner() {
-	Common::String line1 = Common::String::format("%s %s",
-		g_globals->_currCharacter->_name,
-		STRING["spells.casts_spell"].c_str());
+	Common::String line1 = Common::String::format("%s casts a spell:",
+		g_globals->_currCharacter->_name);
 
 	_monsterP = _remainingMonsters[_destMonsterNum];
 	const Common::String monsterName = _monsterP->_name;
@@ -1084,25 +1082,20 @@ void Combat::iterateMonsters2Inner() {
 
 	if (!affects) {
 		msg._lines.push_back(Line(
-			0, 1, Common::String::format("%s %s",
-				monsterName.c_str(),
-				STRING["monster_spells.not_affected"].c_str()
-			)
+			0, 1, Common::String::format("%s is not affected!",
+				monsterName.c_str())
 		));
 
 	} else {
-		Common::String line2 = Common::String::format("%s %s %d %s %s",
+		Common::String line2 = Common::String::format("%s takes %d %s of damage!",
 			monsterName.c_str(),
-			STRING["dialogs.combat.takes"].c_str(),
 			_damage,
-			STRING[_damage == 1 ? "dialogs.combat.point" : "dialogs.combat.points"].c_str(),
-			STRING["dialogs.combat.of_damage"].c_str()
-		);
+			(_damage == 1 ? "point" : "points"));
 
 		msg._lines.push_back(Line(0, 1, line2));
 
 		if (_damage >= _monsterP->_hp) {
-			msg._lines.push_back(Line(0, 2, STRING["dialogs.combat.and_goes_down"]));
+			msg._lines.push_back(Line(0, 2, "and goes down!!!"));
 		}
 	}
 
@@ -1169,7 +1162,7 @@ void Combat::spellFailed() {
 	g_globals->_combatParty[_currentChar]->_checked = true;
 	Sound::sound(SOUND_2);
 
-	SoundMessage msg(10, 2, SpellCasting::spellResultMessage(STRING["spells.failed"]));
+	SoundMessage msg(10, 2, SpellCasting::spellResultMessage("Spell failed"));
 	msg._delaySeconds = 3;
 	displaySpellResult(msg);
 }
@@ -1182,7 +1175,7 @@ bool Combat::monsterLevelThreshold() const {
 
 void Combat::turnUndead() {
 	// It can only be used once per combat. Further casts have no effect
-	Common::String result = STRING["spells.no_effect"];
+	Common::String result = "No effect!";
 	int resultX = 15;
 
 	if (!_turnUndeadUsed) {
@@ -1201,7 +1194,7 @@ void Combat::turnUndead() {
 		}
 
 		if (_monstersDestroyedCtr) {
-			result = STRING["spells.monsters_destroyed"];
+			result = "Some monsters were destroyed!";
 			resultX = 5;
 		}
 	}
@@ -1223,9 +1216,8 @@ void Combat::summonLightning() {
 	SpellsState &ss = g_globals->_spellsState;
 
 	if (_destMonsterNum < _attackersCount) {
-		Common::String line1 = Common::String::format("%s %s",
-			g_globals->_currCharacter->_name,
-			STRING["spells.casts_spell"].c_str());
+		Common::String line1 = Common::String::format("%s casts a spell:",
+			g_globals->_currCharacter->_name);
 
 		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
 		ss._mmVal1++;
@@ -1333,7 +1325,7 @@ void Combat::holyWord() {
 
 	// Holy Word result must be timed, like the existing Turn Undead result.
 	InfoMessage msg(_monstersDestroyedCtr ? 5 : 15, 1,
-		STRING[_monstersDestroyedCtr ? "spells.monsters_destroyed" : "spells.no_effect"]);
+		_monstersDestroyedCtr ? "Some monsters were destroyed!" : "No effect!");
 	msg._delaySeconds = 3;
 	msg._callback = []() {
 		g_globals->_combat->characterDone();
@@ -1352,35 +1344,35 @@ void Combat::identifyMonster() {
 	line += ':';
 	while (line.size() < COL2)
 		line += ' ';
-	line += STRING["spells.info.hp"];
+	line += "hp = ";
 	line += Common::String::format("%d", _monsterP->_hp);
 	line += "  ";
-	line += STRING["spells.info.ac"];
+	line += "ac = ";
 	line += Common::String::format("%d", _monsterP->_ac);
 	msg._lines.push_back(Line(0, 0, line));
 
-	line = STRING["spells.info.speed"];
+	line = "speed = ";
 	line += Common::String::format("%d", _monsterP->_speed);
 	while (line.size() < COL2)
 		line += ' ';
-	line += STRING["spells.info.bonus_on_touch"];
+	line += "bonus on touch   ";
 	line += _monsterP->_bonusOnTouch ? 'Y' : 'N';
 	msg._lines.push_back(Line(0, 1, line));
 
-	line = STRING["spells.info.num_attacks"];
+	line = "# of attacks = ";
 	line += Common::String::format("%d", _monsterP->_numberOfAttacks);
 	while (line.size() < COL2)
 		line += ' ';
-	line += STRING["spells.info.special_ability"];
+	line += "special ability ";
 	line += (_monsterP->_specialAbility & 0x80) ||
 		!_monsterP->_specialAbility ? 'N' : 'Y';
 	msg._lines.push_back(Line(0, 2, line));
 
-	line = STRING["spells.info.max_damage"];
+	line = "maximum damage = ";
 	line += Common::String::format("%d", _monsterP->_maxDamage);
 	while (line.size() < COL2)
 		line += ' ';
-	line += STRING["spells.info.magic_resistance"];
+	line += "magic resistance ";
 	line += Common::String::format("%d",
 		_monsterP->_resistUndead & MAGIC_RESISTANCE);
 	msg._lines.push_back(Line(0, 3, line));
@@ -1528,9 +1520,8 @@ bool Combat::acidRain() {
 }
 
 void Combat::fingerOfDeath() {
-	Common::String line1 = Common::String::format("%s %s",
-		g_globals->_currCharacter->_name,
-		STRING["spells.casts_spell"].c_str());
+	Common::String line1 = Common::String::format("%s casts a spell:",
+		g_globals->_currCharacter->_name);
 
 	const Common::String monsterName = _monsterP->_name;
 	bool kills = !(_monsterP->_resistUndead & IS_UNDEAD) &&
@@ -1546,8 +1537,8 @@ void Combat::fingerOfDeath() {
 
 	Common::String line2 = Common::String::format("%s %s",
 		monsterName.c_str(),
-		kills ? STRING["spells.char_effects.7"].c_str() :
-		STRING["monster_spells.not_affected"].c_str()
+		kills ? "is killed" :
+		"is not affected!"
 	);
 
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
@@ -1560,9 +1551,8 @@ void Combat::fingerOfDeath() {
 }
 
 void Combat::disintegration() {
-	Common::String line1 = Common::String::format("%s %s",
-		g_globals->_currCharacter->_name,
-		STRING["spells.casts_spell"].c_str());
+	Common::String line1 = Common::String::format("%s casts a spell:",
+		g_globals->_currCharacter->_name);
 
 	const Common::String monsterName = _monsterP->_name;
 	bool kills = !monsterLevelThreshold();
@@ -1577,8 +1567,8 @@ void Combat::disintegration() {
 
 	Common::String line2 = Common::String::format("%s %s",
 		monsterName.c_str(),
-		kills ? STRING["spells.char_effects.disintegrated"].c_str() :
-		STRING["monster_spells.not_affected"].c_str()
+		kills ? "is disintegrated!" :
+		"is not affected!"
 	);
 
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
@@ -1786,16 +1776,14 @@ Common::String Combat::subtractDamageFromChar() {
 		if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS))) {
 			c._condition |= UNCONSCIOUS;
 
-			result = Common::String::format("%s %s", c._name,
-				STRING["dialogs.combat.goes_down"].c_str());
+			result = Common::String::format("%s goes down!!!", c._name);
 			Sound::sound2(SOUND_8);
 
 		} else {
 			if (c._condition & BAD_CONDITION)
 				c._condition = BAD_CONDITION | DEAD;
 
-			result = Common::String::format("%s %s", c._name,
-				STRING["dialogs.combat.dies"].c_str());
+			result = Common::String::format("%s dies!", c._name);
 			Sound::sound2(SOUND_8);
 		}
 	}

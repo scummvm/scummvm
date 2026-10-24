@@ -566,31 +566,31 @@ Common::String Character::getConditionString() const {
 	int cond = _condition;
 
 	if (cond == 0) {
-		result += STRING["stats.conditions.good"];
+		result += "Good";
 	} else if (cond == ERADICATED) {
-		result += STRING["stats.conditions.eradicated"];
+		result += "Eradicated";
 	} else {
 		if (cond & BAD_CONDITION) {
 			// Fatal conditions
 			if (cond & DEAD)
-				result += STRING["stats.conditions.dead"] + ",";
+				result += "Dead,";
 			if (cond & STONE)
-				result += STRING["stats.conditions.stone"] + ",";
+				result += "Stone,";
 		} else {
 			if (cond & UNCONSCIOUS)
-				result += STRING["stats.conditions.unconscious"] + ",";
+				result += "Unconscious,";
 			if (cond & PARALYZED)
-				result += STRING["stats.conditions.paralyzed"] + ",";
+				result += "Paralyzed,";
 			if (cond & POISONED)
-				result += STRING["stats.conditions.poisoned"] + ",";
+				result += "Poisoned,";
 			if (cond & DISEASED)
-				result += STRING["stats.conditions.diseased"] + ",";
+				result += "Diseased,";
 			if (cond & SILENCED)
-				result += STRING["stats.conditions.silenced"] + ",";
+				result += "Silenced,";
 			if (cond & BLINDED)
-				result += STRING["stats.conditions.blinded"] + ",";
+				result += "Blinded,";
 			if (cond & ASLEEP)
-				result += STRING["stats.conditions.asleep"] + ",";
+				result += "Asleep,";
 		}
 
 		result.deleteLastChar();
@@ -808,17 +808,17 @@ ConditionEnum Character::worstCondition() const {
 
 Common::String Character::getConditionString(ConditionEnum cond) {
 	switch (cond) {
-	case C_ERADICATED: return STRING["stats.conditions.eradicated"];
-	case C_DEAD: return STRING["stats.conditions.dead"];
-	case C_STONE: return STRING["stats.conditions.stone"];
-	case C_UNCONSCIOUS: return STRING["stats.conditions.unconscious"];
-	case C_PARALYZED: return STRING["stats.conditions.paralyzed"];
-	case C_POISONED: return STRING["stats.conditions.poisoned"];
-	case C_DISEASED: return STRING["stats.conditions.diseased"];
-	case C_SILENCED: return STRING["stats.conditions.silenced"];
-	case C_BLINDED: return STRING["stats.conditions.blinded"];
-	case C_ASLEEP: return STRING["stats.conditions.asleep"];
-	default: return STRING["stats.conditions.good"];
+	case C_ERADICATED: return "Eradicated";
+	case C_DEAD: return "Dead";
+	case C_STONE: return "Stone";
+	case C_UNCONSCIOUS: return "Unconscious";
+	case C_PARALYZED: return "Paralyzed";
+	case C_POISONED: return "Poisoned";
+	case C_DISEASED: return "Diseased";
+	case C_SILENCED: return "Silenced";
+	case C_BLINDED: return "Blinded";
+	case C_ASLEEP: return "Asleep";
+	default: return "Good";
 	}
 }
 

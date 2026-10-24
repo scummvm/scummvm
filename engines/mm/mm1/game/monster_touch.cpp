@@ -57,15 +57,10 @@ const MonsterTouchAction MonsterTouch::ACTIONS[25] = {
 };
 
 static Common::String formatMonsterAction(const Common::String &action) {
-	Common::String conjunction = STRING["monster_actions.and"];
-	if (!conjunction.empty() && conjunction.firstChar() == '!')
-		conjunction.deleteChar(0);
-
-	return Common::String::format("    %s%s!",
-		conjunction.c_str(), action.c_str());
+	return Common::String::format("    and %s!", action.c_str());
 }
 
-#define LINE(ACTION) line = formatMonsterAction(STRING[ACTION])
+#define LINE(ACTION) line = formatMonsterAction(ACTION)
 
 bool MonsterTouch::monsterTouch(uint index, Common::String &line) {
 	line = "";
@@ -84,7 +79,7 @@ bool MonsterTouch::canPerform(int level) const {
 bool MonsterTouch::action00(Common::String &line) {
 	if (canPerform(3)) {
 		g_globals->_currCharacter->_food = 0;
-		LINE("monster_actions.takes_food");
+		LINE("takes food");
 		return true;
 
 	} else {
@@ -95,7 +90,7 @@ bool MonsterTouch::action00(Common::String &line) {
 bool MonsterTouch::action01(Common::String &line) {
 	if (canPerform(20)) {
 		setCondition(DISEASED);
-		LINE("monster_actions.inflicts_disease");
+		LINE("inflicts disease");
 		return true;
 	}
 
@@ -125,7 +120,7 @@ bool MonsterTouch::action04(Common::String &line) {
 
 	if (canPerform(2) && c._gems != 0) {
 		c._gems /= 2;
-		LINE("monster_actions.steals_gems");
+		LINE("steals some gems");
 		return true;
 
 	} else {
@@ -140,14 +135,14 @@ bool MonsterTouch::action05(Common::String &line) {
 		setCondition(BAD_CONDITION | DEAD);
 	_damage += 3;
 
-	LINE("monster_actions.reduces_endurance");
+	LINE("reduces endurance");
 	return true;
 }
 
 bool MonsterTouch::action06(Common::String &line) {
 	if (damageType7()) {
 		setCondition(ASLEEP);
-		LINE("monster_actions.induces_sleep");
+		LINE("induces sleep");
 		return true;
 	}
 
@@ -157,7 +152,7 @@ bool MonsterTouch::action06(Common::String &line) {
 bool MonsterTouch::action07(Common::String &line) {
 	if (damageType5()) {
 		setCondition(3);
-		LINE("monster_actions.causes_paralysis");
+		LINE("causes paralysis");
 		return true;
 	}
 
@@ -167,7 +162,7 @@ bool MonsterTouch::action07(Common::String &line) {
 bool MonsterTouch::action08(Common::String &line) {
 	if (canPerform(4)) {
 		setCondition(DISEASED);
-		LINE("monster_actions.inflicts_disease");
+		LINE("inflicts disease");
 		return true;
 
 	} else {
@@ -180,7 +175,7 @@ bool MonsterTouch::action09(Common::String &line) {
 
 	if (canPerform(2) && c._gold != 0) {
 		c._gold /= 2;
-		LINE("monster_actions.steals_gold");
+		LINE("steals some gold");
 		return true;
 
 	} else {
@@ -195,7 +190,7 @@ bool MonsterTouch::action10(Common::String &line) {
 
 	if (canPerform(2) && !c._backpack.empty()) {
 		c._backpack.removeAt(c._backpack.size() - 1);
-		LINE("monster_actions.steals_something");
+		LINE("steals something");
 		return true;
 
 	} else {
@@ -206,7 +201,7 @@ bool MonsterTouch::action10(Common::String &line) {
 bool MonsterTouch::action11(Common::String &line) {
 	if (damageType6()) {
 		setCondition(16);
-		LINE("monster_actions.induces_poison");
+		LINE("induces poison");
 		return true;
 	}
 
@@ -216,7 +211,7 @@ bool MonsterTouch::action11(Common::String &line) {
 bool MonsterTouch::action12(Common::String &line) {
 	if (canPerform(3)) {
 		setCondition(BLINDED);
-		LINE("monster_actions.causes_blindness");
+		LINE("causes blindness");
 		return true;
 
 	} else {
@@ -231,7 +226,7 @@ bool MonsterTouch::action13(Common::String &line) {
 		setCondition(BAD_CONDITION | DEAD);
 
 	_damage += 10;
-	LINE("monster_actions.drains_lifeforce");
+	LINE("drains lifeforce");
 	return true;
 }
 
@@ -240,10 +235,8 @@ bool MonsterTouch::action14(Common::String &line) {
 
 	if (canPerform(3) && isCharAffected()) {
 		setCondition(BAD_CONDITION | STONE);
-		line = Common::String::format("%s %s",
-			c._name,
-			STRING["monster_actions.turned_to_stone"].c_str()
-		);
+		line = Common::String::format("%s is turned to stone",
+			c._name);
 		return true;
 
 	} else {
@@ -263,7 +256,7 @@ bool MonsterTouch::action15(Common::String &line) {
 			setCondition(ERADICATED);
 		}
 
-		LINE("monster_actions.causes_aging");
+		LINE("causes rapid aging");
 		return true;
 
 	} else {
@@ -283,7 +276,7 @@ bool MonsterTouch::action16(Common::String &line) {
 	}
 
 	_damage += 20;
-	LINE("monster_actions.drains_lifeforce");
+	LINE("drains lifeforce");
 	return true;
 }
 
@@ -292,10 +285,8 @@ bool MonsterTouch::action17(Common::String &line) {
 
 	if (canPerform(3) && isCharAffected()) {
 		setCondition(BAD_CONDITION | DEAD);
-		line = Common::String::format("%s %s",
-			c._name,
-			STRING["monster_actions.is_killed"].c_str()
-		);
+		line = Common::String::format("%s is killed",
+			c._name);
 		return true;
 
 	} else {
@@ -306,7 +297,7 @@ bool MonsterTouch::action17(Common::String &line) {
 bool MonsterTouch::action18(Common::String &line) {
 	if (canPerform(3) && isCharAffected()) {
 		setCondition(UNCONSCIOUS);
-		LINE("monster_actions.induces_unconsciousness");
+		LINE("induces unconsciousness");
 		return true;
 
 	} else {
@@ -325,7 +316,7 @@ bool MonsterTouch::action19(Common::String &line) {
 		c._might._current -= 3;
 	}
 
-	LINE("monster_actions.drains_might");
+	LINE("drains might");
 	return true;
 }
 
@@ -344,7 +335,7 @@ bool MonsterTouch::action20(Common::String &line) {
 		}
 	}
 
-	LINE("monster_actions.drains_ability");
+	LINE("drains ability");
 	return true;
 }
 
@@ -368,7 +359,7 @@ bool MonsterTouch::action22(Common::String &line) {
 		c._gold = 0;
 		c._gems = 0;
 
-		LINE("monster_actions.steals_gold_and_gems");
+		LINE("steals gold and gems");
 		return true;
 
 	} else {
@@ -380,10 +371,8 @@ bool MonsterTouch::action23(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	setCondition(ERADICATED);
-	line = Common::String::format("%s %s",
-		c._name,
-		STRING["monster_actions.is_eradicated"].c_str()
-	);
+	line = Common::String::format("%s is eradicated",
+		c._name);
 
 	return true;
 }
@@ -392,7 +381,7 @@ bool MonsterTouch::action24(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	c._sp._current = 0;
-	LINE("monster_actions.drains_sp");
+	LINE("drains spell points");
 	return true;
 }
 
