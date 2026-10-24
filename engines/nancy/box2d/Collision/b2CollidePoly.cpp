@@ -320,7 +320,6 @@ void b2CollidePolygons(b2Manifold* manifold,
 	b2Vec2 v11 = vertices1[edge1];
 	b2Vec2 v12 = edge1 + 1 < count1 ? vertices1[edge1+1] : vertices1[0];
 
-	b2Vec2 dv = v12 - v11;
 	b2Vec2 sideNormal = b2Mul(xf1.R, v12 - v11);
 	sideNormal.Normalize();
 	b2Vec2 frontNormal = b2Cross(sideNormal, 1.0f);

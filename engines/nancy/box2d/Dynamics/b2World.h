@@ -88,7 +88,7 @@ public:
 	void SetBoundaryListener(b2BoundaryListener* listener);
 
 	/// Register a contact filter to provide specific control over collision.
-	/// Otherwise the default filter is used (b2_defaultFilter).
+	/// Otherwise the default filter is used.
 	void SetContactFilter(b2ContactFilter* filter);
 
 	/// Register a contact event listener
@@ -218,6 +218,7 @@ private:
 
 	b2DestructionListener* m_destructionListener;
 	b2BoundaryListener* m_boundaryListener;
+	b2ContactFilter m_defaultFilter;
 	b2ContactFilter* m_contactFilter;
 	b2ContactListener* m_contactListener;
 	b2DebugDraw* m_debugDraw;

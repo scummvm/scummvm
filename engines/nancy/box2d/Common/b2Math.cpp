@@ -41,7 +41,7 @@
 
 const b2Vec2 b2Vec2_zero(0.0f, 0.0f);
 const b2Mat22 b2Mat22_identity(1.0f, 0.0f, 0.0f, 1.0f);
-const b2XForm b2XForm_identity(b2Vec2_zero, b2Mat22_identity);
+const b2XForm b2XForm_identity(b2Vec2(0.0f, 0.0f), b2Mat22(1.0f, 0.0f, 0.0f, 1.0f));
 
 void b2Sweep::GetXForm(b2XForm* xf, float32 t) const
 {

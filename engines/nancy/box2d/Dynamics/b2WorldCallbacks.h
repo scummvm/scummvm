@@ -93,9 +93,6 @@ public:
 	virtual bool ShouldCollide(b2Shape* shape1, b2Shape* shape2);
 };
 
-/// The default contact filter.
-extern b2ContactFilter b2_defaultFilter;
-
 /// Implement this class to get collision results. You can use these results for
 /// things like sounds and game logic. You can also get contact results by
 /// traversing the contact lists after the time step. However, you might miss
