@@ -55,7 +55,10 @@ void Map29::special() {
 	}
 
 	switch (_walls[g_maps->_mapOffset]) {
-	case 0:
+	case 0xff:
+		// The original overlay compares the cell wall byte with 0xff here.
+		// 0x00 was a transcription error that made the intended 1-in-50
+		// swamp encounter branch unreachable
 		if (getRandomNumber(50) == 50) {
 			int id1 = getRandomNumber(16);
 			int monsterCount = getRandomNumber(id1 < 15 ? 13 : 4);
