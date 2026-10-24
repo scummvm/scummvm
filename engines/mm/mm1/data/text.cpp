@@ -391,7 +391,7 @@ const char *const TAVERN_TIPS[5][4] = {
 		"See man in cave below (1,2)",
 		"Check walls near (12,3)",
 		"Statue at (2,4) is your first job",
-		"Similar pieces of a puzzle may not\\8dbelong to the same puzzle"
+		"Similar pieces of a puzzle may not\x8d""belong to the same puzzle"
 	},
 	{
 		"Seek quests behind moons",
