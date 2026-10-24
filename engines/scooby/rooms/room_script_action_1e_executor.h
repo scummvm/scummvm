@@ -30,7 +30,6 @@
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/runtime/runtime_state.h"
-#include "scooby/runtime/session_exit.h"
 
 // Owns room-script action 0x1E's streamed reset presentation and handover.
 

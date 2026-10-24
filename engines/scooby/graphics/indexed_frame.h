@@ -28,10 +28,9 @@
 #include "common/array.h"
 
 #include "graphics/screen.h"
-#include "palette_color.h"
-#include "tucker/graphics.h"
+#include "scooby/types.h"
 
-// Carries one backend-neutral 320x224 indexed frame and its 64-color palette.
+// Working framebuffer 320x224 indexed 8bpp, 64-color palette.
 
 namespace Scooby {
 

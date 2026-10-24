@@ -28,9 +28,8 @@
 #include "scooby/common/make_unique.h"
 #include "scooby/common/span.h"
 #include "scooby/compression/ring_lz_decoder.h"
-#include "scooby/graphics/binary_mask_tile_generator.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
-#include "scooby/graphics/palette_color.h"
+#include "scooby/types.h"
 
 namespace Scooby {
 namespace {
@@ -99,7 +98,7 @@ void RoomSceneLoader::loadRoomScene() {
 														 kPriorityAttribute);
 	uint16 maskTileByteOffset =
 		static_cast<uint16>(((_state.InterfaceTileAttributes & 0x07FF) + 0x20) << 5);
-	Common::Array<uint8> dialogueMaskTiles = generate(_rom, 0x0F, 0x01);
+	Common::Array<uint8> dialogueMaskTiles = colorise4bppMaskTiles(_rom, 0x0F, 0x01);
 	_scene.overwritePackedPatternBytes(MakeSpan(dialogueMaskTiles), maskTileByteOffset);
 	patternByteOffset += kMaskTileByteCount;
 	_state.ActionPromptTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |

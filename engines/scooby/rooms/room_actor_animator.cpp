@@ -25,7 +25,6 @@
 
 #include "common/array.h"
 
-#include "scooby/compression/byte_rle_decoder.h"
 #include "scooby/sound/gems_audio.h"
 
 namespace Scooby {
@@ -198,8 +197,7 @@ void RoomActorAnimator::stageActorFrame(int actor, uint8 actorMask, int descript
 		_state.ActorCompactFrameSourceOffsets[actor] = compressedSourceOffset;
 		_state.ActorCompactConversionPendingFlags |= actorMask;
 	} else {
-		_state.ActorTileData[actor] = decompressByteRle(
-			_rom, compressedSourceOffset);
+		_state.ActorTileData[actor] = _rom.decompressByteRle(compressedSourceOffset);
 		_state.ActorTileUploadPendingFlags |= actorMask;
 	}
 
@@ -237,8 +235,8 @@ void RoomActorAnimator::convertCompactFrames() {
 
 		int descriptorOffset = _state.ActorAnimationDescriptorOffsets[actor];
 		int frameDataOffset = descriptorOffset + _state.ActorSelectedFrameOffsets[actor];
-		Common::Array<uint8> decodedPixels = decompressByteRle(
-			_rom, _state.ActorCompactFrameSourceOffsets[actor].value());
+		Common::Array<uint8> decodedPixels = _rom.decompressByteRle(
+			_state.ActorCompactFrameSourceOffsets[actor].value());
 		int sourceOffset = actor == 0 && _rom.readByte(frameDataOffset + 4) == kExtendedSpriteLayout
 							   ? 0x1000
 							   : 0;

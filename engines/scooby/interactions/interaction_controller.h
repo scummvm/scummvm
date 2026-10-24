@@ -33,7 +33,6 @@
 #include "scooby/common/optional.h"
 #include "scooby/randomness/deterministic_random.h"
 #include "scooby/runtime/runtime_state.h"
-#include "scooby/runtime/session_exit.h"
 
 // Coordinates cursor, automatic, and selected-interaction state recovered from Ghidra RunAdventure at
 // 0x00000BF4.

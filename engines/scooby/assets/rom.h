@@ -33,6 +33,16 @@
 
 namespace Scooby {
 
+inline uint16 readBigEndian16(Span<const uint8> entry, size_t offset) {
+	return static_cast<uint16>((uint16(entry[offset]) << 8) | uint16(
+																  entry[offset + 1]));
+}
+
+inline uint16 readBigEndian16(const Common::Array<uint8> &bytes, int offset) {
+	size_t o = static_cast<size_t>(offset);
+	return static_cast<uint16>((uint16(bytes[o]) << 8) | uint16(bytes[o + 1]));
+}
+
 class ScoobyDooRom {
 public:
 	static Common::ScopedPtr<ScoobyDooRom> load(const Common::Path &path, Common::String &outError);
@@ -69,6 +79,8 @@ public:
 		Span<const uint8> bytes = readBytes(offset, endOffset - offset);
 		return Common::String(reinterpret_cast<const char *>(bytes.data()), static_cast<uint32>(bytes.size()));
 	}
+
+	Common::Array<uint8> decompressByteRle(int sourceOffset) const;
 
 private:
 	ScoobyDooRom(Common::Array<uint8> bytes);

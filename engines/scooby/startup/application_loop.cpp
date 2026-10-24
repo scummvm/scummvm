@@ -24,7 +24,6 @@
 #include "intro_sequence.h"
 #include "scooby/rendering/frame_clock.h"
 #include "scooby/runtime/session_controller.h"
-#include "scooby/runtime/session_exit.h"
 #include "scooby/scooby.h"
 #include "scooby/sound/gems_audio.h"
 #include "scooby/runtime/save_game_data.h"

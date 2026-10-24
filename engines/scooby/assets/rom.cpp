@@ -67,4 +67,35 @@ Common::ScopedPtr<ScoobyDooRom> ScoobyDooRom::load(const Common::Path &path, Com
 	return Common::ScopedPtr<ScoobyDooRom>(new ScoobyDooRom(Common::move(bytes)));
 }
 
+// Only the header's low word determines output length. A control byte with
+// bit 7 clear copies (control + 1) literals; one with bit 7 set repeats the
+// next byte (257 - control) times.
+Common::Array<uint8> ScoobyDooRom::decompressByteRle(int sourceOffset) const {
+	Common::Array<uint8> output(readUInt16(sourceOffset + static_cast<int>(sizeof(uint16))));
+	sourceOffset += static_cast<int>(sizeof(uint32));
+	size_t outputOffset = 0;
+	while (outputOffset < output.size()) {
+		uint8 control = readByte(sourceOffset++);
+		if (static_cast<int8>(control) >= 0) {
+			int literalCount = static_cast<int>(control) + 1;
+			Span<const uint8> literals = readBytes(sourceOffset, literalCount);
+			for (int i = 0; i < literalCount; ++i) {
+				output[outputOffset + static_cast<size_t>(i)] = literals[static_cast<size_t>(i)];
+			}
+			sourceOffset += literalCount;
+			outputOffset += static_cast<size_t>(literalCount);
+			continue;
+		}
+
+		int repeatCount = 0x101 - static_cast<int>(control);
+		uint8 repeatedByte = readByte(sourceOffset++);
+		for (int i = 0; i < repeatCount; ++i) {
+			output[outputOffset + static_cast<size_t>(i)] = repeatedByte;
+		}
+		outputOffset += static_cast<size_t>(repeatCount);
+	}
+
+	return output;
+}
+
 } // namespace Scooby

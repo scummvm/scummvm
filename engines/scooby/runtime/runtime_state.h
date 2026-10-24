@@ -30,7 +30,6 @@
 
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
-#include "scooby/graphics/palette_color.h"
 #include "scooby/interactions/interaction_action_registry.h"
 #include "scooby/movement/actor_movement_point.h"
 #include "scooby/rooms/room_object.h"

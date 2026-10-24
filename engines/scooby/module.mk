@@ -4,12 +4,9 @@ MODULE_OBJS = \
 	scooby.o \
 	console.o \
 	assets/rom.o \
-    compression/byte_rle_decoder.o \
     compression/ring_lz_decoder.o \
-    graphics/binary_mask_tile_generator.o \
     graphics/indexed_frame.o \
     graphics/genesis_asset_decoder.o \
-    graphics/genesis_sprite_table_decoder.o \
     graphics/sprite_layer.o \
     graphics/tile_scene.o \
     input/controller_input.o \

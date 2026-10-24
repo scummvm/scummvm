@@ -26,7 +26,7 @@
 #include "common/func.h"
 
 #include "scooby/assets/rom.h"
-#include "scooby/graphics/palette_color.h"
+#include "scooby/types.h"
 #include "scooby/graphics/tile_scene.h"
 
 // Reimplements Ghidra RunStartupSequence at 0x000008CE, the four ROM-backed

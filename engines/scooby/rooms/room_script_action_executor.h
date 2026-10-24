@@ -43,7 +43,6 @@
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/randomness/deterministic_random.h"
 #include "scooby/runtime/runtime_state.h"
-#include "scooby/runtime/session_exit.h"
 
 // Owns the executable nested room-script action mapping and its recovered function boundaries.
 //

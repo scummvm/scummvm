@@ -25,6 +25,9 @@ namespace Scooby {
 namespace {
 const int kDecodedPixelsPerTile = 64;
 const int kPackedBytesPerTile = 32;
+
+const int kMaskTilesSourceOffset = 0x30F12;
+const int kMaskTilesSourceWordCount = 0x5F0;
 } // namespace
 
 Common::Array<uint8> decodeTiles(Span<const uint8> packedTiles) {
@@ -78,5 +81,20 @@ Common::Array<PaletteColor> readPalette(const ScoobyDooRom &rom, int romOffset, 
 	}
 
 	return palette;
+}
+
+Common::Array<uint8> colorise4bppMaskTiles(const ScoobyDooRom &rom, uint8 nonzeroPaletteIndex,
+							  uint8 zeroPaletteIndex) {
+	Span<const uint8> source =
+		rom.readBytes(kMaskTilesSourceOffset, kMaskTilesSourceWordCount * static_cast<int>(sizeof(uint16)));
+	Common::Array<uint8> output = source.toArray();
+	for (size_t index = 0; index < output.size(); ++index) {
+		uint8 packedPixels = output[index];
+		uint8 highPaletteIndex = (packedPixels & 0xF0) == 0 ? zeroPaletteIndex : nonzeroPaletteIndex;
+		uint8 lowPaletteIndex = (packedPixels & 0x0F) == 0 ? zeroPaletteIndex : nonzeroPaletteIndex;
+		output[index] = static_cast<uint8>((highPaletteIndex << 4) | lowPaletteIndex);
+	}
+
+	return output;
 }
 } // namespace Scooby

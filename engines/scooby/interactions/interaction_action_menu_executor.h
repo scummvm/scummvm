@@ -34,7 +34,6 @@
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/runtime/runtime_state.h"
-#include "scooby/runtime/session_exit.h"
 
 // Owns interaction-action choice presentation, nested script frames, and interface restoration.
 

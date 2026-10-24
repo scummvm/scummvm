@@ -33,7 +33,6 @@
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/randomness/deterministic_random.h"
 #include "scooby/runtime/runtime_state.h"
-#include "scooby/runtime/session_exit.h"
 
 // Owns room-script action 0x32's persistent duel state, presentation resources, and recovered collision
 // boundaries.

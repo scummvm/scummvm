@@ -22,7 +22,6 @@
 #include "room_interface_transition_executor.h"
 
 #include "scooby/common/span.h"
-#include "scooby/graphics/binary_mask_tile_generator.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 
 namespace Scooby {
@@ -101,7 +100,7 @@ void RoomInterfaceTransitionExecutor::finishRoomStartup() {
 	int firstMaskTileIndex = (_state.InterfaceTileAttributes & kInterfaceTileIndexMask) +
 							 kInterfaceMaskTileBaseDelta;
 	Common::Array<uint8> binaryMaskTiles =
-		generate(_rom, kMaskNonzeroPaletteIndex, kMaskZeroPaletteIndex);
+		colorise4bppMaskTiles(_rom, kMaskNonzeroPaletteIndex, kMaskZeroPaletteIndex);
 	_scene.loadTilesAt(MakeSpan(binaryMaskTiles), firstMaskTileIndex);
 
 	// Ghidra 0x000048AC-0x000048B5: clear only progress byte-zero bit one after every restoration side effect.

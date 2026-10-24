@@ -57,7 +57,6 @@
 #include "scooby/sound/gems_audio.h"
 #include "scooby/startup/restart_sequence.h"
 #include "scooby/startup/studio_logo_sequence.h"
-#include "session_exit.h"
 
 // Owns the C++ recovery of Ghidra RunAdventure at 0x00000BF4 and coordinates its domains.
 

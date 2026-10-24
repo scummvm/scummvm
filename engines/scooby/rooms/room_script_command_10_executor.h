@@ -30,7 +30,6 @@
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/interactions/dialogue_controller.h"
 #include "scooby/runtime/runtime_state.h"
-#include "scooby/runtime/session_exit.h"
 
 // Owns room-script command 0x10's dialogue and optional lead-actor transitions.
 

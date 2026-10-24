@@ -28,6 +28,7 @@
 #include "scooby/common/span.h"
 #include "scooby/compression/ring_lz_decoder.h"
 #include "scooby/graphics/tile_layer.h"
+#include "scooby/types.h"
 
 namespace Scooby {
 namespace {

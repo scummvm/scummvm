@@ -21,11 +21,41 @@
 
 #include "sprite_layer.h"
 
-// #include "common/algorithm.h"
-
-#include "genesis_sprite_table_decoder.h"
+#include "scooby/assets/rom.h"
 
 namespace Scooby {
+namespace {
+const int kEntryByteCount = 8;
+const int kVisibleCoordinateBias = 128;
+}
+
+Common::Array<SpriteInstance> decodePackedSpriteTableData(Span<const uint8> packedEntries) {
+	Common::Array<SpriteInstance> sprites;
+	int entryIndex = 0;
+	while (true) {
+		Span<const uint8> entry =
+			packedEntries.slice(
+				static_cast<size_t>(entryIndex) * static_cast<size_t>(kEntryByteCount),
+				static_cast<size_t>(kEntryByteCount));
+		uint16 packedY = readBigEndian16(entry, 0);
+		uint16 sizeAndLink = readBigEndian16(entry, 2);
+		uint16 attributes = readBigEndian16(entry, 4);
+		uint16 packedX = readBigEndian16(entry, 6);
+
+		sprites.push_back(SpriteInstance(
+			(static_cast<int32>(packedX & 0x01FF)) - kVisibleCoordinateBias,
+			(static_cast<int32>(packedY & 0x03FF)) - kVisibleCoordinateBias,
+			((sizeAndLink >> 10) & 3) + 1, ((sizeAndLink >> 8) & 3) + 1, attributes & 0x07FF,
+			static_cast<uint8>((attributes >> 13) & 3), (attributes & 0x0800) != 0,
+			(attributes & 0x1000) != 0, (attributes & 0x8000) != 0));
+
+		entryIndex = sizeAndLink & 0x007F;
+		if (entryIndex == 0) {
+			return sprites;
+		}
+	}
+}
+
 
 SpriteLayer::SpriteLayer()
 	: _highPriority(
@@ -37,7 +67,7 @@ SpriteLayer::SpriteLayer()
 void SpriteLayer::clear() { _sprites.clear(); }
 
 void SpriteLayer::load(Span<const uint8> packedEntries) {
-	_sprites = decode(packedEntries);
+	_sprites = decodePackedSpriteTableData(packedEntries);
 }
 
 void SpriteLayer::replace(Span<const SpriteInstance> sprites) { _sprites = sprites.toArray(); }

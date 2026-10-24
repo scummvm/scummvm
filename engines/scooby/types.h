@@ -39,6 +39,36 @@ enum VerbEnum : uint16 {
 	NO_SUGGESTED_VERB = 11
 };
 
+enum class SessionExit {
+	// The reset path requests reconstruction from the cartridge entry sequence.
+	RestartRequested,
+
+	// The native host requested process shutdown.
+	HostClosed
+};
+
+enum class HorizontalDisplayMode {
+	// Displays 32 eight-pixel tiles through a centered 256-pixel viewport.
+	H32,
+
+	// Displays 40 eight-pixel tiles across the complete 320-pixel frame.
+	H40
+};
+
+// color components quantized to levels (0-7)
+struct PaletteColor {
+	uint8 redLevel;
+	uint8 greenLevel;
+	uint8 blueLevel;
+
+	PaletteColor() : redLevel(0), greenLevel(0), blueLevel(0) {
+	}
+
+	PaletteColor(uint8 redLevel_, uint8 greenLevel_, uint8 blueLevel_)
+		: redLevel(redLevel_), greenLevel(greenLevel_), blueLevel(blueLevel_) {
+	}
+};
+
 } // End of namespace Scooby
 
 #endif // SCOOBY_TYPES_H

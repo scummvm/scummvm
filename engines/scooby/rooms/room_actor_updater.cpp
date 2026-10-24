@@ -38,10 +38,6 @@ void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
 	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 
-inline uint16 ReadBigEndian16(const Common::Array<uint8> &bytes, int offset) {
-	size_t o = static_cast<size_t>(offset);
-	return static_cast<uint16>((uint16(bytes[o]) << 8) | uint16(bytes[o + 1]));
-}
 } // namespace
 
 void RoomActorUpdater::updateRoomActorsAndInterface() {
@@ -1314,7 +1310,7 @@ void RoomActorUpdater::updateActorPriority(int actor) {
 		return;
 	}
 
-	int16 collisionCell = static_cast<int16>(ReadBigEndian16(collisionCells, byteOffset));
+	int16 collisionCell = static_cast<int16>(readBigEndian16(collisionCells, byteOffset));
 	uint8 actorMask = this->actorMask(actor);
 	if (collisionCell < 0) {
 		_state.ActorHighPriorityFlags |= actorMask;

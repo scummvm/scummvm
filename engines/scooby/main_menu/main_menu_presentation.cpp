@@ -26,11 +26,8 @@
 #include "common/array.h"
 
 #include "reveal/menu_reveal_compositor.h"
-#include "scooby/compression/byte_rle_decoder.h"
 #include "scooby/compression/ring_lz_decoder.h"
-#include "scooby/graphics/binary_mask_tile_generator.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
-#include "scooby/graphics/horizontal_display_mode.h"
 #include "scooby/graphics/tile_cell.h"
 #include "scooby/graphics/tile_layer.h"
 
@@ -45,9 +42,9 @@ int MainMenuPresentation::loadInitialAssets() {
 	_scene.loadTiles(MakeSpan(initialTiles));
 	int initialTileCount = static_cast<int>(initialTiles.size()) / kPackedBytesPerTile;
 
-	Common::Array<Common::Array<uint8>> additionalTileChunks{decompressByteRle(_rom, 0x16D38),
-															 decompressByteRle(_rom, 0x16E6A),
-															 decompressByteRle(_rom, 0x16F76)};
+	Common::Array<Common::Array<uint8>> additionalTileChunks{_rom.decompressByteRle(0x16D38),
+															 _rom.decompressByteRle(0x16E6A),
+															 _rom.decompressByteRle(0x16F76)};
 
 	_fixedBackgroundMap = _rom.readBytes(0x165B8, 0x700).toArray();
 	_menuLayout = _rom.readBytes(0x85F8, 0x68).toArray();
@@ -56,17 +53,17 @@ int MainMenuPresentation::loadInitialAssets() {
 	uint16 selector = _rom.readUInt16(assetTableBase + 4);
 	uint16 firstPointerIndex = _rom.readUInt16(assetTableBase + selector);
 	uint16 secondPointerIndex = _rom.readUInt16(assetTableBase + 2 + selector);
-	_wideRevealSource = decompressByteRle(
-		_rom, assetTableBase + static_cast<int>(_rom.readUInt32(assetTableBase + 6 + firstPointerIndex)));
-	_narrowRevealSource = decompressByteRle(
-		_rom, assetTableBase + static_cast<int>(_rom.readUInt32(assetTableBase + 6 + secondPointerIndex)));
+	_wideRevealSource = _rom.decompressByteRle(
+		assetTableBase + static_cast<int>(_rom.readUInt32(assetTableBase + 6 + firstPointerIndex)));
+	_narrowRevealSource = _rom.decompressByteRle(
+		assetTableBase + static_cast<int>(_rom.readUInt32(assetTableBase + 6 + secondPointerIndex)));
 	stageInitialMenuAssets(initialTileCount, additionalTileChunks, _fixedBackgroundMap);
 	return initialTileCount;
 }
 
 void MainMenuPresentation::restoreBinaryMaskTiles() {
 	int firstMaskTileIndex = (_textAttributes & 0x07FF) + 0x20;
-	Common::Array<uint8> maskTiles = generate(_rom, 0x0F, 0);
+	Common::Array<uint8> maskTiles = colorise4bppMaskTiles(_rom, 0x0F, 0);
 	_scene.loadTilesAt(MakeSpan(maskTiles), firstMaskTileIndex);
 }
 
@@ -79,7 +76,7 @@ bool MainMenuPresentation::fadePaletteIn(const Common::Functor0<void> &beforeRet
 }
 
 void MainMenuPresentation::stageByteRleData(int sourceOffset) {
-	_currentRleData = decompressByteRle(_rom, sourceOffset);
+	_currentRleData = _rom.decompressByteRle(sourceOffset);
 }
 
 void MainMenuPresentation::composeWideMenuRevealTiles(int16 rowMaskOffset, int16 columnMaskOffset) {

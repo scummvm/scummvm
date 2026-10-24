@@ -26,7 +26,7 @@
 
 #include "scooby/assets/rom.h"
 #include "scooby/common/span.h"
-#include "scooby/graphics/palette_color.h"
+#include "scooby/types.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/input/controller_input.h"
 #include "scooby/presentation/frame_presenter.h"

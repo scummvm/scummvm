@@ -26,7 +26,6 @@
 #include "dialogue_text_source.h"
 #include "interaction_action_registry.h"
 #include "scooby/common/span.h"
-#include "scooby/graphics/binary_mask_tile_generator.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_layer.h"
 #include "scooby/scooby.h"
@@ -428,7 +427,7 @@ void InteractionActionMenuExecutor::publishBinaryMaskTiles(uint8 nonzeroPaletteI
 														   uint16 destinationAttributes) {
 	int firstMaskTileIndex = (destinationAttributes & kInterfaceTileIndexMask) + kInterfaceMaskTileBaseDelta;
 	Common::Array<uint8> maskTiles =
-		generate(_rom, nonzeroPaletteIndex, zeroPaletteIndex);
+		colorise4bppMaskTiles(_rom, nonzeroPaletteIndex, zeroPaletteIndex);
 	_scene.loadTilesAt(MakeSpan(maskTiles), firstMaskTileIndex);
 }
 

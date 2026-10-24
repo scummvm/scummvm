@@ -26,7 +26,7 @@
 
 #include "common/array.h"
 
-#include "palette_color.h"
+#include "scooby/types.h"
 #include "scooby/assets/rom.h"
 #include "scooby/common/span.h"
 #include "tile_cell.h"
@@ -51,6 +51,12 @@ uint16 encodeTileCell(const TileCell &cell);
 
 // Reads and decodes a contiguous palette range beginning at a recovered ROM address.
 Common::Array<PaletteColor> readPalette(const ScoobyDooRom &rom, int romOffset, int colorCount = 64);
+
+// Replaces each zero and nonzero source nibble with its caller-selected
+// palette index. The inclusive D2 = 0x05EF loop reads 1,520 words from
+// 0x00030F12-0x00031AF1 and produces exactly 3,040 bytes.
+Common::Array<uint8> colorise4bppMaskTiles(const ScoobyDooRom &rom, uint8 nonzeroPaletteIndex,
+							  uint8 zeroPaletteIndex);
 } // namespace Scooby
 
 #endif // SCOOBY_GENESIS_ASSET_DECODER_H

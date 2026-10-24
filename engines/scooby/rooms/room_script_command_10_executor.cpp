@@ -24,7 +24,7 @@
 #include "lead_actor_position_transition_animation_catalog.h"
 #include "scooby/common/optional.h"
 #include "scooby/common/span.h"
-#include "scooby/graphics/binary_mask_tile_generator.h"
+#include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/interactions/dialogue_text_source.h"
 
 namespace Scooby {
@@ -100,7 +100,7 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 }
 
 void RoomScriptCommand10Executor::generateDialogueMaskTiles(uint8 nonzeroPaletteIndex) {
-	Common::Array<uint8> packedTiles = generate(
+	Common::Array<uint8> packedTiles = colorise4bppMaskTiles(
 		_rom, nonzeroPaletteIndex, 1);
 	int firstTileIndex = (_state.InterfaceTileAttributes & 0x07FF) + kMaskTileBaseDelta;
 	_scene.loadTilesAt(MakeSpan(packedTiles), firstTileIndex);

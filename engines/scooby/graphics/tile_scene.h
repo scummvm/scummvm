@@ -25,9 +25,8 @@
 #include "common/array.h"
 #include "common/scummsys.h"
 
-#include "horizontal_display_mode.h"
+#include "scooby/types.h"
 #include "indexed_frame.h"
-#include "palette_color.h"
 #include "scooby/common/span.h"
 #include "sprite_instance.h"
 #include "sprite_layer.h"

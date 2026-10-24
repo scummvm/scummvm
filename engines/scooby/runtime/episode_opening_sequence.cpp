@@ -26,10 +26,9 @@
 
 #include "common/array.h"
 
-#include "scooby/compression/byte_rle_decoder.h"
 #include "scooby/compression/ring_lz_decoder.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
-#include "scooby/graphics/palette_color.h"
+#include "scooby/types.h"
 
 namespace Scooby {
 
@@ -66,8 +65,7 @@ bool EpisodeOpeningSequence::runEpisodeOpeningSequence() {
 		int streamOffset =
 			kOpeningSpriteDescriptorOffset + static_cast<int>(_rom.readUInt32(
 												 descriptorOffset + kSpriteDescriptorDataField));
-		Common::Array<uint8> streamTiles = decompressByteRle(
-			_rom, streamOffset);
+		Common::Array<uint8> streamTiles = _rom.decompressByteRle(streamOffset);
 		_scene.loadTilesAt(MakeSpan(streamTiles),
 						   kSpriteTileBankStart + streamIndex * kAnimationTileBankStride);
 	}

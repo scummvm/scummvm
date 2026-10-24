@@ -26,12 +26,6 @@
 #include "scooby/common/contracts.h"
 
 namespace Scooby {
-namespace {
-inline uint16 ReadBigEndian16(const Common::Array<uint8> &bytes, int offset) {
-	size_t o = static_cast<size_t>(offset);
-	return static_cast<uint16>((uint16(bytes[o]) << 8) | uint16(bytes[o + 1]));
-}
-} // namespace
 
 RoomCollisionProbeResult RoomCollisionProbe::probeLeadActorCollision(int candidateX, int candidateY,
 																	 int16 maximumX,
@@ -58,7 +52,7 @@ RoomCollisionProbeResult RoomCollisionProbe::probeLeadActorCollision(int candida
 		(static_cast<uint16>(x) >> 3) * sizeof(uint16) +
 		(static_cast<uint16>(y) >> 3) * rowByteStride);
 	SDM_ASSERT(_state.ActiveRoomScene, "ProbeLeadActorCollision requires an active room scene.");
-	uint16 collisionCell = ReadBigEndian16(_state.ActiveRoomScene->CollisionCells, collisionByteOffset);
+	uint16 collisionCell = readBigEndian16(_state.ActiveRoomScene->CollisionCells, collisionByteOffset);
 	uint16 descriptorIndex = collisionCell & kCollisionCellDescriptorIndexMask;
 	if (descriptorIndex == 0) {
 		return RoomCollisionProbeResult(true, 0);
@@ -109,7 +103,7 @@ bool RoomCollisionProbe::probeStagedCollision(int16 x, int16 y) const {
 		return true;
 	}
 
-	uint16 collisionCell = ReadBigEndian16(collisionCells, collisionByteOffset);
+	uint16 collisionCell = readBigEndian16(collisionCells, collisionByteOffset);
 	uint16 descriptorIndex = collisionCell & kCollisionDescriptorShapeIndexMask;
 	if (descriptorIndex == 0) {
 		return false;

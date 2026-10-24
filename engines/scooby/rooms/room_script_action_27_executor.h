@@ -29,7 +29,6 @@
 
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/runtime/runtime_state.h"
-#include "scooby/runtime/session_exit.h"
 
 // Owns room-script action 0x27's paired-actor input sequence, path outcome, and presentation lifecycle.
 

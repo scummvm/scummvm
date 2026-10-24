@@ -33,7 +33,6 @@
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
 #include "scooby/common/span.h"
-#include "scooby/graphics/palette_color.h"
 #include "scooby/graphics/sprite_instance.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"

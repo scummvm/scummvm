@@ -26,7 +26,7 @@
 
 #include "scooby/common/span.h"
 #include "scooby/graphics/indexed_frame.h"
-#include "scooby/graphics/palette_color.h"
+#include "scooby/types.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/rendering/frame_clock.h"
 
