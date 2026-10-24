@@ -77,7 +77,7 @@ void WheelSpin::spin() {
 			case 3:
 				val = 15 << map[VAL4];
 				WRITE_LE_UINT16(&map[VAL3], val);
-				c._gems += val;
+				c._gems = MIN((int)c._gems + val, 0xffff);
 				line = Common::String::format("+%d %s", val,
 					STRING["maps.map16.gems"].c_str());
 				break;

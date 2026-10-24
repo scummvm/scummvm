@@ -132,7 +132,7 @@ void UseItem::applyItemBonus(int id, int value){
 		case 37: c._age += value; break;
 		case 43: c._sp._current += value; break;
 		case 48: c._spellLevel._current += value; break;
-		case 49: c._gems += value; break;
+		case 49: c._gems = MIN((int)c._gems + value, 0xffff); break;
 		case 58: c._gold += 255*value; break;
 		case 62: c._food += value; break;
 		case 89: c._resistances._s._magic._current += value; break;
