@@ -505,7 +505,7 @@ enum Flags {
 	kFlagGaffApproachedMcCoyAboutZuben        =  64,
 	kFlagMcCoyCommentsOnTB05Monitors          =  65, // Re-purposed. Original: 65 is never used
 	kFlagMcCoyCommentsOnNR03Sloth             =  66, // Re-purposed. Original: 66 is never used
-	// 67 is never used
+	kFlagMcCoyAskedEarlyQAboutJewelry         =  67, // Re-purposed. Original: 67 is never used
 	kFlagCT02toCT01                           =  68,
 	kFlagCT02toCT03                           =  69,
 	kFlagCT03toCT02                           =  70,

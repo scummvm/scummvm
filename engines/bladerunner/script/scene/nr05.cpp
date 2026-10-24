@@ -303,16 +303,16 @@ void SceneScriptNR05::talkToEarlyQ() {
 		if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(900, 5, 6, 5); // LUCY
 		}
-		if (Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)) {
-			// TODO A bug? kClueDektorasDressingRoom is acquired from EarlyQ
-			// at his office (nr04) while being threatened by McCoy.
-			// At which point EarlyQ already tells McCoy who the people on the photograph are.
-			// It makes no sense that McCoy will next find EarlyQ at the VIP area (this area, nr05)
-			// and casually ask him about who the woman is in this photo.
-			// (McCoy won't be able to even find EarlyQ there again).
-			// Maybe it's another photo of Dektora needed here
-			// --- Animoid Row? Why would McCoy suspect that woman?
-			// --- Hawker's Bar? Can we find a Dektora pic in SHP resources?
+		bool canAskAboutBlondWoman;
+		if (_vm->_cutContent) {
+			// Can ask this if McCoy saw her with Clovis (the prime suspect).
+			canAskAboutBlondWoman = Actor_Clue_Query(kActorMcCoy, kClueIzosFriend);
+		} else {
+			// A bug? McCoy can't get this clue prior to this event.
+			// This would also mean that Early Q already told McCoy about her identity.
+			canAskAboutBlondWoman = Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom);
+		}
+		if (canAskAboutBlondWoman) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(910, 5, 5, 5); // BLOND WOMAN
 		}
 	}
@@ -332,6 +332,7 @@ void SceneScriptNR05::talkToEarlyQ() {
 
 	switch (answer) {
 	case 890: // JEWELRY
+		Game_Flag_Set(kFlagMcCoyAskedEarlyQAboutJewelry);
 		Actor_Says(kActorMcCoy, 3505, kAnimationModeTalk);
 		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
 		Actor_Says(kActorEarlyQ, 420, 12);
@@ -363,20 +364,20 @@ void SceneScriptNR05::talkToEarlyQ() {
 	case 910: // BLOND WOMAN
 		Actor_Says(kActorMcCoy, 3515, 14);
 		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
-		if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) { // cut content? this clue is unobtanium
-			// A BUG?
-			// TODO why is Grigorian's Note needed here, for EarlyQ to reveal who Hecuba is?
-			// TODO could CrazysInvolvement also do here?
-			//      maybe another clue should be required in its place or some additional ones?
-			// Early Q acknowledges he knows Dektora, and also reveals Hecuba is her stage name
-			// (Early Q also mentions Hecuba in the JEWELRY question but does not connect her with Dektora)
-			// This dialogue thread assumes:
-			// - Early Q has told McCoy about JEWELRY (weak, not necessarily)
-			// --- If McCoy has not discussed the JEWELRY topic with EarlyQ yet, 
-			// --- then he should NOT be able to do this AFTER this conversation IF McCoy has the clue condition
-			// --- for this specific bit of dialogue which reveals Hecuba's identity.
-			// --- Otherwiase it would create inconsistency to what is known about Hecuba
-			// - Dektora/Hecuba has *not* performed her act yet
+		bool earlyQRevealsHerName;
+		if (_vm->_cutContent) {
+			// This happens if McCoy has already asked about jewelry. This seems to be the only
+			// contextual requirement for the extended dialog. The original dialog priorities
+			// are already set so this happens when talking in the "Surly" mode.
+			earlyQRevealsHerName = Game_Flag_Query(kFlagMcCoyAskedEarlyQAboutJewelry);
+		} else {
+			// A bug? This clue can't be obtained in the original version. Also, it has no relation 
+			// to Dektora's identity. Instead, it implies Grigorians connection to Crazy-legs Larry 
+			// and the replicants who stole the car.
+			earlyQRevealsHerName = Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote);
+		}
+		if (earlyQRevealsHerName) {
+			// Early Q mentions the jewelry and, after a push back, reveals her real name.
 			Actor_Says(kActorEarlyQ, 580, 12);
 			Actor_Says(kActorMcCoy, 3560, 13);
 			Actor_Says(kActorEarlyQ, 590, 16);
@@ -386,7 +387,7 @@ void SceneScriptNR05::talkToEarlyQ() {
 			Actor_Says(kActorEarlyQ, 620, 15);
 			Actor_Says(kActorMcCoy, 3575, 13);
 		} else {
-			// Early Q denies recongnizing Dektora
+			// Early Q pretends to be not sure who she is.
 			Actor_Says(kActorEarlyQ, 640, 13);
 			Actor_Says(kActorMcCoy, 3580, 15);
 			Actor_Says(kActorEarlyQ, 660, 12);
