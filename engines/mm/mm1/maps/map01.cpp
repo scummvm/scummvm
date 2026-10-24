@@ -123,6 +123,14 @@ void Map01::special08() {
 		STRING["maps.map01.secret"],
 		[](const Common::KeyState &) {
 			g_events->close();
+
+			// Consume the secret for this map visit, and record Lord
+			// Ironfist's quest #3 (discover the secret of Portsmith) at
+			// the discovery site. Winning the fight isn't required
+			g_maps->clearSpecial();
+			for (uint i = 0; i < g_globals->_party.size(); ++i)
+				g_globals->_party[i]._flags[7] |= CHARFLAG7_4;
+
 			Game::Encounter &enc = g_globals->_encounters;
 			enc.clearMonsters();
 

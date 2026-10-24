@@ -31,8 +31,10 @@ namespace Maps {
 
 #define TREASURE_STATE 142
 
+// Ironfist's quest completions are recorded where they're discovered,
+// so inventory items are no longer used as surrogate proof
 static const byte MATCH_ITEMS[7] = {
-	0, 0, MAP_OF_DESERT_ID, 0, 0, 0, 0
+	0, 0, 0, 0, 0, 0, 0
 };
 static const byte MATCH_FLAGS[8] = {
 	1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80
@@ -154,7 +156,7 @@ void Map43::updateFlags() {
 
 			// Scan list of items to match against
 			for (int arrIdx = 0; arrIdx < 7; ++arrIdx) {
-				if (itemId == MATCH_ITEMS[arrIdx]) {
+				if (MATCH_ITEMS[arrIdx] && itemId == MATCH_ITEMS[arrIdx]) {
 					c._flags[7] |= MATCH_FLAGS[arrIdx];
 					break;
 				}
