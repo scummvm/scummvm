@@ -608,7 +608,7 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 
 void Combat::writeOptions() {
 	if (_option != OPTION_NONE)
-		writeString(30, 170, STRING["enhdialogs.misc.go_back"]);
+		writeString(40, 170, STRING["enhdialogs.misc.go_back"]);
 
 	switch (_option) {
 	case OPTION_NONE:
@@ -786,7 +786,7 @@ bool Combat::beginCombatLogEvent() {
 
 void Combat::writeDelaySelect() {
 	writeBottomText(0, 0, STRING["dialogs.combat.set_delay"]);
-	writeBottomText(0, 3, Common::String::format(
+	writeBottomText(40, 3, Common::String::format(
 		STRING["dialogs.combat.delay_currently"].c_str(),
 		g_globals->_delay));
 }
