@@ -58,7 +58,6 @@ void Map15::special() {
 			if (_data[VAL1] > 14)
 				_data[VAL1] = 14;
 
-			g_globals->_activeSpells._s.fire = 0;
 			enc.clearMonsters();
 			for (uint i = 0; i < _data[VAL1]; ++i)
 				enc.addMonster(7, 8);
