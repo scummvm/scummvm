@@ -36,15 +36,13 @@
 
 namespace Snatcher {
 
-CmdQueue::CmdQueue(SnatcherEngine *vm) : _vm(vm), _data(nullptr), _readPos(nullptr), /* _lastReadPos(nullptr), */ _writePos(nullptr), _enable(false), _progress(-1), _currentOpcode(0), _counter(0), _state(nullptr), /* _restoreData(nullptr), _restoreDataSize(0),*/ _opcodes() {
+CmdQueue::CmdQueue(SnatcherEngine *vm) : _vm(vm), _data(nullptr), _readPos(nullptr), _writePos(nullptr), _enable(false), _progress(-1), _currentOpcode(0), _counter(0), _state(nullptr), _opcodes() {
 	_data = new uint16[256]();
 	makeFunctions();
 	reset();
 }
 
 CmdQueue::~CmdQueue() {
-	//delete[] _data;
-	//delete[] _restoreData;
 	for (Common::Array<CmdQueOpcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++ i)
 		delete *i;
 }
@@ -52,7 +50,6 @@ CmdQueue::~CmdQueue() {
 void CmdQueue::reset() {
 	memset(_data, 0, 256);
 	_readPos = _writePos = _data;
-	//_lastReadPos = nullptr;
 	_enable = false;
 	_progress = -1;
 }
@@ -74,7 +71,6 @@ void CmdQueue::run(GameState &state) {
 
 	do {
 		if (_progress == -1) {
-			//_lastReadPos = _readPos;
 			_currentOpcode = *_readPos++;
 			_progress = 0;
 		}
@@ -85,51 +81,6 @@ void CmdQueue::run(GameState &state) {
 			error("%s(): Invalid opcode %d", __FUNCTION__, _currentOpcode);
 	} while (_currentOpcode != 0 && _progress == -1);
 }
-
-/*
-void CmdQueue::loadState(Common::SeekableReadStream *in) {
-	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
-		error("%s(): Save file invalid or corrupt", __FUNCTION__);
-
-	_enable = in->readByte() != 0;
-	if (!_enable)
-		return;
-
-	delete[] _restoreData;
-	_restoreDataSize = in->readUint16BE();
-	_restoreData = new uint16[_restoreDataSize]();
-	assert(_restoreData);
-	for (int i = 0; i < _restoreDataSize; ++i)
-		_restoreData[i] = in->readUint16BE();
-
-	int s = in->readUint16BE();
-	for (int i = 0; i < s; ++i)
-		in->readUint16BE();
-}
-
-void CmdQueue::saveState(Common::SeekableWriteStream *out) {
-	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
-
-	out->writeByte(_enable ? 1 : 0);
-	if (!_enable)
-		return;
-
-	uint16 len = 0;
-	for (const uint16 *p = _data; p < _writePos; ++p)
-		++len;
-	out->writeUint16BE(len);
-	for (const uint16 *p = _data; p < _writePos; ++p)
-		out->writeUint16BE(*p);
-}
-
-void CmdQueue::appendRestoreData() {
-	for (int i = 0; i < _restoreDataSize; ++i)
-		*_writePos++ = _restoreData[i];
-	delete[] _restoreData;
-	_restoreData = nullptr;
-	_restoreDataSize = 0;
-}
-*/
 
 void CmdQueue::makeFunctions() {
 #define OP(x) &CmdQueue::m_##x
