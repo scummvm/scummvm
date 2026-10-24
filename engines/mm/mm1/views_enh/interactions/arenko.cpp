@@ -32,7 +32,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Arenko::Arenko() : Interaction("Arenko", 9) {
-	_title = STRING["maps.emap28.arenko_title"];
+	_title = "Arenko";
 }
 
 bool Arenko::msgFocus(const FocusMessage &msg) {
@@ -40,17 +40,18 @@ bool Arenko::msgFocus(const FocusMessage &msg) {
 	clearButtons();
 
 	if (!map.arenkoQuestActive()) {
-		addText(STRING["maps.map28.arenko"]);
+		addText("I am Arenko Guire and this is my grove. Climb all the trees, without leaving the area, "
+			"and return.");
 		map.startArenkoQuest();
 
 	} else if (map[VAL1] < 19) {
-		addText(STRING["maps.map28.keep_climbing"]);
+		addText("Keep climbing.");
 
 	} else {
-		addText(STRING["maps.map28.well_done"]);
-		addButton(STRING["maps.emap28.gold"], 'A');
-		addButton(STRING["maps.emap28.gems"], 'B');
-		addButton(STRING["maps.emap28.item"], 'C');
+		addText("Well done! What is your pleasure?");
+		addButton("Gold", 'A');
+		addButton("Gems", 'B');
+		addButton("Item", 'C');
 	}
 
 	return true;

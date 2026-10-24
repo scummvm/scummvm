@@ -33,7 +33,7 @@ Prisoner::Prisoner(const Common::String &name, int portrait, const Common::Strin
 		byte flag, Alignment freeAlignment, Alignment leaveAlignment) :
 		Interaction(name, portrait), _line(line1), _flag(flag),
 		_freeAlignment(freeAlignment), _leaveAlignment(leaveAlignment) {
-	_title = STRING["maps.eprisoners.title"];
+	_title = "Prisoner";
 }
 
 bool Prisoner::msgFocus(const FocusMessage &msg) {
@@ -41,9 +41,9 @@ bool Prisoner::msgFocus(const FocusMessage &msg) {
 
 	addText(_line);
 	clearButtons();
-	addButton(STRING["maps.eprisoners.options1"], '1');
-	addButton(STRING["maps.eprisoners.options2"], '2');
-	addButton(STRING["maps.eprisoners.options3"], '3');
+	addButton("Set the prisoner free. ", '1');
+	addButton("Torment the prisoner. ", '2');
+	addButton("Leave without disturbing.", '3');
 
 	// Since the prisoner options are 1 to 3, disable party bindings
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
@@ -61,14 +61,14 @@ bool Prisoner::msgKeypress(const KeypressMessage &msg) {
 	int align;
 	switch (msg.keycode) {
 	case Common::KEYCODE_1:
-		line = STRING["maps.prisoners.flees"];
+		line = "The prisoner flees!";
 		align = _freeAlignment;
 		g_maps->clearSpecial();
 		flee();
 		break;
 
 	case Common::KEYCODE_2:
-		line = STRING["maps.prisoners.cowers"];
+		line = "The prisoner cowers!";
 		align = _leaveAlignment;
 		break;
 
@@ -109,33 +109,33 @@ void Prisoner::timeout() {
 /*------------------------------------------------------------------------*/
 
 ChildPrisoner::ChildPrisoner() :
-		Prisoner("ChildPrisoner", 34, STRING["maps.prisoners.child"],
+		Prisoner("ChildPrisoner", 34, "A small child shivers fearfully as you approach.  ",
 		CHARFLAG1_4, GOOD, EVIL) {
 }
 
 ManPrisoner::ManPrisoner() :
-	Prisoner("ManPrisoner", 23, STRING["maps.prisoners.man"],
+	Prisoner("ManPrisoner", 23, "Man in shackles moans in agony!  ",
 	CHARFLAG1_20, EVIL, GOOD) {
 }
 
 CloakedPrisoner::CloakedPrisoner() :
-	Prisoner("CloakedPrisoner", 16, STRING["maps.prisoners.cloaked"],
+	Prisoner("CloakedPrisoner", 16, "A mysterious cloaked figure, bound and gagged, lies motionless in the corner.  ",
 		CHARFLAG1_40, EVIL, GOOD) {
 	_animated = false;
 }
 
 DemonPrisoner::DemonPrisoner() :
-	Prisoner("DemonPrisoner", 41, STRING["maps.prisoners.demon"],
+	Prisoner("DemonPrisoner", 41, "A vicious demon lunges at the party, restrained only by a collar and chain!  ",
 		CHARFLAG1_10, EVIL, GOOD) {
 }
 
 MutatedPrisoner::MutatedPrisoner() :
-	Prisoner("MutatedPrisoner", 1, STRING["maps.prisoners.mutated"],
+	Prisoner("MutatedPrisoner", 1, "Mutated creature chained to the floor grunts as you approach.  ",
 		CHARFLAG1_2, GOOD, EVIL) {
 }
 
 MaidenPrisoner::MaidenPrisoner() :
-	Prisoner("MaidenPrisoner", 2, STRING["maps.prisoners.maiden"],
+	Prisoner("MaidenPrisoner", 2, "Inside a steel cage,a fair maiden weeps.  ",
 		CHARFLAG1_8, GOOD, EVIL) {
 }
 
@@ -147,17 +147,17 @@ void MaidenPrisoner::flee() {
 /*------------------------------------------------------------------------*/
 
 VirginPrisoner::VirginPrisoner() : Interaction("VirginPrisoner", 2) {
-	addText(STRING["maps.emap11.virgin"]);
-	addButton(STRING["maps.emap11.virgin_a"], 'A');
-	addButton(STRING["maps.emap11.virgin_b"], 'B');
-	addButton(STRING["maps.emap11.virgin_c"], 'C');
+	addText("A luscious virgin shackled to the wall!");
+	addButton("Kiss her", 'A');
+	addButton("Release her", 'B');
+	addButton("Leave", 'C');
 }
 
 bool VirginPrisoner::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_a:
 		g_events->close();
-		g_events->send(SoundMessage(STRING["maps.map11.tip1"]));
+		g_events->send(SoundMessage("Try setting 1B,2J"));
 		break;
 	case Common::KEYCODE_b:
 		g_events->close();

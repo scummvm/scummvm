@@ -79,12 +79,12 @@ bool Location::subtractGold(uint amount) {
 
 void Location::notEnoughGold() {
 	Sound::sound(SOUND_2);
-	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
+	displayMessage("Not enough gold");
 }
 
 void Location::backpackFull() {
 	Sound::sound(SOUND_2);
-	displayMessage(STRING["dialogs.misc.backpack_full"]);
+	displayMessage("Backpack is full");
 }
 
 bool Location::msgUnfocus(const UnfocusMessage &msg) {

@@ -44,9 +44,9 @@ void Rest::draw() {
 	YesNo::draw();
 
 	if (_mode == CONFIRM) {
-		writeString(0, 0, STRING["dialogs.game.rest.rest_here"], ALIGN_MIDDLE);
+		writeString(0, 0, "Rest here (Y/N)?", ALIGN_MIDDLE);
 	} else {
-		writeString(0, 0, STRING["enhdialogs.rest.too_dangerous"], ALIGN_MIDDLE);
+		writeString(0, 0, "Too dangerous to rest here!", ALIGN_MIDDLE);
 	}
 }
 

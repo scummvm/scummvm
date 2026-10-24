@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "mm/mm1/views_enh/create_characters.h"
+#include "mm/mm1/data/text.h"
 #include "mm/shared/utils/strings.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -97,7 +98,7 @@ static Common::String getAlignmentString(Alignment alignment) {
 	if (alignment == NEUTRAL)
 		return "Neutral";
 
-	return STRING[Common::String::format("stats.alignments.%d", alignment)];
+	return ALIGNMENT_NAMES[alignment - 1];
 }
 
 void CreateCharacters::NewCharacter::clear() {
@@ -351,14 +352,14 @@ void CreateCharacters::draw() {
 		_newChar._portraits.draw(&s, 0, Common::Point(10, 10));
 	}
 
-	writeString(135, 174, STRING["enhdialogs.misc.go_back"]);
-	writeString(70, 125, STRING["enhdialogs.create_characters.roll"]);
+	writeString(135, 174, "Go back");
+	writeString(70, 125, "\x01""37Roll");
 
 	switch (_state) {
 	case SELECT_CLASS:
 		printClasses();
 		if (g_globals->_roster.full())
-			writeLine(9, STRING["dialogs.create_characters.full"], ALIGN_MIDDLE, 190);
+			writeLine(9, "*** Roster is Full ***", ALIGN_MIDDLE, 190);
 		break;
 
 	case SELECT_RACE:
@@ -391,15 +392,15 @@ void CreateCharacters::draw() {
 }
 
 void CreateCharacters::printAttributes() {
-	writeLine(0, STRING["dialogs.create_characters.title"], ALIGN_MIDDLE);
+	writeLine(0, "Create New Characters", ALIGN_MIDDLE);
 
-	writeLine(5, STRING["enhdialogs.create_characters.intellect"], ALIGN_RIGHT, 90);
-	writeLine(6, STRING["enhdialogs.create_characters.might"], ALIGN_RIGHT, 90);
-	writeLine(7, STRING["enhdialogs.create_characters.personality"], ALIGN_RIGHT, 90);
-	writeLine(8, STRING["enhdialogs.create_characters.endurance"], ALIGN_RIGHT, 90);
-	writeLine(9, STRING["enhdialogs.create_characters.speed"], ALIGN_RIGHT, 90);
-	writeLine(10, STRING["enhdialogs.create_characters.accuracy"], ALIGN_RIGHT, 90);
-	writeLine(11, STRING["enhdialogs.create_characters.luck"], ALIGN_RIGHT, 90);
+	writeLine(5, "Intellect =", ALIGN_RIGHT, 90);
+	writeLine(6, "Might =", ALIGN_RIGHT, 90);
+	writeLine(7, "Personality =", ALIGN_RIGHT, 90);
+	writeLine(8, "Endurance =", ALIGN_RIGHT, 90);
+	writeLine(9, "Speed =", ALIGN_RIGHT, 90);
+	writeLine(10, "Accuracy =", ALIGN_RIGHT, 90);
+	writeLine(11, "Luck =", ALIGN_RIGHT, 90);
 
 	for (int i = 0; i < 7; ++i, _textPos.y += 2) {
 		writeLine(5 + i,
@@ -421,7 +422,7 @@ void CreateCharacters::printClasses() {
 	for (int classNum = KNIGHT; classNum <= SORCERER; ++classNum) {
 		Common::String text = Common::String::format("%d) %s",
 			classNum,
-			STRING[Common::String::format("stats.classes.%d", classNum)].c_str()
+			CLASS_NAMES[classNum - 1]
 		);
 		bool enabled = _newChar._classesAllowed[classNum] && !rosterFull;
 		int buttonNum = enabled ? addSelection(4, classNum, text) : -1;
@@ -430,38 +431,38 @@ void CreateCharacters::printClasses() {
 
 	}
 
-	Common::String text = Common::String::format("6) %s", STRING["stats.classes.6"].c_str());
+	Common::String text = "6) Robber";
 	int buttonNum = rosterFull ? -1 : addSelection(4, ROBBER, text);
 	setTextColor(rosterFull ? 1 : (_selectedButton == buttonNum ? 15 : 0));
 	writeLine(10, text, ALIGN_LEFT, 170);
 
 	setTextColor(0);
-	writeLine(13, STRING["dialogs.create_characters.select_class"], ALIGN_MIDDLE, RIGHT_X);
+	writeLine(13, "Select class", ALIGN_MIDDLE, RIGHT_X);
 	writeLine(14, "(1-6)", ALIGN_MIDDLE, RIGHT_X);
 }
 
 void CreateCharacters::printRaces() {
-	writeLine(5, STRING["enhdialogs.create_characters.class"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
+	writeLine(5, "Class = ", ALIGN_RIGHT, RIGHT_X);
+	writeString(CLASS_NAMES[_newChar._class - 1]);
 
 	for (int i = 1; i <= 5; ++i) {
 		Common::String text = Common::String::format("%d) %s", i,
-			STRING[Common::String::format("stats.races.%d", i)].c_str());
+			RACE_NAMES[i - 1]);
 		int buttonNum = addSelection(6, i, text);
 		byte oldColor = setTextColor(_selectedButton == buttonNum ? 15 : 0);
 		writeLine(6 + i, text, ALIGN_LEFT, 170);
 		setTextColor(oldColor);
 	}
 
-	writeLine(13, STRING["dialogs.create_characters.select_race"], ALIGN_MIDDLE, RIGHT_X);
+	writeLine(13, "Select a race", ALIGN_MIDDLE, RIGHT_X);
 	writeLine(14, "(1-5)", ALIGN_MIDDLE, RIGHT_X);
 }
 
 void CreateCharacters::printAlignments() {
-	writeLine(5, STRING["enhdialogs.create_characters.class"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
-	writeLine(6, STRING["enhdialogs.create_characters.race"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
+	writeLine(5, "Class = ", ALIGN_RIGHT, RIGHT_X);
+	writeString(CLASS_NAMES[_newChar._class - 1]);
+	writeLine(6, "Race = ", ALIGN_RIGHT, RIGHT_X);
+	writeString(RACE_NAMES[_newChar._race - 1]);
 
 	for (int i = 1; i <= 3; ++i) {
 		Common::String text = Common::String::format("%d) %s", i,
@@ -472,20 +473,20 @@ void CreateCharacters::printAlignments() {
 		setTextColor(oldColor);
 	}
 
-	writeLine(13, STRING["dialogs.create_characters.select_alignment"], ALIGN_MIDDLE, RIGHT_X);
+	writeLine(13, "Select alignment", ALIGN_MIDDLE, RIGHT_X);
 	writeLine(14, "(1-3)", ALIGN_MIDDLE, RIGHT_X);
 }
 
 void CreateCharacters::printSexes() {
-	writeLine(5, STRING["enhdialogs.create_characters.class"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
-	writeLine(6, STRING["enhdialogs.create_characters.race"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
-	writeLine(7, STRING["enhdialogs.create_characters.alignment"], ALIGN_RIGHT, RIGHT_X);
+	writeLine(5, "Class = ", ALIGN_RIGHT, RIGHT_X);
+	writeString(CLASS_NAMES[_newChar._class - 1]);
+	writeLine(6, "Race = ", ALIGN_RIGHT, RIGHT_X);
+	writeString(RACE_NAMES[_newChar._race - 1]);
+	writeLine(7, "Align = ", ALIGN_RIGHT, RIGHT_X);
 	writeString(getAlignmentString(_newChar._alignment));
 
-	Common::String male = Common::String::format("1) %s", STRING["stats.sex.1"].c_str());
-	Common::String female = Common::String::format("2) %s", STRING["stats.sex.2"].c_str());
+	Common::String male = "1) Male";
+	Common::String female = "2) Female";
 	int maleButton = addSelection(8, 1, male);
 	byte oldColor = setTextColor(_selectedButton == maleButton ? 15 : 0);
 	writeLine(9, male, ALIGN_LEFT, 170);
@@ -495,42 +496,42 @@ void CreateCharacters::printSexes() {
 	writeLine(10, female, ALIGN_LEFT, 170);
 	setTextColor(oldColor);
 
-	writeLine(14, STRING["dialogs.create_characters.select_sex"], ALIGN_MIDDLE, RIGHT_X);
+	writeLine(14, "Select a sex", ALIGN_MIDDLE, RIGHT_X);
 	writeLine(15, "(1-2)", ALIGN_MIDDLE, RIGHT_X);
 }
 
 void CreateCharacters::printSelections() {
-	writeLine(5, STRING["enhdialogs.create_characters.class"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
-	writeLine(6, STRING["enhdialogs.create_characters.race"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
-	writeLine(7, STRING["enhdialogs.create_characters.alignment"], ALIGN_RIGHT, RIGHT_X);
+	writeLine(5, "Class = ", ALIGN_RIGHT, RIGHT_X);
+	writeString(CLASS_NAMES[_newChar._class - 1]);
+	writeLine(6, "Race = ", ALIGN_RIGHT, RIGHT_X);
+	writeString(RACE_NAMES[_newChar._race - 1]);
+	writeLine(7, "Align = ", ALIGN_RIGHT, RIGHT_X);
 	writeString(getAlignmentString(_newChar._alignment));
-	writeLine(8, STRING["enhdialogs.create_characters.sex"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.sex.%d", _newChar._sex)]);
+	writeLine(8, "Sex = ", ALIGN_RIGHT, RIGHT_X);
+	writeString(SEX_NAMES[_newChar._sex - 1]);
 }
 
 void CreateCharacters::printPortraits() {
 	printSelections();
-	writeLine(10, STRING["enhdialogs.create_characters.select_portrait"], ALIGN_MIDDLE, RIGHT_X);
+	writeLine(10, "Select a portrait", ALIGN_MIDDLE, RIGHT_X);
 
 	Graphics::ManagedSurface s = getSurface();
 	_newChar._portraits.draw(&s, 0, Common::Point(160, 120));
 
-	writeString(250, 126, STRING["enhdialogs.create_characters.select"]);
+	writeString(250, 126, "\x01""37Select");
 }
 
 void CreateCharacters::printSelectName() {
 	printSelections();
-	writeLine(10, STRING["enhdialogs.create_characters.enter_name"], ALIGN_MIDDLE, RIGHT_X);
+	writeLine(10, "Enter name:", ALIGN_MIDDLE, RIGHT_X);
 }
 
 void CreateCharacters::printSummary() {
 	printSelections();
-	writeLine(9, STRING["enhdialogs.create_characters.name"], ALIGN_RIGHT, RIGHT_X);
+	writeLine(9, "Name = ", ALIGN_RIGHT, RIGHT_X);
 	writeString(_newChar._name);
 
-	writeLine(12, STRING["dialogs.create_characters.save_character"], ALIGN_MIDDLE, RIGHT_X);
+	writeLine(12, "Save character", ALIGN_MIDDLE, RIGHT_X);
 }
 
 bool CreateCharacters::msgKeypress(const KeypressMessage &msg) {

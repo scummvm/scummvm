@@ -43,31 +43,31 @@ void Location::draw() {
 	ScrollView::draw();
 
 	setReduced(true);
-	writeString(20, 30, STRING["enhdialogs.misc.go_back"]);
+	writeString(20, 30, "Go back");
 
-	writeLine(0, STRING["dialogs.spells.location_loc"], ALIGN_LEFT, 0);
+	writeLine(0, "Location: ", ALIGN_LEFT, 0);
 
 	v = map[Maps::MAP_TYPE];
 	if (v == 0xff) {
-		writeString(STRING["dialogs.spells.location_unknown"]);
+		writeString("Unknown");
 	} else {
 		if (v == 0) {
-			writeString(STRING["dialogs.spells.location_outdoors"]);
+			writeString("Outdoors");
 		} else if (!(v & 0x80)) {
 			writeChar('0' + map[37]);
-			writeString(STRING["dialogs.spells.location_under"]);
+			writeString("0' under");
 		} else if (v == 0xfe) {
-			writeString(STRING["dialogs.spells.location_town"]);
+			writeString("In town");
 		} else {
-			writeString(STRING["dialogs.spells.location_castle"]);
+			writeString("in castle");
 		}
 
-		writeLine(0, STRING["dialogs.spells.location_sector"], ALIGN_LEFT, 111);
+		writeLine(0, "Map sector: ", ALIGN_LEFT, 111);
 		writeChar(map[Maps::MAP_SECTOR1] & 0x7f);
 		writeChar('-');
 		writeChar(map[Maps::MAP_SECTOR2] & 0x7f);
 
-		writeLine(1, STRING["dialogs.spells.location_surface_x"], ALIGN_RIGHT, TEXT_X1);
+		writeLine(1, "Surface: ", ALIGN_RIGHT, TEXT_X1);
 		writeString("X=");
 
 		if (map[Maps::MAP_TYPE]) {
@@ -75,7 +75,7 @@ void Location::draw() {
 			writeLine(1, "Y=", ALIGN_LEFT, TEXT_X2);
 			writeNumber(map[Maps::MAP_SURFACE_Y]);
 
-			writeLine(2, STRING["dialogs.spells.location_inside_x"], ALIGN_RIGHT, TEXT_X1);
+			writeLine(2, "Inside: ", ALIGN_RIGHT, TEXT_X1);
 			writeString("X=");
 		}
 
@@ -84,7 +84,7 @@ void Location::draw() {
 		writeString("Y=");
 		writeNumber(maps._mapPos.y);
 
-		writeLine(3, STRING["dialogs.spells.location_facing"], ALIGN_RIGHT, TEXT_X1);
+		writeLine(3, "Facing: ", ALIGN_RIGHT, TEXT_X1);
 		switch (maps._forwardMask) {
 		case Maps::DIRMASK_N:
 			writeChar('N');

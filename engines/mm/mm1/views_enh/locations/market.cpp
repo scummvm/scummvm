@@ -49,14 +49,14 @@ bool Market::msgFocus(const FocusMessage &msg) {
 void Market::draw() {
 	Location::draw();
 
-	writeLine(0, STRING["enhdialogs.market.title"],ALIGN_MIDDLE);
-	writeLine(1, STRING["enhdialogs.location.options"], ALIGN_MIDDLE);
+	writeLine(0, "Market",ALIGN_MIDDLE);
+	writeLine(1, "options", ALIGN_MIDDLE);
 
-	writeLine(6, STRING["enhdialogs.market.buy_food"], ALIGN_MIDDLE);
-	writeLine(7, Common::String::format("%d %s",
-		_foodCost, STRING["dialogs.market.gp"].c_str()),
+	writeLine(6, "Buy food", ALIGN_MIDDLE);
+	writeLine(7, Common::String::format("%d GP/ea",
+		_foodCost),
 		ALIGN_MIDDLE);
-	writeLine(10, STRING["enhdialogs.location.gold"], ALIGN_LEFT);
+	writeLine(10, "Gold", ALIGN_LEFT);
 
 	uint gold = g_globals->_party.getPartyGold();
 	writeLine(10, Common::String::format("%d", gold), ALIGN_RIGHT);
@@ -105,8 +105,8 @@ void Market::buyFood() {
 	}
 
 	displayMessage(numPurchases ?
-		STRING["enhdialogs.market.thankyou"] :
-		STRING["enhdialogs.market.no_gold"]
+		"Thank you, come again!" :
+		"No gold, no food!"
 	);
 }
 

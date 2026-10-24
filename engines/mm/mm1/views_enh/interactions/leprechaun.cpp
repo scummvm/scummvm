@@ -28,13 +28,14 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Leprechaun::Leprechaun() : Interaction("Leprechaun", 15) {
-	_title = STRING["maps.emap00.leprechaun_title"];
-	addText(STRING["maps.emap00.leprechaun"]);
-	addButton(STRING["stats.towns.1"], '1');
-	addButton(STRING["stats.towns.2"], '2');
-	addButton(STRING["stats.towns.3"], '3');
-	addButton(STRING["stats.towns.4"], '4');
-	addButton(STRING["stats.towns.5"], '5');
+	_title = "Leprechaun";
+	addText("A tenacious leprechaun appears saying, \"Traveling the roads is quite dangerous. Only 1 "
+		"gem and i'll teleport you.\"");
+	addButton("Sorpigal", '1');
+	addButton("Portsmith", '2');
+	addButton("Algary", '3');
+	addButton("Dusk", '4');
+	addButton("Erliquin", '5');
 }
 
 bool Leprechaun::msgFocus(const FocusMessage &msg) {

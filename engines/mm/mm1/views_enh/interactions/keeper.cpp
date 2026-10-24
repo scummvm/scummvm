@@ -30,7 +30,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Keeper::Keeper() : Interaction("Keeper", 10) {
-	_title = STRING["maps.emap54.keeper"];
+	_title = "Keeper";
 	_animated = false;
 }
 
@@ -38,7 +38,8 @@ bool Keeper::msgFocus(const FocusMessage &msg) {
 	Interaction::msgFocus(msg);
 
 	_pageNum = 0;
-	addText(STRING["maps.map54.keeper1"]);
+	addText("A metallic panel slides open, revealing a mysterious man in a white coat... (Press Space "
+		"to communicate)");
 	return true;
 }
 
@@ -47,7 +48,9 @@ void Keeper::viewAction() {
 
 	switch (++_pageNum) {
 	case 1:
-		addText(STRING["maps.emap54.keeper2"]);
+		addText("In a serene voice, the data keeper says, \"Welcome to your inner sanctum Varnlings! I am "
+			"very pleased that you've made it this far. You are to be commended. I've been monitoring "
+			"your progress.\"");
 		redraw();
 		break;
 
@@ -56,14 +59,17 @@ void Keeper::viewAction() {
 		_isWorthy = map.isWorthy(perfTotal);
 
 		addText(Common::String::format(
-			STRING["maps.emap54.keeper3"].c_str(), perfTotal));
+			"Turning to the strange mechanical device, he inserts a flat object into a slot. Your "
+				"party's current performance total=%u.", perfTotal));
 		redraw();
 		break;
 	}
 
 	case 3:
-		addText(STRING[_isWorthy ? "maps.emap54.keeper5" :
-			"maps.emap54.keeper4"].c_str());
+		addText(_isWorthy ?
+			"Excellent rating! this is a rare occasion, for only a privileged few are given the "
+				"opportunity for transfer to another V.A.R.N. (Vehicular Astropod Research Nacelle)." :
+			"\"You are not yet worthy for transfer. Return after defeating the imposter.\"");
 		redraw();
 		break;
 
@@ -72,7 +78,9 @@ void Keeper::viewAction() {
 			leave();
 			map.sorpigalInn();
 		} else {
-			addText(STRING["maps.map54.keeper6"]);
+			addText("Return now to the\n"
+				"Inn of Sorpigal for rest and celebration then continue on to your new assignment at the "
+				"Gates To Another World...\" (+50000 exp for your accomplishment!)");
 			redraw();
 		}
 		break;

@@ -29,7 +29,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Resistances::Resistances() : Interaction("Resistances", 4) {
-	_title = STRING["maps.emap02.resistances"];
+	_title = "Resistances";
 }
 
 bool Resistances::msgFocus(const FocusMessage &msg) {
@@ -46,22 +46,22 @@ void Resistances::draw() {
 		const Character &c = *g_globals->_currCharacter;
 
 		setReduced(true);
-		writeLine(0, STRING["maps.emap02.magic"], ALIGN_LEFT, 0);
+		writeLine(0, "Magic", ALIGN_LEFT, 0);
 		writeLine(0, c._resistances._s._magic, ALIGN_RIGHT, 45);
-		writeLine(0, STRING["maps.emap02.fire"], ALIGN_LEFT, 50);
+		writeLine(0, "Fire", ALIGN_LEFT, 50);
 		writeLine(0, c._resistances._s._fire, ALIGN_RIGHT, 90);
-		writeLine(0, STRING["maps.emap02.cold"], ALIGN_LEFT, 95);
+		writeLine(0, "Cold", ALIGN_LEFT, 95);
 		writeLine(0, c._resistances._s._cold, ALIGN_RIGHT, 145);
-		writeLine(0, STRING["maps.emap02.electricity"], ALIGN_LEFT, 150);
+		writeLine(0, "Elc", ALIGN_LEFT, 150);
 		writeLine(0, c._resistances._s._electricity, ALIGN_RIGHT, 195);
 
-		writeLine(1, STRING["maps.emap02.acid"], ALIGN_LEFT, 0);
+		writeLine(1, "Acid", ALIGN_LEFT, 0);
 		writeLine(1, c._resistances._s._acid, ALIGN_RIGHT, 45);
-		writeLine(1, STRING["maps.emap02.fear"], ALIGN_LEFT, 50);
+		writeLine(1, "Fear", ALIGN_LEFT, 50);
 		writeLine(1, c._resistances._s._fear, ALIGN_RIGHT, 90);
-		writeLine(1, STRING["maps.emap02.poison"], ALIGN_LEFT, 95);
+		writeLine(1, "Poison", ALIGN_LEFT, 95);
 		writeLine(1, c._resistances._s._poison, ALIGN_RIGHT, 145);
-		writeLine(1, STRING["maps.emap02.sleep"], ALIGN_LEFT, 150);
+		writeLine(1, "Sleep", ALIGN_LEFT, 150);
 		writeLine(1, c._resistances._s._psychic, ALIGN_RIGHT, 195);
 	}
 }

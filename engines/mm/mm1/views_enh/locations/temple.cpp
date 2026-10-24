@@ -72,27 +72,27 @@ void Temple::draw() {
 	Location::draw();
 
 	setReduced(false);
-	writeLine(0, STRING["enhdialogs.temple.title"], ALIGN_MIDDLE);
-	writeLine(1, STRING["enhdialogs.location.options_for"], ALIGN_MIDDLE);
+	writeLine(0, "Temple", ALIGN_MIDDLE);
+	writeLine(1, "options for", ALIGN_MIDDLE);
 	writeString(0, 23, camelCase(g_globals->_currCharacter->_name), ALIGN_MIDDLE);
 
 	setReduced(true);
-	writeOption(0, 'H', STRING["enhdialogs.temple.heal"],
+	writeOption(0, 'H', "\x01""37Heal",
 		_healCost ? Common::String::format("%d", _healCost) : "----");
-	writeOption(1, 'U', STRING["enhdialogs.temple.uncurse"],
+	writeOption(1, 'U', "\x01""37Uncurse",
 		_uncurseCost ? Common::String::format("%d", _uncurseCost) : "----");
-	writeOption(2, 'R', STRING["enhdialogs.temple.realign"],
+	writeOption(2, 'R', "\x01""37Re-align",
 		_alignmentCost ? Common::String::format("%d", _alignmentCost) : "----");
-	writeOption(3, 'D', STRING["enhdialogs.temple.donate"],
+	writeOption(3, 'D', "\x01""37Donate",
 		Common::String::format("%d", _donateCost));
 
 	setReduced(false);
-	writeLine(10, STRING["enhdialogs.location.gold"]);
+	writeLine(10, "Gold");
 	writeLine(10, Common::String::format("%d",
 		g_globals->_currCharacter->_gold), ALIGN_RIGHT);
 
 	setReduced(true);
-	writeString(27, 122, STRING["enhdialogs.location.esc"]);
+	writeString(27, 122, "Esc");
 }
 
 void Temple::writeOption(int row, char c, const Common::String &text,
@@ -269,9 +269,9 @@ void Temple::donate() {
 				g_globals->_activeSpells._arr[i] = 75;
 
 			Sound::sound(SOUND_3);
-			displayMessage(STRING["dialogs.temple.protected"]);
+			displayMessage("*** Today you shall be protected!");
 		} else {
-			displayMessage(STRING["dialogs.temple.thankyou"]);
+			displayMessage("Thank you!");
 		}
 	}
 }

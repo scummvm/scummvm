@@ -98,7 +98,7 @@ void Bestiary::draw() {
 	writeString(262, 172, "Next");
 
 	setTextColor(0);
-	writeString(152, 172, STRING["enhdialogs.misc.go_back"]);
+	writeString(152, 172, "Go back");
 }
 
 void Bestiary::select(int index) {

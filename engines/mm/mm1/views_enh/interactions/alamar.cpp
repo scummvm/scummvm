@@ -50,29 +50,23 @@ bool Alamar::msgFocus(const FocusMessage &msg) {
 			g_globals->_party[i]._quest = 255;
 	}
 
-	_title = STRING["maps.emap49.king_alamar"];
+	_title = "King Alamar";
 
 	if (_succeeded) {
-		addText(Common::String::format("%s%s",
-			STRING["maps.map49.alamar1"].c_str(),
-			STRING["maps.map49.alamar3"].c_str()
+		addText(Common::String::format("The omnipotent King Alamar speaks,  %s",
+			"\"My saviors, you're always welcome here! You should find the Inner Sanctum... Live long "
+				"and prosper.\""
 		));
 
 	} else if (map[HAS_EYE]) {
-		_title = STRING["maps.emap49.sheltem"];
-		addText(Common::String::format("%s%s",
-			STRING["maps.map49.alamar1"].c_str(),
-			STRING["maps.map49.alamar4"].c_str()
-		));
+		_title = "Imposter King Alamar";
+		addText("The omnipotent King Alamar speaks,  \"You've discovered my true identity! Into the soul maze you go...\"");
 
 		for (int i = 0; i < 6; ++i)
 			Sound::sound(SOUND_2);
 
 	} else {
-		addText(Common::String::format("%s%s",
-			STRING["maps.map49.alamar1"].c_str(),
-			STRING["maps.map49.alamar2"].c_str()
-		));
+		addText("The omnipotent King Alamar speaks,  \"Varnlings, I quest thee to find the Crypt of Carmenca. Away with you...\"");
 	}
 
 	return true;

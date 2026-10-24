@@ -29,8 +29,9 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Ruby::Ruby() : InteractionQuery("Ruby", 12) {
-	_title = STRING["maps.emap39.title"];
-	addText(STRING["maps.emap39.ruby1"]);
+	_title = "Ruby";
+	addText("In the center of the room, a huge hexagonal ruby stands glowing atop a pedestal. You "
+		"hear: Glass that glitters, rubies that glow when i twinkle, I cast a rainbow. What am i?");
 }
 
 void Ruby::answerEntered() {

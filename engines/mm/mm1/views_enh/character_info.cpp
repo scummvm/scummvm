@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_info.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/views_enh/scroll_popup.h"
 #include "mm/shared/utils/strings.h"
 #include "mm/mm1/globals.h"
@@ -71,17 +72,16 @@ CharacterInfo::CharacterInfo() : PartyView("CharacterInfo") {
 	_bounds = Common::Rect(0, 0, 320, 146);
 	_statInfo.setReduced(true);
 
-	static const char *FIELDS[CHAR_ICONS_COUNT] = {
-		"might", "intelligence", "personality",
-		"endurance", "speed",
-		"accuracy", "luck", "age", "level", "ac",
-		"hp", "sp", "spells",
-		"experience", "gold", "gems", "food", "condition"
+	static const char *const FIELDS[CHAR_ICONS_COUNT] = {
+		"Mgt", "Int", "Per",
+		"End", "Spd",
+		"Acy", "Luc", "Age", "Lvl", "AC",
+		"H.P.", "S.P.", "Spells",
+		"Experience", "Gold", "Gems", "Food", "Condition"
 	};
 
 	for (int i = 0; i < ICONS_COUNT; ++i) {
-		ICONS_TEXT[i] = STRING[Common::String::format(
-			"enhdialogs.character.stats.%s", FIELDS[i])];
+		ICONS_TEXT[i] = FIELDS[i];
 	}
 }
 
@@ -230,9 +230,9 @@ void CharacterInfo::drawTitle() {
 	Common::String suffix = Common::String::format(
 		" : %s %s %s %s",
 		sex,
-		STRING[Common::String::format("stats.alignments.%d", (int)c._alignment)].c_str(),
-		STRING[Common::String::format("stats.races.%d", (int)c._race)].c_str(),
-		STRING[Common::String::format("stats.classes.%d", (int)c._class)].c_str()
+		ALIGNMENT_NAMES[(int)c._alignment - 1],
+		RACE_NAMES[(int)c._race - 1],
+		CLASS_NAMES[(int)c._class - 1]
 	);
 	Common::String name = truncateString(camelCase(c._name),
 		269 - (int)getStringWidth(suffix));
@@ -254,10 +254,10 @@ void CharacterInfo::drawIcons() {
 	}
 
 	// Text for buttons
-	writeString(277, 25, STRING["enhdialogs.character.item"]);
-	writeString(273, 57, STRING["enhdialogs.character.quick"]);
-	writeString(276, 90, STRING["enhdialogs.character.exchange"]);
-	writeString(278, 122, STRING["enhdialogs.misc.exit"]);
+	writeString(277, 25, "\x01""37Item");
+	writeString(273, 57, "\x01""37Quick");
+	writeString(276, 90, "\x01""37Exch");
+	writeString(278, 122, "Exit");
 }
 
 void CharacterInfo::drawStats() {
@@ -298,8 +298,7 @@ void CharacterInfo::drawStats() {
 			// Food
 			Common::String str = Common::String::format("%d %s",
 				c._food,
-				STRING[c._food == 1 ? "enhdialogs.character.stats.day" :
-					"enhdialogs.character.stats.days"].c_str());
+				c._food == 1 ? "Day" : "Days");
 			setTextColor(15);
 			writeString(pt.x, pt.y, str);
 		} else {
@@ -447,23 +446,22 @@ void CharacterInfo::showAttribute(int attrNum) {
 		c._luck._base, c._age, c._level._base,
 		c._ac._current, c._hp, c._sp._base
 	};
-	const char *TITLES[12] = {
-		"might", "intelligence", "personality",
-		"endurance", "speed", "accuracy", "luck",
-		"age", "level", "ac", "hp", "sp"
+	const char *const TITLES[12] = {
+		"Might", "Intelligence", "Personality", "Endurance",
+		"Speed", "Accuracy", "Luck", "Age",
+		"Level", "Armor Class", "Hit Points", "Spell Points"
 	};
 
 	if (attrib < 12) {
 		_statInfo.addLine(
-			STRING[Common::String::format("enhdialogs.character.long.%s",
-				TITLES[attrib]).c_str()],
+			TITLES[attrib],
 			ALIGN_MIDDLE);
 
 		int xc = (bounds.width() - FRAME_BORDER_SIZE * 2) / 2;
-		_statInfo.addText(STRING["enhdialogs.character.long.current"],
+		_statInfo.addText("Current",
 			1, 0, ALIGN_RIGHT, xc - 8);
 		_statInfo.addText("/", 1, 0, ALIGN_MIDDLE);
-		_statInfo.addText(STRING["enhdialogs.character.long.base"],
+		_statInfo.addText("Base",
 			1, 0, ALIGN_LEFT, xc + 8);
 
 		_statInfo.addText(Common::String::format("%u", CURR[attrib]),
@@ -474,7 +472,7 @@ void CharacterInfo::showAttribute(int attrNum) {
 
 	} else if (attrib == 15) {
 		// Experience
-		_statInfo.addLine(STRING["enhdialogs.character.stats.experience"], ALIGN_MIDDLE);
+		_statInfo.addLine("Experience", ALIGN_MIDDLE);
 		_statInfo.addLine(Common::String::format("%u", c._exp), ALIGN_MIDDLE);
 
 	} else if (attrib >= 16 && attrib <= 18) {
@@ -482,24 +480,24 @@ void CharacterInfo::showAttribute(int attrNum) {
 		_statInfo.setBounds(bounds);
 
 		uint value = c._gold;
-		Common::String title = STRING["enhdialogs.character.stats.gold"];
+		Common::String title = "Gold";
 		if (attrib == 17) {
 			value = c._gems;
-			title = STRING["enhdialogs.character.stats.gems"];
+			title = "Gems";
 		} else if (attrib == 18) {
 			value = c._food;
-			title = STRING["enhdialogs.character.stats.food"];
+			title = "Food";
 		}
 
 		_statInfo.addLine(title, ALIGN_MIDDLE);
-		_statInfo.addLine(Common::String::format("%u %s",
-			value, STRING["enhdialogs.character.long.on_hand"].c_str()),
+		_statInfo.addLine(Common::String::format("%u On Hand",
+			value),
 			ALIGN_MIDDLE);
 	} else {
 		// Condition
 		Common::String conditionStr = c.getConditionString();
 
-		_statInfo.addLine(STRING["enhdialogs.character.stats.condition"], ALIGN_MIDDLE);
+		_statInfo.addLine("Condition", ALIGN_MIDDLE);
 		_statInfo.addLine(conditionStr, ALIGN_MIDDLE);
 	}
 

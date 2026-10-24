@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views_enh/spells/spellbook.h"
 #include "common/config-manager.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/globals.h"
 
@@ -94,16 +95,14 @@ void Spellbook::draw() {
 
 	// Title line
 	_fontReduced = true;
-	Common::String title = Common::String::format("%s %s",
-		STRING["enhdialogs.spellbook.title"].c_str(),
+	Common::String title = Common::String::format("Spells for %s",
 		c._name
 	);
 	title = truncateString(title, _innerBounds.width());
 	writeString(0, 0, title, ALIGN_MIDDLE);
 
 	// Write current spell points
-	Common::String sp = Common::String::format("%s - %d",
-		STRING["enhdialogs.spellbook.spell_points"].c_str(), c._sp._current);
+	Common::String sp = Common::String::format("Spell Pts - %d", c._sp._current);
 	writeString(7, 111, sp);
 
 	// Iterate over the lines
@@ -118,7 +117,7 @@ void Spellbook::draw() {
 		if (_count == 0) {
 			if (i == 0) {
 				setTextColor(37);
-				writeString(12, yp, STRING["enhdialogs.spellbook.non_caster"]);
+				writeString(12, yp, "Not a spell caster...");
 			}
 		} else if (displayIndex < _count) {
 			const int spellIndex = _spellOrder[displayIndex];
@@ -133,11 +132,8 @@ void Spellbook::draw() {
 			setTextColor(textColor);
 
 			// Spell name and requirements
-			Common::String spellName = STRING[Common::String::format(
-				"spells.%s.%d",
-				_isWizard ? "wizard" : "cleric",
-				spellIndex
-			)];
+			Common::String spellName = _isWizard ?
+				WIZARD_SPELL_NAMES[spellIndex] : CLERIC_SPELL_NAMES[spellIndex];
 
 			// MM1 Cleric 2-5 is Protection From Fire.
 			if (!_isWizard && spellIndex == 12)

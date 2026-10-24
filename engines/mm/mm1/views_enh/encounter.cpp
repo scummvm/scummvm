@@ -67,51 +67,51 @@ void Encounter::draw() {
 		view.setBounds(Common::Rect(pt.x - 50, pt.y - 9, pt.x + 50, pt.y + 18));
 		view.draw();
 
-		writeLine(7, STRING["dialogs.encounter.title"], ALIGN_MIDDLE);
+		writeLine(7, " Encounter! ", ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 	}
 
 	case SURPRISED_BY_MONSTERS:
-		writeLine(0, STRING["dialogs.encounter.surprised"], ALIGN_MIDDLE);
+		writeLine(0, "The monsters surprised you!", ALIGN_MIDDLE);
 		enc._encounterType = Game::FORCE_SURPRISED;
 		delaySeconds(2);
 		break;
 
 	case SURPRISED_MONSTERS:
-		writeLine(0, STRING["dialogs.encounter.surprise"], ALIGN_MIDDLE);
-		writeLine(2, STRING["dialogs.encounter.approach"], ALIGN_MIDDLE);
+		writeLine(0, "You surprised a group of monsters,", ALIGN_MIDDLE);
+		writeLine(2, "Approach (Y/N)?", ALIGN_MIDDLE);
 		break;
 
 	case ENCOUNTER_OPTIONS: {
 		// Write the encounter options
 		setReduced(false);
-		writeString(0, 5, STRING["enhdialogs.encounter.options"]);
+		writeString(0, 5, "Options:");
 		setReduced(true);
-		writeString(88, 5, STRING["enhdialogs.encounter.attack"]);
-		writeString(164, 5, STRING["enhdialogs.encounter.retreat"]);
-		writeString(88, 25, STRING["enhdialogs.encounter.bribe"]);
-		writeString(164, 25, STRING["enhdialogs.encounter.surrender"]);
+		writeString(88, 5, "\x01""37Attack");
+		writeString(164, 5, "\x01""37Retreat");
+		writeString(88, 25, "\x01""37Bribe");
+		writeString(164, 25, "\x01""37Surrender");
 		break;
 	}
 
 	case NOWHERE_TO_RUN:
-		writeLine(0, STRING["dialogs.encounter.nowhere_to_run"], ALIGN_MIDDLE);
+		writeLine(0, "Nowhere to run", ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
 	case SURROUNDED:
-		writeLine(0, STRING["dialogs.encounter.surround"], ALIGN_MIDDLE);
+		writeLine(0, "The monsters surround you!", ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
 	case SURRENDER_FAILED:
-		writeLine(0, STRING["dialogs.encounter.surrender_failed"], ALIGN_MIDDLE);
+		writeLine(0, "The monsters don't take prisoners!", ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
 	case NO_RESPONSE:
-		writeLine(0, STRING["dialogs.encounter.no_response"], ALIGN_MIDDLE);
+		writeLine(0, "No response", ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
@@ -119,17 +119,17 @@ void Encounter::draw() {
 		enc._bribeFleeCtr++;
 		enc._bribeAlignmentCtr++;
 		writeLine(0, Common::String::format(
-			STRING["dialogs.encounter.give_up"].c_str(),
+			"Give up all your %s (Y/N)?",
 			_bribeTypeStr.c_str()), ALIGN_MIDDLE);
 		break;
 
 	case NOT_ENOUGH:
-		writeLine(0, STRING["dialogs.encounter.not_enough"], ALIGN_MIDDLE);
+		writeLine(0, "Not enough", ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
 	case COMBAT:
-		writeLine(0, STRING["dialogs.encounter.combat"], ALIGN_MIDDLE);
+		writeLine(0, "Combat!", ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
@@ -163,7 +163,7 @@ void Encounter::draw() {
 			_mode == SURPRISED_BY_MONSTERS) {
 		if (enc._alignmentsChanged) {
 			setDisplayArea(false);
-			writeLine(3, STRING["dialogs.encounter.alignment_slips"], ALIGN_MIDDLE);
+			writeLine(3, "*** Alignment slips ***", ALIGN_MIDDLE);
 			Sound::sound(SOUND_2);
 		}
 
@@ -313,13 +313,13 @@ void Encounter::bribe() {
 		int val = getRandomNumber(100);
 		if (val < 6) {
 			_bribeType = BRIBE_GEMS;
-			_bribeTypeStr = STRING["dialogs.encounter.gems"];
+			_bribeTypeStr = "gems";
 		} else if (val < 16) {
 			_bribeType = BRIBE_FOOD;
-			_bribeTypeStr = STRING["dialogs.encounter.food"];
+			_bribeTypeStr = "food";
 		} else {
 			_bribeType = BRIBE_GOLD;
-			_bribeTypeStr = STRING["dialogs.encounter.gold"];
+			_bribeTypeStr = "gold";
 		}
 
 		redraw();

@@ -58,7 +58,7 @@ bool Unlock::msgGame(const GameMessage &msg) {
 	if (canUnlock) {
 		WhoWillTry::display(charSelected);
 	} else {
-		g_events->send(InfoMessage(STRING["dialogs.unlock.none"]));
+		g_events->send(InfoMessage("Unlock: No door present"));
 	}
 
 	return true;
@@ -80,11 +80,11 @@ void Unlock::charSelected(int charIndex) {
 
 		if (val < c._trapCtr) {
 			g_maps->_currentMap->unlockDoor();
-			g_engine->send(InfoMessage(11, 1, STRING["dialogs.unlock.success"]));
+			g_engine->send(InfoMessage(11, 1, "Success!"));
 
 		} else if (g_engine->getRandomNumber(100) <
 				g_maps->_currentMap->dataByte(Maps::MAP_TRAP_THRESHOLD)) {
-			g_engine->send(InfoMessage(8, 1, STRING["dialogs.unlock.failed"]));
+			g_engine->send(InfoMessage(8, 1, "Unlock failed!"));
 
 		} else {
 			g_maps->_currentMap->unlockDoor();

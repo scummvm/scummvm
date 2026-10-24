@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/color_questions.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/maps/map17.h"
 #include "mm/mm1/globals.h"
 
@@ -66,18 +67,17 @@ void ColorQuestions::draw() {
 	setReduced(false);
 
 	if (!_showingResponse) {
-		writeString(0, 0, STRING["maps.map17.color"]);
+		writeString(0, 0, "What is your color (1-8)?");
 
 		setReduced(true);
 		for (int option = 0; option < 8; ++option) {
 			Common::String prefix = Common::String::format("%c) ", '1' + option);
 			writeString(20 + 105 * (option % 2), 10 + (option / 2) * 8, prefix, ALIGN_RIGHT);
-			writeString(STRING[Common::String::format("colors.%d", option)]);
+			writeString(COLOR_NAMES[option]);
 		}
 	} else {
 		const Character &c = g_globals->_party[_charIndex];
-		Common::String result = STRING[c.hasBadCondition() ?
-			"maps.map17.wrong" : "maps.map17.correct"];
+		Common::String result = (c.hasBadCondition() ? "Wrong!" : "Correct!");
 		writeLine(1, result, ALIGN_MIDDLE);
 	}
 }

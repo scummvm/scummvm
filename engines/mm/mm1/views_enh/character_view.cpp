@@ -33,7 +33,7 @@ CharacterView::CharacterView() : CharacterBase("CharacterView") {
 
 void CharacterView::draw() {
 	CharacterBase::draw();
-	writeString(120, 174, STRING["dialogs.misc.go_back"]);
+	writeString(120, 174, "Go back");
 }
 
 bool CharacterView::msgMouseUp(const MouseUpMessage &msg) {

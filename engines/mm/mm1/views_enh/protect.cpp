@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/protect.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/game/combat.h"
 #include "mm/mm1/globals.h"
 
@@ -36,8 +37,8 @@ void Protect::draw() {
 	ScrollView::draw();
 
 	setReduced(false);
-	writeLine(0, STRING["dialogs.protect.title"], ALIGN_MIDDLE);
-	writeString(152, 172, STRING["enhdialogs.misc.go_back"]);
+	writeLine(0, "Protect:  Spells currently active", ALIGN_MIDDLE);
+	writeString(152, 172, "Go back");
 
 	setReduced(true);
 	int yp = 4;
@@ -45,9 +46,8 @@ void Protect::draw() {
 	// Protection spells
 	for (int i = 0; i < 7; ++i) {
 		if (g_globals->_activeSpells._arr[i]) {
-			Common::String line = Common::String::format("%s %s + %d%%",
-				STRING["dialogs.protect.protection"].c_str(),
-				STRING[Common::String::format("dialogs.protect.%d", i + 1)].c_str(),
+			Common::String line = Common::String::format("Protection from %s + %d%%",
+				PROTECTION_NAMES[i],
 				g_globals->_activeSpells._arr[i]);
 			writeString(0, yp += 8, line, ALIGN_MIDDLE);
 		}
@@ -55,8 +55,7 @@ void Protect::draw() {
 
 	// Light spell
 	if (g_globals->_activeSpells._arr[7]) {
-		writeString(0, yp += 8, Common::String::format("%s%d)",
-			STRING["dialogs.protect.8"].c_str(),
+		writeString(0, yp += 8, Common::String::format("Light (%d)",
 			g_globals->_activeSpells._arr[7]), ALIGN_MIDDLE);
 	}
 
@@ -78,8 +77,7 @@ void Protect::draw() {
 		}
 
 		if (g_globals->_activeSpells._arr[i]) {
-			Common::String line = STRING[Common::String::format(
-				"dialogs.protect.%d", i + 1)];
+			Common::String line = PROTECTION_NAMES[i];
 			if (i == 8) {
 				line += Common::String::format(" +%d AC",
 					g_globals->_activeSpells._arr[i]);
@@ -100,10 +98,8 @@ void Protect::draw() {
 			} else if (i == 16) {
 				line += " -50% damage";
 			} else if (i == 17) {
-				line += Common::String::format("%d %s",
-					g_globals->_activeSpells._arr[17],
-					STRING["dialogs.protect.to_attacks"].c_str()
-				);
+				line += Common::String::format("%d to attacks",
+					g_globals->_activeSpells._arr[17]);
 			}
 
 			writeString(0, yp += 8, line, ALIGN_MIDDLE);

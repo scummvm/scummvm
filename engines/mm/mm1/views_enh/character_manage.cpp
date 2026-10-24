@@ -75,20 +75,20 @@ void CharacterManage::draw() {
 	switch (_state) {
 	case DISPLAY:
 		setReduced(true);
-		writeString(35, 174, STRING["enhdialogs.character.portrait"]);
-		writeString(105, 174, STRING["enhdialogs.character.rename"]);
-		writeString(175, 174, STRING["enhdialogs.character.delete"]);
-		writeString(245, 174, STRING["enhdialogs.misc.go_back"]);
+		writeString(35, 174, "Portrait");
+		writeString(105, 174, "Rename");
+		writeString(175, 174, "Delete");
+		writeString(245, 174, "Go back");
 		break;
 
 	case RENAME:
 		_state = DISPLAY;
-		writeString(80, 172, STRING["dialogs.view_character.name"]);
+		writeString(80, 172, "Name: ");
 		_textEntry.display(130, 180, 15, false, abortFunc, enterFunc);
 		break;
 
 	case DELETE:
-		writeString(110, 171, STRING["enhdialogs.character.are_you_sure"]);
+		writeString(110, 171, "Are you sure? (Y/N)");
 		break;
 	}
 }

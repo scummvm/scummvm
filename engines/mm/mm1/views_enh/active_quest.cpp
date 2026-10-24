@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/active_quest.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/maps/map06.h"
 #include "mm/mm1/maps/map17.h"
@@ -28,6 +29,7 @@
 #include "mm/mm1/maps/map29.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/metaengine.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -101,18 +103,14 @@ void setFormalQuestText(Common::String &title, Common::String &details,
 		byte questNum) {
 	if (questNum >= 1 && questNum <= 7) {
 		title = "Lord Ironfist";
-		details = STRING[Common::String::format(
-			"maps.map43.quests.%d", questNum)];
+		details = IRONFIST_QUESTS[questNum - 1];
 	} else if (questNum >= 8 && questNum <= 14) {
 		title = "Lord Inspectron";
-		details = STRING[Common::String::format(
-			"maps.map35.quests.%d", questNum - 8)];
+		details = mapText(INSPECTRON_QUESTS[questNum - 8]);
 	} else if (questNum >= 15 && questNum <= 21) {
 		title = "Lord Hacker";
-		details = Common::String::format("%s %s",
-			STRING["maps.map36.hacker3"].c_str(),
-			STRING[Common::String::format("maps.map36.ingredients.%d",
-				questNum - 15)].c_str());
+		details = Common::String::format("Bring me %s",
+			INGREDIENTS[questNum - 15]);
 	}
 }
 
@@ -524,7 +522,7 @@ void ActiveQuest::draw() {
 	ScrollView::draw();
 	setReduced(false);
 	writeLine(0, "Quest Log", ALIGN_MIDDLE);
-	writeString(152, 172, STRING["enhdialogs.misc.go_back"]);
+	writeString(152, 172, "Go back");
 
 	Common::Array<QuestLogEntry> entries;
 	buildQuestList(entries);

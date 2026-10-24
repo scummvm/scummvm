@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/locations/blacksmith_items.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/views_enh/locations/blacksmith.h"
 #include "mm/mm1/views_enh/confirm.h"
 #include "mm/mm1/globals.h"
@@ -31,11 +32,11 @@ namespace Locations {
 
 BlacksmithItems::BlacksmithItems() : ItemsView("BlacksmithItems") {
 	_btnSprites.load("buy.icn");
-	addButton(0, STRING["enhdialogs.blacksmith.buttons.weapons"], Common::KEYCODE_w);
-	addButton(2, STRING["enhdialogs.blacksmith.buttons.armor"], Common::KEYCODE_a);
-	addButton(6, STRING["enhdialogs.blacksmith.buttons.misc"], Common::KEYCODE_m);
-	addButton(10, STRING["enhdialogs.blacksmith.buttons.sell"], Common::KEYCODE_s);
-	addButton(12, STRING["enhdialogs.misc.exit"], Common::KEYCODE_ESCAPE);
+	addButton(0, "\x01""37Weap", Common::KEYCODE_w);
+	addButton(2, "\x01""37Armor", Common::KEYCODE_a);
+	addButton(6, "\x01""37Misc", Common::KEYCODE_m);
+	addButton(10, "\x01""37Sell", Common::KEYCODE_s);
+	addButton(12, "Exit", Common::KEYCODE_ESCAPE);
 }
 
 bool BlacksmithItems::msgFocus(const FocusMessage &msg) {
@@ -58,18 +59,18 @@ void BlacksmithItems::draw() {
 void BlacksmithItems::drawTitle() {
 	const Character &c = *g_globals->_currCharacter;
 
-	Common::String areaName = STRING["enhdialogs.blacksmith.areas.weapons"];
+	Common::String areaName = "Weapons";
 	if (_mode == ARMOR_MODE)
-		areaName = STRING["enhdialogs.blacksmith.areas.armor"];
+		areaName = "Armor";
 	if (_mode == MISC_MODE)
-		areaName = STRING["enhdialogs.blacksmith.areas.misc"];
+		areaName = "Misc";
 
 	if (_mode == SELL_MODE) {
 		// Show sell mode title
 		Common::String title = Common::String::format(
-			STRING["enhdialogs.items.backpack_for"].c_str(),
+			"Backpack for %s the %s",
 			c._name,
-			STRING[Common::String::format("stats.classes.%d", c._class)].c_str()
+			CLASS_NAMES[c._class - 1]
 		);
 
 		setReduced(false);
@@ -78,17 +79,15 @@ void BlacksmithItems::drawTitle() {
 	} else {
 		// Show title with "Available <Area>", "Gold", and "Cost"
 		setReduced(false);
-		Common::String title = Common::String::format("%s %s",
-			STRING["enhdialogs.blacksmith.available"].c_str(),
+		Common::String title = Common::String::format("Available %s",
 			areaName.c_str());
 		writeString(0, 0, title);
 
-		Common::String gold = Common::String::format("%s - %d",
-			STRING["enhdialogs.blacksmith.gold"].c_str(),
+		Common::String gold = Common::String::format("Gold - %d",
 			c._gold);
 		writeString(160, 0, gold);
 
-		writeString(0, 0, STRING["enhdialogs.blacksmith.cost"], ALIGN_RIGHT);
+		writeString(0, 0, "Cost", ALIGN_RIGHT);
 	}
 }
 
@@ -167,14 +166,14 @@ void BlacksmithItems::itemSelected() {
 	_buySellItem = _selectedItem;
 
 	if (_mode != SELL_MODE) {
-		buySell = STRING["enhdialogs.blacksmith.buy"];
+		buySell = "Buy";
 		gold = Common::String::format(
-			STRING["enhdialogs.blacksmith.for_gold"].c_str(),
+			"for %d gold",
 			item._cost);
 	} else {
-		buySell = STRING["enhdialogs.blacksmith.sell"];
+		buySell = "Sell";
 		gold = Common::String::format(
-			STRING["enhdialogs.blacksmith.for_gold"].c_str(),
+			"for %d gold",
 			item.getSellCost());
 	}
 
@@ -215,7 +214,7 @@ void BlacksmithItems::itemConfirmed() {
 			notEnoughGold();
 			break;
 		default:
-			displayMessage(STRING["dialogs.blacksmith.thankyou"]);
+			displayMessage("Thank you!");
 			break;
 		}
 	}

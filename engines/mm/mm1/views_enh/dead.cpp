@@ -46,12 +46,12 @@ void Dead::draw() {
 	ScrollView::draw();
 	setReduced(false);
 
-	writeLine(4, STRING["dialogs.dead.1"], ALIGN_MIDDLE);
-	writeLine(6, STRING["dialogs.dead.2"], ALIGN_MIDDLE);
-	writeLine(8, STRING["dialogs.dead.3"], ALIGN_MIDDLE);
-	writeLine(10, STRING["dialogs.dead.4"], ALIGN_MIDDLE);
-	writeLine(12, STRING["dialogs.dead.5"], ALIGN_MIDDLE);
-	writeLine(14, STRING["dialogs.dead.6"], ALIGN_MIDDLE);
+	writeLine(4, "The shadow of death", ALIGN_MIDDLE);
+	writeLine(6, "has fallen upon your party!", ALIGN_MIDDLE);
+	writeLine(8, "Fortunately, you may renew", ALIGN_MIDDLE);
+	writeLine(10, "your quest from the last", ALIGN_MIDDLE);
+	writeLine(12, "inn in which you stayed", ALIGN_MIDDLE);
+	writeLine(14, "by pressing 'Enter'", ALIGN_MIDDLE);
 }
 
 bool Dead::msgAction(const ActionMessage &msg) {

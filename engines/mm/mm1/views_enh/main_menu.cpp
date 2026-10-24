@@ -111,13 +111,13 @@ void MainMenu::draw() {
 
 	drawCircles();
 
-	writeString(0, 100, STRING["dialogs.main_menu.title3"], ALIGN_MIDDLE);
-	writeString(0, 110, STRING["dialogs.main_menu.title4"], ALIGN_MIDDLE);
+	writeString(0, 100, "Options", ALIGN_MIDDLE);
+	writeString(0, 110, "-------", ALIGN_MIDDLE);
 
-	Common::String line1 = STRING["dialogs.main_menu.option1"];
-	Common::String line2 = STRING["dialogs.main_menu.option2"];
-	Common::String line31 = STRING["dialogs.main_menu.option3e1"];
-	Common::String line32 = STRING["dialogs.main_menu.option3e2"];
+	Common::String line1 = "'C'.......Create New Characters";
+	Common::String line2 = "'V'.......View All Characters";
+	Common::String line31 = "'1' to '5'";
+	Common::String line32 = "Go to Town";
 
 	writeString(80, 120, Common::String(line1.c_str(), line1.c_str() + 3));
 	writeString(80, 130, Common::String(line2.c_str(), line2.c_str() + 3));
@@ -133,15 +133,15 @@ void MainMenu::draw() {
 	writeString(110, 140, line32);
 	setTextColor(oldColor);
 
-	writeString(0, 165, STRING["dialogs.main_menu.copyright1"], ALIGN_MIDDLE);
-	writeString(0, 175, STRING["dialogs.main_menu.scummvm"], ALIGN_MIDDLE);
+	writeString(0, 165, "Copr. 1986,1987-Jon Van Caneghem", ALIGN_MIDDLE);
+	writeString(0, 175, "Enhanced version provided by ScummVM", ALIGN_MIDDLE);
 }
 
 MainMenu::Choice MainMenu::getChoiceAt(const Common::Point &pos) {
 	const int height = g_globals->_fontNormal.getFontHeight();
-	const Common::String line1 = STRING["dialogs.main_menu.option1"];
-	const Common::String line2 = STRING["dialogs.main_menu.option2"];
-	const Common::String line32 = STRING["dialogs.main_menu.option3e2"];
+	const Common::String line1 = "'C'.......Create New Characters";
+	const Common::String line2 = "'V'.......View All Characters";
+	const Common::String line32 = "Go to Town";
 	const Common::String create = Common::String(line1.c_str() + line1.findLastOf('.') + 1);
 	const Common::String view = Common::String(line2.c_str() + line2.findLastOf('.') + 1);
 

@@ -41,18 +41,18 @@ void Blacksmith::draw() {
 	const Character &c = *g_globals->_currCharacter;
 
 	setReduced(false);
-	writeLine(0, STRING["enhdialogs.location.store"], ALIGN_MIDDLE);
-	writeLine(1, STRING["enhdialogs.location.options_for"], ALIGN_MIDDLE);
+	writeLine(0, "Store", ALIGN_MIDDLE);
+	writeLine(1, "options for", ALIGN_MIDDLE);
 	writeLine(3, c._name, ALIGN_MIDDLE);
 
-	writeLine(6, STRING["enhdialogs.blacksmith.browse"], ALIGN_LEFT, 23);
+	writeLine(6, "\x01""37Browse", ALIGN_LEFT, 23);
 
-	writeLine(10, STRING["enhdialogs.location.gold"]);
+	writeLine(10, "Gold");
 	writeLine(10, Common::String::format("%d",
 		g_globals->_currCharacter->_gold), ALIGN_RIGHT);
 
 	setReduced(true);
-	writeString(27, 122, STRING["enhdialogs.location.esc"]);
+	writeString(27, 122, "Esc");
 }
 
 bool Blacksmith::msgKeypress(const KeypressMessage &msg) {

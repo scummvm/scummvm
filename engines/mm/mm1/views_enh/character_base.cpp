@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_base.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/utils/strings.h"
 #include "mm/mm1/globals.h"
 
@@ -40,45 +41,45 @@ void CharacterBase::printStats() {
 	const Character &c = *g_globals->_currCharacter;
 	printSummary();
 
-	writeLine(4, STRING["stats.attributes.int"], ALIGN_RIGHT, COL1_X);
+	writeLine(4, "Int=", ALIGN_RIGHT, COL1_X);
 	writeLine(4, Common::String::format("%u", c._intelligence._base), ALIGN_LEFT, COL1_X);
-	writeLine(5, STRING["stats.attributes.mgt"], ALIGN_RIGHT, COL1_X);
+	writeLine(5, "Mgt=", ALIGN_RIGHT, COL1_X);
 	writeLine(5, Common::String::format("%u", c._might._base), ALIGN_LEFT, COL1_X);
-	writeLine(6, STRING["stats.attributes.per"], ALIGN_RIGHT, COL1_X);
+	writeLine(6, "Per=", ALIGN_RIGHT, COL1_X);
 	writeLine(6, Common::String::format("%u", c._personality._base), ALIGN_LEFT, COL1_X);
-	writeLine(7, STRING["stats.attributes.end"], ALIGN_RIGHT, COL1_X);
+	writeLine(7, "End=", ALIGN_RIGHT, COL1_X);
 	writeLine(7, Common::String::format("%u", c._endurance._base), ALIGN_LEFT, COL1_X);
-	writeLine(8, STRING["stats.attributes.spd"], ALIGN_RIGHT, COL1_X);
+	writeLine(8, "Spd=", ALIGN_RIGHT, COL1_X);
 	writeLine(8, Common::String::format("%u", c._speed._base), ALIGN_LEFT, COL1_X);
-	writeLine(9, STRING["stats.attributes.acy"], ALIGN_RIGHT, COL1_X);
+	writeLine(9, "Acy=", ALIGN_RIGHT, COL1_X);
 	writeLine(9, Common::String::format("%u", c._accuracy._base), ALIGN_LEFT, COL1_X);
-	writeLine(10, STRING["stats.attributes.luc"], ALIGN_RIGHT, COL1_X);
+	writeLine(10, "Luc=", ALIGN_RIGHT, COL1_X);
 	writeLine(10, Common::String::format("%u", c._luck._base), ALIGN_LEFT, COL1_X);
 
-	writeLine(4, STRING["stats.attributes.level"], ALIGN_RIGHT, 90);
+	writeLine(4, "Level=", ALIGN_RIGHT, 90);
 	writeNumber(c._level);
-	writeLine(4, STRING["stats.attributes.age"], ALIGN_LEFT, 120);
+	writeLine(4, "Age=", ALIGN_LEFT, 120);
 	writeNumber(c._age);
 
-	writeLine(6, STRING["stats.attributes.sp"], ALIGN_RIGHT, 90);
+	writeLine(6, "SP=", ALIGN_RIGHT, 90);
 	writeLine(6, Common::String::format("%u", c._sp._current), ALIGN_LEFT, 90);
 	writeLine(6, Common::String::format("/%u", c._sp._base), ALIGN_LEFT, 120);
 	writeLine(6, Common::String::format("(%u)", c._spellLevel._current), ALIGN_LEFT, 160);
 
-	writeLine(8, STRING["stats.attributes.hp"], ALIGN_RIGHT, 90);
+	writeLine(8, "HP=", ALIGN_RIGHT, 90);
 	writeLine(8, Common::String::format("%u", c._hpCurrent), ALIGN_LEFT, 90);
 	writeLine(8, Common::String::format("/%u", c._hpMax), ALIGN_LEFT, 120);
 
-	writeLine(10, STRING["stats.attributes.ac"], ALIGN_RIGHT, 90);
+	writeLine(10, "AC=", ALIGN_RIGHT, 90);
 	writeLine(10, Common::String::format("%u", c._ac._current), ALIGN_LEFT, 90);
 
-	writeLine(4, STRING["stats.attributes.exp"], ALIGN_RIGHT, COL3_X);
+	writeLine(4, "Exp=", ALIGN_RIGHT, COL3_X);
 	writeLine(4, Common::String::format("%u", c._exp), ALIGN_LEFT, COL3_X);
-	writeLine(6, STRING["stats.attributes.gems"], ALIGN_RIGHT, COL3_X);
+	writeLine(6, "Gems=", ALIGN_RIGHT, COL3_X);
 	writeLine(6, Common::String::format("%u", c._gems), ALIGN_LEFT, COL3_X);
-	writeLine(8, STRING["stats.attributes.gold"], ALIGN_RIGHT, COL3_X);
+	writeLine(8, "Gold=", ALIGN_RIGHT, COL3_X);
 	writeLine(8, Common::String::format("%u", c._gold), ALIGN_LEFT, COL3_X);
-	writeLine(10, STRING["stats.attributes.food"], ALIGN_RIGHT, COL3_X);
+	writeLine(10, "Food=", ALIGN_RIGHT, COL3_X);
 	writeLine(10, Common::String::format("%u", c._food), ALIGN_LEFT, COL3_X);
 
 	printCondition();
@@ -88,22 +89,22 @@ void CharacterBase::printStats() {
 void CharacterBase::printSummary() {
 	const Character &c = *g_globals->_currCharacter;
 	Common::String suffix = Common::String::format(": %s %s ",
-		STRING[Common::String::format("stats.sex.%d", c._sex)].c_str(),
+		SEX_NAMES[c._sex - 1],
 		((c._alignment >= GOOD && c._alignment <= EVIL) ?
-		STRING[Common::String::format("stats.alignments.%d", c._alignment)] :
-		STRING["stats.none"]).c_str()
+		ALIGNMENT_NAMES[c._alignment - 1] :
+		"None")
 	);
 
 	if (c._race >= HUMAN && c._race <= HALF_ORC)
-		suffix += STRING[Common::String::format("stats.races.%d", c._race)];
+		suffix += RACE_NAMES[c._race - 1];
 	else
-		suffix += STRING["stats.none"];
+		suffix += "None";
 	suffix += ' ';
 
 	if (c._class >= KNIGHT && c._class <= ROBBER)
-		suffix += STRING[Common::String::format("stats.classes.%d", c._class)];
+		suffix += CLASS_NAMES[c._class - 1];
 	else
-		suffix += STRING["stats.none"];
+		suffix += "None";
 
 	writeString(35, LINE1_Y, truncateString(c._name,
 		_innerBounds.width() - 35 - (int)getStringWidth(suffix)));
@@ -113,13 +114,13 @@ void CharacterBase::printSummary() {
 void CharacterBase::printCondition() {
 	const Character &c = *g_globals->_currCharacter;
 
-	writeLine(2, STRING["stats.attributes.cond"], ALIGN_RIGHT, 90);
+	writeLine(2, "Cond=", ALIGN_RIGHT, 90);
 	writeLine(2, c.getConditionString(), ALIGN_LEFT, 90);
 }
 
 void CharacterBase::printInventory() {
 	const Character &c = *g_globals->_currCharacter;
-	writeString(0, BACKPACK_Y, STRING["stats.inventory"]);
+	writeString(0, BACKPACK_Y, "-----<Equipped>----------<Backpack>----");
 	for (int i = 0; i < 5; ++i)
 		writeChar('-');
 

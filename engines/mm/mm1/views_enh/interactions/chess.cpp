@@ -29,8 +29,10 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Chess::Chess() : InteractionQuery("Chess", 23, 13) {
-	_title = STRING["maps.emap29.og_title"];
-	addText(STRING["maps.map29.og"]);
+	_title = "Og";
+	addText("Painted on these grounds is a black &\n"
+		"white checkered motif covered with idols similar to the ones you carry. A large being "
+		"approaches... Og speaks, \"Queen to queens level 3\"");
 }
 
 void Chess::answerEntered() {

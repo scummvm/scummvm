@@ -43,7 +43,7 @@ bool Exchange::msgFocus(const FocusMessage &msg) {
 void Exchange::draw() {
 	PartyView::draw();
 
-	writeString(10, 5, STRING["enhdialogs.exchange"]);
+	writeString(10, 5, "Exhange with whom?");
 }
 
 bool Exchange::msgAction(const ActionMessage &msg) {

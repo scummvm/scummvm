@@ -45,18 +45,18 @@ void Teleport::draw() {
 	ScrollView::draw();
 
 	setReduced(true);
-	writeString(20, 30, STRING["enhdialogs.misc.go_back"]);
+	writeString(20, 30, "Go back");
 
-	writeLine(0, STRING["dialogs.spells.teleport_dir"], ALIGN_RIGHT, TEXT_X);
+	writeLine(0, "Direction (N,E,S,W): ", ALIGN_RIGHT, TEXT_X);
 	writeChar((_mode == SELECT_DIRECTION) ? '_' : _direction);
 
 	if (_mode == SELECT_SQUARES || _mode == CAST) {
-		writeLine(1, STRING["dialogs.spells.teleport_squares"], ALIGN_RIGHT, TEXT_X);
+		writeLine(1, "# of squares (0-9): ", ALIGN_RIGHT, TEXT_X);
 		writeChar((_mode == SELECT_SQUARES) ? '_' : '0' + _squares);
 	}
 
 	if (_mode == CAST)
-		writeString(0, 30, STRING["spells.enter_to_cast"], ALIGN_RIGHT);
+		writeString(0, 30, "'Enter' to cast", ALIGN_RIGHT);
 
 	setReduced(false);
 }
@@ -106,7 +106,7 @@ void Teleport::teleport() {
 
 	g_events->replaceView("Game", true);
 	if (map[Maps::MAP_FLAGS] & 2) {
-		g_events->send(SoundMessage(STRING["spells.failed"]));
+		g_events->send(SoundMessage("Spell failed"));
 
 	} else {
 		switch (_direction) {

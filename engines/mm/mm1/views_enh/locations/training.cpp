@@ -50,30 +50,30 @@ void Training::draw() {
 	const Character &c = *g_globals->_currCharacter;
 
 	setReduced(false);
-	writeLine(0, STRING["enhdialogs.training.title"], ALIGN_MIDDLE);
-	writeLine(1, STRING["enhdialogs.location.options"], ALIGN_MIDDLE);
+	writeLine(0, "Training", ALIGN_MIDDLE);
+	writeLine(1, "options", ALIGN_MIDDLE);
 
 	if (_currLevel >= MAX_LEVEL) {
 		writeLine(3, c._name, ALIGN_MIDDLE);
-		writeLine(5, STRING["dialogs.training.no_way"], ALIGN_MIDDLE);
+		writeLine(5, "No way!", ALIGN_MIDDLE);
 
 	} else if (_remainingExp > 0) {
 		writeLine(3, Common::String::format(
-			STRING["enhdialogs.training.needs"].c_str(),
+			"%s\nneeds %d experience for level %d.",
 			c._name, _remainingExp, _currLevel + 1), ALIGN_MIDDLE);
 
 	} else {
 		writeLine(3, Common::String::format(
-			STRING["enhdialogs.training.eligible"].c_str(),
+			"%s\nis eligible for level %d.",
 			c._name, _currLevel + 1), ALIGN_MIDDLE);
 	}
 
-	writeLine(10, STRING["enhdialogs.location.gold"]);
+	writeLine(10, "Gold");
 	writeLine(10, Common::String::format("%d", c._gold), ALIGN_RIGHT);
 
 	setReduced(true);
-	writeString(5, 122, STRING["enhdialogs.training.train"]);
-	writeString(43, 122, STRING["enhdialogs.training.esc"]);
+	writeString(5, 122, "\x01""37Train");
+	writeString(43, 122, "ESC");
 }
 
 bool Training::msgGame(const GameMessage &msg) {
@@ -163,7 +163,7 @@ void Training::train() {
 	if (c._condition) {
 		// Having a condition prevents characters from training
 		Sound::sound(SOUND_3);
-		displayMessage(STRING["dialogs.training.condition"]);
+		displayMessage("*** Check condition ***");
 
 	} else if (!_canAfford) {
 		// Can't afford training
@@ -175,16 +175,15 @@ void Training::train() {
 		Character::LevelIncrease lvl = c.increaseLevel();
 		Sound::sound(SOUND_2);
 
-		Common::String msg = Common::String::format("%s%d",
-			STRING["dialogs.training.congrats"].c_str(),
+		Common::String msg = Common::String::format("Congratulations! you are now level %d",
 			c._level._base);
 
-		msg = Common::String::format(STRING["dialogs.training.hp"].c_str(),
+		msg = Common::String::format("You gained %d hit points",
 			lvl._numHP);
 
 		if (lvl._numSpells != 0) {
 			msg += ". ";
-			msg += STRING["dialogs.training.new_spells"];
+			msg += "You gained new spells!";
 		}
 
 		displayMessage(msg);

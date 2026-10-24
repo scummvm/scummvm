@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/locations/inn.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
@@ -83,15 +84,14 @@ void Inn::draw() {
 
 	// Write title
 	Common::String title = Common::String::format(
-		STRING["dialogs.inn.title"].c_str(),
+		"(%c) Inn of ",
 		'0' + g_globals->_startingTown);
-	title += STRING[Common::String::format(
-		"stats.towns.%d", g_globals->_startingTown)];
+	title += TOWN_NAMES[g_globals->_startingTown - 1];
 	setReduced(false);
 	writeString(0, 0, title, ALIGN_MIDDLE);
 
 	if (_charNums.empty()) {
-		writeString(0, 40, STRING["dialogs.misc.no_characters"], ALIGN_MIDDLE);
+		writeString(0, 40, "No available characters", ALIGN_MIDDLE);
 
 	} else {
 		// Write out the roster
@@ -122,17 +122,17 @@ void Inn::draw() {
 
 		setReduced(false);
 		if (_partyChars.size() == 6)
-			writeString(0, 130, STRING["dialogs.inn.full"], ALIGN_MIDDLE);
+			writeString(0, 130, "*** Party is full ***", ALIGN_MIDDLE);
 
-		writeString(0, 142, STRING["enhdialogs.inn.left_click"], ALIGN_MIDDLE);
-		writeString(0, 152, STRING["enhdialogs.inn.right_click"], ALIGN_MIDDLE);
+		writeString(0, 142, "Left click potraits to add/remove", ALIGN_MIDDLE);
+		writeString(0, 152, "Right click to view", ALIGN_MIDDLE);
 	}
 
 	if (!_partyChars.empty()) {
-		writeString(100, 168, STRING["enhdialogs.inn.exit"]);
-		writeString(170, 168, STRING["enhdialogs.misc.go_back"]);
+		writeString(100, 168, "Exit Inn");
+		writeString(170, 168, "Go back");
 	} else {
-		writeString(134, 168, STRING["enhdialogs.misc.go_back"]);
+		writeString(134, 168, "Go back");
 	}
 }
 

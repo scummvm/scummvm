@@ -30,7 +30,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 DogStatue::DogStatue() : Interaction("DogStatue") {
-	_title = STRING["maps.emap42.title"];
+	_title = "Dog Statue";
 }
 
 bool DogStatue::msgFocus(const FocusMessage &msg) {
@@ -62,17 +62,18 @@ bool DogStatue::msgFocus(const FocusMessage &msg) {
 
 	if (_completedQuests) {
 		addText(Common::String::format("%s%s",
-			STRING["maps.map42.statue1"].c_str(),
-			STRING["maps.map42.statue2"].c_str()
+			"Standing atop a pedestal in the center of the room is a statue of a small sable and white "
+				"dog. ",
+			"It comes to life and speaks,\"Congratulations, you've completed a major quest (+10000 "
+				"exp) Remember B.J.!\""
 		));
 	} else {
-		addText(Common::String::format("%s%s",
-			STRING["maps.map42.statue1"].c_str(),
-			STRING["maps.map42.statue3"].c_str()
-		));
+		addText(Common::String::format("%sDesecrate it (Y/N)?",
+			"Standing atop a pedestal in the center of the room is a statue of a small sable and white "
+				"dog. "));
 
-		addButton(STRING["maps.yes"], 'Y');
-		addButton(STRING["maps.no"], 'N');
+		addButton("\x01""37Yes", 'Y');
+		addButton("\x01""37No", 'N');
 	}
 
 	return TextView::msgFocus(msg);

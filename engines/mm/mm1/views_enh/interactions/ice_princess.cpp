@@ -29,8 +29,9 @@ namespace ViewsEnh {
 namespace Interactions {
 
 IcePrincess::IcePrincess() : InteractionQuery("IcePrincess", 10, 19) {
-	_title = STRING["maps.emap19.title"];
-	addText(STRING["maps.emap19.ice_princess"]);
+	_title = "Ice Princess";
+	addText("On a throne adorned with precious gems the ice princess speaks, \"Conqueror of worlds, "
+		"maker of dreams The greatest force of all, yet elusive it seems.\"");
 }
 
 void IcePrincess::answerEntered() {

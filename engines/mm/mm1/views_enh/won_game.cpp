@@ -33,8 +33,12 @@ WonGame::WonGame() : ScrollView("WonGame") {
 
 void WonGame::draw() {
 	ScrollView::draw();
-	writeLine(0, STRING["maps.map18.gates"], ALIGN_MIDDLE);
-	writeLine(2, STRING["maps.map18.congratulations"], ALIGN_MIDDLE);
+	writeLine(0, "The Gates to Another World! ", ALIGN_MIDDLE);
+	writeLine(2, "Congratulations distinguished \n"
+		"travelers! The gates are now\n"
+		"open to you. In order to pass\n"
+		"through you must first find\n"
+		"Might and Magic Book Two !!!", ALIGN_MIDDLE);
 	Sound::sound(SOUND_3);
 }
 

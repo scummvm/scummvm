@@ -30,10 +30,10 @@ namespace Spells {
 Duplication::Duplication() : CharacterInventory("Duplication") {
 	clearButtons();
 
-	addButton(2, STRING["enhdialogs.items.buttons.arms"], Common::KEYCODE_a);
-	addButton(6, STRING["enhdialogs.items.buttons.backpack"], Common::KEYCODE_b);
-	addButton(14, STRING["enhdialogs.items.buttons.copy"], Common::KEYCODE_c);
-	addButton(16, STRING["enhdialogs.misc.exit"], Common::KEYCODE_ESCAPE);
+	addButton(2, "\x01""37Arms", Common::KEYCODE_a);
+	addButton(6, "\x01""37BkPack", Common::KEYCODE_b);
+	addButton(14, "\x01""37Copy", Common::KEYCODE_c);
+	addButton(16, "Exit", Common::KEYCODE_ESCAPE);
 }
 
 bool Duplication::msgKeypress(const KeypressMessage &msg) {
@@ -57,7 +57,7 @@ void Duplication::performAction() {
 	bool result = duplicate(*g_globals->_currCharacter, inv, _selectedItem);
 	close();
 
-	g_events->send(InfoMessage(STRING[result ? "spells.done" : "spells.failed"]));
+	g_events->send(InfoMessage(result ? "Done" : "Spell failed"));
 }
 
 } // namespace Spells

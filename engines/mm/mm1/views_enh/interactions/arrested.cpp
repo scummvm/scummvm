@@ -29,16 +29,16 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Arrested::Arrested() : Interaction("Arrested", 26), Game::Arrested() {
-	_title = STRING["maps.emap04.town_guards"];
+	_title = "Town Guards";
 }
 
 bool Arrested::msgFocus(const FocusMessage &msg) {
-	addText(STRING["maps.emap04.guards"]);
+	addText("Town guards: you're under arrest!");
 	clearButtons();
-	addButton(STRING["maps.emap04.attack"], 'A');
-	addButton(STRING["maps.emap04.bribe"], 'B');
-	addButton(STRING["maps.emap04.run"], 'R');
-	addButton(STRING["maps.emap04.surrender"], 'S');
+	addButton("\x01""37Attack", 'A');
+	addButton("\x01""37Bribe", 'B');
+	addButton("\x01""37Run", 'R');
+	addButton("\x01""37Surrender", 'S');
 
 	return true;
 }
@@ -69,7 +69,7 @@ void Arrested::surrender(int numYears) {
 
 	// Display sentence
 	Common::String str = Common::String::format(
-		STRING["maps.emap04.sentence"].c_str(), numYears);
+		"High court sentence: %d years", numYears);
 
 	SoundMessage msg(str);
 	msg._delaySeconds = 3;

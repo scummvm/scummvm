@@ -30,10 +30,11 @@ namespace ViewsEnh {
 namespace Interactions {
 
 LordArcher::LordArcher() : Interaction("LordArcher", 33) {
-	_title = STRING["maps.emap40.title"];
-	addText(STRING["maps.emap40.archer"]);
-	addButton(STRING["maps.yes"], 'Y');
-	addButton(STRING["maps.no"], 'N');
+	_title = "Lord Archer";
+	addText("\"I am Lord Archer, the Raven. I take from those who have and give to those who have not! "
+		"Submit (Y/N)?\"");
+	addButton("\x01""37Yes", 'Y');
+	addButton("\x01""37No", 'N');
 }
 
 bool LordArcher::msgKeypress(const KeypressMessage &msg) {

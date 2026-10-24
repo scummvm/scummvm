@@ -30,10 +30,10 @@ namespace Spells {
 RechargeItem::RechargeItem() : CharacterInventory("RechargeItem") {
 	clearButtons();
 
-	addButton(2, STRING["enhdialogs.items.buttons.arms"], Common::KEYCODE_a);
-	addButton(6, STRING["enhdialogs.items.buttons.backpack"], Common::KEYCODE_b);
-	addButton(14, STRING["enhdialogs.items.buttons.charge"], Common::KEYCODE_c);
-	addButton(16, STRING["enhdialogs.misc.exit"], Common::KEYCODE_ESCAPE);
+	addButton(2, "\x01""37Arms", Common::KEYCODE_a);
+	addButton(6, "\x01""37BkPack", Common::KEYCODE_b);
+	addButton(14, "\x01""37Charg", Common::KEYCODE_c);
+	addButton(16, "Exit", Common::KEYCODE_ESCAPE);
 }
 
 bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
@@ -57,7 +57,7 @@ void RechargeItem::performAction() {
 	bool result = charge(inv, _selectedItem);
 	close();
 
-	g_events->send(InfoMessage(STRING[result ? "spells.done" : "spells.failed"]));
+	g_events->send(InfoMessage(result ? "Done" : "Spell failed"));
 }
 
 } // namespace Spells

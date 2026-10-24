@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/quick_ref.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/globals.h"
@@ -55,17 +56,17 @@ void QuickRef::draw() {
 	ScrollPopup::draw();
 
 	// Title
-	writeString(0, 0, STRING["enhdialogs.quickref.title"], ALIGN_MIDDLE);
+	writeString(0, 0, "Quick Reference Chart", ALIGN_MIDDLE);
 
 	// Header line
 	writeString(COLUMN_NUM, 20, "#");
-	writeString(COLUMN_NAME, 20, STRING["enhdialogs.quickref.headers.name"]);
-	writeString(COLUMN_CLASS, 20, STRING["enhdialogs.quickref.headers.class"]);
-	writeString(COLUMN_LEVEL, 20, STRING["enhdialogs.quickref.headers.level"], ALIGN_RIGHT);
-	writeString(COLUMN_HP, 20, STRING["enhdialogs.quickref.headers.hp"]);
-	writeString(COLUMN_SP, 20, STRING["enhdialogs.quickref.headers.sp"]);
-	writeString(COLUMN_AC, 20, STRING["enhdialogs.quickref.headers.ac"]);
-	writeString(COLUMN_CONDITION, 20, STRING["enhdialogs.quickref.headers.cond"]);
+	writeString(COLUMN_NAME, 20, "Name");
+	writeString(COLUMN_CLASS, 20, "Cls");
+	writeString(COLUMN_LEVEL, 20, "Lvl", ALIGN_RIGHT);
+	writeString(COLUMN_HP, 20, "H.P.");
+	writeString(COLUMN_SP, 20, "S.P.");
+	writeString(COLUMN_AC, 20, "A.C.");
+	writeString(COLUMN_CONDITION, 20, "Cond");
 
 	// Write out individual character lines
 	for (uint i = 0; i < g_globals->_party.size(); ++i)
@@ -83,8 +84,7 @@ void QuickRef::writeCharacterLine(int charNum) {
 
 	writeString(COLUMN_NAME, yp, truncateString(c._name, COLUMN_CLASS - COLUMN_NAME - 3));
 
-	Common::String classStr = STRING[Common::String::format(
-		"stats.classes.%d", c._class)];
+	Common::String classStr = CLASS_NAMES[c._class - 1];
 	writeString(COLUMN_CLASS, yp, Common::String(
 		classStr.c_str(), classStr.c_str() + 3));
 

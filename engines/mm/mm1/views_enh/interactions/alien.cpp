@@ -30,11 +30,11 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Alien::Alien() : Interaction("Alien", 37) {
-	_title = STRING["maps.emap31.alien_title"];
-	addText(STRING["maps.emap31.alien"]);
-	addButton(STRING["maps.emap31.option_a"], 'A');
-	addButton(STRING["maps.emap31.option_b"], 'B');
-	addButton(STRING["maps.emap31.option_c"], 'C');
+	_title = "Alien";
+	addText("Scattered remains of a metallic craft! An alien grunts, \"Eep op oop!\" Reaction?");
+	addButton("Hostile", 'A');
+	addButton("Neutral", 'B');
+	addButton("Friendly", 'C');
 }
 
 bool Alien::msgKeypress(const KeypressMessage &msg) {

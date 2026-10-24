@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/spells/cast_spell.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/globals.h"
 
@@ -63,36 +64,36 @@ void CastSpell::draw() {
 	_fontReduced = false;
 
 	const Character &c = *g_globals->_currCharacter;
-	writeString(0, 0, STRING["enhdialogs.cast_spell.title"], ALIGN_MIDDLE);
+	writeString(0, 0, "Cast Spell", ALIGN_MIDDLE);
 	writeString(0, 16, c._name, ALIGN_MIDDLE);
-	writeString(0, 40, STRING["enhdialogs.cast_spell.spell_ready"]);
+	writeString(0, 40, "Spell Ready:");
 
 	setTextColor(37);
 
 	int spellNum = c.spellNumber();
-	Common::String spellName = STRING["enhdialogs.cast_spell.none"];
+	Common::String spellName = "None Ready";
 	if (spellNum >= 0 && spellNum < 47) {
-		spellName = STRING[Common::String::format("spells.cleric.%d", spellNum)];
+		spellName = CLERIC_SPELL_NAMES[spellNum];
 
 		// MM1 Cleric 2-5 is Protection From Fire.
 		if (spellNum == 12)
 			spellName = "Protection From Fire";
 	} else if (spellNum >= 47) {
-		spellName = STRING[Common::String::format("spells.wizard.%d", spellNum - 47)];
+		spellName = WIZARD_SPELL_NAMES[spellNum - 47];
 	}
 	writeString(0, 60, spellName, ALIGN_MIDDLE);
 
 	_fontReduced = true;
 	setTextColor(0);
-	writeString(0, 80, STRING["enhdialogs.cast_spell.cost"]);
-	writeString(0, 90, STRING["enhdialogs.cast_spell.cur_sp"]);
+	writeString(0, 80, "Cost");
+	writeString(0, 90, "Cur SP");
 	writeString(0, 80, Common::String::format("%d/%d",
 		_requiredSp, _requiredGems), ALIGN_RIGHT);
 	writeString(0, 90, Common::String::format("%d", c._sp._current), ALIGN_RIGHT);
 
-	writeString(0, 122, STRING["enhdialogs.cast_spell.cast"]);
-	writeString(30, 122, STRING["enhdialogs.cast_spell.new"]);
-	writeString(60, 122, STRING["enhdialogs.cast_spell.esc"]);
+	writeString(0, 122, "\x01""37Cast");
+	writeString(30, 122, "\x01""37New");
+	writeString(60, 122, "ESC");
 
 	_fontReduced = false;
 }
@@ -233,8 +234,8 @@ void CastSpell::castSpell(Character *target) {
 	Character &c = *g_globals->_currCharacter;
 	if (isInCombat()) {
 		Common::String spellName = _spellIndex < 47 ?
-			STRING[Common::String::format("spells.cleric.%d", _spellIndex)] :
-			STRING[Common::String::format("spells.wizard.%d", _spellIndex - 47)];
+			CLERIC_SPELL_NAMES[_spellIndex] :
+			WIZARD_SPELL_NAMES[_spellIndex - 47];
 		if (_spellIndex == 12)
 			spellName = "Protection From Fire";
 		const Common::String logLine = target ?
@@ -249,7 +250,7 @@ void CastSpell::castSpell(Character *target) {
 	c._gems = MAX((int)c._gems - _requiredGems, 0);
 
 	if (!isMagicAllowed()) {
-		showResult(STRING["spells.magic_doesnt_work"]);
+		showResult("Magic doesn't work here");
 
 	} else {
 		// Cast the spell
@@ -257,11 +258,11 @@ void CastSpell::castSpell(Character *target) {
 
 		switch (result) {
 		case Game::SR_FAILED:
-			showResult(STRING["spells.failed"]);
+			showResult("Spell failed");
 			break;
 
 		case Game::SR_SUCCESS_DONE:
-			showResult(STRING["spells.done"]);
+			showResult("Done");
 			break;
 
 		default:

@@ -20,9 +20,11 @@
  */
 
 #include "mm/mm1/views_enh/interactions/inspectron.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/maps/map35.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -30,7 +32,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Inspectron::Inspectron() : Interaction("Inspectron", 18) {
-	_title = STRING["maps.emap35.inspectron_title"];
+	_title = "Lord Inspectron";
 }
 
 bool Inspectron::msgFocus(const FocusMessage &msg) {
@@ -51,9 +53,9 @@ bool Inspectron::msgGame(const GameMessage &msg) {
 	clearButtons();
 
 	if (_mode == CAN_ACCEPT) {
-		addText(STRING["maps.map35.inspectron2"]);
-		addButton(STRING["maps.accept"], 'Y');
-		addButton(STRING["maps.decline"], 'N');
+		addText("\"Your services are needed!\" Accept (Y/N)?");
+		addButton("Accept", 'Y');
+		addButton("Decline", 'N');
 
 	} else {
 		// There's an active quest, so check for completion
@@ -64,7 +66,7 @@ bool Inspectron::msgGame(const GameMessage &msg) {
 		if (questNum >= 8 && questNum <= 14)
 			line = map.checkQuestComplete();
 		else
-			line = STRING["maps.map35.inspectron4"];
+			line = "\"Sorry, but since you are currently quested, i can't engage your services.\"";
 
 		g_maps->_mapPos.y++;
 		map.redrawGame();
@@ -84,10 +86,7 @@ bool Inspectron::msgKeypress(const KeypressMessage &msg) {
 			_mode = ACCEPTED_QUEST;
 
 			clearButtons();
-			addText(STRING[Common::String::format(
-				"maps.map35.quests.%d",
-				g_globals->_party[0]._quest - 8
-			)]);
+			addText(mapText(INSPECTRON_QUESTS[g_globals->_party[0]._quest - 8]));
 
 			redraw();
 			return true;

@@ -45,8 +45,7 @@ void WhichCharacter::draw() {
 	}
 
 	PartyView::draw();
-	writeString(10, 5, STRING[g_events->isInCombat() ?
-		"enhdialogs.misc.exchange" : "enhdialogs.trade.dest"]);
+	writeString(10, 5, g_events->isInCombat() ? "Exchange with whom?" : "Trade to whom?");
 }
 
 bool WhichCharacter::msgAction(const ActionMessage &msg) {

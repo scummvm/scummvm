@@ -29,8 +29,8 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Lion::Lion() : InteractionQuery("Lion", 10) {
-	_title = STRING["maps.emap32.statue_title"];
-	addText(STRING["maps.emap32.statue"]);
+	_title = "Lion Statue";
+	addText("Statue of a lion growls, \"Password?\" ");
 }
 
 void Lion::answerEntered() {

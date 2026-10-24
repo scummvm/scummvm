@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/search.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/views_enh/select_number.h"
 #include "mm/mm1/views_enh/trap.h"
 #include "mm/mm1/views_enh/who_will_try.h"
@@ -47,8 +48,7 @@ bool Search::msgGame(const GameMessage &msg) {
 
 	} else {
 		// Otherwise send an info message to say nothing was found
-		Common::String line = STRING["dialogs.search.search"] +
-			STRING["dialogs.search.nothing"];
+		Common::String line = "Search: nothing";
 		send(InfoMessage(0, 1, line));
 	}
 
@@ -81,18 +81,17 @@ void Search::draw() {
 	switch (_mode) {
 	case INITIAL:
 		Sound::sound(SOUND_2);
-		line = STRING["dialogs.search.search"] +
-			STRING["dialogs.search.you_found"];
+		line = "Search: You found...";
 		writeString(0, 0, line);
 		delaySeconds(2);
 		break;
 
 	case OPTIONS:
-		writeString(0, 0, STRING["dialogs.search.options"]);
-		writeString(80, 0, STRING["dialogs.search.options1"]);
-		writeString(80, 9, STRING["dialogs.search.options2"]);
-		writeString(80, 18, STRING["dialogs.search.options3"]);
-		writeString(96, 32, STRING["enhdialogs.misc.go_back"]);
+		writeString(0, 0, "Options:");
+		writeString(80, 0, "1) Open It");
+		writeString(80, 9, "2) Find/Remove Trap");
+		writeString(80, 18, "3) Detect Magic/Trap");
+		writeString(96, 32, "Go back");
 		break;
 
 	case RESPONSE:
@@ -187,8 +186,7 @@ void Search::timeout() {
 
 		// Show the name of the container type in the game view
 		send("View", HeaderMessage(
-			STRING[Common::String::format("dialogs.search.containers.%d",
-				g_globals->_treasure._container)]
+			SEARCH_CONTAINERS[g_globals->_treasure._container]
 		));
 
 		// Display a graphic for the container type
@@ -285,13 +283,13 @@ void Search::detectMagicTrap2() {
 	if (c._class == PALADIN || c._class == CLERIC) {
 		Sound::sound(SOUND_2);
 		_responseLine = 2;
-		_responseText = STRING["dialogs.search.bad_class"];
+		_responseText = "*** Bad class ***";
 		delaySeconds(4);
 
 	} else if (c._sp == 0) {
 		Sound::sound(SOUND_2);
 		_responseLine = 2;
-		_responseText = STRING["dialogs.search.no_sp"];
+		_responseText = "*** No spell points ***";
 		delaySeconds(4);
 
 	} else {
@@ -303,7 +301,7 @@ void Search::detectMagicTrap2() {
 
 		_responseLine = 1;
 		_responseText = Common::String::format(
-			STRING["dialogs.search.magic_trap"].c_str(),
+			"Magic (%c)  Trap (%c)",
 			magic, trapped);
 		delaySeconds(8);
 	}
@@ -362,7 +360,7 @@ void Search::getTreasure() {
 }
 
 void Search::drawTreasure() {
-	writeLine(0, STRING["dialogs.search.it_opens"], ALIGN_MIDDLE);
+	writeLine(0, "It opens!", ALIGN_MIDDLE);
 
 	// Split up the gold across the party
 	uint32 goldPerPerson = g_globals->_treasure.getGold() /
@@ -379,7 +377,7 @@ void Search::drawTreasure() {
 	}
 	
 	writeLine(2, Common::String::format(
-		STRING["dialogs.search.each_share"].c_str(),
+		"each share is worth %d gold",
 		goldPerPerson));
 	g_globals->_treasure.setGold(0);
 
@@ -394,7 +392,7 @@ void Search::drawTreasure() {
 		Character &c = g_globals->_party[charNum];
 
 		writeLine(_lineNum++, Common::String::format(
-			STRING["dialogs.search.found_gems"].c_str(),
+			"%s found %d gems",
 			c._name,
 			gems));
 		c._gems = MIN((int)c._gems + gems, 0xffff);
@@ -439,7 +437,7 @@ void Search::drawItem() {
 			recipient->_backpack.add(itemId, item->_maxCharges);
 
 			writeLine(_lineNum++, Common::String::format(
-				STRING["dialogs.search.found_item"].c_str(),
+				"%s found %s",
 				recipient->_name,
 				item->_name.c_str()
 			));

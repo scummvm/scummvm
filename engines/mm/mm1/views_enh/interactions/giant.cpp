@@ -31,7 +31,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Giant::Giant() : Interaction("Giant", 8) {
-	_title = STRING["maps.emap30.giant_title"];
+	_title = "Giant";
 	_animated = false;
 }
 

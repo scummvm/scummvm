@@ -30,7 +30,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 VolcanoGod::VolcanoGod() : InteractionQuery("VolcanoGod", 8, 10) {
-	_title = STRING["maps.emap11.volcano_god"];
+	_title = "Volcano God";
 }
 
 bool VolcanoGod::msgFocus(const FocusMessage &msg) {
@@ -73,13 +73,13 @@ void VolcanoGod::setMode(Mode newMode) {
 
 	switch (_mode) {
 	case CHOOSE_OPTION:
-		addText(STRING["maps.emap11.god_text"]);
-		addButton(STRING["maps.emap11.god_a"], 'A');
-		addButton(STRING["maps.emap11.god_b"], 'B');
-		addButton(STRING["maps.emap11.god_c"], 'C');
+		addText("The Volcano God bellows, \"What do you seek here?\"");
+		addButton("Challenge", 'A');
+		addButton("A Riddle", 'B');
+		addButton("A Clue", 'C');
 		break;
 	case ENTER_RESPONSE:
-		addText(STRING["maps.emap11.question"]);
+		addText("Who was brave yet failed?\"");
 		_showEntry = true;
 		break;
 	}

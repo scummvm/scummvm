@@ -98,7 +98,7 @@ void ItemsView::draw() {
 		}
 	}
 	if (_items.size() == 0)
-		writeLine(2, STRING["enhdialogs.misc.no_items"], ALIGN_LEFT, 10);
+		writeLine(2, "Inventory empty", ALIGN_LEFT, 10);
 	setTextColor(0);
 }
 
@@ -155,11 +155,11 @@ void ItemsView::timeout() {
 }
 
 void ItemsView::backpackFull() {
-	displayMessage(STRING["dialogs.misc.backpack_full"]);
+	displayMessage("Backpack is full");
 }
 
 void ItemsView::notEnoughGold() {
-	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
+	displayMessage("Not enough gold");
 }
 
 void ItemsView::displayMessage(const Common::String &msg) {

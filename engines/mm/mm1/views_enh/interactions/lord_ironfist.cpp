@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/interactions/lord_ironfist.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/maps/map43.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -30,7 +31,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 LordIronfist::LordIronfist() : Interaction("LordIronfist", 18) {
-	_title = STRING["maps.emap43.title"];
+	_title = "Lord Ironfist";
 }
 
 bool LordIronfist::msgFocus(const FocusMessage &msg) {
@@ -40,10 +41,7 @@ bool LordIronfist::msgFocus(const FocusMessage &msg) {
 	if (_mode == ACCEPTING) {
 		_mode = ACCEPTED_QUEST;
 
-		addText(STRING[Common::String::format(
-			"maps.map43.quests.%d",
-			g_globals->_party[0]._quest
-		)]);
+		addText(IRONFIST_QUESTS[g_globals->_party[0]._quest - 1]);
 
 	} else {
 		const Character &c = g_globals->_party[0];
@@ -53,13 +51,10 @@ bool LordIronfist::msgFocus(const FocusMessage &msg) {
 		if (_mode == CAN_ACCEPT) {
 			Sound::sound(SOUND_2);
 
-			addText(Common::String::format("%s%s",
-				STRING["maps.map43.ironfist1"].c_str(),
-				STRING["maps.map43.ironfist2"].c_str()
-			));
+			addText("Lord Ironfist speaks: \"Your services are needed!\" Accept (Y/N)?");
 
-			addButton(STRING["maps.accept"], 'Y');
-			addButton(STRING["maps.decline"], 'N');
+			addButton("Accept", 'Y');
+			addButton("Decline", 'N');
 
 		} else {
 			// There's an active quest, so check for completion
@@ -70,12 +65,11 @@ bool LordIronfist::msgFocus(const FocusMessage &msg) {
 			if (questNum < 8)
 				line = map.checkQuestComplete();
 			else
-				line = STRING["maps.map43.ironfist4"];
+				line = "\"Sorry, but since you are currently quested, i can't engage your services.\"";
 
 			g_maps->_mapPos.x++;
 
-			addText(Common::String::format("%s%s",
-				STRING["maps.map43.ironfist1"].c_str(),
+			addText(Common::String::format("Lord Ironfist speaks: %s",
 				line.c_str()
 			));
 		}

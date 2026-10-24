@@ -29,8 +29,9 @@ namespace ViewsEnh {
 namespace Interactions {
 
 ScummVM::ScummVM() : Interaction("ScummVM", 38) {
-	_title = STRING["maps.map55.title"];
-	addText(STRING["maps.map55.message"]);
+	_title = "ScummVM";
+	addText("Well done! I didn't think anyone would ever find this secret map. You deserve a hefty "
+		"reward. +10000 Gold, +1000 Gems each");
 }
 
 void ScummVM::viewAction() {

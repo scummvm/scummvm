@@ -41,10 +41,10 @@ void Characters::draw() {
 
 	// Write title
 	setReduced(false);
-	writeString(0, 0, STRING["dialogs.view_characters.title"], ALIGN_MIDDLE);
+	writeString(0, 0, "View all characters", ALIGN_MIDDLE);
 
 	if (g_globals->_roster.empty()) {
-		writeString(0, 40, STRING["dialogs.misc.no_characters"], ALIGN_MIDDLE);
+		writeString(0, 40, "No available characters", ALIGN_MIDDLE);
 
 	} else {
 		// Write out the roster
@@ -73,10 +73,10 @@ void Characters::draw() {
 		}
 
 		setReduced(false);
-		writeString(0, 152, STRING["enhdialogs.characters.left_click"], ALIGN_MIDDLE);
+		writeString(0, 152, "Left click portraits to view", ALIGN_MIDDLE);
 	}
 
-	writeString(135, 174, STRING["enhdialogs.misc.go_back"]);
+	writeString(135, 174, "Go back");
 }
 
 bool Characters::msgMouseDown(const MouseDownMessage &msg) {

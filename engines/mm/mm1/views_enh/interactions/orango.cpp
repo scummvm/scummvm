@@ -30,8 +30,9 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Orango::Orango() : InteractionQuery("Orango", 15, 13) {
-	_title = STRING["maps.emap48.title"];
-	addText(STRING["maps.emap48.orango1"]);
+	_title = "Strange Alien";
+	addText("A strange alien being in a silver jumpsuit proclaims, \"This is a soul maze and you are "
+		"its prisoner! To escape, you must find your captor's name hidden within these walls.\"");
 }
 
 void Orango::answerEntered() {

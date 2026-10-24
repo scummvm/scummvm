@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/interactions/hacker.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/maps/map36.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -30,7 +31,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Hacker::Hacker() : Interaction("Hacker", 35) {
-	_title = STRING["maps.emap36.hacker_title"];
+	_title = "Lord Hacker";
 }
 
 bool Hacker::msgFocus(const FocusMessage &msg) {
@@ -51,9 +52,9 @@ bool Hacker::msgGame(const GameMessage &msg) {
 	clearButtons();
 
 	if (_mode == CAN_ACCEPT) {
-		addText(STRING["maps.map36.hacker2"]);
-		addButton(STRING["maps.accept"], 'Y');
-		addButton(STRING["maps.decline"], 'N');
+		addText("\"Your services are needed!\" Accept (Y/N)?");
+		addButton("Accept", 'Y');
+		addButton("Decline", 'N');
 
 	} else {
 		// There's an active quest, so check for completion
@@ -64,7 +65,7 @@ bool Hacker::msgGame(const GameMessage &msg) {
 		if (questNum >= 15 && questNum <= 21)
 			line = map.checkQuestComplete();
 		else
-			line = STRING["maps.map36.hacker4"];
+			line = "\"Sorry, you're already quested.\"";
 
 		g_maps->_mapPos.x--;
 		map.redrawGame();
@@ -93,11 +94,8 @@ bool Hacker::msgKeypress(const KeypressMessage &msg) {
 
 			_mode = ACCEPTED_QUEST;
 			clearButtons();
-			Common::String line = Common::String::format("%s %s",
-				STRING["maps.map36.hacker3"].c_str(),
-				STRING[Common::String::format(
-					"maps.map36.ingredients.%d",
-					g_globals->_party[0]._quest - 15)].c_str()
+			Common::String line = Common::String::format("Bring me %s",
+				INGREDIENTS[g_globals->_party[0]._quest - 15]
 			);
 			addText(line);
 

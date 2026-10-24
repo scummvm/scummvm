@@ -27,6 +27,20 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+static const char *const TRAP_TEXT[11] = {
+	"Darts!! a swarm of poisonous darts fill the air!",
+	"Spikes!! Deadly spikes spring forth!",
+	"Arrows!! A sudden onslaught of poisonous arrows permeate the party!",
+	"Blades!! Razor sharp blades slice through the party!",
+	"Boiling oil!! Streams of boiling oil cover the party!",
+	"Gas!! A faint hiss can be heard as noxious fumes fill the air!",
+	"Fireball!! A fiery explosion engulfs the area!",
+	"Lightning bolt!! Electric currents singe the party!",
+	"Acid!! A fine mist of volatile acid sprays the party!",
+	"Ice storm!! Particles of splintered ice hail through the air!",
+	"Death ray!! A blinding light sears through the party!"
+};
+
 Trap::Trap() : ScrollView("Trap") {
 	setBounds(Common::Rect(0, 144, 234, 200));
 }
@@ -50,9 +64,9 @@ void Trap::draw() {
 	ScrollView::draw();
 
 	if (_mode == MODE_TRIGGER) {
-		writeString(0, 0, STRING["dialogs.trap.oops"], ALIGN_MIDDLE);
+		writeString(0, 0, "Oops a trap!", ALIGN_MIDDLE);
 	} else {
-		writeString(0, 0, STRING[Common::String::format("dialogs.trap.%d", _trapType)]);
+		writeString(0, 0, TRAP_TEXT[_trapType]);
 	}
 }
 

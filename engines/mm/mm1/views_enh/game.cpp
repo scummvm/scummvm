@@ -100,7 +100,7 @@ bool Game::msgAction(const ActionMessage &msg) {
 		if (g_maps->_currentMap->mappingAllowed())
 			addView("MapPopup");
 		else
-			send(InfoMessage(STRING["enhdialogs.map.disabled"]));
+			send(InfoMessage("Mapping is currently unavailable here"));
 		return true;
 	case KEYBIND_MENU:
 		g_engine->openMainMenuDialog();

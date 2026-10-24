@@ -29,8 +29,8 @@ namespace ViewsEnh {
 namespace Interactions {
 
 AccessCode::AccessCode() : InteractionQuery("AccessCode", 8) {
-	_title = STRING["maps.emap08.access_code"];
-	addText(STRING["maps.map08.enter_code"]);
+	_title = "Access Code";
+	addText("Covered with flashing lights the wall speaks: \"Please enter access code:\" ");
 }
 
 void AccessCode::answerEntered() {

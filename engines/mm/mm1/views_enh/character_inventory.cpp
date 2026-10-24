@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_inventory.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/views_enh/combat.h"
 #include "mm/mm1/views_enh/game_messages.h"
 #include "mm/mm1/views_enh/trade.h"
@@ -51,14 +52,14 @@ CharacterInventory::CharacterInventory(const Common::String &name) : ItemsView(n
 
 void CharacterInventory::setup() {
 	_btnSprites.load("items.icn");
-	addButton(2, STRING["enhdialogs.items.buttons.arms"], Common::KEYCODE_a);
-	addButton(6, STRING["enhdialogs.items.buttons.backpack"], Common::KEYCODE_b);
-	addButton(8, STRING["enhdialogs.items.buttons.equip"], Common::KEYCODE_e);
-	addButton(10, STRING["enhdialogs.items.buttons.remove"], Common::KEYCODE_r);
-	addButton(12, STRING["enhdialogs.items.buttons.discard"], Common::KEYCODE_d);
-	addButton(6, STRING["enhdialogs.items.buttons.trade"], Common::KEYCODE_t);
-	addButton(14, STRING["enhdialogs.items.buttons.use"], Common::KEYCODE_u);
-	addButton(16, STRING["enhdialogs.misc.exit"], Common::KEYCODE_ESCAPE);
+	addButton(2, "\x01""37Arms", Common::KEYCODE_a);
+	addButton(6, "\x01""37BkPack", Common::KEYCODE_b);
+	addButton(8, "\x01""37Equip", Common::KEYCODE_e);
+	addButton(10, "\x01""37Rem", Common::KEYCODE_r);
+	addButton(12, "\x01""37Disc", Common::KEYCODE_d);
+	addButton(6, "\x01""37Trade", Common::KEYCODE_t);
+	addButton(14, "\x01""37Use", Common::KEYCODE_u);
+	addButton(16, "Exit", Common::KEYCODE_ESCAPE);
 }
 
 bool CharacterInventory::msgFocus(const FocusMessage &msg) {
@@ -164,13 +165,11 @@ void CharacterInventory::gatherShare(GatherShareButton action) {
 
 void CharacterInventory::drawTitle() {
 	const Character &c = *g_globals->_currCharacter;
-	const Common::String fmt = STRING[(_mode == ARMS_MODE) ?
-		"enhdialogs.items.arms_for" :
-		"enhdialogs.items.backpack_for"];
+	const Common::String fmt = ((_mode == ARMS_MODE) ? "Equipment for %s the %s" : "Backpack for %s the %s");
 
 	const Common::String title = Common::String::format(fmt.c_str(),
 		c._name,
-		STRING[Common::String::format("stats.classes.%d", c._class)].c_str()
+		CLASS_NAMES[c._class - 1]
 	);
 
 	setReduced(false);
@@ -324,19 +323,18 @@ void CharacterInventory::selectButton(SelectedButton btnMode) {
 		performAction();
 
 	} else {
-		Common::String btn = STRING["enhdialogs.items.equip"];
+		Common::String btn = "Equip";
 		if (btnMode == BTN_REMOVE)
-			btn = STRING["enhdialogs.items.remove"];
+			btn = "Remove";
 		else if (btnMode == BTN_DISCARD)
-			btn = STRING["enhdialogs.items.discard"];
+			btn = "Discard";
 		else if (btnMode == BTN_USE)
-			btn = STRING["enhdialogs.items.use"];
+			btn = "Use";
 		else if (btnMode == BTN_CHARGE)
-			btn = STRING["enhdialogs.items.charge"];
+			btn = "Charge";
 
 		send("WhichItem", GameMessage("DISPLAY",
-			Common::String::format("%s %s", btn.c_str(),
-				STRING["enhdialogs.items.which_item"].c_str())
+			Common::String::format("%s which item?", btn.c_str())
 		));
 	}
 }

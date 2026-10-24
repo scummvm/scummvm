@@ -61,16 +61,16 @@ void MapPopup::draw() {
 	Common::String dir;
 	switch (g_maps->_forwardMask) {
 	case Maps::DIRMASK_N:
-		dir = STRING["enhdialogs.map.north"];
+		dir = "North";
 		break;
 	case Maps::DIRMASK_S:
-		dir = STRING["enhdialogs.map.south"];
+		dir = "South";
 		break;
 	case Maps::DIRMASK_E:
-		dir = STRING["enhdialogs.map.east"];
+		dir = "East";
 		break;
 	case Maps::DIRMASK_W:
-		dir = STRING["enhdialogs.map.west"];
+		dir = "West";
 		break;
 	default:
 		break;

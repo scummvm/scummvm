@@ -35,7 +35,7 @@ void CharacterSelect::draw() {
 	ScrollView::draw();
 
 	_fontReduced = true;
-	writeString(0, 0, STRING["enhdialogs.character_select.title"]);
+	writeString(0, 0, "Select target");
 }
 
 bool CharacterSelect::msgAction(const ActionMessage &msg) {

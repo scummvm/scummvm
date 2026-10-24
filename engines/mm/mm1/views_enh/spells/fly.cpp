@@ -49,13 +49,13 @@ void Fly::draw() {
 	ScrollView::draw();
 
 	setReduced(true);
-	writeString(20, 30, STRING["enhdialogs.misc.go_back"]);
+	writeString(20, 30, "Go back");
 
-	writeLine(0, STRING["dialogs.spells.fly_to_x"], ALIGN_RIGHT, TEXT_X);
+	writeLine(0, "Fly to (A-E): ", ALIGN_RIGHT, TEXT_X);
 	writeChar((_mode == SELECT_X) ? '_' : 'A' + _xIndex);
 
 	if (_mode == SELECT_Y || _mode == CAST) {
-		writeLine(1, STRING["dialogs.spells.fly_to_y"], ALIGN_RIGHT, TEXT_X);
+		writeLine(1, "(1-4): ", ALIGN_RIGHT, TEXT_X);
 		writeChar((_mode == SELECT_Y) ? '_' : '1' + _yIndex);
 	}
 

@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/interactions/statue.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 
 
@@ -29,7 +30,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Statue::Statue() : Interaction("Statue", 33) {
-	_title = STRING["dialogs.statues.statue"];
+	_title = "Statue";
 	_animated = false;
 }
 
@@ -45,13 +46,9 @@ bool Statue::msgGame(const GameMessage &msg) {
 }
 
 bool Statue::msgFocus(const FocusMessage &msg) {
-	Common::String statueType = STRING[Common::String::format(
-		"dialogs.statues.names.%d", _statueNum)];
-	Common::String str = Common::String::format("%s%s. %s",
-		STRING["dialogs.statues.stone"].c_str(),
-		statueType.c_str(),
-		STRING["dialogs.statues.plaque"].c_str()
-	);
+	Common::String statueType = STATUE_NAMES[_statueNum];
+	Common::String str = Common::String::format("On this stone statue of %s. A plaque reads...",
+		statueType.c_str());
 
 	addText(str);
 	return true;
@@ -60,8 +57,7 @@ bool Statue::msgFocus(const FocusMessage &msg) {
 void Statue::viewAction() {
 	switch (++_pageNum) {
 	case 1:
-		addText(STRING[Common::String::format(
-			"dialogs.statues.messages.%d", _statueNum)]);
+		addText(STATUE_MESSAGES[_statueNum]);
 		redraw();
 		break;
 	default:

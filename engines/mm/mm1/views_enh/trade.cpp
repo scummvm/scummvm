@@ -66,7 +66,7 @@ void Trade::draw() {
 		drawOptions();
 		break;
 	default:
-		writeString(0, 5, STRING["enhdialogs.trade.how_much"]);
+		writeString(0, 5, "How much:");
 		break;
 	}
 }
@@ -102,7 +102,8 @@ bool Trade::msgKeypress(const KeypressMessage &msg) {
 		case Common::KEYCODE_i:
 			if (!_shareMode) {
 				close();
-				send(InfoMessage(STRING["enhdialogs.trade.items_help"]));
+				send(InfoMessage("To trade items, select an item from the inventory, and then select the portrait of the "
+					"character to trade to"));
 			}
 			break;
 		default:
@@ -160,14 +161,14 @@ void Trade::setMode(TradeMode mode) {
 }
 
 void Trade::drawOptions() {
-	writeString(0, 5, _shareMode ? STRING["dialogs.character.share_all"] :
-		STRING["enhdialogs.trade.which"]);
-	writeString(28, 25, STRING["enhdialogs.misc.exit"]);
-	writeString(108, 5, STRING["enhdialogs.trade.gold"]);
-	writeString(186, 5, STRING["enhdialogs.trade.gems"]);
-	writeString(108, 25, STRING["enhdialogs.trade.food"]);
+	writeString(0, 5, _shareMode ? "share all:" :
+		"Trade which:");
+	writeString(28, 25, "Exit");
+	writeString(108, 5, "\x01""37Gold");
+	writeString(186, 5, "Ge\x01""37ms");
+	writeString(108, 25, "\x01""37Food");
 	if (!_shareMode)
-		writeString(186, 25, STRING["enhdialogs.trade.items"]);
+		writeString(186, 25, "\x01""37Items");
 }
 
 void Trade::amountEntered(uint amount) {

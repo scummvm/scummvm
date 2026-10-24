@@ -30,16 +30,17 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Ghost::Ghost() : Interaction("Ghost", 33) {
-	_title = STRING["maps.emap37.okrim"];
+	_title = "Okrim";
 }
 
 bool Ghost::msgFocus(const FocusMessage &msg) {
 	Interaction::msgFocus(msg);
-	addText(STRING["maps.map37.okrim1"]);
+	addText("A ghostlike figure rises from the body of Okrim and speaks, \"In exchange for my ring, "
+		"forfeit a life. Accept (Y/N)?\"");
 
 	clearButtons();
-	addButton(STRING["maps.accept"], 'Y');
-	addButton(STRING["maps.decline"], 'N');
+	addButton("Accept", 'Y');
+	addButton("Decline", 'N');
 
 	return true;
 }
@@ -69,7 +70,7 @@ bool Ghost::msgKeypress(const KeypressMessage &msg) {
 		// Preserve Enhanced's acknowledgement text, but stage the same
 		// Ring reward that Classic places in treasure immediately.
 		g_globals->_treasure._items[2] = RING_OF_OKRIM_ID;
-		addText(STRING["maps.map37.okrim2"]);
+		addText("\"May the shadow of death greet you with open arms!\"");
 		clearButtons();
 		return true;
 	}

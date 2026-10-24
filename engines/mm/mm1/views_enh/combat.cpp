@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/combat.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/views/character_view_combat.h"
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/globals.h"
@@ -184,13 +185,12 @@ void Combat::draw() {
 		return;
 	case MONSTER_ADVANCES:
 		writeBottomText(0, 0, _monsterName);
-		writeString(STRING["dialogs.combat.advances"]);
+		writeString(" advances!");
 		writeRound();
 		writeMonsters();
 		if (beginCombatLogEvent())
-			addCombatLog(Common::String::format("%s %s",
-				_monsterName.c_str(),
-				STRING["dialogs.combat.advances"].c_str()));
+			addCombatLog(Common::String::format("%s  advances!",
+				_monsterName.c_str()));
 		delayFrames(combatMessageDelayFrames());
 		return;
 	case MONSTERS_AFFECTED:
@@ -612,7 +612,7 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 
 void Combat::writeOptions() {
 	if (_option != OPTION_NONE)
-		writeString(40, 170, STRING["enhdialogs.misc.go_back"]);
+		writeString(40, 170, "Go back");
 
 	switch (_option) {
 	case OPTION_NONE:
@@ -640,7 +640,7 @@ void Combat::writeOptions() {
 
 void Combat::writeAllOptions() {
 	const Character &c = *g_globals->_currCharacter;
-	writeBottomText(0, 0, STRING["dialogs.combat.options_for"]);
+	writeBottomText(0, 0, "Options for: ");
 	writeBottomText(0, 2, c._name);
 
 	// Highlight the currently active character
@@ -668,11 +668,11 @@ void Combat::writeAllOptions() {
 		_allowCast = true;
 	}
 
-	writeOption(0, 2, 'R', STRING["enhdialogs.combat.retreat"]);
+	writeOption(0, 2, 'R', "\x01""37Retreat");
 
-	writeOption(1, 0, 'E', STRING["enhdialogs.combat.exchange"]);
-	writeOption(1, 1, 'U', STRING["enhdialogs.combat.use"]);
-	writeOption(1, 2, 'B', STRING["enhdialogs.combat.block"]);
+	writeOption(1, 0, 'E', "\x01""37Exchange");
+	writeOption(1, 1, 'U', "\x01""37Use");
+	writeOption(1, 2, 'B', "\x01""37Block");
 
 	writeOption(2, 2, 'L', "\x01""37Log");
 }
@@ -789,9 +789,9 @@ bool Combat::beginCombatLogEvent() {
 
 
 void Combat::writeDelaySelect() {
-	writeBottomText(0, 0, STRING["dialogs.combat.set_delay"]);
+	writeBottomText(0, 0, "Set delay (0-9):");
 	writeBottomText(40, 3, Common::String::format(
-		STRING["dialogs.combat.delay_currently"].c_str(),
+		"(currently= %d)",
 		g_globals->_delay));
 }
 
@@ -806,7 +806,7 @@ void Combat::writeFightSelect() {
 	_attackableCount = MIN(_attackersCount, (int)_remainingMonsters.size());
 
 	writeBottomText(0, 1, Common::String::format(
-		STRING["dialogs.combat.fight_which"].c_str(), 'A' + _attackableCount - 1),
+		"Fight which 'A'-'%c'?", 'A' + _attackableCount - 1),
 		ALIGN_MIDDLE);
 }
 
@@ -814,7 +814,7 @@ void Combat::writeShootSelect() {
 	_attackableCount = MIN(_attackersCount, (int)_remainingMonsters.size());
 
 	writeBottomText(0, 1, Common::String::format(
-		STRING["dialogs.combat.shoot_which"].c_str(), 'A' + _attackableCount - 1),
+		"Shoot which 'A'-'%c'?", 'A' + _attackableCount - 1),
 		ALIGN_MIDDLE);
 }
 
@@ -828,16 +828,16 @@ void Combat::writeSpellTargetSelect() {
 
 
 void Combat::writeAttackOptions() {
-	writeOption(0, 0, 'A', STRING["dialogs.combat.attack"]);
-	writeOption(0, 1, 'F', STRING["dialogs.combat.fight"]);
+	writeOption(0, 0, 'A', "\x01""37Attack(A)");
+	writeOption(0, 1, 'F', "\x01""37Fight(+)");
 }
 
 void Combat::writeCastOption() {
-	writeOption(2, 1, 'C', STRING["dialogs.combat.cast"]);
+	writeOption(2, 1, 'C', "\x01""37Cast");
 }
 
 void Combat::writeShootOption() {
-	writeOption(2, 0, 'S', STRING["dialogs.combat.shoot"]);
+	writeOption(2, 0, 'S', "\x01""37Shoot");
 }
 
 void Combat::clearSurface() {
@@ -913,15 +913,15 @@ void Combat::writeOption(uint col, uint row, char c, const Common::String &msg) 
 
 void Combat::writeStaticContent() {
 	setReduced(false);
-	writeString(0, 0, STRING["dialogs.combat.combat"]);
-	writeString(0, 7 * LINE_H, STRING["dialogs.combat.delay"]);
-	writeString(0, 8 * LINE_H, STRING["dialogs.combat.protect"]);
-	writeString(0, 9 * LINE_H, STRING["dialogs.combat.quickref"]);
-	writeString(0, 10 * LINE_H, STRING["dialogs.combat.view_char"]);
+	writeString(0, 0, "Combat");
+	writeString(0, 7 * LINE_H, "D Delay");
+	writeString(0, 8 * LINE_H, "P Protect");
+	writeString(0, 9 * LINE_H, "Q QuickRef");
+	writeString(0, 10 * LINE_H, "# View Ch");
 }
 
 void Combat::writeHandicap() {
-	writeString(0, 12 * LINE_H, STRING["dialogs.combat.handicap"]);
+	writeString(0, 12 * LINE_H, "Handicap");
 
 	clearArea(Common::Rect(0, 13 * LINE_H, 100, 14 * LINE_H));
 
@@ -929,22 +929,21 @@ void Combat::writeHandicap() {
 
 	switch (_handicap) {
 	case HANDICAP_EVEN:
-		writeString(STRING["dialogs.combat.even"]);
+		writeString("Even");
 		break;
 	case HANDICAP_PARTY:
-		writeString(STRING["dialogs.combat.party_plus"]);
+		writeString("Party +");
 		writeNumber(_handicapDelta);
 		break;
 	case HANDICAP_MONSTER:
-		writeString(STRING["dialogs.combat.monster_plus"]);
+		writeString("Monster +");
 		writeNumber(_handicapDelta);
 		break;
 	}
 }
 
 void Combat::writeRound() {
-	writeString(0, LINE_H, Common::String::format("%s%d",
-		STRING["dialogs.combat.round"].c_str(), _roundNum));
+	writeString(0, LINE_H, Common::String::format("Round #%d", _roundNum));
 }
 
 void Combat::writePartyNumbers() {
@@ -993,11 +992,10 @@ void Combat::writeMonsterStatus(int monsterNum) {
 			}
 		}
 
-		writeString(STRING[Common::String::format("dialogs.combat.status.%d",
-			status)]);
+		writeString(COMBAT_STATUS[status]);
 	} else if (_monsterP->_hp != _monsterP->_defaultHP) {
 		writeDots();
-		writeString(STRING["dialogs.combat.status.wounded"]);
+		writeString("(wounded) ");
 	}
 
 	_monsterP = currMonster;
@@ -1032,12 +1030,12 @@ void Combat::clearPartyArea() {
 
 void Combat::writeDefeat() {
 	const Common::Rect oldBounds = _bounds;
-	Common::String line1 = STRING["dialogs.combat.defeating1"];
-	Common::String line2 = STRING["dialogs.combat.defeating2"];
+	Common::String line1 = "! For defeating the monsters !";
+	Common::String line2 = "!   each survivor receives   !";
 	line1 = Common::String(line1.c_str() + 1, line1.c_str() + line1.size() - 2);
 	line2 = Common::String(line2.c_str() + 1, line2.c_str() + line2.size() - 2);
-	Common::String line3 = Common::String::format("%d %s",
-		_totalExperience, STRING["dialogs.combat.xp"].c_str());
+	Common::String line3 = Common::String::format("%d experience points.",
+		_totalExperience);
 
 	setBounds(Common::Rect(50, 40, 270, 100));
 	ScrollView::draw();
@@ -1055,8 +1053,7 @@ void Combat::writeDefeat() {
 }
 
 void Combat::highlightNextRound() {
-	Common::String s = Common::String::format("%s%d",
-		STRING["dialogs.combat.round"].c_str(),
+	Common::String s = Common::String::format("Round #%d",
 		_roundNum);
 
 	for (uint i = 0; i < s.size(); ++i)
@@ -1072,11 +1069,11 @@ void Combat::writeMonsterEffects() {
 	int line = 0;
 	if (_monstersRegenerate)
 		writeBottomText(0, line++,
-			STRING["dialogs.combat.regenerate"]);
+			"some monsters regenerate!");
 
 	if (_monstersResistSpells)
 		writeBottomText(0, line,
-			STRING["dialogs.combat.overcome"]);
+			"some monsters overcome spells!");
 
 	writeMonsters();
 
@@ -1093,10 +1090,7 @@ void Combat::writeMonsterAction(bool flees) {
 
 	const Common::String message = Common::String::format(
 			"%s %s", _monsterName.c_str(),
-			STRING[flees ?
-				"dialogs.combat.monster_flees" :
-				"dialogs.combat.monster_wanders"
-			].c_str());
+			flees ? "runs away..." : "wanders aimlessly");
 
 	writeBottomText(0, 0, message);
 
@@ -1123,8 +1117,8 @@ void Combat::writeMonsterAttack() {
 	resetBottom();
 
 	Common::String monsterName = _monsterP->_name;
-	Common::String attackStyle = STRING[Common::String::format(
-		"dialogs.combat.attack_types.%d", _monsterAttackStyle)];
+	Common::String attackStyle = _monsterAttackStyle == 99 ?
+		"shoots at" : ATTACK_TYPES[_monsterAttackStyle - 1];
 	Character &c = *g_globals->_currCharacter;
 
 	Common::String line = Common::String::format("%s %s %s",
@@ -1169,9 +1163,8 @@ void Combat::writeMonsterAttack() {
 }
 
 void Combat::writeInfiltration() {
-	Common::String line = Common::String::format("%s %s",
-		_monsterP->getDisplayName().c_str(),
-		STRING["dialogs.combat.infiltration"].c_str());
+	Common::String line = Common::String::format("%s infiltrates the ranks!",
+		_monsterP->getDisplayName().c_str());
 
 	resetBottom();
 	writeBottomText(0, 0, line);
@@ -1183,10 +1176,8 @@ void Combat::writeInfiltration() {
 }
 
 void Combat::writeWaitsForOpening() {
-	Common::String line = Common::String::format("%s %s",
-		_monsterP->getDisplayName().c_str(),
-		STRING["dialogs.combat.infiltration"].c_str()
-	);
+	Common::String line = Common::String::format("%s infiltrates the ranks!",
+		_monsterP->getDisplayName().c_str());
 
 	resetBottom();
 	writeBottomText(0, 0, line);
@@ -1256,8 +1247,7 @@ void Combat::writeCharAttackDamage() {
 
 	writeBottomText(0, 0, Common::String::format("%s %s %s",
 		g_globals->_currCharacter->_name,
-		STRING[_isShooting ? "dialogs.combat.shoots" :
-		"dialogs.combat.attacks"].c_str(),
+		_isShooting ? "shoots" : "attacks",
 		_monsterP->_name.c_str()
 	));
 	_isShooting = false;
@@ -1265,22 +1255,19 @@ void Combat::writeCharAttackDamage() {
 	writeBottomText(0, 1, getAttackString());
 
 	if (_monsterP->_status == MONFLAG_DEAD) {
-		writeBottomText(0, 2, Common::String::format("%s %s",
-			_monsterP->_name.c_str(),
-			STRING["dialogs.combat.goes_down"].c_str()));
+		writeBottomText(0, 2, Common::String::format("%s goes down!!!",
+			_monsterP->_name.c_str()));
 	}
 
 	if (beginCombatLogEvent()) {
 		addCombatLog(Common::String::format("%s %s %s",
 			g_globals->_currCharacter->_name,
-			STRING[wasShooting ? "dialogs.combat.shoots" :
-				"dialogs.combat.attacks"].c_str(),
+			wasShooting ? "shoots" : "attacks",
 			_monsterP->_name.c_str()));
 		addCombatLog(getAttackString());
 		if (_monsterP->_status == MONFLAG_DEAD)
-			addCombatLog(Common::String::format("%s %s",
-				_monsterP->_name.c_str(),
-				STRING["dialogs.combat.goes_down"].c_str()));
+			addCombatLog(Common::String::format("%s goes down!!!",
+				_monsterP->_name.c_str()));
 	}
 }
 
@@ -1290,58 +1277,53 @@ void Combat::writeCharAttackNoEffect() {
 
 	writeBottomText(0, 0, Common::String::format("%s %s %s",
 		g_globals->_currCharacter->_name,
-		STRING[_isShooting ? "dialogs.combat.shoots" :
-		"dialogs.combat.attacks"].c_str(),
+		_isShooting ? "shoots" : "attacks",
 		_monsterP->_name.c_str()
 	));
 	_isShooting = false;
 
-	writeBottomText(0, 1, STRING["dialogs.combat.weapon_no_effect"]);
+	writeBottomText(0, 1, "Weapon has no effect!");
 
 	if (beginCombatLogEvent()) {
 		addCombatLog(Common::String::format("%s %s %s",
 			g_globals->_currCharacter->_name,
-			STRING[wasShooting ? "dialogs.combat.shoots" :
-				"dialogs.combat.attacks"].c_str(),
+			wasShooting ? "shoots" : "attacks",
 			_monsterP->_name.c_str()));
-		addCombatLog(STRING["dialogs.combat.weapon_no_effect"]);
+		addCombatLog("Weapon has no effect!");
 	}
 }
 
 Common::String Combat::getAttackString() {
 	Common::String line1;
 	if (_numberOfTimes == 1) {
-		line1 = STRING["dialogs.combat.once"];
+		line1 = "once";
 	} else {
-		line1 = Common::String::format("%d %s", _numberOfTimes,
-			STRING["dialogs.combat.times"].c_str());
+		line1 = Common::String::format("%d times", _numberOfTimes);
 	}
 
-	line1 += Common::String::format(" %s ", STRING["dialogs.combat.and"].c_str());
+	line1 += " and ";
 
 	if (_displayedDamage == 0) {
-		line1 += STRING["dialogs.combat.misses"];
+		line1 += "misses";
 	} else {
-		line1 += STRING["dialogs.combat.hit"];
+		line1 += "hit";
 
 		if (_numberOfTimes > 1) {
 			line1 += ' ';
 
 			if (_timesHit == 1) {
-				line1 += STRING["dialogs.combat.once"];
+				line1 += "once";
 			} else {
-				line1 += Common::String::format("%d %s", _timesHit,
-					STRING["dialogs.combat.times"].c_str());
+				line1 += Common::String::format("%d times", _timesHit);
 			}
 		}
 
-		line1 += Common::String::format(" %s %d %s",
-			STRING["dialogs.combat.for"].c_str(), _displayedDamage,
-			STRING[_damage == 1 ? "dialogs.combat.point" : "dialogs.combat.points"].c_str());
+		line1 += Common::String::format(" for %d %s", _displayedDamage,
+			_damage == 1 ? "point" : "points");
 
 		if (line1.size() < 30) {
 			line1 += ' ';
-			line1 += STRING["dialogs.combat.of_damage"];
+			line1 += "of damage!";
 		} else {
 			line1 += '!';
 		}

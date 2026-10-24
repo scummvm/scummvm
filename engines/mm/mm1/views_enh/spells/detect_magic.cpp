@@ -39,7 +39,7 @@ void DetectMagic::draw() {
 	ScrollView::draw();
 
 	setReduced(true);
-	writeString(0, 0, STRING["dialogs.spells.detect_charges"], ALIGN_RIGHT);
+	writeString(0, 0, "Magic (charges)", ALIGN_RIGHT);
 
 	getMagicStrings();
 
@@ -55,9 +55,9 @@ void DetectMagic::draw() {
 	}
 
 	if (inv.empty())
-		writeLine(1, STRING["enhdialogs.misc.no_items"]);
+		writeLine(1, "Inventory empty");
 
-	writeString(15, 66, STRING["enhdialogs.misc.go_back"]);
+	writeString(15, 66, "Go back");
 	setReduced(false);
 }
 

@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/town_select.h"
+#include "mm/mm1/data/text.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -37,7 +38,7 @@ TownSelect::TownSelect() : ScrollView("TownSelect") {
 	for (int i = 1; i <= 5; ++i) {
 		int row = i - 1;
 		int y = 22 + row * 12;
-		Common::String text = STRING[Common::String::format("stats.towns.%d", i)];
+		Common::String text = TOWN_NAMES[i - 1];
 		addButton(Common::Rect(BTN_X, y, TEXT_X + (int)getStringWidth(text),
 				y + BTN_SIZE),
 			(Common::KeyCode)(Common::KEYCODE_0 + i));
@@ -48,7 +49,7 @@ void TownSelect::draw() {
 	ScrollView::draw();
 	Graphics::ManagedSurface s = getSurface();
 	setReduced(false);
-	writeString(0, 0, STRING["spells.which_town"], ALIGN_MIDDLE);
+	writeString(0, 0, "Which town (1-5)?", ALIGN_MIDDLE);
 
 	Graphics::ManagedSurface btnSmall(BTN_SIZE, BTN_SIZE);
 	btnSmall.blitFrom(g_globals->_blankButton, Common::Rect(0, 0, 20, 20),
@@ -63,7 +64,7 @@ void TownSelect::draw() {
 			Common::String::format("%d", i), ALIGN_MIDDLE);
 
 		byte oldColor = setTextColor(i == _selectedButton + 1 ? 15 : 0);
-		writeString(TEXT_X, y, STRING[Common::String::format("stats.towns.%d", i)]);
+		writeString(TEXT_X, y, TOWN_NAMES[i - 1]);
 		setTextColor(oldColor);
 	}
 }
