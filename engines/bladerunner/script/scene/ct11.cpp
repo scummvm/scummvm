@@ -77,17 +77,17 @@ void SceneScriptCT11::SceneLoaded() {
 			// We place the note only for the second case here.
 			// For the first case, a CrazyLegs advertisement (plus note) is placed in Dektora's room (nr07, kClueCrazysInvolvement)
 			Item_Add_To_World(kItemNote, kModelAnimationGrigoriansNote, kSetCT11, 641.21f, 26.0f, 472.0f, 304, 12, 12, false, true, false, true);
-			Scene_2D_Region_Add(2, 505, 321, 519, 332);
+			Scene_2D_Region_Add(1, 505, 321, 519, 332);
 			Game_Flag_Set(kFlagCT11GrigorianNotePlaced);
 		}
 
 		if (!Actor_Clue_Query(kActorMcCoy, kClueCar)) {
 #if BLADERUNNER_ORIGINAL_BUGS
-			Scene_2D_Region_Add(1, 412, 258, 552, 358);
+			Scene_2D_Region_Add(2, 412, 258, 552, 358);
 #else
-			// expand region 1 a bit and add two more
-			// as auxiliary in order to better cover the car area
-			Scene_2D_Region_Add(1, 365, 258, 552, 358);
+			// Expand the car region a bit and add two more to better cover its area.
+			// Regions are checked in ascending order. So we add these (2-4) after the small ones (0-1).
+			Scene_2D_Region_Add(2, 365, 258, 552, 358);
 			Scene_2D_Region_Add(3, 267, 330, 365, 377);
 			Scene_2D_Region_Add(4, 365, 358, 454, 377);
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -195,7 +195,7 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 	}
 
 	if (_vm->_cutContent
-	    && region == 2
+	    && region == 1
 	    && !Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
 	) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, true, false, false)) {
@@ -205,12 +205,12 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 			Actor_Clue_Acquire(kActorMcCoy, kClueGrigoriansNote, false, -1);
 			Item_Pickup_Spin_Effect(kModelAnimationGrigoriansNote, 512, 326);
 			Actor_Voice_Over(8840, kActorMcCoy);
-			Scene_2D_Region_Remove(2);
+			Scene_2D_Region_Remove(1);
 		}
 		return true;
 	}
 
-	if (region == 1
+	if (region == 2
 #if !BLADERUNNER_ORIGINAL_BUGS
 	    || region == 3
 	    || region == 4
@@ -245,7 +245,7 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 				Actor_Voice_Over(530, kActorVoiceOver);
 				Actor_Voice_Over(540, kActorVoiceOver);
 				Actor_Clue_Acquire(kActorMcCoy, kClueCar, false, -1);
-				Scene_2D_Region_Remove(1);
+				Scene_2D_Region_Remove(2);
 #if !BLADERUNNER_ORIGINAL_BUGS
 				Scene_2D_Region_Remove(3);
 				Scene_2D_Region_Remove(4);
