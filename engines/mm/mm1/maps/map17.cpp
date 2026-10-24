@@ -84,6 +84,28 @@ void Map17::special01() {
 	// using a fixed bit in the saved visit data
 	_visited[COLOR_BRIDGE_VISITED_OFFSET] |= COLOR_BRIDGE_DISCOVERED;
 
+	bool allAssigned = !g_globals->_party.empty();
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (!(g_globals->_party[i]._flags[4] & CHARFLAG4_ASSIGNED)) {
+			allAssigned = false;
+			break;
+		}
+	}
+
+	if (!allAssigned) {
+		// Without a Gypsy sign the quiz can't be answered correctly, so
+		// don't open the Y/N and quiz chain in that state
+		g_maps->clearSpecial();
+		SoundMessage info(
+			"The Hooded Figure bars the Color Bridge. "
+			"Each party member must first learn a sign from the Gypsy.");
+		info._largeMessage = true;
+		send(info);
+		return;
+	}
+
+	// Everyone knows their sign. Declining the bridge prompt doesn't
+	// consume the special, so the quiz can be retried
 	SoundMessage msg(STRING["maps.map17.bridge"],
 		[]() {
 			g_events->addView("ColorQuestions");
