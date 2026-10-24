@@ -498,7 +498,7 @@ def check_fs(iso: str) -> FileSystem:
     f_size = f.seek(0, 2)
     blocks = f_size // SIZE_OF_BLOCK
     for block in range(min(16, blocks)):
-        if checkHeader(f, block, 0):
+        if checkHeader3DO(f, block, 0):
             disk_formats.append(FileSystem.threedo)
             break
 
@@ -1774,11 +1774,11 @@ def check_pycdlib_version() -> bool:
         doc_get_file_from_iso_fp
     )
 
-def endianswap(x):
+def endianswap3DO(x):
     value = struct.unpack(">I", x)
     return value[0]
 
-def checkHeader(f, block, offset):
+def checkHeader3DO(f, block, offset):
     position = offset + block * SIZE_OF_BLOCK
     f.seek(position)
     data = f.read(7)
@@ -1790,7 +1790,7 @@ def checkHeader(f, block, offset):
         return 0
     return 1
 
-def expandDir(f, offset, block, out):
+def expandDir3DO(f, offset, block, out):
     while True:
         dirSize = struct.calcsize(DIR_HEAD_TYPE)
         entrySize = struct.calcsize(FILE_ENTRY_TYPE)
@@ -1830,7 +1830,7 @@ def expandDir(f, offset, block, out):
                 dir_path = os.path.join(out, FileName)
                 print(f"Parsing : {dir_path}")
                 os.makedirs(dir_path, exist_ok=True)
-                expandDir(f, offset, startBlock, dir_path)
+                expandDir3DO(f, offset, startBlock, dir_path)
 
             elif (attr & 255) in (2, 6):
                 file_path = os.path.join(out, FileName)
@@ -1858,15 +1858,15 @@ def extract3do(args: argparse.Namespace) -> None:
         totalBlocks = f_size // SIZE_OF_BLOCK
         offset = 0
         for block in range(totalBlocks):
-            if checkHeader(f, block, offset):
+            if checkHeader3DO(f, block, offset):
                 print("3DO image detected")
                 offset = block * SIZE_OF_BLOCK
                 f.seek(offset + 0x64)
                 root = f.read(4)
-                root_block = endianswap(root)
+                root_block = endianswap3DO(root)
                 os.makedirs(args.dir, exist_ok=True)
                 print("Converting 3DO image to ISO...")
-                expandDir(f, offset, root_block, args.dir)
+                expandDir3DO(f, offset, root_block, args.dir)
                 print("Done")
                 return
 
