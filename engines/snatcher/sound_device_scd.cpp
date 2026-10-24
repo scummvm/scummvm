@@ -82,9 +82,10 @@ public:
 
 	bool init(Audio::Mixer *mixer) override;
 
-	void cdaPlay(int track) override;
+	void cdaPlay(int track, uint32 bcdTime = 0) override;
 	void cdaStop() override;
 	bool cdaIsPlaying() const override;
+	int cdaGetCurTrack() const override;
 	uint32 cdaGetTime() const override;
 
 	void fmSendCommand(int cmd, int restoreVolume) override;
@@ -1781,9 +1782,14 @@ bool SegaSoundDevice::init(Audio::Mixer *mixer) {
 	return true;
 }
 
-void SegaSoundDevice::cdaPlay(int track) {
+void SegaSoundDevice::cdaPlay(int track, uint32 bcdTime) {
 	assert(track > 0);
-	g_system->getAudioCDManager()->play(track - 1, 1, 0, 0);
+
+	uint32 frm = 0;
+	if (bcdTime != 0)
+		frm = Util::decodeBCDTimeStamp(bcdTime, Util::kBCD_MMSSFR) / (1000 / 75);
+
+	g_system->getAudioCDManager()->play(track - 1, 1, frm, 0);
 	_lastTrack = track;
 	_musicStartTime = g_system->getMillis();
 }
@@ -1797,8 +1803,14 @@ bool SegaSoundDevice::cdaIsPlaying() const {
 	return g_system->getAudioCDManager()->isPlaying();
 }
 
+int SegaSoundDevice::cdaGetCurTrack() const {
+	return cdaIsPlaying() ? _lastTrack : -1;
+}
+
 uint32 SegaSoundDevice::cdaGetTime() const {
 	uint32 relTime = cdaIsPlaying() ? g_system->getMillis() - _musicStartTime : 0;
+	if (_pauseStartTime)
+		relTime -= (g_system->getMillis() - _pauseStartTime);
 	return Util::makeBCDTimeStamp(relTime, Util::kBCD_MMSSFR);
 }
 

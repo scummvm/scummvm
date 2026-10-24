@@ -78,6 +78,15 @@ struct Script {
 	uint16 newPos;
 	int16 &phase;
 	const uint32 textResOffset;
+
+	struct Temp {
+		Temp() : curFileNo(0), curPos(0) {
+			memset(arr4, 0, sizeof(arr4));
+		}
+		uint8 curFileNo;
+		uint16 curPos;
+		uint16 arr4[4];
+	} temp;
 };
 
 struct GameState {

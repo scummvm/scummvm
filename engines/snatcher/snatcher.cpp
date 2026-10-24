@@ -25,6 +25,7 @@
 #include "snatcher/mem_mapping.h"
 #include "snatcher/resource.h"
 #include "snatcher/saveload.h"
+#include "snatcher/saveflags.h"
 #include "snatcher/script.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
@@ -222,7 +223,7 @@ void SnatcherEngine::playBootLogoAnimation(const GameState &state) {
 		delayUntil(nextFrame);
 	}
 }
-
+int g = 0;
 bool SnatcherEngine::start() {
 	Util::rngReset();
 	GameState state;
@@ -262,6 +263,7 @@ bool SnatcherEngine::start() {
 				bool blockedMod = _cmdQueue->enabled();
 				if (_cmdQueue->enabled()) {
 					_cmdQueue->run(state);
+					g = state.script.curPos;
 					blockedMod = _gfx->busy(0);
 				}
 				if (!blockedMod) {
@@ -473,14 +475,12 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		// Init first scene or load savegame
 		_cmdQueue->writeUInt16(0x11);
 		_cmdQueue->writeUInt32(0x1A800);
-		if (state.menuSelect == 0) {
-			// Enter first scene
-			_cmdQueue->writeUInt16(0x3F);
-			_cmdQueue->writeUInt16(0x0F);
-		} else {
+		if (state.menuSelect == 0)
+			state.script.curFileNo = 0x3F; // First scene
+		_cmdQueue->writeUInt16(state.script.curFileNo);
+		_cmdQueue->writeUInt16(0x0F);
+		if (state.menuSelect != 0) {
 			// Restore saved state
-			_cmdQueue->writeUInt16(state.script.curFileNo);
-			_cmdQueue->writeUInt16(0x0F);
 			_cmdQueue->writeUInt16(0x11);
 			_cmdQueue->writeUInt32(0x28000);
 			_cmdQueue->writeUInt16(state.script.curGfxScript >> 8);
@@ -493,8 +493,10 @@ void SnatcherEngine::updateMainState(GameState &state) {
 			_cmdQueue->writeUInt16(state.script.curGfxScript & 0xFF);
 			_cmdQueue->writeUInt16(0x07);
 			_cmdQueue->writeUInt16(_snd->fmGetStatus().music);
+			//_cmdQueue->appendRestoreData();
 			_snd->pcmBlock(_snd->pcmGetStatus().blocked);
 			_snd->reduceVolume2(_snd->fmGetStatus().reduceVol2);
+			_snd->cdaRestore();
 		}
 
 		_ui->setControllerConfig(state.conf.controllerSetup);
@@ -794,7 +796,10 @@ bool SnatcherEngine::canLoadGameStateCurrently(Common::U32String*) {
 }
 
 bool SnatcherEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return _saveMan->isSavingEnabled();
+	static const char txt[] = "Saving not possible right now.\nFor now, saving is mostly limited to situations where the original interpreter would allow it.";
+	*msg = Common::U32String(txt, strnlen(txt, ARRAYSIZE(txt)));
+
+	return _saveMan->canSaveHere() && _ui->canSaveHere() && _aseq->canSaveHere();
 }
 
 Common::Error SnatcherEngine::loadGameState(int slot) {
@@ -803,7 +808,7 @@ Common::Error SnatcherEngine::loadGameState(int slot) {
 }
 
 Common::Error SnatcherEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	_saveMan->requestSave(slot, desc);
+	_saveMan->requestSave(slot, desc, kSaveFlagsNone);
 	return Common::kNoError;
 }
 

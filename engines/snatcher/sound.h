@@ -23,6 +23,7 @@
 #define SNATCHER_SOUND_H
 
 #include "common/platform.h"
+#include "snatcher/saveflags.h"
 
 namespace Audio {
 class Mixer;
@@ -49,6 +50,7 @@ public:
 	void cdaStop();
 	bool cdaIsPlaying() const;
 	uint32 cdaGetTime() const;
+	void cdaRestore();
 
 	struct FMStatus {
 		FMStatus() : music(0), sfx(0), sync(0), blocked(0), reduceVol2(0) {}
@@ -84,13 +86,16 @@ public:
 	void setMusicVolume(int vol);
 	void setSoundEffectVolume(int vol);
 
-	void loadState(Common::SeekableReadStream *in);
-	void saveState(Common::SeekableWriteStream *out);
+	void loadState(Common::SeekableReadStream *in, SaveFlags flags);
+	void saveState(Common::SeekableWriteStream *out, SaveFlags flags);
 
 private:
 	FMStatus _fmStatus;
 	PCMStatus _pcmStatus;
 	SoundDevice *_dev;
+
+	int16 _cdaRestoreTrack;
+	uint32 _cdaRestoreTime;
 };
 
 } // End of namespace Snatcher

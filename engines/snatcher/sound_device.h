@@ -39,9 +39,10 @@ public:
 
 	virtual bool init(Audio::Mixer *mixer) = 0;
 
-	virtual void cdaPlay(int track) = 0;
+	virtual void cdaPlay(int track, uint32 bcdTime = 0) = 0;
 	virtual void cdaStop() = 0;
 	virtual bool cdaIsPlaying() const = 0;
+	virtual int cdaGetCurTrack() const = 0;
 	virtual uint32 cdaGetTime() const = 0;
 
 	virtual void fmSendCommand(int cmd, int arg) = 0;

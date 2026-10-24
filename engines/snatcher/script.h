@@ -22,11 +22,12 @@
 #ifndef SNATCHER_SCRIPT_H
 #define SNATCHER_SCRIPT_H
 
+#include "snatcher/saveflags.h"
+#include "snatcher/state.h"
 #include "common/array.h"
 #include "common/func.h"
 #include "common/ptr.h"
 
-//#define		SNATCHER_SCRIPT_DEBUG
 
 namespace Common {
 class SeekableReadStream;
@@ -51,13 +52,17 @@ public:
 	bool enabled() const { return _enable; }
 	void run(GameState &state);
 
-	void loadState(Common::SeekableReadStream *in);
-	void saveState(Common::SeekableWriteStream *out);
+	//void loadState(Common::SeekableReadStream *in);
+	//void saveState(Common::SeekableWriteStream *out);
+	//void appendRestoreData();
 
 private:
 	const uint16 *_readPos;
+	//const uint16 *_lastReadPos;
 	uint16 *_data;
 	uint16 *_writePos;
+	//uint16 *_restoreData;
+	//uint16 _restoreDataSize;
 	uint16 _currentOpcode;
 	int16 _progress;
 	uint16 _counter;
@@ -144,8 +149,8 @@ public:
 	bool postProcess(Script &script);
 	void processInput();
 
-	void loadState(Common::SeekableReadStream *in, Script &script, bool onlyTempData);
-	void saveState(Common::SeekableWriteStream *out, Script &script, bool onlyTempData);
+	void loadState(Common::SeekableReadStream *in, Script &script, SaveFlags flags);
+	void saveState(Common::SeekableWriteStream *out, Script &script, SaveFlags flags);
 
 private:
 	CmdQueue *_que;
