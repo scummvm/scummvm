@@ -1042,6 +1042,11 @@ void Combat::writeDefeat() {
 
 	// Restore the combat view's size for any later combat screens
 	setBounds(oldBounds);
+
+	if (beginCombatLogEvent())
+		addCombatLog(Common::String::format(
+			"Victory. Each active character receives %d XP.",
+			_totalExperience));
 }
 
 void Combat::highlightNextRound() {

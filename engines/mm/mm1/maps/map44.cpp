@@ -87,7 +87,10 @@ void Map44::special04() {
 		Character &c = g_globals->_party[i];
 		if (!(c._flags[11] & CHARFLAG11_GOT_LUCK)) {
 			c._flags[11] |= CHARFLAG11_GOT_LUCK;
-			c._luck._current = c._luck._base = c._luck._base + 4;
+			if (c._luck._base < 30) {
+				c._luck._current = c._luck._base =
+					c._luck._base + 4;
+			}
 		}
 	}
 }

@@ -71,8 +71,10 @@ void Map31::special00() {
 
 		if (!(c._flags[11] & CHARFLAG11_GOT_INTELLIGENCE)) {
 			c._flags[11] |= CHARFLAG11_GOT_INTELLIGENCE;
-			c._intelligence._current = c._intelligence._base =
-				MIN(c._intelligence._base + 4, 30);
+			if (c._intelligence._base < 30) {
+				c._intelligence._current = c._intelligence._base =
+					c._intelligence._base + 4;
+			}
 		}
 	}
 }
@@ -85,6 +87,7 @@ void Map31::special02() {
 	if (_data[VAL1]) {
 		none160();
 	} else {
+		g_maps->clearSpecial();
 		encounter();
 	}
 }
@@ -126,6 +129,7 @@ void Map31::hostile() {
 
 void Map31::neutral() {
 	_data[VAL1]--;
+	g_maps->clearSpecial();
 	encounter();
 }
 

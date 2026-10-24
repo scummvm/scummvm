@@ -179,7 +179,10 @@ void Map07::special15() {
 		Character &c = g_globals->_party[i];
 		if (!(c._flags[11] & CHARFLAG11_GOT_MIGHT)) {
 			c._flags[11] |= CHARFLAG11_GOT_MIGHT;
-			c._might._base = MIN((int)c._might._base + 4, 255);
+			if (c._might._base < 30) {
+				c._might._current = c._might._base =
+					c._might._base + 4;
+			}
 		}
 	}
 

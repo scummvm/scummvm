@@ -88,6 +88,8 @@ void Map23::special02() {
 }
 
 void Map23::special03() {
+	g_maps->clearSpecial();
+
 	if (g_globals->_activeSpells._s.levitate) {
 		Common::String line1 = Common::String::format("%s %s",
 			STRING["maps.map23.pit"].c_str(),

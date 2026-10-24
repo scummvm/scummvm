@@ -72,7 +72,7 @@ bool Teleport::msgKeypress(const KeypressMessage &msg) {
 		redraw();
 	}
 
-	return true;
+	return false;
 }
 
 bool Teleport::msgAction(const ActionMessage &msg) {

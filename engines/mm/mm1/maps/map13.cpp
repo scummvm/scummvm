@@ -157,10 +157,12 @@ void Map13::special10() {
 }
 
 void Map13::special18() {
+	g_maps->clearSpecial();
 	encounter(getRandomNumber(4) + 2, 2, 5);
 }
 
 void Map13::special22() {
+	g_maps->clearSpecial();
 	encounter(getRandomNumber(3) + 3, 9, 6);
 }
 

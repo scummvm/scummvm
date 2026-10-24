@@ -32,7 +32,7 @@ namespace Maps {
 static const byte PORTAL_DEST_X[4] = { 8, 15, 0, 5 };
 static const byte PORTAL_DEST_Y[4] = { 4, 0, 0, 14 };
 static const uint16 PORTAL_DEST_ID[4] = { 0xc03, 0xa00, 0xf01, 0x604 };
-static const byte PORTAL_DEST_SECTION[4] = { 3, 0, 1, 4 };
+static const byte PORTAL_DEST_SECTION[4] = { 1, 0, 2, 1 };
 
 void Map02::special() {
 	// Scan for special actions on the map cell
@@ -154,6 +154,8 @@ void Map02::special15() {
 		STRING["maps.map02.portal"],
 		[]() {
 			int index = g_maps->_mapPos.x - 9;
+			if (index < 0 || index >= 4)
+				return;
 			g_maps->_mapPos.x = PORTAL_DEST_X[index];
 			g_maps->_mapPos.y = PORTAL_DEST_Y[index];
 

@@ -108,6 +108,7 @@ void Map21::special01() {
 		[]() {
 			Map21 &map = *static_cast<Map21 *>(g_maps->_currentMap);
 			map[TRIVIA_ENABLED]++;
+			g_events->send(InfoMessage("Trivia Island admission granted."));
 		}
 	));
 }

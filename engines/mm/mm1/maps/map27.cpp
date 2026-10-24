@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/maps/map27.h"
+#include "mm/mm1/data/locations.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
@@ -94,9 +95,11 @@ void Map27::special03() {
 		0, 2, STRING["maps.map27.alignment"]
 	));
 
+	TempleData alignmentData;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
 		c._alignment = c._alignmentInitial;
+		c._alignmentCtr = alignmentData.ALIGNMENT_VALS[c._alignment - 1];
 	}
 }
 
@@ -113,7 +116,9 @@ void Map27::special04() {
 			Inventory &inv = (invNum == 0) ? c._equipped : c._backpack;
 
 			for (int itemNum = (int)inv.size() - 1; itemNum >= 0; --itemNum) {
-				Item *item = g_globals->_items.getItem(c._equipped[itemNum]._id);
+				if (!inv[itemNum])
+					continue;
+				Item *item = g_globals->_items.getItem(inv[itemNum]._id);
 				if (item->_constBonus_id == EQUIP_CURSED)
 					inv.removeAt(itemNum);
 			}

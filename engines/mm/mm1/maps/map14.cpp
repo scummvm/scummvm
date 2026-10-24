@@ -168,9 +168,9 @@ void Map14::special05() {
 		Character &c = g_globals->_party[i];
 		if (!(c._flags[11] & CHARFLAG11_GOT_ENDURANCE)) {
 			c._flags[11] |= CHARFLAG11_GOT_ENDURANCE;
-			int endurance = c._endurance._base + 4;
-			if (endurance < 30) {
-				c._endurance._base = c._endurance._current = endurance;
+			if (c._endurance._base < 30) {
+				c._endurance._current = c._endurance._base =
+					c._endurance._base + 4;
 			}
 		}
 	}
