@@ -803,9 +803,9 @@ void Combat::attackMonster(int monsterNum) {
 
 	_numberOfTimes = 1;
 
-	if (c._class >= CLERIC && c._level >= 8) {
+	// Extra attacks belong to the martial classes: Knight, Paladin and Archer
+	if (c._class >= KNIGHT && c._class <= ARCHER && c._level >= 8)
 		_numberOfTimes += c._level / 8;
-	}
 
 	// Affect level based on might
 	_attackAttr2 = _attackAttr1;
