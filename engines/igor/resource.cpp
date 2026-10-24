@@ -1,0 +1,388 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/debug-channels.h"
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+void IgorEngine::readTableFile() {
+	Common::File tblFile;
+	uint32 stringsEntriesOffset = 0, resourcesEntriesOffset = 0, soundEntriesOffset = 0;
+	uint32 tableVersion = 0;
+	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == 'ITBL') {
+		tableVersion = tblFile.readUint32BE();
+	}
+	// version 5 adds the source of the data of each resource, version 6 data embedded in the table
+	if (tableVersion >= 4 && tableVersion <= 6) {
+		stringsEntriesOffset = tblFile.readUint32BE();
+		uint32 borlandOverlaySize = _ovlFile.size();
+		int gameVersionsCount = tblFile.readByte();
+		for (int i = 0; i < gameVersionsCount; ++i) {
+			uint32 size = tblFile.readUint32BE();
+			if (size == borlandOverlaySize) {
+				resourcesEntriesOffset = tblFile.readUint32BE();
+				soundEntriesOffset = tblFile.readUint32BE();
+				break;
+			}
+			tblFile.skip(8);
+		}
+	}
+	if (resourcesEntriesOffset != 0 && soundEntriesOffset != 0) {
+		tblFile.seek(resourcesEntriesOffset);
+		_resourceEntriesCount = tblFile.readUint16BE();
+		_resourceEntries = (ResourceEntry *)malloc(sizeof(ResourceEntry) * _resourceEntriesCount);
+		for (int i = 0; i < _resourceEntriesCount; ++i) {
+			_resourceEntries[i].id = tblFile.readUint16BE();
+			_resourceEntries[i].offs = tblFile.readUint32BE();
+			_resourceEntries[i].size = tblFile.readUint32BE();
+			_resourceEntries[i].source = kResourceSourceContainer;
+			if (tableVersion >= 5) {
+				const int source = tblFile.readByte();
+				if (source != kResourceSourceContainer && !(tableVersion >= 6 && source == kResourceSourceTable)) {
+					error("Invalid resource source in 'IGOR.TBL'");
+				}
+				_resourceEntries[i].source = (ResourceSource)source;
+			}
+		}
+		tblFile.seek(soundEntriesOffset);
+		_soundOffsetsCount = tblFile.readUint16BE();
+		_soundOffsets = (uint32 *)malloc(sizeof(uint32) * _soundOffsetsCount);
+		for (int i = 0; i < _soundOffsetsCount; ++i) {
+			_soundOffsets[i] = tblFile.readUint32BE();
+		}
+		tblFile.seek(stringsEntriesOffset);
+		int stringsCount = tblFile.readUint16BE();
+		for (int i = 0; i < stringsCount; ++i) {
+			int id = tblFile.readUint16BE();
+			int lang = tblFile.readByte();
+			int len = tblFile.readByte();
+			bool skipString = (lang == 1 && _game.language != Common::EN_ANY) || (lang == 2 && _game.language != Common::ES_ESP);
+			if (skipString) {
+				tblFile.skip(len);
+			} else {
+				char buf[256];
+				tblFile.read(buf, len);
+				buf[len] = 0;
+				_stringEntries.push_back(StringEntry(id, buf));
+			}
+		}
+		return;
+	}
+	error("Unable to read 'IGOR.TBL'");
+}
+
+// The Spanish floppy text table stores each text as a
+// plain Pascal string (length byte, then the characters) in a slot with room for
+// both languages.
+static void decodeFloppyMainString(const uint8 *src, char *dst, uint slotSize) {
+	const uint length = *src;
+	if (length >= slotSize) {
+		error("Invalid text length in the floppy text table");
+	}
+	memcpy(dst, src + 1, length);
+	dst[length] = '\0';
+}
+
+static void decodeMainString(const uint8 *src, char *dst) {
+	int sz = *src - 0x6D;
+	if (sz != 0) {
+		++src;
+		for (int i = 0; i < sz; ++i) {
+			uint8 code = src[i] - 0x6D;
+			dst[i] = (char)code;
+		}
+	}
+	dst[sz] = '\0';
+}
+
+static void decodeRoomString(const uint8 *src, char *dst, int sz) {
+	for (int i = 0; i < sz; ++i) {
+		uint8 code = *src++;
+		if ((code >= 0xAE && code <= 0xC7) || (code >= 0xCE && code <= 0xE7)) {
+			code -= 0x6D;
+		} else if (code > 0xE7) {
+			switch (code) {
+			case 0xE8:
+				code = 0xA0;
+				break;
+			case 0xE9:
+				code = 0x82;
+				break;
+			case 0xEA:
+				code = 0xA1;
+				break;
+			case 0xEB:
+				code = 0xA2;
+				break;
+			case 0xEC:
+				code = 0xA3;
+				break;
+			case 0xED:
+				code = 0xA4;
+				break;
+			case 0xEE:
+				code = 0xA5;
+				break;
+			}
+		}
+		*dst++ = (char)code;
+	}
+}
+
+void IgorEngine::loadDialogueData(int dlg) {
+	int dataSize;
+	uint8 *p = loadData(dlg, 0, &dataSize);
+	int dialogueDataSize = _roomDataOffsets.dlg.questionsOffset + 164 + 41;
+	assert(dialogueDataSize <= (int)sizeof(_gameState.dialogueData));
+	if (!_dialogueResuming) // a loaded savegame already holds the answered questions
+		memcpy(_gameState.dialogueData, p, dialogueDataSize);
+	assert(_roomDataOffsets.dlg.questionsSize <= MAX_DIALOGUE_QUESTIONS);
+	assert(_roomDataOffsets.dlg.repliesSize <= MAX_DIALOGUE_REPLIES);
+	memset(_dialogueQuestionSounds, 0, sizeof(_dialogueQuestionSounds));
+	memset(_dialogueReplySounds, 0, sizeof(_dialogueReplySounds));
+	if (_game.flags & kFlagTalkie) {
+		int questionSoundsOffset = _roomDataOffsets.dlg.questionSoundsOffset;
+		int replySoundsOffset = _roomDataOffsets.dlg.replySoundsOffset;
+		int replySoundsSize = _roomDataOffsets.dlg.replySoundsSize;
+		if (questionSoundsOffset == 0) {
+			questionSoundsOffset = dataSize - (_roomDataOffsets.dlg.questionsSize + _roomDataOffsets.dlg.repliesSize + 1) * 2;
+			replySoundsOffset = questionSoundsOffset + _roomDataOffsets.dlg.questionsSize * 2;
+			replySoundsSize = _roomDataOffsets.dlg.repliesSize;
+		}
+		assert(questionSoundsOffset >= 0);
+		assert(questionSoundsOffset + (_roomDataOffsets.dlg.questionsSize + 1) * 2 <= dataSize);
+		for (int i = 0; i < _roomDataOffsets.dlg.questionsSize; ++i) {
+			_dialogueQuestionSounds[i] = READ_LE_UINT16(p + questionSoundsOffset + (i + 1) * 2);
+		}
+		assert(replySoundsOffset + (replySoundsSize + 1) * 2 <= dataSize);
+		for (int i = 0; i < replySoundsSize; ++i) {
+			_dialogueReplySounds[i] = READ_LE_UINT16(p + replySoundsOffset + (i + 1) * 2);
+		}
+	}
+	for (int i = 0; i < _roomDataOffsets.dlg.questionsSize; ++i) {
+		for (int n = 0; n < 2; ++n) {
+			const uint8 *src = p + _roomDataOffsets.dlg.questionsOffset + (i + 1) * 164 + _language * 82 + (n + 1) * 41;
+			int len = *src++;
+			if (len != 0) {
+				decodeRoomString(src, _dialogueQuestions[i][n], len);
+				_dialogueQuestions[i][n][len] = '\0';
+				debugC(9, kDebugResource, "loadDialogueData() _dialogueQuestions[%d][%d] '%s'", i, n, _dialogueQuestions[i][n]);
+			} else {
+				_dialogueQuestions[i][n][0] = '\0';
+			}
+		}
+	}
+	for (int i = 0; i < _roomDataOffsets.dlg.repliesSize; ++i) {
+		const uint8 *src = p + _roomDataOffsets.dlg.repliesOffset + (i + 1) * 102 + _language * 51;
+		int len = *src++;
+		if (len != 0) {
+			decodeRoomString(src, _dialogueReplies[i], len);
+			_dialogueReplies[i][len] = '\0';
+			debugC(9, kDebugResource, "loadDialogueData() _dialogueReplies[%d] '%s'", i, _dialogueReplies[i]);
+		} else {
+			_dialogueReplies[i][0] = '\0';
+		}
+	}
+	free(p);
+}
+
+void IgorEngine::loadMainTexts() {
+	// the panel of the Spanish floppy version has one row less than the CD one
+	const ResourceEntry *panel = findData(IMG_VerbsPanel);
+	if (panel->size > 320 * 12 || panel->size % 320 != 0) {
+		error("Invalid verbs panel dimensions");
+	}
+	// save the size in _verbsPanelSize
+	loadData(IMG_VerbsPanel, _verbsPanelBuffer, &_verbsPanelSize);
+	debugC(9, kDebugResource, "loadMainTexts()");
+	if (_game.version == kIdSpaCD) {
+		const struct {
+			int strId;
+			int x;
+		} verbTexts[] = {
+			{ STR_Talk,   21 },
+			{ STR_Take,   67 },
+			{ STR_Look,  113 },
+			{ STR_Use,   159 },
+			{ STR_Open,  205 },
+			{ STR_Close, 251 },
+			{ STR_Give,  297 }
+		};
+		for (int i = 0; i < 7; ++i) {
+			const char *s = getString(verbTexts[i].strId);
+			int x = verbTexts[i].x - _dialogueFont->getStringWidth(s) / 2;
+			_dialogueFont->drawString(_verbsPanelBuffer, s, x, 0, 0xF2, -1, 0);
+		}
+	}
+	int dataSize;
+	uint8 *p = loadData(TXT_MainTable, 0, &dataSize);
+	if (_game.version == kIdSpaFloppy) {
+		loadData(DAT_FloppySentenceColors, _actionSentenceColors);
+		// it has 171 dialogue texts and its verbs are in a separate resource
+		const uint objectsOffset = 3 * 7 * 2;
+		const uint dialogueOffset = 0x8BA;
+		if ((uint)dataSize < dialogueOffset || (dataSize - dialogueOffset) % (51 * 2) != 0) {
+			error("Invalid main text resource");
+		}
+		const uint dialogueCount = (dataSize - dialogueOffset) / (51 * 2);
+		if (dialogueCount > ARRAYSIZE(_globalDialogueTexts) ||
+			objectsOffset + ARRAYSIZE(_globalObjectNames) * 31 * 2 > (uint)dataSize) {
+			error("Invalid main text resource");
+		}
+		for (uint i = 0; i < ARRAYSIZE(_verbPrepositions); ++i) {
+			decodeFloppyMainString(p + (i * 2 + _language) * 7, _verbPrepositions[i], 7);
+		}
+		for (uint i = 0; i < ARRAYSIZE(_globalObjectNames); ++i) {
+			decodeFloppyMainString(p + objectsOffset + (i * 2 + _language) * 31, _globalObjectNames[i], 31);
+		}
+		for (uint i = 0; i < dialogueCount; ++i) {
+			decodeFloppyMainString(p + dialogueOffset + (i * 2 + _language) * 51, _globalDialogueTexts[i], 51);
+		}
+		free(p);
+		p = loadData(TXT_MainVerbs, 0, &dataSize);
+		if (dataSize != (int)(ARRAYSIZE(_verbsName) - 1) * 12 * 2) {
+			error("Invalid verbs text resource");
+		}
+		for (uint i = 1; i < ARRAYSIZE(_verbsName); ++i) {
+			decodeFloppyMainString(p + ((i - 1) * 2 + _language) * 12, _verbsName[i], 12);
+		}
+		free(p);
+		debugC(9, kDebugResource, "loadMainTexts() %u dialogue texts", dialogueCount);
+		return;
+	}
+	const uint8 *src = &p[0] + _language * 7;
+	for (int i = 0; i < 3; ++i, src += 7 * 2) {
+		decodeMainString(src, _verbPrepositions[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _verbPrepositions[%d] '%s'", i, _verbPrepositions[i]);
+	}
+	src = &p[0x2A] + _language * 31;
+	for (int i = 0; i < 37; ++i, src += 31 * 2) {
+		decodeMainString(src, _globalObjectNames[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _globalObjectNames[%d] '%s'", i, _globalObjectNames[i]);
+	}
+	src = &p[0x8BA] + _language * 51;
+	for (int i = 0; i < 250; ++i, src += 51 * 2) {
+		decodeMainString(src, _globalDialogueTexts[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _globalDialogueTexts[%d] '%s'", i, _globalDialogueTexts[i]);
+	}
+	src = &p[0x6CA4] + _language * 12;
+	for (int i = 0; i < 9; ++i, src += 12 * 2) {
+		decodeMainString(src, _verbsName[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _verbsName[%d] '%s'", i, _verbsName[i]);
+	}
+	free(p);
+}
+
+const char *IgorEngine::getString(int id) const {
+	const char *str = 0;
+	for (Common::Array<StringEntry>::const_iterator it = _stringEntries.begin(); it != _stringEntries.end(); ++it) {
+		if ((*it).id == id) {
+			str = (*it).str.c_str();
+			break;
+		}
+	}
+	return str;
+}
+
+void IgorEngine::loadIgorFrames() {
+	loadData(FRM_IgorDirBack, _facingIgorFrames[0]);
+	loadData(FRM_IgorDirRight, _facingIgorFrames[1]);
+	loadData(FRM_IgorDirFront, _facingIgorFrames[2]);
+	loadData(FRM_IgorDirLeft, _facingIgorFrames[3]);
+	loadData(FRM_IgorHead, _igorHeadFrames);
+	memcpy(_igorPalette, PAL_IGOR_1, 48);
+}
+
+/**
+ * Igor with the other clothes (the plane scenes).
+ */
+void IgorEngine::loadIgorBeachFrames() {
+	loadData(FRM_IgorDirBack2, _facingIgorFrames[0]);
+	loadData(FRM_IgorDirRight2, _facingIgorFrames[1]);
+	loadData(FRM_IgorDirFront2, _facingIgorFrames[2]);
+	loadData(FRM_IgorDirLeft2, _facingIgorFrames[3]);
+	loadData(FRM_IgorHead2, _igorHeadFrames);
+	memcpy(_igorPalette, PAL_IGOR_2, 48);
+}
+
+static int compareResourceEntry(const void *a, const void *b) {
+	int id = *(const int *)a;
+	const ResourceEntry *entry = (const ResourceEntry *)b;
+	return id - entry->id;
+}
+
+ResourceEntry *IgorEngine::findData(int id) {
+	ResourceEntry *re = (ResourceEntry *)bsearch(&id, _resourceEntries, _resourceEntriesCount, sizeof(ResourceEntry), compareResourceEntry);
+	assert(re);
+	return re;
+}
+
+/**
+ * Will load resource identified with id from the contents of IGOR.TBL.
+ * IGOR.TBL is produced externally using the same ids pointing to a given resource.
+ */
+uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
+	debugC(9, kDebugResource, "loadData() id %d", id);
+	ResourceEntry *re = findData(id);
+	if (!dst) {
+		dst = (uint8 *)malloc(re->size);
+		if (!dst) {
+			error("Unable to allocate %d bytes", re->size);
+		}
+	}
+	if (re->source == kResourceSourceTable) {
+		Common::File tblFile;
+		if (!tblFile.open("IGOR.TBL") || !tblFile.seek(re->offs) || tblFile.read(dst, re->size) != re->size) {
+			error("Unable to read resource %d from 'IGOR.TBL'", id);
+		}
+	} else {
+		_ovlFile.seek(re->offs);
+		_ovlFile.read(dst, re->size);
+	}
+	if (size) {
+		*size = re->size;
+	}
+	return dst;
+}
+
+void IgorEngine::loadActionData(int act) {
+	if (act != 0) {
+		assert(findData(act)->size <= 0x2000);
+		loadData(act, _roomActionsTable);
+	}
+}
+
+void IgorEngine::loadAnimData(const int *anm, int loadOffset) {
+	if (loadOffset == 0) {
+		//clears the entire animation buffer which is big enough to hold screen
+		//and animations
+		memset(_animFramesBuffer, 0, 65535);
+	}
+	while (*anm) {
+		int dataSize;
+		loadData(*anm++, &_animFramesBuffer[loadOffset], &dataSize);
+		loadOffset += dataSize;
+	}
+}
+
+} // End of namespace Igor

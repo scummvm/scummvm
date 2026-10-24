@@ -1,0 +1,262 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+const uint32 kDoor1Closed = 0x2175;
+const uint32 kDoor1Open = 0x23F1;
+const uint32 kDoor2Closed = 0x266D;
+const uint32 kDoor2Open = 0x28DD;
+
+void IgorEngine::part7DrawDoorState(int num) {
+	_roomActionsTable[297] = 109;
+	if (num == 1 || num == 255) { // draws open or closed door depending on the flag
+		const uint32 srcOffset = _objectsState[kDeanDoorOpenStateIndex] == 0 ? kDoor1Closed : kDoor1Open;
+		copyArea(_screenLayer1, 0x4DB8, 320, _animFramesBuffer + srcOffset, 12, 12, 53);
+		_roomActionsTable[146] = _objectsState[kDeanDoorOpenStateIndex] == 0 ? 6 : 7;
+	}
+	if (num == 2 || num == 255) {
+		const uint32 srcOffset = _objectsState[kSecretaryDoorOpenStateIndex] == 0 ? kDoor2Closed : kDoor2Open;
+		copyArea(_screenLayer1, 0x4E1A, 320, _animFramesBuffer + srcOffset, 12, 12, 52);
+		_roomActionsTable[147] = _objectsState[kSecretaryDoorOpenStateIndex] == 0 ? 6 : 7;
+	}
+}
+
+void IgorEngine::part7OpenCloseDoor(int door, bool open) {
+	const int stateIndex = door == 1 ? kDeanDoorOpenStateIndex : kSecretaryDoorOpenStateIndex;
+	if ((_objectsState[stateIndex] != 0) == open) {
+		const int text = open ? 19 : 23;
+		igorSayAndWait(text, 1, text);
+		return;
+	}
+
+	const int lastFrame = open ? 2 : 0;
+	const int step = open ? 1 : -1;
+	for (int frame = 1;; frame += step) {
+		if (door == 1) {
+			drawAnimRect(0x4DB8, frame * 0x636, 30, 53);
+		} else {
+			drawAnimRect(0x4E0F, 0x12A2 + frame * 0x4F1, 23, 55);
+		}
+		if ((open && frame == 2) || (!open && frame == 1))
+			playSound(open ? 13 : 14, 1);
+		if (frame == lastFrame)
+			break;
+		waitForTimer(127);
+	}
+	_objectsState[stateIndex] = open ? 1 : 0;
+	part7DrawDoorState(door);
+}
+
+void IgorEngine::part7DrawScaledIgor(int scaleStep, int facing, int frame, int dyPos) {
+	WalkData &wd = _walkData[0];
+	wd.setPos(109, 143, facing, frame);
+	wd.clipSkipX = 1;
+	wd.clipWidth = 30;
+	wd.scaleWidth = 23 + scaleStep * 3;
+	wd.xPosChanged = 1;
+	wd.dxPos = 0;
+	wd.yPosChanged = 1;
+	wd.dyPos = dyPos;
+	wd.scaleHeight = 50;
+	_walkDataCurrentIndex = 0;
+	moveIgor(facing, frame);
+}
+
+void IgorEngine::part7EnterFromOutside() {
+	if (!isCDVersion())
+		playMusic(3, true);
+	part7DrawDoorState(255);
+	for (int area = 11; area <= 13; ++area)
+		_roomObjectAreasTable[area].area = 0;
+
+	int frame = 1;
+	for (int step = 0; step <= 9; ++step) {
+		// The Spanish floppy ends the entrance on the standing frame
+		part7DrawScaledIgor(step, kFacingPositionBack, (_game.version == kIdSpaFloppy && step == 9) ? 0 : frame, 0);
+		frame = frame == 6 ? 1 : frame + 1;
+		waitForTimer(15);
+	}
+
+	if (_game.version == kIdSpaFloppy) {
+		// The Spanish floppy does not walk further inside after the entrance
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+		return;
+	}
+	_walkDataLastIndex = 0;
+	// first time read notice board
+	if (_game.version == kIdSpaCD && !_part07FirstVisitDone) {
+		buildWalkPath(109, 143, 180, 129);
+		_walkData[_walkDataLastIndex].frameNum = 0;
+		_walkData[_walkDataLastIndex].posNum = kFacingPositionRight;
+		_walkDataCurrentIndex = 1;
+		_gameState.igorMoving = true;
+		waitForIgorMove();
+		igorSayAndWait({ { 206, 2, 144 }, { 208, 4, 145 } });
+		_part07FirstVisitDone = true;
+	} else {
+		buildWalkPath(109, 143, 129, 138);
+		_walkData[_walkDataLastIndex].frameNum = 0;
+		_walkDataCurrentIndex = 1;
+		_gameState.igorMoving = true;
+		waitForIgorMove();
+	}
+}
+
+void IgorEngine::part7ExitToOutside() {
+	int frame = 1;
+	for (int step = 9; step >= 0; --step) {
+		if (step == 9)
+			frame = 0;
+		part7DrawScaledIgor(step, kFacingPositionFront, frame, 3);
+		frame = frame == 6 ? 1 : frame + 1;
+		waitForTimer(15);
+	}
+	_currentPart = 101;
+}
+
+void IgorEngine::part7ExecuteAction(int action) {
+	switch (action) {
+	case 101: // Look at dean's plaque
+		igorSayAndWait(201, 1, 140);
+		break;
+	case 102: // Look at dean's door
+		igorSayAndWait(202, 2, 141);
+		break;
+	case 103:
+		part7OpenCloseDoor(1, true);
+		break;
+	case 104:
+		part7OpenCloseDoor(1, false);
+		break;
+	case 105:
+		part7OpenCloseDoor(2, true);
+		break;
+	case 106:
+		part7OpenCloseDoor(2, false);
+		break;
+	case 107: // Secretary's plaque
+		igorSayAndWait(204, 1, 142);
+		break;
+	case 108: // Look at messageboard
+		switch (getRandomNumber(2)) {
+		case 0:
+			igorSayAndWait({ { 205, 1, 143 }, { 206, 2, 144 }, { 208, 4, 145 } });
+			break;
+		case 1:
+			igorSayAndWait(213, 2, 147);
+			break;
+		case 2:
+			igorSayAndWait({ { 215, 1, 148 }, { 216, 1, 149 }, { 217, 1, 150 }, { 218, 1, 151 }, { 219, 1, 152 } });
+			break;
+		}
+		break;
+	case 109: // Look at stairs
+		igorSayAndWait(212, 1, 146);
+		break;
+	case 110:
+		part7ExitToOutside();
+		break;
+	case 111: // Go through dean's door
+		if (_objectsState[kDeanDoorOpenStateIndex] != 0) {
+			for (int area = 11; area <= 13; ++area) {
+				_roomObjectAreasTable[area].area = 3;
+			}
+			--_walkDataLastIndex;
+			buildWalkPath(77, 114, 46, 111);
+			_walkDataCurrentIndex = 1;
+			_gameState.igorMoving = true;
+			waitForIgorMove();
+			_currentPart = 80;
+		}
+		break;
+	case 112: // Go through secretary's door
+		if (_objectsState[kSecretaryDoorOpenStateIndex] != 0) {
+			WalkData &wd = _walkData[0];
+			wd.setPos(156, 113, kFacingPositionBack, 1);
+			wd.setDefaultScale();
+			wd.dxPos = 4;
+			wd.yPosChanged = 0;
+			wd.dyPos = 3;
+			_walkDataCurrentIndex = 0;
+			moveIgor(kFacingPositionBack, 1);
+			_currentPart = 90;
+		}
+		break;
+	default:
+		warning("part7ExecuteAction unhandled action %d", action);
+		break;
+	}
+}
+
+void IgorEngine::part7() {
+	if (isCDVersion())
+		playMusic(2);
+	_gameState.enableLight = 1;
+	loadActionData(DAT_AdministrationCorridor);
+	loadRoomData(PAL_AdministrationCorridor, IMG_AdministrationCorridor,
+				 BOX_AdministrationCorridor, MSK_AdministrationCorridor,
+				 TXT_AdministrationCorridor);
+	static const int anim[] = {ANM_AdministrationCorridor, 0};
+	loadAnimData(anim);
+	partMainSetExecuteAction(1, &IgorEngine::part7ExecuteAction);
+	_roomDataOffsets = PART_07_ROOM_DATA_OFFSETS;
+	setRoomWalkBounds(0, 0, 319, 143);
+	part7DrawDoorState(255);
+	memcpy(_screenVGA, _screenLayer1, 46080);
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
+	for (int area = 11; area <= 13; ++area) {
+		_roomObjectAreasTable[area].area = 0;
+	}
+	if (!restoreRoomAfterLoad()) {
+		_currentAction.verb = kVerbWalk;
+		if (_currentPart == 71) { // enter from dean's door
+			_walkData[0].setPos(78, 114, kFacingPositionRight, 0);
+			_walkData[0].setDefaultScale();
+			_walkDataCurrentIndex = 0;
+			moveIgor(kFacingPositionRight, 0);
+		} else if (_currentPart == 72) { // enter from secretary's door
+			_walkData[0].setPos(153, 116, kFacingPositionFront, 0);
+			_walkData[0].setDefaultScale();
+			_walkDataCurrentIndex = 0;
+			moveIgor(kFacingPositionFront, 0);
+		}
+
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+		fadeIn(768);
+		if (_currentPart == 70) { // enter from outside
+			part7EnterFromOutside();
+		}
+	}
+	enterPartLoop();
+	while (_currentPart >= 70 && _currentPart <= 72 && !_gameStateLoaded)
+		runPartLoop();
+	leavePartLoop();
+	if (!_gameStateLoaded)
+		fadeOut(624);
+}
+
+} // End of namespace Igor

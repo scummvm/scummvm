@@ -1,0 +1,175 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+
+void IgorEngine::part18ExecuteAction(int action) {
+	switch (action) {
+	case 101: // look at grating
+		igorSay(201, 1, 896);
+		break;
+	case 102: // look at door
+		igorSay(202, 1, 897);
+		break;
+	case 103: // use left-most door
+		cutsceneSay(99, 54, 43, 63, 0, 205, 1, 899);
+		break;
+	case 104: // use middle door
+		cutsceneSay(132, 55, 63, 42, 0, 206, 1, 900);
+		break;
+	case 105: // use right-most door
+		cutsceneSay(167, 56, 0, 42, 42, 207, 1, 901);
+		break;
+	case 106: // look at dryer
+		igorSay(208, 1, 902);
+		break;
+	case 107: // look at tap
+		igorSay(209, 1, 903);
+		break;
+	case 108: // use tap
+		igorSay(210, 1, 904);
+		break;
+	case 109: // use slug on grating
+		part18UseSlugOnGrating();
+		break;
+	case 110: // leave
+		_currentPart = 252;
+		break;
+	case 111:
+		part18UseBottleOnTap();
+		break;
+	default:
+		error("part18ExecuteAction unhandled action %d", action);
+		break;
+	}
+}
+
+void IgorEngine::part18UseSlugOnGrating() {
+	const int offset = 29480;
+	for (int i = 1; i <= 2; ++i) {
+		drawAnimRect(offset + 320, (i - 1) * 1519 + 31, 31, 48);
+		waitForTimer(120);
+	}
+	int part = _currentPart;
+	_currentPart = 191;
+	fadeOut(768);
+	// loads part 19
+	part19();
+
+	memcpy(_screenVGA, _screenLayer2, 46080);
+
+	part18LoadRoom();
+	part18LoadAnimation();
+	loadActionData(DAT_MenToilets);
+	_roomDataOffsets = PART_18_ROOM_DATA_OFFSETS;
+	setRoomWalkBounds(0, 0, 319, 143);
+	partMainSetExecuteAction(1, &IgorEngine::part18ExecuteAction);
+	part18ApplyObjectState(255);
+	// paints bottom of screen black
+	memset(_screenVGA + 46080, 0, 17920);
+	drawVerbsPanel();
+	drawInventory(1, 0);
+	removeObjectFromInventory(53);
+	fadeIn(768);
+	_currentPart = part;
+	igorSay(215, 1, 908);
+}
+
+void IgorEngine::part18UseBottleOnTap() {
+	if (_objectsState[kBottleStateIndex] == 0) {
+		igorSay(211, 1, 905);
+		return;
+	}
+	if (_objectsState[kBottleStateIndex] == 2) {
+		igorSay(212, 1, 906);
+		return;
+	}
+	const int offset = 26798;
+	drawAnimRect(offset, 0xF0A, 28, 29);
+	playRoomSound(kSoundPart18Tap, kSpaFloppySoundPart18Tap);
+	for (int i = 1; i <= 2; ++i) {
+		waitForTimer(_game.version == kIdSpaFloppy ? 120 : 200);
+	}
+	drawAnimRect(offset, 0xBDE, 28, 29);
+	igorSay(213, 2, 907);
+	_objectsState[kBottleStateIndex] = 2;
+	partMainUpdateObjectState(1);
+}
+
+void IgorEngine::part18ApplyObjectState(int num) {
+}
+
+void IgorEngine::part18WalkIn() {
+	_walkData[0].setPos(319, 142, 4, 0);
+	_walkData[0].clipSkipX = 1;
+	_walkData[0].clipWidth = 15;
+	_walkData[0].scaleWidth = 50;
+	_walkData[0].xPosChanged = 1;
+	_walkData[0].dxPos = 0;
+	_walkData[0].yPosChanged = 1;
+	_walkData[0].dyPos = 0;
+	_walkData[0].scaleHeight = 50;
+	_walkDataLastIndex = 0;
+	buildWalkPath(319, 142, 295, 142);
+	_walkData[_walkDataLastIndex].frameNum = 0;
+	_walkDataCurrentIndex = 1;
+	_gameState.igorMoving = true;
+	waitForIgorMove();
+}
+
+void IgorEngine::part18() {
+	if (isCDVersion())
+		playMusic(2);
+	_gameState.enableLight = 1;
+	part18LoadRoom();
+	part18LoadAnimation();
+	loadActionData(DAT_MenToilets);
+	_roomDataOffsets = PART_18_ROOM_DATA_OFFSETS;
+	setRoomWalkBounds(0, 0, 319, 143);
+	partMainSetExecuteAction(1, &IgorEngine::part18ExecuteAction);
+	part18ApplyObjectState(255);
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		part18WalkIn();
+		enterPartLoop();
+	}
+	while (_currentPart == 180 && !_gameStateLoaded) {
+		runPartLoop();
+	}
+	leavePartLoop();
+	if (!_gameStateLoaded)
+		fadeOut(624);
+}
+
+void IgorEngine::part18LoadRoom() {
+	loadRoomData(PAL_MenToilets, IMG_MenToilets, BOX_MenToilets, MSK_MenToilets, TXT_MenToilets);
+}
+
+void IgorEngine::part18LoadAnimation() {
+	static const int anm[] = { FRM_MenToilets1, FRM_MenToilets2, 0 };
+	loadAnimData(anm);
+}
+} // namespace Igor

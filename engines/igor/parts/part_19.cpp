@@ -1,0 +1,253 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+static int VAR_CURRENT_TALKING_ACTOR;
+
+void IgorEngine::part19ExecuteAction(int action) {
+	switch (action) {
+	case 101:
+		igorSay(201, 1, 909);
+		break;
+	case 102:
+		cutsceneSay(99, 54, 43, 63, 0, 202, 1, 910);
+		break;
+	case 103:
+		cutsceneSay(132, 55, 63, 42, 0, 203, 1, 911);
+		break;
+	case 104:
+		cutsceneSay(167, 56, 0, 42, 42, 204, 1, 912);
+		break;
+	case 105:
+		igorSay(205, 1, 913);
+		break;
+	case 106:
+		_currentPart = 232;
+		break;
+	case 107:
+		part19LookAtSink();
+		break;
+	case 108:
+		igorSay(208, 1, 916);
+		break;
+	case 109:
+		part19UsePapyrusOnDryer();
+		break;
+	default:
+		error("part19ExecuteAction unhandled action %d", action);
+		break;
+	}
+}
+
+void IgorEngine::part19LookAtSink() {
+	if (_objectsState[kHairpinTakenStateIndex] == 1) {
+		igorSay(211, 1, 919);
+		return;
+	}
+	igorSayAndWait({ { 206, 1, 914 }, { 207, 1, 915 } });
+	for (int i = 1; i <= 2; ++i) {
+		const int offset = 27110;
+		for (int j = 0; j <= 48; ++j) {
+			memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + i * 1372 + j * 28 - 506, 28);
+		}
+		waitForTimer(120);
+	}
+	addObjectToInventory(kInventoryObjectHairpin, 47);
+	_objectsState[kHairpinTakenStateIndex] = 1;
+	part19ApplyObjectState(255);
+}
+
+void IgorEngine::part19UsePapyrusOnDryer() {
+	if (_objectsState[kPapyrusFiguresVisibleStateIndex] == 1) {
+		igorSay(210, 1, 918);
+		return;
+	}
+	for (int i = 1; i <= 4; ++i) {
+		const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x354 + i * 2) - 1;
+		decodeAnimFrame(src, _screenVGA, true);
+		waitForTimer(45);
+	}
+	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x35E) - 1, _screenVGA, true);
+	playRoomSound(kSoundPart19Dryer, kSpaFloppySoundPart19Dryer);
+	partMainLookAtPapyrus(true);
+	part19ApplyObjectState(255);
+	stopSound();
+	decodeAnimFrame(_animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x360) - 1, _screenVGA, true);
+	igorSayAndWait(209, 1, 917);
+}
+
+void IgorEngine::part19UpdateWomenDialogue(int action) {
+	switch (action) {
+	case kUpdateDialogueAnimEndOfSentence:
+		part19DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 : 40);
+		break;
+	case kUpdateDialogueAnimMiddleOfSentence:
+		part19DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 + getRandomNumber(4) : 40 + getRandomNumber(4));
+		break;
+	}
+}
+
+void IgorEngine::part19UpdateBackground() {
+	if (compareGameTick(3, 64) && _gameState.counter[1] <= 34) {
+		const uint8 *src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + _gameState.counter[1] * 2) - 1;
+		decodeAnimFrame(src, _screenVGA, true);
+		++_gameState.counter[1];
+	}
+}
+
+void IgorEngine::part19ApplyObjectState(int num) {
+	if (num == 2 || num == 255) {
+		if (_objectsState[kToiletGirlsHaveLeftStateIndex] == 0) {
+			decodeAnimFrame(_animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x4051) - 1, _screenLayer1, true);
+		}
+	}
+}
+
+void IgorEngine::part19SlugCutscene() { // sub_137_07AD
+	int talkSpeed = _gameState.talkSpeed;
+	_gameState.talkSpeed = 5;
+	memcpy(_screenLayer2, _screenVGA, 46080);
+	memcpy(_screenVGA, _screenLayer1, 46080);
+	const uint8 *src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x4051) - 1;
+	decodeAnimFrame(src, _screenVGA, true);
+	memcpy(_screenLayer1, _screenVGA, 46080);
+	fadeIn(624);
+	VAR_CURRENT_TALKING_ACTOR = 0;
+	cutsceneSayWithCallback(243, 92, 63, 23, 33, 212, 3, 920, &IgorEngine::part19UpdateWomenDialogue);
+	for (int i = 2; i <= 9; ++i) {
+		src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + i * 2) - 1;
+		decodeAnimFrame(src, _screenVGA, true);
+		waitForTimer(60);
+	}
+	cutsceneSayStart(227, 91, 0, 63, 63, { { 215, 1, 921 }, { 216, 2, 922 } });
+	_gameState.counter[1] = 10;
+	VAR_CURRENT_TALKING_ACTOR = 1;
+	_updateRoomBackground = &IgorEngine::part19UpdateBackground;
+	waitForEndOfCutsceneDialogue(227, 91, 0, 63, 63);
+	_updateRoomBackground = 0;
+	while (_gameState.counter[1] != 35) {
+		part19UpdateBackground();
+		waitForTimer();
+	}
+	for (int i = 47; i <= 48; ++i) {
+		src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + i * 2) - 1;
+		decodeAnimFrame(src, _screenVGA, true);
+		waitForTimer(30);
+	}
+	for (int i = 1; i <= 3; ++i) {
+		for (int j = 49; j <= 50; ++j) {
+			src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + j * 2) - 1;
+			decodeAnimFrame(src, _screenVGA, true);
+			waitForTimer(30);
+			if (j == 50) {
+				playSound(46, 1);
+			}
+		}
+	}
+	src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x40B5) - 1;
+	decodeAnimFrame(src, _screenVGA, true);
+	waitForTimer(30);
+	VAR_CURRENT_TALKING_ACTOR = 0;
+	cutsceneSayWithCallback(243, 92, 63, 23, 33, 218, 1, 923, &IgorEngine::part19UpdateWomenDialogue);
+	VAR_CURRENT_TALKING_ACTOR = 1;
+	cutsceneSayWithCallback(227, 91, 0, 63, 63, 219, 2, 924, &IgorEngine::part19UpdateWomenDialogue);
+	VAR_CURRENT_TALKING_ACTOR = 0;
+	cutsceneSayWithCallback(243, 92, 63, 23, 33, 221, 2, 925, &IgorEngine::part19UpdateWomenDialogue);
+	VAR_CURRENT_TALKING_ACTOR = 1;
+	cutsceneSayWithCallback(227, 91, 0, 63, 63, 223, 2, 926, &IgorEngine::part19UpdateWomenDialogue);
+	_objectsState[kToiletGirlsHaveLeftStateIndex] = 1;
+	fadeOut(624);
+	_gameState.talkSpeed = talkSpeed;
+}
+
+void IgorEngine::part19WalkIn() {
+	_walkData[0].setPos(319, 142, 1, 0);
+	_walkData[0].setDefaultScale();
+	_walkData[0].clipSkipX = 1;
+	_walkData[0].clipWidth = 15;
+	_walkDataLastIndex = 0;
+	buildWalkPath(319, 142, 295, 142);
+	_walkData[_walkDataLastIndex].frameNum = 0;
+	_walkDataCurrentIndex = 1;
+	_gameState.igorMoving = true;
+	waitForIgorMove();
+}
+
+void IgorEngine::part19EnterAndLeave() {
+	decodeAnimFrame(_animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x40AB) - 1, _screenVGA, true);
+	waitForTimer(60);
+	igorSayAndWait(225, 1, 927);
+	--_walkDataLastIndex;
+	buildWalkPath(295, 142, 319, 142);
+	_walkDataCurrentIndex = 1;
+	_gameState.igorMoving = true;
+	waitForIgorMove();
+	_currentPart = 232;
+}
+
+void IgorEngine::part19DrawTalkingFrame(int frame) {
+	const uint8 *src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + frame * 2) - 1;
+	decodeAnimFrame(src, _screenVGA, true);
+}
+
+void IgorEngine::part19() {
+	if (isCDVersion())
+		playMusic(2);
+	_gameState.enableLight = 1;
+	loadRoomData(PAL_WomenToilets, IMG_WomenToilets, BOX_WomenToilets, MSK_WomenToilets, TXT_WomenToilets);
+	static const int anm[] = { FRM_WomenToilets1, FRM_WomenToilets2, FRM_WomenToilets3, FRM_WomenToilets4, FRM_WomenToilets5, 0 };
+	loadAnimData(anm);
+	loadActionData(DAT_WomenToilets);
+	_roomDataOffsets = PART_19_ROOM_DATA_OFFSETS;
+	setRoomWalkBounds(0, 0, 319, 143);
+	if (_currentPart == 191) {
+		// cutscene only: it fades out by itself and returns to the caller
+		part19SlugCutscene();
+		return;
+	}
+	partMainSetExecuteAction(1, &IgorEngine::part19ExecuteAction);
+	part19ApplyObjectState(255);
+	if (!restoreRoomAfterLoad()) {
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		part19WalkIn();
+		if (_objectsState[kToiletGirlsHaveLeftStateIndex] == 0) {
+			part19EnterAndLeave();
+			if (!_gameStateLoaded && _currentPart != 191)
+				fadeOut(624);
+			return;
+		}
+		enterPartLoop();
+	}
+	while (_currentPart == 190 && !_gameStateLoaded) {
+		runPartLoop();
+	}
+	leavePartLoop();
+	if (_currentPart != 191 && !_gameStateLoaded) {
+		fadeOut(624);
+	}
+}
+
+} // namespace Igor

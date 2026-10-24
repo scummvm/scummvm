@@ -1,0 +1,1278 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+static int16 roundReal(float f) {
+	return (int16)(f + .5);
+}
+
+static int16 truncReal(float f) {
+	return (int16)f;
+}
+
+void IgorEngine::setRoomClickFix(int yMax, int xMin, int xMax, bool scanUp, int yBottom) {
+	_roomWalkTargetRules.yMax = yMax;
+	_roomWalkTargetBottom = yBottom;
+	_roomWalkTargetRules.xMin = xMin;
+	_roomWalkTargetRules.xMax = xMax;
+	_roomWalkTargetRules.scanUp = scanUp;
+	_roomWalkTargetRules.enabled = true;
+}
+
+int IgorEngine::lookupScale(int xOffset, int yOffset, int h) const {
+	int index = READ_LE_UINT16(_walkScaleTable + 0x734 + _walkWidthScaleTable[h - 1] * 2);
+	int offset = _walkScaleTable[0x4FC + index + xOffset];
+	index = READ_LE_UINT16(_walkScaleTable + 0x6CE + h * 2);
+	offset += _walkScaleTable[index + yOffset] * 30;
+	return offset;
+}
+
+void IgorEngine::moveIgor(int pos, int frame) {
+	assert(_gameState.enableLight == 1 || _gameState.enableLight == 2);
+	debugC(9, kDebugWalk, "moveIgorHelper _walkDataCurrentIndex %d pos %d frame %d", _walkDataCurrentIndex, pos, frame);
+	if (pos < 1 || pos > 4) {
+		warning("moveIgor: invalid facing %d, step not drawn", pos);
+		return;
+	}
+	WalkData *wd = &_walkData[_walkDataCurrentIndex];
+	uint8 _walkClipSkipX = wd->clipSkipX;
+	uint8 _walkHeightScale = wd->scaleHeight;
+	int16 _walkClipWidth = wd->clipWidth;
+	uint16 _walkScaleWidth = wd->scaleWidth;
+	uint8 _walkXPosChanged = wd->xPosChanged;
+	int16 _walkDxPos = wd->dxPos + 1;
+	uint8 _walkYPosChanged = wd->yPosChanged;
+	int16 _walkDyPos = wd->dyPos;
+	int16 _walkDataCurrentPosX2 = wd->x;
+	int16 _walkDataCurrentPosY2 = wd->y;
+
+	if (_walkDxPos <= 0) {
+		debugC(9, kDebugWalk, "moveIgor NEGATIVE dxPos: wd->dxPos %d _walkDxPos %d clipWidth %d wd->x %d wd->y %d _walkData[0] %d,%d idx %d",
+		       wd->dxPos, _walkDxPos, _walkClipWidth, _walkDataCurrentPosX2, _walkDataCurrentPosY2,
+		       _walkData[0].x, _walkData[0].y, _walkDataCurrentIndex);
+	}
+
+	uint16 _walkDataDrawOffset = (wd->y - wd->scaleWidth + 1) * 320;
+
+	int xPos = _walkWidthScaleTable[wd->scaleHeight - 1] / 2;
+	if (wd->x > xPos) {
+		_walkDataDrawOffset += wd->x - xPos;
+	}
+	if (_walkXPosChanged != 0) {
+		_walkDataDrawOffset -= _walkDxPos;
+	}
+	if (_walkYPosChanged != 0) {
+		_walkDataDrawOffset -= _walkDyPos * 320;
+	}
+	if (_gameState.enableLight == 2) {
+		int8 colorLum = _roomObjectAreasTable[_screenLayer2[_walkDataCurrentPosY2 * 320 + _walkDataCurrentPosX2]].y2Lum;
+		if (_gameState.colorLum != colorLum) {
+			for (int color = 192 * 3; color <= 207 * 3; ++color) {
+				// Igor's colors come from his own palette, not from the (possibly darkened) palette of the room
+				int c = _igorPalette[color - 192 * 3] + colorLum;
+				if (c < 1) {
+					c = 0;
+				} else if (c > 62) {
+					c = 63;
+				}
+				_currentPalette[color] = c;
+			}
+			setPaletteRange(192, 207);
+			_gameState.colorLum = colorLum;
+		}
+	}
+	// Igor's sprite can extend past the right edge of the last room row; the
+	// pixels read there are outside the room and never drawn
+	const int layerSize = 320 * 144;
+	auto layer1At = [&](int offset) -> uint8 { return offset < layerSize ? _screenLayer1[offset] : 0; };
+	auto layer2At = [&](int offset) -> uint8 { return offset < layerSize ? _screenLayer2[offset] : 0; };
+	auto copyLayer1 = [&](uint8 *dst, int offset, int size) {
+		for (int n = 0; n < size; ++n) {
+			dst[n] = layer1At(offset + n);
+		}
+	};
+	uint16 screenIgorDrawOffset = _walkDataDrawOffset;
+	uint16 igorScaledWidth = _walkDxPos + _walkClipWidth;
+	uint16 igorScaledHeight = _walkScaleWidth + _walkDyPos;
+	uint16 igorBodyScanLine = 0;
+	if (_walkYPosChanged != 0) {
+		for (int i = 1; i <= _walkDyPos; ++i) {
+			copyLayer1(_igorTempFrames + igorBodyScanLine * 50, _walkDataDrawOffset, igorScaledWidth);
+			_walkDataDrawOffset += 320;
+			++igorBodyScanLine;
+		}
+	}
+	if (_walkXPosChanged != 0) {
+		for (int yOffset = 0; yOffset < _walkScaleWidth; ++yOffset) {
+			assert(_walkDxPos > 0);
+			assert(igorBodyScanLine * 50 + _walkDxPos <= 3000);
+			copyLayer1(_igorTempFrames + igorBodyScanLine * 50, _walkDataDrawOffset, _walkDxPos);
+			int xOffset = _walkClipSkipX - 1;
+			for (int i = 0; i < _walkClipWidth; ++i) {
+				int offset = lookupScale(xOffset, yOffset, _walkHeightScale);
+				offset += frame * 1500;
+				uint8 color = _facingIgorFrames[pos - 1][offset];
+				if (color != 0) {
+					assert(_walkDataDrawOffset + _walkDxPos + i >= 0);
+					int index = layer2At(_walkDataDrawOffset + _walkDxPos + i);
+					int yPos = _roomObjectAreasTable[index].y1Lum;
+					if (wd->y <= yPos) {
+						_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = layer1At(_walkDataDrawOffset + _walkDxPos + i);
+					} else {
+						if (_gameState.enableLight == 1 && wd->y <= _roomObjectAreasTable[index].y2Lum) {
+							color -= _roomObjectAreasTable[index].deltaLum;
+						}
+						_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = color;
+					}
+				} else {
+					_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = layer1At(_walkDataDrawOffset + _walkDxPos + i);
+				}
+				++xOffset;
+			}
+			_walkDataDrawOffset += 320;
+			++igorBodyScanLine;
+		}
+	} else {
+		for (int yOffset = 0; yOffset < _walkScaleWidth; ++yOffset) {
+			int xOffset = _walkClipSkipX - 1;
+			for (int i = 0; i < _walkClipWidth; ++i) {
+				int offset = lookupScale(xOffset, yOffset, _walkHeightScale);
+				offset += frame * 1500;
+				uint8 color = _facingIgorFrames[pos - 1][offset];
+				if (color != 0) {
+					assert(_walkDataDrawOffset + i >= 0);
+					int index = layer2At(_walkDataDrawOffset + i);
+					int yPos = _roomObjectAreasTable[index].y1Lum;
+					if (wd->y <= yPos) {
+						_igorTempFrames[igorBodyScanLine * 50 + i] = layer1At(_walkDataDrawOffset + i);
+					} else {
+						if (_gameState.enableLight == 1 && wd->y <= _roomObjectAreasTable[index].y2Lum) {
+							color -= _roomObjectAreasTable[index].deltaLum;
+						}
+						_igorTempFrames[igorBodyScanLine * 50 + i] = color;
+					}
+				} else {
+					_igorTempFrames[igorBodyScanLine * 50 + i] = layer1At(_walkDataDrawOffset + i);
+				}
+				++xOffset;
+			}
+			copyLayer1(_igorTempFrames + igorBodyScanLine * 50 + _walkClipWidth, _walkDataDrawOffset + _walkClipWidth, _walkDxPos);
+			_walkDataDrawOffset += 320;
+			++igorBodyScanLine;
+		}
+	}
+	if (_walkYPosChanged == 0) {
+		for (int i = 1; i <= _walkDyPos; ++i) {
+			copyLayer1(_igorTempFrames + igorBodyScanLine * 50, _walkDataDrawOffset, igorScaledWidth);
+			_walkDataDrawOffset += 320;
+			++igorBodyScanLine;
+		}
+	}
+	for (igorBodyScanLine = 0; igorBodyScanLine < igorScaledHeight; ++igorBodyScanLine) {
+		if (screenIgorDrawOffset < 320 * 144) {
+			const int len = MIN<int>(igorScaledWidth, 320 * 144 - screenIgorDrawOffset);
+			memcpy(_screenVGA + screenIgorDrawOffset, _igorTempFrames + igorBodyScanLine * 50, len);
+		}
+		screenIgorDrawOffset += 320;
+	}
+}
+void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
+	debugC(9, kDebugWalk, "IgorEngine::buildWalkPathSimple(%d, %d, %d, %d)", srcX, srcY, dstX, dstY);
+	if (srcX != dstX || srcY != dstY) {
+		_walkData[0] = _walkData[_walkDataLastIndex];
+		_walkDataLastIndex = 1;
+		buildWalkPathArea(srcX, srcY, dstX, dstY);
+		--_walkDataLastIndex;
+	}
+}
+
+void IgorEngine::getClosestAreaTrianglePoint(int dstArea, int srcArea, int *dstY, int *dstX, int srcY, int srcX) {
+	int minSqrDist = -1;
+	assert(dstArea >= 1 && srcArea >= 1);
+	const uint8 *p = _roomActionsTable + ((dstArea - 1) + (srcArea - 1) * _roomDataOffsets.area.boxSize) * 6;
+	for (int i = 0; i < 3; ++i) {
+		const uint16 offset = READ_LE_UINT16(p + i * 2);
+		const int yPos = offset / 320;
+		const int xPos = offset % 320;
+		int y = srcY - yPos;
+		int x = srcX - xPos;
+		int sqrDist = y * y + x * x;
+		if (minSqrDist == -1 || sqrDist < minSqrDist) {
+			*dstY = yPos;
+			*dstX = xPos;
+			minSqrDist = sqrDist;
+		}
+	}
+	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
+}
+
+void IgorEngine::getClosestAreaTrianglePoint2(int dstArea, int srcArea, int *dstY, int *dstX, int srcY1, int srcX1, int srcY2, int srcX2) {
+	int minSqrDist = -1;
+	assert(dstArea >= 1 && srcArea >= 1);
+	const uint8 *p = _roomActionsTable + ((dstArea - 1) + (srcArea - 1) * _roomDataOffsets.area.boxSize) * 6;
+	for (int i = 0; i < 3; ++i) {
+		const uint16 offset = READ_LE_UINT16(p + i * 2);
+		const int yPos = offset / 320;
+		const int xPos = offset % 320;
+		int y1 = srcY1 - yPos;
+		int x1 = srcX1 - xPos;
+		int y2 = srcY2 - yPos;
+		int x2 = srcX2 - xPos;
+		int sqrDist = y1 * y1 + x1 * x1 + y2 * y2 + x2 * x2;
+		if (minSqrDist == -1 || sqrDist < minSqrDist) {
+			*dstY = yPos;
+			*dstX = xPos;
+			minSqrDist = sqrDist;
+		}
+	}
+	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint2() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
+}
+
+void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
+	if (srcX != dstX || srcY != dstY) {
+		_walkData[0] = _walkData[_walkDataLastIndex];
+		_walkDataLastIndex = 1;
+		int srcArea = _roomObjectAreasTable[_screenLayer2[srcY * 320 + srcX]].area;
+		int dstArea = _roomObjectAreasTable[_screenLayer2[dstY * 320 + dstX]].area;
+		debugC(9, kDebugWalk, "srcArea = %d dstArea = %d", srcArea, dstArea);
+		int currentArea = srcArea;
+		// Area 0 means the point is outside any walk area: there is no route
+		// through the area table, so walk straight to the destination
+		for (int i = 1; srcArea >= 1 && dstArea >= 1 && dstArea != currentArea; ++i) {
+			const int boxOffset = srcArea * _roomDataOffsets.area.boxSrcSize + dstArea * _roomDataOffsets.area.boxDstSize;
+			int nextArea = _roomActionsTable[boxOffset + i + _roomDataOffsets.area.box];
+			debugC(9, kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);
+			int nextPosX, nextPosY;
+			if (dstArea != nextArea) {
+				getClosestAreaTrianglePoint(nextArea, currentArea, &nextPosY, &nextPosX, srcY, srcX);
+			} else {
+				getClosestAreaTrianglePoint2(nextArea, currentArea, &nextPosY, &nextPosX, dstY, dstX, srcY, srcX);
+			}
+			debugC(9, kDebugWalk, "buildWalkPath() transitionArea = %d next %d,%d pos %d,%d offset 0x%X", nextArea, nextPosX, nextPosY, dstX, dstY, _roomDataOffsets.area.box);
+			buildWalkPathArea(srcX, srcY, nextPosX, nextPosY);
+			srcX = nextPosX;
+			srcY = nextPosY;
+			currentArea = nextArea;
+		}
+		buildWalkPathArea(srcX, srcY, dstX, dstY);
+		--_walkDataLastIndex;
+	}
+	debugC(9, kDebugWalk, "buildWalkPath() end _walkDataLastIndex %d", _walkDataLastIndex);
+}
+
+void IgorEngine::buildWalkPathArea(int srcX, int srcY, int dstX, int dstY) {
+	if (srcX != dstX || srcY != dstY) {
+		const int dx = dstX - srcX;
+		const int dy = dstY - srcY;
+		debugC(9, kDebugWalk, "buildWalkPathArea() dx = %d dy = %d src %d,%d dst %d,%d", dx, dy, srcX, srcY, dstX, dstY);
+		assert(_walkDataLastIndex > 0);
+		if (ABS(dy) * 2 > ABS(dx)) {
+			if (srcY > dstY) {
+				buildWalkPathAreaUpDirection(srcX, srcY, dstX, dstY);
+			} else {
+				buildWalkPathAreaDownDirection(srcX, srcY, dstX, dstY);
+			}
+		} else {
+			if (srcX < dstX) {
+				buildWalkPathAreaRightDirection(srcX, srcY, dstX, dstY);
+			} else {
+				buildWalkPathAreaLeftDirection(srcX, srcY, dstX, dstY);
+			}
+		}
+	}
+}
+
+int IgorEngine::getVerticalStepsCount(int minX, int minY, int maxX, int maxY) {
+	debugC(9, kDebugWalk, "getVerticalStepsCount() %d %d %d %d", minX, minY, maxX, maxY);
+	int curX = 2;
+	if ((_walkXScaleRoom[minX] != 1 || _walkXScaleRoom[maxX] != 3) && (_walkXScaleRoom[maxX] != 1 || _walkXScaleRoom[minX] != 3)) {
+		curX = _walkXScaleRoom[minX];
+	}
+	int curY = minY;
+	int count = 0;
+	while (1) {
+		uint8 scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+		scale = _walkScaleTable[0x901 + scale];
+		if (maxY - curY <= scale) {
+			break;
+		}
+		curY += scale;
+		++count;
+	}
+	return count;
+}
+
+int IgorEngine::getHorizontalStepsCount(int minX, int minY, int maxX, int maxY) {
+	uint8 scale, frame = _walkCurrentFrame;
+
+	scale = _walkYScaleRoom[(_walkXScaleRoom[maxX] - 1) * 144 + maxY];
+	float r1 = _walkScaleSpeedTable[scale - 1];
+	scale = _walkYScaleRoom[(_walkXScaleRoom[minX] - 1) * 144 + minY];
+	float r2 = _walkScaleSpeedTable[scale - 1];
+	debugC(9, kDebugWalk, "getHorizontalStepsCount() maxX - minX = %d r1 = %f r2 = %f", maxX - minX, r1, r2);
+
+	int16 steps = roundReal((maxX - minX) / ((r1 + r2) / 2.0f));
+	int count = 0;
+	if (steps != 0) {
+		float r3 = (maxY - minY) / (float)steps;
+		int curX = minX;
+		int curY = minY;
+		float r4 = r3;
+		while (1) {
+			scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+			uint8 c = _walkScaleTable[0x769 + scale * 8 + frame];
+			if (maxX - curX <= c) {
+				break;
+			}
+			curX += c;
+			curY = minY + truncReal(r4);
+			if (frame == 8) {
+				frame = 1;
+			} else {
+				++frame;
+			}
+			r4 += r3;
+			++count;
+		}
+	}
+	return count;
+}
+
+void IgorEngine::lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, uint8 &yScale) const {
+	scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+	yScale = _walkScaleTable[0x901 + scale];
+	xScale = _walkWidthScaleTable[scale - 1];
+}
+
+void IgorEngine::buildWalkPathAreaUpDirection(int srcX, int srcY, int dstX, int dstY) {
+	int _walkCurrentPosLocalVar = _walkCurrentPos;
+	if (_walkCurrentPos == 3) {
+		_walkCurrentPos = 1;
+		_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+		_walkData[_walkDataLastIndex].posNum = (dstX > srcX) ? kFacingPositionRight : kFacingPositionLeft;
+		_walkData[_walkDataLastIndex].frameNum = 5;
+		++_walkDataLastIndex;
+	} else {
+		_walkCurrentPos = 1;
+	}
+	if (_walkCurrentFrame > 6) {
+		_walkCurrentFrame -= 6;
+	}
+	WalkData *wd;
+	uint8 scale, xScale, yScale;
+	float vStepDist, vStepCur;
+	int curX = srcX;
+	int curY = srcY;
+	if (srcX > dstX) {
+		int vStepsCount = getVerticalStepsCount(dstX, dstY, srcX, srcY);
+		if (vStepsCount > 0) {
+			vStepCur = vStepDist = (srcX - dstX) / (float)vStepsCount;
+			for (int i = 1; i <= vStepsCount; ++i) {
+				wd = &_walkData[_walkDataLastIndex];
+				curX = srcX - truncReal(vStepCur);
+				lookupScale(curX, curY, scale, xScale, yScale);
+				curY -= yScale;
+				lookupScale(curX, curY, scale, xScale, yScale);
+				wd->setPos(curX, curY, 1, _walkCurrentFrame);
+				WalkData::setNextFrame(kFacingPositionBack, _walkCurrentFrame);
+				wd->setScale(scale, scale);
+				wd->yPosChanged = 0;
+				wd->dyPos = _walkData[_walkDataLastIndex - 1].y - wd->y;
+				int x = xScale - xScale / 2 + curX - 1;
+				if (x > 319) {
+					wd->clipSkipX = 1;
+					wd->clipWidth = 319 - (x - xScale);
+					wd->xPosChanged = 0;
+					wd->dxPos = 0;
+				} else {
+					x = curX - xScale / 2;
+					if (x < 0) {
+						wd->clipWidth = x + xScale;
+						wd->clipSkipX = xScale - wd->clipWidth + 1;
+						wd->xPosChanged = 0;
+						wd->dxPos = _walkData[_walkDataLastIndex - 1].x - wd->x;
+					} else {
+						wd->clipWidth = xScale;
+						wd->clipSkipX = 1;
+						wd->xPosChanged = 0;
+						wd->dxPos = _walkData[_walkDataLastIndex - 1].x - wd->x;
+					}
+				}
+				++_walkDataLastIndex;
+				vStepCur += vStepDist;
+			}
+		} else {
+			if (_walkCurrentPosLocalVar == 1 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
+				_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+				_walkData[_walkDataLastIndex].posNum = 1;
+				_walkData[_walkDataLastIndex].frameNum = 1;
+				++_walkDataLastIndex;
+			}
+		}
+		lookupScale(dstX, dstY, scale, xScale, yScale);
+		wd = &_walkData[_walkDataLastIndex];
+		wd->setPos(dstX, dstY, 1, _walkCurrentFrame);
+		WalkData::setNextFrame(kFacingPositionBack, _walkCurrentFrame);
+		wd->setScale(scale, scale);
+		wd->yPosChanged = 0;
+		wd->dyPos = _walkData[_walkDataLastIndex - 1].y - wd->y;
+		int x = xScale - xScale / 2 + dstX - 1;
+		if (x > 319) {
+			wd->clipSkipX = 1;
+			wd->clipWidth = 319 - (x - xScale / 2);
+			wd->xPosChanged = 0;
+			wd->dxPos = 0;
+		} else {
+			x = dstX - xScale / 2;
+			if (x < 0) {
+				wd->clipWidth = xScale + x;
+				wd->clipSkipX = xScale - wd->clipWidth + 1;
+				wd->xPosChanged = 0;
+				wd->dxPos = curX - dstX;
+			} else {
+				wd->clipWidth = xScale;
+				wd->clipSkipX = 1;
+				wd->xPosChanged = 0;
+				wd->dxPos = curX - dstX;
+			}
+		}
+		++_walkDataLastIndex;
+	} else {
+		int vStepsCount = getVerticalStepsCount(dstX, dstY, srcX, srcY);
+		if (vStepsCount > 0) {
+			vStepCur = vStepDist = (dstX - srcX) / (float)vStepsCount;
+			for (int i = 1; i <= vStepsCount; ++i) {
+				wd = &_walkData[_walkDataLastIndex];
+				curX = srcX + truncReal(vStepCur);
+				lookupScale(curX, curY, scale, xScale, yScale);
+				curY -= yScale;
+				lookupScale(curX, curY, scale, xScale, yScale);
+				wd->setPos(curX, curY, 1, _walkCurrentFrame);
+				WalkData::setNextFrame(kFacingPositionBack, _walkCurrentFrame);
+				lookupScale(curX, curY, scale, xScale, yScale);
+				wd->setScale(scale, scale);
+				wd->yPosChanged = 0;
+				wd->dyPos = _walkData[_walkDataLastIndex - 1].y - wd->y;
+				int x = xScale - xScale / 2 + curX - 1;
+				if (x > 319) {
+					wd->clipSkipX = 1;
+					wd->clipWidth = 319 - (x - xScale);
+					wd->xPosChanged = 0;
+					wd->dxPos = wd->x - _walkData[_walkDataLastIndex - 1].x;
+				} else {
+					x = curX - xScale / 2;
+					if (x < 0) {
+						wd->clipWidth = x + xScale;
+						wd->clipSkipX = xScale - wd->clipWidth + 1;
+						wd->xPosChanged = 1;
+						wd->dxPos = 0;
+					} else {
+						wd->clipWidth = xScale;
+						wd->clipSkipX = 1;
+						wd->xPosChanged = 1;
+						wd->dxPos = wd->x - _walkData[_walkDataLastIndex - 1].x;
+					}
+				}
+				++_walkDataLastIndex;
+				vStepCur += vStepDist;
+			}
+		} else {
+			if (_walkCurrentPosLocalVar == 1 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
+				_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+				_walkData[_walkDataLastIndex].posNum = 1;
+				_walkData[_walkDataLastIndex].frameNum = 1;
+				++_walkDataLastIndex;
+			}
+		}
+		lookupScale(dstX, dstY, scale, xScale, yScale);
+		wd = &_walkData[_walkDataLastIndex];
+		wd->setPos(dstX, dstY, 1, _walkCurrentFrame);
+		WalkData::setNextFrame(kFacingPositionBack, _walkCurrentFrame);
+		wd->setScale(scale, scale);
+		wd->yPosChanged = 0;
+		wd->dyPos = _walkData[_walkDataLastIndex - 1].y - wd->y;
+		int x = xScale - xScale / 2 + dstX - 1;
+		if (x > 319) {
+			wd->clipSkipX = 1;
+			int16 _dx = x - xScale;
+			int16 _cx = 319 - _dx;
+			wd->clipWidth = _cx;
+			wd->xPosChanged = 0;
+			wd->dxPos = dstX - curX;
+		} else {
+			x = dstX - xScale / 2;
+			if (x < 0) {
+				wd->clipWidth = xScale + x;
+				wd->clipSkipX = xScale - wd->clipWidth + 1;
+				wd->xPosChanged = 1;
+				wd->dxPos = 0;
+			} else {
+				wd->clipWidth = xScale;
+				wd->clipSkipX = 1;
+				wd->xPosChanged = 1;
+				wd->dxPos = dstX - curX;
+			}
+		}
+		++_walkDataLastIndex;
+	}
+}
+
+void IgorEngine::buildWalkPathAreaDownDirection(int srcX, int srcY, int dstX, int dstY) {
+	int _walkCurrentPosLocalVar = _walkCurrentPos;
+	if (_walkCurrentPos == 1) {
+		_walkCurrentPos = 3;
+		_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+		_walkData[_walkDataLastIndex].posNum = (srcX > dstX) ? kFacingPositionLeft : kFacingPositionRight;
+		_walkData[_walkDataLastIndex].frameNum = 1;
+		++_walkDataLastIndex;
+	} else {
+		_walkCurrentPos = 3;
+	}
+	if (_walkCurrentFrame > 6) {
+		_walkCurrentFrame -= 6;
+	}
+	WalkData *wd;
+	uint8 scale, xScale, yScale;
+	float vStepCur, vStepDist;
+	int curX = srcX;
+	int curY = srcY;
+	if (srcX > dstX) {
+		int vStepsCount = getVerticalStepsCount(srcX, srcY, dstX, dstY);
+		if (vStepsCount > 0) {
+			vStepCur = vStepDist = (srcX - dstX) / (float)vStepsCount;
+			for (int i = 1; i <= vStepsCount; ++i) {
+				wd = &_walkData[_walkDataLastIndex];
+				curX = srcX - truncReal(vStepCur);
+				lookupScale(curX, curY, scale, xScale, yScale);
+				curY += yScale;
+				lookupScale(curX, curY, scale, xScale, yScale);
+				wd->setPos(curX, curY, 3, _walkCurrentFrame);
+				WalkData::setNextFrame(kFacingPositionFront, _walkCurrentFrame);
+				wd->setScale(scale, scale);
+				wd->yPosChanged = 1;
+				wd->dyPos = wd->y - _walkData[_walkDataLastIndex - 1].y;
+				int x = xScale - xScale / 2 + curX - 1;
+				if (x > 319) {
+					wd->clipSkipX = 1;
+					wd->clipWidth = 319 - (x - xScale);
+					wd->xPosChanged = 0;
+					wd->dxPos = 0;
+				} else {
+					x = curX - xScale / 2;
+					if (x < 0) {
+						wd->clipWidth = x + xScale;
+						wd->clipSkipX = xScale - wd->clipWidth + 1;
+						wd->xPosChanged = 0;
+						wd->dxPos = _walkData[_walkDataLastIndex - 1].x - wd->x;
+					} else {
+						wd->clipWidth = xScale;
+						wd->clipSkipX = 1;
+						wd->xPosChanged = 0;
+						wd->dxPos = _walkData[_walkDataLastIndex - 1].x - wd->x;
+					}
+				}
+				++_walkDataLastIndex;
+				vStepCur += vStepDist;
+			}
+		} else {
+			if (_walkCurrentPosLocalVar == 3 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
+				_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+				_walkData[_walkDataLastIndex].posNum = 3;
+				_walkData[_walkDataLastIndex].frameNum = 1;
+				++_walkDataLastIndex;
+			}
+		}
+		lookupScale(dstX, dstY, scale, xScale, yScale);
+		wd = &_walkData[_walkDataLastIndex];
+		wd->setPos(dstX, dstY, 3, _walkCurrentFrame);
+		WalkData::setNextFrame(kFacingPositionFront, _walkCurrentFrame);
+		wd->setScale(scale, scale);
+		wd->yPosChanged = 1;
+		wd->dyPos = wd->y - _walkData[_walkDataLastIndex - 1].y;
+		int x = xScale - xScale / 2 + dstX - 1;
+		if (x > 319) {
+			wd->clipSkipX = 1;
+			wd->clipWidth = 319 - (x - xScale);
+			wd->xPosChanged = 0;
+			wd->dxPos = 0;
+		} else {
+			x = dstX - xScale / 2;
+			if (x < 0) {
+				wd->clipWidth = xScale + x;
+				wd->clipSkipX = xScale - wd->clipWidth + 1;
+				wd->xPosChanged = 0;
+				wd->dxPos = curX - dstX;
+			} else {
+				wd->clipWidth = xScale;
+				wd->clipSkipX = 1;
+				wd->xPosChanged = 0;
+				wd->dxPos = curX - dstX;
+			}
+		}
+		++_walkDataLastIndex;
+	} else {
+		int vStepsCount = getVerticalStepsCount(srcX, srcY, dstX, dstY);
+		if (vStepsCount > 0) {
+			vStepCur = vStepDist = (dstX - srcX) / (float)vStepsCount;
+			for (int i = 1; i <= vStepsCount; ++i) {
+				wd = &_walkData[_walkDataLastIndex];
+				curX = srcX + truncReal(vStepCur);
+				lookupScale(curX, curY, scale, xScale, yScale);
+				curY += yScale;
+				lookupScale(curX, curY, scale, xScale, yScale);
+				wd->setPos(curX, curY, 3, _walkCurrentFrame);
+				WalkData::setNextFrame(kFacingPositionFront, _walkCurrentFrame);
+				wd->setScale(scale, scale);
+				wd->yPosChanged = 1;
+				wd->dyPos = wd->y - _walkData[_walkDataLastIndex - 1].y;
+				int x = xScale - xScale / 2 + curX - 1;
+				if (x > 319) {
+					wd->clipSkipX = 1;
+					wd->clipWidth = 319 - (x - xScale);
+					wd->xPosChanged = 1;
+					wd->dxPos = wd->x - _walkData[_walkDataLastIndex - 1].x;
+				} else {
+					x = curX - xScale / 2;
+					if (x < 0) {
+						wd->clipWidth = x + xScale;
+						wd->clipSkipX = xScale - wd->clipWidth + 1;
+						wd->xPosChanged = 1;
+						wd->dxPos = 0;
+					} else {
+						wd->clipWidth = xScale;
+						wd->clipSkipX = 1;
+						wd->xPosChanged = 1;
+						wd->dxPos = wd->x - _walkData[_walkDataLastIndex - 1].x;
+					}
+				}
+				++_walkDataLastIndex;
+				vStepCur += vStepDist;
+			}
+		} else {
+			if (_walkCurrentPosLocalVar == 3 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
+				_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+				_walkData[_walkDataLastIndex].posNum = 3;
+				_walkData[_walkDataLastIndex].frameNum = 1;
+				++_walkDataLastIndex;
+			}
+		}
+		lookupScale(dstX, dstY, scale, xScale, yScale);
+		wd = &_walkData[_walkDataLastIndex];
+		wd->setPos(dstX, dstY, 3, _walkCurrentFrame);
+		WalkData::setNextFrame(kFacingPositionFront, _walkCurrentFrame);
+		wd->setScale(scale, scale);
+		wd->yPosChanged = 1;
+		wd->dyPos = wd->y - _walkData[_walkDataLastIndex - 1].y;
+		int x = xScale - xScale / 2 + dstX - 1;
+		if (x > 319) {
+			wd->clipSkipX = 1;
+			wd->clipWidth = 319 - (x - xScale);
+			wd->xPosChanged = 1;
+			wd->dxPos = dstX - curX;
+		} else {
+			x = dstX - xScale / 2;
+			if (x < 0) {
+				wd->clipWidth = xScale + x;
+				wd->clipSkipX = xScale - wd->clipWidth + 1;
+				wd->xPosChanged = 1;
+				wd->dxPos = 0;
+			} else {
+				wd->clipWidth = xScale;
+				wd->clipSkipX = 1;
+				wd->xPosChanged = 1;
+				wd->dxPos = dstX - curX;
+			}
+		}
+		++_walkDataLastIndex;
+	}
+}
+
+void IgorEngine::buildWalkPathAreaRightDirection(int srcX, int srcY, int dstX, int dstY) {
+	int _walkCurrentPosLocalVar = _walkCurrentPos;
+	if (_walkCurrentPos == kFacingPositionLeft) {
+		_walkCurrentPos = kFacingPositionRight;
+		_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+		_walkData[_walkDataLastIndex].posNum = (srcY > dstY) ? kFacingPositionBack : kFacingPositionFront;
+		_walkData[_walkDataLastIndex].frameNum = 5;
+		++_walkDataLastIndex;
+	} else {
+		_walkCurrentPos = kFacingPositionRight;
+	}
+	WalkData *wd;
+	uint8 scale, xScale, xSkip;
+	float hStepCur, hStepDist;
+	int curX = srcX;
+	int curY = srcY;
+	if (srcY > dstY) {
+		int hStepsCount = getHorizontalStepsCount(srcX, dstY, dstX, srcY);
+		if (hStepsCount > 0) {
+			hStepCur = hStepDist = (srcY - dstY) / (float)hStepsCount;
+			for (int i = 1; i <= hStepsCount; ++i) {
+				wd = &_walkData[_walkDataLastIndex];
+				scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+				xSkip = _walkScaleTable[0x769 + scale * 8 + _walkCurrentFrame];
+				if ((curX + xSkip) >= dstX) {
+					break;
+				}
+				curX += xSkip;
+				curY = srcY - truncReal(hStepCur);
+				wd->setPos(curX, curY, 2, _walkCurrentFrame);
+				scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+				xScale = _walkWidthScaleTable[scale - 1];
+				wd->setScale(scale, scale);
+				wd->yPosChanged = 0;
+				wd->dyPos = _walkData[_walkDataLastIndex - 1].y - wd->y;
+				int x = xScale - xScale / 2 + curX - 1;
+				if (x > 319) {
+					wd->clipSkipX = 1;
+					wd->clipWidth = 319 - (x - xScale);
+					wd->xPosChanged = 1;
+					wd->dxPos = xSkip;
+				} else {
+					x = x - xScale / 2;
+					if (x < 0) {
+						wd->clipWidth = x + xScale;
+						wd->clipSkipX = xScale - wd->clipWidth + 1;
+						wd->xPosChanged = 1;
+						wd->dxPos = 0;
+					} else {
+						wd->clipWidth = xScale;
+						wd->clipSkipX = 1;
+						wd->xPosChanged = 1;
+						wd->dxPos = xSkip;
+					}
+				}
+				++_walkDataLastIndex;
+				hStepCur += hStepDist;
+				WalkData::setNextFrame(kFacingPositionRight, _walkCurrentFrame);
+			}
+		} else {
+			if (_walkCurrentPosLocalVar == 2 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
+				_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+				_walkData[_walkDataLastIndex].posNum = 2;
+				_walkData[_walkDataLastIndex].frameNum = 1;
+				++_walkDataLastIndex;
+			}
+		}
+		wd = &_walkData[_walkDataLastIndex];
+		wd->setPos(dstX, dstY, 2, _walkCurrentFrame);
+		scale = _walkYScaleRoom[(_walkXScaleRoom[dstX] - 1) * 144 + dstY];
+		xScale = _walkWidthScaleTable[scale - 1];
+		wd->setScale(scale, scale);
+		wd->yPosChanged = 0;
+		wd->dyPos = _walkData[_walkDataLastIndex - 1].y - wd->y;
+		int x = xScale - xScale / 2 + dstX - 1;
+		if (x > 319) {
+			wd->clipSkipX = 1;
+			wd->clipWidth = 319 - (x - xScale);
+			wd->xPosChanged = 1;
+			wd->dxPos = dstX - curX;
+		} else {
+			x = dstX - xScale / 2;
+			if (x < 0) {
+				wd->clipWidth = xScale + x;
+				wd->clipSkipX = xScale - wd->clipWidth + 1;
+				wd->xPosChanged = 1;
+				wd->dxPos = 0;
+			} else {
+				wd->clipWidth = xScale;
+				wd->clipSkipX = 1;
+				wd->xPosChanged = 1;
+				wd->dxPos = dstX - curX;
+			}
+		}
+		++_walkDataLastIndex;
+		WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame);
+	} else {
+		int hStepsCount = getHorizontalStepsCount(srcX, srcY, dstX, dstY);
+		if (hStepsCount > 0) {
+			hStepCur = hStepDist = (dstY - srcY) / (float)hStepsCount;
+			for (int i = 1; i <= hStepsCount; ++i) {
+				wd = &_walkData[_walkDataLastIndex];
+				scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+				xSkip = _walkScaleTable[0x769 + scale * 8 + _walkCurrentFrame];
+				if (curX + xSkip >= dstX) {
+					break;
+				}
+				curX += xSkip;
+				curY = srcY + truncReal(hStepCur);
+				_walkData[_walkDataLastIndex].setPos(curX, curY, 2, _walkCurrentFrame);
+				scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+				xScale = _walkWidthScaleTable[scale - 1];
+				wd->setScale(scale, scale);
+				wd->yPosChanged = 1;
+				wd->dyPos = wd->y - _walkData[_walkDataLastIndex - 1].y;
+				int x = xScale - xScale / 2 + curX - 1;
+				if (x > 319) {
+					wd->clipSkipX = 1;
+					wd->clipWidth = 319 - (x - xScale);
+					wd->xPosChanged = 1;
+					wd->dxPos = xSkip;
+				} else {
+					x = curX - xScale / 2;
+					if (x < 0) {
+						wd->clipWidth = x + xScale;
+						wd->clipSkipX = xScale - wd->clipWidth + 1;
+						wd->xPosChanged = 1;
+						wd->dxPos = 0;
+					} else {
+						wd->clipWidth = xScale;
+						wd->clipSkipX = 1;
+						wd->xPosChanged = 1;
+						wd->dxPos = xSkip;
+					}
+				}
+				++_walkDataLastIndex;
+				hStepCur += hStepDist;
+				WalkData::setNextFrame(kFacingPositionRight, _walkCurrentFrame);
+			}
+		} else {
+			if (_walkCurrentPosLocalVar == 2 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
+				_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+				_walkData[_walkDataLastIndex].posNum = 2;
+				_walkData[_walkDataLastIndex].frameNum = 1;
+				++_walkDataLastIndex;
+			}
+		}
+		wd = &_walkData[_walkDataLastIndex];
+		wd->setPos(dstX, dstY, 2, _walkCurrentFrame);
+		scale = _walkYScaleRoom[(_walkXScaleRoom[dstX] - 1) * 144 + dstY];
+		xScale = _walkWidthScaleTable[scale - 1];
+		wd->setScale(scale, scale);
+		wd->yPosChanged = 1;
+		wd->dyPos = wd->y - _walkData[_walkDataLastIndex - 1].y;
+		int x = xScale - xScale / 2 + dstX - 1;
+		if (x > 319) {
+			wd->clipSkipX = 1;
+			wd->clipWidth = 319 - (x - xScale);
+			wd->xPosChanged = 1;
+			wd->dxPos = dstX - curX;
+		} else {
+			x = dstX - xScale / 2;
+			if (x < 0) {
+				wd->clipWidth = xScale + x;
+				wd->clipSkipX = xScale - wd->clipWidth + 1;
+				wd->xPosChanged = 1;
+				wd->dxPos = 0;
+			} else {
+				wd->clipWidth = xScale;
+				wd->clipSkipX = 1;
+				wd->xPosChanged = 1;
+				wd->dxPos = dstX - curX;
+			}
+		}
+		++_walkDataLastIndex;
+		WalkData::setNextFrame(kFacingPositionRight, _walkCurrentFrame);
+	}
+}
+
+void IgorEngine::buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, int dstY) {
+	int _walkCurrentPosLocalVar = _walkCurrentPos;
+	if (_walkCurrentPos == kFacingPositionRight) {
+		_walkCurrentPos = kFacingPositionLeft;
+		_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+		_walkData[_walkDataLastIndex].posNum = (srcY > dstY) ? kFacingPositionBack : kFacingPositionFront;
+		_walkData[_walkDataLastIndex].frameNum = 5;
+		++_walkDataLastIndex;
+	} else {
+		_walkCurrentPos = kFacingPositionLeft;
+	}
+	WalkData *wd;
+	uint8 scale, xScale, xSkip;
+	float hStepCur, hStepDist;
+	int curX = srcX;
+	int curY = srcY;
+	if (srcY > dstY) {
+		int hStepsCount = getHorizontalStepsCount(dstX, dstY, srcX, srcY);
+		if (hStepsCount > 0) {
+			hStepCur = hStepDist = (srcY - dstY) / (float)hStepsCount;
+			for (int i = 1; i <= hStepsCount; ++i) {
+				wd = &_walkData[_walkDataLastIndex];
+				scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+				xSkip = _walkScaleTable[0x769 + scale * 8 + _walkCurrentFrame];
+				if ((curX - xSkip) <= dstX) {
+					break;
+				}
+				curX -= xSkip;
+				curY = srcY - truncReal(hStepCur);
+				wd->setPos(curX, curY, 4, _walkCurrentFrame);
+				scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+				xScale = _walkWidthScaleTable[scale - 1];
+				wd->setScale(scale, scale);
+				wd->yPosChanged = 0;
+				wd->dyPos = _walkData[_walkDataLastIndex - 1].y - wd->y;
+				int x = xScale - xScale / 2 + curX - 1;
+				if (x > 319) {
+					wd->clipSkipX = 1;
+					wd->clipWidth = 319 - (x - xScale);
+					wd->xPosChanged = 0;
+					wd->dxPos = 0;
+				} else {
+					x = curX - xScale / 2;
+					if (x < 0) {
+						wd->clipWidth = x + xScale;
+						wd->clipSkipX = xScale - wd->clipWidth + 1;
+						wd->xPosChanged = 0;
+						wd->dxPos = xSkip;
+					} else {
+						wd->clipWidth = xScale;
+						wd->clipSkipX = 1;
+						wd->xPosChanged = 0;
+						wd->dxPos = xSkip;
+					}
+				}
+				++_walkDataLastIndex;
+				hStepCur += hStepDist;
+				WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame);
+			}
+		} else {
+			if (_walkCurrentPosLocalVar == 4 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
+				_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+				_walkData[_walkDataLastIndex].posNum = 4;
+				_walkData[_walkDataLastIndex].frameNum = 1;
+				++_walkDataLastIndex;
+			}
+		}
+		wd = &_walkData[_walkDataLastIndex];
+		wd->setPos(dstX, dstY, 4, _walkCurrentFrame);
+		scale = _walkYScaleRoom[(_walkXScaleRoom[dstX] - 1) * 144 + dstY];
+		xScale = _walkWidthScaleTable[scale - 1];
+		wd->setScale(scale, scale);
+		wd->yPosChanged = 0;
+		wd->dyPos = curY - dstY;
+		int x = xScale - xScale / 2 + dstX - 1;
+		if (x > 319) {
+			wd->clipSkipX = 1;
+			wd->clipWidth = 319 - (x - xScale);
+			wd->xPosChanged = 0;
+			wd->dxPos = 0;
+		} else {
+			x = dstX - xScale / 2;
+			if (x < 0) {
+				wd->clipWidth = xScale + x;
+				wd->clipSkipX = xScale - wd->clipWidth + 1;
+				wd->xPosChanged = 0;
+				wd->dxPos = curX - dstX;
+			} else {
+				wd->clipWidth = xScale;
+				wd->clipSkipX = 1;
+				wd->xPosChanged = 0;
+				wd->dxPos = curX - dstX;
+			}
+		}
+		++_walkDataLastIndex;
+		WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame);
+	} else {
+		int hStepsCount = getHorizontalStepsCount(dstX, srcY, srcX, dstY);
+		if (hStepsCount > 0) {
+			hStepCur = hStepDist = (dstY - srcY) / (float)hStepsCount;
+			for (int i = 1; i <= hStepsCount; ++i) {
+				wd = &_walkData[_walkDataLastIndex];
+				scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+				xSkip = _walkScaleTable[0x769 + scale * 8 + _walkCurrentFrame];
+				if (curX - xSkip <= dstX) {
+					break;
+				}
+				curX -= xSkip;
+				curY = srcY + truncReal(hStepCur);
+				wd->setPos(curX, curY, 4, _walkCurrentFrame);
+				scale = _walkYScaleRoom[(_walkXScaleRoom[curX] - 1) * 144 + curY];
+				xScale = _walkWidthScaleTable[scale - 1];
+				wd->setScale(scale, scale);
+				wd->yPosChanged = 1;
+				wd->dyPos = wd->y - _walkData[_walkDataLastIndex - 1].y;
+				int x = xScale - xScale / 2 + curX - 1;
+				if (x > 319) {
+					wd->clipSkipX = 1;
+					wd->clipWidth = 319 - (x - xScale);
+					wd->xPosChanged = 0;
+					wd->dxPos = 0;
+				} else {
+					x = curX - xScale / 2;
+					if (x < 0) {
+						wd->clipWidth = x + xScale;
+						wd->clipSkipX = xScale - wd->clipWidth + 1;
+						wd->xPosChanged = 0;
+						wd->dxPos = xSkip;
+					} else {
+						wd->clipWidth = xScale;
+						wd->clipSkipX = 1;
+						wd->xPosChanged = 0;
+						wd->dxPos = xSkip;
+					}
+				}
+				++_walkDataLastIndex;
+				hStepCur += hStepDist;
+				WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame);
+			}
+		} else {
+			if (_walkCurrentPosLocalVar == 4 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
+				_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
+				_walkData[_walkDataLastIndex].posNum = 4;
+				_walkData[_walkDataLastIndex].frameNum = 1;
+				++_walkDataLastIndex;
+			}
+		}
+		wd = &_walkData[_walkDataLastIndex];
+		wd->setPos(dstX, dstY, 4, _walkCurrentFrame);
+		scale = _walkYScaleRoom[(_walkXScaleRoom[dstX] - 1) * 144 + dstY];
+		xScale = _walkWidthScaleTable[scale - 1];
+		wd->setScale(scale, scale);
+		wd->yPosChanged = 1;
+		wd->dyPos = dstY - curY;
+		int x = xScale - xScale / 2 + dstX - 1;
+		if (x > 319) {
+			wd->clipSkipX = 1;
+			wd->clipWidth = 319 - (x - xScale);
+			wd->xPosChanged = 0;
+			wd->dxPos = 0;
+		} else {
+			x = dstX - xScale / 2;
+			if (x < 0) {
+				wd->clipWidth = xScale + x;
+				wd->clipSkipX = xScale - wd->clipWidth + 1;
+				wd->xPosChanged = 0;
+				wd->dxPos = curX - dstX;
+			} else {
+				wd->clipWidth = xScale;
+				wd->clipSkipX = 1;
+				wd->xPosChanged = 0;
+				wd->dxPos = curX - dstX;
+			}
+		}
+		++_walkDataLastIndex;
+		WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame);
+	}
+}
+
+bool IgorEngine::waitForIgorMove(IgorMoveTick tick, bool escapeSkips, bool forceSkip, int fixedPosNum) {
+	_gameTicks = 0;
+	bool skipped = false;
+	do {
+		if (compareGameTick(1, 16)) {
+			if (_walkDataCurrentIndex > _walkDataLastIndex) {
+				_gameState.igorMoving = false;
+				_walkDataLastIndex = _walkDataCurrentIndex;
+			}
+			if (_gameState.igorMoving) {
+				// some scripted walks draw every step with one fixed facing instead of the facing of the step
+				moveIgor(fixedPosNum >= 0 ? fixedPosNum : _walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
+				++_walkDataCurrentIndex;
+			}
+		}
+		if (tick) { // run the update function if necessary
+			(this->*tick)();
+		}
+		if (escapeSkips && ((_inputVars[kInputEscape] && !_eventQuitGame) || forceSkip)) {
+			// Escape draws the remaining walk frames at once, without waiting for the timer.
+			// Once pressed, the walks that follow in the same sequence are skipped the same way.
+			// this is done in the college entrance, for instance.
+			_inputVars[kInputEscape] = 0;
+			skipped = true;
+			while (_gameState.igorMoving && _walkDataCurrentIndex <= _walkDataLastIndex) {
+				moveIgor(fixedPosNum >= 0 ? fixedPosNum : _walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
+				++_walkDataCurrentIndex;
+			}
+			_inputVars[kInputEscape] = 0;
+			_gameState.igorMoving = false;
+			_walkDataLastIndex = _walkDataCurrentIndex;
+			break;
+		}
+		waitForTimer();
+	} while (_gameState.igorMoving);
+	return skipped;
+}
+
+void IgorEngine::setRoomWalkBounds(int x1, int y1, int x2, int y2, int x1MinY, int x2MinY) {
+	assert(x1 <= x2 && y1 <= y2);
+	_roomWalkBounds.x1 = x1;
+	_roomWalkBounds.x2 = x2;
+	_roomWalkBounds.y1 = y1;
+	_roomWalkBounds.y2 = y2;
+	_roomWalkBounds.x1MinY = x1MinY < 0 ? y1 : x1MinY;
+	_roomWalkBounds.x2MinY = x2MinY < 0 ? y1 : x2MinY;
+}
+
+void IgorEngine::fixWalkPosition(int *x, int *y) {
+	// some rooms had specific walk behavior that needs to be handled differently
+	if (getPart() == 50) {
+		int xPos = MAX(MIN(*x, 224), 49);
+		int yPos = MAX(MIN(MIN(*y, 143), 119), 22);
+		if (xPos > 144) {
+			do {
+				++yPos;
+			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos != 143);
+			if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
+				do {
+					--yPos;
+				} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > 0);
+			}
+		} else {
+			// at column 144 the scan never stops by itself: it runs on over the following rows
+			do {
+				++xPos;
+			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && xPos != 144 && yPos * 320 + xPos < 320 * 143);
+			if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
+				do {
+					--xPos;
+				} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && xPos > 0);
+			}
+		}
+		*x = xPos;
+		*y = yPos;
+		return;
+	}
+	if (getPart() == 81) {
+		// Clamps clicks to the floor; on the right part a click above row 93 goes to a fixed
+		// place and any other goes to the first walkable column to the left.
+		int xPos = *x;
+		int yPos = MIN(*y, 143);
+		if (xPos <= 128) {
+			do {
+				if (yPos < 143) {
+					++yPos;
+				}
+				if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area > 0) {
+					break;
+				}
+			} while (yPos != 143);
+			if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
+				do {
+					if (yPos > 0) {
+						--yPos;
+					}
+				} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > 0);
+			}
+		} else if (yPos < 93) {
+			xPos = 128;
+			yPos = 93;
+		} else {
+			do {
+				if (xPos > 0) {
+					--xPos;
+				}
+			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && xPos > 0);
+		}
+		*x = xPos;
+		*y = yPos;
+		return;
+	}
+	if (_roomWalkTargetRules.enabled) {
+		// The click is clamped; then the picture is scanned for the first walkable row strictly below it (the
+		// scan starts one row down, whatever the row is) and, if none is found down to the last row and the
+		// room says so, upwards from the last row.
+		int xPos = *x;
+		if (_roomWalkTargetRules.xMax >= 0) {
+			xPos = MIN(xPos, _roomWalkTargetRules.xMax);
+		}
+		if (_roomWalkTargetRules.xMin >= 0) {
+			xPos = MAX(xPos, _roomWalkTargetRules.xMin);
+		}
+		int yPos = MIN(*y, _roomWalkTargetRules.yMax);
+		do {
+			if (yPos < _roomWalkTargetBottom) {
+				++yPos;
+			}
+			if (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area > 0) {
+				break;
+			}
+		} while (yPos != _roomWalkTargetBottom);
+		if (_roomWalkTargetRules.scanUp && yPos == _roomWalkTargetBottom && _roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
+			do {
+				--yPos;
+			} while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > 0);
+		}
+		*x = xPos;
+		*y = yPos;
+		return;
+	}
+	int xPos = *x;
+	int edgeMinY = _roomWalkBounds.y1;
+	if (xPos < _roomWalkBounds.x1) {
+		xPos = _roomWalkBounds.x1;
+		edgeMinY = _roomWalkBounds.x1MinY;
+	}
+	if (xPos > _roomWalkBounds.x2) {
+		xPos = _roomWalkBounds.x2;
+		edgeMinY = _roomWalkBounds.x2MinY;
+	}
+	if (getPart() == 22) {
+		*x = xPos;
+		*y = _roomWalkBounds.y1;
+		return;
+	}
+	int yPos = MAX(MIN(*y, _roomWalkBounds.y2), edgeMinY);
+	if (getPart() == 13) {
+		if (xPos >= 92 && xPos <= 186 && yPos > 127) {
+			*x = xPos;
+			*y = 127;
+			return;
+		}
+		if (xPos >= 191 && xPos <= 289 && yPos > 127) {
+			*x = xPos;
+			*y = 127;
+			return;
+		}
+	}
+	// skip areas from top to bottom
+	while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos < _roomWalkBounds.y2) {
+		++yPos;
+	}
+	if (getPart() == 17) {
+		if (yPos != 143 || _roomObjectAreasTable[_screenLayer2[45760 + xPos]].area != 0) {
+			*x = xPos;
+			*y = yPos;
+			return;
+		}
+	}
+	// skip areas from bottom to top
+	while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > _roomWalkBounds.y1) {
+		--yPos;
+	}
+	*x = xPos;
+	*y = yPos;
+}
+
+void IgorEngine::handleRoomIgorWalk() {
+	if (_walkDataCurrentIndex > _walkDataLastIndex) {
+		_gameState.igorMoving = false;
+		_walkDataLastIndex = _walkDataCurrentIndex;
+		if (_actionCode > 0) {
+			hideCursor();
+			debugC(9, kDebugEngine, "Executing action code %d", _actionCode);
+			const int actionPart = _currentPart;
+			executeAction(_actionCode);
+			if (!_gameState.dialogueTextRunning) {
+				showCursor();
+			}
+			clearAction(_currentPart == actionPart);
+		}
+	}
+	if (_gameState.igorMoving) {
+		moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
+		++_walkDataCurrentIndex;
+	}
+}
+
+} // End of namespace Igor
