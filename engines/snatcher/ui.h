@@ -25,6 +25,7 @@
 
 
 #include "common/scummsys.h"
+#include "snatcher/saveflags.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -74,8 +75,9 @@ public:
 	void setInputStringLength(uint16 length) { _textInputColumnMax = length; }
 	void setHeadLineYOffset(int16 offs) { _headLineYOffset = offs; };
 
-	void loadState(Common::SeekableReadStream *in);
-	void saveState(Common::SeekableWriteStream *out);
+	void loadState(Common::SeekableReadStream *in, SaveFlags flags);
+	void saveState(Common::SeekableWriteStream *out, SaveFlags flags);
+	bool canSaveHere() const;
 
 private:
 	void printDialogStringHead();

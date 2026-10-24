@@ -25,7 +25,7 @@
 
 namespace Snatcher {
 
-SoundEngine::SoundEngine(FIO *fio, Common::Platform platform, int soundOptions) : _dev(nullptr) {
+SoundEngine::SoundEngine(FIO *fio, Common::Platform platform, int soundOptions) : _dev(nullptr), _cdaRestoreTime(0), _cdaRestoreTrack(-1) {
 	_dev = SoundDevice::create(fio, platform, soundOptions);
 	assert(_dev);
 }
@@ -52,6 +52,16 @@ bool SoundEngine::cdaIsPlaying() const {
 
 uint32 SoundEngine::cdaGetTime() const {
 	return _dev->cdaGetTime();
+}
+
+void SoundEngine::cdaRestore() {
+	if (_cdaRestoreTrack == -1)
+		return;
+
+	_dev->cdaStop();
+	_dev->cdaPlay(_cdaRestoreTrack, _cdaRestoreTime);
+
+	_cdaRestoreTrack = -1;
 }
 
 void SoundEngine::fmSendCommand(int cmd, int restoreVolume, int trackType) {
@@ -115,21 +125,37 @@ void SoundEngine::setSoundEffectVolume(int vol) {
 	_dev->setSoundEffectVolume(vol);
 }
 
-void SoundEngine::loadState(Common::SeekableReadStream *in) {
+void SoundEngine::loadState(Common::SeekableReadStream *in, SaveFlags flags) {
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
 	_pcmStatus.resourceId = _pcmStatus.resourceId2 = in->readSint16BE();
 	_pcmStatus.blocked = in->readByte();
 	_fmStatus.music = in->readByte();
 	_fmStatus.reduceVol2 = in->readByte();
+
+	if (flags & (kSaveFlagsScriptedSave | kSaveFlagsTempData)) {
+		_cdaRestoreTrack = -1;
+		return;
+	}
+
+	_cdaRestoreTrack = in->readSByte();
+	_cdaRestoreTime = (_cdaRestoreTrack != -1) ? in->readUint32BE() : 0;
 }
 
-void SoundEngine::saveState(Common::SeekableWriteStream *out) {
+void SoundEngine::saveState(Common::SeekableWriteStream *out, SaveFlags flags) {
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
 	out->writeSint16BE(_pcmStatus.resourceId);
 	out->writeByte(_pcmStatus.blocked);
 	out->writeByte(_fmStatus.music);
 	out->writeByte(_fmStatus.reduceVol2);
+
+	if (flags & (kSaveFlagsScriptedSave | kSaveFlagsTempData))
+		return;
+
+	int16 cdaTrack = _dev->cdaGetCurTrack();
+	out->writeSByte(cdaTrack);
+	if (cdaTrack != -1)
+		out->writeUint32BE(_dev->cdaGetTime());
 }
 
 SoundDevice *SoundDevice::create(FIO *fio, Common::Platform platform, int soundOptions) {

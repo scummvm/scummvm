@@ -148,8 +148,6 @@ bool UI::displayDialog(int sceneInfo, int sceneTextOffset, uint16 inputFlags) {
 
 		_sceneTextOffsCur = _sceneTextOffsStart;
 		_textLineEnd = 0;
-		//_gfxOps10_sub_974B = _gfxOps10_sub_974E = 0;
-		//_gfxOps10_subword_974C = 0;
 		_textColor = 1;
 
 		_gfx->transitionCommand(_gfx->getVerbAreaType() == 0 ? 15 : (_gfx->getVerbAreaType() == 1 ? 20 : 22));
@@ -490,18 +488,55 @@ void UI::setVerbInterfaceMode(uint16 mode) {
 		_flashLight.posX = _flashLight.posY = 0;
 }
 
-void UI::loadState(Common::SeekableReadStream *in) {
+void UI::loadState(Common::SeekableReadStream *in, SaveFlags flags) {
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
 	_verbInterfaceMode = in->readUint16BE();
 	_verbsInterpreterMode = in->readUint16BE();
 	_progress = _progress2 = -1;
+
+	if (flags & kSaveFlagsTempData)
+		return;
+
+	_videoPhoneMode = in->readSint16BE();
+	_textInputColumnMax = in->readSint16BE();
+	_prevSelectedVerb = in->readByte();
+	_selectedVerb = in->readByte();
+	_prevSelectedVerb = _selectedVerb;
+	if (flags & kSaveFlagsScriptedSave)
+		resetVerbSelection();
+	else
+		_prevSelectedVerb = _selectedVerb;
+	_vkeybVisible = in->readByte();
+
+	_flashLight.inputFlags= in->readByte();
+	_flashLight.posData= in->readByte();
+	_flashLight.posX = in->readSint32BE();
+	_flashLight.posY = in->readSint32BE();
 }
 
-void UI::saveState(Common::SeekableWriteStream *out) {
+void UI::saveState(Common::SeekableWriteStream *out, SaveFlags flags) {
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
 	out->writeUint16BE(_verbInterfaceMode);
 	out->writeUint16BE(_verbsInterpreterMode);
+
+	if (flags & kSaveFlagsTempData)
+		return;
+
+	out->writeSint16BE(_videoPhoneMode);
+	out->writeSint16BE(_textInputColumnMax);
+	out->writeByte(_prevSelectedVerb);
+	out->writeByte(_selectedVerb);
+	out->writeByte(_vkeybVisible ? 1 : 0);
+
+	out->writeByte(_flashLight.inputFlags);
+	out->writeByte(_flashLight.posData);
+	out->writeSint32BE(_flashLight.posX);
+	out->writeSint32BE(_flashLight.posY);
+}
+
+bool UI::canSaveHere() const {
+	return (_videoPhoneMode == false && _verbInterfaceMode < 2 && (_progress2 & 0xFF) == 103);
 }
 
 void UI::printDialogStringHead() {

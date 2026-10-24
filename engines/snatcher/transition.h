@@ -25,6 +25,11 @@
 #include "common/platform.h"
 #include "common/scummsys.h"
 
+namespace Common {
+	class SeekableWriteStream;
+	class SeekableReadStream;
+}
+
 namespace Snatcher {
 
 class TransitionManager {
@@ -64,6 +69,10 @@ public:
 	virtual bool nextFrame() = 0;
 	virtual void hINTCallback(void*) {}
 	const ScrollState &scroll_getState() const { return _result; }
+
+	virtual void saveState(Common::SeekableWriteStream *out) = 0;
+	virtual void loadState(Common::SeekableReadStream *in) = 0;
+	virtual void postLoadProcess() = 0;
 
 protected:
 	ScrollState _result;
