@@ -18,7 +18,18 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  MM:
    - Integrated Dragoo84's M&M1 Bugfix and Enhanced Mode improvements pack
-   - Fixed several M&M1 tavern bugs
+   - Party XP gain and training now work correctly.
+   - A blue arrow is shown beside XP value to indicate when a level-up is possible.
+   - Certain party members are now eligible for multiple attacks per turn, as originally intended.
+   - Added G/S (Gather/Share) button on character screen, normally available in classic mode.
+   - Spellbook improved - manual spell sorting with X and scrolling with PgUp/PgDn.
+   - Quest log implemented - keep track of quests with K.
+   - Battle log implemented - keep track of damage, spells and statuses during combat with L.
+   - Bestiary implemented - unlock enemy units and their stats through encounters and check with N or click the black skull icon in the interface corner.
+   - Post-combat loot (sacks, boxes and chests) are now finally enabled, as intended. Previously, only gold and gems were received (yeah, sucks).
+   - Many game-breaking quest bugs corrected.
+   - Spell behaviour corrected.
+   - Fixed several tavern bugs
 
 #### 2026.4.0 "Never-slop" (2026-10-10)
 
