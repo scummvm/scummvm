@@ -44,8 +44,10 @@ protected:
 	DisplayMode _mode = ARMS_MODE;
 
 private:
+	enum GatherShareButton { GS_NONE, GS_GATHER, GS_SHARE };
 	Common::String _tradeMode;
 	int _tradeAmount;
+	GatherShareButton _gsPressed = GS_NONE;
 
 	/**
 	 * Populates the list of items
@@ -56,6 +58,21 @@ private:
 	 * Displays the title row
 	 */
 	void drawTitle();
+
+	/**
+	 * Draw the compact G/S Gather/Share control in the spare inventory gap.
+	 */
+	void drawGatherShare();
+
+	/**
+	 * Return which half of the G/S control is under the mouse pointer.
+	 */
+	GatherShareButton gatherShareAt(const Common::Point &pos) const;
+
+	/**
+	 * Execute Gather or open the Share resource chooser.
+	 */
+	void gatherShare(GatherShareButton action);
 
 	/**
 	 * Equip an item
@@ -128,6 +145,8 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 };
 

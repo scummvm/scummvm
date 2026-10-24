@@ -34,6 +34,7 @@ private:
 	enum TradeMode { TRADE_OPTIONS, TRADE_GEMS, TRADE_GOLD, TRADE_FOOD };
 	const char *const TRADE_NAMES[4] = { nullptr, "GEMS", "GOLD", "FOOD" };
 	TradeMode _mode = TRADE_OPTIONS;
+	bool _shareMode = false;
 	Shared::Xeen::SpriteResource _btnIcons;
 	TextEntry _textEntry;
 	static void abortFunc();
@@ -60,6 +61,7 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;

@@ -31,6 +31,16 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+// Existing inventory buttons end at x=239 and Exit begins at x=275. The G/S
+// control fits in the spare gap without moving any existing control. Its icon
+// is drawn from the engine's native blank-button surface with a vertical split,
+// avoiding the unrelated necklace art previously borrowed from ITEMS.ICN.
+static const int GS_BUTTON_X = 245;
+static const int GS_BUTTON_Y = 101;
+static const int GS_BUTTON_W = 24;
+static const int GS_BUTTON_H = 36;
+static const int GS_ICON_SIZE = 20;
+
 CharacterInventory::CharacterInventory() : ItemsView("CharacterInventory") {
 	setup();
 }
@@ -96,7 +106,60 @@ bool CharacterInventory::msgGame(const GameMessage &msg) {
 
 void CharacterInventory::draw() {
 	ItemsView::draw();
+	drawGatherShare();
 	drawTitle();
+}
+
+void CharacterInventory::drawGatherShare() {
+	if (g_events->isInCombat())
+		return;
+
+	Graphics::ManagedSurface s = getSurface();
+	const int pressOffset = _gsPressed != GS_NONE ? 1 : 0;
+	const int iconX = GS_BUTTON_X + (GS_BUTTON_W - GS_ICON_SIZE) / 2 +
+		_bounds.borderSize() + pressOffset;
+	const int iconY = GS_BUTTON_Y + _bounds.borderSize() + pressOffset;
+
+	// Native blank button + a simple center divider. This reads as two halves
+	// without requiring a new ICN resource and keeps the UI style consistent.
+	s.blitFrom(g_globals->_blankButton, Common::Point(iconX, iconY));
+	s.vLine(iconX + GS_ICON_SIZE / 2, iconY + 3,
+		iconY + GS_ICON_SIZE - 4, 0);
+
+	setReduced(true);
+	writeString(GS_BUTTON_X + GS_BUTTON_W / 2, 123,
+		"\x01""37G/\x01""37S", ALIGN_MIDDLE);
+}
+
+CharacterInventory::GatherShareButton CharacterInventory::gatherShareAt(
+		const Common::Point &pos) const {
+	if (g_events->isInCombat())
+		return GS_NONE;
+
+	Common::Rect r(GS_BUTTON_X, GS_BUTTON_Y,
+		GS_BUTTON_X + GS_BUTTON_W, GS_BUTTON_Y + GS_BUTTON_H);
+	r.translate(_innerBounds.left, _innerBounds.top);
+	if (!r.contains(pos))
+		return GS_NONE;
+
+	return pos.x < r.left + GS_BUTTON_W / 2 ? GS_GATHER : GS_SHARE;
+}
+
+void CharacterInventory::gatherShare(GatherShareButton action) {
+	if (action == GS_GATHER) {
+		InfoMessage msg(Common::String::format(
+			"Gather all gold, gems and food onto %s?",
+			g_globals->_currCharacter->_name));
+		msg._fontReduced = true;
+		msg._callback = []() {
+			g_globals->_currCharacter->gatherResources();
+			g_events->redraw();
+		};
+		send(msg);
+	} else if (action == GS_SHARE) {
+		addView("Trade");
+		send("Trade", GameMessage("SHARE"));
+	}
 }
 
 void CharacterInventory::drawTitle() {
@@ -150,12 +213,48 @@ bool CharacterInventory::msgKeypress(const KeypressMessage &msg) {
 		case Common::KEYCODE_u:
 			selectButton(BTN_USE);
 			return true;
+		case Common::KEYCODE_g:
+			gatherShare(GS_GATHER);
+			return true;
+		case Common::KEYCODE_s:
+			gatherShare(GS_SHARE);
+			return true;
 		default:
 			break;
 		}
 	}
 
 	return ItemsView::msgKeypress(msg);
+}
+
+bool CharacterInventory::msgMouseDown(const MouseDownMessage &msg) {
+	if (msg._button == MouseMessage::MB_LEFT) {
+		const GatherShareButton action = gatherShareAt(msg._pos);
+		if (action != GS_NONE) {
+			_gsPressed = action;
+			draw();
+			return true;
+		}
+	}
+
+	return ItemsView::msgMouseDown(msg);
+}
+
+bool CharacterInventory::msgMouseUp(const MouseUpMessage &msg) {
+	if (_gsPressed != GS_NONE) {
+		const GatherShareButton pressed = _gsPressed;
+		const GatherShareButton released =
+			msg._button == MouseMessage::MB_LEFT ? gatherShareAt(msg._pos) : GS_NONE;
+
+		_gsPressed = GS_NONE;
+		draw();
+
+		if (released == pressed)
+			gatherShare(pressed);
+		return true;
+	}
+
+	return ItemsView::msgMouseUp(msg);
 }
 
 bool CharacterInventory::msgAction(const ActionMessage &msg) {
@@ -359,10 +458,11 @@ void CharacterInventory::trade(const Common::String &mode, int amount, Character
 		// Gold is a 24-bit value. The old 16-bit limit truncated both the
 		// requested amount and the source gold above 65,535
 		uint32 transfer = MIN<uint32>((uint32)amount, src._gold);
-		if (destChar->_gold >= 0xffffff)
+		if (destChar->_gold >= 0xffffff) {
 			transfer = 0;
-		else
+		} else {
 			transfer = MIN<uint32>(transfer, 0xffffff - destChar->_gold);
+		}
 		src._gold -= transfer;
 		destChar->_gold += transfer;
 
