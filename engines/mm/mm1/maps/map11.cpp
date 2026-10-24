@@ -159,7 +159,16 @@ void Map11::selectDial(int dialIndex) {
 	Common::String msg = Common::String::format(
 		STRING["maps.map11.dial"].c_str(), '1' + dialIndex);
 
-	send(SoundMessage(msg,
+	// Show the dial's current setting under the prompt
+	byte current = _data[VAL2 + dialIndex];
+	if (current >= 'a' && current <= 'z')
+		current -= 'a' - 'A';
+	Common::String currentLine = Common::String::format("Current: %c",
+		(current >= 'A' && current <= 'Z') ? current : '-');
+
+	send(SoundMessage(
+		0, 1, msg,
+		0, 2, currentLine,
 		[](const Common::KeyState &ks) {
 			if (ks.keycode >= Common::KEYCODE_a &&
 					ks.keycode <= Common::KEYCODE_z) {
@@ -201,6 +210,12 @@ void Map11::setDialChar(char c) {
 		_visited[visitedOffset] |= 0x80;
 	else
 		_visited[visitedOffset] &= ~0x80;
+
+	// Echo the chosen value, so it's clear what was recorded
+	Common::String line1 = Common::String::format(
+		STRING["maps.map11.dial"].c_str(), '1' + _dialIndex);
+	Common::String line2 = Common::String::format("Selected: %c", c);
+	send(InfoMessage(0, 1, line1, 0, 2, line2));
 }
 
 void Map11::clue() {
