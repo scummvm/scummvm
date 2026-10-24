@@ -23,6 +23,7 @@
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
@@ -55,7 +56,17 @@ void Map40::special() {
 		_data[VAL2]++;
 		g_maps->_mapPos.y++;
 		updateGame();
-		send(SoundMessage(STRING["maps.map40.conveyor_belt"]));
+
+		SoundMessage msg(STRING["maps.map40.conveyor_belt"]);
+		if (g_engine->isEnhanced()) {
+			// Enhanced messages normally forward the key that dismissed them
+			// back to the game, which would immediately trigger another
+			// forced step and message. Consume the dismissing input instead
+			msg._keyCallback = [](const Common::KeyState &) {
+				g_events->close();
+			};
+		}
+		send(msg);
 	}
 }
 
