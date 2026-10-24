@@ -346,14 +346,25 @@ void CharacterInventory::trade(const Common::String &mode, int amount, Character
 	Character &src = *g_globals->_currCharacter;
 
 	if (mode == "GEMS") {
-		amount = MIN<uint16>(amount, src._gems);
-		src._gems -= amount;
-		destChar->_gems = MIN(destChar->_gems + amount, 0xffff);
+		// Gems are a 16-bit value (maximum 65,535). Keep the calculation
+		// wide enough for a five-digit entered amount, and limit the
+		// transfer to both the source balance and the destination capacity
+		// so that excess gems don't disappear
+		uint32 transfer = MIN<uint32>((uint32)amount, (uint32)src._gems);
+		transfer = MIN<uint32>(transfer, 0xffffU - (uint32)destChar->_gems);
+		src._gems -= (uint16)transfer;
+		destChar->_gems += (uint16)transfer;
 
 	} else if (mode == "GOLD") {
-		amount = MIN<uint16>(amount, src._gold);
-		src._gold -= amount;
-		destChar->_gold += amount;
+		// Gold is a 24-bit value. The old 16-bit limit truncated both the
+		// requested amount and the source gold above 65,535
+		uint32 transfer = MIN<uint32>((uint32)amount, src._gold);
+		if (destChar->_gold >= 0xffffff)
+			transfer = 0;
+		else
+			transfer = MIN<uint32>(transfer, 0xffffff - destChar->_gold);
+		src._gold -= transfer;
+		destChar->_gold += transfer;
 
 	} else if (mode == "FOOD") {
 		amount = MIN<uint16>(amount, src._food);

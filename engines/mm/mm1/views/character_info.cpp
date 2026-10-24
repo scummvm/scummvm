@@ -419,7 +419,8 @@ void CharacterInfo::tradeHowMuch() {
 	escToGoBack(0);
 	writeString(10, 20, STRING["dialogs.character.how_much"]);
 
-	_textEntry.display(20, 20, 5, true, abortFunc, enterFunc);
+	_textEntry.display(20, 20, _tradeKind == TK_GOLD ? 8 : 5, true,
+		abortFunc, enterFunc);
 }
 
 void CharacterInfo::combatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped) {

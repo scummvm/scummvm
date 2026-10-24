@@ -119,9 +119,11 @@ void Trade::setMode(TradeMode mode) {
 		break;
 
 	default:
-		// How much
+		// How much. Gold is a 24-bit value (maximum 16,777,215),
+		// so gold transfers need an 8-digit entry field
 		draw();
-		_textEntry.display(70, 157, 5, true, abortFunc, enterFunc);
+		_textEntry.display(70, 157, _mode == TRADE_GOLD ? 8 : 5, true,
+			abortFunc, enterFunc);
 	}
 }
 
