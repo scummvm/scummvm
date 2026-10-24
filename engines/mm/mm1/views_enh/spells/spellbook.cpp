@@ -162,6 +162,14 @@ void Spellbook::draw() {
 }
 
 bool Spellbook::msgKeypress(const KeypressMessage &msg) {
+	// Some keyboard paths report the navigation-labelled numpad keys as
+	// KP9 and KP3. Treat them as Page Up and Page Down only while Num Lock
+	// is off, so numeric keypad input still works with it on
+	const bool pageUpKey = msg.keycode == Common::KEYCODE_PAGEUP ||
+		(msg.keycode == Common::KEYCODE_KP9 && !(msg.flags & Common::KBD_NUM));
+	const bool pageDownKey = msg.keycode == Common::KEYCODE_PAGEDOWN ||
+		(msg.keycode == Common::KEYCODE_KP3 && !(msg.flags & Common::KBD_NUM));
+
 	if (msg.keycode >= Common::KEYCODE_0 && msg.keycode <= Common::KEYCODE_9) {
 		const int shortcut = (msg.keycode == Common::KEYCODE_0) ?
 			9 : msg.keycode - Common::KEYCODE_1;
@@ -181,12 +189,12 @@ bool Spellbook::msgKeypress(const KeypressMessage &msg) {
 		else
 			beginFavoriteAssignment();
 
-	} else if (msg.keycode == Common::KEYCODE_PAGEUP) {
+	} else if (pageUpKey) {
 		if (_topIndex > 0) {
 			_topIndex = MAX(_topIndex - 10, 0);
 			redraw();
 		}
-	} else if (msg.keycode == Common::KEYCODE_PAGEDOWN) {
+	} else if (pageDownKey) {
 		int newTopIndex = _topIndex + 10;
 		if (newTopIndex < _count) {
 			_topIndex = newTopIndex;
