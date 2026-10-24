@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/utils/strings.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
@@ -27,6 +28,18 @@ namespace MM1 {
 void pad_string(Common::String &str, size_t len, char c) {
 	while (str.size() < len)
 		str += c;
+}
+
+Common::String mapText(const char *str) {
+	Common::String result = str;
+	if (g_engine->isEnhanced()) {
+		for (uint i = 0; i < result.size(); ++i) {
+			if (result[i] == '\n')
+				result.setChar(' ', i);
+		}
+	}
+
+	return result;
 }
 
 } // namespace MM1

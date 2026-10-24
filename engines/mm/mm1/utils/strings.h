@@ -29,6 +29,12 @@ namespace MM1 {
 
 extern void pad_string(Common::String &str, size_t len, char c = ' ');
 
+/**
+ * Returns text laid out with newlines for the classic interface.
+ * The enhanced interface wraps text itself, so newlines become spaces.
+ */
+extern Common::String mapText(const char *str);
+
 } // namespace MM1
 } // namespace MM
 
