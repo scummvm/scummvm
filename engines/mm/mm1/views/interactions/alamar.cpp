@@ -83,6 +83,10 @@ bool Alamar::msgKeypress(const KeypressMessage &msg) {
 	MM1::Maps::Map49 &map = *static_cast<MM1::Maps::Map49 *>(g_maps->_currentMap);
 	close();
 
+	// Alamar has already been defeated, so there's nothing more to do
+	if (_succeeded)
+		return true;
+
 	if (map[HAS_EYE]) {
 		map[VAL1]++;
 		map.updateGame();
