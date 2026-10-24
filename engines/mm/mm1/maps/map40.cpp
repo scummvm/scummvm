@@ -95,8 +95,18 @@ void Map40::special04() {
 		[]() {
 			Map40 &map = *static_cast<Map40 *>(g_maps->_currentMap);
 			map[VAL1]++;
+
+			// Remember the disabled conveyor across a save and load in
+			// this map visit. A normal map transition clears the marker
+			map._visited[g_maps->_mapOffset] |= VISITED_TRANSIENT_STATE;
 		}
 	));
+}
+
+void Map40::restoreVisitState() {
+	const byte buttonOffset = _data[51 + 4];
+	if (_visited[buttonOffset] & VISITED_TRANSIENT_STATE)
+		_data[VAL1] = 1;
 }
 
 void Map40::special05() {

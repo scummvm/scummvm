@@ -85,6 +85,7 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+	void restoreVisitState() override;
 
 	/**
 	 * Called when party chooses to resist Lord Archer

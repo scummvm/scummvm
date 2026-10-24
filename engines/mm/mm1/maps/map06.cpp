@@ -155,6 +155,15 @@ void Map06::special06() {
 			Map06 &map = *static_cast<Map06 *>(g_maps->_currentMap);
 			byte &val1 = map[VAL1];
 			val1 = val1 ? 0 : 1;
+
+			// The overlay byte is reloaded when a save is loaded, so
+			// remember this visit's OFF state on the button cell
+			byte &visited = map._visited[g_maps->_mapOffset];
+			if (val1)
+				visited &= ~VISITED_TRANSIENT_STATE;
+			else
+				visited |= VISITED_TRANSIENT_STATE;
+
 			g_events->addKeypress(Common::KEYCODE_SPACE);
 		}
 	));
@@ -253,6 +262,12 @@ void Map06::clearEncounterProgress() {
 		for (int x = 0; x < MAP_W; ++x)
 			_visited[y * MAP_W + x] &= ~ENCOUNTER_COMPLETE;
 	}
+}
+
+void Map06::restoreVisitState() {
+	const byte buttonOffset = _data[51 + 6];
+	if (_visited[buttonOffset] & VISITED_TRANSIENT_STATE)
+		_data[VAL1] = 0;
 }
 
 void Map06::slide() {

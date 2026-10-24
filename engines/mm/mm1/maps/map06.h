@@ -85,6 +85,7 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+	void restoreVisitState() override;
 };
 
 } // namespace Maps
