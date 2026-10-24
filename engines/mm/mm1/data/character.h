@@ -508,6 +508,12 @@ struct Character : public PrimaryAttributes {
 	void gatherGold();
 
 	/**
+	 * Gathers gold, gems and food into the character, up to
+	 * their carrying limits
+	 */
+	void gatherResources();
+
+	/**
 	 * Trade an item to another
 	 */
 	enum TradeResult { TRADE_SUCCESS, TRADE_NO_ITEM, TRADE_FULL };

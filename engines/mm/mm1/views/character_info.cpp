@@ -147,7 +147,7 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 			redraw();
 			break;
 		case Common::KEYCODE_g:
-			g_globals->_currCharacter->gatherGold();
+			g_globals->_currCharacter->gatherResources();
 			redraw();
 			break;
 		case Common::KEYCODE_q:

@@ -21,6 +21,7 @@
 
 #include "common/algorithm.h"
 #include "mm/mm1/data/character.h"
+#include "mm/mm1/data/locations.h"
 #include "mm/shared/utils/strings.h"
 #include "mm/mm1/mm1.h"
 
@@ -288,13 +289,56 @@ void Character::clear() {
 
 
 void Character::gatherGold() {
-	uint total = 0;
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		total += g_globals->_party[i]._gold;
-		g_globals->_party[i]._gold = 0;
-	}
+	// Gold is stored in the original MM1 24-bit range. Move as much as
+	// possible to this character and leave any overflow with its owner
+	static const uint32 MAX_GOLD = 0xffffff;
 
-	_gold = total;
+	if (_gold >= MAX_GOLD)
+		return;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &src = g_globals->_party[i];
+		if (&src == this)
+			continue;
+
+		const uint32 room = MAX_GOLD - _gold;
+		const uint32 amount = MIN(src._gold, room);
+		_gold += amount;
+		src._gold -= amount;
+
+		if (_gold == MAX_GOLD)
+			break;
+	}
+}
+
+void Character::gatherResources() {
+	// Gather gold, gems and food, each only up to the destination
+	// character's carrying limit. Any excess stays with the source
+	// character instead of being destroyed
+	gatherGold();
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &src = g_globals->_party[i];
+		if (&src == this)
+			continue;
+
+		if (_gems < 0xffff) {
+			const uint32 room = 0xffff - _gems;
+			const uint32 amount = MIN<uint32>(src._gems, room);
+			_gems += amount;
+			src._gems -= amount;
+		}
+
+		if (_food < MAX_FOOD) {
+			const uint room = MAX_FOOD - _food;
+			const uint amount = MIN<uint>(src._food, room);
+			_food += amount;
+			src._food -= amount;
+		}
+
+		if (_gems == 0xffff && _food == MAX_FOOD)
+			break;
+	}
 }
 
 Character::TradeResult Character::trade(int whoTo, int itemIndex) {
