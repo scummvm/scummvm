@@ -16,6 +16,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  MADS:
    - MT32 crash fixes for Dragonsphere
 
+ MM:
+   - Integrated Dragoo84's M&M1 Bugfix and Enhanced Mode improvements pack
+   - Fixed several M&M1 tavern bugs
+
 #### 2026.4.0 "Never-slop" (2026-10-10)
 
  New games:
