@@ -84,6 +84,9 @@ bool Game::msgAction(const ActionMessage &msg) {
 	case KEYBIND_MENU:
 		g_engine->openMainMenuDialog();
 		return true;
+	case KEYBIND_BESTIARY:
+		addView("Bestiary");
+		return true;
 	case KEYBIND_PROTECT:
 		addView("Protect");
 		return true;

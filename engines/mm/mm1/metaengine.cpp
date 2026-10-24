@@ -138,6 +138,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_ORDER, "ORDER", _s("Reorder party"), "o", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
 	{ KEYBIND_PROTECT, "PROTECT", _s("Protect"), "p", nullptr },
+	{ KEYBIND_BESTIARY, "BESTIARY", _s("Bestiary"), "n", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
 	{ KEYBIND_REST, "REST", _s("Rest"), "r", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
