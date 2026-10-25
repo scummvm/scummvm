@@ -170,7 +170,7 @@ void Kit8Engine::updateInstruments() {
 void Kit8Engine::drawUI() {
 	uint32 colors[16];
 	bool flash = (g_system->getMillis() / 320) & 1;
-	for (uint i = 0; i < (isSpectrum() || isC64() ? 16 : 4); i++) {
+	for (uint i = 0; i < (isSpectrum() || isC64() ? 16u : 4u); i++) {
 		byte r, g, b;
 		if (isSpectrum() || isC64())
 			_gfx->readFromPalette(i, r, g, b);
