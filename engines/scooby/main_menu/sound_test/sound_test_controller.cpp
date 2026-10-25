@@ -175,7 +175,7 @@ void SoundTestController::normalizeSelection(int &group, int &index) {
 
 bool SoundTestController::wasPressed(ControllerButtons button, uint8 previousInput) const {
 	uint8 mask = static_cast<uint8>(button);
-	return (_state.ControllerOneInput & mask) == 0 &&
+	return _state.isButtonDown(button) &&
 		   ((previousInput & mask) != 0 || (_state.ControllerOneAccumulatedChanges & mask) != 0);
 }
 

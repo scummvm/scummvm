@@ -115,8 +115,6 @@ public:
 	Optional<SessionExit> waitForDialogueDismissal();
 
 private:
-	static const uint8 kActionButtonMask = 0x40;
-	static const uint8 kAlternateActionButtonMask = 0x10;
 	static const uint8 kActorZeroHoldMask = 0x01;
 	static const int kCenteringWidth = 30;
 	static const uint8 kDialogueDisplayMask = 0x08;

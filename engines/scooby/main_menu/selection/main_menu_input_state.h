@@ -46,7 +46,7 @@ public:
 	// Returns true only on a released-to-held transition.
 	bool wasPressed(ControllerButtons button) const {
 		uint8 mask = static_cast<uint8>(button);
-		return (_state.ControllerOneInput & mask) == 0 && (_previousInput & mask) != 0;
+		return _state.isButtonDown(button) && (_previousInput & mask) != 0;
 	}
 
 	// Accepts a directional press from either the retained sample or PollControllers'
@@ -55,7 +55,7 @@ public:
 	// Returns true when the original buffered-edge condition accepts the press.
 	bool acceptBufferedPress(ControllerButtons button) {
 		uint8 mask = static_cast<uint8>(button);
-		if ((_state.ControllerOneInput & mask) != 0 ||
+		if (!_state.isButtonDown(button) ||
 			((_previousInput & mask) == 0 && (_state.ControllerOneAccumulatedChanges & mask) == 0)) {
 			return false;
 		}

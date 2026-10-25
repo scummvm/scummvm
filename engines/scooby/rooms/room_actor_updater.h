@@ -65,7 +65,6 @@ public:
 	void updateRoomActorsAndInterface();
 
 private:
-	static const uint8 kActionButtonMask = 0x10;
 	static const uint8 kActorAnimationHoldMask = 0x01;
 	static const uint8 kActorGraphicsReadyMask = 0x01;
 	static const uint8 kCompanionActorMask = 0x02;
@@ -73,12 +72,10 @@ private:
 	static const uint8 kCursorDownMask = 0x02;
 	static const uint8 kCursorLeftMask = 0x04;
 	static const uint8 kCursorRightMask = 0x08;
-	static const uint8 kCursorUpMask = 0x01;
 	static const uint8 kDirectionMask = 0x0F;
 	static const uint8 kDisplayInterfaceMask = 0x08;
 	static const uint8 kDisplayRightInterfaceMask = 0x10;
 	static const uint8 kDisplayTransitionMask = 0x80;
-	static const uint8 kInterfaceTransitionButtonMask = 0x20; // inventory show/hide - c button.
 	static const uint8 kInteractionMenuSuppressionMask = 0x04;
 	static const uint8 kLeadActorMask = 0x01;
 	static const int kLeadActorSlot = 0;
@@ -89,7 +86,6 @@ private:
 	static const int kLowerInterfaceStartRow = 21;
 	static const int kLowerInterfaceClosingCellsOffset = 0x3034C;
 	static const int kLowerInterfaceOpeningCellsOffset = 0x3004C;
-	static const uint8 kNewInterfaceButtonMask = 0x40;
 	static const uint8 kProgressInterfaceSuppressionMask = 0x02;
 	static const uint8 kRoomBehaviorCameraLockMask = 0x02;
 	static const uint8 kRoomBehaviorDuelMask = 0x04;
@@ -151,7 +147,7 @@ private:
 	void updateActorPriority(int actor);
 	void requestActorAnimation(int actor, int16 animationOffset);
 	void setActorIntegerCoordinates(int actor, int16 x, int16 y);
-	bool isNewPress(uint8 buttonMask) const;
+	bool isNewPress(ControllerButtons button) const;
 	static int32 scaleMovementStep(uint16 scale, uint16 multiplier,
 								   int16 movementStep);
 	static uint8 actorMask(int actor);

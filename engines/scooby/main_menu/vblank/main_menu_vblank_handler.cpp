@@ -42,7 +42,7 @@ void MainMenuVBlankHandler::handleInputVBlankTail() {
 	_input.pollControllers(_state, InputScreen::Menu);
 
 	// Ghidra 0x0000A4A8-0x0000A4BB: a held Start button sets room-script flag bit zero.
-	if ((_state.ControllerOneInput & static_cast<uint8>(ControllerButtons::Start)) == 0) {
+	if (_state.isButtonDown(ControllerButtons::Start)) {
 		_state.RoomScriptFlags |= 0x01;
 	}
 

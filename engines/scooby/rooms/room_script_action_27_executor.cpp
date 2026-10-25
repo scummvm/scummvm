@@ -43,11 +43,11 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 		// step with right taking precedence, and move both actors only inside the inclusive X bounds.
 		_state.RetraceCountdown = 0;
 		_updateActorAnimationFrames();
-		if ((_state.ControllerOneInput & kLeftButtonMask) == 0) {
+		if (_state.isButtonDown(ControllerButtons::Left)) {
 			horizontalStep = -2;
 		}
 
-		if ((_state.ControllerOneInput & kRightButtonMask) == 0) {
+		if (_state.isButtonDown(ControllerButtons::Right)) {
 			horizontalStep = 2;
 		}
 
@@ -59,11 +59,11 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 
 		// Ghidra 0x00003FBE-0x00003FDF: A has exit priority over B; with neither held, wait until the
 		// installed room callback decrements the zero retrace countdown through -1 and repeat.
-		uint8 testedButtonMask;
-		if ((_state.ControllerOneInput & kAButtonMask) == 0) {
-			testedButtonMask = kAButtonMask;
-		} else if ((_state.ControllerOneInput & kBButtonMask) == 0) {
-			testedButtonMask = kBButtonMask;
+		ControllerButtons testedButton;
+		if (_state.isButtonDown(ControllerButtons::A)) {
+			testedButton = ControllerButtons::A;
+		} else if (_state.isButtonDown(ControllerButtons::B)) {
+			testedButton = ControllerButtons::B;
 		} else {
 			while (_state.RetraceCountdown >= 0) {
 				if (!waitForRoomVerticalBlank()) {
@@ -77,7 +77,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 		// Ghidra 0x00003FE0-0x00004007: retain the raw Z-clear fallthrough in full. The incoming
 		// active-low button branches normally carry Z set and skip it, but that does not remove this body:
 		// if the tested state differs here, move the pair once per retrace until the next step is out of range.
-		if ((_state.ControllerOneInput & testedButtonMask) != 0) {
+		if (!_state.isButtonDown(testedButton)) {
 			while (true) {
 				if (!waitForRoomVerticalBlank()) {
 					return;

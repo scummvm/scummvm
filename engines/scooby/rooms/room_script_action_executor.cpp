@@ -252,7 +252,7 @@ void RoomScriptActionExecutor::scriptAction04WaitForButtonPress() {
 
 		// Ghidra 0x00004570-0x00004589: A has priority. A released falls through to B, newly pressed A
 		// returns, and held A repeats immediately without sampling either B state.
-		if ((_state.ControllerOneInput & 0x40) == 0) {
+		if (_state.isButtonDown(ControllerButtons::A)) {
 			if ((_state.PreviousControllerOneInput & 0x40) != 0) {
 				return;
 			}
@@ -266,7 +266,7 @@ void RoomScriptActionExecutor::scriptAction04WaitForButtonPress() {
 
 		// Ghidra 0x0000458A-0x000045A3: preserve all B outcomes independently. Released or held B
 		// repeats the complete loop; only a current press following a previous release returns.
-		if ((_state.ControllerOneInput & 0x10) != 0) {
+		if (!_state.isButtonDown(ControllerButtons::B)) {
 			if (!waitForRoomVerticalBlank()) {
 				return;
 			}
@@ -444,13 +444,13 @@ void RoomScriptActionExecutor::executeRoomScriptAction21() {
 		_updateActorAnimationFrames();
 
 		// Ghidra 0x0000415E-0x00004171: active-low Left has first priority and publishes result zero.
-		if ((_state.ControllerOneInput & 0x04) == 0) {
+		if (_state.isButtonDown(ControllerButtons::Left)) {
 			_state.RoomObjects[0].ScriptStateWords[0] = 0;
 			break;
 		}
 
 		// Ghidra 0x00004172-0x00004185: active-low Right has second priority and publishes result one.
-		if ((_state.ControllerOneInput & 0x08) == 0) {
+		if (_state.isButtonDown(ControllerButtons::Right)) {
 			_state.RoomObjects[0].ScriptStateWords[0] = 1;
 			break;
 		}
@@ -458,7 +458,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction21() {
 		// Ghidra 0x00004186-0x00004197: active-low Down publishes result two; no accepted direction
 		// retains the complete back edge. The original relies on asynchronous controller polling, so
 		// service the installed room callback and one clocked host frame before each managed continuation.
-		if ((_state.ControllerOneInput & 0x02) == 0) {
+		if (_state.isButtonDown(ControllerButtons::Down)) {
 			_state.RoomObjects[0].ScriptStateWords[0] = 2;
 			break;
 		}

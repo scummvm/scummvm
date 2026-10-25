@@ -132,11 +132,11 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 		// iterations, the every-fourth-iteration camera bit toggle, every retrace, and each 8-word rotate.
 		int cameraToggleCounter = 3;
 		for (int frameCounter = 0xC8; frameCounter >= 0; frameCounter--) {
-			if ((_state.ControllerOneInput & kAButtonMask) == 0) {
+			if (_state.isButtonDown(ControllerButtons::A)) {
 				break;
 			}
 
-			if ((_state.ControllerOneInput & kBButtonMask) == 0) {
+			if (_state.isButtonDown(ControllerButtons::B)) {
 				break;
 			}
 

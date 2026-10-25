@@ -125,7 +125,7 @@ bool RoomActorUpdater::updateInterfaceTransitionAndCursor() {
 			return false;
 		}
 
-		if (isNewPress(kInterfaceTransitionButtonMask)) { // button C pressed
+		if (isNewPress(ControllerButtons::C)) { // button C pressed
 			publishLowerInterfaceCells(kLowerInterfaceClosingCellsOffset);
 			_state.RoomInterfaceTransitionCountdown = 0x10;
 		}
@@ -140,7 +140,7 @@ bool RoomActorUpdater::updateInterfaceTransitionAndCursor() {
 	}
 
 	endActorPathAtTerminal(kLeadActorSlot);
-	if (isNewPress(kNewInterfaceButtonMask)) {
+	if (isNewPress(ControllerButtons::A)) {
 		closeInteractionInterface();
 		return true;
 	}
@@ -219,21 +219,21 @@ void RoomActorUpdater::updateInteractionCursor() {
 		}
 	}
 
-	if ((_state.ControllerOneInput & kCursorLeftMask) == 0) {
+	if (_state.isButtonDown(ControllerButtons::Left)) {
 		_state.CursorX -= _state.CursorHorizontalStep;
 		if (_state.CursorX < -8) {
 			_state.CursorX = -8;
 		}
 	}
 
-	if ((_state.ControllerOneInput & kCursorRightMask) == 0) {
+	if (_state.isButtonDown(ControllerButtons::Right)) {
 		_state.CursorX += _state.CursorHorizontalStep;
 		if (_state.CursorX > 0xF7) {
 			_state.CursorX = 0xF7;
 		}
 	}
 
-	if ((_state.ControllerOneInput & kCursorUpMask) == 0) {
+	if (_state.isButtonDown(ControllerButtons::Up)) {
 		if (_state.CursorY >= 0xC0) {
 			_state.CursorY = 0xBF;
 		} else {
@@ -244,7 +244,7 @@ void RoomActorUpdater::updateInteractionCursor() {
 		}
 	}
 
-	if ((_state.ControllerOneInput & kCursorDownMask) == 0) {
+	if (_state.isButtonDown(ControllerButtons::Down)) {
 		if (_state.CursorY >= 0xA8) {
 			if ((_state.PreviousControllerOneInput & kCursorDownMask) != 0) {
 				_state.CursorY = 0xC0;
@@ -268,7 +268,7 @@ void RoomActorUpdater::updateInteractionCursor() {
 		}
 	}
 
-	if (!isNewPress(kActionButtonMask)) {
+	if (!isNewPress(ControllerButtons::B)) {
 		return;
 	}
 
@@ -439,7 +439,7 @@ bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candi
 
 			return false;
 		}
-	} else if ((_state.ControllerOneInput & kCursorLeftMask) == 0) {
+	} else if (_state.isButtonDown(ControllerButtons::Left)) {
 		moveLeadLeft(candidateX, stepMagnitude);
 	} else {
 		if ((_state.LeadActorDirectionalAnimationLatchFlags & 0x02) != 0 &&
@@ -447,7 +447,7 @@ bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candi
 			_state.LeadActorDirectionalAnimationLatchFlags &= 0xFD;
 		}
 
-		if ((_state.ControllerOneInput & kCursorRightMask) == 0) {
+		if (_state.isButtonDown(ControllerButtons::Right)) {
 			moveLeadRight(candidateX, stepMagnitude, maximumX);
 		}
 	}
@@ -462,18 +462,18 @@ bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candi
 	}
 
 	uint32 verticalMagnitude = stepMagnitude >> 1;
-	if ((_state.ControllerOneInput & kCursorUpMask) == 0) {
-		bool horizontalDirectionHeld = (_state.ControllerOneInput & kCursorLeftMask) == 0 ||
-									   (_state.ControllerOneInput & kCursorRightMask) == 0;
+	if (_state.isButtonDown(ControllerButtons::Up)) {
+		bool horizontalDirectionHeld = _state.isButtonDown(ControllerButtons::Left) ||
+									   _state.isButtonDown(ControllerButtons::Right);
 		bool graphicsPending = moveLeadUp(candidateY, verticalMagnitude, maximumY, horizontalDirectionHeld);
 		if (!graphicsPending) {
 			return false;
 		}
 	}
 
-	if ((_state.ControllerOneInput & kCursorDownMask) == 0) {
-		bool horizontalDirectionHeld = (_state.ControllerOneInput & kCursorLeftMask) == 0 ||
-									   (_state.ControllerOneInput & kCursorRightMask) == 0;
+	if (_state.isButtonDown(ControllerButtons::Down)) {
+		bool horizontalDirectionHeld = _state.isButtonDown(ControllerButtons::Left) ||
+									   _state.isButtonDown(ControllerButtons::Right);
 		moveLeadDown(candidateY, verticalMagnitude, maximumY, horizontalDirectionHeld);
 	}
 
@@ -862,9 +862,9 @@ void RoomActorUpdater::tryOpenInteractionInterface() {
 		return;
 	}
 
-	bool shouldOpen = isNewPress(kNewInterfaceButtonMask);
+	bool shouldOpen = isNewPress(ControllerButtons::A);
 	if (!shouldOpen) {
-		shouldOpen = isNewPress(kActionButtonMask);
+		shouldOpen = isNewPress(ControllerButtons::B);
 	}
 
 	// Managed-only mouse support: the pointer opens the cursor interface like an A/B press would
@@ -1329,9 +1329,8 @@ void RoomActorUpdater::setActorIntegerCoordinates(int actor, int16 x, int16 y) {
 	_state.ActorYFixedCoordinates[actor] = replaceIntegerCoordinate(_state.ActorYFixedCoordinates[actor], y);
 }
 
-bool RoomActorUpdater::isNewPress(uint8 buttonMask) const {
-	return (_state.ControllerOneInput & buttonMask) == 0 && (_state.PreviousControllerOneInput & buttonMask) !=
-																0;
+bool RoomActorUpdater::isNewPress(ControllerButtons button) const {
+	return _state.isButtonDown(button) && (_state.PreviousControllerOneInput & static_cast<uint8>(button)) != 0;
 }
 
 int32 RoomActorUpdater::scaleMovementStep(uint16 scale, uint16 multiplier,
@@ -1370,12 +1369,12 @@ int32 RoomActorUpdater::replaceIntegerCoordinate(int32 fixedCoordinate,
 
 int16 RoomActorUpdater::getControllerDirectionIndex(int16 retainedDataRegister) {
 	// Ghidra 0x0000750A-0x00007539: Left wins over every simultaneous Right input, then Up wins over Down.
-	if ((_state.ControllerOneInput & kCursorLeftMask) == 0) {
-		if ((_state.ControllerOneInput & kCursorUpMask) == 0) {
+	if (_state.isButtonDown(ControllerButtons::Left)) {
+		if (_state.isButtonDown(ControllerButtons::Up)) {
 			return 1;
 		}
 
-		if ((_state.ControllerOneInput & kCursorDownMask) == 0) {
+		if (_state.isButtonDown(ControllerButtons::Down)) {
 			return 3;
 		}
 
@@ -1383,12 +1382,12 @@ int16 RoomActorUpdater::getControllerDirectionIndex(int16 retainedDataRegister) 
 	}
 
 	// Ghidra 0x0000753A-0x00007569: with Left released, preserve Right+Up, Right+Down, and Right-only.
-	if ((_state.ControllerOneInput & kCursorRightMask) == 0) {
-		if ((_state.ControllerOneInput & kCursorUpMask) == 0) {
+	if (_state.isButtonDown(ControllerButtons::Right)) {
+		if (_state.isButtonDown(ControllerButtons::Up)) {
 			return 2;
 		}
 
-		if ((_state.ControllerOneInput & kCursorDownMask) == 0) {
+		if (_state.isButtonDown(ControllerButtons::Down)) {
 			return 0;
 		}
 
@@ -1397,11 +1396,11 @@ int16 RoomActorUpdater::getControllerDirectionIndex(int16 retainedDataRegister) 
 
 	// Ghidra 0x0000756A-0x00007589: retain independent Up and Down results and the untouched incoming-D0
 	// return when all four direction bits are released.
-	if ((_state.ControllerOneInput & kCursorUpMask) == 0) {
+	if (_state.isButtonDown(ControllerButtons::Up)) {
 		return 6;
 	}
 
-	if ((_state.ControllerOneInput & kCursorDownMask) == 0) {
+	if (_state.isButtonDown(ControllerButtons::Down)) {
 		return 7;
 	}
 

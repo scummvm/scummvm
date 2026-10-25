@@ -62,10 +62,6 @@ private:
 	static const int kCompanionActorSlot = 2;
 	static const int kMovingActorSlot = 3;
 	static const int kPairedActorSlot = 4;
-	static const uint8 kAButtonMask = 0x40;
-	static const uint8 kBButtonMask = 0x10;
-	static const uint8 kLeftButtonMask = 0x04;
-	static const uint8 kRightButtonMask = 0x08;
 	static const int16 kMaximumX = 0x0094;
 	static const int16 kMinimumX = 0x0064;
 	static const int16 kTargetY = 0x004A;

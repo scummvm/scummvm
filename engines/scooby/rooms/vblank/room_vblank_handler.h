@@ -97,7 +97,6 @@ private:
 	static const int kRightActionPromptStartRow = 24;
 	static const int kRightActionPromptTemplateOffset = 0x3020C;
 	static const uint8 kRoomUpdateEnabledMask = 0x40;
-	static const uint8 kStartButtonMask = 0x80;
 
 	// Advances every enabled palette-range timer and rotates each range whose timer expires.
 	//

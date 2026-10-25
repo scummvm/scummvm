@@ -77,8 +77,6 @@ public:
 	Optional<SessionExit> runInteractionActionMenu();
 
 private:
-	static const uint8 kActionButtonMask = 0x40;
-	static const uint8 kAlternateActionButtonMask = 0x10;
 	static const uint8 kAutomaticFrameUnwindMask = 0x01;
 	static const uint8 kDisplaySideMask = 0x10;
 	static const uint8 kDownDirectionMask = 0x02;

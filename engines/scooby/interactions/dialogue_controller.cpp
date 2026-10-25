@@ -213,13 +213,13 @@ Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 	// Ghidra 0x0000A192-0x0000A1A9: A release has priority over the B release test. Native interrupts
 	// updated input during these spins; each managed continuation services that asynchronous boundary.
 	while (true) {
-		while ((_state.ControllerOneInput & kActionButtonMask) == 0) {
+		while (_state.isButtonDown(ControllerButtons::A)) {
 			if (!waitForRoomRetrace()) {
 				return Optional<SessionExit>(SessionExit::HostClosed);
 			}
 		}
 
-		if ((_state.ControllerOneInput & kAlternateActionButtonMask) != 0) {
+		if (!_state.isButtonDown(ControllerButtons::B)) {
 			break;
 		}
 
@@ -272,8 +272,8 @@ Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 
 		// Ghidra 0x0000A200-0x0000A21B: A has priority. A held waits for its release and then returns;
 		// A released alone reaches the distinct B path.
-		if ((_state.ControllerOneInput & kActionButtonMask) == 0) {
-			while ((_state.ControllerOneInput & kActionButtonMask) == 0) {
+		if (_state.isButtonDown(ControllerButtons::A)) {
+			while (_state.isButtonDown(ControllerButtons::A)) {
 				if (!waitForRoomRetrace()) {
 					return Optional<SessionExit>(SessionExit::HostClosed);
 				}
@@ -284,11 +284,11 @@ Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 
 		// Ghidra 0x0000A21C-0x0000A233: released B repeats the complete service loop. Held B waits for
 		// release and returns, preserving the branch that differs from the held-A path above.
-		if ((_state.ControllerOneInput & kAlternateActionButtonMask) != 0) {
+		if (!_state.isButtonDown(ControllerButtons::B)) {
 			continue;
 		}
 
-		while ((_state.ControllerOneInput & kAlternateActionButtonMask) == 0) {
+		while (_state.isButtonDown(ControllerButtons::B)) {
 			if (!waitForRoomRetrace()) {
 				return Optional<SessionExit>(SessionExit::HostClosed);
 			}

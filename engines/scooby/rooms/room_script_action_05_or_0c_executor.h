@@ -71,8 +71,6 @@ public:
 	void executeRoomScriptAction05Or0C();
 
 private:
-	static const uint8 kAButtonMask = 0x40;
-	static const uint8 kBButtonMask = 0x10;
 	static const int kBackgroundHalfMapOffset = 0x2F97A;
 	static const int kBackgroundHalfRowBytes = 64; // 32 * sizeof(ushort)
 	static const int kBackgroundMapRows = 19;

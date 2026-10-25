@@ -141,16 +141,16 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 			break;
 		}
 
-		if ((_state.ControllerOneInput & 0x80) == 0 && (_state.PreviousControllerOneInput & 0x80) != 0) {
+		if (_state.isButtonDown(ControllerButtons::Start) && (_state.PreviousControllerOneInput & 0x80) != 0) {
 			pauseAudioDriver();
 			playAudioCommand(0x59);
-			while ((_state.ControllerOneInput & 0x80) == 0) {
+			while (_state.isButtonDown(ControllerButtons::Start)) {
 				if (!waitForRoomVerticalBlank()) {
 					return;
 				}
 			}
 
-			while ((_state.ControllerOneInput & 0x80) != 0) {
+			while (!_state.isButtonDown(ControllerButtons::Start)) {
 				if (!waitForRoomVerticalBlank()) {
 					return;
 				}
@@ -215,7 +215,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 				static_cast<uint8>(_duelMomentum[kDuelSecondActor] + 8);
 		}
 
-		if ((_state.ControllerOneInput & 0x40) == 0 || (_state.ControllerOneInput & 0x10) == 0) {
+		if (_state.isButtonDown(ControllerButtons::A) || _state.isButtonDown(ControllerButtons::B)) {
 			if (_duelMomentumCooldowns[kDuelFirstActor] == 0 && _duelMomentum[kDuelFirstActor] != 7) {
 				_duelMomentum[kDuelFirstActor]++;
 				_duelMomentumCooldowns[kDuelFirstActor] =
@@ -281,7 +281,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 				candidateFacing++;
 			}
 
-			if ((_state.ControllerOneInput & 0x08) == 0) {
+			if (_state.isButtonDown(ControllerButtons::Right)) {
 				candidateFacing++;
 			}
 
@@ -289,7 +289,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 				candidateFacing--;
 			}
 
-			if ((_state.ControllerOneInput & 0x04) == 0) {
+			if (_state.isButtonDown(ControllerButtons::Left)) {
 				candidateFacing--;
 			}
 

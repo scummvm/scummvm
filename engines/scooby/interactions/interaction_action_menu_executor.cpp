@@ -158,8 +158,8 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 		fillInteractionTextWindow(interfaceStartColumn);
 		_state.InterfaceTileAttributes &= kInterfacePaletteClearMask;
 		publishBinaryMaskTiles(6, 0, _state.InterfaceTileAttributes);
-		while ((_state.ControllerOneInput & kActionButtonMask) == 0 ||
-			   (_state.ControllerOneInput & kAlternateActionButtonMask) == 0) {
+		while (_state.isButtonDown(ControllerButtons::A) ||
+			   _state.isButtonDown(ControllerButtons::B)) {
 			if (!waitForRoomRetrace()) {
 				return Optional<SessionExit>(SessionExit::HostClosed);
 			}
@@ -234,7 +234,7 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 			}
 
 			bool movedUp = false;
-			if ((_state.ControllerOneInput & kUpDirectionMask) == 0 &&
+			if (_state.isButtonDown(ControllerButtons::Up) &&
 				(_state.PreviousControllerOneInput & kUpDirectionMask) != 0 && selectedIndex != 0) {
 				int16 candidate = static_cast<int16>(selectedIndex - 1);
 				while (candidate >= 0 && (currentFrame.UsedFlags & (1 << candidate)) != 0) {
@@ -248,7 +248,7 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 				}
 			}
 
-			if (!movedUp && (_state.ControllerOneInput & kDownDirectionMask) == 0 &&
+			if (!movedUp && _state.isButtonDown(ControllerButtons::Down) &&
 				(_state.PreviousControllerOneInput & kDownDirectionMask) != 0) {
 				int16 candidate = static_cast<int16>(selectedIndex + 1);
 				if (candidate < _state.InteractionActions.count() && candidate <
@@ -278,8 +278,8 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 
 			// Ghidra 0x00001E5A-0x00001E79: either held action button selects; both released repeat the
 			// complete publication loop. The strip is hidden before any selected-entry side effect.
-			if ((_state.ControllerOneInput & kAlternateActionButtonMask) != 0 &&
-				(_state.ControllerOneInput & kActionButtonMask) != 0 && !mouseChose) {
+			if (!_state.isButtonDown(ControllerButtons::B) &&
+				!_state.isButtonDown(ControllerButtons::A) && !mouseChose) {
 				continue;
 			}
 

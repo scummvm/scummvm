@@ -87,7 +87,7 @@ bool ActionMenuController::updateActionMenu() {
 			return true;
 		}
 
-		if ((_state.ControllerOneInput & 0x10) == 0) {
+		if (_state.isButtonDown(ControllerButtons::B)) {
 			VerbEnum selectedAction = kActionIconByCommand[static_cast<size_t>(command)];
 			if (_state.activeVerbIcon == 0) {
 				_state.pendingVerbIcon = _state.cachedVerbIcon;
@@ -116,7 +116,7 @@ bool ActionMenuController::updateActionMenu() {
 			_state.SecondaryInteraction = 0;
 		}
 
-		if ((_state.ControllerOneInput & 0x10) == 0) {
+		if (_state.isButtonDown(ControllerButtons::B)) {
 			if (command == 10) { // down button
 				int16 lastPage = _state.InventoryObjectIndices.empty()
 									 ? static_cast<int16>(0)
