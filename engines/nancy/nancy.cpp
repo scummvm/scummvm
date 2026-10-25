@@ -542,6 +542,12 @@ Common::Error NancyEngine::run() {
 
 	bool graphicsWereSuppressed = false;
 
+	// The frames follow each other at 60 a second, as the original, which waits
+	// for the display. Later games step what they move 60 times a second, so a
+	// frame that is a little short would make the scrolling jump.
+	const double kFrameMillis = 1000.0 / 60.0;
+	double nextFrameTime = _system->getMillis();
+
 	// Main loop
 	while (true) {
 		_input->processEvents();
@@ -549,7 +555,13 @@ Common::Error NancyEngine::run() {
 			break;
 		}
 
-		uint32 frameEndTime = _system->getMillis() + 16;
+		// A frame that came too late doesn't make the next ones shorter
+		nextFrameTime += kFrameMillis;
+		if (nextFrameTime < _system->getMillis()) {
+			nextFrameTime = _system->getMillis() + kFrameMillis;
+		}
+
+		uint32 frameEndTime = (uint32)nextFrameTime;
 
 		if (!graphicsWereSuppressed) {
 			_cursor->setCursorType(CursorManager::kNormalArrow);
