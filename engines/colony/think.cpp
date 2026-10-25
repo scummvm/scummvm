@@ -726,8 +726,7 @@ int ColonyEngine::scanForPlayer(int num) {
 		return 0;
 
 	Thing &obj = _objects[num - 1];
-	Locate fire;
-	memset(&fire, 0, sizeof(fire));
+	Locate fire = {};
 	fire.ang = obj.where.ang;
 	fire.type = 2;
 
