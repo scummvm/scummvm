@@ -28,29 +28,7 @@
 
 namespace Snatcher {
 
-class EndianWrapper : public Common::SeekableReadStreamEndian {
-public:
-	EndianWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), Common::ReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
-	~EndianWrapper() override { if (_dispose) delete _stream; }
-
-	// Common::Stream interface
-	bool err() const override { return _stream->err(); }
-
-	// Common::ReadStream interface
-	bool eos() const override { return _stream->eos(); }
-	uint32 read(void *dataPtr, uint32 dataSize) override { return _stream->read(dataPtr, dataSize); }
-
-	// Common::SeekableReadStream interface
-	int64 pos() const override { return _stream->pos(); }
-	int64 size() const override { return _stream->size(); }
-	bool seek(int64 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
-
-private:
-	Common::SeekableReadStream *_stream;
-	bool _dispose;
-};
-
-FIO::FIO(SnatcherEngine *vm, bool isBigEndian) : _vm(vm), _bigEndianTarget(isBigEndian), _loadingTimer(0) {
+FIO::FIO(SnatcherEngine *vm) : _vm(vm), _loadingTimer(0) {
 	_files.add("global_search", &SearchMan, 0, false);
 }
 
@@ -105,15 +83,6 @@ Common::SeekableReadStream *FIO::readStream(const Common::Path &file) {
 	return _files.createReadStreamForMember(file);
 }
 
-Common::SeekableReadStreamEndian *FIO::readStreamEndian(int index, EndianMode em) {
-	return (index >= 0 && index < _resFileListSize) ? readStreamEndian(_resFileList[index], em) : nullptr;
-}
-
-Common::SeekableReadStreamEndian *FIO::readStreamEndian(const Common::Path &file, EndianMode em) {
-	Common::SeekableReadStream *stream = readStream(file);
-	return stream ? new EndianWrapper(stream, (em == kForceBE) ? true : (em == kForceLE ? false : _bigEndianTarget)) : nullptr;
-}
-
 const char *FIO::_resFileList[97] = {
 	"DATA_A0.BIN",	"DATA_B0.BIN",	"DATA_D0.BIN",	"DATA_D1.BIN",	"DATA_D2.BIN",	"DATA_F0.BIN",	"DATA_F4.BIN",	"DATA_G0.BIN",
 	"DATA_H00.BIN",	"DATA_H01.BIN",	"DATA_H02.BIN",	"DATA_H03.BIN",	"DATA_H04.BIN",	"DATA_H05.BIN",	"DATA_H06.BIN",	"DATA_H07.BIN",
@@ -165,7 +134,7 @@ const uint8 *ResourcePointer::operator++(int) {
 	return _dataStart + (_offset++);
 }
 
-const uint8 *ResourcePointer::ResourcePointer::operator++() {
+const uint8 *ResourcePointer::operator++() {
 	return _dataStart + (++_offset);
 }
 
