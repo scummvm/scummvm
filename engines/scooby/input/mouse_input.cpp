@@ -136,6 +136,14 @@ void MouseInput::beginPoll() {
 }
 
 ControllerButtons MouseInput::sampleControllerButtons(RuntimeState &state, InputScreen screen) {
+	if (_mode == Mode::Intro) {
+		// Leave the click for takeIntroSkipClick; no pointer and no controller presses during the intros.
+		updateCursor(InputScreen::Intro);
+		state.MouseCursorActive = false;
+		state.MouseOpenInterfaceRequest = false;
+		return ControllerButtons::None;
+	}
+
 	updateCursor(screen);
 	state.MouseCursorActive = _active && screen == InputScreen::Room;
 	ControllerButtons held = ControllerButtons::None;
@@ -164,6 +172,10 @@ bool MouseInput::takeIntroSkipClick() {
 	_leftClick = false;
 	_rightClick = false;
 	_wheel = 0;
+	// Mouse use during the intros does not make the mouse the active device, so the main menu shows no
+	// pointer until the mouse moves (or clicks) there.
+	_active = false;
+	_moved = false;
 	return clicked;
 }
 
@@ -270,8 +282,9 @@ Common::Point MouseInput::toContent(const Common::Point &screenPos) const {
 }
 
 void MouseInput::updateCursor(InputScreen screen) {
-	CursorStyle wanted = !_active ? CursorStyle::Hidden
-								  : (screen == InputScreen::Room ? CursorStyle::Crosshair : CursorStyle::Arrow);
+	CursorStyle wanted = (!_active || screen == InputScreen::Intro)
+							 ? CursorStyle::Hidden
+							 : (screen == InputScreen::Room ? CursorStyle::Crosshair : CursorStyle::Arrow);
 	if (wanted == _cursorStyle) {
 		return;
 	}

@@ -41,6 +41,7 @@
 //
 // Hook points in the recovered code are all marked "Managed-only mouse support":
 //   - ControllerInput::pollControllers / processEvents / isIntroSkipPressed (event intake and pulses),
+//   - ApplicationLoop::run and StudioLogoSequence::run (the startup intros, see Mode::Intro),
 //   - SessionController::runGame (marks the idle room loop, see Mode::RoomIdle),
 //   - RoomActorUpdater::tryOpenInteractionInterface (RuntimeState::MouseOpenInterfaceRequest),
 //   - RoomSpriteRenderer::appendCursorOrLowerInterfaceSprite (RuntimeState::MouseCursorActive),
@@ -58,7 +59,7 @@ class RuntimeState;
 
 // The screen family sampling input; it selects the cursor image.
 enum class InputScreen {
-	Intro, // Startup logos and title intro: system arrow.
+	Intro, // Startup logos and title intro: no pointer.
 	Menu,  // Main menu, password entry and sound test: system arrow.
 	Room   // Rooms, room scripts and dialogue: the game's targeting crosshair.
 };
@@ -74,7 +75,12 @@ public:
 		// Sound test: left click plays (B), right click leaves (C), the wheel steps the track (Left/Right).
 		SoundTest,
 		// The idle room loop: cursor targeting, the verb bar and click-to-walk (RoomMouseController).
-		RoomIdle
+		RoomIdle,
+		// Startup intros (title intro and studio logos): the pointer stays hidden and clicks never become
+		// controller presses; a left click is left for isIntroSkipPressed to skip with. The studio logos poll
+		// through the room retrace handler, so this mode also stops that poll treating the click as a room
+		// click or showing the crosshair.
+		Intro
 	};
 
 	MouseInput();
@@ -91,7 +97,8 @@ public:
 	void beginPoll();
 	ControllerButtons sampleControllerButtons(RuntimeState &state, InputScreen screen);
 
-	// Called by ControllerInput::isIntroSkipPressed: a left click skips like Escape.
+	// Called by ControllerInput::isIntroSkipPressed: a left click skips like Escape. Mouse use during the
+	// intros does not count as activity, so the pointer first appears once the mouse moves on the main menu.
 	bool takeIntroSkipClick();
 
 	// True while the mouse (rather than the keyboard or a pad) is the active device.

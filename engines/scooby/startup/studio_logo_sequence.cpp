@@ -36,6 +36,9 @@ StudioLogoSequence::StudioLogoSequence(const ScoobyDooRom &rom, TileScene &scene
 }
 
 bool StudioLogoSequence::run() {
+	// Managed-only mouse support: no pointer during the logos, and a left click skips like Escape
+	// (mouse_input.h, MouseInput::Mode::Intro).
+	MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::Intro);
 	_scene.reset(HorizontalDisplayMode::H32);
 	Common::Array<uint8> initialTiles = decompressRingLz(_rom, 0x287C8);
 	_scene.loadTiles(MakeSpan(initialTiles));
@@ -43,15 +46,20 @@ bool StudioLogoSequence::run() {
 	Common::Array<uint8> finalTilemap = decompressRingLz(_rom, 0x2864C);
 	Common::Array<PaletteColor> targetPalette = readPalette(_rom, 0x2967A);
 
-	if (runAnimatedStep(MakeSpan(stagedTilemap), MakeSpan(targetPalette)) ==
-		StepResult::HostClosed) {
+	StepResult animatedResult = runAnimatedStep(MakeSpan(stagedTilemap), MakeSpan(targetPalette));
+	if (animatedResult == StepResult::HostClosed) {
 		return false;
 	}
 
-	_scene.replacePaletteRange(MakeSpan(targetPalette), 0);
-	_scene.loadLayerRows(MakeSpan(finalTilemap), TileLayer::Foreground, 4, 5, 25, 15);
-	if (runFinalStep() == StepResult::HostClosed) {
-		return false;
+	// Managed-only: a skip (Escape or a left click) ends the whole logo, as it moves straight on to the next
+	// screen in the title intro, instead of only cutting the animated step short and still holding the final
+	// logo for its full 200-frame wait.
+	if (animatedResult == StepResult::Completed) {
+		_scene.replacePaletteRange(MakeSpan(targetPalette), 0);
+		_scene.loadLayerRows(MakeSpan(finalTilemap), TileLayer::Foreground, 4, 5, 25, 15);
+		if (runFinalStep() == StepResult::HostClosed) {
+			return false;
+		}
 	}
 
 	_scene.clearContent();
