@@ -223,7 +223,7 @@ void SnatcherEngine::playBootLogoAnimation(const GameState &state) {
 		delayUntil(nextFrame);
 	}
 }
-int g = 0;
+
 bool SnatcherEngine::start() {
 	Util::rngReset();
 	GameState state;
@@ -263,7 +263,6 @@ bool SnatcherEngine::start() {
 				bool blockedMod = _cmdQueue->enabled();
 				if (_cmdQueue->enabled()) {
 					_cmdQueue->run(state);
-					g = state.script.curPos;
 					blockedMod = _gfx->busy(0);
 				}
 				if (!blockedMod) {
