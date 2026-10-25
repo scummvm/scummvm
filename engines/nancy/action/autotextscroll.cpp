@@ -21,6 +21,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/font.h"
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/util.h"
 
@@ -151,16 +152,32 @@ void AutotextScroll::update(int32 ticks) {
 void AutotextScroll::redraw() {
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 
-	for (const ScrollingText *text : _texts) {
-		Common::Rect dest(_bounds.left, _bounds.top - text->offset, _bounds.left + text->image.w, _bounds.top - text->offset + text->image.h);
-		Common::Rect visible = dest.findIntersectingRect(_bounds);
-		if (visible.isEmpty()) {
-			continue;
-		}
+	// A line is drawn only when all of it fits in the rect, whose bottom edge it
+	// can't use; e.g. the name in scene 4580 of Nancy17 is in a rect too small
+	// for it, and doesn't show
+	const Font *font = g_nancy->_graphics->getFont(_fontID);
+	const Common::Rect clip(_bounds.left, _bounds.top, _bounds.right, _bounds.bottom - 1);
 
-		Common::Rect src = visible;
-		src.translate(-dest.left, -dest.top);
-		_drawSurface.blitFrom(text->image, src, visible.origin());
+	for (const ScrollingText *text : _texts) {
+		const int lineHeight = font ? MAX<int>(font->getFontHeight(), 1) : text->image.h;
+		const int top = _bounds.top - text->offset;
+
+		for (int y = 0; y < text->image.h; y += lineHeight) {
+			if (top + y < clip.top || top + y + lineHeight > clip.bottom) {
+				continue;
+			}
+
+			Common::Rect line(_bounds.left, top + y, _bounds.left + text->image.w, top + MIN<int>(y + lineHeight, text->image.h));
+
+			Common::Rect visible = line.findIntersectingRect(clip);
+			if (visible.isEmpty()) {
+				continue;
+			}
+
+			Common::Rect src = visible;
+			src.translate(-_bounds.left, -top);
+			_drawSurface.blitFrom(text->image, src, visible.origin());
+		}
 	}
 
 	_needsRedraw = true;
