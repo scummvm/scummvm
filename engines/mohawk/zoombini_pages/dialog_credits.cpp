@@ -30,9 +30,9 @@ namespace Mohawk {
 ZoombiniDialogCredits::ZoombiniDialogCredits(MohawkEngine_Zoombini *vm)
 	: ZoombiniDialog(vm, ZoombiniPageType::kCreditScreen) {
 	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
-	_textRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kCreditsTextLayout).apply(_textRect);
+	_textRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kCreditsText).apply(_textRect);
 
-	const ZmbReleaseInfo::LayoutAdjustment scrollAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kCreditsScrollLayout);
+	const ZmbReleaseInfo::LayoutAdjustment scrollAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kCreditsScroll);
 	_scrollDestRect = scrollAdjustment.apply(_scrollDestRect);
 	_scrollSrcRect = scrollAdjustment.apply(_scrollSrcRect);
 	_blitRect = scrollAdjustment.apply(_blitRect);
@@ -54,7 +54,7 @@ void ZoombiniDialogCredits::open() {
 	// [Deliberate MIDI difference]
 	// Do not stop the entire MIDI. Pause MIDI when opening, and resume MIDI when closing.
 	_vm->_midi->pause(true);
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		_vm->_sound->pauseActiveMusicSoundsForDialog();
 }
 
@@ -99,7 +99,7 @@ void ZoombiniDialogCredits::drawCreditLine(const Common::U32String &lineText, bo
 }
 
 uint32 ZoombiniDialogCredits::getCreditScrollLineCount() const {
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return _totalCreditLines + kTlcCreditsPreLogoBlankLineCount +
 			   kTlcCreditsLogoLineCount + kTlcCreditsPostLogoBlankLineCount;
 
@@ -107,7 +107,7 @@ uint32 ZoombiniDialogCredits::getCreditScrollLineCount() const {
 }
 
 void ZoombiniDialogCredits::drawTlcEndLogos(int32 elapsedFrames, int32 baseLineIdx, int32 startLineIdx, int32 endLineIdx) {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	const int32 logoStartLineIdx = static_cast<int32>(_totalCreditLines + kTlcCreditsPreLogoBlankLineCount + 1);

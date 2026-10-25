@@ -33,6 +33,7 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/gui_options.h"
+#include "common/language.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -225,7 +226,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 
 	const Common::Language lang = _relInfo.getLanguage();
 	_mhkArchiveRoot = ZMB_MHK_ROOT_GENERIC;
-	if (_relInfo.isFamily(ZmbReleaseInfo::kEuropeV1)) {
+	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
 		switch (lang) {
 		case Common::EN_GRB:
 			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_GB;
@@ -264,7 +265,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 
 	// Load ZOOMBINI.MHK
 	_sysMhk = loadSystemArchive();
-	if (_relInfo.isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		_helpMhk = loadHelpArchive();
 	if (_relInfo.isV1())
 		loadMidiArchive();
@@ -319,7 +320,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 					bootParam);
 		}
 		ZoombiniPageType startPage = ZoombiniPageType::kLogo;
-		if (_relInfo.isDemo(ZmbReleaseInfo::kEuropeV10)) {
+		if (_relInfo.isDemo(ZmbReleaseInfo::Family::kEuropeV1x, Common::EN_GRB)) {
 			_state->_practiceLevel = 1;
 			_state->beginPracticeState();
 			_state->generateRandomPack();
@@ -330,7 +331,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 			_state->beginPracticeState();
 			_state->markGameStateReady();
 			startPage = ZoombiniPageType::kRodMap;
-		} else if (_relInfo.isDemo(ZmbReleaseInfo::kTlcV20)) {
+		} else if (_relInfo.isDemo(ZmbReleaseInfo::Family::kTlcV20)) {
 			_state->_practiceLevel = 1;
 			_state->markGameStateReady();
 		} else if (_state->_r._nextSaveFileNameCounter == 0) {
@@ -582,7 +583,7 @@ uint16 MohawkEngine_Zoombini::playBuiltinMidiTestResource(bool advance) {
 
 	const uint16 resourceId = getBuiltinMidiTestResource();
 	if (!_state || _state->getEnableMusic()) {
-		if (_relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) {
+		if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 			const ZmbResource musicResource(ZmbResource::kPage, static_cast<int16>(resourceId));
 			if (resourceId == kBuiltinTlcMidiTestSoundResourceId && hasResource(ID_SND, musicResource) && !_sound->isSoundPlaying(musicResource))
 				_sound->playSound(musicResource, Audio::Mixer::kMusicSoundType);
@@ -771,7 +772,7 @@ void MohawkEngine_Zoombini::doFrame() {
 	if (_gfx->isMouseCursorEyeAnimationActive()) {
 		uint32 currentFrame = getAnimationFrameCounter(frameStartTime);
 		bool keepCursor = inFade;
-		if (_relInfo.isFamily(ZmbReleaseInfo::kTlcV2) && currentFrame <= _pageLoadingCursorStopFrame)
+		if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20) && currentFrame <= _pageLoadingCursorStopFrame)
 			keepCursor = true;
 
 		if (keepCursor)
@@ -817,7 +818,7 @@ void MohawkEngine_Zoombini::delayRunningFrames(uint32 ms) {
 
 void MohawkEngine_Zoombini::initSearchPaths() {
 	Common::FSNode candidate(ConfMan.getPath("path"));
-	if (_relInfo.isDemo(ZmbReleaseInfo::kEuropeV10)) {
+	if (_relInfo.isDemo(ZmbReleaseInfo::Family::kEuropeV1x, Common::EN_GRB)) {
 		const Common::FSNode nestedComponent = candidate.getChild("PIZZA");
 		if (nestedComponent.getChild("ENGLISH").getChild("ZOOMBINI.MHK").exists())
 			candidate = nestedComponent;
@@ -1069,7 +1070,7 @@ Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("C+h");
 	shortcutKeymap->addAction(act);
 
-	if (checkGameGUIOption(GAMEOPTION_ZMB_V10JP, guiOptions)) {
+	if (guiOptions.contains(getGameGUIOptionsDescriptionLanguage(JA_JPN))) {
 		act = new Action(MohawkMetaEngine_Zoombini::kActionToggleJapaneseNames, _c("Toggle Japanese names", "zoombini-keymap"));
 		act->setKeyEvent(KeyState(KEYCODE_m, 'm', KBD_CTRL));
 		act->addDefaultInputMapping("C+m");
@@ -1249,9 +1250,8 @@ MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 		midiSoundtrack = MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC;
 		break;
 	}
-	// Lock MIDI soundtrack switching in a demo with one MIDI archive.
-	if (_relInfo.isDemo())
-		MohawkMetaEngine_Zoombini::getFixedDemoMidiSoundtrack(getPlatform(), _relInfo.getLanguage(), midiSoundtrack);
+	// The release classifier reflects the original game tree's MIDI archives.
+	MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(getPlatform(), _relInfo.getLanguage(), _relInfo.isDemo(), _relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10), midiSoundtrack);
 	if (_midiMhk && _midiMhkSoundtrack == midiSoundtrack)
 		return _midiMhk;
 	if (_midiMhk) {
@@ -1307,7 +1307,7 @@ bool MohawkEngine_Zoombini::debugRetryPuzzle() {
 	}
 
 	// Reopen the same puzzle through the normal page lifecycle.
-	// Keep the destination unchanged even in the v1.1US demo's practice mode.
+	// Keep the destination unchanged even in the v1.0US demo's practice mode.
 	queueNextPage(_activePage->getPageType());
 	_activePage->close();
 	return true;
@@ -1404,7 +1404,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		break;
 	case ZoombiniPageType::kNet:
 		// The v2.0US demo starts a page instance with a fresh active pack.
-		if (_relInfo.isDemo(ZmbReleaseInfo::kTlcV20))
+		if (_relInfo.isDemo(ZmbReleaseInfo::Family::kTlcV20))
 			_state->generateRandomPack();
 		page = new ZoombiniPuzzleNet(this);
 		break;
@@ -1460,7 +1460,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		_gfx->startMouseCursorEyeAnimation();
 	}
 	page->onFadeIn();
-	if (replacingPage && _relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) {
+	if (replacingPage && _relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		uint32 currentFrame = getAnimationFrameCounter(getTotalPlayTime());
 		_pageLoadingCursorStopFrame = currentFrame + kTlcV2BusyCursorStopDelay;
 	} else if (replacingPage && !_gfx->isFading()) {
@@ -1493,7 +1493,7 @@ void MohawkEngine_Zoombini::clearPageArchives() {
 }
 
 bool MohawkEngine_Zoombini::consumeDemoStartupLogoReveal() {
-	if (!_relInfo.isDemo(ZmbReleaseInfo::kTlcV20) || !_demoStartupLogoRevealPending)
+	if (!_relInfo.isDemo(ZmbReleaseInfo::Family::kTlcV20) || !_demoStartupLogoRevealPending)
 		return false;
 
 	_demoStartupLogoRevealPending = false;
@@ -1566,7 +1566,7 @@ void MohawkEngine_Zoombini::openOptionsDialog() {
 }
 
 bool MohawkEngine_Zoombini::finishV10BrDemoComponent() {
-	if (!_relInfo.isDemo(ZmbReleaseInfo::kEuropeV10))
+	if (!_relInfo.isDemo(ZmbReleaseInfo::Family::kEuropeV1x, Common::EN_GRB))
 		return false;
 	// Return through the main loop so a chained Director launcher can resume.
 	ConfMan.setBool("confirm_exit", false, Common::ConfigManager::kTransientDomain);
@@ -1728,8 +1728,8 @@ bool MohawkEngine_Zoombini::consumePickerUpdateHelpRequest() {
 }
 
 bool MohawkEngine_Zoombini::supportsOnScreenHelp() const {
-	// European v1.x releases and the v1.1 US demo do not provide the on-screen Help button or dialog.
-	return !_relInfo.isFamily(ZmbReleaseInfo::kEuropeV1) && !_relInfo.isDemo(ZmbReleaseInfo::kUsV11);
+	// Only USv1.1 and TLCv2.0 releases provide the on-screen Help dialog.
+	return _relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11) || _relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20);
 }
 
 void MohawkEngine_Zoombini::openDebugDialog(const ZoombiniDebugCommand &cmd) {

@@ -34,7 +34,8 @@ ZoombiniDialogMsgBox::ZoombiniDialogMsgBox(MohawkEngine_Zoombini *vm, ZoombiniMs
 	// Spanish and Portuguese v1.0 keep the Options OK label in a separate
 	// executable string from the one-button alert label.
 	ZoombiniText::Key alertAcceptKey;
-	if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kEsPtV10))
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10, Common::ES_ESP) || relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10, Common::PT_PRT))
 		alertAcceptKey = ZoombiniText::kDialogButtonAccept;
 	else
 		alertAcceptKey = ZoombiniText::kDialogButtonOkay;
@@ -127,7 +128,7 @@ void ZoombiniDialogMsgBox::initButtons(ZoombiniText::Key yesKey, ZoombiniText::K
 
 Common::Rect ZoombiniDialogMsgBox::getBodyTextRect() const {
 	static const Common::Rect bodyTextRect(0x009A, 0x0091, 0x01E7, 0x00DC);
-	return _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMsgBoxBodyLayout).apply(bodyTextRect);
+	return _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMsgBoxBody).apply(bodyTextRect);
 }
 
 ZoombiniDialogMsgBox::~ZoombiniDialogMsgBox() {

@@ -431,7 +431,8 @@ void ZoombiniShelterTown::initStates() {
 
 void ZoombiniShelterTown::loadFeatures() {
 	ZmbStateFile &f = _vm->_state->getCurrentState();
-	const bool populationBasedCelebrations = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1);
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	const bool populationBasedCelebrations = relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10) || relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x);
 
 	// Preload images
 	_vm->_gfx->preloadShapes(ZmbResource(ZmbResource::kPage, kResBitmapShape2000_Cursors));
@@ -786,7 +787,8 @@ void ZoombiniShelterTown::onPostRenderFrame() {
 
 			// Full Town schedules another celebration after each ambient sound completes.
 			if (_allZoombinisInTown) {
-				if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1))
+				const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+				if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10) || relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x))
 					_developAnimTimer = 40;
 				else
 					_developAnimTimer = 50;
