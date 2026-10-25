@@ -96,7 +96,7 @@ Common::Error SnatcherEngine::run() {
 }
 
 bool SnatcherEngine::initResource() {
-	_fio = new FIO(this, _game.isBigEndian);
+	_fio = new FIO(this);
 	if (!_fio)
 		return false;
 

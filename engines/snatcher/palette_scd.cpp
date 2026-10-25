@@ -223,7 +223,7 @@ void SCDPalette::selectPalettes(uint32 sel) {
 		if (p == 0xFF)
 			continue;
 		assert(p < ARRAYSIZE(_presetColors));
-		Common::copy<const uint16 *, uint16 *>(_presetColors[p], _presetColors[p + 1], &_colors[i << 4]);
+		Common::copy<const uint16*, uint16*>(_presetColors[p], _presetColors[p + 1], &_colors[i << 4]);
 	}
 	_gfxState.setFlag(7, 0);
 }
