@@ -4462,8 +4462,8 @@ void EEMEngine::drawKDBalloonOverCurrentScreen(Common::String text) {
 
 	Picture balloon;
 	const bool haveBalloon =
-		_balloonArchive.size() > (bubNum & 0x7F) &&
-		_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
+		_balloonArchive.size() > (bubNum & 0x7Fu) &&
+		_balloonArchive.loadEntry(bubNum & 0x7Fu, balloon);
 
 	const int balloonX = isMacTalkie() ? 100 : scaleX(0x21);
 	const int topBandH = isMacTalkie() ? 155 : scaleY(0x50);
@@ -4856,8 +4856,8 @@ void EEMEngine::doAccuse() {
 			_picsArchive.getPicture(picId, suspect);
 		Picture balloon;
 		const bool haveBalloon =
-			_balloonArchive.size() > (bubNum & 0x7F) &&
-			_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
+			_balloonArchive.size() > (bubNum & 0x7Fu) &&
+			_balloonArchive.loadEntry(bubNum & 0x7Fu, balloon);
 
 		int balloonX = macTalkie ? 100 : 0x21;
 		int balloonY = 1;
@@ -4983,8 +4983,8 @@ void EEMEngine::doAccuse() {
 				rBub = fitBalloonToText(rBub, react);
 				Picture rBalloon;
 				const bool haveR =
-					_balloonArchive.size() > (rBub & 0x7F) &&
-					_balloonArchive.loadEntry(rBub & 0x7F, rBalloon);
+					_balloonArchive.size() > (rBub & 0x7Fu) &&
+					_balloonArchive.loadEntry(rBub & 0x7Fu, rBalloon);
 				const int rX = macTalkie ? 100 : 0x21;
 				int rY = 1;
 				if (haveR && rBalloon.surface.h < (macTalkie ? 155 : 0x4e))
