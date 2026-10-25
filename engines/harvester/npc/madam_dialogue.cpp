@@ -51,7 +51,7 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
-	auto executeActionTagIfSet = [&](const char *actionTag, bool mutatedRuntimeState = false) {
+	auto executeActionTagIfSet = [&](const char *actionTag, bool mutatedRuntimeState) {
 		InteractionResult interaction;
 		interaction.mutatedRuntimeState = mutatedRuntimeState;
 		if (runtime.executeActionTag(actionTag, interaction)) {
@@ -154,7 +154,7 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return lineError;
 
 	executeActionTagIfSet(kHurtPcActionTag, removedBarCash200);
-	executeActionTagIfSet(kActivateLustExitActionTag);
+	executeActionTagIfSet(kActivateLustExitActionTag, false);
 	return Common::kNoError;
 }
 
