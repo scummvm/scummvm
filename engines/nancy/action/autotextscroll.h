@@ -33,10 +33,12 @@ namespace Action {
 // Once they have all scrolled out of view, an event flag gets set.
 class AutotextScroll : public RenderActionRecord {
 public:
-	AutotextScroll(bool hasDrawingOrder = false) : RenderActionRecord(7), _hasDrawingOrder(hasDrawingOrder) {}
+	// The text goes over the overlays of the scene, e.g. Nancy17's index cards
+	AutotextScroll(bool hasDrawingOrder = false) : RenderActionRecord(15), _hasDrawingOrder(hasDrawingOrder) {}
 	virtual ~AutotextScroll();
 
 	void init() override;
+	void updateGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;

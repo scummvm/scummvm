@@ -149,6 +149,14 @@ void AutotextScroll::update(int32 ticks) {
 	}
 }
 
+// The text is gone while the record's dependencies don't hold, e.g. the index
+// card in scene 2660 of Nancy17 has a record for every page
+void AutotextScroll::updateGraphics() {
+	if (isVisible() != _isActive) {
+		setVisible(_isActive);
+	}
+}
+
 void AutotextScroll::redraw() {
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 
