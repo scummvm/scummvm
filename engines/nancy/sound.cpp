@@ -489,7 +489,9 @@ void SoundManager::pauseSound(const SoundDescription &description, bool pause) {
 }
 
 void SoundManager::pauseSound(const Common::String &chunkName, bool pause) {
-	pauseSound(_commonSounds[chunkName], pause);
+	if (_commonSounds.contains(chunkName)) {
+		pauseSound(_commonSounds[chunkName], pause);
+	}
 }
 
 void SoundManager::pauseAllSounds(bool pause) {
@@ -516,8 +518,9 @@ bool SoundManager::isSoundPlaying(const SoundDescription &description) const {
 	}
 }
 
+// Nancy19 and up have no common sounds
 bool SoundManager::isSoundPlaying(const Common::String &chunkName) const {
-	return isSoundPlaying(_commonSounds[chunkName]);
+	return _commonSounds.contains(chunkName) && isSoundPlaying(_commonSounds[chunkName]);
 }
 
 void SoundManager::stopSound(uint16 channelID) {
@@ -552,7 +555,9 @@ void SoundManager::stopSound(const SoundDescription &description) {
 }
 
 void SoundManager::stopSound(const Common::String &chunkName) {
-	stopSound(_commonSounds[chunkName]);
+	if (_commonSounds.contains(chunkName)) {
+		stopSound(_commonSounds[chunkName]);
+	}
 }
 
 void SoundManager::stopAllSounds() {
