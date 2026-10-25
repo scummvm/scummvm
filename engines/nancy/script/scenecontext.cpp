@@ -109,7 +109,7 @@ bool SceneContext::load() {
 	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
 	if (boot) {
 		for (const Common::String &name : boot->includeFileNames) {
-			if (!_lua->runScript(name)) {
+			if (!include(name)) {
 				return false;
 			}
 		}
@@ -175,6 +175,14 @@ Common::String SceneContext::findGlobalName(const Record *record) const {
 }
 
 bool SceneContext::include(const Common::String &name) {
+	if (g_nancy->getGameType() >= kGameTypeNancy21) {
+		if (_includedNames.contains(name)) {
+			return true;
+		}
+
+		_includedNames.setVal(name, true);
+	}
+
 	return _lua->runScript(name);
 }
 

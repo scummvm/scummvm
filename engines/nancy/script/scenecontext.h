@@ -138,7 +138,9 @@ public:
 	// Lets the records under a node know that it changed its z or transform
 	void onGraphNodeChanged(GraphNode *node);
 
-	// Runs another script as a part of this scene
+	// Runs another script as a part of this scene. From Nancy21 on, a script
+	// that the scene already included is left out, since scripts include each
+	// other, e.g. ThemeManager_SC and ThemeControls_SC in Nancy22.
 	bool include(const Common::String &name);
 
 	// Changes the scene of a stream; no name stands for the one this scene is in
@@ -177,6 +179,7 @@ private:
 	Common::Array<ConvoResponse *> _convoResponses;
 	Common::Array<GraphNode *> _graphNodes;
 	Common::HashMap<Common::String, RefImage *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _refs;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _includedNames;
 
 	double _time = 0.0;
 	double _elapsedTime = 0.0;
