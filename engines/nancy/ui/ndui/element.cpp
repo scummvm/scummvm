@@ -37,6 +37,9 @@ namespace NDUI {
 static const uint32 kDefaultColor = 0xFFFFFFFF;
 static const uint32 kDefaultDisabledColor = 0xC8808080;
 
+// How wide a line of text that doesn't get wrapped can be laid out
+static const int kSingleLineWidth = 1024;
+
 // Lays out text, with its markup, in the font and color of an element
 class ElementText : public Misc::HypertextParser {
 public:
@@ -63,6 +66,21 @@ public:
 		addTextLine(text);
 		drawAllText(Common::Rect(width, height), 0, fontID, fontID);
 		return _fullSurface;
+	}
+
+	// How wide the text drawn by render() is
+	int getDrawnWidth() const {
+		for (int x = _fullSurface.w - 1; x >= 0; --x) {
+			for (int y = 0; y < _fullSurface.h; ++y) {
+				byte a, r, g, b;
+				_fullSurface.format.colorToARGB(_fullSurface.getPixel(x, y), a, r, g, b);
+				if (a) {
+					return x + 1;
+				}
+			}
+		}
+
+		return 0;
 	}
 
 	// The number of lines the text gets wrapped into
@@ -209,13 +227,24 @@ void Element::drawText(Graphics::ManagedSurface &surface, const Common::String &
 		return;
 	}
 
+	// Text kept on a single line is laid out as wide as it gets, and then aligned
+	// in the rect
 	ElementText layout;
-	const Graphics::ManagedSurface &rendered = layout.render(text, dest.width(), dest.height(), (uint)fontID,
-		colorChannelToByte(color[1]), colorChannelToByte(color[2]), colorChannelToByte(color[3]), _horizontalAlignment, state);
+	const Graphics::ManagedSurface &rendered = layout.render(text, _wordWrap ? dest.width() : kSingleLineWidth, dest.height(), (uint)fontID,
+		colorChannelToByte(color[1]), colorChannelToByte(color[2]), colorChannelToByte(color[3]),
+		_wordWrap ? _horizontalAlignment : (int32)ElementText::kAlignLeft, state);
 
-	// Only text kept on a single line gets aligned vertically
+	int left = dest.left;
+	int width = rendered.w;
 	int top = dest.top;
 	if (!_wordWrap) {
+		width = layout.getDrawnWidth();
+		if (_horizontalAlignment == ElementText::kAlignCenter) {
+			left += (dest.width() - width) / 2;
+		} else if (_horizontalAlignment == ElementText::kAlignRight) {
+			left = dest.right - width;
+		}
+
 		int lineHeight = getFontHeight();
 		if (_verticalAlignment == kAlignVCenter) {
 			top += (dest.height() - lineHeight) / 2;
@@ -234,8 +263,8 @@ void Element::drawText(Graphics::ManagedSurface &surface, const Common::String &
 				continue;
 			}
 
-			for (int x = 0; x < rendered.w; ++x) {
-				int destX = dest.left + x + offset;
+			for (int x = 0; x < width; ++x) {
+				int destX = left + x + offset;
 				if (destX < 0 || destX >= surface.w) {
 					continue;
 				}
