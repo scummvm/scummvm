@@ -35,7 +35,6 @@ namespace ViewsEnh {
  */
 class Bestiary : public ScrollView {
 private:
-	static const int PAGE_SIZE = 12;
 	int _topIndex = 0;
 	int _selectedIndex = 0;
 	Common::Array<int> _monsterIds;

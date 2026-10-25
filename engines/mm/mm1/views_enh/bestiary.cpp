@@ -28,6 +28,8 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+constexpr int BESTIARY_PAGE_SIZE = 12;
+
 Bestiary::Bestiary() : ScrollView("Bestiary") {
 	setBounds(Common::Rect(0, 0, 320, 200));
 	addButton(&g_globals->_escSprites, Common::Point(134, 170), 0, KEYBIND_ESCAPE, true);
@@ -71,7 +73,7 @@ void Bestiary::draw() {
 	writeString(0, 17, Common::String::format("Discovered: %u/%u",
 		g_globals->_bestiary.count(), (uint)MONSTERS_COUNT), ALIGN_MIDDLE);
 
-	for (int row = 0; row < PAGE_SIZE; ++row) {
+	for (int row = 0; row < BESTIARY_PAGE_SIZE; ++row) {
 		const int index = _topIndex + row;
 		if (index >= MONSTERS_COUNT)
 			break;
@@ -89,12 +91,12 @@ void Bestiary::draw() {
 
 	setTextColor(0);
 	writeString(0, 145, Common::String::format("%d-%d of %d",
-		_topIndex + 1, _topIndex + PAGE_SIZE, MONSTERS_COUNT), ALIGN_MIDDLE);
+		_topIndex + 1, _topIndex + BESTIARY_PAGE_SIZE, MONSTERS_COUNT), ALIGN_MIDDLE);
 	writeString(0, 155, "Up/Down: select  Enter: details", ALIGN_MIDDLE);
 
 	setTextColor(_topIndex > 0 ? 37 : 1);
 	writeString(8, 172, "Previous");
-	setTextColor(_topIndex < MONSTERS_COUNT - PAGE_SIZE ? 37 : 1);
+	setTextColor(_topIndex < MONSTERS_COUNT - BESTIARY_PAGE_SIZE ? 37 : 1);
 	writeString(262, 172, "Next");
 
 	setTextColor(0);
@@ -106,18 +108,18 @@ void Bestiary::select(int index) {
 
 	if (_selectedIndex < _topIndex)
 		_topIndex = _selectedIndex;
-	else if (_selectedIndex >= _topIndex + PAGE_SIZE)
-		_topIndex = _selectedIndex - PAGE_SIZE + 1;
+	else if (_selectedIndex >= _topIndex + BESTIARY_PAGE_SIZE)
+		_topIndex = _selectedIndex - BESTIARY_PAGE_SIZE + 1;
 
-	_topIndex = CLIP(_topIndex, 0, MONSTERS_COUNT - PAGE_SIZE);
+	_topIndex = CLIP(_topIndex, 0, MONSTERS_COUNT - BESTIARY_PAGE_SIZE);
 	redraw();
 }
 
 void Bestiary::scroll(int delta) {
 	const int oldTop = _topIndex;
-	_topIndex = CLIP(_topIndex + delta, 0, MONSTERS_COUNT - PAGE_SIZE);
+	_topIndex = CLIP(_topIndex + delta, 0, MONSTERS_COUNT - BESTIARY_PAGE_SIZE);
 	_selectedIndex = CLIP(_selectedIndex + _topIndex - oldTop,
-		_topIndex, _topIndex + PAGE_SIZE - 1);
+		_topIndex, _topIndex + BESTIARY_PAGE_SIZE - 1);
 	redraw();
 }
 
@@ -142,10 +144,10 @@ bool Bestiary::msgAction(const ActionMessage &msg) {
 		select(_selectedIndex + 1);
 		break;
 	case KEYBIND_BESTIARY_PAGEUP:
-		scroll(-PAGE_SIZE);
+		scroll(-BESTIARY_PAGE_SIZE);
 		break;
 	case KEYBIND_BESTIARY_PAGEDOWN:
-		scroll(PAGE_SIZE);
+		scroll(BESTIARY_PAGE_SIZE);
 		break;
 	case KEYBIND_BESTIARY_HOME:
 		select(0);
@@ -166,10 +168,10 @@ bool Bestiary::msgKeypress(const KeypressMessage &msg) {
 	if (!(msg.flags & Common::KBD_NUM)) {
 		switch (msg.keycode) {
 		case Common::KEYCODE_KP9:
-			scroll(-PAGE_SIZE);
+			scroll(-BESTIARY_PAGE_SIZE);
 			return true;
 		case Common::KEYCODE_KP3:
-			scroll(PAGE_SIZE);
+			scroll(BESTIARY_PAGE_SIZE);
 			return true;
 		case Common::KEYCODE_KP8:
 			select(_selectedIndex - 1);
@@ -196,10 +198,10 @@ bool Bestiary::msgKeypress(const KeypressMessage &msg) {
 		select(_selectedIndex + 1);
 		break;
 	case Common::KEYCODE_PAGEUP:
-		scroll(-PAGE_SIZE);
+		scroll(-BESTIARY_PAGE_SIZE);
 		break;
 	case Common::KEYCODE_PAGEDOWN:
-		scroll(PAGE_SIZE);
+		scroll(BESTIARY_PAGE_SIZE);
 		break;
 	case Common::KEYCODE_HOME:
 		select(0);
@@ -228,7 +230,7 @@ bool Bestiary::msgMouseUp(const MouseUpMessage &msg) {
 
 	const int y = msg._pos.y - _innerBounds.top;
 	if (msg._button == MouseMessage::MB_LEFT && _innerBounds.contains(msg._pos) &&
-			y >= 33 && y < 33 + PAGE_SIZE * 9) {
+			y >= 33 && y < 33 + BESTIARY_PAGE_SIZE * 9) {
 		select(_topIndex + (y - 33) / 9);
 		return true;
 	}
