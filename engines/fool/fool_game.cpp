@@ -472,9 +472,9 @@ void FoolGame::sub_128_1e4(const Common::String &osType) {
 void FoolGame::getGridFromMouse(int16 &gridX, int16 &gridY) {
 	// 128:02be
 	// convert mouse coordinates to grid coordinates
-	gridX = (_event.where.x - arr_i16_1eb8[4]) / (arr_i16_1eb8[6]);
+	gridX = (_event.where.x - _gridInfo.xOrigin) / (_gridInfo.xOuterSpan);
 
-	gridY = (_event.where.y - arr_i16_1eb8[5]) / (arr_i16_1eb8[7]);
+	gridY = (_event.where.y - _gridInfo.yOrigin) / (_gridInfo.yOuterSpan);
 }
 
 void FoolGame::sub_128_342(int16 unk2, int16 unk1) {
@@ -485,14 +485,14 @@ void FoolGame::sub_128_342(int16 unk2, int16 unk1) {
 		var_i16_68a = 1;
 	}
 	// 128:035c
-	if (var_i16_68a > arr_i16_1eb8[0]) {
-		var_i16_68a = arr_i16_1eb8[0];
+	if (var_i16_68a > _gridInfo.xCount) {
+		var_i16_68a = _gridInfo.xCount;
 	}
 	if (var_i16_68c < 1) {
 		var_i16_68c = 1;
 	}
-	if (var_i16_68c > arr_i16_1eb8[1]) {
-		var_i16_68c = arr_i16_1eb8[1];
+	if (var_i16_68c > _gridInfo.yCount) {
+		var_i16_68c = _gridInfo.yCount;
 	}
 }
 
@@ -547,6 +547,27 @@ Common::String FoolGame::puzzlesReadString() {
 	debugC(8, kDebugLoading, "Read[%04x]: %s", _puzzleDataPtr, result.c_str());
 	_puzzleDataPtr += var_i16_79e + 1;
 	return result;
+}
+
+GridInfo FoolGame::puzzlesReadGridInfo() {
+	GridInfo info;
+	info.xCount = puzzlesReadShort();
+	info.yCount = puzzlesReadShort();
+	info.xInnerOffset = puzzlesReadShort();
+	info.yInnerOffset = puzzlesReadShort();
+	info.xOrigin = puzzlesReadShort();
+	info.yOrigin = puzzlesReadShort();
+	info.xOuterSpan = puzzlesReadShort();
+	info.yOuterSpan = puzzlesReadShort();
+	info.yStartPos = puzzlesReadShort();
+	info.yEndPos = puzzlesReadShort();
+	info.xStartPos = puzzlesReadShort();
+	info.xEndPos = puzzlesReadShort();
+	info.yInnerSpan = puzzlesReadShort();
+	info.xInnerSpan = puzzlesReadShort();
+	info.fontSize = puzzlesReadShort();
+
+	return info;
 }
 
 void FoolGame::toggleMouseCursor(bool visible) {
@@ -1034,9 +1055,9 @@ void FoolGame::showBehold(int16 unk2, int16 unk1, const Common::U32String &messa
 	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_toolbox->FrameRect(rect);
 	_toolbox->PenMode(Graphics::MacToolbox::kPatCopy);
-	var_i16_484 = _toolbox->StringWidth(message);
+	int16 msgWidth = _toolbox->StringWidth(message);
 	// 128:19ec
-	_toolbox->MoveTo(0x105 - (var_i16_484/2), 0x12e);
+	_toolbox->MoveTo(0x105 - (msgWidth/2), 0x12e);
 	_toolbox->DrawString(message);
 	// loop count was 0x4d
 	for (int i = 0; i <= 0x24; i++) {
@@ -1311,8 +1332,9 @@ void FoolGame::menuClickMessage() {
 	_toolbox->SetPort(var_i32_0);
 }
 
-void FoolGame::sub_128_26f6() {
+void FoolGame::clearGridInfo() {
 	// 128:26f6
+	_gridInfo = GridInfo();
 	for (int i = 0; i <= 0x28; i++) {
 		arr_i16_1eb8[i] = 0;
 	}
@@ -1320,18 +1342,16 @@ void FoolGame::sub_128_26f6() {
 
 void FoolGame::fetchPuzzleData() {
 	int position = _puzzleDataOffsets[_activePuzzle] - 1;
-	// record index
-	var_i16_484 = (int16)(position / 1000);
-	// offset at record
-	var_i16_7e4 = (int16)(position % 1000);
-	_zbasic->record(1, var_i16_484, var_i16_7e4);
+	int16 recordIndex = (int16)(position / 1000);
+	int16 recordOffset = (int16)(position % 1000);
+	_zbasic->record(1, recordIndex, recordOffset);
 	_puzzleDataPtr = 0;
 	int length = _puzzleDataOffsets[_activePuzzle + 1] - _puzzleDataOffsets[_activePuzzle];
 	debugC(8, kDebugLoading, "fetchPuzzleData: seek puzzles to puzzle %d at position %x (rec: %d, offset: %d), length %x",
 			_activePuzzle,
 			position,
-			var_i16_484,
-			var_i16_7e4,
+			recordIndex,
+			recordOffset,
 			length
 	);
 	arr_bytes_109dc = _zbasic->readFile(1, length);
@@ -1525,9 +1545,9 @@ void FoolGame::newGame() {
 	// 128:2cf6
 	// shuffle around the pieces of the sun's map
 	for (int i = 1; i <= 0x64; i++) {
-		var_i16_484 = _zbasic->rndInt(0x51);
-		var_i16_7e4 = _zbasic->rndInt(0x51);
-		_zbasic->swapInt(_sunMapTileID[var_i16_484], _sunMapTileID[var_i16_7e4]);
+		int16 tile1 = _zbasic->rndInt(0x51);
+		int16 tile2 = _zbasic->rndInt(0x51);
+		_zbasic->swapInt(_sunMapTileID[tile1], _sunMapTileID[tile2]);
 		_puzzleCompletionStatus[i] = 0;
 		_puzzleFlags[i] = kFlagMenuDisabled;
 	}
@@ -1891,7 +1911,7 @@ void FoolGame::puzzleRun() {
 	}
 	// 128:3a12
 	puzzleSetupMenu();
-	sub_128_26f6();
+	clearGridInfo();
 	sub_128_61ec();
 	puzzleLoadContext();
 	// 128:3a22
@@ -2667,11 +2687,11 @@ void FoolGame::thothHidePlayfield() {
 void FoolGame::thothShowPlayfield() {
 	// 128:5f16
 	if (_stateFlags == kStateSaveGame) {
-		if (arr_i16_1eb8[0] < 1) {
-			arr_i16_1eb8[0] = 1;
+		if (_gridInfo.xCount < 1) {
+			_gridInfo.xCount = 1;
 		}
 		// 128:5f4c
-		_activePuzzleBuffer = _zbasic->encodeInt(arr_i16_1eb8[0]);
+		_activePuzzleBuffer = _zbasic->encodeInt(_gridInfo.xCount);
 		saveGame();
 	}
 	// 128:5f70

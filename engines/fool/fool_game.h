@@ -106,6 +106,25 @@ enum FoolFontID : uint16 {
 	kFontChicago = 255,
 };
 
+struct GridInfo { // arr_i16_1eb8
+	int16 xCount = 0; // 0
+	int16 yCount = 0; // 1
+	int16 xInnerOffset = 0; // 2
+	int16 yInnerOffset = 0; // 3
+	int16 xOrigin = 0; // 4
+	int16 yOrigin = 0; // 5
+	int16 xOuterSpan = 0; // 6
+	int16 yOuterSpan = 0; // 7
+	int16 yStartPos = 0; // 8
+	int16 yEndPos = 0; // 9
+	int16 xStartPos = 0; // 10
+	int16 xEndPos = 0; // 11
+	int16 yInnerSpan = 0; // 12
+	int16 xInnerSpan = 0; // 13
+	int16 fontSize = 8; // 14
+};
+
+
 class FoolGame {
 public:
 	FoolGame(FoolVersion version, const Common::String &saveFileName): _version(version), _startSaveFileName(saveFileName) {}
@@ -124,6 +143,9 @@ public:
 	int16 puzzlesReadByte(); // sub_128_428
 	int16 puzzlesReadShort(); // sub_128_446
 	int32 puzzlesReadLong(); // sub_128_462
+
+	GridInfo puzzlesReadGridInfo();
+
 	Common::String puzzlesReadString(); // sub_128_49a
 	void toggleMouseCursor(bool visible); // sub_128_4da
 	void playTone(int16 freq, int16 duration, bool wait);
@@ -153,7 +175,7 @@ public:
 	void sub_128_21c8();
 	void storyRenderPage(); // sub_128_2202
 	void menuClickMessage(); // sub_128_2664
-	void sub_128_26f6();
+	void clearGridInfo(); // sub_128_26f6
 	void fetchPuzzleData(); // sub_128_271a
 	void menuNewGame(); // sub_128_27d6
 	void writeSaveFile(); // sub_128_2808
@@ -483,6 +505,7 @@ private:
 	ZBasic *_zbasic;
 	Common::String _startSaveFileName;
 	bool _quit = false;
+	GridInfo _gridInfo;
 
 	GrafPtr var_i32_0;
 	GrafPtr var_i32_4;
@@ -775,6 +798,9 @@ private:
 	uint16 _puzzleFlags[101]; // arr_i16_1d24
 	int16 _pageLines[202]; // arr_i16_1dee
 	int16 arr_i16_1eb8[0x29];
+
+	int16 _straightPathSteps; // arr_i16_1eb8[15]
+
 	// used just for death?
 	Common::Rect _deathBlackEye; // arr_rect_1eb8
 	Common::Rect _screenGrid[0x200]; // arr_rect_1f38

@@ -34,25 +34,27 @@ void FoolGame::mazeRun() {
 	// 136:0004
 	fetchPuzzleData();
 	toggleMouseCursor(false);
-	for (int16 i = 0; i <= 0x17; i++) {
+	_gridInfo = puzzlesReadGridInfo();
+	for (int16 i = 0xf; i <= 0x17; i++) {
 		arr_i16_1eb8[i] = puzzlesReadShort();
 	}
-	var_i16_484 = 0;
-	var_i16_68c = arr_i16_1eb8[8];
+	int16 gridIndex = 0;
+	int16 gridX = 0;
+	int16 gridY = _gridInfo.yStartPos;
 	do {
-		var_i16_68a = arr_i16_1eb8[10];
+		gridX = _gridInfo.xStartPos;
 		do {
-			var_i16_484++;
+			gridIndex++;
 			_toolbox->SetRect(
-				_screenGrid[var_i16_484],
-				var_i16_68a,
-				var_i16_68c,
-				var_i16_68a + arr_i16_1eb8[13],
-				var_i16_68c + arr_i16_1eb8[12]
+				_screenGrid[gridIndex],
+				gridX,
+				gridY,
+				gridX + _gridInfo.xInnerSpan,
+				gridY + _gridInfo.yInnerSpan
 			);
 			// 136:00ca
-		} while (_zbasic->incrAndCheck(var_i16_68a, arr_i16_1eb8[11], arr_i16_1eb8[6]));
-	} while (_zbasic->incrAndCheck(var_i16_68c, arr_i16_1eb8[9], arr_i16_1eb8[7]));
+		} while (_zbasic->incrAndCheck(gridX, _gridInfo.xEndPos, _gridInfo.xOuterSpan));
+	} while (_zbasic->incrAndCheck(gridY, _gridInfo.yEndPos, _gridInfo.yOuterSpan));
 	if (arr_i16_1eb8[20] != 0) {
 		var_i32_1ac0 = _toolbox->GetPicture(arr_i16_1eb8[20]);
 		_zbasic->picture(arr_i16_1eb8[18], arr_i16_1eb8[19], var_i32_1ac0);
@@ -63,18 +65,18 @@ void FoolGame::mazeRun() {
 		_mazeInvItemCount[i] = 0;
 	}
 	// 136:01d2
-	var_i16_484 = 0;
-	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
-			var_i16_484++;
-			arr_i16_3738[var_i16_484] = puzzlesReadByte();
-			arr_i16_2f38[i*32 + j] = var_i16_484;
-			arr_i16_4338[var_i16_484] = 0;
+	gridIndex = 0;
+	for (int16 j = 1; j <= _gridInfo.yCount; j++) {
+		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
+			gridIndex++;
+			arr_i16_3738[gridIndex] = puzzlesReadByte();
+			arr_i16_2f38[i*32 + j] = gridIndex;
+			arr_i16_4338[gridIndex] = 0;
 		}
 	}
 	// 136:026a
-	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+	for (int16 j = 1; j <= _gridInfo.yCount; j++) {
+		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
 			arr_i16_3b38[i*32 + j] = puzzlesReadByte();
 		}
 	}
@@ -84,8 +86,8 @@ void FoolGame::mazeRun() {
 	Common::Rect playArea;
 	playArea.top = _screenGrid[1].top + 3;
 	playArea.left = _screenGrid[1].left + 3;
-	playArea.bottom = _screenGrid[arr_i16_1eb8[0] * arr_i16_1eb8[1] - 1].bottom - 3;
-	playArea.right = _screenGrid[arr_i16_1eb8[0] * arr_i16_1eb8[1] - 1].right - 3;
+	playArea.bottom = _screenGrid[_gridInfo.xCount * _gridInfo.yCount - 1].bottom - 3;
+	playArea.right = _screenGrid[_gridInfo.xCount * _gridInfo.yCount - 1].right - 3;
 	_toolbox->FillRect(playArea, _patterns[2]);
 	_toolbox->PenNormal();
 	_toolbox->PenSize(5, 5);
@@ -94,8 +96,8 @@ void FoolGame::mazeRun() {
 	var_i16_1ac4 = arr_i16_1eb8[17];
 	var_i16_1574 = 0;
 	var_i16_68c = 1;
-	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+	for (int16 j = 1; j <= _gridInfo.yCount; j++) {
+		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
 			var_i16_1574++;
 			if ((arr_i16_3738[var_i16_1574] & 0x10) != 0) {
 				mazeAddWallLeft();
@@ -565,8 +567,8 @@ void FoolGame::mazeWanderingWinds() {
 	var_i16_1dec = 2;
 	mazeMovementTrail();
 	// 136:1108
-	_mazePlayerX = ((var_i16_1de8 - 1) % arr_i16_1eb8[0]) + 1;
-	_mazePlayerY = ((var_i16_1de8 - 1) / arr_i16_1eb8[0]) + 1;
+	_mazePlayerX = ((var_i16_1de8 - 1) % _gridInfo.xCount) + 1;
+	_mazePlayerY = ((var_i16_1de8 - 1) / _gridInfo.xCount) + 1;
 	mazeDrawPlayer();
 }
 
@@ -614,8 +616,8 @@ void FoolGame::mazeDrawLetter() {
 	// 136:12e4
 	_zbasic->text(kFontPuzzle, 0xc, 0, var_src_1dee);
 	_toolbox->MoveTo(
-		_screenGrid[var_i16_1dea].left + arr_i16_1eb8[2],
-		_screenGrid[var_i16_1dea].top + arr_i16_1eb8[3]
+		_screenGrid[var_i16_1dea].left + _gridInfo.xInnerOffset,
+		_screenGrid[var_i16_1dea].top + _gridInfo.yInnerOffset
 	);
 	var_str_384 = _zbasic->chr(var_i16_106e);
 	_toolbox->DrawString(var_str_384);
@@ -1267,8 +1269,8 @@ void FoolGame::mazeStoreState() {
 	var_i16_484 = 0;
 	Common::String buffer;
 	var_i16_1de6 = 0;
-	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+	for (int16 j = 1; j <= _gridInfo.yCount; j++) {
+		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
 			var_i16_484++;
 			if (arr_i16_4338[var_i16_484] > 0) {
 				var_i16_1de6++;
@@ -1283,8 +1285,8 @@ void FoolGame::mazeStoreState() {
 	var_i16_484 = 0;
 	var_i16_1de6 = 0;
 	var_i16_1f08 = 0;
-	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+	for (int16 j = 1; j <= _gridInfo.yCount; j++) {
+		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
 			var_i16_484++;
 			if (arr_i16_1eb8[21] != 0) {
 				// 136:3188
@@ -1422,8 +1424,8 @@ void FoolGame::mazeLoadState() {
 			var_i16_1f0a += 2;
 			// 136:366e
 			_toolbox->MoveTo(
-				_screenGrid[var_i16_1dea].left + arr_i16_1eb8[2],
-				_screenGrid[var_i16_1dea].top + arr_i16_1eb8[3]
+				_screenGrid[var_i16_1dea].left + _gridInfo.xInnerOffset,
+				_screenGrid[var_i16_1dea].top + _gridInfo.yInnerOffset
 			);
 			_zbasic->unk_8();
 			// the one place that used ZBasic's print API,
@@ -1445,8 +1447,8 @@ void FoolGame::mazeLoadState() {
 	// 136:3766
 	debugC(5, kDebugLoading, "mazeLoadState: mask[%d] %04x", var_i16_1f0a, var_i16_1f08);
 	var_i16_1f0a += 2;
-	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+	for (int16 j = 1; j <= _gridInfo.yCount; j++) {
+		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
 			var_i16_1574++;
 			if (arr_i16_1eb8[21] != 0) {
 				if (((arr_i16_3738[var_i16_1574] & 1) == 1) && ((arr_i16_3738[var_i16_1574] & 0x10) == 0)) {

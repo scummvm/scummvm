@@ -33,39 +33,39 @@ void FoolGame::sunMapRun() {
 	// 137:0004
 	var_i16_c00 = 1;
 	fillRect(1, Graphics::MacToolbox::kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
-	arr_i16_1eb8[0] = 9;
-	arr_i16_1eb8[1] = 9;
-	arr_i16_1eb8[4] = 0x4b;
-	arr_i16_1eb8[5] = -9;
-	arr_i16_1eb8[6] = 0x23;
-	arr_i16_1eb8[7] = 0x23;
-	var_i16_484 = 0;
+	_gridInfo.xCount = 9;
+	_gridInfo.yCount = 9;
+	_gridInfo.xOrigin = 0x4b;
+	_gridInfo.yOrigin = -9;
+	_gridInfo.xOuterSpan = 0x23;
+	_gridInfo.yOuterSpan = 0x23;
+	int16 gridIndex = 0;
 	for (int16 j = 0x1a; j <= 0x132; j += 0x23) {
 		for (int16 i = 0x6e; i <= 0x186; i += 0x23) {
-			var_i16_484++;
-			_toolbox->SetRect(_screenGrid[var_i16_484], i, j, i+0x24, j+0x24);
+			gridIndex++;
+			_toolbox->SetRect(_screenGrid[gridIndex], i, j, i+0x24, j+0x24);
 		}
 	}
 	// 137:00fa
-	var_i16_484 = 0;
+	gridIndex = 0;
 	for (int16 j = 1; j <= 9; j++) {
 		for (int16 i = 1; i <= 9; i++) {
-			var_i16_484++;
-			arr_i16_2f38[i*32 + j] = var_i16_484;
+			gridIndex++;
+			arr_i16_2f38[i*32 + j] = gridIndex;
 		}
 	}
 	// 137:0148
 	for (int i = 1; i <= 0x51; i++) {
-		var_i16_484 = arr_i16_4c7c[i];
-		if ((_puzzleFlags[var_i16_484] & (kFlagMenuDiamond | kFlagMenuEnabled)) != 0) {
+		int16 puzzleIndex = arr_i16_4c7c[i];
+		if ((_puzzleFlags[puzzleIndex] & (kFlagMenuDiamond | kFlagMenuEnabled)) != 0) {
 			arr_i32_192c0[i] = _sunMapTilePic[i];
 		} else {
 			// 137:01b2
 			arr_i32_192c0[i] = _sunMapTilePic[0x52];
 		}
 		// 137:01d8
-		if ((_puzzleFlags[var_i16_484] & 4) != 0) {
-			_puzzleFlags[var_i16_484] ^= 4;
+		if ((_puzzleFlags[puzzleIndex] & 4) != 0) {
+			_puzzleFlags[puzzleIndex] ^= 4;
 			_puzzleFlags[i] |= kFlagMapTile;
 		}
 		// 137:0252
@@ -128,8 +128,8 @@ void FoolGame::sunMapRun() {
 void FoolGame::sunMapOnClick() {
 	// 137:03e2
 	getGridFromMouse(var_i16_68a, var_i16_68c);
-	if ((var_i16_68a < 1) || (var_i16_68a > arr_i16_1eb8[0]) ||
-		(var_i16_68c < 1) || (var_i16_68c > arr_i16_1eb8[1])) {
+	if ((var_i16_68a < 1) || (var_i16_68a > _gridInfo.xCount) ||
+		(var_i16_68c < 1) || (var_i16_68c > _gridInfo.yCount)) {
 		return;
 	}
 	// 137:0466
@@ -229,14 +229,14 @@ void FoolGame::sunMapMoveSelected() {
 			arr_i16_4758[9] = 1 + ABS(arr_i16_4758[1]);
 		}
 		// 137:0a92
-		if (arr_i16_4758[5] > arr_i16_1eb8[0]) {
-			arr_i16_4758[4] = arr_i16_1eb8[0] - ABS(arr_i16_4758[0]);
-			arr_i16_4758[5] = arr_i16_1eb8[0];
+		if (arr_i16_4758[5] > _gridInfo.xCount) {
+			arr_i16_4758[4] = _gridInfo.xCount - ABS(arr_i16_4758[0]);
+			arr_i16_4758[5] = _gridInfo.xCount;
 		}
 		// 137:0b20
-		if (arr_i16_4758[9] > arr_i16_1eb8[1]) {
-			arr_i16_4758[8] = arr_i16_1eb8[1] - ABS(arr_i16_4758[1]);
-			arr_i16_4758[9] = arr_i16_1eb8[1];
+		if (arr_i16_4758[9] > _gridInfo.yCount) {
+			arr_i16_4758[8] = _gridInfo.yCount - ABS(arr_i16_4758[1]);
+			arr_i16_4758[9] = _gridInfo.yCount;
 		}
 		// 137:0bae
 		arr_rect_4776.top = _screenGrid[arr_i16_2f38[arr_i16_4758[4]*32 + arr_i16_4758[8]]].top;

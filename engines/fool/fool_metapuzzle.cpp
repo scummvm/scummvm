@@ -139,7 +139,7 @@ void FoolGame::sub_138_21e() {
 	_toolbox->InvertRect(temp);
 	puzzleLoadContext();
 	puzzleSetupMenu();
-	sub_128_26f6();
+	clearGridInfo();
 	sub_128_61ec();
 	if (_activePuzzle == 0x55) {
 		fillRect(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0x47);

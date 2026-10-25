@@ -1117,16 +1117,16 @@ void FoolGame::thothKeyLastSetup() {
 	// 140:2998
 	if (_hermitPathStage != 6) {
 		fetchPuzzleData();
-		arr_i16_1eb8[4] = 0x37;
-		arr_i16_1eb8[5] = 0x29;
-		arr_i16_1eb8[6] = 0x14;
-		arr_i16_1eb8[7] = 0x14;
-		arr_i16_1eb8[8] = 0x29;
-		arr_i16_1eb8[9] = 0x12d;
-		arr_i16_1eb8[10] = 0x37;
-		arr_i16_1eb8[11] = 0x1bd;
-		arr_i16_1eb8[12] = 0x15;
-		arr_i16_1eb8[13] = 0x15;
+		_gridInfo.xOrigin = 0x37;
+		_gridInfo.yOrigin = 0x29;
+		_gridInfo.xOuterSpan = 0x14;
+		_gridInfo.yOuterSpan = 0x14;
+		_gridInfo.yStartPos = 0x29;
+		_gridInfo.yEndPos = 0x12d;
+		_gridInfo.xStartPos = 0x37;
+		_gridInfo.xEndPos = 0x1bd;
+		_gridInfo.yInnerSpan = 0x15;
+		_gridInfo.xInnerSpan = 0x15;
 		for (int16 i = 0; i <= 0x13; i++) {
 			arr_i16_5bbc[i] = puzzlesReadShort();
 		}
@@ -1157,9 +1157,7 @@ void FoolGame::thothKeyLastSetup() {
 		// 140:2b70: MOVE.L - D0,var_i32_696
 		_puzzleDataBuffer = var_bytes_232a;
 		_puzzleDataPtr = var_ptr_232a + 0x1e4;
-		for (int16 i = 0; i <= 0xe; i++) {
-			arr_i16_1eb8[i] = puzzlesReadShort();
-		}
+		_gridInfo = puzzlesReadGridInfo();
 		for (int16 i = 0; i <= 0x13; i++) {
 			arr_i16_5bbc[i] = puzzlesReadShort();
 		}
@@ -1174,29 +1172,30 @@ void FoolGame::thothKeyLastSetup() {
 		arr_i16_3b38[6+0x20] = 0xcd;
 	}
 	// 140:2c58
-	var_i16_484 = 0;
-	var_i16_68c = arr_i16_1eb8[8];
+	int16 gridIndex = 0;
+	int16 gridX = 0;
+	int16 gridY = _gridInfo.yStartPos;
 	do {
-		var_i16_68a = arr_i16_1eb8[0xa];
+		gridX = _gridInfo.xStartPos;
 		do {
-			var_i16_484++;
+			gridIndex++;
 			_toolbox->SetRect(
-				_screenGrid[var_i16_484],
-				var_i16_68a,
-				var_i16_68c,
-				var_i16_68a + arr_i16_1eb8[0xd],
-				var_i16_68c + arr_i16_1eb8[0xc]
+				_screenGrid[gridIndex],
+				gridX,
+				gridY,
+				gridX + _gridInfo.xInnerSpan,
+				gridY + _gridInfo.yInnerSpan
 			);
 			// 140:2ce4
-		} while (_zbasic->incrAndCheck(var_i16_68a, arr_i16_1eb8[0xb], arr_i16_1eb8[6]));
-	} while (_zbasic->incrAndCheck(var_i16_68c, arr_i16_1eb8[9], arr_i16_1eb8[7]));
+		} while (_zbasic->incrAndCheck(gridX, _gridInfo.xEndPos, _gridInfo.xOuterSpan));
+	} while (_zbasic->incrAndCheck(gridY, _gridInfo.yEndPos, _gridInfo.yOuterSpan));
 	// 140:2d46
 
-	var_i16_484 = 0;
+	gridIndex = 0;
 	for (int16 j = 0; j <= 0xd; j++) {
 		for (int16 i = 0; i <= 0x13; i++) {
-			var_i16_484++;
-			arr_i16_2f38[i*32 + j] = var_i16_484;
+			gridIndex++;
+			arr_i16_2f38[i*32 + j] = gridIndex;
 		}
 	}
 	// 140:2d94

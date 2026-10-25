@@ -35,7 +35,8 @@ void FoolGame::polyominoRun() {
 	// 133:0004
 	fetchPuzzleData();
 	var_i16_c00 = 1;
-	for (int i = 0; i <= 0x11; i++) {
+	_gridInfo = puzzlesReadGridInfo();
+	for (int i = 0xf; i <= 0x11; i++) {
 		arr_i16_1eb8[i] = puzzlesReadShort();
 	}
 	// 133:003c
@@ -44,10 +45,11 @@ void FoolGame::polyominoRun() {
 	hint = _zbasic->str(OFF(0)) + hint + _zbasic->str(OFF(1));
 	_zbasic->menu(8, 0xf, 1, hint);
 	int16 gridIndex = 0;
-	int16 gridY = arr_i16_1eb8[8];
+	int16 gridX = 0;
+	int16 gridY = _gridInfo.yStartPos;
 	do {
 		// 133:009e
-		int16 gridX = arr_i16_1eb8[10];
+		gridX = _gridInfo.xStartPos;
 		do {
 			// 133:00b2
 			gridIndex++;
@@ -55,31 +57,31 @@ void FoolGame::polyominoRun() {
 				_screenGrid[gridIndex],
 				gridX,
 				gridY,
-				gridX + arr_i16_1eb8[13],
-				gridY + arr_i16_1eb8[12]
+				gridX + _gridInfo.xInnerSpan,
+				gridY + _gridInfo.yInnerSpan
 			);
 			// 133:0112
 		} while (_zbasic->incrAndCheck(
 			gridX,
-			arr_i16_1eb8[11],
-			arr_i16_1eb8[6]
+			_gridInfo.xEndPos,
+			_gridInfo.xOuterSpan
 		));
 		// 133:0142
 	} while (_zbasic->incrAndCheck(
 		gridY,
-		arr_i16_1eb8[9],
-		arr_i16_1eb8[7]
+		_gridInfo.yEndPos,
+		_gridInfo.yOuterSpan
 	));
 	// 133:0172
-	var_i16_484 = 0;
-	for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
+	gridIndex = 0;
+	for (int j = 1; j <= _gridInfo.yCount; j++) {
+		for (int i = 1; i <= _gridInfo.xCount; i++) {
 			// 133:0184
-			var_i16_484++;
+			gridIndex++;
 			// collision map: 2D grid where element is occupying polyomino ID
 			arr_i16_2f38[i*32 + j] = 0;
 
-			arr_i16_3b38[i*32 + j] = var_i16_484;
+			arr_i16_3b38[i*32 + j] = gridIndex;
 		}
 	}
 	// 133:01fa
@@ -268,7 +270,7 @@ void FoolGame::polyominoOnClick() {
 	// 133:087c
 	getGridFromMouse(var_i16_68a, var_i16_68c);
 	debug(5, "FoolGame::polyominoOnClick: grid pos: (%d, %d)", var_i16_68a, var_i16_68c);
-	if ((var_i16_68a < 1) || (var_i16_68a > arr_i16_1eb8[0]) || (var_i16_68c < 1) || (var_i16_68c > arr_i16_1eb8[1])) {
+	if ((var_i16_68a < 1) || (var_i16_68a > _gridInfo.xCount) || (var_i16_68c < 1) || (var_i16_68c > _gridInfo.yCount)) {
 		waitForMouseUp();
 		return;
 	}
@@ -326,8 +328,8 @@ void FoolGame::polyominoOnClick() {
 			// 133:0b62
 			getNextEvent(4);
 
-			var_i16_68a = var_i16_1ab2 + ((_event.where.x - arr_i16_1eb8[4]) / arr_i16_1eb8[6]);
-			var_i16_68c = var_i16_1ab4 + ((_event.where.y - arr_i16_1eb8[5]) / arr_i16_1eb8[7]);
+			var_i16_68a = var_i16_1ab2 + ((_event.where.x - _gridInfo.xOrigin) / _gridInfo.xOuterSpan);
+			var_i16_68c = var_i16_1ab4 + ((_event.where.y - _gridInfo.yOrigin) / _gridInfo.yOuterSpan);
 
 			if (var_i16_68a < 1) {
 				var_i16_68a = 1;
@@ -455,8 +457,8 @@ void FoolGame::polyominoOnClickFixed() {
 void FoolGame::polyominoReset() {
 	// 133:11cc
 	// zero out collision grid
-	for (int j = 1; j <= arr_i16_1eb8[1] + 1; j++) {
-		for (int i = 1; i <= arr_i16_1eb8[0] + 1; i++) {
+	for (int j = 1; j <= _gridInfo.yCount + 1; j++) {
+		for (int i = 1; i <= _gridInfo.xCount + 1; i++) {
 			arr_i16_2f38[i*32 + j] = 0;
 		}
 	}

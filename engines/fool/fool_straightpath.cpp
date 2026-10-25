@@ -31,64 +31,62 @@ namespace Fool {
 void FoolGame::straightPathRun() {
 	// 143:0004
 	fetchPuzzleData();
-	for (int16 i = 0; i <= 0xe; i++) {
-		arr_i16_1eb8[i] = puzzlesReadShort();
-	}
+	_gridInfo = puzzlesReadGridInfo();
 	int16 gridIndex = 0;
-	int16 gridX = arr_i16_1eb8[10];
-	int16 gridY = arr_i16_1eb8[8];
+	int16 gridX = _gridInfo.xStartPos;
+	int16 gridY = _gridInfo.yStartPos;
 	do {
-		gridX = arr_i16_1eb8[10];
+		gridX = _gridInfo.xStartPos;
 		do {
 			gridIndex++;
 			_toolbox->SetRect(
 				_screenGrid[gridIndex],
 				gridX,
 				gridY,
-				gridX + arr_i16_1eb8[13] - 1,
-				gridY + arr_i16_1eb8[12] - 1
+				gridX + _gridInfo.xInnerSpan - 1,
+				gridY + _gridInfo.yInnerSpan - 1
 			);
-		} while (_zbasic->incrAndCheck(gridX, arr_i16_1eb8[11], arr_i16_1eb8[6]));
-	} while (_zbasic->incrAndCheck(gridY, arr_i16_1eb8[9], arr_i16_1eb8[7]));
+		} while (_zbasic->incrAndCheck(gridX, _gridInfo.xEndPos, _gridInfo.xOuterSpan));
+	} while (_zbasic->incrAndCheck(gridY, _gridInfo.yEndPos, _gridInfo.yOuterSpan));
 	// 143:0128
-	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+	for (int16 j = 1; j <= _gridInfo.yCount; j++) {
+		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
 			arr_i16_2f38[i*32 + j] = 0;
 			arr_i16_3b38[i*32 + j] = 0;
 		}
 	}
 	// 143:01a4
 	_straightPathGoal.clear(); // was: str(366)
-	arr_i16_1eb8[15] = puzzlesReadShort();
-	for (int16 i = 1; i <= arr_i16_1eb8[15]; i++) {
+	_straightPathSteps = puzzlesReadShort();
+	for (int16 i = 1; i <= _straightPathSteps; i++) {
 		gridX = puzzlesReadByte();
 		gridY = puzzlesReadByte();
 		_zbasic->indexRawSet(puzzlesReadString(), 1, i);
-		arr_i16_2f38[gridX*32 + gridX] = i;
+		arr_i16_2f38[gridX*32 + gridY] = i;
 		arr_i16_3b38[gridX*32 + gridY] = _zbasic->asc(_zbasic->leftStr(_zbasic->index(1, i), 1));
 		_straightPathGoal += _zbasic->indexRaw(1, i);
 		// 143:0276
 	}
-	_zbasic->text(kFontPuzzle, arr_i16_1eb8[14], 0, Graphics::MacToolbox::kSrcOr);
+	_zbasic->text(kFontPuzzle, _gridInfo.fontSize, 0, Graphics::MacToolbox::kSrcOr);
 	_zbasic->unk_20();
 	// 143:02b6
-	for (int16 j = 0; j <= arr_i16_1eb8[1]; j++) {
+	for (int16 j = 0; j <= _gridInfo.yCount; j++) {
 		Common::Rect temp;
-		temp.top = arr_i16_1eb8[8] + arr_i16_1eb8[7] * (j - 1);
+		temp.top = _gridInfo.yStartPos + _gridInfo.yOuterSpan * (j - 1);
 		temp.left = 0;
-		temp.bottom = temp.top + arr_i16_1eb8[7] + 2;
+		temp.bottom = temp.top + _gridInfo.yOuterSpan + 2;
 		temp.right = SCREEN_WIDTH;
 		_toolbox->FillRect(temp, _patterns[0]);
-		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
-			gridIndex = (j - 1)*arr_i16_1eb8[0] + i;
+		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
+			gridIndex = (j - 1)*_gridInfo.xCount + i;
 			if (arr_i16_3b38[i*32 + j] == 0) {
 				// 143:03c4
 				arr_i16_3b38[i*32 + j] = _zbasic->rndInt(0x1a) + 0x40;
 			}
 			// 143:03f0
 			_toolbox->MoveTo(
-				_screenGrid[gridIndex].left + arr_i16_1eb8[2] - 1,
-				_screenGrid[gridIndex].top + arr_i16_1eb8[3]
+				_screenGrid[gridIndex].left + _gridInfo.xInnerOffset - 1,
+				_screenGrid[gridIndex].top + _gridInfo.yInnerOffset
 			);
 			_toolbox->DrawString(_zbasic->chr(arr_i16_3b38[i*32 + j]));
 		}
@@ -135,7 +133,7 @@ void FoolGame::straightPathOnClick() {
 		_straightPathSelected = 0;
 	}
 	// 143:05fc
-	if ((gridX < 1) || (gridX > arr_i16_1eb8[0]) || (gridY < 1) || (gridY > arr_i16_1eb8[1]))
+	if ((gridX < 1) || (gridX > _gridInfo.xCount) || (gridY < 1) || (gridY > _gridInfo.yCount))
 		return;
 	// 143:066c
 	_activePuzzleStatus++;
@@ -147,8 +145,8 @@ void FoolGame::straightPathOnClick() {
 	}
 	// 143:06fa
 	straightPathDrawText();
-	if (_activePuzzleStatus < arr_i16_1eb8[15]) {
-		_straightPathSelected = (gridY - 1)*arr_i16_1eb8[0] + gridX;
+	if (_activePuzzleStatus < _straightPathSteps) {
+		_straightPathSelected = (gridY - 1)*_gridInfo.xCount + gridX;
 		_toolbox->InvertRect(_screenGrid[_straightPathSelected]);
 	} else {
 		// 143:0766
@@ -167,7 +165,7 @@ void FoolGame::straightPathReset() {
 	}
 	// 143:07a4
 	for (int16 i = 0; i <= 0x14; i++) {
-		int16 gridIndex = _zbasic->rndInt(arr_i16_1eb8[0] * arr_i16_1eb8[1]);
+		int16 gridIndex = _zbasic->rndInt(_gridInfo.xCount * _gridInfo.yCount);
 		_toolbox->InvertRect(_screenGrid[gridIndex]);
 		_toolbox->Delay(0);
 		playTone(_zbasic->rndInt(0x2328) + 0xf, 0x28, true);
@@ -197,10 +195,10 @@ void FoolGame::straightPathSuccess() {
 	// 143:08b0
 	_toolbox->PenMode(Graphics::MacToolbox::kPatBic);
 	_toolbox->PenPat(_patterns[1]);
-	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+	for (int16 j = 1; j <= _gridInfo.yCount; j++) {
+		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
 			if (arr_i16_2f38[i*32 + j] == 0) {
-				int16 gridIndex = (j - 1)*arr_i16_1eb8[0] + i;
+				int16 gridIndex = (j - 1)*_gridInfo.xCount + i;
 				_toolbox->PaintRect(_screenGrid[gridIndex]);
 			}
 			// 143:0936

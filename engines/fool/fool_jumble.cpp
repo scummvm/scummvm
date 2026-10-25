@@ -39,44 +39,27 @@ void FoolGame::jumbleRun() {
 	for (_jumbleCurrentSubPuzzle = 1; _jumbleCurrentSubPuzzle <= _jumbleSubPuzzleCount; _jumbleCurrentSubPuzzle++) {
 		var_i16_105a = puzzlesReadShort();
 		debugC(5, kDebugLoading, "FoolGame::jumbleRun: subpuzzle %d", _jumbleCurrentSubPuzzle);
-		// load grid information block
-		// 0x0: grid width (squares)
-		// 0x1: grid height (squares)
-		// 0x2:
-		// 0x3:
-		// 0x4:
-		// 0x5:
-		// 0x6: grid square outer width (px)
-		// 0x7: grid square outer height (px)
-		// 0x8: grid top bound (px)
-		// 0x9: grid bottom bound (px)
-		// 0xa: grid left bound (px)
-		// 0xb: grid right bound (px)
-		// 0xc: grid square inner height (px)
-		// 0xd: grid square inner width (px)
 		if ((var_i16_105a & 0x1) == 1) {
-			for (int i = 0; i <= 0xe; i++) {
-				arr_i16_1eb8[i] = puzzlesReadShort();
-			}
+			_gridInfo = puzzlesReadGridInfo();
 		}
 		// 130:0066
 		var_i16_484 = 0;
-		int16 gridY = arr_i16_1eb8[8];
+		int16 gridY = _gridInfo.yStartPos;
 		do {
-			int16 gridX = arr_i16_1eb8[10];
+			int16 gridX = _gridInfo.xStartPos;
 			do {
 				var_i16_484++;
 				_toolbox->SetRect(
 					_screenGrid[var_i16_484],
 					gridX,
 					gridY,
-					gridX + arr_i16_1eb8[13],
-					gridY + arr_i16_1eb8[12]
+					gridX + _gridInfo.xInnerSpan,
+					gridY + _gridInfo.yInnerSpan
 				);
 				// 130:00f6
-			} while (_zbasic->incrAndCheck(gridX, arr_i16_1eb8[11], arr_i16_1eb8[6]));
+			} while (_zbasic->incrAndCheck(gridX, _gridInfo.xEndPos, _gridInfo.xOuterSpan));
 		// 130:0126
-		} while (_zbasic->incrAndCheck(gridY, arr_i16_1eb8[9], arr_i16_1eb8[7]));
+		} while (_zbasic->incrAndCheck(gridY, _gridInfo.yEndPos, _gridInfo.yOuterSpan));
 		// 130:0156
 		if ((var_i16_105a & 0x2) == 2) {
 			var_i16_105c = puzzlesReadShort();
@@ -94,16 +77,16 @@ void FoolGame::jumbleRun() {
 		// 130:01f0
 		_jumbleGameType = puzzlesReadShort();
 		if (_jumbleGameType == 6) {
-			for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
-				for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
+			for (int j = 1; j <= _gridInfo.yCount; j++) {
+				for (int i = 1; i <= _gridInfo.xCount; i++) {
 					arr_i16_2f38[i*32 + j] = puzzlesReadByte();
 					arr_i16_3b38[i*32 + j] = 0;
 				}
 			}
 		} else {
 		// 130:028a
-			for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
-				for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
+			for (int j = 1; j <= _gridInfo.yCount; j++) {
+				for (int i = 1; i <= _gridInfo.xCount; i++) {
 					arr_i16_2f38[i*32 + j] = 0;
 					arr_i16_3b38[i*32 + j] = 0;
 				}
@@ -571,7 +554,7 @@ void FoolGame::jumbleRunHiddenMessage() {
 		if (_event.what == Graphics::MacToolbox::kMouseDown) {
 			jumbleOnClick();
 		}
-		if ((_jumbleGridPos.x < 1) || (_jumbleGridPos.x > arr_i16_1eb8[0]) || (_jumbleGridPos.y < 1) || (_jumbleGridPos.y > arr_i16_1eb8[1])) {
+		if ((_jumbleGridPos.x < 1) || (_jumbleGridPos.x > _gridInfo.xCount) || (_jumbleGridPos.y < 1) || (_jumbleGridPos.y > _gridInfo.yCount)) {
 			var_i16_187c = 0;
 		} else {
 			var_i16_187c = arr_i16_2f38[_jumbleGridPos.x*32 + _jumbleGridPos.y];
@@ -613,7 +596,7 @@ void FoolGame::sub_130_1426() {
 void FoolGame::jumbleOnClick() {
 	// 130:1476
 	getGridFromMouse(_jumbleGridPos.x, _jumbleGridPos.y);
-	if ((_jumbleGridPos.x < 1) || (_jumbleGridPos.x > arr_i16_1eb8[0]) || (_jumbleGridPos.y < 1) || (_jumbleGridPos.y > arr_i16_1eb8[1])) {
+	if ((_jumbleGridPos.x < 1) || (_jumbleGridPos.x > _gridInfo.xCount) || (_jumbleGridPos.y < 1) || (_jumbleGridPos.y > _gridInfo.yCount)) {
 		// 130:14fa
 		if (_event.where.x > 0x14) {
 			playTone(0xf, 0x42, 0x1);
@@ -857,10 +840,10 @@ void FoolGame::sub_130_1c6c() {
 
 void FoolGame::jumbleDrawLetter() {
 	// 130:1dcc
-	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], 0, var_i16_106c);
+	_zbasic->text(kFontPuzzle, _gridInfo.fontSize, 0, var_i16_106c);
 	_toolbox->MoveTo(
-		_screenGrid[_jumbleSelected].left + arr_i16_1eb8[2],
-		_screenGrid[_jumbleSelected].top + arr_i16_1eb8[3]
+		_screenGrid[_jumbleSelected].left + _gridInfo.xInnerOffset,
+		_screenGrid[_jumbleSelected].top + _gridInfo.yInnerOffset
 	);
 	_toolbox->DrawString(var_str_d12);
 }
@@ -886,11 +869,11 @@ void FoolGame::sub_130_1e76() {
 	temp.bottom = arr_i16_4758[2];
 	temp.right = arr_i16_4758[3];
 	_toolbox->FillRect(temp, _patterns[var_i16_105e]);
-	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], 0, var_i16_106c);
+	_zbasic->text(kFontPuzzle, _gridInfo.fontSize, 0, var_i16_106c);
 	// 130:1f70
 	_toolbox->MoveTo(
-		_screenGrid[_jumbleSelected].left + arr_i16_1eb8[2],
-		_screenGrid[_jumbleSelected].top + arr_i16_1eb8[3]
+		_screenGrid[_jumbleSelected].left + _gridInfo.xInnerOffset,
+		_screenGrid[_jumbleSelected].top + _gridInfo.yInnerOffset
 	);
 	_toolbox->DrawString(var_str_d12);
 	if (arr_i16_3738[_jumblePosition] < 0)
@@ -956,8 +939,8 @@ Common::Point FoolGame::jumbleGetGridPos() {
 	// 130:20fe
 	int16 index = ABS(arr_i16_3738[_jumblePosition]) - 1;
 	Common::Point result;
-	result.x = (index % arr_i16_1eb8[0]) + 1;
-	result.y = (index / arr_i16_1eb8[0]) + 1;
+	result.x = (index % _gridInfo.xCount) + 1;
+	result.y = (index / _gridInfo.xCount) + 1;
 	return result;
 }
 

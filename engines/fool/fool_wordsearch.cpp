@@ -35,31 +35,30 @@ void FoolGame::wordSearchRun() {
 	// 131:0004
 	fetchPuzzleData();
 	var_str_188e = puzzlesReadString().decode(Common::kMacRoman);
-	for (int i = 0; i <= 0xe; i++) {
-		arr_i16_1eb8[i] = puzzlesReadShort();
-	}
+	_gridInfo = puzzlesReadGridInfo();
 	// 131:0042
-	var_i16_484 = 0;
-	var_i16_68c = arr_i16_1eb8[8];
+	int16 gridIndex = 0;
+	int16 gridX = 0;
+	int16 gridY = _gridInfo.yStartPos;
 	do {
-		var_i16_68a = arr_i16_1eb8[0xa];
+		gridX = _gridInfo.xStartPos;
 		do {
-			var_i16_484++;
+			gridIndex++;
 			_toolbox->SetRect(
-				_screenGrid[var_i16_484],
-				var_i16_68a,
-				var_i16_68c,
-				var_i16_68a + arr_i16_1eb8[0xd] - 1,
-				var_i16_68c + arr_i16_1eb8[0xc] - 1
+				_screenGrid[gridIndex],
+				gridX,
+				gridY,
+				gridX + _gridInfo.xInnerSpan - 1,
+				gridY + _gridInfo.yInnerSpan - 1
 			);
 		// 131:00d4
-		} while (_zbasic->incrAndCheck(var_i16_68a, arr_i16_1eb8[0xb], arr_i16_1eb8[6]));
-	} while (_zbasic->incrAndCheck(var_i16_68c, arr_i16_1eb8[9], arr_i16_1eb8[7]));
+		} while (_zbasic->incrAndCheck(gridX, _gridInfo.xEndPos, _gridInfo.xOuterSpan));
+	} while (_zbasic->incrAndCheck(gridY, _gridInfo.yEndPos, _gridInfo.yOuterSpan));
 	// 131:0134
 	var_i16_484 = 0;
 
-	for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
+	for (int j = 1; j <= _gridInfo.yCount; j++) {
+		for (int i = 1; i <= _gridInfo.xCount; i++) {
 			arr_i16_2f38[i*32 + j] = 0;
 			arr_i16_3b38[i*32 + j] = 0;
 		}
@@ -83,10 +82,9 @@ void FoolGame::wordSearchRun() {
 		// 131:0282
 		var_i16_484 = 0;
 		var_i16_106a = 1;
-		var_i16_68c = 1;
 
-		for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
-			for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
+		for (int j = 1; j <= _gridInfo.yCount; j++) {
+			for (int i = 1; i <= _gridInfo.xCount; i++) {
 				// 131:029a
 				if ((arr_i16_4758[var_i16_106a] & _bitLUT[var_i16_484]) != 0) {
 					arr_i16_2f38[i*32 + j] = 1;
@@ -105,7 +103,6 @@ void FoolGame::wordSearchRun() {
 	}
 	// 131:0336
 	var_i16_1990 = 0;
-	var_i16_68a = 1;
 	for (int i = 1; i <= var_i16_198e; i++) {
 		arr_i16_3738[i] = _zbasic->castInt(_zbasic->midStr(_activePuzzleBuffer, i, 1));
 		if (arr_i16_3738[i] != 0) {
@@ -141,14 +138,14 @@ void FoolGame::wordSearchRun() {
 	_toolbox->PenNormal();
 	var_str_384 = var_str_188e;
 	wordSearchDrawFooter();
-	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
+	_zbasic->text(kFontPuzzle, _gridInfo.fontSize, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	_toolbox->PenPat(_patterns[1]);
 	_toolbox->PenMode(Graphics::MacToolbox::kPatBic);
 	_zbasic->unk_20();
 	// 131:04e0
-	for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
+	for (int j = 1; j <= _gridInfo.yCount; j++) {
 		var_str_1994 = puzzlesReadString().decode(Common::kMacRoman);
-		var_i16_1574 = 1 + (j - 1) * arr_i16_1eb8[0];
+		var_i16_1574 = 1 + (j - 1) * _gridInfo.xCount;
 		// 131:051e
 		Common::Rect temp; // arr_rect_5b7c
 		temp.top = _screenGrid[var_i16_1574].top - 1;
@@ -157,14 +154,14 @@ void FoolGame::wordSearchRun() {
 		temp.right = SCREEN_WIDTH;
 		_toolbox->FillRect(temp, _patterns[0]);
 		// 131:05b0
-		for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
-			var_i16_1574 = i + (j - 1) * arr_i16_1eb8[0];
+		for (int i = 1; i <= _gridInfo.xCount; i++) {
+			var_i16_1574 = i + (j - 1) * _gridInfo.xCount;
 			var_str_384 = _zbasic->midStr(var_str_1994, i, 1);
 			arr_i16_3b38[i*32 + j] = _zbasic->asc(var_str_384);
 
 			_toolbox->MoveTo(
-				_screenGrid[var_i16_1574].left + arr_i16_1eb8[2] - 1,
-				_screenGrid[var_i16_1574].top + arr_i16_1eb8[3]
+				_screenGrid[var_i16_1574].left + _gridInfo.xInnerOffset - 1,
+				_screenGrid[var_i16_1574].top + _gridInfo.yInnerOffset
 			);
 			_toolbox->DrawString(var_str_384);
 			// 131:069e
@@ -231,7 +228,7 @@ void FoolGame::wordSearchOnClick() {
 		sub_128_342(var_i16_68a, var_i16_68c);
 		if (!((var_i16_68a == var_i16_1a96) && (var_i16_68c == var_i16_1a98))) {
 			// 131:0934
-			var_i16_1574 = var_i16_68a + (var_i16_68c - 1)*arr_i16_1eb8[0];
+			var_i16_1574 = var_i16_68a + (var_i16_68c - 1)*_gridInfo.xCount;
 			var_i16_1a96 = var_i16_68a;
 			var_i16_1a98 = var_i16_68c;
 			var_str_1070 += _zbasic->chr(arr_i16_3b38[var_i16_68a*32 + var_i16_68c]);
@@ -290,9 +287,9 @@ void FoolGame::wordSearchOnClick() {
 		_toolbox->InvertRect(_screenGrid[arr_i16_4338[i]]);
 		// paint the square with white checkerboard
 		_toolbox->PaintRect(_screenGrid[arr_i16_4338[i]]);
-		var_i16_484 = ((arr_i16_4338[i] - 1) % arr_i16_1eb8[0]) + 1;
+		var_i16_484 = ((arr_i16_4338[i] - 1) % _gridInfo.xCount) + 1;
 		// 131:0bce
-		var_i16_7e4 = ((arr_i16_4338[i] - 1) / arr_i16_1eb8[0]) + 1;
+		var_i16_7e4 = ((arr_i16_4338[i] - 1) / _gridInfo.xCount) + 1;
 		// add the square to the selected list
 		arr_i16_2f38[var_i16_484*32 + var_i16_7e4] = 1;
 	}
@@ -344,8 +341,8 @@ void FoolGame::wordSearchStoreState() {
 	var_i16_106a = 1;
 	arr_i16_4758[0] = 1;
 	arr_i16_4758[1] = 0;
-	for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
+	for (int j = 1; j <= _gridInfo.yCount; j++) {
+		for (int i = 1; i <= _gridInfo.xCount; i++) {
 			if (arr_i16_2f38[i*32 + j] != 0) {
 				arr_i16_4758[var_i16_106a] |= _bitLUT[var_i16_484];
 			}
@@ -375,16 +372,16 @@ void FoolGame::wordSearchSuccess() {
 	}
 	// 131:0f52
 	fillRect(1, Graphics::MacToolbox::kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
-	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], 0, Graphics::MacToolbox::kSrcOr);
-	for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
+	_zbasic->text(kFontPuzzle, _gridInfo.fontSize, 0, Graphics::MacToolbox::kSrcOr);
+	for (int j = 1; j <= _gridInfo.yCount; j++) {
+		for (int i = 1; i <= _gridInfo.xCount; i++) {
 			if (arr_i16_2f38[i*32 + j] != 0) {
 				// 131:0fc8
-				var_i16_1574 = i + (j - 1)* arr_i16_1eb8[0];
+				var_i16_1574 = i + (j - 1)* _gridInfo.xCount;
 				_toolbox->EraseRect(_screenGrid[var_i16_1574]);
 				_toolbox->MoveTo(
-					_screenGrid[var_i16_1574].left + arr_i16_1eb8[2] - 1,
-					_screenGrid[var_i16_1574].top + arr_i16_1eb8[3]
+					_screenGrid[var_i16_1574].left + _gridInfo.xInnerOffset - 1,
+					_screenGrid[var_i16_1574].top + _gridInfo.yInnerOffset
 				);
 				// 131:107a
 				var_str_384 = _zbasic->chr(arr_i16_3b38[i*32 + j]);

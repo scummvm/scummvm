@@ -37,12 +37,10 @@ void FoolGame::jigsawRun() {
 	var_i16_c00 = 1;
 	fetchPuzzleData();
 	int16 picID = puzzlesReadShort();
-	for (int i = 0; i <= 0xe; i++) {
-		arr_i16_1eb8[i] = puzzlesReadShort();
-	}
+	_gridInfo = puzzlesReadGridInfo();
 	// 132:0044
 	// puzzle dimensions
-	_jigsawPieceCount = arr_i16_1eb8[0] * arr_i16_1eb8[1];
+	_jigsawPieceCount = _gridInfo.xCount * _gridInfo.yCount;
 	for (int i = 1; i <= _jigsawPieceCount; i++) {
 		arr_i16_3738[i] = puzzlesReadByte();
 	}
@@ -50,49 +48,50 @@ void FoolGame::jigsawRun() {
 	arr_i32_192c0[0] = _toolbox->GetPicture(picID);
 	_zbasic->picture(0, 0x14, arr_i32_192c0[0]);
 	_toolbox->ReleaseResource(arr_i32_192c0[0]);
-	var_i16_1aa0 = 4 + ((arr_i16_1eb8[12] + 1)*2) * ((arr_i16_1eb8[13]+0x10)/0x10);
+	var_i16_1aa0 = 4 + ((_gridInfo.xInnerSpan + 1)*2) * ((_gridInfo.yInnerSpan+0x10)/0x10);
 	// 132:0136
 	var_i16_1aa0 = (var_i16_1aa0 / 2) + 1;
-	var_i16_484 = 0;
-	var_i16_68c = arr_i16_1eb8[8];
+	int16 gridIndex = 0;
+	int16 gridX = 0;
+	int16 gridY = 0;
+	gridY = _gridInfo.yStartPos;
 	do {
-		var_i16_68a = arr_i16_1eb8[10];
+		gridX = _gridInfo.xStartPos;
 		do {
-			var_i16_484++;
+			gridIndex++;
 			_toolbox->SetRect(
-				_screenGrid[var_i16_484],
-				var_i16_68a + 1,
-				var_i16_68c + 1,
-				var_i16_68a + arr_i16_1eb8[13],
-				var_i16_68c + arr_i16_1eb8[12]
+				_screenGrid[gridIndex],
+				gridX + 1,
+				gridY + 1,
+				gridX + _gridInfo.xInnerSpan,
+				gridY + _gridInfo.yInnerSpan
 			);
-			//var_i16_1aa2 = 0x2af8 + var_i16_1aa0*(arr_i16_3738[var_i16_484] - 1);
 			// 132:0216
-			_jigsawPieces[arr_i16_3738[var_i16_484]] = BitMap(new Graphics::ManagedSurface());
+			_jigsawPieces[arr_i16_3738[gridIndex]] = BitMap(new Graphics::ManagedSurface());
 			_zbasic->get(
-				_screenGrid[var_i16_484].left,
-				_screenGrid[var_i16_484].top,
-				_screenGrid[var_i16_484].right,
-				_screenGrid[var_i16_484].bottom,
-				_jigsawPieces[arr_i16_3738[var_i16_484]]
+				_screenGrid[gridIndex].left,
+				_screenGrid[gridIndex].top,
+				_screenGrid[gridIndex].right,
+				_screenGrid[gridIndex].bottom,
+				_jigsawPieces[arr_i16_3738[gridIndex]]
 			);
 		} while (_zbasic->incrAndCheck(
-			var_i16_68a,
-			arr_i16_1eb8[11],
-			arr_i16_1eb8[6]
+			gridX,
+			_gridInfo.xEndPos,
+			_gridInfo.xOuterSpan
 		));
 	// 132:02dc
 	} while (_zbasic->incrAndCheck(
-		var_i16_68c,
-		arr_i16_1eb8[9],
-		arr_i16_1eb8[7]
+		gridY,
+		_gridInfo.yEndPos,
+		_gridInfo.yOuterSpan
 	));
 	// 132:030c
-	var_i16_484 = 0;
-	for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
-		for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
-			var_i16_484++;
-			arr_i16_2f38[i*32 + j] = var_i16_484;
+	gridIndex = 0;
+	for (int j = 1; j <= _gridInfo.yCount; j++) {
+		for (int i = 1; i <= _gridInfo.xCount; i++) {
+			gridIndex++;
+			arr_i16_2f38[i*32 + j] = gridIndex;
 		}
 	}
 	// 132:0376
@@ -150,7 +149,7 @@ void FoolGame::jigsawRun() {
 void FoolGame::jigsawOnClick() {
 	// 132:0518
 	getGridFromMouse(var_i16_68a, var_i16_68c);
-	if ((var_i16_68a < 1) || ((var_i16_68a - (arr_i16_1eb8[0])) > 0) || (var_i16_68c < 1) || ((var_i16_68c - (arr_i16_1eb8[1])) > 0)) {
+	if ((var_i16_68a < 1) || ((var_i16_68a - (_gridInfo.xCount)) > 0) || (var_i16_68c < 1) || ((var_i16_68c - (_gridInfo.yCount)) > 0)) {
 		return;
 	}
 	// 132:059c
@@ -258,14 +257,14 @@ void FoolGame::jigsawMoveSelected() {
 			arr_i16_4758[9] = 1 + ABS(arr_i16_4758[1]);
 		}
 		// 132:0b74
-		if ((arr_i16_4758[5] - arr_i16_1eb8[0]) > 0) {
-			arr_i16_4758[4] = arr_i16_1eb8[0] - ABS(arr_i16_4758[0]);
-			arr_i16_4758[5] = arr_i16_1eb8[0];
+		if ((arr_i16_4758[5] - _gridInfo.xCount) > 0) {
+			arr_i16_4758[4] = _gridInfo.xCount - ABS(arr_i16_4758[0]);
+			arr_i16_4758[5] = _gridInfo.xCount;
 		}
 		// 132:0c02
-		if ((arr_i16_4758[9] - arr_i16_1eb8[1]) > 0) {
-			arr_i16_4758[8] = arr_i16_1eb8[1] - ABS(arr_i16_4758[1]);
-			arr_i16_4758[9] = arr_i16_1eb8[1];
+		if ((arr_i16_4758[9] - _gridInfo.yCount) > 0) {
+			arr_i16_4758[8] = _gridInfo.yCount - ABS(arr_i16_4758[1]);
+			arr_i16_4758[9] = _gridInfo.yCount;
 		}
 		// 132:0c90
 		arr_rect_4776.top = _screenGrid[arr_i16_2f38[arr_i16_4758[4]*32 + arr_i16_4758[8]]].top;
