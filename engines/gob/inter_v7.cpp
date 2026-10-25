@@ -1937,6 +1937,17 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		size = _vm->_dataIO->fileSize(file);
 		if (size == -1)
 			warning("File \"%s\" not found", file.c_str());
+		else if (_vm->getGameType() == kGameTypeAdi4 && file.matchString("DISC?", true)) {
+			// WORKAROUND: In some Adi4 applications (e.g. "Anglais"), the script use a flag file "DISC1", "DISC2", etc. to check which disc is currently inserted.
+			// If the found file is in a directory other than the current CD path, pretend it is not there.
+			Common::ArchiveMemberDetailsList matchingFiles;
+			SearchMan.listMatchingMembers(matchingFiles, file.c_str());
+			if (!matchingFiles.empty() && !matchingFiles.front().arcName.equalsIgnoreCase(_currentCDPath.baseName())) {
+				debugC(2, kDebugFileIO, "o7_checkData: file \"%s\" is not in current CD path \"%s\", pretending it does not exist", file.c_str(), _currentCDPath.toString().c_str());
+				WRITE_VAR(16, -1);
+				return;
+			}
+		}
 
 	} else if (mode == SaveLoad::kSaveModeSave)
 		size = _vm->_saveLoad->getSize(file.c_str());
