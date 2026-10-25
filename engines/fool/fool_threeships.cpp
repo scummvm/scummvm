@@ -160,7 +160,7 @@ void FoolGame::sub_128_55ac() {
 		var_i16_d08 = -0xa;
 	}
 	// 128:56a0
-	for (var_i16_68a = 0; var_i16_68a <= 0x5; var_i16_68a++) {
+	for (int16 i = 0; i <= 5; i++) {
 		_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_bbbc, Graphics::MacToolbox::kSrcCopy);
 		_toolbox->OffsetRect(arr_rect_1910c, var_i16_d08, var_i16_d0a);
 		sub_128_5a6c();

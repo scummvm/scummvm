@@ -137,7 +137,7 @@ public:
 	void openSaveFileDialog(const Common::U32String &title, const Common::U32String &filename); // sub_128_11c
 	void sub_128_1e4(const Common::String &osType);
 	void getGridFromMouse(int16 &gridX, int16 &gridY); // sub_128_2be
-	void sub_128_342(int16 unk2, int16 unk1);
+	void clampToGrid(int16 &gridX, int16 &gridY); // sub_128_342
 	void delay(int16 numTicks); // sub_128_3da
 	void delayFromMarker(int16 numTicks); // sub_128_406
 	int16 puzzlesReadByte(); // sub_128_428
@@ -287,8 +287,8 @@ public:
 	// fool_jigsaw.cpp
 	void jigsawRun(); // sub_132_004
 	void jigsawOnClick(); // sub_132_518
-	void jigsawDragSelect(); // sub_132_67a
-	void jigsawMoveSelected(); // sub_132_962
+	void jigsawDragSelect(int16 &gridX, int16 &gridY); // sub_132_67a
+	void jigsawMoveSelected(int16 &gridX, int16 &gridY); // sub_132_962
 	void jigsawCancelSelect(); // sub_132_e5a
 	void jigsawDropSelected(); // sub_132_ed8
 	void jigsawStoreState(); // sub_132_1384
@@ -383,12 +383,12 @@ public:
 	// fool_sun.cpp
 	void sunMapRun(); // sub_137_004
 	void sunMapOnClick(); // sub_137_3e2
-	void sunMapDragSelect(); // sub_137_598
-	void sunMapMoveSelected(); // sub_137_880
+	void sunMapDragSelect(int16 &gridX, int16 &gridY); // sub_137_598
+	void sunMapMoveSelected(int16 &gridX, int16 &gridY); // sub_137_880
 	void sunMapUndoMove(); // sub_137_d60
 	void sunMapDropSelected(); // sub_137_dde
 	void sunMapCheckIfSolved(); // sub_137_124e
-	void sunMapRevealPiece(); // sub_137_131a
+	void sunMapRevealPiece(int16 &gridX, int16 &gridY); // sub_137_131a
 
 	// fool_metapuzzle.cpp
 	void metapuzzleRun(); // sub_138_004
@@ -538,8 +538,7 @@ private:
 	Common::U32String var_str_588;
 	int16 var_i16_688;
 	Common::Point _jumbleGridPos; // var_i16_68a
-	int16 var_i16_68a;
-	int16 var_i16_68c;
+
 	uint32 var_i32_692;
 	// this is normally a raw pointer to some memory,
 	// instead we track it as a handle + offset

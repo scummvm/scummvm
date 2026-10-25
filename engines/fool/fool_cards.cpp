@@ -518,14 +518,14 @@ void FoolGame::cardsRevealHands() {
 	drawTextCenter(_zbasic->str(OFF(16)), 0x78); // beats
 	drawTextCenter(var_str_2222, 0x8c);
 	if (arr_i16_1eb8[1] != 0) {
-		var_i16_68a = arr_i16_1eb8[1];
-		if (var_i16_68a > 8) {
-			var_i16_68a -= 8;
+		int16 index = arr_i16_1eb8[1];
+		if (index > 8) {
+			index -= 8;
 		}
 		// 139:1420
 		if (_zbasic->instr(
 			1,
-			_zbasic->index(1, 0x15 + var_i16_68a),
+			_zbasic->index(1, 0x15 + index),
 			_zbasic->midStr(_zbasic->index(1, 0x26), 1, 1)
 		) == 0) {
 			drawTarotCard(5, 0, 2);
@@ -533,7 +533,7 @@ void FoolGame::cardsRevealHands() {
 		// 139:1470
 		if (_zbasic->instr(
 				1,
-				_zbasic->index(1, 0x15 + var_i16_68a),
+				_zbasic->index(1, 0x15 + index),
 				_zbasic->midStr(_zbasic->index(1, 0x26), 2, 1)
 			) == 0) {
 			drawTarotCard(7, 0, 2);
@@ -541,7 +541,7 @@ void FoolGame::cardsRevealHands() {
 		// 139:14c0
 		if (_zbasic->instr(
 				1,
-				_zbasic->index(1, 0x15 + var_i16_68a),
+				_zbasic->index(1, 0x15 + index),
 				_zbasic->midStr(_zbasic->index(1, 0x26), 3, 1)
 			) == 0) {
 			drawTarotCard(9, 0, 2);
@@ -562,19 +562,19 @@ void FoolGame::cardsRevealHands() {
 	}
 	// 139:15f2
 	if (arr_i16_1eb8[2] != 0) {
-		var_i16_68a = arr_i16_1eb8[2];
-		if (var_i16_68a > 8) {
-			var_i16_68a -= 8;
+		int16 index = arr_i16_1eb8[2];
+		if (index > 8) {
+			index -= 8;
 		}
-		if (_zbasic->instr(1, _zbasic->index(1, 0x15 + var_i16_68a), _zbasic->midStr(_zbasic->index(1, 0x27), 1, 1)) == 0) {
+		if (_zbasic->instr(1, _zbasic->index(1, 0x15 + index), _zbasic->midStr(_zbasic->index(1, 0x27), 1, 1)) == 0) {
 			drawTarotCard(4, 0, 2);
 		}
 		// 139:1678
-		if (_zbasic->instr(1, _zbasic->index(1, 0x15 + var_i16_68a), _zbasic->midStr(_zbasic->index(1, 0x27), 2, 1)) == 0) {
+		if (_zbasic->instr(1, _zbasic->index(1, 0x15 + index), _zbasic->midStr(_zbasic->index(1, 0x27), 2, 1)) == 0) {
 			drawTarotCard(6, 0, 2);
 		}
 		// 139:16c8
-		if (_zbasic->instr(1, _zbasic->index(1, 0x15 + var_i16_68a), _zbasic->midStr(_zbasic->index(1, 0x27), 3, 1)) == 0) {
+		if (_zbasic->instr(1, _zbasic->index(1, 0x15 + index), _zbasic->midStr(_zbasic->index(1, 0x27), 3, 1)) == 0) {
 			drawTarotCard(8, 0, 2);
 		}
 	} else {

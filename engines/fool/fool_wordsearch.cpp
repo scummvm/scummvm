@@ -224,14 +224,16 @@ void FoolGame::wordSearchOnClick() {
 	while ((_event.modifiers & 0x80) == 0) {
 		// 131:08d4
 		getNextEvent(0);
-		getGridFromMouse(var_i16_68a, var_i16_68c);
-		sub_128_342(var_i16_68a, var_i16_68c);
-		if (!((var_i16_68a == var_i16_1a96) && (var_i16_68c == var_i16_1a98))) {
+		int16 gridX = 0;
+		int16 gridY = 0;
+		getGridFromMouse(gridX, gridY);
+		clampToGrid(gridX, gridY);
+		if (!((gridX == var_i16_1a96) && (gridY == var_i16_1a98))) {
 			// 131:0934
-			var_i16_1574 = var_i16_68a + (var_i16_68c - 1)*_gridInfo.xCount;
-			var_i16_1a96 = var_i16_68a;
-			var_i16_1a98 = var_i16_68c;
-			var_str_1070 += _zbasic->chr(arr_i16_3b38[var_i16_68a*32 + var_i16_68c]);
+			var_i16_1574 = gridX + (gridY - 1)*_gridInfo.xCount;
+			var_i16_1a96 = gridX;
+			var_i16_1a98 = gridY;
+			var_str_1070 += _zbasic->chr(arr_i16_3b38[gridX*32 + gridY]);
 			_toolbox->InvertRect(_screenGrid[var_i16_1574]);
 			var_i16_1a94++;
 			// 131:09c4
@@ -248,9 +250,8 @@ void FoolGame::wordSearchOnClick() {
 	// 131:09fc
 	var_i16_1a9a = 0;
 	var_i16_1a9c = arr_i16_4338[2] - arr_i16_4338[1];
-	var_i16_68a = 1;
 	for (int i = 1; i <= var_i16_1a94 - 1; i++) {
-		if (arr_i16_4338[var_i16_68a + 1] - arr_i16_4338[var_i16_68a] != var_i16_1a9c) {
+		if (arr_i16_4338[i + 1] - arr_i16_4338[i] != var_i16_1a9c) {
 			var_i16_1a9a = 0x29a;
 		}
 	// 131:0a78

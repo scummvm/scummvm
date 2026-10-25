@@ -95,7 +95,6 @@ void FoolGame::mazeRun() {
 	// 136:042c
 	var_i16_1ac4 = arr_i16_1eb8[17];
 	var_i16_1574 = 0;
-	var_i16_68c = 1;
 	for (int16 j = 1; j <= _gridInfo.yCount; j++) {
 		for (int16 i = 1; i <= _gridInfo.xCount; i++) {
 			var_i16_1574++;
@@ -185,21 +184,23 @@ void FoolGame::mazeRun() {
 
 void FoolGame::mazeOnClick() {
 	// 136:079e
-	getGridFromMouse(var_i16_68a, var_i16_68c);
-	if ((var_i16_68a == _mazePlayerX) && (var_i16_68c == _mazePlayerY)) {
+	int16 gridX = 0;
+	int16 gridY = 0;
+	getGridFromMouse(gridX, gridY);
+	if ((gridX == _mazePlayerX) && (gridY == _mazePlayerY)) {
 		return;
 	}
 	// 136:07e2
-	if (_mazePlayerY > var_i16_68c) {
+	if (_mazePlayerY > gridY) {
 		_mazePlayerDirection = 2;
 	}
-	if (_mazePlayerX > var_i16_68a) {
+	if (_mazePlayerX > gridX) {
 		_mazePlayerDirection = 1;
 	}
-	if (_mazePlayerY < var_i16_68c) {
+	if (_mazePlayerY < gridY) {
 		_mazePlayerDirection = 4;
 	}
-	if (_mazePlayerX < var_i16_68a) {
+	if (_mazePlayerX < gridX) {
 		_mazePlayerDirection = 3;
 	}
 	if (var_i16_1bd4 != _mazePlayerDirection) {
@@ -546,14 +547,14 @@ void FoolGame::mazeWanderingWinds() {
 	}
 	// 136:0ffc
 	if (_zbasic->leftStr(var_str_1ce2, 1) == _zbasic->strRaw(OFF(9))) { // A
-		var_i16_68a = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
-		var_i16_68c = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 4, 2));
+		int16 gridX = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
+		int16 gridY = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 4, 2));
 		var_i16_1a96 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 6, 2));
 		var_i16_1a98 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 8, 2));
-		var_i16_68a += _zbasic->rndInt(var_i16_1a96 + 1) - 1;
-		var_i16_68c += _zbasic->rndInt(var_i16_1a98 + 1) - 1;
+		gridX += _zbasic->rndInt(var_i16_1a96 + 1) - 1;
+		gridY += _zbasic->rndInt(var_i16_1a98 + 1) - 1;
 		// 136:10bc
-		var_i16_1de8 = arr_i16_2f38[var_i16_68a*32 + var_i16_68c];
+		var_i16_1de8 = arr_i16_2f38[gridX*32 + gridY];
 		mazeLoadTone(0xa);
 	}
 	// 136:10ea

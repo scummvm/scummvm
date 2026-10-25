@@ -104,7 +104,6 @@ void FoolGame::sunMapRun() {
 		return;
 	}
 	// JMP 0x1618
-	var_i16_68c = 0;
 	for (int j = 0; j <= 5; j++) {
 		for (int i = 1; i <= 0x51; i++) {
 			_toolbox->InvertRect(_screenGrid[i]);
@@ -127,9 +126,11 @@ void FoolGame::sunMapRun() {
 
 void FoolGame::sunMapOnClick() {
 	// 137:03e2
-	getGridFromMouse(var_i16_68a, var_i16_68c);
-	if ((var_i16_68a < 1) || (var_i16_68a > _gridInfo.xCount) ||
-		(var_i16_68c < 1) || (var_i16_68c > _gridInfo.yCount)) {
+	int16 gridX = 0;
+	int16 gridY = 0;
+	getGridFromMouse(gridX, gridY);
+	if ((gridX < 1) || (gridX > _gridInfo.xCount) ||
+		(gridY < 1) || (gridY > _gridInfo.yCount)) {
 		return;
 	}
 	// 137:0466
@@ -138,18 +139,18 @@ void FoolGame::sunMapOnClick() {
 	_toolbox->PenNormal();
 	_toolbox->PenSize(3, 3);
 	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
-	arr_i16_4758[0] = var_i16_68a;
-	arr_i16_4758[1] = var_i16_68c;
-	if (_puzzleFlags[_sunMapTileID[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]]] & kFlagMapTile) {
-		sunMapRevealPiece();
+	arr_i16_4758[0] = gridX;
+	arr_i16_4758[1] = gridY;
+	if (_puzzleFlags[_sunMapTileID[arr_i16_2f38[gridX*32 + gridY]]] & kFlagMapTile) {
+		sunMapRevealPiece(gridX, gridY);
 		return;
 	}
-	sunMapDragSelect();
+	sunMapDragSelect(gridX, gridY);
 	// 137:0506
 	_toolbox->FrameRect(Common::Rect(arr_i16_4758[12], arr_i16_4758[11], arr_i16_4758[14], arr_i16_4758[13]));
-	arr_i16_4758[0] -= var_i16_68a;
-	arr_i16_4758[1] -= var_i16_68c;
-	sunMapMoveSelected();
+	arr_i16_4758[0] -= gridX;
+	arr_i16_4758[1] -= gridY;
+	sunMapMoveSelected(gridX, gridY);
 	_toolbox->FrameRect(Common::Rect(arr_i16_4758[12], arr_i16_4758[11], arr_i16_4758[14], arr_i16_4758[13]));
 	sunMapDropSelected();
 	sunMapCheckIfSolved();
@@ -158,27 +159,27 @@ void FoolGame::sunMapOnClick() {
 	_menuDisabled = false;
 }
 
-void FoolGame::sunMapDragSelect() {
+void FoolGame::sunMapDragSelect(int16 &gridX, int16 &gridY) {
 	// 137:0598
 	do {
 		getNextEvent(4);
-		getGridFromMouse(var_i16_68a, var_i16_68c);
-		sub_128_342(var_i16_68a, var_i16_68c);
-		if (var_i16_68a >= arr_i16_4758[0]) {
+		getGridFromMouse(gridX, gridY);
+		clampToGrid(gridX, gridY);
+		if (gridX >= arr_i16_4758[0]) {
 			arr_i16_4758[2] = arr_i16_4758[0];
-			arr_i16_4758[3] = var_i16_68a;
+			arr_i16_4758[3] = gridX;
 		} else {
 		// 137:061a
-			arr_i16_4758[2] = var_i16_68a;
+			arr_i16_4758[2] = gridX;
 			arr_i16_4758[3] = arr_i16_4758[0];
 		}
 		// 137:064a
-		if (var_i16_68c >= arr_i16_4758[1]) {
+		if (gridY >= arr_i16_4758[1]) {
 			arr_i16_4758[6] = arr_i16_4758[1];
-			arr_i16_4758[7] = var_i16_68c;
+			arr_i16_4758[7] = gridY;
 		} else {
 			// 137:069e
-			arr_i16_4758[6] = var_i16_68c;
+			arr_i16_4758[6] = gridY;
 			arr_i16_4758[7] = arr_i16_4758[1];
 		}
 		// 137:06ce
@@ -195,28 +196,28 @@ void FoolGame::sunMapDragSelect() {
 	// 137:087e
 }
 
-void FoolGame::sunMapMoveSelected() {
+void FoolGame::sunMapMoveSelected(int16 &gridX, int16 &gridY) {
 	// 137:0880
 	do {
 		getNextEvent(2);
-		getGridFromMouse(var_i16_68a, var_i16_68c);
-		sub_128_342(var_i16_68a, var_i16_68c);
+		getGridFromMouse(gridX, gridY);
+		clampToGrid(gridX, gridY);
 		if (arr_i16_4758[0] >= 0) {
-			arr_i16_4758[4] = var_i16_68a;
-			arr_i16_4758[5] = var_i16_68a + arr_i16_4758[0];
+			arr_i16_4758[4] = gridX;
+			arr_i16_4758[5] = gridX + arr_i16_4758[0];
 		} else {
 			// 137:0900
-			arr_i16_4758[4] = var_i16_68a + arr_i16_4758[0];
-			arr_i16_4758[5] = var_i16_68a;
+			arr_i16_4758[4] = gridX + arr_i16_4758[0];
+			arr_i16_4758[5] = gridX;
 		}
 		// 137:093c
 		if (arr_i16_4758[1] >= 0) {
-			arr_i16_4758[8] = var_i16_68c;
-			arr_i16_4758[9] = var_i16_68c + arr_i16_4758[1];
+			arr_i16_4758[8] = gridY;
+			arr_i16_4758[9] = gridY + arr_i16_4758[1];
 		} else {
 			// 137:098e
-			arr_i16_4758[8] = var_i16_68c + arr_i16_4758[1];
-			arr_i16_4758[9] = var_i16_68c;
+			arr_i16_4758[8] = gridY + arr_i16_4758[1];
+			arr_i16_4758[9] = gridY;
 		}
 		// 137:09ca
 		if (arr_i16_4758[4] < 1) {
@@ -337,16 +338,16 @@ void FoolGame::sunMapCheckIfSolved() {
 	}
 }
 
-void FoolGame::sunMapRevealPiece() {
+void FoolGame::sunMapRevealPiece(int16 &gridX, int16 &gridY) {
 	// 137:131a
-	_puzzleFlags[_sunMapTileID[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]]] ^= kFlagMapTile;
-	arr_i32_192c0[_sunMapTileID[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]]] = _sunMapTilePic[_sunMapTileID[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]]];
+	_puzzleFlags[_sunMapTileID[arr_i16_2f38[gridX*32 + gridY]]] ^= kFlagMapTile;
+	arr_i32_192c0[_sunMapTileID[arr_i16_2f38[gridX*32 + gridY]]] = _sunMapTilePic[_sunMapTileID[arr_i16_2f38[gridX*32 + gridY]]];
 	// 137:142c
 	// unrolled loop
-	arr_i16_4758[0] = _screenGrid[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]].top;
-	arr_i16_4758[1] = _screenGrid[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]].left;
-	arr_i16_4758[2] = _screenGrid[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]].bottom;
-	arr_i16_4758[3] = _screenGrid[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]].right;
+	arr_i16_4758[0] = _screenGrid[arr_i16_2f38[gridX*32 + gridY]].top;
+	arr_i16_4758[1] = _screenGrid[arr_i16_2f38[gridX*32 + gridY]].left;
+	arr_i16_4758[2] = _screenGrid[arr_i16_2f38[gridX*32 + gridY]].bottom;
+	arr_i16_4758[3] = _screenGrid[arr_i16_2f38[gridX*32 + gridY]].right;
 	// 137:1490
 	for (int16 i = 0; i <= 0xf; i++) {
 		arr_i16_4758[0] += i;
@@ -363,9 +364,9 @@ void FoolGame::sunMapRevealPiece() {
 	}
 	// 137:1550
 	_zbasic->picture(
-		_screenGrid[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]].left,
-		_screenGrid[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]].top,
-		arr_i32_192c0[_sunMapTileID[arr_i16_2f38[var_i16_68a*32+var_i16_68c]]]
+		_screenGrid[arr_i16_2f38[gridX*32 + gridY]].left,
+		_screenGrid[arr_i16_2f38[gridX*32 + gridY]].top,
+		arr_i32_192c0[_sunMapTileID[arr_i16_2f38[gridX*32+gridY]]]
 	);
 	waitForMouseUp();
 	sunMapCheckIfSolved();

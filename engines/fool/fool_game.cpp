@@ -477,22 +477,20 @@ void FoolGame::getGridFromMouse(int16 &gridX, int16 &gridY) {
 	gridY = (_event.where.y - _gridInfo.yOrigin) / (_gridInfo.yOuterSpan);
 }
 
-void FoolGame::sub_128_342(int16 unk2, int16 unk1) {
+void FoolGame::clampToGrid(int16 &gridX, int16 &gridY) {
 	// 128:0342
-	var_i16_68c = unk1;
-	var_i16_68a = unk2;
-	if (var_i16_68a < 1) {
-		var_i16_68a = 1;
+	if (gridX < 1) {
+		gridX = 1;
 	}
 	// 128:035c
-	if (var_i16_68a > _gridInfo.xCount) {
-		var_i16_68a = _gridInfo.xCount;
+	if (gridX > _gridInfo.xCount) {
+		gridX = _gridInfo.xCount;
 	}
-	if (var_i16_68c < 1) {
-		var_i16_68c = 1;
+	if (gridY < 1) {
+		gridY = 1;
 	}
-	if (var_i16_68c > _gridInfo.yCount) {
-		var_i16_68c = _gridInfo.yCount;
+	if (gridY > _gridInfo.yCount) {
+		gridY = _gridInfo.yCount;
 	}
 }
 
@@ -1647,7 +1645,6 @@ void FoolGame::menuSetup() {
 	_storyCurrentChapter = 0;
 	_stateFlags = kStateNull;
 	var_i16_484 = 0;
-	var_i16_68c = 3;
 	// render chapter menu headings
 	for (int j = 3; j <= 7; j++) {
 		var_str_384 = Common::U32String("-") + _zbasic->chr(0x7d+j) + Common::U32String("-"); // was: str(37)
@@ -3052,14 +3049,8 @@ void FoolGame::sub_129_068() {
 	menuLoadingMessage(40);
 
 	// load sun's map tiles
-	//byte fakePal[768];
-	//Common::fill(fakePal, fakePal+3, 0xff);
-	//Common::fill(fakePal+3, fakePal+768, 0x00);
-
 	for (int i = 1; i <= 0x53; i++) {
 		_sunMapTilePic[i] = _toolbox->GetPicture(i);
-		//_sunMapTilePic[i]->getSurface()->debugPrint(0, 0, 0, 0, 0, -1, 160, fakePal);
-
 		_toolbox->DetachResource(_sunMapTilePic[i]);
 	}
 	// 129:097c
@@ -3169,7 +3160,6 @@ void FoolGame::sub_129_068() {
 	// 129:0d3c
 	// story text
 	var_i16_103c = puzzlesReadShort();
-	var_i16_68a = 1;
 	Common::fill(_pageLineFace, _pageLineFace + 1301, 0);
 	Common::fill(_pageLineBreak, _pageLineBreak + 1301, 0);
 	for (int i = 1; i <= var_i16_103c; i++) {
@@ -3407,19 +3397,8 @@ void FoolGame::metapuzzleComplete() {
 	_modalText[6] = Common::U32String("Okay");
 	showChoiceModal(kFontFool, 5, 1, false, true);
 
-	//if (!_screenOversized) {
-	//	_toolbox->ClearMenuBar();
-	//	_toolbox->DrawMenuBar();
-	//}
-	//sub_128_1f1e();
-	//toggleMouseCursor(true);
-
 	// 144:03e2
 	// write the finale file to the disk. we don't need to do this
-	//if (_saveFileName.empty()) {
-	//	sub_144_5ca();
-	//}
-	//sub_144_406();
 
 	// kick back to the start of the story
 	clearStateBits(kStateMetapuzzleComplete);

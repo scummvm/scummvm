@@ -55,12 +55,12 @@ void FoolGame::revealRun() {
 		_revealPoly[i] = _toolbox->OpenPoly();
 		// 134:010e
 		for (int j = 5; j <= var_i16_103a - 1; j += 2) {
-			var_i16_484 = puzzlesReadShort();
-			var_i16_7e4 = puzzlesReadShort();
+			int16 posY  = puzzlesReadShort();
+			int16 posX = puzzlesReadShort();
 			if (j == 5) {
-				_toolbox->MoveTo(var_i16_7e4, var_i16_484 + 0xf);
+				_toolbox->MoveTo(posX, posY + 0xf);
 			} else {
-				_toolbox->LineTo(var_i16_7e4, var_i16_484 + 0xf);
+				_toolbox->LineTo(posX, posY + 0xf);
 			}
 			// 134:015c
 		}

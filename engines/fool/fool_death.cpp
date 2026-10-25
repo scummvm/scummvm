@@ -135,28 +135,28 @@ void FoolGame::deathRun() {
 void FoolGame::deathMoveBlackEye() {
 	// 141:03ca
 	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
-	var_i16_68a = _event.where.x - 0xc - _deathBlackEye.left;
-	var_i16_68c = _event.where.y - 8 - _deathBlackEye.top;
+	int16 posX = _event.where.x - 0xc - _deathBlackEye.left;
+	int16 posY = _event.where.y - 8 - _deathBlackEye.top;
 	// 141:0452
-	if (var_i16_68c < -4) {
-		var_i16_68c = -4;
+	if (posY < -4) {
+		posY = -4;
 	}
-	if (var_i16_68c > 4) {
-		var_i16_68c = 4;
+	if (posY > 4) {
+		posY = 4;
 	}
-	if (var_i16_68a < -6) {
-		var_i16_68a = -6;
+	if (posX < -6) {
+		posX = -6;
 	}
-	if (var_i16_68a > 6) {
-		var_i16_68a = 6;
+	if (posX > 6) {
+		posX = 6;
 	}
 	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
 	// 141:04ce
 	Common::Rect newPos; // arr_rect_1ec0
-	newPos.top = _deathBlackEye.top + var_i16_68c;
-	newPos.left = _deathBlackEye.left + var_i16_68a;
-	newPos.bottom = _deathBlackEye.bottom + var_i16_68c;
-	newPos.right = _deathBlackEye.right + var_i16_68a;
+	newPos.top = _deathBlackEye.top + posY;
+	newPos.left = _deathBlackEye.left + posX;
+	newPos.bottom = _deathBlackEye.bottom + posY;
+	newPos.right = _deathBlackEye.right + posX;
 
 	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
 	// 141:05a2

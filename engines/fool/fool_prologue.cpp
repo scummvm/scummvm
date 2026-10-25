@@ -94,7 +94,6 @@ void FoolPrologue::setup(bool finale, const BitMap &prevWindow) {
 		_cardSlices[i]->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	}
 	for (int i = 0; i < 12; i++) {
-		//_screenPages[i] = &arr_i32_b54[SCREEN_PAGE_SIZE*i];
 		_screenPages[i] = BitMap(new Graphics::ManagedSurface());
 		_screenPages[i]->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	}
@@ -115,9 +114,6 @@ void FoolPrologue::setup(bool finale, const BitMap &prevWindow) {
 	_patterns[4] = { { 0x88, 0x00, 0x22, 0x00, 0x88, 0x00, 0x22, 0x00 } };
 
 	// 128:017a
-	//var_str_76 = _zbasic->str(0);
-	//var_str_76 = _zbasic->str(1);
-	//var_str_76 = _zbasic->str(2);
 
 	// fill graphics pages with white
 	for (int16 i = 0; i < 12; i++) {
@@ -502,29 +498,6 @@ void FoolPrologue::onDiskEvent() {
 	//_zbasic->unk11(var_i16_1be);
 }
 
-
-// Sources:
-// QuickDraw types, Inside Macintosh I-201
-// QuickDraw global list, Inside Macintosh I-162
-// Memory organization: Inside Macintosh II-19
-
-// QuickDraw globals; offset below the A5 address.
-// GrafPtr thePort = 0x00
-// Pattern white = 0x04
-// Pattern black = 0x0c
-// Pattern gray = 0x14
-// Pattern ltGray = 0x1c
-// Pattern dkGray = 0x24
-// Arrow cursor = 0x2c
-// - Bits16 cursor.data = 0x2c
-// - Bits16 cursor.mask = 0x4c
-// - Point cursor.hotSpot = 0x6c
-// BitMap screenBits = 0x70
-// - Ptr screenBits.baseAddr = 0x70
-// - INTEGER screenBits.rowBytes = 0x74
-// - Rect screenBits.bounds = 0x76
-// LONGINT randSeed = 0x7e
-
 void FoolPrologue::setupWindow() {
 	// 129:0004
 	// get the screen width and height from QuickDraw
@@ -625,53 +598,15 @@ void FoolPrologue::setupWindow() {
 
 	} else {
 		// 129:04a0
-		// this next blob of code is for determining whether to
+		// originally there was code for determining whether to
 		// open the prologue or the finale.
 		// both are in the same EXE, however the finale is accessed
 		// by opening a file with the right associated application code
 		// that contains the words "And now it's time to show the finale of the Fool's Errand" and a sequence of numbers.
+
 		// we don't need to worry about files as we add a start trigger
 		// in the game's menu.
-		/*
-		//var_i16_180 = 1;
-		_mode = 1;
-		// 180 == number, possibly file number
-		// 1c4 == string
-		// 2c4 == unused
-		// 2c8 == volume number?
-		var_i16_176 = _zbasic->finderInfo(var_i16_180, var_i16_1c4, _tickMarkerc4, var_i16_2c8);
-		if (Common::U32String("") != var_i16_1c4) {
-			// 129:04de
-			// "and now it is time to show the finale" message
-			var_str_76 = _zbasic->str(12);
 
-			for (int i = 1; i <= 0xa; i++) {
-				var_str_76 += _zbasic->chr(i);
-			}
-
-			// 129:0522
-			var_i16_2ca = var_str_76.size();
-			var_i16_2cc = 0;
-			// 129:0534
-			// what is this???
-			// 0x0534: LEA - [0x0764],A0
-			// 0x0538: MOVE.L - A0,-0x8ee(A5)
-			// 0x053c: SF - 0x8,D0
-			_zbasic->openR(1, var_i16_1c4, 0x400, var_i16_2c8);
-
-			Handle payload = _zbasic->readFile(1, var_i16_2ca);
-			var_i16_2ce = Common::U32String((char *)payload->data(), var_i16_2ca, Common::kMacRoman);
-			_zbasic->close(1);
-			// 0x0570: CLR.L - -0x8ee(A5)
-			// 129:0582
-			if ((var_i16_2ce == var_str_76) &&
-				var_i16_2cc == 0) {
-				_mode = 2;
-			} else {
-				_mode = 0;
-			}
-		}
-		*/
 		// 129:05a6
 		if (testColour.red + testColour.blue + testColour.green != 0) {
 			_toolbox->InitCursor();
@@ -717,7 +652,6 @@ void FoolPrologue::prologueRun() {
 	_prologueLoading = 5;
 	_prologuePicIndex = 0;
 	prologueDrawLoadingMsg();
-	//var_i16_18e = SCREEN_HEIGHT;
 	// fill a buffer with random screen y-positions, to use for the scanline transition
 	shuffleScanlines();
 
@@ -1132,9 +1066,6 @@ void FoolPrologue::prologueRun() {
 
 	zoomClose(1, Graphics::MacToolbox::kPatCopy);
 	// 130:0ce6
-	// JMP 1002
-	// _zbasic->pushOldCodeResource(0x82);
-	//finaleRun();
 }
 
 void FoolPrologue::prologueBufferNextPicture() {

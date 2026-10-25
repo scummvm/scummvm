@@ -148,8 +148,10 @@ void FoolGame::jigsawRun() {
 
 void FoolGame::jigsawOnClick() {
 	// 132:0518
-	getGridFromMouse(var_i16_68a, var_i16_68c);
-	if ((var_i16_68a < 1) || ((var_i16_68a - (_gridInfo.xCount)) > 0) || (var_i16_68c < 1) || ((var_i16_68c - (_gridInfo.yCount)) > 0)) {
+	int16 gridX = 0;
+	int16 gridY = 0;
+	getGridFromMouse(gridX, gridY);
+	if ((gridX < 1) || ((gridX - (_gridInfo.xCount)) > 0) || (gridY < 1) || ((gridY - (_gridInfo.yCount)) > 0)) {
 		return;
 	}
 	// 132:059c
@@ -159,20 +161,20 @@ void FoolGame::jigsawOnClick() {
 	_toolbox->PenSize(3, 3);
 	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	// 132:05c4
-	arr_i16_4758[0] = var_i16_68a;
-	arr_i16_4758[1] = var_i16_68c;
+	arr_i16_4758[0] = gridX;
+	arr_i16_4758[1] = gridY;
 
 	// change select area while mouse button held down
-	jigsawDragSelect();
+	jigsawDragSelect(gridX, gridY);
 	// leave an XOR outline on the page for the selected block
 	Common::Rect temp(arr_i16_4758[12], arr_i16_4758[11], arr_i16_4758[14], arr_i16_4758[13]);
 	_toolbox->FrameRect(temp);
-	arr_i16_4758[0] -= var_i16_68a;
-	arr_i16_4758[1] -= var_i16_68c;
+	arr_i16_4758[0] -= gridX;
+	arr_i16_4758[1] -= gridY;
 
 	// 132:0642
 	// move select area to new target
-	jigsawMoveSelected();
+	jigsawMoveSelected(gridX, gridY);
 	// remove XOR outline
 	temp = Common::Rect(arr_i16_4758[12], arr_i16_4758[11], arr_i16_4758[14], arr_i16_4758[13]);
 	_toolbox->FrameRect(temp);
@@ -184,27 +186,27 @@ void FoolGame::jigsawOnClick() {
 	_menuDisabled = false;
 }
 
-void FoolGame::jigsawDragSelect() {
+void FoolGame::jigsawDragSelect(int16 &gridX, int16 &gridY) {
 	// 132:067a
 	// change select area while mouse button held down
 	do {
 		getNextEvent(4);
-		getGridFromMouse(var_i16_68a, var_i16_68c);
-		sub_128_342(var_i16_68a, var_i16_68c);
-		if (var_i16_68a >= arr_i16_4758[0]) {
+		getGridFromMouse(gridX, gridY);
+		clampToGrid(gridX, gridY);
+		if (gridX >= arr_i16_4758[0]) {
 			arr_i16_4758[2] = arr_i16_4758[0];
-			arr_i16_4758[3] = var_i16_68a;
+			arr_i16_4758[3] = gridX;
 		} else {
 			// 132:06fc
-			arr_i16_4758[2] = var_i16_68a;
+			arr_i16_4758[2] = gridX;
 			arr_i16_4758[3] = arr_i16_4758[0];
 		}
 		// 132:072c
-		if (var_i16_68c >= arr_i16_4758[1]) {
+		if (gridY >= arr_i16_4758[1]) {
 			arr_i16_4758[6] = arr_i16_4758[1];
-			arr_i16_4758[7] = var_i16_68c;
+			arr_i16_4758[7] = gridY;
 		} else {
-			arr_i16_4758[6] = var_i16_68c;
+			arr_i16_4758[6] = gridY;
 			arr_i16_4758[7] = arr_i16_4758[1];
 		}
 		// 132:07b0
@@ -222,29 +224,29 @@ void FoolGame::jigsawDragSelect() {
 	} while (_event.what != Graphics::MacToolbox::kMouseUp);
 }
 
-void FoolGame::jigsawMoveSelected() {
+void FoolGame::jigsawMoveSelected(int16 &gridX, int16 &gridY) {
 	// 132:0962
 	// move select area to new target
 	do {
 		getNextEvent(2);
-		getGridFromMouse(var_i16_68a, var_i16_68c);
-		sub_128_342(var_i16_68a, var_i16_68c);
+		getGridFromMouse(gridX, gridY);
+		clampToGrid(gridX, gridY);
 		if (arr_i16_4758[0] >= 0) {
-			arr_i16_4758[4] = var_i16_68a;
-			arr_i16_4758[5] = var_i16_68a + arr_i16_4758[0];
+			arr_i16_4758[4] = gridX;
+			arr_i16_4758[5] = gridX + arr_i16_4758[0];
 		} else {
 		// 132:09e2
-			arr_i16_4758[4] = var_i16_68a + arr_i16_4758[0];
-			arr_i16_4758[5] = var_i16_68a;
+			arr_i16_4758[4] = gridX + arr_i16_4758[0];
+			arr_i16_4758[5] = gridX;
 		}
 		// 132:0a1e
 		if (arr_i16_4758[1] >= 0) {
-			arr_i16_4758[8] = var_i16_68c;
-			arr_i16_4758[9] = var_i16_68c + arr_i16_4758[1];
+			arr_i16_4758[8] = gridY;
+			arr_i16_4758[9] = gridY + arr_i16_4758[1];
 		} else {
 			// 132:0a70
-			arr_i16_4758[8] = var_i16_68c + arr_i16_4758[1];
-			arr_i16_4758[9] = var_i16_68c;
+			arr_i16_4758[8] = gridY + arr_i16_4758[1];
+			arr_i16_4758[9] = gridY;
 		}
 		// 132:0aac
 		if (arr_i16_4758[4] < 1) {

@@ -130,7 +130,6 @@ void FoolGame::highPriestessRun() {
 		sub_128_1ef8();
 	}
 	// 140:02b4
-	var_i16_68a = 1;
 	for (int16 i = 1; i <= 0x155; i++) {
 		_zbasic->get(1, i, SCREEN_WIDTH, i + 1, arr_bmp_fa3c);
 		_zbasic->put(_zbasic->rndInt(0x14) - 0xa, i, arr_bmp_fa3c, Graphics::MacToolbox::kSrcCopy);
@@ -149,17 +148,17 @@ void FoolGame::highPriestessRun() {
 			delayFromMarker(1);
 		}
 		// 140:037e
-		var_i16_484 = 0x96;
+		int16 shifter = 0x96;
 
 		for (int16 i = 0x37; i <= 0x122; i++) {
 			if (i < 0x69) {
-				var_i16_484 -= 3;
+				shifter -= 3;
 			}
 			if (i > 0xf0) {
-				var_i16_484 += 3;
+				shifter += 3;
 			}
-			_toolbox->MoveTo(var_i16_484 + 0x5f - _zbasic->rndInt(0x32), i);
-			_toolbox->LineTo(0x1a1 - var_i16_484 + _zbasic->rndInt(0x32), i);
+			_toolbox->MoveTo(shifter + 0x5f - _zbasic->rndInt(0x32), i);
+			_toolbox->LineTo(0x1a1 - shifter + _zbasic->rndInt(0x32), i);
 			if (i % 2 == 0) {
 				_toolbox->Delay(0);
 			}
@@ -355,13 +354,13 @@ void FoolGame::sub_140_c4c() {
 			_activePuzzleSolved = true;
 			return;
 		}
-		var_i16_484 = arr_i16_1eb8[0] + 1;
-		_toolbox->FillRoundRect(_screenGrid[var_i16_484], 0x14, 0x14, _patterns[2]);
+		int16 gridIndex = arr_i16_1eb8[0] + 1;
+		_toolbox->FillRoundRect(_screenGrid[gridIndex], 0x14, 0x14, _patterns[2]);
 		zoomRect(
-			_screenGrid[var_i16_484].top,
-			_screenGrid[var_i16_484].left,
-			_screenGrid[var_i16_484].bottom,
-			_screenGrid[var_i16_484].right,
+			_screenGrid[gridIndex].top,
+			_screenGrid[gridIndex].left,
+			_screenGrid[gridIndex].bottom,
+			_screenGrid[gridIndex].right,
 			0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, Graphics::MacToolbox::kPatXor, 0xd
 		);
 		arr_i16_1eb8[1] = 0;
@@ -897,6 +896,7 @@ void FoolGame::thothKeyLast() {
 	arr_i16_1eb8[1] = -1;
 	var_i16_1de6 = arr_i16_3b38[_hermitPathStage];
 	debugC(5, kDebugLoading, "thothKeyLast: 1de6: %d, target: %d", var_i16_1de6, (arr_i16_3b38[0x20 + _hermitPathStage] + 1));
+
 	// JMP 0x228c
 	while (((_stateFlags & kStateReturn) == 0) && !_activePuzzleSolved) {
 		// 140:20c2
@@ -908,14 +908,6 @@ void FoolGame::thothKeyLast() {
 					getNextEvent(-1);
 					_toolbox->FillRect(_screenGrid[arr_i16_3738[hermitPathStartIndex]], _patterns[var_i16_2338]);
 					hermitPathStartIndex++;
-					// we're updating the screen in the event handler, this has no effect
-					/*if (_hermitPathStage == 5) {
-						if (hermitPathStartIndex % 4 == 0)
-							_toolbox->Delay(0);
-					} else {
-						if (hermitPathStartIndex % 8 == 0)
-							_toolbox->Delay(0);
-					}*/
 				// 140:2168
 				} while (!((_event.what == 1) || (hermitPathStartIndex > hermitPathEndIndex) || ((_stateFlags & kStateReturn) != 0)));
 				// 140:219e
@@ -930,11 +922,11 @@ void FoolGame::thothKeyLast() {
 				copyScreen(1, arr_bmp_b3ec);
 			} else { // we're in the high priestess, show nothing but random filled squares
 				// 140:21fe
-				var_i16_484 = _zbasic->rndInt(0x4e) + 2;
-				var_i16_68a = _zbasic->rndInt(0x14) - 1;
-				var_i16_68c = _zbasic->rndInt(0xe) - 1;
+				int16 patternID = _zbasic->rndInt(0x4e) + 2;
+				int16 gridX = _zbasic->rndInt(0x14) - 1;
+				int16 gridY = _zbasic->rndInt(0xe) - 1;
 				// 140:2222
-				_toolbox->FillRect(_screenGrid[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]], _patterns[var_i16_484]);
+				_toolbox->FillRect(_screenGrid[arr_i16_2f38[gridX*32 + gridY]], _patterns[patternID]);
 				getNextEvent(-1);
 			}
 			if (_event.what == 1) {
@@ -950,13 +942,15 @@ void FoolGame::thothKeyLast() {
 
 void FoolGame::thothKeyLastOnClick() {
 	// 140:22b8
+	int16 gridX = 0;
+	int16 gridY = 0;
 	while (((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) && (var_i16_1de6 != (arr_i16_3b38[0x20 + _hermitPathStage] + 1))) {
 		// 140:22bc
 		getNextEvent(-1); // was: 0
-		getGridFromMouse(var_i16_68a, var_i16_68c);
-		if ((var_i16_68a >= 0) && (var_i16_68c >= 0) && (var_i16_68a <= 0x13) && (var_i16_68c <= 0xd)) {
+		getGridFromMouse(gridX, gridY);
+		if ((gridX >= 0) && (gridY >= 0) && (gridX <= 0x13) && (gridY <= 0xd)) {
 			// 140:2316
-			arr_i16_1eb8[0] = arr_i16_2f38[var_i16_68a*32 + var_i16_68c];
+			arr_i16_1eb8[0] = arr_i16_2f38[gridX*32 + gridY];
 			if (arr_i16_1eb8[0] != arr_i16_1eb8[1]) {
 				// 140:2372
 				if (arr_i16_1eb8[0] != arr_i16_3738[var_i16_1de6]) {
@@ -984,19 +978,20 @@ void FoolGame::thothKeyLastOnClick() {
 void FoolGame::thothBadSelect() {
 	// 140:24ae
 	playTone(0x14, 0x64, 0x0);
+	int16 patternID = 0;
 	while ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) {
 		// 140:24c4
 		getNextEvent(-1);
-		var_i16_484 = _zbasic->rndInt(0x50);
-		_toolbox->FillRect(_screenGrid[arr_i16_1eb8[0]], _patterns[var_i16_484]);
+		patternID = _zbasic->rndInt(0x50);
+		_toolbox->FillRect(_screenGrid[arr_i16_1eb8[0]], _patterns[patternID]);
 	}
 	// 140:2520
 	if (_activePuzzle != 0x34) {
 		copyScreen(1, arr_bmp_b3ec);
 	} else {
 		for (int16 i = var_i16_1de6; i >= arr_i16_3b38[_hermitPathStage]; i--) {
-			var_i16_484 = _zbasic->rndInt(0x4e) + 2;
-			_toolbox->FillRect(_screenGrid[arr_i16_3738[i]], _patterns[var_i16_484]);
+			patternID = _zbasic->rndInt(0x4e) + 2;
+			_toolbox->FillRect(_screenGrid[arr_i16_3738[i]], _patterns[patternID]);
 		}
 	}
 	// 140:25b4
@@ -1212,19 +1207,19 @@ void FoolGame::thothKeyLastSetup() {
 	} else {
 		// 140:2e7a
 		for (int16 k = 0; k <= 0x13; k++) {
-			var_i16_68a = k;
+			int16 index = k;
 			for (int16 j = 0; j <= 0xd; j++) {
 				// 140:2e8c
-				var_i16_484 = _zbasic->rndInt(0x4e) + 2;
+				int16 patternID = _zbasic->rndInt(0x4e) + 2;
 				_toolbox->FillRect(
-					_screenGrid[arr_i16_2f38[arr_i16_5bbc[var_i16_68a]*32 + arr_i16_5cbc[j]]],
-					_patterns[var_i16_484]
+					_screenGrid[arr_i16_2f38[arr_i16_5bbc[index]*32 + arr_i16_5cbc[j]]],
+					_patterns[patternID]
 				);
 				if (((j + k*0xd) % 6) == 0)
 					_toolbox->Delay(0);
-				var_i16_68a++;
-				if (var_i16_68a > 0x13) {
-					var_i16_68a = 0;
+				index++;
+				if (index > 0x13) {
+					index = 0;
 				}
 				// 140:2f12
 			}
@@ -1320,9 +1315,9 @@ void FoolGame::sub_140_32ac() {
 void FoolGame::thothAdjustPuzzleData() {
 	// 140:3372
 	// change puzzle data pointer to use high priestess data
-	var_i16_484 = (_puzzleDataOffsets[0x34] - 1) / 1000;
-	var_i16_7e4 = (_puzzleDataOffsets[0x34] - 1) % 1000;
-	_zbasic->record(1, var_i16_484, var_i16_7e4);
+	int16 recordIndex = (_puzzleDataOffsets[0x34] - 1) / 1000;
+	int16 recordOffset = (_puzzleDataOffsets[0x34] - 1) % 1000;
+	_zbasic->record(1, recordIndex, recordOffset);
 	//_puzzleDataBuffer = arr_bytes_109dc;
 	_puzzleDataBuffer = _zbasic->readFile(1, _puzzleDataOffsets[0x35] - _puzzleDataOffsets[0x34]);
 	_puzzleDataPtr = 0;

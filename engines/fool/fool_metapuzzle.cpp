@@ -43,11 +43,11 @@ void FoolGame::metapuzzleRun() {
 		fillRect(0x127, 0x69, 0x138, 0x190, 0);
 		fillRect(1, Graphics::MacToolbox::kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 		fillRect(0x14, 0x67, SCREEN_HEIGHT, 0x1b1, 2);
-		var_i16_484 = 0;
+		int16 picIndex = 0;
 		for (int16 j = 0x1a; j <= 0x132; j += 0x23) {
 			for (int16 i = 0x6e; i <= 0x186; i += 0x23) {
-				var_i16_484++;
-				_zbasic->picture(i, j, _sunMapTilePic[var_i16_484]);
+				picIndex++;
+				_zbasic->picture(i, j, _sunMapTilePic[picIndex]);
 			}
 		}
 	}
@@ -186,11 +186,11 @@ void FoolGame::metapuzzleSetupMenu() {
 	_zbasic->menu(8, 0, 1, _zbasic->str(OFF(0))); // the sun's map
 	_zbasic->menu(8, 1, 1, _zbasic->str(OFF(1))); // return to scroll
 	_zbasic->menu(8, 2, 0, _zbasic->str(OFF(2))); // -
-	var_i16_484 = 2;
+	int16 menuIndex = 2;
 	for (int16 i = _puzzleMenuInstructions[0x30]; i <= _puzzleMenuInstructions[0x30+1]; i++) {
-		var_i16_484++;
+		menuIndex++;
 		var_str_384 = _zbasic->index(0, i) + _zbasic->str(OFF(3)); // '  '
-		_zbasic->menu(8, var_i16_484, 1, var_str_384);
+		_zbasic->menu(8, menuIndex, 1, var_str_384);
 	}
 }
 
@@ -208,8 +208,8 @@ void FoolGame::metapuzzleSecretCode() {
 	// 138:0550
 	var_i16_c00 = 1;
 	for (int16 i = 1; i <= 2; i++) {
-		var_i16_68c = _activePuzzle - 0x50;
-		zoomRect(arr_i16_4d20[var_i16_68c*4], arr_i16_4d20[var_i16_68c*4+1], arr_i16_4d20[var_i16_68c*4+2], arr_i16_4d20[var_i16_68c*4+3], 0x122, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, Graphics::MacToolbox::kPatXor, 0x1a);
+		int16 index = _activePuzzle - 0x50;
+		zoomRect(arr_i16_4d20[index*4], arr_i16_4d20[index*4+1], arr_i16_4d20[index*4+2], arr_i16_4d20[index*4+3], 0x122, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, Graphics::MacToolbox::kPatXor, 0x1a);
 	}
 	if (_activePuzzle == 0x58) {
 		_metapuzzleSecretGoal = _zbasic->str(OFF(4)); // treasure name
@@ -251,7 +251,6 @@ void FoolGame::metapuzzleSecretCode() {
 		// 138:0778
 		_metapuzzleSecretBuffer = _activePuzzleBuffer.decode(Common::kMacRoman);
 		_metapuzzleSecretCodeCount = 0;
-		var_i16_68a = 1;
 		for (int16 i = 1; i <= (int16)_metapuzzleSecretBuffer.size(); i++) {
 			if (_zbasic->midStr(_metapuzzleSecretBuffer, i, 1) != _zbasic->str(OFF(12))) { // ' '
 				_metapuzzleSecretCodeCount++;
@@ -389,9 +388,9 @@ void FoolGame::metapuzzleOnShift() {
 		getNextEvent(-1); // was: 0
 		if ((_event.where.x >= 0x6e) && (_event.where.y >= 0x1a) && (_event.where.x <= 0x1a8) && (_event.where.y <= SCREEN_HEIGHT)) {
 			// 138:0c04
-			var_i16_68a = (_event.where.x - 0x6e)/0x23;
-			var_i16_68c = (_event.where.y - 0x1a)/0x23;
-			var_i16_1888 = var_i16_68c * 9 + var_i16_68a + 1;
+			int16 gridX = MIN(MAX((_event.where.x - 0x6e)/0x23, 0), 8);
+			int16 gridY = MIN(MAX((_event.where.y - 0x1a)/0x23, 0), 8);
+			var_i16_1888 = gridY * 9 + gridX + 1;
 			_selectedMenuChapter = arr_i16_4c7c[var_i16_1888];
 			if (var_i16_200e != _selectedMenuChapter) {
 				if (var_i16_200e > 0) {
@@ -403,10 +402,10 @@ void FoolGame::metapuzzleOnShift() {
 					_toolbox->InvertRect(temp);
 				}
 				// 138:0c8c
-				arr_i16_1eb8[0] = 0x1a + var_i16_68c * 0x23;
-				arr_i16_1eb8[1] = 0x6e + var_i16_68a * 0x23;
-				arr_i16_1eb8[2] = 0x3d + var_i16_68c * 0x23;
-				arr_i16_1eb8[3] = 0x91 + var_i16_68a * 0x23;
+				arr_i16_1eb8[0] = 0x1a + gridY * 0x23;
+				arr_i16_1eb8[1] = 0x6e + gridX * 0x23;
+				arr_i16_1eb8[2] = 0x3d + gridY * 0x23;
+				arr_i16_1eb8[3] = 0x91 + gridX * 0x23;
 				Common::Rect temp;
 				temp.top = arr_i16_1eb8[0];
 				temp.left = arr_i16_1eb8[1];
