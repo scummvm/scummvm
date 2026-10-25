@@ -105,7 +105,7 @@ static FCLInstruction decodeFreescapeInstruction(const FCLOpcode &entry, const u
 			instruction.setSource(k8bitVariableScore);
 			instruction.setDestination(operands[0] | (operands[1] << 8) | (operands[2] << 16));
 		} else if (entry.opcode == 0x02 || entry.opcode == 0x13) {
-			instruction.setSource(entry.opcode == 0x02 ? k8bitVariableEnergy : k8bitVariableShield);
+			instruction.setSource(entry.opcode == 0x02 ? static_cast<uint8>(k8bitVariableEnergy) : k8bitVariableShield);
 			instruction.setDestination(int8(operands[0]));
 		} else {
 			instruction.setDestination(1);
