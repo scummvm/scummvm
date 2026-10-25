@@ -1750,7 +1750,12 @@ void Scene::synchronize(Common::Serializer &ser) {
 		g_nancy->_sound->stopAllSounds();
 
 		_streams.clear();
-		load(true);
+
+		// The scripts of a scene read the flags and what the scripts saved
+		// while the scene loads, so it waits until those are back
+		if (g_nancy->getGameType() < kGameTypeNancy19) {
+			load(true);
+		}
 	}
 
 	ser.syncAsUint16LE(_sceneState.pushedScene.sceneID);
@@ -1958,6 +1963,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 		if (_ndui) {
 			initUI();
 			_ndui->restoreState(((UIStateData *)getPuzzleData(UIStateData::getTag()))->changes);
+		}
+
+		if (g_nancy->getGameType() >= kGameTypeNancy19) {
+			load(true);
 		}
 
 		if (!_streams.isEmpty()) {
