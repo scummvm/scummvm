@@ -95,11 +95,24 @@ static const char *const kWindowsDemoFonts[] = {
 	"RA2VID/TALKFONT.NUT", "RA2VID/SMALFONT.NUT", "RA2VID/TITLFONT.NUT", nullptr
 };
 
+static const char *const kMacContainers[] = {
+	"Rebel Assault II Data 1", "Rebel Assault II Data 2", nullptr
+};
+
+static const char *const kMacDemoContainers[] = {
+	"Rebel Assault II Demo Data", nullptr
+};
+
 // Variants match detection_tables.h. Availability also limits passwords,
 // saved pilot progress and the unlock-all option.
 static const Rebel2Release kReleases[] = {
 	{
 		"", nullptr, "SYSTM/GAME.TRS", nullptr, nullptr,
+		{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
+		true, false, false, false, false, nullptr, 0, nullptr, nullptr
+	},
+	{
+		"Mac", kMacContainers, "SYSTM/GAME.TRS", nullptr, nullptr,
 		{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
 		true, false, false, false, false, nullptr, 0, nullptr, nullptr
 	},
@@ -145,7 +158,7 @@ static const Rebel2Release kReleases[] = {
 	{
 		// Macintosh v1.0's chapter-6 handler (PEF code section, 0x17fe8)
 		// also skips the shield attack in demo mode and uses 06END_B.
-		"Demo v1.0", "Rebel Assault II Demo Data", "SYSTM/GAME_E.TRS", nullptr, nullptr, { 6 },
+		"Demo v1.0", kMacDemoContainers, "SYSTM/GAME_E.TRS", nullptr, nullptr, { 6 },
 		false, true, true, true, false, kChapter6DemoDifficulty, ARRAYSIZE(kChapter6DemoDifficulty), nullptr, nullptr
 	}
 };

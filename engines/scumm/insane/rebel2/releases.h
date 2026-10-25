@@ -66,7 +66,7 @@ struct Rebel2Release {
 	enum { kNumLevels = 15, kFinale = 16 };
 
 	const char *variant;
-	const char *container;
+	const char *const *containers;
 	const char *strings;
 	// Null-terminated playlist for non-interactive demos.
 	const Rebel2DemoVideo *nonInteractiveVideos;
