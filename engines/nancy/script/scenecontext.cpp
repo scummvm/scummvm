@@ -333,8 +333,11 @@ bool SceneContext::receiveMessage(const Message &message, bool &wasTaken) {
 		return true;
 	}
 
+	// The records made this frame get messages as well, e.g. the managers of
+	// Nancy22, which the scripts of other scenes call on as soon as they load
 	bool hasReceiver = false;
-	const Common::Array<Record *> records = _records;
+	Common::Array<Record *> records = _records;
+	records.push_back(_newRecords);
 	for (Record *record : records) {
 		if (!record->hasMessagingName(message.target)) {
 			continue;
