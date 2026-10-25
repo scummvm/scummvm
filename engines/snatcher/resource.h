@@ -116,14 +116,8 @@ private:
 
 class FIO {
 public:
-	FIO(SnatcherEngine *vm, bool isBigEndian);
+	FIO(SnatcherEngine *vm);
 	~FIO();
-
-	enum EndianMode {
-		kPlatformEndianness = 0,
-		kForceLE,
-		kForceBE
-	};
 
 	SceneModule *loadModule(int index);
 	uint8 *fileData(int index, uint32 *fileSize);
@@ -131,15 +125,11 @@ public:
 	bool loadingCompleted();
 	Common::SeekableReadStream *readStream(int index);
 	Common::SeekableReadStream *readStream(const Common::Path &file);
-	Common::SeekableReadStreamEndian *readStreamEndian(int index, EndianMode em = kPlatformEndianness);
-	Common::SeekableReadStreamEndian *readStreamEndian(const Common::Path &file, EndianMode em = kPlatformEndianness);
-
 
 private:
 	Common::SearchSet _files;
 	SnatcherEngine *_vm;
 	uint32 _loadingTimer;
-	bool _bigEndianTarget;
 
 private:
 	static const char *_resFileList[97];
