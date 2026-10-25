@@ -69,6 +69,20 @@ struct PaletteColor {
 	}
 };
 
+class ScriptedCoordinateSpriteState {
+public:
+	ScriptedCoordinateSpriteState() : _coordinateOffset(0), _frameDelay(0), _tileAttributes(0) {
+	}
+
+	// Ghidra g_pScriptedSpriteCoordinateCursor at 0xFF08A6-0xFF08A9.
+	int32 _coordinateOffset;
+
+	// Ghidra g_bScriptedSpriteFrameDelay at 0xFF0ACE.
+	int8 _frameDelay;
+
+	// Ghidra g_wScriptedSpriteTileAttributes at 0xFF08A4-0xFF08A5.
+	uint16 _tileAttributes;
+};
 } // End of namespace Scooby
 
 #endif // SCOOBY_TYPES_H

@@ -34,7 +34,6 @@
 #include "scooby/movement/actor_movement_point.h"
 #include "scooby/rooms/room_object.h"
 #include "scooby/rooms/room_scene_data.h"
-#include "scooby/rooms/scripted_coordinate_sprite_state.h"
 #include "scooby/runtime/save_game_data.h"
 #include "scooby/input/controller_buttons.h"
 
