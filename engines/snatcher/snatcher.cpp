@@ -306,6 +306,7 @@ bool SnatcherEngine::start() {
 				++state.totalPlayTime;
 			}
 		}
+
 		if (_reset)
 			--_reset;
 
@@ -540,9 +541,11 @@ void SnatcherEngine::updateMainState(GameState &state) {
 
 	case 4:
 		// Reset
-		_cmdQueue->writeUInt16(0x02);
-		_cmdQueue->start();
-		_reset = 100;
+		if (_reset == 0) {
+			_cmdQueue->writeUInt16(0x02);
+			_cmdQueue->start();
+			_reset = 100;
+		}
 		break;
 
 	default:
