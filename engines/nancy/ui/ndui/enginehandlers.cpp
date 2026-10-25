@@ -217,7 +217,7 @@ void Manager::viewInventoryItem(int16 itemID) {
 // taken out to be looked at.
 void Manager::onItemStreamClicked(const InvButton &button) {
 	const int16 itemID = button.getItemID();
-	const Common::String streamName = "INVSTR_" + button.getName();
+	const Common::String streamName = InvButton::getStreamName(button.getName());
 	const Common::String &sceneName = button.getSceneName();
 
 	// On top of everything the scenes below draw
@@ -234,7 +234,7 @@ void Manager::onItemStreamClicked(const InvButton &button) {
 		const INVD *items = GetEngineData(INVD);
 		for (const INVD::Item &item : items->items) {
 			if (item.kind == InvButton::kItemView && item.id != itemID) {
-				NancySceneState.getStreams().end("INVSTR_" + item.name);
+				NancySceneState.getStreams().end(InvButton::getStreamName(item.name));
 			}
 		}
 
