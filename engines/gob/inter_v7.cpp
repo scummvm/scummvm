@@ -2360,14 +2360,14 @@ void Inter_v7::o7_startAdi4Application(OpGobParams &params) {
 		warning("o7_startAdi4Application: c = 0 case stub");
 	} else {
 		Common::String appliStkFile = "ADI" + appliAbbreviation + ".STK";
-		_vm->_dataIO->openArchive(appliStkFile, false);
+		_vm->_dataIO->openArchive(appliStkFile, true);
 
 		Common::String appliIntroTotFile = appliAbbreviation + "INTRO";
 		_vm->_draw->_colorOffset = 10;
 		_vm->_game->totSub(1, appliIntroTotFile);
 		_vm->_draw->_colorOffset = 0;
 
-		_vm->_dataIO->closeArchive(false);
+		_vm->_dataIO->closeArchive(true);
 	}
 
 	_adi4CurrentSectionInAppChildData = 0;
