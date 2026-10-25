@@ -210,7 +210,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 
 	// DOS gameInit(): Me.ang=Me.look=32; Me.xloc=4400; Me.yloc=4400.
 	// intro.c: Me.power[0..2]=POWER(256); armor=SUIT(0); weapons=SUIT(0).
-	memset(&_me, 0, sizeof(_me));
+	_me = {};
 	_me.xloc = 4400;
 	_me.yloc = 4400;
 	_me.xindex = _me.xloc >> 8;
@@ -851,7 +851,7 @@ void ColonyEngine::startNewGame() {
 
 	_randomSource.setSeed(Common::RandomSource::generateNewSeed());
 
-	memset(&_me, 0, sizeof(_me));
+	_me = {};
 	_me.xloc = 4400;
 	_me.yloc = 4400;
 	_me.xindex = _me.xloc >> 8;
