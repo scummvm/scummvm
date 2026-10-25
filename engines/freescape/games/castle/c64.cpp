@@ -485,7 +485,7 @@ void CastleEngine::loadAssetsC64FullGame() {
 	}
 
 	uint16 databaseSize = readCastleC64Uint16LE(uiData, kCastleC64DatabaseAddress + 1);
-	if (databaseSize < kCastleC64RuntimeAreaTableOffset || kCastleC64DatabaseAddress + databaseSize > uiData.size())
+	if (databaseSize < static_cast<uint16>(kCastleC64RuntimeAreaTableOffset) || static_cast<uint>(kCastleC64DatabaseAddress + databaseSize) > uiData.size())
 		error("Invalid Castle C64 database size");
 	Common::Array<byte> database(uiData.data() + kCastleC64DatabaseAddress, databaseSize);
 	CastleC64DatabaseReadStream databaseStream(database);

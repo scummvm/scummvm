@@ -56,7 +56,7 @@ void Kit8Engine::loadPresentationC64() {
 	_borderSurface.fillRect(_viewArea, 255);
 
 	uint16 font = READ_LE_UINT16(runner.data() + 0x1a7b - 0x0400);
-	if (font < 0xc400 || font + 64 * 8 > 0xc400 + characters.size())
+	if (font < 0xc400u || font + 64u * 8u > 0xc400u + characters.size())
 		error("Invalid 3D Construction Kit C64 font address");
 	for (uint chr = 32; chr < 128; ++chr) {
 		uint glyph = chr == 32 ? 0 : chr >= 65 ? chr - 64 : chr - 21;
