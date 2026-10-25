@@ -39,7 +39,7 @@ ZoombiniInteractiveRodMap::ZoombiniInteractiveRodMap(MohawkEngine_Zoombini *vm)
 	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
 	for (uint32 i = 0; i < ARRAYSIZE(_routeNameRects); i++)
 		_routeNameRects[i] = relInfo.getMapRouteLayoutAdjustment(i).apply(_routeNameRects[i]);
-	const ZmbReleaseInfo::LayoutAdjustment legendClickAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kMapLegendClickLayout);
+	const ZmbReleaseInfo::LayoutAdjustment legendClickAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapLegendClick);
 	for (Common::Rect &rect : _levelLegendClickRects)
 		rect = legendClickAdjustment.apply(rect);
 	// Clickable Pos & Rect
@@ -55,27 +55,27 @@ ZoombiniInteractiveRodMap::~ZoombiniInteractiveRodMap() {
 
 ZoombiniInteractiveRodMap::TextLayout ZoombiniInteractiveRodMap::createTextLayout(const ZmbReleaseInfo &relInfo) {
 	TextLayout layout;
-	const bool classicResArchives = usesMapArchive(relInfo);
-	if (classicResArchives) {
+	const ZmbReleaseInfo::MapArchiveKind archiveKind = relInfo.getMapArchiveKind();
+	if (archiveKind == ZmbReleaseInfo::MapArchiveKind::kMap) {
 		layout.stats.wrapLastJourneyRow = false;
 		layout.stats.practiceReturnInsts = true;
-		layout.stats.journeyLabelKeys[0] = ZoombiniText::kEuropeJourneyStatZoombiniIsle;
-		layout.stats.journeyLabelKeys[1] = ZoombiniText::kEuropeJourneyStatShelterRock;
-		layout.stats.journeyLabelKeys[2] = ZoombiniText::kEuropeJourneyStatShadeTree;
-		layout.stats.journeyLabelKeys[3] = ZoombiniText::kEuropeJourneyStatZoombiniton;
+		layout.stats.journeyLabelKeys[0] = ZoombiniText::kJourneyStatZoombiniIsle;
+		layout.stats.journeyLabelKeys[1] = ZoombiniText::kJourneyStatShelterRock;
+		layout.stats.journeyLabelKeys[2] = ZoombiniText::kJourneyStatShadeTree;
+		layout.stats.journeyLabelKeys[3] = ZoombiniText::kJourneyStatZoombiniton;
 	}
 
-	if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT)) {
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10, Common::PT_PRT)) {
 		layout.legend.rowWordWrap = true;
 		layout.stats.titleWordWrap = true;
 		layout.stats.descWordWrap = true;
 		layout.tooltip.wordWrap = true;
-	} else if (relInfo.isVariant(ZmbReleaseInfo::kJapanV10)) {
+	} else if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
 		layout.legend.rowWordWrap = true;
 		layout.stats.titleWordWrap = true;
 		layout.stats.descWordWrap = true;
 		layout.tooltip.wordWrap = true;
-	} else if (relInfo.isVariant(ZmbReleaseInfo::kTlcV20, Common::PL_POL)) {
+	} else if (relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20, Common::PL_POL)) {
 		// Polish labels wrap within the legend rows and stop before the statistics numeric column.
 		layout.legend.rowWordWrap = true;
 		layout.stats.titleWordWrap = true;
@@ -88,10 +88,6 @@ ZoombiniInteractiveRodMap::TextLayout ZoombiniInteractiveRodMap::createTextLayou
 	return layout;
 }
 
-bool ZoombiniInteractiveRodMap::usesMapArchive(const ZmbReleaseInfo &relInfo) {
-	return relInfo.isFamily(ZmbReleaseInfo::kEuropeV1) || relInfo.isDemo(ZmbReleaseInfo::kUsV11);
-}
-
 const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniInteractiveRodMap::getScriptSoundPriorityRanges() const {
 	static const ZoombiniPage::ScriptSoundPriorityRanges kRanges = {
 		{kSysResSoundRange20000_Base, kSysResSoundRange29999_Last}};
@@ -99,10 +95,14 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniInteractiveRodMap::getScr
 }
 
 void ZoombiniInteractiveRodMap::open() {
-	const char *mhkArchive = ZMB_MHK_RODMAP;
-	if (usesMapArchive(_vm->getRelInfo()))
-		mhkArchive = ZMB_MHK_MAP;
-	openArchive(mhkArchive);
+	switch (_vm->getRelInfo().getMapArchiveKind()) {
+	case ZmbReleaseInfo::MapArchiveKind::kMap:
+		openArchive(ZMB_MHK_MAP);
+		break;
+	case ZmbReleaseInfo::MapArchiveKind::kRodMap:
+		openArchive(ZMB_MHK_RODMAP);
+		break;
+	}
 }
 
 void ZoombiniInteractiveRodMap::setBackgroundBitmap() {
@@ -117,15 +117,36 @@ void ZoombiniInteractiveRodMap::initStates() {
 }
 
 int16 ZoombiniInteractiveRodMap::getHoverTooltipScrbId() const {
-	return usesMapArchive(_vm->getRelInfo()) ? kResScrbEuropePageNameHover1004 : kResScrbUsPageNameHover1005;
+	switch (_vm->getRelInfo().getMapArchiveKind()) {
+	case ZmbReleaseInfo::MapArchiveKind::kMap:
+		return kResScrbEuropePageNameHover1004;
+	case ZmbReleaseInfo::MapArchiveKind::kRodMap:
+		return kResScrbUsPageNameHover1005;
+	default:
+		error("RodMap: unknown archive kind");
+	}
 }
 
 int16 ZoombiniInteractiveRodMap::getOptionButtonScrbId() const {
-	return usesMapArchive(_vm->getRelInfo()) ? kResScrbEuropeMenuButton1005 : kResScrbUsMenuButton1006;
+	switch (_vm->getRelInfo().getMapArchiveKind()) {
+	case ZmbReleaseInfo::MapArchiveKind::kMap:
+		return kResScrbEuropeMenuButton1005;
+	case ZmbReleaseInfo::MapArchiveKind::kRodMap:
+		return kResScrbUsMenuButton1006;
+	default:
+		error("RodMap: unknown archive kind");
+	}
 }
 
 int16 ZoombiniInteractiveRodMap::getLevelLegendScrbId() const {
-	return usesMapArchive(_vm->getRelInfo()) ? kResScrbEuropeLevelLegend1003 : kResScrbUsLevelLegend1004;
+	switch (_vm->getRelInfo().getMapArchiveKind()) {
+	case ZmbReleaseInfo::MapArchiveKind::kMap:
+		return kResScrbEuropeLevelLegend1003;
+	case ZmbReleaseInfo::MapArchiveKind::kRodMap:
+		return kResScrbUsLevelLegend1004;
+	default:
+		error("RodMap: unknown archive kind");
+	}
 }
 
 const Common::Rect &ZoombiniInteractiveRodMap::getRouteNameRect(uint32 routeIdx) const {
@@ -145,7 +166,7 @@ const Common::Rect &ZoombiniInteractiveRodMap::getLevelLegendClickRect(uint32 le
 }
 
 void ZoombiniInteractiveRodMap::loadRodmapPanelFeatures() {
-	// Europe MAP.MHK uses SCRB 1003; US RODMAP.MHK uses SCRB 1004.
+	// MAP.MHK uses SCRB 1003; RODMAP.MHK uses SCRB 1004.
 	// The level legend is only clickable in practice mode.
 	ZmbFeature::EventHooks hooks1004;
 	hooks1004.setPreRenderShapeFunc(&ZoombiniInteractiveRodMap::patchSelectedLevelShape1004_preRenderShape);
@@ -167,7 +188,7 @@ void ZoombiniInteractiveRodMap::loadRodmapPanelFeatures() {
 										  ZmbFeature::FLAG_00100000_PLAY_ONCE,
 										  hooks1002);
 
-	if (!usesMapArchive(_vm->getRelInfo())) {
+	if (_vm->getRelInfo().getMapArchiveKind() == ZmbReleaseInfo::MapArchiveKind::kRodMap) {
 		// US RODMAP.MHK SCRB 1003: mode select combobox.
 		// RodMap keeps positional Z-sorting disabled and uses its explicit runner-list order.
 		// Register the mode markers after the journey panel and keep them at the list tail.
@@ -217,7 +238,7 @@ void ZoombiniInteractiveRodMap::loadFeatures() {
 											ZmbFeature::FLAG_08000000_REGION_TRACK | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00008000_LOOP_ANIM,
 											hooks1001);
 
-	// Europe MAP.MHK uses SCRB 1004; US RODMAP.MHK uses SCRB 1005.
+	// MAP.MHK uses SCRB 1004; RODMAP.MHK uses SCRB 1005.
 	// The panel only appears after hovering one of the puzzle icons.
 	ZmbFeature::EventHooks hooks1005;
 	hooks1005.setPreRenderFunc(&ZoombiniInteractiveRodMap::drawAfterPageIconHover1005_preRender);
@@ -227,7 +248,7 @@ void ZoombiniInteractiveRodMap::loadFeatures() {
 										ZmbFeature::FLAG_00100000_PLAY_ONCE,
 										hooks1005);
 	if (!_vm->getRelInfo().hasDemoPracticeMap()) {
-		// Europe MAP.MHK uses SCRB 1005; US RODMAP.MHK uses SCRB 1006.
+		// MAP.MHK uses SCRB 1005; RODMAP.MHK uses SCRB 1006.
 		ZmbFeature::EventHooks hooks1006;
 		hooks1006.setPreRenderShapeFunc(&ZoombiniInteractiveRodMap::optionButton1006_preRenderShape);
 		hooks1006.setPostRenderFunc(&ZoombiniInteractiveRodMap::optionButton1006_postRender);
@@ -235,7 +256,7 @@ void ZoombiniInteractiveRodMap::loadFeatures() {
 		_optionButtonFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1000), getOptionButtonScrbId(), 3,
 											   ZmbFeature::FLAG_00001000_TOPMOST,
 											   hooks1006);
-		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 			_optionButtonFeature->setClickRect(_tlcOptionButtonClickRect);
 	}
 
@@ -296,7 +317,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::onKeyDown(const Common::KeyState
 			// The classic MAP.MHK route screen only turns practice on here and leaves it when a hub page is selected.
 			// Enhanced shortcuts add a two-way toggle; otherwise keep the original turn-on-only behavior.
 			if (_vm->getRelInfo().hasDemoPracticeMap() ||
-				(usesMapArchive(_vm->getRelInfo()) && !_vm->useEnhancedKbdShortcuts()))
+				(_vm->getRelInfo().getMapArchiveKind() == ZmbReleaseInfo::MapArchiveKind::kMap && !_vm->useEnhancedKbdShortcuts()))
 				setPracticeMode(true);
 			else
 				togglePracticeMode();
@@ -680,7 +701,7 @@ void ZoombiniInteractiveRodMap::patchPageShape1000_preRenderShape(ZmbFeature *fe
 		}
 
 		// The classic and retail route layouts use different hover frames for resting page icons.
-		if (usesMapArchive(_vm->getRelInfo())) {
+		if (_vm->getRelInfo().getMapArchiveKind() == ZmbReleaseInfo::MapArchiveKind::kMap) {
 			switch (shapeId) {
 			case kResShape1000_Picker16:
 				pageShapeIdMap[shapeId] = 109;
@@ -754,15 +775,14 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 			case ZoombiniPageType::kPicker:
 			case ZoombiniPageType::kBasecamp1:
 			case ZoombiniPageType::kBasecamp2:
-			case ZoombiniPageType::kTown:
-				// The European map has no practice/journey mode combobox.
-				// Zoombini Isle is always available.
-				// Each shelter or town becomes an exit after its journey checkpoint is unlocked.
-				// In the US RODMAP, the same clicks are inert while practicing.
+			case ZoombiniPageType::kTown: {
+				// USv1.0, EUv1.0 family maps have no practice/journey mode combobox.
+				// Each shelter or town becomes an exit after its journey checkpoint is unlocked (Picker is always available).
+				// In USv1.1 and TLCv2.0 RODMAP, the same clicks are inert while practicing.
 				// Leave practice through the mode combobox instead.
-				// The on-map roster is already the real non-practice pack,
-				// so no state restore is needed here.
-				if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kEuropeV1)) {
+				// The on-map roster is already the real non-practice pack, so no state restore is needed here.
+				const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+				if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10) || relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
 					if (isPracticeExitAvailable(nextType)) {
 						_vm->_state->endPracticeState();
 						_vm->_state->_practiceLevel = 0;
@@ -775,6 +795,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 					return ZmbEventHandleResult::kConsumed;
 				}
 				break;
+			}
 			default:
 				break;
 			}
@@ -862,7 +883,7 @@ void ZoombiniInteractiveRodMap::textPageName1005_postRender(ZmbFeature *feature)
 		error("rodmap: page-name SCRB has no draw record");
 		return;
 	}
-	const Common::Rect textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapTooltipLayout).apply(record->_drawnRect);
+	const Common::Rect textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapTooltip).apply(record->_drawnRect);
 
 	ZoombiniGraphics::TextConf tc;
 	tc._textPalette = ZoombiniGraphics::kColor2D_Black;
@@ -917,7 +938,7 @@ void ZoombiniInteractiveRodMap::optionButton1006_postRender(ZmbFeature *feature)
 
 void ZoombiniInteractiveRodMap::optionButton1006_renderTlcLabel() {
 	// TLC v2.0 draws a release-localized executable string over the button bitmap.
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	const Common::U32String optionStr = _vm->_text->getLocalizedString(ZoombiniText::kRodMapOptionsButton);
@@ -932,7 +953,7 @@ void ZoombiniInteractiveRodMap::optionButton1006_renderTlcLabel() {
 
 void ZoombiniInteractiveRodMap::optionButton1006_updateTlcHover(const Common::Point &absPos) {
 	// TLC v2.0 hover reloads SCRB 1007 onto the existing options-button runner, then restores SCRB 1006 on leave.
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) || !_optionButtonFeature)
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20) || !_optionButtonFeature)
 		return;
 
 	const bool hovered = _tlcOptionButtonClickRect.contains(absPos);
@@ -948,7 +969,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::optionButton1006_onLButtonDown(Z
 	(void)relPos;
 
 	bool hit;
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		hit = _tlcOptionButtonClickRect.contains(absPos);
 	else
 		hit = feature->findDrawRecordAtPoint(absPos) != nullptr;
@@ -989,7 +1010,7 @@ void ZoombiniInteractiveRodMap::textLegend1004_postRender(ZmbFeature *feature) {
 	Common::Rect legendTitleRect = record->_drawnRect;
 	legendTitleRect.top += 3;
 	legendTitleRect.setHeight(15);
-	legendTitleRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapLegendTitleLayout).apply(legendTitleRect);
+	legendTitleRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapLegendTitle).apply(legendTitleRect);
 
 	ZoombiniGraphics::TextConf ttc;
 	ttc._hAlign = Graphics::kTextAlignCenter;
@@ -1002,7 +1023,7 @@ void ZoombiniInteractiveRodMap::textLegend1004_postRender(ZmbFeature *feature) {
 	levelRect.top += 22;
 	levelRect.setHeight(14);
 	levelRect.left += 36;
-	levelRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapLegendRowLayout).apply(levelRect);
+	levelRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapLegendRow).apply(levelRect);
 	for (uint32 i = 0; i < 4; i++) {
 		ZoombiniText::Key lKey = static_cast<ZoombiniText::Key>(ZoombiniText::kLevel1 + i);
 
@@ -1098,7 +1119,7 @@ void ZoombiniInteractiveRodMap::textJourneyStat1002_postRender(ZmbFeature *featu
 	Common::Rect titleRect = panelRect;
 	titleRect.top += 3;
 	titleRect.setHeight(15);
-	titleRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsTitleLayout).apply(titleRect);
+	titleRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapStatsTitle).apply(titleRect);
 
 	Common::U32String title;
 	if (_vm->_state->inPracticeMode()) {
@@ -1126,7 +1147,7 @@ void ZoombiniInteractiveRodMap::textJourneyStat1002_postRender(ZmbFeature *featu
 	else
 		drawPracticeDesc(panelRect);
 
-	if (!usesMapArchive(_vm->getRelInfo())) {
+	if (_vm->getRelInfo().getMapArchiveKind() == ZmbReleaseInfo::MapArchiveKind::kRodMap) {
 		// Mode labels belong to the statistics panel, not the SCRB 1003 renderer.
 		Common::Rect comboPracticeRect = Common::Rect(50, 135, 197, 152);
 		ZoombiniGraphics::TextConf cptc;
@@ -1144,23 +1165,23 @@ void ZoombiniInteractiveRodMap::textJourneyStat1002_postRender(ZmbFeature *featu
 
 void ZoombiniInteractiveRodMap::drawPracticeReturnInstructions(const Common::Rect &panelRect) {
 	const StatsLayout &layout = _textLayout.stats;
-	// Select one of the four four-line return-path blocks in TEXTSTR.MHK STRL 2002.
+	// Select a progress-dependent return block from the executable or TEXTSTR.MHK STRL 2002.
 	ZoombiniText::Key firstStringKey;
 	if ((_vm->_state->getCurrentState()._levelFlagRouteMontDespair & 0x0F) != 0)
-		firstStringKey = ZoombiniText::kEuropePracticeReturnZoombiniton1;
+		firstStringKey = ZoombiniText::kPracticeReturnZoombiniton1;
 	else if (_vm->_state->getCurrentState()._levelFlagLoWhosBayouHiDeepDarkForest != 0)
-		firstStringKey = ZoombiniText::kEuropePracticeReturnShadeTree1;
+		firstStringKey = ZoombiniText::kPracticeReturnShadeTree1;
 	else if ((_vm->_state->getCurrentState()._levelFlagRouteBigBadHungry & 0x0F) != 0)
-		firstStringKey = ZoombiniText::kEuropePracticeReturnShelterRock1;
+		firstStringKey = ZoombiniText::kPracticeReturnShelterRock1;
 	else
-		firstStringKey = ZoombiniText::kEuropePracticeReturnInitial1;
+		firstStringKey = ZoombiniText::kPracticeReturnInitial1;
 
 	Common::Rect descRect = panelRect;
 	descRect.top += 26;
 	descRect.setHeight(18);
 	descRect.left += 5;
-	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsRowLayout).apply(descRect);
-	const ZmbReleaseInfo::LayoutAdjustment rowStep = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapPracticeRowStepLayout);
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapStatsRow).apply(descRect);
+	const ZmbReleaseInfo::LayoutAdjustment rowStep = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapPracticeRowStep);
 	for (uint16 i = 0; i < 4; i++) {
 		ZoombiniGraphics::TextConf descConf;
 		descConf._hAlign = Graphics::kTextAlignLeft;
@@ -1185,8 +1206,8 @@ void ZoombiniInteractiveRodMap::drawPracticeDesc(const Common::Rect &panelRect) 
 	descRect.setHeight(18);
 	descRect.left += 7;
 	descRect.setWidth(115);
-	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsRowLayout).apply(descRect);
-	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsLabelLayout).apply(descRect);
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapStatsRow).apply(descRect);
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapStatsLabel).apply(descRect);
 	const int16 rowHeight = descRect.height();
 	for (uint32 i = 0; i < ARRAYSIZE(kDescKeys); i++) {
 		ZoombiniGraphics::TextConf descConf;
@@ -1204,8 +1225,8 @@ void ZoombiniInteractiveRodMap::drawJourneyStatistics(const Common::Rect &panelR
 	descRect.setHeight(18);
 	descRect.left += 7;
 	descRect.setWidth(115);
-	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsRowLayout).apply(descRect);
-	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kMapStatsLabelLayout).apply(descRect);
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapStatsRow).apply(descRect);
+	descRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapStatsLabel).apply(descRect);
 	const int16 rowHeight = descRect.height();
 	Common::Rect valueRect = descRect;
 	valueRect.left += descRect.width();

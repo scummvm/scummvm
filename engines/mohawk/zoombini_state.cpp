@@ -23,6 +23,7 @@
 #include "common/array.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/endian.h"
 #include "common/fs.h"
 #include "common/language.h"
 #include "common/memstream.h"
@@ -37,6 +38,7 @@
 #include "gui/message.h"
 
 #include "mohawk/zoombini.h"
+#include "mohawk/zoombini_dialogs.h"
 #include "mohawk/zoombini_metaengine.h"
 #include "mohawk/zoombini_page.h"
 #include "mohawk/zoombini_pages/interactive_base.h"
@@ -47,8 +49,6 @@
 
 namespace Mohawk {
 
-constexpr byte ZoombiniGameState::kLittleEndianMagicBytes[2];
-constexpr byte ZoombiniGameState::kBigEndianMagicBytes[2];
 constexpr uint32 ZoombiniGameState::kZmbRosterFileSize;
 constexpr uint32 ZmbRosterFile::kSerializedHeaderSize;
 constexpr uint32 ZmbRosterFile::kSerializedEntrySize;
@@ -127,29 +127,33 @@ const ZmbXferRouteInfo *ZmbXferRouteInfo::getZmbXferRouteInfo(ZmbSrcPageKind src
 }
 
 bool ZmbXferRouteInfo::entersContainer() const {
-	return destPage == ZmbDestPageKind::kBC1_04 ||
-		   destPage == ZmbDestPageKind::kBC2_05 ||
-		   destPage == ZmbDestPageKind::kTown_06;
+	switch (destPage) {
+	case ZmbDestPageKind::kBC1_04:
+	case ZmbDestPageKind::kBC2_05:
+	case ZmbDestPageKind::kTown_06:
+		return true;
+	default:
+		return false;
+	}
 }
 
 Common::CodePage ZoombiniGameState::getSaveNameCodePage(const Common::String &target) {
+	// Save management can also be opened from launcher game options without a running engine.
+	// Resolve language and platform from the requested target's config domain for save-name encoding.
 	const Common::Language language = Common::parseLanguage(ConfMan.get("language", target));
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 	return ZmbReleaseInfo::getExeCodePage(language, platform);
 }
 
 Common::U32String ZoombiniGameState::trimSaveName(const Common::U32String &name) {
-	uint32 begin = 0;
-	uint32 end = name.size();
-	while (begin < end && name[begin] == ' ')
-		begin += 1;
-	while (begin < end && name[end - 1] == ' ')
-		end -= 1;
+	uint32 beginIdx = 0;
+	uint32 endIdx = name.size();
+	while (beginIdx < endIdx && name[beginIdx] == ' ')
+		beginIdx += 1;
+	while (beginIdx < endIdx && name[endIdx - 1] == ' ')
+		endIdx -= 1;
 
-	Common::U32String trimmed;
-	for (uint32 i = begin; i < end; i += 1)
-		trimmed += name[i];
-	return trimmed;
+	return name.substr(beginIdx, endIdx - beginIdx);
 }
 
 bool ZoombiniGameState::encodeRosterSaveName(const Common::U32String &saveName, Common::CodePage codePage, byte *output, uint32 outputSize) {
@@ -193,83 +197,327 @@ bool ZoombiniGameState::renameRosterEntry(const Common::String &target, ZmbRoste
 	return true;
 }
 
-ZoombiniGameState::ZmbSaveFormat ZoombiniGameState::getSaveFormatFromSize(int32 size) {
+bool ZoombiniGameState::convertStateBytes(const Common::Array<byte> &srcBytes, ZmbSaveFormat destFormat, Common::Array<byte> &output) {
+	if (destFormat != ZmbSaveFormat::kInvalid && ZmbStateFile::getWriteSaveFormat(destFormat) != destFormat)
+		return false;
+	// Decode the source layout into a local normalized state before exposing any converted bytes.
+	Common::MemoryReadStream input(srcBytes.data(), srcBytes.size());
+	const ZmbSaveFormat srcFormat = getSaveFormat(input);
+	if (srcFormat == ZmbSaveFormat::kInvalid)
+		return false;
+	ZmbStateFile state;
+	Common::Serializer reader(&input, nullptr);
+	const bool stateSyncSucceeded = state.sync(reader, srcFormat);
+	ZoombiniSaveSummary summary;
+	if (!stateSyncSucceeded || input.err() || !summarizeState(state, summary))
+		return false;
+	// An unspecified or unchanged destination preserves the entire original payload, including padding.
+	if (destFormat == ZmbSaveFormat::kInvalid || destFormat == srcFormat) {
+		output = srcBytes;
+		return true;
+	}
+	// Saves do not record their language or code page, so retain every name field verbatim.
+	upgradeStateForVariant(state, srcFormat, destFormat);
+	Common::MemoryWriteStreamDynamic buffer(DisposeAfterUse::YES);
+	Common::Serializer writer(nullptr, &buffer);
+	if (!state.sync(writer, destFormat) || buffer.err())
+		return false;
+	// Re-detect the serialized layout before publishing the output buffer.
+	Common::MemoryReadStream check(buffer.getData(), buffer.size());
+	if (getSaveFormat(check) != destFormat)
+		return false;
+	output.resize(buffer.size());
+	memcpy(output.data(), buffer.getData(), buffer.size());
+	return true;
+}
+
+bool ZoombiniGameState::convertSaveForTarget(const Common::String &target, int slot, ZmbSaveFormat destFormat, Common::String &backupFilename) {
+	// Resolve the managed filename through a validated roster slot, then validate the input size before allocating.
+	backupFilename.clear();
+	Common::SaveFileManager *manager = g_system->getSavefileManager();
+	ZmbRosterFile roster;
+	if (!loadRosterFile(manager, target + ".WHO", roster) || !roster.isSerializedStateValid() || !roster.hasEntry(slot))
+		return false;
+	const Common::String filename = makeSaveFilename(target, roster.getEntry(slot).getSaveFileStem());
+	if (filename.empty())
+		return false;
+	Common::InSaveFile *input = manager->openForLoading(filename);
+	if (!input)
+		return false;
+	Common::Array<byte> srcBytes;
+	const int64 srcSize = input->size();
+	if (isValidStateFileSize(srcSize)) {
+		srcBytes.resize(static_cast<uint32>(srcSize));
+		if (input->read(srcBytes.data(), srcBytes.size()) != srcBytes.size() || input->err())
+			srcBytes.clear();
+	}
+	delete input;
+	Common::Array<byte> convBytes;
+	if (srcBytes.empty() || !convertStateBytes(srcBytes, destFormat, convBytes))
+		return false;
+	// Only changed payloads need a verified backup and replacement; a no-op leaves the managed file intact.
+	if (srcBytes == convBytes)
+		return true;
+	return replaceSaveFile(manager, filename, srcBytes, convBytes, backupFilename);
+}
+
+bool ZoombiniGameState::replaceSaveFile(Common::SaveFileManager *manager, const Common::String &filename, const Common::Array<byte> &src, const Common::Array<byte> &converted, Common::String &backupFilename) {
+	// Reserve an unused temporary/backup pair so earlier conversion artifacts remain available.
+	backupFilename.clear();
+	Common::String temporary;
+	Common::String backup;
+	for (uint32 i = 0; i < 1024; i++) {
+		const Common::String candidate = Common::String::format("%s-convert-%u", filename.c_str(), i);
+		if (!manager->exists(candidate + ".tmp") && !manager->exists(candidate + ".bak")) {
+			temporary = candidate + ".tmp";
+			backup = candidate + ".bak";
+			break;
+		}
+	}
+	if (temporary.empty())
+		return false;
+	// Stage and finalize the converted payload while the original file is still present.
+	Common::OutSaveFile *output = manager->openForSaving(temporary);
+	if (!output)
+		return false;
+	output->write(converted.data(), converted.size());
+	output->finalize();
+	const bool written = !output->err();
+	delete output;
+	// Reopen through SaveFileManager and compare complete logical bytes; a successful write alone is insufficient.
+	const auto matches = [manager](const Common::String &candidate, const Common::Array<byte> &expected) {
+		Common::InSaveFile *file = manager->openForLoading(candidate);
+		if (!file)
+			return false;
+		Common::Array<byte> bytes;
+		bytes.resize(expected.size());
+		const bool valid = file->size() == static_cast<int64>(expected.size()) &&
+						   file->read(bytes.data(), bytes.size()) == bytes.size() && !file->err() && bytes == expected;
+		delete file;
+		return valid;
+	};
+	// Require both a verified converted file and a verified original-byte backup before removing the live file.
+	if (!written || !matches(temporary, converted) || !copySaveFile(manager, filename, backup) || !matches(backup, src)) {
+		manager->removeSavefile(temporary);
+		return false;
+	}
+	// Return the verified backup name even if publication or restoration subsequently fails.
+	backupFilename = backup;
+	if (!manager->removeSavefile(filename)) {
+		manager->removeSavefile(temporary);
+		return false;
+	}
+	if (moveSaveFile(manager, temporary, filename) && matches(filename, converted))
+		return true;
+	// A failed move or readback may leave a partial destination. Restore from the verified backup and retain that backup.
+	manager->removeSavefile(filename);
+	if (!copySaveFile(manager, backupFilename, filename) || !matches(filename, src))
+		warning("Zoombini: conversion rollback failed for '%s'; original bytes remain in '%s'", filename.c_str(), backupFilename.c_str());
+	manager->removeSavefile(temporary);
+	return false;
+}
+
+bool ZoombiniGameState::isValidStateFileSize(int64 size) {
 	switch (size) {
-	case kStateFileSizeBrV10:
-		// The 16-bit Europe v1.1 executable retained the v1.0 layout.
-		return ZmbSaveFormat::kEuV10;
-	case kStateFileSizeUsV11:
-		return ZmbSaveFormat::kUsV11;
-	case kStateFileSizeTlcV20Small:
-		return ZmbSaveFormat::kTlcV20Small;
+	case kStateFileSizeWinV10:
+	case kStateFileSizeMacV10:
+	case kStateFileSizeMacV11EU:
+	case kStateFileSizeWinV11:
+	case kStateFileSizeMacV11US:
+	case kStateFileSizeTlcV20Compat:
 	case kStateFileSizeTlcV20:
-		return ZmbSaveFormat::kTlcV20;
+		return true;
+	}
+	return false;
+}
+
+ZmbSaveFormat ZoombiniGameState::getSaveFormatFromSize(int32 size, Common::Platform platform) {
+	// The v1 layouts have distinct exact sizes; Windows and Macintosh TLC layouts share sizes and need the platform too.
+	switch (size) {
+	case kStateFileSizeWinV10:
+		return ZmbSaveFormat::kWinV10;
+	case kStateFileSizeMacV10:
+		return ZmbSaveFormat::kMacV10;
+	case kStateFileSizeMacV11EU:
+		return ZmbSaveFormat::kMacV11EU;
+	case kStateFileSizeWinV11:
+		return ZmbSaveFormat::kWinV11;
+	case kStateFileSizeMacV11US:
+		return ZmbSaveFormat::kMacV11US;
+	case kStateFileSizeTlcV20Compat:
+	case kStateFileSizeTlcV20:
+		switch (platform) {
+		case Common::kPlatformWindows:
+			if (size == kStateFileSizeTlcV20Compat)
+				return ZmbSaveFormat::kWinV20Compat;
+			return ZmbSaveFormat::kWinV20;
+		case Common::kPlatformMacintosh:
+			if (size == kStateFileSizeTlcV20Compat)
+				return ZmbSaveFormat::kMacV20Compat;
+			return ZmbSaveFormat::kMacV20;
+		default:
+			error("ZoombiniGameState::getSaveFormatFromSize: unsupported platform %d", static_cast<int>(platform));
+		}
 	default:
 		return ZmbSaveFormat::kInvalid;
 	}
 }
 
-const char *ZoombiniGameState::getSaveFormatName(ZmbSaveFormat format) {
+ZmbSaveFormat ZoombiniGameState::getSaveFormat(Common::SeekableReadStream &stream) {
+	// A successful header probe restores the caller's position before any serializer consumes the state.
+	const int64 position = stream.pos();
+	if (stream.size() < 2 || !stream.seek(0))
+		return ZmbSaveFormat::kInvalid;
+	const uint16 magic = stream.readUint16BE();
+	if (stream.err() || !stream.seek(position))
+		return ZmbSaveFormat::kInvalid;
+	// Use the Mac signature to resolve shared TLC sizes. Other signatures retain the Windows fallback for recovery;
+	// the native serializer or explicit magic check decides whether the classified payload is actually valid.
+	Common::Platform platform = Common::kPlatformWindows;
+	if (magic == ZmbStateFile::kMacintoshMagic)
+		platform = Common::kPlatformMacintosh;
+	return getSaveFormatFromSize(stream.size(), platform);
+}
+
+ZmbSaveFormat ZoombiniGameState::getSaveFormat(const Common::Array<byte> &bytes) {
+	// Memory conversions and file-backed loads use the same size/signature classification.
+	Common::MemoryReadStream stream(bytes.data(), bytes.size());
+	return getSaveFormat(stream);
+}
+
+Common::U32String ZoombiniGameState::getSaveFormatName(ZmbSaveFormat format) {
+	// Keep table labels compact and distinct; C denotes a TLC compatibility input.
 	switch (format) {
-	case ZmbSaveFormat::kEuV10:
-		return "EUv1";
-	case ZmbSaveFormat::kUsV11:
-		return "USv1";
-	case ZmbSaveFormat::kTlcV20Small:
-		return "TLCv2s";
-	case ZmbSaveFormat::kTlcV20:
-		return "TLCv2";
+	case ZmbSaveFormat::kWinV10:
+		return Common::U32String(U"WinV10");
+	case ZmbSaveFormat::kMacV10:
+		return Common::U32String(U"MacV10");
+	case ZmbSaveFormat::kMacV11EU:
+		return Common::U32String(U"MacV11EU");
+	case ZmbSaveFormat::kWinV11:
+		return Common::U32String(U"WinV11");
+	case ZmbSaveFormat::kMacV11US:
+		return Common::U32String(U"MacV11US");
+	case ZmbSaveFormat::kWinV20Compat:
+		return Common::U32String(U"WinV20C");
+	case ZmbSaveFormat::kWinV20:
+		return Common::U32String(U"WinV20");
+	case ZmbSaveFormat::kMacV20Compat:
+		return Common::U32String(U"MacV20C");
+	case ZmbSaveFormat::kMacV20:
+		return Common::U32String(U"MacV20");
 	default:
-		return "INVALID";
+		return Common::U32String(U"INVALID");
 	}
 }
 
-bool ZoombiniGameState::isTlcSaveFormat(ZmbSaveFormat format) {
-	return format == ZmbSaveFormat::kTlcV20Small || format == ZmbSaveFormat::kTlcV20;
+ZmbSaveFormat ZmbStateFile::getWriteSaveFormat(ZmbSaveFormat format) {
+	switch (format) {
+	case ZmbSaveFormat::kWinV20Compat:
+		return ZmbSaveFormat::kWinV20;
+	case ZmbSaveFormat::kMacV20Compat:
+		return ZmbSaveFormat::kMacV20;
+	case ZmbSaveFormat::kWinV10:
+	case ZmbSaveFormat::kMacV10:
+	case ZmbSaveFormat::kWinV11:
+	case ZmbSaveFormat::kMacV11EU:
+	case ZmbSaveFormat::kMacV11US:
+	case ZmbSaveFormat::kWinV20:
+	case ZmbSaveFormat::kMacV20:
+		return format;
+	default:
+		return ZmbSaveFormat::kInvalid;
+	}
 }
 
-bool ZoombiniGameState::hasCompletionCounters(ZmbSaveFormat format) {
-	return format == ZmbSaveFormat::kUsV11 || format == ZmbSaveFormat::kTlcV20;
+Common::Platform ZmbStateFile::getSavePlatform(ZmbSaveFormat format) {
+	// Select byte order and geometry from the file format, independently of the currently running release.
+	switch (format) {
+	case ZmbSaveFormat::kWinV10:
+	case ZmbSaveFormat::kWinV11:
+	case ZmbSaveFormat::kWinV20Compat:
+	case ZmbSaveFormat::kWinV20:
+		return Common::kPlatformWindows;
+	case ZmbSaveFormat::kMacV10:
+	case ZmbSaveFormat::kMacV11EU:
+	case ZmbSaveFormat::kMacV11US:
+	case ZmbSaveFormat::kMacV20Compat:
+	case ZmbSaveFormat::kMacV20:
+		return Common::kPlatformMacintosh;
+	default:
+		error("ZmbStateFile::getSavePlatform: invalid save format %d", static_cast<int>(format));
+	}
 }
 
-ZoombiniGameState::ZmbSaveFormat ZoombiniGameState::getTargetSaveFormat(const MohawkEngine_Zoombini *vm) {
+bool ZmbStateFile::usesMacV11EUAlignment(ZmbSaveFormat format) {
+	// EUv1.1 Macintosh keeps v1.0 fields but adds the 24-byte stored stride and header/tail alignment.
+	switch (format) {
+	case ZmbSaveFormat::kMacV11EU:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool ZmbStateFile::isTlcSaveFormat(ZmbSaveFormat format) {
+	// TLC compatibility saves omit the completion tail but retain the rest of the TLC header and entry layouts.
+	switch (format) {
+	case ZmbSaveFormat::kWinV20Compat:
+	case ZmbSaveFormat::kWinV20:
+	case ZmbSaveFormat::kMacV20Compat:
+	case ZmbSaveFormat::kMacV20:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool ZmbStateFile::hasCompletionCounters(ZmbSaveFormat format) {
+	// The five-word completion tail is independent of platform and absent from both TLC compatibility layouts.
+	switch (format) {
+	case ZmbSaveFormat::kWinV11:
+	case ZmbSaveFormat::kMacV11US:
+	case ZmbSaveFormat::kWinV20:
+	case ZmbSaveFormat::kMacV20:
+		return true;
+	default:
+		return false;
+	}
+}
+
+ZmbSaveFormat ZoombiniGameState::getTargetSaveFormat(const MohawkEngine_Zoombini *vm) {
 	const ZmbReleaseInfo &relInfo = vm->getRelInfo();
-
-	// The Europe v1.1 executables keeps the v1.0 save layout.
-	// ScummVM still accepts other recognized source layouts when loading.
-	if (relInfo.isFamily(ZmbReleaseInfo::kEuropeV1))
-		return ZmbSaveFormat::kEuV10;
-	if (relInfo.isFamily(ZmbReleaseInfo::kUsV1))
-		return ZmbSaveFormat::kUsV11;
-	if (relInfo.isFamily(ZmbReleaseInfo::kTlcV2))
-		return ZmbSaveFormat::kTlcV20;
-
-	return ZmbSaveFormat::kEuV10;
-}
-
-bool ZoombiniGameState::canLoadSaveFormat(ZmbSaveFormat sourceFormat) {
-	// Deliberate extension beyond the release executables:
-	// normalize every known layout into ZmbStateFile so any supported release can load it.
-	// The target release selects its own layout when the state is saved again.
-	return sourceFormat != ZmbSaveFormat::kInvalid;
-}
-
-int ZoombiniGameState::getSaveFormatMajorVersion(ZmbSaveFormat format) {
-	switch (format) {
-	case ZmbSaveFormat::kEuV10:
-		return 10;
-	case ZmbSaveFormat::kUsV11:
-		return 11;
-	case ZmbSaveFormat::kTlcV20Small:
-	case ZmbSaveFormat::kTlcV20:
-		return 20;
+	switch (relInfo.getPlatform()) {
+	case Common::kPlatformWindows:
+		if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10) || relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x))
+			return ZmbSaveFormat::kWinV10;
+		if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11))
+			return ZmbSaveFormat::kWinV11;
+		return ZmbSaveFormat::kWinV20;
+	case Common::kPlatformMacintosh:
+		// Check the EUv1.1 alignment revision before the broader European family match.
+		if ((vm->getFeatures() & GF_ZMB_11_EU) != 0)
+			return ZmbSaveFormat::kMacV11EU;
+		if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10) || relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x))
+			return ZmbSaveFormat::kMacV10;
+		if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11))
+			return ZmbSaveFormat::kMacV11US;
+		return ZmbSaveFormat::kMacV20;
 	default:
-		return 0;
+		error("Zoombini: unsupported save platform %d", static_cast<int>(relInfo.getPlatform()));
 	}
 }
 
-bool ZoombiniGameState::isNewerThanTargetSaveFormat(ZmbSaveFormat sourceFormat, ZmbSaveFormat targetFormat) {
-	return getSaveFormatMajorVersion(targetFormat) < getSaveFormatMajorVersion(sourceFormat);
+bool ZoombiniGameState::canLoadSaveFormat(ZmbSaveFormat srcFormat) {
+	// Normalize every known layout into ZmbStateFile so any supported release can load it.
+	// The target release selects its own layout when the state is saved again.
+	return srcFormat != ZmbSaveFormat::kInvalid;
+}
+
+bool ZoombiniGameState::isNewerThanTargetSaveFormat(ZmbSaveFormat srcFormat, ZmbSaveFormat targetFormat) {
+	// Warn about source fields the destination cannot represent, rather than ordering platform-specific enum values.
+	return (ZmbStateFile::isTlcSaveFormat(srcFormat) && !ZmbStateFile::isTlcSaveFormat(targetFormat)) ||
+		   (ZmbStateFile::hasCompletionCounters(srcFormat) && !ZmbStateFile::hasCompletionCounters(targetFormat));
 }
 
 void ZoombiniGameState::initializeCompletionCounters(ZmbStateFile &state) {
@@ -278,13 +526,15 @@ void ZoombiniGameState::initializeCompletionCounters(ZmbStateFile &state) {
 	state._townDevelopLevel = 0;
 }
 
-void ZoombiniGameState::upgradeStateForVariant(ZmbStateFile &state, ZmbSaveFormat sourceFormat, ZmbSaveFormat targetFormat) {
-	if (!hasCompletionCounters(sourceFormat))
+void ZoombiniGameState::upgradeStateForVariant(ZmbStateFile &state, ZmbSaveFormat srcFormat, ZmbSaveFormat targetFormat) {
+	// Initialize omitted tail fields before exposing an older/shorter payload to a release that can use them.
+	if (!ZmbStateFile::hasCompletionCounters(srcFormat))
 		initializeCompletionCounters(state);
 
-	const bool sourceIsTlc = isTlcSaveFormat(sourceFormat);
-	const bool targetIsTlc = isTlcSaveFormat(targetFormat);
-	if (sourceIsTlc == targetIsTlc)
+	// Translate logical v1/TLC settings here; native word order and padding are handled by the serializers.
+	const bool srcIsTlc = ZmbStateFile::isTlcSaveFormat(srcFormat);
+	const bool targetIsTlc = ZmbStateFile::isTlcSaveFormat(targetFormat);
+	if (srcIsTlc == targetIsTlc)
 		return;
 
 	if (!targetIsTlc) {
@@ -307,32 +557,58 @@ void ZoombiniGameState::upgradeStateForVariant(ZmbStateFile &state, ZmbSaveForma
 	for (int32 i = 0; i < ARRAYSIZE(state._v2FleensTraitDestSlots); i++)
 		state._v2FleensTraitDestSlots[i] = state._v1FleensTraitDestSlots[i];
 	state._v2PreviousPage = state._currentPage;
-	state._v2TwinGenStatusPad = 0;
 }
 
-ZoombiniGameState::ZmbSaveFormat ZoombiniGameState::getLoadSaveFormatFromSize(int32 size, ZmbSaveFormat targetFormat) {
+ZmbSaveFormat ZoombiniGameState::getLoadSaveFormatFromSize(int32 size, ZmbSaveFormat targetFormat) {
+	// Reproduce the target's fixed-prefix reads when exact cross-format detection is unavailable.
+	// Complete native prefixes may have trailing bytes; only the documented shorter variants select a missing tail.
 	switch (targetFormat) {
-	case ZmbSaveFormat::kEuV10:
+	case ZmbSaveFormat::kWinV10:
 		// Europe v1.x reads its fixed native prefix and ignores trailing bytes.
-		return kStateFileSizeBrV10 <= size ? ZmbSaveFormat::kEuV10 : ZmbSaveFormat::kInvalid;
-	case ZmbSaveFormat::kUsV11:
+		return kStateFileSizeWinV10 <= size ? ZmbSaveFormat::kWinV10 : ZmbSaveFormat::kInvalid;
+	case ZmbSaveFormat::kWinV11:
 		// US v1.1 accepts the exact v1.0 length and clears its five added words.
-		if (kStateFileSizeUsV11 <= size)
-			return ZmbSaveFormat::kUsV11;
-		return size == kStateFileSizeBrV10 ? ZmbSaveFormat::kEuV10 : ZmbSaveFormat::kInvalid;
-	case ZmbSaveFormat::kTlcV20:
-		// TLC v2.0 accepts the exact short layout and clears its five added words.
+		if (kStateFileSizeWinV11 <= size)
+			return ZmbSaveFormat::kWinV11;
+		return size == kStateFileSizeWinV10 ? ZmbSaveFormat::kWinV10 : ZmbSaveFormat::kInvalid;
+	case ZmbSaveFormat::kWinV20:
+		// TLC v2.0 accepts the compat layout and clears its five added words.
 		if (kStateFileSizeTlcV20 <= size)
-			return ZmbSaveFormat::kTlcV20;
-		return size == kStateFileSizeTlcV20Small ? ZmbSaveFormat::kTlcV20Small : ZmbSaveFormat::kInvalid;
+			return ZmbSaveFormat::kWinV20;
+		return size == kStateFileSizeTlcV20Compat ? ZmbSaveFormat::kWinV20Compat : ZmbSaveFormat::kInvalid;
+	case ZmbSaveFormat::kMacV10:
+		return kStateFileSizeMacV10 <= size ? ZmbSaveFormat::kMacV10 : ZmbSaveFormat::kInvalid;
+	case ZmbSaveFormat::kMacV11EU:
+		return kStateFileSizeMacV11EU <= size ? ZmbSaveFormat::kMacV11EU : ZmbSaveFormat::kInvalid;
+	case ZmbSaveFormat::kMacV11US:
+		if (kStateFileSizeMacV11US <= size)
+			return ZmbSaveFormat::kMacV11US;
+		return size == kStateFileSizeMacV10 ? ZmbSaveFormat::kMacV10 : ZmbSaveFormat::kInvalid;
+	case ZmbSaveFormat::kMacV20:
+		if (kStateFileSizeTlcV20 <= size)
+			return ZmbSaveFormat::kMacV20;
+		return size == kStateFileSizeTlcV20Compat ? ZmbSaveFormat::kMacV20Compat : ZmbSaveFormat::kInvalid;
 	default:
 		return ZmbSaveFormat::kInvalid;
 	}
 }
 
-bool ZoombiniGameState::hasValidStateFileMagic(Common::SeekableReadStream &stream) {
+bool ZoombiniGameState::hasValidStateFileMagic(Common::SeekableReadStream &stream, ZmbSaveFormat format) {
+	// State headers store the signature BE on both platforms; its value selects the native convention.
 	const uint16 magic = stream.readUint16BE();
-	return !stream.err() && magic == kEndianMagic;
+	uint16 expectedMagic = 0;
+	switch (ZmbStateFile::getSavePlatform(format)) {
+	case Common::kPlatformMacintosh:
+		expectedMagic = ZmbStateFile::kMacintoshMagic;
+		break;
+	case Common::kPlatformWindows:
+		expectedMagic = ZmbStateFile::kWindowsMagic;
+		break;
+	default:
+		error("ZoombiniGameState::hasValidStateFileMagic: unsupported save platform");
+		break;
+	}
+	return !stream.err() && magic == expectedMagic;
 }
 
 bool ZmbStateFile::isLoadablePage(ZmbDestPageKind page) {
@@ -597,7 +873,6 @@ void ZoombiniGameState::limitOccupiedSnoidsInPack(ZmbStateActivePack &pack, int1
 }
 
 bool ZoombiniGameState::recoverState(ZmbStateFile &state) {
-	state._magic006B = kEndianMagic;
 	state.recoverSerializedScalars();
 	state._storedChunkBC1.recoverSerializedState();
 	state._storedChunkBC2.recoverSerializedState();
@@ -683,8 +958,6 @@ bool ZoombiniGameState::summarizeState(const ZmbStateFile &state, ZoombiniSaveSu
 		warning("state: corrupted save state: %s", reason);
 		return false;
 	};
-	if (state._magic006B != kEndianMagic)
-		return rejectState(ZmbSaveIssue::kMagic, "magic");
 	if (!state.hasLoadableCurrentPage() || !state.hasValidV2PreviousPage())
 		return rejectState(ZmbSaveIssue::kPage, "page");
 	if (!state.hasValidSerializedScalars())
@@ -824,10 +1097,9 @@ bool ZoombiniGameState::parseRoster(Common::SeekableReadStream *stream, ZmbRoste
 
 	ZmbRosterFile parsedRoster;
 	Common::Serializer serializer(stream, nullptr);
-	parsedRoster.sync(serializer);
+	const bool hasSyncSucc = parsedRoster.sync(serializer, Common::kPlatformWindows);
 	const uint16 serializedCapacity = parsedRoster.getEntryCapacityForFileSize(static_cast<uint32>(stream->size()));
-	if (stream->err() || serializedCapacity != parsedRoster.getEntryCapacity() ||
-		parsedRoster._magic006B != kEndianMagic)
+	if (!hasSyncSucc || stream->err() || serializedCapacity != parsedRoster.getEntryCapacity())
 		return false;
 
 	roster = parsedRoster;
@@ -847,8 +1119,7 @@ bool ZoombiniGameState::loadRosterFile(Common::SaveFileManager *saveFileMan, con
 	return result;
 }
 
-bool ZoombiniGameState::writeRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, const ZmbRosterFile &roster,
-										Common::ErrorCode *fallbackErrorCode) {
+bool ZoombiniGameState::writeRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, const ZmbRosterFile &roster, Common::Platform platform, Common::ErrorCode *fallbackErrorCode) {
 	if (fallbackErrorCode)
 		*fallbackErrorCode = Common::kWritingFailed;
 	if (!saveFileMan || !roster.isSerializedStateValid())
@@ -864,17 +1135,18 @@ bool ZoombiniGameState::writeRosterFile(Common::SaveFileManager *saveFileMan, co
 
 	ZmbRosterFile rosterCopy = roster;
 	Common::Serializer serializer(nullptr, file);
-	rosterCopy.sync(serializer);
+	const bool hasSyncSucc = rosterCopy.sync(serializer, platform);
 	file->finalize();
-	const bool result = !file->err();
+	const bool result = hasSyncSucc && !file->err();
 	delete file;
 	if (!result && fallbackErrorCode)
 		*fallbackErrorCode = Common::kWritingFailed;
 	return result;
 }
 
-bool ZoombiniGameState::saveRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, const ZmbRosterFile &roster) {
-	return writeRosterFile(saveFileMan, filename, roster, nullptr);
+bool ZoombiniGameState::saveRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, const ZmbRosterFile &roster,
+									   Common::Platform platform) {
+	return writeRosterFile(saveFileMan, filename, roster, platform, nullptr);
 }
 
 static bool getTargetStateFileNumber(const Common::String &target, const Common::String &filename, Common::String &number) {
@@ -915,9 +1187,9 @@ static int findTargetStateFile(const Common::StringArray &filenames, const Commo
 	return -1;
 }
 
-static bool decodeAvailableRosterEntries(Common::InSaveFile *file, ZmbRosterFile &roster,
-										 uint16 &availableEntryCapacity) {
+bool ZoombiniGameState::decodeAvailableRosterEntries(Common::SeekableReadStream *file, ZmbRosterFile &roster, uint16 &availableEntryCapacity, bool &hasSyncSucc) {
 	availableEntryCapacity = 0;
+	hasSyncSucc = false;
 	if (!file || file->size() < static_cast<int64>(ZmbRosterFile::kSerializedHeaderSize))
 		return false;
 
@@ -933,10 +1205,11 @@ static bool decodeAvailableRosterEntries(Common::InSaveFile *file, ZmbRosterFile
 
 	Common::MemoryReadStream stream(bytes.begin(), bytes.size());
 	Common::Serializer serializer(&stream, nullptr);
-	roster.sync(serializer);
+	hasSyncSucc = roster.sync(serializer, Common::kPlatformWindows);
 	if (stream.err())
 		return false;
 
+	// Zero-filled missing slots let the fixed serializer run, but recovery must inspect only complete on-disk entries.
 	availableEntryCapacity = roster.getEntryCapacityForFileSize(readSize);
 	return true;
 }
@@ -949,26 +1222,27 @@ uint32 ZoombiniGameState::getRosterIssueFlagsForTarget(const Common::String &tar
 		return stateFiles.empty() ? kRosterIssueNone : kRosterIssueMissing | kRosterIssueOrphanState;
 
 	uint32 issues = kRosterIssueNone;
-	const int64 sourceSize = file->size();
-	if (sourceSize != kZmbRosterFileSize)
+	const int64 srcSize = file->size();
+	if (srcSize != kZmbRosterFileSize)
 		issues |= kRosterIssueSize;
 
 	ZmbRosterFile roster;
-	uint16 sourceCapacity = 0;
-	const bool decoded = decodeAvailableRosterEntries(file, roster, sourceCapacity);
+	uint16 srcCapacity = 0;
+	bool rosterSyncSucceeded = false;
+	const bool decoded = decodeAvailableRosterEntries(file, roster, srcCapacity, rosterSyncSucceeded);
 	delete file;
 	if (!decoded)
 		return issues | kRosterIssueRead |
 			   (stateFiles.empty() ? kRosterIssueNone : kRosterIssueOrphanState);
 
-	if (roster._magic006B != kEndianMagic)
+	if (!rosterSyncSucceeded)
 		issues |= kRosterIssueMagic;
-	if (sourceCapacity < roster._saveEntryCount)
+	if (srcCapacity < roster._saveEntryCount)
 		issues |= kRosterIssueEntryCount;
 	if (!roster.hasValidNextSaveFileNameCounter())
 		issues |= kRosterIssueNextCounter;
 
-	const uint16 entryCount = MIN<uint16>(roster._saveEntryCount, sourceCapacity);
+	const uint16 entryCount = MIN<uint16>(roster._saveEntryCount, srcCapacity);
 	Common::Array<byte> referencedStateFiles;
 	referencedStateFiles.resize(stateFiles.size());
 	if (!referencedStateFiles.empty())
@@ -979,13 +1253,12 @@ uint32 ZoombiniGameState::getRosterIssueFlagsForTarget(const Common::String &tar
 		if (saveNameLength == 0 || ARRAYSIZE(entry._saveName) <= saveNameLength)
 			issues |= kRosterIssueSaveName;
 
-		const Common::String fileNumber = entry.getSaveFileNumStr();
-		if (fileNumber.empty()) {
+		const Common::String stateFilename = makeSaveFilename(target, entry.getSaveFileStem());
+		if (stateFilename.empty()) {
 			issues |= kRosterIssueFileStem;
 			continue;
 		}
 
-		const Common::String stateFilename = makeSaveFilename(target, entry._fileName);
 		const int stateFileIdx = findTargetStateFile(stateFiles, stateFilename);
 		if (stateFileIdx < 0) {
 			issues |= kRosterIssueMissingState;
@@ -1017,16 +1290,17 @@ ZoombiniGameState::ZmbRosterRecoverResult ZoombiniGameState::recoverRosterForTar
 
 	const Common::String rosterFilename = target + ".WHO";
 	const Common::StringArray stateFiles = listTargetStateFiles(saveFileMan, target);
-	ZmbRosterFile sourceRoster;
-	uint16 sourceEntryCount = 0;
-	Common::InSaveFile *sourceFile = saveFileMan->openForLoading(rosterFilename);
-	const bool hadRoster = sourceFile != nullptr;
-	const int64 sourceFileSize = sourceFile ? sourceFile->size() : -1;
-	if (sourceFile) {
-		uint16 sourceCapacity = 0;
-		if (decodeAvailableRosterEntries(sourceFile, sourceRoster, sourceCapacity))
-			sourceEntryCount = MIN<uint16>(sourceRoster._saveEntryCount, sourceCapacity);
-		delete sourceFile;
+	ZmbRosterFile srcRoster;
+	uint16 srcEntryCount = 0;
+	Common::InSaveFile *srcFile = saveFileMan->openForLoading(rosterFilename);
+	const bool hadRoster = srcFile != nullptr;
+	const int64 srcFileSize = srcFile ? srcFile->size() : -1;
+	if (srcFile) {
+		uint16 srcCapacity = 0;
+		bool hasSyncSucc = false;
+		if (decodeAvailableRosterEntries(srcFile, srcRoster, srcCapacity, hasSyncSucc))
+			srcEntryCount = MIN<uint16>(srcRoster._saveEntryCount, srcCapacity);
+		delete srcFile;
 	}
 
 	ZmbRosterFile recoveredRoster;
@@ -1034,8 +1308,8 @@ ZoombiniGameState::ZmbRosterRecoverResult ZoombiniGameState::recoverRosterForTar
 	usedStateFiles.resize(stateFiles.size());
 	if (!usedStateFiles.empty())
 		memset(usedStateFiles.begin(), 0, usedStateFiles.size());
-	for (uint16 sourceIdx = 0; sourceIdx < sourceEntryCount && recoveredRoster._saveEntryCount < recoveredRoster.getEntryCapacity(); sourceIdx++) {
-		ZmbRosterEntry entry = sourceRoster._entries[sourceIdx];
+	for (uint16 srcIdx = 0; srcIdx < srcEntryCount && recoveredRoster._saveEntryCount < recoveredRoster.getEntryCapacity(); srcIdx++) {
+		ZmbRosterEntry entry = srcRoster._entries[srcIdx];
 		if (ARRAYSIZE(entry._saveName) <= entry.getSaveNameLength())
 			entry._saveName[ARRAYSIZE(entry._saveName) - 1] = 0;
 		if (entry.getSaveNameLength() == 0) {
@@ -1046,8 +1320,9 @@ ZoombiniGameState::ZmbRosterRecoverResult ZoombiniGameState::recoverRosterForTar
 		}
 
 		int stateFileIdx = -1;
-		if (!entry.getSaveFileNumStr().empty())
-			stateFileIdx = findTargetStateFile(stateFiles, makeSaveFilename(target, entry._fileName));
+		const Common::String destFilename = makeSaveFilename(target, entry.getSaveFileStem());
+		if (!destFilename.empty())
+			stateFileIdx = findTargetStateFile(stateFiles, destFilename);
 		if (0 <= stateFileIdx && usedStateFiles[stateFileIdx] != 0)
 			stateFileIdx = -1;
 		if (stateFileIdx < 0) {
@@ -1098,7 +1373,9 @@ ZoombiniGameState::ZmbRosterRecoverResult ZoombiniGameState::recoverRosterForTar
 				break;
 			}
 		}
-		const Common::String filename = makeSaveFilename(target, reinterpret_cast<const byte *>(stem.c_str()));
+		const Common::String filename = makeSaveFilename(target, stem);
+		if (filename.empty())
+			return ZmbRosterRecoverResult::kWriteFailed;
 		saveFileMan->clearError();
 		if (!usedByRoster && !saveFileMan->exists(filename)) {
 			recoveredRoster._nextSaveFileNameCounter = static_cast<uint16>(counter);
@@ -1106,25 +1383,26 @@ ZoombiniGameState::ZmbRosterRecoverResult ZoombiniGameState::recoverRosterForTar
 		}
 	}
 
-	Common::String temporaryFilename;
-	for (uint32 attempt = 0; attempt < 1024 && temporaryFilename.empty(); attempt++) {
+	Common::String tempFilename;
+	for (uint32 attempt = 0; attempt < 1024 && tempFilename.empty(); attempt++) {
 		const Common::String candidate = Common::String::format("%s-roster-recovery-%u.tmp", target.c_str(), attempt);
 		saveFileMan->clearError();
 		if (!saveFileMan->exists(candidate))
-			temporaryFilename = candidate;
+			tempFilename = candidate;
 	}
-	if (temporaryFilename.empty() || !saveRosterFile(saveFileMan, temporaryFilename, recoveredRoster)) {
-		if (!temporaryFilename.empty()) {
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	if (tempFilename.empty() || !saveRosterFile(saveFileMan, tempFilename, recoveredRoster, platform)) {
+		if (!tempFilename.empty()) {
 			saveFileMan->clearError();
-			saveFileMan->removeSavefile(temporaryFilename);
+			saveFileMan->removeSavefile(tempFilename);
 		}
 		return ZmbRosterRecoverResult::kWriteFailed;
 	}
-	ZmbRosterFile verifiedTemporaryRoster;
-	if (!loadRosterFile(saveFileMan, temporaryFilename, verifiedTemporaryRoster) ||
-		!verifiedTemporaryRoster.isSerializedStateValid()) {
+	ZmbRosterFile verifiedTempRoster;
+	if (!loadRosterFile(saveFileMan, tempFilename, verifiedTempRoster) ||
+		!verifiedTempRoster.isSerializedStateValid()) {
 		saveFileMan->clearError();
-		saveFileMan->removeSavefile(temporaryFilename);
+		saveFileMan->removeSavefile(tempFilename);
 		return ZmbRosterRecoverResult::kWriteFailed;
 	}
 
@@ -1138,16 +1416,15 @@ ZoombiniGameState::ZmbRosterRecoverResult ZoombiniGameState::recoverRosterForTar
 		}
 		if (backupFilename.empty() || !copySaveFile(saveFileMan, rosterFilename, backupFilename)) {
 			saveFileMan->clearError();
-			saveFileMan->removeSavefile(temporaryFilename);
+			saveFileMan->removeSavefile(tempFilename);
 			return ZmbRosterRecoverResult::kBackupFailed;
 		}
 		Common::InSaveFile *backupFile = saveFileMan->openForLoading(backupFilename);
-		const bool backupValid = 0 <= sourceFileSize && backupFile &&
-								 backupFile->size() == sourceFileSize && !backupFile->err();
+		const bool backupValid = 0 <= srcFileSize && backupFile && backupFile->size() == srcFileSize && !backupFile->err();
 		delete backupFile;
 		if (!backupValid) {
 			saveFileMan->clearError();
-			saveFileMan->removeSavefile(temporaryFilename);
+			saveFileMan->removeSavefile(tempFilename);
 			saveFileMan->clearError();
 			saveFileMan->removeSavefile(backupFilename);
 			return ZmbRosterRecoverResult::kBackupFailed;
@@ -1158,12 +1435,12 @@ ZoombiniGameState::ZmbRosterRecoverResult ZoombiniGameState::recoverRosterForTar
 		saveFileMan->clearError();
 		if (!saveFileMan->removeSavefile(rosterFilename)) {
 			saveFileMan->clearError();
-			saveFileMan->removeSavefile(temporaryFilename);
+			saveFileMan->removeSavefile(tempFilename);
 			return ZmbRosterRecoverResult::kWriteFailed;
 		}
 	}
 
-	const bool replaced = moveSaveFile(saveFileMan, temporaryFilename, rosterFilename);
+	const bool replaced = moveSaveFile(saveFileMan, tempFilename, rosterFilename);
 	if (replaced) {
 		ZmbRosterFile verifiedRoster;
 		if (loadRosterFile(saveFileMan, rosterFilename, verifiedRoster) &&
@@ -1180,18 +1457,18 @@ ZoombiniGameState::ZmbRosterRecoverResult ZoombiniGameState::recoverRosterForTar
 	}
 	if (!hadRoster) {
 		saveFileMan->clearError();
-		if (saveFileMan->exists(temporaryFilename)) {
+		if (saveFileMan->exists(tempFilename)) {
 			saveFileMan->clearError();
-			saveFileMan->removeSavefile(temporaryFilename);
+			saveFileMan->removeSavefile(tempFilename);
 		}
 		return ZmbRosterRecoverResult::kWriteFailed;
 	}
 	if (!copySaveFile(saveFileMan, backupFilename, rosterFilename))
 		return ZmbRosterRecoverResult::kRollbackFailed;
 	saveFileMan->clearError();
-	if (saveFileMan->exists(temporaryFilename)) {
+	if (saveFileMan->exists(tempFilename)) {
 		saveFileMan->clearError();
-		saveFileMan->removeSavefile(temporaryFilename);
+		saveFileMan->removeSavefile(tempFilename);
 	}
 	return ZmbRosterRecoverResult::kWriteFailed;
 }
@@ -1205,75 +1482,74 @@ bool ZoombiniGameState::containsSaveFilename(const Common::Array<Common::String>
 	return false;
 }
 
-bool ZoombiniGameState::copySaveFile(Common::SaveFileManager *saveFileMan, const Common::String &source, const Common::String &destination) {
-	if (!saveFileMan || source.equalsIgnoreCase(destination))
+bool ZoombiniGameState::copySaveFile(Common::SaveFileManager *saveFileMan, const Common::String &srcFile, const Common::String &destFile) {
+	if (!saveFileMan || srcFile.equalsIgnoreCase(destFile))
 		return false;
 
 	saveFileMan->clearError();
-	if (saveFileMan->exists(destination))
+	if (saveFileMan->exists(destFile))
 		return false;
 
 	saveFileMan->clearError();
-	if (saveFileMan->copySavefile(source, destination))
+	if (saveFileMan->copySavefile(srcFile, destFile))
 		return true;
 
 	saveFileMan->clearError();
-	if (saveFileMan->exists(destination)) {
+	if (saveFileMan->exists(destFile)) {
 		saveFileMan->clearError();
-		saveFileMan->removeSavefile(destination);
+		saveFileMan->removeSavefile(destFile);
 	}
 	return false;
 }
 
-bool ZoombiniGameState::moveSaveFile(Common::SaveFileManager *saveFileMan, const Common::String &source, const Common::String &destination) {
-	if (!copySaveFile(saveFileMan, source, destination))
+bool ZoombiniGameState::moveSaveFile(Common::SaveFileManager *saveFileMan, const Common::String &src, const Common::String &dest) {
+	if (!copySaveFile(saveFileMan, src, dest))
 		return false;
 
 	saveFileMan->clearError();
-	if (saveFileMan->removeSavefile(source))
+	if (saveFileMan->removeSavefile(src))
 		return true;
 
 	saveFileMan->clearError();
-	saveFileMan->removeSavefile(destination);
+	saveFileMan->removeSavefile(dest);
 	return false;
 }
 
-bool ZoombiniGameState::restoreCompactedSaveFiles(Common::SaveFileManager *saveFileMan,
-												  const Common::Array<Common::String> &originalFilenames,
-												  const Common::Array<Common::String> &temporaryFilenames,
-												  const Common::Array<Common::String> &compactedFilenames,
-												  int stagedCount, int compactedCount) {
+bool ZoombiniGameState::rollbackSaveFileCompaction(Common::SaveFileManager *saveFileMan,
+												   const Common::Array<Common::String> &orgFilenames,
+												   const Common::Array<Common::String> &tempFilenames,
+												   const Common::Array<Common::String> &compactedFilenames,
+												   int stagedCount, int compactedCount) {
 	bool restored = true;
 	for (int i = compactedCount - 1; 0 <= i; i--) {
-		if (!moveSaveFile(saveFileMan, compactedFilenames[i], temporaryFilenames[i]))
+		if (!moveSaveFile(saveFileMan, compactedFilenames[i], tempFilenames[i]))
 			restored = false;
 	}
 
-	Common::Array<Common::String> restoredOriginalFilenames;
-	restoredOriginalFilenames.reserve(stagedCount);
+	Common::Array<Common::String> restoredOrgFilenames;
+	restoredOrgFilenames.reserve(stagedCount);
 	for (int i = 0; i < stagedCount; i++) {
 		// A damaged roster can have several temporary files for one original.
 		// Restore that shared original once and discard the extra staged copies.
-		if (containsSaveFilename(restoredOriginalFilenames, originalFilenames[i])) {
+		if (containsSaveFilename(restoredOrgFilenames, orgFilenames[i])) {
 			saveFileMan->clearError();
-			if (saveFileMan->exists(temporaryFilenames[i])) {
+			if (saveFileMan->exists(tempFilenames[i])) {
 				saveFileMan->clearError();
-				if (!saveFileMan->removeSavefile(temporaryFilenames[i]))
+				if (!saveFileMan->removeSavefile(tempFilenames[i]))
 					restored = false;
 			}
 			continue;
 		}
 
-		if (moveSaveFile(saveFileMan, temporaryFilenames[i], originalFilenames[i]))
-			restoredOriginalFilenames.push_back(originalFilenames[i]);
+		if (moveSaveFile(saveFileMan, tempFilenames[i], orgFilenames[i]))
+			restoredOrgFilenames.push_back(orgFilenames[i]);
 		else
 			restored = false;
 	}
 	return restored;
 }
 
-ZoombiniGameState::ZmbSaveCompactResult ZoombiniGameState::compactRosterSaveFiles(Common::SaveFileManager *saveFileMan, const Common::String &target,
-																				  ZmbRosterFile &roster) {
+ZoombiniGameState::ZmbSaveCompactResult ZoombiniGameState::compactRosterSaveFiles(Common::SaveFileManager *saveFileMan, const Common::String &target, ZmbRosterFile &roster) {
 	if (!saveFileMan || !roster.isSerializedStateValid())
 		return ZmbSaveCompactResult::kInvalidRoster;
 
@@ -1290,17 +1566,19 @@ ZoombiniGameState::ZmbSaveCompactResult ZoombiniGameState::compactRosterSaveFile
 	bool fileNamesNeedCompaction = false;
 	for (int i = 0; i < entryCount; i++) {
 		const ZmbRosterEntry &entry = roster.getEntry(i);
-		if (entry.getSaveFileNumStr().empty())
-			return ZmbSaveCompactResult::kInvalidRoster;
 		const Common::String storedStem = entry.getSaveFileStem();
 
-		const Common::String originalFilename = makeSaveFilename(target, entry._fileName);
+		const Common::String originalFilename = makeSaveFilename(target, storedStem);
+		if (originalFilename.empty())
+			return ZmbSaveCompactResult::kInvalidRoster;
 		saveFileMan->clearError();
 		if (!saveFileMan->exists(originalFilename))
 			return ZmbSaveCompactResult::kMissingSaveFile;
 
 		const Common::String compactedStem = Common::String::format("ZOOM%04d", i);
-		const Common::String compactedFilename = makeSaveFilename(target, reinterpret_cast<const byte *>(compactedStem.c_str()));
+		const Common::String compactedFilename = makeSaveFilename(target, compactedStem);
+		if (compactedFilename.empty())
+			return ZmbSaveCompactResult::kInvalidRoster;
 		if (storedStem != compactedStem)
 			fileNamesNeedCompaction = true;
 
@@ -1316,7 +1594,9 @@ ZoombiniGameState::ZmbSaveCompactResult ZoombiniGameState::compactRosterSaveFile
 	}
 
 	const Common::String nextStem = Common::String::format("ZOOM%04d", entryCount);
-	const Common::String nextFilename = makeSaveFilename(target, reinterpret_cast<const byte *>(nextStem.c_str()));
+	const Common::String nextFilename = makeSaveFilename(target, nextStem);
+	if (nextFilename.empty())
+		return ZmbSaveCompactResult::kInvalidRoster;
 	saveFileMan->clearError();
 	if (saveFileMan->exists(nextFilename) && !containsSaveFilename(originalFilenames, nextFilename))
 		return ZmbSaveCompactResult::kFileNameConflict;
@@ -1345,9 +1625,9 @@ ZoombiniGameState::ZmbSaveCompactResult ZoombiniGameState::compactRosterSaveFile
 		int stagedCount = 0;
 		for (int i = 0; i < entryCount; i++) {
 			int duplicateSourceIdx = -1;
-			for (int sourceIdx = 0; sourceIdx < i; sourceIdx++) {
-				if (originalFilenames[sourceIdx].equalsIgnoreCase(originalFilenames[i])) {
-					duplicateSourceIdx = sourceIdx;
+			for (int srcIdx = 0; srcIdx < i; srcIdx++) {
+				if (originalFilenames[srcIdx].equalsIgnoreCase(originalFilenames[i])) {
+					duplicateSourceIdx = srcIdx;
 					break;
 				}
 			}
@@ -1360,17 +1640,17 @@ ZoombiniGameState::ZmbSaveCompactResult ZoombiniGameState::compactRosterSaveFile
 			else
 				staged = moveSaveFile(saveFileMan, originalFilenames[i], temporaryFilenames[i]);
 			if (!staged) {
-				const Common::String *sourceFilename;
+				const Common::String *srcFilename;
 				if (0 <= duplicateSourceIdx)
-					sourceFilename = &temporaryFilenames[duplicateSourceIdx];
+					srcFilename = &temporaryFilenames[duplicateSourceIdx];
 				else
-					sourceFilename = &originalFilenames[i];
+					srcFilename = &originalFilenames[i];
 				saveFileMan->clearError();
-				const bool sourcePreserved = saveFileMan->exists(*sourceFilename);
+				const bool srcPreserved = saveFileMan->exists(*srcFilename);
 				saveFileMan->clearError();
 				const bool temporaryAbsent = !saveFileMan->exists(temporaryFilenames[i]);
-				if (!restoreCompactedSaveFiles(saveFileMan, originalFilenames, temporaryFilenames, compactedFilenames, stagedCount, 0) ||
-					!sourcePreserved || !temporaryAbsent)
+				if (!rollbackSaveFileCompaction(saveFileMan, originalFilenames, temporaryFilenames, compactedFilenames, stagedCount, 0) ||
+					!srcPreserved || !temporaryAbsent)
 					return ZmbSaveCompactResult::kRollbackFailed;
 				return ZmbSaveCompactResult::kFileMoveFailed;
 			}
@@ -1384,7 +1664,7 @@ ZoombiniGameState::ZmbSaveCompactResult ZoombiniGameState::compactRosterSaveFile
 				const bool temporaryPreserved = saveFileMan->exists(temporaryFilenames[i]);
 				saveFileMan->clearError();
 				const bool compactedAbsent = !saveFileMan->exists(compactedFilenames[i]);
-				if (!restoreCompactedSaveFiles(saveFileMan, originalFilenames, temporaryFilenames, compactedFilenames, stagedCount, compactedCount) ||
+				if (!rollbackSaveFileCompaction(saveFileMan, originalFilenames, temporaryFilenames, compactedFilenames, stagedCount, compactedCount) ||
 					!temporaryPreserved || !compactedAbsent)
 					return ZmbSaveCompactResult::kRollbackFailed;
 				return ZmbSaveCompactResult::kFileMoveFailed;
@@ -1419,15 +1699,16 @@ ZoombiniGameState::ZmbSaveCompactResult ZoombiniGameState::compactRosterSaveFile
 		}
 		roster = originalRoster;
 		if (fileNamesNeedCompaction &&
-			!restoreCompactedSaveFiles(saveFileMan, originalFilenames, temporaryFilenames, compactedFilenames, entryCount, entryCount))
+			!rollbackSaveFileCompaction(saveFileMan, originalFilenames, temporaryFilenames, compactedFilenames, entryCount, entryCount))
 			return ZmbSaveCompactResult::kRollbackFailed;
 		return ZmbSaveCompactResult::kRosterWriteFailed;
 	}
 
-	if (!saveRosterFile(saveFileMan, rosterFilename, roster)) {
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	if (!saveRosterFile(saveFileMan, rosterFilename, roster, platform)) {
 		roster = originalRoster;
 		const bool filesRestored = !fileNamesNeedCompaction ||
-								   restoreCompactedSaveFiles(saveFileMan, originalFilenames, temporaryFilenames, compactedFilenames, entryCount, entryCount);
+								   rollbackSaveFileCompaction(saveFileMan, originalFilenames, temporaryFilenames, compactedFilenames, entryCount, entryCount);
 		saveFileMan->clearError();
 		const bool rosterRestored = saveFileMan->copySavefile(rosterBackupFilename, rosterFilename);
 		if (rosterRestored) {
@@ -1468,21 +1749,25 @@ Common::Array<ZoombiniSaveSummary> ZoombiniGameState::listSaveSummaries(const Co
 			summaries.push_back(summary);
 			continue;
 		}
-		summary._fileName = makeSaveFilename(target, rosterEntry._fileName);
+		summary._fileName = makeSaveFilename(target, rosterEntry.getSaveFileStem());
 		if (summary._fileName.empty()) {
 			summaries.push_back(summary);
 			continue;
 		}
 		Common::InSaveFile *stateFile = saveFileMan->openForLoading(summary._fileName);
 		if (stateFile) {
-			const ZmbSaveFormat format = getSaveFormatFromSize(stateFile->size());
+			const ZmbSaveFormat format = getSaveFormat(*stateFile);
 			summary._saveFormat = format;
 			if (format != ZmbSaveFormat::kInvalid) {
 				ZmbStateFile state;
 				Common::Serializer serializer(stateFile, nullptr);
-				state.sync(serializer, isTlcSaveFormat(format), hasCompletionCounters(format));
+				const bool hasSyncSucc = state.sync(serializer, format);
 				if (!stateFile->err()) {
-					if (summarizeState(state, summary)) {
+					if (!hasSyncSucc) {
+						summary._stateIssue = ZmbSaveIssue::kMagic;
+						warning("state: corrupted save state: magic");
+					}
+					if (hasSyncSucc && summarizeState(state, summary)) {
 						summary._stateValid = true;
 					} else {
 						ZmbStateFile recoveredState = state;
@@ -1505,17 +1790,19 @@ bool ZoombiniGameState::deleteSaveForTarget(const Common::String &target, int sl
 	if (!loadRosterFile(saveFileMan, target + ".WHO", roster) || !roster.hasEntry(slot))
 		return false;
 
-	const Common::String filename = makeSaveFilename(target, roster.getEntry(slot)._fileName);
+	const Common::String filename = makeSaveFilename(target, roster.getEntry(slot).getSaveFileStem());
 	if (!roster.removeEntryAt(slot))
 		return false;
-	if (!saveRosterFile(saveFileMan, target + ".WHO", roster))
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	if (!saveRosterFile(saveFileMan, target + ".WHO", roster, platform))
 		return false;
+	// A corrupt roster row can still be removed, but an invalid stem must not authorize deleting a state file.
 	if (filename.empty())
 		return true;
 
 	bool filenameStillReferenced = false;
 	for (int i = 0; i < roster.getEntryCount(); i++) {
-		if (filename.equalsIgnoreCase(makeSaveFilename(target, roster.getEntry(i)._fileName))) {
+		if (filename.equalsIgnoreCase(makeSaveFilename(target, roster.getEntry(i).getSaveFileStem()))) {
 			filenameStillReferenced = true;
 			break;
 		}
@@ -1535,21 +1822,23 @@ bool ZoombiniGameState::renameSaveForTarget(const Common::String &target, int sl
 	if (!ZoombiniGameState::renameRosterEntry(target, roster, slot, saveName))
 		return false;
 
-	return saveRosterFile(saveFileMan, target + ".WHO", roster);
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	return saveRosterFile(saveFileMan, target + ".WHO", roster, platform);
 }
 
-bool ZoombiniGameState::moveSaveForTarget(const Common::String &target, int slot, int destinationSlot) {
+bool ZoombiniGameState::moveSaveForTarget(const Common::String &target, int slot, int destSlot) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	ZmbRosterFile roster;
-	if (!loadRosterFile(saveFileMan, target + ".WHO", roster) || slot < 0 || destinationSlot < 0 ||
-		!roster.hasEntry(slot) || !roster.hasEntry(destinationSlot) ||
-		(slot + 1 != destinationSlot && destinationSlot + 1 != slot))
+	if (!loadRosterFile(saveFileMan, target + ".WHO", roster) || slot < 0 || destSlot < 0 ||
+		!roster.hasEntry(slot) || !roster.hasEntry(destSlot) ||
+		(slot + 1 != destSlot && destSlot + 1 != slot))
 		return false;
 
-	if (!roster.swapEntries(slot, destinationSlot))
+	if (!roster.swapEntries(slot, destSlot))
 		return false;
 
-	return saveRosterFile(saveFileMan, target + ".WHO", roster);
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	return saveRosterFile(saveFileMan, target + ".WHO", roster, platform);
 }
 
 ZoombiniGameState::ZmbSaveRecoverResult ZoombiniGameState::recoverSaveForTarget(const Common::String &target, int slot) {
@@ -1563,16 +1852,19 @@ ZoombiniGameState::ZmbSaveRecoverResult ZoombiniGameState::recoverSaveForTarget(
 	if (ARRAYSIZE(rosterEntry._saveName) <= saveNameLength || rosterEntry.getSaveFileNumStr().empty())
 		return ZmbSaveRecoverResult::kNotRecoverable;
 
-	const Common::String filename = makeSaveFilename(target, rosterEntry._fileName);
+	const Common::String filename = makeSaveFilename(target, rosterEntry.getSaveFileStem());
+	if (filename.empty())
+		return ZmbSaveRecoverResult::kNotRecoverable;
 	Common::InSaveFile *stateFile = saveFileMan->openForLoading(filename);
 	if (!stateFile)
 		return ZmbSaveRecoverResult::kNotRecoverable;
 
-	const ZmbSaveFormat format = getSaveFormatFromSize(stateFile->size());
+	const ZmbSaveFormat format = getSaveFormat(*stateFile);
 	ZmbStateFile state;
+	bool stateSyncSucceeded = false;
 	if (format != ZmbSaveFormat::kInvalid) {
 		Common::Serializer serializer(stateFile, nullptr);
-		state.sync(serializer, isTlcSaveFormat(format), hasCompletionCounters(format));
+		stateSyncSucceeded = state.sync(serializer, format);
 	}
 	const bool stateRead = format != ZmbSaveFormat::kInvalid && !stateFile->err();
 	delete stateFile;
@@ -1580,8 +1872,11 @@ ZoombiniGameState::ZmbSaveRecoverResult ZoombiniGameState::recoverSaveForTarget(
 		return ZmbSaveRecoverResult::kNotRecoverable;
 
 	ZoombiniSaveSummary summary;
-	if (summarizeState(state, summary) || !recoverState(state))
+	if ((stateSyncSucceeded && summarizeState(state, summary)) || !recoverState(state))
 		return ZmbSaveRecoverResult::kNotRecoverable;
+	const ZmbSaveFormat writeFormat = ZmbStateFile::getWriteSaveFormat(format);
+	if (format != writeFormat)
+		upgradeStateForVariant(state, format, writeFormat);
 
 	Common::String temporaryFilename;
 	for (uint32 attempt = 0; attempt < 1024 && temporaryFilename.empty(); attempt++) {
@@ -1600,11 +1895,11 @@ ZoombiniGameState::ZmbSaveRecoverResult ZoombiniGameState::recoverSaveForTarget(
 		return ZmbSaveRecoverResult::kTemporaryWriteFailed;
 	}
 	Common::Serializer outputSerializer(nullptr, outputFile);
-	state.sync(outputSerializer, isTlcSaveFormat(format), hasCompletionCounters(format));
+	const bool hasSyncSucc = state.sync(outputSerializer, writeFormat);
 	outputFile->finalize();
-	const bool writeSucceeded = !outputFile->err();
+	const bool hasWriteSucc = hasSyncSucc && !outputFile->err();
 	delete outputFile;
-	if (!writeSucceeded) {
+	if (!hasWriteSucc) {
 		saveFileMan->clearError();
 		saveFileMan->removeSavefile(temporaryFilename);
 		return ZmbSaveRecoverResult::kTemporaryWriteFailed;
@@ -1615,22 +1910,23 @@ ZoombiniGameState::ZmbSaveRecoverResult ZoombiniGameState::recoverSaveForTarget(
 		Common::InSaveFile *file = saveFileMan->openForLoading(candidate);
 		if (!file)
 			return false;
-		const bool valid = getSaveFormatFromSize(file->size()) == format && !file->err();
+		const bool valid = getSaveFormat(*file) == format && !file->err();
 		delete file;
 		return valid;
 	};
-	const auto isRecoveredFileValid = [saveFileMan, format](const Common::String &candidate) {
+	const auto isRecoveredFileValid = [saveFileMan, writeFormat](const Common::String &candidate) {
 		saveFileMan->clearError();
 		Common::InSaveFile *file = saveFileMan->openForLoading(candidate);
 		if (!file)
 			return false;
-		const ZmbSaveFormat candidateFormat = getSaveFormatFromSize(file->size());
+		const ZmbSaveFormat candidateFormat = getSaveFormat(*file);
 		ZmbStateFile candidateState;
-		if (candidateFormat == format) {
+		bool candidateSyncSucceeded = false;
+		if (candidateFormat == writeFormat) {
 			Common::Serializer serializer(file, nullptr);
-			candidateState.sync(serializer, isTlcSaveFormat(format), hasCompletionCounters(format));
+			candidateSyncSucceeded = candidateState.sync(serializer, writeFormat);
 		}
-		const bool readSucceeded = candidateFormat == format && !file->err();
+		const bool readSucceeded = candidateFormat == writeFormat && candidateSyncSucceeded && !file->err();
 		delete file;
 		ZoombiniSaveSummary candidateSummary;
 		return readSucceeded && summarizeState(candidateState, candidateSummary);
@@ -1717,16 +2013,15 @@ bool ZoombiniGameState::isSaveCompactionNeededForTarget(const Common::String &ta
 	bool fileNamesNeedCompaction = false;
 	for (int i = 0; i < entryCount; i++) {
 		const ZmbRosterEntry &entry = roster.getEntry(i);
-		if (entry.getSaveFileNumStr().empty())
+		const Common::String storedStem = entry.getSaveFileStem();
+		const Common::String originalFilename = makeSaveFilename(target, storedStem);
+		if (originalFilename.empty())
 			return false;
-
-		const Common::String originalFilename = makeSaveFilename(target, entry._fileName);
 		saveFileMan->clearError();
 		if (!saveFileMan->exists(originalFilename))
 			return false;
 		originalFilenames.push_back(originalFilename);
 
-		const Common::String storedStem = entry.getSaveFileStem();
 		const Common::String compactedStem = Common::String::format("ZOOM%04d", i);
 		if (storedStem != compactedStem)
 			fileNamesNeedCompaction = true;
@@ -1740,7 +2035,9 @@ bool ZoombiniGameState::isSaveCompactionNeededForTarget(const Common::String &ta
 	// unlisted state file already owns one of the destination names.
 	for (int i = 0; i < entryCount; i++) {
 		const Common::String compactedStem = Common::String::format("ZOOM%04d", i);
-		const Common::String compactedFilename = makeSaveFilename(target, reinterpret_cast<const byte *>(compactedStem.c_str()));
+		const Common::String compactedFilename = makeSaveFilename(target, compactedStem);
+		if (compactedFilename.empty())
+			return false;
 		saveFileMan->clearError();
 		if (saveFileMan->exists(compactedFilename) &&
 			!containsSaveFilename(originalFilenames, compactedFilename))
@@ -1748,7 +2045,9 @@ bool ZoombiniGameState::isSaveCompactionNeededForTarget(const Common::String &ta
 	}
 
 	const Common::String nextStem = Common::String::format("ZOOM%04d", entryCount);
-	const Common::String nextFilename = makeSaveFilename(target, reinterpret_cast<const byte *>(nextStem.c_str()));
+	const Common::String nextFilename = makeSaveFilename(target, nextStem);
+	if (nextFilename.empty())
+		return false;
 	saveFileMan->clearError();
 	if (saveFileMan->exists(nextFilename) &&
 		!containsSaveFilename(originalFilenames, nextFilename))
@@ -1865,22 +2164,22 @@ bool ZoombiniGameState::renameGame(int slot, const Common::U32String &saveName) 
 	return false;
 }
 
-bool ZoombiniGameState::moveGame(int slot, int destinationSlot) {
-	if (!_r.isSerializedStateValid() || !_r.hasEntry(slot) || !_r.hasEntry(destinationSlot) ||
-		(slot + 1 != destinationSlot && destinationSlot + 1 != slot))
+bool ZoombiniGameState::moveGame(int slot, int destSlot) {
+	if (!_r.isSerializedStateValid() || !_r.hasEntry(slot) || !_r.hasEntry(destSlot) ||
+		(slot + 1 != destSlot && destSlot + 1 != slot))
 		return false;
 
-	if (!_r.swapEntries(slot, destinationSlot))
+	if (!_r.swapEntries(slot, destSlot))
 		return false;
 
 	if (!saveRoster()) {
-		_r.swapEntries(slot, destinationSlot);
+		_r.swapEntries(slot, destSlot);
 		return false;
 	}
 
 	if (_currentSaveSlot == slot)
-		_currentSaveSlot = destinationSlot;
-	else if (_currentSaveSlot == destinationSlot)
+		_currentSaveSlot = destSlot;
+	else if (_currentSaveSlot == destSlot)
 		_currentSaveSlot = slot;
 
 	return true;
@@ -1944,19 +2243,20 @@ bool ZoombiniGameState::loadState(int slot) {
 
 	debugC(1, MohawkEngine_Zoombini::kDebugSaveLoad01, "state: loading game from '%s'", filename.c_str());
 
+	// Prefer exact cross-platform detection, then apply the target's native prefix rules for non-exact file lengths.
 	const int32 size = loadFile->size();
 	const ZmbSaveFormat targetFormat = getTargetSaveFormat(_vm);
-	ZmbSaveFormat sourceFormat = getSaveFormatFromSize(size);
-	if (!canLoadSaveFormat(sourceFormat))
-		sourceFormat = getLoadSaveFormatFromSize(size, targetFormat);
-	if (!canLoadSaveFormat(sourceFormat)) {
+	ZmbSaveFormat srcFormat = getSaveFormat(*loadFile);
+	if (!canLoadSaveFormat(srcFormat))
+		srcFormat = getLoadSaveFormatFromSize(size, targetFormat);
+	if (!canLoadSaveFormat(srcFormat)) {
 		warning("Cannot load Zoombini save file '%s': size %d is incompatible with target format %s",
-				filename.c_str(), size, getSaveFormatName(targetFormat));
+				filename.c_str(), size, getSaveFormatName(targetFormat).encode(Common::kUtf8).c_str());
 		delete loadFile;
 		return false;
 	}
 
-	if (!hasValidStateFileMagic(*loadFile)) {
+	if (!hasValidStateFileMagic(*loadFile, srcFormat)) {
 		warning("Cannot load Zoombini save file '%s': invalid state-file magic", filename.c_str());
 		delete loadFile;
 		return false;
@@ -1967,18 +2267,25 @@ bool ZoombiniGameState::loadState(int slot) {
 		return false;
 	}
 
-	if (isNewerThanTargetSaveFormat(sourceFormat, targetFormat)) {
-		if (_vm->openConfirmMsgBoxDialog(_vm->_text->getLocalizedString(ZoombiniText::kSvmDialogBodyLoadNewerSaveFormat)) != ZoombiniDialogResult::kYes) {
-			_lastLoadCancelledFlag = true;
-			delete loadFile;
-			return false;
-		}
+	// Show one format warning before decoding; a platform change takes precedence over a missing-field warning.
+	const bool platformConversion = ZmbStateFile::getSavePlatform(srcFormat) != ZmbStateFile::getSavePlatform(targetFormat);
+	Common::U32String formatWarning;
+	if (platformConversion)
+		formatWarning = _vm->_text->getLocalizedString(ZoombiniText::kSvmDialogBodyLoadOtherPlatformSave);
+	else if (isNewerThanTargetSaveFormat(srcFormat, targetFormat))
+		formatWarning = _vm->_text->getLocalizedString(ZoombiniText::kSvmDialogBodyLoadNewerSaveFormat);
+
+	if (!formatWarning.empty() && _vm->openConfirmMsgBoxDialog(formatWarning) != ZoombiniDialogResult::kYes) {
+		_lastLoadCancelledFlag = true;
+		delete loadFile;
+		return false;
 	}
 
+	// Deserialize with the source's layout into a local state; keep the current journey until all checks succeed.
 	ZmbStateFile loadedState;
 	Common::Serializer s(loadFile, nullptr);
-	loadedState.sync(s, isTlcSaveFormat(sourceFormat), hasCompletionCounters(sourceFormat));
-	const bool readFailed = loadFile->err();
+	const bool stateSyncSucceeded = loadedState.sync(s, srcFormat);
+	const bool readFailed = !stateSyncSucceeded || loadFile->err();
 	delete loadFile;
 
 	ZoombiniSaveSummary ignoredSummary;
@@ -1987,12 +2294,13 @@ bool ZoombiniGameState::loadState(int slot) {
 		return false;
 	}
 
-	upgradeStateForVariant(loadedState, sourceFormat, targetFormat);
-	loadedState._isDirty = false;
+	upgradeStateForVariant(loadedState, srcFormat, targetFormat);
+	loadedState._isDirty = platformConversion;
 
-	const Common::U32String convPromptBody = _vm->_text->getLocalizedString(ZoombiniText::kSvmDialogBodyAskConvertUnreadableZoombiniNames);
-	if (!_vm->getRelInfo().supportsLocalizedNames() && hasNonAsciiZoombiniName(loadedState) &&
-		_vm->openConfirmMsgBoxDialog(convPromptBody) == ZoombiniDialogResult::kYes) {
+	// Structural conversion preserves name bytes. Regeneration is a separate target-language decision requiring approval.
+	const Common::U32String regeneratePromptBody = _vm->_text->getLocalizedString(ZoombiniText::kSvmDialogBodyAskRegenerateZoombiniNames);
+	if (hasUnsupportedZoombiniName(loadedState, *_vm->_text) &&
+		_vm->openConfirmMsgBoxDialog(regeneratePromptBody) == ZoombiniDialogResult::kYes) {
 		replaceZoombiniNamesWithStandardNames(loadedState);
 		loadedState._isDirty = true;
 	}
@@ -2004,42 +2312,41 @@ bool ZoombiniGameState::loadState(int slot) {
 	return true;
 }
 
-void ZoombiniGameState::syncGameState(Common::Serializer &s, bool isTlcLayout, bool hasCompletionCounters) {
-	_journeyState.sync(s, isTlcLayout, hasCompletionCounters);
+void ZoombiniGameState::syncGameState(Common::Serializer &s, ZmbSaveFormat format) {
+	// Let the state-file serializer select the native fields and alignment from the format.
+	_journeyState.sync(s, format);
 }
 
 void ZoombiniGameState::dumpCurrentState(Common::WriteStream &out) {
 	Common::Serializer s(nullptr, &out);
 	const ZmbSaveFormat targetFormat = getTargetSaveFormat(_vm);
-	_journeyState.sync(s, isTlcSaveFormat(targetFormat), hasCompletionCounters(targetFormat));
+	_journeyState.sync(s, targetFormat);
 }
 
 Common::String ZoombiniGameState::getTargetName() const {
 	return ConfMan.getActiveDomainName();
 }
 
-Common::String ZoombiniGameState::makeSaveFilename(const Common::String &targetName, const byte *baseName) {
+Common::String ZoombiniGameState::makeSaveFilename(const Common::String &targetName, const Common::String &fileStem) {
 	// The roster stores the legacy "ZOOM####" base name; the four-digit counter
 	// suffix uniquely identifies the save within this target's namespace.
-	if (!baseName || baseName[0] != 'Z' || baseName[1] != 'O' || baseName[2] != 'O' || baseName[3] != 'M' ||
-		baseName[8] != 0)
+	// Check the owned string's exact length before indexing; fixed roster fields are decoded by getSaveFileStem().
+	if (fileStem.size() != 8 || !fileStem.hasPrefix("ZOOM"))
 		return Common::String();
 
-	char counter[5] = {};
-	for (uint i = 0; i < 4; i++) {
-		const byte digit = baseName[i + 4];
+	for (uint i = 4; i < fileStem.size(); i++) {
+		const char digit = fileStem[i];
 		if (digit < '0' || '9' < digit)
 			return Common::String();
-		counter[i] = static_cast<char>(digit);
 	}
-	return Common::String::format("%s-%s.ZMB", targetName.c_str(), counter);
+	return Common::String::format("%s-%s.ZMB", targetName.c_str(), fileStem.c_str() + 4);
 }
 
-bool ZoombiniGameState::appendNewSaveEntryForTarget(Common::SaveFileManager *saveFileMan, const Common::String &target, ZmbRosterFile &roster,
-													ZmbRosterEntry entry) {
+bool ZoombiniGameState::appendNewSaveEntryForTarget(Common::SaveFileManager *saveFileMan, const Common::String &target, ZmbRosterFile &roster, ZmbRosterEntry entry) {
 	if (!saveFileMan || !roster.isSerializedStateValid() || roster.getEntryCapacity() <= roster.getEntryCount())
 		return false;
 
+	// Advance monotonically past both roster-owned stems and orphan files left in the target's save namespace.
 	const uint16 originalCounter = roster._nextSaveFileNameCounter;
 	uint32 candidateCounter = originalCounter;
 	while (candidateCounter <= 9999) {
@@ -2056,9 +2363,12 @@ bool ZoombiniGameState::appendNewSaveEntryForTarget(Common::SaveFileManager *sav
 			}
 		}
 
-		const Common::String filename = makeSaveFilename(target, reinterpret_cast<const byte *>(stem.c_str()));
+		const Common::String filename = makeSaveFilename(target, stem);
+		if (filename.empty())
+			return false;
 		saveFileMan->clearError();
 		if (!usedByRoster && !saveFileMan->exists(filename)) {
+			// Temporarily select this free counter; restore it if appending cannot commit the roster entry.
 			roster._nextSaveFileNameCounter = static_cast<uint16>(candidateCounter);
 			if (roster.appendNewSaveEntry(entry))
 				return true;
@@ -2076,14 +2386,15 @@ bool ZoombiniGameState::appendNewSaveEntryForTarget(Common::SaveFileManager *sav
 Common::String ZoombiniGameState::getSaveFilename(int slot) const {
 	if (!_r.isSerializedStateValid() || !_r.hasEntry(slot))
 		return Common::String();
-	return makeSaveFilename(getTargetName(), _r.getEntry(slot)._fileName);
+	return makeSaveFilename(getTargetName(), _r.getEntry(slot).getSaveFileStem());
 }
 
 Common::String ZoombiniGameState::getRosterFilename() const {
 	return getTargetName() + ".WHO";
 }
 
-bool ZoombiniGameState::hasNonAsciiZoombiniName(const ZmbStateFile &state) const {
+bool ZoombiniGameState::hasUnsupportedZoombiniName(const ZmbStateFile &state, ZoombiniText &text) {
+	// Active packs use their logical prefixes; stale unused tail slots must not request regeneration.
 	const ZmbStateActivePack *packs[] = {
 		&state._zmbPackIsle,
 		&state._zmbPackBC1,
@@ -2092,11 +2403,12 @@ bool ZoombiniGameState::hasNonAsciiZoombiniName(const ZmbStateFile &state) const
 	};
 	for (uint32 packIdx = 0; packIdx < ARRAYSIZE(packs); packIdx++) {
 		for (int16 entryIdx = 0; entryIdx < packs[packIdx]->getPackZmbCount(); entryIdx++) {
-			if (packs[packIdx]->getEntry(entryIdx).hasNonAsciiName())
+			if (!packs[packIdx]->getEntry(entryIdx).hasSupportedName(text))
 				return true;
 		}
 	}
 
+	// Stored belts are sparse, so inspect every serialized slot rather than treating the count as a populated prefix.
 	const ZmbStateStoredChunk *chunks[] = {
 		&state._storedChunkBC1,
 		&state._storedChunkBC2,
@@ -2104,7 +2416,7 @@ bool ZoombiniGameState::hasNonAsciiZoombiniName(const ZmbStateFile &state) const
 	};
 	for (uint32 chunkIdx = 0; chunkIdx < ARRAYSIZE(chunks); chunkIdx++) {
 		for (int16 entryIdx = 0; entryIdx < chunks[chunkIdx]->getEntryCapacity(); entryIdx++) {
-			if (chunks[chunkIdx]->getEntry(entryIdx).hasNonAsciiName())
+			if (!chunks[chunkIdx]->getEntry(entryIdx).hasSupportedName(text))
 				return true;
 		}
 	}
@@ -2113,6 +2425,8 @@ bool ZoombiniGameState::hasNonAsciiZoombiniName(const ZmbStateFile &state) const
 }
 
 void ZoombiniGameState::replaceZoombiniNamesWithStandardNames(ZmbStateFile &state) {
+	// After user approval, visit the same logical packs and sparse storage as the compatibility scan.
+	// Generate replacements through the active release's normal name selector, leaving empty name fields empty.
 	ZmbStateActivePack *packs[] = {
 		&state._zmbPackIsle,
 		&state._zmbPackBC1,
@@ -2227,7 +2541,7 @@ bool ZoombiniGameState::saveState(int slot) {
 
 	Common::Serializer s(nullptr, saveFile);
 	const ZmbSaveFormat targetFormat = getTargetSaveFormat(_vm);
-	syncGameState(s, isTlcSaveFormat(targetFormat), hasCompletionCounters(targetFormat));
+	syncGameState(s, targetFormat);
 	saveFile->finalize();
 	const bool writeFailed = saveFile->err();
 	delete saveFile;
@@ -2271,7 +2585,7 @@ bool ZoombiniGameState::saveRoster() {
 	Common::String filename = getRosterFilename();
 	debugC(1, MohawkEngine_Zoombini::kDebugSaveLoad01, "state: saving roster to '%s'", filename.c_str());
 	Common::ErrorCode fallbackErrorCode;
-	if (writeRosterFile(_saveFileMan, filename, _r, &fallbackErrorCode))
+	if (writeRosterFile(_saveFileMan, filename, _r, _vm->getPlatform(), &fallbackErrorCode))
 		return true;
 
 	if (_r.isSerializedStateValid()) {
@@ -2309,14 +2623,31 @@ void ZmbTrait::sync(Common::Serializer &s) {
 		assert(hasValidValues());
 }
 
-void ZmbStateStoredEntry::sync(Common::Serializer &s, bool isTlcLayout) {
+void ZmbStateStoredEntry::sync(Common::Serializer &s, bool hasAlignedStoredEntries, Common::Platform platform) {
+	// Traits and encoded names are raw byte fields; rectangle words and trailing alignment use the native layout.
+	const bool isLE = platform == Common::kPlatformWindows;
+
 	_traits.sync(s);
-	s.syncAsUint16LE(_rect.bottom);
-	s.syncAsUint16LE(_rect.right);
-	s.syncAsUint16LE(_rect.top);
-	s.syncAsUint16LE(_rect.left);
-	s.syncBytes(_name, ARRAYSIZE(_name));
-	if (isTlcLayout)
+	switch (platform) {
+	case Common::kPlatformMacintosh:
+		// Native sRect stores left, top, right, bottom; the Windows state uses the reverse order.
+		s.syncMultipleEndian(isLE, _rect.left);
+		s.syncMultipleEndian(isLE, _rect.top);
+		s.syncMultipleEndian(isLE, _rect.right);
+		s.syncMultipleEndian(isLE, _rect.bottom);
+		break;
+	case Common::kPlatformWindows:
+		s.syncMultipleEndian(isLE, _rect.bottom);
+		s.syncMultipleEndian(isLE, _rect.right);
+		s.syncMultipleEndian(isLE, _rect.top);
+		s.syncMultipleEndian(isLE, _rect.left);
+		break;
+	default:
+		error("ZmbStateStoredEntry::sync: unsupported platform %d", static_cast<int>(platform));
+	}
+	s.syncBytes(reinterpret_cast<byte *>(_name), ARRAYSIZE(_name));
+	// TLC and EUv1.1 Macintosh align the next stored entry with two serialized padding bytes.
+	if (hasAlignedStoredEntries)
 		s.skip(2);
 }
 
@@ -2357,19 +2688,21 @@ bool ZmbStateStoredEntry::hasSerializedName() const {
 	return _name[0] != 0;
 }
 
-bool ZmbStateStoredEntry::hasNonAsciiName() const {
-	for (uint32 i = 0; i < ARRAYSIZE(_name) && _name[i] != 0; i++) {
-		if (0x7F < _name[i])
-			return true;
-	}
-	return false;
+bool ZmbStateStoredEntry::hasSupportedName(ZoombiniText &text) const {
+	// Require an in-field NUL before passing the exact original bytes to the target release's name rules.
+	const uint32 length = getNameLength();
+	if (ARRAYSIZE(_name) <= length)
+		return false;
+	return text.isAllowedZoombiniName(Common::String(_name, length));
 }
 
-void Mohawk::ZmbStateStoredChunk::sync(Common::Serializer &s, bool isTlcLayout) {
-	s.syncAsSint16LE(_leftmostColumnIdx);
-	s.syncAsSint16LE(_storedCount);
+void Mohawk::ZmbStateStoredChunk::sync(Common::Serializer &s, bool hasAlignedStoredEntries, Common::Platform platform) {
+	// Serialize all fixed-capacity slots, including unused ones, so subsequent chunks retain their native offsets.
+	const bool isLE = platform == Common::kPlatformWindows;
+	s.syncMultipleEndian(isLE, _leftmostColumnIdx);
+	s.syncMultipleEndian(isLE, _storedCount);
 	for (int i = 0; i < ARRAYSIZE(_entries); i++)
-		_entries[i].sync(s, isTlcLayout);
+		_entries[i].sync(s, hasAlignedStoredEntries, platform);
 }
 
 int16 Mohawk::ZmbStateStoredChunk::getPopulatedEntryCount() const {
@@ -2410,13 +2743,15 @@ void Mohawk::ZmbStateStoredChunk::recoverSerializedState() {
 		_storedCount = recoveredCount;
 }
 
-void ZmbStateActiveEntry::sync(Common::Serializer &s, bool isTlcLayout) {
+void ZmbStateActiveEntry::sync(Common::Serializer &s, bool isTlcV20Layout, Common::Platform platform) {
+	// Keep name bytes unchanged while translating coordinate words; Windows v1 uses 19 bytes, Macintosh and TLC use 20.
+	const bool isLE = platform == Common::kPlatformWindows;
 	_traits.sync(s);
-	s.syncAsUint16LE(_posX);
-	s.syncAsUint16LE(_posY);
+	s.syncMultipleEndian(isLE, _posX);
+	s.syncMultipleEndian(isLE, _posY);
 	s.syncAsByte(_bIsOccupied);
-	s.syncBytes(_name, ARRAYSIZE(_name));
-	if (isTlcLayout)
+	s.syncBytes(reinterpret_cast<byte *>(_name), ARRAYSIZE(_name));
+	if (isTlcV20Layout || platform == Common::kPlatformMacintosh)
 		s.skip(1);
 }
 
@@ -2458,20 +2793,22 @@ bool ZmbStateActiveEntry::hasSerializedName() const {
 	return _name[0] != 0;
 }
 
-bool ZmbStateActiveEntry::hasNonAsciiName() const {
-	for (uint32 i = 0; i < ARRAYSIZE(_name) && _name[i] != 0; i++) {
-		if (0x7F < _name[i])
-			return true;
-	}
-	return false;
+bool ZmbStateActiveEntry::hasSupportedName(ZoombiniText &text) const {
+	// Bound the name by its fixed field, then share the text service's codec and generator/pool validation.
+	const uint32 length = getNameLength();
+	if (ARRAYSIZE(_name) <= length)
+		return false;
+	return text.isAllowedZoombiniName(Common::String(_name, length));
 }
 
-void ZmbStateActivePack::sync(Common::Serializer &s, bool isTlcLayout) {
-	s.syncAsSint16LE(_wPackZmbCount);
-	s.syncAsSint16LE(_bSkipOccupiedEntries);
-	s.syncAsSint16LE(_bSkipUnoccupiedEntries);
+void ZmbStateActivePack::sync(Common::Serializer &s, bool isTlcV20Layout, Common::Platform platform) {
+	// The logical count controls gameplay, but the native file always contains the complete fixed entry array.
+	const bool isLE = platform == Common::kPlatformWindows;
+	s.syncMultipleEndian(isLE, _wPackZmbCount);
+	s.syncMultipleEndian(isLE, _bSkipOccupiedEntries);
+	s.syncMultipleEndian(isLE, _bSkipUnoccupiedEntries);
 	for (int i = 0; i < ARRAYSIZE(_entries); i++)
-		_entries[i].sync(s, isTlcLayout);
+		_entries[i].sync(s, isTlcV20Layout, platform);
 }
 
 bool ZmbStateActivePack::isSerializedStateValid() const {
@@ -2554,18 +2891,48 @@ bool ZmbRosterFile::appendNewSaveEntry(ZmbRosterEntry entry) {
 	return true;
 }
 
-void ZmbRosterFile::sync(Common::Serializer &r) {
-	r.syncAsUint16LE(_magic006B);
-	r.syncAsUint16LE(_nextSaveFileNameCounter);
-	r.syncAsUint16LE(_saveEntryCount);
+bool ZmbRosterFile::sync(Common::Serializer &r, Common::Platform platform) {
+	bool magicMatches = true;
+	if (r.isLoading()) {
+		// Probe as big-endian: Macintosh matches directly, while Windows requires swapping its little-endian signature.
+		// Preserve a mismatch result but continue decoding with the Windows fallback so recovery can inspect the fields.
+		uint16 rawMagic = 0;
+		r.syncAsUint16BE(rawMagic);
+		if (rawMagic == ZmbStateFile::kMacintoshMagic) {
+			platform = Common::kPlatformMacintosh;
+		} else {
+			platform = Common::kPlatformWindows;
+			magicMatches = SWAP_BYTES_16(rawMagic) == ZmbStateFile::kWindowsMagic;
+		}
+	} else {
+		// Roster signatures use native byte order, unlike state-file signatures, which are always big-endian.
+		switch (platform) {
+		case Common::kPlatformMacintosh: {
+			uint16 magic = ZmbStateFile::kMacintoshMagic;
+			r.syncAsUint16BE(magic);
+			break;
+		}
+		case Common::kPlatformWindows: {
+			uint16 magic = ZmbStateFile::kWindowsMagic;
+			r.syncAsUint16LE(magic);
+			break;
+		}
+		default:
+			error("ZmbRosterFile::sync: unsupported platform %d", static_cast<int>(platform));
+		}
+	}
+	const bool isLE = platform == Common::kPlatformWindows;
+	r.syncMultipleEndian(isLE, _nextSaveFileNameCounter);
+	r.syncMultipleEndian(isLE, _saveEntryCount);
+	// Keep the full roster image, including unused slots, independent of the possibly damaged entry count.
 	for (int32 i = 0; i < ARRAYSIZE(_entries); i++) {
 		_entries[i].sync(r);
 	}
+	return magicMatches && !r.err();
 }
 
 bool ZmbRosterFile::isSerializedStateValid() const {
-	if (_magic006B != ZoombiniGameState::kEndianMagic || !hasValidEntryCount() ||
-		!hasValidNextSaveFileNameCounter())
+	if (!hasValidEntryCount() || !hasValidNextSaveFileNameCounter())
 		return false;
 
 	for (int16 i = 0; i < getEntryCount(); i++) {
@@ -2596,6 +2963,7 @@ Common::U32String ZmbRosterEntry::getSaveName(MohawkEngine_Zoombini *vm) const {
 }
 
 Common::U32String ZmbRosterEntry::getSaveName(Common::CodePage codePage) const {
+	// Launcher save management has no active text service; decode only the bounded field using its selected release codec.
 	const uint16 saveNameLength = getSaveNameLength();
 	if (ARRAYSIZE(_saveName) <= saveNameLength)
 		return Common::U32String();
@@ -2620,6 +2988,7 @@ uint16 ZmbRosterEntry::getFileNameLength() const {
 }
 
 Common::String ZmbRosterEntry::getSaveFileStem() const {
+	// Find the terminator inside the fixed field before constructing a length-bearing string from untrusted save bytes.
 	const uint16 fileNameLength = getFileNameLength();
 	if (fileNameLength != ARRAYSIZE(_fileName) - 1)
 		return Common::String();
@@ -2827,11 +3196,31 @@ void ZmbStateFile::markDebugXferProgress(const ZmbXferRouteInfo &routeInfo) {
 	}
 }
 
-void ZmbStateFile::sync(Common::Serializer &s, bool isTlcLayout, bool hasCompletionCounters) {
-	// 0x0000: The state file stores the magic and auto-sticky delay big-endian
-	// (on-disk bytes 00 6B and 00 1E).
-	// Every field from 0x0004 onward is little-endian.
-	s.syncAsUint16BE(_magic006B);
+bool ZmbStateFile::sync(Common::Serializer &s, ZmbSaveFormat format) {
+	if (s.isSaving() && (format == ZmbSaveFormat::kInvalid || getWriteSaveFormat(format) != format))
+		return false;
+	// Resolve the layout from one format so its platform, field set and alignment stay consistent.
+	const Common::Platform platform = getSavePlatform(format);
+	const bool isTlcV20Layout = isTlcSaveFormat(format);
+	const bool hasCompletionTail = hasCompletionCounters(format);
+	const bool isMacV11EULayout = usesMacV11EUAlignment(format);
+	// The native signature belongs to the file header, not the in-memory game state.
+	// Keep decoding after a mismatch so recovery can inspect the body, and report it to the caller.
+	uint16 expectedMagic = 0;
+	switch (platform) {
+	case Common::kPlatformMacintosh:
+		expectedMagic = kMacintoshMagic;
+		break;
+	case Common::kPlatformWindows:
+		expectedMagic = kWindowsMagic;
+		break;
+	default:
+		error("ZmbStateFile::sync: unsupported platform %d", static_cast<int>(platform));
+	}
+	const bool isLE = platform == Common::kPlatformWindows;
+	uint16 magic = expectedMagic;
+	// These two header words are big-endian even on Windows; later words follow the platform selected above.
+	s.syncAsUint16BE(magic);
 	s.syncAsUint16BE(_autoStickyDelay);
 
 	// 0x0004: Flags
@@ -2841,54 +3230,54 @@ void ZmbStateFile::sync(Common::Serializer &s, bool isTlcLayout, bool hasComplet
 	s.syncAsByte(_flagCursorVisible);
 	s.syncAsByte(_flagDebug);
 	s.syncAsByte(_flagAutoStickyMouse);
-	if (isTlcLayout) {
+	if (isTlcV20Layout) {
 		// TLC adds the eight-byte Fleens transform tables at 0x000E-0x0015.
 		// The v1 header has six corresponding bytes, so later scalar fields move by two bytes.
 		s.syncAsByte(_tlcTouchSenseEnable);
 		s.syncAsByte(_tlcHelpAudioEnable);
-		s.syncAsUint16LE(_v2TransitionsDisable);
+		s.syncMultipleEndian(isLE, _v2TransitionsDisable);
 		for (int32 i = 0; i < ARRAYSIZE(_v2FleensTraitValueRotations); i++)
 			s.syncAsByte(_v2FleensTraitValueRotations[i]);
 		for (int32 i = 0; i < ARRAYSIZE(_v2FleensTraitDestSlots); i++)
 			s.syncAsByte(_v2FleensTraitDestSlots[i]);
 	} else {
-		s.syncAsUint16LE(_v1TransitionsDisable);
+		s.syncMultipleEndian(isLE, _v1TransitionsDisable);
 		for (int32 i = 0; i < ARRAYSIZE(_v1FleensTraitValueRotations); i++)
 			s.syncAsByte(_v1FleensTraitValueRotations[i]);
 		for (int32 i = 0; i < ARRAYSIZE(_v1FleensTraitDestSlots); i++)
 			s.syncAsByte(_v1FleensTraitDestSlots[i]);
 	}
 	for (int32 i = 0; i < ARRAYSIZE(_bcOneMushroomColors); i++)
-		s.syncAsUint16LE(_bcOneMushroomColors[i]);
-	s.syncAsUint16LE(_townScrollCol);
-	s.syncAsUint16LE(_lessActionFlag);
-	s.syncAsUint16LE(_fleensHighScore);
-	s.syncAsUint16LE(_mudballHighScore);
-	s.syncAsUint16LE(_pickerWaveBoatAnimationState);
+		s.syncMultipleEndian(isLE, _bcOneMushroomColors[i]);
+	s.syncMultipleEndian(isLE, _townScrollCol);
+	s.syncMultipleEndian(isLE, _lessActionFlag);
+	s.syncMultipleEndian(isLE, _fleensHighScore);
+	s.syncMultipleEndian(isLE, _mudballHighScore);
+	s.syncMultipleEndian(isLE, _pickerWaveBoatAnimationState);
 
 	// v1.x 0x0028 / TLC 0x002A: Page Flags
-	_pageFlagIsle.sync(s);
-	_pageFlagBridge.sync(s);
-	_pageFlagTunnels.sync(s);
-	_pageFlagPizza.sync(s);
-	_pageFlagBasecamp1.sync(s);
-	_pageFlagFerry.sync(s);
-	_pageFlagLilly.sync(s);
-	_pageFlagSlides.sync(s);
-	_pageFlagFleens.sync(s);
-	_pageFlagHotel.sync(s);
-	_pageFlagNet.sync(s);
-	_pageFlagBasecamp2.sync(s);
-	_pageFlagCaves.sync(s);
-	_pageFlagSmoke.sync(s);
-	_pageFlagMaze.sync(s);
-	_pageFlagTown.sync(s);
+	_pageFlagIsle.sync(s, platform);
+	_pageFlagBridge.sync(s, platform);
+	_pageFlagTunnels.sync(s, platform);
+	_pageFlagPizza.sync(s, platform);
+	_pageFlagBasecamp1.sync(s, platform);
+	_pageFlagFerry.sync(s, platform);
+	_pageFlagLilly.sync(s, platform);
+	_pageFlagSlides.sync(s, platform);
+	_pageFlagFleens.sync(s, platform);
+	_pageFlagHotel.sync(s, platform);
+	_pageFlagNet.sync(s, platform);
+	_pageFlagBasecamp2.sync(s, platform);
+	_pageFlagCaves.sync(s, platform);
+	_pageFlagSmoke.sync(s, platform);
+	_pageFlagMaze.sync(s, platform);
+	_pageFlagTown.sync(s, platform);
 
 	// v1.x 0x0048 / TLC 0x004A: Generated and Stored Zoombini Count
-	s.syncAsSint16LE(_zmbGeneratedCount);
-	s.syncAsSint16LE(_zmbStoredBC1Count);
-	s.syncAsSint16LE(_zmbStoredBC2Count);
-	s.syncAsSint16LE(_zmbStoredTownCount);
+	s.syncMultipleEndian(isLE, _zmbGeneratedCount);
+	s.syncMultipleEndian(isLE, _zmbStoredBC1Count);
+	s.syncMultipleEndian(isLE, _zmbStoredBC2Count);
+	s.syncMultipleEndian(isLE, _zmbStoredTownCount);
 
 	// v1.x 0x0050 / TLC 0x0052: Level Flags
 	s.syncAsByte(_levelFlagRouteBigBadHungry);
@@ -2898,7 +3287,7 @@ void ZmbStateFile::sync(Common::Serializer &s, bool isTlcLayout, bool hasComplet
 
 	// v1.x 0x0062 / TLC 0x0064: Memorial Stone Records
 	for (int32 i = 0; i < ARRAYSIZE(_memorialYears); i++)
-		s.syncAsUint16LE(_memorialYears[i]);
+		s.syncMultipleEndian(isLE, _memorialYears[i]);
 	for (int32 i = 0; i < ARRAYSIZE(_memorialMonths); i++)
 		s.syncAsByte(_memorialMonths[i]);
 	for (int32 i = 0; i < ARRAYSIZE(_memorialDays); i++)
@@ -2910,18 +3299,18 @@ void ZmbStateFile::sync(Common::Serializer &s, bool isTlcLayout, bool hasComplet
 
 	// v1.x 0x00C2 / TLC 0x00C4: Route Levels
 	for (int32 i = 0; i < ARRAYSIZE(_routeLevels); i++) {
-		s.syncAsSint16LE(_routeLevels[i]);
+		s.syncMultipleEndian(isLE, _routeLevels[i]);
 	}
-	if (!isTlcLayout)
-		s.syncAsSint16LE(_currentRoute);
+	if (!isTlcV20Layout)
+		s.syncMultipleEndian(isLE, _currentRoute);
 	int16 currentPage = static_cast<int16>(_currentPage);
-	if (isTlcLayout) {
+	if (isTlcV20Layout) {
 		// TLC moved the current page from 0x00CC to 0x00CE.
 		// It stores the previous page at 0x00CC.
 		// Keep @ref ZmbStateFile::_currentPage independent of the source layout.
 		int16 tlcPreviousPage = static_cast<int16>(_v2PreviousPage);
-		s.syncAsSint16LE(tlcPreviousPage);
-		s.syncAsSint16LE(currentPage);
+		s.syncMultipleEndian(isLE, tlcPreviousPage);
+		s.syncMultipleEndian(isLE, currentPage);
 
 		if (s.isLoading()) {
 			_v2PreviousPage = static_cast<ZmbDestPageKind>(tlcPreviousPage);
@@ -2929,48 +3318,56 @@ void ZmbStateFile::sync(Common::Serializer &s, bool isTlcLayout, bool hasComplet
 			_currentRoute = static_cast<int16>(_v2PreviousPage);
 		}
 	} else {
-		s.syncAsSint16LE(currentPage);
+		s.syncMultipleEndian(isLE, currentPage);
 		if (s.isLoading())
 			_currentPage = static_cast<ZmbDestPageKind>(currentPage);
 	}
 
+	// EUv1.1 Mac aligns its first stored chunk to 0x00D0 while retaining the v1.0 header fields.
+	if (isMacV11EULayout)
+		s.skip(2);
+
 	// v1.x 0x00CE / TLC 0x00D0: Stored Zoombinis on Basecamp 1
-	_storedChunkBC1.sync(s, isTlcLayout);
+	_storedChunkBC1.sync(s, isTlcV20Layout || isMacV11EULayout, platform);
 
 	// v1.x 0x3688 / TLC 0x3B6C: Stored Zoombinis on Basecamp 2
-	_storedChunkBC2.sync(s, isTlcLayout);
+	_storedChunkBC2.sync(s, isTlcV20Layout || isMacV11EULayout, platform);
 
 	// v1.x 0x6C42 / TLC 0x7608: Stored Zoombinis on Town
-	_storedChunkTown.sync(s, isTlcLayout);
+	_storedChunkTown.sync(s, isTlcV20Layout || isMacV11EULayout, platform);
 
 	// v1.x 0xA1FC / TLC 0xB0A4: Active Zoombini Packs
-	_zmbPackIsle.sync(s, isTlcLayout);
-	_zmbPackBC1.sync(s, isTlcLayout);
-	_zmbPackBC2.sync(s, isTlcLayout);
-	_zmbPackActive.sync(s, isTlcLayout);
+	_zmbPackIsle.sync(s, isTlcV20Layout, platform);
+	_zmbPackBC1.sync(s, isTlcV20Layout, platform);
+	_zmbPackBC2.sync(s, isTlcV20Layout, platform);
+	_zmbPackActive.sync(s, isTlcV20Layout, platform);
 
 	// v1.x 0xAB94 / TLC 0xBABC: Zoombini Twin Status
 	s.syncBytes(_twinGenStatus, ARRAYSIZE(_twinGenStatus));
-	if (isTlcLayout)
-		s.syncAsByte(_v2TwinGenStatusPad);
+	// Alignment belongs to the file layout, not game state; consume or emit it without retaining padding members.
+	if (isMacV11EULayout)
+		s.skip(3);
+	else if (isTlcV20Layout || platform == Common::kPlatformMacintosh)
+		s.skip(1);
 
-	if (hasCompletionCounters) {
+	if (hasCompletionTail) {
+		// Short/older layouts omit the entire tail; their missing values are initialized during variant conversion.
 		// v1.x 0xAE05 / TLC 0xBD2E: Per-route perfect completion counters.
 		for (int32 i = 0; i < ARRAYSIZE(_routePerfectCounters); i++) {
-			s.syncAsSint16LE(_routePerfectCounters[i]);
+			s.syncMultipleEndian(isLE, _routePerfectCounters[i]);
 		}
-		s.syncAsSint16LE(_townDevelopLevel);
+		s.syncMultipleEndian(isLE, _townDevelopLevel);
 	}
 
 	// v1.x 0xAE0F / TLC 0xBD38: EOF
+	return magic == expectedMagic && !s.err();
 }
 
 ZmbSfxGroupFlags ZoombiniGameState::getSfxGroupFlagsFromPageFlag(ZmbStateFile::PageFlag &pageFlag) {
 	return getSfxGroupFlagsFromPageFlag(pageFlag, getCurrentState().getCurrentPageType());
 }
 
-ZmbSfxGroupFlags ZoombiniGameState::getSfxGroupFlagsFromPageFlag(ZmbStateFile::PageFlag &pageFlag,
-																 ZoombiniPageType pageType) {
+ZmbSfxGroupFlags ZoombiniGameState::getSfxGroupFlagsFromPageFlag(ZmbStateFile::PageFlag &pageFlag, ZoombiniPageType pageType) {
 	// Practice mode has its own SFX selector and does not update the page flag.
 	if (0 < _practiceLevel)
 		return ZmbSfxGroupFlags::kPractice_05;
@@ -3123,21 +3520,22 @@ bool ZoombiniGameState::isValidMemorialDate(uint16 year, byte month, byte day) {
 		30,
 		31,
 	};
-	byte maximumDay = daysInMonth[month - 1];
+	byte maxDay = daysInMonth[month - 1];
 	const bool leapYear = year % 400 == 0 || (year % 4 == 0 && year % 100 != 0);
 	if (month == 2 && leapYear)
-		maximumDay = 29;
+		maxDay = 29;
 
-	return day <= maximumDay;
+	return day <= maxDay;
 }
 
-int16 ZoombiniGameState::findFirstClearMemorialSlot(ZmbRouteId routeId, int16 difficultyLevel) const {
-	if (ZmbRouteId::kMontDespair < routeId || difficultyLevel < 1 || 4 < difficultyLevel)
+int16 ZoombiniGameState::findFirstClearMemorialSlot(ZmbRouteId routeId, int16 puzzleLevel) const {
+	if (ZmbRouteId::kMontDespair < routeId || puzzleLevel < 1 || 4 < puzzleLevel)
 		return -1;
 
+	// Serialized route keys are one-based; the route/level pair identifies a record independently of its physical slot.
 	const ZmbStateFile &state = getCurrentState();
 	const byte memorialRoute = static_cast<byte>(static_cast<uint16>(routeId) + 1);
-	const byte memorialLevel = static_cast<byte>(difficultyLevel);
+	const byte memorialLevel = static_cast<byte>(puzzleLevel);
 	for (uint16 slotIdx = 0; slotIdx < ARRAYSIZE(state._memorialRoutes); slotIdx += 1) {
 		if (state._memorialRoutes[slotIdx] == memorialRoute &&
 			state._memorialLevels[slotIdx] == memorialLevel)
@@ -3147,16 +3545,17 @@ int16 ZoombiniGameState::findFirstClearMemorialSlot(ZmbRouteId routeId, int16 di
 	return -1;
 }
 
-bool ZoombiniGameState::addFirstClearMemorial(ZmbRouteId routeId, int16 difficultyLevel, uint16 year, byte month, byte day) {
-	if (ZmbRouteId::kMontDespair < routeId || difficultyLevel < 1 || 4 < difficultyLevel ||
+bool ZoombiniGameState::addFirstClearMemorial(ZmbRouteId routeId, int16 puzzleLevel, uint16 year, byte month, byte day) {
+	if (ZmbRouteId::kMontDespair < routeId || puzzleLevel < 1 || 4 < puzzleLevel ||
 		!isValidMemorialDate(year, month, day))
 		return false;
 
-	if (0 <= findFirstClearMemorialSlot(routeId, difficultyLevel))
+	// A first-clear date is stable: reject an existing key before looking for the first free route-zero slot.
+	if (0 <= findFirstClearMemorialSlot(routeId, puzzleLevel))
 		return false;
 
 	const byte memorialRoute = static_cast<byte>(static_cast<uint16>(routeId) + 1);
-	const byte memorialLevel = static_cast<byte>(difficultyLevel);
+	const byte memorialLevel = static_cast<byte>(puzzleLevel);
 	ZmbStateFile &state = getCurrentState();
 
 	for (uint16 slotIdx = 0; slotIdx < ARRAYSIZE(state._memorialRoutes); slotIdx += 1) {
@@ -3186,25 +3585,25 @@ void ZoombiniGameState::clearFirstClearMemorial(uint16 slotIdx) {
 	state._memorialLevels[slotIdx] = 0;
 }
 
-bool ZoombiniGameState::recordFirstClearMemorial(ZmbRouteId routeId, int16 difficultyLevel) {
+bool ZoombiniGameState::recordFirstClearMemorial(ZmbRouteId routeId, int16 puzzleLevel) {
+	// Capture the host calendar once and translate its year/month bases into the native saved-date fields.
 	TimeDate date;
 	g_system->getTimeAndDate(date);
-	return addFirstClearMemorial(routeId, difficultyLevel,
-								 static_cast<uint16>(date.tm_year + 1900),
-								 static_cast<byte>(date.tm_mon + 1),
-								 static_cast<byte>(date.tm_mday));
+	return addFirstClearMemorial(routeId, puzzleLevel, static_cast<uint16>(date.tm_year + 1900), static_cast<byte>(date.tm_mon + 1), static_cast<byte>(date.tm_mday));
 }
 
-bool ZoombiniGameState::readMemorialActive(ZmbRouteId routeId, int16 difficultyLevel) const {
-	return 0 <= findFirstClearMemorialSlot(routeId, difficultyLevel);
+bool ZoombiniGameState::readMemorialActive(ZmbRouteId routeId, int16 puzzleLevel) const {
+	// Presence is encoded by a route/level record, rather than by a separate active flag.
+	return 0 <= findFirstClearMemorialSlot(routeId, puzzleLevel);
 }
 
-bool ZoombiniGameState::readMemorialDate(ZmbRouteId routeId, int16 difficultyLevel, uint16 &year, byte &month, byte &day) const {
+bool ZoombiniGameState::readMemorialDate(ZmbRouteId routeId, int16 puzzleLevel, uint16 &year, byte &month, byte &day) const {
+	// Clear all outputs before lookup so a missing record cannot leave a caller's previous date visible.
 	year = 0;
 	month = 0;
 	day = 0;
 
-	const int16 slotIdx = findFirstClearMemorialSlot(routeId, difficultyLevel);
+	const int16 slotIdx = findFirstClearMemorialSlot(routeId, puzzleLevel);
 	if (slotIdx < 0)
 		return false;
 
@@ -3215,33 +3614,36 @@ bool ZoombiniGameState::readMemorialDate(ZmbRouteId routeId, int16 difficultyLev
 	return true;
 }
 
-bool ZoombiniGameState::setMemorialActive(ZmbRouteId routeId, int16 difficultyLevel, bool active) {
-	if (ZmbRouteId::kMontDespair < routeId || difficultyLevel < 1 || 4 < difficultyLevel)
+bool ZoombiniGameState::setMemorialActive(ZmbRouteId routeId, int16 puzzleLevel, bool active) {
+	if (ZmbRouteId::kMontDespair < routeId || puzzleLevel < 1 || 4 < puzzleLevel)
 		return false;
 
-	const int16 slotIdx = findFirstClearMemorialSlot(routeId, difficultyLevel);
+	const int16 slotIdx = findFirstClearMemorialSlot(routeId, puzzleLevel);
+	// Repeated activation preserves the first-clear date; only a newly created record receives today's date.
 	if (active) {
 		if (0 <= slotIdx)
 			return true;
 
-		return recordFirstClearMemorial(routeId, difficultyLevel);
+		return recordFirstClearMemorial(routeId, puzzleLevel);
 	}
 
 	if (slotIdx < 0)
 		return true;
 
+	// Deactivation clears the complete parallel-array record so its slot can be reused.
 	clearFirstClearMemorial(static_cast<uint16>(slotIdx));
 	return true;
 }
 
-bool ZoombiniGameState::setMemorialDate(ZmbRouteId routeId, int16 difficultyLevel, uint16 year, byte month, byte day) {
-	if (ZmbRouteId::kMontDespair < routeId || difficultyLevel < 1 || 4 < difficultyLevel ||
+bool ZoombiniGameState::setMemorialDate(ZmbRouteId routeId, int16 puzzleLevel, uint16 year, byte month, byte day) {
+	if (ZmbRouteId::kMontDespair < routeId || puzzleLevel < 1 || 4 < puzzleLevel ||
 		!isValidMemorialDate(year, month, day))
 		return false;
 
-	const int16 slotIdx = findFirstClearMemorialSlot(routeId, difficultyLevel);
+	// Create a missing key with the requested date, or replace only the date fields of an existing record.
+	const int16 slotIdx = findFirstClearMemorialSlot(routeId, puzzleLevel);
 	if (slotIdx < 0)
-		return addFirstClearMemorial(routeId, difficultyLevel, year, month, day);
+		return addFirstClearMemorial(routeId, puzzleLevel, year, month, day);
 
 	ZmbStateFile &state = getCurrentState();
 	state._memorialYears[slotIdx] = year;
@@ -3250,13 +3652,13 @@ bool ZoombiniGameState::setMemorialDate(ZmbRouteId routeId, int16 difficultyLeve
 	return true;
 }
 
-void ZoombiniGameState::syncRouteProgressFlags(ZmbRouteId routeId, int16 difficultyLevel) {
-	if (ZmbRouteId::kMontDespair < routeId || difficultyLevel < 1 || 4 < difficultyLevel)
+void ZoombiniGameState::syncRouteProgressFlags(ZmbRouteId routeId, int16 puzzleLevel) {
+	if (ZmbRouteId::kMontDespair < routeId || puzzleLevel < 1 || 4 < puzzleLevel)
 		return;
 
 	// The selected level is its starting state, so only lower levels are complete.
 	const uint routeIndex = static_cast<uint>(routeId);
-	const byte completedLevelMask = static_cast<byte>((1 << (difficultyLevel - 1)) - 1);
+	const byte completedLevelMask = static_cast<byte>((1 << (puzzleLevel - 1)) - 1);
 	ZmbStateFile &state = getCurrentState();
 
 	// Page flags store ordinary clears in the low nibble and perfect clears in the high nibble.
@@ -3286,8 +3688,8 @@ void ZoombiniGameState::syncRouteProgressFlags(ZmbRouteId routeId, int16 difficu
 	}
 }
 
-void ZoombiniGameState::syncRouteFirstClearMemorials(ZmbRouteId routeId, int16 difficultyLevel, bool removeAtOrAboveTarget) {
-	if (ZmbRouteId::kMontDespair < routeId || difficultyLevel < 1 || 4 < difficultyLevel)
+void ZoombiniGameState::syncRouteFirstClearMemorials(ZmbRouteId routeId, int16 puzzleLevel, bool removeAtOrAboveTarget) {
+	if (ZmbRouteId::kMontDespair < routeId || puzzleLevel < 1 || 4 < puzzleLevel)
 		return;
 
 	// Memorial records use one-based route values.
@@ -3301,7 +3703,7 @@ void ZoombiniGameState::syncRouteFirstClearMemorials(ZmbRouteId routeId, int16 d
 			continue;
 
 		const int16 memorialLevel = state._memorialLevels[slotIdx];
-		if (removeAtOrAboveTarget && (memorialLevel == 0 || difficultyLevel <= memorialLevel))
+		if (removeAtOrAboveTarget && (memorialLevel == 0 || puzzleLevel <= memorialLevel))
 			clearFirstClearMemorial(slotIdx);
 	}
 
@@ -3312,13 +3714,13 @@ void ZoombiniGameState::syncRouteFirstClearMemorials(ZmbRouteId routeId, int16 d
 	const byte month = static_cast<byte>(date.tm_mon + 1);
 	const byte day = static_cast<byte>(date.tm_mday);
 
-	for (int16 memorialLevel = 1; memorialLevel < difficultyLevel; memorialLevel += 1)
+	for (int16 memorialLevel = 1; memorialLevel < puzzleLevel; memorialLevel += 1)
 		addFirstClearMemorial(routeId, memorialLevel, year, month, day);
 }
 
 bool ZoombiniGameState::hasRoutePerfectClearCounters() const {
 	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
-	return relInfo.isFamily(ZmbReleaseInfo::kUsV1) || relInfo.isFamily(ZmbReleaseInfo::kTlcV2);
+	return relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11) || relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20);
 }
 
 bool ZoombiniGameState::advanceRouteLevel(ZmbRouteId routeId) {
@@ -3338,18 +3740,20 @@ bool ZoombiniGameState::advanceRouteLevel(ZmbRouteId routeId) {
 	return true;
 }
 
-bool ZoombiniGameState::setRouteDifficultyLevel(ZmbRouteId routeId, int16 difficultyLevel) {
-	if (ZmbRouteId::kMontDespair < routeId || difficultyLevel < 1 || 4 < difficultyLevel)
+bool ZoombiniGameState::setRouteDifficultyLevel(ZmbRouteId routeId, int16 puzzleLevel) {
+	if (ZmbRouteId::kMontDespair < routeId || puzzleLevel < 1 || 4 < puzzleLevel)
 		return false;
 
+	// The public puzzle level is one-based, while the stored route level is zero-based.
 	const uint routeIndex = static_cast<uint>(routeId);
 	ZmbStateFile &state = getCurrentState();
 	int16 &routeLevel = state._routeLevels[routeIndex];
-	const int16 targetRouteLevel = difficultyLevel - 1;
+	const int16 targetRouteLevel = puzzleLevel - 1;
 	if (routeLevel == targetRouteLevel)
 		return true;
 
 	const bool routeLevelDecreased = targetRouteLevel < routeLevel;
+	// Raising a level uses ordinary progression; lowering it assigns directly, then reconciles flags and memorials below.
 	if (routeLevel < targetRouteLevel) {
 		while (routeLevel < targetRouteLevel) {
 			if (!advanceRouteLevel(routeId))
@@ -3361,8 +3765,8 @@ bool ZoombiniGameState::setRouteDifficultyLevel(ZmbRouteId routeId, int16 diffic
 
 	if (hasRoutePerfectClearCounters())
 		state._routePerfectCounters[routeIndex] = 0;
-	syncRouteProgressFlags(routeId, difficultyLevel);
-	syncRouteFirstClearMemorials(routeId, difficultyLevel, routeLevelDecreased);
+	syncRouteProgressFlags(routeId, puzzleLevel);
+	syncRouteFirstClearMemorials(routeId, puzzleLevel, routeLevelDecreased);
 
 	// A debugger level change does not sit inside executeDeparture(). Do not
 	// leave its one-shot completion marker for a later real puzzle departure.
@@ -3478,7 +3882,7 @@ void ZoombiniGameState::startNewGame(bool askSaveCurrentGame) {
 }
 
 void ZoombiniGameState::initVariantDefaults() {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	_journeyState.setTouchSenseEnabled(true);
@@ -3487,49 +3891,49 @@ void ZoombiniGameState::initVariantDefaults() {
 }
 
 bool ZoombiniGameState::getEnableTransitions() {
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return !_journeyState.getV2TransitionsDisabled();
 
 	return !_journeyState.getV1TransitionsDisabled();
 }
 
 bool ZoombiniGameState::getEnableTouchSense() {
-	return _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && _journeyState.getTouchSenseEnabled();
+	return _vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20) && _journeyState.getTouchSenseEnabled();
 }
 
 bool ZoombiniGameState::getEnableHelpAudio() {
-	return !_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) || _journeyState.getHelpAudioEnabled();
+	return !_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20) || _journeyState.getHelpAudioEnabled();
 }
 
-void ZoombiniGameState::setEnableSound(bool val, bool showNotification) {
+void ZoombiniGameState::setEnableSound(bool val, bool showNoti) {
 	_journeyState.setSfxEnabled(val);
 	_vm->syncSoundSettings();
 
 	ZoombiniPage *page = _vm->getActivePage();
-	if (showNotification && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
+	if (showNoti && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
 		ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(page);
 		if (interactive)
 			interactive->showNotiBoxLong(val ? ZoombiniText::kNotiBoxSoundOn : ZoombiniText::kNotiBoxSoundOff);
 	}
 }
 
-void ZoombiniGameState::setEnableMusic(bool val, bool showNotification) {
+void ZoombiniGameState::setEnableMusic(bool val, bool showNoti) {
 	_journeyState.setBgmEnabled(val);
 	_vm->syncSoundSettings();
 
 	ZoombiniPage *page = _vm->getActivePage();
-	if (showNotification && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
+	if (showNoti && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
 		ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(page);
 		if (interactive)
 			interactive->showNotiBoxLong(val ? ZoombiniText::kNotiBoxMusicOn : ZoombiniText::kNotiBoxMusicOff);
 	}
 }
 
-void ZoombiniGameState::setEnableStickyMouse(bool val, bool showNotification) {
+void ZoombiniGameState::setEnableStickyMouse(bool val, bool showNoti) {
 	_journeyState.setStickyMouseEnabled(val);
 
 	ZoombiniPage *page = _vm->getActivePage();
-	if (showNotification && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
+	if (showNoti && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
 		ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(page);
 		if (interactive)
 			interactive->showNotiBoxLong(val ? ZoombiniText::kNotiBoxStickeyMouse : ZoombiniText::kNotiBoxNonStickeyMouse);
@@ -3547,29 +3951,29 @@ void ZoombiniGameState::setEnableAutoStickyMouse(bool val) {
 	}
 }
 
-void ZoombiniGameState::setEnableTransitions(bool val, bool showNotification) {
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+void ZoombiniGameState::setEnableTransitions(bool val, bool showNoti) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		_journeyState.setV2TransitionsDisabled(!val);
 	} else {
 		_journeyState.setV1TransitionsDisabled(!val);
 	}
 
 	ZoombiniPage *page = _vm->getActivePage();
-	if (showNotification && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
+	if (showNoti && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
 		ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(page);
 		if (interactive)
 			interactive->showNotiBoxLong(val ? ZoombiniText::kNotiBoxTransitionsOn : ZoombiniText::kNotiBoxTransitionsOff);
 	}
 }
 
-void ZoombiniGameState::setEnableTouchSense(bool val, bool showNotification) {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+void ZoombiniGameState::setEnableTouchSense(bool val, bool showNoti) {
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	_journeyState.setTouchSenseEnabled(val);
 
 	ZoombiniPage *page = _vm->getActivePage();
-	if (showNotification && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
+	if (showNoti && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
 		ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(page);
 		if (interactive)
 			interactive->showNotiBoxLong(val ? ZoombiniText::kNotiBoxTouchSenseOn : ZoombiniText::kNotiBoxTouchSenseOff);
@@ -3579,14 +3983,14 @@ void ZoombiniGameState::setEnableTouchSense(bool val, bool showNotification) {
 	dialog.runModal();
 }
 
-void ZoombiniGameState::setEnableHelpAudio(bool val, bool showNotification) {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+void ZoombiniGameState::setEnableHelpAudio(bool val, bool showNoti) {
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	_journeyState.setHelpAudioEnabled(val);
 
 	ZoombiniPage *page = _vm->getActivePage();
-	if (showNotification && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
+	if (showNoti && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
 		ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(page);
 		if (interactive)
 			interactive->showNotiBoxLong(val ? ZoombiniText::kNotiBoxHelpAudioOn : ZoombiniText::kNotiBoxHelpAudioOff);
@@ -3737,14 +4141,6 @@ int16 ZoombiniGameState::subtractDebugGeneratedSnoidsFromIsle(int16 generatedCou
 	return removedCount;
 }
 
-// True if the (decompressed) length matches one of the four save layouts.
-bool ZoombiniSaveTransfer::zmbIsValidStateSize(uint32 size) {
-	return size == static_cast<uint32>(ZoombiniGameState::kStateFileSizeBrV10) ||
-		   size == static_cast<uint32>(ZoombiniGameState::kStateFileSizeUsV11) ||
-		   size == static_cast<uint32>(ZoombiniGameState::kStateFileSizeTlcV20Small) ||
-		   size == static_cast<uint32>(ZoombiniGameState::kStateFileSizeTlcV20);
-}
-
 bool ZoombiniSaveTransfer::zmbReadAll(Common::SeekableReadStream *stream, Common::Array<byte> &out, uint32 maximumSize) {
 	if (!stream)
 		return false;
@@ -3815,17 +4211,17 @@ void ZoombiniSaveTransfer::exportOneSave(const Common::String &target, int slot)
 	}
 
 	const ZmbRosterEntry &entry = roster.getEntry(slot);
-	const Common::String sourceName = ZoombiniGameState::makeSaveFilename(target, entry._fileName);
-	if (sourceName.empty()) {
+	const Common::String srcName = ZoombiniGameState::makeSaveFilename(target, entry.getSaveFileStem());
+	if (srcName.empty()) {
 		GUI::MessageDialog msg(_("The selected saved game is missing or invalid."));
 		msg.runModal();
 		return;
 	}
 	Common::Array<byte> stateBytes;
-	Common::InSaveFile *source = saveFileMan->openForLoading(sourceName);
-	const bool read = zmbReadAll(source, stateBytes, static_cast<uint32>(ZoombiniGameState::kStateFileSizeTlcV20));
-	delete source;
-	if (!read || !zmbIsValidStateSize(stateBytes.size())) {
+	Common::InSaveFile *srcSaveFile = saveFileMan->openForLoading(srcName);
+	const bool read = zmbReadAll(srcSaveFile, stateBytes, static_cast<uint32>(ZoombiniGameState::kStateFileSizeTlcV20));
+	delete srcSaveFile;
+	if (!read || !ZoombiniGameState::isValidStateFileSize(stateBytes.size())) {
 		GUI::MessageDialog msg(_("The selected saved game is missing or invalid."));
 		msg.runModal();
 		return;
@@ -3849,14 +4245,14 @@ void ZoombiniSaveTransfer::exportOneSave(const Common::String &target, int slot)
 		msg.runModal();
 		return;
 	}
-	const Common::FSNode destination = zmbFindChild(dir, baseName + ".TXT");
-	if (destination.exists()) {
+	const Common::FSNode destFSNode = zmbFindChild(dir, baseName + ".TXT");
+	if (destFSNode.exists()) {
 		GUI::MessageDialog confirm(_("The .TXT file already exists. Overwrite it?"), _("Yes"), _("No"));
 		if (confirm.runModal() != GUI::kMessageOK)
 			return;
 	}
 
-	if (!zmbWriteToFolder(destination, stateBytes)) {
+	if (!zmbWriteToFolder(destFSNode, stateBytes)) {
 		GUI::MessageDialog msg(_("Unable to export the selected saved game."));
 		msg.runModal();
 		return;
@@ -3906,14 +4302,19 @@ void ZoombiniSaveTransfer::importFromOriginalFolder(const Common::String &target
 		const Common::FSNode src = zmbFindChild(dir, base + ".TXT");
 		if (!src.exists())
 			continue;
+		const Common::String destFilename = ZoombiniGameState::makeSaveFilename(target, base);
+		if (destFilename.empty())
+			continue;
 		stateSrc.push_back(src);
-		stateDst.push_back(ZoombiniGameState::makeSaveFilename(target, roster.getEntry(i)._fileName));
+		stateDst.push_back(destFilename);
 	}
 
-	// Confirm before overwriting existing ScummVM saves for this game.
-	bool overwrite = zmbSaveFileExists(saveFileMan, target + ".WHO");
-	for (uint i = 0; i < stateDst.size() && !overwrite; i++)
-		overwrite = zmbSaveFileExists(saveFileMan, stateDst[i]);
+	// Ignore an empty roster, but warn for any existing save in this target's namespace.
+	bool overwrite = !listTargetStateFiles(saveFileMan, target).empty();
+	if (!overwrite) {
+		ZmbRosterFile existingRoster;
+		overwrite = ZoombiniGameState::loadRosterFile(saveFileMan, target + ".WHO", existingRoster) && 0 < existingRoster.getEntryCount();
+	}
 	if (overwrite) {
 		GUI::MessageDialog confirm(_("This will overwrite existing ScummVM saves for this game. Continue?"), _("Yes"), _("No"));
 		if (confirm.runModal() != GUI::kMessageOK)
@@ -3922,14 +4323,15 @@ void ZoombiniSaveTransfer::importFromOriginalFolder(const Common::String &target
 
 	int imported = 0;
 	int failed = 0;
-	if (!zmbWriteToSaveFile(saveFileMan, target + ".WHO", rosterBytes))
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	if (!ZoombiniGameState::saveRosterFile(saveFileMan, target + ".WHO", roster, platform))
 		failed += 1;
 	for (uint i = 0; i < stateSrc.size(); i++) {
 		Common::Array<byte> bytes;
 		Common::SeekableReadStream *in = stateSrc[i].createReadStream();
 		const bool read = zmbReadAll(in, bytes, static_cast<uint32>(ZoombiniGameState::kStateFileSizeTlcV20));
 		delete in;
-		if (!read || !zmbIsValidStateSize(bytes.size())) {
+		if (!read || !ZoombiniGameState::isValidStateFileSize(bytes.size())) {
 			failed += 1;
 			continue;
 		}
@@ -3982,11 +4384,26 @@ void ZoombiniSaveTransfer::exportToOriginalFolder(const Common::String &target) 
 		const Common::String base = roster.getEntry(i).getSaveFileStem();
 		if (base.empty())
 			continue;
-		const Common::String srcName = ZoombiniGameState::makeSaveFilename(target, roster.getEntry(i)._fileName);
-		if (!zmbSaveFileExists(saveFileMan, srcName))
+		const Common::String srcName = ZoombiniGameState::makeSaveFilename(target, base);
+		if (srcName.empty() || !zmbSaveFileExists(saveFileMan, srcName))
 			continue;
 		stateSrc.push_back(srcName);
 		stateDst.push_back(zmbFindChild(dir, base + ".TXT"));
+	}
+
+	// Read every original payload before replacing any dest files.
+	Common::Array<Common::Array<byte>> statePayloads;
+	for (uint i = 0; i < stateSrc.size(); i++) {
+		Common::Array<byte> bytes;
+		Common::InSaveFile *input = saveFileMan->openForLoading(stateSrc[i]);
+		const bool read = zmbReadAll(input, bytes, static_cast<uint32>(ZoombiniGameState::kStateFileSizeTlcV20));
+		delete input;
+		if (!read || !ZoombiniGameState::isValidStateFileSize(bytes.size())) {
+			GUI::MessageDialog msg(_("Unable to prepare every saved game for export. No destination files were changed."));
+			msg.runModal();
+			return;
+		}
+		statePayloads.push_back(bytes);
 	}
 
 	// Confirm before overwriting existing files in the destination folder.
@@ -4003,16 +4420,8 @@ void ZoombiniSaveTransfer::exportToOriginalFolder(const Common::String &target) 
 	int failed = 0;
 	if (!zmbWriteToFolder(zmbFindChild(dir, "ZOOMBINI.WHO"), rosterBytes))
 		failed += 1;
-	for (uint i = 0; i < stateSrc.size(); i++) {
-		Common::Array<byte> bytes;
-		Common::InSaveFile *in = saveFileMan->openForLoading(stateSrc[i]);
-		const bool read = zmbReadAll(in, bytes, static_cast<uint32>(ZoombiniGameState::kStateFileSizeTlcV20));
-		delete in;
-		if (!read || !zmbIsValidStateSize(bytes.size())) {
-			failed += 1;
-			continue;
-		}
-		if (zmbWriteToFolder(stateDst[i], bytes))
+	for (uint i = 0; i < stateDst.size(); i++) {
+		if (zmbWriteToFolder(stateDst[i], statePayloads[i]))
 			exported += 1;
 		else
 			failed += 1;

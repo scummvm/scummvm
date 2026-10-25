@@ -458,8 +458,6 @@ private:
 
 	/** Resolve text settings independently of resource numbering and input behavior. */
 	static TextLayout createTextLayout(const ZmbReleaseInfo &relInfo);
-	/** Whether the map uses the six-SCRB MAP.MHK resources, including the US v1.1 demo. */
-	static bool usesMapArchive(const ZmbReleaseInfo &relInfo);
 	/** Draw the progress-dependent practice return instructions. */
 	void drawPracticeReturnInstructions(const Common::Rect &panelRect);
 	/** Draw the general practice description in the statistics label column. */

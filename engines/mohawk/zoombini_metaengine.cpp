@@ -113,16 +113,18 @@ const char *Mohawk::ZmbReleaseInfo::getCodePageName(Common::CodePage codePage) {
 	}
 }
 
-bool Mohawk::MohawkMetaEngine_Zoombini::getFixedDemoMidiSoundtrack(Common::Platform platform, Common::Language language, MidiSoundtrack &soundtrack) {
+bool Mohawk::MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(Common::Platform platform, Common::Language language, bool isDemo, bool isUsV10, MidiSoundtrack &soundtrack) {
 	switch (platform) {
 	case Common::kPlatformMacintosh:
-		if (language == Common::EN_USA || language == Common::JA_JPN) { // v1.1US Demo, v1.0JP Demo
+		// Macintosh v1.0US retail, v1.0US Demo and v1.0JP Demo contain only MIDIMAC.MHK.
+		// Macintosh v1.1US retail, v1.xEU and v1.0JP retail contain both MIDIMAC.MHK and MIDIMPC.MHK.
+		if (isUsV10 || (isDemo && (language == Common::EN_USA || language == Common::JA_JPN))) {
 			soundtrack = MidiSoundtrack::kMacintosh;
 			return true;
 		}
 		break;
 	case Common::kPlatformWindows:
-		if (language == Common::EN_USA) { // v1.1US Demo
+		if (isUsV10 || (isDemo && language == Common::EN_USA)) { // v1.0US retail and v1.0US Demo
 			soundtrack = MidiSoundtrack::kWindowsMPC;
 			return true;
 		}
@@ -133,63 +135,65 @@ bool Mohawk::MohawkMetaEngine_Zoombini::getFixedDemoMidiSoundtrack(Common::Platf
 	return false;
 }
 
-bool Mohawk::ZmbReleaseInfo::isVariant(Variant variant) const {
-	switch (variant) {
-	case kEuropeV10:
-		return (_features & GF_ZMB_10_EU) != 0;
-	case kEuropeV11:
-		return (_features & GF_ZMB_11_EU) != 0;
-	case kFranceV11_2002:
-		return (_features & GF_ZMB_11_FR_2002) != 0;
-	case kEsPtV10:
-		return (_features & GF_ZMB_10_ESPT) != 0;
-	case kJapanV10:
-		return (_features & GF_ZMB_10_JP) != 0;
-	case kUsV11:
+bool Mohawk::ZmbReleaseInfo::isFamily(Family family) const {
+	switch (family) {
+	case Family::kUsV10:
+		return (_features & (GF_ZMB_10_US | GF_ZMB_10_ESPT)) != 0;
+	case Family::kEuropeV1x:
+		return (_features & (GF_ZMB_10_EU | GF_ZMB_11_EU | GF_ZMB_11_FR_2002 | GF_ZMB_10_JP)) != 0;
+	case Family::kUsV11:
 		return (_features & GF_ZMB_11_US) != 0;
-	case kTlcV20:
+	case Family::kTlcV20:
 		return (_features & GF_ZMB_20_US) != 0;
 	}
 	return false;
 }
 
-bool Mohawk::ZmbReleaseInfo::isVariant(Variant variant, Common::Language lang) const {
-	return isVariant(variant) && _lang == lang;
-}
-
-bool Mohawk::ZmbReleaseInfo::isFamily(Family family) const {
-	switch (family) {
-	case kEuropeV1:
-		return isVariant(kEuropeV10) || isVariant(kEuropeV11) || isVariant(kFranceV11_2002) || isVariant(kEsPtV10) || isVariant(kJapanV10);
-	case kUsV1:
-		return isVariant(kUsV11);
-	case kTlcV2:
-		return isVariant(kTlcV20);
-	}
-	return false;
+bool Mohawk::ZmbReleaseInfo::isFamily(Family family, Common::Language lang) const {
+	return isFamily(family) && _lang == lang;
 }
 
 bool Mohawk::ZmbReleaseInfo::isV1() const {
-	return isFamily(kEuropeV1) || isFamily(kUsV1);
+	return isFamily(Family::kUsV10) || isFamily(Family::kEuropeV1x) || isFamily(Family::kUsV11);
 }
 
-bool Mohawk::ZmbReleaseInfo::isDemo(Variant variant) const {
-	return isDemo() && isVariant(variant);
+bool Mohawk::ZmbReleaseInfo::isDemo(Family family) const {
+	return isDemo() && isFamily(family);
+}
+
+bool Mohawk::ZmbReleaseInfo::isDemo(Family family, Common::Language lang) const {
+	return isDemo() && isFamily(family, lang);
 }
 
 bool Mohawk::ZmbReleaseInfo::hasDemoPracticeMap() const {
-	return isDemo(kUsV11) || isDemo(kJapanV10);
+	return isDemo(Family::kUsV10) || isDemo(Family::kEuropeV1x, Common::JA_JPN);
+}
+
+Mohawk::ZmbReleaseInfo::MapArchiveKind Mohawk::ZmbReleaseInfo::getMapArchiveKind() const {
+	if (isFamily(Family::kUsV10) || isFamily(Family::kEuropeV1x))
+		return MapArchiveKind::kMap;
+	return MapArchiveKind::kRodMap;
+}
+
+const char *Mohawk::ZmbReleaseInfo::getMacApplicationName() const {
+	if (isFamily(Family::kTlcV20))
+		return "Zoombinis I V2";
+	if (isDemo(Family::kUsV10))
+		return "Zoom";
+	if (isFamily(Family::kUsV11))
+		return "Zoombinis";
+	return "Zoombini";
 }
 
 bool Mohawk::ZmbReleaseInfo::supportsLocalizedNames() const {
-	return isVariant(kJapanV10) || isVariant(kUsV11, Common::KO_KOR);
+	return isFamily(Family::kEuropeV1x, Common::JA_JPN) || isFamily(Family::kUsV11, Common::KO_KOR);
 }
 
 Common::U32String Mohawk::ZmbReleaseInfo::formatMemorialDate(uint16 year, const Common::U32String &monthText, byte day) const {
-	if (isVariant(kEuropeV10) || isVariant(kEuropeV11) || isVariant(kFranceV11_2002)) {
+	if (isFamily(Family::kEuropeV1x) && _lang != Common::JA_JPN) {
 		// v1.0BR/FR/GE, v1.1BR/FR/GE, v1.1FR_2002 and v1.0IT: Day month year
 		return Common::U32String::format("%d %S %d", day, monthText.c_str(), year);
-	} else if (isVariant(kJapanV10)) {
+	} else if (isFamily(Family::kEuropeV1x, Common::JA_JPN)) {
 		// v1.0JP: Year-NEN month day-NICHI (with the Japenese year/day suffix.)
 		return Common::U32String::format(Common::U32String(U"%d年 %S %d日"), year, monthText.c_str(), day);
 	} else if (_lang == Common::KO_KOR) {
@@ -205,138 +209,138 @@ Common::Rect Mohawk::ZmbReleaseInfo::LayoutAdjustment::apply(const Common::Rect 
 	return Common::Rect(rect.left + leftOffset, rect.top + topOffset, rect.right + rightOffset, rect.bottom + bottomOffset);
 }
 
-Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjustment(LayoutElement element) const {
+Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjustment(LayoutKind kind) const {
 	LayoutAdjustment adjustment;
-	switch (element) {
-	case kCreditsTextLayout:
-		if (isFamily(kEuropeV1) && !isVariant(kEsPtV10)) {
+	switch (kind) {
+	case LayoutKind::kCreditsText:
+		if (isFamily(Family::kEuropeV1x)) {
 			adjustment.leftOffset = 0x009B - 0x00BE;
 			adjustment.rightOffset = 0x01E5 - 0x01C2;
-		} else if (isFamily(kTlcV2)) {
+		} else if (isFamily(Family::kTlcV20)) {
 			adjustment.leftOffset = 0x0064 - 0x00BE;
 			adjustment.rightOffset = 0x021C - 0x01C2;
 		}
 		break;
-	case kCreditsScrollLayout:
-		if (isFamily(kEuropeV1) && !isVariant(kEsPtV10)) {
+	case LayoutKind::kCreditsScroll:
+		if (isFamily(Family::kEuropeV1x)) {
 			adjustment.leftOffset = 0x00AA - 0x00BE;
 			adjustment.rightOffset = 0x01D6 - 0x01C2;
-		} else if (isFamily(kTlcV2)) {
+		} else if (isFamily(Family::kTlcV20)) {
 			adjustment.leftOffset = 0x0064 - 0x00BE;
 			adjustment.rightOffset = 0x021C - 0x01C2;
 		}
 		break;
-	case kMsgBoxBodyLayout:
-		if (isVariant(kEuropeV10, Common::IT_ITA) || isVariant(kJapanV10)) {
+	case LayoutKind::kMsgBoxBody:
+		if (isFamily(Family::kEuropeV1x, Common::IT_ITA) || isFamily(Family::kEuropeV1x, Common::JA_JPN)) {
 			adjustment.topOffset = 0x0082 - 0x0091;
 			adjustment.bottomOffset = 0x00EB - 0x00DC;
 		}
 		break;
-	case kOptionsTitleLayout:
-		if (isFamily(kTlcV2)) {
+	case LayoutKind::kOptionsTitle:
+		if (isFamily(Family::kTlcV20)) {
 			adjustment.leftOffset = 0x00B9 - 0x00FA;
 			adjustment.rightOffset = 0x01BD - 0x017C;
 		}
 		break;
-	case kSaveLoadTitleLayout:
-		if (isVariant(kJapanV10)) {
+	case LayoutKind::kSaveLoadTitle:
+		if (isFamily(Family::kEuropeV1x, Common::JA_JPN)) {
 			adjustment.leftOffset = 0x00C8 - 0x00FA;
 			adjustment.rightOffset = 0x01C7 - 0x0198;
 		}
 		break;
-	case kSaveNameInputLayout:
-		if (isVariant(kJapanV10)) {
+	case LayoutKind::kSaveNameInput:
+		if (isFamily(Family::kEuropeV1x, Common::JA_JPN)) {
 			adjustment.topOffset = 0x012C - 0x012A;
 			adjustment.bottomOffset = 0x013E - 0x013C;
 		}
 		break;
-	case kMapLegendClickLayout:
-		if (isFamily(kEuropeV1) || isDemo(kUsV11)) {
+	case LayoutKind::kMapLegendClick:
+		if (isFamily(Family::kEuropeV1x) || isDemo(Family::kUsV10)) {
 			adjustment.leftOffset = 0x01C1 - 0x01D0;
 			adjustment.rightOffset = 0x0255 - 0x0264;
 		}
 		break;
-	case kMapLegendTitleLayout:
-		if (isFamily(kEuropeV1) && !isVariant(kEsPtV10)) {
+	case LayoutKind::kMapLegendTitle:
+		if (isFamily(Family::kEuropeV1x)) {
 			adjustment.topOffset = -3 - 3;
 			adjustment.bottomOffset = (-3 + 38) - (3 + 15);
-		} else if (isVariant(kEsPtV10, Common::ES_ESP)) {
+		} else if (isFamily(Family::kUsV10, Common::ES_ESP)) {
 			adjustment.bottomOffset = 18 - 15;
-		} else if (isVariant(kEsPtV10, Common::PT_PRT)) {
+		} else if (isFamily(Family::kUsV10, Common::PT_PRT)) {
 			adjustment.topOffset = 2 - 3;
 			adjustment.bottomOffset = (2 + 23) - (3 + 15);
-		} else if (isDemo(kUsV11) || isVariant(kTlcV20, Common::PL_POL)) {
+		} else if (isFamily(Family::kUsV10) || isFamily(Family::kTlcV20, Common::PL_POL)) {
 			adjustment.bottomOffset = 18 - 15;
 		}
 		break;
-	case kMapLegendRowLayout:
-		if (isFamily(kEuropeV1) && !isVariant(kEsPtV10)) {
+	case LayoutKind::kMapLegendRow:
+		if (isFamily(Family::kEuropeV1x)) {
 			adjustment.topOffset = 33 - 22;
 			adjustment.bottomOffset = adjustment.topOffset;
 			adjustment.rightOffset = 25;
 		}
 		break;
-	case kMapStatsTitleLayout:
-		if (isFamily(kEuropeV1)) {
+	case LayoutKind::kMapStatsTitle:
+		if (isFamily(Family::kUsV10) || isFamily(Family::kEuropeV1x)) {
 			adjustment.bottomOffset = 18 - 15;
-			if (isVariant(kEsPtV10, Common::PT_PRT)) {
+			if (isFamily(Family::kUsV10, Common::PT_PRT)) {
 				adjustment.topOffset = 2 - 3;
 				adjustment.bottomOffset = (2 + 23) - (3 + 15);
 			}
-		} else if (isDemo(kUsV11) || isVariant(kTlcV20, Common::PL_POL)) {
+		} else if (isFamily(Family::kTlcV20, Common::PL_POL)) {
 			adjustment.bottomOffset = 18 - 15;
 		}
 		break;
-	case kMapStatsRowLayout:
-		if (isVariant(kEsPtV10, Common::PT_PRT)) {
+	case LayoutKind::kMapStatsRow:
+		if (isFamily(Family::kUsV10, Common::PT_PRT)) {
 			adjustment.topOffset = 20 - 26;
 			adjustment.bottomOffset = (20 + 23) - (26 + 18);
 		}
 		break;
-	case kMapStatsLabelLayout:
-		if (isVariant(kEsPtV10, Common::PT_PRT))
+	case LayoutKind::kMapStatsLabel:
+		if (isFamily(Family::kUsV10, Common::PT_PRT))
 			adjustment.rightOffset = 120 - 115;
 		break;
-	case kMapPracticeRowStepLayout:
-		if (isFamily(kEuropeV1) && !isVariant(kEsPtV10)) {
+	case LayoutKind::kMapPracticeRowStep:
+		if (isFamily(Family::kEuropeV1x)) {
 			adjustment.bottomOffset = 38 - 18;
-		} else if (isVariant(kEsPtV10, Common::PT_PRT)) {
+		} else if (isFamily(Family::kUsV10, Common::PT_PRT)) {
 			adjustment.topOffset = 23 - 18;
 			adjustment.bottomOffset = adjustment.topOffset;
 		}
 		break;
-	case kMapTooltipLayout:
-		if (isVariant(kUsV11, Common::KO_KOR)) {
+	case LayoutKind::kMapTooltip:
+		if (isFamily(Family::kUsV11, Common::KO_KOR)) {
 			adjustment.topOffset = 2;
 			adjustment.bottomOffset = adjustment.topOffset;
 		}
 		break;
-	case kPickerNameLayout:
-		if (isVariant(kEsPtV10, Common::PT_PRT) || isVariant(kJapanV10) || isVariant(kTlcV20, Common::PL_POL))
+	case LayoutKind::kPickerName:
+		if (isFamily(Family::kUsV10, Common::PT_PRT) || isFamily(Family::kEuropeV1x, Common::JA_JPN) || isFamily(Family::kTlcV20, Common::PL_POL))
 			adjustment.topOffset = 1 - 4;
 		break;
-	case kNotiBoxLongLayout:
-		if (isVariant(kJapanV10)) {
+	case LayoutKind::kNotiBoxLong:
+		if (isFamily(Family::kEuropeV1x, Common::JA_JPN)) {
 			adjustment.leftOffset = 0x00ED - 0x0101;
 			adjustment.rightOffset = 0x01B5 - 0x0183;
 		}
 		break;
-	case kNotiBoxTextLayout:
+	case LayoutKind::kNotiBoxText:
 		if (_lang == Common::KO_KOR)
 			adjustment.topOffset = 3;
 		break;
-	case kHelpHeadingLayout:
-		if (isFamily(kTlcV2)) {
+	case LayoutKind::kHelpHeading:
+		if (isFamily(Family::kTlcV20)) {
 			adjustment.topOffset = 0x0035 - 0x003E;
 			adjustment.bottomOffset = adjustment.topOffset;
 		}
 		break;
-	case kHelpBodyLayout:
-		if (isFamily(kTlcV2))
+	case LayoutKind::kHelpBody:
+		if (isFamily(Family::kTlcV20))
 			adjustment.topOffset = 0x0070 - 0x0079;
 		break;
-	case kHelpButtonTextLayout:
-		if (!isFamily(kTlcV2)) {
+	case LayoutKind::kHelpButtonText:
+		if (!isFamily(Family::kTlcV20)) {
 			adjustment.topOffset = 3;
 			adjustment.bottomOffset = adjustment.topOffset;
 		}
@@ -347,7 +351,7 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjust
 
 Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getMapRouteLayoutAdjustment(uint32 routeIndex) const {
 	LayoutAdjustment adjustment;
-	if (isFamily(kEuropeV1) && !isVariant(kEsPtV10)) {
+	if (isFamily(Family::kEuropeV1x)) {
 		// v1.0BR/FR/GE/IT/JP, v1.1BR/FR/GE, v1.1FR_2002 and v1.0BR Demo use the wider route rectangles.
 		switch (routeIndex) {
 		case 0: // Route 1: The big, the bad and the hungry
@@ -374,7 +378,7 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getMapRouteLayo
 
 Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getOptionsLabelLayoutAdjustment(uint32 buttonIndex) const {
 	LayoutAdjustment adjustment;
-	if (!isFamily(kTlcV2))
+	if (!isFamily(Family::kTlcV20))
 		return adjustment;
 
 	// v2.0TLC family needs adjustments.
@@ -396,12 +400,14 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getOptionsLabel
 }
 
 const char *Mohawk::ZmbReleaseInfo::getFamilyName() const {
-	if (isFamily(kEuropeV1))
-		return "EUv1";
-	if (isFamily(kUsV1))
-		return "USv1";
-	if (isFamily(kTlcV2))
-		return "TLCv2";
+	if (isFamily(Family::kUsV10))
+		return "USv1.0";
+	if (isFamily(Family::kEuropeV1x))
+		return "EUv1.x";
+	if (isFamily(Family::kUsV11))
+		return "USv1.1";
+	if (isFamily(Family::kTlcV20))
+		return "TLCv2.0";
 	return "unknown";
 }
 

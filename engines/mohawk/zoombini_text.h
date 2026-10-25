@@ -25,10 +25,10 @@
 #include "common/hashmap.h"
 #include "common/language.h"
 #include "common/noncopyable.h"
-#include "common/platform.h"
 #include "common/scummsys.h"
 #include "common/str-enc.h"
 #include "graphics/fontman.h"
+#include "graphics/fonts/ttf.h"
 
 #include "mohawk/resource.h"
 #include "mohawk/zoombini_resource.h"
@@ -109,33 +109,32 @@ public:
 		kLevel4,
 		/** (v2.0TLC-only) Label for options button. */
 		kRodMapOptionsButton,
-		// RODMAP: (European-only) Journey-stat location descriptions.
-		// These are distinct from the page-name keys: STRL 2002 uses abbreviated stat labels,
-		// while STRL 2000 contains the full page names (for example, French Shelter Rock).
-		// v1.1US demo also use this layout.
-		kEuropeJourneyStatZoombiniIsle,
-		kEuropeJourneyStatShelterRock,
-		kEuropeJourneyStatShadeTree,
-		kEuropeJourneyStatZoombiniton,
-		// RODMAP: (European-only) Practice return-path descriptions.
-		// STRL 2002 has four progress-dependent four-line blocks (5-8, 9-12, 13-16, and 17-20).
-		// v1.1US demo also use this layout.
-		kEuropePracticeReturnInitial1,
-		kEuropePracticeReturnInitial2,
-		kEuropePracticeReturnInitial3,
-		kEuropePracticeReturnInitial4,
-		kEuropePracticeReturnShelterRock1,
-		kEuropePracticeReturnShelterRock2,
-		kEuropePracticeReturnShelterRock3,
-		kEuropePracticeReturnShelterRock4,
-		kEuropePracticeReturnShadeTree1,
-		kEuropePracticeReturnShadeTree2,
-		kEuropePracticeReturnShadeTree3,
-		kEuropePracticeReturnShadeTree4,
-		kEuropePracticeReturnZoombiniton1,
-		kEuropePracticeReturnZoombiniton2,
-		kEuropePracticeReturnZoombiniton3,
-		kEuropePracticeReturnZoombiniton4,
+		// RODMAP: Journey-stat location labels for the USv1.0 and Europe-v1 families.
+		// These are distinct from the full page-name keys. Europe-v1 uses STRL 2002
+		// instead of STRL 2000; USv1.0 uses executable strings, including its demos.
+		kJourneyStatZoombiniIsle,
+		kJourneyStatShelterRock,
+		kJourneyStatShadeTree,
+		kJourneyStatZoombiniton,
+		// RODMAP: Practice return-path descriptions for the USv1.0 and Europe-v1 families.
+		// Four progress-dependent four-line blocks. Europe-v1 uses STRL 2002 entries 5-20;
+		// USv1.0 uses executable strings, including its demos.
+		kPracticeReturnInitial1,
+		kPracticeReturnInitial2,
+		kPracticeReturnInitial3,
+		kPracticeReturnInitial4,
+		kPracticeReturnShelterRock1,
+		kPracticeReturnShelterRock2,
+		kPracticeReturnShelterRock3,
+		kPracticeReturnShelterRock4,
+		kPracticeReturnShadeTree1,
+		kPracticeReturnShadeTree2,
+		kPracticeReturnShadeTree3,
+		kPracticeReturnShadeTree4,
+		kPracticeReturnZoombiniton1,
+		kPracticeReturnZoombiniton2,
+		kPracticeReturnZoombiniton3,
+		kPracticeReturnZoombiniton4,
 		// TOWN: Memorial
 		kMemorialJanuary = 400,
 		kMemorialFebruary,
@@ -271,9 +270,11 @@ public:
 		// ScummVM-only text keys
 		kSvmDialogBodyAskSaveAfterDebugStateMutation = 2000,
 		kSvmDialogBodyLoadNewerSaveFormat,
+		/** Confirm loading a native save from the other platform. */
+		kSvmDialogBodyLoadOtherPlatformSave,
 		kSvmDialogBodyCannotLoadSave,
 		kSvmDialogBodyCannotSaveNameEncoding,
-		kSvmDialogBodyAskConvertUnreadableZoombiniNames,
+		kSvmDialogBodyAskRegenerateZoombiniNames,
 	};
 
 	/** One paragraph of localized credit text. */
@@ -345,6 +346,18 @@ public:
 	bool getStrl(Common::U32String &outStr, ZmbResource resource, uint16 subStrIdx);
 
 	// [*] Zoombini names
+	/** Fixed Japanese name shared by Picker's F1 override and saved-name compatibility checks. */
+	static constexpr char32_t kJapaneseF1DebugName[] = U"チョビ";
+	/** Fixed Japanese name shared by Picker's F2 override and saved-name compatibility checks. */
+	static constexpr char32_t kJapaneseDebugF1Name[] = U"史昭";
+	/**
+	 * Return whether this release allows the given serialized Zoombini name.
+	 * Accept shared ASCII names, Japanese generator outputs or Korean STRL pool names; localized names must round-trip exactly through the release's codec.
+	 * Preserve name bytes and never infer their source language.
+	 * Korean resource lookup fills the generator's cache without drawing a name or advancing random state.
+	 */
+	bool isAllowedZoombiniName(const Common::String &name);
+
 	/**
 	 * Fixed Japanese name requested by Picker when generating a new name.
 	 * Possibly a v1.0JP debug-only feature.
@@ -405,6 +418,29 @@ public:
 	void getLocalizedCredits(Common::Array<CreditParagraph> &paragraphs) const;
 
 private:
+	/** Smallest Japanese target length, before pair extension or an early NUL. */
+	static constexpr uint kJapaneseNameMinTargetLength = 3;
+	/** Largest Japanese target length, before pair extension or an early NUL. */
+	static constexpr uint kJapaneseNameMaxTargetLength = 6;
+	/** Shared first-character pool; the terminating NUL is not selectable. */
+	static constexpr char32_t kJapaneseInitialKana[] = U"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾜ";
+	/** Shared plain-kana pool for later positions, including nasal N. */
+	static constexpr char32_t kJapaneseNormalKana[] = U"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾜﾝ";
+	/** Shared bases that can precede a semi-voiced mark. */
+	static constexpr char32_t kJapaneseSemiVoicedKana[] = U"ﾊﾋﾌﾍﾎ";
+	/** Shared bases that can precede a voiced mark. */
+	static constexpr char32_t kJapaneseVoicedKana[] = U"ｶｷｸｹｺｻｼｽｾｿﾀﾃﾄﾊﾋﾌﾍﾎ";
+	/** Shared bases that can precede a contracted small kana. */
+	static constexpr char32_t kJapaneseContractedKana[] = U"ｷｼﾁﾆﾋﾐ";
+	/** Shared contracted suffixes; generation also permits this array's terminating NUL. */
+	static constexpr char32_t kJapaneseSmallKana[] = U"ｬｭｮ";
+	/** Return whether the given character is in the specified Japanese name-generation kana table. */
+	static bool isKanaInJapaneseNameTable(char32_t character, const char32_t *table);
+	/** Recognize any possible Japanese generator output, including fixed names, pair extension and early termination. */
+	static bool isGeneratedJapaneseZoombiniName(const Common::U32String &name);
+	/** Read one Korean name by ID, reusing the same resource cache as random name generation. */
+	Common::U32String getKoreanZoombiniNameById(uint16 nameId);
+
 	/** Localized page-name key indexed by page type. */
 	struct PageKeyEntry {
 		/** Page whose display name is supplied by this entry. */
@@ -452,15 +488,58 @@ private:
 		uint16 stringIndex;
 	};
 
+	/** Byte images prepared by executable sources and selected by their text tables. */
+	enum class ExeTextDataSource {
+		/**
+		 * Use raw executable file bytes, with offsets measured from the beginning of the file.
+		 * Windows NE/PE tables and the Japanese Macintosh demo use this origin.
+		 * For Macintosh PPC PEF, this selects the original data-fork container, including literals embedded in PPC code.
+		 */
+		kRawExecutableFile,
+		/**
+		 * Use the expanded RLE-compressed DATA 0 from a Macintosh 68K executable's resource fork.
+		 * Offsets are relative to the original A5 global-data base, which maps to index 0 in the expanded buffer.
+		 *
+		 * @remarks Uses a game-specific decoder matching Z1's verified 68K startup routine.
+		 * Related enhanced-RLE formats exist in other 68K runtimes; this encoding is not known to be unique to Z1.
+		 * @see expandMac68kResForkRleGlobals() for the stream layout and related-format references.
+		 */
+		kExpandedMac68kA5Globals,
+		/**
+		 * Use the expanded selected data section of a Macintosh PPC PEF executable.
+		 * Offsets are relative to the beginning of that section, including its zero-initialized tail.
+		 *
+		 * @remarks Expansion follows the PEF standard's pattern-init instructions and zero-init tail rules.
+		 * @see Apple, Mac OS Runtime Architectures, chapter 8, pp. 8-7..8-14:
+		 * https://developer.apple.com/library/archive/documentation/mac/pdf/MacOS_RT_Architectures.pdf#page=168
+		 */
+		kExpandedMacPpcPefDataSection,
+	};
+
 	/** One Key-offset-size entry in an executable text table. */
 	struct ExeTextEntry {
 		Key key;
-		/** Offset in the source image.
-		 * - From file: Raw file offset of the first text byte.
-		 * - From Mac resource fork: A5-relative for expanded Macintosh globals. */
+		/** Byte offset from the origin selected by the containing @ref ExeTextTable. */
 		uint32 offset;
 		/** Number of text bytes, excluding the trailing NUL terminator. */
 		uint16 length;
+		/** Map a string to a byte range within its table's selected image. */
+		constexpr ExeTextEntry(Key srcKey, uint32 srcOffset, uint16 srcLength)
+			: key(srcKey), offset(srcOffset), length(srcLength) {}
+	};
+
+	/** Executable text entries sharing one byte image and offset origin. */
+	struct ExeTextTable {
+		/** Static key-offset-size entries in this table. */
+		const ExeTextEntry *entries;
+		/** Number of entries in @ref entries. */
+		uint32 entryCount;
+		/** Byte image and offset origin used by every entry in this table. */
+		ExeTextDataSource dataSource;
+
+		/** Associate a static text table with its byte image. */
+		constexpr ExeTextTable(const ExeTextEntry *srcEntries, uint32 srcEntryCount, ExeTextDataSource srcDataSource)
+			: entries(srcEntries), entryCount(srcEntryCount), dataSource(srcDataSource) {}
 	};
 
 	typedef void (ZoombiniText::*ExeTextPatchFunction)();
@@ -473,11 +552,12 @@ private:
 		/** Executable strings reached through a sequential pointer stream. */
 		kExecutablePointerStream,
 		/**
-		 * Credit strings from the Macintosh resource-fork, reached through big-endian A5-relative offsets.
+		 * Credits from a Macintosh 68K executable's RLE-compressed resource-fork DATA 0.
+		 * Big-endian A5-relative offsets address strings in the expanded globals.
 		 * Classic Motorola 68k Mac applications use the A5 address register as their global-data base
 		 * (the "A5 world"): an offset denotes the address A5 + offset.
 		 *
-		 * For executables with compressed resource-fork DATA 0, expandMacResForkRleGlobals() restores
+		 * For executables with compressed resource-fork DATA 0, expandMac68kResForkRleGlobals() restores
 		 * the globals using the A5-world sizes from CODE 0 before reading the strings.
 		 * Its output starts at the original A5 position, so A5 + offset becomes data[offset].
 		 * These offsets address expanded globals, not raw resource-fork bytes.
@@ -485,7 +565,12 @@ private:
 		 *
 		 * @see https://developer.apple.com/library/archive/documentation/mac/pdf/Processes/Processes_GL.pdf
 		 */
-		kMacRleA5RelativePointerStream,
+		kMac68kA5RelativePointerStream,
+		/**
+		 * Credits from a Macintosh PowerPC (PPC) PEF executable, using BE32 offsets into its expanded data section.
+		 * Retain TLC leading-space and icon-marker conventions.
+		 */
+		kMacPpcPefRelativePointerStream,
 		/** Flat strings loaded sequentially from TEXTSTR.MHK STRL resources. */
 		kTextStrResourceSequence,
 	};
@@ -515,15 +600,17 @@ private:
 		bool archiveIsCabinet = false;
 		/** Exact byte size of the release-matched executable image. */
 		uint32 expectedSize = 0;
-		/** Whether to read and expand DATA 0 from the Macintosh application's resource fork before text lookup. */
-		bool macDataResFork = false;
+		/** Primary image to prepare for required-byte checks and executable credits. */
+		ExeTextDataSource primaryDataSource = ExeTextDataSource::kRawExecutableFile;
+		/** Selected data-section index, used only with @ref ExeTextDataSource::kExpandedMacPpcPefDataSection. */
+		uint16 macPpcPefDataSection = 0;
+		/** Expected PEF totalSize, checked before allocation when preparing the expanded PPC data section. */
+		uint32 macPpcPefDataSize = 0;
 
 		/** Code page used to decode the keyed executable strings. */
 		Common::CodePage codePage = Common::kWindows1252;
-		/** Table of keyed string offsets and lengths within the source image. */
-		const ExeTextEntry *entries = nullptr;
-		/** Number of entries in @ref entries. */
-		uint entryCount = 0;
+		/** Keyed string tables in decoding order, each selecting its own byte image. */
+		Common::Array<ExeTextTable> textTables;
 		/** Required ASCII signature bytes used to validate the executable identity. */
 		const char *requiredBytes = nullptr;
 		/** Offset of @ref requiredBytes within the executable image. */
@@ -557,16 +644,26 @@ private:
 
 		/** Copy these decoding settings to a candidate in a loose executable file. */
 		ExeTextSource inFile(const char *srcFileName, uint32 srcExpectedSize) const;
-		/** Select compressed DATA 0 from a Macintosh application's resource fork for expansion before text lookup. */
-		ExeTextSource inMacDataResFork(const char *srcFileName, uint32 srcExpectedSize) const;
+		/** Select RLE-compressed DATA 0 from a Macintosh 68K executable's resource fork for expansion before text lookup. */
+		ExeTextSource inMac68kDataResFork(const char *srcFileName, uint32 srcExpectedSize) const;
+		/** Read a Macintosh PPC PEF executable's data fork and expand its selected data section before text lookup. */
+		ExeTextSource inMacPpcPefDataFork(const char *srcFileName, uint32 srcExpectedSize, uint16 sectionIndex, uint32 sectionSize) const;
 		/** Copy these decoding settings to a candidate in an InstallShield v3 .Z archive. */
 		ExeTextSource inArchiveMember(const char *srcArchiveName, const char *srcMemberName, uint32 srcExpectedSize) const;
 		/** Copy these decoding settings to a candidate in an InstallShield cabinet. */
 		ExeTextSource inCabinetMember(const char *srcArchiveName, const char *srcMemberName, uint32 srcExpectedSize) const;
 
-		/** Set the code page and keyed string table, returning the updated descriptor. */
-		template<size_t size>
-		ExeTextSource withTextTable(Common::CodePage srcCodePage, const ExeTextEntry (&srcEntries)[size]);
+		/** Set the code page and first static keyed string table by pointer and entry count; file offsets are the default origin. */
+		ExeTextSource withTextTable(Common::CodePage srcCodePage, const ExeTextEntry *srcEntries, uint32 srcEntryCount, ExeTextDataSource srcDataSource = ExeTextDataSource::kRawExecutableFile);
+		/**
+		 * Append a static keyed string table by pointer and entry count, sharing this source's code page.
+		 *
+		 * @remarks Unlike withTextTable(), this preserves previously registered tables and the code page.
+		 * The PPC PEF source needs both expanded-data strings and raw-file code literals such as "Level";
+		 * calling withTextTable() again would discard the first table.
+		 * @see withTextTable()
+		 */
+		ExeTextSource withAdditionalTextTable(const ExeTextEntry *srcEntries, uint32 srcEntryCount, ExeTextDataSource srcDataSource = ExeTextDataSource::kRawExecutableFile);
 		/** Set the required-bytes identity check, returning the updated descriptor. */
 		ExeTextSource withRequiredBytes(uint32 srcOffset, const char *srcBytes);
 		/** Set the keyed-string patch callback, returning the updated descriptor. */
@@ -584,6 +681,8 @@ private:
 		ExeTextSource withCreditPtrTable(uint32 tableOffset, uint32 baseAddress, uint32 firstIndex);
 		/** Select credits whose table offset and BE32 entries are relative to the original 68k A5 register value. */
 		ExeTextSource withMacA5RelativeCreditPtrTable(uint32 tableOffset);
+		/** Select BE32 credit pointers relative to the start of the expanded PEF data section. */
+		ExeTextSource withMacPefRelativeCreditPtrTable(uint32 tableOffset);
 		/** Set the blank-entry pointer value, returning the updated descriptor. */
 		ExeTextSource withCreditPtrBlankAddress(uint32 address);
 		/** Set the inclusive blank-entry pointer range, returning the updated descriptor. */
@@ -592,8 +691,10 @@ private:
 		ExeTextSource withCreditLimits(const CreditLimits &limits);
 	};
 
-	/** Release-selected string sources; defaults select no executable or archive. */
-	struct StringSources {
+	/** Release-selected text and font sources; defaults select no executable, archive or font cabinet. */
+	struct SourceSettings {
+		/** Preferred Windows font cabinet, or null when no cabinet is selected. */
+		const char *fontCabinet = nullptr;
 		/** Executable candidates in search order; the first fully valid candidate wins. */
 		Common::Array<ExeTextSource> executables;
 		/** Load TEXTSTR.MHK after executable and ScummVM-added strings. */
@@ -622,6 +723,8 @@ private:
 
 	/** Bounds measured from the Spanish v1.0 executable credit source. */
 	static const CreditLimits kV10ESCreditLimits;
+	/** Equal bounds measured from the USv1.0 Windows and Macintosh credit sources. */
+	static const CreditLimits kV10USCreditLimits;
 	/** Bounds measured from the Portuguese v1.0 executable credit source. */
 	static const CreditLimits kV10PTCreditLimits;
 	/** Equal bounds measured from the US v1.1 16-bit and 32-bit credit sources. */
@@ -652,6 +755,7 @@ private:
 	static const ResTextEntry kV10EU_ResTextEntries[];
 	/** v1.0BR NE Key-address-size map. */
 	static const ExeTextEntry kV10BR_NETextEntries[];
+	/** v1.0BR Win16 demo Key-address-size map. */
 	static const ExeTextEntry kV10BRDemo_NETextEntries[];
 	/** v1.1BR NE Key-address-size map. */
 	static const ExeTextEntry kV11BR_NETextEntries[];
@@ -663,7 +767,7 @@ private:
 	static const ExeTextEntry kV10GE_NETextEntries[];
 	/** v1.1GE NE Key-address-size map. */
 	static const ExeTextEntry kV11GE_NETextEntries[];
-	/** v1.0ES NE Key-address-size map. */
+	/** v1.0ES PE32 Key-address-size map. */
 	static const ExeTextEntry kV10ES_PETextEntries[];
 	/** v1.0IT NE Key-address-size map. */
 	static const ExeTextEntry kV10IT_NETextEntries[];
@@ -677,10 +781,36 @@ private:
 	static const ExeTextEntry kV11US_PETextEntries[];
 	/** v1.1US NE Key-address-size map. */
 	static const ExeTextEntry kV11US_NETextEntries[];
-	/** v1.1US Win16 demo Key-address-size map. */
-	static const ExeTextEntry kV11USDemo_NETextEntries[];
-	/** v1.1US Macintosh demo strings at A5-relative offsets in the expanded resource-fork DATA 0. */
-	static const ExeTextEntry kV11USMacDemoTextEntries[];
+	/** USv1.0 Windows NE retail executable text, indexed by raw file offset. */
+	static const ExeTextEntry kV10US_NETextEntries[];
+	/** USv1.0 Windows PE32 retail executable text, indexed by raw file offset. */
+	static const ExeTextEntry kV10US_PETextEntries[];
+	/** v1.0US Win16 demo Key-address-size map. */
+	static const ExeTextEntry kV10USDemo_NETextEntries[];
+	/** v1.0US Macintosh demo strings at A5-relative offsets in the expanded resource-fork DATA 0. */
+	static const ExeTextEntry kV10USMacDemoTextEntries[];
+	/** USv1.0 Macintosh 68K retail text at A5-relative offsets in the expanded resource-fork DATA 0. */
+	static const ExeTextEntry kV10USMacTextEntries[];
+	/** US v1.1 Macintosh retail text, relative to the expanded A5 globals. */
+	static const ExeTextEntry kV11USMacTextEntries[];
+	/** v1.0 British Macintosh 68K retail text at A5-relative offsets in expanded DATA 0. */
+	static const ExeTextEntry kV10BRMacTextEntries[];
+	/** v1.0 French Macintosh 68K retail text at A5-relative offsets in expanded DATA 0. */
+	static const ExeTextEntry kV10FRMacTextEntries[];
+	/** v1.0 German Macintosh 68K retail text at A5-relative offsets in expanded DATA 0. */
+	static const ExeTextEntry kV10GEMacTextEntries[];
+	/** v1.1 British Macintosh 68K retail text at A5-relative offsets in expanded DATA 0. */
+	static const ExeTextEntry kV11BRMacTextEntries[];
+	/** v1.1 French Macintosh 68K retail text at A5-relative offsets in expanded DATA 0. */
+	static const ExeTextEntry kV11FRMacTextEntries[];
+	/** v1.1 German Macintosh 68K retail text at A5-relative offsets in expanded DATA 0. */
+	static const ExeTextEntry kV11GEMacTextEntries[];
+	/** v1.0 Japanese Macintosh 68K retail text at A5-relative offsets in expanded DATA 0. */
+	static const ExeTextEntry kV10JPMacTextEntries[];
+	/** USv2.0 Macintosh PPC PEF text in the expanded data section. */
+	static const ExeTextEntry kV20USMacTextEntries[];
+	/** USv2.0 Macintosh PPC code literals at raw executable-file offsets. */
+	static const ExeTextEntry kV20USMacRawTextEntries[];
 	/** v1.11KR PE32 Key-address-size map. */
 	static const ExeTextEntry kV111KR_PETextEntries[];
 	/** v1.11KR NE Key-address-size map. */
@@ -710,7 +840,13 @@ private:
 	/** Read one NUL-terminated STRL string while reserving one terminator byte for every following string. */
 	static bool readBoundedStrlString(Common::SeekableReadStream *stream, Common::String &text, uint16 remainingStringCount);
 	/** Configure release-specific font sources and load the normal and title fonts. */
-	void initFonts();
+	void initFonts(const SourceSettings &sources);
+	/** Select Macintosh font sources, fallback candidates and release-matched point sizes. */
+	void initMacintoshFonts();
+	/** Select Windows font sources, fallback candidates and release-specific sizing. */
+	void initWindowsFonts(const char *fontCabinet);
+	/** Describe the verified retail Macintosh executable's static text image. */
+	static ExeTextSource createMacExecutableSource(const ZmbReleaseInfo &relInfo, bool europeV11);
 	/** Select and cache one font role, optionally warning when a fallback is used. */
 	const Graphics::Font *loadFont(FontState &state, bool showWarnMsgBox);
 
@@ -721,51 +857,52 @@ private:
 	void applyStringOverrides(const ZmbReleaseInfo &relInfo);
 	/** Build the key-to-language replacement map used by @ref ZoombiniText::applyStringOverrides. */
 	static StringOverrideMap createStringOverrides();
-	/** Select executable candidates and TEXTSTR.MHK settings without reading files. */
-	static StringSources createStringSources(const ZmbReleaseInfo &relInfo);
+	/** Consume detector layout/package distinctions once to select text and font sources without reading files. */
+	static SourceSettings createSourceSettings(const ZmbReleaseInfo &relInfo, uint32 detectedFeatures);
 	/** Load mapped TEXTSTR.MHK strings and archive credits using the selected source settings. */
-	bool initArchiveStrings(const StringSources &sources);
+	bool initArchiveStrings(const SourceSettings &sources);
 	/** Try the selected executable candidates in order. */
 	bool initExecutableStrings(const Common::Array<ExeTextSource> &sources);
 	/** Validate and decode one candidate, committing strings and credits only on success. */
 	bool tryExecutableSource(const ExeTextSource &source);
 	/** Read a release-matched executable image of the exact configured size into memory. */
 	static bool readExecutableData(Common::SeekableReadStream *exeStream, uint32 expectedSize, Common::Array<byte> &data);
-	/** Read the first two BE32 fields in CODE 0: bytes above A5, then bytes below A5. The caller owns the stream. */
-	static bool readMacA5WorldSizes(Common::SeekableReadStream *codeStream, uint32 &bytesAboveA5, uint32 &bytesBelowA5);
+	/** Read a Macintosh 68K executable's CODE 0 header: BE32 bytes above A5, then below A5. The caller owns the stream. */
+	static bool readMac68kA5WorldSizes(Common::SeekableReadStream *codeStream, uint32 &bytesAboveA5, uint32 &bytesBelowA5);
 	/**
-	 * Command codes and run-command range bases in a Macintosh application's enhanced-RLE-compressed DATA 0.
+	 * Command codes and run-command range bases in a Macintosh 68K executable's enhanced-RLE-compressed resource-fork DATA 0.
 	 * Each byte selects one command, not a combination of flags. Codes 1..4 select templates; 5..15 are invalid.
 	 * Run commands occupy ranges 16..31, 32..63, 64..127 and 128..255. Select the highest matching range base.
 	 * The count is code - base + 1, except RepeatByte, which uses code - base + 2.
 	 */
-	enum MacDataCommandCode : uint8 {
+	enum Mac68kDataCommandCode : uint8 {
 		/** End the current block. */
-		kMacDataEndBlock_00 = 0,
+		kMac68kDataEndBlock_00 = 0,
 		/** First of four eight-byte templates, indexed by code - TemplateFirst. */
-		kMacDataTemplateFirst_01 = 1,
+		kMac68kDataTemplateFirst_01 = 1,
 		/** Preserve four bytes, emit 255, then copy three literal bytes. */
-		kMacDataTemplate_02 = 2,
+		kMac68kDataTemplate_02 = 2,
 		/** Emit 169, 240; preserve two bytes; copy two literals; preserve one byte; copy one literal. */
-		kMacDataTemplate_03 = 3,
+		kMac68kDataTemplate_03 = 3,
 		/** Last template command, inclusive. */
-		kMacDataTemplateLast_04 = 4,
+		kMac68kDataTemplateLast_04 = 4,
 		/** Codes 16..31 emit 1..16 copies of byte 255. */
-		kMacDataRepeatFFBase_16 = 16,
+		kMac68kDataRepeatFFBase_16 = 16,
 		/** Codes 32..63 consume one source byte and repeat it 2..33 times. */
-		kMacDataRepeatByteBase_32 = 32,
+		kMac68kDataRepeatByteBase_32 = 32,
 		/** Codes 64..127 preserve/skip 1..64 destination bytes without a source payload. */
-		kMacDataSkipBase_64 = 64,
+		kMac68kDataSkipBase_64 = 64,
 		/** Codes 128..255 copy the following 1..128 literal bytes. */
-		kMacDataCopyLiteralsBase_128 = 128,
+		kMac68kDataCopyLiteralsBase_128 = 128,
 	};
 
 	/**
-	 * Expand enhanced-RLE-compressed globals from a Macintosh application's resource-fork DATA 0.
-	 * Required for text lookup: offsets are relative to the global-data base in the original 68k A5 register.
+	 * Expand enhanced-RLE-compressed globals from a Macintosh 68K executable's resource-fork DATA 0.
+	 * This is the 68K CODE-resource startup format; PPC PEF data sections use expandMacPpcPefDataSection().
+	 * Required for text lookup: offsets are relative to the global-data base in the original 68K A5 register.
 	 * Keep the bytes at/above A5 with A5 mapped to index 0, so those offsets index data directly.
 	 *
-	 * The caller reads bytesAboveA5 and bytesBelowA5 from CODE 0 with readMacA5WorldSizes(), then
+	 * The caller reads bytesAboveA5 and bytesBelowA5 from CODE 0 with readMac68kA5WorldSizes(), then
 	 * gets the DATA 0 payload stream from MacResManager::getResource() and copies its compressed bytes
 	 * into data with readExecutableData(). The sizes describe the executable's memory layout, not the RLE format.
 	 *
@@ -780,7 +917,7 @@ private:
 	 *   After the third block: relocation streams, which are not parsed here.
 	 * Commands may consume literal payload bytes; only a zero read as a command ends a block.
 	 *
-	 * A5 is the original 68k global-data base.
+	 * A5 is the original 68K global-data base.
 	 * Decode into a zero-filled temporary image with bytesBelowA5 bytes below A5 and bytesAboveA5 above it;
 	 * a block's signed offset n starts at a5World[bytesBelowA5 + n].
 	 * Literal copies, repeated-byte runs, skips and eight-byte templates reconstruct the globals in that image.
@@ -796,14 +933,54 @@ private:
 	 * These describe related initialization formats; they do not identify an executable's compiler or runtime version.
 	 * Unlike the Palm description's zero-fill, this decoder preserves skipped bytes and template holes, matching the verified Mac startup.
 	 */
-	static bool expandMacResForkRleGlobals(Common::Array<byte> &data, uint32 bytesAboveA5, uint32 bytesBelowA5);
+	static bool expandMac68kResForkRleGlobals(Common::Array<byte> &data, uint32 bytesAboveA5, uint32 bytesBelowA5);
+	/**
+	 * Supported data-section kind codes in a PPC PEF section header, using Apple's section type names.
+	 * @see Mac OS Runtime Architectures, chapter 8, Table 8-1, pp. 8-8..8-9:
+	 * https://developer.apple.com/library/archive/documentation/mac/pdf/MacOS_RT_Architectures.pdf#page=170
+	 */
+	enum MacPpcPefSectionKind : uint8 {
+		/** Uncompressed initialized read/write data, followed by zero-initialized data. */
+		kPefSectionUnpackedData_01 = 1,
+		/** Read/write data constructed by pattern-initialization instructions. */
+		kPefSectionPatternInitData_02 = 2
+	};
+	/** Opcodes in the high three bits of a PPC PEF pattern-initialization instruction (Apple Runtime Architectures, chapter 8). */
+	enum MacPpcPefDataOpcode : uint8 {
+		/** Emit a run of zero bytes. */
+		kPefOpcodeZero_00 = 0,
+		/** Copy a literal byte block. */
+		kPefOpcodeBlockCopy_01 = 1,
+		/** Repeat one literal byte block. */
+		kPefOpcodeRepeatedBlock_02 = 2,
+		/** Alternate a shared literal block with successive custom literal blocks. */
+		kPefOpcodeInterleaveBlocks_03 = 3,
+		/** Alternate zero-filled runs with successive custom literal blocks. */
+		kPefOpcodeInterleaveZero_04 = 4
+	};
+	/**
+	 * Read one PPC PEF pattern argument: up to five big-endian groups of seven bits, with bit 7 marking continuation.
+	 * Used for extended instruction counts and additional pattern operands; advance sourceOffset within the caller-validated sourceEnd.
+	 * @see Apple, Mac OS Runtime Architectures, chapter 8, pp. 8-11..8-12:
+	 * https://developer.apple.com/library/archive/documentation/mac/pdf/MacOS_RT_Architectures.pdf#page=172
+	 */
+	static bool readMacPpcPefDataArgument(const Common::Array<byte> &data, uint32 sourceEnd, uint32 &sourceOffset, uint32 &value);
+	/**
+	 * Expand one data section from a Macintosh PPC PEF data fork to section-relative bytes.
+	 * Reproduce the Code Fragment Manager's literal/pattern initialization and zero-filled tail for static text lookup.
+	 * Validate the PowerPC ('pwpc') container architecture and leave CFM address relocations unapplied.
+	 * @param data Read-only PEF container bytes.
+	 * @param sectionIdx Index of the instantiated data section to expand.
+	 * @param expectedSize Required expanded section size for the selected release.
+	 * @param[out] expandedData Receives the section image on success; unchanged on failure.
+	 */
+	static bool expandMacPpcPefDataSection(const Common::Array<byte> &data, uint16 sectionIdx, uint32 expectedSize, Common::Array<byte> &expandedData);
 	/** Find an ASCII byte sequence in executable data. */
 	static bool findBytes(const Common::Array<byte> &data, const char *needle, uint32 &offset);
 	/** Decode an executable byte string through its source code page. */
 	static Common::U32String decodeExecutableStringBytes(const byte *bytes, uint32 length, const ExeTextSource &source);
 	/** Read and decode a bounded executable string at an offset. */
-	static bool readExecutableStringAt(const Common::Array<byte> &data, uint32 offset, const ExeTextSource &source,
-									   Common::U32String &text, uint32 &byteLength);
+	static bool readExecutableStringAt(const Common::Array<byte> &data, uint32 offset, const ExeTextSource &source, Common::U32String &text, uint32 &byteLength);
 	/** Return whether all release-specific executable credit bounds are present. */
 	static bool areExecutableCreditLimitsValid(const ExeTextSource &source);
 	/** Return whether text terminates an executable credit string table. */

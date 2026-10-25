@@ -98,7 +98,7 @@ protected:
 	bool debugSetChances(int16 remaining) override;
 	/** Process Snoid and slot animation callbacks. */
 	void onFeatureAnimEvent(ZmbFeature *feature, int16 eventCode) override;
-	/** Preserve the v1.1 US demo's uphill exit-facing direction after a tracked walk completes. */
+	/** Handle a Snoid reaching the final target of its tracked walk. */
 	void onSnoidWalkCompleted(ZmbSnoid *snoid) override;
 	/** Advance column assignment and feedback after the current render. */
 	void onPostRenderFrame() override;

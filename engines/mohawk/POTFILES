@@ -11,5 +11,6 @@ engines/mohawk/riven_stacks/aspit.cpp
 engines/mohawk/zoombini.cpp
 engines/mohawk/zoombini_dialogs.cpp
 engines/mohawk/zoombini_graphics.cpp
+engines/mohawk/zoombini_state.cpp
 engines/mohawk/zoombini_text.cpp
 engines/mohawk/zoombini_pages/transition_logo.cpp

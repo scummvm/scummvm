@@ -101,7 +101,7 @@ Audio::Mixer::SoundType ZoombiniPuzzleHotel::getFeatureSoundType(const ZmbFeatur
 
 void ZoombiniPuzzleHotel::open() {
 	// MIDI BGM (tMID 30020-30023) -- Broderbund v1.x only.
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		openMidiArchive();
 	openArchive(ZMB_MHK_HOTEL);
 }
@@ -861,7 +861,7 @@ void ZoombiniPuzzleHotel::setupCloseView() {
 		_guidePromptCompleted = false;
 		_openingSkipEnabled = false;
 		unloadUllaAnimFeature();
-		if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+		if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_puzzleLevel - 1))));
 	} else if (_openingSkipped) {
 		// Reset the state after a skipped guide.
@@ -879,7 +879,7 @@ void ZoombiniPuzzleHotel::setupCloseView() {
 		} else {
 			loadScrbOntoFeature(_mistakeCounterFeature, static_cast<int16>(_initialCounterStep + kResScrb6000_CounterBase));
 		}
-		if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+		if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_puzzleLevel - 1))));
 	} else if (!_openingAnimVariant || (_openingAnimVariant == 4 && _guidePromptPending)) {
 		// Play the guide prompt.
@@ -899,7 +899,7 @@ void ZoombiniPuzzleHotel::setupCloseView() {
 		// This caller uses the immediately returned timing-slot ID as a page-local next-frame latch.
 		// This is not the generic completion rule for registered timing groups.
 		_initialCounterFillStepPending = true;
-		if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+		if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_puzzleLevel - 1))));
 	} else {
 		// Play the guide with its sounds.
@@ -1929,7 +1929,7 @@ void ZoombiniPuzzleHotel::onPostRenderFrame() {
 		debugC(2, MohawkEngine_Zoombini::kDebugPage02, "hotel: starting counter after guide prompt");
 		_guidePromptCompleted = false;
 		_openingSkipEnabled = false;
-		if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+		if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_puzzleLevel - 1))));
 
 		if (_openingSkipped) {
@@ -2185,7 +2185,7 @@ void ZoombiniPuzzleHotel::endDrag(const Common::Point &mousePos) {
 	// Clear loaded PCM at the drop boundary before evaluating the room.
 	// The bug-fix option preserves MIDI across this cleanup.
 	_vm->_sound->releaseAllLoadedSounds();
-	const bool stopMidiAfterDrop = !_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && !ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixHotelMidiHaltBug);
+	const bool stopMidiAfterDrop = !_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20) && !ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixHotelMidiHaltBug);
 	if (stopMidiAfterDrop)
 		_vm->_midi->stopMidi();
 

@@ -1198,7 +1198,7 @@ void ZoombiniPuzzleLilly::beginToadSwapDrag(const Common::Point &absPos) {
 	if (!_swapWandFeature)
 		return;
 
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		const int16 normalScrbId = static_cast<int16>(kResScrb10078_ToadBase + MIN<int16>(_swapWandStage, 6));
 		if (_swapWandFeature->getScrbId() != normalScrbId)
 			loadSwapWandScrb(normalScrbId);
@@ -1207,7 +1207,7 @@ void ZoombiniPuzzleLilly::beginToadSwapDrag(const Common::Point &absPos) {
 	// Preserve the positioned home hit area before the runner begins following the cursor.
 	// Restoring it on cancel makes the wand immediately reusable without waiting for another
 	// materialization pass to replace the cursor-position click rectangle.
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		_swapWandHomeClickRect = _normalSwapWandHomeRect;
 	else
 		_swapWandHomeClickRect = _swapWandFeature->getClickRect();
@@ -1348,7 +1348,7 @@ void ZoombiniPuzzleLilly::cancelToadSwapDrag() {
 }
 
 void ZoombiniPuzzleLilly::updateV2SwapWandHover() {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) || !_swapWandFeature || _swapWandDragging)
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20) || !_swapWandFeature || _swapWandDragging)
 		return;
 	if (_swapWandFeature->hasFlag(ZmbFeature::FLAG_01000000_DEFER_RENDER))
 		return;
@@ -1365,7 +1365,7 @@ void ZoombiniPuzzleLilly::updateV2SwapWandHover() {
 bool ZoombiniPuzzleLilly::isSwapWandAtPoint(const Common::Point &pos) const {
 	if (!_swapWandFeature)
 		return false;
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return _normalSwapWandHomeRect.contains(pos);
 	return _swapWandFeature->hasClickRect() && _swapWandFeature->getClickRect().contains(pos);
 }

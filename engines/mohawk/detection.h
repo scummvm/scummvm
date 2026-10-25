@@ -53,12 +53,8 @@ enum MohawkGameType {
 #define GAMEOPTION_ME   GUIO_GAMEOPTIONS1
 #define GAMEOPTION_25TH GUIO_GAMEOPTIONS2
 #define GAMEOPTION_DEMO GUIO_GAMEOPTIONS3
-/**
- * Marker flag set only on the Zoombinis v2.0 (TLC rebuild) detection entry.
- */
 #define GAMEOPTION_ZMB_V20 GUIO_GAMEOPTIONS4
-/** Marker for Japanese Zoombinis v1.0. */
-#define GAMEOPTION_ZMB_V10JP GUIO_GAMEOPTIONS5
+#define GAMEOPTION_ZMB_V10US GUIO_GAMEOPTIONS5
 
 enum MohawkGameFeatures {
 	GF_ME             = (1 << 0), // Myst Masterpiece Edition
@@ -96,16 +92,18 @@ enum MohawkGameFeatures {
 	 * The executable is still 16-bit, but the installer is now 32-bit and the resource directories are now in French only.
 	 */
 	GF_ZMB_11_FR_2002 = (1 << 7),
+	/** USv1.0 Windows and Macintosh retail releases (January 1996), with one-clear difficulty advancement. */
+	GF_ZMB_10_US      = (1 << 8),
 	/**
 	 * Logical Journey of the Zoombinis v1.0 (Spain and Portugal)
 	 * - v1.0ES
 	 * - v1.0PT
 	 * @remarks
-	 * This release retains the Europe v1.0 game-state and UI behavior,
+	 * These localizations retain the US v1.0 game-state and UI behavior,
 	 * but ships 16/32-bit executables and keeps its resources under DATA.
 	 * Localized UI text is embedded in the executable instead of TEXTSTR.MHK.
 	 */
-	GF_ZMB_10_ESPT    = (1 << 8),
+	GF_ZMB_10_ESPT    = (1 << 9),
 	/**
 	 * Logical Journey of the Zoombinis v1.0 (Japan).
 	 * - v1.0JP
@@ -115,18 +113,18 @@ enum MohawkGameFeatures {
 	 * Localized UI text is still stored in JAPANESE/TEXTSTR.MHK.
 	 * The CD contains a 16-bit installer and 16/32-bit executable.
 	 */
-	GF_ZMB_10_JP      = (1 << 9),
+	GF_ZMB_10_JP      = (1 << 10),
 	/**
 	 * Versions based on Logical Journey of the Zoombinis v1.1 (US)
 	 * - v1.1US
 	 * - v1.11KR
 	 * @remarks
-	 * v1.1US has additional features and balance patched on Europe v1.0.
+	 * v1.1US adds features and adjusts the balance patched on US v1.0 release.
 	 * v1.11KR is a Korean localization based on v1.1US.
 	 * It added IME support for Hangul input and word dictionary for Korean Zoombini names.
 	 * The CD contains a 16-bit installer and 16/32-bit executable.
 	 */
-	GF_ZMB_11_US      = (1 << 10),
+	GF_ZMB_11_US      = (1 << 11),
 	/**
 	 * Logical Journey of the Zoombinis v2.0 (The Learning Company rebuild)
 	 * - v2.0US
@@ -136,7 +134,7 @@ enum MohawkGameFeatures {
 	 * and have better compatibility with modern NT-based Windows.
 	 * The CD contains only 32-bit installer and executable.
 	 */
-	GF_ZMB_20_US      = (1 << 11),
+	GF_ZMB_20_US      = (1 << 12),
 };
 
 struct MohawkGameDescription {

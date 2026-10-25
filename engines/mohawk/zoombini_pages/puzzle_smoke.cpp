@@ -107,13 +107,13 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniPuzzleSmoke::getScriptSou
 
 void ZoombiniPuzzleSmoke::open() {
 	// MIDI BGM (tMID 30030-30033) - Broderbund v1.x only.
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		openMidiArchive();
 	openArchive(ZMB_MHK_SMOKE);
 }
 
 void ZoombiniPuzzleSmoke::setBackgroundMusic() {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		const int16 routeLevel = _puzzleLevel - kPuzzleLevel1;
 		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30030_SmokeBgmBase + routeLevel)));
 	}

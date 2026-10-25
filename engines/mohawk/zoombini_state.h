@@ -25,10 +25,14 @@
 #include "common/array.h"
 #include "common/error.h"
 #include "common/fs.h"
+#include "common/language.h"
 #include "common/noncopyable.h"
+#include "common/platform.h"
 #include "common/rect.h"
 #include "common/serializer.h"
 #include "common/str.h"
+#include "common/textconsole.h"
+#include "common/ustr.h"
 
 #include "mohawk/zoombini_resource.h"
 
@@ -43,6 +47,7 @@ namespace Mohawk {
 
 class MohawkEngine_Zoombini;
 class ZmbFeature;
+class ZoombiniText;
 
 /**
  * Transient SFX-selection outcomes returned while a page flag is updated.
@@ -313,7 +318,7 @@ struct ZmbXferRouteInfo {
 	static const ZmbXferRouteInfo *getZmbXferRouteInfos(uint32 &routeCount);
 
 	/** Find the shared XFER route entry for a source SI page. */
-	static const ZmbXferRouteInfo *getZmbXferRouteInfo(ZmbSrcPageKind sourcePage);
+	static const ZmbXferRouteInfo *getZmbXferRouteInfo(ZmbSrcPageKind srcPage);
 
 	/** Return whether this route arrives at a Basecamp or Town container. */
 	bool entersContainer() const;
@@ -413,7 +418,10 @@ struct ZmbTrait {
 	}
 	/** Replace out-of-range serialized trait bytes with empty slots. */
 	void recoverSerializedValues();
-	/** Serialize the four trait bytes in save-file order. */
+	/**
+	 * Serialize the four trait bytes in save-file order.
+	 * @param s Serializer reading or writing hair, eyes, nose and feet, in that order.
+	 */
 	void sync(Common::Serializer &s);
 	/** Return whether every canonical trait slot equals @p other. */
 	bool operator==(const ZmbTrait &other) const {
@@ -544,14 +552,20 @@ public:
 	Common::Rect _rect;
 
 private:
-	byte _name[kNameByteCount] = {};
+	/** Fixed encoded name field, including its NUL terminator; serialized verbatim. */
+	char _name[kNameByteCount] = {};
 
 public:
 	const ZmbTrait &getTraits() const { return _traits; }
 	void setTraits(const ZmbTrait &traits) { _traits = traits; }
 
-	/** Serialize the stored entry using the selected release layout. */
-	void sync(Common::Serializer &s, bool isTlcLayout);
+	/**
+	 * Serialize the stored entry using the selected release layout and native platform.
+	 * @param s Serializer whose loading or saving mode selects the transfer direction.
+	 * @param hasAlignedStoredEntries Whether the entry has two trailing padding bytes, as in TLCv2.0 and MacV11EU.
+	 * @param platform Native save platform, selecting the rectangle's field order and word byte order.
+	 */
+	void sync(Common::Serializer &s, bool hasAlignedStoredEntries, Common::Platform platform);
 	/** Decode the stored name, or return empty when its NUL terminator is missing. */
 	Common::U32String getName(MohawkEngine_Zoombini *vm) const;
 	/** Encode and assign a stored name through the active engine text codec. */
@@ -562,8 +576,8 @@ public:
 	void recoverSerializedState();
 	/** Return whether the serialized name field contains a non-empty name. */
 	bool hasSerializedName() const;
-	/** Return whether the serialized name contains a byte outside ASCII. */
-	bool hasNonAsciiName() const;
+	/** Check the bounded serialized name using the target text service's generation rules. */
+	bool hasSupportedName(ZoombiniText &text) const;
 
 private:
 	/** Return the bounded serialized name length, or the field size when unterminated. */
@@ -613,8 +627,13 @@ public:
 	bool isSerializedStateValid() const;
 	/** Normalize serialized headers, traits, and names for safe loading. */
 	void recoverSerializedState();
-	/** Serialize the stored chunk using the selected release layout. */
-	void sync(Common::Serializer &s, bool isTlcLayout);
+	/**
+	 * Serialize the stored chunk using the selected release layout.
+	 * @param s Serializer whose loading or saving mode selects the transfer direction.
+	 * @param hasAlignedStoredEntries Whether each stored entry has two trailing padding bytes (TLCv2.0 or MacV11EU).
+	 * @param platform Native save platform used for the chunk's header words and entry rectangles.
+	 */
+	void sync(Common::Serializer &s, bool hasAlignedStoredEntries, Common::Platform platform);
 };
 
 /** Represents a snoid in an active pack. */
@@ -643,8 +662,8 @@ private:
 	 */
 	byte _bIsOccupied = 0;
 
-	/** 0x09-0x12: Zoombini name (10 bytes) */
-	byte _name[10] = {};
+	/** 0x09-0x12: Fixed encoded name field, including its NUL terminator; serialized verbatim (10 bytes). */
+	char _name[10] = {};
 
 public:
 	const ZmbTrait &getTraits() const { return _traits; }
@@ -663,16 +682,21 @@ public:
 	bool isSerializedStateValid() const;
 	/** Normalize serialized traits, occupancy, and name bytes for safe loading. */
 	void recoverSerializedState();
-	/** Serialize one active-pack entry using the selected release layout. */
-	void sync(Common::Serializer &s, bool isTlcLayout);
+	/**
+	 * Serialize one active-pack entry using the selected release layout.
+	 * @param s Serializer whose loading or saving mode selects the transfer direction.
+	 * @param isTlcV20Layout Whether to use TLCv2.0's 20-byte entry, including one trailing padding byte.
+	 * @param platform Native save platform, selecting coordinate byte order; Macintosh also requires a 20-byte entry.
+	 */
+	void sync(Common::Serializer &s, bool isTlcV20Layout, Common::Platform platform);
 	/** Decode the active-pack name, or return empty when its NUL terminator is missing. */
 	Common::U32String getU32Name(MohawkEngine_Zoombini *vm) const;
 	/** Encode and assign an active-pack name through the active engine text codec. */
 	void setU32Name(MohawkEngine_Zoombini *vm, const Common::U32String &name);
 	/** Return whether the serialized name field contains a non-empty name. */
 	bool hasSerializedName() const;
-	/** Return whether the serialized name contains a byte outside ASCII. */
-	bool hasNonAsciiName() const;
+	/** Check the bounded serialized name using the target text service's generation rules. */
+	bool hasSupportedName(ZoombiniText &text) const;
 
 private:
 	/** Return the bounded serialized name length, or the field size when unterminated. */
@@ -776,36 +800,202 @@ public:
 	bool isSerializedStateValid() const;
 	/** Normalize the serialized header and entries for safe loading. */
 	void recoverSerializedState();
-	/** Serialize the active pack header, flags, and entries. */
-	void sync(Common::Serializer &s, bool isTlcLayout);
+	/**
+	 * Serialize the active pack header, flags, and entries for the native platform.
+	 * @param s Serializer whose loading or saving mode selects the transfer direction.
+	 * @param isTlcV20Layout Whether entries use TLCv2.0's trailing padding byte; Macintosh entries always have it.
+	 * @param platform Native save platform used for header words and each active entry.
+	 */
+	void sync(Common::Serializer &s, bool isTlcV20Layout, Common::Platform platform);
 	void copyTo(ZmbStateActivePack &dest) {
 		dest = *this;
 	}
 };
 
 /**
+ * Native state-file layouts recognized by length and platform signature.
+ * Files contain a platform signature but no explicit version tag.
+ * The optional 10-byte completion tail contains four 16-bit route-perfect counters
+ * and one 16-bit Town development level. Release numbering alone does not identify the layout.
+ *
+ * "TLC header" means the v2.0 state prefix before the first stored chunk at 0x00D0.
+ * - 0x000A (byte): TouchSense
+ * - 0x000B (byte): Help Audio
+ * - 0x000C (word): Transition-disable flag
+ * - 0x000E-0x0015: Fleens Transform Tables
+ * - 0x00CC (word): Previous pageId
+ * - 0x00CE (word): Current pageId
+ */
+enum class ZmbSaveFormat {
+	/** Unrecognized layout; as a conversion destination, preserve the exact source bytes. */
+	kInvalid = 0,
+	/**
+	 * 44549-byte Windows layout used by USv1.0-family and Europe-v1 releases, including EUv1.1.
+	 *
+	 * - Stored entries:  22 bytes
+	 * - Active entries:  19 bytes
+	 * - Completion tail: absent
+	 */
+	kWinV10,
+	/**
+	 * 44678-byte Macintosh layout used by USv1.0, EUv1.0 and JPv1.0 releases.
+	 *
+	 * - Stored entries:  22 bytes
+	 * - Active entries:  20 bytes
+	 * - Completion tail: absent
+	 *
+	 * One alignment byte follows the twin-generation status array.
+	 */
+	kMacV10,
+	/**
+	 * 48432-byte EUv1.1 Macintosh layout retaining the v1.0 header and progression fields.
+	 *
+	 * - Stored entries:  24 bytes
+	 * - Active entries:  20 bytes
+	 * - Completion tail: absent
+	 *
+	 * Two padding bytes precede the first stored chunk, and three follow the twin-generation status array.
+	 * The v1.1 release number does not imply the presence of the completion tail.
+	 */
+	kMacV11EU,
+	/**
+	 * 44559-byte Windows layout used by USv1.1 and KRv1.11.
+	 *
+	 * - Stored entries:  22 bytes
+	 * - Active entries:  19 bytes
+	 * - Completion tail: 10 bytes
+	 *
+	 * Extends kWinV10 with the completion tail.
+	 */
+	kWinV11,
+	/**
+	 * 44688-byte USv1.1 Macintosh layout.
+	 *
+	 * - Stored entries:  22 bytes
+	 * - Active entries:  20 bytes
+	 * - Completion tail: 10 bytes
+	 *
+	 * Extends kMacV10 with the completion tail, retaining one alignment byte after the twin-generation status array.
+	 */
+	kMacV11US,
+	/**
+	 * 48430-byte Windows TLC v2.0 compatibility input.
+	 *
+	 * - Stored entries:  24 bytes
+	 * - Active entries:  20 bytes
+	 * - Completion tail: absent
+	 *
+	 * Already uses the TLC header.
+	 * In the original TLC v2.0 family, support for this shorter form remains only in the reader.
+	 * The reader zero-fills the missing five words; the writer always emits kWinV20, never this form.
+	 * The original producer of this shorter form has not been established.
+	 * ScummVM accepts this layout only as input; new TLC saves use kWinV20.
+	 */
+	kWinV20Compat,
+	/**
+	 * 48440-byte Windows TLC v2.0 writer layout.
+	 *
+	 * - Stored entries:  24 bytes
+	 * - Active entries:  20 bytes
+	 * - Completion tail: 10 bytes
+	 *
+	 * Uses the TLC header.
+	 */
+	kWinV20,
+	/**
+	 * 48430-byte Macintosh TLC v2.0 compatibility input.
+	 *
+	 * - Stored entries:  24 bytes
+	 * - Active entries:  20 bytes
+	 * - Completion tail: absent
+	 *
+	 * Uses the TLC header with Macintosh signature, scalar byte order and rectangle order.
+	 * In the original TLC v2.0 family, support for this shorter form remains only in the reader.
+	 * The reader zero-fills the missing five words; the writer always emits kMacV20, never this form.
+	 * As with kWinV20Compat, the original producer of this shorter form has not been established.
+	 * ScummVM accepts this layout only as input; new TLC saves use kMacV20.
+	 */
+	kMacV20Compat,
+	/**
+	 * 48440-byte Macintosh TLC v2.0 writer layout.
+	 *
+	 * - Stored entries:  24 bytes
+	 * - Active entries:  20 bytes
+	 * - Completion tail: 10 bytes
+	 *
+	 * Has the same TLC fields as kWinV20, but uses Macintosh signature, scalar byte order and rectangle order.
+	 */
+	kMacV20
+};
+
+/**
  * Represents the Zoombini game-state.
  *
- * The savefile has three layouts: v1.0BR (44549 bytes), v1.1US (44559
- * bytes), and v2.0TLC (48430-byte small or 48440-byte current). Europe
- * v1.1 retains the v1.0BR layout. Each serialized member below identifies
- * its byte address as (v1.0BR), (v1.1US), and (v2.0TLC). An address labelled
- * v2.0TLC applies to both TLC lengths unless the comment distinguishes the
- * 48430-byte small layout from the current 48440-byte layout.
+ * Recognized native formats (sizes in bytes):
+ * - WinV10 (44549)
+ * - MacV10 (44678)
+ * - MacV11EU (48432): retains MacV10 fields with different native alignment.
+ * - WinV11 (44559)
+ * - MacV11US (44688)
+ * - WinV20/MacV20 (48440)
+ * - WinV20Compat/MacV20Compat (48430).
+ *
+ * Member offsets below describe the Windows layouts.
+ * Platform conventions and layout differences:
+ * - The state signature is 0x006A on Macintosh and 0x006B on Windows.
+ * - Both platforms store the signature and auto-sticky delay as big-endian 16-bit fields.
+ *   Subsequent 16-bit fields are little-endian on Windows and big-endian on Macintosh.
+ * - Active entries use 19 bytes in Windows v1 layouts and 20 bytes in all Macintosh and TLC layouts.
+ * - MacV11EU uses 24-byte stored entries, inserts two padding bytes before the first stored chunk,
+ *   and ends with three padding bytes after the twin-generation status array.
+ * - Other Macintosh layouts have one alignment byte after the twin-generation status array.
+ * - Stored rectangles use left/top/right/bottom order on Macintosh and bottom/right/top/left order on Windows.
+ *
+ * MacV10 and MacV11EU have three stored chunks (Basecamp 1, Basecamp 2 and Town),
+ * each containing 625 serialized entries, including unused slots:
+ * @code
+ * MacV10:   [traits: 4][rectangle: 8][name: 10]             = 22 bytes per entry
+ * MacV11EU: [traits: 4][rectangle: 8][name: 10][padding: 2] = 24 bytes per entry
+ *
+ * Extra stored-entry padding:       3 * 625 * 2 = 3750 bytes
+ * Padding before the first stored chunk:        +    2 bytes
+ * Extra padding after the twin-status array:    +    2 bytes (3 instead of 1)
+ *                                               ------------
+ * Total size difference:                          3754 bytes
+ * MacV11EU file size:             44678 + 3754 = 48432 bytes
+ * @endcode
+ * Both layouts use 20-byte active entries and have no completion tail;
+ * the entire 3754-byte difference comes from alignment padding.
+ *
+ * The shared in-memory state normalizes these differences. Signatures and alignment
+ * padding are handled by the serializer and are not retained as game-state members.
  */
 struct ZmbStateFile {
 	/** Construct a state file with its release-independent defaults. */
 	ZmbStateFile() {}
 
-	/** Shared state-file and roster magic, with file-specific byte order. */
-	static constexpr uint16 kEndianMagic = 0x006B;
+	/** Native Windows signature: BE16 in state files, LE16 in roster files. */
+	static constexpr uint16 kWindowsMagic = 0x006B;
+	/** Native Macintosh signature: BE16 in both state and roster files. */
+	static constexpr uint16 kMacintoshMagic = 0x006A;
+
+	/** Return the native platform whose signature, word order and geometry the save format uses. */
+	static Common::Platform getSavePlatform(ZmbSaveFormat format);
+	/** Return the writable counterpart, upgrading read-only TLC compatibility layouts. */
+	static ZmbSaveFormat getWriteSaveFormat(ZmbSaveFormat format);
+	/** EUv1.1 Macintosh retains v1.0 fields with four-byte rectangle alignment. */
+	static bool usesMacV11EUAlignment(ZmbSaveFormat format);
+	/** Return whether a save format is a TLC layout. */
+	static bool isTlcSaveFormat(ZmbSaveFormat format);
+	/** Return whether a save format stores route completion counters. */
+	static bool hasCompletionCounters(ZmbSaveFormat format);
 
 	/**
 	 * Persisted two-byte page state.
 	 *
 	 * The low 12 bits hold the saturating visit count.
 	 * The next two bits record the first and second normal Hard-group triggers.
-	 * The serialized value remains one little-endian uint16.
+	 * The serialized value remains one uint16 in the selected platform's byte order.
 	 */
 	struct PageFlag {
 		/** Bit masks for the visit count and normal Hard-group trigger state. */
@@ -846,8 +1036,15 @@ struct ZmbStateFile {
 			_raw &= static_cast<uint16>(~(kHardGroupFirstTrigger |
 										  kHardGroupSecondTrigger));
 		}
-		/** Serialize the stored uint16 without changing the page-flag byte order. */
-		void sync(Common::Serializer &s) { s.syncAsUint16LE(_raw); }
+		/**
+		 * Serialize the stored uint16 using the native platform's byte order.
+		 * @param s Serializer reading or writing the packed visit count and trigger flags.
+		 * @param platform Native save platform selecting the word byte order.
+		 */
+		void sync(Common::Serializer &s, Common::Platform platform) {
+			const bool isLE = platform == Common::kPlatformWindows;
+			s.syncMultipleEndian(isLE, _raw);
+		}
 
 	private:
 		uint16 _raw = 0;
@@ -860,15 +1057,6 @@ struct ZmbStateFile {
 	 */
 	PageFlag &getPageFlagFromPageType(ZoombiniPageType pageType);
 
-	/**
-	 * (v1.0BR) 0x0000
-	 * (v1.1US) 0x0000
-	 * (v2.0TLC) 0x0000
-	 * Magic value 0x006B, stored big-endian in the state file (on-disk bytes
-	 * 00 6B).
-	 * The roster stores the same value little-endian instead.
-	 */
-	uint16 _magic006B = kEndianMagic;
 	/**
 	 * (v1.0BR) 0x0002
 	 * (v1.1US) 0x0002
@@ -1388,14 +1576,6 @@ public:
 	};
 	/**
 	 * (v1.0BR) absent
-	 * (v1.1US) absent
-	 * (v2.0TLC) 0xBD2D
-	 * TLC-only byte after @ref ZmbStateFile::_twinGenStatus.
-	 */
-	byte _v2TwinGenStatusPad = 0;
-
-	/**
-	 * (v1.0BR) absent
 	 * (v1.1US) 0xAE05-0xAE0C
 	 * (v2.0TLC small 48430) absent
 	 * (v2.0TLC current 48440) 0xBD2E-0xBD35 (+0x0F29)
@@ -1423,8 +1603,16 @@ public:
 	 * (v2.0TLC) 0xBD38 (+0x0F29)
 	 */
 
-	/** Serialize the complete game state using the selected release layout. */
-	void sync(Common::Serializer &s, bool isTlcLayout, bool hasCompletionCounters);
+	/**
+	 * Serialize game state, validating or writing the platform's native signature and skipping padding.
+	 * Decode the body even after a signature mismatch so recovery can inspect its fields;
+	 * the caller decides whether to reject or repair it.
+	 * V20Compat layouts are read-only and are rejected before writing any fields.
+	 * @param s Serializer whose loading or saving mode selects the transfer direction.
+	 * @param format Native save format selecting the signature, byte order, fields and alignment.
+	 * @return Whether the format supports this transfer, the signature matches and serializer I/O succeeded.
+	 */
+	bool sync(Common::Serializer &s, ZmbSaveFormat format);
 
 	/**
 	 * ScummVM-only runtime marker for serialized-state changes not reflected in a save file.
@@ -1449,7 +1637,10 @@ struct ZmbRosterEntry {
 		0,
 	};
 
-	/** Serialize the roster entry's fixed-width byte fields. */
+	/**
+	 * Serialize the roster entry's fixed-width byte fields.
+	 * @param r Serializer reading or writing the save-name and file-stem byte arrays.
+	 */
 	void sync(Common::Serializer &r);
 	/** Decode the user-visible save name, or return empty when unterminated. */
 	Common::U32String getSaveName(MohawkEngine_Zoombini *vm) const;
@@ -1457,7 +1648,10 @@ struct ZmbRosterEntry {
 	Common::U32String getSaveName(Common::CodePage codePage) const;
 	/** Return the bounded byte length of the save name, or the field capacity when unterminated. */
 	uint16 getSaveNameLength() const;
-	/** Return the validated ASCII ZOOM#### state-file stem. */
+	/**
+	 * Return the validated ASCII ZOOM#### state-file stem from the fixed-width roster field.
+	 * Read at most the field's nine bytes; return empty if its terminator, prefix or digits are invalid.
+	 */
 	Common::String getSaveFileStem() const;
 	/** Return the four ASCII decimal digits from a valid ZOOM#### state-file stem. */
 	Common::String getSaveFileNumStr() const;
@@ -1475,12 +1669,11 @@ private:
 	uint16 getFileNameLength() const;
 };
 
+/** Native ZOOMBINI.WHO roster with a fixed-capacity entry array and filename counter. */
 struct ZmbRosterFile {
-	/** Construct an empty roster with the current roster magic. */
+	/** Construct an empty roster. */
 	ZmbRosterFile() {}
 
-	/** Endian-aware roster magic value. */
-	uint16 _magic006B = ZmbStateFile::kEndianMagic;
 	/** Next monotonic ZOOM#### filename counter. */
 	uint16 _nextSaveFileNameCounter = 0;
 	/** Number of valid save entries. */
@@ -1509,12 +1702,21 @@ public:
 	bool hasValidNextSaveFileNameCounter() const { return _nextSaveFileNameCounter <= 10000; }
 	/** Return the entry count clamped to the entries fitting the exact roster size. */
 	uint16 getEntryCount() const;
+	/** Return the number of slots in the fixed-capacity roster array. */
 	uint16 getEntryCapacity() const { return static_cast<uint16>(ARRAYSIZE(_entries)); }
 	/** Return whether an index addresses a serialized roster entry safely. */
 	bool hasEntry(int index) const { return hasValidEntryCount() && 0 <= index && index < getEntryCount(); }
 	/** Return whether the header and every used entry are structurally valid. */
 	bool isSerializedStateValid() const;
+	/**
+	 * Return a mutable slot from the fixed-capacity roster array.
+	 * @param index Zero-based slot; must be in [0, getEntryCapacity()).
+	 */
 	ZmbRosterEntry &getEntry(int16 index) { return _entries[index]; }
+	/**
+	 * Return a read-only slot from the fixed-capacity roster array.
+	 * @param index Zero-based slot; must be in [0, getEntryCapacity()).
+	 */
 	const ZmbRosterEntry &getEntry(int16 index) const { return _entries[index]; }
 	/** Swap two valid roster entries without changing the entry count. */
 	bool swapEntries(int16 firstIndex, int16 secondIndex) {
@@ -1530,6 +1732,11 @@ public:
 	/** Assign the next monotonic ZOOM#### stem and append an entry at the roster tail. */
 	bool appendNewSaveEntry(ZmbRosterEntry entry);
 
+	/**
+	 * Remove a used roster entry, shift later entries left and clear the vacated tail slot.
+	 * @param index Zero-based index of the used entry to remove.
+	 * @return Whether the index was valid and the entry was removed.
+	 */
 	bool removeEntryAt(int16 index) {
 		if (!hasEntry(index))
 			return false;
@@ -1541,10 +1748,17 @@ public:
 		return true;
 	}
 
+	/** Mark the roster empty while retaining its entry bytes and next filename counter. */
 	void clearEntries() { _saveEntryCount = 0; }
 
-	/** Serialize the roster header and valid entries. */
-	void sync(Common::Serializer &r);
+	/**
+	 * Serialize the roster, detecting its native signature on load and selecting it from platform on save.
+	 * Decode available fields even for a bad signature to permit recovery.
+	 * @param r Serializer whose loading or saving mode selects the transfer direction.
+	 * @param platform Native output platform when saving; ignored on load, where the signature selects the byte order.
+	 * @return Whether the signature and serializer I/O are valid.
+	 */
+	bool sync(Common::Serializer &r, Common::Platform platform);
 };
 
 struct ZoombiniSaveSummary;
@@ -1555,6 +1769,8 @@ struct ZoombiniSaveSummary;
  *
  * Each entry point is a self-contained, modal UI flow: it prompts for a folder,
  * copies the roster-referenced saves, and reports the result.
+ * Folder transfers preserve the .TXT payloads without converting their native formats.
+ * Imported rosters use the dest target's native platform; exported rosters retain their stored bytes.
  */
 class ZoombiniSaveTransfer {
 public:
@@ -1574,8 +1790,6 @@ public:
 	static void exportOneSave(const Common::String &target, int slot);
 
 private:
-	/** Validate an uncompressed state-file size for all supported variants. */
-	static bool zmbIsValidStateSize(uint32 size);
 	/** Read a bounded stream into @p out. */
 	static bool zmbReadAll(Common::SeekableReadStream *stream, Common::Array<byte> &out, uint32 maximumSize);
 	/** Find a named child under a folder without changing the filesystem. */
@@ -1590,133 +1804,156 @@ private:
 
 class ZoombiniGameState : private Common::NonCopyable {
 public:
-	/**
-	 * On-disk game-state layouts, identified by exact file length.
-	 *
-	 * Zoombini state files have no explicit format tag. The original engines
-	 * identify a compatible layout by its exact byte length. The Europe v1.1
-	 * executable retains the Europe v1.0 layout, so kEuV10 covers both of those
-	 * releases. kUsV11 identifies the later 44559-byte v1.1-family layout,
-	 * including the Korean release.
-	 */
-	enum class ZmbSaveFormat {
-		/** Unknown size; do not load. */
-		kInvalid = 0,
-		/** 44549-byte Europe v1.0/v1.1 layout. */
-		kEuV10,
-		/** 44559-byte US v1.1 layout, also used by the Korean release. */
-		kUsV11,
-		/**
-		 * 48430-byte small TLC v2.0 layout.
-		 *
-		 * The Europe v1.0/v1.1 files are 44549 bytes and the US v1.1/Korean files
-		 * are 44559 bytes, so this is already a TLC layout rather than an EU v1
-		 * layout with a renamed version. The original TLC v2.0 reader accepts it
-		 * by zero-filling the missing 10-byte tail (four route-perfect counters and
-		 * Town Develop Level), then always writes the 48440-byte layout. No evidence
-		 * establishes a direct EU v1.0-to-TLC conversion or a separately shipped
-		 * retail producer for this shorter file. It is not dead in ScummVM because
-		 * the compatibility loader still accepts it.
-		 */
-		kTlcV20Small,
-		/** 48440-byte current TLC v2.0 layout. */
-		kTlcV20
-	};
-
 	/** Result of compacting roster file stems and the next filename counter. */
 	enum class ZmbSaveCompactResult {
+		/** Sequential file stems and the matching next counter were written successfully. */
 		kSuccess,
+		/** File stems are already sequential and the next counter equals the entry count. */
 		kNoChanges,
+		/** The roster could not be loaded or its serialized data is invalid. */
 		kInvalidRoster,
+		/** A state file referenced by the roster does not exist. */
 		kMissingSaveFile,
+		/** A compacted filename or the next filename is occupied by a file outside this roster. */
 		kFileNameConflict,
+		/** Staging, copying a duplicate reference, or renaming a state file failed. */
 		kFileMoveFailed,
+		/** Backing up the original roster or writing the updated roster failed. */
 		kRosterWriteFailed,
+		/** A failed operation could not restore or preserve all original files. */
 		kRollbackFailed
 	};
 
 	/** Result of recovering one corrupted state file. */
 	enum class ZmbSaveRecoverResult {
+		/** The repaired state replaced the original, passed validation, and retains an original-file backup. */
 		kSuccess,
+		/** The roster or slot is invalid, or the state is unreadable, unsupported, already valid, or cannot be repaired. */
 		kNotRecoverable,
+		/** Selecting a temporary filename, writing the repaired state, or validating that temporary file failed. */
 		kTemporaryWriteFailed,
+		/** Selecting a backup filename, copying the original, or checking the backup format failed. */
 		kBackupFailed,
+		/** Removing the original, installing the repaired file, or validating the installed file failed. */
 		kReplaceFailed,
+		/** Replacement failed and the original could not be copied back from its backup. */
 		kRollbackFailed
 	};
 
-	/** Structural problems that can require rebuilding ZOOMBINI.WHO. */
+	/** Combinable structural problems that can require rebuilding ZOOMBINI.WHO. */
 	enum ZmbRosterIssueFlags : uint32 {
+		/** No roster problem was detected, including when neither roster nor state files exist. */
 		kRosterIssueNone = 0,
+		/** State files exist, but their roster could not be opened. */
 		kRosterIssueMissing = 1 << 0,
+		/** The roster length differs from the expected 1606 bytes. */
 		kRosterIssueSize = 1 << 1,
+		/** The roster's native signature is invalid. */
 		kRosterIssueMagic = 1 << 2,
+		/** The declared entry count exceeds the entries available in the roster file. */
 		kRosterIssueEntryCount = 1 << 3,
+		/** The next filename counter is outside the writer's range 0..10000. */
 		kRosterIssueNextCounter = 1 << 4,
+		/** A roster entry has an empty save title or lacks a NUL terminator within its title field. */
 		kRosterIssueSaveName = 1 << 5,
+		/** A roster entry does not contain a valid ZOOM#### state-file stem. */
 		kRosterIssueFileStem = 1 << 6,
+		/** A roster entry references a state file that was not found. */
 		kRosterIssueMissingState = 1 << 7,
+		/** State files lack usable roster references; unmatched files are reported when roster capacity remains. */
 		kRosterIssueOrphanState = 1 << 8,
+		/** The roster header and available entries could not be read or decoded. */
 		kRosterIssueRead = 1 << 9,
-		kRosterIssueDuplicateFileStem = 1 << 10
+		/** Multiple roster entries reference the same existing state file. */
+		kRosterIssueDuplicateFileStem = 1 << 10,
 	};
 
 	/** Result of rebuilding a corrupted ZOOMBINI.WHO roster. */
 	enum class ZmbRosterRecoverResult {
+		/** The rebuilt roster was installed, validated, and checked against the available state files. */
 		kSuccess,
+		/** No roster issue was detected, so rebuilding was skipped. */
 		kNotNeeded,
+		/** Selecting a backup filename, copying the original roster, or checking its backup failed. */
 		kBackupFailed,
+		/** Creating, validating, or installing the rebuilt roster failed. */
 		kWriteFailed,
-		kRollbackFailed
+		/** Installing the rebuilt roster failed and its original backup could not be restored. */
+		kRollbackFailed,
 	};
 
 	/** Primary structural problem detected while validating one state file. */
 	enum class ZmbSaveIssue {
+		/** No state validation problem has been recorded. */
 		kNone,
+		/** The state file's native signature is invalid. */
 		kMagic,
+		/** The current page cannot be restored, or the TLC previous-page value is invalid. */
 		kPage,
+		/** Bounded flags or scalar fields are invalid, or generation bookkeeping is inconsistent. */
 		kScalarFields,
+		/** Basecamp 1 stored-chunk headers, traits, or name terminators are invalid. */
 		kBasecamp1Storage,
+		/** Basecamp 2 stored-chunk headers, traits, or name terminators are invalid. */
 		kBasecamp2Storage,
+		/** Town stored-chunk headers, traits, or name terminators are invalid. */
 		kTownStorage,
+		/** The Isle pack has invalid headers, entry traits, occupancy flags, or name terminators. */
 		kIslePack,
+		/** The Basecamp 1 pack has invalid headers, entry traits, occupancy flags, or name terminators. */
 		kBasecamp1Pack,
+		/** The Basecamp 2 pack has invalid headers, entry traits, occupancy flags, or name terminators. */
 		kBasecamp2Pack,
+		/** The traveling pack has invalid headers, entry traits, occupancy flags, or name terminators. */
 		kActivePack,
+		/** The current puzzle has no valid 1..16-member pack, or Caves skips occupied entries. */
 		kPuzzlePack,
+		/** The current route is outside 0..18 or Town development is outside 0..6. */
 		kProgressFields,
+		/** A route difficulty level is outside the serialized range 0..3. */
 		kRouteLevel,
+		/** A level-zero route has progress values that cannot select valid RodMap shape frames. */
 		kRodMapProgress,
+		/** A route-perfect counter is outside the serialized range 0..2. */
 		kPerfectCounter,
+		/** A recorded Basecamp 1, Basecamp 2, or Town population is outside 0..625. */
 		kLogicalLocationCount,
+		/** The occupied traveling-pack count or the derived remaining Isle population is outside 0..625. */
 		kIsleActiveCount,
-		kPhysicalLocationCount
+		/** Recorded shelter populations do not fit stored/resident slots, or Town's count differs from its stored population. */
+		kPhysicalLocationCount,
 	};
 
-	static constexpr uint16 kEndianMagic = ZmbStateFile::kEndianMagic; // 6B 00 in LE, 00 6B in BE.
-	/** Raw little-endian bytes for the roster magic. */
-	static constexpr byte kLittleEndianMagicBytes[2]{
-		0x6B,
-		0x00,
-	};
-	/** Raw big-endian bytes for the roster magic. */
-	static constexpr byte kBigEndianMagicBytes[2]{
-		0x00,
-		0x6B,
-	};
-
-	/** Exact Bridge v1.0/European v1.1 state-file size. */
-	static constexpr int32 kStateFileSizeBrV10 = 44549;
-	/** Exact US v1.1 state-file size. */
-	static constexpr int32 kStateFileSizeUsV11 = 44559;
-	/** Small TLC v2.0 state-file size without the final five-word completion tail. */
-	static constexpr int32 kStateFileSizeTlcV20Small = 48430;
-	/** Exact TLC v2.0 state-file size. */
+	/** Exact Windows v1.0/European v1.1 state-file size. */
+	static constexpr int32 kStateFileSizeWinV10 = 44549;
+	/** Exact Macintosh v1.0 state-file size, including active-entry alignment. */
+	static constexpr int32 kStateFileSizeMacV10 = 44678;
+	/** EUv1.1 Macintosh uses aligned stored entries and header/tail padding. */
+	static constexpr int32 kStateFileSizeMacV11EU = 48432;
+	/** Exact USv1.1 Macintosh state-file size, including the completion tail. */
+	static constexpr int32 kStateFileSizeMacV11US = 44688;
+	/** Exact Windows v1.1 state-file size. */
+	static constexpr int32 kStateFileSizeWinV11 = 44559;
+	/** Exact Windows/Macintosh TLC v2.0 compatibility-input size without the final five-word completion tail. */
+	static constexpr int32 kStateFileSizeTlcV20Compat = 48430;
+	/** Exact Windows/Macintosh TLC v2.0 state-file size. */
 	static constexpr int32 kStateFileSizeTlcV20 = 48440;
 	/** Exact uncompressed ZOOMBINI.WHO size in every release family. */
 	static constexpr uint32 kZmbRosterFileSize = 1606;
 	/** Return the compact display identifier for a serialized save format. */
-	static const char *getSaveFormatName(ZmbSaveFormat format);
+	static Common::U32String getSaveFormatName(ZmbSaveFormat format);
+
+	/** Return whether an uncompressed size matches a supported native state-file layout. */
+	static bool isValidStateFileSize(int64 size);
+	/** Identify a state layout using its signature and length; leave the stream position unchanged. */
+	static ZmbSaveFormat getSaveFormat(Common::SeekableReadStream &stream);
+	/** Identify a raw state payload, including Macintosh and Windows TLC files of equal length. */
+	static ZmbSaveFormat getSaveFormat(const Common::Array<byte> &bytes);
+
+	/** Convert to a writable layout while preserving name bytes; an invalid destination preserves all source bytes. */
+	static bool convertStateBytes(const Common::Array<byte> &srcBytes, ZmbSaveFormat destFormat, Common::Array<byte> &output);
+	/** Convert a managed save in place, retaining its original bytes in the returned backup file. */
+	static bool convertSaveForTarget(const Common::String &target, int slot, ZmbSaveFormat destFormat, Common::String &backupFilename);
 
 	/**
 	 * Runtime-only ambient scheduler state shared by every interactive page instance.
@@ -1848,12 +2085,13 @@ public:
 	static bool parseRoster(Common::SeekableReadStream *stream, ZmbRosterFile &roster);
 	/** Load and decode one roster file without trusting its entry fields. */
 	static bool loadRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, ZmbRosterFile &roster);
-	/** Serialize and write one roster file. */
-	static bool saveRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, const ZmbRosterFile &roster);
+	/** Serialize and write one roster file using the destination target's platform. */
+	static bool saveRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, const ZmbRosterFile &roster,
+							   Common::Platform platform);
 
-	/** Load the target's roster file into memory. */
+	/** Load the target's roster file into memory, detecting either native byte order. */
 	void loadRoster();
-	/** Persist the in-memory roster file. */
+	/** Persist the in-memory roster file using the active target's native platform. */
 	bool saveRoster();
 	/** Load one game state by roster slot. */
 	bool loadGame(int slot);
@@ -1873,7 +2111,7 @@ public:
 	/** Rename an existing save slot without changing its state-file stem. */
 	bool renameGame(int slot, const Common::U32String &saveName);
 	/** Move one save entry to an adjacent roster slot. */
-	bool moveGame(int slot, int destinationSlot);
+	bool moveGame(int slot, int destSlot);
 	/** Return whether the most recent load operation was cancelled by the user. */
 	bool wasLastLoadCancelled() const { return _lastLoadCancelledFlag; }
 	/** Mark the game state changed by a debugger command. */
@@ -1900,7 +2138,7 @@ public:
 	/** Rename one roster entry without requiring a running Zoombini engine. */
 	static bool renameSaveForTarget(const Common::String &target, int slot, const Common::U32String &saveName);
 	/** Move one roster entry to an adjacent slot without requiring a running engine. */
-	static bool moveSaveForTarget(const Common::String &target, int slot, int destinationSlot);
+	static bool moveSaveForTarget(const Common::String &target, int slot, int destSlot);
 	/** Recover one corrupted state file without requiring a running engine. */
 	static ZmbSaveRecoverResult recoverSaveForTarget(const Common::String &target, int slot);
 	/** Compact one target's state-file stems without requiring a running engine. */
@@ -1912,9 +2150,7 @@ public:
 	/** Rebuild one target's roster from bounded metadata and existing state files. */
 	static ZmbRosterRecoverResult recoverRosterForTarget(const Common::String &target);
 	/** Append an entry with a roster- and disk-unique ZOOM#### state-file stem. */
-	static bool appendNewSaveEntryForTarget(Common::SaveFileManager *saveFileMan,
-											const Common::String &target, ZmbRosterFile &roster,
-											ZmbRosterEntry entry);
+	static bool appendNewSaveEntryForTarget(Common::SaveFileManager *saveFileMan, const Common::String &target, ZmbRosterFile &roster, ZmbRosterEntry entry);
 	/** Remove leading and trailing ASCII spaces from a save name. */
 	static Common::U32String trimSaveName(const Common::U32String &name);
 	/** Return the executable code page used for save names in a target. */
@@ -1925,10 +2161,12 @@ public:
 	static bool renameRosterEntry(const Common::String &target, ZmbRosterFile &roster, int slot, const Common::U32String &saveName);
 
 	/**
-	 * Build the per-target save filename "{targetId}-####.ZMB"
-	 * from the legacy roster base name stored in @ref ZmbRosterEntry::_fileName.
+	 * Build the per-target save filename "{targetId}-####.ZMB" from a legacy ZOOM#### stem.
+	 * @param targetName ScummVM target namespace for the managed save.
+	 * @param fileStem Length-bearing eight-character ASCII stem; use ZmbRosterEntry::getSaveFileStem() for roster fields.
+	 * @return The managed filename, or empty if the stem has an invalid length, prefix or counter.
 	 */
-	static Common::String makeSaveFilename(const Common::String &targetName, const byte *baseName);
+	static Common::String makeSaveFilename(const Common::String &targetName, const Common::String &fileStem);
 
 	/** Return whether serialized-state changes are not reflected in a save file. */
 	bool isStateDirty() const { return _journeyState._isDirty; }
@@ -2056,10 +2294,10 @@ public:
 	 * A debugger level change is not a puzzle departure, so its one-shot
 	 * departure marker is cleared before returning.
 	 * @param routeId The zero-based route to update.
-	 * @param difficultyLevel The player-facing difficulty level, from 1 through 4.
+	 * @param puzzleLevel The player-facing difficulty level, from 1 through 4.
 	 * @return True when the arguments are valid, otherwise false.
 	 */
-	bool setRouteDifficultyLevel(ZmbRouteId routeId, int16 difficultyLevel);
+	bool setRouteDifficultyLevel(ZmbRouteId routeId, int16 puzzleLevel);
 
 	/**
 	 * Record a first-clear memorial for a completed route level.
@@ -2068,52 +2306,52 @@ public:
 	 * route completion calls this before route advancement, so the level is the
 	 * player-facing level that was just completed.
 	 * @param routeId The zero-based route that was completed.
-	 * @param difficultyLevel The player-facing level that was completed, from 1 through 4.
+	 * @param puzzleLevel The player-facing level that was completed, from 1 through 4.
 	 * @return True when a new memorial was stored, otherwise false.
 	 */
-	bool recordFirstClearMemorial(ZmbRouteId routeId, int16 difficultyLevel);
+	bool recordFirstClearMemorial(ZmbRouteId routeId, int16 puzzleLevel);
 
 	/**
 	 * Return whether a first-clear memorial is active for a route and level.
 	 * @param routeId The zero-based route to query.
-	 * @param difficultyLevel The one-based completed level, from 1 through 4.
+	 * @param puzzleLevel The one-based completed level, from 1 through 4.
 	 * @return True when the matching memorial slot is active.
 	 */
-	bool readMemorialActive(ZmbRouteId routeId, int16 difficultyLevel) const;
+	bool readMemorialActive(ZmbRouteId routeId, int16 puzzleLevel) const;
 
 	/**
 	 * Read the date of an active first-clear memorial.
 	 * @param routeId The zero-based route to query.
-	 * @param difficultyLevel The one-based completed level, from 1 through 4.
+	 * @param puzzleLevel The one-based completed level, from 1 through 4.
 	 * @param year Receives the Gregorian year, from 1 through 9999.
 	 * @param month Receives the month, from 1 through 12.
 	 * @param day Receives the valid day for the selected month.
 	 * @return True when the matching memorial slot is active.
 	 */
-	bool readMemorialDate(ZmbRouteId routeId, int16 difficultyLevel, uint16 &year, byte &month, byte &day) const;
+	bool readMemorialDate(ZmbRouteId routeId, int16 puzzleLevel, uint16 &year, byte &month, byte &day) const;
 
 	/**
 	 * Activate or deactivate a first-clear memorial for a route and level.
 	 * Activating a missing record creates it with the command-time date.
 	 * Deactivating a record clears all serialized fields in its slot.
 	 * @param routeId The zero-based route to update.
-	 * @param difficultyLevel The one-based completed level, from 1 through 4.
+	 * @param puzzleLevel The one-based completed level, from 1 through 4.
 	 * @param active True to create or retain the memorial, false to clear it.
 	 * @return True when the arguments are valid and the requested state fits in the memorial slots.
 	 */
-	bool setMemorialActive(ZmbRouteId routeId, int16 difficultyLevel, bool active);
+	bool setMemorialActive(ZmbRouteId routeId, int16 puzzleLevel, bool active);
 
 	/**
 	 * Set the date of a first-clear memorial.
 	 * A missing record is created and activated with the supplied date.
 	 * @param routeId The zero-based route to update.
-	 * @param difficultyLevel The one-based completed level, from 1 through 4.
+	 * @param puzzleLevel The one-based completed level, from 1 through 4.
 	 * @param year The Gregorian year, from 1 through 9999.
 	 * @param month The month, from 1 through 12.
 	 * @param day The valid day for the selected month.
 	 * @return True when the date and target memorial are valid.
 	 */
-	bool setMemorialDate(ZmbRouteId routeId, int16 difficultyLevel, uint16 year, byte month, byte day);
+	bool setMemorialDate(ZmbRouteId routeId, int16 puzzleLevel, uint16 year, byte month, byte day);
 
 	/**
 	 * Determines if the next logical destination in the game flow is a container
@@ -2126,7 +2364,7 @@ public:
 	 * Remember an XFER source when its route arrives at a container page.
 	 * The Basecamp and Town arrival handlers consume the transient marker.
 	 */
-	void markXferContainerArrival(ZmbSrcPageKind sourcePage, const ZmbXferRouteInfo &routeInfo);
+	void markXferContainerArrival(ZmbSrcPageKind srcPage, const ZmbXferRouteInfo &routeInfo);
 
 	/**
 	 * Runtime (non-persisted): set to the puzzle page DI when a puzzle that leads
@@ -2346,46 +2584,57 @@ private:
 	/** Report a roster-file write failure to the player. */
 	static void showRosterFileWriteFailure(Common::SaveFileManager *saveFileMan, const Common::String &filename, Common::ErrorCode fallbackErrorCode);
 	/** Write one roster while returning the operation-specific fallback error category. */
-	static bool writeRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, const ZmbRosterFile &roster,
-								Common::ErrorCode *fallbackErrorCode);
-	/** Return whether any living Zoombini has a serialized non-ASCII name. */
-	bool hasNonAsciiZoombiniName(const ZmbStateFile &state) const;
+	static bool writeRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, const ZmbRosterFile &roster, Common::Platform platform, Common::ErrorCode *fallbackErrorCode);
+	/** Return whether any living Zoombini has a serialized name unsupported by the target release. */
+	static bool hasUnsupportedZoombiniName(const ZmbStateFile &state, ZoombiniText &text);
 	/** Replace every living Zoombini name through the active release's standard name generator. */
 	void replaceZoombiniNamesWithStandardNames(ZmbStateFile &state);
 	/** Find the active memorial slot for a route and level, or return -1. */
-	int16 findFirstClearMemorialSlot(ZmbRouteId routeId, int16 difficultyLevel) const;
+	int16 findFirstClearMemorialSlot(ZmbRouteId routeId, int16 puzzleLevel) const;
 	/** Return whether a Gregorian memorial date is within its valid calendar range. */
 	static bool isValidMemorialDate(uint16 year, byte month, byte day);
 	/** Add a memorial with an already captured date if the route/level is missing. */
-	bool addFirstClearMemorial(ZmbRouteId routeId, int16 difficultyLevel, uint16 year, byte month, byte day);
+	bool addFirstClearMemorial(ZmbRouteId routeId, int16 puzzleLevel, uint16 year, byte month, byte day);
 	/** Clear all serialized fields belonging to one memorial slot. */
 	void clearFirstClearMemorial(uint16 slotIdx);
-	/** Make route-path completion flags consistent with a debugger-selected route level. */
-	void syncRouteProgressFlags(ZmbRouteId routeId, int16 difficultyLevel);
-	/** Make memorial records consistent with a debugger-selected route level. */
-	void syncRouteFirstClearMemorials(ZmbRouteId routeId, int16 difficultyLevel, bool removeAtOrAboveTarget);
-	/** Select a save format from an exact serialized file size. */
-	static ZmbSaveFormat getSaveFormatFromSize(int32 size);
-	/** Return whether a save format is a TLC layout. */
-	static bool isTlcSaveFormat(ZmbSaveFormat format);
-	/** Return whether a save format stores route completion counters. */
-	static bool hasCompletionCounters(ZmbSaveFormat format);
+	/**
+	 * Make route-path completion flags consistent with a debugger-selected route level.
+	 * @param routeId Route whose puzzle and endpoint completion flags are updated.
+	 * @param puzzleLevel Selected starting level (1..4); only lower levels are marked complete.
+	 */
+	void syncRouteProgressFlags(ZmbRouteId routeId, int16 puzzleLevel);
+	/**
+	 * Make memorial records consistent with a debugger-selected route level.
+	 * @param routeId Route whose first-clear memorials are updated.
+	 * @param puzzleLevel Selected starting level (1..4); ensure memorials exist for all lower levels.
+	 * @param removeAtOrAboveTarget Whether to remove this route's memorials at or above the selected level and malformed level-zero records.
+	 */
+	void syncRouteFirstClearMemorials(ZmbRouteId routeId, int16 puzzleLevel, bool removeAtOrAboveTarget);
+	/**
+	 * Select a save format from an exact serialized file size.
+	 * @param size Exact native state-file size in bytes.
+	 * @param platform Native file platform used to distinguish layouts with matching file sizes.
+	 */
+	static ZmbSaveFormat getSaveFormatFromSize(int32 size, Common::Platform platform);
+
+	/** Replace a managed save only after verifying both the converted file and an original-byte backup. */
+	static bool replaceSaveFile(Common::SaveFileManager *manager, const Common::String &filename, const Common::Array<byte> &src, const Common::Array<byte> &converted, Common::String &backupFilename);
 	/** Select the write format for the active engine release. */
 	static ZmbSaveFormat getTargetSaveFormat(const MohawkEngine_Zoombini *vm);
 	/** Return whether the engine can load a source save format. */
-	static bool canLoadSaveFormat(ZmbSaveFormat sourceFormat);
-	/** Return the major version represented by a save format. */
-	static int getSaveFormatMajorVersion(ZmbSaveFormat format);
-	/** Return whether a source format is newer than the target format. */
-	static bool isNewerThanTargetSaveFormat(ZmbSaveFormat sourceFormat, ZmbSaveFormat targetFormat);
+	static bool canLoadSaveFormat(ZmbSaveFormat srcFormat);
+	/** Return whether saving in the target format would discard source-only fields. */
+	static bool isNewerThanTargetSaveFormat(ZmbSaveFormat srcFormat, ZmbSaveFormat targetFormat);
 	/** Initialize route completion counters for a newly created state. */
 	static void initializeCompletionCounters(ZmbStateFile &state);
 	/** Upgrade source-layout fields into the target release layout. */
-	static void upgradeStateForVariant(ZmbStateFile &state, ZmbSaveFormat sourceFormat, ZmbSaveFormat targetFormat);
+	static void upgradeStateForVariant(ZmbStateFile &state, ZmbSaveFormat srcFormat, ZmbSaveFormat targetFormat);
 	/** Select the serialized layout read by a target for the available file length. */
 	static ZmbSaveFormat getLoadSaveFormatFromSize(int32 size, ZmbSaveFormat targetFormat);
 	/** Read and validate the big-endian magic at the stream's current position. */
-	static bool hasValidStateFileMagic(Common::SeekableReadStream &stream);
+	static bool hasValidStateFileMagic(Common::SeekableReadStream &stream, ZmbSaveFormat format);
+	/** Decode complete roster entries from a bounded file prefix, reporting serialization success separately for recovery. */
+	static bool decodeAvailableRosterEntries(Common::SeekableReadStream *file, ZmbRosterFile &roster, uint16 &availableEntryCapacity, bool &hasSyncSucc);
 	/** Count entries in the used prefix of a serialized active pack. */
 	static int16 countSnoidsInPack(const ZmbStateActivePack &pack);
 	/** Count populated trait records in a serialized storage chunk. */
@@ -2409,13 +2658,13 @@ private:
 	/** Return whether a filename is already present in a case-insensitive list. */
 	static bool containsSaveFilename(const Common::Array<Common::String> &filenames, const Common::String &filename);
 	/** Copy one save file without overwriting an existing destination. */
-	static bool copySaveFile(Common::SaveFileManager *saveFileMan, const Common::String &source, const Common::String &destination);
+	static bool copySaveFile(Common::SaveFileManager *saveFileMan, const Common::String &srcFile, const Common::String &destFile);
 	/** Move one save file without overwriting an existing destination. */
-	static bool moveSaveFile(Common::SaveFileManager *saveFileMan, const Common::String &source, const Common::String &destination);
-	/** Restore files staged by @ref compactRosterSaveFiles after a failed operation. */
-	static bool restoreCompactedSaveFiles(Common::SaveFileManager *saveFileMan, const Common::Array<Common::String> &originalFilenames,
-										  const Common::Array<Common::String> &temporaryFilenames, const Common::Array<Common::String> &compactedFilenames,
-										  int stagedCount, int compactedCount);
+	static bool moveSaveFile(Common::SaveFileManager *saveFileMan, const Common::String &src, const Common::String &dest);
+	/** Rollback files staged or renamed by @ref compactRosterSaveFiles to their original filenames after failure. */
+	static bool rollbackSaveFileCompaction(Common::SaveFileManager *saveFileMan, const Common::Array<Common::String> &orgFilenames,
+										   const Common::Array<Common::String> &tempFilenames, const Common::Array<Common::String> &compactedFilenames,
+										   int stagedCount, int compactedCount);
 	/** Compact a decoded roster and all state files referenced by it. */
 	static ZmbSaveCompactResult compactRosterSaveFiles(Common::SaveFileManager *saveFileMan, const Common::String &target, ZmbRosterFile &roster);
 	/** Generate a pack using either standard or Picker availability rules. */
@@ -2446,8 +2695,12 @@ private:
 
 	/** Initialize release-specific runtime defaults. */
 	void initVariantDefaults();
-	/** Serialize the current state and release-specific optional fields. */
-	void syncGameState(Common::Serializer &s, bool isTlcLayout, bool hasCompletionCounters);
+	/**
+	 * Serialize the current state and release-specific optional fields.
+	 * @param s Serializer reading or writing the journey state.
+	 * @param format Native save format selecting the layout, optional fields, alignment and platform.
+	 */
+	void syncGameState(Common::Serializer &s, ZmbSaveFormat format);
 
 	/**
 	 * The active ScummVM target id, used to namespace the roster and save files
@@ -2479,7 +2732,7 @@ struct ZoombiniSaveSummary {
 	/** Target-scoped ScummVM state filename derived from the roster stem. */
 	Common::String _fileName;
 	/** Detected serialized state-file layout. */
-	ZoombiniGameState::ZmbSaveFormat _saveFormat = ZoombiniGameState::ZmbSaveFormat::kInvalid;
+	ZmbSaveFormat _saveFormat = ZmbSaveFormat::kInvalid;
 	/** RodMap's Isle/on-road count after separating the occupied active pack. */
 	int16 _isleCount = -1;
 	/** RodMap's logical Basecamp 1 ownership count. */

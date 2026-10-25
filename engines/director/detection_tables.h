@@ -6632,7 +6632,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Only the launcher is a director, full game is supported via Mohawk engine
 	// From Logical Journey of the Zoombinis demo
 	WINDEMO1_l("zoombini", "v1.0BR Demo, Launcher", "PIZZA/_ZOOMDAT.EXE", "d573b80bb932f50cbe69395b158e9f47", 696927, Common::EN_GRB, 404),
-	WINDEMO1t_l("zoombini", "v1.1US Demo, Launcher", "ZOOMBINI.EXE", "fffa1e234005c89a366a4f5a3d82d34e", 4632551, Common::EN_USA, 404),
+	WINDEMO1t_l("zoombini", "v1.0US Demo, Launcher", "ZOOMBINI.EXE", "fffa1e234005c89a366a4f5a3d82d34e", 4632551, Common::EN_USA, 404),
+	MACDEMO1_l("zoombini", "v1.0US Demo, Launcher", "Zoombini", "c92cda8365946126cc7d523c49a60bb4", 483490, Common::EN_USA, 404),
 
 //////////////////////////////////////////////////
 //

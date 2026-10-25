@@ -22,10 +22,12 @@
 #ifndef MOHAWK_ZOOMBINI_DIALOGS_H
 #define MOHAWK_ZOOMBINI_DIALOGS_H
 
+#include "common/array.h"
 #include "common/noncopyable.h"
 #include "common/str.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
+#include "mohawk/zoombini_state.h"
 
 namespace GUI {
 class ButtonWidget;
@@ -43,8 +45,27 @@ class ThemeEval;
 
 namespace Mohawk {
 
+/** Shared layout for a save-dialog description, one input and confirmation buttons. */
+class ZoombiniSaveInputDialog : public GUI::Dialog, private Common::NonCopyable {
+public:
+	void reflowLayout() override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
+protected:
+	ZoombiniSaveInputDialog(const Common::U32String &title, const Common::U32String &description);
+	GUI::Widget *_inputWidget = nullptr;
+
+private:
+	Common::U32String _descStr;
+	GUI::StaticTextWidget *_titleWidget = nullptr;
+	GUI::ScrollContainerWidget *_descScroller = nullptr;
+	Common::Array<GUI::StaticTextWidget *> _descLines;
+	GUI::ButtonWidget *_okButton = nullptr;
+	GUI::ButtonWidget *_cancelButton = nullptr;
+};
+
 /** Modal dialog for entering or renaming a Zoombini save name. */
-class ZoombiniSaveNameDialog : public GUI::Dialog, private Common::NonCopyable {
+class ZoombiniSaveNameDialog : public ZoombiniSaveInputDialog {
 public:
 	/** Create a save-name dialog with the target's save-name code page. */
 	ZoombiniSaveNameDialog(const Common::U32String &initialName, bool rename, Common::CodePage codePage);
@@ -52,11 +73,21 @@ public:
 	/** Return the text entered by the user. */
 	Common::U32String getSaveName() const;
 
-	void reflowLayout() override;
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+private:
+	static Common::U32String getTitle(bool rename);
+	static Common::U32String getDescription(Common::CodePage codePage);
+	GUI::EditTextWidget *_edit = nullptr;
+};
+
+/** Select a native save format, retaining the source format by default. */
+class ZoombiniSaveFormatDialog : public ZoombiniSaveInputDialog {
+public:
+	explicit ZoombiniSaveFormatDialog(ZmbSaveFormat source);
+	ZmbSaveFormat getSaveFormat() const;
 
 private:
-	GUI::EditTextWidget *_edit = nullptr;
+	ZmbSaveFormat _srcFormat;
+	GUI::PopUpWidget *_formatPopUp = nullptr;
 };
 
 /** Modal ScummVM dialog for managing Logical Journey of the Zoombini saves. */
@@ -82,7 +113,7 @@ private:
 	static constexpr int kZmbSaveNameX = kZmbSaveSlotX + kZmbSaveSlotWidth;
 	static constexpr int kZmbSaveNameWidth = 88;
 	static constexpr int kZmbSaveVersionX = kZmbSaveNameX + kZmbSaveNameWidth;
-	static constexpr int kZmbSaveVersionWidth = 50;
+	static constexpr int kZmbSaveVersionWidth = 100;
 	static constexpr int kZmbSaveIsleX = kZmbSaveVersionX + kZmbSaveVersionWidth;
 	static constexpr int kZmbSaveShelterWidth = 50;
 	static constexpr int kZmbSaveBasecamp1X = kZmbSaveIsleX + kZmbSaveShelterWidth;
@@ -114,18 +145,23 @@ private:
 		kImportOneSaveCmd = 'zIm1',
 		kRecoverSaveCmd = 'zRec',
 		kCompactSlotsCmd = 'zCmp',
+		kConvertSaveCmd = 'zCvt',
 	};
 
 	/** Refresh save names and metadata shown in the table. */
 	void refreshSaveList();
+	/** Scale layout spacing using the current GUI scale. */
+	static int scaleLayoutValue(int value);
 	/** Recalculate the save-table columns and row geometry. */
-	void updateSaveTableLayout();
+	void updateSaveTableLayout(int tableWidth, int lineHeight, int padding);
 	/** Delete the selected save slot after command confirmation. */
 	void deleteSave(int slot);
 	/** Rename the selected save slot after editing its display name. */
 	void renameSave(int slot);
 	/** Export the selected save slot as an original-engine TXT file. */
 	void exportOneSave(int slot);
+	/** Replace the selected save with another native format after preserving a backup. */
+	void convertSave(int slot);
 	/** Move one save entry to an adjacent roster slot. */
 	void moveSave(int slot, int destinationSlot);
 	/** Recover the selected corrupted state file. */
@@ -143,14 +179,18 @@ private:
 	int _selectedSaveSlot = -1;
 	/** Dialog description shown above the save table. */
 	GUI::StaticTextWidget *_description = nullptr;
-	/** Fixed-column save table header. */
+	/** Save table header. */
 	GUI::ContainerWidget *_saveHeader = nullptr;
+	/** Header labels in slot, name, format, Isle, BC1, BC2, Town and active order. */
+	GUI::StaticTextWidget *_saveColumnLabels[8] = {};
 	/** Scroll container holding save rows. */
 	GUI::ScrollContainerWidget *_saveList = nullptr;
 	/** Container holding save-row widgets. */
 	GUI::ContainerWidget *_saveTable = nullptr;
 	/** Number of save rows currently populated in the table. */
 	int _saveRowCount = 0;
+	/** Save summaries shared by row display, button state and row actions. */
+	Common::Array<ZoombiniSaveSummary> _saveSummaries;
 	/** Whether Slot Compact is available and would change the current target. */
 	bool _saveCompactionNeeded = false;
 	/** Structural problems that make the current target's roster recoverable. */
@@ -165,6 +205,10 @@ private:
 	GUI::ButtonWidget *_importButton = nullptr;
 	/** Common button that exports the selected save. */
 	GUI::ButtonWidget *_exportButton = nullptr;
+	/** Convert the selected valid save to another native format. */
+	GUI::ButtonWidget *_convertButton = nullptr;
+	/** Close the save-management dialog. */
+	GUI::ButtonWidget *_closeButton = nullptr;
 	/** Common button that deletes the selected save. */
 	GUI::ButtonWidget *_deleteButton = nullptr;
 	/** Common button that recovers the selected corrupted save. */
@@ -189,12 +233,6 @@ private:
 	GUI::StaticTextWidget *_saveTownLabels[kMaxSaveRows] = {};
 	/** Active-pack count labels. */
 	GUI::StaticTextWidget *_saveActivePackLabels[kMaxSaveRows] = {};
-	/** Target-scoped state filenames used to describe recovery backups. */
-	Common::String _saveFileNames[kMaxSaveRows];
-	/** Whether each visible corrupted row has a recoverable state payload. */
-	bool _saveRecoverableRows[kMaxSaveRows] = {};
-	/** Primary validation problem shown before recovering each row. */
-	uint8 _saveIssueRows[kMaxSaveRows] = {};
 };
 
 /** ScummVM options dialog for Logical Journey of the Zoombinis */

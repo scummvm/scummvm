@@ -212,7 +212,7 @@ static bool quirkLingoZoombiniDemo(const Common::String &whichDocument) {
 
 	// Map the launcher variant to the playable Mohawk demo's detection label.
 	const bool isV10BrDemo = strstr(launcherExtra, "v1.0BR") != nullptr;
-	const bool isV11UsDemo = strstr(launcherExtra, "v1.1US") != nullptr;
+	const bool isV10UsDemo = strstr(launcherExtra, "v1.0US") != nullptr;
 	const Common::Path demoExecPath = ConfMan.getPath("path").normalize();
 	Common::String demoExecExtra;
 	if (isV10BrDemo) {
@@ -220,10 +220,10 @@ static bool quirkLingoZoombiniDemo(const Common::String &whichDocument) {
 		if (!Common::Path(whichDocument, '\\').baseName().equalsIgnoreCase("zoombini.exe"))
 			return false;
 		demoExecExtra = "v1.0BR Demo";
-	} else if (isV11UsDemo) {
+	} else if (isV10UsDemo) {
 		if (!whichDocument.empty())
 			return false;
-		demoExecExtra = "v1.1US Demo";
+		demoExecExtra = "v1.0US Demo";
 	} else {
 		warning("quirkLingoZoombiniDemo(): Unsupported launcher variant '%s'", launcherExtra);
 		return false;
@@ -265,7 +265,7 @@ static bool quirkLingoZoombiniDemo(const Common::String &whichDocument) {
 
 	// Daisy-chain
 	// v1.0BR: Director -> Mohawk -> Director
-	// v1.1US: Director -> Mohawk
+	// v1.0US: Director -> Mohawk
 	debugC(1, kDebugLingoExec, "quirkLingoZoombiniDemo(): Chaining to ScummVM target '%s'", target.c_str());
 	ChainedGamesMan.push(target);
 	if (isV10BrDemo) // The queue runs Mohawk first, then resumes the v1.0BR Director launcher.
@@ -331,9 +331,9 @@ static void quirkVideoForWindowsPalette() {
 	g_director->_vfwPaletteHack = true;
 }
 
-static void quirkZoombiniV11UsDemo() {
-	// Zoombinis v1.1US Demo requires stopMovie event to be fired precisely at movie's end frame.
-	if (strstr(g_director->getExtra(), "v1.1US") != nullptr)
+static void quirkZoombiniV10UsDemo() {
+	// Zoombinis v1.0US Demo requires stopMovie event to be fired precisely at movie's end frame.
+	if (strstr(g_director->getExtra(), "v1.0US") != nullptr)
 		g_director->_dispatchStopMovieAtEnd = true;
 }
 
@@ -485,8 +485,8 @@ const struct Quirk {
 	// Remove the 16-colours from the video decoder.
 	{"mckenzie", Common::kPlatformWindows, &quirkVideoForWindowsPalette },
 
-	// The v1.1 US Zoombinis demo opens its playable component from stopMovie after the last frame.
-	{ "zoombini", Common::kPlatformWindows, &quirkZoombiniV11UsDemo },
+	// The v1.0 US Zoombinis demo opens its playable component from stopMovie after the last frame.
+	{ "zoombini", Common::kPlatformWindows, &quirkZoombiniV10UsDemo },
 
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };

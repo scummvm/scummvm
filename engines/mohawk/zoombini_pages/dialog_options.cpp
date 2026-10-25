@@ -103,10 +103,10 @@ ZoombiniDialogOptions::~ZoombiniDialogOptions() {
 
 ZoombiniDialogOptions::Layout ZoombiniDialogOptions::createLayout(const ZmbReleaseInfo &relInfo) {
 	Layout layout;
-	layout.titleRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kOptionsTitleLayout).apply(layout.titleRect);
-	layout.wordWrap = relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT);
+	layout.titleRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kOptionsTitle).apply(layout.titleRect);
+	layout.wordWrap = relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10, Common::PT_PRT);
 	layout.textTops = {0x0066, 0x007C, 0x0091, 0x00A6, 0x00DD, 0x00F3, 0x0108, 0x011D};
-	if (relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) {
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		layout.textTops.push_back(0x0112);
 		layout.textTops.push_back(0x0127);
 		layout.redPressedBaseIdx = 10;

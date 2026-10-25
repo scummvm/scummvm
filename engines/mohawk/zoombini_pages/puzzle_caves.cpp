@@ -117,7 +117,7 @@ Audio::Mixer::SoundType ZoombiniPuzzleCaves::getFeatureSoundType(const ZmbFeatur
 
 void ZoombiniPuzzleCaves::open() {
 	// MIDI BGM (tMID 30025-30028) - Broderbund v1.x only.
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		openMidiArchive();
 	openArchive(ZMB_MHK_CAVES);
 }
@@ -126,7 +126,7 @@ void ZoombiniPuzzleCaves::setBackgroundMusic() {
 	// In original engine, only L1-L3 plays MIDI BGM. L4 remains silent.
 	// However, the MIDI .MHK archives has a song for a L4, too.
 	// This ScummVM option deliberately restores the shipped silent level 4 behavior when disabled.
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) { // TLC v2.0 has no MIDI resources.
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) { // TLC v2.0 has no MIDI resources.
 		const int16 routeLevel = _puzzleLevel - kPuzzleLevel1;
 		if (routeLevel < 3 || ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixCavesL4MidiSilentBug))
 			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30025_CavesBgmBase + routeLevel)));

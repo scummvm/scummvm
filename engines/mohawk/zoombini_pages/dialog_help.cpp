@@ -31,10 +31,10 @@ ZoombiniDialogHelp::ZoombiniDialogHelp(MohawkEngine_Zoombini *vm, ZoombiniPageTy
 	: ZoombiniDialog(vm, ZoombiniPageType::kDialogHelp), _forPageType(forPage),
 	  _showPickerHeaderEasterEgg(vm->consumePickerUpdateHelpRequest()) {
 	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
-	const ZmbReleaseInfo::LayoutAdjustment headingAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kHelpHeadingLayout);
+	const ZmbReleaseInfo::LayoutAdjustment headingAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kHelpHeading);
 	_helpDialogTitleRect = headingAdjustment.apply(_helpDialogTitleRect);
 	_helpDialogHeadRect = headingAdjustment.apply(_helpDialogHeadRect);
-	_helpDialogBodyRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::kHelpBodyLayout).apply(_helpDialogBodyRect);
+	_helpDialogBodyRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kHelpBody).apply(_helpDialogBodyRect);
 }
 
 ZoombiniDialogHelp::~ZoombiniDialogHelp() {
@@ -44,7 +44,7 @@ ZoombiniDialogHelp::~ZoombiniDialogHelp() {
 
 void ZoombiniDialogHelp::loadFeatures() {
 	loadHelpStrings();
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		_helpSoundQueue = _vm->_sound->createSoundQueue();
 
 	// Initialize button states
@@ -259,7 +259,7 @@ Common::Rect ZoombiniDialogHelp::helpDialog_getButtonTextRect(ZmbFeature *featur
 	else
 		textRect = _helpDialogButtonRects[bsIdx];
 
-	textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kHelpButtonTextLayout).apply(textRect);
+	textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kHelpButtonText).apply(textRect);
 	if (bs.isAnimating()) {
 		textRect.top += 2;
 		textRect.bottom += 2;
@@ -309,7 +309,7 @@ ZmbEventHandleResult ZoombiniDialogHelp::helpDialog_onMouseLButtonDown(ZmbFeatur
 
 	// TLC Help narration is click-to-stop even when the click does not
 	// activate a dialog button.
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) &&
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20) &&
 		_helpSoundQueue != ZoombiniSound::kInvalidSoundQueueHandle &&
 		_vm->_sound->isSoundQueuePlaying(_helpSoundQueue))
 		stopHelpVoice();
@@ -328,7 +328,7 @@ Common::Rect ZoombiniDialogHelp::helpDialog_getButtonClickRect(ZmbFeature *featu
 ZmbEventHandleResult ZoombiniDialogHelp::helpDialog_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat) {
 	ZmbEventHandleResult result = ZmbEventHandleResult::kPassthrough;
 
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && kbd.keycode == Common::KEYCODE_SPACE &&
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20) && kbd.keycode == Common::KEYCODE_SPACE &&
 		_helpSoundQueue != ZoombiniSound::kInvalidSoundQueueHandle &&
 		_vm->_sound->isSoundQueuePlaying(_helpSoundQueue)) {
 		stopHelpVoice();
@@ -392,7 +392,7 @@ void ZoombiniDialogHelp::updateNavigationButtons() {
 	if (helpBodyCount <= 1) {
 		_helpDialogButtonStateMap[kHelpDialogButton01_Prev]._drawEnabled = false;
 		_helpDialogButtonStateMap[kHelpDialogButton02_Next]._drawEnabled = false;
-	} else if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+	} else if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		_helpDialogButtonStateMap[kHelpDialogButton01_Prev]._drawEnabled = 0 < _pageHelpBodyIdx;
 		_helpDialogButtonStateMap[kHelpDialogButton02_Next]._drawEnabled = _pageHelpBodyIdx + 1 < helpBodyCount;
 	} else {
@@ -407,7 +407,7 @@ void ZoombiniDialogHelp::stopHelpVoice() {
 }
 
 void ZoombiniDialogHelp::playHelpVoice() {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	stopHelpVoice();
