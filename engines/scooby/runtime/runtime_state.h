@@ -36,6 +36,7 @@
 #include "scooby/rooms/room_scene_data.h"
 #include "scooby/rooms/scripted_coordinate_sprite_state.h"
 #include "scooby/runtime/save_game_data.h"
+#include "scooby/input/controller_buttons.h"
 
 // Preserves the shared RAM and register-backed state recovered from Ghidra
 // RunAdventure at 0x00000BF4 and its callees.
@@ -1066,6 +1067,8 @@ public:
 
 	// Advances the recovered A5/A6 script window to the next length-prefixed block.
 	void advanceRoomScriptBlock(const ScoobyDooRom &rom);
+
+	bool isButtonDown(ControllerButtons button) const;
 };
 } // namespace Scooby
 

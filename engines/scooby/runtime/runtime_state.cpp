@@ -85,4 +85,8 @@ void RuntimeState::advanceRoomScriptBlock(const ScoobyDooRom &rom) {
 	roomScriptCurrentOffset = RoomScriptEndOffset + static_cast<int>(sizeof(int16));
 	RoomScriptEndOffset = roomScriptCurrentOffset + length;
 }
+
+bool RuntimeState::isButtonDown(ControllerButtons button) const {
+	return (ControllerOneInput & static_cast<uint8>(button)) == 0;
+}
 } // namespace Scooby

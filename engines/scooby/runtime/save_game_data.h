@@ -49,7 +49,7 @@
 
 namespace Scooby {
 
-struct RuntimeState;
+class RuntimeState;
 
 // The persistent part of one room-object record (RoomObject). The runtime actor-slot byte at record offset
 // +0x19 is not saved: room loading reassigns it from the other fields.

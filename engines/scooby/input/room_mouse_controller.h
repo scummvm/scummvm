@@ -54,7 +54,7 @@ namespace Scooby {
 
 class MouseInput;
 class ScoobyDooRom;
-struct RuntimeState;
+class RuntimeState;
 
 class RoomMouseController {
 public:

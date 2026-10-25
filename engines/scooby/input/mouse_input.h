@@ -54,7 +54,7 @@ namespace Scooby {
 
 class ScoobyDooRom;
 class TileScene;
-struct RuntimeState;
+class RuntimeState;
 
 // The screen family sampling input; it selects the cursor image.
 enum class InputScreen {

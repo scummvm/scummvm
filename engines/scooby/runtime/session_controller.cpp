@@ -468,7 +468,7 @@ SessionExit SessionController::runGame() {
 			continue;
 		}
 
-		if ((_state.ControllerOneInput & 0x80) == 0 && (_state.TransitionFlags & 0x10) == 0) {
+		if (_state.isButtonDown(ControllerButtons::Start) && (_state.TransitionFlags & 0x10) == 0) {
 			_state.DisplayFlags &= 0xBF;
 			if (!_presenter.fadePaletteOut(&_handleRoomVBlankFunctor)) {
 				return SessionExit::HostClosed;
