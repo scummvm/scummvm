@@ -1124,7 +1124,7 @@ void FoolGame::sub_128_1f76() {
 			// original was 5 ticks
 			delayFromMarker(10);
 			// new: empty the event queue, so feedback is instant
-			_toolbox->FlushEvents(-1, 0);
+			_toolbox->FlushEvents(static_cast<uint32>(-1), 0);
 			var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 		} while ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0);
 	} else {
