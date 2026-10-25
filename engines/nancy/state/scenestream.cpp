@@ -32,6 +32,7 @@
 #include "engines/nancy/state/scenestream.h"
 
 #include "engines/nancy/ui/viewport.h"
+#include "engines/nancy/ui/ndui/button.h"
 
 #ifdef ENABLE_NANCY_V4
 #include "engines/nancy/script/records.h"
@@ -541,6 +542,23 @@ Common::String SceneStreamManager::getSceneName(const Common::String &name) cons
 	return stream ? stream->getSceneName() : Common::String();
 }
 
+// Nancy17 takes an item out of the inventory while its scene is up, in a stream
+// named after it. The item's scene doesn't put it back: the stream ending does.
+static void returnViewedItem(const Common::String &streamName) {
+	const INVD *items = GetEngineData(INVD);
+	if (!items || g_nancy->getGameType() >= kGameTypeNancy19) {
+		return;
+	}
+
+	for (const INVD::Item &item : items->items) {
+		if (item.kind == UI::NDUI::InvButton::kItemView &&
+				streamName.equalsIgnoreCase(UI::NDUI::InvButton::getStreamName(item.name))) {
+			NancySceneState.addItemToInventory(item.id);
+			return;
+		}
+	}
+}
+
 void SceneStreamManager::process() {
 	if (_streams.empty()) {
 		NancySceneState.processMainStream();
@@ -567,6 +585,7 @@ void SceneStreamManager::process() {
 	for (uint i = 0; i < _streams.size(); ) {
 		if (_streams[i] && _streams[i]->isEnded()) {
 			_streams[i]->endScene();
+			returnViewedItem(_streams[i]->getName());
 			delete _streams[i];
 			_streams.remove_at(i);
 		} else {
