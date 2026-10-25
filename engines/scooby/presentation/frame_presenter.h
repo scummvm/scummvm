@@ -23,12 +23,12 @@
 #define SCOOBY_FRAME_PRESENTER_H
 
 #include "common/func.h"
+#include "graphics/framelimiter.h"
 
 #include "scooby/common/span.h"
 #include "scooby/graphics/indexed_frame.h"
 #include "scooby/types.h"
 #include "scooby/graphics/tile_scene.h"
-#include "scooby/rendering/frame_clock.h"
 
 // Owns retrace pacing, logical-frame presentation, and palette transitions
 // shared by recovered sequences.
@@ -38,7 +38,7 @@ namespace Scooby {
 class FramePresenter {
 public:
 	FramePresenter(TileScene &scene, IndexedFrame &frame,
-				   FrameClock &clock);
+				   Graphics::FrameLimiter &limiter);
 
 	// Ghidra fadePaletteOut (0x00009DE0), including its leading retrace.
 	// Returns false when the host requests shutdown during the fade.
@@ -68,7 +68,7 @@ public:
 
 private:
 	bool _presentationSuspended = false;
-	FrameClock &_clock;
+	Graphics::FrameLimiter &_limiter;
 	IndexedFrame &_frame;
 	TileScene &_scene;
 };

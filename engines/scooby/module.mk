@@ -36,8 +36,6 @@ MODULE_OBJS = \
     movement/scripted_room_movement_executor.o \
     presentation/frame_presenter.o \
     randomness/deterministic_random.o \
-    rendering/frame_clock.o \
-    rendering/frame_viewport.o \
     rooms/actor_animation_descriptor_catalog.o \
     rooms/actor_sprite_transformer.o \
     rooms/companion_actor_position_transition_animation_catalog.o \

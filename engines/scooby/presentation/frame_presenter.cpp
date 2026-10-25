@@ -26,8 +26,8 @@
 namespace Scooby {
 
 FramePresenter::FramePresenter(TileScene &scene, IndexedFrame &frame,
-							   FrameClock &clock)
-	: _clock(clock), _frame(frame), _scene(scene) {
+							   Graphics::FrameLimiter &limiter)
+	: _limiter(limiter), _frame(frame), _scene(scene) {
 }
 
 bool FramePresenter::fadePaletteOut(const Common::Functor0<void> *beforeRetrace) {
@@ -69,9 +69,10 @@ bool FramePresenter::waitForVerticalBlank() {
 		return !g_engine->shouldQuit();
 	}
 
-	_clock.waitForNextFrame();
+	_limiter.delayBeforeSwap();
 	_scene.render(_frame);
 	_frame.present();
+	_limiter.startFrame();
 	return !g_engine->shouldQuit();
 }
 

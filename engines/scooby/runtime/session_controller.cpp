@@ -29,13 +29,13 @@
 namespace Scooby {
 
 SessionController::SessionController(const ScoobyDooRom &rom, TileScene &scene, IndexedFrame &frame,
-									 ControllerInput &input, FrameClock &clock, RuntimeState &state,
+									 ControllerInput &input, Graphics::FrameLimiter &limiter, RuntimeState &state,
 									 DeterministicRandom &random)
 	: _rom(rom), _state(state), _input(input), _roomTileStreamer(_rom, scene, _state),
 	  _roomActorInitializer(_rom, _state), _roomObjectTilePatches(_rom, scene, _state),
 	  _roomSprites(_rom, scene, _state),
 	  _roomVBlank(_rom, _input, _roomObjectTilePatches, scene, _roomSprites, _state, _roomTileStreamer),
-	  _presenter(scene, frame, clock), _restartSequence(_state, _presenter), _graphicsWorkspace(),
+	  _presenter(scene, frame, limiter), _restartSequence(_state, _presenter), _graphicsWorkspace(),
 	  _waitForRoomVerticalBlankFunctor(this, &SessionController::waitForRoomVerticalBlank),
 	  _presentRoomFunctor(this, &SessionController::presentRoom),
 	  _resetRoomStateForReloadFunctor(this, &SessionController::resetRoomStateForReload),

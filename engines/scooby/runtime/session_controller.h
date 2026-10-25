@@ -23,6 +23,7 @@
 #define SCOOBY_SESSION_CONTROLLER_H
 
 #include "common/scummsys.h"
+#include "graphics/framelimiter.h"
 
 #include "episode_opening_sequence.h"
 #include "runtime_state.h"
@@ -42,7 +43,6 @@
 #include "scooby/movement/scripted_room_movement_executor.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/randomness/deterministic_random.h"
-#include "scooby/rendering/frame_clock.h"
 #include "scooby/rooms/room_actor_animator.h"
 #include "scooby/rooms/room_actor_initializer.h"
 #include "scooby/rooms/room_actor_updater.h"
@@ -69,12 +69,12 @@ public:
 	// scene: logical tile scene populated from decoded ROM assets.
 	// frame: shared logical output frame.
 	// host: raylib window and input owner.
-	// clock: continuous retrace cadence carried forward from the startup sequence.
+	// limiter: continuous 60 Hz retrace cadence carried forward from the startup sequence.
 	// state: runtime state initialized before the startup presentations.
 	// random: deterministic random state initialized and warmed before the startup presentations.
 	SessionController(const ScoobyDooRom &rom, TileScene &scene,
 					  IndexedFrame &frame,
-					  ControllerInput &input, FrameClock &clock, RuntimeState &state,
+					  ControllerInput &input, Graphics::FrameLimiter &limiter, RuntimeState &state,
 					  DeterministicRandom &random);
 
 	// Reimplements Ghidra RunAdventure at 0x00000BF4 from entry through its perpetual frame loop. Audio

@@ -58,6 +58,9 @@ public:
 	const RuntimeState &getState() const { return _state; }
 
 private:
+	// NTSC Genesis vertical blank.
+	static const uint kFramesPerSecond = 60;
+
 	// Initializes the shared state lifecycle before any startup presentation can run.
 	// state: runtime state retained through the following adventure session.
 	// random: deterministic random owner retained through the following adventure session.

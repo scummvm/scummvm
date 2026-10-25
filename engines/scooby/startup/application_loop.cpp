@@ -21,8 +21,8 @@
 
 #include "application_loop.h"
 
+#include "graphics/framelimiter.h"
 #include "intro_sequence.h"
-#include "scooby/rendering/frame_clock.h"
 #include "scooby/runtime/session_controller.h"
 #include "scooby/scooby.h"
 #include "scooby/sound/gems_audio.h"
@@ -43,11 +43,11 @@ void ApplicationLoop::run() {
 		// RunAdventure's InitializeAudioDriver stops it when a session (including a loaded save) begins.
 		_state.ResumeAudioCommand = 0x2F;
 		gemsStartSong(_state.ResumeAudioCommand);
-		FrameClock clock;
+		Graphics::FrameLimiter limiter(g_system, kFramesPerSecond); // NTSC - 60Hz
 		if (!_state._saveGameData.shouldLoadGameData) {
 			IntroSequence intro(_rom, _scene);
 			while (!g_engine->shouldQuit() && !intro.isComplete()) {
-				clock.waitForNextFrame();
+				limiter.delayBeforeSwap();
 				if (_input.isIntroSkipPressed()) {
 					intro.skipCurrentStep();
 				} else {
@@ -56,6 +56,7 @@ void ApplicationLoop::run() {
 
 				_scene.render(_frame);
 				_frame.present();
+				limiter.startFrame();
 			}
 		}
 
@@ -63,7 +64,7 @@ void ApplicationLoop::run() {
 			return;
 		}
 
-		SessionController session(_rom, _scene, _frame, _input, clock, _state, random);
+		SessionController session(_rom, _scene, _frame, _input, limiter, _state, random);
 		_scene.setInterfaceScroll(0);
 		if (session.runGame() == SessionExit::HostClosed) {
 			return;
