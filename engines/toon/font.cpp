@@ -115,8 +115,11 @@ void FontRenderer::renderText(int16 x, int16 y, const Common::String &origText, 
 
 	const byte *text = (const byte *)origText.c_str();
 
-	if (_vm->_language == Common::HE_ISR)
-		text = (const byte *)Common::convertBiDiString((const char *) text, Common::kWindows1255).c_str();
+	Common::String visualText;
+	if (_vm->_language == Common::HE_ISR) {
+		visualText = Common::convertBiDiString((const char *)text, Common::kWindows1255);
+		text = (const byte *)visualText.c_str();
+	}
 
 	while (*text) {
 		byte curChar = *text;
@@ -328,8 +331,11 @@ void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &o
 	for (int32 i = 0; i < numLines; i++) {
 		const byte *line = lines[i];
 
-		if (_vm->_language == Common::HE_ISR)
-			line = (const byte *)Common::convertBiDiString((const char *) line, Common::kWindows1255).c_str();
+		Common::String visualText;
+		if (_vm->_language == Common::HE_ISR) {
+			visualText = Common::convertBiDiString((const char *)line, Common::kWindows1255);
+			line = (const byte *)visualText.c_str();
+		}
 
 		curX = x - lineSize[i] / 2;
 		_vm->addDirtyRect(curX + _vm->state()->_currentScrollValue, curY, curX + lineSize[i] + _vm->state()->_currentScrollValue + 2, curY + height);
