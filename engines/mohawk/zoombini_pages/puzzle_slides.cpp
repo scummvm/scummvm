@@ -120,7 +120,7 @@ void ZoombiniPuzzleSlides::initStates() {
 	memset(_activeCellSnoidIds, 0, sizeof(_activeCellSnoidIds));
 
 	_entranceFadeObserved = false;
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		// The v2.0 release submits the entrance sound during page initialization.
 		playEntranceSound();
 		_entranceSoundPending = false;

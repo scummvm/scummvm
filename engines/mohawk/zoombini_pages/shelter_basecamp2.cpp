@@ -366,7 +366,7 @@ ZmbEventHandleResult ZoombiniShelterBasecampTwo::scrollButton_onLButtonDown(ZmbF
 bool ZoombiniShelterBasecampTwo::updateScrollButtonHover(const Common::Point &absPos) {
 	// Z1-20U/TLC v2.0 release only: BC2 storage scroll buttons use
 	// yellow-outline hover shapes.
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return false;
 
 	bool changed = false;
@@ -649,7 +649,7 @@ void ZoombiniShelterBasecampTwo::renderScrollButtons() {
 
 	for (int scrollIdx = 0; scrollIdx < kStorageScrollButtonCount; scrollIdx++) {
 		uint16 shapeIdx;
-		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) && _scrollButtonHovered[scrollIdx])
+		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20) && _scrollButtonHovered[scrollIdx])
 			shapeIdx = static_cast<uint16>(kResShape9000_ScrollLMaxHover20 + scrollIdx);
 		else if (_heldStorageScrollDirection == getBasecampStorageScrollDirection(scrollIdx))
 			shapeIdx = static_cast<uint16>(kResShape9000_ScrollLMaxPressed08 + 2 * scrollIdx);

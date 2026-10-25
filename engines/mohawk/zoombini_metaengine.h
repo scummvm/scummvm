@@ -42,79 +42,89 @@ struct MohawkGameDescription;
 class ZmbReleaseInfo {
 public:
 	/** Broad implementation lineages; localized variants retain their parent family. */
-	enum Family {
+	enum class Family {
+		/**
+		 * v1.0US, v1.0ES, v1.0PT, and v1.0US Demo.
+		 *
+		 * @remarks
+		 * Base Version README Date: 1996-01-15
+		 */
+		kUsV10,
 		/**
 		 * v1.0BR, v1.0FR, v1.0GE, v1.0BR Demo,
 		 * v1.1BR, v1.1FR, v1.1GE, v1.1FR_2002,
-		 * v1.0ES, v1.0PT, v1.0IT, and v1.0JP.
+		 * v1.0IT and v1.0JP.
+		 *
+		 * @remarks
+		 * Base Version README Date: 1996-03-15
 		 */
-		kEuropeV1,
-		/** v1.1US, v1.11KR, and v1.1US Demo. */
-		kUsV1,
-		/** v2.0US, v2.0PL, and v2.0US Demo. */
-		kTlcV2
-	};
-
-	/** Detector variants, without assigning a separate identity to every language or demo. */
-	enum Variant {
-		/** v1.0BR, v1.0FR, v1.0GE, v1.0IT, and v1.0BR Demo. */
-		kEuropeV10,
-		/** v1.1BR, v1.1FR, and v1.1GE. */
-		kEuropeV11,
-		/** v1.1FR_2002. */
-		kFranceV11_2002,
-		/** v1.0ES, v1.0PT. */
-		kEsPtV10,
-		/** v1.0JP. */
-		kJapanV10,
-		/** v1.1US, v1.11KR, and v1.1US Demo. */
+		kEuropeV1x,
+		/**
+		 * v1.1US and v1.11KR.
+		 *
+		 * @remarks
+		 * Base Version README Date: 1996-12-04
+		 */
 		kUsV11,
-		/** v2.0US, v2.0PL, and v2.0US Demo. */
-		kTlcV20,
+		/**
+		 * v2.0US, v2.0PL, and v2.0US Demo.
+		 *
+		 * @remarks
+		 * Base Version Manual Date: 2001-08-30
+		 */
+		kTlcV20
 	};
 
-	/** Page elements whose fixed rects need release-specific adjustments. */
-	enum LayoutElement {
+	/** Archive supplying this release's route-map resources. */
+	enum class MapArchiveKind {
+		/** MAP.MHK resources used by the USv1.0 and Europe-v1 families. */
+		kMap,
+		/** RODMAP.MHK resources used by the USv1.1 and TLCv2.0 families. */
+		kRodMap
+	};
+
+	/** Kinds of in-game UI layout requiring release-specific position, size and spacing adjustments. */
+	enum class LayoutKind {
 		/** Credit Dialog: text-line drawing rect in @ref Mohawk::ZoombiniDialogCredits. */
-		kCreditsTextLayout,
+		kCreditsText,
 		/** Credit Dialog: text clipping area to scroll in @ref Mohawk::ZoombiniDialogCredits. */
-		kCreditsScrollLayout,
+		kCreditsScroll,
 		/** MsgBox Dialog: body text rect in @ref Mohawk::ZoombiniDialogMsgBox. */
-		kMsgBoxBodyLayout,
+		kMsgBoxBody,
 		/** Options Dialog: title text rect in @ref Mohawk::ZoombiniDialogOptions. */
-		kOptionsTitleLayout,
+		kOptionsTitle,
 		/** Save/load Dialog: title text rect in @ref Mohawk::ZoombiniDialogSaveLoad. */
-		kSaveLoadTitleLayout,
+		kSaveLoadTitle,
 		/** Save Dialog: editable save-name text/caret rect in @ref Mohawk::ZoombiniDialogSaveLoad. */
-		kSaveNameInputLayout,
+		kSaveNameInput,
 		/** RODMAP: hit rects for the practice level selection in @ref Mohawk::ZoombiniInteractiveRodMap. */
-		kMapLegendClickLayout,
+		kMapLegendClick,
 		/** RODMAP: legend title rect in @ref Mohawk::ZoombiniInteractiveRodMap. */
-		kMapLegendTitleLayout,
+		kMapLegendTitle,
 		/** RODMAP: text rect for each four level labels of the legend in @ref Mohawk::ZoombiniInteractiveRodMap. */
-		kMapLegendRowLayout,
+		kMapLegendRow,
 		/** RODMAP: panel title rect for the save name or practice heading in @ref Mohawk::ZoombiniInteractiveRodMap. */
-		kMapStatsTitleLayout,
+		kMapStatsTitle,
 		/** RODMAP: initial row Y position and height for statistics and practice descriptions in @ref Mohawk::ZoombiniInteractiveRodMap. */
-		kMapStatsRowLayout,
+		kMapStatsRow,
 		/** RODMAP: label-column width shared by journey statistics and practice descriptions in @ref Mohawk::ZoombiniInteractiveRodMap. */
-		kMapStatsLabelLayout,
+		kMapStatsLabel,
 		/** RODMAP: per-row vertical advance and height growth for practice return instructions in @ref Mohawk::ZoombiniInteractiveRodMap. */
-		kMapPracticeRowStepLayout,
+		kMapPracticeRowStep,
 		/** RODMAP: text rect for map-icon hover puzzle-name tooltip in @ref Mohawk::ZoombiniInteractiveRodMap. */
-		kMapTooltipLayout,
+		kMapTooltip,
 		/** PICKER: text rect for Zoombini name preview in @ref Mohawk::ZoombiniShelterPicker. */
-		kPickerNameLayout,
+		kPickerName,
 		/** NotiBox: long noti box bounds for its background and redraw area in @ref Mohawk::ZoombiniInteractive. */
-		kNotiBoxLongLayout,
+		kNotiBoxLong,
 		/** NotiBox: text rect inside either noti box size in @ref Mohawk::ZoombiniInteractive. */
-		kNotiBoxTextLayout,
+		kNotiBoxText,
 		/** Help Dialog: rect adjustment for the dialog title and page heading in @ref Mohawk::ZoombiniDialogHelp. */
-		kHelpHeadingLayout,
+		kHelpHeading,
 		/** Help Dialog: instruction body text rect in @ref Mohawk::ZoombiniDialogHelp. */
-		kHelpBodyLayout,
+		kHelpBody,
 		/** Help Dialog: Previous, Next and Okay button text rects in @ref Mohawk::ZoombiniDialogHelp. */
-		kHelpButtonTextLayout,
+		kHelpButtonText,
 	};
 
 	/** Independent offsets added to the four edges of a page-owned rectangle. */
@@ -132,24 +142,28 @@ public:
 	explicit ZmbReleaseInfo(const MohawkGameDescription &gameDesc);
 	/** Match a broad implementation lineage. */
 	bool isFamily(Family family) const;
-	/** Match a detector variant, including its localized and demo releases. */
-	bool isVariant(Variant variant) const;
-	/** Match both the detector variant and its language. */
-	bool isVariant(Variant variant, Common::Language lang) const;
-	/** Match either v1 implementation family. */
+	/** Match both the implementation family and its language. */
+	bool isFamily(Family family, Common::Language lang) const;
+	/** Match any v1 implementation family. */
 	bool isV1() const;
 	/** Whether the detector marks the release as a demo. */
 	bool isDemo() const { return _demo; }
 	/** Match a demo without implicitly restricting its language. */
-	bool isDemo(Variant variant) const;
+	bool isDemo(Family family) const;
+	/** Match a demo in one implementation family and language. */
+	bool isDemo(Family family, Common::Language lang) const;
 	/** Whether the demo starts at a map with fixed practice levels. */
 	bool hasDemoPracticeMap() const;
+	/** Select MAP.MHK or RODMAP.MHK for this release. */
+	MapArchiveKind getMapArchiveKind() const;
+	/** Original Macintosh application filename used by text and font resource readers. */
+	const char *getMacApplicationName() const;
 	/** Whether this release supports localized Zoombini names. */
 	bool supportsLocalizedNames() const;
 	/** Format a memorial date using the original release's order and punctuation. */
 	Common::U32String formatMemorialDate(uint16 year, const Common::U32String &monthText, byte day) const;
-	/** Return edge adjustments for a fixed page layout element. */
-	LayoutAdjustment getLayoutAdjustment(LayoutElement element) const;
+	/** Return edge adjustments for an in-game UI layout kind. */
+	LayoutAdjustment getLayoutAdjustment(LayoutKind kind) const;
 	/**
 	 * Return the adjustment for one of the four zero-based map route labels.
 	 * @param routeIdx 0-based index for each four routes.
@@ -175,7 +189,7 @@ public:
 	const char *getFamilyName() const;
 
 private:
-	/** Detector feature bits retained for release-family and variant queries. */
+	/** Detector feature bits used to identify the implementation family. */
 	const uint32 _features;
 	/** Detector language normalized to US English when unknown. */
 	Common::Language _lang;
@@ -317,8 +331,8 @@ public:
 	 * @remarks Broderbund v1.x only; TLC v2.0 rebuild does not contain any MIDI resources.
 	 */
 	static constexpr const char *kOptionMidiSoundtrack = "midi_soundtrack";
-	/** Override the soundtrack for a known single-midi-archive v1 demo; otherwise leave it unchanged and return false. */
-	static bool getFixedDemoMidiSoundtrack(Common::Platform platform, Common::Language language, MidiSoundtrack &soundtrack);
+	/** Override the soundtrack for a known single-archive v1 release; otherwise leave it unchanged and return false. */
+	static bool getFixedMidiSoundtrack(Common::Platform platform, Common::Language language, bool isDemo, bool isUsV10, MidiSoundtrack &soundtrack);
 	/** Enable color-blind presentation adjustments. */
 	constexpr static const char *kOptionColorBlindMode = "color_blind_mode";
 	/** Always play the Maze completion celebration sound. */

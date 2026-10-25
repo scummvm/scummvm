@@ -111,10 +111,6 @@ private:
 	Common::U32String _corruptedTooltip;
 };
 
-static int scaleSaveDialogValue(const int value) {
-	return value > 0 ? static_cast<int>(value * g_gui.getScaleFactor()) : value;
-}
-
 static Common::U32String describeSaveIssue(ZoombiniGameState::ZmbSaveIssue issue) {
 	switch (issue) {
 	case ZoombiniGameState::ZmbSaveIssue::kMagic:
@@ -161,7 +157,7 @@ static Common::U32String describeSaveIssue(ZoombiniGameState::ZmbSaveIssue issue
 
 static void appendRosterIssue(Common::U32String &description, const Common::U32String &issue) {
 	if (!description.empty())
-		description += Common::U32String("\n");
+		description += Common::U32String(U"\n");
 	description += issue;
 }
 
@@ -209,48 +205,141 @@ static void appendBackupStorageDescription(Common::U32String &description,
 
 } // End of anonymous namespace
 
-ZoombiniSaveNameDialog::ZoombiniSaveNameDialog(const Common::U32String &initialName, bool rename, Common::CodePage codePage)
-	: GUI::Dialog(0, 0, 360, 168) {
-	Common::U32String title;
+ZoombiniSaveInputDialog::ZoombiniSaveInputDialog(const Common::U32String &title, const Common::U32String &description)
+	: GUI::Dialog(0, 0, 1, 1), _descStr(description) {
+	_titleWidget = new GUI::StaticTextWidget(this, 0, 0, 1, 1, title, Graphics::kTextAlignStart);
+	_descScroller = new GUI::ScrollContainerWidget(this, 0, 0, 1, 1);
+	_descScroller->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
+	_okButton = new GUI::ButtonWidget(this, 0, 0, 1, 1, _("OK"), Common::U32String(), GUI::kOKCmd);
+	_cancelButton = new GUI::ButtonWidget(this, 0, 0, 1, 1, _("Cancel"), Common::U32String(), GUI::kCloseCmd);
+}
+
+void ZoombiniSaveInputDialog::reflowLayout() {
+	assert(_inputWidget);
+	const Common::Rect safeArea = g_system->getSafeOverlayArea();
+	const float scale = g_gui.getScaleFactor();
+	const int outerMargin = MAX(1, static_cast<int>(4 * scale));
+	const int margin = MAX(4, static_cast<int>(8 * scale));
+	const int gap = MAX(2, static_cast<int>(4 * scale));
+	const Graphics::Font &font = g_gui.getFont(GUI::ThemeEngine::kFontStyleNormal);
+	const int lineHeight = font.getFontHeight() + MAX(1, static_cast<int>(2 * scale));
+	const int titleHeight = g_gui.getFontHeight();
+	const int buttonHeight = MAX(g_gui.xmlEval()->getVar("Globals.Button.Height", 0), titleHeight + static_cast<int>(6 * scale));
+	const int inputHeight = MAX(buttonHeight, font.getFontHeight() + static_cast<int>(8 * scale));
+	const int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", static_cast<int>(9 * scale));
+	_w = MIN<int>(safeArea.width() - 2 * outerMargin, static_cast<int>(360 * scale));
+	const int contentWidth = _w - 2 * margin;
+	const int descriptionWidth = contentWidth - scrollbarWidth;
+	Common::Array<Common::U32String> lines;
+	font.wordWrapText(_descStr, descriptionWidth, lines);
+	const int scrollPadding = g_gui.xmlEval()->getVar("Globals.Font.Height", font.getFontHeight());
+	const int fixedHeight = 2 * margin + titleHeight + 3 * gap + inputHeight + buttonHeight;
+	// ScrollContainerWidget reserves spacing above and below its children.
+	_h = MIN<int>(safeArea.height() - 2 * outerMargin, fixedHeight + lines.size() * lineHeight + 2 * scrollPadding);
+	_x = safeArea.left + (safeArea.width() - _w) / 2;
+	_y = safeArea.top + (safeArea.height() - _h) / 2;
+	_titleWidget->setPos(margin, margin);
+	_titleWidget->setSize(contentWidth, titleHeight);
+	_titleWidget->setTooltip(_titleWidget->getLabel());
+
+	const int footerY = _h - margin - buttonHeight;
+	const int inputY = footerY - gap - inputHeight;
+	const int descriptionY = margin + titleHeight + gap;
+	_descScroller->setPos(margin, descriptionY);
+	_descScroller->setSize(descriptionWidth, MAX(1, inputY - gap - descriptionY));
+	while (_descLines.size() < lines.size()) {
+		_descLines.push_back(new GUI::StaticTextWidget(_descScroller, 0, 0, 1, 1, Common::U32String(), Graphics::kTextAlignStart, Common::U32String(), GUI::ThemeEngine::kFontStyleNormal));
+	}
+	for (uint i = 0; i < _descLines.size(); i++) {
+		const bool visible = i < lines.size();
+		_descLines[i]->setVisible(visible);
+		if (visible) {
+			_descLines[i]->setPos(0, i * lineHeight);
+			_descLines[i]->setSize(descriptionWidth, lineHeight);
+			_descLines[i]->setLabel(lines[i]);
+		}
+	}
+	_inputWidget->setPos(margin, inputY);
+	_inputWidget->setSize(contentWidth, inputHeight);
+	int buttonWidth = MAX(g_gui.getStringWidth(_okButton->getLabel()), g_gui.getStringWidth(_cancelButton->getLabel()));
+	buttonWidth += 2 * margin;
+	buttonWidth = MAX(buttonWidth, g_gui.xmlEval()->getVar("Globals.Button.Width", 0));
+	buttonWidth = MIN(buttonWidth, (contentWidth - gap) / 2);
+	const int buttonX = margin + (contentWidth - 2 * buttonWidth - gap) / 2;
+	_okButton->setPos(buttonX, footerY);
+	_okButton->setSize(buttonWidth, buttonHeight);
+	_okButton->setTooltip(_okButton->getLabel());
+	_cancelButton->setPos(buttonX + buttonWidth + gap, footerY);
+	_cancelButton->setSize(buttonWidth, buttonHeight);
+	_cancelButton->setTooltip(_cancelButton->getLabel());
+	GUI::Dialog::reflowLayout();
+}
+
+void ZoombiniSaveInputDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case GUI::kOKCmd:
+	case GUI::kCloseCmd:
+		setResult(cmd);
+		close();
+		break;
+	default:
+		GUI::Dialog::handleCommand(sender, cmd, data);
+		break;
+	}
+}
+
+Common::U32String ZoombiniSaveNameDialog::getTitle(bool rename) {
 	if (rename)
-		title = _c("Rename savefile", "zoombini-options");
-	else
-		title = _c("Save name", "zoombini-options");
-	new GUI::StaticTextWidget(this, 12, 10, _w - 24, 24, title, Graphics::kTextAlignStart);
-	new GUI::StaticTextWidget(this, 12, 38, _w - 24, 20, false,
-							  _c("Save names are limited to 22 bytes.", "zoombini-options"), Graphics::kTextAlignStart,
-							  Common::U32String(), GUI::ThemeEngine::kFontStyleNormal, Common::UNK_LANG, false);
+		return _c("Rename savefile", "zoombini-options");
+	return _c("Save name", "zoombini-options");
+}
+
+Common::U32String ZoombiniSaveNameDialog::getDescription(Common::CodePage codePage) {
+	Common::U32String descStr = _c("Save names are limited to 22 bytes.", "zoombini-options");
+	descStr += Common::U32String(U"\n");
 	const Common::String codePageName = ZmbReleaseInfo::getCodePageName(codePage);
-	new GUI::StaticTextWidget(this, 12, 58, _w - 24, 20, false,
-							  Common::U32String::format(_c("Only characters representable in %s are allowed.", "zoombini-options"), codePageName.c_str()),
-							  Graphics::kTextAlignStart, Common::U32String(), GUI::ThemeEngine::kFontStyleNormal, Common::UNK_LANG, false);
-	_edit = new GUI::EditTextWidget(this, 12, 84, _w - 24, 28, false, initialName);
-	new GUI::ButtonWidget(this, 12, 126, 150, 28, false, _("OK"), Common::U32String(), GUI::kOKCmd);
-	new GUI::ButtonWidget(this, _w - 162, 126, 150, 28, false, _("Cancel"), Common::U32String(), GUI::kCloseCmd);
+	descStr += Common::U32String::format(_c("Only characters representable in %s are allowed.", "zoombini-options"), codePageName.c_str());
+	return descStr;
+}
+
+ZoombiniSaveNameDialog::ZoombiniSaveNameDialog(const Common::U32String &initialName, bool rename, Common::CodePage codePage)
+	: ZoombiniSaveInputDialog(getTitle(rename), getDescription(codePage)) {
+	_edit = new GUI::EditTextWidget(this, 0, 0, 1, 1, false, initialName);
+	_inputWidget = _edit;
 }
 
 Common::U32String ZoombiniSaveNameDialog::getSaveName() const {
 	return _edit->getEditString();
 }
 
-void ZoombiniSaveNameDialog::reflowLayout() {
-	const int screenWidth = g_system->getOverlayWidth();
-	const int screenHeight = g_system->getOverlayHeight();
-	_x = MAX<int>(0, (screenWidth - _w) / 2);
-	_y = MAX<int>(0, (screenHeight - _h) / 2);
-	GUI::Dialog::reflowLayout();
+ZoombiniSaveFormatDialog::ZoombiniSaveFormatDialog(ZmbSaveFormat source)
+	: ZoombiniSaveInputDialog(_c("Save format", "zoombini-options"),
+							  _("Converting to an older format may cause some progress data to be lost.")),
+	  _srcFormat(source) {
+	_formatPopUp = new GUI::PopUpWidget(this, 0, 0, 1, 1);
+	_inputWidget = _formatPopUp;
+	_formatPopUp->appendEntry(_("Keep original format"), 0);
+	static constexpr ZmbSaveFormat kFormats[] = {
+		ZmbSaveFormat::kWinV10,
+		ZmbSaveFormat::kMacV10,
+		ZmbSaveFormat::kWinV11,
+		ZmbSaveFormat::kMacV11EU,
+		ZmbSaveFormat::kMacV11US,
+		ZmbSaveFormat::kWinV20,
+		ZmbSaveFormat::kMacV20,
+	};
+	for (ZmbSaveFormat format : kFormats) {
+		Common::U32String formatName = ZoombiniGameState::getSaveFormatName(format);
+		_formatPopUp->appendEntry(formatName, static_cast<uint32>(format));
+	}
+
+	_formatPopUp->setSelectedTag(0);
 }
 
-void ZoombiniSaveNameDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	if (cmd == GUI::kOKCmd) {
-		setResult(GUI::kOKCmd);
-		close();
-	} else if (cmd == GUI::kCloseCmd) {
-		setResult(GUI::kCloseCmd);
-		close();
-	} else {
-		GUI::Dialog::handleCommand(sender, cmd, data);
-	}
+ZmbSaveFormat ZoombiniSaveFormatDialog::getSaveFormat() const {
+	if (_formatPopUp->getSelectedTag() == 0)
+		return _srcFormat;
+	return static_cast<ZmbSaveFormat>(_formatPopUp->getSelectedTag());
 }
 
 bool ZoombiniSaveTransfer::importOneSave(const Common::String &target) {
@@ -288,7 +377,7 @@ bool ZoombiniSaveTransfer::importOneSave(const Common::String &target) {
 	Common::SeekableReadStream *sourceStream = Common::wrapCompressedReadStream(rawSource, DisposeAfterUse::YES);
 	const bool read = zmbReadAll(sourceStream, stateBytes, static_cast<uint32>(ZoombiniGameState::kStateFileSizeTlcV20));
 	delete sourceStream;
-	if (!read || !zmbIsValidStateSize(stateBytes.size())) {
+	if (!read || !ZoombiniGameState::isValidStateFileSize(stateBytes.size())) {
 		GUI::MessageDialog msg(_("The selected file is not a valid Zoombini save."));
 		msg.runModal();
 		return false;
@@ -354,16 +443,16 @@ bool ZoombiniSaveTransfer::importOneSave(const Common::String &target) {
 		msg.runModal();
 		return false;
 	}
-	const Common::String destination = ZoombiniGameState::makeSaveFilename(target, roster.getEntry(slot)._fileName);
-	if (destination.empty()) {
+	const Common::String destFile = ZoombiniGameState::makeSaveFilename(target, roster.getEntry(slot).getSaveFileStem());
+	if (destFile.empty()) {
 		roster.removeEntryAt(slot);
 		roster._nextSaveFileNameCounter = oldCounter;
 		GUI::MessageDialog msg(_("Unable to add the imported save to the save roster."));
 		msg.runModal();
 		return false;
 	}
-	if (!zmbWriteToSaveFile(saveFileMan, destination, stateBytes)) {
-		saveFileMan->removeSavefile(destination);
+	if (!zmbWriteToSaveFile(saveFileMan, destFile, stateBytes)) {
+		saveFileMan->removeSavefile(destFile);
 		roster.removeEntryAt(slot);
 		roster._nextSaveFileNameCounter = oldCounter;
 		GUI::MessageDialog msg(_("Unable to write the imported save file."));
@@ -371,8 +460,9 @@ bool ZoombiniSaveTransfer::importOneSave(const Common::String &target) {
 		return false;
 	}
 
-	if (!ZoombiniGameState::saveRosterFile(saveFileMan, target + ".WHO", roster)) {
-		saveFileMan->removeSavefile(destination);
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	if (!ZoombiniGameState::saveRosterFile(saveFileMan, target + ".WHO", roster, platform)) {
+		saveFileMan->removeSavefile(destFile);
 		roster.removeEntryAt(slot);
 		roster._nextSaveFileNameCounter = oldCounter;
 		GUI::MessageDialog msg(_("Unable to update the save roster."));
@@ -394,25 +484,25 @@ ZoombiniSaveManagementDialog::ZoombiniSaveManagementDialog(const Common::String 
 
 	_saveHeader = new GUI::ContainerWidget(this, margin, kZmbSaveDialogHeaderTop, kZmbSaveTableWidth, kZmbSaveTableRowHeight, true);
 	_saveHeader->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
-	new GUI::StaticTextWidget(_saveHeader, kZmbSaveSlotX, 0, kZmbSaveSlotWidth, kZmbSaveTableRowHeight, true,
-							  _c("Slot", "zoombini-options"), Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_saveHeader, kZmbSaveNameX, 0, kZmbSaveNameWidth, kZmbSaveTableRowHeight, true,
-							  _c("Name", "zoombini-options"), Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_saveHeader, kZmbSaveVersionX, 0, kZmbSaveVersionWidth, kZmbSaveTableRowHeight, true,
-							  _c("Ver", "zoombini-options"), Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_saveHeader, kZmbSaveIsleX, 0, kZmbSaveShelterWidth, kZmbSaveTableRowHeight, true,
-							  _c("Isle", "zoombini-options"), Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_saveHeader, kZmbSaveBasecamp1X, 0, kZmbSaveShelterWidth, kZmbSaveTableRowHeight, true,
-							  _c("BC1", "zoombini-options"), Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_saveHeader, kZmbSaveBasecamp2X, 0, kZmbSaveShelterWidth, kZmbSaveTableRowHeight, true,
-							  _c("BC2", "zoombini-options"), Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_saveHeader, kZmbSaveTownX, 0, kZmbSaveShelterWidth, kZmbSaveTableRowHeight, true,
-							  _c("Town", "zoombini-options"), Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_saveHeader, kZmbSaveActivePackX, 0, kZmbSaveActivePackWidth, kZmbSaveTableRowHeight, true,
-							  _c("Active", "zoombini-options"), Graphics::kTextAlignCenter);
+	_saveColumnLabels[0] = new GUI::StaticTextWidget(_saveHeader, kZmbSaveSlotX, 0, kZmbSaveSlotWidth, kZmbSaveTableRowHeight, true,
+													 _c("Slot", "zoombini-options"), Graphics::kTextAlignCenter);
+	_saveColumnLabels[1] = new GUI::StaticTextWidget(_saveHeader, kZmbSaveNameX, 0, kZmbSaveNameWidth, kZmbSaveTableRowHeight, true,
+													 _c("Name", "zoombini-options"), Graphics::kTextAlignCenter);
+	_saveColumnLabels[2] = new GUI::StaticTextWidget(_saveHeader, kZmbSaveVersionX, 0, kZmbSaveVersionWidth, kZmbSaveTableRowHeight, true,
+													 _c("Format", "zoombini-options"), Graphics::kTextAlignCenter);
+	_saveColumnLabels[3] = new GUI::StaticTextWidget(_saveHeader, kZmbSaveIsleX, 0, kZmbSaveShelterWidth, kZmbSaveTableRowHeight, true,
+													 _c("Isle", "zoombini-options"), Graphics::kTextAlignCenter);
+	_saveColumnLabels[4] = new GUI::StaticTextWidget(_saveHeader, kZmbSaveBasecamp1X, 0, kZmbSaveShelterWidth, kZmbSaveTableRowHeight, true,
+													 _c("BC1", "zoombini-options"), Graphics::kTextAlignCenter);
+	_saveColumnLabels[5] = new GUI::StaticTextWidget(_saveHeader, kZmbSaveBasecamp2X, 0, kZmbSaveShelterWidth, kZmbSaveTableRowHeight, true,
+													 _c("BC2", "zoombini-options"), Graphics::kTextAlignCenter);
+	_saveColumnLabels[6] = new GUI::StaticTextWidget(_saveHeader, kZmbSaveTownX, 0, kZmbSaveShelterWidth, kZmbSaveTableRowHeight, true,
+													 _c("Town", "zoombini-options"), Graphics::kTextAlignCenter);
+	_saveColumnLabels[7] = new GUI::StaticTextWidget(_saveHeader, kZmbSaveActivePackX, 0, kZmbSaveActivePackWidth, kZmbSaveTableRowHeight, true,
+													 _c("Active", "zoombini-options"), Graphics::kTextAlignCenter);
 
-	_saveList = new ZoombiniSaveListWidget(this, scaleSaveDialogValue(margin), scaleSaveDialogValue(kZmbSaveDialogListTop),
-										   scaleSaveDialogValue(kZmbSaveTableWidth), scaleSaveDialogValue(kZmbSaveDialogListHeight),
+	_saveList = new ZoombiniSaveListWidget(this, scaleLayoutValue(margin), scaleLayoutValue(kZmbSaveDialogListTop),
+										   scaleLayoutValue(kZmbSaveTableWidth), scaleLayoutValue(kZmbSaveDialogListHeight),
 										   _c("Corrupted save", "zoombini-options"));
 	_saveTable = new GUI::ContainerWidget(_saveList, 0, 0, kZmbSaveTableWidth, 0, true);
 	const int fontHeight = MAX<int>(1, static_cast<int>(g_gui.getFontHeight() / g_gui.getScaleFactor()));
@@ -443,12 +533,12 @@ ZoombiniSaveManagementDialog::ZoombiniSaveManagementDialog(const Common::String 
 	int actionX = margin;
 	_moveUpButton = new GUI::ButtonWidget(this, actionX, kZmbSaveDialogActionButtonsTop,
 										  kZmbSaveMoveButtonWidth, kZmbSaveDialogButtonHeight, true,
-										  Common::U32String("^"), Common::U32String(), kMoveOneSaveUpCmd);
+										  Common::U32String(U"^"), Common::U32String(), kMoveOneSaveUpCmd);
 	_moveUpButton->setTarget(this);
 	actionX += kZmbSaveMoveButtonWidth + kZmbSaveButtonGap;
 	_moveDownButton = new GUI::ButtonWidget(this, actionX, kZmbSaveDialogActionButtonsTop,
 											kZmbSaveMoveButtonWidth, kZmbSaveDialogButtonHeight, true,
-											Common::U32String("v"), Common::U32String(), kMoveOneSaveDownCmd);
+											Common::U32String(U"v"), Common::U32String(), kMoveOneSaveDownCmd);
 	_moveDownButton->setTarget(this);
 	actionX += kZmbSaveMoveButtonWidth + kZmbSaveButtonGap;
 	_renameButton = new GUI::ButtonWidget(this, actionX, kZmbSaveDialogActionButtonsTop,
@@ -476,14 +566,17 @@ ZoombiniSaveManagementDialog::ZoombiniSaveManagementDialog(const Common::String 
 										   _c("Recover", "zoombini-options"), Common::U32String(), kRecoverSaveCmd);
 	_recoverButton->setTarget(this);
 	actionX += kZmbSaveCommonButtonWidth + kZmbSaveButtonGap;
-	_compactButton = new GUI::ButtonWidget(this, actionX, kZmbSaveDialogActionButtonsTop,
+	_convertButton = new GUI::ButtonWidget(this, actionX, kZmbSaveDialogActionButtonsTop,
 										   kZmbSaveTableWidth - actionX, kZmbSaveDialogButtonHeight, true,
-										   _c("Slot Compact", "zoombini-options"), Common::U32String(), kCompactSlotsCmd);
-	_compactButton->setTarget(this);
+										   _c("Convert", "zoombini-options"), Common::U32String(), kConvertSaveCmd);
+	_convertButton->setTarget(this);
 
-	new GUI::ButtonWidget(this, margin + (kZmbSaveTableWidth - 120) / 2, kZmbSaveDialogButtonsTop,
-						  120, kZmbSaveDialogButtonHeight, true,
-						  _("Close"), Common::U32String(), GUI::kCloseCmd);
+	const int bottomButtonsX = margin + (kZmbSaveTableWidth - 292) / 2;
+	_compactButton = new GUI::ButtonWidget(this, bottomButtonsX, kZmbSaveDialogButtonsTop,
+										   160, kZmbSaveDialogButtonHeight, true, _c("Slot Compact", "zoombini-options"), Common::U32String(), kCompactSlotsCmd);
+	_compactButton->setTarget(this);
+	_closeButton = new GUI::ButtonWidget(this, bottomButtonsX + 172, kZmbSaveDialogButtonsTop,
+										 120, kZmbSaveDialogButtonHeight, true, _("Close"), Common::U32String(), GUI::kCloseCmd);
 }
 
 ZoombiniSaveManagementDialog::~ZoombiniSaveManagementDialog() {
@@ -496,23 +589,80 @@ void ZoombiniSaveManagementDialog::open() {
 	g_gui.scheduleTopDialogRedraw();
 }
 
+int ZoombiniSaveManagementDialog::scaleLayoutValue(int value) {
+	return static_cast<int>(value * g_gui.getScaleFactor());
+}
+
 void ZoombiniSaveManagementDialog::reflowLayout() {
-	const int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 16);
-	const int width = scaleSaveDialogValue(kZmbSaveTableWidth + (2 * kZmbSaveDialogWidthMargin)) + scrollbarWidth;
-	const int height = scaleSaveDialogValue(kZmbSaveDialogHeight);
-	const int screenWidth = g_system->getOverlayWidth();
-	const int screenHeight = g_system->getOverlayHeight();
+	const Common::Rect safeArea = g_system->getSafeOverlayArea();
+	const int outerMargin = MAX<int>(1, scaleLayoutValue(4));
+	int margin = MAX<int>(2, scaleLayoutValue(6));
+	int gap = MAX<int>(1, scaleLayoutValue(4));
+	int padding = MAX<int>(2, scaleLayoutValue(6));
+	if (safeArea.height() < scaleLayoutValue(280)) {
+		margin = MAX<int>(2, scaleLayoutValue(4));
+		gap = MAX<int>(1, scaleLayoutValue(2));
+		padding = MAX<int>(2, scaleLayoutValue(4));
+	}
+	const int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", scaleLayoutValue(9));
+	const int fontHeight = MAX(g_gui.getFontHeight(), g_gui.getFontHeight(GUI::ThemeEngine::kFontStyleNormal));
+	const int lineHeight = fontHeight + gap;
+	const int buttonHeight = MAX(g_gui.xmlEval()->getVar("Globals.Button.Height", 0), fontHeight + padding);
 
-	_x = MAX<int>(0, (screenWidth - width) / 2);
-	_y = MAX<int>(0, (screenHeight - height) / 2);
-	_w = width;
-	_h = height;
+	_w = MIN<int>(safeArea.width() - 2 * outerMargin, scaleLayoutValue(kZmbSaveTableWidth + 2 * kZmbSaveDialogWidthMargin) + scrollbarWidth);
+	_h = MIN<int>(safeArea.height(), scaleLayoutValue(kZmbSaveDialogHeight));
+	_x = safeArea.left + (safeArea.width() - _w) / 2;
+	_y = safeArea.top + (safeArea.height() - _h) / 2;
+	const int contentWidth = _w - 2 * margin;
+	const int tableWidth = contentWidth - scrollbarWidth;
+	_description->setPos(margin, margin);
+	_description->setSize(contentWidth, lineHeight);
+	_description->setTooltip(_description->getLabel());
 
+	GUI::ButtonWidget *const actions[] = {
+		_moveUpButton, _moveDownButton, _renameButton, _importButton,
+		_exportButton, _deleteButton, _recoverButton, _convertButton};
+	int actionX = margin;
+	int actionY = margin + lineHeight + gap;
+	const int maximumButtonWidth = (contentWidth - 3 * gap) / 4;
+	for (uint i = 0; i < ARRAYSIZE(actions); i++) {
+		GUI::ButtonWidget *button = actions[i];
+		int width = g_gui.getStringWidth(button->getLabel()) + 2 * padding;
+		width = MAX(width, scaleLayoutValue(22));
+		width = MIN(width, maximumButtonWidth);
+		if (margin < actionX && margin + contentWidth < actionX + width) {
+			actionX = margin;
+			actionY += buttonHeight + gap;
+		}
+		button->setPos(actionX, actionY);
+		button->setSize(width, buttonHeight);
+		button->setTooltip(button->getLabel());
+		actionX += width + gap;
+	}
+
+	updateSaveTableLayout(tableWidth, lineHeight, padding);
+	const int headerY = actionY + buttonHeight + gap;
+	_saveHeader->setPos(margin, headerY);
+	const int footerY = _h - margin - buttonHeight;
+	int footerButtonWidth = MAX(g_gui.getStringWidth(_compactButton->getLabel()), g_gui.getStringWidth(_closeButton->getLabel()));
+	footerButtonWidth += 2 * padding;
+	footerButtonWidth = MAX(footerButtonWidth, g_gui.xmlEval()->getVar("Globals.Button.Width", 0));
+	footerButtonWidth = MIN(footerButtonWidth, (contentWidth - gap) / 2);
+	const int footerX = margin + (contentWidth - 2 * footerButtonWidth - gap) / 2;
+	_compactButton->setPos(footerX, footerY);
+	_compactButton->setSize(footerButtonWidth, buttonHeight);
+	_compactButton->setTooltip(_compactButton->getLabel());
+	_closeButton->setPos(footerX + footerButtonWidth + gap, footerY);
+	_closeButton->setSize(footerButtonWidth, buttonHeight);
+	_closeButton->setTooltip(_closeButton->getLabel());
+	const int listY = headerY + _saveHeader->getHeight();
+	_saveList->setPos(margin, listY);
+	_saveList->setSize(tableWidth, MAX(1, footerY - gap - listY));
 	GUI::Dialog::reflowLayout();
 }
 
 void ZoombiniSaveManagementDialog::refreshSaveList() {
-	const Common::Array<ZoombiniSaveSummary> summaries = ZoombiniGameState::listSaveSummaries(_domain);
+	_saveSummaries = ZoombiniGameState::listSaveSummaries(_domain);
 	ZoombiniSaveListWidget *saveList = static_cast<ZoombiniSaveListWidget *>(_saveList);
 	_rosterIssueFlags = ZoombiniGameState::getRosterIssueFlagsForTarget(_domain);
 	_saveCompactionNeeded = _rosterIssueFlags == ZoombiniGameState::kRosterIssueNone &&
@@ -524,7 +674,7 @@ void ZoombiniSaveManagementDialog::refreshSaveList() {
 		compactButtonLabel = _c("Slot Compact", "zoombini-options");
 	_compactButton->setLabel(compactButtonLabel);
 	_compactButton->markAsDirty();
-	_saveRowCount = MIN<int>(summaries.size(), kMaxSaveRows);
+	_saveRowCount = MIN<int>(_saveSummaries.size(), kMaxSaveRows);
 	if (_saveRowCount == 0)
 		_selectedSaveSlot = -1;
 	else
@@ -537,9 +687,6 @@ void ZoombiniSaveManagementDialog::refreshSaveList() {
 
 	for (int i = 0; i < kMaxSaveRows; i++) {
 		const bool visible = i < _saveRowCount;
-		_saveFileNames[i].clear();
-		_saveRecoverableRows[i] = false;
-		_saveIssueRows[i] = static_cast<uint8>(ZoombiniGameState::ZmbSaveIssue::kNone);
 		_saveSelectionButtons[i]->setVisible(visible);
 		_saveSlotLabels[i]->setVisible(visible);
 		_saveNameLabels[i]->setVisible(visible);
@@ -554,10 +701,7 @@ void ZoombiniSaveManagementDialog::refreshSaveList() {
 			continue;
 		}
 
-		const ZoombiniSaveSummary &summary = summaries[i];
-		_saveFileNames[i] = summary._fileName;
-		_saveRecoverableRows[i] = summary._stateRecoverable;
-		_saveIssueRows[i] = static_cast<uint8>(summary._stateIssue);
+		const ZoombiniSaveSummary &summary = _saveSummaries[i];
 		const Common::U32String saveName(summary._saveName, saveNameCodePage);
 		Common::U32String slotName = _("?");
 		if (!summary._saveFileNumber.empty()) {
@@ -567,12 +711,12 @@ void ZoombiniSaveManagementDialog::refreshSaveList() {
 				strippedZeroCount += 1;
 			if (0 < strippedZeroCount)
 				displayedNumber = displayedNumber.substr(strippedZeroCount);
-			slotName = Common::U32String(displayedNumber.c_str());
+			slotName = Common::U32String(displayedNumber.c_str(), Common::kUtf8);
 		}
 
 		_saveSlotLabels[i]->setLabel(slotName);
 		_saveNameLabels[i]->setLabel(saveName);
-		_saveVersionLabels[i]->setLabel(Common::U32String(ZoombiniGameState::getSaveFormatName(summary._saveFormat)));
+		_saveVersionLabels[i]->setLabel(ZoombiniGameState::getSaveFormatName(summary._saveFormat));
 		if (summary._stateValid) {
 			_saveIsleLabels[i]->setLabel(Common::U32String::format("%d", summary._isleCount));
 			_saveBasecamp1Labels[i]->setLabel(Common::U32String::format("%d", summary._basecamp1Count));
@@ -608,12 +752,83 @@ void ZoombiniSaveManagementDialog::refreshSaveList() {
 	}
 
 	_saveSelectionGroup.setValue(_selectedSaveSlot);
-	updateSaveTableLayout();
+	reflowLayout();
 	updateActionButtonState();
 }
 
-void ZoombiniSaveManagementDialog::updateSaveTableLayout() {
-	_saveTable->setSize(scaleSaveDialogValue(kZmbSaveTableWidth), scaleSaveDialogValue(_saveRowCount * kZmbSaveTableRowHeight));
+void ZoombiniSaveManagementDialog::updateSaveTableLayout(int tableWidth, int lineHeight, int padding) {
+	const Graphics::Font &font = g_gui.getFont(GUI::ThemeEngine::kFontStyleNormal);
+	const int selectionWidth = font.getFontHeight() + padding;
+	int formatWidth = 0;
+	static constexpr ZmbSaveFormat kFormats[] = {
+		ZmbSaveFormat::kWinV10, ZmbSaveFormat::kMacV10, ZmbSaveFormat::kWinV11,
+		ZmbSaveFormat::kMacV11EU, ZmbSaveFormat::kMacV11US,
+		ZmbSaveFormat::kWinV20Compat, ZmbSaveFormat::kWinV20, ZmbSaveFormat::kMacV20Compat, ZmbSaveFormat::kMacV20};
+	for (ZmbSaveFormat format : kFormats)
+		formatWidth = MAX(formatWidth, font.getStringWidth(ZoombiniGameState::getSaveFormatName(format)));
+	int widths[8] = {
+		font.getStringWidth(Common::U32String(U"9999")), scaleLayoutValue(64), formatWidth,
+		font.getStringWidth(Common::U32String(U"999")), font.getStringWidth(Common::U32String(U"999")),
+		font.getStringWidth(Common::U32String(U"999")), font.getStringWidth(Common::U32String(U"999")),
+		font.getStringWidth(Common::U32String(U"99"))};
+	int requiredWidth = selectionWidth;
+	for (uint i = 0; i < ARRAYSIZE(widths); i++) {
+		widths[i] = MAX(widths[i], g_gui.getStringWidth(_saveColumnLabels[i]->getLabel())) + padding;
+		requiredWidth += widths[i];
+	}
+	const bool stacked = tableWidth < requiredWidth;
+	if (stacked) {
+		// Long translated headings may be elided; reserve the actual slot and format values first.
+		widths[0] = font.getStringWidth(Common::U32String(U"9999")) + padding;
+		widths[2] = formatWidth + padding;
+	}
+	int columnX[8] = {};
+	int columnY[8] = {};
+	int fixedWidth = selectionWidth + widths[0] + widths[2];
+	if (!stacked) {
+		for (uint i = 3; i < ARRAYSIZE(widths); i++)
+			fixedWidth += widths[i];
+	}
+	widths[1] = MAX(1, tableWidth - fixedWidth);
+	int x = selectionWidth;
+	for (uint i = 0; i < ARRAYSIZE(widths); i++) {
+		if (stacked && 3 <= i) {
+			// Keep all five statistics visible on a second line in narrow tables.
+			const int statsWidth = tableWidth - selectionWidth;
+			const int statIndex = i - 3;
+			columnX[i] = selectionWidth + statsWidth * statIndex / 5;
+			columnY[i] = lineHeight;
+			widths[i] = statsWidth * (statIndex + 1) / 5 - statsWidth * statIndex / 5;
+		} else {
+			columnX[i] = x;
+			x += widths[i];
+		}
+		_saveColumnLabels[i]->setPos(columnX[i], columnY[i]);
+		_saveColumnLabels[i]->setSize(widths[i], lineHeight);
+		_saveColumnLabels[i]->setTooltip(_saveColumnLabels[i]->getLabel());
+	}
+	int rowHeight = lineHeight;
+	if (stacked)
+		rowHeight += lineHeight;
+	_saveHeader->setSize(tableWidth, rowHeight);
+	_saveTable->setSize(tableWidth, _saveRowCount * rowHeight);
+	const Common::U32String corruptedTooltip = _c("Corrupted save", "zoombini-options");
+	for (int row = 0; row < kMaxSaveRows; row++) {
+		const int y = row * rowHeight;
+		_saveSelectionButtons[row]->setPos(0, y + (lineHeight - font.getFontHeight()) / 2);
+		_saveSelectionButtons[row]->setSize(selectionWidth, font.getFontHeight());
+		GUI::StaticTextWidget *const labels[] = {
+			_saveSlotLabels[row], _saveNameLabels[row], _saveVersionLabels[row], _saveIsleLabels[row],
+			_saveBasecamp1Labels[row], _saveBasecamp2Labels[row], _saveTownLabels[row], _saveActivePackLabels[row]};
+		for (uint i = 0; i < ARRAYSIZE(labels); i++) {
+			labels[i]->setPos(columnX[i], y + columnY[i]);
+			labels[i]->setSize(widths[i], lineHeight);
+			if (row < _saveRowCount && !_saveSummaries[row]._stateValid)
+				labels[i]->setTooltip(corruptedTooltip);
+			else
+				labels[i]->setTooltip(labels[i]->getLabel());
+		}
+	}
 }
 
 void ZoombiniSaveManagementDialog::deleteSave(int slot) {
@@ -691,6 +906,40 @@ void ZoombiniSaveManagementDialog::exportOneSave(int slot) {
 	ZoombiniSaveTransfer::exportOneSave(_domain, slot);
 }
 
+void ZoombiniSaveManagementDialog::convertSave(int slot) {
+	if (slot < 0 || _saveRowCount <= slot || !_saveSummaries[slot]._stateValid)
+		return;
+	const ZmbSaveFormat source = _saveSummaries[slot]._saveFormat;
+	ZoombiniSaveFormatDialog dialog(source);
+	if (dialog.runModal() != GUI::kOKCmd || dialog.getSaveFormat() == source)
+		return;
+	const ZmbSaveFormat destination = dialog.getSaveFormat();
+	// I18N: %S is a native save format name, such as MacV11US.
+	GUI::MessageDialog confirm(Common::U32String::format(
+								   _("Convert this save to %S? A backup of the original file will be kept. Changes apply the next time the save is loaded."),
+								   ZoombiniGameState::getSaveFormatName(destination).c_str()),
+							   _("Yes"), _("No"));
+	if (confirm.runModal() != GUI::kMessageOK)
+		return;
+	Common::String backup;
+	const bool converted = ZoombiniGameState::convertSaveForTarget(_domain, slot, destination, backup);
+	Common::U32String message;
+	if (converted)
+		message = _("The saved game was converted.");
+	else
+		message = _("Unable to convert the saved game.");
+	if (!backup.empty()) {
+		const Common::U32String backupName(backup, Common::kUtf8);
+		// I18N: %S is the original save's backup filename in ScummVM save storage.
+		message += Common::U32String::format(_("\nOriginal save backup: %S"), backupName.c_str());
+	}
+	GUI::MessageDialog done(message);
+	done.runModal();
+	refreshSaveList();
+	_saveList->reflowLayout();
+	g_gui.scheduleTopDialogRedraw();
+}
+
 void ZoombiniSaveManagementDialog::moveSave(int slot, int destinationSlot) {
 	if (slot < 0 || _saveRowCount <= slot || destinationSlot < 0 || _saveRowCount <= destinationSlot ||
 		(slot + 1 != destinationSlot && destinationSlot + 1 != slot))
@@ -713,14 +962,15 @@ void ZoombiniSaveManagementDialog::moveSave(int slot, int destinationSlot) {
 }
 
 void ZoombiniSaveManagementDialog::recoverSave(int slot) {
-	if (slot < 0 || _saveRowCount <= slot || !_saveRecoverableRows[slot])
+	if (slot < 0 || _saveRowCount <= slot || !_saveSummaries[slot]._stateRecoverable)
 		return;
 
+	const ZoombiniSaveSummary &summary = _saveSummaries[slot];
 	Common::U32String prompt = _("The selected save is corrupted.\n\nDetected problem:\n");
-	prompt += describeSaveIssue(static_cast<ZoombiniGameState::ZmbSaveIssue>(_saveIssueRows[slot]));
+	prompt += describeSaveIssue(summary._stateIssue);
 	prompt += _("\n\nRecovery is experimental and best-effort. Some progress may be changed or lost even if the recovered save "
 				"loads successfully. A backup of the original save will be retained.");
-	Common::String backupFilenamePattern = _saveFileNames[slot];
+	Common::String backupFilenamePattern = summary._fileName;
 	if (backupFilenamePattern.empty())
 		backupFilenamePattern = Common::String::format("%s-####.ZMB", _domain.c_str());
 	backupFilenamePattern += "-recovery-N.bak";
@@ -834,7 +1084,8 @@ void ZoombiniSaveManagementDialog::compactSaves() {
 }
 
 void ZoombiniSaveManagementDialog::updateActionButtonState() {
-	if (!_moveUpButton || !_moveDownButton || !_renameButton || !_importButton || !_exportButton || !_deleteButton || !_recoverButton || !_compactButton)
+	if (!_moveUpButton || !_moveDownButton || !_renameButton || !_importButton ||
+		!_exportButton || !_convertButton || !_deleteButton || !_recoverButton || !_compactButton)
 		return;
 
 	const bool hasSelection = 0 <= _selectedSaveSlot && _selectedSaveSlot < _saveRowCount;
@@ -843,8 +1094,9 @@ void ZoombiniSaveManagementDialog::updateActionButtonState() {
 	_renameButton->setEnabled(hasSelection);
 	_importButton->setEnabled(true);
 	_exportButton->setEnabled(hasSelection);
+	_convertButton->setEnabled(hasSelection && _saveSummaries[_selectedSaveSlot]._stateValid);
 	_deleteButton->setEnabled(hasSelection);
-	_recoverButton->setEnabled(hasSelection && _saveRecoverableRows[_selectedSaveSlot]);
+	_recoverButton->setEnabled(hasSelection && _saveSummaries[_selectedSaveSlot]._stateRecoverable);
 	_compactButton->setEnabled(_rosterIssueFlags != ZoombiniGameState::kRosterIssueNone || _saveCompactionNeeded);
 }
 
@@ -870,6 +1122,9 @@ void ZoombiniSaveManagementDialog::handleCommand(GUI::CommandSender *sender, uin
 		break;
 	case kRenameSaveCmd:
 		renameSave(_selectedSaveSlot);
+		break;
+	case kConvertSaveCmd:
+		convertSave(_selectedSaveSlot);
 		break;
 	case kExportOneSaveCmd:
 		exportOneSave(_selectedSaveSlot);
@@ -911,28 +1166,31 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 
 	GUI::StaticTextWidget *text = nullptr;
 
-	new ZoombiniSeparatorWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.SaveFilesSeparator");
-	_saveFilesHeader = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.SaveFilesHeader",
-												 _c("Manage savefiles", "zoombini-options"), Common::U32String(), GUI::ThemeEngine::kFontStyleBold);
-	_saveFilesHeader->setAlign(Graphics::TextAlign::kTextAlignStart);
+	if (!_isDemo) {
+		new ZoombiniSeparatorWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.SaveFilesSeparator");
+		_saveFilesHeader = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.SaveFilesHeader",
+													 _c("Manage savefiles", "zoombini-options"), Common::U32String(), GUI::ThemeEngine::kFontStyleBold);
+		_saveFilesHeader->setAlign(Graphics::TextAlign::kTextAlignStart);
 
-	_importSavesButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ImportSaves",
-											   _c("Import Saves", "zoombini-options"),
-											   _("Copy the original game's ZOOMBINI.WHO roster and ZOOM####.TXT saves from a directory into this ScummVM game."),
-											   kImportSavesCmd);
-	_importSavesButton->setTarget(this);
+		_importSavesButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ImportSaves",
+												   _c("Import Saves", "zoombini-options"),
+												   _("Copy the original game's ZOOMBINI.WHO roster and ZOOM####.TXT saves "
+													 "from a directory into this ScummVM game."),
+												   kImportSavesCmd);
+		_importSavesButton->setTarget(this);
 
-	_exportSavesButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ExportSaves",
-											   _c("Export Saves", "zoombini-options"),
-											   _("Copy this ScummVM game's saves into the original game's ZOOMBINI.WHO / ZOOM####.TXT layout."),
-											   kExportSavesCmd);
-	_exportSavesButton->setTarget(this);
+		_exportSavesButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ExportSaves",
+												   _c("Export Saves", "zoombini-options"),
+												   _("Copy this ScummVM game's saves into the original game's ZOOMBINI.WHO / ZOOM####.TXT layout."),
+												   kExportSavesCmd);
+		_exportSavesButton->setTarget(this);
 
-	_manageSavesButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ManageSaves",
-											   _("Manage"),
-											   Common::U32String(),
-											   kManageSavesCmd);
-	_manageSavesButton->setTarget(this);
+		_manageSavesButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ManageSaves",
+												   _("Manage"),
+												   Common::U32String(),
+												   kManageSavesCmd);
+		_manageSavesButton->setTarget(this);
+	}
 
 	new ZoombiniSeparatorWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.BugFixesSeparator");
 	text = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.BugFixes",
@@ -1024,40 +1282,41 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 	_prngAlgorithmPopUp->appendEntry(_("ScummVM Standard PRNG"), static_cast<uint32>(MohawkMetaEngine_Zoombini::PrngAlgorithm::kStandardPrng));
 
 	if (_isV1x) {
+		static constexpr const char *kMidiSoundtrackMacintosh = "Macintosh";
+		static constexpr const char *kMidiSoundtrackWindowsMPC = "Windows MPC";
 		const Common::U32String midiSoundtrackTooltip = _("Selects the Windows or Macintosh MIDI soundtrack. "
 														  "Both are the same tunes arranged for different synthesizers.");
 		_midiSoundtrackLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MidiSoundtrackLabel",
 														 _("MIDI soundtrack:"), midiSoundtrackTooltip);
 		_midiSoundtrackLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
 		_midiSoundtrackPopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MidiSoundtrack", midiSoundtrackTooltip);
-		// A demo with one MIDI archive cannot switch soundtracks.
+		// A release with one MIDI archive cannot switch soundtracks.
 		bool alwaysUseMacMidi = false;
 		bool alwaysUseWinMidi = false;
-		if (_isDemo) {
-			const Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
-			MohawkMetaEngine_Zoombini::MidiSoundtrack singleSoundtrack;
-			if (MohawkMetaEngine_Zoombini::getFixedDemoMidiSoundtrack(platform, language, singleSoundtrack)) {
-				switch (singleSoundtrack) {
-				case MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh:
-					alwaysUseMacMidi = true;
-					break;
-				case MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC:
-					alwaysUseWinMidi = true;
-					break;
-				}
+		const Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
+		MohawkMetaEngine_Zoombini::MidiSoundtrack singleSoundtrack;
+		const bool isUsV10 = checkGameGUIOption(GAMEOPTION_ZMB_V10US, guiOptions);
+		if (MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(platform, language, _isDemo, isUsV10, singleSoundtrack)) {
+			switch (singleSoundtrack) {
+			case MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh:
+				alwaysUseMacMidi = true;
+				break;
+			case MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC:
+				alwaysUseWinMidi = true;
+				break;
 			}
 		}
 		if (alwaysUseMacMidi) {
-			_midiSoundtrackPopUp->appendEntry(_("Macintosh"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
+			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackMacintosh, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
 			_midiSoundtrackPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
 			_midiSoundtrackPopUp->setEnabled(false);
 		} else if (alwaysUseWinMidi) {
-			_midiSoundtrackPopUp->appendEntry(_("Windows MPC"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
+			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackWindowsMPC, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
 			_midiSoundtrackPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
 			_midiSoundtrackPopUp->setEnabled(false);
 		} else {
-			_midiSoundtrackPopUp->appendEntry(_("Windows MPC"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
-			_midiSoundtrackPopUp->appendEntry(_("Macintosh"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
+			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackWindowsMPC, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
+			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackMacintosh, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
 		}
 	}
 
@@ -1118,16 +1377,20 @@ void ZoombiniOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::
 
 	layouts.addDialog(layoutName, overlayedLayout)
 		.addLayout(GUI::ThemeLayout::kLayoutVertical)
-		.addPadding(0, 0, 0, 0)
-		.addSpace(10)
-		.addWidget("SaveFilesSeparator", "", -1, 2)
-		.addWidget("SaveFilesHeader", "OptionsLabel")
-		.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-		.addPadding(0, 0, 0, 0)
-		.addWidget("ImportSaves", "Button")
-		.addWidget("ExportSaves", "Button")
-		.addWidget("ManageSaves", "Button")
-		.closeLayout()
+		.addPadding(0, 0, 0, 0);
+	if (!_isDemo) {
+		layouts
+			.addSpace(10)
+			.addWidget("SaveFilesSeparator", "", -1, 2)
+			.addWidget("SaveFilesHeader", "OptionsLabel")
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("ImportSaves", "Button")
+			.addWidget("ExportSaves", "Button")
+			.addWidget("ManageSaves", "Button")
+			.closeLayout();
+	}
+	layouts
 		.addSpace(10)
 		.addWidget("BugFixesSeparator", "", -1, 2)
 		.addWidget("BugFixes", "OptionsLabel")

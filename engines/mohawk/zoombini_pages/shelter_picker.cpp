@@ -59,11 +59,11 @@ ZoombiniShelterPicker::ZoombiniShelterPicker(MohawkEngine_Zoombini *vm)
 	_pickerButtonStateMap[kPickerButtons_Generate] = ButtonState(generateSoundResId, kHotspotGenerateButtonNormal, kHotspotGenerateButtonPressed, kShape4200_02_GenerateButtonNormal, kShape4200_03_GenerateButtonPressed);
 	_pickerButtonStateMap[kPickerButtons_Generate].setDisabledState(kShape4200_01_GenerateButtonDisabled);
 	// Z1-20U/TLC v2.0 release only: picker buttons gain yellow-outline hover states.
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		_pickerButtonStateMap[kPickerButtons_Generate].setHoverState(kShape4200_14_GenerateButtonHover);
 	_pickerButtonStateMap[kPickerButtons_Generate]._isPressDisabled = true; // Disabled until all matrix rows have a selection
 	_pickerButtonStateMap[kPickerButtons_Dice] = ButtonState(diceSoundResId, kHotspotDiceButtonNormal, kHotspotDiceButtonPressed, kShape4200_04_DiceButtonNormal, kShape4200_05_DiceButtonPressed);
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		_pickerButtonStateMap[kPickerButtons_Dice].setHoverState(kShape4200_15_DiceButtonHover);
 	_pickerButtonRectMap[kPickerButtons_Generate] = _generateButtonRect;
 	_pickerButtonRectMap[kPickerButtons_Dice] = _diceButtonRect;
@@ -83,7 +83,7 @@ void ZoombiniShelterPicker::open() {
 	// The preview name is selected before any Picker archive is opened.
 	generateZoombiniName();
 
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		openArchive(ZMB_MHK_MUSIC);
 	else
 		openMidiArchive(); // v1.x MIDI BGM (tMID 30000-30001).
@@ -96,7 +96,7 @@ void ZoombiniShelterPicker::setBackgroundMusic() {
 	// its non-blocking startup Load dialog. ScummVM starts it at the standard background-
 	// music lifecycle point because its Load dialog is synchronous. This keeps the music
 	// audible while that dialog is open and does not add, remove, or move any RNG call.
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		_vm->_sound->playSound(ZmbResource(ZmbResource::kPage, kResSound30001_Isle), Audio::Mixer::kMusicSoundType);
 	else
 		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, kResMidi30001_Isle));
@@ -505,7 +505,7 @@ void ZoombiniShelterPicker::pickerButtons_onPostRender(ZmbFeature *feature) {
 		Common::Rect nameTextRect = _nameBoxRect;
 		nameTextRect.left += 4;
 		nameTextRect.top += 4;
-		nameTextRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::kPickerNameLayout).apply(nameTextRect);
+		nameTextRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kPickerName).apply(nameTextRect);
 
 		ZoombiniGraphics::TextConf tc;
 		tc._hAlign = Graphics::TextAlign::kTextAlignCenter;
@@ -789,7 +789,7 @@ void ZoombiniShelterPicker::updateDiceButtonVisual(ZmbFeature *feature) {
 	ButtonState &diceButton = _pickerButtonStateMap[kPickerButtons_Dice];
 	diceButton._shapeNormalIdx = rapidFill ? kShape4200_06_DiceArrowButtonNormal : kShape4200_04_DiceButtonNormal;
 	diceButton._shapePressedIdx = rapidFill ? kShape4200_07_DiceArrowButtonPressed : kShape4200_05_DiceButtonPressed;
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		diceButton.setHoverState(rapidFill ? kShape4200_16_DiceArrowButtonHover : kShape4200_15_DiceButtonHover);
 	}
 	addExternalDirtyRect(feature->getZSortRect());
@@ -866,8 +866,9 @@ ZmbEventHandleResult ZoombiniShelterPicker::onKeyDown(const Common::KeyState &kb
 		return ZmbEventHandleResult::kConsumed;
 	}
 
-	// Lowercase r arms the one-shot version-update header for the next Help dialog.
-	// If that dialog still belongs to Picker, it also loads the update body.
+	// Only USv1.1 and TLCv2.0 provide the in-game Help dialog used by this Easter egg.
+	// Lowercase 'r' sets the one-shot version-update header for the next Help dialog.
+	// If that dialog still belongs to Picker, its update body comes from system STRL 2900.
 	if (kbd.ascii == 'r' && kbd.hasFlags(0))
 		_vm->requestPickerUpdateHelp();
 
@@ -923,7 +924,7 @@ ZmbEventHandleResult ZoombiniShelterPicker::onLButtonDown(const Common::Point &a
 
 ZmbEventHandleResult ZoombiniShelterPicker::onMouseMove(const Common::Point &absPos, const Common::Point &relPos) {
 	// Z1-20U/TLC v2.0 release only: picker-local buttons use hover shapes.
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		genericButton_updateHoverState(_pickerButtonsFeature, absPos, _pickerButtonStateMap, _pickerButtonRectMap);
 	return ZoombiniInteractive::onMouseMove(absPos, relPos);
 }
@@ -1369,7 +1370,7 @@ bool ZoombiniShelterPicker::isZoombiniTraitGeneratable(ZmbTrait trait) const {
 
 void ZoombiniShelterPicker::generateZoombiniName() {
 	ZoombiniText::JPFixedNameKind requestedFixedName = ZoombiniText::kJPFixedNameNone;
-	if (_vm->getRelInfo().isVariant(ZmbReleaseInfo::kJapanV10)) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
 		if (_v10jpKbd_F1Held)
 			requestedFixedName = ZoombiniText::kJPFixedJPNameChobi;
 		else if (_v10jpKbd_F2Held)

@@ -232,7 +232,7 @@ void ZoombiniPuzzleFleens::buildZmbTraitSetup() {
 	// Their indices follow @ref ZmbTrait::TraitKind order: hair, eyes, nose, and feet.
 	// Select the table belonging to the active layout.
 	// Generated transforms persist across later Fleens visits and save/load operations.
-	const bool isTlc = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2);
+	const bool isTlc = _vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20);
 	byte *traitValueRotations;
 	byte *traitDestSlots;
 	if (isTlc) {

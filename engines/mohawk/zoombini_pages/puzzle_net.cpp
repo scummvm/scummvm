@@ -69,7 +69,7 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniPuzzleNet::getScriptSound
 }
 
 void ZoombiniPuzzleNet::open() {
-	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kTlcV20)) {
+	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::Family::kTlcV20)) {
 		openArchive(ZMB_MHK_NET_DEMO);
 	} else {
 		openArchive(ZMB_MHK_NET);
@@ -197,7 +197,7 @@ void ZoombiniPuzzleNet::loadFeatures() {
 	{
 		ZmbFeature *parent = mainFeature;
 		// TLC v2 adds selector-button SCRBs 10019-10035 to the original feedback group.
-		const uint16 feedbackScrbCount = _vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2) ? 36 : 19;
+		const uint16 feedbackScrbCount = _vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20) ? 36 : 19;
 		for (uint16 i = 0; i < feedbackScrbCount; i++) {
 			parent = loadSubFeature(parent, ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Feedback), kResScrb10000_FeedbackBase + i);
 		}
@@ -239,7 +239,7 @@ void ZoombiniPuzzleNet::loadFeatures() {
 
 	// Lay out the initial Snoids with a 30-frame walk-in stagger.
 	layoutStaticAndWalkIn(0, false);
-	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11)) {
+	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::Family::kUsV10)) {
 		// The demo initializes every materialized Snoid facing right before any NET script can turn it.
 		for (ZmbFeatureList<ZmbSnoid>::const_iterator it = _snoidMap.begin(); it != _snoidMap.end(); it++) {
 			if ((*it)->isPackSnoid())
@@ -257,7 +257,7 @@ void ZoombiniPuzzleNet::loadFeatures() {
 	// Buttons
 	// Set up Go/Map/Help buttons
 	configureStandardPuzzleControlRects();
-	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kTlcV20))
+	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::Family::kTlcV20))
 		setGoButtonsEnabled(true);
 	loadStandardPuzzleControlFeatures(kResBitmapShape6000_Snoid);
 }
@@ -267,7 +267,7 @@ void ZoombiniPuzzleNet::initHelpPrompt() {
 }
 
 void ZoombiniPuzzleNet::onGoButtonActivated() {
-	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::kTlcV20)) {
+	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::Family::kTlcV20)) {
 		if (_vm->openMsgBoxDialog(ZoombiniMsgBoxType::kAskReallyQuit) == ZoombiniDialogResult::kYes)
 			Engine::quitGame();
 		return;
@@ -716,7 +716,7 @@ void ZoombiniPuzzleNet::registerColumnRunners() {
 }
 
 void ZoombiniPuzzleNet::registerV2SelectorHoverRunners() {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	ZmbFeature::EventHooks hoverHooks;
@@ -766,7 +766,7 @@ ZmbRenderResult ZoombiniPuzzleNet::selectorHover_render(ZmbFeature *feature) {
 }
 
 void ZoombiniPuzzleNet::updateV2SelectorHoverRunners() {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	const Common::Point mousePos = _selectorHoverMousePos;
@@ -1567,7 +1567,7 @@ void ZoombiniPuzzleNet::releaseSelectorGateAfterTraitAnimation() {
 // ---------------------------------------------------------------------------
 
 void ZoombiniPuzzleNet::onMapButtonActivated() {
-	if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::kTlcV20)) {
+	if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::Family::kTlcV20)) {
 		ZoombiniPuzzle::onMapButtonActivated();
 		return;
 	}
@@ -1688,14 +1688,14 @@ void ZoombiniPuzzleNet::linkAcceptedSnoid(ZmbSnoid *snoid) {
 }
 
 void ZoombiniPuzzleNet::onSnoidWalkCompleted(ZmbSnoid *snoid) {
-	if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::kUsV11) || !snoid)
+	// Preserve the v1.0US demo's uphill exit-facing direction after a tracked walk completes.
+	if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::Family::kUsV10) || !snoid)
 		return;
 
 	for (int16 exitPosIdx = 0; exitPosIdx < 16; exitPosIdx++) {
 		if (snoid->getAnimTargetPos() != kExitPositions[exitPosIdx])
 			continue;
 
-		// The demo leaves an accepted Snoid facing in its last uphill walking direction.
 		// Cancel the shared post-arrival turn before its first animation tick can normalize the final exit pose.
 		snoid->setAnimState(kSnoidAnimState000_Idle);
 		return;

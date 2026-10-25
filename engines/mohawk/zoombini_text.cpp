@@ -46,11 +46,20 @@
 namespace Mohawk {
 
 constexpr ZoombiniText::PageKeyEntry ZoombiniText::kPageKeyTable[];
+constexpr char32_t ZoombiniText::kJapaneseF1DebugName[];
+constexpr char32_t ZoombiniText::kJapaneseDebugF1Name[];
+constexpr char32_t ZoombiniText::kJapaneseInitialKana[];
+constexpr char32_t ZoombiniText::kJapaneseNormalKana[];
+constexpr char32_t ZoombiniText::kJapaneseSemiVoicedKana[];
+constexpr char32_t ZoombiniText::kJapaneseVoicedKana[];
+constexpr char32_t ZoombiniText::kJapaneseContractedKana[];
+constexpr char32_t ZoombiniText::kJapaneseSmallKana[];
 
 constexpr const char *const ZoombiniText::kExeCreditParagraphsAnchor;
 constexpr const char *const ZoombiniText::kExeSpanishCreditParagraphsAnchor;
 constexpr const char *const ZoombiniText::kExePortugueseCreditParagraphsAnchor;
 const ZoombiniText::CreditLimits ZoombiniText::kV10ESCreditLimits = {254, 31, 2464};
+const ZoombiniText::CreditLimits ZoombiniText::kV10USCreditLimits = {248, 27, 2349};
 const ZoombiniText::CreditLimits ZoombiniText::kV10PTCreditLimits = {267, 32, 2622};
 const ZoombiniText::CreditLimits ZoombiniText::kV11USCreditLimits = {248, 27, 2355};
 const ZoombiniText::CreditLimits ZoombiniText::kV111KRCreditLimits = {258, 35, 2541};
@@ -81,9 +90,17 @@ ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::inArchiveMember(const c
 	return source;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::inMacDataResFork(const char *srcFileName, uint32 srcExpectedSize) const {
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::inMac68kDataResFork(const char *srcFileName, uint32 srcExpectedSize) const {
 	ExeTextSource source = inFile(srcFileName, srcExpectedSize);
-	source.macDataResFork = true;
+	source.primaryDataSource = ExeTextDataSource::kExpandedMac68kA5Globals;
+	return source;
+}
+
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::inMacPpcPefDataFork(const char *srcFileName, uint32 srcExpectedSize, uint16 sectionIdx, uint32 sectionSize) const {
+	ExeTextSource source = inFile(srcFileName, srcExpectedSize);
+	source.primaryDataSource = ExeTextDataSource::kExpandedMacPpcPefDataSection;
+	source.macPpcPefDataSection = sectionIdx;
+	source.macPpcPefDataSize = sectionSize;
 	return source;
 }
 
@@ -93,11 +110,15 @@ ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::inCabinetMember(const c
 	return source;
 }
 
-template<size_t size>
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withTextTable(Common::CodePage srcCodePage, const ZoombiniText::ExeTextEntry (&srcEntries)[size]) {
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withTextTable(Common::CodePage srcCodePage, const ZoombiniText::ExeTextEntry *srcEntries,
+																	   uint32 srcEntryCount, ExeTextDataSource srcDataSource) {
 	this->codePage = srcCodePage;
-	this->entries = srcEntries;
-	entryCount = size;
+	textTables.clear();
+	return withAdditionalTextTable(srcEntries, srcEntryCount, srcDataSource);
+}
+
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withAdditionalTextTable(const ZoombiniText::ExeTextEntry *srcEntries, uint32 srcEntryCount, ExeTextDataSource srcDataSource) {
+	textTables.push_back(ExeTextTable(srcEntries, srcEntryCount, srcDataSource));
 	return *this;
 }
 
@@ -143,7 +164,13 @@ ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditPtrTable(uint
 
 ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withMacA5RelativeCreditPtrTable(uint32 tableOffset) {
 	withCreditPtrTable(tableOffset, 0, 0);
-	creditSourceKind = CreditSourceKind::kMacRleA5RelativePointerStream;
+	creditSourceKind = CreditSourceKind::kMac68kA5RelativePointerStream;
+	return *this;
+}
+
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withMacPefRelativeCreditPtrTable(uint32 tableOffset) {
+	withCreditPtrTable(tableOffset, 0, 0);
+	creditSourceKind = CreditSourceKind::kMacPpcPefRelativePointerStream;
 	return *this;
 }
 
@@ -202,28 +229,28 @@ const ZoombiniText::ResTextEntry ZoombiniText::kV10EU_ResTextEntries[] = {
 	{ZoombiniText::kMaze, 2000, 14},
 	{ZoombiniText::kTown, 2000, 15},
 	// STRL 2002 journey-stat labels are distinct from the full page names in STRL 2000.
-	{ZoombiniText::kEuropeJourneyStatZoombiniIsle, 2002, 0},
-	{ZoombiniText::kEuropeJourneyStatShelterRock, 2002, 1},
-	{ZoombiniText::kEuropeJourneyStatShadeTree, 2002, 2},
-	{ZoombiniText::kEuropeJourneyStatZoombiniton, 2002, 3},
+	{ZoombiniText::kJourneyStatZoombiniIsle, 2002, 0},
+	{ZoombiniText::kJourneyStatShelterRock, 2002, 1},
+	{ZoombiniText::kJourneyStatShadeTree, 2002, 2},
+	{ZoombiniText::kJourneyStatZoombiniton, 2002, 3},
 	{ZoombiniText::kPracticeMode, 2002, 4},
-	// Four progress-dependent return-path blocks. (Only in europe releases)
-	{ZoombiniText::kEuropePracticeReturnInitial1, 2002, 5},
-	{ZoombiniText::kEuropePracticeReturnInitial2, 2002, 6},
-	{ZoombiniText::kEuropePracticeReturnInitial3, 2002, 7},
-	{ZoombiniText::kEuropePracticeReturnInitial4, 2002, 8},
-	{ZoombiniText::kEuropePracticeReturnShelterRock1, 2002, 9},
-	{ZoombiniText::kEuropePracticeReturnShelterRock2, 2002, 10},
-	{ZoombiniText::kEuropePracticeReturnShelterRock3, 2002, 11},
-	{ZoombiniText::kEuropePracticeReturnShelterRock4, 2002, 12},
-	{ZoombiniText::kEuropePracticeReturnShadeTree1, 2002, 13},
-	{ZoombiniText::kEuropePracticeReturnShadeTree2, 2002, 14},
-	{ZoombiniText::kEuropePracticeReturnShadeTree3, 2002, 15},
-	{ZoombiniText::kEuropePracticeReturnShadeTree4, 2002, 16},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton1, 2002, 17},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton2, 2002, 18},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton3, 2002, 19},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton4, 2002, 20},
+	// Europe-v1 STRL 2002 return-path blocks; USv1.0 supplies these keys from executable tables.
+	{ZoombiniText::kPracticeReturnInitial1, 2002, 5},
+	{ZoombiniText::kPracticeReturnInitial2, 2002, 6},
+	{ZoombiniText::kPracticeReturnInitial3, 2002, 7},
+	{ZoombiniText::kPracticeReturnInitial4, 2002, 8},
+	{ZoombiniText::kPracticeReturnShelterRock1, 2002, 9},
+	{ZoombiniText::kPracticeReturnShelterRock2, 2002, 10},
+	{ZoombiniText::kPracticeReturnShelterRock3, 2002, 11},
+	{ZoombiniText::kPracticeReturnShelterRock4, 2002, 12},
+	{ZoombiniText::kPracticeReturnShadeTree1, 2002, 13},
+	{ZoombiniText::kPracticeReturnShadeTree2, 2002, 14},
+	{ZoombiniText::kPracticeReturnShadeTree3, 2002, 15},
+	{ZoombiniText::kPracticeReturnShadeTree4, 2002, 16},
+	{ZoombiniText::kPracticeReturnZoombiniton1, 2002, 17},
+	{ZoombiniText::kPracticeReturnZoombiniton2, 2002, 18},
+	{ZoombiniText::kPracticeReturnZoombiniton3, 2002, 19},
+	{ZoombiniText::kPracticeReturnZoombiniton4, 2002, 20},
 	{ZoombiniText::kTerrainKey, 2004, 0},
 	{ZoombiniText::kChooseLevel, 2004, 1},
 	{ZoombiniText::kLevel1, 2004, 2},
@@ -408,27 +435,27 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10ES_PETextEntries[] = {
 	{ZoombiniText::kSmoke, 0x89A88, 14},
 	{ZoombiniText::kMaze, 0x89A97, 22},
 	{ZoombiniText::kTown, 0x89AAE, 14},
-	{ZoombiniText::kEuropeJourneyStatZoombiniIsle, 0x89ABD, 13},
-	{ZoombiniText::kEuropeJourneyStatShelterRock, 0x89ACB, 12},
-	{ZoombiniText::kEuropeJourneyStatShadeTree, 0x89AD8, 13},
-	{ZoombiniText::kEuropeJourneyStatZoombiniton, 0x89AE6, 14},
+	{ZoombiniText::kJourneyStatZoombiniIsle, 0x89ABD, 13},
+	{ZoombiniText::kJourneyStatShelterRock, 0x89ACB, 12},
+	{ZoombiniText::kJourneyStatShadeTree, 0x89AD8, 13},
+	{ZoombiniText::kJourneyStatZoombiniton, 0x89AE6, 14},
 	{ZoombiniText::kPracticeMode, 0x89AF5, 9},
-	{ZoombiniText::kEuropePracticeReturnInitial1, 0x89AFF, 16},
-	{ZoombiniText::kEuropePracticeReturnInitial2, 0x89B10, 18},
-	{ZoombiniText::kEuropePracticeReturnInitial3, 0x89B23, 1},
-	{ZoombiniText::kEuropePracticeReturnInitial4, 0x89B25, 1},
-	{ZoombiniText::kEuropePracticeReturnShelterRock1, 0x89B27, 16},
-	{ZoombiniText::kEuropePracticeReturnShelterRock2, 0x89B38, 18},
-	{ZoombiniText::kEuropePracticeReturnShelterRock3, 0x89B4B, 14},
-	{ZoombiniText::kEuropePracticeReturnShelterRock4, 0x89B5A, 1},
-	{ZoombiniText::kEuropePracticeReturnShadeTree1, 0x89B5C, 16},
-	{ZoombiniText::kEuropePracticeReturnShadeTree2, 0x89B6D, 19},
-	{ZoombiniText::kEuropePracticeReturnShadeTree3, 0x89B81, 12},
-	{ZoombiniText::kEuropePracticeReturnShadeTree4, 0x89B8E, 13},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton1, 0x89B9C, 16},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton2, 0x89BAD, 19},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton3, 0x89BC1, 25},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton4, 0x89BDB, 16},
+	{ZoombiniText::kPracticeReturnInitial1, 0x89AFF, 16},
+	{ZoombiniText::kPracticeReturnInitial2, 0x89B10, 18},
+	{ZoombiniText::kPracticeReturnInitial3, 0x89B23, 1},
+	{ZoombiniText::kPracticeReturnInitial4, 0x89B25, 1},
+	{ZoombiniText::kPracticeReturnShelterRock1, 0x89B27, 16},
+	{ZoombiniText::kPracticeReturnShelterRock2, 0x89B38, 18},
+	{ZoombiniText::kPracticeReturnShelterRock3, 0x89B4B, 14},
+	{ZoombiniText::kPracticeReturnShelterRock4, 0x89B5A, 1},
+	{ZoombiniText::kPracticeReturnShadeTree1, 0x89B5C, 16},
+	{ZoombiniText::kPracticeReturnShadeTree2, 0x89B6D, 19},
+	{ZoombiniText::kPracticeReturnShadeTree3, 0x89B81, 12},
+	{ZoombiniText::kPracticeReturnShadeTree4, 0x89B8E, 13},
+	{ZoombiniText::kPracticeReturnZoombiniton1, 0x89B9C, 16},
+	{ZoombiniText::kPracticeReturnZoombiniton2, 0x89BAD, 19},
+	{ZoombiniText::kPracticeReturnZoombiniton3, 0x89BC1, 25},
+	{ZoombiniText::kPracticeReturnZoombiniton4, 0x89BDB, 16},
 	{ZoombiniText::kTerrainKey, 0x89BEC, 17},
 	{ZoombiniText::kChooseLevel, 0x89BFE, 14},
 	{ZoombiniText::kLevel1, 0x89C0D, 12},
@@ -564,27 +591,27 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10PT_PETextEntries[] = {
 	{ZoombiniText::kSmoke, 0x89B58, 20},
 	{ZoombiniText::kMaze, 0x89B6D, 26},
 	{ZoombiniText::kTown, 0x89B88, 12},
-	{ZoombiniText::kEuropeJourneyStatZoombiniIsle, 0x89B95, 20},
-	{ZoombiniText::kEuropeJourneyStatShelterRock, 0x89BAA, 29},
-	{ZoombiniText::kEuropeJourneyStatShadeTree, 0x89BC8, 29},
-	{ZoombiniText::kEuropeJourneyStatZoombiniton, 0x89BE6, 12},
+	{ZoombiniText::kJourneyStatZoombiniIsle, 0x89B95, 20},
+	{ZoombiniText::kJourneyStatShelterRock, 0x89BAA, 29},
+	{ZoombiniText::kJourneyStatShadeTree, 0x89BC8, 29},
+	{ZoombiniText::kJourneyStatZoombiniton, 0x89BE6, 12},
 	{ZoombiniText::kPracticeMode, 0x89BF3, 11},
-	{ZoombiniText::kEuropePracticeReturnInitial1, 0x89BFF, 20},
-	{ZoombiniText::kEuropePracticeReturnInitial2, 0x89C14, 28},
-	{ZoombiniText::kEuropePracticeReturnInitial3, 0x89C31, 1},
-	{ZoombiniText::kEuropePracticeReturnInitial4, 0x89C33, 1},
-	{ZoombiniText::kEuropePracticeReturnShelterRock1, 0x89C35, 20},
-	{ZoombiniText::kEuropePracticeReturnShelterRock2, 0x89C4A, 28},
-	{ZoombiniText::kEuropePracticeReturnShelterRock3, 0x89C67, 37},
-	{ZoombiniText::kEuropePracticeReturnShelterRock4, 0x89C8D, 1},
-	{ZoombiniText::kEuropePracticeReturnShadeTree1, 0x89C8F, 20},
-	{ZoombiniText::kEuropePracticeReturnShadeTree2, 0x89CA4, 29},
-	{ZoombiniText::kEuropePracticeReturnShadeTree3, 0x89CC2, 38},
-	{ZoombiniText::kEuropePracticeReturnShadeTree4, 0x89CE9, 34},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton1, 0x89D0C, 20},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton2, 0x89D21, 29},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton3, 0x89D3F, 25},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton4, 0x89D59, 22},
+	{ZoombiniText::kPracticeReturnInitial1, 0x89BFF, 20},
+	{ZoombiniText::kPracticeReturnInitial2, 0x89C14, 28},
+	{ZoombiniText::kPracticeReturnInitial3, 0x89C31, 1},
+	{ZoombiniText::kPracticeReturnInitial4, 0x89C33, 1},
+	{ZoombiniText::kPracticeReturnShelterRock1, 0x89C35, 20},
+	{ZoombiniText::kPracticeReturnShelterRock2, 0x89C4A, 28},
+	{ZoombiniText::kPracticeReturnShelterRock3, 0x89C67, 37},
+	{ZoombiniText::kPracticeReturnShelterRock4, 0x89C8D, 1},
+	{ZoombiniText::kPracticeReturnShadeTree1, 0x89C8F, 20},
+	{ZoombiniText::kPracticeReturnShadeTree2, 0x89CA4, 29},
+	{ZoombiniText::kPracticeReturnShadeTree3, 0x89CC2, 38},
+	{ZoombiniText::kPracticeReturnShadeTree4, 0x89CE9, 34},
+	{ZoombiniText::kPracticeReturnZoombiniton1, 0x89D0C, 20},
+	{ZoombiniText::kPracticeReturnZoombiniton2, 0x89D21, 29},
+	{ZoombiniText::kPracticeReturnZoombiniton3, 0x89D3F, 25},
+	{ZoombiniText::kPracticeReturnZoombiniton4, 0x89D59, 22},
 	{ZoombiniText::kTerrainKey, 0x89D70, 16},
 	{ZoombiniText::kChooseLevel, 0x89D81, 16},
 	{ZoombiniText::kLevel1, 0x89D92, 15},
@@ -986,7 +1013,794 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_NETextEntries[] = {
 	{ZoombiniText::kNotiBoxAutoStickeyOff, 0xDD9D3, 15},
 };
 
-const ZoombiniText::ExeTextEntry ZoombiniText::kV11USMacDemoTextEntries[] = {
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_NETextEntries[] = {
+	{ZoombiniText::kTown, 890205, 13},
+	{ZoombiniText::kPicker, 889976, 13},
+	{ZoombiniText::kBridge, 889990, 15},
+	{ZoombiniText::kTunnels, 890006, 16},
+	{ZoombiniText::kPizza, 890023, 10},
+	{ZoombiniText::kBasecamp1, 890034, 12},
+	{ZoombiniText::kFerry, 890047, 25},
+	{ZoombiniText::kLilly, 890073, 22},
+	{ZoombiniText::kSlides, 890096, 10},
+	{ZoombiniText::kFleens, 890107, 7},
+	{ZoombiniText::kHotel, 890115, 14},
+	{ZoombiniText::kNet, 890130, 12},
+	{ZoombiniText::kBasecamp2, 890143, 10},
+	{ZoombiniText::kCaves, 890154, 15},
+	{ZoombiniText::kSmoke, 890170, 14},
+	{ZoombiniText::kMaze, 890186, 18},
+	{ZoombiniText::kNewGame, 851968, 8},
+	{ZoombiniText::kJourneyStatZoombiniIsle, 889976, 13},
+	{ZoombiniText::kJourneyStatShelterRock, 890034, 12},
+	{ZoombiniText::kJourneyStatShadeTree, 890143, 10},
+	{ZoombiniText::kJourneyStatZoombiniton, 890205, 13},
+	{ZoombiniText::kPracticeMode, 890271, 13},
+	{ZoombiniText::kPracticeReturnInitial1, 890285, 18},
+	{ZoombiniText::kPracticeReturnInitial2, 890304, 19},
+	{ZoombiniText::kPracticeReturnInitial3, 889984, 1},
+	{ZoombiniText::kPracticeReturnInitial4, 889984, 1},
+	{ZoombiniText::kPracticeReturnShelterRock1, 890285, 18},
+	{ZoombiniText::kPracticeReturnShelterRock2, 890304, 19},
+	{ZoombiniText::kPracticeReturnShelterRock3, 890367, 15},
+	{ZoombiniText::kPracticeReturnShelterRock4, 889984, 1},
+	{ZoombiniText::kPracticeReturnShadeTree1, 890285, 18},
+	{ZoombiniText::kPracticeReturnShadeTree2, 890404, 20},
+	{ZoombiniText::kPracticeReturnShadeTree3, 890425, 15},
+	{ZoombiniText::kPracticeReturnShadeTree4, 890143, 10},
+	{ZoombiniText::kPracticeReturnZoombiniton1, 890285, 18},
+	{ZoombiniText::kPracticeReturnZoombiniton2, 890404, 20},
+	{ZoombiniText::kPracticeReturnZoombiniton3, 890492, 16},
+	{ZoombiniText::kPracticeReturnZoombiniton4, 890509, 16},
+	{ZoombiniText::kTerrainKey, 890526, 11},
+	{ZoombiniText::kChooseLevel, 890538, 14},
+	{ZoombiniText::kLevel1, 890553, 11},
+	{ZoombiniText::kLevel2, 890565, 11},
+	{ZoombiniText::kLevel3, 890577, 9},
+	{ZoombiniText::kLevel4, 890587, 15},
+	{ZoombiniText::kRoute1, 890603, 31},
+	{ZoombiniText::kRoute2, 890635, 11},
+	{ZoombiniText::kRoute3, 890647, 17},
+	{ZoombiniText::kRoute4, 890665, 20},
+	{ZoombiniText::kXferVillePopulation, 890686, 24},
+	{ZoombiniText::kMemorialJanuary, 890712, 7},
+	{ZoombiniText::kMemorialFebruary, 890720, 8},
+	{ZoombiniText::kMemorialMarch, 890729, 5},
+	{ZoombiniText::kMemorialApril, 890735, 5},
+	{ZoombiniText::kMemorialMay, 890741, 3},
+	{ZoombiniText::kMemorialJune, 890745, 4},
+	{ZoombiniText::kMemorialJuly, 890750, 4},
+	{ZoombiniText::kMemorialAugust, 890755, 6},
+	{ZoombiniText::kMemorialSeptember, 890762, 9},
+	{ZoombiniText::kMemorialOctober, 890772, 7},
+	{ZoombiniText::kMemorialNovember, 890780, 8},
+	{ZoombiniText::kMemorialDecember, 890789, 8},
+	{ZoombiniText::kMemorialWhenLevel, 890798, 18},
+	{ZoombiniText::kMemorialHonorMonument, 890817, 50},
+	{ZoombiniText::kMemorialHonorWindmill, 890868, 53},
+	{ZoombiniText::kMemorialHonorObservatory, 890922, 44},
+	{ZoombiniText::kMemorialHonorBowlingAlley, 890967, 44},
+	{ZoombiniText::kMemorialHonorGeneralStore, 891012, 53},
+	{ZoombiniText::kMemorialHonorSwimmingPool, 891066, 45},
+	{ZoombiniText::kMemorialHonorPlayground, 891112, 55},
+	{ZoombiniText::kMemorialHonorBandShell, 891168, 53},
+	{ZoombiniText::kMemorialHonorSchool, 891222, 43},
+	{ZoombiniText::kMemorialHonorLibrary, 891266, 51},
+	{ZoombiniText::kMemorialHonorFire, 891318, 40},
+	{ZoombiniText::kMemorialHonorOpera, 891359, 52},
+	{ZoombiniText::kMemorialHonorCityHall, 891412, 44},
+	{ZoombiniText::kMemorialHonorClockTower, 891457, 55},
+	{ZoombiniText::kMemorialHonorMuseum, 891513, 54},
+	{ZoombiniText::kMemorialHonorCourt, 891568, 54},
+	{ZoombiniText::kMemorialRoute1Level1, 891623, 100},
+	{ZoombiniText::kMemorialRoute1Level2, 891724, 106},
+	{ZoombiniText::kMemorialRoute1Level3, 891831, 102},
+	{ZoombiniText::kMemorialRoute1Level4, 891934, 113},
+	{ZoombiniText::kMemorialRoute2Level1, 892048, 66},
+	{ZoombiniText::kMemorialRoute2Level2, 892115, 81},
+	{ZoombiniText::kMemorialRoute2Level3, 892197, 92},
+	{ZoombiniText::kMemorialRoute2Level4, 892048, 66},
+	{ZoombiniText::kMemorialRoute3Level1, 892357, 106},
+	{ZoombiniText::kMemorialRoute3Level2, 892464, 93},
+	{ZoombiniText::kMemorialRoute3Level3, 892558, 94},
+	{ZoombiniText::kMemorialRoute3Level4, 892653, 98},
+	{ZoombiniText::kMemorialRoute4Level1, 892752, 103},
+	{ZoombiniText::kMemorialRoute4Level2, 892856, 110},
+	{ZoombiniText::kMemorialRoute4Level3, 892967, 91},
+	{ZoombiniText::kMemorialRoute4Level4, 893059, 134},
+	{ZoombiniText::kDialogBodyGoMapWillLost, 893194, 64},
+	{ZoombiniText::kDialogButtonLoseThem, 893259, 9},
+	{ZoombiniText::kDialogButtonKeepThem, 893269, 9},
+	{ZoombiniText::kDialogButtonOkay, 893279, 2},
+	{ZoombiniText::kDialogButtonCancel, 893282, 6},
+	{ZoombiniText::kDialogButtonYes, 893712, 3},
+	{ZoombiniText::kDialogButtonNo, 887812, 2},
+	{ZoombiniText::kDialogButtonQuit, 893390, 4},
+	{ZoombiniText::kDialogButtonLoad, 893289, 4},
+	{ZoombiniText::kDialogButtonSave, 893294, 4},
+	{ZoombiniText::kOptionsTitle, 893299, 7},
+	{ZoombiniText::kOptionsLegendOn, 893307, 4},
+	{ZoombiniText::kOptionsLegendOff, 893312, 5},
+	{ZoombiniText::kOptionsNewGame, 893334, 17},
+	{ZoombiniText::kOptionsLoadGame, 893352, 18},
+	{ZoombiniText::kOptionsSaveGame, 893371, 18},
+	{ZoombiniText::kOptionsQuit, 893390, 13},
+	{ZoombiniText::kOptionsToggle, 893318, 15},
+	{ZoombiniText::kOptionsSound, 893404, 26},
+	{ZoombiniText::kOptionsMusic, 893431, 25},
+	{ZoombiniText::kOptionsStickyMouse, 893457, 21},
+	{ZoombiniText::kOptionsTransitions, 893479, 20},
+	{ZoombiniText::kOptionsCredits, 893680, 7},
+	{ZoombiniText::kDialogBodyNoSavedGames, 893500, 14},
+	{ZoombiniText::kDialogBodyCreateAndSaveNewGame, 893518, 56},
+	{ZoombiniText::kDialogButtonNewGame, 893334, 8},
+	{ZoombiniText::kDialogButtonReplaceTitle, 893584, 7},
+	{ZoombiniText::kDialogTitleSave, 893592, 11},
+	{ZoombiniText::kDialogTitleSaveAs, 893604, 13},
+	{ZoombiniText::kDialogTitleLoad, 893618, 11},
+	{ZoombiniText::kDialogBodyReplaceGame, 893630, 48},
+	{ZoombiniText::kDialogBodySaveCurrentGame, 893688, 23},
+	{ZoombiniText::kDialogBodyCannotSaveInPractice, 893816, 42},
+	{ZoombiniText::kDialogBodyCreateNewGame, 893859, 42},
+	{ZoombiniText::kDialogBodyCannotSaveMoreGame, 893902, 70},
+	{ZoombiniText::kDialogBodyCannotLoadInPractice, 893973, 42},
+	{ZoombiniText::kDialogBodyCannotCreateNewInPractice, 894016, 48},
+	{ZoombiniText::kDialogBodyNewGame, 893334, 8},
+	{ZoombiniText::kDialogBodyReallyQuit, 894074, 28},
+	{ZoombiniText::kDialogBodySaveBeforeQuit, 893721, 87},
+	{ZoombiniText::kDialogHelpLevel, 887440, 5},
+	{ZoombiniText::kNotiBoxMusicOn, 896700, 8},
+	{ZoombiniText::kNotiBoxMusicOff, 896709, 9},
+	{ZoombiniText::kNotiBoxSoundOn, 896719, 8},
+	{ZoombiniText::kNotiBoxSoundOff, 896728, 9},
+	{ZoombiniText::kNotiBoxLessAction, 896738, 11},
+	{ZoombiniText::kNotiBoxMoreAction, 896750, 11},
+	{ZoombiniText::kNotiBoxHideCursor, 896762, 11},
+	{ZoombiniText::kNotiBoxShowCursor, 896774, 11},
+	{ZoombiniText::kNotiBoxStickeyMouse, 896786, 12},
+	{ZoombiniText::kNotiBoxNonStickeyMouse, 896799, 16},
+	{ZoombiniText::kNotiBoxTransitionsOn, 896816, 14},
+	{ZoombiniText::kNotiBoxTransitionsOff, 896831, 15},
+	{ZoombiniText::kNotiBoxAutoStickeyOn, 896847, 14},
+	{ZoombiniText::kNotiBoxAutoStickeyOff, 896862, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_PETextEntries[] = {
+	{ZoombiniText::kTown, 563625, 13},
+	{ZoombiniText::kPicker, 563396, 13},
+	{ZoombiniText::kBridge, 563410, 15},
+	{ZoombiniText::kTunnels, 563426, 16},
+	{ZoombiniText::kPizza, 563443, 10},
+	{ZoombiniText::kBasecamp1, 563454, 12},
+	{ZoombiniText::kFerry, 563467, 25},
+	{ZoombiniText::kLilly, 563493, 22},
+	{ZoombiniText::kSlides, 563516, 10},
+	{ZoombiniText::kFleens, 563527, 7},
+	{ZoombiniText::kHotel, 563535, 14},
+	{ZoombiniText::kNet, 563550, 12},
+	{ZoombiniText::kBasecamp2, 563563, 10},
+	{ZoombiniText::kCaves, 563574, 15},
+	{ZoombiniText::kSmoke, 563590, 14},
+	{ZoombiniText::kMaze, 563606, 18},
+	{ZoombiniText::kNewGame, 559338, 8},
+	{ZoombiniText::kJourneyStatZoombiniIsle, 563396, 13},
+	{ZoombiniText::kJourneyStatShelterRock, 563454, 12},
+	{ZoombiniText::kJourneyStatShadeTree, 563563, 10},
+	{ZoombiniText::kJourneyStatZoombiniton, 563625, 13},
+	{ZoombiniText::kPracticeMode, 563691, 13},
+	{ZoombiniText::kPracticeReturnInitial1, 563705, 18},
+	{ZoombiniText::kPracticeReturnInitial2, 563724, 19},
+	{ZoombiniText::kPracticeReturnInitial3, 563404, 1},
+	{ZoombiniText::kPracticeReturnInitial4, 563404, 1},
+	{ZoombiniText::kPracticeReturnShelterRock1, 563705, 18},
+	{ZoombiniText::kPracticeReturnShelterRock2, 563724, 19},
+	{ZoombiniText::kPracticeReturnShelterRock3, 563787, 15},
+	{ZoombiniText::kPracticeReturnShelterRock4, 563404, 1},
+	{ZoombiniText::kPracticeReturnShadeTree1, 563705, 18},
+	{ZoombiniText::kPracticeReturnShadeTree2, 563824, 20},
+	{ZoombiniText::kPracticeReturnShadeTree3, 563845, 15},
+	{ZoombiniText::kPracticeReturnShadeTree4, 563563, 10},
+	{ZoombiniText::kPracticeReturnZoombiniton1, 563705, 18},
+	{ZoombiniText::kPracticeReturnZoombiniton2, 563824, 20},
+	{ZoombiniText::kPracticeReturnZoombiniton3, 563912, 16},
+	{ZoombiniText::kPracticeReturnZoombiniton4, 563929, 16},
+	{ZoombiniText::kTerrainKey, 563946, 11},
+	{ZoombiniText::kChooseLevel, 563958, 14},
+	{ZoombiniText::kLevel1, 563973, 11},
+	{ZoombiniText::kLevel2, 563985, 11},
+	{ZoombiniText::kLevel3, 563997, 9},
+	{ZoombiniText::kLevel4, 564007, 15},
+	{ZoombiniText::kRoute1, 564023, 31},
+	{ZoombiniText::kRoute2, 564055, 11},
+	{ZoombiniText::kRoute3, 564067, 17},
+	{ZoombiniText::kRoute4, 564085, 20},
+	{ZoombiniText::kXferVillePopulation, 564106, 24},
+	{ZoombiniText::kMemorialJanuary, 564132, 7},
+	{ZoombiniText::kMemorialFebruary, 564140, 8},
+	{ZoombiniText::kMemorialMarch, 564149, 5},
+	{ZoombiniText::kMemorialApril, 564155, 5},
+	{ZoombiniText::kMemorialMay, 564161, 3},
+	{ZoombiniText::kMemorialJune, 564165, 4},
+	{ZoombiniText::kMemorialJuly, 564170, 4},
+	{ZoombiniText::kMemorialAugust, 564175, 6},
+	{ZoombiniText::kMemorialSeptember, 564182, 9},
+	{ZoombiniText::kMemorialOctober, 564192, 7},
+	{ZoombiniText::kMemorialNovember, 564200, 8},
+	{ZoombiniText::kMemorialDecember, 564209, 8},
+	{ZoombiniText::kMemorialWhenLevel, 564218, 18},
+	{ZoombiniText::kMemorialHonorMonument, 564237, 50},
+	{ZoombiniText::kMemorialHonorWindmill, 564288, 53},
+	{ZoombiniText::kMemorialHonorObservatory, 564342, 44},
+	{ZoombiniText::kMemorialHonorBowlingAlley, 564387, 44},
+	{ZoombiniText::kMemorialHonorGeneralStore, 564432, 53},
+	{ZoombiniText::kMemorialHonorSwimmingPool, 564486, 45},
+	{ZoombiniText::kMemorialHonorPlayground, 564532, 55},
+	{ZoombiniText::kMemorialHonorBandShell, 564588, 53},
+	{ZoombiniText::kMemorialHonorSchool, 564642, 43},
+	{ZoombiniText::kMemorialHonorLibrary, 564686, 51},
+	{ZoombiniText::kMemorialHonorFire, 564738, 40},
+	{ZoombiniText::kMemorialHonorOpera, 564779, 52},
+	{ZoombiniText::kMemorialHonorCityHall, 564832, 44},
+	{ZoombiniText::kMemorialHonorClockTower, 564877, 55},
+	{ZoombiniText::kMemorialHonorMuseum, 564933, 54},
+	{ZoombiniText::kMemorialHonorCourt, 564988, 54},
+	{ZoombiniText::kMemorialRoute1Level1, 565043, 100},
+	{ZoombiniText::kMemorialRoute1Level2, 565144, 106},
+	{ZoombiniText::kMemorialRoute1Level3, 565251, 102},
+	{ZoombiniText::kMemorialRoute1Level4, 565354, 113},
+	{ZoombiniText::kMemorialRoute2Level1, 565468, 66},
+	{ZoombiniText::kMemorialRoute2Level2, 565535, 81},
+	{ZoombiniText::kMemorialRoute2Level3, 565617, 92},
+	{ZoombiniText::kMemorialRoute2Level4, 565468, 66},
+	{ZoombiniText::kMemorialRoute3Level1, 565777, 106},
+	{ZoombiniText::kMemorialRoute3Level2, 565884, 93},
+	{ZoombiniText::kMemorialRoute3Level3, 565978, 94},
+	{ZoombiniText::kMemorialRoute3Level4, 566073, 98},
+	{ZoombiniText::kMemorialRoute4Level1, 566172, 103},
+	{ZoombiniText::kMemorialRoute4Level2, 566276, 110},
+	{ZoombiniText::kMemorialRoute4Level3, 566387, 91},
+	{ZoombiniText::kMemorialRoute4Level4, 566479, 134},
+	{ZoombiniText::kDialogBodyGoMapWillLost, 566614, 64},
+	{ZoombiniText::kDialogButtonLoseThem, 566679, 9},
+	{ZoombiniText::kDialogButtonKeepThem, 566689, 9},
+	{ZoombiniText::kDialogButtonOkay, 566699, 2},
+	{ZoombiniText::kDialogButtonCancel, 566702, 6},
+	{ZoombiniText::kDialogButtonYes, 567132, 3},
+	{ZoombiniText::kDialogButtonNo, 560486, 2},
+	{ZoombiniText::kDialogButtonQuit, 566810, 4},
+	{ZoombiniText::kDialogButtonLoad, 566709, 4},
+	{ZoombiniText::kDialogButtonSave, 566714, 4},
+	{ZoombiniText::kOptionsTitle, 566719, 7},
+	{ZoombiniText::kOptionsLegendOn, 566727, 4},
+	{ZoombiniText::kOptionsLegendOff, 566732, 5},
+	{ZoombiniText::kOptionsNewGame, 566754, 17},
+	{ZoombiniText::kOptionsLoadGame, 566772, 18},
+	{ZoombiniText::kOptionsSaveGame, 566791, 18},
+	{ZoombiniText::kOptionsQuit, 566810, 13},
+	{ZoombiniText::kOptionsToggle, 566738, 15},
+	{ZoombiniText::kOptionsSound, 566824, 26},
+	{ZoombiniText::kOptionsMusic, 566851, 25},
+	{ZoombiniText::kOptionsStickyMouse, 566877, 21},
+	{ZoombiniText::kOptionsTransitions, 566899, 20},
+	{ZoombiniText::kOptionsCredits, 567100, 7},
+	{ZoombiniText::kDialogBodyNoSavedGames, 566920, 14},
+	{ZoombiniText::kDialogBodyCreateAndSaveNewGame, 566938, 56},
+	{ZoombiniText::kDialogButtonNewGame, 566754, 8},
+	{ZoombiniText::kDialogButtonReplaceTitle, 567004, 7},
+	{ZoombiniText::kDialogTitleSave, 567012, 11},
+	{ZoombiniText::kDialogTitleSaveAs, 567024, 13},
+	{ZoombiniText::kDialogTitleLoad, 567038, 11},
+	{ZoombiniText::kDialogBodyReplaceGame, 567050, 48},
+	{ZoombiniText::kDialogBodySaveCurrentGame, 567108, 23},
+	{ZoombiniText::kDialogBodyCannotSaveInPractice, 567236, 42},
+	{ZoombiniText::kDialogBodyCreateNewGame, 567279, 42},
+	{ZoombiniText::kDialogBodyCannotSaveMoreGame, 567322, 70},
+	{ZoombiniText::kDialogBodyCannotLoadInPractice, 567393, 42},
+	{ZoombiniText::kDialogBodyCannotCreateNewInPractice, 567436, 48},
+	{ZoombiniText::kDialogBodyNewGame, 566754, 8},
+	{ZoombiniText::kDialogBodyReallyQuit, 567494, 28},
+	{ZoombiniText::kDialogBodySaveBeforeQuit, 567141, 87},
+	{ZoombiniText::kDialogHelpLevel, 559230, 5},
+	{ZoombiniText::kNotiBoxMusicOn, 570120, 8},
+	{ZoombiniText::kNotiBoxMusicOff, 570129, 9},
+	{ZoombiniText::kNotiBoxSoundOn, 570139, 8},
+	{ZoombiniText::kNotiBoxSoundOff, 570148, 9},
+	{ZoombiniText::kNotiBoxLessAction, 570158, 11},
+	{ZoombiniText::kNotiBoxMoreAction, 570170, 11},
+	{ZoombiniText::kNotiBoxHideCursor, 570182, 11},
+	{ZoombiniText::kNotiBoxShowCursor, 570194, 11},
+	{ZoombiniText::kNotiBoxStickeyMouse, 570206, 12},
+	{ZoombiniText::kNotiBoxNonStickeyMouse, 570219, 16},
+	{ZoombiniText::kNotiBoxTransitionsOn, 570236, 14},
+	{ZoombiniText::kNotiBoxTransitionsOff, 570251, 15},
+	{ZoombiniText::kNotiBoxAutoStickeyOn, 570267, 14},
+	{ZoombiniText::kNotiBoxAutoStickeyOff, 570282, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV11USMacTextEntries[] = {
+	{ZoombiniText::kTown, 39830, 13},
+	{ZoombiniText::kPicker, 40560, 13},
+	{ZoombiniText::kBridge, 38688, 15},
+	{ZoombiniText::kTunnels, 38719, 16},
+	{ZoombiniText::kPizza, 40515, 10},
+	{ZoombiniText::kBasecamp1, 40502, 12},
+	{ZoombiniText::kFerry, 40476, 25},
+	{ZoombiniText::kLilly, 40453, 22},
+	{ZoombiniText::kSlides, 40442, 10},
+	{ZoombiniText::kFleens, 40434, 7},
+	{ZoombiniText::kHotel, 37946, 14},
+	{ZoombiniText::kNet, 37792, 12},
+	{ZoombiniText::kBasecamp2, 40394, 10},
+	{ZoombiniText::kCaves, 40378, 15},
+	{ZoombiniText::kSmoke, 37560, 14},
+	{ZoombiniText::kMaze, 37695, 18},
+	{ZoombiniText::kNewGame, 36532, 8},
+	{ZoombiniText::kPracticeMode, 36571, 13},
+	{ZoombiniText::kContinueJourney, 40150, 16},
+	{ZoombiniText::kPracticeTitle, 40168, 13},
+	{ZoombiniText::kPracticeDesc1, 40230, 18},
+	{ZoombiniText::kPracticeDesc2, 40212, 17},
+	{ZoombiniText::kPracticeDesc3, 40195, 16},
+	{ZoombiniText::kPracticeDesc4, 40182, 12},
+	{ZoombiniText::kTerrainKey, 40046, 11},
+	{ZoombiniText::kChooseLevel, 40030, 14},
+	{ZoombiniText::kLevel1, 40018, 11},
+	{ZoombiniText::kLevel2, 40006, 11},
+	{ZoombiniText::kLevel3, 39986, 9},
+	{ZoombiniText::kLevel4, 39980, 15},
+	{ZoombiniText::kRoute1, 39924, 31},
+	{ZoombiniText::kRoute2, 39912, 11},
+	{ZoombiniText::kRoute3, 39894, 17},
+	{ZoombiniText::kRoute4, 39872, 20},
+	{ZoombiniText::kXferVillePopulation, 39830, 24},
+	{ZoombiniText::kMemorialJanuary, 39818, 7},
+	{ZoombiniText::kMemorialFebruary, 39808, 8},
+	{ZoombiniText::kMemorialMarch, 39802, 5},
+	{ZoombiniText::kMemorialApril, 39796, 5},
+	{ZoombiniText::kMemorialMay, 39792, 3},
+	{ZoombiniText::kMemorialJune, 39786, 4},
+	{ZoombiniText::kMemorialJuly, 39781, 4},
+	{ZoombiniText::kMemorialAugust, 39774, 6},
+	{ZoombiniText::kMemorialSeptember, 39764, 9},
+	{ZoombiniText::kMemorialOctober, 39756, 7},
+	{ZoombiniText::kMemorialNovember, 39747, 8},
+	{ZoombiniText::kMemorialDecember, 39738, 8},
+	{ZoombiniText::kMemorialWhenLevel, 39670, 18},
+	{ZoombiniText::kMemorialHonorMonument, 39598, 50},
+	{ZoombiniText::kMemorialHonorWindmill, 39544, 53},
+	{ZoombiniText::kMemorialHonorObservatory, 39499, 44},
+	{ZoombiniText::kMemorialHonorBowlingAlley, 39454, 44},
+	{ZoombiniText::kMemorialHonorGeneralStore, 39400, 53},
+	{ZoombiniText::kMemorialHonorSwimmingPool, 39354, 45},
+	{ZoombiniText::kMemorialHonorPlayground, 39298, 55},
+	{ZoombiniText::kMemorialHonorBandShell, 39244, 53},
+	{ZoombiniText::kMemorialHonorSchool, 39200, 43},
+	{ZoombiniText::kMemorialHonorLibrary, 39148, 51},
+	{ZoombiniText::kMemorialHonorFire, 39106, 40},
+	{ZoombiniText::kMemorialHonorOpera, 39053, 52},
+	{ZoombiniText::kMemorialHonorCityHall, 39008, 44},
+	{ZoombiniText::kMemorialHonorClockTower, 38952, 55},
+	{ZoombiniText::kMemorialHonorMuseum, 38897, 54},
+	{ZoombiniText::kMemorialHonorCourt, 38842, 54},
+	{ZoombiniText::kMemorialRoute1Level1, 38676, 100},
+	{ZoombiniText::kMemorialRoute1Level2, 38569, 106},
+	{ZoombiniText::kMemorialRoute1Level3, 38466, 102},
+	{ZoombiniText::kMemorialRoute1Level4, 38352, 113},
+	{ZoombiniText::kMemorialRoute2Level1, 38284, 66},
+	{ZoombiniText::kMemorialRoute2Level2, 38202, 81},
+	{ZoombiniText::kMemorialRoute2Level3, 38109, 92},
+	{ZoombiniText::kMemorialRoute2Level4, 38284, 66},
+	{ZoombiniText::kMemorialRoute3Level1, 38002, 106},
+	{ZoombiniText::kMemorialRoute3Level2, 37908, 93},
+	{ZoombiniText::kMemorialRoute3Level3, 37813, 94},
+	{ZoombiniText::kMemorialRoute3Level4, 37714, 98},
+	{ZoombiniText::kMemorialRoute4Level1, 37610, 103},
+	{ZoombiniText::kMemorialRoute4Level2, 37498, 110},
+	{ZoombiniText::kMemorialRoute4Level3, 37406, 91},
+	{ZoombiniText::kMemorialRoute4Level4, 37270, 134},
+	{ZoombiniText::kDialogBodyGoMapWillLost, 37140, 64},
+	{ZoombiniText::kDialogButtonLoseThem, 37130, 9},
+	{ZoombiniText::kDialogButtonKeepThem, 37120, 9},
+	{ZoombiniText::kDialogButtonOkay, 37117, 2},
+	{ZoombiniText::kDialogButtonCancel, 37110, 6},
+	{ZoombiniText::kDialogButtonYes, 36684, 3},
+	{ZoombiniText::kDialogButtonNo, 36586, 2},
+	{ZoombiniText::kDialogButtonQuit, 36330, 4},
+	{ZoombiniText::kDialogButtonLoad, 36770, 4},
+	{ZoombiniText::kDialogButtonSave, 36782, 4},
+	{ZoombiniText::kOptionsTitle, 37092, 7},
+	{ZoombiniText::kOptionsLegendOn, 37086, 4},
+	{ZoombiniText::kOptionsLegendOff, 37080, 5},
+	{ZoombiniText::kOptionsNewGame, 37046, 17},
+	{ZoombiniText::kOptionsLoadGame, 37027, 18},
+	{ZoombiniText::kOptionsSaveGame, 37008, 18},
+	{ZoombiniText::kOptionsQuit, 36994, 13},
+	{ZoombiniText::kOptionsToggle, 37064, 15},
+	{ZoombiniText::kOptionsSound, 36966, 26},
+	{ZoombiniText::kOptionsMusic, 36940, 25},
+	{ZoombiniText::kOptionsStickyMouse, 36918, 21},
+	{ZoombiniText::kOptionsTransitions, 36897, 20},
+	{ZoombiniText::kOptionsCredits, 36712, 7},
+	{ZoombiniText::kDialogBodyNoSavedGames, 36882, 14},
+	{ZoombiniText::kDialogBodyCreateAndSaveNewGame, 36825, 56},
+	{ZoombiniText::kDialogButtonNewGame, 36532, 8},
+	{ZoombiniText::kDialogButtonReplaceTitle, 36808, 7},
+	{ZoombiniText::kDialogTitleSave, 36796, 11},
+	{ZoombiniText::kDialogTitleSaveAs, 36782, 13},
+	{ZoombiniText::kDialogTitleLoad, 36770, 11},
+	{ZoombiniText::kDialogBodyReplaceGame, 36720, 48},
+	{ZoombiniText::kDialogBodySaveCurrentGame, 36688, 23},
+	{ZoombiniText::kDialogBodySaveDirtyGame, 36247, 60},
+	{ZoombiniText::kDialogBodyCannotSaveInPractice, 36543, 42},
+	{ZoombiniText::kDialogBodyCreateNewGame, 36500, 42},
+	{ZoombiniText::kDialogBodyCannotSaveMoreGame, 36429, 70},
+	{ZoombiniText::kDialogBodyCannotLoadInPractice, 36386, 42},
+	{ZoombiniText::kDialogBodyCannotCreateNewInPractice, 36337, 48},
+	{ZoombiniText::kDialogBodyNewGame, 36532, 8},
+	{ZoombiniText::kDialogBodyReallyQuit, 36308, 28},
+	{ZoombiniText::kDialogBodySaveBeforeQuit, 36590, 87},
+	{ZoombiniText::kDialogHelpTitle, 36242, 4},
+	{ZoombiniText::kDialogButtonPrev, 36233, 8},
+	{ZoombiniText::kDialogButtonNext, 36228, 4},
+	{ZoombiniText::kDialogHelpLevel, 32320, 5},
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 31080, 27},
+	{ZoombiniText::kNotiBoxMusicOn, 32934, 8},
+	{ZoombiniText::kNotiBoxMusicOff, 32924, 9},
+	{ZoombiniText::kNotiBoxSoundOn, 32914, 8},
+	{ZoombiniText::kNotiBoxSoundOff, 32904, 9},
+	{ZoombiniText::kNotiBoxLessAction, 32892, 11},
+	{ZoombiniText::kNotiBoxMoreAction, 32880, 11},
+	{ZoombiniText::kNotiBoxHideCursor, 32868, 11},
+	{ZoombiniText::kNotiBoxShowCursor, 32856, 11},
+	{ZoombiniText::kNotiBoxStickeyMouse, 32842, 12},
+	{ZoombiniText::kNotiBoxNonStickeyMouse, 32825, 16},
+	{ZoombiniText::kNotiBoxTransitionsOn, 32810, 14},
+	{ZoombiniText::kNotiBoxTransitionsOff, 32794, 15},
+	{ZoombiniText::kNotiBoxAutoStickeyOn, 32778, 14},
+	{ZoombiniText::kNotiBoxAutoStickeyOff, 32762, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10USMacTextEntries[] = {
+	{ZoombiniText::kTown, 36382, 13},
+	{ZoombiniText::kPicker, 36750, 13},
+	{ZoombiniText::kBridge, 35240, 15},
+	{ZoombiniText::kTunnels, 35271, 16},
+	{ZoombiniText::kPizza, 37089, 10},
+	{ZoombiniText::kBasecamp1, 36728, 12},
+	{ZoombiniText::kFerry, 37050, 25},
+	{ZoombiniText::kLilly, 37027, 22},
+	{ZoombiniText::kSlides, 37016, 10},
+	{ZoombiniText::kFleens, 37008, 7},
+	{ZoombiniText::kHotel, 34498, 14},
+	{ZoombiniText::kNet, 34344, 12},
+	{ZoombiniText::kBasecamp2, 36968, 10},
+	{ZoombiniText::kCaves, 36952, 15},
+	{ZoombiniText::kSmoke, 34112, 14},
+	{ZoombiniText::kMaze, 34247, 18},
+	{ZoombiniText::kNewGame, 28201, 8},
+	{ZoombiniText::kJourneyStatZoombiniIsle, 36750, 13},
+	{ZoombiniText::kJourneyStatShelterRock, 36728, 12},
+	{ZoombiniText::kJourneyStatShadeTree, 36968, 10},
+	{ZoombiniText::kJourneyStatZoombiniton, 36382, 13},
+	{ZoombiniText::kPracticeMode, 32923, 13},
+	{ZoombiniText::kPracticeReturnInitial1, 36804, 18},
+	{ZoombiniText::kPracticeReturnInitial2, 36744, 19},
+	{ZoombiniText::kPracticeReturnInitial3, 61, 1},
+	{ZoombiniText::kPracticeReturnInitial4, 61, 1},
+	{ZoombiniText::kPracticeReturnShelterRock1, 36804, 18},
+	{ZoombiniText::kPracticeReturnShelterRock2, 36744, 19},
+	{ZoombiniText::kPracticeReturnShelterRock3, 36766, 15},
+	{ZoombiniText::kPracticeReturnShelterRock4, 61, 1},
+	{ZoombiniText::kPracticeReturnShadeTree1, 36804, 18},
+	{ZoombiniText::kPracticeReturnShadeTree2, 36744, 20},
+	{ZoombiniText::kPracticeReturnShadeTree3, 36728, 15},
+	{ZoombiniText::kPracticeReturnShadeTree4, 36968, 10},
+	{ZoombiniText::kPracticeReturnZoombiniton1, 36804, 18},
+	{ZoombiniText::kPracticeReturnZoombiniton2, 36744, 20},
+	{ZoombiniText::kPracticeReturnZoombiniton3, 36711, 16},
+	{ZoombiniText::kPracticeReturnZoombiniton4, 36694, 16},
+	{ZoombiniText::kTerrainKey, 36598, 11},
+	{ZoombiniText::kChooseLevel, 36582, 14},
+	{ZoombiniText::kLevel1, 36570, 11},
+	{ZoombiniText::kLevel2, 36558, 11},
+	{ZoombiniText::kLevel3, 36538, 9},
+	{ZoombiniText::kLevel4, 36532, 15},
+	{ZoombiniText::kRoute1, 36476, 31},
+	{ZoombiniText::kRoute2, 36464, 11},
+	{ZoombiniText::kRoute3, 36446, 17},
+	{ZoombiniText::kRoute4, 36424, 20},
+	{ZoombiniText::kXferVillePopulation, 36382, 24},
+	{ZoombiniText::kMemorialJanuary, 36370, 7},
+	{ZoombiniText::kMemorialFebruary, 36360, 8},
+	{ZoombiniText::kMemorialMarch, 36354, 5},
+	{ZoombiniText::kMemorialApril, 36348, 5},
+	{ZoombiniText::kMemorialMay, 36344, 3},
+	{ZoombiniText::kMemorialJune, 36338, 4},
+	{ZoombiniText::kMemorialJuly, 36333, 4},
+	{ZoombiniText::kMemorialAugust, 36326, 6},
+	{ZoombiniText::kMemorialSeptember, 36316, 9},
+	{ZoombiniText::kMemorialOctober, 36308, 7},
+	{ZoombiniText::kMemorialNovember, 36299, 8},
+	{ZoombiniText::kMemorialDecember, 36290, 8},
+	{ZoombiniText::kMemorialWhenLevel, 36222, 18},
+	{ZoombiniText::kMemorialHonorMonument, 36150, 50},
+	{ZoombiniText::kMemorialHonorWindmill, 36096, 53},
+	{ZoombiniText::kMemorialHonorObservatory, 36051, 44},
+	{ZoombiniText::kMemorialHonorBowlingAlley, 36006, 44},
+	{ZoombiniText::kMemorialHonorGeneralStore, 35952, 53},
+	{ZoombiniText::kMemorialHonorSwimmingPool, 35906, 45},
+	{ZoombiniText::kMemorialHonorPlayground, 35850, 55},
+	{ZoombiniText::kMemorialHonorBandShell, 35796, 53},
+	{ZoombiniText::kMemorialHonorSchool, 35752, 43},
+	{ZoombiniText::kMemorialHonorLibrary, 35700, 51},
+	{ZoombiniText::kMemorialHonorFire, 35658, 40},
+	{ZoombiniText::kMemorialHonorOpera, 35605, 52},
+	{ZoombiniText::kMemorialHonorCityHall, 35560, 44},
+	{ZoombiniText::kMemorialHonorClockTower, 35504, 55},
+	{ZoombiniText::kMemorialHonorMuseum, 35449, 54},
+	{ZoombiniText::kMemorialHonorCourt, 35394, 54},
+	{ZoombiniText::kMemorialRoute1Level1, 35228, 100},
+	{ZoombiniText::kMemorialRoute1Level2, 35121, 106},
+	{ZoombiniText::kMemorialRoute1Level3, 35018, 102},
+	{ZoombiniText::kMemorialRoute1Level4, 34904, 113},
+	{ZoombiniText::kMemorialRoute2Level1, 34836, 66},
+	{ZoombiniText::kMemorialRoute2Level2, 34754, 81},
+	{ZoombiniText::kMemorialRoute2Level3, 34661, 92},
+	{ZoombiniText::kMemorialRoute2Level4, 34836, 66},
+	{ZoombiniText::kMemorialRoute3Level1, 34554, 106},
+	{ZoombiniText::kMemorialRoute3Level2, 34460, 93},
+	{ZoombiniText::kMemorialRoute3Level3, 34365, 94},
+	{ZoombiniText::kMemorialRoute3Level4, 34266, 98},
+	{ZoombiniText::kMemorialRoute4Level1, 34162, 103},
+	{ZoombiniText::kMemorialRoute4Level2, 34050, 110},
+	{ZoombiniText::kMemorialRoute4Level3, 33958, 91},
+	{ZoombiniText::kMemorialRoute4Level4, 33822, 134},
+	{ZoombiniText::kDialogBodyGoMapWillLost, 33692, 64},
+	{ZoombiniText::kDialogButtonLoseThem, 33682, 9},
+	{ZoombiniText::kDialogButtonKeepThem, 33672, 9},
+	{ZoombiniText::kDialogButtonOkay, 10517, 2},
+	{ZoombiniText::kDialogButtonCancel, 33662, 6},
+	{ZoombiniText::kDialogButtonYes, 33236, 3},
+	{ZoombiniText::kDialogButtonNo, 9394, 2},
+	{ZoombiniText::kDialogButtonQuit, 32882, 4},
+	{ZoombiniText::kDialogButtonLoad, 33322, 4},
+	{ZoombiniText::kDialogButtonSave, 33334, 4},
+	{ZoombiniText::kOptionsTitle, 33644, 7},
+	{ZoombiniText::kOptionsLegendOn, 33638, 4},
+	{ZoombiniText::kOptionsLegendOff, 33632, 5},
+	{ZoombiniText::kOptionsNewGame, 33598, 17},
+	{ZoombiniText::kOptionsLoadGame, 33579, 18},
+	{ZoombiniText::kOptionsSaveGame, 33560, 18},
+	{ZoombiniText::kOptionsQuit, 33546, 13},
+	{ZoombiniText::kOptionsToggle, 33616, 15},
+	{ZoombiniText::kOptionsSound, 33518, 26},
+	{ZoombiniText::kOptionsMusic, 33492, 25},
+	{ZoombiniText::kOptionsStickyMouse, 33470, 21},
+	{ZoombiniText::kOptionsTransitions, 33449, 20},
+	{ZoombiniText::kOptionsCredits, 33264, 7},
+	{ZoombiniText::kDialogBodyNoSavedGames, 33434, 14},
+	{ZoombiniText::kDialogBodyCreateAndSaveNewGame, 33377, 56},
+	{ZoombiniText::kDialogButtonNewGame, 33084, 8},
+	{ZoombiniText::kDialogButtonReplaceTitle, 33360, 7},
+	{ZoombiniText::kDialogTitleSave, 33348, 11},
+	{ZoombiniText::kDialogTitleSaveAs, 33334, 13},
+	{ZoombiniText::kDialogTitleLoad, 33322, 11},
+	{ZoombiniText::kDialogBodyReplaceGame, 33272, 48},
+	{ZoombiniText::kDialogBodySaveCurrentGame, 33240, 23},
+	{ZoombiniText::kDialogBodyCannotSaveInPractice, 33095, 42},
+	{ZoombiniText::kDialogBodyCreateNewGame, 33052, 42},
+	{ZoombiniText::kDialogBodyCannotSaveMoreGame, 32981, 70},
+	{ZoombiniText::kDialogBodyCannotLoadInPractice, 32938, 42},
+	{ZoombiniText::kDialogBodyCannotCreateNewInPractice, 32889, 48},
+	{ZoombiniText::kDialogBodyNewGame, 33084, 8},
+	{ZoombiniText::kDialogBodyReallyQuit, 32860, 28},
+	{ZoombiniText::kDialogBodySaveBeforeQuit, 33142, 87},
+	{ZoombiniText::kDialogHelpLevel, 12912, 5},
+	{ZoombiniText::kNotiBoxMusicOn, 29592, 8},
+	{ZoombiniText::kNotiBoxMusicOff, 29582, 9},
+	{ZoombiniText::kNotiBoxSoundOn, 29572, 8},
+	{ZoombiniText::kNotiBoxSoundOff, 29562, 9},
+	{ZoombiniText::kNotiBoxLessAction, 29550, 11},
+	{ZoombiniText::kNotiBoxMoreAction, 29538, 11},
+	{ZoombiniText::kNotiBoxHideCursor, 29526, 11},
+	{ZoombiniText::kNotiBoxShowCursor, 29514, 11},
+	{ZoombiniText::kNotiBoxStickeyMouse, 29487, 12},
+	{ZoombiniText::kNotiBoxNonStickeyMouse, 29483, 16},
+	{ZoombiniText::kNotiBoxTransitionsOn, 29468, 14},
+	{ZoombiniText::kNotiBoxTransitionsOff, 29452, 15},
+	{ZoombiniText::kNotiBoxAutoStickeyOn, 29436, 14},
+	{ZoombiniText::kNotiBoxAutoStickeyOff, 29420, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10BRMacTextEntries[] = {
+	{ZoombiniText::kNewGame, 33642, 8},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10FRMacTextEntries[] = {
+	{ZoombiniText::kNewGame, 33626, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10GEMacTextEntries[] = {
+	{ZoombiniText::kNewGame, 33614, 11},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV11BRMacTextEntries[] = {
+	{ZoombiniText::kNewGame, 35264, 8},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV11FRMacTextEntries[] = {
+	{ZoombiniText::kNewGame, 35248, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV11GEMacTextEntries[] = {
+	{ZoombiniText::kNewGame, 35236, 11},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10JPMacTextEntries[] = {
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0, 0},
+	{ZoombiniText::kNewGame, 34258, 10},
+	{ZoombiniText::kNotiBoxEnglishNames, 29243, 10},
+	{ZoombiniText::kNotiBoxJapaneseNames, 29230, 12},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV20USMacTextEntries[] = {
+	{ZoombiniText::kTown, 32212, 13},
+	{ZoombiniText::kPicker, 31984, 13},
+	{ZoombiniText::kBridge, 31998, 15},
+	{ZoombiniText::kTunnels, 32014, 16},
+	{ZoombiniText::kPizza, 32031, 10},
+	{ZoombiniText::kBasecamp1, 32042, 12},
+	{ZoombiniText::kFerry, 32055, 25},
+	{ZoombiniText::kLilly, 32081, 22},
+	{ZoombiniText::kSlides, 32104, 10},
+	{ZoombiniText::kFleens, 32115, 7},
+	{ZoombiniText::kHotel, 32123, 14},
+	{ZoombiniText::kNet, 32138, 12},
+	{ZoombiniText::kBasecamp2, 32151, 10},
+	{ZoombiniText::kCaves, 32162, 15},
+	{ZoombiniText::kSmoke, 32178, 14},
+	{ZoombiniText::kMaze, 32193, 18},
+	{ZoombiniText::kNewGame, 35503, 8},
+	{ZoombiniText::kPracticeMode, 32292, 13},
+	{ZoombiniText::kContinueJourney, 32387, 16},
+	{ZoombiniText::kPracticeTitle, 32373, 13},
+	{ZoombiniText::kPracticeDesc1, 32306, 18},
+	{ZoombiniText::kPracticeDesc2, 32325, 17},
+	{ZoombiniText::kPracticeDesc3, 32343, 16},
+	{ZoombiniText::kPracticeDesc4, 32360, 12},
+	{ZoombiniText::kTerrainKey, 32496, 11},
+	{ZoombiniText::kChooseLevel, 32508, 14},
+	{ZoombiniText::kLevel1, 32523, 11},
+	{ZoombiniText::kLevel2, 32535, 11},
+	{ZoombiniText::kLevel3, 32547, 9},
+	{ZoombiniText::kLevel4, 32557, 15},
+	{ZoombiniText::kRoute1, 32600, 31},
+	{ZoombiniText::kRoute2, 32632, 11},
+	{ZoombiniText::kRoute3, 32644, 17},
+	{ZoombiniText::kRoute4, 32662, 20},
+	{ZoombiniText::kRodMapOptionsButton, 32700, 7},
+	{ZoombiniText::kXferVillePopulation, 32712, 24},
+	{ZoombiniText::kMemorialJanuary, 32744, 7},
+	{ZoombiniText::kMemorialFebruary, 32752, 8},
+	{ZoombiniText::kMemorialMarch, 32761, 5},
+	{ZoombiniText::kMemorialApril, 32767, 5},
+	{ZoombiniText::kMemorialMay, 9478, 3},
+	{ZoombiniText::kMemorialJune, 32773, 4},
+	{ZoombiniText::kMemorialJuly, 32778, 4},
+	{ZoombiniText::kMemorialAugust, 32783, 6},
+	{ZoombiniText::kMemorialSeptember, 32790, 9},
+	{ZoombiniText::kMemorialOctober, 32800, 7},
+	{ZoombiniText::kMemorialNovember, 32808, 8},
+	{ZoombiniText::kMemorialDecember, 32817, 8},
+	{ZoombiniText::kMemorialWhenLevel, 32876, 18},
+	{ZoombiniText::kMemorialHonorMonument, 32916, 50},
+	{ZoombiniText::kMemorialHonorWindmill, 32967, 53},
+	{ZoombiniText::kMemorialHonorObservatory, 33021, 44},
+	{ZoombiniText::kMemorialHonorBowlingAlley, 33066, 44},
+	{ZoombiniText::kMemorialHonorGeneralStore, 33111, 53},
+	{ZoombiniText::kMemorialHonorSwimmingPool, 33165, 45},
+	{ZoombiniText::kMemorialHonorPlayground, 33211, 55},
+	{ZoombiniText::kMemorialHonorBandShell, 33267, 53},
+	{ZoombiniText::kMemorialHonorSchool, 33321, 43},
+	{ZoombiniText::kMemorialHonorLibrary, 33365, 51},
+	{ZoombiniText::kMemorialHonorFire, 33417, 40},
+	{ZoombiniText::kMemorialHonorOpera, 33458, 52},
+	{ZoombiniText::kMemorialHonorCityHall, 33511, 44},
+	{ZoombiniText::kMemorialHonorClockTower, 33556, 55},
+	{ZoombiniText::kMemorialHonorMuseum, 33612, 54},
+	{ZoombiniText::kMemorialHonorCourt, 33667, 54},
+	{ZoombiniText::kMemorialRoute1Level1, 33788, 100},
+	{ZoombiniText::kMemorialRoute1Level2, 33889, 106},
+	{ZoombiniText::kMemorialRoute1Level3, 33996, 102},
+	{ZoombiniText::kMemorialRoute1Level4, 34099, 113},
+	{ZoombiniText::kMemorialRoute2Level1, 34213, 66},
+	{ZoombiniText::kMemorialRoute2Level2, 34280, 81},
+	{ZoombiniText::kMemorialRoute2Level3, 34362, 92},
+	{ZoombiniText::kMemorialRoute2Level4, 34213, 66},
+	{ZoombiniText::kMemorialRoute3Level1, 34455, 106},
+	{ZoombiniText::kMemorialRoute3Level2, 34562, 93},
+	{ZoombiniText::kMemorialRoute3Level3, 34656, 94},
+	{ZoombiniText::kMemorialRoute3Level4, 34751, 98},
+	{ZoombiniText::kMemorialRoute4Level1, 34850, 103},
+	{ZoombiniText::kMemorialRoute4Level2, 34954, 110},
+	{ZoombiniText::kMemorialRoute4Level3, 35065, 91},
+	{ZoombiniText::kMemorialRoute4Level4, 35157, 134},
+	{ZoombiniText::kDialogBodyGoMapWillLost, 35356, 64},
+	{ZoombiniText::kDialogButtonLoseThem, 35421, 9},
+	{ZoombiniText::kDialogButtonKeepThem, 35431, 9},
+	{ZoombiniText::kDialogButtonOkay, 9482, 2},
+	{ZoombiniText::kDialogButtonCancel, 35441, 6},
+	{ZoombiniText::kDialogButtonYes, 9485, 3},
+	{ZoombiniText::kDialogButtonNo, 9489, 2},
+	{ZoombiniText::kDialogButtonQuit, 35559, 4},
+	{ZoombiniText::kDialogButtonLoad, 35448, 4},
+	{ZoombiniText::kDialogButtonSave, 35453, 4},
+	{ZoombiniText::kOptionsTitle, 35458, 7},
+	{ZoombiniText::kOptionsLegendOn, 35476, 4},
+	{ZoombiniText::kOptionsLegendOff, 35481, 5},
+	{ZoombiniText::kOptionsNewGame, 35503, 17},
+	{ZoombiniText::kOptionsLoadGame, 35521, 18},
+	{ZoombiniText::kOptionsSaveGame, 35540, 18},
+	{ZoombiniText::kOptionsQuit, 35559, 13},
+	{ZoombiniText::kOptionsToggle, 35487, 15},
+	{ZoombiniText::kOptionsSound, 35573, 26},
+	{ZoombiniText::kOptionsMusic, 35600, 25},
+	{ZoombiniText::kOptionsStickyMouse, 35626, 21},
+	{ZoombiniText::kOptionsTransitions, 35648, 20},
+	{ZoombiniText::kOptionsCredits, 35846, 7},
+	{ZoombiniText::kDialogBodyNoSavedGames, 35669, 14},
+	{ZoombiniText::kDialogBodyCreateAndSaveNewGame, 35684, 56},
+	{ZoombiniText::kDialogButtonNewGame, 35503, 8},
+	{ZoombiniText::kDialogButtonReplaceTitle, 35750, 7},
+	{ZoombiniText::kDialogTitleSave, 35758, 11},
+	{ZoombiniText::kDialogTitleSaveAs, 35770, 13},
+	{ZoombiniText::kDialogTitleLoad, 35784, 11},
+	{ZoombiniText::kDialogBodyReplaceGame, 35796, 48},
+	{ZoombiniText::kDialogBodySaveCurrentGame, 35854, 23},
+	{ZoombiniText::kDialogBodySaveDirtyGame, 36249, 60},
+	{ZoombiniText::kDialogBodyCannotSaveInPractice, 35971, 42},
+	{ZoombiniText::kDialogBodyCreateNewGame, 36014, 42},
+	{ZoombiniText::kDialogBodyCannotSaveMoreGame, 36057, 70},
+	{ZoombiniText::kDialogBodyCannotLoadInPractice, 36128, 42},
+	{ZoombiniText::kDialogBodyCannotCreateNewInPractice, 36171, 48},
+	{ZoombiniText::kDialogBodyNewGame, 35503, 8},
+	{ZoombiniText::kDialogBodyReallyQuit, 36220, 28},
+	{ZoombiniText::kDialogBodySaveBeforeQuit, 35883, 87},
+	{ZoombiniText::kDialogHelpTitle, 36360, 4},
+	{ZoombiniText::kDialogButtonPrev, 36315, 8},
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 45309, 27},
+	{ZoombiniText::kNotiBoxMusicOn, 41956, 8},
+	{ZoombiniText::kNotiBoxMusicOff, 41965, 9},
+	{ZoombiniText::kNotiBoxSoundOn, 41975, 8},
+	{ZoombiniText::kNotiBoxSoundOff, 41984, 9},
+	{ZoombiniText::kNotiBoxLessAction, 41994, 11},
+	{ZoombiniText::kNotiBoxMoreAction, 42006, 11},
+	{ZoombiniText::kNotiBoxHideCursor, 42018, 11},
+	{ZoombiniText::kNotiBoxShowCursor, 42030, 11},
+	{ZoombiniText::kNotiBoxStickeyMouse, 42042, 12},
+	{ZoombiniText::kNotiBoxNonStickeyMouse, 42055, 16},
+	{ZoombiniText::kNotiBoxTransitionsOn, 42072, 14},
+	{ZoombiniText::kNotiBoxTransitionsOff, 42087, 15},
+	{ZoombiniText::kNotiBoxAutoStickeyOn, 42103, 14},
+	{ZoombiniText::kNotiBoxAutoStickeyOff, 42118, 15},
+	{ZoombiniText::kOptionsTitle, 35458, 17},
+	{ZoombiniText::kOptionsHelpAudio, 36360, 19},
+	{ZoombiniText::kOptionsTouchSense, 36329, 30},
+	{ZoombiniText::kDialogHelpTitle, 30927, 4},
+	{ZoombiniText::kDialogButtonOkay, 9492, 2},
+	{ZoombiniText::kDialogButtonNext, 36324, 4},
+	{ZoombiniText::kDialogBodyRemoveGame, 36380, 42},
+	{ZoombiniText::kNotiBoxHelpAudioOn, 42165, 13},
+	{ZoombiniText::kNotiBoxHelpAudioOff, 42179, 14},
+	{ZoombiniText::kNotiBoxTouchSenseOn, 42134, 14},
+	{ZoombiniText::kNotiBoxTouchSenseOff, 42149, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV20USMacRawTextEntries[] = {
+	{ZoombiniText::kDialogHelpLevel, 632580, 5},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10USMacDemoTextEntries[] = {
 	{ZoombiniText::kTown, 36270, 13},
 	{ZoombiniText::kPicker, 36638, 13},
 	{ZoombiniText::kBridge, 35128, 15},
@@ -1004,27 +1818,27 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11USMacDemoTextEntries[] = {
 	{ZoombiniText::kSmoke, 34000, 14},
 	{ZoombiniText::kMaze, 34135, 18},
 	{ZoombiniText::kNewGame, 28089, 8},
-	{ZoombiniText::kEuropeJourneyStatZoombiniIsle, 36638, 13},
-	{ZoombiniText::kEuropeJourneyStatShelterRock, 36616, 12},
-	{ZoombiniText::kEuropeJourneyStatShadeTree, 36856, 10},
-	{ZoombiniText::kEuropeJourneyStatZoombiniton, 36270, 13},
+	{ZoombiniText::kJourneyStatZoombiniIsle, 36638, 13},
+	{ZoombiniText::kJourneyStatShelterRock, 36616, 12},
+	{ZoombiniText::kJourneyStatShadeTree, 36856, 10},
+	{ZoombiniText::kJourneyStatZoombiniton, 36270, 13},
 	{ZoombiniText::kPracticeMode, 32811, 13},
-	{ZoombiniText::kEuropePracticeReturnInitial1, 36692, 18},
-	{ZoombiniText::kEuropePracticeReturnInitial2, 36632, 19},
-	{ZoombiniText::kEuropePracticeReturnInitial3, 61, 1},
-	{ZoombiniText::kEuropePracticeReturnInitial4, 61, 1},
-	{ZoombiniText::kEuropePracticeReturnShelterRock1, 36692, 18},
-	{ZoombiniText::kEuropePracticeReturnShelterRock2, 36632, 19},
-	{ZoombiniText::kEuropePracticeReturnShelterRock3, 36654, 15},
-	{ZoombiniText::kEuropePracticeReturnShelterRock4, 61, 1},
-	{ZoombiniText::kEuropePracticeReturnShadeTree1, 36692, 18},
-	{ZoombiniText::kEuropePracticeReturnShadeTree2, 36632, 20},
-	{ZoombiniText::kEuropePracticeReturnShadeTree3, 36616, 15},
-	{ZoombiniText::kEuropePracticeReturnShadeTree4, 36856, 10},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton1, 36692, 18},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton2, 36632, 20},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton3, 36599, 16},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton4, 36582, 16},
+	{ZoombiniText::kPracticeReturnInitial1, 36692, 18},
+	{ZoombiniText::kPracticeReturnInitial2, 36632, 19},
+	{ZoombiniText::kPracticeReturnInitial3, 61, 1},
+	{ZoombiniText::kPracticeReturnInitial4, 61, 1},
+	{ZoombiniText::kPracticeReturnShelterRock1, 36692, 18},
+	{ZoombiniText::kPracticeReturnShelterRock2, 36632, 19},
+	{ZoombiniText::kPracticeReturnShelterRock3, 36654, 15},
+	{ZoombiniText::kPracticeReturnShelterRock4, 61, 1},
+	{ZoombiniText::kPracticeReturnShadeTree1, 36692, 18},
+	{ZoombiniText::kPracticeReturnShadeTree2, 36632, 20},
+	{ZoombiniText::kPracticeReturnShadeTree3, 36616, 15},
+	{ZoombiniText::kPracticeReturnShadeTree4, 36856, 10},
+	{ZoombiniText::kPracticeReturnZoombiniton1, 36692, 18},
+	{ZoombiniText::kPracticeReturnZoombiniton2, 36632, 20},
+	{ZoombiniText::kPracticeReturnZoombiniton3, 36599, 16},
+	{ZoombiniText::kPracticeReturnZoombiniton4, 36582, 16},
 	{ZoombiniText::kTerrainKey, 36486, 11},
 	{ZoombiniText::kChooseLevel, 36470, 14},
 	{ZoombiniText::kLevel1, 36458, 11},
@@ -1138,7 +1952,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11USMacDemoTextEntries[] = {
 	{ZoombiniText::kNotiBoxAutoStickeyOff, 29308, 15},
 };
 
-const ZoombiniText::ExeTextEntry ZoombiniText::kV11USDemo_NETextEntries[] = {
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10USDemo_NETextEntries[] = {
 	{ZoombiniText::kTown, 0xD8B1F, 13},
 	{ZoombiniText::kPicker, 0xD8A3A, 13},
 	{ZoombiniText::kBridge, 0xD8A48, 15},
@@ -1156,27 +1970,27 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11USDemo_NETextEntries[] = {
 	{ZoombiniText::kSmoke, 0xD8AFC, 14},
 	{ZoombiniText::kMaze, 0xD8B0C, 18},
 	{ZoombiniText::kNewGame, 0xD9758, 8},
-	{ZoombiniText::kEuropeJourneyStatZoombiniIsle, 0xD8B2D, 13},
-	{ZoombiniText::kEuropeJourneyStatShelterRock, 0xD8B3B, 12},
-	{ZoombiniText::kEuropeJourneyStatShadeTree, 0xD8B48, 10},
-	{ZoombiniText::kEuropeJourneyStatZoombiniton, 0xD8B53, 13},
+	{ZoombiniText::kJourneyStatZoombiniIsle, 0xD8B2D, 13},
+	{ZoombiniText::kJourneyStatShelterRock, 0xD8B3B, 12},
+	{ZoombiniText::kJourneyStatShadeTree, 0xD8B48, 10},
+	{ZoombiniText::kJourneyStatZoombiniton, 0xD8B53, 13},
 	{ZoombiniText::kPracticeMode, 0xD8B61, 13},
-	{ZoombiniText::kEuropePracticeReturnInitial1, 0xD8B6F, 18},
-	{ZoombiniText::kEuropePracticeReturnInitial2, 0xD8B82, 19},
-	{ZoombiniText::kEuropePracticeReturnInitial3, 0xD8B96, 1},
-	{ZoombiniText::kEuropePracticeReturnInitial4, 0xD8B98, 1},
-	{ZoombiniText::kEuropePracticeReturnShelterRock1, 0xD8B9A, 18},
-	{ZoombiniText::kEuropePracticeReturnShelterRock2, 0xD8BAD, 19},
-	{ZoombiniText::kEuropePracticeReturnShelterRock3, 0xD8BC1, 15},
-	{ZoombiniText::kEuropePracticeReturnShelterRock4, 0xD8BD1, 1},
-	{ZoombiniText::kEuropePracticeReturnShadeTree1, 0xD8BD3, 18},
-	{ZoombiniText::kEuropePracticeReturnShadeTree2, 0xD8BE6, 20},
-	{ZoombiniText::kEuropePracticeReturnShadeTree3, 0xD8BFB, 15},
-	{ZoombiniText::kEuropePracticeReturnShadeTree4, 0xD8C0B, 10},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton1, 0xD8C16, 18},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton2, 0xD8C29, 20},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton3, 0xD8C3E, 16},
-	{ZoombiniText::kEuropePracticeReturnZoombiniton4, 0xD8C4F, 16},
+	{ZoombiniText::kPracticeReturnInitial1, 0xD8B6F, 18},
+	{ZoombiniText::kPracticeReturnInitial2, 0xD8B82, 19},
+	{ZoombiniText::kPracticeReturnInitial3, 0xD8B96, 1},
+	{ZoombiniText::kPracticeReturnInitial4, 0xD8B98, 1},
+	{ZoombiniText::kPracticeReturnShelterRock1, 0xD8B9A, 18},
+	{ZoombiniText::kPracticeReturnShelterRock2, 0xD8BAD, 19},
+	{ZoombiniText::kPracticeReturnShelterRock3, 0xD8BC1, 15},
+	{ZoombiniText::kPracticeReturnShelterRock4, 0xD8BD1, 1},
+	{ZoombiniText::kPracticeReturnShadeTree1, 0xD8BD3, 18},
+	{ZoombiniText::kPracticeReturnShadeTree2, 0xD8BE6, 20},
+	{ZoombiniText::kPracticeReturnShadeTree3, 0xD8BFB, 15},
+	{ZoombiniText::kPracticeReturnShadeTree4, 0xD8C0B, 10},
+	{ZoombiniText::kPracticeReturnZoombiniton1, 0xD8C16, 18},
+	{ZoombiniText::kPracticeReturnZoombiniton2, 0xD8C29, 20},
+	{ZoombiniText::kPracticeReturnZoombiniton3, 0xD8C3E, 16},
+	{ZoombiniText::kPracticeReturnZoombiniton4, 0xD8C4F, 16},
 	{ZoombiniText::kTerrainKey, 0xD8C60, 11},
 	{ZoombiniText::kChooseLevel, 0xD8C6C, 14},
 	{ZoombiniText::kLevel1, 0xD8C7B, 11},
@@ -2139,7 +2953,7 @@ bool ZoombiniText::readTextStrStrings(MohawkArchive &archive, int16 resourceId, 
 	// The v1.0BR/v1.1BR TEXTSTR.MHK credit STRL 2022 has an incorrect string count in its header.
 	// It declares 142 strings but contains 145, including two trailing empty strings and the final '*' marker.
 	// Accept only this known suffix so the malformed original resource remains readable.
-	const bool allowBritishCreditTerminator = _relInfo.isFamily(ZmbReleaseInfo::kEuropeV1) &&
+	const bool allowBritishCreditTerminator = _relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x) &&
 											  _relInfo.getLanguage() == Common::EN_GRB && resourceId == 2022 && stringCount == 142;
 	if (!consumedExactly && allowBritishCreditTerminator && ZmbResource::hasBytes(stringStream, 4)) {
 		const bool hasCreditTerminatorSuffix = stringStream->readByte() == 0 && stringStream->readByte() == 0 && stringStream->readByte() == '*' &&
@@ -2161,7 +2975,228 @@ bool ZoombiniText::readExecutableData(Common::SeekableReadStream *exeStream, uin
 	return exeStream->seek(0) && exeStream->read(data.data(), expectedSize) == expectedSize && exeStream->pos() == exeStream->size();
 }
 
-bool ZoombiniText::readMacA5WorldSizes(Common::SeekableReadStream *codeStream, uint32 &bytesAboveA5, uint32 &bytesBelowA5) {
+bool ZoombiniText::readMacPpcPefDataArgument(const Common::Array<byte> &data, uint32 sourceEnd, uint32 &sourceOffset, uint32 &value) {
+	// PEF argument: one to five bytes, each [continuation bit | seven payload bits], most significant group first.
+	// Pattern instructions use this for extended counts, repeat counts and custom-block sizes.
+	// The caller validates sourceEnd as the packed section's exclusive bound; never consume its next section.
+	static constexpr uint kMaxArgumentBytes = 5;
+	static constexpr uint kPayloadBitCount = 7;
+	static constexpr byte kPayloadMask = 0x7F;
+	static constexpr byte kContinuationBit = 1 << kPayloadBitCount;
+
+	value = 0;
+	for (uint bIdx = 0; bIdx < kMaxArgumentBytes; bIdx++) {
+		if (sourceEnd <= sourceOffset)
+			return false;
+		const byte encodedByte = data[sourceOffset];
+		sourceOffset += 1;
+		const uint32 payloadBits = encodedByte & kPayloadMask;
+		// Unsigned 32-bit accumulation retains the low 32 bits when all five groups are present.
+		value = (value << kPayloadBitCount) | payloadBits;
+		// A clear high bit ends this argument; other high payload bits do not imply continuation.
+		if ((encodedByte & kContinuationBit) == 0)
+			return true;
+	}
+	// A fifth continuation byte cannot form a valid 32-bit PEF argument.
+	return false;
+}
+
+bool ZoombiniText::expandMacPpcPefDataSection(const Common::Array<byte> &data, uint16 sectionIdx, uint32 expectedSize, Common::Array<byte> &expandedData) {
+	// Reproduce the data-section preparation performed by classic Mac OS's Code Fragment Manager.
+	// A packed section stores pattern instructions, not directly readable initialized globals.
+	// Build its memory image here so static strings and credit offsets can be read without executing PPC code.
+
+	// PPC PEF data-fork layout (header fields are BE):
+	//   [Container header: 40 bytes]
+	//   [Section headers: 28 bytes * sectionCount]
+	//     Fields used here, at offsets within each section header:
+	//       +8  [totalSize: BE32]
+	//       +12 [unpackedSize: BE32]
+	//       +16 [packedSize: BE32]
+	//       +20 [containerOffset: BE32]
+	//       +24 [sectionKind: byte]
+	//   [Section name table: variable length]
+	//   [Section contents, with alignment gaps]
+	//     kind 1: unpacked data
+	//     kind 2: pattern-initialized data
+	//       [opcode: 3 bits | count: 5 bits][arguments][literal bytes]
+	//       count == 0: read the count from the first variable-length argument
+	//       interleaves: additional arguments are customSize and repeatCount
+	//       repeatedBlock: additional repeatCount stores the number of copies minus one
+	// Each header's containerOffset locates its contents; content order may differ from header order.
+	//
+	// Expanded selected section (offsets start at 0):
+	//   [Initialized data: unpackedSize bytes][Zero-filled BSS: totalSize - unpackedSize bytes]
+	// Original BE32 credit pointers are relative to this buffer; static text lookup needs neither imports nor CFM address relocation.
+	//
+	// Apple, Mac OS Runtime Architectures, chapter 8, pp. 8-4..8-14:
+	// https://developer.apple.com/library/archive/documentation/mac/pdf/MacOS_RT_Architectures.pdf
+	static constexpr uint32 kPefHeaderSize = 40;
+	static constexpr uint32 kSectionHeaderSize = 28;
+	if (data.size() < kPefHeaderSize)
+		return false;
+
+	// [*] Parse PEF Header
+	const uint32 magicTag = READ_BE_UINT32(data.data());
+	const uint32 formatTag = READ_BE_UINT32(data.data() + 4);
+	const uint32 archTag = READ_BE_UINT32(data.data() + 8);
+	const uint32 formatVer = READ_BE_UINT32(data.data() + 12);
+	if (magicTag != MKTAG('J', 'o', 'y', '!') || formatTag != MKTAG('p', 'e', 'f', 'f') || archTag != MKTAG('p', 'w', 'p', 'c') || formatVer != 1)
+		return false;
+	// In PEF spec, instantiated section headers precede noninstantiated headers in the section header array.
+	const uint16 sectionCount = READ_BE_UINT16(data.data() + 32);
+	const uint16 instedCount = READ_BE_UINT16(data.data() + 34);
+	if (sectionCount < instedCount || instedCount <= sectionIdx)
+		return false;
+	// Dividing the remaining bytes by 28 counts complete section headers; require the full declared table before indexing the selected section.
+	const uint32 maxSectionHeaderCount = (data.size() - kPefHeaderSize) / kSectionHeaderSize;
+	if (maxSectionHeaderCount < sectionCount)
+		return false;
+
+	// [*] Parse Section Header
+	const byte *header = data.data() + kPefHeaderSize + sectionIdx * kSectionHeaderSize;
+	const uint32 totalSize = READ_BE_UINT32(header + 8);
+	const uint32 unpackedSize = READ_BE_UINT32(header + 12);
+	const uint32 packedSize = READ_BE_UINT32(header + 16);
+	const uint32 sectionOffset = READ_BE_UINT32(header + 20);
+	const MacPpcPefSectionKind sectionKind = static_cast<MacPpcPefSectionKind>(header[24]);
+
+	// Match the release's expected memory size before allocating; packed bytes and initialized bytes have separate bounds.
+	if (!expectedSize || totalSize != expectedSize || totalSize < unpackedSize || data.size() < sectionOffset || data.size() - sectionOffset < packedSize)
+		return false;
+
+	// [*] Expand Section Data
+	// totalSize includes the zero-initialized tail after unpackedSize. Zero opcodes can also reuse this cleared storage.
+	Common::Array<byte> expandedBytes;
+	switch (sectionKind) {
+	case kPefSectionUnpackedData_01:
+		// [*] Copy Unpacked Data
+		// Unpacked data already contains its initialized memory bytes; leave the remaining tail zeroed.
+		if (packedSize != unpackedSize)
+			return false;
+		expandedBytes.resize(totalSize);
+		memset(expandedBytes.data(), 0, totalSize);
+		memcpy(expandedBytes.data(), data.data() + sectionOffset, unpackedSize);
+		break;
+	case kPefSectionPatternInitData_02: {
+		// [*] Decode Pattern-Initialized Data
+		expandedBytes.resize(totalSize);
+		memset(expandedBytes.data(), 0, totalSize);
+		// Read commands/payload from file offsets while writing to section-relative destination offsets.
+		uint32 srcOffset = sectionOffset;
+		const uint32 srcEnd = sectionOffset + packedSize;
+		uint32 destOffset = 0;
+		while (srcOffset < srcEnd) {
+			const byte cmdByte = data[srcOffset];
+			srcOffset += 1;
+			// Split the command byte: opcode = high 3 bits (7..5), inline count = low 5 bits (4..0).
+			const MacPpcPefDataOpcode opcode = static_cast<MacPpcPefDataOpcode>(cmdByte >> 5);
+			uint32 count = cmdByte & 31;
+			// A zero inline count escapes to the variable-length argument representation.
+			if (!count && !readMacPpcPefDataArgument(data, srcEnd, srcOffset, count))
+				return false;
+			uint32 customSize = 0;
+			uint32 repeatCount = 0;
+			switch (opcode) {
+			case kPefOpcodeZero_00:
+			case kPefOpcodeBlockCopy_01:
+				// Both advance count output bytes; only blockCopy consumes literal input bytes.
+				if (unpackedSize - destOffset < count)
+					return false;
+				if (opcode == kPefOpcodeBlockCopy_01) {
+					if (srcEnd - srcOffset < count)
+						return false;
+					memcpy(expandedBytes.data() + destOffset, data.data() + srcOffset, count);
+					srcOffset += count;
+				}
+				destOffset += count;
+				break;
+			case kPefOpcodeRepeatedBlock_02: {
+				// The stored repeat count is one less than the number of copies; consume the literal block only once.
+				if (!readMacPpcPefDataArgument(data, srcEnd, srcOffset, repeatCount) || srcEnd - srcOffset < count)
+					return false;
+				if (count) {
+					// Check the number of whole copies that fit before adding the omitted first copy.
+					const uint32 maxCopies = (unpackedSize - destOffset) / count;
+					if (maxCopies <= repeatCount)
+						return false;
+					const uint32 repetitions = repeatCount + 1;
+					for (uint32 index = 0; index < repetitions; index++) {
+						memcpy(expandedBytes.data() + destOffset, data.data() + srcOffset, count);
+						destOffset += count;
+					}
+				}
+				srcOffset += count;
+				break;
+			}
+			case kPefOpcodeInterleaveBlocks_03:
+			case kPefOpcodeInterleaveZero_04: {
+				// Packed input holds one common block (or implicit zeros), then all custom blocks.
+				// Output alternates common/custom blocks and ends with one final common block.
+				if (!readMacPpcPefDataArgument(data, srcEnd, srcOffset, customSize) ||
+					!readMacPpcPefDataArgument(data, srcEnd, srcOffset, repeatCount))
+					return false;
+				// Reserve the final common block, then bound both repeated portions before multiplying.
+				uint32 remainingOutput = unpackedSize - destOffset;
+				if (remainingOutput < count)
+					return false;
+				remainingOutput -= count;
+				uint32 customBytes = 0;
+				if (repeatCount) {
+					const uint32 maxCommonBlockSize = remainingOutput / repeatCount;
+					if (maxCommonBlockSize < count)
+						return false;
+					remainingOutput -= count * repeatCount;
+					const uint32 maxCustomBlockSize = remainingOutput / repeatCount;
+					if (maxCustomBlockSize < customSize)
+						return false;
+					customBytes = customSize * repeatCount;
+				}
+				const uint32 commonOffset = srcOffset;
+				uint32 commonPayloadSize = 0;
+				if (opcode == kPefOpcodeInterleaveBlocks_03)
+					commonPayloadSize = count;
+				if (srcEnd - srcOffset < commonPayloadSize || srcEnd - srcOffset - commonPayloadSize < customBytes)
+					return false;
+				srcOffset += commonPayloadSize;
+				// Empty patterns consume no payload and must not loop repeatCount times.
+				if (count || customSize) {
+					for (uint32 i = 0; i < repeatCount; i++) {
+						if (commonPayloadSize)
+							memcpy(expandedBytes.data() + destOffset, data.data() + commonOffset, count);
+						destOffset += count;
+						memcpy(expandedBytes.data() + destOffset, data.data() + srcOffset, customSize);
+						destOffset += customSize;
+						srcOffset += customSize;
+					}
+				}
+				// Emit the last common block separately, without forming repeatCount + 1.
+				if (commonPayloadSize)
+					memcpy(expandedBytes.data() + destOffset, data.data() + commonOffset, count);
+				destOffset += count;
+				break;
+			}
+			default: // Opcodes 5..7 are reserved.
+				return false;
+			}
+		}
+		// [*] Validate Expanded Size
+		// Patterns must produce exactly the initialized region; the remaining totalSize bytes stay zero.
+		if (destOffset != unpackedSize)
+			return false;
+		break;
+	}
+	default:
+		// Handle only unpacked and pattern-initted data sections.
+		return false;
+	}
+	// [*] Publish Expanded Section
+	// Transfer the validated image without copying; failures leave the caller's output unchanged.
+	expandedData.swap(expandedBytes);
+	return true;
+}
+
+bool ZoombiniText::readMac68kA5WorldSizes(Common::SeekableReadStream *codeStream, uint32 &bytesAboveA5, uint32 &bytesBelowA5) {
 	if (!codeStream || codeStream->size() < 8 || !codeStream->seek(0))
 		return false;
 
@@ -2170,7 +3205,7 @@ bool ZoombiniText::readMacA5WorldSizes(Common::SeekableReadStream *codeStream, u
 	return !codeStream->err();
 }
 
-bool ZoombiniText::expandMacResForkRleGlobals(Common::Array<byte> &data, uint32 bytesAboveA5, uint32 bytesBelowA5) {
+bool ZoombiniText::expandMac68kResForkRleGlobals(Common::Array<byte> &data, uint32 bytesAboveA5, uint32 bytesBelowA5) {
 	const uint64 a5WorldSize = static_cast<uint64>(bytesBelowA5) + bytesAboveA5;
 	if (bytesAboveA5 == 0 || UINT32_MAX < a5WorldSize)
 		return false;
@@ -2204,13 +3239,13 @@ bool ZoombiniText::expandMacResForkRleGlobals(Common::Array<byte> &data, uint32 
 			const byte cmd = data[srcOffset];
 			srcOffset += 1;
 			// Zero ends this block, not the entire three-block stream.
-			if (cmd == kMacDataEndBlock_00)
+			if (cmd == kMac68kDataEndBlock_00)
 				break;
-			if (cmd <= kMacDataTemplateLast_04) {
+			if (cmd <= kMac68kDataTemplateLast_04) {
 				if (a5World.size() - dest < 8)
 					return false;
 				for (uint i = 0; i < 8; i++) {
-					const int16 value = kTemplates[cmd - kMacDataTemplateFirst_01][i];
+					const int16 value = kTemplates[cmd - kMac68kDataTemplateFirst_01][i];
 					if (value == -2) {
 						if (data.size() <= srcOffset)
 							return false;
@@ -2227,30 +3262,30 @@ bool ZoombiniText::expandMacResForkRleGlobals(Common::Array<byte> &data, uint32 
 			// Check bases in descending order so each byte selects exactly one command.
 			uint32 count;
 			byte value = 255;
-			if (kMacDataCopyLiteralsBase_128 <= cmd) {
-				count = cmd - kMacDataCopyLiteralsBase_128 + 1;
-			} else if (kMacDataSkipBase_64 <= cmd) {
-				count = cmd - kMacDataSkipBase_64 + 1;
-			} else if (kMacDataRepeatByteBase_32 <= cmd) {
-				count = cmd - kMacDataRepeatByteBase_32 + 2;
+			if (kMac68kDataCopyLiteralsBase_128 <= cmd) {
+				count = cmd - kMac68kDataCopyLiteralsBase_128 + 1;
+			} else if (kMac68kDataSkipBase_64 <= cmd) {
+				count = cmd - kMac68kDataSkipBase_64 + 1;
+			} else if (kMac68kDataRepeatByteBase_32 <= cmd) {
+				count = cmd - kMac68kDataRepeatByteBase_32 + 2;
 				if (data.size() <= srcOffset)
 					return false;
 				value = data[srcOffset];
 				srcOffset += 1;
-			} else if (kMacDataRepeatFFBase_16 <= cmd) {
-				count = cmd - kMacDataRepeatFFBase_16 + 1;
+			} else if (kMac68kDataRepeatFFBase_16 <= cmd) {
+				count = cmd - kMac68kDataRepeatFFBase_16 + 1;
 			} else {
 				// Commands 5..15 are invalid; the original reports SysError 15.
 				return false;
 			}
 			if (a5World.size() - dest < count)
 				return false;
-			if (kMacDataCopyLiteralsBase_128 <= cmd) {
+			if (kMac68kDataCopyLiteralsBase_128 <= cmd) {
 				if (data.size() - srcOffset < count)
 					return false;
 				memcpy(a5World.data() + dest, data.data() + srcOffset, count);
 				srcOffset += count;
-			} else if (cmd < kMacDataSkipBase_64) {
+			} else if (cmd < kMac68kDataSkipBase_64) {
 				memset(a5World.data() + dest, value, count);
 			}
 			dest += count;
@@ -2374,7 +3409,7 @@ bool ZoombiniText::readCreditStringsFromPointerTable(const Common::Array<byte> &
 
 	creditStrings.clear();
 	bool reachedIcons = false;
-	uint32 nextIconIndex = 1;
+	uint32 nextIconIdx = 1;
 	uint32 pointerIndex = source.creditPointerFirstIndex;
 	uint32 totalByteCount = 0;
 	for (uint32 entryCount = 0; entryCount < source.creditLimits.entryCount; entryCount++) {
@@ -2383,11 +3418,16 @@ bool ZoombiniText::readCreditStringsFromPointerTable(const Common::Array<byte> &
 			return false;
 
 		uint32 stringAddress;
-		const bool srcMacRleA5RelativePtrs = source.creditSourceKind == CreditSourceKind::kMacRleA5RelativePointerStream;
-		if (srcMacRleA5RelativePtrs)
+		const bool srcMac68kA5RelativePtrs = source.creditSourceKind == CreditSourceKind::kMac68kA5RelativePointerStream;
+		switch (source.creditSourceKind) {
+		case CreditSourceKind::kMac68kA5RelativePointerStream:
+		case CreditSourceKind::kMacPpcPefRelativePointerStream:
 			stringAddress = READ_BE_UINT32(data.data() + tableEntryOffset);
-		else
+			break;
+		default:
 			stringAddress = READ_LE_UINT32(data.data() + tableEntryOffset);
+			break;
+		}
 		if (source.creditPointerBlankAddressFirst &&
 			source.creditPointerBlankAddressFirst <= stringAddress && stringAddress <= source.creditPointerBlankAddressLast) {
 			if (!reachedIcons)
@@ -2406,21 +3446,21 @@ bool ZoombiniText::readCreditStringsFromPointerTable(const Common::Array<byte> &
 			return false;
 		totalByteCount += byteLength;
 		if (isCreditTerminator(text)) {
-			if ((!srcMacRleA5RelativePtrs && nextIconIndex != 5) || creditStrings.empty())
+			if ((!srcMac68kA5RelativePtrs && nextIconIdx != 5) || creditStrings.empty())
 				return false;
 			creditStrings.push_back(text);
 			return true;
 		}
-		if (!srcMacRleA5RelativePtrs && isTlcCreditIconMarker(text)) {
+		if (!srcMac68kA5RelativePtrs && isTlcCreditIconMarker(text)) {
 			const uint32 iconIndex = static_cast<uint32>(text[4] - U'0');
-			if (iconIndex != nextIconIndex)
+			if (iconIndex != nextIconIdx)
 				return false;
 			if (!reachedIcons) {
 				while (!creditStrings.empty() && creditStrings.back().empty())
 					creditStrings.pop_back();
 				reachedIcons = true;
 			}
-			nextIconIndex += 1;
+			nextIconIdx += 1;
 			pointerIndex += 1;
 			continue;
 		}
@@ -2443,7 +3483,16 @@ bool ZoombiniText::buildCreditParagraphsFromStrings(const Common::Array<Common::
 	uint32 blankLineCount = 0;
 	bool firstLineIsTitle = true;
 	bool reachedTerminator = false;
-	const bool leadingSpaceMarksBody = kind == CreditSourceKind::kExecutablePointerStream;
+	bool leadingSpaceMarksBody;
+	switch (kind) {
+	case CreditSourceKind::kExecutablePointerStream:
+	case CreditSourceKind::kMacPpcPefRelativePointerStream:
+		leadingSpaceMarksBody = true;
+		break;
+	default:
+		leadingSpaceMarksBody = false;
+		break;
+	}
 
 	for (const Common::U32String &text : creditStrings) {
 		if (isCreditTerminator(text)) {
@@ -2483,7 +3532,8 @@ bool ZoombiniText::loadOriginalExecutableCredits(const Common::Array<byte> &data
 			return false;
 		break;
 	case CreditSourceKind::kExecutablePointerStream:
-	case CreditSourceKind::kMacRleA5RelativePointerStream:
+	case CreditSourceKind::kMac68kA5RelativePointerStream:
+	case CreditSourceKind::kMacPpcPefRelativePointerStream:
 		if (!readCreditStringsFromPointerTable(data, source, creditStrings))
 			return false;
 		break;
@@ -2501,7 +3551,7 @@ bool ZoombiniText::compareLocalizedStrings(const LocalizedString &left, const Lo
 	return left._key < right._key;
 }
 
-bool ZoombiniText::initArchiveStrings(const StringSources &sources) {
+bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 	const Common::Path textStrMhkPath = Common::Path(_vm->getArchiveRoot()).append(ZMB_MHK_TEXTSTR);
 	MohawkArchive textStrArchive;
 	if (!textStrArchive.openFile(textStrMhkPath))
@@ -2563,9 +3613,8 @@ bool ZoombiniText::initArchiveStrings(const StringSources &sources) {
 
 ZoombiniText::ZoombiniText(MohawkEngine_Zoombini *vm)
 	: _vm(vm), _relInfo(vm->getRelInfo()), _exeCodePage(_relInfo.getExeCodePage()), _resCodePage(_relInfo.getResCodePage()) {
-	initFonts();
-
-	const StringSources sources = createStringSources(_relInfo);
+	const SourceSettings sources = createSourceSettings(_relInfo, _vm->getFeatures());
+	initFonts(sources);
 	// Load the release-specific strings embedded in the game executable.
 	if (!initExecutableStrings(sources.executables)) {
 		error("ZoombiniText: the original executable is missing, malformed, or does not match this release");
@@ -2581,7 +3630,57 @@ ZoombiniText::ZoombiniText(MohawkEngine_Zoombini *vm)
 	}
 }
 
-void ZoombiniText::initFonts() {
+void ZoombiniText::initFonts(const SourceSettings &sources) {
+	switch (_relInfo.getPlatform()) {
+	case Common::kPlatformMacintosh:
+		initMacintoshFonts();
+		break;
+	case Common::kPlatformWindows:
+		initWindowsFonts(sources.fontCabinet);
+		break;
+	default:
+		error("ZoombiniText::initFonts: unsupported platform %d", static_cast<int>(_relInfo.getPlatform()));
+	}
+
+	// Check if ScummVM can access required fonts, and print warning message box if they are not found.
+	loadFont(_textFont, true);
+	loadFont(_titleFont, false);
+}
+
+void ZoombiniText::initMacintoshFonts() {
+	static constexpr Graphics::TTFSizeMode kSizeMode = Graphics::kTTFSizeModeCharacter;
+	_textFont.point = 12;
+	_titleFont.point = 18;
+	switch (_relInfo.getLanguage()) {
+	case Common::FR_FRA:
+	case Common::DE_DEU:
+		_titleFont.point = 16;
+		break;
+	case Common::JA_JPN:
+		_titleFont.point = 16;
+		// Classic Osaka has no Unicode cmap, making hard to support it in ScummVM font system without major overhaul.
+		// So in the meantime, keep the existing macOS-font/substitute path.
+		_optimalTTFLoaders.push_back(new FileTTFLoader("Osaka.ttf", "Osaka", false, 0, kSizeMode));
+		_optimalTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", "MS Gothic", false, 0, kSizeMode));
+#if defined(WIN32)
+		_optimalTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", "MS Gothic", false, 0, kSizeMode));
+#endif
+		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", Graphics::kTTFRenderModeLight, kSizeMode));
+		return;
+	case Common::EN_USA:
+	case Common::EN_GRB:
+	default:
+		break;
+	}
+	_optimalTTFLoaders.push_back(new MacResForkTTFLoader(_relInfo.getMacApplicationName(), "Cornerstone", 2863, kSizeMode));
+	if (_fallbackTTFLoaders.empty())
+		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("LiberationMono-Bold.ttf", "Liberation Mono", false, 0, kSizeMode));
+}
+
+void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
+	Graphics::TTFSizeMode fontSizeMode = Graphics::kTTFSizeModeCharacter;
+	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20, Common::PL_POL))
+		fontSizeMode = Graphics::kTTFSizeModeCell;
 	const Common::Language language = _relInfo.getLanguage();
 	static constexpr const char *kFontNameCornerstone = "CornerStone";
 	static constexpr const char *kFontNameGulimChe = "GulimChe";  // for v1.11KR
@@ -2589,12 +3688,6 @@ void ZoombiniText::initFonts() {
 	static constexpr const char *kFontNameTahoma = "Tahoma";      // for v2.0PL
 	// I18N: %s is a required file name or a list of alternative paths within the installer disk directory.
 	const Common::U32String srcInstTemplate = _("Please provide an installer disk directory containing: %s.");
-	Graphics::TTFSizeMode fontSizeMode;
-	if (_relInfo.isVariant(ZmbReleaseInfo::kTlcV20, Common::PL_POL))
-		fontSizeMode = Graphics::kTTFSizeModeCell;
-	else
-		fontSizeMode = Graphics::kTTFSizeModeCharacter;
-
 #if defined(WIN32)
 	// FIXME: Is loading required fonts from the Windows font archive acceptable in ScummVM?
 	// I18N: %s is a font file name; %S is the complete localized instruction for obtaining that font.
@@ -2610,25 +3703,24 @@ void ZoombiniText::initFonts() {
 	_titleFont.point = 18;
 
 	// Zoombini bundles its preferred font in InstallShield archives or the install location.
-	// - 1.0/1.1 Europe: found in /CORNER.TTF
+	// - v1.0US, v1.0EU and v1.1EU: found in /CORNER.TTF
 	// - 1.1 US: found in /ZBARC16.Z, /ZBARC32.Z, or /SETUP/data1.cab
-	//   * Win16 demo: found in /CORNER.TTF
 	// - 2.0 TLC: found in /INSTALL/HD/CORNER.TTF
 	//   * Polish release contains Tahoma in name of CORNER.TTF.
 	// - 2.0 TLC demo: found in /CORNER.TTF
-	if (_relInfo.isFamily(ZmbReleaseInfo::kEuropeV1)) { // Europe v1.0, v1.1 releases and v1.0JP.
+	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10) || _relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
 		// English releases load CornerStone at 13/18 pt for text/title.
 		// French, German, and Italian branches use 13/16 pt for text/title.
 		// Portuguese v1.0 uses 10/14 pt for text/title.
 		// Japanese v1.0 uses MS Gothic at 12/15 pt for text/title.
-		if (_relInfo.isVariant(ZmbReleaseInfo::kEsPtV10, Common::PT_PRT)) {
+		if (_relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10, Common::PT_PRT)) {
 			// FIXME: CornerStone's ascender is 904/1000 em, or 9.04 pixels at size 10.
 			// GDI rounds this to 9 pixels; FreeType rounds up to 10 and uses that ascent for cached glyph Y offsets.
 			// Both have an 11-pixel line height, but FreeType places the Portuguese glyph baseline one pixel lower.
 			// This font-metric difference remains a known issue; do not compensate with layout rectangles.
 			_textFont.point = 10;
 			_titleFont.point = 14;
-		} else if (_relInfo.isVariant(ZmbReleaseInfo::kJapanV10)) {
+		} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
 			_textFont.point = 12;
 			_titleFont.point = 15;
 		} else {
@@ -2643,23 +3735,12 @@ void ZoombiniText::initFonts() {
 			}
 		}
 
-		if (_relInfo.isVariant(ZmbReleaseInfo::kFranceV11_2002)) { // French 2002 v1.1 release
-			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/data1.cab'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new ISCabTTFLoader("data1.cab", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+		if (fontCabinet) {
+			const Common::String cabinetPath = Common::String::format("'/%s'", fontCabinet);
+			fontSrcInst = Common::U32String::format(srcInstTemplate, cabinetPath.c_str()).encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new ISCabTTFLoader(fontCabinet, "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
 			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-		} else if (_relInfo.isDemo(ZmbReleaseInfo::kJapanV10)) {
-			// Known issue: classic Osaka uses Mac Japanese character codes without a Unicode cmap.
-			// The shared TTF loader's 8-bit mapping cannot cover Japanese text; use macOS Osaka.ttf.
-			// Known issue: QuickDraw size selection and metrics remain unverified.
-			_optimalTTFLoaders.push_back(new FileTTFLoader("Osaka.ttf", "Osaka", false, 0, fontSizeMode));
-			// Prefer the Japanese Windows release's MS Gothic as a substitute.
-			_optimalTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", kFontNameMsGothic, false, 0, fontSizeMode));
-#if defined(WIN32)
-			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "msgothic.ttc", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", kFontNameMsGothic, systemFontWarn, false, 0, fontSizeMode));
-#endif
-			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", Graphics::kTTFRenderModeLight, fontSizeMode));
-		} else if (_relInfo.isVariant(ZmbReleaseInfo::kJapanV10)) { // v1.0JP
+		} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) { // v1.0JP
 			// Japanese Zoombini depends on 'MS Gothic' font named as 'msgothic.ttc'.
 			// The font is distributed with Windows and is not included on the game CD.
 			// Users have to source the required font themselves!
@@ -2676,29 +3757,13 @@ void ZoombiniText::initFonts() {
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
 			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
 		}
-	} else if (_relInfo.isFamily(ZmbReleaseInfo::kUsV1)) { // Broderbund v1.1 US release
+	} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11)) { // Broderbund v1.1 US release
 		if (language == Common::EN_USA) {
-			if (_relInfo.isDemo()) {
-				switch (_vm->getPlatform()) {
-				case Common::kPlatformMacintosh: // v1.1US Mac Demo
-					_textFont.point = 12;
-					_optimalTTFLoaders.push_back(new MacResForkTTFLoader("Zoom", "Cornerstone", 2863, fontSizeMode));
-					break;
-				case Common::kPlatformWindows: // v1.1US Windows Demo
-					fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
-					_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-					break;
-				default:
-					error("ZoombiniText::initFonts: unknown platform(%d) for v1.1US Demo", _vm->getPlatform());
-					break;
-				}
-			} else { // Retail releases
-				fontSrcInst = Common::U32String::format(srcInstTemplate, "'/ZBARC32.Z', '/ZBARC16.Z', or '/SETUP/data1.cab'").encode(Common::kUtf8);
-				_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC32.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-				_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC16.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-				_optimalTTFLoaders.push_back(new ISCabTTFLoader("SETUP/data1.cab", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-				_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-			}
+			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/ZBARC32.Z', '/ZBARC16.Z', or '/SETUP/data1.cab'").encode(Common::kUtf8);
+			_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC32.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC16.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new ISCabTTFLoader("SETUP/data1.cab", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
 		} else if (language == Common::KO_KOR) {
 			// Korean Zoombini depends on GulimChe font named as 'gulim.ttc'.
 			// The font is distributed with Windows and is not included on the game CD.
@@ -2722,8 +3787,8 @@ void ZoombiniText::initFonts() {
 			error("ZoombiniText: unsupported language (%s) for Broderbund v1.1 US-based release", Common::getLanguageDescription(language));
 			return;
 		}
-	} else if (_relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) { // The Learning Company v2.0 release family
-		if (_relInfo.isDemo(ZmbReleaseInfo::kTlcV20)) {
+	} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) { // The Learning Company v2.0 release family
+		if (_relInfo.isDemo(ZmbReleaseInfo::Family::kTlcV20)) {
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
 			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
 		} else if (language == Common::EN_USA) {
@@ -2749,13 +3814,8 @@ void ZoombiniText::initFonts() {
 		error("ZoombiniText: unsupported release (%s, %s)", Common::getLanguageDescription(language), _vm->_gameDescription->desc.extra);
 		return;
 	}
-
 	if (_fallbackTTFLoaders.empty())
 		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("LiberationMono-Bold.ttf", "Liberation Mono", false, 0, fontSizeMode));
-
-	// Check if ScummVM can access required fonts, and print warning message box if they are not found.
-	loadFont(_textFont, true);
-	loadFont(_titleFont, false);
 }
 
 ZoombiniText::~ZoombiniText() {
@@ -2773,7 +3833,100 @@ ZoombiniText::~ZoombiniText() {
 	_fallbackTTFLoaders.clear();
 }
 
-ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseInfo &relInfo) {
+ZoombiniText::ExeTextSource ZoombiniText::createMacExecutableSource(const ZmbReleaseInfo &relInfo, bool europeV11) {
+	const Common::CodePage codePage = relInfo.getExeCodePage();
+	const char *application = relInfo.getMacApplicationName();
+
+	// USv10, USv11, TLCv20 family
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10, Common::EN_USA)) {
+		// 68K CODE: text offsets are A5-relative within the expanded resource-fork DATA 0.
+		return ExeTextSource()
+			.withTextTable(codePage, kV10USMacTextEntries, ARRAYSIZE(kV10USMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
+			.withRequiredBytes(33598, "NEW GAME (CTRL N)")
+			.withMacA5RelativeCreditPtrTable(29602)
+			.withCreditLimits(kV10USCreditLimits)
+			.inMac68kDataResFork(application, 33222);
+	}
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11)) {
+		// 68K CODE: text offsets are A5-relative within the expanded resource-fork DATA 0.
+		return ExeTextSource()
+			.withTextTable(codePage, kV11USMacTextEntries, ARRAYSIZE(kV11USMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
+			.withRequiredBytes(37046, "NEW GAME (CTRL N)")
+			.withMacA5RelativeCreditPtrTable(32944)
+			.withCreditLimits(kV11USCreditLimits)
+			.inMac68kDataResFork(application, 40327);
+	}
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
+		// PPC PEF: expand data-fork section 1; code literals retain raw-file offsets.
+		return ExeTextSource()
+			.withTextTable(codePage, kV20USMacTextEntries, ARRAYSIZE(kV20USMacTextEntries), ExeTextDataSource::kExpandedMacPpcPefDataSection)
+			.withAdditionalTextTable(kV20USMacRawTextEntries, ARRAYSIZE(kV20USMacRawTextEntries))
+			.withRequiredBytes(35503, "NEW GAME (CTRL N)")
+			.withMacPefRelativeCreditPtrTable(40516)
+			.withCreditPtrBlankAddress(9495)
+			.withCreditLimits(kV20USCreditLimits)
+			.inMacPpcPefDataFork(application, 682084, 1, 96256);
+	}
+
+	// EUv10 family
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
+		// 68K CODE: text offsets are A5-relative within the expanded resource-fork DATA 0.
+		return ExeTextSource()
+			.withTextTable(codePage, kV10JPMacTextEntries, ARRAYSIZE(kV10JPMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
+			.withRequiredBytes(34314, "New Game")
+			.inMac68kDataResFork(application, 29190);
+	}
+
+	// EUv10, EUv11
+	ExeTextSource source;
+	uint32 dataSize = 0;
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x) && !europeV11) {
+		// 68K CODE: text offsets are A5-relative within the expanded resource-fork DATA 0.
+		dataSize = 28317;
+		switch (relInfo.getLanguage()) {
+		case Common::EN_GRB:
+			source = source.withTextTable(codePage, kV10BRMacTextEntries, ARRAYSIZE(kV10BRMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
+						 .withRequiredBytes(33642, "New Game");
+			break;
+		case Common::FR_FRA:
+			source = source.withTextTable(codePage, kV10FRMacTextEntries, ARRAYSIZE(kV10FRMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
+						 .withRequiredBytes(33626, "Nouvelle Partie");
+			break;
+		case Common::DE_DEU:
+			source = source.withTextTable(codePage, kV10GEMacTextEntries, ARRAYSIZE(kV10GEMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
+						 .withRequiredBytes(33614, "Neues Spiel");
+			break;
+		default:
+			error("ZoombiniText: unsupported Macintosh v1.0 language");
+		}
+	} else if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x) && europeV11) {
+		// 68K CODE: text offsets are A5-relative within the expanded resource-fork DATA 0.
+		dataSize = 39145;
+		switch (relInfo.getLanguage()) {
+		case Common::EN_GRB:
+			source = source.withTextTable(codePage, kV11BRMacTextEntries, ARRAYSIZE(kV11BRMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
+						 .withRequiredBytes(35264, "New Game");
+			break;
+		case Common::FR_FRA:
+			source = source.withTextTable(codePage, kV11FRMacTextEntries, ARRAYSIZE(kV11FRMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
+						 .withRequiredBytes(35248, "Nouvelle Partie");
+			break;
+		case Common::DE_DEU:
+			source = source.withTextTable(codePage, kV11GEMacTextEntries, ARRAYSIZE(kV11GEMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
+						 .withRequiredBytes(35236, "Neues Spiel");
+			break;
+		default:
+			error("ZoombiniText: unsupported Macintosh v1.1 language");
+		}
+	} else {
+		error("ZoombiniText: unsupported Macintosh retail executable");
+	}
+	return source.inMac68kDataResFork(application, dataSize);
+}
+
+ZoombiniText::SourceSettings ZoombiniText::createSourceSettings(const ZmbReleaseInfo &relInfo, uint32 detectedFeatures) {
+	static constexpr uint32 kV10USNEExeSize = 939536;
+	static constexpr uint32 kV10USPEExeSize = 633888;
 	static constexpr uint32 kV10EUExeSize = 934416;
 	static constexpr uint32 kV10BRDemoExeSize = 932368;
 	static constexpr uint32 kV10ITExeSize = 935952;
@@ -2783,67 +3936,182 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 	static constexpr uint32 kV11EUExeSize = 934928;
 	static constexpr uint32 kV11USPEExeSize = 642592;
 	static constexpr uint32 kV11USNEExeSize = 951824;
-	static constexpr uint32 kV11USDemoNEExeSize = 936976;
+	static constexpr uint32 kV10USDemoNEExeSize = 936976;
 	static constexpr uint32 kV111KRPEExeSize = 647168;
 	static constexpr uint32 kV111KRNEExeSize = 977920;
 	static constexpr uint32 kV20USExeSize = 614400;
 	static constexpr uint32 kV20PLExeSize = 892928;
 	static constexpr uint32 kV20USDemoExeSize = 610304;
 
-	StringSources sources;
+	// Exact executable revisions and packaging belong to source selection, not gameplay identity.
+	const bool europeV11 = (detectedFeatures & (GF_ZMB_11_EU | GF_ZMB_11_FR_2002)) != 0;
+	const bool cabinetRelease = (detectedFeatures & GF_ZMB_11_FR_2002) != 0;
+	SourceSettings sources;
 	const Common::Language language = relInfo.getLanguage();
 	const Common::Platform platform = relInfo.getPlatform();
 	const Common::CodePage exeCodePage = relInfo.getExeCodePage();
-	if (relInfo.isFamily(ZmbReleaseInfo::kEuropeV1)) {
-		sources.textStrArchive = !relInfo.isVariant(ZmbReleaseInfo::kEsPtV10);
-		// These releases concatenate STRL 2020/2021, including blanks and the final '*' marker.
-		if (relInfo.isVariant(ZmbReleaseInfo::kEuropeV10) || relInfo.isVariant(ZmbReleaseInfo::kEuropeV11) ||
-			relInfo.isVariant(ZmbReleaseInfo::kFranceV11_2002)) {
-			switch (language) {
-			case Common::EN_GRB:
-				sources.textStrCreditEntryCount = kEuropeBRCreditEntryCount;
-				break;
-			case Common::FR_FRA:
-				sources.textStrCreditEntryCount = kEuropeFRCreditEntryCount;
-				break;
-			case Common::DE_DEU:
-				sources.textStrCreditEntryCount = kEuropeGECreditEntryCount;
-				break;
-			case Common::IT_ITA:
-				sources.textStrCreditEntryCount = kEuropeITCreditEntryCount;
-				break;
-			default:
-				break;
-			}
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
+		sources.textStrArchive = true;
+		// Europe-v1 credits concat TEXTSTR.MHK STRL 2020/2021, including blanks and the final '*' marker.
+		switch (language) {
+		case Common::EN_GRB:
+			sources.textStrCreditEntryCount = kEuropeBRCreditEntryCount;
+			break;
+		case Common::FR_FRA:
+			sources.textStrCreditEntryCount = kEuropeFRCreditEntryCount;
+			break;
+		case Common::DE_DEU:
+			sources.textStrCreditEntryCount = kEuropeGECreditEntryCount;
+			break;
+		case Common::IT_ITA:
+			sources.textStrCreditEntryCount = kEuropeITCreditEntryCount;
+			break;
+		case Common::JA_JPN:
+			sources.textStrCreditEntryCount = kEuropeJPCreditEntryCount;
+			sources.decodeMacRomanUmlautByte9F = true;
+			break;
+		default:
+			break;
 		}
-
-		if (relInfo.isDemo(ZmbReleaseInfo::kEuropeV10)) { // v1.0BR Demo
+		if (cabinetRelease)
+			sources.fontCabinet = "data1.cab";
+	}
+	switch (platform) {
+	case Common::kPlatformMacintosh:
+		if (!relInfo.isDemo()) {
+			sources.executables = {createMacExecutableSource(relInfo, europeV11)};
+			return sources;
+		}
+		break;
+	case Common::kPlatformWindows:
+		break;
+	default:
+		error("ZoombiniText::createSourceSettings: unsupported platform %d", static_cast<int>(platform));
+	}
+	if (relInfo.isDemo(ZmbReleaseInfo::Family::kUsV10)) {
+		switch (platform) {
+		case Common::kPlatformMacintosh: {
+			static constexpr CreditLimits kMacCreditLimits = {248, 27, 2349};
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(exeCodePage, kV10BRDemo_NETextEntries)
+											 .withTextTable(exeCodePage, kV10USMacDemoTextEntries, ARRAYSIZE(kV10USMacDemoTextEntries),
+															ExeTextDataSource::kExpandedMac68kA5Globals)
+											 .withRequiredBytes(33486, "NEW GAME (CTRL N)")
+											 .withMacA5RelativeCreditPtrTable(29490)
+											 .withCreditLimits(kMacCreditLimits);
+			sources.executables = {source.inMac68kDataResFork("Zoom", 33120)};
+			break;
+		}
+		case Common::kPlatformWindows: {
+			const ExeTextSource source = ExeTextSource()
+											 .withTextTable(exeCodePage, kV10USDemo_NETextEntries, ARRAYSIZE(kV10USDemo_NETextEntries))
+											 .withRequiredBytes(0xD9758, "NEW GAME")
+											 .withCreditAnchor(kExeCreditParagraphsAnchor)
+											 .withCreditLimits(kV11USCreditLimits);
+			sources.executables = {source.inFile("ZOOM.EXE", kV10USDemoNEExeSize)};
+			break;
+		}
+		default:
+			error("ZoombiniText::createSourceSettings: unknown platform(%d) for v1.0US Demo", platform);
+			break;
+		}
+		return sources;
+	}
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10, Common::EN_USA)) {
+		const ExeTextSource peSource = ExeTextSource()
+										   .withTextTable(exeCodePage, kV10US_PETextEntries, ARRAYSIZE(kV10US_PETextEntries))
+										   .withRequiredBytes(566754, "NEW GAME (CTRL N)")
+										   .withCreditPtrTable(562340, 4308992, 0)
+										   .withCreditLimits(kV10USCreditLimits);
+		const ExeTextSource neSource = ExeTextSource()
+										   .withTextTable(exeCodePage, kV10US_NETextEntries, ARRAYSIZE(kV10US_NETextEntries))
+										   .withCreditAnchor(kExeCreditParagraphsAnchor)
+										   .withCreditLimits(kV10USCreditLimits);
+		sources.executables = {
+			peSource.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10USPEExeSize),
+			neSource.inFile("ZOOMBINI._EX", kV10USNEExeSize),
+			peSource.inFile("ZOOMBI32.EXE", kV10USPEExeSize),
+			neSource.inFile("ZOOMBINI.EXE", kV10USNEExeSize),
+		};
+	} else if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10)) {
+		switch (language) {
+		case Common::ES_ESP: {
+			const ExeTextSource source = ExeTextSource()
+											 .withTextTable(exeCodePage, kV10ES_PETextEntries, ARRAYSIZE(kV10ES_PETextEntries))
+											 .withRequiredBytes(0x888EA, "Nueva Partida")
+											 .withTextPatches(&ZoombiniText::patchSpanish10ExeText)
+											 .withCreditAnchor(kExeSpanishCreditParagraphsAnchor)
+											 .withCreditLimits(kV10ESCreditLimits);
+			sources.executables = {
+				source.inFile("ZOOMBI32._EX", kV10ESExeSize),
+				source.inFile("ZOOMBI32.EXE", kV10ESExeSize),
+			};
+			break;
+		}
+		case Common::PT_PRT: {
+			const ExeTextSource source = ExeTextSource()
+											 .withTextTable(exeCodePage, kV10PT_PETextEntries, ARRAYSIZE(kV10PT_PETextEntries))
+											 .withRequiredBytes(0x888EA, "Novo Jogo")
+											 .withCreditAnchor(kExePortugueseCreditParagraphsAnchor)
+											 .withCreditLimits(kV10PTCreditLimits);
+			sources.executables = {
+				source.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10PTExeSize),
+				source.inFile("zoombi32.exe", kV10PTExeSize),
+			};
+			break;
+		}
+		default:
+			return sources;
+		}
+	} else if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
+		if (relInfo.isDemo(ZmbReleaseInfo::Family::kEuropeV1x, Common::EN_GRB)) { // v1.0BR Demo
+			const ExeTextSource source = ExeTextSource()
+											 .withTextTable(exeCodePage, kV10BRDemo_NETextEntries, ARRAYSIZE(kV10BRDemo_NETextEntries))
 											 .withRequiredBytes(0xD72C8, "New Game");
 			sources.executables = {source.inFile("ZOOMBINI.EXE", kV10BRDemoExeSize)};
-		} else if (relInfo.isVariant(ZmbReleaseInfo::kEuropeV10)) {
+		} else if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
+			if (relInfo.isDemo()) {
+				const ExeTextSource source = ExeTextSource()
+												 .withTextTable(exeCodePage, kV10JPMacDemoTextEntries, ARRAYSIZE(kV10JPMacDemoTextEntries))
+												 .withRequiredBytes(93593, "1.0  1996 Broderbund Software.");
+				sources.executables = {source.inFile("Zoombini", 722944)};
+				return sources;
+			}
+			const ExeTextSource source = ExeTextSource()
+											 .withTextTable(exeCodePage, kV10JP_PETextEntries, ARRAYSIZE(kV10JP_PETextEntries))
+											 .withRequiredBytes(0x88427, "Japanese");
+			sources.executables = {
+				source.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10JPExeSize),
+				source.inFile("zoombi32.exe", kV10JPExeSize),
+			};
+		} else if (cabinetRelease) {
+			const ExeTextSource source = ExeTextSource()
+											 .withTextTable(exeCodePage, kV11FR_NETextEntries, ARRAYSIZE(kV11FR_NETextEntries))
+											 .withRequiredBytes(883901, "Nouvelle Partie");
+			sources.executables = {
+				source.inCabinetMember("data1.cab", "ZOOMBINI.EXE", kV11EUExeSize),
+			};
+		} else if (!europeV11) {
 			ExeTextSource source;
 			uint32 executableSize = kV10EUExeSize;
 			switch (language) {
 			case Common::EN_GRB:
 				source = ExeTextSource()
-							 .withTextTable(exeCodePage, kV10BR_NETextEntries)
+							 .withTextTable(exeCodePage, kV10BR_NETextEntries, ARRAYSIZE(kV10BR_NETextEntries))
 							 .withRequiredBytes(0xD6840, "New Game");
 				break;
 			case Common::FR_FRA:
 				source = ExeTextSource()
-							 .withTextTable(exeCodePage, kV10FR_NETextEntries)
+							 .withTextTable(exeCodePage, kV10FR_NETextEntries, ARRAYSIZE(kV10FR_NETextEntries))
 							 .withRequiredBytes(0xD6849, "Nouvelle Partie");
 				break;
 			case Common::DE_DEU:
 				source = ExeTextSource()
-							 .withTextTable(exeCodePage, kV10GE_NETextEntries)
+							 .withTextTable(exeCodePage, kV10GE_NETextEntries, ARRAYSIZE(kV10GE_NETextEntries))
 							 .withRequiredBytes(0xD6859, "Neues Spiel");
 				break;
 			case Common::IT_ITA:
 				source = ExeTextSource()
-							 .withTextTable(exeCodePage, kV10IT_NETextEntries)
+							 .withTextTable(exeCodePage, kV10IT_NETextEntries, ARRAYSIZE(kV10IT_NETextEntries))
 							 .withRequiredBytes(0xD78DE, "Nuova partita");
 				executableSize = kV10ITExeSize;
 				break;
@@ -2853,113 +4121,38 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 			sources.executables = {
 				source.inFile("ZOOMBINI.EXE", executableSize),
 				source.inFile("ZOOMBINI._EX", executableSize)};
-		} else if (relInfo.isVariant(ZmbReleaseInfo::kEuropeV11)) {
+		} else {
 			ExeTextSource source;
 			switch (language) {
 			case Common::EN_GRB:
 				source = ExeTextSource()
-							 .withTextTable(exeCodePage, kV11BR_NETextEntries)
+							 .withTextTable(exeCodePage, kV11BR_NETextEntries, ARRAYSIZE(kV11BR_NETextEntries))
 							 .withRequiredBytes(883892, "New Game");
 				break;
 			case Common::FR_FRA:
 				source = ExeTextSource()
-							 .withTextTable(exeCodePage, kV11FR_NETextEntries)
+							 .withTextTable(exeCodePage, kV11FR_NETextEntries, ARRAYSIZE(kV11FR_NETextEntries))
 							 .withRequiredBytes(883901, "Nouvelle Partie");
 				break;
 			case Common::DE_DEU:
 				source = ExeTextSource()
-							 .withTextTable(exeCodePage, kV11GE_NETextEntries)
+							 .withTextTable(exeCodePage, kV11GE_NETextEntries, ARRAYSIZE(kV11GE_NETextEntries))
 							 .withRequiredBytes(883917, "Neues Spiel");
 				break;
 			default:
 				return sources;
 			}
 			sources.executables = {source.inFile("ZOOMBINI._EX", kV11EUExeSize)};
-		} else if (relInfo.isVariant(ZmbReleaseInfo::kFranceV11_2002)) {
-			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(exeCodePage, kV11FR_NETextEntries)
-											 .withRequiredBytes(883901, "Nouvelle Partie");
-			sources.executables = {
-				source.inCabinetMember("data1.cab", "ZOOMBINI.EXE", kV11EUExeSize)};
-		} else if (relInfo.isVariant(ZmbReleaseInfo::kEsPtV10)) {
-			switch (language) {
-			case Common::ES_ESP: {
-				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(exeCodePage, kV10ES_PETextEntries)
-												 .withRequiredBytes(0x888EA, "Nueva Partida")
-												 .withTextPatches(&ZoombiniText::patchSpanish10ExeText)
-												 .withCreditAnchor(kExeSpanishCreditParagraphsAnchor)
-												 .withCreditLimits(kV10ESCreditLimits);
-				sources.executables = {
-					source.inFile("ZOOMBI32._EX", kV10ESExeSize),
-					source.inFile("ZOOMBI32.EXE", kV10ESExeSize)};
-				break;
-			}
-			case Common::PT_PRT: {
-				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(exeCodePage, kV10PT_PETextEntries)
-												 .withRequiredBytes(0x888EA, "Novo Jogo")
-												 .withCreditAnchor(kExePortugueseCreditParagraphsAnchor)
-												 .withCreditLimits(kV10PTCreditLimits);
-				sources.executables = {
-					source.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10PTExeSize),
-					source.inFile("zoombi32.exe", kV10PTExeSize)};
-				break;
-			}
-			default:
-				return sources;
-			}
-		} else if (relInfo.isVariant(ZmbReleaseInfo::kJapanV10)) {
-			sources.textStrCreditEntryCount = kEuropeJPCreditEntryCount;
-			sources.decodeMacRomanUmlautByte9F = true;
-			if (relInfo.isDemo()) {
-				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(exeCodePage, kV10JPMacDemoTextEntries)
-												 .withRequiredBytes(93593, "1.0  1996 Broderbund Software.");
-				sources.executables = {source.inFile("Zoombini", 722944)};
-				return sources;
-			}
-			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(exeCodePage, kV10JP_PETextEntries)
-											 .withRequiredBytes(0x88427, "Japanese");
-			sources.executables = {
-				source.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10JPExeSize),
-				source.inFile("zoombi32.exe", kV10JPExeSize)};
 		}
-	} else if (relInfo.isFamily(ZmbReleaseInfo::kUsV1)) {
-		if (language == Common::EN_USA && relInfo.isDemo(ZmbReleaseInfo::kUsV11)) {
-			switch (platform) {
-			case Common::kPlatformMacintosh: {
-				static constexpr CreditLimits kMacCreditLimits = {248, 27, 2349};
-				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(exeCodePage, kV11USMacDemoTextEntries)
-												 .withRequiredBytes(33486, "NEW GAME (CTRL N)")
-												 .withMacA5RelativeCreditPtrTable(29490)
-												 .withCreditLimits(kMacCreditLimits);
-				sources.executables = {source.inMacDataResFork("Zoom", 33120)};
-				break;
-			}
-			case Common::kPlatformWindows: {
-				const ExeTextSource source = ExeTextSource()
-												 .withTextTable(exeCodePage, kV11USDemo_NETextEntries)
-												 .withRequiredBytes(0xD9758, "NEW GAME")
-												 .withCreditAnchor(kExeCreditParagraphsAnchor)
-												 .withCreditLimits(kV11USCreditLimits);
-				sources.executables = {source.inFile("ZOOM.EXE", kV11USDemoNEExeSize)};
-				break;
-			}
-			default:
-				error("ZoombiniText::createStringSources: unknown platform(%d) for v1.1US Demo", platform);
-				break;
-			}
-		} else if (language == Common::EN_USA) {
+	} else if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11)) {
+		if (language == Common::EN_USA) {
 			const ExeTextSource peSource = ExeTextSource()
-											   .withTextTable(exeCodePage, kV11US_PETextEntries)
+											   .withTextTable(exeCodePage, kV11US_PETextEntries, ARRAYSIZE(kV11US_PETextEntries))
 											   .withRequiredBytes(0x8B9FC, "NEW GAME")
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
 											   .withCreditLimits(kV11USCreditLimits);
 			const ExeTextSource neSource = ExeTextSource()
-											   .withTextTable(exeCodePage, kV11US_NETextEntries)
+											   .withTextTable(exeCodePage, kV11US_NETextEntries, ARRAYSIZE(kV11US_NETextEntries))
 											   .withRequiredBytes(0xDCBB2, "NEW GAME")
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
 											   .withCreditLimits(kV11USCreditLimits);
@@ -2967,16 +4160,17 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 				peSource.inArchiveMember("ZBARC32.Z", "Zoombi32.exe", kV11USPEExeSize),
 				neSource.inArchiveMember("ZBARC16.Z", "ZOOMBINI.EXE", kV11USNEExeSize),
 				peSource.inFile("Zoombi32.exe", kV11USPEExeSize),
-				neSource.inFile("ZOOMBINI.EXE", kV11USNEExeSize)};
+				neSource.inFile("ZOOMBINI.EXE", kV11USNEExeSize),
+			};
 		} else if (language == Common::KO_KOR) {
 			const ExeTextSource peSource = ExeTextSource()
-											   .withTextTable(exeCodePage, kV111KR_PETextEntries)
+											   .withTextTable(exeCodePage, kV111KR_PETextEntries, ARRAYSIZE(kV111KR_PETextEntries))
 											   .withWindows1252StrokeByteD8Decode()
 											   .withCreditLinePatches(&ZoombiniText::patchKoreanExeCredits)
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
 											   .withCreditLimits(kV111KRCreditLimits);
 			const ExeTextSource neSource = ExeTextSource()
-											   .withTextTable(exeCodePage, kV111KR_NETextEntries)
+											   .withTextTable(exeCodePage, kV111KR_NETextEntries, ARRAYSIZE(kV111KR_NETextEntries))
 											   .withWindows1252StrokeByteD8Decode()
 											   .withCreditLinePatches(&ZoombiniText::patchKoreanExeCredits)
 											   .withCreditAnchor(kExeCreditParagraphsAnchor)
@@ -2985,12 +4179,13 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 				peSource.inFile("SETUP/data1/data32/Zoombi32.exe", kV111KRPEExeSize),
 				neSource.inFile("SETUP/data1/data16/Zoombini.exe", kV111KRNEExeSize),
 				peSource.inFile("Zoombi32.exe", kV111KRPEExeSize),
-				neSource.inFile("Zoombini.exe", kV111KRNEExeSize)};
+				neSource.inFile("Zoombini.exe", kV111KRNEExeSize),
+			};
 		}
-	} else if (relInfo.isFamily(ZmbReleaseInfo::kTlcV2)) {
-		if (relInfo.isDemo(ZmbReleaseInfo::kTlcV20)) {
+	} else if (relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
+		if (relInfo.isDemo(ZmbReleaseInfo::Family::kTlcV20)) {
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(exeCodePage, kV20USDemo_PETextEntries)
+											 .withTextTable(exeCodePage, kV20USDemo_PETextEntries, ARRAYSIZE(kV20USDemo_PETextEntries))
 											 .withRequiredBytes(0x909B8, "NEW GAME")
 											 .withMacRomanTrademarkByteAAEscape()
 											 .withCreditPtrTable(0x8F09C, 0x400000, 0)
@@ -3000,23 +4195,25 @@ ZoombiniText::StringSources ZoombiniText::createStringSources(const ZmbReleaseIn
 				source.inFile("Zoom.exe", kV20USDemoExeSize)};
 		} else if (language == Common::PL_POL) {
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(exeCodePage, kV20PL_PETextEntries)
+											 .withTextTable(exeCodePage, kV20PL_PETextEntries, ARRAYSIZE(kV20PL_PETextEntries))
 											 .withRequiredBytes(0xC9AF4, "Bez nazwy")
 											 .withMacRomanTrademarkByteAAEscape()
 											 .withCreditPtrTable(0xCA190, 0x413000, 21)
 											 .withCreditPtrBlankAddressRange(0x4DD234, 0x4DD3F4)
 											 .withCreditLimits(kV20PLCreditLimits);
 			sources.executables = {
-				source.inFile("INSTALL/HD/Zoombinis Logical Journey.exe", kV20PLExeSize)};
+				source.inFile("INSTALL/HD/Zoombinis Logical Journey.exe", kV20PLExeSize),
+			};
 		} else {
 			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(exeCodePage, kV20US_PETextEntries)
+											 .withTextTable(exeCodePage, kV20US_PETextEntries, ARRAYSIZE(kV20US_PETextEntries))
 											 .withMacRomanTrademarkByteAAEscape()
 											 .withCreditPtrTable(0x90080, 0x400000, 21)
 											 .withCreditPtrBlankAddress(0x4A286C)
 											 .withCreditLimits(kV20USCreditLimits);
 			sources.executables = {
-				source.inFile("INSTALL/HD/Zoombinis Logical Journey.exe", kV20USExeSize)};
+				source.inFile("INSTALL/HD/Zoombinis Logical Journey.exe", kV20USExeSize),
+			};
 		}
 	}
 	return sources;
@@ -3036,19 +4233,30 @@ bool ZoombiniText::tryExecutableSource(const ExeTextSource &source) {
 	uint32 bytesAboveA5 = 0;
 	uint32 bytesBelowA5 = 0;
 
-	if (source.macDataResFork) {
+	switch (source.primaryDataSource) {
+	case ExeTextDataSource::kExpandedMac68kA5Globals: {
 		if (!macApplication.open(Common::Path(source.fileName)))
 			return false;
 		Common::ScopedPtr<Common::SeekableReadStream> codeStream(macApplication.getResource(MKTAG('C', 'O', 'D', 'E'), 0));
-		if (!readMacA5WorldSizes(codeStream.get(), bytesAboveA5, bytesBelowA5))
+		if (!readMac68kA5WorldSizes(codeStream.get(), bytesAboveA5, bytesBelowA5))
 			return false;
 		exeStream = macApplication.getResource(MKTAG('D', 'A', 'T', 'A'), 0);
-	} else if (source.fileName) {
-		Common::File *file = new Common::File();
-		if (file->open(Common::Path(source.fileName)))
-			exeStream = file;
-		else
-			delete file;
+		break;
+	}
+	case ExeTextDataSource::kExpandedMacPpcPefDataSection:
+		exeStream = Common::MacResManager::openFileOrDataFork(Common::Path(source.fileName));
+		break;
+	case ExeTextDataSource::kRawExecutableFile:
+		if (source.fileName) {
+			Common::File *file = new Common::File();
+			if (file->open(Common::Path(source.fileName)))
+				exeStream = file;
+			else
+				delete file;
+		}
+		break;
+	default:
+		return false;
 	}
 
 	if (!exeStream && source.archiveName) {
@@ -3072,39 +4280,113 @@ bool ZoombiniText::tryExecutableSource(const ExeTextSource &source) {
 	if (!exeStream)
 		return false;
 
-	Common::Array<byte> exeData;
-	if (!readExecutableData(exeStream, source.expectedSize, exeData)) {
+	Common::Array<byte> exeFileData;          // Raw file stream.
+	Common::Array<byte> mac68kA5Globals;      // Expanded data section of Mac 68K binary.
+	Common::Array<byte> macPpcPefDataSection; // Expanded data section of Mac PPC PEF binary.
+	bool resultSuccess;
+	switch (source.primaryDataSource) {
+	case ExeTextDataSource::kExpandedMac68kA5Globals:
+		resultSuccess = readExecutableData(exeStream, source.expectedSize, mac68kA5Globals);
+		break;
+	case ExeTextDataSource::kRawExecutableFile:
+	case ExeTextDataSource::kExpandedMacPpcPefDataSection:
+		resultSuccess = readExecutableData(exeStream, source.expectedSize, exeFileData);
+		break;
+	default:
 		delete exeStream;
 		return false;
 	}
-	if (source.macDataResFork && !expandMacResForkRleGlobals(exeData, bytesAboveA5, bytesBelowA5)) {
+	if (!resultSuccess) {
 		delete exeStream;
 		return false;
 	}
 
-	if (source.requiredBytes && !bytesMatchAt(exeData, source.requiredBytesOffset, source.requiredBytes)) {
+	switch (source.primaryDataSource) {
+	case ExeTextDataSource::kRawExecutableFile:
+		resultSuccess = !source.requiredBytes || bytesMatchAt(exeFileData, source.requiredBytesOffset, source.requiredBytes);
+		break;
+	case ExeTextDataSource::kExpandedMac68kA5Globals:
+		if (!expandMac68kResForkRleGlobals(mac68kA5Globals, bytesAboveA5, bytesBelowA5)) {
+			delete exeStream;
+			return false;
+		}
+		resultSuccess = !source.requiredBytes || bytesMatchAt(mac68kA5Globals, source.requiredBytesOffset, source.requiredBytes);
+		break;
+	case ExeTextDataSource::kExpandedMacPpcPefDataSection:
+		if (!expandMacPpcPefDataSection(exeFileData, source.macPpcPefDataSection, source.macPpcPefDataSize, macPpcPefDataSection)) {
+			delete exeStream;
+			return false;
+		}
+		resultSuccess = !source.requiredBytes || bytesMatchAt(macPpcPefDataSection, source.requiredBytesOffset, source.requiredBytes);
+		break;
+	default:
+		delete exeStream;
+		return false;
+	}
+
+	if (!resultSuccess) {
 		delete exeStream;
 		return false;
 	}
 
 	Common::Array<Common::U32String> strings;
-	strings.reserve(source.entryCount);
+	uint entryCount = 0;
+	for (const ExeTextTable &table : source.textTables)
+		entryCount += table.entryCount;
+	strings.reserve(entryCount);
 	bool loaded = true;
 
-	for (uint entryIndex = 0; entryIndex < source.entryCount; entryIndex++) {
-		const ZoombiniText::ExeTextEntry &entry = source.entries[entryIndex];
-		const uint32 entryOffset = entry.offset;
-		if (exeData.size() < static_cast<uint64>(entryOffset) + entry.length) {
+	for (const ExeTextTable &table : source.textTables) {
+		const Common::Array<byte> *textData = nullptr;
+		switch (table.dataSource) {
+		case ExeTextDataSource::kRawExecutableFile:
+			textData = &exeFileData;
+			break;
+		case ExeTextDataSource::kExpandedMac68kA5Globals:
+			textData = &mac68kA5Globals;
+			break;
+		case ExeTextDataSource::kExpandedMacPpcPefDataSection:
+			textData = &macPpcPefDataSection;
+			break;
+		default:
+			loaded = false;
+			break;
+		}
+		if (!loaded || textData->empty()) {
 			loaded = false;
 			break;
 		}
 
-		strings.push_back(decodeExecutableStringBytes(exeData.data() + entryOffset, entry.length, source));
+		for (uint entryIndex = 0; entryIndex < table.entryCount; entryIndex++) {
+			const ExeTextEntry &entry = table.entries[entryIndex];
+			if (textData->size() < static_cast<uint64>(entry.offset) + entry.length) {
+				loaded = false;
+				break;
+			}
+			strings.push_back(decodeExecutableStringBytes(textData->data() + entry.offset, entry.length, source));
+		}
+		if (!loaded)
+			break;
 	}
 
 	const bool sourceHasCredits = source.creditSourceKind != CreditSourceKind::kNone;
 	Common::Array<CreditParagraph> executableCredits;
-	bool creditsLoaded = loaded && sourceHasCredits && loadOriginalExecutableCredits(exeData, source, executableCredits);
+	bool creditsLoaded = false;
+	if (loaded && sourceHasCredits) {
+		switch (source.primaryDataSource) {
+		case ExeTextDataSource::kRawExecutableFile:
+			creditsLoaded = loadOriginalExecutableCredits(exeFileData, source, executableCredits);
+			break;
+		case ExeTextDataSource::kExpandedMac68kA5Globals:
+			creditsLoaded = loadOriginalExecutableCredits(mac68kA5Globals, source, executableCredits);
+			break;
+		case ExeTextDataSource::kExpandedMacPpcPefDataSection:
+			creditsLoaded = loadOriginalExecutableCredits(macPpcPefDataSection, source, executableCredits);
+			break;
+		default:
+			break;
+		}
+	}
 	if (loaded && sourceHasCredits && !creditsLoaded)
 		loaded = false;
 
@@ -3113,8 +4395,13 @@ bool ZoombiniText::tryExecutableSource(const ExeTextSource &source) {
 	if (!loaded)
 		return false;
 
-	for (uint entryIndex = 0; entryIndex < source.entryCount; entryIndex++)
-		_strMap[source.entries[entryIndex].key] = strings[entryIndex];
+	uint stringIdx = 0;
+	for (const ExeTextTable &table : source.textTables) {
+		for (uint entryIdx = 0; entryIdx < table.entryCount; entryIdx++) {
+			_strMap[table.entries[entryIdx].key] = strings[stringIdx];
+			stringIdx += 1;
+		}
+	}
 	if (source.textPatches)
 		(this->*source.textPatches)();
 
@@ -3217,7 +4504,7 @@ bool ZoombiniText::fontUsesAntialiasing(ZoombiniFontUsage fontUsage) const {
 }
 
 const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgBox) {
-	const bool isJapaneseMacDemo = _relInfo.isDemo(ZmbReleaseInfo::kJapanV10);
+	const bool isJpMac = _relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN) && _relInfo.getPlatform() == Common::kPlatformMacintosh;
 	TTFLoader *firstOptimalLoader = nullptr;
 	if (!_optimalTTFLoaders.empty())
 		firstOptimalLoader = _optimalTTFLoaders.front();
@@ -3236,9 +4523,9 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 	}
 
 	Common::U32String noFontMsg;
-	if (isJapaneseMacDemo) {
+	if (isJpMac) {
 		// I18N: Osaka and MS Gothic are font names; 'Osaka.ttf' and 'msgothic.ttc' are literal file names.
-		noFontMsg = _("The Japanese Macintosh demo requires 'Osaka.ttf' from modern macOS.\n\n"
+		noFontMsg = _("The Japanese Macintosh version requires 'Osaka.ttf' from modern macOS.\n\n"
 					  "Copy 'Osaka.ttf' into ScummVM's extras directory or the game directory.\n"
 					  "Classic Macintosh Osaka fonts are not supported yet.\n"
 					  "MS Gothic ('msgothic.ttc') from Windows is the preferred substitute.");
@@ -3251,11 +4538,11 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 		// I18N: %s is the file name of the required font.
 		noFontMsg += Common::U32String::format(_("Copy the required font '%s' into ScummVM's extras directory, or into the game directory."), firstOptimalLoader->_filePath.baseName().c_str());
 	}
-	if (_relInfo.isVariant(ZmbReleaseInfo::kUsV11, Common::KO_KOR)) {
+	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11, Common::KO_KOR)) {
 		noFontMsg += U"\n";
 		// I18N: 'GulimChe' is a font name; 'gulim.ttc' is a literal file name and must not be translated.
 		noFontMsg += _("The Korean release requires the GulimChe ('gulim.ttc') font from the Windows font archive.");
-	} else if (_relInfo.isVariant(ZmbReleaseInfo::kJapanV10) && !_relInfo.isDemo()) {
+	} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN) && !_relInfo.isDemo()) {
 		noFontMsg += U"\n";
 		// I18N: 'MS Gothic' is a font name; 'msgothic.ttc' is a literal file name and must not be translated.
 		noFontMsg += _("The Japanese release requires the MS Gothic ('msgothic.ttc') font from the Windows font archive.");
@@ -3336,7 +4623,7 @@ bool ZoombiniText::getStrl(Common::Array<Common::U32String> &outStrs, ZmbResourc
 
 	Common::Array<Common::U32String> parsedStrs;
 	if (resource._archiveKind == ZmbResource::kSystem && resource._id == ZoombiniPage::kSysResStrl2900_HelpPickerUpdate && subStrCount == 1 &&
-		stringStream->size() == 1 && _relInfo.isVariant(ZmbReleaseInfo::kTlcV20, Common::PL_POL)) {
+		stringStream->size() == 1 && _relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20, Common::PL_POL)) {
 		// Polish v2.0 STRL s:2900 (Picker update help) contains only the count byte (01), with no string or NUL terminator.
 		// Treat this specific resource as one empty string.
 		parsedStrs.push_back(Common::U32String());
@@ -3366,12 +4653,110 @@ bool ZoombiniText::getStrl(Common::U32String &outStr, ZmbResource resource, uint
 	return true;
 }
 
+bool ZoombiniText::isAllowedZoombiniName(const Common::String &name) {
+	bool asciiOnly = true;
+	for (uint i = 0; i < name.size(); i++) {
+		if (0x7F < static_cast<byte>(name[i])) {
+			asciiOnly = false;
+			break;
+		}
+	}
+	if (asciiOnly)
+		return true;
+	if (!_relInfo.supportsLocalizedNames())
+		return false;
+
+	const Common::U32String decoded(name, _exeCodePage);
+	Common::String encoded;
+	if (decoded.encode(encoded, _exeCodePage, '?') != Common::kStringEncodingResultSucceeded || encoded != name)
+		return false;
+
+	switch (_exeCodePage) {
+	case Common::kWindows932:
+		// FIXME: Use MacJapanese for Macintosh once the shared codec supports it.
+		return isGeneratedJapaneseZoombiniName(decoded);
+	case Common::kWindows949:
+		for (uint16 nameId = 0; nameId < 625; nameId++) {
+			if (getKoreanZoombiniNameById(nameId) == decoded)
+				return true;
+		}
+		return false;
+	default:
+		return false;
+	}
+}
+
+bool ZoombiniText::isKanaInJapaneseNameTable(char32_t character, const char32_t *table) {
+	for (uint i = 0; table[i]; i++) {
+		if (table[i] == character)
+			return true;
+	}
+	return false;
+}
+
+bool ZoombiniText::isGeneratedJapaneseZoombiniName(const Common::U32String &name) {
+	// Fixed F1/F2 names bypass the random halfwidth-kana grammar.
+	if (name == kJapaneseF1DebugName || name == kJapaneseDebugF1Name)
+		return true;
+	const uint length = name.size();
+	// A small-kana NUL can leave two visible characters; a final pair can exceed the target by one.
+	if (length < 2 || kJapaneseNameMaxTargetLength + 1 < length || !isKanaInJapaneseNameTable(name[0], kJapaneseInitialKana))
+		return false;
+
+	// Match generator choices with dynamic programming, without drawing random numbers or enumerating seeds.
+	// Transitions share the same prefixes for every target length, so compute them once up to the largest target.
+	// reachable[pos][contracted][longVowel] matches name[0..pos), with the next write at pos and the two generator flags.
+	// The flags mirror previousContractedKana/previousLongVowel; a set flag blocks that special choice.
+	// Kana pools overlap, so retain every matching path. The checked initial kana leaves both flags clear.
+	bool reachable[kJapaneseNameMaxTargetLength + 2][2][2] = {};
+	reachable[1][0][0] = true;
+	// A choice must start before the largest target, but a two-character choice may finish one position beyond it.
+	for (uint pos = 1; pos < kJapaneseNameMaxTargetLength && pos < length; pos++) {
+		for (uint contracted = 0; contracted < 2; contracted++) {
+			for (uint longVowel = 0; longVowel < 2; longVowel++) {
+				if (!reachable[pos][contracted][longVowel])
+					continue;
+				const char32_t ch = name[pos];
+				// Plain kana and voiced pairs clear both flags; a long vowel retains the contracted flag.
+				if (isKanaInJapaneseNameTable(ch, kJapaneseNormalKana))
+					reachable[pos + 1][0][0] = true;
+				if (!longVowel && ch == U'ｰ')
+					reachable[pos + 1][contracted][1] = true;
+				if (pos + 1 < length) {
+					if ((isKanaInJapaneseNameTable(ch, kJapaneseSemiVoicedKana) && name[pos + 1] == U'ﾟ') ||
+						(isKanaInJapaneseNameTable(ch, kJapaneseVoicedKana) && name[pos + 1] == U'ﾞ'))
+						reachable[pos + 2][0][0] = true;
+				}
+				// A contracted pair sets its flag while retaining the long-vowel flag.
+				if (!contracted && isKanaInJapaneseNameTable(ch, kJapaneseContractedKana)) {
+					// Selecting NUL as the small kana ends the visible name; later generated bytes stay hidden.
+					if (pos + 1 == length)
+						return true;
+					if (isKanaInJapaneseNameTable(name[pos + 1], kJapaneseSmallKana))
+						reachable[pos + 2][1][longVowel] = true;
+				}
+			}
+		}
+	}
+	// A full match can select its length as the target, or the largest target when the final pair extends it by one.
+	// Shorter visible names require the early-NUL path above; any final flag combination is valid here.
+	if (kJapaneseNameMinTargetLength <= length) {
+		for (uint contracted = 0; contracted < 2; contracted++) {
+			for (uint longVowel = 0; longVowel < 2; longVowel++) {
+				if (reachable[length][contracted][longVowel])
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
 Common::U32String ZoombiniText::pickNextZoombiniName() {
 	return pickNextZoombiniName(kJPFixedNameNone);
 }
 
 Common::U32String ZoombiniText::pickNextZoombiniName(JPFixedNameKind jpFixedName) {
-	if (_relInfo.isVariant(ZmbReleaseInfo::kJapanV10) && _useJapaneseNames)
+	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN) && _useJapaneseNames)
 		return generateJapaneseZoombiniName(jpFixedName);
 
 	// Only v1.11KR release has the STRL name pool.
@@ -3553,7 +4938,10 @@ Common::U32String ZoombiniText::getKoreanZoombiniName() {
 		nameId = static_cast<uint16>(_vm->_rnd->getRandomNumber(624));
 	} while (drawnFlags[nameId]);
 	drawnFlags[nameId] = 1;
+	return getKoreanZoombiniNameById(nameId);
+}
 
+Common::U32String ZoombiniText::getKoreanZoombiniNameById(uint16 nameId) {
 	Common::HashMap<int16, Common::U32String>::iterator it = _nameCache.find(nameId);
 	if (it != _nameCache.end())
 		return it->_value;
@@ -3577,37 +4965,31 @@ Common::U32String ZoombiniText::getKoreanZoombiniName() {
 
 Common::U32String ZoombiniText::generateJapaneseZoombiniName(JPFixedNameKind jpFixedName) {
 	if (jpFixedName == kJPFixedJPNameChobi)
-		return Common::U32String(U"チョビ"); // "Chobi", a Japanese nickname suggesting "little one".
+		return Common::U32String(kJapaneseF1DebugName); // "Chobi", a Japanese nickname suggesting "little one".
 
 	if (jpFixedName == kJPFixedJPNameFumiaki)
-		return Common::U32String(U"史昭"); // Likely a kanji-name test using localizer Fumiaki Utsunomiya's name.
+		return Common::U32String(kJapaneseDebugF1Name); // Likely a kanji-name test using localizer Fumiaki Utsunomiya's name.
 
-	static constexpr char32_t kInitialKana[] = U"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾜ";
-	static constexpr char32_t kNormalKana[] = U"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾜﾝ";
-	static constexpr char32_t kSemiVoicedKana[] = U"ﾊﾋﾌﾍﾎ";
-	static constexpr char32_t kVoicedKana[] = U"ｶｷｸｹｺｻｼｽｾｿﾀﾃﾄﾊﾋﾌﾍﾎ";
-	static constexpr char32_t kContractedKana[] = U"ｷｼﾁﾆﾋﾐ";
-	static constexpr char32_t kSmallKana[] = U"ｬｭｮ";
-	char32_t name[8] = {};
-	const int16 targetLength = 6 - _vm->_rnd->getRandomNumber(0, 3);
+	char32_t name[kJapaneseNameMaxTargetLength + 2] = {};
+	const int16 targetLength = kJapaneseNameMaxTargetLength - _vm->_rnd->getRandomNumber(0, kJapaneseNameMaxTargetLength - kJapaneseNameMinTargetLength);
 	bool previousContractedKana = false;
 	bool previousLongVowel = false;
 	int pos;
-	// The inclusive bound ARRAYSIZE(table) - 2 excludes the terminating NUL from all kana tables except kSmallKana.
+	// The inclusive bound ARRAYSIZE(table) - 2 excludes the terminating NUL from all kana tables except kJapaneseSmallKana.
 	for (pos = 0; pos < targetLength; pos++) {
 		if (pos == 0) {
-			name[pos] = kInitialKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kInitialKana) - 2)];
+			name[pos] = kJapaneseInitialKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kJapaneseInitialKana) - 2)];
 			continue;
 		}
 		const int16 roll = _vm->_rnd->getRandomNumber(0, 100);
 		if (90 < roll) {
-			name[pos] = kSemiVoicedKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kSemiVoicedKana) - 2)];
+			name[pos] = kJapaneseSemiVoicedKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kJapaneseSemiVoicedKana) - 2)];
 			if (pos < targetLength) {
 				pos += 1;
 				name[pos] = U'ﾟ';
 			}
 		} else if (80 < roll) {
-			name[pos] = kVoicedKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kVoicedKana) - 2)];
+			name[pos] = kJapaneseVoicedKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kJapaneseVoicedKana) - 2)];
 			if (pos < targetLength) {
 				pos += 1;
 				name[pos] = U'ﾞ';
@@ -3618,15 +5000,15 @@ Common::U32String ZoombiniText::generateJapaneseZoombiniName(JPFixedNameKind jpF
 			continue;
 		} else if (40 < roll && roll <= 60 && !previousContractedKana) {
 			previousContractedKana = true;
-			name[pos] = kContractedKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kContractedKana) - 2)];
+			name[pos] = kJapaneseContractedKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kJapaneseContractedKana) - 2)];
 			if (pos < targetLength) {
 				pos += 1;
-				// The inclusive bound ARRAYSIZE(kSmallKana) - 1 includes NUL, preserving the original early-termination choice.
-				name[pos] = kSmallKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kSmallKana) - 1)];
+				// The inclusive bound ARRAYSIZE(kJapaneseSmallKana) - 1 includes NUL, preserving the original early-termination choice.
+				name[pos] = kJapaneseSmallKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kJapaneseSmallKana) - 1)];
 			}
 			continue;
 		} else {
-			name[pos] = kNormalKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kNormalKana) - 2)];
+			name[pos] = kJapaneseNormalKana[_vm->_rnd->getRandomNumber(0, ARRAYSIZE(kJapaneseNormalKana) - 2)];
 		}
 		previousContractedKana = false;
 		previousLongVowel = false;
@@ -3669,6 +5051,11 @@ ZoombiniText::StringOverrideMap ZoombiniText::createStringOverrides() {
 	overrides[kSvmDialogBodyLoadNewerSaveFormat][Common::KO_KOR] = StringOverride(
 		U"더 최신 버전에서 저장한 게임을\r불러오면 일부 진행 상황이\r손실될 수 있습니다.\r계속하시겠습니까?");
 
+	overrides[kSvmDialogBodyLoadOtherPlatformSave][Common::EN_USA] = StringOverride(
+		U"loading a savefile created\rfrom other platform.\rSome progress may be lost.\rContinue?");
+	overrides[kSvmDialogBodyLoadOtherPlatformSave][Common::KO_KOR] = StringOverride(
+		U"다른 플랫폼에서 저장한 게임을\r불러오면 일부 진행 상황이\r손실될 수 있습니다.\r계속하시겠습니까?");
+
 	overrides[kSvmDialogBodyCannotLoadSave][Common::EN_USA] = StringOverride(
 		U"cannot load this game:\rthe saved game is damaged\ror incompatible.");
 	overrides[kSvmDialogBodyCannotLoadSave][Common::KO_KOR] = StringOverride(
@@ -3684,10 +5071,10 @@ ZoombiniText::StringOverrideMap ZoombiniText::createStringOverrides() {
 	overrides[kSvmDialogBodyCannotSaveNameEncoding][Common::KO_KOR] = StringOverride(
 		U"저장파일 이름에 활성 코드\r페이지로 표현할 수 없는 문자가\r있어 게임을 저장할 수 없습니다.");
 
-	overrides[kSvmDialogBodyAskConvertUnreadableZoombiniNames][Common::EN_USA] = StringOverride(
-		U"the active code page cannot\rread the Zoombini names in\rthis save. Convert them to\rstandard names?");
-	overrides[kSvmDialogBodyAskConvertUnreadableZoombiniNames][Common::KO_KOR] = StringOverride(
-		U"활성 코드페이지로 저장 파일 내\r줌비니 이름을 읽을 수 없습니다.\r표준 이름으로 변환하시겠습니까?");
+	overrides[kSvmDialogBodyAskRegenerateZoombiniNames][Common::EN_USA] = StringOverride(
+		U"some Zoombini names cannot\rbe read in this version.\rGenerate new names for\rall Zoombinis?");
+	overrides[kSvmDialogBodyAskRegenerateZoombiniNames][Common::KO_KOR] = StringOverride(
+		U"일부 줌비니 이름을 이 버전에서\r읽을 수 없습니다.\r모든 줌비니 이름을\r새로 생성하시겠습니까?");
 
 	overrides[kDialogBodyRemoveGame][Common::EN_USA] = StringOverride(
 		U"are you sure you want to\rremove this game?", true);
@@ -3699,7 +5086,7 @@ ZoombiniText::StringOverrideMap ZoombiniText::createStringOverrides() {
 void ZoombiniText::applyStringOverrides(const ZmbReleaseInfo &relInfo) {
 	static const StringOverrideMap overrides = createStringOverrides();
 	const Common::Language language = relInfo.getLanguage();
-	const bool tlc = relInfo.isFamily(ZmbReleaseInfo::kTlcV2);
+	const bool tlc = relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20);
 	for (StringOverrideMap::const_iterator entry = overrides.begin(); entry != overrides.end(); entry++) {
 		const LanguageStringOverrides &translations = entry->_value;
 		LanguageStringOverrides::const_iterator text = translations.find(language);

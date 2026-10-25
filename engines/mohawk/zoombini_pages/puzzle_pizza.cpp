@@ -1521,7 +1521,7 @@ int16 ZoombiniPuzzlePizza::getToppingButtonScrbId(int16 ingredientIdx, bool sele
 }
 
 void ZoombiniPuzzlePizza::updateV2MachineButtonHover() {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	const int16 produceNormalScrbId = static_cast<int16>(kResScrb7001_AnswerLevel1 + (_puzzleLevel - 1));
@@ -1553,7 +1553,7 @@ bool ZoombiniPuzzlePizza::isToppingButtonAtPoint(int16 ingredientIdx, const Comm
 	if (_machineToppingSlotCount <= ingredientIdx || !hasToppingButtonForIngredient(ingredientIdx) || !_toppingButtonFeatures[ingredientIdx])
 		return false;
 
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2))
+	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return _toppingButtonFeatures[ingredientIdx]->findDrawRecordAtPoint(point) != nullptr;
 
 	const int16 *rect = kToppingClickRectTable[_puzzleLevel - 1][ingredientIdx];
@@ -1582,7 +1582,7 @@ void ZoombiniPuzzlePizza::handleIngredientToggle(int16 ingredientIdx) {
 		loadScrbOntoFeature(_toppingButtonFeatures[ingredientIdx], targetScrb);
 	}
 	// TLC v2 topping SCRBs omit the frame sound, so the button queues it separately.
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::kTlcV2)) {
+	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kPage, kToppingButtonSoundTable[ingredientIdx]));
 	}
 
@@ -2421,7 +2421,7 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(TrollOrderLine orderLine) {
 		if (_allTrollOrdersMatched) {
 			setupQuestionRunners();
 			// The v1.0BR demo keeps Go disabled after its only order is accepted.
-			if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::kEuropeV10))
+			if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::Family::kEuropeV1x, Common::EN_GRB))
 				setGoButtonsEnabled(true);
 			return;
 		}
@@ -2519,7 +2519,7 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(TrollOrderLine orderLine) {
 	if (_allTrollOrdersMatched) {
 		setupQuestionRunners();
 		// The v1.0BR demo keeps Go disabled after its only order is accepted.
-		if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::kEuropeV10))
+		if (!_vm->getRelInfo().isDemo(ZmbReleaseInfo::Family::kEuropeV1x, Common::EN_GRB))
 			setGoButtonsEnabled(true);
 		return;
 	}

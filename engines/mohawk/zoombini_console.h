@@ -322,7 +322,7 @@ private:
 	/** Parse a debugger state key into its shared state category. */
 	static StateKeyKind parseStateKey(const char *key);
 	/** Parse one route/level memorial key and return its zero-based route index. */
-	static StateKeyKind parseMemorialStateKey(const char *key, uint &routeIndex, uint &difficultyLevel);
+	static StateKeyKind parseMemorialStateKey(const char *key, uint &routeIndex, uint &puzzleLevel);
 	/** Parse one Fleens trait key and return its zero-based source trait index. */
 	static StateKeyKind parseFleensTraitStateKey(const char *key, uint &traitIndex);
 	/** Return whether a state key exists in the active release family. */
