@@ -644,10 +644,10 @@ void ScriptEngine::runOpcodeOrReadVar(uint16 mode, uint16 &result) {
 		_pos2 = cpos;
 		jump();
 	} else if (mode == 1) {
-		getFlags(READ_BE_UINT16(_script->data + _pos1), result);
+		getFlags(safeReadUINT16(_pos1, __FUNCTION__), result);
 		_pos2 = _pos1 + 2;
 	} else if (mode == 3 || mode == 5) {
-		result = READ_BE_UINT16(_script->data + _pos1);
+		result = safeReadUINT16(_pos1, __FUNCTION__);
 		_pos2 = _pos1 + 2;
 	} else {
 		error("%s(): Invalid opcode length %d", __FUNCTION__, mode);
@@ -705,7 +705,7 @@ uint8 ScriptEngine::countFunctionOps() {
 		if (r2 == 7)
 			break;
 		if (opcodeHasFlag8()) {
-			_pos2 = READ_BE_UINT16(_script->data + _pos2 + 1);
+			_pos2 = safeReadUINT16(_pos2 + 1, __FUNCTION__);
 		} else {
 			++_pos2;
 			jump();
@@ -731,7 +731,7 @@ void ScriptEngine::seekToFunctionOp(int num) {
 			break;
 		}
 		if (opcodeHasFlag8()) {
-			_pos2 = READ_BE_UINT16(_script->data + _pos2 + 1);
+			_pos2 = safeReadUINT16(_pos2 + 1, __FUNCTION__);
 		} else {
 			getOpcodeProperties(r1, r2, r3);
 			if (r1 == 4) {
@@ -761,7 +761,7 @@ bool ScriptEngine::stackOps_checkFor52(uint16 &result) {
 		skipOnFlag8();
 		uint8 op = getOpcode(_pos2);
 		if (op == 52 || op == 53) {
-			result = READ_BE_UINT16(_script->data + _pos2 + 1);
+			result = safeReadUINT16(_pos2 + 1, __FUNCTION__);
 			res = true;
 		}
 	}
@@ -796,7 +796,7 @@ void ScriptEngine::skipOnFlag8() {
 void ScriptEngine::jump() {
 	for (bool lp = true; lp; ) {
 		if (opcodeHasFlag8()) {
-			_pos2 = READ_BE_UINT16(_script->data + _pos2 + 1);
+			_pos2 = safeReadUINT16(_pos2 + 1, __FUNCTION__);
 			continue;
 		}
 		lp = false;
@@ -857,13 +857,19 @@ bool ScriptEngine::setArrayLastEntry(uint16 arrNo, uint16 val) {
 	return true;
 }
 
-uint8 ScriptEngine::getOpcode(int offset) {
-	if ((uint)offset >= _script->dataSize)
-		error("%s(): Offset %d is out of bounds", __FUNCTION__, offset);
+uint8 ScriptEngine::getOpcode(int offset) const {
+	if (offset >= _script->dataSize)
+		error("%s(): Offset %d is out of bounds (data size %d)", __FUNCTION__, offset, _script->dataSize);
 	uint8 op = _script->data[offset];
 	if (op >= _opcodes.size())
 		error("%s(): Opcode %d is out of bounds", __FUNCTION__, op);
 	return op;
+}
+
+uint16 ScriptEngine::safeReadUINT16(uint16 pos, const char *caller) const {
+	if (pos + 2 > _script->dataSize)
+		error("%s(): Offset %d is out of bounds (data size %d)", caller, pos, _script->dataSize);
+	return READ_BE_UINT16(_script->data + pos);
 }
 
 #ifdef SNATCHER_SCRIPT_DEBUG
@@ -979,8 +985,8 @@ void ScriptEngine::o_animOps() {
 	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x09);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 4));
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 2));
+	_que->writeUInt16(safeReadUINT16(_pos1 + 4, __FUNCTION__));
+	_que->writeUInt16(safeReadUINT16(_pos1 + 2, __FUNCTION__));
 }
 
 void ScriptEngine::o_evalAdd() {
@@ -1001,14 +1007,14 @@ void ScriptEngine::o_chatWithPortraitAnim() {
 	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x0D);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
+	_que->writeUInt16(safeReadUINT16(_pos1 + 1, __FUNCTION__));
 }
 
 void ScriptEngine::o_pcmSound() {
 	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x0C);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
+	_que->writeUInt16(safeReadUINT16(_pos1 + 1, __FUNCTION__));
 }
 
 void ScriptEngine::o_evalAnd() {
@@ -1029,7 +1035,7 @@ void ScriptEngine::o_fmMusicStart() {
 	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x07);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
+	_que->writeUInt16(safeReadUINT16(_pos1 + 1, __FUNCTION__));
 }
 
 void ScriptEngine::o_runSubScript() {
@@ -1046,7 +1052,7 @@ void ScriptEngine::o_runSubScript() {
 	++_pos2;
 
 	if (m != 5) {
-		uint16 no = READ_BE_UINT16(_script->data + _pos2 + 1);
+		uint16 no = safeReadUINT16(_pos2 + 1, __FUNCTION__);
 		_que->writeUInt16(0x11);
 		_que->writeUInt32(0x1A800);
 		_que->writeUInt16(no);
@@ -1058,13 +1064,13 @@ void ScriptEngine::o_runSubScript() {
 		u = _script->curPos;
 	setArrayLastEntry(3, u);
 
-	_script->newPos = READ_BE_UINT16(_script->data + _pos2);
+	_script->newPos = safeReadUINT16(_pos2, __FUNCTION__);
 }
 
 void ScriptEngine::o_callSubroutine() {
 	uint16 cp = _script->curPos;
 	setArrayLastEntry(5, cp);
-	_pos1 = _script->curPos = READ_BE_UINT16(_script->data + _pos1 + 1);
+	_pos1 = _script->curPos = safeReadUINT16(_pos1 + 1, __FUNCTION__);
 	runOpcode();
 	popArrayLastEntry(5, cp);
 	_script->curPos = cp;
@@ -1074,7 +1080,7 @@ void ScriptEngine::o_cdaPlay() {
 	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x0E);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
+	_que->writeUInt16(safeReadUINT16(_pos1 + 1, __FUNCTION__));
 
 }
 
@@ -1083,7 +1089,7 @@ void ScriptEngine::o_incrCounter() {
 		return;
 
 	uint16 r1 = 0;
-	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
+	uint16 sel = safeReadUINT16(_pos1 + 1, __FUNCTION__);
 	getFlags(sel, r1);
 
 	uint16 r2 = (0xFFFFFFFF >> (15 - (sel & 0x0F))) & 0xFFFF;
@@ -1095,7 +1101,7 @@ void ScriptEngine::o_fmSoundEffect() {
 	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x1C);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
+	_que->writeUInt16(safeReadUINT16(_pos1 + 1, __FUNCTION__));
 }
 
 void ScriptEngine::o_evalEquals() {
@@ -1115,17 +1121,17 @@ void ScriptEngine::o_evalEquals() {
 void ScriptEngine::o_clearFlags() {
 	if (!evalFinished())
 		return;
-	setFlags(READ_BE_UINT16(_script->data + _pos1 + 1), 0);
+	setFlags(safeReadUINT16(_pos1 + 1, __FUNCTION__), 0);
 }
 
 void ScriptEngine::o_setFlags() {
 	if (!evalFinished())
 		return;
-	setFlags(READ_BE_UINT16(_script->data + _pos1 + 1), 0xFFFF);
+	setFlags(safeReadUINT16(_pos1 + 1, __FUNCTION__), 0xFFFF);
 }
 
 void ScriptEngine::o_getPrevPosition() {
-	uint16 n = READ_BE_UINT16(_script->data + _pos1 + 1);
+	uint16 n = safeReadUINT16(_pos1 + 1, __FUNCTION__);
 	if (!getArrayEntry(4, ARR_POS(4) - n, _result))
 		_result = 0xFFFF;
 }
@@ -1162,7 +1168,7 @@ void ScriptEngine::o_doEitherOr() {
 	uint16 f2 = 0;
 	_pos2 = _pos1;
 	getOpcodeProperties(mode, f1, f2);
-	uint16 np = READ_BE_UINT16(_script->data + _pos1 + 1);
+	uint16 np = safeReadUINT16(_pos1 + 1, __FUNCTION__);
 	_pos1 += 3;
 	runOpcodeOrReadVar(mode, _result);
 	_pos1 = _result ? _pos2 : np;
@@ -1191,7 +1197,7 @@ void ScriptEngine::o_setResult() {
 	uint16 f2 = 0;
 	_pos2 = _pos1;
 	getOpcodeProperties(len, mode, f2);
-	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
+	uint16 sel = safeReadUINT16(_pos1 + 1, __FUNCTION__);
 	_pos1 += 3;
 	runOpcodeOrReadVar(mode, _result);
 	setFlags(sel, _result);
@@ -1254,7 +1260,7 @@ void ScriptEngine::o_break() {
 	getOpcodeProperties(m, f1, f2);
 	++_pos2;
 	if (m != 5) {
-		int num = READ_BE_UINT16(_script->data + _pos2 + 1);
+		int num = safeReadUINT16(_pos2 + 1, __FUNCTION__);
 		_pos2 += 3;
 		if (_script->curFileNo != num) {
 			_script->curFileNo = num;
@@ -1263,7 +1269,7 @@ void ScriptEngine::o_break() {
 			_que->writeUInt16(num);
 		}
 	}
-	_script->newPos = READ_BE_UINT16(_script->data + _pos2);
+	_script->newPos = safeReadUINT16(_pos2, __FUNCTION__);
 }
 
 void ScriptEngine::o_evalTrue() {
@@ -1335,7 +1341,7 @@ void ScriptEngine::o_verbOps() {
 	_pos2 = _pos1;
 
 	if (ARR_POS(2) == _script->sentencePos) {
-		uint16 val = READ_BE_UINT16(_script->data + _pos2 + 1);
+		uint16 val = safeReadUINT16(_pos2 + 1, __FUNCTION__);
 
 		if (!setArrayLastEntry(1, val))
 			debug("Verb array overflow");
@@ -1343,7 +1349,7 @@ void ScriptEngine::o_verbOps() {
 	} else {
 		uint16 val = 0;
 		getArrayEntry(2, _script->sentencePos, val);
-		if (READ_BE_UINT16(_script->data + _pos2 + 1) != val)
+		if (safeReadUINT16(_pos2 + 1, __FUNCTION__) != val)
 			return;
 
 		++_script->sentencePos;
@@ -1386,7 +1392,7 @@ void ScriptEngine::o_checkSubRecurseState() {
 	uint16 f2 = 0;
 	_pos2 = _pos1;
 	getOpcodeProperties(m, f1, f2);
-	uint16 val = READ_BE_UINT16(_script->data + _pos2 + 1);
+	uint16 val = safeReadUINT16(_pos2 + 1, __FUNCTION__);
 	if (m == 5) {
 		_result = 0;
 		for (int i = 0; i < ARR_POS(5) && !_result; ++i) {
@@ -1424,7 +1430,7 @@ void ScriptEngine::o_loadModuleAndStartGfx() {
 }
 
 void ScriptEngine::o_randomSwitch() {
-	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
+	uint16 sel = safeReadUINT16(_pos1 + 1, __FUNCTION__);
 	_pos2 = _pos1 + 3;
 	uint16 f = Util::rngGetNumberFromRange(1, countFunctionOps()) & 0xFF;
 	_pos2 = _pos1 + 3;
@@ -1437,7 +1443,7 @@ void ScriptEngine::o_randomSwitch() {
 void ScriptEngine::o_sequentialSwitch() {
 	_pos2 = _pos1 + 3;
 	uint16 cnt = countFunctionOps();
-	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
+	uint16 sel = safeReadUINT16(_pos1 + 1, __FUNCTION__);
 	uint16 val = 0;
 	getFlags(sel, val);
 	_pos2 = _pos1 + 3;
@@ -1461,7 +1467,7 @@ void ScriptEngine::o_sysOps() {
 	_pos2 = _pos1;
 	getOpcodeProperties(m, f1, f2);
 	_pos2 += (m == 4 ? 2 : 1);
-	uint16 sub = READ_BE_UINT16(_script->data + _pos2);
+	uint16 sub = safeReadUINT16(_pos2, __FUNCTION__);
 	uint16 addr = 0;
 	uint16 val = 0;
 
@@ -1473,7 +1479,7 @@ void ScriptEngine::o_sysOps() {
 	case 1:
 		// Save game state
 		_que->writeUInt16(0x1E);
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 4));
+		_que->writeUInt16(safeReadUINT16(_pos1 + 4, __FUNCTION__));
 		if (!getArrayEntry(5, 0, _script->temp.curPos))
 			_script->temp.curPos = _script->curPos;
 		_script->temp.curFileNo = _script->curFileNo;
@@ -1491,7 +1497,7 @@ void ScriptEngine::o_sysOps() {
 		break;
 	case 4:
 		// Start action sequence
-		_aseq->setup(READ_BE_UINT16(_script->data + _pos1 + 4));
+		_aseq->setup(safeReadUINT16(_pos1 + 4, __FUNCTION__));
 		_que->writeUInt16(0x18);
 		break;
 	case 5:
@@ -1499,41 +1505,41 @@ void ScriptEngine::o_sysOps() {
 		// the sub cpu memory. It is limited to 16bit addresses at least. I hope
 		// that in practice, this will only happen for some global variables. We
 		// will just have to catch every case whenever a new address comes up...
-		addr = READ_BE_UINT16(_script->data + _pos1 + 4);
+		addr = safeReadUINT16(_pos1 + 4, __FUNCTION__);
 		_result = _mem->readWord(addr);
 		break;
 	case 6:
 		// See case 5
-		addr = READ_BE_UINT16(_script->data + _pos1 + 5);
-		val = READ_BE_UINT16(_script->data + _pos1 + 7);
+		addr = safeReadUINT16(_pos1 + 5, __FUNCTION__);
+		val = safeReadUINT16(_pos1 + 7, __FUNCTION__);
 		_mem->writeWord(addr, val);
 		break;
 	case 7:
 		// Block pcm sounds
 		_que->writeUInt16(0x1D);
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 4) ? 1 : 0);
+		_que->writeUInt16(safeReadUINT16(_pos1 + 4, __FUNCTION__) ? 1 : 0);
 		break;
 	case 8:
-		if (READ_BE_UINT16(_script->data + _pos1 + 4) == 0) {
+		if (safeReadUINT16(_pos1 + 4, __FUNCTION__) == 0) {
 			_que->writeUInt16(0x09);
 			_que->writeUInt16(0x02);
 			_que->writeUInt16(0x01);
 		} else {
 			// Show inventory item close-up
 			_que->writeUInt16(0x15);
-			_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 8));
-			_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 10));
+			_que->writeUInt16(safeReadUINT16(_pos1 + 8, __FUNCTION__));
+			_que->writeUInt16(safeReadUINT16(_pos1 + 10, __FUNCTION__));
 		}
 		break;
 	case 9:
-		_script->phase = READ_BE_UINT16(_script->data + _pos1 + 4) + 2;
+		_script->phase = safeReadUINT16(_pos1 + 4, __FUNCTION__) + 2;
 		break;
 	case 10:
-		val = READ_BE_UINT16(_script->data + _pos1 + 4);
+		val = safeReadUINT16(_pos1 + 4, __FUNCTION__);
 		_ui->setVerbInterfaceMode(val);
 		break;
 	case 11:
-		if (READ_BE_UINT16(_script->data + _pos1 + 4)) {
+		if (safeReadUINT16(_pos1 + 4, __FUNCTION__)) {
 			_mem->restoreTempState();
 			_script->phase = 1;
 		} else {
@@ -1549,9 +1555,9 @@ void ScriptEngine::o_sysOps() {
 	case 13:
 		// CD-Audio sync
 		_que->writeUInt16(0x1B);
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 5));
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 8));
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 10));
+		_que->writeUInt16(safeReadUINT16(_pos1 + 5, __FUNCTION__));
+		_que->writeUInt16(safeReadUINT16(_pos1 + 8, __FUNCTION__));
+		_que->writeUInt16(safeReadUINT16(_pos1 + 10, __FUNCTION__));
 		break;
 	default:
 		break;
@@ -1572,12 +1578,12 @@ void ScriptEngine::o_displayDialog() {
 
 	_que->writeUInt16(0x08);
 	if (m == 4) {
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos2 + 1));
+		_que->writeUInt16(safeReadUINT16(_pos2 + 1, __FUNCTION__));
 		_pos2 += 3;
 	} else {
 		_que->writeUInt16(0);
 	}
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos2));
+	_que->writeUInt16(safeReadUINT16(_pos2, __FUNCTION__));
 }
 
 void ScriptEngine::o_animWait() {
@@ -1585,7 +1591,7 @@ void ScriptEngine::o_animWait() {
 		return;
 	_que->writeUInt16(0x09);
 	_que->writeUInt16(0x03);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
+	_que->writeUInt16(safeReadUINT16(_pos1 + 1, __FUNCTION__));
 }
 
 void ScriptEngine::o_pcmSoundWait() {
@@ -1612,7 +1618,7 @@ void ScriptEngine::o_waitFrames() {
 	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x10);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
+	_que->writeUInt16(safeReadUINT16(_pos1 + 1, __FUNCTION__));
 }
 
 #undef ARR_SIZE
