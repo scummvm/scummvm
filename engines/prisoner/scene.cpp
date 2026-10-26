@@ -227,7 +227,8 @@ void PrisonerEngine::leaveScene() {
 	unloadBackground();
 	unloadScriptProgram(kSceneScriptProgram);
 	if (_newModuleIndex != _currModuleIndex) {
-		// TODO: unloadMusicItems
+		// The music belongs to the module: stop and free it (original: unloadMusicItems)
+		unloadMusics(true);
 		stopModuleScript();
 		// Reset module script vars
 		for (uint i = 0; i < 300; i++)
