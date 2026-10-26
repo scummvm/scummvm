@@ -149,7 +149,7 @@ bool CityCastleLogic::move(Data::Direction dir) {
 			writeString(Common::String::format("%s\n", Data::DIRECTION_NAMES[dir]));
 
 			_G(savegame)._locationPosition = Common::Point(x, y);
-			playFX(1);
+			playFX(4);
 			redrawMap();
 
 		} else {
