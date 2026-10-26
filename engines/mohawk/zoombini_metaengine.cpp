@@ -23,6 +23,7 @@
 #include "mohawk/detection.h"
 
 #include "common/config-manager.h"
+#include "common/str.h"
 #include "common/textconsole.h"
 #include "common/ustr.h"
 
@@ -151,6 +152,22 @@ bool Mohawk::ZmbReleaseInfo::isFamily(Family family) const {
 
 bool Mohawk::ZmbReleaseInfo::isFamily(Family family, Common::Language lang) const {
 	return isFamily(family) && _lang == lang;
+}
+
+bool Mohawk::ZmbReleaseInfo::isExtraFamily(const Common::String &extra, Family family) {
+	switch (family) {
+	case Family::kUsV10:
+		return extra.hasPrefix("v1.0US") || extra.hasPrefix("v1.0ES") || extra.hasPrefix("v1.0PT");
+	case Family::kEuropeV1x:
+		return extra.hasPrefix("v1.0BR") || extra.hasPrefix("v1.0FR") || extra.hasPrefix("v1.0GE") ||
+			   extra.hasPrefix("v1.0IT") || extra.hasPrefix("v1.0JP") ||
+			   extra.hasPrefix("v1.1BR") || extra.hasPrefix("v1.1FR") || extra.hasPrefix("v1.1GE");
+	case Family::kUsV11:
+		return extra.hasPrefix("v1.1US") || extra.hasPrefix("v1.11KR");
+	case Family::kTlcV20:
+		return extra.hasPrefix("v2.0");
+	}
+	return false;
 }
 
 bool Mohawk::ZmbReleaseInfo::isV1() const {

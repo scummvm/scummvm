@@ -2934,33 +2934,33 @@ bool ZoombiniText::readTextStrStrings(MohawkArchive &archive, int16 resourceId, 
 	if (!archive.hasResource(ID_STRL, resourceId))
 		return false;
 
-	Common::SeekableReadStream *stringStream = archive.getResource(ID_STRL, resourceId);
-	if (!stringStream)
+	Common::SeekableReadStream *resStream = archive.getResource(ID_STRL, resourceId);
+	if (!resStream)
 		return false;
-	if (!ZmbResource::hasBytes(stringStream, 1)) {
-		delete stringStream;
+	if (!ZmbResource::hasBytes(resStream, 1)) {
+		delete resStream;
 		return false;
 	}
 
-	const byte stringCount = stringStream->readByte();
+	const byte stringCount = resStream->readByte();
 	Common::Array<Common::U32String> parsedTexts;
-	if (!readStrlBody(stringStream, stringCount, codePage, parsedTexts, decodeMacRomanUmlautByte9F)) {
-		delete stringStream;
+	if (!readStrlBody(resStream, stringCount, codePage, parsedTexts, decodeMacRomanUmlautByte9F)) {
+		delete resStream;
 		return false;
 	}
 
-	bool consumedExactly = stringStream->pos() == stringStream->size();
+	bool consumedExactly = resStream->pos() == resStream->size();
 	// The v1.0BR/v1.1BR TEXTSTR.MHK credit STRL 2022 has an incorrect string count in its header.
 	// It declares 142 strings but contains 145, including two trailing empty strings and the final '*' marker.
 	// Accept only this known suffix so the malformed original resource remains readable.
 	const bool allowBritishCreditTerminator = _relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x) &&
 											  _relInfo.getLanguage() == Common::EN_GRB && resourceId == 2022 && stringCount == 142;
-	if (!consumedExactly && allowBritishCreditTerminator && ZmbResource::hasBytes(stringStream, 4)) {
-		const bool hasCreditTerminatorSuffix = stringStream->readByte() == 0 && stringStream->readByte() == 0 && stringStream->readByte() == '*' &&
-											   stringStream->readByte() == 0 && stringStream->pos() == stringStream->size();
+	if (!consumedExactly && allowBritishCreditTerminator && ZmbResource::hasBytes(resStream, 4)) {
+		const bool hasCreditTerminatorSuffix = resStream->readByte() == 0 && resStream->readByte() == 0 && resStream->readByte() == '*' &&
+											   resStream->readByte() == 0 && resStream->pos() == resStream->size();
 		consumedExactly = hasCreditTerminatorSuffix;
 	}
-	delete stringStream;
+	delete resStream;
 	if (!consumedExactly || parsedTexts.size() != stringCount)
 		return false;
 	texts = parsedTexts;
@@ -3649,6 +3649,7 @@ void ZoombiniText::initFonts(const SourceSettings &sources) {
 
 void ZoombiniText::initMacintoshFonts() {
 	static constexpr Graphics::TTFSizeMode kSizeMode = Graphics::kTTFSizeModeCharacter;
+
 	_textFont.point = 12;
 	_titleFont.point = 18;
 	switch (_relInfo.getLanguage()) {
@@ -3658,13 +3659,17 @@ void ZoombiniText::initMacintoshFonts() {
 		break;
 	case Common::JA_JPN:
 		_titleFont.point = 16;
-		// Classic Osaka has no Unicode cmap, making hard to support it in ScummVM font system without major overhaul.
-		// So in the meantime, keep the existing macOS-font/substitute path.
+		// We need specifically Osaka 4.2 from the Mac OS 9 Japanese Language Kit, not from the KanjiTalk 7.5.3.
+		// The latter does not contain Unicode cmap, which is required by FreeType.
+		_optimalTTFLoaders.push_back(new MacResForkTTFLoader("Osaka", "Osaka", 16384, kSizeMode));
 		_optimalTTFLoaders.push_back(new FileTTFLoader("Osaka.ttf", "Osaka", false, 0, kSizeMode));
-		_optimalTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", "MS Gothic", false, 0, kSizeMode));
+		_fallbackTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", "MS Gothic", false, 0, kSizeMode));
 #if defined(WIN32)
-		_optimalTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", "MS Gothic", false, 0, kSizeMode));
+		_fallbackTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", "MS Gothic", false, 0, kSizeMode));
 #endif
+		// Without hinting, quality of modern CJK font rendering in low resolution is terrible.
+		// Thus, prefer light hinting for modern CJK fonts when RGB rendering is available.
+		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic", Graphics::kTTFRenderModeLight, kSizeMode));
 		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", Graphics::kTTFRenderModeLight, kSizeMode));
 		return;
 	case Common::EN_USA:
@@ -3698,7 +3703,7 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 #endif
 	Common::String fontSrcInst;
 
-	// Default font sizes for English and European Zoombini.
+	// Default font sizes for English Zoombinis.
 	_textFont.point = 13;
 	_titleFont.point = 18;
 
@@ -3709,10 +3714,6 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 	//   * Polish release contains Tahoma in name of CORNER.TTF.
 	// - 2.0 TLC demo: found in /CORNER.TTF
 	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10) || _relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
-		// English releases load CornerStone at 13/18 pt for text/title.
-		// French, German, and Italian branches use 13/16 pt for text/title.
-		// Portuguese v1.0 uses 10/14 pt for text/title.
-		// Japanese v1.0 uses MS Gothic at 12/15 pt for text/title.
 		if (_relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10, Common::PT_PRT)) {
 			// FIXME: CornerStone's ascender is 904/1000 em, or 9.04 pixels at size 10.
 			// GDI rounds this to 9 pixels; FreeType rounds up to 10 and uses that ascent for cached glyph Y offsets.
@@ -3750,8 +3751,9 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "msgothic.ttc", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
 			_optimalTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", kFontNameMsGothic, systemFontWarn, false, 0, fontSizeMode));
 #endif
-			// Without hinting, quality of Noto Sans rendering in low resolution is terrible.
-			// Thus, prefer light hinting for Noto Sans when RGB rendering is available.
+			// Without hinting, quality of modern CJK font rendering in low resolution is terrible.
+			// Thus, prefer light hinting for modern CJK fonts when RGB rendering is available.
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic", Graphics::kTTFRenderModeLight, fontSizeMode));
 			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", Graphics::kTTFRenderModeLight, fontSizeMode));
 		} else {
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
@@ -4504,7 +4506,6 @@ bool ZoombiniText::fontUsesAntialiasing(ZoombiniFontUsage fontUsage) const {
 }
 
 const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgBox) {
-	const bool isJpMac = _relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN) && _relInfo.getPlatform() == Common::kPlatformMacintosh;
 	TTFLoader *firstOptimalLoader = nullptr;
 	if (!_optimalTTFLoaders.empty())
 		firstOptimalLoader = _optimalTTFLoaders.front();
@@ -4523,29 +4524,59 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 	}
 
 	Common::U32String noFontMsg;
-	if (isJpMac) {
-		// I18N: Osaka and MS Gothic are font names; 'Osaka.ttf' and 'msgothic.ttc' are literal file names.
-		noFontMsg = _("The Japanese Macintosh version requires 'Osaka.ttf' from modern macOS.\n\n"
-					  "Copy 'Osaka.ttf' into ScummVM's extras directory or the game directory.\n"
-					  "Classic Macintosh Osaka fonts are not supported yet.\n"
-					  "MS Gothic ('msgothic.ttc') from Windows is the preferred substitute.");
-	} else {
+	Common::U32String fontSourceMsg;
+	switch (_relInfo.getPlatform()) {
+	case Common::kPlatformMacintosh:
+		switch (_relInfo.getLanguage()) {
+		case Common::JA_JPN:
+			if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
+				// I18N: Osaka is a font name and must not be translated.
+				noFontMsg = _("ScummVM cannot load the Osaka font used by the Japanese Macintosh version.");
+				// I18N: Osaka is a font name; quoted font file names must not be translated.
+				fontSourceMsg = _("Obtain the font in one of the following ways:\n"
+								  "- Export Osaka 4.2 from classic Mac OS 9.2.2 Japanese Language Kit in MacBinary as 'Osaka.bin'.\n"
+								  "- Export 'Osaka.ttf' from modern macOS.\n\n"
+								  "Place the file in the game directory or the configured Extra Path directory.\n");
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	case Common::kPlatformWindows:
+		switch (_relInfo.getLanguage()) {
+		case Common::KO_KOR:
+			// I18N: 'GulimChe' is a font name; 'gulim.ttc' is a literal file name and must not be translated.
+			fontSourceMsg = _("The Korean release requires the GulimChe ('gulim.ttc') font from the Windows font archive.");
+			break;
+		case Common::JA_JPN:
+			// I18N: 'MS Gothic' is a font name; 'msgothic.ttc' is a literal file name and must not be translated.
+			fontSourceMsg = _("The Japanese release requires the MS Gothic ('msgothic.ttc') font from the Windows font archive.");
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+	if (noFontMsg.empty()) {
 		// I18N: The three %s placeholders are the game language, release label (e.g. v1.11KR), and required font file name, in that order.
 		noFontMsg = Common::U32String::format(_("Zoombini (%s, %s) requires the font '%s' to display text correctly, but ScummVM cannot access it."),
 											  Common::getLanguageDescription(_relInfo.getLanguage()), _vm->_gameDescription->desc.extra,
 											  firstOptimalLoader->_filePath.baseName().c_str());
-		noFontMsg += U"\n\n";
 		// I18N: %s is the file name of the required font.
-		noFontMsg += Common::U32String::format(_("Copy the required font '%s' into ScummVM's extras directory, or into the game directory."), firstOptimalLoader->_filePath.baseName().c_str());
+		Common::U32String copyMsg = Common::U32String::format(_("Copy the required font '%s' into the game directory or the configured Extra Path directory."),
+															  firstOptimalLoader->_filePath.baseName().c_str());
+		if (!fontSourceMsg.empty()) {
+			copyMsg += U"\n";
+			copyMsg += fontSourceMsg;
+		}
+		fontSourceMsg = copyMsg;
 	}
-	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11, Common::KO_KOR)) {
-		noFontMsg += U"\n";
-		// I18N: 'GulimChe' is a font name; 'gulim.ttc' is a literal file name and must not be translated.
-		noFontMsg += _("The Korean release requires the GulimChe ('gulim.ttc') font from the Windows font archive.");
-	} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN) && !_relInfo.isDemo()) {
-		noFontMsg += U"\n";
-		// I18N: 'MS Gothic' is a font name; 'msgothic.ttc' is a literal file name and must not be translated.
-		noFontMsg += _("The Japanese release requires the MS Gothic ('msgothic.ttc') font from the Windows font archive.");
+	if (!fontSourceMsg.empty()) {
+		noFontMsg += U"\n\n";
+		noFontMsg += fontSourceMsg;
 	}
 
 	const char *primaryFontSourceInstruction = firstOptimalLoader->_srcInst.c_str();
@@ -4673,7 +4704,7 @@ bool ZoombiniText::isAllowedZoombiniName(const Common::String &name) {
 
 	switch (_exeCodePage) {
 	case Common::kWindows932:
-		// FIXME: Use MacJapanese for Macintosh once the shared codec supports it.
+		// FIXME: Use MacJapanese for Macintosh once the ScummVM codec supports it.
 		return isGeneratedJapaneseZoombiniName(decoded);
 	case Common::kWindows949:
 		for (uint16 nameId = 0; nameId < 625; nameId++) {

@@ -1160,7 +1160,8 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 	: OptionsContainerWidget(boss, name, "ZoombiniEngineOptionsDialog", domain) {
 	// Hide the v1.x-only MIDI settings on the TLC v2.0 rebuilds, as they does not have any MIDI resources.
 	Common::String guiOptions = ConfMan.get("guioptions", _domain);
-	_isV1x = !checkGameGUIOption(GAMEOPTION_ZMB_V20, guiOptions);
+	const Common::String extra = ConfMan.get("extra", _domain);
+	_isV1x = !ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kTlcV20);
 	_isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
 
@@ -1295,7 +1296,7 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 		bool alwaysUseWinMidi = false;
 		const Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
 		MohawkMetaEngine_Zoombini::MidiSoundtrack singleSoundtrack;
-		const bool isUsV10 = checkGameGUIOption(GAMEOPTION_ZMB_V10US, guiOptions);
+		const bool isUsV10 = ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kUsV10);
 		if (MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(platform, language, _isDemo, isUsV10, singleSoundtrack)) {
 			switch (singleSoundtrack) {
 			case MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh:

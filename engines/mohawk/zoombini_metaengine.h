@@ -30,6 +30,7 @@
 
 namespace Common {
 
+class String;
 class U32String;
 
 } // End of namespace Common
@@ -144,6 +145,8 @@ public:
 	bool isFamily(Family family) const;
 	/** Match both the implementation family and its language. */
 	bool isFamily(Family family, Common::Language lang) const;
+	/** Match an implementation family from a detector extra label, including variant suffixes. */
+	static bool isExtraFamily(const Common::String &extra, Family family);
 	/** Match any v1 implementation family. */
 	bool isV1() const;
 	/** Whether the detector marks the release as a demo. */
