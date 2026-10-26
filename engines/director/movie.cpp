@@ -552,6 +552,7 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 	}
 
 	Cast *cast = new Cast(this, libId, false, true, libResourceId);
+	cast->setCastName(name);
 	cast->setArchive(castArchive);
 	cast->loadConfig();
 	cast->loadCast();
