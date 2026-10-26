@@ -1328,7 +1328,10 @@ void SoundRecord::run(double sceneTime, double elapsedTime) {
 		_wasPreempted = true;
 	}
 
-	if (_endTime <= sceneTime || _wasPreempted) {
+	// From Nancy21 on, a sound that loops keeps the record going
+	const bool hasPlayedThrough = _endTime <= sceneTime && !(_isLooping && g_nancy->getGameType() >= kGameTypeNancy21);
+
+	if (hasPlayedThrough || _wasPreempted) {
 		// The caption goes with the sound, unless another one has replaced it
 		UI::NDUI::Manager *ui = NancySceneState.getNDUI();
 		if (!_caption.empty() && ui && ui->getCaption() == _caption) {
