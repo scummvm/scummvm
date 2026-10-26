@@ -176,6 +176,7 @@ public:
 	 * Set one of the retained system CURS resources.
 	 */
 	void setCursor(uint16 id) override;
+	void setDefaultCursor() override;
 	/**
 	 * Load cursor from the page/system tBMP resource.
 	 * (e.g. for scroll button hover cursor on basecamps)

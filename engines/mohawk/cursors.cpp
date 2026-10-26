@@ -38,6 +38,7 @@
 #endif
 
 #ifdef ENABLE_ZOOMBINI
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/paletteman.h"
 #include "mohawk/bitmap.h"
 #include "mohawk/zoombini.h"
@@ -244,6 +245,36 @@ void ZoombiniCursorManager::setCursor(uint16 id) {
 	if (!_cachedCursors.contains(id))
 		_cachedCursors[id] = loadCursor(id);
 	CursorMan.replaceCursor(_cachedCursors[id]);
+}
+
+void ZoombiniCursorManager::setDefaultCursor() {
+	switch (_vm->getPlatform()) {
+	case Common::kPlatformMacintosh: {
+		const byte *data = nullptr;
+		const byte *palette = nullptr;
+		const byte *mask = nullptr;
+		int width = 0;
+		int height = 0;
+		int hotspotX = 0;
+		int hotspotY = 0;
+		int transColor = 0;
+		if (!Graphics::MacWindowManager::getBuiltInCursorData(Graphics::kMacCursorArrow, data, palette, mask, width, height, hotspotX, hotspotY, transColor))
+			error("cursor: cannot find the built-in Macintosh arrow");
+
+		CursorMan.replaceCursor(data, width, height, hotspotX, hotspotY, transColor, nullptr, mask);
+		CursorMan.replaceCursorPalette(palette, 0, 2);
+		break;
+	}
+	case Common::kPlatformWindows: {
+		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+		CursorMan.replaceCursor(cursor);
+		delete cursor;
+		break;
+	}
+	default:
+		CursorManager::setDefaultCursor();
+		break;
+	}
 }
 
 void ZoombiniCursorManager::setShapeCursor(ZmbResource::ArchiveKind archiveKind, uint16 imageId, uint16 shapeIdx, const Common::Point &minusREGS) {
