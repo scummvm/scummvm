@@ -101,23 +101,26 @@ const char *FIO::_resFileList[97] = {
 
 const int FIO::_resFileListSize = ARRAYSIZE(_resFileList);
 
-ResourcePointer::ResourcePointer() : _dataStart(nullptr), _writeableDataStart(nullptr), _offset(0), _moduleLocation(0x28000), _ownBuffer(false) {}
+ResourcePointer::ResourcePointer() : _dataStart(nullptr), _dataSize(0), _writeableDataStart(nullptr), _offset(0), _moduleLocation(0x28000), _ownBuffer(false) {}
 
-ResourcePointer::ResourcePointer(const uint8 *data, uint32 offs, uint32 loc, bool assignBufferOwnership) : _dataStart(data), _writeableDataStart(nullptr), _offset(offs), _moduleLocation(loc), _ownBuffer(assignBufferOwnership) {
+ResourcePointer::ResourcePointer(const uint8 *data, uint32 dataSize, uint32 offs, uint32 loc, bool assignBufferOwnership) : _dataStart(data), _dataSize(dataSize), _writeableDataStart(nullptr), _offset(offs), _moduleLocation(loc), _ownBuffer(assignBufferOwnership) {
 	if (_offset >= _moduleLocation)
 		_offset -= _moduleLocation;
+	checkOffset(0, __FUNCTION__);
 }
 
-ResourcePointer::ResourcePointer(uint8 *data, uint32 offs, uint32 loc, bool assignBufferOwnership) : _dataStart(data), _writeableDataStart(data), _offset(offs), _moduleLocation(loc), _ownBuffer(assignBufferOwnership) {
+ResourcePointer::ResourcePointer(uint8 *data, uint32 dataSize, uint32 offs, uint32 loc, bool assignBufferOwnership) : _dataStart(data), _dataSize(dataSize), _writeableDataStart(data), _offset(offs), _moduleLocation(loc), _ownBuffer(assignBufferOwnership) {
 	if (_offset >= _moduleLocation)
 		_offset -= _moduleLocation;
+	checkOffset(0, __FUNCTION__);
+	checkOffset(0, __FUNCTION__);
 }
 
-ResourcePointer::ResourcePointer(const ResourcePointer &ptr) : _dataStart(ptr._dataStart), _offset(ptr._offset), _moduleLocation(ptr._moduleLocation), _writeableDataStart(ptr._writeableDataStart), _ownBuffer(false) {
+ResourcePointer::ResourcePointer(const ResourcePointer &ptr) : _dataStart(ptr._dataStart), _dataSize(ptr._dataSize), _offset(ptr._offset), _moduleLocation(ptr._moduleLocation), _writeableDataStart(ptr._writeableDataStart), _ownBuffer(false) {
 	assert(ptr._ownBuffer == false);
 }
 
-ResourcePointer::ResourcePointer(ResourcePointer &&ptr) noexcept : _dataStart(ptr._dataStart), _offset(ptr._offset), _moduleLocation(ptr._moduleLocation), _writeableDataStart(ptr._writeableDataStart), _ownBuffer(ptr._ownBuffer) {
+ResourcePointer::ResourcePointer(ResourcePointer &&ptr) noexcept : _dataStart(ptr._dataStart), _dataSize(ptr._dataSize), _offset(ptr._offset), _moduleLocation(ptr._moduleLocation), _writeableDataStart(ptr._writeableDataStart), _ownBuffer(ptr._ownBuffer) {
 	ptr._ownBuffer = false;
 }
 
@@ -131,48 +134,58 @@ const uint8 *ResourcePointer::operator()() const {
 }
 
 const uint8 *ResourcePointer::operator++(int) {
+	checkOffset(0, __FUNCTION__);
 	return _dataStart + (_offset++);
 }
 
 const uint8 *ResourcePointer::operator++() {
+	checkOffset(1, __FUNCTION__);
 	return _dataStart + (++_offset);
 }
 
 uint16 ResourcePointer::readUINT16() const {
+	checkOffset(1, __FUNCTION__);
 	return READ_BE_UINT16(_dataStart + _offset);
 }
 
 uint16 ResourcePointer::readSINT16() const {
+	checkOffset(1, __FUNCTION__);
 	return READ_BE_INT16(_dataStart + _offset);
 }
 
 uint32 ResourcePointer::readUINT32() const {
+	checkOffset(3, __FUNCTION__);
 	return READ_BE_UINT32(_dataStart + _offset);
 }
 
 uint32 ResourcePointer::readSINT32() const {
+	checkOffset(3, __FUNCTION__);
 	return READ_BE_INT32(_dataStart + _offset);
 }
 
 uint16 ResourcePointer::readIncrUINT16() {
+	checkOffset(1, __FUNCTION__);
 	uint16 r = READ_BE_UINT16(_dataStart + _offset);
 	_offset += 2;
 	return r;
 }
 
 uint16 ResourcePointer::readIncrSINT16() {
+	checkOffset(1, __FUNCTION__);
 	int16 r = READ_BE_INT16(_dataStart + _offset);
 	_offset += 2;
 	return r;
 }
 
 uint32 ResourcePointer::readIncrUINT32() {
+	checkOffset(3, __FUNCTION__);
 	uint32 r = READ_BE_UINT32(_dataStart + _offset);
 	_offset += 4;
 	return r;
 }
 
 uint32 ResourcePointer::readIncrSINT32() {
+	checkOffset(3, __FUNCTION__);
 	int32 r = READ_BE_INT32(_dataStart + _offset);
 	_offset += 4;
 	return r;
@@ -180,18 +193,20 @@ uint32 ResourcePointer::readIncrSINT32() {
 
 void ResourcePointer::writeUINT16(uint16 value) {
 	assert(_writeableDataStart);
+	checkOffset(1, __FUNCTION__);
 	WRITE_BE_UINT16(_writeableDataStart + _offset, value);
 }
 
 void ResourcePointer::writeUINT32(uint32 value) {
 	assert(_writeableDataStart);
+	checkOffset(3, __FUNCTION__);
 	WRITE_BE_UINT32(_writeableDataStart + _offset, value);
 }
 
 ResourcePointer ResourcePointer::operator+(int inc) const {
 	return _writeableDataStart ?
-		ResourcePointer(_writeableDataStart, _offset + _moduleLocation + inc, _moduleLocation) :
-			ResourcePointer(_dataStart, _offset + _moduleLocation + inc, _moduleLocation);
+		ResourcePointer(_writeableDataStart, _dataSize, _offset + _moduleLocation + inc, _moduleLocation) :
+			ResourcePointer(_dataStart, _dataSize, _offset + _moduleLocation + inc, _moduleLocation);
 }
 
 bool ResourcePointer::operator<(const ResourcePointer &ptr) const {
@@ -219,6 +234,7 @@ void ResourcePointer::operator=(const uint8 *ptr) {
 void ResourcePointer::operator=(const ResourcePointer &ptr) {
 	assert(ptr._ownBuffer == false);
 	_dataStart = ptr._dataStart;
+	_dataSize = ptr._dataSize;
 	_writeableDataStart = ptr._writeableDataStart;
 	_offset = ptr._offset;
 	_moduleLocation = ptr._moduleLocation;
@@ -226,6 +242,7 @@ void ResourcePointer::operator=(const ResourcePointer &ptr) {
 
 void ResourcePointer::operator=(ResourcePointer &&ptr) noexcept {
 	_dataStart = ptr._dataStart;
+	_dataSize = ptr._dataSize;
 	_writeableDataStart = ptr._writeableDataStart;
 	_offset = ptr._offset;
 	_moduleLocation = ptr._moduleLocation;
@@ -234,19 +251,25 @@ void ResourcePointer::operator=(ResourcePointer &&ptr) noexcept {
 }
 
 uint8 ResourcePointer::operator[](int index) const {
+	assert(_offset + index < _dataSize);
 	return _dataStart[_offset + index];
 }
 
 ResourcePointer ResourcePointer::getDataFromTable(int tableEntry) const {
 	return _writeableDataStart ?
-		ResourcePointer(_writeableDataStart, _offset + _moduleLocation + READ_BE_INT16(_dataStart + _offset + tableEntry * 2), _moduleLocation) :
-			ResourcePointer(_dataStart, _offset + _moduleLocation + READ_BE_INT16(_dataStart + _offset + tableEntry * 2), _moduleLocation);
+		ResourcePointer(_writeableDataStart, _dataSize, _offset + _moduleLocation + READ_BE_INT16(_dataStart + _offset + tableEntry * 2), _moduleLocation) :
+			ResourcePointer(_dataStart, _dataSize, _offset + _moduleLocation + READ_BE_INT16(_dataStart + _offset + tableEntry * 2), _moduleLocation);
 }
 
 ResourcePointer ResourcePointer::makePtr(uint32 offs) const {
 	return _writeableDataStart ?
-		ResourcePointer(_writeableDataStart, offs, _moduleLocation) :
-			ResourcePointer(_dataStart, offs, _moduleLocation);
+		ResourcePointer(_writeableDataStart, _dataSize, offs, _moduleLocation) :
+			ResourcePointer(_dataStart, _dataSize, offs, _moduleLocation);
+}
+
+void ResourcePointer::checkOffset(int extraBytes, const char *caller) const {
+	if (_offset + extraBytes >= _dataSize)
+		error("%s(): Offset %d is out of bounds (data size %d)", caller, _offset + extraBytes, _dataSize);
 }
 
 SceneModule::SceneModule(SnatcherEngine *vm, FIO *fio, const char *resFile, int index) : _vm(vm), _fio(fio), _resFile(resFile), _resIndex(index), _data(0), _dataSize(0), _updateHandler(0) {
@@ -261,7 +284,7 @@ SceneModule::~SceneModule() {
 }
 
 ResourcePointer SceneModule::getPtr(int offset) const {
-	return ResourcePointer(_data, offset);
+	return ResourcePointer(_data, _dataSize, offset);
 }
 
 ResourcePointer SceneModule::getGfxData() const {

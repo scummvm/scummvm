@@ -51,8 +51,8 @@ protected:
 class ResourcePointer {
 public:
 	ResourcePointer();
-	explicit ResourcePointer(const uint8 *data, uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false);
-	explicit ResourcePointer(uint8 *data, uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false);
+	explicit ResourcePointer(const uint8 *data, uint32 dataSize,uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false);
+	explicit ResourcePointer(uint8 *data, uint32 dataSize, uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false);
 	ResourcePointer(const ResourcePointer &ptr);
 	ResourcePointer(ResourcePointer &&ptr) noexcept;
 	~ResourcePointer();
@@ -82,7 +82,10 @@ public:
 	ResourcePointer getDataFromTable(int tableEntry) const;
 	ResourcePointer makePtr(uint32 offs) const;
 private:
+	void checkOffset(int extraBytes, const char *caller) const;
+
 	const uint8 *_dataStart;
+	uint32 _dataSize;
 	uint8 *_writeableDataStart;
 	uint32 _offset;
 	uint32 _moduleLocation;

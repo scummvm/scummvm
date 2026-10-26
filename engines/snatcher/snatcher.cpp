@@ -104,7 +104,7 @@ bool SnatcherEngine::initResource() {
 	uint8 *data = _fio->fileData(96, &size);
 	if (!data)
 		return false;
-	_scd = new ResourcePointer(data, 0, 0xD400, true);
+	_scd = new ResourcePointer(data, size, 0, 0xD400, true);
 	if (!_scd)
 		return false;
 
