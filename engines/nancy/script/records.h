@@ -331,6 +331,7 @@ private:
 	Common::String _caption;	// what the sound says, while it is the one on screen
 	bool _isPlaying = false;
 	bool _wasPreempted = false;
+	uint32 _channelSerial = 0;	// of the channel, once the sound started
 	double _endTime = 0.0;
 };
 

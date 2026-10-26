@@ -81,6 +81,11 @@ public:
 	bool isSoundPlaying(const SoundDescription &description) const;
 	bool isSoundPlaying(const Common::String &chunkName) const;
 
+	// Goes up whenever a sound starts on the channel or the channel is stopped,
+	// but not when a sound ends by itself. Nancy19 records tell from it whether
+	// their sound was cut off.
+	uint32 getChannelSerial(uint16 channelID) const;
+
 	void stopSound(uint16 channelID);
 	void stopSound(const SoundDescription &description);
 	void stopSound(const Common::String &chunkName);
@@ -155,6 +160,7 @@ protected:
 		Audio::AudioStream *streamForMixer = nullptr;
 		Audio::SoundHandle handle;
 		bool isPersistent = false;
+		uint32 serial = 0;
 
 		// Sound effect data, not applicable to nancy2 and below
 		SoundEffectDescription *effectData = nullptr;

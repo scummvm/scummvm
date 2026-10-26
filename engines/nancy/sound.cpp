@@ -313,6 +313,8 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 	}
 
 	Channel &existing = _channels[description.channelID];
+	++existing.serial;
+
 	if (!forceReload && existing.stream != nullptr) {
 		// There's a channel already loaded. Check if we're trying to reload the exact same sound
 		if (	description.name == existing.name &&
@@ -523,11 +525,16 @@ bool SoundManager::isSoundPlaying(const Common::String &chunkName) const {
 	return _commonSounds.contains(chunkName) && isSoundPlaying(_commonSounds[chunkName]);
 }
 
+uint32 SoundManager::getChannelSerial(uint16 channelID) const {
+	return channelID < _channels.size() ? _channels[channelID].serial : 0;
+}
+
 void SoundManager::stopSound(uint16 channelID) {
 	if (channelID >= _channels.size())
 		return;
 
 	Channel &chan = _channels[channelID];
+	++chan.serial;
 
 	if (isSoundPlaying(channelID)) {
 		_mixer->stopHandle(chan.handle);

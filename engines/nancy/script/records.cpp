@@ -1307,6 +1307,7 @@ void SoundRecord::runOnce() {
 
 	_isPlaying = g_nancy->_sound->isSoundPlaying(_sound);
 	_wasPreempted = false;
+	_channelSerial = g_nancy->_sound->getChannelSerial(_channel);
 
 	// The record is done once the sound has played through, whether it loops or not
 	const double length = _isPlaying ? g_nancy->_sound->getLength(_sound).msecs() / 1000.0 : 0.0;
@@ -1321,8 +1322,9 @@ void SoundRecord::runOnce() {
 }
 
 void SoundRecord::run(double sceneTime, double elapsedTime) {
-	// Something else taking over the channel ends the record early
-	if (_isPlaying && !_isLooping && !g_nancy->_sound->isSoundPlaying(_sound) && sceneTime < _endTime) {
+	// The sound is cut off when another sound starts on its channel, or the
+	// channel is stopped. Ending a little before its length doesn't count.
+	if (_isPlaying && g_nancy->_sound->getChannelSerial(_channel) != _channelSerial && (sceneTime < _endTime || _isLooping)) {
 		_wasPreempted = true;
 	}
 
