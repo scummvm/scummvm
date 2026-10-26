@@ -160,8 +160,10 @@ void PrisonerEngine::updateCameraFollowing() {
 		_backgroundCameraLocked || !_backgroundNoScrollFlag2)
 		return;
 
-	int16 scrollX = _backgroundWidth / 10;
-	int16 scrollY = _backgroundHeight / 10;
+	// The half-screen jump starts when the actor is within a tenth of the drawn area from its edge
+	// (original: updateCameraFollowing__)
+	int16 scrollX = _backgroundDrawWidth / 10;
+	int16 scrollY = _backgroundDrawHeight / 10;
 	int16 absActorX = _actors[_cameraFollowsActorIndex].actorSprite->x - _cameraX + _cameraDeltaX - _backgroundDrawX;
 	int16 absActorY = _actors[_cameraFollowsActorIndex].actorSprite->y - _cameraY + _cameraDeltaY - _backgroundDrawY;
 	int16 origCameraX = _cameraX;
