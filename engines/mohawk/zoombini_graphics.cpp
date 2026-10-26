@@ -1041,13 +1041,20 @@ Common::Rect ZoombiniGraphics::drawTextToScreen(ScreenKind screenKind, const Com
 		return Common::Rect();
 	}
 	const bool useAA = _vm->_text->fontUsesAntialiasing(tc._fontUsage);
-	const Common::Rect *clipRect = nullptr;
-	if (tc._hasClipRect)
-		clipRect = &tc._clipRect;
+	TextLayoutPolicy policy;
+	switch (_vm->getRelInfo().getPlatform()) {
+	case Common::kPlatformMacintosh:
+		policy = TextLayoutPolicy::kQuickDraw;
+		break;
+	case Common::kPlatformWindows:
+	default:
+		policy = TextLayoutPolicy::kGdi;
+		break;
+	}
 
 	// Lay out against the full caller rectangle before applying the optional pixel clip.
 	// Shrinking it to the visible area would change line breaks and alignment during scrolling.
-	const Common::Array<Common::U32String> &lines = prepareTextLines(text, font, tc._wordWrap, destRect.width());
+	Common::Array<Common::U32String> lines = prepareTextLines(text, font, tc._wordWrap, destRect.width(), policy, _vm->getLanguage());
 
 	// Align all passes from the unexpanded text bounds.
 	// Offset only the four outline passes so the main text does not move.
@@ -1058,35 +1065,22 @@ Common::Rect ZoombiniGraphics::drawTextToScreen(ScreenKind screenKind, const Com
 	if (!tc._wordWrap)
 		expandUnwrappedTextRect(drawRect, boundSize.x, tc._hAlign);
 
-	// Handle background fill
-	uint32 fillBackgroundPalette = kTransparentKey;
-	if (tc._fillBackground)
-		fillBackgroundPalette = tc._fillBackgroundKey;
+	// layoutClip: preserves the layout bounds before applying any adjustments.
+	// outputClip: intersects those bounds with the fixed caller clip for the main text, its dirty bounds and the returned bounds.
+	const Common::Rect layoutClip = drawRect;
+	Common::Rect outputClip = layoutClip;
+	if (tc._hasClipRect)
+		outputClip.clip(tc._clipRect);
 
-	// Position the complete text block within the caller's layout bounds, including portions later clipped.
-	if (0 < text.size()) {
-		switch (tc._vAlign) {
-		case Graphics::kTextAlignStart:
-		case Graphics::kTextAlignLeft:
-			// Do nothing
-			break;
-		case Graphics::kTextAlignCenter:
-			// The original GDI wrapper halves each height separately before subtracting.
-			drawRect.top += drawRect.height() / 2 - boundSize.y / 2;
-			drawRect.bottom = drawRect.top + boundSize.y;
-			break;
-		case Graphics::kTextAlignEnd:
-		case Graphics::kTextAlignRight:
-			drawRect.top = drawRect.bottom - boundSize.y;
-			break;
-		default:
-			error("gfx: invalid vertical alignment %d", tc._vAlign);
-			break;
-		}
-	}
+	// Handle background fill
+	uint32 fillBgPalette = kTransparentKey;
+	if (tc._fillBackground)
+		fillBgPalette = tc._fillBackgroundKey;
+
+	drawRect = positionTextLines(lines, font, drawRect, tc._vAlign, policy);
 
 	// Draw the four one-pixel outline passes before the main text.
-	// All passes share the output clip, which also limits their dirty bounds.
+	// Move each pass's layout clip with its offset; the caller's additional pixel clip stays fixed.
 	if (tc._outlineEffect) {
 		for (uint32 i = 0; i < 4; i++) {
 			Common::Rect outlineRect = drawRect;
@@ -1111,23 +1105,27 @@ Common::Rect ZoombiniGraphics::drawTextToScreen(ScreenKind screenKind, const Com
 			outlineRect.top += yDelta;
 			outlineRect.bottom += yDelta;
 
+			// outlineClip moves layoutClip with this outline pass, then intersects the same fixed caller clip.
+			// Translating outputClip instead would also move its already-clipped edges and lose valid outline pixels.
+			Common::Rect outlineClip = layoutClip;
+			outlineClip.translate(xDelta, yDelta);
+			if (tc._hasClipRect)
+				outlineClip.clip(tc._clipRect);
+
 			Common::Rect dirtyRect = outlineRect;
-			if (clipRect)
-				dirtyRect.clip(*clipRect);
+			dirtyRect.clip(outlineClip);
 			recordDirtyRect(screenKind, dirtyRect);
-			drawTextLines(screenKind, font, lines, outlineRect, tc._outlinePalette, tc._hAlign, useAA, fillBackgroundPalette, clipRect);
+			drawTextLines(screenKind, font, lines, outlineRect, tc._outlinePalette, tc._hAlign, policy, useAA, fillBgPalette, &outlineClip);
 		}
 	}
 
 	Common::Rect dirtyRect = drawRect;
-	if (clipRect)
-		dirtyRect.clip(*clipRect);
+	dirtyRect.clip(outputClip);
 	recordDirtyRect(screenKind, dirtyRect);
-	drawTextLines(screenKind, font, lines, drawRect, tc._textPalette, tc._hAlign, useAA, fillBackgroundPalette, clipRect);
+	drawTextLines(screenKind, font, lines, drawRect, tc._textPalette, tc._hAlign, policy, useAA, fillBgPalette, &outputClip);
 	if (tc._outlineEffect)
 		drawRect.grow(1);
-	if (clipRect)
-		drawRect.clip(*clipRect);
+	drawRect.clip(outputClip);
 	return drawRect;
 }
 
@@ -1175,9 +1173,420 @@ void ZoombiniGraphics::expandUnwrappedTextRect(Common::Rect &rect, int textWidth
 	}
 }
 
-Common::Array<Common::U32String> ZoombiniGraphics::prepareTextLines(const Common::U32String &text, const Graphics::Font *font, bool wordWrap, int16 targetWidth) {
+ZoombiniGraphics::MacLineBreakClass ZoombiniGraphics::getMacLineBreakClass(uint32 chr, Common::Language lang) {
+	// 'itl2' is the four-character type of Classic Mac OS international string-manipulation resources.
+	// They contain script/region-specific sorting, word-selection and line-break rules.
+	// These character classes reproduce their line-break tables, used by StyledLineBreak.
+	// Mac OS 9.2.2 resource IDs: English/German 0/3, French/Italian 1/4, Spanish/Portuguese 8/10,
+	// Polish (MacCentralEurope) 30762, Japanese 16384, Korean 17408.
+	// FIXME: Move Classic MacOS StyledLineBreak helpers to the ScummVM core?
+	if (chr == 0 || chr == '\t' || chr == ' ')
+		return kMacLineBreakClass02_Blank;
+	if (chr == '\r')
+		return kMacLineBreakClass03_CarriageReturn;
+
+	switch (lang) {
+	case Common::JA_JPN: {
+		static const Common::U32String operators(
+			U"&*+-/<=>^|±×÷∈∋∝∩∪∽≒≠≡≦≧≪"
+			U"≫⊂⊃⊆⊇＆＋－＜＝＞＾");
+		static const Common::U32String opening(
+			U"([{‘“〈《「『【〔（［｛｢");
+		static const Common::U32String closing(
+			U"!),.:;?]}，．");
+		static const Common::U32String nonstarters(
+			U"‐―’”、。〃々〉》」』】〕ぁぃ"
+			U"ぅぇぉっゃゅょゎ゛゜ゝゞァィゥェ"
+			U"ォッャュョヮ・ーヽヾ仝！）：；？"
+			U"］｝｡｣､･ｧｨｩｪｫｬｭｮｯｰ"
+			U"ﾞﾟ");
+		static const Common::U32String wordSymbols(
+			U"№℡ⅠⅡⅢⅣⅤ∑∟∮⊿⑯⑰⑱⑲⑳"
+			U"〟㈱㈲㈹㊤㊥㊦㊧㊨㌃㌍㌔㌘㌢㌣㌦"
+			U"㌧㌫㌶㌻㍊㍍㍑㍗㍼㍽㍾㎎㎏㎜㎝㎞"
+			U"㎡㏄㏍＄￡￥");
+
+		if (chr == 0x3000) // CJK Symbols and Punctuation: IDEOGRAPHIC SPACE.
+			return kMacLineBreakClass02_Blank;
+		if (operators.contains(chr))
+			return kMacLineBreakClass05_Operator;
+		if (opening.contains(chr))
+			return kMacLineBreakClass06_Opening;
+		if (closing.contains(chr))
+			return kMacLineBreakClass07_Closing;
+		if (nonstarters.contains(chr))
+			return kMacLineBreakClass08_JaNonstarter;
+		// Fullwidth Latin letters/digits are words; Greek, Cyrillic and ordinary kana/kanji use class 9.
+		if (chr <= 0x0080 ||                    // Remaining ASCII and CP932 U+0080; special classes were handled above.
+			(0xFF10 <= chr && chr <= 0xFF19) || // Fullwidth digits 0..9.
+			(0xFF21 <= chr && chr <= 0xFF3A) || // Fullwidth uppercase Latin letters A..Z.
+			(0xFF41 <= chr && chr <= 0xFF5A) || // Fullwidth lowercase Latin letters a..z.
+			(0xF8F0 <= chr && chr <= 0xF8F3) || // CP932 private-use mappings for bytes 0xA0 and 0xFD..0xFF.
+			wordSymbols.contains(chr))          // Other native word-class symbols listed above.
+			return kMacLineBreakClass04_Word;
+		return kMacLineBreakClass09_Ideographic;
+	}
+	case Common::KO_KOR: {
+		// The native Korean operator class includes the fullwidth right brace.
+		static const Common::U32String operators(
+			U"&*+-/<=>^|±×÷–—⁺⁻⁼∈∉∋∌∓∝∧∨∩∪∽≃≅≈≑≒≓≠≡≢≤≥"
+			U"≦≧≪≫≮≯≰≱≲≳≶≷≹≺≻⊀⊁⊂⊃⊄⊅⊆⊇⋎⋏⋚⋛⪋⪌⪑⪒⫅⫆⫋⫌〓〜＆＋－"
+			U"＜＝＞＾｝");
+		static const Common::U32String opening(
+			U"([{‘‛“⁽⦅⦗〈《「『【〔〖〘﹙（［｛");
+		static const Common::U32String closing(
+			U"!),.:;?]}ʼ’”⁾⦆⦘〉》」』】〕〗〙﹚！），．：；？］");
+		static const Common::U32String wordSymbols(
+			U"£¥©₩＄％￦");
+
+		if (chr == '\n') // Basic Latin: LINE FEED, classified with CR by the original Korean table.
+			return kMacLineBreakClass03_CarriageReturn;
+		if (chr == 0x3000) // CJK Symbols and Punctuation: IDEOGRAPHIC SPACE.
+			return kMacLineBreakClass02_Blank;
+		if (operators.contains(chr))
+			return kMacLineBreakClass05_Operator;
+		if (opening.contains(chr))
+			return kMacLineBreakClass06_Opening;
+		if (closing.contains(chr))
+			return kMacLineBreakClass07_Closing;
+		if (chr < 0x0080 ||                     // Remaining Basic Latin (ASCII); special classes were handled above.
+			(0x0085 <= chr && chr <= 0x009F) || // Latin-1 Supplement: C1 control codes U+0085..009F.
+			chr == 0x00A0 ||                    // Latin-1 Supplement: NO-BREAK SPACE, a word character in the Korean table.
+			(0xFF10 <= chr && chr <= 0xFF19) || // Fullwidth digits 0..9.
+			(0xFF21 <= chr && chr <= 0xFF3A) || // Fullwidth uppercase Latin letters A..Z.
+			(0xFF41 <= chr && chr <= 0xFF5A) || // Fullwidth lowercase Latin letters a..z.
+			wordSymbols.contains(chr))          // Other word-class symbols listed above.
+			return kMacLineBreakClass04_Word;
+		return kMacLineBreakClass08_KoText;
+	}
+	case Common::EN_ANY:
+	case Common::EN_USA:
+	case Common::EN_GRB:
+	case Common::DE_DEU: {
+		static const Common::U32String operators(
+			U"&*+-/<=>\\^|±÷–—≈≠≤≥");
+		// English and German use the acquired Roman 0/3 line-break classes.
+		if (chr == 0x00A0) // Latin-1 Supplement: NO-BREAK SPACE.
+			return kMacLineBreakClass01_Nonbreaking;
+		if (operators.contains(chr))
+			return kMacLineBreakClass05_Operator;
+		return kMacLineBreakClass04_Word;
+	}
+	case Common::ES_ESP:
+	case Common::PT_PRT: {
+		// Spanish/Portuguese itl2 IDs 8/10 share their own operator set; '+' and '-' remain word characters.
+		if (chr == 0x00A0) // Latin-1 Supplement: NO-BREAK SPACE.
+			return kMacLineBreakClass01_Nonbreaking;
+		static const Common::U32String operators(
+			U"#&*/<=>@\\^_|~ß≠≤≥≈«»");
+		if (operators.contains(chr))
+			return kMacLineBreakClass05_Operator;
+		return kMacLineBreakClass04_Word;
+	}
+	case Common::PL_POL: {
+		// Polish itl2 ID 30762 uses MacCentralEurope, whose native operator set omits Roman-only symbols.
+		if (chr == 0x00A0) // Latin-1 Supplement: NO-BREAK SPACE.
+			return kMacLineBreakClass01_Nonbreaking;
+		static const Common::U32String operators(
+			U"&*+-/<=>\\^|≠≤≥–—÷");
+		if (operators.contains(chr))
+			return kMacLineBreakClass05_Operator;
+		return kMacLineBreakClass04_Word;
+	}
+	case Common::FR_FRA:
+	case Common::IT_ITA:
+		// French/Italian itl2 IDs 1/4 put all mapped characters except blanks, CR and NBSP in class 4 (word).
+		// This includes '+', '-' and '/', which have class 5 (operator) in the US/German tables.
+		// They therefore create no internal word-break opportunity in an unspaced span such as "AB+CD".
+		// styledLineBreak() can still split the span at a character boundary if it cannot fit an empty line.
+		if (chr == 0x00A0) // Latin-1 Supplement: NO-BREAK SPACE.
+			return kMacLineBreakClass01_Nonbreaking;
+		return kMacLineBreakClass04_Word;
+	default:
+		error("ZoombiniGraphics::getMacLineBreakClass: unsupported language %d", static_cast<int>(lang));
+	}
+}
+
+uint32 ZoombiniGraphics::getMacCharByteSize(uint32 chr, Common::Language lang) {
+	// FIXME: Once Common::kMacJapanese/kMacKorean are merged, replace these per-scalar estimates
+	// with encoder-derived native byte offsets. Migrate text decoding and classification together,
+	// including CP932-specific mappings. Preserve complete Apple multi-code-point sequences and
+	// check encoding errors so replacement bytes are not counted as original character widths.
+	switch (lang) {
+	case Common::JA_JPN: // MacJapanese
+		// These Unicode BMP subsets count as one byte in the legacy Japanese encoding used here.
+		if (chr <= 0x0080 ||                    // Basic Latin (U+0000..007F) plus U+0080 in Latin-1 Supplement.
+			(0xFF61 <= chr && chr <= 0xFF9F) || // Halfwidth and Fullwidth Forms: halfwidth CJK punctuation, Katakana and voicing marks.
+			(0xF8F0 <= chr && chr <= 0xF8F3))   // Private Use Area (U+E000..F8FF): CP932 byte mappings A0 and FD..FF.
+			return 1;
+		return 2;
+	case Common::KO_KOR: // MacKorean
+		// MacKorean has single-byte NBSP, copyright and won signs in addition to ASCII and C1 controls.
+		if (chr < 0x0080 ||                     // Basic Latin: ASCII characters and controls.
+			(0x0085 <= chr && chr <= 0x009F) || // Latin-1 Supplement: C1 control codes U+0085..009F.
+			chr == 0x00A0 ||                    // Latin-1 Supplement: NO-BREAK SPACE.
+			chr == 0x00A9 ||                    // Latin-1 Supplement: COPYRIGHT SIGN.
+			chr == 0x20A9)                      // Currency Symbols: WON SIGN.
+			return 1;
+		return 2;
+	case Common::EN_ANY:
+	case Common::EN_USA:
+	case Common::EN_GRB:
+	case Common::DE_DEU:
+	case Common::FR_FRA:
+	case Common::ES_ESP:
+	case Common::PT_PRT:
+	case Common::IT_ITA:
+	case Common::PL_POL:
+		return 1;
+	default:
+		error("ZoombiniGraphics::getMacCharByteSize: unsupported language %d", static_cast<int>(lang));
+	}
+}
+
+void ZoombiniGraphics::findMacWordBreaks(const Common::U32String &text, uint32 lineStart, uint32 fitEnd, Common::Language lang, uint32 &wordStart, uint32 &wordEnd) {
+	// Transition tables used by the original Classic Mac OS FindWordBreaks routine.
+	// Fixed-width rows replace the original NBreakTable's row-offset header.
+	// Each action marks the current character start with bit 7 and selects an even state number in bits 0..6.
+	// State zero stops at the last mark; state 2 starts a word. Class zero supplies the end-of-text sentinel.
+	static constexpr byte romanBackward[7][6] = {
+		{0, 0, 0, 0, 0, 0},
+		{136, 138, 132, 132, 134, 134},
+		{0, 4, 132, 128, 0, 0},
+		{0, 140, 0, 0, 134, 0},
+		{0, 140, 0, 0, 0, 0},
+		{136, 138, 132, 0, 134, 134},
+		{136, 140, 0, 0, 134, 134},
+	};
+	static constexpr byte jaBackward[8][10] = {
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{136, 130, 132, 132, 134, 134, 138, 140, 140, 142},
+		{0, 130, 132, 0, 0, 0, 0, 0, 0, 0},
+		{0, 130, 0, 0, 134, 0, 138, 6, 0, 0},
+		{0, 130, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 130, 0, 0, 0, 0, 138, 0, 0, 0},
+		{0, 130, 0, 0, 134, 134, 138, 140, 140, 142},
+		{0, 130, 0, 0, 0, 0, 138, 0, 0, 0},
+	};
+	static constexpr byte koBackward[8][9] = {
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{136, 130, 132, 132, 134, 134, 138, 140, 142},
+		{0, 130, 132, 0, 0, 0, 0, 0, 0},
+		{0, 130, 0, 0, 134, 0, 138, 6, 0},
+		{0, 130, 0, 0, 0, 0, 0, 0, 0},
+		{0, 130, 0, 0, 0, 0, 138, 0, 0},
+		{0, 130, 0, 0, 134, 134, 138, 140, 142},
+		{0, 130, 0, 0, 0, 0, 138, 0, 0},
+	};
+	static constexpr byte romanTransitions[8][6] = {
+		{0, 0, 0, 0, 0, 0},
+		{136, 130, 132, 140, 134, 136},
+		{128, 142, 132, 140, 128, 128},
+		{128, 138, 128, 128, 134, 136},
+		{128, 138, 128, 128, 128, 128},
+		{136, 138, 128, 128, 134, 136},
+		{128, 128, 128, 128, 128, 128},
+		{0, 14, 132, 140, 0, 0},
+	};
+	static constexpr byte jaTransitions[9][10] = {
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{136, 130, 132, 136, 134, 136, 138, 140, 142, 144},
+		{128, 130, 132, 136, 128, 128, 128, 128, 128, 128},
+		{128, 130, 128, 128, 134, 136, 138, 140, 142, 128},
+		{128, 130, 128, 128, 128, 128, 128, 140, 142, 128},
+		{128, 130, 128, 128, 134, 136, 138, 140, 142, 144},
+		{128, 130, 128, 128, 134, 136, 138, 140, 142, 128},
+		{128, 130, 128, 128, 128, 128, 128, 142, 142, 128},
+		{128, 130, 128, 128, 128, 136, 128, 142, 142, 128},
+	};
+
+	static constexpr byte koTransitions[8][9] = {
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{136, 130, 132, 136, 134, 136, 138, 140, 142},
+		{128, 130, 132, 136, 128, 128, 128, 128, 128},
+		{128, 130, 128, 128, 134, 136, 138, 140, 128},
+		{128, 130, 128, 128, 128, 128, 128, 140, 128},
+		{128, 130, 128, 128, 134, 136, 138, 140, 142},
+		{128, 130, 128, 128, 134, 136, 138, 140, 128},
+		{128, 130, 128, 128, 128, 136, 128, 142, 128},
+	};
+
+	// The original Mac OS routine uses NBreakTable's doBackup field to enable a backward DFA scan at this encoded-byte offset from lineStart.
+	// Below it, scan forward from lineStart; otherwise backtrack from fitEnd to find the forward scan's restart point.
+	// It is a trigger threshold, not a backward-scan length limit: 6 bytes for Roman/Polish, 10 for Japanese/Korean.
+	uint32 backupThreshold = 6;
+	switch (lang) {
+	case Common::JA_JPN:
+	case Common::KO_KOR:
+		backupThreshold = 10;
+		break;
+	case Common::EN_ANY:
+	case Common::EN_USA:
+	case Common::EN_GRB:
+	case Common::DE_DEU:
+	case Common::FR_FRA:
+	case Common::ES_ESP:
+	case Common::PT_PRT:
+	case Common::IT_ITA:
+	case Common::PL_POL:
+		break;
+	default:
+		error("ZoombiniGraphics::findMacWordBreaks: unsupported language %d", static_cast<int>(lang));
+	}
+
+	// Count the fitting prefix in bytes of the original Mac OS script encoding; our text and span indices remain UTF-32.
+	uint32 nativeFitOffset = 0;
+	for (uint32 offset = lineStart; offset < fitEnd && nativeFitOffset < backupThreshold; offset++)
+		nativeFitOffset += getMacCharByteSize(text[offset], lang);
+	wordStart = lineStart;
+	if (backupThreshold <= nativeFitOffset) {
+		byte state = 2;
+		uint32 offset = fitEnd;
+		while (lineStart < offset) {
+			MacLineBreakClass charClass = getMacLineBreakClass(text[offset], lang);
+			byte action;
+			switch (lang) {
+			case Common::JA_JPN:
+				action = jaBackward[state / 2][charClass];
+				break;
+			case Common::KO_KOR:
+				action = koBackward[state / 2][charClass];
+				break;
+			case Common::EN_ANY:
+			case Common::EN_USA:
+			case Common::EN_GRB:
+			case Common::DE_DEU:
+			case Common::FR_FRA:
+			case Common::ES_ESP:
+			case Common::PT_PRT:
+			case Common::IT_ITA:
+			case Common::PL_POL:
+				action = romanBackward[state / 2][charClass];
+				break;
+			default:
+				error("ZoombiniGraphics::findMacWordBreaks: unsupported language %d", static_cast<int>(lang));
+			}
+			if (action & 0x80)
+				wordStart = offset;
+			state = action & 0x7F;
+			if (!state)
+				break;
+			offset -= 1;
+		}
+		if (offset == lineStart)
+			wordStart = lineStart;
+	}
+
+	// Scan forward from the backward table's restart point until the selected character is inside a span.
+	// Keep both scans: script-specific backward restarts can differ from tokenizing the paragraph from its beginning.
+	do {
+		wordEnd = wordStart;
+		byte state = 2;
+		for (uint32 offset = wordStart; offset <= text.size(); offset++) {
+			MacLineBreakClass charClass = kMacLineBreakClass00_End;
+			if (offset < text.size())
+				charClass = getMacLineBreakClass(text[offset], lang);
+			byte action;
+			switch (lang) {
+			case Common::JA_JPN:
+				action = jaTransitions[state / 2][charClass];
+				break;
+			case Common::KO_KOR:
+				action = koTransitions[state / 2][charClass];
+				break;
+			case Common::EN_ANY:
+			case Common::EN_USA:
+			case Common::EN_GRB:
+			case Common::DE_DEU:
+			case Common::FR_FRA:
+			case Common::ES_ESP:
+			case Common::PT_PRT:
+			case Common::IT_ITA:
+			case Common::PL_POL:
+				action = romanTransitions[state / 2][charClass];
+				break;
+			default:
+				error("ZoombiniGraphics::findMacWordBreaks: unsupported language %d", static_cast<int>(lang));
+			}
+			if (action & 0x80)
+				wordEnd = offset;
+			state = action & 0x7F;
+			if (!state)
+				break;
+		}
+		assert(wordStart < wordEnd);
+		if (fitEnd < wordEnd)
+			return;
+		wordStart = wordEnd;
+	} while (wordStart < text.size());
+}
+
+uint32 ZoombiniGraphics::styledLineBreak(const Common::U32String &text, uint32 lineStart, const Graphics::Font *font, int targetWidth, Common::Language lang) {
+	assert(lineStart < text.size());
+	// PixelToChar supplies a fitting whole-character offset to the native routine.
+	// Use the selected ScummVM font's advances here; this does not synthesize unavailable QuickDraw font metrics.
+	if (targetWidth < 0)
+		return lineStart + 1;
+	uint32 fitEnd = lineStart;
+	uint32 prev = 0;
+	int lineWidth = 0;
+	while (fitEnd < text.size()) {
+		const uint32 chr = text[fitEnd];
+		const int charWidth = font->getCharWidth(chr) + font->getKerningOffset(prev, chr);
+		if (targetWidth < lineWidth + charWidth)
+			break;
+		lineWidth += charWidth;
+		prev = chr;
+		fitEnd += 1;
+	}
+	if (fitEnd == text.size())
+		return fitEnd;
+
+	// FindWordBreaks selects the span containing the fitting edge, with script-specific backward and forward scans.
+	uint32 wordStart, wordEnd;
+	findMacWordBreaks(text, lineStart, fitEnd, lang, wordStart, wordEnd);
+
+	// StyledLineBreak keeps the entire blank span on the preceding line, even past the fitting width.
+	// Otherwise move the whole word to the next line; split characters only when the first word cannot fit.
+	if (getMacLineBreakClass(text[wordStart], lang) == kMacLineBreakClass02_Blank)
+		return wordEnd;
+	if (wordStart == lineStart)
+		return MAX(fitEnd, lineStart + 1);
+	return wordStart;
+}
+
+Common::Array<Common::U32String> ZoombiniGraphics::prepareTextLines(const Common::U32String &text, const Graphics::Font *font, bool wordWrap, int16 targetWidth, TextLayoutPolicy policy, Common::Language lang) {
+	Common::U32String normalizedText = text;
+	switch (policy) {
+	case TextLayoutPolicy::kGdi:
+		break;
+	case TextLayoutPolicy::kQuickDraw:
+		// Normalize TAB char to one Space char, following QuickDraw/TextEdit convention.
+		// tokenizeLines() will handle CR/LF/CRLF to CR normalization.
+		normalizedText.replace(U'\t', U' ');
+		break;
+	}
+
 	if (!wordWrap)
-		return ZoombiniText::tokenizeLines(text);
+		return ZoombiniText::tokenizeLines(normalizedText);
+
+	if (policy == TextLayoutPolicy::kQuickDraw) {
+		Common::Array<Common::U32String> lines;
+		const Common::Array<Common::U32String> paragraphs = ZoombiniText::tokenizeLines(normalizedText);
+		for (const Common::U32String &paragraph : paragraphs) {
+			if (paragraph.empty()) {
+				lines.push_back(paragraph);
+				continue;
+			}
+			uint32 lineStart = 0;
+			while (lineStart < paragraph.size()) {
+				const uint32 lineEnd = styledLineBreak(paragraph, lineStart, font, targetWidth, lang);
+				lines.push_back(paragraph.substr(lineStart, lineEnd - lineStart));
+				lineStart = lineEnd;
+			}
+		}
+		return lines;
+	}
 
 	// GDI DrawTextA with DT_WORDBREAK accepts a line whose extent exactly equals the caller rectangle width.
 	// @ref Graphics::Font::wordWrapText() treats that equality as overflow because its width test uses >=.
@@ -1186,13 +1595,113 @@ Common::Array<Common::U32String> ZoombiniGraphics::prepareTextLines(const Common
 	// Wrap before splitting explicit breaks: an overflowing space followed by CR consumes a blank line in GDI.
 	// Splitting first would discard that line (for example, the Portuguese RodMap's fourth route name).
 	Common::Array<Common::U32String> lines;
-	font->wordWrapText(text, wordWrapWidth, lines);
+	font->wordWrapText(normalizedText, wordWrapWidth, lines);
 	return lines;
 }
 
+Common::Rect ZoombiniGraphics::positionTextLines(Common::Array<Common::U32String> &lines, const Graphics::Font *font,
+												 const Common::Rect &destRect, Graphics::TextAlign vAlign, TextLayoutPolicy policy) {
+	// Start from the caller's layout bounds; empty text or an empty rectangle needs no positioning.
+	Common::Rect drawRect = destRect;
+	if (lines.empty() || destRect.isEmpty())
+		return drawRect;
+
+	// Measure the full text block and initially select every line, starting at index zero.
+	const int lineHeight = font->getFontHeight();
+	assert(0 < lineHeight);
+	int textHeight = lineHeight * lines.size();
+	int firstLine = 0;
+
+	// [*] Handle visible line counts
+	int visibleLines = lines.size();
+	if (policy == TextLayoutPolicy::kQuickDraw) {
+		// Follow the original Mac engine's calculations.
+		visibleLines = MIN<int>(visibleLines, destRect.height() / lineHeight + 1);
+		textHeight = visibleLines * lineHeight;
+	}
+
+	// [*] Handle vertical alignment.
+	// Position the full GDI block or visible Mac subset; Mac center/bottom alignment also chooses firstLine.
+	switch (vAlign) {
+	case Graphics::kTextAlignStart:
+	case Graphics::kTextAlignLeft:
+		break;
+	case Graphics::kTextAlignCenter:
+		switch (policy) {
+		case TextLayoutPolicy::kGdi:
+			// GDI halves the two heights separately; QuickDraw halves their combined coordinates.
+			drawRect.top += destRect.height() / 2 - textHeight / 2;
+			break;
+		case TextLayoutPolicy::kQuickDraw:
+			firstLine = (lines.size() - visibleLines) / 2;
+			drawRect.top = (destRect.top + destRect.bottom - textHeight) / 2;
+			break;
+		}
+		break;
+	case Graphics::kTextAlignEnd:
+	case Graphics::kTextAlignRight:
+		drawRect.top = destRect.bottom - textHeight;
+		if (policy == TextLayoutPolicy::kQuickDraw)
+			firstLine = lines.size() - visibleLines;
+		break;
+	default:
+		error("gfx: invalid vertical alignment %d", vAlign);
+	}
+
+	// [*] Calculate top offset of a line, following TECalText convention.
+	if (policy == TextLayoutPolicy::kQuickDraw) {
+		// Retain [firstLine, firstLine + visibleLines) so drawing begins at the selected line and skips the rest.
+		Common::Array<Common::U32String> visibleText;
+		for (int i = 0; i < visibleLines; i++)
+			visibleText.push_back(lines[firstLine + i]);
+		lines = visibleText;
+
+		// Original Mac engine use calculation of: blockTop + lineHeight - descent (when the both metrics are available).
+		// FIXME: The ScummVM common TTF renderer exposes neither descent nor leading. Until it does, retain its glyph origin.
+		// Exact baseline and native bitmap-strike metrics cannot be reproduced here yet.
+		const int descent = font->getFontDescent();
+		const int ascent = font->getFontAscent();
+		if (0 <= descent && 0 <= ascent)
+			drawRect.top += lineHeight - descent - ascent;
+	}
+
+	// Keep space below the last baseline for glyph outside its reported line cell;
+	// outputClip still bounds the pixels.
+	drawRect.bottom = MAX<int>(destRect.bottom, drawRect.top + textHeight);
+	return drawRect;
+}
+
+int ZoombiniGraphics::getTextLineLeft(const Graphics::Font *font, const Common::U32String &line, const Common::Rect &destRect, Graphics::TextAlign hAlign, TextLayoutPolicy policy) {
+	const int textWidth = font->getStringWidth(line);
+	switch (hAlign) {
+	case Graphics::kTextAlignStart:
+	case Graphics::kTextAlignLeft:
+		return destRect.left;
+	case Graphics::kTextAlignCenter:
+		switch (policy) {
+		case TextLayoutPolicy::kGdi:
+			return destRect.left + (destRect.width() - textWidth) / 2;
+		case TextLayoutPolicy::kQuickDraw: {
+			int minLeft = destRect.left;
+			if (textWidth != destRect.width())
+				minLeft += 1;
+			return MAX(minLeft, (destRect.left + destRect.right - textWidth) / 2);
+		}
+		default:
+			break;
+		}
+		break;
+	case Graphics::kTextAlignEnd:
+	case Graphics::kTextAlignRight:
+		return destRect.right - textWidth;
+	default:
+		error("gfx: invalid horizontal alignment %d", hAlign);
+	}
+	return destRect.left;
+}
+
 Common::Point ZoombiniGraphics::getTextLinesBounds(const Graphics::Font *font, bool outlineEffect, const Common::Array<Common::U32String> &lines) {
-	// Use @ref Graphics::Font::getFontHeight() for line height to match GDI DrawTextA with DT_EXTERNALLEADING.
-	// The returned height includes the ascender, descender, and line gap.
+	// Retain the font's line advance, including GDI's external leading.
 	const int16 lineHeight = font->getFontHeight();
 	int16 drawTotalHeight = 0;
 	Common::Point boundSize;
@@ -1266,7 +1775,7 @@ void ZoombiniGraphics::quantizeHintedTextPixels(Graphics::Surface *textSurface, 
 #endif
 
 void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines,
-									 const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, bool useAA,
+									 const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, TextLayoutPolicy policy, bool useAA,
 									 uint32 fillBackgroundColor, const Common::Rect *clipRect) {
 	// The destination already contains the layout width and computed vertical position.
 	if (destRect.isEmpty())
@@ -1298,7 +1807,8 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 		textSurface.fillRect(textSurface.getRect(), kTransparentKey);
 	} while (false);
 
-	// Use @ref Graphics::Font::getFontHeight() for line advancement to match GDI DrawTextA() with DT_EXTERNALLEADING.
+	// GDI and QuickDraw both has same line advancement policy: advance by the font height when selecting and positioning the lines.
+	// - Matches  GDI DrawTextA() with DT_EXTERNALLEADING.
 	const int lineHeight = font->getFontHeight();
 	Common::Rect drawRect = destRect;
 
@@ -1310,10 +1820,12 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 			break;
 
 		const int localTop = drawRect.top - destRect.top;
+		const int localLeft = getTextLineLeft(font, line, destRect, hAlign, policy) - destRect.left;
+		const int localWidth = destRect.width() - localLeft;
 
 		// Background feature is for debug purposes, Zoombini gameplay itself does not use this feature.
 		if (fillBackgroundColor != kTransparentKey) {
-			const Common::Rect bbox = font->getBoundingBox(line, 0, localTop, destRect.width(), hAlign);
+			const Common::Rect bbox = font->getBoundingBox(line, localLeft, localTop, localWidth, Graphics::kTextAlignLeft);
 			do {
 #ifdef USE_RGB_COLOR
 				// @ref ZoombiniGraphics::quantizeHintedTextPixels treats source alpha as glyph coverage and blends against the screen.
@@ -1340,11 +1852,11 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 				const byte textGreen = _paletteBytes[color * 3 + 1];
 				const byte textBlue = _paletteBytes[color * 3 + 2];
 				const uint32 textColor = textSurface.format.ARGBToColor(0xFF, textRed, textGreen, textBlue);
-				font->drawAlphaString(&textSurface, line, 0, localTop, destRect.width(), textColor, hAlign);
+				font->drawAlphaString(&textSurface, line, localLeft, localTop, localWidth, textColor, Graphics::kTextAlignLeft, 0, false, true);
 				break;
 			}
 #endif
-			font->drawString(&textSurface, line, 0, localTop, destRect.width(), color, hAlign);
+			font->drawString(&textSurface, line, localLeft, localTop, localWidth, color, Graphics::kTextAlignLeft, 0, false, true);
 		} while (false);
 
 		if (i + 1 < lines.size()) {

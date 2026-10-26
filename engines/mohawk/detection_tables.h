@@ -775,7 +775,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_ZMB_V10US)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_US,
@@ -794,8 +794,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "rt:d201b8007d2237b651a2b2c567365bad", 684208),
 			Common::EN_USA,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_ZMB_V10US)
+			ADGF_TESTING,
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_US,
@@ -814,7 +814,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO3(GUIO_NOASPECT, GAMEOPTION_DEMO, GAMEOPTION_ZMB_V10US)
+			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_US,
@@ -832,8 +832,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "ab6ba48edb4a93ca034c63905f615865", 4538864),
 			Common::EN_USA,
 			Common::kPlatformMacintosh,
-			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO3(GUIO_NOASPECT, GAMEOPTION_DEMO, GAMEOPTION_ZMB_V10US)
+			ADGF_DEMO | ADGF_TESTING,
+			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_US,
@@ -853,7 +853,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_ZMB_V10US)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_ESPT,
@@ -873,7 +873,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::PT_PRT,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_ZMB_V10US)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_ESPT,
@@ -912,7 +912,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "rt:8e27d8dbd65b5a735fcd6ffd919efd1a", 719477),
 			Common::EN_GRB,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
@@ -952,7 +952,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "rt:8e27d8dbd65b5a735fcd6ffd919efd1a", 719477),
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
@@ -992,7 +992,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "rt:8e27d8dbd65b5a735fcd6ffd919efd1a", 719477),
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
@@ -1051,7 +1051,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "rt:9d11b6f8e065a87f2537ff9cf74c04be", 724473),
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
@@ -1112,7 +1112,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "rt:fb070c328777f30431bb88f7a04390b1", 710038),
 			Common::EN_GRB,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
@@ -1152,7 +1152,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "rt:fb070c328777f30431bb88f7a04390b1", 710038),
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
@@ -1192,7 +1192,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "rt:fb070c328777f30431bb88f7a04390b1", 710038),
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
@@ -1211,7 +1211,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombini", "6cec7f51ebff7778175866e2d277c238", 722944),
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
-			ADGF_DEMO | ADGF_UNSTABLE,
+			ADGF_DEMO | ADGF_TESTING,
 			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
@@ -1276,7 +1276,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "Zoombinis", "rt:0a5083ecddb220ed73693697a742a89a", 743219),
 			Common::EN_USA,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
@@ -1316,7 +1316,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_ZMB_V20)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_20_US,
@@ -1335,8 +1335,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 					   "INSTALL/HD/Zoombinis I V2", "d:ad8f99fa9972c937bcb6139c014c4daa", 682084),
 			Common::EN_USA,
 			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_ZMB_V20)
+			ADGF_TESTING,
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_20_US,
@@ -1358,7 +1358,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO3(GUIO_NOASPECT, GAMEOPTION_DEMO, GAMEOPTION_ZMB_V20)
+			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_20_US,
@@ -1378,7 +1378,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_ZMB_V20)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_20_US,

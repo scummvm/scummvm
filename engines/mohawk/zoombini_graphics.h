@@ -23,6 +23,7 @@
 #define MOHAWK_ZOOMBINI_GRAPHICS_H
 
 #include "common/array.h"
+#include "common/language.h"
 #include "common/noncopyable.h"
 #include "common/ptr.h"
 #include "common/queue.h"
@@ -748,6 +749,58 @@ private:
 	 * @param hAlign Alignment anchor to preserve: left, center, or right, including start/end aliases.
 	 */
 	static void expandUnwrappedTextRect(Common::Rect &rect, int textWidth, Graphics::TextAlign hAlign);
+	/** Native text-layout policy to mimick. */
+	enum class TextLayoutPolicy {
+		kGdi,       //< Mohawk variant of Windows GDI convention
+		kQuickDraw, //< Mohawk variant of Classic MacOS QuickDraw/TextEdit convention
+	};
+	/** Native character classes from Classic Mac OS 'itl2' (international string-manipulation) line-break tables. */
+	enum MacLineBreakClass : byte {
+		kMacLineBreakClass00_End = 0,
+		kMacLineBreakClass01_Nonbreaking = 1,
+		kMacLineBreakClass02_Blank = 2,
+		kMacLineBreakClass03_CarriageReturn = 3,
+		kMacLineBreakClass04_Word = 4,
+		kMacLineBreakClass05_Operator = 5,
+		kMacLineBreakClass06_Opening = 6,
+		kMacLineBreakClass07_Closing = 7,
+		kMacLineBreakClass08_JaNonstarter = 8, //< Japanese table
+		kMacLineBreakClass08_KoText = 8,       //< Korean table
+		kMacLineBreakClass09_Ideographic = 9
+	};
+	/**
+	 * Map a decoded character to the native line-break class for the release's language.
+	 *
+	 * @param chr Unicode code point to classify using the native character-table rules.
+	 * @param lang Supported release language selecting the script and regional character classes.
+	 * @return Native character-class code for the selected script and region.
+	 */
+	static MacLineBreakClass getMacLineBreakClass(uint32 chr, Common::Language lang);
+	/** Return the native encoded byte count of one Unicode character for the selected script. */
+	static uint32 getMacCharByteSize(uint32 chr, Common::Language lang);
+	/**
+	 * Run native backward/forward break-state tables around the fitting edge.
+	 * All input/output offsets are absolute UTF-32 indices into @p text.
+	 *
+	 * @param text Paragraph containing the current line and its remaining text.
+	 * @param lineStart Inclusive start of the current line.
+	 * @param fitEnd Exclusive end of the fitting prefix; requires lineStart <= fitEnd < text.size().
+	 * @param lang Supported release language selecting the native character and break-state tables.
+	 * @param[out] wordStart Inclusive start of the containing word span, at or after lineStart.
+	 * @param[out] wordEnd Exclusive end of that span, with fitEnd < wordEnd <= text.size().
+	 */
+	static void findMacWordBreaks(const Common::U32String &text, uint32 lineStart, uint32 fitEnd, Common::Language lang, uint32 &wordStart, uint32 &wordEnd);
+	/**
+	 * Fit one uniform-style TextEdit line, retaining trailing blanks and splitting an overlong first word at a whole character.
+	 *
+	 * @param text UTF-32 paragraph, with explicit line breaks split and TABs normalized by the caller.
+	 * @param lineStart Inclusive UTF-32 start index of the line; requires lineStart < text.size().
+	 * @param font Non-null borrowed font supplying glyph advances and kerning.
+	 * @param targetWidth Available line width in pixels; a negative width forces one character.
+	 * @param lang Supported release language selecting native script/region rules and encoded byte sizes.
+	 * @return Exclusive UTF-32 line end, with lineStart < result <= text.size(); includes retained trailing blanks.
+	 */
+	static uint32 styledLineBreak(const Common::U32String &text, uint32 lineStart, const Graphics::Font *font, int targetWidth, Common::Language lang);
 	/**
 	 * Split text into renderable lines with optional word wrapping.
 	 *
@@ -755,9 +808,15 @@ private:
 	 * @param font Borrowed font used to measure wrap candidates; required when wordWrap is true.
 	 * @param wordWrap Whether to subdivide explicit lines to fit targetWidth.
 	 * @param targetWidth Wrapping width in pixels; an exactly fitting line is accepted. Ignored without wrapping.
+	 * @param policy Native line-break and control-character policy.
+	 * @param lang Release language selecting the classic Mac script and regional break rules. Ignored by GDI.
 	 * @return Prepared lines in drawing order, without applying alignment or clipping.
 	 */
-	Common::Array<Common::U32String> prepareTextLines(const Common::U32String &text, const Graphics::Font *font, bool wordWrap, int16 targetWidth);
+	static Common::Array<Common::U32String> prepareTextLines(const Common::U32String &text, const Graphics::Font *font, bool wordWrap, int16 targetWidth, TextLayoutPolicy policy, Common::Language lang);
+	/** Apply native vertical alignment, including QuickDraw's visible-line selection and baseline. */
+	static Common::Rect positionTextLines(Common::Array<Common::U32String> &lines, const Graphics::Font *font, const Common::Rect &destRect, Graphics::TextAlign vAlign, TextLayoutPolicy policy);
+	/** Return the horizontal pen position under the selected native layout policy. */
+	static int getTextLineLeft(const Graphics::Font *font, const Common::U32String &line, const Common::Rect &destRect, Graphics::TextAlign hAlign, TextLayoutPolicy policy);
 	/**
 	 * Calculate the maximum line width and total line height.
 	 *
@@ -779,6 +838,7 @@ private:
 	 * @param destRect Positioned raster bounds in game-screen pixels, retaining the layout width for horizontal alignment.
 	 * @param color Palette index used for glyphs, including the outline color during an outline pass.
 	 * @param hAlign Horizontal alignment within destRect; vertical placement is already reflected in destRect.
+	 * @param policy Native horizontal alignment policy.
 	 * @param useAA Whether to render alpha coverage and quantize it to the palette.
 	 * @param fillBackgroundColor Palette index for each line's glyph bounds; kTransparentKey disables background fill.
 	 * @param clipRect Optional borrowed, read-only clip in game-screen pixels; nullptr disables only this extra clip.
@@ -786,7 +846,7 @@ private:
 	 * The destination, screen bounds, and active render region still constrain output without changing text layout.
 	 */
 	void drawTextLines(ScreenKind screenKind, const Graphics::Font *font, const Common::Array<Common::U32String> &lines,
-					   const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, bool useAA,
+					   const Common::Rect &destRect, uint32 color, Graphics::TextAlign hAlign, TextLayoutPolicy policy, bool useAA,
 					   uint32 fillBackgroundColor = kTransparentKey, const Common::Rect *clipRect = nullptr);
 	/**
 	 * Copy indexed text pixels while preserving kTransparentKey pixels on the destination.

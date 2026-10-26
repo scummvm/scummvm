@@ -3979,8 +3979,7 @@ void ZoombiniGameState::setEnableTouchSense(bool val, bool showNoti) {
 			interactive->showNotiBoxLong(val ? ZoombiniText::kNotiBoxTouchSenseOn : ZoombiniText::kNotiBoxTouchSenseOff);
 	}
 
-	GUI::MessageDialog dialog(Common::U32String("[WARN] Hardware feedback is not implemented in ScummVM.", Common::kUtf8));
-	dialog.runModal();
+	_vm->_system->displayMessageOnOSD(_("[WARN] Hardware feedback is not implemented in ScummVM."));
 }
 
 void ZoombiniGameState::setEnableHelpAudio(bool val, bool showNoti) {
