@@ -209,9 +209,7 @@ Common::Error PrisonerEngine::run() {
 
 	clearScriptPrograms();
 
-	_globalScriptVars[0] = -1;
-	for (uint i = 1; i < 250; i++)
-		_globalScriptVars[i] = 0;
+	resetGlobalScriptVars();
 
 	_moduleScriptVars[0] = -1;
 	for (uint i = 1; i < 300; i++)
@@ -487,6 +485,12 @@ int16 PrisonerEngine::loadTextResource(Common::String &pakName, int16 pakSlot) {
 	makeLanguageString(pakName);
 	pakName.setChar('T', 2);
 	return _res->load<TextResource>(pakName, pakSlot, 3);
+}
+
+void PrisonerEngine::resetGlobalScriptVars() {
+	_globalScriptVars[0] = -1;
+	for (uint i = 1; i < 250; i++)
+		_globalScriptVars[i] = 0;
 }
 
 void PrisonerEngine::makeLanguageString(Common::String &value) {

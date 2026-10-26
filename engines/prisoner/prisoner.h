@@ -866,6 +866,7 @@ public:
 public:
 	int16 loadTextResource(Common::String &pakName, int16 pakSlot);
 	void makeLanguageString(Common::String &value);
+	void resetGlobalScriptVars();
 	int16 getGlobalScriptVar(int16 varIndex);
 	void setGlobalScriptVar(int16 varIndex, int16 value);
 	int16 getModuleScriptVar(int16 varIndex);
