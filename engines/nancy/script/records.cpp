@@ -292,6 +292,9 @@ void SummaryRecord::readTable(int tableIndex) {
 
 	lua_pop(L, 1);
 
+	// Whether turning goes on past the first and the last frame
+	readField(L, tableIndex, "wrap", _wraps);
+
 	// The background is behind everything else
 	limitZ(kBackgroundScriptZ);
 }
@@ -379,14 +382,24 @@ SummaryRecord::Turn SummaryRecord::getTurnAt(const ScriptPoint &point, bool inVi
 
 	const Common::Point place = point.toPoint();
 	if (boot->leftNodeHotspot.contains(place)) {
-		return kTurnLeft;
+		return canTurn(kTurnLeft) ? kTurnLeft : kNoTurn;
 	} else if (boot->rightNodeHotspot.contains(place)) {
-		return kTurnRight;
+		return canTurn(kTurnRight) ? kTurnRight : kNoTurn;
 	} else if (boot->uturnNodeHotspot.contains(place)) {
 		return kTurnAround;
 	}
 
 	return kNoTurn;
+}
+
+// Turning left goes to the next frame, and right to the one before. A node that
+// doesn't wrap stops at its first and last frame.
+bool SummaryRecord::canTurn(Turn turn) const {
+	if (_wraps) {
+		return true;
+	}
+
+	return turn == kTurnLeft ? _frame + 1 < _numFrames : _frame > 0;
 }
 
 void SummaryRecord::onMouseMove(const ScriptPoint &point, bool inViewport) {
@@ -464,6 +477,10 @@ void SummaryRecord::run(double sceneTime, double elapsedTime) {
 	updateTheme(sceneTime);
 
 	if (_numFrames <= 1 || _turn == kNoTurn) {
+		return;
+	}
+
+	if (!canTurn(_turn)) {
 		return;
 	}
 

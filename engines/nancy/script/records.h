@@ -122,6 +122,7 @@ private:
 
 	// The side of the node the mouse is on
 	Turn getTurnAt(const ScriptPoint &point, bool inViewport) const;
+	bool canTurn(Turn turn) const;
 	void setFrame(uint frame);
 	void playTheme();
 	void updateTheme(double sceneTime);
@@ -142,6 +143,8 @@ private:
 	bool _isTurningFast = false;
 	double _lastTurnTime = 0.0;
 	double _sceneTime = 0.0;
+
+	bool _wraps = true;
 };
 
 // Changes the scene and sets flags, either right away or when its hotspot gets clicked
