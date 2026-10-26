@@ -811,13 +811,9 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 		} else if (keyState == Common::KEYCODE_F4) {
 			inpKeybSetWaitRelease(true);
 			openOptionsMenuFromGame();
-		} else if (keyState == Common::KEYCODE_p) {
+		} else if (keyState == Common::KEYCODE_p && !_mainMenuRequested) {
 			inpKeybSetWaitRelease(true);
-			if (isPaused()) {
-				this->resumeGame();
-			} else {
-				this->pauseGame();
-			}
+			runPauseScreen();
 		}
 	}
 
@@ -1033,6 +1029,80 @@ void PrisonerEngine::resumeGame() {
 	_selectedMenuIndex = MAIN_PANEL;
 	this->_screen->clear();
 	_pauseToken.clear();
+}
+
+void PrisonerEngine::runPauseScreen() {
+	const int16 kPictureWidth = 320;
+	const int16 kPictureHeight = 158;
+	const int16 kPictureX = 162;
+	const int16 kPictureY = 170;
+	const int16 kGameAreaY = 82;
+
+	AnimationResource *pausePanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[PAUSE_PANEL]);
+	Graphics::Surface *screen = _screen->getScreen();
+
+	CursorMan.showMouse(false);
+
+	// Every second pixel of every second line of the game area
+	Common::Array<byte> picture;
+	picture.resize(kPictureWidth * kPictureHeight);
+	for (int16 y = 0; y < kPictureHeight; y++) {
+		const byte *src = (const byte *)screen->getBasePtr(0, kGameAreaY + y * 2);
+		for (int16 x = 0; x < kPictureWidth; x++)
+			picture[y * kPictureWidth + x] = src[x * 2];
+	}
+
+	suspendMusics();
+	PauseToken pauseToken = pauseEngine();
+
+	byte savedPalette[768];
+	memcpy(savedPalette, _effectPalette, 768);
+	byte greyPalette[768];
+	for (int i = 0; i < 256; i++) {
+		const byte grey = (_effectPalette[i * 3] + _effectPalette[i * 3 + 1] + _effectPalette[i * 3 + 2]) / 3;
+		greyPalette[i * 3] = greyPalette[i * 3 + 1] = greyPalette[i * 3 + 2] = grey;
+	}
+
+	fadeInOutColor(greyPalette, 1, 255, 255, 255, 0);
+	_screen->setFullPalette(_effectPalette);
+	_screen->clear();
+	_screen->drawAnimationElement(pausePanel, 0, 67, 77, 0);
+	for (int16 y = 0; y < kPictureHeight; y++)
+		memcpy(screen->getBasePtr(kPictureX, kPictureY + y), &picture[y * kPictureWidth], kPictureWidth);
+	_screen->update();
+
+	// Fade from white to grey, one step per vertical retrace in the original
+	for (int16 position = 0; position < 255 && !shouldQuit(); position += 4) {
+		fadeInOutColor(greyPalette, 1, 255, 255, 255, position);
+		_screen->setFullPalette(_effectPalette);
+		_screen->update();
+		updateEvents();
+		_system->delayMillis(14);
+	}
+	memcpy(_effectPalette, greyPalette, 768);
+	_screen->setFullPalette(_effectPalette);
+
+	inpSetWaitRelease(true);
+	while (!shouldQuit()) {
+		Common::KeyCode keyState;
+		uint16 buttonState;
+		updateEvents();
+		getInputStatus(keyState, buttonState);
+		if (keyState != Common::KEYCODE_INVALID || buttonState != 0)
+			break;
+		_screen->update();
+		_system->delayMillis(10);
+	}
+
+	_screen->clear();
+	pauseToken.clear();
+	resumeMusics();
+	memcpy(_effectPalette, savedPalette, 768);
+	_screen->setFullPalette(_effectPalette);
+	inpSetWaitRelease(true);
+	CursorMan.showMouse(true);
+	updateScreen(true, -1, -1);
+	resetFrameValues();
 }
 
 void PrisonerEngine::requestAutoSave(Common::String &pakName, int16 pakSlot, Common::String &identifier) {

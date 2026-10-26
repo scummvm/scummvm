@@ -1157,6 +1157,7 @@ public:
 		int16 &outResourceCacheSlot, Common::String &outIdentifier);
 
 	void updateEvents();
+	void runPauseScreen();
 	uint32 getTicks();
 
 	/* Sounds */
