@@ -6629,11 +6629,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Full game is supported in ZVision engine
 	WINDEMO1("znemesis", "Demo", "ZORKDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
 
-	// Only the launcher is a director, full game is supported via Mohawk engine
+	// Only the launcher is a director, full game is supported via Mohawk engine.
 	// From Logical Journey of the Zoombinis demo
 	WINDEMO1_l("zoombini", "v1.0BR Demo, Launcher", "PIZZA/_ZOOMDAT.EXE", "d573b80bb932f50cbe69395b158e9f47", 696927, Common::EN_GRB, 404),
 	WINDEMO1t_l("zoombini", "v1.0US Demo, Launcher", "ZOOMBINI.EXE", "fffa1e234005c89a366a4f5a3d82d34e", 4632551, Common::EN_USA, 404),
-	MACDEMO1_l("zoombini", "v1.0US Demo, Launcher", "Zoombini", "c92cda8365946126cc7d523c49a60bb4", 483490, Common::EN_USA, 404),
+	MACDEMO2_l("zoombini", "v1.0US Demo, Launcher", "Zoombini", "c92cda8365946126cc7d523c49a60bb4", 483490,
+			   "Zoom", "rt:03881888db84f64228ed591e35bfcdfa", 681603, Common::EN_USA, 404),
 
 //////////////////////////////////////////////////
 //

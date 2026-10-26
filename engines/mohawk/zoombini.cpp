@@ -944,6 +944,7 @@ Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	using namespace Common;
 
 	const String guiOptions = ConfMan.get("guioptions", target);
+	const String extra = ConfMan.get("extra", target);
 
 	Keymap *defaultKeymap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymappings"));
 	defaultKeymap->setPartialMatchAllowed(false);
@@ -1084,7 +1085,7 @@ Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("JOY_RIGHT_STICK");
 	shortcutKeymap->addAction(act);
 
-	if (checkGameGUIOption(GAMEOPTION_ZMB_V20, guiOptions)) {
+	if (ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kTlcV20)) {
 		// TLC v2 adds page narration to the Help dialog and exposes its Ctrl+A toggle.
 		act = new Action(MohawkMetaEngine_Zoombini::kActionToggleHelpDialogNarration, _c("Toggle Help dialog narration", "zoombini-keymap"));
 		act->setKeyEvent(KeyState(KEYCODE_a, 'a', KBD_CTRL));

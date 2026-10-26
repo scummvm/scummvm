@@ -2476,7 +2476,13 @@ public:
 	void setEnableAutoStickyMouse(bool val);
 	/** Set the transition-effects option and optionally show its page notification. */
 	void setEnableTransitions(bool val, bool showNoti = true);
-	/** Set the touch-sense option and optionally show its page notification. */
+	/**
+	 *  Set the TouchSense option and optionally show its page notification.
+	 *
+	 * @remarks
+	 * ToushSense HW is not supported on ScummVM.
+	 * An OSD will be displayed to notify players.
+	 */
 	void setEnableTouchSense(bool val, bool showNoti = true);
 	/** Set the help-audio option and optionally show its page notification. */
 	void setEnableHelpAudio(bool val, bool showNoti = true);

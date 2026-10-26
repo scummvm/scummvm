@@ -53,8 +53,6 @@ enum MohawkGameType {
 #define GAMEOPTION_ME   GUIO_GAMEOPTIONS1
 #define GAMEOPTION_25TH GUIO_GAMEOPTIONS2
 #define GAMEOPTION_DEMO GUIO_GAMEOPTIONS3
-#define GAMEOPTION_ZMB_V20 GUIO_GAMEOPTIONS4
-#define GAMEOPTION_ZMB_V10US GUIO_GAMEOPTIONS5
 
 enum MohawkGameFeatures {
 	GF_ME             = (1 << 0), // Myst Masterpiece Edition
