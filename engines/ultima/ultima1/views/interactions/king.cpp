@@ -28,15 +28,23 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
+// Same generic dialog box geometry the Lose and Win views use
+constexpr int DIALOG_X1 = 31, DIALOG_Y1 = 23, DIALOG_X2 = 287, DIALOG_Y2 = 127;
+constexpr int BORDER_X1 = 34, BORDER_Y1 = 26, BORDER_X2 = 284, BORDER_Y2 = 124;
+
 // The four dungeon monsters kings with an even castle index send the
-// player to kill, indexed by (castleIndex - 2) / 2
+// player to kill, indexed by (castleIndex - 2) / 2. They're padded to
+// roughly center under the heading
 static const char *const QUEST_MONSTER_NAMES[4] = {
-	"Gelatinous Cube", "Carrion Creeper", "Lich", "Balron"
+	" Gelatinous Cube", " Carrion Creeper", "     Lich", "    Balron"
 };
 
 // The four landmarks kings with an odd castle index send the player to
 // find, as indexes into Data::LOCATION_NAMES, indexed by (castleIndex - 1) / 2
 static const int QUEST_LOCATION_INDEXES[4] = { 47, 45, 43, 41 };
+
+// Text column of each of those landmark names within the quest dialog
+static const int QUEST_LOCATION_X[4] = { 8, 10, 9, 9 };
 
 // Reward text shown for a completed "kill a monster" quest, indexed by the
 // continent the player is currently standing on
@@ -66,6 +74,9 @@ bool King::msgFocus(const FocusMessage &msg) {
 }
 
 bool King::msgAction(const ActionMessage &msg) {
+	if (_mode == KING_QUEST)
+		return true;
+
 	writeString("neither\n");
 	finish();
 	return true;
@@ -73,6 +84,13 @@ bool King::msgAction(const ActionMessage &msg) {
 
 bool King::msgKeypress(const KeypressMessage &msg) {
 	switch (_mode) {
+	case KING_QUEST:
+		if (msg.keycode == Common::KEYCODE_SPACE || msg.keycode == Common::KEYCODE_RETURN) {
+			prompt();
+			close();
+		}
+		break;
+
 	case KING_PROMPT:
 		if (msg.keycode == Common::KEYCODE_p) {
 			_mode = KING_PENCE;
@@ -89,10 +107,10 @@ bool King::msgKeypress(const KeypressMessage &msg) {
 				writeString("\n");
 				writeString("Thou art on a quest\n");
 				writeString("for me already!\n");
+				finish();
 			} else {
 				giveQuest();
 			}
-			finish();
 
 		} else {
 			writeString("neither\n");
@@ -165,26 +183,43 @@ bool King::checkQuestReward() {
 }
 
 void King::giveQuest() {
-	auto &sg = _G(savegame);
+	_G(savegame)._questStatus[_G(map)._castleNum2] = -1;
+	_mode = KING_QUEST;
+
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
+	redraw();
+	g_engine->send("Commands", GameMessage("SPACE2"));
+}
+
+void King::draw() {
+	if (_mode == KING_QUEST)
+		drawQuest();
+}
+
+void King::drawQuest() {
 	int castleIdx = _G(map)._castleNum2;
-	sg._questStatus[castleIdx] = -1;
+
+	auto s = getSurface();
+	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _G(colors)._border);
+	s.setColor(_G(colors)._text);
 
 	if (castleIdx % 2 == 0) {
-		writeString("Go now and kill a\n");
+		s.writeString(Common::Point(12, 6), "Go now and kill a");
 
 		int monsterIdx = (castleIdx - 2) / 2;
 		if (monsterIdx >= 0 && monsterIdx < 4)
-			writeString(Common::String::format("%s\n", QUEST_MONSTER_NAMES[monsterIdx]));
+			s.writeString(Common::Point(12, 8), QUEST_MONSTER_NAMES[monsterIdx]);
 	} else {
-		writeString("Go forth and find\n");
+		s.writeString(Common::Point(11, 6), "Go forth and find");
 
 		int locIdx = (castleIdx - 1) / 2;
 		if (locIdx >= 0 && locIdx < 4)
-			writeString(Common::String::format("%s\n", Data::LOCATION_NAMES[QUEST_LOCATION_INDEXES[locIdx]]));
+			s.writeString(Common::Point(QUEST_LOCATION_X[locIdx], 8), Data::LOCATION_NAMES[QUEST_LOCATION_INDEXES[locIdx]]);
 	}
 
-	writeString("Do not return until\n");
-	writeString("thy quest is done!\n");
+	s.writeString(Common::Point(11, 10), "Do not return until");
+	s.writeString(Common::Point(11, 11), "thy quest is done!");
 }
 
 void King::penceKeypress(const KeypressMessage &msg) {
@@ -229,7 +264,6 @@ void King::penceKeypress(const KeypressMessage &msg) {
 }
 
 void King::finish() {
-	writeString("\n");
 	prompt();
 	close();
 }

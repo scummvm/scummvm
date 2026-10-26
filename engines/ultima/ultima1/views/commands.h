@@ -49,6 +49,7 @@ private:
 	void showCursor();
 	void prompt();
 	void space();
+	void space2();
 
 public:
 	Commands(UIElement *parent);

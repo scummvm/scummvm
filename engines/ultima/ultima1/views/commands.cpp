@@ -60,6 +60,9 @@ bool Commands::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "SPACE") {
 		space();
 		return true;
+	} else if (msg._name == "SPACE2") {
+		space2();
+		return true;
 	} else if (msg._name == "DELAY") {
 		delay(msg._value);
 		return true;
@@ -96,6 +99,12 @@ void Commands::prompt() {
 void Commands::space() {
 	resetLine();
 	_surface.writeString("\x10Press Space to continue: ");
+	showCursor();
+}
+
+void Commands::space2() {
+	resetLine();
+	_surface.writeString(" Press Space to continue: ");
 	showCursor();
 }
 

@@ -39,7 +39,7 @@ using namespace Graphics::Views;
  */
 class King : public Interaction {
 	enum Mode {
-		KING_PROMPT, KING_PENCE
+		KING_PROMPT, KING_PENCE, KING_QUEST
 	};
 private:
 	Mode _mode = KING_PROMPT;
@@ -58,9 +58,15 @@ private:
 	/**
 	 * Starts a new quest for this castle - either to kill a specific
 	 * dungeon monster, or to find a specific landmark - depending on
-	 * whether the castle's index is even or odd
+	 * whether the castle's index is even or odd. The quest is shown in
+	 * a dialog until the player continues
 	 */
 	void giveQuest();
+
+	/**
+	 * Draws the quest dialog
+	 */
+	void drawQuest();
 
 	/**
 	 * Handles the pence amount entry, digit by digit
@@ -72,6 +78,7 @@ public:
 	~King() override {
 	}
 
+	void draw() override;
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
