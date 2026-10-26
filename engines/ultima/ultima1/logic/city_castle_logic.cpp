@@ -686,12 +686,6 @@ CastleLogic::CastleLogic() {
 	_G(savegame)._freeingPrincess = 0;
 	_G(savegame)._castleItemAllowance = 0;
 
-	// The two castle map styles are vertical mirrors of each other, so
-	// the row these two cells sit on differs between them
-	int row = (_G(map)._mapStyle == 0) ? 14 : 4;
-	_G(map)[row][35] = 11;
-	_G(map)[row][31] = 11;
-
 	_G(savegame)._castleKeyVal = getRandomNumber(1) == 1 ? 61 : 60;
 }
 
@@ -754,6 +748,12 @@ bool CastleLogic::unlock() {
 void CastleLogic::entering() {
 	_G(savegame)._locationPosition = Common::Point(0, 9);
 	CityCastleLogic::entering();
+
+	// The two castle map styles are vertical mirrors of each other, so
+	// the row these two cells sit on differs between them
+	int row = (_G(map)._mapStyle == 0) ? 14 : 4;
+	_G(map)[row][35] = Data::CTILE_BARRED_DOOR;
+	_G(map)[row][31] = Data::CTILE_BARRED_DOOR;
 }
 
 void CastleLogic::leaving() {

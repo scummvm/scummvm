@@ -78,6 +78,7 @@ enum OverworldTileId {
 enum LocationTileId {
 	CTILE_WALL = 0,
 	CTILE_GROUND = 1,
+	CTILE_BARRED_DOOR = 11,
 	CTILE_GUARD = 17,
 	CTILE_PLAYER = 18,
 	CTILE_BARD = 19,
