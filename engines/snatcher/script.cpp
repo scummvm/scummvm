@@ -482,13 +482,13 @@ ScriptEngine::~ScriptEngine() {
 }
 
 void ScriptEngine::resetArrays() {
-	static const uint8 arraySizes[] = { 0x08, 0x1F, 0x0F, 0x12, 0x03, 0x10 };
+	const int arraySizes[] = { 0x08, 0x1F, 0x0F, 0x12, 0x03, 0x10 };
 	memset(_arrayData, 0, 256);
 
 	uint8 *pos = _arrayData;
-	for (int i = 0; i < ARRAYSIZE(_arrays); ++i) {
-		_arrays[i] = ScriptArray(pos , arraySizes[i]);
-		pos += ((arraySizes[i] + 1) << 1);
+	for (uint i = 0; i < ARRAYSIZE(_arrays); ++i) {
+		_arrays[i] = ScriptArray(pos, arraySizes[i]);
+		pos += ((arraySizes[i] + 1) * 2);
 	}
 }
 

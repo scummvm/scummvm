@@ -41,7 +41,7 @@ struct GameState;
 
 class MemAccessHandler {
 public:
-	MemAccessHandler(SnatcherEngine *vm, UI *ui, ActionSequenceHandler *aseq, SaveLoadManager *saveMan) : _vm(vm), _ui(ui), _aseq(aseq), _saveMan(saveMan) {}
+	MemAccessHandler(SnatcherEngine *vm, UI *ui, ActionSequenceHandler *aseq, SaveLoadManager *saveMan) : _vm(vm), _ui(ui), _aseq(aseq), _saveMan(saveMan), _state(nullptr) {}
 	~MemAccessHandler() {}
 
 	uint16 readWord(uint16 addr);
