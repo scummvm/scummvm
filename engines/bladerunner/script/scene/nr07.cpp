@@ -524,14 +524,14 @@ void SceneScriptNR07::talkAboutScorpions() {
 	Actor_Says(kActorDektora, 870, kAnimationModeSit);
 #else
 	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
-		Actor_Says_With_Pause(kActorDektora, 850, 1.0f, 30); // "Oh, those. I didn't know what they were called."
+		Actor_Says_With_Pause(kActorDektora, 850, 1.0f, 30); // Oh, those. I didn't know what they were called.
 	} else {
-		// TODO: Check in other languages (EFIGS).
-		// English: "Insects make excellent pets. And they were so beautiful I just had to have the whole set."
 		Actor_Says(kActorDektora, 860, 31);
-		
-		// English: "I just had to have the whole set."
-		// Actor_Says(kActorDektora, 870, 31);
+		if (_vm->_language == Common::ES_ESP || _vm->_language == Common::FR_FRA || _vm->_language == Common::IT_ITA) {
+			// These localizations have the ending of 860 in a separate voice line. The Italian version,
+			// unlike the others, uses the present tense (a feedback from an Italian speaker is welcome).
+			Actor_Says(kActorDektora, 870, 31);
+		}
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 3750, 11);
