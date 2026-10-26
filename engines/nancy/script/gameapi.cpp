@@ -1787,13 +1787,36 @@ static int autotextIndex(lua_State *L) {
 	return 1;
 }
 
+// Autotext:ShowCC(key[, show]) puts up the text of a key as the caption, and gives
+// a number for it that goes up with every caption; -1 when there is no such text.
+// Only Nancy22 calls it, always with show set.
+static int autotextShowCC(lua_State *L) {
+	static int numShown = 0;
+
+	const char *key = luaL_checkstring(L, 2);
+	Common::String text;
+	if (!findText(key, text)) {
+		lua_pushinteger(L, -1);
+		return 1;
+	}
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	if (ui) {
+		ui->setCaption(text);
+	}
+
+	lua_pushinteger(L, ++numShown);
+	return 1;
+}
+
 static const luaL_Reg kAutotextFunctions[] = {
 	{ "__index", autotextIndex },
+	{ "ShowCC", autotextShowCC },
 	{ "RemoveCC", autotextRemoveCC },
 	{ nullptr, nullptr }
 };
 
-// TODO: Autotext:ShowCC, the Generics and UIMgr objects, and Log:WriteAll
+// TODO: The Generics and UIMgr objects, and Log:WriteAll
 void registerGameAPI(lua_State *L) {
 	registerGlobal(L, "Flags", "ND.Flags", kFlagsFunctions);
 	registerGlobal(L, "VarTable", "ND.VarTable", kVarTableFunctions);
@@ -1820,6 +1843,11 @@ void registerGameAPI(lua_State *L) {
 
 	registerGlobal(L, "Scene", "ND.Scene", kSceneFunctions);
 	registerGlobal(L, "Autotext", "ND.Autotext", kAutotextFunctions);
+	// What starts a new line in a text
+	luaL_getmetatable(L, "ND.Autotext");
+	lua_pushstring(L, "<n>");
+	lua_setfield(L, -2, "newline");
+	lua_pop(L, 1);
 	registerGlobal(L, "Streams", "ND.Streams", kStreamsFunctions);
 	luaL_getmetatable(L, "ND.Streams");
 	lua_pushstring(L, State::SceneStreamManager::getMainStreamName());
