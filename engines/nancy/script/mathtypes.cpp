@@ -22,6 +22,8 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 
+#include "engines/nancy/nancy.h"
+
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/mathtypes.h"
 
@@ -249,19 +251,27 @@ static int vectorNewIndex(lua_State *L) {
 	return 0;
 }
 
+// Nancy19 only works on two vectors of the same size. From Nancy20 on, the
+// result has the size of the larger one, and what the smaller one lacks is 0.
 static void checkSameSize(lua_State *L, const ScriptVector &a, const ScriptVector &b) {
-	if (a.size != b.size) {
+	if (a.size != b.size && g_nancy->getGameType() < kGameTypeNancy20) {
 		luaL_error(L, "Vector 1 has %d dimensions but vector 2 has %d dimensions", a.size, b.size);
 	}
 }
 
-static int vectorAdd(lua_State *L) {
-	ScriptVector result = checkVector(L, 1);
-	const ScriptVector &other = checkVector(L, 2);
-	checkSameSize(L, result, other);
+static double getComponent(const ScriptVector &vector, int index) {
+	return index < vector.size ? vector.v[index] : 0.0;
+}
 
+static int vectorAdd(lua_State *L) {
+	const ScriptVector &left = checkVector(L, 1);
+	const ScriptVector &right = checkVector(L, 2);
+	checkSameSize(L, left, right);
+
+	ScriptVector result;
+	result.size = MAX(left.size, right.size);
 	for (int i = 0; i < result.size; ++i) {
-		result.v[i] += other.v[i];
+		result.v[i] = getComponent(left, i) + getComponent(right, i);
 	}
 
 	pushVector(L, result);
@@ -269,12 +279,14 @@ static int vectorAdd(lua_State *L) {
 }
 
 static int vectorSubtract(lua_State *L) {
-	ScriptVector result = checkVector(L, 1);
-	const ScriptVector &other = checkVector(L, 2);
-	checkSameSize(L, result, other);
+	const ScriptVector &left = checkVector(L, 1);
+	const ScriptVector &right = checkVector(L, 2);
+	checkSameSize(L, left, right);
 
+	ScriptVector result;
+	result.size = MAX(left.size, right.size);
 	for (int i = 0; i < result.size; ++i) {
-		result.v[i] -= other.v[i];
+		result.v[i] = getComponent(left, i) - getComponent(right, i);
 	}
 
 	pushVector(L, result);
@@ -289,9 +301,9 @@ static int vectorMultiply(lua_State *L) {
 	ScriptVector result;
 	if (left && right) {
 		checkSameSize(L, *left, *right);
-		result = *left;
+		result.size = MAX(left->size, right->size);
 		for (int i = 0; i < result.size; ++i) {
-			result.v[i] *= right->v[i];
+			result.v[i] = getComponent(*left, i) * getComponent(*right, i);
 		}
 	} else {
 		result = left ? *left : checkVector(L, 2);
@@ -315,8 +327,10 @@ static int vectorDivide(lua_State *L) {
 
 	if (right) {
 		checkSameSize(L, result, *right);
+		const ScriptVector left = result;
+		result.size = MAX(left.size, right->size);
 		for (int i = 0; i < result.size; ++i) {
-			result.v[i] /= right->v[i];
+			result.v[i] = getComponent(left, i) / getComponent(*right, i);
 		}
 	} else {
 		const double divisor = luaL_checknumber(L, 2);
@@ -345,8 +359,8 @@ static int vectorDot(lua_State *L) {
 	checkSameSize(L, a, b);
 
 	double sum = 0.0;
-	for (int i = 0; i < a.size; ++i) {
-		sum += a.v[i] * b.v[i];
+	for (int i = 0; i < MAX(a.size, b.size); ++i) {
+		sum += getComponent(a, i) * getComponent(b, i);
 	}
 
 	lua_pushnumber(L, sum);
@@ -388,8 +402,10 @@ static int vectorLerp(lua_State *L) {
 	const double amount = luaL_checknumber(L, 3);
 	checkSameSize(L, result, other);
 
+	const ScriptVector from = result;
+	result.size = MAX(from.size, other.size);
 	for (int i = 0; i < result.size; ++i) {
-		result.v[i] += (other.v[i] - result.v[i]) * amount;
+		result.v[i] = getComponent(from, i) + (getComponent(other, i) - getComponent(from, i)) * amount;
 	}
 
 	pushVector(L, result);
