@@ -135,8 +135,10 @@ public:
 	// Nancy21: a new node to group records under, which lasts as long as the scene
 	GraphNode *createGraphNode();
 
-	// Lets the records under a node know that it changed its z or transform
+	// Lets the records under a node know that it changed its z or transform,
+	// once the frame is over
 	void onGraphNodeChanged(GraphNode *node);
+	void applyGraphNodeChanges();
 
 	// Runs another script as a part of this scene. From Nancy21 on, a script
 	// that the scene already included is left out, since scripts include each
@@ -178,6 +180,7 @@ private:
 	ConvoRecord *_convo = nullptr;
 	Common::Array<ConvoResponse *> _convoResponses;
 	Common::Array<GraphNode *> _graphNodes;
+	Common::Array<GraphNode *> _changedNodes;	// since the last frame
 	Common::HashMap<Common::String, RefImage *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _refs;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _includedNames;
 

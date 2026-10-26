@@ -374,6 +374,7 @@ void SceneContext::run(double elapsedTime) {
 	}
 
 	renderAttachment();
+	applyGraphNodeChanges();
 
 	for (Record *record : _records) {
 		record->updateGraphics();
@@ -481,16 +482,39 @@ GraphNode *SceneContext::createGraphNode() {
 	return node;
 }
 
+// Nodes change many times a frame, e.g. the cars of Nancy22's driving game with
+// every step of the physics, so the records under them only catch up once the
+// frame is over. Their transform and z are always worked out when asked for.
 void SceneContext::onGraphNodeChanged(GraphNode *node) {
-	for (Record *record : _records) {
-		if (record->getParentNode() && record->getParentNode()->isUnder(node)) {
-			record->onParentNodeChanged();
+	for (const GraphNode *changed : _changedNodes) {
+		if (changed == node) {
+			return;
 		}
 	}
 
-	for (Record *record : _newRecords) {
-		if (record->getParentNode() && record->getParentNode()->isUnder(node)) {
-			record->onParentNodeChanged();
+	_changedNodes.push_back(node);
+}
+
+void SceneContext::applyGraphNodeChanges() {
+	// Catching up can change more nodes, e.g. the z of a Transformer
+	while (!_changedNodes.empty()) {
+		const Common::Array<GraphNode *> changedNodes = _changedNodes;
+		_changedNodes.clear();
+
+		Common::Array<Record *> records = _records;
+		records.push_back(_newRecords);
+		for (Record *record : records) {
+			const GraphNode *parent = record->getParentNode();
+			if (!parent) {
+				continue;
+			}
+
+			for (const GraphNode *node : changedNodes) {
+				if (parent->isUnder(node)) {
+					record->onParentNodeChanged();
+					break;
+				}
+			}
 		}
 	}
 }
