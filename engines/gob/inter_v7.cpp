@@ -730,7 +730,8 @@ void Inter_v7::o7_playVmdOrMusic() {
 	props.startFrame = _vm->_game->_script->readValExpr();
 	props.lastFrame  = _vm->_game->_script->readValExpr();
 	props.breakKey   = _vm->_game->_script->readValExpr();
-	props.flags      = _vm->_game->_script->readValExpr();
+	// Original engine flags use 16bits, higher bits are ScummVM specific flags set elsewhere (kFlagScreenSurface)
+	props.flags      = (uint16)_vm->_game->_script->readValExpr();
 	props.palStart   = _vm->_game->_script->readValExpr();
 	props.palEnd     = _vm->_game->_script->readValExpr();
 	props.palCmd     = 1 << (props.flags & 0x3F);
