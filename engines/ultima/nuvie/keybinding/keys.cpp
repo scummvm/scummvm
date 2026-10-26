@@ -300,7 +300,7 @@ KeyBinder::KeyBinder(const Configuration *config) : enable_joystick(false) {
 	if (keyfilename != "(default)" && !key_file_exists)
 		::error("Couldn't find the default key setting at %s - trying defaultkeys.txt in the data directory\n", keyfilename.c_str());
 	if (keyfilename == "(default)" || !key_file_exists) {
-		config->value("config/datadir", dir, "./data");
+		config->value("config/datadir", dir, ".");
 		keyfilename = dir + "/defaultkeys.txt";
 	}
 	LoadFromFile(keyfilename.c_str());
@@ -676,7 +676,7 @@ void KeyBinder::LoadGameSpecificKeys() {
 	Common::String key_path_str;
 	Common::String default_key_path;
 	const Configuration *config = Game::get_game()->get_config();
-	config->value("config/datadir", default_key_path, "./data");
+	config->value("config/datadir", default_key_path, ".");
 	nuvie_game_t game_type = get_game_type(config);
 
 	if (game_type == NUVIE_GAME_U6)

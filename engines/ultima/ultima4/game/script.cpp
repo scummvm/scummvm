@@ -157,7 +157,7 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 	 * Open and parse the .xml file
 	 */
 	Shared::XMLTree *doc = new Shared::XMLTree(
-		Common::Path(Common::String::format("data/conf/%s", filename.c_str())));
+		Common::Path(Common::String::format("conf/%s", filename.c_str())));
 	_vendorScriptDoc = root = doc->getTree();
 
 	if (!root->id().equalsIgnoreCase("scripts"))

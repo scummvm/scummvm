@@ -36,7 +36,7 @@ Configuration::Configuration() : _configChanged(false) {
 	_localKeys["GameType"] = "";
 	_localKeys["GameName"] = "";
 	_localKeys["GameID"] = "";
-	_localKeys["datadir"] = "data";		// This maps to ultima6/ in ultima.dat
+	_localKeys["datadir"] = "";		// ultima.dat ultima6/ subfolder mapped into local filesystem root
 	_localKeys["quit"] = "no";
 }
 

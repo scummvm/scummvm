@@ -30,7 +30,7 @@ Config *Config::_instance;
 Config::Config() {
 	_instance = this;
 
-	if (!_doc.readConfigFile("data/conf/config.xml"))
+	if (!_doc.readConfigFile("conf/config.xml"))
 		error("Failed to read core configuration");
 }
 

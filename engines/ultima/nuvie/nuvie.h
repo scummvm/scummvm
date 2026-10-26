@@ -66,7 +66,7 @@ protected:
 	/**
 	 * Returns the data archive folder and version that's required
 	 */
-	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion);
+	bool isDataRequired(const char *&folder, int &majorVersion, int &minorVersion);
 public:
 	const Common::String c_empty_string;
 public:

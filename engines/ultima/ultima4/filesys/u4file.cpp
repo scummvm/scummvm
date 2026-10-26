@@ -27,7 +27,7 @@ namespace Ultima4 {
 
 Common::Array<Common::String> u4read_stringtable(const Common::String &filename) {
 	Common::File f;
-	if (!f.open(Common::Path(Common::String::format("data/text/%s.dat", filename.c_str()))))
+	if (!f.open(Common::Path(Common::String::format("text/%s.dat", filename.c_str()))))
 		error("Could not open string table '%s'", filename.c_str());
 
 	Common::Array<Common::String> strs;

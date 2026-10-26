@@ -532,7 +532,7 @@ Common::File *ImageMgr::getImageFile(ImageInfo *info) {
 			return file;
 	}
 
-	if (file->open(Common::Path("data/graphics/").joinInPlace(filename)))
+	if (file->open(Common::Path("graphics/").joinInPlace(filename)))
 		return file;
 
 	delete file;

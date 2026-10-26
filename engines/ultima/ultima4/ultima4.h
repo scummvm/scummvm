@@ -69,7 +69,7 @@ protected:
 	/**
 	 * Returns the data archive folder and version that's required
 	 */
-	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion);
+	bool isDataRequired(const char *&folder, int &majorVersion, int &minorVersion);
 public:
 	Armors *_armors;
 	Codex *_codex;

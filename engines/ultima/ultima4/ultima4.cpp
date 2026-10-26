@@ -46,8 +46,8 @@
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
-#include "ultima/shared/engine/data_archive.h"
 #include "common/debug.h"
+#include "common/engine_data.h"
 #include "common/system.h"
 
 namespace Ultima {
@@ -113,7 +113,7 @@ Ultima4Engine::~Ultima4Engine() {
 }
 
 bool Ultima4Engine::initialize() {
-	Common::Path folder;
+	const char *folder;
 	int reqMajorVersion, reqMinorVersion;
 
 	// Call syncSoundSettings to get default volumes set
@@ -125,7 +125,7 @@ bool Ultima4Engine::initialize() {
 
 	// Try and set up the data archive
 	Common::U32String errorMsg;
-	if (!Shared::UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
+	if (!Common::load_engine_data("ultima.dat", folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
 		GUIErrorMessage(errorMsg);
 		return false;
 	}
@@ -201,7 +201,7 @@ Common::Error Ultima4Engine::run() {
 	return Common::kNoError;
 }
 
-bool Ultima4Engine::isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) {
+bool Ultima4Engine::isDataRequired(const char *&folder, int &majorVersion, int &minorVersion) {
 	folder = "ultima4";
 	majorVersion = 1;
 	minorVersion = 0;

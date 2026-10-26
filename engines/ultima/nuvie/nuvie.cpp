@@ -36,8 +36,8 @@
 #include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/save/save_game.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/shared/engine/data_archive.h"
 #include "common/config-manager.h"
+#include "common/engine_data.h"
 #include "common/translation.h"
 #include "common/compression/unzip.h"
 
@@ -64,7 +64,7 @@ NuvieEngine::~NuvieEngine() {
 	g_engine = nullptr;
 }
 
-bool NuvieEngine::isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) {
+bool NuvieEngine::isDataRequired(const char *&folder, int &majorVersion, int &minorVersion) {
 	folder = "ultima6";
 	majorVersion = 1;
 	minorVersion = 1;
@@ -84,7 +84,7 @@ bool NuvieEngine::initialize() {
 	bool playEnding = false;
 	bool showVirtueMsg = false;
 
-	Common::Path folder;
+	const char *folder;
 	int reqMajorVersion, reqMinorVersion;
 
 	// Call syncSoundSettings to get default volumes set
@@ -96,7 +96,7 @@ bool NuvieEngine::initialize() {
 
 	// Try and set up the data archive
 	Common::U32String errorMsg;
-	if (!Shared::UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
+	if (!Common::load_engine_data("ultima.dat", folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
 		GUIErrorMessage(errorMsg);
 		return false;
 	}

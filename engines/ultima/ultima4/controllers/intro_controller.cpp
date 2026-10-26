@@ -109,7 +109,7 @@ IntroBinData::~IntroBinData() {
 }
 
 void IntroBinData::openFile(Common::File &f, const Common::String &name) {
-	if (!f.open(Common::Path(Common::String::format("data/intro/%s.dat", name.c_str()))))
+	if (!f.open(Common::Path(Common::String::format("intro/%s.dat", name.c_str()))))
 		error("Could not load '%s'", name.c_str());
 }
 

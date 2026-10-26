@@ -148,7 +148,7 @@ void Screen::loadMouseCursors() {
 	// enable or disable the mouse cursor
 	if (settings._mouseOptions._enabled) {
 		Common::File cursorsFile;
-		if (!cursorsFile.open("data/graphics/cursors.txt"))
+		if (!cursorsFile.open("graphics/cursors.txt"))
 			error("Could not load mouse cursors");
 
 		for (int idx = 0; idx < 5; ++idx)

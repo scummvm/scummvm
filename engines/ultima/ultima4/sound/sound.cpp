@@ -76,7 +76,7 @@ bool SoundManager::load(Sound sound) {
 	assertMsg(sound < SOUND_MAX, "Attempted to load an invalid sound");
 
 	if (_sounds[sound] == nullptr) {
-		Common::Path pathname("data/sound/");
+		Common::Path pathname("sound/");
 		pathname.joinInPlace(_soundFilenames[sound]);
 		Common::String basename = pathname.baseName();
 		if (!basename.empty() && !basename.hasSuffix("/"))
