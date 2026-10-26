@@ -319,6 +319,7 @@ protected:
 	void run(double sceneTime, double elapsedTime) override;
 	bool prepareReset() override;
 	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
 
 private:
 	Common::Array<Common::String> _names;
@@ -332,6 +333,7 @@ private:
 	bool _isPlaying = false;
 	bool _wasPreempted = false;
 	uint32 _channelSerial = 0;	// of the channel, once the sound started
+	double _duration = 0.0;		// of the sound that plays, in seconds
 	double _endTime = 0.0;
 };
 

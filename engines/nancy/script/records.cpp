@@ -1310,8 +1310,8 @@ void SoundRecord::runOnce() {
 	_channelSerial = g_nancy->_sound->getChannelSerial(_channel);
 
 	// The record is done once the sound has played through, whether it loops or not
-	const double length = _isPlaying ? g_nancy->_sound->getLength(_sound).msecs() / 1000.0 : 0.0;
-	_endTime = getContext().getTime() + length;
+	_duration = _isPlaying ? g_nancy->_sound->getLength(_sound).msecs() / 1000.0 : 0.0;
+	_endTime = getContext().getTime() + _duration;
 
 	// What the sound says is kept under its name
 	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
@@ -1347,6 +1347,36 @@ bool SoundRecord::prepareReset() {
 	return true;
 }
 
+// Scripts hand a record other sounds, or move it to another channel, and then
+// restart it. A record that plays stops when it moves.
+bool SoundRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "channel") {
+		if (_isPlaying && hasStarted() && !isDone()) {
+			g_nancy->_sound->stopSound(_sound);
+		}
+
+		_channel = checkSoundChannel(L, 3);
+	} else if (key == "volume") {
+		_volume = luaL_checknumber(L, 3);
+	} else if (key == "useCC") {
+		_usesCaption = lua_toboolean(L, 3) != 0;
+	} else if (key == "loop") {
+		_isLooping = lua_toboolean(L, 3) != 0;
+	} else if (key == "sounds") {
+		_names.clear();
+		readStringList(L, 3, _names);
+		if (_names.empty()) {
+			luaL_error(L, "sounds must have one or more fields in its table");
+		}
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
 bool SoundRecord::getField(const Common::String &key) {
 	lua_State *L = getLua();
 
@@ -1360,6 +1390,19 @@ bool SoundRecord::getField(const Common::String &key) {
 		lua_pushnumber(L, _endTime);
 	} else if (key == "preempted") {
 		lua_pushboolean(L, _wasPreempted);
+	} else if (key == "duration") {
+		lua_pushnumber(L, _duration);
+	} else if (key == "sounds") {
+		// A single sound comes back as its name
+		if (_names.size() == 1) {
+			lua_pushstring(L, _names[0].c_str());
+		} else {
+			lua_createtable(L, _names.size(), 0);
+			for (uint i = 0; i < _names.size(); ++i) {
+				lua_pushstring(L, _names[i].c_str());
+				lua_rawseti(L, -2, i + 1);
+			}
+		}
 	} else {
 		return false;
 	}
