@@ -167,7 +167,7 @@ int Savegame::getLocationEntityAt(int x, int y) const {
 	int foundIndex = -1;
 	for (int startingIndex = 0; startingIndex < LOCATION_ENTITY_COUNT && foundIndex == -1; ++startingIndex) {
 		const auto &e = _locationEntities[startingIndex];
-		if (e._position.x == x && e._position.y == y)
+		if (e._type != -1 && e._position.x == x && e._position.y == y)
 			foundIndex = startingIndex;
 	}
 
