@@ -97,7 +97,7 @@ void ZoombiniShelterPicker::setBackgroundMusic() {
 	// music lifecycle point because its Load dialog is synchronous. This keeps the music
 	// audible while that dialog is open and does not add, remove, or move any RNG call.
 	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
-		_vm->_sound->playSound(ZmbResource(ZmbResource::kPage, kResSound30001_Isle), Audio::Mixer::kMusicSoundType);
+		_vm->_sound->playSound(ZmbResource(ZmbResource::kPage, kResSound30001_Isle), Audio::Mixer::kMusicSoundType, true);
 	else
 		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, kResMidi30001_Isle));
 
