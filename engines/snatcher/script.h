@@ -187,7 +187,8 @@ private:
 	bool getArrayEntry(uint16 arrNo, uint8 pos, uint16 &result);
 	bool setArrayLastEntry(uint16 arrNo, uint16 val);
 
-	uint8 getOpcode(int offset);
+	uint8 getOpcode(int offset) const;
+	uint16 safeReadUINT16(uint16 pos, const char *caller) const;
 
 private:
 	void makeOpcodeTable(ResourcePointer *scd);
