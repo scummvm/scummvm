@@ -1,6 +1,10 @@
 MODULE := engines/harold
 
 MODULE_OBJS := \
+	metaengine.o
+
+ifdef ENABLE_BCB
+MODULE_OBJS += \
 	bcb/bcb.o \
 	bcb/captions.o \
 	bcb/computer.o \
@@ -14,8 +18,8 @@ MODULE_OBJS := \
 	bcb/screens.o \
 	bcb/script.o \
 	bcb/static_data.o \
-	bcb/video.o \
-	metaengine.o
+	bcb/video.o
+endif
 
 MODULE_DIRS += \
 	engines/harold \

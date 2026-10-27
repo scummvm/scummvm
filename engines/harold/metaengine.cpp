@@ -100,9 +100,11 @@ Common::KeymapArray HaroldMetaEngine::initKeymaps(const char *target) const {
 
 Common::Error HaroldMetaEngine::createInstance(OSystem *syst, Engine **engine, const BCB::HaroldGameDescription *gd) const {
 	switch (gd->gameType) {
+#ifdef ENABLE_BCB
 	case BCB::kHaroldGameBCB:
 		*engine = new BCB::BCBEngine(syst, gd);
 		return Common::kNoError;
+#endif
 	default:
 		return Common::kUnsupportedGameidError;
 	}
