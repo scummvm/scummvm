@@ -202,9 +202,9 @@ public:
 		return playInternal(target, range, true);
 	}
 
-	bool transitionAndPresent(byte &targetFrame, const AnimationTransition &transition) {
+	bool transitionAndPresent(byte &targetFrame, const AnimationTransition &transitionSpec) {
 		FrameValueTarget target(targetFrame);
-		return transitionInternal(target, transition, true);
+		return transitionInternal(target, transitionSpec, true);
 	}
 
 	template<class FrameTarget>
@@ -218,13 +218,13 @@ public:
 	}
 
 	template<class FrameTarget>
-	bool transition(FrameTarget &target, const AnimationTransition &transition) {
-		return transitionInternal(target, transition, false);
+	bool transition(FrameTarget &target, const AnimationTransition &transitionSpec) {
+		return transitionInternal(target, transitionSpec, false);
 	}
 
 	template<class FrameTarget>
-	bool transitionAndPresent(FrameTarget &target, const AnimationTransition &transition) {
-		return transitionInternal(target, transition, true);
+	bool transitionAndPresent(FrameTarget &target, const AnimationTransition &transitionSpec) {
+		return transitionInternal(target, transitionSpec, true);
 	}
 
 private:
@@ -276,14 +276,14 @@ private:
 	}
 
 	template<class FrameTarget>
-	bool transitionInternal(FrameTarget &target, const AnimationTransition &transition,
+	bool transitionInternal(FrameTarget &target, const AnimationTransition &transitionSpec,
 			bool presentBoundaryFrames) {
-		if (transition.firstFrame > 0xff || transition.lastFrame > 0xff ||
+		if (transitionSpec.firstFrame > 0xff || transitionSpec.lastFrame > 0xff ||
 				_delegate.animationPlaybackShouldStop())
 			return false;
 
-		const int step = transition.firstFrame <= transition.lastFrame ? 1 : -1;
-		int frame = transition.firstFrame;
+		const int step = transitionSpec.firstFrame <= transitionSpec.lastFrame ? 1 : -1;
+		int frame = transitionSpec.firstFrame;
 		target.setFrame((byte)frame);
 		if (presentBoundaryFrames) {
 			_delegate.presentAnimationFrame();
@@ -291,8 +291,8 @@ private:
 				return false;
 		}
 
-		while (frame != (int)transition.lastFrame) {
-			if (_delegate.waitForAnimationFrame(transition.frameMillis, transition.allowSkip)) {
+		while (frame != (int)transitionSpec.lastFrame) {
+			if (_delegate.waitForAnimationFrame(transitionSpec.frameMillis, transitionSpec.allowSkip)) {
 				if (!_delegate.consumeAnimationFastForwardRequest())
 					return false;
 				break;
@@ -301,7 +301,7 @@ private:
 			target.setFrame((byte)frame);
 		}
 
-		target.setFrame(transition.finalFrame);
+		target.setFrame(transitionSpec.finalFrame);
 		if (presentBoundaryFrames) {
 			_delegate.presentAnimationFrame();
 			if (_delegate.animationPlaybackShouldStop())
