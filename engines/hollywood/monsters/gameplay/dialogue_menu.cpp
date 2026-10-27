@@ -113,7 +113,7 @@ byte DialogueMenu::choose(byte stageId, const Common::Array<DialogueChoiceRecord
 			if (redirectedChoice != choiceIndex && animateChoiceRedirect(redirectedChoice))
 				choiceIndex = redirectedChoice;
 			_vm->cursor()->leaveInteractiveMode();
-			return Engine::shouldQuit() ? kCancelledChoice : choiceIndex;
+			return Engine::shouldQuit() ? (byte)kCancelledChoice : choiceIndex;
 		}
 
 		g_system->delayMillis(kDialogueMenuTickMillis);

@@ -725,7 +725,7 @@ struct GameplayState {
 			return 0;
 
 		const byte itemCount = inventoryItemCountByOwner[owner] < kInventoryLastSlot ?
-			inventoryItemCountByOwner[owner] : kInventoryLastSlot;
+			inventoryItemCountByOwner[owner] : (byte)kInventoryLastSlot;
 		for (byte slot = kInventoryFirstSlot; slot <= itemCount; ++slot) {
 			if (inventorySlotItemIdByOwner[owner][slot] == itemId)
 				return slot;

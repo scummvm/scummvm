@@ -799,7 +799,7 @@ bool GameplayLoop::scrollInventoryPanelPreviousPage() {
 	if (firstVisibleSlot <= GameplayState::kInventoryFirstSlot)
 		return false;
 
-	firstVisibleSlot = firstVisibleSlot > 8 ? (byte)(firstVisibleSlot - 8) : GameplayState::kInventoryFirstSlot;
+	firstVisibleSlot = firstVisibleSlot > 8 ? (byte)(firstVisibleSlot - 8) : (byte)GameplayState::kInventoryFirstSlot;
 	gameState.inventoryPanelDirty = true;
 	return true;
 }
