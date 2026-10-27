@@ -60,7 +60,6 @@ MODULE_OBJS := \
 	scaler/thumbnail_intern.o \
 	screen.o \
 	scaler/normal.o \
-	sjis.o \
 	surface.o \
 	svg.o \
 	transform_struct.o \
@@ -90,6 +89,10 @@ MODULE_OBJS += \
 	mactoolbox/utils.o
 endif
 
+ifdef USE_SJIS
+MODULE_OBJS += \
+	sjis.o
+endif
 
 ifdef USE_MFC
 MODULE_OBJS += \

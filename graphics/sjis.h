@@ -19,17 +19,9 @@
  *
  */
 
-// The code in this file is currently used in BCB, KYRA, SCI, SCUMM,
-// SAGA, and AGOS. If none of those are enabled, we will skip compiling it.
-// We also enable this code for ScummVM builds including support
-// for dynamic engine plugins.
-// If you plan to use this code in another engine, you will have
-// to add the proper define check here.
-#if !(defined(ENABLE_BCB) || defined(ENABLE_KYRA) || defined(ENABLE_SCI) || defined(ENABLE_SCUMM) || defined(ENABLE_SAGA) || defined(ENABLE_AGOS) || defined(DYNAMIC_MODULES))
+#include "common/scummsys.h"
 
-// If neither of the above mentioned is enabled, do not include the SJIS code.
-
-#else
+#ifdef USE_SJIS
 
 #ifndef GRAPHICS_SJIS_H
 #define GRAPHICS_SJIS_H
@@ -330,4 +322,4 @@ private:
 
 #endif
 
-#endif // engine and dynamic plugins guard
+#endif // USE_SJIS

@@ -173,6 +173,7 @@ _osxdockplugin=auto
 _jpeg=auto
 _png=auto
 _gif=auto
+_sjis=auto
 _theoradec=auto
 _vpx=auto
 _faad=auto
@@ -364,6 +365,7 @@ add_component mpeg2 "mpeg2" "_mpeg2" "USE_MPEG2"
 add_component msmpeg4 "Microsoft MPEG-4 v3" "_msmpeg4" "USE_MSMPEG4"
 add_component qdm2 "QDM2" "_qdm2" "USE_QDM2"
 add_component sid_audio "SID audio" "_sid_audio" "USE_SID_AUDIO"
+add_component sjis "SJIS" "_sjis" "USE_SJIS"
 add_component svq1 "Sorenson Video 1" "_svq1" "USE_SVQ1"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
 add_component truemotion1 "TrueMotion 1" "_truemotion1" "USE_TRUEMOTION1"
@@ -1351,8 +1353,8 @@ for ac_option in $@; do
 	--disable-mikmod)             _libmikmod=no          ;;
 	--enable-openmpt)             _libopenmpt=yes        ;;
 	--disable-openmpt)            _libopenmpt=no         ;;
-	--enable-mpcdec)              _libmpcdec=yes        ;;
-	--disable-mpcdec)             _libmpcdec=no         ;;
+	--enable-mpcdec)              _libmpcdec=yes         ;;
+	--disable-mpcdec)             _libmpcdec=no          ;;
 	--enable-a52)                 _a52=yes               ;;
 	--disable-a52)                _a52=no                ;;
 	--disable-jpeg)               _jpeg=no               ;;
@@ -1361,6 +1363,8 @@ for ac_option in $@; do
 	--enable-png)                 _png=yes               ;;
 	--disable-gif)                _gif=no                ;;
 	--enable-gif)                 _gif=yes               ;;
+	--disable-sjis)               _sjis=no               ;;
+	--enable-sjis)                _sjis=yes              ;;
 	--disable-theoradec)          _theoradec=no          ;;
 	--enable-theoradec)           _theoradec=yes         ;;
 	--disable-vpx)                _vpx=no                ;;

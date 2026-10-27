@@ -22,8 +22,6 @@
 #include "common/scummsys.h"
 #include "graphics/sjis.h"
 
-#ifdef GRAPHICS_SJIS_H
-
 #include "common/debug.h"
 #include "common/archive.h"
 #include "common/endian.h"
@@ -549,7 +547,7 @@ const uint8 *FontPC98::getCharData(uint16 ch) const {
 		hiblock = hi - 0x81 - 0x40;
 	else
 		return nullptr;
-	
+
 	uint glyph = hiblock * 192;
 
 	if (lo >= 0x3f && lo <= 0x7e)
@@ -808,5 +806,3 @@ void FontSjisSVM::mapKANJIChar(const uint8 fB, const uint8 sB, int &base, int &i
 }
 
 } // End of namespace Graphics
-
-#endif // defined(GRAPHICS_SJIS_H)
