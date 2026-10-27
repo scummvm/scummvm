@@ -1467,14 +1467,14 @@ int Animator_SCD::anim_36(AnimObject &a, const uint8 *data) {
 
 int Animator_SCD::anim_fadeOut(AnimObject &a, const uint8 *data) {
 	static const uint8 cmd[] = { 0x25, 0x00 };
-	ResourcePointer r(cmd, sizeof(cmd), 0);
+	ResourcePointer r(cmd, sizeof(cmd), 0, 0);
 	enqueueDrawCommands(r);
 	return 1;
 }
 
 int Animator_SCD::anim_fadeIn(AnimObject &a, const uint8 *data) {
 	static const uint8 cmd[] = { 0xA4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x20 };
-	ResourcePointer r(cmd, sizeof(cmd), 0);
+	ResourcePointer r(cmd, sizeof(cmd), 0, 0);
 	enqueueDrawCommands(r);
 	return 1;
 }

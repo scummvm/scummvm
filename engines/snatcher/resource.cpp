@@ -19,6 +19,8 @@
 *
 */
 
+
+#include "snatcher/mem_mapping.h"
 #include "snatcher/resource.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/scene.h"
@@ -101,7 +103,7 @@ const char *FIO::_resFileList[97] = {
 
 const int FIO::_resFileListSize = ARRAYSIZE(_resFileList);
 
-ResourcePointer::ResourcePointer() : _dataStart(nullptr), _dataSize(0), _writeableDataStart(nullptr), _offset(0), _moduleLocation(0x28000), _ownBuffer(false) {}
+ResourcePointer::ResourcePointer() : _dataStart(nullptr), _dataSize(0), _writeableDataStart(nullptr), _offset(0), _moduleLocation(MemMapping::MEM_MODULE_LOCATION), _ownBuffer(false) {}
 
 ResourcePointer::ResourcePointer(const uint8 *data, uint32 dataSize, uint32 offs, uint32 loc, bool assignBufferOwnership) : _dataStart(data), _dataSize(dataSize), _writeableDataStart(nullptr), _offset(offs), _moduleLocation(loc), _ownBuffer(assignBufferOwnership) {
 	if (_offset >= _moduleLocation)
@@ -251,7 +253,7 @@ void ResourcePointer::operator=(ResourcePointer &&ptr) noexcept {
 }
 
 uint8 ResourcePointer::operator[](int index) const {
-	assert(_offset + index < _dataSize);
+	checkOffset(index, __FUNCTION__);
 	return _dataStart[_offset + index];
 }
 
@@ -284,7 +286,7 @@ SceneModule::~SceneModule() {
 }
 
 ResourcePointer SceneModule::getPtr(int offset) const {
-	return ResourcePointer(_data, _dataSize, offset);
+	return ResourcePointer(_data, _dataSize, offset, MemMapping::MEM_MODULE_LOCATION);
 }
 
 ResourcePointer SceneModule::getGfxData() const {
