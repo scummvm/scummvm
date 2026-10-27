@@ -67,7 +67,7 @@ void initializeDemoGameState(GameplayState &state) {
 }
 
 bool isImplementedIntroSceneNumber(int sceneNumber) {
-	return sceneNumber == 9000 || sceneNumber == 9010 || sceneNumber == 9030 || sceneNumber == 9050 ||
+	return sceneNumber == 9000 || sceneNumber == 9010 || sceneNumber == 9050 ||
 		sceneNumber == 9100 || sceneNumber == 9110 || sceneNumber == 9120;
 }
 
@@ -237,7 +237,11 @@ Common::Error HollywoodEngine::run() {
 		debugC(1, kDebugGeneral, "Loaded startup save slot %d", startupLoadSlot);
 	}
 
-	const int bootParam = startupLoad ? 0 : ConfMan.getInt("boot_param");
+	int bootParam = startupLoad ? 0 : ConfMan.getInt("boot_param");
+	if (bootParam == 9030) {
+		warning("Scene 9030 requires the preceding scene; starting from scene 9010 instead");
+		bootParam = 9010;
+	}
 	if (!startupLoad && isDemo() && getLanguage() == Common::ES_ESP &&
 			(bootParam == 255 || bootParam == 9001)) {
 		return playSpanishDemoEnding(this, bootParam == 9001) ?
@@ -274,10 +278,6 @@ Common::Error HollywoodEngine::run() {
 				if (!scene9030.play())
 					return Common::kReadingFailed;
 			}
-		} else if (shouldRunSceneForBootParam(bootParam, 9030, bootSceneReached)) {
-			Scene9030 scene9030(this);
-			if (!scene9030.play())
-				return Common::kReadingFailed;
 		}
 
 		if (shouldRunSceneForBootParam(bootParam, 9100, bootSceneReached)) {
