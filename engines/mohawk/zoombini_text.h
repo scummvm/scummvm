@@ -773,6 +773,8 @@ private:
 	static const ExeTextEntry kV10IT_NETextEntries[];
 	/** v1.0JP PE32 default-game name and name-mode notifications. */
 	static const ExeTextEntry kV10JP_PETextEntries[];
+	/** Japanese Windows v1.0 demo default-game name and name-mode notifications. */
+	static const ExeTextEntry kV10JPDemo_PETextEntries[];
 	/** Japanese Macintosh v1.0 demo strings in the original MacBinary executable. */
 	static const ExeTextEntry kV10JPMacDemoTextEntries[];
 	/** v1.0PT PE32 Key-address-size map. */

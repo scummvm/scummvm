@@ -355,12 +355,31 @@ void ZoombiniShelterPicker::pickerUI_drawGroup(const Common::Array<ZmbHotspot> &
 	}
 }
 
+void ZoombiniShelterPicker::pickerUI_drawPreview() {
+	// @ref Mohawk::ZoombiniShelterPicker::pickerUI_drawGroup follows hotspot array order,
+	// which would put feet over the body and facial features over the hair.
+	// Draw the preview separately to keep feet behind the body and hair in front of the face.
+	static constexpr ZoombiniPreviewIndex kDrawOrder[] = {
+		kHotspotPreviewFeet,
+		kHotspotPreviewBody,
+		kHotspotPreviewEye,
+		kHotspotPreviewNose,
+		kHotspotPreviewHair,
+	};
+	for (uint32 i = 0; i < ARRAYSIZE(kDrawOrder); i++) {
+		const ZmbHotspot &hs = _previewHotspots[kDrawOrder[i]];
+		if (hs._shapeIdx <= ZmbHotspot::kShapeNone)
+			continue;
+		_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, ZmbResource(ZmbResource::kPage, kResBitmapShapes4300_ZoombiniPreview), &hs);
+	}
+}
+
 ZmbRenderResult ZoombiniShelterPicker::pickerUI_onRender(ZmbFeature *feature) {
 	(void)feature;
 
 	// Draw order follows the original's post-render callback: right panel first, matrix on top.
 	pickerUI_drawGroup(_buttonHotspots, ZmbResource(ZmbResource::kPage, kResBitmapShapes4200_Buttons));
-	pickerUI_drawGroup(_previewHotspots, ZmbResource(ZmbResource::kPage, kResBitmapShapes4300_ZoombiniPreview));
+	pickerUI_drawPreview();
 	pickerUI_drawGroup(_goMapHotspots, ZmbResource(ZmbResource::kPage, kResBitmapShapes4200_Buttons));
 	pickerUI_drawGroup(_helpHotspots, ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap0001_Dialog));
 	pickerUI_drawGroup(_matrixHotspots, ZmbResource(ZmbResource::kPage, kResBitmapShapes4400_PickerMatrix));
