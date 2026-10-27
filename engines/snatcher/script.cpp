@@ -136,7 +136,7 @@ void CmdQueue::m_end(const uint16 *&data) {
 void CmdQueue::m_initAnimations(const uint16 *&data) {
 	uint32 addr = *reinterpret_cast<const uint32*>(data);
 	data += 2;
-	ResourcePointer in = (addr >= 0x28000 ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
+	ResourcePointer in = (addr >= MemMapping::MEM_MODULE_LOCATION ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
 	uint16 len = 0;
 	const uint8 *s = in();
 	int dbgTimeout = 0;
@@ -172,7 +172,7 @@ void CmdQueue::m_animPauseAll(const uint16 *&data) {
 void CmdQueue::m_drawCommands(const uint16 *&data) {
 	uint32 addr = *reinterpret_cast<const uint32*>(data);
 	data += 2;
-	_vm->gfx()->enqueueDrawCommands(addr >= 0x28000 ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
+	_vm->gfx()->enqueueDrawCommands(addr >= MemMapping::MEM_MODULE_LOCATION ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
 	_progress = -1;
 }
 
@@ -186,7 +186,7 @@ void CmdQueue::m_printText(const uint16 *&data) {
 		return;
 	uint32 addr = *reinterpret_cast<const uint32*>(data);
 	data += 2;
-	_vm->gfx()->printText(addr >= 0x28000 ? _vm->_module->getPtr(addr)() : _vm->_scd->makePtr(addr)());
+	_vm->gfx()->printText(addr >= MemMapping::MEM_MODULE_LOCATION ? _vm->_module->getPtr(addr)() : _vm->_scd->makePtr(addr)());
 	_progress = -1;
 }
 
@@ -332,12 +332,12 @@ void CmdQueue::m_loadResource(const uint16 *&data) {
 		uint16 index = *data++;
 		++_progress;
 
-		if (dest == 0x1A800) {
+		if (dest == MemMapping::MEM_SCRIPT_LOCATION) {
 			delete[] _state->script.data;
 			_state->script.data = _vm->_fio->fileData(index, &_state->script.dataSize);
 			assert(_state->script.data);
 			_vm->_ui->setScriptTextResource(_state->script.getTextResource());
-		} else if (dest == 0x28000) {
+		} else if (dest == MemMapping::MEM_MODULE_LOCATION) {
 			delete _vm->_module;
 			_vm->_module = _vm->_fio->loadModule(index);
 			assert(_vm->_module);
@@ -456,7 +456,7 @@ void CmdQueue::m_waitForStartButton(const uint16 *&data) {
 
 void CmdQueue::m_palOps(const uint16 *&data) {
 	uint32 addr = *reinterpret_cast<const uint32*>(data);
-	_vm->gfx()->enqueuePaletteEvent(addr >= 0x28000 ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
+	_vm->gfx()->enqueuePaletteEvent(addr >= MemMapping::MEM_MODULE_LOCATION ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
 	data += 2;
 	_progress = -1;
 }
@@ -858,7 +858,7 @@ bool ScriptEngine::setArrayLastEntry(uint16 arrNo, uint16 val) {
 }
 
 uint8 ScriptEngine::getOpcode(int offset) const {
-	if (offset >= _script->dataSize)
+	if ((uint)offset >= _script->dataSize)
 		error("%s(): Offset %d is out of bounds (data size %d)", __FUNCTION__, offset, _script->dataSize);
 	uint8 op = _script->data[offset];
 	if (op >= _opcodes.size())
@@ -867,7 +867,7 @@ uint8 ScriptEngine::getOpcode(int offset) const {
 }
 
 uint16 ScriptEngine::safeReadUINT16(uint16 pos, const char *caller) const {
-	if (pos + 2 > _script->dataSize)
+	if ((uint)pos + 2 > _script->dataSize)
 		error("%s(): Offset %d is out of bounds (data size %d)", caller, pos, _script->dataSize);
 	return READ_BE_UINT16(_script->data + pos);
 }
@@ -1054,7 +1054,7 @@ void ScriptEngine::o_runSubScript() {
 	if (m != 5) {
 		uint16 no = safeReadUINT16(_pos2 + 1, __FUNCTION__);
 		_que->writeUInt16(0x11);
-		_que->writeUInt32(0x1A800);
+		_que->writeUInt32(MemMapping::MEM_SCRIPT_LOCATION);
 		_que->writeUInt16(no);
 		_script->curFileNo = no;
 		_pos2 += 3;
@@ -1265,7 +1265,7 @@ void ScriptEngine::o_break() {
 		if (_script->curFileNo != num) {
 			_script->curFileNo = num;
 			_que->writeUInt16(0x11);
-			_que->writeUInt32(0x1A800);
+			_que->writeUInt32(MemMapping::MEM_SCRIPT_LOCATION);
 			_que->writeUInt16(num);
 		}
 	}
@@ -1381,7 +1381,7 @@ void ScriptEngine::o_returnFromSubScript() {
 	if (_script->curFileNo == res)
 		return;
 	_que->writeUInt16(0x11);
-	_que->writeUInt32(0x1A800);
+	_que->writeUInt32(MemMapping::MEM_SCRIPT_LOCATION);
 	_que->writeUInt16(res);
 	_script->curFileNo = res;
 }
@@ -1419,7 +1419,7 @@ void ScriptEngine::o_loadModuleAndStartGfx() {
 
 	if ((_script->curGfxScript >> 8) != (num >> 8)) {
 		_que->writeUInt16(0x11);
-		_que->writeUInt32(0x28000);
+		_que->writeUInt32(MemMapping::MEM_MODULE_LOCATION);
 		_que->writeUInt16(num >> 8);
 	}
 

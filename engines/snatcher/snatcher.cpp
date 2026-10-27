@@ -54,6 +54,7 @@ SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(s
 	_scriptEngine(nullptr), _cmdQueue(nullptr), _aseq(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(), _saveMan(nullptr), _reset(0),
 		_updateGameSettings(false), _memHandler(nullptr), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
 	assert(system);
+	MemMapping::initMapping(_game.usePALTiming ? 1 : 0);
 }
 
 SnatcherEngine::~SnatcherEngine() {
@@ -104,11 +105,9 @@ bool SnatcherEngine::initResource() {
 	uint8 *data = _fio->fileData(96, &size);
 	if (!data)
 		return false;
-	_scd = new ResourcePointer(data, size, 0, 0xD400, true);
+	_scd = new ResourcePointer(data, size, 0, MemMapping::MEM_SUBCODE_LOCATION, true);
 	if (!_scd)
 		return false;
-
-	MemMapping::initMapping(_game.usePALTiming ? 1 : 0);
 
 	return true;
 }
@@ -474,7 +473,7 @@ void SnatcherEngine::updateMainState(GameState &state) {
 	case 1:
 		// Init first scene or load savegame
 		_cmdQueue->writeUInt16(0x11);
-		_cmdQueue->writeUInt32(0x1A800);
+		_cmdQueue->writeUInt32(MemMapping::MEM_SCRIPT_LOCATION);
 		if (state.menuSelect == 0)
 			state.script.curFileNo = 0x3F; // First scene
 		_cmdQueue->writeUInt16(state.script.curFileNo);
@@ -482,7 +481,7 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		if (state.menuSelect != 0) {
 			// Restore saved state
 			_cmdQueue->writeUInt16(0x11);
-			_cmdQueue->writeUInt32(0x28000);
+			_cmdQueue->writeUInt32(MemMapping::MEM_MODULE_LOCATION);
 			_cmdQueue->writeUInt16(state.script.curGfxScript >> 8);
 			if (_snd->pcmGetStatus().resourceId2 != -1) {
 				_cmdQueue->writeUInt16(0x0D);

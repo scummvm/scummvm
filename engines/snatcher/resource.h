@@ -51,8 +51,8 @@ protected:
 class ResourcePointer {
 public:
 	ResourcePointer();
-	explicit ResourcePointer(const uint8 *data, uint32 dataSize,uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false);
-	explicit ResourcePointer(uint8 *data, uint32 dataSize, uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false);
+	explicit ResourcePointer(const uint8 *data, uint32 dataSize, uint32 offs, uint32 loc, bool assignBufferOwnership = false);
+	explicit ResourcePointer(uint8 *data, uint32 dataSize, uint32 offs, uint32 loc, bool assignBufferOwnership = false);
 	ResourcePointer(const ResourcePointer &ptr);
 	ResourcePointer(ResourcePointer &&ptr) noexcept;
 	~ResourcePointer();

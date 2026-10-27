@@ -79,6 +79,10 @@ uint32 MEM_RAWDATA_04                	=	0;
 uint32 MEM_RAWDATA_05                	=	0;
 uint32 MEM_RAWDATA_06                	=	0;
 
+uint32 MEM_MODULE_LOCATION				=	0;
+uint32 MEM_SCRIPT_LOCATION				=	0;
+uint32 MEM_SUBCODE_LOCATION				=	0;
+
 void initMapping(int mappingNum) {
 	MEM_GFXDATA_00                	=	0x0ECB6;
 	MEM_RAWDATA_00                	=	0x100D8;
@@ -133,6 +137,10 @@ void initMapping(int mappingNum) {
 	MEM_RAWDATA_04                	=	0x14B7C;
 	MEM_RAWDATA_05                	=	0x14EAC;
 	MEM_RAWDATA_06                	=	0x16CDC;
+
+	MEM_MODULE_LOCATION				=	0x28000;
+	MEM_SCRIPT_LOCATION				=	0x1A800;
+	MEM_SUBCODE_LOCATION			=	0xD400;
 
 	if (mappingNum == 1)
 		MEM_RAWDATA_06              =	0x16CEC;
