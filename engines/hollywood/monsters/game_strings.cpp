@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "hollywood/monsters/game_strings.h"
 
 namespace Hollywood {
@@ -99,11 +101,62 @@ const HollywoodGameStrings kItalianGameStrings = {
 		"Crepa", "Capanno", "Scale", "Cascata", "Ascensore" }
 };
 
-const HollywoodGameStrings &getGameStrings(Common::Language language) {
-	if (language == Common::IT_ITA)
-		return kItalianGameStrings;
+const HollywoodGameStrings kEnglishGameStrings = {
+	{ " to", "Walk to", "Talk with", "Take", "Look at", "Use", "Open", "Close", "Give" },
+	{ "", "", "Talk", "Take", "Look", "Use", "Open", "Close", "Give" },
+	" to",
+	" with",
+	"Inventory",
 
-	return kSpanishGameStrings;
+	"Save",
+	"Load",
+	"Quit",
+	"Play",
+	"Music ON",
+	"Music OFF",
+	"SFX ON",
+	"SFX OFF",
+	"Test ON",
+	"Test OFF",
+	"Music volume",
+	"SFX volume",
+	"Speech volume",
+	"Text speed",
+	"Text",
+	"Speech",
+	"Both",
+	"Are you sure?",
+	"Y",
+	"N",
+
+	" passage",
+	" wide coffin",
+	" records",
+	" Change drink",
+	" Open tap",
+	" Stop making cocktails",
+	{ "Damaged tunnel", "Camp", "Miner", "Overturned cart",
+		"Crack", "Hut", "Stairs", "Waterfall", "Elevator" }
+};
+
+const HollywoodGameStrings &getGameStrings(Common::Language language) {
+	if (ConfMan.hasKey("language")) {
+		const Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
+		if (selectedLanguage == Common::EN_ANY || selectedLanguage == Common::EN_GRB ||
+				selectedLanguage == Common::EN_USA)
+			language = selectedLanguage;
+	}
+
+	switch (language) {
+	case Common::EN_ANY:
+	case Common::EN_GRB:
+	case Common::EN_USA:
+		return kEnglishGameStrings;
+	case Common::IT_ITA:
+		return kItalianGameStrings;
+	default:
+		return kSpanishGameStrings;
+	}
 }
 
 } // End of namespace Hollywood

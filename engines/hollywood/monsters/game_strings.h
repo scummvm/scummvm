@@ -33,9 +33,9 @@ enum {
 /**
  * In-game text not supplied by RESOURCE.003, including localized executable strings.
  *
- * These strings follow the detected game language. ScummVM's translation
- * manager is reserved for launcher and engine UI that is independent of the
- * selected game release.
+ * These strings follow the detected game language unless English is explicitly
+ * selected for a fan translation. ScummVM's translation manager is reserved for
+ * launcher and engine UI that is independent of the selected game release.
  */
 struct HollywoodGameStrings {
 	const char *actionCaptions[kGameActionCaptionCount];
