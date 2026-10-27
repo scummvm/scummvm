@@ -24,6 +24,7 @@
 
 #include "graphics/views/events.h"
 #include "ultima/ultima1/views/interactions/dead.h"
+#include "ultima/ultima1/views/interactions/direction.h"
 #include "ultima/ultima1/views/interactions/drop.h"
 #include "ultima/ultima1/views/interactions/entering_craft.h"
 #include "ultima/ultima1/views/interactions/king.h"
@@ -57,6 +58,7 @@ namespace Views {
 
 struct Views {
 	Interactions::Dead _dead;
+	Interactions::Direction _direction;
 	Interactions::Drop _drop;
 	Interactions::EnteringCraft _enteringCraft;
 	Interactions::King _king;

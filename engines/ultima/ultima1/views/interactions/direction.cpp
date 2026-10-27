@@ -30,11 +30,19 @@ namespace Views {
 namespace Interactions {
 
 bool Direction::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);	// Need for direction keybindings
 	showCursor();
 	return true;
 }
 
+bool Direction::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	return Interaction::msgUnfocus(msg);
+}
+
 bool Direction::msgAction(const ActionMessage &msg) {
+	close();
+
 	switch (msg._action) {
 	case KEYBIND_UP:
 	case KEYBIND_ATTACK_UP:

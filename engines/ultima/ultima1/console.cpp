@@ -157,6 +157,9 @@ bool Console::cmdInventory(int argc, const char **argv) {
 	sg._redGems = sg._greenGems = sg._blueGem = sg._whiteGem = 1;
 	sg._hits = sg._food = sg._coins = 9999;
 
+	if (_G(map)._mapType == Data::MAPTYPE_CASTLE)
+		sg._hasCastleKey = 1;
+
 	sg._equippedWeapon = Data::WEAPON_BLASTER;
 	sg._equippedArmor = Data::ARMOR_REFLECT_SUIT;
 	sg._equippedSpell = Data::SPELL_KILL;

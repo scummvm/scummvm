@@ -223,6 +223,7 @@ void CityCastleLogic::attackPerson(Data::Direction dir, int maxDistance, int str
 
 	if (!hit) {
 		writeString("Missed!\n");
+		endOfTurn();
 		return;
 	}
 
@@ -284,6 +285,8 @@ void CityCastleLogic::attackPerson(Data::Direction dir, int maxDistance, int str
 
 		writeString("%d damage!\n", strike);
 	}
+
+	endOfTurn();
 }
 
 bool CityCastleLogic::drop() {
@@ -680,13 +683,6 @@ CastleLogic::CastleLogic() {
 	_G(map)._mapStyle = (_G(savegame)._mapNum - 1) % 2;
 	_G(map)._castleNum2 = _G(map)._castleNum + 1;
 	_G(map)._mapType = Data::MAPTYPE_CASTLE;
-
-	_G(savegame)._guardsHostile = 0;
-	_G(savegame)._hasCastleKey = 0;
-	_G(savegame)._freeingPrincess = 0;
-	_G(savegame)._castleItemAllowance = 0;
-
-	_G(savegame)._castleKeyVal = getRandomNumber(1) == 1 ? 61 : 60;
 }
 
 bool CastleLogic::transact() {
@@ -748,6 +744,12 @@ bool CastleLogic::unlock() {
 void CastleLogic::entering() {
 	_G(savegame)._locationPosition = Common::Point(0, 9);
 	CityCastleLogic::entering();
+
+	_G(savegame)._guardsHostile = 0;
+	_G(savegame)._hasCastleKey = 0;
+	_G(savegame)._freeingPrincess = 0;
+	_G(savegame)._castleItemAllowance = 0;
+	_G(savegame)._castleKeyVal = getRandomNumber(1) == 1 ? 61 : 60;
 
 	// The two castle map styles are vertical mirrors of each other, so
 	// the row these two cells sit on differs between them

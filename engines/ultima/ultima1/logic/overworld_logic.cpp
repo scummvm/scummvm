@@ -732,6 +732,7 @@ void OverworldLogic::damage(Data::Direction dir, int effectNum, int maxDistance,
 	if (tile < Data::TILE_FIRST_MONSTER) {
 		// Ran out of range, or blocked by mountains, without finding a monster
 		writeString("Miss!\n");
+		endOfTurn();
 		return;
 	}
 
@@ -740,6 +741,7 @@ void OverworldLogic::damage(Data::Direction dir, int effectNum, int maxDistance,
 
 	if (getRandomNumber(1, 100) > hitChance) {
 		writeString("Missed the %s!\n", monsterName);
+		endOfTurn();
 		return;
 	}
 
@@ -749,6 +751,7 @@ void OverworldLogic::damage(Data::Direction dir, int effectNum, int maxDistance,
 		// Shouldn't normally happen - the scan found a monster tile with no
 		// matching entity there
 		writeString("Miss!\n");
+		endOfTurn();
 		return;
 	}
 
@@ -774,6 +777,8 @@ void OverworldLogic::damage(Data::Direction dir, int effectNum, int maxDistance,
 		giveCoins(coins);
 		redrawStats();
 	}
+
+	endOfTurn();
 }
 
 void OverworldLogic::castSpellAttack(Data::Direction dir) {

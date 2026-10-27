@@ -88,6 +88,8 @@ void Logic::endOfTurn() {
 
 	if (_G(savegame)._hits <= 0)
 		g_engine->addView("Dead");
+	else
+		prompt();
 }
 
 void Logic::action(int action) {
@@ -193,9 +195,6 @@ void Logic::action(int action) {
 		// still in the same map we started on
 		if (_G(logic) == currLogic)
 			endOfTurn();
-
-		if (_G(savegame)._hits > 0)
-			prompt();
 	}
 }
 
@@ -374,6 +373,7 @@ bool Logic::pass() {
 void Logic::combat(Data::Direction direction, int effect) {
 	if (direction == Data::DIR_UNSPECIFIED) {
 		writeString("nothing\n");
+		prompt();
 	} else {
 		writeString("%s\n", Data::DIRECTION_NAMES[direction]);
 		combatDir(direction, effect);
@@ -407,6 +407,8 @@ DirectionLogic::DirectionLogic(Mode mode) : _mode(mode) {
 
 void DirectionLogic::action(int action) {
 	Data::Direction dir;
+	Common::SharedPtr<Logic> old = _oldLogic;
+	Mode mode = _mode;
 
 	switch (action) {
 	case KEYBIND_UP:
@@ -426,18 +428,20 @@ void DirectionLogic::action(int action) {
 		break;
 	}
 
-	_G(logic) = _oldLogic;
+	// Restore the old logic handler. This will remove the only reference to this,
+	// which will delete it. So after this line, 'this' will no longer be valid
+	_G(logic) = old;
 
-	switch (_mode) {
+	switch (mode) {
 	case SPELL:
-		_oldLogic->castSpellAttack(dir);
+		old->castSpellAttack(dir);
 		break;
 	case WEAPON:
-		_oldLogic->combat(dir, 7);
+		old->combat(dir, 7);
 		break;
 	case FIRE:
 	default:
-		_oldLogic->combat(dir, 8);
+		old->combat(dir, 8);
 		break;
 	}
 }
