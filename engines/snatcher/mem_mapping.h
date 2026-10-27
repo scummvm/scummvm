@@ -82,6 +82,10 @@ extern uint32 MEM_RAWDATA_04;
 extern uint32 MEM_RAWDATA_05;
 extern uint32 MEM_RAWDATA_06;
 
+extern uint32 MEM_MODULE_LOCATION;
+extern uint32 MEM_SCRIPT_LOCATION;
+extern uint32 MEM_SUBCODE_LOCATION;
+
 extern void initMapping(int mappingNum);
 
 } // End of namespace MemMapping
