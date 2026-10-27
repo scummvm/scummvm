@@ -37,6 +37,10 @@ private:
 	bool cmdCoins(int argc, const char **argv);
 	bool cmdFuel(int argc, const char **argv);
 	bool cmdSpace(int argc, const char **argv);
+	bool cmdInventory(int argc, const char **argv);
+	bool cmdTeleport(int argc, const char **argv);
+	bool cmdLocations(int argc, const char **argv);
+	bool cmdEnemy(int argc, const char **argv);
 
 public:
 	Console();
