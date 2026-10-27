@@ -22,6 +22,7 @@
 
 #include "snatcher/snatcher.h"
 #include "snatcher/graphics.h"
+#include "snatcher/mem_mapping.h"
 #include "snatcher/sound.h"
 #include "snatcher/resource.h"
 #include "snatcher/scene_imp.h"
@@ -92,7 +93,7 @@ SH_IMP_CTOR(D1) {
 	SH_CTOR_MAKEPROCS(D1);
 
 	uint32 *t = new uint32[29];
-	const uint8 *in = _module->getPtr(0x2929A)();
+	const uint8 *in = _module->getPtr(MemMapping::MEM_TIMERDATA_01)();
 	for (int i = 0; i < 29; ++i) {
 		t[i] = READ_BE_UINT32(in);
 		in += 6;
@@ -134,7 +135,7 @@ SH_IMPL_FRM(D1, 00) {
 }
 
 SH_IMPL_FRM(D1, 01) {
-	_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x2942C));
+	_vm->gfx()->enqueuePaletteEvent(_module->getPtr(MemMapping::MEM_PALDATA_31));
 }
 
 SH_IMPL_FRM(D1, 02) {
@@ -200,7 +201,7 @@ SH_IMPL_FRM(D1, 21) {
 }
 
 SH_IMPL_FRM(D1, 22) {
-	_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x2943A));
+	_vm->gfx()->enqueuePaletteEvent(_module->getPtr(MemMapping::MEM_PALDATA_30));
 }
 
 SH_IMPL_FRM(D1, 23) {
