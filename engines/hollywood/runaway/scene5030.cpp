@@ -370,7 +370,7 @@ void RunawayScene5030::walkTo(Common::Point target) {
 
 void RunawayScene5030::say(uint16 row) {
 	stopSpeech();
-	if (row < 500 || row - 500 >= _voiceSamples.size())
+	if (row < 500 || row - 500U >= _voiceSamples.size())
 		return;
 	_globalSpeech = false;
 	_speechRow = row;

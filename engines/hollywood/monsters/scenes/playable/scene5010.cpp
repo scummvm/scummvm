@@ -567,7 +567,7 @@ void Scene5010::drawSwitchPanelOverlay() {
 	byte *pixels = framebufferPixels(_sceneFramebuffer);
 	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
 		const uint rowOffset = y * HollywoodEngine::kSceneBufferWidth;
-		for (uint x = _viewportXOffset; x < _viewportXOffset + HollywoodEngine::kScreenWidth; ++x) {
+		for (uint x = _viewportXOffset; x < (uint)_viewportXOffset + HollywoodEngine::kScreenWidth; ++x) {
 			const uint offset = rowOffset + x;
 			pixels[offset] = _presentationPaletteRemapTable[pixels[offset]];
 		}

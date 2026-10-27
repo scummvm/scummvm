@@ -473,7 +473,7 @@ void GameplayPanelArt::copySceneCaptionBand(Graphics::Surface &surface,
 		const uint sceneY = viewportYOffset + screenY + row;
 		if (sceneY >= HollywoodEngine::kSceneBufferHeight ||
 				sceneY >= (uint)sceneComposite.h ||
-				viewportXOffset + HollywoodEngine::kScreenWidth > (uint)sceneComposite.w ||
+				(uint)viewportXOffset + HollywoodEngine::kScreenWidth > (uint)sceneComposite.w ||
 				screenY + row >= (uint)surface.h)
 			continue;
 

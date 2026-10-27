@@ -154,7 +154,7 @@ bool MusicPlayer::isPlaying() const {
 }
 
 bool MusicPlayer::readCueSpan(const Common::Path &fileName, uint16 cueId, uint32 &start, uint32 &size) const {
-	if ((cueId + 1) * 4 >= kMusicCueTableSize) {
+	if ((cueId + 1U) * 4 >= kMusicCueTableSize) {
 		warning("Invalid %s cue id %u", fileName.toString().c_str(), cueId);
 		return false;
 	}
@@ -258,7 +258,7 @@ bool SpeechPlayer::isPlaying() const {
 }
 
 bool SpeechPlayer::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const {
-	if ((sampleId + 1) * 4 >= kSpeechCueTableSize) {
+	if ((sampleId + 1U) * 4 >= kSpeechCueTableSize) {
 		warning("Invalid %s sample id %u", kSpeechArchiveName, sampleId);
 		return false;
 	}
@@ -356,7 +356,7 @@ bool SoundBank0Player::isPlaying() const {
 }
 
 bool SoundBank0Player::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const {
-	if ((sampleId + 1) * 4 >= kSoundBank0CueTableSize) {
+	if ((sampleId + 1U) * 4 >= kSoundBank0CueTableSize) {
 		warning("Invalid %s sample id %u", _archiveName.toString().c_str(), sampleId);
 		return false;
 	}

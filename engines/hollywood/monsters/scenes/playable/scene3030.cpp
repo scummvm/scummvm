@@ -335,7 +335,7 @@ void Scene3030::runMachineActivationSequence() {
 	bool actionReleased = false;
 	// Ron holds frame 15 until the machine effect reaches frame 5.
 	while ((actionFrame + 1 < ARRAYSIZE(kScene3030MachineActionFrameMap) ||
-			effectFrame + 1 < kScene3030MachineEffectDescriptorCount) &&
+			effectFrame + 1U < kScene3030MachineEffectDescriptorCount) &&
 			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (actionFrame + 1 < ARRAYSIZE(kScene3030MachineActionFrameMap) &&
 				(actionFrame < 15 || actionReleased)) {
@@ -349,7 +349,7 @@ void Scene3030::runMachineActivationSequence() {
 			}
 		}
 
-		if (effectStarted && effectFrame + 1 < kScene3030MachineEffectDescriptorCount) {
+		if (effectStarted && effectFrame + 1U < kScene3030MachineEffectDescriptorCount) {
 			++effectFrame;
 			_sceneLayers.setVisibleLayerFrame(kScene3030MachineEffectLayer, effectFrame);
 			if (effectFrame == 5) {

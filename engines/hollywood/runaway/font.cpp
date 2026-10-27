@@ -67,7 +67,7 @@ bool RunawayFont::load(bool menuFont) {
 		glyph.height = data[3];
 		glyph.width = data[4];
 		if (glyph.width > 28 || glyph.top + glyph.height > 28 ||
-				glyph.offset + glyph.width * glyph.height > _pixels.size())
+				(uint)glyph.offset + glyph.width * glyph.height > _pixels.size())
 			return false;
 	}
 	memcpy(_glyphMap, kGlyphMap, sizeof(_glyphMap));
