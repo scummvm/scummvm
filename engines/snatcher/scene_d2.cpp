@@ -22,6 +22,7 @@
 
 #include "snatcher/snatcher.h"
 #include "snatcher/graphics.h"
+#include "snatcher/mem_mapping.h"
 #include "snatcher/sound.h"
 #include "snatcher/resource.h"
 #include "snatcher/scene_imp.h"
@@ -115,7 +116,7 @@ SH_IMPL_FRM(D2, 00) {
 		}
 		if (_vm->input().singleFrameControllerFlags & 0x80) {
 			state.counter = 10;
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(MemMapping::MEM_PALDATA_12));
 			++state.frameState;
 		}
 		break;
@@ -162,7 +163,7 @@ SH_IMPL_FRM(D2, 03) {
 SH_IMPL_FRM(D2, 04) {
 	if (--state.counter)
 		return;
-	_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x288E6));
+	_vm->gfx()->enqueuePaletteEvent(_module->getPtr(MemMapping::MEM_PALDATA_10));
 	state.counter = 86;
 	++state.frameNo;
 	state.frameState = 0;
@@ -182,7 +183,7 @@ SH_IMPL_FRM(D2, 06) {
 			++state.frameNo;
 			state.frameState = 0;
 		} else {
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x28944));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(MemMapping::MEM_PALDATA_11));
 			++state.frameState;
 			state.counter = 17;
 		}
@@ -226,7 +227,7 @@ SH_IMPL_FRM(D2, 08) {
 			++state.frameNo;
 			state.frameState = 0;
 		} else {
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x28944));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(MemMapping::MEM_PALDATA_11));
 			state.counter = 17;
 			++state.frameState;
 		}
@@ -412,7 +413,7 @@ SH_IMPL_FRM(D2, 11) {
 			fin = (_option == 4) ? 1 : (_option == 3 ? 3 : 0);
 		if (fin) {
 			_vm->sound()->pcmSendCommand(55 + fin, -1);
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(MemMapping::MEM_PALDATA_12));
 			state.counter = 10;
 			if (fin == 1) {
 				state.frameState = 0;
@@ -445,7 +446,7 @@ SH_IMPL_FRM(D2, 11) {
 		break;
 	case 3:
 		if (_vm->input().singleFrameControllerFlags & 0x80) {
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(MemMapping::MEM_PALDATA_12));
 			state.counter = 10;
 			++state.frameState;
 			_vm->allowLightGunInput(false);
@@ -500,7 +501,7 @@ SH_IMPL_FRM(D2, 11) {
 			if (++_counter2 < 180)
 				return;
 			state.counter = 10;
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(MemMapping::MEM_PALDATA_12));
 			++state.frameState;
 			break;
 		default:
