@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-24 06:24+0000\n"
+"POT-Creation-Date: 2026-10-27 10:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -306,6 +306,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:459 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
+#: engines/scumm/insane/mortimer/dialogs.cpp:69
 msgid "Back"
 msgstr ""
 
@@ -1061,9 +1062,11 @@ msgstr ""
 #: engines/freescape/movement.cpp:36 engines/got/metaengine.cpp:70
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:563 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:1237 engines/supernova/metaengine.cpp:273
-#: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
-#: engines/twp/metaengine.cpp:153 engines/ultima/ultima0/metaengine.cpp:45
+#: engines/scumm/metaengine.cpp:1237
+#: engines/scumm/insane/mortimer/mortimer.cpp:94
+#: engines/supernova/metaengine.cpp:273 engines/twine/metaengine.cpp:430
+#: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:153
+#: engines/ultima/ultima0/metaengine.cpp:45
 #: engines/ultima/ultima4/metaengine.cpp:44
 #: engines/ultima/ultima4/metaengine.cpp:139
 #: engines/ultima/ultima4/metaengine.cpp:149
@@ -1083,9 +1086,11 @@ msgstr ""
 #: engines/freescape/movement.cpp:45 engines/got/metaengine.cpp:71
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:568 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:1204 engines/supernova/metaengine.cpp:279
-#: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
-#: engines/twp/metaengine.cpp:154 engines/ultima/ultima0/metaengine.cpp:46
+#: engines/scumm/metaengine.cpp:1204
+#: engines/scumm/insane/mortimer/mortimer.cpp:94
+#: engines/supernova/metaengine.cpp:279 engines/twine/metaengine.cpp:437
+#: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:154
+#: engines/ultima/ultima0/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:45
 #: engines/ultima/ultima4/metaengine.cpp:140
 #: engines/ultima/ultima4/metaengine.cpp:150
@@ -1105,9 +1110,10 @@ msgstr ""
 #: engines/glk/dialogs.cpp:371 engines/got/metaengine.cpp:72
 #: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
 #: engines/grim/grim.cpp:573 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
-#: engines/scumm/metaengine.cpp:1217 engines/twine/metaengine.cpp:452
-#: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:151
-#: engines/ultima/ultima4/metaengine.cpp:46
+#: engines/scumm/metaengine.cpp:1217
+#: engines/scumm/insane/mortimer/mortimer.cpp:94
+#: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
+#: engines/twp/metaengine.cpp:151 engines/ultima/ultima4/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:141
 #: engines/ultima/ultima4/metaengine.cpp:151
 #: engines/wintermute/keymapper_tables.h:357
@@ -1127,9 +1133,10 @@ msgstr ""
 #: engines/glk/dialogs.cpp:373 engines/got/metaengine.cpp:73
 #: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
 #: engines/grim/grim.cpp:578 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
-#: engines/scumm/metaengine.cpp:1224 engines/twine/metaengine.cpp:444
-#: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:152
-#: engines/ultima/ultima4/metaengine.cpp:47
+#: engines/scumm/metaengine.cpp:1224
+#: engines/scumm/insane/mortimer/mortimer.cpp:94
+#: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
+#: engines/twp/metaengine.cpp:152 engines/ultima/ultima4/metaengine.cpp:47
 #: engines/ultima/ultima4/metaengine.cpp:142
 #: engines/ultima/ultima4/metaengine.cpp:152
 #: engines/wintermute/keymapper_tables.h:363
@@ -2990,12 +2997,12 @@ msgstr ""
 msgid "Error running game:"
 msgstr ""
 
-#: common/engine_data.cpp:277 engines/ultima/shared/engine/data_archive.cpp:88
+#: common/engine_data.cpp:277
 #, c-format
 msgid "Could not locate engine data %s"
 msgstr ""
 
-#: common/engine_data.cpp:295 engines/ultima/shared/engine/data_archive.cpp:106
+#: common/engine_data.cpp:295
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
@@ -3225,13 +3232,14 @@ msgstr ""
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
-#: engines/scumm/scumm.cpp:4538 engines/sludge/keymapper_tables.h:98
-#: engines/sludge/keymapper_tables.h:147 engines/sludge/keymapper_tables.h:226
-#: engines/sludge/keymapper_tables.h:346 engines/sludge/keymapper_tables.h:358
-#: engines/sludge/keymapper_tables.h:419 engines/sludge/keymapper_tables.h:432
-#: engines/sludge/keymapper_tables.h:544 engines/supernova/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:335 engines/titanic/metaengine.cpp:302
-#: engines/ultima/ultima0/metaengine.cpp:48
+#: engines/scumm/scumm.cpp:4538 engines/scumm/insane/mortimer/mortimer.cpp:78
+#: engines/scumm/insane/mortimer/mortimer.cpp:1362
+#: engines/sludge/keymapper_tables.h:98 engines/sludge/keymapper_tables.h:147
+#: engines/sludge/keymapper_tables.h:226 engines/sludge/keymapper_tables.h:346
+#: engines/sludge/keymapper_tables.h:358 engines/sludge/keymapper_tables.h:419
+#: engines/sludge/keymapper_tables.h:432 engines/sludge/keymapper_tables.h:544
+#: engines/supernova/metaengine.cpp:267 engines/tinsel/metaengine.cpp:335
+#: engines/titanic/metaengine.cpp:302 engines/ultima/ultima0/metaengine.cpp:48
 #: engines/ultima/ultima0/metaengine.cpp:71
 #: engines/ultima/ultima0/metaengine.cpp:85
 #: engines/ultima/nuvie/metaengine.cpp:93 engines/zvision/metaengine.cpp:292
@@ -3720,18 +3728,19 @@ msgstr ""
 #: engines/hypno/metaengine.cpp:456 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/ngi/metaengine.cpp:136
-#: engines/sky/metaengine.cpp:126 engines/sludge/keymapper_tables.h:55
-#: engines/sludge/keymapper_tables.h:128 engines/sludge/keymapper_tables.h:190
-#: engines/sludge/keymapper_tables.h:246 engines/sludge/keymapper_tables.h:265
-#: engines/sludge/keymapper_tables.h:462 engines/sludge/keymapper_tables.h:493
-#: engines/supernova/metaengine.cpp:262 engines/sword25/metaengine.cpp:124
-#: engines/tucker/metaengine.cpp:184 engines/twine/metaengine.cpp:223
-#: engines/wintermute/keymapper_tables.h:1646
+#: engines/scumm/insane/mortimer/mortimer.cpp:75 engines/sky/metaengine.cpp:126
+#: engines/sludge/keymapper_tables.h:55 engines/sludge/keymapper_tables.h:128
+#: engines/sludge/keymapper_tables.h:190 engines/sludge/keymapper_tables.h:246
+#: engines/sludge/keymapper_tables.h:265 engines/sludge/keymapper_tables.h:462
+#: engines/sludge/keymapper_tables.h:493 engines/supernova/metaengine.cpp:262
+#: engines/sword25/metaengine.cpp:124 engines/tucker/metaengine.cpp:184
+#: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:1646
 msgid "Pause"
 msgstr ""
 
 #: engines/metaengine.cpp:105 engines/harvester/metaengine.cpp:93
 #: engines/parallaction/metaengine.cpp:163
+#: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
 msgid "Game menu"
 msgstr ""
@@ -4645,6 +4654,7 @@ msgstr ""
 #: backends/platform/sdl/miyoo/miyoo.cpp:96
 #: backends/platform/sdl/opendingux/opendingux.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:53
+#: engines/scumm/insane/mortimer/dialogs.cpp:70
 #: engines/sludge/keymapper_tables.h:352
 msgid "Start"
 msgstr ""
@@ -8504,6 +8514,8 @@ msgid "Crouch"
 msgstr ""
 
 #: engines/freescape/games/3dck/zx.cpp:61
+#: engines/scumm/insane/mortimer/mortimer.cpp:77
+#: engines/scumm/insane/mortimer/mortimer.cpp:1362
 msgid "Restart"
 msgstr ""
 
@@ -9176,7 +9188,8 @@ msgstr ""
 
 #. I18N: Action in In Cold Blood
 #: engines/got/metaengine.cpp:74 engines/hopkins/metaengine.cpp:306
-#: engines/icb/icb.cpp:89 engines/ultima/ultima4/metaengine.cpp:55
+#: engines/icb/icb.cpp:89 engines/scumm/insane/mortimer/mortimer.cpp:74
+#: engines/ultima/ultima4/metaengine.cpp:55
 msgid "Fire"
 msgstr ""
 
@@ -12381,6 +12394,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1604
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
+#: engines/scumm/insane/mortimer/dialogs.cpp:34
 msgid "Medium"
 msgstr ""
 
@@ -13520,6 +13534,123 @@ msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"
 "\n"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:34
+msgid "Easy"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:34
+msgid "Hard"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:38
+#: engines/scumm/insane/mortimer/dialogs.cpp:158
+msgid "New pilot"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:38
+msgid "Select difficulty"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:40
+msgid "Pilot name:"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:44
+msgid "Character:"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:46
+msgid "Sally"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:47
+msgid "Sid"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:50
+msgid "Flight difficulty:"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:51
+msgid "Riddle difficulty:"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:56
+msgid "Choose how difficult flying and recovering from crashes should be."
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:59
+msgid "Choose the riddle difficulty and the cost and number of guesses."
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:62
+msgid "Fixed (demo)"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:63
+msgid "The demo includes only one set of riddles."
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:143
+msgid "Please enter a pilot name."
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:143
+msgid "Please enter a shorter pilot name."
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:155
+msgid "Select pilot"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:156
+msgid "Progress is saved after each riddle is solved."
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:162
+msgid "High Scores"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/dialogs.cpp:163
+msgid "Play Mortimer"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/mortimer.cpp:76
+msgid "Skip cutscene / open menu"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/mortimer.cpp:80
+msgid "Mouse control"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/mortimer.cpp:81
+msgid "Joystick control"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/mortimer.cpp:1250
+msgid "Could not save the high scores. Please try again."
+msgstr ""
+
+#: engines/scumm/insane/mortimer/mortimer.cpp:1362
+msgid "Play again?"
+msgstr ""
+
+#: engines/scumm/insane/mortimer/saveload.cpp:49
+msgid "Progress is saved automatically when a riddle is solved."
+msgstr ""
+
+#: engines/scumm/insane/mortimer/saveload.cpp:111
+msgid ""
+"Could not save your pilot. Progress will be saved again when you finish "
+"another riddle or quit."
+msgstr ""
+
+#: engines/scumm/insane/mortimer/saveload.cpp:141
+msgid ""
+"There are no free pilot slots. Delete a saved pilot from the launcher before "
+"creating another."
 msgstr ""
 
 #: engines/scumm/insane/rebel2/psx/level2.cpp:886
