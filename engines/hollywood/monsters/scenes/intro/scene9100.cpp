@@ -64,7 +64,6 @@ const uint kI10SueActorRunChunk = 25;
 const uint kI10SueActorDescriptorChunk = 26;
 const byte kI10SceneActorFacing = 5;
 const uint kI10SceneActorDescriptorBase = kI10SceneActorFacing * kActorCelsPerFacing;
-const uint kActorEntryFrameDelayMillis = 90;
 const uint32 kClockFrameIntervalMillis = 1000;
 const uint32 kTalkingFrameIntervalMillis = 125;
 const uint32 kEntryPathFrameIntervalMillis = 60;
@@ -120,8 +119,10 @@ bool Scene9100::play() {
 	if (!load(false))
 		return false;
 
+	// Prepare the opening frame offscreen before revealing it through the curtain.
 	memcpy(_sceneFramebuffer.data(), _frameDecodeBuffer.data(), _frameDecodeBuffer.size());
-	runEntryActorAnimations();
+	applyActorHighlightColor(0x3f, 0x3f, 0x3f);
+	drawActorFrame(_actorBankI10Ron, kI10SceneActorFacing, 0, 0x307, 0x1d4);
 	_clockVisible = true;
 	drawInitialForegroundFrame();
 	memcpy(_savedFramebuffer.data(), _sceneFramebuffer.data(), _sceneFramebuffer.size());
@@ -337,40 +338,6 @@ void Scene9100::applyActorHighlightColor(byte highlightRed, byte highlightGreen,
 	_paletteCurrent[0x2f7] = highlightRed;
 	_paletteCurrent[0x2f8] = highlightGreen;
 	_paletteCurrent[0x2f9] = highlightBlue;
-}
-
-void Scene9100::runEntryActorAnimations() {
-	IndexedSurfaceBuffer baseFramebuffer;
-	baseFramebuffer.resize(_sceneFramebuffer.size());
-	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
-
-	applyActorHighlightColor(0x3f, 0x3f, 0x3f);
-	playEntryActorAnimation(_actorBankI10Ron, 0x307, 0x1d4, baseFramebuffer);
-
-	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
-}
-
-void Scene9100::playEntryActorAnimation(const ActorSpriteBank &bank, int worldX, int worldY, IndexedSurfaceBuffer &baseFramebuffer) {
-	const byte kFacingTurnToCamera = 5;
-	const byte kTurnCel = 2;
-	const byte kFinalCel = 0;
-	const byte kFrames[][2] = {
-		{ kFacingTurnToCamera, kTurnCel },
-		{ kFacingTurnToCamera, kFinalCel }
-	};
-
-	if (bank.descriptors.size() < kActorDescriptorCount || bank.runStreams.size() < kActorFacingCount * kActorFacingRunStride)
-		return;
-
-	for (uint i = 0; i < ARRAYSIZE(kFrames) && !_skipRequested && !Engine::shouldQuit(); ++i) {
-		memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
-		drawActorFrame(bank, kFrames[i][0], kFrames[i][1], worldX, worldY);
-		presentFrame();
-		if (delay(kActorEntryFrameDelayMillis))
-			return;
-	}
-
-	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 }
 
 void Scene9100::runRonEntryConversation() {
