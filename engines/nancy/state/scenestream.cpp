@@ -329,6 +329,9 @@ void SceneStream::clearScene() {
 static const char *const kMainStreamName = "MainStream";
 static const char *const kUIStreamName = "UIStream";
 
+// Nancy22: the stream with the scripts of the environments
+static const char *const kEnvStreamName = "EnvStream";
+
 const char *SceneStreamManager::getMainStreamName() {
 	return kMainStreamName;
 }
@@ -668,6 +671,11 @@ void SceneStreamManager::changeEnvironment(const Common::String &newEnvironment)
 		return;
 	}
 
+	if (g_nancy->getGameType() >= kGameTypeNancy22) {
+		changeEnvironmentStream(*envs, newEnvironment);
+		return;
+	}
+
 	for (const ENVS::Environment &env : envs->environments) {
 		if (env.code.equalsIgnoreCase(_environment)) {
 			end(env.code + "_Enter_Stream");
@@ -688,6 +696,28 @@ void SceneStreamManager::changeEnvironment(const Common::String &newEnvironment)
 			flags.runsFirst = true;
 			begin(env.code + "_Enter_Stream", env.ambientScriptName.toString(), 0, flags);
 		}
+	}
+}
+
+// Nancy22 runs the script of every environment in the same stream, which moves
+// on to the script of the next environment, and ends in one without a script
+void SceneStreamManager::changeEnvironmentStream(const ENVS &envs, const Common::String &newEnvironment) {
+	_environment = newEnvironment;
+
+	Common::String sceneName;
+	for (const ENVS::Environment &env : envs.environments) {
+		if (env.code.equalsIgnoreCase(newEnvironment)) {
+			sceneName = env.ambientScriptName.toString();
+			break;
+		}
+	}
+
+	if (sceneName.empty()) {
+		end(kEnvStreamName);
+	} else if (find(kEnvStreamName)) {
+		changeScene(kEnvStreamName, sceneName, 0);
+	} else {
+		begin(kEnvStreamName, sceneName, 0, StreamFlags());
 	}
 }
 

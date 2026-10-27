@@ -220,8 +220,12 @@ static int envCreate(lua_State *L) {
 			luaL_error(L, "Environments must specify the 'fullName' field");
 		}
 
+		// Nancy22 calls the script of the environment its "sceneName"
 		Common::String name;
-		readField(L, env, "onEnterScene", name);
+		if (!readField(L, env, "onEnterScene", name)) {
+			readField(L, env, "sceneName", name);
+		}
+
 		environment.ambientScriptName = Common::Path(name);
 
 		name.clear();

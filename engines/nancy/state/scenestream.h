@@ -41,6 +41,7 @@ class SeekableReadStream;
 
 namespace Nancy {
 
+struct ENVS;
 struct NancyInput;
 
 namespace UI {
@@ -240,6 +241,7 @@ public:
 
 private:
 	void endChildren(const Common::Array<SceneStream::Child> &children);
+	void changeEnvironmentStream(const ENVS &envs, const Common::String &newEnvironment);
 
 	// Every stream in the order they run and get input in. The main stream is
 	// the scene itself, and takes part as a null entry.
