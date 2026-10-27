@@ -1656,9 +1656,9 @@ Common::Rect ZoombiniGraphics::positionTextLines(Common::Array<Common::U32String
 			visibleText.push_back(lines[firstLine + i]);
 		lines = visibleText;
 
-		// Original Mac engine use calculation of: blockTop + lineHeight - descent (when the both metrics are available).
-		// FIXME: The ScummVM common TTF renderer exposes neither descent nor leading. Until it does, retain its glyph origin.
-		// Exact baseline and native bitmap-strike metrics cannot be reproduced here yet.
+		// QuickDraw positions the baseline at blockTop + lineHeight - descent.
+		// FIXME: Strangely, calculating leading manaully renders more faithfully to the original, compared to using getFontLeading() directly.
+		// May be due to the TTFFont/FreeType's integer metric rounding error? 
 		const int descent = font->getFontDescent();
 		const int ascent = font->getFontAscent();
 		if (0 <= descent && 0 <= ascent)
