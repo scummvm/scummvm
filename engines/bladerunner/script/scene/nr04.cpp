@@ -286,6 +286,14 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Actor_Says(kActorEarlyQ, 240, 30);
 			Actor_Says(kActorMcCoy, 3435, kAnimationModeTalk);
 			Actor_Says(kActorEarlyQ, 250, 30);
+			if (_vm->_cutContent
+				&& (Actor_Clue_Query(kActorMcCoy, kClueGaffsInformation) // if McCoy heard about the moonbus from Gaff
+					|| Actor_Clue_Query(kActorMcCoy, kClueCrystalsCase)) // or from Steele
+			) {
+				// In the speech 250 Early Q mentions Dektora and her replicant friends who are gonna help
+				// them get Off-World. This clue is one of the ways to ask Dektora about the moonbus.
+				Actor_Clue_Acquire(kActorMcCoy, kClueSuspectDektora, false, kActorEarlyQ);
+			}
 			Actor_Says(kActorMcCoy, 3440, kAnimationModeTalk);
 			Actor_Says(kActorEarlyQ, 280, 30);
 			Actor_Says(kActorMcCoy, 3445, kAnimationModeTalk);

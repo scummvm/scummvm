@@ -74,15 +74,34 @@ bool SceneScriptNR07::ClickedOnActor(int actorId) {
 		if (Game_Flag_Query(kFlagNR07McCoyIsCop)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(1100, -1, 3, 8); // VOIGT-KAMPFF
 			DM_Add_To_List_Never_Repeat_Once_Selected(1110, 8, -1, -1); // CRYSTAL
-			if (Actor_Clue_Query(kActorMcCoy, kClueSuspectDektora)) { // cut content? clue is not obtainable
-				// TODO - restore trigger
+			bool canAskAboutMoonbus = Actor_Clue_Query(kActorMcCoy, kClueSuspectDektora);
+			if (!canAskAboutMoonbus && _vm->_cutContent) {
+				// Can also ask this if McCoy saw Clovis at the moonbus and with Dektora.
+				canAskAboutMoonbus = (
+					Actor_Clue_Query(kActorMcCoy, kClueGaffsInformation)
+						|| Actor_Clue_Query(kActorMcCoy, kClueCrystalsCase))
+					&& Actor_Clue_Query(kActorMcCoy, kClueClovisAtMoonbus)
+					&& (Actor_Clue_Query(kActorMcCoy, kClueIzosFriend)
+						|| Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom));
+			}
+			if (canAskAboutMoonbus) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1120, 3, 6, 7); // MOONBUS
 			}
 			if (Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1130, 3, 5, 7); // BLACK SEDAN
 			}
-			if (Game_Flag_Query(kFlagNotUsed510)) { // cut content? flag is never set
-				// TODO - restore trigger
+			bool canAskAboutScorpions;
+			if (_vm->_cutContent) {
+				// Can ask this if Dektora bought the scorpions and McCoy saw her with the box
+				// or he saw the box in the outer dressing room (it's there in all cases).
+				canAskAboutScorpions = Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
+					&& ((Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow) && Actor_Clue_Query(kActorMcCoy, kClueScorpions))
+						|| Actor_Clue_Query(kActorMcCoy, kClueScorpionbox));
+			} else {
+				// This flag is never set.
+				canAskAboutScorpions = Game_Flag_Query(kFlagNotUsed510);
+			}
+			if (canAskAboutScorpions) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1140, 1, 4, 7); // SCORPIONS
 			}
 		} else {
@@ -455,7 +474,6 @@ void SceneScriptNR07::talkAboutSteele() {
 }
 
 void SceneScriptNR07::talkAboutMoonbus() {
-	// TODO cut content - restore trigger
 	Actor_Says(kActorMcCoy, 3705, 19);
 	Actor_Says(kActorDektora, 760, kAnimationModeSit); // Excuse me?
 
@@ -497,7 +515,6 @@ void SceneScriptNR07::talkAboutBlackSedan() {
 }
 
 void SceneScriptNR07::talkAboutScorpions() {
-	// TODO cut content - restore trigger
 	Actor_Says(kActorMcCoy, 3620, 19);
 	Actor_Says(kActorDektora, 840, 30);
 	Actor_Says(kActorMcCoy, 3745, 9);
@@ -507,11 +524,14 @@ void SceneScriptNR07::talkAboutScorpions() {
 	Actor_Says(kActorDektora, 870, kAnimationModeSit);
 #else
 	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
-		Actor_Says_With_Pause(kActorDektora, 850, 1.0f, 30); // I didn't know what they were called
-		// Note: this plays a bit loud and maybe in inconsistent tone, but surely belongs here
-		Actor_Says(kActorDektora, 870, 31);
+		Actor_Says_With_Pause(kActorDektora, 850, 1.0f, 30); // Oh, those. I didn't know what they were called.
 	} else {
 		Actor_Says(kActorDektora, 860, 31);
+		if (_vm->_language == Common::ES_ESP || _vm->_language == Common::FR_FRA || _vm->_language == Common::IT_ITA) {
+			// These localizations have the ending of 860 in a separate voice line. The Italian version,
+			// unlike the others, uses the present tense (a feedback from an Italian speaker is welcome).
+			Actor_Says(kActorDektora, 870, 31);
+		}
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 3750, 11);
