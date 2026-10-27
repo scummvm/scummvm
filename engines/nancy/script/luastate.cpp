@@ -196,6 +196,11 @@ LuaState::LuaState(SceneContext *context) {
 	removeGlobal(_state, "loadfile");
 	removeGlobal(_state, "print");
 
+	if (g_nancy->getGameType() >= kGameTypeNancy22) {
+		removeGlobal(_state, "loadstring");
+		removeGlobal(_state, "setfenv");
+	}
+
 	// The random numbers of the library come from one generator that all
 	// states share, so it is seeded with the first one
 	static bool isSeeded = false;
