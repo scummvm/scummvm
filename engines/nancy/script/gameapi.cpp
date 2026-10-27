@@ -839,10 +839,6 @@ static const luaL_Reg kLoadFunctions[] = {
 static const char *const kSoundChannelType = "ND.SoundChannel";
 
 enum SoundChannelID {
-	kChannelFirstMusic		= 0,	// Theme
-	kChannelFirstAmbient	= 6,
-	kChannelFirstFX			= 14,
-	kChannelFirstVoice		= 24,
 	kNumSoundChannels		= 30,
 
 	// These stand for every channel of a kind
@@ -850,7 +846,9 @@ enum SoundChannelID {
 	kChannelAllMusic		= 0x22,
 	kChannelAllFX			= 0x23,
 	kChannelAllAmbient		= 0x24,
-	kChannelAllVoice		= 0x25
+	kChannelAllVoice		= 0x25,
+	kChannelAllGlobal		= 0x26,		// Nancy22
+	kChannelAllExceptTheme	= 0xFFFE	// Nancy21; -2 in the original
 };
 
 struct SoundChannelName {
@@ -869,6 +867,38 @@ static const SoundChannelName kSoundChannelNames[] = {
 	{ "AllAmbient", kChannelAllAmbient }, { "AllVoice", kChannelAllVoice }
 };
 
+// Nancy22 has five channels for the sounds that go on from scene to scene, and
+// no more music or voice channels with numbers
+static const SoundChannelName kNancy22SoundChannelNames[] = {
+	{ "Theme", 0 }, { "UIMusic", 1 }, { "EngineMusic", 2 },
+	{ "Global1", 3 }, { "Global2", 4 }, { "Global3", 5 }, { "Global4", 6 }, { "Global5", 7 },
+	{ "Ambient1", 8 }, { "Ambient2", 9 }, { "Ambient3", 10 }, { "Ambient4", 11 },
+	{ "Ambient5", 12 }, { "Ambient6", 13 }, { "Ambient7", 14 }, { "Ambient8", 15 },
+	{ "FX1", 16 }, { "FX2", 17 }, { "FX3", 18 }, { "FX4", 19 }, { "FX5", 20 }, { "FX6", 21 }, { "FX7", 22 }, { "FX8", 23 },
+	{ "UIFX", 24 }, { "EngineFX", 25 },
+	{ "NPCVoice", 26 }, { "PlayerVoice", 27 }, { "UIVoice", 28 }, { "EngineVoice", 29 },
+	{ "All", kChannelAll }, { "AllExceptTheme", kChannelAllExceptTheme }, { "AllMusic", kChannelAllMusic },
+	{ "AllFX", kChannelAllFX }, { "AllAmbient", kChannelAllAmbient }, { "AllVoice", kChannelAllVoice },
+	{ "AllGlobal", kChannelAllGlobal }
+};
+
+// Where the channels of each kind begin, and the end of the last kind
+struct SoundChannelLayout {
+	uint16 firstMusic;
+	uint16 firstGlobal;
+	uint16 firstAmbient;
+	uint16 firstFX;
+	uint16 firstVoice;
+	uint16 end;
+};
+
+static const SoundChannelLayout kSoundChannelLayout = { 0, 6, 6, 14, 24, kNumSoundChannels };
+static const SoundChannelLayout kNancy22SoundChannelLayout = { 0, 3, 8, 16, 26, kNumSoundChannels };
+
+static const SoundChannelLayout &getSoundChannelLayout() {
+	return g_nancy->getGameType() >= kGameTypeNancy22 ? kNancy22SoundChannelLayout : kSoundChannelLayout;
+}
+
 void pushSoundChannel(lua_State *L, uint16 channel) {
 	pushValue(L, kSoundChannelType, channel);
 }
@@ -877,12 +907,31 @@ uint16 checkSoundChannel(lua_State *L, int index) {
 	return *(const uint16 *)checkUserData(L, index, kSoundChannelType);
 }
 
+bool isVoiceChannel(uint16 channel) {
+	const SoundChannelLayout &layout = getSoundChannelLayout();
+	return channel >= layout.firstVoice && channel < layout.end;
+}
+
 static int soundChannelIndex(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
 
-	for (const SoundChannelName &channel : kSoundChannelNames) {
-		if (scumm_stricmp(channel.name, name) == 0) {
-			pushSoundChannel(L, channel.channel);
+	if (g_nancy->getGameType() >= kGameTypeNancy22) {
+		for (const SoundChannelName &channel : kNancy22SoundChannelNames) {
+			if (scumm_stricmp(channel.name, name) == 0) {
+				pushSoundChannel(L, channel.channel);
+				return 1;
+			}
+		}
+	} else {
+		for (const SoundChannelName &channel : kSoundChannelNames) {
+			if (scumm_stricmp(channel.name, name) == 0) {
+				pushSoundChannel(L, channel.channel);
+				return 1;
+			}
+		}
+
+		if (g_nancy->getGameType() >= kGameTypeNancy21 && scumm_stricmp(name, "AllExceptTheme") == 0) {
+			pushSoundChannel(L, kChannelAllExceptTheme);
 			return 1;
 		}
 	}
@@ -893,26 +942,36 @@ static int soundChannelIndex(lua_State *L) {
 
 // The channels a channel object stands for
 static void getChannelRange(uint16 channel, uint16 &first, uint16 &last) {
+	const SoundChannelLayout &layout = getSoundChannelLayout();
+
 	switch (channel) {
 	case kChannelAll:
 		first = 0;
-		last = kNumSoundChannels - 1;
+		last = layout.end - 1;
+		break;
+	case kChannelAllExceptTheme:
+		first = 1;
+		last = layout.end - 1;
 		break;
 	case kChannelAllMusic:
-		first = kChannelFirstMusic;
-		last = kChannelFirstAmbient - 1;
+		first = layout.firstMusic;
+		last = layout.firstGlobal - 1;
+		break;
+	case kChannelAllGlobal:
+		first = layout.firstGlobal;
+		last = layout.firstAmbient - 1;
 		break;
 	case kChannelAllAmbient:
-		first = kChannelFirstAmbient;
-		last = kChannelFirstFX - 1;
+		first = layout.firstAmbient;
+		last = layout.firstFX - 1;
 		break;
 	case kChannelAllFX:
-		first = kChannelFirstFX;
-		last = kChannelFirstVoice - 1;
+		first = layout.firstFX;
+		last = layout.firstVoice - 1;
 		break;
 	case kChannelAllVoice:
-		first = kChannelFirstVoice;
-		last = kNumSoundChannels - 1;
+		first = layout.firstVoice;
+		last = layout.end - 1;
 		break;
 	default:
 		first = last = channel;

@@ -311,7 +311,7 @@ private:
 // Plays a sound, picked at random when it has several
 class SoundRecord : public Record {
 public:
-	SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") {}
+	SoundRecord(SceneContext &context);
 
 	void onSkip() override;
 	bool skipSpeech() override;
@@ -326,7 +326,7 @@ protected:
 
 private:
 	Common::Array<Common::String> _names;
-	uint16 _channel = 14;
+	uint16 _channel;	// FX1 unless the table says otherwise
 	double _volume = 1.0;
 	bool _isLooping = false;
 	bool _usesCaption = true;

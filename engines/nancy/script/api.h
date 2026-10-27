@@ -110,6 +110,9 @@ void registerRefAPI(lua_State *L);
 void pushSoundChannel(lua_State *L, uint16 channel);
 uint16 checkSoundChannel(lua_State *L, int index);
 
+// Whether a channel is one of those speech plays on
+bool isVoiceChannel(uint16 channel);
+
 } // End of namespace Script
 } // End of namespace Nancy
 

@@ -37,9 +37,10 @@ namespace Nancy {
 namespace UI {
 namespace NDUI {
 
-// The Nancy19 channels the UI plays a sound on for the player to hear a new volume with
-static const uint16 kSampleChannelMusic = 4;
-static const uint16 kSampleChannelFX = 22;
+// The channels the UI plays a sound on for the player to hear a new volume with:
+// UIMusic, UIFX and UIVoice, which Nancy22 numbers differently
+static uint16 getSampleChannelMusic() { return g_nancy->getGameType() >= kGameTypeNancy22 ? 1 : 4; }
+static uint16 getSampleChannelFX() { return g_nancy->getGameType() >= kGameTypeNancy22 ? 24 : 22; }
 static const uint16 kSampleChannelVoice = 28;
 
 // The timer whose displays show the time of day
@@ -141,9 +142,9 @@ void Manager::takeEngineAction(const Action &action) {
 	} else if (action.target.equalsIgnoreCase("Engine_VoiceVolume")) {
 		onVolumeAction(action, "speech_volume", kSampleChannelVoice);
 	} else if (action.target.equalsIgnoreCase("Engine_FXVolume")) {
-		onVolumeAction(action, "sfx_volume", kSampleChannelFX);
+		onVolumeAction(action, "sfx_volume", getSampleChannelFX());
 	} else if (action.target.equalsIgnoreCase("Engine_MusicVolume")) {
-		onVolumeAction(action, "music_volume", kSampleChannelMusic);
+		onVolumeAction(action, "music_volume", getSampleChannelMusic());
 	} else if (action.target.equalsIgnoreCase("Engine_Flags")) {
 		onFlagsAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_Sound")) {

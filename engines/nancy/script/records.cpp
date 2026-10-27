@@ -1275,6 +1275,10 @@ void SoundRecord::readTable(int tableIndex) {
 	}
 }
 
+SoundRecord::SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") {
+	_channel = g_nancy->getGameType() >= kGameTypeNancy22 ? 16 : 14;
+}
+
 // A sound that is playing while a movie gets skipped is cut short
 void SoundRecord::onSkip() {
 	if (isActive() && hasStarted() && !_isLooping) {
@@ -1283,14 +1287,9 @@ void SoundRecord::onSkip() {
 	}
 }
 
-// The channels speech plays on: NPCVoice, PlayerVoice, Voice1, Voice2, UIVoice
-// and EngineVoice
-static const uint16 kFirstVoiceChannel = 24;
-static const uint16 kLastVoiceChannel = 29;
-
 bool SoundRecord::skipSpeech() {
 	if (!isActive() || !hasStarted() || _isLooping || !_isPlaying ||
-			_channel < kFirstVoiceChannel || _channel > kLastVoiceChannel ||
+			!isVoiceChannel(_channel) ||
 			!g_nancy->_sound->isSoundPlaying(_sound)) {
 		return false;
 	}
