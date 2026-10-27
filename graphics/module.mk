@@ -60,6 +60,7 @@ MODULE_OBJS := \
 	scaler/thumbnail_intern.o \
 	screen.o \
 	scaler/normal.o \
+	segagfx.o \
 	sjis.o \
 	surface.o \
 	svg.o \

@@ -32,7 +32,7 @@ namespace Common {
 namespace Kyra {
 class EoBEngine;
 class Screen_EoB;
-class SegaRenderer;
+class SCDRenderer;
 class SegaCDResource;
 class SegaSequencePlayer {
 public:
@@ -92,7 +92,7 @@ private:
 
 	EoBEngine *_vm;
 	Screen_EoB *_screen;
-	SegaRenderer *_renderer;
+	SCDRenderer *_renderer;
 	SegaAnimator *_animator;
 	SegaCDResource *_res;
 	ScrollManager *_scrollManager;

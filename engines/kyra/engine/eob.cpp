@@ -184,7 +184,7 @@ Common::Error EoBEngine::init() {
 	const uint8 **shapeBuffer = new const uint8*[numSprites]; \
 	_screen->sega_encodeShapesFromSprites(shapeBuffer, in + (resOffset), numSprites, spriteWidth, spriteHeight, 3, false); \
 	releaseShpArr(shapeBuffer, numSprites); \
-	_screen->sega_getRenderer()->render(Screen_EoB::kSegaInitShapesPage, -1, -1, -1, -1, true); \
+	_screen->sega_getRenderer()->renderToPage(Screen_EoB::kSegaInitShapesPage, -1, -1, -1, -1, true); \
 	_screen->sega_getAnimator()->clearSprites(); \
 	int cp = _screen->setCurPage(Screen_EoB::kSegaInitShapesPage); \
 	singleShape = _screen->encodeShape(0, 0, numSprites  * (spriteWidth >> 3), spriteHeight); \
@@ -260,7 +260,7 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	for (int i = 0; i < 4; ++i)
 		_screen->sega_getRenderer()->loadToVRAM(_redGridTile, 8, 0x52A0 + i * 8);
 	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 4, 4, 4, 0x6295);
-	_screen->sega_getRenderer()->render(Screen_EoB::kSegaInitShapesPage, 0, 4, 4, 4);
+	_screen->sega_getRenderer()->renderToPage(Screen_EoB::kSegaInitShapesPage, 0, 4, 4, 4);
 	_screen->drawShape(Screen_EoB::kSegaInitShapesPage, _weaponSlotShapes[1], 0, 0, 0);
 	_screen->drawShape(Screen_EoB::kSegaInitShapesPage, _weaponSlotShapes[1], 0, 16, 0);
 	_weaponSlotGrid = _screen->encodeShape(0, 0, 4, 16);
@@ -1046,7 +1046,7 @@ void EoBEngine::displayParchment(int id) {
 		gui_drawCharPortraitWithStats(i);
 	}
 
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
 	_screen->sega_getAnimator()->clearSprites();
@@ -1064,7 +1064,7 @@ void EoBEngine::displayParchment(int id) {
 		_txt->printShadedText(strings[curPage++], 16, 16, 0x22, 0, 208, 216, 16, false);
 		_screen->sega_loadTextBufferToVRAM(0, 0x20, 22464);
 		r->fillRectWithTiles(0, 7, 0, 26, 27, 0x4001, true);
-		r->render(0);
+		r->renderToPage(0);
 
 		_screen->sega_fadeToNeutral(1);
 
@@ -1135,7 +1135,7 @@ bool EoBEngine::checkPartyStatusExtra() {
 		snd_stopSound();
 
 		Common::SeekableReadStreamEndian *in = _res->createEndianAwareReadStream("GO");
-		SegaRenderer *r = _screen->sega_getRenderer();
+		SCDRenderer *r = _screen->sega_getRenderer();
 		r->loadStreamToVRAM(in, 0x20);
 		delete in;
 
@@ -1159,7 +1159,7 @@ bool EoBEngine::checkPartyStatusExtra() {
 		_screen->setFontStyles(_screen->_currentFont, cs);
 		_screen->sega_loadTextBufferToVRAM(0, 0xA3A0, 7296);
 		r->fillRectWithTiles(0, 1, 20, 38, 6, 0x651D, true);
-		r->render(0);
+		r->renderToPage(0);
 
 		snd_playSoundEffect(0x5086);
 
@@ -1181,7 +1181,7 @@ bool EoBEngine::checkPartyStatusExtra() {
 		for (int i = 0; i < 7; ++i)
 			_screen->sega_getAnimator()->initSprite(i, 104 + (i << 4), 80, 0x4501 + (i << 2), 5);
 		_screen->sega_getAnimator()->update();
-		r->render(0);
+		r->renderToPage(0);
 
 		_screen->sega_paletteOps(2, 0, 5);
 
