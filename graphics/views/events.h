@@ -69,6 +69,9 @@ public:
 	int16 height() const {
 		return _bounds.height();
 	}
+	bool contains(const Common::Rect &r) const {
+		return _bounds.contains(r);
+	}
 };
 
 /**

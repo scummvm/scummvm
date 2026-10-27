@@ -143,10 +143,13 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews) {
 		_views.pop();
 	}
 
-	// Redraw any prior views to erase the removed view
-	for (uint i = 0; i < _views.size(); ++i) {
-		_views[i]->redraw();
-		_views[i]->draw();
+	if (oldView && !ui->_bounds.contains(oldView->_bounds)) {
+		// The new view won't completely cover the replaced view, so we need to redraw
+		// all the remaining views, if any, in order before drawing the new view
+		for (uint i = 0; i < _views.size(); ++i) {
+			_views[i]->redraw();
+			_views[i]->draw();
+		}
 	}
 
 	// Add the new view
@@ -178,17 +181,23 @@ void Events::addView(const Common::String &name) {
 }
 
 void Events::popView() {
+	// Unfocus the current view and pop if off the view stack
 	UIElement *oldView = focusedView();
 	oldView->msgUnfocus(UnfocusMessage());
 	_views.pop();
 
-	for (uint i = 0; i < _views.size(); ++i) {
-		_views[i]->redraw();
-		_views[i]->draw();
+	UIElement *view = focusedView();
+
+	if (view && !view->_bounds.contains(oldView->_bounds)) {
+		// The closed view won't entirely be erased by redrawn top view. So we have to
+		// iterate through all the remaining views to redraw the entire screen
+		for (uint i = 0; i < _views.size(); ++i) {
+			_views[i]->redraw();
+			_views[i]->draw();
+		}
 	}
 
-	if (!_views.empty()) {
-		UIElement *view = focusedView();
+	if (view) {
 		view->msgFocus(FocusMessage(oldView));
 		view->redraw();
 		view->draw();
