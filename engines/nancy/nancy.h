@@ -98,6 +98,10 @@ namespace State {
 class State;
 }
 
+namespace Script {
+class OverrideRecord;
+}
+
 class NancyEngine : public Engine {
 public:
 	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
@@ -174,6 +178,12 @@ public:
 
 	// Used to check whether we need to show the SaveDialog
 	bool _hasJustSaved;
+
+	// Nancy22: the records that took a name with SetMessagingName. Each name
+	// goes to one record at a time; records without one go by the
+	// "messagingName" a script stored in them.
+	typedef Common::HashMap<Common::String, Script::OverrideRecord *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MessagingNameMap;
+	MessagingNameMap _messagingNames;
 
 protected:
 	Common::Error run() override;

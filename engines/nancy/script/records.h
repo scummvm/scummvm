@@ -212,6 +212,9 @@ public:
 	void onDie() override { callFunction("OnDie"); }
 	bool hasMessagingName(const Common::String &name) override;
 
+	// Nancy22: takes a name to get messages under, or gives it up with an empty one
+	bool setMessagingName(const Common::String &name, bool takeOver);
+
 protected:
 	void readTable(int tableIndex) override;
 	bool prepareReset() override { return true; }
@@ -225,6 +228,8 @@ protected:
 private:
 	// What the "Render" function draws on, for the records that have one
 	RecordGraphic *_canvas = nullptr;
+
+	Common::String _messagingName;	// Nancy22, from SetMessagingName
 };
 
 // Shows a part of an image

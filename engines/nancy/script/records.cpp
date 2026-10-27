@@ -735,7 +735,38 @@ static bool isOverrideFunctionName(const Common::String &name) {
 }
 
 OverrideRecord::~OverrideRecord() {
+	setMessagingName(Common::String(), true);
 	delete _canvas;
+}
+
+bool OverrideRecord::setMessagingName(const Common::String &name, bool takeOver) {
+	if (name.equalsIgnoreCase(_messagingName) && !name.empty()) {
+		return true;
+	}
+
+	NancyEngine::MessagingNameMap &names = g_nancy->_messagingNames;
+
+	if (!_messagingName.empty()) {
+		NancyEngine::MessagingNameMap::iterator it = names.find(_messagingName);
+		if (it != names.end() && it->_value == this) {
+			names.erase(it);
+		}
+	}
+
+	_messagingName.clear();
+
+	if (name.empty()) {
+		return true;
+	}
+
+	if (!takeOver && names.contains(name)) {
+		warning("Name '%s' already registered for messaging.", name.c_str());
+		return false;
+	}
+
+	names.setVal(name, this);
+	_messagingName = name;
+	return true;
 }
 
 void OverrideRecord::readTable(int tableIndex) {
@@ -752,6 +783,12 @@ void OverrideRecord::readTable(int tableIndex) {
 }
 
 bool OverrideRecord::hasMessagingName(const Common::String &name) {
+	const NancyEngine::MessagingNameMap &names = g_nancy->_messagingNames;
+	NancyEngine::MessagingNameMap::const_iterator it = names.find(name);
+	if (it != names.end()) {
+		return it->_value == this;
+	}
+
 	lua_State *L = getLua();
 
 	pushStoredValue("messagingName");
@@ -814,9 +851,26 @@ static int overrideDone(lua_State *L) {
 	return 0;
 }
 
+// this:SetMessagingName(name[, takeOver]), Nancy22: the name the record gets
+// messages under from now on; an empty one for none. A name that another record
+// has stays with it unless the record takes it over. Gives whether it got the name.
+static int overrideSetMessagingName(lua_State *L) {
+	OverrideRecord *record = dynamic_cast<OverrideRecord *>(checkRecord(L, 1));
+	const char *name = luaL_checkstring(L, 2);
+	const bool takeOver = lua_gettop(L) > 2 && lua_toboolean(L, 3);
+
+	lua_pushboolean(L, record && record->setMessagingName(name, takeOver));
+	return 1;
+}
+
 bool OverrideRecord::getField(const Common::String &key) {
 	if (key == "Done") {
 		lua_pushcfunction(getLua(), overrideDone);
+		return true;
+	}
+
+	if (key == "SetMessagingName" && g_nancy->getGameType() >= kGameTypeNancy22) {
+		lua_pushcfunction(getLua(), overrideSetMessagingName);
 		return true;
 	}
 
