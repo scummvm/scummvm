@@ -458,11 +458,11 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		_cmdQueue->reset();
 		_cmdQueue->writeUInt16(0x16);
 		_cmdQueue->writeUInt16(0x03);
-		_cmdQueue->writeUInt32(0xECB6);
+		_cmdQueue->writeUInt32(MemMapping::MEM_GFXDATA_00);
 		_cmdQueue->writeUInt16(0x03);
-		_cmdQueue->writeUInt32(0xECC4);
+		_cmdQueue->writeUInt32(MemMapping::MEM_GFXDATA_01);
 		_cmdQueue->writeUInt16(0x01);
-		_cmdQueue->writeUInt32(0xED0E);
+		_cmdQueue->writeUInt32(MemMapping::MEM_GFXDATA_02);
 		_cmdQueue->start();
 
 		++state.phase;
@@ -511,7 +511,7 @@ void SnatcherEngine::updateMainState(GameState &state) {
 				for (int i = 5; i < 15; ++i)
 					_gfx->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
 				_cmdQueue->writeUInt16(0x22);
-				_cmdQueue->writeUInt32(0x139D0);
+				_cmdQueue->writeUInt32(MemMapping::MEM_PALDATA_06);
 				_cmdQueue->start();
 				state.updateFlags |= 0xA0;
 			}
@@ -645,7 +645,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				state.modFinish = 0;
 				state.counter = 10;
 				++state.modPhaseSub;
-				_gfx->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_06));
+				_gfx->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_07));
 			} else if (state.modFinish) {
 				if (state.modIndex == 0) {
 					++state.modIndex;
@@ -657,7 +657,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			break;
 		case 3:
 			if (--state.counter == 1) {
-				_gfx->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_05));
+				_gfx->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_10));
 			} else if (state.counter == 0) {
 				state.modFinish = -1;
 				state.modPhaseSub = 0;

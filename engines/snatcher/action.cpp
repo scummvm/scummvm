@@ -73,10 +73,10 @@ bool ActionSequenceHandler::run(bool useLightGun) {
 			if (_stage == 0 || _stage == 11) {
 				_progressLSB += 2;
 			} else {
-				_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_02));
+				_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_05));
 				if (_stage != 5) {
-					_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_01));
-					_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_03));
+					_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_04));
+					_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_06));
 				}
 				++_progressLSB;
 			}
@@ -213,7 +213,7 @@ bool ActionSequenceHandler::run(bool useLightGun) {
 				if (++_counter1 < 2)
 					break;
 				_counter1 = 0;
-				_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_04));
+				_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_07));
 			}
 			++_progressLSB;
 			break;

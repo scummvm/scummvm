@@ -281,7 +281,7 @@ bool UI::drawVerbs() {
 		if (_progress2 == 2) {
 			if (_verbInterfaceMode == 2) {
 				_que->writeUInt16(0x05);
-				_que->writeUInt32(0x11454);
+				_que->writeUInt32(MemMapping::MEM_VERBDATA_03);
 				_que->start();
 			}
 			++_progress2;
@@ -652,12 +652,12 @@ uint8 UI::drawVerb(uint8 id) {
 	uint8 cid = id;
 	if (_verbsTabCurPage == 1 && _lastVerbFirstPage == id) {
 		_que->writeUInt16(0x05);
-		_que->writeUInt32(_gfx->getVerbAreaType() ? 0x10F26 : 0x10F10);
+		_que->writeUInt32(_gfx->getVerbAreaType() ? MemMapping::MEM_VERBDATA_02 : MemMapping::MEM_VERBDATA_01);
 		return 0x80;
 	} else if (_verbsTabCurPage > 1) {
 		if (id == 0) {
 			_que->writeUInt16(0x05);
-			_que->writeUInt32(0x10EFA);
+			_que->writeUInt32(MemMapping::MEM_VERBDATA_00);
 			return 0x80;
 		} else {
 			id += _numVerbsFirstPage;
@@ -669,6 +669,7 @@ uint8 UI::drawVerb(uint8 id) {
 
 	uint16 offs = _scriptVerbsArray->read(id);
 	const uint8 *s = _scriptTextResource + offs;
+
 	uint8 *d = _verbTextBuffer + 9;
 	for (int i = 0; i < 33; ++i) {
 		*d = *s++;
@@ -1143,7 +1144,7 @@ void UI::virtKeybPrint() {
 		*d++ = 0xFF;
 
 		_que->writeUInt16(0x05);
-		_que->writeUInt32(0x11946);
+		_que->writeUInt32(MemMapping::MEM_VERBDATA_05);
 		_que->start();
 		++_progress2;
 		return;
@@ -1155,7 +1156,7 @@ void UI::virtKeybPrint() {
 	}
 	if (pr == 0x203) {
 		_que->writeUInt16(0x05);
-		_que->writeUInt32(0x11942);
+		_que->writeUInt32(MemMapping::MEM_VERBDATA_04);
 		_que->start();
 		++_progress2;
 			return;
