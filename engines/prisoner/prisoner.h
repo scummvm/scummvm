@@ -855,7 +855,10 @@ public:
 	MenuFunction _menuFunctionArray[MENU_PANELS::PANEL_SIZE_END];
 
 	/* Dialog */
-	Common::StringArray _dialogStrings;
+	Common::String _dialogTitle;
+	Common::StringArray _dialogLines;
+	Common::StringArray _dialogButtonLabels;
+	MENU_PANELS _dialogPanelIndex;
 	AnimationResource *_dialogPanel;
 	bool _isDialogMenuShowing;
 	int8 _dialogMenuFocus;

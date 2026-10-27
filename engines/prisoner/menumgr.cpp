@@ -66,17 +66,23 @@ static const _MenuOffset _mainMenuOffsets[] = {
 	{111, 260, 402, 281},
 	{98, 13, 413, 39}};
 
-static const _MenuOffset _dialogOffsets[] = {
-	{ 98,  13, 418,  38}, // title
-	{ 91, 301, 184, 328}, // option 1 (left)
-	{206, 301, 297, 328}, // option 2 (center)
-	{320, 301, 412, 328}, // option 3 (right)
+// Confirm boxes (original: some_dialog? and addDialogClickBoxes). The title, then up to six
+// lines of text, and the buttons, which depend on how many there are.
+static const _MenuOffset kDialogTitleOffset = { 98,  13, 418,  38};
+
+static const _MenuOffset kDialogLineOffsets[] = {
 	{ 93,  85, 418, 108},
-	{ 94, 119, 419, 142}, // text line 1
-	{ 94, 143, 419, 166}, // ??
-	{ 94, 177, 419, 200}, // ??
-	{ 94, 201, 419, 224}, // ??
-	{ 94, 235, 419, 258}, // ??
+	{ 94, 119, 419, 142},
+	{ 94, 143, 419, 166},
+	{ 94, 177, 419, 200},
+	{ 94, 201, 419, 224},
+	{ 94, 235, 419, 258}
+};
+
+static const _MenuOffset kDialogButtonOffsets[3][3] = {
+	{{204, 302, 295, 329}},
+	{{ 93, 301, 184, 328}, {321, 301, 412, 329}},
+	{{ 91, 301, 182, 328}, {206, 301, 297, 328}, {321, 301, 412, 328}}
 };
 
 // The menu panels are drawn at this screen position
@@ -166,12 +172,6 @@ enum {
 	kDisplayRowCancel
 };
 
-// Focused button of the yes/no dialog (not in the original, which only takes Enter/Escape)
-enum {
-	kDialogFocusOk = 0,
-	kDialogFocusCancel
-};
-
 static int8 findMenuItemAtPos(const _MenuOffset *offsets, int8 count, int16 x, int16 y) {
 	for (int8 i = 0; i < count; i++) {
 		if (x >= offsets[i].x1 && x <= offsets[i].x2 && y >= offsets[i].y1 && y <= offsets[i].y2)
@@ -228,31 +228,46 @@ void PrisonerEngine::loadDialogData() {
 
 }
 
+// The original has panels with one, two and three buttons (ASKER1 to ASKER3). The first button
+// confirms, the others close the box. The dialog type sets the buttons: OK alone, OK and Cancel,
+// or OK, Ignore and Cancel.
 void PrisonerEngine::displayDialog(
 	DIALOG_TYPE type,
 	Common::String &titleStrId,
 	Common::String &actionStrId,
 	DialogAction actionCallback
 	) {
+	Common::StringArray buttonIds;
+	buttonIds.push_back("OK");
+	if (type == IGNORE)
+		buttonIds.push_back("IGNORE");
+	if (type == CANCEL || type == IGNORE)
+		buttonIds.push_back("CANCEL");
+
 	_isDialogMenuShowing = true;
-	_dialogMenuFocus = kDialogFocusOk;
+	_dialogMenuFocus = 0;
 	_dialogActionCallback = actionCallback;
-	Common::StringArray DialogIds = {"", "OK", "CANCEL", "IGNORE"};
-	Common::String title = getGlobalText(titleStrId);
-	Common::String action = getGlobalText(actionStrId);
-	Common::String option = getGlobalText(DialogIds[type]);
+	_dialogTitle = getGlobalText(titleStrId);
 
-	_dialogStrings.clear();
-	_dialogStrings.push_back(title);
-	_dialogStrings.push_back(getGlobalText(DialogIds[1])); // OK is always on the left
-	_dialogStrings.push_back("");           // middle position
-	_dialogStrings.push_back(option);		// right position
-	_dialogStrings.push_back("");			// first action text
-	_dialogStrings.push_back("");			
-	_dialogStrings.push_back(action);
+	TextResource *textResource = _res->get<TextResource>(_globalTextResourceCacheSlot);
 
-	// TODO: Load dialog panel with 1 button ASKER1 and 3 buttons ASKER3
-	_dialogPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[ASKER2_PANEL]);
+	// The game text has no IGNORE label, so that button shows its identifier
+	_dialogButtonLabels.clear();
+	for (uint i = 0; i < buttonIds.size(); i++)
+		_dialogButtonLabels.push_back(textResource->getIndex(buttonIds[i]) >= 0 ? getGlobalText(buttonIds[i]) : buttonIds[i]);
+
+	// All lines of the message, centered vertically in the six text lines
+	_dialogLines.clear();
+	const TextItem *textItem = textResource->getText(actionStrId);
+	if (textItem && !textItem->chunks.empty()) {
+		const Common::StringArray &lines = *textItem->chunks[0];
+		for (uint i = 0; i < lines.size() && i < ARRAYSIZE(kDialogLineOffsets); i++)
+			_dialogLines.push_back(lines[i]);
+	}
+
+	const MENU_PANELS panels[] = {ASKER1_PANEL, ASKER2_PANEL, ASKER3_PANEL};
+	_dialogPanelIndex = panels[_dialogButtonLabels.size() - 1];
+	_dialogPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[_dialogPanelIndex]);
 }
 
 void PrisonerEngine::loadMenuPanels() {
@@ -379,33 +394,34 @@ void PrisonerEngine::handleDialogMenuInput() {
 
 	getInputStatus(keyState, buttonState);
 
+	const int8 buttonCount = _dialogButtonLabels.size();
+
 	if (buttonState & kLeftButton) {
 		inpMouseSetWaitRelease(true);
-		// Hit-test the left and right buttons directly; the old click boxes belong to the main menu
-		int8 buttonIndex = findMenuItemAtPos(&_dialogOffsets[1], 3, _mouseX - kMenuPanelX, _mouseY - kMenuPanelY);
-		if (buttonIndex == 0) {
-			_dialogMenuFocus = kDialogFocusOk;
-			closeDialogMenu(true);
-		} else if (buttonIndex == 2) {
-			_dialogMenuFocus = kDialogFocusCancel;
-			closeDialogMenu(false);
+		int8 buttonIndex = findMenuItemAtPos(kDialogButtonOffsets[buttonCount - 1], buttonCount,
+			_mouseX - kMenuPanelX, _mouseY - kMenuPanelY);
+		if (buttonIndex != -1) {
+			_dialogMenuFocus = buttonIndex;
+			closeDialogMenu(buttonIndex == 0);
 		}
 	} else if (keyState != Common::KEYCODE_INVALID) {
 		inpKeybSetWaitRelease(true);
 		switch (keyState) {
 		case Common::KEYCODE_LEFT:
-			_dialogMenuFocus = kDialogFocusOk;
+			if (_dialogMenuFocus > 0)
+				_dialogMenuFocus--;
 			break;
 		case Common::KEYCODE_RIGHT:
-			_dialogMenuFocus = kDialogFocusCancel;
+			if (_dialogMenuFocus < buttonCount - 1)
+				_dialogMenuFocus++;
 			break;
 		case Common::KEYCODE_TAB:
-			_dialogMenuFocus = _dialogMenuFocus == kDialogFocusOk ? kDialogFocusCancel : kDialogFocusOk;
+			_dialogMenuFocus = (_dialogMenuFocus + 1) % buttonCount;
 			break;
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
 		case Common::KEYCODE_SPACE:
-			closeDialogMenu(_dialogMenuFocus == kDialogFocusOk);
+			closeDialogMenu(_dialogMenuFocus == 0);
 			break;
 		case Common::KEYCODE_ESCAPE:
 			closeDialogMenu(false);
@@ -805,16 +821,24 @@ void PrisonerEngine::openConfigDialog() {
 void PrisonerEngine::updateDialogMenu(int16 x, int16 y) {
 	_screen->drawAnimationElement(_dialogPanel, 0, x, y, 0);
 
-	for (uint8 i = 0; i < _dialogStrings.size(); i++) {
-		if (_dialogStrings.size() > 0) {
-			auto titleOff = _dialogOffsets[i];
-			drawTextEx(x + titleOff.x1, x + titleOff.x2, y + titleOff.y1, y + titleOff.y2, _dialogStrings[i]);
-		}
+	const _MenuOffset *off = &kDialogTitleOffset;
+	drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _dialogTitle);
+
+	uint firstLine = (ARRAYSIZE(kDialogLineOffsets) - _dialogLines.size()) / 2;
+	for (uint i = 0; i < _dialogLines.size(); i++) {
+		off = &kDialogLineOffsets[firstLine + i];
+		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _dialogLines[i]);
 	}
 
-	// The dialog panel has no highlight of its own, use the main menu's
+	const int8 buttonCount = _dialogButtonLabels.size();
+	for (int8 i = 0; i < buttonCount; i++) {
+		off = &kDialogButtonOffsets[buttonCount - 1][i];
+		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _dialogButtonLabels[i]);
+	}
+
+	// The dialog panels have no highlight of their own, use the main menu's
 	AnimationResource *mainPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[MAIN_PANEL]);
-	const _MenuOffset *off = &_dialogOffsets[_dialogMenuFocus == kDialogFocusOk ? 1 : 3];
+	off = &kDialogButtonOffsets[buttonCount - 1][_dialogMenuFocus];
 	drawButtonHighlight(_screen, mainPanel, x + off->x1, x + off->x2, y + off->y1 + 4);
 }
 
@@ -838,7 +862,7 @@ void PrisonerEngine::updateMainMenu(int16 x, int16 y) {
 	setActiveFont(_menuFont);
 
 	if (_isDialogMenuShowing) {
-		_PakMenuDirectoryEntry dialogPanelData = _kPrisonerPanelData[ASKER2_PANEL];
+		_PakMenuDirectoryEntry dialogPanelData = _kPrisonerPanelData[_dialogPanelIndex];
 		setFontColors(_menuFont, dialogPanelData.outlineColor, dialogPanelData.inkColor);
 		setActiveFont(_menuFont);
 
