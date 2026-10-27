@@ -35,8 +35,8 @@ const char *const kStage003ArchiveName = "RESOURCE.003";
 const uint16 kPostIntroMusicCueId = 0x000e;
 const uint kStage901Index = 901;
 const uint16 kScene9010SpeechRowIndex = 1;
-const byte kScene9010SpeechTextColor = 0x7a;
-const byte kPaletteFadeExcludedIndex = 122;
+// The background and character sprites leave this palette entry unused.
+const byte kScene9010SpeechTextColor = 0xff;
 
 const byte kCharacterDescriptorSequence[] = {
 	0x0f, 0x0d, 0x0e, 0x10, 0x00, 0x01, 0x02, 0x03,
@@ -515,7 +515,7 @@ void Scene9010::updateScene9010PaletteFade() {
 		return;
 
 	for (uint paletteIndex = 0; paletteIndex < 256; ++paletteIndex) {
-		if (paletteIndex == kPaletteFadeExcludedIndex)
+		if (paletteIndex == kScene9010SpeechTextColor)
 			continue;
 
 		for (uint channel = 0; channel < 3; ++channel) {
