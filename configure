@@ -220,6 +220,7 @@ _enable_asan=no
 _enable_tsan=no
 _enable_ubsan=no
 _bink=yes
+_coktel_decoder=auto
 _cloud=auto
 _dlc=no
 _scummvmdlc=no
@@ -345,6 +346,7 @@ add_feature printing "Printing" "_printing"
 
 # Components are features which may be disabled if unused by the engines
 add_component cdtoons "CDTOONS" "_cdtoons" "USE_CDTOONS"
+add_component coktel_decoder "Coktel decoder" "_coktel_decoder" "USE_COKTEL_DECODER"
 add_component enet "ENet" "_enet" "USE_ENET"
 add_component fmtowns_pc98_audio "FM-TOWNS/PC98 audio" "_fmtowns_pc98_audio" "USE_FMTOWNS_PC98_AUDIO"
 add_component gif "GIF" "_gif" "USE_GIF"

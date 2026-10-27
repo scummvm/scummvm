@@ -25,12 +25,9 @@
  *
  */
 
-// Currently, only GOB and SCI32 games play IMDs and VMDs, so skip compiling if GOB and SCI32 is disabled.
-#if !(defined(ENABLE_GOB) || defined(ENABLE_SCI32) || defined(DYNAMIC_MODULES))
+#include "common/scummsys.h"
 
-// Do not compile the CoktelDecoder code
-
-#else
+#ifdef USE_COKTEL_DECODER
 
 #ifndef VIDEO_COKTELDECODER_H
 #define VIDEO_COKTELDECODER_H
@@ -652,4 +649,4 @@ private:
 
 #endif // VIDEO_COKTELDECODER_H
 
-#endif // Engine and dynamic plugins guard
+#endif // USE_COKTEL_DECODER

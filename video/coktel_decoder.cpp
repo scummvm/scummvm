@@ -40,8 +40,6 @@
 #include "image/codecs/indeo3.h"
 #endif
 
-#ifdef VIDEO_COKTELDECODER_H
-
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/adpcm_intern.h"
@@ -2373,7 +2371,7 @@ void VMDDecoder::processFrame() {
 					byte r = _stream->readByte() << 2;
 					byte g = _stream->readByte() << 2;
 					byte b = _stream->readByte() << 2;
-					_palette.set(index + j, r, g, b); 
+					_palette.set(index + j, r, g, b);
 				}
 
 				_stream->skip((255 - count) * 3);
@@ -3032,5 +3030,3 @@ Audio::AudioStream *AdvancedVMDDecoder::VMDAudioTrack::getAudioStream() const {
 }
 
 } // End of namespace Video
-
-#endif // VIDEO_COKTELDECODER_H
