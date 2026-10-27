@@ -116,6 +116,8 @@ protected:
 	ZmbEventHandleResult pickerUI_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos);
 	/** Blit every prepared hotspot in @p hotspots from @p imgResource. */
 	void pickerUI_drawGroup(const Common::Array<ZmbHotspot> &hotspots, ZmbResource imgResource);
+	/** Draw preview layers back to front: feet, body, eyes, nose, then hair. */
+	void pickerUI_drawPreview();
 
 	/** Select the current trait shapes for the matrix hotspots. */
 	void pickerMatrix_onPreRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);

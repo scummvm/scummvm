@@ -125,7 +125,8 @@ bool Mohawk::MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(Common::Platform 
 		}
 		break;
 	case Common::kPlatformWindows:
-		if (isUsV10 || (isDemo && language == Common::EN_USA)) { // v1.0US retail and v1.0US Demo
+		// Windows v1.0US retail, v1.0US Demo and v1.0JP Demo contain only MIDIMPC.MHK.
+		if (isUsV10 || (isDemo && (language == Common::EN_USA || language == Common::JA_JPN))) {
 			soundtrack = MidiSoundtrack::kWindowsMPC;
 			return true;
 		}
@@ -333,7 +334,7 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjust
 		}
 		break;
 	case LayoutKind::kPickerName:
-		if (isFamily(Family::kUsV10, Common::PT_PRT) || isFamily(Family::kEuropeV1x, Common::JA_JPN) || isFamily(Family::kTlcV20, Common::PL_POL))
+		if (!isFamily(Family::kUsV11, Common::KO_KOR))
 			adjustment.topOffset = 1 - 4;
 		break;
 	case LayoutKind::kNotiBoxLong:

@@ -1201,6 +1201,26 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
+	// Japanese Windows, v1.0 Europe family demo (INTERPROG release)
+	// Build Date: 1998-03-13
+	// From Hajin Jang
+	{
+		{
+			"zoombini",
+			"v1.0JP Demo",
+			AD_ENTRY2s("JAPANESE/ZOOMBINI.MHK", "3133e8d164958f8a3f740cb1f4e49f15", 24120142,
+					   "ZOOMBI32.EXE", "4cc199123e917f0afe03f04ed7ebfcc4", 679936),
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
+		},
+		GType_ZOOMBINI,
+		GF_ZMB_10_JP,
+		0
+	},
+
+	// Logical Journey of the Zoombinis
 	// Japanese Macintosh, v1.0 Europe family demo (INTERPROG release)
 	// Build Date: 1998-03-17 UTC
 	{
