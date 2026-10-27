@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-27 10:29+0000\n"
+"POT-Creation-Date: 2026-10-27 13:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6076,7 +6076,7 @@ msgstr ""
 #: engines/griffon/metaengine.cpp:40 engines/hugo/metaengine.cpp:56
 #: engines/macs2/dialogs.cpp:51 engines/made/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:91 engines/mortevielle/metaengine.cpp:37
-#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:221
+#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:234
 #: engines/scumm/dialogs.cpp:1256 engines/scumm/metaengine.cpp:908
 #: engines/supernova/metaengine.cpp:53 engines/wage/metaengine.cpp:51
 #: engines/wintermute/metaengine.cpp:81
@@ -6114,7 +6114,7 @@ msgstr ""
 #: engines/macs2/dialogs.cpp:46 engines/mads/metaengine.cpp:110
 #: engines/nancy/metaengine.cpp:104 engines/neverhood/dialogs.cpp:47
 #: engines/pelrock/metaengine.cpp:35 engines/phoenixvr/metaengine.cpp:47
-#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:47
+#: engines/sci/detection_options.h:118 engines/sherlock/metaengine.cpp:47
 #: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
 #: engines/ultima/metaengine.cpp:56 engines/waynesworld/metaengine.cpp:37
 #: engines/zvision/metaengine.cpp:42
@@ -6130,7 +6130,7 @@ msgstr ""
 #: engines/macs2/dialogs.cpp:47 engines/mads/metaengine.cpp:111
 #: engines/nancy/metaengine.cpp:105 engines/neverhood/dialogs.cpp:48
 #: engines/pelrock/metaengine.cpp:36 engines/phoenixvr/metaengine.cpp:48
-#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:48
+#: engines/sci/detection_options.h:119 engines/sherlock/metaengine.cpp:48
 #: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
 #: engines/ultima/metaengine.cpp:57 engines/waynesworld/metaengine.cpp:38
 #: engines/zvision/metaengine.cpp:43
@@ -6262,11 +6262,11 @@ msgid ""
 "will be used."
 msgstr ""
 
-#: engines/agos/dialogs.cpp:71 engines/sci/detection_options.h:93
+#: engines/agos/dialogs.cpp:71 engines/sci/detection_options.h:106
 msgid "Prefer digital sound effects"
 msgstr ""
 
-#: engines/agos/dialogs.cpp:72 engines/sci/detection_options.h:94
+#: engines/agos/dialogs.cpp:72 engines/sci/detection_options.h:107
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 
@@ -6286,25 +6286,25 @@ msgstr ""
 msgid "Toggle between the system cursor and the default cursor."
 msgstr ""
 
-#: engines/agos/dialogs.cpp:107 engines/sci/detection_options.h:261
+#: engines/agos/dialogs.cpp:107 engines/sci/detection_options.h:274
 msgid "MIDI mode:"
 msgstr ""
 
-#: engines/agos/dialogs.cpp:108 engines/sci/detection_options.h:262
+#: engines/agos/dialogs.cpp:108 engines/sci/detection_options.h:275
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
 
-#: engines/agos/dialogs.cpp:113 engines/sci/detection_options.h:267
+#: engines/agos/dialogs.cpp:113 engines/sci/detection_options.h:280
 msgid "Standard (GM / MT-32)"
 msgstr ""
 
-#: engines/agos/dialogs.cpp:117 engines/sci/detection_options.h:279
+#: engines/agos/dialogs.cpp:117 engines/sci/detection_options.h:292
 msgid "Casio MT-540"
 msgstr ""
 
-#: engines/agos/dialogs.cpp:121 engines/sci/detection_options.h:283
+#: engines/agos/dialogs.cpp:121 engines/sci/detection_options.h:296
 msgid "Casio CT-460 / CSM-1"
 msgstr ""
 
@@ -7410,7 +7410,7 @@ msgstr ""
 #: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
 #: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:161
 #: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:41
-#: engines/sci/detection_options.h:222 engines/sherlock/metaengine.cpp:121
+#: engines/sci/detection_options.h:235 engines/sherlock/metaengine.cpp:121
 #: engines/supernova/metaengine.cpp:54 engines/teenagent/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
@@ -10617,7 +10617,7 @@ msgid ""
 "Otherwise, it will play MIDI music."
 msgstr ""
 
-#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:130
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:143
 msgid "Use Windows cursors"
 msgstr ""
 
@@ -11997,117 +11997,128 @@ msgstr ""
 msgid "Enable high resolution graphics/content"
 msgstr ""
 
-#: engines/sci/detection_options.h:57
-msgid "Enable black-lined video"
-msgstr ""
-
 #: engines/sci/detection_options.h:58
-msgid "Draw black lines over videos to increase their apparent sharpness"
+msgid "Keep all pixels the same size (portraits appear larger)"
 msgstr ""
 
-#: engines/sci/detection_options.h:69
-msgid "Use high-quality video scaling"
+#: engines/sci/detection_options.h:59
+msgid ""
+"Show low-resolution graphics and text at exactly double size, instead of "
+"stretching them unevenly. High-resolution portraits cover slightly more of "
+"the scene, and scenes look slightly shorter than in the original release"
 msgstr ""
 
 #: engines/sci/detection_options.h:70
-msgid "Use linear interpolation when upscaling videos, where possible"
+msgid "Enable black-lined video"
 msgstr ""
 
-#: engines/sci/detection_options.h:81
-msgid "Use high-quality \"LarryScale\" cel scaling"
+#: engines/sci/detection_options.h:71
+msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 
 #: engines/sci/detection_options.h:82
+msgid "Use high-quality video scaling"
+msgstr ""
+
+#: engines/sci/detection_options.h:83
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr ""
+
+#: engines/sci/detection_options.h:94
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr ""
+
+#: engines/sci/detection_options.h:95
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 
-#: engines/sci/detection_options.h:117
+#: engines/sci/detection_options.h:130
 msgid "Use CD audio"
 msgstr ""
 
-#: engines/sci/detection_options.h:118
-msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
-
 #: engines/sci/detection_options.h:131
-msgid ""
-"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr ""
-
-#: engines/sci/detection_options.h:143
-msgid "Use silver cursors"
+msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 
 #: engines/sci/detection_options.h:144
 msgid ""
-"Use the alternate set of silver cursors instead of the normal golden ones"
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 
 #: engines/sci/detection_options.h:156
-msgid "Enable content censoring"
+msgid "Use silver cursors"
 msgstr ""
 
 #: engines/sci/detection_options.h:157
-msgid "Enable the game's built-in optional content censoring"
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 
 #: engines/sci/detection_options.h:169
-msgid "Upscale videos"
+msgid "Enable content censoring"
 msgstr ""
 
 #: engines/sci/detection_options.h:170
-msgid "Upscale videos to double their size"
+msgid "Enable the game's built-in optional content censoring"
 msgstr ""
 
 #: engines/sci/detection_options.h:182
-msgid "Use RGB rendering"
+msgid "Upscale videos"
 msgstr ""
 
 #: engines/sci/detection_options.h:183
-msgid "Use RGB rendering to improve screen transitions"
+msgid "Upscale videos to double their size"
 msgstr ""
 
 #: engines/sci/detection_options.h:195
-msgid "Use per-resource modified palettes"
+msgid "Use RGB rendering"
 msgstr ""
 
 #: engines/sci/detection_options.h:196
-msgid "Use custom per-resource palettes to improve visuals"
+msgid "Use RGB rendering to improve screen transitions"
 msgstr ""
 
 #: engines/sci/detection_options.h:208
-msgid "Enable bearded musicians"
+msgid "Use per-resource modified palettes"
 msgstr ""
 
 #: engines/sci/detection_options.h:209
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr ""
+
+#: engines/sci/detection_options.h:221
+msgid "Enable bearded musicians"
+msgstr ""
+
+#: engines/sci/detection_options.h:222
 msgid "Enable graphics that were disabled for legal reasons"
 msgstr ""
 
-#: engines/sci/detection_options.h:234
+#: engines/sci/detection_options.h:247
 msgid "Enable saving via the GMM"
 msgstr ""
 
-#: engines/sci/detection_options.h:235
+#: engines/sci/detection_options.h:248
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
 msgstr ""
 
-#: engines/sci/detection_options.h:246
+#: engines/sci/detection_options.h:259
 msgid "Repair speech audio"
 msgstr ""
 
-#: engines/sci/detection_options.h:247
+#: engines/sci/detection_options.h:260
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
 msgstr ""
 
-#: engines/sci/detection_options.h:271
+#: engines/sci/detection_options.h:284
 msgid "Roland D-110 / D-10 / D-20"
 msgstr ""
 
-#: engines/sci/detection_options.h:275
+#: engines/sci/detection_options.h:288
 msgid "Yamaha FB-01"
 msgstr ""
 
@@ -12116,11 +12127,11 @@ msgid "Game does not contain menu resources"
 msgstr ""
 
 #. I18N: 'Robot' is a video format name (as in 'MP4 video')
-#: engines/sci/detection_tables.h:4973
+#: engines/sci/detection_tables.h:4975
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 
-#: engines/sci/detection_tables.h:5028
+#: engines/sci/detection_tables.h:5030
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 
