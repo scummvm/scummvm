@@ -68,7 +68,7 @@ bool RunawayUI::load() {
 	_cursor.create(kCursorWidth, kCursorWidth, kUIFormat);
 	const uint16 key = *(const uint16 *)_cursors.getPixels();
 	_cursor.fillRect(Common::Rect(0, 0, kCursorWidth, kCursorWidth), key);
-	CursorMan.pushCursor(_cursor.getPixels(), kCursorWidth, kCursorWidth, 30, 30, key, false, &kUIFormat);
+	CursorMan.pushCursor(_cursor.getPixels(), kCursorWidth, kCursorWidth, 30, 30, key, &kUIFormat);
 	_cursorPushed = true;
 	return true;
 }
@@ -341,7 +341,7 @@ void RunawayUI::updateCursor() {
 				((g * (31 - shade) / 31) << 5) | (b * (31 - shade) / 31);
 		}
 	}
-	CursorMan.replaceCursor(_cursor.getPixels(), 60, 60, 30, 30, transparent, false, &kUIFormat);
+	CursorMan.replaceCursor(_cursor.getPixels(), 60, 60, 30, 30, transparent, &kUIFormat);
 }
 
 Common::U32String RunawayUI::inventoryCaption() const {

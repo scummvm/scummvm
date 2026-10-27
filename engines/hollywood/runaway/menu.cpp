@@ -87,7 +87,7 @@ void RunawayMenu::open(const Graphics::ManagedSurface &screen, const Settings &s
 			dst[x] = src[x * 5];
 	}
 	const uint16 key = *(const uint16 *)_cursor.getPixels();
-	CursorMan.pushCursor(_cursor.getPixels(), 60, 60, 30, 30, key, false, &kMenuFormat);
+	CursorMan.pushCursor(_cursor.getPixels(), 60, 60, 30, 30, key, &kMenuFormat);
 	_cursorPushed = true;
 	CursorMan.showMouse(true);
 }

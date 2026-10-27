@@ -24,7 +24,6 @@ MODULE_OBJS := \
 	codecs/msrle.o \
 	codecs/msrle4.o \
 	codecs/msvideo1.o \
-	codecs/msmpeg4.o \
 	codecs/qtrle.o \
 	codecs/rpza.o \
 	codecs/smc.o
