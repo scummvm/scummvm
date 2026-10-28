@@ -128,6 +128,7 @@ private:
 	void setFrame(uint frame);
 	void playTheme();
 	void updateTheme(double sceneTime);
+	void showFacade();
 
 	Common::String _environment;
 	Common::String _backgroundName;
@@ -147,6 +148,9 @@ private:
 	double _sceneTime = 0.0;
 
 	bool _wraps = true;
+	bool _hasUturn = true;
+	bool _isFacade = false;
+	RecordGraphic _facade;
 };
 
 // Changes the scene and sets flags, either right away or when its hotspot gets clicked

@@ -300,8 +300,11 @@ void SummaryRecord::readTable(int tableIndex) {
 
 	lua_pop(L, 1);
 
-	// Whether turning goes on past the first and the last frame
+	// Whether turning goes on past the first and the last frame, and Nancy22:
+	// whether the player can turn around
 	readField(L, tableIndex, "wrap", _wraps);
+	readField(L, tableIndex, "enableUturn", _hasUturn);
+	readField(L, tableIndex, "facade", _isFacade);
 
 	// The background is behind everything else
 	limitZ(kBackgroundScriptZ);
@@ -361,6 +364,29 @@ void SummaryRecord::updateTheme(double sceneTime) {
 
 void SummaryRecord::runOnce() {
 	playTheme();
+
+	if (_isFacade) {
+		showFacade();
+	}
+}
+
+// Nancy22: a scene with a facade keeps what the viewport showed when it started
+// as its background, e.g. the character after a conversation is over
+void SummaryRecord::showFacade() {
+	const Graphics::ManagedSurface &image = g_nancy->_graphics->getGameImage();
+	Common::Rect area = NancySceneState.getViewport().getScreenPosition();
+	area.clip(Common::Rect(image.w, image.h));
+	if (area.isEmpty()) {
+		return;
+	}
+
+	_facade._drawSurface.copyFrom(image.rawSurface().getSubArea(area));
+	_facade.init();
+	_facade.moveTo(Common::Rect(area.width(), area.height()));
+	_facade.setTransparent(false);
+	_facade.setScriptZ(kBackgroundScriptZ, getContext());
+	_facade.setVisible(true);
+	_facade.registerGraphics();
 }
 
 void SummaryRecord::setBackground(UI::Viewport *background) {
@@ -394,7 +420,7 @@ SummaryRecord::Turn SummaryRecord::getTurnAt(const ScriptPoint &point, bool inVi
 	} else if (boot->rightNodeHotspot.contains(place)) {
 		return canTurn(kTurnRight) ? kTurnRight : kNoTurn;
 	} else if (boot->uturnNodeHotspot.contains(place)) {
-		return kTurnAround;
+		return _hasUturn ? kTurnAround : kNoTurn;
 	}
 
 	return kNoTurn;
