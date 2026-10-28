@@ -221,7 +221,7 @@ void PrisonerEngine::leaveScene() {
 	clearZoneActions();
 	unloadSounds(_newModuleIndex != _currModuleIndex);
 	unloadActors();
-	// TODO: updatePalStucts();
+	restorePaletteTasks();
 	// TODO: clearPaletteValues
 	unloadBackgroundObjects();
 	unloadBackground();

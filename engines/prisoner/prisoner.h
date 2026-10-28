@@ -1165,6 +1165,8 @@ public:
 	void startPaletteTask(int16 type, int16 value1, int16 value2, int16 value3);
 	void updatePaletteTasks();
 	void clearPaletteTasks();
+	void restorePaletteTasks();
+	void restartPaletteTasks();
 
 	void playMux(Common::String filename);
 	bool handleMuxInput();

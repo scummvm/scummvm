@@ -899,10 +899,9 @@ void PrisonerEngine::loadgame(const char *filename) {
 	_needToUpdatePalette = true;
 
 	// Palette tasks
-	for (int i = 0; i < kMaxPaletteTasks; i++) {
+	for (int i = 0; i < kMaxPaletteTasks; i++)
 		_paletteTasks[i].load(this, in);
-		// TODO: Start palette task
-	}
+	restartPaletteTasks();
 
 	// Path system
 	_pathSystem->loadState(in);

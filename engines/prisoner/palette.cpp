@@ -210,6 +210,31 @@ void PrisonerEngine::updatePaletteTasks() {
 
 }
 
+// The task types that start and stop each palette task (original word_61570 and word_6157A).
+// Only task 1 (the alarm) and task 3 (the color fade) do something.
+static const int16 kPaletteTaskStartTypes[kMaxPaletteTasks] = {1, 3, 5, 7, -1};
+static const int16 kPaletteTaskStopTypes[kMaxPaletteTasks] = {2, 4, 6, 9, -1};
+
+// Ends the running palette tasks with their stop type when leaving a scene; ending the color
+// fade also puts the palette back (original: restorePaletteTasks)
+void PrisonerEngine::restorePaletteTasks() {
+	for (int16 i = 0; i < kMaxPaletteTasks; i++) {
+		if (_paletteTasks[i].active)
+			startPaletteTask(kPaletteTaskStopTypes[i], 0, 0, 0);
+	}
+}
+
+// Starts the palette tasks again that were running when the game was saved (original:
+// sg_readPaletteTasks). The color fade gets its step size as the duration and both
+// start again from the beginning.
+void PrisonerEngine::restartPaletteTasks() {
+	for (int16 i = 0; i < kMaxPaletteTasks; i++) {
+		const PaletteTask &task = _paletteTasks[i];
+		if (task.active)
+			startPaletteTask(kPaletteTaskStartTypes[i], task.value2, task.value3, MAX<int16>(task.positionIncr, 1));
+	}
+}
+
 void PrisonerEngine::clearPaletteTasks() {
 	for (int16 i = 0; i < kMaxPaletteTasks; i++) {
 		_paletteTasks[i].active = false;
