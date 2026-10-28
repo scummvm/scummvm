@@ -869,7 +869,8 @@ bool OverrideRecord::getField(const Common::String &key) {
 		return true;
 	}
 
-	if (key == "SetMessagingName" && g_nancy->getGameType() >= kGameTypeNancy22) {
+	// Nancy22
+	if (key == "SetMessagingName") {
 		lua_pushcfunction(getLua(), overrideSetMessagingName);
 		return true;
 	}
