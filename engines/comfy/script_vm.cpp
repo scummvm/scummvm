@@ -1164,8 +1164,8 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			error("Script opcode 0x53 resolved an invalid actor");
 
 		target->spriteSelector = (uint32)(int32)(int16)frame;
-		target->moveDx = 0;
-		target->moveDy = 0;
+		target->xFixed = 0;
+		target->yFixed = 0;
 
 		return kScriptContinue;
 	}
