@@ -26,14 +26,16 @@
 #include "common/debug.h"
 #include "common/endian.h"
 
-#define SOUND_CMD_START 0
-#define SOUND_CMD_BEGIN_EVENT 1
-#define SOUND_CMD_BEGIN_LOOP_EVENT 2
+// SOUND COMMANDS
+
+#define SOUND_CMD_START                0
+#define SOUND_CMD_BEGIN_EVENT          1
+#define SOUND_CMD_BEGIN_LOOP_EVENT     2
 #define SOUND_CMD_FILL_OR_SAMPLE_DELAY 3
-#define SOUND_CMD_PITCH_CHANGE 4
-#define SOUND_CMD_LOOP_START 6
-#define SOUND_CMD_LOOP_END 7
-#define SOUND_CMD_SET_SAMPLE 99
+#define SOUND_CMD_PITCH_CHANGE         4
+#define SOUND_CMD_LOOP_START           6
+#define SOUND_CMD_LOOP_END             7
+#define SOUND_CMD_SET_SAMPLE           99
 
 namespace Comfy {
 
@@ -119,7 +121,6 @@ byte ComfyEngine::soundOpenEntry(uint16 index) {
 	return _soundFault ? 0 : _soundSample;
 }
 
-
 void ComfyEngine::setWaveBalancePercent(uint16 value) {
 	if ((int16)value < 0) {
 		value = 0;
@@ -127,8 +128,8 @@ void ComfyEngine::setWaveBalancePercent(uint16 value) {
 		value = 100;
 	}
 
-	_v3SceneWaveBalancePercent = (byte)value;
-	_v3WaveBalancePercent = value;
+	_sceneWaveBalancePercent = (byte)value;
+	_waveBalancePercent = value;
 }
 
 void ComfyEngine::setWaveLeftPercent(uint16 value) {
@@ -141,8 +142,8 @@ void ComfyEngine::setWaveLeftPercent(uint16 value) {
 		value = 100;
 	}
 
-	_v3SceneWaveLeftPercent = (byte)value;
-	_v3WaveLeftPercent = value;
+	_sceneWaveLeftPercent = (byte)value;
+	_waveLeftPercent = value;
 }
 
 void ComfyEngine::setWaveRightPercent(uint16 value) {
@@ -155,8 +156,8 @@ void ComfyEngine::setWaveRightPercent(uint16 value) {
 		value = 100;
 	}
 
-	_v3SceneWaveRightPercent = (byte)value;
-	_v3WaveRightPercent = value;
+	_sceneWaveRightPercent = (byte)value;
+	_waveRightPercent = value;
 }
 
 void ComfyEngine::setMixerVolumePercent(uint16 value) {
@@ -169,8 +170,8 @@ void ComfyEngine::setMixerVolumePercent(uint16 value) {
 		value = 100;
 	}
 
-	_v3SceneMixerVolumePercent = (byte)value;
-	_v3MixerVolumePercent = value;
+	_sceneMixerVolumePercent = (byte)value;
+	_mixerVolumePercent = value;
 }
 
 void ComfyEngine::setMediaRangePercent(uint16 value) {
@@ -180,31 +181,31 @@ void ComfyEngine::setMediaRangePercent(uint16 value) {
 		value = 100;
 	}
 
-	_v3MixerAltPercent = value;
+	_mixerAltPercent = value;
 }
 
 void ComfyEngine::setMediaMode(byte mode) {
 	if (mode == 1 || mode == 3) {
-		_v3SceneMediaModeEnabled = 1;
+		_sceneMediaModeEnabled = 1;
 
-		if (!_v3MediaValueAvailable) {
-			_v3MediaValue = 0;
-			_v3MediaValueAvailable = true;
+		if (!_mediaValueAvailable) {
+			_mediaValue = 0;
+			_mediaValueAvailable = true;
 		}
 	} else if (mode == 2) {
-		_v3SceneMediaModeEnabled = 0;
-		_v3MediaValue = 0;
-		_v3MediaValueAvailable = false;
+		_sceneMediaModeEnabled = 0;
+		_mediaValue = 0;
+		_mediaValueAvailable = false;
 	}
 }
 
 void ComfyEngine::restoreWaveStateAfterSceneStart() {
-	setWaveBalancePercent(_v3SceneWaveBalancePercent);
-	setWaveLeftPercent(_v3SceneWaveLeftPercent);
-	setWaveRightPercent(_v3SceneWaveRightPercent);
-	setMixerVolumePercent(_v3SceneMixerVolumePercent);
+	setWaveBalancePercent(_sceneWaveBalancePercent);
+	setWaveLeftPercent(_sceneWaveLeftPercent);
+	setWaveRightPercent(_sceneWaveRightPercent);
+	setMixerVolumePercent(_sceneMixerVolumePercent);
 
-	if (_v3SceneMediaModeEnabled) {
+	if (_sceneMediaModeEnabled) {
 		setMediaMode(2);
 		setMediaMode(1);
 	} else {
@@ -235,6 +236,7 @@ bool ComfyEngine::soundOpenVocFile() {
 	_soundCompressed = !_isPanther && header[1] == 'W';
 	_soundUsesAnimData = false;
 	_soundTileStride = READ_LE_UINT16(header + 2);
+
 	return true;
 }
 
@@ -544,7 +546,7 @@ uint32 ComfyEngine::soundCalcSampleRate(byte &sample) {
 		_midiPlyrDriver->vocSrGetCounters(timeFrac, blockNo);
 
 		if (blockNo && timeFrac)
-			return ((uint32)blockNo * 0x1E8480) / timeFrac;
+			return ((uint32)blockNo * 2000000) / timeFrac;
 	}
 
 	uint32 denominator = 0x100 - sample;
@@ -929,7 +931,6 @@ void ComfyEngine::soundDecompressBlock(uint16 size) {
 
 		_soundRate++;
 	}
-
 }
 
 void ComfyEngine::soundLoadDataBlock(uint16 size) {
@@ -1404,6 +1405,7 @@ void ComfyEngine::soundPackState() {
 	uint32 playbackPosition = (vocCounter * _soundSampleRate) / 100;
 	uint16 bufferIndex = _soundWaveBufferIndex;
 	uint32 blockSize = _isPanther ? COMFY_PANTHER_SOUND_PCM_BLOCK_BYTES : (_engineVersion == 3 ? COMFY_V3_SOUND_PCM_BLOCK_BYTES : COMFY_SOUND_PCM_BLOCK_BYTES);
+
 	if ((int32)(_soundStreamPosition - blockSize) < (int32)playbackPosition)
 		bufferIndex = 1 - bufferIndex;
 

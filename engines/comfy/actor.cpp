@@ -29,6 +29,7 @@ bool ComfyEngine::spriteDecompressTile(SpriteResource &sprite, const byte *sourc
 	uint32 outputSize = sprite.header.tiledSize;
 	_spriteDecompressLastSize = 0;
 	_spriteDecompressLastComplete = false;
+
 	if (!source || !sourceSize || !sprite.header.width || !sprite.header.height || !outputSize)
 		return false;
 
@@ -64,6 +65,7 @@ bool ComfyEngine::spriteDecompressTile(SpriteResource &sprite, const byte *sourc
 		while (pixelsLeft) {
 			if (!skipCount && !fillCount && !literalCount) {
 				byte op = sourcePos < sourceEnd ? source[sourcePos++] : 0;
+
 				if (op & 0x40) {
 					skipCount = op - 0x40;
 
@@ -126,6 +128,7 @@ bool ComfyEngine::spriteDecompressTile(SpriteResource &sprite, const byte *sourc
 				uint16 count = MIN<uint16>(pixelsLeft, fillCount);
 				count = MIN<uint16>(count, 0x3F);
 				fillCount -= count;
+
 				if (count < 8) {
 					literalCount = count;
 					literalFromFill = true;
@@ -218,6 +221,7 @@ void ComfyEngine::scenePoolEvict() {
 	byte *entry = &_scenePoolData[_scenePoolEvictCursor];
 	int16 id = (int16)READ_LE_UINT16(entry);
 	uint16 slotSize = READ_LE_UINT16(entry + 2);
+
 	if (id > 0) {
 		if ((uint16)id < _spriteResources.size())
 			spriteInvalidateHostCache(_spriteResources[id]);
@@ -234,8 +238,7 @@ void ComfyEngine::scenePoolEvict() {
 	}
 
 	_scenePoolEvictCursor += slotSize;
-	if (_scenePoolEvictCursor < _scenePoolData.size() &&
-			READ_LE_UINT16(&_scenePoolData[_scenePoolEvictCursor]) == 0x8000)
+	if (_scenePoolEvictCursor < _scenePoolData.size() && READ_LE_UINT16(&_scenePoolData[_scenePoolEvictCursor]) == 0x8000)
 		_scenePoolEvictCursor = 0;
 }
 
@@ -347,6 +350,7 @@ void ComfyEngine::spriteCache(int16 spriteId) {
 	uint16 payloadSize = sprite.pixels.size() + (sprite.pixels.size() & 1);
 	uint16 slotSize = payloadSize + 0x0C;
 	scenePoolReserveSlot((uint32)slotSize + 2);
+
 	if (_scenePoolCursor > _scenePoolData.size() || slotSize > _scenePoolData.size() - _scenePoolCursor)
 		return;
 
@@ -390,8 +394,7 @@ ComfyEngine::SpriteResource *ComfyEngine::spriteLookup(uint16 spriteId, int16 x,
 	int16 right = left + (int16)sprite.header.width - 1;
 	int16 bottom = top + (int16)sprite.header.height - 1;
 	bool fullscreen = sprite.header.width == _logicalScreenWidth && sprite.header.height == _logicalScreenHeight;
-	bool offscreen = left > (int16)(_logicalScreenWidth - 1) || right < 0 ||
-		top > (int16)(_logicalScreenHeight - 1) || bottom < 0;
+	bool offscreen = left > (int16)(_logicalScreenWidth - 1) || right < 0 || top > (int16)(_logicalScreenHeight - 1) || bottom < 0;
 
 	if (entry && entry->slotSize == 0xFFFF && !fullscreen && offscreen) {
 		_objFileOffset = _spriteLastHeader.fileOffset;
@@ -428,7 +431,7 @@ ComfyEngine::SpriteResource *ComfyEngine::spriteGetPtr(int16 spriteId) {
 
 	uint16 frameId = (uint16)-spriteId;
 	if (frameId >= _frameCacheEntries.size() || _frameCacheEntries[frameId].slotSize == 0xFFFF ||
-			!_frameSpriteResource.loaded || _frameSpriteResource.id != frameId)
+		!_frameSpriteResource.loaded || _frameSpriteResource.id != frameId)
 		spriteCache(spriteId);
 
 	return _frameSpriteResource.loaded && _frameSpriteResource.id == frameId ? &_frameSpriteResource : nullptr;
@@ -446,6 +449,7 @@ void ComfyEngine::spriteGetConvPtr(int16 spriteId) {
 	SpriteCacheEntry &entry = _objectCacheEntries[spriteId];
 	byte *payload = nullptr;
 	uint16 width = 0;
+
 	if (entry.slotSize != 0xFFFF) {
 		if (entry.poolOffset <= _scenePoolData.size() && entry.slotSize >= 0x0C && 0x0C <= _scenePoolData.size() - entry.poolOffset) {
 			byte *entryData = &_scenePoolData[entry.poolOffset];
@@ -1105,6 +1109,7 @@ bool ComfyEngine::actorRunScript(uint16 actorIndex, bool &descendChildren) {
 		actor->yFixed = (int32)((uint32)actor->yFixed + (uint32)stepDy);
 		actor->moveDx = moveDx - stepDx;
 		actor->moveDy = moveDy - stepDy;
+
 		moveTicks -= stepTicks;
 		if (moveTicks < 0)
 			moveTicks = 0;
@@ -1174,6 +1179,7 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 	while (child) {
 		Actor *childActor = actorGetPtr(child);
 		uint16 savedNext = childActor ? childActor->nextLink : 0;
+
 		if (actorTickTree(child)) {
 			child = savedNext;
 		} else {
@@ -1257,6 +1263,7 @@ void ComfyEngine::renderFlushDrawCommands() {
 
 			bool coversMouse = animFrameCoversPoint(command.x, command.y, _mouseX, _mouseY);
 			animFrameBlitAt(command.x, command.y);
+
 			if (_engineVersion == 3 && command.actorIndex) {
 				Actor *actor = actorGetPtr(command.actorIndex);
 				if (actor)
@@ -1272,6 +1279,7 @@ void ComfyEngine::renderFlushDrawCommands() {
 
 		bool coversMouse = spriteCoversPoint((int16)command.selector, command.x, command.y, _mouseX, _mouseY);
 		spriteBlitClipped((int16)command.selector, command.x, command.y);
+
 		if (_engineVersion == 3 && command.actorIndex) {
 			Actor *actor = actorGetPtr(command.actorIndex);
 			if (actor)
@@ -1552,6 +1560,7 @@ bool ComfyEngine::actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y) {
 			if (spriteId) {
 				int16 spriteX = drawX + dx;
 				int16 spriteY = drawY + dy;
+
 				SpriteResource *sprite = spriteLookup(spriteId, spriteX, spriteY);
 				if (sprite)
 					spriteBlitClipped((int16)spriteId, spriteX - sprite->header.hotspotX,
@@ -1950,6 +1959,5 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 
 	actorDrawList(actor->childHead, drawX, drawY, visible);
 }
-
 
 } // End of namespace Comfy

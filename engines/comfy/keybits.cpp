@@ -74,5 +74,4 @@ void ComfyEngine::keyBitClear(uint16 bitIndex) {
 	_keyBits[byteIndex] &= ~(1 << (bitIndex & 7));
 }
 
-
 } // End of namespace Comfy

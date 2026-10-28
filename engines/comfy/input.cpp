@@ -251,8 +251,7 @@ uint32 ComfyEngine::lptKeyboardScan() {
 
 		if (_keyboardActiveMask & 0x02) {
 			uint32 timeCounter = _midiPlyrDriver ? _midiPlyrDriver->getTimeCounter() : _midiTimeCounter;
-			if (!_inputKeyboardPulseLatched && (_keyboardLatchedMask & 0x02) &&
-					timeCounter - _inputKeyboardPulseTime < 0x64)
+			if (!_inputKeyboardPulseLatched && (_keyboardLatchedMask & 0x02) && timeCounter - _inputKeyboardPulseTime < 0x64)
 				_inputKeyboardPulseTicks = 6;
 		}
 
@@ -313,7 +312,7 @@ uint32 ComfyEngine::lptKeyboardScan() {
 	} else if (_engineVersion == 3 && _inputDeviceMode == 2) {
 		scanState = keyboardState | (_inputKeyboardBit7Held ? 0x80 : 0);
 	} else if (_engineVersion == 3 && (_inputDeviceMode == 3 || _inputDeviceMode == 4)) {
-		// Modes 3 and 4 originally used WinMM MIDI input, we route those signalsthrough the keymapper/UI...
+		// Modes 3 and 4 originally used WinMM MIDI input, we route those signals through the keymapper/UI...
 		scanState = (_toyKeyboardActiveMask | _toyKeyboardHoldMask | _toyKeyboardLatchedMask | _keymapperActiveMask | _keymapperLatchedMask) & 0x00FFFFFF;
 
 		if (_inputDeviceMode == 4) {
@@ -374,6 +373,7 @@ uint16 ComfyEngine::inputDetectDevice(uint32 comfyboardState, uint32 keyboardSta
 	_inputPreviousKeyboardState = filteredKeyboardState;
 	uint32 comfyboardPressed = (filteredComfyboardState ^ previousComfyboardState) & filteredComfyboardState;
 	uint32 keyboardPressed = (filteredKeyboardState ^ previousKeyboardState) & filteredKeyboardState;
+
 	if (!_inputKeyboardActivityCount && (keyboardPressed & 0x80) && !(comfyboardState & 0x80))
 		return 2;
 

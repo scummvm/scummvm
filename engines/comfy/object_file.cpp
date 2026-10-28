@@ -404,6 +404,7 @@ byte *ComfyEngine::objFileReadTiledCore(uint32 sourceOffset, uint32 byteCount, O
 	if (missing) {
 		uint16 readRow = (uint16)(lastRow - missing + 1);
 		objFileReadRow(objectFile->readBuffer, readRow, missing, blockSize, objectFile);
+
 		for (uint16 i = missing; i != 0; i--) {
 			uint16 tileId = (uint16)(lastRow - i + 1);
 			uint16 bufferRow = (uint16)(missing - i);

@@ -40,14 +40,13 @@ namespace Comfy {
 ComfyEngine *g_engine;
 
 void ComfyEngine::configRunPendingCommand() {
-	if (!_v3ConfigCommandPending)
+	if (!_configCommandPending)
 		return;
 
-	_v3ConfigCommandPending = false;
+	_configCommandPending = false;
 
-	// The original starts the stored command with WinExec or ShellExecute, which has no engine-side equivalent.
 	warning("configRunPendingCommand reached, this is probably a dev path! Values: command=%u value=%u text=%s",
-		_v3ConfigCommandSubop, _v3ConfigCommandValue, _v3ConfigCommandText.c_str());
+		_configCommandSubop, _configCommandValue, _configCommandText.c_str());
 }
 
 #ifdef USE_IMGUI

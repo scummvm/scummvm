@@ -117,11 +117,13 @@ void ComfyEngine::gameConfigInit() {
 void ComfyEngine::findLanguageDirectories() {
 	uint languageCount = 0;
 	_multiLanguage = false;
+
 	for (uint i = 0; i < ARRAYSIZE(_languageDirectories); i++)
 		_languageDirectories[i] = Common::Path();
 
 	Common::FSNode root(ConfMan.getPath("path"));
 	Common::FSNode gameDirectory;
+
 	if (root.getName().equalsIgnoreCase(_gameDirectory.toString())) {
 		gameDirectory = root;
 	} else {
@@ -178,7 +180,7 @@ bool ComfyEngine::iniReadGameConfig() {
 		_inputDeviceMode = 0;
 
 	_inputDevicePreference = _inputDeviceMode;
-	_v3Sensitivity = ConfMan.hasKey("SENSITIVITY") ? ConfMan.getInt("SENSITIVITY") : 0;
+	_sensitivity = ConfMan.hasKey("SENSITIVITY") ? ConfMan.getInt("SENSITIVITY") : 0;
 
 	return !_gameDirectory.empty();
 }
@@ -532,6 +534,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	uint32 objectTableBytes = assetsAlignEven32((uint32)_numObjects * 0x11);
 	uint32 headerTotalBytes = midiHeaderBytes + soundHeaderBytes + objectTableBytes;
 	uint16 headerPages = (uint16)((headerTotalBytes + 0x400) / 0x400);
+
 	int32 headerHandle = memAllocTrackFar(headerPages);
 	if (headerHandle < 0)
 		return false;
@@ -583,6 +586,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	_scenePoolSize = xmsLimit > budget ? xmsLimit - budget : 0;
 	_scenePoolSize &= 0xFFFFFFFE;
 	_scenePoolData.resize(_scenePoolSize);
+
 	if (_scenePoolSize)
 		memset(&_scenePoolData[0], 0, _scenePoolSize);
 
