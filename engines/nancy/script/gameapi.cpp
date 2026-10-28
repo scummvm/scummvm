@@ -1937,6 +1937,38 @@ static const luaL_Reg kLogFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// UI, Nancy19: makes and takes away the controls of the panels. The scripts of
+// a panel make the controls that come from a template themselves. Only the
+// scripts of Nancy22 use it, e.g. for the responses of the conversations.
+
+// UI:CreateObject(panel, name, template[, loadName[, ...]]), which gives whether
+// the control was made
+static int uiCreateObject(lua_State *L) {
+	const char *parentName = luaL_checkstring(L, 2);
+	const char *name = luaL_checkstring(L, 3);
+	const char *templateName = luaL_checkstring(L, 4);
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	lua_pushboolean(L, ui && ui->createObject(name, templateName, parentName));
+	return 1;
+}
+
+// UI:DestroyObject(name)
+static int uiDestroyObject(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	lua_pushboolean(L, ui && ui->destroyObject(name));
+	return 1;
+}
+
+static const luaL_Reg kUIFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "CreateObject", uiCreateObject },
+	{ "DestroyObject", uiDestroyObject },
+	{ nullptr, nullptr }
+};
+
 // Autotext, for the captions
 
 // Autotext:RemoveCC(anything) takes down the caption that shows. The original
@@ -2048,6 +2080,7 @@ void registerGameAPI(lua_State *L) {
 	registerGlobal(L, "Save", "ND.Save", kSaveFunctions);
 	registerGlobal(L, "Load", "ND.Load", kLoadFunctions);
 	registerGlobal(L, "Log", "ND.Log", kLogFunctions);
+	registerGlobal(L, "UI", "ND.UIMgr", kUIFunctions);
 }
 
 } // End of namespace Script

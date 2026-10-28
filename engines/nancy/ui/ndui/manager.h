@@ -123,8 +123,8 @@ public:
 	const Graphics::ManagedSurface *getTexture(const Common::String &name);
 
 	// Creates a control from a template, as the last one of a panel
-	void createObject(const Common::String &name, const Common::String &templateName, const Common::String &parentName);
-	void destroyObject(const Common::String &name);
+	bool createObject(const Common::String &name, const Common::String &templateName, const Common::String &parentName);
+	bool destroyObject(const Common::String &name);
 
 	// Engine state shown by the UI
 	void update();

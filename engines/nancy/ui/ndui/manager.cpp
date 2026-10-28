@@ -225,21 +225,22 @@ Manager::Request Manager::takeRequest() {
 	return request;
 }
 
-void Manager::createObject(const Common::String &name, const Common::String &templateName, const Common::String &parentName) {
+bool Manager::createObject(const Common::String &name, const Common::String &templateName, const Common::String &parentName) {
 	Panel *parent = findPanel(parentName);
 
 	// Nancy19 has the script of the panel make the control
 	if (parent && g_nancy->getGameType() >= kGameTypeNancy19) {
 		if (!parent->createObject(name, templateName)) {
 			warning("Couldn't create UI object %s from %s in %s", name.c_str(), templateName.c_str(), parentName.c_str());
+			return false;
 		}
 
-		return;
+		return true;
 	}
 
 	if (!parent || !_templates.contains(templateName)) {
 		warning("Couldn't create UI object %s from %s in %s", name.c_str(), templateName.c_str(), parentName.c_str());
-		return;
+		return false;
 	}
 
 	const Common::Array<byte> &data = _templates[templateName];
@@ -250,14 +251,17 @@ void Manager::createObject(const Common::String &name, const Common::String &tem
 	Control *control = parent->addNewControl(type, stream);
 	control->setName(name);
 	parent->arrangeControls();
+	return true;
 }
 
-void Manager::destroyObject(const Common::String &name) {
+bool Manager::destroyObject(const Common::String &name) {
 	for (Panel *panel : _panels) {
 		if (panel->removeControl(name)) {
-			return;
+			return true;
 		}
 	}
+
+	return false;
 }
 
 bool Manager::isItemButton(const Common::String &name) const {
