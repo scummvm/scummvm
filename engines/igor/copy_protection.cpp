@@ -161,7 +161,7 @@ bool IgorEngine::readProtectionWord(uint8 *typed) {
 		Common::Event ev;
 		bool changed = false;
 		while (!done && _eventMan->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_QUIT) {
+			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 				break;

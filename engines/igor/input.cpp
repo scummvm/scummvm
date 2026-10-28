@@ -49,6 +49,7 @@ void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 		Common::Event ev;
 		while (!_eventQuitGame && _eventMan->pollEvent(ev)) {
 			switch (ev.type) {
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 			case Common::EVENT_QUIT:
 				_inputVars[kInputEscape] = 1;
 				_currentPart = kInvalidPart;
