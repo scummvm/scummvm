@@ -1240,6 +1240,14 @@ static int sceneTransferChild(lua_State *L) {
 	return 0;
 }
 
+// Scene:Attach(record), Nancy22: puts a record back under the scene, out of
+// the Transformer record it was attached to
+static int sceneAttach(lua_State *L) {
+	checkContext(L);
+	checkRecord(L, 2)->setParentNode(nullptr);
+	return 0;
+}
+
 // Scene:EndStream(name)
 static int sceneEndStream(lua_State *L) {
 	checkContext(L);
@@ -1299,6 +1307,9 @@ static const luaL_Reg kSceneFunctions[] = {
 	{ "ChangeScene", sceneChangeScene },
 	{ "GraphNode", sceneGraphNode },
 	{ "TransferChild", sceneTransferChild },
+	// Available since Nancy19, but used by game scripts from Nancy22 onwards
+	{ "Change", sceneChangeScene },
+	{ "Attach", sceneAttach },
 	{ nullptr, nullptr }
 };
 
