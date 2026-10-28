@@ -126,6 +126,7 @@ public:
 	bool hasRunOnce() const { return _hasRunOnce; }
 	// Counted from the node the record is under, when it is under one
 	double getZ() const;
+	double getLocalZ() const { return _z; }
 
 	// Puts the record no closer to the player than the given z
 	void limitZ(double z);

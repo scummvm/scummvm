@@ -230,6 +230,7 @@ MODULE_OBJS += \
   script/records.o \
   script/ref.o \
   script/scenecontext.o \
+  script/transformer.o \
   script/types.o \
   script/uiapi.o \
   script/xsheet.o

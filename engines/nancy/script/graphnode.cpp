@@ -37,6 +37,20 @@ ScriptMatrix GraphNode::getTransform() const {
 	return _parent ? _transform * _parent->getTransform() : _transform;
 }
 
+void GraphNode::setZ(double z) {
+	if (z != _z) {
+		_z = z;
+		_context.onGraphNodeChanged(this);
+	}
+}
+
+void GraphNode::setTransform(const ScriptMatrix &transform) {
+	if (transform != _transform) {
+		_transform = transform;
+		_context.onGraphNodeChanged(this);
+	}
+}
+
 void GraphNode::setParent(GraphNode *parent) {
 	// A node can't go under itself
 	if (parent && parent->isUnder(this)) {

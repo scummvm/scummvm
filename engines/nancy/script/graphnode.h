@@ -35,7 +35,8 @@ class SceneContext;
 // Scene:GraphNode(). A record that was handed to a node with node:TransferChild()
 // is moved by the transform of the node on top of its own, and its z counts from
 // the one of the node. The tray of puzzle pieces scrolls its pieces that way.
-// Nodes can be put under other nodes as well.
+// Nodes can be put under other nodes as well. In Nancy22, every Transformer
+// record is such a node.
 class GraphNode {
 public:
 	GraphNode(SceneContext &context) : _context(context) {}
@@ -45,6 +46,10 @@ public:
 	// Including those of the nodes above
 	double getZ() const;
 	ScriptMatrix getTransform() const;
+
+	// The node's own, which Nancy22's Transformer records set
+	void setZ(double z);
+	void setTransform(const ScriptMatrix &transform);
 
 	GraphNode *getParent() const { return _parent; }
 	void setParent(GraphNode *parent);
