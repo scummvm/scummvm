@@ -27,8 +27,10 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
+#include "gui/message.h"
 
 #ifdef USE_IMGUI
 #include "backends/imgui/imgui.h"
@@ -47,6 +49,30 @@ void ComfyEngine::configRunPendingCommand() {
 
 	warning("configRunPendingCommand reached, this is probably a dev path! Values: command=%u value=%u text=%s",
 		_configCommandSubop, _configCommandValue, _configCommandText.c_str());
+}
+
+void ComfyEngine::showPeripheralWarning() {
+	if (ConfMan.getBool("shown_peripheral_warning"))
+		return;
+
+#ifdef USE_IMGUI
+	// I18N: Shown at startup, the games were designed for a physical toy keyboard
+	Common::U32String message = _("WARNING: this game was originally designed to be played using an external Comfy Keyboard toy peripheral. "
+		"This device is emulated via an ImGui window, or via the keymapper. "
+		"It is advised to configure the keymapper before starting the game.");
+#else
+	// I18N: Shown at startup, the games were designed for a physical toy keyboard
+	Common::U32String message = _("WARNING: this game was originally designed to be played using an external Comfy Keyboard toy peripheral. "
+		"This device is emulated via the keymapper. "
+		"It is advised to configure the keymapper before starting the game.");
+#endif
+
+	GUI::MessageDialog dialog(message, _("Understood"), _("Remind me later"));
+
+	if (dialog.runModal() == GUI::kMessageOK) {
+		ConfMan.setBool("shown_peripheral_warning", true);
+		ConfMan.flushToDisk();
+	}
 }
 
 #ifdef USE_IMGUI
@@ -146,6 +172,12 @@ Common::Error ComfyEngine::gameInit() {
 	gameConfigInit();
 	if (!iniReadGameConfig())
 		return Common::kNoGameDataFoundError;
+
+	showPeripheralWarning();
+
+	// Avoid continuing if the user bails out during the warning...
+	if (shouldQuit())
+		return Common::kNoError;
 
 #ifdef USE_IMGUI
 	ImGuiCallbacks imGuiCallbacks;
