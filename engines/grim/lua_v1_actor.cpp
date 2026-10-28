@@ -1249,11 +1249,7 @@ void Lua_V1::WalkActorVector() {
 	// yaw is offset from forward by 180 degrees
 	yaw -= 180.0f;
 
-	// set the new direction or walk forward
-	if (actor2->getYaw() != yaw)
-		actor2->turnTo(0, yaw, 0);
-	else
-		actor2->walkForward();
+	actor2->walkVector(yaw);
 }
 
 /* Set the pitch of the actor to the requested value,

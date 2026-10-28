@@ -182,31 +182,25 @@ public:
 	bool isWalking() const;
 
 	/**
-	 * Sets the rotation of thes actor in the 3D scene.
-	 * The effect is not immediate, the actor will slowly rotate
-	 * to the destination orientation.
-	 *
-	 * @param pitch The rotation of the x axis
-	 * @param yaw The rotation of the z axis
-	 * @param roll The rotation of the y axis
-	 * @see getPitch
-	 * @see getYaw
-	 * @see getRoll
-	 * @see setRot
-	 * @see turn
-	 * @see isTurning
-	 */
-	void turnTo(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll);
-	/**
 	 * Turn the actor towards a point in space.
-	 * The effect is not immediate, the actor will slowly rotate
-	 * to the destination orientation.
+	 * The heading is set at once; an actor that turns smoothly rotates
+	 * to it over the following frames.
 	 *
 	 * @param pos The position the actor should turn to.
-	 * @see turnTo
+	 * @see turnToYaw
 	 * @see setRot
 	 */
 	void turnTo(const Math::Vector3d &pos);
+	/**
+	 * Turn the heading toward a yaw and walk forward, as WalkActorVector does.
+	 * The heading turns by at most twice the turn rate per call. Grim walks
+	 * once the yaw is less than 90 degrees from the heading, EMI unless the
+	 * heading had to turn 65 degrees or more.
+	 *
+	 * @param yaw The direction to walk in
+	 * @see walkForward
+	 */
+	void walkVector(const Math::Angle &yaw);
 	/**
 	 * Turn the actor towards a point in space, by an amount defined by the turn rate.
 	 * This function does not make an actor point at the given position, but it makes
@@ -274,15 +268,6 @@ public:
 	 * @see isTurning
 	 */
 	void setRot(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll);
-	/**
-	 * Turn the actor towards a point in space.
-	 * The effect is immediate.
-	 *
-	 * @param pos The position the actor should turn to.
-	 * @see turnTo
-	 * @see setRot
-	 */
-	void setRot(const Math::Vector3d &pos);
 	/**
 	 * Turns the actor by the given parameter on the z axis.
 	 * The actual movement depends also on the turn rate.
@@ -603,6 +588,7 @@ private:
 	void collisionHandlerCallback(Actor *other) const;
 	void updateWalk();
 	void updateMovement();
+	Math::Angle turnHeadingToYaw(const Math::Angle &yaw, float maxStep);
 	float getYawLeft() const;
 	int updateEasedYaw();
 	void updateMoveChores();

@@ -360,6 +360,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 	} else {
 		// An approximation of _smoothTurns
 		_smoothTurns = _followBoxes || _walking;
+		// Only a smooth turn closes the gap to the heading
+		if (!_smoothTurns)
+			_moveYaw = _yaw;
 	}
 	_destPos = savedState->readVector3d();
 
@@ -493,12 +496,6 @@ bool Actor::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-void Actor::setRot(const Math::Vector3d &pos) {
-	Math::Angle y, p, r;
-	calculateOrientation(pos, &p, &y, &r);
-	setRot(p, y, r);
-}
-
 void Actor::setRot(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_pitch = pitchParam;
 	_yaw = yawParam;
@@ -608,19 +605,51 @@ bool Actor::singleTurnTo(const Math::Vector3d &pos) {
 
 	// The original engines ignore time scale here
 	float maxStep = g_grim->getPerSecond(_turnRate);
-	Math::Angle d = y - _moveYaw;
-	d.normalize(-180);
-	float step = MIN(ABS(d.getDegrees()), maxStep);
-	turnToYaw(d > 0 ? _moveYaw + step : _moveYaw - step);
-	return step < maxStep;
+	Math::Angle step = turnHeadingToYaw(y, maxStep);
+	return ABS(step.getDegrees()) < maxStep;
 }
 
-void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
-	_movePitch = pitchParam;
-	_moveRoll = rollParam;
-	_pitch = pitchParam;
-	_roll = rollParam;
-	turnToYaw(yawParam);
+Math::Angle Actor::turnHeadingToYaw(const Math::Angle &yaw, float maxStep) {
+	float step;
+	if (g_grim->getGameType() == GType_GRIM) {
+		Math::Angle d = yaw - _moveYaw;
+		d.normalize(-180);
+		step = MIN(ABS(d.getDegrees()), maxStep);
+		if (d < 0)
+			step = -step;
+	} else {
+		// EMI takes the difference of the two angles in [0, 360) and only
+		// brings it below 180, so it lies in (-360, 180]. Only a positive
+		// difference is limited to the step, a negative one is turned at once.
+		Math::Angle a = yaw;
+		Math::Angle b = _moveYaw;
+		a.normalize(0);
+		b.normalize(0);
+		step = a.getDegrees() - b.getDegrees();
+		if (step > 180.f)
+			step -= 360.f;
+		if (step > maxStep)
+			step = maxStep;
+	}
+	turnToYaw(_moveYaw + step);
+	return step;
+}
+
+void Actor::walkVector(const Math::Angle &yaw) {
+	setSmoothTurns(true);
+	float maxStep = 2.f * g_grim->getPerSecond(_turnRate);
+	bool walk;
+	if (g_grim->getGameType() == GType_GRIM) {
+		Math::Angle d = yaw - _moveYaw;
+		d.normalize(-180);
+		walk = ABS(d.getDegrees()) < 90.f;
+		turnHeadingToYaw(yaw, maxStep);
+	} else {
+		Math::Angle step = turnHeadingToYaw(yaw, maxStep);
+		walk = ABS((int)step.getDegrees()) < 65;
+	}
+	if (walk)
+		walkForward();
 }
 
 void Actor::turnToYaw(const Math::Angle &yaw) {
@@ -1601,7 +1630,9 @@ int Actor::updateEasedYaw() {
 	// The original engines turn by the turn rate plus a tenth of the angle
 	// that is left, all the way at a rate of 0, and stop once less than half
 	// a degree is left
-	float left = getYawLeft();
+	Math::Angle d = _moveYaw - _yaw;
+	d.normalize(-180);
+	float left = ABS(d.getDegrees());
 	if (left < 0.5f)
 		return 0;
 
@@ -1609,8 +1640,6 @@ int Actor::updateEasedYaw() {
 	float turnAmt = g_grim->getPerSecond(_turnRate) * _timeScale;
 	if (turnAmt > 0.f && turnAmt < left)
 		step = (left - turnAmt) * 0.1f + turnAmt;
-	Math::Angle d = _moveYaw - _yaw;
-	d.normalize(-180);
 	if (d > 0) {
 		_yaw += step;
 		return 1;
@@ -1629,11 +1658,13 @@ void Actor::updateMoveChores() {
 	if (_walkedCur)
 		_currTurnDir = 0;
 
+	// A chore is stopped in the frame it is no longer wanted, not while it
+	// fades out: an EMI chore still plays then and would never end
 	if (_walkChore.isValid()) {
 		if (_walkedCur) {
 			if (!_walkChore.isPlaying())
 				_walkChore.playLooping(true, fadeTime);
-		} else if (_walkChore.isPlaying() && !_walking) {
+		} else if (_walkedLast && _walkChore.isPlaying()) {
 			_walkChore.stop(true, fadeTime);
 		}
 	}
@@ -1643,10 +1674,11 @@ void Actor::updateMoveChores() {
 		if (!turnChores[i]->isValid())
 			continue;
 		bool wanted = (i == 0 ? _currTurnDir > 0 : _currTurnDir < 0);
+		bool wantedLast = (i == 0 ? _lastTurnDir > 0 : _lastTurnDir < 0);
 		if (wanted) {
 			if (!turnChores[i]->isPlaying())
 				turnChores[i]->playLooping(true, fadeTime);
-		} else if (turnChores[i]->isPlaying()) {
+		} else if (wantedLast && turnChores[i]->isPlaying()) {
 			turnChores[i]->stop(true, fadeTime);
 		}
 	}

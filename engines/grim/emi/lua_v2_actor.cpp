@@ -1044,10 +1044,7 @@ void Lua_V2::WalkActorVector() {
 
 	Math::Angle yaw = cameraYaw + adjustYaw;
 
-	// set the new direction or walk forward
-	if (actor2->getYaw() != yaw)
-		actor2->turnToYaw(yaw);
-	actor2->walkForward();
+	actor2->walkVector(yaw);
 }
 
 void Lua_V2::EnableActorPuck() {
@@ -1060,7 +1057,8 @@ void Lua_V2::EnableActorPuck() {
 	if (!actor)
 		return;
 
-	bool enable = getbool(2);
+	// The original reads the argument as a number
+	bool enable = (int)lua_getnumber(lua_getparam(2)) != 0;
 	actor->setSmoothTurns(enable);
 }
 
