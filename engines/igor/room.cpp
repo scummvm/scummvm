@@ -64,40 +64,6 @@ void IgorEngine::decodeRoomMask(const uint8 *p) {
 	}
 }
 
-static void decodeRoomString(const uint8 *src, char *dst, int sz) {
-	for (int i = 0; i < sz; ++i) {
-		uint8 code = *src++;
-		if ((code >= 0xAE && code <= 0xC7) || (code >= 0xCE && code <= 0xE7)) {
-			code -= 0x6D;
-		} else if (code > 0xE7) {
-			switch (code) {
-			case 0xE8:
-				code = 0xA0;
-				break;
-			case 0xE9:
-				code = 0x82;
-				break;
-			case 0xEA:
-				code = 0xA1;
-				break;
-			case 0xEB:
-				code = 0xA2;
-				break;
-			case 0xEC:
-				code = 0xA3;
-				break;
-			case 0xED:
-				code = 0xA4;
-				break;
-			case 0xEE:
-				code = 0xA5;
-				break;
-			}
-		}
-		*dst++ = (char)code;
-	}
-}
-
 void IgorEngine::handleRoomDialogue() {
 	if (_gameState.dialogueTextRunning) {
 		// Speech completion ends the sentence

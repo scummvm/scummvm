@@ -1878,6 +1878,8 @@ private:
 	void fadeIn(int count);
 	void fadeOut(int count);
 
+	// Decodes sz bytes of an encoded room/dialogue string (no terminator is written)
+	static void decodeRoomString(const uint8 *src, char *dst, int sz);
 	void decodeRoomStrings(const uint8 *p, bool skipObjectNames = false);
 	void decodeRoomText(const uint8 *p);
 	void decodeRoomAreas(const uint8 *p, int count);

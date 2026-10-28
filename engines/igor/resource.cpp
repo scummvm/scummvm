@@ -115,7 +115,7 @@ static void decodeMainString(const uint8 *src, char *dst) {
 	dst[sz] = '\0';
 }
 
-static void decodeRoomString(const uint8 *src, char *dst, int sz) {
+void IgorEngine::decodeRoomString(const uint8 *src, char *dst, int sz) {
 	for (int i = 0; i < sz; ++i) {
 		uint8 code = *src++;
 		if ((code >= 0xAE && code <= 0xC7) || (code >= 0xCE && code <= 0xE7)) {
