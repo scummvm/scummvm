@@ -42,6 +42,7 @@
 #include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/scenecontext.h"
 #include "engines/nancy/script/types.h"
+#include "engines/nancy/script/xsheet.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -68,7 +69,8 @@ static const RecordKindNames kRecordKindNames[kNumRecordKinds] = {
 	{ "Override", "ND.OverrideAR" },
 	{ "Particle", "ND.ParticleAR" },
 	{ "AnimOverlay", "ND.AnimOvlAR" },
-	{ "Physics", "ND.PhysicsAR" }
+	{ "Physics", "ND.PhysicsAR" },
+	{ "Xsheet", "ND.XsheetAR" }
 };
 
 const char *getRecordKindName(RecordKind kind) {
@@ -105,6 +107,8 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 		return new ParticleRecord(context);
 	case kRecordPhysics:
 		return new PhysicsRecord(context);
+	case kRecordXsheet:
+		return new XsheetRecord(context);
 	default:
 		return nullptr;
 	}

@@ -123,6 +123,7 @@ public:
 	bool isActive() const { return _isActive && !_isDone; }
 	bool isDone() const { return _isDone; }
 	bool hasStarted() const { return _hasStarted; }
+	bool hasRunOnce() const { return _hasRunOnce; }
 	// Counted from the node the record is under, when it is under one
 	double getZ() const;
 

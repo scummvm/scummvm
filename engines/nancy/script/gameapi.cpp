@@ -981,6 +981,17 @@ bool isVoiceChannel(uint16 channel) {
 	return channel >= layout.firstVoice && channel < layout.end;
 }
 
+bool isVoicePlaying() {
+	const SoundChannelLayout &layout = getSoundChannelLayout();
+	for (uint16 channel = layout.firstVoice; channel < layout.end; ++channel) {
+		if (g_nancy->_sound->isSoundPlaying(channel)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static int soundChannelIndex(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
 

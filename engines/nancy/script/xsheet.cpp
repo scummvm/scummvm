@@ -27,6 +27,8 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
 
+#include "engines/nancy/script/api.h"
+#include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/xsheet.h"
 
 namespace Nancy {
@@ -217,6 +219,161 @@ void XSheet::setZ(double z, const SceneContext &context) {
 	for (uint i = 0; i < _trees.size(); ++i) {
 		_trees[i]->graphic.setScriptZ(z + (i == 0 ? 1 : 0), context);
 	}
+}
+
+// Xsheet
+
+void XsheetRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+	lua_getfield(L, tableIndex, "xsheet");
+	if (!lua_isstring(L, -1)) {
+		luaL_error(L, "Field %s must be a string", "xsheet");
+	}
+
+	_xsheetName = lua_tostring(L, -1);
+	lua_pop(L, 1);
+
+	load();
+}
+
+// An XSheet is only loaded when it is another one, and there is none to load
+// for an empty name
+void XsheetRecord::load() {
+	if (_xsheetName.empty() || _xsheetName.equalsIgnoreCase(_xsheet.getName())) {
+		return;
+	}
+
+	if (!_xsheet.load(_xsheetName)) {
+		return;
+	}
+
+	// The counter keeps its time, and goes at the pace of the new XSheet
+	_framesPerSecond = _xsheet.getFramesPerSecond();
+	if (_framesPerSecond > 0.0) {
+		_frame = MAX<int>(0, (int)(_time * _framesPerSecond));
+		if (_lastFrame > 0) {
+			_hasEnded = _frame > _lastFrame;
+			_frame = MIN(_frame, _lastFrame);
+		}
+	}
+
+	const int lastFrame = (int)_xsheet.getNumFrames() - 1;
+	if (lastFrame > 0) {
+		_lastFrame = lastFrame;
+		setFrame(MIN(_frame, _lastFrame));
+	} else {
+		_lastFrame = 0;
+	}
+
+	onZChanged();
+	updateGraphics();
+}
+
+void XsheetRecord::setFrame(int frame) {
+	if (frame == _frame || _framesPerSecond == 0.0) {
+		return;
+	}
+
+	_frame = MAX(frame, 0);
+	if (_lastFrame > 0) {
+		_frame = MIN(frame, _lastFrame);
+		_hasEnded = _frame == _lastFrame;
+	}
+
+	_time = _frame / _framesPerSecond;
+}
+
+void XsheetRecord::advance(double seconds) {
+	_time += seconds;
+	if (_framesPerSecond == 0.0) {
+		return;
+	}
+
+	_frame = MAX<int>(0, (int)(_time * _framesPerSecond));
+	if (_lastFrame > 0) {
+		_hasEnded = _frame > _lastFrame;
+		_frame = MIN(_frame, _lastFrame);
+	}
+}
+
+void XsheetRecord::run(double sceneTime, double elapsedTime) {
+	if (!_isPaused) {
+		advance(elapsedTime);
+	}
+
+	_xsheet.showFrame((uint)_frame);
+
+	if (_hasEnded && !_isPaused) {
+		_isPaused = true;
+		callFunction("OnPause");
+	}
+}
+
+// Restarting goes back to the first frame, and loads an XSheet that was handed
+// over in the meantime
+bool XsheetRecord::prepareReset() {
+	setFrame(0);
+	_xsheet.showFrame(0);
+	_isPaused = false;
+	load();
+	return true;
+}
+
+bool XsheetRecord::skipSpeech() {
+	if (!isActive() || !hasStarted() || _isPaused || _lastFrame <= 0 || !isVoicePlaying()) {
+		return false;
+	}
+
+	setFrame(_lastFrame);
+	_xsheet.showFrame((uint)_frame);
+	return true;
+}
+
+void XsheetRecord::onZChanged() {
+	_xsheet.setZ(getZ(), getContext());
+}
+
+void XsheetRecord::updateGraphics() {
+	_xsheet.setVisible(isActive() && hasStarted());
+}
+
+bool XsheetRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "paused") {
+		lua_pushboolean(L, _isPaused);
+	} else if (key == "frame") {
+		lua_pushinteger(L, _frame);
+	} else if (key == "lastFrame") {
+		// One before the last frame of the counter, as in the original
+		lua_pushinteger(L, _lastFrame - 1);
+	} else if (key == "xsheet") {
+		lua_pushstring(L, _xsheetName.c_str());
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+bool XsheetRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "paused") {
+		_isPaused = lua_toboolean(L, 3) != 0;
+	} else if (key == "frame") {
+		setFrame((int)luaL_checkinteger(L, 3));
+		_xsheet.showFrame((uint)_frame);
+	} else if (key == "xsheet") {
+		_xsheetName = luaL_checkstring(L, 3);
+		if (!hasRunOnce()) {
+			load();
+		}
+	} else {
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Script
