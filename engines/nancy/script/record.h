@@ -98,6 +98,9 @@ public:
 	// Makes a record that ran start over. Only some kinds can.
 	bool reset();
 
+	// Nancy22: works like reset(), but makes the record active as well
+	bool restart();
+
 	// Draws an active record right away, where its transform puts it on the
 	// screen. Scripts do this for what hangs off the cursor.
 	void render();

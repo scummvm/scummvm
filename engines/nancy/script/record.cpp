@@ -261,6 +261,12 @@ bool Record::reset() {
 	return true;
 }
 
+bool Record::restart() {
+	_isActive = true;
+	_hasActiveFunction = false;
+	return reset();
+}
+
 bool Record::callFunction(const char *name, int numArgs, int numResults) {
 	lua_State *L = getLua();
 
@@ -595,6 +601,15 @@ static int recordReset(lua_State *L) {
 	return 0;
 }
 
+// ar:Restart(), Nancy22
+static int recordRestart(lua_State *L) {
+	if (!checkRecord(L, 1)->restart()) {
+		return luaL_error(L, "Cannot reset AR");
+	}
+
+	return 0;
+}
+
 // ar:Render()
 static int recordRender(lua_State *L) {
 	checkRecord(L, 1)->render();
@@ -687,6 +702,7 @@ static const luaL_Reg kRecordFunctions[] = {
 	{ "__newindex", recordNewIndex },
 	{ "__eq", recordEquals },
 	{ "Reset", recordReset },
+	{ "Restart", recordRestart },
 	{ "Run", recordRun },
 	{ "Render", recordRender },
 	{ "OnMouseMove", recordOnMouseMove },
