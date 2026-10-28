@@ -60,6 +60,8 @@ enum {
  * Returns false if the game was loaded or quit meanwhile.
  */
 bool IgorEngine::part90Hold(uint16 duration, int skipMode, bool optionsMenu) {
+	const bool menuWasReachable = _optionsMenuReachable;
+	_optionsMenuReachable = optionsMenu;
 	_inputVars[kInputSkipDialogue] = 0;
 	_inputVars[kInputEscape] = 0;
 	_inputVars[kInputOptions] = 0;
@@ -118,6 +120,7 @@ bool IgorEngine::part90Hold(uint16 duration, int skipMode, bool optionsMenu) {
 		_inputVars[kInputRightClick] = 0;
 		_inputVars[kInputOptions] = 0;
 	}
+	_optionsMenuReachable = menuWasReachable;
 	return !_gameStateLoaded && !_eventQuitGame && _currentPart != kInvalidPart;
 }
 
