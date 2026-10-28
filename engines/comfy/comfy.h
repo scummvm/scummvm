@@ -721,8 +721,8 @@ private:
 	byte _sceneWaveLeftPercent = 0;
 	byte _sceneWaveRightPercent = 0;
 	byte _sceneMixerVolumePercent = 0;
-	bool _v3MediaValueAvailable = false;
-	uint16 _v3MediaValue = 0;
+	bool _mediaValueAvailable = false;
+	uint16 _mediaValue = 0;
 	uint16 _v3MediaProgress = 0;
 	uint16 _sensitivity = 0;
 	bool _configCommandPending = false;

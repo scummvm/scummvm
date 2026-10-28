@@ -183,7 +183,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 				break;
 
 			case EO_HOST_MEDIA_VALUE:
-				value = _v3MediaValueAvailable ? _v3MediaValue : 0;
+				value = _mediaValueAvailable ? _mediaValue : 0;
 				break;
 
 			case EO_NOOP_1B:
