@@ -315,8 +315,8 @@ void IgorEngine::part9() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	part9ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	_updateRoomBackground = &IgorEngine::part9UpdateBackground;
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;

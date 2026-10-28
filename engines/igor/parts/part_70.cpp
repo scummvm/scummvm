@@ -70,7 +70,7 @@ void IgorEngine::part70() {
 	_gameState.enableLight = 2;
 	loadActionData(DAT_Part70);
 	loadRoomData(PAL_Part70, IMG_Part70, BOX_Part70, MSK_Part70, TXT_Part70);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 	static const int anim[] = { ANM_Part70, 0 };
 	loadAnimData(anim);
 	_roomDataOffsets = PART_70_ROOM_DATA_OFFSETS;

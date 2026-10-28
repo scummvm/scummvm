@@ -291,8 +291,8 @@ void IgorEngine::part30Floppy() {
 	partMainSetExecuteAction(1, &IgorEngine::part30FloppyExecuteAction);
 	part30FloppyApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	const bool loaded = restoreRoomAfterLoad(true, false);
 	if (loaded) {
 		// a game saved at laura's dialogue shows the scene of the dialogue from the first frame

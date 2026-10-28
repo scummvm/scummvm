@@ -173,8 +173,8 @@ void IgorEngine::part10() {
 	static const int hamburgerAnimation[] = { ANM_DecanatoHamburger, 0 };
 	loadAnimData(hamburgerAnimation, kPart10_11_Frm1);
 
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 
 	partMainSetExecuteAction(1, &IgorEngine::part10ExecuteAction);
 	_roomDataOffsets = PART_10_ROOM_DATA_OFFSETS;

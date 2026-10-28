@@ -393,8 +393,8 @@ void IgorEngine::part12PaintOverLizard() {
 }
 
 void IgorEngine::part12ExorcismCutscene() {
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	fadeIn(768);
 	playRoomSound(13, 0);
 	for (int i = 1; i <= 5; ++i) {
@@ -544,8 +544,8 @@ void IgorEngine::part12() {
 	setRoomWalkBounds(89, 0, 275, 143);
 	partMainSetExecuteAction(1, &IgorEngine::part12ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part12UpdateBackground;
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	part12ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (_objectsState[kLizardTakenStateIndex] == 0) {

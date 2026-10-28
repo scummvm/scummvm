@@ -184,7 +184,7 @@ void IgorEngine::part72() {
 	loadRoomData(PAL_Part72, IMG_Part72, BOX_Part72, MSK_Part72, TXT_Part72);
 	// the colors of Igor
 	memcpy(_paletteBuffer + 192 * 3, _igorPalette, 48);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 	static const int anim[] = { ANM_Part72, 0 };
 	loadAnimData(anim);
 	_roomDataOffsets = PART_72_ROOM_DATA_OFFSETS;

@@ -79,7 +79,7 @@ void IgorEngine::updatePalette(int count) {
 
 
 // The inventory panel colors (208-239). The Spanish floppy version has its own.
-void IgorEngine::SET_PAL_208_96_1() {
+void IgorEngine::setInventoryPanelColors() {
 	if (_game.version == kIdSpaFloppy) {
 		loadData(PAL_InventoryPanel, _paletteBuffer + 208 * 3);
 	} else {
@@ -88,7 +88,7 @@ void IgorEngine::SET_PAL_208_96_1() {
 }
 
 // The verbs panel colors (240-255). The Spanish floppy version has its own.
-void IgorEngine::SET_PAL_240_48_1() {
+void IgorEngine::setVerbPanelColors() {
 	if (_game.version == kIdSpaFloppy) {
 		loadData(PAL_VerbsPanel, _paletteBuffer + 240 * 3);
 	} else {

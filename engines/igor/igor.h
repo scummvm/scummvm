@@ -1872,8 +1872,8 @@ private:
 	void setPaletteRange(int startColor, int endColor);
 	void darkenPalette(uint8 *palette, int firstColor, int lastColor, int amount);
 	void updatePalette(int count);
-	void SET_PAL_208_96_1();
-	void SET_PAL_240_48_1();
+	void setInventoryPanelColors();
+	void setVerbPanelColors();
 
 	void fadeIn(int count);
 	void fadeOut(int count);

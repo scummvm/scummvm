@@ -71,7 +71,7 @@ static const int kPart68TalkCodeEnd = 100;
 
 void IgorEngine::part68LoadRoom() {
 	loadRoomData(PAL_Part68, IMG_Part68, BOX_Part68, MSK_Part68, TXT_Part68);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 }
 
 void IgorEngine::part68DrawUndertaker(int frame) {
@@ -508,7 +508,7 @@ void IgorEngine::part68() {
 	setRoomClickFix(143, -1, -1, false);
 	partMainSetExecuteAction(1, &IgorEngine::part68ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part68UpdateBackground;
-	SET_PAL_208_96_1();
+	setInventoryPanelColors();
 	part68ApplyObjectState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 

@@ -86,8 +86,8 @@ void IgorEngine::part4() {
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_Map, IMG_Map, BOX_Map, MSK_Map, TXT_Map);
 	if (!isCDVersion()) {
-		SET_PAL_208_96_1();
-		SET_PAL_240_48_1();
+		setInventoryPanelColors();
+		setVerbPanelColors();
 	}
 	loadActionData(DAT_Map);
 	_roomDataOffsets = PART_04_ROOM_DATA_OFFSETS;

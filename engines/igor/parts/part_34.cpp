@@ -306,7 +306,7 @@ void IgorEngine::part34GiveLizardToOldLady() {
 void IgorEngine::part34ReloadParkAfterLaura() {
 	loadActionData(DAT_ParkLeft);
 	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 	static const int frames[] = { FRM_Park1, FRM_Park2, FRM_Park3, FRM_Park4, 0 };
 	loadAnimData(frames, kParkFrames);
 	part34ApplyObjectState(255);
@@ -520,8 +520,8 @@ void IgorEngine::part34() {
 	loadRoomData(PAL_Park, IMG_Park, BOX_Park, MSK_Park, TXT_Park); // active left panel;
 	static const int frames[] = { FRM_Park1, FRM_Park2, FRM_Park3, FRM_Park4, 0 };
 	loadAnimData(frames, kParkFrames);
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	partMainSetExecuteAction(1, &IgorEngine::part34ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part34UpdateBackground;
 	_parkLadyIdleStep = 1;

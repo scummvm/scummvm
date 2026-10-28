@@ -174,8 +174,8 @@ void IgorEngine::part8DeanCallsSecretary() {
 	part8ApplyObjectState(255);
 	memcpy(_screenVGA, roomScreen, 46080);
 	free(roomScreen);
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	fadeIn(768);
@@ -442,8 +442,8 @@ void IgorEngine::part8() {
 	part8ApplyObjectState(255);
 
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		_walkData[0].setPos(241, 121, kFacingPositionLeft, 0);

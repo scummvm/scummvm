@@ -486,8 +486,8 @@ void IgorEngine::partMain() {
 	}
 	partMainUpdateObjectState(255);
 	if (_currentPart != kStartupPart) { // boot param
-		SET_PAL_208_96_1();
-		SET_PAL_240_48_1();
+		setInventoryPanelColors();
+		setVerbPanelColors();
 		drawVerbsPanel();
 		drawInventory(1, 0);
 	}

@@ -104,8 +104,8 @@ void IgorEngine::part73Cutscene() {
 	part80();
 
 	setupDefaultPalette();
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;

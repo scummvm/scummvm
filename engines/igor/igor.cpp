@@ -294,8 +294,8 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor, bool fade) {
 	}
 	if (!_gameState.dialogueStarted) { // if loading we need to redraw the room background and UI
 		memset(_screenVGA + 46080, 0, 17920);
-		SET_PAL_208_96_1();
-		SET_PAL_240_48_1();
+		setInventoryPanelColors();
+		setVerbPanelColors();
 		drawVerbsPanel();
 		redrawVerb(_currentAction.verb, true);
 		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
