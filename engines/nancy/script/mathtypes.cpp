@@ -464,10 +464,22 @@ static int pushTransformedVector(lua_State *L, const ScriptVector &vector, const
 	return 1;
 }
 
-// vector:Transform(kind, matrix)
+// vector:Transform(kind, matrix). Nancy22 moves any vector by its x, y and z,
+// with no z for a 2D one, and gives a 3D vector back.
 static int vectorTransform(lua_State *L) {
 	const ScriptVector &vector = checkVector(L, 1);
 	const char *kind = luaL_checkstring(L, 2);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy22) {
+		ScriptVector place = vector;
+		if (place.size < 3) {
+			place.v[2] = 0.0;
+		}
+
+		place.size = 3;
+		return pushTransformedVector(L, place, checkMatrix(L, 3), kind);
+	}
+
 	return pushTransformedVector(L, vector, checkMatrix(L, 3), kind);
 }
 
@@ -995,10 +1007,41 @@ static const luaL_Reg kPathHelperFunctions[] = {
 	{ nullptr, nullptr }
 };
 
-// rect:Transform(matrix)
+// rect:Transform(matrix). Nancy22 moves all four corners, and gives the
+// smallest and the largest of them as two vectors.
 static int rectTransform(lua_State *L) {
-	pushRect(L, transformRect(checkRect(L, 1), checkMatrix(L, 2)));
-	return 1;
+	const ScriptRect &rect = checkRect(L, 1);
+	const ScriptMatrix &matrix = checkMatrix(L, 2);
+
+	if (g_nancy->getGameType() < kGameTypeNancy22) {
+		pushRect(L, transformRect(rect, matrix));
+		return 1;
+	}
+
+	const double corners[4][2] = {
+		{ (double)rect.left, (double)rect.top }, { (double)rect.right, (double)rect.top },
+		{ (double)rect.left, (double)rect.bottom }, { (double)rect.right, (double)rect.bottom }
+	};
+
+	ScriptVector minimum(1e300, 1e300, 1e300);
+	ScriptVector maximum(-1e300, -1e300, -1e300);
+	for (const double *corner : corners) {
+		// D3DXVec3TransformCoord, of a point at no depth
+		double point[4];
+		for (int i = 0; i < 4; ++i) {
+			point[i] = corner[0] * matrix.m[0][i] + corner[1] * matrix.m[1][i] + matrix.m[3][i];
+		}
+
+		for (int i = 0; i < 3; ++i) {
+			const double value = point[3] != 0.0 ? point[i] / point[3] : point[i];
+			minimum.v[i] = MIN(minimum.v[i], value);
+			maximum.v[i] = MAX(maximum.v[i], value);
+		}
+	}
+
+	pushVector(L, minimum);
+	pushVector(L, maximum);
+	return 2;
 }
 
 void registerMathTypes(lua_State *L) {
