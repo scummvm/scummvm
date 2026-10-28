@@ -271,18 +271,15 @@ void ComfyEngine::videoPresentFrame() {
 	if (_renderInterleaved && framebufferBytes() == 64000) {
 		uint32 byteOffset = 0;
 
-		for (uint16 i = 0; i < 16000;) {
+		for (uint16 i = 0; i < 16000; i++) {
 			memcpy(_presentBuffer + byteOffset, _framebufPtr + byteOffset, 4);
 			byteOffset += 4;
 
 			if ((i % 20000) > 17000)
 				i++;
-
-			i++;
 		}
 
-		_screen->copyRectToSurface(_presentBuffer, _logicalScreenWidth, 0, 0,
-			_logicalScreenWidth, _logicalScreenHeight);
+		_screen->copyRectToSurface(_presentBuffer, _logicalScreenWidth, 0, 0, _logicalScreenWidth, _logicalScreenHeight);
 	} else {
 		uint32 dirtyArea = 0;
 

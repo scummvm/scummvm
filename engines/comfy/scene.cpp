@@ -54,11 +54,11 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 
 	if (_engineVersion == 3) {
 		byte *vocState = &_sceneMemoryBlock[_sceneMidiInstanceOffset + COMFY_SCENE_MIDI_INSTANCE_BYTES];
-		vocState[0] = _v3SceneWaveBalancePercent;
-		vocState[1] = _v3SceneMediaModeEnabled;
-		vocState[2] = _v3SceneWaveLeftPercent;
-		vocState[3] = _v3SceneWaveRightPercent;
-		vocState[6] = _v3SceneMixerVolumePercent;
+		vocState[0] = _sceneWaveBalancePercent;
+		vocState[1] = _sceneMediaModeEnabled;
+		vocState[2] = _sceneWaveLeftPercent;
+		vocState[3] = _sceneWaveRightPercent;
+		vocState[6] = _sceneMixerVolumePercent;
 
 		for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++) {
 			byte *packedEntry = vocState + 7 + i * 0x1F;
@@ -139,6 +139,7 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 				WRITE_LE_UINT16(packedEntry + 7 + frame * 2, state.entries[entry].frames[frame]);
 		}
 	}
+
 	memcpy(&_sceneMemoryBlock[_sceneActorPcOffset], _actorPcTable, sizeof(_actorPcTable));
 
 	if (!_stringTable.empty())
@@ -285,11 +286,11 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 
 	if (_engineVersion == 3) {
 		byte *vocState = &_sceneMemoryBlock[_sceneMidiInstanceOffset + COMFY_SCENE_MIDI_INSTANCE_BYTES];
-		_v3SceneWaveBalancePercent = vocState[0];
-		_v3SceneMediaModeEnabled = vocState[1];
-		_v3SceneWaveLeftPercent = vocState[2];
-		_v3SceneWaveRightPercent = vocState[3];
-		_v3SceneMixerVolumePercent = vocState[6];
+		_sceneWaveBalancePercent = vocState[0];
+		_sceneMediaModeEnabled = vocState[1];
+		_sceneWaveLeftPercent = vocState[2];
+		_sceneWaveRightPercent = vocState[3];
+		_sceneMixerVolumePercent = vocState[6];
 
 		for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++) {
 			byte *packedEntry = vocState + 7 + i * 0x1F;
@@ -657,12 +658,11 @@ void ComfyEngine::sceneShutdown() {
 	_sceneFrameData.clear();
 
 	if (_engineVersion == 3) {
-		_v3SceneWaveLeftPercent = 0xFF;
-		_v3SceneWaveRightPercent = 0xFF;
+		_sceneWaveLeftPercent = 0xFF;
+		_sceneWaveRightPercent = 0xFF;
 	}
 
 	_sceneOpen = false;
 }
-
 
 } // End of namespace Comfy

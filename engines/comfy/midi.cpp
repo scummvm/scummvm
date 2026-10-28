@@ -234,9 +234,9 @@ void ComfyEngine::midiInitChannels() {
 		_midiChannels[channel] = MidiChannelState();
 
 		MidiChannelState &state = _midiChannels[channel];
-		state.volumeCurrent = state.volumeDefault = 0x6400;
-		state.rateCurrent = state.rateDefault = 0x07D0;
-		state.pitchCurrent = state.pitchDefault = 0x1388;
+		state.volumeCurrent = state.volumeDefault = 25600;
+		state.rateCurrent = state.rateDefault = 2000;
+		state.pitchCurrent = state.pitchDefault = 5000;
 
 		if (_engineVersion != 3) {
 			state.volumeTarget = state.volumeDefault;
@@ -262,6 +262,7 @@ void ComfyEngine::midiQueueAdd(MidiQueue &queue, uint16 id, int16 delta) {
 	queue.entries[queue.count].id = id;
 	queue.entries[queue.count].time = queue.baseTime + delta;
 	queue.count++;
+
 	midiFindNext(queue);
 }
 
@@ -346,11 +347,10 @@ void ComfyEngine::midiStartChannel(uint16 channel) {
 	}
 
 	uint16 size = state.loadedFrameSize;
-	state.rateCurrent = state.rateDefault = size >= 4 ? READ_LE_UINT16(song + 2) : 0x07D0;
+	state.rateCurrent = state.rateDefault = size >= 4 ? READ_LE_UINT16(song + 2) : 2000;
 	state.rateTicksLeft = 0;
 	_midiPlyrDriver->musicPlaySong(song, size, channel);
 }
-
 
 void ComfyEngine::midiRestartChannels() {
 	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++)
@@ -423,7 +423,7 @@ void ComfyEngine::midiStopAndFireKeys(uint16 channel) {
 
 	midiClearLoadedSong(channel);
 	for (uint i = 0; i < state.entryCount; i++) {
-		// The original tests every entry but always fires the first entry's key.
+		// The original tests every entry but always fires the first entry's key...
 		if (state.entries[i].completionKey)
 			keyBitSet(firstKey);
 	}

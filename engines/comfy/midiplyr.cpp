@@ -202,6 +202,7 @@ void MidiPlyrDriver::timeCallbackInternal() {
 	}
 
 	_seqCurrentTick += 100;
+
 	if (_sendDirectGuard == 0) {
 		_sendDirectGuard = 1;
 		sequencerTick();
@@ -616,6 +617,7 @@ void MidiPlyrDriver::sequencerParseEvent(uint16 trackIndex) {
 	case 0xF0: {
 		byte event = streamReadByte(track);
 		byte skipCount = 0;
+
 		switch (event) {
 		case 0x2F:
 			skipCount = streamReadByte(track);
@@ -668,9 +670,7 @@ void MidiPlyrDriver::trackAdvance(uint16 trackIndex) {
 		return;
 
 	Track &track = _tracks[trackIndex];
-	while (!track.streamFault && track.state && track.eventCursor < track.eventDataSize &&
-	       track.startTick <= _seqCurrentTick) {
-
+	while (!track.streamFault && track.state && track.eventCursor < track.eventDataSize &&  track.startTick <= _seqCurrentTick) {
 		sequencerParseEvent(trackIndex);
 
 		if (track.streamFault) {

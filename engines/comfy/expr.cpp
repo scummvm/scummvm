@@ -23,34 +23,36 @@
 
 namespace Comfy {
 
-#define EO_PUSH_LITERAL_01 0x01
-#define EO_PUSH_STRING_TABLE_VALUE 0x02
-#define EO_PUSH_LITERAL_03 0x03
-#define EO_ADD 0x08
-#define EO_SUBTRACT 0x09
-#define EO_MULTIPLY 0x0A
-#define EO_DIVIDE 0x0B
+// EXPRESSION OPS
+
+#define EO_PUSH_LITERAL_01            0x01
+#define EO_PUSH_STRING_TABLE_VALUE    0x02
+#define EO_PUSH_LITERAL_03            0x03
+#define EO_ADD                        0x08
+#define EO_SUBTRACT                   0x09
+#define EO_MULTIPLY                   0x0A
+#define EO_DIVIDE                     0x0B
 #define EO_INDEXED_STRING_TABLE_VALUE 0x0C
-#define EO_END 0x0D
-#define EO_MODULO 0x0E
-#define EO_ACTOR_LOCAL_X 0x10
-#define EO_ACTOR_LOCAL_Y 0x11
-#define EO_ACTOR_WORLD_X 0x12
-#define EO_ACTOR_WORLD_Y 0x13
-#define EO_ACTOR_SPRITE_SELECTOR 0x14
-#define EO_PUSH_LITERAL_15 0x15
-#define EO_RANDOMIZE 0x16
-#define EO_MOUSE_X 0x17
-#define EO_MOUSE_Y 0x18
-#define EO_WAVE_BALANCE_PERCENT 0x19
-#define EO_HOST_MEDIA_VALUE 0x1A
-#define EO_NOOP_1B 0x1B
-#define EO_WAVE_LEFT_PERCENT 0x1C
-#define EO_WAVE_RIGHT_PERCENT 0x1D
-#define EO_LOGICAL_DIMENSION 0x1E
-#define EO_NOOP_1F 0x1F
-#define EO_HOST_MEDIA_PROGRESS 0x20
-#define EO_MIXER_VOLUME_PERCENT 0x21
+#define EO_END                        0x0D
+#define EO_MODULO                     0x0E
+#define EO_ACTOR_LOCAL_X              0x10
+#define EO_ACTOR_LOCAL_Y              0x11
+#define EO_ACTOR_WORLD_X              0x12
+#define EO_ACTOR_WORLD_Y              0x13
+#define EO_ACTOR_SPRITE_SELECTOR      0x14
+#define EO_PUSH_LITERAL_15            0x15
+#define EO_RANDOMIZE                  0x16
+#define EO_MOUSE_X                    0x17
+#define EO_MOUSE_Y                    0x18
+#define EO_WAVE_BALANCE_PERCENT       0x19
+#define EO_HOST_MEDIA_VALUE           0x1A
+#define EO_NOOP_1B                    0x1B
+#define EO_WAVE_LEFT_PERCENT          0x1C
+#define EO_WAVE_RIGHT_PERCENT         0x1D
+#define EO_LOGICAL_DIMENSION          0x1E
+#define EO_NOOP_1F                    0x1F
+#define EO_HOST_MEDIA_PROGRESS        0x20
+#define EO_MIXER_VOLUME_PERCENT       0x21
 
 uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 	_exprStackTop = 0;
@@ -177,7 +179,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 				break;
 
 			case EO_WAVE_BALANCE_PERCENT:
-				value = _v3SceneWaveBalancePercent;
+				value = _sceneWaveBalancePercent;
 				break;
 
 			case EO_HOST_MEDIA_VALUE:
@@ -189,11 +191,11 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 				break;
 
 			case EO_WAVE_LEFT_PERCENT:
-				value = _v3SceneWaveLeftPercent;
+				value = _sceneWaveLeftPercent;
 				break;
 
 			case EO_WAVE_RIGHT_PERCENT:
-				value = _v3SceneWaveRightPercent;
+				value = _sceneWaveRightPercent;
 				break;
 
 			case EO_LOGICAL_DIMENSION:
@@ -226,7 +228,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 				break;
 
 			case EO_MIXER_VOLUME_PERCENT:
-				value = _v3SceneMixerVolumePercent;
+				value = _sceneMixerVolumePercent;
 				break;
 
 			default:
@@ -298,6 +300,5 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 		}
 	}
 }
-
 
 } // End of namespace Comfy

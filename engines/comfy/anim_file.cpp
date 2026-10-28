@@ -28,10 +28,10 @@
 namespace Comfy {
 
 enum AnimFileCommand {
-	kAnimCommandEnd = 0x2145,
+	kAnimCommandEnd             = 0x2145,
 	kAnimCommandStoreFrameBytes = 0x4356,
-	kAnimCommandDirtyRect = 0x5842,
-	kAnimCommandFrame = 0x5246
+	kAnimCommandDirtyRect       = 0x5842,
+	kAnimCommandFrame           = 0x5246
 };
 
 bool ComfyEngine::animFrameIsActive() {
@@ -73,8 +73,7 @@ void ComfyEngine::animFrameSetVocCounter(uint32 counter) {
 }
 
 bool ComfyEngine::animFileOpen() {
-	if (!readAssetFile(Common::Path("ANMFILE.DAT"), _animFileData) ||
-			_animFileData.size() < COMFY_ANMFILE_HEADER_BYTES)
+	if (!readAssetFile(Common::Path("ANMFILE.DAT"), _animFileData) || _animFileData.size() < COMFY_ANMFILE_HEADER_BYTES)
 		return false;
 
 	uint16 magic = READ_LE_UINT16(&_animFileData[0]);
@@ -94,6 +93,7 @@ bool ComfyEngine::animFileOpen() {
 	_animIndexLoaded = true;
 	_animActive = false;
 	_animUsesWaveVocCounter = false;
+
 	return true;
 }
 

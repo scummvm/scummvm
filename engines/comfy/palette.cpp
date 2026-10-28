@@ -68,6 +68,7 @@ void ComfyEngine::paletteInterpolate(uint16 step, uint16 maximum) {
 		return;
 
 	int16 remaining = (int16)(maximum - step);
+
 	for (uint i = 0; i < COMFY_PALETTE_BYTES; i++) {
 		int32 from = _paletteFadeSource[i];
 		int32 to = _paletteTarget[i];

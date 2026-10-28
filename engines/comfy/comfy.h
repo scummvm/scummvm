@@ -716,31 +716,31 @@ private:
 	uint16 _mouseCursorSpriteId = 0;
 	uint16 _mouseFlags = 0;
 	bool _waveOutputActive = false;
-	byte _v3SceneWaveBalancePercent = 0;
-	byte _v3SceneMediaModeEnabled = 0;
-	byte _v3SceneWaveLeftPercent = 0;
-	byte _v3SceneWaveRightPercent = 0;
-	byte _v3SceneMixerVolumePercent = 0;
+	byte _sceneWaveBalancePercent = 0;
+	byte _sceneMediaModeEnabled = 0;
+	byte _sceneWaveLeftPercent = 0;
+	byte _sceneWaveRightPercent = 0;
+	byte _sceneMixerVolumePercent = 0;
 	bool _v3MediaValueAvailable = false;
 	uint16 _v3MediaValue = 0;
 	uint16 _v3MediaProgress = 0;
-	uint16 _v3Sensitivity = 0;
-	bool _v3ConfigCommandPending = false;
-	byte _v3ConfigCommandSubop = 0;
-	uint16 _v3ConfigCommandValue = 0;
-	Common::String _v3ConfigCommandText;
-	bool _v3MediaRecording = false;
-	uint16 _v3MediaRecordingArg0 = 0;
-	uint16 _v3MediaRecordingArg1 = 0;
-	uint16 _v3MediaRecordingArg2 = 0;
-	uint16 _v3MediaRecordingArg3 = 0;
-	uint16 _v3AnimIndexOffset = 0;
-	uint16 _v3AnimActorSceneHandle = 0;
-	uint16 _v3WaveBalancePercent = 0;
-	uint16 _v3WaveLeftPercent = 0;
-	uint16 _v3WaveRightPercent = 0;
-	uint16 _v3MixerVolumePercent = 0;
-	uint16 _v3MixerAltPercent = 0;
+	uint16 _sensitivity = 0;
+	bool _configCommandPending = false;
+	byte _configCommandSubop = 0;
+	uint16 _configCommandValue = 0;
+	Common::String _configCommandText;
+	bool _mediaRecording = false;
+	uint16 _mediaRecordingArg0 = 0;
+	uint16 _mediaRecordingArg1 = 0;
+	uint16 _mediaRecordingArg2 = 0;
+	uint16 _mediaRecordingArg3 = 0;
+	uint16 _animIndexOffset = 0;
+	uint16 _animActorSceneHandle = 0;
+	uint16 _waveBalancePercent = 0;
+	uint16 _waveLeftPercent = 0;
+	uint16 _waveRightPercent = 0;
+	uint16 _mixerVolumePercent = 0;
+	uint16 _mixerAltPercent = 0;
 	bool _actorDestroyedCurrent = false;
 	uint16 _lastKey = 0xFFFF;
 	VocQueueEntry _vocQueue[COMFY_VOC_QUEUE_CAPACITY];
@@ -961,10 +961,8 @@ private:
 	void selPoolFree();
 	bool assetsLoad(uint32 budget, byte *scenePtr);
 	void assetsUnload(byte freeAudio);
-	bool sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
-		uint16 scriptVariableCount, uint32 &numSprites);
-	bool sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
-		uint16 scriptVariableCount, uint32 &numSprites);
+	bool sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount, uint16 scriptVariableCount, uint32 &numSprites);
+	bool sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount, uint16 scriptVariableCount, uint32 &numSprites);
 	void midiShutdown();
 	void midiFileGetEntryTableParams(uint16 *entryCount, uint16 *entrySize);
 	void midiFileReadEntries(byte *destination);
@@ -1025,8 +1023,7 @@ private:
 	void actorClearDirtyTree(uint16 actorIndex);
 	void actorSetAllVisible();
 	void actorClearFirstAnimFrameSelector();
-	uint16 actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active,
-		uint32 pc, int16 x, int16 y, int16 sprite, byte insertAsChild);
+	uint16 actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active, uint32 pc, int16 x, int16 y, int16 sprite, byte insertAsChild);
 	bool actorRunScript(uint16 actorIndex, bool &descendChildren);
 	bool actorTickTree(uint16 actorIndex);
 	bool actorDraw(uint16 actorIndex, int16 x, int16 y);
@@ -1037,8 +1034,7 @@ private:
 	void renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte mode, uint16 actorIndex);
 	void renderFlushDrawCommands();
 	void renderFlushCachedDirtyRects();
-	uint16 scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRecord,
-		ComfyRect *rects, int16 baseX, int16 baseY);
+	uint16 scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRecord, ComfyRect *rects, int16 baseX, int16 baseY);
 	void actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y);
 	void timerInit();
 	void timerShutdown();
@@ -1096,8 +1092,7 @@ private:
 	void midiAddEvent(uint16 id, int16 delta);
 	void midiAddTrack(uint16 id, int16 delta);
 	void midiRemoveTrack(uint16 id);
-	void midiAddTrackEntry(uint16 channel, uint16 songId, uint16 completionKey, byte loadFlag,
-		uint16 frameCount, uint16 *frames);
+	void midiAddTrackEntry(uint16 channel, uint16 songId, uint16 completionKey, byte loadFlag, uint16 frameCount, uint16 *frames);
 	void midiClearLoadedSong(uint16 channel);
 	void midiFireClearMarker(uint16 channel, int16 marker);
 	void midiPollSceneEntries();

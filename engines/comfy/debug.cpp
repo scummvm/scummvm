@@ -44,8 +44,7 @@ static void debugIncludeMapRect(int16 &mapLeft, int16 &mapTop, int16 &mapRight, 
 }
 
 static ImVec2 debugMapPointToCanvas(const ImVec2 &canvasPos, int16 mapLeft, int16 mapTop, float scale, float margin, int16 x, int16 y) {
-	return ImVec2(canvasPos.x + ((float)x - mapLeft) * scale + margin,
-		canvasPos.y + ((float)y - mapTop) * scale + margin);
+	return ImVec2(canvasPos.x + ((float)x - mapLeft) * scale + margin, canvasPos.y + ((float)y - mapTop) * scale + margin);
 }
 
 bool ComfyEngine::debugScriptHasRange(uint32 pc, uint32 width) {
@@ -136,6 +135,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 				int16 dy = debugScriptReadWord(pc + 4);
 				pc += 6;
 				wordsLeft -= 3;
+
 				uint16 spriteId = rawSpriteId;
 				if (spriteId & 0x8000) {
 					if (!debugScriptHasRange(pc, 4))
@@ -238,8 +238,8 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 				int16 dy = debugScriptReadWord(pc + 4);
 				pc += 6;
 				wordsLeft -= 3;
-				uint16 spriteId = rawSpriteId;
 
+				uint16 spriteId = rawSpriteId;
 				if (spriteId & 0x8000) {
 					if (!debugScriptHasRange(pc, 4))
 						break;
@@ -323,6 +323,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			uint childCount = 0;
 			uint16 child = actor.childHead;
 			uint guard = 0;
+
 			while (child && child < _actors.size() && child < COMFY_ACTOR_COUNT && childCount < COMFY_ACTOR_COUNT && guard++ < COMFY_ACTOR_COUNT) {
 				if (!visited[child]) {
 					children[childCount] = child;
@@ -409,7 +410,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			}
 		}
 	} else if (ImGui::BeginTable("comfy_actor_table", 10, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg |
-			ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY | ImGuiTableFlags_ScrollX, ImVec2(0, 0))) {
+			   ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY | ImGuiTableFlags_ScrollX, ImVec2(0, 0))) {
 		ImGui::TableSetupColumn("#", ImGuiTableColumnFlags_WidthFixed, 32.0F);
 		ImGui::TableSetupColumn("Scene", ImGuiTableColumnFlags_WidthFixed, 48.0F);
 		ImGui::TableSetupColumn("Parent", ImGuiTableColumnFlags_WidthFixed, 52.0F);
@@ -545,7 +546,6 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 	ImGui::EndChild();
 	ImGui::End();
 }
-
 
 #endif
 
