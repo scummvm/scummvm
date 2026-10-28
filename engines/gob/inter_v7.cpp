@@ -848,13 +848,6 @@ void Inter_v7::o7_playVmdOrMusic() {
 	if (props.startFrame == -2)
 		props.noBlock    = true;
 
-	if ((props.slot == 1 && !(props.flags & VideoPlayer::kFlagNoVideo)) ||
-		startFrameCopy == -20) {
-		props.loop = true;
-		// TODO: one more mode is missing if start frame == -200
-		// In that case, the video is not closed at the end, but does not loop either
-	}
-
 	_vm->_vidPlayer->evaluateFlags(props);
 
 	bool primary = true;
@@ -870,6 +863,13 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 	if (_vm->_vidPlayer->getVideoBufferSize(slot) == 0 || !_vm->_vidPlayer->hasVideo(slot)) {
 		props.noBlock = true;
+	}
+
+	if ((props.slot == 1 && !(props.flags & VideoPlayer::kFlagNoVideo) && _vm->_vidPlayer->hasVideo(slot)) ||
+		startFrameCopy == -20) {
+		props.loop = true;
+		// TODO: one more mode is missing if start frame == -200
+		// In that case, the video is not closed at the end, but does not loop either
 	}
 
 	_vm->_vidPlayer->setAutoUpdate(slot, true);
