@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/func.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -282,5 +283,30 @@ MessageDialogWithURL::MessageDialogWithURL(const Common::String &message, const 
 		: MessageDialog(Common::U32String(message), Common::U32String(defaultButton), _("Open URL"), alignment, url) {
 }
 
+MidiDeviceScanDialog::MidiDeviceScanDialog(const Common::Functor0<bool> &isComplete)
+	// I18N: Shown while MIDI output devices are being detected.
+	: MessageDialog(_("Scanning MIDI devices..."), Common::U32String(), Common::U32String()), _isComplete(isComplete) {
+}
+
+bool MidiDeviceScanDialog::waitForCompletion(const Common::Functor0<bool> &isComplete) {
+	if (isComplete())
+		return true;
+
+	MidiDeviceScanDialog dialog(isComplete);
+	return dialog.runModal() == kCompleted;
+}
+
+void MidiDeviceScanDialog::handleTickle() {
+	MessageDialog::handleTickle();
+	if (_isComplete()) {
+		setResult(kCompleted);
+		close();
+	}
+}
+
+void MidiDeviceScanDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode != Common::KEYCODE_ESCAPE)
+		MessageDialog::handleKeyDown(state);
+}
 
 } // End of namespace GUI

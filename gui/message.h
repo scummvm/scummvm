@@ -26,6 +26,11 @@
 #include "common/str.h"
 #include "common/str-array.h"
 
+namespace Common {
+template<class Res>
+struct Functor0;
+}
+
 namespace GUI {
 
 class CommandSender;
@@ -129,7 +134,67 @@ public:
 	MessageDialogWithURL(const Common::String &message, const char *url, const char *defaultButton, Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
 };
 
+/**
+ * Display a progress message until MIDI device detection finishes.
+ *
+ * @remarks
+ * Some MIDI backends takes long time when scanning the MIDI devices for first time.
+ * e.g., Windows MIDI Services on Windows 11 25H2 or later.
+ *
+ * Those backends will try to warm-up the MIDI backend to avoid this issue,
+ * but the player may request any MIDI APIs before the warm-up is finished.
+ * If it happens, the UI thread may be blocked, inducing OS to mark the process as unresponsive.
+ *
+ * In that case, this dialog would be spawned to:
+ * - Let player know the reason what is happening: MIDI device scan is taking a lot of time.
+ * - Keep UI events processed to prevent process marked as unresponsive.
+ */
+class MidiDeviceScanDialog : public MessageDialog {
+public:
+	/**
+	 * Show a modal progress dialog while the MIDI backend warm-up is pending.
+	 * Return immediately if @p isComplete already reports completion.
+	 * Call this function on the UI thread.
+	 *
+	 * @param isComplete Predicate returning true once MIDI backend warm-up finishes.
+	 *                   Polled on the UI thread and must return promptly without blocking.
+	 * @return True if completion was observed, false if the dialog closed before completion.
+	 */
+	static bool waitForCompletion(const Common::Functor0<bool> &isComplete);
 
+	/**
+	 * Process a dialog tick.
+	 * Close the dialog when the completion predicate returns true.
+	 */
+	void handleTickle() override;
+
+	/**
+	 * Ignore Escape key to prevent dismissing the dialog while warm-up is running.
+	 * Forward other keys to @ref GUI::Dialog::handleKeyDown.
+	 *
+	 * @param state The pressed key and its modifier flags.
+	 */
+	void handleKeyDown(Common::KeyState state) override;
+
+protected:
+	/**
+	 * Construct a progress dialog with a completion predicate.
+	 *
+	 * @param isComplete Predicate returning true once MIDI backend warm-up finishes.
+	 *                   Polled on the UI thread and must return promptly without blocking.
+	 */
+	explicit MidiDeviceScanDialog(const Common::Functor0<bool> &isComplete);
+
+	/** This predicate must be valid for the dialog's lifetime. */
+	const Common::Functor0<bool> &_isComplete;
+
+private:
+	/** Modal results for the warm-up wait. */
+	enum Result {
+		kInterrupted = 0,
+		kCompleted = 1
+	};
+};
 
 } // End of namespace GUI
 
