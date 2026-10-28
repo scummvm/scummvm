@@ -313,9 +313,6 @@ void AdlibMidiDriver::adlibControlChange(int channel, int control, int param) {
 			adlibWrite(0xBD, _adlibData[0xBD] & ~0x20);
 		}
 		break;
-	case 0x7B:
-		adlibTurnNoteOff(channel, -1);
-		break;
 	default:
 		warning("Unhandled adlibControlChange 0x%X %d", control, param);
 		break;
