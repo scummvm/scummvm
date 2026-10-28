@@ -69,6 +69,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 #ifdef ENABLE_NANCY_V4
 	registerCmd("list_records", WRAP_METHOD(NancyConsole, Cmd_listRecords));
 	registerCmd("script_export", WRAP_METHOD(NancyConsole, Cmd_scriptExport));
+	registerCmd("list_managers", WRAP_METHOD(NancyConsole, Cmd_listManagers));
 #endif
 	registerCmd("actionrecord_export", WRAP_METHOD(NancyConsole, Cmd_actionRecordExport));
 	registerCmd("scan_ar_type", WRAP_METHOD(NancyConsole, Cmd_scanForActionRecordType));
@@ -795,6 +796,54 @@ bool NancyConsole::Cmd_listRecords(int argc, const char **argv) {
 		}
 
 		debugPrintf("\n");
+	}
+
+	return true;
+}
+
+// Nancy22: the managers the scripts registered with Log:AddManager, or what one
+// of them gives about itself. The original shows these in its cheat dialog.
+bool NancyConsole::Cmd_listManagers(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Lists the managers of the scripts, in Nancy22 and later.\n");
+		debugPrintf("Usage: %s [manager name]\n", argv[0]);
+		debugPrintf("With a name, prints what the manager says about itself.\n");
+		return true;
+	}
+
+	if (g_nancy->getGameType() < kGameTypeNancy22) {
+		debugPrintf("Managers are used from Nancy22 onwards\n");
+		return true;
+	}
+
+	if (g_nancy->getState() != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	// The managers all run in a stream of their own
+	State::SceneStream *stream = NancySceneState.getStreams().find(State::SceneStreamManager::getManagerStreamName());
+	Script::SceneContext *context = stream ? stream->getScriptScene() : nullptr;
+	if (!context) {
+		debugPrintf("No running stream %s\n", State::SceneStreamManager::getManagerStreamName());
+		return true;
+	}
+
+	if (argc == 2) {
+		Common::String text;
+		if (context->describeManager(argv[1], text)) {
+			debugPrintf("%s\n", text.c_str());
+		} else {
+			debugPrintf("No manager %s\n", argv[1]);
+		}
+
+		return true;
+	}
+
+	Common::Array<Common::String> names;
+	context->getManagerNames(names);
+	for (const Common::String &name : names) {
+		debugPrintf("%s\n", name.c_str());
 	}
 
 	return true;

@@ -212,6 +212,49 @@ void SceneContext::setSceneFunction(const char *name) {
 	lua_pop(L, 1);
 }
 
+bool SceneContext::addManager(const Common::String &name) {
+	for (const ManagerFunction &manager : _managers) {
+		if (manager.name.equalsIgnoreCase(name)) {
+			return false;
+		}
+	}
+
+	ManagerFunction manager;
+	manager.name = name;
+	manager.reference = luaL_ref(getLua(), LUA_REGISTRYINDEX);
+	_managers.push_back(manager);
+	return true;
+}
+
+void SceneContext::getManagerNames(Common::Array<Common::String> &names) const {
+	for (const ManagerFunction &manager : _managers) {
+		names.push_back(manager.name);
+	}
+}
+
+bool SceneContext::describeManager(const Common::String &name, Common::String &text) {
+	for (const ManagerFunction &manager : _managers) {
+		if (!manager.name.equalsIgnoreCase(name)) {
+			continue;
+		}
+
+		lua_State *L = getLua();
+		lua_rawgeti(L, LUA_REGISTRYINDEX, manager.reference);
+		if (lua_pcall(L, 0, 1, 0) != 0) {
+			text = Common::String::format("Error in manager stringize function: %s", lua_tostring(L, -1));
+		} else if (!lua_isstring(L, -1)) {
+			text = Common::String::format("Return value from manager %s is not a string", manager.name.c_str());
+		} else {
+			text = lua_tostring(L, -1);
+		}
+
+		lua_pop(L, 1);
+		return true;
+	}
+
+	return false;
+}
+
 bool SceneContext::callSceneFunction(const char *name, int numArgs) {
 	lua_State *L = getLua();
 

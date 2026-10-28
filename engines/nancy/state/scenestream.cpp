@@ -329,8 +329,10 @@ void SceneStream::clearScene() {
 static const char *const kMainStreamName = "MainStream";
 static const char *const kUIStreamName = "UIStream";
 
-// Nancy22: the stream with the scripts of the environments
+// Nancy22: the stream with the scripts of the environments, and the one with the
+// managers, which the scripts of every scene call on
 static const char *const kEnvStreamName = "EnvStream";
+static const char *const kManagerStreamName = "ManagerStream";
 
 const char *SceneStreamManager::getMainStreamName() {
 	return kMainStreamName;
@@ -338,6 +340,10 @@ const char *SceneStreamManager::getMainStreamName() {
 
 const char *SceneStreamManager::getUIStreamName() {
 	return kUIStreamName;
+}
+
+const char *SceneStreamManager::getManagerStreamName() {
+	return kManagerStreamName;
 }
 
 #ifdef ENABLE_NANCY_V4

@@ -209,6 +209,7 @@ public:
 
 	static const char *getMainStreamName();
 	static const char *getUIStreamName();
+	static const char *getManagerStreamName();	// Nancy22
 
 	// Nancy19: hands a message to the scenes of the streams it is for. Returns
 	// false when there is none.

@@ -420,6 +420,7 @@ private:
 
 	void initStaticData();
 	void initUI();
+	void beginManagers();
 	void loadUIPrepRecords(const Common::Path &name);
 
 	void clearSceneData(bool nextIsNoArt = false);

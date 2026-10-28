@@ -1804,12 +1804,38 @@ static int logClear(lua_State *L) {
 	return 0;
 }
 
+// Log:ShowWarning(text), Nancy22: a warning the original shows in its debug output
+static int logShowWarning(lua_State *L) {
+	debugC(1, kDebugScene, "Script warning: %s", luaL_checkstring(L, 2));
+	return 0;
+}
+
+// Log:AddManager(name, function), Nancy22: a function that describes a manager,
+// which the original shows in its cheat dialog, and list_managers prints here
+static int logAddManager(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+	SceneContext *context = LuaState::getContext(L);
+	if (!context) {
+		return luaL_error(L, "Tried to add a manager from a non-scene Lua environment");
+	}
+
+	luaL_checktype(L, 3, LUA_TFUNCTION);
+	lua_settop(L, 3);
+	if (!context->addManager(name)) {
+		return luaL_error(L, "Manager name %s already taken", name);
+	}
+
+	return 0;
+}
+
 static const luaL_Reg kLogFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Write", logWrite },
 	{ "Assert", logAssert },
 	{ "Watch", logWatch },
 	{ "Clear", logClear },
+	{ "ShowWarning", logShowWarning },
+	{ "AddManager", logAddManager },
 	{ nullptr, nullptr }
 };
 

@@ -1966,6 +1966,12 @@ void Scene::synchronize(Common::Serializer &ser) {
 		}
 
 		if (g_nancy->getGameType() >= kGameTypeNancy19) {
+			// Nancy22's managers answer the scripts of every scene, the one that
+			// loads now included
+			if (g_nancy->getGameType() >= kGameTypeNancy22) {
+				beginManagers();
+			}
+
 			load(true);
 		}
 
@@ -2056,6 +2062,10 @@ void Scene::init() {
 	} else {
 		// Normal boot, load default first scene
 		_state = kLoad;
+
+		if (g_nancy->getGameType() >= kGameTypeNancy22) {
+			beginManagers();
+		}
 		// Make sure the nancy8+ save menu doesn't display a save name on new game
 		ConfMan.removeKey("display_slot", Common::ConfigManager::kTransientDomain);
 	}
@@ -3184,6 +3194,13 @@ void Scene::initUI() {
 
 	_ndui->applyMatteColor();
 	_ndui->registerGraphics();
+}
+
+// Nancy22 begins the stream of the managers along with the game. They keep what
+// the scripts of every scene ask them for, and send each other messages.
+void Scene::beginManagers() {
+	_streams.begin(SceneStreamManager::getManagerStreamName(), "ManagerMain_SC", 0, StreamFlags());
+	_streams.loadNow(SceneStreamManager::getManagerStreamName());
 }
 
 #ifdef ENABLE_NANCY_V4

@@ -152,6 +152,15 @@ public:
 	// on the "Scene" object. Takes the function at the top of the stack.
 	void setSceneFunction(const char *name);
 
+	// Nancy22: keeps the function at the top of the stack, which describes the
+	// manager of that name for the debugger. Returns false when the name is taken.
+	bool addManager(const Common::String &name);
+	void getManagerNames(Common::Array<Common::String> &names) const;
+
+	// What the function of a manager gives, or the error it ran into. Returns
+	// false when the scene has no manager of that name.
+	bool describeManager(const Common::String &name, Common::String &text);
+
 	// Where the mouse is in the viewport. Returns whether it is inside of it.
 	static bool getViewportMouse(const NancyInput &input, ScriptPoint &point);
 
@@ -183,6 +192,13 @@ private:
 	Common::Array<GraphNode *> _changedNodes;	// since the last frame
 	Common::HashMap<Common::String, RefImage *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _refs;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _includedNames;
+
+	struct ManagerFunction {
+		Common::String name;
+		int reference;	// in the registry
+	};
+
+	Common::Array<ManagerFunction> _managers;
 
 	double _time = 0.0;
 	double _elapsedTime = 0.0;
