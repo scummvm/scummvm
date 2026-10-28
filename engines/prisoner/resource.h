@@ -242,9 +242,10 @@ struct LipSyncItem {
 };
 
 struct LipSyncChannel {
+	// When false, the frame also depends on the parent channel's current frame
 	bool flag;
 	int16 parentChannel;
-	int16 value3;
+	int16 parentFrameMultiplier;
 	Common::Array<LipSyncItem> items;
 };
 

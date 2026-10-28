@@ -427,10 +427,10 @@ void LipSyncSoundResource::load(Common::MemoryReadStream &stream) {
 
 		channel.flag = stream.readByte() != 0;
 		channel.parentChannel = stream.readUint16LE();
-		channel.value3 = stream.readUint16LE();
+		channel.parentFrameMultiplier = stream.readUint16LE();
 
-		debug(8, "LipSyncSoundResource::load() channel: flag = %d; parentChannel = %d; value3 = %d",
-			channel.flag, channel.parentChannel, channel.value3);
+		debug(8, "LipSyncSoundResource::load() channel: flag = %d; parentChannel = %d; parentFrameMultiplier = %d",
+			channel.flag, channel.parentChannel, channel.parentFrameMultiplier);
 
 		channel.items.reserve(itemCount);
 		while (itemCount--) {

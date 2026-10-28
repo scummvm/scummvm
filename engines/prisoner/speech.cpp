@@ -111,12 +111,17 @@ void PrisonerEngine::updateTalkieSpeech(int16 &pakSlot, uint32 &finishedTime, in
 					channelStatus.ticks = lipSyncSoundResource->getTicksScale() * channel.items[channelStatus.index - 1].duration;
 				}
 			}
-			if (channel.parentChannel != -1) {
+			if (channel.parentChannel != -1 && channelStatus.index > 0) {
+				int16 frameListIndex = channel.items[channelStatus.index - 1].index;
 				if (!channel.flag) {
-					debug("!channel.flag not implemented");
-				} else {
-					drawLipSyncFrame(channel.items[channelStatus.index - 1].index);
+					// The frame is picked from a block of frames chosen by the parent channel's
+					// current frame (original: updateTalkieSpeech)
+					const LipSyncChannel &parentChannel = lipSyncSoundResource->getChannel(channel.parentChannel);
+					const LipSyncChannelStatus &parentStatus = _lipSyncChannelStatus[channel.parentChannel];
+					if (parentStatus.index > 0)
+						frameListIndex += parentChannel.items[parentStatus.index - 1].index * channel.parentFrameMultiplier;
 				}
+				drawLipSyncFrame(frameListIndex);
 			}
 		}
 	}
