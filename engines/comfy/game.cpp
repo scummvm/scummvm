@@ -112,6 +112,7 @@ void ComfyEngine::gameConfigInit() {
 	ConfMan.registerDefault("skip_intro", false);
 	ConfMan.registerDefault("comfy_screen_update_interleaved", false);
 	ConfMan.registerDefault("comfy_input_device", 0);
+	ConfMan.registerDefault("shown_peripheral_warning", false);
 }
 
 void ComfyEngine::findLanguageDirectories() {

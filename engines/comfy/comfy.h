@@ -857,6 +857,7 @@ private:
 	Common::Error gameInit();
 	void gameShutdown();
 	void gameConfigInit();
+	void showPeripheralWarning();
 	void findLanguageDirectories();
 	bool iniReadGameConfig();
 	bool iniSelectGameDataPath(uint16 sceneId);
