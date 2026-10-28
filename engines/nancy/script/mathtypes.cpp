@@ -885,6 +885,116 @@ static const luaL_Reg kQuaternionHelperFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// Path, Nancy20: places to be at certain times. Only the scripts of Nancy22 use
+// it, for the car of the driving game that plays back a recorded drive.
+// Path:New{ { x, y, time }, ... } takes them in the order of their times.
+// TODO: The curves through the places that path:GetPosition(time, false) gives,
+// and AddPoint, RemovePoint, GetGuides and SetGuides, which no script uses
+static const char *const kPathType = "ND.Path";
+static const char *const kPathHelperType = "ND.PathHelper";
+
+struct PathPoint {
+	double x;
+	double y;
+	double time;
+};
+
+// The points follow the count in the object
+struct PathHeader {
+	uint32 numPoints;
+	uint32 padding;
+};
+
+static const PathPoint *checkPath(lua_State *L, int index, uint32 &numPoints) {
+	const PathHeader *header = (const PathHeader *)checkUserData(L, index, kPathType);
+	numPoints = header->numPoints;
+	return (const PathPoint *)(header + 1);
+}
+
+static int pathNew(lua_State *L) {
+	luaL_checktype(L, 2, LUA_TTABLE);
+	const uint32 numPoints = (uint32)lua_objlen(L, 2);
+
+	PathHeader *header = (PathHeader *)pushUserData(L, sizeof(PathHeader) + numPoints * sizeof(PathPoint), kPathType);
+	header->numPoints = numPoints;
+	header->padding = 0;
+
+	PathPoint *points = (PathPoint *)(header + 1);
+	for (uint32 i = 0; i < numPoints; ++i) {
+		lua_rawgeti(L, 2, i + 1);
+		lua_getfield(L, -1, "x");
+		lua_getfield(L, -2, "y");
+		lua_getfield(L, -3, "time");
+		points[i].x = luaL_checknumber(L, -3);
+		points[i].y = luaL_checknumber(L, -2);
+		points[i].time = luaL_checknumber(L, -1);
+		lua_pop(L, 4);
+	}
+
+	return 1;
+}
+
+// path:GetPosition(time[, straight[, loops]]): where the path is at a time, in a
+// straight line between the places around it. A path that loops starts over
+// after its last place; one that doesn't stays at its ends.
+static int pathGetPosition(lua_State *L) {
+	uint32 numPoints;
+	const PathPoint *points = checkPath(L, 1, numPoints);
+	double time = luaL_checknumber(L, 2);
+	const bool loops = lua_isboolean(L, 4) && lua_toboolean(L, 4);
+
+	if (numPoints == 0) {
+		return luaL_error(L, "Path is empty");
+	}
+
+	ScriptVector position;
+	position.size = 2;
+
+	const double lastTime = points[numPoints - 1].time;
+	const PathPoint *at = nullptr;
+	if (numPoints == 1) {
+		at = &points[0];
+	} else if ((time > lastTime || time < 0.0) && (!loops || lastTime == 0.0)) {
+		at = time > lastTime ? &points[numPoints - 1] : &points[0];
+	} else if (time > lastTime || time < 0.0) {
+		time -= floor(time / lastTime) * lastTime;
+	}
+
+	if (at) {
+		position.v[0] = at->x;
+		position.v[1] = at->y;
+		pushVector(L, position);
+		return 1;
+	}
+
+	uint32 next = 1;
+	while (next + 1 < numPoints && time > points[next].time) {
+		++next;
+	}
+
+	const PathPoint &from = points[next - 1];
+	const PathPoint &to = points[next];
+	const double span = to.time - from.time;
+	const double progress = span != 0.0 ? (time - from.time) / span : 0.0;
+
+	position.v[0] = from.x + (to.x - from.x) * progress;
+	position.v[1] = from.y + (to.y - from.y) * progress;
+	pushVector(L, position);
+	return 1;
+}
+
+static const luaL_Reg kPathFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "GetPosition", pathGetPosition },
+	{ nullptr, nullptr }
+};
+
+static const luaL_Reg kPathHelperFunctions[] = {
+	{ "__index", indexFunctions },
+	{ "New", pathNew },
+	{ nullptr, nullptr }
+};
+
 // rect:Transform(matrix)
 static int rectTransform(lua_State *L) {
 	pushRect(L, transformRect(checkRect(L, 1), checkMatrix(L, 2)));
@@ -900,6 +1010,9 @@ void registerMathTypes(lua_State *L) {
 
 	registerType(L, kQuaternionType, kQuaternionFunctions);
 	registerGlobal(L, "Quaternion", kQuaternionHelperType, kQuaternionHelperFunctions);
+
+	registerType(L, kPathType, kPathFunctions);
+	registerGlobal(L, "Path", kPathHelperType, kPathHelperFunctions);
 
 	// Rectangles can be moved by a matrix as well
 	luaL_getmetatable(L, "ND.Rect");
