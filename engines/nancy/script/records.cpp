@@ -1268,6 +1268,9 @@ bool AnimOverlayRecord::getField(const Common::String &key) {
 		lua_pushinteger(L, _sources.size());
 	} else if (key == "fps") {
 		lua_pushnumber(L, _framesPerSecond);
+	} else if (key == "source") {
+		// Nancy22: the part of the image that shows now
+		pushRect(L, _frame >= 1 && _frame <= (int)_sources.size() ? _sources[_frame - 1] : ScriptRect());
 	} else {
 		return false;
 	}
