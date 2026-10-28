@@ -54,6 +54,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+#ifdef USE_IMGUI
 	{
 		GAMEOPTION_USE_IMGUI_KEYBOARD,
 		{
@@ -65,6 +66,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+#endif
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

@@ -45,7 +45,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		1
 	},
@@ -62,7 +62,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		3
 	},
@@ -77,7 +77,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		1
 	},
@@ -92,7 +92,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		2
 	},
@@ -106,7 +106,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		2
 	},
@@ -120,7 +120,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		1
 	},
@@ -134,7 +134,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		2
 	},
@@ -149,7 +149,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		3
 	},
@@ -164,7 +164,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		3
 	},
@@ -179,7 +179,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_STANDARD
 		},
 		3
 	},
@@ -194,7 +194,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_USE_IMGUI_KEYBOARD)
+		COMFY_GUIO_NO_INTRO
 		},
 		2
 	},
