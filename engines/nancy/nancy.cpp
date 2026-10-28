@@ -124,7 +124,16 @@ Common::Error NancyEngine::loadGameState(int slot) {
 		ConfMan.setInt("display_slot", slot, Common::ConfigManager::kTransientDomain);
 	}
 
+	// Nancy22's scripts know when a game is being loaded, by its name
+	if (State::Scene::hasInstance()) {
+		NancySceneState.setLoadName(save.isValid() && !save.getDescription().empty() ? save.getDescription() : "Saved game");
+	}
+
 	Common::Error result = Engine::loadGameState(slot);
+	if (State::Scene::hasInstance() && result.getCode() != Common::kNoError) {
+		NancySceneState.setLoadName("");
+	}
+
 	if (result.getCode() == Common::kNoError) {
 		if (_gameFlow.curState != NancyState::kScene)
 			destroyState(_gameFlow.curState);

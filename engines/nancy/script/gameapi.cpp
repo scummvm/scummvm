@@ -416,6 +416,26 @@ static int gameIndex(lua_State *L) {
 		return 1;
 	}
 
+	// Nancy22: the name of the saved game that is being loaded, or nil
+	if (key == "loadName") {
+		const Common::String &name = NancySceneState.getLoadName();
+		if (name.empty()) {
+			lua_pushnil(L);
+		} else {
+			lua_pushstring(L, name.c_str());
+		}
+
+		return 1;
+	}
+
+	// Nancy22: a cheat of the original, toggled with F in its cheat mode, with
+	// which a click skips the current line of a conversation. Always off here,
+	// since Esc already skips what the characters are saying.
+	if (key == "fastConvo") {
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
 	lua_pushnil(L);
 	return 1;
 }

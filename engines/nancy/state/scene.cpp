@@ -2436,6 +2436,9 @@ void Scene::run() {
 
 	_streams.process();
 
+	// The scenes of a loaded game have all started by now
+	_loadName.clear();
+
 	// The records a skipped cinematic set off have started by now; its dialogue
 	// shouldn't go on without it
 	if (_hasSkippedMovie) {

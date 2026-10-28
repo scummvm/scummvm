@@ -131,6 +131,11 @@ public:
 	// chance save instead, once the current records have run
 	void loadSecondChance() { _isLoadingSecondChance = true; }
 
+	// Nancy22: the name of the saved game that is being loaded, until the scenes
+	// of all the streams have started. Empty at any other time.
+	void setLoadName(const Common::String &name) { _loadName = name; }
+	const Common::String &getLoadName() const { return _loadName; }
+
 	// Nancy16: lists of movies left under the name of the movie or puzzle that plays
 	// them, e.g. the commands given to the wolf. Taking a list forgets it; returns false
 	// when there is none.
@@ -558,6 +563,7 @@ private:
 	bool _hasSkippedMovie = false;
 
 	bool _isLoadingSecondChance = false;
+	Common::String _loadName;
 
 	Common::HashMap<Common::String, Common::Array<Common::String>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _moviePlaylists;
 
