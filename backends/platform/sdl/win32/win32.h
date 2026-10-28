@@ -28,6 +28,7 @@
 class OSystem_Win32 final : public OSystem_SDL {
 public:
 	OSystem_Win32();
+	~OSystem_Win32() override;
 
 	void init() override;
 	void initBackend() override;

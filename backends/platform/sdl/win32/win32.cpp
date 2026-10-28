@@ -39,7 +39,10 @@
 #include "common/error.h"
 #include "common/textconsole.h"
 
+#include "gui/message.h"
+
 #include "backends/audiocd/win32/win32-audiocd.h"
+#include "backends/midi/windows.h"
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/platform/sdl/win32/win32-window.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
@@ -61,6 +64,10 @@
 
 OSystem_Win32::OSystem_Win32() :
 	_isPortable(false) {
+}
+
+OSystem_Win32::~OSystem_Win32() {
+	WindowsMusicPlugin::cleanupMidiWarmUpThread();
 }
 
 void OSystem_Win32::init() {
@@ -141,6 +148,15 @@ void OSystem_Win32::initBackend() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
+
+	// On Windows 11 25H2 and later, the first WinMM device query takes about 10 seconds,
+	// while new MIDI backend (Windows MIDI Services) initializes.
+	// If this happens on the UI thread, this can make Windows report ScummVM as unresponsive.
+	// Warm up the MIDI backend in a background thread during startup to avoid this.
+	WindowsMusicPlugin::startMidiWarmUpThread();
+
+	// Register the progress handler used by getDevices() on the UI thread.
+	WindowsMusicPlugin::setMidiWarmUpWaitCallback(&GUI::MidiDeviceScanDialog::waitForCompletion);
 }
 
 #ifdef USE_OPENGL

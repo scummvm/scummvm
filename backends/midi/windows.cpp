@@ -27,10 +27,12 @@
 #if defined(WIN32)
 
 #define WIN32_LEAN_AND_MEAN
+#include <process.h>
 #include <windows.h>
 
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
+#include "backends/midi/windows.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -162,22 +164,79 @@ void MidiDriver_WIN::check_error(MMRESULT result) {
 
 // Plugin interface
 
-class WindowsMusicPlugin : public MusicPluginObject {
-public:
-	const char *getName() const override {
-		return _s("Windows MIDI");
-	}
+HANDLE WindowsMusicPlugin::_midiWarmUpThreadHandle = nullptr;
+WindowsMusicPlugin::MidiWarmUpWaitCallback WindowsMusicPlugin::_midiWarmUpWaitCallback = nullptr;
 
-	const char *getId() const override {
-		return "windows";
-	}
+WindowsMusicPlugin::WindowsMusicPlugin()
+	: _uiThreadId(GetCurrentThreadId()) {
+}
 
-	MusicDevices getDevices() const override;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
-	bool checkDevice(MidiDriver::DeviceHandle hdl, int checkFlags, bool quiet) const override;
-};
+const char *WindowsMusicPlugin::getName() const {
+	return _s("Windows MIDI");
+}
+
+const char *WindowsMusicPlugin::getId() const {
+	return "windows";
+}
+
+void WindowsMusicPlugin::startMidiWarmUpThread() {
+	// HANDLE for _beginthreadex must be initialized with nullptr, not an INVALID_HANDLE_VALUE.
+	if (_midiWarmUpThreadHandle != nullptr)
+		return;
+
+	// Warm up WinMM in the worker thread (outside from the UI thread) while the WinMM initializes.
+	// A failed thread creation leaves no pending warm-up, so enumeration can proceed.
+	_midiWarmUpThreadHandle = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, warmUpMidiThreadMain, nullptr, 0, nullptr));
+}
+
+void WindowsMusicPlugin::cleanupMidiWarmUpThread() {
+	_midiWarmUpWaitCallback = nullptr;
+	if (_midiWarmUpThreadHandle) {
+		// Closing the handle here does not terminate the thread.
+		CloseHandle(_midiWarmUpThreadHandle);
+		_midiWarmUpThreadHandle = nullptr;
+	}
+}
+
+unsigned __stdcall WindowsMusicPlugin::warmUpMidiThreadMain(void *arglist) {
+	(void)arglist;
+	// Warm-up WinMM to make later WinMM requests instantaneous.
+	(void)midiOutGetNumDevs();
+	return 0;
+}
+
+bool WindowsMusicPlugin::isMidiWarmUpFinished() {
+	// Empty thread handle means exceptional states.
+	// But let's return true regardless, as this warm-up check is a best-effort.
+	// Subsequent WinMM calls works even in this case, albeit with a first-time UI thread 10 second hang.
+	if (_midiWarmUpThreadHandle == nullptr)
+		return true;
+
+	// Poll the warm-up thread's state without blocking.
+	// - If the thread is still running, it will return WAIT_TIMEOUT.
+	// - If the thread has been finished, it will return WAIT_OBJECT_0.
+	return WaitForSingleObject(_midiWarmUpThreadHandle, 0) == WAIT_OBJECT_0;
+}
+
+void WindowsMusicPlugin::setMidiWarmUpWaitCallback(MidiWarmUpWaitCallback callback) {
+	_midiWarmUpWaitCallback = callback;
+}
+
+bool WindowsMusicPlugin::waitForMidiWarmUp() const {
+	MidiWarmUpCompletion isComplete;
+	// OSystem_Win32 installs GUI::MidiDeviceScanDialog::waitForCompletion as the wait handler.
+	// While warm-up is pending, this callback shows a modal progress dialog on the UI thread.
+	// That modal dialog prevent process being marked as unresponsive by OS.
+	if (GetCurrentThreadId() == _uiThreadId && _midiWarmUpWaitCallback && !isComplete())
+		return _midiWarmUpWaitCallback(isComplete);
+
+	// Warm-up has been finished. Proceed without showing a modal dialog.
+	return true;
+}
 
 MusicDevices WindowsMusicPlugin::getDevices() const {
+	waitForMidiWarmUp();
+
 	MusicDevices devices;
 	int numDevs = midiOutGetNumDevs();
 	MIDIOUTCAPS tmp;
