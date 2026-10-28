@@ -81,12 +81,13 @@ Actor::Actor() :
 		_talkColor(255, 255, 255), _pos(0, 0, 0),
 		_lookingMode(false), _followBoxes(false), _running(false),
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f),
-		_turnRateMultiplier(0.f), _talkAnim(0),
+		_talkAnim(0),
 		_reflectionAngle(80), _scale(1.f), _timeScale(1.f),
-		_visible(true), _lipSync(nullptr), _turning(false), _singleTurning(false), _walking(false),
+		_visible(true), _lipSync(nullptr), _walking(false),
 		_walkedLast(false), _walkedCur(false),
 		_collisionMode(CollisionOff), _collisionScale(1.f),
 		_lastTurnDir(0), _currTurnDir(0),
+		_smoothTurns(false),
 		_sayLineText(0), _talkDelay(0),
 		_attachedActor(0), _attachedJoint(""),
 		_globalAlpha(1.f), _alphaMode(AlphaOff),
@@ -133,7 +134,6 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_roll.getDegrees());
 	savedState->writeFloat(_walkRate);
 	savedState->writeFloat(_turnRate);
-	savedState->writeFloat(_turnRateMultiplier);
 	savedState->writeBool(_followBoxes);
 	savedState->writeFloat(_reflectionAngle);
 	savedState->writeBool(_visible);
@@ -175,13 +175,12 @@ void Actor::saveState(SaveGame *savedState) const {
 		c->saveState(savedState);
 	}
 
-	savedState->writeBool(_turning);
-	savedState->writeBool(_singleTurning);
 	savedState->writeFloat(_moveYaw.getDegrees());
 	savedState->writeFloat(_movePitch.getDegrees());
 	savedState->writeFloat(_moveRoll.getDegrees());
 
 	savedState->writeBool(_walking);
+	savedState->writeBool(_smoothTurns);
 	savedState->writeVector3d(_destPos);
 
 	_restChore.saveState(savedState);
@@ -287,10 +286,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_roll               = savedState->readFloat();
 	_walkRate           = savedState->readFloat();
 	_turnRate           = savedState->readFloat();
-	if (savedState->saveMinorVersion() > 6) {
-		_turnRateMultiplier = savedState->readFloat();
-	} else {
-		_turnRateMultiplier = 1.f;
+	if (savedState->saveMinorVersion() > 6 && savedState->saveMinorVersion() < 30) {
+		// Removed turn rate multiplier
+		savedState->readFloat();
 	}
 	_followBoxes        = savedState->readBool();
 	_reflectionAngle    = savedState->readFloat();
@@ -341,9 +339,11 @@ bool Actor::restoreState(SaveGame *savedState) {
 		_costumeStack.push_back(c);
 	}
 
-	_turning = savedState->readBool();
-	if (savedState->saveMinorVersion() > 25) {
-		_singleTurning = savedState->readBool();
+	if (savedState->saveMinorVersion() < 30) {
+		// Older saves have the turning flags here
+		savedState->readBool();
+		if (savedState->saveMinorVersion() > 25)
+			savedState->readBool();
 	}
 	_moveYaw = savedState->readFloat();
 	if (savedState->saveMinorVersion() > 6) {
@@ -355,6 +355,12 @@ bool Actor::restoreState(SaveGame *savedState) {
 	}
 
 	_walking = savedState->readBool();
+	if (savedState->saveMinorVersion() > 29) {
+		_smoothTurns = savedState->readBool();
+	} else {
+		// An approximation of _smoothTurns
+		_smoothTurns = _followBoxes || _walking;
+	}
 	_destPos = savedState->readVector3d();
 
 	_restChore.restoreState(savedState, this);
@@ -496,9 +502,10 @@ void Actor::setRot(const Math::Vector3d &pos) {
 void Actor::setRot(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_pitch = pitchParam;
 	_yaw = yawParam;
-	_moveYaw = _yaw;
 	_roll = rollParam;
-	_turning = false;
+	_moveYaw = _yaw;
+	_movePitch = _pitch;
+	_moveRoll = _roll;
 }
 
 void Actor::setPos(const Math::Vector3d &position) {
@@ -555,40 +562,73 @@ void Actor::calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, 
 	}
 }
 
-void Actor::turnTo(const Math::Vector3d &pos, bool snap) {
+void Actor::turnTo(const Math::Vector3d &pos) {
 	Math::Angle y, p, r;
 	calculateOrientation(pos, &p, &y, &r);
-	turnTo(p, y, r, snap);
+	_movePitch = p;
+	_moveRoll = r;
+	turnToYaw(y);
+}
+
+void Actor::setSmoothTurns(bool smooth) {
+	// The original engines make a new heading from the current rotation
+	if (smooth && !_smoothTurns) {
+		_moveYaw = _yaw;
+		_movePitch = _pitch;
+		_moveRoll = _roll;
+	}
+	_smoothTurns = smooth;
+}
+
+void Actor::setRotFromScript(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam, bool smooth) {
+	_walking = false;
+	if (!_smoothTurns || !smooth) {
+		setRot(pitchParam, yawParam, rollParam);
+		return;
+	}
+
+	_pitch = _movePitch = pitchParam;
+	_roll = _moveRoll = rollParam;
+	turnToYaw(yawParam);
+}
+
+void Actor::pointAt(const Math::Vector3d &pos) {
+	Math::Angle y, p, r;
+	calculateOrientation(pos, &p, &y, &r);
+	setSmoothTurns(true);
+	setRot(_pitch, y, _roll);
 }
 
 bool Actor::singleTurnTo(const Math::Vector3d &pos) {
+	setSmoothTurns(true);
 	Math::Angle y, p, r;
 	calculateOrientation(pos, &p, &y, &r);
+	_movePitch = p;
+	_moveRoll = r;
 
-	float turnAmt = g_grim->getPerSecond(_turnRate) * _timeScale;
-	bool done = animTurn(turnAmt, y, &_yaw) == 0;
-	done = animTurn(turnAmt, p, &_pitch) == 0 && done;
-	done = animTurn(turnAmt, r, &_roll) == 0 && done;
-	_moveYaw = _yaw;
-	_movePitch = _pitch;
-	_moveRoll = _roll;
-	_singleTurning = !done;
-
-	return done;
+	// The original engines ignore time scale here
+	float maxStep = g_grim->getPerSecond(_turnRate);
+	Math::Angle d = y - _moveYaw;
+	d.normalize(-180);
+	float step = MIN(ABS(d.getDegrees()), maxStep);
+	turnToYaw(d > 0 ? _moveYaw + step : _moveYaw - step);
+	return step < maxStep;
 }
 
-void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam, bool snap) {
+void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_movePitch = pitchParam;
 	_moveRoll = rollParam;
-	_moveYaw = yawParam;
-	_turnRateMultiplier = (snap ? 5.f : 1.f);
-	if (_yaw != yawParam || _pitch != pitchParam || _roll != rollParam) {
-		_turning = true;
-	} else
-		_turning = false;
+	_pitch = pitchParam;
+	_roll = rollParam;
+	turnToYaw(yawParam);
+}
+
+void Actor::turnToYaw(const Math::Angle &yaw) {
+	_moveYaw = yaw;
 }
 
 void Actor::walkTo(const Math::Vector3d &p) {
+	setSmoothTurns(true);
 	if (p == _pos)
 		_walking = false;
 	else {
@@ -754,20 +794,14 @@ bool Actor::isWalking() const {
 }
 
 bool Actor::isTurning() const {
-	if (g_grim->getGameType() == GType_MONKEY4)
-		if (_singleTurning)
-			return true;
-	if (_turning)
-		return true;
-
-	if (_lastTurnDir != 0 || _currTurnDir != 0)
-		return true;
-
-	return false;
+	return _lastTurnDir != 0 || getYawLeft() >= 0.5f;
 }
 
 void Actor::stopTurning() {
-	_turning = false;
+	// Stop the body where it is
+	_moveYaw = _yaw;
+	_movePitch = _pitch;
+	_moveRoll = _roll;
 	if (_lastTurnDir != 0)
 		getTurnChore(_lastTurnDir)->stop(true);
 
@@ -797,6 +831,7 @@ void Actor::moveTo(const Math::Vector3d &pos) {
 }
 
 void Actor::walkForward() {
+	setSmoothTurns(true);
 	float dist = g_grim->getPerSecond(_walkRate) * _timeScale;
 	// Limit the amount of the movement per frame, otherwise with low fps
 	// scripts that use WalkActorForward and proximity may break.
@@ -932,7 +967,7 @@ void Actor::walkForward() {
 		if (g_grim->getGameType() == GType_MONKEY4) {
 			ei.angleWithEdge = -ei.angleWithEdge;
 		}
-		turnTo(0, _moveYaw + ei.angleWithEdge * turnDir, 0, true);
+		turnToYaw(_moveYaw + ei.angleWithEdge * turnDir);
 
 		if (oldDist <= dist + 0.001f) {
 			// If we didn't move at all, keep trying a couple more times
@@ -956,7 +991,7 @@ Math::Vector3d Actor::getSimplePuckVector() const {
 		}
 		return Math::Vector3d(yaw.getSine(), 0, yaw.getCosine());
 	} else {
-		return Math::Vector3d(-_yaw.getSine(), _yaw.getCosine(), 0);
+		return Math::Vector3d(-_moveYaw.getSine(), _moveYaw.getCosine(), 0);
 	}
 }
 
@@ -1103,14 +1138,15 @@ void Actor::stopAllChores(bool ignoreLoopingChores) {
 
 void Actor::turn(int dir) {
 	_walking = false;
-	float delta = g_grim->getPerSecond(_turnRate) * dir * _timeScale;
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		delta = -delta;
+	setSmoothTurns(true);
+
+	// Grim ignores the key while a smooth turn is still more than two steps behind
+	if (g_grim->getGameType() == GType_GRIM) {
+		float delta = g_grim->getPerSecond(_turnRate) * dir * _timeScale;
+		if (getYawLeft() > ABS(2.f * delta))
+			return;
 	}
-	_moveYaw = _moveYaw + delta;
-	_turning = true;
-	_turnRateMultiplier = 5.f;
-	_currTurnDir = dir;
+	_currTurnDir = (dir > 0 ? 1 : -1);
 }
 
 Math::Angle Actor::getYawTo(const Actor *a) const {
@@ -1491,8 +1527,10 @@ Costume *Actor::findCostume(const Common::String &n) {
 
 void Actor::setFollowBoxes(bool follow) {
 	_followBoxes = follow;
-	if (follow)
+	if (follow) {
 		_hasFollowedBoxes = true;
+		setSmoothTurns(true);
+	}
 }
 
 void Actor::updateWalk() {
@@ -1512,18 +1550,118 @@ void Actor::updateWalk() {
 		if (_path.empty()) {
 			_walking = false;
 			_pos = destPos;
-			// It seems that we need to allow an already active turning motion to
-			// continue or else turning actors away from barriers won't work right
-			_turning = false;
 			return;
 		}
 	}
 
-	turnTo(destPos, true);
+	turnTo(destPos);
 
 	dir = destPos - _pos;
 	dir.normalize();
 	_pos += dir * walkAmt;
+}
+
+void Actor::updateMovement() {
+	bool isGrim = g_grim->getGameType() == GType_GRIM;
+	if (_smoothTurns && _currTurnDir != 0 && !_walking) {
+		float delta = g_grim->getPerSecond(_turnRate) * _currTurnDir * _timeScale;
+		// EMI applies the time scale twice
+		if (isGrim)
+			_moveYaw += delta;
+		else
+			_moveYaw -= delta * _timeScale;
+	}
+
+	if (_walking) {
+		updateWalk();
+	}
+
+	if (_smoothTurns) {
+		int eased = updateEasedYaw();
+		if (eased != 0 && _currTurnDir == 0) {
+			_currTurnDir = isGrim ? eased : -eased;
+		}
+	}
+
+	// Only a puck oriented actor tilts here
+	float tiltAmt = g_grim->getPerSecond(_turnRate);
+	animTurn(tiltAmt, _movePitch, &_pitch);
+	animTurn(tiltAmt, _moveRoll, &_roll);
+
+	updateMoveChores();
+}
+
+float Actor::getYawLeft() const {
+	Math::Angle d = _moveYaw - _yaw;
+	d.normalize(-180);
+	return ABS(d.getDegrees());
+}
+
+int Actor::updateEasedYaw() {
+	// The original engines turn by the turn rate plus a tenth of the angle
+	// that is left, all the way at a rate of 0, and stop once less than half
+	// a degree is left
+	float left = getYawLeft();
+	if (left < 0.5f)
+		return 0;
+
+	float step = left;
+	float turnAmt = g_grim->getPerSecond(_turnRate) * _timeScale;
+	if (turnAmt > 0.f && turnAmt < left)
+		step = (left - turnAmt) * 0.1f + turnAmt;
+	Math::Angle d = _moveYaw - _yaw;
+	d.normalize(-180);
+	if (d > 0) {
+		_yaw += step;
+		return 1;
+	}
+	_yaw -= step;
+	return -1;
+}
+
+void Actor::updateMoveChores() {
+	// The chores of the original Grim engine fade in and out in 130 ms, the
+	// ones of EMI in 250 ms. Grim rests while the actor neither walks nor
+	// turns, EMI just restarts the rest chore when it ended.
+	bool isGrim = g_grim->getGameType() == GType_GRIM;
+	const uint fadeTime = isGrim ? 130 : 250;
+
+	if (_walkedCur)
+		_currTurnDir = 0;
+
+	if (_walkChore.isValid()) {
+		if (_walkedCur) {
+			if (!_walkChore.isPlaying())
+				_walkChore.playLooping(true, fadeTime);
+		} else if (_walkChore.isPlaying() && !_walking) {
+			_walkChore.stop(true, fadeTime);
+		}
+	}
+
+	ActionChore *turnChores[2] = { &_leftTurnChore, &_rightTurnChore };
+	for (int i = 0; i < 2; ++i) {
+		if (!turnChores[i]->isValid())
+			continue;
+		bool wanted = (i == 0 ? _currTurnDir > 0 : _currTurnDir < 0);
+		if (wanted) {
+			if (!turnChores[i]->isPlaying())
+				turnChores[i]->playLooping(true, fadeTime);
+		} else if (turnChores[i]->isPlaying()) {
+			turnChores[i]->stop(true, fadeTime);
+		}
+	}
+
+	if (_restChore.isValid()) {
+		if (!isGrim) {
+			if (!_restChore.isPlaying())
+				_restChore.playLooping();
+		} else if (!_walkedCur && _currTurnDir == 0) {
+			if (!_restChore.isPlaying())
+				_restChore.playLooping(true, fadeTime);
+		} else if (_restChore.isPlaying()) {
+			_restChore.stop(true, fadeTime);
+		}
+	}
 }
 
 void Actor::update(uint frameTime) {
@@ -1549,86 +1687,7 @@ void Actor::update(uint frameTime) {
 		}
 	}
 
-	if (_turning) {
-		float turnAmt = g_grim->getPerSecond(_turnRate) * _turnRateMultiplier * _timeScale;
-		_currTurnDir = animTurn(turnAmt, _moveYaw, &_yaw);
-		if (g_grim->getGameType() == GType_MONKEY4) {
-			_currTurnDir = -_currTurnDir;
-		}
-		int p = animTurn(turnAmt, _movePitch, &_pitch);
-		int r = animTurn(turnAmt, _moveRoll, &_roll);
-		if (_currTurnDir == 0 && p == 0 && r == 0) {
-			_turning = false;
-			_turnRateMultiplier = 1.f;
-		}
-	}
-
-	if (_walking) {
-		updateWalk();
-	}
-
-	if (_walkChore.isValid()) {
-		if (_walkedCur) {
-			if (!_walkChore.isPlaying()) {
-				_walkChore.playLooping(true);
-			}
-			if (g_grim->getGameType() == GType_GRIM && _restChore.isPlaying()) {
-				_restChore.stop(true);
-			}
-		} else {
-			if (_walkedLast && _walkChore.isPlaying()) {
-				_walkChore.stop(true);
-				if (!_restChore.isPlaying()) {
-					_restChore.playLooping(true);
-				}
-			}
-		}
-	}
-
-	if (_leftTurnChore.isValid()) {
-		if (_walkedCur || _walkedLast)
-			_currTurnDir = 0;
-
-		if (g_grim->getGameType() == GType_GRIM && _restChore.isValid()) {
-			if (_currTurnDir != 0) {
-				if (getTurnChore(_currTurnDir)->isPlaying() && _restChore.isPlaying()) {
-					_restChore.stop(true, 500);
-				}
-			} else if (_lastTurnDir != 0) {
-				if (!_walkedCur && getTurnChore(_lastTurnDir)->isPlaying()) {
-					_restChore.playLooping(true);
-				}
-			}
-		}
-
-		if (_lastTurnDir != 0 && _lastTurnDir != _currTurnDir) {
-			getTurnChore(_lastTurnDir)->stop(true);
-		}
-		if (_currTurnDir != 0 && _currTurnDir != _lastTurnDir) {
-			getTurnChore(_currTurnDir)->playLooping(true, 500);
-			if (_currTurnDir == 1) {
-				// When turning to the left, ensure that the components of the right turn chore
-				// are fading out (or stopped).
-				// This is necessary because the left turn chore typically contains both the
-				// left turn and right turn keyframe components. The above call to playLooping
-				// will thus start fading in both of the components, overriding the right turn's
-				// fade out that was started before.
-				// The left turn chore's keys will eventually stop the right turn keyframe from
-				// playing, but the stopping will be instantaneous. To get a smooth transition,
-				// we want to keep fading out the right turn. The chore's "stop" key will be
-				// ignored when the keyframe is fading out (see KeyframeComponent::stop()).
-				_rightTurnChore.stop(true);
-			}
-		}
-	} else {
-		_currTurnDir = 0;
-	}
-
-	// The rest chore might have been stopped because of a
-	// StopActorChore(nil).  Restart it if so.
-	if (!_walkedCur && _currTurnDir == 0 && !_restChore.isPlaying()) {
-		_restChore.playLooping(g_grim->getGameType() == GType_GRIM);
-	}
+	updateMovement();
 
 	_walkedLast = _walkedCur;
 	_walkedCur = false;

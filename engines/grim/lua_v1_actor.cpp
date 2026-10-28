@@ -343,11 +343,8 @@ void Lua_V1::SetActorRot() {
 	float pitch = lua_getnumber(p);
 	float yaw = lua_getnumber(y);
 	float roll = lua_getnumber(r);
-	if (getbool(5)) {
-		actor->turnTo(pitch, yaw, roll, true);
-	} else {
-		actor->setRot(pitch, yaw, roll);
-	}
+	bool smooth = getbool(5);
+	actor->setRotFromScript(pitch, yaw, roll, smooth);
 }
 
 void Lua_V1::GetActorRot() {
@@ -427,6 +424,7 @@ void Lua_V1::GetActorYawToPoint() {
 
 	Math::Vector3d yawVector(x, y, z);
 
+	actor->setSmoothTurns(true);
 	lua_pushnumber(actor->getYawTo(yawVector).getDegrees());
 }
 
@@ -488,8 +486,9 @@ void Lua_V1::SetActorTurnRate() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	float rate = lua_getnumber(rateObj); // FIXME verify negate values of rate
-	actor->setTurnRate(rate);
+	float rate = lua_getnumber(rateObj);
+	// The original game uses the absolute value of the rate, even though it never sends a negative value.
+	actor->setTurnRate(ABS(rate));
 }
 
 void Lua_V1::WalkActorForward() {
@@ -709,7 +708,6 @@ void Lua_V1::TurnActor() {
 
 	Actor *actor = getactor(actorObj);
 	int dir = (int)lua_getnumber(dirObj);
-	// TODO verify. need clear mode walking
 	actor->turn(dir);
 }
 
@@ -1212,7 +1210,7 @@ void Lua_V1::PointActorAt() {
 
 	// Find the vector pointing from the actor to the desired location
 	Math::Vector3d turnToVector(x, y, z);
-	actor->setRot(turnToVector);
+	actor->pointAt(turnToVector);
 }
 
 void Lua_V1::WalkActorVector() {
