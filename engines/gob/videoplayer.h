@@ -108,8 +108,6 @@ public:
 		int slot; ///< Explicit slot index (-1 = auto).
 		bool reuseSlotWitSameFilename;
 
-		bool noWaitSound;
-
 		Properties();
 	};
 
@@ -140,6 +138,7 @@ public:
 	bool isPlayingLive() const;
 	bool isSoundPlaying() const;
 
+	void setAutoUpdate(int slot, bool value);
 	void updateVideos(bool force = false, int exceptSlot = -1);
 	void liveVideosLoop();
 
@@ -191,6 +190,7 @@ private:
 
 		bool doubleVideo; ///< Should the video be doubled (each pixel drawn as a 2x2 block)
 		bool live;
+		bool useBackSurface;
 		bool autoUpdate; ///< Should the video be automatically advanced by updateVideos()
 
 		Video();

@@ -46,7 +46,7 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
 	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
 	noBlock(false), loop(false), fade(false), waitEndFrame(true),
-	hasSound(false), canceled(false), noWaitSound(false), slot(-1), reuseSlotWitSameFilename(false) {
+	hasSound(false), canceled(false), slot(-1), reuseSlotWitSameFilename(false) {
 
 }
 
@@ -74,6 +74,8 @@ void VideoPlayer::Video::close() {
 	highColorMap = nullptr;
 
 	live = false;
+	useBackSurface = false;
+	autoUpdate = false;
 }
 
 
@@ -196,8 +198,8 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		// Set the filename
 		video->fileName = file;
 
-		video->autoUpdate = (properties.flags & kFlagNoVideo) ||
-							(!(properties.flags & 0x200) && !(properties.flags & kFlagOtherSurface));
+		video->useBackSurface = (properties.flags & kFlagNoVideo) ||
+								(!(properties.flags & 0x200) && !(properties.flags & kFlagOtherSurface));
 
 		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
 			_noCursorSwitch = true; // For Adibou2, we always want to see the cursor while a video is playing.
@@ -582,6 +584,14 @@ void VideoPlayer::liveVideosLoop() {
 	}
 }
 
+void VideoPlayer::setAutoUpdate(int slot, bool value) {
+	Video *video = getVideoBySlot(slot);
+	if (!video)
+		return;
+
+	video->autoUpdate = value;
+}
+
 void VideoPlayer::updateVideos(bool force, int exceptSlot) {
 	liveVideosLoop();
 
@@ -621,7 +631,7 @@ void VideoPlayer::updateVideo(int slot, bool force) {
 	}
 
 	if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
-		if ((video->decoder->hasVideoData() && !video->autoUpdate) || !video->properties.noWaitSound)
+		if ((video->decoder->hasVideoData() && !video->useBackSurface) || !video->autoUpdate)
 			return;
 
 		video->properties.startFrame = video->decoder->getCurFrame();
