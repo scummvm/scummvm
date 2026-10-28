@@ -179,4 +179,36 @@ void PrisonerEngine::resumeMusics() {
 	}
 }
 
+// Reloads the loaded music as MIDI or digital music and restarts it if it was playing
+// (original: musicItems_sub_36B8F, called when the music type changes)
+void PrisonerEngine::switchMusicType(bool digital) {
+	for (int16 musicIndex = 0; musicIndex < kMaxMusics; musicIndex++) {
+		MusicSlot &musicSlot = _musics[musicIndex];
+		if (musicSlot.isEmpty())
+			continue;
+
+		Common::String pakName;
+		int16 pakSlot;
+		_res->getSlotInfo(musicSlot.resourceCacheSlot, pakName, pakSlot);
+		// loadMusic() takes the MIDI pak name ("MUS02") and picks the digital one itself
+		pakName.setChar('M', 0);
+
+		bool wasPlaying = isMusicPlaying(musicIndex);
+		bool loop = musicSlot.loop;
+		int16 loopCount = musicSlot.loopCount;
+		bool volumeFlag = musicSlot.volumeFlag;
+		uint volume = musicSlot.volume;
+		bool moduleWide = musicSlot.moduleWide;
+
+		unloadMusic(musicIndex);
+		_digitalMusic = digital;
+		int16 newMusicIndex = loadMusic(pakName, pakSlot, moduleWide);
+		if (volumeFlag)
+			setMusicVolume(newMusicIndex, volume);
+		if (wasPlaying)
+			playMusic(newMusicIndex, loop, loopCount);
+	}
+	_digitalMusic = digital;
+}
+
 } // End of namespace Prisoner

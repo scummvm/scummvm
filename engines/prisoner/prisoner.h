@@ -851,6 +851,15 @@ public:
 	Common::Array<bool> _activeMenuItems;
 	Common::StringArray _optionsMenuItems;
 	Common::StringArray _displayMenuItems;
+
+	/* Text and music settings screen, edited copies of the settings */
+	Common::StringArray _textMusicMenuItems;
+	int8 _textMusicRow;
+	int16 _textMusicDialogType;
+	bool _textMusicAutoEnd;
+	bool _textMusicDigital;
+	/* "End of dialogs" setting : spoken text ends by itself */
+	bool _dialogAutoEnd;
 	typedef void (PrisonerEngine::*MenuFunction)(int16, int16);
 	MenuFunction _menuFunctionArray[MENU_PANELS::PANEL_SIZE_END];
 
@@ -1213,6 +1222,14 @@ public:
 	void closeOptionsMenu();
 	void openConfigDialog();
 	void loadDisplaySettings();
+	void loadTextMusicSettings();
+	void loadTextMusicMenu();
+	void closeTextMusicMenu(bool apply);
+	void changeTextMusicSetting(int16 delta);
+	void handleTextMusicInput();
+	void drawTextMusicChoice(AnimationResource *panel, int16 x, int16 y, int16 box, bool chosen);
+	void updateTextMusicMenu(int16 x, int16 y);
+	void switchMusicType(bool digital);
 	void loadDisplaySettingsMenu();
 	void closeDisplaySettingsMenu(bool apply);
 	void changeDisplaySetting(int16 delta);

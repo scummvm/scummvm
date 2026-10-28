@@ -77,6 +77,7 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_menuFunctionArray[MAIN_PANEL] = &PrisonerEngine::updateMainMenu;
 	_menuFunctionArray[OPTIONS_PANEL] = &PrisonerEngine::updateOptionsMenu;
 	_menuFunctionArray[OPTGFX_PANEL] = &PrisonerEngine::updateDisplaySettingsMenu;
+	_menuFunctionArray[DIVOPT_PANEL] = &PrisonerEngine::updateTextMusicMenu;
 }
 
 PrisonerEngine::~PrisonerEngine() {
@@ -255,6 +256,7 @@ Common::Error PrisonerEngine::run() {
 
 	_halfScreenScrolling = true;
 	loadDisplaySettings();
+	loadTextMusicSettings();
 
 	_currModuleIndex = -1;
 	_currSceneIndex = -1;
@@ -798,7 +800,7 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 
 	if (_inGame) {
 		// The display settings screen handles Escape itself (cancel)
-		if (keyState == Common::KEYCODE_ESCAPE && !(_mainMenuRequested && _selectedMenuIndex == OPTGFX_PANEL)) {
+		if (keyState == Common::KEYCODE_ESCAPE && !(_mainMenuRequested && (_selectedMenuIndex == OPTGFX_PANEL || _selectedMenuIndex == DIVOPT_PANEL))) {
 			inpKeybSetWaitRelease(true);
 			if (!_mainMenuRequested) {
 				openMainMenu();

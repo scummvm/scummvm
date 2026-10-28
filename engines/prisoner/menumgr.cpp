@@ -108,6 +108,56 @@ static const _MenuOffset kOptionsMenuOffsets[] = {
 	{ 98,  13, 413,  38}
 };
 
+// Text and music settings screen (runOptionsMenu_sub_33E2C), click box tags from
+// runOptionsMenu_sub_3351C. The option boxes show icons drawn in the panel.
+enum TextMusicMenuBox {
+	kTextMusicBoxTitle = 0,
+	kTextMusicBoxDialogLabel,
+	kTextMusicBoxEndLabel,
+	kTextMusicBoxMusicLabel,
+	kTextMusicBoxDialogText,
+	kTextMusicBoxDialogBoth,
+	kTextMusicBoxDialogVoice,
+	kTextMusicBoxEndClick,
+	kTextMusicBoxEndAuto,
+	kTextMusicBoxMusicMidi,
+	kTextMusicBoxMusicDigital,
+	kTextMusicBoxOk,
+	kTextMusicBoxCancel,
+	kTextMusicBoxCount
+};
+
+static const _MenuOffset kTextMusicMenuOffsets[] = {
+	{ 98,  13, 414,  39},
+	{ 90, 134, 243, 155},
+	{ 90, 191, 243, 212},
+	{ 90, 249, 243, 270},
+	{268, 134, 299, 156},
+	{324, 134, 355, 156},
+	{381, 134, 412, 156},
+	{296, 191, 327, 213},
+	{353, 191, 384, 213},
+	{296, 249, 327, 271},
+	{353, 249, 384, 271},
+	{ 93, 301, 163, 331},
+	{349, 302, 419, 332}
+};
+
+// The original's "type of dialog" values
+enum {
+	kDialogTypeText = 0,
+	kDialogTypeVoice = 1,
+	kDialogTypeBoth = 2
+};
+
+// Rows of the text and music settings screen
+enum {
+	kTextMusicRowDialog = 0,
+	kTextMusicRowEnd,
+	kTextMusicRowMusic,
+	kTextMusicRowCount
+};
+
 // Display settings screen (runOptionsMenu_sub_34B17), click box tags from runOptionsMenu_sub_3432C
 enum DisplayMenuBox {
 	kDisplayBoxTitle = 0,
@@ -355,6 +405,9 @@ void PrisonerEngine::handleMainMenuInput() {
 	} else if (_selectedMenuIndex == OPTGFX_PANEL) {
 		handleDisplaySettingsInput();
 		return;
+	} else if (_selectedMenuIndex == DIVOPT_PANEL) {
+		handleTextMusicInput();
+		return;
 	}
 
 	getInputStatus(keyState, buttonState);
@@ -571,10 +624,12 @@ void PrisonerEngine::handleOptionsMenuInput() {
 void PrisonerEngine::doOptionsMenuAction(int8 itemIndex) {
 	switch (itemIndex) {
 	case kOptionsMenuSound:
-	case kOptionsMenuTextMusic:
-		// TODO: The original has its own sub-menus for these (runOptionsMenu_sub_30628 and
-		// runOptionsMenu_sub_33E2C). Use ScummVM's options dialog until they are implemented.
+		// TODO: The original has its own sub-menu for this (runOptionsMenu_sub_30628). Use
+		// ScummVM's options dialog until it is implemented.
 		openConfigDialog();
+		break;
+	case kOptionsMenuTextMusic:
+		loadTextMusicMenu();
 		break;
 	case kOptionsMenuDisplay:
 		loadDisplaySettingsMenu();
@@ -808,6 +863,185 @@ void PrisonerEngine::updateDisplaySettingsMenu(int16 x, int16 y) {
 
 	off = &kDisplayMenuOffsets[kDisplayBoxSpeedFirst + _displaySpeedIndex];
 	drawPanelSequence(_screen, menuPanel, 2, x + off->x1, y + off->y1);
+}
+
+void PrisonerEngine::loadTextMusicSettings() {
+	_dialogAutoEnd = ConfMan.hasKey("dialog_auto_end") && ConfMan.getBool("dialog_auto_end");
+	// Music type - also set by the "Use MIDI music" game option
+	_digitalMusic = !(ConfMan.hasKey("midi_music") && ConfMan.getBool("midi_music"));
+}
+
+// The screen edits copies of the settings, OK applies them
+void PrisonerEngine::loadTextMusicMenu() {
+	_selectedMenuIndex = DIVOPT_PANEL;
+	_textMusicRow = kTextMusicRowDialog;
+	if (_speechMuted)
+		_textMusicDialogType = kDialogTypeText;
+	else if (_talkieEnabled)
+		_textMusicDialogType = kDialogTypeVoice;
+	else
+		_textMusicDialogType = kDialogTypeBoth;
+	_textMusicAutoEnd = _dialogAutoEnd;
+	_textMusicDigital = _digitalMusic;
+
+	_textMusicMenuItems.clear();
+	const char *const textIds[] = {"M_DOPT", "M_DIALS", "M_CDIAL", "M_MUSIC", "OK", "CANCEL"};
+	for (uint i = 0; i < ARRAYSIZE(textIds); i++) {
+		Common::String id = textIds[i];
+		_textMusicMenuItems.push_back(getGlobalText(id));
+	}
+}
+
+void PrisonerEngine::closeTextMusicMenu(bool apply) {
+	if (apply) {
+		// The type of dialog maps to ScummVM's subtitle and speech settings
+		ConfMan.setBool("subtitles", _textMusicDialogType != kDialogTypeVoice);
+		ConfMan.setBool("speech_mute", _textMusicDialogType == kDialogTypeText);
+		ConfMan.setBool("dialog_auto_end", _textMusicAutoEnd);
+		ConfMan.setBool("midi_music", !_textMusicDigital);
+		_dialogAutoEnd = _textMusicAutoEnd;
+		syncSoundSettings();
+		if (_textMusicDigital != _digitalMusic)
+			switchMusicType(_textMusicDigital);
+	}
+	_selectedMenuIndex = OPTIONS_PANEL;
+}
+
+// Left/right change the value of the current row, like the original
+void PrisonerEngine::changeTextMusicSetting(int16 delta) {
+	switch (_textMusicRow) {
+	case kTextMusicRowDialog: {
+		// The boxes are ordered text, both, voice
+		const int16 order[] = {kDialogTypeText, kDialogTypeBoth, kDialogTypeVoice};
+		int16 position = 0;
+		while (order[position] != _textMusicDialogType)
+			position++;
+		position = (position + 3 + delta) % 3;
+		_textMusicDialogType = order[position];
+		break;
+	}
+	case kTextMusicRowEnd:
+		_textMusicAutoEnd = !_textMusicAutoEnd;
+		break;
+	case kTextMusicRowMusic:
+		_textMusicDigital = !_textMusicDigital;
+		break;
+	default:
+		break;
+	}
+}
+
+void PrisonerEngine::handleTextMusicInput() {
+	Common::KeyCode keyState;
+	uint16 buttonState;
+
+	getInputStatus(keyState, buttonState);
+
+	if (buttonState & kLeftButton) {
+		inpMouseSetWaitRelease(true);
+		int8 boxIndex = findMenuItemAtPos(kTextMusicMenuOffsets, kTextMusicBoxCount, _mouseX - kMenuPanelX, _mouseY - kMenuPanelY);
+		switch (boxIndex) {
+		case kTextMusicBoxDialogText:
+		case kTextMusicBoxDialogBoth:
+		case kTextMusicBoxDialogVoice:
+			_textMusicRow = kTextMusicRowDialog;
+			_textMusicDialogType = boxIndex == kTextMusicBoxDialogText ? kDialogTypeText :
+				(boxIndex == kTextMusicBoxDialogBoth ? kDialogTypeBoth : kDialogTypeVoice);
+			break;
+		case kTextMusicBoxEndClick:
+		case kTextMusicBoxEndAuto:
+			_textMusicRow = kTextMusicRowEnd;
+			_textMusicAutoEnd = boxIndex == kTextMusicBoxEndAuto;
+			break;
+		case kTextMusicBoxMusicMidi:
+		case kTextMusicBoxMusicDigital:
+			_textMusicRow = kTextMusicRowMusic;
+			_textMusicDigital = boxIndex == kTextMusicBoxMusicDigital;
+			break;
+		case kTextMusicBoxOk:
+			closeTextMusicMenu(true);
+			break;
+		case kTextMusicBoxCancel:
+			closeTextMusicMenu(false);
+			break;
+		default:
+			break;
+		}
+	} else if (buttonState & kRightButton) {
+		inpMouseSetWaitRelease(true);
+		closeTextMusicMenu(false);
+	} else if (keyState != Common::KEYCODE_INVALID) {
+		inpKeybSetWaitRelease(true);
+		switch (keyState) {
+		case Common::KEYCODE_UP:
+			_textMusicRow = (_textMusicRow + kTextMusicRowCount - 1) % kTextMusicRowCount;
+			break;
+		case Common::KEYCODE_DOWN:
+			_textMusicRow = (_textMusicRow + 1) % kTextMusicRowCount;
+			break;
+		case Common::KEYCODE_HOME:
+			_textMusicRow = kTextMusicRowDialog;
+			break;
+		case Common::KEYCODE_END:
+			_textMusicRow = kTextMusicRowMusic;
+			break;
+		case Common::KEYCODE_LEFT:
+			changeTextMusicSetting(-1);
+			break;
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_SPACE:
+			changeTextMusicSetting(1);
+			break;
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+			closeTextMusicMenu(true);
+			break;
+		case Common::KEYCODE_ESCAPE:
+			closeTextMusicMenu(false);
+			break;
+		default:
+			break;
+		}
+	}
+
+	updateMouseCursor();
+}
+
+// Marks the chosen box of an option with the panel's marker and darkens the others
+// (original: runOptionsMenu_sub_33770)
+void PrisonerEngine::drawTextMusicChoice(AnimationResource *panel, int16 x, int16 y, int16 box, bool chosen) {
+	const _MenuOffset *off = &kTextMusicMenuOffsets[box];
+	if (chosen)
+		drawPanelSequence(_screen, panel, 2, x + off->x1, y + off->y1);
+	else
+		_screen->drawTransparentRect(x + off->x1, y + off->y1, x + off->x2, y + off->y2);
+}
+
+void PrisonerEngine::updateTextMusicMenu(int16 x, int16 y) {
+	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[DIVOPT_PANEL]);
+	drawPanelSequence(_screen, menuPanel, 0, x, y);
+
+	_PakMenuDirectoryEntry panelData = _kPrisonerPanelData[DIVOPT_PANEL];
+	setFontColors(_menuFont, panelData.outlineColor, panelData.inkColor);
+	setActiveFont(_menuFont);
+
+	const int8 textBoxes[] = {kTextMusicBoxTitle, kTextMusicBoxDialogLabel, kTextMusicBoxEndLabel,
+		kTextMusicBoxMusicLabel, kTextMusicBoxOk, kTextMusicBoxCancel};
+	for (uint i = 0; i < _textMusicMenuItems.size(); i++) {
+		const _MenuOffset *off = &kTextMusicMenuOffsets[textBoxes[i]];
+		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _textMusicMenuItems[i]);
+	}
+
+	drawTextMusicChoice(menuPanel, x, y, kTextMusicBoxDialogText, _textMusicDialogType == kDialogTypeText);
+	drawTextMusicChoice(menuPanel, x, y, kTextMusicBoxDialogBoth, _textMusicDialogType == kDialogTypeBoth);
+	drawTextMusicChoice(menuPanel, x, y, kTextMusicBoxDialogVoice, _textMusicDialogType == kDialogTypeVoice);
+	drawTextMusicChoice(menuPanel, x, y, kTextMusicBoxEndClick, !_textMusicAutoEnd);
+	drawTextMusicChoice(menuPanel, x, y, kTextMusicBoxEndAuto, _textMusicAutoEnd);
+	drawTextMusicChoice(menuPanel, x, y, kTextMusicBoxMusicMidi, !_textMusicDigital);
+	drawTextMusicChoice(menuPanel, x, y, kTextMusicBoxMusicDigital, _textMusicDigital);
+
+	const _MenuOffset *off = &kTextMusicMenuOffsets[kTextMusicBoxDialogLabel + _textMusicRow];
+	drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
 }
 
 void PrisonerEngine::openConfigDialog() {
