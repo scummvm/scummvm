@@ -57,7 +57,6 @@ enum {
 	kTimerTicksCount = 8,
 	kFastModeFactor = 4,
 	kFastModeMaxFactor = 16,
-	kMaxSaveStates = 10,
 	kNoSpeechSound = 0
 };
 
@@ -819,7 +818,6 @@ private:
 	ResourceEntry *_resourceEntries;
 	Common::Array<StringEntry> _stringEntries;
 	Common::Array<Common::String> _optionsMenuTexts;
-	char _saveStateDescriptions[kMaxSaveStates][100];
 
 	void restart();
 
@@ -2067,7 +2065,6 @@ protected:
 };
 
 extern IgorEngine *g_engine;
-#define SHOULD_QUIT ::Igor::g_engine->shouldQuit()
 
 } // End of namespace Igor
 
