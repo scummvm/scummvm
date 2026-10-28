@@ -231,7 +231,8 @@ MODULE_OBJS += \
   script/ref.o \
   script/scenecontext.o \
   script/types.o \
-  script/uiapi.o
+  script/uiapi.o \
+  script/xsheet.o
 endif
 
 # This module can be built as a plugin
