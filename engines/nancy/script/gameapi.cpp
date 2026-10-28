@@ -44,6 +44,7 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/ndui/button.h"
 #include "engines/nancy/ui/ndui/common.h"
 #include "engines/nancy/ui/ndui/manager.h"
 
@@ -1614,6 +1615,24 @@ static int playerIndex(lua_State *L) {
 		const PCUI *players = GetEngineData(PCUI);
 		const uint character = g_nancy->getPlayerCharacter();
 		lua_pushstring(L, players && character < players->characters.size() ? players->characters[character].name.c_str() : "");
+		return 1;
+	}
+
+	// Nancy22: the stream of the item that is being looked at, or ""
+	if (key == "curViewableStream") {
+		Common::String streamName;
+		const INVD *items = GetEngineData(INVD);
+		if (items) {
+			for (const INVD::Item &item : items->items) {
+				if (item.kind == UI::NDUI::InvButton::kItemView &&
+						NancySceneState.getStreams().isRunning(UI::NDUI::InvButton::getStreamName(item.name))) {
+					streamName = UI::NDUI::InvButton::getStreamName(item.name);
+					break;
+				}
+			}
+		}
+
+		lua_pushstring(L, streamName.c_str());
 		return 1;
 	}
 
