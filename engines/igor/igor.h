@@ -730,6 +730,8 @@ private:
 
 	int16 _currentPart;
 	bool _canSaveGame = true;
+	// Sequences that block saving but still open the options menu (title, credits)
+	bool _optionsMenuReachable = false;
 	Graphics::Surface _optionsMenuThumbnail;
 	int _talkDelay;
 	int _talkSpeechCounter;
@@ -1958,7 +1960,8 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		// Loading is only possible where the original lets the player open the options menu
+		return _canSaveGame || _optionsMenuReachable;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return _canSaveGame;

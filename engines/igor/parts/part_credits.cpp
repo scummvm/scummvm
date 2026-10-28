@@ -76,6 +76,7 @@ void IgorEngine::partCreditsDrawText(int x, int y, uint8 color, bool underline, 
 void IgorEngine::partCredits() {
 	const bool savingWasAllowed = _canSaveGame;
 	_canSaveGame = false;
+	_optionsMenuReachable = true;
 	const CreditsPage &page = kCreditsPages[(_currentPart - 910) / 10];
 
 	if (isCDVersion())
@@ -146,6 +147,7 @@ void IgorEngine::partCredits() {
 		fadeOut(768);
 		SET_PAL_208_96_1();
 		_canSaveGame = savingWasAllowed;
+	_optionsMenuReachable = false;
 		return;
 	}
 
@@ -157,6 +159,7 @@ void IgorEngine::partCredits() {
 		_currentPart += 10;
 	}
 	_canSaveGame = savingWasAllowed;
+	_optionsMenuReachable = false;
 }
 
 } // End of namespace Igor
