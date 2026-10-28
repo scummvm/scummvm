@@ -109,16 +109,23 @@ Common::KeymapArray ComfyMetaEngine::initKeymaps(const char *target) const {
 		_s("Flute"), _s("Keyboard contact 19"), _s("Comfy phone"), _s("Rainy cloud"),
 		_s("Feely phone"), _s("Music")
 	};
+
+	// Laid out to loosely resemble the original toy keyboard: phones on the number row, instruments in
+	// the QWERTY/home rows, weather as a column on the right, colors on the bottom row, ROLL on space...
 	static const char *defaultMappings[COMFY_KEYBOARD_CONTACT_COUNT] = {
-		"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "q", "w",
-		"e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f"
+		"u", "SPACE", "n", "r", "1", "z", "f", "RETURN",
+		"x", "j", "3", "b", "p", "TAB", "v", "e",
+		"2", "c", "t", nullptr, "5", "m", "4", "g"
 	};
 
 	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "comfy-keyboard", _s("Comfy Keyboard"));
 	for (uint i = 0; i < COMFY_KEYBOARD_CONTACT_COUNT; i++) {
 		Action *action = new Action(actionIds[i], _(actionNames[i]));
 		action->setCustomEngineActionEvent(Comfy::kActionKeyboardContact0 + i);
-		action->addDefaultInputMapping(defaultMappings[i]);
+
+		if (defaultMappings[i])
+			action->addDefaultInputMapping(defaultMappings[i]);
+
 		keymap->addAction(action);
 	}
 
