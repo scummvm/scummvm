@@ -430,17 +430,23 @@ private:
 };
 
 // "turbulence": every step, every particle gets pushed by "factor" along one of
-// the axes, either way, or not at all
+// the axes, either way, or not at all. Nancy22 can leave axes out with "x", "y"
+// or "z" set to false; a push along those does nothing.
 class ParticleTurbulenceStage : public ParticleStage {
 public:
 	ParticleTurbulenceStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
 		readField(L, tableIndex, "factor", _factor);
+
+		static const char *const kAxisNames[3] = { "x", "y", "z" };
+		for (int i = 0; i < 3; ++i) {
+			readField(L, tableIndex, kAxisNames[i], _isOnAxis[i]);
+		}
 	}
 
 	void update(uint first, uint count) override {
 		for (uint i = first; i < first + count; ++i) {
 			const uint push = g_nancy->_randomSource->getRandomNumber(7);
-			if (push < 6) {
+			if (push < 6 && _isOnAxis[push / 2]) {
 				_record.getParticle(i).acceleration[push / 2] += (push & 1) ? -_factor : _factor;
 			}
 		}
@@ -448,9 +454,97 @@ public:
 
 private:
 	double _factor = 0.95;
+	bool _isOnAxis[3] = { true, true, true };
 };
 
-// TODO: The "position" and "script" stages, which no script uses
+// "position", Nancy22: a place anywhere between "min" and "max"
+class ParticlePositionStage : public ParticleStage {
+public:
+	ParticlePositionStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
+		readPicked(L, tableIndex);
+		readVectorField(L, tableIndex, "min", _min, 3);
+		readVectorField(L, tableIndex, "max", _max, 3);
+	}
+
+protected:
+	void initParticles(uint first, uint count) override {
+		for (uint i = first; i < first + count; ++i) {
+			Particle &particle = _record.getParticle(i);
+			for (int j = 0; j < 3; ++j) {
+				particle.position[j] = lerp(_min[j], _max[j], randomFraction());
+			}
+		}
+	}
+
+private:
+	double _min[3] = { 0.0, 0.0, 0.0 };
+	double _max[3] = { 0.0, 0.0, 0.0 };
+};
+
+// "planeCollision", Nancy22: the particles bounce off a plane through "position"
+// that faces along "normal". They keep "elasticity" of their speed towards the
+// plane, and lose "friction" of the speed along it.
+class ParticlePlaneCollisionStage : public ParticleStage {
+public:
+	ParticlePlaneCollisionStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
+		readVectorField(L, tableIndex, "position", _position, 3);
+
+		if (readVectorField(L, tableIndex, "normal", _normal, 3)) {
+			const double length = sqrt(_normal[0] * _normal[0] + _normal[1] * _normal[1] + _normal[2] * _normal[2]);
+			if (length > 0.0) {
+				for (int i = 0; i < 3; ++i) {
+					_normal[i] /= length;
+				}
+			}
+		}
+
+		double elasticity = 0.5;
+		readField(L, tableIndex, "elasticity", elasticity);
+		_bounce = 1.0 + CLIP(elasticity, 0.0, 1.0);
+
+		if (readField(L, tableIndex, "friction", _friction)) {
+			_friction = CLIP(_friction, 0.0, 1.0);
+		}
+	}
+
+	void update(uint first, uint count) override {
+		for (uint i = first; i < first + count; ++i) {
+			Particle &particle = _record.getParticle(i);
+
+			const double depth = dot(particle.position, _normal, _position);
+			if (depth >= 0.0) {
+				continue;
+			}
+
+			// Back onto the plane, and off it again
+			const double speed = dot(particle.velocity, _normal, nullptr);
+			for (int j = 0; j < 3; ++j) {
+				particle.position[j] -= _normal[j] * depth;
+
+				const double along = particle.velocity[j] - _normal[j] * speed;
+				particle.velocity[j] -= along * _friction + _normal[j] * speed * _bounce;
+			}
+		}
+	}
+
+private:
+	// Of a vector, or of a place measured from another
+	double dot(const double *vector, const double *normal, const double *origin) const {
+		double result = 0.0;
+		for (int i = 0; i < 3; ++i) {
+			result += (vector[i] - (origin ? origin[i] : 0.0)) * normal[i];
+		}
+
+		return result;
+	}
+
+	double _position[3] = { 0.0, 0.0, 0.0 };
+	double _normal[3] = { 0.0, 1.0, 0.0 };
+	double _bounce = 1.5;
+	double _friction = 0.0;
+};
+
+// TODO: The "script" and "revolve" stages, which no script uses
 static ParticleStage *makeStage(ParticleRecord &record, lua_State *L, int tableIndex) {
 	Common::String name;
 	if (!readField(L, tableIndex, "name", name)) {
@@ -459,6 +553,10 @@ static ParticleStage *makeStage(ParticleRecord &record, lua_State *L, int tableI
 
 	if (name == "positionPerspective") {
 		return new ParticlePerspectivePositionStage(record, L, tableIndex);
+	} else if (name == "position") {
+		return new ParticlePositionStage(record, L, tableIndex);
+	} else if (name == "planeCollision") {
+		return new ParticlePlaneCollisionStage(record, L, tableIndex);
 	} else if (name == "velocity") {
 		return new ParticleVelocityStage(record, L, tableIndex);
 	} else if (name == "angle") {
@@ -513,6 +611,7 @@ void ParticleRecord::readTable(int tableIndex) {
 
 	if (pushField(L, tableIndex, "perspective")) {
 		_perspective = checkMatrix(L, -1);
+		_hasPerspective = true;
 		lua_pop(L, 1);
 	}
 
@@ -718,11 +817,18 @@ void ParticleRecord::updateGraphics() {
 }
 
 // Where a corner of a particle ends up in the viewport. Returns false when it is
-// behind the camera.
-static bool projectCorner(double x, double y, const ScriptMatrix &matrix, int width, int height, double &outX, double &outY) {
+// behind the camera. Without a projection, the particles are placed in the
+// pixels of the viewport.
+static bool projectCorner(double x, double y, const ScriptMatrix &matrix, bool isProjected, int width, int height, double &outX, double &outY) {
 	double point[4];
 	for (int i = 0; i < 4; ++i) {
 		point[i] = x * matrix.m[0][i] + y * matrix.m[1][i] + matrix.m[3][i];
+	}
+
+	if (!isProjected) {
+		outX = point[0];
+		outY = point[1];
+		return true;
 	}
 
 	if (point[3] <= 0.0) {
@@ -760,9 +866,9 @@ void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &
 
 	// The top left, top right and bottom left corners
 	double x0, y0, x1, y1, x2, y2;
-	if (!projectCorner(-0.5, 0.5, matrix, target.w, target.h, x0, y0) ||
-			!projectCorner(0.5, 0.5, matrix, target.w, target.h, x1, y1) ||
-			!projectCorner(-0.5, -0.5, matrix, target.w, target.h, x2, y2)) {
+	if (!projectCorner(-0.5, 0.5, matrix, _hasPerspective, target.w, target.h, x0, y0) ||
+			!projectCorner(0.5, 0.5, matrix, _hasPerspective, target.w, target.h, x1, y1) ||
+			!projectCorner(-0.5, -0.5, matrix, _hasPerspective, target.w, target.h, x2, y2)) {
 		return;
 	}
 

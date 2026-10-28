@@ -53,8 +53,9 @@ struct Particle {
 	uint32 color = 0;			// 0xAARRGGBB
 };
 
-// Nancy21's falling snow. A Particle record keeps making particles out of parts
-// of an image, which it moves along and draws until their life is over:
+// Nancy21's falling snow, and Nancy22's rain, hail and dust. A Particle record
+// keeps making particles out of parts of an image, which it moves along and
+// draws until their life is over:
 //
 //   AR:Particle({ ovl = "Flakes_OVL", frequency = 50, life = 6, perspective = ...,
 //                 stages = { { name = "velocity", minSpeed = 300, ... }, ... } })
@@ -111,6 +112,7 @@ private:
 	double _frequency = 0.0;	// particles a second
 	double _life = 0.0;			// seconds
 	ScriptMatrix _perspective;
+	bool _hasPerspective = false;	// Nancy22 has particles without one
 
 	double _stepTime = 0.0;
 	int _numSteps = 0;
