@@ -822,6 +822,21 @@ static int loadAttic(lua_State *L) {
 	return 1;
 }
 
+// Save:GetScreenshotNames(), Nancy22: the names of the pictures the camera of
+// the cell phone took
+static int saveGetScreenshotNames(lua_State *L) {
+	const ScriptPictureData *pictures = (const ScriptPictureData *)NancySceneState.getPuzzleData(ScriptPictureData::getTag());
+
+	lua_createtable(L, pictures->pictures.size(), 0);
+	int index = 1;
+	for (const auto &picture : pictures->pictures) {
+		lua_pushstring(L, picture._key.c_str());
+		lua_rawseti(L, -2, index++);
+	}
+
+	return 1;
+}
+
 // Save:Game(name), which saves the game under a name of the scripts' choosing
 static int saveGame(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
@@ -840,7 +855,9 @@ static int saveGame(lua_State *L) {
 // it couldn't be taken.
 static int saveScreenshot(lua_State *L) {
 	const ScriptRect &rect = checkRect(L, 2);
-	const Common::String name = lua_gettop(L) > 2 ? Common::String(luaL_checkstring(L, 3)) : Common::String::format("%u_OVL", g_system->getMillis());
+	// Nancy22 names the pictures it takes "<time>_SSPIC"
+	const char *suffix = g_nancy->getGameType() >= kGameTypeNancy22 ? "_SSPIC" : "_OVL";
+	const Common::String name = lua_gettop(L) > 2 ? Common::String(luaL_checkstring(L, 3)) : Common::String::format("%u%s", g_system->getMillis(), suffix);
 
 	// The viewport as it was drawn last, before it got scaled onto the screen
 	const Graphics::ManagedSurface &image = g_nancy->_graphics->getGameImage();
@@ -875,6 +892,7 @@ static const luaL_Reg kSaveFunctions[] = {
 	{ "Attic", saveAttic },
 	{ "Game", saveGame },
 	{ "Screenshot", saveScreenshot },
+	{ "GetScreenshotNames", saveGetScreenshotNames },
 	{ nullptr, nullptr }
 };
 
