@@ -56,6 +56,20 @@ extern const ComfyGameDescription gameDescriptions[];
 #define GAMEOPTION_SKIP_INTRO           GUIO_GAMEOPTIONS2
 #define GAMEOPTION_USE_IMGUI_KEYBOARD   GUIO_GAMEOPTIONS3
 
+// Avoid showing the "Use ImGui based virtual keyboard" option entirely, if this build doesn't have ImGui...
+
+#ifdef USE_IMGUI
+
+#define COMFY_GUIO_STANDARD GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO, GAMEOPTION_USE_IMGUI_KEYBOARD)
+#define COMFY_GUIO_NO_INTRO GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_USE_IMGUI_KEYBOARD)
+
+#else
+
+#define COMFY_GUIO_STANDARD GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
+#define COMFY_GUIO_NO_INTRO GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+
+#endif
+
 } // End of namespace Comfy
 
 class ComfyMetaEngineDetection : public AdvancedMetaEngineDetection<Comfy::ComfyGameDescription> {
