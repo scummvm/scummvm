@@ -141,6 +141,9 @@ static int rectIndex(lua_State *L) {
 		center.v[0] = rect.left + rect.width() * 0.5f;
 		center.v[1] = rect.top + rect.height() * 0.5f;
 		pushVector(L, center);
+	} else if (key == "size") {
+		// Nancy22: the width and the height as a point
+		pushPoint(L, ScriptPoint(rect.width(), rect.height()));
 	} else if (key == "leftTop") {
 		pushPoint(L, ScriptPoint(rect.left, rect.top));
 	} else if (key == "rightTop") {
