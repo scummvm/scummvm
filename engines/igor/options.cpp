@@ -511,7 +511,7 @@ void IgorEngine::floppyOptionsControlPage(const uint8 *button) {
 	while (!leave && !_eventQuitGame && _currentPart != kInvalidPart) {
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_QUIT) {
+			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 			} else if (ev.type == Common::EVENT_KEYDOWN) {
@@ -557,7 +557,7 @@ void IgorEngine::floppyOptionsQuitPage(const uint8 *button) {
 	while (!leave && !_eventQuitGame && _currentPart != kInvalidPart) {
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_QUIT) {
+			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 			} else if (ev.type == Common::EVENT_KEYDOWN) {
@@ -733,7 +733,7 @@ bool IgorEngine::saveLoadChoose(const SaveLoadLayout &l, const uint8 *button, co
 		}
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_QUIT) {
+			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 			} else if (ev.type == Common::EVENT_KEYDOWN) {
@@ -841,7 +841,7 @@ bool IgorEngine::saveLoadEditName(const SaveLoadLayout &l, const uint8 *button, 
 	while (!done && !_eventQuitGame && _currentPart != kInvalidPart) {
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_QUIT) {
+			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 			} else if (ev.type == Common::EVENT_KEYDOWN) {
@@ -997,7 +997,7 @@ void IgorEngine::handleFloppyOptionsMenu() {
 	while (menuLoop && !_eventQuitGame && _currentPart != kInvalidPart) {
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_QUIT) {
+			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 			} else if (ev.type == Common::EVENT_KEYDOWN) {
@@ -1127,6 +1127,7 @@ void IgorEngine::handleOptionsMenu() {
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
 			switch (ev.type) {
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 			case Common::EVENT_QUIT:
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
