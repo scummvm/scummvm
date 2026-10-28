@@ -92,6 +92,21 @@
 		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
+	// English fan translation v1.0.0 by ShinjiGR and A.P.$lasH, based on the Spanish Windows release.
+	// RESOURCE.003 retains the original header, so hash its translated text at the end.
+	{
+		"hollywood",
+		"Fanmade",
+		AD_ENTRY4s("MONSTERS.EXE", "1129cea40124683fc4aabaeaf6478f5a", 1167360,
+			"RESOURCE.000", "bf580b6b3eedf45e427bb83ab29ccd21", 4320424,
+			"RESOURCE.003", "t:69d8f3b0333a9809f597765f4afb30a2", 9444153,
+			"RESOURCE.004", "a79d937879665b899c255957c7310d42", 265002432),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+	},
+
 	// Spanish DOS CD full game, MONSTERS directory from the CD.
 	{
 		"hollywood",
