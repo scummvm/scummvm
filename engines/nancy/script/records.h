@@ -161,7 +161,7 @@ public:
 protected:
 	void readTable(int tableIndex) override;
 	void run(double sceneTime, double elapsedTime) override;
-	bool prepareReset() override { return true; }
+	bool prepareReset() override;
 	bool hasTransform() const override { return true; }
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
@@ -202,6 +202,8 @@ private:
 
 	bool _isRightClick = false;	// Nancy20: the right button clicks it, not the left
 	bool _isMouseOver = false;
+	bool _isPressedAndReleased = false;	// Nancy22: goes off when the button comes up
+	bool _isDown = false;
 
 	Common::Array<Flag> _flags;
 };

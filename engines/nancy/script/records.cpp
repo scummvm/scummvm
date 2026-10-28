@@ -600,6 +600,19 @@ void NavLogicRecord::readTable(int tableIndex) {
 
 	readField(L, tableIndex, "rightClick", _isRightClick);
 
+	// Nancy22: a hotspot can act like a button, which goes off when the button
+	// of the mouse that went down over it comes up over it again
+	Common::String mouseMode;
+	if (readField(L, tableIndex, "mouseMode", mouseMode)) {
+		if (mouseMode == "OnClick") {
+			_isPressedAndReleased = false;
+		} else if (mouseMode == "OnDownAndUp") {
+			_isPressedAndReleased = true;
+		} else {
+			luaL_error(L, "Mouse mode set to unrecognized value '%s'", mouseMode.c_str());
+		}
+	}
+
 	// The flags to set, by name
 	if (pushField(L, tableIndex, "flags")) {
 		luaL_checktype(L, -1, LUA_TTABLE);
@@ -656,8 +669,17 @@ bool NavLogicRecord::isOver(const ScriptPoint &point) const {
 	return _hasRefColor ? pixel == _refColor : (pixel >> 24) != 0;
 }
 
+// A hotspot that is held down tells its scripts when the mouse leaves it and
+// comes back, with OnUp and OnDown
 void NavLogicRecord::onMouseMove(const ScriptPoint &point, bool inViewport) {
+	const bool wasMouseOver = _isMouseOver;
 	_isMouseOver = inViewport && isOver(point);
+
+	if (_isDown && _isMouseOver && !wasMouseOver) {
+		callFunction("OnDown");
+	} else if (_isDown && !_isMouseOver && wasMouseOver) {
+		callFunction("OnUp");
+	}
 }
 
 bool NavLogicRecord::getCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot) {
@@ -671,12 +693,35 @@ bool NavLogicRecord::getCursor(const ScriptPoint &point, bool inViewport, uint &
 }
 
 bool NavLogicRecord::onMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport) {
+	if (_isPressedAndReleased) {
+		const RecordEvent downEvent = _isRightClick ? kEventRightDown : kEventLeftDown;
+		const RecordEvent upEvent = _isRightClick ? kEventRightUp : kEventLeftUp;
+
+		if (event == downEvent && _isMouseOver) {
+			callFunction("OnDown");
+			_isDown = true;
+		} else if (event == upEvent) {
+			const bool wasDown = _isDown;
+			_isDown = false;
+			if (wasDown && _isMouseOver) {
+				trigger();
+			}
+		}
+
+		return false;
+	}
+
 	const RecordEvent clickEvent = _isRightClick ? kEventRightClick : kEventLeftClick;
 	if (event != clickEvent || !isOver(point)) {
 		return false;
 	}
 
 	trigger();
+	return true;
+}
+
+bool NavLogicRecord::prepareReset() {
+	_isDown = false;
 	return true;
 }
 
@@ -707,6 +752,8 @@ bool NavLogicRecord::getField(const Common::String &key) {
 		pushRect(L, _hotspot);
 	} else if (key == "mouseOver") {
 		lua_pushboolean(L, _isMouseOver);
+	} else if (key == "down") {
+		lua_pushboolean(L, _isDown);
 	} else if (key == "refColor" && _hasRefColor) {
 		pushColor(L, _refColor);
 	} else if (key == "source") {
