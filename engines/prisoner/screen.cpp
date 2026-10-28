@@ -279,7 +279,14 @@ void Screen::buildPaletteTransTable(const byte *sourcePalette, byte color) {
 }
 
 void Screen::drawTransparentRect(int16 x1, int16 y1, int16 x2, int16 y2) {
-	// TODO: Clipping
+	// Clip to the clip rectangle, its right and bottom edges are inclusive (original: drawTransparentRect)
+	x1 = MAX<int16>(x1, _clipX1);
+	y1 = MAX<int16>(y1, _clipY1);
+	x2 = MIN<int16>(x2, MIN(_clipX2, _workScreen->w - 1));
+	y2 = MIN<int16>(y2, MIN(_clipY2, _workScreen->h - 1));
+	if (x1 > x2 || y1 > y2)
+		return;
+
 	int16 w = x2 - x1 + 1, h = y2 - y1 + 1;
 	byte *pixels = (byte*)_workScreen->getBasePtr(x1, y1);
 	while (h--) {

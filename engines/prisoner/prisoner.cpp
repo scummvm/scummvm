@@ -315,7 +315,7 @@ Common::Error PrisonerEngine::run() {
 		pakName = "F_ICETXT";
 		_globalTextResourceCacheSlot = loadTextResource(pakName, 0);
 		pakName = "S_PANEL";
-		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, 12, 11);
+		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, getMenuPanelData(FORLOOKINV_PANEL).pakSlot, 11);
 	}
 
 	loadMenuPanels();

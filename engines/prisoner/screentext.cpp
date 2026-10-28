@@ -234,8 +234,10 @@ void PrisonerEngine::updateScreenTexts() {
 					int16 ry1 = y1 - screenText->fontHeight - 10;
 					int16 ry2 = ry1 + screenText->height;
 					addDirtyRect(rx1 - 3, ry1 - 3, screenText->width + 18, screenText->height + 26, 1);
-					_screen->frameRect(rx1 - 2, ry1 - 2, rx2 + 14, ry2 + 22, 155); // TODO: Color
-					_screen->frameRect(rx1 - 1, ry1 - 1, rx2 + 13, ry2 + 21, 153); // TODO: Color
+					// The frame uses the outline and ink colors of the inventory text box panel
+					const _PakMenuDirectoryEntry &panelData = getMenuPanelData(FORLOOKINV_PANEL);
+					_screen->frameRect(rx1 - 2, ry1 - 2, rx2 + 14, ry2 + 22, panelData.outlineColor);
+					_screen->frameRect(rx1 - 1, ry1 - 1, rx2 + 13, ry2 + 21, panelData.inkColor);
 					_screen->drawAnimationElement(anim, 0, rx1, ry1);
 					_screen->drawAnimationElement(anim, 1, rx2 + 12, ry1);
 					_screen->drawAnimationElement(anim, 2, rx2 + 12, ry2 + 20);

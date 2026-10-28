@@ -346,6 +346,10 @@ void PrisonerEngine::loadMenuPanels() {
 	_menuMouseCursor = 13;
 }
 
+const _PakMenuDirectoryEntry &PrisonerEngine::getMenuPanelData(MENU_PANELS panel) const {
+	return _kPrisonerPanelData[panel];
+}
+
 void PrisonerEngine::loadOnscreenMenuText() {
 }
 

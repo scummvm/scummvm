@@ -1214,6 +1214,7 @@ public:
 	void displayDialog(DIALOG_TYPE type, Common::String &titleStrId, Common::String &actionStrId, DialogAction dlgAction);
 	void loadDialogData();
 	void loadMenuPanels();
+	const _PakMenuDirectoryEntry &getMenuPanelData(MENU_PANELS panel) const;
 	void loadOptionsMenu(bool fromGame);
 	void openMainMenu();
 	void openOptionsMenuFromGame();
