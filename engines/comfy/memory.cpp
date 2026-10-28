@@ -129,7 +129,7 @@ int32 ComfyEngine::memFreeTrackFar(uint16 handle) {
 }
 
 int32 ComfyEngine::xmsTransfer(XmsMove &move) {
-	byte *source = (byte *)move.sourceMemory;
+	const byte *source = move.sourceMemory;
 	byte *destination = move.destinationMemory;
 	uint32 sourceSize = UINT32_MAX;
 	uint32 destinationSize = UINT32_MAX;
