@@ -39,11 +39,13 @@ namespace Script {
 
 class PhysicsRecord;
 
-// Hands the shapes that begin to touch to the record, while the world steps
+// Hands the shapes that begin to touch to the record, while the world steps,
+// and the push they got
 class PhysicsContactListener : public b2ContactListener {
 public:
 	PhysicsContactListener(PhysicsRecord *record) : _record(record) {}
 	void Add(const b2ContactPoint *point) override;
+	void Result(const b2ContactResult *point) override;
 
 private:
 	PhysicsRecord *_record;
@@ -70,7 +72,9 @@ private:
 // OnContact is called with the two shapes whenever they begin to touch.
 //
 // The world is Box2D 2.0.1, which the original has built in, too. Each frame
-// takes one step of the world, as long as the frame took.
+// takes one step of the world, as long as the frame took. Nancy22 steps the
+// world sixty times a second instead, unless the table says otherwise, and calls
+// OnStep after every step. OnContactResolved tells how hard two shapes pushed.
 class PhysicsRecord : public Record {
 public:
 	PhysicsRecord(SceneContext &context);
@@ -89,6 +93,7 @@ public:
 
 	// Null when it was destroyed
 	b2Body *findBody(uint id) const;
+	b2Shape *findShape(uint id) const;
 	b2MouseJoint *findJoint(uint id) const;
 
 	// Pushes the objects that stand for these
@@ -100,6 +105,7 @@ public:
 	static PhysicsRecord *checkOwner(lua_State *L, int index, const char *typeName, uint &id);
 
 	void onContact(b2Shape *a, b2Shape *b, double x, double y);
+	void onContactResolved(b2Shape *a, b2Shape *b, double x, double y, double impulse);
 
 protected:
 	void readTable(int tableIndex) override;
@@ -113,6 +119,11 @@ private:
 
 	float _timeStep = 1.0f / 60.0f;		// what the mouse joints soften their pull by
 	int _numIterations = 10;
+
+	// Nancy22: the steps the world takes a second, and how far it got
+	double _stepsPerSecond = 60.0;
+	double _stepClock = 0.0;
+	int _numSteps = 0;
 
 	uint _nextID = 1;
 	Common::HashMap<uint, b2Body *> _bodies;

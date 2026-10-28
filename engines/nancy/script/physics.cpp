@@ -26,6 +26,8 @@
 #include "engines/nancy/box2d/Dynamics/Contacts/b2Contact.h"
 #include "engines/nancy/box2d/Dynamics/Joints/b2MouseJoint.h"
 
+#include "engines/nancy/nancy.h"
+
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/mathtypes.h"
 #include "engines/nancy/script/physics.h"
@@ -55,6 +57,11 @@ static void *toUserData(uint id) {
 
 void PhysicsContactListener::Add(const b2ContactPoint *point) {
 	_record->onContact(point->shape1, point->shape2, point->position.x, point->position.y);
+}
+
+void PhysicsContactListener::Result(const b2ContactResult *point) {
+	_record->onContactResolved(point->shape1, point->shape2, point->position.x, point->position.y,
+		point->normalImpulse + point->tangentImpulse);
 }
 
 void PhysicsDestructionListener::SayGoodbye(b2Joint *joint) {
@@ -107,6 +114,10 @@ void PhysicsRecord::forgetJoint(b2Joint *joint) {
 
 b2Body *PhysicsRecord::findBody(uint id) const {
 	return _bodies.getValOrDefault(id, nullptr);
+}
+
+b2Shape *PhysicsRecord::findShape(uint id) const {
+	return _shapes.getValOrDefault(id, nullptr);
 }
 
 b2MouseJoint *PhysicsRecord::findJoint(uint id) const {
@@ -218,21 +229,50 @@ void PhysicsRecord::readTable(int tableIndex) {
 
 	readFloat(L, tableIndex, "timeStep", _timeStep);
 	readField(L, tableIndex, "iterationCount", _numIterations);
+
+	if (_timeStep > 0.0f && pushField(L, tableIndex, "timeStep")) {
+		lua_pop(L, 1);
+		_stepsPerSecond = 1.0 / _timeStep;
+	}
 }
 
 void PhysicsRecord::run(double sceneTime, double elapsedTime) {
-	_world->Step((float32)elapsedTime, _numIterations);
+	if (g_nancy->getGameType() < kGameTypeNancy22) {
+		_world->Step((float32)elapsedTime, _numIterations);
+		return;
+	}
+
+	// The steps that are due by now
+	_stepClock += elapsedTime;
+	const int numSteps = (int)(_stepClock * _stepsPerSecond);
+	const float32 stepTime = (float32)(1.0 / _stepsPerSecond);
+
+	for (; _numSteps < numSteps; ++_numSteps) {
+		_world->Step(stepTime, _numIterations);
+
+		lua_pushnumber(getLua(), stepTime);
+		callFunction("OnStep", 1);
+	}
 }
 
 // OnContact(this, shape, shape, point) gets called for every new point at which
 // two shapes touch, while the world steps
-// TODO: OnContactResolved, which the original calls after the contacts are
-// solved, and which no script sets
 void PhysicsRecord::onContact(b2Shape *a, b2Shape *b, double x, double y) {
 	pushShape(a);
 	pushShape(b);
 	pushPhysicsVector(getLua(), x, y);
 	callFunction("OnContact", 3);
+}
+
+// OnContactResolved(this, shape, shape, point, impulse), Nancy21: how hard the
+// shapes pushed each other apart at a point. Only the scripts of Nancy22 set
+// it, for the damage to the car of the driving game.
+void PhysicsRecord::onContactResolved(b2Shape *a, b2Shape *b, double x, double y, double impulse) {
+	pushShape(a);
+	pushShape(b);
+	pushPhysicsVector(getLua(), x, y);
+	lua_pushnumber(getLua(), impulse);
+	callFunction("OnContactResolved", 4);
 }
 
 // world:CreateBody({ position, angle, linearDampening, angularDampening, fixedAngle,
@@ -350,7 +390,7 @@ bool PhysicsRecord::getField(const Common::String &key) {
 	}
 
 	if (key == "timeStep") {
-		lua_pushnumber(getLua(), _timeStep);
+		lua_pushnumber(getLua(), g_nancy->getGameType() >= kGameTypeNancy22 ? 1.0 / _stepsPerSecond : _timeStep);
 		return true;
 	} else if (key == "iterationCount") {
 		lua_pushinteger(getLua(), _numIterations);
@@ -400,8 +440,8 @@ static void readShapeDef(lua_State *L, int tableIndex, b2ShapeDef &def) {
 
 // body:CreateShape({ radius, center } or { verticies }, with the fields of
 // readShapeDef() and computeMass). The corners of a polygon go around it
-// counterclockwise, eight at the most.
-// TODO: "box", which no script uses, and body:DestroyShape(), which no script calls
+// counterclockwise, eight at the most. Nancy22 spells them "vertices".
+// TODO: "box", which no script uses
 static int bodyCreateShape(lua_State *L) {
 	PhysicsRecord *record;
 	b2Body *body = checkBody(L, 1, record);
@@ -414,7 +454,7 @@ static int bodyCreateShape(lua_State *L) {
 	if (readFloat(L, 2, "radius", circle.radius)) {
 		readPhysicsVector(L, 2, "center", circle.localPosition);
 		def = &circle;
-	} else if (pushField(L, 2, "verticies")) {
+	} else if (pushField(L, 2, g_nancy->getGameType() >= kGameTypeNancy22 ? "vertices" : "verticies")) {
 		for (int i = 1; polygon.vertexCount < b2_maxPolygonVertices; ++i) {
 			lua_rawgeti(L, -1, i);
 			if (lua_isnil(L, -1)) {
@@ -447,6 +487,28 @@ static int bodyCreateShape(lua_State *L) {
 	return 1;
 }
 
+// body:DestroyShape(shape[, computeMass]), Nancy21, which works the mass of
+// the body out again unless told otherwise. Only the scripts of Nancy22 call it.
+static int bodyDestroyShape(lua_State *L) {
+	PhysicsRecord *record;
+	b2Body *body = checkBody(L, 1, record);
+
+	uint id;
+	if (PhysicsRecord::checkOwner(L, 2, kShapeType, id) == record) {
+		b2Shape *shape = record->findShape(id);
+		if (shape) {
+			record->forgetShape(shape);
+			body->DestroyShape(shape);
+		}
+	}
+
+	if (!lua_isboolean(L, 3) || lua_toboolean(L, 3)) {
+		body->SetMassFromShapes();
+	}
+
+	return 0;
+}
+
 // body:ApplyForce(force, point), for the next step
 static int bodyApplyForce(lua_State *L) {
 	PhysicsRecord *record;
@@ -468,21 +530,38 @@ static int bodyIndex(lua_State *L) {
 		const b2Vec2 velocity = body->GetLinearVelocity();
 		pushPhysicsVector(L, velocity.x, velocity.y);
 		return 1;
+	} else if (key == "angularVelocity") {
+		// Nancy22
+		lua_pushnumber(L, body->GetAngularVelocity());
+		return 1;
+	} else if (key == "angle") {
+		// Nancy22
+		lua_pushnumber(L, body->GetAngle());
+		return 1;
 	}
 
 	return indexFunctions(L);
 }
 
+// A body's velocity can be set, and its turning speed, place and angle, which
+// only the scripts of Nancy22 set
 static int bodyNewIndex(lua_State *L) {
 	PhysicsRecord *record;
 	b2Body *body = checkBody(L, 1, record);
 	const Common::String key = luaL_checkstring(L, 2);
 
-	if (key != "velocity") {
+	if (key == "velocity") {
+		body->SetLinearVelocity(checkPhysicsVector(L, 3));
+	} else if (key == "angularVelocity") {
+		body->SetAngularVelocity((float32)luaL_checknumber(L, 3));
+	} else if (key == "position") {
+		body->SetXForm(checkPhysicsVector(L, 3), body->GetAngle());
+	} else if (key == "angle") {
+		body->SetXForm(body->GetPosition(), (float32)luaL_checknumber(L, 3));
+	} else {
 		return luaL_error(L, "PhysicsBody does not have assignable field: %s.", key.c_str());
 	}
 
-	body->SetLinearVelocity(checkPhysicsVector(L, 3));
 	return 0;
 }
 
@@ -494,8 +573,74 @@ static int handleEquals(lua_State *L) {
 	return 1;
 }
 
+static b2Shape *checkShape(lua_State *L, int index, PhysicsRecord *&record) {
+	uint id;
+	record = PhysicsRecord::checkOwner(L, index, kShapeType, id);
+	b2Shape *shape = record->findShape(id);
+	if (!shape) {
+		luaL_error(L, "The PhysicsShape was destroyed");
+	}
+
+	return shape;
+}
+
+// Nancy22: the corners of a polygon, around the body, and the body of a shape
+static int shapeIndex(lua_State *L) {
+	PhysicsRecord *record;
+	b2Shape *shape = checkShape(L, 1, record);
+	const Common::String key = luaL_checkstring(L, 2);
+
+	if (key == "vertices") {
+		if (shape->GetType() != e_polygonShape) {
+			return luaL_error(L, "Shape is not of the polygon type and has no vertices");
+		}
+
+		const b2PolygonShape *polygon = (const b2PolygonShape *)shape;
+		const b2Vec2 *vertices = polygon->GetVertices();
+		lua_createtable(L, polygon->GetVertexCount(), 0);
+		for (int i = 0; i < polygon->GetVertexCount(); ++i) {
+			pushPhysicsVector(L, vertices[i].x, vertices[i].y);
+			lua_rawseti(L, -2, i + 1);
+		}
+
+		return 1;
+	} else if (key == "body") {
+		record->pushBody(shape->GetBody());
+		return 1;
+	}
+
+	return indexFunctions(L);
+}
+
+// Nancy22: shape.filter = { category, mask, group }, of which the fields left
+// out stay as they were
 static int shapeNewIndex(lua_State *L) {
-	return luaL_error(L, "PhysicsShape does not have assignable fields");
+	const Common::String key = luaL_checkstring(L, 2);
+	if (key != "filter") {
+		return luaL_error(L, "PhysicsShape does not have assignable fields");
+	}
+
+	PhysicsRecord *record;
+	b2Shape *shape = checkShape(L, 1, record);
+	luaL_checktype(L, 3, LUA_TTABLE);
+
+	b2FilterData filter = shape->GetFilterData();
+	int value;
+	if (readField(L, 3, "category", value)) {
+		filter.categoryBits = (uint16)value;
+	}
+
+	if (readField(L, 3, "mask", value)) {
+		filter.maskBits = (uint16)value;
+	}
+
+	if (readField(L, 3, "group", value)) {
+		filter.groupIndex = (int16)value;
+	}
+
+	// The original changes the filter without looking at the contacts again
+	shape->SetFilterData(filter);
+	return 0;
 }
 
 // joint:SetTarget(point)
@@ -520,12 +665,13 @@ void registerPhysicsAPI(lua_State *L) {
 		{ "__newindex", bodyNewIndex },
 		{ "__eq", handleEquals },
 		{ "CreateShape", bodyCreateShape },
+		{ "DestroyShape", bodyDestroyShape },
 		{ "ApplyForce", bodyApplyForce },
 		{ nullptr, nullptr }
 	};
 
 	static const luaL_Reg kShapeFunctions[] = {
-		{ "__index", indexFunctions },
+		{ "__index", shapeIndex },
 		{ "__newindex", shapeNewIndex },
 		{ "__eq", handleEquals },
 		{ nullptr, nullptr }
