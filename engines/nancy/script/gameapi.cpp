@@ -794,6 +794,34 @@ static int loadData(lua_State *L) {
 	return 1;
 }
 
+// Save:Attic(name, value) and Load:Attic(name), Nancy21: values that are kept
+// apart from the saved games. Only the scripts of Nancy22 use them, for playtest
+// statistics that the game logs only when a debug flag is set.
+static int saveAttic(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+	luaL_checkany(L, 3);
+
+	Common::Array<byte> packed;
+	if (!writeSavedValue(L, 3, packed, 0)) {
+		return luaL_error(L, "Save:Attic can only save tables, numbers, booleans, strings and nils");
+	}
+
+	g_nancy->_scriptAttic.setVal(name, packed);
+	return 0;
+}
+
+static int loadAttic(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+	if (!g_nancy->_scriptAttic.contains(name)) {
+		lua_pushnil(L);
+		return 1;
+	}
+
+	uint pos = 0;
+	readSavedValue(L, g_nancy->_scriptAttic[name], pos);
+	return 1;
+}
+
 // Save:Game(name), which saves the game under a name of the scripts' choosing
 static int saveGame(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
@@ -844,6 +872,7 @@ static int saveScreenshot(lua_State *L) {
 static const luaL_Reg kSaveFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Data", saveData },
+	{ "Attic", saveAttic },
 	{ "Game", saveGame },
 	{ "Screenshot", saveScreenshot },
 	{ nullptr, nullptr }
@@ -852,6 +881,7 @@ static const luaL_Reg kSaveFunctions[] = {
 static const luaL_Reg kLoadFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Data", loadData },
+	{ "Attic", loadAttic },
 	{ nullptr, nullptr }
 };
 

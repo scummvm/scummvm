@@ -23,6 +23,7 @@
 #define NANCY_H
 
 #include "common/file.h"
+#include "common/hashmap.h"
 #include "common/str.h"
 #include "common/ptr.h"
 
@@ -184,6 +185,11 @@ public:
 	// "messagingName" a script stored in them.
 	typedef Common::HashMap<Common::String, Script::OverrideRecord *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MessagingNameMap;
 	MessagingNameMap _messagingNames;
+
+	// Nancy21: what the scripts keep apart from the saved games, packed the way
+	// Save:Data packs it. The original writes it to a file of its own; here it
+	// lasts for as long as the game runs.
+	Common::HashMap<Common::String, Common::Array<byte> > _scriptAttic;
 
 protected:
 	Common::Error run() override;
