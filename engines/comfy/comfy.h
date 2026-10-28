@@ -523,7 +523,7 @@ private:
 	Common::Path _gameDataPath;
 	bool _hasDataPath = false;
 	Common::Path _languageDirectories[16];
-	Common::String _v3LanguageDataSubdirectory;
+	Common::String _languageDataSubdirectory;
 	uint16 _language = 2;
 	bool _multiLanguage = true;
 	Common::RandomSource _randomSource;
@@ -723,7 +723,7 @@ private:
 	byte _sceneMixerVolumePercent = 0;
 	bool _mediaValueAvailable = false;
 	uint16 _mediaValue = 0;
-	uint16 _v3MediaProgress = 0;
+	uint16 _mediaProgress = 0;
 	uint16 _sensitivity = 0;
 	bool _configCommandPending = false;
 	byte _configCommandSubop = 0;

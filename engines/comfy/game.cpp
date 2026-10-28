@@ -205,8 +205,8 @@ bool ComfyEngine::iniSelectGameDataPath(uint16 sceneId) {
 		return false;
 
 	Common::Path gameDataPath = _gameDirectory.join(languageDirectory);
-	if (_engineVersion == 3 && !_v3LanguageDataSubdirectory.empty() && _v3LanguageDataSubdirectory != ".")
-		gameDataPath = gameDataPath.join(Common::Path(_v3LanguageDataSubdirectory, '/'));
+	if (_engineVersion == 3 && !_languageDataSubdirectory.empty() && _languageDataSubdirectory != ".")
+		gameDataPath = gameDataPath.join(Common::Path(_languageDataSubdirectory, '/'));
 
 	pathSetGameDataDir(gameDataPath);
 	return true;
@@ -228,13 +228,13 @@ uint16 ComfyEngine::languageSetDataSubdirectory(Common::String text) {
 	while (end > start && Common::isSpace((byte)text[end - 1]))
 		end--;
 
-	_v3LanguageDataSubdirectory = text.substr(start, end - start);
+	_languageDataSubdirectory = text.substr(start, end - start);
 	_languageSessionRestartRequested = true;
 
-	if (_v3LanguageDataSubdirectory.empty())
+	if (_languageDataSubdirectory.empty())
 		return 0x20;
 
-	byte character = _v3LanguageDataSubdirectory.lastChar();
+	byte character = _languageDataSubdirectory.lastChar();
 	if (character == ' ')
 		return 0x81;
 

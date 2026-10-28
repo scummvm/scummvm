@@ -224,7 +224,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 				break;
 
 			case EO_HOST_MEDIA_PROGRESS:
-				value = _v3MediaProgress;
+				value = _mediaProgress;
 				break;
 
 			case EO_MIXER_VOLUME_PERCENT:
