@@ -661,6 +661,10 @@ public:
 	int16 _optionsTextTicksCounter;
 	uint32 _optionsTextTicks;
 	bool _inputFlag;
+	// Shift+arrow walking (original: the key fields next to the input flag). The key stays set
+	// until the walk it starts has been given; the first press starts a new walk.
+	Common::KeyCode _walkKey;
+	bool _walkKeyFirstPress;
 
 	/* Scene control */
 	int16 _currModuleIndex, _currSceneIndex;
@@ -975,12 +979,15 @@ public:
 	void setMainActor(int16 actorIndex);
 	void actorAssignPathWalker(int16 actorIndex);
 	void actorWalkToPoint(int16 actorIndex, int16 x, int16 y);
+	bool walkMainActorWithKey(Common::KeyCode key);
 	void actorWalkToPathNode(int16 actorIndex, int16 nodeIndex);
 	void resetActorPathWalk(int16 actorIndex);
 	void actor21C78();
 	void actor21C89();
 	void setActorDirection(int16 actorIndex, int16 direction);
 	void setActorLookInDirection(int16 actorIndex);
+	bool isLeftButtonKey(Common::KeyCode keyCode) const;
+	bool isRightButtonKey(Common::KeyCode keyCode) const;
 	int16 getActorX(int16 actorIndex);
 	int16 getActorY(int16 actorIndex);
 	void setActorX(int16 actorIndex, int16 x);

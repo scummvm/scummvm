@@ -481,9 +481,45 @@ void PrisonerEngine::setActorSpriteFrameListIndexIfIdle(int16 actorIndex, int16 
 	actor->status = 2;
 }
 
+// Walks the main character 10 pixels in the direction of an arrow key (original updateActors).
+// Returns false for other keys.
+bool PrisonerEngine::walkMainActorWithKey(Common::KeyCode key) {
+	const ActorSprite *actorSprite = _actors[_mainActorIndex].actorSprite;
+	int16 x = actorSprite->x;
+	int16 y = actorSprite->y;
+	switch (key) {
+	case Common::KEYCODE_LEFT:
+		x -= 10;
+		break;
+	case Common::KEYCODE_RIGHT:
+		x += 10;
+		break;
+	case Common::KEYCODE_UP:
+		y -= 10;
+		break;
+	case Common::KEYCODE_DOWN:
+		y += 10;
+		break;
+	default:
+		return false;
+	}
+	actorWalkToPoint(_mainActorIndex, x, y);
+	return true;
+}
+
 void PrisonerEngine::updateActors() {
 
-	// TODO: Keyboard handling
+	// Shift+arrow walking: the first press of a key starts a walk; once the key is no longer
+	// held the input flag is cleared, which stops the walk at the next path node
+	if (_mainActorValid && _mainActorIndex != -1) {
+		if (_walkKeyFirstPress && _inputFlag) {
+			if (!walkMainActorWithKey(_walkKey))
+				_inputFlag = false;
+			_walkKey = Common::KEYCODE_INVALID;
+		} else if (_walkKey == Common::KEYCODE_INVALID) {
+			_inputFlag = false;
+		}
+	}
 
 	for (int16 actorIndex = 0; actorIndex < kMaxActors; actorIndex++) {
 		Actor *actor = &_actors[actorIndex];
@@ -506,11 +542,10 @@ void PrisonerEngine::updateActors() {
 				if (!updateActorSpriteWalking(actorIndex, prevX, prevY, newX, newY)) {
 					actor->actorSprite->scale = currPathResult->scale;
 					if (actor->pathResultIndex + 1 < actor->pathResultCount) {
-						/*
-						if (actorIndex == _mainActorIndex && _mainActorValid && _inputFlag) {//TODO:key
-							// Key input cancels walking here or something like that
+						if (actorIndex == _mainActorIndex && _mainActorValid && _inputFlag && _walkKey == Common::KEYCODE_INVALID) {
+							// The Shift+arrow key was released: stop at this node
 							_inputFlag = false;
-							if (_pathEdges[currPathResult->edgeIndex].polyCount > 0) {
+							if (_pathSystem->getEdge(currPathResult->edgeIndex)->polyCount > 0) {
 								setActorLookInDirection(actorIndex);
 							} else {
 								setActorSpriteFrameListIndex(actor->actorSprite, actor->actorSprite->frameListIndex - 8,
@@ -519,7 +554,7 @@ void PrisonerEngine::updateActors() {
 							actor->pathResultIndex = 0;
 							actor->pathResultCount = 0;
 							actor->pathWalker1 = actor->pathWalker2;
-						} else */{
+						} else {
 							//loc_3BF0C
 							PathResult *nextPathResult = actor->pathWalker1 + 1;
 							if (currPathResult->x - nextPathResult->x < 0) {
@@ -543,7 +578,13 @@ void PrisonerEngine::updateActors() {
 						actor->pathNodeIndex = currPathResult->nodeIndex;
 						actor->pathEdgeIndex = currPathResult->edgeIndex;
 						actor->pathPolyIndex = currPathResult->polyIndex;
-						// TODO: Key input
+						if (actorIndex == _mainActorIndex && _mainActorValid && _inputFlag && !_walkKeyFirstPress) {
+							// The Shift+arrow key is still held: walk on that way
+							if (!walkMainActorWithKey(_walkKey))
+								_inputFlag = false;
+							_walkKey = Common::KEYCODE_INVALID;
+							continue;
+						}
 						if (actorIndex == _mainActorIndex)
 							_inputFlag = false;
 						if (_pathSystem->getEdge(currPathResult->edgeIndex)->polyCount > 0) {

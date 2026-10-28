@@ -653,9 +653,18 @@ void PrisonerEngine::death() {
 	_screen->clear();
 }
 
+// Insert or Delete (scan codes 52h and 53h) keys act as the mouse buttons
+// when playing with the keyboard (original: op_waitForInput)
 bool PrisonerEngine::waitForInput() {
-	// TODO: Check for keyboard
-	return !_paletteTasks[3].active && _buttonState != 0;
+	return !_paletteTasks[3].active && (_buttonState != 0 || isLeftButtonKey(_keyState) || isRightButtonKey(_keyState));
+}
+
+bool PrisonerEngine::isLeftButtonKey(Common::KeyCode keyCode) const {
+	return keyCode == Common::KEYCODE_INSERT || keyCode == Common::KEYCODE_KP0;
+}
+
+bool PrisonerEngine::isRightButtonKey(Common::KeyCode keyCode) const {
+	return keyCode == Common::KEYCODE_DELETE || keyCode == Common::KEYCODE_KP_PERIOD;
 }
 
 void PrisonerEngine::resetFrameValues() {
@@ -693,6 +702,8 @@ void PrisonerEngine::initInput() {
 	_keyState = Common::KEYCODE_INVALID;
 	_keyReleasePending = false;
 	_buttonReleasePending = 0;
+	_walkKey = Common::KEYCODE_INVALID;
+	_walkKeyFirstPress = false;
 
 	_inpKeybWaitRelease = false;
 	_inpMouseWaitRelease = false;
@@ -726,6 +737,12 @@ void PrisonerEngine::getInputStatus(Common::KeyCode &keyState, uint16 &buttonSta
 	}
 
 	keyState = _keyState;
+	// Insert and Delete act as the left and right mouse buttons. A key press counts as
+	// one click, the key has to be released before it clicks again.
+	if (!_inpMouseWaitRelease && !_inpKeybWaitRelease && (isLeftButtonKey(keyState) || isRightButtonKey(keyState))) {
+		buttonState |= isLeftButtonKey(keyState) ? kLeftButton : kRightButton;
+		inpKeybSetWaitRelease(true);
+	}
 	if (_inpKeybWaitRelease) {
 		if (keyState == Common::KEYCODE_INVALID) {
 			_inpKeybWaitRelease = false;
@@ -823,12 +840,41 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 		}
 	}
 
+	// The arrow keys (original handleInput). With Shift held and the default, door or item cursor
+	// they walk the main character (updateActors does the walking); otherwise they move the
+	// pointer by one pixel each frame.
+	if (!_mainMenuRequested && (keyState == Common::KEYCODE_LEFT || keyState == Common::KEYCODE_RIGHT ||
+		keyState == Common::KEYCODE_UP || keyState == Common::KEYCODE_DOWN)) {
+		const bool shiftHeld = (_eventMan->getModifierState() & Common::KBD_SHIFT) != 0;
+		if (shiftHeld && (_currMouseCursor == kCursorDefault || _currMouseCursor == kCursorDoor ||
+			_currMouseCursor == kCursorItem)) {
+			_walkKey = keyState;
+			_walkKeyFirstPress = !_inputFlag;
+			_inputFlag = true;
+			_queuedZoneAction.used = 0;
+		} else {
+			_mouseX += (keyState == Common::KEYCODE_RIGHT && _mouseX < 639) - (keyState == Common::KEYCODE_LEFT && _mouseX > 0);
+			_mouseY += (keyState == Common::KEYCODE_DOWN && _mouseY < 479) - (keyState == Common::KEYCODE_UP && _mouseY > 0);
+			_system->warpMouse(_mouseX, _mouseY);
+			x = _cameraX + _mouseX;
+			y = _cameraY + _mouseY;
+		}
+		keyState = Common::KEYCODE_INVALID;
+	}
+
 	if (_mainMenuRequested) {
 		handleMainMenuInput();
 		return 0;
 	}
 
 	//debug("_currMouseCursor = %d", _currMouseCursor);
+
+	if (keyState == Common::KEYCODE_KP5 && _mainActorIndex != -1 && _mainActorValid &&
+		(_currMouseCursor == kCursorDefault || _currMouseCursor == kCursorDoor || _currMouseCursor == kCursorItem)) {
+		inpKeybSetWaitRelease(true);
+		_queuedZoneAction.used = 0;
+		setActorLookInDirection(_mainActorIndex);
+	}
 
 	switch (_currMouseCursor) {
 
