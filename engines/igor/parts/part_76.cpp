@@ -286,10 +286,10 @@ void IgorEngine::part76() {
 	loadIgorBeachFrames();
 	loadActionData(DAT_Part76);
 	loadRoomData(PAL_Part76, IMG_Part76, BOX_Part76, MSK_Part76, TXT_Part76);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 	static const int anim[] = { ANM_Part76, 0 };
 	loadAnimData(anim);
-	SET_PAL_208_96_1();
+	setInventoryPanelColors();
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_roomDataOffsets = PART_76_ROOM_DATA_OFFSETS;

@@ -115,7 +115,7 @@ void IgorEngine::part50() {
 	_gameState.enableLight = 2;
 	loadRoomData(PAL_OutsideMaze, IMG_OutsideMaze, BOX_OutsideMaze, MSK_OutsideMaze, TXT_OutsideMaze);
 	memcpy(_paletteBuffer + 192 * 3, _igorPalette, 48);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 	loadActionData(DAT_OutsideMaze);
 	_roomDataOffsets = PART_50_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(49, 22, 224, 119);

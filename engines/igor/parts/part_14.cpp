@@ -502,7 +502,7 @@ void IgorEngine::part14ShowPuzzle() {
 	}
 	fadeOut(768);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	SET_PAL_208_96_1();
+	setInventoryPanelColors();
 }
 
 void IgorEngine::part14LoadChurchMosaicData() {

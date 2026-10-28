@@ -314,7 +314,7 @@ void IgorEngine::partMaze() {
 	}
 	loadRoomData(room->pal, room->img, room->box, room->msk, room->txt);
 	memcpy(_paletteBuffer + 192 * 3, _igorPalette, 48);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 	static const int anm[] = { FRM_MazeEntrance1, 0 };
 	loadAnimData(anm);
 	loadActionData(room->dat);

@@ -204,8 +204,8 @@ void IgorEngine::part11() {
 	_roomDataOffsets = PART_11_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	part11ApplyObjectState(255);
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	if (!restoreRoomAfterLoad()) {
 		_walkDataLastIndex = 1;
 		_walkDataCurrentIndex = 1;

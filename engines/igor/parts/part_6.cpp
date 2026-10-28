@@ -293,8 +293,8 @@ void IgorEngine::part6() {
 	copyArea(_animFramesBuffer, 0, 224, _screenLayer1, 320, 224, 144);
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
 
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 
 	static const int anm2[] = {FRM_SpringRock1, FRM_SpringRock2, 0};
 	loadAnimData(anm2, 0x7E00);
@@ -313,7 +313,7 @@ void IgorEngine::part6() {
 	}
 
 	if (_currentPart == 61 && !_gameStateLoaded) {
-		SET_PAL_208_96_1();
+		setInventoryPanelColors();
 		drawVerbsPanel();
 		drawInventory(1, 0);
 		_currentAction.verb = kVerbWalk;

@@ -250,8 +250,8 @@ void IgorEngine::part90() {
 		if (spanishFloppy) {
 			part90SetUserInterfacePalettes();
 		} else {
-			SET_PAL_208_96_1();
-			SET_PAL_240_48_1();
+			setInventoryPanelColors();
+			setVerbPanelColors();
 		}
 		_canSaveGame = savingWasAllowed;
 		return;

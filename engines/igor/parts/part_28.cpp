@@ -214,8 +214,8 @@ void IgorEngine::part28DrawCarolineTalkingFrame(int frame) {
 
 void IgorEngine::part28EnterAndCheckGrades() {
 	setupDefaultPalette();
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	part28ApplyObjectState(255);

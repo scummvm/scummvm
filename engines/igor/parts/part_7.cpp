@@ -225,8 +225,8 @@ void IgorEngine::part7() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	part7DrawDoorState(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	for (int area = 11; area <= 13; ++area) {
 		_roomObjectAreasTable[area].area = 0;
 	}

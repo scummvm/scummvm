@@ -144,8 +144,8 @@ void IgorEngine::part16PhotoCutscene() {
 		partMargaret();
 	} while (_objectsState[kMargaretSceneStateIndex] != 9);
 	setupDefaultPalette();
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	part16LoadRoom();
 	part16LoadAnimation();
 	memcpy(_screenVGA, _screenLayer1, 46080);

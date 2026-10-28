@@ -137,8 +137,8 @@ void IgorEngine::part35() {
 	// The pick up frames replace the start of FRM_Park1, whose frames are not drawn on this panel
 	static const int pickUpFrames[] = { FRM_ParkRight1, 0 };
 	loadAnimData(pickUpFrames, kParkFrames);
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	partMainSetExecuteAction(1, &IgorEngine::part35ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part34And35UpdateAmbientSound;
 	_roomDataOffsets = PART_35_ROOM_DATA_OFFSETS;

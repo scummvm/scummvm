@@ -606,7 +606,7 @@ void IgorEngine::part32() {
 	_gameState.enableLight = 1;
 	loadActionData(DAT_Part32);
 	loadRoomData(PAL_Part32, IMG_Part32, BOX_Part32, MSK_Part32, TXT_Part32);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 	_roomDataOffsets = PART_32_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, 10, 120, true);
 	partMainSetExecuteAction(1, &IgorEngine::part32ExecuteAction);

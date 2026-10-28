@@ -113,9 +113,9 @@ void IgorEngine::part5() {
 		playMusic(10);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 	// the room palette resource is longer than the palette the room really uses, restore the inventory colors
-	SET_PAL_208_96_1();
+	setInventoryPanelColors();
 	static const int anm2[] = {FRM_SpringRock1, FRM_SpringRock2, 0};
 	loadAnimData(anm2, 0x7E00);
 	static const int anm3[] = {FRM_SpringRock3, FRM_SpringRock4, 0};

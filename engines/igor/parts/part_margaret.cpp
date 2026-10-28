@@ -144,8 +144,8 @@ void IgorEngine::partMargaret() {
 		memset(_screenVGA, 0, 46080);
 	if (_objectsState[kMargaretSceneStateIndex] < 9 && _currentPart != 331) {
 		setupDefaultPalette();
-		SET_PAL_240_48_1();
-		SET_PAL_208_96_1();
+		setVerbPanelColors();
+		setInventoryPanelColors();
 		drawVerbsPanel();
 		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	}

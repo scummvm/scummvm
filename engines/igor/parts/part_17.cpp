@@ -504,8 +504,8 @@ void IgorEngine::part17() {
 	partMainSetExecuteAction(1, &IgorEngine::part17ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part17UpdateBackground;
 
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	part17ApplyObjectState(255);
 
 	memcpy(_screenVGA, _screenLayer1, 46080);

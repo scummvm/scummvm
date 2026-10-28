@@ -162,7 +162,7 @@ void IgorEngine::part22() {
 		playMusic(3);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_BellChurch, IMG_BellChurch, BOX_BellChurch, MSK_BellChurch, TXT_BellChurch);
-	SET_PAL_240_48_1();
+	setVerbPanelColors();
 	static const int anm[] = { FRM_BellChurch1, FRM_BellChurch2, 0 };
 	loadAnimData(anm);
 	loadActionData(DAT_BellChurch);

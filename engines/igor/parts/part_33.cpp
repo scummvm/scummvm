@@ -371,8 +371,8 @@ void IgorEngine::part33() {
 	partMainSetExecuteAction(1, &IgorEngine::part33ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part33UpdateBackground;
 	part33ApplyObjectState(255);
-	SET_PAL_240_48_1();
-	SET_PAL_208_96_1();
+	setVerbPanelColors();
+	setInventoryPanelColors();
 	if (!restoreRoomAfterLoad()) {
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		_currentAction.verb = kVerbWalk;
