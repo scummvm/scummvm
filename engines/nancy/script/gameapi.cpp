@@ -1803,7 +1803,8 @@ static const MessageActionName kMessageActionNames[] = {
 	{ "toggleCollapsed", UI::NDUI::kActionToggleCollapsed },
 	{ "getValue", UI::NDUI::kActionQuery },
 	{ "showItem", UI::NDUI::kActionShowItem },
-	{ "hideItem", UI::NDUI::kActionHideItem }
+	{ "hideItem", UI::NDUI::kActionHideItem },
+	{ "cycleFocus", UI::NDUI::kActionCycleFocus }
 };
 
 // Message:Send(action, target[, value[, text[, isTextKey]]])

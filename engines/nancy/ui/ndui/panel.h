@@ -124,7 +124,7 @@ public:
 	bool isItemButton(const Common::String &name) const;
 
 	// The edit box that gets typed into, when the panel is up: the one that was
-	// clicked last, or else the first one
+	// clicked or cycled to last, or else the first one
 	EditBox *getKeyboardFocus() const;
 	void setKeyboardFocus(EditBox *editBox) { _focus = editBox; }
 
@@ -149,6 +149,7 @@ private:
 	void redraw();
 	Control *getControlAt(const Common::Point &pos) const;
 	void showItem(int16 itemID, bool show);
+	void cycleFocus();
 
 	Manager *_manager;
 	byte _kind;

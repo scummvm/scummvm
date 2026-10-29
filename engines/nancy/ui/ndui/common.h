@@ -120,7 +120,8 @@ enum ActionType {
 	kActionSetImage			= 15,	// Nancy21: a texture and a source rect, in one
 	kActionQuery			= 30,	// asks the engine to send its value back with kActionSetValue
 	kActionShowItem			= 40,	// inventory panels
-	kActionHideItem			= 41
+	kActionHideItem			= 41,
+	kActionCycleFocus		= 42		// gives the next edit box of a panel the keyboard
 };
 
 struct Action {
