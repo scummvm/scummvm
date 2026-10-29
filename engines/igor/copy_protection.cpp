@@ -148,6 +148,7 @@ void IgorEngine::drawProtectionScreen(const Common::Array<Common::String> &texts
 }
 
 bool IgorEngine::readProtectionWord(uint8 *typed) {
+	setKeymapperEnabled(false);
 	memset(typed, ' ', kFloppyProtectionMaxInput + 1);
 	int position = 1;
 	int x = kFloppyProtectionInputX;
@@ -211,6 +212,7 @@ bool IgorEngine::readProtectionWord(uint8 *typed) {
 		lastTick = ticksSince(startMillis);
 		blinkCounter = (blinkCounter == kFloppyProtectionBlinkPeriod - 1) ? 0 : blinkCounter + 1;
 	}
+	setKeymapperEnabled(true);
 	return !isGameEnding();
 }
 

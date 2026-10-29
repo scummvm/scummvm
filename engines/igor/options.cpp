@@ -142,7 +142,7 @@ struct Page {
 	int captions[2];
 	int xPos[2];
 	void (IgorEngine::*paintProc)();
-	bool (IgorEngine::*handleKeyDownProc)(int key);
+	bool (IgorEngine::*handleActionProc)(int action);
 };
 
 static const Page pages[] = {
@@ -162,13 +162,13 @@ static const Page pages[] = {
 		{ kOptionsQuit, kOptionsQuitTitle },
 		{ 159, 159 },
 		&IgorEngine::handleOptionsMenu_paintQuit,
-		&IgorEngine::handleOptionsMenu_handleKeyDownQuit
+		&IgorEngine::handleOptionsMenu_handleActionQuit
 	},
 	{
 		{ kOptionsCtrl, kOptionsCtrlTitle },
 		{ 205, 159 },
 		&IgorEngine::handleOptionsMenu_paintCtrl,
-		&IgorEngine::handleOptionsMenu_handleKeyDownCtrl
+		&IgorEngine::handleOptionsMenu_handleActionCtrl
 	},
 	{
 		{ kOptionsPlay, -1 },
@@ -241,11 +241,10 @@ void IgorEngine::handleOptionsMenu_paintQuit() {
 	drawOptionsMenuText(kOptionsQuitKeys, kPageCenterX, 76 - kMenuY, kColorTitle);
 }
 
-bool IgorEngine::handleOptionsMenu_handleKeyDownQuit(int key) {
-	const int yesKey = (_game.language == Common::ES_ESP) ? Common::KEYCODE_s : Common::KEYCODE_y;
-	if (key == yesKey)
+bool IgorEngine::handleOptionsMenu_handleActionQuit(int action) {
+	if (action == kActionYes)
 		_currentPart = kInvalidPart;
-	return key == yesKey || key == Common::KEYCODE_n || key == Common::KEYCODE_ESCAPE;
+	return action == kActionYes || action == kActionNo || action == kActionEscape;
 }
 
 static void redrawRect(uint8 *dst, int num, bool border) {
@@ -294,11 +293,11 @@ void IgorEngine::handleOptionsMenu_paintCtrl() {
 	}
 }
 
-bool IgorEngine::handleOptionsMenu_handleKeyDownCtrl(int key) {
+bool IgorEngine::handleOptionsMenu_handleActionCtrl(int action) {
 	if (_game.flags & kFlagDemo) {
-		if (key == Common::KEYCODE_ESCAPE)
+		if (action == kActionEscape)
 			return true;
-		if (key == Common::KEYCODE_RETURN) {
+		if (action == kActionConfirm) {
 			_gameState.talkSpeed = _gameState.talkSpeed == 5 ? 1 : _gameState.talkSpeed + 1;
 			handleOptionsMenu_paintCtrl();
 		}
@@ -306,16 +305,16 @@ bool IgorEngine::handleOptionsMenu_handleKeyDownCtrl(int key) {
 	}
 	const int firstRow = (_game.flags & kFlagTalkie) ? 1 : 4;
 	const int lastRow = getTalkMode() == kTalkModeTextOnly ? 4 : 3;
-	switch (key) {
-	case Common::KEYCODE_ESCAPE:
+	switch (action) {
+	case kActionEscape:
 		return true;
-	case Common::KEYCODE_UP:
+	case kActionUp:
 		_optionsControlRow = MAX(firstRow, _optionsControlRow - 1);
 		break;
-	case Common::KEYCODE_DOWN:
+	case kActionDown:
 		_optionsControlRow = MIN(lastRow, _optionsControlRow + 1);
 		break;
-	case Common::KEYCODE_RETURN:
+	case kActionConfirm:
 		switch (_optionsControlRow) {
 		case 1:
 			ConfMan.setBool("sfx_mute", !ConfMan.getBool("sfx_mute"));
@@ -514,19 +513,18 @@ void IgorEngine::floppyOptionsControlPage(const uint8 *button) {
 			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
-			} else if (ev.type == Common::EVENT_KEYDOWN) {
-				switch (ev.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
+			} else if (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				switch (ev.customType) {
+				case kActionEscape:
 					leave = true;
 					break;
-				case Common::KEYCODE_UP:
+				case kActionUp:
 					row = MAX(1, row - 1);
 					break;
-				case Common::KEYCODE_DOWN:
+				case kActionDown:
 					row = MIN(3, row + 1);
 					break;
-				case Common::KEYCODE_RETURN:
-				case Common::KEYCODE_KP_ENTER:
+				case kActionConfirm:
 					if (row == 1) {
 						_gameState.talkSpeed = _gameState.talkSpeed >= 5 ? 1 : _gameState.talkSpeed + 1;
 					} else if (row == 2) {
@@ -560,11 +558,11 @@ void IgorEngine::floppyOptionsQuitPage(const uint8 *button) {
 			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
-			} else if (ev.type == Common::EVENT_KEYDOWN) {
-				if (ev.kbd.keycode == Common::KEYCODE_s) {
+			} else if (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				if (ev.customType == kActionYes) {
 					_currentPart = kInvalidPart;
 					leave = true;
-				} else if (ev.kbd.keycode == Common::KEYCODE_n || ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				} else if (ev.customType == kActionNo || ev.customType == kActionEscape) {
 					leave = true;
 				}
 			}
@@ -736,9 +734,9 @@ bool IgorEngine::saveLoadChoose(const SaveLoadLayout &l, const uint8 *button, co
 			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
-			} else if (ev.type == Common::EVENT_KEYDOWN) {
-				switch (ev.kbd.keycode) {
-				case Common::KEYCODE_UP:
+			} else if (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				switch (ev.customType) {
+				case kActionUp:
 					if (row > 1) {
 						--row;
 					} else if (top > 1) {
@@ -746,7 +744,7 @@ bool IgorEngine::saveLoadChoose(const SaveLoadLayout &l, const uint8 *button, co
 					}
 					redraw = true;
 					break;
-				case Common::KEYCODE_DOWN:
+				case kActionDown:
 					if (row < kSaveLoadVisibleRows) {
 						if (row < count)
 							++row;
@@ -755,12 +753,11 @@ bool IgorEngine::saveLoadChoose(const SaveLoadLayout &l, const uint8 *button, co
 					}
 					redraw = true;
 					break;
-				case Common::KEYCODE_RETURN:
-				case Common::KEYCODE_KP_ENTER:
+				case kActionConfirm:
 					accepted = true;
 					done = true;
 					break;
-				case Common::KEYCODE_ESCAPE:
+				case kActionEscape:
 					done = true;
 					break;
 				default:
@@ -810,6 +807,8 @@ void IgorEngine::saveLoadFillCursor(const SaveLoadLayout &l, int x, int y, int f
 }
 
 bool IgorEngine::saveLoadEditName(const SaveLoadLayout &l, const uint8 *button, Common::String &name, int row) {
+	// raw key presses are needed to type, whatever keys the player bound
+	setKeymapperEnabled(false);
 	uint8 *allowed = loadData(DAT_OptionsNameChars);
 	saveLoadFillRows(l, button, kSaveLoadCaptionArtRow, l.captionFirstY, l.captionLastY);
 	saveLoadDrawTitle(l, kOptionsDescribe, l.describeTitleX, l.captionTextY, l.colorTitle);
@@ -899,6 +898,7 @@ bool IgorEngine::saveLoadEditName(const SaveLoadLayout &l, const uint8 *button, 
 	if (accepted) {
 		name = Common::String(text + 1, kSaveLoadNameLength);
 	}
+	setKeymapperEnabled(true);
 	return accepted;
 }
 
@@ -1000,19 +1000,18 @@ void IgorEngine::handleFloppyOptionsMenu() {
 			if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
-			} else if (ev.type == Common::EVENT_KEYDOWN) {
-				switch (ev.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
+			} else if (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				switch (ev.customType) {
+				case kActionEscape:
 					menuLoop = false;
 					break;
-				case Common::KEYCODE_LEFT:
+				case kActionLeft:
 					selected = MAX(1, selected - 1);
 					break;
-				case Common::KEYCODE_RIGHT:
+				case kActionRight:
 					selected = MIN(5, selected + 1);
 					break;
-				case Common::KEYCODE_RETURN:
-				case Common::KEYCODE_KP_ENTER:
+				case kActionConfirm:
 					if (selected == 1) {
 						if (ConfMan.getBool("original_menus") ? originalSaveLoadPage(true) : saveGameDialog())
 							menuLoop = false;
@@ -1132,10 +1131,10 @@ void IgorEngine::handleOptionsMenu() {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 				break;
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				if (focusOnPage) {
 					const bool unavailable = (_game.flags & kFlagDemo) && (currentPage == kPageSave || currentPage == kPageLoad);
-					if (unavailable || (this->*pages[currentPage].handleKeyDownProc)(ev.kbd.keycode)) {
+					if (unavailable || (this->*pages[currentPage].handleActionProc)(ev.customType)) {
 						memcpy(_screenTextLayer + 3 * 320, buttonsBarBackup, 320 * 12);
 						for (int y = 22; y <= 110; ++y) {
 							memset(_screenTextLayer + y * 320 + kMenuX + 4, kColorFill, 226);
@@ -1143,11 +1142,11 @@ void IgorEngine::handleOptionsMenu() {
 						focusOnPage = false;
 					}
 				} else {
-					switch (ev.kbd.keycode) {
-					case Common::KEYCODE_ESCAPE:
+					switch (ev.customType) {
+					case kActionEscape:
 						menuLoop = false;
 						break;
-					case Common::KEYCODE_RETURN:
+					case kActionConfirm:
 						if (currentPage == kPageSave && !(_game.flags & kFlagDemo)) {
 							if (ConfMan.getBool("original_menus") ? originalSaveLoadPage(true) : saveGameDialog())
 								menuLoop = false;
@@ -1180,13 +1179,13 @@ void IgorEngine::handleOptionsMenu() {
 							focusOnPage = true;
 						}
 						break;
-					case Common::KEYCODE_LEFT:
+					case kActionLeft:
 						--currentPage;
 						if (currentPage < 0) {
 							currentPage = 0;
 						}
 						break;
-					case Common::KEYCODE_RIGHT:
+					case kActionRight:
 						++currentPage;
 						if (currentPage > 4) {
 							currentPage = 4;
