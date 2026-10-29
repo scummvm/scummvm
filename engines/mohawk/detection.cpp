@@ -168,10 +168,11 @@ DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adG
 		// Turn e.g. "v1.1FR_2002" into "v11fr-2002": lowercase, drop the dots
 		// of the version number, and use '-' as a word separator.
 		Common::String versionTag;
-		for (const char *c = versionExtra.c_str(); *c; c++) {
-			if (Common::isAlnum(*c))
-				versionTag += *c;
-			else if (*c == '_')
+		for (uint i = 0; i < versionExtra.size(); i++) {
+			const char ch = versionExtra[i];
+			if (Common::isAlnum(ch))
+				versionTag += ch;
+			else if (ch == '_' || ch == '-')
 				versionTag += '-';
 			// '.' and any other separator are dropped
 		}
