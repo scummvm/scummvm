@@ -43,7 +43,8 @@ const GlkDetectionEntry* ComprehendMetaEngine::getDetectionEntries() {
 			entry->_md5,
 			0,
 			Common::EN_ANY,
-			Common::kPlatformUnknown
+			Common::kPlatformUnknown,
+			false
 		};
 		entries.push_back(detection);
 	}
@@ -53,7 +54,8 @@ const GlkDetectionEntry* ComprehendMetaEngine::getDetectionEntries() {
 					   nullptr,
 					   0,
 					   Common::UNK_LANG,
-					   Common::kPlatformUnknown});
+					   Common::kPlatformUnknown,
+					   false});
 
 	return entries.data();
 }
