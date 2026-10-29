@@ -39,43 +39,79 @@ class InstallShieldV3;
 namespace Mohawk {
 
 /**
- * The font loader which supports multiple stream backend.
+ * Base interface for loading TrueType/OpenType fonts from different sources.
  */
 class TTFLoader {
 public:
+	/** Path of the font source. */
 	Common::Path _filePath;
+	/** Face name used to identify cached font instances. */
 	Common::String _faceName;
-	bool _bold = false;
+	/** Fake bold when the bold face is not available. */
+	bool _fakeBold = false;
+	/** Fake italic when the italic face is not available. */
+	bool _fakeItalic = false;
+	/**
+	 * The index of face to load when loading a TTC file.
+	 * Otherwise, always set to 0.
+	 */
 	int32 _faceIndex = 0;
+	/**
+	 * Font source instructions to display when a font stream is not available.
+	 * Leave it empty when this feature is not wanted.
+	 */
 	Common::String _srcInst;
 
 	TTFLoader() {}
-	TTFLoader(const Common::String &fileName, const Common::String &faceName,
-			  bool bold = false, int32 faceIndex = 0,
-			  Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
-	TTFLoader(const Common::String &fileName, const Common::String &faceName,
-			  const Common::String &srcInst, bool bold = false, int32 faceIndex = 0,
-			  Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
+	/**
+	 * Configure a font source, face selection and rendering options.
+	 *
+	 * @param fileName    Path of the font source.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	TTFLoader(const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
+	/**
+	 * Configure a font source, face selection and rendering options.
+	 *
+	 * @param fileName    Path of the font source.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param srcInst     Font source instructions to display when a font stream is not available.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	TTFLoader(const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 	virtual ~TTFLoader() {}
 
+	/** Build a cache key of the font. */
 	Common::String getCacheName(int point) const;
+	/** Create a font instance. */
 	const Graphics::Font *loadFont(int point);
-	/** Return whether this loader preserves grayscale glyph coverage. */
-	bool usesAntialiasing() const;
-	bool isFontNameEqual(TTFLoader *other);
+	/** Return whether anti-aliasing is enabled by the configured rendering mode. */
+	bool isAntialiasingEnabled() const;
+	/** Select the rendering mode. */
+	void setRenderMode(Graphics::TTFRenderMode renderMode);
 
 protected:
-	TTFLoader(const Common::String &fileName, const Common::String &faceName,
-			  const Common::String &srcInst, bool bold, int32 faceIndex,
-			  Graphics::TTFRenderMode renderMode, Graphics::TTFSizeMode sizeMode);
 	virtual const Graphics::Font *loadFontCore(int point) = 0;
 
 	const Graphics::Font *getCachedFont(int point) const;
 	void cacheFont(int point, const Graphics::Font *font);
 
-	/** Coverage mode used to load and cache this font. */
+	/** Glyph anti-aliasing and hinting mode. */
 	Graphics::TTFRenderMode _renderMode = Graphics::kTTFRenderModeMonochrome;
-	/** Interpretation of the requested font size. */
+	/** Controls interpretation of the requested point size. */
 	Graphics::TTFSizeMode _sizeMode = Graphics::kTTFSizeModeCharacter;
 };
 
@@ -85,12 +121,35 @@ protected:
 class FileTTFLoader : public TTFLoader {
 public:
 	FileTTFLoader() {}
-	FileTTFLoader(const Common::String &fileName, const Common::String &faceName,
-				  bool bold = false, int32 faceIndex = 0,
-				  Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
-	FileTTFLoader(const Common::String &fileName, const Common::String &faceName,
-				  const Common::String &srcInst, bool bold = false, int32 faceIndex = 0,
-				  Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
+	/**
+	 * Configure a local font file for loading on demand.
+	 *
+	 * @param fileName    Path of the local font file.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	FileTTFLoader(const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
+	/**
+	 * Configure a local font file for loading on demand.
+	 *
+	 * @param fileName    Path of the local font file.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param srcInst     Font source instructions to display when a font stream is not available.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	FileTTFLoader(const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 	virtual ~FileTTFLoader() {}
 
 	virtual bool hasStream();
@@ -102,11 +161,21 @@ protected:
 
 /**
  * Load an 'sfnt' font resource from a Macintosh application's resource fork.
+ * 
+ * @remarks
+ * The inherited @ref TTFLoader::_filePath identifies the application.
  */
 class MacResForkTTFLoader : public FileTTFLoader {
 public:
-	MacResForkTTFLoader(const Common::String &application, const Common::String &faceName, uint16 resourceId,
-						Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
+	/**
+	 * Configure an 'sfnt' font resource from a Macintosh application.
+	 *
+	 * @param appPath     Path of the Macintosh application containing the font resource.
+	 * @param resourceId  ID of the 'sfnt' resource in the application's resource fork.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param sizeMode    Selects the point size definition.
+	 */
+	MacResForkTTFLoader(const Common::String &appPath, uint16 resourceId, const Common::String &faceName, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
 	bool hasStream() override;
 
 protected:
@@ -125,13 +194,37 @@ public:
 	Common::Archive *_iscabArchive = nullptr;
 
 	ISCabTTFLoader() {}
-	ISCabTTFLoader(const Common::String &iscabFile, const Common::String &fileName,
-				   const Common::String &faceName, bool bold = false, int32 faceIndex = 0,
-				   Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
-	ISCabTTFLoader(const Common::String &iscabFile, const Common::String &fileName,
-				   const Common::String &faceName, const Common::String &srcInst,
-				   bool bold = false, int32 faceIndex = 0,
-				   Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
+	/**
+	 * Configure a font member in an InstallShield cabinet.
+	 *
+	 * @param iscabFile   Path of the InstallShield cabinet containing the font.
+	 * @param fileName    Path of the font file within the InstallShield cabinet.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	ISCabTTFLoader(const Common::String &iscabFile, const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
+	/**
+	 * Configure a font member in an InstallShield cabinet.
+	 *
+	 * @param iscabFile   Path of the InstallShield cabinet containing the font.
+	 * @param fileName    Path of the font file within the InstallShield cabinet.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param srcInst     Font source instructions to display when a font stream is not available.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	ISCabTTFLoader(const Common::String &iscabFile, const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 	~ISCabTTFLoader() override;
 
 	bool hasStream() override;
@@ -153,13 +246,37 @@ public:
 	Common::InstallShieldV3 *_iszArchive = nullptr;
 
 	ISZTTFLoader() {}
-	ISZTTFLoader(const Common::String &iszFile, const Common::String &fileName,
-				 const Common::String &faceName, bool bold = false, int32 faceIndex = 0,
-				 Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
-	ISZTTFLoader(const Common::String &iszFile, const Common::String &fileName,
-				 const Common::String &faceName, const Common::String &srcInst,
-				 bool bold = false, int32 faceIndex = 0,
-				 Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
+	/**
+	 * Configure a font member in an InstallShield Z archive.
+	 *
+	 * @param iszFile     Path of the InstallShield Z archive containing the font.
+	 * @param fileName    Path of the font file within the InstallShield Z archive.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	ISZTTFLoader(const Common::String &iszFile, const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
+	/**
+	 * Configure a font member in an InstallShield Z archive.
+	 *
+	 * @param iszFile     Path of the InstallShield Z archive containing the font.
+	 * @param fileName    Path of the font file within the InstallShield Z archive.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param srcInst     Font source instructions to display when a font stream is not available.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	ISZTTFLoader(const Common::String &iszFile, const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 	~ISZTTFLoader() override;
 
 	bool hasStream() override;
@@ -175,16 +292,40 @@ protected:
 /**
  * Load TTF/TTC font from Windows system font archive.
  * - To discourage use of system fonts, show a warning if this is used.
+ * The inherited @ref TTFLoader::_srcInst is shown once as a warning when the font stream is opened.
  */
 class WinSysTTFLoader : public FileTTFLoader {
 public:
 	WinSysTTFLoader() {}
-	WinSysTTFLoader(const Common::String &fileName, const Common::String &faceName,
-					bool bold = false, int32 faceIndex = 0,
-					Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
-	WinSysTTFLoader(const Common::String &fileName, const Common::String &faceName,
-					const Common::String &srcInst, bool bold = false, int32 faceIndex = 0,
-					Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
+	/**
+	 * Configure a font from the Windows system font directory.
+	 *
+	 * @param fileName    Name of the font file in the Windows system font directory.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	WinSysTTFLoader(const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
+	/**
+	 * Configure a font from the Windows system font directory.
+	 *
+	 * @param fileName    Name of the font file in the Windows system font directory.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param srcInst     Font source instructions to display when a font stream is not available.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	WinSysTTFLoader(const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 	~WinSysTTFLoader() override {}
 
 	bool hasStream() override;
@@ -201,15 +342,35 @@ protected:
 class ArchiveTTFLoader : public TTFLoader {
 public:
 	ArchiveTTFLoader() {}
-	ArchiveTTFLoader(const Common::String &fileName, const Common::String &faceName,
-					 bool bold = false, int32 faceIndex = 0,
-					 Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
-	ArchiveTTFLoader(const Common::String &fileName, const Common::String &faceName,
-					 Graphics::TTFRenderMode renderMode,
-					 Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
-	ArchiveTTFLoader(const Common::String &fileName, const Common::String &faceName,
-					 const Common::String &srcInst, bool bold = false, int32 faceIndex = 0,
-					 Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter);
+	/**
+	 * Configure a fallback font from the ScummVM font archive.
+	 *
+	 * @param fileName    Name of the font file in the ScummVM font archive.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	ArchiveTTFLoader(const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
+	/**
+	 * Configure a fallback font from the ScummVM font archive.
+	 *
+	 * @param fileName    Name of the font file in the ScummVM font archive.
+	 * @param faceName    Font face name used to identify cached font instances.
+	 * @param srcInst     Font source instructions to display when a font stream is not available.
+	 * @param sizeMode    Selects the point size definition.
+	 * @param renderMode  Glyph anti-aliasing and hinting mode;
+	 *                    monochrome rendering disables anti-aliasing.
+	 * @param faceIndex   The index of face to load when loading a TTC file.
+	 *                    Otherwise, always set to 0.
+	 * @param fakeBold    Fake bold when the bold face is not available.
+	 * @param fakeItalic  Fake italic when the italic face is not available.
+	 */
+	ArchiveTTFLoader(const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode = Graphics::kTTFSizeModeCharacter, Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 	virtual ~ArchiveTTFLoader() {}
 
 	const Graphics::Font *loadFontCore(int point) override;
