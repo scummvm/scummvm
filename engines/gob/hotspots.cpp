@@ -321,6 +321,11 @@ void Hotspots::recalculate(bool force) {
 			// Not forcing a special hotspot
 			continue;
 
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
+			if ((spot.getState() & kStateFilledDisabled) != kStateFilled)
+				continue;
+		}
+
 		if (spot.funcPos == 0)
 			// Simple coordinates don't need update
 			continue;
