@@ -127,6 +127,7 @@ public:
 	uint8 _dungeonLevel = 1;
 	uint8 _dungeonDirection = 4;
 	uint16 _dungeonExitHitPoints = 0;
+	int8 _woodsCount = 0, _grassCount = 0, _waterCount = 0;	// Tiles surrounding entered locations
 
 	// Outer space state - synchronized only while _mapNum == MAP_SPACE
 	int16 _sectorX = SPACE_STATION_X;

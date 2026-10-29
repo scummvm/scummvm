@@ -130,7 +130,6 @@ public:
 	byte _tilePlayerCenter = 0;
 	byte _tilePlayerUp = 0, _tilePlayerDown = 0,
 		_tilePlayerLeft = 0, _tilePlayerRight = 0;
-	int _woodsCount = 0, _grassCount = 0, _waterCount = 0;	// Tiles surrounding entered locations
 	bool _isLordBritishCastle = false;
 	int _mapStyle = 0;
 	int _mapType = MAPTYPE_OVERWORLD;

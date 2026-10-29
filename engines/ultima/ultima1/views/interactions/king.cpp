@@ -47,12 +47,13 @@ static const int QUEST_LOCATION_INDEXES[4] = { 47, 45, 43, 41 };
 static const int QUEST_LOCATION_X[4] = { 8, 10, 9, 9 };
 
 // Reward text shown for a completed "kill a monster" quest, indexed by the
-// continent the player is currently standing on
-static const char *const GEM_REWARD_MESSAGES[4] = {
-	"that it requires all four gems\nto launch a time machine!\n\nThe king gives thee a red gem.\n",
-	"that the time machine must be\nused in order to win.\n\nThe king gives thee a green gem!\n",
-	"the princess will help a\nspace ace through time!\n\nThe king gives thee a blue gem!\n",
-	"to take nine items from my\nstorerooms - but only nine!\n\nThe king also gives thee a white gem!\n"
+// continent the player is currently standing on. These are the lines for
+// rows 9, 10, 12 and 13 of the dialog
+static const char *const GEM_REWARD_LINES[4][4] = {
+	{ "that it requires all four gems", "  to launch a time machine!", "The king gives thee a red gem.", nullptr },
+	{ "that the time machine must be", "     used in order to win.", "     The king gives thee a", "           green gem!" },
+	{ "   the princess will help a", "   space ace through time!", "    The king gives thee a", "          blue gem!" },
+	{ "   to take nine items from my", "  storerooms - but only nine!", "   The king also gives thee a", "          white gem!" }
 };
 
 King::King() : Interaction("King") {
@@ -62,10 +63,8 @@ bool King::msgFocus(const FocusMessage &msg) {
 	_mode = KING_PROMPT;
 	setBounds(Common::Rect(0, 0, 0, 0));
 
-	if (checkQuestReward()) {
-		finish();
+	if (checkQuestReward())
 		return true;
-	}
 
 	writeString("Dost thou offer pence\n");
 	writeString("or service: ");
@@ -74,7 +73,7 @@ bool King::msgFocus(const FocusMessage &msg) {
 }
 
 bool King::msgAction(const ActionMessage &msg) {
-	if (_mode == KING_QUEST)
+	if (_mode == KING_QUEST || _mode == KING_REWARD)
 		return true;
 
 	writeString("neither\n");
@@ -85,6 +84,7 @@ bool King::msgAction(const ActionMessage &msg) {
 bool King::msgKeypress(const KeypressMessage &msg) {
 	switch (_mode) {
 	case KING_QUEST:
+	case KING_REWARD:
 		if (msg.keycode == Common::KEYCODE_SPACE || msg.keycode == Common::KEYCODE_RETURN) {
 			prompt();
 			close();
@@ -135,18 +135,14 @@ bool King::checkQuestReward() {
 
 	sg._questStatus[castleIdx] = 0;
 
-	writeString(Common::String::format("Ah, %s!  Thou hast\n", sg._name));
-	writeString("completed thy quest.\n");
-
 	if (castleIdx % 2 != 0) {
 		// Odd castle index - a "find a location" quest rewards strength points
-		int amount = (99 - sg._strength) / 8;
-		if (amount == 0 && sg._strength != 99)
-			amount = 1;
+		_rewardContinent = -1;
+		_rewardPoints = (99 - sg._strength) / 8;
+		if (_rewardPoints == 0 && sg._strength != 99)
+			_rewardPoints = 1;
 
-		writeString(Common::String::format("For this I will give thee %d point%s of strength.\n",
-			amount, amount == 1 ? "" : "s"));
-		sg._strength += amount;
+		sg._strength += _rewardPoints;
 
 	} else {
 		// Even castle index - a "kill a monster" quest rewards a gem, based
@@ -155,11 +151,9 @@ bool King::checkQuestReward() {
 		// coordinates, so this ends up passing meaningless in-castle
 		// coordinates to the continent lookup; using the real overworld
 		// position instead
-		int continent = _G(map).getContinentAt(sg._overworldPos);
-		writeString("For this I shall tell thee\n");
-		writeString(GEM_REWARD_MESSAGES[continent]);
+		_rewardContinent = _G(map).getContinentAt(sg._overworldPos);
 
-		switch (continent) {
+		switch (_rewardContinent) {
 		case 0:
 			++sg._redGems;
 			break;
@@ -169,16 +163,18 @@ bool King::checkQuestReward() {
 		case 2:
 			++sg._blueGem;
 			break;
-		case 3:
+		default:
 			++sg._whiteGem;
 			sg._castleItemAllowance = 9;
-			break;
-		default:
 			break;
 		}
 	}
 
+	_mode = KING_REWARD;
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
+	redraw();
 	redrawStats();
+	g_engine->send("Commands", GameMessage("SPACE2"));
 	return true;
 }
 
@@ -194,15 +190,44 @@ void King::giveQuest() {
 void King::draw() {
 	if (_mode == KING_QUEST)
 		drawQuest();
+	else if (_mode == KING_REWARD)
+		drawReward();
+}
+
+void King::drawBox() {
+	auto s = getSurface();
+	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _G(colors)._border);
+	s.setColor(_G(colors)._text);
+}
+
+void King::drawReward() {
+	drawBox();
+	auto s = getSurface();
+
+	const char *name = _G(savegame)._name;
+	s.writeString(Common::Point(12 - (int)strlen(name) / 2, 5), "Ah, %s!  Thou hast", name);
+	s.writeString(Common::Point(10, 6), "completed thy quest.");
+
+	if (_rewardContinent < 0) {
+		s.writeString(Common::Point(8, 8), "For this I will give thee");
+		s.writeString(Common::Point(10, 9), "%d point%s of strength.", _rewardPoints, _rewardPoints == 1 ? "" : "s");
+	} else {
+		s.writeString(Common::Point(7, 8), "For this I shall tell thee");
+
+		static const int ROWS[4] = { 9, 10, 12, 13 };
+		for (int i = 0; i < 4; ++i) {
+			if (GEM_REWARD_LINES[_rewardContinent][i])
+				s.writeString(Common::Point(5, ROWS[i]), "%s", GEM_REWARD_LINES[_rewardContinent][i]);
+		}
+	}
 }
 
 void King::drawQuest() {
 	int castleIdx = _G(map)._castleNum2;
 
+	drawBox();
 	auto s = getSurface();
-	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
-	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _G(colors)._border);
-	s.setColor(_G(colors)._text);
 
 	if (castleIdx % 2 == 0) {
 		s.writeString(Common::Point(12, 6), "Go now and kill a");

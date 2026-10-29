@@ -20,21 +20,32 @@
  */
 
 #include "ultima/ultima1/views/interactions/operate_craft.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
+// Same generic dialog box geometry the Lose and Win views use
+constexpr int DIALOG_X1 = 31, DIALOG_Y1 = 23, DIALOG_X2 = 287, DIALOG_Y2 = 127;
+constexpr int BORDER_X1 = 34, BORDER_Y1 = 26, BORDER_X2 = 284, BORDER_Y2 = 124;
+
 bool OperateCraft::msgFocus(const FocusMessage &msg) {
-	setBounds(Common::Rect(0, 0, 0, 0));
-
-	writeString("Thou canst not determine how\n");
-	writeString("to operate the craft at this\n");
-	writeString("time.\n");
-
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 	showCursor();
 	return true;
+}
+
+void OperateCraft::draw() {
+	auto s = getSurface();
+	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _G(colors)._border);
+
+	s.setColor(_G(colors)._text);
+	s.writeString(Common::Point(6, 7), "Thou canst not determine how");
+	s.writeString(Common::Point(6, 8), "to operate the craft at this");
+	s.writeString(Common::Point(6, 9), "           time.");
 }
 
 bool OperateCraft::msgAction(const ActionMessage &msg) {
@@ -48,6 +59,7 @@ bool OperateCraft::msgKeypress(const KeypressMessage &msg) {
 }
 
 void OperateCraft::finish() {
+	prompt();
 	close();
 }
 

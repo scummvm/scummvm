@@ -39,11 +39,15 @@ using namespace Graphics::Views;
  */
 class King : public Interaction {
 	enum Mode {
-		KING_PROMPT, KING_PENCE, KING_QUEST
+		KING_PROMPT, KING_PENCE, KING_QUEST, KING_REWARD
 	};
 private:
 	Mode _mode = KING_PROMPT;
 	Common::String _amount;
+	// Details of a quest reward being shown: the strength points given, or
+	// the continent the gem reward is for when not a strength reward
+	int _rewardPoints = 0;
+	int _rewardContinent = 0;
 
 	void finish();
 	void redrawStats();
@@ -64,9 +68,19 @@ private:
 	void giveQuest();
 
 	/**
+	 * Draws the dialog box that quest and reward screens appear in
+	 */
+	void drawBox();
+
+	/**
 	 * Draws the quest dialog
 	 */
 	void drawQuest();
+
+	/**
+	 * Draws the quest completion reward dialog
+	 */
+	void drawReward();
 
 	/**
 	 * Handles the pence amount entry, digit by digit

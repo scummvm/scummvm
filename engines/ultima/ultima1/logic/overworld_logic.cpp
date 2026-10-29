@@ -137,22 +137,22 @@ bool OverworldLogic::enter() {
 		playFX(1);
 	} else {
 		// Check for tiles surrounding the location
-		_G(map)._waterCount = 0;
-		_G(map)._grassCount = 0;
-		_G(map)._woodsCount = 0;
+		_G(savegame)._waterCount = 0;
+		_G(savegame)._grassCount = 0;
+		_G(savegame)._woodsCount = 0;
 
 		for (int deltaY = -1; deltaY <= 1; ++deltaY) {
 			for (int deltaX = -1; deltaX <= 1; ++deltaX) {
 				int tile = _G(map).getTileAt(_G(savegame)._overworldPos.x + deltaX, _G(savegame)._overworldPos.y + deltaY);
 				switch (tile) {
 				case Data::TILE_OCEAN:
-					_G(map)._waterCount++;
+					_G(savegame)._waterCount++;
 					break;
 				case Data::TILE_GRASS:
-					_G(map)._grassCount++;
+					_G(savegame)._grassCount++;
 					break;
 				case Data::TILE_WOODS:
-					_G(map)._woodsCount++;
+					_G(savegame)._woodsCount++;
 					break;
 				default:
 					break;

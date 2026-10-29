@@ -29,6 +29,10 @@ namespace Views {
 namespace Interactions {
 
 
+// Same generic dialog box geometry the Lose and Win views use
+constexpr int DIALOG_X1 = 31, DIALOG_Y1 = 23, DIALOG_X2 = 287, DIALOG_Y2 = 127;
+constexpr int BORDER_X1 = 34, BORDER_Y1 = 26, BORDER_X2 = 284, BORDER_Y2 = 124;
+
 struct ShopName {
 	const char *_line1;
 	const char *_line2;
@@ -73,25 +77,28 @@ static const ShopName TRANSPORT_SHOP_NAMES[8] = {
 	{ nullptr, nullptr }, { "Sly Sam's Transportation", "Specialists" }
 };
 
-// Tavern tip/rumor flavor texts. Index 0 is the drunk penalty message
-// (no header); indices 1-8 are prefixed with "Thou had best know " when
-// shown. Index 2 is sex-dependent and filled in at the point of use
-static const char *const TAVERN_TIPS[9] = {
-	"Thou hast been seduced!\nAfter a long night,\nthou art back.",
-	"about space travel!\nThou must destroy at least 20 enemy vessels\nto become an ace!",
-	nullptr,
-	"that the princess will give great reward to the one who\nrescues her, and an extra gift to an 8th level ace!",
-	"thou must go back in time.",
-	"thou should destroy the evil gem!",
-	"that many lakes and ponds have strong magical powers!",
-	"this is a great game!",
-	"that over 1000 years ago, Mondain the Wizard created an evil gem.\n"
-	"With this gem, he is immortal and cannot be defeated.\n\n"
-	"The quest of --Ultima-- is to traverse the lands in search\n"
-	"of a time machine.  Upon finding such a device, thou\n"
-	"should go back in time to the days before Mondain created\n"
-	"the evil gem and destroy him!"
+// Text column of each shop's first name line, in the same order and per
+// variant as the name tables above. Their second lines (only the
+// armoury/weapon shops' first variant and the transport shops' first and
+// last variants have one) are at a fixed column
+static const byte NAME_X[6][8] = {
+	{ 11, 15, 13, 10, 0, 5, 0, 11 },
+	{ 11, 11, 12, 10, 12, 13, 12, 10 },
+	{ 9, 12, 13, 5, 0, 0, 0, 11 },
+	{ 5, 8, 0, 13, 9, 11, 6, 8 },
+	{ 14, 11, 13, 13, 0, 12, 10, 11 },
+	{ 10, 0, 0, 9, 0, 7, 0, 8 }
 };
+
+// Looks up the proprietor name for a shop, which varies per city
+static const ShopName &shopNameFor(int shopType, int variant) {
+	static const ShopName *const TABLES[6] = {
+		ARMORY_NAMES, WEAPON_SHOP_NAMES, MAGIC_SHOP_NAMES,
+		GROCER_SHOP_NAMES, TAVERN_SHOP_NAMES, TRANSPORT_SHOP_NAMES
+	};
+
+	return TABLES[shopType][variant];
+}
 
 Merchant::Merchant() : Interaction("Merchant") {
 }
@@ -131,7 +138,10 @@ bool Merchant::msgFocus(const FocusMessage &msg) {
 }
 
 bool Merchant::msgAction(const ActionMessage &msg) {
-	nothing();
+	if (_mode == SHOP_MESSAGE)
+		nextScreen();
+	else
+		nothing();
 	return true;
 }
 
@@ -144,6 +154,10 @@ bool Merchant::msgKeypress(const KeypressMessage &msg) {
 			chooseSell();
 		else
 			nothing();
+		break;
+
+	case SHOP_MESSAGE:
+		nextScreen();
 		break;
 
 	case SHOP_BUY:
@@ -187,14 +201,25 @@ bool Merchant::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Merchant::draw() {
-	if (_mode != SHOP_BUY && _mode != SHOP_SELL)
+	if (_mode == SHOP_PROMPT)
 		return;
 
-	auto s = getSurface();
-	s.writeString(Common::Point(15, 0), "\x10 Transact \x11");
-	s.fillRect(Graphics::Views::TextRect(1, 1, 38, 18), 0);
+	drawFrame();
 
-	if (_mode == SHOP_BUY) {
+	if (_mode == SHOP_MESSAGE) {
+		const Screen &screen = _screens[0];
+		auto s = getSurface();
+		if (screen._clear)
+			s.fillRect(Common::Rect(39, 48, 280, 120), 0);
+
+		s.setColor(_G(colors)._text);
+		for (const ScreenLine &line : screen._lines)
+			s.writeString(Common::Point(line._x, line._y), "%s", line._text);
+
+	} else if (_mode == SHOP_QTY) {
+		drawGroceryPrompt();
+
+	} else if (_mode == SHOP_BUY) {
 		switch (_shopType) {
 		case SHOP_ARMORY:
 			drawArmoryBuy();
@@ -229,21 +254,32 @@ int Merchant::shopVariant() const {
 	return _G(map)._mapStyle - 2;
 }
 
-void Merchant::drawShopName() {
-	static const ShopName *const TABLES[6] = {
-		ARMORY_NAMES, WEAPON_SHOP_NAMES, MAGIC_SHOP_NAMES,
-		GROCER_SHOP_NAMES, TAVERN_SHOP_NAMES, TRANSPORT_SHOP_NAMES
-	};
+void Merchant::drawFrame() {
+	auto s = getSurface();
+	s.fillRect(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2), 0);
+	s.frameRect(Common::Rect(BORDER_X1, BORDER_Y1, BORDER_X2, BORDER_Y2), _G(colors)._border);
+	s.setColor(_G(colors)._text);
 
-	const ShopName &name = TABLES[_shopType][shopVariant()];
-	if (!name._line1)
-		return;
+	const int variant = shopVariant();
+	const ShopName &name = shopNameFor(_shopType, variant);
 
+	if (name._line1)
+		s.writeString(Common::Point(NAME_X[_shopType][variant], 4), "%s", name._line1);
+	if (name._line2) {
+		int x = (_shopType == SHOP_TRANSPORT) ? (variant == 0 ? 13 : 15) : 8;
+		s.writeString(Common::Point(x, 5), "%s", name._line2);
+	}
+}
+
+int Merchant::listY() const {
+	return shopNameFor(_shopType, shopVariant())._line2 ? 7 : 6;
+}
+
+void Merchant::drawShopLine(int y, int nameX, int priceX, int letterIdx, const char *name, int price, int digits) {
 	auto s = getSurface();
 	s.setColor(_G(colors)._text);
-	s.writeString(Common::Point(19 - (int)Common::String(name._line1).size() / 2, 2), "%s", name._line1);
-	if (name._line2)
-		s.writeString(Common::Point(19 - (int)Common::String(name._line2).size() / 2, 3), "%s", name._line2);
+	s.writeString(Common::Point(nameX, y), "%c) %s", 'a' + letterIdx, name);
+	s.writeString(Common::Point(priceX, y), digits == 4 ? "- %4d" : "- %3d", price);
 }
 
 bool Merchant::isWenchNearby() const {
@@ -274,6 +310,88 @@ int Merchant::overworldTransportCount() const {
 	return count;
 }
 
+void Merchant::addScreen(bool clear, std::initializer_list<ScreenLine> lines) {
+	Screen screen;
+	screen._clear = clear;
+	for (const ScreenLine &line : lines)
+		screen._lines.push_back(line);
+
+	_screens.push_back(screen);
+}
+
+void Merchant::showScreens(bool nothingAfter) {
+	_nothingAfter = nothingAfter;
+	_mode = SHOP_MESSAGE;
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
+	redraw();
+	showCursor();
+}
+
+void Merchant::showText(bool nothingAfter, bool clear, std::initializer_list<ScreenLine> lines) {
+	_screens.clear();
+	addScreen(clear, lines);
+	showScreens(nothingAfter);
+}
+
+void Merchant::nextScreen() {
+	_screens.remove_at(0);
+
+	if (!_screens.empty()) {
+		redraw();
+	} else if (_nothingAfter) {
+		nothing();
+	} else {
+		writeString("\n");
+		finish();
+	}
+}
+
+void Merchant::addTip(int tipIdx) {
+	switch (tipIdx) {
+	case 0:
+		addScreen(true, { { 9, 8, "Thou hast been seduced!" }, { 11, 10, "After a long night," },
+			{ 13, 11, "thou art back." } });
+		break;
+	case 1:
+		addScreen(true, { { 11, 7, "Thou had best know" }, { 10, 8, "about space travel!" },
+			{ 10, 9, "Thou must destroy at" }, { 9, 10, "least 20 enemy vessels" },
+			{ 11, 11, "to become an ace!" } });
+		break;
+	case 2:
+		addScreen(true, { { 11, 7, "Thou had best know" },
+			{ 11, 8, _G(savegame)._sex == Data::SEX_MALE ? "to watch the wench." : "to watch the lecher." } });
+		break;
+	case 3:
+		addScreen(true, { { 11, 7, "Thou had best know" }, { 5, 8, " that the princess will give" },
+			{ 5, 9, " great reward to the one who" }, { 5, 10, "rescues her, and an extra gift" },
+			{ 10, 11, "to an 8th level ace!" } });
+		break;
+	case 4:
+		addScreen(true, { { 11, 7, "Thou had best know" }, { 7, 8, "thou must go back in time." } });
+		break;
+	case 5:
+		addScreen(true, { { 11, 7, "Thou had best know" }, { 10, 8, "thou should destroy" },
+			{ 13, 9, "the evil gem!" } });
+		break;
+	case 6:
+		addScreen(true, { { 11, 7, "Thou had best know" }, { 5, 8, "   that many lakes and ponds" },
+			{ 5, 9, "  have strong magical powers!" } });
+		break;
+	case 7:
+		addScreen(true, { { 11, 7, "Thou had best know" }, { 10, 8, "this is a great game!" } });
+		break;
+	default:
+		addScreen(true, { { 11, 7, "Thou had best know" }, { 5, 8, "   that over 1000 years ago," },
+			{ 5, 9, "Mondain the Wizard created an" }, { 5, 10, " evil gem.  With this gem, he" },
+			{ 5, 11, "   is immortal and cannot be" }, { 15, 12, "defeated." } });
+		addScreen(true, { { 5, 7, "The quest of --Ultima-- is to" }, { 5, 8, " traverse the lands in search" },
+			{ 8, 9, "of a time machine.  Upon" }, { 5, 10, " finding such a device, thou" },
+			{ 5, 11, "should go back in time to the" }, { 5, 12, " days before Mondain created" },
+			{ 5, 13, "the evil gem and destroy him!" } });
+		break;
+	}
+}
+
 void Merchant::chooseBuy() {
 	resetLine();
 	writeString("Transact-Buy: ");
@@ -297,7 +415,6 @@ void Merchant::chooseBuy() {
 		break;
 
 	case SHOP_TRANSPORT: {
-		auto &map = _G(map);
 		auto &sg = _G(savegame);
 		bool fleetFull = sg._transports[Data::TRANSPORT_SHUTTLE] == 0 &&
 			overworldTransportCount() >= 15;
@@ -305,16 +422,16 @@ void Merchant::chooseBuy() {
 		for (int i = 0; i < 6; ++i)
 			_transportIds[i] = 0;
 
-		if ((map._woodsCount || map._grassCount) && !fleetFull) {
+		if ((sg._woodsCount || sg._grassCount) && !fleetFull) {
 			_transportIds[0] = Data::TRANSPORT_HORSE;
 			_transportIds[1] = Data::TRANSPORT_CART;
 		}
-		if (map._waterCount && !fleetFull) {
+		if (sg._waterCount && !fleetFull) {
 			_transportIds[2] = Data::TRANSPORT_RAFT;
 			_transportIds[3] = Data::TRANSPORT_FRIGATE;
 		}
 		if (_G(moveCtr) > 3000) {
-			if (map._grassCount && !fleetFull)
+			if (sg._grassCount && !fleetFull)
 				_transportIds[4] = Data::TRANSPORT_AIRCAR;
 			if (sg._transports[Data::TRANSPORT_SHUTTLE] == 0)
 				_transportIds[5] = Data::TRANSPORT_SHUTTLE;
@@ -325,9 +442,7 @@ void Merchant::chooseBuy() {
 			any = _transportIds[i] != 0;
 
 		if (!any) {
-			writeString("\n");
-			writeString("Closed for the day.\n");
-			finish();
+			showText(false, false, { { 11, listY() + 2, "Closed for the day." } });
 			break;
 		}
 
@@ -354,9 +469,7 @@ void Merchant::chooseSell() {
 			anyOwned = _G(savegame)._armor[idx] != 0;
 
 		if (!anyOwned) {
-			writeString("\n");
-			writeString("Thou hast no armour to sell!\n");
-			nothing();
+			showText(true, false, { { 5, listY() + 1, "  Thou hast no armour to sell!" } });
 		} else {
 			_mode = SHOP_SELL;
 			setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
@@ -371,9 +484,7 @@ void Merchant::chooseSell() {
 			anyOwned = _G(savegame)._weapons[idx] != 0;
 
 		if (!anyOwned) {
-			writeString("\n");
-			writeString("Thou hast no weaponry to sell!\n");
-			nothing();
+			showText(true, false, { { 5, listY() + 1, "Thou hast no weaponry to sell!" } });
 		} else {
 			_mode = SHOP_SELL;
 			setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
@@ -383,42 +494,28 @@ void Merchant::chooseSell() {
 	}
 
 	case SHOP_MAGIC:
-		writeString("\n");
-		writeString("Sorry, we don't buy spells!\n");
-		nothing();
+		showText(true, false, { { 5, listY() + 2, "  Sorry, we don't buy spells!" } });
 		break;
 
 	case SHOP_GROCER:
-		writeString("\n");
-		writeString("Used food?  No thanks!\n");
-		nothing();
+		showText(true, false, { { 9, listY() + 2, "Used food?  No thanks!" } });
 		break;
 
 	case SHOP_TAVERN:
-		writeString("\n");
-		writeString("We have plenty of booze already!\n");
-		nothing();
+		showText(true, false, { { 8, listY() + 2, "We have plenty of booze" }, { 17, listY() + 3, "already!" } });
 		break;
 
 	case SHOP_TRANSPORT:
-		writeString("\n");
-		writeString("Sorry, we don't deal in used stuff.\n");
-		nothing();
+		showText(true, false, { { 9, listY() + 2, "Sorry, we don't deal in" }, { 15, listY() + 3, "used stuff." } });
 		break;
 	}
 }
 
 void Merchant::drawArmoryBuy() {
-	drawShopName();
-	auto s = getSurface();
-	s.setColor(_G(colors)._text);
-
 	int maxIdx = (_G(moveCtr) > 3000) ? 5 : 3;
-	int y = 8;
-	for (int idx = 1; idx <= maxIdx; ++idx, ++y) {
+	for (int idx = 1; idx <= maxIdx; ++idx) {
 		int price = ((200 - _G(savegame)._intelligence) / 4) * idx;
-		s.writeString(Common::Point(10, y), "%c) %s", 'a' + idx, Data::ARMOR_NAMES[idx]);
-		s.writeString(Common::Point(27, y), "-%3d", price);
+		drawShopLine(listY() + idx, 9, 26, idx, Data::ARMOR_NAMES[idx], price, 3);
 	}
 }
 
@@ -444,23 +541,15 @@ void Merchant::armoryBuyKeypress(Common::KeyCode keycode) {
 
 	writeString(Data::ARMOR_NAMES[idx]);
 	redrawStats();
-	writeString("\n");
-	writeString("Sold!\n");
-	finish();
+	showText(false, true, { { 18, 9, "Sold!" } });
 }
 
 void Merchant::drawArmorySell() {
-	drawShopName();
-	auto s = getSurface();
-	s.setColor(_G(colors)._text);
-
-	int y = 8;
+	int y = listY() + 1;
 	for (int idx = 1; idx < Data::ARMOR_COUNT; ++idx) {
 		if (_G(savegame)._armor[idx]) {
 			int price = (_G(savegame)._charisma + 40) * idx * idx / 256 + 1;
-			s.writeString(Common::Point(10, y), "%c) %s", 'a' + idx, Data::ARMOR_NAMES[idx]);
-			s.writeString(Common::Point(27, y), "-%3d", price);
-			++y;
+			drawShopLine(y++, 9, 26, idx, Data::ARMOR_NAMES[idx], price, 3);
 		}
 	}
 }
@@ -482,9 +571,7 @@ void Merchant::armorySellKeypress(Common::KeyCode keycode) {
 
 	writeString(Data::ARMOR_NAMES[idx]);
 	redrawStats();
-	writeString("\n");
-	writeString("Done!\n");
-	finish();
+	showText(false, true, { { 18, 9, "Done!" } });
 }
 
 void Merchant::weaponsRange(int &minIdx, int &maxIdx) const {
@@ -502,18 +589,13 @@ void Merchant::weaponsRange(int &minIdx, int &maxIdx) const {
 }
 
 void Merchant::drawWeaponsBuy() {
-	drawShopName();
-	auto s = getSurface();
-	s.setColor(_G(colors)._text);
-
 	int minIdx, maxIdx;
 	weaponsRange(minIdx, maxIdx);
 
-	int y = 8;
-	for (int idx = minIdx; idx <= maxIdx; idx += 2, ++y) {
+	int y = listY();
+	for (int idx = minIdx; idx <= maxIdx; idx += 2) {
 		int price = (255 - _G(savegame)._intelligence) * idx * idx / 256 + 5;
-		s.writeString(Common::Point(9, y), "%c) %s", 'a' + idx, Data::WEAPON_NAMES[idx]);
-		s.writeString(Common::Point(26, y), "-%3d", price);
+		drawShopLine(y++, 9, 26, idx, Data::WEAPON_NAMES[idx], price, 3);
 	}
 }
 
@@ -540,23 +622,15 @@ void Merchant::weaponsBuyKeypress(Common::KeyCode keycode) {
 
 	writeString(Data::WEAPON_NAMES[idx]);
 	redrawStats();
-	writeString("\n");
-	writeString("Sold!\n");
-	finish();
+	showText(false, true, { { 18, 9, "Sold!" } });
 }
 
 void Merchant::drawWeaponsSell() {
-	drawShopName();
-	auto s = getSurface();
-	s.setColor(_G(colors)._text);
-
-	int y = 6;
+	int y = listY();
 	for (int idx = 1; idx < Data::WEAPON_COUNT; ++idx) {
 		if (_G(savegame)._weapons[idx]) {
 			int price = (_G(savegame)._charisma + 40) * idx * idx / 256 + 1;
-			s.writeString(Common::Point(9, y), "%c) %s", 'a' + idx, Data::WEAPON_NAMES[idx]);
-			s.writeString(Common::Point(26, y), "-%3d", price);
-			++y;
+			drawShopLine(y++, 9, 26, idx, Data::WEAPON_NAMES[idx], price, 3);
 		}
 	}
 }
@@ -578,9 +652,7 @@ void Merchant::weaponsSellKeypress(Common::KeyCode keycode) {
 
 	writeString(Data::WEAPON_NAMES[idx]);
 	redrawStats();
-	writeString("\n");
-	writeString("Done!\n");
-	finish();
+	showText(false, true, { { 18, 9, "Done!" } });
 }
 
 void Merchant::magicRange(int &minIdx, int &maxIdx) const {
@@ -592,22 +664,16 @@ void Merchant::magicRange(int &minIdx, int &maxIdx) const {
 }
 
 void Merchant::drawMagicBuy() {
-	drawShopName();
-	auto s = getSurface();
-	s.setColor(_G(colors)._text);
-
 	int minIdx, maxIdx;
 	magicRange(minIdx, maxIdx);
 
-	int y = 8;
+	int y = listY();
 	for (int idx = minIdx; idx <= maxIdx; idx += 2) {
 		if (idx == Data::SPELL_STEAL)
 			continue;
 
 		int price = ((200 - _G(savegame)._wisdom) / 32) * idx;
-		s.writeString(Common::Point(9, y), "%c) %s", 'a' + idx, Data::SPELL_NAMES[idx]);
-		s.writeString(Common::Point(26, y), "-%3d", price);
-		++y;
+		drawShopLine(y++, 9, 26, idx, Data::SPELL_NAMES[idx], price, 3);
 	}
 }
 
@@ -634,21 +700,24 @@ void Merchant::magicBuyKeypress(Common::KeyCode keycode) {
 
 	writeString(Data::SPELL_NAMES[idx]);
 	redrawStats();
-	writeString("\n");
-	writeString("Sold!\n");
-	finish();
+	showText(false, true, { { 18, 9, "Sold!" } });
 }
 
 void Merchant::groceryPrompt() {
 	_mode = SHOP_QTY;
 	_amount.clear();
+	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
+	redraw();
+}
 
-	int pricePerPack = 5 - _G(savegame)._intelligence / 20;
-	writeString("\n");
-	writeString(Common::String::format("Packs of 10 food cost %d pence each.\n", pricePerPack));
-	resetLine();
-	writeString("\x10""How many dost thou wish to purchase? ");
-	showCursor();
+void Merchant::drawGroceryPrompt() {
+	auto s = getSurface();
+	s.setColor(_G(colors)._text);
+
+	int y = listY();
+	s.writeString(Common::Point(5, y + 2), " Packs of 10 food cost %d pence", 5 - _G(savegame)._intelligence / 20);
+	s.writeString(Common::Point(8, y + 3), "each.  How many dost thou");
+	s.writeString(Common::Point(11, y + 4), "wish to purchase?");
 }
 
 void Merchant::groceryKeypress(const KeypressMessage &msg) {
@@ -663,7 +732,7 @@ void Merchant::groceryKeypress(const KeypressMessage &msg) {
 		if (!_amount.empty()) {
 			_amount.deleteLastChar();
 			resetLine();
-			writeString(Common::String::format("\x10""How many dost thou wish to purchase? %s", _amount.c_str()));
+			writeString(Common::String::format("Transact-Buy: %s", _amount.c_str()));
 			showCursor();
 		}
 
@@ -673,45 +742,45 @@ void Merchant::groceryKeypress(const KeypressMessage &msg) {
 		int pricePerPack = 5 - sg._intelligence / 20;
 		int total = pricePerPack * qty;
 
-		writeString("\n");
-		if (qty == 0) {
-			nothing();
-		} else if (total > sg._coins) {
-			cantAfford();
+		if (qty == 0 || total > sg._coins) {
+			// The typed amount is replaced by "nothing"
+			resetLine();
+			writeString("Transact-Buy: ");
+
+			if (qty == 0)
+				nothing();
+			else
+				cantAfford();
 		} else {
 			sg._coins -= total;
 			sg._food += qty * 10;
 			redrawStats();
-			writeString(Common::String::format("%d packs food\n", qty));
-			writeString("Sold!\n");
-			finish();
+			writeString(" packs food");
+			showText(false, true, { { 18, 9, "Sold!" } });
 		}
 	}
 }
 
 void Merchant::tavernBuy() {
 	auto &sg = _G(savegame);
+	const int y = listY();
 
 	if (sg._coins == 0) {
-		writeString("\n");
-		writeString("Thou art broke!\n");
-		writeString("Come back when thou hast some money to spend.\n");
-		nothing();
+		showText(true, false, { { 12, y + 1, "Thou art broke!" }, { 8, y + 4, "Come back when thou hast" },
+			{ 10, y + 5, "some money to spend." } });
 		return;
 	}
 
 	--sg._coins;
 	redrawStats();
-	writeString("\n");
-	writeString("The tavern keeper sayeth:\n");
-	writeString("Here, have a cold one!\n");
 	writeString("ale");
 	++_G(map)._tavernCtr;
 
+	_screens.clear();
+	addScreen(false, { { 8, y + 1, "The tavern keeper sayeth:" }, { 9, y + 4, "Here, have a cold one!" } });
+
 	if (_G(map)._tavernCtr > sg._stamina / 4 && isWenchNearby()) {
-		writeString("\n");
-		writeString(TAVERN_TIPS[0]);
-		writeString("\n");
+		addTip(0);
 
 		sg._coins /= 2;
 		redrawStats();
@@ -720,35 +789,21 @@ void Merchant::tavernBuy() {
 			++sg._wisdom;
 	}
 
-	if (g_engine->getRandomNumber(1, 255) < 75) {
-		int tipIdx = g_engine->getRandomNumber(11, 89) / 10;
-		writeString("\n");
-		writeString("Thou had best know ");
+	if (g_engine->getRandomNumber(1, 255) < 75)
+		addTip(g_engine->getRandomNumber(11, 89) / 10);
 
-		if (tipIdx == 2)
-			writeString(Common::String::format("to watch the %s.", sg._sex == Data::SEX_MALE ? "wench" : "lecher"));
-		else
-			writeString(TAVERN_TIPS[tipIdx]);
-		writeString("\n");
-	}
-
-	finish();
+	showScreens(false);
 }
 
 void Merchant::drawTransportBuy() {
-	drawShopName();
-	auto s = getSurface();
-	s.setColor(_G(colors)._text);
-
-	int y = 8;
-	for (int i = 0; i < 6; ++i, ++y) {
+	int y = listY();
+	for (int i = 0; i < 6; ++i) {
 		if (_transportIds[i] == 0)
 			continue;
 
 		int transportId = _transportIds[i];
 		int price = ((200 - _G(savegame)._intelligence) / 5) * transportId * transportId;
-		s.writeString(Common::Point(11, y), "%c) %s", 'a' + i, Data::TRANSPORT_NAMES[transportId]);
-		s.writeString(Common::Point(22, y), "-%4d", price);
+		drawShopLine(y++, 12, 23, i, Data::TRANSPORT_NAMES[transportId], price, 4);
 	}
 }
 
@@ -782,9 +837,7 @@ void Merchant::transportBuyKeypress(Common::KeyCode keycode) {
 
 	spawnTransport(transportId);
 
-	writeString("\n");
-	writeString("Sold!\n");
-	finish();
+	showText(false, true, { { 18, 9, "Sold!" } });
 }
 
 void Merchant::spawnTransport(int transportId) {
@@ -797,7 +850,7 @@ void Merchant::spawnTransport(int transportId) {
 	switch (transportId) {
 	case Data::TRANSPORT_HORSE:
 	case Data::TRANSPORT_CART:
-		neededTile = (_G(map)._woodsCount > 0) ? Data::TILE_WOODS : Data::TILE_GRASS;
+		neededTile = (_G(savegame)._woodsCount > 0) ? Data::TILE_WOODS : Data::TILE_GRASS;
 		break;
 	case Data::TRANSPORT_RAFT:
 	case Data::TRANSPORT_FRIGATE:
@@ -834,20 +887,16 @@ void Merchant::spawnTransport(int transportId) {
 }
 
 void Merchant::nothing() {
-	writeString("nothing");
+	writeString("nothing\n");
 	finish();
 }
 
 void Merchant::cantAfford() {
-	writeString("nothing");
-	writeString("\n");
-	writeString("Thou canst not afford it!\n");
 	g_engine->playFX(1);
-	finish();
+	showText(true, true, { { 8, 9, "Thou canst not afford it!" } });
 }
 
 void Merchant::finish() {
-	writeString("\n");
 	prompt();
 	close();
 }

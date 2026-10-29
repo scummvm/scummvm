@@ -23,6 +23,7 @@
 #ifndef ULTIMA1_VIEWS_INTERACTIONS_MERCHANT_H
 #define ULTIMA1_VIEWS_INTERACTIONS_MERCHANT_H
 
+#include "common/array.h"
 #include "ultima/ultima1/views/interactions/interaction.h"
 
 namespace Ultima {
@@ -46,11 +47,26 @@ enum ShopType {
  */
 class Merchant : public Interaction {
 	enum Mode {
-		SHOP_PROMPT, SHOP_BUY, SHOP_SELL, SHOP_QTY
+		SHOP_PROMPT, SHOP_BUY, SHOP_SELL, SHOP_QTY, SHOP_MESSAGE
+	};
+
+	// A line of text within one of the shop dialog's message screens
+	struct ScreenLine {
+		int _x, _y;
+		const char *_text;
+	};
+
+	// A message screen shown in the shop dialog, optionally first clearing its inner area
+	struct Screen {
+		bool _clear = false;
+		Common::Array<ScreenLine> _lines;
 	};
 private:
 	ShopType _shopType = SHOP_ARMORY;
 	Mode _mode = SHOP_PROMPT;
+	Common::Array<Screen> _screens;
+	// Whether to finish with "nothing" typed after the last screen rather than a newline
+	bool _nothingAfter = false;
 	Common::String _amount;
 	// Which of the 6 transports (Horse..Shuttle) are offered this visit,
 	// indexed by the letter (a-f) used to select them; 0 means unavailable
@@ -68,10 +84,20 @@ private:
 	int shopVariant() const;
 
 	/**
-	 * Draws the current shop's proprietor name(s), if any, centered near
-	 * the top of the dialog
+	 * Draws the shop dialog's box and the shop's proprietor name(s)
 	 */
-	void drawShopName();
+	void drawFrame();
+
+	/**
+	 * Returns the row of the first line below the shop's name, which is
+	 * lower when the name takes two lines
+	 */
+	int listY() const;
+
+	/**
+	 * Draws one line of a shop's list of items, with its price
+	 */
+	void drawShopLine(int y, int nameX, int priceX, int letterIdx, const char *name, int price, int digits);
 
 	/**
 	 * Returns true if a wench (or, for a female player, a lecher) NPC is
@@ -84,6 +110,36 @@ private:
 	 * overworld map, used to cap the transport shop's available fleet
 	 */
 	int overworldTransportCount() const;
+
+	/**
+	 * Adds a message screen to the queue of screens to show
+	 */
+	void addScreen(bool clear, std::initializer_list<ScreenLine> lines);
+
+	/**
+	 * Shows the queued message screens one at a time, each waiting for a keypress
+	 */
+	void showScreens(bool nothingAfter);
+
+	/**
+	 * Shows a single message screen
+	 */
+	void showText(bool nothingAfter, bool clear, std::initializer_list<ScreenLine> lines);
+
+	/**
+	 * Moves on from the current message screen
+	 */
+	void nextScreen();
+
+	/**
+	 * Adds the screen(s) for one of the tavern keeper's tips
+	 */
+	void addTip(int tipIdx);
+
+	/**
+	 * Draws the grocer's quantity prompt
+	 */
+	void drawGroceryPrompt();
 
 	void chooseBuy();
 	void chooseSell();
