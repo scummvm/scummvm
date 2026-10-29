@@ -94,7 +94,7 @@ Actor::Actor() :
 		_puckOrient(false), _talking(false),
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
 		_sortOrder(0), _useParentSortOrder(false),
-		_sectorSortOrder(-1), _fakeUnbound(false), _lightMode(LightFastDyn),
+		_sectorSortOrder(0), _hasSectorSortOrder(false), _fakeUnbound(false), _lightMode(LightFastDyn),
 		_hasFollowedBoxes(false), _lookAtActor(0) {
 
 	// Some actors don't set walk and turn rates, so we default the
@@ -436,7 +436,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 		_attachedJoint = savedState->readString();
 
 		// will be recalculated in next update()
-		_sectorSortOrder = -1;
+		_sectorSortOrder = 0;
+		_hasSectorSortOrder = false;
 
 		if (savedState->saveMinorVersion() < 24) {
 			// Used to be the wear chore.
@@ -1539,12 +1540,15 @@ void Actor::update(uint frameTime) {
 		if (_followBoxes) {
 			// Check for sort order information in the current sector
 			int oldSortOrder = getEffectiveSortOrder();
-			_sectorSortOrder = set->findSectorSortOrder(_pos, Sector::WalkType);
+			Common::Pair<bool, int> sortInfo = set->findSectorSortOrder(_pos, Sector::WalkType);
+			_hasSectorSortOrder = sortInfo.first;
+			_sectorSortOrder = sortInfo.second;
 
 			if (oldSortOrder != getEffectiveSortOrder())
 				g_emi->invalidateSortOrder();
-		} else if (_sectorSortOrder >= 0) {
-			_sectorSortOrder = -1;
+		} else if (_hasSectorSortOrder) {
+			_hasSectorSortOrder = false;
+			_sectorSortOrder = 0;
 			g_emi->invalidateSortOrder();
 		}
 	}
@@ -2400,7 +2404,7 @@ int Actor::getEffectiveSortOrder() const {
 		Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
 		return attachedActor->getEffectiveSortOrder();
 	}
-	return _sectorSortOrder >= 0 ? _sectorSortOrder : getSortOrder();
+	return _hasSectorSortOrder ? _sectorSortOrder : getSortOrder();
 }
 
 void Actor::activateShadow(bool active, const char *shadowName) {

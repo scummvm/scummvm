@@ -719,6 +719,7 @@ private:
 
 	int _sortOrder;
 	int _sectorSortOrder;
+	bool _hasSectorSortOrder { false };
 	bool _useParentSortOrder;
 
 	bool _fakeUnbound;

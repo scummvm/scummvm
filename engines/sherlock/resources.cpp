@@ -119,11 +119,29 @@ void Resources::addToCache(const Common::Path &filename) {
 	if (_indexes.contains(filename))
 		return;
 
+	Common::File file;
+	if (!file.open(filename))
+		error("Could not read file - %s", filename.toString().c_str());
+
+	uint32 header = file.readUint32BE();
+	file.seek(0);
+
+	if (header == MKTAG('L', 'I', 'B', 26)) {
+		loadLibraryIndex(filename, &file, false);
+		file.close();
+		return;
+	} else if (header == MKTAG('L', 'I', 'C', 26)) {
+		loadLibraryIndex(filename, &file, true);
+		file.close();
+		return;
+	}
+
+	file.close();
 	_cache.load(filename);
 
-	// Check to see if the file is a library
-	Common::SeekableReadStream *stream = load(filename);
-	uint32 header = stream->readUint32BE();
+	Common::SeekableReadStream *stream = _cache.get(filename);
+	header = stream->readUint32BE();
+	stream->seek(0);
 
 	if (header == MKTAG('L', 'I', 'B', 26))
 		loadLibraryIndex(filename, stream, false);
@@ -155,16 +173,28 @@ Common::SeekableReadStream *Resources::load(const Common::Path &filename) {
 	// that has the same name
 	for (LibraryIndexes::iterator i = _indexes.begin(); i != _indexes.end(); ++i) {
 		if (i->_value.contains(filename)) {
-			// Get a stream reference to the given library file
-			Common::SeekableReadStream *stream = load(i->_key);
 			LibraryEntry &entry = i->_value[filename];
 			_resourceIndex = entry._index;
 
-			stream->seek(entry._offset);
-			Common::SeekableReadStream *resStream = stream->readStream(entry._size);
-			decompressIfNecessary(resStream);
+			if (_cache.isCached(i->_key)) {
+				Common::SeekableReadStream *stream = _cache.get(i->_key);
+				stream->seek(entry._offset);
+				Common::SeekableReadStream *resStream = stream->readStream(entry._size);
+				decompressIfNecessary(resStream);
 
-			delete stream;
+				delete stream;
+				return resStream;
+			}
+
+			Common::File library;
+			if (!library.open(i->_key))
+				error("Could not open library - %s", i->_key.toString().c_str());
+
+			library.seek(entry._offset);
+			Common::SeekableReadStream *resStream = library.readStream(entry._size);
+			library.close();
+
+			decompressIfNecessary(resStream);
 			return resStream;
 		}
 	}
@@ -196,12 +226,17 @@ void Resources::decompressIfNecessary(Common::SeekableReadStream *&stream) {
 
 Common::SeekableReadStream *Resources::load(const Common::Path &filename, const Common::Path &libraryFile,
 		bool suppressErrors) {
-	// Open up the library for access
-	Common::SeekableReadStream *libStream = load(libraryFile);
-
 	// Check if the library has already had its index read, and if not, load it
 	if (!_indexes.contains(libraryFile))
-		loadLibraryIndex(libraryFile, libStream, false);
+		addToCache(libraryFile);
+
+	if (!_indexes.contains(libraryFile)) {
+		if (!suppressErrors)
+			error("Could not load library - %s", libraryFile.toString().c_str());
+
+		return nullptr;
+	}
+
 	LibraryIndex &libIndex = _indexes[libraryFile];
 
 	// Handle if resource is not present
@@ -209,23 +244,57 @@ Common::SeekableReadStream *Resources::load(const Common::Path &filename, const 
 		if (!suppressErrors)
 			error("Could not find resource - %s", filename.toString().c_str());
 
-		delete libStream;
 		return nullptr;
 	}
 
 	// Extract the data for the specified resource and return it
 	LibraryEntry &entry = libIndex[filename];
-	libStream->seek(entry._offset);
-	Common::SeekableReadStream *stream = libStream->readStream(entry._size);
-	decompressIfNecessary(stream);
+	_resourceIndex = entry._index;
 
-	delete libStream;
+	if (_cache.isCached(libraryFile)) {
+		Common::SeekableReadStream *libStream = _cache.get(libraryFile);
+		libStream->seek(entry._offset);
+		Common::SeekableReadStream *stream = libStream->readStream(entry._size);
+		decompressIfNecessary(stream);
+
+		delete libStream;
+		return stream;
+	}
+
+	Common::File library;
+	if (!library.open(libraryFile)) {
+		if (!suppressErrors)
+			error("Could not open library - %s", libraryFile.toString().c_str());
+
+		return nullptr;
+	}
+
+	library.seek(entry._offset);
+	Common::SeekableReadStream *stream = library.readStream(entry._size);
+	library.close();
+
+	if (!stream) {
+		if (!suppressErrors)
+			error("Could not read resource - %s", filename.toString().c_str());
+
+		return nullptr;
+	}
+
+	decompressIfNecessary(stream);
 	return stream;
 }
 
 bool Resources::exists(const Common::Path &filename) const {
 	Common::File f;
-	return f.exists(filename) || _cache.isCached(filename);
+	if (f.exists(filename) || _cache.isCached(filename))
+		return true;
+
+	for (LibraryIndexes::const_iterator i = _indexes.begin(); i != _indexes.end(); ++i) {
+		if (i->_value.contains(filename))
+			return true;
+	}
+
+	return false;
 }
 
 void Resources::loadLibraryIndex(const Common::Path &libFilename,
