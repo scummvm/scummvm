@@ -841,6 +841,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
+	// English/Korean Windows, v1.0 USA Family Demo (Arisumedia, English text with Korean voice)
+	{
+		{
+			"zoombini",
+			"v1.0US-KO Demo",
+			AD_ENTRY3s("DATA/ZOOMBINI.MHK", "cfa2db71d571a40a4ae692606547e391", 1492603,
+					   "DATA/PIZZA.MHK", "b7731f50a514f0bf56adb09d1bffcb9f", 5362695,
+					   "ZOOM.EXE", "951c5e7a3caa6a2afede16ff03433a1e", 936976),
+			Common::EN_USA, //< Keep this as English to apply v1.0US text layout config.
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
+		},
+		GType_ZOOMBINI,
+		GF_ZMB_10_US,
+		0
+	},
+
+	// Logical Journey of the Zoombinis
 	// Spanish Windows, v1.0 USA family (Broderbund release)
 	// Build Date: 1996-06-14
 	// From Hajin Jang
