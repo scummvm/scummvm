@@ -123,8 +123,10 @@ public:
 	InvButton *findItemButton(int16 itemID) const;
 	bool isItemButton(const Common::String &name) const;
 
-	// The edit box that gets typed into, when the panel is up
+	// The edit box that gets typed into, when the panel is up: the one that was
+	// clicked last, or else the first one
 	EditBox *getKeyboardFocus() const;
+	void setKeyboardFocus(EditBox *editBox) { _focus = editBox; }
 
 	// Places the visible controls one after another, when the panel asks for it
 	void arrangeControls();
@@ -163,6 +165,7 @@ private:
 	Common::Array<Control *> _arrangeOrder;
 	Common::Array<RadioButton *> _radioButtons;
 	Common::Array<EditBox *> _editBoxes;
+	EditBox *_focus = nullptr;
 	int _nextID = 1;
 
 	Arrangement _arrangement = kArrangeNone;

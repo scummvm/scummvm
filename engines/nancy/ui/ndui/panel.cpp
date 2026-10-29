@@ -648,6 +648,10 @@ bool Panel::removeControl(const Common::String &name) {
 			}
 		}
 
+		if (_focus == control) {
+			_focus = nullptr;
+		}
+
 		if (_capture == control) {
 			_capture = nullptr;
 		}
@@ -663,6 +667,10 @@ bool Panel::removeControl(const Common::String &name) {
 EditBox *Panel::getKeyboardFocus() const {
 	if (!isVisible() || !_enabled) {
 		return nullptr;
+	}
+
+	if (_focus && _focus->isVisible() && _focus->isEnabled()) {
+		return _focus;
 	}
 
 	for (EditBox *editBox : _editBoxes) {

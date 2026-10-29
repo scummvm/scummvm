@@ -234,7 +234,7 @@ void EditBox::draw(Graphics::ManagedSurface &surface, const Common::Point &offse
 			argbToColor(area.format, _selectedTextColor | 0xFF000000));
 	}
 
-	if (_isCaretShown) {
+	if (_isCaretShown && _panel->getKeyboardFocus() == this) {
 		int caretX = x + getCharX(_caret);
 		Common::Rect caret(caretX - 1, 0, caretX + 1, area.h);
 		caret.clip(Common::Rect(area.w, area.h));
@@ -243,6 +243,7 @@ void EditBox::draw(Graphics::ManagedSurface &surface, const Common::Point &offse
 }
 
 bool EditBox::onMouseDown(const Common::Point &pos) {
+	_panel->setKeyboardFocus(this);
 	moveCaret(getCharAt(pos.x), false);
 	return true;
 }
