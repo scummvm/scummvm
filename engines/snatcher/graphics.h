@@ -227,8 +227,8 @@ private:
 	uint8 _verbAreaType;
 
 	uint8 *_animSaveLoadData;
-	//Common::SharedPtr<const uint8> _animSaveLoadDataExt;
-	bool _animSaveLoadDataExt;
+	Common::SharedPtr<const uint8> _animSaveLoadDataExt;
+	bool _trsNeedsUpdate;
 
 	uint8 *_screen;
 	Animator *_animator;

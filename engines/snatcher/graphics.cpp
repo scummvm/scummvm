@@ -35,7 +35,8 @@
 namespace Snatcher {
 
 GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd, bool enableAspectRatioCorrection) :
-	_system(system), _state(vmstate), _animator(nullptr), _text(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _verbAreaType(0), _animSaveLoadData(nullptr), _animSaveLoadDataExt() {
+	_system(system), _state(vmstate), _animator(nullptr), _text(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _verbAreaType(0), _animSaveLoadData(nullptr),
+		_animSaveLoadDataExt(), _trsNeedsUpdate(false) {
 	assert(system);
 	_palette = Palette::create(pxf, _system->getPaletteManager(), platform, _state);
 	assert(_palette);
@@ -282,12 +283,20 @@ void GraphicsEngine::loadState(Common::SeekableReadStream *in, SaveFlags flags) 
 	if (flags & (kSaveFlagsTempData))
 		return;
 
-	_animSaveLoadDataExt = true;
-
 	for (int i = 0; i < 13; ++i)
 		_state.setVar(i, in->readByte());
 
 	_trs->loadState(in);
+	_trsNeedsUpdate = true;
+
+	if (flags & (kSaveFlagsScriptedSave))
+		return;
+
+	uint16 size = in->readSint16BE();
+	uint8 *data = new uint8[size]();
+	assert(data);
+	in->read(data, size);
+	_animSaveLoadDataExt = Common::SharedPtr<const uint8>(data, Common::ArrayDeleter<const uint8>());
 }
 
 void GraphicsEngine::saveState(Common::SeekableWriteStream *out, SaveFlags flags) {
@@ -319,6 +328,79 @@ void GraphicsEngine::saveState(Common::SeekableWriteStream *out, SaveFlags flags
 		out->writeByte(_state.getVar(i));
 
 	_trs->saveState(out);
+
+	if (flags & (kSaveFlagsScriptedSave))
+		return;
+
+	int count = 0;
+	for (int i = 0; i < 64; ++i) {
+		if (_animSaveLoadData[i])
+			++count;
+	}
+	uint8 *data = new uint8[count * 29]();
+	uint8 *d = data;
+
+	for (int i = 0; i < 64; ++i) {
+		if (_animSaveLoadData[i] == 0)
+			continue;
+
+		uint8 v = (getAnimParameter(i, kAnimParaScriptComFlags) & 2) >> 1;
+		v |= getAnimParameter(i, kAnimParaDrawFlags) << 1;
+		v |= (getAnimParameter(i, kAnimFreezeFlag) ? 0x20 : 0);
+		*d++ = v;
+
+		uint16 b = getAnimParameter(i, kAnimParaPosX);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+		b = getAnimParameter(i, kAnimParaPosY);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+		b = getAnimParameter(i, kAnimParaRelSpeedX);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+		b = getAnimParameter(i, kAnimParaRelSpeedY);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+
+		v = getAnimParameter(i, kAnimParaOvrTile) & 0xFC;
+		uint8 v2 = (getAnimParameter(i, kAnimParaPhase) & 0xF3);
+		b = ((v2 & 0xF0) << 8) | (v2 & 0x0F) | v;
+		v = getAnimParameter(i, kAnimParaPalette) & 0x83;
+		b |= (((v & 0x80) << 4) | ((v & 0x03) << 9));
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+
+		b = getAnimParameter(i, kAnimParaTarget);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+		v = getAnimParameter(i, kAnimParaF1c);
+		*d++ = v;
+
+		uint32 t = getAnimParameter(i, kAnimParaTimeStamp);
+		WRITE_BE_UINT32(d, t);
+		d += 4;
+		v = getAnimParameter(i, kAnimParaFrameSeqCounter);
+		*d++ = v;
+		b = getAnimParameter(i, kAnimParaFrame);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+		b = getAnimParameter(i, kAnimParaFrameDelay);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+		b = getAnimParameter(i, kAnimParaActionTimer);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+		b = getAnimParameter(i, kAnimParaAbsSpeedX);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+		b = getAnimParameter(i, kAnimParaAbsSpeedY);
+		WRITE_BE_UINT16(d, b);
+		d += 2;
+	}
+
+	out->writeUint16BE(d - data);
+	out->write(data, d - data);
+	delete[] data;
 }
 
 void GraphicsEngine::postLoadProcess() {
@@ -343,10 +425,57 @@ void GraphicsEngine::postLoadProcess() {
 		setAnimParameter(i, kAnimParaAllowFrameDrop, (v & 0x20) ? 1 : 0);
 	}
 
-	if (!(_animSaveLoadDataExt))
+	if (_trsNeedsUpdate)
+		_trs->postLoadProcess();
+	_trsNeedsUpdate = false;
+
+	if (_animSaveLoadDataExt == nullptr)
 		return;
 
-	_trs->postLoadProcess();
+	const uint8 *s = _animSaveLoadDataExt.get();
+	for (int i = 0; i < 64; ++i) {
+		if (_animSaveLoadData[i] == 0)
+			continue;
+
+		uint16 v = *s++;
+		setAnimParameter(i, kAnimParaScriptComFlags, getAnimParameter(i, kAnimParaScriptComFlags) | ((v & 1) << 1));
+		setAnimParameter(i, kAnimParaDrawFlags, (v & 0x1E) >> 1);
+		setAnimParameter(i, kAnimFreezeFlag, (v & 0x20) >> 5);
+
+		setAnimParameter(i, kAnimParaPosX, READ_BE_INT16(s));
+		s += 2;
+		setAnimParameter(i, kAnimParaPosY, READ_BE_INT16(s));
+		s += 2;
+		setAnimParameter(i, kAnimParaRelSpeedX, READ_BE_INT16(s));
+		s += 2;
+		setAnimParameter(i, kAnimParaRelSpeedY, READ_BE_INT16(s));
+		s += 2;
+
+		v = READ_BE_INT16(s);
+		s += 2;
+		setAnimParameter(i, kAnimParaOvrTile, v & 0xFC);
+		setAnimParameter(i, kAnimParaPhase, ((v >> 8) & 0xF0) | (v & 3));
+		setAnimParameter(i, kAnimParaPalette, ((v >> 4) & 0x80) | ((v >> 9) & 0x03));
+
+		setAnimParameter(i, kAnimParaTarget, READ_BE_UINT16(s));
+		s += 2;
+		setAnimParameter(i, kAnimParaF1c, *s++);
+		setAnimParameter(i, kAnimParaTimeStamp, READ_BE_UINT32(s));
+		s += 4;
+		setAnimParameter(i, kAnimParaFrameSeqCounter, *s++);
+		setAnimParameter(i, kAnimParaFrame, READ_BE_UINT16(s));
+		s += 2;
+		setAnimParameter(i, kAnimParaFrameDelay, READ_BE_UINT16(s));
+		s += 2;
+		setAnimParameter(i, kAnimParaActionTimer, READ_BE_UINT16(s));
+		s += 2;
+		setAnimParameter(i, kAnimParaAbsSpeedX, READ_BE_INT16(s));
+		s += 2;
+		setAnimParameter(i, kAnimParaAbsSpeedY, READ_BE_INT16(s));
+		s += 2;
+	}
+
+	_animSaveLoadDataExt.reset();
 }
 
 void GraphicsEngine::createMouseCursor() {
