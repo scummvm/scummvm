@@ -263,20 +263,23 @@ reg_t GfxText32::createTitledFontBitmap(int16 width, int16 height, const Common:
 }
 
 void GfxText32::setFont(const GuiResourceId fontId) {
-	// GK1 CD high-resolution text: draw fonts 0, 4, 30, 40, and 999 at native
-	// 640x480 with 2x glyphs
+	// GK1 CD high-resolution text:
+	// - Font 30 (Ask About): remap to font 2 at native 640x480, 1x glyphs
+	// - Fonts 4, 0, 40, and 999: native 640x480 with 2x glyphs
 	const bool hiresOn = g_sci->useHiresText() && g_sci->_gfxFrameout && g_sci->_gfxFrameout->isHiRes();
-	const bool scaleLowResFont = hiresOn && (fontId == 4 || fontId == 0 || fontId == 30 || fontId == 40 || fontId == 999);
+	const bool remapAskAbout = hiresOn && fontId == 30;
+	const bool scaleLowResFont = hiresOn && (fontId == 4 || fontId == 0 || fontId == 40 || fontId == 999);
+	const GuiResourceId resolvedFontId = remapAskAbout ? 2 : fontId;
 
-	resetTextResolution(scaleLowResFont);
+	resetTextResolution(remapAskAbout || scaleLowResFont);
 	_hiresTextScale = scaleLowResFont ? 2 : 1;
 
 	// In SSCI, this calls FontMgr::BuildFontTable, and then a font table is
 	// built on the FontMgr directly; instead, because we already have GfxFont
 	// resources from SCI16 and those resources did not change in SCI32, this
 	// code just grabs those out of GfxCache
-	if (fontId != _fontId) {
-		_fontId = fontId;
+	if (resolvedFontId != _fontId) {
+		_fontId = resolvedFontId;
 		_font = _cache->getFont(_fontId);
 	}
 }
@@ -779,6 +782,9 @@ void GfxText32::getTextDimensions(const uint index, uint length, int16 &width, i
 				}
 
 				if (length > 0) {
+					if (fontId == 30 && g_sci->useHiresText() && g_sci->_gfxFrameout && g_sci->_gfxFrameout->isHiRes()) {
+						fontId = 2;
+					}
 					font = _cache->getFont(fontId);
 				}
 			}
