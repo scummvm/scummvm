@@ -3668,25 +3668,25 @@ void ZoombiniText::initMacintoshFonts() {
 		_titleFont.point = 16;
 		// We need specifically Osaka 4.2 from the Mac OS 9 Japanese Language Kit, not from the KanjiTalk 7.5.3.
 		// The latter does not contain Unicode cmap, which is required by FreeType.
-		_optimalTTFLoaders.push_back(new MacResForkTTFLoader("Osaka", "Osaka", 16384, kSizeMode));
-		_optimalTTFLoaders.push_back(new FileTTFLoader("Osaka.ttf", "Osaka", false, 0, kSizeMode));
-		_fallbackTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", "MS Gothic", false, 0, kSizeMode));
+		_optimalTTFLoaders.push_back(new MacResForkTTFLoader("Osaka", 16384, "Osaka", kSizeMode));
+		_optimalTTFLoaders.push_back(new FileTTFLoader("Osaka.ttf", "Osaka", kSizeMode));
+		_fallbackTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", "MS Gothic", kSizeMode));
 #if defined(WIN32)
-		_fallbackTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", "MS Gothic", false, 0, kSizeMode));
+		_fallbackTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", "MS Gothic", kSizeMode));
 #endif
 		// Without hinting, quality of modern CJK font rendering in low resolution is terrible.
 		// Thus, prefer light hinting for modern CJK fonts when RGB rendering is available.
-		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic", Graphics::kTTFRenderModeLight, kSizeMode));
-		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", Graphics::kTTFRenderModeLight, kSizeMode));
+		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic", kSizeMode, Graphics::kTTFRenderModeLight));
+		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", kSizeMode, Graphics::kTTFRenderModeLight));
 		return;
 	case Common::EN_USA:
 	case Common::EN_GRB:
 	default:
 		break;
 	}
-	_optimalTTFLoaders.push_back(new MacResForkTTFLoader(_relInfo.getMacApplicationName(), "Cornerstone", 2863, kSizeMode));
+	_optimalTTFLoaders.push_back(new MacResForkTTFLoader(_relInfo.getMacApplicationName(), 2863, "Cornerstone", kSizeMode));
 	if (_fallbackTTFLoaders.empty())
-		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("LiberationMono-Bold.ttf", "Liberation Mono", false, 0, kSizeMode));
+		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("LiberationMono-Bold.ttf", "Liberation Mono", kSizeMode));
 }
 
 void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
@@ -3746,33 +3746,33 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 		if (fontCabinet) {
 			const Common::String cabinetPath = Common::String::format("'/%s'", fontCabinet);
 			fontSrcInst = Common::U32String::format(srcInstTemplate, cabinetPath.c_str()).encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new ISCabTTFLoader(fontCabinet, "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new ISCabTTFLoader(fontCabinet, "CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
 		} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) { // v1.0JP
 			// Japanese Zoombini depends on 'MS Gothic' font named as 'msgothic.ttc'.
 			// The font is distributed with Windows and is not included on the game CD.
 			// Users have to source the required font themselves!
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'msgothic.ttc'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", kFontNameMsGothic, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("msgothic.ttc", kFontNameMsGothic, fontSrcInst, fontSizeMode));
 #if defined(WIN32)
 			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "msgothic.ttc", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", kFontNameMsGothic, systemFontWarn, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", kFontNameMsGothic, systemFontWarn, fontSizeMode));
 #endif
 			// Without hinting, quality of modern CJK font rendering in low resolution is terrible.
 			// Thus, prefer light hinting for modern CJK fonts when RGB rendering is available.
-			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic", Graphics::kTTFRenderModeLight, fontSizeMode));
-			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", Graphics::kTTFRenderModeLight, fontSizeMode));
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic", fontSizeMode, Graphics::kTTFRenderModeLight));
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", fontSizeMode, Graphics::kTTFRenderModeLight));
 		} else {
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
 		}
 	} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kUsV11)) { // Broderbund v1.1 US release
 		if (language == Common::EN_USA) {
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/ZBARC32.Z', '/ZBARC16.Z', or '/SETUP/data1.cab'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC32.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC16.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new ISCabTTFLoader("SETUP/data1.cab", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC32.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
+			_optimalTTFLoaders.push_back(new ISZTTFLoader("ZBARC16.Z", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
+			_optimalTTFLoaders.push_back(new ISCabTTFLoader("SETUP/data1.cab", "CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
 		} else if (language == Common::KO_KOR) {
 			// Korean Zoombini depends on GulimChe font named as 'gulim.ttc'.
 			// The font is distributed with Windows and is not included on the game CD.
@@ -3781,16 +3781,18 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 			// FreeType loads TrueType scaler bitmaps (sbits) from gulim.ttc's EBDT/EBLC tables.
 			// It uses the matching strike (the bitmap set for a given size) when available.
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'gulim.ttc'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("gulim.ttc", kFontNameGulimChe, fontSrcInst, true, 1, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("gulim.ttc", kFontNameGulimChe, fontSrcInst,
+														   fontSizeMode, Graphics::kTTFRenderModeMonochrome, 1, true));
 #if defined(WIN32)
 			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "gulim.ttc", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new WinSysTTFLoader("gulim.ttc", kFontNameGulimChe, systemFontWarn, true, 1, fontSizeMode));
+			_optimalTTFLoaders.push_back(new WinSysTTFLoader("gulim.ttc", kFontNameGulimChe, systemFontWarn,
+															 fontSizeMode, Graphics::kTTFRenderModeMonochrome, 1, true));
 #endif
 			_textFont.point = 12;
 			_titleFont.point = 18;
 			// Without hinting, quality of Noto Sans rendering in low resolution is terrible.
 			// Thus, prefer light hinting for Noto Sans when RGB rendering is available.
-			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansKR-Bold.otf", "Noto Sans KR Bold", Graphics::kTTFRenderModeLight, fontSizeMode));
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansKR-Bold.otf", "Noto Sans KR Bold", fontSizeMode, Graphics::kTTFRenderModeLight));
 			// TODO: Unifont support? The font is small while supporting every possible Unicode glyphs.
 		} else {
 			error("ZoombiniText: unsupported language (%s) for Broderbund v1.1 US-based release", Common::getLanguageDescription(language));
@@ -3799,21 +3801,21 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 	} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) { // The Learning Company v2.0 release family
 		if (_relInfo.isDemo(ZmbReleaseInfo::Family::kTlcV20)) {
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
 		} else if (language == Common::EN_USA) {
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/INSTALL/HD/CORNER.TTF'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("INSTALL/HD/CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("INSTALL/HD/CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
 		} else if (language == Common::PL_POL) {
 			// Polish Zoombini uses Tahoma, a font distributed with Windows.
 			// Strange enough, Tahoma is embedded in CD-ROM named as 'CORNER.TTF'.
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/INSTALL/HD/CORNER.TTF'").encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new FileTTFLoader("INSTALL/HD/CORNER.TTF", kFontNameTahoma, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameTahoma, fontSrcInst, false, 0, fontSizeMode));
-			_optimalTTFLoaders.push_back(new FileTTFLoader("tahoma.ttf", kFontNameTahoma, fontSrcInst, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("INSTALL/HD/CORNER.TTF", kFontNameTahoma, fontSrcInst, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameTahoma, fontSrcInst, fontSizeMode));
+			_optimalTTFLoaders.push_back(new FileTTFLoader("tahoma.ttf", kFontNameTahoma, fontSrcInst, fontSizeMode));
 #if defined(WIN32)
 			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "tahoma.ttf", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
-			_optimalTTFLoaders.push_back(new WinSysTTFLoader("tahoma.ttf", kFontNameTahoma, systemFontWarn, false, 0, fontSizeMode));
+			_optimalTTFLoaders.push_back(new WinSysTTFLoader("tahoma.ttf", kFontNameTahoma, systemFontWarn, fontSizeMode));
 #endif
 		} else {
 			error("ZoombiniText: unsupported language (%s) for The Learning Company v2.0 based release", Common::getLanguageDescription(language));
@@ -3824,7 +3826,7 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 		return;
 	}
 	if (_fallbackTTFLoaders.empty())
-		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("LiberationMono-Bold.ttf", "Liberation Mono", false, 0, fontSizeMode));
+		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("LiberationMono-Bold.ttf", "Liberation Mono", fontSizeMode));
 }
 
 ZoombiniText::~ZoombiniText() {
@@ -4532,7 +4534,7 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 			continue;
 
 		state.cacheName = loader->getCacheName(state.point);
-		state.enableHinting = loader->usesAntialiasing();
+		state.enableHinting = loader->isAntialiasingEnabled();
 		return font;
 	}
 
@@ -4616,7 +4618,7 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 		}
 
 		state.cacheName = loader->getCacheName(state.point);
-		state.enableHinting = loader->usesAntialiasing();
+		state.enableHinting = loader->isAntialiasingEnabled();
 		return font;
 	}
 

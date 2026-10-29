@@ -38,37 +38,46 @@
 
 namespace Mohawk {
 
-TTFLoader::TTFLoader(const Common::String &fileName, const Common::String &faceName,
-					 bool bold, int32 faceIndex, Graphics::TTFSizeMode sizeMode)
-	: TTFLoader(fileName, faceName, Common::String(), bold, faceIndex, sizeMode) {
+TTFLoader::TTFLoader(const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: TTFLoader(fileName, faceName, Common::String(), sizeMode, renderMode, faceIndex, fakeBold, fakeItalic) {
 }
 
-TTFLoader::TTFLoader(const Common::String &fileName, const Common::String &faceName,
-					 const Common::String &srcInst, bool bold, int32 faceIndex,
-					 Graphics::TTFSizeMode sizeMode)
-	: TTFLoader(fileName, faceName, srcInst, bold, faceIndex,
-				Graphics::kTTFRenderModeMonochrome, sizeMode) {
-}
-
-TTFLoader::TTFLoader(const Common::String &fileName, const Common::String &faceName,
-					 const Common::String &srcInst, bool bold, int32 faceIndex,
-					 Graphics::TTFRenderMode renderMode, Graphics::TTFSizeMode sizeMode)
-	: _filePath(Common::Path(fileName)), _faceName(faceName), _bold(bold), _faceIndex(faceIndex),
+TTFLoader::TTFLoader(const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: _filePath(Common::Path(fileName)), _faceName(faceName), _fakeBold(fakeBold), _fakeItalic(fakeItalic), _faceIndex(faceIndex),
 	  _srcInst(srcInst), _renderMode(renderMode), _sizeMode(sizeMode) {
 }
 
 Common::String TTFLoader::getCacheName(int point) const {
-	switch (_renderMode) {
-	case Graphics::kTTFRenderModeLight:
-		if (_sizeMode == Graphics::kTTFSizeModeCell)
-			return Common::String::format("%s@%d-cell-light", _faceName.c_str(), point);
-		return Common::String::format("%s@%d-char-light", _faceName.c_str(), point);
-	case Graphics::kTTFRenderModeMonochrome:
+	const char *sizeModeTag = "unk";
+	switch (_sizeMode) {
+	case Graphics::kTTFSizeModeCell:
+		sizeModeTag = "cell";
+		break;
+	case Graphics::kTTFSizeModeCharacter:
+		sizeModeTag = "char";
+		break;
 	default:
-		if (_sizeMode == Graphics::kTTFSizeModeCell)
-			return Common::String::format("%s@%d-cell-mono", _faceName.c_str(), point);
-		return Common::String::format("%s@%d-char-mono", _faceName.c_str(), point);
+		break;
 	}
+
+	const char *renderModeTag = "unk";
+	switch (_renderMode) {
+	case Graphics::kTTFRenderModeNormalWithGridFitting:
+		renderModeTag = "gridfit";
+		break;
+	case Graphics::kTTFRenderModeNormal:
+		renderModeTag = "normal";
+		break;
+	case Graphics::kTTFRenderModeLight:
+		renderModeTag = "light";
+		break;
+	case Graphics::kTTFRenderModeMonochrome:
+		renderModeTag = "mono";
+		break;
+	default:
+		break;
+	}
+	return Common::String::format("%s@%d-%s-%s", _faceName.c_str(), point, sizeModeTag, renderModeTag);
 }
 
 const Graphics::Font *TTFLoader::loadFont(int point) {
@@ -83,15 +92,20 @@ const Graphics::Font *TTFLoader::loadFont(int point) {
 	return font;
 }
 
-bool TTFLoader::usesAntialiasing() const {
-	return _renderMode != Graphics::kTTFRenderModeMonochrome;
+bool TTFLoader::isAntialiasingEnabled() const {
+	switch (_renderMode) {
+	case Graphics::kTTFRenderModeNormal:
+	case Graphics::kTTFRenderModeLight:
+	case Graphics::kTTFRenderModeNormalWithGridFitting:
+		return true;
+	case Graphics::kTTFRenderModeMonochrome:
+	default:
+		return false;
+	}
 }
 
-bool TTFLoader::isFontNameEqual(TTFLoader *other) {
-	if (!other)
-		return false;
-
-	return _filePath.equalsIgnoreCase(other->_filePath);
+void TTFLoader::setRenderMode(Graphics::TTFRenderMode renderMode) {
+	_renderMode = renderMode;
 }
 
 const Graphics::Font *TTFLoader::getCachedFont(int point) const {
@@ -102,15 +116,12 @@ void TTFLoader::cacheFont(int point, const Graphics::Font *font) {
 	FontMan.assignFontToName(getCacheName(point), font);
 }
 
-FileTTFLoader::FileTTFLoader(const Common::String &fileName, const Common::String &faceName,
-							 bool bold, int32 faceIndex, Graphics::TTFSizeMode sizeMode)
-	: TTFLoader(fileName, faceName, Common::String(), bold, faceIndex, sizeMode) {
+FileTTFLoader::FileTTFLoader(const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: TTFLoader(fileName, faceName, sizeMode, renderMode, faceIndex, fakeBold, fakeItalic) {
 }
 
-FileTTFLoader::FileTTFLoader(const Common::String &fileName, const Common::String &faceName,
-							 const Common::String &srcInst, bool bold, int32 faceIndex,
-							 Graphics::TTFSizeMode sizeMode)
-	: TTFLoader(fileName, faceName, srcInst, bold, faceIndex, sizeMode) {
+FileTTFLoader::FileTTFLoader(const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: TTFLoader(fileName, faceName, srcInst, sizeMode, renderMode, faceIndex, fakeBold, fakeItalic) {
 }
 
 bool FileTTFLoader::hasStream() {
@@ -137,18 +148,17 @@ const Graphics::Font *FileTTFLoader::loadFontCore(int point) {
 #else
 	Common::SeekableReadStream *stream = getStream();
 	if (stream) {
-		font = Graphics::loadTTFFont(stream, DisposeAfterUse::YES, point,
-									 _sizeMode, 0, 0, _renderMode, 0, false,
-									 _faceIndex, _bold, false);
+		font = Graphics::loadTTFFont(stream, DisposeAfterUse::YES, point, _sizeMode, 0, 0, _renderMode, 0, false, _faceIndex, _fakeBold, _fakeItalic);
+		if (!font)
+			delete stream;
 	}
 #endif
 #endif
 	return font;
 }
 
-MacResForkTTFLoader::MacResForkTTFLoader(const Common::String &application, const Common::String &faceName, uint16 resourceId,
-										 Graphics::TTFSizeMode sizeMode)
-	: FileTTFLoader(application, faceName, false, 0, sizeMode), _resourceId(resourceId) {
+MacResForkTTFLoader::MacResForkTTFLoader(const Common::String &appPath, uint16 resourceId, const Common::String &faceName, Graphics::TTFSizeMode sizeMode)
+	: FileTTFLoader(appPath, faceName, sizeMode), _resourceId(resourceId) {
 }
 
 bool MacResForkTTFLoader::hasStream() {
@@ -159,23 +169,18 @@ bool MacResForkTTFLoader::hasStream() {
 }
 
 Common::SeekableReadStream *MacResForkTTFLoader::getStream() {
-	Common::MacResManager application;
-	if (!application.open(_filePath))
+	Common::MacResManager appMacRes;
+	if (!appMacRes.open(_filePath))
 		return nullptr;
-	return application.getResource(MKTAG('s', 'f', 'n', 't'), _resourceId);
+	return appMacRes.getResource(MKTAG('s', 'f', 'n', 't'), _resourceId);
 }
 
-ISCabTTFLoader::ISCabTTFLoader(const Common::String &iscabFile,
-							   const Common::String &fileName, const Common::String &faceName,
-							   bool bold, int32 faceIndex, Graphics::TTFSizeMode sizeMode)
-	: ISCabTTFLoader(iscabFile, fileName, faceName, Common::String(), bold, faceIndex, sizeMode) {
+ISCabTTFLoader::ISCabTTFLoader(const Common::String &iscabFile, const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: ISCabTTFLoader(iscabFile, fileName, faceName, Common::String(), sizeMode, renderMode, faceIndex, fakeBold, fakeItalic) {
 }
 
-ISCabTTFLoader::ISCabTTFLoader(const Common::String &iscabFile,
-							   const Common::String &fileName, const Common::String &faceName,
-							   const Common::String &srcInst, bool bold, int32 faceIndex,
-							   Graphics::TTFSizeMode sizeMode)
-	: FileTTFLoader(fileName, faceName, srcInst, bold, faceIndex, sizeMode),
+ISCabTTFLoader::ISCabTTFLoader(const Common::String &iscabFile, const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: FileTTFLoader(fileName, faceName, srcInst, sizeMode, renderMode, faceIndex, fakeBold, fakeItalic),
 	  _iscabPath(Common::Path(iscabFile)), _inPath(Common::Path(fileName, Common::Path::kNoSeparator)) {
 }
 
@@ -212,17 +217,12 @@ void ISCabTTFLoader::closeArchive() {
 	}
 }
 
-ISZTTFLoader::ISZTTFLoader(const Common::String &iszFile,
-						   const Common::String &fileName, const Common::String &faceName,
-						   bool bold, int32 faceIndex, Graphics::TTFSizeMode sizeMode)
-	: ISZTTFLoader(iszFile, fileName, faceName, Common::String(), bold, faceIndex, sizeMode) {
+ISZTTFLoader::ISZTTFLoader(const Common::String &iszFile, const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: ISZTTFLoader(iszFile, fileName, faceName, Common::String(), sizeMode, renderMode, faceIndex, fakeBold, fakeItalic) {
 }
 
-ISZTTFLoader::ISZTTFLoader(const Common::String &iszFile,
-						   const Common::String &fileName, const Common::String &faceName,
-						   const Common::String &srcInst, bool bold, int32 faceIndex,
-						   Graphics::TTFSizeMode sizeMode)
-	: FileTTFLoader(fileName, faceName, srcInst, bold, faceIndex, sizeMode),
+ISZTTFLoader::ISZTTFLoader(const Common::String &iszFile, const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: FileTTFLoader(fileName, faceName, srcInst, sizeMode, renderMode, faceIndex, fakeBold, fakeItalic),
 	  _iszPath(Common::Path(iszFile)), _inPath(Common::Path(fileName, Common::Path::kNoSeparator)) {
 }
 
@@ -265,16 +265,12 @@ void ISZTTFLoader::closeArchive() {
 	}
 }
 
-WinSysTTFLoader::WinSysTTFLoader(const Common::String &fileName,
-								 const Common::String &faceName, bool bold, int32 faceIndex,
-								 Graphics::TTFSizeMode sizeMode)
-	: FileTTFLoader(fileName, faceName, bold, faceIndex, sizeMode) {
+WinSysTTFLoader::WinSysTTFLoader(const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: FileTTFLoader(fileName, faceName, sizeMode, renderMode, faceIndex, fakeBold, fakeItalic) {
 }
 
-WinSysTTFLoader::WinSysTTFLoader(const Common::String &fileName,
-								 const Common::String &faceName, const Common::String &srcInst,
-								 bool bold, int32 faceIndex, Graphics::TTFSizeMode sizeMode)
-	: FileTTFLoader(fileName, faceName, srcInst, bold, faceIndex, sizeMode) {
+WinSysTTFLoader::WinSysTTFLoader(const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: FileTTFLoader(fileName, faceName, srcInst, sizeMode, renderMode, faceIndex, fakeBold, fakeItalic) {
 }
 
 bool WinSysTTFLoader::hasStream() {
@@ -324,31 +320,18 @@ bool WinSysTTFLoader::getFileNode(Common::FSNode &node) {
 #endif
 }
 
-ArchiveTTFLoader::ArchiveTTFLoader(const Common::String &fileName,
-								   const Common::String &faceName, bool bold, int32 faceIndex,
-								   Graphics::TTFSizeMode sizeMode)
-	: TTFLoader(fileName, faceName, Common::String(), bold, faceIndex, sizeMode) {
+ArchiveTTFLoader::ArchiveTTFLoader(const Common::String &fileName, const Common::String &faceName, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: TTFLoader(fileName, faceName, sizeMode, renderMode, faceIndex, fakeBold, fakeItalic) {
 }
 
-ArchiveTTFLoader::ArchiveTTFLoader(const Common::String &fileName,
-								   const Common::String &faceName,
-								   Graphics::TTFRenderMode renderMode,
-								   Graphics::TTFSizeMode sizeMode)
-	: TTFLoader(fileName, faceName, Common::String(), false, 0, renderMode, sizeMode) {
-}
-
-ArchiveTTFLoader::ArchiveTTFLoader(const Common::String &fileName,
-								   const Common::String &faceName,
-								   const Common::String &srcInst, bool bold, int32 faceIndex,
-								   Graphics::TTFSizeMode sizeMode)
-	: TTFLoader(fileName, faceName, srcInst, bold, faceIndex, sizeMode) {
+ArchiveTTFLoader::ArchiveTTFLoader(const Common::String &fileName, const Common::String &faceName, const Common::String &srcInst, Graphics::TTFSizeMode sizeMode, Graphics::TTFRenderMode renderMode, int32 faceIndex, bool fakeBold, bool fakeItalic)
+	: TTFLoader(fileName, faceName, srcInst, sizeMode, renderMode, faceIndex, fakeBold, fakeItalic) {
 }
 
 const Graphics::Font *ArchiveTTFLoader::loadFontCore(int point) {
 	const Graphics::Font *font = nullptr;
 #ifdef USE_FREETYPE2
-	font = Graphics::loadTTFFontFromArchive(_filePath.baseName(), point,
-											_sizeMode, 0, 0, _renderMode);
+	font = Graphics::loadTTFFontFromArchive(_filePath.baseName(), point, _sizeMode, 0, 0, _renderMode, nullptr, false, _faceIndex, _fakeBold, _fakeItalic);
 #endif
 	return font;
 }
