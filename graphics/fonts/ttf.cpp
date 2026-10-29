@@ -968,7 +968,7 @@ Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disp
 	return font;
 }
 
-Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping) {
+Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening, int32 faceIndex, bool fakeBold, bool fakeItalic) {
 	Common::SeekableReadStream *archiveStream = nullptr;
 	if (ConfMan.hasKey("extrapath")) {
 		Common::FSDirectory extrapath(ConfMan.getPath("extrapath"));
@@ -1013,7 +1013,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 		}
 	}
 
-	Font *font = loadTTFFont(f, DisposeAfterUse::YES, size, sizeMode, xdpi, ydpi, renderMode, mapping);
+	Font *font = loadTTFFont(f, DisposeAfterUse::YES, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening, faceIndex, fakeBold, fakeItalic);
 	if (!font) {
 		delete archive;
 		delete f;
