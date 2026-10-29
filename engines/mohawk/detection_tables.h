@@ -775,7 +775,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_US,
@@ -795,7 +795,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_US,
@@ -814,7 +814,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
+			GUIO3(GUIO_NOASPECT, GUIO_NOLANG, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_US,
@@ -833,7 +833,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO | ADGF_TESTING,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
+			GUIO3(GUIO_NOASPECT, GUIO_NOLANG, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_US,
@@ -852,7 +852,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA, //< Keep this as English to apply v1.0US text layout config.
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
+			GUIO3(GUIO_NOASPECT, GUIO_NOLANG, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_US,
@@ -872,7 +872,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_ESPT,
@@ -892,7 +892,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::PT_PRT,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_ESPT,
@@ -912,7 +912,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -932,7 +932,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -952,7 +952,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -972,7 +972,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -992,7 +992,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -1012,7 +1012,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -1031,7 +1031,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
+			GUIO3(GUIO_NOASPECT, GUIO_NOLANG, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -1051,7 +1051,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_JP,
@@ -1071,7 +1071,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_JP,
@@ -1092,7 +1092,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -1112,7 +1112,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_EU,
@@ -1132,7 +1132,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_EU,
@@ -1152,7 +1152,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_EU,
@@ -1172,7 +1172,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_EU,
@@ -1192,7 +1192,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_EU,
@@ -1212,7 +1212,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_EU,
@@ -1232,7 +1232,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
+			GUIO3(GUIO_NOASPECT, GUIO_NOLANG, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_JP,
@@ -1251,7 +1251,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO | ADGF_TESTING,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
+			GUIO3(GUIO_NOASPECT, GUIO_NOLANG, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_JP,
@@ -1277,7 +1277,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_FR_2002,
@@ -1296,7 +1296,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_US,
@@ -1316,7 +1316,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_US,
@@ -1336,7 +1336,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::KO_KOR,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_US,
@@ -1355,7 +1355,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_20_US,
@@ -1375,7 +1375,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_20_US,
@@ -1397,7 +1397,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOASPECT, GAMEOPTION_DEMO)
+			GUIO3(GUIO_NOASPECT, GUIO_NOLANG, GAMEOPTION_DEMO)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_20_US,
@@ -1417,7 +1417,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_20_US,
