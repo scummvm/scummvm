@@ -26,6 +26,8 @@
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
 
+#include "common/system.h"
+
 namespace GUI {
 
 Dialog::Dialog(int x, int y, int w, int h, bool scale)
@@ -482,6 +484,14 @@ void Dialog::unregisterTickleWidget(Widget *widget) {
 	if (_tickleWidget == widget) {
 		_tickleWidget = nullptr;
 	}
+}
+
+void Dialog::dumpWidgetTree(const Common::String &baseName, const Common::String &lang, int width, int height) {
+	Graphics::Surface surf;
+	surf.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
+	g_system->grabOverlay(surf);
+	Widget::dumpWidgetChain(_firstWidget, surf, baseName, lang, width, height);
+	surf.free();
 }
 
 } // End of namespace GUI
