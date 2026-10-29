@@ -303,7 +303,9 @@ void EMIEngine::sortLayers() {
 }
 
 bool EMIEngine::compareActor(const Actor *x, const Actor *y) {
-	if (x->getEffectiveSortOrder() == y->getEffectiveSortOrder()) {
+	int xSortOrder = x->getEffectiveSortOrder();
+	int ySortOrder = y->getEffectiveSortOrder();
+	if (xSortOrder == ySortOrder) {
 		Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
 		Math::Matrix4 camRot = setup->_rot;
 
@@ -318,7 +320,7 @@ bool EMIEngine::compareActor(const Actor *x, const Actor *y) {
 			return xp.z() > yp.z();
 		}
 	}
-	return x->getEffectiveSortOrder() > y->getEffectiveSortOrder();
+	return xSortOrder > ySortOrder;
 }
 
 void EMIEngine::sortActiveActorsList() {
