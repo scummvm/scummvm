@@ -31,6 +31,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Spell behaviour corrected.
    - Fixed several tavern bugs
 
+ Sherlock:
+   - Improved resource handling by not keeping entire resource files in memory at all times.
+
 #### 2026.4.0 "Never-slop" (2026-10-10)
 
  New games:
