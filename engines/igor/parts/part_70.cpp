@@ -78,7 +78,7 @@ void IgorEngine::part70() {
 	partMainSetExecuteAction(1, &IgorEngine::part70ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part70UpdateBackground;
 	part70DrawObjectState();
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	// Igor is not shown in the map
 	if (!restoreRoomAfterLoad(false)) {

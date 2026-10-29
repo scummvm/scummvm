@@ -23,6 +23,20 @@
 
 namespace Igor {
 
+void IgorEngine::flushScreenToBackend() {
+	_system->copyRectToScreen(_screenVGASurface.getPixels(), _screenVGASurface.pitch, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
+}
+
+// Copies a 320x144 room layer (background, mask or text layer) over the room area of the screen surface
+void IgorEngine::copyLayerToScreen(const Graphics::ManagedSurface &layer) {
+	_screenVGASurface.copyRectToSurface(layer, 0, 0, Common::Rect(320, 144));
+}
+
+// Fills whole rows of the screen surface with one color
+void IgorEngine::fillScreenRows(int firstRow, int numRows, uint8 color) {
+	_screenVGASurface.fillRect(Common::Rect(0, firstRow, 320, firstRow + numRows), color);
+}
+
 /**
  * Copies a w x h block between two pixel buffers (each with its own pitch).
  * Transparent copies skip source pixels equal to 0.
@@ -161,7 +175,7 @@ void IgorEngine::decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText
 }
 
 void IgorEngine::drawVerbsPanel() {
-	memcpy(_screenVGA + 320 * 156, _verbsPanelBuffer, _verbsPanelSize);
+	_screenVGASurface.copyRectToSurface(_verbsPanelSurface, 0, 156, Common::Rect(320, _verbsPanelSize / 320));
 }
 
 void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
@@ -169,12 +183,10 @@ void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
 		if (verb < kVerbWalk || verb > kVerbGive)
 			return;
 		const int x = (verb - 1) * 40;
-		memset(_screenVGA + 155 * 320 + x, highlight ? 254 : 0, 40);
-		for (int y = 156; y <= 166; ++y) {
-			_screenVGA[y * 320 + x] = highlight ? 254 : 0;
-			_screenVGA[y * 320 + x + 39] = highlight ? 253 : 0;
-		}
-		memset(_screenVGA + 167 * 320 + x, highlight ? 253 : 0, 40);
+		_screenVGASurface.hLine(x, 155, x + 39, highlight ? 254 : 0);
+		_screenVGASurface.vLine(x, 156, 166, highlight ? 254 : 0);
+		_screenVGASurface.vLine(x + 39, 156, 166, highlight ? 253 : 0);
+		_screenVGASurface.hLine(x, 167, x + 39, highlight ? 253 : 0);
 		return;
 	}
 	uint8 verbBitmap[44 * 12];
@@ -196,14 +208,10 @@ void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
 
 void IgorEngine::scrollInventory() {
 	if (_scrollInventoryStartY == _scrollInventoryEndY) {
-		memcpy(_screenVGA + 54400, _inventoryPanelBuffer + (_scrollInventoryStartY - 1) * 320, 9600);
+		_screenVGASurface.copyRectToSurface(_inventoryPanelBuffer + (_scrollInventoryStartY - 1) * 320, 320, 0, 170, 320, 30);
 		_scrollInventory = false;
 	} else {
-		int offset = 54420;
-		for (int y = _scrollInventoryStartY; y < _scrollInventoryStartY + 29; ++y) {
-			memcpy(_screenVGA + offset, _inventoryPanelBuffer + 320 * y - 300, 280);
-			offset += 320;
-		}
+		_screenVGASurface.copyRectToSurface(_inventoryPanelBuffer + 320 * _scrollInventoryStartY - 300, 320, 20, 170, 280, 29);
 		_scrollInventoryStartY += _scrollInventoryDy;
 	}
 }
@@ -223,7 +231,7 @@ void IgorEngine::drawInventory(int start, int mode) {
 				}
 			}
 		}
-		memcpy(_screenVGA + 170 * 320, _inventoryPanelBuffer, 9600);
+		_screenVGASurface.copyRectToSurface(_inventoryPanelSurface, 0, 170, Common::Rect(320, 30));
 		_scrollInventory = false;
 		return;
 	}
@@ -274,7 +282,7 @@ void IgorEngine::drawInventory(int start, int mode) {
 	}
 	switch (mode) {
 	case 0: // normal inventory rendering
-		memcpy(_screenVGA + 54400, _inventoryPanelBuffer, 9600);
+		_screenVGASurface.copyRectToSurface(_inventoryPanelSurface, 0, 170, Common::Rect(320, 30));
 		_scrollInventory = false;
 		break;
 	case 1: // animation scrolling up
@@ -289,7 +297,7 @@ void IgorEngine::drawInventory(int start, int mode) {
 			}
 		}
 		memmove(_inventoryPanelBuffer + 9600, _inventoryPanelBuffer, 9600);
-		memcpy(_inventoryPanelBuffer, _screenVGA + 54400, 9600);
+		_inventoryPanelSurface.copyRectToSurface(_screenVGASurface, 0, 0, Common::Rect(0, 170, 320, 200));
 		_scrollInventoryStartY = 7;
 		_scrollInventoryEndY = 31;
 		_scrollInventoryDy = 6;
@@ -307,7 +315,7 @@ void IgorEngine::drawInventory(int start, int mode) {
 			}
 		}
 		memmove(_inventoryPanelBuffer + 9600, _inventoryPanelBuffer, 9600);
-		memcpy(_inventoryPanelBuffer + 9600, _screenVGA + 54400, 9600);
+		_inventoryPanelSurface.copyRectToSurface(_screenVGASurface, 0, 30, Common::Rect(0, 170, 320, 200));
 		_scrollInventoryStartY = 25;
 		_scrollInventoryEndY = 1;
 		_scrollInventoryDy = -6;

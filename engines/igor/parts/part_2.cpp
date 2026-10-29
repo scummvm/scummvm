@@ -388,7 +388,7 @@ void IgorEngine::part2() {
 	setRoomWalkBounds(41, 0, 253, 143, 141, 138);
 	partMainSetExecuteAction(1, &IgorEngine::part2ExecuteAction);
 	part2ApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;

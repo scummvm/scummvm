@@ -242,7 +242,7 @@ void IgorEngine::part23() {
 	partMainSetExecuteAction(1, &IgorEngine::part23ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part23UpdateBackground;
 	part23ApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);

@@ -95,7 +95,7 @@ void IgorEngine::part4() {
 
 	// closes Philips locker
 	_objectsState[kPhillipLockerStateIndex] = 0;
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	if (isCDVersion())
 

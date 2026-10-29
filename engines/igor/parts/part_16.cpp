@@ -108,7 +108,7 @@ void IgorEngine::part16EnterScene() {
 }
 
 void IgorEngine::part16PhotoCutscene() {
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	igorSayAndWait({ { 210, 1, 731 }, { 211, 1, 732 }, { 212, 1, 733 }, { 213, 2, 734 } });
 	--_walkDataLastIndex;
 	buildWalkPath(90, 135, 200, 143);
@@ -148,7 +148,7 @@ void IgorEngine::part16PhotoCutscene() {
 	setInventoryPanelColors();
 	part16LoadRoom();
 	part16LoadAnimation();
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	part16ApplyObjectState(255);
 	fadeIn(768);
 	waitForTimer(255);
@@ -232,7 +232,7 @@ void IgorEngine::part16() {
 	partMainSetExecuteAction(1, &IgorEngine::part16ExecuteAction);
 	part16ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		part16EnterScene();

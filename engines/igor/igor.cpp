@@ -41,20 +41,29 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	g_engine = this;
 
 	// Some parts draw outside the visible 320x200 area, but still within 64kb segment
-	// hence allocate full 64-KiB VGA segment for the screen buffer
-	_screenVGA = (uint8 *)malloc(65536);
+	// hence the screen surface covers the full 64-KiB VGA segment
+	const Graphics::PixelFormat clut8 = Graphics::PixelFormat::createFormatCLUT8();
+	_screenVGASurface.create(320, 205, clut8);
+	_screenLayer1Surface.create(320, 144, clut8);
+	_screenLayer2Surface.create(320, 144, clut8);
+	_screenTextLayerSurface.create(320, 144, clut8);
+	_screenTempLayerSurface.create(100, 100, clut8);
+	_inventoryPanelSurface.create(320, 60, clut8);
+	_inventoryImagesSurface.create(320, 150, clut8);
+	_verbsPanelSurface.create(320, 12, clut8);
+	_screenVGA = (uint8 *)_screenVGASurface.getPixels();
+	_screenLayer1 = (uint8 *)_screenLayer1Surface.getPixels();
+	_screenLayer2 = (uint8 *)_screenLayer2Surface.getPixels();
+	_screenTextLayer = (uint8 *)_screenTextLayerSurface.getPixels();
+	_screenTempLayer = (uint8 *)_screenTempLayerSurface.getPixels();
+	_inventoryPanelBuffer = (uint8 *)_inventoryPanelSurface.getPixels();
+	_inventoryImagesBuffer = (uint8 *)_inventoryImagesSurface.getPixels();
+	_verbsPanelBuffer = (uint8 *)_verbsPanelSurface.getPixels();
 	for (int i = 0; i < 4; i++) {
 		_facingIgorFrames[i] = (uint8 *)malloc(13500);
 	}
-	_screenLayer1 = (uint8 *)malloc(320 * 144);
-	_screenLayer2 = (uint8 *)malloc(320 * 144);
-	_screenTextLayer = (uint8 *)malloc(320 * 144);
-	_screenTempLayer = (uint8 *)malloc(9996);
 	_igorHeadFrames = (uint8 *)malloc(3696);
 	_animFramesBuffer = (uint8 *)malloc(65535);
-	_inventoryPanelBuffer = (uint8 *)malloc(9600 * 2);
-	_inventoryImagesBuffer = (uint8 *)malloc(48000);
-	_verbsPanelBuffer = (uint8 *)malloc(3840);
 	_verbsPanelSize = 0; // set when the panel is loaded
 
 	_floppyProtectionPassed = false;
@@ -88,19 +97,11 @@ IgorEngine::~IgorEngine() {
 	free(_musicData);
 	free(_resourceEntries);
 	free(_soundOffsets);
-	free(_screenVGA);
 	for (int i = 0; i < 4; ++i) {
 		free(_facingIgorFrames[i]);
 	}
-	free(_screenLayer1);
-	free(_screenLayer2);
-	free(_screenTextLayer);
-	free(_screenTempLayer);
 	free(_igorHeadFrames);
 	free(_animFramesBuffer);
-	free(_inventoryPanelBuffer);
-	free(_inventoryImagesBuffer);
-	free(_verbsPanelBuffer);
 
 	delete _screen;
 }
@@ -283,7 +284,7 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor, bool fade) {
 
 	// A game saved while Igor was walking keeps walking once the room is entered.
 	_loadedIgorMoving = _gameState.igorMoving;
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	if (drawIgor) { // position Igor in the room at the saved position
 		if (!_gameState.igorMoving)
 			_walkDataCurrentIndex = _walkDataLastIndex - 1;
@@ -293,7 +294,7 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor, bool fade) {
 			_walkDataCurrentIndex = _walkDataLastIndex;
 	}
 	if (!_gameState.dialogueStarted) { // if loading we need to redraw the room background and UI
-		memset(_screenVGA + 46080, 0, 17920);
+		fillScreenRows(144, 56, 0);
 		setInventoryPanelColors();
 		setVerbPanelColors();
 		drawVerbsPanel();
@@ -301,7 +302,7 @@ bool IgorEngine::restoreRoomAfterLoad(bool drawIgor, bool fade) {
 		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	} else {
 		// the choice menu fills this area once the dialogue resumes; until then it must not show what was on screen before the load
-		memset(_screenVGA + 46080, 0, 17920);
+		fillScreenRows(144, 56, 0);
 	}
 	if (!_gameState.dialogueTextRunning)
 		showCursor();

@@ -273,7 +273,7 @@ void IgorEngine::part28Floppy() {
 	_updateRoomBackground = &IgorEngine::part28FloppyUpdateBackground;
 	part28FloppyDrawCaroline();
 	part28FloppyApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	if (!restoreRoomAfterLoad()) {
 		_gameState.unk10 = 4;
 		_currentAction.verb = kVerbWalk;

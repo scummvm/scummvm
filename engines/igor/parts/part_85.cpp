@@ -136,7 +136,7 @@ void IgorEngine::part85DisplayLogo() {
 		waitForTimer(0);
 	}
 
-	memcpy(_screenVGA, _screenTextLayer, 46080);
+	copyLayerToScreen(_screenTextLayerSurface);
 	_currentPalette[765] = 63;
 	_currentPalette[766] = 63;
 	_currentPalette[767] = 63;
@@ -162,7 +162,7 @@ void IgorEngine::part85ScrollRight() {
 		if (compareGameTick(0, 16)) {
 			copyArea(_screenTextLayer, 0, 320, _screenLayer1 + x * 8, 320, 320 - x * 8, 144);
 			copyArea(_screenTextLayer, 320 - x * 8, 320, _screenLayer2 + 96, 320, x * 8, 144);
-			memcpy(_screenVGA, _screenTextLayer, 46080);
+			copyLayerToScreen(_screenTextLayerSurface);
 			++x;
 		}
 		part85UpdateBackground();
@@ -219,7 +219,7 @@ void IgorEngine::part85() {
 	static const int anm[] = { ANM_PhilipLauraIntro, AOF_PhilipLauraIntro, ANM_LauraIntro, AOF_LauraIntro, 0 };
 	loadAnimData(anm);
 	// copies part6 into screen buffer
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	_updateDialogue = &IgorEngine::part85UpdatePhilipLauraDialogue;
 	_updateRoomBackground = &IgorEngine::part85UpdateBackground;
@@ -312,7 +312,7 @@ PART_85_EXIT:
 	_walkData[0].setPos(155, 121, 4, 0);
 	_walkData[0].setDefaultScale();
 	copyArea(_screenLayer2, 23180, 320, _facingIgorFrames[3], 30, 30, 50, true);
-	memcpy(_screenVGA, _screenLayer2, 46080);
+	copyLayerToScreen(_screenLayer2Surface);
 	// sets all colors after 624 as black
 	memset(_currentPalette + 0x270, 0, 0x8D);
 	setPaletteRange(208, 254);

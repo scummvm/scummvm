@@ -134,7 +134,7 @@ void IgorEngine::part10ScrollLeft() {
 						_screenLayer2[dstOffset + col] = color;
 				}
 			}
-			memcpy(_screenVGA, _screenLayer2, 46080);
+			copyLayerToScreen(_screenLayer2Surface);
 			++i;
 		}
 		waitForTimer();
@@ -181,7 +181,7 @@ void IgorEngine::part10() {
 	setRoomWalkBounds(0, 0, 319, 143);
 
 	if (_currentPart != 102 && !_gameStateLoaded) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 	}

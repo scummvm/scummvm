@@ -90,7 +90,7 @@ void IgorEngine::part14LookAtPuzzle() {
 	fadeOut(768);
 	part14ShowPuzzle();
 	part14LoadRoom();
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	fadeIn(768);
@@ -391,9 +391,9 @@ void IgorEngine::part14BrotherReveal(int start, int end) {
 void IgorEngine::part14ShowPuzzle() {
 	part14LoadChurchMosaicData();
 	memcpy(_screenTextLayer, _screenVGA, 46080);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	memcpy(_screenLayer1, _screenTextLayer, 46080);
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	fadeIn(768);
 	_inputVars[kInputCursorXPos] = 160;
 	_inputVars[kInputCursorYPos] = 72;
@@ -501,7 +501,7 @@ void IgorEngine::part14ShowPuzzle() {
 		playRoomSound(35, kSpaFloppySoundPart14Solved);
 	}
 	fadeOut(768);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	setInventoryPanelColors();
 }
 
@@ -540,7 +540,7 @@ void IgorEngine::part14() {
 	partMainSetExecuteAction(1, &IgorEngine::part14ExecuteAction);
 	part14ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 140) {

@@ -265,7 +265,7 @@ void IgorEngine::part15Floppy() {
 	partMainSetExecuteAction(1, &IgorEngine::part15FloppyExecuteAction);
 	_updateRoomBackground = &IgorEngine::part15FloppyUpdateBackground;
 	part15FloppyApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	// One of three figures in the hall, or none, drawn in its first frame
 	_gameState.unk10 = (getRandomNumber(9) + 2) / 3;
 	if (_gameState.unk10 != 0) {

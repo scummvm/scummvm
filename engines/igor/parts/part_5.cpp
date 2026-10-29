@@ -157,7 +157,7 @@ void IgorEngine::part5() {
 		_walkDataCurrentIndex = 1;
 		if (_currentPart == 50) {
 			debug("Entering PART_05_HELPER_6");
-			memcpy(_screenVGA, _screenLayer1, 46080);
+			copyLayerToScreen(_screenLayer1Surface);
 			_currentAction.verb = kVerbWalk;
 			fadeIn(624);
 			part5WalkIgorToScene();
@@ -238,7 +238,7 @@ void IgorEngine::part5ScrollRight() {
 					}
 				}
 			}
-			memcpy(_screenVGA, _screenLayer2, 46080);
+			copyLayerToScreen(_screenLayer2Surface);
 			++i;
 		}
 		part5UpdateBackground();

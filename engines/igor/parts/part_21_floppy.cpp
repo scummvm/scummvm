@@ -320,7 +320,7 @@ void IgorEngine::part21FloppyDrawMargaretNoteHead(int frame) {
 
 void IgorEngine::part21FloppyMargaretTakesNote() {
 	part21FloppyDrawMargaretFrameComposited(1);
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	drawAnimRect(kMargaretBodyOffset, kMargaretBodyFrame, 48, 40);
 	waitForTimer(121);
 	for (int i = 1; i <= 6; ++i) {
@@ -395,7 +395,7 @@ void IgorEngine::part21Floppy() {
 	partMainSetExecuteAction(1, &IgorEngine::part21FloppyExecuteAction);
 	_updateRoomBackground = &IgorEngine::part21FloppyUpdateBackground;
 	part21FloppyApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	if (!restoreRoomAfterLoad()) {

@@ -1084,7 +1084,7 @@ void IgorEngine::handleOptionsMenu() {
 	memcpy(_currentPalette + 208 * 3, _paletteBuffer + 208 * 3, 48 * 3);
 	setPaletteRange(208, 255);
 	if (!_gameState.dialogueStarted)
-		memset(_screenVGA + 144 * 320, 0, 11 * 320);
+		fillScreenRows(144, 11, 0);
 	_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, 200);
 	for (int m = 3; m <= kFadeSteps; m += 3) {
 		for (int i = 1 * 3; i <= kLastFadedColor * 3; ++i) {

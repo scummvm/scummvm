@@ -84,7 +84,7 @@ void IgorEngine::partCredits() {
 	else
 		playMusic(12);
 
-	memset(_screenVGA, 0, 64000);
+	fillScreenRows(0, 200, 0);
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
 

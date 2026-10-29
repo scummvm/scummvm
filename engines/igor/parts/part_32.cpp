@@ -417,8 +417,8 @@ void IgorEngine::part32Controls() {
 	decodeRoomMask(mask);
 	free(mask);
 	loadData(ANM_Part32Digits, _part32Glyphs);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	memset(_screenVGA + 46080, 0, 17920);
+	copyLayerToScreen(_screenLayer1Surface);
+	fillScreenRows(144, 56, 0);
 	fadeIn(624);
 	showCursor();
 
@@ -589,7 +589,7 @@ void IgorEngine::part32SceneNothing() {
 void IgorEngine::part32SceneGirl() {
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	fadeIn(768);
 	for (int i = 0; i < ARRAYSIZE(kPart32GirlFrames); ++i) {
 		const int frame = kPart32GirlFrames[i];
@@ -610,7 +610,7 @@ void IgorEngine::part32() {
 	_roomDataOffsets = PART_32_ROOM_DATA_OFFSETS;
 	setRoomClickFix(143, 10, 120, true);
 	partMainSetExecuteAction(1, &IgorEngine::part32ExecuteAction);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;

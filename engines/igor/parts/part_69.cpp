@@ -299,7 +299,7 @@ void IgorEngine::part69() {
 	partMainSetExecuteAction(1, &IgorEngine::part69ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part69UpdateBackground;
 	part69ApplyObjectState();
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	if (_objectsState[kPart69FireflyCapturedStateIndex] == 0) {
 		part69DrawSwarm(kPart69SwarmInitialFrame);
 		part69DrawMainFirefly(kPart69MainFireflyInitialFrame);

@@ -326,7 +326,7 @@ void IgorEngine::partMaze() {
 	if (room->objectName3) {
 		Common::strlcpy(_roomObjectNames[3], room->objectName3, sizeof(_roomObjectNames[3]));
 	}
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	// the whole room is darker than its palette
 	darkenPalette(_paletteBuffer, 1, 183, room->darkness);

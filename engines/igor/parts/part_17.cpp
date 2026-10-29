@@ -508,7 +508,7 @@ void IgorEngine::part17() {
 	setInventoryPanelColors();
 	part17ApplyObjectState(255);
 
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 
 	if (_objectsState[kPhillipAndJimmyHaveLeftStateIndex] == 1) {

@@ -177,7 +177,7 @@ void IgorEngine::part76UseParachute() {
 		return;
 	}
 	// the panel and the colors 240 to 255 are cleared
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	memset(_paletteBuffer + 240 * 3, 0, 48);
 	memset(_currentPalette + 240 * 3, 0, 48);
 	if (_gameState.igorMoving) {
@@ -298,7 +298,7 @@ void IgorEngine::part76() {
 	part76ApplyObjectState();
 	if (_game.version == kIdSpaFloppy)
 		playSound(kSpaFloppySoundPlaneEngine, 1);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
@@ -312,7 +312,7 @@ void IgorEngine::part76() {
 	stopDialogueSpeech();
 	if (!_gameStateLoaded) {
 		// the panel is cleared and the colors 208 to 254 go black in both palettes
-		memset(_screenVGA + 46080, 0, 17920);
+		fillScreenRows(144, 56, 0);
 		memset(_paletteBuffer + 208 * 3, 0, 141);
 		memset(_currentPalette + 208 * 3, 0, 141);
 	} else {

@@ -171,7 +171,7 @@ void IgorEngine::part12UseResinWithStone() {
 		startIgorDialogue();
 		return;
 	}
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	removeInventoryEntry(62);
 	const int animOffset = (_objectsState[kChurchDoorOpenStateIndex] == 0) ? 0x2543 : 0xBF1E;
 	for (int i = 1; i <= 9; ++i) {
@@ -547,7 +547,7 @@ void IgorEngine::part12() {
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	part12ApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	if (_objectsState[kLizardTakenStateIndex] == 0) {
 		part12PaintOverLizard();
 	}

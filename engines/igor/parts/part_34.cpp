@@ -317,7 +317,7 @@ void IgorEngine::part34OldLadyConversation() {
 	loadDialogueData(DLG_ParkLady);
 	const bool resuming = _dialogueResuming;
 	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
-		memset(_screenVGA + 46080, 0, 17920);
+		fillScreenRows(144, 56, 0);
 	}
 	int textIndex = 250;
 	if (!resuming) {
@@ -349,7 +349,7 @@ void IgorEngine::part34OldLadyConversation() {
 	startCutsceneDialogue(121, 68, 63, 23, 0);
 	part34WaitForLadyDialogue();
 	if (_objectsState[kOldLadyConversationSeenStateIndex] == 0) {
-		memset(_screenVGA + 46080, 0, 17920);
+		fillScreenRows(144, 56, 0);
 		drawVerbsPanel();
 		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 		_currentAction.verb = kVerbWalk;
@@ -389,7 +389,7 @@ void IgorEngine::part34LauraConversation() {
 	loadDialogueData(DLG_ParkLaura);
 	// a loaded savegame continues at the choice menu
 	const bool resuming = _dialogueResuming;
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	int textIndex = 250;
 	if (!resuming) {
 		part34DrawLauraWalkingIn(true);
@@ -438,7 +438,7 @@ void IgorEngine::part34LauraConversation() {
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(162, 64, 63, 63, 63);
 	part34WaitForIgorDialogue();
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
@@ -471,7 +471,7 @@ void IgorEngine::part34ScrollRight() {
 					}
 				}
 			}
-			memcpy(_screenVGA, _screenLayer2, 46080);
+			copyLayerToScreen(_screenLayer2Surface);
 			++step;
 		}
 		waitForTimer();

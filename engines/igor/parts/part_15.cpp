@@ -374,7 +374,7 @@ void IgorEngine::part15() {
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		_gameState.unk10 = 1;

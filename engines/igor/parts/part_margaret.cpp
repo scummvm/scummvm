@@ -75,7 +75,7 @@ void IgorEngine::partMargaret() {
 	loadRoomData(PAL_MargaretRoom, IMG_MargaretRoom, BOX_MargaretRoom, MSK_MargaretRoom, TXT_MargaretRoom);
 	static const int anm[] = { FRM_MargaretRoom1, FRM_MargaretRoom2, FRM_MargaretRoom3, FRM_MargaretRoom4, 0 };
 	loadAnimData(anm);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	_updateDialogue = &IgorEngine::partMargaretUpdateDialogue;
 	partMargaretDrawBasePose();
 	memset(_currentPalette, 0, 768);

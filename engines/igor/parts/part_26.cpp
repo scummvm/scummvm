@@ -233,7 +233,7 @@ void IgorEngine::part26() {
 	_updateRoomBackground = &IgorEngine::part26UpdateBackground;
 	part26ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		_gameState.unk10 = true;
 		fadeIn(768);

@@ -255,7 +255,7 @@ void IgorEngine::part6ScrollLeft() {
 					}
 				}
 			}
-			memcpy(_screenVGA, _screenLayer2, 46080);
+			copyLayerToScreen(_screenLayer2Surface);
 			++i;
 		}
 		part6UpdateBackground();

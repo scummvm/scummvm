@@ -210,7 +210,7 @@ void IgorEngine::part13() {
 	partMainSetExecuteAction(1, &IgorEngine::part13ExecuteAction);
 	part13ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		if (_currentPart == 130) {

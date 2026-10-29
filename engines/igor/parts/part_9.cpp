@@ -282,7 +282,7 @@ void IgorEngine::part9() {
 		TXT_AdministrationSecretaryRoom);
 	if (_currentPart == 91) {
 		// This sequence uses the animation frames retained from the dean's room.
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		part8DrawSecretaryTalkingFrame(1);
 		memcpy(_screenLayer1, _screenVGA, 46080);
 		fadeIn(624);
@@ -314,7 +314,7 @@ void IgorEngine::part9() {
 	_roomDataOffsets = PART_09_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	part9ApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	_updateRoomBackground = &IgorEngine::part9UpdateBackground;

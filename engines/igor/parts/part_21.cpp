@@ -338,7 +338,7 @@ void IgorEngine::part21DrawMargaret() {
 
 void IgorEngine::part21MargaretTakesNote() {
 	part21DrawMargaretFrameComposited(1);
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	waitForTimer(120);
 	for (int i = 1; i <= 6; ++i) {
 		part21DrawMargaretFrameComposited(PART_21_ANIM_DATA_1[i]);
@@ -414,7 +414,7 @@ void IgorEngine::part21() {
 	partMainSetExecuteAction(1, &IgorEngine::part21ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part21UpdateBackground;
 	part21ApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	if (!restoreRoomAfterLoad()) {
