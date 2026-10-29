@@ -41,6 +41,8 @@ using namespace Graphics::Views;
  */
 class PrincessSaved : public Interaction {
 private:
+	bool _readyForTimeTravel = false;
+
 	/**
 	 * Hides a time machine on the overworld, near the continent the player
 	 * is currently on, on a random patch of woods
@@ -57,6 +59,7 @@ public:
 	~PrincessSaved() override {
 	}
 
+	void draw() override;
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;

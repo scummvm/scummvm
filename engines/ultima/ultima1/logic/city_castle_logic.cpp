@@ -140,6 +140,7 @@ bool CityCastleLogic::move(Data::Direction dir) {
 
 	if (x < 0 || y < 0 || x >= Data::CITY_WIDTH || y >= Data::CITY_HEIGHT) {
 		leaving();
+		return false;
 
 	} else {
 		int tile = checkAt(x, y);
@@ -157,9 +158,9 @@ bool CityCastleLogic::move(Data::Direction dir) {
 			writeString("Blocked!\n");
 			playFX(1);
 		}
-	}
 
-	return true;
+		return true;
+	}
 }
 
 void CityCastleLogic::updateCreatures() {
