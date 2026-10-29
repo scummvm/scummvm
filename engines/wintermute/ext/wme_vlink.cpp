@@ -108,7 +108,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		if (file) {
 			_videoDecoder = new Video::BinkDecoder();
 			if (_videoDecoder && _videoDecoder->loadStream(file) && _videoDecoder->isVideoLoaded()) {
-				_videoDecoder->setOutputPixelFormat(Graphics::PixelFormat(_game->_renderer->getPixelFormat()));
+				_videoDecoder->setOutputPixelFormat(_game->_renderer->getPixelFormat(false));
 				BaseSurface *texture = _game->_renderer->createSurface();
 				texture->create(_videoDecoder->getWidth(), _videoDecoder->getHeight());
 
