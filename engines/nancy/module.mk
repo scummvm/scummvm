@@ -180,7 +180,8 @@ MODULE_OBJS = \
   sound.o \
   sound_vorbis.o \
   util.o \
-  video.o
+  video.o \
+  xsheetfile.o
 
 # Nancy19 and newer, whose scenes are Lua scripts
 ifdef ENABLE_NANCY_V4

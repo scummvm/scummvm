@@ -19,13 +19,10 @@
  *
  */
 
-#include "common/archive.h"
-#include "common/stream.h"
 #include "common/textconsole.h"
 
 #include "engines/nancy/graphics.h"
-#include "engines/nancy/nancy.h"
-#include "engines/nancy/util.h"
+#include "engines/nancy/xsheetfile.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
@@ -34,72 +31,31 @@
 namespace Nancy {
 namespace Script {
 
-// The parts of an XSheet
-static const uint kXSheetFrameCountOffset = 0x22;
-static const uint kXSheetMaxTrees = 4;
-
 bool XSheet::load(const Common::String &name) {
 	clear();
 
-	Common::SeekableReadStream *xsheet = SearchMan.createReadStreamForMember(Common::Path(name));
-	if (!xsheet) {
-		warning("Could not open XSheet file %s", name.c_str());
+	XSheetFile xsheet;
+	if (!xsheet.load(name)) {
 		return false;
 	}
 
-	xsheet->seek(kXSheetFrameCountOffset);
-	_numFrames = xsheet->readUint16LE();
-	const uint numTrees = MIN<uint>(xsheet->readUint16LE(), kXSheetMaxTrees);
+	_numFrames = xsheet.numFrames;
+	_framesPerSecond = xsheet.frameTiming;
 
-	Common::Array<Common::String> treeNames(kXSheetMaxTrees);
-	for (Common::String &treeName : treeNames) {
-		readFilename(*xsheet, treeName);
-	}
-
-	// Nancy20 lines the rectangles up on four bytes
-	if (g_nancy->getGameType() >= kGameTypeNancy20) {
-		xsheet->skip(2);
-	}
-
-	// Where each part goes in the viewport; the right and bottom edge are left out
-	Common::Array<Common::Rect> treeRects;
-	readRectArray(*xsheet, treeRects, kXSheetMaxTrees);
-
-	_framesPerSecond = xsheet->readUint32LE();
-
-	for (uint i = 0; i < numTrees; ++i) {
+	for (uint i = 0; i < xsheet.movieFrames.size(); ++i) {
 		Tree *tree = new Tree();
-		tree->frames.resize(_numFrames);
+		tree->frames = xsheet.movieFrames[i];
 		_trees.push_back(tree);
 	}
-
-	// Every frame has a movie frame for each of the parts there can be
-	for (uint frame = 0; frame < _numFrames; ++frame) {
-		for (uint i = 0; i < kXSheetMaxTrees; ++i) {
-			const int32 movieFrame = xsheet->readSint32LE();
-			if (i < numTrees) {
-				_trees[i]->frames[frame] = movieFrame;
-			}
-		}
-
-		xsheet->skip(8);
-	}
-
-	delete xsheet;
 
 	_name = name;
 	_frame = 0;
 
-	for (uint i = 0; i < numTrees; ++i) {
+	for (uint i = 0; i < _trees.size(); ++i) {
 		Tree &tree = *_trees[i];
-		Common::Rect dest = treeRects[i];
-		if (!dest.isEmpty()) {
-			--dest.right;
-			--dest.bottom;
-		}
-
-		if (dest.isEmpty() || !tree.player.loadFile(Common::Path(treeNames[i]))) {
-			warning("Could not load conversation movie %s of XSheet %s", treeNames[i].c_str(), name.c_str());
+		const Common::Rect &dest = xsheet.treeRects[i];
+		if (dest.isEmpty() || !tree.player.loadFile(Common::Path(xsheet.treeNames[i]))) {
+			warning("Could not load conversation movie %s of XSheet %s", xsheet.treeNames[i].c_str(), name.c_str());
 			clear();
 			return false;
 		}

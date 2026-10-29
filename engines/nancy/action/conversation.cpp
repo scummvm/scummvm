@@ -31,6 +31,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/iff.h"
+#include "engines/nancy/xsheetfile.h"
 
 #include "engines/nancy/action/conversation.h"
 #include "engines/nancy/action/actionmanager.h"
@@ -1280,96 +1281,25 @@ void ConversationCel::readCelDataNancy13(Common::SeekableReadStream &stream) {
 }
 
 void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Common::String &xsheetName) {
-	Common::SeekableReadStream *xsheet = SearchMan.createReadStreamForMember(Common::Path(xsheetName));
-	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
-	const uint kNameSize = 33;
-	const uint kFrameRecordSize = 140;
-
-	// Read the xsheet and load all images into the arrays
-	// Completely unoptimized, the original engine uses a buffer
-	xsheet->seek(0);
-	const uint16 sigLength = g_nancy->getGameType() <= kGameTypeNancy11 ? 18 : 22;
-	Common::String signature = xsheet->readString('\0', sigLength);
-	if (signature != "XSHEET WayneSikes" && signature != "XSHEET HerInteractive") {
-		warning("XSHEET signature doesn't match!");
+	XSheetFile xsheet;
+	if (!xsheet.load(xsheetName)) {
 		return;
 	}
 
-	xsheet->seek(0x22);
-	const uint16 numFrames = xsheet->readUint16LE();
-	uint16 numTrees = 4;
-
-	if (isNancy13) {
-		// Nancy13 moved the cel tree / .cal names into the XSheet header, which
-		// reserves a fixed kMaxTrees name slots followed by a 32-bit frame time;
-		// the frame data begins right after. Each frame is likewise a fixed-size
-		// block of kMaxTrees name slots. Earlier games keep the tree names in the
-		// AR data and use a 16-bit frame time.
-		const uint kMaxTrees = 4;
-
-		numTrees = xsheet->readUint16LE();
-
-		_treeNames.resize(numTrees);
-		for (uint j = 0; j < numTrees; ++j) {
-			readFilename(*xsheet, _treeNames[j]);
-		}
-
-		// Skip any unused tree-name slots so the frame time is read from its fixed
-		// offset regardless of numTrees.
-		xsheet->skip((kMaxTrees - numTrees) * kNameSize);
-
-		// Nancy15 inserted a destination rect per tree slot ahead of the frame time.
-		// It is only filled in for trees that name a movie instead of a cel archive.
-		if (g_nancy->getGameType() >= kGameTypeNancy15) {
-			readRectArray(*xsheet, _treeRects, kMaxTrees);
-		}
-
-		// Nancy17 leaves the right and bottom edge out of the rect
-		if (g_nancy->getGameType() >= kGameTypeNancy17) {
-			for (Common::Rect &rect : _treeRects) {
-				if (!rect.isEmpty()) {
-					--rect.right;
-					--rect.bottom;
-				}
-			}
-		}
-
-		_frameTime = xsheet->readUint32LE();
-	} else {
-		xsheet->skip(2);
-		_frameTime = xsheet->readUint16LE();
-		xsheet->skip(2);
+	// Earlier games name the trees in the record
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		_treeNames = xsheet.treeNames;
 	}
 
-	_celNames.resize(numTrees, Common::Array<Common::Path>(numFrames));
+	_treeRects = xsheet.treeRects;
+	_frameTime = xsheet.frameTiming;
+	_celNames = xsheet.celNames;
+	_treeMovieFrames = xsheet.movieFrames;
 
-	if (g_nancy->getGameType() >= kGameTypeNancy16) {
-		// The frame records name a movie frame per tree slot instead of a cel
-		const uint kMaxTrees = 4;
-
-		_treeMovieFrames.resize(numTrees, Common::Array<int32>(numFrames));
-		for (uint i = 0; i < numFrames; ++i) {
-			for (uint j = 0; j < kMaxTrees; ++j) {
-				const int32 movieFrame = xsheet->readSint32LE();
-				if (j < numTrees) {
-					_treeMovieFrames[j][i] = movieFrame;
-				}
-			}
-			xsheet->skip(8);
-		}
-
-		delete xsheet;
-		return;
+	// The frames are counted by the cels, which Nancy16 and up have no names for
+	if (_celNames.empty()) {
+		_celNames.resize(_treeMovieFrames.size(), Common::Array<Common::Path>(xsheet.numFrames));
 	}
-
-	for (uint i = 0; i < numFrames; ++i) {
-		for (uint j = 0; j < numTrees; ++j) {
-			readFilename(*xsheet, _celNames[j][i]);
-		}
-		xsheet->skip(kFrameRecordSize - numTrees * kNameSize);
-	}
-
-	delete xsheet;
 }
 
 bool ConversationCel::isVideoDonePlaying() {
