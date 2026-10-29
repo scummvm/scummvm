@@ -1039,6 +1039,26 @@ void ScriptValueData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void ScriptTextData::synchronize(Common::Serializer &ser) {
+	uint16 numTexts = texts.size();
+	ser.syncAsUint16LE(numTexts);
+
+	Common::Array<Common::String> names;
+	if (ser.isSaving()) {
+		for (auto &entry : texts) {
+			names.push_back(entry._key);
+		}
+	} else {
+		texts.clear();
+		names.resize(numTexts);
+	}
+
+	for (Common::String &name : names) {
+		ser.syncString(name);
+		ser.syncString(texts[name]);
+	}
+}
+
 void ScriptSavedData::synchronize(Common::Serializer &ser) {
 	uint16 numValues = values.size();
 	ser.syncAsUint16LE(numValues);
@@ -1134,6 +1154,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new SavedStateData();
 	case ScriptValueData::getTag():
 		return new ScriptValueData();
+	case ScriptTextData::getTag():
+		return new ScriptTextData();
 	case ScriptSavedData::getTag():
 		return new ScriptSavedData();
 	case ScriptJournalData::getTag():

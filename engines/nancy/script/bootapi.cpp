@@ -286,6 +286,29 @@ static int flagsCreate(lua_State *L) {
 	return 0;
 }
 
+// VarTableInit and StrTableInit, Nancy1New: the names of the values and the
+// texts the scripts keep
+
+static void readNames(lua_State *L, ScriptBootData::NameSet &names) {
+	Common::Array<Common::String> list;
+	readStringList(L, 2, list);
+	for (const Common::String &name : list) {
+		names.setVal(name, true);
+	}
+}
+
+static int varTableCreate(lua_State *L) {
+	checkCreateArguments(L, "ND.VarTableInit", s_tables && s_tables->boot);
+	readNames(L, s_tables->boot->valueNames);
+	return 0;
+}
+
+static int strTableCreate(lua_State *L) {
+	checkCreateArguments(L, "ND.StrTableInit", s_tables && s_tables->boot);
+	readNames(L, s_tables->boot->textNames);
+	return 0;
+}
+
 // InventoryInit
 
 static int inventoryCreate(lua_State *L) {
@@ -565,6 +588,8 @@ static const InitObject kInitObjects[] = {
 	{ "LoadSaveInit", "ND.LoadSaveInit", loadSaveCreate },
 	{ "ViewportInit", "ND.ViewportInit", viewportCreate },
 	{ "FlagsInit", "ND.FlagsInit", flagsCreate },
+	{ "VarTableInit", "ND.VarTableInit", varTableCreate },
+	{ "StrTableInit", "ND.StrTableInit", strTableCreate },
 	{ "InventoryInit", "ND.InventoryInit", inventoryCreate },
 	{ "FontsInit", "ND.FontsInit", fontsCreate },
 	{ "ColorsInit", "ND.ColorsInit", colorsCreate },

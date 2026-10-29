@@ -1166,6 +1166,12 @@ struct ScriptBootData : public EngineData {
 	Common::Array<FontColor> fontColors;
 
 	Common::Array<Player> players;	// in the order of PCUI::characters
+
+	// Nancy1New names every value (VarTable) and text (StrTable) the scripts
+	// keep beforehand; using any other name is an error
+	typedef Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> NameSet;
+	NameSet valueNames;
+	NameSet textNames;
 };
 
 } // End of namespace Nancy

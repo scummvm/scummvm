@@ -115,10 +115,24 @@ static const luaL_Reg kFlagsFunctions[] = {
 	{ nullptr, nullptr }
 };
 
-// VarTable.<name>, the whole numbers scripts keep by name
+// VarTable.<name>, the whole numbers scripts keep by name, and from Nancy1New
+// on StrTable.<name>, the texts. Nancy1New names them all in its boot scripts.
+
+static void checkTableName(lua_State *L, bool isText, const char *name) {
+	if (g_nancy->getGameType() < kGameTypeNancy1New) {
+		return;
+	}
+
+	const ScriptBootData *boot = GetEngineData(ScriptBootData);
+	const ScriptBootData::NameSet &names = isText ? boot->textNames : boot->valueNames;
+	if (!names.contains(name)) {
+		luaL_error(L, "%s does not have variable %s", isText ? "StrTable" : "VarTable", name);
+	}
+}
 
 static int varTableIndex(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
+	checkTableName(L, false, name);
 
 	ScriptValueData *values = (ScriptValueData *)NancySceneState.getPuzzleData(ScriptValueData::getTag());
 	lua_pushnumber(L, values->values.getValOrDefault(name, 0));
@@ -128,6 +142,7 @@ static int varTableIndex(lua_State *L) {
 static int varTableNewIndex(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
 	const int32 value = (int32)luaL_checknumber(L, 3);
+	checkTableName(L, false, name);
 
 	ScriptValueData *values = (ScriptValueData *)NancySceneState.getPuzzleData(ScriptValueData::getTag());
 	values->values.setVal(name, value);
@@ -137,6 +152,31 @@ static int varTableNewIndex(lua_State *L) {
 static const luaL_Reg kVarTableFunctions[] = {
 	{ "__index", varTableIndex },
 	{ "__newindex", varTableNewIndex },
+	{ nullptr, nullptr }
+};
+
+static int strTableIndex(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+	checkTableName(L, true, name);
+
+	ScriptTextData *texts = (ScriptTextData *)NancySceneState.getPuzzleData(ScriptTextData::getTag());
+	lua_pushstring(L, texts->texts.getValOrDefault(name).c_str());
+	return 1;
+}
+
+static int strTableNewIndex(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+	const char *text = luaL_checkstring(L, 3);
+	checkTableName(L, true, name);
+
+	ScriptTextData *texts = (ScriptTextData *)NancySceneState.getPuzzleData(ScriptTextData::getTag());
+	texts->texts.setVal(name, text);
+	return 0;
+}
+
+static const luaL_Reg kStrTableFunctions[] = {
+	{ "__index", strTableIndex },
+	{ "__newindex", strTableNewIndex },
 	{ nullptr, nullptr }
 };
 
@@ -2054,6 +2094,9 @@ static const luaL_Reg kAutotextFunctions[] = {
 void registerGameAPI(lua_State *L) {
 	registerGlobal(L, "Flags", "ND.Flags", kFlagsFunctions);
 	registerGlobal(L, "VarTable", "ND.VarTable", kVarTableFunctions);
+	if (g_nancy->getGameType() >= kGameTypeNancy1New) {
+		registerGlobal(L, "StrTable", "ND.StrTable", kStrTableFunctions);
+	}
 
 	registerGlobal(L, "Z", "ND.ZHelper", kZFunctions);
 	luaL_getmetatable(L, "ND.ZHelper");

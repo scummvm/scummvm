@@ -967,6 +967,14 @@ void NancyEngine::bootScriptedGameEngine() {
 	flagTables.flags = flags;
 	runRequiredBootScript("Flags", flagTables);
 
+	// Nancy1New names the values and texts the scripts keep
+	if (getGameType() >= kGameTypeNancy1New) {
+		Script::BootTables tableTables;
+		tableTables.boot = boot;
+		runRequiredBootScript("Vars", tableTables);
+		runRequiredBootScript("Strs", tableTables);
+	}
+
 	Script::BootTables inventoryTables;
 	inventoryTables.inventory = inventory;
 	inventoryTables.boot = boot;
