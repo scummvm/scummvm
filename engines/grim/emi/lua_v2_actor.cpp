@@ -382,18 +382,8 @@ void Lua_V2::AdvanceChore() {
 	int chore = lua_getuserdata(choreObj);
 	float time = lua_getnumber(timeObj);
 	Chore *c = EMIChore::getPool().getObject(chore);
-	if (c) {
-		if (!c->isPlaying()) {
-			warning("AdvanceChore() called on stopped chore %s (%s)",
-					c->getName(), c->getOwner()->getFilename().c_str());
-			if (c->isLooping()) {
-				c->getOwner()->playChoreLooping(c->getName());
-			} else {
-				c->getOwner()->playChore(c->getName());
-			}
-		}
+	if (c && c->isPlaying())
 		c->advance(time * 1000);
-	}
 }
 
 // TODO: Implement, verify, and rename parameters
