@@ -222,7 +222,7 @@ protected:
 
 class ThemeLayoutWidget : public ThemeLayout {
 public:
-	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, bool useRTL) : ThemeLayout(p), _name(name) {
+	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, bool useRTL) : ThemeLayout(p), _name(name), _preserveWidth(false), _preserveHeight(false) {
 		_w = _defaultW = w;
 		_h = _defaultH = h;
 		_useRTL = useRTL;
@@ -237,6 +237,11 @@ public:
 
 	virtual const char *getName() const override { return _name.c_str(); }
 
+	void setPreserveMeasuredSize(bool width, bool height) {
+		_preserveWidth = width;
+		_preserveHeight = height;
+	}
+
 protected:
 	LayoutType getLayoutType() const override { return kLayoutWidget; }
 
@@ -250,6 +255,7 @@ protected:
 	}
 
 	Common::String _name;
+	bool _preserveWidth, _preserveHeight;
 };
 
 class ThemeLayoutTabWidget : public ThemeLayoutWidget {

@@ -101,6 +101,9 @@ public:
 	 */
 	void setActiveTab(int tabID);
 
+	/** Request a user transition; same-tab requests do not call the hooks. */
+	bool requestActiveTab(int tabID);
+
 	int getTabCount();
 
 	void setTabTitle(int tabID, const Common::U32String &title) {
@@ -125,6 +128,17 @@ public:
 	void markAsDirty() override;
 
 protected:
+	/**
+	 * Handle this bar's arrows locally and forward other commands.
+	 * Embedded subclasses call this instead of TabWidget::handleCommand().
+	 */
+	void handleEmbeddedCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+	/** Approve a user transition before focus or child attachment changes. */
+	virtual bool canChangeTab(int tabID) { return true; }
+	/** Called after an accepted user transition has changed focus and children. */
+	virtual void activeTabChanged(int previousTab) {}
+
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
 	int16 getChildY() const override;
@@ -137,6 +151,9 @@ protected:
 	virtual void adjustTabs(int value);
 
 	virtual void computeLastVisibleTab(bool adjustFirstIfRoom);
+
+private:
+	void handleArrowCommand(uint32 cmd);
 };
 
 } // End of namespace GUI

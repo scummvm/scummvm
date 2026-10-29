@@ -119,6 +119,7 @@ public:
 	void rearrange(const Rect &box) override;
 
 	void refreshStyles();
+	void setSpeechEnabled(bool enabled) { Speech::setSpeechEnabled(enabled); }
 
 	/**
 	 * Get window split size within parent pair window
