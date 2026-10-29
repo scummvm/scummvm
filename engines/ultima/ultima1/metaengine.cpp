@@ -74,7 +74,7 @@ static const KeybindingRecord GAMEPLAY_KEYS[] = {
 	{ KEYBIND_VIEW, "VIEW", _s("View change"), "v", nullptr },
 	{ KEYBIND_EXIT, "EXIT", _s("eXit"), "x", nullptr },
 	{ KEYBIND_STATS, "STATS", _s("Ztats"), "z", nullptr },
-	{ KEYBIND_PASS, "PASS", _s("Pass"), " ", nullptr },
+	{ KEYBIND_PASS, "PASS", _s("Pass"), "SPACE", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
