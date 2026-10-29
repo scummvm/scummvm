@@ -602,7 +602,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 		}
 		debugC(9, kDebugEngine, "handleDialogue() end %d start %d count %d", _dialogueEnded, _gameState.dialogueChoiceStart, _gameState.dialogueChoiceCount);
 	} while (!_dialogueEnded);
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	if(restoreUI) {
 		drawVerbsPanel();
 		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
@@ -617,7 +617,7 @@ void IgorEngine::drawDialogueChoices() {
 		warning("drawDialogueChoices() entered while dialogue text is still active");
 	}
 	const bool floppy = (_game.version == kIdSpaFloppy);
-	memset(_screenVGA + 46080, 0, 56 * 320);
+	fillScreenRows(144, 56, 0);
 	setPaletteColor(floppy ? kFloppyChoiceColor : kChoiceColor, 0, 0, 0);
 	_dialogueInfo[0] = 0;
 	for (int i = 1; i <= 5; ++i) {
@@ -702,7 +702,7 @@ int IgorEngine::selectDialogue() {
 }
 
 void IgorEngine::dialogueAskQuestion() {
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	int offset = dialogueChoiceOffset(_dialogueInfo[_dialogueChoiceSelected]);
 	int question = _gameState.dialogueData[offset + 3];
 	// For part 5 igor always chickens out from Phillip

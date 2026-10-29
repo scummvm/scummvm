@@ -98,7 +98,7 @@ void IgorEngine::setVerbPanelColors() {
 
 void IgorEngine::fadeIn(int count) {
 	debugC(9, kDebugScreen, "fadeIn(%d)", count);
-	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
+	flushScreenToBackend();
 	int m = 66;
 	do {
 		m -= 3;
@@ -119,7 +119,7 @@ void IgorEngine::fadeIn(int count) {
 
 void IgorEngine::fadeOut(int count) {
 	debugC(9, kDebugScreen, "fadeOut(%d)", count);
-	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
+	flushScreenToBackend();
 	// only the faded range is saved; the rest of the buffer is left untouched
 	memcpy(_paletteBuffer, _currentPalette, count);
 	int m = 0;

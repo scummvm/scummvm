@@ -120,7 +120,7 @@ void IgorEngine::part22ScrollStep(int step) {
 	const int pictureRows = kPart22PictureRows - step * 8;
 	memcpy(_screenTextLayer, _screenLayer1 + pictureRows * 320, roomRows * 320);
 	memcpy(_screenTextLayer + roomRows * 320, _animFramesBuffer, pictureRows * 320);
-	memcpy(_screenVGA, _screenTextLayer, 46080);
+	copyLayerToScreen(_screenTextLayerSurface);
 }
 
 /**

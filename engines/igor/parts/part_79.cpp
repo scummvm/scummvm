@@ -144,8 +144,8 @@ void IgorEngine::part79LauraInWater() {
 	loadData(IMG_Part79Layer2, _screenLayer2);
 	loadData(ANM_Part79, _animFramesBuffer);
 	if (!isCDVersion())
-		memset(_screenVGA, 0, 64000);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+		fillScreenRows(0, 200, 0);
+	copyLayerToScreen(_screenLayer1Surface);
 	part79DrawLauraInWater(1);
 	fadeIn(768);
 	_roomAmbientIndex = 0;
@@ -601,7 +601,7 @@ void IgorEngine::part79() {
 	_canSaveGame = false;
 	// the picture is shown below a black band (the Spanish floppy draws it at the top of the screen)
 	if (_currentPart == 790) {
-		memset(_screenVGA, 0, 64000);
+		fillScreenRows(0, 200, 0);
 	}
 	if (_game.version != kIdSpaFloppy) {
 		uint8 band[320 * kPart79BandRows];

@@ -197,7 +197,7 @@ void IgorEngine::part30LauraCutscene() {
 		playMusic(3, true);
 
 	const bool resuming = _dialogueResuming;
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	if (!resuming) {
 		fadeIn(768);
 		part30LauraAndIgorBumpIntoEachOther();
@@ -233,7 +233,7 @@ void IgorEngine::part30LauraCutscene() {
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	// Que caracter
 	igorSay(210, 1, 459);
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
@@ -289,7 +289,7 @@ void IgorEngine::part30() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	partMainSetExecuteAction(1, &IgorEngine::part30ExecuteAction);
 	part30ApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	const bool loaded = restoreRoomAfterLoad(true, false);

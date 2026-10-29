@@ -224,7 +224,7 @@ void IgorEngine::part7() {
 	_roomDataOffsets = PART_07_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143);
 	part7DrawDoorState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	for (int area = 11; area <= 13; ++area) {

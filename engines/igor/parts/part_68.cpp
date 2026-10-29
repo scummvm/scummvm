@@ -366,7 +366,7 @@ void IgorEngine::part68Conversation() {
 	_part68QuestionCounter = 1;
 	part68DrawUndertaker(kPart68BorisStanding);
 
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	_gameState.dialogueStarted = 1;
 	if (!resuming) {
 		_gameState.dialogueChoiceStart = 1;
@@ -434,7 +434,7 @@ void IgorEngine::part68Conversation() {
 		part68BorisLeaves();
 		_objectsState[kUndertakerLeftStateIndex] = 2;
 	}
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
@@ -510,7 +510,7 @@ void IgorEngine::part68() {
 	_updateRoomBackground = &IgorEngine::part68UpdateBackground;
 	setInventoryPanelColors();
 	part68ApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	// the colors that change are darker than their palette
 	darkenPalette(_paletteBuffer, 192, 207, 10);

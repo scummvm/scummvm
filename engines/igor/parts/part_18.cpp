@@ -77,7 +77,7 @@ void IgorEngine::part18UseSlugOnGrating() {
 	// loads part 19
 	part19();
 
-	memcpy(_screenVGA, _screenLayer2, 46080);
+	copyLayerToScreen(_screenLayer2Surface);
 
 	part18LoadRoom();
 	part18LoadAnimation();
@@ -87,7 +87,7 @@ void IgorEngine::part18UseSlugOnGrating() {
 	partMainSetExecuteAction(1, &IgorEngine::part18ExecuteAction);
 	part18ApplyObjectState(255);
 	// paints bottom of screen black
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	drawVerbsPanel();
 	drawInventory(1, 0);
 	removeObjectFromInventory(53);
@@ -150,7 +150,7 @@ void IgorEngine::part18() {
 	partMainSetExecuteAction(1, &IgorEngine::part18ExecuteAction);
 	part18ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		part18WalkIn();

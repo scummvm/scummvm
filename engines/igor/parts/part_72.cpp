@@ -192,7 +192,7 @@ void IgorEngine::part72() {
 	partMainSetExecuteAction(1, &IgorEngine::part72ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part72UpdateBackground;
 	part72ApplyObjectState();
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	// Darken the room colors by 10 and Igor's colors by 15.
 	darkenPalette(_paletteBuffer, 1, 175, 10);

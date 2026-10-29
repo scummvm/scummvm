@@ -243,7 +243,7 @@ void IgorEngine::part30FloppyLauraLeaves() {
 void IgorEngine::part30FloppyLauraCutscene() {
 	// The cutscene does not select any music, the current music keeps playing
 	const bool resuming = _dialogueResuming;
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	if (!resuming) {
 		fadeIn(768);
 		part30FloppyLauraAndIgorBumpIntoEachOther();
@@ -272,7 +272,7 @@ void IgorEngine::part30FloppyLauraCutscene() {
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 1;
 	igorSay(210, 1, 0);
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
@@ -290,7 +290,7 @@ void IgorEngine::part30Floppy() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	partMainSetExecuteAction(1, &IgorEngine::part30FloppyExecuteAction);
 	part30FloppyApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	const bool loaded = restoreRoomAfterLoad(true, false);

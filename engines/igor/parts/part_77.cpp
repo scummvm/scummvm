@@ -78,7 +78,7 @@ void IgorEngine::part77UpdateDialogue(int action) {
 }
 
 void IgorEngine::part77MonkeyCageCutscene() {
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	--_walkDataLastIndex;
 	_roomObjectAreasTable[_screenLayer2[88 * 320 + 124]].area = 5;
 	buildWalkPath(_walkData[_walkDataLastIndex].x, _walkData[_walkDataLastIndex].y, 124, 88);
@@ -169,7 +169,7 @@ void IgorEngine::part77() {
 	setRoomClickFix(143, -1, 286, true);
 	partMainSetExecuteAction(1, &IgorEngine::part77ExecuteAction);
 	part77ApplyObjectState();
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	part17DisableArea(0);
 
 	if (_gameStateLoaded) {

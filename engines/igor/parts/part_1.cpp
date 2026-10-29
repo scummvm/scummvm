@@ -174,7 +174,7 @@ void IgorEngine::part1() {
 	// the room mask
 	setRoomWalkBounds(60, 0, 276, 143);
 	partMainSetExecuteAction(1, &IgorEngine::part1ExecuteAction);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;

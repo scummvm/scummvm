@@ -60,7 +60,7 @@ void IgorEngine::part75() {
 	loadRoomData(PAL_PhilipRoom, IMG_PhilipRoom, BOX_PhilipRoom, MSK_PhilipRoom, TXT_PhilipRoom);
 	static const int anm[] = { ANM_PhilipVodka, AOF_PhilipVodka, 0 };
 	loadAnimData(anm);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	_updateDialogue = &IgorEngine::part75UpdatePhilipDialogue;
 	part75DrawPhilipFrame(1);
 	part75DrawPhilipFrame(7);

@@ -192,7 +192,7 @@ void IgorEngine::part27Floppy() {
 	setRoomWalkBounds(0, 0, 296, 143);
 	partMainSetExecuteAction(1, &IgorEngine::part27FloppyExecuteAction);
 	part27FloppyApplyObjectState(255);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);

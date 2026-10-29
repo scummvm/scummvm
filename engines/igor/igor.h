@@ -38,6 +38,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
+#include "graphics/managed_surface.h"
 #include "graphics/screen.h"
 
 #include "igor/detection.h"
@@ -249,6 +250,17 @@ private:
 	int _optionsControlRow;
 	bool _floppyProtectionPassed;
 
+	// Screen layers and UI buffers: the surfaces own the pixels (8bpp, pitch == width), the raw pointers below
+	// are views of their pixel memory, set once in the constructor, for the offset-based drawing code
+	Graphics::ManagedSurface _screenVGASurface; // 320x205: some parts draw below the visible area
+	Graphics::ManagedSurface _screenLayer1Surface; // room background
+	Graphics::ManagedSurface _screenLayer2Surface; // room hotspot/lighting mask
+	Graphics::ManagedSurface _screenTextLayerSurface;
+	Graphics::ManagedSurface _screenTempLayerSurface; // 100x100 scratch block
+	Graphics::ManagedSurface _inventoryPanelSurface; // two panels (320x30 each)
+	Graphics::ManagedSurface _inventoryImagesSurface;
+	Graphics::ManagedSurface _verbsPanelSurface;
+
 	uint8 *_screenVGA;
 	uint8 *_facingIgorFrames[4];
 	uint8 *_screenLayer1;
@@ -416,6 +428,9 @@ private:
 
 	void readTableFile();
 
+	void flushScreenToBackend();
+	void copyLayerToScreen(const Graphics::ManagedSurface &layer);
+	void fillScreenRows(int firstRow, int numRows, uint8 color);
 	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent = false);
 	void drawAnimRect(int dstOffset, int animOffset, int w, int h, bool alsoBackground = false, AnimBlend blend = kBlendCopy);
 	void animateLitAnimFrames(int srcOffset, int firstFrame, int lastFrame, int frameSize, int width, int height, int dstOffset, int delay, int soundFrame, int sound);

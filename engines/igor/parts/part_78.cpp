@@ -207,7 +207,7 @@ void IgorEngine::part78() {
 	partMainMeanwhile(IMG_Part78MinutesLater);
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_Part78, IMG_Part78, BOX_Part78, 0, TXT_Part78);
 	static const int anim[] = { ANM_Part78, 0 };
@@ -215,7 +215,7 @@ void IgorEngine::part78() {
 
 	loadData(IMG_Part78Layer2, _screenLayer2 + 1);
 	_part78BandFrames = loadData(ANM_Part78Frames);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	part78DrawProfessorFrame(kPart78FirstFigure);
 	part78DrawIgorFrame(1);
 	memset(_currentPalette, 0, 768);

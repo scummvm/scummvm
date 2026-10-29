@@ -441,7 +441,7 @@ void IgorEngine::part8() {
 	setRoomClickFix(143, -1, 281, false);
 	part8ApplyObjectState(255);
 
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	if (!restoreRoomAfterLoad()) {

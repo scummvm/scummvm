@@ -791,7 +791,7 @@ void IgorEngine::partMain() {
 			const bool savingWasAllowed = _canSaveGame;
 			_canSaveGame = false;
 			// Clear the entire screen buffer before starting the intro cutscene
-			memset(_screenVGA, 0, 64000);
+			fillScreenRows(0, 200, 0);
 			g_engine->_screen->updateScreen();
 			// The Spanish floppy draws the intro at the top of the screen, without the black band
 			const bool band = _game.version != kIdSpaFloppy;
@@ -803,7 +803,7 @@ void IgorEngine::partMain() {
 			}
 			part85();
 			// Clears the bottom portion of the screen
-			memset(_screenVGA + 46080, 0, 17920);
+			fillScreenRows(144, 56, 0);
 			if (band)
 				partMainMoveScreenUp(_screenVGAVOffset);
 			_screenVGAVOffset = 0;
@@ -988,7 +988,7 @@ void IgorEngine::partMainMeanwhile(int img) {
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(208, 255);
 	// clears the verbs and inventory panels area
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	loadData(img, _screenVGA);
 	_paletteBuffer[3] = 63;
 	_paletteBuffer[4] = 32;

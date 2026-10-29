@@ -92,7 +92,7 @@ void IgorEngine::part35ScrollLeft() {
 					}
 				}
 			}
-			memcpy(_screenVGA, _screenLayer2, 46080);
+			copyLayerToScreen(_screenLayer2Surface);
 			++step;
 		}
 		waitForTimer();
@@ -146,7 +146,7 @@ void IgorEngine::part35() {
 	part35ApplyObjectState(255);
 
 	if (_currentPart != 351 && !_gameStateLoaded) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 	}

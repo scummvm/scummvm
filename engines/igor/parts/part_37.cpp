@@ -99,7 +99,7 @@ void IgorEngine::part37() {
 	partMainSetExecuteAction(1, &IgorEngine::part37ExecuteAction);
 	part37ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		part37WalkIn();

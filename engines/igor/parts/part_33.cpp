@@ -265,7 +265,7 @@ void IgorEngine::part33HarrisonWalksOut() {
 	if (!isCDVersion() && _game.version != kIdSpaFloppy)
 		playMusic(11, true);
 	memcpy(_screenLayer2, _screenVGA, 46080);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x5255) - 1, _screenVGA, true);
 	memcpy(_screenLayer1, _screenVGA, 46080);
 	fadeIn(624);
@@ -374,7 +374,7 @@ void IgorEngine::part33() {
 	setVerbPanelColors();
 	setInventoryPanelColors();
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		part33WalkIn();

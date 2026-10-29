@@ -121,7 +121,7 @@ void IgorEngine::part50() {
 	setRoomWalkBounds(49, 22, 224, 119);
 	partMainSetExecuteAction(1, &IgorEngine::part50ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part50UpdateBackground;
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	// the whole room is darker than its palette
 	darkenPalette(_paletteBuffer, 1, 207, kPart50PaletteDarkness);

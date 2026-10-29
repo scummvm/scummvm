@@ -380,7 +380,7 @@ void IgorEngine::part31() {
 	_updateRoomBackground = &IgorEngine::part31UpdateBackground;
 	part31ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		_gameState.unk10 = 4;
 		part31DrawJohnnyFrame(_gameState.unk10);

@@ -307,7 +307,7 @@ void IgorEngine::part81GiveLampToLighthouseKeeper() {
 		part81RejectItem();
 		return;
 	}
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	for (int frame = 3; frame <= 4; ++frame) {
 		part81DrawLighthouseKeeperHead(frame);
 		waitForTimer(31);
@@ -433,7 +433,7 @@ void IgorEngine::part81HandleDialogue() {
 		}
 	} while (!done);
 
-	memset(_screenVGA + 46080, 0, 17920);
+	fillScreenRows(144, 56, 0);
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
 	_currentAction.verb = kVerbWalk;
@@ -530,7 +530,7 @@ void IgorEngine::part81() {
 
 	// the colors that change are darker than their palette
 	darkenPalette(_paletteBuffer, 192, 207, 20);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 
 	if (!restoreRoomAfterLoad()) {
 		_currentAction.verb = kVerbWalk;

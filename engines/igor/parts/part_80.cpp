@@ -89,8 +89,8 @@ void IgorEngine::part80() {
 	loadRoomData(PAL_Part80, IMG_Part80, BOX_Part80, MSK_Part80, TXT_Part80);
 	static const int anim[] = { ANM_Part80, 0 };
 	loadAnimData(anim);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	memset(_screenVGA + 46080, 0, 17920);
+	copyLayerToScreen(_screenLayer1Surface);
+	fillScreenRows(144, 56, 0);
 	fadeIn(768);
 	_gameState.igorMoving = false;
 

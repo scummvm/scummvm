@@ -58,8 +58,8 @@ void IgorEngine::part73Cutscene() {
 	memcpy(_paletteBuffer + 192 * 3, _igorPalette, 48);
 	static const int anim[] = { ANM_Part73, 0 };
 	loadAnimData(anim);
-	memcpy(_screenVGA, _screenLayer1, 46080);
-	memset(_screenVGA + 46080, 0, 17920);
+	copyLayerToScreen(_screenLayer1Surface);
+	fillScreenRows(144, 56, 0);
 	part73DrawPoliceman(1);
 	WalkData *wd = &_walkData[0];
 	wd->setPos(195, 107, 4, 0);

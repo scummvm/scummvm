@@ -115,7 +115,7 @@ void IgorEngine::part95() {
 	hideCursor();
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
-	memset(_screenVGA, 0, 64000);
+	fillScreenRows(0, 200, 0);
 	int startStr = -1, endStr = -1;
 	switch (_currentPart) {
 	case 950:

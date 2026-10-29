@@ -128,7 +128,7 @@ void IgorEngine::part19SlugCutscene() { // sub_137_07AD
 	int talkSpeed = _gameState.talkSpeed;
 	_gameState.talkSpeed = 5;
 	memcpy(_screenLayer2, _screenVGA, 46080);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	const uint8 *src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x4051) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 	memcpy(_screenLayer1, _screenVGA, 46080);
@@ -229,7 +229,7 @@ void IgorEngine::part19() {
 	partMainSetExecuteAction(1, &IgorEngine::part19ExecuteAction);
 	part19ApplyObjectState(255);
 	if (!restoreRoomAfterLoad()) {
-		memcpy(_screenVGA, _screenLayer1, 46080);
+		copyLayerToScreen(_screenLayer1Surface);
 		_currentAction.verb = kVerbWalk;
 		fadeIn(768);
 		part19WalkIn();

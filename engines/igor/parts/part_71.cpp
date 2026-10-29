@@ -203,7 +203,7 @@ void IgorEngine::part71() {
 	partMainSetExecuteAction(1, &IgorEngine::part71ExecuteAction);
 	_updateRoomBackground = &IgorEngine::part71UpdateBackground;
 	part71ApplyObjectState(kPart71ApplyAll);
-	memcpy(_screenVGA, _screenLayer1, 46080);
+	copyLayerToScreen(_screenLayer1Surface);
 	_roomAmbientIndex = 0;
 
 	// the colors of Igor are darker than their palette

@@ -38,7 +38,7 @@ uint32 IgorEngine::ticksSince(uint32 startMillis) const {
 void IgorEngine::waitForTimer(int ticks, bool presentScreen, uint32 deadline) {
 
 	if (presentScreen && !_eventQuitGame) {
-		_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
+		flushScreenToBackend();
 
 		_system->updateScreen();
 	}
@@ -764,7 +764,7 @@ void IgorEngine::formatActionSentence(uint8 color) {
 }
 
 void IgorEngine::drawActionSentence(const char *sentence, uint8 color) {
-	memset(_screenVGA + 144 * 320, 0, 11 * 320);
+	fillScreenRows(144, 11, 0);
 	int w = _sentenceFont->getStringWidth(sentence);
 	int x = (320 - w) / 2;
 	// A sentence wider than the screen would start at a negative offset and
