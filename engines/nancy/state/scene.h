@@ -136,6 +136,11 @@ public:
 	void setLoadName(const Common::String &name) { _loadName = name; }
 	const Common::String &getLoadName() const { return _loadName; }
 
+	// Nancy20: the cheat mode of the original, which the scripts use for views
+	// made for debugging the puzzles. Only the console turns it on.
+	void setCheatMode(bool isOn) { _isCheatMode = isOn; }
+	bool isCheatMode() const { return _isCheatMode; }
+
 	// Nancy16: lists of movies left under the name of the movie or puzzle that plays
 	// them, e.g. the commands given to the wolf. Taking a list forgets it; returns false
 	// when there is none.
@@ -564,6 +569,7 @@ private:
 
 	bool _isLoadingSecondChance = false;
 	Common::String _loadName;
+	bool _isCheatMode = false;
 
 	Common::HashMap<Common::String, Common::Array<Common::String>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _moviePlaylists;
 

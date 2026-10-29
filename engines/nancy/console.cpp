@@ -70,6 +70,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("list_records", WRAP_METHOD(NancyConsole, Cmd_listRecords));
 	registerCmd("script_export", WRAP_METHOD(NancyConsole, Cmd_scriptExport));
 	registerCmd("list_managers", WRAP_METHOD(NancyConsole, Cmd_listManagers));
+	registerCmd("cheat_mode", WRAP_METHOD(NancyConsole, Cmd_cheatMode));
 #endif
 	registerCmd("actionrecord_export", WRAP_METHOD(NancyConsole, Cmd_actionRecordExport));
 	registerCmd("scan_ar_type", WRAP_METHOD(NancyConsole, Cmd_scanForActionRecordType));
@@ -798,6 +799,27 @@ bool NancyConsole::Cmd_listRecords(int argc, const char **argv) {
 		debugPrintf("\n");
 	}
 
+	return true;
+}
+
+// Nancy20: the cheat mode of the original, which the scripts ask for with
+// Game.cheatMode. It turns on views made for debugging the puzzles, like the
+// physics shapes of the Nancy22 driving game (Q).
+bool NancyConsole::Cmd_cheatMode(int argc, const char **argv) {
+	bool isOn = !NancySceneState.isCheatMode();
+	if (argc == 2 && !scumm_stricmp(argv[1], "on")) {
+		isOn = true;
+	} else if (argc == 2 && !scumm_stricmp(argv[1], "off")) {
+		isOn = false;
+	} else if (argc != 1) {
+		debugPrintf("Turns the cheat mode of the scripts of Nancy20 and later on or off.\n");
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		debugPrintf("Without an argument, toggles it.\n");
+		return true;
+	}
+
+	NancySceneState.setCheatMode(isOn);
+	debugPrintf("Cheat mode is %s\n", isOn ? "on" : "off");
 	return true;
 }
 

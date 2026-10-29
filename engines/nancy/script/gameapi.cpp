@@ -437,6 +437,13 @@ static int gameIndex(lua_State *L) {
 		return 1;
 	}
 
+	// Nancy20: whether the cheat mode of the original is on, which scripts use
+	// for views made for debugging. The console command cheat_mode sets it.
+	if (key == "cheatMode") {
+		lua_pushboolean(L, NancySceneState.isCheatMode());
+		return 1;
+	}
+
 	lua_pushnil(L);
 	return 1;
 }
