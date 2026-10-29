@@ -61,7 +61,7 @@ Always return to the launcher when leaving a game
 .. _guidisablefontscaling:
 
 Disable fixed font scaling
-	If ticked, fixed size fonts in the GUI are not upscaled. This reduces artefacts on low resolution screens.
+	If ticked, fixed size fonts in the GUI are not upscaled. This reduces artifacts on low resolution screens.
 
 	*gui_disable_fixed_font_scaling*
 
