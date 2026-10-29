@@ -39,6 +39,7 @@ public:
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 #endif // IGOR_METAENGINE_H
