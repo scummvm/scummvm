@@ -517,6 +517,14 @@ void Sector::getExitInfo(const Math::Vector3d &s, const Math::Vector3d &dirVec, 
 	result->exitPoint = start + (Math::Vector3d::dotProduct(_vertices[i] - start, edgeNormal) / d) * dir;
 }
 
+int Sector::getSortplane(int setup) {
+	// An unkown sortplane is 0
+	if (setup < 0 || setup >= _numSortplanes) {
+		return 0;
+	}
+	return _sortplanes[setup];
+}
+
 Sector &Sector::operator=(const Sector &other) {
 	_numVertices = other._numVertices;
 	_id = other._id;

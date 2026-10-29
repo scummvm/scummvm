@@ -912,14 +912,15 @@ Sector *Set::findPointSector(const Math::Vector3d &p, Sector::SectorType type) {
 	return nullptr;
 }
 
-int Set::findSectorSortOrder(const Math::Vector3d &p, Sector::SectorType type) {
+Common::Pair<bool, int> Set::findSectorSortOrder(const Math::Vector3d &p, Sector::SectorType type) {
 	int setup = getSetup();
-	int sortOrder = 0;
 	float minDist = 0.01f;
+	int sortOrder = 0;
+	bool found = false;
 
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
-		if (!sector || (sector->getType() & type) == 0 || !sector->isVisible() || setup >= sector->getNumSortplanes())
+		if (!sector || (sector->getType() & type) == 0 || !sector->isVisible())
 			continue;
 
 		Math::Vector3d closestPt = sector->getClosestPoint(p);
@@ -927,9 +928,10 @@ int Set::findSectorSortOrder(const Math::Vector3d &p, Sector::SectorType type) {
 		if (thisDist < minDist) {
 			minDist = thisDist;
 			sortOrder = sector->getSortplane(setup);
+			found = true;
 		}
 	}
-	return sortOrder;
+	return Common::Pair<bool, int>(found, sortOrder);
 }
 
 void Set::findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPoint) {

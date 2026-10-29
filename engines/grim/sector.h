@@ -84,7 +84,7 @@ public:
 	void getExitInfo(const Math::Vector3d &start, const Math::Vector3d &dir, struct ExitInfo *result) const;
 
 	int getNumSortplanes() { return _numSortplanes; }
-	int getSortplane(int setup) { return _sortplanes[setup]; }
+	int getSortplane(int setup);
 	int getNumVertices() { return _numVertices; }
 	Math::Vector3d *getVertices() const { return _vertices; }
 	Math::Vector3d getNormal() const { return _normal; }
