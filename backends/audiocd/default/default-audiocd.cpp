@@ -35,9 +35,7 @@ DefaultAudioCDManager::DefaultAudioCDManager() {
 	_cd.numLoops = 0;
 	_cd.volume = Audio::Mixer::kMaxChannelVolume;
 	_cd.balance = 0;
-	_mixer = g_system->getMixer();
 	_emulating = false;
-	assert(_mixer);
 }
 
 DefaultAudioCDManager::~DefaultAudioCDManager() {
@@ -128,8 +126,8 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 			repetitions. Finally, -1 means infinitely many
 			*/
 			_emulating = true;
-			_mixer->playStream(soundType, &_handle,
-			                        Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
+			g_system->getMixer()->playStream(soundType, &_handle,
+				Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
 			return true;
 		}
 	}
@@ -162,7 +160,7 @@ bool DefaultAudioCDManager::playAbsolute(int startFrame, int numLoops, int durat
 void DefaultAudioCDManager::stop() {
 	if (_emulating) {
 		// Audio CD emulation
-		_mixer->stopHandle(_handle);
+		g_system->getMixer()->stopHandle(_handle);
 		_emulating = false;
 	}
 }
@@ -170,7 +168,7 @@ void DefaultAudioCDManager::stop() {
 bool DefaultAudioCDManager::isPlaying() const {
 	// Audio CD emulation
 	if (_emulating)
-		return _mixer->isSoundHandleActive(_handle);
+		return g_system->getMixer()->isSoundHandleActive(_handle);
 
 	// The default class only handles emulation
 	return false;
@@ -181,7 +179,7 @@ void DefaultAudioCDManager::setVolume(byte volume) {
 
 	// Audio CD emulation
 	if (_emulating && isPlaying())
-		_mixer->setChannelVolume(_handle, _cd.volume);
+		g_system->getMixer()->setChannelVolume(_handle, _cd.volume);
 }
 
 void DefaultAudioCDManager::setBalance(int8 balance) {
@@ -189,13 +187,13 @@ void DefaultAudioCDManager::setBalance(int8 balance) {
 
 	// Audio CD emulation
 	if (_emulating && isPlaying())
-		_mixer->setChannelBalance(_handle, _cd.balance);
+		g_system->getMixer()->setChannelBalance(_handle, _cd.balance);
 }
 
 void DefaultAudioCDManager::update() {
 	if (_emulating) {
 		// Check whether the audio track stopped playback
-		if (!_mixer->isSoundHandleActive(_handle)) {
+		if (!g_system->getMixer()->isSoundHandleActive(_handle)) {
 			// FIXME: We do not update the numLoops parameter here (and in fact,
 			// currently can't do that). Luckily, only one engine ever checks
 			// this part of the AudioCD status, namely the SCUMM engine; and it

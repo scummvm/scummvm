@@ -294,7 +294,7 @@ bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int dura
 	// Fake emulation since we're really playing an AudioStream
 	_emulating = true;
 
-	_mixer->playStream(
+	g_system->getMixer()->playStream(
 	    soundType,
 	    &_handle,
 	    Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
