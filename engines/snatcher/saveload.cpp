@@ -292,7 +292,6 @@ void SaveLoadManager::saveState(int slot, GameState &state, SaveFlags flags) {
 	delete out;
 
 	updateSaveSlotsStatus(state);
-	debug("Saved game state to slot %d", slot);
 }
 
 Common::SeekableReadStream *SaveLoadManager::openFileForLoading(int slot, GameState &state, SaveHeader &header) {
