@@ -876,6 +876,8 @@ MohawkMetaEngine_Zoombini::PaletteFilter MohawkEngine_Zoombini::getConfiguredPal
 
 void MohawkEngine_Zoombini::applyGameSettings() {
 	bool needsRedraw = false;
+	if (_text && _text->applyFontSmoothing())
+		needsRedraw = true;
 
 	if (_rnd) {
 		const int prngAlgorithmVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPrngAlgorithm);

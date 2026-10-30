@@ -458,6 +458,16 @@ Mohawk::MohawkMetaEngine_Zoombini::TargetFrameRate Mohawk::MohawkMetaEngine_Zoom
 	}
 }
 
+Mohawk::MohawkMetaEngine_Zoombini::MacFontSmoothing Mohawk::MohawkMetaEngine_Zoombini::normalizeFontSmoothing(int smoothing) {
+	switch (static_cast<MacFontSmoothing>(smoothing)) {
+	case MacFontSmoothing::kEnabled:
+		return MacFontSmoothing::kEnabled;
+	case MacFontSmoothing::kDisabled:
+	default:
+		return MacFontSmoothing::kDisabled;
+	}
+}
+
 void Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings() {
 	// Bug fixes.
 	ConfMan.registerDefault(kOptionFixAudioPops, true);
@@ -472,6 +482,7 @@ void Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings() {
 	ConfMan.registerDefault(kOptionShowRemappedOptionDialogShortcuts, true);
 	// Gameplay tuning.
 	ConfMan.registerDefault(kOptionPaletteFilter, static_cast<int>(PaletteFilter::kBrightenPalette));
+	ConfMan.registerDefault(kOptionMacFontSmoothing, static_cast<int>(MacFontSmoothing::kDisabled));
 	ConfMan.registerDefault(kOptionPrngAlgorithm, static_cast<int>(PrngAlgorithm::kOriginalPrng));
 	ConfMan.registerDefault(kOptionMidiSoundtrack, static_cast<int>(MidiSoundtrack::kWindowsMPC));
 	ConfMan.registerDefault(kOptionColorBlindMode, false);

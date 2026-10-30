@@ -1164,6 +1164,7 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 	_isV1x = !ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kTlcV20);
 	_isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+	const Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
 
 	GUI::StaticTextWidget *text = nullptr;
 
@@ -1294,7 +1295,6 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 		// A release with one MIDI archive cannot switch soundtracks.
 		bool alwaysUseMacMidi = false;
 		bool alwaysUseWinMidi = false;
-		const Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
 		MohawkMetaEngine_Zoombini::MidiSoundtrack singleSoundtrack;
 		const bool isUsV10 = ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kUsV10);
 		if (MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(platform, language, _isDemo, isUsV10, singleSoundtrack)) {
@@ -1319,6 +1319,27 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackWindowsMPC, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
 			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackMacintosh, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
 		}
+	}
+
+	// Windows ClearType did not support 256-color screens, so this option is only for Macintosh targets.
+	if (platform == Common::kPlatformMacintosh) {
+		const Common::U32String macFontSmoothingTooltip = _("Approximates classic Mac OS 8.5+ QuickDraw font smoothing.");
+		_macFontSmoothingLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MacFontSmoothingLabel",
+														   _("Font smoothing:"), macFontSmoothingTooltip);
+		_macFontSmoothingLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
+		_macFontSmoothingPopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MacFontSmoothing", macFontSmoothingTooltip);
+		_macFontSmoothingPopUp->appendEntry(_("Disabled"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MacFontSmoothing::kDisabled));
+		_macFontSmoothingPopUp->appendEntry(_("Enabled (Approximation)"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MacFontSmoothing::kEnabled));
+		bool macFontSmoothingAvailable;
+#ifndef USE_RGB_COLOR
+		// Font AA requires 32bit color surface support
+		macFontSmoothingAvailable = false;
+#else
+		// Classic CJK TrueType fonts contains a bitmap strike, and 
+		macFontSmoothingAvailable = language != Common::KO_KOR && language != Common::JA_JPN;
+#endif
+		_macFontSmoothingLabel->setEnabled(macFontSmoothingAvailable);
+		_macFontSmoothingPopUp->setEnabled(macFontSmoothingAvailable);
 	}
 
 	_colorBlindModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ColorBlindMode",
@@ -1365,6 +1386,7 @@ void ZoombiniOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::
 		_tickRateLabel,
 		_targetFrameRateLabel,
 		_paletteFilterLabel,
+		_macFontSmoothingLabel,
 		_prngAlgorithmLabel,
 		_midiSoundtrackLabel,
 	};
@@ -1430,7 +1452,9 @@ void ZoombiniOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::
 		.addPadding(0, 0, 0, 0)
 		.addWidget("PaletteFilterLabel", "", optionLabelWidth, optionLabelHeight)
 		.addWidget("PaletteFilter", "PopUp")
-		.closeLayout()
+		.closeLayout();
+
+	layouts
 		.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
 		.addPadding(0, 0, 0, 0)
 		.addWidget("PrngAlgorithmLabel", "", optionLabelWidth, optionLabelHeight)
@@ -1443,6 +1467,15 @@ void ZoombiniOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::
 			.addPadding(0, 0, 0, 0)
 			.addWidget("MidiSoundtrackLabel", "", optionLabelWidth, optionLabelHeight)
 			.addWidget("MidiSoundtrack", "PopUp")
+			.closeLayout();
+	}
+
+	if (_macFontSmoothingPopUp) {
+		layouts
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("MacFontSmoothingLabel", "", optionLabelWidth, optionLabelHeight)
+			.addWidget("MacFontSmoothing", "PopUp")
 			.closeLayout();
 	}
 
@@ -1480,6 +1513,8 @@ void ZoombiniOptionsWidget::resetToDefaults() {
 	_enhancedKbdShortcutsCheckbox->setState(true);
 	_showRemappedOptionDialogShortcutsCheckbox->setState(true);
 	_paletteFilterPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::PaletteFilter::kBrightenPalette));
+	if (_macFontSmoothingPopUp)
+		_macFontSmoothingPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::MacFontSmoothing::kDisabled));
 	_prngAlgorithmPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng));
 	if (_midiSoundtrackPopUp)
 		_midiSoundtrackPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
@@ -1513,6 +1548,12 @@ void ZoombiniOptionsWidget::load() {
 	_enhancedKbdShortcutsCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionEnhancedKbdShortcuts, _domain));
 	_showRemappedOptionDialogShortcutsCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionShowRemappedOptionDialogShortcuts, _domain));
 	_paletteFilterPopUp->setSelectedTag(ConfMan.getInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionPaletteFilter, _domain));
+	if (_macFontSmoothingPopUp) {
+		MohawkMetaEngine_Zoombini::MacFontSmoothing smoothing = MohawkMetaEngine_Zoombini::MacFontSmoothing::kDisabled;
+		if (_macFontSmoothingPopUp->isEnabled())
+			smoothing = MohawkMetaEngine_Zoombini::normalizeFontSmoothing(ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMacFontSmoothing, _domain));
+		_macFontSmoothingPopUp->setSelectedTag(static_cast<uint32>(smoothing));
+	}
 	_prngAlgorithmPopUp->setSelectedTag(ConfMan.getInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionPrngAlgorithm, _domain));
 	if (_midiSoundtrackPopUp)
 		_midiSoundtrackPopUp->setSelectedTag(ConfMan.getInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack, _domain));
@@ -1548,6 +1589,10 @@ bool ZoombiniOptionsWidget::save() {
 	ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionShowRemappedOptionDialogShortcuts,
 					_showRemappedOptionDialogShortcutsCheckbox->getState(), _domain);
 	ConfMan.setInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionPaletteFilter, static_cast<int>(paletteFilter), _domain);
+#ifdef USE_RGB_COLOR
+	if (_macFontSmoothingPopUp)
+		ConfMan.setInt(MohawkMetaEngine_Zoombini::kOptionMacFontSmoothing, static_cast<int>(_macFontSmoothingPopUp->getSelectedTag()), _domain);
+#endif
 	ConfMan.setInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionPrngAlgorithm, static_cast<int>(prngAlgorithm), _domain);
 	if (_midiSoundtrackPopUp) {
 		const MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack =
