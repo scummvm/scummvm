@@ -67,7 +67,6 @@ private:
 	int _callbackFps;
 	static void timer_handler(void *refConf);
 
-	bool _isEngineDisabled;
 	bool _checkForUnderrun;
 	int _underrunCooldown;
 	bool _lowLatencyMode;
@@ -86,7 +85,6 @@ private:
 	int _maxQueuedStreams; // maximum number of streams which can be queued before they are played
 	int _nominalBufferCount;
 
-	int _currentSpeechVolume, _currentSpeechFrequency, _currentSpeechPan;
 	int _curMixerMusicVolume, _curMixerSpeechVolume, _curMixerSFXVolume;
 
 	int32 _attributes[228];	// internal attributes for each music file to store and check later
@@ -96,7 +94,6 @@ private:
 
 	bool _scriptInitializedFlag;
 	char _emptyMarker[1];
-	bool _spooledMusicEnabled;
 
 	int _usecPerInt; // Microseconds between each callback (will be set to 50 Hz)
 	bool _callbackInterruptFlag;
@@ -344,27 +341,12 @@ public:
 
 	// Wrapper functions used by the main engine
 
-	void stopSound(int sound);
-	void stopAllSounds();
-	int isSoundRunning(int soundId);
-	void setPriority(int soundId, int priority);
-	void setVolume(int soundId, int volume);
-	void setPan(int soundId, int pan);
-	void setFrequency(int soundId, int frequency);
-	int  getCurSpeechVolume() const;
-	int  getCurSpeechPan() const;
-	int  getCurSpeechFrequency() const;
 	void pause(bool pause);
-	void disableEngine();
-	bool isEngineDisabled();
 	void soundsFloodMusicBuffer();
 	void soundsFillStreamsWhileMusicCritical(int fillTimesAfter);
 	bool queryMusicStream(int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
-	int getSampleRate();
-	int getFeedSize();
 
-	int32 getCurMusicPosInMs();
-	int32 getSoundElapsedTimeInMs(int soundId);
+	int32 soundsGetMusicPosition();
 
 	// Sounds API
 	int soundsLoadStartSound(const char *soundName, int priority, int group);
@@ -435,8 +417,6 @@ public:
 	int imSetSequence(int soundId);
 	int imSetCuePoint(int cueId);
 	int imSetAttribute(int attrIndex, int attrVal);
-	void enableSpooledMusic();
-	void disableSpooledMusic();
 
 	// Utils
 	int addTrackToList(IMuseTrack **listPtr, IMuseTrack *listPtr_Item);
@@ -445,7 +425,6 @@ public:
 	int removeStreamZoneFromList(IMuseStreamZone **listPtr, IMuseStreamZone *itemPtr);
 	int clampNumber(int value, int minValue, int maxValue);
 	int checkHookId(int &trackHookId, int sampleHookId);
-	int roundRobinSetBufferCount();
 	void adaptBufferCount();
 
 	// CMDs
@@ -456,13 +435,6 @@ public:
 
 	// Script
 	int scriptTriggerCallback(char *marker);
-
-	// Debugger utility functions
-	void listStates();
-	void listSeqs();
-	void listCues();
-	void listTracks();
-	void listGroups();
 };
 
 extern IMuse *g_imuse;

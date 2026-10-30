@@ -61,9 +61,6 @@ IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool low
 	_curMixerMusicVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 	_curMixerSpeechVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 	_curMixerSFXVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-	_currentSpeechVolume = 0;
-	_currentSpeechFrequency = 0;
-	_currentSpeechPan = 0;
 
 	_waveOutXorTrigger = 0;
 	_waveOutWriteIndex = 0;
@@ -78,9 +75,7 @@ IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool low
 	_openedSoundsList = nullptr;
 	_scriptInitializedFlag = false;
 	_callbackInterruptFlag = false;
-	_spooledMusicEnabled = true;
 
-	_isEngineDisabled = false;
 	_checkForUnderrun = false;
 	_underrunCooldown = 0;
 
@@ -185,33 +180,9 @@ IMuse::~IMuse() {
 	_waveOutLowLatencyOutputBuffer = nullptr;
 }
 
-int IMuse::roundRobinSetBufferCount() {
-	int minStreams = MAX<int>(_nominalBufferCount - 5, 1);
-	int maxStreams = _nominalBufferCount + 5;
-	_maxQueuedStreams++;
-
-	if (_maxQueuedStreams > maxStreams) {
-		_maxQueuedStreams = minStreams;
-	}
-
-	return _maxQueuedStreams;
-}
-
 void IMuse::adaptBufferCount() {
 	_maxQueuedStreams++;
 	_nominalBufferCount = _maxQueuedStreams;
-}
-
-void IMuse::stopSound(int sound) {
-	imStopSound(sound);
-}
-
-void IMuse::stopAllSounds() {
-	imStopAllSounds();
-}
-
-int IMuse::isSoundRunning(int soundId) {
-	return imGetParam(soundId, IMUSE_P_SND_TRACK_NUM) > 0;
 }
 
 void IMuse::imHeartbeat() {
@@ -299,51 +270,7 @@ void IMuse::imHeartbeat() {
 	_callbackInterruptFlag = false;
 }
 
-void IMuse::setPriority(int soundId, int priority) {
-	imSetParam(soundId, IMUSE_P_PRIORITY, priority);
-}
-
-void IMuse::setVolume(int soundId, int volume) {
-	imSetParam(soundId, IMUSE_P_VOLUME, volume);
-	if (soundId == kTalkSoundID)
-		_currentSpeechVolume = volume;
-}
-
-void IMuse::setPan(int soundId, int pan) {
-	imSetParam(soundId, IMUSE_P_PAN, pan);
-	if (soundId == kTalkSoundID)
-		_currentSpeechPan = pan;
-}
-
-void IMuse::setFrequency(int soundId, int frequency) {
-	imSetParam(soundId, IMUSE_P_TRANSPOSE, frequency);
-	if (soundId == kTalkSoundID)
-		_currentSpeechFrequency = frequency;
-}
-
-int IMuse::getCurSpeechVolume() const {
-	return _currentSpeechVolume;
-}
-
-int IMuse::getCurSpeechPan() const {
-	return _currentSpeechPan;
-}
-
-int IMuse::getCurSpeechFrequency() const {
-	return _currentSpeechFrequency;
-}
-
-// This is used in order to avoid crash everything
-// if a compressed audio resource file is found
-void IMuse::disableEngine() {
-	_isEngineDisabled = true;
-}
-
-bool IMuse::isEngineDisabled() {
-	return _isEngineDisabled;
-}
-
-int32 IMuse::getCurMusicPosInMs() {
+int32 IMuse::soundsGetMusicPosition() {
 	int soundId, curSoundId;
 
 	curSoundId = 0;
@@ -360,13 +287,6 @@ int32 IMuse::getCurMusicPosInMs() {
 	}
 
 	return imGetParam(soundId, IMUSE_P_SND_POS_IN_MS);
-}
-
-int32 IMuse::getSoundElapsedTimeInMs(int soundId) {
-	if (imGetParam(soundId, IMUSE_P_SND_HAS_STREAM)) {
-		return imGetParam(soundId, IMUSE_P_SND_POS_IN_MS);
-	}
-	return 0;
 }
 
 void IMuse::pause(bool p) {
@@ -426,14 +346,6 @@ bool IMuse::queryMusicStream(int32 &bufSize, int32 &criticalSize, int32 &freeSpa
 		soundId = imGetNextSound(soundId);
 	}
 	return false;
-}
-
-int IMuse::getSampleRate() {
-	return _internalSampleRate;
-}
-
-int IMuse::getFeedSize() {
-	return _internalFeedSize;
 }
 
 int IMuse::imTerminate() {
@@ -684,112 +596,5 @@ int IMuse::imSetCuePoint(int cueId) {
 int IMuse::imSetAttribute(int attrIndex, int attrVal) {
 	return scriptParse(IMUSE_C_SCRIPT_SET_ATTRIBUTE, attrIndex, attrVal);
 }
-
-void IMuse::enableSpooledMusic() {
-	_spooledMusicEnabled = true;
-}
-
-void IMuse::disableSpooledMusic() {
-	_spooledMusicEnabled = true;
-	imSetState(0);
-	imSetSequence(0);
-	_spooledMusicEnabled = false;
-}
-
-// Debugger utility functions
-
-// TODO
-#if 0
-void IMuse::listStates() {
-	_vm->getDebugger()->debugPrintf("+---------------------------------+\n");
-	_vm->getDebugger()->debugPrintf("| stateId |         name          |\n");
-	_vm->getDebugger()->debugPrintf("+---------+-----------------------+\n");
-	if (_vm->_game.id == GID_CMI) {
-		if (_vm->_game.features & GF_DEMO) {
-			for (int i = 0; _comiDemoStateMusicTable[i].soundId != -1; i++) {
-				_vm->getDebugger()->debugPrintf("|  %4d   | %20s  |\n", _comiDemoStateMusicTable[i].soundId, _comiDemoStateMusicTable[i].name);
-			}
-		} else {
-			for (int i = 0; _comiStateMusicTable[i].soundId != -1; i++) {
-				_vm->getDebugger()->debugPrintf("|  %4d   | %20s  |\n", _comiStateMusicTable[i].soundId, _comiStateMusicTable[i].name);
-			}
-		}
-	} else if (_vm->_game.id == GID_DIG) {
-		for (int i = 0; _digStateMusicTable[i].soundId != -1; i++) {
-			_vm->getDebugger()->debugPrintf("|  %4d   | %20s  |\n", _digStateMusicTable[i].soundId, _digStateMusicTable[i].name);
-		}
-	} else if (_vm->_game.id == GID_FT) {
-		for (int i = 0; _ftStateMusicTable[i].name[0]; i++) {
-			_vm->getDebugger()->debugPrintf("|  %4d   | %21s |\n", i, _ftStateMusicTable[i].name);
-		}
-	}
-	_vm->getDebugger()->debugPrintf("+---------+-----------------------+\n\n");
-}
-
-void IMuse::listSeqs() {
-	_vm->getDebugger()->debugPrintf("+--------------------------------+\n");
-	_vm->getDebugger()->debugPrintf("|  seqId  |         name         |\n");
-	_vm->getDebugger()->debugPrintf("+---------+----------------------+\n");
-	if (_vm->_game.id == GID_CMI) {
-		for (int i = 0; _comiSeqMusicTable[i].soundId != -1; i++) {
-			_vm->getDebugger()->debugPrintf("|  %4d   | %20s |\n", _comiSeqMusicTable[i].soundId, _comiSeqMusicTable[i].name);
-		}
-	} else if (_vm->_game.id == GID_DIG) {
-		for (int i = 0; _digSeqMusicTable[i].soundId != -1; i++) {
-			_vm->getDebugger()->debugPrintf("|  %4d   | %20s |\n", _digSeqMusicTable[i].soundId, _digSeqMusicTable[i].name);
-		}
-	} else if (_vm->_game.id == GID_FT) {
-		for (int i = 0; _ftSeqNames[i].name[0]; i++) {
-			_vm->getDebugger()->debugPrintf("|  %4d   | %20s |\n", i, _ftSeqNames[i].name);
-		}
-	}
-	_vm->getDebugger()->debugPrintf("+---------+----------------------+\n\n");
-}
-
-void IMuse::listCues() {
-	int curId = -1;
-	if (_curMusicSeq) {
-		_vm->getDebugger()->debugPrintf("Available cues for current sequence:\n");
-		_vm->getDebugger()->debugPrintf("+---------------------------------------+\n");
-		_vm->getDebugger()->debugPrintf("|   cueName   | transitionType | volume |\n");
-		_vm->getDebugger()->debugPrintf("+-------------+----------------+--------+\n");
-		for (int i = 0; i < 4; i++) {
-			curId = ((_curMusicSeq - 1) * 4) + i;
-			_vm->getDebugger()->debugPrintf("|  %9s  |        %d       |  %3d   |\n",
-				_ftSeqMusicTable[curId].audioName, (int)_ftSeqMusicTable[curId].transitionType, (int)_ftSeqMusicTable[curId].volume);
-		}
-		_vm->getDebugger()->debugPrintf("+-------------+----------------+--------+\n\n");
-	} else {
-		_vm->getDebugger()->debugPrintf("Current sequence is NULL, no cues available.\n\n");
-	}
-}
-
-void IMuse::listTracks() {
-	_vm->getDebugger()->debugPrintf("Virtual audio tracks currently playing:\n");
-	_vm->getDebugger()->debugPrintf("+-------------------------------------------------------------------------+\n");
-	_vm->getDebugger()->debugPrintf("| # | soundId | group | hasStream | vol/effVol/pan  | priority | jumpHook |\n");
-	_vm->getDebugger()->debugPrintf("+---+---------+-------+-----------+-----------------+----------+----------+\n");
-
-	for (int i = 0; i < _trackCount; i++) {
-		IMuseTrack curTrack = _tracks[i];
-		if (curTrack.soundId != 0) {
-			_vm->getDebugger()->debugPrintf("| %1d |  %5d  |   %d   |     %d     |   %3d/%3d/%3d   |   %3d    |   %3d    |\n",
-				i, curTrack.soundId, curTrack.group, imGetParam(curTrack.soundId, IMUSE_P_SND_HAS_STREAM),
-				curTrack.vol, curTrack.effVol, curTrack.pan, curTrack.priority, curTrack.jumpHook);
-		} else {
-			_vm->getDebugger()->debugPrintf("| %1d |   ---   |  ---  |    ---    |   ---/---/---   |   ---    |   ---    |\n", i);
-		}
-	}
-	_vm->getDebugger()->debugPrintf("+---+---------+-------+-----------+-----------------+----------+----------+\n\n");
-}
-
-void IMuse::listGroups() {
-	_vm->getDebugger()->debugPrintf("Volume groups:\n");
-	_vm->getDebugger()->debugPrintf("\tSFX:      %3d\n", _groupsHandler->getGroupVol(IMUSE_GROUP_SFX));
-	_vm->getDebugger()->debugPrintf("\tSPEECH:   %3d\n", _groupsHandler->getGroupVol(IMUSE_GROUP_SPEECH));
-	_vm->getDebugger()->debugPrintf("\tMUSIC:    %3d\n", _groupsHandler->getGroupVol(IMUSE_GROUP_MUSIC));
-	_vm->getDebugger()->debugPrintf("\tMUSICEFF: %3d\n\n", _groupsHandler->getGroupVol(IMUSE_GROUP_MUSICEFF));
-}
-#endif
 
 } // End of namespace Grim
