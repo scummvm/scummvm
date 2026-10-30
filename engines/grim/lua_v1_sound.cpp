@@ -185,6 +185,25 @@ void Lua_V1::ImSetSequence() {
 	lua_pushnumber(g_imuse->imSetSequence(state));
 }
 
+void Lua_V1::ImSetAttribute() {
+	lua_Object attrIndexObj = lua_getparam(1);
+	lua_Object attrValObj = lua_getparam(2);
+	if (!lua_isnumber(attrIndexObj) || !lua_isnumber(attrValObj))
+		return;
+
+	int attrIndex = (int)lua_getnumber(attrIndexObj);
+	int attrVal = (int)lua_getnumber(attrValObj);
+	lua_pushnumber(g_imuse->imSetAttribute(attrIndex, attrVal));
+}
+
+void Lua_V1::ImSetCuePoint() {
+	lua_Object cueObj = lua_getparam(1);
+	if (!lua_isnumber(cueObj))
+		return;
+
+	g_imuse->imSetCuePoint((int)lua_getnumber(cueObj));
+}
+
 void Lua_V1::SaveIMuse() {
 	SaveGame *savedIMuse = SaveGame::openForSaving("grim.tmp");
 	if (!savedIMuse)

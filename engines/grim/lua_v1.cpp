@@ -948,6 +948,8 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "ImSetMusicVol", LUA_OPCODE(Lua_V1, ImSetMusicVol) },
 	{ "ImSetState", LUA_OPCODE(Lua_V1, ImSetState) },
 	{ "ImSetSequence", LUA_OPCODE(Lua_V1, ImSetSequence) },
+	{ "ImSetAttribute", LUA_OPCODE(Lua_V1, ImSetAttribute) },
+	{ "ImSetCuePoint", LUA_OPCODE(Lua_V1, ImSetCuePoint) },
 	{ "ImPause", LUA_OPCODE(Lua_V1, ImPause) },
 	{ "ImResume", LUA_OPCODE(Lua_V1, ImResume) },
 	{ "ImSetVoiceEffect", LUA_OPCODE(Lua_V1, ImSetVoiceEffect) },
