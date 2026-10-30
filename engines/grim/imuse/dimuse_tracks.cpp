@@ -31,11 +31,8 @@ int IMuseDigital::tracksInit() {
 	if (waveOutInit(&waveOutSettings))
 		return -1;
 
-	if (_internalMixer->init(waveOutSettings.bytesPerSample,
-			waveOutSettings.numChannels,
-			waveOutSettings.mixBuf,
+	if (_internalMixer->init(waveOutSettings.numChannels,
 			waveOutSettings.mixBufSize,
-			waveOutSettings.sizeSampleKB,
 			_trackCount) ||
 			dispatchInit() ||
 		streamerInit()) {
@@ -218,7 +215,6 @@ void IMuseDigital::tracksLowLatencyCallback() {
 
 			if (_outputFeedSize != 0) {
 				// Ordinary audio tracks handling...
-				_internalMixer->setCurrentMixerBuffer(_outputLowLatencyAudioBuffers[idx]);
 				_internalMixer->clearMixerBuffer();
 
 				if (!_tracksPauseTimer) {
