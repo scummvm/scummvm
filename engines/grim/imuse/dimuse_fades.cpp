@@ -42,12 +42,14 @@ int IMuseDigiFadesHandler::fadeParam(int soundId, int opcode, int destinationVal
 	if (!soundId || fadeLength < 0)
 		return -5;
 
-	if (opcode != DIMUSE_P_PRIORITY && opcode != DIMUSE_P_VOLUME && opcode != DIMUSE_P_PAN && opcode != DIMUSE_P_DETUNE && opcode != DIMUSE_P_UNKNOWN && opcode != 17)
+	if (opcode != DIMUSE_P_PRIORITY && opcode != DIMUSE_P_VOLUME && opcode != DIMUSE_P_PAN && opcode != DIMUSE_P_DETUNE)
 		return -5;
 
 	clearFadeStatus(soundId, opcode);
 
-	if (!fadeLength) {
+	int len50HzTicks = 5 * fadeLength / 6;
+
+	if (!len50HzTicks) {
 		debug(5, "IMuseDigiFadesHandler::fadeParam(): WARNING: allocated fade with zero length for sound %d", soundId);
 		if (opcode != DIMUSE_P_VOLUME || destinationValue) {
 			_engine->diMUSESetParam(soundId, opcode, destinationValue);
@@ -63,19 +65,19 @@ int IMuseDigiFadesHandler::fadeParam(int soundId, int opcode, int destinationVal
 			_fades[l].sound = soundId;
 			_fades[l].param = opcode;
 			_fades[l].currentVal = _engine->diMUSEGetParam(soundId, opcode);
-			_fades[l].length = fadeLength;
-			_fades[l].counter = fadeLength;
-			_fades[l].slope = (destinationValue - _fades[l].currentVal) / fadeLength;
+			_fades[l].length = len50HzTicks;
+			_fades[l].counter = len50HzTicks;
+			_fades[l].slope = (destinationValue - _fades[l].currentVal) / len50HzTicks;
 			_fades[l].modOvfloCounter = 0;
 			_fades[l].status = 1;
 			_fadesOn = 1;
 
 			if ((destinationValue - _fades[l].currentVal) < 0) {
 				_fades[l].nudge = -1;
-				_fades[l].slopeMod = (-(destinationValue - _fades[l].currentVal) % fadeLength);
+				_fades[l].slopeMod = (-(destinationValue - _fades[l].currentVal) % len50HzTicks);
 			} else {
 				_fades[l].nudge = 1;
-				_fades[l].slopeMod = (destinationValue - _fades[l].currentVal) % fadeLength;
+				_fades[l].slopeMod = (destinationValue - _fades[l].currentVal) % len50HzTicks;
 			}
 
 			return 0;
@@ -121,7 +123,7 @@ void IMuseDigiFadesHandler::loop() {
 			if (_fades[l].currentVal != currentVolume) {
 				_fades[l].currentVal = currentVolume;
 
-				if (!(_fades[l].counter % 6)) {
+				if (!(_fades[l].counter % 5)) {
 					debug(5, "IMuseDigiFadesHandler::loop(): running fade for sound %d with id %d, currently at volume %d", _fades[l].sound, l, currentVolume);
 					if ((_fades[l].param != DIMUSE_P_VOLUME) || currentVolume) {
 						_engine->diMUSESetParam(_fades[l].sound, _fades[l].param, currentVolume);

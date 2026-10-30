@@ -353,71 +353,6 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 	return diMUSEGetParam(soundId, DIMUSE_P_SND_POS_IN_MS);
 }
 
-int32 IMuseDigital::getCurVoiceLipSyncWidth() {
-	int32 width, height;
-	getSpeechLipSyncInfo(width, height);
-	return width;
-}
-
-int32 IMuseDigital::getCurVoiceLipSyncHeight() {
-	int32 width, height;
-	getSpeechLipSyncInfo(width, height);
-	return height;
-}
-
-int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
-	int32 width, height;
-	getMusicLipSyncInfo(syncId, width, height);
-	return width;
-}
-
-int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
-	int32 width, height;
-	getMusicLipSyncInfo(syncId, width, height);
-	return height;
-}
-
-void IMuseDigital::getSpeechLipSyncInfo(int32 &width, int32 &height) {
-	int curSpeechPosInMs;
-
-	width = 0;
-	height = 0;
-
-	if (diMUSEGetParam(kTalkSoundID, DIMUSE_P_SND_TRACK_NUM) > 0) {
-		curSpeechPosInMs = diMUSEGetParam(kTalkSoundID, DIMUSE_P_SND_POS_IN_MS);
-		// TODO
-		// diMUSELipSync(kTalkSoundID, 0, _vm->VAR(_vm->VAR_SYNC) + curSpeechPosInMs + 50, width, height);
-	}
-}
-
-void IMuseDigital::getMusicLipSyncInfo(int syncId, int32 &width, int32 &height) {
-	int soundId;
-	int speechSoundId;
-	int curSpeechPosInMs;
-
-	soundId = 0;
-	speechSoundId = 0;
-	width = 0;
-	height = 0;
-	while (1) {
-		soundId = diMUSEGetNextSound(soundId);
-		if (!soundId)
-			break;
-		if (diMUSEGetParam(soundId, DIMUSE_P_SND_HAS_STREAM)) {
-			if (diMUSEGetParam(soundId, DIMUSE_P_STREAM_BUFID) == DIMUSE_BUFFER_MUSIC) {
-				speechSoundId = soundId;
-				break;
-			}
-		}
-	}
-
-	if (speechSoundId) {
-		curSpeechPosInMs = diMUSEGetParam(speechSoundId, DIMUSE_P_SND_POS_IN_MS);
-		// TODO
-		// diMUSELipSync(speechSoundId, syncId, _vm->VAR(_vm->VAR_SYNC) + curSpeechPosInMs + 50, width, height);
-	}
-}
-
 int32 IMuseDigital::getSoundElapsedTimeInMs(int soundId) {
 	if (diMUSEGetParam(soundId, DIMUSE_P_SND_HAS_STREAM)) {
 		return diMUSEGetParam(soundId, DIMUSE_P_SND_POS_IN_MS);
@@ -577,10 +512,6 @@ int IMuseDigital::diMUSEQueryStream(int soundId, int32 &bufSize, int32 &critical
 
 int IMuseDigital::diMUSEFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {
 	return cmdsHandleCmd(DIMUSE_C_FEED_STREAM, srcBuf, soundId, -1, sizeToFeed, paused);
-}
-
-int IMuseDigital::diMUSELipSync(int soundId, int syncId, int msPos, int32 &width, int32 &height) {
-	return waveLipSync(soundId, syncId, msPos, width, height);
 }
 
 int IMuseDigital::diMUSEGetMusicGroupVol() {

@@ -87,14 +87,12 @@ int IMuseDigital::streamerProcessStreams() {
 
 	for (int l = 0; l < DIMUSE_MAX_STREAMS; l++) {
 		if ((_streams[l].soundId) && (!_streams[l].paused)) {
-			if (stream2) {
-				if (stream1) {
-					debug(5, "IMuseDigital::streamerProcessStreams(): WARNING: three streams in use");
-				} else {
-					stream1 = &_streams[l];
+			if (stream1) {
+				if (!stream2) {
+					stream2 = &_streams[l];
 				}
 			} else {
-				stream2 = &_streams[l];
+				stream1 = &_streams[l];
 			}
 		}
 	}
@@ -152,7 +150,7 @@ uint8 *IMuseDigital::streamerGetStreamBuffer(IMuseDigiStream *streamPtr, int siz
 	if (size > streamPtr->bufFreeSize - streamPtr->readIndex) {
 		memcpy(&streamPtr->buf[streamPtr->bufFreeSize],
 			streamPtr->buf,
-			size - streamPtr->bufFreeSize + streamPtr->readIndex + 4);
+			size - streamPtr->bufFreeSize + streamPtr->readIndex);
 	}
 
 	int32 readIndex_tmp = streamPtr->readIndex;
@@ -237,20 +235,8 @@ int IMuseDigital::streamerFeedStream(IMuseDigiStream *streamPtr, uint8 *srcBuf, 
 	if (size <= 0)
 		size += streamPtr->bufFreeSize;
 	if (sizeToFeed > (size - 4)) {
-		// Don't worry, judging from the intro of The Dig, this is totally expected
-		// to happen, and when it does, the output matches the EXE behavior
 		debug(5, "IMuseDigital::streamerFeedStream(): WARNING: buffer overflow");
-		_streamerBailFlag = 1;
-
-		int32 newTentativeSize = sizeToFeed - (size - 4) - (sizeToFeed - (size - 4)) % 12 + 12;
-		size = streamPtr->loadIndex - streamPtr->readIndex;
-		if (size < 0)
-			size += streamPtr->bufFreeSize;
-		if (size >= newTentativeSize) {
-			streamPtr->readIndex = newTentativeSize + streamPtr->readIndex;
-			if (streamPtr->bufFreeSize <= streamPtr->readIndex)
-				streamPtr->readIndex -= streamPtr->bufFreeSize;
-		}
+		streamerSetReadIndex(streamPtr, sizeToFeed - (size - 4) - (sizeToFeed - (size - 4)) % 12 + 12);
 	}
 
 	if (sizeToFeed > 0) {
@@ -298,61 +284,54 @@ int IMuseDigital::streamerFetchData(IMuseDigiStream *streamPtr) {
 
 	if (remainingSize <= 0) {
 		streamPtr->paused = 1;
-
-		// Pad the buffer
-		streamPtr->buf[streamPtr->loadIndex] = 127;
-		streamPtr->loadIndex++;
-		streamPtr->buf[streamPtr->loadIndex] = 127;
-		streamPtr->loadIndex++;
-		streamPtr->buf[streamPtr->loadIndex] = 127;
-		streamPtr->loadIndex++;
-		streamPtr->buf[streamPtr->loadIndex] = 127;
-		streamPtr->loadIndex++;
 	}
 
 	int32 actualAmount;
 	int32 requestedAmount;
 
-	while (1) {
-		if (loadSize <= 0)
-			return 0;
+	if (loadSize > 0) {
+		while (1) {
+			requestedAmount = streamPtr->bufFreeSize - streamPtr->loadIndex;
+			if (requestedAmount >= loadSize) {
+				requestedAmount = loadSize;
+			}
 
-		requestedAmount = streamPtr->bufFreeSize - streamPtr->loadIndex;
-		if (requestedAmount >= loadSize) {
-			requestedAmount = loadSize;
+			if (_filesHandler->seek(streamPtr->soundId, streamPtr->curOffset, SEEK_SET, streamPtr->bufId) != streamPtr->curOffset) {
+				debug(5, "IMuseDigital::streamerFetchData(): ERROR: invalid seek in streamer (%d), pausing stream...", streamPtr->curOffset);
+				streamPtr->paused = 1;
+				return 0;
+			}
+
+			_streamerBailFlag = 0;
+
+			_mutex->lock();
+			actualAmount = _filesHandler->read(streamPtr->soundId, &streamPtr->buf[streamPtr->loadIndex], requestedAmount, streamPtr->bufId);
+			_mutex->unlock();
+
+			if (_streamerBailFlag)
+				return 0;
+
+			loadSize -= actualAmount;
+			streamPtr->curOffset += actualAmount;
+			_lastStreamLoaded = streamPtr;
+
+			int32 newLoadIndex = actualAmount + streamPtr->loadIndex;
+			streamPtr->loadIndex = newLoadIndex;
+			if (newLoadIndex >= streamPtr->bufFreeSize) {
+				streamPtr->loadIndex = newLoadIndex - streamPtr->bufFreeSize;
+			}
+
+			if (actualAmount != requestedAmount)
+				break;
+
+			if (loadSize <= 0)
+				return 0;
 		}
 
-		if (_filesHandler->seek(streamPtr->soundId, streamPtr->curOffset, SEEK_SET, streamPtr->bufId) != streamPtr->curOffset) {
-			debug(5, "IMuseDigital::streamerFetchData(): ERROR: invalid seek in streamer (%d), pausing stream...", streamPtr->curOffset);
-			streamPtr->paused = 1;
-			return 0;
-		}
-
-		_streamerBailFlag = 0;
-
-		_mutex->lock();
-		actualAmount = _filesHandler->read(streamPtr->soundId, &streamPtr->buf[streamPtr->loadIndex], requestedAmount, streamPtr->bufId);
-		_mutex->unlock();
-
-		if (_streamerBailFlag)
-			return 0;
-
-		loadSize -= actualAmount;
-		streamPtr->curOffset += actualAmount;
-		_lastStreamLoaded = streamPtr;
-
-		int32 newLoadIndex = actualAmount + streamPtr->loadIndex;
-		streamPtr->loadIndex = newLoadIndex;
-		if (newLoadIndex >= streamPtr->bufFreeSize) {
-			streamPtr->loadIndex = newLoadIndex - streamPtr->bufFreeSize;
-		}
-
-		if (actualAmount != requestedAmount)
-			break;
+		debug(5, "IMuseDigital::streamerFetchData(): ERROR: unable to load the correct amount of data (req=%d, act=%d)", requestedAmount, actualAmount);
+		_lastStreamLoaded = nullptr;
 	}
 
-	debug(5, "IMuseDigital::streamerFetchData(): ERROR: unable to load the correct amount of data (req=%d, act=%d)", requestedAmount, actualAmount);
-	_lastStreamLoaded = nullptr;
 	return 0;
 }
 
