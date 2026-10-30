@@ -66,11 +66,11 @@ endif
 
 $(PATH_BUILD_LIBSCUMMVM): libscummvm.so | $(PATH_BUILD)
 	$(INSTALL) -d  $(PATH_BUILD_LIB)
-	$(INSTALL) -c -m 644 $< $@
+	$(STRIP) -S $< -o $@
 
 $(PATH_BUILD_LOADER): libloader.so | $(PATH_BUILD)
 	$(INSTALL) -d  $(PATH_BUILD_LIB)
-	$(INSTALL) -c -m 644 $< $@
+	$(STRIP) -S $< -o $@
 
 $(APK_MAIN): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS)/MD5SUMS $(PATH_BUILD_LIBSCUMMVM) $(PATH_BUILD_LOADER) | $(PATH_BUILD)
 	(cd $(PATH_BUILD); ./gradlew assembleDebug)
