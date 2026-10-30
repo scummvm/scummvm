@@ -69,8 +69,10 @@ public:
 	void setupLights(const Math::Vector3d &pos, bool inOverworld);
 
 	void setSoundPosition(const char *soundName, const Math::Vector3d &pos);
-	void setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol);
-	void calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxVol, int &volume, int &balance);
+	void setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol, float maxDist);
+	void setSoundPosition(int soundId, const Math::Vector3d &pos, int minVol, int maxVol, float maxDist);
+	void relocateSounds();
+	bool calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxVol, float maxDist, int &volume, int &balance);
 	void setSoundParameters(int minVolume, int maxVolume);
 	void getSoundParameters(int *minVolume, int *maxVolume);
 
@@ -171,6 +173,22 @@ private:
 	Setup *_currSetup;
 	typedef Common::List<ObjectState::Ptr> StateList;
 	StateList _states;
+
+	// A sound with a position in the set, which has to be updated when the camera changes
+	struct SoundPosition {
+		Common::String name;	// Empty if the sound is identified by a number
+		int soundId;
+		Math::Vector3d pos;
+		int minVol, maxVol;
+		float maxDist;
+	};
+	Common::List<SoundPosition> _soundPositions;
+
+	const char *getSoundKey(const SoundPosition &sound) const;
+	bool isSoundPlaying(const SoundPosition &sound) const;
+	void addSoundPosition(const SoundPosition &newSound);
+	void updateSoundPosition(const SoundPosition &sound);
+	void removeStoppedSounds();
 
 	Math::Frustum _frustum;
 

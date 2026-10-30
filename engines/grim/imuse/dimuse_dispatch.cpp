@@ -744,6 +744,8 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 				return 0;
 
 			continue;
+		case MKTAG('S', 'T', 'O', 'P'):
+			return -1;
 		default:
 			debug(5, "IMuseDigital::dispatchNavigateMap(): ERROR: Unrecognized map event at offset %dx", dispatchPtr->currentOffset);
 			return -1;

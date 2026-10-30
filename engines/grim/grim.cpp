@@ -1576,7 +1576,9 @@ void GrimEngine::makeCurrentSetup(int num) {
 		getCurrSet()->setSetup(num);
 		getCurrSet()->setSoundParameters(20, 127);
 		cameraChangeHandle(prevSetup, num);
-		// here should be set sound position
+
+		if (getGameType() == GType_GRIM)
+			getCurrSet()->relocateSounds();
 
 		_setupChanged = true;
 	}
