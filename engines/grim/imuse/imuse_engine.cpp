@@ -195,25 +195,20 @@ void IMuse::imHeartbeat() {
 
 	waveOutCallback();
 
-	// TODO
-	// if (!_vm->isUsingOriginalGUI()) {
-	// 	// Update volumes
-	//
-	// 	if (_curMixerMusicVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType)) {
-	// 		_curMixerMusicVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
-	// 		setMusicGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2, 0, 127));
-	// 	}
-	//
-	// 	if (_curMixerSpeechVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType)) {
-	// 		_curMixerSpeechVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-	// 		setVoiceGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2, 0, 127));
-	// 	}
-	//
-	// 	if (_curMixerSFXVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType)) {
-	// 		_curMixerSFXVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-	// 		setSFXGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2, 0, 127));
-	// 	}
-	// }
+	if (_curMixerMusicVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType)) {
+		_curMixerMusicVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+		setMusicGroupVol(CLIP(_curMixerMusicVolume / 2, 0, 127));
+	}
+
+	if (_curMixerSpeechVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType)) {
+		_curMixerSpeechVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
+		setVoiceGroupVol(CLIP(_curMixerSpeechVolume / 2, 0, 127));
+	}
+
+	if (_curMixerSFXVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType)) {
+		_curMixerSFXVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+		setSFXGroupVol(CLIP(_curMixerSFXVolume / 2, 0, 127));
+	}
 
 	if (!_cmdsPauseCount) {
 		// Handle fades and triggers
@@ -521,32 +516,14 @@ int IMuse::imFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused
 }
 
 int IMuse::getMusicGroupVol() {
-	// TODO
-	// if (_vm->isUsingOriginalGUI()) {
-	// 	return imSetGroupVol(IMUSE_GROUP_MUSIC, -1);
-	// }
-	//
-	// return _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2;
 	return imSetGroupVol(IMUSE_GROUP_MUSIC, -1);
 }
 
 int IMuse::getSFXGroupVol() {
-	// TODO
-	// if (_vm->isUsingOriginalGUI()) {
-	// 	return imSetGroupVol(IMUSE_GROUP_SFX, -1);
-	// }
-	//
-	// return _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2;
 	return imSetGroupVol(IMUSE_GROUP_SFX, -1);
 }
 
 int IMuse::getVoiceGroupVol() {
-	// TODO
-	// if (_vm->isUsingOriginalGUI()) {
-	// 	return imSetGroupVol(IMUSE_GROUP_SPEECH, -1);
-	// }
-	//
-	// return _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2;
 	return imSetGroupVol(IMUSE_GROUP_SPEECH, -1);
 }
 
