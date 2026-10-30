@@ -28,18 +28,7 @@ namespace Grim {
 int IMuseDigital::cmdsHandleCmd(int cmd, uint8 *ptr, int a, int b, int c, int d, int e,
 	int f, int g, int h, int i, int j, int k, int l, int m, int n) {
 
-	// Convert the character constant (single quotes '') to string
-	char marker[5];
-	if (cmd == 17 || cmd == 18 || cmd == 19) {
-		for (int index = 0; index < 4; index++) {
-#if defined SCUMM_BIG_ENDIAN
-			marker[index] = (b >> (8 * index)) & 0xff;
-#elif defined SCUMM_LITTLE_ENDIAN
-			marker[3 - index] = (b >> (8 * index)) & 0xff;
-#endif
-		}
-		marker[4] = '\0';
-	}
+	char *marker = (char *)ptr;
 
 	switch (cmd) {
 	case DIMUSE_C_INIT:
@@ -112,8 +101,6 @@ int IMuseDigital::cmdsInit() {
 int IMuseDigital::cmdsDeinit() {
 	waveTerminate();
 	waveOutDeinit();
-	_triggersHandler->deinit();
-	_fadesHandler->deinit();
 	_cmdsPauseCount = 0;
 	_cmdsRunning60HzCount = 0;
 	_cmdsRunning10HzCount = 0;
@@ -176,7 +163,7 @@ void IMuseDigital::cmdsSaveLoad(Common::Serializer &ser) {
 	ser.syncAsSint32LE(_curMusicState, VER(103));
 	ser.syncAsSint32LE(_curMusicSeq, VER(103));
 	ser.syncAsSint32LE(_nextSeqToPlay, VER(103));
-	ser.syncArray(_attributes, 188, Common::Serializer::Sint32LE, VER(103));
+	ser.syncArray(_attributes, ARRAYSIZE(_attributes), Common::Serializer::Sint32LE, VER(103));
 }
 
 int IMuseDigital::cmdsStartSound(int soundId, int priority) {

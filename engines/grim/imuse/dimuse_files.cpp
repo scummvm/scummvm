@@ -244,21 +244,22 @@ void IMuseDigiFilesHandler::getFilenameFromSoundId(int soundId, char *fileName, 
 		return;
 	}
 
+	// TODO
 	if (soundId < 2000) {
-		while (_comiStateMusicTable[i].soundId != -1) {
-			if (_comiStateMusicTable[i].soundId == soundId) {
-				Common::strlcpy(fileName, _comiStateMusicTable[i].filename, size);
+		for (i = 0; i < ARRAYSIZE(_grimStateMusicTable); i++) {
+			if (_grimStateMusicTable[i].soundId == soundId) {
+				Common::strlcpy(fileName, _grimStateMusicTable[i].name, size);
+				Common::strlcat(fileName, ".IMC", size);
 				return;
 			}
-			i++;
 		}
 	} else {
-		while (_comiSeqMusicTable[i].soundId != -1) {
-			if (_comiSeqMusicTable[i].soundId == soundId) {
-				Common::strlcpy(fileName, _comiSeqMusicTable[i].filename, size);
+		for (i = 0; i < ARRAYSIZE(_grimSeqMusicTable); i++) {
+			if (_grimSeqMusicTable[i].soundId == soundId) {
+				Common::strlcpy(fileName, _grimSeqMusicTable[i].name, size);
+				Common::strlcat(fileName, ".IMC", size);
 				return;
 			}
-			i++;
 		}
 	}
 }

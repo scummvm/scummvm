@@ -36,10 +36,6 @@ int IMuseDigiTriggersHandler::init() {
 	return clearAllTriggers();
 }
 
-int IMuseDigiTriggersHandler::deinit() {
-	return clearAllTriggers();
-}
-
 int IMuseDigiTriggersHandler::clearAllTriggers() {
 	Common::StackLock lock(*_mutex);
 

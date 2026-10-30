@@ -42,7 +42,6 @@ public:
 	~IMuseDigiFadesHandler();
 
 	int init();
-	void deinit();
 	void saveLoad(Common::Serializer &ser);
 	int fadeParam(int soundId, int opcode, int destinationValue, int fadeLength);
 	void clearFadeStatus(int soundId, int opcode);

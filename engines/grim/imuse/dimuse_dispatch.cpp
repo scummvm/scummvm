@@ -81,6 +81,12 @@ int IMuseDigital::dispatchInit() {
 	return 0;
 }
 
+int IMuseDigital::dispatchTerminate() {
+	free(_dispatchBuffer);
+	_dispatchBuffer = nullptr;
+	return 0;
+}
+
 IMuseDigiDispatch *IMuseDigital::dispatchGetDispatchByTrackId(int trackId) {
 	return &_dispatches[trackId];
 }
