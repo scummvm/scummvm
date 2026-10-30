@@ -39,18 +39,18 @@ bool Scene9000::play() {
 
 	_music.playIntroMusic();
 
+	bool skippedChunk = false;
 	for (uint chunkIndex = 0; chunkIndex < kIntroChunkCount && !_skipRequested && !Engine::shouldQuit(); ++chunkIndex) {
 		if (!loadChunk(chunkIndex)) {
 			_music.stop();
 			return false;
 		}
-		if (!runChunk()) {
-			_music.stop();
-			return false;
-		}
+		if (!runChunk())
+			skippedChunk = true;
 	}
 
-	while (_music.isPlaying() && !_skipRequested && !Engine::shouldQuit()) {
+	// Skipped logos shorten the sequence, so don't wait for the remaining music.
+	while (!skippedChunk && _music.isPlaying() && !_skipRequested && !Engine::shouldQuit()) {
 		if (delay(10))
 			break;
 	}
@@ -89,7 +89,7 @@ bool Scene9000::runChunk() {
 
 	while ((frameIndex < kIntroFrameDescriptorCount || !fadeInComplete) && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
-			return true;
+			return false;
 
 		if (frameIndex < kIntroFrameDescriptorCount) {
 			frameIndex++;
@@ -110,18 +110,18 @@ bool Scene9000::runChunk() {
 
 		presentFrame();
 		if (delay(kFrameStepMillis))
-			return true;
+			return false;
 	}
 
 	for (uint holdStep = 0; holdStep < kHoldStepCount && !_skipRequested && !Engine::shouldQuit(); ++holdStep) {
 		if (delay(kHoldStepMillis))
-			return true;
+			return false;
 	}
 
 	fadeThreshold = 0;
 	while ((frameIndex > 1 || !fadeOutComplete) && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
-			return true;
+			return false;
 
 		if (frameIndex > 1) {
 			frameIndex--;
@@ -142,7 +142,7 @@ bool Scene9000::runChunk() {
 
 		presentFrame();
 		if (delay(kPaletteStepMillis))
-			return true;
+			return false;
 	}
 
 	return true;

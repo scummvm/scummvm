@@ -40,7 +40,7 @@ public:
 private:
 	bool load();
 	bool loadChunk(uint chunkIndex);
-	bool runChunk();
+	bool runChunk(); // Returns false if interrupted.
 	void stopAudio() override;
 
 	void resetChunkState();
