@@ -62,9 +62,11 @@ bool PrisonerMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-//		(f == kSupportsDeleteSave) ||
-	   	(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
 }
 
 bool Prisoner::PrisonerEngine::hasFeature(EngineFeature f) const {
@@ -111,39 +113,8 @@ int PrisonerMetaEngine::getMaximumSaveSlot() const {
 }
 
 bool PrisonerMetaEngine::removeSaveState(const char *target, int slot) const {
-	// Slot 0 can't be deleted, it's for restarting the game(s)
-	if (slot == 0)
-		return false;
-
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String filename = Prisoner::PrisonerEngine::getSavegameFilename(target, slot);
-
-	saveFileMan->removeSavefile(filename.c_str());
-
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".???";
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
-
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-
-		// Rename every slot greater than the deleted slot,
-		// Also do not rename quicksaves.
-		if (slotNum > slot && slotNum < 990) {
-			// FIXME: Our savefile renaming done here is inconsitent with what we do in
-			// GUI_v2::deleteMenu. While here we rename every slot with a greater equal
-			// number of the deleted slot to deleted slot, deleted slot + 1 etc.,
-			// we only rename the following slots in GUI_v2::deleteMenu until a slot
-			// is missing.
-			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
-
-			filename = Prisoner::PrisonerEngine::getSavegameFilename(target, ++slot);
-		}
-	}
-	return true;
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor PrisonerMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -160,10 +131,16 @@ SaveStateDescriptor PrisonerMetaEngine::querySaveMetaInfos(const char *target, i
 		if (error == Prisoner::PrisonerEngine::kRSHENoError) {
 			SaveStateDescriptor desc(this, slot, header.description);
 
-			// The constructor write-protects the autosave slot; only the engine writes there
-			desc.setDeletableFlag(false);
+			// The constructor already protects the autosave slot from being overwritten or deleted
 			desc.setAutosave(slot == getAutosaveSlot());
 			desc.setThumbnail(header.thumbnail);
+
+			// Version 0 saves have no date or play time
+			if (header.version >= 1) {
+				desc.setSaveDate(header.saveDate & 0xFFFF, (header.saveDate >> 16) & 0xFF, (header.saveDate >> 24) & 0xFF);
+				desc.setSaveTime((header.saveTime >> 8) & 0xFF, header.saveTime & 0xFF);
+				desc.setPlayTime(header.playTime);
+			}
 
 			return desc;
 		}

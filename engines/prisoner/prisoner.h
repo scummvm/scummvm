@@ -31,6 +31,7 @@
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/system.h"
 #include "common/util.h"
 
@@ -119,8 +120,7 @@ struct ScriptProgram {
 	int16 scriptCount;
 	Script scripts[kMaxScripts];
 	ScriptProgram() : resourceCacheSlot(-1), scriptCount(0), scriptResource(NULL) {}
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 /* Zones */
@@ -137,8 +137,7 @@ struct Zone {
 	Common::String identifier;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 struct ZoneAction {
@@ -155,8 +154,7 @@ struct ZoneAction {
 	int16 sceneIndex;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 const int16 kMaxZones = 50;
@@ -180,8 +178,7 @@ struct Dialog {
 	Common::Array<DialogKeyword> keywords;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 const int16 kMaxDialogs = 3;
@@ -202,8 +199,7 @@ struct InventoryItem {
 		name.clear();
 		combinationIndex = -1;
 	}
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 struct InventoryItemCombination {
@@ -212,8 +208,7 @@ struct InventoryItemCombination {
 	int16 scriptIndex;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 const int16 kMaxInventoryItems = 50;
@@ -240,8 +235,7 @@ struct ActorSprite {
 	int16 frameListIndex, frameListCount;
 	AnimationFrameList *frameList;
 	void clear() { used = 0; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 struct CompareActorSpriteByY {
@@ -281,8 +275,7 @@ struct Actor {
 	int16 x, y;
 	bool isEmpty() const { return resourceCacheSlot == -1; }
 	void clear() { resourceCacheSlot = -1; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 const int16 kMaxAltActorAnimations = 5;
@@ -292,8 +285,7 @@ struct AltActorAnimation {
 	byte value;
 	bool isEmpty() const { return resourceCacheSlot == -1; }
 	void clear() { resourceCacheSlot = -1; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 /* BackgroundObject */
@@ -347,8 +339,7 @@ struct SceneItem {
 		actorIndex = -1;
 		inventoryItemIndex = -1;
 	}
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 const int16 kMaxSceneItems = 10;
@@ -364,8 +355,7 @@ struct ActorFrameSound {
 	bool flag;
 	bool isEmpty() const { return actorIndex == -1; }
 	void clear() { actorIndex = -1; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 const int16 kMaxActorFrameSounds = 30;
@@ -374,8 +364,7 @@ const int16 kMaxActorFrameSounds = 30;
 
 struct FontColorDef {
 	byte inkColor, outlineColor;
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 struct Font {
@@ -418,8 +407,7 @@ struct ScreenText {
 	int16 fontHeight;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 const int16 kMaxScreenTexts = 3;
@@ -484,8 +472,7 @@ struct PaletteTask {
 	int16 value3;
 	int16 positionIncr;
 	int16 updateTicks;
-	void save(PrisonerEngine *vm, Common::WriteStream *out);
-	void load(PrisonerEngine *vm, Common::ReadStream *in);
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
 const int16 kMaxPaletteTasks = 5;
@@ -1292,6 +1279,9 @@ public:
 		uint32 version;
 		byte gameID;
 		uint32 flags;
+		uint32 saveDate;
+		uint16 saveTime;
+		uint32 playTime;
 		Graphics::Surface *thumbnail;
 	};
 
@@ -1306,8 +1296,9 @@ public:
 	int getAutosaveSlot() const override { return 0; }
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
-	void savegame(const char *filename, const char *description);
-	void loadgame(const char *filename);
+	Common::Error savegame(const char *filename, const char *description);
+	Common::Error loadgame(const char *filename);
+	void syncGameState(Common::Serializer &s);
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);

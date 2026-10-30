@@ -44,585 +44,367 @@
 #include "prisoner/resourcemgr.h"
 #include "prisoner/screen.h"
 
+
 namespace Prisoner {
 
-#define PRISONER_SAVEGAME_VERSION 0 // 0 is dev version until in official SVN
+// Version history:
+// 0 - Development format
+// 1 - Common::Serializer, save date and play time in the header, music playing and loop state
+//     Version 0 saves have the same layout without these fields and still load.
+static const Common::Serializer::Version kSavegameVersion = 1;
 
-void writeString(Common::WriteStream *out, const Common::String &str) {
-	out->writeByte(str.size());
-	out->write(str.c_str(), str.size());
+// Strings are stored as a length byte followed by the characters
+static void syncString(Common::Serializer &s, Common::String &str) {
+	char buffer[256];
+	byte length = MIN<uint>(str.size(), 255);
+	s.syncAsByte(length);
+	if (s.isSaving())
+		memcpy(buffer, str.c_str(), length);
+	s.syncBytes((byte *)buffer, length);
+	if (s.isLoading())
+		str = Common::String(buffer, length);
 }
 
-Common::String readString(Common::ReadStream *stream) {
-	Common::String str;
-	int len = stream->readByte();
-	while (len--)
-		str += (char)stream->readByte();
-	return str;
+// Syncs the pak name, slot and type of a loaded resource. When loading, the caller
+// loads the resource from them.
+static void syncResourceInfo(PrisonerEngine *vm, Common::Serializer &s, int16 resourceCacheSlot,
+	Common::String &pakName, int16 &pakSlot, int16 &resType) {
+	if (s.isSaving())
+		vm->_res->getSlotInfo(resourceCacheSlot, pakName, pakSlot, &resType);
+	syncString(s, pakName);
+	s.syncAsUint16LE(pakSlot);
+	s.syncAsUint16LE(resType);
 }
 
-void writeResourceCacheSlotInfo(int16 resourceCacheSlot, ResourceManager *res, Common::WriteStream *out) {
-	Common::String pakName;
-	int16 pakSlot, resType;
-	res->getSlotInfo(resourceCacheSlot, pakName, pakSlot, &resType);
-	writeString(out, pakName);
-	out->writeUint16LE(pakSlot);
-	out->writeUint16LE(resType);
-}
-
+// Syncs a loaded resource. When loading, the resource is loaded again and
+// resourceCacheSlot is set to its new slot.
 template<class T>
-int16 loadResourceCacheSlotInfo(ResourceManager *res, Common::ReadStream *in) {
+static void syncResourceCacheSlot(PrisonerEngine *vm, Common::Serializer &s, int16 &resourceCacheSlot) {
 	Common::String pakName;
 	int16 pakSlot, resType;
-	pakName = readString(in);
-	pakSlot = in->readUint16LE();
-	resType = in->readUint16LE();
-	return res->load<T>(pakName, pakSlot, resType);
+	syncResourceInfo(vm, s, resourceCacheSlot, pakName, pakSlot, resType);
+	if (s.isLoading())
+		resourceCacheSlot = vm->_res->load<T>(pakName, pakSlot, resType);
 }
 
-void readResourceCacheSlotInfo(Common::ReadStream *in, Common::String &pakName, int16 &pakSlot) {
-	pakName = readString(in);
-	pakSlot = in->readUint16LE();
-	in->readUint16LE(); // skip resType
-}
-
-void Zone::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeByte(used);
+void Zone::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsByte(used);
 	if (used) {
-		out->writeUint16LE(x1);
-		out->writeUint16LE(y1);
-		out->writeUint16LE(x2);
-		out->writeUint16LE(y2);
-		out->writeByte(type);
-		out->writeUint16LE(actorIndex);
-		out->writeUint16LE(mouseCursor);
-		out->writeByte(hasText);
-		out->writeUint16LE(textIndex);
-		writeString(out, identifier);
-		out->writeUint16LE(resourceCacheSlot);
-		if (hasText) {
-			writeResourceCacheSlotInfo(resourceCacheSlot, vm->_res, out);
-		}
-	}
-}
-
-void Zone::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	used = in->readByte();
-	if (used) {
-		x1 = in->readUint16LE();
-		y1 = in->readUint16LE();
-		x2 = in->readUint16LE();
-		y2 = in->readUint16LE();
-		type = in->readByte();
-		actorIndex = in->readUint16LE();
-		mouseCursor = in->readUint16LE();
-		hasText = in->readByte();
-		textIndex = in->readUint16LE();
-		identifier = readString(in);
-		resourceCacheSlot = in->readUint16LE();
+		s.syncAsUint16LE(x1);
+		s.syncAsUint16LE(y1);
+		s.syncAsUint16LE(x2);
+		s.syncAsUint16LE(y2);
+		s.syncAsByte(type);
+		s.syncAsUint16LE(actorIndex);
+		s.syncAsUint16LE(mouseCursor);
+		s.syncAsByte(hasText);
+		s.syncAsUint16LE(textIndex);
+		syncString(s, identifier);
+		s.syncAsUint16LE(resourceCacheSlot);
 		if (hasText) {
 			Common::String pakName;
-			int16 pakSlot;
-			readResourceCacheSlotInfo(in, pakName, pakSlot);
-			resourceCacheSlot = vm->loadTextResource(pakName, pakSlot);
+			int16 pakSlot, resType;
+			syncResourceInfo(vm, s, resourceCacheSlot, pakName, pakSlot, resType);
+			if (s.isLoading())
+				resourceCacheSlot = vm->loadTextResource(pakName, pakSlot);
 		}
 	}
 }
 
-void ZoneAction::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeUint16LE(used);
+void ZoneAction::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsUint16LE(used);
 	if (used) {
-		out->writeUint16LE(zoneActionIndex);
-		out->writeUint16LE(zoneIndex);
-		out->writeUint16LE(type);
-		out->writeUint16LE(inventoryItemIndex);
-		out->writeUint16LE(pathNodeIndex);
-		out->writeUint16LE(scriptIndex1);
-		out->writeUint16LE(scriptProgIndex);
-		out->writeUint16LE(scriptIndex2);
-		out->writeByte(0/*unk2*/);
-		out->writeUint16LE(0/*unk3*/);
-		out->writeUint16LE(0/*unk4*/);
-		out->writeUint16LE(moduleIndex);
-		out->writeUint16LE(sceneIndex);
+		// Values that were saved but aren't used
+		byte unk2 = 0;
+		uint16 unk3 = 0, unk4 = 0;
+		s.syncAsUint16LE(zoneActionIndex);
+		s.syncAsUint16LE(zoneIndex);
+		s.syncAsUint16LE(type);
+		s.syncAsUint16LE(inventoryItemIndex);
+		s.syncAsUint16LE(pathNodeIndex);
+		s.syncAsUint16LE(scriptIndex1);
+		s.syncAsUint16LE(scriptProgIndex);
+		s.syncAsUint16LE(scriptIndex2);
+		s.syncAsByte(unk2);
+		s.syncAsUint16LE(unk3);
+		s.syncAsUint16LE(unk4);
+		s.syncAsUint16LE(moduleIndex);
+		s.syncAsUint16LE(sceneIndex);
 	}
 }
 
-void ZoneAction::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	used = in->readUint16LE();
-	if (used) {
-		zoneActionIndex = in->readUint16LE();
-		zoneIndex = in->readUint16LE();
-		type = in->readUint16LE();
-		inventoryItemIndex = in->readUint16LE();
-		pathNodeIndex = in->readUint16LE();
-		scriptIndex1 = in->readUint16LE();
-		scriptProgIndex = in->readUint16LE();
-		scriptIndex2 = in->readUint16LE();
-		/*unk2 = */in->readByte();
-		/*unk3 = */in->readUint16LE();
-		/*unk4 = */in->readUint16LE();
-		moduleIndex = in->readUint16LE();
-		sceneIndex = in->readUint16LE();
-	}
-}
-
-void ScriptProgram::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeUint16LE(resourceCacheSlot);
+void ScriptProgram::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsUint16LE(resourceCacheSlot);
 	if (resourceCacheSlot != -1) {
-		writeResourceCacheSlotInfo(resourceCacheSlot, vm->_res, out);
+		syncResourceCacheSlot<ScriptResource>(vm, s, resourceCacheSlot);
+		if (s.isLoading()) {
+			scriptResource = vm->_res->get<ScriptResource>(resourceCacheSlot);
+			scriptCount = scriptResource->getCount() - 1;
+		}
 		for (int16 i = 0; i < kMaxScripts; i++) {
 			Script *script = &scripts[i];
-			out->writeByte(script->status);
+			if (s.isLoading())
+				script->clear();
+			s.syncAsByte(script->status);
 			if (script->status != kScriptStatusPaused) {
-				out->writeUint32LE(script->ip - script->code);
-				out->writeUint16LE(script->soundIndex);
-				out->writeUint16LE(script->zoneIndex);
-				out->writeByte(script->zoneEnterLeaveFlag);
-				out->writeUint16LE(script->screenTextIndex);
-				out->writeUint32LE(script->sleepCounter);
-				out->writeUint16LE(script->syncScriptNumber);
-				out->writeUint16LE(script->actorIndex);
-				out->writeUint16LE(script->actorIndex2);
-				out->writeUint16LE(script->altAnimationIndex);
-				out->writeUint16LE(script->frameIndex);
-				out->writeUint16LE(0/*script->unk3*/);
+				uint32 codeOffs = 0;
+				uint16 unk3 = 0;
+				if (s.isSaving())
+					codeOffs = script->ip - script->code;
+				s.syncAsUint32LE(codeOffs);
+				if (s.isLoading()) {
+					script->code = scriptResource->getScript(i);
+					script->ip = script->code + codeOffs;
+				}
+				s.syncAsUint16LE(script->soundIndex);
+				s.syncAsUint16LE(script->zoneIndex);
+				s.syncAsByte(script->zoneEnterLeaveFlag);
+				s.syncAsUint16LE(script->screenTextIndex);
+				s.syncAsUint32LE(script->sleepCounter);
+				s.syncAsUint16LE(script->syncScriptNumber);
+				s.syncAsUint16LE(script->actorIndex);
+				s.syncAsUint16LE(script->actorIndex2);
+				s.syncAsUint16LE(script->altAnimationIndex);
+				s.syncAsUint16LE(script->frameIndex);
+				s.syncAsUint16LE(unk3);
 			}
 		}
 	}
 }
 
-void ScriptProgram::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	resourceCacheSlot = in->readUint16LE();
+void InventoryItem::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsUint16LE(resourceCacheSlot);
 	if (resourceCacheSlot != -1) {
-		resourceCacheSlot = loadResourceCacheSlotInfo<ScriptResource>(vm->_res, in);
-		scriptResource = vm->_res->get<ScriptResource>(resourceCacheSlot);
-		scriptCount = scriptResource->getCount() - 1;
-		for (int16 i = 0; i < kMaxScripts; i++) {
-			Script *script = &scripts[i];
-			script->clear();
-			script->status = in->readByte();
-			if (script->status != kScriptStatusPaused) {
-				uint32 codeOffs;
-				codeOffs = in->readUint32LE();
-				script->code = scriptResource->getScript(i);
-				script->ip = script->code + codeOffs;
-				script->soundIndex = in->readUint16LE();
-				script->zoneIndex = in->readUint16LE();
-				script->zoneEnterLeaveFlag = in->readByte();
-				script->screenTextIndex = in->readUint16LE();
-				script->sleepCounter = in->readUint32LE();
-				script->syncScriptNumber = in->readUint16LE();
-				script->actorIndex = in->readUint16LE();
-				script->actorIndex2 = in->readUint16LE();
-				script->altAnimationIndex = in->readUint16LE();
-				script->frameIndex = in->readUint16LE();
-				/*script->unk3 = */in->readUint16LE();
-			}
+		s.syncAsUint16LE(id);
+		s.syncAsByte(status);
+		syncString(s, name);
+		s.syncAsUint16LE(combinationIndex);
+		syncResourceCacheSlot<AnimationResource>(vm, s, resourceCacheSlot);
+	}
+}
+
+void InventoryItemCombination::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsByte(used);
+	if (used) {
+		s.syncAsUint16LE(inventoryItem1);
+		s.syncAsUint16LE(inventoryItem2);
+		s.syncAsUint16LE(scriptIndex);
+	}
+}
+
+void ActorSprite::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsByte(used);
+	if (used) {
+		s.syncAsUint16LE(actorIndex);
+		s.syncAsUint16LE(x);
+		s.syncAsUint16LE(y);
+		s.syncAsUint16LE(xsub);
+		s.syncAsUint16LE(ysub);
+		s.syncAsUint16LE(xadd);
+		s.syncAsUint16LE(yadd);
+		s.syncAsUint16LE(xoffs);
+		s.syncAsUint16LE(yoffs);
+		s.syncAsUint16LE(scale);
+		s.syncAsUint16LE(boundsX1);
+		s.syncAsUint16LE(boundsY1);
+		s.syncAsUint16LE(boundsX2);
+		s.syncAsUint16LE(boundsY2);
+		s.syncAsUint16LE(zoneX1);
+		s.syncAsUint16LE(zoneY1);
+		s.syncAsUint16LE(zoneX2);
+		s.syncAsUint16LE(zoneY2);
+		s.syncAsByte(flag);
+		s.syncAsUint16LE(elementIndex);
+		s.syncAsUint16LE(prevFrameIndex);
+		s.syncAsUint16LE(frameIndex);
+		s.syncAsUint16LE(frameCount);
+		s.syncAsUint16LE(ticks);
+		s.syncAsUint16LE(frameListIndex);
+		s.syncAsUint16LE(frameListCount);
+	}
+}
+
+void Actor::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsUint16LE(resourceCacheSlot);
+	if (resourceCacheSlot != -1) {
+		syncResourceCacheSlot<AnimationResource>(vm, s, resourceCacheSlot);
+		s.syncAsUint16LE(altAnimationIndex);
+		s.syncAsUint16LE(status);
+		s.syncAsUint16LE(pathWalkerIndex);
+		s.syncAsUint16LE(pathResultIndex);
+		if (s.isLoading()) {
+			pathWalker1 = nullptr;
+			pathWalker2 = nullptr;
 		}
-	}
-}
-
-void InventoryItem::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeUint16LE(resourceCacheSlot);
-	if (resourceCacheSlot != -1) {
-		out->writeUint16LE(id);
-		out->writeByte(status);
-		writeString(out, name);
-		out->writeUint16LE(combinationIndex);
-		writeResourceCacheSlotInfo(resourceCacheSlot, vm->_res, out);
-	}
-}
-
-void InventoryItem::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	resourceCacheSlot = in->readUint16LE();
-	if (resourceCacheSlot != -1) {
-		id = in->readUint16LE();
-		status = in->readByte();
-		name = readString(in);
-		combinationIndex = in->readUint16LE();
-		resourceCacheSlot = loadResourceCacheSlotInfo<AnimationResource>(vm->_res, in);
-	}
-}
-
-void InventoryItemCombination::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeByte(used);
-	if (used) {
-		out->writeUint16LE(inventoryItem1);
-		out->writeUint16LE(inventoryItem2);
-		out->writeUint16LE(scriptIndex);
-	}
-}
-
-void InventoryItemCombination::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	used = in->readByte();
-	if (used) {
-		inventoryItem1 = in->readUint16LE();
-		inventoryItem2 = in->readUint16LE();
-		scriptIndex = in->readUint16LE();
-	}
-}
-
-void ActorSprite::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeByte(used);
-	if (used) {
-		out->writeUint16LE(actorIndex);
-		out->writeUint16LE(x);
-		out->writeUint16LE(y);
-		out->writeUint16LE(xsub);
-		out->writeUint16LE(ysub);
-		out->writeUint16LE(xadd);
-		out->writeUint16LE(yadd);
-		out->writeUint16LE(xoffs);
-		out->writeUint16LE(yoffs);
-		out->writeUint16LE(scale);
-		out->writeUint16LE(boundsX1);
-		out->writeUint16LE(boundsY1);
-		out->writeUint16LE(boundsX2);
-		out->writeUint16LE(boundsY2);
-		out->writeUint16LE(zoneX1);
-		out->writeUint16LE(zoneY1);
-		out->writeUint16LE(zoneX2);
-		out->writeUint16LE(zoneY2);
-		out->writeByte(flag);
-		out->writeUint16LE(elementIndex);
-		out->writeUint16LE(prevFrameIndex);
-		out->writeUint16LE(frameIndex);
-		out->writeUint16LE(frameCount);
-		out->writeUint16LE(ticks);
-		out->writeUint16LE(frameListIndex);
-		out->writeUint16LE(frameListCount);
-	}
-}
-
-void ActorSprite::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	used = in->readByte();
-	if (used) {
-		actorIndex = in->readUint16LE();
-		x = in->readUint16LE();
- 		y = in->readUint16LE();
-	 	xsub = in->readUint16LE();
-		ysub = in->readUint16LE();
-		xadd = in->readUint16LE();
-		yadd = in->readUint16LE();
-		xoffs = in->readUint16LE();
-		yoffs = in->readUint16LE();
-		scale = in->readUint16LE();
-		boundsX1 = in->readUint16LE();
-		boundsY1 = in->readUint16LE();
-		boundsX2 = in->readUint16LE();
-		boundsY2 = in->readUint16LE();
-		zoneX1 = in->readUint16LE();
-		zoneY1 = in->readUint16LE();
-		zoneX2 = in->readUint16LE();
-		zoneY2 = in->readUint16LE();
-		flag = in->readByte();
-		elementIndex = in->readUint16LE();
-		prevFrameIndex = in->readUint16LE();
-		frameIndex = in->readUint16LE();
-		frameCount = in->readUint16LE();
-		ticks = in->readUint16LE();
-		frameListIndex = in->readUint16LE();
-		frameListCount = in->readUint16LE();
-	}
-}
-
-void Actor::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeUint16LE(resourceCacheSlot);
-	if (resourceCacheSlot != -1) {
-		writeResourceCacheSlotInfo(resourceCacheSlot, vm->_res, out);
-		out->writeUint16LE(altAnimationIndex);
-		out->writeUint16LE(status);
-		out->writeUint16LE(pathWalkerIndex);
-		out->writeUint16LE(pathResultIndex);
-		out->writeUint16LE(pathResultCount);
+		s.syncAsUint16LE(pathResultCount);
 		if (pathWalkerIndex >= 0) {
+			if (s.isLoading()) {
+				// Assign a new path walker for the path result data
+				pathWalkerIndex = vm->_pathWalkers.getFreeSlot();
+				vm->_pathWalkers[pathWalkerIndex].used = 1;
+				pathWalker1 = &vm->_pathWalkers[pathWalkerIndex].items[pathResultIndex];
+				pathWalker2 = &vm->_pathWalkers[pathWalkerIndex].items[0];
+			}
 			PathResult *pathResult = pathWalker2;
 			for (int j = 0; j < pathResultCount; j++) {
-				out->writeUint16LE(pathResult->x);
-				out->writeUint16LE(pathResult->y);
-				out->writeUint16LE(pathResult->edgeIndex);
-				out->writeUint16LE(pathResult->nodeIndex);
-				out->writeUint16LE(pathResult->polyIndex);
-				out->writeUint16LE(pathResult->direction);
-				out->writeUint16LE(pathResult->scale);
+				s.syncAsUint16LE(pathResult->x);
+				s.syncAsUint16LE(pathResult->y);
+				s.syncAsUint16LE(pathResult->edgeIndex);
+				s.syncAsUint16LE(pathResult->nodeIndex);
+				s.syncAsUint16LE(pathResult->polyIndex);
+				s.syncAsUint16LE(pathResult->direction);
+				s.syncAsUint16LE(pathResult->scale);
 				pathResult++;
 			}
 		}
-		out->writeUint16LE(pathNodeIndex);
-		out->writeUint16LE(pathEdgeIndex);
-		out->writeUint16LE(pathPolyIndex);
-		out->writeUint16LE(firstFrameListIndex);
-		out->writeUint16LE(lastFrameListIndex);
-		out->writeUint16LE(minTicks);
-		out->writeUint16LE(maxTicks);
-		out->writeUint32LE(ticks);
-		out->writeByte(ticksFlag);
-		writeString(out, pakName);
-		out->writeUint16LE(pakSlot);
-		out->writeUint16LE(frameListIndex);
-		out->writeUint16LE(walkDestX);
-		out->writeUint16LE(walkDestY);
-		out->writeUint16LE(x2);
-		out->writeUint16LE(y2);
-		out->writeUint16LE(textFontNumber);
-		out->writeUint16LE(fontOutlineColor);
-		out->writeUint16LE(fontInkColor);
-		//ActorSprite *actorSprite;
-		out->writeUint16LE(x);
-		out->writeUint16LE(y);
+		s.syncAsUint16LE(pathNodeIndex);
+		s.syncAsUint16LE(pathEdgeIndex);
+		s.syncAsUint16LE(pathPolyIndex);
+		s.syncAsUint16LE(firstFrameListIndex);
+		s.syncAsUint16LE(lastFrameListIndex);
+		s.syncAsUint16LE(minTicks);
+		s.syncAsUint16LE(maxTicks);
+		s.syncAsUint32LE(ticks);
+		s.syncAsByte(ticksFlag);
+		syncString(s, pakName);
+		s.syncAsUint16LE(pakSlot);
+		s.syncAsUint16LE(frameListIndex);
+		s.syncAsUint16LE(walkDestX);
+		s.syncAsUint16LE(walkDestY);
+		s.syncAsUint16LE(x2);
+		s.syncAsUint16LE(y2);
+		s.syncAsUint16LE(textFontNumber);
+		s.syncAsUint16LE(fontOutlineColor);
+		s.syncAsUint16LE(fontInkColor);
+		s.syncAsUint16LE(x);
+		s.syncAsUint16LE(y);
 	}
 }
 
-void Actor::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	resourceCacheSlot = in->readUint16LE();
+void AltActorAnimation::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsUint16LE(resourceCacheSlot);
 	if (resourceCacheSlot != -1) {
-		resourceCacheSlot = loadResourceCacheSlotInfo<AnimationResource>(vm->_res, in);
-		altAnimationIndex = in->readUint16LE();
-		status = in->readUint16LE();
-		pathWalkerIndex = in->readUint16LE();
-		pathResultIndex = in->readUint16LE();
-		pathWalker1 = NULL;
-		pathWalker2 = NULL;
-		pathResultCount = in->readUint16LE();
-		// Assign pathwalker and load the path result data
-		if (pathWalkerIndex >= 0) {
-			// ----------------------------------------------------------
-			// TODO: Own function
-			pathWalkerIndex = vm->_pathWalkers.getFreeSlot();
-			vm->_pathWalkers[pathWalkerIndex].used = 1;
-			pathWalker1 = &vm->_pathWalkers[pathWalkerIndex].items[pathResultIndex];
-			pathWalker2 = &vm->_pathWalkers[pathWalkerIndex].items[0];
-			// ----------------------------------------------------------
-			PathResult *pathResult = pathWalker2;
-			for (int j = 0; j < pathResultCount; j++) {
-				pathResult->x = in->readUint16LE();
-				pathResult->y = in->readUint16LE();
-				pathResult->edgeIndex = in->readUint16LE();
-				pathResult->nodeIndex = in->readUint16LE();
-				pathResult->polyIndex = in->readUint16LE();
-				pathResult->direction = in->readUint16LE();
-				pathResult->scale = in->readUint16LE();
-				pathResult++;
-			}
-		}
-		pathNodeIndex = in->readUint16LE();
-		pathEdgeIndex = in->readUint16LE();
-		pathPolyIndex = in->readUint16LE();
-		firstFrameListIndex = in->readUint16LE();
-		lastFrameListIndex = in->readUint16LE();
-		minTicks = in->readUint16LE();
-		maxTicks = in->readUint16LE();
-		ticks = in->readUint32LE();
-		ticksFlag = in->readByte();
-		pakName = readString(in);
-		pakSlot = in->readUint16LE();
-		frameListIndex = in->readUint16LE();
-		walkDestX = in->readUint16LE();
-		walkDestY = in->readUint16LE();
-		x2 = in->readUint16LE();
-		y2 = in->readUint16LE();
-		textFontNumber = in->readUint16LE();
-		fontOutlineColor = in->readUint16LE();
-		fontInkColor = in->readUint16LE();
-		x = in->readUint16LE();
-		y = in->readUint16LE();
+		s.syncAsByte(value);
+		syncResourceCacheSlot<AnimationResource>(vm, s, resourceCacheSlot);
 	}
 }
 
-void AltActorAnimation::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeUint16LE(resourceCacheSlot);
-	if (resourceCacheSlot != -1) {
-		out->writeByte(value);
-		writeResourceCacheSlotInfo(resourceCacheSlot, vm->_res, out);
-	}
-}
-
-void AltActorAnimation::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	resourceCacheSlot = in->readUint16LE();
-	if (resourceCacheSlot != -1) {
-		value = in->readByte();
-		resourceCacheSlot = loadResourceCacheSlotInfo<AnimationResource>(vm->_res, in);
-	}
-}
-
-void SceneItem::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeUint16LE(actorIndex);
+void SceneItem::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsUint16LE(actorIndex);
 	if (actorIndex != -1)
-		out->writeUint16LE(inventoryItemIndex);
+		s.syncAsUint16LE(inventoryItemIndex);
 }
 
-void SceneItem::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	actorIndex = in->readUint16LE();
-	if (actorIndex != -1)
-		inventoryItemIndex = in->readUint16LE();
-}
-
-void ActorFrameSound::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeUint16LE(actorIndex);
+void ActorFrameSound::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsUint16LE(actorIndex);
 	if (actorIndex != -1) {
-		out->writeUint16LE(soundIndex);
-		out->writeUint16LE(frameListIndex);
-		out->writeUint16LE(frameIndex);
-		out->writeUint16LE(volume);
-		out->writeByte(flag);
+		s.syncAsUint16LE(soundIndex);
+		s.syncAsUint16LE(frameListIndex);
+		s.syncAsUint16LE(frameIndex);
+		s.syncAsUint16LE(volume);
+		s.syncAsByte(flag);
 	}
 }
 
-void ActorFrameSound::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	actorIndex = in->readUint16LE();
-	if (actorIndex != -1) {
-		soundIndex = in->readUint16LE();
-		frameListIndex = in->readUint16LE();
-		frameIndex = in->readUint16LE();
-		volume = in->readUint16LE();
-		flag = in->readByte() == 1;
-	}
+void PaletteTask::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsByte(active);
+	s.syncAsUint16LE(value1);
+	s.syncAsUint16LE(value2);
+	s.syncAsUint16LE(value3);
+	s.syncAsUint16LE(positionIncr);
+	if (s.isLoading())
+		updateTicks = 0;
 }
 
-void PaletteTask::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeByte(active);
-	out->writeUint16LE(value1);
-	out->writeUint16LE(value2);
-	out->writeUint16LE(value3);
-	out->writeUint16LE(positionIncr);
-}
-
-void PaletteTask::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	active = in->readByte();
-	value1 = in->readUint16LE();
-	value2 = in->readUint16LE();
-	value3 = in->readUint16LE();
-	positionIncr = in->readUint16LE();
-	updateTicks = 0;
-}
-
-void Dialog::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeByte(used);
+void Dialog::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsByte(used);
 	if (used) {
-		writeString(out, pakName);
-		out->writeUint16LE(pakSlot);
-		for (uint i = 0; i < keywords.size(); i++) {
-			out->writeByte(keywords[i]._used);
-		}
+		syncString(s, pakName);
+		s.syncAsUint16LE(pakSlot);
+		if (s.isLoading())
+			vm->loadDialogKeywords(pakName, pakSlot, this, false);
+		for (uint i = 0; i < keywords.size(); i++)
+			s.syncAsByte(keywords[i]._used);
 	}
 }
 
-void Dialog::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	used = in->readByte();
+void FontColorDef::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsByte(inkColor);
+	s.syncAsByte(outlineColor);
+}
+
+void ScreenText::sync(PrisonerEngine *vm, Common::Serializer &s) {
+	s.syncAsByte(used);
 	if (used) {
-		pakName = readString(in);
-		pakSlot = in->readUint16LE();
-		vm->loadDialogKeywords(pakName, pakSlot, this, false);
-		for (uint i = 0; i < keywords.size(); i++) {
-			keywords[i]._used = in->readByte();
-		}
-	}
-}
-
-void FontColorDef::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeByte(inkColor);
-	out->writeByte(outlineColor);
-}
-
-void FontColorDef::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	inkColor = in->readByte();
-	outlineColor = in->readByte();
-}
-
-void ScreenText::save(PrisonerEngine *vm, Common::WriteStream *out) {
-	out->writeByte(used);
-	if (used) {
-		out->writeByte(screenText);
-		writeString(out, identifier);
-		out->writeUint16LE(x0);
-		out->writeUint16LE(y0);
-		out->writeByte(screenCenter);
-		out->writeUint16LE(resourceCacheSlot);
-		out->writeUint16LE(actorIndex);
-		out->writeUint32LE(finishedTime);
-		out->writeUint16LE(speechPakSlot);
-		out->writeUint16LE(chunkCount);
-		out->writeUint16LE(chunkIndex);
-		out->writeByte(inventoryActive);
-		out->writeUint16LE(textIndex);
-		out->writeUint16LE(fontIndex);
-		out->writeUint16LE(fontOutlineColor);
-		out->writeUint16LE(fontInkColor);
-		out->writeUint16LE(x);
-		out->writeUint16LE(y);
-		out->writeUint16LE(lineCount);
-		out->writeUint16LE(width);
-		out->writeUint16LE(height);
-		out->writeUint16LE(fontHeight);
-		writeResourceCacheSlotInfo(resourceCacheSlot, vm->_res, out);
-	}
-}
-
-void ScreenText::load(PrisonerEngine *vm, Common::ReadStream *in) {
-	used = in->readByte();
-	if (used) {
-		screenText = in->readByte();
-		identifier = readString(in);
-		x0 = in->readUint16LE();
-		y0 = in->readUint16LE();
-		screenCenter = in->readByte();
-		resourceCacheSlot = in->readUint16LE();
-		actorIndex = in->readUint16LE();
-		finishedTime = in->readUint32LE();
-		speechPakSlot = in->readUint16LE() - 1; // Dec since the slot is already set to the next slot in-game
-		chunkCount = in->readUint16LE();
-		chunkIndex = in->readUint16LE();
-		inventoryActive = in->readByte();
-		textIndex = in->readUint16LE();
-		fontIndex = in->readUint16LE();
-		fontOutlineColor = in->readUint16LE();
-		fontInkColor = in->readUint16LE();
-		x = in->readUint16LE();
-		y = in->readUint16LE();
-		lineCount = in->readUint16LE();
-		width = in->readUint16LE();
-		height = in->readUint16LE();
-		fontHeight = in->readUint16LE();
-		resourceCacheSlot = loadResourceCacheSlotInfo<TextResource>(vm->_res, in);
+		s.syncAsByte(screenText);
+		syncString(s, identifier);
+		s.syncAsUint16LE(x0);
+		s.syncAsUint16LE(y0);
+		s.syncAsByte(screenCenter);
+		s.syncAsUint16LE(resourceCacheSlot);
+		s.syncAsUint16LE(actorIndex);
+		s.syncAsUint32LE(finishedTime);
+		s.syncAsUint16LE(speechPakSlot);
+		// The slot already points to the next speech in the game, play the current one again
+		if (s.isLoading())
+			speechPakSlot--;
+		s.syncAsUint16LE(chunkCount);
+		s.syncAsUint16LE(chunkIndex);
+		s.syncAsByte(inventoryActive);
+		s.syncAsUint16LE(textIndex);
+		s.syncAsUint16LE(fontIndex);
+		s.syncAsUint16LE(fontOutlineColor);
+		s.syncAsUint16LE(fontInkColor);
+		s.syncAsUint16LE(x);
+		s.syncAsUint16LE(y);
+		s.syncAsUint16LE(lineCount);
+		s.syncAsUint16LE(width);
+		s.syncAsUint16LE(height);
+		s.syncAsUint16LE(fontHeight);
+		syncResourceCacheSlot<TextResource>(vm, s, resourceCacheSlot);
 	}
 }
 
 PrisonerEngine::kReadSaveHeaderError PrisonerEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
+	Common::Serializer s(in, nullptr);
 
-	header.version = in->readUint32LE();
-	if (header.version != PRISONER_SAVEGAME_VERSION)
+	header.thumbnail = nullptr;
+	header.saveDate = 0;
+	header.saveTime = 0;
+	header.playTime = 0;
+
+	if (!s.syncVersion(kSavegameVersion))
 		return kRSHEInvalidVersion;
+	header.version = s.getVersion();
 
-	byte descriptionLen = in->readByte();
-	header.description = "";
-	while (descriptionLen--)
-		header.description += (char)in->readByte();
+	syncString(s, header.description);
 
-	if (!Graphics::loadThumbnail(*in, header.thumbnail, !loadThumbnail)) {
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, !loadThumbnail))
 		return kRSHEIoError;
-	}
 
 	// Not used yet, reserved for future usage
-	header.gameID = in->readByte();
-	header.flags = in->readUint32LE();
+	s.syncAsByte(header.gameID);
+	s.syncAsUint32LE(header.flags);
 
-	return ((in->eos() || in->err()) ? kRSHEIoError : kRSHENoError);
+	s.syncAsUint32LE(header.saveDate, 1);
+	s.syncAsUint16LE(header.saveTime, 1);
+	s.syncAsUint32LE(header.playTime, 1);
+
+	return (in->eos() || in->err()) ? kRSHEIoError : kRSHENoError;
 }
 
-void PrisonerEngine::savegame(const char *filename, const char *description) {
-
-	Common::OutSaveFile *out;
-	if (!(out = g_system->getSavefileManager()->openForSaving(filename))) {
+Common::Error PrisonerEngine::savegame(const char *filename, const char *description) {
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(filename);
+	if (!out) {
 		warning("Can't create file '%s', game not saved", filename);
-		return;
+		return Common::Error(Common::kCreatingFileFailed, filename);
 	}
 
-	out->writeUint32LE(PRISONER_SAVEGAME_VERSION);
+	Common::Serializer s(nullptr, out);
+	s.syncVersion(kSavegameVersion);
 
-	byte descriptionLen = strlen(description);
-	out->writeByte(descriptionLen);
-	out->write(description, descriptionLen);
+	Common::String descriptionStr = description;
+	syncString(s, descriptionStr);
 
 	if (_menuBackgroundSaved) {
 		// Saving from the main menu: take the thumbnail from the game screen behind the menu
@@ -638,204 +420,48 @@ void PrisonerEngine::savegame(const char *filename, const char *description) {
 	}
 
 	// Not used yet, reserved for future usage
-	out->writeByte(0);
-	out->writeUint32LE(0);
+	byte gameID = 0;
+	uint32 flags = 0;
+	s.syncAsByte(gameID);
+	s.syncAsUint32LE(flags);
 
-	// Module & Background
-	out->writeUint16LE(_currModuleIndex);
-	out->writeUint16LE(_currSceneIndex);
-	out->writeUint16LE(_newModuleIndex);
-	out->writeUint16LE(_newSceneIndex);
-	out->writeUint16LE(_prevModuleIndex);
-	out->writeUint16LE(_prevSceneIndex);
-	out->writeUint16LE(_inventoryItemIndex2);
-	out->writeUint16LE(_backgroundResourceCacheSlot);
-	if (_backgroundResourceCacheSlot != -1) {
-		writeResourceCacheSlotInfo(_backgroundResourceCacheSlot, _res, out);
-	}
-	out->writeUint16LE(_cameraX);
-	out->writeUint16LE(_cameraY);
-	out->writeByte(_backgroundCameraLocked);
-	out->writeUint16LE(_cameraFollowsActorIndex);
-	out->writeUint16LE(_backgroundObjectsResourceCacheSlot);
-	if (_backgroundObjectsResourceCacheSlot != -1) {
-		writeResourceCacheSlotInfo(_backgroundObjectsResourceCacheSlot, _res, out);
-	}
+	TimeDate now;
+	g_system->getTimeAndDate(now);
+	uint32 saveDate = ((now.tm_mday & 0xFF) << 24) | (((now.tm_mon + 1) & 0xFF) << 16) | ((now.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = ((now.tm_hour & 0xFF) << 8) | (now.tm_min & 0xFF);
+	uint32 playTime = getTotalPlayTime();
+	s.syncAsUint32LE(saveDate);
+	s.syncAsUint16LE(saveTime);
+	s.syncAsUint32LE(playTime);
 
-	// Script variables
-	for (uint i = 0; i < 250; i++)
-		out->writeUint16LE(_globalScriptVars[i]);
-	for (uint i = 0; i < 300; i++)
-		out->writeUint16LE(_moduleScriptVars[i]);
+	syncGameState(s);
 
-	// Palette
-	// TODO: Unknown palette struct "stru_761EC" seems unused
-	out->writeByte(_scenePaletteOk);
-	out->write(_scenePalette, 768);
-	out->writeByte(_effectPaletteOk);
-	out->write(_effectPalette, 768);
-
-	// Palette tasks
-	for (int i = 0; i < kMaxPaletteTasks; i++)
-		_paletteTasks[i].save(this, out);
-
-	// Path system
-	_pathSystem->saveState(out);
-
-	// Scene items
-	_sceneItems.save(this, out);
-
-	// Inventory item combinations
-	_inventoryItemCombinations.save(this, out);
-
-	// Inventory
-	out->writeUint16LE(_inventoryItemCursor); // TODO: sg_inventoryItemCursor
-	// TODO: "someArray" doesn't seem to be used
-	out->writeUint16LE(_inventoryItemsCount);
-	_inventoryItems.save(this, out);
-	out->writeUint16LE(_inventoryItemSlotBaseIndex);
-	out->writeUint16LE(_inventoryItemsResourceCacheIndex);
-	if (_inventoryItemsResourceCacheIndex != -1) {
-		writeResourceCacheSlotInfo(_inventoryItemsResourceCacheIndex, _res, out);
-	}
-
-	// Actor frame sounds
-	out->writeUint16LE(_actorFrameSoundItemsCount);
-	if (_actorFrameSoundItemsCount > 0) {
-		_actorFrameSounds.save(this, out);
-	}
-
-	// Actors
-	out->writeByte(_exitZoneActionFlag);
-	out->writeUint16LE(_mainActorIndex);
-	out->writeByte(_mainActorValid);
-	out->writeUint16LE(_cameraDeltaX);
-	out->writeUint16LE(_cameraDeltaY);
-
-	// Actor sprites
-	_actorSprites.save(this, out);
-	// Actors
-	_actors.save(this, out);
-	// Alt actor animations
-	_altActorAnimations.save(this, out);
-
-	// Zones
-	_zones.save(this, out);
-	out->writeUint16LE(_zoneIndexAtMouse);
-
-	// Main actor saved path/queued action
-	out->writeByte(_actorPathFlag);
-	out->writeUint16LE(_actorPathX);
-	out->writeUint16LE(_actorPathY);
-	_zoneActionItem.save(this, out);
-
-	// Zone actions
-	_queuedZoneAction.save(this, out);
-	_zoneActions.save(this, out);
-	out->writeUint16LE(_currZoneActionIndex);
-
-	// LipSync
-	out->writeUint16LE(_lipSyncX);
-	out->writeUint16LE(_lipSyncY);
-	out->writeUint16LE(_lipSyncScriptNumber);
-	out->writeUint16LE(_lipSyncActorIndex);
-	out->writeUint16LE(_lipSyncResourceCacheSlot);
-	if (_lipSyncResourceCacheSlot != -1) {
-		writeResourceCacheSlotInfo(_lipSyncResourceCacheSlot, _res, out);
-		out->writeUint16LE(_lipSyncChannelStatus.size());
-		for (uint i = 0; i < _lipSyncChannelStatus.size(); i++) {
-			out->writeUint16LE(_lipSyncChannelStatus[i].ticks);
-			out->writeUint16LE(_lipSyncChannelStatus[i].index);
-		}
-	}
-
-	// Scripts
-	out->writeUint16LE(_enterSceneScriptIndex);
-	out->writeUint16LE(_enterSceneScriptProgramIndex);
-	out->writeUint16LE(_leaveSceneScriptIndex);
-	out->writeUint16LE(_leaveSceneScriptProgramIndex);
-	_scriptPrograms[0].save(this, out);
-	_scriptPrograms[1].save(this, out);
-
-	// Dialog
-	_dialogs.save(this, out);
-	for (uint i = 0; i < 50; i++)
-		out->writeUint16LE(_currDialogKeywordIndices[i]);
-	out->writeUint16LE(_dialogActiveKeywordsCount);
-	out->writeUint16LE(_currDialogIndex);
-	out->writeUint16LE(_dialogMaxKeywordTextWidth);
-	out->writeUint16LE(_dialogFontHeight);
-	out->writeUint16LE(_selectedDialogKeywordIndex);
-	out->writeByte(_dialogRunning);
-	out->writeByte(_dialogFlag);
-
-	// User input counter
-	out->writeUint16LE(_lockUserInputRefCounter);
-
-	// Text colors
-	_screenTextFontColor.save(this, out);
-	_inventoryScreenTextFontColor.save(this, out);
-	_inventoryFontColor.save(this, out);
-	_zoneFontColor.save(this, out);
-	_dialogFontColor.save(this, out);
-	_dialogHoverFontColor.save(this, out);
-
-	// Screen texts
-	// Unused: g_currTextItemIndex
-	_screenTexts.save(this, out);
-	// Unused: word_61674
-	out->writeByte(_screenTextShowing);
-	out->writeByte(_screenTextHasSpeech);
-
-	// Music
-	for (int16 musicIndex = 0; musicIndex < kMaxMusics; musicIndex++) {
-		MusicSlot &musicSlot = _musics[musicIndex];
-		out->writeUint16LE(musicSlot.resourceCacheSlot);
-		if (musicSlot.resourceCacheSlot != -1) {
-			writeResourceCacheSlotInfo(musicSlot.resourceCacheSlot, _res, out);
-			out->writeByte(musicSlot.volumeFlag);
-			out->writeUint16LE(musicSlot.volume);
-			out->writeByte(musicSlot.shouldResume);
-			out->writeByte(musicSlot.moduleWide);
-		}
-	}
-
-
-	// Sound
-	for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
-		SoundSlot &soundSlot = _sounds[soundIndex];
-		out->writeUint16LE(soundSlot.resourceCacheSlot);
-		if (soundSlot.resourceCacheSlot != -1) {
-			writeResourceCacheSlotInfo(soundSlot.resourceCacheSlot, _res, out);
-			out->writeByte(soundSlot.volumeFlag);
-			out->writeUint16LE(soundSlot.volume);
-			out->writeByte(soundSlot.shouldResume);
-			out->writeByte(soundSlot.moduleWide);
-		}
-	}
-
-	// TODO...
-
+	out->finalize();
+	bool failed = out->err();
 	delete out;
 
+	if (failed) {
+		warning("Error writing file '%s', game not saved", filename);
+		return Common::Error(Common::kWritingFailed, filename);
+	}
+	return Common::kNoError;
 }
 
-void PrisonerEngine::loadgame(const char *filename) {
-
-	Common::InSaveFile *in;
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+Common::Error PrisonerEngine::loadgame(const char *filename) {
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
+	if (!in) {
 		warning("Can't open file '%s', game not loaded", filename);
-		return;
+		return Common::Error(Common::kReadingFailed, filename);
 	}
 
 	SaveHeader header;
-
 	kReadSaveHeaderError errorCode = readSaveHeader(in, false, header);
-
 	if (errorCode != kRSHENoError) {
 		warning("Error loading savegame '%s'", filename);
 		delete in;
-		return;
+		if (errorCode == kRSHEInvalidVersion)
+			return Common::Error(Common::kReadingFailed, "This saved game was made with a newer version of the engine");
+		return Common::Error(Common::kReadingFailed, filename);
 	}
 
 	_updateDirtyRectsFlag = true;
@@ -856,244 +482,15 @@ void PrisonerEngine::loadgame(const char *filename) {
 
 	clearActors();
 
-	// Module & Background
-	_currModuleIndex = in->readUint16LE();
-	_currSceneIndex = in->readUint16LE();
-	_newModuleIndex = in->readUint16LE();
-	_newSceneIndex = in->readUint16LE();
-	_prevModuleIndex = in->readUint16LE();
-	_prevSceneIndex = in->readUint16LE();
-	_inventoryItemIndex2 = in->readUint16LE();
-	_backgroundResourceCacheSlot = in->readUint16LE();
-	if (_backgroundResourceCacheSlot != -1) {
-		Common::String pakName;
-		int16 pakSlot;
-		readResourceCacheSlotInfo(in, pakName, pakSlot);
-		loadBackground(pakName, pakSlot);
-	}
-	_cameraX = in->readUint16LE();
-	_cameraY = in->readUint16LE();
-	_backgroundCameraLocked = in->readByte() != 0;
-	_cameraFollowsActorIndex = in->readUint16LE();
-	_backgroundObjectsResourceCacheSlot = in->readUint16LE();
-	if (_backgroundObjectsResourceCacheSlot != -1) {
-		Common::String pakName;
-		int16 pakSlot;
-		readResourceCacheSlotInfo(in, pakName, pakSlot);
-		setBackgroundObjects(pakName, pakSlot);
-	}
+	Common::Serializer s(in, nullptr);
+	s.setVersion(header.version);
+	syncGameState(s);
 
-	// Script variables
-	for (uint i = 0; i < 250; i++)
-		_globalScriptVars[i] = in->readUint16LE();
-	for (uint i = 0; i < 300; i++)
-		_moduleScriptVars[i] = in->readUint16LE();
+	bool failed = in->err();
+	delete in;
 
-	// Palette
-	// TODO: Unknown palette struct "stru_761EC" seems unused
-	_scenePaletteOk = in->readByte() != 0;
-	in->read(_scenePalette, 768);
-	_effectPaletteOk = in->readByte() != 0;
-	in->read(_effectPalette, 768);
-	_screen->buildPaletteTransTable(_scenePalette, 0);
-	_needToUpdatePalette = true;
-
-	// Palette tasks
-	for (int i = 0; i < kMaxPaletteTasks; i++)
-		_paletteTasks[i].load(this, in);
-	restartPaletteTasks();
-
-	// Path system
-	_pathSystem->loadState(in);
-
-	// Scene items
-	_sceneItems.load(this, in);
-
-	// Inventory item combinations
-	_inventoryItemCombinations.load(this, in);
-
-	// Inventory
-	_inventoryItemCursor = in->readUint16LE(); // TODO: sg_inventoryItemCursor
-	// TODO: "someArray" doesn't seem to be used
-	_inventoryItemsCount = in->readUint16LE();
-	_inventoryItems.load(this, in);
-	for (int inventoryItemIndex = 0; inventoryItemIndex < _inventoryItems.count(); inventoryItemIndex++) {
-		InventoryItem *inventoryItem = &_inventoryItems[inventoryItemIndex];
-		if (inventoryItem->resourceCacheSlot != -1) {
-			loadInventoryItemText(inventoryItemIndex);
-		}
-	}
-	_inventoryItemSlotBaseIndex = in->readUint16LE();
-	_inventoryItemsResourceCacheIndex = in->readUint16LE();
-	if (_inventoryItemsResourceCacheIndex != -1) {
-		_inventoryItemsResourceCacheIndex = loadResourceCacheSlotInfo<AnimationResource>(_res, in);
-	}
-
-	// Actor frame sounds
-	_actorFrameSoundItemsCount = in->readUint16LE();
-	if (_actorFrameSoundItemsCount > 0) {
-		_actorFrameSounds.load(this, in);
-	}
-
-	// Actors
-	_exitZoneActionFlag = in->readByte();
-	_mainActorIndex = in->readUint16LE();
-	_mainActorValid = in->readByte() != 0;
-	_cameraDeltaX = in->readUint16LE();
-	_cameraDeltaY = in->readUint16LE();
-
-	// Actor sprites
-	_actorSprites.load(this, in);
-
-	// Actors
-	_actors.load(this, in);
-	for (int16 actorIndex = 0; actorIndex < kMaxActors; actorIndex++) {
-		Actor *actor = &_actors[actorIndex];
-		if (actor->resourceCacheSlot != -1) {
-			ActorSprite *actorSprite = &_actorSprites[actorIndex];
-			if (actorSprite->prevFrameIndex != -1) {
-				if (actorSprite->prevFrameIndex > 0) {
-					actorSprite->prevFrameIndex--;
-				} else {
-					actorSprite->prevFrameIndex = actorSprite->frameCount - 1;
-				}
-			}
-			if (actorSprite->frameIndex > 0) {
-				actorSprite->frameIndex--;
-			} else {
-				actorSprite->frameIndex = actorSprite->frameCount - 1;
-			}
-			actor->actorSprite = actorSprite;
-			actor->textFontNumber = _textFont;
-		}
-	}
-
-	restoreActorSprites();
-	buildActorSpriteDrawQueue();
-
-	// Alt actor animations
-	_altActorAnimations.load(this, in);
-
-	// Zones
-	_zones.load(this, in);
-	_zoneIndexAtMouse = in->readUint16LE();
-
-	// Main actor saved path/queued action
-	_actorPathFlag = in->readByte();
-	_actorPathX = in->readUint16LE();
-	_actorPathY = in->readUint16LE();
-	_zoneActionItem.load(this, in);
-
-	// Zone actions
-	_queuedZoneAction.load(this, in);
-	_zoneActions.load(this, in);
-	_currZoneActionIndex = in->readUint16LE();
-
-	// LipSync
-	_lipSyncX = in->readUint16LE();
-	_lipSyncY = in->readUint16LE();
-	_lipSyncScriptNumber = in->readUint16LE();
-	_lipSyncActorIndex = in->readUint16LE();
-	_lipSyncResourceCacheSlot = in->readUint16LE();
-	if (_lipSyncResourceCacheSlot != -1) {
-		Common::String pakName;
-		int16 pakSlot;
-		readResourceCacheSlotInfo(in, pakName, pakSlot);
-		int16 count = in->readUint16LE();
-		_lipSyncChannelStatusRestored = true;
-		_lipSyncChannelStatus.clear();
-		_lipSyncChannelStatus.reserve(count);
-		for (int i = 0; i < count; i++) {
-			_lipSyncChannelStatus.push_back(LipSyncChannelStatus());
-			_lipSyncChannelStatus[i].ticks = in->readUint16LE();
-			_lipSyncChannelStatus[i].index = in->readUint16LE();
-		}
-		startLipSync(pakName, pakSlot, _lipSyncScriptNumber, _lipSyncActorIndex, _lipSyncX, _lipSyncY);
-	}
-
-	// Scripts
-	_enterSceneScriptIndex = in->readUint16LE();
-	_enterSceneScriptProgramIndex = in->readUint16LE();
-	_leaveSceneScriptIndex = in->readUint16LE();
-	_leaveSceneScriptProgramIndex = in->readUint16LE();
-	_scriptPrograms[0].load(this, in);
-	_scriptPrograms[1].load(this, in);
-
-	// Dialog
-	_dialogs.load(this, in);
-	for (uint i = 0; i < 50; i++)
-		_currDialogKeywordIndices[i] = in->readUint16LE();
-	_dialogActiveKeywordsCount = in->readUint16LE();
-	_currDialogIndex = in->readUint16LE();
-	_dialogMaxKeywordTextWidth = in->readUint16LE();
-	_dialogFontHeight = in->readUint16LE();
-	_selectedDialogKeywordIndex = in->readUint16LE();
-	_dialogRunning = in->readByte() != 0;
-	_dialogFlag = in->readByte() != 0;
-	if (_dialogRunning)
-		startDialog(_currDialogIndex);
-
-	// User input locking
-	_lockUserInputRefCounter = in->readUint16LE();
-
-	// Text colors
-	_screenTextFontColor.load(this, in);
-	_inventoryScreenTextFontColor.load(this, in);
-	_inventoryFontColor.load(this, in);
-	_zoneFontColor.load(this, in);
-	_dialogFontColor.load(this, in);
-	_dialogHoverFontColor.load(this, in);
-
-	// Screen texts
-	// Unused: g_currTextItemIndex
-	_screenTexts.load(this, in);
-	// Unused: word_61674
-	_screenTextShowing = in->readByte() != 0;
-	_screenTextHasSpeech = in->readByte() != 0;
-
-	// Music
-	for (int16 musicIndex = 0; musicIndex < kMaxMusics; musicIndex++) {
-		MusicSlot &musicSlot = _musics[musicIndex];
-		musicSlot.resourceCacheSlot = in->readUint16LE();
-		if (musicSlot.resourceCacheSlot != -1) {
-			Common::String pakName;
-			int16 pakSlot;
-			readResourceCacheSlotInfo(in, pakName, pakSlot);
-			// Digital music is loaded from the "W" paks, MIDI from the "M" paks
-			musicSlot.isDigital = pakName.hasPrefix("W");
-			if (musicSlot.isDigital)
-				musicSlot.resourceCacheSlot = _res->load<SoundResource>(pakName, pakSlot, 12);
-			else
-				musicSlot.resourceCacheSlot = _res->load<MidiResource>(pakName, pakSlot, 13);
-			musicSlot.volumeFlag = in->readByte() != 0;
-			musicSlot.volume = in->readUint16LE();
-			musicSlot.shouldResume = in->readByte() != 0;
-			musicSlot.moduleWide = in->readByte() != 0;
-			// Restart the music
-			setMusicVolume(musicIndex, musicSlot.volume);
-			playMusic(musicIndex);
-		}
-	}
-
-	// Sound
-	for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
-		SoundSlot &soundSlot = _sounds[soundIndex];
-		soundSlot.resourceCacheSlot = in->readUint16LE();
-		if (soundSlot.resourceCacheSlot != -1) {
-			soundSlot.resourceCacheSlot = loadResourceCacheSlotInfo<SoundResource>(_res, in);
-			soundSlot.volumeFlag = in->readByte() != 0;
-			soundSlot.volume = in->readUint16LE();
-			soundSlot.shouldResume = in->readByte() != 0;
-			soundSlot.moduleWide = in->readByte() != 0;
-			if (soundSlot.shouldResume) {
-				// Restart the sound
-				setSoundVolume(soundIndex, soundSlot.volume);
-				playLoopingSound(soundIndex, 0);
-			}
-		}
-	}
-
-	// TODO: ...
+	if (header.version >= 1)
+		setTotalPlayTime(header.playTime);
 
 	_inScene = true;
 	initFrameTime();
@@ -1106,9 +503,269 @@ void PrisonerEngine::loadgame(const char *filename) {
 	_menuMouseCursor = -1;
 	_moduleScriptCalled = false;
 
+	if (failed) {
+		warning("Error reading savegame '%s'", filename);
+		return Common::Error(Common::kReadingFailed, filename);
+	}
+	return Common::kNoError;
+}
 
-	delete in;
+// Syncs everything after the header. When loading, the state is restored in the same
+// order the data is read, since later parts depend on resources loaded earlier.
+void PrisonerEngine::syncGameState(Common::Serializer &s) {
+	// Module & Background
+	s.syncAsUint16LE(_currModuleIndex);
+	s.syncAsUint16LE(_currSceneIndex);
+	s.syncAsUint16LE(_newModuleIndex);
+	s.syncAsUint16LE(_newSceneIndex);
+	s.syncAsUint16LE(_prevModuleIndex);
+	s.syncAsUint16LE(_prevSceneIndex);
+	s.syncAsUint16LE(_inventoryItemIndex2);
+	s.syncAsUint16LE(_backgroundResourceCacheSlot);
+	if (_backgroundResourceCacheSlot != -1) {
+		Common::String pakName;
+		int16 pakSlot, resType;
+		syncResourceInfo(this, s, _backgroundResourceCacheSlot, pakName, pakSlot, resType);
+		if (s.isLoading())
+			loadBackground(pakName, pakSlot);
+	}
+	s.syncAsUint16LE(_cameraX);
+	s.syncAsUint16LE(_cameraY);
+	s.syncAsByte(_backgroundCameraLocked);
+	s.syncAsUint16LE(_cameraFollowsActorIndex);
+	s.syncAsUint16LE(_backgroundObjectsResourceCacheSlot);
+	if (_backgroundObjectsResourceCacheSlot != -1) {
+		Common::String pakName;
+		int16 pakSlot, resType;
+		syncResourceInfo(this, s, _backgroundObjectsResourceCacheSlot, pakName, pakSlot, resType);
+		if (s.isLoading())
+			setBackgroundObjects(pakName, pakSlot);
+	}
 
+	// Script variables
+	for (uint i = 0; i < 250; i++)
+		s.syncAsUint16LE(_globalScriptVars[i]);
+	for (uint i = 0; i < 300; i++)
+		s.syncAsUint16LE(_moduleScriptVars[i]);
+
+	// Palette
+	// TODO: Unknown palette struct "stru_761EC" seems unused
+	s.syncAsByte(_scenePaletteOk);
+	s.syncBytes(_scenePalette, 768);
+	s.syncAsByte(_effectPaletteOk);
+	s.syncBytes(_effectPalette, 768);
+	if (s.isLoading()) {
+		_screen->buildPaletteTransTable(_scenePalette, 0);
+		_needToUpdatePalette = true;
+	}
+
+	// Palette tasks
+	for (int i = 0; i < kMaxPaletteTasks; i++)
+		_paletteTasks[i].sync(this, s);
+	if (s.isLoading())
+		restartPaletteTasks();
+
+	// Path system
+	_pathSystem->syncState(s);
+
+	// Scene items
+	_sceneItems.sync(this, s);
+
+	// Inventory item combinations
+	_inventoryItemCombinations.sync(this, s);
+
+	// Inventory
+	s.syncAsUint16LE(_inventoryItemCursor); // TODO: sg_inventoryItemCursor
+	// TODO: "someArray" doesn't seem to be used
+	s.syncAsUint16LE(_inventoryItemsCount);
+	_inventoryItems.sync(this, s);
+	if (s.isLoading()) {
+		for (int inventoryItemIndex = 0; inventoryItemIndex < _inventoryItems.count(); inventoryItemIndex++) {
+			if (_inventoryItems[inventoryItemIndex].resourceCacheSlot != -1)
+				loadInventoryItemText(inventoryItemIndex);
+		}
+	}
+	s.syncAsUint16LE(_inventoryItemSlotBaseIndex);
+	s.syncAsUint16LE(_inventoryItemsResourceCacheIndex);
+	if (_inventoryItemsResourceCacheIndex != -1)
+		syncResourceCacheSlot<AnimationResource>(this, s, _inventoryItemsResourceCacheIndex);
+
+	// Actor frame sounds
+	s.syncAsUint16LE(_actorFrameSoundItemsCount);
+	if (_actorFrameSoundItemsCount > 0)
+		_actorFrameSounds.sync(this, s);
+
+	// Actors
+	s.syncAsByte(_exitZoneActionFlag);
+	s.syncAsUint16LE(_mainActorIndex);
+	s.syncAsByte(_mainActorValid);
+	s.syncAsUint16LE(_cameraDeltaX);
+	s.syncAsUint16LE(_cameraDeltaY);
+
+	// Actor sprites
+	_actorSprites.sync(this, s);
+
+	// Actors
+	_actors.sync(this, s);
+	if (s.isLoading()) {
+		for (int16 actorIndex = 0; actorIndex < kMaxActors; actorIndex++) {
+			Actor *actor = &_actors[actorIndex];
+			if (actor->resourceCacheSlot != -1) {
+				ActorSprite *actorSprite = &_actorSprites[actorIndex];
+				if (actorSprite->prevFrameIndex != -1) {
+					if (actorSprite->prevFrameIndex > 0) {
+						actorSprite->prevFrameIndex--;
+					} else {
+						actorSprite->prevFrameIndex = actorSprite->frameCount - 1;
+					}
+				}
+				if (actorSprite->frameIndex > 0) {
+					actorSprite->frameIndex--;
+				} else {
+					actorSprite->frameIndex = actorSprite->frameCount - 1;
+				}
+				actor->actorSprite = actorSprite;
+				actor->textFontNumber = _textFont;
+			}
+		}
+		restoreActorSprites();
+		buildActorSpriteDrawQueue();
+	}
+
+	// Alt actor animations
+	_altActorAnimations.sync(this, s);
+
+	// Zones
+	_zones.sync(this, s);
+	s.syncAsUint16LE(_zoneIndexAtMouse);
+
+	// Main actor saved path/queued action
+	s.syncAsByte(_actorPathFlag);
+	s.syncAsUint16LE(_actorPathX);
+	s.syncAsUint16LE(_actorPathY);
+	_zoneActionItem.sync(this, s);
+
+	// Zone actions
+	_queuedZoneAction.sync(this, s);
+	_zoneActions.sync(this, s);
+	s.syncAsUint16LE(_currZoneActionIndex);
+
+	// LipSync
+	s.syncAsUint16LE(_lipSyncX);
+	s.syncAsUint16LE(_lipSyncY);
+	s.syncAsUint16LE(_lipSyncScriptNumber);
+	s.syncAsUint16LE(_lipSyncActorIndex);
+	s.syncAsUint16LE(_lipSyncResourceCacheSlot);
+	if (_lipSyncResourceCacheSlot != -1) {
+		Common::String pakName;
+		int16 pakSlot, resType;
+		syncResourceInfo(this, s, _lipSyncResourceCacheSlot, pakName, pakSlot, resType);
+		uint16 count = _lipSyncChannelStatus.size();
+		s.syncAsUint16LE(count);
+		if (s.isLoading()) {
+			_lipSyncChannelStatusRestored = true;
+			_lipSyncChannelStatus.clear();
+			_lipSyncChannelStatus.resize(count);
+		}
+		for (uint i = 0; i < count; i++) {
+			s.syncAsUint16LE(_lipSyncChannelStatus[i].ticks);
+			s.syncAsUint16LE(_lipSyncChannelStatus[i].index);
+		}
+		if (s.isLoading())
+			startLipSync(pakName, pakSlot, _lipSyncScriptNumber, _lipSyncActorIndex, _lipSyncX, _lipSyncY);
+	}
+
+	// Scripts
+	s.syncAsUint16LE(_enterSceneScriptIndex);
+	s.syncAsUint16LE(_enterSceneScriptProgramIndex);
+	s.syncAsUint16LE(_leaveSceneScriptIndex);
+	s.syncAsUint16LE(_leaveSceneScriptProgramIndex);
+	_scriptPrograms[0].sync(this, s);
+	_scriptPrograms[1].sync(this, s);
+
+	// Dialog
+	_dialogs.sync(this, s);
+	for (uint i = 0; i < 50; i++)
+		s.syncAsUint16LE(_currDialogKeywordIndices[i]);
+	s.syncAsUint16LE(_dialogActiveKeywordsCount);
+	s.syncAsUint16LE(_currDialogIndex);
+	s.syncAsUint16LE(_dialogMaxKeywordTextWidth);
+	s.syncAsUint16LE(_dialogFontHeight);
+	s.syncAsUint16LE(_selectedDialogKeywordIndex);
+	s.syncAsByte(_dialogRunning);
+	s.syncAsByte(_dialogFlag);
+	if (s.isLoading() && _dialogRunning)
+		startDialog(_currDialogIndex);
+
+	// User input locking
+	s.syncAsUint16LE(_lockUserInputRefCounter);
+
+	// Text colors
+	_screenTextFontColor.sync(this, s);
+	_inventoryScreenTextFontColor.sync(this, s);
+	_inventoryFontColor.sync(this, s);
+	_zoneFontColor.sync(this, s);
+	_dialogFontColor.sync(this, s);
+	_dialogHoverFontColor.sync(this, s);
+
+	// Screen texts
+	// Unused: g_currTextItemIndex
+	_screenTexts.sync(this, s);
+	// Unused: word_61674
+	s.syncAsByte(_screenTextShowing);
+	s.syncAsByte(_screenTextHasSpeech);
+
+	// Music
+	for (int16 musicIndex = 0; musicIndex < kMaxMusics; musicIndex++) {
+		MusicSlot &musicSlot = _musics[musicIndex];
+		s.syncAsUint16LE(musicSlot.resourceCacheSlot);
+		if (musicSlot.resourceCacheSlot != -1) {
+			Common::String pakName;
+			int16 pakSlot, resType;
+			syncResourceInfo(this, s, musicSlot.resourceCacheSlot, pakName, pakSlot, resType);
+			if (s.isLoading()) {
+				// Digital music is loaded from the "W" paks, MIDI from the "M" paks
+				musicSlot.isDigital = pakName.hasPrefix("W");
+				if (musicSlot.isDigital)
+					musicSlot.resourceCacheSlot = _res->load<SoundResource>(pakName, pakSlot, 12);
+				else
+					musicSlot.resourceCacheSlot = _res->load<MidiResource>(pakName, pakSlot, 13);
+				// Version 0 saves don't know whether the music was playing, restart it
+				musicSlot.isPlaying = true;
+				musicSlot.loop = false;
+				musicSlot.loopCount = 0;
+			}
+			s.syncAsByte(musicSlot.volumeFlag);
+			s.syncAsUint16LE(musicSlot.volume);
+			s.syncAsByte(musicSlot.shouldResume);
+			s.syncAsByte(musicSlot.moduleWide);
+			s.syncAsByte(musicSlot.isPlaying, 1);
+			s.syncAsByte(musicSlot.loop, 1);
+			s.syncAsUint16LE(musicSlot.loopCount, 1);
+			if (s.isLoading() && musicSlot.isPlaying) {
+				setMusicVolume(musicIndex, musicSlot.volume);
+				playMusic(musicIndex, musicSlot.loop, musicSlot.loopCount);
+			}
+		}
+	}
+
+	// Sound
+	for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
+		SoundSlot &soundSlot = _sounds[soundIndex];
+		s.syncAsUint16LE(soundSlot.resourceCacheSlot);
+		if (soundSlot.resourceCacheSlot != -1) {
+			syncResourceCacheSlot<SoundResource>(this, s, soundSlot.resourceCacheSlot);
+			s.syncAsByte(soundSlot.volumeFlag);
+			s.syncAsUint16LE(soundSlot.volume);
+			s.syncAsByte(soundSlot.shouldResume);
+			s.syncAsByte(soundSlot.moduleWide);
+			if (s.isLoading() && soundSlot.shouldResume) {
+				// Restart the endlessly looping sound
+				setSoundVolume(soundIndex, soundSlot.volume);
+				playLoopingSound(soundIndex, 0);
+			}
+		}
+	}
 }
 
 // Saving needs a running game in a stable state: a scene is loaded and no scene change,
@@ -1128,15 +785,11 @@ bool PrisonerEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error PrisonerEngine::loadGameState(int slot) {
-	const char *fileName = getSavegameFilename(slot);
-	loadgame(fileName);
-	return Common::kNoError;
+	return loadgame(getSavegameFilename(slot));
 }
 
 Common::Error PrisonerEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
-	const char *fileName = getSavegameFilename(slot);
-	savegame(fileName, description.c_str());
-	return Common::kNoError;
+	return savegame(getSavegameFilename(slot), description.c_str());
 }
 
 const char *PrisonerEngine::getSavegameFilename(int num) {
@@ -1154,4 +807,4 @@ Common::String PrisonerEngine::getSavegameFilename(const Common::String &target,
 	return target + "." + extension;
 }
 
-} // End of namespace Picture
+} // End of namespace Prisoner

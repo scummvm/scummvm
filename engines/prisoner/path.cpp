@@ -1231,117 +1231,64 @@ void PathSystem::togglePathSystem(int16 flag) {
 	}
 }
 
-void PathSystem::saveState(Common::WriteStream *out) {
-	out->writeByte(_pathSystemBuilt);
+void PathSystem::syncState(Common::Serializer &s) {
+	s.syncAsByte(_pathSystemBuilt);
 	// Nodes
-	out->writeUint16LE(_pathNodesCount);
+	if (s.isLoading())
+		_pathNodes.clear();
+	s.syncAsUint16LE(_pathNodesCount);
 	for (int i = 0; i < kMaxPathNodes; i++) {
 		PathNode *node = &_pathNodes[i];
-		out->writeByte(node->used ? 1 : 0);
+		s.syncAsByte(node->used);
 		if (node->used) {
-			out->writeByte(node->temporary);
-			out->writeUint16LE(node->x);
-			out->writeUint16LE(node->y);
-			out->writeUint16LE(node->scale);
-			out->writeUint16LE(node->connectionsCount);
+			s.syncAsByte(node->temporary);
+			s.syncAsUint16LE(node->x);
+			s.syncAsUint16LE(node->y);
+			s.syncAsUint16LE(node->scale);
+			s.syncAsUint16LE(node->connectionsCount);
 			for (int j = 0; j < kMaxPathNodeConnections; j++) {
 				PathNodeConnection *conn = &node->connections[j];
-				out->writeByte(conn->used ? 1 : 0);
+				s.syncAsByte(conn->used);
 				if (conn->used) {
-					out->writeUint16LE(conn->nodeIndex);
-					out->writeUint16LE(conn->edgeIndex);
-					out->writeUint16LE(conn->distance);
-					out->writeByte(conn->enabled ? 1 : 0);
+					s.syncAsUint16LE(conn->nodeIndex);
+					s.syncAsUint16LE(conn->edgeIndex);
+					s.syncAsUint16LE(conn->distance);
+					s.syncAsByte(conn->enabled);
 				}
 			}
 		}
 	}
 	// Edges
-	out->writeUint16LE(_pathEdgesCount);
+	if (s.isLoading())
+		_pathEdges.clear();
+	s.syncAsUint16LE(_pathEdgesCount);
 	for (int i = 0; i < kMaxPathEdges; i++) {
 		PathEdge *edge = &_pathEdges[i];
-		out->writeByte(edge->used ? 1 : 0);
+		s.syncAsByte(edge->used);
 		if (edge->used) {
-			out->writeUint16LE(edge->enabled ? 1 : 0);
-			out->writeUint16LE(edge->unk2);
-			out->writeUint16LE(edge->polyCount);
-			out->writeUint16LE(edge->nodeIndex1);
-			out->writeUint16LE(edge->nodeIndex2);
-			out->writeUint16LE(edge->distance);
+			s.syncAsUint16LE(edge->enabled);
+			s.syncAsUint16LE(edge->unk2);
+			s.syncAsUint16LE(edge->polyCount);
+			s.syncAsUint16LE(edge->nodeIndex1);
+			s.syncAsUint16LE(edge->nodeIndex2);
+			s.syncAsUint16LE(edge->distance);
 		}
 	}
 	// Polygons
-	out->writeUint16LE(_pathPolygonsCount);
+	if (s.isLoading())
+		_pathPolygons.clear();
+	s.syncAsUint16LE(_pathPolygonsCount);
 	for (int i = 0; i < kMaxPathPolygons; i++) {
 		PathPolygon *poly = &_pathPolygons[i];
-		out->writeByte(poly->used ? 1 : 0);
+		s.syncAsByte(poly->used);
 		if (poly->used) {
-			out->writeByte(poly->enabled ? 1 : 0);
-			out->writeUint16LE(poly->nodeIndex1);
-			out->writeUint16LE(poly->nodeIndex2);
-			out->writeUint16LE(poly->nodeIndex3);
-			out->writeUint16LE(poly->edgeIndex1);
-			out->writeUint16LE(poly->edgeIndex2);
-			out->writeUint16LE(poly->edgeIndex3);
-		}
-	}
-}
-
-void PathSystem::loadState(Common::ReadStream *in) {
-	_pathSystemBuilt = in->readByte() != 0;
-	// Nodes
-	_pathNodes.clear();
-	_pathNodesCount = in->readUint16LE();
-	for (int i = 0; i < kMaxPathNodes; i++) {
-		PathNode *node = &_pathNodes[i];
-		node->used = in->readByte() != 0;
-		if (node->used) {
-			node->temporary = in->readByte();
-			node->x = in->readUint16LE();
-			node->y = in->readUint16LE();
-			node->scale = in->readUint16LE();
-			node->connectionsCount = in->readUint16LE();
-			for (int j = 0; j < kMaxPathNodeConnections; j++) {
-				PathNodeConnection *conn = &node->connections[j];
-				conn->used = in->readByte() != 0;
-				if (conn->used) {
-					conn->nodeIndex = in->readUint16LE();
-					conn->edgeIndex = in->readUint16LE();
-					conn->distance = in->readUint16LE();
-					conn->enabled = in->readByte() != 0;
-				}
-			}
-		}
-	}
-	// Edges
-	_pathEdges.clear();
-	_pathEdgesCount = in->readUint16LE();
-	for (int i = 0; i < kMaxPathEdges; i++) {
-		PathEdge *edge = &_pathEdges[i];
-		edge->used = in->readByte() != 0;
-		if (edge->used) {
-			edge->enabled = in->readUint16LE() != 0;
-			edge->unk2 = in->readUint16LE();
-			edge->polyCount = in->readUint16LE();
-			edge->nodeIndex1 = in->readUint16LE();
-			edge->nodeIndex2 = in->readUint16LE();
-			edge->distance = in->readUint16LE();
-		}
-	}
-	// Polygons
-	_pathPolygons.clear();
-	_pathPolygonsCount = in->readUint16LE();
-	for (int i = 0; i < kMaxPathPolygons; i++) {
-		PathPolygon *poly = &_pathPolygons[i];
-		poly->used = in->readByte() != 0;
-		if (poly->used) {
-			poly->enabled = in->readByte() != 0;
-			poly->nodeIndex1 = in->readUint16LE();
-			poly->nodeIndex2 = in->readUint16LE();
-			poly->nodeIndex3 = in->readUint16LE();
-			poly->edgeIndex1 = in->readUint16LE();
-			poly->edgeIndex2 = in->readUint16LE();
-			poly->edgeIndex3 = in->readUint16LE();
+			s.syncAsByte(poly->enabled);
+			s.syncAsUint16LE(poly->nodeIndex1);
+			s.syncAsUint16LE(poly->nodeIndex2);
+			s.syncAsUint16LE(poly->nodeIndex3);
+			s.syncAsUint16LE(poly->edgeIndex1);
+			s.syncAsUint16LE(poly->edgeIndex2);
+			s.syncAsUint16LE(poly->edgeIndex3);
 		}
 	}
 }

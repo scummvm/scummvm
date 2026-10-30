@@ -27,6 +27,7 @@
 #define PRISONER_OBJECTSTORAGE_H
 
 #include "common/array.h"
+#include "common/serializer.h"
 #include "common/textconsole.h"
 
 namespace Prisoner {
@@ -57,13 +58,9 @@ public:
 		return _objects[index];
 	}
 	int16 count() const { return N; }
-	void save(PrisonerEngine *vm, Common::WriteStream *out) {
+	void sync(PrisonerEngine *vm, Common::Serializer &s) {
 		for (int16 i = 0; i < N; i++)
-			_objects[i].save(vm, out);
-	}
-	void load(PrisonerEngine *vm, Common::ReadStream *in) {
-		for (int16 i = 0; i < N; i++)
-			_objects[i].load(vm, in);
+			_objects[i].sync(vm, s);
 	}
 protected:
 	T _objects[N];
