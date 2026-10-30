@@ -28,6 +28,8 @@
 #include "engines/grim/imuse/dimuse_sndmgr.h"
 #include "engines/grim/imuse/dimuse_tables.h"
 
+#include "engines/grim/movie/codecs/vima.h"
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
@@ -68,9 +70,12 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 
 	_dispatchFadeSize = 0;
 
-	_initialized = 0;
-	_scriptInitializedFlag = 0;
-	_callbackInterruptFlag = 0;
+	_initialized = false;
+	_fileListInitialized = false;
+	_loadedSoundList = nullptr;
+	_openedSoundsList = nullptr;
+	_scriptInitializedFlag = false;
+	_callbackInterruptFlag = false;
 	_spooledMusicEnabled = true;
 
 	_isEngineDisabled = false;
@@ -82,14 +87,15 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 	_groupsHandler = new IMuseDigiGroupsHandler(this, mutex);
 	_fadesHandler = new IMuseDigiFadesHandler(this, mutex);
 	_triggersHandler = new IMuseDigiTriggersHandler(this, mutex);
-	_filesHandler = new IMuseDigiFilesHandler(this);
+
+	memset(_openAudioFiles, 0, sizeof(_openAudioFiles));
+	memset(_soundBuffers, 0, sizeof(_soundBuffers));
+	vimaInit(_imuseDestTable);
 
 	diMUSEInitialize();
+	soundsAllocateBuffer(DIMUSE_BUFFER_MUSIC, 528000, 44000, 352000);
+	soundsAllocateBuffer(DIMUSE_BUFFER_SPEECH, 176000, 44000, 88000);
 	diMUSEInitializeScript();
-	_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SPEECH, 176000, 44000, 88000);
-	_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_MUSIC, 528000, 44000, 352000);
-
-	_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SFX, 198000, 0, 0);
 
 	if (_mixer->getOutputBufSize() != 0) {
 		// Let's find the optimal value for the maximum number of streams which can stay in the queue at once;
@@ -124,14 +130,14 @@ IMuseDigital::~IMuseDigital() {
 	g_system->getTimerManager()->removeTimerProc(timer_handler);
 	diMUSETerminateScript();
 	diMUSETerminate();
-	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SPEECH);
-	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_MUSIC);
-	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SFX);
+
+	soundsDeallocateBuffer(DIMUSE_BUFFER_SPEECH);
+	soundsDeallocateBuffer(DIMUSE_BUFFER_MUSIC);
+
 	delete _internalMixer;
 	delete _groupsHandler;
 	delete _fadesHandler;
 	delete _triggersHandler;
-	delete _filesHandler;
 
 	// Deinit the WaveOut module
 	free(_waveOutOutputBuffer);
@@ -176,7 +182,7 @@ void IMuseDigital::diMUSEHeartbeat() {
 	if (_callbackInterruptFlag)
 		return;
 
-	_callbackInterruptFlag = 1;
+	_callbackInterruptFlag = true;
 
 	waveOutCallback();
 
@@ -252,7 +258,7 @@ void IMuseDigital::diMUSEHeartbeat() {
 		}
 	}
 
-	_callbackInterruptFlag = 0;
+	_callbackInterruptFlag = false;
 }
 
 void IMuseDigital::setPriority(int soundId, int priority) {
@@ -287,10 +293,6 @@ int IMuseDigital::getCurSpeechPan() const {
 
 int IMuseDigital::getCurSpeechFrequency() const {
 	return _currentSpeechFrequency;
-}
-
-void IMuseDigital::flushTracks() {
-	_filesHandler->flushSounds();
 }
 
 // This is used in order to avoid crash everything
@@ -358,7 +360,7 @@ void IMuseDigital::fillStreamsWhileMusicCritical(int fillTimesAfter) {
 bool IMuseDigital::isMusicStreamIdle() {
 	int32 bufSize, criticalSize, freeSpace;
 	int paused;
-	IMuseDigiSndBuffer *bufInfo = _filesHandler->getBufInfo(DIMUSE_BUFFER_MUSIC);
+	IMuseDigiSndBuffer *bufInfo = filesGetBufInfo(DIMUSE_BUFFER_MUSIC);
 
 	if (!queryNextSoundFile(bufSize, criticalSize, freeSpace, paused))
 		return true;
@@ -412,9 +414,10 @@ int IMuseDigital::diMUSEInitialize() {
 		return -1;
 	}
 
-	_callbackInterruptFlag = 0;
+	_callbackInterruptFlag = false;
 	_cmdsPauseCount = 0;
-	_initialized = 1;
+	_initialized = true;
+
 	return 49;
 }
 
@@ -453,10 +456,10 @@ int IMuseDigital::diMUSESetGroupVol(int groupId, int volume) {
 }
 
 int IMuseDigital::diMUSEStartSound(int soundId, int priority) {
-	uint8 *src = _filesHandler->getSoundAddrData(soundId);
+	uint8 *src = filesFetchMap(soundId);
 
 	if (src == nullptr) {
-		debug(5, "IMuseDigital::diMUSEStartSound(): ERROR: resource address for sound %d is NULL", soundId);
+		debug(5, "IMuseDigital::diMUSEStartSound(): ERROR: map address for sound %d is NULL", soundId);
 		return -1;
 	}
 

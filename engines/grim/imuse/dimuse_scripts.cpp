@@ -35,11 +35,11 @@ int IMuseDigital::scriptParse(int cmd, int a, int b) {
 				debug(5, "IMuseDigital::scriptParse(): script module already initialized");
 				return -1;
 			} else {
-				_scriptInitializedFlag = 1;
+				_scriptInitializedFlag = true;
 				return scriptInit();
 			}
 		case DIMUSE_C_SCRIPT_TERMINATE:
-			_scriptInitializedFlag = 0;
+			_scriptInitializedFlag = false;
 			return scriptTerminate();
 		case DIMUSE_C_SCRIPT_SAVE:
 		case DIMUSE_C_SCRIPT_RESTORE:
@@ -71,6 +71,8 @@ int IMuseDigital::scriptParse(int cmd, int a, int b) {
 }
 
 int IMuseDigital::scriptInit() {
+	diMUSEInitFilelist();
+
 	_curMusicState = 0;
 	_curMusicSeq = 0;
 	_nextSeqToPlay = 0;
@@ -109,7 +111,7 @@ void IMuseDigital::scriptRefresh() {
 			scriptSetSequence(0);
 	}
 
-	flushTracks();
+	diMUSEFlushSounds();
 }
 
 void IMuseDigital::scriptSetState(int stateId) {
@@ -219,19 +221,22 @@ int IMuseDigital::scriptSetAttribute(int attrIndex, int attrVal) {
 }
 
 void IMuseDigital::scriptSaveLoad(Common::Serializer &ser) {
-	if (ser.isLoading())
-		_filesHandler->closeAllSounds();
+	if (ser.isLoading()) {
+		diMUSEUnloadAll();
+		diMUSECloseAll();
+	}
 
 	ser.syncAsSint32LE(_curMusicState, VER(103));
 	ser.syncAsSint32LE(_curMusicSeq, VER(103));
 	ser.syncAsSint32LE(_nextSeqToPlay, VER(103));
 	ser.syncArray(_attributes, ARRAYSIZE(_attributes), Common::Serializer::Sint32LE, VER(103));
-	_filesHandler->saveLoad(ser);
+	diMUSESaveLoadFilelist(ser);
 }
 
 void IMuseDigital::scriptDeinit() {
 	diMUSEStopAllSounds();
-	_filesHandler->closeAllSounds();
+	diMUSEUnloadAll();
+	diMUSECloseAll();
 }
 
 int IMuseDigital::scriptTriggerCallback(char *marker) {
@@ -247,6 +252,7 @@ void IMuseDigital::scriptPlayMusic(const IMuseDigiStateTable *tableEntry, int cu
 	int hookId = 0;
 	int attribPos, oldSoundId, newSoundId, soundId;
 	int fadeTime, fadeDelay, fadeLength;
+	char fileName[64];
 
 	Common::StackLock lock(*_mutex);
 
@@ -311,11 +317,15 @@ void IMuseDigital::scriptPlayMusic(const IMuseDigiStateTable *tableEntry, int cu
 	case 11:
 	case 12:
 		// TODO
-		// newSoundId = diMUSEOpenSound(fileName, 0);
-		newSoundId = _filesHandler->openSound(tableEntry->soundId) ? 0 : tableEntry->soundId;
+		// The original remaps the name through a table which always appends ".IMC"
+		Common::strlcpy(fileName, tableEntry->name, sizeof(fileName));
+		Common::strlcat(fileName, ".IMC", sizeof(fileName));
+
+		debug(5, "IMuseDigital::scriptPlayMusic(): opening %s", fileName);
+		newSoundId = diMUSEOpenSound(fileName, 0);
 
 		if (!newSoundId) {
-			debug(5, "IMuseDigital::scriptPlayMusic(): unable to open sound %d", tableEntry->soundId);
+			debug(5, "IMuseDigital::scriptPlayMusic(): unable to open %s", fileName);
 			if (oldSoundId)
 				diMUSEFadeParam(oldSoundId, DIMUSE_P_VOLUME, 0, 60);
 			return;
@@ -391,7 +401,7 @@ void IMuseDigital::scriptPlayMusic(const IMuseDigiStateTable *tableEntry, int cu
 			diMUSEProcessStreams();
 		}
 
-		_filesHandler->closeSound(newSoundId);
+		diMUSECloseSound(newSoundId);
 		diMUSESetParam(newSoundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
 		break;
 	case 5:

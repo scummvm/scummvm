@@ -22,44 +22,4 @@
 #ifndef GRIM_IMUSE_FILES_H
 #define GRIM_IMUSE_FILES_H
 
-#include "common/scummsys.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-#include "engines/grim/imuse/dimuse_bndmgr.h"
-#include "engines/grim/imuse/dimuse_sndmgr.h"
-
-namespace Grim {
-
-class IMuseDigiFilesHandler {
-
-private:
-	IMuseDigital *_engine;
-	ImuseDigiSndMgr *_sound;
-	Common::Mutex _mutex;
-	IMuseDigiSndBuffer _soundBuffers[4];
-	char _currentSpeechFilename[60] = {};
-
-	void getFilenameFromSoundId(int soundId, char *fileName, size_t size);
-public:
-	IMuseDigiFilesHandler(IMuseDigital *engine);
-	~IMuseDigiFilesHandler();
-
-	uint8 *getSoundAddrData(int soundId);
-	int getSoundAddrDataSize(int soundId, bool hasStream);
-	int getNextSound(int soundId);
-	int seek(int soundId, int32 offset, int mode, int bufId);
-	int read(int soundId, uint8 *buf, int32 size, int bufId);
-	IMuseDigiSndBuffer *getBufInfo(int bufId);
-	int openSound(int soundId);
-	void closeSound(int soundId);
-	void closeAllSounds();
-	void allocSoundBuffer(int bufId, int32 size, int32 loadSize, int32 criticalSize);
-	void deallocSoundBuffer(int bufId);
-	void flushSounds();
-	int setCurrentSpeechFilename(const char *fileName);
-	void closeSoundImmediatelyById(int soundId);
-	void saveLoad(Common::Serializer &ser);
-};
-
-} // End of namespace Grim
 #endif

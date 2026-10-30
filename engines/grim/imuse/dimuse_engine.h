@@ -64,7 +64,6 @@ private:
 	IMuseDigiGroupsHandler *_groupsHandler;
 	IMuseDigiFadesHandler *_fadesHandler;
 	IMuseDigiTriggersHandler *_triggersHandler;
-	IMuseDigiFilesHandler *_filesHandler;
 
 	int _callbackFps;
 	static void timer_handler(void *refConf);
@@ -96,12 +95,12 @@ private:
 	int32 _curMusicState;
 	int32 _curMusicSeq;
 
-	int _scriptInitializedFlag;
+	bool _scriptInitializedFlag;
 	char _emptyMarker[1];
 	bool _spooledMusicEnabled;
 
 	int _usecPerInt; // Microseconds between each callback (will be set to 50 Hz)
-	int _callbackInterruptFlag;
+	bool _callbackInterruptFlag;
 	void diMUSEHeartbeat();
 
 	bool isMusicStreamIdle();
@@ -121,7 +120,7 @@ private:
 	int scriptSetAttribute(int attrIndex, int attrVal);
 
 	// CMDs
-	int _initialized;
+	bool _initialized;
 	int _cmdsPauseCount;
 	int _cmdsRunning50HzCount;
 	int _cmdsRunning5HzCount;
@@ -217,6 +216,54 @@ private:
 	int dispatchUpdateFadeMixVolume(IMuseDigiDispatch *dispatchPtr, int32 remainingFade);
 	int dispatchUpdateFadeSlope(IMuseDigiDispatch *dispatchPtr);
 
+	// Files
+	IMuseDigiSoundList _mainSoundList[DIMUSE_MAX_SOUND_LIST];
+	IMuseDigiSoundList *_loadedSoundList;
+	IMuseDigiSoundList *_openedSoundsList;
+	bool _fileListInitialized;
+	uint16 _imuseDestTable[5786];
+	IMuseDigiOpenAudioFile _openAudioFiles[DIMUSE_MAX_OPEN_FILES];
+	IMuseDigiSndBuffer _soundBuffers[4];
+
+	int diMUSEInitFilelist();
+	void diMUSESaveLoadFilelist(Common::Serializer &ser);
+	int diMUSELoadSound(const char *soundName, int requestedSoundId);
+	void diMUSEUnloadSound(int soundId);
+	void diMUSEUnloadAll();
+	int diMUSEOpenSound(const char *filename, int requestedSoundId);
+	void diMUSECloseSound(int soundId);
+	void diMUSECloseAll();
+	int diMUSEFindSound(const char *soundName);
+	void diMUSEFlushSounds();
+	int diMUSEAddSoundToList(IMuseDigiSoundList **listPtr, IMuseDigiSoundList *item);
+	int diMUSERemoveSoundFromList(IMuseDigiSoundList **listPtr, IMuseDigiSoundList *item);
+
+	bool filesCheckRange(int soundId);
+	uint8 *filesGetSoundAddrData(int soundId);
+	uint8 *filesFetchMap(int soundId);
+	int filesSeek(int soundId, int32 offset, int mode);
+	int filesRead(int soundId, uint8 *buf, int32 size);
+	IMuseDigiSndBuffer *filesGetBufInfo(int bufId);
+
+	int ihostLoadSound(const char *soundName, int requestedSoundId);
+	int ihostUnloadSound(int soundId);
+	int ihostOpenSound(const char *filename, int requestedSoundId);
+	int ihostCloseSound(int soundId);
+	uint8 *ihostGetMapAddr(int soundId);
+	uint8 *ihostGetSoundAddr(int soundId);
+	IMuseDigiSndBuffer *ihostGetBufferInfo(int bufId);
+	int ihostFseek(int soundId, int32 offset, int mode);
+	int ihostRead(int soundId, uint8 *destBuf, int32 size);
+
+	void soundsAllocateBuffer(int bufferId, int32 bufSize, int32 loadSize, int32 criticalSize);
+	void soundsDeallocateBuffer(int bufferId);
+	IMuseDigiResource *soundsOpenFile(const char *filename);
+	void soundsCloseFile(IMuseDigiResource *res);
+	void soundsFileSeek(IMuseDigiResource *res, int32 offset, int mode);
+	int32 soundsFileTell(IMuseDigiResource *res);
+	int soundsGetCompBlockId(IMuseDigiResource *res, int32 offset);
+	int32 copyDataFromResource(IMuseDigiResource *res, uint8 *dest, int32 size);
+
 	// Waveapi
 	waveOutParamsStruct waveOutSettings;
 
@@ -261,7 +308,6 @@ public:
 	int  getCurSpeechPan() const;
 	int  getCurSpeechFrequency() const;
 	void pause(bool pause);
-	void flushTracks();
 	void disableEngine();
 	bool isEngineDisabled();
 	void floodMusicBuffer();

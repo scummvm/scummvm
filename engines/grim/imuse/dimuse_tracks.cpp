@@ -303,8 +303,6 @@ int IMuseDigital::tracksStopAllSounds() {
 		tracksClear(curTrack);
 	}
 
-	_filesHandler->closeAllSounds();
-
 	return 0;
 }
 

@@ -32,7 +32,7 @@ int IMuseDigital::streamerInit() {
 }
 
 IMuseDigiStream *IMuseDigital::streamerAllocateSound(int soundId, int bufId, int32 maxRead) {
-	IMuseDigiSndBuffer *bufInfoPtr = _filesHandler->getBufInfo(bufId);
+	IMuseDigiSndBuffer *bufInfoPtr = filesGetBufInfo(bufId);
 	if (!bufInfoPtr) {
 		debug(5, "IMuseDigital::streamerAlloc(): ERROR: couldn't get buffer info");
 		return nullptr;
@@ -52,7 +52,7 @@ IMuseDigiStream *IMuseDigital::streamerAllocateSound(int soundId, int bufId, int
 
 	for (int l = 0; l < DIMUSE_MAX_STREAMS; l++) {
 		if (!_streams[l].soundId) {
-			_streams[l].endOffset = _filesHandler->seek(soundId, 0, SEEK_END, bufId);
+			_streams[l].endOffset = filesSeek(soundId, 0, SEEK_END);
 			_streams[l].curOffset = 0;
 			_streams[l].soundId = soundId;
 			_streams[l].bufId = bufId;
@@ -264,7 +264,7 @@ int IMuseDigital::streamerFeedStream(IMuseDigiStream *streamPtr, uint8 *srcBuf, 
 
 int IMuseDigital::streamerFetchData(IMuseDigiStream *streamPtr) {
 	if (streamPtr->endOffset == 0) {
-		streamPtr->endOffset = _filesHandler->seek(streamPtr->soundId, 0, SEEK_END, streamPtr->bufId);
+		streamPtr->endOffset = filesSeek(streamPtr->soundId, 0, SEEK_END);
 	}
 
 	int32 size = streamPtr->readIndex - streamPtr->loadIndex;
@@ -296,7 +296,7 @@ int IMuseDigital::streamerFetchData(IMuseDigiStream *streamPtr) {
 				requestedAmount = loadSize;
 			}
 
-			if (_filesHandler->seek(streamPtr->soundId, streamPtr->curOffset, SEEK_SET, streamPtr->bufId) != streamPtr->curOffset) {
+			if (filesSeek(streamPtr->soundId, streamPtr->curOffset, SEEK_SET) != streamPtr->curOffset) {
 				debug(5, "IMuseDigital::streamerFetchData(): ERROR: invalid seek in streamer (%d), pausing stream...", streamPtr->curOffset);
 				streamPtr->paused = 1;
 				return 0;
@@ -305,7 +305,7 @@ int IMuseDigital::streamerFetchData(IMuseDigiStream *streamPtr) {
 			_streamerBailFlag = 0;
 
 			_mutex->lock();
-			actualAmount = _filesHandler->read(streamPtr->soundId, &streamPtr->buf[streamPtr->loadIndex], requestedAmount, streamPtr->bufId);
+			actualAmount = filesRead(streamPtr->soundId, &streamPtr->buf[streamPtr->loadIndex], requestedAmount);
 			_mutex->unlock();
 
 			if (_streamerBailFlag)
