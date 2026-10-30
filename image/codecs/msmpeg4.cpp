@@ -30,11 +30,13 @@
  * or later. The migrated path includes the complete frame flow used by MP43:
  * picture header parsing, macroblock decoding, VLC/RL tables, DC/AC
  * prediction, dequantization, IDCT, motion compensation, and YUV420 output.
+ * Later MP43 corrections checked against FFmpeg revision fa4daf630e:
+ * https://github.com/FFmpeg/FFmpeg/tree/fa4daf630eb52235b1b3d0e9b1cc08392b87e9a8/libavcodec
  */
 
 #include "image/codecs/msmpeg4.h"
-#include "image/codecs/msmpeg4_vc1.h"
 
+#include "common/bitstream.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/stream.h"
@@ -68,11 +70,8 @@ enum {
 };
 
 struct GetBitContext {
-	uint32 bitBuf = 0;
-	int bitCount = 0;
-	const byte *buf = nullptr;
-	const byte *bufPtr = nullptr;
-	const byte *bufEnd = nullptr;
+	Common::BitStreamMemory8MSB *reader = nullptr;
+	bool error = false;
 };
 
 struct VLC {
@@ -113,52 +112,12 @@ static inline byte clipByte(int value) {
 	return (byte)CLIP(value, 0, 255);
 }
 
-static void initGetBits(GetBitContext *bits, const byte *buffer, int bufferSize) {
-	bits->buf = buffer;
-	bits->bufPtr = buffer;
-	bits->bufEnd = buffer + bufferSize;
-	bits->bitCount = 0;
-	bits->bitBuf = 0;
-	while (bits->bufPtr < bits->bufEnd && bits->bitCount < 32) {
-		bits->bitBuf |= (uint32)(*bits->bufPtr++) << (24 - bits->bitCount);
-		bits->bitCount += 8;
-	}
-}
-
-static uint getBitsLong(GetBitContext *bits, int n) {
-	uint32 bitBuf = bits->bitBuf;
-	int bitCount = bits->bitCount - n;
-	uint value = bitBuf >> (32 - n);
-	const byte *bufPtr = bits->bufPtr + 4;
-	if (bufPtr <= bits->bufEnd) {
-		bitBuf = ((uint32)bufPtr[-4] << 24) | ((uint32)bufPtr[-3] << 16) | ((uint32)bufPtr[-2] << 8) | bufPtr[-1];
-	} else {
-		bufPtr -= 4;
-		bitBuf = 0;
-		if (bufPtr < bits->bufEnd)
-			bitBuf |= (uint32)*bufPtr++ << 24;
-		if (bufPtr < bits->bufEnd)
-			bitBuf |= (uint32)*bufPtr++ << 16;
-		if (bufPtr < bits->bufEnd)
-			bitBuf |= (uint32)*bufPtr++ << 8;
-		if (bufPtr < bits->bufEnd)
-			bitBuf |= *bufPtr++;
-	}
-	bits->bufPtr = bufPtr;
-	value |= bitBuf >> (32 + bitCount);
-	bits->bitBuf = bitBuf << -bitCount;
-	bits->bitCount = bitCount + 32;
-	return value;
-}
-
 static inline uint getBits(GetBitContext *bits, int n) {
-	if (bits->bitCount >= n) {
-		uint value = bits->bitBuf >> (32 - n);
-		bits->bitBuf <<= n;
-		bits->bitCount -= n;
-		return value;
+	if (bits->error || (uint)n > bits->reader->size() - bits->reader->pos()) {
+		bits->error = true;
+		return 0;
 	}
-	return getBitsLong(bits, n);
+	return bits->reader->getBits(n);
 }
 
 static inline uint getBits1(GetBitContext *bits) {
@@ -166,7 +125,7 @@ static inline uint getBits1(GetBitContext *bits) {
 }
 
 static int getBitsCount(const GetBitContext *bits) {
-	return (int)(bits->bufPtr - bits->buf) * 8 - bits->bitCount;
+	return bits->reader->pos();
 }
 
 static int getDataValue(const void *table, int index, int wrap, int size) {
@@ -174,8 +133,8 @@ static int getDataValue(const void *table, int index, int wrap, int size) {
 	if (size == 1)
 		return *(const uint8 *)ptr;
 	if (size == 2)
-		return READ_LE_UINT16(ptr);
-	return READ_LE_UINT32(ptr);
+		return READ_UINT16(ptr);
+	return READ_UINT32(ptr);
 }
 
 static int allocVlcTable(VLC *vlc, int size) {
@@ -266,33 +225,23 @@ static int initVlc(VLC *vlc, int bits, int codeCount, const void *bitSizes, int 
 }
 
 static int getVlc(GetBitContext *bits, VLC *vlc) {
-	int bitCount = bits->bitCount;
-	uint32 bitBuf = bits->bitBuf;
-	const byte *bufPtr = bits->bufPtr;
 	int nbBits = vlc->bits;
 	int16 *tableCodes = vlc->tableCodes;
 	int8 *tableBits = vlc->tableBits;
 
 	for (;;) {
-		while (bitCount < nbBits && bufPtr < bits->bufEnd) {
-			bitBuf |= (uint32)*bufPtr++ << (24 - bitCount);
-			bitCount += 8;
-		}
-		int index = bitBuf >> (32 - nbBits);
+		if (bits->error)
+			return -1;
+		int index = bits->reader->peekBits(nbBits);
 		int code = tableCodes[index];
 		int n = tableBits[index];
 		if (n > 0) {
-			bitBuf <<= n;
-			bitCount -= n;
-			bits->bufPtr = bufPtr;
-			bits->bitBuf = bitBuf;
-			bits->bitCount = bitCount;
-			return code;
+			getBits(bits, n);
+			return bits->error ? -1 : code;
 		}
 		if (n == 0)
 			return -1;
-		bitBuf <<= nbBits;
-		bitCount -= nbBits;
+		getBits(bits, nbBits);
 		nbBits = -n;
 		tableCodes = vlc->tableCodes + code;
 		tableBits = vlc->tableBits + code;
@@ -423,6 +372,27 @@ const INT8 intra_run[102] = {
  15, 16, 17, 18, 19, 20,
 };
 
+
+/* intra picture macro block coded block pattern */
+const UINT16 table_mb_intra[64][2] = {
+{ 0x1, 1 },{ 0x17, 6 },{ 0x9, 5 },{ 0x5, 5 },
+{ 0x6, 5 },{ 0x47, 9 },{ 0x20, 7 },{ 0x10, 7 },
+{ 0x2, 5 },{ 0x7c, 9 },{ 0x3a, 7 },{ 0x1d, 7 },
+{ 0x2, 6 },{ 0xec, 9 },{ 0x77, 8 },{ 0x0, 8 },
+{ 0x3, 5 },{ 0xb7, 9 },{ 0x2c, 7 },{ 0x13, 7 },
+{ 0x1, 6 },{ 0x168, 10 },{ 0x46, 8 },{ 0x3f, 8 },
+{ 0x1e, 6 },{ 0x712, 13 },{ 0xb5, 9 },{ 0x42, 8 },
+{ 0x22, 7 },{ 0x1c5, 11 },{ 0x11e, 10 },{ 0x87, 9 },
+{ 0x6, 4 },{ 0x3, 9 },{ 0x1e, 7 },{ 0x1c, 6 },
+{ 0x12, 7 },{ 0x388, 12 },{ 0x44, 9 },{ 0x70, 9 },
+{ 0x1f, 6 },{ 0x23e, 11 },{ 0x39, 8 },{ 0x8e, 9 },
+{ 0x1, 7 },{ 0x1c6, 11 },{ 0xb6, 9 },{ 0x45, 9 },
+{ 0x14, 6 },{ 0x23f, 11 },{ 0x7d, 9 },{ 0x18, 9 },
+{ 0x7, 7 },{ 0x1c7, 11 },{ 0x86, 9 },{ 0x19, 9 },
+{ 0x15, 6 },{ 0x1db, 10 },{ 0x2, 9 },{ 0x46, 9 },
+{ 0xd, 8 },{ 0x713, 13 },{ 0x1da, 10 },{ 0x169, 10 },
+};
+
 /* non intra picture macro block coded block pattern + mb type */
 const UINT32 table_mb_non_intra[128][2] = {
 { 0x40, 7 },{ 0x13c9, 13 },{ 0x9fd, 12 },{ 0x1fc, 15 },
@@ -457,6 +427,142 @@ const UINT32 table_mb_non_intra[128][2] = {
 { 0x21, 6 },{ 0x4ab, 11 },{ 0x20b, 10 },{ 0x34, 12 },
 { 0x15, 5 },{ 0x278, 10 },{ 0x252, 10 },{ 0x968, 12 },
 { 0x5, 5 },{ 0xb, 10 },{ 0x9c, 8 },{ 0xe, 10 },
+};
+
+/* dc table 0 */
+
+static const UINT32 table0_dc_lum[120][2] = {
+{ 0x1, 1 },{ 0x1, 2 },{ 0x1, 4 },{ 0x1, 5 },
+{ 0x5, 5 },{ 0x7, 5 },{ 0x8, 6 },{ 0xc, 6 },
+{ 0x0, 7 },{ 0x2, 7 },{ 0x12, 7 },{ 0x1a, 7 },
+{ 0x3, 8 },{ 0x7, 8 },{ 0x27, 8 },{ 0x37, 8 },
+{ 0x5, 9 },{ 0x4c, 9 },{ 0x6c, 9 },{ 0x6d, 9 },
+{ 0x8, 10 },{ 0x19, 10 },{ 0x9b, 10 },{ 0x1b, 10 },
+{ 0x9a, 10 },{ 0x13, 11 },{ 0x34, 11 },{ 0x35, 11 },
+{ 0x61, 12 },{ 0x48, 13 },{ 0xc4, 13 },{ 0x4a, 13 },
+{ 0xc6, 13 },{ 0xc7, 13 },{ 0x92, 14 },{ 0x18b, 14 },
+{ 0x93, 14 },{ 0x183, 14 },{ 0x182, 14 },{ 0x96, 14 },
+{ 0x97, 14 },{ 0x180, 14 },{ 0x314, 15 },{ 0x315, 15 },
+{ 0x605, 16 },{ 0x604, 16 },{ 0x606, 16 },{ 0xc0e, 17 },
+{ 0x303cd, 23 },{ 0x303c9, 23 },{ 0x303c8, 23 },{ 0x303ca, 23 },
+{ 0x303cb, 23 },{ 0x303cc, 23 },{ 0x303ce, 23 },{ 0x303cf, 23 },
+{ 0x303d0, 23 },{ 0x303d1, 23 },{ 0x303d2, 23 },{ 0x303d3, 23 },
+{ 0x303d4, 23 },{ 0x303d5, 23 },{ 0x303d6, 23 },{ 0x303d7, 23 },
+{ 0x303d8, 23 },{ 0x303d9, 23 },{ 0x303da, 23 },{ 0x303db, 23 },
+{ 0x303dc, 23 },{ 0x303dd, 23 },{ 0x303de, 23 },{ 0x303df, 23 },
+{ 0x303e0, 23 },{ 0x303e1, 23 },{ 0x303e2, 23 },{ 0x303e3, 23 },
+{ 0x303e4, 23 },{ 0x303e5, 23 },{ 0x303e6, 23 },{ 0x303e7, 23 },
+{ 0x303e8, 23 },{ 0x303e9, 23 },{ 0x303ea, 23 },{ 0x303eb, 23 },
+{ 0x303ec, 23 },{ 0x303ed, 23 },{ 0x303ee, 23 },{ 0x303ef, 23 },
+{ 0x303f0, 23 },{ 0x303f1, 23 },{ 0x303f2, 23 },{ 0x303f3, 23 },
+{ 0x303f4, 23 },{ 0x303f5, 23 },{ 0x303f6, 23 },{ 0x303f7, 23 },
+{ 0x303f8, 23 },{ 0x303f9, 23 },{ 0x303fa, 23 },{ 0x303fb, 23 },
+{ 0x303fc, 23 },{ 0x303fd, 23 },{ 0x303fe, 23 },{ 0x303ff, 23 },
+{ 0x60780, 24 },{ 0x60781, 24 },{ 0x60782, 24 },{ 0x60783, 24 },
+{ 0x60784, 24 },{ 0x60785, 24 },{ 0x60786, 24 },{ 0x60787, 24 },
+{ 0x60788, 24 },{ 0x60789, 24 },{ 0x6078a, 24 },{ 0x6078b, 24 },
+{ 0x6078c, 24 },{ 0x6078d, 24 },{ 0x6078e, 24 },{ 0x6078f, 24 },
+};
+
+static const UINT32 table0_dc_chroma[120][2] = {
+{ 0x0, 2 },{ 0x1, 2 },{ 0x5, 3 },{ 0x9, 4 },
+{ 0xd, 4 },{ 0x11, 5 },{ 0x1d, 5 },{ 0x1f, 5 },
+{ 0x21, 6 },{ 0x31, 6 },{ 0x38, 6 },{ 0x33, 6 },
+{ 0x39, 6 },{ 0x3d, 6 },{ 0x61, 7 },{ 0x79, 7 },
+{ 0x80, 8 },{ 0xc8, 8 },{ 0xca, 8 },{ 0xf0, 8 },
+{ 0x81, 8 },{ 0xc0, 8 },{ 0xc9, 8 },{ 0x107, 9 },
+{ 0x106, 9 },{ 0x196, 9 },{ 0x183, 9 },{ 0x1e3, 9 },
+{ 0x1e2, 9 },{ 0x20a, 10 },{ 0x20b, 10 },{ 0x609, 11 },
+{ 0x412, 11 },{ 0x413, 11 },{ 0x60b, 11 },{ 0x411, 11 },
+{ 0x60a, 11 },{ 0x65f, 11 },{ 0x410, 11 },{ 0x65d, 11 },
+{ 0x65e, 11 },{ 0xcb8, 12 },{ 0xc10, 12 },{ 0xcb9, 12 },
+{ 0x1823, 13 },{ 0x3045, 14 },{ 0x6089, 15 },{ 0xc110, 16 },
+{ 0x304448, 22 },{ 0x304449, 22 },{ 0x30444a, 22 },{ 0x30444b, 22 },
+{ 0x30444c, 22 },{ 0x30444d, 22 },{ 0x30444e, 22 },{ 0x30444f, 22 },
+{ 0x304450, 22 },{ 0x304451, 22 },{ 0x304452, 22 },{ 0x304453, 22 },
+{ 0x304454, 22 },{ 0x304455, 22 },{ 0x304456, 22 },{ 0x304457, 22 },
+{ 0x304458, 22 },{ 0x304459, 22 },{ 0x30445a, 22 },{ 0x30445b, 22 },
+{ 0x30445c, 22 },{ 0x30445d, 22 },{ 0x30445e, 22 },{ 0x30445f, 22 },
+{ 0x304460, 22 },{ 0x304461, 22 },{ 0x304462, 22 },{ 0x304463, 22 },
+{ 0x304464, 22 },{ 0x304465, 22 },{ 0x304466, 22 },{ 0x304467, 22 },
+{ 0x304468, 22 },{ 0x304469, 22 },{ 0x30446a, 22 },{ 0x30446b, 22 },
+{ 0x30446c, 22 },{ 0x30446d, 22 },{ 0x30446e, 22 },{ 0x30446f, 22 },
+{ 0x304470, 22 },{ 0x304471, 22 },{ 0x304472, 22 },{ 0x304473, 22 },
+{ 0x304474, 22 },{ 0x304475, 22 },{ 0x304476, 22 },{ 0x304477, 22 },
+{ 0x304478, 22 },{ 0x304479, 22 },{ 0x30447a, 22 },{ 0x30447b, 22 },
+{ 0x30447c, 22 },{ 0x30447d, 22 },{ 0x30447e, 22 },{ 0x30447f, 22 },
+{ 0x608880, 23 },{ 0x608881, 23 },{ 0x608882, 23 },{ 0x608883, 23 },
+{ 0x608884, 23 },{ 0x608885, 23 },{ 0x608886, 23 },{ 0x608887, 23 },
+{ 0x608888, 23 },{ 0x608889, 23 },{ 0x60888a, 23 },{ 0x60888b, 23 },
+{ 0x60888c, 23 },{ 0x60888d, 23 },{ 0x60888e, 23 },{ 0x60888f, 23 },
+};
+
+/* dc table 1 */
+
+const UINT32 table1_dc_lum[120][2] = {
+{ 0x2, 2 },{ 0x3, 2 },{ 0x3, 3 },{ 0x2, 4 },
+{ 0x5, 4 },{ 0x1, 5 },{ 0x3, 5 },{ 0x8, 5 },
+{ 0x0, 6 },{ 0x5, 6 },{ 0xd, 6 },{ 0xf, 6 },
+{ 0x13, 6 },{ 0x8, 7 },{ 0x18, 7 },{ 0x1c, 7 },
+{ 0x24, 7 },{ 0x4, 8 },{ 0x6, 8 },{ 0x12, 8 },
+{ 0x32, 8 },{ 0x3b, 8 },{ 0x4a, 8 },{ 0x4b, 8 },
+{ 0xb, 9 },{ 0x26, 9 },{ 0x27, 9 },{ 0x66, 9 },
+{ 0x74, 9 },{ 0x75, 9 },{ 0x14, 10 },{ 0x1c, 10 },
+{ 0x1f, 10 },{ 0x1d, 10 },{ 0x2b, 11 },{ 0x3d, 11 },
+{ 0x19d, 11 },{ 0x19f, 11 },{ 0x54, 12 },{ 0x339, 12 },
+{ 0x338, 12 },{ 0x33d, 12 },{ 0xab, 13 },{ 0xf1, 13 },
+{ 0x678, 13 },{ 0xf2, 13 },{ 0x1e0, 14 },{ 0x1e1, 14 },
+{ 0x154, 14 },{ 0xcf2, 14 },{ 0x3cc, 15 },{ 0x2ab, 15 },
+{ 0x19e7, 15 },{ 0x3ce, 15 },{ 0x19e6, 15 },{ 0x554, 16 },
+{ 0x79f, 16 },{ 0x555, 16 },{ 0xf3d, 17 },{ 0xf37, 17 },
+{ 0xf3c, 17 },{ 0xf35, 17 },{ 0x1e6d, 18 },{ 0x1e68, 18 },
+{ 0x3cd8, 19 },{ 0x3cd3, 19 },{ 0x3cd9, 19 },{ 0x79a4, 20 },
+{ 0xf34ba, 25 },{ 0xf34b4, 25 },{ 0xf34b5, 25 },{ 0xf34b6, 25 },
+{ 0xf34b7, 25 },{ 0xf34b8, 25 },{ 0xf34b9, 25 },{ 0xf34bb, 25 },
+{ 0xf34bc, 25 },{ 0xf34bd, 25 },{ 0xf34be, 25 },{ 0xf34bf, 25 },
+{ 0x1e6940, 26 },{ 0x1e6941, 26 },{ 0x1e6942, 26 },{ 0x1e6943, 26 },
+{ 0x1e6944, 26 },{ 0x1e6945, 26 },{ 0x1e6946, 26 },{ 0x1e6947, 26 },
+{ 0x1e6948, 26 },{ 0x1e6949, 26 },{ 0x1e694a, 26 },{ 0x1e694b, 26 },
+{ 0x1e694c, 26 },{ 0x1e694d, 26 },{ 0x1e694e, 26 },{ 0x1e694f, 26 },
+{ 0x1e6950, 26 },{ 0x1e6951, 26 },{ 0x1e6952, 26 },{ 0x1e6953, 26 },
+{ 0x1e6954, 26 },{ 0x1e6955, 26 },{ 0x1e6956, 26 },{ 0x1e6957, 26 },
+{ 0x1e6958, 26 },{ 0x1e6959, 26 },{ 0x1e695a, 26 },{ 0x1e695b, 26 },
+{ 0x1e695c, 26 },{ 0x1e695d, 26 },{ 0x1e695e, 26 },{ 0x1e695f, 26 },
+{ 0x1e6960, 26 },{ 0x1e6961, 26 },{ 0x1e6962, 26 },{ 0x1e6963, 26 },
+{ 0x1e6964, 26 },{ 0x1e6965, 26 },{ 0x1e6966, 26 },{ 0x1e6967, 26 },
+};
+
+const UINT32 table1_dc_chroma[120][2] = {
+{ 0x0, 2 },{ 0x1, 2 },{ 0x4, 3 },{ 0x7, 3 },
+{ 0xb, 4 },{ 0xd, 4 },{ 0x15, 5 },{ 0x28, 6 },
+{ 0x30, 6 },{ 0x32, 6 },{ 0x52, 7 },{ 0x62, 7 },
+{ 0x66, 7 },{ 0xa6, 8 },{ 0xc6, 8 },{ 0xcf, 8 },
+{ 0x14f, 9 },{ 0x18e, 9 },{ 0x19c, 9 },{ 0x29d, 10 },
+{ 0x33a, 10 },{ 0x538, 11 },{ 0x63c, 11 },{ 0x63e, 11 },
+{ 0x63f, 11 },{ 0x676, 11 },{ 0xa73, 12 },{ 0xc7a, 12 },
+{ 0xcef, 12 },{ 0x14e5, 13 },{ 0x19dd, 13 },{ 0x29c8, 14 },
+{ 0x29c9, 14 },{ 0x63dd, 15 },{ 0x33b8, 14 },{ 0x33b9, 14 },
+{ 0xc7b6, 16 },{ 0x63d8, 15 },{ 0x63df, 15 },{ 0xc7b3, 16 },
+{ 0xc7b4, 16 },{ 0xc7b5, 16 },{ 0x63de, 15 },{ 0xc7b7, 16 },
+{ 0xc7b8, 16 },{ 0xc7b9, 16 },{ 0x18f65, 17 },{ 0x31ec8, 18 },
+{ 0xc7b248, 24 },{ 0xc7b249, 24 },{ 0xc7b24a, 24 },{ 0xc7b24b, 24 },
+{ 0xc7b24c, 24 },{ 0xc7b24d, 24 },{ 0xc7b24e, 24 },{ 0xc7b24f, 24 },
+{ 0xc7b250, 24 },{ 0xc7b251, 24 },{ 0xc7b252, 24 },{ 0xc7b253, 24 },
+{ 0xc7b254, 24 },{ 0xc7b255, 24 },{ 0xc7b256, 24 },{ 0xc7b257, 24 },
+{ 0xc7b258, 24 },{ 0xc7b259, 24 },{ 0xc7b25a, 24 },{ 0xc7b25b, 24 },
+{ 0xc7b25c, 24 },{ 0xc7b25d, 24 },{ 0xc7b25e, 24 },{ 0xc7b25f, 24 },
+{ 0xc7b260, 24 },{ 0xc7b261, 24 },{ 0xc7b262, 24 },{ 0xc7b263, 24 },
+{ 0xc7b264, 24 },{ 0xc7b265, 24 },{ 0xc7b266, 24 },{ 0xc7b267, 24 },
+{ 0xc7b268, 24 },{ 0xc7b269, 24 },{ 0xc7b26a, 24 },{ 0xc7b26b, 24 },
+{ 0xc7b26c, 24 },{ 0xc7b26d, 24 },{ 0xc7b26e, 24 },{ 0xc7b26f, 24 },
+{ 0xc7b270, 24 },{ 0xc7b271, 24 },{ 0xc7b272, 24 },{ 0xc7b273, 24 },
+{ 0xc7b274, 24 },{ 0xc7b275, 24 },{ 0xc7b276, 24 },{ 0xc7b277, 24 },
+{ 0xc7b278, 24 },{ 0xc7b279, 24 },{ 0xc7b27a, 24 },{ 0xc7b27b, 24 },
+{ 0xc7b27c, 24 },{ 0xc7b27d, 24 },{ 0xc7b27e, 24 },{ 0xc7b27f, 24 },
+{ 0x18f6480, 25 },{ 0x18f6481, 25 },{ 0x18f6482, 25 },{ 0x18f6483, 25 },
+{ 0x18f6484, 25 },{ 0x18f6485, 25 },{ 0x18f6486, 25 },{ 0x18f6487, 25 },
+{ 0x18f6488, 25 },{ 0x18f6489, 25 },{ 0x18f648a, 25 },{ 0x18f648b, 25 },
+{ 0x18f648c, 25 },{ 0x18f648d, 25 },{ 0x18f648e, 25 },{ 0x18f648f, 25 },
 };
 
 /* vlc table 0, for intra luma */
@@ -2161,7 +2267,7 @@ static void idct(int16 data[64])
     if ((d1 | d2 | d3 | d4 | d5 | d6 | d7) == 0) {
       /* AC terms all zero */
       if (d0) {
-	  int16 dcval = (int16)(d0 << PASS1_BITS);
+	  int16 dcval = (int16)(d0 * (1 << PASS1_BITS));
 	  dataptr[0] = dcval;
 	  dataptr[1] = dcval;
 	  dataptr[2] = dcval;
@@ -2188,8 +2294,8 @@ static void idct(int16 data[64])
 		    tmp2 = z1 + MULTIPLY(-d6, FIX_1_847759065);
 		    tmp3 = z1 + MULTIPLY(d2, FIX_0_765366865);
 
-		    tmp0 = (d0 + d4) << CONST_BITS;
-		    tmp1 = (d0 - d4) << CONST_BITS;
+		    tmp0 = (d0 + d4) * (1 << CONST_BITS);
+		    tmp1 = (d0 - d4) * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2201,7 +2307,7 @@ static void idct(int16 data[64])
 		    tmp2 = z1 + MULTIPLY(-d6, FIX_1_847759065);
 		    tmp3 = z1 + MULTIPLY(d2, FIX_0_765366865);
 
-		    tmp0 = d4 << CONST_BITS;
+		    tmp0 = d4 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2214,8 +2320,8 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(-d6, FIX_1_306562965);
 		    tmp3 = MULTIPLY(d6, FIX_0_541196100);
 
-		    tmp0 = (d0 + d4) << CONST_BITS;
-		    tmp1 = (d0 - d4) << CONST_BITS;
+		    tmp0 = (d0 + d4) * (1 << CONST_BITS);
+		    tmp1 = (d0 - d4) * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2226,7 +2332,7 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(-d6, FIX_1_306562965);
 		    tmp3 = MULTIPLY(d6, FIX_0_541196100);
 
-		    tmp0 = d4 << CONST_BITS;
+		    tmp0 = d4 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2242,7 +2348,7 @@ static void idct(int16 data[64])
 		    tmp2 = z1 + MULTIPLY(-d6, FIX_1_847759065);
 		    tmp3 = z1 + MULTIPLY(d2, FIX_0_765366865);
 
-		    tmp0 = d0 << CONST_BITS;
+		    tmp0 = d0 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2265,7 +2371,7 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(-d6, FIX_1_306562965);
 		    tmp3 = MULTIPLY(d6, FIX_0_541196100);
 
-		    tmp0 = d0 << CONST_BITS;
+		    tmp0 = d0 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2291,8 +2397,8 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(d2, FIX_0_541196100);
 		    tmp3 = MULTIPLY(d2, FIX_1_306562965);
 
-		    tmp0 = (d0 + d4) << CONST_BITS;
-		    tmp1 = (d0 - d4) << CONST_BITS;
+		    tmp0 = (d0 + d4) * (1 << CONST_BITS);
+		    tmp1 = (d0 - d4) * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2303,7 +2409,7 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(d2, FIX_0_541196100);
 		    tmp3 = MULTIPLY(d2, FIX_1_306562965);
 
-		    tmp0 = d4 << CONST_BITS;
+		    tmp0 = d4 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2313,11 +2419,11 @@ static void idct(int16 data[64])
 	    } else {
 		if (d0) {
 		    /* d0 != 0, d2 == 0, d4 != 0, d6 == 0 */
-		    tmp10 = tmp13 = (d0 + d4) << CONST_BITS;
-		    tmp11 = tmp12 = (d0 - d4) << CONST_BITS;
+		    tmp10 = tmp13 = (d0 + d4) * (1 << CONST_BITS);
+		    tmp11 = tmp12 = (d0 - d4) * (1 << CONST_BITS);
 		} else {
 		    /* d0 == 0, d2 == 0, d4 != 0, d6 == 0 */
-		    tmp10 = tmp13 = d4 << CONST_BITS;
+		    tmp10 = tmp13 = d4 * (1 << CONST_BITS);
 		    tmp11 = tmp12 = -tmp10;
 		}
 	    }
@@ -2328,7 +2434,7 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(d2, FIX_0_541196100);
 		    tmp3 = MULTIPLY(d2, FIX_1_306562965);
 
-		    tmp0 = d0 << CONST_BITS;
+		    tmp0 = d0 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2347,7 +2453,7 @@ static void idct(int16 data[64])
 	    } else {
 		if (d0) {
 		    /* d0 != 0, d2 == 0, d4 == 0, d6 == 0 */
-		    tmp10 = tmp13 = tmp11 = tmp12 = d0 << CONST_BITS;
+		    tmp10 = tmp13 = tmp11 = tmp12 = d0 * (1 << CONST_BITS);
 		} else {
 		    /* d0 == 0, d2 == 0, d4 == 0, d6 == 0 */
 		    tmp10 = tmp13 = tmp11 = tmp12 = 0;
@@ -2664,8 +2770,8 @@ static void idct(int16 data[64])
 		    tmp2 = z1 + MULTIPLY(-d6, FIX_1_847759065);
 		    tmp3 = z1 + MULTIPLY(d2, FIX_0_765366865);
 
-		    tmp0 = (d0 + d4) << CONST_BITS;
-		    tmp1 = (d0 - d4) << CONST_BITS;
+		    tmp0 = (d0 + d4) * (1 << CONST_BITS);
+		    tmp1 = (d0 - d4) * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2677,7 +2783,7 @@ static void idct(int16 data[64])
 		    tmp2 = z1 + MULTIPLY(-d6, FIX_1_847759065);
 		    tmp3 = z1 + MULTIPLY(d2, FIX_0_765366865);
 
-		    tmp0 = d4 << CONST_BITS;
+		    tmp0 = d4 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2690,8 +2796,8 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(-d6, FIX_1_306562965);
 		    tmp3 = MULTIPLY(d6, FIX_0_541196100);
 
-		    tmp0 = (d0 + d4) << CONST_BITS;
-		    tmp1 = (d0 - d4) << CONST_BITS;
+		    tmp0 = (d0 + d4) * (1 << CONST_BITS);
+		    tmp1 = (d0 - d4) * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2702,7 +2808,7 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(-d6, FIX_1_306562965);
 		    tmp3 = MULTIPLY(d6, FIX_0_541196100);
 
-		    tmp0 = d4 << CONST_BITS;
+		    tmp0 = d4 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2718,7 +2824,7 @@ static void idct(int16 data[64])
 		    tmp2 = z1 + MULTIPLY(-d6, FIX_1_847759065);
 		    tmp3 = z1 + MULTIPLY(d2, FIX_0_765366865);
 
-		    tmp0 = d0 << CONST_BITS;
+		    tmp0 = d0 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2741,7 +2847,7 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(-d6, FIX_1_306562965);
 		    tmp3 = MULTIPLY(d6, FIX_0_541196100);
 
-		    tmp0 = d0 << CONST_BITS;
+		    tmp0 = d0 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2767,8 +2873,8 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(d2, FIX_0_541196100);
 		    tmp3 = MULTIPLY(d2, FIX_1_306562965);
 
-		    tmp0 = (d0 + d4) << CONST_BITS;
-		    tmp1 = (d0 - d4) << CONST_BITS;
+		    tmp0 = (d0 + d4) * (1 << CONST_BITS);
+		    tmp1 = (d0 - d4) * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2779,7 +2885,7 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(d2, FIX_0_541196100);
 		    tmp3 = MULTIPLY(d2, FIX_1_306562965);
 
-		    tmp0 = d4 << CONST_BITS;
+		    tmp0 = d4 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2789,11 +2895,11 @@ static void idct(int16 data[64])
 	    } else {
 		if (d0) {
 		    /* d0 != 0, d2 == 0, d4 != 0, d6 == 0 */
-		    tmp10 = tmp13 = (d0 + d4) << CONST_BITS;
-		    tmp11 = tmp12 = (d0 - d4) << CONST_BITS;
+		    tmp10 = tmp13 = (d0 + d4) * (1 << CONST_BITS);
+		    tmp11 = tmp12 = (d0 - d4) * (1 << CONST_BITS);
 		} else {
 		    /* d0 == 0, d2 == 0, d4 != 0, d6 == 0 */
-		    tmp10 = tmp13 = d4 << CONST_BITS;
+		    tmp10 = tmp13 = d4 * (1 << CONST_BITS);
 		    tmp11 = tmp12 = -tmp10;
 		}
 	    }
@@ -2804,7 +2910,7 @@ static void idct(int16 data[64])
 		    tmp2 = MULTIPLY(d2, FIX_0_541196100);
 		    tmp3 = MULTIPLY(d2, FIX_1_306562965);
 
-		    tmp0 = d0 << CONST_BITS;
+		    tmp0 = d0 * (1 << CONST_BITS);
 
 		    tmp10 = tmp0 + tmp3;
 		    tmp13 = tmp0 - tmp3;
@@ -2823,7 +2929,7 @@ static void idct(int16 data[64])
 	    } else {
 		if (d0) {
 		    /* d0 != 0, d2 == 0, d4 == 0, d6 == 0 */
-		    tmp10 = tmp13 = tmp11 = tmp12 = d0 << CONST_BITS;
+		    tmp10 = tmp13 = tmp11 = tmp12 = d0 * (1 << CONST_BITS);
 		} else {
 		    /* d0 == 0, d2 == 0, d4 == 0, d6 == 0 */
 		    tmp10 = tmp13 = tmp11 = tmp12 = 0;
@@ -3167,20 +3273,32 @@ static void initMsmpeg4Tables() {
 		MVTable *mv = &mv_tables[i];
 		initVlc(&mv->vlc, 9, mv->n + 1, mv->table_mv_bits, 1, 1, mv->table_mv_code, 2, 2);
 	}
-	initVlc(&gDcLumVlc[0], 9, 120, &MSMPEG4VC1::ff_msmp4_dc_tables[0][0][0][1], 8, 4, &MSMPEG4VC1::ff_msmp4_dc_tables[0][0][0][0], 8, 4);
-	initVlc(&gDcChromaVlc[0], 9, 120, &MSMPEG4VC1::ff_msmp4_dc_tables[0][1][0][1], 8, 4, &MSMPEG4VC1::ff_msmp4_dc_tables[0][1][0][0], 8, 4);
-	initVlc(&gDcLumVlc[1], 9, 120, &MSMPEG4VC1::ff_msmp4_dc_tables[1][0][0][1], 8, 4, &MSMPEG4VC1::ff_msmp4_dc_tables[1][0][0][0], 8, 4);
-	initVlc(&gDcChromaVlc[1], 9, 120, &MSMPEG4VC1::ff_msmp4_dc_tables[1][1][0][1], 8, 4, &MSMPEG4VC1::ff_msmp4_dc_tables[1][1][0][0], 8, 4);
+	initVlc(&gDcLumVlc[0], 9, 120, &table0_dc_lum[0][1], 8, 4, &table0_dc_lum[0][0], 8, 4);
+	initVlc(&gDcChromaVlc[0], 9, 120, &table0_dc_chroma[0][1], 8, 4, &table0_dc_chroma[0][0], 8, 4);
+	initVlc(&gDcLumVlc[1], 9, 120, &table1_dc_lum[0][1], 8, 4, &table1_dc_lum[0][0], 8, 4);
+	initVlc(&gDcChromaVlc[1], 9, 120, &table1_dc_chroma[0][1], 8, 4, &table1_dc_chroma[0][0], 8, 4);
 	initVlc(&gMbNonIntraVlc, 9, 128, &table_mb_non_intra[0][1], 8, 4, &table_mb_non_intra[0][0], 8, 4);
-	initVlc(&gMbIntraVlc, 9, 64, &MSMPEG4VC1::ff_msmp4_mb_i_table[0][1], 4, 2, &MSMPEG4VC1::ff_msmp4_mb_i_table[0][0], 4, 2);
+	initVlc(&gMbIntraVlc, 9, 64, &table_mb_intra[0][1], 4, 2, &table_mb_intra[0][0], 4, 2);
 }
 
 } // End of namespace
 
 struct MSMPEG4Decoder::Context {
+	~Context() {
+		for (int i = 0; i < 3; ++i) {
+			free(lastPictureBase[i]);
+			free(nextPictureBase[i]);
+		}
+		free(motionVal);
+		free(dcVal[0]);
+		free(acVal[0]);
+		free(codedBlock);
+		free(mbSkipTable);
+	}
+
 	GetBitContext bits;
-	int width = 0;
-	int height = 0;
+	int codedWidth = 0;
+	int codedHeight = 0;
 	int mbWidth = 0;
 	int mbHeight = 0;
 	int lineSize = 0;
@@ -3207,6 +3325,8 @@ struct MSMPEG4Decoder::Context {
 	int mv[2][4][2] = {};
 	int blockLastIndex[6] = {};
 	int noRounding = 0;
+	bool flipflopRounding = false;
+	bool referenceValid = false;
 	int acPred = 0;
 	int mvTableIndex = 0;
 	int rlTableIndex = 0;
@@ -3267,6 +3387,10 @@ static int msmpeg4PredDc(MSMPEG4Decoder::Context *ctx, int blockIndex, int16 **d
 	return pred;
 }
 
+static int blockPermuteOp(int index) {
+	return (index & 0x38) | ((index & 6) >> 1) | ((index & 1) << 2);
+}
+
 static void mpeg4PredAc(MSMPEG4Decoder::Context *ctx, int16 *block, int blockIndex, int direction) {
 	int x, y, wrap;
 	int16 (*acVal)[16];
@@ -3286,17 +3410,17 @@ static void mpeg4PredAc(MSMPEG4Decoder::Context *ctx, int16 *block, int blockInd
 		if (direction == 0) {
 			int16 *left = current - 16;
 			for (int i = 1; i < 8; ++i)
-				block[i * 8] += left[i];
+				block[blockPermuteOp(i * 8)] += left[i];
 		} else {
 			int16 *top = current - 16 * wrap;
 			for (int i = 1; i < 8; ++i)
-				block[i] += top[i + 8];
+				block[blockPermuteOp(i)] += top[i + 8];
 		}
 	}
 	for (int i = 1; i < 8; ++i)
-		current[i] = block[i * 8];
+		current[i] = block[blockPermuteOp(i * 8)];
 	for (int i = 1; i < 8; ++i)
-		current[8 + i] = block[i];
+		current[8 + i] = block[blockPermuteOp(i)];
 }
 
 static int16 *h263PredMotion(MSMPEG4Decoder::Context *ctx, int block, int *px, int *py) {
@@ -3337,10 +3461,17 @@ static void msmpeg4DcScale(MSMPEG4Decoder::Context *ctx) {
 		scale = 8;
 	else if (ctx->qscale < 9)
 		scale = 2 * ctx->qscale;
-	else
+	else if (ctx->qscale < 25)
 		scale = ctx->qscale + 8;
+	else
+		scale = 2 * ctx->qscale - 16;
 	ctx->yDcScale = scale;
-	ctx->cDcScale = (ctx->qscale + 13) / 2;
+	if (ctx->qscale < 5)
+		ctx->cDcScale = 8;
+	else if (ctx->qscale < 25)
+		ctx->cDcScale = (ctx->qscale + 13) / 2;
+	else
+		ctx->cDcScale = ctx->qscale - 6;
 }
 
 static void dctUnquantizeH263(MSMPEG4Decoder::Context *ctx, int16 *block, int blockIndex, int qscale) {
@@ -3371,15 +3502,6 @@ MSMPEG4Decoder::~MSMPEG4Decoder() {
 		_surface->free();
 		delete _surface;
 	}
-	for (int i = 0; i < 3; ++i) {
-		free(_ctx->lastPictureBase[i]);
-		free(_ctx->nextPictureBase[i]);
-	}
-	free(_ctx->motionVal);
-	free(_ctx->dcVal[0]);
-	free(_ctx->acVal[0]);
-	free(_ctx->codedBlock);
-	free(_ctx->mbSkipTable);
 	delete _ctx;
 }
 
@@ -3393,14 +3515,19 @@ bool MSMPEG4Decoder::setOutputPixelFormat(const Graphics::PixelFormat &format) {
 bool MSMPEG4Decoder::initialize() {
 	if (_tablesInitialized)
 		return true;
+	if (_width <= 0 || _height <= 0 || _width > 32766 || _height > 32766 ||
+		(_width & 1) || (_height & 1) || (uint64)_width * _height * 4 > 0x7fffffff) {
+		warning("MSMPEG4Decoder: unsupported frame dimensions %dx%d", _width, _height);
+		return false;
+	}
 	if (_bitsPerPixel != 24 && _bitsPerPixel != 16 && _bitsPerPixel != 32)
 		warning("MSMPEG4Decoder: unexpected AVI bit depth %d", _bitsPerPixel);
 	initMsmpeg4Tables();
 	Context *ctx = _ctx;
-	ctx->width = _width;
-	ctx->height = _height;
 	ctx->mbWidth = (_width + 15) / 16;
 	ctx->mbHeight = (_height + 15) / 16;
+	ctx->codedWidth = ctx->mbWidth * 16;
+	ctx->codedHeight = ctx->mbHeight * 16;
 	ctx->lineSize = ctx->mbWidth * 16 + 2 * kEdgeWidth;
 	int yPlaneSize = ctx->lineSize * (ctx->mbHeight * 16 + 2 * kEdgeWidth);
 	int cPlaneSize = (ctx->lineSize / 2) * (ctx->mbHeight * 8 + kEdgeWidth);
@@ -3411,8 +3538,11 @@ bool MSMPEG4Decoder::initialize() {
 		int start = pitch * edge + edge;
 		ctx->lastPictureBase[i] = (byte *)calloc(planeSize, 1);
 		ctx->nextPictureBase[i] = (byte *)calloc(planeSize, 1);
-		if (!ctx->lastPictureBase[i] || !ctx->nextPictureBase[i])
+		if (!ctx->lastPictureBase[i] || !ctx->nextPictureBase[i]) {
+			delete _ctx;
+			_ctx = new Context();
 			return false;
+		}
 		ctx->lastPicture[i] = ctx->lastPictureBase[i] + start;
 		ctx->nextPicture[i] = ctx->nextPictureBase[i] + start;
 		ctx->currentPicture[i] = ctx->nextPicture[i];
@@ -3426,8 +3556,11 @@ bool MSMPEG4Decoder::initialize() {
 	ctx->acVal[0] = (int16 (*)[16])calloc(predictSize, sizeof(int16[16]));
 	ctx->codedBlock = (byte *)calloc(yPredictSize, 1);
 	ctx->mbSkipTable = (byte *)calloc(ctx->mbWidth * ctx->mbHeight, 1);
-	if (!ctx->motionVal || !ctx->dcVal[0] || !ctx->acVal[0] || !ctx->codedBlock || !ctx->mbSkipTable)
+	if (!ctx->motionVal || !ctx->dcVal[0] || !ctx->acVal[0] || !ctx->codedBlock || !ctx->mbSkipTable) {
+		delete _ctx;
+		_ctx = new Context();
 		return false;
+	}
 	ctx->dcVal[1] = ctx->dcVal[0] + yPredictSize;
 	ctx->dcVal[2] = ctx->dcVal[1] + cPredictSize;
 	ctx->acVal[1] = ctx->acVal[0] + yPredictSize;
@@ -3439,14 +3572,28 @@ bool MSMPEG4Decoder::initialize() {
 }
 
 const Graphics::Surface *MSMPEG4Decoder::decodeFrame(Common::SeekableReadStream &stream) {
+	const int64 remaining = stream.size() - stream.pos();
+	if (remaining <= 0 || remaining > 0x0fffffff) {
+		_ctx->referenceValid = false;
+		return nullptr;
+	}
 	if (!initialize())
 		return nullptr;
-	uint32 dataSize = stream.size() - stream.pos();
+	uint32 dataSize = remaining;
 	byte *frameData = (byte *)malloc(dataSize);
-	if (!frameData)
+	if (!frameData) {
+		_ctx->referenceValid = false;
 		return nullptr;
-	stream.read(frameData, dataSize);
-	initGetBits(&_ctx->bits, frameData, dataSize);
+	}
+	if (stream.read(frameData, dataSize) != dataSize || stream.err()) {
+		free(frameData);
+		_ctx->referenceValid = false;
+		return nullptr;
+	}
+	Common::BitStreamMemoryStream memory(frameData, dataSize);
+	Common::BitStreamMemory8MSB reader(memory);
+	_ctx->bits.reader = &reader;
+	_ctx->bits.error = false;
 	bool ok = decodePictureHeader();
 	if (ok) {
 		frameStart();
@@ -3457,20 +3604,33 @@ const Graphics::Surface *MSMPEG4Decoder::decodeFrame(Common::SeekableReadStream 
 				memset(block, 0, sizeof(block));
 				_ctx->mvDir = kMvDirForward;
 				_ctx->mvType = kMvType16x16;
-				ok = decodeMacroblock(block);
+				ok = decodeMacroblock(block) && !_ctx->bits.error;
 				if (ok)
 					decodeMacroblockPixels(block);
 			}
 		}
 		if (ok) {
+			if (_ctx->pictType == kIFrame) {
+				const uint left = reader.size() - reader.pos();
+				if (left >= 17 && left < 25) {
+					getBits(&_ctx->bits, 5);
+					getBits(&_ctx->bits, 11);
+					_ctx->flipflopRounding = getBits1(&_ctx->bits);
+				} else if (left < 17) {
+					_ctx->flipflopRounding = false;
+				}
+			}
 			frameEnd();
 			convertToSurface();
 		}
 	}
+	_ctx->referenceValid = ok;
+	const int bitsRead = getBitsCount(&_ctx->bits);
+	_ctx->bits.reader = nullptr;
 	free(frameData);
 	if (!ok) {
 		warning("MSMPEG4Decoder: failed to decode MP43 frame at macroblock %d,%d bit %d/%d",
-			_ctx->mbX, _ctx->mbY, getBitsCount(&_ctx->bits), dataSize * 8);
+			_ctx->mbX, _ctx->mbY, bitsRead, dataSize * 8);
 		return nullptr;
 	}
 	return _surface;
@@ -3482,13 +3642,16 @@ bool MSMPEG4Decoder::decodePictureHeader() {
 	if (ctx->pictType != kIFrame && ctx->pictType != kPFrame)
 		return false;
 	ctx->qscale = getBits(&ctx->bits, 5);
+	if (!ctx->qscale || ctx->bits.error ||
+		(ctx->pictType == kPFrame && !ctx->referenceValid))
+		return false;
 	if (ctx->pictType == kIFrame) {
 		int code = getBits(&ctx->bits, 5);
 		if (code < 0x17)
 			return false;
 		ctx->sliceHeight = ctx->mbHeight / (code - 0x16);
 		if (ctx->sliceHeight <= 0)
-			ctx->sliceHeight = ctx->mbHeight;
+			return false;
 		ctx->rlChromaTableIndex = decode012(&ctx->bits);
 		ctx->rlTableIndex = decode012(&ctx->bits);
 		ctx->dcTableIndex = getBits1(&ctx->bits);
@@ -3499,17 +3662,20 @@ bool MSMPEG4Decoder::decodePictureHeader() {
 		ctx->rlChromaTableIndex = ctx->rlTableIndex;
 		ctx->dcTableIndex = getBits1(&ctx->bits);
 		ctx->mvTableIndex = getBits1(&ctx->bits);
-		ctx->noRounding ^= 1;
+		ctx->noRounding = ctx->flipflopRounding ? ctx->noRounding ^ 1 : 0;
 	}
-	return ctx->rlTableIndex <= 2 && ctx->rlChromaTableIndex <= 2;
+	return !ctx->bits.error && ctx->rlTableIndex <= 2 && ctx->rlChromaTableIndex <= 2;
 }
 
 void MSMPEG4Decoder::resetPredictorsForSlice() {
 	Context *ctx = _ctx;
 	int wrap = 2 * ctx->mbWidth + 2;
+	memset(ctx->acVal[0] + 2 * ctx->mbY * wrap, 0, wrap * sizeof(*ctx->acVal[0]));
 	for (int i = 0; i < 2 * ctx->mbWidth; ++i)
 		ctx->dcVal[0][1 + i + 2 * ctx->mbY * wrap] = 1024;
 	wrap = ctx->mbWidth + 2;
+	memset(ctx->acVal[1] + ctx->mbY * wrap, 0, wrap * sizeof(*ctx->acVal[1]));
+	memset(ctx->acVal[2] + ctx->mbY * wrap, 0, wrap * sizeof(*ctx->acVal[2]));
 	for (int i = 0; i < ctx->mbWidth; ++i) {
 		ctx->dcVal[1][1 + i + ctx->mbY * wrap] = 1024;
 		ctx->dcVal[2][1 + i + ctx->mbY * wrap] = 1024;
@@ -3583,10 +3749,6 @@ bool MSMPEG4Decoder::decodeMacroblock(int16 block[6][64]) {
 			return false;
 	}
 	return true;
-}
-
-static int blockPermuteOp(int index) {
-	return (index & 0x38) | ((index & 6) >> 1) | ((index & 1) << 2);
 }
 
 bool MSMPEG4Decoder::decodeBlock(int16 *block, int blockIndex, bool coded) {
@@ -3708,7 +3870,10 @@ int MSMPEG4Decoder::decodeDc(int blockIndex, int *direction) {
 	int16 *dcVal;
 	int pred = msmpeg4PredDc(ctx, blockIndex, &dcVal, direction);
 	level += pred;
-	*dcVal = level * (blockIndex < 4 ? ctx->yDcScale : ctx->cDcScale);
+	const int scale = blockIndex < 4 ? ctx->yDcScale : ctx->cDcScale;
+	if (ctx->bits.error || level < 0 || level * scale > 32767)
+		return -1;
+	*dcVal = level * scale;
 	return level;
 }
 
@@ -3769,13 +3934,28 @@ void MSMPEG4Decoder::drawEdges(byte *plane, int pitch, int width, int height, in
 
 void MSMPEG4Decoder::frameEnd() {
 	Context *ctx = _ctx;
-	drawEdges(ctx->currentPicture[0], ctx->lineSize, ctx->width, ctx->height, kEdgeWidth);
-	drawEdges(ctx->currentPicture[1], ctx->lineSize / 2, ctx->width / 2, ctx->height / 2, kEdgeWidth / 2);
-	drawEdges(ctx->currentPicture[2], ctx->lineSize / 2, ctx->width / 2, ctx->height / 2, kEdgeWidth / 2);
+	drawEdges(ctx->currentPicture[0], ctx->lineSize, ctx->codedWidth, ctx->codedHeight, kEdgeWidth);
+	drawEdges(ctx->currentPicture[1], ctx->lineSize / 2, ctx->codedWidth / 2, ctx->codedHeight / 2, kEdgeWidth / 2);
+	drawEdges(ctx->currentPicture[2], ctx->lineSize / 2, ctx->codedWidth / 2, ctx->codedHeight / 2, kEdgeWidth / 2);
 }
 
 static void putPixels(byte *dst, const byte *src, int pitch, int h, int mode, bool noRounding) {
-	putHalfPixels<8>(dst, src, pitch, h, mode, noRounding);
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < 8; ++x) {
+			int value;
+			if (mode == 0)
+				value = src[x];
+			else if (mode == 1)
+				value = noRounding ? ((src[x] + src[x + 1]) >> 1) : ((src[x] + src[x + 1] + 1) >> 1);
+			else if (mode == 2)
+				value = noRounding ? ((src[x] + src[x + pitch]) >> 1) : ((src[x] + src[x + pitch] + 1) >> 1);
+			else
+				value = noRounding ? ((src[x] + src[x + 1] + src[x + pitch] + src[x + pitch + 1] + 1) >> 2) : ((src[x] + src[x + 1] + src[x + pitch] + src[x + pitch + 1] + 2) >> 2);
+			dst[x] = value;
+		}
+		dst += pitch;
+		src += pitch;
+	}
 }
 
 static void motionCompensatePlane(byte *dst, const byte *ref, int dstPitch, int refPitch, int dstX, int dstY,
@@ -3877,20 +4057,20 @@ void MSMPEG4Decoder::decodeMacroblockPixels(int16 block[6][64]) {
 		int motionX = ctx->mv[0][0][0];
 		int motionY = ctx->mv[0][0][1];
 		bool noRounding = ctx->noRounding != 0;
-		motionCompensatePlane(destY, ctx->lastPicture[0], ctx->lineSize, ctx->lineSize, mbX * 16, mbY * 16, ctx->width, ctx->height, motionX, motionY, 8, noRounding);
-		motionCompensatePlane(destY + 8, ctx->lastPicture[0], ctx->lineSize, ctx->lineSize, mbX * 16 + 8, mbY * 16, ctx->width, ctx->height, motionX, motionY, 8, noRounding);
-		motionCompensatePlane(destY + 8 * ctx->lineSize, ctx->lastPicture[0], ctx->lineSize, ctx->lineSize, mbX * 16, mbY * 16 + 8, ctx->width, ctx->height, motionX, motionY, 8, noRounding);
-		motionCompensatePlane(destY + 8 * ctx->lineSize + 8, ctx->lastPicture[0], ctx->lineSize, ctx->lineSize, mbX * 16 + 8, mbY * 16 + 8, ctx->width, ctx->height, motionX, motionY, 8, noRounding);
-		int chromaX = motionX / 2;
-		int chromaY = motionY / 2;
+		motionCompensatePlane(destY, ctx->lastPicture[0], ctx->lineSize, ctx->lineSize, mbX * 16, mbY * 16, ctx->codedWidth, ctx->codedHeight, motionX, motionY, 8, noRounding);
+		motionCompensatePlane(destY + 8, ctx->lastPicture[0], ctx->lineSize, ctx->lineSize, mbX * 16 + 8, mbY * 16, ctx->codedWidth, ctx->codedHeight, motionX, motionY, 8, noRounding);
+		motionCompensatePlane(destY + 8 * ctx->lineSize, ctx->lastPicture[0], ctx->lineSize, ctx->lineSize, mbX * 16, mbY * 16 + 8, ctx->codedWidth, ctx->codedHeight, motionX, motionY, 8, noRounding);
+		motionCompensatePlane(destY + 8 * ctx->lineSize + 8, ctx->lastPicture[0], ctx->lineSize, ctx->lineSize, mbX * 16 + 8, mbY * 16 + 8, ctx->codedWidth, ctx->codedHeight, motionX, motionY, 8, noRounding);
+		int chromaX = (motionX >> 1) | (motionX & 1);
+		int chromaY = (motionY >> 1) | (motionY & 1);
 		int dxy = ((chromaY & 1) << 1) | (chromaX & 1);
 		chromaX >>= 1;
 		chromaY >>= 1;
-		int srcX = clipInt(mbX * 8 + chromaX, -8, ctx->width / 2);
-		int srcY = clipInt(mbY * 8 + chromaY, -8, ctx->height / 2);
-		if (srcX == ctx->width / 2)
+		int srcX = clipInt(mbX * 8 + chromaX, -8, ctx->codedWidth / 2);
+		int srcY = clipInt(mbY * 8 + chromaY, -8, ctx->codedHeight / 2);
+		if (srcX == ctx->codedWidth / 2)
 			dxy &= ~1;
-		if (srcY == ctx->height / 2)
+		if (srcY == ctx->codedHeight / 2)
 			dxy &= ~2;
 		putPixels(destCb, ctx->lastPicture[1] + srcY * (ctx->lineSize / 2) + srcX, ctx->lineSize / 2, 8, dxy, noRounding);
 		putPixels(destCr, ctx->lastPicture[2] + srcY * (ctx->lineSize / 2) + srcX, ctx->lineSize / 2, 8, dxy, noRounding);
