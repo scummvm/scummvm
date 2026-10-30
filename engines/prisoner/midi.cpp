@@ -29,6 +29,7 @@
 #include "prisoner/prisoner.h"
 #include "prisoner/midi.h"
 
+#include "common/config-manager.h"
 #include "common/stream.h"
 
 namespace Prisoner {
@@ -36,6 +37,7 @@ namespace Prisoner {
 MidiPlayer::MidiPlayer(PrisonerEngine *vm, MidiDriver *driver) : _vm(vm), _driver(driver), _isPlaying(false), _passThrough(false), _isGM(false) {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
+	_scriptVolume = 100;
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(getBaseTempo());
@@ -51,17 +53,23 @@ MidiPlayer::~MidiPlayer() {
 }
 
 void MidiPlayer::setVolume(int volume) {
+	_scriptVolume = CLIP(volume, 0, 100);
+	syncVolume();
+}
+
+void MidiPlayer::syncVolume() {
+	bool mute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+	int musicVolume = mute ? 0 : CLIP(ConfMan.getInt("music_volume"), 0, 255);
+	applyMasterVolume(musicVolume * _scriptVolume / 100);
+}
+
+void MidiPlayer::applyMasterVolume(int masterVolume) {
 	Common::StackLock lock(_mutex);
 
-	if (volume < 0)
-		volume = 0;
-	else if (volume > 255)
-		volume = 255;
-
-	if (_masterVolume == volume)
+	if (_masterVolume == masterVolume)
 		return;
 
-	_masterVolume = volume;
+	_masterVolume = masterVolume;
 
 	for (int i = 0; i < 16; ++i) {
 		if (_channel[i]) {
@@ -153,7 +161,7 @@ void MidiPlayer::playMusic(MidiResource *midiResource, int32 vol, bool loop) {
 	_parser->loadMusic(midiResource->getMidiData(), midiResource->getMidiSize());
 	_parser->property(MidiParser::mpAutoLoop, loop);
 
-	setVolume(255);
+	setVolume(vol);
 
 	_isPlaying = true;
 }

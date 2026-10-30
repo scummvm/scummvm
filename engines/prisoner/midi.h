@@ -44,8 +44,10 @@ public:
 
 	bool isPlaying() { return _isPlaying; }
 
+	// The script volume (0 to 100) is combined with ScummVM's music volume and mute setting
 	void setVolume(int volume);
-	int getVolume() { return _masterVolume; }
+	int getVolume() { return _scriptVolume; }
+	void syncVolume();
 
 	void setNativeMT32(bool b) { _nativeMT32 = b; }
 	bool hasNativeMT32() { return _nativeMT32; }
@@ -86,6 +88,9 @@ protected:
 	bool _isPlaying;
 	bool _randomLoop;
 	byte _masterVolume;
+	int _scriptVolume;
+
+	void applyMasterVolume(int masterVolume);
 
 	Common::Mutex _mutex;
 

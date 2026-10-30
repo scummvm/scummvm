@@ -66,6 +66,8 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		warning("Sound initialization failed.");
 	}
 
+	_midi = nullptr;
+
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
@@ -373,6 +375,9 @@ void PrisonerEngine::syncSoundSettings() {
 	_speechMuted = mute || ConfMan.getBool("speech_mute");
 	// In the original's talkie mode spoken lines are shown without text
 	_talkieEnabled = !_speechMuted && !ConfMan.getBool("subtitles");
+
+	if (_midi)
+		_midi->syncVolume();
 }
 
 void PrisonerEngine::checkScreensaver() {
