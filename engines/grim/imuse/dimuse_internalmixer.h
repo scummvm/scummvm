@@ -43,50 +43,34 @@ namespace Grim {
 class IMuseDigiInternalMixer {
 
 private:
-	int32 *_amp8Table = nullptr;
-	int32 *_amp12Table = nullptr;
-	int32 *_softLMID = nullptr;
-	int32 *_softLTable = nullptr;
+	uint8 _mixerTable[17 * 17];
+	int16 *_softLTable = nullptr;
 
-	uint8 *_mixBuf = nullptr;
+	int32 *_mixBuf = nullptr;
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _channelHandle;
 	int _mixBufSize = 0;
-	int _outWordSize = 0;
 	int _outChannelCount = 0;
 	int _sampleRate = 0;
-	int _stereoReverseFlag = 0;
 	bool _lowLatencyMode = false;
 
-	void mixBits8Mono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
-	void mixBits12Mono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
-	void mixBits16Mono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
-
-	void mixBits8ConvertToMono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
-	void mixBits12ConvertToMono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
-	void mixBits16ConvertToMono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
-
-	void mixBits8ConvertToStereo(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *leftAmpTable, int32 *rightAmpTable);
-	void mixBits12ConvertToStereo(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *leftAmpTable, int32 *rightAmpTable);
-	void mixBits16ConvertToStereo(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *leftAmpTable, int32 *rightAmpTable);
-
-	void mixBits8Stereo(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
-	void mixBits12Stereo(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
-	void mixBits16Stereo(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
+	void mix16(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume);
+	void mix16Swap(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume);
+	void mix16ToStereo(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp);
+	void mix16ToStereoSwap(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp);
 
 public:
 	IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool lowLatencyMode = false);
 	~IMuseDigiInternalMixer();
-	int  init(int bytesPerSample, int numChannels, uint8 *mixBuf, int mixBufSize, int sizeSampleKB, int mixChannelsNum);
+	int  init(int numChannels, int mixBufSize, int mixChannelsNum);
 	int  clearMixerBuffer();
 
-	void mix(uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, int feedSize, int32 mixBufStartIndex, int volume, int pan);
+	void mix(uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, int swapEndiannessFlag, int feedSize, int32 mixBufStartIndex, int volume, int pan);
 	int  loop(uint8 **destBuffer, int len);
 	Audio::QueuingAudioStream *_stream;
 
 	// For low latency audio
-	void setCurrentMixerBuffer(uint8 *newBuf);
 	void endStream(int idx);
 	Audio::QueuingAudioStream *getStream(int idx);
 
