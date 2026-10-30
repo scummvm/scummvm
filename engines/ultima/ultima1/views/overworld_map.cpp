@@ -142,8 +142,12 @@ void OverworldMap::prepareMapForDrawing() {
 	map._tilePlayerLeft = _mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y][Data::OVERWORLD_VISIBLE_CENTER_X - 1];
 	map._tilePlayerRight = _mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y][Data::OVERWORLD_VISIBLE_CENTER_X + 1];
 
-	// Place the player tile at the center
-	_mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y][Data::OVERWORLD_VISIBLE_CENTER_X] = map._playerTileId;
+	// The player's own entity gives the tile at the center - either the player, or whatever they're riding
+	int playerTile = _G(savegame)._overworldEntities[0]._type;
+	if (playerTile < Data::TILE_PLAYER || playerTile > Data::TILE_TIME_MACHINE)
+		playerTile = Data::TILE_PLAYER;
+
+	_mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y][Data::OVERWORLD_VISIBLE_CENTER_X] = playerTile;
 }
 
 } // namespace Views

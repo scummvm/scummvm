@@ -377,6 +377,12 @@ void CreateCharacter::confirmAndSave() {
 	p._equippedArmor = ARMOR_LEATHER;
 	p._transportType = TRANSPORT_FOOT;
 	p._overworldPos = Common::Point(49, 40);
+
+	auto &player = p._overworldEntities[0];
+	player._type = TILE_PLAYER;
+	player._data = TILE_GRASS;
+	player._x = p._overworldPos.x;
+	player._y = p._overworldPos.y;
 	p._soundOn = true;
 
 	for (int i = 0; i < QUEST_COUNT; ++i)

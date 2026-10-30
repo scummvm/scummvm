@@ -126,7 +126,6 @@ private:
 	void loadDungeonMap();
 
 public:
-	byte _playerTileId = 0;
 	byte _tilePlayerCenter = 0;
 	byte _tilePlayerUp = 0, _tilePlayerDown = 0,
 		_tilePlayerLeft = 0, _tilePlayerRight = 0;

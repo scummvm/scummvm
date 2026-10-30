@@ -196,9 +196,6 @@ void Map::load(int mapNum) {
 		_tiles = _cityTiles;
 	}
 
-	// Set up copies of the map position and player tile to use
-	_playerTileId = TILE_PLAYER;
-
 	// Set up logic handler for the mode and which view it'll be using
 	Common::String viewName;
 	if (mapNum == MAP_SPACE) {
