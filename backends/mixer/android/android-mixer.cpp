@@ -40,7 +40,7 @@ extern const char *android_log_tag;
 
 class AndroidMixerManagerImpl : public AndroidMixerManager, public oboe::AudioStreamDataCallback {
 public:
-	AndroidMixerManagerImpl() : _chunkSize(0), _buffer(nullptr), _stream(nullptr), _latency(nullptr), _audio_thread_exit(false), _underflows(0) {}
+	AndroidMixerManagerImpl() : _chunkSize(0), _buffer(nullptr), _stream(nullptr), _latency(nullptr), _audio_thread_exit(false), _underflows(0), _plugEvent(false) {}
 	~AndroidMixerManagerImpl() override;
 
 	void init() override;
