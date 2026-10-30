@@ -19,12 +19,12 @@
  *
  */
 
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 
 namespace Grim {
 
-int IMuseDigital::tracksInit() {
-	_trackCount = DIMUSE_MAX_TRACKS;
+int IMuse::tracksInit() {
+	_trackCount = IMUSE_MAX_TRACKS;
 	_tracksPauseTimer = 0;
 	_trackList = nullptr;
 
@@ -62,15 +62,15 @@ int IMuseDigital::tracksInit() {
 	return 0;
 }
 
-void IMuseDigital::tracksPause() {
+void IMuse::tracksPause() {
 	_tracksPauseTimer = 1;
 }
 
-void IMuseDigital::tracksResume() {
+void IMuse::tracksResume() {
 	_tracksPauseTimer = 0;
 }
 
-void IMuseDigital::tracksSaveLoad(Common::Serializer &ser) {
+void IMuse::tracksSaveLoad(Common::Serializer &ser) {
 	Common::StackLock lock(*_mutex);
 	dispatchSaveLoad(ser);
 
@@ -104,15 +104,15 @@ void IMuseDigital::tracksSaveLoad(Common::Serializer &ser) {
 	}
 }
 
-void IMuseDigital::tracksSetGroupVol() {
-	IMuseDigiTrack* curTrack = _trackList;
+void IMuse::tracksSetGroupVol() {
+	IMuseTrack* curTrack = _trackList;
 	while (curTrack) {
 		curTrack->effVol = ((curTrack->vol + 1) * _groupsHandler->getGroupVol(curTrack->group)) / 128;
 		curTrack = curTrack->next;
 	}
 }
 
-void IMuseDigital::tracksCallback() {
+void IMuse::tracksCallback() {
 	if (_tracksPauseTimer) {
 		if (++_tracksPauseTimer < 3)
 			return;
@@ -126,7 +126,7 @@ void IMuseDigital::tracksCallback() {
 	// This is not part of the original implementation, but it's used to yield
 	// smooth audio hopefully on every device.
 	if (_internalMixer->_stream->endOfData() && _checkForUnderrun) {
-		debug(5, "IMuseDigital::tracksCallback(): WARNING: audio buffer underrun, adapting the buffer queue count...");
+		debug(5, "IMuse::tracksCallback(): WARNING: audio buffer underrun, adapting the buffer queue count...");
 
 		adaptBufferCount();
 
@@ -156,10 +156,10 @@ void IMuseDigital::tracksCallback() {
 			_internalMixer->clearMixerBuffer();
 
 			if (!_tracksPauseTimer) {
-				IMuseDigiTrack *track = _trackList;
+				IMuseTrack *track = _trackList;
 
 				while (track) {
-					IMuseDigiTrack *next = track->next;
+					IMuseTrack *next = track->next;
 					dispatchProcessDispatches(track, _outputFeedSize, _outputSampleRate);
 					track = next;
 				};
@@ -170,7 +170,7 @@ void IMuseDigital::tracksCallback() {
 	}
 }
 
-void IMuseDigital::tracksLowLatencyCallback() {
+void IMuse::tracksLowLatencyCallback() {
 	// Why do we need a low latency mode?
 	//
 	// For every audio callback, this engine works by collecting all the sound
@@ -201,11 +201,11 @@ void IMuseDigital::tracksLowLatencyCallback() {
 
 	dispatchPredictFirstStream();
 
-	IMuseDigiTrack *track = _trackList;
+	IMuseTrack *track = _trackList;
 
 	while (track) {
 
-		IMuseDigiTrack *next = track->next;
+		IMuseTrack *next = track->next;
 		int idx = track->index;
 
 		bool canQueueBufs = (int)_internalMixer->getStream(idx)->numQueuedStreams() < (_maxQueuedStreams + 1);
@@ -235,14 +235,14 @@ void IMuseDigital::tracksLowLatencyCallback() {
 	}
 }
 
-int IMuseDigital::tracksStartSound(int soundId, int tryPriority, int group) {
+int IMuse::tracksStartSound(int soundId, int tryPriority, int group) {
 	int priority = clampNumber(tryPriority, 0, 127);
 
-	debug(5, "IMuseDigital::tracksStartSound(): sound %d with priority %d and group %d", soundId, priority, group);
-	IMuseDigiTrack *allocatedTrack = tracksReserveTrack(priority);
+	debug(5, "IMuse::tracksStartSound(): sound %d with priority %d and group %d", soundId, priority, group);
+	IMuseTrack *allocatedTrack = tracksReserveTrack(priority);
 
 	if (!allocatedTrack) {
-		debug(5, "IMuseDigital::tracksStartSound(): ERROR: couldn't find a spare track to allocate sound %d", soundId);
+		debug(5, "IMuse::tracksStartSound(): ERROR: couldn't find a spare track to allocate sound %d", soundId);
 		return -6;
 	}
 
@@ -260,7 +260,7 @@ int IMuseDigital::tracksStartSound(int soundId, int tryPriority, int group) {
 	allocatedTrack->jumpHook = 0;
 
 	if (dispatchAllocateSound(allocatedTrack, group)) {
-		debug(5, "IMuseDigital::tracksStartSound(): ERROR: dispatch couldn't start sound %d", soundId);
+		debug(5, "IMuse::tracksStartSound(): ERROR: dispatch couldn't start sound %d", soundId);
 		allocatedTrack->soundId = 0;
 		return -1;
 	}
@@ -272,12 +272,12 @@ int IMuseDigital::tracksStartSound(int soundId, int tryPriority, int group) {
 	return 0;
 }
 
-int IMuseDigital::tracksStopSound(int soundId) {
+int IMuse::tracksStopSound(int soundId) {
 	if (!_trackList)
 		return -1;
 
-	IMuseDigiTrack *nextTrack = _trackList;
-	IMuseDigiTrack *curTrack;
+	IMuseTrack *nextTrack = _trackList;
+	IMuseTrack *curTrack;
 	int result = -1;
 
 	while (nextTrack) {
@@ -292,10 +292,10 @@ int IMuseDigital::tracksStopSound(int soundId) {
 	return result;
 }
 
-int IMuseDigital::tracksStopAllSounds() {
+int IMuse::tracksStopAllSounds() {
 	Common::StackLock lock(*_mutex);
-	IMuseDigiTrack *nextTrack = _trackList;
-	IMuseDigiTrack *curTrack;
+	IMuseTrack *nextTrack = _trackList;
+	IMuseTrack *curTrack;
 
 	while (nextTrack) {
 		curTrack = nextTrack;
@@ -306,9 +306,9 @@ int IMuseDigital::tracksStopAllSounds() {
 	return 0;
 }
 
-int IMuseDigital::tracksGetNextSound(int soundId) {
+int IMuse::tracksGetNextSound(int soundId) {
 	int foundSoundId = 0;
-	IMuseDigiTrack *track = _trackList;
+	IMuseTrack *track = _trackList;
 	while (track) {
 		if (track->soundId > soundId) {
 			if (!foundSoundId || track->soundId < foundSoundId) {
@@ -321,13 +321,13 @@ int IMuseDigital::tracksGetNextSound(int soundId) {
 	return foundSoundId;
 }
 
-int IMuseDigital::tracksQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
+int IMuse::tracksQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
 	if (!_trackList) {
-		debug(5, "IMuseDigital::tracksQueryStream(): WARNING: empty trackList, ignoring call...");
+		debug(5, "IMuse::tracksQueryStream(): WARNING: empty trackList, ignoring call...");
 		return -1;
 	}
 
-	IMuseDigiTrack *track = _trackList;
+	IMuseTrack *track = _trackList;
 	do {
 		if (track->soundId) {
 			if (soundId == track->soundId && track->dispatchPtr->streamPtr) {
@@ -338,15 +338,15 @@ int IMuseDigital::tracksQueryStream(int soundId, int32 &bufSize, int32 &critical
 		track = track->next;
 	} while (track);
 
-	debug(5, "IMuseDigital::tracksQueryStream(): WARNING: couldn't find sound %d in trackList, ignoring call...", soundId);
+	debug(5, "IMuse::tracksQueryStream(): WARNING: couldn't find sound %d in trackList, ignoring call...", soundId);
 	return -1;
 }
 
-int IMuseDigital::tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {
+int IMuse::tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {
 	if (!_trackList)
 		return -1;
 
-	IMuseDigiTrack *track = _trackList;
+	IMuseTrack *track = _trackList;
 	do {
 		if (track->soundId != 0) {
 			if (track->soundId == soundId && track->dispatchPtr->streamPtr) {
@@ -360,7 +360,7 @@ int IMuseDigital::tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed,
 	return -1;
 }
 
-void IMuseDigital::tracksClear(IMuseDigiTrack *trackPtr) {
+void IMuse::tracksClear(IMuseTrack *trackPtr) {
 	Common::StackLock lock(*_mutex);
 
 	removeTrackFromList(&_trackList, trackPtr);
@@ -380,53 +380,53 @@ void IMuseDigital::tracksClear(IMuseDigiTrack *trackPtr) {
 	trackPtr->soundId = 0;
 }
 
-int IMuseDigital::tracksSetParam(int soundId, int opcode, int value) {
+int IMuse::tracksSetParam(int soundId, int opcode, int value) {
 	if (!_trackList)
 		return -4;
 
-	IMuseDigiTrack *track = _trackList;
+	IMuseTrack *track = _trackList;
 	while (track) {
 		if (track->soundId == soundId) {
 			switch (opcode) {
-			case DIMUSE_P_GROUP:
+			case IMUSE_P_GROUP:
 				if (value >= 16)
 					return -5;
 				track->group = value;
 				track->effVol = ((track->vol + 1) * _groupsHandler->getGroupVol(value)) / 128;
 				return 0;
-			case DIMUSE_P_PRIORITY:
+			case IMUSE_P_PRIORITY:
 				if (value > 127)
 					return -5;
 				track->priority = value;
 				return 0;
-			case DIMUSE_P_VOLUME:
+			case IMUSE_P_VOLUME:
 				if (value > 127)
 					return -5;
 				track->vol = value;
 				track->effVol = ((value + 1) * _groupsHandler->getGroupVol(track->group)) / 128;
 				return 0;
-			case DIMUSE_P_PAN:
+			case IMUSE_P_PAN:
 				if (value > 127)
 					return -5;
 				track->pan = value;
 				return 0;
-			case DIMUSE_P_DETUNE:
+			case IMUSE_P_DETUNE:
 				if (value < -9216 || value > 9216)
 					return -5;
 				track->detune = value;
 				track->pitchShift = value + track->transpose * 256;
 				return 0;
-			case DIMUSE_P_TRANSPOSE:
+			case IMUSE_P_TRANSPOSE:
 				if (value < 0 || value > 4095)
 					return -5;
 
 				track->pitchShift = value;
 				return 0;
-			case DIMUSE_P_MAILBOX:
+			case IMUSE_P_MAILBOX:
 				track->mailbox = value;
 				return 0;
 			default:
-				debug(5, "IMuseDigital::tracksSetParam(): unknown opcode %d", opcode);
+				debug(5, "IMuse::tracksSetParam(): unknown opcode %d", opcode);
 				return -5;
 			}
 		}
@@ -436,47 +436,47 @@ int IMuseDigital::tracksSetParam(int soundId, int opcode, int value) {
 	return -4;
 }
 
-int IMuseDigital::tracksGetParam(int soundId, int opcode) {
+int IMuse::tracksGetParam(int soundId, int opcode) {
 	if (!_trackList) {
-		if (opcode != DIMUSE_P_SND_TRACK_NUM)
+		if (opcode != IMUSE_P_SND_TRACK_NUM)
 			return -4;
 		else
 			return 0;
 	}
 
-	IMuseDigiTrack *track = _trackList;
+	IMuseTrack *track = _trackList;
 	int l = 0;
 	do {
 		if (track->soundId == soundId) {
 			switch (opcode) {
-			case DIMUSE_P_BOGUS_ID:
+			case IMUSE_P_BOGUS_ID:
 				return -1;
-			case DIMUSE_P_SND_TRACK_NUM:
+			case IMUSE_P_SND_TRACK_NUM:
 				l++;
 				break;
-			case DIMUSE_P_TRIGS_SNDS:
+			case IMUSE_P_TRIGS_SNDS:
 				return -1;
-			case DIMUSE_P_MARKER:
+			case IMUSE_P_MARKER:
 				return track->marker;
-			case DIMUSE_P_GROUP:
+			case IMUSE_P_GROUP:
 				return track->group;
-			case DIMUSE_P_PRIORITY:
+			case IMUSE_P_PRIORITY:
 				return track->priority;
-			case DIMUSE_P_VOLUME:
+			case IMUSE_P_VOLUME:
 				return track->vol;
-			case DIMUSE_P_PAN:
+			case IMUSE_P_PAN:
 				return track->pan;
-			case DIMUSE_P_DETUNE:
+			case IMUSE_P_DETUNE:
 				return track->detune;
-			case DIMUSE_P_TRANSPOSE:
+			case IMUSE_P_TRANSPOSE:
 				return track->transpose;
-			case DIMUSE_P_MAILBOX:
+			case IMUSE_P_MAILBOX:
 				return track->mailbox;
-			case DIMUSE_P_SND_HAS_STREAM:
+			case IMUSE_P_SND_HAS_STREAM:
 				return (track->dispatchPtr->streamPtr != 0);
-			case DIMUSE_P_STREAM_BUFID:
+			case IMUSE_P_STREAM_BUFID:
 				return track->dispatchPtr->streamBufID;
-			case DIMUSE_P_SND_POS_IN_MS: // getCurSoundPositionInMs
+			case IMUSE_P_SND_POS_IN_MS: // getCurSoundPositionInMs
 				if (track->dispatchPtr->wordSize == 0)
 					return 0;
 				if (track->dispatchPtr->sampleRate == 0)
@@ -492,19 +492,19 @@ int IMuseDigital::tracksGetParam(int soundId, int opcode) {
 		track = track->next;
 	} while (track);
 
-	if (opcode != DIMUSE_P_SND_TRACK_NUM)
+	if (opcode != IMUSE_P_SND_TRACK_NUM)
 		return -4;
 
 	return l;
 }
 
-int IMuseDigital::tracksSetHook(int soundId, int hookId) {
+int IMuse::tracksSetHook(int soundId, int hookId) {
 	if (hookId > 128)
 		return -5;
 	if (!_trackList)
 		return -4;
 
-	IMuseDigiTrack *track = _trackList;
+	IMuseTrack *track = _trackList;
 	while (track->soundId != soundId) {
 		track = track->next;
 		if (!track)
@@ -516,11 +516,11 @@ int IMuseDigital::tracksSetHook(int soundId, int hookId) {
 	return 0;
 }
 
-int IMuseDigital::tracksGetHook(int soundId) {
+int IMuse::tracksGetHook(int soundId) {
 	if (!_trackList)
 		return -4;
 
-	IMuseDigiTrack *track = _trackList;
+	IMuseTrack *track = _trackList;
 	while (track->soundId != soundId) {
 		track = track->next;
 		if (!track)
@@ -530,9 +530,9 @@ int IMuseDigital::tracksGetHook(int soundId) {
 	return track->jumpHook;
 }
 
-IMuseDigiTrack *IMuseDigital::tracksReserveTrack(int priority) {
-	IMuseDigiTrack *curTrack;
-	IMuseDigiTrack *reservedTrack = nullptr;
+IMuseTrack *IMuse::tracksReserveTrack(int priority) {
+	IMuseTrack *curTrack;
+	IMuseTrack *reservedTrack = nullptr;
 	int minPriorityFound;
 
 	// Pick the track from the pool of free tracks
@@ -559,7 +559,7 @@ IMuseDigiTrack *IMuseDigital::tracksReserveTrack(int priority) {
 	return nullptr;
 }
 
-int IMuseDigital::tracksDeinit() {
+int IMuse::tracksDeinit() {
 	tracksStopAllSounds();
 	waveOutDeinit();
 	dispatchTerminate();

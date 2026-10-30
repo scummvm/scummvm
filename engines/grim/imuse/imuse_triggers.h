@@ -19,33 +19,43 @@
  *
  */
 
-#ifndef GRIM_IMUSE_FADES_H
-#define GRIM_IMUSE_FADES_H
+#ifndef GRIM_IMUSE_TRIGGERS_H
+#define GRIM_IMUSE_TRIGGERS_H
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "engines/grim/imuse/imuse_defs.h"
 
 namespace Grim {
 
-class IMuseDigiFadesHandler {
+class IMuseTriggersHandler {
 
 private:
-	IMuseDigital *_engine;
+	IMuse *_engine;
 	Common::Mutex *_mutex;
-	IMuseDigiFade _fades[DIMUSE_MAX_FADES] = {};
-	int _fadesOn = 0;
+	IMuseTrigger _trigs[IMUSE_MAX_TRIGGERS] = {};
+	IMuseDefer _defers[IMUSE_MAX_DEFERS] = {};
 
-	void clearAllFades();
+	int  _defersOn = 0;
+	int  _midProcessing = 0;
+	char _textBuffer[256] = {};
+	char _emptyMarker[1] = {};
+
 public:
-	IMuseDigiFadesHandler(IMuseDigital *engine, Common::Mutex *mutex);
-	~IMuseDigiFadesHandler();
+	IMuseTriggersHandler(IMuse *engine, Common::Mutex *mutex);
+	~IMuseTriggersHandler();
 
-	int init();
+	int  init();
+	int  clearAllTriggers();
 	void saveLoad(Common::Serializer &ser);
-	int fadeParam(int soundId, int opcode, int destinationValue, int fadeLength);
-	void clearFadeStatus(int soundId, int opcode);
+	int  setTrigger(int soundId, char *marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
+	int  checkTrigger(int soundId, char *marker, int opcode);
+	int  clearTrigger(int soundId, char *marker, int opcode);
+	void processTriggers(int soundId, char *marker);
+	int  deferCommand(int count, int opcode, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
 	void loop();
+	int  countPendingSounds(int soundId);
 
 };
 

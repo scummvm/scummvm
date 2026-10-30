@@ -19,38 +19,38 @@
  *
  */
 
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 
 namespace Grim {
 
-int IMuseDigital::streamerInit() {
-	for (int l = 0; l < DIMUSE_MAX_STREAMS; l++) {
+int IMuse::streamerInit() {
+	for (int l = 0; l < IMUSE_MAX_STREAMS; l++) {
 		_streams[l].soundId = 0;
 	}
 	_lastStreamLoaded = nullptr;
 	return 0;
 }
 
-IMuseDigiStream *IMuseDigital::streamerAllocateSound(int soundId, int bufId, int32 maxRead) {
-	IMuseDigiSndBuffer *bufInfoPtr = filesGetBufInfo(bufId);
+IMuseStream *IMuse::streamerAllocateSound(int soundId, int bufId, int32 maxRead) {
+	IMuseSndBuffer *bufInfoPtr = filesGetBufInfo(bufId);
 	if (!bufInfoPtr) {
-		debug(5, "IMuseDigital::streamerAlloc(): ERROR: couldn't get buffer info");
+		debug(5, "IMuse::streamerAlloc(): ERROR: couldn't get buffer info");
 		return nullptr;
 	}
 
 	if ((bufInfoPtr->bufSize / 4) <= maxRead) {
-		debug(5, "IMuseDigital::streamerAlloc(): ERROR: maxRead too big for buffer");
+		debug(5, "IMuse::streamerAlloc(): ERROR: maxRead too big for buffer");
 		return nullptr;
 	}
 
-	for (int l = 0; l < DIMUSE_MAX_STREAMS; l++) {
+	for (int l = 0; l < IMUSE_MAX_STREAMS; l++) {
 		if (_streams[l].soundId && _streams[l].bufId == bufId) {
-			debug(5, "IMuseDigital::streamerAlloc(): ERROR: stream bufId %d already in use", bufId);
+			debug(5, "IMuse::streamerAlloc(): ERROR: stream bufId %d already in use", bufId);
 			return nullptr;
 		}
 	}
 
-	for (int l = 0; l < DIMUSE_MAX_STREAMS; l++) {
+	for (int l = 0; l < IMUSE_MAX_STREAMS; l++) {
 		if (!_streams[l].soundId) {
 			_streams[l].endOffset = filesSeek(soundId, 0, SEEK_END);
 			_streams[l].curOffset = 0;
@@ -67,11 +67,11 @@ IMuseDigiStream *IMuseDigital::streamerAllocateSound(int soundId, int bufId, int
 			return &_streams[l];
 		}
 	}
-	debug(5, "IMuseDigital::streamerAlloc(): ERROR: no spare streams");
+	debug(5, "IMuse::streamerAlloc(): ERROR: no spare streams");
 	return nullptr;
 }
 
-int IMuseDigital::streamerClearSoundInStream(IMuseDigiStream *streamPtr) {
+int IMuse::streamerClearSoundInStream(IMuseStream *streamPtr) {
 	streamPtr->soundId = 0;
 	if (_lastStreamLoaded == streamPtr) {
 		_lastStreamLoaded = 0;
@@ -79,13 +79,13 @@ int IMuseDigital::streamerClearSoundInStream(IMuseDigiStream *streamPtr) {
 	return 0;
 }
 
-int IMuseDigital::streamerProcessStreams() {
+int IMuse::streamerProcessStreams() {
 	dispatchPredictFirstStream();
 
-	IMuseDigiStream *stream1 = nullptr;
-	IMuseDigiStream *stream2 = nullptr;
+	IMuseStream *stream1 = nullptr;
+	IMuseStream *stream2 = nullptr;
 
-	for (int l = 0; l < DIMUSE_MAX_STREAMS; l++) {
+	for (int l = 0; l < IMUSE_MAX_STREAMS; l++) {
 		if ((_streams[l].soundId) && (!_streams[l].paused)) {
 			if (stream1) {
 				if (!stream2) {
@@ -143,7 +143,7 @@ int IMuseDigital::streamerProcessStreams() {
 	}
 }
 
-uint8 *IMuseDigital::streamerGetStreamBuffer(IMuseDigiStream *streamPtr, int size) {
+uint8 *IMuse::streamerGetStreamBuffer(IMuseStream *streamPtr, int size) {
 	if (size > streamerGetFreeBufferAmount(streamPtr) || streamPtr->maxRead < size)
 		return 0;
 
@@ -162,7 +162,7 @@ uint8 *IMuseDigital::streamerGetStreamBuffer(IMuseDigiStream *streamPtr, int siz
 	return ptr;
 }
 
-uint8 *IMuseDigital::streamerGetStreamBufferAtOffset(IMuseDigiStream *streamPtr, int32 offset, int size) {
+uint8 *IMuse::streamerGetStreamBufferAtOffset(IMuseStream *streamPtr, int32 offset, int size) {
 	if (offset + size > streamerGetFreeBufferAmount(streamPtr) || streamPtr->maxRead < size)
 		return 0;
 
@@ -178,7 +178,7 @@ uint8 *IMuseDigital::streamerGetStreamBufferAtOffset(IMuseDigiStream *streamPtr,
 	return &streamPtr->buf[offsetReadIndex];
 }
 
-int IMuseDigital::streamerSetReadIndex(IMuseDigiStream *streamPtr, int offset) {
+int IMuse::streamerSetReadIndex(IMuseStream *streamPtr, int offset) {
 	_streamerBailFlag = 1;
 	if (offset > streamerGetFreeBufferAmount(streamPtr))
 		return -1;
@@ -190,7 +190,7 @@ int IMuseDigital::streamerSetReadIndex(IMuseDigiStream *streamPtr, int offset) {
 	return 0;
 }
 
-int IMuseDigital::streamerSetLoadIndex(IMuseDigiStream *streamPtr, int offset) {
+int IMuse::streamerSetLoadIndex(IMuseStream *streamPtr, int offset) {
 	_streamerBailFlag = 1;
 	if (offset > streamerGetFreeBufferAmount(streamPtr))
 		return -1;
@@ -202,14 +202,14 @@ int IMuseDigital::streamerSetLoadIndex(IMuseDigiStream *streamPtr, int offset) {
 	return 0;
 }
 
-int IMuseDigital::streamerGetFreeBufferAmount(IMuseDigiStream *streamPtr) {
+int IMuse::streamerGetFreeBufferAmount(IMuseStream *streamPtr) {
 	int32 freeBufferSize = streamPtr->loadIndex - streamPtr->readIndex;
 	if (freeBufferSize < 0)
 		freeBufferSize += streamPtr->bufFreeSize;
 	return freeBufferSize;
 }
 
-int IMuseDigital::streamerSetSoundToStreamFromOffset(IMuseDigiStream *streamPtr, int soundId, int32 offset) {
+int IMuse::streamerSetSoundToStreamFromOffset(IMuseStream *streamPtr, int soundId, int32 offset) {
 	_streamerBailFlag = 1;
 	streamPtr->soundId = soundId;
 	streamPtr->curOffset = offset;
@@ -221,7 +221,7 @@ int IMuseDigital::streamerSetSoundToStreamFromOffset(IMuseDigiStream *streamPtr,
 	return 0;
 }
 
-void IMuseDigital::streamerQueryStream(IMuseDigiStream *streamPtr, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
+void IMuse::streamerQueryStream(IMuseStream *streamPtr, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
 	dispatchPredictFirstStream();
 
 	bufSize = streamPtr->bufFreeSize;
@@ -230,12 +230,12 @@ void IMuseDigital::streamerQueryStream(IMuseDigiStream *streamPtr, int32 &bufSiz
 	paused = streamPtr->paused;
 }
 
-int IMuseDigital::streamerFeedStream(IMuseDigiStream *streamPtr, uint8 *srcBuf, int32 sizeToFeed, int paused) {
+int IMuse::streamerFeedStream(IMuseStream *streamPtr, uint8 *srcBuf, int32 sizeToFeed, int paused) {
 	int32 size = streamPtr->readIndex - streamPtr->loadIndex;
 	if (size <= 0)
 		size += streamPtr->bufFreeSize;
 	if (sizeToFeed > (size - 4)) {
-		debug(5, "IMuseDigital::streamerFeedStream(): WARNING: buffer overflow");
+		debug(5, "IMuse::streamerFeedStream(): WARNING: buffer overflow");
 		streamerSetReadIndex(streamPtr, sizeToFeed - (size - 4) - (sizeToFeed - (size - 4)) % 12 + 12);
 	}
 
@@ -262,7 +262,7 @@ int IMuseDigital::streamerFeedStream(IMuseDigiStream *streamPtr, uint8 *srcBuf, 
 	return 0;
 }
 
-int IMuseDigital::streamerFetchData(IMuseDigiStream *streamPtr) {
+int IMuse::streamerFetchData(IMuseStream *streamPtr) {
 	if (streamPtr->endOffset == 0) {
 		streamPtr->endOffset = filesSeek(streamPtr->soundId, 0, SEEK_END);
 	}
@@ -297,7 +297,7 @@ int IMuseDigital::streamerFetchData(IMuseDigiStream *streamPtr) {
 			}
 
 			if (filesSeek(streamPtr->soundId, streamPtr->curOffset, SEEK_SET) != streamPtr->curOffset) {
-				debug(5, "IMuseDigital::streamerFetchData(): ERROR: invalid seek in streamer (%d), pausing stream...", streamPtr->curOffset);
+				debug(5, "IMuse::streamerFetchData(): ERROR: invalid seek in streamer (%d), pausing stream...", streamPtr->curOffset);
 				streamPtr->paused = 1;
 				return 0;
 			}
@@ -328,7 +328,7 @@ int IMuseDigital::streamerFetchData(IMuseDigiStream *streamPtr) {
 				return 0;
 		}
 
-		debug(5, "IMuseDigital::streamerFetchData(): ERROR: unable to load the correct amount of data (req=%d, act=%d)", requestedAmount, actualAmount);
+		debug(5, "IMuse::streamerFetchData(): ERROR: unable to load the correct amount of data (req=%d, act=%d)", requestedAmount, actualAmount);
 		_lastStreamLoaded = nullptr;
 	}
 

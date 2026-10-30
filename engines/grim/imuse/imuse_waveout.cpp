@@ -19,11 +19,11 @@
  *
  */
 
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 
 namespace Grim {
 
-int IMuseDigital::waveOutInit(waveOutParamsStruct *waveOutSettingsStruct) {
+int IMuse::waveOutInit(waveOutParamsStruct *waveOutSettingsStruct) {
 	_waveOutBytesPerSample = 2;
 	_waveOutNumChannels = _mixer->getOutputStereo() ? 2 : 1;
 	_waveOutZeroLevel = 0;
@@ -66,7 +66,7 @@ int IMuseDigital::waveOutInit(waveOutParamsStruct *waveOutSettingsStruct) {
 	return 0;
 }
 
-void IMuseDigital::waveOutWrite(uint8 **audioData, int &feedSize, int &sampleRate) {
+void IMuse::waveOutWrite(uint8 **audioData, int &feedSize, int &sampleRate) {
 	uint8 *curBufferBlock;
 	if (_waveOutDisableWrite)
 		return;
@@ -123,12 +123,12 @@ void IMuseDigital::waveOutWrite(uint8 **audioData, int &feedSize, int &sampleRat
 	}
 }
 
-int IMuseDigital::waveOutDeinit() {
+int IMuse::waveOutDeinit() {
 	_waveOutDisableWrite = 1;
 	return 0;
 }
 
-void IMuseDigital::waveOutCallback() {
+void IMuse::waveOutCallback() {
 	Common::StackLock lock(*_mutex);
 	if (_lowLatencyMode) {
 		tracksLowLatencyCallback();
@@ -137,7 +137,7 @@ void IMuseDigital::waveOutCallback() {
 	}
 }
 
-byte IMuseDigital::waveOutGetStreamFlags() {
+byte IMuse::waveOutGetStreamFlags() {
 	byte flags = Audio::FLAG_16BITS;
 
 	if (_mixer->getOutputStereo()) {
@@ -150,7 +150,7 @@ byte IMuseDigital::waveOutGetStreamFlags() {
 	return flags;
 }
 
-void IMuseDigital::waveOutLowLatencyWrite(uint8 **audioData, int &feedSize, int &sampleRate, int idx) {
+void IMuse::waveOutLowLatencyWrite(uint8 **audioData, int &feedSize, int &sampleRate, int idx) {
 	uint8 *curBufferBlock;
 	if (_waveOutDisableWrite)
 		return;
@@ -174,7 +174,7 @@ void IMuseDigital::waveOutLowLatencyWrite(uint8 **audioData, int &feedSize, int 
 	}
 }
 
-void IMuseDigital::waveOutEmptyBuffer(int idx) {
+void IMuse::waveOutEmptyBuffer(int idx) {
 	// This is necessary in low latency mode to clean-up the buffers of stale/finished sounds
 	int bufferSize = _waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize;
 	memset(&_waveOutLowLatencyOutputBuffer[bufferSize * idx], _waveOutZeroLevel, bufferSize);

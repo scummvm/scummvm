@@ -19,32 +19,31 @@
  *
  */
 
-#ifndef GRIM_IMUSE_GROUPS_H
-#define GRIM_IMUSE_GROUPS_H
+#ifndef GRIM_IMUSE_TABLES_H
+#define GRIM_IMUSE_TABLES_H
 
 #include "common/scummsys.h"
-#include "common/mutex.h"
-#include "common/serializer.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-#include "engines/grim/imuse/dimuse_engine.h"
 
 namespace Grim {
 
-class IMuseDigiGroupsHandler {
-
-private:
-	IMuseDigital *_engine;
-	Common::Mutex *_mutex;
-	int _effVols[DIMUSE_MAX_GROUPS] = {};
-	int _vols[DIMUSE_MAX_GROUPS] = {};
-public:
-	IMuseDigiGroupsHandler(IMuseDigital *engine, Common::Mutex *mutex);
-	~IMuseDigiGroupsHandler();
-	int init();
-	int setGroupVol(uint32 id, int volume);
-	int getGroupVol(uint32 id);
+struct IMuseStateTable {
+	char name[32];
+	int transitionId;
+	int soundId;
+	char internalName[24];
+	int attribPos;
+	int hookId;
+	int fadeTime;
+	int volume;
+	int pan;
 };
 
+extern const IMuseStateTable _grimStateMusicTable[181];
+extern const IMuseStateTable _grimSeqMusicTable[41];
+
+// Sound id of a state, given its position in the table of the old iMUSE
+int grimLegacyStateSoundId(int tableIndex);
+
 } // End of namespace Grim
+
 #endif

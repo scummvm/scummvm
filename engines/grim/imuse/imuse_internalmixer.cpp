@@ -25,12 +25,12 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#include "engines/grim/imuse/dimuse_engine.h"
-#include "engines/grim/imuse/dimuse_internalmixer.h"
+#include "engines/grim/imuse/imuse_engine.h"
+#include "engines/grim/imuse/imuse_internalmixer.h"
 
 namespace Grim {
 
-IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool lowLatencyMode) {
+IMuseInternalMixer::IMuseInternalMixer(Audio::Mixer *mixer, int sampleRate, bool lowLatencyMode) {
 	_mixer = mixer;
 	_sampleRate = sampleRate;
 	_lowLatencyMode = lowLatencyMode;
@@ -46,11 +46,11 @@ IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRa
 		_stream = nullptr;
 }
 
-IMuseDigiInternalMixer::~IMuseDigiInternalMixer() {
+IMuseInternalMixer::~IMuseInternalMixer() {
 	terminate();
 }
 
-int IMuseDigiInternalMixer::terminate() {
+int IMuseInternalMixer::terminate() {
 	free(_softLTable);
 	free(_mixBuf);
 	_softLTable = nullptr;
@@ -58,7 +58,7 @@ int IMuseDigiInternalMixer::terminate() {
 	return 0;
 }
 
-int IMuseDigiInternalMixer::init(int numChannels, int mixBufSize, int mixChannelsNum) {
+int IMuseInternalMixer::init(int numChannels, int mixBufSize, int mixChannelsNum) {
 	// Pan table: 17 volume levels x 17 pan positions
 	for (int i = 0; i < 17; i++) {
 		for (int j = 0; j < 17; j++) {
@@ -72,7 +72,7 @@ int IMuseDigiInternalMixer::init(int numChannels, int mixBufSize, int mixChannel
 
 	_softLTable = (int16 *)malloc(mixChannelsNum << 16);
 	if (!_softLTable) {
-		debug(5, "IMuseDigiInternalMixer::init(): ERROR: couldn't allocate mixer tables");
+		debug(5, "IMuseInternalMixer::init(): ERROR: couldn't allocate mixer tables");
 		return -1;
 	}
 
@@ -92,7 +92,7 @@ int IMuseDigiInternalMixer::init(int numChannels, int mixBufSize, int mixChannel
 	return 0;
 }
 
-int IMuseDigiInternalMixer::clearMixerBuffer() {
+int IMuseInternalMixer::clearMixerBuffer() {
 	if (!_mixBuf)
 		return -1;
 
@@ -101,7 +101,7 @@ int IMuseDigiInternalMixer::clearMixerBuffer() {
 	return 0;
 }
 
-void IMuseDigiInternalMixer::mix16ToStereo(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp) {
+void IMuseInternalMixer::mix16ToStereo(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp) {
 	int32 *mixBufCurCell = &_mixBuf[2 * mixBufStartIndex];
 	uint32 ratio = ((uint32)inFrameCount << 16) / feedSize;
 	uint32 position = 0;
@@ -158,7 +158,7 @@ void IMuseDigiInternalMixer::mix16ToStereo(const int16 *srcBuf, int32 inFrameCou
 	}
 }
 
-void IMuseDigiInternalMixer::mix16ToStereoSwap(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp) {
+void IMuseInternalMixer::mix16ToStereoSwap(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp) {
 	int32 *mixBufCurCell = &_mixBuf[2 * mixBufStartIndex];
 	uint32 ratio = ((uint32)inFrameCount << 16) / feedSize;
 	uint32 position = 0;
@@ -220,7 +220,7 @@ void IMuseDigiInternalMixer::mix16ToStereoSwap(const int16 *srcBuf, int32 inFram
 	}
 }
 
-void IMuseDigiInternalMixer::mix16(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume) {
+void IMuseInternalMixer::mix16(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume) {
 	int32 *mixBufCurCell = &_mixBuf[2 * mixBufStartIndex];
 	uint32 ratio = ((uint32)inFrameCount << 16) / feedSize;
 	uint32 position = 0;
@@ -270,7 +270,7 @@ void IMuseDigiInternalMixer::mix16(const int16 *srcBuf, int32 inFrameCount, uint
 	}
 }
 
-void IMuseDigiInternalMixer::mix16Swap(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume) {
+void IMuseInternalMixer::mix16Swap(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume) {
 	int32 *mixBufCurCell = &_mixBuf[2 * mixBufStartIndex];
 	uint32 ratio = ((uint32)inFrameCount << 16) / feedSize;
 	uint32 position = 0;
@@ -326,7 +326,7 @@ void IMuseDigiInternalMixer::mix16Swap(const int16 *srcBuf, int32 inFrameCount, 
 	}
 }
 
-void IMuseDigiInternalMixer::mix(uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, int swapEndiannessFlag, int feedSize, int32 mixBufStartIndex, int volume, int pan) {
+void IMuseInternalMixer::mix(uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, int swapEndiannessFlag, int feedSize, int32 mixBufStartIndex, int volume, int pan) {
 	int channelVolume, channelPan, leftAmp, rightAmp;
 
 	// The original could divide by zero here, let's avoid that...
@@ -356,7 +356,7 @@ void IMuseDigiInternalMixer::mix(uint8 *srcBuf, int32 inFrameCount, int wordSize
 	}
 }
 
-int IMuseDigiInternalMixer::loop(uint8 **destBuffer, int len) {
+int IMuseInternalMixer::loop(uint8 **destBuffer, int len) {
 	if (!_mixBuf || !destBuffer || !len)
 		return -1;
 
@@ -377,7 +377,7 @@ int IMuseDigiInternalMixer::loop(uint8 **destBuffer, int len) {
 	return 0;
 }
 
-void IMuseDigiInternalMixer::endStream(int idx) {
+void IMuseInternalMixer::endStream(int idx) {
 	// We mark the stream as finished and then remove
 	// the reference: in this way, the stream will have time
 	// to flush the remaining sound data and will be disposed
@@ -388,7 +388,7 @@ void IMuseDigiInternalMixer::endStream(int idx) {
 	}
 }
 
-Audio::QueuingAudioStream *IMuseDigiInternalMixer::getStream(int idx) {
+Audio::QueuingAudioStream *IMuseInternalMixer::getStream(int idx) {
 	if (!_lowLatencyMode || idx == -1) {
 		// Stream for the original mode
 		return _stream;

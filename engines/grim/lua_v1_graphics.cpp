@@ -28,7 +28,7 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/set.h"
 #include "engines/grim/actor.h"
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 #include "engines/grim/movie/movie.h"
 #include "engines/grim/lua/lua.h"
 
@@ -99,7 +99,7 @@ void Lua_V1::StartMovie() {
 	}
 
 	if (g_imuse)
-		g_imuse->floodMusicBuffer();
+		g_imuse->soundsFloodMusicBuffer();
 
 	int x = 0, y = 0;
 	if (!lua_isnil(lua_getparam(3)))

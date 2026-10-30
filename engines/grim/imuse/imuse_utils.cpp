@@ -19,16 +19,16 @@
  *
  */
 
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 
 namespace Grim {
 
-int IMuseDigital::addTrackToList(IMuseDigiTrack **listPtr, IMuseDigiTrack *listPtr_Item) {
+int IMuse::addTrackToList(IMuseTrack **listPtr, IMuseTrack *listPtr_Item) {
 	Common::StackLock lock(*_mutex);
 
 	// [0] is ->prev, [1] is ->next
 	if (!listPtr_Item || listPtr_Item->prev || listPtr_Item->next) {
-		debug(5, "IMuseDigital::addTrackToList(): ERROR: arguments might be null");
+		debug(5, "IMuse::addTrackToList(): ERROR: arguments might be null");
 		return -5;
 	} else {
 		// Set item's next element to the list
@@ -50,11 +50,11 @@ int IMuseDigital::addTrackToList(IMuseDigiTrack **listPtr, IMuseDigiTrack *listP
 	return 0;
 }
 
-int IMuseDigital::removeTrackFromList(IMuseDigiTrack **listPtr, IMuseDigiTrack *listPtr_Item) {
+int IMuse::removeTrackFromList(IMuseTrack **listPtr, IMuseTrack *listPtr_Item) {
 	Common::StackLock lock(*_mutex);
 
-	IMuseDigiTrack *currentTrack = *listPtr;
-	IMuseDigiTrack *nextTrack;
+	IMuseTrack *currentTrack = *listPtr;
+	IMuseTrack *nextTrack;
 	if (listPtr_Item && currentTrack) {
 		do {
 			if (currentTrack == listPtr_Item)
@@ -78,18 +78,18 @@ int IMuseDigital::removeTrackFromList(IMuseDigiTrack **listPtr, IMuseDigiTrack *
 			listPtr_Item->next = nullptr;
 			return 0;
 		} else {
-			debug(5, "IMuseDigital::removeTrackFromList(): ERROR: item not on list");
+			debug(5, "IMuse::removeTrackFromList(): ERROR: item not on list");
 			return -3;
 		}
 	} else {
-		debug(5, "IMuseDigital::removeTrackFromList(): ERROR: arguments might be null");
+		debug(5, "IMuse::removeTrackFromList(): ERROR: arguments might be null");
 		return -5;
 	}
 }
 
-int IMuseDigital::addStreamZoneToList(IMuseDigiStreamZone **listPtr, IMuseDigiStreamZone *listPtr_Item) {
+int IMuse::addStreamZoneToList(IMuseStreamZone **listPtr, IMuseStreamZone *listPtr_Item) {
 	if (!listPtr_Item || listPtr_Item->prev || listPtr_Item->next) {
-		debug(5, "IMuseDigital::addStreamZoneToList(): ERROR: arguments might be null");
+		debug(5, "IMuse::addStreamZoneToList(): ERROR: arguments might be null");
 		return -5;
 	} else {
 		// Set item's next element to the list
@@ -111,9 +111,9 @@ int IMuseDigital::addStreamZoneToList(IMuseDigiStreamZone **listPtr, IMuseDigiSt
 	return 0;
 }
 
-int IMuseDigital::removeStreamZoneFromList(IMuseDigiStreamZone **listPtr, IMuseDigiStreamZone *listPtr_Item) {
-	IMuseDigiStreamZone *currentStrZone = *listPtr;
-	IMuseDigiStreamZone *nextStrZone;
+int IMuse::removeStreamZoneFromList(IMuseStreamZone **listPtr, IMuseStreamZone *listPtr_Item) {
+	IMuseStreamZone *currentStrZone = *listPtr;
+	IMuseStreamZone *nextStrZone;
 	if (listPtr_Item && currentStrZone) {
 		do {
 			if (currentStrZone == listPtr_Item)
@@ -137,16 +137,16 @@ int IMuseDigital::removeStreamZoneFromList(IMuseDigiStreamZone **listPtr, IMuseD
 			listPtr_Item->next = nullptr;
 			return 0;
 		} else {
-			debug(5, "IMuseDigital::removeStreamZoneFromList(): ERROR: item not on list");
+			debug(5, "IMuse::removeStreamZoneFromList(): ERROR: item not on list");
 			return -3;
 		}
 	} else {
-		debug(5, "IMuseDigital::removeStreamZoneFromList(): ERROR: arguments might be null");
+		debug(5, "IMuse::removeStreamZoneFromList(): ERROR: arguments might be null");
 		return -5;
 	}
 }
 
-int IMuseDigital::clampNumber(int value, int minValue, int maxValue) {
+int IMuse::clampNumber(int value, int minValue, int maxValue) {
 	if (value < minValue)
 		return minValue;
 
@@ -156,7 +156,7 @@ int IMuseDigital::clampNumber(int value, int minValue, int maxValue) {
 	return value;
 }
 
-int IMuseDigital::checkHookId(int &trackHookId, int sampleHookId) {
+int IMuse::checkHookId(int &trackHookId, int sampleHookId) {
 	if (sampleHookId) {
 		if (trackHookId == sampleHookId) {
 			trackHookId = 0;

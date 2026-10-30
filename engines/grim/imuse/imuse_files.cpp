@@ -24,12 +24,12 @@
 
 #include "engines/grim/resource.h"
 #include "engines/grim/movie/codecs/vima.h"
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 
 namespace Grim {
 
-int IMuseDigital::diMUSEInitFilelist() {
-	for (int i = 0; i < DIMUSE_MAX_SOUND_LIST; i++) {
+int IMuse::imInitFilelist() {
+	for (int i = 0; i < IMUSE_MAX_SOUND_LIST; i++) {
 		_mainSoundList[i].prev = nullptr;
 		_mainSoundList[i].next = nullptr;
 		_mainSoundList[i].soundId = 0;
@@ -39,8 +39,8 @@ int IMuseDigital::diMUSEInitFilelist() {
 	return 0;
 }
 
-void IMuseDigital::diMUSESaveLoadFilelist(Common::Serializer &ser) {
-	IMuseDigiSoundList *sound;
+void IMuse::imSaveLoadFilelist(Common::Serializer &ser) {
+	IMuseSoundList *sound;
 	int loadedCount = 0;
 	int openedCount = 0;
 	int soundId = 0;
@@ -54,7 +54,7 @@ void IMuseDigital::diMUSESaveLoadFilelist(Common::Serializer &ser) {
 		for (sound = _openedSoundsList; sound; sound = sound->next)
 			openedCount++;
 	} else {
-		for (int i = 0; i < DIMUSE_MAX_SOUND_LIST; i++) {
+		for (int i = 0; i < IMUSE_MAX_SOUND_LIST; i++) {
 			_mainSoundList[i].prev = nullptr;
 			_mainSoundList[i].next = nullptr;
 			_mainSoundList[i].soundId = 0;
@@ -78,13 +78,13 @@ void IMuseDigital::diMUSESaveLoadFilelist(Common::Serializer &ser) {
 		ser.syncAsSint32LE(refCount, VER(30));
 
 		if (ser.isLoading()) {
-			if (!diMUSELoadSound(filename, soundId)) {
-				debug(5, "IMuseDigital::diMUSESaveLoadFilelist(): ERROR: couldn't load file %s", filename);
+			if (!imLoadSound(filename, soundId)) {
+				debug(5, "IMuse::imSaveLoadFilelist(): ERROR: couldn't load file %s", filename);
 				return;
 			}
 
 			if (soundId != _loadedSoundList->soundId) {
-				debug(5, "IMuseDigital::diMUSESaveLoadFilelist(): ERROR: detected modified sound number");
+				debug(5, "IMuse::imSaveLoadFilelist(): ERROR: detected modified sound number");
 				return;
 			}
 
@@ -106,12 +106,12 @@ void IMuseDigital::diMUSESaveLoadFilelist(Common::Serializer &ser) {
 		ser.syncAsSint32LE(refCount, VER(30));
 
 		if (ser.isLoading()) {
-			if (!diMUSEOpenSound(filename, soundId)) {
-				debug(5, "IMuseDigital::diMUSESaveLoadFilelist(): ERROR: couldn't open file %s", filename);
+			if (!imOpenSound(filename, soundId)) {
+				debug(5, "IMuse::imSaveLoadFilelist(): ERROR: couldn't open file %s", filename);
 			}
 
 			if (soundId != _openedSoundsList->soundId) {
-				debug(5, "IMuseDigital::diMUSESaveLoadFilelist(): ERROR: detected modified sound number");
+				debug(5, "IMuse::imSaveLoadFilelist(): ERROR: detected modified sound number");
 				return;
 			}
 
@@ -120,15 +120,15 @@ void IMuseDigital::diMUSESaveLoadFilelist(Common::Serializer &ser) {
 	}
 }
 
-int IMuseDigital::diMUSELoadSound(const char *soundName, int requestedSoundId) {
-	IMuseDigiSoundList *sound;
+int IMuse::imLoadSound(const char *soundName, int requestedSoundId) {
+	IMuseSoundList *sound;
 	int soundId;
 	int nameIndex;
 
 	if (!_fileListInitialized || !*soundName)
 		return 0;
 
-	soundId = diMUSEFindSound(soundName);
+	soundId = imFindSound(soundName);
 	if (soundId && _loadedSoundList) {
 		sound = _loadedSoundList;
 		while (soundId != sound->soundId) {
@@ -146,8 +146,8 @@ int IMuseDigital::diMUSELoadSound(const char *soundName, int requestedSoundId) {
 
 	sound = _mainSoundList;
 	while (sound->soundId) {
-		if (++sound >= &_mainSoundList[DIMUSE_MAX_SOUND_LIST]) {
-			debug(5, "IMuseDigital::diMUSELoadSound(): Sound List FULL!");
+		if (++sound >= &_mainSoundList[IMUSE_MAX_SOUND_LIST]) {
+			debug(5, "IMuse::imLoadSound(): Sound List FULL!");
 			return 0;
 		}
 	}
@@ -164,20 +164,20 @@ int IMuseDigital::diMUSELoadSound(const char *soundName, int requestedSoundId) {
 			sound->filename[nameIndex] = 0;
 			sound->soundId = soundId;
 			sound->refCount = 1;
-			diMUSEAddSoundToList(&_loadedSoundList, sound);
+			imAddSoundToList(&_loadedSoundList, sound);
 			return soundId;
 		}
 
-		debug(5, "IMuseDigital::diMUSELoadSound(): Name too long: %s", soundName);
+		debug(5, "IMuse::imLoadSound(): Name too long: %s", soundName);
 	} else {
-		debug(5, "IMuseDigital::diMUSELoadSound(): Host couldn't load sound %s", soundName);
+		debug(5, "IMuse::imLoadSound(): Host couldn't load sound %s", soundName);
 	}
 
 	return 0;
 }
 
-void IMuseDigital::diMUSEUnloadSound(int soundId) {
-	IMuseDigiSoundList *sound;
+void IMuse::imUnloadSound(int soundId) {
+	IMuseSoundList *sound;
 
 	if (_fileListInitialized) {
 		sound = _loadedSoundList;
@@ -192,30 +192,30 @@ void IMuseDigital::diMUSEUnloadSound(int soundId) {
 			sound = sound->next;
 		}
 
-		diMUSEFlushSounds();
+		imFlushSounds();
 	}
 }
 
-void IMuseDigital::diMUSEUnloadAll() {
-	IMuseDigiSoundList *sound;
+void IMuse::imUnloadAll() {
+	IMuseSoundList *sound;
 
 	if (_fileListInitialized) {
 		for (sound = _loadedSoundList; sound; sound = sound->next)
 			sound->refCount = 0;
 
-		diMUSEFlushSounds();
+		imFlushSounds();
 	}
 }
 
-int IMuseDigital::diMUSEOpenSound(const char *filename, int requestedSoundId) {
-	IMuseDigiSoundList *sound;
+int IMuse::imOpenSound(const char *filename, int requestedSoundId) {
+	IMuseSoundList *sound;
 	int soundId;
 	int nameIndex;
 
 	if (!_fileListInitialized || !*filename)
 		return 0;
 
-	soundId = diMUSEFindSound(filename);
+	soundId = imFindSound(filename);
 	if (soundId && _openedSoundsList) {
 		sound = _openedSoundsList;
 		while (soundId != sound->soundId) {
@@ -232,8 +232,8 @@ int IMuseDigital::diMUSEOpenSound(const char *filename, int requestedSoundId) {
 
 	sound = _mainSoundList;
 	while (sound->soundId) {
-		if (++sound >= &_mainSoundList[DIMUSE_MAX_SOUND_LIST]) {
-			debug(5, "IMuseDigital::diMUSEOpenSound(): Sound List FULL!");
+		if (++sound >= &_mainSoundList[IMUSE_MAX_SOUND_LIST]) {
+			debug(5, "IMuse::imOpenSound(): Sound List FULL!");
 			return 0;
 		}
 	}
@@ -251,20 +251,20 @@ int IMuseDigital::diMUSEOpenSound(const char *filename, int requestedSoundId) {
 			sound->filename[nameIndex] = 0;
 			sound->soundId = soundId;
 			sound->refCount = 1;
-			diMUSEAddSoundToList(&_openedSoundsList, sound);
+			imAddSoundToList(&_openedSoundsList, sound);
 			return soundId;
 		}
 
-		debug(5, "IMuseDigital::diMUSEOpenSound(): Name too long: %s", filename);
+		debug(5, "IMuse::imOpenSound(): Name too long: %s", filename);
 	} else {
-		debug(5, "IMuseDigital::diMUSEOpenSound(): Host couldn't open sound %s", filename);
+		debug(5, "IMuse::imOpenSound(): Host couldn't open sound %s", filename);
 	}
 
 	return 0;
 }
 
-void IMuseDigital::diMUSECloseSound(int soundId) {
-	IMuseDigiSoundList *sound;
+void IMuse::imCloseSound(int soundId) {
+	IMuseSoundList *sound;
 
 	if (_fileListInitialized) {
 		sound = _openedSoundsList;
@@ -277,23 +277,23 @@ void IMuseDigital::diMUSECloseSound(int soundId) {
 			sound = sound->next;
 		}
 
-		diMUSEFlushSounds();
+		imFlushSounds();
 	}
 }
 
-void IMuseDigital::diMUSECloseAll() {
-	IMuseDigiSoundList *sound;
+void IMuse::imCloseAll() {
+	IMuseSoundList *sound;
 
 	if (_fileListInitialized) {
 		for (sound = _openedSoundsList; sound; sound = sound->next)
 			sound->refCount = 0;
 
-		diMUSEFlushSounds();
+		imFlushSounds();
 	}
 }
 
-int IMuseDigital::diMUSEFindSound(const char *soundName) {
-	IMuseDigiSoundList *sound;
+int IMuse::imFindSound(const char *soundName) {
+	IMuseSoundList *sound;
 
 	for (sound = _loadedSoundList; sound; sound = sound->next) {
 		if (*soundName && !strcmp(sound->filename, soundName))
@@ -308,31 +308,31 @@ int IMuseDigital::diMUSEFindSound(const char *soundName) {
 	return 0;
 }
 
-void IMuseDigital::diMUSEFlushSounds() {
-	IMuseDigiSoundList *sound, *next;
+void IMuse::imFlushSounds() {
+	IMuseSoundList *sound, *next;
 
 	for (sound = _loadedSoundList; sound; sound = next) {
 		next = sound->next;
-		if (!sound->refCount && !diMUSEGetParam(sound->soundId, DIMUSE_P_SND_TRACK_NUM) && !diMUSEGetParam(sound->soundId, DIMUSE_P_TRIGS_SNDS)) {
+		if (!sound->refCount && !imGetParam(sound->soundId, IMUSE_P_SND_TRACK_NUM) && !imGetParam(sound->soundId, IMUSE_P_TRIGS_SNDS)) {
 			ihostUnloadSound(sound->soundId);
 			sound->soundId = 0;
-			diMUSERemoveSoundFromList(&_loadedSoundList, sound);
+			imRemoveSoundFromList(&_loadedSoundList, sound);
 		}
 	}
 
 	for (sound = _openedSoundsList; sound; sound = next) {
 		next = sound->next;
-		if (!sound->refCount && !diMUSEGetParam(sound->soundId, DIMUSE_P_SND_TRACK_NUM) && !diMUSEGetParam(sound->soundId, DIMUSE_P_TRIGS_SNDS)) {
+		if (!sound->refCount && !imGetParam(sound->soundId, IMUSE_P_SND_TRACK_NUM) && !imGetParam(sound->soundId, IMUSE_P_TRIGS_SNDS)) {
 			ihostCloseSound(sound->soundId);
 			sound->soundId = 0;
-			diMUSERemoveSoundFromList(&_openedSoundsList, sound);
+			imRemoveSoundFromList(&_openedSoundsList, sound);
 		}
 	}
 }
 
-int IMuseDigital::diMUSEAddSoundToList(IMuseDigiSoundList **listPtr, IMuseDigiSoundList *item) {
+int IMuse::imAddSoundToList(IMuseSoundList **listPtr, IMuseSoundList *item) {
 	if (!item || item->prev || item->next) {
-		debug(5, "IMuseDigital::diMUSEAddSoundToList(): ERROR: list arg err when adding");
+		debug(5, "IMuse::imAddSoundToList(): ERROR: list arg err when adding");
 		return -5;
 	}
 
@@ -347,8 +347,8 @@ int IMuseDigital::diMUSEAddSoundToList(IMuseDigiSoundList **listPtr, IMuseDigiSo
 	return 0;
 }
 
-int IMuseDigital::diMUSERemoveSoundFromList(IMuseDigiSoundList **listPtr, IMuseDigiSoundList *item) {
-	IMuseDigiSoundList *curItem = *listPtr;
+int IMuse::imRemoveSoundFromList(IMuseSoundList **listPtr, IMuseSoundList *item) {
+	IMuseSoundList *curItem = *listPtr;
 
 	if (item && curItem) {
 		while (curItem) {
@@ -371,65 +371,65 @@ int IMuseDigital::diMUSERemoveSoundFromList(IMuseDigiSoundList **listPtr, IMuseD
 
 			return 0;
 		} else {
-			debug(5, "IMuseDigital::diMUSERemoveSoundFromList(): ERROR: item not on list");
+			debug(5, "IMuse::imRemoveSoundFromList(): ERROR: item not on list");
 			return -3;
 		}
 	} else {
-		debug(5, "IMuseDigital::diMUSERemoveSoundFromList(): ERROR: list arg err when removing");
+		debug(5, "IMuse::imRemoveSoundFromList(): ERROR: list arg err when removing");
 		return -5;
 	}
 }
 
-bool IMuseDigital::filesCheckRange(int soundId) {
+bool IMuse::filesCheckRange(int soundId) {
 	return soundId > 0;
 }
 
-uint8 *IMuseDigital::filesGetSoundAddrData(int soundId) {
+uint8 *IMuse::filesGetSoundAddrData(int soundId) {
 	if (filesCheckRange(soundId))
 		return ihostGetSoundAddr(soundId);
 
 	return nullptr;
 }
 
-uint8 *IMuseDigital::filesFetchMap(int soundId) {
+uint8 *IMuse::filesFetchMap(int soundId) {
 	if (filesCheckRange(soundId))
 		return ihostGetMapAddr(soundId);
 
 	return nullptr;
 }
 
-int IMuseDigital::filesSeek(int soundId, int32 offset, int mode) {
+int IMuse::filesSeek(int soundId, int32 offset, int mode) {
 	if (filesCheckRange(soundId))
 		return ihostFseek(soundId, offset, mode);
 
 	return 0;
 }
 
-int IMuseDigital::filesRead(int soundId, uint8 *buf, int32 size) {
+int IMuse::filesRead(int soundId, uint8 *buf, int32 size) {
 	if (filesCheckRange(soundId))
 		return ihostRead(soundId, buf, size);
 
 	return 0;
 }
 
-IMuseDigiSndBuffer *IMuseDigital::filesGetBufInfo(int bufId) {
+IMuseSndBuffer *IMuse::filesGetBufInfo(int bufId) {
 	if (bufId)
 		return ihostGetBufferInfo(bufId);
 
 	return nullptr;
 }
 
-int IMuseDigital::ihostLoadSound(const char *soundName, int requestedSoundId) {
+int IMuse::ihostLoadSound(const char *soundName, int requestedSoundId) {
 	return 0;
 }
 
-int IMuseDigital::ihostUnloadSound(int soundId) {
+int IMuse::ihostUnloadSound(int soundId) {
 	return 0;
 }
 
-int IMuseDigital::ihostOpenSound(const char *filename, int requestedSoundId) {
+int IMuse::ihostOpenSound(const char *filename, int requestedSoundId) {
 	Common::StackLock lock(*_mutex);
-	IMuseDigiResource *res;
+	IMuseResource *res;
 	int index;
 
 	if (requestedSoundId) {
@@ -440,7 +440,7 @@ int IMuseDigital::ihostOpenSound(const char *filename, int requestedSoundId) {
 		return requestedSoundId;
 	}
 
-	for (index = 1; index < DIMUSE_MAX_OPEN_FILES; index++) {
+	for (index = 1; index < IMUSE_MAX_OPEN_FILES; index++) {
 		if (!_openAudioFiles[index].resourcePtr)
 			break;
 
@@ -450,7 +450,7 @@ int IMuseDigital::ihostOpenSound(const char *filename, int requestedSoundId) {
 		}
 	}
 
-	if (index >= DIMUSE_MAX_OPEN_FILES)
+	if (index >= IMUSE_MAX_OPEN_FILES)
 		return 0;
 
 	res = soundsOpenFile(filename);
@@ -464,7 +464,7 @@ int IMuseDigital::ihostOpenSound(const char *filename, int requestedSoundId) {
 	return 0;
 }
 
-int IMuseDigital::ihostCloseSound(int soundId) {
+int IMuse::ihostCloseSound(int soundId) {
 	Common::StackLock lock(*_mutex);
 	int index = soundId - 10000;
 
@@ -483,34 +483,34 @@ int IMuseDigital::ihostCloseSound(int soundId) {
 	return 0;
 }
 
-uint8 *IMuseDigital::ihostGetMapAddr(int soundId) {
-	if (soundId < 100 || soundId >= 100 + DIMUSE_MAX_CACHED_SOUNDS)
+uint8 *IMuse::ihostGetMapAddr(int soundId) {
+	if (soundId < 100 || soundId >= 100 + IMUSE_MAX_CACHED_SOUNDS)
 		return nullptr;
 
 	return _soundCache[soundId - 100].soundMap;
 }
 
-uint8 *IMuseDigital::ihostGetSoundAddr(int soundId) {
-	if (soundId < 100 || soundId >= 100 + DIMUSE_MAX_CACHED_SOUNDS)
+uint8 *IMuse::ihostGetSoundAddr(int soundId) {
+	if (soundId < 100 || soundId >= 100 + IMUSE_MAX_CACHED_SOUNDS)
 		return nullptr;
 
 	return _soundCache[soundId - 100].soundAddrData;
 }
 
-IMuseDigiSndBuffer *IMuseDigital::ihostGetBufferInfo(int bufId) {
+IMuseSndBuffer *IMuse::ihostGetBufferInfo(int bufId) {
 	return &_soundBuffers[bufId];
 }
 
-int IMuseDigital::ihostFseek(int soundId, int32 offset, int mode) {
+int IMuse::ihostFseek(int soundId, int32 offset, int mode) {
 	Common::StackLock lock(*_mutex);
 
-	if (soundId >= 10000 && soundId < 10000 + DIMUSE_MAX_OPEN_FILES) {
-		IMuseDigiResource *res = _openAudioFiles[soundId - 10000].resourcePtr;
+	if (soundId >= 10000 && soundId < 10000 + IMUSE_MAX_OPEN_FILES) {
+		IMuseResource *res = _openAudioFiles[soundId - 10000].resourcePtr;
 		if (res) {
 			soundsFileSeek(res, offset, mode);
 
 			if (soundId == kTalkSoundID && _curEffectId && mode == SEEK_END)
-				return _curEffectId * (soundsFileTell(res) + DIMUSE_HMI_TAIL_SIZE - 44) + 44;
+				return _curEffectId * (soundsFileTell(res) + IMUSE_HMI_TAIL_SIZE - 44) + 44;
 
 			if (soundId != kTalkSoundID || !_curEffectId || mode != SEEK_SET)
 				return soundsFileTell(res);
@@ -527,10 +527,10 @@ int IMuseDigital::ihostFseek(int soundId, int32 offset, int mode) {
 	return 0;
 }
 
-int IMuseDigital::ihostRead(int soundId, uint8 *destBuf, int32 size) {
+int IMuse::ihostRead(int soundId, uint8 *destBuf, int32 size) {
 	Common::StackLock lock(*_mutex);
 
-	IMuseDigiResource *res = _openAudioFiles[soundId - 10000].resourcePtr;
+	IMuseResource *res = _openAudioFiles[soundId - 10000].resourcePtr;
 	if (!res)
 		return 0;
 
@@ -577,7 +577,7 @@ int IMuseDigital::ihostRead(int soundId, uint8 *destBuf, int32 size) {
 			isLastChunk = true;
 
 		memcpy(destBuf, _voiceSrcBuf, 44);
-		WRITE_LE_UINT32(destBuf + 40, (DIMUSE_HMI_TAIL_SIZE + READ_LE_UINT32(destBuf + 40)) * _curEffectId);
+		WRITE_LE_UINT32(destBuf + 40, (IMUSE_HMI_TAIL_SIZE + READ_LE_UINT32(destBuf + 40)) * _curEffectId);
 		WRITE_LE_UINT32(destBuf + 28, READ_LE_UINT32(destBuf + 28) * _curEffectId);
 
 		if (_curEffectId > 1) {
@@ -645,8 +645,8 @@ int IMuseDigital::ihostRead(int soundId, uint8 *destBuf, int32 size) {
 	return size;
 }
 
-void IMuseDigital::soundsAllocateBuffer(int bufferId, int32 bufSize, int32 loadSize, int32 criticalSize) {
-	IMuseDigiSndBuffer *soundBuf = &_soundBuffers[bufferId];
+void IMuse::soundsAllocateBuffer(int bufferId, int32 bufSize, int32 loadSize, int32 criticalSize) {
+	IMuseSndBuffer *soundBuf = &_soundBuffers[bufferId];
 
 	soundBuf->buffer = (uint8 *)malloc(bufSize);
 	soundBuf->bufSize = bufSize;
@@ -654,14 +654,14 @@ void IMuseDigital::soundsAllocateBuffer(int bufferId, int32 bufSize, int32 loadS
 	soundBuf->criticalSize = criticalSize;
 }
 
-void IMuseDigital::soundsDeallocateBuffer(int bufferId) {
-	IMuseDigiSndBuffer *soundBuf = &_soundBuffers[bufferId];
+void IMuse::soundsDeallocateBuffer(int bufferId) {
+	IMuseSndBuffer *soundBuf = &_soundBuffers[bufferId];
 
 	free(soundBuf->buffer);
 	soundBuf->buffer = nullptr;
 }
 
-IMuseDigiResource *IMuseDigital::soundsOpenFile(const char *filename) {
+IMuseResource *IMuse::soundsOpenFile(const char *filename) {
 	Common::String lowerName(filename);
 	lowerName.toLowercase();
 
@@ -669,8 +669,8 @@ IMuseDigiResource *IMuseDigital::soundsOpenFile(const char *filename) {
 	if (!stream)
 		return nullptr;
 
-	IMuseDigiResource *res = new IMuseDigiResource();
-	memset(res, 0, sizeof(IMuseDigiResource));
+	IMuseResource *res = new IMuseResource();
+	memset(res, 0, sizeof(IMuseResource));
 	res->resId = stream;
 	res->curProcessedCompBlock = -1;
 	Common::strlcpy(res->filename, filename, sizeof(res->filename));
@@ -739,7 +739,7 @@ IMuseDigiResource *IMuseDigital::soundsOpenFile(const char *filename) {
 	return res;
 }
 
-void IMuseDigital::soundsCloseFile(IMuseDigiResource *res) {
+void IMuse::soundsCloseFile(IMuseResource *res) {
 	if (res->hasMcmp) {
 		free(res->mcmpBlockPtr);
 		delete[] res->compBlockPtr;
@@ -754,7 +754,7 @@ void IMuseDigital::soundsCloseFile(IMuseDigiResource *res) {
 	delete res;
 }
 
-void IMuseDigital::soundsFileSeek(IMuseDigiResource *res, int32 offset, int mode) {
+void IMuse::soundsFileSeek(IMuseResource *res, int32 offset, int mode) {
 	if (!res->hasMcmp) {
 		res->resId->seek(offset, mode);
 	} else if (mode == SEEK_SET) {
@@ -766,14 +766,14 @@ void IMuseDigital::soundsFileSeek(IMuseDigiResource *res, int32 offset, int mode
 	}
 }
 
-int32 IMuseDigital::soundsFileTell(IMuseDigiResource *res) {
+int32 IMuse::soundsFileTell(IMuseResource *res) {
 	if (!res->hasMcmp)
 		return res->resId->pos();
 
 	return res->fileCurOffset;
 }
 
-int IMuseDigital::soundsGetCompBlockId(IMuseDigiResource *res, int32 offset) {
+int IMuse::soundsGetCompBlockId(IMuseResource *res, int32 offset) {
 	if (offset >= 0 && offset < res->resSize) {
 		for (int i = 0; i < res->compBlocksNum; i++) {
 			if (offset >= res->compBlockOffset[i] && offset < res->compBlockOffset[i + 1])
@@ -784,7 +784,7 @@ int IMuseDigital::soundsGetCompBlockId(IMuseDigiResource *res, int32 offset) {
 	return -1;
 }
 
-int32 IMuseDigital::copyDataFromResource(IMuseDigiResource *res, uint8 *dest, int32 size) {
+int32 IMuse::copyDataFromResource(IMuseResource *res, uint8 *dest, int32 size) {
 	uint8 *cmpDataTmpBuf = nullptr;
 	uint32 curCompBlockSize = 0;
 	uint8 *curDest = dest;
@@ -881,9 +881,9 @@ int32 IMuseDigital::copyDataFromResource(IMuseDigiResource *res, uint8 *dest, in
 	return resSize;
 }
 
-int IMuseDigital::cacheGetSoundId(const char *soundName) {
+int IMuse::cacheGetSoundId(const char *soundName) {
 	uintptr soundKey = (uintptr)soundName;
-	IMuseDigiCachedSound *sound;
+	IMuseCachedSound *sound;
 	int slot, soundId, loadSlot = -1;
 	bool isLuaSoundId;
 	bool allocated = false;
@@ -911,8 +911,8 @@ int IMuseDigital::cacheGetSoundId(const char *soundName) {
 		isLuaSoundId = false;
 	}
 
-	sound = &_soundCache[DIMUSE_MAX_CACHED_SOUNDS - 1];
-	slot = DIMUSE_MAX_CACHED_SOUNDS - 1;
+	sound = &_soundCache[IMUSE_MAX_CACHED_SOUNDS - 1];
+	slot = IMUSE_MAX_CACHED_SOUNDS - 1;
 
 	if (isLuaSoundId) {
 		while ((uintptr)sound->luaSoundId != soundKey) {
@@ -947,7 +947,7 @@ int IMuseDigital::cacheGetSoundId(const char *soundName) {
 				do {
 					collision = false;
 					int candidateId = abs(slotCounter) % 256 + 1111;
-					for (int i = 0; i < DIMUSE_MAX_CACHED_SOUNDS; i++) {
+					for (int i = 0; i < IMUSE_MAX_CACHED_SOUNDS; i++) {
 						if (_soundCache[i].soundFilename[0] && _soundCache[i].luaSoundId == candidateId) {
 							collision = true;
 							slotCounter++;
@@ -976,9 +976,9 @@ int IMuseDigital::cacheGetSoundId(const char *soundName) {
 	// Load the sound in the cache
 	sound->flag = 0;
 
-	IMuseDigiResource *res = soundsOpenFile(sound->soundFilename);
+	IMuseResource *res = soundsOpenFile(sound->soundFilename);
 	if (!res) {
-		memset(sound, 0, sizeof(IMuseDigiCachedSound));
+		memset(sound, 0, sizeof(IMuseCachedSound));
 		return 0;
 	}
 
@@ -1046,21 +1046,21 @@ int IMuseDigital::cacheGetSoundId(const char *soundName) {
 
 	free(sound->soundUncompData);
 	soundsResetLipsyncState(sound->luaSoundId);
-	memset(sound, 0, sizeof(IMuseDigiCachedSound));
+	memset(sound, 0, sizeof(IMuseCachedSound));
 	return 0;
 }
 
-int IMuseDigital::cachePurgeOldestStoppedSound() {
+int IMuse::cachePurgeOldestStoppedSound() {
 	int foundSlot = -1;
 	int emptySlot = -1;
 	uint32 oldestTimestamp = g_system->getMillis();
 
-	for (int slot = DIMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
-		IMuseDigiCachedSound *sound = &_soundCache[slot];
+	for (int slot = IMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
+		IMuseCachedSound *sound = &_soundCache[slot];
 
 		if (sound->soundFilename[0] && sound->soundUncompData) {
-			if (!diMUSEGetParam(slot + 100, DIMUSE_P_SND_TRACK_NUM) &&
-				!diMUSEGetParam(slot + 100, DIMUSE_P_TRIGS_SNDS) &&
+			if (!imGetParam(slot + 100, IMUSE_P_SND_TRACK_NUM) &&
+				!imGetParam(slot + 100, IMUSE_P_TRIGS_SNDS) &&
 				(foundSlot < 0 || oldestTimestamp > sound->tsOfAllocation)) {
 				foundSlot = slot;
 				oldestTimestamp = sound->tsOfAllocation;
@@ -1071,20 +1071,20 @@ int IMuseDigital::cachePurgeOldestStoppedSound() {
 	}
 
 	if (foundSlot >= 0) {
-		IMuseDigiCachedSound *sound = &_soundCache[foundSlot];
+		IMuseCachedSound *sound = &_soundCache[foundSlot];
 		sound->soundFilename[0] = 0;
 		soundsResetLipsyncState(sound->luaSoundId);
 
 		free(sound->soundUncompData);
-		memset(sound, 0, sizeof(IMuseDigiCachedSound));
+		memset(sound, 0, sizeof(IMuseCachedSound));
 		return foundSlot;
 	}
 
 	return emptySlot;
 }
 
-void IMuseDigital::cacheReset() {
-	for (int slot = DIMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
+void IMuse::cacheReset() {
+	for (int slot = IMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
 		if (_soundCache[slot].soundUncompData) {
 			soundsResetLipsyncState(_soundCache[slot].luaSoundId);
 			free(_soundCache[slot].soundUncompData);
@@ -1095,7 +1095,7 @@ void IMuseDigital::cacheReset() {
 	memset(_soundCache, 0, sizeof(_soundCache));
 }
 
-uint8 *IMuseDigital::soundsGetExtFormatBuffer(uint8 *streamHeader, int *formatId, int *targetSampleRate, int *targetWordSize, int *targetNumChannels, int *swapEndianFlag, int *regionLength) {
+uint8 *IMuse::soundsGetExtFormatBuffer(uint8 *streamHeader, int *formatId, int *targetSampleRate, int *targetWordSize, int *targetNumChannels, int *swapEndianFlag, int *regionLength) {
 	bool isMCMP = false;
 	uint8 *header = streamHeader;
 
@@ -1242,7 +1242,7 @@ uint8 *IMuseDigital::soundsGetExtFormatBuffer(uint8 *streamHeader, int *formatId
 	return nullptr;
 }
 
-int IMuseDigital::createSoundHeader(uint8 *buffer, int mode, int sampleRate, int wordSize, int numChannels, int regionLength) {
+int IMuse::createSoundHeader(uint8 *buffer, int mode, int sampleRate, int wordSize, int numChannels, int regionLength) {
 	if (mode == 3) {
 		memcpy(buffer, "iMUS", 4);
 		WRITE_BE_UINT32(buffer + 4, regionLength + 80);
@@ -1270,7 +1270,7 @@ int IMuseDigital::createSoundHeader(uint8 *buffer, int mode, int sampleRate, int
 	return 0;
 }
 
-int IMuseDigital::soundsLoadStartSound(const char *soundName, int priority, int group) {
+int IMuse::soundsLoadStartSound(const char *soundName, int priority, int group) {
 	int soundId = cacheGetSoundId(soundName);
 	if (!soundId)
 		return 0;
@@ -1278,13 +1278,13 @@ int IMuseDigital::soundsLoadStartSound(const char *soundName, int priority, int 
 	if (priority > 124)
 		priority = 124;
 
-	diMUSEStartSound(soundId, priority);
-	diMUSESetParam(soundId, DIMUSE_P_GROUP, group);
+	imStartSound(soundId, priority);
+	imSetParam(soundId, IMUSE_P_GROUP, group);
 	_soundCache[soundId - 100].priority = priority;
 	return _soundCache[soundId - 100].luaSoundId;
 }
 
-int IMuseDigital::soundsLoadProcessStartSound(const char *soundName, int priority, int group) {
+int IMuse::soundsLoadProcessStartSound(const char *soundName, int priority, int group) {
 	int soundId = cacheGetSoundId(soundName);
 	if (!soundId)
 		return 0;
@@ -1293,76 +1293,76 @@ int IMuseDigital::soundsLoadProcessStartSound(const char *soundName, int priorit
 		priority = 124;
 
 	if (_curEffectId) {
-		IMuseDigiCachedSound *sound = &_soundCache[soundId - 100];
+		IMuseCachedSound *sound = &_soundCache[soundId - 100];
 		if (sound->luaSoundId && !sound->flag)
 			allocateProcessedSound(sound->luaSoundId);
 	}
 
-	diMUSEStartSound(soundId, priority);
-	diMUSESetParam(soundId, DIMUSE_P_GROUP, group);
+	imStartSound(soundId, priority);
+	imSetParam(soundId, IMUSE_P_GROUP, group);
 	_soundCache[soundId - 100].priority = priority;
 	return _soundCache[soundId - 100].luaSoundId;
 }
 
-void IMuseDigital::soundsStopSound(const char *soundName) {
+void IMuse::soundsStopSound(const char *soundName) {
 	int soundId = cacheGetSoundId(soundName);
 	if (soundId)
-		diMUSEStopSound(soundId);
+		imStopSound(soundId);
 }
 
-int IMuseDigital::soundsGetParam(const char *soundName, int paramId) {
+int IMuse::soundsGetParam(const char *soundName, int paramId) {
 	int soundId = cacheGetSoundId(soundName);
 	if (soundId)
-		return diMUSEGetParam(soundId, paramId);
+		return imGetParam(soundId, paramId);
 
 	return 1;
 }
 
-void IMuseDigital::soundsSetParam(const char *soundName, int paramId, int value) {
+void IMuse::soundsSetParam(const char *soundName, int paramId, int value) {
 	int soundId = cacheGetSoundId(soundName);
 	if (soundId)
-		diMUSESetParam(soundId, paramId, value);
+		imSetParam(soundId, paramId, value);
 }
 
-int IMuseDigital::soundsFadeParam(const char *soundName, int paramId, int value, int length) {
+int IMuse::soundsFadeParam(const char *soundName, int paramId, int value, int length) {
 	int soundId = cacheGetSoundId(soundName);
 	if (soundId)
-		return diMUSEFadeParam(soundId, paramId, value, 60 * length / 1000);
+		return imFadeParam(soundId, paramId, value, 60 * length / 1000);
 
 	return 1;
 }
 
-bool IMuseDigital::soundsIsSoundInUse(const char *soundName) {
+bool IMuse::soundsIsSoundInUse(const char *soundName) {
 	uint32 soundIndex = cacheGetSoundId(soundName) - 100;
-	if (soundIndex >= DIMUSE_MAX_CACHED_SOUNDS || !_soundCache[soundIndex].soundFilename[0] || !_soundCache[soundIndex].soundUncompData)
+	if (soundIndex >= IMUSE_MAX_CACHED_SOUNDS || !_soundCache[soundIndex].soundFilename[0] || !_soundCache[soundIndex].soundUncompData)
 		return false;
 
 	int soundId = soundIndex + 100;
-	return diMUSEGetParam(soundId, DIMUSE_P_SND_TRACK_NUM) > 0 || diMUSEGetParam(soundId, DIMUSE_P_TRIGS_SNDS) > 0;
+	return imGetParam(soundId, IMUSE_P_SND_TRACK_NUM) > 0 || imGetParam(soundId, IMUSE_P_TRIGS_SNDS) > 0;
 }
 
-bool IMuseDigital::soundsIsSoundPlaying(const char *soundName) {
+bool IMuse::soundsIsSoundPlaying(const char *soundName) {
 	int soundId = cacheGetSoundId(soundName);
-	return diMUSEGetParam(soundId, DIMUSE_P_SND_TRACK_NUM) > 0;
+	return imGetParam(soundId, IMUSE_P_SND_TRACK_NUM) > 0;
 }
 
-int IMuseDigital::iMUSESetHook(const char *soundName, int hookId) {
+int IMuse::iMUSESetHook(const char *soundName, int hookId) {
 	int soundId = cacheGetSoundId(soundName);
 	if (soundId)
-		return diMUSESetHook(soundId, hookId);
+		return imSetHook(soundId, hookId);
 
 	return -1;
 }
 
-int IMuseDigital::iMUSEGetHook(const char *soundName) {
+int IMuse::iMUSEGetHook(const char *soundName) {
 	int soundId = cacheGetSoundId(soundName);
 	if (soundId)
-		return diMUSEGetHook(soundId);
+		return imGetHook(soundId);
 
 	return -1;
 }
 
-void IMuseDigital::iMUSESetVoiceEffect(const char *effectName) {
+void IMuse::iMUSESetVoiceEffect(const char *effectName) {
 	Common::strlcpy(_curEffectName, effectName, sizeof(_curEffectName));
 
 	if (!_hmiFxInitialized || !scumm_stricmp(effectName, "OFF"))
@@ -1371,17 +1371,17 @@ void IMuseDigital::iMUSESetVoiceEffect(const char *effectName) {
 		_curEffectId = registerHMIEffect(effectName);
 }
 
-void IMuseDigital::allocateProcessedSound(int luaSoundId) {
+void IMuse::allocateProcessedSound(int luaSoundId) {
 	if (luaSoundId < 1111 || luaSoundId >= 1367)
 		return;
 
-	int slot = DIMUSE_MAX_CACHED_SOUNDS - 1;
+	int slot = IMUSE_MAX_CACHED_SOUNDS - 1;
 	while (_soundCache[slot].luaSoundId != luaSoundId) {
 		if (!slot--)
 			return;
 	}
 
-	IMuseDigiCachedSound *sound = &_soundCache[slot];
+	IMuseCachedSound *sound = &_soundCache[slot];
 	if (!sound->soundUncompData || !sound->soundAddrData)
 		return;
 
@@ -1413,37 +1413,37 @@ void IMuseDigital::allocateProcessedSound(int luaSoundId) {
 	}
 }
 
-void IMuseDigital::soundsPeriodic() {
+void IMuse::soundsPeriodic() {
 	int32 cachedSize = 0;
 
-	diMUSEProcessStreams();
-	diMUSERefreshScript();
+	imProcessStreams();
+	imRefreshScript();
 
-	for (int slot = DIMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
+	for (int slot = IMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
 		if (_soundCache[slot].soundFilename[0] && _soundCache[slot].soundUncompData)
 			cachedSize += _soundCache[slot].uncompResourceSize;
 	}
 
-	if (cachedSize > DIMUSE_SOUNDS_MEMORY_LIMIT)
+	if (cachedSize > IMUSE_SOUNDS_MEMORY_LIMIT)
 		cachePurgeOldestStoppedSound();
 }
 
-int IMuseDigital::soundsPause() {
-	diMUSEPause();
-	_globalVolume = diMUSESetGroupVol(0, -1);
-	diMUSESetGroupVol(0, 0);
-	diMUSESetAttribute(-1, 0);
+int IMuse::soundsPause() {
+	imPause();
+	_globalVolume = imSetGroupVol(0, -1);
+	imSetGroupVol(0, 0);
+	imSetAttribute(-1, 0);
 	return 0;
 }
 
-int IMuseDigital::soundsResume() {
-	diMUSESetGroupVol(0, _globalVolume);
-	diMUSEResume();
-	diMUSESetAttribute(-1, 1);
+int IMuse::soundsResume() {
+	imSetGroupVol(0, _globalVolume);
+	imResume();
+	imSetAttribute(-1, 1);
 	return 0;
 }
 
-int IMuseDigital::soundsRegisterVoice(const char *filename) {
+int IMuse::soundsRegisterVoice(const char *filename) {
 	char lipsyncFilename[32];
 
 	Common::strlcpy(_curSpeechFile, filename, sizeof(_curSpeechFile));
@@ -1455,7 +1455,7 @@ int IMuseDigital::soundsRegisterVoice(const char *filename) {
 		loadLip(lipsyncFilename, kTalkSoundID);
 	}
 
-	IMuseDigiResource *res = soundsOpenFile(filename);
+	IMuseResource *res = soundsOpenFile(filename);
 	_openAudioFiles[0].resourcePtr = res;
 	if (!res) {
 		_millisecsInCurSpeechFile = 0;
@@ -1469,7 +1469,7 @@ int IMuseDigital::soundsRegisterVoice(const char *filename) {
 	return 1;
 }
 
-void IMuseDigital::soundsCloseVoiceFile() {
+void IMuse::soundsCloseVoiceFile() {
 	if (_openAudioFiles[0].resourcePtr) {
 		soundsCloseFile(_openAudioFiles[0].resourcePtr);
 		soundsResetLipsyncState(kTalkSoundID);
@@ -1477,38 +1477,38 @@ void IMuseDigital::soundsCloseVoiceFile() {
 	}
 }
 
-void IMuseDigital::soundsReOpenVoiceFile() {
+void IMuse::soundsReOpenVoiceFile() {
 	soundsCloseVoiceFile();
 	if (_curSpeechFile[0])
 		soundsRegisterVoice(_curSpeechFile);
 }
 
-int IMuseDigital::soundStartVoiceStream(const char *filename, int volume, int pan) {
-	diMUSEStopSound(kTalkSoundID);
+int IMuse::soundStartVoiceStream(const char *filename, int volume, int pan) {
+	imStopSound(kTalkSoundID);
 	soundsCloseVoiceFile();
 	if (!soundsRegisterVoice(filename))
 		return 1;
 
-	fillStreamsWhileMusicCritical(5);
-	diMUSEStartStream(kTalkSoundID, 127, DIMUSE_BUFFER_SPEECH);
-	diMUSESetParam(kTalkSoundID, DIMUSE_P_GROUP, DIMUSE_GROUP_SPEECH);
-	diMUSESetParam(kTalkSoundID, DIMUSE_P_VOLUME, volume);
-	diMUSESetParam(kTalkSoundID, DIMUSE_P_PAN, pan);
-	diMUSEProcessStreams();
-	diMUSEProcessStreams();
+	soundsFillStreamsWhileMusicCritical(5);
+	imStartStream(kTalkSoundID, 127, IMUSE_BUFFER_SPEECH);
+	imSetParam(kTalkSoundID, IMUSE_P_GROUP, IMUSE_GROUP_SPEECH);
+	imSetParam(kTalkSoundID, IMUSE_P_VOLUME, volume);
+	imSetParam(kTalkSoundID, IMUSE_P_PAN, pan);
+	imProcessStreams();
+	imProcessStreams();
 	return 0;
 }
 
-int IMuseDigital::soundStopVoiceStream() {
-	diMUSEStopSound(kTalkSoundID);
+int IMuse::soundStopVoiceStream() {
+	imStopSound(kTalkSoundID);
 	return ihostCloseSound(kTalkSoundID);
 }
 
-int IMuseDigital::soundGetVoiceTime() {
-	return diMUSEGetParam(kTalkSoundID, DIMUSE_P_SND_POS_IN_MS);
+int IMuse::soundGetVoiceTime() {
+	return imGetParam(kTalkSoundID, IMUSE_P_SND_POS_IN_MS);
 }
 
-int IMuseDigital::loadLip(const char *lipsyncFilename, int soundId) {
+int IMuse::loadLip(const char *lipsyncFilename, int soundId) {
 	Common::String lowerName(lipsyncFilename);
 	lowerName.toLowercase();
 
@@ -1523,7 +1523,7 @@ int IMuseDigital::loadLip(const char *lipsyncFilename, int soundId) {
 		return 0;
 	}
 
-	for (int i = 1; i < DIMUSE_MAX_LIPSYNCS; i++) {
+	for (int i = 1; i < IMUSE_MAX_LIPSYNCS; i++) {
 		if (soundId == _lipsyncSoundIds[i]) {
 			delete lipsyncFile;
 			return 1;
@@ -1534,7 +1534,7 @@ int IMuseDigital::loadLip(const char *lipsyncFilename, int soundId) {
 	if (soundId == kTalkSoundID) {
 		slot = 0;
 	} else {
-		for (int i = 1; i < DIMUSE_MAX_LIPSYNCS; i++) {
+		for (int i = 1; i < IMUSE_MAX_LIPSYNCS; i++) {
 			if (!_lipsyncSoundIds[i]) {
 				slot = i;
 				break;
@@ -1546,7 +1546,7 @@ int IMuseDigital::loadLip(const char *lipsyncFilename, int soundId) {
 		_lipsyncSoundIds[slot] = soundId;
 
 		int fileSize = lipsyncFile->size();
-		if (fileSize <= DIMUSE_LIPSYNC_MAX_SIZE) {
+		if (fileSize <= IMUSE_LIPSYNC_MAX_SIZE) {
 			lipsyncFile->read(_lipsyncBufs[slot], fileSize);
 
 			if (memcmp(_lipsyncBufs[slot], "LIP!", 4))
@@ -1558,14 +1558,14 @@ int IMuseDigital::loadLip(const char *lipsyncFilename, int soundId) {
 	return 0;
 }
 
-void IMuseDigital::soundsResetLipsyncState(int soundId) {
-	for (int i = 0; i < DIMUSE_MAX_LIPSYNCS; i++) {
+void IMuse::soundsResetLipsyncState(int soundId) {
+	for (int i = 0; i < IMUSE_MAX_LIPSYNCS; i++) {
 		if (soundId == _lipsyncSoundIds[i])
 			_lipsyncSoundIds[i] = 0;
 	}
 }
 
-int IMuseDigital::soundsGetPhoneme(int soundId, int offset) {
+int IMuse::soundsGetPhoneme(int soundId, int offset) {
 	uint8 *lipsyncBuffer;
 
 	if (soundId == kTalkSoundID) {
@@ -1597,10 +1597,10 @@ int IMuseDigital::soundsGetPhoneme(int soundId, int offset) {
 		entry += 4;
 	}
 
-	return DIMUSE_PHONEME_NONE;
+	return IMUSE_PHONEME_NONE;
 }
 
-void IMuseDigital::soundsSaveLoad(Common::Serializer &ser) {
+void IMuse::soundsSaveLoad(Common::Serializer &ser) {
 	Common::StackLock lock(*_mutex);
 
 	char effectName[sizeof(_curEffectName)];
@@ -1613,43 +1613,43 @@ void IMuseDigital::soundsSaveLoad(Common::Serializer &ser) {
 	ser.syncArray(effectName, sizeof(effectName), Common::Serializer::SByte, VER(30));
 
 	if (ser.isLoading()) {
-		diMUSEStopAllSounds();
-		diMUSEFlushSounds();
+		imStopAllSounds();
+		imFlushSounds();
 		soundsCloseVoiceFile();
 		cacheReset();
 		iMUSESetVoiceEffect(effectName);
 		_curSpeechFile[0] = '\0';
 	}
 
-	diMUSESaveLoad(ser);
-	diMUSESaveLoadScript(ser);
+	imSaveLoad(ser);
+	imSaveLoadScript(ser);
 
 	if (ser.isLoading()) {
-		for (int soundId = diMUSEGetNextSound(0); soundId; soundId = diMUSEGetNextSound(soundId)) {
+		for (int soundId = imGetNextSound(0); soundId; soundId = imGetNextSound(soundId)) {
 			if (soundId <= kTalkSoundID)
-				diMUSEStopSound(soundId);
+				imStopSound(soundId);
 		}
 
 		soundsCloseVoiceFile();
 	}
 
 	int32 numSounds = 0;
-	int savedSlots[DIMUSE_MAX_CACHED_SOUNDS];
+	int savedSlots[IMUSE_MAX_CACHED_SOUNDS];
 
 	if (ser.isSaving()) {
 		// Only active sounds with a native iMUS map are saved...
-		for (int slot = 0; slot < DIMUSE_MAX_CACHED_SOUNDS; slot++) {
-			IMuseDigiCachedSound *sound = &_soundCache[slot];
+		for (int slot = 0; slot < IMUSE_MAX_CACHED_SOUNDS; slot++) {
+			IMuseCachedSound *sound = &_soundCache[slot];
 
 			if (sound->soundFilename[0] && sound->soundUncompData &&
-				diMUSEGetParam(slot + 100, DIMUSE_P_SND_TRACK_NUM) > 0 &&
+				imGetParam(slot + 100, IMUSE_P_SND_TRACK_NUM) > 0 &&
 				!memcmp(sound->soundMap, "iMUS", 4) && READ_BE_UINT16(sound->soundMap + 14) != 56)
 				savedSlots[numSounds++] = slot;
 		}
 	}
 
 	ser.syncAsSint32LE(numSounds, VER(30));
-	if (numSounds < 0 || numSounds > DIMUSE_MAX_CACHED_SOUNDS)
+	if (numSounds < 0 || numSounds > IMUSE_MAX_CACHED_SOUNDS)
 		return;
 
 	// The cached sounds are restarted with the same ids, volume, pan and hook
@@ -1669,7 +1669,7 @@ void IMuseDigital::soundsSaveLoad(Common::Serializer &ser) {
 
 		if (ser.isLoading()) {
 			_currentSoundSlot = luaSoundId - 1111;
-			soundsLoadStartSound(soundName, priority, DIMUSE_GROUP_SFX);
+			soundsLoadStartSound(soundName, priority, IMUSE_GROUP_SFX);
 		}
 	}
 
@@ -1678,8 +1678,8 @@ void IMuseDigital::soundsSaveLoad(Common::Serializer &ser) {
 
 		if (ser.isSaving()) {
 			luaSoundId = _soundCache[savedSlots[i]].luaSoundId;
-			volume = diMUSEGetParam(savedSlots[i] + 100, DIMUSE_P_VOLUME);
-			pan = diMUSEGetParam(savedSlots[i] + 100, DIMUSE_P_PAN);
+			volume = imGetParam(savedSlots[i] + 100, IMUSE_P_VOLUME);
+			pan = imGetParam(savedSlots[i] + 100, IMUSE_P_PAN);
 		}
 
 		ser.syncAsSint32LE(luaSoundId, VER(30));
@@ -1687,8 +1687,8 @@ void IMuseDigital::soundsSaveLoad(Common::Serializer &ser) {
 		ser.syncAsSint32LE(pan, VER(30));
 
 		if (ser.isLoading()) {
-			soundsSetParam((const char *)(intptr)luaSoundId, DIMUSE_P_VOLUME, volume);
-			soundsSetParam((const char *)(intptr)luaSoundId, DIMUSE_P_PAN, pan);
+			soundsSetParam((const char *)(intptr)luaSoundId, IMUSE_P_VOLUME, volume);
+			soundsSetParam((const char *)(intptr)luaSoundId, IMUSE_P_PAN, pan);
 		}
 	}
 
@@ -1697,7 +1697,7 @@ void IMuseDigital::soundsSaveLoad(Common::Serializer &ser) {
 
 		if (ser.isSaving()) {
 			luaSoundId = _soundCache[savedSlots[i]].luaSoundId;
-			hookId = diMUSEGetHook(savedSlots[i] + 100);
+			hookId = imGetHook(savedSlots[i] + 100);
 		}
 
 		ser.syncAsSint32LE(luaSoundId, VER(30));
@@ -1708,13 +1708,13 @@ void IMuseDigital::soundsSaveLoad(Common::Serializer &ser) {
 	}
 }
 
-void IMuseDigital::soundsRestoreLegacy(int32 stateIndex, int32 seqIndex) {
+void IMuse::soundsRestoreLegacy(int32 stateIndex, int32 seqIndex) {
 	Common::StackLock lock(*_mutex);
 
 	// The savegames of the old iMUSE only stored the music state and sequence, so
 	// the rest is reset and the music is started again as it was
-	diMUSEStopAllSounds();
-	diMUSEFlushSounds();
+	imStopAllSounds();
+	imFlushSounds();
 	soundsCloseVoiceFile();
 	cacheReset();
 	_curSpeechFile[0] = '\0';
@@ -1731,13 +1731,13 @@ void IMuseDigital::soundsRestoreLegacy(int32 stateIndex, int32 seqIndex) {
 	scriptSetState(stateId);
 }
 
-int IMuseDigital::iMUSEGetPhoneme(int lipsyncId, int offset) {
+int IMuse::iMUSEGetPhoneme(int lipsyncId, int offset) {
 	if (lipsyncId == _lipsyncSoundIds[0])
 		return soundsGetPhoneme(lipsyncId, offset + soundGetVoiceTime());
 
 	if (lipsyncId == _lipsyncSoundIds[1] || lipsyncId == _lipsyncSoundIds[2] || lipsyncId == _lipsyncSoundIds[3]) {
 		int soundId = 0;
-		for (int slot = 0; slot < DIMUSE_MAX_CACHED_SOUNDS && !soundId; slot++) {
+		for (int slot = 0; slot < IMUSE_MAX_CACHED_SOUNDS && !soundId; slot++) {
 			if (_soundCache[slot].luaSoundId == lipsyncId)
 				soundId = slot + 100;
 		}
@@ -1745,7 +1745,7 @@ int IMuseDigital::iMUSEGetPhoneme(int lipsyncId, int offset) {
 		if (!soundId)
 			return 0;
 
-		return soundsGetPhoneme(lipsyncId, offset + diMUSEGetParam(soundId, DIMUSE_P_SND_POS_IN_MS));
+		return soundsGetPhoneme(lipsyncId, offset + imGetParam(soundId, IMUSE_P_SND_POS_IN_MS));
 	}
 
 	return 0;

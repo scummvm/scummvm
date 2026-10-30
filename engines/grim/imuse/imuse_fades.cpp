@@ -19,30 +19,30 @@
  *
  */
 
-#include "engines/grim/imuse/dimuse_engine.h"
-#include "engines/grim/imuse/dimuse_fades.h"
+#include "engines/grim/imuse/imuse_engine.h"
+#include "engines/grim/imuse/imuse_fades.h"
 
 namespace Grim {
 
-IMuseDigiFadesHandler::IMuseDigiFadesHandler(IMuseDigital *engine, Common::Mutex *mutex) {
+IMuseFadesHandler::IMuseFadesHandler(IMuse *engine, Common::Mutex *mutex) {
 	_engine = engine;
 	_mutex = mutex;
 }
 
-IMuseDigiFadesHandler::~IMuseDigiFadesHandler() {}
+IMuseFadesHandler::~IMuseFadesHandler() {}
 
-int IMuseDigiFadesHandler::init() {
+int IMuseFadesHandler::init() {
 	clearAllFades();
 	return 0;
 }
 
-int IMuseDigiFadesHandler::fadeParam(int soundId, int opcode, int destinationValue, int fadeLength) {
+int IMuseFadesHandler::fadeParam(int soundId, int opcode, int destinationValue, int fadeLength) {
 	Common::StackLock lock(*_mutex);
 
 	if (!soundId || fadeLength < 0)
 		return -5;
 
-	if (opcode != DIMUSE_P_PRIORITY && opcode != DIMUSE_P_VOLUME && opcode != DIMUSE_P_PAN && opcode != DIMUSE_P_DETUNE)
+	if (opcode != IMUSE_P_PRIORITY && opcode != IMUSE_P_VOLUME && opcode != IMUSE_P_PAN && opcode != IMUSE_P_DETUNE)
 		return -5;
 
 	clearFadeStatus(soundId, opcode);
@@ -50,21 +50,21 @@ int IMuseDigiFadesHandler::fadeParam(int soundId, int opcode, int destinationVal
 	int len50HzTicks = 5 * fadeLength / 6;
 
 	if (!len50HzTicks) {
-		debug(5, "IMuseDigiFadesHandler::fadeParam(): WARNING: allocated fade with zero length for sound %d", soundId);
-		if (opcode != DIMUSE_P_VOLUME || destinationValue) {
-			_engine->diMUSESetParam(soundId, opcode, destinationValue);
+		debug(5, "IMuseFadesHandler::fadeParam(): WARNING: allocated fade with zero length for sound %d", soundId);
+		if (opcode != IMUSE_P_VOLUME || destinationValue) {
+			_engine->imSetParam(soundId, opcode, destinationValue);
 		} else {
-			_engine->diMUSEStopSound(soundId);
+			_engine->imStopSound(soundId);
 		}
 
 		return 0;
 	}
 
-	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
+	for (int l = 0; l < IMUSE_MAX_FADES; l++) {
 		if (!_fades[l].status) {
 			_fades[l].sound = soundId;
 			_fades[l].param = opcode;
-			_fades[l].currentVal = _engine->diMUSEGetParam(soundId, opcode);
+			_fades[l].currentVal = _engine->imGetParam(soundId, opcode);
 			_fades[l].length = len50HzTicks;
 			_fades[l].counter = len50HzTicks;
 			_fades[l].slope = (destinationValue - _fades[l].currentVal) / len50HzTicks;
@@ -84,12 +84,12 @@ int IMuseDigiFadesHandler::fadeParam(int soundId, int opcode, int destinationVal
 		}
 	}
 
-	debug(5, "IMuseDigiFadesHandler::fadeParam(): unable to allocate fade for sound %d", soundId);
+	debug(5, "IMuseFadesHandler::fadeParam(): unable to allocate fade for sound %d", soundId);
 	return -6;
 }
 
-void IMuseDigiFadesHandler::clearFadeStatus(int soundId, int opcode) {
-	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
+void IMuseFadesHandler::clearFadeStatus(int soundId, int opcode) {
+	for (int l = 0; l < IMUSE_MAX_FADES; l++) {
 		if (_fades[l].status
 			&& _fades[l].sound == soundId
 			&& (_fades[l].param == opcode || opcode == -1)) {
@@ -98,13 +98,13 @@ void IMuseDigiFadesHandler::clearFadeStatus(int soundId, int opcode) {
 	}
 }
 
-void IMuseDigiFadesHandler::loop() {
+void IMuseFadesHandler::loop() {
 	if (!_fadesOn)
 		return;
 
 	_fadesOn = 0;
 
-	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
+	for (int l = 0; l < IMUSE_MAX_FADES; l++) {
 		if (_fades[l].status) {
 			_fadesOn = 1;
 			if (--_fades[l].counter == 0) {
@@ -124,11 +124,11 @@ void IMuseDigiFadesHandler::loop() {
 				_fades[l].currentVal = currentVolume;
 
 				if (!(_fades[l].counter % 5)) {
-					debug(5, "IMuseDigiFadesHandler::loop(): running fade for sound %d with id %d, currently at volume %d", _fades[l].sound, l, currentVolume);
-					if ((_fades[l].param != DIMUSE_P_VOLUME) || currentVolume) {
-						_engine->diMUSESetParam(_fades[l].sound, _fades[l].param, currentVolume);
+					debug(5, "IMuseFadesHandler::loop(): running fade for sound %d with id %d, currently at volume %d", _fades[l].sound, l, currentVolume);
+					if ((_fades[l].param != IMUSE_P_VOLUME) || currentVolume) {
+						_engine->imSetParam(_fades[l].sound, _fades[l].param, currentVolume);
 					} else {
-						_engine->diMUSEStopSound(_fades[l].sound);
+						_engine->imStopSound(_fades[l].sound);
 					}
 				}
 			}
@@ -136,8 +136,8 @@ void IMuseDigiFadesHandler::loop() {
 	}
 }
 
-void IMuseDigiFadesHandler::saveLoad(Common::Serializer &ser) {
-	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
+void IMuseFadesHandler::saveLoad(Common::Serializer &ser) {
+	for (int l = 0; l < IMUSE_MAX_FADES; l++) {
 		ser.syncAsSint32LE(_fades[l].status, VER(30));
 		ser.syncAsSint32LE(_fades[l].sound, VER(30));
 		ser.syncAsSint32LE(_fades[l].param, VER(30));
@@ -154,10 +154,10 @@ void IMuseDigiFadesHandler::saveLoad(Common::Serializer &ser) {
 		_fadesOn = 1;
 }
 
-void IMuseDigiFadesHandler::clearAllFades() {
+void IMuseFadesHandler::clearAllFades() {
 	Common::StackLock lock(*_mutex);
 
-	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
+	for (int l = 0; l < IMUSE_MAX_FADES; l++) {
 		_fades[l].status = 0;
 		_fades[l].sound = 0;
 		_fades[l].param = 0;
