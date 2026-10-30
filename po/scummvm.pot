@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-27 13:47+0000\n"
+"POT-Creation-Date: 2026-10-30 18:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3739,6 +3739,7 @@ msgid "Pause"
 msgstr ""
 
 #: engines/metaengine.cpp:105 engines/harvester/metaengine.cpp:93
+#: engines/hollywood/runaway/engine.cpp:592
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -5969,18 +5970,19 @@ msgstr ""
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
 #: engines/grim/grim.cpp:621 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
-#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179
-#: engines/macs2/metaengine.cpp:64 engines/petka/metaengine.cpp:173
-#: engines/phoenixvr/metaengine.cpp:82 engines/scumm/help.cpp:228
-#: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
-#: engines/scumm/help.cpp:252 engines/sherlock/metaengine.cpp:435
-#: engines/sludge/keymapper_tables.h:61 engines/sludge/keymapper_tables.h:122
-#: engines/sludge/keymapper_tables.h:171 engines/sludge/keymapper_tables.h:184
-#: engines/sludge/keymapper_tables.h:220 engines/sludge/keymapper_tables.h:259
-#: engines/stark/metaengine.cpp:267 engines/tinsel/metaengine.cpp:313
-#: engines/titanic/metaengine.cpp:244 engines/titanic/metaengine.cpp:297
-#: engines/twine/metaengine.cpp:370 engines/zvision/metaengine.cpp:252
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:603
+#: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
+#: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
+#: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
+#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:237
+#: engines/scumm/help.cpp:244 engines/scumm/help.cpp:252
+#: engines/sherlock/metaengine.cpp:435 engines/sludge/keymapper_tables.h:61
+#: engines/sludge/keymapper_tables.h:122 engines/sludge/keymapper_tables.h:171
+#: engines/sludge/keymapper_tables.h:184 engines/sludge/keymapper_tables.h:220
+#: engines/sludge/keymapper_tables.h:259 engines/stark/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:313 engines/titanic/metaengine.cpp:244
+#: engines/titanic/metaengine.cpp:297 engines/twine/metaengine.cpp:370
+#: engines/zvision/metaengine.cpp:252
 msgid "Inventory"
 msgstr ""
 
@@ -8074,8 +8076,8 @@ msgstr ""
 msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
 msgstr ""
 
-#: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
-#: engines/scumm/metaengine.cpp:990
+#: engines/eem/metaengine.cpp:72 engines/hollywood/monsters/metaengine.cpp:37
+#: engines/hypno/metaengine.cpp:81 engines/scumm/metaengine.cpp:990
 msgid "Enable restored content"
 msgstr ""
 
@@ -9523,6 +9525,45 @@ msgstr ""
 
 #: engines/hdb/metaengine.cpp:270
 msgid "Debug"
+msgstr ""
+
+#: engines/hollywood/monsters/metaengine.cpp:38
+msgid ""
+"Play optional content present in the game data but unused by the original "
+"release"
+msgstr ""
+
+#: engines/hollywood/runaway/engine.cpp:560
+msgid "Perform action"
+msgstr ""
+
+#: engines/hollywood/runaway/engine.cpp:566
+#: engines/hollywood/runaway/engine.cpp:609
+msgid "Next action / Cancel"
+msgstr ""
+
+#: engines/hollywood/runaway/engine.cpp:572 engines/sherlock/metaengine.cpp:578
+msgid "Scroll left"
+msgstr ""
+
+#: engines/hollywood/runaway/engine.cpp:577 engines/sherlock/metaengine.cpp:584
+msgid "Scroll right"
+msgstr ""
+
+#: engines/hollywood/runaway/engine.cpp:582
+msgid "Scroll to the left edge"
+msgstr ""
+
+#: engines/hollywood/runaway/engine.cpp:587
+msgid "Scroll to the right edge"
+msgstr ""
+
+#: engines/hollywood/runaway/engine.cpp:598
+msgid "Cancel action / Menu"
+msgstr ""
+
+#: engines/hollywood/runaway/engine.cpp:614
+msgid "Skip intro / Skip line"
 msgstr ""
 
 #: engines/hopkins/base_enhancements.cpp:313
@@ -13823,14 +13864,6 @@ msgstr ""
 #: engines/sherlock/metaengine.cpp:528 engines/sherlock/metaengine.cpp:931
 #: engines/wintermute/keymapper_tables.h:1007
 msgid "Last page"
-msgstr ""
-
-#: engines/sherlock/metaengine.cpp:578
-msgid "Scroll left"
-msgstr ""
-
-#: engines/sherlock/metaengine.cpp:584
-msgid "Scroll right"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:938
