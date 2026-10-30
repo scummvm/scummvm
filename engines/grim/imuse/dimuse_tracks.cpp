@@ -561,8 +561,11 @@ IMuseDigiTrack *IMuseDigital::tracksReserveTrack(int priority) {
 	return nullptr;
 }
 
-void IMuseDigital::tracksDeinit() {
+int IMuseDigital::tracksDeinit() {
 	tracksStopAllSounds();
+	waveOutDeinit();
+	dispatchTerminate();
+	return _internalMixer->terminate();
 }
 
 } // End of namespace Grim

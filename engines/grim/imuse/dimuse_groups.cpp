@@ -69,7 +69,7 @@ int IMuseDigiGroupsHandler::setGroupVol(uint32 id, int volume) {
 		}
 	}
 
-	_engine->diMUSEUpdateGroupVolumes();
+	_engine->tracksSetGroupVol();
 	return oldVolume;
 }
 
