@@ -152,13 +152,14 @@ public:
 class MidiDeviceScanDialog : public MessageDialog {
 public:
 	/**
-	 * Show a modal progress dialog while the MIDI backend warm-up is pending.
+	 * Show a modal progress dialog while the MIDI backend warm-up is pending and the GUI is active.
 	 * Return immediately if @p isComplete already reports completion.
 	 * Call this function on the UI thread.
 	 *
 	 * @param isComplete Predicate returning true once MIDI backend warm-up finishes.
 	 *                   Polled on the UI thread and must return promptly without blocking.
-	 * @return True if completion was observed, false if the dialog closed before completion.
+	 * @return True if completion was observed, false if the GUI is inactive or the dialog
+	 *         closed before completion.
 	 */
 	static bool waitForCompletion(const Common::Functor0<bool> &isComplete);
 

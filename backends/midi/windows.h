@@ -71,12 +71,13 @@ public:
 	static void cleanupMidiWarmUpThread();
 
 	/**
-	 * Wait for background MIDI warm-up while keeping the process responsive,
-	 * by spawning a modal dialog.
+	 * Wait for background MIDI warm-up through a modal dialog when the GUI is active.
+	 * A modal dialog will handle UI events, keeping the process responsive.
 	 *
 	 * @param isComplete A functor immediately returns whether the warm-up has been finished.
 	 * @return True if completion was observed.
-	 *         False if quitting ScummVM or returning to the launcher ended the wait first.
+	 *         False if the wait was skipped because the GUI was unavailable or inactive,
+	 *         or if the dialog closed before completion (e.g. on quit or return to launcher).
 	 *
 	 * @see setMidiWarmUpWaitCallback()
 	 */
@@ -135,11 +136,14 @@ private:
 	static unsigned __stdcall warmUpMidiThreadMain(void *arglist);
 
 	/**
-	 * Returns immediately if MIDI backend warm-up has been finished.
-	 * Show a progress dialog if the warm-up is not finished yet.
+	 * Invoke the UI wait handler on the UI thread if MIDI warm-up is pending.
 	 *
-	 * @return False if the UI handler is interrupted, otherwise enumeration may proceed.
-	 *         Interruption of UI handler can happen on quit event or return-to-launcher event.
+	 * Show a progress dialog if the warm-up is not finished yet, and GUI is available.
+	 * Returns immediately if warm-up has been finished, or GUI is not available.
+	 *
+	 * @return True if no UI wait handler was invoked, or if it observed completion.
+	 *         False if the handler skipped waiting because the GUI was unavailable or
+	 *         inactive, or if the wait was interrupted (e.g. on quit or return to launcher).
 	 */
 	bool waitForMidiWarmUp() const;
 
