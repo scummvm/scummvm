@@ -616,6 +616,7 @@ private:
 	bool _talking;
 	bool _backgroundTalk;
 	bool _voiceIs3D;
+	int _talkSoundId;
 	ObjectPtr<LipSync> _lipSync;
 	Common::List<Costume *> _costumeStack;
 

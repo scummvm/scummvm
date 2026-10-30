@@ -38,6 +38,7 @@ public:
 	~LipSync();
 
 	int getAnim(int pos);
+	static int getAnimFromPhoneme(int phoneme);
 	bool isValid() { return _numEntries > 0; }
 	const Common::String &getFilename() const { return _fname; };
 

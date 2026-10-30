@@ -31,18 +31,23 @@ namespace Grim {
 
 SoundPlayer *g_sound = nullptr;
 
-bool SoundPlayer::startVoice(const char *soundName, int volume, int pan, bool background) {
+bool SoundPlayer::startVoice(const char *soundName, int volume, int pan, bool background, int *soundId) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		if (background) {
-			if (!g_imuse->soundsLoadProcessStartSound(soundName, 127, IMUSE_GROUP_SPEECH))
+			int luaSoundId = g_imuse->soundsLoadProcessStartSound(soundName, 127, IMUSE_GROUP_SPEECH);
+			if (!luaSoundId)
 				return false;
 
 			g_imuse->soundsSetParam(soundName, IMUSE_P_VOLUME, volume);
+			if (soundId)
+				*soundId = luaSoundId;
 			return true;
 		}
 
 		bool started = !g_imuse->soundStartVoiceStream(soundName, volume, pan);
 		_streamedVoice = started ? soundName : "";
+		if (started && soundId)
+			*soundId = kTalkSoundID;
 		return started;
 	} else {
 		return g_emiSound->startVoice(soundName, volume, pan);

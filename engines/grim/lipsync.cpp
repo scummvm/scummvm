@@ -92,6 +92,20 @@ int LipSync::getAnim(int pos) {
 	return -1;
 }
 
+int LipSync::getAnimFromPhoneme(int phoneme) {
+	// The silence phoneme
+	if (phoneme == 0x5F)
+		return 0;
+
+	// The original table doesn't have the last two entries
+	for (int i = 0; i < _animTableSize - 2; i++) {
+		if (phoneme == _animTable[i].phoneme)
+			return _animTable[i].anim;
+	}
+
+	return 1;
+}
+
 // TODO: Figure out which one is 0x0000, use 0 for now.
 const LipSync::PhonemeAnim LipSync::_animTable[] = {
 	{0x005F, 0}, {0x0251, 1}, {0x0061, 1}, {0x00E6, 1}, {0x028C, 8},
