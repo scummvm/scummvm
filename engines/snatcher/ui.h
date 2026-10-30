@@ -143,6 +143,7 @@ private:
 	uint8 _verbsTabOffsY;
 
 	int8 _lastHiliteVerb;
+	int8 _savedHiliteVerb;
 	int8 _hiliteVerb;
 	uint8 _lastVerbDrawn;
 	uint8 *_verbTextBuffer;
