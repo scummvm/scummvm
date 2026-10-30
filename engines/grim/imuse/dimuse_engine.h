@@ -229,7 +229,7 @@ private:
 	uint8 *dispatchAllocateFade(int32 &fadeSize, const char *functionName);
 	void dispatchDeallocateFade(IMuseDigiDispatch *dispatchPtr, const char *functionName);
 	int dispatchGetFadeSize(IMuseDigiDispatch *dispatchPtr, int fadeLength);
-	void dispatchValidateFadeSize(IMuseDigiDispatch *dispatchPtr, int32 &dispatchSize, const char *functionName);
+	void dispatchValidateFadeSize(IMuseDigiDispatch *dispatchPtr, int32 &dispatchSize);
 	int dispatchUpdateFadeMixVolume(IMuseDigiDispatch *dispatchPtr, int32 remainingFade);
 	int dispatchUpdateFadeSlope(IMuseDigiDispatch *dispatchPtr);
 

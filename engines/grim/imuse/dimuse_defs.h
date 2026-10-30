@@ -29,7 +29,7 @@ namespace Grim {
 #define DIMUSE_MAX_TRIGGERS    8
 #define DIMUSE_MAX_DEFERS      8
 #define DIMUSE_MAX_TRACKS      8
-#define DIMUSE_MAX_MAP_SIZE    2048
+#define DIMUSE_MAX_MAP_SIZE    512
 #define DIMUSE_MAX_DISPATCHES  8
 #define DIMUSE_MAX_STREAMZONES 50
 #define DIMUSE_MAX_FADE_VOLUME 8323072
@@ -237,6 +237,7 @@ struct IMuseDigiDispatch {
 	int wordSize;
 	int sampleRate;
 	int channelCount;
+	int swapEndiannessFlag;
 	int32 currentOffset;
 	int32 audioRemaining;
 	int32 map[DIMUSE_MAX_MAP_SIZE];
