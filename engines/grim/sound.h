@@ -22,6 +22,8 @@
 #ifndef GRIM_SOUND_H
 #define GRIM_SOUND_H
 
+#include "common/str.h"
+
 #include "engines/grim/savegame.h"
 
 namespace Grim {
@@ -30,7 +32,7 @@ class EMISound;
 
 class SoundPlayer {
 public:
-	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
+	bool startVoice(const char *soundName, int volume = 127, int pan = 64, bool background = false);
 	bool getSoundStatus(const char *soundName);
 	void stopSound(const char *soundName);
 	int32 getPosIn16msTicks(const char *soundName);
@@ -43,6 +45,10 @@ public:
 	// Save/Load:
 	void restoreState(SaveGame *savedState);
 	void saveState(SaveGame *savedState);
+
+private:
+	// Name of the voice currently in the streamed voice slot
+	Common::String _streamedVoice;
 };
 
 extern SoundPlayer *g_sound;

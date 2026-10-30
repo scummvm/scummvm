@@ -28,6 +28,7 @@
 #include "common/str-array.h"
 #include "common/hashmap.h"
 #include "common/events.h"
+#include "common/mutex.h"
 
 #include "graphics/renderer.h"
 
@@ -233,6 +234,7 @@ protected:
 	bool _savegameSaveRequest = false;
 	Common::String _savegameFileName;
 	SaveGame *_savedState;
+	Common::Mutex _imuseMutex;
 	bool _justSaveLoaded;
 
 	Set *_currSet;

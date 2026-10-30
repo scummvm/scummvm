@@ -35,6 +35,8 @@
 
 namespace Grim {
 
+IMuseDigital *g_imuse = nullptr;
+
 void IMuseDigital::timer_handler(void *refCon) {
 	IMuseDigital *diMUSE = (IMuseDigital *)refCon;
 	diMUSE->diMUSEHeartbeat();
@@ -370,10 +372,10 @@ int32 IMuseDigital::getSoundElapsedTimeInMs(int soundId) {
 void IMuseDigital::pause(bool p) {
 	if (p) {
 		debug(5, "IMuseDigital::pause(): pausing...");
-		soundsPause();
+		diMUSEPause();
 	} else {
 		debug(5, "IMuseDigital::pause(): resuming...");
-		soundsResume();
+		diMUSEResume();
 	}
 }
 
