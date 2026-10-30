@@ -88,12 +88,9 @@ PrisonerEngine::~PrisonerEngine() {
 Common::Error PrisonerEngine::run() {
 	initGraphics(640, 480);
 
-	// TODO: try to find a better way of doing this maybe after implementing loading of other
-	// languages (which I currently don't have access to)
-	_languageChar = 'A';
-	if (Common::File::exists("e_klang.bin")) {
-		_languageChar = 'E';
-	}
+	// As per metaengine, the language files start with the language letter (A_KLANG.BIN, E_KLANG.BIN, D_KLANG.BIN...).
+	// Every detection entry lists its language's KLANG.BIN first, so take the letter from there.
+	_languageChar = toupper(_gameDescription->filesDescriptions[0].fileName[0]);
 
 	_currModuleIndex = 2;
 
