@@ -32,7 +32,7 @@ class EMISound;
 
 class SoundPlayer {
 public:
-	bool startVoice(const char *soundName, int volume = 127, int pan = 64, bool background = false);
+	bool startVoice(const char *soundName, int volume = 127, int pan = 64, bool background = false, int *soundId = nullptr);
 	bool getSoundStatus(const char *soundName);
 	void stopSound(const char *soundName);
 	int32 getPosIn16msTicks(const char *soundName);

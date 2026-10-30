@@ -1547,6 +1547,8 @@ int IMuse::loadLip(const char *lipsyncFilename, int soundId) {
 
 		int fileSize = lipsyncFile->size();
 		if (fileSize <= IMUSE_LIPSYNC_MAX_SIZE) {
+			// Clear the old data, or it would be read after the end of the new file
+			memset(_lipsyncBufs[slot], 0, sizeof(_lipsyncBufs[slot]));
 			lipsyncFile->read(_lipsyncBufs[slot], fileSize);
 
 			if (memcmp(_lipsyncBufs[slot], "LIP!", 4))
@@ -1584,6 +1586,12 @@ int IMuse::soundsGetPhoneme(int soundId, int offset) {
 	}
 
 	int numEntries = READ_LE_INT32(lipsyncBuffer + 4);
+
+	// The number of entries in the file is often bigger than the real one, don't read out of the buffer
+	int maxEntries = (sizeof(_lipsyncBufs[0]) - 12) / 4;
+	if (numEntries > maxEntries)
+		numEntries = maxEntries;
+
 	int offset16MsTicks = offset >> 4;
 	uint8 *entry = lipsyncBuffer + 8;
 
