@@ -28,6 +28,8 @@
 
 #include "engines/grim/movie/codecs/vima.h"
 
+#include "audio/effects/hmi/hmifxlib.h"
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
@@ -97,6 +99,25 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 	_globalVolume = 0;
 	vimaInit(_imuseDestTable);
 
+	_hmiFxLib = new Audio::HMIFxLib();
+	memset(&_hmiInitData, 0, sizeof(_hmiInitData));
+	memset(&_hmiRequest, 0, sizeof(_hmiRequest));
+	memset(&_hmiInputFmt, 0, sizeof(_hmiInputFmt));
+	memset(&_hmiOutputFmt, 0, sizeof(_hmiOutputFmt));
+	_presetCollection = nullptr;
+	_loadedPreset = nullptr;
+	_hmiFxInitialized = false;
+	_curHMIEffectIdInternal = 0;
+	_curEffectId = 0;
+	_curEffectName[0] = '\0';
+	_voiceSrcBuf = nullptr;
+	_maxChunkRequested = 0;
+	_voiceRemainderBuf = nullptr;
+	_voiceRemainderSize = 0;
+	_voiceRemainderCapacity = 0;
+	_voiceRemainderPos = 0;
+	setupHMI(DIMUSE_HMI_HEAP_SIZE);
+
 	diMUSEInitialize();
 	soundsAllocateBuffer(DIMUSE_BUFFER_MUSIC, 440000, 44000, 352000);
 	soundsAllocateBuffer(DIMUSE_BUFFER_SPEECH, 88000, 44000, 88000);
@@ -134,6 +155,15 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 IMuseDigital::~IMuseDigital() {
 	g_system->getTimerManager()->removeTimerProc(timer_handler);
 	diMUSETerminateScript();
+
+	soundsTerminateProcessing();
+	free(_voiceSrcBuf);
+	_voiceSrcBuf = nullptr;
+	_maxChunkRequested = 0;
+	free(_voiceRemainderBuf);
+	_voiceRemainderBuf = nullptr;
+	delete _hmiFxLib;
+
 	diMUSETerminate();
 
 	cacheReset();
