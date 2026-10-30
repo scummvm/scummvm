@@ -58,6 +58,21 @@ Always return to the launcher when leaving a game
 
 	*gui_return_to_launcher_at_exit*
 
+.. _guidisablefontscaling:
+
+Disable fixed font scaling
+	If ticked, fixed size fonts in the GUI are not upscaled. This reduces artifacts on low resolution screens.
+
+	*gui_disable_fixed_font_scaling*
+
+.. _guikineticscrolling:
+
+Enable kinetic scrolling in lists
+	If ticked, enables smooth, momentum-based scrolling in list widgets.
+
+	*gui_kinetic_scrolling*
+
+
 .. _guiconfirm:
 
 Ask for confirmation on exit
