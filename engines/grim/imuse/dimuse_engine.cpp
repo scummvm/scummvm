@@ -90,6 +90,11 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 	_currentSoundSlot = 0;
 	memset(_openAudioFiles, 0, sizeof(_openAudioFiles));
 	memset(_soundBuffers, 0, sizeof(_soundBuffers));
+	memset(_lipsyncSoundIds, 0, sizeof(_lipsyncSoundIds));
+	memset(_lipsyncBufs, 0, sizeof(_lipsyncBufs));
+	_curSpeechFile[0] = '\0';
+	_millisecsInCurSpeechFile = 0;
+	_globalVolume = 0;
 	vimaInit(_imuseDestTable);
 
 	diMUSEInitialize();
@@ -335,10 +340,10 @@ int32 IMuseDigital::getSoundElapsedTimeInMs(int soundId) {
 void IMuseDigital::pause(bool p) {
 	if (p) {
 		debug(5, "IMuseDigital::pause(): pausing...");
-		diMUSEPause();
+		soundsPause();
 	} else {
 		debug(5, "IMuseDigital::pause(): resuming...");
-		diMUSEResume();
+		soundsResume();
 	}
 }
 
@@ -543,10 +548,7 @@ int IMuseDigital::diMUSEDeferCommand(int count, int opcode, int c, int d, int e,
 }
 
 int IMuseDigital::diMUSEStartStream(int soundId, int priority, int bufferId) {
-	// TODO
-	// if (!filesCheckRange(soundId))
-	// 	return -1;
-	if (soundId == 0)
+	if (!filesCheckRange(soundId))
 		return -1;
 
 	Common::StackLock lock(*_mutex);

@@ -867,8 +867,13 @@ int IMuseDigital::cacheGetSoundId(const char *soundName) {
 
 	sound->tsOfAllocation = g_system->getMillis();
 
-	// TODO
-	// Lipsync registration for the ".lip" file with the same name
+	char lipsyncFilename[32];
+	Common::strlcpy(lipsyncFilename, sound->soundFilename, sizeof(lipsyncFilename));
+	char *extension = strrchr(lipsyncFilename, '.');
+	if (extension) {
+		Common::strlcpy(extension, ".lip", lipsyncFilename + sizeof(lipsyncFilename) - extension);
+		loadLip(lipsyncFilename, sound->luaSoundId);
+	}
 
 	soundsFileSeek(res, 0, SEEK_END);
 	sound->uncompResourceSize = soundsFileTell(res);
@@ -923,10 +928,7 @@ int IMuseDigital::cacheGetSoundId(const char *soundName) {
 	}
 
 	free(sound->soundUncompData);
-
-	// TODO
-	// Reset the lipsync state for this sound
-
+	soundsResetLipsyncState(sound->luaSoundId);
 	memset(sound, 0, sizeof(IMuseDigiCachedSound));
 	return 0;
 }
@@ -954,9 +956,7 @@ int IMuseDigital::cachePurgeOldestStoppedSound() {
 	if (foundSlot >= 0) {
 		IMuseDigiCachedSound *sound = &_soundCache[foundSlot];
 		sound->soundFilename[0] = 0;
-
-		// TODO
-		// Reset the lipsync state for this sound
+		soundsResetLipsyncState(sound->luaSoundId);
 
 		free(sound->soundUncompData);
 		memset(sound, 0, sizeof(IMuseDigiCachedSound));
@@ -969,9 +969,7 @@ int IMuseDigital::cachePurgeOldestStoppedSound() {
 void IMuseDigital::cacheReset() {
 	for (int slot = DIMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
 		if (_soundCache[slot].soundUncompData) {
-			// TODO
-			// Reset the lipsync state for this sound
-
+			soundsResetLipsyncState(_soundCache[slot].luaSoundId);
 			free(_soundCache[slot].soundUncompData);
 		}
 	}
@@ -1150,6 +1148,302 @@ int IMuseDigital::createSoundHeader(uint8 *buffer, int mode, int sampleRate, int
 		memcpy(buffer + 72, "DATA", 4);
 		WRITE_BE_UINT32(buffer + 76, regionLength);
 		return 80;
+	}
+
+	return 0;
+}
+
+int IMuseDigital::soundsLoadStartSound(const char *soundName, int priority, int group) {
+	int soundId = cacheGetSoundId(soundName);
+	if (!soundId)
+		return 0;
+
+	if (priority > 124)
+		priority = 124;
+
+	diMUSEStartSound(soundId, priority);
+	diMUSESetParam(soundId, DIMUSE_P_GROUP, group);
+	_soundCache[soundId - 100].priority = priority;
+	return _soundCache[soundId - 100].luaSoundId;
+}
+
+int IMuseDigital::soundsLoadProcessStartSound(const char *soundName, int priority, int group) {
+	int soundId = cacheGetSoundId(soundName);
+	if (!soundId)
+		return 0;
+
+	if (priority > 124)
+		priority = 124;
+
+	// TODO
+	// If a voice effect is active (curEffectId), AllocateProcessedSound() the sound before starting it (hmiFX)
+
+	diMUSEStartSound(soundId, priority);
+	diMUSESetParam(soundId, DIMUSE_P_GROUP, group);
+	_soundCache[soundId - 100].priority = priority;
+	return _soundCache[soundId - 100].luaSoundId;
+}
+
+void IMuseDigital::soundsStopSound(const char *soundName) {
+	int soundId = cacheGetSoundId(soundName);
+	if (soundId)
+		diMUSEStopSound(soundId);
+}
+
+int IMuseDigital::soundsGetParam(const char *soundName, int paramId) {
+	int soundId = cacheGetSoundId(soundName);
+	if (soundId)
+		return diMUSEGetParam(soundId, paramId);
+
+	return 1;
+}
+
+void IMuseDigital::soundsSetParam(const char *soundName, int paramId, int value) {
+	int soundId = cacheGetSoundId(soundName);
+	if (soundId)
+		diMUSESetParam(soundId, paramId, value);
+}
+
+int IMuseDigital::soundsFadeParam(const char *soundName, int paramId, int value, int length) {
+	int soundId = cacheGetSoundId(soundName);
+	if (soundId)
+		return diMUSEFadeParam(soundId, paramId, value, 60 * length / 1000);
+
+	return 1;
+}
+
+bool IMuseDigital::soundsIsSoundInUse(const char *soundName) {
+	uint32 soundIndex = cacheGetSoundId(soundName) - 100;
+	if (soundIndex >= DIMUSE_MAX_CACHED_SOUNDS || !_soundCache[soundIndex].soundFilename[0] || !_soundCache[soundIndex].soundUncompData)
+		return false;
+
+	int soundId = soundIndex + 100;
+	return diMUSEGetParam(soundId, DIMUSE_P_SND_TRACK_NUM) > 0 || diMUSEGetParam(soundId, DIMUSE_P_TRIGS_SNDS) > 0;
+}
+
+bool IMuseDigital::soundsIsSoundPlaying(const char *soundName) {
+	int soundId = cacheGetSoundId(soundName);
+	return diMUSEGetParam(soundId, DIMUSE_P_SND_TRACK_NUM) > 0;
+}
+
+int IMuseDigital::iMUSESetHook(const char *soundName, int hookId) {
+	int soundId = cacheGetSoundId(soundName);
+	if (soundId)
+		return diMUSESetHook(soundId, hookId);
+
+	return -1;
+}
+
+int IMuseDigital::iMUSEGetHook(const char *soundName) {
+	int soundId = cacheGetSoundId(soundName);
+	if (soundId)
+		return diMUSEGetHook(soundId);
+
+	return -1;
+}
+
+void IMuseDigital::soundsPeriodic() {
+	int32 cachedSize = 0;
+
+	diMUSEProcessStreams();
+	diMUSERefreshScript();
+
+	for (int slot = DIMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
+		if (_soundCache[slot].soundFilename[0] && _soundCache[slot].soundUncompData)
+			cachedSize += _soundCache[slot].uncompResourceSize;
+	}
+
+	if (cachedSize > DIMUSE_SOUNDS_MEMORY_LIMIT)
+		cachePurgeOldestStoppedSound();
+}
+
+int IMuseDigital::soundsPause() {
+	diMUSEPause();
+	_globalVolume = diMUSESetGroupVol(0, -1);
+	diMUSESetGroupVol(0, 0);
+	diMUSESetAttribute(-1, 0);
+	return 0;
+}
+
+int IMuseDigital::soundsResume() {
+	diMUSESetGroupVol(0, _globalVolume);
+	diMUSEResume();
+	diMUSESetAttribute(-1, 1);
+	return 0;
+}
+
+int IMuseDigital::soundsRegisterVoice(const char *filename) {
+	char lipsyncFilename[32];
+
+	Common::strlcpy(_curSpeechFile, filename, sizeof(_curSpeechFile));
+	Common::strlcpy(lipsyncFilename, filename, sizeof(lipsyncFilename));
+
+	char *extension = strrchr(lipsyncFilename, '.');
+	if (extension) {
+		Common::strlcpy(extension, ".lip", lipsyncFilename + sizeof(lipsyncFilename) - extension);
+		loadLip(lipsyncFilename, kTalkSoundID);
+	}
+
+	IMuseDigiResource *res = soundsOpenFile(filename);
+	_openAudioFiles[0].resourcePtr = res;
+	if (!res) {
+		_millisecsInCurSpeechFile = 0;
+		return 0;
+	}
+
+	soundsFileSeek(res, 0, SEEK_END);
+	int dataSamplesInFile = soundsFileTell(res) - 44;
+	soundsFileSeek(res, 0, SEEK_SET);
+	_millisecsInCurSpeechFile = 10 * dataSamplesInFile / 441;
+	return 1;
+}
+
+void IMuseDigital::soundsCloseVoiceFile() {
+	if (_openAudioFiles[0].resourcePtr) {
+		soundsCloseFile(_openAudioFiles[0].resourcePtr);
+		soundsResetLipsyncState(kTalkSoundID);
+		_openAudioFiles[0].resourcePtr = nullptr;
+	}
+}
+
+void IMuseDigital::soundsReOpenVoiceFile() {
+	soundsCloseVoiceFile();
+	if (_curSpeechFile[0])
+		soundsRegisterVoice(_curSpeechFile);
+}
+
+int IMuseDigital::soundStartVoiceStream(const char *filename, int volume, int pan) {
+	diMUSEStopSound(kTalkSoundID);
+	soundsCloseVoiceFile();
+	if (!soundsRegisterVoice(filename))
+		return 1;
+
+	fillStreamsWhileMusicCritical(5);
+	diMUSEStartStream(kTalkSoundID, 127, DIMUSE_BUFFER_SPEECH);
+	diMUSESetParam(kTalkSoundID, DIMUSE_P_GROUP, DIMUSE_GROUP_SPEECH);
+	diMUSESetParam(kTalkSoundID, DIMUSE_P_VOLUME, volume);
+	diMUSESetParam(kTalkSoundID, DIMUSE_P_PAN, pan);
+	diMUSEProcessStreams();
+	diMUSEProcessStreams();
+	return 0;
+}
+
+int IMuseDigital::soundStopVoiceStream() {
+	diMUSEStopSound(kTalkSoundID);
+	return ihostCloseSound(kTalkSoundID);
+}
+
+int IMuseDigital::soundGetVoiceTime() {
+	return diMUSEGetParam(kTalkSoundID, DIMUSE_P_SND_POS_IN_MS);
+}
+
+int IMuseDigital::loadLip(const char *lipsyncFilename, int soundId) {
+	Common::String lowerName(lipsyncFilename);
+	lowerName.toLowercase();
+
+	Common::SeekableReadStream *lipsyncFile = g_resourceloader->openNewStreamFile(lowerName.c_str());
+	if (!lipsyncFile) {
+		soundsResetLipsyncState(soundId);
+		return 0;
+	}
+
+	if (!soundId) {
+		delete lipsyncFile;
+		return 0;
+	}
+
+	for (int i = 1; i < DIMUSE_MAX_LIPSYNCS; i++) {
+		if (soundId == _lipsyncSoundIds[i]) {
+			delete lipsyncFile;
+			return 1;
+		}
+	}
+
+	int slot = -1;
+	if (soundId == kTalkSoundID) {
+		slot = 0;
+	} else {
+		for (int i = 1; i < DIMUSE_MAX_LIPSYNCS; i++) {
+			if (!_lipsyncSoundIds[i]) {
+				slot = i;
+				break;
+			}
+		}
+	}
+
+	if (slot >= 0) {
+		_lipsyncSoundIds[slot] = soundId;
+
+		int fileSize = lipsyncFile->size();
+		if (fileSize <= DIMUSE_LIPSYNC_MAX_SIZE) {
+			lipsyncFile->read(_lipsyncBufs[slot], fileSize);
+
+			if (memcmp(_lipsyncBufs[slot], "LIP!", 4))
+				_lipsyncSoundIds[slot] = 0;
+		}
+	}
+
+	delete lipsyncFile;
+	return 0;
+}
+
+void IMuseDigital::soundsResetLipsyncState(int soundId) {
+	for (int i = 0; i < DIMUSE_MAX_LIPSYNCS; i++) {
+		if (soundId == _lipsyncSoundIds[i])
+			_lipsyncSoundIds[i] = 0;
+	}
+}
+
+int IMuseDigital::soundsGetPhoneme(int soundId, int offset) {
+	uint8 *lipsyncBuffer;
+
+	if (soundId == kTalkSoundID) {
+		if (!_lipsyncSoundIds[0])
+			return 0;
+
+		lipsyncBuffer = _lipsyncBufs[0];
+	} else if (soundId == _lipsyncSoundIds[1]) {
+		lipsyncBuffer = _lipsyncBufs[1];
+	} else if (soundId == _lipsyncSoundIds[2]) {
+		lipsyncBuffer = _lipsyncBufs[2];
+	} else if (soundId == _lipsyncSoundIds[3]) {
+		lipsyncBuffer = _lipsyncBufs[3];
+	} else {
+		return 0;
+	}
+
+	int numEntries = READ_LE_INT32(lipsyncBuffer + 4);
+	int offset16MsTicks = offset >> 4;
+	uint8 *entry = lipsyncBuffer + 8;
+
+	for (int i = 0; i < numEntries; i++) {
+		if (offset16MsTicks < READ_LE_INT16(entry))
+			break;
+
+		if (offset16MsTicks < READ_LE_INT16(entry + 4))
+			return READ_LE_INT16(entry + 2);
+
+		entry += 4;
+	}
+
+	return DIMUSE_PHONEME_NONE;
+}
+
+int IMuseDigital::iMUSEGetPhoneme(int lipsyncId, int offset) {
+	if (lipsyncId == _lipsyncSoundIds[0])
+		return soundsGetPhoneme(lipsyncId, offset + soundGetVoiceTime());
+
+	if (lipsyncId == _lipsyncSoundIds[1] || lipsyncId == _lipsyncSoundIds[2] || lipsyncId == _lipsyncSoundIds[3]) {
+		int soundId = 0;
+		for (int slot = 0; slot < DIMUSE_MAX_CACHED_SOUNDS && !soundId; slot++) {
+			if (_soundCache[slot].luaSoundId == lipsyncId)
+				soundId = slot + 100;
+		}
+
+		if (!soundId)
+			return 0;
+
+		return soundsGetPhoneme(lipsyncId, offset + diMUSEGetParam(soundId, DIMUSE_P_SND_POS_IN_MS));
 	}
 
 	return 0;
