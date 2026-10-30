@@ -566,6 +566,7 @@ void PrisonerEngine::updateEvents() {
 		case Common::EVENT_KEYDOWN:
 			this->_lastInputTicks = getTicks();
 			_keyState = event.kbd.keycode;
+			_keyAscii = event.kbd.ascii;
 			_keyReleasePending = false;
 			keyPressed = true;
 			break;
@@ -816,6 +817,13 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 			_inventoryBarFlag = true;
 	}
 
+	// The original save/load screens handle all keys themselves (Escape cancels), but not those
+	// of their delete confirmation box
+	if (_mainMenuRequested && !_isDialogMenuShowing && (_selectedMenuIndex == SAVE_PANEL || _selectedMenuIndex == LOAD_PANEL)) {
+		handleSaveLoadInput();
+		return 0;
+	}
+
 	if (_isDialogMenuShowing) {
 		handleDialogMenuInput();
 		return 0;
@@ -834,10 +842,10 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 			}
 		} else if (keyState == Common::KEYCODE_F2) {
 			inpKeybSetWaitRelease(true);
-			saveGameDialog();
+			openSaveLoadScreen(true);
 		} else if (keyState == Common::KEYCODE_F3) {
 			inpKeybSetWaitRelease(true);
-			loadGameDialog();
+			openSaveLoadScreen(false);
 		} else if (keyState == Common::KEYCODE_F4) {
 			inpKeybSetWaitRelease(true);
 			openOptionsMenuFromGame();

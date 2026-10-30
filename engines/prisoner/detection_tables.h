@@ -26,6 +26,8 @@ const PlainGameDescriptor prisonerGames[] = {
 	{ 0, 0 }
 };
 
+// Every entry is detected by its language file (?_KLANG.BIN), the engine takes the language
+// letter from it.
 const ADGameDescription gameDescriptions[] = {
 	// Prisoner GOG version
 	{
@@ -34,8 +36,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("a_klang.bin", "f20001d885aee4e6320052a4368bf8cf", 561),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)},
+		ADGF_TESTING,
+		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)},
 
 	// Prisoner English version
 	{
@@ -44,8 +46,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("e_klang.bin", "898cc3ba5b382cf9eed2918bea56ac64", 561),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		ADGF_TESTING,
+		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 	},
 
 	// Prisoner Multilingual Version - English
@@ -55,8 +57,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("e_klang.bin", "c8e85c96425a2c5bd535410ef39fd9fe", 561),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		ADGF_TESTING,
+		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 	},
 
 	// Prisoner Multilingual Version - German
@@ -66,8 +68,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("d_klang.bin", "2c5e71abf3c7908f80db62fe850a459b", 561),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		ADGF_TESTING,
+		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 	},
 
 	// Prisoner Multilingual Version - French
@@ -77,8 +79,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("f_klang.bin", "08866dc389a00b2c3c611b782c68220c", 561),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		ADGF_TESTING,
+		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 	},
 
 	// Prisoner Multilingual Version - Dutch
@@ -88,8 +90,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("n_klang.bin", "dd8bcbe13bbf2cc2f5039dd4254b74b7", 561),
 		Common::NL_NLD,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		ADGF_TESTING,
+		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 	},
 
 	// Prisoner Multilingual Version - Swedish
@@ -99,8 +101,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("w_klang.bin", "68ee7ecba3965975bb857d41026be4b7", 561),
 		Common::SV_SWE,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		ADGF_TESTING,
+		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 	},
 
 	AD_TABLE_END_MARKER

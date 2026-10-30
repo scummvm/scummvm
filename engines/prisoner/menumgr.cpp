@@ -1,6 +1,9 @@
 #include "common/config-manager.h"
+#include "common/hashmap.h"
 
 #include "engines/dialogs.h"
+
+#include "graphics/paletteman.h"
 
 #include "prisoner/prisoner.h"
 #include "prisoner/resource.h"
@@ -586,11 +589,11 @@ void PrisonerEngine::doMenuAction(uint8 clickBoxIndex) {
 		break;
 	case LOAD_GAME:
 		inpKeybSetWaitRelease(true);
-		loadGameDialog();
+		openSaveLoadScreen(false);
 		break;
 	case SAVE_GAME:
 		inpKeybSetWaitRelease(true);
-		saveGameDialog();
+		openSaveLoadScreen(true);
 		break;
 	case OPTIONS:
 		inpKeybSetWaitRelease(true);
@@ -1400,6 +1403,485 @@ void PrisonerEngine::updateOptionsMenu(int16 x, int16 y) {
 
 	const _MenuOffset *off = &kOptionsMenuOffsets[_currOptionsMenuIndex];
 	drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
+}
+
+// Original save/load screens (runMenu_saveLoad), used with the "Use original save/load screens"
+// game option. Click box tags from runMenu_saveLoad_addClickBoxes; the arrows are the bounds of
+// panel elements 3 and 4.
+enum SaveLoadMenuBox {
+	kSaveLoadBoxFirstRow = 0,
+	kSaveLoadBoxLastRow = 5,
+	kSaveLoadBoxOk,
+	kSaveLoadBoxDelete,
+	kSaveLoadBoxCancel,
+	kSaveLoadBoxThumbnail,
+	kSaveLoadBoxTitle,
+	kSaveLoadBoxUp,
+	kSaveLoadBoxDown,
+	kSaveLoadBoxCount
+};
+
+static const _MenuOffset kSaveLoadMenuOffsets[] = {
+	{261,  62, 428,  83},
+	{261,  87, 428, 108},
+	{261, 120, 428, 141},
+	{261, 145, 428, 166},
+	{261, 178, 428, 199},
+	{261, 203, 428, 224},
+	{ 92, 301, 183, 328},
+	{207, 301, 298, 328},
+	{322, 301, 414, 328},
+	{ 89, 103, 248, 183},
+	{103,  13, 412,  39},
+	{443,  59, 472,  85},
+	{444, 198, 473, 223}
+};
+
+static const int16 kSaveLoadRows = kSaveLoadBoxLastRow - kSaveLoadBoxFirstRow + 1;
+static const int16 kSaveLoadThumbnailWidth = 160;
+static const int16 kSaveLoadThumbnailHeight = 80;
+// The original thumbnail shows every fourth pixel of the game area, which starts at line 82
+static const int16 kSaveLoadThumbnailGameY = 82;
+static const uint kSaveLoadMaxDescriptionLength = 98;
+// Frames between two blinks of the text cursor, and the two cursor characters
+static const int16 kSaveLoadCursorBlinkFrames = 10;
+static const char kSaveLoadCursorChars[] = {'\xFF', '\xDD'};
+// The original reads double clicks from its mouse driver, use the time from its unused code
+static const uint32 kSaveLoadDoubleClickTicks = 50;
+
+static bool compareSaveLoadEntries(const PrisonerEngine::SaveLoadEntry &a, const PrisonerEngine::SaveLoadEntry &b) {
+	// Newest first like the original (sg_compareFunc); saves without a date by slot
+	if (a.saveDate != b.saveDate)
+		return a.saveDate > b.saveDate;
+	if (a.saveTime != b.saveTime)
+		return a.saveTime > b.saveTime;
+	return a.slot > b.slot;
+}
+
+// Reads the header of the save in a slot. The caller frees the thumbnail.
+static bool readSaveSlotHeader(const Common::String &target, int slot, bool loadThumbnail, PrisonerEngine::SaveHeader &header) {
+	header.thumbnail = nullptr;
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(PrisonerEngine::getSavegameFilename(target, slot));
+	if (!in)
+		return false;
+	bool result = PrisonerEngine::readSaveHeader(in, loadThumbnail, header) == PrisonerEngine::kRSHENoError;
+	delete in;
+	return result;
+}
+
+static bool isOriginalSaveLoadEnabled() {
+	return ConfMan.hasKey("original_menus") && ConfMan.getBool("original_menus");
+}
+
+// F2/F3 and the main menu open the original screens with the game option, ScummVM's otherwise
+void PrisonerEngine::openSaveLoadScreen(bool saving) {
+	if (!isOriginalSaveLoadEnabled()) {
+		if (saving)
+			saveGameDialog();
+		else
+			loadGameDialog();
+		return;
+	}
+
+	if (saving ? !canSaveGameStateCurrently() : !canLoadGameStateCurrently())
+		return;
+
+	_saveLoadFromGame = !_mainMenuRequested;
+	if (_saveLoadFromGame)
+		openMainMenu();
+
+	_saveLoadSaving = saving;
+	_selectedMenuIndex = saving ? SAVE_PANEL : LOAD_PANEL;
+	_menuFunctionArray[_selectedMenuIndex] = &PrisonerEngine::updateSaveLoadMenu;
+
+	_saveLoadMenuItems.clear();
+	const char *const textIds[] = {saving ? "M_SAVEG" : "M_LOADG", "OK", "DELETE", "CANCEL"};
+	for (uint i = 0; i < ARRAYSIZE(textIds); i++) {
+		Common::String id = textIds[i];
+		_saveLoadMenuItems.push_back(getGlobalText(id));
+	}
+
+	loadSaveLoadEntries();
+	_saveLoadLastClickTicks = 0;
+	_saveLoadLastClickRow = -1;
+}
+
+// The save list (sg_loadSavegameList1). Saving adds an empty entry for a new save in the first
+// free slot; the autosave slot is only listed for loading.
+void PrisonerEngine::loadSaveLoadEntries() {
+	const MetaEngine *metaEngine = getMetaEngine();
+	SaveStateList saves = metaEngine->listSaves(_targetName.c_str());
+
+	_saveLoadEntries.clear();
+	for (uint i = 0; i < saves.size(); i++) {
+		if (_saveLoadSaving && saves[i].getSaveSlot() == getAutosaveSlot())
+			continue;
+		// The description as stored, in the game's character set
+		SaveHeader header;
+		if (!readSaveSlotHeader(_targetName, saves[i].getSaveSlot(), false, header))
+			continue;
+		SaveStateDescriptor desc = metaEngine->querySaveMetaInfos(_targetName.c_str(), saves[i].getSaveSlot());
+		SaveLoadEntry entry;
+		entry.slot = saves[i].getSaveSlot();
+		entry.description = header.description;
+		entry.saveDate = desc.getSaveDate();
+		entry.saveTime = desc.getSaveTime();
+		_saveLoadEntries.push_back(entry);
+	}
+
+	Common::sort(_saveLoadEntries.begin(), _saveLoadEntries.end(), compareSaveLoadEntries);
+
+	if (_saveLoadSaving) {
+		int freeSlot = getAutosaveSlot() + 1;
+		bool slotUsed = true;
+		while (slotUsed) {
+			slotUsed = false;
+			for (uint i = 0; i < saves.size() && !slotUsed; i++) {
+				if (saves[i].getSaveSlot() == freeSlot) {
+					slotUsed = true;
+					freeSlot++;
+				}
+			}
+		}
+		if (freeSlot <= metaEngine->getMaximumSaveSlot()) {
+			SaveLoadEntry entry;
+			entry.slot = freeSlot;
+			_saveLoadEntries.insert_at(0, entry);
+		}
+	}
+
+	_saveLoadSelected = 0;
+	_saveLoadTop = 0;
+	_saveLoadEditing = false;
+	_saveLoadTextScroll = 0;
+	_saveLoadThumbnailEntry = -1;
+}
+
+void PrisonerEngine::closeSaveLoadScreen() {
+	if (_saveLoadFromGame)
+		resumeGame();
+	else
+		_selectedMenuIndex = MAIN_PANEL;
+}
+
+// The thumbnail of the selected save (sg_readThumbnail). The new save shows the game screen.
+void PrisonerEngine::updateSaveLoadThumbnail() {
+	if (_saveLoadThumbnailEntry == _saveLoadSelected)
+		return;
+	_saveLoadThumbnailEntry = _saveLoadSelected;
+
+	_saveLoadThumbnail.resize(kSaveLoadThumbnailWidth * kSaveLoadThumbnailHeight);
+	Common::fill(_saveLoadThumbnail.begin(), _saveLoadThumbnail.end(), 0);
+
+	if (_saveLoadEntries.empty())
+		return;
+
+	const SaveLoadEntry &entry = _saveLoadEntries[_saveLoadSelected];
+	if (entry.description.empty()) {
+		if (_saveLoadSaving && _menuBackgroundSaved) {
+			for (int16 y = 0; y < kSaveLoadThumbnailHeight; y++) {
+				const byte *src = (const byte *)_menuBackgroundSurface->getBasePtr(0, kSaveLoadThumbnailGameY + y * 4);
+				for (int16 x = 0; x < kSaveLoadThumbnailWidth; x++)
+					_saveLoadThumbnail[y * kSaveLoadThumbnailWidth + x] = src[x * 4];
+			}
+		}
+		return;
+	}
+
+	// ScummVM thumbnails are true color and show the whole screen: take the game area and
+	// use the nearest colors of the current palette
+	SaveHeader header;
+	readSaveSlotHeader(_targetName, entry.slot, true, header);
+	Graphics::Surface *thumbnail = header.thumbnail;
+	if (!thumbnail)
+		return;
+
+	byte palette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	Common::HashMap<uint32, byte> colorMap;
+	for (int16 y = 0; y < kSaveLoadThumbnailHeight; y++) {
+		const int srcY = (kSaveLoadThumbnailGameY + y * 4) * thumbnail->h / 480;
+		for (int16 x = 0; x < kSaveLoadThumbnailWidth; x++) {
+			const int srcX = x * 4 * thumbnail->w / 640;
+			byte r, g, b;
+			thumbnail->format.colorToRGB(thumbnail->getPixel(srcX, srcY), r, g, b);
+			const uint32 rgb = (r << 16) | (g << 8) | b;
+			if (!colorMap.contains(rgb)) {
+				int bestDistance = -1;
+				byte bestColor = 0;
+				for (int i = 0; i < 256; i++) {
+					const int dr = palette[i * 3] - r;
+					const int dg = palette[i * 3 + 1] - g;
+					const int db = palette[i * 3 + 2] - b;
+					const int distance = dr * dr + dg * dg + db * db;
+					if (bestDistance < 0 || distance < bestDistance) {
+						bestDistance = distance;
+						bestColor = i;
+					}
+				}
+				colorMap[rgb] = bestColor;
+			}
+			_saveLoadThumbnail[y * kSaveLoadThumbnailWidth + x] = colorMap[rgb];
+		}
+	}
+
+	thumbnail->free();
+	delete thumbnail;
+}
+
+// Saves or loads the selected entry (Enter, OK or a double click)
+void PrisonerEngine::confirmSaveLoadEntry() {
+	if (_saveLoadEntries.empty())
+		return;
+
+	const SaveLoadEntry &entry = _saveLoadEntries[_saveLoadSelected];
+	const Common::String description = _saveLoadEditing ? _saveLoadEditText : entry.description;
+	if (description.empty())
+		return;
+
+	inpSetWaitRelease(true);
+	if (_saveLoadSaving) {
+		saveGameState(entry.slot, description);
+		// The original goes back to the game after saving
+		_saveLoadFromGame = true;
+		closeSaveLoadScreen();
+	} else {
+		if (isPaused())
+			_pauseToken.clear();
+		_selectedMenuIndex = MAIN_PANEL;
+		loadGameState(entry.slot);
+	}
+}
+
+void PrisonerEngine::dialogActionDeleteSave() {
+	// The empty entry for a new save has no file
+	const SaveLoadEntry &entry = _saveLoadEntries[_saveLoadSelected];
+	if (!entry.description.empty())
+		getMetaEngine()->removeSaveState(_targetName.c_str(), entry.slot);
+	loadSaveLoadEntries();
+}
+
+// Moves the selection like the original's cursor keys, the list scrolls to keep it visible
+void PrisonerEngine::moveSaveLoadSelection(int16 delta) {
+	const int16 count = _saveLoadEntries.size();
+	if (count == 0)
+		return;
+
+	_saveLoadEditing = false;
+	_saveLoadTextScroll = 0;
+	_saveLoadSelected = CLIP<int16>(_saveLoadSelected + delta, 0, count - 1);
+	if (_saveLoadSelected < _saveLoadTop)
+		_saveLoadTop = _saveLoadSelected;
+	else if (_saveLoadSelected > _saveLoadTop + kSaveLoadRows - 1)
+		_saveLoadTop = _saveLoadSelected - (kSaveLoadRows - 1);
+}
+
+int16 PrisonerEngine::getSaveLoadTextWidth() {
+	const _MenuOffset *off = &kSaveLoadMenuOffsets[kSaveLoadBoxFirstRow];
+	Common::String space = " ";
+	return off->x2 - off->x1 - 2 * getTextWidth(space);
+}
+
+void PrisonerEngine::handleSaveLoadInput() {
+	Common::KeyCode keyState;
+	uint16 buttonState;
+
+	getInputStatus(keyState, buttonState);
+
+	const int16 count = _saveLoadEntries.size();
+	const int16 visibleCount = MIN<int16>(count, kSaveLoadRows);
+
+	if (buttonState & kLeftButton) {
+		inpMouseSetWaitRelease(true);
+		int8 boxIndex = findMenuItemAtPos(kSaveLoadMenuOffsets, kSaveLoadBoxCount, _mouseX - kMenuPanelX, _mouseY - kMenuPanelY);
+		switch (boxIndex) {
+		case kSaveLoadBoxOk:
+			confirmSaveLoadEntry();
+			break;
+		case kSaveLoadBoxDelete:
+			if (count > 0) {
+				Common::String titleStr("T_WARN");
+				Common::String actionStr("DELSAVE");
+				displayDialog(CANCEL, titleStr, actionStr, &PrisonerEngine::dialogActionDeleteSave);
+			}
+			break;
+		case kSaveLoadBoxCancel:
+			closeSaveLoadScreen();
+			break;
+		case kSaveLoadBoxUp:
+			moveSaveLoadSelection(-1);
+			break;
+		case kSaveLoadBoxDown:
+			moveSaveLoadSelection(1);
+			break;
+		default:
+			if (boxIndex >= kSaveLoadBoxFirstRow && boxIndex <= kSaveLoadBoxLastRow && count > 0) {
+				int16 entryIndex = MIN<int16>(_saveLoadTop + boxIndex - kSaveLoadBoxFirstRow, count - 1);
+				if (entryIndex != _saveLoadSelected) {
+					_saveLoadEditing = false;
+					_saveLoadTextScroll = 0;
+				}
+				_saveLoadSelected = entryIndex;
+				bool doubleClick = _saveLoadLastClickRow == entryIndex &&
+					getTicks() - _saveLoadLastClickTicks < kSaveLoadDoubleClickTicks;
+				_saveLoadLastClickRow = entryIndex;
+				_saveLoadLastClickTicks = getTicks();
+				if (doubleClick)
+					confirmSaveLoadEntry();
+			}
+			break;
+		}
+	} else if (buttonState & kRightButton) {
+		inpMouseSetWaitRelease(true);
+		closeSaveLoadScreen();
+	} else if (keyState != Common::KEYCODE_INVALID) {
+		inpKeybSetWaitRelease(true);
+		// Saving takes the typed characters as the new description of the selected entry. Delete
+		// (ASCII 127) has no character in the original's keyboard buffer.
+		if (_saveLoadSaving && _keyAscii >= 0x20 && _keyAscii <= 0xA5 && _keyAscii != 127 && count > 0) {
+			if (!_saveLoadEditing) {
+				_saveLoadEditing = true;
+				_saveLoadEditText.clear();
+				_saveLoadTextScroll = 0;
+				_saveLoadCursorTimer = kSaveLoadCursorBlinkFrames;
+				_saveLoadCursorShown = false;
+			}
+			if (_saveLoadEditText.size() < kSaveLoadMaxDescriptionLength)
+				_saveLoadEditText += (char)_keyAscii;
+			return;
+		}
+
+		switch (keyState) {
+		case Common::KEYCODE_UP:
+			moveSaveLoadSelection(-1);
+			break;
+		case Common::KEYCODE_DOWN:
+			moveSaveLoadSelection(1);
+			break;
+		case Common::KEYCODE_PAGEUP:
+			moveSaveLoadSelection(-kSaveLoadRows);
+			break;
+		case Common::KEYCODE_PAGEDOWN: {
+			// When the list scrolls the original puts the selection at the top
+			const int16 oldTop = _saveLoadTop;
+			moveSaveLoadSelection(kSaveLoadRows);
+			if (_saveLoadTop != oldTop)
+				_saveLoadTop = MIN<int16>(_saveLoadSelected, count - visibleCount);
+			break;
+		}
+		case Common::KEYCODE_HOME:
+			moveSaveLoadSelection(-count);
+			break;
+		case Common::KEYCODE_END:
+			moveSaveLoadSelection(count);
+			_saveLoadTop = count - visibleCount;
+			break;
+		case Common::KEYCODE_LEFT:
+			// Scrolls a description that is wider than its line
+			if (!_saveLoadEditing && _saveLoadTextScroll > 0)
+				_saveLoadTextScroll--;
+			break;
+		case Common::KEYCODE_RIGHT:
+			if (!_saveLoadEditing && count > 0) {
+				const Common::String &description = _saveLoadEntries[_saveLoadSelected].description;
+				if ((uint)_saveLoadTextScroll < description.size() &&
+					getTextWidth(Common::String(description.c_str() + _saveLoadTextScroll)) > getSaveLoadTextWidth())
+					_saveLoadTextScroll++;
+			}
+			break;
+		case Common::KEYCODE_BACKSPACE:
+			if (_saveLoadEditing && !_saveLoadEditText.empty()) {
+				_saveLoadEditText.deleteLastChar();
+				if (_saveLoadTextScroll > 0)
+					_saveLoadTextScroll--;
+			}
+			break;
+		case Common::KEYCODE_DELETE:
+			if (count > 0) {
+				Common::String titleStr("T_WARN");
+				Common::String actionStr("DELSAVE");
+				displayDialog(CANCEL, titleStr, actionStr, &PrisonerEngine::dialogActionDeleteSave);
+			}
+			break;
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+			confirmSaveLoadEntry();
+			break;
+		case Common::KEYCODE_ESCAPE:
+			closeSaveLoadScreen();
+			break;
+		default:
+			break;
+		}
+	}
+
+	updateMouseCursor();
+}
+
+void PrisonerEngine::updateSaveLoadMenu(int16 x, int16 y) {
+	if (_isDialogMenuShowing) {
+		// The delete confirmation box
+		updateMainMenu(x, y);
+		return;
+	}
+
+	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[_selectedMenuIndex]);
+	drawPanelSequence(_screen, menuPanel, 0, x, y);
+
+	_PakMenuDirectoryEntry panelData = _kPrisonerPanelData[_selectedMenuIndex];
+	setFontColors(_menuFont, panelData.outlineColor, panelData.inkColor);
+	setActiveFont(_menuFont);
+
+	const int8 textBoxes[] = {kSaveLoadBoxTitle, kSaveLoadBoxOk, kSaveLoadBoxDelete, kSaveLoadBoxCancel};
+	for (uint i = 0; i < _saveLoadMenuItems.size(); i++) {
+		const _MenuOffset *off = &kSaveLoadMenuOffsets[textBoxes[i]];
+		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _saveLoadMenuItems[i]);
+	}
+
+	const int16 count = _saveLoadEntries.size();
+	const int16 visibleCount = MIN<int16>(count - _saveLoadTop, kSaveLoadRows);
+	for (int16 i = 0; i < visibleCount; i++) {
+		const int16 entryIndex = _saveLoadTop + i;
+		const _MenuOffset *off = &kSaveLoadMenuOffsets[kSaveLoadBoxFirstRow + i];
+		Common::String text;
+		if (entryIndex == _saveLoadSelected) {
+			drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
+			if (_saveLoadEditing) {
+				if (--_saveLoadCursorTimer == 0) {
+					_saveLoadCursorTimer = kSaveLoadCursorBlinkFrames;
+					_saveLoadCursorShown = !_saveLoadCursorShown;
+				}
+				text = _saveLoadEditText + kSaveLoadCursorChars[_saveLoadCursorShown ? 1 : 0];
+				// Scroll the text while typing so its end stays visible
+				if ((uint)_saveLoadTextScroll < text.size() &&
+					getTextWidth(Common::String(text.c_str() + _saveLoadTextScroll)) > getSaveLoadTextWidth())
+					_saveLoadTextScroll++;
+			} else {
+				text = _saveLoadEntries[entryIndex].description;
+			}
+			text = Common::String(text.c_str() + MIN<uint>(_saveLoadTextScroll, text.size()));
+		} else {
+			text = _saveLoadEntries[entryIndex].description;
+		}
+		_screen->setClipRect(x + off->x1, y + off->y1, x + off->x2, y + off->y2);
+		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, text);
+		_screen->setClipRect(0, 0, 639, 479);
+		if (entryIndex == _saveLoadSelected)
+			drawPanelSequence(_screen, menuPanel, 2, x + off->x1, y + off->y1);
+	}
+
+	updateSaveLoadThumbnail();
+	const _MenuOffset *off = &kSaveLoadMenuOffsets[kSaveLoadBoxThumbnail];
+	Graphics::Surface *screen = _screen->getScreen();
+	for (int16 thumbY = 0; thumbY < kSaveLoadThumbnailHeight; thumbY++)
+		memcpy(screen->getBasePtr(x + off->x1, y + off->y1 + thumbY),
+			&_saveLoadThumbnail[thumbY * kSaveLoadThumbnailWidth], kSaveLoadThumbnailWidth);
+
+	// The arrows only show when the selection can move that way
+	if (count > 0 && (_saveLoadSelected > 0 || _saveLoadTop > 0))
+		drawPanelSequence(_screen, menuPanel, 3, x, y);
+	if (count > 0 && !(_saveLoadSelected == count - 1 && _saveLoadTop == count - MIN<int16>(count, kSaveLoadRows)))
+		drawPanelSequence(_screen, menuPanel, 4, x, y);
 }
 
 } // End of namespace Prisoner

@@ -567,6 +567,8 @@ public:
 	int _mouseX, _mouseY;
 
 	Common::KeyCode _keyState;
+	// The character of the pressed key, for typing save descriptions
+	uint16 _keyAscii;
 	uint16 _buttonState;
 	bool _keyReleasePending;
 	uint16 _buttonReleasePending;
@@ -872,6 +874,31 @@ public:
 	int8 _dialogMenuFocus;
 	typedef void (PrisonerEngine::*DialogAction)();
 	PrisonerEngine::DialogAction _dialogActionCallback;
+
+	/* Original save/load screens */
+	struct SaveLoadEntry {
+		int slot;
+		Common::String description;
+		Common::String saveDate;
+		Common::String saveTime;
+	};
+	Common::Array<SaveLoadEntry> _saveLoadEntries;
+	Common::StringArray _saveLoadMenuItems;
+	bool _saveLoadSaving;
+	// Opened with F2/F3 in the game, which closes the menu when leaving the screen
+	bool _saveLoadFromGame;
+	int16 _saveLoadSelected;
+	int16 _saveLoadTop;
+	bool _saveLoadEditing;
+	Common::String _saveLoadEditText;
+	// First shown character of the selected description, for descriptions wider than the line
+	int16 _saveLoadTextScroll;
+	int16 _saveLoadCursorTimer;
+	bool _saveLoadCursorShown;
+	int16 _saveLoadThumbnailEntry;
+	Common::Array<byte> _saveLoadThumbnail;
+	uint32 _saveLoadLastClickTicks;
+	int16 _saveLoadLastClickRow;
 
 
 public:
@@ -1205,6 +1232,18 @@ public:
 	void unloadMusics(bool all);
 	void suspendMusics();
 	void resumeMusics();
+
+	/* Original save/load screens */
+	void openSaveLoadScreen(bool saving);
+	void loadSaveLoadEntries();
+	void closeSaveLoadScreen();
+	void updateSaveLoadThumbnail();
+	void confirmSaveLoadEntry();
+	void dialogActionDeleteSave();
+	void moveSaveLoadSelection(int16 delta);
+	int16 getSaveLoadTextWidth();
+	void handleSaveLoadInput();
+	void updateSaveLoadMenu(int16 x, int16 y);
 
 
 	/* Font colors */
