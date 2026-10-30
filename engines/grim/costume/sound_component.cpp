@@ -24,7 +24,7 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/costume/sound_component.h"
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 
 namespace Grim {
 
@@ -51,10 +51,10 @@ void SoundComponent::setKey(int val) {
 		if (!g_imuse->soundsIsSoundPlaying(_name.c_str())) {
 			if (isComponentType('I','M','S','S')) {
 				g_imuse->soundStartVoiceStream(_name.c_str(), _maxVolume, _pan);
-				g_imuse->soundsSetParam(_name.c_str(), DIMUSE_P_GROUP, DIMUSE_GROUP_SFX);
-				g_imuse->soundsSetParam(_name.c_str(), DIMUSE_P_PRIORITY, _priority);
+				g_imuse->soundsSetParam(_name.c_str(), IMUSE_P_GROUP, IMUSE_GROUP_SFX);
+				g_imuse->soundsSetParam(_name.c_str(), IMUSE_P_PRIORITY, _priority);
 			} else {
-				g_imuse->soundsLoadStartSound(_name.c_str(), _priority, DIMUSE_GROUP_SFX);
+				g_imuse->soundsLoadStartSound(_name.c_str(), _priority, IMUSE_GROUP_SFX);
 
 				Set *currSet = g_grim->getCurrSet();
 				if (currSet) {

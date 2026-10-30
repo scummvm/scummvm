@@ -77,7 +77,7 @@
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/remastered/lua_remastered.h"
 #include "engines/grim/remastered/commentary.h"
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 #include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/lua/lua.h"
 
@@ -384,24 +384,24 @@ Common::Error GrimEngine::run() {
 			g_movie = CreateBinkPlayer(demo);
 	}
 	if (getGameType() == GType_GRIM) {
-		int sampleRate = DIMUSE_BASE_SAMPLERATE;
-		ConfMan.registerDefault("dimuse_sample_rate", DIMUSE_BASE_SAMPLERATE);
-		if (ConfMan.hasKey("dimuse_sample_rate", _targetName)) {
+		int sampleRate = IMUSE_BASE_SAMPLERATE;
+		ConfMan.registerDefault("imuse_sample_rate", IMUSE_BASE_SAMPLERATE);
+		if (ConfMan.hasKey("imuse_sample_rate", _targetName)) {
 			// Only accept sample rates which are a multiple or submultiple of 22050
-			int configSampleRate = ConfMan.getInt("dimuse_sample_rate");
-			if ((configSampleRate % (DIMUSE_BASE_SAMPLERATE / 2)) == 0 &&
-				configSampleRate >= DIMUSE_BASE_SAMPLERATE / 2 &&
-				configSampleRate <= DIMUSE_BASE_SAMPLERATE * 4) {
+			int configSampleRate = ConfMan.getInt("imuse_sample_rate");
+			if ((configSampleRate % (IMUSE_BASE_SAMPLERATE / 2)) == 0 &&
+				configSampleRate >= IMUSE_BASE_SAMPLERATE / 2 &&
+				configSampleRate <= IMUSE_BASE_SAMPLERATE * 4) {
 				sampleRate = configSampleRate;
 			}
 		}
 
 		bool lowLatencyMode = false;
-		ConfMan.registerDefault("dimuse_low_latency_mode", false);
-		if (ConfMan.hasKey("dimuse_low_latency_mode", _targetName))
-			lowLatencyMode = ConfMan.getBool("dimuse_low_latency_mode");
+		ConfMan.registerDefault("imuse_low_latency_mode", false);
+		if (ConfMan.hasKey("imuse_low_latency_mode", _targetName))
+			lowLatencyMode = ConfMan.getBool("imuse_low_latency_mode");
 
-		g_imuse = new IMuseDigital(sampleRate, _mixer, &_imuseMutex, lowLatencyMode);
+		g_imuse = new IMuse(sampleRate, _mixer, &_imuseMutex, lowLatencyMode);
 		g_emiSound = nullptr;
 		if (g_grim->isRemastered()) {
 			// This must happen here, since we need the resource loader set up.
@@ -789,7 +789,7 @@ void GrimEngine::handleDebugLoadResource() {
 		resource = (void *)g_movie->play(buf, false, 0, 0);
 	else if (strstr(buf, ".wav") || strstr(buf, ".imu")) {
 		if (g_imuse)
-			g_imuse->soundsLoadStartSound(buf, 127, DIMUSE_GROUP_SFX);
+			g_imuse->soundsLoadStartSound(buf, 127, IMUSE_GROUP_SFX);
 		resource = (void *)1;
 	} else if (strstr(buf, ".mat")) {
 		CMap *cmap = g_resourceloader->loadColormap("item.cmp");
@@ -1210,7 +1210,7 @@ void GrimEngine::savegameRestore() {
 	if (!_savedState || !_savedState->isCompatible())
 		return;
 	if (g_imuse)
-		g_imuse->diMUSEStopAllSounds();
+		g_imuse->imStopAllSounds();
 	g_movie->stop();
 	if (g_imuse)
 		g_imuse->pause(true);
@@ -1238,7 +1238,7 @@ void GrimEngine::savegameRestore() {
 	Debug::debug(Debug::Engine, "Sets restored successfully.");
 
 	if (g_imuse)
-		g_imuse->floodMusicBuffer();
+		g_imuse->soundsFloodMusicBuffer();
 
 	TextObject::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "TextObjects restored successfully.");
@@ -1550,7 +1550,7 @@ void GrimEngine::setSet(Set *scene) {
 		return;
 
 	if (g_imuse)
-		g_imuse->floodMusicBuffer();
+		g_imuse->soundsFloodMusicBuffer();
 
 	if (getGameType() == GType_MONKEY4) {
 		for (PoolSound *s : PoolSound::getPool()) {

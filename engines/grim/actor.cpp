@@ -29,7 +29,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/movie/movie.h"
 #include "engines/grim/sound.h"
-#include "engines/grim/imuse/dimuse_defs.h"
+#include "engines/grim/imuse/imuse_defs.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"

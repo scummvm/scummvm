@@ -30,7 +30,7 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/sound.h"
 #include "engines/grim/emi/sound/emisound.h"
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 
 #include "math/frustum.h"
 

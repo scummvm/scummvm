@@ -28,7 +28,7 @@
 #include "engines/grim/savegame.h"
 #include "engines/grim/set.h"
 #include "engines/grim/sound.h"
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 #include "engines/grim/lua/lauxlib.h"
 
 namespace Grim {
@@ -64,7 +64,7 @@ void Lua_V1::ImStopSound() {
 }
 
 void Lua_V1::ImStopAllSounds() {
-	g_imuse->diMUSEStopAllSounds();
+	g_imuse->imStopAllSounds();
 }
 
 void Lua_V1::ImPause() {
@@ -86,33 +86,33 @@ void Lua_V1::ImSetMusicVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
-	g_imuse->diMUSESetMusicGroupVol((int)lua_getnumber(volObj));
+	g_imuse->setMusicGroupVol((int)lua_getnumber(volObj));
 }
 
 void Lua_V1::ImGetMusicVol() {
-	lua_pushnumber(g_imuse->diMUSEGetMusicGroupVol());
+	lua_pushnumber(g_imuse->getMusicGroupVol());
 }
 
 void Lua_V1::ImSetVoiceVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
-	g_imuse->diMUSESetVoiceGroupVol((int)lua_getnumber(volObj));
+	g_imuse->setVoiceGroupVol((int)lua_getnumber(volObj));
 }
 
 void Lua_V1::ImGetVoiceVol() {
-	lua_pushnumber(g_imuse->diMUSEGetVoiceGroupVol());
+	lua_pushnumber(g_imuse->getVoiceGroupVol());
 }
 
 void Lua_V1::ImSetSfxVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
-	g_imuse->diMUSESetSFXGroupVol((int)lua_getnumber(volObj));
+	g_imuse->setSFXGroupVol((int)lua_getnumber(volObj));
 }
 
 void Lua_V1::ImGetSfxVol() {
-	lua_pushnumber(g_imuse->diMUSEGetSFXGroupVol());
+	lua_pushnumber(g_imuse->getSFXGroupVol());
 }
 
 void Lua_V1::ImSetParam() {
@@ -182,7 +182,7 @@ void Lua_V1::ImSetSequence() {
 		return;
 
 	int state = (int)lua_getnumber(stateObj);
-	lua_pushnumber(g_imuse->diMUSESetSequence(state));
+	lua_pushnumber(g_imuse->imSetSequence(state));
 }
 
 void Lua_V1::SaveIMuse() {

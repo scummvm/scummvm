@@ -19,31 +19,35 @@
  *
  */
 
-#ifndef GRIM_IMUSE_TABLES_H
-#define GRIM_IMUSE_TABLES_H
+#ifndef GRIM_IMUSE_FADES_H
+#define GRIM_IMUSE_FADES_H
 
 #include "common/scummsys.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Grim {
 
-struct IMuseDigiStateTable {
-	char name[32];
-	int transitionId;
-	int soundId;
-	char internalName[24];
-	int attribPos;
-	int hookId;
-	int fadeTime;
-	int volume;
-	int pan;
+class IMuseFadesHandler {
+
+private:
+	IMuse *_engine;
+	Common::Mutex *_mutex;
+	IMuseFade _fades[IMUSE_MAX_FADES] = {};
+	int _fadesOn = 0;
+
+	void clearAllFades();
+public:
+	IMuseFadesHandler(IMuse *engine, Common::Mutex *mutex);
+	~IMuseFadesHandler();
+
+	int init();
+	void saveLoad(Common::Serializer &ser);
+	int fadeParam(int soundId, int opcode, int destinationValue, int fadeLength);
+	void clearFadeStatus(int soundId, int opcode);
+	void loop();
+
 };
 
-extern const IMuseDigiStateTable _grimStateMusicTable[181];
-extern const IMuseDigiStateTable _grimSeqMusicTable[41];
-
-// Sound id of a state, given its position in the table of the old iMUSE
-int grimLegacyStateSoundId(int tableIndex);
-
 } // End of namespace Grim
-
 #endif

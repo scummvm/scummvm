@@ -21,11 +21,11 @@
 
 #include "common/util.h"
 
-#include "engines/grim/imuse/dimuse_tables.h"
+#include "engines/grim/imuse/imuse_tables.h"
 
 namespace Grim {
 
-const IMuseDigiStateTable _grimStateMusicTable[181] = {
+const IMuseStateTable _grimStateMusicTable[181] = {
 	{"",                        0, 1000, "STATE_NULL",           0,  0,   0, 127, 0}, /* 000 */
 	{"",                        0, 1999, "stateNoChange",        0,  0,   0, 127, 0}, /* 001 */
 	{"1001 - Manny's Office",   3, 1001, "stateMO",              0,  0,   0, 127, 0}, /* 002 */
@@ -209,7 +209,7 @@ const IMuseDigiStateTable _grimStateMusicTable[181] = {
 	{"",                        0, 1500, "stateMenu",            0,  0,   0, 127, 0}, /* 180 */
 };
 
-const IMuseDigiStateTable _grimSeqMusicTable[41] = {
+const IMuseStateTable _grimSeqMusicTable[41] = {
 	{"",                        0, 2000, "SEQ_NULL",             0,  0, 300, 127, 0}, /* 000 */
 	{"2001 - Climb Rope",       2, 2001, "seqClimbRope",         0,  0, 300, 127, 0}, /* 001 */
 	{"2010 - Glottis OK",       2, 2010, "seqGlottisOK",         0,  0, 300, 127, 0}, /* 002 */

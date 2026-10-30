@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GRIM_IMUSE_MIXER_H
-#define GRIM_IMUSE_MIXER_H
+#ifndef GRIM_IMUSE_INTERNALMIXER_H
+#define GRIM_IMUSE_INTERNALMIXER_H
 
 #include "common/scummsys.h"
 #include "common/mutex.h"
@@ -28,7 +28,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 
@@ -40,7 +40,7 @@ class QueuingAudioStream;
 
 namespace Grim {
 
-class IMuseDigiInternalMixer {
+class IMuseInternalMixer {
 
 private:
 	uint8 _mixerTable[17 * 17];
@@ -61,8 +61,8 @@ private:
 	void mix16ToStereoSwap(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp);
 
 public:
-	IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool lowLatencyMode = false);
-	~IMuseDigiInternalMixer();
+	IMuseInternalMixer(Audio::Mixer *mixer, int sampleRate, bool lowLatencyMode = false);
+	~IMuseInternalMixer();
 	int  init(int numChannels, int mixBufSize, int mixChannelsNum);
 	int  terminate();
 	int  clearMixerBuffer();
@@ -75,8 +75,8 @@ public:
 	void endStream(int idx);
 	Audio::QueuingAudioStream *getStream(int idx);
 
-	Audio::QueuingAudioStream *_separateStreams[DIMUSE_MAX_TRACKS];
-	Audio::SoundHandle _separateChannelHandles[DIMUSE_MAX_TRACKS];
+	Audio::QueuingAudioStream *_separateStreams[IMUSE_MAX_TRACKS];
+	Audio::SoundHandle _separateChannelHandles[IMUSE_MAX_TRACKS];
 };
 
 } // End of namespace Grim

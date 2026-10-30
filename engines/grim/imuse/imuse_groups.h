@@ -19,44 +19,31 @@
  *
  */
 
-#ifndef GRIM_IMUSE_TRIGGERS_H
-#define GRIM_IMUSE_TRIGGERS_H
+#ifndef GRIM_IMUSE_GROUPS_H
+#define GRIM_IMUSE_GROUPS_H
 
 #include "common/scummsys.h"
+#include "common/mutex.h"
+#include "common/serializer.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "engines/grim/imuse/dimuse_defs.h"
+#include "engines/grim/imuse/imuse_engine.h"
 
 namespace Grim {
 
-class IMuseDigiTriggersHandler {
+class IMuseGroupsHandler {
 
 private:
-	IMuseDigital *_engine;
+	IMuse *_engine;
 	Common::Mutex *_mutex;
-	IMuseDigiTrigger _trigs[DIMUSE_MAX_TRIGGERS] = {};
-	IMuseDigiDefer _defers[DIMUSE_MAX_DEFERS] = {};
-
-	int  _defersOn = 0;
-	int  _midProcessing = 0;
-	char _textBuffer[256] = {};
-	char _emptyMarker[1] = {};
-
+	int _effVols[IMUSE_MAX_GROUPS] = {};
+	int _vols[IMUSE_MAX_GROUPS] = {};
 public:
-	IMuseDigiTriggersHandler(IMuseDigital *engine, Common::Mutex *mutex);
-	~IMuseDigiTriggersHandler();
-
-	int  init();
-	int  clearAllTriggers();
-	void saveLoad(Common::Serializer &ser);
-	int  setTrigger(int soundId, char *marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
-	int  checkTrigger(int soundId, char *marker, int opcode);
-	int  clearTrigger(int soundId, char *marker, int opcode);
-	void processTriggers(int soundId, char *marker);
-	int  deferCommand(int count, int opcode, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
-	void loop();
-	int  countPendingSounds(int soundId);
-
+	IMuseGroupsHandler(IMuse *engine, Common::Mutex *mutex);
+	~IMuseGroupsHandler();
+	int init();
+	int setGroupVol(uint32 id, int volume);
+	int getGroupVol(uint32 id);
 };
 
 } // End of namespace Grim

@@ -19,32 +19,32 @@
  *
  */
 
-#include "engines/grim/imuse/dimuse_engine.h"
-#include "engines/grim/imuse/dimuse_groups.h"
+#include "engines/grim/imuse/imuse_engine.h"
+#include "engines/grim/imuse/imuse_groups.h"
 
 namespace Grim {
 
-IMuseDigiGroupsHandler::IMuseDigiGroupsHandler(IMuseDigital *engine, Common::Mutex *mutex) {
+IMuseGroupsHandler::IMuseGroupsHandler(IMuse *engine, Common::Mutex *mutex) {
 	_engine = engine;
 	_mutex = mutex;
 }
 
-IMuseDigiGroupsHandler::~IMuseDigiGroupsHandler() {}
+IMuseGroupsHandler::~IMuseGroupsHandler() {}
 
-int IMuseDigiGroupsHandler::init() {
-	for (int i = 0; i < DIMUSE_MAX_GROUPS; i++) {
+int IMuseGroupsHandler::init() {
+	for (int i = 0; i < IMUSE_MAX_GROUPS; i++) {
 		_effVols[i] = 127;
 		_vols[i] = 127;
 	}
 	return 0;
 }
 
-int IMuseDigiGroupsHandler::setGroupVol(uint32 id, int volume) {
+int IMuseGroupsHandler::setGroupVol(uint32 id, int volume) {
 	Common::StackLock lock(*_mutex);
 
 	int l;
 
-	if (id >= DIMUSE_MAX_GROUPS) {
+	if (id >= IMUSE_MAX_GROUPS) {
 		return -5;
 	}
 
@@ -64,7 +64,7 @@ int IMuseDigiGroupsHandler::setGroupVol(uint32 id, int volume) {
 		_effVols[0] = volume;
 		_vols[0] = volume;
 
-		for (l = 1; l < DIMUSE_MAX_GROUPS; l++) {
+		for (l = 1; l < IMUSE_MAX_GROUPS; l++) {
 			_effVols[l] = (volume * (_vols[l] + 1)) / 128;
 		}
 	}
@@ -73,10 +73,10 @@ int IMuseDigiGroupsHandler::setGroupVol(uint32 id, int volume) {
 	return oldVolume;
 }
 
-int IMuseDigiGroupsHandler::getGroupVol(uint32 id) {
+int IMuseGroupsHandler::getGroupVol(uint32 id) {
 	Common::StackLock lock(*_mutex);
 
-	if (id >= DIMUSE_MAX_GROUPS) {
+	if (id >= IMUSE_MAX_GROUPS) {
 		return -5;
 	}
 

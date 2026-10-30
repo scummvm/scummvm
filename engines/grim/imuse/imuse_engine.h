@@ -29,12 +29,12 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#include "engines/grim/imuse/dimuse_defs.h"
-#include "engines/grim/imuse/dimuse_internalmixer.h"
-#include "engines/grim/imuse/dimuse_groups.h"
-#include "engines/grim/imuse/dimuse_fades.h"
-#include "engines/grim/imuse/dimuse_triggers.h"
-#include "engines/grim/imuse/dimuse_tables.h"
+#include "engines/grim/imuse/imuse_defs.h"
+#include "engines/grim/imuse/imuse_internalmixer.h"
+#include "engines/grim/imuse/imuse_groups.h"
+#include "engines/grim/imuse/imuse_fades.h"
+#include "engines/grim/imuse/imuse_triggers.h"
+#include "engines/grim/imuse/imuse_tables.h"
 
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
@@ -49,20 +49,20 @@ class QueuingAudioStream;
 
 namespace Grim {
 
-struct IMuseDigiStateTable;
-struct IMuseDigiDispatch;
-struct IMuseDigiTrack;
-struct IMuseDigiStreamZone;
+struct IMuseStateTable;
+struct IMuseDispatch;
+struct IMuseTrack;
+struct IMuseStreamZone;
 
-class IMuseDigital {
+class IMuse {
 private:
 	Common::Mutex *_mutex;
 	Audio::Mixer *_mixer;
 
-	IMuseDigiInternalMixer *_internalMixer;
-	IMuseDigiGroupsHandler *_groupsHandler;
-	IMuseDigiFadesHandler *_fadesHandler;
-	IMuseDigiTriggersHandler *_triggersHandler;
+	IMuseInternalMixer *_internalMixer;
+	IMuseGroupsHandler *_groupsHandler;
+	IMuseFadesHandler *_fadesHandler;
+	IMuseTriggersHandler *_triggersHandler;
 
 	int _callbackFps;
 	static void timer_handler(void *refConf);
@@ -81,7 +81,7 @@ private:
 	int _outputSampleRate;
 
 	// Used in low latency mode only
-	uint8 *_outputLowLatencyAudioBuffers[DIMUSE_MAX_TRACKS];
+	uint8 *_outputLowLatencyAudioBuffers[IMUSE_MAX_TRACKS];
 
 	int _maxQueuedStreams; // maximum number of streams which can be queued before they are played
 	int _nominalBufferCount;
@@ -100,10 +100,10 @@ private:
 
 	int _usecPerInt; // Microseconds between each callback (will be set to 50 Hz)
 	bool _callbackInterruptFlag;
-	void diMUSEHeartbeat();
+	void imHeartbeat();
 
-	bool isMusicStreamIdle();
-	bool isMusicCritical();
+	bool soundsIsMusicStreamIdle();
+	bool soundsIsMusicCritical();
 
 	// Script
 	int scriptParse(int cmd, int a, int b);
@@ -114,7 +114,7 @@ private:
 	void scriptRefresh();
 	void scriptSetState(int soundId);
 	void scriptSetSequence(int soundId);
-	void scriptPlayMusic(const IMuseDigiStateTable *tableEntry, int curSongEntryId, int isSequence);
+	void scriptPlayMusic(const IMuseStateTable *tableEntry, int curSongEntryId, int isSequence);
 	void scriptSetCuePoint(int cueId);
 	int scriptSetAttribute(int attrIndex, int attrVal);
 
@@ -125,27 +125,27 @@ private:
 	int _cmdsRunning5HzCount;
 
 	// Streamer
-	IMuseDigiStream _streams[DIMUSE_MAX_STREAMS];
-	IMuseDigiStream *_lastStreamLoaded;
+	IMuseStream _streams[IMUSE_MAX_STREAMS];
+	IMuseStream *_lastStreamLoaded;
 	int _streamerBailFlag;
 
 	int streamerInit();
-	IMuseDigiStream *streamerAllocateSound(int soundId, int bufId, int32 maxRead);
-	int streamerClearSoundInStream(IMuseDigiStream *streamPtr);
+	IMuseStream *streamerAllocateSound(int soundId, int bufId, int32 maxRead);
+	int streamerClearSoundInStream(IMuseStream *streamPtr);
 	int streamerProcessStreams();
-	uint8 *streamerGetStreamBuffer(IMuseDigiStream *streamPtr, int size);
-	uint8 *streamerGetStreamBufferAtOffset(IMuseDigiStream *streamPtr, int32 offset, int size);
-	int streamerSetReadIndex(IMuseDigiStream *streamPtr, int offset);
-	int streamerSetLoadIndex(IMuseDigiStream *streamPtr, int offset);
-	int streamerGetFreeBufferAmount(IMuseDigiStream *streamPtr);
-	int streamerSetSoundToStreamFromOffset(IMuseDigiStream *streamPtr, int soundId, int32 offset);
-	void streamerQueryStream(IMuseDigiStream *streamPtr, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
-	int streamerFeedStream(IMuseDigiStream *streamPtr, uint8 *srcBuf, int32 sizeToFeed, int paused);
-	int streamerFetchData(IMuseDigiStream *streamPtr);
+	uint8 *streamerGetStreamBuffer(IMuseStream *streamPtr, int size);
+	uint8 *streamerGetStreamBufferAtOffset(IMuseStream *streamPtr, int32 offset, int size);
+	int streamerSetReadIndex(IMuseStream *streamPtr, int offset);
+	int streamerSetLoadIndex(IMuseStream *streamPtr, int offset);
+	int streamerGetFreeBufferAmount(IMuseStream *streamPtr);
+	int streamerSetSoundToStreamFromOffset(IMuseStream *streamPtr, int soundId, int32 offset);
+	void streamerQueryStream(IMuseStream *streamPtr, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
+	int streamerFeedStream(IMuseStream *streamPtr, uint8 *srcBuf, int32 sizeToFeed, int paused);
+	int streamerFetchData(IMuseStream *streamPtr);
 
 	// Tracks
-	IMuseDigiTrack _tracks[DIMUSE_MAX_TRACKS];
-	IMuseDigiTrack *_trackList;
+	IMuseTrack _tracks[IMUSE_MAX_TRACKS];
+	IMuseTrack *_trackList;
 
 	int _trackCount;
 	int _tracksPauseTimer;
@@ -163,24 +163,24 @@ private:
 	int tracksGetNextSound(int soundId);
 	int tracksQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
 	int tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused);
-	void tracksClear(IMuseDigiTrack *trackPtr);
+	void tracksClear(IMuseTrack *trackPtr);
 	int tracksSetParam(int soundId, int opcode, int value);
 	int tracksGetParam(int soundId, int opcode);
 	int tracksSetHook(int soundId, int hookId);
 	int tracksGetHook(int soundId);
-	IMuseDigiTrack *tracksReserveTrack(int priority);
+	IMuseTrack *tracksReserveTrack(int priority);
 	int tracksDeinit();
 
 	// Dispatch
-	IMuseDigiDispatch _dispatches[DIMUSE_MAX_DISPATCHES];
-	IMuseDigiStreamZone _streamZones[DIMUSE_MAX_STREAMZONES];
+	IMuseDispatch _dispatches[IMUSE_MAX_DISPATCHES];
+	IMuseStreamZone _streamZones[IMUSE_MAX_STREAMZONES];
 	uint8 *_dispatchBuffer;
 	int32 _dispatchSize;
 	uint8 *_dispatchSmallFadeBufs;
 	uint8 *_dispatchLargeFadeBufs;
 	int32 _dispatchFadeSize;
-	int _dispatchLargeFadeFlags[DIMUSE_LARGE_FADES];
-	int _dispatchSmallFadeFlags[DIMUSE_SMALL_FADES];
+	int _dispatchLargeFadeFlags[IMUSE_LARGE_FADES];
+	int _dispatchSmallFadeFlags[IMUSE_SMALL_FADES];
 	int _dispatchFadeStartedFlag;
 	int _dispatchBufferedHookId;
 	int32 _dispatchJumpFadeSize;
@@ -191,58 +191,58 @@ private:
 
 	int dispatchInit();
 	int dispatchTerminate();
-	IMuseDigiDispatch *dispatchGetDispatchByTrackId(int trackId);
+	IMuseDispatch *dispatchGetDispatchByTrackId(int trackId);
 	void dispatchSaveLoad(Common::Serializer &ser);
 	int dispatchRestoreStreamZones();
-	int dispatchAllocateSound(IMuseDigiTrack *trackPtr, int groupId);
-	int dispatchRelease(IMuseDigiTrack *trackPtr);
+	int dispatchAllocateSound(IMuseTrack *trackPtr, int groupId);
+	int dispatchRelease(IMuseTrack *trackPtr);
 	int dispatchSwitchStream(int oldSoundId, int newSoundId, int fadeLength, int exitTriggerSyncFlag, int offsetFadeSyncFlag);
-	void dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedSize, int sampleRate);
+	void dispatchProcessDispatches(IMuseTrack *trackPtr, int feedSize, int sampleRate);
 	void dispatchPredictFirstStream();
-	int dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr);
-	int dispatchGetMap(IMuseDigiDispatch *dispatchPtr);
+	int dispatchNavigateMap(IMuseDispatch *dispatchPtr);
+	int dispatchGetMap(IMuseDispatch *dispatchPtr);
 	int dispatchConvertMap(uint8 *rawMap, int32 *destMap);
 	uint8 *dispatchGetNextMapEvent(int32 *mapPtr, int32 soundOffset, uint8 *mapEvent);
-	void dispatchPredictStream(IMuseDigiDispatch *dispatchPtr);
-	uint8 *dispatchCheckForJump(int32 *mapPtr, IMuseDigiStreamZone *strZnPtr, int &candidateHookId);
-	void dispatchPrepareToJump(IMuseDigiDispatch *dispatchPtr, IMuseDigiStreamZone *strZnPtr, uint8 *jumpParamsFromMap, int calledFromGetNextMapEvent);
-	void dispatchStreamNextZone(IMuseDigiDispatch *dispatchPtr, IMuseDigiStreamZone *strZnPtr);
-	IMuseDigiStreamZone *dispatchAllocateStreamZone();
+	void dispatchPredictStream(IMuseDispatch *dispatchPtr);
+	uint8 *dispatchCheckForJump(int32 *mapPtr, IMuseStreamZone *strZnPtr, int &candidateHookId);
+	void dispatchPrepareToJump(IMuseDispatch *dispatchPtr, IMuseStreamZone *strZnPtr, uint8 *jumpParamsFromMap, int calledFromGetNextMapEvent);
+	void dispatchStreamNextZone(IMuseDispatch *dispatchPtr, IMuseStreamZone *strZnPtr);
+	IMuseStreamZone *dispatchAllocateStreamZone();
 	uint8 *dispatchAllocateFade(int32 &fadeSize, const char *functionName);
-	void dispatchDeallocateFade(IMuseDigiDispatch *dispatchPtr, const char *functionName);
-	int dispatchGetFadeSize(IMuseDigiDispatch *dispatchPtr, int fadeLength);
-	void dispatchValidateFadeSize(IMuseDigiDispatch *dispatchPtr, int32 &dispatchSize);
-	int dispatchUpdateFadeMixVolume(IMuseDigiDispatch *dispatchPtr, int32 remainingFade);
-	int dispatchUpdateFadeSlope(IMuseDigiDispatch *dispatchPtr);
+	void dispatchDeallocateFade(IMuseDispatch *dispatchPtr, const char *functionName);
+	int dispatchGetFadeSize(IMuseDispatch *dispatchPtr, int fadeLength);
+	void dispatchValidateFadeSize(IMuseDispatch *dispatchPtr, int32 &dispatchSize);
+	int dispatchUpdateFadeMixVolume(IMuseDispatch *dispatchPtr, int32 remainingFade);
+	int dispatchUpdateFadeSlope(IMuseDispatch *dispatchPtr);
 
 	// Files
-	IMuseDigiSoundList _mainSoundList[DIMUSE_MAX_SOUND_LIST];
-	IMuseDigiSoundList *_loadedSoundList;
-	IMuseDigiSoundList *_openedSoundsList;
+	IMuseSoundList _mainSoundList[IMUSE_MAX_SOUND_LIST];
+	IMuseSoundList *_loadedSoundList;
+	IMuseSoundList *_openedSoundsList;
 	bool _fileListInitialized;
 	uint16 _imuseDestTable[5786];
-	IMuseDigiOpenAudioFile _openAudioFiles[DIMUSE_MAX_OPEN_FILES];
-	IMuseDigiSndBuffer _soundBuffers[4];
+	IMuseOpenAudioFile _openAudioFiles[IMUSE_MAX_OPEN_FILES];
+	IMuseSndBuffer _soundBuffers[4];
 
-	int diMUSEInitFilelist();
-	void diMUSESaveLoadFilelist(Common::Serializer &ser);
-	int diMUSELoadSound(const char *soundName, int requestedSoundId);
-	void diMUSEUnloadSound(int soundId);
-	void diMUSEUnloadAll();
-	int diMUSEOpenSound(const char *filename, int requestedSoundId);
-	void diMUSECloseSound(int soundId);
-	void diMUSECloseAll();
-	int diMUSEFindSound(const char *soundName);
-	void diMUSEFlushSounds();
-	int diMUSEAddSoundToList(IMuseDigiSoundList **listPtr, IMuseDigiSoundList *item);
-	int diMUSERemoveSoundFromList(IMuseDigiSoundList **listPtr, IMuseDigiSoundList *item);
+	int imInitFilelist();
+	void imSaveLoadFilelist(Common::Serializer &ser);
+	int imLoadSound(const char *soundName, int requestedSoundId);
+	void imUnloadSound(int soundId);
+	void imUnloadAll();
+	int imOpenSound(const char *filename, int requestedSoundId);
+	void imCloseSound(int soundId);
+	void imCloseAll();
+	int imFindSound(const char *soundName);
+	void imFlushSounds();
+	int imAddSoundToList(IMuseSoundList **listPtr, IMuseSoundList *item);
+	int imRemoveSoundFromList(IMuseSoundList **listPtr, IMuseSoundList *item);
 
 	bool filesCheckRange(int soundId);
 	uint8 *filesGetSoundAddrData(int soundId);
 	uint8 *filesFetchMap(int soundId);
 	int filesSeek(int soundId, int32 offset, int mode);
 	int filesRead(int soundId, uint8 *buf, int32 size);
-	IMuseDigiSndBuffer *filesGetBufInfo(int bufId);
+	IMuseSndBuffer *filesGetBufInfo(int bufId);
 
 	int ihostLoadSound(const char *soundName, int requestedSoundId);
 	int ihostUnloadSound(int soundId);
@@ -250,11 +250,11 @@ private:
 	int ihostCloseSound(int soundId);
 	uint8 *ihostGetMapAddr(int soundId);
 	uint8 *ihostGetSoundAddr(int soundId);
-	IMuseDigiSndBuffer *ihostGetBufferInfo(int bufId);
+	IMuseSndBuffer *ihostGetBufferInfo(int bufId);
 	int ihostFseek(int soundId, int32 offset, int mode);
 	int ihostRead(int soundId, uint8 *destBuf, int32 size);
 
-	IMuseDigiCachedSound _soundCache[DIMUSE_MAX_CACHED_SOUNDS];
+	IMuseCachedSound _soundCache[IMUSE_MAX_CACHED_SOUNDS];
 	int _currentSoundSlot;
 
 	int cacheGetSoundId(const char *soundName);
@@ -265,18 +265,18 @@ private:
 
 	void soundsAllocateBuffer(int bufferId, int32 bufSize, int32 loadSize, int32 criticalSize);
 	void soundsDeallocateBuffer(int bufferId);
-	IMuseDigiResource *soundsOpenFile(const char *filename);
-	void soundsCloseFile(IMuseDigiResource *res);
-	void soundsFileSeek(IMuseDigiResource *res, int32 offset, int mode);
-	int32 soundsFileTell(IMuseDigiResource *res);
-	int soundsGetCompBlockId(IMuseDigiResource *res, int32 offset);
-	int32 copyDataFromResource(IMuseDigiResource *res, uint8 *dest, int32 size);
+	IMuseResource *soundsOpenFile(const char *filename);
+	void soundsCloseFile(IMuseResource *res);
+	void soundsFileSeek(IMuseResource *res, int32 offset, int mode);
+	int32 soundsFileTell(IMuseResource *res);
+	int soundsGetCompBlockId(IMuseResource *res, int32 offset);
+	int32 copyDataFromResource(IMuseResource *res, uint8 *dest, int32 size);
 
 	// Voice and lipsync
 	char _curSpeechFile[32];
 	int32 _millisecsInCurSpeechFile;
-	int _lipsyncSoundIds[DIMUSE_MAX_LIPSYNCS];
-	uint8 _lipsyncBufs[DIMUSE_MAX_LIPSYNCS][DIMUSE_LIPSYNC_MAX_SIZE + 48];
+	int _lipsyncSoundIds[IMUSE_MAX_LIPSYNCS];
+	uint8 _lipsyncBufs[IMUSE_MAX_LIPSYNCS][IMUSE_LIPSYNC_MAX_SIZE + 48];
 	int _globalVolume;
 
 	int soundsRegisterVoice(const char *filename);
@@ -339,8 +339,8 @@ private:
 	uint8 *_waveOutLowLatencyOutputBuffer;
 
 public:
-	IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode = false);
-	~IMuseDigital();
+	IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode = false);
+	~IMuse();
 
 	// Wrapper functions used by the main engine
 
@@ -357,9 +357,9 @@ public:
 	void pause(bool pause);
 	void disableEngine();
 	bool isEngineDisabled();
-	void floodMusicBuffer();
-	void fillStreamsWhileMusicCritical(int fillTimesAfter);
-	bool queryNextSoundFile(int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
+	void soundsFloodMusicBuffer();
+	void soundsFillStreamsWhileMusicCritical(int fillTimesAfter);
+	bool queryMusicStream(int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
 	int getSampleRate();
 	int getFeedSize();
 
@@ -392,64 +392,64 @@ public:
 	void tracksSetGroupVol();
 
 	// General engine functions
-	int diMUSETerminate();
-	int diMUSEInitialize();
-	void diMUSEPause();
-	void diMUSEResume();
-	int diMUSESaveLoad(Common::Serializer &ser);
-	int diMUSESetGroupVol(int groupId, int volume);
-	int diMUSEStartSound(int soundId, int priority);
-	int diMUSEStopSound(int soundId);
-	int diMUSEStopAllSounds();
-	int diMUSEGetNextSound(int soundId);
-	int diMUSESetParam(int soundId, int paramId, int value);
-	int diMUSEGetParam(int soundId, int paramId);
-	int diMUSEFadeParam(int soundId, int opcode, int destValue, int fadeLength);
-	int diMUSESetHook(int soundId, int hookId);
-	int diMUSEGetHook(int soundId);
+	int imTerminate();
+	int imInitialize();
+	void imPause();
+	void imResume();
+	int imSaveLoad(Common::Serializer &ser);
+	int imSetGroupVol(int groupId, int volume);
+	int imStartSound(int soundId, int priority);
+	int imStopSound(int soundId);
+	int imStopAllSounds();
+	int imGetNextSound(int soundId);
+	int imSetParam(int soundId, int paramId, int value);
+	int imGetParam(int soundId, int paramId);
+	int imFadeParam(int soundId, int opcode, int destValue, int fadeLength);
+	int imSetHook(int soundId, int hookId);
+	int imGetHook(int soundId);
 
-	int diMUSESetTrigger(int soundId, const char *marker, int opcode,
+	int imSetTrigger(int soundId, const char *marker, int opcode,
 		int d = -1, int e = -1, int f = -1, int g = -1,
 		int h = -1, int i = -1, int j = -1, int k = -1,
 		int l = -1, int m = -1, int n = -1);
-	int diMUSECheckTrigger(int soundId, const char *marker, int opcode);
-	int diMUSEClearTrigger(int soundId, const char *marker, int opcode);
-	int diMUSEDeferCommand(int count, int opcode, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
+	int imCheckTrigger(int soundId, const char *marker, int opcode);
+	int imClearTrigger(int soundId, const char *marker, int opcode);
+	int imDeferCommand(int count, int opcode, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
 
-	int diMUSEStartStream(int soundId, int priority, int bufferId);
-	int diMUSESwitchStream(int oldSoundId, int newSoundId, int fadeDelay, int fadeSyncFlag2, int fadeSyncFlag1);
-	int diMUSEProcessStreams();
-	int diMUSEQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
-	int diMUSEFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused);
-	int diMUSEGetMusicGroupVol();
-	int diMUSEGetSFXGroupVol();
-	int diMUSEGetVoiceGroupVol();
-	int diMUSESetMusicGroupVol(int volume);
-	int diMUSESetSFXGroupVol(int volume);
-	int diMUSESetVoiceGroupVol(int volume);
-	int diMUSEInitializeScript();
-	int diMUSETerminateScript();
-	void diMUSESaveLoadScript(Common::Serializer &ser);
-	void diMUSERefreshScript();
-	int diMUSESetState(int soundId);
-	int diMUSESetSequence(int soundId);
-	int diMUSESetCuePoint(int cueId);
-	int diMUSESetAttribute(int attrIndex, int attrVal);
-	void diMUSEEnableSpooledMusic();
-	void diMUSEDisableSpooledMusic();
+	int imStartStream(int soundId, int priority, int bufferId);
+	int imSwitchStream(int oldSoundId, int newSoundId, int fadeDelay, int fadeSyncFlag2, int fadeSyncFlag1);
+	int imProcessStreams();
+	int imQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
+	int imFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused);
+	int getMusicGroupVol();
+	int getSFXGroupVol();
+	int getVoiceGroupVol();
+	int setMusicGroupVol(int volume);
+	int setSFXGroupVol(int volume);
+	int setVoiceGroupVol(int volume);
+	int imInitializeScript();
+	int imTerminateScript();
+	void imSaveLoadScript(Common::Serializer &ser);
+	void imRefreshScript();
+	int imSetState(int soundId);
+	int imSetSequence(int soundId);
+	int imSetCuePoint(int cueId);
+	int imSetAttribute(int attrIndex, int attrVal);
+	void enableSpooledMusic();
+	void disableSpooledMusic();
 
 	// Utils
-	int addTrackToList(IMuseDigiTrack **listPtr, IMuseDigiTrack *listPtr_Item);
-	int removeTrackFromList(IMuseDigiTrack **listPtr, IMuseDigiTrack *itemPtr);
-	int addStreamZoneToList(IMuseDigiStreamZone **listPtr, IMuseDigiStreamZone *listPtr_Item);
-	int removeStreamZoneFromList(IMuseDigiStreamZone **listPtr, IMuseDigiStreamZone *itemPtr);
+	int addTrackToList(IMuseTrack **listPtr, IMuseTrack *listPtr_Item);
+	int removeTrackFromList(IMuseTrack **listPtr, IMuseTrack *itemPtr);
+	int addStreamZoneToList(IMuseStreamZone **listPtr, IMuseStreamZone *listPtr_Item);
+	int removeStreamZoneFromList(IMuseStreamZone **listPtr, IMuseStreamZone *itemPtr);
 	int clampNumber(int value, int minValue, int maxValue);
 	int checkHookId(int &trackHookId, int sampleHookId);
 	int roundRobinSetBufferCount();
 	void adaptBufferCount();
 
 	// CMDs
-	int cmdsHandleCmd(int cmd, uint8 *ptr = nullptr,
+	int imSoundCall(int cmd, uint8 *ptr = nullptr,
 		int a = -1, int b = -1, int c = -1, int d = -1, int e = -1,
 		int f = -1, int g = -1, int h = -1, int i = -1, int j = -1,
 		int k = -1, int l = -1, int m = -1, int n = -1);
@@ -465,7 +465,7 @@ public:
 	void listGroups();
 };
 
-extern IMuseDigital *g_imuse;
+extern IMuse *g_imuse;
 
 } // End of namespace Grim
 

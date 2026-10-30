@@ -24,11 +24,11 @@
 #include "audio/effects/hmi/hmifxlib.h"
 
 #include "engines/grim/resource.h"
-#include "engines/grim/imuse/dimuse_engine.h"
+#include "engines/grim/imuse/imuse_engine.h"
 
 namespace Grim {
 
-int IMuseDigital::setupHMI(int heapSize) {
+int IMuse::setupHMI(int heapSize) {
 	if (_hmiFxInitialized)
 		return 1;
 
@@ -67,7 +67,7 @@ int IMuseDigital::setupHMI(int heapSize) {
 	return 1;
 }
 
-int IMuseDigital::registerHMIEffect(const char *effectName) {
+int IMuse::registerHMIEffect(const char *effectName) {
 	if (_loadedPreset)
 		_hmiFxLib->hmiFXPresetRelease(_loadedPreset);
 
@@ -93,7 +93,7 @@ int IMuseDigital::registerHMIEffect(const char *effectName) {
 	return _curHMIEffectIdInternal;
 }
 
-int IMuseDigital::processSound(uint8 *srcBuf, uint32 soundLength, uint8 *destBuf, uint8 **outBuf, int32 *outLength, bool isLastChunk) {
+int IMuse::processSound(uint8 *srcBuf, uint32 soundLength, uint8 *destBuf, uint8 **outBuf, int32 *outLength, bool isLastChunk) {
 	if (_loadedPreset) {
 		_hmiRequest.flags = HMI_PROCESS_USE_PRESET | HMI_PROCESS_OVERRIDE_INPUT_FORMAT | HMI_PROCESS_OVERRIDE_OUTPUT_FORMAT;
 		if (isLastChunk)
@@ -148,7 +148,7 @@ int IMuseDigital::processSound(uint8 *srcBuf, uint32 soundLength, uint8 *destBuf
 	return _curHMIEffectIdInternal;
 }
 
-void IMuseDigital::soundsTerminateProcessing() {
+void IMuse::soundsTerminateProcessing() {
 	if (!_hmiFxInitialized)
 		return;
 
