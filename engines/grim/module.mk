@@ -43,7 +43,6 @@ MODULE_OBJS := \
 	emi/lua_v2_sound.o \
 	emi/emi_registry.o \
 	imuse/dimuse_cmds.o \
-	imuse/dimuse_codecs.o \
 	imuse/dimuse_dispatch.o \
 	imuse/dimuse_engine.o \
 	imuse/dimuse_fades.o \
