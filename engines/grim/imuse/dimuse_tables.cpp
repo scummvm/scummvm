@@ -23,194 +23,232 @@
 
 namespace Grim {
 
-const imuseComiTable _comiStateMusicTable[] = {
-	{0, 1000, "STATE_NULL",         0, 0,    0, ""            }, /* 00 */
-	{0, 1001, "stateNoChange",      0, 0,    0, ""            }, /* 01 */
-	{3, 1098, "stateCredits1",      0, 0,   60, "1098-C~1.IMX"}, /* 02 */
-	{3, 1099, "stateMenu",          0, 0,   60, "1099-M~1.IMX"}, /* 03 */
-	{3, 1100, "stateHold1",         4, 0,   60, "1100-H~1.IMX"}, /* 04 */
-	{3, 1101, "stateWaterline1",    4, 0,   60, "1101-W~1.IMX"}, /* 05 */
-	{3, 1102, "stateHold2",         6, 1,   60, "1102-H~1.IMX"}, /* 06 */
-	{3, 1103, "stateWaterline2",    6, 0,   60, "1103-W~1.IMX"}, /* 07 */
-	{3, 1104, "stateCannon",        0, 0,   60, "1104-C~1.IMX"}, /* 08 */
-	{3, 1105, "stateTreasure",      0, 0,   60, "1105-T~1.IMX"}, /* 09 */
-	{3, 1200, "stateFortBase",     10, 1,   60, "1200-F~1.IMX"}, /* 10 */
-	{3, 1201, "statePreFort",      10, 1,   60, "1201-P~1.IMX"}, /* 11 */
-	{3, 1202, "statePreVooOut",    12, 0,   60, "1202-P~1.IMX"}, /* 12 */
-	{3, 1203, "statePreVooIn",     12, 0,   60, "1203-P~1.IMX"}, /* 13 */
-	{3, 1204, "statePreVooLady",   12, 0,   60, "1204-P~1.IMX"}, /* 14 */
-	{3, 1205, "stateVoodooOut",     0, 0,   60, "1205-V~1.IMX"}, /* 15 */
-	{3, 1210, "stateVoodooIn",      0, 0,   60, "1210-V~1.IMX"}, /* 16 */
-	{12,1212, "stateVoodooInAlt",   0, 1,   42, "1210-V~1.IMX"}, /* 17 */
-	{3, 1215, "stateVoodooLady",    0, 0,   60, "1215-V~1.IMX"}, /* 18 */
-	{3, 1219, "statePrePlundermap", 0, 0,   60, "1219-P~1.IMX"}, /* 19 */
-	{3, 1220, "statePlundermap",    0, 0,   60, "1220-P~1.IMX"}, /* 20 */
-	{3, 1222, "statePreCabana",     0, 0,   60, "1222-P~1.IMX"}, /* 21 */
-	{3, 1223, "stateCabana",        0, 0,   60, "1223-C~1.IMX"}, /* 22 */
-	{3, 1224, "statePostCabana",   23, 0,   60, "1224-P~1.IMX"}, /* 23 */
-	{3, 1225, "stateBeachClub",    23, 0,   60, "1225-B~1.IMX"}, /* 24 */
-	{3, 1230, "stateCliff",         0, 0,   60, "1230-C~1.IMX"}, /* 25 */
-	{3, 1232, "stateBelly",         0, 0,   48, "1232-B~1.IMX"}, /* 26 */
-	{3, 1235, "stateQuicksand",     0, 0,   60, "1235-Q~1.IMX"}, /* 27 */
-	{3, 1240, "stateDangerBeach",   0, 0,   48, "1240-D~1.IMX"}, /* 28 */
-	{12,1241, "stateDangerBeachAlt",0, 2,   48, "1240-D~1.IMX"}, /* 29 */
-	{3, 1245, "stateRowBoat",       0, 0,   60, "1245-R~1.IMX"}, /* 30 */
-	{3, 1247, "stateAlongside",     0, 0,   48, "1247-A~1.IMX"}, /* 31 */
-	{12,1248, "stateAlongsideAlt",  0, 1,   48, "1247-A~1.IMX"}, /* 32 */
-	{3, 1250, "stateChimpBoat",     0, 0,   30, "1250-C~1.IMX"}, /* 33 */
-	{3, 1255, "stateMrFossey",      0, 0,   48, "1255-M~1.IMX"}, /* 34 */
-	{3, 1259, "statePreTown",       0, 0,   60, "1259-P~1.IMX"}, /* 35 */
-	{3, 1260, "stateTown",          0, 0,   60, "1260-T~1.IMX"}, /* 36 */
-	{3, 1264, "statePreMeadow",     0, 0,   60, "1264-P~1.IMX"}, /* 37 */
-	{3, 1265, "stateMeadow",        0, 0,   60, "1265-M~1.IMX"}, /* 38 */
-	{3, 1266, "stateMeadowAmb",     0, 0,   60, "1266-M~1.IMX"}, /* 39 */
-	{3, 1270, "stateWardrobePre",  40, 0,   60, "1270-W~1.IMX"}, /* 40 */
-	{3, 1272, "statePreShow",      40, 0,   60, "1272-P~1.IMX"}, /* 41 */
-	{3, 1274, "stateWardrobeShow", 42, 0,   60, "1274-W~1.IMX"}, /* 42 */
-	{3, 1276, "stateShow",         42, 0,   60, "1276-S~1.IMX"}, /* 43 */
-	{3, 1277, "stateWardrobeJug",  44, 0,   60, "1277-W~1.IMX"}, /* 44 */
-	{3, 1278, "stateJuggling",     44, 0,   60, "1278-J~1.IMX"}, /* 45 */
-	{3, 1279, "statePostShow",      0, 0,   60, "1279-P~1.IMX"}, /* 46 */
-	{3, 1280, "stateChickenShop",   0, 0,   60, "1280-C~1.IMX"}, /* 47 */
-	{3, 1285, "stateBarberShop",   48, 0,   60, "1285-B~1.IMX"}, /* 48 */
-	{3, 1286, "stateVanHelgen",    48, 0,   60, "1286-V~1.IMX"}, /* 49 */
-	{3, 1287, "stateBill",         48, 0,   60, "1287-B~1.IMX"}, /* 50 */
-	{3, 1288, "stateHaggis",       48, 0,   60, "1288-H~1.IMX"}, /* 51 */
-	{3, 1289, "stateRottingham",   48, 0,   60, "1289-R~1.IMX"}, /* 52 */
-	{3, 1305, "stateDeck",          0, 0,   60, "1305-D~1.IMX"}, /* 53 */
-	{3, 1310, "stateCombatMap",     0, 0,   60, "1310-C~1.IMX"}, /* 54 */
-	{3, 1320, "stateShipCombat",    0, 0,   60, "1320-S~1.IMX"}, /* 55 */
-	{3, 1325, "stateSwordfight",    0, 0,   60, "1325-S~1.IMX"}, /* 56 */
-	{3, 1327, "stateSwordRott",     0, 0,   60, "1327-S~1.IMX"}, /* 57 */
-	{3, 1330, "stateTownEdge",      0, 0,   60, "1330-T~1.IMX"}, /* 58 */
-	{3, 1335, "stateSwordLose",     0, 0,   60, "1335-S~1.IMX"}, /* 59 */
-	{3, 1340, "stateSwordWin",      0, 0,   60, "1340-S~1.IMX"}, /* 60 */
-	{3, 1345, "stateGetMap",        0, 0,   60, "1345-G~1.IMX"}, /* 61 */
-	{3, 1400, "stateWreckBeach",    0, 0,   60, "1400-W~1.IMX"}, /* 62 */
-	{3, 1405, "stateBloodMap",     63, 0,   60, "1405-B~1.IMX"}, /* 63 */
-	{3, 1410, "stateClearing",      0, 0,   60, "1410-C~1.IMX"}, /* 64 */
-	{3, 1415, "stateLighthouse",   63, 0,   60, "1415-L~1.IMX"}, /* 65 */
-	{3, 1420, "stateVillage",      66, 0,   60, "1420-V~1.IMX"}, /* 66 */
-	{3, 1423, "stateVolcano",      66, 0,   60, "1423-V~1.IMX"}, /* 67 */
-	{3, 1425, "stateAltar",        66, 0,   60, "1425-A~1.IMX"}, /* 68 */
-	{3, 1430, "stateHotelOut",      0, 0,   60, "1430-H~1.IMX"}, /* 69 */
-	{3, 1435, "stateHotelBar",     70, 0,   60, "1435-H~1.IMX"}, /* 70 */
-	{3, 1440, "stateHotelIn",      70, 0,   60, "1440-H~1.IMX"}, /* 71 */
-	{3, 1445, "stateTarotLady",    70, 0,   60, "1445-T~1.IMX"}, /* 72 */
-	{3, 1447, "stateGoodsoup",     70, 0,   60, "1447-G~1.IMX"}, /* 73 */
-	{3, 1448, "stateGuestRoom",     0, 0,   60, "1448-G~1.IMX"}, /* 74 */
-	{3, 1450, "stateWindmill",     63, 0,   60, "1450-W~1.IMX"}, /* 75 */
-	{3, 1455, "stateCemetary",      0, 0,   60, "1455-C~1.IMX"}, /* 76 */
-	{3, 1460, "stateCrypt",        77, 0,   60, "1460-C~1.IMX"}, /* 77 */
-	{3, 1463, "stateGraveDigger",  77, 0,   60, "1463-G~1.IMX"}, /* 78 */
-	{3, 1465, "stateMonkey1",       0, 0,   60, "1465-M~1.IMX"}, /* 79 */
-	{3, 1475, "stateStanDark",      0, 0,   60, "1475-S~1.IMX"}, /* 80 */
-	{3, 1477, "stateStanLight",     0, 0,   60, "1477-S~1.IMX"}, /* 81 */
-	{3, 1480, "stateEggBeach",     63, 0,   60, "1480-E~1.IMX"}, /* 82 */
-	{3, 1485, "stateSkullIsland",   0, 0,   60, "1485-S~1.IMX"}, /* 83 */
-	{3, 1490, "stateSmugglersCave", 0, 0,   60, "1490-S~1.IMX"}, /* 84 */
-	{3, 1500, "stateLeChuckTalk",   0, 0,   60, "1500-L~1.IMX"}, /* 85 */
-	{3, 1505, "stateCarnival",      0, 0,   60, "1505-C~1.IMX"}, /* 86 */
-	{3, 1511, "stateHang",         87, 0,   60, "1511-H~1.IMX"}, /* 87 */
-	{3, 1512, "stateRum",          87, 0,   60, "1512-RUM.IMX"}, /* 88 */
-	{3, 1513, "stateTorture",      87, 0,   60, "1513-T~1.IMX"}, /* 89 */
-	{3, 1514, "stateSnow",         87, 0,   60, "1514-S~1.IMX"}, /* 90 */
-	{3, 1515, "stateCredits",       0, 0,   60, "1515-C~1.IMX"}, /* 91 */
-	{3, 1520, "stateCarnAmb",       0, 0,   60, "1520-C~1.IMX"}, /* 92 */
-	{0,   -1, "",                   0, 0,    0, "",           }
+const IMuseDigiStateTable _grimStateMusicTable[181] = {
+	{"",                        0, 1000, "STATE_NULL",           0,  0,   0, 127, 0}, /* 000 */
+	{"",                        0, 1999, "stateNoChange",        0,  0,   0, 127, 0}, /* 001 */
+	{"1001 - Manny's Office",   3, 1001, "stateMO",              0,  0,   0, 127, 0}, /* 002 */
+	{"1002 - Mr. Frustration",  3, 1002, "stateHA_INTLS",        3,  8,   0,  20, 50}, /* 003 */
+	{"1002 - Mr. Frustration",  3, 1003, "stateHA_REVLS",        3,  8,   0,  80, 12}, /* 004 */
+	{"1002 - Mr. Frustration",  3, 1004, "stateHA_ELVOS",        3,  8,   0,  90, 110}, /* 005 */
+	{"1002 - Mr. Frustration",  3, 1005, "stateHA_MNYCU",        3,  8,   0,  60, 110}, /* 006 */
+	{"1002 - Mr. Frustration",  3, 1006, "stateHA_EVACU",        3,  8,   0,  80, 64}, /* 007 */
+	{"1002 - Mr. Frustration",  3, 1007, "stateHA_EVAWS",        3,  8,   0,  60, 60}, /* 008 */
+	{"1008 - Domino's Office",  3, 1008, "stateDO",              0,  0,   0, 127, 0}, /* 009 */
+	{"1009 - Copal's Office",   3, 1009, "stateCO",              0,  0,   0, 127, 0}, /* 010 */
+	{"1010 - Ledge",            3, 1010, "stateLE",              0,  0,   0, 127, 0}, /* 011 */
+	{"1011 - Roof",             3, 1011, "stateRF",              0,  0,   0, 127, 0}, /* 012 */
+	{"1020 - Tube Room",        3, 1020, "stateTU",              0,  0,   0, 127, 0}, /* 013 */
+	{"1021 - Brennis",          3, 1021, "stateTU_BRENNIS",      0,  0,   0, 127, 0}, /* 014 */
+	{"1022 - Lobby",            3, 1022, "stateLO",              0,  0,   0, 127, 0}, /* 015 */
+	{"1023 - Packing Room",     3, 1023, "statePK",              0,  0,   0, 127, 0}, /* 016 */
+	{"1030 - Garage",           3, 1030, "stateGA",              0,  0,   0, 127, 0}, /* 017 */
+	{"1031 - Glottis' Shop",    3, 1031, "stateGS",              0,  0,   0, 127, 0}, /* 018 */
+	{"1030 - Garage",           3, 1032, "stateGS_JAIL",         0,  0,   0, 127, 0}, /* 019 */
+	{"1040 - Festival Wet",     3, 1040, "stateAL",             21,  4, 500,  60, 0}, /* 020 */
+	{"1041 - Festival Dry",     3, 1041, "stateFE",             21,  4, 200, 127, 0}, /* 021 */
+	{"1041 - Festival Dry",     3, 1042, "stateST",             21,  4, 200,  60, 0}, /* 022 */
+	{"1041 - Festival Dry",     3, 1043, "stateOS",             21,  4, 200,  46, 0}, /* 023 */
+	{"1040 - Festival Wet",     3, 1044, "stateRP",             21,  4, 200,  85, 0}, /* 024 */
+	{"1050 - Headquarters",     3, 1050, "stateHQ",              0,  0,   0, 127, 0}, /* 025 */
+	{"1060 - Real World",       2, 1060, "stateLR",              0,  0, 300,  80, 0}, /* 026 */
+	{"1070 - Stump Room",       2, 1070, "stateSM",              0,  0,   0, 127, 0}, /* 027 */
+	{"1071 - Signpost Room",    2, 1071, "stateSG",              0,  3,   0, 127, 0}, /* 028 */
+	{"1072 - Navigation",       2, 1072, "stateNA",              0,  0,   0, 127, 0}, /* 029 */
+	{"1071 - Signpost Room",    2, 1073, "stateNA_SOLVED",       0,  3,   0, 127, 0}, /* 030 */
+	{"1074 - Bone Wagon",       2, 1074, "stateOO_BONE",         0,  0,   0, 127, 0}, /* 031 */
+	{"1075 - Spider's Eye",     2, 1075, "stateSP_ENTLA",        0,  0,   0, 127, 0}, /* 032 */
+	{"1076 - Spider Room",      2, 1076, "stateSP_WEBWS",        0,  0,   0, 127, 0}, /* 033 */
+	{"1077 - Tree Pump Amb",    2, 1077, "stateTR_PMPWS",        0,  0,   0, 127, 0}, /* 034 */
+	{"1078 - Tree Pump",        2, 1078, "stateTR_ESTHA",        0,  0,   0, 127, 0}, /* 035 */
+	{"1071 - Signpost Room",    2, 1079, "stateTR_SOLVED",       0,  3,   0, 127, 0}, /* 036 */
+	{"1080 - Beaver Room Lbby", 2, 1080, "stateLB",              0,  0,   0, 127, 0}, /* 037 */
+	{"1081 - Beaver Dam",       2, 1081, "stateBD",              0,  0,   0, 127, 0}, /* 038 */
+	{"1083 - Beaver Room",      2, 1082, "stateBD_SOLVED",       0,  0,   0, 127, 0}, /* 039 */
+	{"1083 - Beaver Room",      2, 1083, "stateBV",              0,  0,   0, 127, 0}, /* 040 */
+	{"1084 - Foggy Cactus",     2, 1084, "stateFC",              0,  0,   0,  80, 0}, /* 041 */
+	{"1085 - Rubamat Exterior", 2, 1085, "stateRE",              0,  0,   0, 105, 0}, /* 042 */
+	{"1087 - Blue Hector",      2, 1086, "stateRI",              0,  4,   0,  80, 30}, /* 043 */
+	{"1109 - Cafe Exterior",    2, 1100, "stateCB",              0,  0,   0, 127, 0}, /* 044 */
+	{"1101 - Cafe Office",      3, 1101, "stateCF",             45,  5, 400,  60, 0}, /* 045 */
+	{"1102 - Cafe Intercom",    3, 1102, "stateCF_INTRCM",      45,  0, 400, 127, 0}, /* 046 */
+	{"1103 - Coat Check",       3, 1103, "stateCC",             49,  4, 400,  60, 100}, /* 047 */
+	{"1104 - Lupe",             2, 1104, "stateCC_LUPE",         0,  0, 300, 127, 0}, /* 048 */
+	{"1106 - Glottis Noodle",   3, 1105, "stateCI",             49,  4, 400, 127, 75}, /* 049 */
+	{"1106 - Glottis Noodle",   3, 1106, "stateCI_NOODLE",      49,  4, 400, 127, 75}, /* 050 */
+	{"1106 - Glottis Noodle",   3, 1190, "stateCI_WIDHA",       49,  4, 400,  80, 45}, /* 051 */
+	{"1106 - Glottis Noodle",   3, 1191, "stateCI_BARWS",       49,  4, 400, 127, 127}, /* 052 */
+	{"1101 - Cafe Office",      3, 1107, "stateCI_EMPTY",       45,  5, 400, 127, 0}, /* 053 */
+	{"1108 - Casino Interior",  3, 1108, "stateCN",             45,  6, 400, 127, 0}, /* 054 */
+	{"1109 - Cafe Exterior",    2, 1109, "stateCE",              0,  0, 400, 127, 0}, /* 055 */
+	{"1110 - Cafe Ledge",       2, 1110, "stateCL",              0,  0, 400, 105, 0}, /* 056 */
+	{"1108 - Casino Interior",  3, 1111, "stateCN_QUIET",        0,  0, 400,  60, 0}, /* 057 */
+	{"1112 - Rusty Sans Vox",   2, 1112, "stateCI_SONG",         0,  0, 400, 127, 68}, /* 058 */
+	{"1120 - Elevator Station", 2, 1120, "stateEV",              0,  0,   0, 127, 0}, /* 059 */
+	{"1122 - Blue Exterior",    3, 1121, "stateBW",              0,  0, 400, 127, 0}, /* 060 */
+	{"1122 - Blue Exterior",    3, 1122, "stateBE",              0,  0, 400, 127, 0}, /* 061 */
+	{"1123 - Blue Casket Ins",  2, 1123, "stateBI",              0,  4, 700, 127, 0}, /* 062 */
+	{"1124 - Blue Casket Amb",  2, 1124, "stateBI_POE",          0,  0,   0, 127, 0}, /* 063 */
+	{"1125 - Smooth Hector",    2, 1125, "stateBK",              0,  4,   0,  80, 75}, /* 064 */
+	{"1122 - Blue Exterior",    3, 1126, "stateHB",              0,  0, 400, 127, 0}, /* 065 */
+	{"1127 - Limbo Dock",       3, 1127, "stateLM",             66,  0,   0, 127, 0}, /* 066 */
+	{"1128 - Limbo Talk",       2, 1128, "stateLM_TALK",         0,  0, 400, 127, 0}, /* 067 */
+	{"1129 - Limbo Poem",       3, 1129, "stateLM_POEM",        66,  0,   0, 127, 0}, /* 068 */
+	{"1130 - Dry Dock",         2, 1130, "stateDD",              0,  0, 400, 127, 0}, /* 069 */
+	{"1131 - Dry Dock Strike",  2, 1131, "stateDD_STRIKE",       0,  0, 400, 127, 0}, /* 070 */
+	{"1132 - Lighthouse Ext",   2, 1132, "stateLX",              0,  0,   0, 127, 0}, /* 071 */
+	{"1133 - Lola's Last",      2, 1133, "stateLX_LOLA",         0,  0,   0, 127, 0}, /* 072 */
+	{"1140 - Police Station",   3, 1140, "statePC",              0,  0,   0, 127, 0}, /* 073 */
+	{"1141 - Police Interior",  2, 1141, "statePI",              0,  0,   0, 105, 0}, /* 074 */
+	{"1141 - Police Interior",  2, 1142, "statePI_MALLOY",       0,  0,   0, 105, 0}, /* 075 */
+	{"1143 - Morgue",           2, 1143, "stateMG",              0,  0,   0, 105, 0}, /* 076 */
+	{"1140 - Police Station",   3, 1144, "stateBP",              0,  0,   0, 105, 0}, /* 077 */
+	{"1145 - Bridge Blimp",     2, 1145, "stateBB",              0,  0,   0, 127, 0}, /* 078 */
+	{"1146 - LOL Security Ext", 2, 1146, "stateGT",              0,  0,   0,  80, 0}, /* 079 */
+	{"1147 - LOL Security Int", 2, 1147, "stateSL",              0,  0,   0, 127, 0}, /* 080 */
+	{"1148 - Carla's Life",     2, 1148, "stateSL_TALK",         0,  0,   0, 127, 0}, /* 081 */
+	{"1149 - Bomb",             2, 1149, "stateSL_BOMB",         0,  0, 400, 127, 0}, /* 082 */
+	{"1152 - Track Stairs",     3, 1150, "stateTB",             83,  0,   0, 105, 0}, /* 083 */
+	{"1152 - Track Stairs",     3, 1151, "stateTW",             83,  0,   0, 105, 0}, /* 084 */
+	{"1152 - Track Stairs",     3, 1152, "stateTS",             83,  0,   0, 105, 0}, /* 085 */
+	{"1153 - Track Base",       2, 1153, "stateTX",              0,  0, 400, 127, 0}, /* 086 */
+	{"1154 - Kitty Hall",       2, 1154, "stateKH",              0,  0,   0, 127, 0}, /* 087 */
+	{"1155 - Sanspoof",         2, 1155, "stateKH_SANS",         0,  0,   0, 127, 0}, /* 088 */
+	{"1156 - Kitty Stables",    2, 1156, "stateKS",              0,  0,   0, 127, 0}, /* 089 */
+	{"1160 - High Roller Hall", 2, 1160, "stateHH",              0,  0,   0, 127, 0}, /* 090 */
+	{"1161 - High Roller Lnge", 3, 1161, "stateHL",              0,  0, 400, 127, 0}, /* 091 */
+	{"1162 - Glottis Gambling", 2, 1162, "stateHL_GLOT",         0,  0,   0, 127, 0}, /* 092 */
+	{"1163 - Max's Office",     3, 1163, "stateMX",              0,  0, 400, 127, 0}, /* 093 */
+	{"1125 - Hector Steps Out", 3, 1164, "stateHK",             94,  4, 200, 127, 80}, /* 094 */
+	{"1125 - Hector Steps Out", 3, 1165, "stateHP",             94,  4, 200,  20, 64}, /* 095 */
+	{"1125 - Hector Steps Out", 3, 1166, "stateHE",             94,  4, 200, 127, 10}, /* 096 */
+	{"1167 - Dillopede Elev",   3, 1167, "stateDE",              0,  0,   0, 127, 0}, /* 097 */
+	{"1167 - Dillopede Elev",   3, 1168, "stateDH",              0,  0,   0, 127, 0}, /* 098 */
+	{"1167 - Dillopede Elev",   3, 1169, "stateWC",              0,  0,   0, 127, 0}, /* 099 */
+	{"1170 - Extendo Bridge",   3, 1170, "stateXB",              0,  0, 400, 105, 0}, /* 100 */
+	{"1170 - Extendo Bridge",   3, 1171, "stateSD",              0,  0, 400, 105, 0}, /* 101 */
+	{"1170 - Extendo Bridge",   3, 1172, "stateSE",              0,  0, 400, 105, 0}, /* 102 */
+	{"1173 - Scrimshaw Int",    2, 1173, "stateSI",              0,  0, 400, 127, 0}, /* 103 */
+	{"1174 - Scrim Sleep",      2, 1174, "stateSI_SLEEP",        0,  0, 400, 127, 0}, /* 104 */
+	{"1180 - Note to Manny",    2, 1180, "stateNT",              0,  0,   0,  72, 0}, /* 105 */
+	{"1155 - Sanspoof",         2, 1181, "statePF",              0,  0,   0, 127, 0}, /* 106 */
+	{"1201 - Lola Zapata",      2, 1201, "stateLZ",              0,  0,   0, 127, 0}, /* 107 */
+	{"1202 - Inside The Lola",  2, 1202, "stateIL",              0,  0,   0, 127, 0}, /* 108 */
+	{"1203 - Engine Room",      2, 1203, "stateEI",              0,  0,   0, 127, 0}, /* 109 */
+	{"1204 - Porthole",         2, 1204, "stateDP",              0,  0,   0, 127, 0}, /* 110 */
+	{"1204 - Porthole",         2, 1205, "stateOP",              0,  0,   0, 127, 0}, /* 111 */
+	{"1210 - Sunken Lola",      2, 1210, "stateSU",              0,  0,   0, 127, 0}, /* 112 */
+	{"1211 - Pearl Crater Sub", 2, 1211, "statePS",              0,  0,   0, 127, 0}, /* 113 */
+	{"1220 - Miner's Room",     3, 1220, "stateMN",              0,  0,   0, 127, 0}, /* 114 */
+	{"1220 - Miner's Room",     3, 1221, "stateMN_CHEPITO",      0,  0,   0, 127, 0}, /* 115 */
+	{"1222 - Exterior Airlock", 2, 1222, "stateEA",              0,  0,   0, 127, 0}, /* 116 */
+	{"1223 - Factory Hub",      2, 1223, "stateFH",              0,  4,   0, 127, 0}, /* 117 */
+	{"1224 - Foreman's Office", 2, 1224, "stateFO",              0,  0,   0, 127, 0}, /* 118 */
+	{"1230 - Vault Door",       2, 1230, "stateVD",              0,  0,   0, 127, 0}, /* 119 */
+	{"1231 - Outer Vault",      2, 1231, "stateVO",              0,  0,   0, 127, 0}, /* 120 */
+	{"1232 - Inner Vault",      2, 1232, "stateVI",              0,  0,   0, 127, 0}, /* 121 */
+	{"1233 - Ashtray Room",     2, 1233, "stateAR",              0,  0,   0, 127, 0}, /* 122 */
+	{"1234 - Ashtray Scary",    2, 1234, "stateAR_SCARY",        0,  0,   0, 127, 0}, /* 123 */
+	{"1235 - Ashtray Pensive",  2, 1235, "stateAR_PENSV",        0,  0,   0, 127, 0}, /* 124 */
+	{"1236 - Domino's Room",    2, 1236, "stateDR",              0,  0,   0, 127, 0}, /* 125 */
+	{"1240 - Conveyor Under",   3, 1240, "stateCY",              0,  4,   0, 127, 0}, /* 126 */
+	{"1240 - Conveyor Under",   3, 1241, "stateCW",              0,  0,   0, 127, 0}, /* 127 */
+	{"1241 - Crane Intro",      2, 1242, "stateCV",              0,  0,   0, 127, 0}, /* 128 */
+	{"1243 - Anchor Room",      3, 1243, "stateAC",              0,  0,   0, 127, 0}, /* 129 */
+	{"1244 - Glottis Hanging",  2, 1244, "stateGH",              0,  0,   0, 127, 0}, /* 130 */
+	{"1245 - End of the World", 2, 1245, "stateEW",              0,  0,   0, 127, 0}, /* 131 */
+	{"1246 - End World Later",  2, 1246, "stateEW_LATER",        0,  0,   0, 127, 0}, /* 132 */
+	{"1241 - Crane Intro",      2, 1247, "stateCU",              0,  0,   0, 127, 0}, /* 133 */
+	{"1250 - Upper Beach",      3, 1250, "stateBU",              0,  0,   0, 127, 0}, /* 134 */
+	{"1250 - Upper Beach",      3, 1251, "stateBL",              0,  0,   0, 127, 0}, /* 135 */
+	{"1252 - Lower Beach Boat", 3, 1252, "stateBL_BOAT",         0,  0,   0, 127, 0}, /* 136 */
+	{"1253 - Lamancha Sub",     2, 1253, "stateLU",              0,  0,   0, 127, 0}, /* 137 */
+	{"1254 - Crane Later",      2, 1254, "stateCUV_LATER",       0,  0,   0, 127, 0}, /* 138 */
+	{"1301 - Temple Gate",      3, 1301, "stateTG",              0,  0,   0, 127, 0}, /* 139 */
+	{"1301 - Temple Gate",      3, 1302, "stateBS",              0,  0,   0, 127, 0}, /* 140 */
+	{"1303 - Truck Depot",      2, 1303, "stateTD",              0,  0,   0, 105, 0}, /* 141 */
+	{"1306 - Mayan Train Pad",  3, 1306, "stateMT_CHEPITO",    143,  0,   0, 127, 0}, /* 142 */
+	{"1304 - Mayan Train Sta",  3, 1304, "stateMT",            143,  0,   0, 127, 0}, /* 143 */
+	{"1305 - Mayan Workshop",   2, 1305, "stateMY",              0,  0,   0, 127, 0}, /* 144 */
+	{"1307 - Mechanic's Kitch", 2, 1307, "stateMK",              0,  4,   0,  40, 64}, /* 145 */
+	{"1310 - Jello Bomb",       3, 1310, "stateJB",              0,  0,   0, 127, 0}, /* 146 */
+	{"1310 - Jello Bomb",       3, 1311, "stateXB_YEAR4",        0,  0,   0, 127, 0}, /* 147 */
+	{"1125 - Smooth Hector",    3, 1312, "stateBI_CLBYR4",     150,  4, 200,  20, 64}, /* 148 */
+	{"1125 - Smooth Hector",    3, 1313, "stateBI_KITYR4",     150,  4, 200,  50, 32}, /* 149 */
+	{"1125 - Smooth Hector",    3, 1314, "stateBK_YR4",        150,  4, 200, 105, 75}, /* 150 */
+	{"1122 - Blue Exterior",    3, 1315, "stateHB_YR4",          0,  0,   0, 127, 0}, /* 151 */
+	{"1122 - Blue Exterior",    3, 1316, "stateBW_YR4",          0,  0,   0, 127, 0}, /* 152 */
+	{"1122 - Blue Exterior",    3, 1317, "stateBE_YR4",          0,  0,   0, 127, 0}, /* 153 */
+	{"1332 - Hector's Foyer",   3, 1318, "stateHN",              0,  0,   0, 127, 0}, /* 154 */
+	{"1319 - Florist Video",    2, 1319, "stateFVID",            0,  0,   0, 127, 0}, /* 155 */
+	{"1320 - New LSA HQ",       2, 1320, "stateNQ",              0,  0,   0, 127, 0}, /* 156 */
+	{"1321 - LSA Sewer",        3, 1321, "stateLW",              0,  0,   0, 127, 0}, /* 157 */
+	{"1321 - LSA Sewer",        3, 1322, "stateSH",              0,  0,   0, 127, 0}, /* 158 */
+	{"1323 - Sewer Maze",       3, 1323, "stateZW",              0,  2,   0, 127, 0}, /* 159 */
+	{"1324 - Albinozod",        3, 1324, "stateAT",              0,  0,   0, 127, 0}, /* 160 */
+	{"1334 - Albino Trap",      3, 1334, "stateAT_TRAP",         0,  0,   0, 127, 0}, /* 161 */
+	{"1325 - Florist Shop",     3, 1325, "stateFP",            162,  0,   0, 127, 0}, /* 162 */
+	{"1326 - Florist Shop Int", 3, 1326, "stateFI",            162,  0,   0, 127, 0}, /* 163 */
+	{"1327 - Florist OK",       2, 1327, "stateFI_OK",           0,  0,   0, 127, 0}, /* 164 */
+	{"1323 - Sewer Maze",       3, 1328, "stateTE",              0,  2,   0, 127, 0}, /* 165 */
+	{"1329 - Theater Backstag", 2, 1329, "stateTH",              0,  4,   0, 127, 0}, /* 166 */
+	{"1330 - Lemans Lobby",     2, 1330, "stateLY",              0,  0,   0, 127, 0}, /* 167 */
+	{"1330 - Lemans Lobby",     2, 1331, "stateLY_CHOW",         0,  0,   0,  60, 0}, /* 168 */
+	{"1333 - Brennis Talk",     2, 1333, "stateLY_BREN",         0,  0,   0, 127, 0}, /* 169 */
+	{"1332 - Hector's Foyer",   3, 1332, "stateHF",              0,  0,   0, 127, 0}, /* 170 */
+	{"1342 - Neon Ledge",       2, 1340, "stateNL",              0,  0,   0, 127, 0}, /* 171 */
+	{"1350 - Meadow Flowers",   2, 1350, "stateMF",              0,  0,   0, 127, 0}, /* 172 */
+	{"1351 - Meadow",           2, 1351, "stateME",              0,  0,   0, 127, 0}, /* 173 */
+	{"1352 - Car Head",         2, 1352, "stateHI",              0,  0,   0, 127, 0}, /* 174 */
+	{"1353 - Greenhouse Appr",  2, 1353, "stateGE",              0,  0,   0, 127, 0}, /* 175 */
+	{"1355 - Shootout",         2, 1355, "stateSHOOT",           0,  0,   0, 127, 0}, /* 176 */
+	{"1354 - Game Ending",      2, 1354, "stateEND",             0,  0,   0, 127, 0}, /* 177 */
+	{"1400 - Start Credits",    2, 1400, "stateOPEN_CRED",       0,  0,   0, 127, 0}, /* 178 */
+	{"1401 - Smooth Hector",    2, 1401, "stateEND_CRED",        0,  0,  20, 105, 0}, /* 179 */
+	{"",                        0, 1500, "stateMenu",            0,  0,   0, 127, 0}, /* 180 */
 };
 
-const imuseComiTable _comiSeqMusicTable[] = {
-	{0, 2000, "SEQ_NULL",        0, 0,    0, ""            },
-	{0, 2100, "seqINTRO",        0, 0,    0, ""            },
-	{3, 2105, "seqInterlude1",   0, 0,   60, "2105-I~1.IMX"},
-	{8, 2110, "seqLastBoat",     0, 1,    0, ""            },
-	{0, 2115, "seqSINK_SHIP",    0, 0,    0, ""            },
-	{0, 2120, "seqCURSED_RING",  0, 0,   60, ""            },
-	{3, 2200, "seqInterlude2",   0, 0,   60, "2200-I~1.IMX"},
-	{3, 2210, "seqKidnapped",    0, 0,   60, "2210-K~1.IMX"},
-	{8, 2220, "seqSnakeVomits",  0, 1,    0, ""            },
-	{8, 2222, "seqPopBalloon",   0, 1,    0, ""            },
-	{3, 2225, "seqDropBalls",    0, 0,   60, "2225-D~1.IMX"},
-	{4, 2232, "seqArriveBarber", 0, 0,   60, "2232-A~1.IMX"},
-	{3, 2233, "seqAtonal",       0, 0,   60, "2233-A~1.IMX"},
-	{3, 2235, "seqShaveHead1",   0, 0,   60, "2235-S~1.IMX"},
-	{2, 2236, "seqShaveHead2",   0, 2,   60, "2235-S~1.IMX"},
-	{3, 2245, "seqCaberLose",    0, 0,   60, "2245-C~1.IMX"},
-	{3, 2250, "seqCaberWin",     0, 0,   60, "2250-C~1.IMX"},
-	{3, 2255, "seqDuel1",        0, 0,   60, "2255-D~1.IMX"},
-	{2, 2256, "seqDuel2",        0, 2,   60, "2255-D~1.IMX"},
-	{2, 2257, "seqDuel3",        0, 3,   60, "2255-D~1.IMX"},
-	{3, 2260, "seqBlowUpTree1",  0, 0,   60, "2260-B~1.IMX"},
-	{2, 2261, "seqBlowUpTree2",  0, 2,   60, "2260-B~1.IMX"},
-	{3, 2275, "seqMonkeys",      0, 0,   60, "2275-M~1.IMX"},
-	{9, 2277, "seqAttack",       0, 1,    0, ""            },
-	{3, 2285, "seqSharks",       0, 0,   60, "2285-S~1.IMX"},
-	{3, 2287, "seqTowelWalk",    0, 0,   60, "2287-T~1.IMX"},
-	{0, 2293, "seqNICE_BOOTS",   0, 0,    0, ""            },
-	{0, 2295, "seqBIG_BONED",    0, 0,    0, ""            },
-	{3, 2300, "seqToBlood",      0, 0,   60, "2300-T~1.IMX"},
-	{3, 2301, "seqInterlude3",   0, 0,   60, "2301-I~1.IMX"},
-	{3, 2302, "seqRott1",        0, 0,   60, "2302-R~1.IMX"},
-	{2, 2304, "seqRott2",        0, 2,   60, "2302-R~1.IMX"},
-	{2, 2305, "seqRott2b",       0,21,   60, "2302-R~1.IMX"},
-	{2, 2306, "seqRott3",        0, 3,   60, "2302-R~1.IMX"},
-	{2, 2308, "seqRott4",        0, 4,   60, "2302-R~1.IMX"},
-	{2, 2309, "seqRott5",        0, 5,   60, "2302-R~1.IMX"},
-	{3, 2311, "seqVerse1",       0, 0,   60, "2311-S~1.IMX"},
-	{2, 2312, "seqVerse2",       0, 2,   60, "2311-S~1.IMX"},
-	{2, 2313, "seqVerse3",       0, 3,   60, "2311-S~1.IMX"},
-	{2, 2314, "seqVerse4",       0, 4,   60, "2311-S~1.IMX"},
-	{2, 2315, "seqVerse5",       0, 5,   60, "2311-S~1.IMX"},
-	{2, 2316, "seqVerse6",       0, 6,   60, "2311-S~1.IMX"},
-	{2, 2317, "seqVerse7",       0, 7,   60, "2311-S~1.IMX"},
-	{2, 2318, "seqVerse8",       0, 8,   60, "2311-S~1.IMX"},
-	{2, 2319, "seqSongEnd",      0, 9,   60, "2311-S~1.IMX"},
-	{2, 2336, "seqRiposteLose",  0, 0,   60, "2336-R~1.IMX"},
-	{2, 2337, "seqRiposteWin",   0, 0,   60, "2337-R~1.IMX"},
-	{2, 2338, "seqInsultLose",   0, 0,   60, "2338-I~1.IMX"},
-	{2, 2339, "seqInsultWin",    0, 0,   60, "2339-I~1.IMX"},
-	{3, 2340, "seqSwordLose",    0, 0,   60, "1335-S~1.IMX"},
-	{3, 2345, "seqSwordWin",     0, 0,   60, "1340-S~1.IMX"},
-	{3, 2347, "seqGetMap",       0, 0,   60, "1345-G~1.IMX"},
-	{3, 2400, "seqInterlude4",   0, 0,   60, "2400-I~1.IMX"},
-	{0, 2405, "seqSHIPWRECK",    0, 0,    0, ""            },
-	{3, 2408, "seqFakeCredits",  0, 0,   60, "2408-F~1.IMX"},
-	{3, 2410, "seqPassOut",      0, 0,   60, "2410-P~1.IMX"},
-	{3, 2414, "seqGhostTalk",    0, 0,   60, "2414-G~1.IMX"},
-	{2, 2415, "seqGhostWedding", 0, 1,   60, "2414-G~1.IMX"},
-	{3, 2420, "seqEruption",     0, 0,   60, "2420-E~1.IMX"},
-	{3, 2425, "seqSacrifice",    0, 0,   60, "2425-S~1.IMX"},
-	{2, 2426, "seqSacrificeEnd", 0, 1,   60, "2425-S~1.IMX"},
-	{3, 2430, "seqScareDigger",  0, 0,   60, "2430-S~1.IMX"},
-	{3, 2445, "seqSkullArrive",  0, 0,   60, "2445-S~1.IMX"},
-	{3, 2450, "seqFloat",        0, 0,   60, "2450-C~1.IMX"},
-	{2, 2451, "seqFall",         0, 1,   60, "2450-C~1.IMX"},
-	{2, 2452, "seqUmbrella",     0, 2,   60, "2450-C~1.IMX"},
-	{3, 2460, "seqFight",        0, 0,   60, "2460-F~1.IMX"},
-	{0, 2465, "seqLAVE_RIDE",    0, 0,    0, ""            },
-	{0, 2470, "seqMORE_SLAW",    0, 0,    0, ""            },
-	{0, 2475, "seqLIFT_CURSE",   0, 0,    0, ""            },
-	{3, 2500, "seqInterlude5",   0, 0,   60, "2500-I~1.IMX"},
-	{3, 2502, "seqExitSkycar",   0, 0,   60, "2502-E~1.IMX"},
-	{3, 2504, "seqGrow1",        0, 0,   60, "2504-G~1.IMX"},
-	{2, 2505, "seqGrow2",        0, 1,   60, "2504-G~1.IMX"},
-	{3, 2508, "seqInterlude6",   0, 0,   60, "2508-I~1.IMX"},
-	{0, 2515, "seqFINALE",       0, 0,    0, ""            },
-	{3, 2520, "seqOut",          0, 0,   60, "2520-OUT.IMX"},
-	{3, 2530, "seqZap1a",        0, 0,   60, "2530-Z~1.IMX"},
-	{2, 2531, "seqZap1b",        0, 1,   60, "2530-Z~1.IMX"},
-	{2, 2532, "seqZap1c",        0, 2,   60, "2530-Z~1.IMX"},
-	{2, 2540, "seqZap2a",        0, 0,   60, "2540-Z~1.IMX"},
-	{2, 2541, "seqZap2b",        0, 1,   60, "2540-Z~1.IMX"},
-	{2, 2542, "seqZap2c",        0, 2,   60, "2540-Z~1.IMX"},
-	{3, 2550, "seqZap3a",        0, 0,   60, "2550-Z~1.IMX"},
-	{2, 2551, "seqZap3b",        0, 1,   60, "2550-Z~1.IMX"},
-	{2, 2552, "seqZap3c",        0, 2,   60, "2550-Z~1.IMX"},
-	{3, 2560, "seqZap4a",        0, 0,   60, "2560-Z~1.IMX"},
-	{2, 2561, "seqZap4b",        0, 1,   60, "2560-Z~1.IMX"},
-	{2, 2562, "seqZap4c",        0, 2,   60, "2560-Z~1.IMX"},
-	{0,   -1, "",                0, 0,    0, ""            }
+const IMuseDigiStateTable _grimSeqMusicTable[41] = {
+	{"",                        0, 2000, "SEQ_NULL",             0,  0, 300, 127, 0}, /* 000 */
+	{"2001 - Climb Rope",       2, 2001, "seqClimbRope",         0,  0, 300, 127, 0}, /* 001 */
+	{"2010 - Glottis OK",       2, 2010, "seqGlottisOK",         0,  0, 300, 127, 0}, /* 002 */
+	{"2020 - Reap Bruno",       2, 2020, "seqReapBruno",         0,  0, 300, 127, 0}, /* 003 */
+	{"2030 - Ledgepeckers",     2, 2030, "seqLedgepeckers",      0,  0, 300, 127, 0}, /* 004 */
+	{"2050 - Glottis Heart",    2, 2050, "seqGlottisHeart",      0,  0, 300, 105, 0}, /* 005 */
+	{"2055 - Slingshot Bone",   2, 2055, "seqSlingshotBone",     0,  0, 300, 127, 0}, /* 006 */
+	{"2060 - Glott Tree Fall",  2, 2060, "seqGlottTreeFall",     0,  0, 300, 127, 0}, /* 007 */
+	{"2070 - Beaver Fly",       2, 2070, "seqBeaverFly",         0,  0, 300, 127, 0}, /* 008 */
+	{"2071 - Beaver Sink",      2, 2071, "seqBeaverSink",        0,  0, 300, 127, 0}, /* 009 */
+	{"2080 - Meet Velasco",     2, 2080, "seqMeetVelasco",       0,  0, 300, 127, 0}, /* 010 */
+	{"2140 - Ooo Bonewagon",    2, 2140, "seqGlottSingBone",     0,  0, 300, 127, 75}, /* 011 */
+	{"2141 - Ooo Meche",        2, 2141, "seqMannySingMeche",    0,  0, 300, 127, 75}, /* 012 */
+	{"2155 - Find Detector",    2, 2155, "seqFindDetector",      0,  0, 300, 127, 0}, /* 013 */
+	{"2156 - Glott Drink Wine", 2, 2156, "seqGlottDrinkWine",    0,  0, 300, 127, 0}, /* 014 */
+	{"2157 - Glott No Wine",    2, 2157, "seqGlottNoWine",       0,  0, 300, 127, 0}, /* 015 */
+	{"2161 - Raoul Appears",    2, 2161, "seqRaoulAppears",      0,  0, 300, 127, 0}, /* 016 */
+	{"2162 - Raoul KO",         2, 2162, "seqRaoulKO",           0,  0, 300, 127, 0}, /* 017 */
+	{"2163 - Raoul Dissed",     2, 2163, "seqRaoulDissed",       0,  0, 300, 127, 0}, /* 018 */
+	{"2165 - Fake Tix",         2, 2165, "seqFakeTix",           0,  0, 300, 127, 0}, /* 019 */
+	{"2180 - Befriend Commies", 2, 2180, "seqBefriendCommies",   0,  0, 300, 127, 0}, /* 020 */
+	{"2186 - Nick Punchout",    2, 2186, "seqNickPunchout",      0,  0, 300, 127, 0}, /* 021 */
+	{"2200 - Yr 3 Iris",        2, 2200, "seqYr3Iris",           0,  0, 300, 127, 0}, /* 022 */
+	{"2210 - Hit Men",          2, 2210, "seqHitMen",            0,  0, 700, 127, 0}, /* 023 */
+	{"2230 - Open Vault",       2, 2230, "seqOpenVault",         0,  0, 300, 127, 0}, /* 024 */
+	{"2235 - Dead Tix",         2, 2235, "seqDeadTix",           0,  0, 300, 127, 0}, /* 025 */
+	{"2240 - Sprinkler",        2, 2240, "seqSprinkler",         0,  0, 500, 127, 0}, /* 026 */
+	{"2250 - Crane Track",      2, 2250, "seqCraneTrack",        0,  0, 300, 127, 0}, /* 027 */
+	{"2255 - Crane Fall",       2, 2255, "seqCraneFall",         0,  0, 300, 127, 0}, /* 028 */
+	{"2300 - Yr 4 Iris",        2, 2300, "seqYr4Iris",           0,  0, 300, 127, 0}, /* 029 */
+	{"2301 - Pop Bruno Casket", 2, 2301, "seqPopBrunoCasket",    0,  0, 300, 127, 0}, /* 030 */
+	{"2310 - Rocket Idea",      2, 2310, "seqRocketIdea",        0,  0, 300, 127, 0}, /* 031 */
+	{"2320 - Jello Suspense",   2, 2320, "seqJelloSuspense",     0,  0, 300, 127, 0}, /* 032 */
+	{"2325 - Lumbago Lemo",     2, 2325, "seqLumbagoLemo",       0,  0, 300, 127, 0}, /* 033 */
+	{"2327 - Breath Mint",      2, 2327, "seqBreathMint",        0,  0, 300, 127, 0}, /* 034 */
+	{"2330 - Pigeon Fly",       2, 2330, "seqPigeonFly",         0,  0, 300, 127, 0}, /* 035 */
+	{"2340 - Coffee On Boys",   2, 2340, "seqCoffeeOnBoys",      0,  0, 300, 127, 0}, /* 036 */
+	{"2350 - Sprout Aha",       2, 2350, "seqSproutAha",         0,  0, 300, 127, 0}, /* 037 */
+	{"2360 - Chowchilla Bye",   2, 2360, "seqChowchillaBye",     0,  0, 300, 127, 0}, /* 038 */
+	{"2370 - Salvador Death",   2, 2370, "seqSalvadorDeath",     0,  0, 300, 127, 0}, /* 039 */
+	{"2399 - End Credits",      2, 2399, "seqEndCredits",        0,  0, 200, 127, 0}, /* 040 */
 };
 
 } // End of namespace Grim

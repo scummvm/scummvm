@@ -23,7 +23,9 @@
 
 namespace Grim {
 
-#define COMI_STATE_OFFSET 3
+#define GRIM_STATE_OFFSET   3
+#define GRIM_SEQ_OFFSET     185
+#define GRIM_STOP_SEQ_ATTR  227
 
 int IMuseDigital::scriptParse(int cmd, int a, int b) {
 	if (_scriptInitializedFlag || !cmd) {
@@ -77,7 +79,7 @@ int IMuseDigital::scriptInit() {
 }
 
 int IMuseDigital::scriptTerminate() {
-	diMUSETerminate();
+	scriptDeinit();
 
 	_curMusicState = 0;
 	_curMusicSeq = 0;
@@ -88,48 +90,137 @@ int IMuseDigital::scriptTerminate() {
 
 void IMuseDigital::scriptRefresh() {
 	int soundId;
-	int nextSound;
 
-	if (_stopSequenceFlag) {
+	if (_attributes[GRIM_STOP_SEQ_ATTR]) {
 		scriptSetSequence(0);
-		_stopSequenceFlag = 0;
+		_attributes[GRIM_STOP_SEQ_ATTR] = 0;
 	}
 
-	soundId = 0;
-
-	while (1) {
-		nextSound = diMUSEGetNextSound(soundId);
-		soundId = nextSound;
-
-		if (!nextSound)
+	soundId = diMUSEGetNextSound(0);
+	while (soundId) {
+		if (diMUSEGetParam(soundId, DIMUSE_P_SND_HAS_STREAM) && diMUSEGetParam(soundId, DIMUSE_P_STREAM_BUFID) == DIMUSE_BUFFER_MUSIC)
 			break;
 
-		if (diMUSEGetParam(nextSound, DIMUSE_P_SND_HAS_STREAM) && diMUSEGetParam(soundId, DIMUSE_P_STREAM_BUFID) == DIMUSE_BUFFER_MUSIC) {
-			if (soundId)
-				return;
-			break;
-		}
+		soundId = diMUSEGetNextSound(soundId);
 	}
 
-	if (_curMusicSeq)
-		scriptSetSequence(0);
+	if (!soundId) {
+		if (_curMusicSeq)
+			scriptSetSequence(0);
+	}
 
 	flushTracks();
 }
 
-void IMuseDigital::scriptSetState(int soundId) {
-	setComiMusicState(soundId);
+void IMuseDigital::scriptSetState(int stateId) {
+	int num;
+
+	if (stateId == -1)
+		return;
+
+	for (num = 0; num < ARRAYSIZE(_grimStateMusicTable); num++) {
+		if (_grimStateMusicTable[num].soundId == stateId)
+			break;
+	}
+
+	if (num == ARRAYSIZE(_grimStateMusicTable))
+		return;
+
+	debug(5, "IMuseDigital::scriptSetState(): Set music state: %s", _grimStateMusicTable[num].internalName);
+
+	if (num != _curMusicState) {
+		if (!_curMusicSeq)
+			scriptPlayMusic(num ? &_grimStateMusicTable[num] : nullptr, num, false);
+
+		_curMusicState = num;
+	}
 }
 
-void IMuseDigital::scriptSetSequence(int soundId) {
-	setComiMusicSequence(soundId);
+void IMuseDigital::scriptSetSequence(int seqId) {
+	int num;
+
+	if (seqId == -1)
+		return;
+
+	if (seqId == 0)
+		seqId = 2000;
+
+	for (num = 0; num < ARRAYSIZE(_grimSeqMusicTable); num++) {
+		if (_grimSeqMusicTable[num].soundId == seqId)
+			break;
+	}
+
+	if (num == ARRAYSIZE(_grimSeqMusicTable)) {
+		debug(5, "IMuseDigital::scriptSetSequence(): bogus sequence");
+		return;
+	}
+
+	debug(5, "IMuseDigital::scriptSetSequence(): Set music sequence: %s", _grimSeqMusicTable[num].internalName);
+
+	if (num == _curMusicSeq)
+		return;
+
+	if (num) {
+		if (_curMusicSeq && (_grimSeqMusicTable[_curMusicSeq].transitionId == 4 || _grimSeqMusicTable[_curMusicSeq].transitionId == 6)) {
+			_nextSeqToPlay = num;
+			return;
+		}
+
+		scriptPlayMusic(&_grimSeqMusicTable[num], 0, true);
+		_nextSeqToPlay = 0;
+		_attributes[GRIM_SEQ_OFFSET + num] = 1;
+		_curMusicSeq = num;
+	} else {
+		if (_nextSeqToPlay) {
+			scriptPlayMusic(&_grimSeqMusicTable[_nextSeqToPlay], 0, true);
+			_curMusicSeq = _nextSeqToPlay;
+			_nextSeqToPlay = 0;
+			_attributes[GRIM_SEQ_OFFSET + _curMusicSeq] = 1;
+			return;
+		}
+
+		scriptPlayMusic(_curMusicState ? &_grimStateMusicTable[_curMusicState] : nullptr, _curMusicState, true);
+		_curMusicSeq = 0;
+	}
 }
 
 void IMuseDigital::scriptSetCuePoint(int cueId) {
 }
 
 int IMuseDigital::scriptSetAttribute(int attrIndex, int attrVal) {
+	if (attrIndex == -1) {
+		if (attrVal == 0) {
+			diMUSEPause();
+		} else if (attrVal == 1) {
+			diMUSEResume();
+		} else if (attrVal == -1) {
+			memset(_attributes, 0, sizeof(_attributes));
+		}
+	} else if (attrIndex == 10000) {
+		char *dest = (char *)(intptr)attrVal;
+
+		for (int i = 0; i < ARRAYSIZE(_grimStateMusicTable); i++) {
+			memcpy(dest, _grimStateMusicTable[i].name, strlen(_grimStateMusicTable[i].name) + 1);
+			dest += strlen(_grimStateMusicTable[i].name) + 1;
+		}
+
+		for (int i = 0; i < ARRAYSIZE(_grimSeqMusicTable); i++) {
+			memcpy(dest, _grimSeqMusicTable[i].name, strlen(_grimSeqMusicTable[i].name) + 1);
+			dest += strlen(_grimSeqMusicTable[i].name) + 1;
+		}
+	} else if ((uint32)attrIndex >= ARRAYSIZE(_attributes)) {
+		debug(5, "IMuseDigital::scriptSetAttribute(): bogus attribute");
+	} else if (attrVal != -1) {
+		debug(5, "IMuseDigital::scriptSetAttribute(): Set attr %u to %u", attrIndex, attrVal);
+		_attributes[attrIndex] = attrVal;
+	}
+
 	return 0;
+}
+
+void IMuseDigital::scriptDeinit() {
+	diMUSEStopAllSounds();
+	_filesHandler->closeAllSounds();
 }
 
 int IMuseDigital::scriptTriggerCallback(char *marker) {
@@ -137,241 +228,166 @@ int IMuseDigital::scriptTriggerCallback(char *marker) {
 		debug(5, "IMuseDigital::scriptTriggerCallback(): got marker != '_end', callback ignored");
 		return -1;
 	}
-	_stopSequenceFlag = 1;
+	_attributes[GRIM_STOP_SEQ_ATTR] = 1;
 	return 0;
 }
 
-
-void IMuseDigital::setComiMusicState(int stateId) {
-	int l, num = -1;
-
-	if (stateId == 0)
-		stateId = 1000;
-
-	for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
-		if ((_comiStateMusicTable[l].soundId == stateId)) {
-			debug(5, "IMuseDigital::setComiMusicState(): Set music state: %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].filename);
-			num = l;
-			break;
-		}
-	}
-
-	if (num == -1)
-		return;
-
-	if (_curMusicState == num)
-		return;
-
-	if (_curMusicSeq == 0) {
-		if (num == 0)
-			playComiMusic(nullptr, &_comiStateMusicTable[0], num, false);
-		else
-			playComiMusic(_comiStateMusicTable[num].name, &_comiStateMusicTable[num], num, false);
-	}
-
-	_curMusicState = num;
-}
-
-void IMuseDigital::setComiMusicSequence(int seqId) {
-	int l, num = -1;
-
-	if (seqId == 0)
-		seqId = 2000;
-
-	for (l = 0; _comiSeqMusicTable[l].soundId != -1; l++) {
-		if ((_comiSeqMusicTable[l].soundId == seqId)) {
-			debug(5, "IMuseDigital::setComiMusicSequence(): Set music sequence: %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].filename);
-			num = l;
-			break;
-		}
-	}
-
-	if (num == -1)
-		return;
-
-	if (_curMusicSeq == num)
-		return;
-
-	if (num != 0) {
-		if (_curMusicSeq && ((_comiSeqMusicTable[_curMusicSeq].transitionType == 4)
-			|| (_comiSeqMusicTable[_curMusicSeq].transitionType == 6))) {
-			_nextSeqToPlay = num;
-			return;
-		} else {
-			playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
-			_nextSeqToPlay = 0;
-		}
-	} else {
-		if (_nextSeqToPlay != 0) {
-			playComiMusic(_comiSeqMusicTable[_nextSeqToPlay].name, &_comiSeqMusicTable[_nextSeqToPlay], 0, true);
-			num = _nextSeqToPlay;
-			_nextSeqToPlay = 0;
-		} else {
-			if (_curMusicState != 0) {
-				playComiMusic(_comiStateMusicTable[_curMusicState].name, &_comiStateMusicTable[_curMusicState], _curMusicState, true);
-			} else {
-				playComiMusic(nullptr, &_comiStateMusicTable[0], _curMusicState, true);
-			}
-			num = 0;
-		}
-	}
-
-	_curMusicSeq = num;
-}
-
-void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *table, int attribPos, bool sequence) {
+void IMuseDigital::scriptPlayMusic(const IMuseDigiStateTable *tableEntry, int curSongEntryId, int isSequence) {
 	int hookId = 0;
-	int fadeDelay = 0;
+	int attribPos, oldSoundId, newSoundId, soundId;
+	int fadeTime, fadeDelay, fadeLength;
 
-	// This flag is not set in the original,
-	// but since we're not using DirectSound and this is pretty much timing related
-	// please see IMuseDigital::waveOutWrite() for more context...
 	Common::StackLock lock(*_mutex);
-	_waveOutXorTrigger = 1;
 
-	if ((songName != nullptr) && (attribPos != 0)) {
-		if (table->attribPos != 0)
-			attribPos = table->attribPos;
-		hookId = _attributes[COMI_STATE_OFFSET + attribPos];
+	if (tableEntry) {
+		attribPos = curSongEntryId;
+		if (curSongEntryId) {
+			if (tableEntry->attribPos)
+				attribPos = tableEntry->attribPos;
 
-		if (table->hookId != 0) {
-			if ((hookId != 0) && (table->hookId > 1)) {
-				_attributes[COMI_STATE_OFFSET + attribPos] = 2;
-			} else {
-				_attributes[COMI_STATE_OFFSET + attribPos] = hookId + 1;
-				if (table->hookId < hookId + 1)
-					_attributes[COMI_STATE_OFFSET + attribPos] = 1;
+			hookId = _attributes[GRIM_STATE_OFFSET + attribPos];
+
+			if (tableEntry->hookId) {
+				if (hookId || tableEntry->hookId <= 1) {
+					_attributes[GRIM_STATE_OFFSET + attribPos] = hookId + 1;
+					if (hookId + 1 > tableEntry->hookId)
+						_attributes[GRIM_STATE_OFFSET + attribPos] = 1;
+				} else {
+					_attributes[GRIM_STATE_OFFSET + attribPos] = 2;
+				}
 			}
 		}
 	}
 
-	int nextSoundId = 0;
-	while (1) {
-		nextSoundId = diMUSEGetNextSound(nextSoundId);
-		if (!nextSoundId)
-			break;
+	if (!hookId)
+		hookId = 100;
 
-		// If a sound is found (and its stream is active), fade it out if it's a music track
-		if (diMUSEGetParam(nextSoundId, DIMUSE_P_GROUP) == DIMUSE_GROUP_MUSICEFF && !diMUSEGetParam(nextSoundId, DIMUSE_P_SND_HAS_STREAM))
-			diMUSEFadeParam(nextSoundId, DIMUSE_P_VOLUME, 0, 120);
+	// Fade out any music track which is not streamed
+	for (soundId = diMUSEGetNextSound(0); soundId; soundId = diMUSEGetNextSound(soundId)) {
+		if (diMUSEGetParam(soundId, DIMUSE_P_GROUP) == DIMUSE_GROUP_MUSICEFF && !diMUSEGetParam(soundId, DIMUSE_P_SND_HAS_STREAM))
+			diMUSEFadeParam(soundId, DIMUSE_P_VOLUME, 0, 120);
 	}
 
-	int oldSoundId = 0;
-	nextSoundId = 0;
-	while (1) {
-		nextSoundId = diMUSEGetNextSound(nextSoundId);
-		if (!nextSoundId)
-			break;
-
-		if (diMUSEGetParam(nextSoundId, DIMUSE_P_SND_HAS_STREAM) && (diMUSEGetParam(nextSoundId, DIMUSE_P_STREAM_BUFID) == DIMUSE_BUFFER_MUSIC)) {
-			oldSoundId = nextSoundId;
+	oldSoundId = 0;
+	for (soundId = diMUSEGetNextSound(0); soundId; soundId = diMUSEGetNextSound(soundId)) {
+		if (diMUSEGetParam(soundId, DIMUSE_P_SND_HAS_STREAM) && diMUSEGetParam(soundId, DIMUSE_P_STREAM_BUFID) == DIMUSE_BUFFER_MUSIC) {
+			oldSoundId = soundId;
 			break;
 		}
 	}
 
-	if (!songName) {
+	if (!tableEntry) {
 		if (oldSoundId)
 			diMUSEFadeParam(oldSoundId, DIMUSE_P_VOLUME, 0, 120);
 		return;
 	}
 
-	switch (table->transitionType) {
-	case 0:
-		debug(5, "IMuseDigital::playComiMusic(): NULL transition, ignored");
-		break;
-	case 1:
-		if (_filesHandler->openSound(table->soundId))
-			return;
+	fadeTime = tableEntry->fadeTime;
+	if (!fadeTime)
+		fadeTime = 1000;
 
-		if (table->soundId) {
-			if (diMUSEStartSound(table->soundId, 126))
-				debug(5, "IMuseDigital::playComiMusic(): transition 1, failed to start the sound (%d)", table->soundId);
-			diMUSESetParam(table->soundId, DIMUSE_P_VOLUME, 1);
-			diMUSEFadeParam(table->soundId, DIMUSE_P_VOLUME, 127, 120);
-			_filesHandler->closeSound(table->soundId);
-			diMUSESetParam(table->soundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
-		} else {
-			debug(5, "IMuseDigital::playComiMusic(): transition 1, empty soundId, ignored");
-		}
+	fadeDelay = fadeTime;
+	fadeLength = (3 * fadeTime) / 50;
+
+	switch (tableEntry->transitionId) {
+	case 0:
+		debug(5, "IMuseDigital::scriptPlayMusic(): NULL transition, ignored");
 		break;
 	case 2:
 	case 3:
 	case 4:
+	case 10:
+	case 11:
 	case 12:
-		if (_filesHandler->openSound(table->soundId))
-			return;
+		// TODO
+		// newSoundId = diMUSEOpenSound(fileName, 0);
+		newSoundId = _filesHandler->openSound(tableEntry->soundId) ? 0 : tableEntry->soundId;
 
-		if (table->filename[0] == 0 || table->soundId == 0) {
+		if (!newSoundId) {
+			debug(5, "IMuseDigital::scriptPlayMusic(): unable to open sound %d", tableEntry->soundId);
 			if (oldSoundId)
 				diMUSEFadeParam(oldSoundId, DIMUSE_P_VOLUME, 0, 60);
-			break;
+			return;
 		}
 
-		if (table->transitionType == 4) {
-			_stopSequenceFlag = 0;
-			diMUSESetTrigger(table->soundId, MKTAG('_', 'e', 'n', 'd'), DIMUSE_C_SCRIPT_CALLBACK);
+		if (tableEntry->transitionId == 4) {
+			_attributes[GRIM_STOP_SEQ_ATTR] = 0;
+			diMUSESetTrigger(newSoundId, "_end", DIMUSE_C_SCRIPT_CALLBACK);
 		}
 
-		if (oldSoundId) {
-			fadeDelay = table->fadeOutDelay;
-			if (!fadeDelay)
-				fadeDelay = 1000;
-			else
-				fadeDelay = (fadeDelay * 100) / 6; // Set dimuse_table fade out time to millisecond scale
+		debug(5, "IMuseDigital::scriptPlayMusic(): HOOK=%d", hookId);
 
-			if (table->transitionType == 2) {
-				diMUSESwitchStream(oldSoundId, table->soundId, fadeDelay, 0, 0);
-				diMUSESetParam(table->soundId, DIMUSE_P_VOLUME, 127);
-				diMUSESetParam(table->soundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
-				diMUSESetHook(table->soundId, table->hookId);
-				diMUSEProcessStreams();
-			} else if (oldSoundId != table->soundId) {
-				if ((!sequence) && (table->attribPos != 0) &&
-					(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
+		if (!oldSoundId) {
+			debug(5, "IMuseDigital::scriptPlayMusic(): no stream sound");
+			if (diMUSEStartStream(newSoundId, 126, DIMUSE_BUFFER_MUSIC))
+				debug(5, "IMuseDigital::scriptPlayMusic(): failed to start the stream for sound %d", newSoundId);
 
-					debug(5, "IMuseDigital::playComiMusic(): Starting new sound (%s) with same attribute as old sound (%s)",
-						table->name, _comiStateMusicTable[_curMusicState].name);
-
-					diMUSESwitchStream(oldSoundId, table->soundId, fadeDelay, 0, 1);
-					diMUSESetParam(table->soundId, DIMUSE_P_VOLUME, 127);
-					diMUSESetParam(table->soundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
-					diMUSEProcessStreams();
-				} else {
-					switch (table->transitionType) {
-					case 12:
-						diMUSESetHook(oldSoundId, table->hookId);
-						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), DIMUSE_C_SWITCH_STREAM, oldSoundId, table->soundId, fadeDelay, 1, 0);
-						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), DIMUSE_C_SET_PARAM, table->soundId, DIMUSE_P_VOLUME, 127);
-						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), DIMUSE_C_SET_PARAM, table->soundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
-						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), DIMUSE_C_SET_HOOK, table->soundId, hookId);
-						diMUSEProcessStreams();
-						break;
-					default:
-						diMUSESwitchStream(oldSoundId, table->soundId, fadeDelay, 0, 0);
-						diMUSESetParam(table->soundId, DIMUSE_P_VOLUME, 127);
-						diMUSESetParam(table->soundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
-						diMUSESetHook(table->soundId, hookId);
-						diMUSEProcessStreams();
-						break;
-					}
-				}
+			diMUSESetParam(newSoundId, DIMUSE_P_VOLUME, 0);
+			diMUSEFadeParam(newSoundId, DIMUSE_P_VOLUME, tableEntry->volume, fadeLength);
+			diMUSESetParam(newSoundId, DIMUSE_P_PAN, tableEntry->pan);
+			diMUSESetParam(newSoundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
+			diMUSESetHook(newSoundId, hookId);
+		} else if (tableEntry->transitionId == 2) {
+			diMUSESwitchStream(oldSoundId, newSoundId, fadeDelay, 0, 0);
+			debug(5, "IMuseDigital::scriptPlayMusic(): FADE=%d, vol=%d", fadeDelay, tableEntry->volume);
+			diMUSEFadeParam(newSoundId, DIMUSE_P_VOLUME, tableEntry->volume, fadeLength);
+			diMUSEFadeParam(newSoundId, DIMUSE_P_PAN, tableEntry->pan, fadeLength);
+			diMUSESetParam(newSoundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
+			diMUSESetHook(newSoundId, hookId);
+			diMUSEProcessStreams();
+		} else if (oldSoundId == newSoundId) {
+			diMUSEFadeParam(newSoundId, DIMUSE_P_VOLUME, tableEntry->volume, fadeLength);
+			debug(5, "IMuseDigital::scriptPlayMusic(): fading VOL=%d", tableEntry->volume);
+			if (tableEntry->pan) {
+				diMUSEFadeParam(newSoundId, DIMUSE_P_PAN, tableEntry->pan, fadeLength);
+				debug(5, "IMuseDigital::scriptPlayMusic(): and PAN=%d", tableEntry->pan);
 			}
+		} else if (!isSequence && tableEntry->attribPos && tableEntry->attribPos == _grimStateMusicTable[_curMusicState].attribPos) {
+			diMUSESwitchStream(oldSoundId, newSoundId, fadeDelay, 0, 1);
+			diMUSEFadeParam(newSoundId, DIMUSE_P_VOLUME, tableEntry->volume, fadeLength);
+			diMUSEFadeParam(newSoundId, DIMUSE_P_PAN, tableEntry->pan, fadeLength);
+			diMUSESetParam(newSoundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
+			if (hookId == 100)
+				diMUSESetHook(newSoundId, 100);
+			diMUSEProcessStreams();
+		} else if (tableEntry->transitionId == 10 || tableEntry->transitionId == 12) {
+			if (tableEntry->transitionId == 12) {
+				diMUSESetHook(oldSoundId, 99);
+				diMUSESetTrigger(oldSoundId, "clear", DIMUSE_C_SET_HOOK, oldSoundId, 128);
+			}
+
+			diMUSESetTrigger(oldSoundId, "exit", DIMUSE_C_SWITCH_STREAM, oldSoundId, newSoundId, fadeDelay, 1, 0);
+			diMUSESetTrigger(oldSoundId, "exit", DIMUSE_C_FADE_PARAM, newSoundId, DIMUSE_P_VOLUME, tableEntry->volume, fadeLength);
+			diMUSESetTrigger(oldSoundId, "exit", DIMUSE_C_FADE_PARAM, newSoundId, DIMUSE_P_PAN, tableEntry->pan, fadeLength);
+			diMUSESetTrigger(oldSoundId, "exit", DIMUSE_C_SET_PARAM, newSoundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
+			diMUSESetTrigger(oldSoundId, "exit", DIMUSE_C_SET_HOOK, newSoundId, hookId);
+			diMUSEProcessStreams();
+		} else if (tableEntry->transitionId == 11) {
+			diMUSESetTrigger(oldSoundId, "exit2", DIMUSE_C_SWITCH_STREAM, oldSoundId, newSoundId, fadeDelay, 1, 0);
+			diMUSESetTrigger(oldSoundId, "exit2", DIMUSE_C_FADE_PARAM, newSoundId, DIMUSE_P_VOLUME, tableEntry->volume, fadeLength);
+			diMUSESetTrigger(oldSoundId, "exit2", DIMUSE_C_FADE_PARAM, newSoundId, DIMUSE_P_PAN, tableEntry->pan, fadeLength);
+			diMUSESetTrigger(oldSoundId, "exit2", DIMUSE_C_SET_PARAM, newSoundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
+			diMUSESetTrigger(oldSoundId, "exit2", DIMUSE_C_SET_HOOK, newSoundId, hookId);
+			diMUSEProcessStreams();
 		} else {
-			if (diMUSEStartStream(table->soundId, 126, DIMUSE_BUFFER_MUSIC))
-				debug(5, "IMuseDigital::playComiMusic(): failed to start the stream for sound %d", table->soundId);
-			diMUSESetParam(table->soundId, DIMUSE_P_VOLUME, 127);
-			diMUSESetParam(table->soundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
-			diMUSESetHook(table->soundId, hookId);
+			diMUSESwitchStream(oldSoundId, newSoundId, fadeDelay, 0, 0);
+			debug(5, "IMuseDigital::scriptPlayMusic(): FADE=%d, vol=%d", fadeDelay, tableEntry->volume);
+			diMUSEFadeParam(newSoundId, DIMUSE_P_VOLUME, tableEntry->volume, fadeLength);
+			diMUSEFadeParam(newSoundId, DIMUSE_P_PAN, tableEntry->pan, fadeLength);
+			debug(5, "IMuseDigital::scriptPlayMusic(): set pan=%d", tableEntry->pan);
+			diMUSESetParam(newSoundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
+			diMUSESetHook(newSoundId, hookId);
+			diMUSEProcessStreams();
 		}
-		_filesHandler->closeSound(table->soundId);
-		diMUSESetParam(table->soundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
+
+		_filesHandler->closeSound(newSoundId);
+		diMUSESetParam(newSoundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
 		break;
 	case 5:
-		debug(5, "IMuseDigital::playComiMusic(): no-op transition type (5), ignored");
 		break;
 	case 6:
-		_stopSequenceFlag = 0;
-		diMUSESetTrigger(DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_MUSIC, MKTAG('_', 'e', 'n', 'd'), DIMUSE_C_SCRIPT_CALLBACK);
+		_attributes[GRIM_STOP_SEQ_ATTR] = 0;
+		diMUSESetTrigger(DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_MUSIC, "_end", DIMUSE_C_SCRIPT_CALLBACK);
 		break;
 	case 7:
 		if (oldSoundId)
@@ -379,16 +395,17 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		break;
 	case 8:
 		if (oldSoundId)
-			diMUSESetHook(oldSoundId, table->hookId);
+			diMUSESetHook(oldSoundId, 100);
 		break;
 	case 9:
 		if (oldSoundId)
-			diMUSESetHook(oldSoundId, table->hookId);
-		_stopSequenceFlag = 0;
-		diMUSESetTrigger(oldSoundId, MKTAG('_', 'e', 'n', 'd'), DIMUSE_C_SCRIPT_CALLBACK);
+			diMUSESetHook(oldSoundId, 99);
+
+		_attributes[GRIM_STOP_SEQ_ATTR] = 0;
+		diMUSESetTrigger(oldSoundId, "_end", DIMUSE_C_SCRIPT_CALLBACK);
 		break;
 	default:
-		debug(5, "IMuseDigital::playComiMusic(): bogus transition type, ignored");
+		debug(5, "IMuseDigital::scriptPlayMusic(): bogus transition type, ignored");
 		break;
 	}
 }

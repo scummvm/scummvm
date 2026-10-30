@@ -64,6 +64,7 @@ public:
 	IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool lowLatencyMode = false);
 	~IMuseDigiInternalMixer();
 	int  init(int numChannels, int mixBufSize, int mixChannelsNum);
+	int  terminate();
 	int  clearMixerBuffer();
 
 	void mix(uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, int swapEndiannessFlag, int feedSize, int32 mixBufStartIndex, int volume, int pan);

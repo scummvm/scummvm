@@ -26,18 +26,20 @@
 
 namespace Grim {
 
-struct imuseComiTable {
-	byte transitionType;
-	int16 soundId;
-	char name[20];
-	byte attribPos;
-	byte hookId;
-	int16 fadeOutDelay;
-	char filename[13];
+struct IMuseDigiStateTable {
+	char name[32];
+	int transitionId;
+	int soundId;
+	char internalName[24];
+	int attribPos;
+	int hookId;
+	int fadeTime;
+	int volume;
+	int pan;
 };
 
-extern const imuseComiTable _comiStateMusicTable[];
-extern const imuseComiTable _comiSeqMusicTable[];
+extern const IMuseDigiStateTable _grimStateMusicTable[181];
+extern const IMuseDigiStateTable _grimSeqMusicTable[41];
 
 } // End of namespace Grim
 

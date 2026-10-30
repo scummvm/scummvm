@@ -136,10 +136,6 @@ void IMuseDigiFadesHandler::loop() {
 	}
 }
 
-void IMuseDigiFadesHandler::deinit() {
-	clearAllFades();
-}
-
 void IMuseDigiFadesHandler::saveLoad(Common::Serializer &ser) {
 	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
 		ser.syncAsSint32LE(_fades[l].status, VER(103));

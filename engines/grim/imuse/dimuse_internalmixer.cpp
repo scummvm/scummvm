@@ -47,10 +47,15 @@ IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRa
 }
 
 IMuseDigiInternalMixer::~IMuseDigiInternalMixer() {
+	terminate();
+}
+
+int IMuseDigiInternalMixer::terminate() {
 	free(_softLTable);
 	free(_mixBuf);
 	_softLTable = nullptr;
 	_mixBuf = nullptr;
+	return 0;
 }
 
 int IMuseDigiInternalMixer::init(int numChannels, int mixBufSize, int mixChannelsNum) {

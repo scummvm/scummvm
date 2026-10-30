@@ -50,7 +50,7 @@ class QueuingAudioStream;
 
 namespace Grim {
 
-struct imuseComiTable;
+struct IMuseDigiStateTable;
 struct IMuseDigiDispatch;
 struct IMuseDigiTrack;
 struct IMuseDigiStreamZone;
@@ -92,12 +92,11 @@ private:
 	int _currentSpeechVolume, _currentSpeechFrequency, _currentSpeechPan;
 	int _curMixerMusicVolume, _curMixerSpeechVolume, _curMixerSFXVolume;
 
-	int32 _attributes[188];	// internal attributes for each music file to store and check later
+	int32 _attributes[228];	// internal attributes for each music file to store and check later
 	int32 _nextSeqToPlay;
 	int32 _curMusicState;
 	int32 _curMusicSeq;
 
-	int _stopSequenceFlag;
 	int _scriptInitializedFlag;
 	char _emptyMarker[1];
 	bool _spooledMusicEnabled;
@@ -106,9 +105,6 @@ private:
 	int _callbackInterruptFlag;
 	void diMUSEHeartbeat();
 
-	void setComiMusicState(int stateId);
-	void setComiMusicSequence(int seqId);
-	void playComiMusic(const char *songName, const imuseComiTable *table, int attribPos, bool sequence);
 	bool isMusicStreamIdle();
 	bool isMusicCritical();
 
@@ -116,9 +112,11 @@ private:
 	int scriptParse(int cmd, int a, int b);
 	int scriptInit();
 	int scriptTerminate();
+	void scriptDeinit();
 	void scriptRefresh();
 	void scriptSetState(int soundId);
 	void scriptSetSequence(int soundId);
+	void scriptPlayMusic(const IMuseDigiStateTable *tableEntry, int curSongEntryId, int isSequence);
 	void scriptSetCuePoint(int cueId);
 	int scriptSetAttribute(int attrIndex, int attrVal);
 
@@ -209,6 +207,7 @@ private:
 	int _dispatchCurStreamPaused;
 
 	int dispatchInit();
+	int dispatchTerminate();
 	IMuseDigiDispatch *dispatchGetDispatchByTrackId(int trackId);
 	void dispatchSaveLoad(Common::Serializer &ser);
 	int dispatchRestoreStreamZones();
@@ -326,7 +325,7 @@ public:
 	int diMUSEFadeParam(int soundId, int opcode, int destValue, int fadeLength);
 	int diMUSESetHook(int soundId, int hookId);
 
-	int diMUSESetTrigger(int soundId, int marker, int opcode,
+	int diMUSESetTrigger(int soundId, const char *marker, int opcode,
 		int d = -1, int e = -1, int f = -1, int g = -1,
 		int h = -1, int i = -1, int j = -1, int k = -1,
 		int l = -1, int m = -1, int n = -1);

@@ -68,7 +68,6 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 
 	_dispatchFadeSize = 0;
 
-	_stopSequenceFlag = 0;
 	_scriptInitializedFlag = 0;
 	_callbackInterruptFlag = 0;
 	_spooledMusicEnabled = true;
@@ -134,8 +133,7 @@ IMuseDigital::~IMuseDigital() {
 	delete _filesHandler;
 
 	// Deinit the Dispatch module
-	free(_dispatchBuffer);
-	_dispatchBuffer = nullptr;
+	dispatchTerminate();
 
 	// Deinit the WaveOut module
 	free(_waveOutOutputBuffer);
@@ -490,8 +488,8 @@ int IMuseDigital::diMUSESetHook(int soundId, int hookId) {
 	return cmdsHandleCmd(DIMUSE_C_SET_HOOK, nullptr, soundId, hookId);
 }
 
-int IMuseDigital::diMUSESetTrigger(int soundId, int marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n) {
-	return cmdsHandleCmd(DIMUSE_C_SET_TRIGGER, nullptr, soundId, marker, opcode, d, e, f, g, h, i, j, k, l, m, n);
+int IMuseDigital::diMUSESetTrigger(int soundId, const char *marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n) {
+	return cmdsHandleCmd(DIMUSE_C_SET_TRIGGER, (uint8 *)marker, soundId, 0, opcode, d, e, f, g, h, i, j, k, l, m, n);
 }
 
 int IMuseDigital::diMUSEStartStream(int soundId, int priority, int bufferId) {
