@@ -754,8 +754,11 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 
 int IMuseDigital::dispatchGetMap(IMuseDigiDispatch *dispatchPtr) {
 	int32 *dstMap;
-	uint8 *rawMap, *copiedBuf, *soundAddrData;
+	uint8 *rawMap, *copiedBuf, *soundAddrData, *extFrmtBufPtr;
+	uint8 bufferHeader[80];
 	int32 size;
+	int32 curChunkPos = 0;
+	int targetSampleRate, targetNumChannels;
 
 	dstMap = dispatchPtr->map;
 
@@ -775,7 +778,23 @@ int IMuseDigital::dispatchGetMap(IMuseDigiDispatch *dispatchPtr) {
 				return -3;
 			}
 
-			if (READ_BE_UINT32(copiedBuf) == MKTAG('i', 'M', 'U', 'S') && READ_BE_UINT32(copiedBuf + 8) == MKTAG('M', 'A', 'P', ' ')) {
+			if (!memcmp(copiedBuf, "RIFF", 4) && !memcmp(copiedBuf + 8, "WAVEfmt ", 8)) {
+				// A WAV file: build an iMUS map for it on the fly
+				extFrmtBufPtr = soundsGetExtFormatBuffer(copiedBuf, nullptr, &targetSampleRate, nullptr, &targetNumChannels, nullptr, &curChunkPos);
+				if (!extFrmtBufPtr) {
+					debug(5, "IMuseDigital::dispatchGetMap(): ERROR: couldn't find the data chunk of the WAV file");
+					return -1;
+				}
+
+				dispatchPtr->currentOffset = extFrmtBufPtr - copiedBuf;
+				if (!streamerGetStreamBuffer(dispatchPtr->streamPtr, extFrmtBufPtr - copiedBuf)) {
+					return -1;
+				}
+
+				createSoundHeader(bufferHeader, 3, targetSampleRate, 16, targetNumChannels, curChunkPos);
+				bufferHeader[31] = 1;
+				rawMap = bufferHeader;
+			} else if (READ_BE_UINT32(copiedBuf) == MKTAG('i', 'M', 'U', 'S') && READ_BE_UINT32(copiedBuf + 8) == MKTAG('M', 'A', 'P', ' ')) {
 				size = READ_BE_UINT32(copiedBuf + 12) + 24;
 				if (!streamerGetStreamBufferAtOffset(dispatchPtr->streamPtr, 0, size)) {
 					return -3;
@@ -787,38 +806,45 @@ int IMuseDigital::dispatchGetMap(IMuseDigiDispatch *dispatchPtr) {
 				}
 
 				dispatchPtr->currentOffset = size;
-				if (dispatchConvertMap(rawMap + 8, dstMap)) {
-					debug(5, "IMuseDigital::dispatchGetMap(): ERROR: dispatchConvertMap() failed");
-					return -1;
-				}
-
-				if (dispatchPtr->map[2] != MKTAG('F', 'R', 'M', 'T')) {
-					debug(5, "IMuseDigital::dispatchGetMap(): ERROR: expected 'FRMT' at start of map");
-					return -1;
-				}
-
-				if (dispatchPtr->map[4] != dispatchPtr->currentOffset) {
-					debug(5, "IMuseDigital::dispatchGetMap(): ERROR: expected data to follow map");
-					return -1;
-				} else {
-					if (dispatchPtr->streamZoneList) {
-						debug(5, "IMuseDigital::dispatchGetMap(): ERROR: expected NULL streamZoneList");
-						return -1;
-					}
-
-					dispatchPtr->streamZoneList = dispatchAllocateStreamZone();
-					if (!dispatchPtr->streamZoneList) {
-						debug(5, "IMuseDigital::dispatchGetMap(): ERROR: couldn't allocate zone");
-						return -1;
-					}
-
-					dispatchPtr->streamZoneList->offset = dispatchPtr->currentOffset;
-					dispatchPtr->streamZoneList->size = streamerGetFreeBufferAmount(dispatchPtr->streamPtr);
-					dispatchPtr->streamZoneList->fadeFlag = 0;
-				}
 			} else {
 				debug(5, "IMuseDigital::dispatchGetMap(): ERROR: unrecognized file format in stream buffer");
 				return -1;
+			}
+
+			if (dispatchConvertMap(rawMap + 8, dstMap)) {
+				debug(5, "IMuseDigital::dispatchGetMap(): ERROR: dispatchConvertMap() failed");
+				return -1;
+			}
+
+			if (curChunkPos) {
+				dispatchPtr->map[4] = dispatchPtr->currentOffset;
+				dispatchPtr->map[11] = dispatchPtr->currentOffset;
+				dispatchPtr->map[15] = dispatchPtr->currentOffset + curChunkPos;
+			}
+
+			if (dispatchPtr->map[2] != MKTAG('F', 'R', 'M', 'T')) {
+				debug(5, "IMuseDigital::dispatchGetMap(): ERROR: expected 'FRMT' at start of map");
+				return -1;
+			}
+
+			if (dispatchPtr->map[4] != dispatchPtr->currentOffset) {
+				debug(5, "IMuseDigital::dispatchGetMap(): ERROR: expected data to follow map");
+				return -1;
+			} else {
+				if (dispatchPtr->streamZoneList) {
+					debug(5, "IMuseDigital::dispatchGetMap(): ERROR: expected NULL streamZoneList");
+					return -1;
+				}
+
+				dispatchPtr->streamZoneList = dispatchAllocateStreamZone();
+				if (!dispatchPtr->streamZoneList) {
+					debug(5, "IMuseDigital::dispatchGetMap(): ERROR: couldn't allocate zone");
+					return -1;
+				}
+
+				dispatchPtr->streamZoneList->offset = dispatchPtr->currentOffset;
+				dispatchPtr->streamZoneList->size = streamerGetFreeBufferAmount(dispatchPtr->streamPtr);
+				dispatchPtr->streamZoneList->fadeFlag = 0;
 			}
 
 		} else {

@@ -270,6 +270,20 @@ private:
 	int soundsGetCompBlockId(IMuseDigiResource *res, int32 offset);
 	int32 copyDataFromResource(IMuseDigiResource *res, uint8 *dest, int32 size);
 
+	// Voice and lipsync
+	char _curSpeechFile[32];
+	int32 _millisecsInCurSpeechFile;
+	int _lipsyncSoundIds[DIMUSE_MAX_LIPSYNCS];
+	uint8 _lipsyncBufs[DIMUSE_MAX_LIPSYNCS][DIMUSE_LIPSYNC_MAX_SIZE + 48];
+	int _globalVolume;
+
+	int soundsRegisterVoice(const char *filename);
+	void soundsCloseVoiceFile();
+	void soundsReOpenVoiceFile();
+	int loadLip(const char *lipsyncFilename, int soundId);
+	void soundsResetLipsyncState(int soundId);
+	int soundsGetPhoneme(int soundId, int offset);
+
 	// Waveapi
 	waveOutParamsStruct waveOutSettings;
 
@@ -325,6 +339,25 @@ public:
 	int32 getCurMusicPosInMs();
 	int32 getSoundElapsedTimeInMs(int soundId);
 
+	// Sounds API
+	int soundsLoadStartSound(const char *soundName, int priority, int group);
+	int soundsLoadProcessStartSound(const char *soundName, int priority, int group);
+	void soundsStopSound(const char *soundName);
+	int soundsGetParam(const char *soundName, int paramId);
+	void soundsSetParam(const char *soundName, int paramId, int value);
+	int soundsFadeParam(const char *soundName, int paramId, int value, int length);
+	bool soundsIsSoundInUse(const char *soundName);
+	bool soundsIsSoundPlaying(const char *soundName);
+	int iMUSESetHook(const char *soundName, int hookId);
+	int iMUSEGetHook(const char *soundName);
+	void soundsPeriodic();
+	int soundsPause();
+	int soundsResume();
+	int soundStartVoiceStream(const char *filename, int volume, int pan);
+	int soundStopVoiceStream();
+	int soundGetVoiceTime();
+	int iMUSEGetPhoneme(int lipsyncId, int offset);
+
 	// Called by the Groups module
 	void tracksSetGroupVol();
 
@@ -353,7 +386,7 @@ public:
 	int diMUSEClearTrigger(int soundId, const char *marker, int opcode);
 	int diMUSEDeferCommand(int count, int opcode, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
 
-	int diMUSEStartStream(int soundId, int priority, int groupId);
+	int diMUSEStartStream(int soundId, int priority, int bufferId);
 	int diMUSESwitchStream(int oldSoundId, int newSoundId, int fadeDelay, int fadeSyncFlag2, int fadeSyncFlag1);
 	int diMUSEProcessStreams();
 	int diMUSEQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
