@@ -77,7 +77,7 @@
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/remastered/lua_remastered.h"
 #include "engines/grim/remastered/commentary.h"
-#include "engines/grim/imuse/imuse.h"
+#include "engines/grim/imuse/dimuse_engine.h"
 #include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/lua/lua.h"
 
@@ -384,7 +384,24 @@ Common::Error GrimEngine::run() {
 			g_movie = CreateBinkPlayer(demo);
 	}
 	if (getGameType() == GType_GRIM) {
-		g_imuse = new Imuse(20, demo);
+		int sampleRate = DIMUSE_BASE_SAMPLERATE;
+		ConfMan.registerDefault("dimuse_sample_rate", DIMUSE_BASE_SAMPLERATE);
+		if (ConfMan.hasKey("dimuse_sample_rate", _targetName)) {
+			// Only accept sample rates which are a multiple or submultiple of 22050
+			int configSampleRate = ConfMan.getInt("dimuse_sample_rate");
+			if ((configSampleRate % (DIMUSE_BASE_SAMPLERATE / 2)) == 0 &&
+				configSampleRate >= DIMUSE_BASE_SAMPLERATE / 2 &&
+				configSampleRate <= DIMUSE_BASE_SAMPLERATE * 4) {
+				sampleRate = configSampleRate;
+			}
+		}
+
+		bool lowLatencyMode = false;
+		ConfMan.registerDefault("dimuse_low_latency_mode", false);
+		if (ConfMan.hasKey("dimuse_low_latency_mode", _targetName))
+			lowLatencyMode = ConfMan.getBool("dimuse_low_latency_mode");
+
+		g_imuse = new IMuseDigital(sampleRate, _mixer, &_imuseMutex, lowLatencyMode);
 		g_emiSound = nullptr;
 		if (g_grim->isRemastered()) {
 			// This must happen here, since we need the resource loader set up.
@@ -772,7 +789,7 @@ void GrimEngine::handleDebugLoadResource() {
 		resource = (void *)g_movie->play(buf, false, 0, 0);
 	else if (strstr(buf, ".wav") || strstr(buf, ".imu")) {
 		if (g_imuse)
-			g_imuse->startSfx(buf);
+			g_imuse->soundsLoadStartSound(buf, 127, DIMUSE_GROUP_SFX);
 		resource = (void *)1;
 	} else if (strstr(buf, ".mat")) {
 		CMap *cmap = g_resourceloader->loadColormap("item.cmp");
@@ -1053,9 +1070,6 @@ void GrimEngine::mainLoop() {
 		}
 
 		g_sound->flushTracks();
-		if (g_imuse) {
-			g_imuse->refreshScripts();
-		}
 
 		// Process events
 		Common::Event event;
@@ -1195,10 +1209,8 @@ void GrimEngine::savegameRestore() {
 	_savedState = SaveGame::openForLoading(filename);
 	if (!_savedState || !_savedState->isCompatible())
 		return;
-	if (g_imuse) {
-		g_imuse->stopAllSounds();
-		g_imuse->resetState();
-	}
+	if (g_imuse)
+		g_imuse->diMUSEStopAllSounds();
 	g_movie->stop();
 	if (g_imuse)
 		g_imuse->pause(true);

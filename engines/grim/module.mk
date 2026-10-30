@@ -58,13 +58,7 @@ MODULE_OBJS := \
 	imuse/dimuse_triggers.o \
 	imuse/dimuse_utils.o \
 	imuse/dimuse_waveout.o \
-	imuse/imuse.o \
 	imuse/imuse_mcmp_mgr.o \
-	imuse/imuse_music.o \
-	imuse/imuse_script.o \
-	imuse/imuse_sndmgr.o \
-	imuse/imuse_tables.o \
-	imuse/imuse_track.o \
 	lua/lapi.o \
 	lua/lauxlib.o \
 	lua/lbuffer.o \

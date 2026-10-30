@@ -24,7 +24,7 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/costume/sound_component.h"
-#include "engines/grim/imuse/imuse.h"
+#include "engines/grim/imuse/dimuse_engine.h"
 
 namespace Grim {
 
@@ -44,19 +44,19 @@ SoundComponent::~SoundComponent() {
 void SoundComponent::setKey(int val) {
 	switch (val) {
 	case 0: // "Play"
-		// No longer a need to check the sound status, if it's already playing
-		// then it will just use the existing handle
-		g_imuse->startSfx(_name.c_str());
-		if (g_grim->getCurrSet()) {
-			Math::Vector3d pos = _cost->getMatrix().getPosition();
-			g_grim->getCurrSet()->setSoundPosition(_name.c_str(), pos);
+		if (!g_imuse->soundsIsSoundPlaying(_name.c_str())) {
+			g_imuse->soundsLoadStartSound(_name.c_str(), 127, DIMUSE_GROUP_SFX);
+			if (g_grim->getCurrSet()) {
+				Math::Vector3d pos = _cost->getMatrix().getPosition();
+				g_grim->getCurrSet()->setSoundPosition(_name.c_str(), pos);
+			}
 		}
 		break;
 	case 1: // "Stop"
-		g_imuse->stopSound(_name.c_str());
+		g_imuse->soundsStopSound(_name.c_str());
 		break;
 	case 2: // "Stop Looping"
-		g_imuse->setHookId(_name.c_str(), 0x80);
+		g_imuse->iMUSESetHook(_name.c_str(), 0x80);
 		break;
 	default:
 		Debug::warning(Debug::Costumes, "Unknown key %d for sound %s", val, _name.c_str());
@@ -65,8 +65,8 @@ void SoundComponent::setKey(int val) {
 
 void SoundComponent::reset() {
 	// A lot of the sound components this gets called against aren't actually running
-	if (g_imuse && g_imuse->getSoundStatus(_name.c_str()))
-		g_imuse->stopSound(_name.c_str());
+	if (g_imuse && !_name.empty())
+		g_imuse->soundsStopSound(_name.c_str());
 }
 
 } // end of namespace Grim

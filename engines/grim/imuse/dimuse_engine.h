@@ -463,6 +463,8 @@ public:
 	void listGroups();
 };
 
+extern IMuseDigital *g_imuse;
+
 } // End of namespace Grim
 
 #endif

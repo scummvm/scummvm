@@ -20,7 +20,7 @@
  */
 
 #include "engines/grim/grim.h"
-#include "engines/grim/imuse/imuse.h"
+#include "engines/grim/imuse/dimuse_engine.h"
 #include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/sound.h"
 
@@ -28,39 +28,63 @@ namespace Grim {
 
 SoundPlayer *g_sound = nullptr;
 
-bool SoundPlayer::startVoice(const char *soundName, int volume, int pan) {
-	if (g_grim->getGameType() == GType_GRIM)
-		return g_imuse->startVoice(soundName, volume, pan);
-	else
+bool SoundPlayer::startVoice(const char *soundName, int volume, int pan, bool background) {
+	if (g_grim->getGameType() == GType_GRIM) {
+		if (background) {
+			if (!g_imuse->soundsLoadProcessStartSound(soundName, 127, DIMUSE_GROUP_SPEECH))
+				return false;
+
+			g_imuse->soundsSetParam(soundName, DIMUSE_P_VOLUME, volume);
+			return true;
+		}
+
+		bool started = !g_imuse->soundStartVoiceStream(soundName, volume, pan);
+		_streamedVoice = started ? soundName : "";
+		return started;
+	} else {
 		return g_emiSound->startVoice(soundName, volume, pan);
+	}
 }
 
 bool SoundPlayer::getSoundStatus(const char *soundName) {
-	if (g_grim->getGameType() == GType_GRIM)
-		return g_imuse->getSoundStatus(soundName);
-	else
+	if (g_grim->getGameType() == GType_GRIM) {
+		if (!*soundName)
+			return false;
+
+		if (_streamedVoice == soundName)
+			return g_imuse->diMUSEGetParam(kTalkSoundID, DIMUSE_P_SND_TRACK_NUM) > 0;
+
+		return g_imuse->soundsIsSoundPlaying(soundName);
+	} else {
 		return g_emiSound->getSoundStatus(soundName);
+	}
 }
 
 void SoundPlayer::stopSound(const char *soundName) {
 	if (g_grim->getGameType() == GType_GRIM) {
-		g_imuse->stopSound(soundName);
-		return;
+		if (_streamedVoice == soundName)
+			g_imuse->soundStopVoiceStream();
+		else
+			g_imuse->soundsStopSound(soundName);
 	} else {
 		g_emiSound->stopSound(soundName);
 	}
 }
 
 int32 SoundPlayer::getPosIn16msTicks(const char *soundName) {
-	if (g_grim->getGameType() == GType_GRIM)
-		return g_imuse->getPosIn16msTicks(soundName);
-	else
+	if (g_grim->getGameType() == GType_GRIM) {
+		if (_streamedVoice == soundName)
+			return g_imuse->soundGetVoiceTime() >> 4;
+
+		return g_imuse->soundsGetParam(soundName, DIMUSE_P_SND_POS_IN_MS) >> 4;
+	} else {
 		return g_emiSound->getPosIn16msTicks(soundName);
+	}
 }
 
 void SoundPlayer::setVolume(const char *soundName, int volume) {
 	if (g_grim->getGameType() == GType_GRIM) {
-		g_imuse->setVolume(soundName, volume);
+		g_imuse->soundsSetParam(soundName, DIMUSE_P_VOLUME, volume);
 	} else {
 		g_emiSound->setVolume(soundName, volume);
 	}
@@ -68,7 +92,7 @@ void SoundPlayer::setVolume(const char *soundName, int volume) {
 
 void SoundPlayer::setPan(const char *soundName, int pan) {
 	if (g_grim->getGameType() == GType_GRIM) {
-		g_imuse->setPan(soundName, pan);
+		g_imuse->soundsSetParam(soundName, DIMUSE_P_PAN, pan);
 	} else {
 		g_emiSound->setPan(soundName, pan);
 	}
@@ -76,7 +100,7 @@ void SoundPlayer::setPan(const char *soundName, int pan) {
 
 void SoundPlayer::setMusicState(int stateId) {
 	if (g_grim->getGameType() == GType_GRIM) {
-		g_imuse->setMusicState(stateId);
+		g_imuse->diMUSESetState(stateId);
 	} else {
 		g_emiSound->setMusicState(stateId);
 	}
@@ -84,7 +108,7 @@ void SoundPlayer::setMusicState(int stateId) {
 
 void SoundPlayer::flushTracks() {
 	if (g_grim->getGameType() == GType_GRIM) {
-		g_imuse->flushTracks();
+		g_imuse->soundsPeriodic();
 	} else {
 		g_emiSound->flushTracks();
 	}
@@ -92,7 +116,8 @@ void SoundPlayer::flushTracks() {
 
 void SoundPlayer::restoreState(SaveGame *savedState) {
 	if (g_grim->getGameType() == GType_GRIM) {
-		g_imuse->restoreState(savedState);
+		// TODO
+		// Save and restore of the iMUSE state
 	} else {
 		g_emiSound->restoreState(savedState);
 	}
@@ -100,7 +125,8 @@ void SoundPlayer::restoreState(SaveGame *savedState) {
 
 void SoundPlayer::saveState(SaveGame *savedState) {
 	if (g_grim->getGameType() == GType_GRIM) {
-		g_imuse->saveState(savedState);
+		// TODO
+		// Save and restore of the iMUSE state
 	} else {
 		g_emiSound->saveState(savedState);
 	}
