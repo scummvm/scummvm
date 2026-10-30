@@ -20,6 +20,7 @@
  */
 
 #include "common/stream.h"
+#include "common/system.h"
 
 #include "engines/grim/resource.h"
 #include "engines/grim/movie/codecs/vima.h"
@@ -380,7 +381,7 @@ int IMuseDigital::diMUSERemoveSoundFromList(IMuseDigiSoundList **listPtr, IMuseD
 }
 
 bool IMuseDigital::filesCheckRange(int soundId) {
-	return soundId && (uint32)soundId < 0xFFFFFFF0;
+	return soundId > 0;
 }
 
 uint8 *IMuseDigital::filesGetSoundAddrData(int soundId) {
@@ -483,13 +484,17 @@ int IMuseDigital::ihostCloseSound(int soundId) {
 }
 
 uint8 *IMuseDigital::ihostGetMapAddr(int soundId) {
-	// TODO
-	return nullptr;
+	if (soundId < 100 || soundId >= 100 + DIMUSE_MAX_CACHED_SOUNDS)
+		return nullptr;
+
+	return _soundCache[soundId - 100].soundMap;
 }
 
 uint8 *IMuseDigital::ihostGetSoundAddr(int soundId) {
-	// TODO
-	return nullptr;
+	if (soundId < 100 || soundId >= 100 + DIMUSE_MAX_CACHED_SOUNDS)
+		return nullptr;
+
+	return _soundCache[soundId - 100].soundAddrData;
 }
 
 IMuseDigiSndBuffer *IMuseDigital::ihostGetBufferInfo(int bufId) {
@@ -652,9 +657,9 @@ int32 IMuseDigital::soundsFileTell(IMuseDigiResource *res) {
 }
 
 int IMuseDigital::soundsGetCompBlockId(IMuseDigiResource *res, int32 offset) {
-	if ((uint32)offset < (uint32)res->resSize) {
+	if (offset >= 0 && offset < res->resSize) {
 		for (int i = 0; i < res->compBlocksNum; i++) {
-			if ((uint32)offset >= (uint32)res->compBlockOffset[i] && (uint32)offset < (uint32)res->compBlockOffset[i + 1])
+			if (offset >= res->compBlockOffset[i] && offset < res->compBlockOffset[i + 1])
 				return i;
 		}
 	}
@@ -757,6 +762,397 @@ int32 IMuseDigital::copyDataFromResource(IMuseDigiResource *res, uint8 *dest, in
 	}
 
 	return resSize;
+}
+
+int IMuseDigital::cacheGetSoundId(const char *soundName) {
+	uintptr soundKey = (uintptr)soundName;
+	IMuseDigiCachedSound *sound;
+	int slot, soundId, loadSlot = -1;
+	bool isLuaSoundId;
+	bool allocated = false;
+
+	if (!soundName)
+		return 0;
+
+	if (soundKey == 10000)
+		return 10000;
+
+	if (soundKey <= 1111)
+		return 0;
+
+	isLuaSoundId = soundKey < 1367;
+	if (soundKey > 1367) {
+		if (strlen(soundName) <= 4) {
+			soundId = atoi(soundName);
+			if (soundId == 10000)
+				return soundId;
+
+			if (soundId >= 1111 && soundId < 1367)
+				return 0;
+		}
+
+		isLuaSoundId = false;
+	}
+
+	sound = &_soundCache[DIMUSE_MAX_CACHED_SOUNDS - 1];
+	slot = DIMUSE_MAX_CACHED_SOUNDS - 1;
+
+	if (isLuaSoundId) {
+		while ((uintptr)sound->luaSoundId != soundKey) {
+			--sound;
+			if (!slot--)
+				return 0;
+		}
+
+		if (sound->soundUncompData)
+			return slot + 100;
+
+		loadSlot = slot;
+	} else {
+		while (scumm_stricmp(sound->soundFilename, soundName)) {
+			if (!sound->soundFilename[0])
+				loadSlot = slot;
+
+			--sound;
+			if (!slot--) {
+				// The sound is not in the cache: pick an empty slot or purge the oldest one
+				if (loadSlot < 0) {
+					loadSlot = cachePurgeOldestStoppedSound();
+					if (loadSlot < 0)
+						return 0;
+				}
+
+				sound = &_soundCache[loadSlot];
+				Common::strlcpy(sound->soundFilename, soundName, sizeof(sound->soundFilename));
+
+				int slotCounter = _currentSoundSlot;
+				bool collision;
+				do {
+					collision = false;
+					int candidateId = abs(slotCounter) % 256 + 1111;
+					for (int i = 0; i < DIMUSE_MAX_CACHED_SOUNDS; i++) {
+						if (_soundCache[i].soundFilename[0] && _soundCache[i].luaSoundId == candidateId) {
+							collision = true;
+							slotCounter++;
+							break;
+						}
+					}
+				} while (collision);
+
+				_currentSoundSlot = slotCounter;
+				sound->luaSoundId = abs(slotCounter) % 256 + 1111;
+				++_currentSoundSlot;
+
+				allocated = true;
+				break;
+			}
+		}
+
+		if (!allocated) {
+			if (sound->soundUncompData)
+				return slot + 100;
+
+			loadSlot = slot;
+		}
+	}
+
+	// Load the sound in the cache
+	sound->flag = 0;
+
+	IMuseDigiResource *res = soundsOpenFile(sound->soundFilename);
+	if (!res) {
+		memset(sound, 0, sizeof(IMuseDigiCachedSound));
+		return 0;
+	}
+
+	sound->tsOfAllocation = g_system->getMillis();
+
+	// TODO
+	// Lipsync registration for the ".lip" file with the same name
+
+	soundsFileSeek(res, 0, SEEK_END);
+	sound->uncompResourceSize = soundsFileTell(res);
+	soundsFileSeek(res, 0, SEEK_SET);
+
+	sound->soundUncompData = (uint8 *)malloc(sound->uncompResourceSize + 80);
+	if (sound->soundUncompData)
+		copyDataFromResource(res, sound->soundUncompData, sound->uncompResourceSize);
+
+	soundsCloseFile(res);
+
+	int formatId, sampleRate, wordSize, numChannels, swapEndianFlag, dataLength;
+	uint8 *extFormatBuffer = soundsGetExtFormatBuffer(sound->soundUncompData, &formatId, &sampleRate, &wordSize, &numChannels, &swapEndianFlag, &dataLength);
+
+	if (formatId == 3 || formatId == 5) {
+		if (wordSize == 8) {
+			// Convert the 8-bit samples to 16-bit
+			int headerSize = extFormatBuffer - sound->soundUncompData;
+			int dataSize = sound->uncompResourceSize - headerSize;
+			uint8 *convertedData = (uint8 *)malloc(2 * sound->uncompResourceSize + 80);
+
+			memcpy(convertedData, sound->soundUncompData, headerSize);
+
+			uint8 *dest = &convertedData[headerSize];
+			for (int i = 0; i < dataSize; i++) {
+				*dest++ = 0x80;
+				*dest++ = extFormatBuffer[i] ^ 0x80;
+			}
+
+			sound->uncompResourceSize = headerSize + 2 * dataSize;
+			free(sound->soundUncompData);
+			sound->soundUncompData = convertedData;
+			extFormatBuffer = &convertedData[headerSize];
+			dataLength *= 2;
+			swapEndianFlag = 1;
+			wordSize = 16;
+			formatId = 0;
+		}
+
+		if (formatId == 3) {
+			sound->soundMap = sound->soundUncompData;
+			sound->soundAddrData = sound->soundUncompData;
+		} else {
+			uint8 *newHeader = &sound->soundUncompData[sound->uncompResourceSize];
+			createSoundHeader(newHeader, 3, sampleRate, 16, numChannels, dataLength);
+			sound->soundMap = newHeader;
+			sound->soundAddrData = extFormatBuffer - 80;
+			newHeader[31] = swapEndianFlag;
+		}
+
+		return loadSlot + 100;
+	}
+
+	free(sound->soundUncompData);
+
+	// TODO
+	// Reset the lipsync state for this sound
+
+	memset(sound, 0, sizeof(IMuseDigiCachedSound));
+	return 0;
+}
+
+int IMuseDigital::cachePurgeOldestStoppedSound() {
+	int foundSlot = -1;
+	int emptySlot = -1;
+	uint32 oldestTimestamp = g_system->getMillis();
+
+	for (int slot = DIMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
+		IMuseDigiCachedSound *sound = &_soundCache[slot];
+
+		if (sound->soundFilename[0] && sound->soundUncompData) {
+			if (!diMUSEGetParam(slot + 100, DIMUSE_P_SND_TRACK_NUM) &&
+				!diMUSEGetParam(slot + 100, DIMUSE_P_TRIGS_SNDS) &&
+				(foundSlot < 0 || oldestTimestamp > sound->tsOfAllocation)) {
+				foundSlot = slot;
+				oldestTimestamp = sound->tsOfAllocation;
+			}
+		} else {
+			emptySlot = slot;
+		}
+	}
+
+	if (foundSlot >= 0) {
+		IMuseDigiCachedSound *sound = &_soundCache[foundSlot];
+		sound->soundFilename[0] = 0;
+
+		// TODO
+		// Reset the lipsync state for this sound
+
+		free(sound->soundUncompData);
+		memset(sound, 0, sizeof(IMuseDigiCachedSound));
+		return foundSlot;
+	}
+
+	return emptySlot;
+}
+
+void IMuseDigital::cacheReset() {
+	for (int slot = DIMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
+		if (_soundCache[slot].soundUncompData) {
+			// TODO
+			// Reset the lipsync state for this sound
+
+			free(_soundCache[slot].soundUncompData);
+		}
+	}
+
+	_currentSoundSlot = 0;
+	memset(_soundCache, 0, sizeof(_soundCache));
+}
+
+uint8 *IMuseDigital::soundsGetExtFormatBuffer(uint8 *streamHeader, int *formatId, int *targetSampleRate, int *targetWordSize, int *targetNumChannels, int *swapEndianFlag, int *regionLength) {
+	bool isMCMP = false;
+	uint8 *header = streamHeader;
+
+	if (formatId)
+		*formatId = 0;
+
+	if (!header)
+		return nullptr;
+
+	if (!memcmp(header, "MCMP", 4)) {
+		int numCompBlocks = READ_BE_UINT16(header + 4);
+		uint8 *codecNamesSize = header + 9 * numCompBlocks + 6;
+		isMCMP = true;
+		header = codecNamesSize + READ_BE_UINT16(codecNamesSize) + 2;
+	}
+
+	if (!memcmp(header, "RIFF", 4)) {
+		uint8 *endOfFile = header + READ_LE_UINT32(header + 4) + 8;
+
+		if (memcmp(header + 8, "WAVEfmt ", 8))
+			return nullptr;
+
+		if (READ_LE_UINT16(header + 20) != 1)
+			return nullptr;
+
+		if (formatId)
+			*formatId = (isMCMP ? 1 : 0) + 5;
+
+		uint8 *chunk = header + 16;
+		uint32 chunkSize = READ_LE_UINT32(chunk);
+
+		if (targetSampleRate)
+			*targetSampleRate = READ_LE_UINT32(chunk + 8);
+
+		if (targetWordSize)
+			*targetWordSize = (int16)READ_LE_UINT16(chunk + 18);
+
+		if (targetNumChannels)
+			*targetNumChannels = (int16)READ_LE_UINT16(chunk + 6);
+
+		if (swapEndianFlag)
+			*swapEndianFlag = 1;
+
+		while (1) {
+			chunk += chunkSize + 8;
+			chunkSize = READ_LE_UINT32(chunk);
+
+			if (chunk >= endOfFile)
+				break;
+
+			if (!memcmp(chunk - 4, "data", 4)) {
+				if (regionLength)
+					*regionLength = chunkSize;
+
+				return chunk + 4;
+			}
+		}
+
+		return nullptr;
+	}
+
+	if (!memcmp(header, "iMUS", 4)) {
+		uint32 mapSize = READ_BE_UINT32(header + 12);
+
+		if (memcmp(header + 16, "FRMT", 4))
+			return nullptr;
+
+		if (formatId)
+			*formatId = (isMCMP ? 1 : 0) + 3;
+
+		uint8 *frmtBlock = header + 32;
+
+		if (targetWordSize)
+			*targetWordSize = READ_BE_UINT32(frmtBlock);
+
+		if (targetSampleRate)
+			*targetSampleRate = READ_BE_UINT32(frmtBlock + 4);
+
+		if (targetNumChannels)
+			*targetNumChannels = READ_BE_UINT32(frmtBlock + 8);
+
+		if (swapEndianFlag)
+			*swapEndianFlag = 0;
+
+		if (regionLength)
+			*regionLength = READ_BE_UINT32(frmtBlock + mapSize - 12);
+
+		return frmtBlock + mapSize - 8;
+	}
+
+	if (isMCMP)
+		return nullptr;
+
+	if (!memcmp(header, "FORM", 4)) {
+		uint8 *endOfFile = header + READ_BE_UINT32(header + 4) + 8;
+
+		if (memcmp(header + 8, "AIFFCOMM", 8))
+			return nullptr;
+
+		if (formatId)
+			*formatId = 7;
+
+		uint8 *chunk = header + 16;
+		uint32 chunkSize = READ_BE_UINT32(chunk);
+
+		if (targetSampleRate) {
+			if (chunk[13] == 14)
+				*targetSampleRate = 44100;
+			else if (chunk[13] == 12)
+				*targetSampleRate = 11025;
+			else
+				*targetSampleRate = 22050;
+		}
+
+		if (targetWordSize)
+			*targetWordSize = chunk[11];
+
+		if (targetNumChannels)
+			*targetNumChannels = chunk[5];
+
+		if (swapEndianFlag)
+			*swapEndianFlag = 0;
+
+		while (1) {
+			chunk += chunkSize + 8;
+			chunkSize = READ_BE_UINT32(chunk);
+
+			if (chunk >= endOfFile)
+				break;
+
+			if (!memcmp(chunk - 4, "SSND", 4)) {
+				if (regionLength)
+					*regionLength = chunkSize - 8;
+
+				return chunk + 12;
+			}
+		}
+
+		return nullptr;
+	}
+
+	// TODO
+	// Headerless audio: CreateAudioChunk() guesses the format from the data
+	return nullptr;
+}
+
+int IMuseDigital::createSoundHeader(uint8 *buffer, int mode, int sampleRate, int wordSize, int numChannels, int regionLength) {
+	if (mode == 3) {
+		memcpy(buffer, "iMUS", 4);
+		WRITE_BE_UINT32(buffer + 4, regionLength + 80);
+		memcpy(buffer + 8, "MAP ", 4);
+		WRITE_BE_UINT32(buffer + 12, 56);
+		memcpy(buffer + 16, "FRMT", 4);
+		WRITE_BE_UINT32(buffer + 20, 20);
+		WRITE_BE_UINT32(buffer + 24, 80);
+		WRITE_BE_UINT32(buffer + 28, 0); // Endianness
+		WRITE_BE_UINT32(buffer + 32, wordSize);
+		WRITE_BE_UINT32(buffer + 36, sampleRate);
+		WRITE_BE_UINT32(buffer + 40, numChannels);
+		memcpy(buffer + 44, "REGN", 4);
+		WRITE_BE_UINT32(buffer + 48, 8);
+		WRITE_BE_UINT32(buffer + 52, 80);
+		WRITE_BE_UINT32(buffer + 56, regionLength);
+		memcpy(buffer + 60, "STOP", 4);
+		WRITE_BE_UINT32(buffer + 64, 4);
+		WRITE_BE_UINT32(buffer + 68, regionLength + 80);
+		memcpy(buffer + 72, "DATA", 4);
+		WRITE_BE_UINT32(buffer + 76, regionLength);
+		return 80;
+	}
+
+	return 0;
 }
 
 } // End of namespace Grim

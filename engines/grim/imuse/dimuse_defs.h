@@ -40,6 +40,7 @@ namespace Grim {
 #define DIMUSE_MAX_STREAMS     3
 #define DIMUSE_MAX_SOUND_LIST  10
 #define DIMUSE_MAX_OPEN_FILES  5
+#define DIMUSE_MAX_CACHED_SOUNDS 32
 
 #define DIMUSE_LARGE_FADES    1
 #define DIMUSE_SMALL_FADES    4
@@ -263,6 +264,18 @@ struct IMuseDigiResource {
 	int32 curDecompBlockSize;
 	uint8 *decompDataBuffer;
 	char filename[80];
+};
+
+struct IMuseDigiCachedSound {
+	char soundFilename[32];
+	int luaSoundId;
+	uint32 tsOfAllocation;
+	uint8 *soundUncompData;
+	uint8 *soundAddrData;
+	uint8 *soundMap;
+	int uncompResourceSize;
+	int flag;
+	int priority;
 };
 
 struct IMuseDigiOpenAudioFile {

@@ -86,6 +86,8 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 	_fadesHandler = new IMuseDigiFadesHandler(this, mutex);
 	_triggersHandler = new IMuseDigiTriggersHandler(this, mutex);
 
+	memset(_soundCache, 0, sizeof(_soundCache));
+	_currentSoundSlot = 0;
 	memset(_openAudioFiles, 0, sizeof(_openAudioFiles));
 	memset(_soundBuffers, 0, sizeof(_soundBuffers));
 	vimaInit(_imuseDestTable);
@@ -129,6 +131,7 @@ IMuseDigital::~IMuseDigital() {
 	diMUSETerminateScript();
 	diMUSETerminate();
 
+	cacheReset();
 	soundsDeallocateBuffer(DIMUSE_BUFFER_SPEECH);
 	soundsDeallocateBuffer(DIMUSE_BUFFER_MUSIC);
 

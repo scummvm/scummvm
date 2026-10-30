@@ -252,6 +252,15 @@ private:
 	int ihostFseek(int soundId, int32 offset, int mode);
 	int ihostRead(int soundId, uint8 *destBuf, int32 size);
 
+	IMuseDigiCachedSound _soundCache[DIMUSE_MAX_CACHED_SOUNDS];
+	int _currentSoundSlot;
+
+	int cacheGetSoundId(const char *soundName);
+	int cachePurgeOldestStoppedSound();
+	void cacheReset();
+	uint8 *soundsGetExtFormatBuffer(uint8 *streamHeader, int *formatId, int *targetSampleRate, int *targetWordSize, int *targetNumChannels, int *swapEndianFlag, int *regionLength);
+	int createSoundHeader(uint8 *buffer, int mode, int sampleRate, int wordSize, int numChannels, int regionLength);
+
 	void soundsAllocateBuffer(int bufferId, int32 bufSize, int32 loadSize, int32 criticalSize);
 	void soundsDeallocateBuffer(int bufferId);
 	IMuseDigiResource *soundsOpenFile(const char *filename);
