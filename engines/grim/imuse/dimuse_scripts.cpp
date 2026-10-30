@@ -226,10 +226,10 @@ void IMuseDigital::scriptSaveLoad(Common::Serializer &ser) {
 		diMUSECloseAll();
 	}
 
-	ser.syncAsSint32LE(_curMusicState, VER(103));
-	ser.syncAsSint32LE(_curMusicSeq, VER(103));
-	ser.syncAsSint32LE(_nextSeqToPlay, VER(103));
-	ser.syncArray(_attributes, ARRAYSIZE(_attributes), Common::Serializer::Sint32LE, VER(103));
+	ser.syncAsSint32LE(_curMusicState, VER(30));
+	ser.syncAsSint32LE(_curMusicSeq, VER(30));
+	ser.syncAsSint32LE(_nextSeqToPlay, VER(30));
+	ser.syncArray(_attributes, ARRAYSIZE(_attributes), Common::Serializer::Sint32LE, VER(30));
 	diMUSESaveLoadFilelist(ser);
 }
 

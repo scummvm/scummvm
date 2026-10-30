@@ -75,18 +75,18 @@ void IMuseDigital::tracksSaveLoad(Common::Serializer &ser) {
 	dispatchSaveLoad(ser);
 
 	for (int l = 0; l < _trackCount; l++) {
-		ser.syncAsSint32LE(_tracks[l].soundId, VER(103));
-		ser.syncAsSint32LE(_tracks[l].marker, VER(103));
-		ser.syncAsSint32LE(_tracks[l].group, VER(103));
-		ser.syncAsSint32LE(_tracks[l].priority, VER(103));
-		ser.syncAsSint32LE(_tracks[l].vol, VER(103));
-		ser.syncAsSint32LE(_tracks[l].effVol, VER(103));
-		ser.syncAsSint32LE(_tracks[l].pan, VER(103));
-		ser.syncAsSint32LE(_tracks[l].detune, VER(103));
-		ser.syncAsSint32LE(_tracks[l].transpose, VER(103));
-		ser.syncAsSint32LE(_tracks[l].pitchShift, VER(103));
-		ser.syncAsSint32LE(_tracks[l].mailbox, VER(103));
-		ser.syncAsSint32LE(_tracks[l].jumpHook, VER(103));
+		ser.syncAsSint32LE(_tracks[l].soundId, VER(30));
+		ser.syncAsSint32LE(_tracks[l].marker, VER(30));
+		ser.syncAsSint32LE(_tracks[l].group, VER(30));
+		ser.syncAsSint32LE(_tracks[l].priority, VER(30));
+		ser.syncAsSint32LE(_tracks[l].vol, VER(30));
+		ser.syncAsSint32LE(_tracks[l].effVol, VER(30));
+		ser.syncAsSint32LE(_tracks[l].pan, VER(30));
+		ser.syncAsSint32LE(_tracks[l].detune, VER(30));
+		ser.syncAsSint32LE(_tracks[l].transpose, VER(30));
+		ser.syncAsSint32LE(_tracks[l].pitchShift, VER(30));
+		ser.syncAsSint32LE(_tracks[l].mailbox, VER(30));
+		ser.syncAsSint32LE(_tracks[l].jumpHook, VER(30));
 	}
 
 	if (ser.isLoading()) {

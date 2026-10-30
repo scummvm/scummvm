@@ -378,6 +378,8 @@ public:
 	int iMUSESetHook(const char *soundName, int hookId);
 	int iMUSEGetHook(const char *soundName);
 	void iMUSESetVoiceEffect(const char *effectName);
+	void soundsSaveLoad(Common::Serializer &ser);
+	void soundsRestoreLegacy(int32 stateIndex, int32 seqIndex);
 	void soundsPeriodic();
 	int soundsPause();
 	int soundsResume();

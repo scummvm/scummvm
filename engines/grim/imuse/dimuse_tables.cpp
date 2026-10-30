@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/util.h"
+
 #include "engines/grim/imuse/dimuse_tables.h"
 
 namespace Grim {
@@ -250,5 +252,27 @@ const IMuseDigiStateTable _grimSeqMusicTable[41] = {
 	{"2370 - Salvador Death",   2, 2370, "seqSalvadorDeath",     0,  0, 300, 127, 0}, /* 039 */
 	{"2399 - End Credits",      2, 2399, "seqEndCredits",        0,  0, 200, 127, 0}, /* 040 */
 };
+
+// The state table of the previous iMUSE implementation had some entries in a different order, so
+// we have to account for that when reloading older savegames...
+static const struct {
+	int tableIndex;
+	int soundId;
+} kLegacyMovedStates[] = {
+	{142, 1304}, {143, 1305}, {144, 1306}, {161, 1325}, {162, 1326}, {163, 1327}, {164, 1328},
+	{165, 1329}, {166, 1330}, {167, 1331}, {168, 1332}, {170, 1334}, {176, 1354}, {177, 1355}
+};
+
+int grimLegacyStateSoundId(int tableIndex) {
+	if (tableIndex < 0 || tableIndex >= ARRAYSIZE(_grimStateMusicTable))
+		return -1;
+
+	for (int i = 0; i < ARRAYSIZE(kLegacyMovedStates); i++) {
+		if (kLegacyMovedStates[i].tableIndex == tableIndex)
+			return kLegacyMovedStates[i].soundId;
+	}
+
+	return _grimStateMusicTable[tableIndex].soundId;
+}
 
 } // End of namespace Grim
