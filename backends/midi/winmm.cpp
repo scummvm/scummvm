@@ -32,7 +32,7 @@
 
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
-#include "backends/midi/windows.h"
+#include "backends/midi/winmm.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "common/config-manager.h"
 #include "common/translation.h"

@@ -42,7 +42,7 @@
 #include "gui/message.h"
 
 #include "backends/audiocd/win32/win32-audiocd.h"
-#include "backends/midi/windows.h"
+#include "backends/midi/winmm.h"
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/platform/sdl/win32/win32-window.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
