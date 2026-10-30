@@ -27,6 +27,7 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/set.h"
+#include "engines/grim/sound.h"
 #include "engines/grim/imuse/dimuse_engine.h"
 #include "engines/grim/lua/lauxlib.h"
 
@@ -185,13 +186,20 @@ void Lua_V1::ImSetSequence() {
 }
 
 void Lua_V1::SaveIMuse() {
-	// TODO
-	// Save and restore of the iMUSE state
+	SaveGame *savedIMuse = SaveGame::openForSaving("grim.tmp");
+	if (!savedIMuse)
+		return;
+	g_sound->saveState(savedIMuse);
+	delete savedIMuse;
 }
 
 void Lua_V1::RestoreIMuse() {
-	// TODO
-	// Save and restore of the iMUSE state
+	SaveGame *savedIMuse = SaveGame::openForLoading("grim.tmp");
+	if (!savedIMuse)
+		return;
+	g_sound->restoreState(savedIMuse);
+	delete savedIMuse;
+	g_system->getSavefileManager()->removeSavefile("grim.tmp");
 }
 
 void Lua_V1::SetSoundPosition() {

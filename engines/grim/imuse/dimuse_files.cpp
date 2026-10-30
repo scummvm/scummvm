@@ -61,8 +61,8 @@ void IMuseDigital::diMUSESaveLoadFilelist(Common::Serializer &ser) {
 		}
 	}
 
-	ser.syncAsSint32LE(loadedCount, VER(103));
-	ser.syncAsSint32LE(openedCount, VER(103));
+	ser.syncAsSint32LE(loadedCount, VER(30));
+	ser.syncAsSint32LE(openedCount, VER(30));
 
 	sound = _loadedSoundList;
 	for (int i = 0; i < loadedCount; i++) {
@@ -73,9 +73,9 @@ void IMuseDigital::diMUSESaveLoadFilelist(Common::Serializer &ser) {
 			sound = sound->next;
 		}
 
-		ser.syncAsSint32LE(soundId, VER(103));
-		ser.syncArray(filename, sizeof(filename), Common::Serializer::SByte, VER(103));
-		ser.syncAsSint32LE(refCount, VER(103));
+		ser.syncAsSint32LE(soundId, VER(30));
+		ser.syncArray(filename, sizeof(filename), Common::Serializer::SByte, VER(30));
+		ser.syncAsSint32LE(refCount, VER(30));
 
 		if (ser.isLoading()) {
 			if (!diMUSELoadSound(filename, soundId)) {
@@ -101,9 +101,9 @@ void IMuseDigital::diMUSESaveLoadFilelist(Common::Serializer &ser) {
 			sound = sound->next;
 		}
 
-		ser.syncAsSint32LE(soundId, VER(103));
-		ser.syncArray(filename, sizeof(filename), Common::Serializer::SByte, VER(103));
-		ser.syncAsSint32LE(refCount, VER(103));
+		ser.syncAsSint32LE(soundId, VER(30));
+		ser.syncArray(filename, sizeof(filename), Common::Serializer::SByte, VER(30));
+		ser.syncAsSint32LE(refCount, VER(30));
 
 		if (ser.isLoading()) {
 			if (!diMUSEOpenSound(filename, soundId)) {
@@ -1598,6 +1598,137 @@ int IMuseDigital::soundsGetPhoneme(int soundId, int offset) {
 	}
 
 	return DIMUSE_PHONEME_NONE;
+}
+
+void IMuseDigital::soundsSaveLoad(Common::Serializer &ser) {
+	Common::StackLock lock(*_mutex);
+
+	char effectName[sizeof(_curEffectName)];
+
+	if (ser.isSaving()) {
+		Common::strlcpy(effectName, _curEffectId ? _curEffectName : "OFF", sizeof(effectName));
+		_curSpeechFile[0] = '\0';
+	}
+
+	ser.syncArray(effectName, sizeof(effectName), Common::Serializer::SByte, VER(30));
+
+	if (ser.isLoading()) {
+		diMUSEStopAllSounds();
+		diMUSEFlushSounds();
+		soundsCloseVoiceFile();
+		cacheReset();
+		iMUSESetVoiceEffect(effectName);
+		_curSpeechFile[0] = '\0';
+	}
+
+	diMUSESaveLoad(ser);
+	diMUSESaveLoadScript(ser);
+
+	if (ser.isLoading()) {
+		for (int soundId = diMUSEGetNextSound(0); soundId; soundId = diMUSEGetNextSound(soundId)) {
+			if (soundId <= kTalkSoundID)
+				diMUSEStopSound(soundId);
+		}
+
+		soundsCloseVoiceFile();
+	}
+
+	int32 numSounds = 0;
+	int savedSlots[DIMUSE_MAX_CACHED_SOUNDS];
+
+	if (ser.isSaving()) {
+		// Only active sounds with a native iMUS map are saved...
+		for (int slot = 0; slot < DIMUSE_MAX_CACHED_SOUNDS; slot++) {
+			IMuseDigiCachedSound *sound = &_soundCache[slot];
+
+			if (sound->soundFilename[0] && sound->soundUncompData &&
+				diMUSEGetParam(slot + 100, DIMUSE_P_SND_TRACK_NUM) > 0 &&
+				!memcmp(sound->soundMap, "iMUS", 4) && READ_BE_UINT16(sound->soundMap + 14) != 56)
+				savedSlots[numSounds++] = slot;
+		}
+	}
+
+	ser.syncAsSint32LE(numSounds, VER(30));
+	if (numSounds < 0 || numSounds > DIMUSE_MAX_CACHED_SOUNDS)
+		return;
+
+	// The cached sounds are restarted with the same ids, volume, pan and hook
+	for (int i = 0; i < numSounds; i++) {
+		char soundName[32] = {};
+		int32 luaSoundId = 0, priority = 0;
+
+		if (ser.isSaving()) {
+			Common::strlcpy(soundName, _soundCache[savedSlots[i]].soundFilename, sizeof(soundName));
+			luaSoundId = _soundCache[savedSlots[i]].luaSoundId;
+			priority = _soundCache[savedSlots[i]].priority;
+		}
+
+		ser.syncArray(soundName, sizeof(soundName), Common::Serializer::SByte, VER(30));
+		ser.syncAsSint32LE(luaSoundId, VER(30));
+		ser.syncAsSint32LE(priority, VER(30));
+
+		if (ser.isLoading()) {
+			_currentSoundSlot = luaSoundId - 1111;
+			soundsLoadStartSound(soundName, priority, DIMUSE_GROUP_SFX);
+		}
+	}
+
+	for (int i = 0; i < numSounds; i++) {
+		int32 luaSoundId = 0, volume = 0, pan = 0;
+
+		if (ser.isSaving()) {
+			luaSoundId = _soundCache[savedSlots[i]].luaSoundId;
+			volume = diMUSEGetParam(savedSlots[i] + 100, DIMUSE_P_VOLUME);
+			pan = diMUSEGetParam(savedSlots[i] + 100, DIMUSE_P_PAN);
+		}
+
+		ser.syncAsSint32LE(luaSoundId, VER(30));
+		ser.syncAsSint32LE(volume, VER(30));
+		ser.syncAsSint32LE(pan, VER(30));
+
+		if (ser.isLoading()) {
+			soundsSetParam((const char *)(intptr)luaSoundId, DIMUSE_P_VOLUME, volume);
+			soundsSetParam((const char *)(intptr)luaSoundId, DIMUSE_P_PAN, pan);
+		}
+	}
+
+	for (int i = 0; i < numSounds; i++) {
+		int32 luaSoundId = 0, hookId = 0;
+
+		if (ser.isSaving()) {
+			luaSoundId = _soundCache[savedSlots[i]].luaSoundId;
+			hookId = diMUSEGetHook(savedSlots[i] + 100);
+		}
+
+		ser.syncAsSint32LE(luaSoundId, VER(30));
+		ser.syncAsSint32LE(hookId, VER(30));
+
+		if (ser.isLoading())
+			iMUSESetHook((const char *)(intptr)luaSoundId, hookId);
+	}
+}
+
+void IMuseDigital::soundsRestoreLegacy(int32 stateIndex, int32 seqIndex) {
+	Common::StackLock lock(*_mutex);
+
+	// The savegames of the old iMUSE only stored the music state and sequence, so
+	// the rest is reset and the music is started again as it was
+	diMUSEStopAllSounds();
+	diMUSEFlushSounds();
+	soundsCloseVoiceFile();
+	cacheReset();
+	_curSpeechFile[0] = '\0';
+
+	int stateId = grimLegacyStateSoundId(stateIndex);
+	int seqId = (seqIndex >= 0 && seqIndex < ARRAYSIZE(_grimSeqMusicTable)) ? _grimSeqMusicTable[seqIndex].soundId : -1;
+
+	_curMusicState = 0;
+	_curMusicSeq = 0;
+	_nextSeqToPlay = 0;
+	memset(_attributes, 0, sizeof(_attributes));
+
+	scriptSetSequence(seqId);
+	scriptSetState(stateId);
 }
 
 int IMuseDigital::iMUSEGetPhoneme(int lipsyncId, int offset) {

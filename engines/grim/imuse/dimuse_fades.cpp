@@ -138,16 +138,16 @@ void IMuseDigiFadesHandler::loop() {
 
 void IMuseDigiFadesHandler::saveLoad(Common::Serializer &ser) {
 	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
-		ser.syncAsSint32LE(_fades[l].status, VER(103));
-		ser.syncAsSint32LE(_fades[l].sound, VER(103));
-		ser.syncAsSint32LE(_fades[l].param, VER(103));
-		ser.syncAsSint32LE(_fades[l].currentVal, VER(103));
-		ser.syncAsSint32LE(_fades[l].counter, VER(103));
-		ser.syncAsSint32LE(_fades[l].length, VER(103));
-		ser.syncAsSint32LE(_fades[l].slope, VER(103));
-		ser.syncAsSint32LE(_fades[l].slopeMod, VER(103));
-		ser.syncAsSint32LE(_fades[l].modOvfloCounter, VER(103));
-		ser.syncAsSint32LE(_fades[l].nudge, VER(103));
+		ser.syncAsSint32LE(_fades[l].status, VER(30));
+		ser.syncAsSint32LE(_fades[l].sound, VER(30));
+		ser.syncAsSint32LE(_fades[l].param, VER(30));
+		ser.syncAsSint32LE(_fades[l].currentVal, VER(30));
+		ser.syncAsSint32LE(_fades[l].counter, VER(30));
+		ser.syncAsSint32LE(_fades[l].length, VER(30));
+		ser.syncAsSint32LE(_fades[l].slope, VER(30));
+		ser.syncAsSint32LE(_fades[l].slopeMod, VER(30));
+		ser.syncAsSint32LE(_fades[l].modOvfloCounter, VER(30));
+		ser.syncAsSint32LE(_fades[l].nudge, VER(30));
 	}
 
 	if (ser.isLoading())

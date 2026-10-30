@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/memstream.h"
+#include "common/serializer.h"
+
 #include "engines/grim/grim.h"
 #include "engines/grim/imuse/dimuse_engine.h"
 #include "engines/grim/emi/sound/emisound.h"
@@ -116,8 +119,26 @@ void SoundPlayer::flushTracks() {
 
 void SoundPlayer::restoreState(SaveGame *savedState) {
 	if (g_grim->getGameType() == GType_GRIM) {
-		// TODO
-		// Save and restore of the iMUSE state
+		uint32 sectionSize = savedState->beginSection('IMUS');
+
+		if (savedState->saveMinorVersion() < 30) {
+			// Post-load fix for older savegames using the previous iMUSE implementation...
+			int32 stateIndex = savedState->readLESint32();
+			int32 seqIndex = savedState->readLESint32();
+			savedState->endSection();
+
+			g_imuse->soundsRestoreLegacy(stateIndex, seqIndex);
+			return;
+		}
+
+		byte *sectionData = (byte *)malloc(sectionSize);
+		savedState->read(sectionData, sectionSize);
+		savedState->endSection();
+
+		Common::MemoryReadStream stream(sectionData, sectionSize, DisposeAfterUse::YES);
+		Common::Serializer ser(&stream, nullptr);
+		ser.setVersion(savedState->saveMinorVersion());
+		g_imuse->soundsSaveLoad(ser);
 	} else {
 		g_emiSound->restoreState(savedState);
 	}
@@ -125,8 +146,14 @@ void SoundPlayer::restoreState(SaveGame *savedState) {
 
 void SoundPlayer::saveState(SaveGame *savedState) {
 	if (g_grim->getGameType() == GType_GRIM) {
-		// TODO
-		// Save and restore of the iMUSE state
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		Common::Serializer ser(nullptr, &stream);
+		ser.setVersion(SaveGame::SAVEGAME_MINOR_VERSION);
+		g_imuse->soundsSaveLoad(ser);
+
+		savedState->beginSection('IMUS');
+		savedState->write(stream.getData(), stream.size());
+		savedState->endSection();
 	} else {
 		g_emiSound->saveState(savedState);
 	}

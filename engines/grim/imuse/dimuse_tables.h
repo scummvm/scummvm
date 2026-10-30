@@ -41,6 +41,9 @@ struct IMuseDigiStateTable {
 extern const IMuseDigiStateTable _grimStateMusicTable[181];
 extern const IMuseDigiStateTable _grimSeqMusicTable[41];
 
+// Sound id of a state, given its position in the table of the old iMUSE
+int grimLegacyStateSoundId(int tableIndex);
+
 } // End of namespace Grim
 
 #endif

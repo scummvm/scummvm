@@ -78,35 +78,35 @@ int IMuseDigiTriggersHandler::clearAllTriggers() {
 
 void IMuseDigiTriggersHandler::saveLoad(Common::Serializer &ser) {
 	for (int l = 0; l < DIMUSE_MAX_TRIGGERS; l++) {
-		ser.syncAsSint32LE(_trigs[l].sound, VER(103));
-		ser.syncArray(_trigs[l].text, 256, Common::Serializer::SByte, VER(103));
-		ser.syncAsSint32LE(_trigs[l].opcode, VER(103));
-		ser.syncAsSint32LE(_trigs[l].a, VER(103));
-		ser.syncAsSint32LE(_trigs[l].b, VER(103));
-		ser.syncAsSint32LE(_trigs[l].c, VER(103));
-		ser.syncAsSint32LE(_trigs[l].d, VER(103));
-		ser.syncAsSint32LE(_trigs[l].e, VER(103));
-		ser.syncAsSint32LE(_trigs[l].f, VER(103));
-		ser.syncAsSint32LE(_trigs[l].g, VER(103));
-		ser.syncAsSint32LE(_trigs[l].h, VER(103));
-		ser.syncAsSint32LE(_trigs[l].i, VER(103));
-		ser.syncAsSint32LE(_trigs[l].j, VER(103));
-		ser.syncAsSint32LE(_trigs[l].clearLater, VER(103));
+		ser.syncAsSint32LE(_trigs[l].sound, VER(30));
+		ser.syncArray(_trigs[l].text, 256, Common::Serializer::SByte, VER(30));
+		ser.syncAsSint32LE(_trigs[l].opcode, VER(30));
+		ser.syncAsSint32LE(_trigs[l].a, VER(30));
+		ser.syncAsSint32LE(_trigs[l].b, VER(30));
+		ser.syncAsSint32LE(_trigs[l].c, VER(30));
+		ser.syncAsSint32LE(_trigs[l].d, VER(30));
+		ser.syncAsSint32LE(_trigs[l].e, VER(30));
+		ser.syncAsSint32LE(_trigs[l].f, VER(30));
+		ser.syncAsSint32LE(_trigs[l].g, VER(30));
+		ser.syncAsSint32LE(_trigs[l].h, VER(30));
+		ser.syncAsSint32LE(_trigs[l].i, VER(30));
+		ser.syncAsSint32LE(_trigs[l].j, VER(30));
+		ser.syncAsSint32LE(_trigs[l].clearLater, VER(30));
 	}
 
 	for (int l = 0; l < DIMUSE_MAX_DEFERS; l++) {
-		ser.syncAsSint32LE(_defers[l].counter, VER(103));
-		ser.syncAsSint32LE(_defers[l].opcode, VER(103));
-		ser.syncAsSint32LE(_defers[l].a, VER(103));
-		ser.syncAsSint32LE(_defers[l].b, VER(103));
-		ser.syncAsSint32LE(_defers[l].c, VER(103));
-		ser.syncAsSint32LE(_defers[l].d, VER(103));
-		ser.syncAsSint32LE(_defers[l].e, VER(103));
-		ser.syncAsSint32LE(_defers[l].f, VER(103));
-		ser.syncAsSint32LE(_defers[l].g, VER(103));
-		ser.syncAsSint32LE(_defers[l].h, VER(103));
-		ser.syncAsSint32LE(_defers[l].i, VER(103));
-		ser.syncAsSint32LE(_defers[l].j, VER(103));
+		ser.syncAsSint32LE(_defers[l].counter, VER(30));
+		ser.syncAsSint32LE(_defers[l].opcode, VER(30));
+		ser.syncAsSint32LE(_defers[l].a, VER(30));
+		ser.syncAsSint32LE(_defers[l].b, VER(30));
+		ser.syncAsSint32LE(_defers[l].c, VER(30));
+		ser.syncAsSint32LE(_defers[l].d, VER(30));
+		ser.syncAsSint32LE(_defers[l].e, VER(30));
+		ser.syncAsSint32LE(_defers[l].f, VER(30));
+		ser.syncAsSint32LE(_defers[l].g, VER(30));
+		ser.syncAsSint32LE(_defers[l].h, VER(30));
+		ser.syncAsSint32LE(_defers[l].i, VER(30));
+		ser.syncAsSint32LE(_defers[l].j, VER(30));
 	}
 
 	if (ser.isLoading())

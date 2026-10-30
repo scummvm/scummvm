@@ -94,36 +94,36 @@ IMuseDigiDispatch *IMuseDigital::dispatchGetDispatchByTrackId(int trackId) {
 void IMuseDigital::dispatchSaveLoad(Common::Serializer &ser) {
 
 	for (int l = 0; l < DIMUSE_MAX_DISPATCHES; l++) {
-		ser.syncAsSint32LE(_dispatches[l].wordSize, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].sampleRate, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].channelCount, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].swapEndiannessFlag, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].currentOffset, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].audioRemaining, VER(103));
-		ser.syncArray(_dispatches[l].map, DIMUSE_MAX_MAP_SIZE, Common::Serializer::Sint32LE, VER(103));
+		ser.syncAsSint32LE(_dispatches[l].wordSize, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].sampleRate, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].channelCount, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].swapEndiannessFlag, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].currentOffset, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].audioRemaining, VER(30));
+		ser.syncArray(_dispatches[l].map, DIMUSE_MAX_MAP_SIZE, Common::Serializer::Sint32LE, VER(30));
 
 		// This is only needed to signal if the sound originally had a stream associated with it
 		int hasStream = 0;
 		if (ser.isSaving()) {
 			if (_dispatches[l].streamPtr)
 				hasStream = 1;
-			ser.syncAsSint32LE(hasStream, VER(103));
+			ser.syncAsSint32LE(hasStream, VER(30));
 		} else {
-			ser.syncAsSint32LE(hasStream, VER(103));
+			ser.syncAsSint32LE(hasStream, VER(30));
 			_dispatches[l].streamPtr = hasStream ? (IMuseDigiStream *)1 : nullptr;
 		}
 
-		ser.syncAsSint32LE(_dispatches[l].streamBufID, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].streamErrFlag, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].fadeOffset, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].fadeRemaining, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].fadeWordSize, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].fadeSampleRate, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].fadeChannelCount, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].fadeSyncFlag, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].fadeSyncDelta, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].fadeVol, VER(103));
-		ser.syncAsSint32LE(_dispatches[l].fadeSlope, VER(103));
+		ser.syncAsSint32LE(_dispatches[l].streamBufID, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].streamErrFlag, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].fadeOffset, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].fadeRemaining, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].fadeWordSize, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].fadeSampleRate, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].fadeChannelCount, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].fadeSyncFlag, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].fadeSyncDelta, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].fadeVol, VER(30));
+		ser.syncAsSint32LE(_dispatches[l].fadeSlope, VER(30));
 	}
 
 	if (ser.isLoading()) {
