@@ -1,1 +1,3 @@
-engines/hollywood/metaengine.cpp
+engines/hollywood/monsters/metaengine.cpp
+engines/hollywood/runaway/engine.cpp
+engines/hollywood/text_translation.cpp
