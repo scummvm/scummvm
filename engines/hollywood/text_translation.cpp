@@ -34,39 +34,82 @@ TextTranslation::TextTranslation() : _loaded(false) {
 }
 
 TextTranslation::~TextTranslation() {
+	SearchMan.remove("monsters-translated-graphics");
 }
 
 bool TextTranslation::load(const Common::Path &fileName, const Common::Path &originalArchive) {
 	_loaded = false;
 	_text.clear();
+	_language.clear();
+	_languages.clear();
+	SearchMan.remove("monsters-translated-graphics");
 #ifdef USE_TRANSLATION
 	_catalog.reset();
+	_graphics.reset();
+	_archive.reset();
 	Common::ScopedPtr<Common::Archive> archive(Common::makeZipArchive(fileName));
-	if (!archive || !archive->hasFile("monsters.en.dat")) {
+	if (!archive || !archive->hasFile("monsters.dat")) {
 		warning("Unable to open text translation: %s", fileName.toString().c_str());
 		return false;
 	}
 
 	SearchMan.add("monsters-translated-text", archive.get(), 1, false);
-	Common::ScopedPtr<Common::TranslationManager> catalog(new Common::TranslationManager("monsters.en.dat"));
-	catalog->setLanguage("en");
+	Common::ScopedPtr<Common::TranslationManager> catalog(new Common::TranslationManager("monsters.dat"));
 	SearchMan.remove("monsters-translated-text");
-	if (catalog->currentIsBuiltinLanguage() || catalog->getContexts().empty()) {
-		warning("Missing English catalog in %s", fileName.toString().c_str());
-		return false;
-	}
-	Common::ScopedPtr<ImageTranslationArchive> graphics(new ImageTranslationArchive(archive.release()));
+	Common::ScopedPtr<ImageTranslationArchive> graphics(new ImageTranslationArchive(archive.get()));
 	if (!graphics->load(originalArchive)) {
 		warning("Invalid image translation in %s", fileName.toString().c_str());
 		return false;
 	}
 
+	const Common::TLangArray languages = catalog->getSupportedLanguageNames();
+	for (uint i = 0; i < languages.size(); ++i) {
+		const Common::String code = catalog->getLangById(languages[i].id);
+		if (!code.hasPrefix("monsters-") || code.size() == 9)
+			continue;
+		Language language;
+		language.code = code.substr(9);
+		if (!decodeText(languages[i].name, language.name))
+			language.name = language.code;
+		_languages.push_back(language);
+	}
+	if (_languages.empty())
+		return false;
+	_archive.reset(archive.release());
+	_graphics.reset(graphics.release());
 	_catalog.reset(catalog.release());
-	_loaded = true;
-	SearchMan.add("monsters-translated-graphics", graphics.release(), 1);
 	return true;
 #else
 	warning("Alternative subtitles require translation support in this build");
+	return false;
+#endif
+}
+
+bool TextTranslation::setLanguage(const Common::String &language) {
+	if (language == _language)
+		return true;
+#ifdef USE_TRANSLATION
+	if (!language.empty()) {
+		if (!_catalog || _catalog->parseLanguage("monsters-" + language) == Common::kTranslationBuiltinId)
+			return false;
+		SearchMan.add("monsters-translated-text", _archive.get(), 1, false);
+		Common::ScopedPtr<Common::TranslationManager> catalog(new Common::TranslationManager("monsters.dat"));
+		catalog->setLanguage("monsters-" + language);
+		SearchMan.remove("monsters-translated-text");
+		if (catalog->currentIsBuiltinLanguage() || catalog->getContexts().empty()) {
+			warning("Unable to load Hollywood subtitles for %s", language.c_str());
+			return false;
+		}
+		_catalog.reset(catalog.release());
+	}
+	SearchMan.remove("monsters-translated-graphics");
+	if (language == "en")
+		SearchMan.add("monsters-translated-graphics", _graphics.get(), 1, false);
+	_text.clear();
+	_language = language;
+	_loaded = !language.empty();
+	return true;
+#else
 	return false;
 #endif
 }

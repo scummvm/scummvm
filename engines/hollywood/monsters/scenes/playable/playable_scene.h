@@ -406,6 +406,7 @@ protected:
 	Common::Path optionsMenuSoundBank0ArchiveName() const override;
 	bool optionsMenuSpeechPreviewSampleId(uint16 &sampleId) const override;
 	void suspendAudioForOptionsMenu() override;
+	void refreshTranslatedText() override;
 	bool shouldExitGameplayLoop() const override;
 	Common::String inventoryItemName(byte owner, byte itemId) const override;
 	void beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) override;

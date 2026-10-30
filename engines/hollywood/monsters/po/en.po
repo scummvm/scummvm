@@ -74,6 +74,10 @@ msgstr "N"
 msgid "interface.optionsQuitPrompt"
 msgstr "Are you sure?"
 
+#. ScummVM's in-game language selector.
+msgid "interface.optionsChangeLanguage"
+msgstr "Change language"
+
 msgid "interface.savePosition"
 msgstr "Choose a position to SAVE"
 

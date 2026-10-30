@@ -28,20 +28,29 @@
 #include "common/ptr.h"
 #include "common/ustr.h"
 
-#ifdef USE_TRANSLATION
 namespace Common {
+class Archive;
 class TranslationManager;
 }
-#endif
 
 namespace Hollywood {
 
+class ImageTranslationArchive;
+
 class TextTranslation {
 public:
+	struct Language {
+		Common::String code;
+		Common::String name;
+	};
+
 	TextTranslation();
 	~TextTranslation();
 
 	bool load(const Common::Path &fileName, const Common::Path &originalArchive);
+	bool setLanguage(const Common::String &language);
+	const Common::String &language() const { return _language; }
+	const Common::Array<Language> &languages() const { return _languages; }
 	void applyRows(const Common::String &section, Common::Array<byte> &rows,
 		uint rowSize, uint firstRow, uint firstRecord) const;
 	const char *interfaceText(const Common::String &key, const char *fallback) const;
@@ -51,8 +60,12 @@ private:
 	bool decodeText(const Common::U32String &value, Common::String &text) const;
 
 #ifdef USE_TRANSLATION
+	Common::ScopedPtr<Common::Archive> _archive;
+	Common::ScopedPtr<ImageTranslationArchive> _graphics;
 	Common::ScopedPtr<Common::TranslationManager> _catalog;
 #endif
+	Common::String _language;
+	Common::Array<Language> _languages;
 	mutable Common::StringMap _text;
 	bool _loaded;
 };

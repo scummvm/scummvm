@@ -68,6 +68,7 @@ private:
 		kHitSpeechText,
 		kHitSpeechVoice,
 		kHitSpeechBoth,
+		kHitLanguage,
 		kHitConfirmQuit,
 		kHitCancelQuit
 	};

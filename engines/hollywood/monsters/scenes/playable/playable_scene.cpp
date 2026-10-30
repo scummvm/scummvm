@@ -2088,6 +2088,16 @@ void PlayableScene::suspendAudioForOptionsMenu() {
 	_residentSoundEffects.stop();
 }
 
+void PlayableScene::refreshTranslatedText() {
+	const SceneTextStore previousText = _textStore;
+	if (!loadStage003SceneRows()) {
+		_textStore = previousText;
+		warning("Unable to refresh %s text after changing language", sceneDebugName());
+		return;
+	}
+	applySceneStateToHotspotsAndPatches(0xff);
+}
+
 bool PlayableScene::shouldExitGameplayLoop() const {
 	if (_vm->isSceneRestartRequested())
 		return true;

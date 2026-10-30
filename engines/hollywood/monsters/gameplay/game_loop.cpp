@@ -104,6 +104,9 @@ bool GameplayLoopDelegate::optionsMenuSpeechPreviewSampleId(uint16 &sampleId) co
 void GameplayLoopDelegate::suspendAudioForOptionsMenu() {
 }
 
+void GameplayLoopDelegate::refreshTranslatedText() {
+}
+
 bool GameplayLoopDelegate::shouldExitGameplayLoop() const {
 	return false;
 }
@@ -557,6 +560,7 @@ void GameplayLoop::closeInventoryPanel() {
 }
 
 void GameplayLoop::openOptionsMenu() {
+	const Common::String previousLanguage = _vm->textTranslation()->language();
 	const bool restoreInventoryPanel = _panelState.inventoryPanelVisible;
 	const bool restoreVerbPanel = _panelState.verbPanelVisible && !restoreInventoryPanel;
 
@@ -582,6 +586,8 @@ void GameplayLoop::openOptionsMenu() {
 		return;
 	if (_vm->isSceneRestartRequested())
 		return;
+	if (previousLanguage != _vm->textTranslation()->language())
+		_delegate->refreshTranslatedText();
 	_delegate->invalidatePresentationPalette();
 
 	_leftButtonDown = false;
@@ -597,6 +603,7 @@ void GameplayLoop::openOptionsMenu() {
 	} else if (restoreVerbPanel) {
 		_panelState.verbPanelVisible = true;
 		_panelState.inventoryPanelVisible = false;
+		_panelState.itemName = _delegate->hotspots().itemName(_panelState.resolvedItem);
 		updatePanelCaption();
 	} else {
 		_panelState.verbPanelVisible = false;

@@ -53,6 +53,7 @@ const HollywoodGameStrings kSpanishGameStrings = {
 	"\xa8" "Est\xa0s seguro?",
 	"S",
 	"N",
+	"Cambiar idioma",
 
 	" pasadizo",
 	" ata\xa3" "d ancho",
@@ -91,6 +92,7 @@ const HollywoodGameStrings kItalianGameStrings = {
 	"Sei sicuro?",
 	"S",
 	"N",
+	"Cambia lingua",
 
 	" passaggio",
 	" cassa da morto larga", // WORKAROUND: The Italian executable leaves this variant in Spanish.
@@ -129,6 +131,7 @@ const HollywoodGameStrings kEnglishGameStrings = {
 	"Are you sure?",
 	"Y",
 	"N",
+	"Change language",
 
 	" passage",
 	" wide coffin",
@@ -172,6 +175,7 @@ void HollywoodGameStrings::applyTranslation(const TextTranslation &translation) 
 		{ "optionsQuitPrompt", &optionsQuitPrompt },
 		{ "optionsQuitYes", &optionsQuitYes },
 		{ "optionsQuitNo", &optionsQuitNo },
+		{ "optionsChangeLanguage", &optionsChangeLanguage },
 		{ "passageName", &passageName },
 		{ "wideCoffinName", &wideCoffinName },
 		{ "recordsName", &recordsName },
@@ -181,10 +185,12 @@ void HollywoodGameStrings::applyTranslation(const TextTranslation &translation) 
 	};
 	for (uint i = 0; i < ARRAYSIZE(fields); ++i)
 		*fields[i].value = translation.interfaceText(fields[i].key, *fields[i].value);
+	for (uint i = 0; i < ARRAYSIZE(mineDestinationLabels); ++i)
+		mineDestinationLabels[i] = translation.interfaceText(Common::String::format("mineDestination%u", i), mineDestinationLabels[i]);
 }
 
-const HollywoodGameStrings &getGameStrings(Common::Language language) {
-	if (ConfMan.hasKey("language")) {
+const HollywoodGameStrings &getGameStrings(Common::Language language, bool useConfiguredLanguage) {
+	if (useConfiguredLanguage && ConfMan.hasKey("language")) {
 		const Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
 		if (selectedLanguage == Common::EN_ANY || selectedLanguage == Common::EN_GRB ||
 				selectedLanguage == Common::EN_USA)

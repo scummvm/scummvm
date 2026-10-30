@@ -35,9 +35,7 @@ enum {
 /**
  * In-game text not supplied by RESOURCE.003, including localized executable strings.
  *
- * These strings follow the detected game language unless English is explicitly
- * selected for a fan translation. The external catalog is independent of the
- * launcher language.
+ * These strings follow the detected game language or the selected external catalog.
  */
 struct HollywoodGameStrings {
 	const char *actionCaptions[kGameActionCaptionCount];
@@ -67,6 +65,7 @@ struct HollywoodGameStrings {
 	const char *optionsQuitPrompt;
 	const char *optionsQuitYes;
 	const char *optionsQuitNo;
+	const char *optionsChangeLanguage;
 
 	const char *passageName;
 	const char *wideCoffinName;
@@ -79,7 +78,7 @@ struct HollywoodGameStrings {
 	void applyTranslation(const TextTranslation &translation);
 };
 
-const HollywoodGameStrings &getGameStrings(Common::Language language);
+const HollywoodGameStrings &getGameStrings(Common::Language language, bool useConfiguredLanguage = true);
 
 } // End of namespace Hollywood
 

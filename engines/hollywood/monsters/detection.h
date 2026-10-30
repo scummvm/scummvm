@@ -25,13 +25,14 @@
 #include "engines/advancedDetector.h"
 
 #define GAMEOPTION_RESTORED_CONTENT GUIO_GAMEOPTIONS1
-#ifdef USE_TRANSLATION
-#define GAMEOPTION_ALTERNATIVE_SUBTITLES GUIO_GAMEOPTIONS2
-#else
-#define GAMEOPTION_ALTERNATIVE_SUBTITLES ""
-#endif
 
 namespace Hollywood {
+
+#ifdef USE_TRANSLATION
+const uint32 kMonstersTranslationFlags = ADGF_ADDENGLISH;
+#else
+const uint32 kMonstersTranslationFlags = 0;
+#endif
 
 extern const ADFileBasedFallback monstersFileBasedFallback[];
 const ADGameDescription *detectMonstersVariant(const AdvancedMetaEngineBase::FileMap &allFiles);

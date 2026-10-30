@@ -397,6 +397,11 @@ bool Scene4030::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) co
 	return true;
 }
 
+void Scene4030::refreshTranslatedText() {
+	_originalStageSmallRows.clear();
+	PlayableScene::refreshTranslatedText();
+}
+
 bool Scene4030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	(void)selector;
 	if (_paletteMaskOriginal.empty())

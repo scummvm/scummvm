@@ -183,7 +183,7 @@ extract_hollywood_translation.py
     Nikos Daskos (ShinjiGR) into editable PO text and image overlays.
 
     Rebuild dists/engine-data/hollywood.dat (ZIP) from
-    engines/hollywood/monsters/po/en.po and the extracted image assets:
+    engines/hollywood/monsters/po/*.po and the extracted image assets:
 
       make hollywood.dat
 

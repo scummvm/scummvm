@@ -379,9 +379,18 @@ def pack_translation(source, output, compiler, po=None):
                 files[name] = (source / name).read_bytes()
 
     with tempfile.TemporaryDirectory() as directory:
-        catalog = Path(directory) / "monsters.en.dat"
-        subprocess.run([str(compiler.resolve()), str(catalog), str(po or source / "en.po")], check=True)
-        files["monsters.en.dat"] = catalog.read_bytes()
+        directory = Path(directory)
+        catalogs = []
+        # Avoid TranslationManager's development override from ScummVM's GUI po/ directory.
+        for path in sorted(po or source.glob("*.po")):
+            catalog_source = directory / f"monsters-{path.stem}.po"
+            catalog_source.write_bytes(path.read_bytes())
+            catalogs.append(str(catalog_source))
+        if not catalogs:
+            raise ValueError("No PO catalogs found")
+        catalog = directory / "monsters.dat"
+        subprocess.run([str(compiler.resolve()), str(catalog), *catalogs], check=True)
+        files["monsters.dat"] = catalog.read_bytes()
     with zipfile.ZipFile(output, "w") as destination:
         for name, data in sorted(files.items()):
             destination.writestr(zipfile.ZipInfo(name), data, compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
@@ -398,7 +407,7 @@ def main():
     pack = commands.add_parser("pack", help="Compile PO text and rebuild hollywood.dat as a ZIP archive")
     pack.add_argument("source", type=Path, help="Directory produced by extract")
     pack.add_argument("output", type=Path, help="Output hollywood.dat (replaced if it exists)")
-    pack.add_argument("--po", type=Path, help="PO file to compile instead of SOURCE/en.po")
+    pack.add_argument("--po", type=Path, nargs="+", help="PO files to compile instead of SOURCE/*.po")
     pack.add_argument("--compiler", type=Path,
                       default=Path(__file__).resolve().parent / "create_translations/create_translations")
     args = parser.parse_args()

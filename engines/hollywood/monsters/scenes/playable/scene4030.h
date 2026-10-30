@@ -46,6 +46,7 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	void refreshTranslatedText() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void initializeSpriteLayers();

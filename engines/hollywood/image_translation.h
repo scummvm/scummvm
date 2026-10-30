@@ -64,7 +64,7 @@ private:
 	bool applyImage(const Overlay &overlay, Common::SeekableReadStream &file,
 		const ResourceChunkTable &table, Common::Array<byte> &data) const;
 
-	Common::ScopedPtr<Common::Archive> _archive;
+	Common::Archive *_archive; // Owned by TextTranslation.
 	Common::StringMap _sources;
 	Common::Array<Overlay> _overlays;
 };

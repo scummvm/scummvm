@@ -97,6 +97,7 @@ public:
 	virtual Common::Path optionsMenuSoundBank0ArchiveName() const;
 	virtual bool optionsMenuSpeechPreviewSampleId(uint16 &sampleId) const;
 	virtual void suspendAudioForOptionsMenu();
+	virtual void refreshTranslatedText();
 	virtual bool shouldExitGameplayLoop() const;
 	virtual bool isInventoryPanelAvailable() const;
 	virtual Common::String inventoryItemName(byte owner, byte itemId) const;
