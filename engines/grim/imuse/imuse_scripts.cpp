@@ -316,7 +316,6 @@ void IMuse::scriptPlayMusic(const IMuseStateTable *tableEntry, int curSongEntryI
 	case 10:
 	case 11:
 	case 12:
-		// TODO
 		// The original remaps the name through a table which always appends ".IMC"
 		Common::strlcpy(fileName, tableEntry->name, sizeof(fileName));
 		Common::strlcat(fileName, ".IMC", sizeof(fileName));
