@@ -36,7 +36,7 @@ UI::UI(GraphicsEngine *gfx, CmdQueue *que, ResourcePointer *scd) : _gfx(gfx), _q
 	_scriptTextResource(nullptr),/*_makestrbt1(0),*/ _textY(0), _headLineYOffset(0), _sceneTextOffsCur(0), _textLineEnd(0), _sceneInfo(0), _sceneTextOffset(0), _flashLight(),
 		_sceneTextOffsStart(0), _waitCursorFrame(0), _waitCursorAnimDelay(0), _progress(-1), _progress2(-1), _controllerCfg(0), _verbInterfaceMode(0), _verbsInterpreterMode(0),
 			_lastVerbFirstPage(0), _numVerbsFirstPage(0), _numVerbsLastPage(0), _lastVerbLastPage(0), _numVerbsMax(0), _verbsTabCurPage(0), _lastVerbDrawn(0), _verbTextBuffer(nullptr), _scriptVerbsArray(nullptr),
-				_scriptSentenceArray(nullptr), _prevSelectedVerb(0), _selectedVerb(0), _lastHiliteVerb(0), _hiliteVerb(0), _textInputMarginLeft(0), _videoPhoneMode(0),
+				_scriptSentenceArray(nullptr), _prevSelectedVerb(0), _selectedVerb(0), _lastHiliteVerb(0), _hiliteVerb(0), _savedHiliteVerb(0), _textInputMarginLeft(0), _videoPhoneMode(0),
 					_textInputColumnCur(0), _textInputColumnMax(0), _textInputCursorState(0), _textInputCursorBlinkCnt(0), _underscoreStr(nullptr), _textInputStr(nullptr), _vkeybPosTotal(0),
 						_vkeybColumnWidth(0), _verbsTabLayoutMap(nullptr), _verbsTabOffsX(0), _verbsTabOffsY(0), _hilitePosX(0), _hilitePosY(0), _vkeybVisible(false) {
 
@@ -255,12 +255,16 @@ bool UI::drawVerbs() {
 				_lastVerbDrawn = _numVerbsMax;
 
 			_selectedVerb = 0;
-			uint8 v = 0;
-			if (_scriptSentenceArray->pos() == 0) {
-				if (_prevSelectedVerb <= _lastVerbDrawn - 1)
-					v = _prevSelectedVerb;
+			uint8 v = _savedHiliteVerb;
+			_savedHiliteVerb = 0;
+
+			if (v == 0) {
+				if (_scriptSentenceArray->pos() == 0) {
+					if (_prevSelectedVerb <= _lastVerbDrawn - 1)
+						v = _prevSelectedVerb;
+				}
 			}
-			_selectedVerb = 0;
+
 			_hiliteVerb = _lastHiliteVerb = v;
 			++_progress2;
 		}
@@ -501,12 +505,11 @@ void UI::loadState(Common::SeekableReadStream *in, SaveFlags flags) {
 	_videoPhoneMode = in->readSint16BE();
 	_textInputColumnMax = in->readSint16BE();
 	_prevSelectedVerb = in->readByte();
-	_selectedVerb = in->readByte();
-	_prevSelectedVerb = _selectedVerb;
-	if (flags & kSaveFlagsScriptedSave)
+	_savedHiliteVerb = in->readByte();
+	if (flags & kSaveFlagsScriptedSave) {
 		resetVerbSelection();
-	else
-		_prevSelectedVerb = _selectedVerb;
+		_savedHiliteVerb = 0;
+	}
 	_vkeybVisible = in->readByte();
 
 	_flashLight.inputFlags= in->readByte();
@@ -526,7 +529,7 @@ void UI::saveState(Common::SeekableWriteStream *out, SaveFlags flags) {
 	out->writeSint16BE(_videoPhoneMode);
 	out->writeSint16BE(_textInputColumnMax);
 	out->writeByte(_prevSelectedVerb);
-	out->writeByte(_selectedVerb);
+	out->writeByte(_lastHiliteVerb);
 	out->writeByte(_vkeybVisible ? 1 : 0);
 
 	out->writeByte(_flashLight.inputFlags);
