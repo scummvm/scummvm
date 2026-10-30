@@ -3641,6 +3641,9 @@ void ZoombiniText::initFonts(const SourceSettings &sources) {
 	switch (_relInfo.getPlatform()) {
 	case Common::kPlatformMacintosh:
 		initMacintoshFonts();
+		_macFontRenderMode = getConfiguredMacFontRenderMode();
+		for (TTFLoader *loader : _optimalTTFLoaders)
+			loader->setRenderMode(_macFontRenderMode);
 		break;
 	case Common::kPlatformWindows:
 		initWindowsFonts(sources.fontCabinet);
@@ -3650,22 +3653,22 @@ void ZoombiniText::initFonts(const SourceSettings &sources) {
 	}
 
 	// Check if ScummVM can access required fonts, and print warning message box if they are not found.
-	loadFont(_textFont, true);
-	loadFont(_titleFont, false);
+	loadFont(_textFontSelection, true);
+	loadFont(_titleFontSelection, false);
 }
 
 void ZoombiniText::initMacintoshFonts() {
 	static constexpr Graphics::TTFSizeMode kSizeMode = Graphics::kTTFSizeModeCharacter;
 
-	_textFont.point = 12;
-	_titleFont.point = 18;
+	_textFontSelection.point = 12;
+	_titleFontSelection.point = 18;
 	switch (_relInfo.getLanguage()) {
 	case Common::FR_FRA:
 	case Common::DE_DEU:
-		_titleFont.point = 16;
+		_titleFontSelection.point = 16;
 		break;
 	case Common::JA_JPN:
-		_titleFont.point = 16;
+		_titleFontSelection.point = 16;
 		// We need specifically Osaka 4.2 from the Mac OS 9 Japanese Language Kit, not from the KanjiTalk 7.5.3.
 		// The latter does not contain Unicode cmap, which is required by FreeType.
 		_optimalTTFLoaders.push_back(new MacResForkTTFLoader("Osaka", 16384, "Osaka", kSizeMode));
@@ -3711,8 +3714,8 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 	Common::String fontSrcInst;
 
 	// Default font sizes for English Zoombinis.
-	_textFont.point = 13;
-	_titleFont.point = 18;
+	_textFontSelection.point = 13;
+	_titleFontSelection.point = 18;
 
 	// Zoombini bundles its preferred font in InstallShield archives or the install location.
 	// - v1.0US, v1.0EU and v1.1EU: found in /CORNER.TTF
@@ -3726,17 +3729,17 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 			// GDI rounds this to 9 pixels; FreeType rounds up to 10 and uses that ascent for cached glyph Y offsets.
 			// Both have an 11-pixel line height, but FreeType places the Portuguese glyph baseline one pixel lower.
 			// This font-metric difference remains a known issue; do not compensate with layout rectangles.
-			_textFont.point = 10;
-			_titleFont.point = 14;
+			_textFontSelection.point = 10;
+			_titleFontSelection.point = 14;
 		} else if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
-			_textFont.point = 12;
-			_titleFont.point = 15;
+			_textFontSelection.point = 12;
+			_titleFontSelection.point = 15;
 		} else {
 			switch (language) {
 			case Common::FR_FRA:
 			case Common::DE_DEU:
 			case Common::IT_ITA:
-				_titleFont.point = 16;
+				_titleFontSelection.point = 16;
 				break;
 			default: // Use default
 				break;
@@ -3788,8 +3791,8 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 			_optimalTTFLoaders.push_back(new WinSysTTFLoader("gulim.ttc", kFontNameGulimChe, systemFontWarn,
 															 fontSizeMode, Graphics::kTTFRenderModeMonochrome, 1, true));
 #endif
-			_textFont.point = 12;
-			_titleFont.point = 18;
+			_textFontSelection.point = 12;
+			_titleFontSelection.point = 18;
 			// Without hinting, quality of Noto Sans rendering in low resolution is terrible.
 			// Thus, prefer light hinting for Noto Sans when RGB rendering is available.
 			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansKR-Bold.otf", "Noto Sans KR Bold", fontSizeMode, Graphics::kTTFRenderModeLight));
@@ -3832,8 +3835,8 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 ZoombiniText::~ZoombiniText() {
 	// FontMan outlives game engines, so release this game's font names before
 	// another Zoombini target can load fonts with the same face and size.
-	FontMan.removeFontName(_textFont.cacheName);
-	FontMan.removeFontName(_titleFont.cacheName);
+	FontMan.removeFontName(_textFontSelection.cacheName);
+	FontMan.removeFontName(_titleFontSelection.cacheName);
 
 	for (TTFLoader *loader : _optimalTTFLoaders)
 		delete loader;
@@ -4484,11 +4487,11 @@ Common::String ZoombiniText::formatCreditLineKey(uint32 paragraphIndex, uint32 l
 }
 
 const Graphics::Font *ZoombiniText::getTextFont() {
-	return FontMan.getFontByName(_textFont.cacheName);
+	return FontMan.getFontByName(_textFontSelection.cacheName);
 }
 
 const Graphics::Font *ZoombiniText::getTitleFont() {
-	return FontMan.getFontByName(_titleFont.cacheName);
+	return FontMan.getFontByName(_titleFontSelection.cacheName);
 }
 
 const Graphics::Font *ZoombiniText::getFont(ZoombiniFontUsage fontUsage) {
@@ -4510,9 +4513,9 @@ const Graphics::Font *ZoombiniText::getFont(ZoombiniFontUsage fontUsage) {
 bool ZoombiniText::fontUsesAntialiasing(ZoombiniFontUsage fontUsage) const {
 	switch (fontUsage) {
 	case ZoombiniFontUsage::kFontTitle:
-		return _titleFont.enableHinting;
+		return _titleFontSelection.antialiasingEnabled;
 	case ZoombiniFontUsage::kFontText:
-		return _textFont.enableHinting;
+		return _textFontSelection.antialiasingEnabled;
 	case ZoombiniFontUsage::kFontDebugTitle:
 	case ZoombiniFontUsage::kFontDebugText:
 	default:
@@ -4520,7 +4523,46 @@ bool ZoombiniText::fontUsesAntialiasing(ZoombiniFontUsage fontUsage) const {
 	}
 }
 
-const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgBox) {
+Graphics::TTFRenderMode ZoombiniText::getConfiguredMacFontRenderMode() const {
+#ifdef USE_RGB_COLOR
+	switch (_relInfo.getLanguage()) {
+	case Common::KO_KOR:
+	case Common::JA_JPN:
+		return Graphics::kTTFRenderModeMonochrome;
+	default:
+		break;
+	}
+	if (_relInfo.getPlatform() == Common::kPlatformMacintosh) {
+		const int intVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMacFontSmoothing);
+		const MohawkMetaEngine_Zoombini::MacFontSmoothing smoothing = MohawkMetaEngine_Zoombini::normalizeFontSmoothing(intVal);
+		if (smoothing == MohawkMetaEngine_Zoombini::MacFontSmoothing::kEnabled)
+			return Graphics::kTTFRenderModeNormalWithGridFitting;
+	}
+#endif
+	return Graphics::kTTFRenderModeMonochrome;
+}
+
+bool ZoombiniText::applyFontSmoothing() {
+	const Graphics::TTFRenderMode renderMode = getConfiguredMacFontRenderMode();
+	if (_macFontRenderMode == renderMode)
+		return false;
+
+	_macFontRenderMode = renderMode;
+	for (TTFLoader *loader : _optimalTTFLoaders)
+		loader->setRenderMode(renderMode);
+
+	const Common::String prevTextCacheName = _textFontSelection.cacheName;
+	const Common::String prevTitleCacheName = _titleFontSelection.cacheName;
+	loadFont(_textFontSelection, false);
+	loadFont(_titleFontSelection, false);
+	if (prevTextCacheName != _textFontSelection.cacheName)
+		FontMan.removeFontName(prevTextCacheName);
+	if (prevTitleCacheName != _titleFontSelection.cacheName)
+		FontMan.removeFontName(prevTitleCacheName);
+	return true;
+}
+
+const Graphics::Font *ZoombiniText::loadFont(FontSelection &selection, bool showWarnMsgBox) {
 	TTFLoader *firstOptimalLoader = nullptr;
 	if (!_optimalTTFLoaders.empty())
 		firstOptimalLoader = _optimalTTFLoaders.front();
@@ -4529,12 +4571,12 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 		return nullptr;
 	}
 	for (TTFLoader *loader : _optimalTTFLoaders) {
-		const Graphics::Font *font = loader->loadFont(state.point);
+		const Graphics::Font *font = loader->loadFont(selection.point);
 		if (!font)
 			continue;
 
-		state.cacheName = loader->getCacheName(state.point);
-		state.enableHinting = loader->isAntialiasingEnabled();
+		selection.cacheName = loader->getCacheName(selection.point);
+		selection.antialiasingEnabled = loader->isAntialiasingEnabled();
 		return font;
 	}
 
@@ -4598,7 +4640,7 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 
 	// Look up fallback fonts when the optimal font is unavailable.
 	for (TTFLoader *loader : _fallbackTTFLoaders) {
-		const Graphics::Font *font = loader->loadFont(state.point);
+		const Graphics::Font *font = loader->loadFont(selection.point);
 		if (!font)
 			continue;
 
@@ -4617,8 +4659,8 @@ const Graphics::Font *ZoombiniText::loadFont(FontState &state, bool showWarnMsgB
 			dialog.runModal();
 		}
 
-		state.cacheName = loader->getCacheName(state.point);
-		state.enableHinting = loader->isAntialiasingEnabled();
+		selection.cacheName = loader->getCacheName(selection.point);
+		selection.antialiasingEnabled = loader->isAntialiasingEnabled();
 		return font;
 	}
 

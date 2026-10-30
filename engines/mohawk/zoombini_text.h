@@ -316,8 +316,10 @@ public:
 	const Graphics::Font *getTitleFont();
 	/** Return the font selected by a renderer-facing usage enum. */
 	const Graphics::Font *getFont(ZoombiniFontUsage fontUsage);
-	/** Return whether the selected font retains grayscale glyph coverage. */
+	/** Return whether this font usage should use the anti-aliased drawing path. */
 	bool fontUsesAntialiasing(ZoombiniFontUsage fontUsage) const;
+	/** Reload Macintosh fonts after a smoothing change and report whether a redraw is needed. */
+	bool applyFontSmoothing();
 
 	// Convert strings to @ref Common::U32String with the selected code page.
 	enum StringKind {
@@ -468,15 +470,17 @@ private:
 		{ZoombiniPageType::kTown, kTown},
 	};
 
-	/** Point size and cached result for one font role. */
-	struct FontState {
+	/** Requested size and selected font metadata for one text role. */
+	struct FontSelection {
 		/** Size interpreted using the selected loader's character or cell mode. */
 		int point = 0;
 		/** Name of the font owned by FontMan. */
 		Common::String cacheName;
-		/** Whether the selected font retains grayscale glyph coverage. */
-		bool enableHinting = false;
+		/** Whether the selected loader enables glyph anti-aliasing. */
+		bool antialiasingEnabled = false;
 	};
+	/** Return the configured rendering mode for original Macintosh fonts. */
+	Graphics::TTFRenderMode getConfiguredMacFontRenderMode() const;
 
 	/** Internal STRL text-table metadata. */
 	struct ResTextEntry {
@@ -849,8 +853,13 @@ private:
 	void initWindowsFonts(const char *fontCabinet);
 	/** Describe the verified retail Macintosh executable's static text image. */
 	static ExeTextSource createMacExecutableSource(const ZmbReleaseInfo &relInfo, bool europeV11);
-	/** Select and cache one font role, optionally warning when a fallback is used. */
-	const Graphics::Font *loadFont(FontState &state, bool showWarnMsgBox);
+	/**
+	 * Load and record a font selection, optionally warning when a fallback is used.
+	 *
+	 * @param[in,out] selection Supplies the requested size and receives the selected font's cache name and anti-aliasing setting.
+	 * @param showWarnMsgBox Whether to log and display a warning when a fallback font is selected.
+	 */
+	const Graphics::Font *loadFont(FontSelection &selection, bool showWarnMsgBox);
 
 	/**
 	 * Insert or replace ScummVM-provided strings while preserving release-owned text.
@@ -1013,10 +1022,12 @@ private:
 	/** Cached code page used to decode Zoombini string resources (STRL). */
 	Common::CodePage _resCodePage;
 
-	/** Selected normal text font. */
-	FontState _textFont;
-	/** Selected title font. */
-	FontState _titleFont;
+	/** Font selection used for normal text. */
+	FontSelection _textFontSelection;
+	/** Font selection used for titles. */
+	FontSelection _titleFontSelection;
+	/** Rendering mode active on the original Macintosh font loaders. */
+	Graphics::TTFRenderMode _macFontRenderMode = Graphics::kTTFRenderModeMonochrome;
 	/** Font loaders tried first for the selected language and point size. */
 	Common::Array<TTFLoader *> _optimalTTFLoaders;
 	/** Fallback font loaders tried when no preferred font can be loaded. */

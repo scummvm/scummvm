@@ -300,6 +300,24 @@ public:
 	};
 	/** Select the palette brightness filter. */
 	static constexpr const char *kOptionPaletteFilter = "palette_filter";
+	/** Font smoothing selection for Macintosh targets. */
+	enum class MacFontSmoothing : uint32 {
+		/**
+		 * Do not smooth the font rendering (no AA).
+		 */
+		kDisabled = 0,
+		/**
+		 * Approximate classic MacOS grayscale font smoothing.
+		 *
+		 * Note that the exact rendered pixels cannot be perfectly equal to the QuickDraw's result.
+		 * We use FreeType NormalWithGridFitting AA as a closist approximiate.
+		 */
+		kEnabled = 1,
+	};
+	/** Select smoothing for the original Macintosh fonts. */
+	static constexpr const char *kOptionMacFontSmoothing = "mac_font_smoothing";
+	/** Return a supported smoothing mode, or no smoothing for an unknown value. */
+	static MacFontSmoothing normalizeFontSmoothing(int smoothing);
 	/** Persisted pseudo-random generator selection. */
 	enum class PrngAlgorithm : uint32 {
 		/**
