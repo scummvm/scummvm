@@ -23,224 +23,68 @@
 
 namespace Grim {
 
-// We have some uintptr arguments as commands 28, 29 and 30 actually require pointer arguments
+// We have some uintptr arguments as commands 17, 18, 19 and 29 actually require pointer arguments
 // Unfortunately this makes function calls for other command a little less pretty...
 int IMuseDigital::cmdsHandleCmd(int cmd, uint8 *ptr, int a, int b, int c, int d, int e,
 	int f, int g, int h, int i, int j, int k, int l, int m, int n) {
 
 	char *marker = (char *)ptr;
 
+	if (!_initialized)
+		return -1;
+
 	switch (cmd) {
 	case DIMUSE_C_INIT:
-		return cmdsInit();
+		return diMUSEInitialize();
+	case DIMUSE_C_TERMINATE:
+		return diMUSETerminate();
+	case 2:
+		return cmd;
 	case DIMUSE_C_PAUSE:
-		return cmdsPause();
+		diMUSEPause();
+		return cmd;
 	case DIMUSE_C_RESUME:
-		return cmdsResume();
+		diMUSEResume();
+		return cmd;
 	case DIMUSE_C_SET_GRP_VOL:
-		return _groupsHandler->setGroupVol(a, b);
+		return diMUSESetGroupVol(a, b);
 	case DIMUSE_C_START_SND:
-		cmdsStartSound(a, b);
-		break;
+		return diMUSEStartSound(a, b);
 	case DIMUSE_C_STOP_SND:
-		cmdsStopSound(a);
-		break;
+		return diMUSEStopSound(a);
 	case DIMUSE_C_STOP_ALL_SNDS:
-		cmdsStopAllSounds();
-		break;
+		return diMUSEStopAllSounds();
 	case DIMUSE_C_GET_NEXT_SND:
-		return cmdsGetNextSound(a);
+		return diMUSEGetNextSound(a);
 	case DIMUSE_C_SET_PARAM:
-		cmdsSetParam(a, b, c);
-		break;
+		return diMUSESetParam(a, b, c);
 	case DIMUSE_C_GET_PARAM:
-		return cmdsGetParam(a, b);
+		return diMUSEGetParam(a, b);
 	case DIMUSE_C_FADE_PARAM:
-		return _fadesHandler->fadeParam(a, b, c, d);
+		return diMUSEFadeParam(a, b, c, d);
 	case DIMUSE_C_SET_HOOK:
-		return cmdsSetHook(a, b);
+		return diMUSESetHook(a, b);
 	case DIMUSE_C_GET_HOOK:
-		return cmdsGetHook(a);
+		return diMUSEGetHook(a);
 	case DIMUSE_C_SET_TRIGGER:
-		return _triggersHandler->setTrigger(a, marker, c, d, e, f, g, h, i, j, k, l, m, n);
+		return diMUSESetTrigger(a, marker, c, d, e, f, g, h, i, j, k, l, m, n);
 	case DIMUSE_C_CHECK_TRIGGER:
-		return _triggersHandler->checkTrigger(a, marker, c);
+		return diMUSECheckTrigger(a, marker, c);
 	case DIMUSE_C_CLEAR_TRIGGER:
-		return _triggersHandler->clearTrigger(a, marker, c);
+		return diMUSEClearTrigger(a, marker, c);
 	case DIMUSE_C_DEFER_CMD:
-		return _triggersHandler->deferCommand(a, b, c, d, e, f, g, h, i, j, k, l, m, n);
+		return diMUSEDeferCommand(a, b, c, d, e, f, g, h, i, j, k, l, m, n);
 	case DIMUSE_C_START_STREAM:
-		return waveStartStream(a, b, c);
+		return diMUSEStartStream(a, b, c);
 	case DIMUSE_C_SWITCH_STREAM:
-		return waveSwitchStream(a, b, c, d, e);
+		return diMUSESwitchStream(a, b, c, d, e);
 	case DIMUSE_C_PROCESS_STREAMS:
-		return waveProcessStreams();
+		return diMUSEProcessStreams();
 	case DIMUSE_C_FEED_STREAM:
-		return waveFeedStream(a, ptr, c, d);
+		return diMUSEFeedStream(a, ptr, c, d);
 	default:
-		debug(5, "IMuseDigital::cmdsHandleCmd(): bogus/unused opcode ignored (%d).", cmd);
 		return -1;
 	}
-
-	return 0;
-}
-
-int IMuseDigital::cmdsInit() {
-	_cmdsRunning60HzCount = 0;
-	_cmdsRunning10HzCount = 0;
-
-	if (_groupsHandler->init() || _fadesHandler->init() ||
-		_triggersHandler->init() || waveInit()) {
-		return -1;
-	}
-
-	_cmdsPauseCount = 0;
-	return 48;
-}
-
-int IMuseDigital::cmdsDeinit() {
-	waveTerminate();
-	waveOutDeinit();
-	_cmdsPauseCount = 0;
-	_cmdsRunning60HzCount = 0;
-	_cmdsRunning10HzCount = 0;
-
-	return 0;
-}
-
-int IMuseDigital::cmdsTerminate() {
-	return 0;
-}
-
-int IMuseDigital::cmdsPause() {
-	int result = 0;
-
-	if (_cmdsPauseCount == 0) {
-		result = wavePause();
-	}
-
-	if (!result) {
-		result = _cmdsPauseCount + 1;
-	}
-	_cmdsPauseCount++;
-
-	return result;
-}
-
-int IMuseDigital::cmdsResume() {
-	int result = 0;
-
-	if (_cmdsPauseCount == 1) {
-		result = waveResume();
-	}
-
-	if (_cmdsPauseCount != 0) {
-		_cmdsPauseCount--;
-	}
-
-	if (!result) {
-		result = _cmdsPauseCount;
-	}
-
-	return result;
-}
-
-void IMuseDigital::cmdsSaveLoad(Common::Serializer &ser) {
-	// Serialize in this order:
-	// - Open files
-	// - Fades
-	// - Triggers
-	// - Pass the control to waveSaveLoad and then tracksSaveLoad, which will serialize:
-	//     - Dispatches
-	//     - Tracks (with SYNCs, if the game is COMI)
-	// - State and sequence info
-	// - Attributes
-
-	_filesHandler->saveLoad(ser);
-	_fadesHandler->saveLoad(ser);
-	_triggersHandler->saveLoad(ser);
-	waveSaveLoad(ser);
-	ser.syncAsSint32LE(_curMusicState, VER(103));
-	ser.syncAsSint32LE(_curMusicSeq, VER(103));
-	ser.syncAsSint32LE(_nextSeqToPlay, VER(103));
-	ser.syncArray(_attributes, ARRAYSIZE(_attributes), Common::Serializer::Sint32LE, VER(103));
-}
-
-int IMuseDigital::cmdsStartSound(int soundId, int priority) {
-	uint8 *src = _filesHandler->getSoundAddrData(soundId);
-
-	if (src == nullptr) {
-		debug(5, "IMuseDigital::cmdsStartSound(): ERROR: resource address for sound %d is NULL", soundId);
-		return -1;
-	}
-
-	// Check for the "iMUS" header
-	if (READ_BE_UINT32(src) == MKTAG('i', 'M', 'U', 'S'))
-		return waveStartSound(soundId, priority);
-
-	return -1;
-}
-
-int IMuseDigital::cmdsStopSound(int soundId) {
-	int result = _filesHandler->getNextSound(soundId);
-
-	if (result != 2)
-		return -1;
-
-	return waveStopSound(soundId);
-}
-
-int IMuseDigital::cmdsStopAllSounds() {
-	return _triggersHandler->clearAllTriggers() | waveStopAllSounds();
-}
-
-int IMuseDigital::cmdsGetNextSound(int soundId) {
-	return waveGetNextSound(soundId);
-}
-
-int IMuseDigital::cmdsSetParam(int soundId, int subCmd, int value) {
-	int result = _filesHandler->getNextSound(soundId);
-
-	if (result != 2)
-		return -1;
-
-	return waveSetParam(soundId, subCmd, value);
-}
-
-int IMuseDigital::cmdsGetParam(int soundId, int subCmd) {
-	int result = _filesHandler->getNextSound(soundId);
-
-	if (subCmd != 0) {
-		if (subCmd == DIMUSE_P_TRIGS_SNDS) {
-			return _triggersHandler->countPendingSounds(soundId);
-		}
-
-		if (result == 2) {
-			return waveGetParam(soundId, subCmd);
-		}
-
-		result = (subCmd == DIMUSE_P_SND_TRACK_NUM) - 1;
-	}
-
-	return result;
-}
-
-int IMuseDigital::cmdsSetHook(int soundId, int hookId) {
-	int result = _filesHandler->getNextSound(soundId);
-
-	if (result != 2)
-		return -1;
-
-	return waveSetHook(soundId, hookId);
-}
-
-int IMuseDigital::cmdsGetHook(int soundId) {
-	int result = _filesHandler->getNextSound(soundId);
-
-	if (result != 2)
-		return -1;
-
-	return waveGetHook(soundId);
 }
 
 } // End of namespace Grim

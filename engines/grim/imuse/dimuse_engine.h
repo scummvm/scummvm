@@ -68,7 +68,6 @@ private:
 
 	int _callbackFps;
 	static void timer_handler(void *refConf);
-	void callback();
 
 	bool _isEngineDisabled;
 	bool _checkForUnderrun;
@@ -112,6 +111,7 @@ private:
 	int scriptParse(int cmd, int a, int b);
 	int scriptInit();
 	int scriptTerminate();
+	void scriptSaveLoad(Common::Serializer &ser);
 	void scriptDeinit();
 	void scriptRefresh();
 	void scriptSetState(int soundId);
@@ -121,24 +121,10 @@ private:
 	int scriptSetAttribute(int attrIndex, int attrVal);
 
 	// CMDs
+	int _initialized;
 	int _cmdsPauseCount;
-	int _cmdsRunning60HzCount;
-	int _cmdsRunning10HzCount;
-
-	int cmdsInit();
-	int cmdsDeinit();
-	int cmdsTerminate();
-	int cmdsPause();
-	int cmdsResume();
-	void cmdsSaveLoad(Common::Serializer &ser);
-	int cmdsStartSound(int soundId, int priority);
-	int cmdsStopSound(int soundId);
-	int cmdsStopAllSounds();
-	int cmdsGetNextSound(int soundId);
-	int cmdsSetParam(int soundId, int opcode, int value);
-	int cmdsGetParam(int soundId, int opcode);
-	int cmdsSetHook(int soundId, int hookId);
-	int cmdsGetHook(int soundId);
+	int _cmdsRunning50HzCount;
+	int _cmdsRunning5HzCount;
 
 	// Streamer
 	IMuseDigiStream _streams[DIMUSE_MAX_STREAMS];
@@ -171,7 +157,6 @@ private:
 	void tracksPause();
 	void tracksResume();
 	void tracksSaveLoad(Common::Serializer &ser);
-	void tracksSetGroupVol();
 	void tracksCallback();
 	void tracksLowLatencyCallback();
 	int tracksStartSound(int soundId, int tryPriority, int group);
@@ -186,7 +171,7 @@ private:
 	int tracksSetHook(int soundId, int hookId);
 	int tracksGetHook(int soundId);
 	IMuseDigiTrack *tracksReserveTrack(int priority);
-	void tracksDeinit();
+	int tracksDeinit();
 
 	// Dispatch
 	IMuseDigiDispatch _dispatches[DIMUSE_MAX_DISPATCHES];
@@ -231,27 +216,6 @@ private:
 	void dispatchValidateFadeSize(IMuseDigiDispatch *dispatchPtr, int32 &dispatchSize);
 	int dispatchUpdateFadeMixVolume(IMuseDigiDispatch *dispatchPtr, int32 remainingFade);
 	int dispatchUpdateFadeSlope(IMuseDigiDispatch *dispatchPtr);
-
-	// Wave (mainly a wrapper for Tracks functions)
-	int waveInit();
-	int waveTerminate();
-	int wavePause();
-	int waveResume();
-	void waveSaveLoad(Common::Serializer &ser);
-	void waveUpdateGroupVolumes();
-	int waveStartSound(int soundId, int priority);
-	int waveStopSound(int soundId);
-	int waveStopAllSounds();
-	int waveGetNextSound(int soundId);
-	int waveSetParam(int soundId, int opcode, int value);
-	int waveGetParam(int soundId, int opcode);
-	int waveSetHook(int soundId, int hookId);
-	int waveGetHook(int soundId);
-	int waveStartStream(int soundId, int priority, int groupId);
-	int waveSwitchStream(int oldSoundId, int newSoundId, int fadeLengthMs, int fadeSyncFlag2, int fadeSyncFlag1);
-	int waveProcessStreams();
-	int waveQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
-	int waveFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused);
 
 	// Waveapi
 	waveOutParamsStruct waveOutSettings;
@@ -309,12 +273,15 @@ public:
 	int32 getCurMusicPosInMs();
 	int32 getSoundElapsedTimeInMs(int soundId);
 
+	// Called by the Groups module
+	void tracksSetGroupVol();
+
 	// General engine functions
 	int diMUSETerminate();
 	int diMUSEInitialize();
-	int diMUSEPause();
-	int diMUSEResume();
-	void diMUSESaveLoad(Common::Serializer &ser);
+	void diMUSEPause();
+	void diMUSEResume();
+	int diMUSESaveLoad(Common::Serializer &ser);
 	int diMUSESetGroupVol(int groupId, int volume);
 	int diMUSEStartSound(int soundId, int priority);
 	int diMUSEStopSound(int soundId);
@@ -324,11 +291,15 @@ public:
 	int diMUSEGetParam(int soundId, int paramId);
 	int diMUSEFadeParam(int soundId, int opcode, int destValue, int fadeLength);
 	int diMUSESetHook(int soundId, int hookId);
+	int diMUSEGetHook(int soundId);
 
 	int diMUSESetTrigger(int soundId, const char *marker, int opcode,
 		int d = -1, int e = -1, int f = -1, int g = -1,
 		int h = -1, int i = -1, int j = -1, int k = -1,
 		int l = -1, int m = -1, int n = -1);
+	int diMUSECheckTrigger(int soundId, const char *marker, int opcode);
+	int diMUSEClearTrigger(int soundId, const char *marker, int opcode);
+	int diMUSEDeferCommand(int count, int opcode, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
 
 	int diMUSEStartStream(int soundId, int priority, int groupId);
 	int diMUSESwitchStream(int oldSoundId, int newSoundId, int fadeDelay, int fadeSyncFlag2, int fadeSyncFlag1);
@@ -341,8 +312,9 @@ public:
 	int diMUSESetMusicGroupVol(int volume);
 	int diMUSESetSFXGroupVol(int volume);
 	int diMUSESetVoiceGroupVol(int volume);
-	void diMUSEUpdateGroupVolumes();
 	int diMUSEInitializeScript();
+	int diMUSETerminateScript();
+	void diMUSESaveLoadScript(Common::Serializer &ser);
 	void diMUSERefreshScript();
 	int diMUSESetState(int soundId);
 	int diMUSESetSequence(int soundId);

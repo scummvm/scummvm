@@ -60,8 +60,8 @@ enum {
 
 #define DIMUSE_TIMER_BASE_RATE_HZ       50
 #define DIMUSE_TIMER_BASE_RATE_USEC     20000  // 1000000 / 50Hz
-#define DIMUSE_TIMER_GAIN_RED_RATE_USEC 100000 // 1000000 / 10Hz
-#define DIMUSE_TIMER_FADES_RATE_USEC    16667  // 1000000 / 60Hz
+#define DIMUSE_TIMER_GAIN_RED_RATE_USEC 200000 // 1000000 / 5Hz
+#define DIMUSE_TIMER_FADES_RATE_USEC    20000  // 1000000 / 50Hz
 
 // Parameters IDs
 #define DIMUSE_P_BOGUS_ID       0x0
@@ -107,6 +107,7 @@ enum {
 
 // Internal command IDs
 #define DIMUSE_C_INIT             0
+#define DIMUSE_C_TERMINATE        1
 #define DIMUSE_C_PAUSE            3
 #define DIMUSE_C_RESUME           4
 #define DIMUSE_C_SET_GRP_VOL      7

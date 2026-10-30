@@ -35,7 +35,7 @@ namespace Grim {
 
 void IMuseDigital::timer_handler(void *refCon) {
 	IMuseDigital *diMUSE = (IMuseDigital *)refCon;
-	diMUSE->callback();
+	diMUSE->diMUSEHeartbeat();
 }
 
 IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode)
@@ -68,6 +68,7 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 
 	_dispatchFadeSize = 0;
 
+	_initialized = 0;
 	_scriptInitializedFlag = 0;
 	_callbackInterruptFlag = 0;
 	_spooledMusicEnabled = true;
@@ -121,19 +122,16 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 
 IMuseDigital::~IMuseDigital() {
 	g_system->getTimerManager()->removeTimerProc(timer_handler);
+	diMUSETerminateScript();
+	diMUSETerminate();
 	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SPEECH);
 	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_MUSIC);
 	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SFX);
-	cmdsDeinit();
-	diMUSETerminate();
 	delete _internalMixer;
 	delete _groupsHandler;
 	delete _fadesHandler;
 	delete _triggersHandler;
 	delete _filesHandler;
-
-	// Deinit the Dispatch module
-	dispatchTerminate();
 
 	// Deinit the WaveOut module
 	free(_waveOutOutputBuffer);
@@ -172,25 +170,13 @@ int IMuseDigital::isSoundRunning(int soundId) {
 	return diMUSEGetParam(soundId, DIMUSE_P_SND_TRACK_NUM) > 0;
 }
 
-void IMuseDigital::callback() {
-	if (_cmdsPauseCount)
+void IMuseDigital::diMUSEHeartbeat() {
+	int soundId, musicTargetVolume, musicEffVol, musicVol, tempVol, tempEffVol;
+
+	if (_callbackInterruptFlag)
 		return;
 
-	if (!_callbackInterruptFlag) {
-		_callbackInterruptFlag = 1;
-		diMUSEHeartbeat();
-		_callbackInterruptFlag = 0;
-	}
-}
-
-void IMuseDigital::diMUSEHeartbeat() {
-	// This is what happens:
-	// - Usual audio stuff like fetching and playing sound (and everything
-	//   within waveOutCallback()) happens at a base 50Hz rate;
-	// - Triggers and fades handling happens at a (somewhat hacky) 60Hz rate;
-	// - Music gain reduction happens at a 10Hz rate.
-
-	int soundId, foundGroupId, musicTargetVolume, musicEffVol, musicVol, tempVol, tempEffVol, factor, step;
+	_callbackInterruptFlag = 1;
 
 	waveOutCallback();
 
@@ -214,74 +200,59 @@ void IMuseDigital::diMUSEHeartbeat() {
 	// 	}
 	// }
 
-	// Handle fades and triggers
+	if (!_cmdsPauseCount) {
+		// Handle fades and triggers
+		_cmdsRunning50HzCount += _usecPerInt;
+		while (_cmdsRunning50HzCount >= DIMUSE_TIMER_FADES_RATE_USEC) {
+			_cmdsRunning50HzCount -= DIMUSE_TIMER_FADES_RATE_USEC;
+			_fadesHandler->loop();
+			_triggersHandler->loop();
+		}
 
-	_cmdsRunning60HzCount += _usecPerInt;
-	while (_cmdsRunning60HzCount >= DIMUSE_TIMER_FADES_RATE_USEC) {
-		_cmdsRunning60HzCount -= DIMUSE_TIMER_FADES_RATE_USEC;
-		_fadesHandler->loop();
-		_triggersHandler->loop();
+		// Music gain reduction while speech is playing
+		_cmdsRunning5HzCount += _usecPerInt;
+		if (_cmdsRunning5HzCount >= DIMUSE_TIMER_GAIN_RED_RATE_USEC) {
+			while (1) {
+				_cmdsRunning5HzCount -= DIMUSE_TIMER_GAIN_RED_RATE_USEC;
+
+				musicTargetVolume = _groupsHandler->setGroupVol(DIMUSE_GROUP_MUSIC, -1);
+				for (soundId = diMUSEGetNextSound(0); soundId; soundId = diMUSEGetNextSound(soundId)) {
+					if (diMUSEGetParam(soundId, DIMUSE_P_GROUP) == DIMUSE_GROUP_SPEECH) {
+						musicTargetVolume = (77 * musicTargetVolume) >> 7;
+						break;
+					}
+				}
+
+				musicEffVol = _groupsHandler->setGroupVol(DIMUSE_GROUP_MUSICEFF, -1);
+				musicVol = _groupsHandler->setGroupVol(DIMUSE_GROUP_MUSIC, -1);
+
+				if (musicEffVol > musicTargetVolume) {
+					tempVol = musicEffVol - 36;
+					if (tempVol <= musicTargetVolume) {
+						if (musicTargetVolume < musicVol)
+							musicVol = musicTargetVolume;
+					} else if (tempVol < musicVol) {
+						musicVol = tempVol;
+					}
+					_groupsHandler->setGroupVol(DIMUSE_GROUP_MUSICEFF, musicVol);
+				} else if (musicEffVol < musicTargetVolume) {
+					tempEffVol = musicEffVol + 1;
+					if (tempEffVol < musicTargetVolume) {
+						if (tempEffVol > musicVol)
+							musicVol = tempEffVol;
+					} else if (musicTargetVolume > musicVol) {
+						musicVol = musicTargetVolume;
+					}
+					_groupsHandler->setGroupVol(DIMUSE_GROUP_MUSICEFF, musicVol);
+				}
+
+				if (_cmdsRunning5HzCount < DIMUSE_TIMER_GAIN_RED_RATE_USEC)
+					break;
+			}
+		}
 	}
 
-	_cmdsRunning10HzCount += _usecPerInt;
-	if (_cmdsRunning10HzCount < DIMUSE_TIMER_GAIN_RED_RATE_USEC)
-		return;
-
-	do {
-		// SPEECH GAIN REDUCTION 10Hz
-		_cmdsRunning10HzCount -= DIMUSE_TIMER_GAIN_RED_RATE_USEC;
-		soundId = 0;
-		musicTargetVolume = _groupsHandler->setGroupVol(DIMUSE_GROUP_MUSIC, -1);
-		while (1) { // Check all tracks to see if there's a speech file playing
-			soundId = waveGetNextSound(soundId);
-			if (!soundId)
-				break;
-
-			foundGroupId = -1;
-			if (_filesHandler->getNextSound(soundId) == 2) {
-				foundGroupId = waveGetParam(soundId, DIMUSE_P_GROUP); // Check the groupId of this sound
-			}
-
-			if (foundGroupId == DIMUSE_GROUP_SPEECH) {
-				// Remember: when a speech file stops playing this block stops
-				// being executed, so musicTargetVolume returns back to its original value
-				factor = 80;
-				musicTargetVolume = (musicTargetVolume * factor) / 128;
-				break;
-			}
-		}
-
-		musicEffVol = _groupsHandler->setGroupVol(DIMUSE_GROUP_MUSICEFF, -1); // MUSIC EFFECTIVE VOLUME GROUP (used for gain reduction)
-		musicVol = _groupsHandler->setGroupVol(DIMUSE_GROUP_MUSIC, -1); // MUSIC VOLUME SUBGROUP (keeps track of original music volume)
-
-		if (musicEffVol < musicTargetVolume) { // If there is gain reduction already going on...
-			tempEffVol = musicEffVol + 3;
-			if (tempEffVol < musicTargetVolume) {
-				if (musicVol <= tempEffVol) {
-					musicVol = tempEffVol;
-				}
-			} else if (musicVol <= musicTargetVolume) { // Bring up the music volume immediately when speech stops playing
-				musicVol = musicTargetVolume;
-			}
-			_groupsHandler->setGroupVol(DIMUSE_GROUP_MUSICEFF, musicVol);
-		} else if (musicEffVol > musicTargetVolume) {
-			// Bring music volume down to target volume with a -18 step
-		    // if there's speech playing or else, just cap it to the target if it's out of range
-			step = 18;
-			tempVol = musicEffVol - step;
-			if (tempVol <= musicTargetVolume) {
-				if (musicVol >= musicTargetVolume) {
-					musicVol = musicTargetVolume;
-				}
-			} else {
-				if (musicVol >= tempVol) {
-					musicVol = tempVol;
-				}
-			}
-			_groupsHandler->setGroupVol(DIMUSE_GROUP_MUSICEFF, musicVol);
-		}
-
-	} while (_cmdsRunning10HzCount >= DIMUSE_TIMER_GAIN_RED_RATE_USEC);
+	_callbackInterruptFlag = 0;
 }
 
 void IMuseDigital::setPriority(int soundId, int priority) {
@@ -426,90 +397,176 @@ int IMuseDigital::getFeedSize() {
 }
 
 int IMuseDigital::diMUSETerminate() {
-	if (_scriptInitializedFlag) {
-		diMUSEStopAllSounds();
-		_filesHandler->closeAllSounds();
-	}
-
-	return 0;
+	return tracksDeinit();
 }
 
 int IMuseDigital::diMUSEInitialize() {
-	return cmdsHandleCmd(DIMUSE_C_INIT);
+	if (_initialized)
+		return -1;
+
+	_cmdsRunning50HzCount = 0;
+	_cmdsRunning5HzCount = 0;
+
+	if (_groupsHandler->init() || _fadesHandler->init() ||
+		_triggersHandler->init() || tracksInit()) {
+		return -1;
+	}
+
+	_callbackInterruptFlag = 0;
+	_cmdsPauseCount = 0;
+	_initialized = 1;
+	return 49;
 }
 
-int IMuseDigital::diMUSEPause() {
-	return cmdsHandleCmd(DIMUSE_C_PAUSE);
+void IMuseDigital::diMUSEPause() {
+	Common::StackLock lock(*_mutex);
+
+	if (_cmdsPauseCount++ == 0)
+		tracksPause();
 }
 
-int IMuseDigital::diMUSEResume() {
-	return cmdsHandleCmd(DIMUSE_C_RESUME);
+void IMuseDigital::diMUSEResume() {
+	Common::StackLock lock(*_mutex);
+
+	if (--_cmdsPauseCount) {
+		if (_cmdsPauseCount < 0)
+			_cmdsPauseCount = 0;
+	} else {
+		tracksResume();
+	}
 }
 
-void IMuseDigital::diMUSESaveLoad(Common::Serializer &ser) {
-	cmdsSaveLoad(ser);
+int IMuseDigital::diMUSESaveLoad(Common::Serializer &ser) {
+	Common::StackLock lock(*_mutex);
+
+	if (ser.isLoading())
+		diMUSEStopAllSounds();
+
+	_fadesHandler->saveLoad(ser);
+	_triggersHandler->saveLoad(ser);
+	tracksSaveLoad(ser);
+	return 0;
 }
 
 int IMuseDigital::diMUSESetGroupVol(int groupId, int volume) {
-	return cmdsHandleCmd(DIMUSE_C_SET_GRP_VOL, nullptr, groupId, volume);
+	return _groupsHandler->setGroupVol(groupId, volume);
 }
 
 int IMuseDigital::diMUSEStartSound(int soundId, int priority) {
-	return cmdsHandleCmd(DIMUSE_C_START_SND, nullptr, soundId, priority);
+	uint8 *src = _filesHandler->getSoundAddrData(soundId);
+
+	if (src == nullptr) {
+		debug(5, "IMuseDigital::diMUSEStartSound(): ERROR: resource address for sound %d is NULL", soundId);
+		return -1;
+	}
+
+	// Check for the "iMUS" header
+	if (READ_BE_UINT32(src) == MKTAG('i', 'M', 'U', 'S')) {
+		Common::StackLock lock(*_mutex);
+		return tracksStartSound(soundId, priority, 0);
+	}
+
+	return -1;
 }
 
 int IMuseDigital::diMUSEStopSound(int soundId) {
 	debug(5, "IMuseDigital::diMUSEStopSound(): %d", soundId);
-	return cmdsHandleCmd(DIMUSE_C_STOP_SND, nullptr, soundId);
+	Common::StackLock lock(*_mutex);
+	return tracksStopSound(soundId);
 }
 
 int IMuseDigital::diMUSEStopAllSounds() {
 	debug(5, "IMuseDigital::diMUSEStopAllSounds()");
-	return cmdsHandleCmd(DIMUSE_C_STOP_ALL_SNDS);
+	Common::StackLock lock(*_mutex);
+	return tracksStopAllSounds();
 }
 
 int IMuseDigital::diMUSEGetNextSound(int soundId) {
-	return cmdsHandleCmd(DIMUSE_C_GET_NEXT_SND, nullptr, soundId);
+	return tracksGetNextSound(soundId);
 }
 
 int IMuseDigital::diMUSESetParam(int soundId, int paramId, int value) {
-	return cmdsHandleCmd(DIMUSE_C_SET_PARAM, nullptr, soundId, paramId, value);
+	Common::StackLock lock(*_mutex);
+	return tracksSetParam(soundId, paramId, value);
 }
 
 int IMuseDigital::diMUSEGetParam(int soundId, int paramId) {
-	return cmdsHandleCmd(DIMUSE_C_GET_PARAM, nullptr, soundId, paramId);
+	int param;
+
+	if (!paramId)
+		return 2;
+
+	if (paramId == DIMUSE_P_TRIGS_SNDS)
+		return _triggersHandler->countPendingSounds(soundId);
+
+	{
+		Common::StackLock lock(*_mutex);
+		param = tracksGetParam(soundId, paramId);
+	}
+
+	if (param < 0 && paramId == DIMUSE_P_SND_TRACK_NUM)
+		return 0;
+
+	return param;
 }
 
 int IMuseDigital::diMUSEFadeParam(int soundId, int opcode, int destValue, int fadeLength) {
-	return cmdsHandleCmd(DIMUSE_C_FADE_PARAM, nullptr, soundId, opcode, destValue, fadeLength);
+	return _fadesHandler->fadeParam(soundId, opcode, destValue, fadeLength);
 }
 
 int IMuseDigital::diMUSESetHook(int soundId, int hookId) {
-	return cmdsHandleCmd(DIMUSE_C_SET_HOOK, nullptr, soundId, hookId);
+	return tracksSetHook(soundId, hookId);
+}
+
+int IMuseDigital::diMUSEGetHook(int soundId) {
+	return tracksGetHook(soundId);
 }
 
 int IMuseDigital::diMUSESetTrigger(int soundId, const char *marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n) {
-	return cmdsHandleCmd(DIMUSE_C_SET_TRIGGER, (uint8 *)marker, soundId, 0, opcode, d, e, f, g, h, i, j, k, l, m, n);
+	return _triggersHandler->setTrigger(soundId, (char *)marker, opcode, d, e, f, g, h, i, j, k, l, m, n);
+}
+
+int IMuseDigital::diMUSECheckTrigger(int soundId, const char *marker, int opcode) {
+	return _triggersHandler->checkTrigger(soundId, (char *)marker, opcode);
+}
+
+int IMuseDigital::diMUSEClearTrigger(int soundId, const char *marker, int opcode) {
+	return _triggersHandler->clearTrigger(soundId, (char *)marker, opcode);
+}
+
+int IMuseDigital::diMUSEDeferCommand(int count, int opcode, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n) {
+	return _triggersHandler->deferCommand(count, opcode, c, d, e, f, g, h, i, j, k, l, m, n);
 }
 
 int IMuseDigital::diMUSEStartStream(int soundId, int priority, int bufferId) {
-	return cmdsHandleCmd(DIMUSE_C_START_STREAM, nullptr, soundId, priority, bufferId);
+	// TODO
+	// if (!filesCheckRange(soundId))
+	// 	return -1;
+	if (soundId == 0)
+		return -1;
+
+	Common::StackLock lock(*_mutex);
+	return tracksStartSound(soundId, priority, bufferId);
 }
 
 int IMuseDigital::diMUSESwitchStream(int oldSoundId, int newSoundId, int fadeDelay, int fadeSyncFlag2, int fadeSyncFlag1) {
-	return cmdsHandleCmd(DIMUSE_C_SWITCH_STREAM, nullptr, oldSoundId, newSoundId, fadeDelay, fadeSyncFlag2, fadeSyncFlag1);
+	Common::StackLock lock(*_mutex);
+	return dispatchSwitchStream(oldSoundId, newSoundId, fadeDelay, fadeSyncFlag2, fadeSyncFlag1);
 }
 
 int IMuseDigital::diMUSEProcessStreams() {
-	return cmdsHandleCmd(DIMUSE_C_PROCESS_STREAMS);
+	Common::StackLock lock(*_mutex);
+	return streamerProcessStreams();
 }
 
 int IMuseDigital::diMUSEQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
-	return waveQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
+	Common::StackLock lock(*_mutex);
+	return tracksQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
 }
 
 int IMuseDigital::diMUSEFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {
-	return cmdsHandleCmd(DIMUSE_C_FEED_STREAM, srcBuf, soundId, -1, sizeToFeed, paused);
+	Common::StackLock lock(*_mutex);
+	return tracksFeedStream(soundId, srcBuf, sizeToFeed, paused);
 }
 
 int IMuseDigital::diMUSEGetMusicGroupVol() {
@@ -557,12 +614,16 @@ int IMuseDigital::diMUSESetVoiceGroupVol(int volume) {
 	return diMUSESetGroupVol(DIMUSE_GROUP_SPEECH, volume);
 }
 
-void IMuseDigital::diMUSEUpdateGroupVolumes() {
-	waveUpdateGroupVolumes();
-}
-
 int IMuseDigital::diMUSEInitializeScript() {
 	return scriptParse(DIMUSE_C_SCRIPT_INIT, -1, -1);
+}
+
+int IMuseDigital::diMUSETerminateScript() {
+	return scriptParse(DIMUSE_C_SCRIPT_TERMINATE, -1, -1);
+}
+
+void IMuseDigital::diMUSESaveLoadScript(Common::Serializer &ser) {
+	scriptSaveLoad(ser);
 }
 
 void IMuseDigital::diMUSERefreshScript() {
