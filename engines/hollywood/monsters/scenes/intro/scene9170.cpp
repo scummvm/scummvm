@@ -85,7 +85,7 @@ Scene9170::Scene9170(HollywoodEngine *vm) :
 		_ambientSpeech(vm->getLanguage()),
 		_sound(),
 		_ambientSound(),
-		_text(),
+		_text(vm->textTranslation()),
 		_random("hollywood_scene9170"),
 		_paletteResource(),
 		_baseFramebuffer(),

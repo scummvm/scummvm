@@ -26,6 +26,8 @@
 
 namespace Hollywood {
 
+class TextTranslation;
+
 enum {
 	kGameActionCaptionCount = 9
 };
@@ -34,8 +36,8 @@ enum {
  * In-game text not supplied by RESOURCE.003, including localized executable strings.
  *
  * These strings follow the detected game language unless English is explicitly
- * selected for a fan translation. ScummVM's translation manager is reserved for
- * launcher and engine UI that is independent of the selected game release.
+ * selected for a fan translation. The external catalog is independent of the
+ * launcher language.
  */
 struct HollywoodGameStrings {
 	const char *actionCaptions[kGameActionCaptionCount];
@@ -73,6 +75,8 @@ struct HollywoodGameStrings {
 	const char *openTap;
 	const char *stopMakingCocktails;
 	const char *mineDestinationLabels[9]; // Scenes 5020 through 5100.
+
+	void applyTranslation(const TextTranslation &translation);
 };
 
 const HollywoodGameStrings &getGameStrings(Common::Language language);

@@ -966,7 +966,7 @@ bool Scene9050::playResourceI05ClipSegment(byte segmentId, byte lastFrameIndex, 
 		return false;
 
 	runResourceI05Clip(segmentId, lastFrameIndex, fadeInBeforePlayback);
-	return !_skipRequested && !Engine::shouldQuit();
+	return true;
 }
 
 void Scene9050::runStage9050InterClipSpriteReveal() {

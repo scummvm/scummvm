@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 
 #include "hollywood/monsters/game_strings.h"
+#include "hollywood/text_translation.h"
 
 namespace Hollywood {
 
@@ -138,6 +139,49 @@ const HollywoodGameStrings kEnglishGameStrings = {
 	{ "Damaged tunnel", "Camp", "Miner", "Overturned cart",
 		"Crack", "Hut", "Stairs", "Waterfall", "Elevator" }
 };
+
+void HollywoodGameStrings::applyTranslation(const TextTranslation &translation) {
+	for (uint i = 0; i < kGameActionCaptionCount; ++i) {
+		actionCaptions[i] = translation.interfaceText(Common::String::format("action%u", i), actionCaptions[i]);
+		panelVerbLabels[i] = translation.interfaceText(Common::String::format("verb%u", i), panelVerbLabels[i]);
+	}
+	struct {
+		const char *key;
+		const char **value;
+	} fields[] = {
+		{ "relationTo", &relationTo },
+		{ "relationWith", &relationWith },
+		{ "inventoryCaption", &inventoryCaption },
+		{ "optionsSave", &optionsSave },
+		{ "optionsLoad", &optionsLoad },
+		{ "optionsQuit", &optionsQuit },
+		{ "optionsPlay", &optionsPlay },
+		{ "optionsMusicOn", &optionsMusicOn },
+		{ "optionsMusicOff", &optionsMusicOff },
+		{ "optionsSfxOn", &optionsSfxOn },
+		{ "optionsSfxOff", &optionsSfxOff },
+		{ "optionsTestOn", &optionsTestOn },
+		{ "optionsTestOff", &optionsTestOff },
+		{ "optionsMusicVolume", &optionsMusicVolume },
+		{ "optionsSfxVolume", &optionsSfxVolume },
+		{ "optionsVoiceVolume", &optionsVoiceVolume },
+		{ "optionsTextSpeed", &optionsTextSpeed },
+		{ "optionsText", &optionsText },
+		{ "optionsVoice", &optionsVoice },
+		{ "optionsBoth", &optionsBoth },
+		{ "optionsQuitPrompt", &optionsQuitPrompt },
+		{ "optionsQuitYes", &optionsQuitYes },
+		{ "optionsQuitNo", &optionsQuitNo },
+		{ "passageName", &passageName },
+		{ "wideCoffinName", &wideCoffinName },
+		{ "recordsName", &recordsName },
+		{ "changeDrink", &changeDrink },
+		{ "openTap", &openTap },
+		{ "stopMakingCocktails", &stopMakingCocktails }
+	};
+	for (uint i = 0; i < ARRAYSIZE(fields); ++i)
+		*fields[i].value = translation.interfaceText(fields[i].key, *fields[i].value);
+}
 
 const HollywoodGameStrings &getGameStrings(Common::Language language) {
 	if (ConfMan.hasKey("language")) {

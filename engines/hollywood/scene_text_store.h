@@ -32,6 +32,8 @@ class SeekableReadStream;
 
 namespace Hollywood {
 
+class TextTranslation;
+
 struct SceneSpeechCue {
 	SceneSpeechCue() :
 			textRecordId(0),
@@ -61,7 +63,7 @@ struct SceneSpeechCue {
  */
 class SceneTextStore {
 public:
-	SceneTextStore();
+	SceneTextStore(const TextTranslation *translation = nullptr);
 
 	bool load(const char *archiveName, const char *sceneDebugName, uint stageIndex,
 		uint inventoryRowsOffsetIndex, uint32 speechCueDescriptorOffset,
@@ -105,6 +107,7 @@ private:
 
 	uint16 _stageVoiceSampleBase;
 	bool _validateSequentialVoiceMap;
+	const TextTranslation *_translation;
 };
 
 } // End of namespace Hollywood

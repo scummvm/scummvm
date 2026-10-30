@@ -234,6 +234,10 @@ bool Scene7020::loadOwner0StaticSpeechTables() {
 		for (uint column = 0; column < kStage003LargeRowSize; ++column)
 			_owner0LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
 	}
+	_vm->textTranslation()->applyRows("static0-small", _owner0SmallRows,
+		kStage003SmallRowSize, 1, 1);
+	_vm->textTranslation()->applyRows("static0-large", _owner0LargeRows,
+		kStage003LargeRowSize, 1, 1);
 
 	return true;
 }

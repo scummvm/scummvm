@@ -133,7 +133,7 @@ void GameplayLoopDelegate::handleRightClick(const GameplayLoopCursorState &state
 GameplayLoop::GameplayLoop(HollywoodEngine *vm, GameplayLoopDelegate *delegate) :
 		_vm(vm),
 		_delegate(delegate),
-		_hoverCaption(vm ? vm->getLanguage() : Common::UNK_LANG),
+		_hoverCaption(vm ? vm->gameStrings() : getGameStrings(Common::UNK_LANG)),
 		_currentStrip(kGameplayDefaultStrip),
 		_leftButtonDown(false),
 		_rightButtonDown(false),
@@ -535,7 +535,7 @@ void GameplayLoop::openInventoryPanel() {
 		_hoverCaption.setCurrentStrip(_currentStrip);
 	}
 	_panelState.inventoryPanelVisible = true;
-	_panelState.captionText = getGameStrings(_vm->getLanguage()).inventoryCaption;
+	_panelState.captionText = _vm->gameStrings().inventoryCaption;
 	_panelState.resolvedItem = 0;
 	_panelState.itemName.clear();
 	updateInventoryPanelCaption();
@@ -842,7 +842,7 @@ bool GameplayLoop::isInventoryPanelNextPageArrow(uint16 cursorX, uint16 cursorY)
 
 void GameplayLoop::updatePanelCaption() {
 	_panelState.currentStrip = _currentStrip;
-	_panelState.captionText = inventoryActionCaption(_vm->getLanguage(), _currentStrip);
+	_panelState.captionText = inventoryActionCaption(_vm->gameStrings(), _currentStrip);
 	if (_panelState.resolvedItem != 0 &&
 			_delegate->hotspots().hasVerbAction(_panelState.resolvedItem, _currentStrip))
 		_panelState.captionText += _panelState.itemName;
@@ -856,10 +856,10 @@ void GameplayLoop::updateInventoryPanelCaption() {
 	_panelState.resolvedItem = itemId;
 	_panelState.itemName = itemId == 0 ? Common::String() : _delegate->inventoryItemName(owner, itemId);
 	if (_relationMode != 0 && _primaryInventoryItem != 0) {
-		_panelState.captionText = inventoryActionCaption(_vm->getLanguage(),
+		_panelState.captionText = inventoryActionCaption(_vm->gameStrings(),
 			_relationMode == 2 ? kGameplayGiveStrip : kGameplayUseStrip);
 		_panelState.captionText += _delegate->inventoryItemName(owner, _primaryInventoryItem);
-		const HollywoodGameStrings &strings = getGameStrings(_vm->getLanguage());
+		const HollywoodGameStrings &strings = _vm->gameStrings();
 		_panelState.captionText += _relationMode == 2 ? strings.relationTo : strings.relationWith;
 		if (itemId != 0 &&
 				dialogueInventoryRelationHandler(_primaryInventoryItem, itemId, _relationMode) != 0)
@@ -868,7 +868,7 @@ void GameplayLoop::updateInventoryPanelCaption() {
 	}
 
 	const uint16 actionHandlerId = fixedInventoryActionHandler(owner, itemId, _currentStrip);
-	_panelState.captionText = inventoryActionCaption(_vm->getLanguage(), _currentStrip);
+	_panelState.captionText = inventoryActionCaption(_vm->gameStrings(), _currentStrip);
 	if (itemId != 0 && actionHandlerId != 0)
 		_panelState.captionText += _panelState.itemName;
 }

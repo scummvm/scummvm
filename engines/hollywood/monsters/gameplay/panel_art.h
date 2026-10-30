@@ -23,7 +23,6 @@
 #define HOLLYWOOD_MONSTERS_GAMEPLAY_PANEL_ART_H
 
 #include "common/array.h"
-#include "common/language.h"
 #include "common/str.h"
 #include "common/types.h"
 
@@ -34,13 +33,14 @@ struct Surface;
 namespace Hollywood {
 
 class HollywoodFont;
+struct HollywoodGameStrings;
 struct DialogueMenuState;
 struct GameplayPanelState;
 struct GameplayState;
 
 class GameplayPanelArt {
 public:
-	GameplayPanelArt(Common::Language language);
+	GameplayPanelArt(const HollywoodGameStrings &strings);
 
 	bool load();
 	bool isLoaded() const { return _loaded; }
@@ -82,7 +82,7 @@ private:
 	Common::Array<byte> _objectPaletteTriples;
 	mutable Common::Array<Common::Array<byte> > _inventoryItemTilePages;
 	uint32 _inventoryItemPageBaseOffset;
-	Common::Language _language;
+	const HollywoodGameStrings &_strings;
 	bool _loaded;
 };
 

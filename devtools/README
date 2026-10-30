@@ -177,6 +177,22 @@ dumper_companion.py
     https://docs.scummvm.org/en/latest/use_scummvm/mac_game_files.html
 
 
+extract_hollywood_translation.py
+-------------------------------
+    Extracts the Hollywood Monsters English fan translation v1.0.0 by
+    Nikos Daskos (ShinjiGR) into editable PO text and image overlays.
+
+    Rebuild dists/engine-data/hollywood.dat (ZIP) from
+    engines/hollywood/monsters/po/en.po and the extracted image assets:
+
+      make hollywood.dat
+
+    To extract sources from the original Spanish game and fan patch:
+
+      python3 devtools/extract_hollywood_translation.py extract PATCH_DIRECTORY \
+        ORIGINAL_GAME/RESOURCE.003 TRANSLATION_SOURCE
+
+
 generate-android-i18n-strings.py
 --------------------------------
     This script generates translated strings.xml files

@@ -1,9 +1,11 @@
 MODULE := engines/hollywood
 
 MODULE_OBJS = \
+	image_translation.o \
 	metaengine.o \
 	resource.o \
 	scene_text_store.o \
+	text_translation.o \
 	monsters/console.o \
 	monsters/font.o \
 	monsters/game_strings.o \

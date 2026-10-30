@@ -45,7 +45,7 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9110"),
 		_music(vm->introMusic()),
 		_speech(vm->getLanguage()),
-		_text(),
+		_text(vm->textTranslation()),
 		_random("hollywood_scene9110"),
 		_mouthAccumulator(0),
 		_idleAccumulator(0),

@@ -35,6 +35,7 @@ f 0644 root sys usr/ScummVM/share/scummvm/got.aud got.aud scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/got.gfx got.gfx scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/grim-patch.lab grim-patch.lab scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/helpdialog.zip helpdialog.zip scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/hollywood.dat hollywood.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/hugo.dat hugo.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/hadesch_translations.dat hadesch_translations.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/kyra.dat kyra.dat scummvm.sw.eoe

@@ -23,7 +23,6 @@
 #define HOLLYWOOD_MONSTERS_GAMEPLAY_HOTSPOTS_H
 
 #include "common/array.h"
-#include "common/language.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "common/types.h"
@@ -37,8 +36,9 @@ struct Surface;
 namespace Hollywood {
 
 class HollywoodFont;
+struct HollywoodGameStrings;
 
-Common::String inventoryActionCaption(Common::Language language, byte stripIndex);
+Common::String inventoryActionCaption(const HollywoodGameStrings &strings, byte stripIndex);
 
 struct SceneVerbActionRecord {
 	uint16 actionHandlerId;
@@ -113,7 +113,7 @@ private:
  */
 class SceneHoverCaption {
 public:
-	SceneHoverCaption(Common::Language language);
+	SceneHoverCaption(const HollywoodGameStrings &strings);
 
 	void reset();
 	void setCurrentStrip(byte stripIndex);
@@ -152,7 +152,7 @@ private:
 	Descriptor _lastDescriptor;
 	Common::String _captionText;
 	uint32 _timer;
-	Common::Language _language;
+	const HollywoodGameStrings &_strings;
 	byte _currentStrip;
 	byte _relationMode;
 	byte _primaryInventoryItem;

@@ -148,6 +148,7 @@ int optionsLevelToConfigTalkSpeed(byte level) {
 HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst),
 		_gameDescription(gameDesc),
+		_gameStrings(getGameStrings(gameDesc->language)),
 		_font(new HollywoodFont()),
 		_introMusic(),
 		_gameplayMusic(),
@@ -214,6 +215,12 @@ bool HollywoodEngine::consumeDebugSceneSolveRequest(uint16 sceneNumber) {
 
 Common::Error HollywoodEngine::run() {
 	setDebugger(new Console(this));
+
+	if (!isDemo() && ConfMan.getBool("alternative_subtitles") &&
+			_translation.load("hollywood.dat", "RESOURCE.003")) {
+		_gameStrings = getGameStrings(Common::EN_ANY);
+		_gameStrings.applyTranslation(_translation);
+	}
 
 	const Graphics::PixelFormat screenFormat = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(kScreenWidth, kScreenHeight, &screenFormat);

@@ -312,7 +312,7 @@ bool Scene4090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (state.scene4090WideCoffinVariant != 0) {
 		if (_sceneChunkTable.isValidChunk(kScene4090AlternatePatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4090AlternatePatchChunk], _baseFramebuffer);
-		setSmallRowText(3, getGameStrings(_vm->getLanguage()).wideCoffinName);
+		setSmallRowText(3, _vm->gameStrings().wideCoffinName);
 		replaceColorMapItemFromOriginal(5, 3);
 	} else {
 		replaceColorMapItemFromOriginal(5, 0);

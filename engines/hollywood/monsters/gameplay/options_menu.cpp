@@ -808,7 +808,7 @@ void GameplayOptionsMenu::drawGameplayPreview() {
 
 void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
 	GameplayState &state = _vm->gameState();
-	const HollywoodGameStrings &strings = getGameStrings(_vm->getLanguage());
+	const HollywoodGameStrings &strings = _vm->gameStrings();
 
 	drawText(surface, strings.optionsSave, 0x1d1, 0xd7, kOptionsTextActiveColor, true);
 	drawText(surface, strings.optionsLoad, 0x22e, 0xd7, kOptionsTextActiveColor, true);
@@ -867,7 +867,7 @@ void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
 }
 
 void GameplayOptionsMenu::drawQuitConfirmation(Graphics::Surface &surface) {
-	const HollywoodGameStrings &strings = getGameStrings(_vm->getLanguage());
+	const HollywoodGameStrings &strings = _vm->gameStrings();
 	drawText(surface, strings.optionsQuitPrompt, 0x1ff, 0x168, kOptionsTextActiveColor, true);
 	drawQuitConfirmationBacking();
 	drawText(surface, strings.optionsQuitYes, 0x1f1, 0x18c, kOptionsTextActiveColor, true);

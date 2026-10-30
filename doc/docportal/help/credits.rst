@@ -2748,6 +2748,15 @@ Drascula
    * - Thierry Crozat
      - Improve French translation
 
+Hollywood
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Nikos Daskos
+     - Hollywood Monsters English translation and translated graphics
+
 Mortevielle
 ^^^^^^^^^^^
 

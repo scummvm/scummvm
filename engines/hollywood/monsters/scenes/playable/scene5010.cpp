@@ -601,7 +601,7 @@ void Scene5010::drawMineDestinationLabel() {
 	const uint16 destination = state.scene5010DestinationStateBySwitchSlot[slot];
 	const char *label = "???";
 	if (state.scene5010DestinationTableInitialized && state.hasVisitedMineDestination(destination))
-		label = getGameStrings(_vm->getLanguage()).mineDestinationLabels[(destination - 5020) / 10];
+		label = _vm->gameStrings().mineDestinationLabels[(destination - 5020) / 10];
 
 	font->setShadowColor(0);
 	setPaletteEntry6Bit(kScene5010DestinationLabelColor, 0x3f, 0x3f, 0x3f);

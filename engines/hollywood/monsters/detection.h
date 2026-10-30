@@ -25,6 +25,11 @@
 #include "engines/advancedDetector.h"
 
 #define GAMEOPTION_RESTORED_CONTENT GUIO_GAMEOPTIONS1
+#ifdef USE_TRANSLATION
+#define GAMEOPTION_ALTERNATIVE_SUBTITLES GUIO_GAMEOPTIONS2
+#else
+#define GAMEOPTION_ALTERNATIVE_SUBTITLES ""
+#endif
 
 namespace Hollywood {
 

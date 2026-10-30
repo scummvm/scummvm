@@ -62,7 +62,7 @@
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_ALTERNATIVE_SUBTITLES, GUIO_NOMIDI)
 	},
 
 	// Italian Windows full game, installed Monsters directory.
@@ -89,10 +89,10 @@
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_ALTERNATIVE_SUBTITLES, GUIO_NOMIDI)
 	},
 
-	// English fan translation v1.0.0 by ShinjiGR and A.P.$lasH, based on the Spanish Windows release.
+	// English fan translation v1.0.0 by ShinjiGR, patched by A.P.$lasH for the Spanish Windows release.
 	// RESOURCE.003 retains the original header, so hash its translated text at the end.
 	{
 		"hollywood",
@@ -117,7 +117,7 @@
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_ALTERNATIVE_SUBTITLES, GUIO_NOMIDI)
 	},
 
 #endif // HOLLYWOOD_MONSTERS_DETECTION_TABLES_H

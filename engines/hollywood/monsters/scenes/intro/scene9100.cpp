@@ -81,7 +81,7 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		PresentationScene(vm, "intro scene 9100"),
 		_music(),
 		_speech(vm->getLanguage(), vm->hasSpeechData()),
-		_text(),
+		_text(vm->textTranslation()),
 		_effectSound(),
 		_clockSound(),
 		_ambientSound(),

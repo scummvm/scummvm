@@ -321,7 +321,7 @@ void Scene6040::runLidRemoval() {
 
 	BlockingSequence sequence(*this);
 	// Borrow Ron's "No la voy a necesitar" without changing this room's captions.
-	SceneTextStore removalText;
+	SceneTextStore removalText(_vm->textTranslation());
 	if (removalText.loadStage("RESOURCE.003", sceneDebugName(), kScene6040LidRemovalSpeechStage)) {
 		_textStore._stageBlock.swap(removalText._stageBlock);
 		_textStore._stageLargeRows.swap(removalText._stageLargeRows);

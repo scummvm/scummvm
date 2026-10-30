@@ -57,7 +57,7 @@ Scene9180::Scene9180(HollywoodEngine *vm) :
 		_speech(vm->getLanguage()),
 		_loopSound(),
 		_effectSound(),
-		_text(),
+		_text(vm->textTranslation()),
 		_random("hollywood_scene9180"),
 		_paletteResource(),
 		_normalPalette(),

@@ -116,7 +116,7 @@ Scene9090::Scene9090(HollywoodEngine *vm) :
 		_secondarySpeech(vm->getLanguage()),
 		_clockSound(),
 		_ambientSound(),
-		_text(),
+		_text(vm->textTranslation()),
 		_random("hollywood_scene9090"),
 		_paletteResource(),
 		_presentationPaletteRemapTable(),

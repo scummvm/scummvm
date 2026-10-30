@@ -26,6 +26,7 @@
 #include "hollywood/debug.h"
 #include "hollywood/resource.h"
 #include "hollywood/scene_text_store.h"
+#include "hollywood/text_translation.h"
 
 namespace Hollywood {
 
@@ -37,9 +38,10 @@ const uint kSceneTextSmallRowSize = 0x29;
 const uint kSceneTextLargeRowSize = 0x141;
 const uint kSceneTextLargeRowBaseIndex = 500;
 
-SceneTextStore::SceneTextStore() :
+SceneTextStore::SceneTextStore(const TextTranslation *translation) :
 		_stageVoiceSampleBase(0),
-		_validateSequentialVoiceMap(false) {
+		_validateSequentialVoiceMap(false),
+		_translation(translation) {
 	_decodeKey.resize(kSceneTextDecodeKeySize);
 	_stageBlock.resize(kSceneTextDescriptorTableSize);
 	_staticSpeechCueDescriptors.resize(kSceneTextSpeechCueDescriptorTableSize);
@@ -179,6 +181,13 @@ bool SceneTextStore::readStage(Common::SeekableReadStream &stream,
 			_stageLargeRows[row * kSceneTextLargeRowSize + column] -= _decodeKey[column];
 	}
 
+	if (_translation) {
+		_translation->applyRows(Common::String::format("stage%u-small", stageIndex),
+			_stageSmallRows, kSceneTextSmallRowSize, 1, 1);
+		_translation->applyRows(Common::String::format("stage%u-large", stageIndex),
+			_stageLargeRows, kSceneTextLargeRowSize, 0, kSceneTextLargeRowBaseIndex);
+	}
+
 	debugC(1, kDebugResources, "Loaded %s stage %u text rows: smallRows=%u largeRows=%u",
 		archiveName, stageIndex, smallRowCount, largeRowCount);
 	return true;
@@ -264,6 +273,12 @@ bool SceneTextStore::readInventoryRows(Common::SeekableReadStream &stream,
 	for (uint row = 1; row <= largeRowCount; ++row) {
 		for (uint column = 0; column < kSceneTextLargeRowSize; ++column)
 			_inventoryOwnerLargeRows[row * kSceneTextLargeRowSize + column] -= _decodeKey[column];
+	}
+	if (_translation) {
+		_translation->applyRows(Common::String::format("static%u-small", inventoryRowsOffsetIndex),
+			_inventoryOwnerSmallRows, kSceneTextSmallRowSize, 1, 1);
+		_translation->applyRows(Common::String::format("static%u-large", inventoryRowsOffsetIndex),
+			_inventoryOwnerLargeRows, kSceneTextLargeRowSize, 1, 1);
 	}
 
 	return true;

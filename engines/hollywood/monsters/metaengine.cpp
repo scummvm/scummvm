@@ -42,6 +42,19 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+#ifdef USE_TRANSLATION
+	{
+		GAMEOPTION_ALTERNATIVE_SUBTITLES,
+		{
+			_s("Enable alternative English subtitles"),
+			_s("Use the English fan translation for subtitles, interface text and images"),
+			"alternative_subtitles",
+			false,
+			0,
+			0
+		}
+	},
+#endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
@@ -54,6 +67,7 @@ const ADExtraGuiOptionsMap *getMonstersExtraGuiOptions() {
 
 void registerMonstersDefaultSettings() {
 	ConfMan.registerDefault("restored_content", true);
+	ConfMan.registerDefault("alternative_subtitles", false);
 }
 
 void getMonstersSavegameThumbnail(Graphics::Surface &thumb) {

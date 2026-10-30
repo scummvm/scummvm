@@ -170,7 +170,7 @@ Scene5130::Scene5130(HollywoodEngine *vm) :
 		_baseFramebuffer(),
 		_fillRuns(),
 		_paletteMask(),
-		_textStore(),
+		_textStore(vm->textTranslation()),
 		_speech(vm->getLanguage()),
 		_soundBank0(),
 		_random("hollywood_scene5130"),
@@ -906,7 +906,7 @@ byte Scene5130::actionAtCursor() const {
 }
 
 Common::String Scene5130::captionForAction(byte actionId) const {
-	const HollywoodGameStrings &strings = getGameStrings(_vm->getLanguage());
+	const HollywoodGameStrings &strings = _vm->gameStrings();
 	switch (actionId) {
 	case kScene5130ActionChangeDrink:
 		return Common::String(strings.changeDrink);

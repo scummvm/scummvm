@@ -361,6 +361,7 @@ char *stripLine(char *const line) {
 			switch (c = *src++) {
 			case  'n': c = '\n'; break;
 			case  't': c = '\t'; break;
+			case  'v': c = '\v'; break;
 			case '\"': c = '\"'; break;
 			case '\'': c = '\''; break;
 			case '\\': c = '\\'; break;

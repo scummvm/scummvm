@@ -234,7 +234,7 @@ bool Scene7050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		// Reconstruct the discarded record hotspot on the half-visible far-right box.
 		const ScenePoint recordsWalkPoint = {690, 400};
 		const ScenePoint recordsPoint = {728, 407};
-		_hotspots.setItemName(kScene7050RecordsSceneItem, getGameStrings(_vm->getLanguage()).recordsName);
+		_hotspots.setItemName(kScene7050RecordsSceneItem, _vm->gameStrings().recordsName);
 		_hotspots.setItemDefaultStrip(kScene7050RecordsSceneItem, 4);
 		_hotspots.setActionTarget(kScene7050RecordsSceneItem, recordsWalkPoint, recordsPoint);
 		_hotspots.setActionInteraction(kScene7050RecordsSceneItem, recordsWalkPoint, 2);

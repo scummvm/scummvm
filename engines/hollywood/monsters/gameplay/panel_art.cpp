@@ -143,9 +143,9 @@ const InventoryItemPageMapEntry kSueInventoryItemPageMap[] = {
 	{ 0x22, 0x7b }
 };
 
-GameplayPanelArt::GameplayPanelArt(Common::Language language) :
+GameplayPanelArt::GameplayPanelArt(const HollywoodGameStrings &strings) :
 		_inventoryItemPageBaseOffset(0),
-		_language(language),
+		_strings(strings),
 		_loaded(false) {
 }
 
@@ -626,7 +626,7 @@ void GameplayPanelArt::drawVerbStripLabels(Graphics::Surface &surface, int scree
 	font->setShadowColor(0);
 	const int textY = screenY + kPanelVerbStripTextYInBuffer;
 	for (byte stripIndex = 2; stripIndex <= 8; ++stripIndex) {
-		const Common::String text(getGameStrings(_language).panelVerbLabels[stripIndex]);
+		const Common::String text(_strings.panelVerbLabels[stripIndex]);
 		const int textWidth = font->getStringWidth(text) + 2;
 		const int x = MAX<int>(0, (int)kPanelVerbStripLabelCenters[stripIndex] - textWidth / 2);
 		font->drawString(&surface, text, x, textY, textWidth, kPanelVerbLabelColor,

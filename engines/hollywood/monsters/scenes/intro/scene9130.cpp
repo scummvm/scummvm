@@ -59,7 +59,7 @@ Scene9130::Scene9130(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9130"),
 		_music(vm->introMusic()),
 		_speech(vm->getLanguage()),
-		_text(),
+		_text(vm->textTranslation()),
 		_paletteResource(),
 		_activeTextRecordId(0),
 		_activeVoiceSampleId(0),

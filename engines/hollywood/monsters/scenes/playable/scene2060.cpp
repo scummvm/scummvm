@@ -379,7 +379,7 @@ void Scene2060::installSceneActorBank() {
 }
 
 void Scene2060::copyPassageTextRows() {
-	const char *passageText = getGameStrings(_vm->getLanguage()).passageName;
+	const char *passageText = _vm->gameStrings().passageName;
 
 	for (uint row = 1; row <= 6; ++row) {
 		const uint offset = row * kStage003SmallRowSize;
