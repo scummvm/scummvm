@@ -39,7 +39,7 @@ int IMuseDigiGroupsHandler::init() {
 	return 0;
 }
 
-int IMuseDigiGroupsHandler::setGroupVol(int id, int volume) {
+int IMuseDigiGroupsHandler::setGroupVol(uint32 id, int volume) {
 	Common::StackLock lock(*_mutex);
 
 	int l;
@@ -52,8 +52,10 @@ int IMuseDigiGroupsHandler::setGroupVol(int id, int volume) {
 		return _vols[id];
 	}
 
-	if (volume > 127)
+	if (volume < 0 || volume > 127)
 		return -5;
+
+	int oldVolume = _vols[id];
 
 	if (id) {
 		_vols[id] = volume;
@@ -68,10 +70,10 @@ int IMuseDigiGroupsHandler::setGroupVol(int id, int volume) {
 	}
 
 	_engine->diMUSEUpdateGroupVolumes();
-	return _vols[id];
+	return oldVolume;
 }
 
-int IMuseDigiGroupsHandler::getGroupVol(int id) {
+int IMuseDigiGroupsHandler::getGroupVol(uint32 id) {
 	Common::StackLock lock(*_mutex);
 
 	if (id >= DIMUSE_MAX_GROUPS) {

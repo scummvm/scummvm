@@ -229,13 +229,11 @@ void IMuseDigiTriggersHandler::processTriggers(int soundId, char *marker) {
 			_engine->scriptTriggerCallback(_textBuffer);
 		} else {
 			if (_trigs[l].opcode < 30) {
-				// Execute a command
+				// Execute a command (the same argument on all slots is intentional)
+				int lastArg = _trigs[l].j;
 				_engine->cmdsHandleCmd(_trigs[l].opcode, (uint8 *)textBuffer,
-					_trigs[l].a, _trigs[l].b,
-					_trigs[l].c, _trigs[l].d,
-					_trigs[l].e, _trigs[l].f,
-					_trigs[l].g, _trigs[l].h,
-					_trigs[l].i, _trigs[l].j);
+					lastArg, lastArg, lastArg, lastArg, lastArg,
+					lastArg, lastArg, lastArg, lastArg, lastArg);
 			}
 		}
 
@@ -299,17 +297,15 @@ void IMuseDigiTriggersHandler::loop() {
 		_defersOn = 1;
 		_defers[l].counter--;
 
-		if (_defers[l].counter == 1) {
+		if (_defers[l].counter == 0) {
 			if (_defers[l].opcode == DIMUSE_C_SCRIPT_CALLBACK) {
-				_engine->scriptTriggerCallback(_trigs[l].text);
+				_engine->scriptTriggerCallback(_emptyMarker);
 			} else {
 				if (_defers[l].opcode < 30) {
-					_engine->cmdsHandleCmd(_trigs[l].opcode, nullptr,
-						_trigs[l].a, _trigs[l].b,
-						_trigs[l].c, _trigs[l].d,
-						_trigs[l].e, _trigs[l].f,
-						_trigs[l].g, _trigs[l].h,
-						_trigs[l].i, _trigs[l].j);
+					int lastArg = _defers[l].j;
+					_engine->cmdsHandleCmd(_defers[l].opcode, nullptr,
+						lastArg, lastArg, lastArg, lastArg, lastArg,
+						lastArg, lastArg, lastArg, lastArg, lastArg);
 				}
 			}
 		}

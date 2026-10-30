@@ -42,8 +42,8 @@ public:
 	IMuseDigiGroupsHandler(IMuseDigital *engine, Common::Mutex *mutex);
 	~IMuseDigiGroupsHandler();
 	int init();
-	int setGroupVol(int id, int volume);
-	int getGroupVol(int id);
+	int setGroupVol(uint32 id, int volume);
+	int getGroupVol(uint32 id);
 };
 
 } // End of namespace Grim

@@ -185,7 +185,6 @@ private:
 	void tracksClear(IMuseDigiTrack *trackPtr);
 	int tracksSetParam(int soundId, int opcode, int value);
 	int tracksGetParam(int soundId, int opcode);
-	int tracksLipSync(int soundId, int syncId, int msPos, int32 &width, int32 &height);
 	int tracksSetHook(int soundId, int hookId);
 	int tracksGetHook(int soundId);
 	IMuseDigiTrack *tracksReserveTrack(int priority);
@@ -254,7 +253,6 @@ private:
 	int waveProcessStreams();
 	int waveQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
 	int waveFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused);
-	int waveLipSync(int soundId, int syncId, int msPos, int32 &width, int32 &height);
 
 	// Waveapi
 	waveOutParamsStruct waveOutSettings;
@@ -310,12 +308,6 @@ public:
 	int getFeedSize();
 
 	int32 getCurMusicPosInMs();
-	int32 getCurVoiceLipSyncWidth();
-	int32 getCurVoiceLipSyncHeight();
-	int32 getCurMusicLipSyncWidth(int syncId);
-	int32 getCurMusicLipSyncHeight(int syncId);
-	void getSpeechLipSyncInfo(int32 &width, int32 &height);
-	void getMusicLipSyncInfo(int syncId, int32 &width, int32 &height);
 	int32 getSoundElapsedTimeInMs(int soundId);
 
 	// General engine functions
@@ -344,7 +336,6 @@ public:
 	int diMUSEProcessStreams();
 	int diMUSEQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
 	int diMUSEFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused);
-	int diMUSELipSync(int soundId, int syncId, int msPos, int32 &width, int32 &height);
 	int diMUSEGetMusicGroupVol();
 	int diMUSEGetSFXGroupVol();
 	int diMUSEGetVoiceGroupVol();

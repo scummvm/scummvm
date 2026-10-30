@@ -24,7 +24,7 @@
 namespace Grim {
 
 int IMuseDigital::tracksInit() {
-	_trackCount = _lowLatencyMode ? DIMUSE_MAX_TRACKS : 6;
+	_trackCount = DIMUSE_MAX_TRACKS;
 	_tracksPauseTimer = 0;
 	_trackList = nullptr;
 
@@ -60,14 +60,6 @@ int IMuseDigital::tracksInit() {
 		_tracks[l].pitchShift = 0;
 		_tracks[l].mailbox = 0;
 		_tracks[l].jumpHook = 0;
-		_tracks[l].syncSize_0 = 0;
-		_tracks[l].syncSize_1 = 0;
-		_tracks[l].syncSize_2 = 0;
-		_tracks[l].syncSize_3 = 0;
-		_tracks[l].syncPtr_0 = nullptr;
-		_tracks[l].syncPtr_1 = nullptr;
-		_tracks[l].syncPtr_2 = nullptr;
-		_tracks[l].syncPtr_3 = nullptr;
 	}
 
 	return 0;
@@ -98,35 +90,6 @@ void IMuseDigital::tracksSaveLoad(Common::Serializer &ser) {
 		ser.syncAsSint32LE(_tracks[l].pitchShift, VER(103));
 		ser.syncAsSint32LE(_tracks[l].mailbox, VER(103));
 		ser.syncAsSint32LE(_tracks[l].jumpHook, VER(103));
-
-		ser.syncAsSint32LE(_tracks[l].syncSize_0, VER(103));
-		ser.syncAsSint32LE(_tracks[l].syncSize_1, VER(103));
-		ser.syncAsSint32LE(_tracks[l].syncSize_2, VER(103));
-		ser.syncAsSint32LE(_tracks[l].syncSize_3, VER(103));
-
-		if (_tracks[l].syncSize_0) {
-			if (ser.isLoading())
-				_tracks[l].syncPtr_0 = (byte *)malloc(_tracks[l].syncSize_0);
-			ser.syncArray(_tracks[l].syncPtr_0, _tracks[l].syncSize_0, Common::Serializer::Byte, VER(103));
-		}
-
-		if (_tracks[l].syncSize_1) {
-			if (ser.isLoading())
-				_tracks[l].syncPtr_1 = (byte *)malloc(_tracks[l].syncSize_1);
-			ser.syncArray(_tracks[l].syncPtr_1, _tracks[l].syncSize_1, Common::Serializer::Byte, VER(103));
-		}
-
-		if (_tracks[l].syncSize_2) {
-			if (ser.isLoading())
-				_tracks[l].syncPtr_2 = (byte *)malloc(_tracks[l].syncSize_2);
-			ser.syncArray(_tracks[l].syncPtr_2, _tracks[l].syncSize_2, Common::Serializer::Byte, VER(103));
-		}
-
-		if (_tracks[l].syncSize_3) {
-			if (ser.isLoading())
-				_tracks[l].syncPtr_3 = (byte *)malloc(_tracks[l].syncSize_3);
-			ser.syncArray(_tracks[l].syncPtr_3, _tracks[l].syncSize_3, Common::Serializer::Byte, VER(103));
-		}
 	}
 
 	if (ser.isLoading()) {
@@ -299,14 +262,6 @@ int IMuseDigital::tracksStartSound(int soundId, int tryPriority, int group) {
 	allocatedTrack->pitchShift = 256;
 	allocatedTrack->mailbox = 0;
 	allocatedTrack->jumpHook = 0;
-	allocatedTrack->syncSize_0 = 0;
-	allocatedTrack->syncPtr_0 = nullptr;
-	allocatedTrack->syncSize_1 = 0;
-	allocatedTrack->syncPtr_1 = nullptr;
-	allocatedTrack->syncSize_2 = 0;
-	allocatedTrack->syncPtr_2 = nullptr;
-	allocatedTrack->syncSize_3 = 0;
-	allocatedTrack->syncPtr_3 = nullptr;
 
 	if (dispatchAllocateSound(allocatedTrack, group)) {
 		debug(5, "IMuseDigital::tracksStartSound(): ERROR: dispatch couldn't start sound %d", soundId);
@@ -327,16 +282,18 @@ int IMuseDigital::tracksStopSound(int soundId) {
 
 	IMuseDigiTrack *nextTrack = _trackList;
 	IMuseDigiTrack *curTrack;
+	int result = -1;
 
 	while (nextTrack) {
 		curTrack = nextTrack;
 		nextTrack = curTrack->next;
 		if (curTrack->soundId == soundId) {
 			tracksClear(curTrack);
+			result = 0;
 		}
 	}
 
-	return 0;
+	return result;
 }
 
 int IMuseDigital::tracksStopAllSounds() {
@@ -411,30 +368,6 @@ int IMuseDigital::tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed,
 
 void IMuseDigital::tracksClear(IMuseDigiTrack *trackPtr) {
 	Common::StackLock lock(*_mutex);
-
-	if (trackPtr->syncPtr_0) {
-		trackPtr->syncSize_0 = 0;
-		free(trackPtr->syncPtr_0);
-		trackPtr->syncPtr_0 = nullptr;
-	}
-
-	if (trackPtr->syncPtr_1) {
-		trackPtr->syncSize_1 = 0;
-		free(trackPtr->syncPtr_1);
-		trackPtr->syncPtr_1 = nullptr;
-	}
-
-	if (trackPtr->syncPtr_2) {
-		trackPtr->syncSize_2 = 0;
-		free(trackPtr->syncPtr_2);
-		trackPtr->syncPtr_2 = nullptr;
-	}
-
-	if (trackPtr->syncPtr_3) {
-		trackPtr->syncSize_3 = 0;
-		free(trackPtr->syncPtr_3);
-		trackPtr->syncPtr_3 = nullptr;
-	}
 
 	removeTrackFromList(&_trackList, trackPtr);
 	dispatchRelease(trackPtr);
@@ -520,14 +453,13 @@ int IMuseDigital::tracksGetParam(int soundId, int opcode) {
 	IMuseDigiTrack *track = _trackList;
 	int l = 0;
 	do {
-		if (track)
-			l++;
 		if (track->soundId == soundId) {
 			switch (opcode) {
 			case DIMUSE_P_BOGUS_ID:
 				return -1;
 			case DIMUSE_P_SND_TRACK_NUM:
-				return l;
+				l++;
+				break;
 			case DIMUSE_P_TRIGS_SNDS:
 				return -1;
 			case DIMUSE_P_MARKER:
@@ -566,97 +498,10 @@ int IMuseDigital::tracksGetParam(int soundId, int opcode) {
 		track = track->next;
 	} while (track);
 
-	return 0;
-}
+	if (opcode != DIMUSE_P_SND_TRACK_NUM)
+		return -4;
 
-int IMuseDigital::tracksLipSync(int soundId, int syncId, int msPos, int32 &width, int32 &height) {
-	int32 w, h;
-
-	byte *syncPtr = nullptr;
-	int32 syncSize = 0;
-
-	IMuseDigiTrack *curTrack;
-	int16 val;
-
-	w = 0;
-	h = 0;
-	curTrack = _trackList;
-
-	if (msPos >= 0) {
-		// Check for an invalid timestamp:
-		// this has to be a suitable 2-bytes word...
-		if (((msPos >> 4) & 0xFFFF0000) != 0) {
-			return -5;
-		} else {
-			if (_trackList) {
-				do {
-					if (curTrack->soundId == soundId)
-						break;
-					curTrack = curTrack->next;
-				} while (curTrack);
-			}
-
-			if (curTrack) {
-				if (syncId >= 0 && syncId < 4) {
-					if (syncId == 0) {
-						syncPtr = curTrack->syncPtr_0;
-						syncSize = curTrack->syncSize_0;
-					} else if (syncId == 1) {
-						syncPtr = curTrack->syncPtr_1;
-						syncSize = curTrack->syncSize_1;
-					} else if (syncId == 2) {
-						syncPtr = curTrack->syncPtr_2;
-						syncSize = curTrack->syncSize_2;
-					} else if (syncId == 3) {
-						syncPtr = curTrack->syncPtr_3;
-						syncSize = curTrack->syncSize_3;
-					}
-
-					if (syncSize && syncPtr) {
-						// SYNC data is packed in a number of 4-bytes entries, in the following order:
-						// - Width and height values, packed as one byte each, next to each other;
-						// - The time position of said values, packed as an unsigned word (2-bytes).
-
-						// Given an input timestamp (in ms), we're going to get its representation as 60Hz
-						// increments by dividing it by 16, then we're going to search the SYNC data from
-						// the beginning to find the first entry with a timestamp being equal or greater
-						// our 60Hz timestamp.
-						uint16 inputTs = msPos >> 4;
-						int32 numOfEntries = (syncSize >> 2);
-						uint16 *syncDataWordPtr = (uint16 *)syncPtr;
-						uint16 curEntryTs = 0;
-						int idx;
-						for (idx = 0; idx < numOfEntries; idx++) {
-							curEntryTs = READ_LE_UINT16(&syncDataWordPtr[idx * 2 + 1]);
-							if (curEntryTs >= inputTs) {
-								break;
-							}
-						}
-
-						// If no relevant entry is found, or if the found entry timestamp is strictly greater
-						// than ours, then we get the previous entry. If no entry was found, this will get the
-						// last entry in our data block.
-						if (idx == numOfEntries || curEntryTs > inputTs) {
-							idx--;
-						}
-
-						// Finally, extract width and height values and remove
-						// their signs by performing AND operations with 0x7F...
-						val = READ_LE_INT16(&syncDataWordPtr[idx * 2]);
-						w = (val >> 8) & 0x7F;
-						h = val & 0x7F;
-					}
-				}
-			} else {
-				return -4;
-			}
-		}
-	}
-
-	width = w;
-	height = h;
-
-	return 0;
+	return l;
 }
 
 int IMuseDigital::tracksSetHook(int soundId, int hookId) {
@@ -698,9 +543,8 @@ IMuseDigiTrack *IMuseDigital::tracksReserveTrack(int priority) {
 
 	// Pick the track from the pool of free tracks
 	for (int i = 0; i < _trackCount; i++) {
-		reservedTrack = &_tracks[i];
-		if (!reservedTrack->soundId) {
-			return reservedTrack;
+		if (!_tracks[i].soundId) {
+			return &_tracks[i];
 		}
 	}
 
@@ -715,9 +559,10 @@ IMuseDigiTrack *IMuseDigital::tracksReserveTrack(int priority) {
 
 	if (reservedTrack && priority >= minPriorityFound) {
 		tracksClear(reservedTrack);
+		return reservedTrack;
 	}
 
-	return reservedTrack;
+	return nullptr;
 }
 
 void IMuseDigital::tracksDeinit() {

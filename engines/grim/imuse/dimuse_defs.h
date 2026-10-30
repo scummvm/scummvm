@@ -199,14 +199,6 @@ struct IMuseDigiTrack {
 	int pitchShift;
 	int mailbox;
 	int jumpHook;
-	int32 syncSize_0;
-	byte *syncPtr_0;
-	int32 syncSize_1;
-	byte *syncPtr_1;
-	int32 syncSize_2;
-	byte *syncPtr_2;
-	int32 syncSize_3;
-	byte *syncPtr_3;
 };
 
 struct IMuseDigiStreamZone {
