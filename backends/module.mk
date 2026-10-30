@@ -334,7 +334,7 @@ MODULE_OBJS += \
 	dialogs/win32/win32-dialogs.o \
 	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
-	midi/windows.o \
+	midi/winmm.o \
 	plugins/win32/win32-provider.o \
 	printing/win32/win32-printman.o \
 	saves/windows/windows-saves.o \

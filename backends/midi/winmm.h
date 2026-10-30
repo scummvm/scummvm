@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef BACKENDS_MIDI_WINDOWS_H
-#define BACKENDS_MIDI_WINDOWS_H
+#ifndef BACKENDS_MIDI_WINMM_H
+#define BACKENDS_MIDI_WINMM_H
 
 #include "audio/musicplugin.h"
 #include "common/func.h"
