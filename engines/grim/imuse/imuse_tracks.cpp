@@ -368,12 +368,6 @@ void IMuse::tracksClear(IMuseTrack *trackPtr) {
 	_fadesHandler->clearFadeStatus(trackPtr->soundId, -1);
 	_triggersHandler->clearTrigger(trackPtr->soundId, _emptyMarker, -1);
 
-	// Unlock the sound, if it's loaded as a resource
-	// TODO
-	// if (trackPtr->soundId < 1000 && trackPtr->soundId) {
-	// 	_vm->_res->unlock(rtSound, trackPtr->soundId);
-	// }
-
 	if (_lowLatencyMode)
 		waveOutEmptyBuffer(trackPtr->index);
 
