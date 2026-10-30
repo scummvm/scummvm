@@ -230,12 +230,16 @@ bool WindowsMusicPlugin::waitForMidiWarmUp() const {
 	if (GetCurrentThreadId() == _uiThreadId && _midiWarmUpWaitCallback && !isComplete())
 		return _midiWarmUpWaitCallback(isComplete);
 
-	// Warm-up has been finished. Proceed without showing a modal dialog.
+	// Warm-up has been finished, or No GUI wait is available. Proceed with device enumeration.
 	return true;
 }
 
 MusicDevices WindowsMusicPlugin::getDevices() const {
-	waitForMidiWarmUp();
+	if (!waitForMidiWarmUp()) {
+		// Continue with synchronous device enumeration even if the GUI wait has failed or not available.
+		// At worst, the subsequent WinMM calls may block until initialization completes.
+		warning("Windows MIDI warm-up wait skipped or interrupted; continuing with synchronous device enumeration");
+	}
 
 	MusicDevices devices;
 	int numDevs = midiOutGetNumDevs();

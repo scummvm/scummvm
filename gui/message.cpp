@@ -292,6 +292,10 @@ bool MidiDeviceScanDialog::waitForCompletion(const Common::Functor0<bool> &isCom
 	if (isComplete())
 		return true;
 
+	// Do not spawn a dialog when the GUI is not available.
+	if (!GuiManager::hasInstance() || !g_gui.isActive())
+		return false;
+
 	MidiDeviceScanDialog dialog(isComplete);
 	return dialog.runModal() == kCompleted;
 }
