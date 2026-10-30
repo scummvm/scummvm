@@ -82,6 +82,17 @@ void Lua_V1::SetActorTalkColor() {
 	actor->setTalkColor(getcolor(colorObj));
 }
 
+void Lua_V1::ActorVoiceIs3D() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object is3DObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	actor->setVoiceIs3D(!lua_isnil(is3DObj));
+}
+
 void Lua_V1::GetActorTalkColor() {
 	lua_Object actorObj = lua_getparam(1);
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R')) {
