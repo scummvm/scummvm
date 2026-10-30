@@ -92,6 +92,7 @@ private:
 	Graphics::PixelFormat _pfGame;
 	Graphics::PixelFormat _pfGameTexture;
 	Graphics::PixelFormat _pfCursor;
+	Graphics::PixelFormat _pfCursorTexture;
 
 	bool _consoleVisible;
 	bool _optionsDlgActive;
@@ -101,7 +102,7 @@ private:
 	bool _mouseVisible;
 	s32 _mouseX, _mouseY;
 	s32 _mouseHotspotX, _mouseHotspotY;
-	u16 _mouseKeyColor;
+	uint32 _mouseKeyColor;
 	gfx_tex_t _texMouse;
 
 	bool _kbd_active;
