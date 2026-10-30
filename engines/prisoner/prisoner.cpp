@@ -78,6 +78,7 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_menuFunctionArray[OPTIONS_PANEL] = &PrisonerEngine::updateOptionsMenu;
 	_menuFunctionArray[OPTGFX_PANEL] = &PrisonerEngine::updateDisplaySettingsMenu;
 	_menuFunctionArray[DIVOPT_PANEL] = &PrisonerEngine::updateTextMusicMenu;
+	_menuFunctionArray[VOLOPT_PANEL] = &PrisonerEngine::updateVolumeMenu;
 }
 
 PrisonerEngine::~PrisonerEngine() {
@@ -365,6 +366,11 @@ const Common::String PrisonerEngine::getGlobalText(Common::String &identifier) {
 
 void PrisonerEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
+
+	// The original's sound effects and music on/off switches (volume settings screen)
+	bool muteAll = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, muteAll || (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute")));
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, muteAll || (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute")));
 
 	bool mute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
 	_speechMuted = mute || ConfMan.getBool("speech_mute");
@@ -817,7 +823,8 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 
 	if (_inGame) {
 		// The display settings screen handles Escape itself (cancel)
-		if (keyState == Common::KEYCODE_ESCAPE && !(_mainMenuRequested && (_selectedMenuIndex == OPTGFX_PANEL || _selectedMenuIndex == DIVOPT_PANEL))) {
+		if (keyState == Common::KEYCODE_ESCAPE && !(_mainMenuRequested && (_selectedMenuIndex == OPTGFX_PANEL || _selectedMenuIndex == DIVOPT_PANEL ||
+			_selectedMenuIndex == VOLOPT_PANEL))) {
 			inpKeybSetWaitRelease(true);
 			if (!_mainMenuRequested) {
 				openMainMenu();

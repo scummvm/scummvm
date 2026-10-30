@@ -143,7 +143,6 @@ static const _MenuOffset kTextMusicMenuOffsets[] = {
 	{349, 302, 419, 332}
 };
 
-// The original's "type of dialog" values
 enum {
 	kDialogTypeText = 0,
 	kDialogTypeVoice = 1,
@@ -157,6 +156,49 @@ enum {
 	kTextMusicRowMusic,
 	kTextMusicRowCount
 };
+
+// Sound volume settings screen (runOptionsMenu_sub_30628), click boxes from
+// runOptionsMenu_sub_30063. Each row has a 21-cell slider (0 to 100 in steps of 5) and an
+// on/off switch. The rows are sound effects, music and voices.
+enum VolumeMenuBox {
+	kVolumeBoxTitle = 0,
+	kVolumeBoxOk,
+	kVolumeBoxCancel,
+	kVolumeBoxFirstLabel,		// 3 rows
+	kVolumeBoxFirstSwitch = kVolumeBoxFirstLabel + 3,
+	kVolumeBoxCount = kVolumeBoxFirstSwitch + 3
+};
+
+static const _MenuOffset kVolumeMenuOffsets[] = {
+	{ 98,  13, 413,  38},
+	{ 93, 300, 164, 329},
+	{349, 301, 421, 330},
+	{ 92, 119, 389, 140},
+	{ 92, 177, 389, 198},
+	{ 92, 234, 389, 255},
+	{394, 116, 431, 164},
+	{394, 174, 431, 222},
+	{394, 232, 431, 279}
+};
+
+static const int16 kVolumeRowCount = 3;
+static const int16 kVolumeSliderCells = 21;
+static const int16 kVolumeStep = 5;
+// The slider cells start at this position and are 15 pixels apart
+static const int16 kVolumeCellX = 77;
+static const int16 kVolumeCellWidth = 15;
+static const int16 kVolumeCellY[kVolumeRowCount] = {143, 201, 258};
+static const int16 kVolumeCellHeight = 22;
+// Panel elements: the filled sliders (one element per number of lit cells), and the switch
+static const int16 kVolumeSliderElements[kVolumeRowCount] = {3, 23, 43};
+static const int16 kVolumeSwitchOnElement = 2;
+static const int16 kVolumeSwitchOffElement = 63;
+
+// Test sounds (TEST_SAMPLE, TEST_MUSIC_SMP, TEST_MUSIC_MIDI and TEST_VOICE)
+static const int16 kTestSampleSlot = 2;
+static const int16 kTestDigitalMusicSlot = 1;
+static const int16 kTestMidiMusicSlot = 0;
+static const int16 kTestVoiceSlot = 21;
 
 // Display settings screen (runOptionsMenu_sub_34B17), click box tags from runOptionsMenu_sub_3432C
 enum DisplayMenuBox {
@@ -412,6 +454,9 @@ void PrisonerEngine::handleMainMenuInput() {
 	} else if (_selectedMenuIndex == DIVOPT_PANEL) {
 		handleTextMusicInput();
 		return;
+	} else if (_selectedMenuIndex == VOLOPT_PANEL) {
+		handleVolumeInput();
+		return;
 	}
 
 	getInputStatus(keyState, buttonState);
@@ -628,9 +673,7 @@ void PrisonerEngine::handleOptionsMenuInput() {
 void PrisonerEngine::doOptionsMenuAction(int8 itemIndex) {
 	switch (itemIndex) {
 	case kOptionsMenuSound:
-		// TODO: The original has its own sub-menu for this (runOptionsMenu_sub_30628). Use
-		// ScummVM's options dialog until it is implemented.
-		openConfigDialog();
+		loadVolumeMenu();
 		break;
 	case kOptionsMenuTextMusic:
 		loadTextMusicMenu();
@@ -638,9 +681,18 @@ void PrisonerEngine::doOptionsMenuAction(int8 itemIndex) {
 	case kOptionsMenuDisplay:
 		loadDisplaySettingsMenu();
 		break;
-	case kOptionsMenuSaveSettings:
+	case kOptionsMenuSaveSettings: {
+		// Show "Saving..." message in the options title while the settings are written
+		Common::String savingId = "MSGSOPT";
+		const _MenuOffset *off = &kOptionsMenuOffsets[kOptionsMenuCount];
+		AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[OPTIONS_PANEL]);
+		_screen->drawAnimationElement(menuPanel, 0, kMenuPanelX, kMenuPanelY, 0);
+		drawTextEx(kMenuPanelX + off->x1, kMenuPanelX + off->x2, kMenuPanelY + off->y1, kMenuPanelY + off->y2, getGlobalText(savingId));
+		_screen->update();
 		ConfMan.flushToDisk();
+		_system->delayMillis(500);
 		break;
+	}
 	case kOptionsMenuBack:
 		closeOptionsMenu();
 		break;
@@ -815,7 +867,7 @@ void PrisonerEngine::handleDisplaySettingsInput() {
 	updateMouseCursor();
 }
 
-// Draws one element of a menu panel. The original's runSeq1 takes the
+// Draws one element of a menu panel. runSeq1 takes the
 // element index directly, like drawAnimationElement.
 static void drawPanelSequence(Screen *screen, AnimationResource *panel, uint elementIndex, int16 x, int16 y) {
 	if (elementIndex < panel->_elements.size())
@@ -911,7 +963,7 @@ void PrisonerEngine::closeTextMusicMenu(bool apply) {
 	_selectedMenuIndex = OPTIONS_PANEL;
 }
 
-// Left/right change the value of the current row, like the original
+// Left/right change the value of the current row
 void PrisonerEngine::changeTextMusicSetting(int16 delta) {
 	switch (_textMusicRow) {
 	case kTextMusicRowDialog: {
@@ -1048,6 +1100,205 @@ void PrisonerEngine::updateTextMusicMenu(int16 x, int16 y) {
 	drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
 }
 
+// Plays the test sounds while the volume screen is open, so the player hears the
+// volumes being set. The game's own sounds and music are paused meanwhile.
+void PrisonerEngine::startVolumeTestSounds() {
+	suspendMusics();
+	suspendSounds();
+	setVoicesMuted(true);
+
+	Common::String testPakName = "SOUNDTST";
+	_volumeTestSlots[0] = _res->load<SoundResource>(testPakName, kTestSampleSlot, 12);
+	if (_digitalMusic) {
+		_volumeTestSlots[1] = _res->load<SoundResource>(testPakName, kTestDigitalMusicSlot, 12);
+	} else {
+		_volumeTestSlots[1] = _res->load<MidiResource>(testPakName, kTestMidiMusicSlot, 13);
+		_midi->playMusic(_res->get<MidiResource>(_volumeTestSlots[1]), 100, true);
+	}
+	Common::String voicePakName = "F_M06R01";
+	makeLanguageString(voicePakName);
+	_volumeTestSlots[2] = _res->load<SoundResource>(voicePakName, kTestVoiceSlot, 16);
+
+	const Audio::Mixer::SoundType soundTypes[] = {Audio::Mixer::kSFXSoundType, Audio::Mixer::kMusicSoundType, Audio::Mixer::kSpeechSoundType};
+	for (int16 row = 0; row < kVolumeRowCount; row++) {
+		if (row == 1 && !_digitalMusic)
+			continue;
+		Audio::AudioStream *stream = _res->get<SoundResource>(_volumeTestSlots[row])->createLoopingAudioStream(0);
+		_mixer->playStream(soundTypes[row], &_volumeTestHandles[row], stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+	}
+	applyVolumeSettings();
+}
+
+void PrisonerEngine::stopVolumeTestSounds() {
+	for (int16 row = 0; row < kVolumeRowCount; row++)
+		_mixer->stopHandle(_volumeTestHandles[row]);
+	if (!_digitalMusic)
+		_midi->stopMusic();
+	for (int16 row = 0; row < kVolumeRowCount; row++)
+		_res->unload(_volumeTestSlots[row]);
+
+	resumeSounds();
+	resumeMusics();
+	setVoicesMuted(false);
+}
+
+// Sets the mixer to the volumes being edited, so the test sounds follow them
+void PrisonerEngine::applyVolumeSettings() {
+	const Audio::Mixer::SoundType soundTypes[] = {Audio::Mixer::kSFXSoundType, Audio::Mixer::kMusicSoundType, Audio::Mixer::kSpeechSoundType};
+	bool mute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+	for (int16 row = 0; row < kVolumeRowCount; row++) {
+		_mixer->setVolumeForSoundType(soundTypes[row], _volumeValues[row] * Audio::Mixer::kMaxMixerVolume / 100);
+		_mixer->muteSoundType(soundTypes[row], mute || !_volumeEnabled[row]);
+	}
+}
+
+void PrisonerEngine::loadVolumeMenu() {
+	_selectedMenuIndex = VOLOPT_PANEL;
+	_volumeRow = 0;
+
+	// ScummVM's volumes go from 0 to 256, the game's from 0 to 100 in steps of 5
+	const char *const volumeKeys[] = {"sfx_volume", "music_volume", "speech_volume"};
+	for (int16 row = 0; row < kVolumeRowCount; row++) {
+		int volume = ConfMan.getInt(volumeKeys[row]) * 100 / Audio::Mixer::kMaxMixerVolume;
+		_volumeValues[row] = CLIP((volume + kVolumeStep / 2) / kVolumeStep * kVolumeStep, 0, 100);
+	}
+	_volumeEnabled[0] = !(ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute"));
+	_volumeEnabled[1] = !(ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute"));
+	_volumeEnabled[2] = !_speechMuted;
+
+	_volumeMenuItems.clear();
+	const char *const textIds[] = {"VOLOPT", "OK", "CANCEL", "SMPVOL", "MUSVOL", "VOXVOL"};
+	for (uint i = 0; i < ARRAYSIZE(textIds); i++) {
+		Common::String id = textIds[i];
+		_volumeMenuItems.push_back(getGlobalText(id));
+	}
+
+	startVolumeTestSounds();
+}
+
+void PrisonerEngine::closeVolumeMenu(bool apply) {
+	if (apply) {
+		ConfMan.setInt("sfx_volume", _volumeValues[0] * Audio::Mixer::kMaxMixerVolume / 100);
+		ConfMan.setInt("music_volume", _volumeValues[1] * Audio::Mixer::kMaxMixerVolume / 100);
+		ConfMan.setInt("speech_volume", _volumeValues[2] * Audio::Mixer::kMaxMixerVolume / 100);
+		ConfMan.setBool("sfx_mute", !_volumeEnabled[0]);
+		ConfMan.setBool("music_mute", !_volumeEnabled[1]);
+		ConfMan.setBool("speech_mute", !_volumeEnabled[2]);
+	}
+	stopVolumeTestSounds();
+	syncSoundSettings();
+	_selectedMenuIndex = OPTIONS_PANEL;
+}
+
+void PrisonerEngine::changeVolumeSetting(int16 row, int16 volume) {
+	_volumeValues[row] = CLIP<int16>(volume, 0, 100);
+	// Changing the volume switches the row on (original: runOptionsMenu_sub_30628)
+	_volumeEnabled[row] = true;
+	applyVolumeSettings();
+}
+
+void PrisonerEngine::handleVolumeInput() {
+	Common::KeyCode keyState;
+	uint16 buttonState;
+
+	getInputStatus(keyState, buttonState);
+
+	if (buttonState & kLeftButton) {
+		inpMouseSetWaitRelease(true);
+		int16 mouseX = _mouseX - kMenuPanelX;
+		int16 mouseY = _mouseY - kMenuPanelY;
+		int8 boxIndex = findMenuItemAtPos(kVolumeMenuOffsets, kVolumeBoxCount, mouseX, mouseY);
+		if (boxIndex == kVolumeBoxOk) {
+			closeVolumeMenu(true);
+		} else if (boxIndex == kVolumeBoxCancel) {
+			closeVolumeMenu(false);
+		} else if (boxIndex >= kVolumeBoxFirstSwitch) {
+			_volumeRow = boxIndex - kVolumeBoxFirstSwitch;
+			_volumeEnabled[_volumeRow] = !_volumeEnabled[_volumeRow];
+			applyVolumeSettings();
+		} else {
+			// A slider cell sets the volume to its position
+			for (int16 row = 0; row < kVolumeRowCount; row++) {
+				if (mouseY >= kVolumeCellY[row] && mouseY < kVolumeCellY[row] + kVolumeCellHeight &&
+					mouseX >= kVolumeCellX && mouseX < kVolumeCellX + kVolumeSliderCells * kVolumeCellWidth) {
+					_volumeRow = row;
+					changeVolumeSetting(row, (mouseX - kVolumeCellX) / kVolumeCellWidth * kVolumeStep);
+				}
+			}
+		}
+	} else if (buttonState & kRightButton) {
+		inpMouseSetWaitRelease(true);
+		closeVolumeMenu(false);
+	} else if (keyState != Common::KEYCODE_INVALID) {
+		inpKeybSetWaitRelease(true);
+		switch (keyState) {
+		case Common::KEYCODE_UP:
+			_volumeRow = (_volumeRow + kVolumeRowCount - 1) % kVolumeRowCount;
+			break;
+		case Common::KEYCODE_DOWN:
+			_volumeRow = (_volumeRow + 1) % kVolumeRowCount;
+			break;
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_MINUS:
+		case Common::KEYCODE_KP_MINUS:
+			changeVolumeSetting(_volumeRow, _volumeValues[_volumeRow] - kVolumeStep);
+			break;
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_PLUS:
+		case Common::KEYCODE_KP_PLUS:
+			changeVolumeSetting(_volumeRow, _volumeValues[_volumeRow] + kVolumeStep);
+			break;
+		case Common::KEYCODE_HOME:
+			changeVolumeSetting(_volumeRow, 0);
+			break;
+		case Common::KEYCODE_END:
+			changeVolumeSetting(_volumeRow, 100);
+			break;
+		case Common::KEYCODE_SPACE:
+			_volumeEnabled[_volumeRow] = !_volumeEnabled[_volumeRow];
+			applyVolumeSettings();
+			break;
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+			closeVolumeMenu(true);
+			break;
+		case Common::KEYCODE_ESCAPE:
+			closeVolumeMenu(false);
+			break;
+		default:
+			break;
+		}
+	}
+
+	updateMouseCursor();
+}
+
+void PrisonerEngine::updateVolumeMenu(int16 x, int16 y) {
+	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[VOLOPT_PANEL]);
+	drawPanelSequence(_screen, menuPanel, 0, x, y);
+
+	_PakMenuDirectoryEntry panelData = _kPrisonerPanelData[VOLOPT_PANEL];
+	setFontColors(_menuFont, panelData.outlineColor, panelData.inkColor);
+	setActiveFont(_menuFont);
+
+	for (uint i = 0; i < _volumeMenuItems.size(); i++) {
+		const _MenuOffset *off = &kVolumeMenuOffsets[i];
+		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _volumeMenuItems[i]);
+	}
+
+	for (int16 row = 0; row < kVolumeRowCount; row++) {
+		int16 litCells = _volumeValues[row] / kVolumeStep;
+		if (litCells > 0)
+			drawPanelSequence(_screen, menuPanel, kVolumeSliderElements[row] + litCells - 1, x + kVolumeCellX, y + kVolumeCellY[row]);
+		const _MenuOffset *off = &kVolumeMenuOffsets[kVolumeBoxFirstSwitch + row];
+		drawPanelSequence(_screen, menuPanel, _volumeEnabled[row] ? kVolumeSwitchOnElement : kVolumeSwitchOffElement,
+			x + off->x1, y + off->y1);
+	}
+
+	const _MenuOffset *off = &kVolumeMenuOffsets[kVolumeBoxFirstLabel + _volumeRow];
+	drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
+}
+
 void PrisonerEngine::openConfigDialog() {
 	GUI::ConfigDialog dialog;
 	runDialog(dialog);
@@ -1127,7 +1378,7 @@ void PrisonerEngine::updateMainMenu(int16 x, int16 y) {
 		}
 	}
 
-	// The original draws panel element 1 (the highlight) at the focused item's top left corner
+	// Draws panel element 1 (the highlight) at the focused item's top left corner
 	const _MenuOffset *off = &(_mainMenuOffsets[_currMenuIndex]);
 	drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
 }

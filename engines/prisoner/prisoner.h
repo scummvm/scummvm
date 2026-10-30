@@ -864,6 +864,14 @@ public:
 	bool _textMusicDigital;
 	/* "End of dialogs" setting : spoken text ends by itself */
 	bool _dialogAutoEnd;
+
+	/* Sound volume settings screen: sound effects, music and voices, 0 to 100 */
+	Common::StringArray _volumeMenuItems;
+	int8 _volumeRow;
+	int16 _volumeValues[3];
+	bool _volumeEnabled[3];
+	int16 _volumeTestSlots[3];
+	Audio::SoundHandle _volumeTestHandles[3];
 	typedef void (PrisonerEngine::*MenuFunction)(int16, int16);
 	MenuFunction _menuFunctionArray[MENU_PANELS::PANEL_SIZE_END];
 
@@ -1240,6 +1248,14 @@ public:
 	void drawTextMusicChoice(AnimationResource *panel, int16 x, int16 y, int16 box, bool chosen);
 	void updateTextMusicMenu(int16 x, int16 y);
 	void switchMusicType(bool digital);
+	void loadVolumeMenu();
+	void closeVolumeMenu(bool apply);
+	void changeVolumeSetting(int16 row, int16 volume);
+	void applyVolumeSettings();
+	void startVolumeTestSounds();
+	void stopVolumeTestSounds();
+	void handleVolumeInput();
+	void updateVolumeMenu(int16 x, int16 y);
 	void loadDisplaySettingsMenu();
 	void closeDisplaySettingsMenu(bool apply);
 	void changeDisplaySetting(int16 delta);
