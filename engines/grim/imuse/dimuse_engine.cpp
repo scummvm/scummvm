@@ -24,8 +24,6 @@
 
 #include "engines/grim/imuse/dimuse_engine.h"
 #include "engines/grim/imuse/dimuse_defs.h"
-#include "engines/grim/imuse/dimuse_bndmgr.h"
-#include "engines/grim/imuse/dimuse_sndmgr.h"
 #include "engines/grim/imuse/dimuse_tables.h"
 
 #include "engines/grim/movie/codecs/vima.h"

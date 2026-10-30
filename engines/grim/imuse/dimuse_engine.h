@@ -33,10 +33,7 @@
 #include "engines/grim/imuse/dimuse_internalmixer.h"
 #include "engines/grim/imuse/dimuse_groups.h"
 #include "engines/grim/imuse/dimuse_fades.h"
-#include "engines/grim/imuse/dimuse_files.h"
 #include "engines/grim/imuse/dimuse_triggers.h"
-#include "engines/grim/imuse/dimuse_bndmgr.h"
-#include "engines/grim/imuse/dimuse_sndmgr.h"
 #include "engines/grim/imuse/dimuse_tables.h"
 
 #include "audio/mixer.h"
