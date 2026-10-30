@@ -508,7 +508,19 @@ int IMuseDigital::ihostFseek(int soundId, int32 offset, int mode) {
 		IMuseDigiResource *res = _openAudioFiles[soundId - 10000].resourcePtr;
 		if (res) {
 			soundsFileSeek(res, offset, mode);
-			return soundsFileTell(res);
+
+			if (soundId == kTalkSoundID && _curEffectId && mode == SEEK_END)
+				return _curEffectId * (soundsFileTell(res) + DIMUSE_HMI_TAIL_SIZE - 44) + 44;
+
+			if (soundId != kTalkSoundID || !_curEffectId || mode != SEEK_SET)
+				return soundsFileTell(res);
+
+			int32 dryOffset = offset;
+			if (offset > 44)
+				dryOffset = (offset - 44) / _curEffectId + 44;
+
+			soundsFileSeek(res, dryOffset, SEEK_SET);
+			return offset;
 		}
 	}
 
@@ -522,10 +534,115 @@ int IMuseDigital::ihostRead(int soundId, uint8 *destBuf, int32 size) {
 	if (!res)
 		return 0;
 
-	// TODO
-	// Voice effects processing (hmiFX) for sound 10000
+	if (soundId != kTalkSoundID || !_curEffectId)
+		return copyDataFromResource(res, destBuf, size);
 
-	return copyDataFromResource(res, destBuf, size);
+	bool isLastChunk = false;
+	uint8 *effectBuf = nullptr;
+	int32 effectSize = 0;
+
+	int32 curPos = soundsFileTell(res);
+	soundsFileSeek(res, 0, SEEK_END);
+	int32 fileSize = soundsFileTell(res);
+	soundsFileSeek(res, curPos, SEEK_SET);
+
+	if (_maxChunkRequested < size) {
+		free(_voiceSrcBuf);
+		_voiceSrcBuf = (uint8 *)malloc(size);
+		_maxChunkRequested = size;
+	}
+
+	// Past the end of the original file we only serve the tail of the effect
+	if (curPos >= fileSize) {
+		if (!_voiceRemainderSize) {
+			memset(destBuf, 0, size);
+			return size;
+		}
+
+		int32 copySize = MIN(_voiceRemainderSize - _voiceRemainderPos, size);
+		memcpy(destBuf, _voiceRemainderBuf + _voiceRemainderPos, copySize);
+		_voiceRemainderPos += copySize;
+
+		if (copySize < size)
+			memset(destBuf + copySize, 0, size - copySize);
+
+		return size;
+	}
+
+	if (!curPos) {
+		// The first chunk starts with the WAV header, which gets adapted to the processed audio
+		int32 dataSize = size - 44;
+		int32 readSize = copyDataFromResource(res, _voiceSrcBuf, dataSize / _curEffectId + 44);
+		if (soundsFileTell(res) >= fileSize)
+			isLastChunk = true;
+
+		memcpy(destBuf, _voiceSrcBuf, 44);
+		WRITE_LE_UINT32(destBuf + 40, (DIMUSE_HMI_TAIL_SIZE + READ_LE_UINT32(destBuf + 40)) * _curEffectId);
+		WRITE_LE_UINT32(destBuf + 28, READ_LE_UINT32(destBuf + 28) * _curEffectId);
+
+		if (_curEffectId > 1) {
+			destBuf[32] *= 2;
+			destBuf[22] *= 2;
+		}
+
+		processSound(_voiceSrcBuf + 44, readSize - 44, destBuf + 44, &effectBuf, &effectSize, isLastChunk);
+		if (isLastChunk && effectBuf) {
+			memcpy(destBuf + 44, effectBuf, MIN(dataSize, effectSize));
+
+			if (dataSize > effectSize)
+				memset(destBuf + 44 + effectSize, 0, dataSize - effectSize);
+
+			if (dataSize < effectSize) {
+				_voiceRemainderSize = effectSize - dataSize;
+				_voiceRemainderPos = 0;
+
+				if (_voiceRemainderSize > _voiceRemainderCapacity) {
+					free(_voiceRemainderBuf);
+					_voiceRemainderBuf = (uint8 *)malloc(_voiceRemainderSize);
+					_voiceRemainderCapacity = _voiceRemainderSize;
+				}
+
+				memcpy(_voiceRemainderBuf, effectBuf + dataSize, _voiceRemainderSize);
+			} else {
+				_voiceRemainderSize = 0;
+			}
+
+			free(effectBuf);
+		}
+
+		return size;
+	}
+
+	int32 readSize = copyDataFromResource(res, _voiceSrcBuf, size / _curEffectId);
+	if (soundsFileTell(res) >= fileSize)
+		isLastChunk = true;
+
+	processSound(_voiceSrcBuf, readSize, destBuf, &effectBuf, &effectSize, isLastChunk);
+	if (!isLastChunk || !effectBuf)
+		return size;
+
+	memcpy(destBuf, effectBuf, MIN(size, effectSize));
+
+	if (size > effectSize)
+		memset(destBuf + effectSize, 0, size - effectSize);
+
+	if (size < effectSize) {
+		_voiceRemainderSize = effectSize - size;
+		_voiceRemainderPos = 0;
+
+		if (_voiceRemainderSize > _voiceRemainderCapacity) {
+			free(_voiceRemainderBuf);
+			_voiceRemainderBuf = (uint8 *)malloc(_voiceRemainderSize);
+			_voiceRemainderCapacity = _voiceRemainderSize;
+		}
+
+		memcpy(_voiceRemainderBuf, effectBuf + size, _voiceRemainderSize);
+	} else {
+		_voiceRemainderSize = 0;
+	}
+
+	free(effectBuf);
+	return size;
 }
 
 void IMuseDigital::soundsAllocateBuffer(int bufferId, int32 bufSize, int32 loadSize, int32 criticalSize) {
@@ -1175,8 +1292,11 @@ int IMuseDigital::soundsLoadProcessStartSound(const char *soundName, int priorit
 	if (priority > 124)
 		priority = 124;
 
-	// TODO
-	// If a voice effect is active (curEffectId), AllocateProcessedSound() the sound before starting it (hmiFX)
+	if (_curEffectId) {
+		IMuseDigiCachedSound *sound = &_soundCache[soundId - 100];
+		if (sound->luaSoundId && !sound->flag)
+			allocateProcessedSound(sound->luaSoundId);
+	}
 
 	diMUSEStartSound(soundId, priority);
 	diMUSESetParam(soundId, DIMUSE_P_GROUP, group);
@@ -1240,6 +1360,57 @@ int IMuseDigital::iMUSEGetHook(const char *soundName) {
 		return diMUSEGetHook(soundId);
 
 	return -1;
+}
+
+void IMuseDigital::iMUSESetVoiceEffect(const char *effectName) {
+	Common::strlcpy(_curEffectName, effectName, sizeof(_curEffectName));
+
+	if (!_hmiFxInitialized || !scumm_stricmp(effectName, "OFF"))
+		_curEffectId = 0;
+	else
+		_curEffectId = registerHMIEffect(effectName);
+}
+
+void IMuseDigital::allocateProcessedSound(int luaSoundId) {
+	if (luaSoundId < 1111 || luaSoundId >= 1367)
+		return;
+
+	int slot = DIMUSE_MAX_CACHED_SOUNDS - 1;
+	while (_soundCache[slot].luaSoundId != luaSoundId) {
+		if (!slot--)
+			return;
+	}
+
+	IMuseDigiCachedSound *sound = &_soundCache[slot];
+	if (!sound->soundUncompData || !sound->soundAddrData)
+		return;
+
+	int sampleRate = 0, wordSize = 0, numChannels = 0, dataLength = 0;
+	soundsGetExtFormatBuffer(sound->soundMap, nullptr, &sampleRate, &wordSize, &numChannels, nullptr, &dataLength);
+
+	if (sampleRate == 22050 && wordSize == 16 && numChannels == 1 && dataLength > 0) {
+		uint8 *processedBuf = (uint8 *)malloc(2 * dataLength + 80);
+		if (processedBuf) {
+			int effectChannels = processSound(sound->soundAddrData + 80, dataLength, processedBuf, nullptr, nullptr, false);
+
+			free(sound->soundUncompData);
+			sound->soundUncompData = processedBuf;
+
+			int regionLength = dataLength;
+			if (effectChannels == 2)
+				regionLength *= 2;
+
+			sound->uncompResourceSize = regionLength;
+			createSoundHeader(&processedBuf[regionLength], 3, 22050, 16, effectChannels, regionLength);
+
+			sound->soundMap = &processedBuf[regionLength];
+			sound->soundMap[31] = 1;
+			sound->soundAddrData = processedBuf - 80;
+			sound->flag = 1;
+		}
+
+		sound->tsOfAllocation = g_system->getMillis();
+	}
 }
 
 void IMuseDigital::soundsPeriodic() {

@@ -38,9 +38,11 @@
 
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/effects/hmi/hmi_types.h"
 
 namespace Audio {
 class AudioStream;
+class HMIFxLib;
 class Mixer;
 class QueuingAudioStream;
 }
@@ -284,6 +286,31 @@ private:
 	void soundsResetLipsyncState(int soundId);
 	int soundsGetPhoneme(int soundId, int offset);
 
+	// HMI voice effects
+	Audio::HMIFxLib *_hmiFxLib;
+	Audio::HMIInitData _hmiInitData;
+	Audio::HMILibrary *_presetCollection;
+	Audio::HMIProcessRequest _hmiRequest;
+	Audio::HMIPreset *_loadedPreset;
+	Audio::HMIFormat _hmiInputFmt;
+	Audio::HMIFormat _hmiOutputFmt;
+	bool _hmiFxInitialized;
+	int _curHMIEffectIdInternal;
+	int _curEffectId;
+	char _curEffectName[40];
+	uint8 *_voiceSrcBuf;
+	int32 _maxChunkRequested;
+	uint8 *_voiceRemainderBuf;
+	int32 _voiceRemainderSize;
+	int32 _voiceRemainderCapacity;
+	int32 _voiceRemainderPos;
+
+	int setupHMI(int heapSize);
+	int registerHMIEffect(const char *effectName);
+	int processSound(uint8 *srcBuf, uint32 soundLength, uint8 *destBuf, uint8 **outBuf, int32 *outLength, bool isLastChunk);
+	void soundsTerminateProcessing();
+	void allocateProcessedSound(int luaSoundId);
+
 	// Waveapi
 	waveOutParamsStruct waveOutSettings;
 
@@ -350,6 +377,7 @@ public:
 	bool soundsIsSoundPlaying(const char *soundName);
 	int iMUSESetHook(const char *soundName, int hookId);
 	int iMUSEGetHook(const char *soundName);
+	void iMUSESetVoiceEffect(const char *effectName);
 	void soundsPeriodic();
 	int soundsPause();
 	int soundsResume();

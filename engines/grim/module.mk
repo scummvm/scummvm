@@ -49,6 +49,7 @@ MODULE_OBJS := \
 	imuse/dimuse_fades.o \
 	imuse/dimuse_files.o \
 	imuse/dimuse_groups.o \
+	imuse/dimuse_hmi.o \
 	imuse/dimuse_internalmixer.o \
 	imuse/dimuse_scripts.o \
 	imuse/dimuse_streamer.o \
