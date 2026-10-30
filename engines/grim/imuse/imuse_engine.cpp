@@ -523,6 +523,7 @@ int IMuse::imStopAllSounds() {
 }
 
 int IMuse::imGetNextSound(int soundId) {
+	Common::StackLock lock(*_mutex);
 	return tracksGetNextSound(soundId);
 }
 
