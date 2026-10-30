@@ -206,7 +206,7 @@ void Lua_V1::SetSoundPosition() {
 	Math::Vector3d pos;
 	int minVolume = 10;
 	int maxVolume = 127;
-	float someParam = 0;
+	float maxDist = 8.0f;
 	int argId = 1;
 	lua_Object paramObj;
 
@@ -248,13 +248,17 @@ void Lua_V1::SetSoundPosition() {
 
 	paramObj = lua_getparam(argId++);
 	if (lua_isnumber(paramObj)) {
-		someParam = (int)lua_getnumber(paramObj);
-		if (someParam < 0.0)
-			someParam = 0.0;
+		maxDist = lua_getnumber(paramObj);
+		if (maxDist < 0.0f)
+			maxDist = 0.0f;
 	}
 
-	if (g_grim->getCurrSet())
-		g_grim->getCurrSet()->setSoundPosition(getSoundKey(nameObj), pos, minVolume, maxVolume);
+	if (g_grim->getCurrSet()) {
+		if (lua_isnumber(nameObj))
+			g_grim->getCurrSet()->setSoundPosition((int)lua_getnumber(nameObj), pos, minVolume, maxVolume, maxDist);
+		else
+			g_grim->getCurrSet()->setSoundPosition(lua_getstring(nameObj), pos, minVolume, maxVolume, maxDist);
+	}
 }
 
 void Lua_V1::IsSoundPlaying() {

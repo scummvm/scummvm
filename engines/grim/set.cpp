@@ -30,10 +30,37 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/sound.h"
 #include "engines/grim/emi/sound/emisound.h"
+#include "engines/grim/imuse/dimuse_engine.h"
 
 #include "math/frustum.h"
 
 namespace Grim {
+
+// Default sound parameters of a room in the original
+static const float kSoundDefaultMaxDist = 8.0f;
+static const float kSoundPanFactor = 1.5f;
+static const float kSoundRadius = 0.8f;
+
+// The original normalizes the vector with an approximation of its length, which it returns too
+static float normalize3QuickAcc(Math::Vector3d &vector) {
+	float x = ABS(vector.x());
+	float y = ABS(vector.y());
+	float z = ABS(vector.z());
+
+	float maxValue = MAX(x, MAX(y, z));
+	float minValue = MIN(x, MIN(y, z));
+	float midValue = MAX(MIN(x, y), MIN(MAX(x, y), z));
+
+	float length = (minValue * 0.25f + midValue * 0.34375f) + maxValue;
+
+	// The original could divide by zero here, let's avoid that...
+	if (length > 0.0f) {
+		float scale = 1.0f / length;
+		vector.set(vector.x() * scale, vector.y() * scale, vector.z() * scale);
+	}
+
+	return length;
+}
 
 Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 		_locked(false), _name(sceneName), _enableLights(false) {
@@ -1019,32 +1046,115 @@ void Set::setLightPosition(int light, const Math::Vector3d &pos) {
 }
 
 void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos) {
-	setSoundPosition(soundName, pos, _minVolume, _maxVolume);
+	setSoundPosition(soundName, pos, _minVolume, _maxVolume, kSoundDefaultMaxDist);
 }
 
-void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol) {
-	int newBalance, newVolume;
-	calculateSoundPosition(pos, minVol, maxVol, newVolume, newBalance);
-	g_sound->setVolume(soundName, newVolume);
-	g_sound->setPan(soundName, newBalance);
+void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol, float maxDist) {
+	SoundPosition sound;
+	sound.name = soundName;
+	sound.soundId = 0;
+	sound.pos = pos;
+	sound.minVol = minVol;
+	sound.maxVol = maxVol;
+	sound.maxDist = maxDist;
+	addSoundPosition(sound);
 }
 
-void Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxVol, int &volume, int &balance) {
-	// TODO: The volume and pan needs to be updated when the setup changes.
+void Set::setSoundPosition(int soundId, const Math::Vector3d &pos, int minVol, int maxVol, float maxDist) {
+	SoundPosition sound;
+	sound.soundId = soundId;
+	sound.pos = pos;
+	sound.minVol = minVol;
+	sound.maxVol = maxVol;
+	sound.maxDist = maxDist;
+	addSoundPosition(sound);
+}
+
+const char *Set::getSoundKey(const SoundPosition &sound) const {
+	// Like in the original, a sound is identified either by its name or by its number
+	if (sound.name.empty())
+		return (const char *)(intptr)sound.soundId;
+
+	return sound.name.c_str();
+}
+
+bool Set::isSoundPlaying(const SoundPosition &sound) const {
+	return g_imuse->soundsIsSoundPlaying(getSoundKey(sound));
+}
+
+void Set::addSoundPosition(const SoundPosition &newSound) {
+	// Only the sounds which are currently playing can be positioned
+	if (!isSoundPlaying(newSound))
+		return;
+
+	removeStoppedSounds();
+
+	_soundPositions.push_front(newSound);
+	updateSoundPosition(newSound);
+}
+
+void Set::removeStoppedSounds() {
+	Common::List<SoundPosition>::iterator it = _soundPositions.begin();
+	while (it != _soundPositions.end()) {
+		if (isSoundPlaying(*it))
+			++it;
+		else
+			it = _soundPositions.erase(it);
+	}
+}
+
+void Set::relocateSounds() {
+	removeStoppedSounds();
+
+	for (Common::List<SoundPosition>::iterator it = _soundPositions.begin(); it != _soundPositions.end(); ++it)
+		updateSoundPosition(*it);
+}
+
+void Set::updateSoundPosition(const SoundPosition &sound) {
+	int newVolume, newBalance;
+	const char *soundKey = getSoundKey(sound);
+
+	if (calculateSoundPosition(sound.pos, sound.minVol, sound.maxVol, sound.maxDist, newVolume, newBalance))
+		g_sound->setVolume(soundKey, newVolume);
+
+	g_sound->setPan(soundKey, newBalance);
+}
+
+bool Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxVol, float maxDist, int &volume, int &balance) {
 	// Note: This is only used in Grim. See SoundTrack::updatePosition for the corresponding implementation in EMI.
 
-	// distance calculation
-	Math::Vector3d cameraPos = _currSetup->_pos;
-	Math::Vector3d vector = pos - cameraPos;
-	float distance = vector.getMagnitude();
-	float diffVolume = maxVol - minVol;
-	// This 8.f is a guess, so it may need some adjusting
-	int newVolume = (int)(8.f * diffVolume / distance);
-	newVolume += minVol;
-	if (newVolume > _maxVolume)
-		newVolume = _maxVolume;
-	volume = newVolume;
-	float angle;
+	// The volume doesn't change if the sound is closer than the radius
+	Math::Vector3d vector = pos - _currSetup->_pos;
+	float distance = normalize3QuickAcc(vector);
+	bool hasVolume = false;
+
+	if (distance - kSoundRadius >= 0.0f) {
+		// These are unsigned like in the original, so a negative volume ends up as the maximum one
+		uint32 minVolume = minVol;
+		uint32 maxVolume = maxVol;
+		uint32 newVolume = minVolume;
+
+		// The original could divide by zero here, let's avoid that...
+		if (maxDist > 0.0f)
+			newVolume = (int)((maxDist - (distance - kSoundRadius)) * ((float)(maxVol - minVol) / maxDist) + minVol);
+
+		if (newVolume >= minVolume) {
+			if (newVolume > maxVolume)
+				newVolume = maxVolume;
+
+			volume = newVolume;
+		} else {
+			volume = minVolume;
+		}
+
+		hasVolume = true;
+	}
+
+	// In the original the division by zero gives a vector of NaNs, which ends up as the leftmost pan...
+	if (distance == 0.0f) {
+		balance = 0;
+		return hasVolume;
+	}
 
 	Math::Vector3d cameraVector = _currSetup->_interest - _currSetup->_pos;
 	Math::Vector3d up(0, 0, 1);
@@ -1057,10 +1167,11 @@ void Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxV
 	     cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
 	right = Math::Vector3d::crossProduct(cameraVector, up);
 	right.normalize();
-	angle = atan2(Math::Vector3d::dotProduct(vector, right), Math::Vector3d::dotProduct(vector, cameraVector));
 
-	float pan = sin(angle);
-	balance = (int)((pan + 1.f) / 2.f * 127.f + 0.5f);
+	float pan = CLIP(Math::Vector3d::dotProduct(vector, right) * kSoundPanFactor, -1.f, 1.f);
+	balance = MIN((int)((pan + 1.f) * 64.f), 127);
+
+	return hasVolume;
 }
 
 Sector *Set::getSectorBase(int id) {
