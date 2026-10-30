@@ -309,6 +309,10 @@ private:
 	GUI::StaticTextWidget *_paletteFilterLabel = nullptr;
 	/** Palette filter selection control. */
 	GUI::PopUpWidget *_paletteFilterPopUp;
+	/** Macintosh font smoothing label. */
+	GUI::StaticTextWidget *_macFontSmoothingLabel = nullptr;
+	/** Original Macintosh font smoothing selection control. */
+	GUI::PopUpWidget *_macFontSmoothingPopUp = nullptr;
 	/** Random number generator label. */
 	GUI::StaticTextWidget *_prngAlgorithmLabel = nullptr;
 	/** Random number generator selection control. */
