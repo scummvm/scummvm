@@ -93,8 +93,8 @@ IMuseDigital::IMuseDigital(int sampleRate, Audio::Mixer *mixer, Common::Mutex *m
 	vimaInit(_imuseDestTable);
 
 	diMUSEInitialize();
-	soundsAllocateBuffer(DIMUSE_BUFFER_MUSIC, 528000, 44000, 352000);
-	soundsAllocateBuffer(DIMUSE_BUFFER_SPEECH, 176000, 44000, 88000);
+	soundsAllocateBuffer(DIMUSE_BUFFER_MUSIC, 440000, 44000, 352000);
+	soundsAllocateBuffer(DIMUSE_BUFFER_SPEECH, 88000, 44000, 88000);
 	diMUSEInitializeScript();
 
 	if (_mixer->getOutputBufSize() != 0) {
