@@ -53,6 +53,7 @@ int IMuseDigital::dispatchInit() {
 			_dispatches[i].wordSize = 0;
 			_dispatches[i].sampleRate = 0;
 			_dispatches[i].channelCount = 0;
+			_dispatches[i].swapEndiannessFlag = 0;
 			_dispatches[i].currentOffset = 0;
 			_dispatches[i].audioRemaining = 0;
 			memset(_dispatches[i].map, 0, sizeof(_dispatches[i].map));
@@ -90,9 +91,10 @@ void IMuseDigital::dispatchSaveLoad(Common::Serializer &ser) {
 		ser.syncAsSint32LE(_dispatches[l].wordSize, VER(103));
 		ser.syncAsSint32LE(_dispatches[l].sampleRate, VER(103));
 		ser.syncAsSint32LE(_dispatches[l].channelCount, VER(103));
+		ser.syncAsSint32LE(_dispatches[l].swapEndiannessFlag, VER(103));
 		ser.syncAsSint32LE(_dispatches[l].currentOffset, VER(103));
 		ser.syncAsSint32LE(_dispatches[l].audioRemaining, VER(103));
-		ser.syncArray(_dispatches[l].map, 2048, Common::Serializer::Sint32LE, VER(103));
+		ser.syncArray(_dispatches[l].map, DIMUSE_MAX_MAP_SIZE, Common::Serializer::Sint32LE, VER(103));
 
 		// This is only needed to signal if the sound originally had a stream associated with it
 		int hasStream = 0;
@@ -181,7 +183,7 @@ int IMuseDigital::dispatchAllocateSound(IMuseDigiTrack *trackPtr, int groupId) {
 	trackDispatch->audioRemaining = 0;
 	trackDispatch->fadeBuf = nullptr;
 
-	memset(trackDispatch->map, 0, sizeof(trackDispatch->map));
+	trackDispatch->map[0] = 0;
 
 	if (groupId) {
 		trackDispatch->streamPtr = streamerAllocateSound(trackPtr->soundId, groupId, sizeToFeed);
@@ -279,7 +281,7 @@ int IMuseDigital::dispatchSwitchStream(int oldSoundId, int newSoundId, int fadeL
 		// Validate and adjust the fade dispatch size further;
 		// this should correctly align the dispatch size to avoid starting a fade without
 		// inverting the stereo image by mistake
-		dispatchValidateFadeSize(curDispatch, _dispatchFadeSize, "dispatchSwitchStream");
+		dispatchValidateFadeSize(curDispatch, _dispatchFadeSize);
 
 		curDispatch->fadeBuf = dispatchAllocateFade(_dispatchFadeSize, "dispatchSwitchStream");
 
@@ -301,7 +303,14 @@ int IMuseDigital::dispatchSwitchStream(int oldSoundId, int newSoundId, int fadeL
 				if ((_dispatchFadeSize - curDispatch->fadeRemaining) >= 0x4000)
 					effFadeSize = 0x4000;
 
-				memcpy(&curDispatch->fadeBuf[curDispatch->fadeRemaining], streamerGetStreamBuffer(curDispatch->streamPtr, effFadeSize), effFadeSize);
+				uint8 *streamBuf = streamerGetStreamBuffer(curDispatch->streamPtr, effFadeSize);
+				if (!streamBuf) {
+					memset(&curDispatch->fadeBuf[curDispatch->fadeRemaining], 0, _dispatchFadeSize - curDispatch->fadeRemaining);
+					curDispatch->fadeRemaining = _dispatchFadeSize;
+					break;
+				}
+
+				memcpy(&curDispatch->fadeBuf[curDispatch->fadeRemaining], streamBuf, effFadeSize);
 
 				curDispatch->fadeRemaining += effFadeSize;
 			}
@@ -311,9 +320,8 @@ int IMuseDigital::dispatchSwitchStream(int oldSoundId, int newSoundId, int fadeL
 	}
 
 	// Clear fades and triggers for the old soundId
-	char emptyMarker[1] = "";
 	_fadesHandler->clearFadeStatus(curDispatch->trackPtr->soundId, -1);
-	_triggersHandler->clearTrigger(curDispatch->trackPtr->soundId, (char *)emptyMarker, -1);
+	_triggersHandler->clearTrigger(curDispatch->trackPtr->soundId, _emptyMarker, -1);
 
 	// Setup the new soundId
 	curDispatch->trackPtr->soundId = newSoundId;
@@ -341,7 +349,7 @@ int IMuseDigital::dispatchSwitchStream(int oldSoundId, int newSoundId, int fadeL
 
 		curDispatch->currentOffset = 0;
 		curDispatch->audioRemaining = 0;
-		memset(curDispatch->map, 0, sizeof(curDispatch->map));
+		curDispatch->map[0] = 0;
 
 		getMapResult = dispatchNavigateMap(curDispatch);
 		if (!getMapResult || getMapResult == -3) {
@@ -378,9 +386,6 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 			effFeedSize = sampleRate * inFrameCount / effSampleRate;
 		}
 
-		if (dispatchPtr->fadeWordSize == 12 && dispatchPtr->fadeChannelCount == 1)
-			inFrameCount &= 0xFFFFFFFE;
-
 		// If the fade is still going on
 		if (inFrameCount) {
 			// Update the fade volume
@@ -406,16 +411,15 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 			// Deallocate fade if it ended
 			if (!dispatchPtr->fadeRemaining) {
 				dispatchDeallocateFade(dispatchPtr, "dispatchProcessDispatches");
+				dispatchPtr->fadeBuf = nullptr;
 			}
 		} else {
-			debug(5, "IMuseDigital::dispatchProcessDispatches(): WARNING: fade for sound %d ends with incomplete frame (or odd 12-bit mono frame)", trackPtr->soundId);
+			debug(5, "IMuseDigital::dispatchProcessDispatches(): WARNING: fade for sound %d ends with incomplete frame", trackPtr->soundId);
 
 			// Fade ended, deallocate it
 			dispatchDeallocateFade(dispatchPtr, "dispatchProcessDispatches");
-		}
-
-		if (!dispatchPtr->fadeRemaining)
 			dispatchPtr->fadeBuf = nullptr;
+		}
 	}
 
 	// This index keeps track of the offset position until which we have
@@ -445,12 +449,6 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 				} else {
 					effFeedSize = sampleRate * inFrameCount / effSampleRate;
 				}
-
-				if (dispatchPtr->fadeWordSize == 12 && dispatchPtr->fadeChannelCount == 1)
-					inFrameCount &= 0xFFFFFFFE;
-
-				if (!inFrameCount)
-					debug(5, "IMuseDigital::dispatchProcessDispatches(): WARNING: fade for sound %d ends with incomplete frame (or odd 12-bit mono frame)", trackPtr->soundId);
 
 				// Update the fade volume
 				effRemainingFade = (inFrameCount * dispatchPtr->fadeWordSize * dispatchPtr->fadeChannelCount) / 8;
@@ -494,12 +492,7 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 			effFeedSize = sampleRate * (8 * dispatchPtr->audioRemaining / effWordSize) / effSampleRate;
 		}
 
-		if (dispatchPtr->wordSize == 12 && dispatchPtr->channelCount == 1)
-			inFrameCount &= 0xFFFFFFFE;
-
 		if (!inFrameCount) {
-			if (dispatchPtr->wordSize == 12)
-				debug(5, "IMuseDigital::dispatchProcessDispatches(): WARNING: region in sound %d ends with incomplete frame (or odd 12-bit mono frame)", trackPtr->soundId);
 			tracksClear(trackPtr);
 			return;
 		}
@@ -521,11 +514,6 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 					_dispatchCurStreamFreeSpace,
 					_dispatchCurStreamPaused);
 
-				if (_dispatchCurStreamPaused) {
-					debug(5, "IMuseDigital::dispatchProcessDispatches(): WARNING: stopping starving paused stream for sound %d", dispatchPtr->trackPtr->soundId);
-					tracksClear(trackPtr);
-				}
-
 				return;
 			}
 			dispatchPtr->streamZoneList->offset += effRemainingAudio;
@@ -535,9 +523,6 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 			soundAddrData = _filesHandler->getSoundAddrData(trackPtr->soundId);
 			if (!soundAddrData) {
 				debug(5, "IMuseDigital::dispatchProcessDispatches(): ERROR: soundAddrData for sound %d is NULL", trackPtr->soundId);
-				// Try to gracefully play nothing instead of getting stuck on an infinite loop
-				dispatchPtr->currentOffset += effRemainingAudio;
-				dispatchPtr->audioRemaining -= effRemainingAudio;
 				return;
 			}
 
@@ -561,9 +546,6 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 
 					inFrameCount = effFeedSize * effSampleRate / sampleRate;
 
-					if (dispatchPtr->wordSize == 12 && dispatchPtr->channelCount == 1)
-						inFrameCount &= 0xFFFFFFFE;
-
 					srcBuf = &srcBuf[effRemainingAudio - ((dispatchPtr->wordSize * inFrameCount * dispatchPtr->channelCount) / 8)];
 				}
 			}
@@ -571,12 +553,7 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 			// If there's still a fadeBuffer active in our dispatch
 			// we balance the volume of the considered track with
 			// the fade volume, effectively creating a crossfade
-			if (dispatchPtr->fadeBuf) {
-				// Fade-in
-				mixVolume = dispatchUpdateFadeSlope(dispatchPtr);
-			} else {
-				mixVolume = trackPtr->effVol;
-			}
+			mixVolume = dispatchUpdateFadeSlope(dispatchPtr);
 		} else {
 			mixVolume = trackPtr->effVol;
 		}
@@ -617,7 +594,7 @@ void IMuseDigital::dispatchPredictFirstStream() {
 
 int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 	uint8 *mapCurEvent;
-	int32 blockTag, effFadeSize, elapsedFadeSize, regionOffset;
+	int32 blockTag, effFadeSize, elapsedFadeSize, soundId;
 	char *marker = NULL;
 
 	int getMapResult = dispatchGetMap(dispatchPtr);
@@ -722,10 +699,11 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			// - The tag 'FRMT' (4 bytes)
 			// - Block size in bytes minus 8 (4 bytes)
 			// - Block offset (4 bytes)
-			// - Empty field (4 bytes) (which is set to 1 in Grim Fandango, I suspect this is the endianness)
+			// - Endianness field (4 bytes) (swapEndiannessFlag is set when it's 0)
 			// - Word size between 8, 12 and 16 (4 bytes)
 			// - Sample rate (4 bytes)
 			// - Number of channels (4 bytes)
+			dispatchPtr->swapEndiannessFlag = (READ_UINT32(mapCurEvent + 12) == 0);
 			dispatchPtr->wordSize = READ_UINT32(mapCurEvent + 16);
 			dispatchPtr->sampleRate = READ_UINT32(mapCurEvent + 20);
 			dispatchPtr->channelCount = READ_UINT32(mapCurEvent + 24);
@@ -737,21 +715,8 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			// - Block size in bytes minus 8 (4 bytes)
 			// - Block offset (4 bytes)
 			// - Region length (4 bytes)
-			regionOffset = READ_UINT32(mapCurEvent + 8);
-			if (regionOffset == dispatchPtr->currentOffset) {
-				dispatchPtr->audioRemaining = READ_UINT32(mapCurEvent + 12);
-				return 0;
-			} else {
-				debug(5, "IMuseDigital::dispatchNavigateMap(): ERROR: region offset %d != currentOffset %d", regionOffset, dispatchPtr->currentOffset);
-				return -1;
-			}
-		case MKTAG('S', 'T', 'O', 'P'):
-			// Stop block (fixed size: 12 bytes)
-			// Contains:
-			// - The tag 'STOP' (4 bytes)
-			// - Block size in bytes minus 8 (4 bytes)
-			// - Block offset (4 bytes)
-			return -1;
+			dispatchPtr->audioRemaining = READ_UINT32(mapCurEvent + 12);
+			return 0;
 		case MKTAG('T', 'E', 'X', 'T'):
 			// Marker block (variable size)
 			// Contains:
@@ -760,14 +725,18 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			// - Block offset (4 bytes)
 			// - A string of characters ending with '\0' (variable length)
 			marker = (char *)mapCurEvent + 12;
-			_triggersHandler->processTriggers(dispatchPtr->trackPtr->soundId, marker);
+			soundId = dispatchPtr->trackPtr->soundId;
+			_triggersHandler->processTriggers(soundId, marker);
+			if (soundId != dispatchPtr->trackPtr->soundId)
+				return -3;
+
 			if (dispatchPtr->audioRemaining)
 				return 0;
 
 			continue;
 		default:
 			debug(5, "IMuseDigital::dispatchNavigateMap(): ERROR: Unrecognized map event at offset %dx", dispatchPtr->currentOffset);
-			break;
+			return -1;
 		};
 	}
 	return -1;
@@ -781,7 +750,7 @@ int IMuseDigital::dispatchGetMap(IMuseDigiDispatch *dispatchPtr) {
 	dstMap = dispatchPtr->map;
 
 	// If there's no map, try to fetch it
-	if (dispatchPtr->map[0] != MKTAG('M', 'A', 'P', ' ')) {
+	if (dispatchPtr->map[0] != MKTAG('M', 'A', 'P', ' ') || (dispatchPtr->streamPtr && !dispatchPtr->streamZoneList)) {
 		if (dispatchPtr->currentOffset) {
 			debug(5, "IMuseDigital::dispatchNavigateMap(): found offset but no map");
 			return -1;
@@ -790,7 +759,7 @@ int IMuseDigital::dispatchGetMap(IMuseDigiDispatch *dispatchPtr) {
 		// If there's a streamPtr it means that this is a sound loaded
 		// from a bundle (either music or speech)
 		if (dispatchPtr->streamPtr) {
-			copiedBuf = (uint8 *)streamerGetStreamBufferAtOffset(dispatchPtr->streamPtr, 0, 0x10);
+			copiedBuf = (uint8 *)streamerGetStreamBufferAtOffset(dispatchPtr->streamPtr, 0, 0x40);
 
 			if (!copiedBuf) {
 				return -3;
@@ -892,7 +861,7 @@ int IMuseDigital::dispatchConvertMap(uint8 *rawMap, int32 *destMap) {
 	if (READ_BE_UINT32(rawMap) == MKTAG('M', 'A', 'P', ' ')) {
 		bytesUntilEndOfMap = READ_BE_UINT32(rawMap + 4);
 		effMapSize = bytesUntilEndOfMap + 8;
-		if (effMapSize <= 0x2000) {
+		if (effMapSize <= 0x800) {
 			memcpy(destMap, rawMap, effMapSize);
 
 			// Fill (or rather, swap32) the fields:
@@ -1122,7 +1091,10 @@ void IMuseDigital::dispatchPrepareToJump(IMuseDigiDispatch *dispatchPtr, IMuseDi
 		_dispatchSize = strZnPtr->size + strZnPtr->offset - hookPosition;
 
 	// This prevents starting a fade with an inverted stereo image
-	dispatchValidateFadeSize(dispatchPtr, _dispatchSize, "dispatchPrepareToJump");
+	dispatchValidateFadeSize(dispatchPtr, _dispatchSize);
+
+	if (hookPosition < 2000 && jumpDestination > hookPosition)
+		_dispatchSize = 0;
 
 	if (dispatchPtr->fadeRemaining)
 		_dispatchSize = 0;
@@ -1198,10 +1170,10 @@ void IMuseDigital::dispatchStreamNextZone(IMuseDigiDispatch *dispatchPtr, IMuseD
 		// Set the stream load index of the sound to the new streamZone
 		streamerSetLoadIndex(dispatchPtr->streamPtr, cumulativeStreamOffset);
 
-		// Remove che previous streamZone from the list, we don't need it anymore
-		while (strZnPtr->next->prev) {
-			strZnPtr->next->prev->useFlag = 0;
-			removeStreamZoneFromList(&strZnPtr->next, strZnPtr->next->prev);
+		// Remove the following streamZones from the list, we don't need them anymore
+		while (strZnPtr->next) {
+			strZnPtr->next->useFlag = 0;
+			removeStreamZoneFromList(&strZnPtr->next, strZnPtr->next);
 		}
 
 		streamerSetSoundToStreamFromOffset(
@@ -1266,6 +1238,7 @@ uint8 *IMuseDigital::dispatchAllocateFade(int32 &fadeSize, const char *function)
 
 		// Fallback to a small fade if large fades are unavailable
 		if (!allocatedFadeBuf) {
+			fadeSize = DIMUSE_SMALL_FADE_DIM;
 			for (int i = 0; i <= DIMUSE_SMALL_FADES; i++) {
 				if (i == DIMUSE_SMALL_FADES) {
 					debug(5, "IMuseDigital::dispatchAllocateFade(): couldn't allocate small fade buffer in %s()", function);
@@ -1314,22 +1287,11 @@ void IMuseDigital::dispatchDeallocateFade(IMuseDigiDispatch *dispatchPtr, const 
 }
 
 int IMuseDigital::dispatchGetFadeSize(IMuseDigiDispatch *dispatchPtr, int fadeLength) {
-	return (dispatchPtr->wordSize * dispatchPtr->channelCount * ((dispatchPtr->sampleRate * fadeLength / 1000) & 0xFFFFFFFE)) / 8;
+	return (dispatchPtr->wordSize * dispatchPtr->channelCount * (dispatchPtr->sampleRate * fadeLength / 1000)) / 8;
 }
 
-void IMuseDigital::dispatchValidateFadeSize(IMuseDigiDispatch *dispatchPtr, int32 &dispatchSize, const char *function) {
-	int alignmentModDividend;
-	if (dispatchPtr->wordSize == 8) {
-		alignmentModDividend = dispatchPtr->channelCount * 1;
-	} else {
-		alignmentModDividend = dispatchPtr->channelCount * ((dispatchPtr->wordSize == 12) + 2);
-	}
-
-	if (alignmentModDividend) {
-		dispatchSize -= dispatchSize % alignmentModDividend;
-	} else {
-		debug(5, "IMuseDigital::dispatchValidateFadeSize(): WARNING: tried mod by 0 while validating fade size in %s(), ignored", function);
-	}
+void IMuseDigital::dispatchValidateFadeSize(IMuseDigiDispatch *dispatchPtr, int32 &dispatchSize) {
+	dispatchSize -= dispatchSize & (dispatchPtr->channelCount * (dispatchPtr->wordSize >> 3) - 1);
 }
 
 int IMuseDigital::dispatchUpdateFadeMixVolume(IMuseDigiDispatch *dispatchPtr, int32 remainingFade) {
