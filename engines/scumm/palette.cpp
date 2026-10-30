@@ -254,7 +254,7 @@ void ScummEngine::resetPalette(bool isBootUp) {
 			if (_game.id == GID_INDY4 || _game.id == GID_MONKEY2)
 				_townsClearLayerFlag = 0;
 #ifdef USE_RGB_COLOR
-			else if (_game.id == GID_LOOM || _game.id == GID_MONKEY) // Setting a default for MI1 as well!
+			else if (_game.id == GID_LOOM)
 				towns_setTextPaletteFromPtr(tableTownsLoomPalette);
 			else if (_game.version == 3)
 				towns_setTextPaletteFromPtr(tableTownsV3Palette);
