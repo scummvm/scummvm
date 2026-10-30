@@ -524,11 +524,12 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 
 				return;
 			}
+
 			dispatchPtr->streamZoneList->offset += effRemainingAudio;
 			dispatchPtr->streamZoneList->size -= effRemainingAudio;
 			dispatchPtr->streamErrFlag = 0;
 		} else {
-			soundAddrData = _filesHandler->getSoundAddrData(trackPtr->soundId);
+			soundAddrData = filesGetSoundAddrData(trackPtr->soundId);
 			if (!soundAddrData) {
 				debug(5, "IMuseDigital::dispatchProcessDispatches(): ERROR: soundAddrData for sound %d is NULL", trackPtr->soundId);
 				return;
@@ -822,7 +823,7 @@ int IMuseDigital::dispatchGetMap(IMuseDigiDispatch *dispatchPtr) {
 
 		} else {
 			// Otherwise, this is a SFX and we must load it using its resource pointer
-			soundAddrData = _filesHandler->getSoundAddrData(dispatchPtr->trackPtr->soundId);
+			soundAddrData = filesFetchMap(dispatchPtr->trackPtr->soundId);
 
 			if (!soundAddrData) {
 				debug(5, "IMuseDigital::dispatchGetMap(): ERROR: couldn't get sound address");

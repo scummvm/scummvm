@@ -22,6 +22,10 @@
 #ifndef GRIM_IMUSE_DEFS_H
 #define GRIM_IMUSE_DEFS_H
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Grim {
 
 #define DIMUSE_MAX_GROUPS      16
@@ -34,6 +38,8 @@ namespace Grim {
 #define DIMUSE_MAX_STREAMZONES 50
 #define DIMUSE_MAX_FADE_VOLUME 8323072
 #define DIMUSE_MAX_STREAMS     3
+#define DIMUSE_MAX_SOUND_LIST  10
+#define DIMUSE_MAX_OPEN_FILES  5
 
 #define DIMUSE_LARGE_FADES    1
 #define DIMUSE_SMALL_FADES    4
@@ -232,6 +238,38 @@ typedef struct {
 	int32 loadSize;
 	int32 criticalSize;
 } IMuseDigiSndBuffer;
+
+struct IMuseDigiSoundList {
+	IMuseDigiSoundList *prev;
+	IMuseDigiSoundList *next;
+	int soundId;
+	char filename[36];
+	int refCount;
+};
+
+struct IMuseDigiResource {
+	Common::SeekableReadStream *resId;
+	bool hasMcmp;
+	int32 resSize;
+	int32 fileCurOffset;
+	int32 compBlocksNum;
+	uint8 *mcmpBlockPtr;
+	uint8 **compBlockPtr;
+	int32 *decompBlockSize;
+	int32 *compBlockOffset;
+	int32 *compBlockSize;
+	int32 *vimaOffsets;
+	int32 curProcessedCompBlock;
+	int32 curDecompBlockSize;
+	uint8 *decompDataBuffer;
+	char filename[80];
+};
+
+struct IMuseDigiOpenAudioFile {
+	IMuseDigiResource *resourcePtr;
+	char soundName[32];
+	int refCount;
+};
 
 struct IMuseDigiDispatch {
 	IMuseDigiTrack *trackPtr;
