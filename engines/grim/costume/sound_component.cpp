@@ -29,10 +29,14 @@
 namespace Grim {
 
 SoundComponent::SoundComponent(Component *p, int parentID, const char *filename, tag32 t) :
-		Component(p, parentID, filename, t) {
+		Component(p, parentID, filename, t), _maxVolume(127), _pan(64), _priority(100), _minVolume(1) {
+	// The name can be followed by the maximum volume, the pan, the priority and the minimum volume
 	const char *comma = strchr(filename, ',');
 	if (comma) {
 		_name = Common::String(filename, comma);
+		sscanf(comma + 1, "%d,%d,%d,%d", &_maxVolume, &_pan, &_priority, &_minVolume);
+	} else {
+		_name = filename;
 	}
 }
 
@@ -45,15 +49,30 @@ void SoundComponent::setKey(int val) {
 	switch (val) {
 	case 0: // "Play"
 		if (!g_imuse->soundsIsSoundPlaying(_name.c_str())) {
-			g_imuse->soundsLoadStartSound(_name.c_str(), 127, DIMUSE_GROUP_SFX);
-			if (g_grim->getCurrSet()) {
-				Math::Vector3d pos = _cost->getMatrix().getPosition();
-				g_grim->getCurrSet()->setSoundPosition(_name.c_str(), pos);
+			if (isComponentType('I','M','S','S')) {
+				g_imuse->soundStartVoiceStream(_name.c_str(), _maxVolume, _pan);
+				g_imuse->soundsSetParam(_name.c_str(), DIMUSE_P_GROUP, DIMUSE_GROUP_SFX);
+				g_imuse->soundsSetParam(_name.c_str(), DIMUSE_P_PRIORITY, _priority);
+			} else {
+				g_imuse->soundsLoadStartSound(_name.c_str(), _priority, DIMUSE_GROUP_SFX);
+
+				Set *currSet = g_grim->getCurrSet();
+				if (currSet) {
+					float maxDist, panFactor, maxRadius;
+					int roomMinVolume, roomMaxVolume;
+					currSet->getSoundParameters(&maxDist, &roomMinVolume, &roomMaxVolume, &panFactor, &maxRadius);
+
+					Math::Vector3d pos = _cost->getMatrix().getPosition();
+					currSet->setSoundPosition(_name.c_str(), pos, MAX(roomMinVolume, _minVolume), MIN(roomMaxVolume, _maxVolume), maxDist, maxRadius);
+				}
 			}
 		}
 		break;
 	case 1: // "Stop"
-		g_imuse->soundsStopSound(_name.c_str());
+		if (isComponentType('I','M','S','S'))
+			g_imuse->soundStopVoiceStream();
+		else
+			g_imuse->soundsStopSound(_name.c_str());
 		break;
 	case 2: // "Stop Looping"
 		g_imuse->iMUSESetHook(_name.c_str(), 0x80);

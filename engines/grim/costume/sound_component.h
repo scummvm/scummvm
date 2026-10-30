@@ -33,6 +33,12 @@ public:
 
 	void setKey(int val) override;
 	void reset() override;
+
+private:
+	int _maxVolume;
+	int _pan;
+	int _priority;
+	int _minVolume;
 };
 
 } // end of namespace Grim
