@@ -31,8 +31,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_ORIGINAL_SAVELOAD,
 		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
+			_s("Use original menus"),
+			_s("Use the original save/load, sound volume and text and music screens instead of the ScummVM ones"),
 			"original_menus",
 			false,
 			0,

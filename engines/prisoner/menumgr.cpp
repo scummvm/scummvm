@@ -676,10 +676,14 @@ void PrisonerEngine::handleOptionsMenuInput() {
 void PrisonerEngine::doOptionsMenuAction(int8 itemIndex) {
 	switch (itemIndex) {
 	case kOptionsMenuSound:
-		loadVolumeMenu();
-		break;
 	case kOptionsMenuTextMusic:
-		loadTextMusicMenu();
+		// The "Use original menus" game option picks the original screens or ScummVM's options
+		if (!(ConfMan.hasKey("original_menus") && ConfMan.getBool("original_menus")))
+			openConfigDialog();
+		else if (itemIndex == kOptionsMenuSound)
+			loadVolumeMenu();
+		else
+			loadTextMusicMenu();
 		break;
 	case kOptionsMenuDisplay:
 		loadDisplaySettingsMenu();
