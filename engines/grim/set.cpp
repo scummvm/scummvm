@@ -36,11 +36,6 @@
 
 namespace Grim {
 
-// Default sound parameters of a room in the original
-static const float kSoundDefaultMaxDist = 8.0f;
-static const float kSoundPanFactor = 1.5f;
-static const float kSoundRadius = 0.8f;
-
 // The original normalizes the vector with an approximation of its length, which it returns too
 static float normalize3QuickAcc(Math::Vector3d &vector) {
 	float x = ABS(vector.x());
@@ -63,7 +58,8 @@ static float normalize3QuickAcc(Math::Vector3d &vector) {
 }
 
 Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
-		_locked(false), _name(sceneName), _enableLights(false) {
+		_locked(false), _name(sceneName), _enableLights(false), _soundMaxDist(kSoundDefaultMaxDist),
+		_soundPanFactor(kSoundDefaultPanFactor), _soundMaxRadius(kSoundDefaultRadius) {
 
 	char header[7];
 	data->read(header, 7);
@@ -81,7 +77,9 @@ Set::Set() :
 		_cmaps(nullptr), _locked(false), _enableLights(false), _numSetups(0),
 		_numLights(0), _numSectors(0), _numObjectStates(0), _minVolume(0),
 		_maxVolume(0), _numCmaps(0), _numShadows(0), _currSetup(nullptr),
-		_setups(nullptr), _lights(nullptr), _sectors(nullptr), _shadows(nullptr) {
+		_setups(nullptr), _lights(nullptr), _sectors(nullptr), _shadows(nullptr),
+		_soundMaxDist(kSoundDefaultMaxDist), _soundPanFactor(kSoundDefaultPanFactor),
+		_soundMaxRadius(kSoundDefaultRadius) {
 	setupOverworldLights();
 }
 
@@ -280,6 +278,9 @@ void Set::saveState(SaveGame *savedState) const {
 	savedState->writeBool(_enableLights);
 	savedState->writeLESint32(_minVolume);
 	savedState->writeLESint32(_maxVolume);
+	savedState->writeFloat(_soundMaxDist);
+	savedState->writeFloat(_soundPanFactor);
+	savedState->writeFloat(_soundMaxRadius);
 
 	savedState->writeLEUint32(_states.size());
 	for (StateList::const_iterator i = _states.begin(); i != _states.end(); ++i) {
@@ -327,6 +328,12 @@ bool Set::restoreState(SaveGame *savedState) {
 	_enableLights     = savedState->readBool();
 	_minVolume        = savedState->readLESint32();
 	_maxVolume        = savedState->readLESint32();
+
+	if (savedState->saveMinorVersion() >= 30) {
+		_soundMaxDist = savedState->readFloat();
+		_soundPanFactor = savedState->readFloat();
+		_soundMaxRadius = savedState->readFloat();
+	}
 
 	_numObjectStates = savedState->readLESint32();
 	_states.clear();
@@ -1046,10 +1053,10 @@ void Set::setLightPosition(int light, const Math::Vector3d &pos) {
 }
 
 void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos) {
-	setSoundPosition(soundName, pos, _minVolume, _maxVolume, kSoundDefaultMaxDist);
+	setSoundPosition(soundName, pos, _minVolume, _maxVolume, _soundMaxDist, _soundMaxRadius);
 }
 
-void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol, float maxDist) {
+void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol, float maxDist, float radius) {
 	SoundPosition sound;
 	sound.name = soundName;
 	sound.soundId = 0;
@@ -1057,16 +1064,18 @@ void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int
 	sound.minVol = minVol;
 	sound.maxVol = maxVol;
 	sound.maxDist = maxDist;
+	sound.radius = radius;
 	addSoundPosition(sound);
 }
 
-void Set::setSoundPosition(int soundId, const Math::Vector3d &pos, int minVol, int maxVol, float maxDist) {
+void Set::setSoundPosition(int soundId, const Math::Vector3d &pos, int minVol, int maxVol, float maxDist, float radius) {
 	SoundPosition sound;
 	sound.soundId = soundId;
 	sound.pos = pos;
 	sound.minVol = minVol;
 	sound.maxVol = maxVol;
 	sound.maxDist = maxDist;
+	sound.radius = radius;
 	addSoundPosition(sound);
 }
 
@@ -1114,13 +1123,13 @@ void Set::updateSoundPosition(const SoundPosition &sound) {
 	int newVolume, newBalance;
 	const char *soundKey = getSoundKey(sound);
 
-	if (calculateSoundPosition(sound.pos, sound.minVol, sound.maxVol, sound.maxDist, newVolume, newBalance))
+	if (calculateSoundPosition(sound.pos, sound.minVol, sound.maxVol, sound.maxDist, sound.radius, newVolume, newBalance))
 		g_sound->setVolume(soundKey, newVolume);
 
 	g_sound->setPan(soundKey, newBalance);
 }
 
-bool Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxVol, float maxDist, int &volume, int &balance) {
+bool Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxVol, float maxDist, float radius, int &volume, int &balance) {
 	// Note: This is only used in Grim. See SoundTrack::updatePosition for the corresponding implementation in EMI.
 
 	// The volume doesn't change if the sound is closer than the radius
@@ -1128,7 +1137,7 @@ bool Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxV
 	float distance = normalize3QuickAcc(vector);
 	bool hasVolume = false;
 
-	if (distance - kSoundRadius >= 0.0f) {
+	if (distance - radius >= 0.0f) {
 		// These are unsigned like in the original, so a negative volume ends up as the maximum one
 		uint32 minVolume = minVol;
 		uint32 maxVolume = maxVol;
@@ -1136,7 +1145,7 @@ bool Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxV
 
 		// The original could divide by zero here, let's avoid that...
 		if (maxDist > 0.0f)
-			newVolume = (int)((maxDist - (distance - kSoundRadius)) * ((float)(maxVol - minVol) / maxDist) + minVol);
+			newVolume = (int)((maxDist - (distance - radius)) * ((float)(maxVol - minVol) / maxDist) + minVol);
 
 		if (newVolume >= minVolume) {
 			if (newVolume > maxVolume)
@@ -1168,7 +1177,7 @@ bool Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxV
 	right = Math::Vector3d::crossProduct(cameraVector, up);
 	right.normalize();
 
-	float pan = CLIP(Math::Vector3d::dotProduct(vector, right) * kSoundPanFactor, -1.f, 1.f);
+	float pan = CLIP(Math::Vector3d::dotProduct(vector, right) * _soundPanFactor, -1.f, 1.f);
 	balance = MIN((int)((pan + 1.f) * 64.f), 127);
 
 	return hasVolume;
@@ -1211,14 +1220,20 @@ Sector *Set::getSectorBySubstring(const Common::String &str, const Math::Vector3
 	return nullptr;
 }
 
-void Set::setSoundParameters(int minVolume, int maxVolume) {
+void Set::setSoundParameters(float maxDist, int minVolume, int maxVolume, float panFactor, float maxRadius) {
+	_soundMaxDist = maxDist;
 	_minVolume = minVolume;
 	_maxVolume = maxVolume;
+	_soundPanFactor = panFactor;
+	_soundMaxRadius = maxRadius;
 }
 
-void Set::getSoundParameters(int *minVolume, int *maxVolume) {
+void Set::getSoundParameters(float *maxDist, int *minVolume, int *maxVolume, float *panFactor, float *maxRadius) {
+	*maxDist = _soundMaxDist;
 	*minVolume = _minVolume;
 	*maxVolume = _maxVolume;
+	*panFactor = _soundPanFactor;
+	*maxRadius = _soundMaxRadius;
 }
 
 void Set::addObjectState(const ObjectState::Ptr &s) {

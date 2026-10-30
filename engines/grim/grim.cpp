@@ -1237,6 +1237,9 @@ void GrimEngine::savegameRestore() {
 	Set::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Sets restored successfully.");
 
+	if (g_imuse)
+		g_imuse->floodMusicBuffer();
+
 	TextObject::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "TextObjects restored successfully.");
 
@@ -1546,6 +1549,9 @@ void GrimEngine::setSet(Set *scene) {
 	if (scene == _currSet)
 		return;
 
+	if (g_imuse)
+		g_imuse->floodMusicBuffer();
+
 	if (getGameType() == GType_MONKEY4) {
 		for (PoolSound *s : PoolSound::getPool()) {
 			s->stop();
@@ -1560,7 +1566,7 @@ void GrimEngine::setSet(Set *scene) {
 
 	Set *lastSet = _currSet;
 	_currSet = scene;
-	_currSet->setSoundParameters(20, 127);
+	_currSet->setSoundParameters();
 	// should delete the old scene after setting the new one
 	if (lastSet && !lastSet->_locked) {
 		delete lastSet;
@@ -1574,7 +1580,7 @@ void GrimEngine::makeCurrentSetup(int num) {
 	int prevSetup = g_grim->getCurrSet()->getSetup();
 	if (prevSetup != num) {
 		getCurrSet()->setSetup(num);
-		getCurrSet()->setSoundParameters(20, 127);
+		getCurrSet()->setSoundParameters();
 		cameraChangeHandle(prevSetup, num);
 
 		if (getGameType() == GType_GRIM)

@@ -29,6 +29,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/movie/movie.h"
 #include "engines/grim/sound.h"
+#include "engines/grim/imuse/dimuse_defs.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
@@ -92,7 +93,7 @@ Actor::Actor() :
 		_globalAlpha(1.f), _alphaMode(AlphaOff),
 		 _mustPlaceText(false),
 		_puckOrient(false), _talking(false),
-		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
+		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false), _voiceIs3D(false),
 		_sortOrder(0), _useParentSortOrder(false),
 		_sectorSortOrder(0), _hasSectorSortOrder(false), _fakeUnbound(false), _lightMode(LightFastDyn),
 		_hasFollowedBoxes(false), _lookAtActor(0) {
@@ -145,6 +146,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeString(_talkSoundName);
 	savedState->writeBool(_talking);
 	savedState->writeBool(_backgroundTalk);
+	savedState->writeBool(_voiceIs3D);
 
 	savedState->writeLEUint32((uint32)_collisionMode);
 	savedState->writeFloat(_collisionScale);
@@ -303,6 +305,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_talkSoundName      = savedState->readString();
 	_talking = savedState->readBool();
 	_backgroundTalk = savedState->readBool();
+	if (savedState->saveMinorVersion() >= 30)
+		_voiceIs3D = savedState->readBool();
+
 	if (isTalking()) {
 		g_grim->addTalkingActor(this);
 	}
@@ -1191,7 +1196,15 @@ void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 		if (g_grim->getGameType() == GType_GRIM && getCurrentCostume()) {
 			_talkDelay = 500;
 		}
-		g_sound->startVoice(_talkSoundName.c_str(), 127, 64, background);
+		bool started = g_sound->startVoice(_talkSoundName.c_str(), 127, 64, background);
+
+		// The voice can be positioned in the set, like the original does
+		if (started && _voiceIs3D && currSet && g_grim->getGameType() == GType_GRIM) {
+			if (background)
+				currSet->setSoundPosition(_talkSoundName.c_str(), getPos(), 20, 127, kSoundDefaultMaxDist, kSoundDefaultRadius);
+			else
+				currSet->setSoundPosition(kTalkSoundID, getPos(), 20, 127, kSoundDefaultMaxDist, kSoundDefaultRadius);
+		}
 	}
 
 	// If the actor is clearly not visible then don't try to play the lip sync
