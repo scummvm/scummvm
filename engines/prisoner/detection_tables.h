@@ -37,7 +37,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)},
+		GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MUSIC, GUIO_MIDIGM, GUIO_MIDIADLIB)},
 
 	// Prisoner English version
 	{
@@ -47,7 +47,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+		GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MUSIC, GUIO_MIDIGM, GUIO_MIDIADLIB)
 	},
 
 	// Prisoner Multilingual Version - English
@@ -58,7 +58,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+		GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MUSIC, GUIO_MIDIGM, GUIO_MIDIADLIB)
 	},
 
 	// Prisoner Multilingual Version - German
@@ -69,7 +69,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+		GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MUSIC, GUIO_MIDIGM, GUIO_MIDIADLIB)
 	},
 
 	// Prisoner Multilingual Version - French
@@ -80,7 +80,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+		GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MUSIC, GUIO_MIDIGM, GUIO_MIDIADLIB)
 	},
 
 	// Prisoner Multilingual Version - Dutch
@@ -91,7 +91,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::NL_NLD,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+		GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MUSIC, GUIO_MIDIGM, GUIO_MIDIADLIB)
 	},
 
 	// Prisoner Multilingual Version - Swedish
@@ -102,7 +102,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::SV_SWE,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+		GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MUSIC, GUIO_MIDIGM, GUIO_MIDIADLIB)
 	},
 
 	AD_TABLE_END_MARKER

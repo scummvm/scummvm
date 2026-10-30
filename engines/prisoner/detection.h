@@ -40,6 +40,9 @@ extern const ADGameDescription gameDescriptions[];
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 
+// "music type" setting: digital (the default) or MIDI music
+#define GAMEOPTION_MIDI_MUSIC GUIO_GAMEOPTIONS2
+
 } // End of namespace Prisoner
 
 class PrisonerMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
