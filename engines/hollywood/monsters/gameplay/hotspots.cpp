@@ -119,7 +119,7 @@ bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const C
 		}
 	}
 
-	_stageSmallRows = stageSmallRows;
+	setItemNames(stageSmallRows);
 	return true;
 }
 
@@ -220,6 +220,10 @@ void SceneHotspotTable::setItemDefaultStrip(byte itemId, byte stripIndex) {
 void SceneHotspotTable::setItemName(byte itemId, const Common::String &name) {
 	if (itemId < _itemNameOverrides.size())
 		_itemNameOverrides[itemId] = name;
+}
+
+void SceneHotspotTable::setItemNames(const Common::Array<byte> &stageSmallRows) {
+	_stageSmallRows = stageSmallRows;
 }
 
 void SceneHotspotTable::setActionTarget(byte itemId, const ScenePoint &interactionPoint, const ScenePoint &approachPoint) {

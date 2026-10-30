@@ -2096,6 +2096,7 @@ void PlayableScene::refreshTranslatedText() {
 		return;
 	}
 	applySceneStateToHotspotsAndPatches(0xff);
+	_hotspots.setItemNames(_stage003SmallRows);
 }
 
 bool PlayableScene::shouldExitGameplayLoop() const {

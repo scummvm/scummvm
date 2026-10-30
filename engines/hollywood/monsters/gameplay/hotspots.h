@@ -72,6 +72,7 @@ public:
 	SceneActionTarget actionTarget(byte itemId) const;
 	void setItemDefaultStrip(byte itemId, byte stripIndex);
 	void setItemName(byte itemId, const Common::String &name);
+	void setItemNames(const Common::Array<byte> &stageSmallRows);
 	void setActionTarget(byte itemId, const ScenePoint &interactionPoint, const ScenePoint &approachPoint);
 	void setActionInteraction(byte itemId, const ScenePoint &interactionPoint, byte facing);
 	// Claims pixels even when the resource maps them to another item.
