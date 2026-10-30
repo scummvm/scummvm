@@ -218,6 +218,9 @@ void PrisonerEngine::handleInventoryInput() {
 
 		updateEvents();
 
+		if (shouldQuit())
+			break;
+
 		if (canLeave) {
 			if (_mouseY >= 82) {
 				_inventoryBarFlag = true;
@@ -274,7 +277,7 @@ void PrisonerEngine::handleInventoryInput() {
 				inpSetWaitRelease(true);
 				restoreScreen(true);
 
-				while (_screenTextShowing) {
+				while (_screenTextShowing && !shouldQuit()) {
 					updateEvents();
 					getInputStatus(keyState, buttonState);
 					updateBackground(true);

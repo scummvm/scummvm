@@ -390,7 +390,8 @@ void PrisonerEngine::checkScreensaver() {
 
 void PrisonerEngine::mainLoop() {
 
-	while (!_mainLoopDone) {
+	// shouldQuit() is set when the player quits or returns to the launcher from ScummVM's menu
+	while (!_mainLoopDone && !shouldQuit()) {
 
 		updateEvents();
 
@@ -610,9 +611,6 @@ void PrisonerEngine::updateEvents() {
 			}
 			break;
 		}
-		case Common::EVENT_QUIT:
-			_system->quit();
-			break;
 		default:
 			break;
 		}
@@ -1068,7 +1066,7 @@ bool PrisonerEngine::handleMuxInput() {
 	updateEvents();
 	getInputStatus(keyState, buttonState);
 	//debug("keyState = %d; buttonState = %d", keyState, buttonState);
-	if (_loadingSavegame)
+	if (_loadingSavegame || shouldQuit())
 		aborted = true;
 	else if (_muxEasterEggCount != 3 && (keyState != Common::KEYCODE_INVALID || buttonState != 0)) {
 		_muxEasterEggKey = keyState;

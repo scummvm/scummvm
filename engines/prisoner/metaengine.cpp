@@ -82,7 +82,7 @@ bool PrisonerMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Prisoner::PrisonerEngine::hasFeature(EngineFeature f) const {
 	return
-//		(f == kSupportsRTL) || // TODO: Not yet...
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsSubtitleOptions);
