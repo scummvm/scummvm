@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GRIM_IMUSE_TABLES_H
-#define GRIM_IMUSE_TABLES_H
+#ifndef GRIM_IMUSE_OLD_TABLES_H
+#define GRIM_IMUSE_OLD_TABLES_H
 
 namespace Grim {
 

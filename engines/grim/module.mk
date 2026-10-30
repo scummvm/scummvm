@@ -42,6 +42,24 @@ MODULE_OBJS := \
 	emi/lua_v2_actor.o \
 	emi/lua_v2_sound.o \
 	emi/emi_registry.o \
+	imuse/dimuse_bndmgr.o \
+	imuse/dimuse_cmds.o \
+	imuse/dimuse_codecs.o \
+	imuse/dimuse_dispatch.o \
+	imuse/dimuse_engine.o \
+	imuse/dimuse_fades.o \
+	imuse/dimuse_files.o \
+	imuse/dimuse_groups.o \
+	imuse/dimuse_internalmixer.o \
+	imuse/dimuse_scripts.o \
+	imuse/dimuse_sndmgr.o \
+	imuse/dimuse_streamer.o \
+	imuse/dimuse_tables.o \
+	imuse/dimuse_tracks.o \
+	imuse/dimuse_triggers.o \
+	imuse/dimuse_utils.o \
+	imuse/dimuse_wave.o \
+	imuse/dimuse_waveout.o \
 	imuse/imuse.o \
 	imuse/imuse_mcmp_mgr.o \
 	imuse/imuse_music.o \
