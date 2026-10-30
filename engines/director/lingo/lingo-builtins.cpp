@@ -4087,7 +4087,7 @@ void LB::b_soundBusy(int nargs) {
 	// Horror Tour 2 calls this with a void argument
 	TYPECHECK2(whichChannel, INT, VOID);
 	int channel = whichChannel.u.i;
-	if (whichChannel.type == VOID) {
+	if (whichChannel.type == VOID || channel == 0) {
 		channel = 1;
 	}
 
