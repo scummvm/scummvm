@@ -544,6 +544,7 @@ Blocky8::Blocky8() {
 	_width = -1;
 	_height = -1;
 	_frameSize = 0;
+	_bufSize = 0;
 	_offset1 = 0;
 	_offset2 = 0;
 	_prevSeqNb = 0;
@@ -566,11 +567,13 @@ void Blocky8::init(int width, int height) {
 	makeTablesInterpolation(8);
 
 	_frameSize = _width * _height;
-	uint32 deltaSize = _frameSize * 3;
+	// The disasm rounds the height of each buffer up to a multiple of 8
+	_bufSize = _width * ((_height + 7) & ~7);
+	uint32 deltaSize = _bufSize * 3;
 	_deltaBuf = new byte[deltaSize]();
 	_deltaBufs[0] = _deltaBuf;
-	_deltaBufs[1] = _deltaBuf + _frameSize;
-	_curBuf = _deltaBuf + _frameSize * 2;
+	_deltaBufs[1] = _deltaBuf + _bufSize;
+	_curBuf = _deltaBuf + _bufSize * 2;
 }
 
 void Blocky8::deinit() {
@@ -595,7 +598,7 @@ Blocky8::~Blocky8() {
 	}
 }
 
-bool Blocky8::decode(byte *dst, const byte *src) {
+bool Blocky8::decode(byte *dst, const byte *src, int flags) {
 	if ((_tableBig == nullptr) || (_tableSmall == nullptr) || (_deltaBuf == nullptr))
 		return false;
 
@@ -608,13 +611,19 @@ bool Blocky8::decode(byte *dst, const byte *src) {
 
 	if (seq_nb == 0) {
 		makeTables47(_width);
-		memset(_deltaBufs[0], src[12], _frameSize);
-		memset(_deltaBufs[1], src[13], _frameSize);
+		memset(_deltaBufs[0], src[12], _bufSize);
+		memset(_deltaBufs[1], src[13], _bufSize);
 		_prevSeqNb = -1;
 	}
 
 	if ((src[4] & 1) != 0) {
 		gfx_data += 32896;
+	}
+
+	// The disasm doesn't decode the frames that don't swap buffers when the display is skipped
+	if ((flags & 0x10) && !src[3] && src[2] >= 2 && src[2] <= 4) {
+		_prevSeqNb = seq_nb;
+		return false;
 	}
 
 	switch (src[2]) {

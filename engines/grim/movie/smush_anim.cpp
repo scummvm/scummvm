@@ -20,6 +20,10 @@
  */
 
 #include "common/scummsys.h"
+#include "common/endian.h"
+#include "common/file.h"
+#include "common/system.h"
+#include "common/util.h"
 
 #include "engines/grim/movie/smush_anim.h"
 #include "engines/grim/movie/smush_sound.h"
@@ -208,6 +212,723 @@ void SmushAnimPlay::syncTimer(int timer, void *context) {
 
 	if (anim->_lateTicks < 20 && !anim->_syncPaused)
 		anim->_lateTicks++;
+}
+
+SmushDemoPlayer::SmushDemoPlayer(SmushDemoVideo *video, SmushDemoDriver *driver) {
+	_video = video;
+	_driver = driver;
+	_stream = new SmushDemoStream();
+	_anim = new SmushDemoAnim(_stream, this);
+	memset(&_audio, 0, sizeof(_audio));
+	_useDriver = true;
+	_playing = 0;
+	_playFlags = 0;
+	memset(_staging, 0, sizeof(_staging));
+	memset(_palette, 0, sizeof(_palette));
+	memset(_paletteSaved, 0, sizeof(_paletteSaved));
+	memset(_paletteTarget, 0, sizeof(_paletteTarget));
+	_frameSource = nullptr;
+	_frameWidth = 0;
+	_frameHeight = 0;
+	_positionX = 0;
+	_positionY = 0;
+	_sourceX = 0;
+	_sourceY = 0;
+	_paused = 0;
+	_done = 0;
+	_flags = 0;
+	_lastResult = 0;
+	_frameReady = 0;
+	_paletteFlag = 0;
+	_annotation = 0;
+	_staged = 0;
+	_audioPaused = 0;
+	_audioStartFrame = 0;
+	_audioClockBase = 0;
+	_audioClockLast = 0;
+	_startTime = 0;
+	_lastUpdate = 0;
+	_fps = 12;
+	_frame = 0;
+	_framesShown = 0;
+	_frameCount = 1;
+	_dropCount = 0;
+	_behind = 0;
+	_fadeStart = 0;
+	_fadeSteps = 1;
+	_fadeRemaining = 0;
+	_firstUpdate = 1;
+	_streamStop = 1;
+}
+
+SmushDemoPlayer::~SmushDemoPlayer() {
+	delete _anim;
+	delete _stream;
+}
+
+int SmushDemoPlayer::preFrame(int frame, int frameCount) {
+	_frameCount = frameCount;
+	return 0;
+}
+
+int SmushDemoPlayer::postFrame(int frame, int frameCount) {
+	_frameCount = frameCount;
+	_frame = frame;
+	return 0;
+}
+
+int SmushDemoPlayer::frameCallback(int flags, bool paletteChanged, bool display, int paletteState) {
+	if (paletteState) {
+		const byte *palette = _anim->anmGetPalette();
+		for (int i = 0; i < 256; i++)
+			_palette[i] = palette[i * 3] | (palette[i * 3 + 1] << 8) | (palette[i * 3 + 2] << 16);
+
+		_paletteFlag = (paletteChanged ? 1 : 0) + 1;
+	}
+
+	_frameReady = 1;
+	return 0;
+}
+
+int SmushDemoPlayer::chunkCallback(const byte *chunk, int size, int flags) {
+	if (READ_LE_UINT16(chunk) != 8)
+		return 0;
+
+	int part = (int16)READ_LE_UINT16(chunk + 6);
+	const byte *data = chunk + 18;
+	int remaining = size - 18;
+
+	if (part) {
+		if (part <= 0 || part > 5)
+			return 0;
+
+		memcpy(_paletteSaved, _palette, sizeof(_palette));
+		for (int i = 0; i < 256; i++) {
+			_paletteTarget[i] = data[0] | (READ_LE_UINT16(data + 1) << 8);
+			data += 3;
+		}
+
+		_fadeSteps = 5 * part;
+		_fadeRemaining = 5 * part;
+		_fadeStart = _framesShown;
+		return 0;
+	}
+
+	_audioStartFrame = _frame;
+	if (!remaining)
+		return 0;
+
+	int staged = _staged;
+	while (true) {
+		if (staged >= 2) {
+			int needed = (_staging[0] << 8) + _staging[1] + 2 - staged;
+			if (needed > remaining) {
+				memcpy(_staging + staged, data, remaining);
+				staged += remaining;
+				_staged = staged;
+				return 0;
+			}
+
+			memcpy(_staging + staged, data, needed);
+			decodeIACT(_staging);
+			staged = 0;
+			data += needed;
+			_staged = 0;
+			remaining -= needed;
+			if (!remaining)
+				return 0;
+
+			continue;
+		}
+
+		if (remaining == 1) {
+			if (staged) {
+				_staging[1] = *data++;
+				remaining--;
+				staged = 2;
+				_staged = 2;
+				if (!remaining)
+					return 0;
+
+				continue;
+			}
+
+			_staging[0] = *data;
+			_staged = 1;
+			return 0;
+		}
+
+		if (!staged) {
+			_staging[0] = *data++;
+			remaining--;
+		}
+
+		_staging[1] = *data++;
+		remaining--;
+		staged = 2;
+		_staged = 2;
+		if (!remaining)
+			return 0;
+	}
+}
+
+void SmushDemoPlayer::setAnnotation(int value) {
+	_annotation = value;
+}
+
+void SmushDemoPlayer::setFrameRate(int fps) {
+	_fps = (int16)fps;
+	if (_startTime)
+		_startTime = audioGetTime();
+}
+
+void SmushDemoPlayer::setFrameBuffer(byte *buffer, int x, int y, int sourceX, int sourceY, int width, int height) {
+	_frameSource = buffer;
+	_frameWidth = width;
+	_frameHeight = height;
+	_positionX = x;
+	_positionY = y;
+	_sourceX = sourceX;
+	_sourceY = sourceY;
+}
+
+void SmushDemoPlayer::decodeIACT(const byte *block) {
+	int shiftLeft = block[2] >> 4;
+	int shiftRight = block[2] & 0xF;
+	byte *destination = _audio.data + _audio.produced % _audio.size;
+	const byte *cursor = block + 3;
+
+	for (int i = 0; i < 1024; i++) {
+		int16 sample;
+
+		if (*cursor == 128) {
+			sample = (int16)((cursor[1] << 8) + cursor[2]);
+			cursor += 3;
+		} else {
+			sample = (int16)((int8)*cursor << shiftLeft);
+			cursor++;
+		}
+
+		WRITE_LE_UINT16(destination, sample);
+		destination += 2;
+
+		if (*cursor == 128) {
+			sample = (int16)((cursor[1] << 8) + cursor[2]);
+			cursor += 3;
+		} else {
+			sample = (int16)((int8)*cursor << shiftRight);
+			cursor++;
+		}
+
+		WRITE_LE_UINT16(destination, sample);
+		destination += 2;
+	}
+
+	_audio.produced += 4096;
+}
+
+void SmushDemoPlayer::fadePalette() {
+	if (!_fadeRemaining)
+		return;
+
+	int steps = _fadeSteps;
+	int remaining = _fadeStart + steps - _frame;
+	int elapsed = _frame - _fadeStart;
+
+	for (int i = 0; i < 256; i++) {
+		uint32 from = _paletteSaved[i];
+		uint32 to = _paletteTarget[i];
+		uint32 red = (remaining * (from & 0xFF) + elapsed * (to & 0xFF)) / steps;
+		uint32 green = (elapsed * ((to >> 8) & 0xFF) + remaining * ((from >> 8) & 0xFF)) / steps;
+		uint32 blue = (elapsed * ((to >> 16) & 0xFF) + remaining * ((from >> 16) & 0xFF)) / steps;
+		_palette[i] = (red & 0xFF) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 16);
+	}
+
+	_fadeRemaining--;
+	_paletteFlag = 1;
+}
+
+int SmushDemoPlayer::audioOpen(int rate, int channels, int bits) {
+	if (_useDriver)
+		return _driver->sndDrivOpen(rate, channels, bits, &_audio);
+
+	_audio.data = new byte[_audio.size]();
+	return _audio.data == nullptr;
+}
+
+void SmushDemoPlayer::audioClose() {
+	if (_useDriver) {
+		_driver->sndDrivClose(&_audio);
+		return;
+	}
+
+	delete[] _audio.data;
+	_audio.data = nullptr;
+}
+
+int SmushDemoPlayer::audioPause() {
+	if (!_useDriver)
+		return 1;
+
+	int result = _driver->sndDrivPause(&_audio);
+	if (!result)
+		_audioPaused = 1;
+
+	return result;
+}
+
+int SmushDemoPlayer::audioResume() {
+	if (!_useDriver)
+		return 1;
+
+	int result = _driver->sndDrivResume(&_audio);
+	if (!result)
+		_audioPaused = 0;
+
+	return result;
+}
+
+void SmushDemoPlayer::audioFill() {
+	if (!_useDriver) {
+		int consumed = _audio.produced - 1024;
+		_audio.consumed = consumed <= 0 ? 0 : consumed;
+		return;
+	}
+
+	if (_frame - _audioStartFrame > 5) {
+		int produced = _audio.produced;
+		if (produced * _fps / 88200 >= _frameCount - 1) {
+			int space = _audio.size + _audio.consumed - produced;
+			if (space > 4096) {
+				int blocks = (space - 1) >> 12;
+				do {
+					memset(_audio.data + _audio.produced % _audio.size, 0, 4096);
+					blocks--;
+					_audio.produced += 4096;
+				} while (blocks);
+			}
+		}
+	}
+
+	_driver->sndDrivFill(&_audio);
+}
+
+int SmushDemoPlayer::audioGetTime() {
+	if (!_useDriver)
+		return g_system->getMillis();
+
+	if (_audioStartFrame || _frame <= 2)
+		return _driver->sndDrivGetTime(&_audio);
+
+	_audioClockLast = _driver->sndDrivGetTime(&_audio);
+	if (!_audioClockBase)
+		_audioClockBase = g_system->getMillis() - 1000 * _frame / _fps;
+
+	return _audioClockLast - _audioClockBase + g_system->getMillis();
+}
+
+int SmushDemoPlayer::getFramesDue() {
+	if (_firstUpdate)
+		return 1;
+
+	return (int)((uint32)(_fps * (audioGetTime() - _startTime)) / 1000u - (uint32)_framesShown);
+}
+
+int SmushDemoPlayer::stepAnimation() {
+	int result;
+
+	while (true) {
+		int flags = (!_behind || _lastResult == 11) ? 0 : 16;
+		result = _anim->animatorRender(flags);
+		_lastResult = (int16)result;
+		if ((int16)result != 11)
+			break;
+
+		if (!_stream->streamFill(24576))
+			break;
+	}
+
+	if (result & 0x8000)
+		_done = 1;
+
+	return result;
+}
+
+bool SmushDemoPlayer::streamStep() {
+	if (_streamStop)
+		return false;
+
+	bool read = false;
+	while (_stream->streamFill(24576))
+		read = true;
+
+	return read;
+}
+
+int SmushDemoPlayer::initialize(int bufferBytes, int width, int height) {
+	if (_stream->streamInitialize(bufferBytes - (width * height + 204800), width * height + 204800))
+		return 0;
+
+	if (_anim->anmInitialize(width, height)) {
+		_stream->streamTerminate();
+		return 0;
+	}
+
+	if (_anim->anmBuffersInitialize(0, 0)) {
+		_anim->anmTerminate();
+		_stream->streamTerminate();
+		return 0;
+	}
+
+	if (_anim->anmRegisterCodecs(width, height)) {
+		_anim->anmBuffersTerminate();
+		_anim->anmTerminate();
+		_stream->streamTerminate();
+		return 0;
+	}
+
+	return 1;
+}
+
+void SmushDemoPlayer::terminate() {
+	_anim->anmUnregisterCodecs();
+	_anim->anmBuffersTerminate();
+	_anim->anmTerminate();
+	_stream->streamTerminate();
+}
+
+int SmushDemoPlayer::open(const Common::String &name, int flags, int offset) {
+	if (!name.empty() && !Common::File::exists(Common::Path(name)))
+		return 1;
+
+	memset(&_audio, 0, sizeof(_audio));
+	_audio.size = 491520;
+
+	if (audioOpen(22050, 2, 16))
+		return 1;
+
+	_anim->animatorInitialize();
+	_anim->animatorNewAnim(name, 0, -1, -1, 0, offset);
+
+	if (!name.empty())
+		_stream->streamFill(0x20000);
+	else
+		_stream->streamInitMemory();
+
+	memset(_palette, 0, sizeof(_palette));
+	_paused = 0;
+	_done = 0;
+	_flags = flags;
+	_lastResult = 0;
+	_frameReady = 0;
+	_paletteFlag = 0;
+	_annotation = 0;
+	_staged = 0;
+	_audioPaused = 0;
+	_audioStartFrame = 0;
+	_audioClockBase = 0;
+	_startTime = 0;
+	_lastUpdate = g_system->getMillis();
+	_frameSource = nullptr;
+	_frameWidth = 0;
+	_frameHeight = 0;
+	_fps = 12;
+	_frame = 0;
+	_framesShown = 0;
+	_frameCount = 1;
+	_dropCount = 0;
+	_behind = 0;
+	_firstUpdate = 1;
+	_fadeStart = 0;
+	_fadeRemaining = 0;
+	_fadeSteps = 1;
+	_streamStop = name.empty() ? 1 : 0;
+	return 0;
+}
+
+int SmushDemoPlayer::close() {
+	audioClose();
+	memset(&_audio, 0, sizeof(_audio));
+
+	_streamStop = 0;
+	_done = 1;
+	return 0;
+}
+
+int SmushDemoPlayer::update(int *frameDecoded, int *finished, int *annotation, int *paletteChanged, const uint32 **palette) {
+	*finished = 0;
+	*frameDecoded = 0;
+	*annotation = 0;
+	*paletteChanged = 0;
+	*palette = nullptr;
+
+	bool late = false;
+	if (_paused)
+		return 0;
+
+	if (!_frameReady) {
+		int saved = _annotation;
+		_annotation = 0;
+		stepAnimation();
+		if (!_frameReady && !_annotation)
+			_annotation = saved;
+
+		audioFill();
+	}
+
+	uint32 time = g_system->getMillis();
+	if (time - _lastUpdate > 200)
+		late = true;
+
+	int due;
+	if (late)
+		due = 1;
+	else
+		due = getFramesDue();
+
+	if (due <= _fps / 2 || _audioPaused) {
+		if (due < 1 && _audioPaused)
+			audioResume();
+	} else {
+		audioPause();
+	}
+
+	if (due > 0) {
+		fadePalette();
+		if (_frameReady)
+			*frameDecoded = 1;
+
+		*paletteChanged = _paletteFlag;
+		*palette = _palette;
+		*annotation = _annotation;
+		_paletteFlag = 0;
+		_frameReady = 0;
+		_lastUpdate = time;
+		if (_firstUpdate) {
+			_firstUpdate = 0;
+			_startTime = audioGetTime();
+		}
+	}
+
+	if (_done || _framesShown >= _frameCount - 1) {
+		*finished = 1;
+		return 0;
+	}
+
+	*finished = 0;
+	return 0;
+}
+
+void SmushDemoPlayer::pause() {
+	if (!_paused && _audio.data) {
+		_paused = 1;
+		audioPause();
+	}
+}
+
+void SmushDemoPlayer::resume() {
+	if (_paused && _audio.data) {
+		_paused = 0;
+		audioResume();
+	}
+}
+
+void SmushDemoPlayer::getFrameBuffer(const byte **pixels, int *width, int *height) {
+	*pixels = _frameSource;
+	*width = _frameWidth;
+	*height = _frameHeight;
+}
+
+void SmushDemoPlayer::getSize(int *x, int *y) {
+	*x = _positionX;
+	*y = _positionY;
+}
+
+int SmushDemoPlayer::smushPlayStartMovie(const Common::String &name, int flags, int bufferBytes, int width, int height, int offset) {
+	_useDriver = (flags >= 0);
+
+	if (_video->videoStart(width, height, 8))
+		return 1;
+
+	if (!initialize(bufferBytes, width, height)) {
+		_video->videoStop();
+		return 1;
+	}
+
+	if (open(name, flags & 0xFFFFFFF, offset)) {
+		terminate();
+		_video->videoStop();
+		return 1;
+	}
+
+	_playFlags = flags & 0xF0000000;
+	_playing = 1;
+	return 0;
+}
+
+int SmushDemoPlayer::smushPlayUpdateMovie(int *finished) {
+	int frameDecoded;
+	int annotation;
+	int paletteChanged;
+	const uint32 *palette;
+
+	update(&frameDecoded, finished, &annotation, &paletteChanged, &palette);
+	if (!*finished && frameDecoded) {
+		if (paletteChanged)
+			_video->videoSetPalette(palette, 0, 256);
+
+		SmushDemoTarget target;
+		SmushDemoRect rect;
+		_video->videoLock(&target, &rect);
+		smushPlayBlit(&target, &rect);
+		_video->videoUnlock();
+	}
+
+	return 0;
+}
+
+int SmushDemoPlayer::smushPlayStopMovie() {
+	close();
+	terminate();
+	_video->videoStop();
+	_playing = 0;
+	return 0;
+}
+
+int SmushDemoPlayer::smushPlayPauseMovie() {
+	if (_playing) {
+		pause();
+		return 0;
+	}
+
+	return 0;
+}
+
+int SmushDemoPlayer::smushPlayResumeMovie() {
+	if (_playing) {
+		resume();
+		return 0;
+	}
+
+	return 0;
+}
+
+int SmushDemoPlayer::smushPlayBlit(SmushDemoTarget *target, const SmushDemoRect *rect) {
+	int due = getFramesDue();
+	_framesShown = _frame;
+
+	if (target && _frameSource) {
+		if (!(_flags & 8) && due > 1 && _dropCount < 3) {
+			_dropCount++;
+		} else {
+			_dropCount = 0;
+			if (_flags & 1) {
+				_flags &= ~6;
+				if (_frameWidth <= rect->width / 2)
+					_flags |= 4;
+				else if (_frameHeight < rect->height)
+					_flags |= 2;
+			}
+
+			int verticalScale = ((_flags & 6) != 0) + 1;
+			int doubleBoth = _flags & 4;
+			int horizontalScale = (doubleBoth != 0) + 1;
+			int width = _frameWidth * horizontalScale;
+			int height = _frameHeight * verticalScale;
+			int x = _sourceX;
+			int y = _sourceY;
+
+			if (x < rect->x) {
+				width += x - rect->x;
+				x = rect->x;
+			}
+
+			if (x + width > rect->width + rect->x)
+				width = rect->width + rect->x - x;
+
+			if (y < rect->y) {
+				height += y - rect->y;
+				y = rect->y;
+			}
+
+			if (y + height > rect->height + rect->y)
+				height = rect->height + rect->y - y;
+
+			int copyWidth = width / horizontalScale;
+			int copyHeight = height / verticalScale;
+			int alignedX = (x & ~7) * horizontalScale;
+			int alignedWidth = ((copyWidth + x + 7) & ~7) - (x & ~7);
+
+			const byte *source = _frameSource + alignedX + y * _frameWidth * verticalScale;
+			byte *destination = target->pixels + alignedX + y * target->width * verticalScale;
+
+			if (doubleBoth)
+				smushPlayBlitDouble(source, _frameWidth, destination, target->width, alignedWidth, copyHeight);
+			else if (_flags & 2)
+				smushPlayBlitDoubleRows(source, _frameWidth, destination, target->width, alignedWidth, copyHeight);
+			else
+				smushPlayBlitCopy(source, _frameWidth, destination, target->width, alignedWidth, copyHeight);
+		}
+	}
+
+	uint32 dueAfter = (uint32)getFramesDue();
+	if (dueAfter < 2) {
+		if (!dueAfter)
+			_behind = 0;
+	} else {
+		_behind = 1;
+	}
+
+	return 0;
+}
+
+void SmushDemoPlayer::smushPlayBlitDouble(const byte *source, int sourcePitch, byte *destination, int destinationPitch, int width, int rows) {
+	for (int row = 0; row < rows; row++) {
+		const byte *in = source;
+		byte *out = destination;
+
+		for (int i = 0; i < (width >> 2); i++) {
+			byte p0 = in[0];
+			byte p1 = in[1];
+			byte p2 = in[2];
+			byte p3 = in[3];
+
+			out[0] = p0;
+			out[1] = p0;
+			out[2] = p1;
+			out[3] = p1;
+			out[4] = p2;
+			out[5] = p2;
+			out[6] = p3;
+			out[7] = p3;
+			memcpy(out + destinationPitch, out, 8);
+
+			in += 4;
+			out += 8;
+		}
+
+		source += sourcePitch;
+		destination += destinationPitch * 2;
+	}
+}
+
+void SmushDemoPlayer::smushPlayBlitDoubleRows(const byte *source, int sourcePitch, byte *destination, int destinationPitch, int width, int rows) {
+	for (int row = 0; row < rows; row++) {
+		memcpy(destination, source, (width >> 2) * 4);
+		memcpy(destination + destinationPitch, source, (width >> 2) * 4);
+
+		source += sourcePitch;
+		destination += destinationPitch * 2;
+	}
+}
+
+void SmushDemoPlayer::smushPlayBlitCopy(const byte *source, int sourcePitch, byte *destination, int destinationPitch, int width, int rows) {
+	for (int row = 0; row < rows; row++) {
+		memcpy(destination, source, (width >> 2) * 4);
+
+		source += sourcePitch;
+		destination += destinationPitch;
+	}
 }
 
 } // End of namespace Grim

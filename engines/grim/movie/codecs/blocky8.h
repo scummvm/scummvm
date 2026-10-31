@@ -41,6 +41,7 @@ private:
 	byte *_tableSmall;
 	int16 _table[256];
 	int32 _frameSize;
+	int32 _bufSize;
 	int _width, _height;
 
 	void makeTablesInterpolation(int param);
@@ -55,7 +56,7 @@ public:
 	~Blocky8();
 	void init(int width, int height);
 	void deinit();
-	bool decode(byte *dst, const byte *src);
+	bool decode(byte *dst, const byte *src, int flags = 0);
 };
 
 } // End of namespace Grim
