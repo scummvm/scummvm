@@ -307,6 +307,25 @@ int Map::getTileAt(int x, int y, int creatureIndex) const {
 	return _G(map).getMapTile(x, y);
 }
 
+int Map::getOverworldTileAt(int x, int y) const {
+	int entityIndex = _G(savegame).getOverworldEntityAt(x, y, 1);
+	if (entityIndex >= 0)
+		return _G(savegame)._overworldEntities[entityIndex]._type;
+
+	x = (x % OVERWORLD_WIDTH + OVERWORLD_WIDTH) % OVERWORLD_WIDTH;
+	y = (y % OVERWORLD_HEIGHT + OVERWORLD_HEIGHT) % OVERWORLD_HEIGHT;
+
+	// Skip the castle/city flag animation frames, as getMapTile does
+	int tile = _overworldMap[y * OVERWORLD_WIDTH + x];
+	if (tile > TILE_CASTLE1) {
+		++tile;
+		if (tile == TILE_CITY2)
+			++tile;
+	}
+
+	return tile;
+}
+
 int Map::getContinentAt(int x, int y) const {
 	return (y > 77 ? 2 : 0) + (x > 83 ? 1 : 0);
 }

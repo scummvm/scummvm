@@ -224,6 +224,13 @@ public:
 	int getTileAt(int x, int y, int creatureIndex = 1) const;
 
 	/**
+	 * Returns a tile or creature/entity at a given overworld position, regardless of
+	 * which map is currently loaded. Used when a location needs to look at the overworld
+	 * around itself, such as when a purchased vehicle is placed outside a city
+	 */
+	int getOverworldTileAt(int x, int y) const;
+
+	/**
 	 * Returns the continent number at a given position
 	 */
 	int getContinentAt(int x, int y) const;

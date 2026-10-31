@@ -225,7 +225,7 @@ void Dead::resetPlayerPosition() {
 		if (_G(map).getContinentAt(x, y) != origContinent)
 			continue;
 
-		tile = _G(map).getTileAt(x, y);
+		tile = _G(map).getOverworldTileAt(x, y);
 		found = tile == Data::TILE_GRASS || tile == Data::TILE_WOODS;
 	}
 

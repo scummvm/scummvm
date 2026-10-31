@@ -846,40 +846,44 @@ void Merchant::spawnTransport(int transportId) {
 		Data::TILE_AIRCAR, Data::TILE_SHUTTLE, 0
 	};
 
-	int neededTile;
-	switch (transportId) {
-	case Data::TRANSPORT_HORSE:
-	case Data::TRANSPORT_CART:
-		neededTile = (_G(savegame)._woodsCount > 0) ? Data::TILE_WOODS : Data::TILE_GRASS;
-		break;
-	case Data::TRANSPORT_RAFT:
-	case Data::TRANSPORT_FRIGATE:
-		neededTile = Data::TILE_OCEAN;
-		break;
-	default:
-		neededTile = Data::TILE_GRASS;
-		break;
+	// Each kind of transport goes on the terrain it needs, using up one of
+	// the surrounding tiles of that terrain counted when the location was entered
+	auto &sg = _G(savegame);
+	int terrain;
+	if (transportId <= Data::TRANSPORT_CART && sg._woodsCount) {
+		--sg._woodsCount;
+		terrain = Data::TILE_WOODS;
+	} else if (transportId == Data::TRANSPORT_RAFT || transportId == Data::TRANSPORT_FRIGATE) {
+		--sg._waterCount;
+		terrain = Data::TILE_OCEAN;
+	} else {
+		--sg._grassCount;
+		terrain = Data::TILE_GRASS;
 	}
 
-	const Common::Point &pos = _G(savegame)._overworldPos;
-	int dx = 1, dy = 1;
-	bool found = false;
+	// Find the first matching tile around the location. If none match, it ends
+	// up two tiles down and right, as in the original
+	const Common::Point &pos = sg._overworldPos;
+	int dx, dy = -1;
+	bool match;
+	do {
+		dx = -1;
+		do {
+			match = _G(map).getOverworldTileAt(pos.x + dx, pos.y + dy) == terrain;
+			++dx;
+		} while (dx < 2 && !match);
 
-	for (int y = -1; y <= 1 && !found; ++y) {
-		for (int x = -1; x <= 1 && !found; ++x) {
-			if (_G(map).getTileAt(pos.x + x, pos.y + y) == neededTile) {
-				dx = x;
-				dy = y;
-				found = true;
-			}
-		}
-	}
+		if (match)
+			--dx;
+		else
+			++dy;
+	} while (dy < 2 && !match);
 
 	if (_G(overworldEntityCount) < Data::OVERWORLD_ENTITY_COUNT - 1) {
 		++_G(overworldEntityCount);
-		auto &e = _G(savegame)._overworldEntities[_G(overworldEntityCount)];
+		auto &e = sg._overworldEntities[_G(overworldEntityCount)];
 		e._type = TRANSPORT_TILES[transportId];
-		e._data = neededTile;
+		e._data = terrain;
 		e._x = pos.x + dx;
 		e._y = pos.y + dy;
 		e._hits = 0;
