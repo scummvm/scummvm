@@ -23,6 +23,7 @@
 #define NANCY_SCRIPT_PARTICLES_H
 
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/list.h"
 
 #include "graphics/managed_surface.h"
@@ -65,6 +66,11 @@ struct Particle {
 // what it gives every particle once, when the record is made, instead of every
 // time a particle is made. The particles go through the "perspective"
 // projection, so they get smaller further off.
+//
+// From Nancy1New on, the stages are added after the record is made, under names
+// of the scripts' choosing:
+//
+//   snow:AddVelocity("velocityStage", { minSpeed = 300, ... })
 class ParticleRecord : public Record {
 public:
 	ParticleRecord(SceneContext &context) : Record(context, "ND.ParticleAR") {}
@@ -78,8 +84,13 @@ public:
 	double getLife() const { return _life; }
 	const Graphics::ManagedSurface &getImage() const { return _image; }
 
+	// Adds a stage of a kind ("velocity", "fade"...) under a name, read from the
+	// table at the given index
+	void addNamedStage(const Common::String &kind, const Common::String &name, int tableIndex);
+
 protected:
 	void readTable(int tableIndex) override;
+	void runOnce() override;
 	void run(double sceneTime, double elapsedTime) override;
 	void onZChanged() override;
 	bool hasTransform() const override { return true; }
@@ -114,10 +125,14 @@ private:
 	ScriptMatrix _perspective;
 	bool _hasPerspective = false;	// Nancy22 has particles without one
 
+	Common::HashMap<Common::String, ParticleStage *> _namedStages;
+
 	// Both keep what is left of the time after the last whole step or particle
 	double _stepClock = 0.0;
 	double _spawnClock = 0.0;
 	double _spawnTime = 0.0;	// when the newest particles were made
+
+	double _fastForward = 0.0;	// seconds to run through when the record starts
 
 	RecordGraphic *_canvas = nullptr;
 };

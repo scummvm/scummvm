@@ -350,18 +350,25 @@ private:
 };
 
 // "fade": the particles fade in or out once they are "start" into their life,
-// over "duration" of it
+// over "duration" of it. From Nancy1New on, they go from "alpha1" to "alpha2"
+// (0 to 255 unless set); before, they fade out unless "in" is set.
 class ParticleFadeStage : public ParticleStage {
 public:
 	ParticleFadeStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
 		readField(L, tableIndex, "start", _start);
 		readField(L, tableIndex, "duration", _duration);
-		_isFadingIn = readTruth(L, tableIndex, "in");
+
+		if (g_nancy->getGameType() >= kGameTypeNancy1New) {
+			readAlpha(L, tableIndex, "alpha1", _fromAlpha);
+			readAlpha(L, tableIndex, "alpha2", _toAlpha);
+		} else if (!readTruth(L, tableIndex, "in")) {
+			_fromAlpha = 255;
+			_toAlpha = 0;
+		}
 	}
 
 	void update(uint first, uint count) override {
-		const double from = _isFadingIn ? 0.0 : 255.0;
-		const double change = _isFadingIn ? 255.0 : -255.0;
+		const double change = _toAlpha - _fromAlpha;
 
 		// The oldest particles come first, so the ones after one that hasn't
 		// started fading haven't either
@@ -373,16 +380,24 @@ public:
 			}
 
 			if (fraction <= 1.0) {
-				const uint32 alpha = (uint32)CLIP<int>((int)floor(fraction * change + from + 0.5), 0, 255);
+				const uint32 alpha = (uint32)CLIP<int>((int)floor(fraction * change + _fromAlpha + 0.5), 0, 255);
 				particle.color = (particle.color & 0xFFFFFF) | (alpha << 24);
 			}
 		}
 	}
 
 private:
+	static void readAlpha(lua_State *L, int tableIndex, const char *name, int &alpha) {
+		double value;
+		if (readField(L, tableIndex, name, value)) {
+			alpha = (int)value;
+		}
+	}
+
 	double _start = 0.0;
 	double _duration = 1.0;
-	bool _isFadingIn = false;
+	int _fromAlpha = 0;
+	int _toAlpha = 255;
 };
 
 // "drag": slows the particles down by a factor every step
@@ -545,12 +560,7 @@ private:
 };
 
 // TODO: The "script" and "revolve" stages, which no script uses
-static ParticleStage *makeStage(ParticleRecord &record, lua_State *L, int tableIndex) {
-	Common::String name;
-	if (!readField(L, tableIndex, "name", name)) {
-		luaL_error(L, "name must be set to a string at each stage");
-	}
-
+static ParticleStage *makeStage(ParticleRecord &record, lua_State *L, int tableIndex, const Common::String &name) {
 	if (name == "positionPerspective") {
 		return new ParticlePerspectivePositionStage(record, L, tableIndex);
 	} else if (name == "position") {
@@ -629,24 +639,48 @@ void ParticleRecord::readTable(int tableIndex) {
 			}
 
 			luaL_checktype(L, -1, LUA_TTABLE);
-			addStage(makeStage(*this, L, absoluteIndex(L, -1)));
+			const int stageIndex = absoluteIndex(L, -1);
+
+			Common::String name;
+			if (!readField(L, stageIndex, "name", name)) {
+				luaL_error(L, "name must be set to a string at each stage");
+			}
+
+			addStage(makeStage(*this, L, stageIndex, name));
 			lua_pop(L, 1);
 		}
 
 		lua_pop(L, 1);
 	}
 
-	// The particles can be there before the record is
-	double fastForward = 0.0;
-	readField(L, tableIndex, "fastForward", fastForward);
-	if (fastForward > 0.0) {
-		simulate(fastForward);
+	// The particles can be there before the record is. From Nancy1New on, that
+	// waits until the record starts, after the stages have been added.
+	readField(L, tableIndex, "fastForward", _fastForward);
+	if (g_nancy->getGameType() < kGameTypeNancy1New && _fastForward > 0.0) {
+		simulate(_fastForward);
 	}
 }
 
 void ParticleRecord::addStage(ParticleStage *stage) {
 	_stages.push_back(stage);
 	stage->onAdded();
+}
+
+void ParticleRecord::addNamedStage(const Common::String &kind, const Common::String &name, int tableIndex) {
+	lua_State *L = getLua();
+	if (_namedStages.contains(name)) {
+		luaL_error(L, "Particle AR already has a stage by the name '%s'", name.c_str());
+	}
+
+	ParticleStage *stage = makeStage(*this, L, tableIndex, kind);
+	addStage(stage);
+	_namedStages[name] = stage;
+}
+
+void ParticleRecord::runOnce() {
+	if (g_nancy->getGameType() >= kGameTypeNancy1New && _fastForward > 0.0) {
+		simulate(_fastForward);
+	}
 }
 
 void ParticleRecord::run(double sceneTime, double elapsedTime) {
@@ -760,27 +794,63 @@ void ParticleRecord::onZChanged() {
 	}
 }
 
+// record:Add<Stage>(name, table), Nancy1New; the kind of stage is the upvalue
+static int particleAddStage(lua_State *L) {
+	ParticleRecord *record = (ParticleRecord *)checkRecord(L, 1);
+	const Common::String name = luaL_checkstring(L, 2);
+	luaL_checktype(L, 3, LUA_TTABLE);
+
+	record->addNamedStage(lua_tostring(L, lua_upvalueindex(1)), name, 3);
+	return 0;
+}
+
+static const char *const kParticleStageKinds[][2] = {
+	{ "AddAngle", "angle" },
+	{ "AddColor", "color" },
+	{ "AddDrag", "drag" },
+	{ "AddFade", "fade" },
+	{ "AddForce", "force" },
+	{ "AddPlaneCollision", "planeCollision" },
+	{ "AddPosition", "position" },
+	{ "AddPositionPerspective", "positionPerspective" },
+	{ "AddScale", "scale" },
+	{ "AddSources", "sources" },
+	{ "AddTurbulence", "turbulence" },
+	{ "AddVelocity", "velocity" }
+};
+
 bool ParticleRecord::getField(const Common::String &key) {
 	lua_State *L = getLua();
 
 	if (key == "frequency") {
 		lua_pushnumber(L, _frequency);
-		return true;
 	} else if (key == "count") {
 		lua_pushinteger(L, _count);
-		return true;
+	} else {
+		for (const auto &kind : kParticleStageKinds) {
+			if (key == kind[0]) {
+				lua_pushstring(L, kind[1]);
+				lua_pushcclosure(L, particleAddStage, 1);
+				return true;
+			}
+		}
+
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 bool ParticleRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
 	if (key == "frequency") {
-		_frequency = luaL_checknumber(getLua(), 3);
-		return true;
+		_frequency = MAX(luaL_checknumber(L, 3), 0.0);
+	} else {
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 // The particles are drawn on a picture as large as the viewport, which is
