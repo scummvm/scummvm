@@ -87,8 +87,10 @@ bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool Gob::GobEngine::hasFeature(EngineFeature f) const {
+	// Only Woodruff reads the subtitles setting (Init_v4::updateConfig)
 	return
-		(f == kSupportsReturnToLauncher);
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsSubtitleOptions && _gameType == kGameTypeWoodruff);
 }
 
 Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Gob::GOBGameDescription *gd) const {
