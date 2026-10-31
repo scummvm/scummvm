@@ -1504,15 +1504,23 @@ static bool deliverMessage(lua_State *L, const char *actionName, UI::NDUI::Actio
 	message.text = action.text;
 	message.value = action.value;
 
-	const SceneContext *context = LuaState::getContext(L);
+	SceneContext *context = LuaState::getContext(L);
 	if (context && !context->getStreamName().equalsIgnoreCase(State::SceneStreamManager::getUIStreamName())) {
 		message.sender = context->getSceneName();
 	} else {
 		message.sender = action.sender;
 	}
 
+	// A scene whose script is running for the first time doesn't belong to its
+	// stream yet, but its records get messages too: Nancy23's ManagerMain_SC
+	// makes the managers, then includes scripts that call on them
 	bool wasTaken = false;
-	if (!NancySceneState.receiveMessage(message, wasTaken) && ui) {
+	bool hasReceiver = context && context->isLoading() && context->receiveMessage(message, wasTaken);
+	if (!wasTaken) {
+		hasReceiver |= NancySceneState.receiveMessage(message, wasTaken);
+	}
+
+	if (!hasReceiver && ui) {
 		ui->takeAction(action);
 	}
 

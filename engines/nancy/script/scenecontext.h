@@ -60,6 +60,10 @@ public:
 	// doesn't begin with a summary.
 	bool load();
 
+	// Whether the script of the scene is running for the first time, before
+	// the scene belongs to its stream
+	bool isLoading() const { return _isLoading; }
+
 	// One frame, which lasted the given number of seconds
 	void run(double elapsedTime);
 	void handleInput(NancyInput &input);
@@ -178,6 +182,7 @@ private:
 	Common::String _streamName;
 	Common::String _sceneName;
 	bool _isEnding = false;
+	bool _isLoading = false;
 	uint _frame;
 	int32 _zOffset;
 

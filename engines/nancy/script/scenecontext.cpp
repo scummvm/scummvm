@@ -115,7 +115,10 @@ bool SceneContext::load() {
 		}
 	}
 
-	if (!_lua->runScript(_sceneName)) {
+	_isLoading = true;
+	const bool hasRun = _lua->runScript(_sceneName);
+	_isLoading = false;
+	if (!hasRun) {
 		return false;
 	}
 
