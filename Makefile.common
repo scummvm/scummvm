@@ -22,7 +22,9 @@ endif
 PLUGINS :=
 MODULES := test devtools base $(MODULES)
 
+ifeq (,$(filter updatepot,$(MAKECMDGOALS)))
 -include engines/engines.mk
+endif
 
 # After the game specific modules follow the shared modules
 MODULES += \
