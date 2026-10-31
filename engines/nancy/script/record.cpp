@@ -287,6 +287,28 @@ bool Record::callFunction(const char *name, int numArgs, int numResults) {
 	return LuaState::call(L, numArgs + 1, numResults, what.c_str());
 }
 
+// The functions scripts can give a record for what the player does
+static const char *const kEventFunctionNames[kNumRecordEvents] = {
+	"OnLeftClick", "OnRightClick", "OnLeftDown", "OnLeftUp", "OnRightDown", "OnRightUp",
+	"OnKeyDown", "OnKey", "OnKeyUp"
+};
+
+// The functions for what the player does, which scripts can give a record as
+// well. The Nancy23 and Nancy24 exes only have the ones of the scripts.
+static bool isEventFunctionName(const Common::String &key) {
+	if (key == "OnMouseMove" || key == "ChangeCursor") {
+		return true;
+	}
+
+	for (const char *name : kEventFunctionNames) {
+		if (key == name) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 int Record::getScriptField() {
 	lua_State *L = getLua();
 	const Common::String key = luaL_checkstring(L, 2);
@@ -306,6 +328,17 @@ int Record::getScriptField() {
 	} else if (key == "transform" && hasTransform()) {
 		pushMatrix(L, _transform);
 		return 1;
+	}
+
+	// A function the script stored under this name is used instead of the
+	// built-in one, e.g. Nancy24's buttons call OnMouseMove without a point
+	if (isEventFunctionName(key)) {
+		pushStoredValue(key.c_str());
+		if (lua_isfunction(L, -1)) {
+			return 1;
+		}
+
+		lua_pop(L, 1);
 	}
 
 	// The functions every record has
@@ -357,12 +390,6 @@ int Record::setScriptField() {
 
 	return 0;
 }
-
-// The functions scripts can give a record for what the player does
-static const char *const kEventFunctionNames[kNumRecordEvents] = {
-	"OnLeftClick", "OnRightClick", "OnLeftDown", "OnLeftUp", "OnRightDown", "OnRightUp",
-	"OnKeyDown", "OnKey", "OnKeyUp"
-};
 
 void Record::sendMouseMove(const ScriptPoint &point, bool inViewport) {
 	if (!isActive()) {
