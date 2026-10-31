@@ -21,6 +21,7 @@
 
 #include "scooby/sound/gems_driver.h"
 
+#include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -321,6 +322,7 @@ void GemsDriver::fmWrite(uint8 part, uint8 reg, uint8 value) {
 		switch (reg) {
 		case 0x22:
 			// LFO: not implemented by ScummVM's FM core.
+			// debug("LFO called %d %d", part, value);
 			return;
 		case 0x24:
 		case 0x25:
@@ -1602,9 +1604,7 @@ void GemsDriver::noteOnPsg(int channel, uint8 note, bool noise) {
 	if (voice == 3) {
 		// Assume TG3 is not locked by this noise patch.
 		_psgVoices[kPsgVoiceTone3 + kVoiceFlags] &= ~kVoiceLocked;
-		// The Z80 tests the low bits of the patch type byte here, which is always 3 for a noise
-		// patch, so noise patches always drive TG3 with the note's frequency and lock it.
-		if ((patchData[0] & 3) == 3) {
+		if ((parameters[0] & 3) == 3) {
 			psgWrite(static_cast<uint8>(_psgRegisters[kPsgToneLow + 3] | 0xC0));
 			psgWrite(_psgRegisters[kPsgToneHigh + 3]);
 			_psgVoices[kPsgVoiceTone3 + kVoiceFlags] = 0xA2; // TG3 free and locked
