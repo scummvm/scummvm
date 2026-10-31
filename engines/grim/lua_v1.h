@@ -178,9 +178,6 @@ protected:
 	DECLARE_LUA_OPCODE(SaveIMuse);
 	DECLARE_LUA_OPCODE(RestoreIMuse);
 	DECLARE_LUA_OPCODE(SetSoundPosition);
-	DECLARE_LUA_OPCODE(SetSoundParameters);
-	DECLARE_LUA_OPCODE(GetSoundParameters);
-	DECLARE_LUA_OPCODE(ActorVoiceIs3D);
 	DECLARE_LUA_OPCODE(IsSoundPlaying);
 	DECLARE_LUA_OPCODE(PlaySoundAt);
 	DECLARE_LUA_OPCODE(FileFindDispose);

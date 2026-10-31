@@ -275,62 +275,6 @@ void Lua_V1::SetSoundPosition() {
 	}
 }
 
-void Lua_V1::SetSoundParameters() {
-	lua_Object maxDistObj = lua_getparam(1);
-	lua_Object minVolObj = lua_getparam(2);
-	lua_Object maxVolObj = lua_getparam(3);
-	lua_Object panFactorObj = lua_getparam(4);
-	lua_Object maxRadiusObj = lua_getparam(5);
-
-	Set *currSet = g_grim->getCurrSet();
-	if (!currSet) {
-		warning("SetSoundParameters: No current room!");
-		return;
-	}
-
-	if (lua_isnil(maxDistObj) && lua_isnil(minVolObj) && lua_isnil(maxVolObj) &&
-		lua_isnil(panFactorObj) && lua_isnil(maxRadiusObj)) {
-		// Reset all parameters
-		currSet->setSoundParameters();
-		return;
-	}
-
-	// The current values are kept for the parameters which aren't specified
-	float maxDist, panFactor, maxRadius;
-	int minVol, maxVol;
-	currSet->getSoundParameters(&maxDist, &minVol, &maxVol, &panFactor, &maxRadius);
-
-	if (!lua_isnil(maxDistObj))
-		maxDist = lua_getnumber(maxDistObj);
-	// The volumes are bytes in the original
-	if (!lua_isnil(minVolObj))
-		minVol = (uint8)(int)lua_getnumber(minVolObj);
-	if (!lua_isnil(maxVolObj))
-		maxVol = (uint8)(int)lua_getnumber(maxVolObj);
-	if (!lua_isnil(panFactorObj))
-		panFactor = lua_getnumber(panFactorObj);
-	if (!lua_isnil(maxRadiusObj))
-		maxRadius = lua_getnumber(maxRadiusObj);
-
-	currSet->setSoundParameters(maxDist, minVol, maxVol, panFactor, maxRadius);
-}
-
-void Lua_V1::GetSoundParameters() {
-	Set *currSet = g_grim->getCurrSet();
-	if (!currSet)
-		return;
-
-	float maxDist, panFactor, maxRadius;
-	int minVol, maxVol;
-	currSet->getSoundParameters(&maxDist, &minVol, &maxVol, &panFactor, &maxRadius);
-
-	lua_pushnumber(maxDist);
-	lua_pushnumber(minVol);
-	lua_pushnumber(maxVol);
-	lua_pushnumber(panFactor);
-	lua_pushnumber(maxRadius);
-}
-
 void Lua_V1::IsSoundPlaying() {
 	// dummy
 }
