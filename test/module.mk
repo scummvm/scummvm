@@ -10,8 +10,13 @@ TESTS        := $(srcdir)/test/common/*.h \
 	$(srcdir)/test/common/formats/*.h \
 	$(srcdir)/test/audio/*.h \
 	$(srcdir)/test/math/*.h \
-	$(srcdir)/test/image/*.h
-TEST_LIBS    :=
+	$(srcdir)/test/image/*.h \
+	$(srcdir)/test/video/*.h
+TEST_LIBS    := video/reelmagic.o
+
+ifdef USE_MPEG2
+TEST_LIBS += video/libvideo.a
+endif
 
 ifdef POSIX
 TEST_LIBS += test/system/null_osystem.o \
