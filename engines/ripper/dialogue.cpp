@@ -339,47 +339,71 @@ void DialogueChooser::dismissForSceneTransition(const char *reason) {
 		reason, choiceCount, restored);
 }
 
+void DialogueChooser::captureSaveState(SaveState &state) const {
+	state.choices = _choices;
+	state.chooser = _chooser;
+	state.pending = _pending;
+}
+
 bool DialogueChooser::syncGame(Common::Serializer &serializer) {
-	byte pending = _pending ? 1 : 0;
+	SaveState state;
+	if (serializer.isSaving())
+		captureSaveState(state);
+	if (!syncGame(serializer, state))
+		return false;
+	if (serializer.isLoading())
+		applySaveState(state);
+	return true;
+}
+
+bool DialogueChooser::syncGame(Common::Serializer &serializer, SaveState &state) const {
+	byte pending = state.pending ? 1 : 0;
 	serializer.syncAsByte(pending);
 
-	uint32 choiceCount = _choices.size();
+	uint32 choiceCount = state.choices.size();
 	serializer.syncAsUint32LE(choiceCount);
 	if (serializer.isLoading()) {
 		if (choiceCount > 256)
 			return false;
-		_backingBounds = Common::Rect();
-		_backingPixels.clear();
-		_renderedChoicePixels.clear();
-		_choices.clear();
-		_choices.resize(choiceCount);
+		state.choices.clear();
+		state.choices.resize(choiceCount);
 	}
 	for (uint i = 0; i < choiceCount; ++i) {
-		serializer.syncString(_choices[i].text);
-		serializer.syncAsUint16LE(_choices[i].result);
-		if (serializer.isLoading() && _choices[i].text.size() > 1024)
+		serializer.syncString(state.choices[i].text);
+		serializer.syncAsUint16LE(state.choices[i].result);
+		if (serializer.isLoading() && state.choices[i].text.size() > 1024)
 			return false;
 	}
 
-	uint32 selectedChoice = _chooser.selectedIndex();
-	uint32 firstVisibleChoice = _chooser.firstVisibleIndex();
+	uint32 selectedChoice = state.chooser.selectedIndex();
+	uint32 firstVisibleChoice = state.chooser.firstVisibleIndex();
 	serializer.syncAsUint32LE(selectedChoice);
 	serializer.syncAsUint32LE(firstVisibleChoice);
 	if (serializer.isLoading()) {
-		_pending = pending != 0;
-		_visualDirty = _pending;
-		_hoveredArrow = 0;
-		if (_choices.empty()) {
-			_pending = false;
-			_chooser.clear();
+		state.pending = pending != 0;
+		if (state.choices.empty()) {
+			state.pending = false;
+			state.chooser.clear();
 		} else {
-			if (!_chooser.restore(_choices.size(), maximumVisibleChoiceCount(),
+			if (!state.chooser.restore(state.choices.size(), maximumVisibleChoiceCount(),
 					selectedChoice, firstVisibleChoice))
 				return false;
-			updateLayout();
 		}
 	}
 	return !serializer.err();
+}
+
+void DialogueChooser::applySaveState(SaveState &state) {
+	_choices = Common::move(state.choices);
+	_chooser = state.chooser;
+	_pending = state.pending;
+	_backingBounds = Common::Rect();
+	_backingPixels.clear();
+	_renderedChoicePixels.clear();
+	_visualDirty = _pending;
+	_hoveredArrow = 0;
+	if (!_choices.empty())
+		updateLayout();
 }
 
 uint DialogueChooser::measureText(const Common::String &text) const {

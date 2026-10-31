@@ -147,7 +147,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		return Common::kReadingFailed;
 	}
 	const uint32 saveVersion = serializer.getVersion();
-	ScriptManager::SaveState scriptState(*_scripts);
+	ScriptManager::SaveState scriptState;
 	SceneAudioManager::SaveState audioState;
 	PuzzleState puzzleState;
 	if (!_scripts->syncGame(serializer, scriptState) ||
@@ -171,6 +171,10 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	if (serializer.err() || stream->eos())
 		return Common::kReadingFailed;
 
+	SceneRuntimeState runtime;
+	if (!_scripts->prepareSaveState(scriptState, runtime))
+		return Common::kReadingFailed;
+
 	if (saveVersion < 5 && !scriptState.milestones.hasRipperIdentity()) {
 		debugC(1, kDebugSaveLoad,
 			"Ripper: repairing legacy save version=%u without a Ripper identity",
@@ -182,7 +186,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 			return Common::kReadingFailed;
 	}
 
-	if (!_scripts->applySaveState(scriptState))
+	if (!_scripts->applySaveState(scriptState, runtime))
 		return Common::kReadingFailed;
 	_sceneAudio->applySaveState(audioState);
 	*_puzzleState = puzzleState;

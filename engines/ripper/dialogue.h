@@ -4,6 +4,7 @@
 #define RIPPER_DIALOGUE_H
 
 #include "common/array.h"
+#include "common/noncopyable.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "ripper/controls.h"
@@ -18,8 +19,19 @@ namespace Ripper {
 struct ScriptCommand;
 struct MouseState;
 
-class DialogueChooser {
+class DialogueChooser : private Common::NonCopyable {
 public:
+	struct Choice {
+		Common::String text;
+		uint16 result;
+	};
+
+	struct SaveState {
+		Common::Array<Choice> choices;
+		ChooserModel chooser;
+		bool pending = false;
+	};
+
 	bool initialize(ResourceManager &resources, bool retailPresentation);
 	bool execute(const ScriptCommand &command, bool includeChoice = true);
 	bool service(const MouseState &mouse, uint &result);
@@ -35,12 +47,11 @@ public:
 	void clearPending();
 	void dismissForSceneTransition(const char *reason);
 	bool syncGame(Common::Serializer &serializer);
+	void captureSaveState(SaveState &state) const;
+	bool syncGame(Common::Serializer &serializer, SaveState &state) const;
+	void applySaveState(SaveState &state);
 
 private:
-	struct Choice {
-		Common::String text;
-		uint16 result;
-	};
 	uint measureText(const Common::String &text) const;
 	bool hasScrollArrows() const;
 	uint maximumVisibleChoiceCount() const;

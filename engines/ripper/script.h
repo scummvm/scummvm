@@ -83,20 +83,29 @@ public:
 	bool canSaveGame() const;
 
 	struct SaveState {
+		SaveState() = default;
 		explicit SaveState(const ScriptManager &scripts);
 
-		SceneRuntimeState runtime;
+		Common::String activeMember;
+		Common::String concurrentMember;
+		Common::String concurrentEntryLabel;
+		Common::String previousFrameLabel;
+		uint32 activeFrame = 0;
+		uint16 frontEndActionMask = 0xffff;
+		byte awaitingInteraction = 0;
 		Milestones milestones;
-		DialogueChooser dialogue;
 		Common::Array<Common::String> playedScenes;
-		byte briefingArmed;
-		uint32 briefingSelector;
-		uint16 announcedSelectors;
+		Common::Array<bool> activeInteractionEnabled;
+		DialogueChooser::SaveState dialogue;
+		byte briefingArmed = 0;
+		uint32 briefingSelector = 0;
+		uint16 announcedSelectors = 0;
 	};
 
 	bool syncGame(Common::Serializer &serializer);
-	bool syncGame(Common::Serializer &serializer, SaveState &state);
-	bool applySaveState(SaveState &state);
+	bool syncGame(Common::Serializer &serializer, SaveState &state) const;
+	bool prepareSaveState(const SaveState &state, SceneRuntimeState &runtime) const;
+	bool applySaveState(SaveState &state, SceneRuntimeState &runtime);
 	void logRuntimeFailure(const char *reason) const;
 
 	const CompiledScript &getActiveScript() const { return _runtime.activeScript; }
