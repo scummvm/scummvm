@@ -1466,6 +1466,13 @@ static int streamsGetScene(lua_State *L) {
 	return 1;
 }
 
+// Streams:GetTime(stream), Nancy23: how long the scene of the stream has been
+// running, or -1 when there is none
+static int streamsGetTime(lua_State *L) {
+	lua_pushnumber(L, NancySceneState.getStreams().getSceneTime(luaL_checkstring(L, 2)));
+	return 1;
+}
+
 // Streams:GetStreams(withUI), Nancy21: the names of the running streams, the
 // main stream among them. The one of the UI is only in there when asked for.
 static int streamsGetStreams(lua_State *L) {
@@ -1505,6 +1512,7 @@ static int streamsSetTransform(lua_State *L) {
 static const luaL_Reg kStreamsFunctions[] = {
 	{ "__index", streamsIndex },
 	{ "GetScene", streamsGetScene },
+	{ "GetTime", streamsGetTime },
 	{ "GetStreams", streamsGetStreams },
 	{ "GetZ", streamsGetZ },
 	{ "GetTransform", streamsGetTransform },

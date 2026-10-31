@@ -185,6 +185,11 @@ public:
 	void changeScene(const Common::String &name, const SceneChangeDescription &sceneDescription);
 	void changeScene(const Common::String &name, const Common::String &sceneName, uint16 frameID);
 	Common::String getSceneName(const Common::String &name) const;
+
+	// Nancy23: how long the scene the stream is in has been running, or -1 when
+	// there is none
+	double getSceneTime(const Common::String &name) const;
+
 	bool isRunning(const Common::String &name) const { return find(name) != nullptr; }
 
 	// The stream whose records are running or getting input; null for the main one

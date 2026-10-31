@@ -551,6 +551,24 @@ Common::String SceneStreamManager::getSceneName(const Common::String &name) cons
 	return stream ? stream->getSceneName() : Common::String();
 }
 
+double SceneStreamManager::getSceneTime(const Common::String &name) const {
+#ifdef ENABLE_NANCY_V4
+	const Script::SceneContext *scene = nullptr;
+	if (name.equalsIgnoreCase(kMainStreamName)) {
+		scene = NancySceneState.getScriptScene();
+	} else {
+		const SceneStream *stream = name.empty() ? _running : find(name);
+		scene = stream ? stream->getScriptScene() : nullptr;
+	}
+
+	if (scene) {
+		return scene->getTime();
+	}
+#endif
+
+	return -1.0;
+}
+
 // Nancy17 takes an item out of the inventory while its scene is up, in a stream
 // named after it. The item's scene doesn't put it back: the stream ending does.
 static void returnViewedItem(const Common::String &streamName) {
