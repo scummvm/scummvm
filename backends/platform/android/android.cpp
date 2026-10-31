@@ -676,7 +676,6 @@ void OSystem_Android::setPause(bool value) {
 	}
 }
 
-// TODO Re-eval if we need this here
 Common::HardwareInputSet *OSystem_Android::getHardwareInputSet() {
 	using namespace Common;
 
@@ -686,12 +685,6 @@ Common::HardwareInputSet *OSystem_Android::getHardwareInputSet() {
 	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
 
 	return inputSet;
-}
-
-// TODO Re-eval if we need this here
-Common::KeymapArray OSystem_Android::getGlobalKeymaps() {
-	Common::KeymapArray globalMaps = BaseBackend::getGlobalKeymaps();
-	return globalMaps;
 }
 
 Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings() {
@@ -851,8 +844,8 @@ void OSystem_Android::logMessage(LogMessageType::Type type, const char *message)
 
 Common::String OSystem_Android::getSystemLanguage() const {
 	return Common::String::format("%s_%s",
-							getSystemProperty("persist.sys.language").c_str(),
-							getSystemProperty("persist.sys.country").c_str());
+	                              getSystemProperty("persist.sys.language").c_str(),
+	                              getSystemProperty("persist.sys.country").c_str());
 }
 
 bool OSystem_Android::openUrl(const Common::String &url) {
