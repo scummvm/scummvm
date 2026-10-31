@@ -61,6 +61,7 @@ SmushDecoder::SmushDecoder() {
 	_wave = nullptr;
 	_ownsAudioTrack = false;
 	_blocky16Frames = 0;
+	_frameDelay = 0;
 	_videoPause = false;
 }
 
@@ -203,6 +204,7 @@ bool SmushDecoder::readHeader() {
 		int height = _file->readUint16LE();
 		_file->readUint16LE();
 		int frameRate = _file->readUint32LE();
+		_frameDelay = frameRate;
 
 		int16 flags = _file->readUint16LE();
 		// Output information for checking out the flags

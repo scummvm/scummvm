@@ -180,7 +180,9 @@ bool SmushPlayer::prepareFrame() {
 		if (_videoLooping) {
 			_smushDecoder->rewind();
 			_smushDecoder->start();
-			_smushAnim->anmStart(15, 24589);
+			// The disasm restarts looping movies with the frame rate of the header
+			int delay = _smushDecoder->getFrameDelay();
+			_smushAnim->anmStart(delay ? (delay / 2 + 1000000) / delay : 15, 24589);
 			_smushAnimator->animatorNewAnim(24589, -1, -1);
 		} else {
 			_videoFinished = true;
@@ -199,16 +201,33 @@ int SmushPlayer::animatorRender(int flags) {
 	_internalPalette = _smushDecoder->getPalette();
 
 	int currentFrame = _smushDecoder->getCurFrame();
-	if (!(flags & 0x8000)) {
-		if (_frame != currentFrame)
-			_updateNeeded = true;
+	if (_frame != currentFrame)
+		_updateNeeded = true;
 
-		_frame = currentFrame;
-	}
+	_frame = currentFrame;
 
 	_movieTime = _smushDecoder->getTime();
 
 	return state;
+}
+
+void SmushPlayer::pause(bool p) {
+	Common::StackLock lock(_frameMutex);
+	MoviePlayer::pause(p);
+
+	if (_smushAnimator && !_videoFinished && !_currentVideoIsTheora)
+		_smushAnimator->animatorPause(p);
+}
+
+int32 SmushPlayer::getMovieTime() {
+	if (_demo || _currentVideoIsTheora || !_smushSound)
+		return MoviePlayer::getMovieTime();
+
+	Common::StackLock lock(_frameMutex);
+	if (_videoFinished)
+		return 0;
+
+	return _smushSound->souEngineQueryTime(0);
 }
 
 void SmushPlayer::resetFrameCounter() {
