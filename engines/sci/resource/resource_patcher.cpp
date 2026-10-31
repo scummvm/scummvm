@@ -486,9 +486,65 @@ static const byte torinPassageRussianPic61101[] = {
 };
 
 #pragma mark -
+#pragma mark Gabriel Knight 1
+
+// English font 2 only has 128 glyphs, so Ask About names like "Vévé" and
+// "Schattenjäger" drop é (130) and ä (132). The French, German, and Spanish
+// fonts already include those glyphs in this same face; append them and grow
+// the character table to 133.
+static const byte gk1EnglishFont2[] = {
+	SKIP(2),
+	REPLACE_NUMBER(uint16, 133),
+	SKIP(2),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10), ADJUST_NUMBER(uint16, 10),
+	INSERT_NUMBER(uint16, 1539), // 128 unused
+	INSERT_NUMBER(uint16, 1539), // 129 unused
+	INSERT_NUMBER(uint16, 1541), // 130 é
+	INSERT_NUMBER(uint16, 1539), // 131 unused
+	INSERT_NUMBER(uint16, 1552), // 132 ä
+	SKIP(1267),
+	INSERT(0x00, 0x00), // empty placeholder for unused 128/129/131
+	INSERT(0x05, 0x09, 0x10, 0x20, 0x30, 0x48, 0x78, 0x40, 0x48, 0x30, 0x00), // é from fr/de/es
+	INSERT(0x06, 0x09, 0x48, 0x00, 0x30, 0x08, 0x38, 0x48, 0x48, 0x34, 0x00), // ä from fr/de/es
+	END
+};
+
+#pragma mark -
 #pragma mark Patch table
 
 static const GameResourcePatch resourcePatches[] = {
+	{ GID_GK1,            SCI_MEDIA_ALL,    Common::EN_ANY,   kResourceTypeFont,        2, gk1EnglishFont2,            false },
 	{ GID_LAURABOW2,      SCI_MEDIA_CD,     Common::UNK_LANG, kResourceTypeView,      828, lauraBow2CdView828,         false },
 	{ GID_LSL1,           SCI_MEDIA_ALL,    Common::RU_RUS,   kResourceTypeSound,     205, lsl1RussianSound205,        false },
 	{ GID_PHANTASMAGORIA, SCI_MEDIA_ALL,    Common::UNK_LANG, kResourceTypeView,    64001, phant1View64001Palette,     false },
