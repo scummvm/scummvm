@@ -107,9 +107,9 @@ void PrincessSaved::spawnTimeMachine() {
 		int y = baseY + g_engine->getRandomNumber(11, 15);
 
 		if (_G(map).getOverworldTileAt(x, y) == Data::TILE_WOODS) {
-			if (_G(overworldEntityCount) < Data::OVERWORLD_ENTITY_COUNT - 1) {
-				++_G(overworldEntityCount);
-				auto &e = _G(savegame)._overworldEntities[_G(overworldEntityCount)];
+			if (_G(savegame)._overworldEntityCount < Data::OVERWORLD_ENTITY_COUNT - 1) {
+				++_G(savegame)._overworldEntityCount;
+				auto &e = _G(savegame)._overworldEntities[_G(savegame)._overworldEntityCount];
 				e._type = Data::TILE_TIME_MACHINE;
 				e._data = Data::TILE_WOODS;
 				e._x = x;

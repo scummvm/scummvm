@@ -219,9 +219,9 @@ bool OverworldLogic::xit() {
 	// Drop the vehicle where the player stands as a re-boardable entity,
 	// then carry on afoot
 	int vehicleTile = sg._overworldEntities[0]._type;
-	if (_G(overworldEntityCount) < Data::OVERWORLD_ENTITY_COUNT - 1) {
-		++_G(overworldEntityCount);
-		auto &e = sg._overworldEntities[_G(overworldEntityCount)];
+	if (_G(savegame)._overworldEntityCount < Data::OVERWORLD_ENTITY_COUNT - 1) {
+		++_G(savegame)._overworldEntityCount;
+		auto &e = sg._overworldEntities[_G(savegame)._overworldEntityCount];
 		e._type = vehicleTile;
 		e._data = terrain;
 		e._x = pos.x;
@@ -362,7 +362,7 @@ void OverworldLogic::moveDown() {
 }
 
 void OverworldLogic::continentChanged(int oldContinent) {
-	for (int index = 1; index < _G(overworldEntityCount); ++index) {
+	for (int index = 1; index < _G(savegame)._overworldEntityCount; ++index) {
 		auto &e = _G(savegame)._overworldEntities[index];
 		int continent = _G(map).getContinentAt(e._x, e._y);
 
@@ -433,9 +433,9 @@ void OverworldLogic::generateCreatures() {
 		return;
 
 	// Add the new entity (addOverworldEntity)
-	if (_G(overworldEntityCount) < Data::OVERWORLD_ENTITY_COUNT - 1) {
-		++_G(overworldEntityCount);
-		auto &e = _G(savegame)._overworldEntities[_G(overworldEntityCount)];
+	if (_G(savegame)._overworldEntityCount < Data::OVERWORLD_ENTITY_COUNT - 1) {
+		++_G(savegame)._overworldEntityCount;
+		auto &e = _G(savegame)._overworldEntities[_G(savegame)._overworldEntityCount];
 		e._type = tile;
 		e._data = data;
 		e._x = x;
@@ -449,7 +449,7 @@ void OverworldLogic::generateCreatures() {
 void OverworldLogic::updateCreatures() {
 	Common::Stack<int> attackers;
 
-	for (int idx = 1; idx <= _G(overworldEntityCount); ++idx) {
+	for (int idx = 1; idx <= _G(savegame)._overworldEntityCount; ++idx) {
 		auto &e = _G(savegame)._overworldEntities[idx];
 
 		if (e._type >= Data::TILE_FIRST_MONSTER && e._type <= Data::TILE_LAST_MONSTER) {
@@ -634,7 +634,7 @@ void OverworldLogic::castPrayer() {
 		// at the player is whisked away
 		Data::Savegame &sg = _G(savegame);
 
-		for (int idx = 1; idx <= _G(overworldEntityCount); ++idx) {
+		for (int idx = 1; idx <= _G(savegame)._overworldEntityCount; ++idx) {
 			Data::OverworldEntity &e = sg._overworldEntities[idx];
 			if (e._type < Data::TILE_FIRST_MONSTER)
 				continue;

@@ -142,7 +142,7 @@ void Savegame::synchronizeOriginal(Common::Serializer &s) {
 
 int Savegame::getOverworldEntityAt(int x, int y, int startingIndex) const {
 	int foundIndex = -1;
-	for (; startingIndex <= _G(overworldEntityCount) && foundIndex == -1; ++startingIndex) {
+	for (; startingIndex <= _overworldEntityCount && foundIndex == -1; ++startingIndex) {
 		const auto &e = _overworldEntities[startingIndex];
 		if (e._x == x && e._y == y)
 			foundIndex = startingIndex;
@@ -157,10 +157,10 @@ void Savegame::removeOverworldCreatureAt(int x, int y) {
 		return;
 
 	// Shift all following entities down a slot, removing the found one
-	for (int idx = creatureNum; idx < _G(overworldEntityCount); ++idx)
+	for (int idx = creatureNum; idx < _overworldEntityCount; ++idx)
 		_overworldEntities[idx] = _overworldEntities[idx + 1];
 
-	--_G(overworldEntityCount);
+	--_overworldEntityCount;
 }
 
 int Savegame::getLocationEntityAt(int x, int y) const {

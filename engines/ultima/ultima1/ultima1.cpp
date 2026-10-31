@@ -111,6 +111,13 @@ Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
 	_savegame.synchronize(s);
 
 	if (s.isLoading()) {
+		_creaturesCount = 0;
+		for (int i = 1; i <= _savegame._overworldEntityCount; ++i) {
+			int type = _savegame._overworldEntities[i]._type;
+			if (type >= Data::TILE_FIRST_MONSTER && type <= Data::TILE_LAST_MONSTER)
+				++_creaturesCount;
+		}
+
 		_G(map).load(_G(savegame)._mapNum);
 	}
 

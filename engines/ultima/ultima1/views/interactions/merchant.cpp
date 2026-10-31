@@ -301,7 +301,7 @@ bool Merchant::isWenchNearby() const {
 
 int Merchant::overworldTransportCount() const {
 	int count = 0;
-	for (int idx = 1; idx <= _G(overworldEntityCount); ++idx) {
+	for (int idx = 1; idx <= _G(savegame)._overworldEntityCount; ++idx) {
 		int type = _G(savegame)._overworldEntities[idx]._type;
 		if (type >= Data::TILE_HORSE && type <= Data::TILE_SHUTTLE)
 			++count;
@@ -879,9 +879,9 @@ void Merchant::spawnTransport(int transportId) {
 			++dy;
 	} while (dy < 2 && !match);
 
-	if (_G(overworldEntityCount) < Data::OVERWORLD_ENTITY_COUNT - 1) {
-		++_G(overworldEntityCount);
-		auto &e = sg._overworldEntities[_G(overworldEntityCount)];
+	if (_G(savegame)._overworldEntityCount < Data::OVERWORLD_ENTITY_COUNT - 1) {
+		++_G(savegame)._overworldEntityCount;
+		auto &e = sg._overworldEntities[_G(savegame)._overworldEntityCount];
 		e._type = TRANSPORT_TILES[transportId];
 		e._data = terrain;
 		e._x = pos.x + dx;

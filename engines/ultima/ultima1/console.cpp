@@ -251,7 +251,7 @@ bool Console::cmdEnemy(int argc, const char **argv) {
 		return true;
 	}
 
-	if (_G(overworldEntityCount) >= Data::OVERWORLD_ENTITY_COUNT - 1) {
+	if (_G(savegame)._overworldEntityCount >= Data::OVERWORLD_ENTITY_COUNT - 1) {
 		debugPrintf("No free entity slots\n");
 		return true;
 	}
@@ -270,8 +270,8 @@ bool Console::cmdEnemy(int argc, const char **argv) {
 						_G(map).getTileAt(x, y) != terrain)
 					continue;
 
-				++_G(overworldEntityCount);
-				auto &e = sg._overworldEntities[_G(overworldEntityCount)];
+				++_G(savegame)._overworldEntityCount;
+				auto &e = sg._overworldEntities[_G(savegame)._overworldEntityCount];
 				e._type = Data::TILE_FIRST_MONSTER + typeIdx * 2;
 				e._data = terrain;
 				e._x = x;

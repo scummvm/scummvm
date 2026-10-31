@@ -197,7 +197,7 @@ bool Dead::tick() {
 }
 
 void Dead::removeCreaturesOnContinent(int continent) {
-	for (int index = 1; index < _G(overworldEntityCount); ++index) {
+	for (int index = 1; index < _G(savegame)._overworldEntityCount; ++index) {
 		auto &e = _G(savegame)._overworldEntities[index];
 
 		if (_G(map).getContinentAt(e._x, e._y) == continent) {

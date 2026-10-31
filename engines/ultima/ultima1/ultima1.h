@@ -89,7 +89,6 @@ public:
 	Data::SpaceStarfield _starfield;
 	Data::Savegame _savegame;
 	Common::SharedPtr<Logic::Logic> _logic;
-	int _overworldEntityCount = 0;
 	int _creaturesCount = 0;
 	uint32 _moveCtr = 0;
 	int _transportFoodCtr = 0;

@@ -410,6 +410,8 @@ void CreateCharacter::confirmAndSave() {
 	p._enemyVessels = 0;
 	p._signMarker = -1;
 	p._moveCount = 0;
+	p._overworldEntityCount = 0;
+	_G(creaturesCount) = 0;
 
 	_cursor.hide();
 
