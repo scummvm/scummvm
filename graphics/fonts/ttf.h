@@ -93,8 +93,10 @@ enum TTFSizeMode {
  * @param stream     Stream object to load font data from.
  * @param size       The point size to load.
  * @param sizeMode   The point size definition used for the size parameter.
- * @param dpi        The dpi to use for size calculations, by default 72dpi
- *                   are used.
+ * @param xdpi       The dpi to use for horizontal size calculations,
+ *                   by default 72dpi are used.
+ * @param ydpi       The dpi to use for vertical size calculations,
+ *                   by default 72dpi are used.
  * @param renderMode FreeType2 mode used to render glyphs. @see TTFRenderMode
  * @param mapping    A mapping from code points 0-255 into UTF-32 code points.
  *                   This can be used to support various 8bit character sets.
@@ -102,9 +104,13 @@ enum TTFSizeMode {
  *                   loading fails in case no glyph for it is found. When this
  *                   is non-null only characters given in the mapping are
  *                   supported.
+ * @param faceIndex  The index of face to load when loading a TTC file.
+ *                   Otherwise, always set to 0.
+ * @param fakeBold   Fake bold when the bold face is not available.
+ * @param fakeItalic Fake italic when the italic face is not available.
  * @return 0 in case loading fails, otherwise a pointer to the Font object.
  */
-Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0, bool stemDarkening = false);
+Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0, bool stemDarkening = false, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 
 /**
  * Loads a TTF font file from the common fonts archive.
@@ -112,8 +118,10 @@ Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disp
  * @param filename   The name of the font to load.
  * @param size       The point size to load.
  * @param sizeMode   The point size definition used for the size parameter.
- * @param dpi        The dpi to use for size calculations, by default 72dpi
- *                   are used.
+ * @param xdpi       The dpi to use for horizontal size calculations,
+ *                   by default 72dpi are used.
+ * @param ydpi       The dpi to use for vertical size calculations,
+ *                   by default 72dpi are used.
  * @param renderMode FreeType2 mode used to render glyphs. @see TTFRenderMode
  * @param mapping    A mapping from code points 0-255 into UTF-32 code points.
  *                   This can be used to support various 8bit character sets.
@@ -121,9 +129,13 @@ Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disp
  *                   loading fails in case no glyph for it is found. When this
  *                   is non-null only characters given in the mapping are
  *                   supported.
+ * @param faceIndex  The index of face to load when loading a TTC file.
+ *                   Otherwise, always set to 0.
+ * @param fakeBold   Fake bold when the bold face is not available.
+ * @param fakeItalic Fake italic when the italic face is not available.
  * @return 0 in case loading fails, otherwise a pointer to the Font object.
  */
-Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0);
+Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0, bool stemDarkening = false, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 
 /**
  * Finds the specified face in a collection of TTF/TTC font files.
@@ -155,4 +167,3 @@ void shutdownTTF();
 #endif
 
 #endif
-
