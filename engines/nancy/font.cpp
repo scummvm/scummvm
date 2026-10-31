@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/file.h"
 
 #include "graphics/fontman.h"
@@ -215,7 +216,8 @@ void Font::setSystemFont(const Common::String &name, const Common::String &faceN
 			return;
 		}
 
-		warning("Could not load font file %s", fileName.toString().c_str());
+		// Nancy24 asks for Digital Display2.ttf, which doesn't come with it
+		debugC(1, kDebugEngine, "Could not load font file %s", fileName.toString().c_str());
 	}
 
 	// None of the Windows fonts the game asks for (Tahoma, Arial, Lucida Handwriting)
