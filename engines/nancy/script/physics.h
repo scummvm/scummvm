@@ -107,6 +107,9 @@ public:
 	void onContact(b2Shape *a, b2Shape *b, double x, double y);
 	void onContactResolved(b2Shape *a, b2Shape *b, double x, double y, double impulse);
 
+	// Nancy22: the world steps a fixed number of times a second
+	void advance(double seconds);
+
 protected:
 	void readTable(int tableIndex) override;
 	void run(double sceneTime, double elapsedTime) override;

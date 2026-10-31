@@ -242,8 +242,12 @@ void PhysicsRecord::run(double sceneTime, double elapsedTime) {
 		return;
 	}
 
-	// The steps that are due by now
-	_stepClock += elapsedTime;
+	advance(elapsedTime);
+}
+
+// Takes the steps that are due after that much more time
+void PhysicsRecord::advance(double seconds) {
+	_stepClock += seconds;
 	const int numSteps = (int)(_stepClock * _stepsPerSecond);
 	const float32 stepTime = (float32)(1.0 / _stepsPerSecond);
 
@@ -373,12 +377,21 @@ static int physicsDestroyJoint(lua_State *L) {
 	return 0;
 }
 
+// world:FastForward(seconds), Nancy23, takes the steps of that much time at
+// once. The puzzle with the bento box shakes up its hint tiles with it.
+static int physicsFastForward(lua_State *L) {
+	PhysicsRecord *record = (PhysicsRecord *)checkRecord(L, 1);
+	record->advance(luaL_checknumber(L, 2));
+	return 0;
+}
+
 bool PhysicsRecord::getField(const Common::String &key) {
 	static const luaL_Reg kWorldFunctions[] = {
 		{ "CreateBody", physicsCreateBody },
 		{ "DestroyBody", physicsDestroyBody },
 		{ "CreateJoint", physicsCreateJoint },
 		{ "DestroyJoint", physicsDestroyJoint },
+		{ "FastForward", physicsFastForward },
 		{ nullptr, nullptr }
 	};
 
