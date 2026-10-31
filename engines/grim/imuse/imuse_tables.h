@@ -38,8 +38,16 @@ struct IMuseStateTable {
 	int pan;
 };
 
+struct IMuseDemoFileTable {
+	char name[32];
+	char fileName[32];
+};
+
 extern const IMuseStateTable _grimStateMusicTable[181];
 extern const IMuseStateTable _grimSeqMusicTable[41];
+extern const IMuseStateTable _grimDemoStateMusicTable[23];
+extern const IMuseStateTable _grimDemoSeqMusicTable[2];
+extern const IMuseDemoFileTable _grimDemoMusicFileTable[12];
 
 // Sound id of a state, given its position in the table of the old iMUSE
 int grimLegacyStateSoundId(int tableIndex);

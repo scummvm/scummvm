@@ -55,7 +55,11 @@ void Lua_V1::ImStartSound() {
 	int priority = (int)lua_getnumber(priorityObj);
 	int group = (int)lua_getnumber(groupObj);
 
-	lua_pushnumber(g_imuse->soundsLoadStartSound(soundName, priority, group));
+	int result = g_imuse->soundsLoadStartSound(soundName, priority, group);
+
+	// The demo doesn't return anything
+	if (!(g_grim->getGameFlags() & ADGF_DEMO))
+		lua_pushnumber(result);
 }
 
 void Lua_V1::ImStopSound() {
@@ -165,7 +169,7 @@ void Lua_V1::ImSetParam() {
 
 	int param = (int)lua_getnumber(paramObj);
 	int value = (int)lua_getnumber(valueObj);
-	if (value < 0)
+	if (value < 0 && !(g_grim->getGameFlags() & ADGF_DEMO))
 		value = 0;
 
 	g_imuse->soundsSetParam(getSoundKey(nameObj), param, value);
@@ -190,8 +194,11 @@ void Lua_V1::ImFadeParam() {
 	lua_Object valueObj = lua_getparam(3);
 	lua_Object durationObj = lua_getparam(4);
 
+	bool demo = g_grim->getGameFlags() & ADGF_DEMO;
+
 	if (!lua_isstring(nameObj) && !lua_isnumber(nameObj)) {
-		lua_pushnumber(0);
+		if (!demo)
+			lua_pushnumber(0);
 		return;
 	}
 	if (!lua_isnumber(opcodeObj) || !lua_isnumber(valueObj) || !lua_isnumber(durationObj))
@@ -199,7 +206,7 @@ void Lua_V1::ImFadeParam() {
 
 	int opcode = (int)lua_getnumber(opcodeObj);
 	int value = (int)lua_getnumber(valueObj);
-	if (value < 0)
+	if (value < 0 && !demo)
 		value = 0;
 	int duration = (int)lua_getnumber(durationObj);
 
@@ -210,6 +217,12 @@ void Lua_V1::ImSetState() {
 	lua_Object stateObj = lua_getparam(1);
 	if (!lua_isnumber(stateObj))
 		return;
+
+	// The demo sets the state right away and returns the new one
+	if (g_grim->getGameFlags() & ADGF_DEMO) {
+		lua_pushnumber(g_imuse->imSetState((int)lua_getnumber(stateObj)));
+		return;
+	}
 
 	g_imuseState = (int)lua_getnumber(stateObj);
 }

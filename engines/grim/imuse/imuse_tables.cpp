@@ -253,6 +253,53 @@ const IMuseStateTable _grimSeqMusicTable[41] = {
 	{"2399 - End Credits",      2, 2399, "seqEndCredits",        0,  0, 200, 127, 0 }, /* 040 */
 };
 
+// The demo's tables have no pan field
+const IMuseStateTable _grimDemoStateMusicTable[23] = {
+	{"",                        0,    0, "STATE_NULL",           0,  0,   0, 127, 0}, /* 000 */
+	{"",                        0, 1000, "stateNoChange",        0,  0,   0, 127, 0}, /* 001 */
+	{"MO - Manny's Office",     3, 1001, "stateMO",              0,  0,   0, 127, 0}, /* 002 */
+	{"MO - Manny's Office",     3, 1002, "stateHA_INTLS",        0,  0,   0, 127, 0}, /* 003 */
+	{"MO - Manny's Office",     3, 1003, "stateHA",              0,  0,   0, 127, 0}, /* 004 */
+	{"DO - Domino's Office",    3, 1004, "stateDO",              0,  0,   0, 127, 0}, /* 005 */
+	{"CO - Copal's Office",     3, 1005, "stateCO",              0,  0,   0, 127, 0}, /* 006 */
+	{"LE - Ledge",              3, 1010, "stateLE",              0,  0,   0, 127, 0}, /* 007 */
+	{"RF - Roof",               3, 1011, "stateRF",              0,  0,   0, 127, 0}, /* 008 */
+	{"TU - Tube Room",          3, 1020, "stateTU",              0,  0,   0, 127, 0}, /* 009 */
+	{"LO - Lobby",              3, 1021, "stateLO",              0,  0,   0, 127, 0}, /* 010 */
+	{"PK - Packing Room",       3, 1022, "statePK",              0,  0,   0, 127, 0}, /* 011 */
+	{"PK - Packing Room",       3, 1030, "stateGA",              0,  0,   0, 127, 0}, /* 012 */
+	{"PK - Packing Room",       3, 1031, "stateGS",              0,  0,   0, 127, 0}, /* 013 */
+	{"Festival Wet",            3, 1040, "stateAL",              1,  0,  80,  60, 0}, /* 014 */
+	{"Festival Dry",            3, 1041, "stateFE",              1,  0,   0, 127, 0}, /* 015 */
+	{"Festival Dry",            3, 1042, "stateST",              1,  0,  80,  50, 0}, /* 016 */
+	{"Festival Dry",            3, 1043, "stateOS",              1,  0,  80,  64, 0}, /* 017 */
+	{"Festival Wet",            3, 1044, "stateRP",              1,  0,  80,  75, 0}, /* 018 */
+	{"HQ - Headquarters",       3, 1050, "stateHQ",              0,  0,   0, 127, 0}, /* 019 */
+	{"",                        3, 1060, "stateLR",              0,  0,   0, 127, 0}, /* 020 */
+	{"",                        0, 5000, "stateCredits",         0,  0,   0, 127, 0}, /* 021 */
+	{"",                        0,    1, "stateMenu",            0,  0,   0, 127, 0}, /* 022 */
+};
+
+const IMuseStateTable _grimDemoSeqMusicTable[2] = {
+	{"",                        0, 2000, "SEQ_NULL",             0,  0,   0, 127, 0}, /* 000 */
+	{"Rope Climb",              3, 2100, "seqClimbRope",         0,  0,   0, 127, 0}, /* 001 */
+};
+
+const IMuseDemoFileTable _grimDemoMusicFileTable[12] = {
+	{"CO - Copal's Office",  "CO - Copal's Office.IMC"},
+	{"DO - Domino's Office", "DO - Domino's Office.IMC"},
+	{"Festival Dry",         "Festival Dry.IMC"},
+	{"Festival Wet",         "Festival Wet.IMC"},
+	{"HQ - Headquarters",    "HQ - Headquarters.IMC"},
+	{"LE - Ledge",           "LE - Ledge.IMC"},
+	{"LO - Lobby",           "LO - Lobby.IMC"},
+	{"MO - Manny's Office",  "MO - Manny's Office.IMC"},
+	{"PK - Packing Room",    "PK - Packing Room.IMC"},
+	{"RF - Roof",            "RF - Roof.IMC"},
+	{"Rope Climb",           "Rope Climb.IMC"},
+	{"TU - Tube Room",       "TU - Tube Room.IMC"},
+};
+
 // The state table of the previous iMUSE implementation had some entries in a different order, so
 // we have to account for that when reloading older savegames...
 static const struct {
