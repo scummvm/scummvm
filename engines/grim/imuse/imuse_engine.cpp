@@ -42,11 +42,12 @@ void IMuse::timer_handler(void *refCon) {
 	imuse->imHeartbeat();
 }
 
-IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode, bool demo)
+IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode, bool demo, bool remastered)
 	: _mixer(mixer), _mutex(mutex) {
 	assert(mixer);
 
 	_demo = demo;
+	_remastered = remastered;
 
 	// 50 Hz rate for the callback
 	_callbackFps = IMUSE_TIMER_BASE_RATE_HZ;
@@ -115,7 +116,9 @@ IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool low
 	_voiceRemainderSize = 0;
 	_voiceRemainderCapacity = 0;
 	_voiceRemainderPos = 0;
-	setupHMI(IMUSE_HMI_HEAP_SIZE);
+	// The remastered has no HMI effects
+	if (!_remastered)
+		setupHMI(IMUSE_HMI_HEAP_SIZE);
 
 	imInitialize();
 	if (_demo) {
@@ -153,7 +156,9 @@ IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool low
 	_nominalBufferCount = _maxQueuedStreams;
 	_underrunCooldown = _maxQueuedStreams;
 
-	g_system->getTimerManager()->installTimerProc(timer_handler, 1000000 / _callbackFps, this, "IMuse");
+	// The remastered calls the heartbeat every 16 ms, but its counters still advance by 20 ms each time
+	int timerPeriodUsec = _remastered ? IMUSE_REMASTERED_TIMER_PERIOD_USEC : 1000000 / _callbackFps;
+	g_system->getTimerManager()->installTimerProc(timer_handler, timerPeriodUsec, this, "IMuse");
 }
 
 IMuse::~IMuse() {

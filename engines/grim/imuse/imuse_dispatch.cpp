@@ -25,11 +25,14 @@
 namespace Grim {
 
 int IMuse::dispatchInit() {
-	_dispatchBuffer = (uint8 *)malloc(IMUSE_SMALL_FADES * IMUSE_SMALL_FADE_DIM + IMUSE_LARGE_FADE_DIM * IMUSE_LARGE_FADES);
+	int largeFadeDim = _remastered ? IMUSE_REMASTERED_LARGE_FADE_DIM : IMUSE_LARGE_FADE_DIM;
+	int smallFadeDim = _remastered ? IMUSE_REMASTERED_SMALL_FADE_DIM : IMUSE_SMALL_FADE_DIM;
+
+	_dispatchBuffer = (uint8 *)malloc(IMUSE_SMALL_FADES * smallFadeDim + largeFadeDim * IMUSE_LARGE_FADES);
 
 	if (_dispatchBuffer) {
 		_dispatchLargeFadeBufs = _dispatchBuffer;
-		_dispatchSmallFadeBufs = _dispatchBuffer + (IMUSE_LARGE_FADE_DIM * IMUSE_LARGE_FADES);
+		_dispatchSmallFadeBufs = _dispatchBuffer + (largeFadeDim * IMUSE_LARGE_FADES);
 
 		for (int i = 0; i < IMUSE_LARGE_FADES; i++) {
 			_dispatchLargeFadeFlags[i] = 0;
@@ -1246,13 +1249,15 @@ IMuseStreamZone *IMuse::dispatchAllocateStreamZone() {
 }
 
 uint8 *IMuse::dispatchAllocateFade(int32 &fadeSize, const char *function) {
+	int largeFadeDim = _remastered ? IMUSE_REMASTERED_LARGE_FADE_DIM : IMUSE_LARGE_FADE_DIM;
+	int smallFadeDim = _remastered ? IMUSE_REMASTERED_SMALL_FADE_DIM : IMUSE_SMALL_FADE_DIM;
 	uint8 *allocatedFadeBuf = nullptr;
-	if (fadeSize > IMUSE_LARGE_FADE_DIM) {
+	if (fadeSize > largeFadeDim) {
 		debug(5, "IMuse::dispatchAllocateFade(): WARNING: requested fade too large (%d) in %s()", fadeSize, function);
-		fadeSize = IMUSE_LARGE_FADE_DIM;
+		fadeSize = largeFadeDim;
 	}
 
-	if (fadeSize <= IMUSE_SMALL_FADE_DIM) { // Small fade
+	if (fadeSize <= smallFadeDim) { // Small fade
 		for (int i = 0; i <= IMUSE_SMALL_FADES; i++) {
 			if (i == IMUSE_SMALL_FADES) {
 				debug(5, "IMuse::dispatchAllocateFade(): couldn't allocate small fade buffer in %s()", function);
@@ -1262,7 +1267,7 @@ uint8 *IMuse::dispatchAllocateFade(int32 &fadeSize, const char *function) {
 
 			if (!_dispatchSmallFadeFlags[i]) {
 				_dispatchSmallFadeFlags[i] = 1;
-				allocatedFadeBuf = &_dispatchSmallFadeBufs[IMUSE_SMALL_FADE_DIM * i];
+				allocatedFadeBuf = &_dispatchSmallFadeBufs[smallFadeDim * i];
 				break;
 			}
 		}
@@ -1276,14 +1281,14 @@ uint8 *IMuse::dispatchAllocateFade(int32 &fadeSize, const char *function) {
 
 			if (!_dispatchLargeFadeFlags[i]) {
 				_dispatchLargeFadeFlags[i] = 1;
-				allocatedFadeBuf = &_dispatchLargeFadeBufs[IMUSE_LARGE_FADE_DIM * i];
+				allocatedFadeBuf = &_dispatchLargeFadeBufs[largeFadeDim * i];
 				break;
 			}
 		}
 
 		// Fallback to a small fade if large fades are unavailable
 		if (!allocatedFadeBuf) {
-			fadeSize = IMUSE_SMALL_FADE_DIM;
+			fadeSize = smallFadeDim;
 			for (int i = 0; i <= IMUSE_SMALL_FADES; i++) {
 				if (i == IMUSE_SMALL_FADES) {
 					debug(5, "IMuse::dispatchAllocateFade(): couldn't allocate small fade buffer in %s()", function);
@@ -1293,7 +1298,7 @@ uint8 *IMuse::dispatchAllocateFade(int32 &fadeSize, const char *function) {
 
 				if (!_dispatchSmallFadeFlags[i]) {
 					_dispatchSmallFadeFlags[i] = 1;
-					allocatedFadeBuf = &_dispatchSmallFadeBufs[IMUSE_SMALL_FADE_DIM * i];
+					allocatedFadeBuf = &_dispatchSmallFadeBufs[smallFadeDim * i];
 					break;
 				}
 			}
@@ -1306,9 +1311,12 @@ uint8 *IMuse::dispatchAllocateFade(int32 &fadeSize, const char *function) {
 void IMuse::dispatchDeallocateFade(IMuseDispatch *dispatchPtr, const char *function) {
 	// This function flags the fade corresponding to our fadeBuf as unused
 
+	int largeFadeDim = _remastered ? IMUSE_REMASTERED_LARGE_FADE_DIM : IMUSE_LARGE_FADE_DIM;
+	int smallFadeDim = _remastered ? IMUSE_REMASTERED_SMALL_FADE_DIM : IMUSE_SMALL_FADE_DIM;
+
 	// First, check if our fade buffer is one of the large fade buffers
 	for (int i = 0; i < IMUSE_LARGE_FADES; i++) {
-		if (_dispatchLargeFadeBufs + (IMUSE_LARGE_FADE_DIM * i) == dispatchPtr->fadeBuf) { // Found it!
+		if (_dispatchLargeFadeBufs + (largeFadeDim * i) == dispatchPtr->fadeBuf) { // Found it!
 			if (_dispatchLargeFadeFlags[i] == 0) {
 				debug(5, "IMuse::dispatchDeallocateFade(): redundant large fade buf de-allocation in %s()", function);
 			}
@@ -1319,7 +1327,7 @@ void IMuse::dispatchDeallocateFade(IMuseDispatch *dispatchPtr, const char *funct
 
 	// If not, check between the small fade buffers
 	for (int j = 0; j < IMUSE_SMALL_FADES; j++) {
-		if (_dispatchSmallFadeBufs + (IMUSE_SMALL_FADE_DIM * j) == dispatchPtr->fadeBuf) { // Found it!
+		if (_dispatchSmallFadeBufs + (smallFadeDim * j) == dispatchPtr->fadeBuf) { // Found it!
 			if (_dispatchSmallFadeFlags[j] == 0) {
 				debug(5, "IMuse::dispatchDeallocateFade(): redundant small fade buf de-allocation in %s()", function);
 			}
