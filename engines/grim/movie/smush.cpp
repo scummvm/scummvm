@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "engines/grim/movie/codecs/smush_decoder.h"
 #include "engines/grim/movie/smush.h"
 #include "engines/grim/movie/smush_animator.h"
@@ -127,7 +129,6 @@ SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	warning("VideoTheoraPlayer::initialize - Theora support not compiled in, video will be skipped");
 	_theoraDecoder = nullptr;
 #endif
-	//_smushDecoder->setDemo(_demo);
 }
 
 bool SmushPlayer::loadFile(const Common::String &filename) {
@@ -137,7 +138,7 @@ bool SmushPlayer::loadFile(const Common::String &filename) {
 	if (!_demo)
 		success = _videoDecoder->loadStream(g_resourceloader->openNewStreamFile(filename.c_str()));
 	else
-		success = _videoDecoder->loadFile(Common::Path(filename));
+		success = Common::File::exists(Common::Path(filename));
 
 	if (!success) {
 #if defined (USE_THEORADEC)
@@ -162,9 +163,6 @@ bool SmushPlayer::loadFile(const Common::String &filename) {
 }
 
 void SmushPlayer::init() {
-	if (!_currentVideoIsTheora && !_demo)
-		_smushDecoder->setLooping(_videoLooping);
-
 	MoviePlayer::init();
 
 	if (_demo && !_currentVideoIsTheora) {
@@ -355,12 +353,6 @@ void SmushPlayer::handleFrame() {
 			_videoFinished = true;
 			g_grim->setMode(GrimEngine::NormalMode);
 			deinit();
-			return;
-		} else {
-			if (!_currentVideoIsTheora) {
-				_smushDecoder->rewind(); // This doesn't handle if looping fails.
-				_smushDecoder->start();
-			}
 		}
 	}
 }
@@ -412,12 +404,8 @@ void SmushPlayer::restore(SaveGame *state) {
 	}
 
 	if (isPlaying() && !_currentVideoIsTheora) {
-		if (_smushAnim) {
-			_frame = -1;
-			_movieTime = 0;
-		} else {
-			_smushDecoder->seek((uint32)_movieTime);
-		}
+		_frame = -1;
+		_movieTime = 0;
 
 		_smushDecoder->start();
 		timerCallback(this);

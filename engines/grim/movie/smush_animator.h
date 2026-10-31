@@ -33,6 +33,7 @@ namespace Grim {
 
 class SmushDecoder;
 class Blocky8;
+class Codec48Decoder;
 
 struct SmushDemoBitmap {
 	byte *pixels;
@@ -107,6 +108,7 @@ private:
 	SmushDemoStream *_stream;
 	SmushDemoClient *_client;
 	Blocky8 *_blocky8;
+	Codec48Decoder *_codec48;
 
 	int _refCount;
 	SmushDemoBitmap *_bitmap;

@@ -56,7 +56,7 @@ public:
 	~Blocky8();
 	void init(int width, int height);
 	void deinit();
-	bool decode(byte *dst, const byte *src, int flags = 0);
+	bool decode(byte *dst, const byte *src, int flags);
 };
 
 } // End of namespace Grim

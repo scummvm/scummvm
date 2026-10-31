@@ -24,64 +24,89 @@
 #include "common/textconsole.h"
 
 #include "engines/grim/movie/codecs/codec48.h"
+#include "engines/grim/movie/smush_animator.h"
 
 namespace Grim {
 
 Codec48Decoder::Codec48Decoder() {
-	_frameSize = 640 * 480; // Yes, this is correct. Looks like the buffers are always this size
-
+	_initialized = false;
 	_curBuf = 0;
-	_deltaBuf[0] = new byte[_frameSize * 2];
-	_deltaBuf[1] = _deltaBuf[0] + _frameSize;
+	_buffer = nullptr;
+	_deltaBuf[0] = nullptr;
+	_deltaBuf[1] = nullptr;
+	_width = 0;
+	_height = 0;
+	_blockX = 0;
+	_blockY = 0;
+	_lastBlockX = 10000;
+	_lastBlockY = 10000;
+	_pitch = 0;
 
 	_offsetTable = new int16[255];
 	_tableLastPitch = -1;
 	_tableLastIndex = -1;
+	_prevSeqNb = 0;
 
-	_interTable = nullptr;
+	_interTable = new byte[65536]();
 }
 
-void Codec48Decoder::init(int width, int height) {
-	if (_width == width && _height == height)
-		return;
-	deinit();
+int Codec48Decoder::init(int width, int height) {
+	_buffer = new byte[width * height * 2]();
+	_deltaBuf[0] = _buffer;
+	_deltaBuf[1] = _buffer + width * height;
 	_width = width;
 	_height = height;
-
-	_blockX = (_width + 7) / 8;
-	_blockY = (_height + 7) / 8;
-	_pitch = _blockX * 8;
-
-	// don't support when this is not equal yet
-	assert(_width == _pitch);
+	_curBuf = 0;
+	_initialized = true;
+	return 0;
 }
 
 void Codec48Decoder::deinit() {
+	delete[] _buffer;
+	_buffer = nullptr;
+	_initialized = false;
 }
 
 Codec48Decoder::~Codec48Decoder() {
-	delete[] _deltaBuf[0];
+	deinit();
 	delete[] _offsetTable;
 	delete[] _interTable;
 }
 
-bool Codec48Decoder::decode(byte *dst, const byte *src) {
+int Codec48Decoder::decode(const SmushDemoBitmap *bitmap, const SmushDemoRect *rect, int x, int y, const byte *chunk, int flags, SmushDemoClient *client) {
+	if (!_initialized)
+		return -1;
+
 	// The header is identical to codec 37, except the flags field is somewhat different
+	const byte *header = chunk + 14;
+	const byte *gfxData = header + 0x10;
 
-	const byte *gfxData = src + 0x10;
+	int width = (int16)READ_LE_UINT16(chunk + 6);
+	int height = (int16)READ_LE_UINT16(chunk + 8);
+	if (width > _width)
+		return -1;
+	if (height > _height)
+		return -1;
 
-	makeTable(_pitch, src[1]);
+	_blockX = (width + 7) / 8;
+	_blockY = (height + 7) / 8;
+	_pitch = _blockX * 8;
 
-	int16 seqNb = READ_LE_UINT16(src + 2);
+	makeTable(_pitch, header[1]);
 
-	if (seqNb == 0)
-		memset(_deltaBuf[0], 0, _frameSize * 2);
+	int16 seqNb = READ_LE_UINT16(header + 2);
 
-	if (src[12] & (1 << 3)) {
+	if (seqNb == 0) {
+		if (_blockX < _lastBlockX || _blockY < _lastBlockY) {
+			memset(_deltaBuf[0], 0, _height * _width);
+			memset(_deltaBuf[1], 0, _height * _width);
+		}
+		_lastBlockX = _blockX;
+		_lastBlockY = _blockY;
+	}
+
+	if (header[12] & (1 << 3)) {
 		// Interpolation table present
-		if (!_interTable)
-			_interTable = new byte[65536];
-
 		byte *ptr = _interTable;
 
 		for (int i = 0; i < 256; i++) {
@@ -99,45 +124,129 @@ bool Codec48Decoder::decode(byte *dst, const byte *src) {
 		}
 	}
 
-	switch (src[0]) {
+	switch (header[0]) {
 	case 0:
 		// Raw frame
-		memcpy(_deltaBuf[_curBuf], gfxData, READ_LE_UINT32(src + 4));
+		memcpy(_deltaBuf[_curBuf], gfxData, READ_LE_UINT32(header + 4));
 		break;
 	case 2:
 		// Blast object
-		bompDecodeLine(_deltaBuf[_curBuf], gfxData, _width * _height);
+		bompDecodeLine(_deltaBuf[_curBuf], gfxData, READ_LE_UINT32(header + 4));
 		break;
 	case 3:
 		// 8x8 block encoding
 		if (!(seqNb && seqNb != _prevSeqNb + 1)) {
-			if (seqNb & 1 || !(src[12] & 1) || src[12] & 0x10)
+			if (seqNb & 1 || !(header[12] & 1) || header[12] & 0x10)
 				_curBuf ^= 1;
+
+			if ((seqNb & 1) && (flags & 0x10) && (header[12] & 1) && !(header[12] & 0x30)) {
+				_prevSeqNb = seqNb;
+				return 1;
+			}
 
 			decode3(_deltaBuf[_curBuf], gfxData, _deltaBuf[_curBuf ^ 1] - _deltaBuf[_curBuf]);
 		}
 		break;
 	case 5:
-		// Some other encoding, but it's unused. (Good)
-		warning("SmushDecoder::decode() codec 48 frame type 5 encountered! Please report!");
+		// Frame stored at half size, scaled up with the interpolation table
+		decode5(_deltaBuf[_curBuf], gfxData, _blockX * 8, _blockY * 8);
 		break;
 	default:
-		warning("SmushDecoder::decode() Unknown codec 48 frame type %d", src[0]);
 		break;
 	}
 
 	_prevSeqNb = seqNb;
-	memcpy(dst, _deltaBuf[_curBuf], _pitch * _height);
-	return true;
+
+	int sourceX = 0;
+	int sourceY = 0;
+
+	if (rect->x > x) {
+		sourceX = rect->x - x;
+		width += x - rect->x;
+		x = rect->x;
+	}
+
+	if (x + width > rect->x + rect->width)
+		width = rect->x + rect->width - x;
+
+	if (rect->y > y) {
+		sourceY = rect->y - y;
+		height += y - rect->y;
+		y = rect->y;
+	}
+
+	if (y + height > rect->y + rect->height)
+		height = rect->y + rect->height - y;
+
+	if (header[12] & 2)
+		return 0;
+
+	if (header[12] & 0x10) {
+		drawBlended(bitmap->pixels, bitmap->width, _deltaBuf[_curBuf ^ 1], _deltaBuf[_curBuf], x, y, sourceX, sourceY, width, height, _pitch);
+		return 0;
+	}
+
+	client->setFrameBuffer(_deltaBuf[_curBuf], x, y, sourceX, sourceY, width, height);
+	return 0;
+}
+
+void Codec48Decoder::drawBlended(byte *bitmap, int bitmapPitch, const byte *previous, const byte *current, int x, int y, int sourceX, int sourceY, int width, int height, int sourcePitch) {
+	int offset = sourceY * sourcePitch + sourceX;
+	blendFrames(bitmap + y * bitmapPitch + x, previous + offset, current + offset, width, height, bitmapPitch, sourcePitch);
+}
+
+void Codec48Decoder::blendFrames(byte *dst, const byte *previous, const byte *current, int width, int height, int dstPitch, int sourcePitch) {
+	for (int row = 0; row < height; row++) {
+		for (int col = 0; col < width; col++)
+			dst[col] = _interTable[previous[col] | (current[col] << 8)];
+
+		dst += dstPitch;
+		previous += sourcePitch;
+		current += sourcePitch;
+	}
+}
+
+void Codec48Decoder::decode5(byte *dst, const byte *src, int width, int height) {
+	byte *out = dst + width;
+	int rows = height;
+
+	do {
+		byte pixel = *src++;
+		out[0] = pixel;
+		out[1] = pixel;
+		out += 2;
+
+		int count = width - 2;
+		do {
+			byte previous = pixel;
+			pixel = *src++;
+			out[0] = _interTable[(previous << 8) | pixel];
+			out[1] = pixel;
+			out += 2;
+			count -= 2;
+		} while (count > 0);
+
+		out += width;
+		rows -= 2;
+	} while (rows > 0);
+
+	memcpy(dst, dst + width, width);
+
+	out = dst + width * 2;
+	rows = height - 2;
+	do {
+		for (int i = 0; i < width; i++)
+			out[i] = _interTable[out[i - width] | (out[i + width] << 8)];
+
+		out += width * 2;
+		rows -= 2;
+	} while (rows > 0);
 }
 
 void Codec48Decoder::bompDecodeLine(byte *dst, const byte *src, int len) {
-	while (len > 0) {
+	do {
 		byte code = *src++;
-		byte num = (code >> 1) + 1;
-
-		if (num > len)
-			num = len;
+		int num = (code >> 1) + 1;
 
 		len -= num;
 
@@ -150,7 +259,7 @@ void Codec48Decoder::bompDecodeLine(byte *dst, const byte *src, int len) {
 		}
 
 		dst += num;
-	}
+	} while (len != 0);
 }
 
 void Codec48Decoder::makeTable(int pitch, int index) {
@@ -300,12 +409,12 @@ void Codec48Decoder::decode3(byte *dst, const byte *src, int bufOffset) {
 				scaleBuffer[4] = _interTable[(dst[_pitch * 2 - 1] << 8) | scaleBuffer[5]];
 				scaleBuffer[6] = _interTable[(scaleBuffer[7] << 8) | scaleBuffer[5]];
 
-				scaleBuffer[9] = _interTable[(dst[_pitch * 3 - 1] << 8) | scaleBuffer[11]];
-				scaleBuffer[8] = _interTable[(dst[_pitch * 3 - 1] << 8) | scaleBuffer[9]];
+				scaleBuffer[9] = _interTable[(dst[_pitch * 4 - 1] << 8) | scaleBuffer[11]];
+				scaleBuffer[8] = _interTable[(dst[_pitch * 4 - 1] << 8) | scaleBuffer[9]];
 				scaleBuffer[10] = _interTable[(scaleBuffer[11] << 8) | scaleBuffer[9]];
 
-				scaleBuffer[13] = _interTable[(dst[_pitch * 4 - 1] << 8) | scaleBuffer[15]];
-				scaleBuffer[12] = _interTable[(dst[_pitch * 4 - 1] << 8) | scaleBuffer[13]];
+				scaleBuffer[13] = _interTable[(dst[_pitch * 6 - 1] << 8) | scaleBuffer[15]];
+				scaleBuffer[12] = _interTable[(dst[_pitch * 6 - 1] << 8) | scaleBuffer[13]];
 				scaleBuffer[14] = _interTable[(scaleBuffer[15] << 8) | scaleBuffer[13]];
 
 				scaleBlock(dst, scaleBuffer);
@@ -334,9 +443,9 @@ void Codec48Decoder::decode3(byte *dst, const byte *src, int bufOffset) {
 				scaleBuffer[4] = _interTable[(dst[_pitch * 2 - 1] << 8) | scaleBuffer[5]];
 				scaleBuffer[6] = _interTable[(scaleBuffer[7] << 8) | scaleBuffer[5]];
 
-				scaleBuffer[8] = _interTable[(dst[_pitch * 3 - 1] << 8) | scaleBuffer[9]];
+				scaleBuffer[8] = _interTable[(dst[_pitch * 4 - 1] << 8) | scaleBuffer[9]];
 				scaleBuffer[10] = _interTable[(scaleBuffer[11] << 8) | scaleBuffer[9]];
-				scaleBuffer[12] = _interTable[(dst[_pitch * 4 - 1] << 8) | scaleBuffer[13]];
+				scaleBuffer[12] = _interTable[(dst[_pitch * 6 - 1] << 8) | scaleBuffer[13]];
 				scaleBuffer[14] = _interTable[(scaleBuffer[15] << 8) | scaleBuffer[13]];
 
 				scaleBlock(dst, scaleBuffer);
