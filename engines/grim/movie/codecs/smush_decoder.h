@@ -48,6 +48,7 @@ public:
 	int getY() const { return _videoTrack->_y; }
 	void setLooping(bool l);
 	void setWave(SmushWave *wave) { _wave = wave; }
+	int getFrameDelay() const { return _frameDelay; }
 	Common::SeekableReadStream *getFile() { return _file; }
 	void decodeFrameBlock(const byte *block, uint32 size, int flags);
 	const Graphics::Surface *getFrameSurface();
@@ -145,6 +146,7 @@ private:
 	SmushWave *_wave;
 	bool _ownsAudioTrack;
 	int _blocky16Frames;
+	int _frameDelay;
 
 	Common::SeekableReadStream *_file;
 

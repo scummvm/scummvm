@@ -41,6 +41,8 @@ public:
 	SmushPlayer(bool demo);
 	virtual ~SmushPlayer();
 	void restore(SaveGame *state) override;
+	void pause(bool p) override;
+	int32 getMovieTime() override;
 
 private:
 	bool loadFile(const Common::String &filename) override;
