@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/util.h"
 
@@ -897,11 +898,12 @@ static const luaL_Reg kQuaternionHelperFunctions[] = {
 	{ nullptr, nullptr }
 };
 
-// Path, Nancy20: places to be at certain times. Only the scripts of Nancy22 use
-// it, for the car of the driving game that plays back a recorded drive.
+// Path, Nancy20: places to be at certain times. The scripts of Nancy22 use it
+// for the car of the driving game that plays back a recorded drive, and Nancy23
+// for the dot that moves along the metro map.
 // Path:New{ { x, y, time }, ... } takes them in the order of their times.
 // TODO: The curves through the places that path:GetPosition(time, false) gives,
-// and AddPoint, RemovePoint, GetGuides and SetGuides, which no script uses
+// and RemovePoint, GetGuides and SetGuides, which no script uses
 static const char *const kPathType = "ND.Path";
 static const char *const kPathHelperType = "ND.PathHelper";
 
@@ -911,27 +913,23 @@ struct PathPoint {
 	double time;
 };
 
-// The points follow the count in the object
-struct PathHeader {
-	uint32 numPoints;
-	uint32 padding;
-};
+typedef Common::Array<PathPoint> PathPoints;
 
-static const PathPoint *checkPath(lua_State *L, int index, uint32 &numPoints) {
-	const PathHeader *header = (const PathHeader *)checkUserData(L, index, kPathType);
-	numPoints = header->numPoints;
-	return (const PathPoint *)(header + 1);
+// A path object holds the places, which go away with it
+static PathPoints *&getPathPoints(lua_State *L, int index) {
+	return *(PathPoints **)checkUserData(L, index, kPathType);
+}
+
+static PathPoints &checkPath(lua_State *L, int index) {
+	return *getPathPoints(L, index);
 }
 
 static int pathNew(lua_State *L) {
 	luaL_checktype(L, 2, LUA_TTABLE);
 	const uint32 numPoints = (uint32)lua_objlen(L, 2);
 
-	PathHeader *header = (PathHeader *)pushUserData(L, sizeof(PathHeader) + numPoints * sizeof(PathPoint), kPathType);
-	header->numPoints = numPoints;
-	header->padding = 0;
-
-	PathPoint *points = (PathPoint *)(header + 1);
+	PathPoints &points = **pushValue(L, kPathType, new PathPoints());
+	points.resize(numPoints);
 	for (uint32 i = 0; i < numPoints; ++i) {
 		lua_rawgeti(L, 2, i + 1);
 		lua_getfield(L, -1, "x");
@@ -946,12 +944,44 @@ static int pathNew(lua_State *L) {
 	return 1;
 }
 
+static int pathCollect(lua_State *L) {
+	PathPoints *&points = getPathPoints(L, 1);
+	delete points;
+	points = nullptr;
+	return 0;
+}
+
+// path:AddPoint({ x, y, time }) or path:AddPoint(x, y, time), Nancy20, which
+// puts the place after the ones up to its time
+static int pathAddPoint(lua_State *L) {
+	PathPoints &points = checkPath(L, 1);
+
+	PathPoint point = { 0.0, 0.0, 0.0 };
+	if (lua_istable(L, 2)) {
+		readField(L, 2, "x", point.x);
+		readField(L, 2, "y", point.y);
+		readField(L, 2, "time", point.time);
+	} else {
+		point.x = luaL_checknumber(L, 2);
+		point.y = luaL_checknumber(L, 3);
+		point.time = luaL_checknumber(L, 4);
+	}
+
+	uint index = 0;
+	while (index < points.size() && points[index].time <= point.time) {
+		++index;
+	}
+
+	points.insert_at(index, point);
+	return 0;
+}
+
 // path:GetPosition(time[, straight[, loops]]): where the path is at a time, in a
 // straight line between the places around it. A path that loops starts over
 // after its last place; one that doesn't stays at its ends.
 static int pathGetPosition(lua_State *L) {
-	uint32 numPoints;
-	const PathPoint *points = checkPath(L, 1, numPoints);
+	const PathPoints &points = checkPath(L, 1);
+	const uint32 numPoints = points.size();
 	double time = luaL_checknumber(L, 2);
 	const bool loops = lua_isboolean(L, 4) && lua_toboolean(L, 4);
 
@@ -997,7 +1027,9 @@ static int pathGetPosition(lua_State *L) {
 
 static const luaL_Reg kPathFunctions[] = {
 	{ "__index", indexFunctions },
+	{ "__gc", pathCollect },
 	{ "GetPosition", pathGetPosition },
+	{ "AddPoint", pathAddPoint },
 	{ nullptr, nullptr }
 };
 
