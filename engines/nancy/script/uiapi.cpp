@@ -454,9 +454,11 @@ static UI::NDUI::Control *addControl(lua_State *L, int32 type, Common::MemoryWri
 	return control;
 }
 
-// The text kept under a key, or the key itself when there is none
+// The text kept under a key. A key that isn't there gives no text, as the
+// engine doesn't answer the control's request for it: Nancy24's coin counter
+// names "PennyCounter", which isn't in the autotext.
 static Common::String resolveText(const Common::String &key) {
-	Common::String text = key;
+	Common::String text;
 	findText(key, text);
 	return text;
 }
