@@ -393,6 +393,7 @@ void Draw_v2::printTotText(int16 id) {
 #ifdef USE_TTS
 	Common::String ttsMessage;
 #endif
+	Common::String logText;
 	while (true) {
 		if ((((*ptr >= 1) && (*ptr <= 7)) || (*ptr == 10)) && (strPos != 0)) {
 			str[MAX(strPos, strPos2)] = 0;
@@ -421,6 +422,9 @@ void Draw_v2::printTotText(int16 id) {
 					printTextCentered(colCmd & 0x0F, rectLeft + 2, rectTop + 2,
 							rectRight - 2, rectBottom - 2, str, fontIndex, frontColor);
 
+				logText += str;
+				logText += ' ';
+
 			} else {
 				_destSpriteX = offX;
 				_destSpriteY = offY;
@@ -431,6 +435,8 @@ void Draw_v2::printTotText(int16 id) {
 				ttsMessage += _textToPrint;
 				ttsMessage += " ";
 #endif
+				logText += _textToPrint;
+				logText += ' ';
 
 				if (isSubtitle) {
 					_fontIndex  = _subtitleFont;
@@ -625,6 +631,11 @@ void Draw_v2::printTotText(int16 id) {
 			break;
 		}
 	}
+
+	logText.trim();
+	if (!logText.empty() && DebugMan.isDebugChannelEnabled(kDebugGraphics))
+		debugC(1, kDebugGraphics, "TotText %d%s: %s", id, isSubtitle ? " (subtitle)" : "",
+		       logText.decode(_vm->_ttsEncoding).encode(Common::kUtf8).c_str());
 
 #ifdef USE_TTS
 	if (_previousTot != ttsMessage && !isSubtitle) {
