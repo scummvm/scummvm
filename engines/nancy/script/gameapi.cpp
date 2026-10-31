@@ -474,6 +474,13 @@ static int gameIndex(lua_State *L) {
 		return 1;
 	}
 
+	// Nancy23: whether the clock of the cell phone shows 12 or 24 hours. The
+	// original takes it from ClockFormat in its INI file, which is 12 by default.
+	if (key == "hourFormat") {
+		lua_pushinteger(L, 12);
+		return 1;
+	}
+
 	// Nancy22: the name of the saved game that is being loaded, or nil
 	if (key == "loadName") {
 		const Common::String &name = NancySceneState.getLoadName();
