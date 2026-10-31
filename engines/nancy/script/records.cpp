@@ -1894,9 +1894,15 @@ void MovieRecord::runOnce() {
 	drawFrame();
 }
 
-// A movie that plays through and ends; one that loops forever never does
+// A movie that plays through and ends; one that loops forever never does. One
+// that stops on its last frame can be skipped until it gets there: Nancy23's
+// cinematics are made of those, each starting when the one before is done.
 bool MovieRecord::isSkippable() const {
-	return isActive() && hasStarted() && !_isPaused && !_pausesOnLastFrame && _numLoops != 0;
+	if (!isActive() || !hasStarted() || _isPaused || _numLoops == 0) {
+		return false;
+	}
+
+	return !_pausesOnLastFrame || (_player.isRangePlaying() && !_hasCalledOnPause);
 }
 
 void MovieRecord::run(double sceneTime, double elapsedTime) {
@@ -1916,10 +1922,18 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 			--_skipFrame;
 		}
 
-		// The movie stays at its last frame for the scripts until it starts over
+		// The movie stays at its last frame for the scripts until it starts over.
+		// One that stops there shows it, as the next movie takes over from it.
 		if (_skipFrame == _lastFrame) {
-			_endTime = sceneTime;
-			finish();
+			if (_pausesOnLastFrame) {
+				_player.goToFrame(_lastFrame);
+				drawFrame();
+				_hasCalledOnPause = true;
+				callFunction("OnPause");
+			} else {
+				_endTime = sceneTime;
+				finish();
+			}
 		}
 
 		return;
