@@ -37,7 +37,7 @@ constexpr int DUNGEON_MONSTER_SLOTS = 5;
 // No monster is present in a cell. Real monster Ids are 0-24 (5 tiers of
 // 5 types, tier = (dungeonLevel - 1) / 2), so this can't use 0 like the
 // _itemId sentinel does
-constexpr uint8 DUNGEON_NO_MONSTER = 0xff;
+constexpr int16 DUNGEON_NO_MONSTER = -1;
 
 // Disguised monster Ids that don't block movement/view like a normal
 // monster would - a mimic looks (and is named) like a chest, an
@@ -78,11 +78,9 @@ enum DungeonItemId {
 
 struct DungeonCell {
 	DungeonTileId _tileNum;
-	uint8 _monsterId;
-	uint8 _itemId;
-	uint16 _monsterHp;
-
-	void synchronize(Common::Serializer &s);
+	int16 _monsterId;
+	int16 _itemId;
+	int16 _monsterHp;
 };
 
 struct MapDungeon {

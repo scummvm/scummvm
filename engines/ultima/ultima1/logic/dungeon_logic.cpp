@@ -597,7 +597,7 @@ void DungeonLogic::endOfTurn() {
 int DungeonLogic::getMonsterDistance(int maxDistance) const {
 	int deltaX = getDirDeltaX();
 	int deltaY = getDirDeltaY();
-	int x, y, tile = 0, monsterId = -1;
+	int x, y, tile = 0, monsterId = Data::DUNGEON_NO_MONSTER;
 	int dist;
 
 	for (dist = 0; dist < maxDistance; ++dist) {
@@ -606,13 +606,13 @@ int DungeonLogic::getMonsterDistance(int maxDistance) const {
 		tile = _G(dungeon)._cells[y][x]._tileNum;
 		monsterId = _G(dungeon)._cells[y][x]._monsterId;
 
-		if (monsterId != -1 || tile == Data::DTILE_WALL || tile == Data::DTILE_SECRET_DOOR ||
+		if (monsterId != Data::DUNGEON_NO_MONSTER || tile == Data::DTILE_WALL || tile == Data::DTILE_SECRET_DOOR ||
 			tile == Data::DTILE_BEAMS || tile == Data::DTILE_DOOR)
 			break;
 	}
 
-	return (monsterId != -1 && tile != Data::DTILE_WALL &&
-		tile != Data::DTILE_SECRET_DOOR && tile != Data::DTILE_BEAMS) ? dist : 0;;
+	return (monsterId != Data::DUNGEON_NO_MONSTER && tile != Data::DTILE_WALL &&
+		tile != Data::DTILE_SECRET_DOOR && tile != Data::DTILE_BEAMS) ? dist : 0;
 }
 
 void DungeonLogic::writeMonsterName(int monsterId) {
