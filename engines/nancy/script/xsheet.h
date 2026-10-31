@@ -43,6 +43,7 @@ public:
 	// Shows the first frame
 	bool load(const Common::String &name);
 	void clear();
+	void registerGraphics();
 
 	bool isLoaded() const { return !_trees.empty(); }
 	const Common::String &getName() const { return _name; }
@@ -98,6 +99,7 @@ public:
 	XsheetRecord(SceneContext &context) : Record(context, "ND.XsheetAR") {}
 
 	void updateGraphics() override;
+	void registerGraphics() override;
 
 	// Enhancement: the character goes to the end of what it says along with
 	// the voice

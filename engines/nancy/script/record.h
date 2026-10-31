@@ -165,6 +165,10 @@ public:
 	// Shows or hides what the record draws, once the records of a frame have run
 	virtual void updateGraphics() {}
 
+	// Puts what the record draws back on the screen, after a change of the
+	// state of the engine took everything off it
+	virtual void registerGraphics() {}
+
 	// Enhancement: the player can skip what a scene plays. Whether the record is
 	// something that can be skipped, and what it does when the skipping begins.
 	virtual bool isSkippable() const { return false; }

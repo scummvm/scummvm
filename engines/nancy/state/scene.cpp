@@ -1361,6 +1361,16 @@ void Scene::registerGraphics() {
 	_frame.registerGraphics();
 	_viewport.registerGraphics();
 
+	// The scenes of the streams, and from Nancy19 on the scripts of the main
+	// scene, have their own graphics
+	_streams.registerGraphics();
+
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		_scriptScene->registerGraphics();
+	}
+#endif
+
 	// Pre-Nancy 10: inventory box is always-on-screen.
 	// Nancy 10+: a separate popup widget driven by UIIV (initially hidden).
 	// Nancy 16+: all of the UI is made of NDUI panels.

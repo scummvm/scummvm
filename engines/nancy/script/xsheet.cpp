@@ -74,6 +74,12 @@ bool XSheet::load(const Common::String &name) {
 	return true;
 }
 
+void XSheet::registerGraphics() {
+	for (Tree *tree : _trees) {
+		tree->graphic.registerGraphics();
+	}
+}
+
 void XSheet::clear() {
 	for (Tree *tree : _trees) {
 		delete tree;
@@ -292,6 +298,10 @@ void XsheetRecord::onZChanged() {
 // A restart doesn't hide the XSheet until the record runs again: the
 // conversation fidgets restart theirs in the middle of a frame, which made the
 // character blink every time
+void XsheetRecord::registerGraphics() {
+	_xsheet.registerGraphics();
+}
+
 void XsheetRecord::updateGraphics() {
 	_hasShown |= hasStarted();
 	_xsheet.setVisible(isActive() && _hasShown);

@@ -108,6 +108,8 @@ public:
 	// The viewport that shows the background, once it has been loaded
 	void setBackground(UI::Viewport *background);
 
+	void registerGraphics() override;
+
 protected:
 	void readTable(int tableIndex) override;
 	void runOnce() override;
@@ -216,6 +218,7 @@ public:
 	virtual ~OverrideRecord();
 
 	void updateGraphics() override;
+	void registerGraphics() override;
 	void onSave() override { callFunction("OnSave"); }
 	void onDie() override { callFunction("OnDie"); }
 	bool hasMessagingName(const Common::String &name) override;
@@ -249,6 +252,7 @@ public:
 	OverlayRecord(SceneContext &context) : Record(context, "ND.Overlay") {}
 
 	void updateGraphics() override;
+	void registerGraphics() override;
 
 protected:
 	void readTable(int tableIndex) override;
@@ -281,6 +285,7 @@ public:
 	AnimOverlayRecord(SceneContext &context) : Record(context, "ND.AnimOvlAR") {}
 
 	void updateGraphics() override;
+	void registerGraphics() override;
 
 	void setPaused(bool isPaused) { _isPaused = isPaused; }
 
@@ -366,6 +371,7 @@ public:
 	TextRecord(SceneContext &context) : Record(context, "ND.TextAR") {}
 
 	void updateGraphics() override;
+	void registerGraphics() override;
 
 	// Shows the next letter of a text that isn't shown at once, along with the
 	// markup in front of it. Returns false when there is nothing left to show.
@@ -411,6 +417,7 @@ public:
 	MovieRecord(SceneContext &context) : Record(context, "ND.Movie") {}
 
 	void updateGraphics() override;
+	void registerGraphics() override;
 	bool isSkippable() const override;
 
 	void setPaused(bool isPaused) { _isPaused = isPaused; }

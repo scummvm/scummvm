@@ -296,6 +296,18 @@ bool SceneStream::loadScene() {
 	return true;
 }
 
+void SceneStream::registerGraphics() {
+	if (_background) {
+		_background->registerGraphics();
+	}
+
+#ifdef ENABLE_NANCY_V4
+	if (_scriptScene) {
+		_scriptScene->registerGraphics();
+	}
+#endif
+}
+
 void SceneStream::endScene() {
 #ifdef ENABLE_NANCY_V4
 	if (_scriptScene) {
@@ -475,6 +487,14 @@ void SceneStreamManager::begin(const Common::String &name, const Common::String 
 		_running->_children.push_back(child);
 	} else {
 		_mainStreamChildren.push_back(child);
+	}
+}
+
+void SceneStreamManager::registerGraphics() {
+	for (SceneStream *stream : _streams) {
+		if (stream) {
+			stream->registerGraphics();
+		}
 	}
 }
 

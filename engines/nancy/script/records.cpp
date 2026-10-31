@@ -391,6 +391,13 @@ void SummaryRecord::showFacade() {
 	_facade.registerGraphics();
 }
 
+void SummaryRecord::registerGraphics() {
+	// The facade is only there once it has been shown
+	if (_facade._drawSurface.getPixels()) {
+		_facade.registerGraphics();
+	}
+}
+
 void SummaryRecord::setBackground(UI::Viewport *background) {
 	_background = background;
 	_numFrames = background ? background->getFrameCount() : 0;
@@ -880,6 +887,12 @@ bool OverrideRecord::hasMessagingName(const Common::String &name) {
 	return isNamed;
 }
 
+void OverrideRecord::registerGraphics() {
+	if (_canvas) {
+		_canvas->registerGraphics();
+	}
+}
+
 void OverrideRecord::onZChanged() {
 	if (_canvas) {
 		_canvas->setScriptZ(getZ(), getContext());
@@ -1063,6 +1076,10 @@ void OverlayRecord::applyRects() {
 
 void OverlayRecord::onZChanged() {
 	_graphic.setScriptZ(getZ(), getContext());
+}
+
+void OverlayRecord::registerGraphics() {
+	_graphic.registerGraphics();
 }
 
 void OverlayRecord::updateGraphics() {
@@ -1300,6 +1317,10 @@ bool AnimOverlayRecord::prepareReset() {
 
 void AnimOverlayRecord::onZChanged() {
 	_graphic.setScriptZ(getZ(), getContext());
+}
+
+void AnimOverlayRecord::registerGraphics() {
+	_graphic.registerGraphics();
 }
 
 void AnimOverlayRecord::updateGraphics() {
@@ -1727,6 +1748,10 @@ void TextRecord::onZChanged() {
 	_graphic.setScriptZ(getZ(), getContext());
 }
 
+void TextRecord::registerGraphics() {
+	_graphic.registerGraphics();
+}
+
 void TextRecord::updateGraphics() {
 	_graphic.setVisible(isActive());
 
@@ -1991,6 +2016,10 @@ bool MovieRecord::prepareReset() {
 	_player.goToFrame(_firstFrame);
 	drawFrame();
 	return true;
+}
+
+void MovieRecord::registerGraphics() {
+	_graphic.registerGraphics();
 }
 
 void MovieRecord::onZChanged() {

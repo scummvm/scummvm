@@ -81,6 +81,7 @@ public:
 	~ParticleRecord() override;
 
 	void updateGraphics() override;
+	void registerGraphics() override;
 
 	// For the stages
 	Particle &getParticle(uint index) { return _particles[index]; }

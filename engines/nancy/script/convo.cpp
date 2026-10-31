@@ -144,6 +144,10 @@ void ConvoRecord::onZChanged() {
 	_xsheet.setZ(getZ(), getContext());
 }
 
+void ConvoRecord::registerGraphics() {
+	_xsheet.registerGraphics();
+}
+
 void ConvoRecord::updateGraphics() {
 	_xsheet.setVisible(hasStarted());
 }

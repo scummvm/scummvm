@@ -60,6 +60,7 @@ public:
 	virtual ~ConvoRecord();
 
 	void updateGraphics() override;
+	void registerGraphics() override;
 
 	// Responses can be added while the scripts named by the record are run
 	void addResponse(ConvoResponse *response) { _responses.push_back(response); }

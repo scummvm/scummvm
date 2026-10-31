@@ -109,6 +109,9 @@ public:
 	// Nancy20: lets the records of the scene know that it is being left
 	void endScene();
 
+	// Puts the background and what the records draw back on the screen
+	void registerGraphics();
+
 	// Loads the scene the stream was asked to go to, without running it.
 	// Returns whether there was one, and it could be loaded.
 	bool loadNextScene();
@@ -181,6 +184,8 @@ public:
 	// Loads the scene a stream that was just begun starts with right away,
 	// instead of with the next frame
 	void loadNow(const Common::String &name);
+
+	void registerGraphics();
 
 	void changeScene(const Common::String &name, const SceneChangeDescription &sceneDescription);
 	void changeScene(const Common::String &name, const Common::String &sceneName, uint16 frameID);

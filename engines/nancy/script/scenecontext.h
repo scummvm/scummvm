@@ -78,6 +78,9 @@ public:
 	// The scene is being deleted
 	bool isEnding() const { return _isEnding; }
 
+	// Puts what the records draw back on the screen
+	void registerGraphics();
+
 	// The Ref image of that name, which the records of the scene share. Places
 	// outside of it take the nearest pixel.
 	const RefImage *loadRef(const Common::String &name);

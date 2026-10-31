@@ -1019,6 +1019,12 @@ void registerParticleAPI(lua_State *L) {
 
 // The particles are drawn on a picture as large as the viewport, which is
 // started over every frame
+void ParticleRecord::registerGraphics() {
+	if (_canvas) {
+		_canvas->registerGraphics();
+	}
+}
+
 void ParticleRecord::updateGraphics() {
 	if (!isActive() || _count == 0) {
 		if (_canvas) {

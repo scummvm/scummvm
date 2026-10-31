@@ -316,6 +316,16 @@ bool SceneContext::skipSpeech() {
 	return hasSkipped;
 }
 
+void SceneContext::registerGraphics() {
+	for (Record *record : _records) {
+		record->registerGraphics();
+	}
+
+	for (Record *record : _newRecords) {
+		record->registerGraphics();
+	}
+}
+
 void SceneContext::end() {
 	for (Record *record : _records) {
 		record->onDie();
