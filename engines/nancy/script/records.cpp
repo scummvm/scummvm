@@ -2030,6 +2030,20 @@ void MovieRecord::updateGraphics() {
 	_graphic.setVisible(isActive() && _isVisible && !isSeeThrough());
 }
 
+void MovieRecord::describeState(Common::Array<Common::String> &lines) const {
+	lines.push_back(Common::String::format("[movie] frame %d of %d..%d, %s%s, played %d of %d",
+		_player.getCurrentFrame(), _firstFrame, _lastFrame,
+		_player.isRangePlaying() ? "playing" : "stopped", _isPaused ? ", paused" : "",
+		_numPlayed, _numLoops));
+
+	const Common::Rect position = _graphic.getScreenPosition();
+	lines.push_back(Common::String::format("[graphic] %s, %s, z %u, at (%d, %d, %d, %d), surface %dx%d%s",
+		g_nancy->_graphics->hasObject(&_graphic) ? "registered" : "NOT registered",
+		_graphic.isVisible() ? "visible" : "hidden", _graphic.getZOrder(),
+		position.left, position.top, position.right, position.bottom,
+		_graphic._drawSurface.w, _graphic._drawSurface.h, isSeeThrough() ? ", see-through" : ""));
+}
+
 // movie:Play() and movie:Pause()
 static int moviePlay(lua_State *L) {
 	MovieRecord *record = dynamic_cast<MovieRecord *>(checkRecord(L, 1));

@@ -568,6 +568,16 @@ void GraphicsManager::removeObject(RenderObject *object) {
 	}
 }
 
+bool GraphicsManager::hasObject(const RenderObject *object) const {
+	for (const RenderObject *r : _objects) {
+		if (r == object) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void GraphicsManager::clearObjects() {
 	_objects.clear();
 }

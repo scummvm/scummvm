@@ -81,6 +81,7 @@ public:
 
 	void addObject(RenderObject *object);
 	void removeObject(RenderObject *object);
+	bool hasObject(const RenderObject *object) const;
 	// Move an already-added object to its new place in the draw order
 	void reorderObject(RenderObject *object);
 	void clearObjects();

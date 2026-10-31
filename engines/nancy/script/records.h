@@ -418,6 +418,7 @@ public:
 
 	void updateGraphics() override;
 	void registerGraphics() override;
+	void describeState(Common::Array<Common::String> &lines) const override;
 	bool isSkippable() const override;
 
 	void setPaused(bool isPaused) { _isPaused = isPaused; }

@@ -186,6 +186,9 @@ public:
 	// For the debugger: what the scripts gave the record, as "name = value"
 	void describeFields(Common::Array<Common::String> &lines);
 
+	// For the console: what the kind of record is up to, beyond its fields
+	virtual void describeState(Common::Array<Common::String> &lines) const {}
+
 protected:
 	lua_State *getLua() const;
 

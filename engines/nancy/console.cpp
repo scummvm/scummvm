@@ -790,6 +790,7 @@ bool NancyConsole::Cmd_listRecords(int argc, const char **argv) {
 			if (showsFields) {
 				Common::Array<Common::String> fields;
 				record->describeFields(fields);
+				record->describeState(fields);
 				for (const Common::String &field : fields) {
 					debugPrintf("      %s\n", field.c_str());
 				}
