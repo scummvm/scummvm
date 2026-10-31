@@ -180,7 +180,6 @@ void Pillar::questCompleted(int locationNum) {
 		sg._questStatus[castleIdx] = 1;
 		writeString("A quest has been completed!\n");
 		g_engine->playFX(5);
-		writeString("\n");
 	}
 }
 

@@ -394,7 +394,7 @@ void Merchant::addTip(int tipIdx) {
 
 void Merchant::chooseBuy() {
 	resetLine();
-	writeString("Transact-Buy: ");
+	writeString("\x10Transact-Buy: ");
 	showCursor();
 
 	switch (_shopType) {
@@ -459,7 +459,7 @@ void Merchant::chooseBuy() {
 
 void Merchant::chooseSell() {
 	resetLine();
-	writeString("Transact-Sell: ");
+	writeString("\x10Transact-Sell: ");
 	showCursor();
 
 	switch (_shopType) {
@@ -732,7 +732,7 @@ void Merchant::groceryKeypress(const KeypressMessage &msg) {
 		if (!_amount.empty()) {
 			_amount.deleteLastChar();
 			resetLine();
-			writeString(Common::String::format("Transact-Buy: %s", _amount.c_str()));
+			writeString(Common::String::format("\x10Transact-Buy: %s", _amount.c_str()));
 			showCursor();
 		}
 
@@ -745,7 +745,7 @@ void Merchant::groceryKeypress(const KeypressMessage &msg) {
 		if (qty == 0 || total > sg._coins) {
 			// The typed amount is replaced by "nothing"
 			resetLine();
-			writeString("Transact-Buy: ");
+			writeString("\x10Transact-Buy: ");
 
 			if (qty == 0)
 				nothing();

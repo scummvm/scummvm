@@ -73,7 +73,20 @@ bool Commands::msgGame(const GameMessage &msg) {
 
 void Commands::writeString(const Common::String &msg) {
 	_textCursor.hide();
-	_surface.writeString(msg);
+
+	// Text starting a line is indented a column, lining up with the command
+	// text that follows the '>' prompt. The prompt glyph itself stays in column 0
+	Common::String text;
+	bool lineStart = _surface.getTextPos().x == 0;
+	for (uint i = 0; i < msg.size(); ++i) {
+		if (lineStart && msg[i] != '\n' && msg[i] != '\x10')
+			text += ' ';
+
+		text += msg[i];
+		lineStart = msg[i] == '\n';
+	}
+
+	_surface.writeString(text);
 
 	if (msg.contains('\n')) {
 		delay(NEWLINE_DELAY);

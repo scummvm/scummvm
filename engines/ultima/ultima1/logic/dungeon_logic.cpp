@@ -649,7 +649,6 @@ void DungeonLogic::monsterDead(int monsterId) {
 		sg._questStatus[castleIdx] = 1;
 		writeString("A quest has been completed!\n");
 		playFX(5);
-		writeString("\n");
 	}
 }
 
