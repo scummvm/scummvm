@@ -63,6 +63,7 @@ enum {
 };
 
 #define IMUSE_BUN_CHUNK_SIZE  0x2000
+#define IMUSE_GROUP_MASTER    0
 #define IMUSE_GROUP_SFX       1
 #define IMUSE_GROUP_SPEECH    2
 #define IMUSE_GROUP_MUSIC     3
