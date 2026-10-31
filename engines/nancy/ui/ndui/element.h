@@ -57,6 +57,9 @@ public:
 	void drawText(Graphics::ManagedSurface &surface, const Common::String &text, const Common::Rect &dest, const float *color, ControlState state, bool shadow) const;
 
 	uint32 getFontColor(ControlState state) const { return _fontColors[state]; }
+
+	// Whether the colors that get drawn are those of a state
+	bool hasReached(ControlState state) const;
 	int getFontHeight() const;
 
 	// The height the text takes up when it gets wrapped to the given width

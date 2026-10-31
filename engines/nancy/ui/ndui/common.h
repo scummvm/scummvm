@@ -118,6 +118,8 @@ enum ActionType {
 	kActionSetValue			= 13,
 	kActionSetTexture		= 14,
 	kActionSetImage			= 15,	// Nancy21: a texture and a source rect, in one
+	kActionBeginFlash		= 16,	// a control blinks, as many times as the value says or for good...
+	kActionEndFlash			= 17,	// ...until this
 	kActionQuery			= 30,	// asks the engine to send its value back with kActionSetValue
 	kActionShowItem			= 40,	// inventory panels
 	kActionHideItem			= 41,

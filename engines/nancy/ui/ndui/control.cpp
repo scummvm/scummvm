@@ -103,11 +103,45 @@ bool Control::doAction(const Action &action) {
 	case kActionToggleEnabled:
 		setEnabled(!_enabled);
 		break;
+	case kActionBeginFlash:
+		if (_numFlashes <= 0) {
+			_isFlashOn = true;
+		}
+
+		// Without a number of flashes, it flashes until told to stop
+		_numFlashes = action.value > 0 ? (int)action.value : INT_MAX;
+		break;
+	case kActionEndFlash:
+		_numFlashes = 0;
+		break;
 	default:
 		return false;
 	}
 
 	return true;
+}
+
+void Control::updateFlash() {
+	if (_numFlashes <= 0) {
+		return;
+	}
+
+	if (_isFlashOn) {
+		if (_elements[0].hasReached(kStateMouseOver)) {
+			_isFlashOn = false;
+		}
+	} else if (_elements[0].hasReached(kStateDisabled)) {
+		--_numFlashes;
+		_isFlashOn = true;
+	}
+}
+
+ControlState Control::getFlashState() const {
+	if (_numFlashes <= 0) {
+		return kStateNormal;
+	}
+
+	return _isFlashOn ? kStateMouseOver : kStateDisabled;
 }
 
 void Control::setVisible(bool visible) {

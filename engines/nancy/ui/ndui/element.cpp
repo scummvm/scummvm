@@ -166,6 +166,12 @@ bool Element::blend(ControlState state, float seconds, float rate) {
 	return changed;
 }
 
+bool Element::hasReached(ControlState state) const {
+	const uint32 current = ((uint32)colorChannelToByte(_current[0]) << 24) | ((uint32)colorChannelToByte(_current[1]) << 16) |
+		((uint32)colorChannelToByte(_current[2]) << 8) | colorChannelToByte(_current[3]);
+	return current == _colors[state];
+}
+
 // The texture is stretched to fill the destination, and tinted by the current color
 void Element::drawSprite(Graphics::ManagedSurface &surface, const Common::Rect &src, const Common::Rect &dest, const Graphics::ManagedSurface &texture) const {
 	byte tintA = colorChannelToByte(_current[0]);

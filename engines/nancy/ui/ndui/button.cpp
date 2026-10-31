@@ -57,11 +57,12 @@ ControlState Button::getButtonState() const {
 		return kStatePressed;
 	}
 
-	return _isMouseOver ? kStateMouseOver : kStateNormal;
+	return _isMouseOver ? kStateMouseOver : getFlashState();
 }
 
 // Buttons keep being drawn after they get hidden, until they have faded out
 bool Button::update(float seconds) {
+	updateFlash();
 	ControlState state = getButtonState();
 	float rate = state == kStatePressed ? 0.0f : kControlBlendRate;
 

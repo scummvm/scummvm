@@ -1877,7 +1877,9 @@ static const MessageActionName kMessageActionNames[] = {
 	{ "getValue", UI::NDUI::kActionQuery },
 	{ "showItem", UI::NDUI::kActionShowItem },
 	{ "hideItem", UI::NDUI::kActionHideItem },
-	{ "cycleFocus", UI::NDUI::kActionCycleFocus }
+	{ "cycleFocus", UI::NDUI::kActionCycleFocus },
+	{ "beginFlash", UI::NDUI::kActionBeginFlash },
+	{ "endFlash", UI::NDUI::kActionEndFlash }
 };
 
 // Message:Send(action, target[, value[, text[, isTextKey]]])

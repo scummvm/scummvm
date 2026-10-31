@@ -95,6 +95,12 @@ protected:
 
 	ControlState getState() const;
 
+	// Nancy22: a control that was told to flash goes back and forth between
+	// looking hovered over and looking disabled. Its resting state is the one
+	// it is heading for, which turns around once the colors get there.
+	void updateFlash();
+	ControlState getFlashState() const;
+
 	// Nancy21: what a "setImage" action asks for. A text picks another texture,
 	// and a value above 0 a source rect.
 	void setImage(uint element, const Action &action);
@@ -115,6 +121,8 @@ protected:
 	bool _visible = true;
 	bool _enabled = true;
 	bool _autoHeight = false;	// controls without a height are as tall as their text
+	int _numFlashes = 0;		// flashes left
+	bool _isFlashOn = false;
 	Common::Array<Action> _events;
 	EventHandler *_eventHandler = nullptr;
 	Common::Array<Element> _elements;
