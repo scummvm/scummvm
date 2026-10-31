@@ -1906,6 +1906,12 @@ void Scene::synchronize(Common::Serializer &ser) {
 		_ndui->saveState(((UIStateData *)getPuzzleData(UIStateData::getTag()))->changes);
 	}
 
+	// Nancy19 and up switch characters from their scripts, which don't keep
+	// track of who is being played, so a saved game gets told here
+	if (ser.isSaving() && g_nancy->getGameType() >= kGameTypeNancy19) {
+		((PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag()))->characterIndex = g_nancy->getPlayerCharacter();
+	}
+
 	byte numPuzzleData = _puzzleData.size();
 	ser.syncAsByte(numPuzzleData);
 
