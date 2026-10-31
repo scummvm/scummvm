@@ -231,7 +231,6 @@ public:
 
 	bool pollEvent(Common::Event &event) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
-	Common::KeymapArray getGlobalKeymaps() override;
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 	Common::Path getDefaultConfigFileName() override;
