@@ -89,4 +89,10 @@ void RuntimeState::advanceRoomScriptBlock(const ScoobyDooRom &rom) {
 bool RuntimeState::isButtonDown(ControllerButtons button) const {
 	return (ControllerOneInput & static_cast<uint8>(button)) == 0;
 }
+
+bool RuntimeState::wasButtonDown(ControllerButtons button) const {
+	// button was down previously but is now up.
+	return (PreviousControllerOneInput & static_cast<uint8>(button)) == 0 && (ControllerOneInput & static_cast<uint8>(button)) != 0;
+}
+
 } // namespace Scooby

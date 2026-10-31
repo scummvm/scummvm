@@ -1068,6 +1068,7 @@ public:
 	void advanceRoomScriptBlock(const ScoobyDooRom &rom);
 
 	bool isButtonDown(ControllerButtons button) const;
+	bool wasButtonDown(ControllerButtons button) const;
 };
 } // namespace Scooby
 

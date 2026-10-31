@@ -163,7 +163,7 @@ bool MainMenuController::waitForRevealCommit(bool &skipRemainingReveal) {
 			return false;
 		}
 
-		if ((_state.ControllerOneInput & kRevealInputMask) != kRevealInputMask) {
+		if (_state.wasButtonDown(ControllerButtons::Start)) {
 			skipRemainingReveal = true;
 			return true;
 		}
