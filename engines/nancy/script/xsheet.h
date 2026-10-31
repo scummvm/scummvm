@@ -129,6 +129,7 @@ private:
 	int _lastFrame = 0;
 	bool _hasEnded = false;
 	bool _isPaused = false;
+	bool _hasShown = false;	// stays on screen when restarted
 };
 
 } // End of namespace Script

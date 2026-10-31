@@ -289,8 +289,12 @@ void XsheetRecord::onZChanged() {
 	_xsheet.setZ(getZ(), getContext());
 }
 
+// A restart doesn't hide the XSheet until the record runs again: the
+// conversation fidgets restart theirs in the middle of a frame, which made the
+// character blink every time
 void XsheetRecord::updateGraphics() {
-	_xsheet.setVisible(isActive() && hasStarted());
+	_hasShown |= hasStarted();
+	_xsheet.setVisible(isActive() && _hasShown);
 }
 
 bool XsheetRecord::getField(const Common::String &key) {
