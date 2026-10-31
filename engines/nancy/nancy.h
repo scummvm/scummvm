@@ -83,8 +83,6 @@ namespace Nancy {
 //       protagonists each carry their own cell phone
 static const int kSavegameVersion = 12;
 
-struct NancyGameDescription;
-
 class ResourceManager;
 class IFF;
 class InputManager;
@@ -105,10 +103,10 @@ class OverrideRecord;
 
 class NancyEngine : public Engine {
 public:
-	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
+	NancyEngine(GameType type, OSystem *syst, const ADGameDescription *gd);
 	~NancyEngine();
 
-	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
+	static NancyEngine *create(GameType type, OSystem *syst, const ADGameDescription *gd);
 
 	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
 	bool hasFeature(EngineFeature f) const override;
@@ -234,7 +232,8 @@ private:
 	GameFlow _gameFlow;
 	OSystem *_system;
 
-	const NancyGameDescription *_gameDescription;
+	const ADGameDescription *_gameDescription;
+	const GameType _gameType;
 
 	Common::Array<Common::WeakPtr<DeferredLoader>> _deferredLoaderObjects;
 };

@@ -43,7 +43,7 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-class NancyMetaEngineDetection : public AdvancedMetaEngineDetection<Nancy::NancyGameDescription> {
+class NancyMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	NancyMetaEngineDetection() : AdvancedMetaEngineDetection(Nancy::gameDescriptions, Nancy::nancyGames) {
 		_maxScanDepth = 2;

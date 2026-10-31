@@ -21,6 +21,7 @@
 
 #include "engines/advancedDetector.h"
 
+#include "engines/nancy/detection.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
@@ -112,14 +113,14 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class NancyMetaEngine : public AdvancedMetaEngine<Nancy::NancyGameDescription> {
+class NancyMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "nancy";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const Nancy::NancyGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
@@ -131,6 +132,8 @@ public:
 	void registerDefaultSettings(const Common::String &target) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	Nancy::GameType getGameType(const char *gameId) const;
 };
 
 Common::KeymapArray NancyMetaEngine::initKeymaps(const char *target) const {
@@ -145,21 +148,39 @@ bool NancyMetaEngine::hasFeature(MetaEngineFeature f) const {
 		checkExtendedSaves(f);
 }
 
-Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const Nancy::NancyGameDescription *gd) const {
+Nancy::GameType NancyMetaEngine::getGameType(const char *gameId) const {
+	const Nancy::GameIdToType *gameInfo = Nancy::gameIdToType;
+
+	while (gameInfo->gameId != nullptr) {
+		if (!strcmp(gameId, gameInfo->gameId))
+			return gameInfo->gameType;
+		gameInfo++;
+	}
+
+	error("Unknown game ID: %s", gameId);
+}
+
+Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+	if (!gd) {
+		return Common::Error(Common::kUnsupportedGameidError, _s("Game description is null"));
+	}
+
+	Nancy::GameType gameType = getGameType(gd->gameId);
+
 #ifndef ENABLE_NANCY_V3A
-	if (gd && gd->gameType == Nancy::kGameTypeNancy18) {
+	if (gameType == Nancy::kGameTypeNancy18) {
 		return Common::Error(Common::kUnsupportedGameidError, _s("Support for Nancy Drew 18 is not compiled in"));
 	}
 #endif
 
 #ifndef ENABLE_NANCY_V4
-	if (gd && gd->gameType >= Nancy::kGameTypeNancy19) {
+	if (gameType >= Nancy::kGameTypeNancy19) {
 		return Common::Error(Common::kUnsupportedGameidError, _s("Support for Nancy Drew 19 and newer is not compiled in"));
 	}
 #endif
 
 	if (gd) {
-		*engine = Nancy::NancyEngine::create(gd->gameType, syst, gd);
+		*engine = Nancy::NancyEngine::create(gameType, syst, gd);
 	}
 
 	if (gd) {

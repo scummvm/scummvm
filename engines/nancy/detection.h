@@ -66,11 +66,47 @@ enum GameType {
 	// Mystery of the Seven Keys was made with Unity
 };
 
-struct NancyGameDescription {
-	AD_GAME_DESCRIPTION_HELPERS(desc);
-
-	ADGameDescription desc;
+struct GameIdToType {
+	const char *gameId;
 	GameType gameType;
+};
+
+static const GameIdToType gameIdToType[] = {
+	{"vampire", kGameTypeVampire },
+	{ "nancy1", kGameTypeNancy1 },
+	{ "nancy2", kGameTypeNancy2 },
+	{ "nancy3", kGameTypeNancy3 },
+	{ "nancy4", kGameTypeNancy4 },
+	{ "nancy5", kGameTypeNancy5 },
+	{ "nancy6", kGameTypeNancy6 },
+	{ "nancy7", kGameTypeNancy7 },
+	{ "nancy8", kGameTypeNancy8 },
+	{ "nancy9", kGameTypeNancy9 },
+	{ "nancy10", kGameTypeNancy10 },
+	{ "nancy11", kGameTypeNancy11 },
+	{ "nancy12", kGameTypeNancy12 },
+	{ "nancy13", kGameTypeNancy13 },
+	{ "nancy14", kGameTypeNancy14 },
+	{ "nancy15", kGameTypeNancy15 },
+	{ "nancy16", kGameTypeNancy16 },
+	{ "nancy17", kGameTypeNancy17 },
+	{ "nancy18", kGameTypeNancy18 },
+	{ "nancy19", kGameTypeNancy19 },
+	{ "nancy20", kGameTypeNancy20 },
+	{ "nancy21", kGameTypeNancy21 },
+	{ "nancy22", kGameTypeNancy22 },
+	{ "nancy1new", kGameTypeNancy1New },
+	{ "nancy23", kGameTypeNancy23 },
+	{ "nancy24", kGameTypeNancy24 },
+	{ "nancy25", kGameTypeNancy25 },
+	{ "nancy26", kGameTypeNancy26 },
+	{ "nancy27", kGameTypeNancy27 },
+	{ "nancy28", kGameTypeNancy28 },
+	{ "nancy29", kGameTypeNancy29 },
+	{ "nancy30", kGameTypeNancy30 },
+	{ "nancy31", kGameTypeNancy31 },
+	{ "nancy32", kGameTypeNancy32 },
+	{ nullptr, kGameTypeNone }
 };
 
 enum NancyDebugChannels {

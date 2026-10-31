@@ -61,14 +61,15 @@ namespace Nancy {
 
 NancyEngine *g_nancy;
 
-NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
+NancyEngine::NancyEngine(GameType type, OSystem *syst, const ADGameDescription *gd) :
 		Engine(syst),
 		_gameDescription(gd),
+		_gameType(type),
 		_system(syst),
 		_datFileMajorVersion(1),
 		_datFileMinorVersion(0),
-		_false(gd->gameType <= kGameTypeNancy2 ? 1 : 0),
-		_true(gd->gameType <= kGameTypeNancy2 ? 2 : 1) {
+		_false(type <= kGameTypeNancy2 ? 1 : 0),
+		_true(type <= kGameTypeNancy2 ? 2 : 1) {
 
 	g_nancy = this;
 
@@ -109,9 +110,9 @@ NancyEngine::~NancyEngine() {
 	}
 }
 
-NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
+NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const ADGameDescription *gd) {
 	if (type >= kGameTypeVampire && type <= kGameTypeNancy32) {
-		return new NancyEngine(syst, gd);
+		return new NancyEngine(type, syst, gd);
 	}
 
 	error("Unknown GameType");
@@ -207,23 +208,23 @@ const char *NancyEngine::getCopyrightString() const {
 }
 
 uint32 NancyEngine::getGameFlags() const {
-	return _gameDescription->desc.flags;
+	return _gameDescription->flags;
 }
 
 const char *NancyEngine::getGameId() const {
-	return _gameDescription->desc.gameId;
+	return _gameDescription->gameId;
 }
 
 GameType NancyEngine::getGameType() const {
-	return _gameDescription->gameType;
+	return _gameType;
 }
 
 Common::Language NancyEngine::getGameLanguage() const {
-	return _gameDescription->desc.language;
+	return _gameDescription->language;
 }
 
 Common::Platform NancyEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
+	return _gameDescription->platform;
 }
 
 const StaticData &NancyEngine::getStaticData() const {
@@ -1173,7 +1174,7 @@ void NancyEngine::readDatFile() {
 	uint32 nextGameOffset = gameType == numGames ? datFile->size() : datFile->readUint32LE();
 	datFile->seek(thisGameOffset);
 
-	_staticData.readData(*datFile, _gameDescription->desc.language, nextGameOffset, major, minor);
+	_staticData.readData(*datFile, _gameDescription->language, nextGameOffset, major, minor);
 
 	delete datFile;
 }
