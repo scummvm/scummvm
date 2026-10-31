@@ -20,6 +20,28 @@
 
 namespace Ripper {
 
+ClockPuzzleState::ClockPuzzleState() : halfDay(false) {
+	memset(dialIndices, 0, sizeof(dialIndices));
+	memset(firstClockDigits, 0, sizeof(firstClockDigits));
+	memset(secondClockDigits, 0, sizeof(secondClockDigits));
+}
+
+BoardArrangementPuzzleState::BoardArrangementPuzzleState() :
+		positions{
+			Common::Point(103, 63), Common::Point(168, 63),
+			Common::Point(103, 120), Common::Point(168, 120),
+			Common::Point(103, 294), Common::Point(168, 176),
+			Common::Point(103, 239), Common::Point(103, 176)
+		} {
+}
+
+KeyGroupPuzzleState::KeyGroupPuzzleState() {
+	for (uint index = 0; index < ARRAYSIZE(sourceSlots); ++index)
+		sourceSlots[index] = index;
+	for (uint index = 0; index < ARRAYSIZE(targetSlots); ++index)
+		targetSlots[index] = -1;
+}
+
 namespace {
 
 bool syncClock(Common::Serializer &serializer, ClockPuzzleState &clock) {

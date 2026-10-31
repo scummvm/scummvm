@@ -66,30 +66,15 @@ static const uint16 kEscapeCommand = 0x1b;
 static const uint16 kHelpCommand = 0x3b00;
 static const uint16 kScreenshotCommand = 0x4400;
 
-static const Common::Point kInitialPositions[kPieceCount] = {
-	Common::Point(103, 13 + kSceneOriginY),
-	Common::Point(168, 13 + kSceneOriginY),
-	Common::Point(103, 70 + kSceneOriginY),
-	Common::Point(168, 70 + kSceneOriginY),
-	Common::Point(103, 244 + kSceneOriginY),
-	Common::Point(168, 126 + kSceneOriginY),
-	Common::Point(103, 189 + kSceneOriginY),
-	Common::Point(103, 126 + kSceneOriginY)
-};
-
 static const uint kValidationOrder[5] = {1, 0, 3, 6, 2};
 
 } // End of anonymous namespace
 
-BoardArrangementPuzzleState::BoardArrangementPuzzleState() {
-	for (uint piece = 0; piece < kPieceCount; ++piece)
-		positions[piece] = kInitialPositions[piece];
-}
-
 BoardArrangementPuzzle::BoardArrangementPuzzle(RipperEngine *engine) :
 		Puzzle(engine), _draggedPiece(-1), _hoveredPiece(-1) {
+	const BoardArrangementPuzzleState defaults;
 	for (uint piece = 0; piece < kPieceCount; ++piece) {
-		_positions[piece] = kInitialPositions[piece];
+		_positions[piece] = defaults.positions[piece];
 		_zOrder[piece] = piece;
 	}
 }

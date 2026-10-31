@@ -92,18 +92,13 @@ static const bool kTargetHalfDay = true;
 
 } // End of anonymous namespace
 
-ClockPuzzleState::ClockPuzzleState() : halfDay(false) {
-	memset(dialIndices, 0, sizeof(dialIndices));
-	memset(firstClockDigits, 0, sizeof(firstClockDigits));
-	memset(secondClockDigits, 0, sizeof(secondClockDigits));
-}
-
 ClockPuzzle::ClockPuzzle(RipperEngine *engine) : Puzzle(engine),
-		_hoveredControl(-1), _dragDial(-1), _lastDragIndex(-1),
-		_halfDay(false) {
-	memset(_dialIndices, 0, sizeof(_dialIndices));
-	memset(_firstClockDigits, 0, sizeof(_firstClockDigits));
-	memset(_secondClockDigits, 0, sizeof(_secondClockDigits));
+		_hoveredControl(-1), _dragDial(-1), _lastDragIndex(-1) {
+	const ClockPuzzleState defaults;
+	memcpy(_dialIndices, defaults.dialIndices, sizeof(_dialIndices));
+	memcpy(_firstClockDigits, defaults.firstClockDigits, sizeof(_firstClockDigits));
+	memcpy(_secondClockDigits, defaults.secondClockDigits, sizeof(_secondClockDigits));
+	_halfDay = defaults.halfDay;
 }
 
 bool ClockPuzzle::captureBackground() {

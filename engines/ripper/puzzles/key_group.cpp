@@ -74,21 +74,13 @@ static const int kSolvedTargetPieces[kTargetSlotCount] = {
 
 } // End of anonymous namespace
 
-KeyGroupPuzzleState::KeyGroupPuzzleState() {
-	for (uint index = 0; index < kSourceSlotCount; ++index)
-		sourceSlots[index] = index;
-	for (uint index = 0; index < kTargetSlotCount; ++index)
-		targetSlots[index] = -1;
-}
-
 KeyGroupPuzzle::KeyGroupPuzzle(RipperEngine *engine) :
 		Puzzle(engine), _maxPieceWidth(0), _maxPieceHeight(0),
 		_heldPiece(-1), _heldPosition(0, 0), _heldOffset(0, 0),
 		_keywordIndex(0) {
-	for (uint index = 0; index < kSourceSlotCount; ++index)
-		_sourceSlots[index] = index;
-	for (uint index = 0; index < kTargetSlotCount; ++index)
-		_targetSlots[index] = -1;
+	const KeyGroupPuzzleState defaults;
+	memcpy(_sourceSlots, defaults.sourceSlots, sizeof(_sourceSlots));
+	memcpy(_targetSlots, defaults.targetSlots, sizeof(_targetSlots));
 }
 
 bool KeyGroupPuzzle::loadBackground() {
