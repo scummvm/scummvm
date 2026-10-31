@@ -140,7 +140,10 @@ void PrisonerEngine::unloadMusic(int16 musicIndex) {
 	if (musicIndex >= 0) {
 		MusicSlot &musicSlot = _musics[musicIndex];
 		stopMusic(musicIndex);
-		_res->unload(musicSlot.resourceCacheSlot);
+		// Scripts can unload a slot that is already empty, for example after a module change
+		// freed the music (the original releases resource -1 without checking)
+		if (musicSlot.resourceCacheSlot != -1)
+			_res->unload(musicSlot.resourceCacheSlot);
 		musicSlot.resourceCacheSlot = -1;
 	}
 }

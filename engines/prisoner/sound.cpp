@@ -106,7 +106,9 @@ void PrisonerEngine::unloadSound(int16 soundIndex) {
 	if (soundIndex >= 0) {
 		SoundSlot &soundSlot = _sounds[soundIndex];
 		stopSound(soundIndex);
-		_res->unload(soundSlot.resourceCacheSlot);
+		// The slot can already be empty, for example after a module change freed the sounds
+		if (soundSlot.resourceCacheSlot != -1)
+			_res->unload(soundSlot.resourceCacheSlot);
 		soundSlot.resourceCacheSlot = -1;
 		clearActorFrameSoundsBySoundIndex(soundIndex);
 	}
