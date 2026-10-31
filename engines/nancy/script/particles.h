@@ -114,10 +114,10 @@ private:
 	ScriptMatrix _perspective;
 	bool _hasPerspective = false;	// Nancy22 has particles without one
 
-	double _stepTime = 0.0;
-	int _numSteps = 0;
-	double _spawnTime = 0.0;
-	int _numSpawned = 0;
+	// Both keep what is left of the time after the last whole step or particle
+	double _stepClock = 0.0;
+	double _spawnClock = 0.0;
+	double _spawnTime = 0.0;	// when the newest particles were made
 
 	RecordGraphic *_canvas = nullptr;
 };

@@ -653,30 +653,36 @@ void ParticleRecord::run(double sceneTime, double elapsedTime) {
 	simulate(elapsedTime);
 }
 
-// Steps through the given time, 30 steps a second
+// Steps through the given time, 30 steps a second. What is left over counts
+// toward the next step.
 void ParticleRecord::simulate(double seconds) {
-	_stepTime += seconds;
-	const int numSteps = (int)(_stepTime * kStepsPerSecond);
-	const int newSteps = numSteps - _numSteps;
-	_numSteps = numSteps;
+	_stepClock += seconds;
+	const int numSteps = MAX<int>((int)(_stepClock * kStepsPerSecond), 0);
+	_stepClock -= numSteps / kStepsPerSecond;
 
-	for (int i = 0; i < newSteps; ++i) {
+	for (int i = 0; i < numSteps; ++i) {
 		step();
 	}
 }
 
 void ParticleRecord::step() {
-	const int numSpawned = _numSpawned;
 	_spawnTime += 1.0 / kStepsPerSecond;
-	_numSpawned = (int)(_spawnTime * _frequency);
+
+	// A record that makes no particles keeps no time toward the next one
+	int numSpawned = 0;
+	if (_frequency > 0.0) {
+		_spawnClock += 1.0 / kStepsPerSecond;
+		numSpawned = MAX<int>((int)(_spawnClock * _frequency), 0);
+		_spawnClock -= numSpawned / _frequency;
+	}
 
 	// The particles that lived long enough go
 	while (!_batches.empty() && _batches.front().time + _life <= _spawnTime) {
 		dropOldestBatch();
 	}
 
-	if (_numSpawned > numSpawned) {
-		spawn(_numSpawned - numSpawned);
+	if (numSpawned > 0) {
+		spawn(numSpawned);
 	}
 
 	runStages(_first, _count, false);
