@@ -290,6 +290,8 @@ bool DungeonLogic::climb() {
 	else
 		climbLadderDown();
 
+	// We want end of turn logic, but changing level will suppress the prompt display
+	prompt();
 	return true;
 }
 
