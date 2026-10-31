@@ -57,7 +57,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x480,
+	kFeaturesTrueColor | kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -83,7 +83,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x480,
+	kFeaturesTrueColor | kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -96,7 +96,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x480,
+	kFeaturesTrueColor | kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -109,7 +109,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x480,
+	kFeaturesTrueColor | kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -164,7 +164,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x480,
+	kFeaturesTrueColor | kFeatures640x480,
 	0, 0, 0
 },
 {
