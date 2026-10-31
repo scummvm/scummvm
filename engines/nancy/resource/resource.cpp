@@ -26,11 +26,11 @@
 #include "image/png.h"
 
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/resource.h"
-#include "engines/nancy/decompress.h"
+#include "engines/nancy/resource/resource.h"
+#include "engines/nancy/resource/decompress.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/util.h"
-#include "engines/nancy/iff.h"
+#include "engines/nancy/resource/iff.h"
 
 static char treePrefix[] = "_tree_";
 

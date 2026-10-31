@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_XSHEETFILE_H
-#define NANCY_XSHEETFILE_H
+#ifndef NANCY_RESOURCE_XSHEETFILE_H
+#define NANCY_RESOURCE_XSHEETFILE_H
 
 #include "common/array.h"
 #include "common/path.h"
@@ -56,4 +56,4 @@ struct XSheetFile {
 
 } // End of namespace Nancy
 
-#endif // NANCY_XSHEETFILE_H
+#endif // NANCY_RESOURCE_XSHEETFILE_H

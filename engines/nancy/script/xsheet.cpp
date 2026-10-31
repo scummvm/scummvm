@@ -22,7 +22,7 @@
 #include "common/textconsole.h"
 
 #include "engines/nancy/graphics.h"
-#include "engines/nancy/xsheetfile.h"
+#include "engines/nancy/resource/xsheetfile.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"

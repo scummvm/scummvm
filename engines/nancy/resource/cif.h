@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_CIF_H
-#define NANCY_CIF_H
+#ifndef NANCY_RESOURCE_CIF_H
+#define NANCY_RESOURCE_CIF_H
 
 #include "common/archive.h"
 #include "common/rect.h"
@@ -143,4 +143,4 @@ public:
 
 } // End of namespace Nancy
 
-#endif // NANCY_CIF_H
+#endif // NANCY_RESOURCE_CIF_H

@@ -22,7 +22,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
-#include "engines/nancy/resource.h"
+#include "engines/nancy/resource/resource.h"
 #include "engines/nancy/font.h"
 
 #include "engines/nancy/misc/hypertext.h"

@@ -161,27 +161,27 @@ MODULE_OBJS = \
   misc/lightning.o \
   misc/specialeffect.o \
   misc/viewportfader.o \
-  cif.o \
+  resource/cif.o \
+  resource/decompress.o \
+  resource/iff.o \
+  resource/resource.o \
+  resource/sound_vorbis.o \
+  resource/video.o \
+  resource/xsheetfile.o \
   commontypes.o \
   console.o \
   cursor.o \
-  decompress.o \
   enginedata.o \
   font.o \
   graphics.o \
-  iff.o \
   movieplayer.o \
   input.o \
   metaengine.o \
   nancy.o \
   puzzledata.o \
   renderobject.o \
-  resource.o \
   sound.o \
-  sound_vorbis.o \
-  util.o \
-  video.o \
-  xsheetfile.o
+  util.o
 
 # Nancy19 and newer, whose scenes are Lua scripts
 ifdef ENABLE_NANCY_V4

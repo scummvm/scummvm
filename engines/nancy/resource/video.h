@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_VIDEO_H
-#define NANCY_VIDEO_H
+#ifndef NANCY_RESOURCE_VIDEO_H
+#define NANCY_RESOURCE_VIDEO_H
 
 #include "video/video_decoder.h"
 
@@ -108,4 +108,4 @@ private:
 
 } // End of namespace Nancy
 
-#endif // NANCY_VIDEO_H
+#endif // NANCY_RESOURCE_VIDEO_H

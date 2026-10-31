@@ -28,7 +28,7 @@
 #include "common/lua/lualib.h"
 
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/resource.h"
+#include "engines/nancy/resource/resource.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luastate.h"

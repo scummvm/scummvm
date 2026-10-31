@@ -25,7 +25,7 @@
 #include "engines/nancy/util.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/resource.h"
+#include "engines/nancy/resource/resource.h"
 
 namespace Nancy {
 namespace Action {

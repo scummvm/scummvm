@@ -27,11 +27,11 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "engines/nancy/sound_vorbis.h"
+#include "engines/nancy/resource/sound_vorbis.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
-#include "engines/nancy/iff.h"
+#include "engines/nancy/resource/iff.h"
 
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/state/map.h"

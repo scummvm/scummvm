@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef NANCY_RESOURCE_H
-#define NANCY_RESOURCE_H
+#ifndef NANCY_RESOURCE_RESOURCE_H
+#define NANCY_RESOURCE_RESOURCE_H
 
-#include "engines/nancy/cif.h"
+#include "engines/nancy/resource/cif.h"
 
 namespace Graphics {
 struct Surface;
@@ -84,4 +84,4 @@ private:
 
 } // End of namespace Nancy
 
-#endif // NANCY_RESOURCE_H
+#endif // NANCY_RESOURCE_RESOURCE_H

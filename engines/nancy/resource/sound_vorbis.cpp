@@ -24,7 +24,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_fseek
 
-#include "engines/nancy/sound_vorbis.h"
+#include "engines/nancy/resource/sound_vorbis.h"
 #include "audio/decoders/vorbis_intern.h"
 #include "common/textconsole.h"
 

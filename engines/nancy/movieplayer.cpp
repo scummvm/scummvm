@@ -25,7 +25,7 @@
 #include "video/bink_decoder.h"
 
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/video.h"
+#include "engines/nancy/resource/video.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/util.h"
 #include "engines/nancy/commontypes.h"

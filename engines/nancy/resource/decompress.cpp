@@ -22,7 +22,7 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
-#include "engines/nancy/decompress.h"
+#include "engines/nancy/resource/decompress.h"
 
 namespace Nancy {
 

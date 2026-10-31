@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_IFF_H
-#define NANCY_IFF_H
+#ifndef NANCY_RESOURCE_IFF_H
+#define NANCY_RESOURCE_IFF_H
 
 #include "common/array.h"
 #include "common/str.h"
@@ -70,4 +70,4 @@ private:
 
 } // End of namespace Nancy
 
-#endif // NANCY_IFF_H
+#endif // NANCY_RESOURCE_IFF_H

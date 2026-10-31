@@ -25,7 +25,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
-#include "engines/nancy/xsheetfile.h"
+#include "engines/nancy/resource/xsheetfile.h"
 
 namespace Nancy {
 
