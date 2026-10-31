@@ -196,8 +196,12 @@ LuaState::LuaState(SceneContext *context) {
 	removeGlobal(_state, "loadfile");
 	removeGlobal(_state, "print");
 
-	if (g_nancy->getGameType() >= kGameTypeNancy22) {
+	// Nancy1New has loadstring again, which QueryTable_SC builds its lambdas with
+	if (g_nancy->getGameType() == kGameTypeNancy22) {
 		removeGlobal(_state, "loadstring");
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy22) {
 		removeGlobal(_state, "setfenv");
 	}
 
