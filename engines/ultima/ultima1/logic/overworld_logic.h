@@ -118,11 +118,6 @@ private:
 	 */
 	int getMagicWeaponPower();
 
-	/**
-	 * Adds coins to the player's purse, capped at 9999
-	 */
-	void giveCoins(int coins);
-
 protected:
 	/**
 	 * Board a vehicle the player is standing on

@@ -100,11 +100,6 @@ private:
 	void monsterDead(int monsterId);
 
 	/**
-	 * Adds coins to the player's purse, capped at 9999
-	 */
-	void giveCoins(int coins);
-
-	/**
 	 * Resolves an attack (physical or magical) landing at the given
 	 * dungeon cell - rolls to hit, then applies damage or kills the
 	 * monster there, awarding coins/experience on a kill

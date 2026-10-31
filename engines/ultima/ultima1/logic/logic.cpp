@@ -67,6 +67,54 @@ void Logic::redrawStats() {
 	g_engine->baseView()->findView("Stats")->draw();
 }
 
+void Logic::giveTreasure(int coins, int nameLen) {
+	Data::Savegame &sg = _G(savegame);
+	if (sg._coins + coins > 9999)
+		coins = 9999 - sg._coins;
+
+	if (coins == 0)
+		return;
+
+	// Whether the next amount shown ends its line
+	bool endLine;
+	if (nameLen == 0) {
+		endLine = true;
+	} else if (nameLen > 6) {
+		writeString("!\n");
+		endLine = false;
+	} else {
+		writeString("! ");
+		endLine = true;
+	}
+
+	int copper = coins % 10;
+	int silver = (coins % 100 - copper) / 10;
+	int gold = coins / 1000;
+
+	auto showAmount = [&](int value, const char *format) {
+		if (value == 0)
+			return;
+
+		writeString(format, value);
+		if (endLine) {
+			writeString("\n");
+			endLine = false;
+		} else {
+			endLine = true;
+		}
+	};
+
+	showAmount(copper, "%d copper!");
+	showAmount(silver, "%2d silver!");
+	showAmount(gold, "%2d gold!");
+
+	if (endLine)
+		writeString("\n");
+
+	sg._coins += coins;
+	redrawStats();
+}
+
 void Logic::playFX(int num) {
 	g_engine->playFX(num);
 }

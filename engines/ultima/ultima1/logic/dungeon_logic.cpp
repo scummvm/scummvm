@@ -320,7 +320,7 @@ bool DungeonLogic::unlock() {
 
 	cell._itemId = Data::DITEM_NONE;
 	writeString("Thou dost find: ");
-	giveCoins(getRandomNumber(3, sg._dungeonLevel * sg._dungeonLevel + 9));
+	giveTreasure(getRandomNumber(3, sg._dungeonLevel * sg._dungeonLevel + 9), 0);
 	return true;
 }
 
@@ -355,7 +355,7 @@ bool DungeonLogic::open() {
 
 	cell._itemId = Data::DITEM_NONE;
 	writeString("Thou dost find: ");
-	giveCoins(getRandomNumber(3, sg._dungeonLevel * sg._dungeonLevel + 9));
+	giveTreasure(getRandomNumber(3, sg._dungeonLevel * sg._dungeonLevel + 9), 0);
 	return true;
 }
 
@@ -653,15 +653,6 @@ void DungeonLogic::monsterDead(int monsterId) {
 	}
 }
 
-void DungeonLogic::giveCoins(int coins) {
-	Data::Savegame &sg = _G(savegame);
-	if (sg._coins + coins > 9999)
-		coins = 9999 - sg._coins;
-
-	sg._coins += coins;
-	writeString("%d gold\n", coins);
-}
-
 void DungeonLogic::dungeonAttackAt(int effectNum, int agility, int strike, int x, int y) {
 	Data::MapDungeon &dungeon = _G(dungeon);
 	Data::Savegame &sg = _G(savegame);
@@ -703,7 +694,7 @@ void DungeonLogic::dungeonAttackAt(int effectNum, int agility, int strike, int x
 
 		int coins = getRandomNumber(2, sg._dungeonLevel * 3 + 10 + cell._monsterId);
 		writeString("Thou dost find: ");
-		giveCoins(coins);
+		giveTreasure(coins, 0);
 
 		dungeon.killMonster(x, y);
 
@@ -751,7 +742,7 @@ void DungeonLogic::castOpen() {
 
 	writeString("Thou dost find: ");
 	int coins = getRandomNumber(3, sg._dungeonLevel * sg._dungeonLevel + 9);
-	giveCoins(coins);
+	giveTreasure(coins, 0);
 }
 
 void DungeonLogic::castSpell(int spell, bool showPhrase) {

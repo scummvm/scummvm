@@ -95,6 +95,14 @@ protected:
 	void redrawStats();
 
 	/**
+	 * Adds coins to the player's purse, capped at 9999, and lists the copper,
+	 * silver and gold found. When nameLen is the length of a just-shown
+	 * monster name, the amounts continue on from it; zero means they start a
+	 * fresh line
+	 */
+	void giveTreasure(int coins, int nameLen);
+
+	/**
 	 * Triggers combat action
 	 */
 	void combat(Data::Direction direction, int effect);

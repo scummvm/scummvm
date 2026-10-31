@@ -676,15 +676,6 @@ int OverworldLogic::getMagicWeaponPower() {
 	return result;
 }
 
-void OverworldLogic::giveCoins(int coins) {
-	Data::Savegame &sg = _G(savegame);
-	if (sg._coins + coins > 9999)
-		coins = 9999 - sg._coins;
-
-	sg._coins += coins;
-	writeString("%d gold\n", coins);
-}
-
 void OverworldLogic::damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
 	// DELTA_X/Y aren't valid for DIR_UNSPECIFIED (-1) - treat it the same
 	// as DELTA_X/Y's own unused index 0, i.e. the projectile just stays put
@@ -740,7 +731,7 @@ void OverworldLogic::damage(Data::Direction dir, int effectNum, int maxDistance,
 
 	if (e._hits > 0) {
 		writeString(Common::String(monsterName).size() > 6 ? "!\n" : "! ");
-		writeString("%d damage\n", strike);
+		writeString("%2d damage\n", strike);
 		playFX(2);
 
 	} else {
@@ -752,8 +743,7 @@ void OverworldLogic::damage(Data::Direction dir, int effectNum, int maxDistance,
 		sg._experience += expGain;
 		playFX(2);
 
-		giveCoins(coins);
-		redrawStats();
+		giveTreasure(coins, strlen(monsterName));
 	}
 
 	endOfTurn();
