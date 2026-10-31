@@ -113,7 +113,7 @@ void IMuseTriggersHandler::saveLoad(Common::Serializer &ser) {
 		_defersOn = 1;
 }
 
-int IMuseTriggersHandler::setTrigger(int soundId, char *marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n) {
+int IMuseTriggersHandler::setTrigger(int soundId, const char *marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n) {
 	Common::StackLock lock(*_mutex);
 
 	if (soundId == 0) {
@@ -155,7 +155,7 @@ int IMuseTriggersHandler::setTrigger(int soundId, char *marker, int opcode, int 
 	return -6;
 }
 
-int IMuseTriggersHandler::checkTrigger(int soundId, char *marker, int opcode) {
+int IMuseTriggersHandler::checkTrigger(int soundId, const char *marker, int opcode) {
 	Common::StackLock lock(*_mutex);
 
 	int r = 0;
@@ -173,7 +173,7 @@ int IMuseTriggersHandler::checkTrigger(int soundId, char *marker, int opcode) {
 	return r;
 }
 
-int IMuseTriggersHandler::clearTrigger(int soundId, char *marker, int opcode) {
+int IMuseTriggersHandler::clearTrigger(int soundId, const char *marker, int opcode) {
 	Common::StackLock lock(*_mutex);
 
 	for (int l = 0; l < IMUSE_MAX_TRIGGERS; l++) {

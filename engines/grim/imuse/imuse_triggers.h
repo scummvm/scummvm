@@ -49,9 +49,9 @@ public:
 	int  init();
 	int  clearAllTriggers();
 	void saveLoad(Common::Serializer &ser);
-	int  setTrigger(int soundId, char *marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
-	int  checkTrigger(int soundId, char *marker, int opcode);
-	int  clearTrigger(int soundId, char *marker, int opcode);
+	int  setTrigger(int soundId, const char *marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
+	int  checkTrigger(int soundId, const char *marker, int opcode);
+	int  clearTrigger(int soundId, const char *marker, int opcode);
 	void processTriggers(int soundId, char *marker);
 	int  deferCommand(int count, int opcode, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
 	void loop();

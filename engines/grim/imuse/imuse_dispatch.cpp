@@ -769,7 +769,7 @@ int IMuse::dispatchGetMap(IMuseDispatch *dispatchPtr) {
 	uint8 *rawMap, *copiedBuf, *soundAddrData, *extFrmtBufPtr;
 	uint8 bufferHeader[80];
 	int32 size;
-	int32 curChunkPos = 0;
+	int curChunkPos = 0;
 	int targetSampleRate, targetNumChannels;
 
 	dstMap = dispatchPtr->map;

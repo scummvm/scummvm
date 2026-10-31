@@ -490,15 +490,15 @@ int IMuse::imGetHook(int soundId) {
 }
 
 int IMuse::imSetTrigger(int soundId, const char *marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n) {
-	return _triggersHandler->setTrigger(soundId, (char *)marker, opcode, d, e, f, g, h, i, j, k, l, m, n);
+	return _triggersHandler->setTrigger(soundId, marker, opcode, d, e, f, g, h, i, j, k, l, m, n);
 }
 
 int IMuse::imCheckTrigger(int soundId, const char *marker, int opcode) {
-	return _triggersHandler->checkTrigger(soundId, (char *)marker, opcode);
+	return _triggersHandler->checkTrigger(soundId, marker, opcode);
 }
 
 int IMuse::imClearTrigger(int soundId, const char *marker, int opcode) {
-	return _triggersHandler->clearTrigger(soundId, (char *)marker, opcode);
+	return _triggersHandler->clearTrigger(soundId, marker, opcode);
 }
 
 int IMuse::imDeferCommand(int count, int opcode, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n) {
