@@ -860,10 +860,11 @@ static void readSavedValue(lua_State *L, const Common::Array<byte> &in, uint &po
 	}
 }
 
-// Save:Data(name, value)
+// Save:Data(name, value). A value left out counts as nil: Nancy24's
+// SoundSystem_SC forgets to pass one.
 static int saveData(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
-	luaL_checkany(L, 3);
+	lua_settop(L, 3);
 
 	Common::Array<byte> packed;
 	if (!writeSavedValue(L, 3, packed, 0)) {
