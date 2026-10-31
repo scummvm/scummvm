@@ -480,7 +480,8 @@ bool SmushPlayerRebel2::handleGameTextResource(uint32 subType, int32 subSize, Co
 	}
 
 	TextStyleFlags flg = (TextStyleFlags)(flags & 7);
-	if (static_cast<InsaneRebel2 *>(_insane)->_release.nonInteractiveVideos || ConfMan.getBool("subtitles"))
+	// Only switchable dialogue text is controlled by the subtitle setting.
+	if (!(flags & 8) || static_cast<InsaneRebel2 *>(_insane)->_release.nonInteractiveVideos || ConfMan.getBool("subtitles"))
 		ra2HandleTextResource(str, fontId, color, posX, posY, left, top, width, height, flg);
 
 	free(text);
@@ -582,9 +583,12 @@ public:
 				line_start = line_end + 1;
 				if (line_start[0] == '/' && line_start[1] == '/') {
 					line_start += 2;
-					if (line_end[-1] == '\r')
-						line_end[-1] = '\n';
+					// Preserve one line break when stripping the continuation prefix.
+					if (line_end > value && line_end[-1] == '\r')
+						line_end--;
+					*line_end = '\n';
 					memmove(line_end + 1, line_start, strlen(line_start) + 1);
+					line_start = line_end + 1;
 				}
 			}
 
