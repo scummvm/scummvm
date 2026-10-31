@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-31 08:21+0000\n"
+"POT-Creation-Date: 2026-10-31 08:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6119,7 +6119,7 @@ msgstr ""
 #: engines/fool/metaengine.cpp:38 engines/got/metaengine.cpp:35
 #: engines/groovie/metaengine.cpp:53 engines/m4/metaengine.cpp:37
 #: engines/macs2/dialogs.cpp:46 engines/mads/metaengine.cpp:110
-#: engines/nancy/metaengine.cpp:104 engines/neverhood/dialogs.cpp:47
+#: engines/nancy/metaengine.cpp:105 engines/neverhood/dialogs.cpp:47
 #: engines/pelrock/metaengine.cpp:35 engines/phoenixvr/metaengine.cpp:47
 #: engines/sci/detection_options.h:118 engines/sherlock/metaengine.cpp:47
 #: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
@@ -6135,7 +6135,7 @@ msgstr ""
 #: engines/fool/metaengine.cpp:39 engines/got/metaengine.cpp:36
 #: engines/groovie/metaengine.cpp:54 engines/m4/metaengine.cpp:38
 #: engines/macs2/dialogs.cpp:47 engines/mads/metaengine.cpp:111
-#: engines/nancy/metaengine.cpp:105 engines/neverhood/dialogs.cpp:48
+#: engines/nancy/metaengine.cpp:106 engines/neverhood/dialogs.cpp:48
 #: engines/pelrock/metaengine.cpp:36 engines/phoenixvr/metaengine.cpp:48
 #: engines/sci/detection_options.h:119 engines/sherlock/metaengine.cpp:48
 #: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
@@ -7314,7 +7314,7 @@ msgid ""
 msgstr ""
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:1222 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1260 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -11393,65 +11393,69 @@ msgstr ""
 msgid "Show / hide maze map"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:38
+#: engines/nancy/metaengine.cpp:39
 msgid "Player Speech"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:39
+#: engines/nancy/metaengine.cpp:40
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:49
+#: engines/nancy/metaengine.cpp:50
 msgid "Character Speech"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:50
+#: engines/nancy/metaengine.cpp:51
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:60
+#: engines/nancy/metaengine.cpp:61
 msgid "Auto Move"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:61
+#: engines/nancy/metaengine.cpp:62
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:71
+#: engines/nancy/metaengine.cpp:72
 msgid "Fix softlocks"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:72
+#: engines/nancy/metaengine.cpp:73
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:82
+#: engines/nancy/metaengine.cpp:83
 msgid "Fix annoyances"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:83
+#: engines/nancy/metaengine.cpp:84
 msgid "Fix various minor annoyances."
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:93
+#: engines/nancy/metaengine.cpp:94
 msgid "Extend endgame timer"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:94
+#: engines/nancy/metaengine.cpp:95
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:151
+#: engines/nancy/metaengine.cpp:165
+msgid "Game description is null"
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:172
 msgid "Support for Nancy Drew 18 is not compiled in"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:157
+#: engines/nancy/metaengine.cpp:178
 msgid "Support for Nancy Drew 19 and newer is not compiled in"
 msgstr ""
 
