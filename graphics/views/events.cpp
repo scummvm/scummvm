@@ -64,6 +64,13 @@ void Events::runGame() {
 			}
 
 			processEvent(e);
+
+			// Any event other than mouse moves is followed by an immediate frame, so a
+			// stream of repeated events can't starve the views of being redrawn
+			if (e.type != Common::EVENT_MOUSEMOVE) {
+				nextFrameTime = 0;
+				break;
+			}
 		}
 
 		if (_views.empty())
