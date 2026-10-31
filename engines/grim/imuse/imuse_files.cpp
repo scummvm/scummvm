@@ -1362,6 +1362,16 @@ int IMuse::iMUSEGetHook(const char *soundName) {
 	return -1;
 }
 
+int IMuse::iMUSEGetMemoryFootprint() {
+	// The original variable is never set
+	return 0;
+}
+
+int IMuse::iMUSEGetSoundCacheSize() {
+	// The original variable is never set
+	return 0;
+}
+
 void IMuse::iMUSESetVoiceEffect(const char *effectName) {
 	Common::strlcpy(_curEffectName, effectName, sizeof(_curEffectName));
 

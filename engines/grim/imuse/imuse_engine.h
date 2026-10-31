@@ -359,6 +359,8 @@ public:
 	bool soundsIsSoundPlaying(const char *soundName);
 	int iMUSESetHook(const char *soundName, int hookId);
 	int iMUSEGetHook(const char *soundName);
+	int iMUSEGetMemoryFootprint();
+	int iMUSEGetSoundCacheSize();
 	void iMUSESetVoiceEffect(const char *effectName);
 	void soundsSaveLoad(Common::Serializer &ser);
 	void soundsRestoreLegacy(int32 stateIndex, int32 seqIndex);
