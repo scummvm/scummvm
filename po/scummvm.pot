@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-31 12:52+0000\n"
+"POT-Creation-Date: 2026-10-31 16:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4770,12 +4770,12 @@ msgstr ""
 msgid "Magnify Mode Off"
 msgstr ""
 
-#: backends/platform/android/android.cpp:942
+#: backends/platform/android/android.cpp:935
 #: backends/platform/ios7/ios7_osys_misc.mm:246
 msgid "Getting help"
 msgstr ""
 
-#: backends/platform/android/android.cpp:945
+#: backends/platform/android/android.cpp:938
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4797,13 +4797,13 @@ msgid ""
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:954
+#: backends/platform/android/android.cpp:947
 #: backends/platform/ios7/ios7_osys_misc.mm:258
 #: backends/platform/ios7/ios7_osys_misc.mm:354
 msgid "Touch Controls"
 msgstr ""
 
-#: backends/platform/android/android.cpp:957
+#: backends/platform/android/android.cpp:950
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4872,13 +4872,13 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1013
+#: backends/platform/android/android.cpp:1006
 #: backends/platform/ios7/ios7_osys_misc.mm:333
 #: backends/platform/ios7/ios7_osys_misc.mm:377
 msgid "Adding Games"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1016
+#: backends/platform/android/android.cpp:1009
 msgid ""
 "## Adding Games \n"
 "\n"

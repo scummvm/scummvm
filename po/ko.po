@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-31 12:52+0000\n"
+"POT-Creation-Date: 2026-10-31 16:56+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5060,12 +5060,12 @@ msgstr "돋보기 모드 끔. 드래그 모드를 재활성화 중..."
 msgid "Magnify Mode Off"
 msgstr "돋보기 모드 끔"
 
-#: backends/platform/android/android.cpp:942
+#: backends/platform/android/android.cpp:935
 #: backends/platform/ios7/ios7_osys_misc.mm:246
 msgid "Getting help"
 msgstr "도움 받기"
 
-#: backends/platform/android/android.cpp:945
+#: backends/platform/android/android.cpp:938
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -5106,13 +5106,13 @@ msgstr ""
 "신이 아찔할 정도로 까다롭습니다. 게임에 막혔다면 게임 연습을 확인해 보세요. "
 "행운을 빕니다!\n"
 
-#: backends/platform/android/android.cpp:954
+#: backends/platform/android/android.cpp:947
 #: backends/platform/ios7/ios7_osys_misc.mm:258
 #: backends/platform/ios7/ios7_osys_misc.mm:354
 msgid "Touch Controls"
 msgstr "터치 조작"
 
-#: backends/platform/android/android.cpp:957
+#: backends/platform/android/android.cpp:950
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5243,13 +5243,13 @@ msgstr ""
 "  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1013
+#: backends/platform/android/android.cpp:1006
 #: backends/platform/ios7/ios7_osys_misc.mm:333
 #: backends/platform/ios7/ios7_osys_misc.mm:377
 msgid "Adding Games"
 msgstr "게임 추가"
 
-#: backends/platform/android/android.cpp:1016
+#: backends/platform/android/android.cpp:1009
 msgid ""
 "## Adding Games \n"
 "\n"
