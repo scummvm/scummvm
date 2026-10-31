@@ -37,6 +37,7 @@
 #include "engines/grim/movie/codecs/blocky16.h"
 #include "engines/grim/movie/codecs/smush_decoder.h"
 #include "engines/grim/movie/codecs/vima.h"
+#include "engines/grim/movie/smush_wave.h"
 
 namespace Grim {
 
@@ -57,6 +58,9 @@ SmushDecoder::SmushDecoder() {
 
 	_videoTrack = nullptr;
 	_audioTrack = nullptr;
+	_wave = nullptr;
+	_ownsAudioTrack = false;
+	_blocky16Frames = 0;
 	_videoPause = false;
 }
 
@@ -118,6 +122,10 @@ void SmushDecoder::initFrames() {
 
 void SmushDecoder::close() {
 	VideoDecoder::close();
+	if (_ownsAudioTrack)
+		delete _audioTrack;
+
+	_ownsAudioTrack = false;
 	_audioTrack = nullptr;
 	_videoTrack = nullptr;
 	_videoLooping = false;
@@ -237,6 +245,9 @@ bool SmushDecoder::handleFramesHeader() {
 		} else if (READ_BE_UINT32(f_header + pos) == MKTAG('W', 'a', 'v', 'e')) {
 			freq = READ_LE_UINT32(f_header + pos + 8);
 			channels = READ_LE_UINT32(f_header + pos + 12);
+			if (_wave)
+				_wave->flobdecDecodeHeader(f_header + pos + 8);
+
 			pos += 20;
 		} else {
 			error("SmushDecoder::handleFramesHeader() unknown tag");
@@ -245,7 +256,11 @@ bool SmushDecoder::handleFramesHeader() {
 	delete[] f_header;
 
 	_audioTrack = new SmushAudioTrack(getSoundType(), true, freq, channels);
-	addTrack(_audioTrack);
+	if (_wave)
+		_ownsAudioTrack = true;
+	else
+		addTrack(_audioTrack);
+
 	return true;
 }
 
@@ -353,9 +368,13 @@ void SmushDecoder::handleFRME(Common::SeekableReadStream *stream, uint32 size) {
 			// Retail only:
 		case MKTAG('B', 'l', '1', '6'):
 			_videoTrack->handleBlocky16(memStream, subSize);
+			_blocky16Frames++;
 			break;
 		case MKTAG('W', 'a', 'v', 'e'):
-			_audioTrack->handleVIMA(memStream, blockSize);
+			if (_wave)
+				_wave->flobdecDecodeBody(block + subPos);
+			else
+				_audioTrack->handleVIMA(memStream, blockSize);
 			break;
 			// Demo only:
 		case MKTAG('F', 'O', 'B', 'J'):
@@ -377,7 +396,43 @@ void SmushDecoder::handleFRME(Common::SeekableReadStream *stream, uint32 size) {
 	delete[] block;
 }
 
+void SmushDecoder::decodeFrameBlock(const byte *block, uint32 size) {
+	Common::MemoryReadStream *memStream = new Common::MemoryReadStream(block, size, DisposeAfterUse::NO);
+
+	int remaining = size;
+	while (remaining > 4) {
+		uint32 subType = memStream->readUint32BE();
+		uint32 subSize = memStream->readUint32BE();
+		uint32 subPos = memStream->pos();
+
+		switch (subType) {
+		case MKTAG('B', 'l', '1', '6'):
+			_videoTrack->handleBlocky16(memStream, subSize);
+			_blocky16Frames++;
+			break;
+		case MKTAG('W', 'a', 'v', 'e'):
+			_wave->flobdecDecodeBody(block + subPos);
+			break;
+		default:
+			break;
+		}
+
+		remaining -= subSize + 8 + (subSize & 1);
+		memStream->seek(subPos + subSize + (subSize & 1), SEEK_SET);
+	}
+
+	delete memStream;
+	_videoTrack->finishFrame();
+}
+
+const Graphics::Surface *SmushDecoder::getFrameSurface() {
+	return _videoTrack->decodeNextFrame();
+}
+
 bool SmushDecoder::rewind() {
+	if (_wave)
+		_wave->flobdecReset();
+
 	return seekToFrame(0);
 }
 

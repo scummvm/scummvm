@@ -115,6 +115,12 @@ protected:
 	virtual void handleFrame() {};
 
 	/**
+	 * Called by the timer thread on every tick, with _frameMutex locked,
+	 * before the frame is prepared.
+	 */
+	virtual void handleTimer() {}
+
+	/**
 	 * Frame-handling function.
 	 *
 	 * Perform any codec-specific per-frame operations after prepareFrame has been

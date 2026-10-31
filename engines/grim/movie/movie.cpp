@@ -81,6 +81,7 @@ void MoviePlayer::stop() {
 void MoviePlayer::timerCallback(void *instance) {
 	MoviePlayer *movie = static_cast<MoviePlayer *>(instance);
 	Common::StackLock lock(movie->_frameMutex);
+	movie->handleTimer();
 	if (movie->prepareFrame())
 		movie->postHandleFrame();
 }

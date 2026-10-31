@@ -23,14 +23,20 @@
 #define GRIM_SMUSH_PLAYER_H
 
 #include "engines/grim/movie/movie.h"
+#include "engines/grim/movie/smush_anim.h"
 
 #include "video/video_decoder.h"
 
 namespace Grim {
 
 class SmushDecoder;
+class SmushAnimator;
+class SmushTimer;
+class SmushDriver;
+class SmushSound;
+class SmushWave;
 
-class SmushPlayer : public MoviePlayer {
+class SmushPlayer : public MoviePlayer, public SmushAnimClient {
 public:
 	SmushPlayer(bool demo);
 	virtual ~SmushPlayer();
@@ -38,12 +44,24 @@ public:
 
 private:
 	bool loadFile(const Common::String &filename) override;
+	bool prepareFrame() override;
+	int animatorRender(int flags) override;
+	void resetFrameCounter() override;
+	int getFrameCounter() override;
 	void handleFrame() override;
+	void handleTimer() override;
 	void postHandleFrame() override;
 	void init() override;
+	void deinit() override;
 	bool _demo;
 	bool _currentVideoIsTheora = false;
 	SmushDecoder *_smushDecoder;
+	SmushTimer *_smushTimer;
+	SmushDriver *_smushDriver;
+	SmushSound *_smushSound;
+	SmushWave *_smushWave;
+	SmushAnimPlay *_smushAnim;
+	SmushAnimator *_smushAnimator;
 	Video::VideoDecoder *_theoraDecoder; // HACK for now, move to other class later?
 };
 

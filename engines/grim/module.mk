@@ -92,6 +92,12 @@ MODULE_OBJS := \
 	movie/movie.o \
 	movie/quicktime.o \
 	movie/smush.o \
+	movie/smush_anim.o \
+	movie/smush_animator.o \
+	movie/smush_mixer.o \
+	movie/smush_sound.o \
+	movie/smush_timer.o \
+	movie/smush_wave.o \
 	remastered/commentary.o \
 	remastered/hotspot.o \
 	remastered/lua_remastered.o \

@@ -37,6 +37,7 @@ namespace Grim {
 class Codec48Decoder;
 class Blocky8;
 class Blocky16;
+class SmushWave;
 
 class SmushDecoder : public Video::VideoDecoder {
 public:
@@ -46,6 +47,12 @@ public:
 	int getX() const { return _videoTrack->_x; }
 	int getY() const { return _videoTrack->_y; }
 	void setLooping(bool l);
+	void setWave(SmushWave *wave) { _wave = wave; }
+	Common::SeekableReadStream *getFile() { return _file; }
+	void decodeFrameBlock(const byte *block, uint32 size);
+	const Graphics::Surface *getFrameSurface();
+	void resetBlocky16Frames() { _blocky16Frames = 0; }
+	int getBlocky16Frames() const { return _blocky16Frames; }
 	bool isRewindable() const override { return true; }
 	bool isSeekable() const override { return true; }
 	bool rewind() override;
@@ -135,6 +142,9 @@ private:
 
 	SmushAudioTrack *_audioTrack;
 	SmushVideoTrack *_videoTrack;
+	SmushWave *_wave;
+	bool _ownsAudioTrack;
+	int _blocky16Frames;
 
 	Common::SeekableReadStream *_file;
 
