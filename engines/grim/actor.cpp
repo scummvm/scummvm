@@ -93,7 +93,7 @@ Actor::Actor() :
 		_globalAlpha(1.f), _alphaMode(AlphaOff),
 		 _mustPlaceText(false),
 		_puckOrient(false), _talking(false),
-		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false), _voiceIs3D(false), _talkSoundId(0),
+		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false), _talkSoundId(0),
 		_sortOrder(0), _useParentSortOrder(false),
 		_sectorSortOrder(0), _hasSectorSortOrder(false), _fakeUnbound(false), _lightMode(LightFastDyn),
 		_hasFollowedBoxes(false), _lookAtActor(0) {
@@ -146,7 +146,6 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeString(_talkSoundName);
 	savedState->writeBool(_talking);
 	savedState->writeBool(_backgroundTalk);
-	savedState->writeBool(_voiceIs3D);
 	savedState->writeLESint32(_talkSoundId);
 
 	savedState->writeLEUint32((uint32)_collisionMode);
@@ -306,10 +305,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_talkSoundName      = savedState->readString();
 	_talking = savedState->readBool();
 	_backgroundTalk = savedState->readBool();
-	if (savedState->saveMinorVersion() >= 30) {
-		_voiceIs3D = savedState->readBool();
+	if (savedState->saveMinorVersion() >= 30)
 		_talkSoundId = savedState->readLESint32();
-	}
 
 	if (isTalking()) {
 		g_grim->addTalkingActor(this);
@@ -1196,17 +1193,8 @@ void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 	bool started = false;
 	_talkSoundId = 0;
 
-	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
+	if (g_grim->getSpeechMode() != GrimEngine::TextOnly)
 		started = g_sound->startVoice(_talkSoundName.c_str(), 127, 64, background, &_talkSoundId);
-
-		// The voice can be positioned in the set, like the original does
-		if (started && _voiceIs3D && currSet && g_grim->getGameType() == GType_GRIM) {
-			if (background)
-				currSet->setSoundPosition(_talkSoundName.c_str(), getPos(), 20, 127, kSoundDefaultMaxDist, kSoundDefaultRadius);
-			else
-				currSet->setSoundPosition(kTalkSoundID, getPos(), 20, 127, kSoundDefaultMaxDist, kSoundDefaultRadius);
-		}
-	}
 
 	// If the actor is clearly not visible then don't try to play the lip sync
 	if (_visible && (!g_movie->isPlaying() || g_grim->getMode() == GrimEngine::NormalMode)) {

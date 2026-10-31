@@ -134,7 +134,6 @@ public:
 	 * @see getTalkColor
 	 */
 	void setTalkColor(const Color &color) { _talkColor = color; }
-	void setVoiceIs3D(bool is3D) { _voiceIs3D = is3D; }
 	/**
 	 * Returns the color of the subtitles of the actor.
 	 *
@@ -615,7 +614,6 @@ private:
 	Common::String _talkSoundName;
 	bool _talking;
 	bool _backgroundTalk;
-	bool _voiceIs3D;
 	int _talkSoundId;
 	ObjectPtr<LipSync> _lipSync;
 	Common::List<Costume *> _costumeStack;
