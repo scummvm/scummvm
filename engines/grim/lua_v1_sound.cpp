@@ -86,44 +86,6 @@ void Lua_V1::ImSetVoiceEffect() {
 	g_imuse->iMUSESetVoiceEffect(effectName);
 }
 
-void Lua_V1::ImStartVoice() {
-	lua_Object nameObj = lua_getparam(1);
-	lua_Object volObj = lua_getparam(2);
-	lua_Object panObj = lua_getparam(3);
-
-	// The original accepts nil too, but it would crash in iMUSE
-	if (!lua_isstring(nameObj))
-		return;
-
-	if (!lua_isnumber(volObj) || !lua_isnumber(panObj))
-		return;
-
-	g_imuse->soundStartVoiceStream(lua_getstring(nameObj), (int)lua_getnumber(volObj), (int)lua_getnumber(panObj));
-}
-
-void Lua_V1::ImStopVoice() {
-	g_imuse->soundStopVoiceStream();
-}
-
-void Lua_V1::ImGetMemoryFootprint() {
-	lua_pushnumber(g_imuse->iMUSEGetMemoryFootprint());
-}
-
-void Lua_V1::ImGetSoundCacheSize() {
-	lua_pushnumber(g_imuse->iMUSEGetSoundCacheSize());
-}
-
-void Lua_V1::ImSetMasterVol() {
-	lua_Object volObj = lua_getparam(1);
-	if (!lua_isnumber(volObj))
-		return;
-	g_imuse->imSetGroupVol(IMUSE_GROUP_MASTER, (int)lua_getnumber(volObj));
-}
-
-void Lua_V1::ImGetMasterVol() {
-	lua_pushnumber(g_imuse->imSetGroupVol(IMUSE_GROUP_MASTER, -1));
-}
-
 void Lua_V1::ImSetMusicVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
@@ -234,25 +196,6 @@ void Lua_V1::ImSetSequence() {
 
 	int state = (int)lua_getnumber(stateObj);
 	lua_pushnumber(g_imuse->imSetSequence(state));
-}
-
-void Lua_V1::ImSetAttribute() {
-	lua_Object attrIndexObj = lua_getparam(1);
-	lua_Object attrValObj = lua_getparam(2);
-	if (!lua_isnumber(attrIndexObj) || !lua_isnumber(attrValObj))
-		return;
-
-	int attrIndex = (int)lua_getnumber(attrIndexObj);
-	int attrVal = (int)lua_getnumber(attrValObj);
-	lua_pushnumber(g_imuse->imSetAttribute(attrIndex, attrVal));
-}
-
-void Lua_V1::ImSetCuePoint() {
-	lua_Object cueObj = lua_getparam(1);
-	if (!lua_isnumber(cueObj))
-		return;
-
-	g_imuse->imSetCuePoint((int)lua_getnumber(cueObj));
 }
 
 void Lua_V1::SaveIMuse() {
