@@ -521,6 +521,27 @@ static int fontsCreate(lua_State *L) {
 	return 0;
 }
 
+// FontsInit:CustomFonts({ file, ... }), Nancy23, which makes the fonts in the
+// files known before the fonts get made
+static int fontsCustomFonts(lua_State *L) {
+	checkUserData(L, 1, "ND.FontsInit");
+	if (!lua_istable(L, 2)) {
+		luaL_argerror(L, 2, "Expected parameter to be a table");
+	}
+
+	if (!s_tables || !s_tables->boot) {
+		luaL_error(L, "ND.FontsInit cannot be used by this script");
+	}
+
+	lua_pushnil(L);
+	while (lua_next(L, 2)) {
+		s_tables->boot->customFontFiles.push_back(luaL_checkstring(L, -1));
+		lua_pop(L, 1);
+	}
+
+	return 0;
+}
+
 static uint32 readColorField(lua_State *L, int tableIndex, const char *name) {
 	uint32 color = 0;
 	if (pushField(L, tableIndex, name)) {
@@ -591,7 +612,6 @@ static const InitObject kInitObjects[] = {
 	{ "VarTableInit", "ND.VarTableInit", varTableCreate },
 	{ "StrTableInit", "ND.StrTableInit", strTableCreate },
 	{ "InventoryInit", "ND.InventoryInit", inventoryCreate },
-	{ "FontsInit", "ND.FontsInit", fontsCreate },
 	{ "ColorsInit", "ND.ColorsInit", colorsCreate },
 	{ "AutotextInit", "ND.AutotextInit", autotextCreate }
 };
@@ -634,6 +654,15 @@ void registerBootAPI(lua_State *L) {
 	};
 
 	registerGlobal(L, "CursorInit", "ND.CursorInit", kCursorInitFunctions);
+
+	static const luaL_Reg kFontsInitFunctions[] = {
+		{ "__index", indexFunctions },
+		{ "Create", fontsCreate },
+		{ "CustomFonts", fontsCustomFonts },
+		{ nullptr, nullptr }
+	};
+
+	registerGlobal(L, "FontsInit", "ND.FontsInit", kFontsInitFunctions);
 }
 
 } // End of namespace Script

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "graphics/fontman.h"
 #include "graphics/fonts/ttf.h"
 
@@ -196,12 +198,28 @@ void Font::readSystemFont(Common::SeekableReadStream &stream, bool bold) {
 	setSystemFont(name, faceName, height, weight);
 }
 
-void Font::setSystemFont(const Common::String &name, const Common::String &faceName, int32 height, int32 weight) {
+void Font::setSystemFont(const Common::String &name, const Common::String &faceName, int32 height, int32 weight, const Common::Path &fileName) {
 	_description = name;
+
+#ifdef USE_FREETYPE2
+	// A font file that comes with the game takes the place of the Windows font
+	if (!fileName.empty()) {
+		Common::File *file = new Common::File();
+		if (file->open(fileName)) {
+			_systemFont.reset(Graphics::loadTTFFont(file, DisposeAfterUse::YES, height, Graphics::kTTFSizeModeCell), DisposeAfterUse::YES);
+		} else {
+			delete file;
+		}
+
+		if (_systemFont) {
+			return;
+		}
+
+		warning("Could not load font file %s", fileName.toString().c_str());
+	}
 
 	// None of the Windows fonts the game asks for (Tahoma, Arial, Lucida Handwriting)
 	// ship with ScummVM, so they all get replaced with the same sans-serif font
-#ifdef USE_FREETYPE2
 	const int32 kBoldWeight = 700;
 	const char *substitute = weight >= kBoldWeight ? "LiberationSans-Bold.ttf" : "LiberationSans-Regular.ttf";
 	_systemFont.reset(Graphics::loadTTFFontFromArchive(substitute, height, Graphics::kTTFSizeModeCell), DisposeAfterUse::YES);

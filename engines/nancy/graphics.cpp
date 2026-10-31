@@ -449,6 +449,24 @@ void GraphicsManager::loadSystemFonts(const IFF &fontIFF) {
 	}
 }
 
+// The font file of the game folder a face is in, if any. The face in the one
+// file Nancy23 has, "Digital Display2.ttf", is named after the file.
+static Common::Path findCustomFontFile(const ScriptBootData &boot, const Common::String &faceName) {
+	for (const Common::String &fileName : boot.customFontFiles) {
+		Common::String baseName = fileName;
+		const size_t dot = baseName.findLastOf('.');
+		if (dot != Common::String::npos) {
+			baseName.erase(dot);
+		}
+
+		if (baseName.equalsIgnoreCase(faceName)) {
+			return Common::Path(fileName);
+		}
+	}
+
+	return Common::Path();
+}
+
 void GraphicsManager::loadSystemFonts(const ScriptBootData &boot) {
 	const int32 kNormalWeight = 400;
 	const int32 kBoldWeight = 700;
@@ -462,13 +480,15 @@ void GraphicsManager::loadSystemFonts(const ScriptBootData &boot) {
 			_fonts.resize(font.id + 1);
 		}
 
-		_fonts[font.id].setSystemFont(font.name, font.faceName, font.height, font.isBold ? kBoldWeight : kNormalWeight);
+		_fonts[font.id].setSystemFont(font.name, font.faceName, font.height, font.isBold ? kBoldWeight : kNormalWeight,
+			findCustomFontFile(boot, font.faceName));
 	}
 
 	// Every font also comes in bold, after the ones with a number of their own
 	for (const ScriptBootData::SystemFont &font : boot.fonts) {
 		_fonts.resize(_fonts.size() + 1);
-		_fonts.back().setSystemFont(font.name + "_Bold", font.faceName, font.height, kBoldWeight);
+		_fonts.back().setSystemFont(font.name + "_Bold", font.faceName, font.height, kBoldWeight,
+			findCustomFontFile(boot, font.faceName));
 	}
 
 	for (const ScriptBootData::FontColor &color : boot.fontColors) {
