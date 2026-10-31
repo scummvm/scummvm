@@ -130,6 +130,7 @@ CityCastleLogic::CityCastleLogic() {
 void CityCastleLogic::entering() {
 	loadEntities();
 	_G(savegame)._guardsHostile = false;
+	prompt();
 }
 
 void CityCastleLogic::leaving() {

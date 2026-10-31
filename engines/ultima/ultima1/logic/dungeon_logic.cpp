@@ -44,6 +44,7 @@ void DungeonLogic::entering() {
 	_G(savegame)._dungeonLevel = 1;
 	_G(savegame)._dungeonDirection = 4;
 	_G(savegame)._dungeonExitHitPoints = 0;
+	prompt();
 }
 
 int DungeonLogic::getDirDeltaX() const {

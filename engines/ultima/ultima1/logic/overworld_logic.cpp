@@ -159,9 +159,6 @@ bool OverworldLogic::enter() {
 		// Run any logic for entering it
 		_G(logic)->entering();
 
-		// Do separate prompt call, since end of turn logic will be skipped
-		prompt();
-
 		return false;
 	}
 }
