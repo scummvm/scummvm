@@ -49,46 +49,38 @@ DEBUG_CURSOR=S_DEBUG.PUK 0 0
 ANM_CURSOR=S_DEBUG.PUK 0 1
 */
 
+// The cursor definitions configuration (listed above). The game decrypts that configuration
+// from a block in ICE640.EXE and reads these keys in loadMouseCursors. The index is the
+// cursor number; -1 means the cursor isn't defined.
+static const struct {
+	const char *key;
+	int16 pakSlot;
+	int16 frameListIndex;
+} kMouseCursorDefs[kMouseCursors] = {
+	{"DEFAULT_CURSOR=",    0,  5},
+	{"LOOK_CURSOR=",       0,  5},
+	{"MOVE_CURSOR=",       0,  5},
+	{"DOOR_CURSOR=",       0,  3},
+	{"READ_CURSOR=",       0,  1},
+	{"ACT_CURSOR=",        0,  5},
+	{"TALK_CURSOR=",       0,  2},
+	{"DISK_CURSOR=",       0,  0},
+	{"IDM_CURSOR=",        0,  7},
+	{"AUTOMATIC_CURSOR=",  0,  4},
+	{nullptr,             -1,  0},
+	{nullptr,             -1,  0},
+	{nullptr,             -1,  0},
+	{"MENU_CURSOR=",       0,  6}
+};
+
 void PrisonerEngine::loadMouseCursors() {
 
-	// TODO: Use cursor definitions from the Exe instead of these hackishly hardcoded values
-
-	_mouseCursors[0].key = "DEFAULT_CURSOR=";
-	_mouseCursors[0].pakSlot = 0;
-	_mouseCursors[0].frameListIndex = 5;
-	_mouseCursors[1].key = "LOOK_CURSOR=";
-	_mouseCursors[1].pakSlot = 0;
-	_mouseCursors[1].frameListIndex = 5;
-	_mouseCursors[2].key = "MOVE_CURSOR=";
-	_mouseCursors[2].pakSlot = 0;
-	_mouseCursors[2].frameListIndex = 5;
-	_mouseCursors[3].key = "DOOR_CURSOR=";
-	_mouseCursors[3].pakSlot = 0;
-	_mouseCursors[3].frameListIndex = 3;
-	_mouseCursors[4].key = "READ_CURSOR=";
-	_mouseCursors[4].pakSlot = 0;
-	_mouseCursors[4].frameListIndex = 1;
-	_mouseCursors[5].key = "ACT_CURSOR=";
-	_mouseCursors[5].pakSlot = 0;
-	_mouseCursors[5].frameListIndex = 5;
-	_mouseCursors[6].key = "TALK_CURSOR=";
-	_mouseCursors[6].pakSlot = 0;
-	_mouseCursors[6].frameListIndex = 2;
-	_mouseCursors[7].key = "DISK_CURSOR=";
-	_mouseCursors[7].pakSlot = 0;
-	_mouseCursors[7].frameListIndex = 0;
-	_mouseCursors[8].key = "IDM_CURSOR=";
-	_mouseCursors[8].pakSlot = 0;
-	_mouseCursors[8].frameListIndex = 7;
-	_mouseCursors[9].key = "AUTOMATIC_CURSOR=";
-	_mouseCursors[9].pakSlot = 0;
-	_mouseCursors[9].frameListIndex = 4;
-	_mouseCursors[10].pakSlot = -1;
-	_mouseCursors[11].pakSlot = -1;
-	_mouseCursors[12].pakSlot = -1;
-	_mouseCursors[13].key = "MENU_CURSOR=";
-	_mouseCursors[13].pakSlot = 0;
-	_mouseCursors[13].frameListIndex = 6;
+	for (int16 i = 0; i < kMouseCursors; i++) {
+		MouseCursor *mouseCursor = &_mouseCursors[i];
+		mouseCursor->key = kMouseCursorDefs[i].key ? kMouseCursorDefs[i].key : "";
+		mouseCursor->pakSlot = kMouseCursorDefs[i].pakSlot;
+		mouseCursor->frameListIndex = kMouseCursorDefs[i].frameListIndex;
+	}
 
 	Common::String pakName = "S_CURSOR";
 	for (int16 i = 0; i < kMouseCursors; i++) {

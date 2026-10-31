@@ -125,32 +125,18 @@ void PrisonerEngine::startDialog(int16 dialogIndex) {
 	_dialogYAdd = _dialogFontHeight / 2;
 	_dialogRectY2 = _dialogRectY1 + _dialogActiveKeywordsCount * _dialogFontHeight + _dialogYAdd * 2;
 
-	if (_dialogPanelResourceCacheSlot == -1) {
-		// TODO: Use loaded values
-		// S_PANEL.PUK   13 89 87?
-		Common::String pakName = "S_PANEL";
-		int16 pakSlot = 13;
-		_dialogPanelResourceCacheSlot = _res->load<AnimationResource>(pakName, pakSlot, 11);
-	}
+	_dialogPanelResourceCacheSlot = _menuPanelResourceCacheSlots[FORIDM_PANEL];
 
 }
 
 void PrisonerEngine::initDialog() {
 	_dialogs.clear();
-	if (_dialogPanelResourceCacheSlot == -1) {
-		// TODO: Use loaded values
-		// S_PANEL.PUK   13 89 87?
-		Common::String pakName = "S_PANEL";
-		int16 pakSlot = 13;
-		_dialogPanelResourceCacheSlot = _res->load<AnimationResource>(pakName, pakSlot, 11);
-	}
+	_dialogPanelResourceCacheSlot = _menuPanelResourceCacheSlots[FORIDM_PANEL];
 }
 
 void PrisonerEngine::unloadDialogPanel() {
-	if (_dialogPanelResourceCacheSlot != -1) {
-		_res->unload(_dialogPanelResourceCacheSlot);
-		_dialogPanelResourceCacheSlot = -1;
-	}
+	// The panel belongs to the menu panels and stays loaded
+	_dialogPanelResourceCacheSlot = -1;
 }
 
 void PrisonerEngine::updateDialog(int16 x, int16 y) {
