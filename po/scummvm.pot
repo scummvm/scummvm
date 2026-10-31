@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.4.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-30 18:12+0000\n"
+"POT-Creation-Date: 2026-10-31 08:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -213,7 +213,7 @@ msgid "Now, open this link in your browser:"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:286 gui/cloudconnectionwizard.cpp:347
-#: gui/message.cpp:278 gui/message.cpp:282
+#: gui/message.cpp:279 gui/message.cpp:283
 msgid "Open URL"
 msgstr ""
 
@@ -373,9 +373,9 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:585 gui/editgamedialog.cpp:382
 #: gui/editrecorddialog.cpp:67 gui/integrity-dialog.cpp:260
-#: gui/fluidsynth-dialog.cpp:154 gui/massadd.cpp:90 gui/message.cpp:156
-#: gui/message.cpp:160 gui/message.cpp:231 gui/message.cpp:270
-#: gui/message.cpp:274 gui/options.cpp:2422 gui/predictivedialog.cpp:69
+#: gui/fluidsynth-dialog.cpp:154 gui/massadd.cpp:90 gui/message.cpp:157
+#: gui/message.cpp:161 gui/message.cpp:232 gui/message.cpp:271
+#: gui/message.cpp:275 gui/options.cpp:2422 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 base/main.cpp:679 base/main.cpp:704
 #: engines/engine.cpp:920 backends/platform/wii/options.cpp:46
 #: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
@@ -1651,6 +1651,11 @@ msgstr ""
 #: gui/massadd.cpp:293
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
+msgstr ""
+
+#. I18N: Shown while MIDI output devices are being detected.
+#: gui/message.cpp:288
+msgid "Scanning MIDI devices..."
 msgstr ""
 
 #: gui/onscreendialog.cpp:95 gui/onscreendialog.cpp:97
@@ -4391,7 +4396,7 @@ msgstr ""
 msgid "Slow down virtual mouse"
 msgstr ""
 
-#: backends/midi/windows.cpp:168
+#: backends/midi/winmm.cpp:175
 msgid "Windows MIDI"
 msgstr ""
 
