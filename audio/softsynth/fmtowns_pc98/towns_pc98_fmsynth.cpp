@@ -51,6 +51,8 @@ public:
 	void envelopeShape(uint32 value);
 	void totalLevel(uint32 value);
 	void ampModulation(bool enable);
+	void lfoAmLevel(uint32 level) { _lfoAm = level; }
+	void phaseModulation(uint8 lfoPm, uint8 pms);
 	void reset();
 
 protected:
@@ -72,6 +74,9 @@ protected:
 	uint32 _sustainLevel;
 
 	bool _ampMod;
+	uint32 _lfoAm;
+	uint16 _fnum;
+	uint8 _block;
 	uint32 _frequency;
 	uint16 _freqTemp;
 	uint8 _kcode;
@@ -110,7 +115,7 @@ TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 tickLength, co
 	_tLvlTbl(tlevelOut), _detnTbl(detuneTable), _frqMask(frequencyMask), _tickLength(tickLength), _specifiedAttackRate(0), _specifiedDecayRate(0),
 	_specifiedReleaseRate(0), _envelopeShapeSpecs(0), _specifiedSustainRate(0), _sustainLevel(0), _phase(0), _shapeState(0),
 	_shapeScale(0), _state(kEnvReady), _keyOn(false), _timer(0), _keyScale1(0), _keyScale2(0), _freqTemp(0),
-	_currentLevel(1023), _ampMod(false), _tickCount(0), _phaseIncrement(0) {
+	_currentLevel(1023), _ampMod(false), _lfoAm(0), _fnum(0), _block(0), _tickCount(0), _phaseIncrement(0) {
 
 	fs_a.rate = fs_a.shift = fs_d.rate = fs_d.shift = fs_s.rate = fs_s.shift = fs_r.rate = fs_r.shift = 0;
 	reset();
@@ -155,8 +160,55 @@ void TownsPC98_FmSynthOperator::frequency(int freq) {
 	uint8 c = pos >> 7;
 
 	_kcode = (block << 2) | ((c < 7) ? 0 : ((c > 8) ? 3 : c - 6));
+	_fnum = pos;
+	_block = block;
 	_frequency = _fTbl[pos << 1] >> (7 - block);
 	_freqTemp = 0;
+}
+
+// LFO phase modulation, following the YM3438 die analysis (Nuked OPN2): the 7 high F-number bits are
+// shifted by two depth- and LFO-step-dependent amounts, and the sum is added to or subtracted from the
+// doubled F-number. The key code is not affected.
+void TownsPC98_FmSynthOperator::phaseModulation(uint8 lfoPm, uint8 pms) {
+	static const uint8 lfoShift1[8][8] = {
+		{ 7, 7, 7, 7, 7, 7, 7, 7 },
+		{ 7, 7, 7, 7, 7, 7, 7, 7 },
+		{ 7, 7, 7, 7, 7, 7, 1, 1 },
+		{ 7, 7, 7, 7, 1, 1, 1, 1 },
+		{ 7, 7, 7, 1, 1, 1, 1, 0 },
+		{ 7, 7, 1, 1, 0, 0, 0, 0 },
+		{ 7, 7, 1, 1, 0, 0, 0, 0 },
+		{ 7, 7, 1, 1, 0, 0, 0, 0 }
+	};
+	static const uint8 lfoShift2[8][8] = {
+		{ 7, 7, 7, 7, 7, 7, 7, 7 },
+		{ 7, 7, 7, 7, 2, 2, 2, 2 },
+		{ 7, 7, 7, 2, 2, 2, 7, 7 },
+		{ 7, 7, 2, 2, 7, 7, 2, 2 },
+		{ 7, 7, 2, 7, 7, 7, 2, 7 },
+		{ 7, 7, 7, 2, 7, 7, 2, 1 },
+		{ 7, 7, 7, 2, 7, 7, 2, 1 },
+		{ 7, 7, 7, 2, 7, 7, 2, 1 }
+	};
+
+	uint32 fnum = (uint32)_fnum << 1;
+	if (pms) {
+		uint32 fnumHigh = _fnum >> 4;
+		uint8 step = lfoPm & 0x0F;
+		if (step & 8)
+			step ^= 0x0F;
+		uint32 fm = (fnumHigh >> lfoShift1[pms & 7][step]) + (fnumHigh >> lfoShift2[pms & 7][step]);
+		if (pms > 5)
+			fm <<= pms - 5;
+		fm >>= 2;
+		fnum = ((lfoPm & 0x10) ? fnum - fm : fnum + fm) & 0xFFF;
+	}
+
+	uint32 frequency = _fTbl[fnum] >> (7 - _block);
+	if (frequency != _frequency) {
+		_frequency = frequency;
+		updatePhaseIncrement();
+	}
 }
 
 void TownsPC98_FmSynthOperator::updatePhaseIncrement() {
@@ -271,6 +323,8 @@ void TownsPC98_FmSynthOperator::generateOutput(int32 phasebuf, int32 *feed, int3
 	}
 
 	uint32 lvlout = _totalLevel + ((uint32) _currentLevel ^ (_state != kEnvReleasing ? ((_shapeScale * (_shapeState & 4)) >> 3) * 1023 : 0));
+	if (_ampMod)
+		lvlout += _lfoAm;
 	_shapeState ^= (((_shapeState & 0x40) >> 2) | ((_shapeState & 2) << 1));
 
 	int32 outp = 0;
@@ -378,6 +432,7 @@ void TownsPC98_FmSynthOperator::reset() {
 	feedbackLevel(0);
 	totalLevel(127);
 	ampModulation(false);
+	_lfoAm = 0;
 }
 
 class TownsPC98_FmSynthSquareWaveSource {
@@ -958,7 +1013,7 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	_prc(nullptr),
 #endif
 	_numChan(type == kType26 ? 3 : 6), _numSSG(type == kTypeTowns ? 0 : 3),
-	_hasPercussion(type == kType86 ? true : false), _wrapDetunedFrequency(type == kTypeTowns),
+	_hasPercussion(type == kType86 ? true : false), _wrapDetunedFrequency(type == kTypeTowns), _lfoEmulation(type == kTypeTowns),
 	_oprRates(nullptr), _oprRateshift(nullptr), _oprAttackDecay(nullptr), _oprFrq(nullptr), _oprSinTbl(nullptr), _oprLevelOut(nullptr), _oprDetune(nullptr),
 	_internalRate((type == kTypeTowns ? 7670454 : (type == kType86 ? 7987000 : 3993600))),
 	_renderBuffer(nullptr), _renderBufferSize(0), _numPending(0), _offsPending(0),
@@ -967,7 +1022,9 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	_samplesPerWaitCycle(type == kType26 ? 72 : 144),
 #endif
 	_outputRate(mixer->getOutputRate()), _rateScale(type == kType26 ? 0 : 1),
-	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255), _mixerThreadLockCounter(0), _ready(false) {
+	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255), _mixerThreadLockCounter(0),
+	_lfoEnabled(false), _lfoFreq(0), _lfoCounter(0), _lfoQuotient(0), _lfoSubSample(0),
+	_lfoAmBuffer(nullptr), _lfoPmBuffer(nullptr), _lfoBufferSize(0), _ready(false) {
 
 	memset(&_timers[0], 0, sizeof(ChipTimer));
 	memset(&_timers[1], 0, sizeof(ChipTimer));
@@ -1003,6 +1060,8 @@ TownsPC98_FmSynth::~TownsPC98_FmSynth() {
 	delete[] _oprDetune;
 
 	delete[] _renderBuffer;
+	delete[] _lfoAmBuffer;
+	delete[] _lfoPmBuffer;
 
 	_timers[0].cb = _timers[1].cb = nullptr;
 	delete _timerProcA;
@@ -1061,9 +1120,13 @@ void TownsPC98_FmSynth::reset() {
 		_chanInternal[i].algorithm = 0;
 		_chanInternal[i].enableLeft = _chanInternal[i].enableRight = true;
 		_chanInternal[i].updateEnvelopeParameters = false;
+		_chanInternal[i].lfoAms = _chanInternal[i].lfoPms = 0;
+		_chanInternal[i].lfoLastPm = 0xFF;
+		_chanInternal[i].lfoPmApplied = false;
 	}
 
 	memset(_registers, 0, sizeof(_registers));
+	resetLfo();
 
 #ifdef ENABLE_SNDTOWNS98_WAITCYCLES
 	_waitCycleElapsedWrites.clear();
@@ -1300,6 +1363,51 @@ void TownsPC98_FmSynth::startWaitCycle() {
 }
 #endif
 
+void TownsPC98_FmSynth::resetLfo() {
+	_lfoEnabled = false;
+	_lfoFreq = 0;
+	_lfoCounter = 0;
+	_lfoQuotient = 0;
+	_lfoSubSample = 0;
+	if (_chanInternal) {
+		for (int i = 0; i < _numChan; i++)
+			_chanInternal[i].lfoLastPm = 0xFF;
+	}
+}
+
+// Advances the LFO over one render pass and stores the AM attenuation (in envelope units, before the
+// channel's AMS shift) and the 5-bit PM step for every render sample. The chip updates the LFO once
+// per output sample: its quotient counter steps the 7-bit LFO counter when all bits of the period
+// value are set, i.e. every period + 1 samples, and a disabled LFO holds the counter at 0.
+void TownsPC98_FmSynth::renderLfo(uint32 bufferSize) {
+	if (_lfoBufferSize < bufferSize) {
+		delete[] _lfoAmBuffer;
+		delete[] _lfoPmBuffer;
+		_lfoBufferSize = bufferSize;
+		_lfoAmBuffer = new uint8[bufferSize];
+		_lfoPmBuffer = new uint8[bufferSize];
+	}
+
+	const uint8 period = _lfoPeriods[_lfoFreq & 7];
+	const uint8 subSampleMask = (1 << _rateScale) - 1;
+	for (uint32 i = 0; i < bufferSize; i++) {
+		if (!(_lfoSubSample++ & subSampleMask)) {
+			if ((_lfoQuotient & period) == period) {
+				_lfoQuotient = 0;
+				_lfoCounter++;
+			} else {
+				_lfoQuotient++;
+			}
+			if (!_lfoEnabled)
+				_lfoCounter = 0;
+			_lfoCounter &= 0x7F;
+		}
+		uint8 am = (_lfoCounter & 0x40) ? (_lfoCounter & 0x3F) : (_lfoCounter ^ 0x3F);
+		_lfoAmBuffer[i] = am << 1;
+		_lfoPmBuffer[i] = _lfoCounter >> 2;
+	}
+}
+
 void TownsPC98_FmSynth::setLevelSSG(int vol) {
 	Common::StackLock lock(_mutex);
 	if (_ssg)
@@ -1396,9 +1504,10 @@ void TownsPC98_FmSynth::writeRegInternal(uint8 part, uint8 regAddress, uint8 val
 	if (regAddress == 0x28) {
 		c = &_chanInternal[(value & 3) + ((value & 4) ? 3 : 0)];
 		checkAddress = true;
-	} else if (h == 0xA0 && (_registers[0x27][0] & 0x40) && (l > 7 || l == 2 || l == 6)) {
-		c = &_chanInternal[3 * part + 2];
-		// Channel 3 special mode: A2/A6 set slot 4, A8/AC slot 3, A9/AD slot 1 and AA/AE slot 2.
+	} else if (h == 0xA0 && part == 0 && (_registers[0x27][0] & 0x40) && (l > 7 || l == 2 || l == 6)) {
+		// Channel 3 special mode: A2/A6 set slot 4, A8/AC slot 3, A9/AD slot 1 and AA/AE slot 2. The mode only
+		// applies to channel 3; channel 6's A2/A6 in the second part keep setting all four operators.
+		c = &_chanInternal[2];
 		static const uint8 ch3Ordr[] = { 2, 0, 1 };
 		o = c->opr[l < 8 ? 3 : ch3Ordr[l & 3]];
 	} else if (h != 0xA0 && h > 0x20) {
@@ -1492,8 +1601,12 @@ void TownsPC98_FmSynth::writeRegInternal(uint8 part, uint8 regAddress, uint8 val
 
 		} else if (l == 2) {
 			// LFO
-			if (value & 8)
+			if (_lfoEmulation) {
+				_lfoEnabled = (value & 8) != 0;
+				_lfoFreq = value & 7;
+			} else if (value & 8) {
 				warning("TownsPC98_FmSynth: TRYING TO USE LFO (NOT SUPPORTED)");
+			}
 		} else if (l == 10 || l == 11) {
 			// DAC
 			if (l == 11 && (value & 0x80))
@@ -1577,6 +1690,9 @@ void TownsPC98_FmSynth::writeRegInternal(uint8 part, uint8 regAddress, uint8 val
 			c->enableRight = value & 0x40 ? true : false;
 			c->ampModSensitivity((value & 0x30) >> 4);
 			c->frqModSensitivity(value & 3);
+			c->lfoAms = (value >> 4) & 3;
+			c->lfoPms = value & 7;
+			c->lfoLastPm = 0xFF;
 		}
 		break;
 
@@ -1589,18 +1705,43 @@ void TownsPC98_FmSynth::nextTick(int32 *buffer, uint32 bufferSize) {
 	if (!_ready)
 		return;
 
+	if (_lfoEmulation)
+		renderLfo(bufferSize);
+
+	// Attenuation shifts for AMS 0-3 (0, 1.4, 5.9 and 11.8 dB at the LFO peak).
+	static const uint8 lfoAmShift[4] = { 7, 3, 1, 0 };
+
 	for (int i = 0; i < _numChan; i++) {
 		TownsPC98_FmSynthOperator **o = _chanInternal[i].opr;
+		ChanInternal &chan = _chanInternal[i];
 
 		if (_chanInternal[i].updateEnvelopeParameters) {
 			_chanInternal[i].updateEnvelopeParameters = false;
 			for (int ii = 0; ii < 4 ; ii++)
 				o[ii]->updatePhaseIncrement();
+			// Frequency, detune or multiple writes: reapply the phase modulation.
+			chan.lfoLastPm = 0xFF;
 		}
 
 		for (uint32 ii = 0; ii < bufferSize ; ii++) {
 			int32 phbuf1, phbuf2, output;
 			phbuf1 = phbuf2 = output = 0;
+
+			if (_lfoEmulation) {
+				uint32 am = _lfoAmBuffer[ii] >> lfoAmShift[chan.lfoAms];
+				for (int op = 0; op < 4; op++)
+					o[op]->lfoAmLevel(am);
+
+				uint8 pm = _lfoPmBuffer[ii];
+				if (pm != chan.lfoLastPm) {
+					chan.lfoLastPm = pm;
+					if (chan.lfoPms || chan.lfoPmApplied) {
+						for (int op = 0; op < 4; op++)
+							o[op]->phaseModulation(pm, chan.lfoPms);
+						chan.lfoPmApplied = chan.lfoPms != 0;
+					}
+				}
+			}
 
 			int32 *leftSample = &buffer[ii * 2];
 			int32 *rightSample = &buffer[ii * 2 + 1];
@@ -1684,6 +1825,11 @@ void TownsPC98_FmSynth::nextTick(int32 *buffer, uint32 bufferSize) {
 		}
 	}
 }
+
+// LFO quotient compare values for the eight LFO rates (3.98 to 72.2 Hz on an 8 MHz chip).
+const uint8 TownsPC98_FmSynth::_lfoPeriods[] = {
+	108, 77, 71, 67, 62, 44, 8, 5
+};
 
 const uint32 TownsPC98_FmSynth::_adtStat[] = {
 	0x00010001, 0x00010001, 0x00010001, 0x01010001,
