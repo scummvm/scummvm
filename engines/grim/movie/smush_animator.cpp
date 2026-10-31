@@ -25,6 +25,7 @@
 #include "common/debug.h"
 
 #include "engines/grim/movie/codecs/blocky8.h"
+#include "engines/grim/movie/codecs/codec48.h"
 #include "engines/grim/movie/codecs/smush_decoder.h"
 #include "engines/grim/movie/smush_animator.h"
 
@@ -520,6 +521,7 @@ SmushDemoAnim::SmushDemoAnim(SmushDemoStream *stream, SmushDemoClient *client) {
 	_stream = stream;
 	_client = client;
 	_blocky8 = nullptr;
+	_codec48 = nullptr;
 	_refCount = 0;
 	_bitmap = nullptr;
 	_rect.x = 0;
@@ -979,6 +981,9 @@ int SmushDemoAnim::anmFrameObject(int x, int y, int flags, const byte *chunk, in
 		drawY -= height >> 1;
 	}
 
+	if (chunk[0] == 48 && _codec48)
+		return _codec48->decode(_bitmap, &_rect, drawX, drawY, chunk, flags, _client);
+
 	if (chunk[0] != 47 || !_blocky8)
 		return -1;
 
@@ -1016,12 +1021,16 @@ int SmushDemoAnim::anmFrameObject(int x, int y, int flags, const byte *chunk, in
 }
 
 int SmushDemoAnim::anmRegisterCodecs(int width, int height) {
+	_codec48 = new Codec48Decoder();
+	_codec48->init(width, height);
 	_blocky8 = new Blocky8();
 	_blocky8->init(width, height);
 	return 0;
 }
 
 void SmushDemoAnim::anmUnregisterCodecs() {
+	delete _codec48;
+	_codec48 = nullptr;
 	delete _blocky8;
 	_blocky8 = nullptr;
 }
