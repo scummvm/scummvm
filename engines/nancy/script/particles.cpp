@@ -85,6 +85,11 @@ public:
 
 	virtual void update(uint first, uint count) {}
 
+	// The fields scripts can read and set on a stage they got back by name; the
+	// new value of a set is at the top of the stack
+	virtual bool getField(lua_State *L, const Common::String &key) { return false; }
+	virtual bool setField(lua_State *L, const Common::String &key) { return false; }
+
 protected:
 	virtual void initParticles(uint first, uint count) {}
 
@@ -559,6 +564,94 @@ private:
 	double _friction = 0.0;
 };
 
+// "path", Nancy23: the particles are made along the line from where the stage
+// was before to where it is now, spread evenly, with sizes and alphas (0 to 1)
+// in between too. Setting one of the three moves its current value to the one
+// before, so a script that keeps moving the stage leaves a trail of particles.
+class ParticlePathStage : public ParticleStage {
+public:
+	ParticlePathStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
+		if (readVectorField(L, tableIndex, "position", _position[1], 3)) {
+			memcpy(_position[0], _position[1], sizeof(_position[0]));
+		}
+
+		if (readField(L, tableIndex, "scale", _scale[1])) {
+			_scale[0] = _scale[1];
+		}
+
+		if (readField(L, tableIndex, "alpha", _alpha[1])) {
+			_alpha[0] = _alpha[1];
+		}
+	}
+
+	bool getField(lua_State *L, const Common::String &key) override {
+		if (key == "position") {
+			pushVector(L, ScriptVector(_position[1][0], _position[1][1], _position[1][2]));
+		} else if (key == "scale") {
+			lua_pushnumber(L, _scale[1]);
+		} else if (key == "alpha") {
+			lua_pushnumber(L, _alpha[1]);
+		} else {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool setField(lua_State *L, const Common::String &key) override {
+		if (key == "position") {
+			const ScriptVector *vector = testVector(L, -1);
+			if (!vector) {
+				luaL_typerror(L, -1, "Vector");
+			}
+
+			memcpy(_position[0], _position[1], sizeof(_position[0]));
+			for (int i = 0; i < 3; ++i) {
+				_position[1][i] = vector->v[i];
+			}
+		} else if (key == "scale") {
+			_scale[0] = _scale[1];
+			_scale[1] = luaL_checknumber(L, -1);
+		} else if (key == "alpha") {
+			_alpha[0] = _alpha[1];
+			_alpha[1] = luaL_checknumber(L, -1);
+		} else {
+			return false;
+		}
+
+		return true;
+	}
+
+protected:
+	// The last of the new particles is at the current place
+	void initParticles(uint first, uint count) override {
+		const double step = 1.0 / MAX<uint>(count, 1);
+		const int fromAlpha = (int)floor(_alpha[0] * 255.0 + 0.5);
+		const int toAlpha = (int)floor(_alpha[1] * 255.0 + 0.5);
+
+		double fraction = 0.0;
+		for (uint i = first; i < first + count; ++i) {
+			fraction += step;
+
+			Particle &particle = _record.getParticle(i);
+			for (int j = 0; j < 3; ++j) {
+				particle.position[j] = lerp(_position[0][j], _position[1][j], fraction);
+			}
+
+			particle.scale = lerp(_scale[0], _scale[1], fraction);
+
+			const int weight = (int)floor(fraction * 255.0 + 0.5);
+			const uint32 alpha = (uint32)CLIP<int>(((255 - weight) * fromAlpha + weight * toAlpha) >> 8, 0, 255);
+			particle.color = (particle.color & 0xFFFFFF) | (alpha << 24);
+		}
+	}
+
+private:
+	double _position[2][3] = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 } };	// before and now
+	double _scale[2] = { 1.0, 1.0 };
+	double _alpha[2] = { 1.0, 1.0 };
+};
+
 // TODO: The "script" and "revolve" stages, which no script uses
 static ParticleStage *makeStage(ParticleRecord &record, lua_State *L, int tableIndex, const Common::String &name) {
 	if (name == "positionPerspective") {
@@ -585,6 +678,8 @@ static ParticleStage *makeStage(ParticleRecord &record, lua_State *L, int tableI
 		return new ParticleForceStage(record, L, tableIndex);
 	} else if (name == "turbulence") {
 		return new ParticleTurbulenceStage(record, L, tableIndex);
+	} else if (name == "path") {
+		return new ParticlePathStage(record, L, tableIndex);
 	}
 
 	luaL_error(L, "Stage name '%s' does not match a known stage", name.c_str());
@@ -659,6 +754,8 @@ void ParticleRecord::readTable(int tableIndex) {
 	if (g_nancy->getGameType() < kGameTypeNancy1New && _fastForward > 0.0) {
 		simulate(_fastForward);
 	}
+
+	readField(L, tableIndex, "paused", _isPaused);
 }
 
 void ParticleRecord::addStage(ParticleStage *stage) {
@@ -678,13 +775,15 @@ void ParticleRecord::addNamedStage(const Common::String &kind, const Common::Str
 }
 
 void ParticleRecord::runOnce() {
-	if (g_nancy->getGameType() >= kGameTypeNancy1New && _fastForward > 0.0) {
+	if (g_nancy->getGameType() >= kGameTypeNancy1New && _fastForward > 0.0 && !_isPaused) {
 		simulate(_fastForward);
 	}
 }
 
 void ParticleRecord::run(double sceneTime, double elapsedTime) {
-	simulate(elapsedTime);
+	if (!_isPaused) {
+		simulate(elapsedTime);
+	}
 }
 
 // Steps through the given time, 30 steps a second. What is left over counts
@@ -794,6 +893,21 @@ void ParticleRecord::onZChanged() {
 	}
 }
 
+// What a stage that a script got back by name holds
+struct ParticleStageHandle {
+	ParticleStage *stage;
+};
+
+static const char *const kParticleStageType = "ND.ParticleStage";
+
+// record:FastForward(seconds), Nancy23, runs the simulation through that time
+// at once, even while the record is paused
+static int particleFastForward(lua_State *L) {
+	ParticleRecord *record = (ParticleRecord *)checkRecord(L, 1);
+	record->simulate(luaL_checknumber(L, 2));
+	return 0;
+}
+
 // record:Add<Stage>(name, table), Nancy1New; the kind of stage is the upvalue
 static int particleAddStage(lua_State *L) {
 	ParticleRecord *record = (ParticleRecord *)checkRecord(L, 1);
@@ -816,7 +930,8 @@ static const char *const kParticleStageKinds[][2] = {
 	{ "AddScale", "scale" },
 	{ "AddSources", "sources" },
 	{ "AddTurbulence", "turbulence" },
-	{ "AddVelocity", "velocity" }
+	{ "AddVelocity", "velocity" },
+	{ "AddPath", "path" }
 };
 
 bool ParticleRecord::getField(const Common::String &key) {
@@ -826,6 +941,13 @@ bool ParticleRecord::getField(const Common::String &key) {
 		lua_pushnumber(L, _frequency);
 	} else if (key == "count") {
 		lua_pushinteger(L, _count);
+	} else if (key == "paused") {
+		lua_pushboolean(L, _isPaused);
+	} else if (key == "timestep") {
+		// Nancy23: the length of a step of the simulation
+		lua_pushnumber(L, 1.0 / kStepsPerSecond);
+	} else if (key == "FastForward") {
+		lua_pushcfunction(L, particleFastForward);
 	} else {
 		for (const auto &kind : kParticleStageKinds) {
 			if (key == kind[0]) {
@@ -835,7 +957,14 @@ bool ParticleRecord::getField(const Common::String &key) {
 			}
 		}
 
-		return false;
+		ParticleStage *stage = _namedStages.getValOrDefault(key, nullptr);
+		if (!stage) {
+			return false;
+		}
+
+		ParticleStageHandle handle;
+		handle.stage = stage;
+		pushValue(L, kParticleStageType, handle);
 	}
 
 	return true;
@@ -846,11 +975,46 @@ bool ParticleRecord::setField(const Common::String &key) {
 
 	if (key == "frequency") {
 		_frequency = MAX(luaL_checknumber(L, 3), 0.0);
+	} else if (key == "paused") {
+		_isPaused = lua_toboolean(L, 3) != 0;
 	} else {
 		return false;
 	}
 
 	return true;
+}
+
+static int particleStageIndex(lua_State *L) {
+	const ParticleStageHandle &handle = *(const ParticleStageHandle *)checkUserData(L, 1, kParticleStageType);
+	const Common::String key = luaL_checkstring(L, 2);
+
+	if (!handle.stage->getField(L, key)) {
+		return luaL_error(L, "Object %s does not have field '%s'", kParticleStageType, key.c_str());
+	}
+
+	return 1;
+}
+
+static int particleStageNewIndex(lua_State *L) {
+	const ParticleStageHandle &handle = *(const ParticleStageHandle *)checkUserData(L, 1, kParticleStageType);
+	const Common::String key = luaL_checkstring(L, 2);
+
+	lua_settop(L, 3);
+	if (!handle.stage->setField(L, key)) {
+		return luaL_error(L, "Object %s does not have field '%s'", kParticleStageType, key.c_str());
+	}
+
+	return 0;
+}
+
+void registerParticleAPI(lua_State *L) {
+	static const luaL_Reg kParticleStageFunctions[] = {
+		{ "__index", particleStageIndex },
+		{ "__newindex", particleStageNewIndex },
+		{ nullptr, nullptr }
+	};
+
+	registerType(L, kParticleStageType, kParticleStageFunctions);
 }
 
 // The particles are drawn on a picture as large as the viewport, which is

@@ -68,9 +68,13 @@ struct Particle {
 // projection, so they get smaller further off.
 //
 // From Nancy1New on, the stages are added after the record is made, under names
-// of the scripts' choosing:
+// of the scripts' choosing, and the record hands them back by those names:
 //
 //   snow:AddVelocity("velocityStage", { minSpeed = 300, ... })
+//   snow.velocityStage
+//
+// Nancy23 draws the calligraphy puzzle with particles: a paused record whose
+// "path" stage follows the brush, and that the script steps with FastForward.
 class ParticleRecord : public Record {
 public:
 	ParticleRecord(SceneContext &context) : Record(context, "ND.ParticleAR") {}
@@ -83,6 +87,9 @@ public:
 	uint getMaxParticles() const { return _particles.size(); }
 	double getLife() const { return _life; }
 	const Graphics::ManagedSurface &getImage() const { return _image; }
+
+	// Runs the simulation through the given time at once
+	void simulate(double seconds);
 
 	// Adds a stage of a kind ("velocity", "fade"...) under a name, read from the
 	// table at the given index
@@ -105,7 +112,6 @@ private:
 	};
 
 	void addStage(ParticleStage *stage);
-	void simulate(double seconds);
 	void step();
 	void spawn(uint count);
 	void grow();
@@ -132,10 +138,14 @@ private:
 	double _spawnClock = 0.0;
 	double _spawnTime = 0.0;	// when the newest particles were made
 
+	bool _isPaused = false;		// Nancy23
 	double _fastForward = 0.0;	// seconds to run through when the record starts
 
 	RecordGraphic *_canvas = nullptr;
 };
+
+// The stages scripts get back from a record by name
+void registerParticleAPI(lua_State *L);
 
 } // End of namespace Script
 } // End of namespace Nancy

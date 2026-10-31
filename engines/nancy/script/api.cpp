@@ -27,6 +27,7 @@
 #include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/mathtypes.h"
+#include "engines/nancy/script/particles.h"
 #include "engines/nancy/script/physics.h"
 #include "engines/nancy/script/record.h"
 #include "engines/nancy/script/types.h"
@@ -85,6 +86,7 @@ void registerAPI(lua_State *L) {
 	registerGameAPI(L);
 	registerGraphNodeAPI(L);
 	registerPhysicsAPI(L);
+	registerParticleAPI(L);
 	registerUIAPI(L);
 	registerConvoAPI(L);
 	registerRecordAPI(L);
