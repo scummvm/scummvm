@@ -443,7 +443,6 @@ static const luaL_Reg kKeyFunctions[] = {
 };
 
 // Game
-// TODO: Game.time
 
 // The two levels the game can be played at
 static const uint kDifficultyJunior = 0;
@@ -454,6 +453,24 @@ static int gameIndex(lua_State *L) {
 
 	if (key == "difficulty") {
 		lua_pushstring(L, NancySceneState.getDifficulty() == kDifficultySenior ? "senior" : "junior");
+		return 1;
+	}
+
+	// How long the game has been played, as { days, hours, minutes, seconds,
+	// totalSeconds }; the seconds have fractions
+	if (key == "time") {
+		const uint32 time = (uint32)NancySceneState._timers.lastTotalTime;
+		lua_createtable(L, 0, 5);
+		lua_pushinteger(L, time / 86400000);
+		lua_setfield(L, -2, "days");
+		lua_pushinteger(L, time / 3600000 % 24);
+		lua_setfield(L, -2, "hours");
+		lua_pushinteger(L, time / 60000 % 60);
+		lua_setfield(L, -2, "minutes");
+		lua_pushnumber(L, (time % 60000) / 1000.0);
+		lua_setfield(L, -2, "seconds");
+		lua_pushnumber(L, time / 1000.0);
+		lua_setfield(L, -2, "totalSeconds");
 		return 1;
 	}
 
