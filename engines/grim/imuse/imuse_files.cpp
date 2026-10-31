@@ -1237,8 +1237,7 @@ uint8 *IMuse::soundsGetExtFormatBuffer(uint8 *streamHeader, int *formatId, int *
 		return nullptr;
 	}
 
-	// TODO
-	// Headerless audio: CreateAudioChunk() guesses the format from the data
+	// The original guesses the format of headerless audio (CreateAudioChunk), but no caller accepts it
 	return nullptr;
 }
 
