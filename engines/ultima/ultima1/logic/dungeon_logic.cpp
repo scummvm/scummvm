@@ -599,18 +599,17 @@ int DungeonLogic::getMonsterDistance(int maxDistance) const {
 	int deltaX = getDirDeltaX();
 	int deltaY = getDirDeltaY();
 	int x, y, tile = 0, monsterId = Data::DUNGEON_NO_MONSTER;
-	int dist;
+	int dist = 0;
 
-	for (dist = 0; dist < maxDistance; ++dist) {
+	// Scanning starts at the cell in front of the player
+	do {
+		++dist;
 		x = _G(savegame)._locationPosition.x + deltaX * dist;
 		y = _G(savegame)._locationPosition.y + deltaY * dist;
 		tile = _G(dungeon)._cells[y][x]._tileNum;
 		monsterId = _G(dungeon)._cells[y][x]._monsterId;
-
-		if (monsterId != Data::DUNGEON_NO_MONSTER || tile == Data::DTILE_WALL || tile == Data::DTILE_SECRET_DOOR ||
-			tile == Data::DTILE_BEAMS || tile == Data::DTILE_DOOR)
-			break;
-	}
+	} while (dist < maxDistance && monsterId == Data::DUNGEON_NO_MONSTER && tile != Data::DTILE_WALL &&
+		tile != Data::DTILE_SECRET_DOOR && tile != Data::DTILE_BEAMS && tile != Data::DTILE_DOOR);
 
 	return (monsterId != Data::DUNGEON_NO_MONSTER && tile != Data::DTILE_WALL &&
 		tile != Data::DTILE_SECRET_DOOR && tile != Data::DTILE_BEAMS) ? dist : 0;
