@@ -41,7 +41,7 @@ private:
 	byte *_tableSmall;
 	int16 _table[256];
 	int32 _frameSize;
-	int _offset;
+	int32 _bufSize;
 	int _width, _height;
 	int _blocksWidth, _blocksHeight;
 
@@ -57,7 +57,7 @@ public:
 	~Blocky16();
 	void init(int width, int height);
 	void deinit();
-	void decode(byte *dst, const byte *src);
+	void decode(byte *dst, const byte *src, int flags);
 };
 
 } // end of namespace Grim

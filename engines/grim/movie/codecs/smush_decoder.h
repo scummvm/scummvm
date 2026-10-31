@@ -49,7 +49,7 @@ public:
 	void setLooping(bool l);
 	void setWave(SmushWave *wave) { _wave = wave; }
 	Common::SeekableReadStream *getFile() { return _file; }
-	void decodeFrameBlock(const byte *block, uint32 size);
+	void decodeFrameBlock(const byte *block, uint32 size, int flags);
 	const Graphics::Surface *getFrameSurface();
 	void resetBlocky16Frames() { _blocky16Frames = 0; }
 	int getBlocky16Frames() const { return _blocky16Frames; }
@@ -87,7 +87,7 @@ protected:
 		bool seek(const Audio::Timestamp &time) override { return true; }
 		void setFrameStart(int frame);
 
-		void handleBlocky16(Common::SeekableReadStream *stream, uint32 size);
+		void handleBlocky16(Common::SeekableReadStream *stream, uint32 size, int flags = 0);
 		void handleFrameObject(Common::SeekableReadStream *stream, uint32 size);
 		void handleDeltaPalette(Common::SeekableReadStream *stream, int32 size);
 		void init();
