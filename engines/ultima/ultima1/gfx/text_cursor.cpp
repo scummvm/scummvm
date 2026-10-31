@@ -49,6 +49,11 @@ void TextCursor::show() {
 }
 
 void TextCursor::hide() {
+	if (_visible) {
+		auto s = getSurface();
+		s.clear();
+	}
+
 	_visible = false;
 	cancelDelay();
 	redraw();

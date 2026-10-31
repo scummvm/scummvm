@@ -304,7 +304,7 @@ int Map::getTileAt(int x, int y, int creatureIndex) const {
 			return _G(savegame)._locationEntities[entityIndex]._type;
 	}
 
-	return _G(map).getMapTile(x, y);
+	return getMapTile(x, y);
 }
 
 int Map::getOverworldTileAt(int x, int y) const {

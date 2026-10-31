@@ -36,7 +36,7 @@ namespace Gfx {
 class TextCursor : public Graphics::Views::UIElement {
 private:
 	int _frame = 0;
-	bool _visible = true;
+	bool _visible = false;
 
 public:
 	TextCursor(const Common::String &name, UIElement *parent = nullptr);
