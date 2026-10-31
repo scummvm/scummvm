@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/hashmap.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 
@@ -179,6 +181,7 @@ static int refNew(lua_State *L) {
 		ScriptRef::Layer *layer = new ScriptRef::Layer();
 		layer->image.edgeMode = ref->edgeMode;
 		g_nancy->_resource->loadImage(Common::Path(imageName), layer->image.image);
+		layer->rect = ScriptRect(0, 0, layer->image.image.w, layer->image.image.h);
 		ref->layers.push_back(layer);
 	}
 
@@ -303,6 +306,53 @@ static int refIsOpaqueInArea(lua_State *L) {
 	return 1;
 }
 
+// ref:SampleArea(rect): how many pixels of every color there are in the
+// rectangle, as a table of counts with Colors for keys. The places none of the
+// images cover count as the border color. The strings puzzle of Nancy23 finds
+// out which areas a cut joins with it.
+static int refSampleArea(lua_State *L) {
+	const ScriptRef *ref = checkRef(L, 1);
+	const ScriptRect area = checkRect(L, 2);
+
+	Common::HashMap<uint32, int> counts;
+	int numUncovered = area.width() * area.height();
+
+	for (const ScriptRef::Layer *layer : ref->layers) {
+		const ScriptRect &rect = layer->rect;
+		const int left = MAX(rect.left, area.left);
+		const int top = MAX(rect.top, area.top);
+		const int right = MIN(rect.right, area.right);
+		const int bottom = MIN(rect.bottom, area.bottom);
+		if (left >= right || top >= bottom) {
+			continue;
+		}
+
+		for (int y = top; y < bottom; ++y) {
+			for (int x = left; x < right; ++x) {
+				uint32 pixel;
+				if (layer->image.getPixel(x - rect.left, y - rect.top, pixel)) {
+					++counts[pixel];
+				}
+			}
+		}
+
+		numUncovered -= (right - left) * (bottom - top);
+	}
+
+	if (numUncovered > 0) {
+		counts[ref->borderColor] += numUncovered;
+	}
+
+	lua_createtable(L, 0, counts.size());
+	for (const auto &count : counts) {
+		pushColor(L, count._key);
+		lua_pushinteger(L, count._value);
+		lua_settable(L, -3);
+	}
+
+	return 1;
+}
+
 void registerRefAPI(lua_State *L) {
 	static const luaL_Reg kRefFunctions[] = {
 		{ "__index", indexFunctions },
@@ -314,6 +364,7 @@ void registerRefAPI(lua_State *L) {
 		{ "IsOpaqueAt", refIsOpaqueAt },
 		{ "IsInArea", refIsInArea },
 		{ "IsOpaqueInArea", refIsOpaqueInArea },
+		{ "SampleArea", refSampleArea },
 		{ nullptr, nullptr }
 	};
 
