@@ -285,7 +285,9 @@ void SummaryRecord::readTable(int tableIndex) {
 		luaL_error(L, "No environment specified");
 	}
 
-	if (!readField(L, tableIndex, "bg", _backgroundName)) {
+	// Nancy21 can leave the background out, e.g. for a scene that keeps the
+	// picture of the one before as its facade
+	if (!readField(L, tableIndex, "bg", _backgroundName) && g_nancy->getGameType() < kGameTypeNancy21) {
 		luaL_error(L, "No background specified");
 	}
 
