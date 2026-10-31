@@ -555,6 +555,10 @@ void PrisonerEngine::dialogActionNewGame() {
 	_mainMenuRequested = false;
 	_newModuleIndex = -1;
 	leaveScene();
+	// No module is running now, so the scene change below starts module 2 from its beginning
+	// like the original's enterScene(2, -1), also when the current game is in module 2
+	_currModuleIndex = -1;
+	_currSceneIndex = -1;
 
 	// The original never resets the global vars, so a new game started from a running one
 	// would inherit its progress.
