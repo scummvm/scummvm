@@ -232,6 +232,13 @@ public:
 	int getOverworldTileAt(int x, int y) const;
 
 	/**
+	 * Wraps an X or Y position around the edges of the overworld. Entities
+	 * are always stored wrapped, so positions must be wrapped before comparing them
+	 */
+	int wrapOverworldX(int x) const;
+	int wrapOverworldY(int y) const;
+
+	/**
 	 * Counts the ocean, grass and woods tiles in the overworld around the player's
 	 * position, which a location uses to know what vehicles can be bought there
 	 */

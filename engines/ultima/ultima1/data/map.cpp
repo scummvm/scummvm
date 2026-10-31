@@ -295,7 +295,7 @@ int Map::getTileAt(int x, int y, int creatureIndex) const {
 	int entityIndex;
 
 	if (_mapType == MAPTYPE_OVERWORLD) {
-		entityIndex = _G(savegame).getOverworldEntityAt(x, y, creatureIndex);
+		entityIndex = _G(savegame).getOverworldEntityAt(wrapOverworldX(x), wrapOverworldY(y), creatureIndex);
 		if (entityIndex >= 0)
 			return _G(savegame)._overworldEntities[entityIndex]._type;
 	} else {
@@ -307,13 +307,21 @@ int Map::getTileAt(int x, int y, int creatureIndex) const {
 	return getMapTile(x, y);
 }
 
+int Map::wrapOverworldX(int x) const {
+	return (x % OVERWORLD_WIDTH + OVERWORLD_WIDTH) % OVERWORLD_WIDTH;
+}
+
+int Map::wrapOverworldY(int y) const {
+	return (y % OVERWORLD_HEIGHT + OVERWORLD_HEIGHT) % OVERWORLD_HEIGHT;
+}
+
 int Map::getOverworldTileAt(int x, int y) const {
+	x = wrapOverworldX(x);
+	y = wrapOverworldY(y);
+
 	int entityIndex = _G(savegame).getOverworldEntityAt(x, y, 1);
 	if (entityIndex >= 0)
 		return _G(savegame)._overworldEntities[entityIndex]._type;
-
-	x = (x % OVERWORLD_WIDTH + OVERWORLD_WIDTH) % OVERWORLD_WIDTH;
-	y = (y % OVERWORLD_HEIGHT + OVERWORLD_HEIGHT) % OVERWORLD_HEIGHT;
 
 	// Skip the castle/city flag animation frames, as getMapTile does
 	int tile = _overworldMap[y * OVERWORLD_WIDTH + x];

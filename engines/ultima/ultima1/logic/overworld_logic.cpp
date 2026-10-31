@@ -364,13 +364,17 @@ void OverworldLogic::moveDown() {
 }
 
 void OverworldLogic::continentChanged(int oldContinent) {
-	for (int index = 1; index < _G(savegame)._overworldEntityCount; ++index) {
+	// Monsters left behind on the old continent are dropped. A removal shifts
+	// the following entities down, so the same slot is rechecked
+	int index = 1;
+	while (index <= _G(savegame)._overworldEntityCount) {
 		auto &e = _G(savegame)._overworldEntities[index];
-		int continent = _G(map).getContinentAt(e._x, e._y);
 
-		if (continent == oldContinent) {
+		if (e._type >= Data::TILE_FIRST_MONSTER && _G(map).getContinentAt(e._x, e._y) == oldContinent) {
 			_G(savegame).removeOverworldCreatureAt(e._x, e._y);
 			_G(creaturesCount)--;
+		} else {
+			++index;
 		}
 	}
 }
@@ -424,8 +428,8 @@ void OverworldLogic::generateCreatures() {
 		if (getRandomNumber(1, 16) & 1)
 			yOff = -yOff;
 
-		x = pos.x + xOff;	// getViewportX(xOff + Data::OVERWORLD_VISIBLE_CENTER_X);
-		y = pos.y + yOff;	// getViewportY(yOff + Data::OVERWORLD_VISIBLE_CENTER_Y);
+		x = _G(map).wrapOverworldX(pos.x + xOff);
+		y = _G(map).wrapOverworldY(pos.y + yOff);
 		tileAtSpot = _G(map).getTileAt(x, y);
 
 		rangeOk = _G(map).mapRangeCheckX(x) && _G(map).mapRangeCheckY(y);
@@ -511,8 +515,8 @@ bool OverworldLogic::monsterTransportCheck(int entityIndex, int xDiff, int yDiff
 		tile2 = Data::TILE_GRASS;
 	}
 
-	int newX = _G(savegame)._overworldPos.x - xDiff;
-	int newY = _G(savegame)._overworldPos.y - yDiff;
+	int newX = _G(map).wrapOverworldX(_G(savegame)._overworldPos.x - xDiff);
+	int newY = _G(map).wrapOverworldY(_G(savegame)._overworldPos.y - yDiff);
 	int tile = _G(map).getTileAt(newX, newY);
 
 	// Single-terrain (amphibious) monster types are also allowed to move
@@ -524,6 +528,15 @@ bool OverworldLogic::monsterTransportCheck(int entityIndex, int xDiff, int yDiff
 		_G(map).mapRangeCheckX(newX) && _G(map).mapRangeCheckY(newY);
 }
 
+void OverworldLogic::moveEntityFromPlayer(int entityIndex, int xDiff, int yDiff) {
+	const Common::Point &pos = _G(savegame)._overworldPos;
+	auto &e = _G(savegame)._overworldEntities[entityIndex];
+
+	e._x = _G(map).wrapOverworldX(pos.x - xDiff);
+	e._y = _G(map).wrapOverworldY(pos.y - yDiff);
+	e._data = _G(map).getMapTile(e._x, e._y);
+}
+
 bool OverworldLogic::monsterMoveCheckX(int entityIndex, int xDiff, int yDiff) {
 	if (xDiff == 0)
 		return false;
@@ -532,7 +545,7 @@ bool OverworldLogic::monsterMoveCheckX(int entityIndex, int xDiff, int yDiff) {
 	if (!monsterTransportCheck(entityIndex, xDiff + step, yDiff))
 		return false;
 
-	_G(savegame)._overworldEntities[entityIndex]._x -= step;
+	moveEntityFromPlayer(entityIndex, xDiff + step, yDiff);
 	return true;
 }
 
@@ -544,7 +557,7 @@ bool OverworldLogic::monsterMoveCheckY(int entityIndex, int xDiff, int yDiff) {
 	if (!monsterTransportCheck(entityIndex, xDiff, yDiff + step))
 		return false;
 
-	_G(savegame)._overworldEntities[entityIndex]._y -= step;
+	moveEntityFromPlayer(entityIndex, xDiff, yDiff + step);
 	return true;
 }
 
@@ -715,6 +728,8 @@ void OverworldLogic::damage(Data::Direction dir, int effectNum, int maxDistance,
 	}
 
 	Data::Savegame &sg = _G(savegame);
+	x = _G(map).wrapOverworldX(x);
+	y = _G(map).wrapOverworldY(y);
 	int entityIdx = sg.getOverworldEntityAt(x, y, 1);
 	if (entityIdx == -1) {
 		// Shouldn't normally happen - the scan found a monster tile with no

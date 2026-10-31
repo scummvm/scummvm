@@ -92,6 +92,12 @@ private:
 	bool monsterTransportCheck(int entityIndex, int xDiff, int yDiff);
 
 	/**
+	 * Places an entity at the overworld position that is the given distance
+	 * from the player, wrapped around the map edges
+	 */
+	void moveEntityFromPlayer(int entityIndex, int xDiff, int yDiff);
+
+	/**
 	 * Attempts to move a monster one step closer to the player along the
 	 * X axis. Returns true if it moved
 	 */
