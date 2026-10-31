@@ -1,0 +1,47 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef IGOR_STATICS_H
+#define IGOR_STATICS_H
+
+#include "common/scummsys.h"
+
+namespace Igor {
+
+// Shared animation frame buffer offsets for Part 10 & Part 11
+const uint32 kPart10_11_Frm1 = 0xB400;
+const uint32 kPart10_11_Frm2 = 0xBC0A;
+const uint32 kPart10_11_Frm3 = 0xC5E2;
+const uint32 kPart10_11_Frm4 = 0xC786;
+const uint32 kPart10_11_Frm5 = 0xC8AE;
+
+// Shared  animation buffer while the park is loaded
+const uint32 kParkFrames = 0x5A00;
+const uint32 kParkFrameTable = 0x76A8;
+const uint32 kParkPickUpFrames = 0xD0E6;
+const uint32 kParkOldLadyIdleFrames = 0xE067;
+const uint32 kParkLauraFrames = 0x5A00;
+const uint32 kParkLauraFrameTable = 0x9EAE;
+const uint32 kParkLauraPalette = 0xF920;
+
+} // End of namespace Igor
+
+#endif // IGOR_STATICS_H

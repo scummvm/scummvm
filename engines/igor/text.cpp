@@ -1,0 +1,779 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+// palette colors of a choice and of the one under the cursor, y of the
+// first line and distance between lines. The CD hover area starts one row above the first line.
+static const int kChoiceColor = 240;
+static const int kChoiceHoverColor = 241;
+static const int kChoiceFirstY = 135;
+static const int kChoiceLineSpacing = 11;
+static const int kChoiceHoverFirstY = 134;
+
+// Spanish floppy dialogue choices use the action sentence colors: the normal color, and the
+// one used for the choice under the cursor.
+static const int kFloppyChoiceColor = 248;
+static const int kFloppyChoiceHoverColor = 247;
+static const int kFloppyChoiceFirstY = 135;
+static const int kFloppyChoiceLineSpacing = 10;
+
+
+/**
+ * appends one DialogueText{num, count, sound} record to the batch being built.
+ * Game accumulates texts in _dialogeTextsTable, then displays them during dialogues.
+ *
+ * each call to ADD_DIALOGUE_TEXT is one screen of dialogue. Each dialogue
+ * can have multiple lines.
+ */
+void IgorEngine::ADD_DIALOGUE_TEXT(int num, int count, int sound) {
+	assert(_dialogueTextsBuildCount < MAX_DIALOGUE_TEXTS);
+	DialogueText *dt = &_dialogueTextsTable[_dialogueTextsBuildCount];
+	dt->num = num;
+	dt->count = count;
+	dt->sound = sound;
+	++_dialogueTextsBuildCount;
+}
+
+/**
+ * Set start and end of dialogue to be displayed
+ * start page of dialogues, count of dialogue screens
+ */
+void IgorEngine::SET_DIALOGUE_TEXT(int start, int count) {
+	_dialogueTextsBuildCount = 0;
+	_dialogueTextsStart = start - 1;
+	_dialogueTextsCount = count;
+	_talkSpeechCounter = 3;
+}
+
+/**
+ * sets the positional state of the text to be displayed
+ */
+void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
+	int textLineWidth = 0;
+	for (int i = 0; i < count; ++i) {
+		int w = _dialogueFont->getStringWidth(_globalDialogueTexts[num + i]);
+		if (w > textLineWidth) {
+			textLineWidth = w;
+		}
+	}
+	int textX = *x;
+	textX += textLineWidth / 2 - 1;
+	if (textX > 318) {
+		textX = 317 - textLineWidth;
+	} else {
+		textX -= textLineWidth;
+	}
+	if (textX < 1) {
+		textX = textLineWidth / 2 + 1;
+	} else {
+		textX += textLineWidth / 2;
+	}
+	*x = textX;
+
+	int textY = *y;
+	textY -= count * 10;
+	if (textY < 1) {
+		textY = 1;
+	}
+	*y = textY;
+}
+
+/**
+ * Paints the text on the screen buffer for a NPC dialogue.
+ */
+void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
+	if (_eventQuitGame)
+		return;
+	debugC(9, kDebugEngine, "startCutsceneDialogue() pos %d,%d color %d,%d,%d", x, y, r, g, b);
+	if (_dialogueTextsCount <= 0 || _dialogueTextsStart < 0 || _dialogueTextsStart >= MAX_DIALOGUE_TEXTS) {
+		warning("startCutsceneDialogue() invalid playback range start %d count %d",	_dialogueTextsStart, _dialogueTextsCount);
+		stopDialogueSpeech();
+		_gameState.dialogueTextRunning = false;
+		return;
+	}
+	--_dialogueTextsCount;
+	int talkX = x;
+	int talkY = y;
+	const DialogueText *dt = &_dialogueTextsTable[_dialogueTextsStart];
+	if (dt->count <= 0 || dt->num < 0 || dt->num + dt->count > ARRAYSIZE(_globalDialogueTexts)) {
+		warning("startCutsceneDialogue() invalid text record num %d count %d", dt->num, dt->count);
+		stopDialogueSpeech();
+		_gameState.dialogueTextRunning = false;
+		return;
+	}
+	fixDialogueTextPosition(dt->num, dt->count, &talkX, &talkY);
+	_dialogueDirtyRectY = talkY * 320;
+	_dialogueDirtyRectSize = dt->count * 11 * 320;
+	assert(_dialogueDirtyRectSize < 320 * 72);
+
+	/**
+	 * Clear previous text line from the screen text layer by copying the corresponding
+	 * portion from the VGA screen buffer.
+	 */
+	memcpy(_screenTextLayer, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+	memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+
+	for (int i = 0; i < dt->count; ++i) {
+		const char *textLine = _globalDialogueTexts[dt->num + i];
+		int textLineWidth = _dialogueFont->getStringWidth(textLine);
+		int textX = talkX - textLineWidth / 2;
+		int textY = i * 10;
+		_dialogueFont->drawString(_screenTextLayer, textLine, textX, textY, _talkColorIndex, _talkShadowIndex, _talkShadowIndex);
+	}
+	setPaletteColor(_talkColorIndex, r, g, b);
+	setPaletteColor(_talkShadowIndex, 0, 0, 0);
+
+	const int talkMode = prepareDialoguePlayback(*dt);
+	if (talkMode != kTalkModeSpeechOnly)
+		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
+	_gameState.dialogueTextRunning = true;
+	_inputVars[kInputSkipDialogue] = 0;
+}
+
+void IgorEngine::queueDialogueLines(const Common::Array<DialogueText> &lines) {
+	for (uint i = 0; i < lines.size(); ++i) {
+		ADD_DIALOGUE_TEXT(lines[i].num, lines[i].count, lines[i].sound);
+	}
+	SET_DIALOGUE_TEXT(1, lines.size());
+}
+
+void IgorEngine::igorSay(const Common::Array<DialogueText> &lines) {
+	queueDialogueLines(lines);
+	startIgorDialogue();
+}
+
+void IgorEngine::igorSay(int num, int count, int sound) {
+	igorSay({ { num, count, sound } });
+}
+
+void IgorEngine::igorSayAndWait(const Common::Array<DialogueText> &lines) {
+	igorSay(lines);
+	waitForEndOfIgorDialogue();
+}
+
+void IgorEngine::igorSayAndWait(int num, int count, int sound) {
+	igorSayAndWait({ { num, count, sound } });
+}
+
+void IgorEngine::cutsceneSayStart(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines) {
+	queueDialogueLines(lines);
+	startCutsceneDialogue(x, y, r, g, b);
+}
+
+void IgorEngine::cutsceneSayStart(int x, int y, int r, int g, int b, int num, int count, int sound) {
+	cutsceneSayStart(x, y, r, g, b, { { num, count, sound } });
+}
+
+void IgorEngine::cutsceneSay(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines) {
+	cutsceneSayStart(x, y, r, g, b, lines);
+	waitForEndOfCutsceneDialogue(x, y, r, g, b);
+}
+
+void IgorEngine::cutsceneSay(int x, int y, int r, int g, int b, int num, int count, int sound) {
+	cutsceneSay(x, y, r, g, b, { { num, count, sound } });
+}
+
+void IgorEngine::cutsceneSayStartWithCallback(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines, UpdateDialogueProc update) {
+	queueDialogueLines(lines);
+	_updateDialogue = update;
+	startCutsceneDialogue(x, y, r, g, b);
+}
+
+void IgorEngine::cutsceneSayStartWithCallback(int x, int y, int r, int g, int b, int num, int count, int sound, UpdateDialogueProc update) {
+	cutsceneSayStartWithCallback(x, y, r, g, b, { { num, count, sound } }, update);
+}
+
+void IgorEngine::cutsceneSayWithCallback(int x, int y, int r, int g, int b, const Common::Array<DialogueText> &lines, UpdateDialogueProc update) {
+	cutsceneSayStartWithCallback(x, y, r, g, b, lines, update);
+	waitForEndOfCutsceneDialogue(x, y, r, g, b);
+	_updateDialogue = nullptr;
+}
+
+void IgorEngine::cutsceneSayWithCallback(int x, int y, int r, int g, int b, int num, int count, int sound, UpdateDialogueProc update) {
+	cutsceneSayWithCallback(x, y, r, g, b, { { num, count, sound } }, update);
+}
+
+/**
+ * Loop for character talking
+ */
+void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b) {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
+	do {
+		if (_eventQuitGame) {
+			cancelDialogue();
+			_canSaveGame = savingWasAllowed;
+			return;
+		}
+		// stop speech if skip dialogue hit
+		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
+			stopDialogueSpeech();
+			_talkDelayCounter = _talkDelay;
+			_inputVars[kInputSkipDialogue] = 0;
+		}
+		// Speech completion ends the sentence; active speech does not suspend
+		// character animation.
+		if (_gameState.dialogueTextRunning && _talkDelay < 0 && !isDialogueSpeechPlaying()) {
+			_talkDelayCounter = _talkDelay;
+		}
+		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
+			if (_talkSpeechCounter > 2) {
+				if (_talkDelay == _talkDelayCounter) {
+					if (_updateDialogue) {
+						(this->*_updateDialogue)(kUpdateDialogueAnimEndOfSentence);
+					}
+					memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+					debugC(9, kDebugEngine, "waitForEndOfCutsceneDialogue() restored text rect y %d size %d remaining %d",
+					       _dialogueDirtyRectY, _dialogueDirtyRectSize, _dialogueTextsCount);
+					if (_dialogueTextsCount == 0) {
+						stopDialogueSpeech();
+						_gameState.dialogueTextRunning = 0;
+					} else {
+						++_dialogueTextsStart;
+						if (_talkDelay < 0) {
+							if (_talkSpeechCounter != -1) {
+								_talkSpeechCounter = 0;
+							} else {
+								_talkSpeechCounter = 5;
+								startCutsceneDialogue(x, y, r, g, b);
+							}
+						} else {
+							startCutsceneDialogue(x, y, r, g, b);
+						}
+					}
+				} else {
+					++_talkDelayCounter;
+					if (_updateDialogue) {
+						(this->*_updateDialogue)(kUpdateDialogueAnimMiddleOfSentence);
+					}
+				}
+			} else {
+				if (_talkSpeechCounter == 2) {
+					startCutsceneDialogue(x, y, r, g, b);
+				}
+				++_talkSpeechCounter;
+			}
+		}
+		if (_updateRoomBackground) {
+			(this->*_updateRoomBackground)();
+		}
+		// Escape only aborts dialogue during the intro cutscene.
+		if (_inputVars[kInputEscape] && _currentPart == 850) {
+			_canSaveGame = savingWasAllowed;
+			return;
+		}
+		waitForTimer();
+	} while (_gameState.dialogueTextRunning);
+	_canSaveGame = savingWasAllowed;
+
+}
+
+// Just fixes the dialogue position to that of igor's
+void IgorEngine::fixIgorDialogueTextPosition(int num, int count, int *x, int *y) {
+	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
+	*x = wd->x;
+	*y = wd->y - wd->scaleWidth - 3;
+	fixDialogueTextPosition(num, count, x, y);
+}
+
+int IgorEngine::prepareDialoguePlayback(const DialogueText &text) {
+	stopDialogueSpeech();
+	int talkMode = getTalkMode();
+	if (talkMode != kTalkModeTextOnly) {
+		// play speech file
+		playSound(text.sound, 0);
+	}
+	if (!isDialogueSpeechPlaying())
+		talkMode = kTalkModeTextOnly;
+	// Speech modes use speed markers instead of a reading speed. Falling
+	// back to text selects normal speed, same as switching to text-only.
+	const int talkSpeed = (_gameState.talkSpeed >= 1 && _gameState.talkSpeed <= 5)
+		? _gameState.talkSpeed : 3;
+	_talkDelay = talkMode == kTalkModeTextOnly? 2 * text.count * _talkDelays[talkSpeed] : -1;
+	_talkDelayCounter = 0;
+	return talkMode;
+}
+
+bool IgorEngine::isDialogueSpeechPlaying() const {
+	return _mixer->isSoundHandleActive(_speechHandle);
+}
+
+void IgorEngine::stopDialogueSpeech() {
+	if (_mixer->isSoundHandleActive(_speechHandle)) {
+		_mixer->stopHandle(_speechHandle);
+	}
+}
+
+void IgorEngine::cancelDialogue() {
+	if (_gameState.dialogueTextRunning) {
+		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 320 * 72, _dialogueDirtyRectSize);
+	}
+	stopDialogueSpeech();
+	_gameState.dialogueTextRunning = false;
+	_dialogueTextsCount = 0;
+	_inputVars[kInputSkipDialogue] = 0;
+}
+
+void IgorEngine::startIgorDialogue() {
+	if (_eventQuitGame)
+		return;
+	debugC(9, kDebugEngine, "startIgorDialogue()");
+	if (_dialogueTextsCount <= 0 || _dialogueTextsStart < 0 || _dialogueTextsStart >= MAX_DIALOGUE_TEXTS) {
+		warning("startIgorDialogue() invalid playback range start %d count %d", _dialogueTextsStart, _dialogueTextsCount);
+		stopDialogueSpeech();
+		_gameState.dialogueTextRunning = false;
+		return;
+	}
+	--_dialogueTextsCount;
+	int talkX, talkY;
+	const DialogueText *dt = &_dialogueTextsTable[_dialogueTextsStart];
+	if (dt->count <= 0 || dt->num < 0 || dt->num + dt->count > ARRAYSIZE(_globalDialogueTexts)) {
+		warning("startIgorDialogue() invalid text record num %d count %d", dt->num, dt->count);
+		stopDialogueSpeech();
+		_gameState.dialogueTextRunning = false;
+		return;
+	}
+	DialogueText text = *dt;
+	// Empty lines reduce the displayed prefix without changing the queued record.
+	for (int i = dt->count - 1; i >= 0; --i) {
+		if (_globalDialogueTexts[dt->num + i][0] == '\0') {
+			--text.count;
+		}
+	}
+	fixIgorDialogueTextPosition(text.num, text.count, &talkX, &talkY);
+	_dialogueDirtyRectY = talkY * 320;
+	_dialogueDirtyRectSize = (text.count * 10 + 1) * 320;
+	assert(_dialogueDirtyRectSize < 320 * 72);
+	memcpy(_screenTextLayer, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+
+	if (_currentPart == 690) {
+		memcpy(_screenTextLayer + 320 * 72, _screenLayer1 + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+		if (_currentAction.verb == kVerbLook && _currentAction.object1Num == 15) {
+			memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+		}
+		if (_currentAction.verb == kVerbLook && _currentAction.object1Num == 19) {
+			memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+		}
+	} else {
+		memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+	}
+	for (int i = 0; i < text.count; ++i) {
+		const char *textLine = _globalDialogueTexts[text.num + i];
+		int textLineWidth = _dialogueFont->getStringWidth(textLine);
+		int textX = talkX - textLineWidth / 2;
+		int textY = i * 10;
+		_dialogueFont->drawString(_screenTextLayer, textLine, textX, textY, _talkColorIndex, _talkShadowIndex, _talkShadowIndex);
+	}
+	setPaletteColor(_talkColorIndex, _dialogueColor[0], _dialogueColor[1], _dialogueColor[2]);
+	setPaletteColor(_talkShadowIndex, 0, 0, 0);
+	const int talkMode = prepareDialoguePlayback(text);
+	if (talkMode != kTalkModeSpeechOnly)
+		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
+	_gameState.dialogueTextRunning = true;
+	_inputVars[kInputSkipDialogue] = 0;
+}
+
+void IgorEngine::waitForEndOfIgorDialogue(bool animateHead, bool updateRoomBackground) {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
+	do {
+		if (_eventQuitGame) {
+			cancelDialogue();
+			_canSaveGame = savingWasAllowed;
+			return;
+		}
+		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
+			stopDialogueSpeech();
+			_talkDelayCounter = _talkDelay;
+			_inputVars[kInputSkipDialogue] = 0;
+		}
+		// Speech completion ends the sentence; active speech does not suspend
+		// Igor's head animation.
+		if (_gameState.dialogueTextRunning && _talkDelay < 0 && !isDialogueSpeechPlaying()) {
+			_talkDelayCounter = _talkDelay;
+		}
+		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
+			if (_talkSpeechCounter > 2) {
+				if (_talkDelay == _talkDelayCounter) {
+					if (animateHead) {
+						animateIgorTalking(0);
+					}
+					memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+					if (_dialogueTextsCount == 0) {
+						stopDialogueSpeech();
+						_gameState.dialogueTextRunning = 0;
+					} else {
+						++_dialogueTextsStart;
+						if (_talkDelay < 0) {
+							if (_talkSpeechCounter != -1) {
+								_talkSpeechCounter = 0;
+							} else {
+								_talkSpeechCounter = 5;
+								startIgorDialogue();
+							}
+						} else {
+							startIgorDialogue();
+						}
+					}
+				} else {
+					if (animateHead) {
+						animateIgorTalking(getRandomNumber(5));
+					}
+					++_talkDelayCounter;
+				}
+			} else {
+				if (_talkSpeechCounter == 2) {
+					startIgorDialogue();
+				}
+				++_talkSpeechCounter;
+			}
+		}
+		if (updateRoomBackground && _updateRoomBackground) {
+			(this->*_updateRoomBackground)();
+		}
+		if (_inputVars[kInputEscape] && _currentPart == 850) {
+			_canSaveGame = savingWasAllowed;
+			return;
+		}
+		waitForTimer();
+	} while (_gameState.dialogueTextRunning);
+	_canSaveGame = savingWasAllowed;
+}
+
+void IgorEngine::animateIgorTalking(int frame) {
+	if (getPart() == 4 || getPart() == 70) { // maps
+		return;
+	}
+	if (getPart() == 85) { // intro scene, igor behind rock
+		part85AnimateIgorHead(frame);
+		return;
+	}
+	if (getPart() == 79) { // ending
+		part79AnimateIgorHead(frame);
+		return;
+	}
+	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
+	int y = (wd->y - wd->scaleWidth + 1) * 320;
+	int delta = wd->x - _walkWidthScaleTable[wd->scaleHeight - 1] / 2;
+	if (delta > 0) {
+		y += delta;
+	}
+	for (int yOffset = 0; yOffset < wd->scaleWidth; y += 320, ++yOffset) {
+		int index = READ_LE_UINT16(_walkScaleTable + 0x6CE + wd->scaleHeight * 2) + yOffset;
+		uint8 yScale = _walkScaleTable[index];
+		if (yScale >= 11) {
+			continue;
+		}
+		for (int x = 0, xOffset = wd->clipSkipX - 1; x < wd->clipWidth; ++x, ++xOffset) {
+			index = READ_LE_UINT16(_walkScaleTable + 0x734 + _walkWidthScaleTable[wd->scaleHeight - 1] * 2) + xOffset;
+			uint8 xScale = _walkScaleTable[0x4FC + index];
+			if (xScale < 8 || xScale > 21) {
+				continue;
+			}
+			uint8 screenColor = _screenVGA[y + x];
+			if (screenColor < kTalkColor || screenColor > kTalkShadowColor) {
+				int offset = yScale * 14 + frame * 154 + (wd->posNum - 1) * 924 + (xScale - 8);
+				uint8 srcColor = _igorHeadFrames[offset];
+				if (srcColor == 0) {
+					_screenVGA[y + x] = _screenLayer1[y + x];
+					continue;
+				}
+				RoomObjectArea *roa = &_roomObjectAreasTable[_screenLayer2[y + x]];
+				if (wd->y <= roa->y1Lum) {
+					_screenVGA[y + x] = _screenLayer1[y + x];
+					continue;
+				}
+				if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+					srcColor -= roa->deltaLum;
+				}
+				_screenVGA[y + x] = srcColor;
+			}
+		}
+	}
+}
+
+
+// Offset in the dialogue data of the entry of choice slot i (1..5) in the current menu.
+int IgorEngine::dialogueChoiceOffset(int i) const {
+	return (i - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
+}
+
+// Text of a choice: both parts of the question, after an optional prefix.
+Common::String IgorEngine::dialogueChoiceText(int choice, const char *prefix) const {
+	const int offset = dialogueChoiceOffset(_dialogueInfo[choice]);
+	const int num = _gameState.dialogueData[offset + 3] - 1;
+	return Common::String::format("%s%s %s", prefix, _dialogueQuestions[num][0], _dialogueQuestions[num][1]);
+}
+
+void IgorEngine::drawFloppyDialogueChoice(int choice, int color) {
+	const Common::String text = dialogueChoiceText(choice, "");
+	_sentenceFont->drawString(_screenVGA, text.c_str(), 0, kFloppyChoiceFirstY + choice * kFloppyChoiceLineSpacing, color, -1, -1);
+}
+
+/**
+ * Pos and color
+ */
+void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreUI, uint8 id) {
+	const bool resuming = _dialogueResuming;
+	_dialogueResuming = false;
+	_gameState.dialogueStarted = id;
+	if (!resuming) { // a loaded savegame keeps the menu position it was saved at
+		_gameState.dialogueChoiceStart = 1;
+		_gameState.dialogueChoiceCount = 1;
+	}
+	_dialogueEnded = false;
+	if (getPart() == 12 && _objectsState[kLizardTakenStateIndex] == 0 && !resuming) {
+		_gameState.dialogueData[6] = 1;
+		dialogueReplyToQuestion(x, y, r, g, b, 40);
+	}
+	do {
+		if (getPart() == 15 && _objectsState[kCuckooClockTriggeredStateIndex] == 0) {
+			_gameState.dialogueData[6] = 0;
+		}
+		drawDialogueChoices();
+		if (_updateDialogue) {
+			(this->*_updateDialogue)(kUpdateDialogueAnimStanding);
+		}
+		_dialogueChoiceSelected = selectDialogue();
+		if (_dialogueChoiceSelected == 0) {
+			break;
+		} else if (_dialogueChoiceSelected == -1) {
+			return;
+		}
+		dialogueAskQuestion();
+		dialogueReplyToQuestion(x, y, r, g, b);
+		int offset = dialogueChoiceOffset(_dialogueInfo[_dialogueChoiceSelected]);
+		int code = _gameState.dialogueData[offset + 5];
+		if (getPart() == 9) {
+			if (code == 4)
+				_gameState.dialogueData[120] = 0;
+			if (code == 98 || code == 101) {
+				part9SecretarySearchesFile();
+				dialogueReplyToQuestion(x, y, r, g, b, code);
+			}
+		}
+		if ((code >= 1 && code <= 99) || (getPart() == 15 && code == 1)) {
+			_gameState.dialogueData[offset] = 0;
+			if (getPart() == 21 && (code == 60 || code == 70 || code == 80) && _dialogueInfo[0] == 1) {
+				_gameState.dialogueData[offset + 2] = 4;
+			}
+			if (getPart() == 33 && (code == 21 || code == 22 || code == 23) && _dialogueInfo[0] == 1) {
+				_gameState.dialogueData[offset + 2] = 2;
+			}
+		}
+		debugC(9, kDebugEngine, "handleDialogue() action %d offset %d", _gameState.dialogueData[offset + 2], offset);
+		switch (_gameState.dialogueData[offset + 2]) {
+		case 1:
+			_gameState.dialogueChoiceCount = _gameState.dialogueData[offset + 1];
+			++_gameState.dialogueChoiceStart;
+			break;
+		case 2:
+			_gameState.dialogueChoiceCount = _gameState.dialogueData[offset + 1];
+			--_gameState.dialogueChoiceStart;
+			break;
+		case 4:
+			_gameState.dialogueChoiceCount = _gameState.dialogueData[offset + 1];
+			_gameState.dialogueChoiceStart -= 2;
+			break;
+		case 0:
+			_dialogueEnded = true;
+			break;
+		}
+		debugC(9, kDebugEngine, "handleDialogue() end %d start %d count %d", _dialogueEnded, _gameState.dialogueChoiceStart, _gameState.dialogueChoiceCount);
+	} while (!_dialogueEnded);
+	fillScreenRows(144, 56, 0);
+	if(restoreUI) {
+		drawVerbsPanel();
+		drawInventory(_inventoryInfo[kInventoryFirstVisible], 0);
+	}
+	_currentAction.verb = kVerbWalk;
+	_gameState.dialogueStarted = 0;
+}
+
+
+void IgorEngine::drawDialogueChoices() {
+	if (_gameState.dialogueTextRunning) {
+		warning("drawDialogueChoices() entered while dialogue text is still active");
+	}
+	const bool floppy = (_game.version == kIdSpaFloppy);
+	fillScreenRows(144, 56, 0);
+	setPaletteColor(floppy ? kFloppyChoiceColor : kChoiceColor, 0, 0, 0);
+	_dialogueInfo[0] = 0;
+	for (int i = 1; i <= 5; ++i) {
+		_dialogueInfo[i] = 0;
+	}
+	for (int i = 1; i <= 5; ++i) {
+		int offset = dialogueChoiceOffset(i);
+		if (_gameState.dialogueData[offset] == 1) {
+			++_dialogueInfo[0];
+			_dialogueInfo[_dialogueInfo[0]] = i;
+			if (floppy) {
+				drawFloppyDialogueChoice(_dialogueInfo[0], kFloppyChoiceColor);
+			} else {
+				const Common::String questionText = dialogueChoiceText(_dialogueInfo[0], "@");
+				_dialogueFont->drawString(_screenVGA, questionText.c_str(), 0, _dialogueInfo[0] * kChoiceLineSpacing + kChoiceFirstY, kChoiceColor, 0, 0);
+			}
+		}
+		debugC(9, kDebugEngine, "drawDialogueChoices() i %d state %d num %d", i, _gameState.dialogueData[offset], _gameState.dialogueData[offset + 3]);
+	}
+	if (floppy) {
+		setPaletteColor(kFloppyChoiceColor, _paletteBuffer[3 * kFloppyChoiceColor], _paletteBuffer[3 * kFloppyChoiceColor + 1], _paletteBuffer[3 * kFloppyChoiceColor + 2]);
+		return;
+	}
+	setPaletteColor(kChoiceColor, _paletteBuffer[0x2F6 + 1], _paletteBuffer[0x2F6 + 2], _paletteBuffer[0x2F6 + 3]);
+	setPaletteColor(kChoiceHoverColor, _paletteBuffer[0x2F0 + 1], _paletteBuffer[0x2F0 + 2], _paletteBuffer[0x2F0 + 3]);
+}
+
+int IgorEngine::selectDialogue() {
+	showCursor();
+	debugC(9, kDebugEngine, "selectDialogue() begin cursor %d,%d choices %d running %d",
+	       _inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos],
+	       _dialogueInfo[0], _gameState.dialogueTextRunning);
+	int hoveredChoice = 0;
+	bool end = false;
+	do {
+		if (_inputVars[kInputOptions]) {
+			_inputVars[kInputOptions] = 0;
+			handleOptionsMenu();
+			if (_gameStateLoaded || _eventQuitGame || _currentPart == kInvalidPart)
+				return -1;
+			drawDialogueChoices();
+			hoveredChoice = 0;
+		}
+		int currentChoice;
+		if (_game.version == kIdSpaFloppy) {
+			// only the rows of the choices react to the cursor
+			const int y = _inputVars[kInputCursorYPos];
+			currentChoice = (y >= 145 && y <= 194) ? (y - kFloppyChoiceFirstY) / kFloppyChoiceLineSpacing : 0;
+		} else {
+			currentChoice = (_inputVars[kInputCursorYPos] - kChoiceHoverFirstY) / kChoiceLineSpacing;
+			if (currentChoice < 0) {
+				currentChoice = 0;
+			}
+		}
+
+		if (currentChoice != hoveredChoice) {
+			if (hoveredChoice != 0) {
+				recolorDialogueChoice(hoveredChoice, false);
+			}
+			hoveredChoice = currentChoice;
+			if (hoveredChoice != 0) {
+				recolorDialogueChoice(hoveredChoice, true);
+			}
+		}
+		if (_inputVars[kInputClick]) {
+			debugC(9, kDebugEngine, "selectDialogue() click cursor %d,%d hovered %d choices %d running %d skip %d",
+			       _inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos], hoveredChoice,
+			       _dialogueInfo[0], _gameState.dialogueTextRunning, _inputVars[kInputSkipDialogue]);
+			if (hoveredChoice != 0 && hoveredChoice <= _dialogueInfo[0]) {
+				end = true;
+			}
+			_inputVars[kInputClick] = 0;
+		}
+
+		waitForTimer();
+	} while (!end && !_eventQuitGame && !_gameStateLoaded);
+	hideCursor();
+	debugC(9, kDebugEngine, "selectDialogue() end hovered %d quit %d", hoveredChoice, _eventQuitGame);
+	if (_gameStateLoaded)
+		return -1;
+	return hoveredChoice;
+}
+
+void IgorEngine::dialogueAskQuestion() {
+	fillScreenRows(144, 56, 0);
+	int offset = dialogueChoiceOffset(_dialogueInfo[_dialogueChoiceSelected]);
+	int question = _gameState.dialogueData[offset + 3];
+	// For part 5 igor always chickens out from Phillip
+	if (getPart() == 17) {
+		question = 5;
+	}
+	const int num = question - 1;
+	const int sound = _dialogueQuestionSounds[question - 1];
+	debugC(9, kDebugEngine, "dialogueAskQuestion() num %d offset %d", num, offset);
+	Common::strlcpy(_globalDialogueTexts[250], _dialogueQuestions[num][0], sizeof(_globalDialogueTexts[250]));
+	Common::strlcpy(_globalDialogueTexts[251], _dialogueQuestions[num][1], sizeof(_globalDialogueTexts[251]));
+	if (_globalDialogueTexts[251][0]) {
+		ADD_DIALOGUE_TEXT(250, 2, sound);
+	} else {
+		ADD_DIALOGUE_TEXT(250, 1, sound);
+	}
+	SET_DIALOGUE_TEXT(1, 1);
+	startIgorDialogue();
+	waitForEndOfIgorDialogue();
+}
+
+void IgorEngine::recolorDialogueChoice(int num, bool highlight) {
+	if (_game.version == kIdSpaFloppy) {
+		if (num >= 1 && num <= _dialogueInfo[0]) {
+			drawFloppyDialogueChoice(num, highlight ? kFloppyChoiceHoverColor : kFloppyChoiceColor);
+		}
+		return;
+	}
+	uint8 *p = _screenVGA + 320 * (kChoiceLineSpacing * num + kChoiceFirstY);
+	for (int i = 0; i < 320 * kChoiceLineSpacing; ++i) {
+		if (highlight) {
+			if (p[i] == kChoiceColor) {
+				p[i] = kChoiceHoverColor;
+			}
+		} else {
+			if (p[i] == kChoiceHoverColor) {
+				p[i] = kChoiceColor;
+			}
+		}
+	}
+}
+
+void IgorEngine::dialogueReplyToQuestion(int x, int y, int r, int g, int b, int reply) {
+	if (reply == 0) {
+		int offset = dialogueChoiceOffset(_dialogueInfo[_dialogueChoiceSelected]);
+		reply = _gameState.dialogueData[offset + 4];
+		debugC(9, kDebugEngine, "dialogueReplyToQuestion() dialogue choice %d reply %d", _dialogueChoiceSelected, reply);
+		if (reply == 0) {
+			return;
+		}
+	}
+	const int repliesDataOffset = _roomDataOffsets.dlg.replyDataOffset != 0
+		? _roomDataOffsets.dlg.replyDataOffset
+		: 30 + _roomDataOffsets.dlg.matSize;
+	int offset = repliesDataOffset + reply;
+	int count = _gameState.dialogueData[offset - 1];
+	int dialogueIndex = 250;
+	for (int i = 0; i < count; ++i) {
+		int num = _gameState.dialogueData[offset] - 1;
+		int len = _gameState.dialogueData[offset + 1];
+		debugC(9, kDebugEngine, "dialogueReplyToQuestion() reply %d %d offset %d", num, len, offset);
+		ADD_DIALOGUE_TEXT(dialogueIndex, len, _dialogueReplySounds[num]);
+		for (int j = 0; j < len; ++j) {
+			Common::strlcpy(_globalDialogueTexts[dialogueIndex], _dialogueReplies[num + j], sizeof(_globalDialogueTexts[dialogueIndex]));
+			++dialogueIndex;
+		}
+		offset += 2;
+	}
+	SET_DIALOGUE_TEXT(1, count);
+	startCutsceneDialogue(x, y, r, g, b);
+	waitForEndOfCutsceneDialogue(x, y, r, g, b);
+}
+
+} // End of namespace Igor

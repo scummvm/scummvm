@@ -1,0 +1,291 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "audio/decoders/raw.h"
+#include "audio/decoders/voc.h"
+#include "backends/audiocd/audiocd.h"
+#include "common/config-manager.h"
+
+#include "igor/igor.h"
+#include "igor/midi.h"
+
+namespace Igor {
+
+int IgorEngine::getTalkMode() const {
+	if (!(_game.flags & kFlagTalkie) || ConfMan.getBool("mute") || ConfMan.getBool("speech_mute"))
+		return kTalkModeTextOnly;
+	return CLIP<int>(_gameState.talkMode, kTalkModeSpeechOnly, kTalkModeTextOnly);
+}
+
+void IgorEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+	const bool mute = ConfMan.getBool("mute");
+	const bool musicMute = mute || ConfMan.getBool("music_mute");
+	const bool sfxMute = mute || ConfMan.getBool("sfx_mute");
+	const bool speechMute = mute || ConfMan.getBool("speech_mute") || !(_game.flags & kFlagTalkie);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, musicMute);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, sfxMute);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, speechMute);
+	_system->getAudioCDManager()->setVolume(musicMute ? 0 : Audio::Mixer::kMaxChannelVolume);
+	_gameState.configSoundEnabled = sfxMute ? 0 : 1;
+
+	_gameState.talkMode = speechMute ? kTalkModeTextOnly
+		: (ConfMan.getBool("subtitles") ? kTalkModeSpeechAndText : kTalkModeSpeechOnly);
+
+	if (speechMute && (_gameState.talkSpeed < 1 || _gameState.talkSpeed > 5))
+		_gameState.talkSpeed = 3;
+	if (sfxMute)
+		_mixer->stopHandle(_sfxHandle);
+
+	if (speechMute) {
+		stopDialogueSpeech();
+		// Disabling speech during a sentence reveals its text and starts the
+		// same reading timer used by sentences begun in text-only mode.
+		if (_gameState.dialogueTextRunning && _talkDelay < 0) {
+			_talkDelay = 2 * _dialogueTextsTable[_dialogueTextsStart].count
+				* _talkDelays[CLIP<int>(_gameState.talkSpeed, 1, 5)];
+			_talkDelayCounter = 0;
+			memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
+		}
+	}
+}
+
+void IgorEngine::startMusic(int cmf) {
+	debugC(9, kDebugEngine, "startMusic() cue %d segment %d resource %d",
+		_gameState.musicNum, _gameState.musicSequenceIndex, cmf);
+	if (_musicTimerDivisor != 4096) {
+		_musicTimerDivisor = 4096;
+		_musicTimerRemainder = 0;
+	}
+	_midiPlayer->stopMusic();
+	free(_musicData);
+	int musicDataSize;
+	_musicData = loadData(cmf, nullptr, &musicDataSize);
+	_midiPlayer->playMusic(_musicData, musicDataSize);
+}
+
+// Number of segments cycled for the given music number (the Spanish floppy
+// version only ships three segments for number 2).
+static int getMusicSegmentCount(int num, int version) {
+	if (num == 2)
+		return version == kIdSpaFloppy ? 3 : 4;
+	return num == 7 ? 4 : 1;
+}
+
+static int getMusicResource(int num, int sequence, int version) {
+	static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
+	if (num < 0 || num >= (int)ARRAYSIZE(cmf))
+		return 0;
+	if (num == 1)
+		return version == kIdSpaFloppy ? CMF_1 : 0;
+	if (num == 2 || num == 7) {
+		if (sequence < 1 || sequence > getMusicSegmentCount(num, version))
+			return 0;
+		return cmf[num] + sequence - 1;
+	}
+	return cmf[num];
+}
+
+void IgorEngine::playMusic(int num, bool restart) {
+	debugC(9, kDebugEngine, "playMusic() %d", num);
+	if (_gameState.musicNum == num && !restart)
+		return;
+	if (_game.flags & kFlagFloppy)
+		updateMusic();
+	if (_gameState.musicNum != num) {
+		_gameState.musicNum = num;
+		_gameState.musicSequenceIndex = 1;
+	}
+	if (_game.flags & kFlagFloppy) {
+		if (!_midiPlayer)
+			return;
+		int cmf = getMusicResource(num, _gameState.musicSequenceIndex, _game.version);
+		// Selection 1 belongs to the Spanish floppy logo screen only.
+		if (num == 1 && _currentPart != 900)
+			cmf = 0;
+		if (num != 0 && !cmf) {
+			// TODO: Restore unsupported music selections once verified.
+			return;
+		}
+		_midiPlayer->stopMusic();
+		_musicRestartCounter = 0;
+		if (_game.version == kIdSpaFloppy) {
+			// The selection starts the segment right away; repetition is
+			// handled by updateMusic() without a restart delay.
+			if (num != 0)
+				startMusic(cmf);
+			_musicRestartCounter = 0xFF;
+		} else if (num == 12) {
+			// Credits start directly and are excluded from automatic repetition.
+			startMusic(cmf);
+			_musicRestartCounter = 0xFF;
+		}
+	} else {
+		g_system->getAudioCDManager()->stop();
+		// the first CD track is the data track: music number N is CD track N + 1
+		g_system->getAudioCDManager()->play(num + 1, -1, 0, 0);
+	}
+}
+
+void IgorEngine::updateMusic() {
+	if (!_midiPlayer)
+		return;
+	const uint32 now = _system->getMillis();
+	const uint32 elapsed = now - _musicUpdateMillis;
+	_musicUpdateMillis = now;
+	if (isPaused() || _musicSuspended)
+		return;
+
+	// The music scheduler uses the BIOS timer, independently of game speed.
+	const uint64 timer = _musicTimerRemainder + (uint64)elapsed * 1193180;
+	const uint32 period = _musicTimerDivisor * 1000;
+	uint32 ticks = timer / period;
+	_musicTimerRemainder = timer % period;
+	while (ticks--) {
+		if (_game.version == kIdSpaFloppy) {
+			// Selections 1 and 12 play once; all others repeat as soon as
+			// the segment ends, without a restart delay.
+			const int num = _gameState.musicNum;
+			if (num > 1 && num < 12 && !_midiPlayer->isPlaying() &&
+					getMusicResource(num, _gameState.musicSequenceIndex, _game.version)) {
+				if (num == 2) {
+					const int previous = _gameState.musicSequenceIndex;
+					do {
+						_gameState.musicSequenceIndex = getRandomNumber(getMusicSegmentCount(2, _game.version) - 1) + 1;
+					} while (_gameState.musicSequenceIndex == previous);
+				} else if (num == 7) {
+					_gameState.musicSequenceIndex = _gameState.musicSequenceIndex == getMusicSegmentCount(7, _game.version) ? 1 : _gameState.musicSequenceIndex + 1;
+				}
+				startMusic(getMusicResource(num, _gameState.musicSequenceIndex, _game.version));
+			}
+			continue;
+		}
+		if (_musicRestartCounter != 0xFF) {
+			if (_musicRestartCounter == _musicRestartDelay) {
+				if (_gameState.musicNum > 0 && _gameState.musicNum < 12) {
+					const int cmf = getMusicResource(_gameState.musicNum, _gameState.musicSequenceIndex, _game.version);
+					if (cmf)
+						startMusic(cmf);
+				}
+				_musicRestartCounter = 0xFF;
+				_musicRestartDelay = 50;
+			} else {
+				++_musicRestartCounter;
+			}
+		} else if (_gameState.musicNum > 0 && _gameState.musicNum < 12 &&
+				getMusicResource(_gameState.musicNum, _gameState.musicSequenceIndex, _game.version) && !_midiPlayer->isPlaying()) {
+			switch (_gameState.musicNum) {
+			case 2: {
+				const int previous = _gameState.musicSequenceIndex;
+				do {
+					_gameState.musicSequenceIndex = getRandomNumber(getMusicSegmentCount(2, _game.version) - 1) + 1;
+				} while (_gameState.musicSequenceIndex == previous);
+				_musicRestartDelay = 5;
+				break;
+			}
+			case 7:
+				_gameState.musicSequenceIndex = _gameState.musicSequenceIndex == getMusicSegmentCount(7, _game.version) ? 1 : _gameState.musicSequenceIndex + 1;
+				_musicRestartDelay = 5;
+				break;
+			case 11:
+				_musicRestartDelay = 5;
+				break;
+			default:
+				_musicRestartDelay = 50;
+				break;
+			}
+			_musicRestartCounter = 0;
+		}
+	}
+}
+
+void IgorEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	_musicUpdateMillis = _system->getMillis();
+}
+
+void IgorEngine::playSound(int num, int type) {
+	if (type == 1 && (ConfMan.getBool("mute") || ConfMan.getBool("sfx_mute")))
+		return;
+	if (type == 0 && getTalkMode() == kTalkModeTextOnly) {
+		stopDialogueSpeech();
+		return;
+	}
+
+	// A zero speech number means the line has no recorded speech.
+	if (type == 0 && num == kNoSpeechSound) {
+		if (_mixer->isSoundHandleActive(_speechHandle)) {
+			_mixer->stopHandle(_speechHandle);
+		}
+		return;
+	}
+	--num;
+	int soundOffset = -1;
+	Audio::Mixer::SoundType soundType;
+	Audio::SoundHandle *soundHandle = 0;
+	if (type == 1) {
+		if (!isCDVersion() && num >= _soundOffsetsCount)
+			return;
+		if (_mixer->isSoundHandleActive(_sfxHandle)) {
+			return;
+		}
+		assert(num >= 0 && num < _soundOffsetsCount);
+		soundOffset = _soundOffsets[num];
+		soundType = Audio::Mixer::kSFXSoundType;
+		soundHandle = &_sfxHandle;
+	} else if (type == 0) {
+		if (_mixer->isSoundHandleActive(_speechHandle)) {
+			debugC(9, kDebugEngine, "stopping previous handle");
+			_mixer->stopHandle(_speechHandle);
+		}
+		if ((_game.flags & kFlagTalkie) == 0) {
+			return;
+		}
+		num += 101;
+		assert(num >= 0 && num < _soundOffsetsCount);
+		soundOffset = _soundOffsets[num];
+		soundType = Audio::Mixer::kSpeechSoundType;
+		soundHandle = &_speechHandle;
+	} else {
+		return;
+	}
+
+	// two streams must never share one Common::File: the second stream's seek would
+	// fight for the first one's cursor and the running sound would come out as
+	// noise. Give each stream its own handle and let the stream dispose of it.
+	Common::File *sndFile = new Common::File;
+	if (!sndFile->open(_game.sfxFileName)) {
+		delete sndFile;
+		return;
+	}
+	sndFile->seek(soundOffset);
+	Audio::AudioStream *stream = Audio::makeVOCStream(sndFile, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	if (stream) {
+		_mixer->playStream(soundType, soundHandle, stream);
+	}
+}
+
+void IgorEngine::stopSound() {
+	_mixer->stopHandle(_sfxHandle);
+	_mixer->stopHandle(_speechHandle);
+}
+
+} // End of namespace Igor

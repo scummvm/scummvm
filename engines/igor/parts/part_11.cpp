@@ -1,0 +1,221 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "igor/igor.h"
+#include "igor/statics.h"
+
+namespace Igor {
+
+const uint32 kPart11PanelRight = 0x0000;
+
+void IgorEngine::part11ApplyObjectState(int num) {
+	part10And11DrawObjectState(num);
+
+	if (num == 1 || num == 255)
+		_roomObjectAreasTable[13].object = _objectsState[kSlugTakenStateIndex] == 0 ? 4 : 3;
+
+	if (num == 2 || num == 255) {
+		if (_objectsState[kGlassShardsPresentStateIndex] == 1) { //glass shards
+			// make area selectable
+			for (int area = 10; area <= 11; ++area)
+				_roomObjectAreasTable[area].object = 7;
+		} else {
+			// make area not selectable
+			for (int area = 10; area <= 11; ++area)
+				_roomObjectAreasTable[area].object = 0;
+		}
+	}
+
+	if (num == 3 || num == 255) {
+		if (_objectsState[kButterflyNetStateIndex] == 0) {
+			for (int area = 7; area <= 8; ++area)
+				_roomObjectAreasTable[area].object = 0;
+		} else if (_objectsState[kButterflyNetStateIndex] == 1) {
+			for (int area = 7; area <= 8; ++area)
+				_roomObjectAreasTable[area].object = 6;
+		} else if (_objectsState[kButterflyNetStateIndex] == 2) {
+			_roomObjectAreasTable[7].object = 6;
+			_roomObjectAreasTable[8].object = 8;
+		}
+	}
+}
+
+void IgorEngine::part11TakeSlug() {
+	for (int frame = 0; frame <= 1; ++frame) {
+		drawAnimRect(0x6167, kPart10_11_Frm1 + frame * 0x405, 21, 49);
+		waitForTimer(127);
+	}
+	addObjectToInventory(kInventoryObjectSlug, 53);
+	_objectsState[kSlugTakenStateIndex] = 1;
+	part11ApplyObjectState(255);
+}
+
+void IgorEngine::part11UseButterflyNetWithHole() {
+	for (int frame = 0; frame <= 2; ++frame) {
+		drawAnimRect(0x47E3, kPart10_11_Frm5 + frame * 0x348, 30, 28);
+		waitForTimer(61);
+	}
+	removeObjectFromInventory(42);
+	_objectsState[kButterflyNetStateIndex] = 1;
+	part11ApplyObjectState(255);
+}
+
+void IgorEngine::part11ScrollRight() {
+	uint8 *walkTable = loadData(WLK_DecanatoRight);
+	int xPos = 310;
+	int yPos = 0;
+	int i = 1;
+	do {
+		if (compareGameTick(1, 16)) {
+			copyArea(_screenLayer2, 0, 320, _screenLayer1 + i * 8, 320, 320 - i * 8, 144);
+			copyArea(_screenLayer2, 320 - i * 8, 320, _animFramesBuffer + kPart11PanelRight, 320, i * 8, 144);
+			if (i < 9) {
+				xPos += _walkScaleTable[0x8F9 + _walkCurrentFrame];
+				assert(xPos >= 260);
+				yPos = walkTable[xPos - 260];
+				WalkData::setNextFrame(kFacingPositionRight, _walkCurrentFrame);
+			} else {
+				_walkCurrentFrame = 0;
+			}
+			int dstOffset = (yPos - 50) * 320 + xPos - 10 - i * 8;
+			for (int row = 0; row <= 49; ++row) {
+				dstOffset += 320;
+				for (int col = 0; col <= 29; ++col) {
+					const uint8 color = _facingIgorFrames[kFacingPositionRight - 1][_walkCurrentFrame * 1500 + row * 30 + col];
+					if (color != 0)
+						_screenLayer2[dstOffset + col] = color;
+				}
+			}
+			copyLayerToScreen(_screenLayer2Surface);
+			++i;
+		}
+		waitForTimer();
+	} while (i != 41);
+	free(walkTable);
+	_walkData[0].setPos(xPos - 315, yPos, kFacingPositionRight, 0);
+	_walkData[0].setDefaultScale();
+	_currentPart = 102;
+}
+
+void IgorEngine::part11TakeBottle() {
+	for (int frame = 0; frame <= 2; ++frame) {
+		drawAnimRect(0x47E3, kPart10_11_Frm2 + frame * 0x348, 30, 28);
+		waitForTimer(61);
+	}
+	addObjectToInventory(kInventoryObjectBottle, 58);
+	_objectsState[kButterflyNetStateIndex] = 1;
+	part11ApplyObjectState(3);
+	_objectsState[kBottleStateIndex] = 1;
+	partMainUpdateObjectState(1);
+}
+
+void IgorEngine::part11ExecuteAction(int action) {
+	switch (action) {
+	case 101: // look at window
+		ADD_DIALOGUE_TEXT(201, 2, 616);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		waitForEndOfIgorDialogue();
+		break;
+	case 102: // close window
+		igorSayAndWait(29, 1, 29);
+		break;
+	case 103: // look at pipe
+		igorSayAndWait(_objectsState[kSlugTakenStateIndex] == 0 ? 203 : 204, 1, _objectsState[kSlugTakenStateIndex] == 0 ? 617 : 618);
+		break;
+	case 104: // talk to slug
+		igorSayAndWait({ { 205, 1, 619 }, { 206, 1, 620 } });
+		break;
+	case 105:
+		part11TakeSlug();
+		break;
+	case 106: // look at slug
+		igorSayAndWait(73, 1, 50);
+		break;
+	case 107:
+		part11UseButterflyNetWithHole();
+		break;
+	case 108:
+		part11ScrollRight();
+		break;
+	case 109: // Look at hole
+		igorSayAndWait(207, 1, 621);
+		break;
+	case 110: // Look at butterfly net
+		igorSayAndWait(_objectsState[kButterflyNetStateIndex] == 1 ? 208 : 209, 1, _objectsState[kButterflyNetStateIndex] == 1 ? 622 : 623);
+		break;
+	case 111: // look at glass shards
+		igorSayAndWait(210, 1, 624);
+		break;
+	case 112:
+		part11TakeBottle();
+		break;
+	case 113:
+		igorSayAndWait(211, 1, 625);
+		break;
+	case 114:
+		igorSayAndWait(29, 1, 29);
+		break;
+	default:
+		warning("part11ExecuteAction unhandled action %d", action);
+		break;
+	}
+}
+
+void IgorEngine::part11() {
+	if (isCDVersion())
+		playMusic(1);
+	_gameState.enableLight = 1;
+	loadActionData(DAT_DecanatoPart11);
+	loadRoomData(PAL_DecanatoRight, IMG_DecanatoRight, BOX_DecanatoRight, MSK_DecanatoRight, TXT_DecanatoRight);
+	memcpy(_animFramesBuffer + kPart11PanelRight, _screenLayer1, 46080);
+	loadRoomData(PAL_DecanatoLeft, IMG_DecanatoLeft, BOX_DecanatoLeft, MSK_DecanatoLeft, TXT_DecanatoLeft);
+
+	static const int frames1[] = { FRM_Decanato1, 0 };
+	static const int frames2[] = { FRM_Decanato2, 0 };
+	static const int frames3[] = { FRM_Decanato3, 0 };
+	static const int frames4[] = { FRM_Decanato4, 0 };
+	static const int frames5[] = { FRM_Decanato5, 0 };
+	loadAnimData(frames1, kPart10_11_Frm1);
+	loadAnimData(frames2, kPart10_11_Frm2);
+	loadAnimData(frames3, kPart10_11_Frm3);
+	loadAnimData(frames4, kPart10_11_Frm4);
+	loadAnimData(frames5, kPart10_11_Frm5);
+
+	partMainSetExecuteAction(1, &IgorEngine::part11ExecuteAction);
+	_roomDataOffsets = PART_11_ROOM_DATA_OFFSETS;
+	setRoomWalkBounds(0, 0, 319, 143);
+	part11ApplyObjectState(255);
+	setVerbPanelColors();
+	setInventoryPanelColors();
+	if (!restoreRoomAfterLoad()) {
+		_walkDataLastIndex = 1;
+		_walkDataCurrentIndex = 1;
+	}
+
+	enterPartLoop();
+	while (_currentPart == 110 && !_gameStateLoaded) {
+		runPartLoop();
+	}
+	leavePartLoop();
+}
+
+} // End of namespace Igor
