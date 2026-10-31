@@ -59,7 +59,6 @@ SmushDecoder::SmushDecoder() {
 	_videoTrack = nullptr;
 	_audioTrack = nullptr;
 	_wave = nullptr;
-	_ownsAudioTrack = false;
 	_blocky16Frames = 0;
 	_frameDelay = 0;
 	_videoPause = false;
@@ -73,7 +72,8 @@ SmushDecoder::~SmushDecoder() {
 
 void SmushDecoder::init() {
 	_videoTrack->init();
-	_audioTrack->init();
+	if (_audioTrack)
+		_audioTrack->init();
 }
 
 void SmushDecoder::initFrames() {
@@ -123,10 +123,6 @@ void SmushDecoder::initFrames() {
 
 void SmushDecoder::close() {
 	VideoDecoder::close();
-	if (_ownsAudioTrack)
-		delete _audioTrack;
-
-	_ownsAudioTrack = false;
 	_audioTrack = nullptr;
 	_videoTrack = nullptr;
 	_videoLooping = false;
@@ -257,11 +253,10 @@ bool SmushDecoder::handleFramesHeader() {
 	} while (pos < size);
 	delete[] f_header;
 
-	_audioTrack = new SmushAudioTrack(getSoundType(), true, freq, channels);
-	if (_wave)
-		_ownsAudioTrack = true;
-	else
+	if (!_wave) {
+		_audioTrack = new SmushAudioTrack(getSoundType(), true, freq, channels);
 		addTrack(_audioTrack);
+	}
 
 	return true;
 }
@@ -496,8 +491,10 @@ bool SmushDecoder::seekIntern(const Audio::Timestamp &time) {
 		delay = delay - _videoTrack->getFrameTime(keyframe);
 	}
 
-	int32 sampleCount = (delay.msecs() / 1000.f) * _audioTrack->getRate() - offset;
-	_audioTrack->skipSamples(sampleCount);
+	if (_audioTrack) {
+		int32 sampleCount = (delay.msecs() / 1000.f) * _audioTrack->getRate() - offset;
+		_audioTrack->skipSamples(sampleCount);
+	}
 
 	VideoDecoder::seekIntern(time);
 	return true;
