@@ -58,6 +58,10 @@ public:
 	bool hasFeature(Feature f) override;
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
+	void acquireImeCompositionControl() override;
+	void setImeCompositionArea(const Common::Rect &area) override;
+	void cancelImeComposition() override;
+	void releaseImeCompositionControl() override;
 
 	// Override functions from ModularBackend and OSystem
 	void initBackend() override;
