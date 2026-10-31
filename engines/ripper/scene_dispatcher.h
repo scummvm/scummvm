@@ -90,13 +90,13 @@ enum SceneAction {
 
 class CompiledScript;
 struct ScriptCommand;
-class ScriptManager;
+class RipperEngine;
 
 class SceneActionDispatcher {
 public:
 	static const char *actionName(uint action);
-	static bool dispatch(ScriptManager &manager, const CompiledScript &script,
-		const ScriptCommand &command, int &callbackResult, bool &stopCallback);
+	static bool dispatch(RipperEngine *engine, const CompiledScript &script,
+		const ScriptCommand &command);
 };
 
 } // End of namespace Ripper

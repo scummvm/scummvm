@@ -40,7 +40,6 @@ namespace Ripper {
 class BriefingManager;
 class ResourceManager;
 class RipperEngine;
-class SceneActionDispatcher;
 
 class ScriptManager {
 public:
@@ -112,14 +111,23 @@ public:
 	DialogueChooser *getDialogue() const { return _dialogue.get(); }
 
 private:
-	friend class SceneActionDispatcher;
+	enum CallbackResult {
+		kCallbackContinue = 0,
+		kCallbackFailed = -1,
+		kCallbackSelectFrame = -2,
+		kCallbackChangeScene = -3,
+		kCallbackTerminateRuntime = -4,
+		kCallbackSuspendedForText = -5
+	};
+
 	class IdleMediaCallback;
 
-	bool executeCallback(const CompiledScript &script, uint32 callbackOffset, int &result,
+	CallbackResult dispatchSceneAction(const CompiledScript &script, const ScriptCommand &command);
+	CallbackResult executeCallback(const CompiledScript &script, uint32 callbackOffset,
 		uint *nextFrame = nullptr, uint commandStart = 0);
-	bool handleActiveRuntimeExit(int result, const CompiledScript &script,
+	bool handleActiveRuntimeExit(CallbackResult result, const CompiledScript &script,
 		const char *callbackPhase);
-	bool acceptConcurrentRuntimeExit(int result, const char *callbackPhase);
+	bool acceptConcurrentRuntimeExit(CallbackResult result, const char *callbackPhase);
 	bool captureCyberKeyboardCommand();
 	bool serviceCyberKeyboardCommand();
 	bool serviceToolbarActionKey(const char *source, bool &handled);

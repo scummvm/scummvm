@@ -23,7 +23,6 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "ripper/briefing.h"
 #include "ripper/combat/combat.h"
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
@@ -58,8 +57,7 @@
 #include "ripper/scenes/ebz2s_scene.h"
 #include "ripper/scenes/gym_scene.h"
 #include "ripper/scenes/tube_scene.h"
-#include "ripper/scene_audio.h"
-#include "ripper/script.h"
+#include "ripper/script/compiled_script.h"
 #include "ripper/wac/wac.h"
 
 namespace Ripper {
@@ -138,34 +136,18 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	}
 }
 
-bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScript &script,
-		const ScriptCommand &command, int &callbackResult, bool &stopCallback) {
-	stopCallback = false;
+bool SceneActionDispatcher::dispatch(RipperEngine *engine, const CompiledScript &script,
+		const ScriptCommand &command) {
 	if (command.arguments.size() < 2)
 		return false;
 
 	const uint action = command.arguments[0].value;
 	const uint argument = command.arguments[1].value;
-	RipperEngine *engine = manager._engine;
-	debugC(2, kDebugScene,
-		"Ripper: dispatch scene action=%u name='%s' argument=%u script='%s' offset=0x%x",
-		action, actionName(action), argument, script.getMemberName().c_str(), command.offset);
 
 	if (action == kSceneActionCircuitChipPuzzle) {
 		CircuitChipPuzzle puzzle(engine);
 		return puzzle.run(argument) != CircuitChipPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionWorldMap) {
-		if (!manager.openWorldMap())
-			return false;
-		if (!manager._runtime.pendingSceneMember.empty()) {
-			callbackResult = -3;
-			stopCallback = true;
-		}
-		return true;
-	}
-	if (action == kSceneActionInventory)
-		return manager.openInventory(argument, true);
 	if (action == kSceneActionCalculatorPuzzle) {
 		CalculatorPuzzle puzzle(engine);
 		return puzzle.run(argument) != CalculatorPuzzle::kLoadFailed;
@@ -273,13 +255,6 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"Ripper: crystal puzzle scene action completed result=%d milestone=%u", result, argument);
 		return result != CrystalPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionSetChooserTemplateMode) {
-		manager._chooserTemplateMode = 0;
-		debugC(2, kDebugScene,
-			"Ripper: scene action 30 captured active presentation templateMode=%u script='%s' offset=0x%x",
-			manager._chooserTemplateMode, script.getMemberName().c_str(), command.offset);
-		return true;
-	}
 	if (action == kSceneActionNoOp) {
 		return true;
 	}
@@ -309,13 +284,6 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(2, kDebugCursor,
 			"Ripper: scene action 36 dispatched UI selection index=%u script='%s' offset=0x%x",
 			argument, script.getMemberName().c_str(), command.offset);
-		return true;
-	}
-	if (action == kSceneActionSetFrontEndActionMask) {
-		manager._runtime.frontEndActionMask = (uint16)argument;
-		debugC(2, kDebugScene,
-			"Ripper: scene action 37 set front-end action mask=0x%04x script='%s' offset=0x%x",
-			manager._runtime.frontEndActionMask, script.getMemberName().c_str(), command.offset);
 		return true;
 	}
 	if (action == kSceneActionBoardGame) {
@@ -377,25 +345,6 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	}
 	if (action == kSceneActionAppendNotebookText)
 		return engine->getWac()->appendNotebookResourceString(argument);
-	if (manager._demoScriptAbi && action == 200) {
-		// Keep this one-shot cue playing across scene handoffs until action 201.
-		SceneAudioManager *sceneAudio = engine->getSceneAudio();
-		return sceneAudio->load("r_p_l1.wav", true) &&
-			sceneAudio->configure("r_p_l1", 100, 0, 0);
-	}
-	if (manager._demoScriptAbi && action == 201) {
-		engine->getSceneAudio()->stop("r_p_l1");
-		return true;
-	}
-	if (action == kSceneActionTerminateRuntime) {
-		if (manager._runtime.cyberActive)
-			manager.requestCyberExit("scene-action-9999");
-		callbackResult = -4;
-		stopCallback = true;
-		return true;
-	}
-	if (action == kSceneActionBriefing)
-		return manager._briefing->arm(argument);
 
 	warning("Ripper: unsupported scene action %u ('%s') in '%s' at 0x%x",
 		action, actionName(action), script.getMemberName().c_str(), command.offset);

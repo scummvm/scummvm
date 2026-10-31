@@ -64,17 +64,15 @@ static const int kSceneInteractionOriginY = 50;
 
 static const uint kDefaultPaletteFadeSteps = 9;
 static const uint kSceneTextEntryMaximumLength = 60;
-static const int kCallbackSuspendedForText = -5;
 
 class ScriptManager::IdleMediaCallback : public MediaSequenceCallback {
 public:
 	IdleMediaCallback(ScriptManager *manager, const CompiledScript &script,
 			uint32 callbackOffset, uint targetFrame, uint initialFrame) :
 			_manager(manager), _script(script), _callbackOffset(callbackOffset),
-			_targetFrame(targetFrame), _nextFrame(initialFrame), _result(0),
+			_targetFrame(targetFrame), _nextFrame(initialFrame), _result(kCallbackFailed),
 			_resumeCommand(0), _requestSelector(0), _failureFrame(0),
-			_started(false), _textPending(false), _serviced(false),
-			_succeeded(false) {
+			_started(false), _textPending(false), _serviced(false) {
 	}
 
 	uint16 service(uint frame) override {
@@ -86,7 +84,7 @@ public:
 			if (entryResult == ModalDialogManager::kTextEntryPending)
 				return 0;
 			if (entryResult == ModalDialogManager::kTextEntryFailed) {
-				_succeeded = false;
+				_result = kCallbackFailed;
 				_serviced = true;
 				return 1;
 			}
@@ -100,8 +98,7 @@ public:
 				_entered.size(), _failureFrame);
 			if (!matched) {
 				_nextFrame = _failureFrame;
-				_result = -2;
-				_succeeded = true;
+				_result = kCallbackSelectFrame;
 				_serviced = true;
 				return 1;
 			}
@@ -130,8 +127,8 @@ public:
 	}
 
 	bool serviced() const { return _serviced; }
-	bool succeeded() const { return _succeeded; }
-	int result() const { return _result; }
+	bool succeeded() const { return _result != kCallbackFailed; }
+	CallbackResult result() const { return _result; }
 	uint nextFrame() const { return _nextFrame; }
 	uint targetFrame() const { return _targetFrame; }
 
@@ -139,11 +136,11 @@ private:
 	uint16 execute(uint frame, uint commandStart) {
 		_manager->_sceneCallbackFrame = frame;
 		_manager->_activeIdleMediaCallback = this;
-		_succeeded = _manager->executeCallback(_script, _callbackOffset,
-			_result, &_nextFrame, commandStart);
+		_result = _manager->executeCallback(_script, _callbackOffset,
+			&_nextFrame, commandStart);
 		_manager->_activeIdleMediaCallback = nullptr;
 		_manager->_sceneCallbackFrame = 0;
-		if (_succeeded && _result == kCallbackSuspendedForText)
+		if (_result == kCallbackSuspendedForText)
 			return 0;
 		_serviced = true;
 		return 1;
@@ -153,7 +150,7 @@ private:
 	uint32 _callbackOffset;
 	uint _targetFrame;
 	uint _nextFrame;
-	int _result;
+	CallbackResult _result;
 	uint _resumeCommand;
 	uint _requestSelector;
 	uint _failureFrame;
@@ -162,7 +159,6 @@ private:
 	bool _started;
 	bool _textPending;
 	bool _serviced;
-	bool _succeeded;
 };
 
 static Common::String compiledScriptMemberName(const Common::String &target) {
@@ -490,9 +486,8 @@ bool ScriptManager::runWorldMapCheckpoint(uint chapter) {
 	// WMAP checkpoint scripts perform their work in the sole entry callback;
 	// the exit callback only terminates the nested runtime.
 	const ScriptFrame &frame = checkpoint.getFrames()[0];
-	int result = 0;
-	if (!executeCallback(checkpoint, frame.enterCallbackOffset, result) ||
-			result != 0) {
+	const CallbackResult result = executeCallback(checkpoint, frame.enterCallbackOffset);
+	if (result != kCallbackContinue) {
 		warning("Ripper: world-map checkpoint chapter=%u member='%s' "
 			"enter=0x%x returned result=%d",
 			chapter, memberName.c_str(), frame.enterCallbackOffset, result);
@@ -642,15 +637,69 @@ void ScriptManager::bindBa0Frame(uint frameIndex) {
 		_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame, _runtime.previousFrameLabel.c_str());
 }
 
-bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbackOffset, int &result,
+ScriptManager::CallbackResult ScriptManager::dispatchSceneAction(const CompiledScript &script,
+		const ScriptCommand &command) {
+	if (command.arguments.size() < 2)
+		return kCallbackFailed;
+
+	const uint action = command.arguments[0].value;
+	const uint argument = command.arguments[1].value;
+	debugC(2, kDebugScene,
+		"Ripper: dispatch scene action=%u name='%s' argument=%u script='%s' offset=0x%x",
+		action, SceneActionDispatcher::actionName(action), argument, script.getMemberName().c_str(), command.offset);
+
+	switch (action) {
+	case kSceneActionWorldMap:
+		if (!openWorldMap())
+			return kCallbackFailed;
+		return _runtime.pendingSceneMember.empty() ? kCallbackContinue : kCallbackChangeScene;
+	case kSceneActionInventory:
+		return openInventory(argument, true) ? kCallbackContinue : kCallbackFailed;
+	case kSceneActionSetChooserTemplateMode:
+		_chooserTemplateMode = 0;
+		debugC(2, kDebugScene,
+			"Ripper: scene action 30 captured active presentation templateMode=%u script='%s' offset=0x%x",
+			_chooserTemplateMode, script.getMemberName().c_str(), command.offset);
+		return kCallbackContinue;
+	case kSceneActionSetFrontEndActionMask:
+		_runtime.frontEndActionMask = (uint16)argument;
+		debugC(2, kDebugScene,
+			"Ripper: scene action 37 set front-end action mask=0x%04x script='%s' offset=0x%x",
+			_runtime.frontEndActionMask, script.getMemberName().c_str(), command.offset);
+		return kCallbackContinue;
+	case kSceneActionTerminateRuntime:
+		if (_runtime.cyberActive)
+			requestCyberExit("scene-action-9999");
+		return kCallbackTerminateRuntime;
+	case kSceneActionBriefing:
+		return _briefing->arm(argument) ? kCallbackContinue : kCallbackFailed;
+	default:
+		break;
+	}
+
+	if (_demoScriptAbi && action == 200) {
+		// Keep this one-shot cue playing across scene handoffs until action 201.
+		SceneAudioManager *sceneAudio = _engine->getSceneAudio();
+		if (!sceneAudio->load("r_p_l1.wav", true) ||
+				!sceneAudio->configure("r_p_l1", 100, 0, 0))
+			return kCallbackFailed;
+		return kCallbackContinue;
+	}
+	if (_demoScriptAbi && action == 201) {
+		_engine->getSceneAudio()->stop("r_p_l1");
+		return kCallbackContinue;
+	}
+	return SceneActionDispatcher::dispatch(_engine, script, command) ? kCallbackContinue : kCallbackFailed;
+}
+
+ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScript &script, uint32 callbackOffset,
 		uint *nextFrame, uint commandStart) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Common::Array<ScriptCommand> commands;
-	result = 0;
 	if (nextFrame)
 		*nextFrame = 0;
 	if (!script.decodeCallback(callbackOffset, true, commands))
-		return false;
+		return kCallbackFailed;
 	debugC(3, kDebugScripts,
 		"Ripper: decoded callback script='%s' offset=0x%x commands=%u",
 		script.getMemberName().c_str(), callbackOffset, commands.size());
@@ -668,7 +717,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 		case kMilestoneCondition:
 		case kScenePlayedCondition: {
 			if (command.arguments.size() < 3)
-				return false;
+				return kCallbackFailed;
 			const bool expected = command.arguments[0].value != 0;
 			bool actual = false;
 			if (command.opcode == kMilestoneCondition) {
@@ -693,7 +742,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 				if (targetIndex == commands.size()) {
 					warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
 						command.arguments[2].value, script.getMemberName().c_str());
-					return false;
+					return kCallbackFailed;
 				}
 				commandIndex = targetIndex;
 				continue;
@@ -703,7 +752,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 
 		case kDialogueChoiceCondition: {
 			if (command.arguments.size() < 2)
-				return false;
+				return kCallbackFailed;
 			const bool choicesAvailable = _dialogue->hasChoices();
 			const bool takeBranch = command.arguments[0].value == 0 ?
 				choicesAvailable : !choicesAvailable;
@@ -720,7 +769,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 				if (targetIndex == commands.size()) {
 					warning("Ripper: dialogue branch target 0x%x is not a command boundary in '%s'",
 						command.arguments[1].value, script.getMemberName().c_str());
-					return false;
+					return kCallbackFailed;
 				}
 				commandIndex = targetIndex;
 				continue;
@@ -731,11 +780,11 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 		case kPreviousSceneCondition: {
 			if (command.arguments.size() < 3 ||
 				command.arguments[1].value >= script.getFrames().size())
-				return false;
+				return kCallbackFailed;
 			if (&script != &_runtime.activeScript) {
 				warning("Ripper: previous-scene condition has no tracked runtime in '%s' at 0x%x",
 					script.getMemberName().c_str(), command.offset);
-				return false;
+				return kCallbackFailed;
 			}
 
 			const bool expected = command.arguments[0].value != 0;
@@ -758,7 +807,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 				if (targetIndex == commands.size()) {
 					warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
 						command.arguments[2].value, script.getMemberName().c_str());
-					return false;
+					return kCallbackFailed;
 				}
 				commandIndex = targetIndex;
 				continue;
@@ -768,7 +817,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 
 		case kDefaultBranch: {
 			if (command.arguments.size() < 1)
-				return false;
+				return kCallbackFailed;
 			const bool useDefaultBranch = !branchTaken;
 			branchTaken = false;
 			debugC(3, kDebugScripts, "Ripper: default branch target=0x%x selected=%d",
@@ -781,7 +830,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 				if (targetIndex == commands.size()) {
 					warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
 						command.arguments[0].value, script.getMemberName().c_str());
-					return false;
+					return kCallbackFailed;
 				}
 				commandIndex = targetIndex;
 				continue;
@@ -797,21 +846,21 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 		case kSetMilestoneFlag:
 		case kClearMilestoneFlag: {
 			if (command.arguments.size() < 1)
-				return false;
+				return kCallbackFailed;
 			const bool value = command.opcode == kSetMilestoneFlag;
 			if (!_engine->getMilestones()->set(command.arguments[0].value, value,
 				value ? "set milestone flag" : "clear milestone flag"))
-				return false;
+				return kCallbackFailed;
 			break;
 		}
 
 		case kDisableInteraction: {
 			if (command.arguments.size() < 1)
-				return false;
+				return kCallbackFailed;
 			if (&script != &_runtime.activeScript || _runtime.activeFrame >= _runtime.activeScript.getFrames().size()) {
 				warning("Ripper: interaction disable opcode has no active scene frame in '%s' at 0x%x",
 					script.getMemberName().c_str(), command.offset);
-				return false;
+				return kCallbackFailed;
 			}
 			const uint relativeIndex = command.arguments[0].value & 0xffff;
 			const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
@@ -833,7 +882,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 		case kPlayMedia: {
 			const uint expectedArgumentCount = _demoScriptAbi ? 4 : 5;
 			if (command.arguments.size() < expectedArgumentCount)
-				return false;
+				return kCallbackFailed;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
 			// Compiler stores this optional authored text as an inline
 			// type-7 argument. An absent caption is encoded as a one-byte NUL
@@ -856,7 +905,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 			_engine->getCursor()->setVisible(false);
 			if (!_engine->getMedia()->play(mediaPath, allowEscSpace, x, y, true,
 					presentationText))
-				return false;
+				return kCallbackFailed;
 			const size_t extension = mediaPath.findFirstOf('.');
 			const Common::String playedKey = mediaPath.substr(0, extension);
 			markScenePlayed(playedKey);
@@ -873,7 +922,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 			if (command.opcode == kAddConditionalDialogueChoice) {
 				if (command.arguments.size() < 2 ||
 					command.arguments[1].value >= _runtime.activeScript.getFrames().size())
-					return false;
+					return kCallbackFailed;
 				const ScriptFrame &responseFrame = _runtime.activeScript.getFrames()[command.arguments[1].value];
 				const Common::String responseLabel = _runtime.activeScript.getString(responseFrame.labelOffset);
 				includeChoice = !isScenePlayed(responseLabel);
@@ -882,14 +931,14 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 					command.arguments[1].value, responseLabel.c_str(), !includeChoice);
 			}
 			if (!_dialogue->execute(command, includeChoice))
-				return false;
+				return kCallbackFailed;
 			break;
 		}
 
 		case kStartSceneRuntime: {
 			const uint expectedArgumentCount = _demoScriptAbi ? 2 : 3;
 			if (command.arguments.size() < expectedArgumentCount)
-				return false;
+				return kCallbackFailed;
 			const Common::String target = argumentString(command.arguments[0]);
 			const Common::String entryLabel = argumentString(command.arguments[1]);
 			if (_demoScriptAbi) {
@@ -899,8 +948,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 					"Ripper: queued demo script transition target='%s' entry='%s' source='%s'",
 					_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str(),
 					script.getMemberName().c_str());
-				result = -3;
-				return true;
+				return kCallbackChangeScene;
 			}
 			if (&script == &_runtime.concurrentScript || command.arguments[2].value == 0) {
 				_runtime.pendingSceneMember = compiledScriptMemberName(target);
@@ -911,12 +959,11 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 					"Ripper: queued script transition target='%s' entry='%s' source='%s'",
 					_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str(),
 					script.getMemberName().c_str());
-				result = -3;
-				return true;
+				return kCallbackChangeScene;
 			}
 			const Common::String memberName = compiledScriptMemberName(target);
 			if (!_runtime.concurrentScript.load(_engine->getResources()->scripts(), memberName))
-				return false;
+				return kCallbackFailed;
 			_runtime.concurrentEntryLabel = entryLabel;
 			debugC(1, kDebugScene, "Ripper: created concurrent script='%s' entry='%s'",
 				target.c_str(), entryLabel.c_str());
@@ -925,11 +972,11 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 
 		case kSetNamedFlag: {
 			if (command.arguments.size() < 2)
-				return false;
+				return kCallbackFailed;
 			const bool played = command.arguments[0].value != 0;
 			const Common::String scene = argumentString(command.arguments[1]);
 			if (scene.empty())
-				return false;
+				return kCallbackFailed;
 			const bool previous = isScenePlayed(scene);			
 			setScenePlayed(scene, played);
 			debugC(2, kDebugScene,
@@ -940,30 +987,30 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 
 		case kLoadAudio: {
 			if (command.arguments.size() < 2)
-				return false;
+				return kCallbackFailed;
 			const Common::String audioPath = script.getString(command.arguments[0].value);
 			const bool preserve = (command.arguments[1].value & 1) != 0;
 			if (!_engine->getSceneAudio()->load(audioPath, preserve))
-				return false;
+				return kCallbackFailed;
 			break;
 		}
 
 		case kConfigureAudio: {
 			if (command.arguments.size() < 4)
-				return false;
+				return kCallbackFailed;
 			const Common::String key = argumentString(command.arguments[0]);
 			const uint volume = command.arguments[1].value == 0 ? 100 : command.arguments[1].value & 0xff;
 			const uint trigger = command.arguments[2].value & 0xffff;
 			const uint control = command.arguments[3].value & 0xff;
 			if (!_engine->getSceneAudio()->configure(key, volume, trigger, control))
-				return false;
+				return kCallbackFailed;
 			break;
 		}
 
 		case kClearAudio:
 		case kStopAudio: {
 			if (command.arguments.size() < 1)
-				return false;
+				return kCallbackFailed;
 			const Common::String key = argumentString(command.arguments[0]);
 			if (command.opcode == kClearAudio)
 				_engine->getSceneAudio()->clear(key);
@@ -974,7 +1021,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 
 		case kSetAudioVolume: {
 			if (command.arguments.size() < 4)
-				return false;
+				return kCallbackFailed;
 			const Common::String key = argumentString(command.arguments[0]);
 			_engine->getSceneAudio()->setVolume(key,
 				command.arguments[1].value & 0xff,
@@ -985,13 +1032,13 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 
 		case kWaitForFrameCounter: {
 			if (command.arguments.size() < 1)
-				return false;
+				return kCallbackFailed;
 			const uint targetFrame = command.arguments[0].value;
 			if (_sceneCallbackFrame < targetFrame) {
 				warning("Ripper: scene callback frame=%u did not reach wait target=%u script='%s' offset=0x%x",
 					_sceneCallbackFrame, targetFrame, script.getMemberName().c_str(),
 					command.offset);
-				return false;
+				return kCallbackFailed;
 			}
 			debugC(2, kDebugScene,
 				"Ripper: scene idle callback reached media frame=%u target=%u script='%s' offset=0x%x",
@@ -1003,7 +1050,7 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 		case kRequestTextInput: {
 			if (command.arguments.size() < 4 || !nextFrame ||
 					!_activeIdleMediaCallback)
-				return false;
+				return kCallbackFailed;
 			const Common::String prompt = argumentString(command.arguments[0]);
 			const Common::String expected = argumentString(command.arguments[1]);
 			const uint failureFrame = command.arguments[2].value;
@@ -1011,29 +1058,28 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 			if (layoutVariant != 2) {
 				warning("Ripper: unsupported scene text request layout=%u script='%s' offset=0x%x",
 					layoutVariant, script.getMemberName().c_str(), command.offset);
-				return false;
+				return kCallbackFailed;
 			}
 
 			const byte templateMode = _chooserTemplateMode;
 			_chooserTemplateMode = 0;
 			if (!_activeIdleMediaCallback->beginTextRequest(prompt, expected,
 					failureFrame, command.selector, commandIndex + 1))
-				return false;
+				return kCallbackFailed;
 			debugC(2, kDebugCyber,
 				"Ripper: suspended scene callback for text request script='%s' selector=%u layout=%u templateMode=%u resumeCommand=%u",
 				script.getMemberName().c_str(), command.selector, layoutVariant,
 				templateMode, commandIndex + 1);
-			result = kCallbackSuspendedForText;
-			return true;
+			return kCallbackSuspendedForText;
 		}
 
 		case kPreviewMedia: {
 			if (command.arguments.size() < 4)
-				return false;
+				return kCallbackFailed;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
 			if (!_engine->getMedia()->playScene(mediaPath, (int32)command.arguments[1].value,
 				(int32)command.arguments[2].value, true))
-				return false;
+				return kCallbackFailed;
 			debugC(2, kDebugScripts,
 				"Ripper: retained first frame for scene media command '%s'",
 				mediaPath.c_str());
@@ -1042,26 +1088,23 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 
 		case kSelectFrame:
 			if (command.arguments.size() < 1)
-				return false;
+				return kCallbackFailed;
 			if (nextFrame)
 				*nextFrame = command.arguments[0].value;
-			result = -2;
 			debugC(2, kDebugScripts, "Ripper: callback selected frame=%u control=%d",
-				command.arguments[0].value, result);
-			return true;
+				command.arguments[0].value, kCallbackSelectFrame);
+			return kCallbackSelectFrame;
 
 		case kDispatchSceneAction: {
-			bool stopCallback = false;
-			if (!SceneActionDispatcher::dispatch(*this, script, command, result, stopCallback))
-				return false;
-			if (stopCallback)
-				return true;
+			const CallbackResult result = dispatchSceneAction(script, command);
+			if (result != kCallbackContinue)
+				return result;
 			break;
 		}
 
 		case kFadePalette: {
 			if (command.arguments.size() < 2)
-				return false;
+				return kCallbackFailed;
 			const bool fadeIn = command.arguments[0].value != 0;
 			const int32 configuredSteps = (int32)command.arguments[1].value;
 			const uint stepCount = configuredSteps > 0 ? configuredSteps : kDefaultPaletteFadeSteps;
@@ -1078,16 +1121,16 @@ bool ScriptManager::executeCallback(const CompiledScript &script, uint32 callbac
 		default:
 			warning("Ripper: unsupported opcode 0x%02x in '%s' at 0x%x",
 				command.opcode, script.getMemberName().c_str(), command.offset);
-			return false;
+			return kCallbackFailed;
 		}
 		++commandIndex;
 	}
-	return true;
+	return kCallbackContinue;
 }
 
-bool ScriptManager::handleActiveRuntimeExit(int result, const CompiledScript &script,
+bool ScriptManager::handleActiveRuntimeExit(CallbackResult result, const CompiledScript &script,
 		const char *callbackPhase) {
-	if (result != -4)
+	if (result != kCallbackTerminateRuntime)
 		return false;
 
 	if (_runtime.cyberActive) {
@@ -1114,9 +1157,9 @@ bool ScriptManager::handleActiveRuntimeExit(int result, const CompiledScript &sc
 	return true;
 }
 
-bool ScriptManager::acceptConcurrentRuntimeExit(int result,
+bool ScriptManager::acceptConcurrentRuntimeExit(CallbackResult result,
 		const char *callbackPhase) {
-	if (result != -4 || _runtime.concurrentScript.getFrames().empty())
+	if (result != kCallbackTerminateRuntime || _runtime.concurrentScript.getFrames().empty())
 		return false;
 
 	debugC(1, kDebugScene,
@@ -1133,10 +1176,9 @@ bool ScriptManager::runStartupPath() {
 	if (_startup.getFrames().empty() || _runtime.activeScript.getFrames().empty())
 		return false;
 
-	int result = 0;
 	const ScriptFrame &startupFrame = _startup.getFrames()[0];
-	if (!executeCallback(_startup, startupFrame.exitCallbackOffset, result) ||
-			result != -3 || _runtime.pendingSceneMember.empty()) {
+	const CallbackResult result = executeCallback(_startup, startupFrame.exitCallbackOffset);
+	if (result != kCallbackChangeScene || _runtime.pendingSceneMember.empty()) {
 		warning("Ripper: startup script did not request the BA0 transition (result=%d)", result);
 		return false;
 	}
@@ -1154,13 +1196,13 @@ bool ScriptManager::executeConcurrentFrame() {
 	const ScriptFrame &frame = _runtime.concurrentScript.getFrames()[frameIndex];
 	debugC(2, kDebugScene, "Ripper: servicing concurrent script='%s' frame=%u label='%s'",
 		_runtime.concurrentScript.getMemberName().c_str(), frameIndex, _runtime.concurrentEntryLabel.c_str());
-	int result = 0;
 	uint nextFrame = frameIndex;
-	if (!executeCallback(_runtime.concurrentScript, frame.enterCallbackOffset, result, &nextFrame))
+	CallbackResult result = executeCallback(_runtime.concurrentScript, frame.enterCallbackOffset, &nextFrame);
+	if (result == kCallbackFailed)
 		return false;
 	if (acceptConcurrentRuntimeExit(result, "enter"))
 		return true;
-	if (result == -3 && !_runtime.pendingSceneMember.empty()) {
+	if (result == kCallbackChangeScene && !_runtime.pendingSceneMember.empty()) {
 		debugC(1, kDebugScene,
 			"Ripper: concurrent script requested transition target='%s' entry='%s'",
 			_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
@@ -1168,13 +1210,14 @@ bool ScriptManager::executeConcurrentFrame() {
 		_runtime.concurrentEntryLabel.clear();
 		return true;
 	}
-	if (result != 0)
+	if (result != kCallbackContinue)
 		return false;
-	if (!executeCallback(_runtime.concurrentScript, frame.exitCallbackOffset, result, &nextFrame))
+	result = executeCallback(_runtime.concurrentScript, frame.exitCallbackOffset, &nextFrame);
+	if (result == kCallbackFailed)
 		return false;
 	if (acceptConcurrentRuntimeExit(result, "exit"))
 		return true;
-	if (result == -3 && !_runtime.pendingSceneMember.empty()) {
+	if (result == kCallbackChangeScene && !_runtime.pendingSceneMember.empty()) {
 		debugC(1, kDebugScene,
 			"Ripper: concurrent script requested transition target='%s' entry='%s'",
 			_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
@@ -1182,7 +1225,7 @@ bool ScriptManager::executeConcurrentFrame() {
 		_runtime.concurrentEntryLabel.clear();
 		return true;
 	}
-	if (result != -2) {
+	if (result != kCallbackSelectFrame) {
 		warning("Ripper: concurrent frame '%s' returned unexpected result %d",
 			_runtime.concurrentEntryLabel.c_str(), result);
 		return false;
@@ -1228,7 +1271,7 @@ bool ScriptManager::performPendingSceneTransition() {
 bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	_engine->getCursor()->setVisible(false);
 	_runtime.hoveredInteraction = -1;
-	// Re-enter on callback result -2 so the concurrent runtime runs before the
+	// Frame selection re-enters the loop so the concurrent runtime runs before the
 	// next active frame.
 	while (!_engine->shouldQuit()) {
 		if (!executeConcurrentFrame())
@@ -1250,20 +1293,20 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			frame.presentationType, frame.interactionCount);
 		initializeBa0InteractionState(frame);
 
-		int result = 0;
 		uint callbackFrame = _runtime.activeFrame;
-		if (!executeCallback(_runtime.activeScript, frame.enterCallbackOffset, result, &callbackFrame))
+		CallbackResult result = executeCallback(_runtime.activeScript, frame.enterCallbackOffset, &callbackFrame);
+		if (result == kCallbackFailed)
 			return false;
 		if (handleActiveRuntimeExit(result, _runtime.activeScript, "enter"))
 			return true;
-		if (result == -3 && !_runtime.pendingSceneMember.empty())
+		if (result == kCallbackChangeScene && !_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
-		if (result == -2) {
+		if (result == kCallbackSelectFrame) {
 			_engine->getSceneAudio()->resetTriggers();
 			nextFrame = callbackFrame;
 			continue;
 		}
-		if (result != 0)
+		if (result != kCallbackContinue)
 			return false;
 
 		if (frame.presentationType == 0 || frame.presentationType == 1) {
@@ -1284,12 +1327,12 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			const bool dialogueIdleCallback =
 				frame.idleCallbackOffset != 0 && _dialogue->hasChoices();
 			if (dialogueIdleCallback) {
-				int idleResult = 0;
-				if (!executeCallback(_runtime.activeScript, frame.idleCallbackOffset, idleResult))
+				const CallbackResult idleResult = executeCallback(_runtime.activeScript, frame.idleCallbackOffset);
+				if (idleResult == kCallbackFailed)
 					return false;
 				if (handleActiveRuntimeExit(idleResult, _runtime.activeScript, "idle"))
 					return true;
-				if (idleResult != 0) {
+				if (idleResult != kCallbackContinue) {
 					warning("Ripper: dialogue idle callback for frame '%s' returned %d",
 						label.c_str(), idleResult);
 					return false;
@@ -1374,23 +1417,23 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					label.c_str(), result, callbackFrame, idleCommand);
 				if (handleActiveRuntimeExit(result, _runtime.activeScript, "media idle"))
 					return true;
-				if (result == -2) {
+				if (result == kCallbackSelectFrame) {
 					_runtime.awaitingInteraction = false;
 					_engine->getSceneAudio()->resetTriggers();
 					nextFrame = callbackFrame;
 					continue;
 				}
-				if (result != 0)
+				if (result != kCallbackContinue)
 					return false;
 			}
 			if (frame.idleCallbackOffset != 0 && !dialogueIdleCallback &&
 					!idleTextRequest) {
 				// EE2.RUN frame EEZ1 relies on the idle callback running before
 				// chooser input so Q2_V5.WAV plays before its hotspot becomes active.
-				result = 0;
 				callbackFrame = _runtime.activeFrame;
-				if (!executeCallback(_runtime.activeScript,
-						frame.idleCallbackOffset, result, &callbackFrame))
+				result = executeCallback(_runtime.activeScript,
+						frame.idleCallbackOffset, &callbackFrame);
+				if (result == kCallbackFailed)
 					return false;
 				debugC(2, kDebugScene,
 					"Ripper: serviced frame idle callback before interaction "
@@ -1399,15 +1442,15 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				if (handleActiveRuntimeExit(result, _runtime.activeScript,
 						"interaction idle"))
 					return true;
-				if (result == -3 && !_runtime.pendingSceneMember.empty())
+				if (result == kCallbackChangeScene && !_runtime.pendingSceneMember.empty())
 					return performPendingSceneTransition();
-				if (result == -2) {
+				if (result == kCallbackSelectFrame) {
 					_runtime.awaitingInteraction = false;
 					_engine->getSceneAudio()->resetTriggers();
 					nextFrame = callbackFrame;
 					continue;
 				}
-				if (result != 0)
+				if (result != kCallbackContinue)
 					return false;
 			}
 			if (!_runtime.pendingSceneMember.empty()) {
@@ -1442,13 +1485,14 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		}
 
 		callbackFrame = _runtime.activeFrame;
-		if (!executeCallback(_runtime.activeScript, frame.exitCallbackOffset, result, &callbackFrame))
+		result = executeCallback(_runtime.activeScript, frame.exitCallbackOffset, &callbackFrame);
+		if (result == kCallbackFailed)
 			return false;
 		if (handleActiveRuntimeExit(result, _runtime.activeScript, "exit"))
 			return true;
-		if (result == -3 && !_runtime.pendingSceneMember.empty())
+		if (result == kCallbackChangeScene && !_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
-		if (result != -2) {
+		if (result != kCallbackSelectFrame) {
 			warning("Ripper: automatic active scene script='%s' frame='%s' returned unexpected result %d",
 				_runtime.activeScript.getMemberName().c_str(), label.c_str(), result);
 			return false;
@@ -1537,19 +1581,19 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 		return false;
 	}
 
-	int result = 0;
 	uint nextFrame = _runtime.activeFrame;
 	debugC(2, kDebugCyber,
 		"Ripper: Cyber keyboard command=0x%04x interaction=%u label='%s' callback=0x%x",
 		command, interactionIndex, interaction->label.c_str(), interaction->callbackOffset);
-	if (!executeCallback(_runtime.activeScript, interaction->callbackOffset, result, &nextFrame))
+	const CallbackResult result = executeCallback(_runtime.activeScript, interaction->callbackOffset, &nextFrame);
+	if (result == kCallbackFailed)
 		return false;
 	_runtime.awaitingInteraction = false;
 	_engine->getCursor()->setVisible(false);
 	_runtime.hoveredInteraction = -1;
 	if (handleActiveRuntimeExit(result, _runtime.activeScript, "keyboard interaction"))
 		return true;
-	if (result != -2) {
+	if (result != kCallbackSelectFrame) {
 		warning("Ripper: Cyber keyboard interaction=%u returned unexpected result %d",
 			interactionIndex, result);
 		return false;
@@ -1764,14 +1808,14 @@ bool ScriptManager::serviceScene() {
 			_runtime.activeScript.getMemberName().c_str(), hoveredInteractionIndex,
 			hoveredInteraction->label.c_str(), mouse.position.x, mouse.position.y,
 			bounds.left, bounds.top, bounds.width(), bounds.height());
-		int result = 0;
 		uint nextFrame = _runtime.activeFrame;
-		if (!executeCallback(_runtime.activeScript, hoveredInteraction->callbackOffset, result, &nextFrame))
+		const CallbackResult result = executeCallback(_runtime.activeScript, hoveredInteraction->callbackOffset, &nextFrame);
+		if (result == kCallbackFailed)
 			return false;
 		debugC(1, kDebugScripts,
 			"Ripper: hotspot action script='%s' callback=0x%x result=%d nextFrame=%u",
 			_runtime.activeScript.getMemberName().c_str(), hoveredInteraction->callbackOffset, result, nextFrame);
-		if (result == -3 && !_runtime.pendingSceneMember.empty()) {
+		if (result == kCallbackChangeScene && !_runtime.pendingSceneMember.empty()) {
 			_runtime.awaitingInteraction = false;
 			_engine->getCursor()->setVisible(false);
 			_runtime.hoveredInteraction = -1;
@@ -1783,7 +1827,7 @@ bool ScriptManager::serviceScene() {
 			_runtime.hoveredInteraction = -1;
 			return true;
 		}
-		if (result != -2) {
+		if (result != kCallbackSelectFrame) {
 			warning("Ripper: active scene script='%s' interaction=%u returned unexpected result %d",
 				_runtime.activeScript.getMemberName().c_str(), hoveredInteractionIndex, result);
 			return false;
