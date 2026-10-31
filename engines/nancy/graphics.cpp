@@ -128,11 +128,11 @@ void GraphicsManager::init() {
 	_screen.clear();
 
 	// Nancy16 runs at a higher resolution than the game was made for. The
-	// viewport's chunk holds the resolution the game gets drawn at.
-	if (g_nancy->getGameType() >= kGameTypeNancy16) {
-		auto *viewportData = GetEngineData(VIEW);
-		assert(viewportData);
-
+	// viewport's chunk holds the resolution the game gets drawn at, which is
+	// the one of the screen from Nancy24 on.
+	const VIEW *viewportData = GetEngineData(VIEW);
+	if (g_nancy->getGameType() >= kGameTypeNancy16 && viewportData &&
+			(viewportData->bounds.width() != _screen.w || viewportData->bounds.height() != _screen.h)) {
 		_gameSurface.create(viewportData->bounds.width(), viewportData->bounds.height(), getScreenPixelFormat());
 		_gameSurface.setTransparentColor(getTransColor());
 		_gameSurface.clear();
