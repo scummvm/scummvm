@@ -384,14 +384,16 @@ Common::Error GrimEngine::run() {
 			g_movie = CreateBinkPlayer(demo);
 	}
 	if (getGameType() == GType_GRIM) {
-		int sampleRate = IMUSE_BASE_SAMPLERATE;
-		ConfMan.registerDefault("imuse_sample_rate", IMUSE_BASE_SAMPLERATE);
+		// The remastered works at 48000Hz
+		int baseSampleRate = isRemastered() ? IMUSE_REMASTERED_SAMPLERATE : IMUSE_BASE_SAMPLERATE;
+		int sampleRate = baseSampleRate;
+		ConfMan.registerDefault("imuse_sample_rate", baseSampleRate);
 		if (ConfMan.hasKey("imuse_sample_rate", _targetName)) {
-			// Only accept sample rates which are a multiple or submultiple of 22050
+			// Only accept sample rates which are a multiple or submultiple of the base one
 			int configSampleRate = ConfMan.getInt("imuse_sample_rate");
-			if ((configSampleRate % (IMUSE_BASE_SAMPLERATE / 2)) == 0 &&
-				configSampleRate >= IMUSE_BASE_SAMPLERATE / 2 &&
-				configSampleRate <= IMUSE_BASE_SAMPLERATE * 4) {
+			if ((configSampleRate % (baseSampleRate / 2)) == 0 &&
+				configSampleRate >= baseSampleRate / 2 &&
+				configSampleRate <= baseSampleRate * 4) {
 				sampleRate = configSampleRate;
 			}
 		}
@@ -401,7 +403,7 @@ Common::Error GrimEngine::run() {
 		if (ConfMan.hasKey("imuse_low_latency_mode", _targetName))
 			lowLatencyMode = ConfMan.getBool("imuse_low_latency_mode");
 
-		g_imuse = new IMuse(sampleRate, _mixer, &_imuseMutex, lowLatencyMode, demo);
+		g_imuse = new IMuse(sampleRate, _mixer, &_imuseMutex, lowLatencyMode, demo, isRemastered());
 		g_emiSound = nullptr;
 		if (g_grim->isRemastered()) {
 			// This must happen here, since we need the resource loader set up.

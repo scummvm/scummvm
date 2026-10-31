@@ -88,6 +88,7 @@ private:
 	int _curMixerMusicVolume, _curMixerSpeechVolume, _curMixerSFXVolume;
 
 	bool _demo;
+	bool _remastered;
 
 	int32 _attributes[228];	// internal attributes for each music file to store and check later
 	int32 _nextSeqToPlay;
@@ -339,7 +340,7 @@ private:
 	uint8 *_waveOutLowLatencyOutputBuffer;
 
 public:
-	IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode = false, bool demo = false);
+	IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode = false, bool demo = false, bool remastered = false);
 	~IMuse();
 
 	// Wrapper functions used by the main engine
