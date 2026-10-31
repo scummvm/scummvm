@@ -290,10 +290,13 @@ void MoviePlayer::goToFrame(int frameNr) {
 	_decoder->setReverse(false);
 	_decoder->seekToFrame(frameNr);
 	storeCurrentFrame();
+}
 
-	int frameCount = _decoder->getFrameCount();
-	uint32 durationMs = _decoder->getDuration().msecs();
-	_frameDelayMs = (frameCount > 0 && durationMs > 0) ? (durationMs / frameCount) : 66;
+// How long a frame shows, from the length of the movie
+double MoviePlayer::getFrameMillis() const {
+	const int frameCount = _decoder->getFrameCount();
+	const uint32 durationMs = _decoder->getDuration().msecs();
+	return (frameCount > 0 && durationMs > 0) ? (double)durationMs / frameCount : 1000.0 / 15.0;
 }
 
 void MoviePlayer::playRange(int first, int last) {
@@ -310,7 +313,8 @@ void MoviePlayer::playRange(int first, int last) {
 	_decoder->seekToFrame(first);
 	storeCurrentFrame();
 	_rangePlaying = (first != last);
-	_lastFrameTime = g_system->getMillis();
+	_frameMillis = getFrameMillis();
+	_nextFrameTime = g_system->getMillis() + _frameMillis;
 }
 
 bool MoviePlayer::update() {
@@ -318,14 +322,22 @@ bool MoviePlayer::update() {
 		return false;
 	}
 
-	// Own the frame timing (one frame per delay, never skipping), so playback
+	// Own the frame timing (one frame at a time, never skipping), so playback
 	// starts immediately and stays smooth even when the decoder's own timing
-	// would stall after a seek.
-	uint32 now = g_system->getMillis();
-	if (now - _lastFrameTime < _frameDelayMs) {
+	// would stall after a seek. Every frame is due at its own time, so frames
+	// that show a little late, as the game only draws 60 times a second, don't
+	// hold back the ones after them and leave the movie behind its sound.
+	const uint32 now = g_system->getMillis();
+	if (now < _nextFrameTime) {
 		return false;
 	}
-	_lastFrameTime = now;
+
+	_nextFrameTime += _frameMillis;
+
+	// A movie that is more than a frame late times the frames after it from now
+	if (_nextFrameTime < now) {
+		_nextFrameTime = now + _frameMillis;
+	}
 
 	if (_decoder->endOfVideo() ||
 			(_step > 0 && _decoder->getCurFrame() >= _rangeLast) ||

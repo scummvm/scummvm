@@ -141,14 +141,16 @@ private:
 	Common::SharedPtr<DeferredLoader> _cacheLoader;
 	uint _cacheFillNext = 0;
 
+	double getFrameMillis() const;
+
 	// Simple frame-range player state. _currentSurface points at the decoder's
 	// last-decoded frame (owned by it, valid until the next decode).
 	const Graphics::Surface *_currentSurface = nullptr;
 	int _rangeLast = 0;
 	int _step = 1;
 	bool _rangePlaying = false;
-	uint32 _lastFrameTime = 0;
-	uint32 _frameDelayMs = 66;
+	double _nextFrameTime = 0.0;	// when the next frame is due, in milliseconds
+	double _frameMillis = 1000.0 / 15.0;
 };
 
 } // End of namespace Nancy
