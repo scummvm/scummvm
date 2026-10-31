@@ -144,7 +144,6 @@ private:
 	SmushAudioTrack *_audioTrack;
 	SmushVideoTrack *_videoTrack;
 	SmushWave *_wave;
-	bool _ownsAudioTrack;
 	int _blocky16Frames;
 	int _frameDelay;
 
