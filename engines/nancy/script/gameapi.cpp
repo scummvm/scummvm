@@ -678,7 +678,8 @@ enum SavedValueTag {
 	kSavedTrue		= 2,
 	kSavedNumber	= 3,
 	kSavedString	= 4,
-	kSavedTable		= 5
+	kSavedTable		= 5,
+	kSavedRect		= 6
 };
 
 static void writeSavedUint32(Common::Array<byte> &out, uint32 value) {
@@ -748,6 +749,21 @@ static bool writeSavedValue(lua_State *L, int index, Common::Array<byte> &out, i
 		out.push_back(pairs);
 		return true;
 	}
+	case LUA_TUSERDATA: {
+		// Rects are the only objects that can be kept, e.g. the parts of the
+		// screen Nancy23's photo manager gets handed
+		const ScriptRect *rect = testRect(L, index);
+		if (!rect) {
+			return false;
+		}
+
+		out.push_back(kSavedRect);
+		writeSavedUint32(out, (uint32)rect->left);
+		writeSavedUint32(out, (uint32)rect->top);
+		writeSavedUint32(out, (uint32)rect->right);
+		writeSavedUint32(out, (uint32)rect->bottom);
+		return true;
+	}
 	default:
 		return false;
 	}
@@ -803,6 +819,15 @@ static void readSavedValue(lua_State *L, const Common::Array<byte> &in, uint &po
 			}
 		}
 
+		break;
+	}
+	case kSavedRect: {
+		ScriptRect rect;
+		rect.left = (int32)readSavedUint32(in, pos);
+		rect.top = (int32)readSavedUint32(in, pos);
+		rect.right = (int32)readSavedUint32(in, pos);
+		rect.bottom = (int32)readSavedUint32(in, pos);
+		pushRect(L, rect);
 		break;
 	}
 	default:
