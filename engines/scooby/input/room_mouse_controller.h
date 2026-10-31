@@ -22,6 +22,7 @@
 #ifndef SCOOBY_ROOM_MOUSE_CONTROLLER_H
 #define SCOOBY_ROOM_MOUSE_CONTROLLER_H
 
+#include "common/array.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 
@@ -42,8 +43,11 @@
 //     doorway, stairs) takes him through. A single click on an object whose default verb is SHUT (an open
 //     door) does the same when no verb was chosen in the bar; choosing SHUT first still shuts it.
 //   - Left click on room space with no object closes the cursor (A) and walks Shaggy towards the point by
-//     holding the d-pad, using the original movement and collision code. Walking stops at the point, when no
-//     progress is made (blocked: Shaggy ends as near as the original movement allows), or on any new input.
+//     holding the d-pad, using the original movement and collision code. The route is planned over the room's
+//     own lead-actor collision map (the point test the original movement makes) and walked one axis at a time,
+//     so Shaggy goes around railings, steps and ledges instead of pushing into them; a point he cannot stand
+//     on is replaced by the nearest one he can reach. Walking stops at the point, when no progress is made
+//     (Shaggy ends as near as the original movement allows), or on any new input.
 //   - While "use with" waits for its second target, any room click presses B, as the pad would.
 //   - Right click cancels: it stops a walk, otherwise it presses A (closes the cursor interface).
 //
@@ -53,6 +57,7 @@
 namespace Scooby {
 
 class MouseInput;
+class RoomCollisionProbe;
 class ScoobyDooRom;
 class RuntimeState;
 
@@ -103,13 +108,27 @@ private:
 	static const int kWalkStallLimit = 30;
 	static const int kInterfaceWaitLimit = 6;
 	static const int kBusyLimit = 2;
+	static const int kPathCellSize = 4;        // Planning grid spacing in room pixels.
+	static const int kWaypointTolerance = 2;
+	static const int kMaxPathReplans = 2;
 
 	void placeCursor(RuntimeState &state, const Common::Point &target) const;
 	void resolveClick(RuntimeState &state, MouseInput &mouse);
 	void walkIntoClickedObject(RuntimeState &state, MouseInput &mouse);
-	bool findWalkInTarget(RuntimeState &state, int16 interaction, int16 &worldX, int16 &worldY) const;
-	void startWalk(int16 worldX, int16 worldY);
+	bool findWalkInTarget(RuntimeState &state, int16 interaction, int16 &worldX, int16 &worldY,
+						  Common::Rect &shapeArea) const;
+	// pushToTarget: keep walking straight at the exact target after the planned route ends (walk-ins, where
+	// the trigger lies inside a shape Shaggy may not be able to stand in); otherwise end at the nearest
+	// reachable point. goalArea: for a walk-in, the object's shape in room pixels; the route then ends at the
+	// nearest point inside it that Shaggy can reach, since entering it is what triggers the walk-in.
+	void startWalk(RuntimeState &state, int16 worldX, int16 worldY, bool pushToTarget,
+				   const Common::Rect &goalArea = Common::Rect());
 	ControllerButtons stepWalk(RuntimeState &state);
+	// Plans _walkPath from Shaggy's position to the walk target over the collision map. Returns false when no
+	// map is available (the walk then heads straight for the target, as a pad player would).
+	bool planWalkPath(RuntimeState &state);
+	bool isSegmentClear(const RoomCollisionProbe &probe, int x0, int y0, int x1, int y1, int16 maximumX,
+						int16 maximumY) const;
 	bool isBarArrow(const RuntimeState &state, const Common::Point &target) const;
 
 	const ScoobyDooRom *_rom;
@@ -129,6 +148,12 @@ private:
 	int _walkStall;
 	int _walkInterfaceWait;
 	int _busySamples;
+	bool _walkPushToTarget;
+	bool _walkEndsWithPush; // The last waypoint is the exact walk-in target past the planned route.
+	Common::Rect _walkGoalArea;
+	Common::Array<Common::Point> _walkPath; // Planned waypoints in room space; the last one is the destination.
+	uint _walkPathIndex;
+	int _walkReplans;
 };
 
 } // namespace Scooby
