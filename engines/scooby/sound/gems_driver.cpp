@@ -320,10 +320,6 @@ uint32 GemsDriver::bankPointer(int index) const {
 void GemsDriver::fmWrite(uint8 part, uint8 reg, uint8 value) {
 	if (part == 0) {
 		switch (reg) {
-		case 0x22:
-			// LFO: not implemented by ScummVM's FM core.
-			// debug("LFO called %d %d", part, value);
-			return;
 		case 0x24:
 		case 0x25:
 			// Timer A reload: the driver uses it to pace DAC output, which is emulated in onRenderSample().
