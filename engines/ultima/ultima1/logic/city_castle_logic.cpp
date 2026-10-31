@@ -145,6 +145,7 @@ bool CityCastleLogic::move(Data::Direction dir) {
 
 	if (x < 0 || y < 0 || x >= Data::CITY_WIDTH || y >= Data::CITY_HEIGHT) {
 		leaving();
+		prompt();		// Called since end of turn processing will be skipped
 		return false;
 
 	} else {

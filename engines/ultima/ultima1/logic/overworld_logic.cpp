@@ -135,6 +135,8 @@ bool OverworldLogic::enter() {
 	if (location == 0) {
 		writeString("Enter?\n");
 		playFX(1);
+		return true;
+
 	} else {
 		// Display the enter message
 		_G(map)._isLordBritishCastle = location == 33;
@@ -156,9 +158,12 @@ bool OverworldLogic::enter() {
 
 		// Run any logic for entering it
 		_G(logic)->entering();
-	}
 
-	return true;
+		// Do separate prompt call, since end of turn logic will be skipped
+		prompt();
+
+		return false;
+	}
 }
 
 bool OverworldLogic::fire() {
