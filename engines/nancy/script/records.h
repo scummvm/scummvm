@@ -240,6 +240,9 @@ private:
 	Common::String _messagingName;	// Nancy22, from SetMessagingName
 };
 
+// Loads an image from a tree, or a picture the camera took from the "LOADSAVE" one
+bool loadTreeImage(const Common::String &name, const Common::String &treeName, Graphics::ManagedSurface &image);
+
 // Shows a part of an image
 class OverlayRecord : public Record {
 public:

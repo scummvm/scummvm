@@ -978,7 +978,7 @@ bool OverrideRecord::setField(const Common::String &key) {
 // the saved game
 static const char *const kPictureTreeName = "LOADSAVE";
 
-static bool loadOverlayImage(const Common::String &name, const Common::String &treeName, Graphics::ManagedSurface &image) {
+bool loadTreeImage(const Common::String &name, const Common::String &treeName, Graphics::ManagedSurface &image) {
 	if (!treeName.equalsIgnoreCase(kPictureTreeName)) {
 		return g_nancy->_resource->loadImage(Common::Path(name), image, treeName);
 	}
@@ -1019,7 +1019,7 @@ void OverlayRecord::readTable(int tableIndex) {
 	Common::String treeName;
 	readField(L, tableIndex, "tree", treeName);
 
-	if (!loadOverlayImage(imageName, treeName, _image)) {
+	if (!loadTreeImage(imageName, treeName, _image)) {
 		luaL_error(L, "Could not load overlay %s", imageName.c_str());
 	}
 
@@ -1222,7 +1222,7 @@ void AnimOverlayRecord::readTable(int tableIndex) {
 	Common::String treeName;
 	readField(L, tableIndex, "tree", treeName);
 
-	if (!loadOverlayImage(imageName, treeName, _image)) {
+	if (!loadTreeImage(imageName, treeName, _image)) {
 		luaL_error(L, "Could not load overlay %s", imageName.c_str());
 	}
 

@@ -26,6 +26,7 @@
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/records.h"
 #include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/types.h"
 
@@ -108,10 +109,10 @@ static ScriptRef *checkRef(lua_State *L, int index) {
 
 // Puts an image into a Nancy20 Ref, unless it would overlap one that is in it
 // already. An empty rectangle stands for the size of the image.
-static bool addRefLayer(ScriptRef &ref, const Common::String &imageName, const ScriptRect &rect) {
+static bool addRefLayer(ScriptRef &ref, const Common::String &imageName, const Common::String &treeName, const ScriptRect &rect) {
 	ScriptRef::Layer *layer = new ScriptRef::Layer();
 	layer->image.edgeMode = ref.edgeMode;
-	if (!g_nancy->_resource->loadImage(Common::Path(imageName), layer->image.image)) {
+	if (!loadTreeImage(imageName, treeName, layer->image.image)) {
 		warning("Could not load Ref %s", imageName.c_str());
 	}
 
@@ -166,7 +167,7 @@ static int refNew(lua_State *L) {
 
 		Common::String imageName;
 		if (readField(L, 2, "ref", imageName)) {
-			addRefLayer(*ref, imageName, ScriptRect());
+			addRefLayer(*ref, imageName, Common::String(), ScriptRect());
 		}
 	} else {
 		const char *imageName = luaL_checkstring(L, 2);
@@ -198,13 +199,22 @@ static int refCollect(lua_State *L) {
 }
 
 // ref:Add(image, rect), Nancy20. Returns false when the image would overlap
-// one that is in the Ref already.
+// one that is in the Ref already. Nancy23 names the tree of the image too,
+// ref:Add(image, tree, rect), which lets the calligraphy puzzle look at a
+// picture the camera took of what the player drew.
 static int refAdd(lua_State *L) {
 	ScriptRef *ref = checkRef(L, 1);
 	const char *imageName = luaL_checkstring(L, 2);
-	const ScriptRect &rect = checkRect(L, 3);
 
-	lua_pushboolean(L, addRefLayer(*ref, imageName, rect));
+	Common::String treeName;
+	int rectIndex = 3;
+	if (g_nancy->getGameType() >= kGameTypeNancy23) {
+		treeName = luaL_checkstring(L, 3);
+		rectIndex = 4;
+	}
+
+	const ScriptRect &rect = checkRect(L, rectIndex);
+	lua_pushboolean(L, addRefLayer(*ref, imageName, treeName, rect));
 	return 1;
 }
 
