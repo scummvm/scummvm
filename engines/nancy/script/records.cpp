@@ -1537,10 +1537,25 @@ bool SoundRecord::setField(const Common::String &key) {
 	return true;
 }
 
+// sound:StopIfPlaying(), Nancy23: stops the channel, unless another sound has
+// started on it since this one did
+static int soundStopIfPlaying(lua_State *L) {
+	((SoundRecord *)checkRecord(L, 1))->stopIfPlaying();
+	return 0;
+}
+
+void SoundRecord::stopIfPlaying() {
+	if (_isPlaying && g_nancy->_sound->getChannelSerial(_channel) == _channelSerial) {
+		g_nancy->_sound->stopSound(_sound);
+	}
+}
+
 bool SoundRecord::getField(const Common::String &key) {
 	lua_State *L = getLua();
 
-	if (key == "channel") {
+	if (key == "StopIfPlaying") {
+		lua_pushcfunction(L, soundStopIfPlaying);
+	} else if (key == "channel") {
 		pushSoundChannel(L, _channel);
 	} else if (key == "volume") {
 		lua_pushnumber(L, _volume);

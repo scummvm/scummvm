@@ -328,6 +328,7 @@ public:
 
 	void onSkip() override;
 	bool skipSpeech() override;
+	void stopIfPlaying();
 
 protected:
 	void readTable(int tableIndex) override;
