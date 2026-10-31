@@ -25,6 +25,7 @@
 #include "engines/grim/movie/movie.h"
 #include "engines/grim/movie/smush_anim.h"
 
+#include "graphics/surface.h"
 #include "video/video_decoder.h"
 
 namespace Grim {
@@ -36,13 +37,19 @@ class SmushDriver;
 class SmushSound;
 class SmushWave;
 
-class SmushPlayer : public MoviePlayer, public SmushAnimClient {
+class SmushPlayer : public MoviePlayer, public SmushAnimClient, public SmushDemoVideo {
 public:
 	SmushPlayer(bool demo);
 	virtual ~SmushPlayer();
 	void restore(SaveGame *state) override;
 	void pause(bool p) override;
 	int32 getMovieTime() override;
+
+	int videoStart(int width, int height, int depth) override;
+	void videoStop() override;
+	void videoLock(SmushDemoTarget *target, SmushDemoRect *rect) override;
+	void videoUnlock() override;
+	void videoSetPalette(const uint32 *palette, int start, int count) override;
 
 private:
 	bool loadFile(const Common::String &filename) override;
@@ -64,6 +71,14 @@ private:
 	SmushWave *_smushWave;
 	SmushAnimPlay *_smushAnim;
 	SmushAnimator *_smushAnimator;
+	SmushDemoDriver *_demoDriver;
+	SmushDemoPlayer *_demoPlayer;
+	bool _demoPlaying;
+	byte *_demoTarget;
+	int _demoWidth;
+	int _demoHeight;
+	byte _demoPalette[768];
+	Graphics::Surface _demoSurface;
 	Video::VideoDecoder *_theoraDecoder; // HACK for now, move to other class later?
 };
 

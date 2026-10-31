@@ -846,4 +846,244 @@ int SmushDriver::ringRead(int16 *buffer, int numSamples) {
 	return numSamples;
 }
 
+SmushDemoDriverStream::SmushDemoDriverStream(SmushDemoDriver *driver) {
+	_driver = driver;
+}
+
+int SmushDemoDriverStream::readBuffer(int16 *buffer, const int numSamples) {
+	return _driver->ringRead(buffer, numSamples);
+}
+
+SmushDemoDriver::SmushDemoDriver() {
+	_system = g_system->getMixer();
+	_buffer = nullptr;
+	_bufferSize = 0;
+	_playPosition = 0;
+	_playing = false;
+	_created = false;
+	_rate = 0;
+	_blockAlign = 0;
+	_written = 0;
+	_wrapCount = 0;
+	_lastPosition = 0;
+	_lastTime = 0;
+	_lastMeasure = 0;
+	_lastReturned = 0;
+	_waiting = 0;
+	_paused = 0;
+	_threshold = 0;
+	_msPerByte = 0.0;
+}
+
+SmushDemoDriver::~SmushDemoDriver() {
+	_system->stopHandle(_soundHandle);
+
+	Common::StackLock lock(_mutex);
+	delete[] _buffer;
+	_buffer = nullptr;
+}
+
+void SmushDemoDriver::sndDrivCreate() {
+	_created = true;
+}
+
+void SmushDemoDriver::sndDrivRelease() {
+	_created = false;
+}
+
+int SmushDemoDriver::sndDrivOpen(int rate, int channels, int bits, SmushDemoAudio *audio) {
+	sndDrivCreate();
+
+	_rate = rate;
+	audio->data = new byte[audio->size]();
+
+	_blockAlign = (bits >> 3) * channels;
+	_bufferSize = 5000 * _rate * _blockAlign / 1000;
+
+	{
+		Common::StackLock lock(_mutex);
+		_buffer = new byte[_bufferSize]();
+		_playPosition = 0;
+		_playing = false;
+	}
+
+	_system->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, new SmushDemoDriverStream(this), -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+	audio->opened = true;
+
+	_written = 0;
+	_wrapCount = 0;
+	_lastPosition = 0;
+	_lastMeasure = g_system->getMillis();
+	_lastTime = 0;
+	_lastReturned = 0;
+	_waiting = 1;
+	_paused = 0;
+	_msPerByte = 1000.0 / (double)(_rate * _blockAlign);
+	_threshold = 1000 * _rate * _blockAlign / 1000;
+	return 0;
+}
+
+void SmushDemoDriver::sndDrivClose(SmushDemoAudio *audio) {
+	if (!audio->opened)
+		return;
+
+	_system->stopHandle(_soundHandle);
+	{
+		Common::StackLock lock(_mutex);
+		_playing = false;
+		delete[] _buffer;
+		_buffer = nullptr;
+	}
+
+	audio->opened = false;
+	if (audio->data) {
+		delete[] audio->data;
+		audio->data = nullptr;
+	}
+
+	sndDrivRelease();
+}
+
+int SmushDemoDriver::sndDrivGetTime(SmushDemoAudio *audio) {
+	int position;
+	{
+		Common::StackLock lock(_mutex);
+		position = _playPosition;
+	}
+
+	uint32 time = g_system->getMillis();
+	int result;
+
+	if (position != _lastPosition) {
+		if (position < _lastPosition)
+			_wrapCount++;
+
+		int played = position + _wrapCount * _bufferSize;
+		_lastTime = (int)((double)played * _msPerByte);
+		_lastMeasure = time;
+		_lastPosition = position;
+
+		if (!_waiting) {
+			if (_written < played + 500 * _rate * _blockAlign / 1000) {
+				Common::StackLock lock(_mutex);
+				_playing = false;
+				_waiting = 1;
+				_threshold = played + 500 * _rate * _blockAlign / 1000;
+			}
+		}
+	}
+
+	if (_waiting || _paused)
+		result = _lastTime;
+	else
+		result = _lastTime + (int)(time - _lastMeasure);
+
+	if (result <= _lastReturned)
+		result = _lastReturned;
+
+	_lastReturned = result;
+	return result;
+}
+
+int SmushDemoDriver::sndDrivPause(SmushDemoAudio *audio) {
+	{
+		Common::StackLock lock(_mutex);
+		_playing = false;
+	}
+
+	_paused = 1;
+	return 0;
+}
+
+int SmushDemoDriver::sndDrivResume(SmushDemoAudio *audio) {
+	_paused = 0;
+	_lastMeasure = g_system->getMillis();
+
+	Common::StackLock lock(_mutex);
+	_playing = true;
+	_playPosition = _lastPosition;
+	return 0;
+}
+
+void SmushDemoDriver::sndDrivFill(SmushDemoAudio *audio) {
+	sndDrivGetTime(audio);
+
+	int ringSize = _bufferSize;
+	int playedAbsolute = _lastPosition + ringSize * _wrapCount;
+	int available = audio->produced - audio->consumed - 1024;
+	int space = playedAbsolute - _written + ringSize - 4096;
+	if (space >= available)
+		space = available;
+
+	if (space <= 0)
+		return;
+
+	int offset = _written % ringSize;
+	int firstLength = MIN(space, ringSize - offset);
+	int secondLength = space - firstLength;
+	int remaining = space;
+	int segmentRemaining = firstLength;
+	int destination = offset;
+
+	{
+		Common::StackLock lock(_mutex);
+
+		while (remaining > 0) {
+			int source = audio->consumed % audio->size;
+			int toEnd = audio->size - source;
+			int chunk = MIN(remaining, toEnd);
+			chunk = MIN(chunk, segmentRemaining);
+
+			memcpy(_buffer + destination, audio->data + source, chunk);
+			remaining -= chunk;
+			segmentRemaining -= chunk;
+			audio->consumed += chunk;
+
+			if (segmentRemaining == 0) {
+				segmentRemaining = secondLength;
+				destination = 0;
+			} else {
+				destination += chunk;
+			}
+		}
+	}
+
+	_written += firstLength + secondLength;
+
+	if (_waiting) {
+		if (_written > _threshold) {
+			{
+				Common::StackLock lock(_mutex);
+				_playing = true;
+				_playPosition = _lastPosition;
+			}
+
+			_waiting = 0;
+			_lastMeasure = g_system->getMillis();
+		}
+	}
+}
+
+int SmushDemoDriver::ringRead(int16 *buffer, int numSamples) {
+	Common::StackLock lock(_mutex);
+	if (!_buffer || !_playing) {
+		memset(buffer, 0, numSamples * 2);
+		return numSamples;
+	}
+
+	byte *dest = (byte *)buffer;
+	int remaining = numSamples * 2;
+
+	while (remaining > 0) {
+		int chunk = MIN(remaining, _bufferSize - _playPosition);
+		memcpy(dest, _buffer + _playPosition, chunk);
+
+		dest += chunk;
+		remaining -= chunk;
+		_playPosition = (_playPosition + chunk) % _bufferSize;
+	}
+
+	return numSamples;
+}
+
 } // End of namespace Grim

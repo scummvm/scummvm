@@ -124,5 +124,71 @@ public:
 
 };
 
+struct SmushDemoAudio {
+	byte *data;
+	int produced;
+	int consumed;
+	int size;
+	bool opened;
+};
+
+class SmushDemoDriver;
+
+class SmushDemoDriverStream : public Audio::AudioStream {
+
+private:
+	SmushDemoDriver *_driver;
+
+public:
+	SmushDemoDriverStream(SmushDemoDriver *driver);
+
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return true; }
+	int getRate() const override { return 22050; }
+	bool endOfData() const override { return false; }
+
+};
+
+class SmushDemoDriver {
+
+private:
+	Audio::Mixer *_system;
+	Audio::SoundHandle _soundHandle;
+	Common::Mutex _mutex;
+	byte *_buffer;
+	int _bufferSize;
+	int _playPosition;
+	bool _playing;
+	bool _created;
+	int _rate;
+	int _blockAlign;
+	int _written;
+	int _wrapCount;
+	int _lastPosition;
+	int _lastTime;
+	uint32 _lastMeasure;
+	int _lastReturned;
+	int _waiting;
+	int _paused;
+	int _threshold;
+	double _msPerByte;
+
+public:
+	SmushDemoDriver();
+	~SmushDemoDriver();
+
+	void sndDrivCreate();
+	void sndDrivRelease();
+	int sndDrivOpen(int rate, int channels, int bits, SmushDemoAudio *audio);
+	void sndDrivClose(SmushDemoAudio *audio);
+	int sndDrivGetTime(SmushDemoAudio *audio);
+	int sndDrivPause(SmushDemoAudio *audio);
+	int sndDrivResume(SmushDemoAudio *audio);
+	void sndDrivFill(SmushDemoAudio *audio);
+
+	int ringRead(int16 *buffer, int numSamples);
+
+};
+
 } // End of namespace Grim
 #endif
