@@ -122,6 +122,11 @@ static const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };
 static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
 
+CityCastleLogic::CityCastleLogic() {
+	// Done here rather than on entering, so it also applies when a savegame inside a location is loaded
+	_G(map).countSurroundingTiles();
+}
+
 void CityCastleLogic::entering() {
 	loadEntities();
 	_G(savegame)._guardsHostile = false;

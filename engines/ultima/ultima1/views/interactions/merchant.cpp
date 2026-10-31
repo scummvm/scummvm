@@ -422,16 +422,16 @@ void Merchant::chooseBuy() {
 		for (int i = 0; i < 6; ++i)
 			_transportIds[i] = 0;
 
-		if ((sg._woodsCount || sg._grassCount) && !fleetFull) {
+		if ((_G(map)._woodsCount || _G(map)._grassCount) && !fleetFull) {
 			_transportIds[0] = Data::TRANSPORT_HORSE;
 			_transportIds[1] = Data::TRANSPORT_CART;
 		}
-		if (sg._waterCount && !fleetFull) {
+		if (_G(map)._waterCount && !fleetFull) {
 			_transportIds[2] = Data::TRANSPORT_RAFT;
 			_transportIds[3] = Data::TRANSPORT_FRIGATE;
 		}
 		if (_G(moveCtr) > 3000) {
-			if (sg._grassCount && !fleetFull)
+			if (_G(map)._grassCount && !fleetFull)
 				_transportIds[4] = Data::TRANSPORT_AIRCAR;
 			if (sg._transports[Data::TRANSPORT_SHUTTLE] == 0)
 				_transportIds[5] = Data::TRANSPORT_SHUTTLE;
@@ -850,14 +850,14 @@ void Merchant::spawnTransport(int transportId) {
 	// the surrounding tiles of that terrain counted when the location was entered
 	auto &sg = _G(savegame);
 	int terrain;
-	if (transportId <= Data::TRANSPORT_CART && sg._woodsCount) {
-		--sg._woodsCount;
+	if (transportId <= Data::TRANSPORT_CART && _G(map)._woodsCount) {
+		--_G(map)._woodsCount;
 		terrain = Data::TILE_WOODS;
 	} else if (transportId == Data::TRANSPORT_RAFT || transportId == Data::TRANSPORT_FRIGATE) {
-		--sg._waterCount;
+		--_G(map)._waterCount;
 		terrain = Data::TILE_OCEAN;
 	} else {
-		--sg._grassCount;
+		--_G(map)._grassCount;
 		terrain = Data::TILE_GRASS;
 	}
 

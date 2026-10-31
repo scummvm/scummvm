@@ -79,8 +79,6 @@ void Savegame::synchronizeBasic(Common::Serializer &s) {
 	for (int i = 0; i < TRANSPORT_COUNT; ++i)
 		s.syncAsSint16LE(_transports[i]);
 
-	s.syncMultipleLE(_woodsCount, _grassCount, _waterCount);
-
 	s.syncAsSint16LE(_enemyVessels);
 	s.syncAsSint16LE(_signMarker);
 	s.syncAsSint16LE(_overworldEntityCount);

@@ -326,6 +326,29 @@ int Map::getOverworldTileAt(int x, int y) const {
 	return tile;
 }
 
+void Map::countSurroundingTiles() {
+	const Common::Point &pos = _G(savegame)._overworldPos;
+	_waterCount = _grassCount = _woodsCount = 0;
+
+	for (int deltaY = -1; deltaY <= 1; ++deltaY) {
+		for (int deltaX = -1; deltaX <= 1; ++deltaX) {
+			switch (getOverworldTileAt(pos.x + deltaX, pos.y + deltaY)) {
+			case TILE_OCEAN:
+				++_waterCount;
+				break;
+			case TILE_GRASS:
+				++_grassCount;
+				break;
+			case TILE_WOODS:
+				++_woodsCount;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
 int Map::getContinentAt(int x, int y) const {
 	return (y > 77 ? 2 : 0) + (x > 83 ? 1 : 0);
 }

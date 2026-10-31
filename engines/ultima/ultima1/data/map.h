@@ -129,6 +129,7 @@ public:
 	byte _tilePlayerCenter = 0;
 	byte _tilePlayerUp = 0, _tilePlayerDown = 0,
 		_tilePlayerLeft = 0, _tilePlayerRight = 0;
+	int _woodsCount = 0, _grassCount = 0, _waterCount = 0;	// Tiles surrounding entered locations
 	bool _isLordBritishCastle = false;
 	int _mapStyle = 0;
 	int _mapType = MAPTYPE_OVERWORLD;
@@ -229,6 +230,12 @@ public:
 	 * around itself, such as when a purchased vehicle is placed outside a city
 	 */
 	int getOverworldTileAt(int x, int y) const;
+
+	/**
+	 * Counts the ocean, grass and woods tiles in the overworld around the player's
+	 * position, which a location uses to know what vehicles can be bought there
+	 */
+	void countSurroundingTiles();
 
 	/**
 	 * Returns the continent number at a given position

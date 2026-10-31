@@ -165,6 +165,7 @@ protected:
 	void findArmor(bool checkCaught);
 
 public:
+	CityCastleLogic();
 	~CityCastleLogic() override {
 	}
 
