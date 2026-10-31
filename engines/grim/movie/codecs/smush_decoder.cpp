@@ -396,7 +396,7 @@ void SmushDecoder::handleFRME(Common::SeekableReadStream *stream, uint32 size) {
 	delete[] block;
 }
 
-void SmushDecoder::decodeFrameBlock(const byte *block, uint32 size) {
+void SmushDecoder::decodeFrameBlock(const byte *block, uint32 size, int flags) {
 	Common::MemoryReadStream *memStream = new Common::MemoryReadStream(block, size, DisposeAfterUse::NO);
 
 	int remaining = size;
@@ -407,7 +407,7 @@ void SmushDecoder::decodeFrameBlock(const byte *block, uint32 size) {
 
 		switch (subType) {
 		case MKTAG('B', 'l', '1', '6'):
-			_videoTrack->handleBlocky16(memStream, subSize);
+			_videoTrack->handleBlocky16(memStream, subSize, flags);
 			_blocky16Frames++;
 			break;
 		case MKTAG('W', 'a', 'v', 'e'):
@@ -553,7 +553,7 @@ void SmushDecoder::SmushVideoTrack::setFrameStart(int frame) {
 	_frameStart = frame - 1;
 }
 
-void SmushDecoder::SmushVideoTrack::handleBlocky16(Common::SeekableReadStream *stream, uint32 size) {
+void SmushDecoder::SmushVideoTrack::handleBlocky16(Common::SeekableReadStream *stream, uint32 size, int flags) {
 	if (_curFrame < _frameStart) {
 		return;
 	}
@@ -562,7 +562,7 @@ void SmushDecoder::SmushVideoTrack::handleBlocky16(Common::SeekableReadStream *s
 	byte *ptr = new byte[size];
 	stream->read(ptr, size);
 
-	_blocky16->decode((byte *)_surface.getPixels(), ptr);
+	_blocky16->decode((byte *)_surface.getPixels(), ptr, flags);
 	delete[] ptr;
 }
 

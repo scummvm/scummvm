@@ -146,8 +146,10 @@ int SmushAnimator::checkSkip() {
 	return 0;
 }
 
-void SmushAnimator::decodeBlocks() {
-	_decoder->decodeFrameBlock(_block, _blockSize);
+void SmushAnimator::decodeBlocks(int flags) {
+	int allFlags = _flags | flags;
+	int decodeFlags = ((allFlags >> 13) & 4) | (allFlags & 0x30);
+	_decoder->decodeFrameBlock(_block, _blockSize, decodeFlags);
 }
 
 bool SmushAnimator::moreData() {
@@ -181,7 +183,7 @@ int SmushAnimator::animatorRender(int flags) {
 			if (_block) {
 				_frame++;
 				if (_skipping || !checkSkip()) {
-					decodeBlocks();
+					decodeBlocks(flags);
 
 					if (_frame < _frameCount - 1 || _skipping) {
 						if (_pause == 1)

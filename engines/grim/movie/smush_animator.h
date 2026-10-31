@@ -52,7 +52,7 @@ private:
 
 	void readBlock(int size);
 	int checkSkip();
-	void decodeBlocks();
+	void decodeBlocks(int flags);
 	bool moreData();
 
 public:

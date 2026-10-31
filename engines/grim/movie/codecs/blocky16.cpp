@@ -473,19 +473,20 @@ void Blocky16::level2(byte *d_dst) {
 			_d_src += 2;
 		}
 		byte *tmp_ptr = _tableSmall + (tmp * 128);
-		byte l = tmp_ptr[96];
+		// The disasm writes at least one entry, even when the list is empty
+		int l = tmp_ptr[96];
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
-		while (l--) {
+		do {
 			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val);
 			tmp_ptr2++;
-		}
+		} while (l-- > 1);
 		l = tmp_ptr[97];
 		val >>= 16;
 		tmp_ptr2 = (int16 *)(tmp_ptr + 32);
-		while (l--) {
+		do {
 			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val);
 			tmp_ptr2++;
-		}
+		} while (l-- > 1);
 	} else if (code >= 0xF9) {
 		if (code == 0xFD) {
 			t = *_d_src++;
@@ -558,19 +559,19 @@ void Blocky16::level1(byte *d_dst) {
 			_d_src += 2;
 		}
 		byte *tmp_ptr = _tableBig + (tmp * 388);
-		byte l = tmp_ptr[384];
+		int l = tmp_ptr[384];
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
-		while (l--) {
+		do {
 			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val);
 			tmp_ptr2++;
-		}
+		} while (l-- > 1);
 		l = tmp_ptr[385];
 		val >>= 16;
 		tmp_ptr2 = (int16 *)(tmp_ptr + 128);
-		while (l--) {
+		do {
 			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val);
 			tmp_ptr2++;
-		}
+		} while (l-- > 1);
 	} else if (code >= 0xF9) {
 		if (code == 0xFD) {
 			t = *_d_src++;
@@ -624,19 +625,16 @@ void Blocky16::init(int width, int height) {
 
 	_frameSize = _width * _height * 2;
 
-	// some animations, like tb_kitty.snm don't have a multiple of 8 width or height,
-	// so set the size of the buffer in _blocksWidth * 8 * _blocksHeight * 8, instead
-	// of using _frameSize.
-	int size = _blocksWidth * 8 * _blocksHeight * 8 * 2;
-	_offset = size - _frameSize;
+	// The disasm rounds the height of each buffer up to a multiple of 8
+	_bufSize = _width * _blocksHeight * 8 * 2;
 	// workaround for read over buffer by increasing buffer
 	// 200 bytes is enough for smush anims:
 	// lol, byeruba, crushed, eldepot, heltrain, hostage
-	uint32 deltaSize = size * 3 + 200;
+	uint32 deltaSize = _bufSize * 3 + 200;
 	_deltaBuf = new byte[deltaSize]();
 	_deltaBufs[0] = _deltaBuf;
-	_deltaBufs[1] = _deltaBuf + _frameSize;
-	_curBuf = _deltaBuf + _frameSize * 2;
+	_deltaBufs[1] = _deltaBuf + _bufSize;
+	_curBuf = _deltaBuf + _bufSize * 2;
 }
 
 Blocky16::Blocky16() {
@@ -653,8 +651,9 @@ Blocky16::Blocky16() {
 	_param6_7Ptr = nullptr;
 	_blocksHeight = _blocksWidth = 0;
 	_height = _width = 0;
-	_offset = _offset1 = _offset2 = 0;
+	_offset1 = _offset2 = 0;
 	_frameSize = 0;
+	_bufSize = 0;
 	_d_pitch = 0;
 }
 
@@ -743,7 +742,7 @@ static void bompDecodeMain(byte *dst, const byte *src, int size) {
 	}
 }
 
-void Blocky16::decode(byte *dst, const byte *src) {
+void Blocky16::decode(byte *dst, const byte *src, int flags) {
 	_offset1 = ((_deltaBufs[1] - _curBuf) / 2) * 2;
 	_offset2 = ((_deltaBufs[0] - _curBuf) / 2) * 2;
 
@@ -754,10 +753,10 @@ void Blocky16::decode(byte *dst, const byte *src) {
 	if (seq_nb == 0) {
 		makeTables47(_width);
 		if (src[32] == src[33]) {
-			memset(_deltaBufs[0], src[32], _frameSize);
-			memset(_deltaBufs[1], src[32], _frameSize);
+			memset(_deltaBufs[0], src[32], _bufSize);
+			memset(_deltaBufs[1], src[32], _bufSize);
 		} else {
-			int count = _frameSize / 2;
+			int count = _bufSize / 2;
 			uint16 *ptr1 = (uint16 *)_deltaBufs[0];
 			uint16 *ptr2 = (uint16 *)_deltaBufs[1];
 			uint16 val = READ_LE_UINT16(src + 32);
@@ -768,6 +767,12 @@ void Blocky16::decode(byte *dst, const byte *src) {
 
 		}
 		_prevSeqNb = -1;
+	}
+
+	// The disasm doesn't decode the frames that don't swap buffers when the display is skipped
+	if ((flags & 4) && !src[19] && src[18] >= 2 && src[18] <= 4) {
+		_prevSeqNb = seq_nb;
+		return;
 	}
 
 	switch (src[18]) {
@@ -835,8 +840,8 @@ void Blocky16::decode(byte *dst, const byte *src) {
 		} else if (src[19] == 2) {
 			tmp_ptr = _deltaBufs[0];
 			_deltaBufs[0] = _deltaBufs[1];
-			_deltaBufs[1] = _curBuf - _offset; // subtract the offset here or else a black bar will appear
-			_curBuf = tmp_ptr;                 // on top of tb_kitty.snm.
+			_deltaBufs[1] = _curBuf;
+			_curBuf = tmp_ptr;
 		}
 	}
 	_prevSeqNb = seq_nb;
