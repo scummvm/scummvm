@@ -195,6 +195,16 @@ public:
 	// Managed-only mouse support: left edge of the visible H32/H40 content within the 320-pixel frame.
 	int contentLeft() const;
 
+	// Managed-only debug overlay (Console "showWalkArea"): width of the visible content and height of the room
+	// view above the interface, the size of the mask setWalkAreaOverlay expects.
+	int walkAreaOverlayWidth() const { return contentWidth(); }
+	static int walkAreaOverlayHeight() { return kRoomInterfaceSplitY; }
+
+	// Managed-only debug overlay (Console "showWalkArea"): for the next render only, marks every visible room
+	// pixel whose mask byte is nonzero (row-major, walkAreaOverlayWidth() x walkAreaOverlayHeight()) with a
+	// checkerboard of IndexedFrame::kDebugOverlayColorIndex, drawn over the low-priority background plane.
+	void setWalkAreaOverlay(Span<const uint8> mask);
+
 private:
 	static const int kDefaultLayerColumns = 64;
 	static const int kDefaultLayerRows = 32;
@@ -210,6 +220,7 @@ private:
 	static Common::Array<TileCell> decodeLayer(Span<const uint8> packedCells, int columnCount,
 											   int rowCount);
 	void drawForegroundAndWindow(IndexedFrame &frame, bool highPriority, int roomBottom);
+	void drawWalkAreaOverlay(IndexedFrame &frame, int roomBottom);
 	void drawLayer(IndexedFrame &frame, const Common::Array<TileCell> &layer, int columnCount, int rowCount,
 				   int horizontalOffset, Span<const int16> lineHorizontalOffsets,
 				   int verticalOffset,
@@ -238,6 +249,8 @@ private:
 	Common::Array<uint8> _tilePixels;
 	uint8 _windowVerticalPositionBits;
 	int16 _interfaceHorizontalScroll; // controls whether the action buttons or inventory are displayed.
+	Common::Array<uint8> _walkAreaOverlay; // Managed-only debug overlay, see setWalkAreaOverlay.
+	bool _walkAreaOverlayPending;
 };
 } // namespace Scooby
 

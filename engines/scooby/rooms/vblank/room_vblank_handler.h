@@ -58,7 +58,8 @@ public:
 					  RoomTileStreamer &tileStreamer)
 		: _commitActionPromptTiles(nullptr), _updateRoomActorsAndInterface(nullptr), _rom(rom),
 		  _input(input), _objectTilePatches(objectTilePatches), _scene(scene), _sprites(sprites),
-		  _state(state), _tileStreamer(tileStreamer) {
+		  _state(state), _tileStreamer(tileStreamer), _walkAreaScene(nullptr), _walkAreaRoomId(-1),
+		  _walkAreaCameraX(0), _walkAreaCameraY(0) {
 	}
 
 	// Binds the prompt-tile owner after the mutually dependent menu and VBlank owners exist.
@@ -105,6 +106,10 @@ private:
 	// scene owns both the live colors and their immediate publication.
 	void rotateAnimatedPaletteRanges();
 
+	// Managed-only debug overlay (Console "showWalkArea"): publishes the visible part of the room's walk area
+	// to the scene for the next frame.
+	void updateWalkAreaOverlay();
+
 	// Publishes a staged action-prompt update when its pending latch is set.
 	//
 	// Ghidra: commitPendingActionPromptDuringVBlank (0x00005C8E). Native scanlines at or before 0xE0 and
@@ -139,6 +144,15 @@ private:
 	RoomSpriteRenderer &_sprites;
 	RuntimeState &_state;
 	RoomTileStreamer &_tileStreamer;
+
+	// Managed-only debug overlay cache: the walk area over the whole room (rebuilt per room, or when Shaggy
+	// leaves it) and its visible part (rebuilt when the camera moves).
+	Common::Array<uint8> _walkAreaRoom;
+	Common::Array<uint8> _walkAreaOverlay;
+	const RoomSceneData *_walkAreaScene;
+	int16 _walkAreaRoomId;
+	int16 _walkAreaCameraX;
+	int16 _walkAreaCameraY;
 };
 } // namespace Scooby
 

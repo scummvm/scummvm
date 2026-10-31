@@ -24,13 +24,18 @@
 namespace Scooby {
 
 void IndexedFrame::present() {
-	byte pal[64 *3];
+	byte pal[(64 + 1) * 3];
 	for (int i = 0; i < 64; i++) {
 		pal[i*3] = expandLevel(_palette[i].redLevel);
 		pal[i*3+1] = expandLevel(_palette[i].greenLevel);
 		pal[i*3+2] = expandLevel(_palette[i].blueLevel);
 	}
-	_screen.setPalette(pal, 0, 64);
+
+	// Managed-only debug overlay colour (kDebugOverlayColorIndex): bright green.
+	pal[kDebugOverlayColorIndex * 3] = 0x00;
+	pal[kDebugOverlayColorIndex * 3 + 1] = 0xFF;
+	pal[kDebugOverlayColorIndex * 3 + 2] = 0x40;
+	_screen.setPalette(pal, 0, 64 + 1);
 
 	_screen.copyRectToSurface(_pixels.data(), Width, 0, 0, Width, Height);
 	_screen.makeAllDirty();

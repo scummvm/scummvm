@@ -20,12 +20,14 @@
  */
 
 #include "scooby/console.h"
+#include "scooby/scooby.h"
 
 namespace Scooby {
 
 Console::Console(const ApplicationLoop *applicationLoop) : GUI::Debugger(), _applicationLoop(applicationLoop) {
 	registerCmd("test", WRAP_METHOD(Console, Cmd_test));
 	registerCmd("info", WRAP_METHOD(Console, Cmd_info));
+	registerCmd("showWalkArea", WRAP_METHOD(Console, Cmd_showWalkArea));
 }
 
 Console::~Console() {
@@ -38,6 +40,14 @@ bool Console::Cmd_test(int argc, const char **argv) {
 
 bool Console::Cmd_info(int argc, const char **argv) {
 	debugPrintf("RoomId: %d\n", _applicationLoop->getState().RoomId);
+	return true;
+}
+
+bool Console::Cmd_showWalkArea(int argc, const char **argv) {
+	// Toggles the walk-area overlay: a green checkerboard over the room points Shaggy can walk to from where he
+	// stands (RoomVBlankHandler::updateWalkAreaOverlay).
+	g_engine->setWalkAreaShown(!g_engine->isWalkAreaShown());
+	debugPrintf("Walk area overlay %s\n", g_engine->isWalkAreaShown() ? "on" : "off");
 	return true;
 }
 

@@ -70,6 +70,7 @@ private:
 	ControllerInput *_input;
 
 	uint32 _nextUpdatetime;
+	bool _walkAreaShown;
 
 protected:
 	// Engine APIs
@@ -111,6 +112,10 @@ public:
 
 	// Managed-only mouse support: the shared mouse owner for loops without a ControllerInput reference.
 	MouseInput &getMouseInput();
+
+	// Managed-only debug overlay: whether rooms show the walk area (Console "showWalkArea").
+	bool isWalkAreaShown() const { return _walkAreaShown; }
+	void setWalkAreaShown(bool shown) { _walkAreaShown = shown; }
 
 	/**
 	 * Uses a serializer to allow implementing savegame

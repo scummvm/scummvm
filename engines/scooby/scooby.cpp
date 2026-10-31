@@ -41,7 +41,8 @@ namespace Scooby {
 ScoobyEngine *g_engine;
 
 ScoobyEngine::ScoobyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Scooby"), _applicationLoop(nullptr), _gemsDriver(nullptr), _input(nullptr) {
+	_gameDescription(gameDesc), _randomSource("Scooby"), _applicationLoop(nullptr), _gemsDriver(nullptr), _input(nullptr),
+	  _walkAreaShown(false) {
 	g_engine = this;
 }
 

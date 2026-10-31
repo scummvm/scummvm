@@ -30,7 +30,9 @@
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_cell.h"
 #include "scooby/graphics/tile_layer.h"
+#include "scooby/rooms/room_collision_probe.h"
 #include "scooby/rooms/room_object.h"
+#include "scooby/scooby.h"
 
 namespace Scooby {
 
@@ -40,6 +42,9 @@ void RoomVBlankHandler::handleRoomVBlank() {
 
 	// Ghidra 0x0000A674-0x0000A677: publish scrolling and any newly exposed room-edge tiles.
 	_tileStreamer.updateScrollingAndStreamTiles();
+
+	// Managed-only debug overlay (Console "showWalkArea").
+	updateWalkAreaOverlay();
 
 	// Ghidra 0x0000A678-0x0000A683: a clear room-update gate skips the complete conditional block and
 	// continues with controller polling, script latching, and countdown service.
@@ -88,6 +93,90 @@ void RoomVBlankHandler::handleRoomVBlank() {
 	if (_state.RetraceCountdown >= 0) {
 		_state.RetraceCountdown--;
 	}
+}
+
+void RoomVBlankHandler::updateWalkAreaOverlay() {
+	// Managed-only debug overlay (Console "showWalkArea"): the points Shaggy may walk to. The original
+	// lead-actor movement tests one point at a time (RoomCollisionProbe::probeLeadActorCollision), and the
+	// collision map only blocks walls, so the area shown is the clear region connected to where Shaggy stands.
+	if (!g_engine->isWalkAreaShown() || !_state.ActiveRoomScene || _state.RoomWidthTiles == 0 ||
+		_state.RoomHeightTiles == 0) {
+		_walkAreaScene = nullptr;
+		return;
+	}
+
+	const int roomWidth = _state.RoomWidthTiles * 8;
+	const int roomHeight = _state.RoomHeightTiles * 8;
+	const int leadX = static_cast<int16>(_state.ActorXFixedCoordinates[0] >> 16);
+	const int leadY = static_cast<int16>(_state.ActorYFixedCoordinates[0] >> 16);
+	const bool leadInRoom = leadX >= 0 && leadY >= 0 && leadX < roomWidth && leadY < roomHeight;
+	bool rebuildRoom = _walkAreaScene != _state.ActiveRoomScene.get() || _walkAreaRoomId != _state.RoomId ||
+					   _walkAreaRoom.size() != static_cast<size_t>(roomWidth * roomHeight);
+	// Shaggy moved to another region (scripts can place him anywhere): flood from his new position.
+	if (!rebuildRoom && leadInRoom && _walkAreaRoom[static_cast<size_t>(leadY * roomWidth + leadX)] == 0) {
+		rebuildRoom = true;
+	}
+
+	if (rebuildRoom) {
+		_walkAreaScene = _state.ActiveRoomScene.get();
+		_walkAreaRoomId = _state.RoomId;
+		const int16 maximumX = static_cast<int16>(roomWidth - 1);
+		const int16 maximumY = static_cast<int16>(roomHeight - 1);
+		RoomCollisionProbe probe(_rom, _state);
+		Common::Array<uint8> clear(static_cast<size_t>(roomWidth * roomHeight));
+		for (int y = 0; y < roomHeight; y++) {
+			for (int x = 0; x < roomWidth; x++) {
+				clear[static_cast<size_t>(y * roomWidth + x)] =
+					probe.probeLeadActorCollision(x << 16, y << 16, maximumX, maximumY).IsClear ? 1 : 0;
+			}
+		}
+
+		// Flood the clear points connected to Shaggy; with no clear starting point show every clear point.
+		if (!leadInRoom || clear[static_cast<size_t>(leadY * roomWidth + leadX)] == 0) {
+			_walkAreaRoom = clear;
+		} else {
+			_walkAreaRoom = Common::Array<uint8>(static_cast<size_t>(roomWidth * roomHeight), 0);
+			Common::Array<int32> pending;
+			pending.push_back(leadY * roomWidth + leadX);
+			_walkAreaRoom[static_cast<size_t>(leadY * roomWidth + leadX)] = 1;
+			while (!pending.empty()) {
+				int32 point = pending.back();
+				pending.pop_back();
+				int x = point % roomWidth;
+				int y = point / roomWidth;
+				const int32 neighbours[4] = {x > 0 ? point - 1 : -1, x + 1 < roomWidth ? point + 1 : -1,
+											 y > 0 ? point - roomWidth : -1,
+											 y + 1 < roomHeight ? point + roomWidth : -1};
+				for (int i = 0; i < 4; i++) {
+					int32 next = neighbours[i];
+					if (next >= 0 && clear[static_cast<size_t>(next)] != 0 && _walkAreaRoom[static_cast<size_t>(next)] == 0) {
+						_walkAreaRoom[static_cast<size_t>(next)] = 1;
+						pending.push_back(next);
+					}
+				}
+			}
+		}
+	}
+
+	const int width = _scene.walkAreaOverlayWidth();
+	const int height = TileScene::walkAreaOverlayHeight();
+	if (rebuildRoom || _walkAreaCameraX != _state.CameraX || _walkAreaCameraY != _state.CameraY ||
+		_walkAreaOverlay.size() != static_cast<size_t>(width * height)) {
+		_walkAreaCameraX = _state.CameraX;
+		_walkAreaCameraY = _state.CameraY;
+		_walkAreaOverlay.resize(static_cast<size_t>(width * height));
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int worldX = x + _state.CameraX;
+				int worldY = y + _state.CameraY;
+				bool walkable = worldX >= 0 && worldY >= 0 && worldX < roomWidth && worldY < roomHeight &&
+								_walkAreaRoom[static_cast<size_t>(worldY * roomWidth + worldX)] != 0;
+				_walkAreaOverlay[static_cast<size_t>(y * width + x)] = walkable ? 1 : 0;
+			}
+		}
+	}
+
+	_scene.setWalkAreaOverlay(MakeSpan(_walkAreaOverlay));
 }
 
 void RoomVBlankHandler::rotateAnimatedPaletteRanges() {

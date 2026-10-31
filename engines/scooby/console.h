@@ -34,6 +34,7 @@ private:
 
 	bool Cmd_test(int argc, const char **argv);
 	bool Cmd_info(int argc, const char **argv);
+	bool Cmd_showWalkArea(int argc, const char **argv);
 public:
 	Console(const ApplicationLoop *applicationLoop);
 	~Console() override;

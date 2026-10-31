@@ -38,7 +38,7 @@ TileScene::TileScene()
 	  _foregroundHorizontalOffset(0), _foregroundVerticalOffset(0), _layerColumns(kDefaultLayerColumns),
 	  _layerRows(kDefaultLayerRows), _roomInterfaceVisible(false), _spriteVerticalOffset(0),
 	  _spritesVisible(true),
-	  _windowVerticalPositionBits(0), _interfaceHorizontalScroll(0) {
+	  _windowVerticalPositionBits(0), _interfaceHorizontalScroll(0), _walkAreaOverlayPending(false) {
 	Common::fill(_palette.begin(), _palette.end(), PaletteColor());
 }
 
@@ -403,6 +403,14 @@ void TileScene::render(IndexedFrame &frame) {
 	drawLayer(frame, _backgroundLayer, _layerColumns, _layerRows, _backgroundHorizontalOffset,
 			  MakeSpan(_backgroundLineHorizontalOffsets), _backgroundVerticalOffset, false, 0,
 			  roomBottom);
+	// Managed-only debug overlay (Console "showWalkArea"): requested anew for every room frame.
+	if (_walkAreaOverlayPending) {
+		_walkAreaOverlayPending = false;
+		if (_roomInterfaceVisible) {
+			drawWalkAreaOverlay(frame, roomBottom);
+		}
+	}
+
 	drawForegroundAndWindow(frame, false, roomBottom);
 	if (_roomInterfaceVisible) {
 		drawLayer(frame, _interfaceLayer, kDefaultLayerColumns, kDefaultLayerRows, _interfaceHorizontalScroll,
@@ -426,6 +434,29 @@ void TileScene::render(IndexedFrame &frame) {
 
 	if (_spritesVisible) {
 		_spriteLayer.drawPass(frame, true);
+	}
+}
+
+void TileScene::setWalkAreaOverlay(Span<const uint8> mask) {
+	_walkAreaOverlay.resize(mask.size());
+	for (size_t i = 0; i < mask.size(); i++) {
+		_walkAreaOverlay[i] = mask[i];
+	}
+
+	_walkAreaOverlayPending = true;
+}
+
+void TileScene::drawWalkAreaOverlay(IndexedFrame &frame, int roomBottom) {
+	const int width = contentWidth();
+	const int left = contentLeft();
+	const int rows = MIN<int>(roomBottom, static_cast<int>(_walkAreaOverlay.size()) / width);
+	for (int y = 0; y < rows; y++) {
+		for (int x = y & 1; x < width; x += 2) {
+			if (_walkAreaOverlay[static_cast<size_t>(y * width + x)] != 0) {
+				frame._pixels[static_cast<size_t>(y * IndexedFrame::Width + left + x)] =
+					IndexedFrame::kDebugOverlayColorIndex;
+			}
+		}
 	}
 }
 
