@@ -114,6 +114,9 @@ protected:
 	// YM2612 only: the sum of the block-shifted frequency and the detune wraps at 17 bits
 	// Not confirmed for the YM2203/YM2608, so those keep the previous behavior.
 	const bool _wrapDetunedFrequency;
+	// YM2612 only: emulate the LFO (register 0x22, the AMS/PMS bits of registers 0xB4-0xB6 and the AM
+	// bits of registers 0x60-0x6F). Disabled for other chips types.
+	const bool _lfoEmulation;
 
 	Common::Mutex &_mutex;
 	int _mixerThreadLockCounter;
@@ -122,6 +125,8 @@ private:
 	void generateTables();
 	void writeRegInternal(uint8 part, uint8 regAddress, uint8 value);
 	void nextTick(int32 *buffer, uint32 bufferSize);
+	void resetLfo();
+	void renderLfo(uint32 bufferSize);
 
 #ifdef ENABLE_SNDTOWNS98_WAITCYCLES
 	void startWaitCycle();
@@ -153,6 +158,14 @@ private:
 
 		uint32 ampModSvty = 0u;
 		uint32 frqModSvty = 0u;
+
+		// LFO emulation: amplitude (0-3) and phase (0-7) modulation sensitivity from register 0xB4,
+		// the LFO phase value last applied to the operators (0xFF forces a refresh) and whether the
+		// operator frequencies currently carry a phase modulation offset.
+		uint8 lfoAms = 0u;
+		uint8 lfoPms = 0u;
+		uint8 lfoLastPm = 0xFFu;
+		bool lfoPmApplied = false;
 
 		TownsPC98_FmSynthOperator *opr[4] = {};
 	};
@@ -220,6 +233,19 @@ private:
 #endif
 
 	uint8 _registers[255][2];
+
+	// LFO state (see _lfoEmulation). The counter advances once per chip sample (two render
+	// samples for the YM2612/YM2608), and renderLfo() expands it into per-render-sample AM and PM
+	// values for the channel loop.
+	bool _lfoEnabled;
+	uint8 _lfoFreq;
+	uint8 _lfoCounter;
+	uint8 _lfoQuotient;
+	uint8 _lfoSubSample;
+	uint8 *_lfoAmBuffer;
+	uint8 *_lfoPmBuffer;
+	uint32 _lfoBufferSize;
+	static const uint8 _lfoPeriods[];
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
