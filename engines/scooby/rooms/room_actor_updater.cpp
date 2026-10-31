@@ -338,6 +338,15 @@ void RoomActorUpdater::closeInteractionInterface() {
 		return;
 	}
 
+	// Managed-only guard: Shaggy and Scooby (interactions 1 and 2) have no room-object record, and the original
+	// reads the bytes in front of the object table here (cancelling with A while the cursor is on either of
+	// them). Show LOOK, the action ActionMenuController::resolveActionIcon gives both actors while hovering.
+	if (_state.CurrentInteraction < kRoomObjectFirstInteraction) {
+		_state.pendingVerbIcon = LOOK;
+		_drawSelectedActionIcon(0);
+		return;
+	}
+
 	const RoomObject &roomObject = _state.RoomObjects[_state.CurrentInteraction - kRoomObjectFirstInteraction];
 	_state.pendingVerbIcon = static_cast<VerbEnum>(roomObject.suggestedVerb);
 	_drawSelectedActionIcon(0);
