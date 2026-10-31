@@ -725,6 +725,11 @@ int IMuse::dispatchNavigateMap(IMuseDispatch *dispatchPtr) {
 			// - Block size in bytes minus 8 (4 bytes)
 			// - Block offset (4 bytes)
 			// - Region length (4 bytes)
+			if (_demo && (int32)READ_UINT32(mapCurEvent + 8) != dispatchPtr->currentOffset) {
+				debug(5, "IMuse::dispatchNavigateMap(): ERROR: region offset %d != currentOffset %d", (int32)READ_UINT32(mapCurEvent + 8), dispatchPtr->currentOffset);
+				return -1;
+			}
+
 			dispatchPtr->audioRemaining = READ_UINT32(mapCurEvent + 12);
 			return 0;
 		case MKTAG('T', 'E', 'X', 'T'):
@@ -737,7 +742,9 @@ int IMuse::dispatchNavigateMap(IMuseDispatch *dispatchPtr) {
 			marker = (char *)mapCurEvent + 12;
 			soundId = dispatchPtr->trackPtr->soundId;
 			_triggersHandler->processTriggers(soundId, marker);
-			if (soundId != dispatchPtr->trackPtr->soundId)
+
+			// (The demo doesn't check if the trigger has switched the sound)
+			if (!_demo && soundId != dispatchPtr->trackPtr->soundId)
 				return -3;
 
 			if (dispatchPtr->audioRemaining)

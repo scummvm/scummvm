@@ -49,10 +49,17 @@ void SoundComponent::setKey(int val) {
 	switch (val) {
 	case 0: // "Play"
 		if (!g_imuse->soundsIsSoundPlaying(_name.c_str())) {
+			// In the demo the last value is the group, and the sound isn't positioned in the set
+			bool demo = g_grim->getGameFlags() & ADGF_DEMO;
+
 			if (isComponentType('I','M','S','S')) {
 				g_imuse->soundStartVoiceStream(_name.c_str(), _maxVolume, _pan);
-				g_imuse->soundsSetParam(_name.c_str(), IMUSE_P_GROUP, IMUSE_GROUP_SFX);
+				g_imuse->soundsSetParam(_name.c_str(), IMUSE_P_GROUP, demo ? _minVolume : IMUSE_GROUP_SFX);
 				g_imuse->soundsSetParam(_name.c_str(), IMUSE_P_PRIORITY, _priority);
+			} else if (demo) {
+				g_imuse->soundsLoadStartSound(_name.c_str(), _priority, _minVolume);
+				g_imuse->soundsSetParam(_name.c_str(), IMUSE_P_VOLUME, _maxVolume);
+				g_imuse->soundsSetParam(_name.c_str(), IMUSE_P_PAN, _pan);
 			} else {
 				g_imuse->soundsLoadStartSound(_name.c_str(), _priority, IMUSE_GROUP_SFX);
 

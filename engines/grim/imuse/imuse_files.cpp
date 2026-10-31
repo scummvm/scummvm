@@ -891,85 +891,112 @@ int IMuse::cacheGetSoundId(const char *soundName) {
 	if (!soundName)
 		return 0;
 
-	if (soundKey == 10000)
-		return 10000;
+	if (_demo) {
+		// The cache of the demo has 16 slots and sounds are only looked up by name: there are
+		// no Lua sound IDs (so a number can't be a valid name), and no lipsync data is loaded here
+		if (soundKey <= 0xFFFF)
+			return 0;
 
-	if (soundKey <= 1111)
-		return 0;
+		for (slot = 15; slot >= 0; slot--) {
+			if (!scumm_stricmp(_soundCache[slot].soundFilename, soundName))
+				return slot + 100;
 
-	isLuaSoundId = soundKey < 1367;
-	if (soundKey > 1367) {
-		if (strlen(soundName) <= 4) {
-			soundId = atoi(soundName);
-			if (soundId == 10000)
-				return soundId;
-
-			if (soundId >= 1111 && soundId < 1367)
-				return 0;
-		}
-
-		isLuaSoundId = false;
-	}
-
-	sound = &_soundCache[IMUSE_MAX_CACHED_SOUNDS - 1];
-	slot = IMUSE_MAX_CACHED_SOUNDS - 1;
-
-	if (isLuaSoundId) {
-		while ((uintptr)sound->luaSoundId != soundKey) {
-			--sound;
-			if (!slot--)
-				return 0;
-		}
-
-		if (sound->soundUncompData)
-			return slot + 100;
-
-		loadSlot = slot;
-	} else {
-		while (scumm_stricmp(sound->soundFilename, soundName)) {
-			if (!sound->soundFilename[0])
+			if (!_soundCache[slot].soundFilename[0])
 				loadSlot = slot;
-
-			--sound;
-			if (!slot--) {
-				// The sound is not in the cache: pick an empty slot or purge the oldest one
-				if (loadSlot < 0) {
-					loadSlot = cachePurgeOldestStoppedSound();
-					if (loadSlot < 0)
-						return 0;
-				}
-
-				sound = &_soundCache[loadSlot];
-				Common::strlcpy(sound->soundFilename, soundName, sizeof(sound->soundFilename));
-
-				int slotCounter = _currentSoundSlot;
-				bool collision;
-				do {
-					collision = false;
-					int candidateId = abs(slotCounter) % 256 + 1111;
-					for (int i = 0; i < IMUSE_MAX_CACHED_SOUNDS; i++) {
-						if (_soundCache[i].soundFilename[0] && _soundCache[i].luaSoundId == candidateId) {
-							collision = true;
-							slotCounter++;
-							break;
-						}
-					}
-				} while (collision);
-
-				_currentSoundSlot = slotCounter;
-				sound->luaSoundId = abs(slotCounter) % 256 + 1111;
-				++_currentSoundSlot;
-
-				allocated = true;
-				break;
-			}
 		}
 
-		if (!allocated) {
+		// The sound is not in the cache: pick an empty slot or purge the oldest one
+		if (loadSlot < 0) {
+			loadSlot = cachePurgeOldestStoppedSound();
+			if (loadSlot < 0)
+				return 0;
+		}
+
+		sound = &_soundCache[loadSlot];
+		Common::strlcpy(sound->soundFilename, soundName, sizeof(sound->soundFilename));
+		sound->tsOfAllocation = g_system->getMillis();
+		allocated = true;
+	} else {
+		if (soundKey == 10000)
+			return 10000;
+
+		if (soundKey <= 1111)
+			return 0;
+
+		isLuaSoundId = soundKey < 1367;
+		if (soundKey > 1367) {
+			if (strlen(soundName) <= 4) {
+				soundId = atoi(soundName);
+				if (soundId == 10000)
+					return soundId;
+
+				if (soundId >= 1111 && soundId < 1367)
+					return 0;
+			}
+
+			isLuaSoundId = false;
+		}
+
+		sound = &_soundCache[IMUSE_MAX_CACHED_SOUNDS - 1];
+		slot = IMUSE_MAX_CACHED_SOUNDS - 1;
+
+		if (isLuaSoundId) {
+			while ((uintptr)sound->luaSoundId != soundKey) {
+				--sound;
+				if (!slot--)
+					return 0;
+			}
+
 			if (sound->soundUncompData)
 				return slot + 100;
 
 			loadSlot = slot;
+		} else {
+			while (scumm_stricmp(sound->soundFilename, soundName)) {
+				if (!sound->soundFilename[0])
+					loadSlot = slot;
+
+				--sound;
+				if (!slot--) {
+					// The sound is not in the cache: pick an empty slot or purge the oldest one
+					if (loadSlot < 0) {
+						loadSlot = cachePurgeOldestStoppedSound();
+						if (loadSlot < 0)
+							return 0;
+					}
+
+					sound = &_soundCache[loadSlot];
+					Common::strlcpy(sound->soundFilename, soundName, sizeof(sound->soundFilename));
+
+					int slotCounter = _currentSoundSlot;
+					bool collision;
+					do {
+						collision = false;
+						int candidateId = abs(slotCounter) % 256 + 1111;
+						for (int i = 0; i < IMUSE_MAX_CACHED_SOUNDS; i++) {
+							if (_soundCache[i].soundFilename[0] && _soundCache[i].luaSoundId == candidateId) {
+								collision = true;
+								slotCounter++;
+								break;
+							}
+						}
+					} while (collision);
+
+					_currentSoundSlot = slotCounter;
+					sound->luaSoundId = abs(slotCounter) % 256 + 1111;
+					++_currentSoundSlot;
+
+					allocated = true;
+					break;
+				}
+			}
+
+			if (!allocated) {
+				if (sound->soundUncompData)
+					return slot + 100;
+
+				loadSlot = slot;
+			}
 		}
 	}
 
@@ -978,18 +1005,23 @@ int IMuse::cacheGetSoundId(const char *soundName) {
 
 	IMuseResource *res = soundsOpenFile(sound->soundFilename);
 	if (!res) {
-		memset(sound, 0, sizeof(IMuseCachedSound));
+		// (The demo leaves the name of the sound in the slot)
+		if (!_demo)
+			memset(sound, 0, sizeof(IMuseCachedSound));
+
 		return 0;
 	}
 
 	sound->tsOfAllocation = g_system->getMillis();
 
-	char lipsyncFilename[32];
-	Common::strlcpy(lipsyncFilename, sound->soundFilename, sizeof(lipsyncFilename));
-	char *extension = strrchr(lipsyncFilename, '.');
-	if (extension) {
-		Common::strlcpy(extension, ".lip", lipsyncFilename + sizeof(lipsyncFilename) - extension);
-		loadLip(lipsyncFilename, sound->luaSoundId);
+	if (!_demo) {
+		char lipsyncFilename[32];
+		Common::strlcpy(lipsyncFilename, sound->soundFilename, sizeof(lipsyncFilename));
+		char *extension = strrchr(lipsyncFilename, '.');
+		if (extension) {
+			Common::strlcpy(extension, ".lip", lipsyncFilename + sizeof(lipsyncFilename) - extension);
+			loadLip(lipsyncFilename, sound->luaSoundId);
+		}
 	}
 
 	soundsFileSeek(res, 0, SEEK_END);
@@ -1038,7 +1070,15 @@ int IMuse::cacheGetSoundId(const char *soundName) {
 			createSoundHeader(newHeader, 3, sampleRate, 16, numChannels, dataLength);
 			sound->soundMap = newHeader;
 			sound->soundAddrData = extFormatBuffer - 80;
-			newHeader[31] = swapEndianFlag;
+
+			if (!_demo) {
+				newHeader[31] = swapEndianFlag;
+			} else if (!swapEndianFlag) {
+				// The demo swaps the samples right away
+				uint32 numSamples = (uint32)(sound->soundUncompData + dataLength - extFormatBuffer) >> 1;
+				for (uint32 i = 0; i < numSamples; i++)
+					SWAP(extFormatBuffer[2 * i], extFormatBuffer[2 * i + 1]);
+			}
 		}
 
 		return loadSlot + 100;
@@ -1054,8 +1094,9 @@ int IMuse::cachePurgeOldestStoppedSound() {
 	int foundSlot = -1;
 	int emptySlot = -1;
 	uint32 oldestTimestamp = g_system->getMillis();
+	int numSlots = _demo ? 16 : IMUSE_MAX_CACHED_SOUNDS;
 
-	for (int slot = IMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
+	for (int slot = numSlots - 1; slot >= 0; slot--) {
 		IMuseCachedSound *sound = &_soundCache[slot];
 
 		if (sound->soundFilename[0] && sound->soundUncompData) {
@@ -1073,7 +1114,8 @@ int IMuse::cachePurgeOldestStoppedSound() {
 	if (foundSlot >= 0) {
 		IMuseCachedSound *sound = &_soundCache[foundSlot];
 		sound->soundFilename[0] = 0;
-		soundsResetLipsyncState(sound->luaSoundId);
+		if (!_demo)
+			soundsResetLipsyncState(sound->luaSoundId);
 
 		free(sound->soundUncompData);
 		memset(sound, 0, sizeof(IMuseCachedSound));
@@ -1274,6 +1316,11 @@ int IMuse::soundsLoadStartSound(const char *soundName, int priority, int group) 
 	if (!soundId)
 		return 0;
 
+	if (_demo) {
+		imStartSound(soundId, priority);
+		return imSetParam(soundId, IMUSE_P_GROUP, group);
+	}
+
 	if (priority > 124)
 		priority = 124;
 
@@ -1326,7 +1373,7 @@ void IMuse::soundsSetParam(const char *soundName, int paramId, int value) {
 int IMuse::soundsFadeParam(const char *soundName, int paramId, int value, int length) {
 	int soundId = cacheGetSoundId(soundName);
 	if (soundId)
-		return imFadeParam(soundId, paramId, value, 60 * length / 1000);
+		return imFadeParam(soundId, paramId, value, _demo ? length : 60 * length / 1000);
 
 	return 1;
 }
@@ -1428,7 +1475,7 @@ void IMuse::soundsPeriodic() {
 	imProcessStreams();
 	imRefreshScript();
 
-	for (int slot = IMUSE_MAX_CACHED_SOUNDS - 1; slot >= 0; slot--) {
+	for (int slot = (_demo ? 16 : IMUSE_MAX_CACHED_SOUNDS) - 1; slot >= 0; slot--) {
 		if (_soundCache[slot].soundFilename[0] && _soundCache[slot].soundUncompData)
 			cachedSize += _soundCache[slot].uncompResourceSize;
 	}
@@ -1458,14 +1505,20 @@ int IMuse::soundsRegisterVoice(const char *filename) {
 	Common::strlcpy(_curSpeechFile, filename, sizeof(_curSpeechFile));
 	Common::strlcpy(lipsyncFilename, filename, sizeof(lipsyncFilename));
 
-	char *extension = strrchr(lipsyncFilename, '.');
-	if (extension) {
-		Common::strlcpy(extension, ".lip", lipsyncFilename + sizeof(lipsyncFilename) - extension);
-		loadLip(lipsyncFilename, kTalkSoundID);
+	// The demo doesn't register the lipsync here, and doesn't compute the duration of the file
+	if (!_demo) {
+		char *extension = strrchr(lipsyncFilename, '.');
+		if (extension) {
+			Common::strlcpy(extension, ".lip", lipsyncFilename + sizeof(lipsyncFilename) - extension);
+			loadLip(lipsyncFilename, kTalkSoundID);
+		}
 	}
 
 	IMuseResource *res = soundsOpenFile(filename);
 	_openAudioFiles[0].resourcePtr = res;
+	if (_demo)
+		return res ? 1 : 0;
+
 	if (!res) {
 		_millisecsInCurSpeechFile = 0;
 		return 0;
@@ -1481,7 +1534,8 @@ int IMuse::soundsRegisterVoice(const char *filename) {
 void IMuse::soundsCloseVoiceFile() {
 	if (_openAudioFiles[0].resourcePtr) {
 		soundsCloseFile(_openAudioFiles[0].resourcePtr);
-		soundsResetLipsyncState(kTalkSoundID);
+		if (!_demo)
+			soundsResetLipsyncState(kTalkSoundID);
 		_openAudioFiles[0].resourcePtr = nullptr;
 	}
 }

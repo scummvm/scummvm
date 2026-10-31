@@ -401,7 +401,7 @@ Common::Error GrimEngine::run() {
 		if (ConfMan.hasKey("imuse_low_latency_mode", _targetName))
 			lowLatencyMode = ConfMan.getBool("imuse_low_latency_mode");
 
-		g_imuse = new IMuse(sampleRate, _mixer, &_imuseMutex, lowLatencyMode);
+		g_imuse = new IMuse(sampleRate, _mixer, &_imuseMutex, lowLatencyMode, demo);
 		g_emiSound = nullptr;
 		if (g_grim->isRemastered()) {
 			// This must happen here, since we need the resource loader set up.

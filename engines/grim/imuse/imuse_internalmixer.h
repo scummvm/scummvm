@@ -54,6 +54,7 @@ private:
 	int _outChannelCount = 0;
 	int _sampleRate = 0;
 	bool _lowLatencyMode = false;
+	bool _demo = false;
 
 	void mix16(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume);
 	void mix16Swap(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume);
@@ -61,7 +62,7 @@ private:
 	void mix16ToStereoSwap(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp);
 
 public:
-	IMuseInternalMixer(Audio::Mixer *mixer, int sampleRate, bool lowLatencyMode = false);
+	IMuseInternalMixer(Audio::Mixer *mixer, int sampleRate, bool lowLatencyMode = false, bool demo = false);
 	~IMuseInternalMixer();
 	int  init(int numChannels, int mixBufSize, int mixChannelsNum);
 	int  terminate();

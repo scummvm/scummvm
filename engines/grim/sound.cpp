@@ -33,7 +33,8 @@ SoundPlayer *g_sound = nullptr;
 
 bool SoundPlayer::startVoice(const char *soundName, int volume, int pan, bool background, int *soundId) {
 	if (g_grim->getGameType() == GType_GRIM) {
-		if (background) {
+		// The demo has no background voices
+		if (background && !(g_grim->getGameFlags() & ADGF_DEMO)) {
 			int luaSoundId = g_imuse->soundsLoadProcessStartSound(soundName, 127, IMUSE_GROUP_SPEECH);
 			if (!luaSoundId)
 				return false;

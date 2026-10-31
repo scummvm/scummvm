@@ -87,6 +87,8 @@ private:
 
 	int _curMixerMusicVolume, _curMixerSpeechVolume, _curMixerSFXVolume;
 
+	bool _demo;
+
 	int32 _attributes[228];	// internal attributes for each music file to store and check later
 	int32 _nextSeqToPlay;
 	int32 _curMusicState;
@@ -109,9 +111,10 @@ private:
 	void scriptSaveLoad(Common::Serializer &ser);
 	void scriptDeinit();
 	void scriptRefresh();
-	void scriptSetState(int soundId);
-	void scriptSetSequence(int soundId);
+	int scriptSetState(int soundId);
+	int scriptSetSequence(int soundId);
 	void scriptPlayMusic(const IMuseStateTable *tableEntry, int curSongEntryId, int isSequence);
+	void scriptPlayMusicDemo(const IMuseStateTable *tableEntry, int curSongEntryId, int isSequence);
 	void scriptSetCuePoint(int cueId);
 	int scriptSetAttribute(int attrIndex, int attrVal);
 
@@ -336,7 +339,7 @@ private:
 	uint8 *_waveOutLowLatencyOutputBuffer;
 
 public:
-	IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode = false);
+	IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode = false, bool demo = false);
 	~IMuse();
 
 	// Wrapper functions used by the main engine

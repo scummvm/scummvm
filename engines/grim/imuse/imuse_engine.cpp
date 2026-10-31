@@ -42,9 +42,11 @@ void IMuse::timer_handler(void *refCon) {
 	imuse->imHeartbeat();
 }
 
-IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode)
+IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode, bool demo)
 	: _mixer(mixer), _mutex(mutex) {
 	assert(mixer);
+
+	_demo = demo;
 
 	// 50 Hz rate for the callback
 	_callbackFps = IMUSE_TIMER_BASE_RATE_HZ;
@@ -80,7 +82,7 @@ IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool low
 	_underrunCooldown = 0;
 
 	_emptyMarker[0] = '\0';
-	_internalMixer = new IMuseInternalMixer(mixer, _internalSampleRate, _lowLatencyMode);
+	_internalMixer = new IMuseInternalMixer(mixer, _internalSampleRate, _lowLatencyMode, _demo);
 	_groupsHandler = new IMuseGroupsHandler(this, mutex);
 	_fadesHandler = new IMuseFadesHandler(this, mutex);
 	_triggersHandler = new IMuseTriggersHandler(this, mutex);
@@ -116,8 +118,13 @@ IMuse::IMuse(int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool low
 	setupHMI(IMUSE_HMI_HEAP_SIZE);
 
 	imInitialize();
-	soundsAllocateBuffer(IMUSE_BUFFER_MUSIC, 440000, 44000, 352000);
-	soundsAllocateBuffer(IMUSE_BUFFER_SPEECH, 88000, 44000, 88000);
+	if (_demo) {
+		soundsAllocateBuffer(IMUSE_BUFFER_MUSIC, 528000, 44000, 352000);
+		soundsAllocateBuffer(IMUSE_BUFFER_SPEECH, 176000, 44000, 88000);
+	} else {
+		soundsAllocateBuffer(IMUSE_BUFFER_MUSIC, 440000, 44000, 352000);
+		soundsAllocateBuffer(IMUSE_BUFFER_SPEECH, 88000, 44000, 88000);
+	}
 	imInitializeScript();
 
 	if (_mixer->getOutputBufSize() != 0) {
@@ -220,15 +227,21 @@ void IMuse::imHeartbeat() {
 		}
 
 		// Music gain reduction while speech is playing
+		// (The demo does it twice as often, with a different reduction and different steps)
+		int gainRedRateUsec = _demo ? 100000 : IMUSE_TIMER_GAIN_RED_RATE_USEC;
+		int gainRedFactor = _demo ? 80 : 77;
+		int gainRedStepUp = _demo ? 3 : 1;
+		int gainRedStepDown = _demo ? 18 : 36;
+
 		_cmdsRunning5HzCount += _usecPerInt;
-		if (_cmdsRunning5HzCount >= IMUSE_TIMER_GAIN_RED_RATE_USEC) {
+		if (_cmdsRunning5HzCount >= gainRedRateUsec) {
 			while (1) {
-				_cmdsRunning5HzCount -= IMUSE_TIMER_GAIN_RED_RATE_USEC;
+				_cmdsRunning5HzCount -= gainRedRateUsec;
 
 				musicTargetVolume = _groupsHandler->setGroupVol(IMUSE_GROUP_MUSIC, -1);
 				for (soundId = imGetNextSound(0); soundId; soundId = imGetNextSound(soundId)) {
 					if (imGetParam(soundId, IMUSE_P_GROUP) == IMUSE_GROUP_SPEECH) {
-						musicTargetVolume = (77 * musicTargetVolume) >> 7;
+						musicTargetVolume = (gainRedFactor * musicTargetVolume) >> 7;
 						break;
 					}
 				}
@@ -237,7 +250,7 @@ void IMuse::imHeartbeat() {
 				musicVol = _groupsHandler->setGroupVol(IMUSE_GROUP_MUSIC, -1);
 
 				if (musicEffVol > musicTargetVolume) {
-					tempVol = musicEffVol - 36;
+					tempVol = musicEffVol - gainRedStepDown;
 					if (tempVol <= musicTargetVolume) {
 						if (musicTargetVolume < musicVol)
 							musicVol = musicTargetVolume;
@@ -246,7 +259,7 @@ void IMuse::imHeartbeat() {
 					}
 					_groupsHandler->setGroupVol(IMUSE_GROUP_MUSICEFF, musicVol);
 				} else if (musicEffVol < musicTargetVolume) {
-					tempEffVol = musicEffVol + 1;
+					tempEffVol = musicEffVol + gainRedStepUp;
 					if (tempEffVol < musicTargetVolume) {
 						if (tempEffVol > musicVol)
 							musicVol = tempEffVol;
@@ -256,7 +269,7 @@ void IMuse::imHeartbeat() {
 					_groupsHandler->setGroupVol(IMUSE_GROUP_MUSICEFF, musicVol);
 				}
 
-				if (_cmdsRunning5HzCount < IMUSE_TIMER_GAIN_RED_RATE_USEC)
+				if (_cmdsRunning5HzCount < gainRedRateUsec)
 					break;
 			}
 		}

@@ -24,7 +24,7 @@
 namespace Grim {
 
 int IMuse::tracksInit() {
-	_trackCount = IMUSE_MAX_TRACKS;
+	_trackCount = _demo ? 8 : IMUSE_MAX_TRACKS;
 	_tracksPauseTimer = 0;
 	_trackList = nullptr;
 
