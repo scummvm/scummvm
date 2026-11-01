@@ -57,7 +57,6 @@ public:
 	virtual int postFrame(int frame, int frameCount) = 0;
 	virtual int frameCallback(int flags, bool paletteChanged, bool display, int paletteState) = 0;
 	virtual int chunkCallback(const byte *chunk, int size, int flags) = 0;
-	virtual void setAnnotation(int value) = 0;
 	virtual void setFrameRate(int fps) = 0;
 	virtual void setFrameBuffer(byte *buffer, int x, int y, int sourceX, int sourceY, int width, int height) = 0;
 };
@@ -73,10 +72,8 @@ private:
 	int _rewindPos;
 	int _alignSkip;
 	Common::SeekableReadStream *_file;
-	bool _fileIsMemory;
 	int _fileOffset;
 	int _fileSize;
-	int _busy;
 	int _restart;
 	int _hasData;
 	int _released;
@@ -94,7 +91,6 @@ public:
 
 	int streamInitialize(int ringSize, int maxRead);
 	void streamTerminate();
-	void streamInitMemory();
 	void streamReset();
 	void streamOpen(const Common::String &name, int offset);
 	bool streamFill(int limit);
@@ -119,47 +115,19 @@ private:
 	int _frameCount;
 	int _blockSize;
 	int _tag;
-	int _originX;
-	int _originY;
-	int _newAnim;
-	int _options;
-	int _seeking;
-	int _skipping;
 	int _quit;
-	int _pause;
-	int _dirty;
-	int _skipUntil;
-	int _skipBase;
-	int _skipLength;
-	int _flags;
-
-	byte *_overlay;
-	byte *_preload;
-	int _overlaySize;
-	int _preloadSize;
-	int _preloadUsed;
-	int _preloadCursor;
-	int _preloadLast;
-	int _preloadFirst;
-	byte _updateFlags[128];
 
 	byte _palette[768];
 	uint16 _paletteAccum[768];
 	uint16 _paletteDelta[768];
 	int _paletteState;
-	int _paletteRefresh;
 	int _noDisplay;
 	int _displayPending;
 
 	int animatorReadBlock(int size);
-	int animatorCheckSkip();
-	int animatorDecodeBlocks(int x, int y, int flags);
+	void animatorDecodeBlocks(int flags);
 	void animatorHandleHeader(const byte *header);
-	int anmFrameObject(int x, int y, int flags, const byte *chunk, int size);
-	void anmStoreObject(byte *destination, const byte *chunk);
-	void anmDrawObject(int x, int y, const byte *object, int flags);
-	void anmPreloadPut(const byte *chunk, int size);
-	bool anmTestUpdateFlag(int index);
+	int anmFrameObject(int flags, const byte *chunk);
 
 public:
 	SmushDemoAnim(SmushDemoStream *stream, SmushDemoClient *client);
@@ -169,16 +137,9 @@ public:
 	int anmTerminate();
 	void animatorInitialize();
 	int animatorRender(int flags);
-	void animatorSetOrigin(int x, int y);
-	void animatorNewAnim(const Common::String &name, int options, int skipLength, int skipUntil, int seeking, int offset);
-	void animatorSetSkip(int skipLength, int skipUntil);
+	void animatorNewAnim(const Common::String &name, int offset);
 	void animatorResetView();
-	int animatorPause(int mode);
-	int anmBuffersInitialize(int overlaySize, int preloadSize);
-	void anmBuffersTerminate();
-	void anmClearUpdateFlags(int index);
-	int anmDecodeBody(int x, int y, const byte *block, int size, int flags);
-	const byte *anmPreloadGet(int size);
+	int anmDecodeBody(const byte *block, int size, int flags);
 	void anmDisplay(int flags);
 	void anmSetPalette(const byte *palette, int mode);
 	const byte *anmGetPalette() const { return _palette; }
