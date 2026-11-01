@@ -80,6 +80,15 @@ void Record::storeValue(const char *name) {
 	lua_pop(L, 1);
 }
 
+void Record::clean() {
+	lua_State *L = getLua();
+	lua_pushlightuserdata(L, this);
+	lua_pushnil(L);
+	lua_rawset(L, LUA_REGISTRYINDEX);
+
+	_hasActiveFunction = false;
+}
+
 void Record::create(int tableIndex) {
 	lua_State *L = getLua();
 
@@ -637,6 +646,12 @@ static int recordRestart(lua_State *L) {
 	return 0;
 }
 
+// ar:Clean(), Nancy24
+static int recordClean(lua_State *L) {
+	checkRecord(L, 1)->clean();
+	return 0;
+}
+
 // ar:Render()
 static int recordRender(lua_State *L) {
 	checkRecord(L, 1)->render();
@@ -730,6 +745,7 @@ static const luaL_Reg kRecordFunctions[] = {
 	{ "__eq", recordEquals },
 	{ "Reset", recordReset },
 	{ "Restart", recordRestart },
+	{ "Clean", recordClean },
 	{ "Run", recordRun },
 	{ "Render", recordRender },
 	{ "OnMouseMove", recordOnMouseMove },
@@ -769,6 +785,13 @@ static int createRecord(lua_State *L) {
 	return 1;
 }
 
+// AR:GetActualField(ar, name), Nancy24: what a script stored in the record,
+// such as its "active" function rather than whether it is active
+static int recordGetActualField(lua_State *L) {
+	checkRecord(L, 2)->pushStoredValue(luaL_checkstring(L, 3));
+	return 1;
+}
+
 void registerRecordAPI(lua_State *L) {
 	for (uint i = 0; i < kNumRecordKinds; ++i) {
 		const char *typeName = getRecordTypeName((RecordKind)i);
@@ -793,6 +816,7 @@ void registerRecordAPI(lua_State *L) {
 
 	static const luaL_Reg kFactoryFunctions[] = {
 		{ "__index", indexFunctions },
+		{ "GetActualField", recordGetActualField },
 		{ nullptr, nullptr }
 	};
 

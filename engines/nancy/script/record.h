@@ -136,6 +136,14 @@ public:
 	int getScriptField();
 	int setScriptField();
 
+	// What scripts stored in the record under a name, which the fields of its
+	// kind don't go through. AR:GetActualField (Nancy24) reads it.
+	void pushStoredValue(const char *name);
+
+	// Nancy24: clears everything scripts stored in the record, the function
+	// that says whether it is active as well
+	void clean();
+
 	// Calls a function a script stored in the record, with the record itself in
 	// front of the arguments on the stack. Returns false when there is no such
 	// function, or when it failed; no results are left then.
@@ -226,8 +234,6 @@ protected:
 	virtual bool getField(const Common::String &key) { return false; }
 	virtual bool setField(const Common::String &key) { return false; }
 
-	// What scripts stored in the record
-	void pushStoredValue(const char *name);
 	void storeValue(const char *name);	// pops the value
 
 private:
