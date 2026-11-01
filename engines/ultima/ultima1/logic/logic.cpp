@@ -72,9 +72,6 @@ void Logic::giveTreasure(int coins, int nameLen) {
 	if (sg._coins + coins > 9999)
 		coins = 9999 - sg._coins;
 
-	if (coins == 0)
-		return;
-
 	// Whether the next amount shown ends its line
 	bool endLine;
 	if (nameLen == 0) {
@@ -85,6 +82,13 @@ void Logic::giveTreasure(int coins, int nameLen) {
 	} else {
 		writeString("! ");
 		endLine = true;
+	}
+
+	// A full purse leaves nothing to give. The original prints nothing at all
+	// here, which leaves the line unfinished
+	if (coins == 0) {
+		writeString("nothing\n");
+		return;
 	}
 
 	int copper = coins % 10;
