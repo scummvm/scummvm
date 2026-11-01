@@ -322,7 +322,7 @@ Common::Error PrisonerEngine::run() {
 
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot >= 0 && saveSlot <= 99) {
+		if (saveSlot >= 0 && saveSlot <= getMetaEngine()->getMaximumSaveSlot()) {
 			loadGameState(saveSlot);
 		}
 		_mainMenuRequested = false;
