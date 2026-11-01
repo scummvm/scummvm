@@ -185,10 +185,6 @@ public:
 	int anmStart(int fps, int flags);
 	void anmStop();
 	int anmRender(SmushAnimClient *client);
-	void anmSetRate(int fps);
-	void anmSyncUp();
-	bool anmRenderQuery();
-	int anmGetTime();
 
 };
 
