@@ -30,7 +30,7 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"scooby",
 		nullptr,
-		AD_ENTRY1s("scooby.md", "40a323e76dfa5892c0cd534f5bc3da6f", 2097152),
+		AD_ENTRY1s("Scooby-Doo Mystery (USA).md", "40a323e76dfa5892c0cd534f5bc3da6f", 2097152),
 		Common::EN_USA,
 		Common::kPlatformMegaDrive,
 		ADGF_UNSTABLE,

@@ -62,7 +62,7 @@ Common::String ScoobyEngine::getGameId() const {
 Common::Error ScoobyEngine::run() {
 	Common::String loadError;
 	Common::ScopedPtr<Scooby::ScoobyDooRom> rom =
-		Scooby::ScoobyDooRom::load("scooby.md", loadError);
+		Scooby::ScoobyDooRom::load("Scooby-Doo Mystery (USA).md", loadError);
 	if (!rom) {
 		error("%s\n", loadError.c_str());
 		return Common::kUnknownError;
