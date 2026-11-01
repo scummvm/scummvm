@@ -44,7 +44,9 @@ static const char *IMPASSABLE_REASONS[] = {
 	"Mountains are impassable!",
 	"Aircars can't pass woods!",
 	"Frigates like water!",
-	"Rafts like water!"
+	"Rafts like water!",
+	"Blocked by a",
+	"Can't move on land!"
 };
 
 static const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };

@@ -35,6 +35,11 @@ constexpr int MAX_DRIFT = 9;
 // hazard is fatal (checkStarProximity)
 constexpr int STAR_DEATH_RANGE = 25;
 
+// Touching anything within this range (on both axes) of the station's docking
+// bay entrance lands the ship back on the planet - or destroys it, if it isn't
+// a shuttle
+constexpr int LANDING_RANGE = 25;
+
 // Rotating Left/Right cycles the ship's facing a quarter-turn counter-
 // clockwise/clockwise (word_17EA2), indexed by the ship's current facing
 constexpr Data::SpaceShipFacing ROTATE_CCW[4] = {
@@ -207,6 +212,32 @@ void SpaceMapLogic::tick() {
 			if (other._shipType != Data::SHIP_NONE)
 				crunch = overlapsRect(newX, newY, other._x + SHIP_COLLISION_OFFSET_X, other._y + SHIP_COLLISION_OFFSET_Y,
 					SHIP_COLLISION_WIDTH, SHIP_COLLISION_HEIGHT);
+		}
+
+		if (crunch && isStationSector && ABS(newX - Data::SPACE_STATION_SCREEN_X) < LANDING_RANGE &&
+				ABS(newY - Data::SPACE_STATION_SCREEN_Y) < LANDING_RANGE) {
+			_G(sectorDriftX) = 0;
+			_G(sectorDriftY) = 0;
+			_G(shipExhaustCountdown) = 0;
+
+			if (ship._shipType == Data::SHIP_SHUTTLE) {
+				writeString("Thou hast landed safely!\n");
+				_G(savegame)._shipFuel = ship._fuel;
+				_G(savegame)._shipShield = ship._shield;
+
+				// This logic is replaced by loading the overworld, so nothing
+				// of it can be used afterwards
+				prompt();
+				_G(map).load(Data::MAP_OVERWORLD);
+			} else {
+				writeString("Only space shuttles are heat\n");
+				writeString("shielded for landings!\n");
+				ship._fuel = ship._shield = 0;
+				_G(savegame)._shipFuel = _G(savegame)._shipShield = 0;
+				death();
+			}
+
+			return;
 		}
 
 		if (crunch) {
