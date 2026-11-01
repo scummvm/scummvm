@@ -115,6 +115,11 @@ Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
 				++_creaturesCount;
 		}
 
+		// Space flight momentum isn't saved, so a ship doesn't keep thrusting from before the load
+		_G(sectorDriftX) = 0;
+		_G(sectorDriftY) = 0;
+		_G(shipExhaustCountdown) = 0;
+
 		_G(map).load(_G(savegame)._mapNum);
 	}
 
