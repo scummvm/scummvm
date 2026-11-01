@@ -89,7 +89,7 @@ void RoomTileStreamer::updateScrollingAndStreamTiles() {
 		_state.backgroundHorizontalScroll = static_cast<int16>(-(_state.cameraX & 0x03FF));
 		_state.foregroundHorizontalScroll = _state.backgroundHorizontalScroll;
 		if ((_state.interactionFlags & kForegroundOverrideMask) != 0) {
-			int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16);
+			int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[kShaggyActorSlot] >> 16);
 			_state.foregroundHorizontalScroll = static_cast<int16>(actorX - _state.cameraX - 0x2C);
 		}
 
@@ -98,7 +98,7 @@ void RoomTileStreamer::updateScrollingAndStreamTiles() {
 		_state.backgroundVerticalScroll = static_cast<int16>(_state.cameraY & 0x00FF);
 		_state.foregroundVerticalScroll = _state.backgroundVerticalScroll;
 		if ((_state.interactionFlags & kForegroundOverrideMask) != 0) {
-			int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[0] >> 16);
+			int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[kShaggyActorSlot] >> 16);
 			_state.foregroundVerticalScroll = static_cast<int16>(-(actorY - _state.cameraY - 0x30));
 		}
 

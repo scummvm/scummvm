@@ -30,9 +30,9 @@ const Common::Array<int16> kAnimationByPackedIndex = {0x000C, 0x0051, 0x0014, 0x
 } // namespace
 
 bool AmbientMovementController::tryStartRandomMove() {
-	if ((_state.interactionFlags & 0x80) != 0 || (_state.actorMovementFlags & 0x02) != 0 ||
+	if ((_state.interactionFlags & 0x80) != 0 || (_state.actorMovementFlags & kScoobyActorMask) != 0 ||
 		(_state.videoFlags & 0x04) != 0 || _state.randomMoveTimer >= 0 ||
-		(_state.actorAnimationHoldFlags & 0x02) == 0) {
+		(_state.actorAnimationHoldFlags & kScoobyActorMask) == 0) {
 		return true;
 	}
 

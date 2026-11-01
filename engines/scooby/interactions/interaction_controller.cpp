@@ -89,11 +89,11 @@ void InteractionController::chooseRandomInteractionAnimation() {
 
 	// Ghidra 0x000020FC-0x0000211F: exact position two mutates shared state to zero. Exact position three
 	// substitutes two only in the local calculation; every other signed word passes through unchanged.
-	if (_state.actorPositionIndices[0] == 2) {
-		_state.actorPositionIndices[0] = 0;
+	if (_state.actorPositionIndices[kShaggyActorSlot] == 2) {
+		_state.actorPositionIndices[kShaggyActorSlot] = 0;
 	}
 
-	int16 positionIndex = _state.actorPositionIndices[0];
+	int16 positionIndex = _state.actorPositionIndices[kShaggyActorSlot];
 	if (positionIndex == 3) {
 		positionIndex = 2;
 	}
@@ -101,7 +101,7 @@ void InteractionController::chooseRandomInteractionAnimation() {
 	// Ghidra 0x00002120-0x00002135: shift and add with word wrapping, publish actor zero's descriptor-
 	// relative animation offset, then request its restart while preserving every other slot.
 	int16 positionAnimationOffset = static_cast<int16>(positionIndex << 2);
-	_state.actorAnimationOffsets[0] =
+	_state.actorAnimationOffsets[kShaggyActorSlot] =
 		static_cast<int16>(positionAnimationOffset + randomAnimationOffset + 0x24);
 	_state.actorAnimationRestartFlags |= kActorZeroRestartMask;
 

@@ -107,8 +107,8 @@ void RoomVBlankHandler::updateWalkAreaOverlay() {
 
 	const int roomWidth = _state.roomWidthTiles * 8;
 	const int roomHeight = _state.roomHeightTiles * 8;
-	const int shaggyX = static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16);
-	const int shaggyY = static_cast<int16>(_state.actorYFixedCoordinates[0] >> 16);
+	const int shaggyX = static_cast<int16>(_state.actorXFixedCoordinates[kShaggyActorSlot] >> 16);
+	const int shaggyY = static_cast<int16>(_state.actorYFixedCoordinates[kShaggyActorSlot] >> 16);
 	const bool shaggyInRoom = shaggyX >= 0 && shaggyY >= 0 && shaggyX < roomWidth && shaggyY < roomHeight;
 	bool rebuildRoom = _walkAreaScene != _state.activeRoomScene.get() || _walkAreaRoomId != _state.roomId ||
 					   _walkAreaRoom.size() != static_cast<size_t>(roomWidth * roomHeight);

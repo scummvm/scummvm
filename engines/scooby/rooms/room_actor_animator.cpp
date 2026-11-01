@@ -67,13 +67,13 @@ void RoomActorAnimator::updateActorAnimationFrames() {
 }
 
 void RoomActorAnimator::coupleTransitionAnimation() {
-	if ((_state.transitionFlags & kTransitionMask) == 0 || (_state.actorAnimationRestartFlags & 0x01) == 0) {
+	if ((_state.transitionFlags & kTransitionMask) == 0 || (_state.actorAnimationRestartFlags & kShaggyActorMask) == 0) {
 		return;
 	}
 
-	_state.actorAnimationDelays[2] = _state.actorAnimationDelays[0];
+	_state.actorAnimationDelays[2] = _state.actorAnimationDelays[kShaggyActorSlot];
 	_state.actorAnimationOffsets[2] =
-		kTransitionAnimationByOffset[static_cast<size_t>(static_cast<uint16>(_state.actorAnimationOffsets[0]))];
+		kTransitionAnimationByOffset[static_cast<size_t>(static_cast<uint16>(_state.actorAnimationOffsets[kShaggyActorSlot]))];
 	_state.actorAnimationRestartFlags |= 0x04;
 }
 
@@ -288,7 +288,7 @@ bool RoomActorAnimator::canConvertCompactFrame(int actor) const {
 	}
 
 	uint8 transitionActorMask = static_cast<uint8>(1 << _state.transitionActorIndex);
-	return (_state.actorTransitionFrameReadyFlags & 0x01) != 0 &&
+	return (_state.actorTransitionFrameReadyFlags & kShaggyActorMask) != 0 &&
 		   (_state.actorTransitionFrameReadyFlags & transitionActorMask) != 0;
 }
 
@@ -296,21 +296,21 @@ void RoomActorAnimator::publishTransitionPair() {
 	uint16 transitionActor = _state.transitionActorIndex;
 	uint8 transitionActorMask = static_cast<uint8>(1 << transitionActor);
 	if ((_state.roomBehaviorFlags & kTransitionMask) == 0 ||
-		(_state.actorTransitionFrameReadyFlags & 0x01) == 0 ||
+		(_state.actorTransitionFrameReadyFlags & kShaggyActorMask) == 0 ||
 		(_state.actorTransitionFrameReadyFlags & transitionActorMask) == 0) {
 		return;
 	}
 
 	_state.actorTransitionFrameReadyFlags = 0;
-	int frameDataOffset = _state.actorAnimationDescriptorOffsets[0] + _state.actorSelectedFrameOffsets[0];
-	int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16);
-	int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[0] >> 16);
+	int frameDataOffset = _state.actorAnimationDescriptorOffsets[kShaggyActorSlot] + _state.actorSelectedFrameOffsets[kShaggyActorSlot];
+	int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[kShaggyActorSlot] >> 16);
+	int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[kShaggyActorSlot] >> 16);
 	int16 pairedX = static_cast<int16>(
 		actorX - scaleTransitionOffset(_rom.readInt16(frameDataOffset + 14),
-									   _state.actorHorizontalScaleFactors[0]));
+									   _state.actorHorizontalScaleFactors[kShaggyActorSlot]));
 	int16 pairedY = static_cast<int16>(
 		actorY - scaleTransitionOffset(_rom.readInt16(frameDataOffset + 16),
-									   _state.actorVerticalScaleFactors[0]));
+									   _state.actorVerticalScaleFactors[kShaggyActorSlot]));
 	_state.actorXFixedCoordinates[transitionActor] =
 		replaceIntegerCoordinate(_state.actorXFixedCoordinates[transitionActor], pairedX);
 	_state.actorYFixedCoordinates[transitionActor] =

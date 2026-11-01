@@ -1061,7 +1061,7 @@ void RoomActorUpdater::updateActorPrioritiesAndScales() {
 	updateActorPriority(kScoobyActorSlot);
 	if ((_state.transitionFlags & kTransitionCompanionCopyMask) != 0) {
 		_state.actorHighPriorityFlags = static_cast<uint8>((_state.actorHighPriorityFlags & 0xF0) |
-														   0x03);
+														   kShaggyAndScoobyActorMask);
 		_state.actorXFixedCoordinates[2] = _state.actorXFixedCoordinates[kShaggyActorSlot];
 		_state.actorYFixedCoordinates[2] = _state.actorYFixedCoordinates[kShaggyActorSlot];
 		if (getIntegerCoordinate(_state.actorXFixedCoordinates[kShaggyActorSlot]) >= 0xF3) {
@@ -1183,7 +1183,7 @@ void RoomActorUpdater::advanceDynamicActorMovement(int actor) {
 	int16 actorX = getIntegerCoordinate(_state.actorXFixedCoordinates[actor]);
 	if (actorX != targetX) {
 		int32 targetFixedX = composePackedTargetCoordinate(_state.actorTargetXCoordinates, actor,
-														   static_cast<uint16>(_state.actorTargetYCoordinates[0]));
+														   static_cast<uint16>(_state.actorTargetYCoordinates[kShaggyActorSlot]));
 		if (actorX < targetX) {
 			_state.actorXFixedCoordinates[actor] =
 				_state.actorXFixedCoordinates[actor] + _state.roomObjectActorHorizontalSteps[movementIndex];
@@ -1208,7 +1208,7 @@ void RoomActorUpdater::advanceDynamicActorMovement(int actor) {
 	int32 targetFixedY = composePackedTargetCoordinate(_state.actorTargetYCoordinates, actor,
 													   static_cast<uint16>(static_cast<
 																			   uint32>(
-																			   _state.actorPathStreamOffsets[0]) >>
+																			   _state.actorPathStreamOffsets[kShaggyActorSlot]) >>
 																		   16));
 	if (actorY < targetY) {
 		_state.actorYFixedCoordinates[actor] =

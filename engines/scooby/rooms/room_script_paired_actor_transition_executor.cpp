@@ -29,7 +29,7 @@ void RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction15() {
 		// actor zero reaches a hold command. Room VBlank remains asynchronous on the original, so service the
 		// installed callback before each managed continuation.
 		_updateActorAnimationFrames();
-		if ((_state.actorAnimationHoldFlags & 0x01) != 0) {
+		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) != 0) {
 			break;
 		}
 

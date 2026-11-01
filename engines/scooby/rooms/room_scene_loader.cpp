@@ -225,17 +225,17 @@ void RoomSceneLoader::loadRoomScene() {
 		int16 initialX = static_cast<int16>(_rom.readInt16(initialPositionOffset) << 3);
 		int16 initialY = static_cast<int16>(
 			_rom.readInt16(initialPositionOffset + static_cast<int>(sizeof(uint16))) << 3);
-		_state.actorXFixedCoordinates[0] = (_state.actorXFixedCoordinates[0] & 0xFFFF) | (initialX << 16);
-		_state.actorXFixedCoordinates[1] = (_state.actorXFixedCoordinates[1] & 0xFFFF) | (initialX << 16);
-		_state.actorYFixedCoordinates[0] = (_state.actorYFixedCoordinates[0] & 0xFFFF) | (initialY << 16);
-		_state.actorYFixedCoordinates[1] =
-			(_state.actorYFixedCoordinates[1] & 0xFFFF) | (static_cast<int16>(initialY - 1) << 16);
+		_state.actorXFixedCoordinates[kShaggyActorSlot] = (_state.actorXFixedCoordinates[kShaggyActorSlot] & 0xFFFF) | (initialX << 16);
+		_state.actorXFixedCoordinates[kScoobyActorSlot] = (_state.actorXFixedCoordinates[kScoobyActorSlot] & 0xFFFF) | (initialX << 16);
+		_state.actorYFixedCoordinates[kShaggyActorSlot] = (_state.actorYFixedCoordinates[kShaggyActorSlot] & 0xFFFF) | (initialY << 16);
+		_state.actorYFixedCoordinates[kScoobyActorSlot] =
+			(_state.actorYFixedCoordinates[kScoobyActorSlot] & 0xFFFF) | (static_cast<int16>(initialY - 1) << 16);
 	}
 
 	// Ghidra 0x000078DA-0x00007945: preserve logical word shifts, signed lower clamps, signed viewport-bound
 	// branches, and 16-bit scaling while selecting the initial camera from actor zero.
-	int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16);
-	int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[0] >> 16);
+	int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[kShaggyActorSlot] >> 16);
+	int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[kShaggyActorSlot] >> 16);
 	int16 cameraTileX = static_cast<int16>((static_cast<uint16>(actorX) >> 3) - 16);
 	int16 cameraTileY = static_cast<int16>((static_cast<uint16>(actorY) >> 3) - 10);
 	if (cameraTileX < 0) {

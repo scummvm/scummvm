@@ -67,8 +67,6 @@ public:
 private:
 	static const uint8 kActorAnimationHoldMask = 0x01;
 	static const uint8 kActorGraphicsReadyMask = 0x01;
-	static const uint8 kScoobyActorMask = 0x02;
-	static const int kScoobyActorSlot = 1;
 	static const uint8 kCursorDownMask = 0x02;
 	static const uint8 kCursorLeftMask = 0x04;
 	static const uint8 kCursorRightMask = 0x08;
@@ -77,8 +75,6 @@ private:
 	static const uint8 kDisplayRightInterfaceMask = 0x10;
 	static const uint8 kDisplayTransitionMask = 0x80;
 	static const uint8 kInteractionMenuSuppressionMask = 0x04;
-	static const uint8 kShaggyActorMask = 0x01;
-	static const int kShaggyActorSlot = 0;
 	static const int kLowerInterfaceColumnCount = 10;
 	static const int kLowerInterfaceRowCount = 7;
 	static const int kLowerInterfaceSourceRowByteStride = 0x80;

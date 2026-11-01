@@ -32,14 +32,14 @@ int16 InteractionResolver::findAdjustedCursorInteraction() {
 		static_cast<uint16>(static_cast<int16>(worldX + 8)) >> 3);
 	int16 tileY = static_cast<int16>(
 		static_cast<uint16>(static_cast<int16>(worldY - 8)) >> 3);
-	int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[1] >> 16);
-	int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[1] >> 16);
+	int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[kScoobyActorSlot] >> 16);
+	int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[kScoobyActorSlot] >> 16);
 	int32 episodeDescriptorOffset = _state.activeEpisodeDescriptorOffset;
 	int shapeOffsetTableOffset = static_cast<int>(
 		_rom.readUInt32(episodeDescriptorOffset + kEpisodeRoomShapeOffsetTableField));
 	int shapeDataOffset = static_cast<int>(_rom.readUInt32(episodeDescriptorOffset + kEpisodeRoomShapeDataField));
 	int16 selectedInteraction = 0;
-	if ((_state.actorVisibilityBlockFlags & 0x02) == 0 && (_state.activeActorFlags & 0x02) != 0 &&
+	if ((_state.actorVisibilityBlockFlags & kScoobyActorMask) == 0 && (_state.activeActorFlags & kScoobyActorMask) != 0 &&
 		worldX <= static_cast<int16>(actorX + _rom.readInt16(0x3259A)) &&
 		worldX >= static_cast<int16>(actorX - _rom.readInt16(0x32552)) &&
 		worldY <= static_cast<int16>(actorY + _rom.readInt16(0x3250A)) &&
@@ -69,9 +69,9 @@ int16 InteractionResolver::findAdjustedCursorInteraction() {
 
 int16 InteractionResolver::findAutomaticInteraction() {
 	int16 tileX = static_cast<int16>(
-		static_cast<uint16>(_state.actorXFixedCoordinates[0] >> 16) >> 3);
+		static_cast<uint16>(_state.actorXFixedCoordinates[kShaggyActorSlot] >> 16) >> 3);
 	int16 tileY = static_cast<int16>(
-		static_cast<uint16>(_state.actorYFixedCoordinates[0] >> 16) >> 3);
+		static_cast<uint16>(_state.actorYFixedCoordinates[kShaggyActorSlot] >> 16) >> 3);
 	int32 episodeDescriptorOffset = _state.activeEpisodeDescriptorOffset;
 	int shapeOffsetTableOffset = static_cast<int>(
 		_rom.readUInt32(episodeDescriptorOffset + kEpisodeRoomShapeOffsetTableField));

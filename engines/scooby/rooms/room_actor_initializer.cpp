@@ -27,7 +27,7 @@ namespace Scooby {
 void RoomActorInitializer::initializeRoomActors() {
 	// Ghidra 0x00007A8C-0x00007AAF: retain only built-in visibility gates, clear path/loop state, seed ambient
 	// movement timing, and clear interaction bit five without disturbing the other seven bits.
-	_state.actorVisibilityBlockFlags &= 0x03;
+	_state.actorVisibilityBlockFlags &= kShaggyAndScoobyActorMask;
 	_state.actorAnimationLoopExitFlags = 0;
 	_state.actorPathActiveFlags = 0;
 	_state.randomMoveTimer = 100;
@@ -40,22 +40,22 @@ void RoomActorInitializer::initializeRoomActors() {
 	// Ghidra 0x00007AC6-0x00007ADD: clear directional latches, preserve dynamic movement bits, and seed the
 	// lead actor's automatic idle-animation countdown.
 	_state.shaggyActorWalkingAnimationLatchFlags = 0;
-	_state.actorMovementFlags &= 0xFC;
+	_state.actorMovementFlags &= static_cast<uint8>(~kShaggyAndScoobyActorMask);
 	_state.shaggyActorIdleAnimationTimer = 300;
 
 	// Ghidra 0x00007ADE-0x00007B0D: derive both built-in steady offsets from slot zero's signed position.
 	// Interaction bit seven deliberately leaves slot one's previous animation offset unchanged.
-	_state.actorAnimationOffsets[0] = static_cast<int16>(_state.actorPositionIndices[0] + 4);
+	_state.actorAnimationOffsets[kShaggyActorSlot] = static_cast<int16>(_state.actorPositionIndices[kShaggyActorSlot] + 4);
 	if ((_state.interactionFlags & 0x80) == 0) {
-		_state.actorAnimationOffsets[1] = static_cast<int16>(_state.actorPositionIndices[0] + 4);
+		_state.actorAnimationOffsets[kScoobyActorSlot] = static_cast<int16>(_state.actorPositionIndices[kShaggyActorSlot] + 4);
 	}
 
 	// Ghidra 0x00007B0E-0x00007B41: clear position updates, seed all three local masks for slots zero and one,
 	// and begin the inclusive object-table scan with dynamic actor slot two.
 	_state.actorPositionUpdateFlags = 0;
-	uint8 activeActorFlags = 0x03;
-	uint8 animationRestartFlags = 0x03;
-	uint8 compactFrameFlags = 0x03;
+	uint8 activeActorFlags = kShaggyAndScoobyActorMask;
+	uint8 animationRestartFlags = kShaggyAndScoobyActorMask;
+	uint8 compactFrameFlags = kShaggyAndScoobyActorMask;
 	int actorSlot = kDynamicActorFirstSlot;
 
 	for (size_t objectIndex = 0; objectIndex < _state.roomObjects.size(); ++objectIndex) {
@@ -115,7 +115,7 @@ void RoomActorInitializer::initializeRoomActors() {
 	_state.actorTileUploadPendingFlags = 0;
 	_state.actorCompactConversionPendingFlags = 0;
 	if ((_state.interactionFlags & 0x80) != 0) {
-		_state.actorVisibilityBlockFlags |= 0x02;
+		_state.actorVisibilityBlockFlags |= kScoobyActorMask;
 	}
 }
 } // namespace Scooby

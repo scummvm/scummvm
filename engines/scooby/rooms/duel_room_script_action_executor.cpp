@@ -69,13 +69,13 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 	// graphics-ready back edge. The original loop has no explicit retrace call but relies on asynchronous
 	// room VBlank publication, so service one callback and clocked host frame before each continuation.
 	_state.actorAnimationDescriptorOffsets[kDuelFirstActorSlot] = kDuelFirstActorDescriptorOffset;
-	_state.actorCompactFrameFlags &= 0xFE;
+	_state.actorCompactFrameFlags &= static_cast<uint8>(~kShaggyActorMask);
 	_state.actorAnimationOffsets[kDuelFirstActorSlot] = 2;
-	_state.actorAnimationRestartFlags |= 0x01;
+	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	_state.actorAnimationDelays[kDuelFirstActorSlot] = -1;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorGraphicsReadyFlags & 0x01) != 0) {
+		if ((_state.actorGraphicsReadyFlags & kShaggyActorMask) != 0) {
 			break;
 		}
 
@@ -261,7 +261,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 		// combine both duel-state and active-low controller turn inputs, clamp momentum after a facing
 		// change, and restart actor zero.
 		if ((_duelKnockback[kDuelFirstActor] != 0 || _duelMomentum[kDuelFirstActor] != 0) &&
-			(_state.actorAnimationHoldFlags & 0x01) != 0) {
+			(_state.actorAnimationHoldFlags & kShaggyActorMask) != 0) {
 			int16 candidateFacing = _state.actorAnimationOffsets[kDuelFirstActorSlot];
 			if ((_state.duelStateFlags & 0x02) != 0) {
 				candidateFacing++;
@@ -287,7 +287,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 				}
 
 				_state.actorAnimationOffsets[kDuelFirstActorSlot] = candidateFacing;
-				_state.actorAnimationRestartFlags |= 0x01;
+				_state.actorAnimationRestartFlags |= kShaggyActorMask;
 			}
 		}
 
@@ -365,7 +365,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 					_duelPreviousYCoordinates[kDuelFirstActor]);
 				_state.actorAnimationOffsets[kDuelFirstActorSlot] = _duelPreviousFacings[kDuelFirstActor];
 				_state.actorAnimationDelays[kDuelFirstActorSlot] = -1;
-				_state.actorAnimationRestartFlags |= 0x01;
+				_state.actorAnimationRestartFlags |= kShaggyActorMask;
 			}
 
 			if ((_duelCollisionFlags & 0x02) != 0) {
@@ -424,7 +424,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 	_state.actorPositionIndices[kDuelFirstActorSlot] = savedFirstActorPositionIndex;
 	_state.interactionFlags &= 0xBF;
 	_state.actorAnimationDescriptorOffsets[kDuelFirstActorSlot] = 0x32700;
-	_state.actorCompactFrameFlags |= 0x01;
+	_state.actorCompactFrameFlags |= kShaggyActorMask;
 	_state.duelStateFlags &= 0xFE;
 	_state.roomBehaviorFlags &= 0xFB;
 }

@@ -299,16 +299,16 @@ bool SessionController::loadRoomObjectTable() {
 void SessionController::initializeRoomRuntimeState() {
 	// Ghidra 0x0000801A-0x00008039: bind the first two actor slots to the shape-one and shape-two
 	// animation descriptors, then reset their selected descriptor-relative frame offsets.
-	_state.actorAnimationDescriptorOffsets[0] = 0x32700;
-	_state.actorAnimationDescriptorOffsets[1] = 0x642D0;
-	_state.actorSelectedFrameOffsets[0] = 0;
-	_state.actorSelectedFrameOffsets[1] = 0;
+	_state.actorAnimationDescriptorOffsets[kShaggyActorSlot] = 0x32700;
+	_state.actorAnimationDescriptorOffsets[kScoobyActorSlot] = 0x642D0;
+	_state.actorSelectedFrameOffsets[kShaggyActorSlot] = 0;
+	_state.actorSelectedFrameOffsets[kScoobyActorSlot] = 0;
 
 	// Ghidra 0x0000803A-0x0000807B: enable and restart the first two compact-frame actors, clear all
 	// pending frame, movement, priority, and visibility state, and omit write-only byte 0xFF0AC8.
-	_state.activeActorFlags = 0x03;
-	_state.actorAnimationRestartFlags = 0x03;
-	_state.actorCompactFrameFlags = 0x03;
+	_state.activeActorFlags = kShaggyAndScoobyActorMask;
+	_state.actorAnimationRestartFlags = kShaggyAndScoobyActorMask;
+	_state.actorCompactFrameFlags = kShaggyAndScoobyActorMask;
 	_state.actorTileUploadPendingFlags = 0;
 	_state.actorMovementFlags = 0;
 	_state.actorCompactConversionPendingFlags = 0;
@@ -319,8 +319,8 @@ void SessionController::initializeRoomRuntimeState() {
 	// Ghidra 0x0000807C-0x000080C7: select animation offset four for slots zero and one, zero the other
 	// four animation offsets, and clear every actor's authored room-position index.
 	Common::fill(_state.actorAnimationOffsets.begin(), _state.actorAnimationOffsets.end(), 0);
-	_state.actorAnimationOffsets[0] = 4;
-	_state.actorAnimationOffsets[1] = 4;
+	_state.actorAnimationOffsets[kShaggyActorSlot] = 4;
+	_state.actorAnimationOffsets[kScoobyActorSlot] = 4;
 	Common::fill(_state.actorPositionIndices.begin(), _state.actorPositionIndices.end(), 0);
 
 	// Ghidra 0x000080C8-0x00008157: make every animation delay immediately ready and replace both
@@ -331,10 +331,10 @@ void SessionController::initializeRoomRuntimeState() {
 
 	// Ghidra 0x00008158-0x0000816F: clear the first two actors' cached horizontal and vertical
 	// interpolation values; later actor slots still carry the process-zeroed values consumed at creation.
-	_state.actorPreviousHorizontalScales[0] = 0;
-	_state.actorPreviousHorizontalScales[1] = 0;
-	_state.actorPreviousVerticalScales[0] = 0;
-	_state.actorPreviousVerticalScales[1] = 0;
+	_state.actorPreviousHorizontalScales[kShaggyActorSlot] = 0;
+	_state.actorPreviousHorizontalScales[kScoobyActorSlot] = 0;
+	_state.actorPreviousVerticalScales[kShaggyActorSlot] = 0;
+	_state.actorPreviousVerticalScales[kScoobyActorSlot] = 0;
 
 	// Ghidra 0x00008170-0x0000818F: visit every decoded object. The fixed-position-bit branch either
 	// executes a literal NOP or converges immediately, so the complete loop has no managed state effect.

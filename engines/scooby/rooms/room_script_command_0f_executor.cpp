@@ -55,7 +55,7 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 					return;
 				}
 
-				_state.actorPositionIndices[0] = resolveRoomObject(_rom.readUInt16(commandOffset + 4)).positionIndex;
+				_state.actorPositionIndices[kShaggyActorSlot] = resolveRoomObject(_rom.readUInt16(commandOffset + 4)).positionIndex;
 				break;
 			case 2:
 				// Ghidra 0x00004D38-0x00004D63: companion direct movement remains distinct, then actor slot
@@ -68,7 +68,7 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 					return;
 				}
 
-				_state.actorPositionIndices[1] = resolveRoomObject(_rom.readUInt16(commandOffset + 4)).positionIndex;
+				_state.actorPositionIndices[kScoobyActorSlot] = resolveRoomObject(_rom.readUInt16(commandOffset + 4)).positionIndex;
 				break;
 			default:
 				// Ghidra 0x00004D64-0x00004D79: every other masked target preserves argument order, movement
@@ -91,12 +91,12 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 bool RoomScriptCommand0FExecutor::tryResolveTargetAnimationDescriptor(uint16 targetIdentity,
 																	  int &descriptorOffset) {
 	if (targetIdentity == 1) {
-		descriptorOffset = _state.actorAnimationDescriptorOffsets[0];
+		descriptorOffset = _state.actorAnimationDescriptorOffsets[kShaggyActorSlot];
 		return true;
 	}
 
 	if (targetIdentity == 2) {
-		descriptorOffset = _state.actorAnimationDescriptorOffsets[1];
+		descriptorOffset = _state.actorAnimationDescriptorOffsets[kScoobyActorSlot];
 		return true;
 	}
 
@@ -113,15 +113,15 @@ RoomScriptCommand0FExecutor::RelativeDestination RoomScriptCommand0FExecutor::re
 		// Ghidra 0x00004C7A-0x00004C97: source one adds the relative X with word wrap and retains actor
 		// zero's current integer Y without introducing a separate vertical command offset.
 		return RelativeDestination(
-			static_cast<int16>(relativeX + getIntegerCoordinate(_state.actorXFixedCoordinates[0])),
-			getIntegerCoordinate(_state.actorYFixedCoordinates[0]));
+			static_cast<int16>(relativeX + getIntegerCoordinate(_state.actorXFixedCoordinates[kShaggyActorSlot])),
+			getIntegerCoordinate(_state.actorYFixedCoordinates[kShaggyActorSlot]));
 	}
 
 	if (sourceIdentity == 2) {
 		// Ghidra 0x00004C98-0x00004CAD: source two repeats the independent actor-one coordinate branch.
 		return RelativeDestination(
-			static_cast<int16>(relativeX + getIntegerCoordinate(_state.actorXFixedCoordinates[1])),
-			getIntegerCoordinate(_state.actorYFixedCoordinates[1]));
+			static_cast<int16>(relativeX + getIntegerCoordinate(_state.actorXFixedCoordinates[kScoobyActorSlot])),
+			getIntegerCoordinate(_state.actorYFixedCoordinates[kScoobyActorSlot]));
 	}
 
 	// Ghidra 0x00004CAE-0x00004CCD: every other source retains wrapped object-table selection, adds its

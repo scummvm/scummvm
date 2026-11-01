@@ -222,11 +222,11 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 		case 1:
 			// Ghidra 0x00002B5E-0x00002B75: identity one selects actor slot zero and joins the
 			// restart-pending loop without passing through the identity-two comparison.
-			_state.actorAnimationOffsets[0] = animationOffset;
-			_state.actorAnimationRestartFlags |= 0x01;
+			_state.actorAnimationOffsets[kShaggyActorSlot] = animationOffset;
+			_state.actorAnimationRestartFlags |= kShaggyActorMask;
 			while (true) {
 				_updateActorAnimationFrames();
-				if ((_state.actorAnimationRestartFlags & 0x01) == 0) {
+				if ((_state.actorAnimationRestartFlags & kShaggyActorMask) == 0) {
 					break;
 				}
 
@@ -239,11 +239,11 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 		case 2:
 			// Ghidra 0x00002B76-0x00002B9F: identity two selects actor slot one; both outcomes of
 			// the restart-bit test remain in the loop before the common epilogue.
-			_state.actorAnimationOffsets[1] = animationOffset;
-			_state.actorAnimationRestartFlags |= 0x02;
+			_state.actorAnimationOffsets[kScoobyActorSlot] = animationOffset;
+			_state.actorAnimationRestartFlags |= kScoobyActorMask;
 			while (true) {
 				_updateActorAnimationFrames();
-				if ((_state.actorAnimationRestartFlags & 0x02) == 0) {
+				if ((_state.actorAnimationRestartFlags & kScoobyActorMask) == 0) {
 					break;
 				}
 
@@ -409,7 +409,7 @@ void RoomScriptCommandExecutor::scriptCommand11ChangeRoom(int mode) {
 		// Ghidra 0x00004F12-0x00004F21: replace the room identity and lead actor's signed position index
 		// independently from the coordinate-table offset between them in the record.
 		_state.roomId = _rom.readInt16(commandOffset + 2);
-		_state.actorPositionIndices[0] = _rom.readInt16(commandOffset + 6);
+		_state.actorPositionIndices[kShaggyActorSlot] = _rom.readInt16(commandOffset + 6);
 
 		// Ghidra 0x00004F22-0x00004F39: save every display flag, clear only the room-update gate during
 		// the complete callback-aware fade, and restore the exact byte before either continuation.
@@ -591,7 +591,7 @@ void RoomScriptCommandExecutor::scriptCommand18ChangeRoomNoFade(int mode) {
 		// Ghidra 0x00004EE8-0x00004EF7: replace the room identity and lead actor's signed position index
 		// independently from the coordinate-table offset between them in the command record.
 		_state.roomId = _rom.readInt16(commandOffset + 2);
-		_state.actorPositionIndices[0] = _rom.readInt16(commandOffset + 6);
+		_state.actorPositionIndices[kShaggyActorSlot] = _rom.readInt16(commandOffset + 6);
 
 		// Ghidra 0x00004EF8-0x00004F07: scale the coordinate index by four with word wrapping, publish
 		// the signed initial byte offset, and retain the separate room-state reset function boundary.

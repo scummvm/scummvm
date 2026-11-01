@@ -308,7 +308,7 @@ void RoomScriptActionExecutor::scriptAction09HideScoobyDoo() {
 	// Ghidra 0x00004496-0x0000449D: set only actor-slot-one exclusion mode.
 	_state.interactionFlags |= 0x80;
 	// Ghidra 0x0000449E-0x000044A5: set only actor slot one's visibility block.
-	_state.actorVisibilityBlockFlags |= 0x02;
+	_state.actorVisibilityBlockFlags |= kScoobyActorMask;
 	// Ghidra 0x000044A6-0x000044A7: return with every other flag preserved.
 }
 
@@ -319,7 +319,7 @@ void RoomScriptActionExecutor::scriptAction0AShowScoobyDoo() {
 	// Ghidra 0x000044A8-0x000044AF: clear only actor-slot-one exclusion mode.
 	_state.interactionFlags &= 0x7F;
 	// Ghidra 0x000044B0-0x000044B7: clear only actor slot one's visibility block.
-	_state.actorVisibilityBlockFlags &= 0xFD;
+	_state.actorVisibilityBlockFlags &= static_cast<uint8>(~kScoobyActorMask);
 	// Ghidra 0x000044B8-0x000044B9: return with every other flag preserved.
 }
 
@@ -329,7 +329,7 @@ void RoomScriptActionExecutor::scriptAction0AShowScoobyDoo() {
 void RoomScriptActionExecutor::scriptAction0BScoobyDooStartAnimation() {
 	// Ghidra 0x00002FFC-0x00003003: load slot one's signed position index and add four with word wrap.
 	// Ghidra 0x00003004-0x00003009: replace slot one's raw descriptor-relative animation offset.
-	_state.actorAnimationOffsets[1] = static_cast<int16>(_state.actorPositionIndices[1] + 4);
+	_state.actorAnimationOffsets[kScoobyActorSlot] = static_cast<int16>(_state.actorPositionIndices[kScoobyActorSlot] + 4);
 
 	// Ghidra 0x0000300A-0x00003011: set only the actor-slot update suspension flag.
 	_state.videoFlags |= 0x04;
@@ -469,7 +469,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction21() {
 	}
 
 	// Ghidra 0x00004198-0x000041A1: request actor zero's one-shot animation-loop exit and return.
-	_state.actorAnimationLoopExitFlags |= 0x01;
+	_state.actorAnimationLoopExitFlags |= kShaggyActorMask;
 }
 
 // Selects actor zero's position-dependent animation and waits for its graphics publication.
@@ -477,22 +477,22 @@ void RoomScriptActionExecutor::executeRoomScriptAction21() {
 // Ghidra: executeRoomScriptAction22 (0x00004120).
 void RoomScriptActionExecutor::executeRoomScriptAction22() {
 	// Ghidra 0x00004120-0x00004131: retain both signed-X branches around the 0x0114 threshold.
-	if (static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16) < 0x0114) {
-		_state.actorAnimationOffsets[0] = 0x0049;
+	if (static_cast<int16>(_state.actorXFixedCoordinates[kShaggyActorSlot] >> 16) < 0x0114) {
+		_state.actorAnimationOffsets[kShaggyActorSlot] = 0x0049;
 	} else {
-		_state.actorAnimationOffsets[0] = 0x004A;
+		_state.actorAnimationOffsets[kShaggyActorSlot] = 0x004A;
 	}
 
 	// Ghidra 0x00004132-0x00004147: publish the selection, force its delay ready, and request restart.
-	_state.actorAnimationDelays[0] = -1;
-	_state.actorAnimationRestartFlags |= 0x01;
+	_state.actorAnimationDelays[kShaggyActorSlot] = -1;
+	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 
 	// Ghidra 0x00004148-0x00004157: advance at least once and retain the graphics-ready back edge.
 	// Sprite publication occurs asynchronously during the original room interrupt, so service the installed
 	// room callback and one clocked host frame before each managed continuation.
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorGraphicsReadyFlags & 0x01) != 0) {
+		if ((_state.actorGraphicsReadyFlags & kShaggyActorMask) != 0) {
 			break;
 		}
 
@@ -531,7 +531,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction25() {
 		// Ghidra 0x00004100-0x00004109: return when slot zero's path is inactive; otherwise retain the
 		// complete back edge. The original relies on asynchronous room interrupts to update path state,
 		// so service the installed room callback and one clocked host frame before each continuation.
-		if ((_state.actorPathActiveFlags & 0x01) == 0) {
+		if ((_state.actorPathActiveFlags & kShaggyActorMask) == 0) {
 			break;
 		}
 
@@ -551,7 +551,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction26() {
 	_state.roomObjects[0].scriptStateWords[0] = 0;
 
 	// Ghidra 0x000040E8-0x000040F1: preserve the active path branch and return with that zero result.
-	if ((_state.actorPathActiveFlags & 0x01) != 0) {
+	if ((_state.actorPathActiveFlags & kShaggyActorMask) != 0) {
 		return;
 	}
 
@@ -591,19 +591,19 @@ void RoomScriptActionExecutor::executeRoomScriptAction2B() {
 	_state.transitionFlags |= 0x10;
 
 	// Ghidra 0x00003EDA-0x00003EE1: select direct rather than compact frame decoding for actor zero.
-	_state.actorCompactFrameFlags &= 0xFE;
+	_state.actorCompactFrameFlags &= static_cast<uint8>(~kShaggyActorMask);
 
 	// Ghidra 0x00003EE2-0x00003EF3: install the alternate descriptor and select animation 0x001E.
-	_state.actorAnimationDescriptorOffsets[0] = 0xB5D02;
-	_state.actorAnimationOffsets[0] = 0x1E;
+	_state.actorAnimationDescriptorOffsets[kShaggyActorSlot] = 0xB5D02;
+	_state.actorAnimationOffsets[kShaggyActorSlot] = 0x1E;
 
 	// Ghidra 0x00003EF4-0x00003F0B: restart actor zero, update every animation stream, and retain the
 	// backward branch until sprite publication sets actor zero's graphics-ready bit. The original loop
 	// relies on asynchronous room VBlank interrupts; service its callback and clock on each continuation.
-	_state.actorAnimationRestartFlags |= 0x01;
+	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorGraphicsReadyFlags & 0x01) != 0) {
+		if ((_state.actorGraphicsReadyFlags & kShaggyActorMask) != 0) {
 			break;
 		}
 
@@ -621,10 +621,10 @@ void RoomScriptActionExecutor::executeRoomScriptAction2B() {
 // Ghidra: executeRoomScriptAction2C (0x00003F16).
 void RoomScriptActionExecutor::executeRoomScriptAction2C() {
 	// Ghidra 0x00003F16-0x00003F1D: restore compact-frame conversion for actor slot zero.
-	_state.actorCompactFrameFlags |= 0x01;
+	_state.actorCompactFrameFlags |= kShaggyActorMask;
 
 	// Ghidra 0x00003F1E-0x00003F27: restore actor zero's normal animation descriptor.
-	_state.actorAnimationDescriptorOffsets[0] = 0x32700;
+	_state.actorAnimationDescriptorOffsets[kShaggyActorSlot] = 0x32700;
 
 	// Ghidra 0x00003F28-0x00003F2F: leave the alternate actor-zero transition mode.
 	_state.transitionFlags &= 0xEF;
@@ -705,27 +705,27 @@ void RoomScriptActionExecutor::executeRoomScriptAction35() {
 	// Ghidra 0x0000301E-0x0000302F: select actor-zero animation 0x45 and wait until its prior decoded
 	// frame is published. The original room VBlank remains active during the busy loop; invoke its callback
 	// and clocked host frame once for each managed continuation instead of discarding the wait branch.
-	_state.actorAnimationOffsets[0] = 0x45;
-	while ((_state.actorTileUploadPendingFlags & 0x01) != 0) {
+	_state.actorAnimationOffsets[kShaggyActorSlot] = 0x45;
+	while ((_state.actorTileUploadPendingFlags & kShaggyActorMask) != 0) {
 		if (!waitForRoomVerticalBlank()) {
 			return;
 		}
 	}
 
 	// Ghidra 0x00003030-0x0000303D: restart actor zero and immediately advance all animation streams.
-	_state.actorAnimationRestartFlags |= 0x01;
+	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	_updateActorAnimationFrames();
 
 	// Ghidra 0x0000303E-0x0000304D: replace only actor zero's signed integer coordinate halves,
 	// preserving both fractional low words.
-	_state.actorXFixedCoordinates[0] = (_state.actorXFixedCoordinates[0] & 0x0000FFFF) | (0x0128 << 16);
-	_state.actorYFixedCoordinates[0] = (_state.actorYFixedCoordinates[0] & 0x0000FFFF) | (0x0040 << 16);
+	_state.actorXFixedCoordinates[kShaggyActorSlot] = (_state.actorXFixedCoordinates[kShaggyActorSlot] & 0x0000FFFF) | (0x0128 << 16);
+	_state.actorYFixedCoordinates[kShaggyActorSlot] = (_state.actorYFixedCoordinates[kShaggyActorSlot] & 0x0000FFFF) | (0x0040 << 16);
 
 	// Ghidra 0x0000304E-0x00003071: advance until actor zero holds. Interaction bit seven bypasses
 	// actor-one traversal waiting; otherwise a still-active path returns through the complete update loop.
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorAnimationHoldFlags & 0x01) == 0) {
+		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) == 0) {
 			if (!waitForRoomVerticalBlank()) {
 				return;
 			}
@@ -737,7 +737,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction35() {
 			break;
 		}
 
-		if ((_state.actorPathActiveFlags & 0x02) == 0) {
+		if ((_state.actorPathActiveFlags & kScoobyActorMask) == 0) {
 			break;
 		}
 
@@ -759,7 +759,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction35() {
 	_updateActorAnimationFrames();
 
 	// Ghidra 0x0000309C-0x000030A5: block visibility for actors zero and one, then return.
-	_state.actorVisibilityBlockFlags |= 0x03;
+	_state.actorVisibilityBlockFlags |= kShaggyAndScoobyActorMask;
 }
 
 // Restores normal actor-slot updates suspended by action 0x0B.
@@ -779,27 +779,27 @@ void RoomScriptActionExecutor::executeRoomScriptAction37() {
 	// Ghidra 0x000030A6-0x000030B7: select actor-zero animation 0x47 and wait until its prior decoded
 	// frame is published. The original room VBlank remains active during the busy loop; invoke its callback
 	// and clocked host frame once for each managed continuation instead of discarding the wait branch.
-	_state.actorAnimationOffsets[0] = 0x47;
-	while ((_state.actorTileUploadPendingFlags & 0x01) != 0) {
+	_state.actorAnimationOffsets[kShaggyActorSlot] = 0x47;
+	while ((_state.actorTileUploadPendingFlags & kShaggyActorMask) != 0) {
 		if (!waitForRoomVerticalBlank()) {
 			return;
 		}
 	}
 
 	// Ghidra 0x000030B8-0x000030C5: restart actor zero and immediately advance all animation streams.
-	_state.actorAnimationRestartFlags |= 0x01;
+	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	_updateActorAnimationFrames();
 
 	// Ghidra 0x000030C6-0x000030D5: replace only actor zero's signed integer coordinate halves,
 	// preserving both fractional low words.
-	_state.actorXFixedCoordinates[0] = (_state.actorXFixedCoordinates[0] & 0x0000FFFF) | (0x0058 << 16);
-	_state.actorYFixedCoordinates[0] = (_state.actorYFixedCoordinates[0] & 0x0000FFFF) | (0x0050 << 16);
+	_state.actorXFixedCoordinates[kShaggyActorSlot] = (_state.actorXFixedCoordinates[kShaggyActorSlot] & 0x0000FFFF) | (0x0058 << 16);
+	_state.actorYFixedCoordinates[kShaggyActorSlot] = (_state.actorYFixedCoordinates[kShaggyActorSlot] & 0x0000FFFF) | (0x0050 << 16);
 
 	// Ghidra 0x000030D6-0x000030F9: advance until actor zero holds. Interaction bit seven bypasses
 	// actor-one traversal waiting; otherwise a still-active path returns through the complete update loop.
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorAnimationHoldFlags & 0x01) == 0) {
+		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) == 0) {
 			if (!waitForRoomVerticalBlank()) {
 				return;
 			}
@@ -811,7 +811,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction37() {
 			break;
 		}
 
-		if ((_state.actorPathActiveFlags & 0x02) == 0) {
+		if ((_state.actorPathActiveFlags & kScoobyActorMask) == 0) {
 			break;
 		}
 
@@ -833,7 +833,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction37() {
 	_updateActorAnimationFrames();
 
 	// Ghidra 0x00003124-0x0000312D: block visibility for actors zero and one, then return.
-	_state.actorVisibilityBlockFlags |= 0x03;
+	_state.actorVisibilityBlockFlags |= kShaggyAndScoobyActorMask;
 }
 
 // Disables the low-bit exit gate shared by room-script and dialogue processing.

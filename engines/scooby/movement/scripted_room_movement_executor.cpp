@@ -129,8 +129,8 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 	// Ghidra 0x00005002-0x0000501B: clear stale lead movement and return only when both signed integer
 	// coordinates already equal the requested destination.
 	_state.actorMovementFlags &= static_cast<uint8>(~kShaggyActorMask);
-	if (getIntegerCoordinate(_state.actorXFixedCoordinates[0]) == targetX &&
-		getIntegerCoordinate(_state.actorYFixedCoordinates[0]) == targetY) {
+	if (getIntegerCoordinate(_state.actorXFixedCoordinates[kShaggyActorSlot]) == targetX &&
+		getIntegerCoordinate(_state.actorYFixedCoordinates[kShaggyActorSlot]) == targetY) {
 		return true;
 	}
 
@@ -468,7 +468,7 @@ uint16 ScriptedRoomMovementExecutor::classifyShaggyWaypointVisibility() {
 bool ScriptedRoomMovementExecutor::traceShaggyPathToTarget(int16 targetX, int16 targetY) {
 	// Ghidra 0x00005364-0x00005377: stage both complete lead coordinates and preserve the original fallthrough
 	// into the separately owned trace continuation.
-	return tracePathFromStagedOrigin(_state.actorXFixedCoordinates[0], _state.actorYFixedCoordinates[0],
+	return tracePathFromStagedOrigin(_state.actorXFixedCoordinates[kShaggyActorSlot], _state.actorYFixedCoordinates[kShaggyActorSlot],
 									 targetX,
 									 targetY);
 }
@@ -541,8 +541,8 @@ ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::compu
 	int16 targetX, int16 targetY, int16 movementScale) {
 	// Ghidra 0x0000547A-0x0000548D: stage both complete lead coordinates and retain the fallthrough into the
 	// separately owned velocity calculation with target and scale inputs unchanged.
-	return computeMovementVelocityFromStagedOrigin(_state.actorXFixedCoordinates[0],
-												   _state.actorYFixedCoordinates[0],
+	return computeMovementVelocityFromStagedOrigin(_state.actorXFixedCoordinates[kShaggyActorSlot],
+												   _state.actorYFixedCoordinates[kShaggyActorSlot],
 												   targetX, targetY, movementScale);
 }
 
@@ -558,8 +558,8 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 
 	// Ghidra 0x00005592-0x000055AF: install the target, preserve and clear display bit three, then stage
 	// current lead coordinates and calculate this segment's velocity through its separate original owner.
-	_state.actorTargetXCoordinates[0] = targetX;
-	_state.actorTargetYCoordinates[0] = targetY;
+	_state.actorTargetXCoordinates[kShaggyActorSlot] = targetX;
+	_state.actorTargetYCoordinates[kShaggyActorSlot] = targetY;
 	uint8 savedDisplayBit = static_cast<uint8>(_state.displayFlags & 0x08);
 	_state.displayFlags &= static_cast<uint8>(~0x08);
 	VelocityResult velocity = computeShaggyMovementVelocity(targetX, targetY, movementScale);
@@ -567,15 +567,15 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 
 	// Ghidra 0x000055B0-0x000055D9: zero bias uses the authored previous-to-next directional matrix; every
 	// nonzero signed bias wraps with the new position before publishing the selected animation.
-	_state.actorAnimationOffsets[0] =
+	_state.actorAnimationOffsets[kShaggyActorSlot] =
 		animationBias == 0
-			? resolveShaggyWalkingAnimation(_state.actorPositionIndices[0], positionIndex)
+			? resolveShaggyWalkingAnimation(_state.actorPositionIndices[kShaggyActorSlot], positionIndex)
 			: static_cast<int16>(positionIndex + animationBias);
 
 	// Ghidra 0x000055DA-0x00005613: restart immediately, wait for both restart consumption and graphics
 	// publication, then mark lead movement active. Native interrupt-owned progress is serviced per back edge.
-	_state.actorPositionIndices[0] = positionIndex;
-	_state.actorAnimationDelays[0] = -1;
+	_state.actorPositionIndices[kShaggyActorSlot] = positionIndex;
+	_state.actorAnimationDelays[kShaggyActorSlot] = -1;
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	while (true) {
 		_updateActorAnimationFrames();
@@ -607,8 +607,8 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 
 		// Ghidra 0x0000562A-0x00005653: select position plus four, restart at delay -1, and wait only for
 		// restart consumption before continuing to the normal restoration path.
-		_state.actorAnimationOffsets[0] = static_cast<int16>(positionIndex + 4);
-		_state.actorAnimationDelays[0] = -1;
+		_state.actorAnimationOffsets[kShaggyActorSlot] = static_cast<int16>(positionIndex + 4);
+		_state.actorAnimationDelays[kShaggyActorSlot] = -1;
 		_state.actorAnimationRestartFlags |= kShaggyActorMask;
 		while (true) {
 			_updateActorAnimationFrames();
@@ -657,8 +657,8 @@ bool ScriptedRoomMovementExecutor::finishScoobyMovement(int16 targetX, int16 tar
 
 	// Ghidra 0x00005684-0x000056AD: wrap the retained position plus four, restart companion animation at delay
 	// -1, then update at least once and wait only for callback consumption of its restart request.
-	_state.actorAnimationOffsets[1] = static_cast<int16>(result.positionIndex + 4);
-	_state.actorAnimationDelays[1] = -1;
+	_state.actorAnimationOffsets[kScoobyActorSlot] = static_cast<int16>(result.positionIndex + 4);
+	_state.actorAnimationDelays[kScoobyActorSlot] = -1;
 	_state.actorAnimationRestartFlags |= kScoobyActorMask;
 	while (true) {
 		_updateActorAnimationFrames();
@@ -891,7 +891,7 @@ uint16 ScriptedRoomMovementExecutor::classifyScoobyWaypointVisibility() {
 bool ScriptedRoomMovementExecutor::traceScoobyPathToTarget(int16 targetX, int16 targetY) {
 	// Ghidra 0x000059B0-0x000059C7: stage both complete companion coordinates and preserve the original tail
 	// branch into the separately owned trace continuation.
-	return tracePathFromStagedOrigin(_state.actorXFixedCoordinates[1], _state.actorYFixedCoordinates[1],
+	return tracePathFromStagedOrigin(_state.actorXFixedCoordinates[kScoobyActorSlot], _state.actorYFixedCoordinates[kScoobyActorSlot],
 									 targetX,
 									 targetY);
 }
@@ -900,8 +900,8 @@ ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::compu
 	int16 targetX, int16 targetY, int16 movementScale) {
 	// Ghidra 0x000059C8-0x000059DB: stage both complete companion coordinates and retain the fallthrough into
 	// the separately owned velocity calculation with target and scale inputs unchanged.
-	return computeScoobyVelocityFromStagedOrigin(_state.actorXFixedCoordinates[1],
-													_state.actorYFixedCoordinates[1], targetX, targetY,
+	return computeScoobyVelocityFromStagedOrigin(_state.actorXFixedCoordinates[kScoobyActorSlot],
+													_state.actorYFixedCoordinates[kScoobyActorSlot], targetX, targetY,
 													movementScale);
 }
 
@@ -1001,22 +1001,22 @@ MovementResult ScriptedRoomMovementExecutor::moveScoobyActorDirectly(
 
 	// Ghidra 0x00005AE0-0x00005AEF: install the companion target and calculate this segment's three velocity
 	// outputs through the separate original owner.
-	_state.actorTargetXCoordinates[1] = targetX;
-	_state.actorTargetYCoordinates[1] = targetY;
+	_state.actorTargetXCoordinates[kScoobyActorSlot] = targetX;
+	_state.actorTargetYCoordinates[kScoobyActorSlot] = targetY;
 	VelocityResult velocity = computeScoobyMovementVelocity(targetX, targetY, movementScale);
 	int16 positionIndex = velocity.positionIndex;
 
 	// Ghidra 0x00005AF0-0x00005B1F: zero bias uses the authored previous-to-next directional matrix; every
 	// nonzero signed bias wraps with the new position before publishing both animation and position.
-	_state.actorAnimationOffsets[1] =
+	_state.actorAnimationOffsets[kScoobyActorSlot] =
 		animationBias == 0
-			? resolveScoobyWalkingAnimation(_state.actorPositionIndices[1], positionIndex)
+			? resolveScoobyWalkingAnimation(_state.actorPositionIndices[kScoobyActorSlot], positionIndex)
 			: static_cast<int16>(positionIndex + animationBias);
-	_state.actorPositionIndices[1] = positionIndex;
+	_state.actorPositionIndices[kScoobyActorSlot] = positionIndex;
 
 	// Ghidra 0x00005B20-0x00005B4B: restart immediately, update at least once, and wait until restart
 	// consumption and graphics publication are both complete. Service native callback progress per back edge.
-	_state.actorAnimationDelays[1] = -1;
+	_state.actorAnimationDelays[kScoobyActorSlot] = -1;
 	_state.actorAnimationRestartFlags |= kScoobyActorMask;
 	while (true) {
 		_updateActorAnimationFrames();

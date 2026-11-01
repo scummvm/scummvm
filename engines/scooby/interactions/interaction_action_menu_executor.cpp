@@ -306,8 +306,8 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 		}
 
 		_state.interactionFlags &= static_cast<uint8>(~kInteractionAnimationMask);
-		_state.actorAnimationOffsets[0] = static_cast<int16>(_state.actorPositionIndices[0] + 4);
-		_state.actorAnimationRestartFlags |= 0x01;
+		_state.actorAnimationOffsets[kShaggyActorSlot] = static_cast<int16>(_state.actorPositionIndices[kShaggyActorSlot] + 4);
+		_state.actorAnimationRestartFlags |= kShaggyActorMask;
 
 		// Ghidra 0x00001EF6-0x00001F2D: publish the selected state word and its exact signed-length script
 		// window while retaining the independently addressed response pointer.

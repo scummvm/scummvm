@@ -387,7 +387,7 @@ void ActionMenuController::queueRightActionPrompt(int16 mode) {
 void ActionMenuController::commitActionPromptUpdate() {
 	// Ghidra 0x00005CF6-0x00005D01: retain the actor-zero-only pending-upload loop. The original interrupt
 	// advances publication asynchronously, so service one callback-aware clocked frame on each back edge.
-	while ((_state.actorTileUploadPendingFlags & 0x01) != 0) {
+	while ((_state.actorTileUploadPendingFlags & kShaggyActorMask) != 0) {
 		if (!_waitForRoomVerticalBlank()) {
 			return;
 		}

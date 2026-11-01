@@ -50,8 +50,8 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 		// word left by two and masking with three selects original bits 14-15 without consuming other flags.
 		if ((commandFlags & 0x2000) != 0) {
 			int16 temporaryPositionIndex = static_cast<int16>(commandFlags >> 14);
-			previousPositionIndex = _state.actorPositionIndices[0];
-			_state.actorPositionIndices[0] = temporaryPositionIndex;
+			previousPositionIndex = _state.actorPositionIndices[kShaggyActorSlot];
+			_state.actorPositionIndices[kShaggyActorSlot] = temporaryPositionIndex;
 			if (!playShaggyActorTurnAnimation(previousPositionIndex, temporaryPositionIndex)) {
 				return;
 			}
@@ -87,8 +87,8 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 		// position before selecting the reverse matrix entry, then repeat both hold-state waits and restart
 		// the restored position's steady animation. Original D7 restoration has no separate managed state.
 		if ((commandFlags & 0x2000) != 0) {
-			int16 temporaryPositionIndex = _state.actorPositionIndices[0];
-			_state.actorPositionIndices[0] = previousPositionIndex;
+			int16 temporaryPositionIndex = _state.actorPositionIndices[kShaggyActorSlot];
+			_state.actorPositionIndices[kShaggyActorSlot] = previousPositionIndex;
 			if (!playShaggyActorTurnAnimation(temporaryPositionIndex, previousPositionIndex)) {
 				return;
 			}
@@ -108,7 +108,7 @@ void RoomScriptCommand10Executor::generateDialogueMaskTiles(uint8 nonzeroPalette
 
 bool RoomScriptCommand10Executor::playShaggyActorTurnAnimation(int16 previousPositionIndex,
 																  int16 nextPositionIndex) {
-	_state.actorAnimationOffsets[0] =
+	_state.actorAnimationOffsets[kShaggyActorSlot] =
 		resolveShaggyTurnAnimation(previousPositionIndex, nextPositionIndex);
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 
@@ -134,7 +134,7 @@ bool RoomScriptCommand10Executor::playShaggyActorTurnAnimation(int16 previousPos
 		}
 	}
 
-	_state.actorAnimationOffsets[0] = static_cast<int16>(_state.actorPositionIndices[0] + 4);
+	_state.actorAnimationOffsets[kShaggyActorSlot] = static_cast<int16>(_state.actorPositionIndices[kShaggyActorSlot] + 4);
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	return true;
 }

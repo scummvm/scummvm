@@ -56,6 +56,14 @@
 
 namespace Scooby {
 
+// Fixed actor slots. Shaggy, the player-controlled actor, is always slot 0 and Scooby always slot 1; room-object
+// actors occupy slots 2-5. The per-actor flag bytes use bit n for slot n.
+const int kShaggyActorSlot = 0;
+const int kScoobyActorSlot = 1;
+const uint8 kShaggyActorMask = 1 << kShaggyActorSlot;
+const uint8 kScoobyActorMask = 1 << kScoobyActorSlot;
+const uint8 kShaggyAndScoobyActorMask = kShaggyActorMask | kScoobyActorMask;
+
 class RuntimeState {
 public:
 	RuntimeState() {

@@ -143,9 +143,6 @@ public:
 											  int16 animationBias, bool resetMovementPointIndex);
 
 private:
-	static const uint8 kShaggyActorMask = 0x01;
-	static const uint8 kScoobyActorMask = 0x02;
-	static const int kScoobyActorSlot = 1;
 	static const int kRouteWaypointDataOffset = 0x20;
 
 	// Small named replacement for the C# private (short HorizontalStep, short VerticalStep, short PositionIndex)

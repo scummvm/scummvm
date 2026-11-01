@@ -235,8 +235,8 @@ bool RoomMouseController::findWalkInTarget(RuntimeState &state, int16 interactio
 
 	shapeArea = Common::Rect(static_cast<int16>(tiles.left * 8), static_cast<int16>(tiles.top * 8),
 							 static_cast<int16>(tiles.right * 8), static_cast<int16>(tiles.bottom * 8));
-	int shaggyX = integerCoordinate(state.actorXFixedCoordinates[0]);
-	int shaggyY = integerCoordinate(state.actorYFixedCoordinates[0]);
+	int shaggyX = integerCoordinate(state.actorXFixedCoordinates[kShaggyActorSlot]);
+	int shaggyY = integerCoordinate(state.actorYFixedCoordinates[kShaggyActorSlot]);
 	int minimumX = tiles.left * 8 + 4;
 	int maximumX = tiles.right * 8 - 4;
 	int minimumY = tiles.top * 8 + 4;
@@ -317,8 +317,8 @@ ControllerButtons RoomMouseController::stepWalk(RuntimeState &state) {
 		return ControllerButtons::None;
 	}
 
-	int shaggyX = integerCoordinate(state.actorXFixedCoordinates[0]);
-	int shaggyY = integerCoordinate(state.actorYFixedCoordinates[0]);
+	int shaggyX = integerCoordinate(state.actorXFixedCoordinates[kShaggyActorSlot]);
+	int shaggyY = integerCoordinate(state.actorYFixedCoordinates[kShaggyActorSlot]);
 	bool finalWaypoint = false;
 	bool moveX = false;
 	bool moveY = false;
@@ -426,8 +426,8 @@ bool RoomMouseController::planWalkPath(RuntimeState &state) {
 		}
 	}
 
-	const int shaggyX = CLIP<int>(integerCoordinate(state.actorXFixedCoordinates[0]), 0, maximumX);
-	const int shaggyY = CLIP<int>(integerCoordinate(state.actorYFixedCoordinates[0]), 0, maximumY);
+	const int shaggyX = CLIP<int>(integerCoordinate(state.actorXFixedCoordinates[kShaggyActorSlot]), 0, maximumX);
+	const int shaggyY = CLIP<int>(integerCoordinate(state.actorYFixedCoordinates[kShaggyActorSlot]), 0, maximumY);
 	const int startCell = (shaggyY / kPathCellSize) * columns + shaggyX / kPathCellSize;
 
 	// Dijkstra over (cell, arrival direction) with circular buckets (Dial's algorithm): every edge costs at
