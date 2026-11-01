@@ -75,7 +75,7 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples) override;
 	bool isStereo() const override { return true; }
-	int getRate() const override { return 22050; }
+	int getRate() const override;
 	bool endOfData() const override { return false; }
 
 };
@@ -94,6 +94,7 @@ private:
 	int _ringPlayPosition;
 	int _lastBlock;
 	int _driverRate;
+	bool _remastered;
 	int _driverVolume;
 	int _fillTimer;
 	int _volumeTable[128];
@@ -107,7 +108,7 @@ private:
 	int sndDrivMixerEnd(int16 *destBuf, int frameCount);
 
 public:
-	SmushDriver(SmushTimer *timer);
+	SmushDriver(SmushTimer *timer, bool remastered);
 	~SmushDriver();
 
 	int sndDrivInitialize(int rate, int channelCount, SmushSound *sound);

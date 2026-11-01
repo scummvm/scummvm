@@ -609,8 +609,13 @@ int SmushDriverStream::readBuffer(int16 *buffer, const int numSamples) {
 	return _driver->ringRead(buffer, numSamples);
 }
 
-SmushDriver::SmushDriver(SmushTimer *timer) {
+int SmushDriverStream::getRate() const {
+	return _driver->sndDrivGetRate();
+}
+
+SmushDriver::SmushDriver(SmushTimer *timer, bool remastered) {
 	_timer = timer;
+	_remastered = remastered;
 	_sound = nullptr;
 	_system = g_system->getMixer();
 	_ring = nullptr;
@@ -629,8 +634,14 @@ SmushDriver::~SmushDriver() {
 }
 
 int SmushDriver::sndDrivInitialize(int rate, int channelCount, SmushSound *sound) {
-	if (rate < 22050)
+	// The disasm of the remastered ignores the requested rate and always runs at 24000
+	if (_remastered)
+		rate = 24000;
+	else if (rate < 22050)
 		rate = 22050;
+
+	// The stream reads the rate as soon as it is opened
+	_driverRate = rate;
 
 	if (sndDrivOpenRing())
 		return -1;
@@ -639,7 +650,6 @@ int SmushDriver::sndDrivInitialize(int rate, int channelCount, SmushSound *sound
 		return -1;
 
 	_sound = sound;
-	_driverRate = rate;
 	_fillTimer = _timer->sysAlloc(sndDrivFillThreadCallback, 1193180 / (rate / 1024), SYS_TIMER_ONE_SHOT, this);
 
 	return 0;
