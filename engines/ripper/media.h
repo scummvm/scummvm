@@ -23,6 +23,7 @@
 
 #include "audio/mixer.h"
 #include "common/array.h"
+#include "common/noncopyable.h"
 #include "common/rect.h"
 #include "common/str.h"
 
@@ -154,7 +155,7 @@ private:
 			externalAudio(externalAudio_) {}
 	};
 
-	class ActivePlaybackGuard {
+	class ActivePlaybackGuard : private Common::NonCopyable {
 	public:
 		ActivePlaybackGuard(MediaPlayer *player, Video::SmackerDecoder *decoder,
 			const Common::String &name, Audio::SoundHandle *externalAudio);
