@@ -628,7 +628,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 	return true;
 }
 
-bool ScriptedRoomMovementExecutor::finishCompanionMovement(int16 targetX, int16 targetY,
+bool ScriptedRoomMovementExecutor::finishScoobyMovement(int16 targetX, int16 targetY,
 														   int16 movementMode,
 														   int16 destinationBias,
 														   uint16 encodedObjectId) {
@@ -690,11 +690,11 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 
 	// Ghidra 0x000056D2-0x000056F9: progress bit four, a clear direct trace, or no visible waypoint selects the
 	// full direct-movement entry and resets the companion queue index.
-	if ((_state.progressStateBytes[0] & 0x10) != 0 || !traceCompanionPathToTarget(targetX, targetY)) {
+	if ((_state.progressStateBytes[0] & 0x10) != 0 || !traceScoobyPathToTarget(targetX, targetY)) {
 		return moveScoobyActorDirectly(targetX, targetY, movementScale, animationBias, true);
 	}
 
-	uint16 visibleWaypoints = classifyCompanionWaypointVisibility();
+	uint16 visibleWaypoints = classifyScoobyWaypointVisibility();
 	if (visibleWaypoints == 0) {
 		return moveScoobyActorDirectly(targetX, targetY, movementScale, animationBias, true);
 	}
@@ -723,7 +723,7 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 
 			_state.scoobyActorMovementPoints[0].targetX = targetX;
 			_state.scoobyActorMovementPoints[0].targetY = targetY;
-			buildCompanionRouteFromSecondWaypoint(targetX, targetY, movementScale);
+			buildScoobyRouteFromSecondWaypoint(targetX, targetY, movementScale);
 			_state.scoobyActorMovementPointIndex = 1;
 			return moveScoobyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 											  false);
@@ -735,7 +735,7 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 
 		_state.scoobyActorMovementPoints[0].targetX = targetX;
 		_state.scoobyActorMovementPoints[0].targetY = targetY;
-		buildCompanionRouteFromFirstWaypoint(targetX, targetY, movementScale);
+		buildScoobyRouteFromFirstWaypoint(targetX, targetY, movementScale);
 		_state.scoobyActorMovementPointIndex = 1;
 		return moveScoobyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias, false);
 	}
@@ -746,7 +746,7 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 		if (!tracePathFromFirstWaypoint(targetX, targetY)) {
 			_state.scoobyActorMovementPoints[0].targetX = targetX;
 			_state.scoobyActorMovementPoints[0].targetY = targetY;
-			buildCompanionRouteFromFirstWaypoint(targetX, targetY, movementScale);
+			buildScoobyRouteFromFirstWaypoint(targetX, targetY, movementScale);
 			_state.scoobyActorMovementPointIndex = 1;
 			return moveScoobyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 											  false);
@@ -758,10 +758,10 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 
 		_state.scoobyActorMovementPoints[0].targetX = targetX;
 		_state.scoobyActorMovementPoints[0].targetY = targetY;
-		buildCompanionRouteFromSecondWaypoint(targetX, targetY, movementScale);
+		buildScoobyRouteFromSecondWaypoint(targetX, targetY, movementScale);
 		_state.scoobyActorMovementPoints[1].targetX = secondWaypointX;
 		_state.scoobyActorMovementPoints[1].targetY = secondWaypointY;
-		appendCompanionRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
+		appendScoobyRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
 		_state.scoobyActorMovementPointIndex = 2;
 		return moveScoobyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias, false);
 	}
@@ -771,7 +771,7 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 	if (!tracePathFromSecondWaypoint(targetX, targetY)) {
 		_state.scoobyActorMovementPoints[0].targetX = targetX;
 		_state.scoobyActorMovementPoints[0].targetY = targetY;
-		buildCompanionRouteFromSecondWaypoint(targetX, targetY, movementScale);
+		buildScoobyRouteFromSecondWaypoint(targetX, targetY, movementScale);
 		_state.scoobyActorMovementPointIndex = 1;
 		return moveScoobyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 										  false);
@@ -783,15 +783,15 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 
 	_state.scoobyActorMovementPoints[0].targetX = targetX;
 	_state.scoobyActorMovementPoints[0].targetY = targetY;
-	buildCompanionRouteFromFirstWaypoint(targetX, targetY, movementScale);
+	buildScoobyRouteFromFirstWaypoint(targetX, targetY, movementScale);
 	_state.scoobyActorMovementPoints[1].targetX = firstWaypointX;
 	_state.scoobyActorMovementPoints[1].targetY = firstWaypointY;
-	appendCompanionRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
+	appendScoobyRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
 	_state.scoobyActorMovementPointIndex = 2;
 	return moveScoobyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias, false);
 }
 
-void ScriptedRoomMovementExecutor::buildCompanionRouteFromFirstWaypoint(
+void ScriptedRoomMovementExecutor::buildScoobyRouteFromFirstWaypoint(
 	int16 targetX, int16 targetY,
 	int16 movementScale) {
 	// Ghidra 0x00005852-0x00005881: stage the first waypoint as wrapped signed 16.16 coordinates with zero
@@ -802,7 +802,7 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromFirstWaypoint(
 
 	// Ghidra 0x00005882-0x00005885: calculate all three outputs from the staged origin.
 	VelocityResult velocity =
-		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
+		computeScoobyVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x00005886-0x00005899: publish the outputs into queue slot zero without replacing its target.
 	_state.scoobyActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
@@ -810,7 +810,7 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromFirstWaypoint(
 	_state.scoobyActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
-void ScriptedRoomMovementExecutor::buildCompanionRouteFromSecondWaypoint(
+void ScriptedRoomMovementExecutor::buildScoobyRouteFromSecondWaypoint(
 	int16 targetX, int16 targetY,
 	int16 movementScale) {
 	// Ghidra 0x0000589A-0x000058CB: stage the second waypoint as wrapped signed 16.16 coordinates with zero
@@ -821,7 +821,7 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromSecondWaypoint(
 
 	// Ghidra 0x000058CC-0x000058CF: calculate all three outputs from the staged origin.
 	VelocityResult velocity =
-		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
+		computeScoobyVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x000058D0-0x000058E3: publish the outputs into queue slot zero without replacing its target.
 	_state.scoobyActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
@@ -829,7 +829,7 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromSecondWaypoint(
 	_state.scoobyActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
-void ScriptedRoomMovementExecutor::appendCompanionRouteFromFirstWaypoint(
+void ScriptedRoomMovementExecutor::appendScoobyRouteFromFirstWaypoint(
 	int16 targetX, int16 targetY,
 	int16 movementScale) {
 	// Ghidra 0x000058E4-0x00005913: stage the first waypoint as wrapped signed 16.16 coordinates with zero
@@ -840,7 +840,7 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromFirstWaypoint(
 
 	// Ghidra 0x00005914-0x00005917: calculate all three outputs from the staged origin.
 	VelocityResult velocity =
-		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
+		computeScoobyVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x00005918-0x0000592B: publish the outputs into queue slot one without replacing its target.
 	_state.scoobyActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
@@ -848,7 +848,7 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromFirstWaypoint(
 	_state.scoobyActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
-void ScriptedRoomMovementExecutor::appendCompanionRouteFromSecondWaypoint(
+void ScriptedRoomMovementExecutor::appendScoobyRouteFromSecondWaypoint(
 	int16 targetX, int16 targetY,
 	int16 movementScale) {
 	// Ghidra 0x0000592C-0x0000595D: stage the second waypoint as wrapped signed 16.16 coordinates with zero
@@ -859,7 +859,7 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromSecondWaypoint(
 
 	// Ghidra 0x0000595E-0x00005961: calculate all three outputs from the staged origin.
 	VelocityResult velocity =
-		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
+		computeScoobyVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x00005962-0x00005975: publish the outputs into queue slot one without replacing its target.
 	_state.scoobyActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
@@ -867,7 +867,7 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromSecondWaypoint(
 	_state.scoobyActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
-uint16 ScriptedRoomMovementExecutor::classifyCompanionWaypointVisibility() {
+uint16 ScriptedRoomMovementExecutor::classifyScoobyWaypointVisibility() {
 	// Ghidra 0x00005976-0x00005985: clear the result and select the first of exactly two waypoint pairs.
 	uint16 visibility = 0;
 	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
@@ -877,7 +877,7 @@ uint16 ScriptedRoomMovementExecutor::classifyCompanionWaypointVisibility() {
 		int16 targetX = static_cast<int16>(_rom.readInt16(waypointOffset) << 3);
 		int16 targetY = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))
 										   << 3);
-		if (!traceCompanionPathToTarget(targetX, targetY)) {
+		if (!traceScoobyPathToTarget(targetX, targetY)) {
 			visibility |= 1 << waypointIndex;
 		}
 
@@ -888,7 +888,7 @@ uint16 ScriptedRoomMovementExecutor::classifyCompanionWaypointVisibility() {
 	return visibility;
 }
 
-bool ScriptedRoomMovementExecutor::traceCompanionPathToTarget(int16 targetX, int16 targetY) {
+bool ScriptedRoomMovementExecutor::traceScoobyPathToTarget(int16 targetX, int16 targetY) {
 	// Ghidra 0x000059B0-0x000059C7: stage both complete companion coordinates and preserve the original tail
 	// branch into the separately owned trace continuation.
 	return tracePathFromStagedOrigin(_state.actorXFixedCoordinates[1], _state.actorYFixedCoordinates[1],
@@ -896,17 +896,17 @@ bool ScriptedRoomMovementExecutor::traceCompanionPathToTarget(int16 targetX, int
 									 targetY);
 }
 
-ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::computeCompanionMovementVelocity(
+ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::computeScoobyMovementVelocity(
 	int16 targetX, int16 targetY, int16 movementScale) {
 	// Ghidra 0x000059C8-0x000059DB: stage both complete companion coordinates and retain the fallthrough into
 	// the separately owned velocity calculation with target and scale inputs unchanged.
-	return computeCompanionVelocityFromStagedOrigin(_state.actorXFixedCoordinates[1],
+	return computeScoobyVelocityFromStagedOrigin(_state.actorXFixedCoordinates[1],
 													_state.actorYFixedCoordinates[1], targetX, targetY,
 													movementScale);
 }
 
 ScriptedRoomMovementExecutor::VelocityResult
-ScriptedRoomMovementExecutor::computeCompanionVelocityFromStagedOrigin(
+ScriptedRoomMovementExecutor::computeScoobyVelocityFromStagedOrigin(
 	int originXFixed, int originYFixed, int16 targetX, int16 targetY, int16 movementScale) {
 	// Ghidra 0x000059DC-0x00005A0F: preserve inputs, calculate wrapping word deltas and magnitudes, and classify
 	// direction with the original signed comparison of the magnitude words.
@@ -1003,7 +1003,7 @@ MovementResult ScriptedRoomMovementExecutor::moveScoobyActorDirectly(
 	// outputs through the separate original owner.
 	_state.actorTargetXCoordinates[1] = targetX;
 	_state.actorTargetYCoordinates[1] = targetY;
-	VelocityResult velocity = computeCompanionMovementVelocity(targetX, targetY, movementScale);
+	VelocityResult velocity = computeScoobyMovementVelocity(targetX, targetY, movementScale);
 	int16 positionIndex = velocity.positionIndex;
 
 	// Ghidra 0x00005AF0-0x00005B1F: zero bias uses the authored previous-to-next directional matrix; every

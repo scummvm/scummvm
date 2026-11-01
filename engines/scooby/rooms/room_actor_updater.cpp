@@ -914,7 +914,7 @@ void RoomActorUpdater::setCenteredCursor() {
 }
 
 void RoomActorUpdater::updateScoobyActor() {
-	if ((_state.videoFlags & kVideoCompanionUpdateBlockMask) != 0) {
+	if ((_state.videoFlags & kVideoScoobyUpdateBlockMask) != 0) {
 		return;
 	}
 
@@ -971,10 +971,10 @@ void RoomActorUpdater::updateScoobyActor() {
 		return;
 	}
 
-	advanceCompanionScriptedMovement();
+	advanceScoobyScriptedMovement();
 }
 
-void RoomActorUpdater::advanceCompanionScriptedMovement() {
+void RoomActorUpdater::advanceScoobyScriptedMovement() {
 	int32 horizontalDelta = scaleMovementStep(_state.actorHorizontalScaleFactors[kScoobyActorSlot],
 											  0x12A,
 											  _state.scoobyActorHorizontalMovementStep);

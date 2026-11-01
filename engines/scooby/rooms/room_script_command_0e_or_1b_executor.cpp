@@ -83,7 +83,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 				} else {
 					// Ghidra 0x00004AC2-0x00004ACD: nonnegative movement mode preserves the complete companion
 					// movement and finish boundary, including encoded bit 15.
-					if (!_movement.finishCompanionMovement(target.x, target.y, movementMode,
+					if (!_movement.finishScoobyMovement(target.x, target.y, movementMode,
 														   movementArgument,
 														   encodedObjectId)) {
 						_requestMovementHostClose();

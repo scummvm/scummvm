@@ -107,7 +107,7 @@ public:
 	// return leaves incidental caller residue in D6, which is deliberately not represented as managed state.
 	// Both busy loops update animations at least once and service the installed room callback on every
 	// continuing back edge.
-	bool finishCompanionMovement(int16 targetX, int16 targetY, int16 movementMode,
+	bool finishScoobyMovement(int16 targetX, int16 targetY, int16 movementMode,
 								 int16 destinationBias, uint16 encodedObjectId);
 
 	// Chooses and starts a direct or waypoint-routed companion-actor movement.
@@ -189,19 +189,19 @@ private:
 							   int16 animationBias, uint16 encodedObjectId,
 							   bool resetMovementPointIndex);
 
-	void buildCompanionRouteFromFirstWaypoint(int16 targetX, int16 targetY,
+	void buildScoobyRouteFromFirstWaypoint(int16 targetX, int16 targetY,
 											  int16 movementScale);
-	void buildCompanionRouteFromSecondWaypoint(int16 targetX, int16 targetY,
+	void buildScoobyRouteFromSecondWaypoint(int16 targetX, int16 targetY,
 											   int16 movementScale);
-	void appendCompanionRouteFromFirstWaypoint(int16 targetX, int16 targetY,
+	void appendScoobyRouteFromFirstWaypoint(int16 targetX, int16 targetY,
 											   int16 movementScale);
-	void appendCompanionRouteFromSecondWaypoint(int16 targetX, int16 targetY,
+	void appendScoobyRouteFromSecondWaypoint(int16 targetX, int16 targetY,
 												int16 movementScale);
-	uint16 classifyCompanionWaypointVisibility();
-	bool traceCompanionPathToTarget(int16 targetX, int16 targetY);
-	VelocityResult computeCompanionMovementVelocity(int16 targetX, int16 targetY,
+	uint16 classifyScoobyWaypointVisibility();
+	bool traceScoobyPathToTarget(int16 targetX, int16 targetY);
+	VelocityResult computeScoobyMovementVelocity(int16 targetX, int16 targetY,
 													int16 movementScale);
-	VelocityResult computeCompanionVelocityFromStagedOrigin(int originXFixed, int originYFixed,
+	VelocityResult computeScoobyVelocityFromStagedOrigin(int originXFixed, int originYFixed,
 															int16 targetX,
 															int16 targetY, int16 movementScale);
 
