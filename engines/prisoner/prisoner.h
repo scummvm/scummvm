@@ -912,6 +912,7 @@ public:
 	int16 getSysVar(int16 varIndex);
 
 	void playIntroVideos();
+	void runScreensaver();
 	void death();
 	bool waitForInput();
 

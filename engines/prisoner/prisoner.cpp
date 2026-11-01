@@ -383,8 +383,7 @@ void PrisonerEngine::checkScreensaver() {
 	// A stand-by time of 0 disables the screensaver
 	if (_screensaverTime > 0 && _screensaverTime < (int32)getTicks() - _lastInputTicks) {
 		_mainMenuRequested = false;
-		_screensaverRunning = true;
-		playIntroVideos();
+		runScreensaver();
 	}
 }
 
@@ -640,14 +639,48 @@ void PrisonerEngine::playIntroVideos() {
 		playMux(entry.filename);
 		if (_muxEasterEggKey == entry.key)
 			_muxEasterEggCount++;
-		else if (_screensaverRunning) {
-			_screensaverRunning = false;
-			return;
-		}
 	}
 	if (_muxEasterEggCount == 3)
 		playMux("vice.mux");
 	_muxEasterEggCount = 0;
+}
+
+// The intro, credits and title videos play in a loop until a key or a mouse button is pressed.
+// During a game the "best of" video plays too, and the game's music, sounds and voices are
+// stopped meanwhile.
+void PrisonerEngine::runScreensaver() {
+	const char *const videos[] = {"vintro.mux", "vcredits.mux", "vtitre.mux", "vbestoff.mux"};
+	const bool inGame = _inGame;
+	const uint videoCount = inGame ? ARRAYSIZE(videos) : ARRAYSIZE(videos) - 1;
+
+	if (inGame) {
+		suspendMusics();
+		suspendSounds();
+		setVoicesMuted(true);
+	}
+
+	_screensaverRunning = true;
+	_muxClearScreenBefore = true;
+	_muxClearScreenAfter = true;
+	bool aborted = false;
+	while (!aborted && !shouldQuit()) {
+		const uint32 roundStart = getTicks();
+		for (uint i = 0; i < videoCount && !aborted && !shouldQuit(); i++) {
+			playMux(videos[i]);
+			aborted = _screensaverAborted;
+		}
+		// Missing video files would make this loop spin without ever reading input
+		if (getTicks() - roundStart < 100)
+			break;
+	}
+	_screensaverRunning = false;
+
+	if (inGame) {
+		resumeSounds();
+		resumeMusics();
+		setVoicesMuted(false);
+	}
+	resetFrameValues();
 }
 
 void PrisonerEngine::death() {
@@ -1073,6 +1106,8 @@ bool PrisonerEngine::handleMuxInput() {
 	else if (_muxEasterEggCount != 3 && (keyState != Common::KEYCODE_INVALID || buttonState != 0)) {
 		_muxEasterEggKey = keyState;
 		aborted = true;
+		// Input also ends the screensaver
+		_screensaverAborted = true;
 		inpSetWaitRelease(true);
 	}
 	return aborted;
