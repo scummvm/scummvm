@@ -993,9 +993,10 @@ int16 ScriptOpcodes::op_startMusicE(Script *script) {
 
 int16 ScriptOpcodes::op_unloadMusic(Script *script) {
 	ARG_EVALUATE(musicIndex);
+	if (musicIndex == -2)
+		return 0;
 	_vm->unloadMusic(musicIndex);
- 	// TODO
-	return 0;
+	return musicIndex;
 }
 
 int16 ScriptOpcodes::op_stopSound(Script *script) {
@@ -1006,9 +1007,10 @@ int16 ScriptOpcodes::op_stopSound(Script *script) {
 
 int16 ScriptOpcodes::op_stopMusic(Script *script) {
 	ARG_EVALUATE(musicIndex);
+	if (musicIndex == -2)
+		return 0;
 	_vm->stopMusic(musicIndex);
-	debug("ARGS!"); // TODO
-	return 0;
+	return musicIndex;
 }
 
 int16 ScriptOpcodes::op_isSoundPlaying(Script *script) {
@@ -1018,7 +1020,8 @@ int16 ScriptOpcodes::op_isSoundPlaying(Script *script) {
 
 int16 ScriptOpcodes::op_isMusicPlaying(Script *script) {
 	ARG_EVALUATE(musicIndex);
-	// TODO
+	if (musicIndex == -2)
+		return 0;
 	return _vm->isMusicPlaying(musicIndex);
 }
 
