@@ -107,13 +107,13 @@ void RoomVBlankHandler::updateWalkAreaOverlay() {
 
 	const int roomWidth = _state.roomWidthTiles * 8;
 	const int roomHeight = _state.roomHeightTiles * 8;
-	const int leadX = static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16);
-	const int leadY = static_cast<int16>(_state.actorYFixedCoordinates[0] >> 16);
-	const bool leadInRoom = leadX >= 0 && leadY >= 0 && leadX < roomWidth && leadY < roomHeight;
+	const int shaggyX = static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16);
+	const int shaggyY = static_cast<int16>(_state.actorYFixedCoordinates[0] >> 16);
+	const bool shaggyInRoom = shaggyX >= 0 && shaggyY >= 0 && shaggyX < roomWidth && shaggyY < roomHeight;
 	bool rebuildRoom = _walkAreaScene != _state.activeRoomScene.get() || _walkAreaRoomId != _state.roomId ||
 					   _walkAreaRoom.size() != static_cast<size_t>(roomWidth * roomHeight);
 	// Shaggy moved to another region (scripts can place him anywhere): flood from his new position.
-	if (!rebuildRoom && leadInRoom && _walkAreaRoom[static_cast<size_t>(leadY * roomWidth + leadX)] == 0) {
+	if (!rebuildRoom && shaggyInRoom && _walkAreaRoom[static_cast<size_t>(shaggyY * roomWidth + shaggyX)] == 0) {
 		rebuildRoom = true;
 	}
 
@@ -132,13 +132,13 @@ void RoomVBlankHandler::updateWalkAreaOverlay() {
 		}
 
 		// Flood the clear points connected to Shaggy; with no clear starting point show every clear point.
-		if (!leadInRoom || clear[static_cast<size_t>(leadY * roomWidth + leadX)] == 0) {
+		if (!shaggyInRoom || clear[static_cast<size_t>(shaggyY * roomWidth + shaggyX)] == 0) {
 			_walkAreaRoom = clear;
 		} else {
 			_walkAreaRoom = Common::Array<uint8>(static_cast<size_t>(roomWidth * roomHeight), 0);
 			Common::Array<int32> pending;
-			pending.push_back(leadY * roomWidth + leadX);
-			_walkAreaRoom[static_cast<size_t>(leadY * roomWidth + leadX)] = 1;
+			pending.push_back(shaggyY * roomWidth + shaggyX);
+			_walkAreaRoom[static_cast<size_t>(shaggyY * roomWidth + shaggyX)] = 1;
 			while (!pending.empty()) {
 				int32 point = pending.back();
 				pending.pop_back();

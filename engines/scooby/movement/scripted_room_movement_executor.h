@@ -162,13 +162,13 @@ private:
 		}
 	};
 
-	void buildLeadRouteFromFirstWaypoint(int16 targetX, int16 targetY,
+	void buildShaggyRouteFromFirstWaypoint(int16 targetX, int16 targetY,
 										 int16 movementScale);
-	void buildLeadRouteFromSecondWaypoint(int16 targetX, int16 targetY,
+	void buildShaggyRouteFromSecondWaypoint(int16 targetX, int16 targetY,
 										  int16 movementScale);
-	void appendLeadRouteFromFirstWaypoint(int16 targetX, int16 targetY,
+	void appendShaggyRouteFromFirstWaypoint(int16 targetX, int16 targetY,
 										  int16 movementScale);
-	void appendLeadRouteFromSecondWaypoint(int16 targetX, int16 targetY,
+	void appendShaggyRouteFromSecondWaypoint(int16 targetX, int16 targetY,
 										   int16 movementScale);
 
 	VelocityResult computeMovementVelocityFromStagedOrigin(int originXFixed, int originYFixed,
@@ -179,11 +179,11 @@ private:
 
 	bool tracePathFromFirstWaypoint(int16 targetX, int16 targetY);
 	bool tracePathFromSecondWaypoint(int16 targetX, int16 targetY);
-	uint16 classifyLeadWaypointVisibility();
+	uint16 classifyShaggyWaypointVisibility();
 	bool traceShaggyPathToTarget(int16 targetX, int16 targetY);
 	bool tracePathFromStagedOrigin(int originXFixed, int originYFixed, int16 targetX,
 								   int16 targetY);
-	VelocityResult computeLeadMovementVelocity(int16 targetX, int16 targetY,
+	VelocityResult computeShaggyMovementVelocity(int16 targetX, int16 targetY,
 											   int16 movementScale);
 	bool moveShaggyActorDirectly(int16 targetX, int16 targetY, int16 movementScale,
 							   int16 animationBias, uint16 encodedObjectId,

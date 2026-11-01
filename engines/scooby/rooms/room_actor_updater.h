@@ -94,7 +94,7 @@ private:
 	static const uint8 kTransitionCenteredCursorMask = 0x40;
 	static const uint8 kTransitionCompanionCopyMask = 0x08;
 	static const uint8 kTransitionForegroundPolarityMask = 0x01;
-	static const uint8 kTransitionHideLeadMask = 0x10;
+	static const uint8 kTransitionHideShaggyMask = 0x10;
 	static const uint8 kTransitionSkipCompactScaleMask = 0x02;
 	static const uint8 kVideoScoobyShaggySideBySideWalking = 0x40;
 	static const uint8 kVideoScoobyUpdateBlockMask = 0x04;
@@ -113,21 +113,21 @@ private:
 	void updateMenuCommandFromCursor();
 	void closeInteractionInterface();
 	void updateShaggyActorAndCamera();
-	bool updateLeadControlledCandidate(int &candidateX, int &candidateY, uint32 stepMagnitude,
+	bool updateShaggyControlledCandidate(int &candidateX, int &candidateY, uint32 stepMagnitude,
 									   int16 maximumX, int16 maximumY);
-	void moveLeadLeft(int &candidateX, uint32 stepMagnitude);
-	void moveLeadRight(int &candidateX, uint32 stepMagnitude, int16 maximumX);
-	bool moveLeadUp(int &candidateY, uint32 movementMagnitude, int16 maximumY,
+	void moveShaggyLeft(int &candidateX, uint32 stepMagnitude);
+	void moveShaggyRight(int &candidateX, uint32 stepMagnitude, int16 maximumX);
+	bool moveShaggyUp(int &candidateY, uint32 movementMagnitude, int16 maximumY,
 					bool horizontalDirectionHeld);
-	void moveLeadDown(int &candidateY, uint32 movementMagnitude, int16 maximumY,
+	void moveShaggyDown(int &candidateY, uint32 movementMagnitude, int16 maximumY,
 					  bool horizontalDirectionHeld);
-	void updateLeadIdleAnimation();
-	void adjustLeadMovementAroundCollision(int &candidateX, int &candidateY, int16 maximumX,
+	void updateShaggyIdleAnimation();
+	void adjustShaggyMovementAroundCollision(int &candidateX, int &candidateY, int16 maximumX,
 										   int16 maximumY, int16 retainedDataRegister);
-	void beginLeadVerticalCollisionAdjustment(int candidateX, int candidateY, int16 movementStep);
-	void beginLeadHorizontalCollisionAdjustment(int candidateX, int candidateY, int16 movementStep);
-	void advanceLeadScriptedMovement();
-	void beginNextLeadMovementPoint(const ActorMovementPoint &point);
+	void beginShaggyVerticalCollisionAdjustment(int candidateX, int candidateY, int16 movementStep);
+	void beginShaggyHorizontalCollisionAdjustment(int candidateX, int candidateY, int16 movementStep);
+	void advanceShaggyScriptedMovement();
+	void beginNextShaggyMovementPoint(const ActorMovementPoint &point);
 	void updateCameraAndInteractionEntry(int16 maximumX, int16 maximumY);
 	void updateCameraX(int16 maximumX);
 	void updateCameraY(int16 maximumY);

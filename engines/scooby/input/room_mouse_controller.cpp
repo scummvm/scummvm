@@ -235,20 +235,20 @@ bool RoomMouseController::findWalkInTarget(RuntimeState &state, int16 interactio
 
 	shapeArea = Common::Rect(static_cast<int16>(tiles.left * 8), static_cast<int16>(tiles.top * 8),
 							 static_cast<int16>(tiles.right * 8), static_cast<int16>(tiles.bottom * 8));
-	int leadX = integerCoordinate(state.actorXFixedCoordinates[0]);
-	int leadY = integerCoordinate(state.actorYFixedCoordinates[0]);
+	int shaggyX = integerCoordinate(state.actorXFixedCoordinates[0]);
+	int shaggyY = integerCoordinate(state.actorYFixedCoordinates[0]);
 	int minimumX = tiles.left * 8 + 4;
 	int maximumX = tiles.right * 8 - 4;
 	int minimumY = tiles.top * 8 + 4;
 	int maximumY = tiles.bottom * 8 - 4;
-	int outsideX = leadX < minimumX ? minimumX - leadX : MAX(leadX - maximumX, 0);
-	int outsideY = leadY < minimumY ? minimumY - leadY : MAX(leadY - maximumY, 0);
+	int outsideX = shaggyX < minimumX ? minimumX - shaggyX : MAX(shaggyX - maximumX, 0);
+	int outsideY = shaggyY < minimumY ? minimumY - shaggyY : MAX(shaggyY - maximumY, 0);
 	if (outsideX >= outsideY) {
-		worldX = static_cast<int16>(leadX <= (minimumX + maximumX) / 2 ? maximumX : minimumX);
-		worldY = static_cast<int16>(CLIP(leadY, minimumY, maximumY));
+		worldX = static_cast<int16>(shaggyX <= (minimumX + maximumX) / 2 ? maximumX : minimumX);
+		worldY = static_cast<int16>(CLIP(shaggyY, minimumY, maximumY));
 	} else {
-		worldX = static_cast<int16>(CLIP(leadX, minimumX, maximumX));
-		worldY = static_cast<int16>(leadY <= (minimumY + maximumY) / 2 ? maximumY : minimumY);
+		worldX = static_cast<int16>(CLIP(shaggyX, minimumX, maximumX));
+		worldY = static_cast<int16>(shaggyY <= (minimumY + maximumY) / 2 ? maximumY : minimumY);
 	}
 
 	return true;
@@ -317,8 +317,8 @@ ControllerButtons RoomMouseController::stepWalk(RuntimeState &state) {
 		return ControllerButtons::None;
 	}
 
-	int leadX = integerCoordinate(state.actorXFixedCoordinates[0]);
-	int leadY = integerCoordinate(state.actorYFixedCoordinates[0]);
+	int shaggyX = integerCoordinate(state.actorXFixedCoordinates[0]);
+	int shaggyY = integerCoordinate(state.actorYFixedCoordinates[0]);
 	bool finalWaypoint = false;
 	bool moveX = false;
 	bool moveY = false;
@@ -328,8 +328,8 @@ ControllerButtons RoomMouseController::stepWalk(RuntimeState &state) {
 		// Pass each waypoint once Shaggy is close to it; only the destination needs the exact tolerances.
 		const Common::Point &waypoint = _walkPath[_walkPathIndex];
 		finalWaypoint = _walkPathIndex + 1 >= _walkPath.size();
-		deltaX = waypoint.x - leadX;
-		deltaY = waypoint.y - leadY;
+		deltaX = waypoint.x - shaggyX;
+		deltaY = waypoint.y - shaggyY;
 		moveX = ABS(deltaX) > (finalWaypoint ? kArrivalToleranceX : kWaypointTolerance);
 		moveY = ABS(deltaY) > (finalWaypoint ? kArrivalToleranceY : kWaypointTolerance);
 		if (moveX || moveY || finalWaypoint) {
@@ -426,9 +426,9 @@ bool RoomMouseController::planWalkPath(RuntimeState &state) {
 		}
 	}
 
-	const int leadX = CLIP<int>(integerCoordinate(state.actorXFixedCoordinates[0]), 0, maximumX);
-	const int leadY = CLIP<int>(integerCoordinate(state.actorYFixedCoordinates[0]), 0, maximumY);
-	const int startCell = (leadY / kPathCellSize) * columns + leadX / kPathCellSize;
+	const int shaggyX = CLIP<int>(integerCoordinate(state.actorXFixedCoordinates[0]), 0, maximumX);
+	const int shaggyY = CLIP<int>(integerCoordinate(state.actorYFixedCoordinates[0]), 0, maximumY);
+	const int startCell = (shaggyY / kPathCellSize) * columns + shaggyX / kPathCellSize;
 
 	// Dijkstra over (cell, arrival direction) with circular buckets (Dial's algorithm): every edge costs at
 	// most kVerticalStepCost + kTurnCost, so that many buckets plus one suffice.
@@ -465,8 +465,8 @@ bool RoomMouseController::planWalkPath(RuntimeState &state) {
 			int column = cell % columns;
 			int row = cell / columns;
 			// Shaggy starts off-grid: test the first steps from where he actually stands.
-			int originX = cell == startCell ? leadX : centers[cell].x;
-			int originY = cell == startCell ? leadY : centers[cell].y;
+			int originX = cell == startCell ? shaggyX : centers[cell].x;
+			int originY = cell == startCell ? shaggyY : centers[cell].y;
 			for (int direction = 0; direction < kDirectionCount; direction++) {
 				int nextColumn = column + kDirectionX[direction];
 				int nextRow = row + kDirectionY[direction];

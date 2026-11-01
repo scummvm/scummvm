@@ -141,7 +141,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 									 true);
 	}
 
-	uint16 visibleWaypoints = classifyLeadWaypointVisibility();
+	uint16 visibleWaypoints = classifyShaggyWaypointVisibility();
 	if (visibleWaypoints == 0) {
 		return moveShaggyActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 									 true);
@@ -173,7 +173,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 
 			_state.shaggyActorMovementPoints[0].targetX = targetX;
 			_state.shaggyActorMovementPoints[0].targetY = targetY;
-			buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
+			buildShaggyRouteFromSecondWaypoint(targetX, targetY, movementScale);
 			_state.shaggyActorMovementPointIndex = 1;
 			return moveShaggyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 										 encodedObjectId, false);
@@ -186,7 +186,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 
 		_state.shaggyActorMovementPoints[0].targetX = targetX;
 		_state.shaggyActorMovementPoints[0].targetY = targetY;
-		buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
+		buildShaggyRouteFromFirstWaypoint(targetX, targetY, movementScale);
 		_state.shaggyActorMovementPointIndex = 1;
 		return moveShaggyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
@@ -198,7 +198,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 		if (!tracePathFromFirstWaypoint(targetX, targetY)) {
 			_state.shaggyActorMovementPoints[0].targetX = targetX;
 			_state.shaggyActorMovementPoints[0].targetY = targetY;
-			buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
+			buildShaggyRouteFromFirstWaypoint(targetX, targetY, movementScale);
 			_state.shaggyActorMovementPointIndex = 1;
 			return moveShaggyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 										 encodedObjectId, false);
@@ -211,10 +211,10 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 
 		_state.shaggyActorMovementPoints[0].targetX = targetX;
 		_state.shaggyActorMovementPoints[0].targetY = targetY;
-		buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
+		buildShaggyRouteFromSecondWaypoint(targetX, targetY, movementScale);
 		_state.shaggyActorMovementPoints[1].targetX = secondWaypointX;
 		_state.shaggyActorMovementPoints[1].targetY = secondWaypointY;
-		appendLeadRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
+		appendShaggyRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
 		_state.shaggyActorMovementPointIndex = 2;
 		return moveShaggyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
@@ -225,7 +225,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 	if (!tracePathFromSecondWaypoint(targetX, targetY)) {
 		_state.shaggyActorMovementPoints[0].targetX = targetX;
 		_state.shaggyActorMovementPoints[0].targetY = targetY;
-		buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
+		buildShaggyRouteFromSecondWaypoint(targetX, targetY, movementScale);
 		_state.shaggyActorMovementPointIndex = 1;
 		return moveShaggyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
@@ -238,16 +238,16 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 
 	_state.shaggyActorMovementPoints[0].targetX = targetX;
 	_state.shaggyActorMovementPoints[0].targetY = targetY;
-	buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
+	buildShaggyRouteFromFirstWaypoint(targetX, targetY, movementScale);
 	_state.shaggyActorMovementPoints[1].targetX = firstWaypointX;
 	_state.shaggyActorMovementPoints[1].targetY = firstWaypointY;
-	appendLeadRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
+	appendShaggyRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
 	_state.shaggyActorMovementPointIndex = 2;
 	return moveShaggyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 								 encodedObjectId, false);
 }
 
-void ScriptedRoomMovementExecutor::buildLeadRouteFromFirstWaypoint(int16 targetX, int16 targetY,
+void ScriptedRoomMovementExecutor::buildShaggyRouteFromFirstWaypoint(int16 targetX, int16 targetY,
 																   int16 movementScale) {
 	// Ghidra 0x0000519C-0x000051CB: stage the first waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
@@ -266,7 +266,7 @@ void ScriptedRoomMovementExecutor::buildLeadRouteFromFirstWaypoint(int16 targetX
 	_state.shaggyActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
-void ScriptedRoomMovementExecutor::buildLeadRouteFromSecondWaypoint(int16 targetX, int16 targetY,
+void ScriptedRoomMovementExecutor::buildShaggyRouteFromSecondWaypoint(int16 targetX, int16 targetY,
 																	int16 movementScale) {
 	// Ghidra 0x000051E4-0x00005215: stage the second waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
@@ -285,7 +285,7 @@ void ScriptedRoomMovementExecutor::buildLeadRouteFromSecondWaypoint(int16 target
 	_state.shaggyActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
-void ScriptedRoomMovementExecutor::appendLeadRouteFromFirstWaypoint(int16 targetX, int16 targetY,
+void ScriptedRoomMovementExecutor::appendShaggyRouteFromFirstWaypoint(int16 targetX, int16 targetY,
 																	int16 movementScale) {
 	// Ghidra 0x0000522E-0x0000525D: stage the first waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
@@ -304,7 +304,7 @@ void ScriptedRoomMovementExecutor::appendLeadRouteFromFirstWaypoint(int16 target
 	_state.shaggyActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
-void ScriptedRoomMovementExecutor::appendLeadRouteFromSecondWaypoint(int16 targetX, int16 targetY,
+void ScriptedRoomMovementExecutor::appendShaggyRouteFromSecondWaypoint(int16 targetX, int16 targetY,
 																	 int16 movementScale) {
 	// Ghidra 0x00005276-0x000052A7: stage the second waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
@@ -444,7 +444,7 @@ bool ScriptedRoomMovementExecutor::tracePathFromSecondWaypoint(int16 targetX, in
 	return tracePathFromStagedOrigin(originXFixed, originYFixed, targetX, targetY);
 }
 
-uint16 ScriptedRoomMovementExecutor::classifyLeadWaypointVisibility() {
+uint16 ScriptedRoomMovementExecutor::classifyShaggyWaypointVisibility() {
 	// Ghidra 0x0000532A-0x00005339: clear the result and select the first of exactly two waypoint pairs.
 	uint16 visibility = 0;
 	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
@@ -537,7 +537,7 @@ bool ScriptedRoomMovementExecutor::tracePathFromStagedOrigin(int originXFixed, i
 	}
 }
 
-ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::computeLeadMovementVelocity(
+ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::computeShaggyMovementVelocity(
 	int16 targetX, int16 targetY, int16 movementScale) {
 	// Ghidra 0x0000547A-0x0000548D: stage both complete lead coordinates and retain the fallthrough into the
 	// separately owned velocity calculation with target and scale inputs unchanged.
@@ -562,7 +562,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 	_state.actorTargetYCoordinates[0] = targetY;
 	uint8 savedDisplayBit = static_cast<uint8>(_state.displayFlags & 0x08);
 	_state.displayFlags &= static_cast<uint8>(~0x08);
-	VelocityResult velocity = computeLeadMovementVelocity(targetX, targetY, movementScale);
+	VelocityResult velocity = computeShaggyMovementVelocity(targetX, targetY, movementScale);
 	int16 positionIndex = velocity.positionIndex;
 
 	// Ghidra 0x000055B0-0x000055D9: zero bias uses the authored previous-to-next directional matrix; every
