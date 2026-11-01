@@ -184,11 +184,8 @@ SmushDemoPlayer::SmushDemoPlayer(SmushDemoVideo *video, SmushDemoDriver *driver)
 	memset(&_audio, 0, sizeof(_audio));
 	_useDriver = true;
 	_playing = 0;
-	_playFlags = 0;
 	memset(_staging, 0, sizeof(_staging));
 	memset(_palette, 0, sizeof(_palette));
-	memset(_paletteSaved, 0, sizeof(_paletteSaved));
-	memset(_paletteTarget, 0, sizeof(_paletteTarget));
 	_frameSource = nullptr;
 	_frameWidth = 0;
 	_frameHeight = 0;
@@ -198,7 +195,6 @@ SmushDemoPlayer::SmushDemoPlayer(SmushDemoVideo *video, SmushDemoDriver *driver)
 	_sourceY = 0;
 	_paused = 0;
 	_done = 0;
-	_flags = 0;
 	_lastResult = 0;
 	_frameReady = 0;
 	_paletteFlag = 0;
@@ -215,9 +211,6 @@ SmushDemoPlayer::SmushDemoPlayer(SmushDemoVideo *video, SmushDemoDriver *driver)
 	_frameCount = 1;
 	_dropCount = 0;
 	_behind = 0;
-	_fadeStart = 0;
-	_fadeSteps = 1;
-	_fadeRemaining = 0;
 	_firstUpdate = 1;
 	_streamStop = 1;
 }
@@ -255,25 +248,12 @@ int SmushDemoPlayer::chunkCallback(const byte *chunk, int size, int flags) {
 	if (READ_LE_UINT16(chunk) != 8)
 		return 0;
 
-	int part = (int16)READ_LE_UINT16(chunk + 6);
 	const byte *data = chunk + 18;
 	int remaining = size - 18;
 
-	if (part) {
-		if (part <= 0 || part > 5)
-			return 0;
-
-		memcpy(_paletteSaved, _palette, sizeof(_palette));
-		for (int i = 0; i < 256; i++) {
-			_paletteTarget[i] = data[0] | (READ_LE_UINT16(data + 1) << 8);
-			data += 3;
-		}
-
-		_fadeSteps = 5 * part;
-		_fadeRemaining = 5 * part;
-		_fadeStart = _framesShown;
+	// The disasm fades the palette with the other parts, which no movie has
+	if (READ_LE_UINT16(chunk + 6))
 		return 0;
-	}
 
 	_audioStartFrame = _frame;
 	if (!remaining)
@@ -382,27 +362,6 @@ void SmushDemoPlayer::decodeIACT(const byte *block) {
 	}
 
 	_audio.produced += 4096;
-}
-
-void SmushDemoPlayer::fadePalette() {
-	if (!_fadeRemaining)
-		return;
-
-	int steps = _fadeSteps;
-	int remaining = _fadeStart + steps - _frame;
-	int elapsed = _frame - _fadeStart;
-
-	for (int i = 0; i < 256; i++) {
-		uint32 from = _paletteSaved[i];
-		uint32 to = _paletteTarget[i];
-		uint32 red = (remaining * (from & 0xFF) + elapsed * (to & 0xFF)) / steps;
-		uint32 green = (elapsed * ((to >> 8) & 0xFF) + remaining * ((from >> 8) & 0xFF)) / steps;
-		uint32 blue = (elapsed * ((to >> 16) & 0xFF) + remaining * ((from >> 16) & 0xFF)) / steps;
-		_palette[i] = (red & 0xFF) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 16);
-	}
-
-	_fadeRemaining--;
-	_paletteFlag = 1;
 }
 
 int SmushDemoPlayer::audioOpen(int rate, int channels, int bits) {
@@ -546,7 +505,7 @@ void SmushDemoPlayer::terminate() {
 	_stream->streamTerminate();
 }
 
-int SmushDemoPlayer::open(const Common::String &name, int flags, int offset) {
+int SmushDemoPlayer::open(const Common::String &name, int offset) {
 	if (!Common::File::exists(Common::Path(name)))
 		return 1;
 
@@ -563,7 +522,6 @@ int SmushDemoPlayer::open(const Common::String &name, int flags, int offset) {
 	memset(_palette, 0, sizeof(_palette));
 	_paused = 0;
 	_done = 0;
-	_flags = flags;
 	_lastResult = 0;
 	_frameReady = 0;
 	_paletteFlag = 0;
@@ -583,9 +541,6 @@ int SmushDemoPlayer::open(const Common::String &name, int flags, int offset) {
 	_dropCount = 0;
 	_behind = 0;
 	_firstUpdate = 1;
-	_fadeStart = 0;
-	_fadeRemaining = 0;
-	_fadeSteps = 1;
 	_streamStop = 0;
 	return 0;
 }
@@ -632,7 +587,6 @@ int SmushDemoPlayer::update(int *frameDecoded, int *finished, int *paletteChange
 	}
 
 	if (due > 0) {
-		fadePalette();
 		if (_frameReady)
 			*frameDecoded = 1;
 
@@ -692,13 +646,12 @@ int SmushDemoPlayer::smushPlayStartMovie(const Common::String &name, int flags, 
 		return 1;
 	}
 
-	if (open(name, flags & 0xFFFFFFF, offset)) {
+	if (open(name, offset)) {
 		terminate();
 		_video->videoStop();
 		return 1;
 	}
 
-	_playFlags = flags & 0xF0000000;
 	_playing = 1;
 	return 0;
 }
@@ -754,23 +707,13 @@ int SmushDemoPlayer::smushPlayBlit(SmushDemoTarget *target, const SmushDemoRect 
 	_framesShown = _frame;
 
 	if (target && _frameSource) {
-		if (!(_flags & 8) && due > 1 && _dropCount < 3) {
+		if (due > 1 && _dropCount < 3) {
 			_dropCount++;
 		} else {
 			_dropCount = 0;
-			if (_flags & 1) {
-				_flags &= ~6;
-				if (_frameWidth <= rect->width / 2)
-					_flags |= 4;
-				else if (_frameHeight < rect->height)
-					_flags |= 2;
-			}
 
-			int verticalScale = ((_flags & 6) != 0) + 1;
-			int doubleBoth = _flags & 4;
-			int horizontalScale = (doubleBoth != 0) + 1;
-			int width = _frameWidth * horizontalScale;
-			int height = _frameHeight * verticalScale;
+			int width = _frameWidth;
+			int height = _frameHeight;
 			int x = _sourceX;
 			int y = _sourceY;
 
@@ -790,20 +733,13 @@ int SmushDemoPlayer::smushPlayBlit(SmushDemoTarget *target, const SmushDemoRect 
 			if (y + height > rect->height + rect->y)
 				height = rect->height + rect->y - y;
 
-			int copyWidth = width / horizontalScale;
-			int copyHeight = height / verticalScale;
-			int alignedX = (x & ~7) * horizontalScale;
-			int alignedWidth = ((copyWidth + x + 7) & ~7) - (x & ~7);
+			int alignedX = x & ~7;
+			int alignedWidth = ((width + x + 7) & ~7) - alignedX;
 
-			const byte *source = _frameSource + alignedX + y * _frameWidth * verticalScale;
-			byte *destination = target->pixels + alignedX + y * target->width * verticalScale;
+			const byte *source = _frameSource + alignedX + y * _frameWidth;
+			byte *destination = target->pixels + alignedX + y * target->width;
 
-			if (doubleBoth)
-				smushPlayBlitDouble(source, _frameWidth, destination, target->width, alignedWidth, copyHeight);
-			else if (_flags & 2)
-				smushPlayBlitDoubleRows(source, _frameWidth, destination, target->width, alignedWidth, copyHeight);
-			else
-				smushPlayBlitCopy(source, _frameWidth, destination, target->width, alignedWidth, copyHeight);
+			smushPlayBlitCopy(source, _frameWidth, destination, target->width, alignedWidth, height);
 		}
 	}
 
@@ -816,46 +752,6 @@ int SmushDemoPlayer::smushPlayBlit(SmushDemoTarget *target, const SmushDemoRect 
 	}
 
 	return 0;
-}
-
-void SmushDemoPlayer::smushPlayBlitDouble(const byte *source, int sourcePitch, byte *destination, int destinationPitch, int width, int rows) {
-	for (int row = 0; row < rows; row++) {
-		const byte *in = source;
-		byte *out = destination;
-
-		for (int i = 0; i < (width >> 2); i++) {
-			byte p0 = in[0];
-			byte p1 = in[1];
-			byte p2 = in[2];
-			byte p3 = in[3];
-
-			out[0] = p0;
-			out[1] = p0;
-			out[2] = p1;
-			out[3] = p1;
-			out[4] = p2;
-			out[5] = p2;
-			out[6] = p3;
-			out[7] = p3;
-			memcpy(out + destinationPitch, out, 8);
-
-			in += 4;
-			out += 8;
-		}
-
-		source += sourcePitch;
-		destination += destinationPitch * 2;
-	}
-}
-
-void SmushDemoPlayer::smushPlayBlitDoubleRows(const byte *source, int sourcePitch, byte *destination, int destinationPitch, int width, int rows) {
-	for (int row = 0; row < rows; row++) {
-		memcpy(destination, source, (width >> 2) * 4);
-		memcpy(destination + destinationPitch, source, (width >> 2) * 4);
-
-		source += sourcePitch;
-		destination += destinationPitch * 2;
-	}
 }
 
 void SmushDemoPlayer::smushPlayBlitCopy(const byte *source, int sourcePitch, byte *destination, int destinationPitch, int width, int rows) {
