@@ -22,10 +22,10 @@
 #ifndef BACKENDS_DLC_DLCMANAGER_H
 #define BACKENDS_DLC_DLCMANAGER_H
 
-#include "common/str.h"
-#include "common/str-array.h"
 #include "common/queue.h"
 #include "common/singleton.h"
+#include "common/str-array.h"
+#include "common/str.h"
 
 #include "gui/object.h"
 
@@ -38,7 +38,7 @@ class LauncherDialog;
 namespace DLC {
 class Store;
 struct DLCDesc;
-}
+} // namespace DLC
 
 namespace DLC {
 
@@ -54,11 +54,11 @@ public:
 	bool _fetchDLCs = false;
 	bool _interruptCurrentDownload = false;
 	uint32 _currentDownloadedSize;
-	Common::String _errorText;
-	Common::Array<DLCDesc*> _dlcs;
-	Common::Array<DLCDesc*> _dlcsInProgress;
-	Common::Queue<DLCDesc*> _queuedDownloadTasks;
-	
+	Common::U32String _errorText;
+	Common::Array<DLCDesc *> _dlcs;
+	Common::Array<DLCDesc *> _dlcsInProgress;
+	Common::Queue<DLCDesc *> _queuedDownloadTasks;
+
 	DLCManager();
 	virtual ~DLCManager();
 
@@ -73,7 +73,7 @@ public:
 
 	void setLauncher(GUI::LauncherDialog *launcher);
 
-	// Add download task to queue, runs on click download button, 
+	// Add download task to queue, runs on click download button,
 	void addDownload(uint32 idx);
 
 	bool cancelDownload(uint32 idx);
@@ -87,9 +87,8 @@ public:
 	void startDownloadAsync(const Common::String &id, const Common::String &url);
 };
 
-#define DLCMan        DLC::DLCManager::instance()
+#define DLCMan DLC::DLCManager::instance()
 
 } // End of namespace DLC
-
 
 #endif
