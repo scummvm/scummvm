@@ -49,7 +49,7 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 				// Ghidra 0x00004D00-0x00004D37: lead movement receives the encoded target context, then
 				// actor slot zero copies the source room object's position selector. Managed host closure
 				// retains the native non-returning handover and bypasses that post-movement copy.
-				if (!_movement.moveLeadActorToRoomPosition(target.x, target.y, movementModeOrScale,
+				if (!_movement.moveShaggyActorToRoomPosition(target.x, target.y, movementModeOrScale,
 														   movementArgument, encodedTargetIdentity)) {
 					_requestMovementHostClose();
 					return;

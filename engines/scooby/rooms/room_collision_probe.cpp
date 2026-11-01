@@ -27,7 +27,7 @@
 
 namespace Scooby {
 
-RoomCollisionProbeResult RoomCollisionProbe::probeLeadActorCollision(int candidateX, int candidateY,
+RoomCollisionProbeResult RoomCollisionProbe::probeShaggyActorCollision(int candidateX, int candidateY,
 																	 int16 maximumX,
 																	 int16 maximumY) const {
 	// Retain the candidate X word and reject each signed bound independently.

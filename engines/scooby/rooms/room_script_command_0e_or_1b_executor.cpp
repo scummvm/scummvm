@@ -56,7 +56,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 					// Ghidra 0x00004A44-0x00004A4F: nonnegative movement mode preserves the complete
 					// lead-actor movement boundary and the original encoded identity context. Managed host
 					// closure bypasses the native record epilogue as a non-returning handover.
-					if (!_movement.moveLeadActorToRoomPosition(
+					if (!_movement.moveShaggyActorToRoomPosition(
 							target.x, target.y, movementMode, movementArgument,
 							encodedObjectId)) {
 						_requestMovementHostClose();

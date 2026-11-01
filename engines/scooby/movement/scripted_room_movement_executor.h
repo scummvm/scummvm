@@ -91,7 +91,7 @@ public:
 	// signed waypoint pairs follow the eight-entry ambient section in g_pRoomMovementData. Visibility bits
 	// independently describe clear actor-to-waypoint paths; every clear/blocked waypoint-to-target combination
 	// is preserved before the direct-movement tail.
-	bool moveLeadActorToRoomPosition(int16 targetX, int16 targetY, int16 movementScale,
+	bool moveShaggyActorToRoomPosition(int16 targetX, int16 targetY, int16 movementScale,
 									 int16 animationBias, uint16 encodedObjectId);
 
 	// Starts a companion move and optionally waits through movement and its final animation.
@@ -143,8 +143,8 @@ public:
 											  int16 animationBias, bool resetMovementPointIndex);
 
 private:
-	static const uint8 kCompanionActorMask = 0x02;
-	static const uint8 kLeadActorMask = 0x01;
+	static const uint8 kShaggyActorMask = 0x01;
+	static const uint8 kScoobyActorMask = 0x02;
 	static const int kRouteWaypointDataOffset = 0x20;
 
 	// Small named replacement for the C# private (short HorizontalStep, short VerticalStep, short PositionIndex)
@@ -180,12 +180,12 @@ private:
 	bool tracePathFromFirstWaypoint(int16 targetX, int16 targetY);
 	bool tracePathFromSecondWaypoint(int16 targetX, int16 targetY);
 	uint16 classifyLeadWaypointVisibility();
-	bool traceLeadPathToTarget(int16 targetX, int16 targetY);
+	bool traceShaggyPathToTarget(int16 targetX, int16 targetY);
 	bool tracePathFromStagedOrigin(int originXFixed, int originYFixed, int16 targetX,
 								   int16 targetY);
 	VelocityResult computeLeadMovementVelocity(int16 targetX, int16 targetY,
 											   int16 movementScale);
-	bool moveLeadActorDirectly(int16 targetX, int16 targetY, int16 movementScale,
+	bool moveShaggyActorDirectly(int16 targetX, int16 targetY, int16 movementScale,
 							   int16 animationBias, uint16 encodedObjectId,
 							   bool resetMovementPointIndex);
 

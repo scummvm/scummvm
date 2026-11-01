@@ -40,7 +40,7 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 		// Ghidra 0x00004D84-0x00004DA1: retain the caller's interaction snapshot and both bit-12 outcomes.
 		// The managed caller already owns D7; only the hold and interaction bits survive as runtime state.
 		if ((commandFlags & 0x1000) != 0) {
-			_state.actorAnimationHoldFlags |= kLeadActorMask;
+			_state.actorAnimationHoldFlags |= kShaggyActorMask;
 			_state.interactionFlags |= 0x10;
 		}
 
@@ -110,11 +110,11 @@ bool RoomScriptCommand10Executor::playLeadActorPositionTransition(int16 previous
 																  int16 nextPositionIndex) {
 	_state.actorAnimationOffsets[0] =
 		resolveLeadPositionTransition(previousPositionIndex, nextPositionIndex);
-	_state.actorAnimationRestartFlags |= kLeadActorMask;
+	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorAnimationHoldFlags & kLeadActorMask) == 0) {
+		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) == 0) {
 			break;
 		}
 
@@ -125,7 +125,7 @@ bool RoomScriptCommand10Executor::playLeadActorPositionTransition(int16 previous
 
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorAnimationHoldFlags & kLeadActorMask) != 0) {
+		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) != 0) {
 			break;
 		}
 
@@ -135,7 +135,7 @@ bool RoomScriptCommand10Executor::playLeadActorPositionTransition(int16 previous
 	}
 
 	_state.actorAnimationOffsets[0] = static_cast<int16>(_state.actorPositionIndices[0] + 4);
-	_state.actorAnimationRestartFlags |= kLeadActorMask;
+	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	return true;
 }
 } // namespace Scooby

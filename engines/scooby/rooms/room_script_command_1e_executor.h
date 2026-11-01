@@ -63,8 +63,8 @@ public:
 	void executeRoomScriptCommand1E(int mode);
 
 private:
-	static const uint8 kCompanionActorMask = 0x02;
-	static const uint8 kLeadActorMask = 0x01;
+	static const uint8 kScoobyActorMask = 0x02;
+	static const uint8 kShaggyActorMask = 0x01;
 
 	bool waitForRoomVerticalBlank();
 

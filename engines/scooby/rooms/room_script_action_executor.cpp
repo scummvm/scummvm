@@ -341,7 +341,7 @@ void RoomScriptActionExecutor::scriptAction0BScoobyDooStartAnimation() {
 //
 // Ghidra: executeRoomScriptAction11 (0x000043AC).
 void RoomScriptActionExecutor::scriptAction11StopShaggyLeadMode() {
-	// Ghidra 0x000043AC-0x000043B3: set only the special actor-zero update-mode flag.
+	// Ghidra 0x000043AC-0x000043B3: set only the special actor-zero (Shaggy) update-mode flag.
 	_state.roomBehaviorFlags |= 0x04;
 
 	// Ghidra 0x000043B4-0x000043B5: return with every other room-behavior flag preserved.

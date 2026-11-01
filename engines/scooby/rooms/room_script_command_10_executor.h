@@ -66,7 +66,7 @@ public:
 	void scriptCommand10Dialog(int mode);
 
 private:
-	static const uint8 kLeadActorMask = 0x01;
+	static const uint8 kShaggyActorMask = 0x01;
 	static const int kDialogueBaseField = 0x20;
 	static const int kMaskTileBaseDelta = 0x20;
 	static const uint16 kPaletteAttributePreservationMask = 0x9FFF;

@@ -42,7 +42,7 @@ public:
 	// original D0 word needed after a collision.
 	// candidateX/candidateY: signed 16.16 candidate coordinates. maximumX/maximumY: inclusive signed
 	// room-space bounds.
-	RoomCollisionProbeResult probeLeadActorCollision(int candidateX, int candidateY, int16 maximumX,
+	RoomCollisionProbeResult probeShaggyActorCollision(int candidateX, int candidateY, int16 maximumX,
 													 int16 maximumY) const;
 
 	// Ghidra: probeStagedCollision (0x00007476). Tests one staged integer point against the active room's

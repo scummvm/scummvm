@@ -421,7 +421,7 @@ bool RoomMouseController::planWalkPath(RuntimeState &state) {
 			int centerX = MIN<int>(column * kPathCellSize + kPathCellSize / 2, maximumX);
 			int centerY = MIN<int>(row * kPathCellSize + kPathCellSize / 2, maximumY);
 			centers[cell] = Common::Point(static_cast<int16>(centerX), static_cast<int16>(centerY));
-			open[cell] = probe.probeLeadActorCollision(centers[cell].x << 16, centers[cell].y << 16, maximumX,
+			open[cell] = probe.probeShaggyActorCollision(centers[cell].x << 16, centers[cell].y << 16, maximumX,
 													   maximumY).isClear ? 1 : 0;
 		}
 	}
@@ -529,7 +529,7 @@ bool RoomMouseController::planWalkPath(RuntimeState &state) {
 	}
 
 	Common::Point destination = centers[goalState / kDirectionCount];
-	if (!goalInArea && probe.probeLeadActorCollision(targetX << 16, targetY << 16, maximumX, maximumY).isClear &&
+	if (!goalInArea && probe.probeShaggyActorCollision(targetX << 16, targetY << 16, maximumX, maximumY).isClear &&
 		isSegmentClear(probe, destination.x, destination.y, targetX, targetY, maximumX, maximumY)) {
 		destination = Common::Point(static_cast<int16>(targetX), static_cast<int16>(targetY));
 	}
@@ -563,7 +563,7 @@ bool RoomMouseController::isSegmentClear(const RoomCollisionProbe &probe, int x0
 	for (int step = 1; step <= steps; step++) {
 		int x = x0 + ((x1 - x0) * step + (x1 >= x0 ? steps / 2 : -steps / 2)) / steps;
 		int y = y0 + ((y1 - y0) * step + (y1 >= y0 ? steps / 2 : -steps / 2)) / steps;
-		if (!probe.probeLeadActorCollision(x << 16, y << 16, maximumX, maximumY).isClear) {
+		if (!probe.probeShaggyActorCollision(x << 16, y << 16, maximumX, maximumY).isClear) {
 			return false;
 		}
 	}

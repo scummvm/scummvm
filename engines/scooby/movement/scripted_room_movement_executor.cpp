@@ -122,13 +122,13 @@ bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectId, int
 	}
 }
 
-bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, int16 targetY,
+bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, int16 targetY,
 															   int16 movementScale,
 															   int16 animationBias,
 															   uint16 encodedObjectId) {
 	// Ghidra 0x00005002-0x0000501B: clear stale lead movement and return only when both signed integer
 	// coordinates already equal the requested destination.
-	_state.actorMovementFlags &= static_cast<uint8>(~kLeadActorMask);
+	_state.actorMovementFlags &= static_cast<uint8>(~kShaggyActorMask);
 	if (getIntegerCoordinate(_state.actorXFixedCoordinates[0]) == targetX &&
 		getIntegerCoordinate(_state.actorYFixedCoordinates[0]) == targetY) {
 		return true;
@@ -136,14 +136,14 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 
 	// Ghidra 0x0000501C-0x00005043: progress bit four, a clear direct trace, or no visible waypoint all
 	// tail-enter direct movement with a freshly reset queued-point index.
-	if ((_state.progressStateBytes[0] & 0x10) != 0 || !traceLeadPathToTarget(targetX, targetY)) {
-		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
+	if ((_state.progressStateBytes[0] & 0x10) != 0 || !traceShaggyPathToTarget(targetX, targetY)) {
+		return moveShaggyActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 									 true);
 	}
 
 	uint16 visibleWaypoints = classifyLeadWaypointVisibility();
 	if (visibleWaypoints == 0) {
-		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
+		return moveShaggyActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 									 true);
 	}
 
@@ -166,7 +166,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 			secondWaypointRawX * secondWaypointRawX + secondWaypointRawY * secondWaypointRawY;
 		if (firstSquaredMagnitude < secondSquaredMagnitude) {
 			if (tracePathFromSecondWaypoint(targetX, targetY)) {
-				return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias,
+				return moveShaggyActorDirectly(targetX, targetY, movementScale, animationBias,
 											 encodedObjectId,
 											 true);
 			}
@@ -175,12 +175,12 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 			_state.leadActorMovementPoints[0].targetY = targetY;
 			buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
 			_state.leadActorMovementPointIndex = 1;
-			return moveLeadActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
+			return moveShaggyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 										 encodedObjectId, false);
 		}
 
 		if (tracePathFromFirstWaypoint(targetX, targetY)) {
-			return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
+			return moveShaggyActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 										 true);
 		}
 
@@ -188,7 +188,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 		_state.leadActorMovementPoints[0].targetY = targetY;
 		buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
 		_state.leadActorMovementPointIndex = 1;
-		return moveLeadActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
+		return moveShaggyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
 	}
 
@@ -200,12 +200,12 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 			_state.leadActorMovementPoints[0].targetY = targetY;
 			buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
 			_state.leadActorMovementPointIndex = 1;
-			return moveLeadActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
+			return moveShaggyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 										 encodedObjectId, false);
 		}
 
 		if (tracePathFromSecondWaypoint(targetX, targetY)) {
-			return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
+			return moveShaggyActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 										 true);
 		}
 
@@ -216,7 +216,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 		_state.leadActorMovementPoints[1].targetY = secondWaypointY;
 		appendLeadRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
 		_state.leadActorMovementPointIndex = 2;
-		return moveLeadActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
+		return moveShaggyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
 	}
 
@@ -227,12 +227,12 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 		_state.leadActorMovementPoints[0].targetY = targetY;
 		buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
 		_state.leadActorMovementPointIndex = 1;
-		return moveLeadActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
+		return moveShaggyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
 	}
 
 	if (tracePathFromFirstWaypoint(targetX, targetY)) {
-		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
+		return moveShaggyActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 									 true);
 	}
 
@@ -243,7 +243,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 	_state.leadActorMovementPoints[1].targetY = firstWaypointY;
 	appendLeadRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
 	_state.leadActorMovementPointIndex = 2;
-	return moveLeadActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
+	return moveShaggyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 								 encodedObjectId, false);
 }
 
@@ -454,7 +454,7 @@ uint16 ScriptedRoomMovementExecutor::classifyLeadWaypointVisibility() {
 		int16 targetX = static_cast<int16>(_rom.readInt16(waypointOffset) << 3);
 		int16 targetY = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))
 										   << 3);
-		if (!traceLeadPathToTarget(targetX, targetY)) {
+		if (!traceShaggyPathToTarget(targetX, targetY)) {
 			visibility |= 1 << waypointIndex;
 		}
 
@@ -465,7 +465,7 @@ uint16 ScriptedRoomMovementExecutor::classifyLeadWaypointVisibility() {
 	return visibility;
 }
 
-bool ScriptedRoomMovementExecutor::traceLeadPathToTarget(int16 targetX, int16 targetY) {
+bool ScriptedRoomMovementExecutor::traceShaggyPathToTarget(int16 targetX, int16 targetY) {
 	// Ghidra 0x00005364-0x00005377: stage both complete lead coordinates and preserve the original fallthrough
 	// into the separately owned trace continuation.
 	return tracePathFromStagedOrigin(_state.actorXFixedCoordinates[0], _state.actorYFixedCoordinates[0],
@@ -546,7 +546,7 @@ ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::compu
 												   targetX, targetY, movementScale);
 }
 
-bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 targetY,
+bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 targetY,
 														 int16 movementScale, int16 animationBias,
 														 uint16 encodedObjectId,
 														 bool resetMovementPointIndex) {
@@ -576,11 +576,11 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 	// publication, then mark lead movement active. Native interrupt-owned progress is serviced per back edge.
 	_state.actorPositionIndices[0] = positionIndex;
 	_state.actorAnimationDelays[0] = -1;
-	_state.actorAnimationRestartFlags |= kLeadActorMask;
+	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorAnimationRestartFlags & kLeadActorMask) == 0 &&
-			(_state.actorGraphicsReadyFlags & kLeadActorMask) != 0) {
+		if ((_state.actorAnimationRestartFlags & kShaggyActorMask) == 0 &&
+			(_state.actorGraphicsReadyFlags & kShaggyActorMask) != 0) {
 			break;
 		}
 
@@ -589,14 +589,14 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 		}
 	}
 
-	_state.actorMovementFlags |= kLeadActorMask;
+	_state.actorMovementFlags |= kShaggyActorMask;
 
 	// Ghidra 0x00005614-0x00005629: a negative encoded identity leaves movement asynchronous. Every nonnegative
 	// identity waits at least once until the room callback clears the complete routed movement.
 	if (static_cast<int16>(encodedObjectId) >= 0) {
 		while (true) {
 			_updateActorAnimationFrames();
-			if ((_state.actorMovementFlags & kLeadActorMask) == 0) {
+			if ((_state.actorMovementFlags & kShaggyActorMask) == 0) {
 				break;
 			}
 
@@ -609,10 +609,10 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 		// restart consumption before continuing to the normal restoration path.
 		_state.actorAnimationOffsets[0] = static_cast<int16>(positionIndex + 4);
 		_state.actorAnimationDelays[0] = -1;
-		_state.actorAnimationRestartFlags |= kLeadActorMask;
+		_state.actorAnimationRestartFlags |= kShaggyActorMask;
 		while (true) {
 			_updateActorAnimationFrames();
-			if ((_state.actorAnimationRestartFlags & kLeadActorMask) == 0) {
+			if ((_state.actorAnimationRestartFlags & kShaggyActorMask) == 0) {
 				break;
 			}
 
@@ -646,7 +646,7 @@ bool ScriptedRoomMovementExecutor::finishCompanionMovement(int16 targetX, int16 
 
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorMovementFlags & kCompanionActorMask) == 0) {
+		if ((_state.actorMovementFlags & kScoobyActorMask) == 0) {
 			break;
 		}
 
@@ -659,10 +659,10 @@ bool ScriptedRoomMovementExecutor::finishCompanionMovement(int16 targetX, int16 
 	// -1, then update at least once and wait only for callback consumption of its restart request.
 	_state.actorAnimationOffsets[1] = static_cast<int16>(result.positionIndex + 4);
 	_state.actorAnimationDelays[1] = -1;
-	_state.actorAnimationRestartFlags |= kCompanionActorMask;
+	_state.actorAnimationRestartFlags |= kScoobyActorMask;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorAnimationRestartFlags & kCompanionActorMask) == 0) {
+		if ((_state.actorAnimationRestartFlags & kScoobyActorMask) == 0) {
 			break;
 		}
 
@@ -681,7 +681,7 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 	int16 animationBias) {
 	// Ghidra 0x000056B0-0x000056D1: clear stale companion movement and interaction bit five, then return only
 	// when both signed integer coordinates already equal the target. Incoming D6 is incidental here.
-	_state.actorMovementFlags &= static_cast<uint8>(~kCompanionActorMask);
+	_state.actorMovementFlags &= static_cast<uint8>(~kScoobyActorMask);
 	_state.interactionFlags &= 0xDF;
 	if (getIntegerCoordinate(_state.actorXFixedCoordinates[1]) == targetX &&
 		getIntegerCoordinate(_state.actorYFixedCoordinates[1]) == targetY) {
@@ -1017,11 +1017,11 @@ MovementResult ScriptedRoomMovementExecutor::moveCompanionActorDirectly(
 	// Ghidra 0x00005B20-0x00005B4B: restart immediately, update at least once, and wait until restart
 	// consumption and graphics publication are both complete. Service native callback progress per back edge.
 	_state.actorAnimationDelays[1] = -1;
-	_state.actorAnimationRestartFlags |= kCompanionActorMask;
+	_state.actorAnimationRestartFlags |= kScoobyActorMask;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.actorAnimationRestartFlags & kCompanionActorMask) == 0 &&
-			(_state.actorGraphicsReadyFlags & kCompanionActorMask) != 0) {
+		if ((_state.actorAnimationRestartFlags & kScoobyActorMask) == 0 &&
+			(_state.actorGraphicsReadyFlags & kScoobyActorMask) != 0) {
 			break;
 		}
 
@@ -1031,7 +1031,7 @@ MovementResult ScriptedRoomMovementExecutor::moveCompanionActorDirectly(
 	}
 
 	// Ghidra 0x00005B4C-0x00005B55: mark companion movement active and return D6's semantic position.
-	_state.actorMovementFlags |= kCompanionActorMask;
+	_state.actorMovementFlags |= kScoobyActorMask;
 	return MovementResult(true, positionIndex);
 }
 

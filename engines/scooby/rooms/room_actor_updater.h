@@ -67,8 +67,8 @@ public:
 private:
 	static const uint8 kActorAnimationHoldMask = 0x01;
 	static const uint8 kActorGraphicsReadyMask = 0x01;
-	static const uint8 kCompanionActorMask = 0x02;
-	static const int kCompanionActorSlot = 1;
+	static const uint8 kScoobyActorMask = 0x02;
+	static const int kScoobyActorSlot = 1;
 	static const uint8 kCursorDownMask = 0x02;
 	static const uint8 kCursorLeftMask = 0x04;
 	static const uint8 kCursorRightMask = 0x08;
@@ -77,8 +77,8 @@ private:
 	static const uint8 kDisplayRightInterfaceMask = 0x10;
 	static const uint8 kDisplayTransitionMask = 0x80;
 	static const uint8 kInteractionMenuSuppressionMask = 0x04;
-	static const uint8 kLeadActorMask = 0x01;
-	static const int kLeadActorSlot = 0;
+	static const uint8 kShaggyActorMask = 0x01;
+	static const int kShaggyActorSlot = 0;
 	static const int kLowerInterfaceColumnCount = 10;
 	static const int kLowerInterfaceRowCount = 7;
 	static const int kLowerInterfaceSourceRowByteStride = 0x80;
@@ -112,7 +112,7 @@ private:
 	void updateInteractionCursor();
 	void updateMenuCommandFromCursor();
 	void closeInteractionInterface();
-	void updateLeadActorAndCamera();
+	void updateShaggyActorAndCamera();
 	bool updateLeadControlledCandidate(int &candidateX, int &candidateY, uint32 stepMagnitude,
 									   int16 maximumX, int16 maximumY);
 	void moveLeadLeft(int &candidateX, uint32 stepMagnitude);
@@ -133,7 +133,7 @@ private:
 	void updateCameraY(int16 maximumY);
 	void tryOpenInteractionInterface();
 	void setCenteredCursor();
-	void updateCompanionActor();
+	void updateScoobyActor();
 	void advanceCompanionScriptedMovement();
 	void beginNextCompanionMovementPoint(const ActorMovementPoint &point);
 	void updateActorPrioritiesAndScales();

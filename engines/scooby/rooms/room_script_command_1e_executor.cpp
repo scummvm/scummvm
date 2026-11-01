@@ -46,11 +46,11 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 			// Ghidra 0x000026C6-0x000026E5: slot zero always requests restart. A negative selector also
 			// advances all animation streams at least once until hold bit zero is set; nonnegative selectors
 			// retain the immediate exit.
-			_state.actorAnimationRestartFlags |= kLeadActorMask;
+			_state.actorAnimationRestartFlags |= kShaggyActorMask;
 			if (static_cast<int16>(selector) < 0) {
 				while (true) {
 					_updateActorAnimationFrames();
-					if ((_state.actorAnimationHoldFlags & kLeadActorMask) != 0) {
+					if ((_state.actorAnimationHoldFlags & kShaggyActorMask) != 0) {
 						break;
 					}
 
@@ -72,10 +72,10 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 			// Negative selectors set it, advance animation at least once until hold bit one is set, then
 			// retain the native final rewrite of the preserved next-position word.
 			if (static_cast<int16>(selector) < 0) {
-				_state.actorAnimationRestartFlags |= kCompanionActorMask;
+				_state.actorAnimationRestartFlags |= kScoobyActorMask;
 				while (true) {
 					_updateActorAnimationFrames();
-					if ((_state.actorAnimationHoldFlags & kCompanionActorMask) != 0) {
+					if ((_state.actorAnimationHoldFlags & kScoobyActorMask) != 0) {
 						break;
 					}
 

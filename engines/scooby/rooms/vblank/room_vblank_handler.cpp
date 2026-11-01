@@ -127,7 +127,7 @@ void RoomVBlankHandler::updateWalkAreaOverlay() {
 		for (int y = 0; y < roomHeight; y++) {
 			for (int x = 0; x < roomWidth; x++) {
 				clear[static_cast<size_t>(y * roomWidth + x)] =
-					probe.probeLeadActorCollision(x << 16, y << 16, maximumX, maximumY).isClear ? 1 : 0;
+					probe.probeShaggyActorCollision(x << 16, y << 16, maximumX, maximumY).isClear ? 1 : 0;
 			}
 		}
 
