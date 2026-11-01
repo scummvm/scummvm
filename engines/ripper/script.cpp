@@ -1077,8 +1077,11 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 			if (command.arguments.size() < 4)
 				return kCallbackFailed;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
-			if (!_engine->getMedia()->playScene(mediaPath, (int32)command.arguments[1].value,
-				(int32)command.arguments[2].value, true))
+			ScenePlaybackOptions options;
+			options.x = (int32)command.arguments[1].value;
+			options.y = (int32)command.arguments[2].value;
+			options.firstFrameOnly = true;
+			if (!_engine->getMedia()->playScene(mediaPath, options))
 				return kCallbackFailed;
 			debugC(2, kDebugScripts,
 				"Ripper: retained first frame for scene media command '%s'",
@@ -1383,12 +1386,17 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			IdleMediaCallback idleCallback(this, _runtime.activeScript, frame.idleCallbackOffset,
 				idleWaitFrame, _runtime.activeFrame);
 			uint16 idleCommand = 0;
+			ScenePlaybackOptions options;
+			options.x = frame.x;
+			options.y = frame.y;
+			options.loopUntilInput = loopUntilInput;
+			options.allowEscSpace = allowEscSpace;
+			options.callback = idleTextRequest ? &idleCallback : nullptr;
+			options.command = &idleCommand;
 			const bool played = frame.presentationType == 0 ?
 				_engine->getMedia()->play(mediaPath, allowEscSpace, frame.x,
 					frame.y, true, presentationText) :
-				_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
-					loopUntilInput, allowEscSpace,
-					idleTextRequest ? &idleCallback : nullptr, &idleCommand);
+				_engine->getMedia()->playScene(mediaPath, options);
 			if (!played)
 				return false;
 			if (_runtimeRestorePending) {
@@ -1654,7 +1662,11 @@ bool ScriptManager::serviceScene() {
 		debugC(1, kDebugSaveLoad,
 			"Ripper: resuming loaded interactive presentation frame=%u label='%s' media='%s'",
 			_runtime.activeFrame, label.c_str(), mediaPath.c_str());
-		if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false, true, false))
+		ScenePlaybackOptions options;
+		options.x = frame.x;
+		options.y = frame.y;
+		options.loopUntilInput = true;
+		if (!_engine->getMedia()->playScene(mediaPath, options))
 			return false;
 		if (_runtimeRestorePending)
 			return true;

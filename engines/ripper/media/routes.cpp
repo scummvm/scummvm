@@ -115,11 +115,16 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 			_engine->getSettings()->getVideoMode() < 2 ? 1 : 0;
 		// Restoring an indexed page also requires its source palette; ACCESED.AVI
 		// must not replace the palette used to rebuild the surrounding WAC page.
-		result = playIavf(*stream, path, allowEscSpace, presentationX,
-			presentationY, originY, false,
-			rememberIavfPalette, textDisplayScale,
-			hasPresentationText ? &textCallback : nullptr,
-			hasPresentationText ? &textCommand : nullptr);
+		IavfPlaybackOptions options;
+		options.x = presentationX;
+		options.y = presentationY;
+		options.originY = originY;
+		options.displayScale = textDisplayScale;
+		options.allowEscSpace = allowEscSpace;
+		options.rememberVideoPalette = rememberIavfPalette;
+		options.callback = hasPresentationText ? &textCallback : nullptr;
+		options.command = hasPresentationText ? &textCommand : nullptr;
+		result = playIavf(*stream, path, options);
 		if (result && hasPresentationText && textCommand == 0 &&
 				!_engine->shouldQuit())
 			result = textCallback.waitForDismissal();
@@ -179,7 +184,13 @@ bool MediaPlayer::playWacPresentation(const Common::String &path, int x, int y) 
 
 	IndexedDisplaySnapshot displayContext;
 	const bool captured = displayContext.capture();
-	bool result = playIavf(*stream, path, true, x, y, 0, false, !captured, 1);
+	IavfPlaybackOptions options;
+	options.x = x;
+	options.y = y;
+	options.displayScale = 1;
+	options.allowEscSpace = true;
+	options.rememberVideoPalette = !captured;
+	bool result = playIavf(*stream, path, options);
 	if (captured && !_engine->shouldQuit()) {
 		const bool restored = displayContext.restore();
 		debugC(restored ? 2 : 1, kDebugVideo,
@@ -306,8 +317,13 @@ bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
 	} else {
 		IndexedDisplaySnapshot displayContext;
 		const bool captured = displayContext.capture();
-		result = playIavf(*ownedStream, name, allowEscSpace, x, y,
-			kScenePresentationTop, false, !captured);
+		IavfPlaybackOptions options;
+		options.x = x;
+		options.y = y;
+		options.originY = kScenePresentationTop;
+		options.allowEscSpace = allowEscSpace;
+		options.rememberVideoPalette = !captured;
+		result = playIavf(*ownedStream, name, options);
 		if (captured && !_engine->shouldQuit()) {
 			const bool restored = displayContext.restore();
 			debugC(restored ? 2 : 1, kDebugVideo,
@@ -416,18 +432,19 @@ bool MediaPlayer::playInteractiveIavf(const Common::String &path,
 	debugC(1, kDebugVideo,
 		"Ripper: entering interactive IAVF presentation media='%s' callback=%d",
 		path.c_str(), callback != nullptr);
-	const bool result = playIavf(*stream, path, false, -1, -1, 0, false,
-		true, kAutoPacketizedDisplayScale, callback, command);
+	IavfPlaybackOptions options;
+	options.callback = callback;
+	options.command = command;
+	const bool result = playIavf(*stream, path, options);
 	_input->drainKeys();
 	return result;
 }
 
-bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
-		bool loopUntilInput, bool allowEscSpace, MediaSequenceCallback *callback,
-		uint16 *command) {
+bool MediaPlayer::playScene(const Common::String &path, const ScenePlaybackOptions &options) {
 	debugC(1, kDebugVideo,
 		"Ripper: entering scene presentation media='%s' firstFrameOnly=%d loopUntilInput=%d controls=%d callback=%d",
-		path.c_str(), firstFrameOnly, loopUntilInput, allowEscSpace, callback != nullptr);
+		path.c_str(), options.firstFrameOnly, options.loopUntilInput, options.allowEscSpace,
+		options.callback != nullptr);
 	Common::String source;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		openSource(path, kSourceConfiguredPath, source));
@@ -436,17 +453,17 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		return false;
 	}
 
-	const uint frameLimit = firstFrameOnly ? 1 : 0;
+	const uint frameLimit = options.firstFrameOnly ? 1 : 0;
 	const MediaFormat format = detectMediaFormat(*stream);
 	const bool isSmacker = format == kMediaFormatSmacker;
 	const bool isIavf = format == kMediaFormatIavf;
 	debugC(2, kDebugVideo,
 		"Ripper: scene media '%s' mode=%s scriptPosition=%d,%d originY=%d controls=%d",
-		path.c_str(), firstFrameOnly ? "first-frame-preview" : "sequence", x, y,
-		kScenePresentationTop, allowEscSpace);
+		path.c_str(), options.firstFrameOnly ? "first-frame-preview" : "sequence", options.x, options.y,
+		kScenePresentationTop, options.allowEscSpace);
 	bool result = false;
-	_stopSceneOnMouse = loopUntilInput && !firstFrameOnly;
-	const bool loop = loopUntilInput && !firstFrameOnly;
+	_stopSceneOnMouse = options.loopUntilInput && !options.firstFrameOnly;
+	const bool loop = options.loopUntilInput && !options.firstFrameOnly;
 	uint pass = 0;
 	do {
 		const bool repeatedLoopPass = pass++ != 0;
@@ -460,30 +477,35 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		}
 	if (isSmacker) {
 		SmackerPlaybackPlan plan;
-		plan.input.allowEscSpace = allowEscSpace;
-		plan.placement.x = x;
-		plan.placement.y = y;
+		plan.input.allowEscSpace = options.allowEscSpace;
+		plan.placement.x = options.x;
+		plan.placement.y = options.y;
 		plan.frames.frameLimit = frameLimit;
 		plan.placement.originY = kScenePresentationTop;
 		plan.input.serviceSceneUi = true;
 		plan.loop.loopFromStart = loop;
-		plan.callback.sequenceCallback = callback;
-		plan.callback.sequenceCommand = command;
+		plan.callback.sequenceCallback = options.callback;
+		plan.callback.sequenceCommand = options.command;
 		result = playValidatedSmacker(stream.release(), path, "scene", plan);
 		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
 			result = true;
 			debugC(1, kDebugVideo,
 				"Ripper: interactive scene media stopped by mouse; returning to hotspot polling");
 		}
-	} else if (isIavf && !firstFrameOnly) {
-		if (callback) {
+	} else if (isIavf && !options.firstFrameOnly) {
+		if (options.callback) {
 			warning("Ripper: scene callback is unsupported for packetized media '%s'",
 				path.c_str());
 			result = false;
 			break;
 		}
-		result = playIavf(*stream, path, allowEscSpace, x, y,
-			kScenePresentationTop, true, true);
+		IavfPlaybackOptions iavfOptions;
+		iavfOptions.x = options.x;
+		iavfOptions.y = options.y;
+		iavfOptions.originY = kScenePresentationTop;
+		iavfOptions.allowEscSpace = options.allowEscSpace;
+		iavfOptions.serviceSceneUi = true;
+		result = playIavf(*stream, path, iavfOptions);
 		stream.reset();
 	} else {
 		warning("Ripper: unsupported scene media mode for '%s' format=%s",

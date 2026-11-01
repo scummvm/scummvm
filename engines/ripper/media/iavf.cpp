@@ -37,9 +37,7 @@
 namespace Ripper {
 
 bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::String &name,
-		bool allowEscSpace, int overrideX, int overrideY, int overrideOriginY,
-		bool serviceSceneUi, bool rememberVideoPalette, uint displayScale,
-		MediaSequenceCallback *callback, uint16 *command) {
+		const IavfPlaybackOptions &options) {
 	IavfMovie movie;
 	if (!parseIavf(stream, name, movie)) {
 		warning("Ripper: invalid IAVF presentation '%s'", name.c_str());
@@ -97,8 +95,8 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 	bool result = true;
 	const uint32 audioByteRate = movie.audioByteRate;
 	bool completedFinalSegment = false;
-	if (command)
-		*command = 0;
+	if (options.command)
+		*options.command = 0;
 	for (uint i = 0; i < movie.segments.size() && !_engine->shouldQuit(); ++i) {
 		if (movie.segments[i].clearDisplayBefore) {
 			g_system->fillScreen(0);
@@ -119,22 +117,22 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			branchHeight = smacker->readUint32LE();
 			smacker->seek(0);
 		}
-		if (callback)
-			callback->beginIavfSegment(sequenceId,
+		if (options.callback)
+			options.callback->beginIavfSegment(sequenceId,
 				segment.expectedFrames, branchWidth, branchHeight);
 		debugC(2, kDebugVideo,
 			"Ripper: IAVF '%s' entered packetized branch segment=%u "
 			"sequence=%u callback=%d size=%ux%u",
-			name.c_str(), i, sequenceId, callback != nullptr,
+			name.c_str(), i, sequenceId, options.callback != nullptr,
 			branchWidth, branchHeight);
-		const int segmentX = overrideX != -1 ? overrideX : segment.x;
-		const int segmentY = overrideY != -1 ? overrideY : segment.y;
-		const int segmentOriginY = overrideY != -1 ? overrideOriginY : 0;
-		if (overrideX != -1 || overrideY != -1) {
+		const int segmentX = options.x != -1 ? options.x : segment.x;
+		const int segmentY = options.y != -1 ? options.y : segment.y;
+		const int segmentOriginY = options.y != -1 ? options.originY : 0;
+		if (options.x != -1 || options.y != -1) {
 			debugC(2, kDebugVideo,
 				"Ripper: IAVF '%s' segment=%u coordinate override raw=%d,%d caller=%d,%d originY=%d effective=%d,%d",
 				name.c_str(), i, segment.x, segment.y,
-				overrideX, overrideY, segmentOriginY, segmentX,
+				options.x, options.y, segmentOriginY, segmentX,
 				segmentY + segmentOriginY);
 		}
 		bool stoppedByUser = false;
@@ -150,7 +148,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			frameAudioOffsets = &relativeAudioOffsets;
 		}
 		SmackerPlaybackPlan plan;
-		plan.input.allowEscSpace = allowEscSpace;
+		plan.input.allowEscSpace = options.allowEscSpace;
 		plan.placement.x = segmentX;
 		plan.placement.y = segmentY;
 		plan.timeline.externalAudio = audioActive ? &audioHandle : nullptr;
@@ -158,14 +156,14 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		plan.timeline.frameAudioOffsets = frameAudioOffsets;
 		plan.timeline.audioByteRate = audioByteRate;
 		plan.timeline.timelineStartMillis = timelineStartMillis;
-		plan.placement.displayScale = displayScale;
+		plan.placement.displayScale = options.displayScale;
 		plan.palette.patchInterfacePalette = false;
 		plan.placement.originY = segmentOriginY;
-		plan.input.serviceSceneUi = serviceSceneUi;
-		plan.palette.rememberVideoPalette = rememberVideoPalette;
+		plan.input.serviceSceneUi = options.serviceSceneUi;
+		plan.palette.rememberVideoPalette = options.rememberVideoPalette;
 		plan.input.advanceSegment = &advanceSegment;
-		plan.callback.sequenceCallback = callback;
-		plan.callback.sequenceCommand = command;
+		plan.callback.sequenceCallback = options.callback;
+		plan.callback.sequenceCommand = options.command;
 		if (!smacker || !playSmacker(smacker,
 				Common::String::format("%s#%u", name.c_str(), i), plan)) {
 			result = false;
@@ -173,7 +171,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		}
 		if (stoppedByUser)
 			break;
-		if (command && *command != 0)
+		if (options.command && *options.command != 0)
 			break;
 		if (_engine->getScripts()->hasPendingSceneTransition())
 			break;
@@ -217,7 +215,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 				result = false;
 				break;
 			}
-			if (allowEscSpace && _input->hasPendingKey()) {
+			if (options.allowEscSpace && _input->hasPendingKey()) {
 				const uint16 inputCommand = _input->consumeKey();
 				if (inputCommand == 0x1b || inputCommand == 0x4d00) {
 					skipped = true;

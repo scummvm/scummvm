@@ -131,9 +131,7 @@ public:
 	bool playInteractiveIavf(const Common::String &path,
 		MediaSequenceCallback *callback, uint16 *command);
 	void fadePalette(bool fadeIn, uint stepCount);
-	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
-		bool loopUntilInput = false, bool allowEscSpace = false,
-		MediaSequenceCallback *callback = nullptr, uint16 *command = nullptr);
+	bool playScene(const Common::String &path, const ScenePlaybackOptions &options);
 	void pauseActiveMedia(bool pause);
 
 private:
@@ -184,11 +182,7 @@ private:
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		const SmackerPlaybackPlan &plan);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
-		bool allowEscSpace, int overrideX = -1, int overrideY = -1,
-		int overrideOriginY = 0, bool serviceSceneUi = false,
-		bool rememberVideoPalette = true, uint displayScale = 0,
-		MediaSequenceCallback *callback = nullptr,
-		uint16 *command = nullptr);
+		const IavfPlaybackOptions &options);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
 		bool allowSegmentAdvance, bool &paused, bool &skipToEnd,
 		bool &advanceSegment,

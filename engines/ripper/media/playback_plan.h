@@ -117,6 +117,28 @@ struct SmackerPlaybackPlan {
 	SmackerRenderingPolicy rendering;
 };
 
+struct IavfPlaybackOptions {
+	int x = -1;
+	int y = -1;
+	int originY = 0;
+	uint displayScale = kAutoPacketizedDisplayScale;
+	bool allowEscSpace = false;
+	bool serviceSceneUi = false;
+	bool rememberVideoPalette = true;
+	MediaSequenceCallback *callback = nullptr;
+	uint16 *command = nullptr;
+};
+
+struct ScenePlaybackOptions {
+	int x = -1;
+	int y = -1;
+	bool firstFrameOnly = false;
+	bool loopUntilInput = false;
+	bool allowEscSpace = false;
+	MediaSequenceCallback *callback = nullptr;
+	uint16 *command = nullptr;
+};
+
 Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan);
 
 } // End of namespace Ripper

@@ -149,8 +149,10 @@ bool KeypadSequencePuzzle::captureEntryDisplay() {
 
 bool KeypadSequencePuzzle::openKeypad() {
 	_engine->getCursor()->setVisible(false);
-	if (!_engine->getMedia()->playScene(kOpenMedia, kMediaX, 0, false,
-			false, false))
+	ScenePlaybackOptions options;
+	options.x = kMediaX;
+	options.y = 0;
+	if (!_engine->getMedia()->playScene(kOpenMedia, options))
 		return false;
 	if (!_baseDisplay.capture())
 		return false;
@@ -172,8 +174,10 @@ bool KeypadSequencePuzzle::openKeypad() {
 
 bool KeypadSequencePuzzle::closeKeypad() {
 	_engine->getCursor()->setVisible(false);
-	const bool result = _engine->getMedia()->playScene(kCloseMedia, kMediaX, 0,
-		false, false, false);
+	ScenePlaybackOptions options;
+	options.x = kMediaX;
+	options.y = 0;
+	const bool result = _engine->getMedia()->playScene(kCloseMedia, options);
 	_engine->getInput()->discardMouseTransitions();
 	debugC(1, kDebugPuzzles,
 		"Ripper: closed keypad sequence presentation media='%s' success=%d",
