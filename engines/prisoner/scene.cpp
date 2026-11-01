@@ -181,7 +181,13 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 	_screen->clear();
 	// TODO: resetDirtyRects();
 	addDirtyRect(0, 0, 640, 480, 1);
-	// TODO: setPalette(_blackPalette, 0, 240);
+	{
+		// The original blacks out the scene colors while the new scene is set up; the scene's own
+		// palette is set when the main loop applies the palette
+		byte blackPalette[240 * 3];
+		memset(blackPalette, 0, sizeof(blackPalette));
+		_screen->setPartialPalette(blackPalette, 0, 240);
+	}
 	// TODO: drawDirtyRects(false);
 	addDirtyRect(0, 0, 640, 480, 1);
 	_pathSystem->buildPathSystem();
@@ -222,7 +228,9 @@ void PrisonerEngine::leaveScene() {
 	unloadSounds(_newModuleIndex != _currModuleIndex);
 	unloadActors();
 	restorePaletteTasks();
-	// TODO: clearPaletteValues
+	// The palettes are set again by the next scene (original: clearPaletteValues)
+	_scenePaletteOk = false;
+	_effectPaletteOk = false;
 	unloadBackgroundObjects();
 	unloadBackground();
 	unloadScriptProgram(kSceneScriptProgram);
