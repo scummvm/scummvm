@@ -50,7 +50,6 @@ SmushAnimator::~SmushAnimator() {
 }
 
 void SmushAnimator::animatorInitialize() {
-	_flags = 0;
 	_frame = 0;
 	_blockSize = 0;
 	_tag = SMUSH_TAG_NULL;
@@ -58,11 +57,10 @@ void SmushAnimator::animatorInitialize() {
 	_pause = 0;
 }
 
-void SmushAnimator::animatorNewAnim(int flags) {
+void SmushAnimator::animatorNewAnim() {
 	animatorInitialize();
 
 	_frameCount = _decoder->getFrameCount();
-	_flags = flags;
 }
 
 void SmushAnimator::animatorPause(bool pause) {
@@ -96,8 +94,8 @@ void SmushAnimator::readBlock(int size) {
 }
 
 void SmushAnimator::decodeBlocks(int flags) {
-	int allFlags = _flags | flags;
-	int decodeFlags = ((allFlags >> 13) & 4) | (allFlags & 0x30);
+	// Only the "late" bit (0x8000) gets to the decoder, as flag 4
+	int decodeFlags = (flags >> 13) & 4;
 	_decoder->decodeFrameBlock(_block, _blockSize, decodeFlags);
 }
 

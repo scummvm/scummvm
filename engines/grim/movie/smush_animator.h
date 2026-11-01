@@ -165,7 +165,6 @@ private:
 	int _frameCount;
 	int _blockSize;
 	uint32 _tag;
-	int _flags;
 	int _pause;
 
 	void animatorInitialize();
@@ -177,7 +176,7 @@ public:
 	SmushAnimator(SmushDecoder *decoder);
 	~SmushAnimator();
 
-	void animatorNewAnim(int flags);
+	void animatorNewAnim();
 	int animatorRender(int flags);
 	void animatorPause(bool pause);
 

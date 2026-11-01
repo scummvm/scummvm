@@ -150,7 +150,6 @@ private:
 	SmushSound *_sound;
 	int _frameTimer;
 	int _syncTimer;
-	int _flags;
 	int _finished;
 	int _framesDue;
 	int _lateTicks;
@@ -170,7 +169,7 @@ public:
 	SmushAnimPlay(SmushTimer *timer, SmushSound *sound);
 	~SmushAnimPlay();
 
-	int anmStart(int fps, int flags);
+	int anmStart(int fps);
 	void anmStop();
 	int anmRender(SmushAnimClient *client);
 
