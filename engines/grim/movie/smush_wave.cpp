@@ -119,7 +119,7 @@ void SmushWave::flobdecDecodeBody(const byte *body) {
 			decompressVima(data, (int16 *)(packet + 54), pcmSize, _vimaTable, true);
 		}
 
-		_sound->souEngineStart(packet, -1, 127, 0, 64);
+		_sound->souEngineStart(packet, 127, 0, 64);
 		_chunkCounter++;
 	}
 }
