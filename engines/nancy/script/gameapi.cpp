@@ -691,6 +691,7 @@ static const luaL_Reg kDrawFunctions[] = {
 	{ "Line", drawLine },
 	{ "Tri", drawTri },
 	{ "Circle", drawCircle },
+	{ "OVL", drawOverlay },
 	{ nullptr, nullptr }
 };
 

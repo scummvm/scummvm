@@ -35,6 +35,7 @@
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/convo.h"
+#include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/particles.h"
 #include "engines/nancy/script/physics.h"
@@ -1276,6 +1277,82 @@ void OverlayRecord::renderNow() {
 
 	placePicture(_attachment, _image, source, _dest, transform, _modColor);
 	_isAttachmentDrawn = true;
+}
+
+// Draws the picture of the overlay once more. The source, onScreen, transform
+// and modColor in the table of Draw:OVL replace the overlay's own.
+void OverlayRecord::drawCopy(int tableIndex) {
+	lua_State *L = getLua();
+
+	ScriptRect source = _source;
+	ScriptRect dest = _dest;
+	ScriptMatrix transform = getTransform();
+	uint32 modColor = _modColor;
+
+	if (pushField(L, tableIndex, "source")) {
+		source = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	if (pushField(L, tableIndex, "onScreen")) {
+		dest = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	// A transform from the table is still combined with those of the nodes
+	// the overlay is attached to
+	if (pushField(L, tableIndex, "transform")) {
+		transform = checkMatrix(L, -1);
+		lua_pop(L, 1);
+
+		if (getParentNode()) {
+			transform = transform * getParentNode()->getTransform();
+		}
+	}
+
+	if (pushField(L, tableIndex, "modColor")) {
+		modColor = checkColor(L, -1);
+		lua_pop(L, 1);
+	}
+
+	Graphics::ManagedSurface *target = getDrawTarget();
+	if (!target) {
+		luaL_error(L, "Draw can only be used while a record is rendering");
+	}
+
+	Common::Rect from = source.toRect();
+	from.clip(Common::Rect(_image.w, _image.h));
+	if (from.isEmpty()) {
+		return;
+	}
+
+	const VIEW *viewport = GetEngineData(VIEW);
+	assert(viewport);
+	transform.m[3][0] -= viewport->screenPosition.left;
+	transform.m[3][1] -= viewport->screenPosition.top;
+
+	RecordGraphic picture;
+	placePicture(picture, _image, from, dest, transform, modColor);
+	blendPicture(*target, picture, transform.isTranslation() && modColor == kNoModColor, Common::Point());
+}
+
+// Draw:OVL(table), Nancy24: table.ar is the Overlay record to draw
+int drawOverlay(lua_State *L) {
+	luaL_checktype(L, 2, LUA_TTABLE);
+
+	lua_getfield(L, 2, "ar");
+	if (lua_isnil(L, -1)) {
+		return luaL_argerror(L, 2, "Reference to existing overlay AR must be provided (ar field is nil)");
+	}
+
+	OverlayRecord *overlay = dynamic_cast<OverlayRecord *>(checkRecord(L, -1));
+	if (!overlay) {
+		return luaL_typerror(L, -1, "ND.Overlay");
+	}
+
+	lua_pop(L, 1);
+	overlay->drawCopy(2);
+	return 0;
 }
 
 bool OverlayRecord::getField(const Common::String &key) {

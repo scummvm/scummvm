@@ -75,6 +75,10 @@ Record *makeRecord(RecordKind kind, SceneContext &context);
 // function is running. Null at any other time.
 Graphics::ManagedSurface *getDrawTarget();
 
+// Draw:OVL(table), Nancy24: draws the picture of an Overlay record onto what
+// the record that is rendering draws
+int drawOverlay(lua_State *L);
+
 // What a record draws. Records are placed in the coordinates of the viewport.
 class RecordGraphic : public RenderObject {
 public:
@@ -256,6 +260,11 @@ public:
 
 	void updateGraphics() override;
 	void registerGraphics() override;
+
+	// Nancy24: Draw:OVL draws the picture once more while another record
+	// renders. The table at tableIndex can replace its source, onScreen,
+	// transform and modColor.
+	void drawCopy(int tableIndex);
 
 protected:
 	void readTable(int tableIndex) override;
