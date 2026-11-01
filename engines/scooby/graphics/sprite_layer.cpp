@@ -37,10 +37,10 @@ Common::Array<SpriteInstance> decodePackedSpriteTableData(Span<const uint8> pack
 			packedEntries.slice(
 				static_cast<size_t>(entryIndex) * static_cast<size_t>(kEntryByteCount),
 				static_cast<size_t>(kEntryByteCount));
-		uint16 packedY = readBigEndian16(entry, 0);
-		uint16 sizeAndLink = readBigEndian16(entry, 2);
-		uint16 attributes = readBigEndian16(entry, 4);
-		uint16 packedX = readBigEndian16(entry, 6);
+		uint16 packedY = readUInt16BigEndian(entry, 0);
+		uint16 sizeAndLink = readUInt16BigEndian(entry, 2);
+		uint16 attributes = readUInt16BigEndian(entry, 4);
+		uint16 packedX = readUInt16BigEndian(entry, 6);
 
 		sprites.push_back(SpriteInstance(
 			(static_cast<int32>(packedX & 0x01FF)) - kVisibleCoordinateBias,

@@ -32,13 +32,6 @@
 #include "scooby/types.h"
 
 namespace Scooby {
-namespace {
-void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
-	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
-}
-} // namespace
-
 void RoomSceneLoader::loadRoomScene() {
 	// Ghidra 0x0000758A-0x000075AB: clear the complete pattern/layer destination and all four scroll words.
 	_scene.clearContent();

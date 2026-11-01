@@ -31,6 +31,37 @@ namespace {
 const long kExpectedLength = 0x200000;
 } // namespace
 
+uint16 readUInt16BigEndian(Span<const uint8> bytes, int offset) {
+	size_t o = static_cast<size_t>(offset);
+	return static_cast<uint16>((uint16(bytes[o]) << 8) | uint16(bytes[o + 1]));
+}
+
+uint16 readUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
+	return readUInt16BigEndian(makeSpan(bytes), offset);
+}
+
+void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
+	size_t o = static_cast<size_t>(offset);
+	bytes[o] = static_cast<uint8>(value >> 8);
+	bytes[o + 1] = static_cast<uint8>(value);
+}
+
+void writeUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
+	writeUInt16BigEndian(makeSpan(bytes), offset, value);
+}
+
+void writeUInt32BigEndian(Span<uint8> bytes, int offset, uint32 value) {
+	size_t o = static_cast<size_t>(offset);
+	bytes[o] = static_cast<uint8>(value >> 24);
+	bytes[o + 1] = static_cast<uint8>(value >> 16);
+	bytes[o + 2] = static_cast<uint8>(value >> 8);
+	bytes[o + 3] = static_cast<uint8>(value);
+}
+
+void writeUInt32BigEndian(Common::Array<uint8> &bytes, int offset, uint32 value) {
+	writeUInt32BigEndian(makeSpan(bytes), offset, value);
+}
+
 ScoobyDooRom::ScoobyDooRom(Common::Array<uint8> bytes)
 	: _bytes(Common::move(bytes)) {
 }

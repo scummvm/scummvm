@@ -24,20 +24,6 @@
 #include "common/array.h"
 
 namespace Scooby {
-namespace {
-inline void writeUInt16BigEndian(Common::Array<uint8> &output, int offset, uint16 value) {
-	output[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
-	output[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
-}
-
-inline void writeUInt32BigEndian(Common::Array<uint8> &output, int offset, uint32 value) {
-	output[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 24);
-	output[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
-	output[static_cast<size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
-	output[static_cast<size_t>(offset + 3)] = static_cast<uint8>(value);
-}
-} // namespace
-
 ActorSpriteTransformer::ActorSpriteTransformer(const ScoobyDooRom &rom)
 	: _scaleSelectionMasks(
 		  rom.readBytes(kScaleMaskTableOffset, kScaleMaskRecordCount * kScaleMaskRecordSize).toArray()) {

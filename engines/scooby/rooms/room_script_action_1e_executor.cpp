@@ -31,18 +31,6 @@
 #include "scooby/types.h"
 
 namespace Scooby {
-namespace {
-uint16 readUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
-	return static_cast<uint16>((bytes[static_cast<size_t>(offset)] << 8) |
-							   bytes[static_cast<size_t>(offset + 1)]);
-}
-
-void writeUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
-	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
-}
-} // namespace
-
 void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 	// Ghidra 0x000041B6-0x000041BD: D0=0x001E drives 31 callback-aware retrace waits.
 	for (int frameCounter = 0; frameCounter <= kInitialWaitCounter; frameCounter++) {

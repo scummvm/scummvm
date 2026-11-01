@@ -32,14 +32,6 @@
 #include "scooby/movement/actor_directional_animation_catalog.h"
 
 namespace Scooby {
-namespace {
-void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
-	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
-}
-
-} // namespace
-
 void RoomActorUpdater::updateRoomActorsAndInterface() {
 	// Ghidra 0x00005E4A-0x00005EE9: service lead-actor path cadence and every path control record.
 	updateLeadActorPath();
@@ -1319,7 +1311,7 @@ void RoomActorUpdater::updateActorPriority(int actor) {
 		return;
 	}
 
-	int16 collisionCell = static_cast<int16>(readBigEndian16(collisionCells, byteOffset));
+	int16 collisionCell = static_cast<int16>(readUInt16BigEndian(collisionCells, byteOffset));
 	uint8 actorMask = this->actorMask(actor);
 	if (collisionCell < 0) {
 		_state.actorHighPriorityFlags |= actorMask;

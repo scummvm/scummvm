@@ -39,20 +39,6 @@ const Common::Array<DuelRoomScriptActionExecutor::DuelMovementDelta>
 	DuelRoomScriptActionExecutor::kDuelMovementDeltas{
 		{0, 0}, {0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}, {0, 0}, {1, -1}, {2, -2}, {3, -3}, {3, -3}, {4, -4}, {4, -4}, {5, -5}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {0, 0}, {1, 1}, {2, 2}, {3, 3}, {3, 3}, {4, 4}, {4, 4}, {5, 5}, {0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 0}, {-1, 1}, {-2, 2}, {-3, 3}, {-3, 3}, {-4, 4}, {-4, 4}, {-5, 5}, {0, 0}, {-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}, {0, 0}, {-1, -1}, {-2, -2}, {-3, -3}, {-3, -3}, {-4, -4}, {-4, -4}, {-5, -5}};
 
-namespace {
-void writeUInt32BigEndian(Span<uint8> bytes, int offset, uint32 value) {
-	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 24);
-	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
-	bytes[static_cast<size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<size_t>(offset + 3)] = static_cast<uint8>(value);
-}
-
-void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
-	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
-}
-} // namespace
-
 void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 	// Ghidra 0x00003142-0x00003265: replace raster-counter setup and every VDP transfer with the same
 	// logical custom tiles, border cells, authored pattern tiles, and five-row plane-A frame publication.

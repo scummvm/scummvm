@@ -33,15 +33,13 @@
 
 namespace Scooby {
 
-inline uint16 readBigEndian16(Span<const uint8> entry, size_t offset) {
-	return static_cast<uint16>((uint16(entry[offset]) << 8) | uint16(
-																  entry[offset + 1]));
-}
-
-inline uint16 readBigEndian16(const Common::Array<uint8> &bytes, int offset) {
-	size_t o = static_cast<size_t>(offset);
-	return static_cast<uint16>((uint16(bytes[o]) << 8) | uint16(bytes[o + 1]));
-}
+// Big-endian (68000 byte order) access to 16- and 32-bit values in RAM-side byte buffers.
+uint16 readUInt16BigEndian(Span<const uint8> bytes, int offset);
+uint16 readUInt16BigEndian(const Common::Array<uint8> &bytes, int offset);
+void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value);
+void writeUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value);
+void writeUInt32BigEndian(Span<uint8> bytes, int offset, uint32 value);
+void writeUInt32BigEndian(Common::Array<uint8> &bytes, int offset, uint32 value);
 
 class ScoobyDooRom {
 public:

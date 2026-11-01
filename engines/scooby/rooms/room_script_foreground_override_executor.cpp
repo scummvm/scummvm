@@ -31,18 +31,6 @@
 #include "scooby/graphics/tile_layer.h"
 
 namespace Scooby {
-namespace {
-uint16 readUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
-	return static_cast<uint16>((bytes[static_cast<size_t>(offset)] << 8) |
-							   bytes[static_cast<size_t>(offset + 1)]);
-}
-
-void writeUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
-	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
-}
-} // namespace
-
 void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { // maze sequence. maybe
 	// Ghidra 0x000044BA-0x000044C1: preserve the full-byte busy branch. Original interrupts keep publishing
 	// actor tiles during the spin, so each continuation services one callback-aware clocked frame.

@@ -37,13 +37,6 @@ const int kWideOutputOffsetTable = 0xB5C0;
 const int kWideSourceHeight = 40;
 const int kWideSourceWidth = 120;
 
-void writeUInt32BigEndian(Common::Array<uint8> &output, int offset, uint32 value) {
-	output[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 24);
-	output[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
-	output[static_cast<size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
-	output[static_cast<size_t>(offset + 3)] = static_cast<uint8>(value);
-}
-
 bool maskSelects(const ScoobyDooRom &rom, int maskOffset, int index) {
 	return (rom.readByte(maskOffset + index / 8) & (0x80 >> (index % 8))) != 0;
 }

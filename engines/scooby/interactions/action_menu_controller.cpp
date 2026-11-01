@@ -32,11 +32,6 @@ namespace Scooby {
 const Common::Array<VerbEnum> ActionMenuController::kActionIconByCommand{NONE, TAKE, LOOK, OPEN, PUSH, EAT, GIVE, TALK, SHUT, PULL, USE};
 
 namespace {
-void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
-	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
-	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
-}
-
 void copyBytes(Span<const uint8> source, Span<uint8> destination) {
 	for (size_t i = 0; i < source.size(); ++i) {
 		destination[i] = source[i];
