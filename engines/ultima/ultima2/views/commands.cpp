@@ -29,7 +29,8 @@ namespace Ultima2 {
 namespace Views {
 
 constexpr int COLOR_TEXT = 3; // white, within the game's 4-color CGA palette
-constexpr int NEWLINE_DELAY = 50;
+constexpr int NEWLINE_DELAY_LONG = 500;
+constexpr int NEWLINE_DELAY_SHORT = 50;
 constexpr int PROMPT_ROW = 3; // last of the 4 rows within Commands' own bounds
 constexpr int PROMPT_ABSOLUTE_ROW = 23;
 
@@ -68,12 +69,17 @@ bool Commands::msgGame(const GameMessage &msg) {
 }
 
 void Commands::writeString(const Common::String &msg) {
+	// We only want short delays when printing movement actions on the map
+	bool isShort = _surface.getTextPos().x == 1 && msg.hasSuffix("\n");
+
 	_textCursor.hide();
 	_surface.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
 	_surface.writeString(msg);
 
+	// Delay after each line. For short lines, like movement east/west/etc. keep it short,
+	// but for longer lines have a more substantial delay to allow time for reading
 	if (msg.contains('\n'))
-		delay(NEWLINE_DELAY);
+		delay(isShort ? NEWLINE_DELAY_SHORT : NEWLINE_DELAY_LONG);
 }
 
 void Commands::resetLine() {

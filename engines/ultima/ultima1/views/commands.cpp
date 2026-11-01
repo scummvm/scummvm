@@ -27,7 +27,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-constexpr int NEWLINE_DELAY = 50;	// Delay after a newline
+constexpr int NEWLINE_DELAY_LONG = 500;
+constexpr int NEWLINE_DELAY_SHORT = 50;
 
 Commands::Commands(UIElement *parent) : Graphics::Views::UIElement("Commands", parent), _textCursor("CommandsCursor", this) {
 }
@@ -72,6 +73,9 @@ bool Commands::msgGame(const GameMessage &msg) {
 }
 
 void Commands::writeString(const Common::String &msg) {
+	// We only want short delays when printing movement actions on the map
+	bool isShort = _surface.getTextPos().x == 1 && msg.hasSuffix("\n");
+
 	_textCursor.hide();
 
 	Common::String line;
@@ -106,9 +110,10 @@ void Commands::writeString(const Common::String &msg) {
 
 	flush();
 
-	if (msg.contains('\n')) {
-		delay(NEWLINE_DELAY);
-	}
+	// Delay after each line. For short lines, like movement east/west/etc. keep it short,
+	// but for longer lines have a more substantial delay to allow time for reading
+	if (msg.contains('\n'))
+		delay(isShort ? NEWLINE_DELAY_SHORT : NEWLINE_DELAY_LONG);
 }
 
 void Commands::resetLine() {
@@ -142,7 +147,7 @@ void Commands::space2() {
 
 void Commands::delay(uint milli) {
 	g_engine->updateScreen();
-	g_engine->pauseMillis(NEWLINE_DELAY);
+	g_engine->pauseMillis(milli);
 }
 
 } // namespace Views

@@ -148,15 +148,13 @@ void DungeonLogic::moveForward() {
 	int deltaX = getDirDeltaX();
 	int deltaY = getDirDeltaY();
 
-	writeString("Forward");
-
 	if (isBlocked(deltaX, deltaY)) {
+		writeString("Forward - path blocked!\n");
 		playFX(0);
-		writeString(" - path blocked!\n");
 	} else {
+		writeString("Forward\n");
 		_G(savegame)._locationPosition.x += deltaX;
 		_G(savegame)._locationPosition.y += deltaY;
-		writeString("\n");
 	}
 }
 
