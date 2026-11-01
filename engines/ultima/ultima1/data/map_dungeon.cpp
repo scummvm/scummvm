@@ -55,6 +55,7 @@ void MapDungeon::setRandomSeed() {
 
 byte MapDungeon::getRandomNumber(int minVal, int maxVal) {
 	// Rotate the seed right by 3 bits after adding a fixed value
+	_randomSeed = (uint16)(_randomSeed + 0x9248);
 	uint16 low3 = _randomSeed & 7;
 	_randomSeed = (uint16)(_randomSeed >> 3) | (uint16)(low3 << 13);
 
