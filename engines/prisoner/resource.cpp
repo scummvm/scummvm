@@ -151,7 +151,10 @@ TextResource::TextResource() {
 }
 
 TextResource::~TextResource() {
-	// TODO: Free
+	for (uint i = 0; i < _items.size(); i++) {
+		for (uint j = 0; j < _items[i].chunks.size(); j++)
+			delete _items[i].chunks[j];
+	}
 }
 
 void TextResource::load(Common::MemoryReadStream &stream) {
