@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-01 10:48+0000\n"
-"PO-Revision-Date: 2026-08-09 17:29+0000\n"
+"PO-Revision-Date: 2026-11-01 11:37+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.7.1\n"
+"X-Generator: Weblate 2026.10.1\n"
 "X-Language-name: Español\n"
 
 #: audio/mac_plugin.cpp:30
@@ -1800,10 +1800,8 @@ msgstr ""
 
 #. I18N: Shown while MIDI output devices are being detected.
 #: gui/message.cpp:288
-#, fuzzy
-#| msgid "Scanned %d directories ..."
 msgid "Scanning MIDI devices..."
-msgstr "Se ha buscado en %d directorios..."
+msgstr "Buscando dispositivos MIDI..."
 
 #: gui/onscreendialog.cpp:95 gui/onscreendialog.cpp:97
 msgid "Stop"
@@ -3597,10 +3595,8 @@ msgid "ScummVM Web server"
 msgstr "Servidor web de ScummVM"
 
 #: dists/android.strings.xml.cpp:52
-#, fuzzy
-#| msgid "Default"
 msgid "Default voice"
-msgstr "Por defecto"
+msgstr "Voz por defecto"
 
 #: dists/android.strings.xml.cpp:53
 msgid "Configuration file could not be parsed"
@@ -4765,7 +4761,7 @@ msgstr "Windows MIDI"
 
 #: backends/midi/android.cpp:179
 msgid "Can't connect MIDI port: no sound will be produced"
-msgstr ""
+msgstr "No se puede conectar al puerto MIDI: no se producirán sonidos"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:58
 msgid "Can't create directory here!"
@@ -6079,10 +6075,8 @@ msgstr ""
 "dedicados para cada juego utilizando **."
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:300
-#, fuzzy
-#| msgid "Active storage:"
 msgid "Android storage"
-msgstr "Almac. activo:"
+msgstr "Almacenamiento de Android"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:303
 msgid ""
@@ -6126,6 +6120,51 @@ msgid ""
 "been authorized, the core falls back to the local filesystem and shows a "
 "notification.\n"
 msgstr ""
+"## Acceso al almacenamiento de Android\n"
+"En las versiones más modernas de Android, las aplicaciones solo pueden "
+"acceder a aquellas carpetas que hayan sido autorizadas explícitamente por el "
+"usuario mediante el selector de archivos del sistema (framework de acceso al "
+"almacenamiento, o SAF por sus siglas en inglés).\n"
+"\n"
+"El núcleo podrá acceder tanto al sistema de archivos local estándar como a "
+"las carpetas autorizadas en el front-end (p. ej.: RetroArch). El punto de "
+"partida del explorador de archivos está controlado por el **modo de "
+"búsqueda** del núcleo.\n"
+"\n"
+"## Modo de búsqueda\n"
+"Esta opción del núcleo está disponible dentro de las opciones del núcleo, en "
+"el front-end (por ejemplo, en RetroArch: Menú rápido > Opciones del núcleo > "
+"Sistema).\n"
+"\n"
+"  - **Almacenamiento autorizado**: el explorador de archivos comenzará a "
+"partir de una raíz virtual, mostrando una lista de solo las carpetas que se "
+"hayan autorizado con el front-end. Este es el valor predeterminado de "
+"Android.\n"
+"\n"
+"  - **Sistema de archivos local**: el explorador de archivos comenzará a "
+"partir de la ruta local estándar.\n"
+"\n"
+"## Cómo autorizar carpetas\n"
+"  - Abre el explorador de archivos del front-end (por ejemplo, en RetroArch, "
+"\"Cargar contenido\") y utiliza la opción para abrir o añadir una carpeta; "
+"así aparecerá el selector de archivos del sistema.\n"
+"\n"
+"  - Da permisos de acceso a la carpeta o carpetas que contengan tus juegos y "
+"sal del explorador de archivos (no es necesario que selecciones contenidos "
+"en este momento). La autorización se conservará tras cada reinicio.\n"
+"\n"
+"  - Ejecuta el núcleo; las carpetas autorizadas aparecerán en el explorador "
+"de archivos de ScummVM si el **modo de búsqueda** está configurado como "
+"Almacenamiento autorizado.\n"
+"\n"
+"## Notas\n"
+"  - La lista de carpetas autorizadas se leerá al ejecutar el núcleo. Si "
+"autorizas más carpetas cuando el núcleo ya se esté ejecutando, deberás "
+"reiniciar (volver a cargar) el núcleo para que aparezcan.\n"
+"\n"
+"  - Si el **modo de búsqueda** está configurado como Almacenamiento "
+"autorizado pero no has autorizado ninguna carpeta, el núcleo pasará a leer "
+"el sistema de archivos local y mostrará una notificación.\n"
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -8408,10 +8447,8 @@ msgstr ""
 "Stealth desde el principio, con partidas guardadas nuevas."
 
 #: engines/colony/intro.cpp:264
-#, fuzzy
-#| msgid "Save game"
 msgid "Save this game?"
-msgstr "Guardar partida"
+msgstr "¿Guardar la partida?"
 
 #: engines/colony/intro.cpp:298
 msgid "New Game"
@@ -8506,16 +8543,12 @@ msgid "Fire weapon"
 msgstr "Disparar arma"
 
 #: engines/colony/metaengine.cpp:201
-#, fuzzy
-#| msgid "Zoom in"
 msgid "Zoom in (map)"
-msgstr "Aumentar zoom"
+msgstr "Aumentar zoom (mapa)"
 
 #: engines/colony/metaengine.cpp:208
-#, fuzzy
-#| msgid "Zoom out"
 msgid "Zoom out (map)"
-msgstr "Reducir zoom"
+msgstr "Reducir zoom (mapa)"
 
 #: engines/colony/savegame.cpp:304
 msgid "Saving is only available in first-person view."
@@ -9284,10 +9317,8 @@ msgid "Play sound type 16"
 msgstr "Reproducir tipo de sonido 16"
 
 #: engines/fool/metaengine.cpp:133
-#, fuzzy
-#| msgid "Files keymappings"
 msgid "Fool's Errand keymappings"
-msgstr "Asignaciones de ficheros"
+msgstr "Asignaciones de Fool's Errand"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Prerecorded sounds"
@@ -9431,16 +9462,12 @@ msgid "Toggle red/blue 3D"
 msgstr "Activar/Desactivar 3D de rojo/azul"
 
 #: engines/freescape/games/3dck/zx.cpp:41
-#, fuzzy
-#| msgid "Center"
 msgid "Center view"
-msgstr "Centrado"
+msgstr "Centrar vista"
 
 #: engines/freescape/games/3dck/zx.cpp:52
-#, fuzzy
-#| msgid "Standard"
 msgid "Stand up"
-msgstr "Estándar"
+msgstr "Levantarse"
 
 #. I18N: Action in In Cold Blood
 #: engines/freescape/games/3dck/zx.cpp:53 engines/hpl1/metaengine.cpp:84
@@ -9451,10 +9478,8 @@ msgstr "Agacharse"
 #: engines/freescape/games/3dck/zx.cpp:61
 #: engines/scumm/insane/mortimer/mortimer.cpp:77
 #: engines/scumm/insane/mortimer/mortimer.cpp:1362
-#, fuzzy
-#| msgid "Restart game"
 msgid "Restart"
-msgstr "Reiniciar partida"
+msgstr "Reiniciar"
 
 #: engines/freescape/games/castle/castle.cpp:529
 msgid "Select prince"
@@ -9465,10 +9490,8 @@ msgid "Select princess"
 msgstr "Seleccionar a la princesa"
 
 #: engines/freescape/games/castle/castle.cpp:557
-#, fuzzy
-#| msgid "Toggle sound effects"
 msgid "Toggle music/sound effects"
-msgstr "Activar/Desactivar efectos de sonido"
+msgstr "Activar/Desactivar música/efectos de sonido"
 
 #: engines/freescape/games/castle/castle.cpp:557
 #: engines/freescape/games/dark/dark.cpp:251
@@ -10419,57 +10442,43 @@ msgstr "El minijuego de Troya todavía no está soportado. Omitiendo..."
 
 #: engines/harold/metaengine.cpp:54
 msgid "J.B. Harold: Blue Chicago Blues"
-msgstr ""
+msgstr "J.B. Harold: Blue Chicago Blues"
 
 #: engines/harold/metaengine.cpp:70
-#, fuzzy
-#| msgid "Skip / back"
 msgid "Skip / Advance"
-msgstr "Omitir/Volver"
+msgstr "Omitir/Avanzar"
 
 #: engines/harold/metaengine.cpp:86
-#, fuzzy
-#| msgid "Select choice 1"
 msgid "Choice 1"
-msgstr "Seleccionar opción 1"
+msgstr "Opción 1"
 
 #: engines/harold/metaengine.cpp:86
-#, fuzzy
-#| msgid "Select choice 2"
 msgid "Choice 2"
-msgstr "Seleccionar opción 2"
+msgstr "Opción 2"
 
 #: engines/harold/metaengine.cpp:86
-#, fuzzy
-#| msgid "Select choice 3"
 msgid "Choice 3"
-msgstr "Seleccionar opción 3"
+msgstr "Opción 3"
 
 #: engines/harold/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select choice 4"
 msgid "Choice 4"
-msgstr "Seleccionar opción 4"
+msgstr "Opción 4"
 
 #: engines/harold/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select choice 5"
 msgid "Choice 5"
-msgstr "Seleccionar opción 5"
+msgstr "Opción 5"
 
 #: engines/harold/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select choice 6"
 msgid "Choice 6"
-msgstr "Seleccionar opción 6"
+msgstr "Opción 6"
 
 #: engines/harold/metaengine.cpp:88
 msgid "Choice 7"
-msgstr ""
+msgstr "Opción 7"
 
 #: engines/harold/metaengine.cpp:88
 msgid "Choice 8"
-msgstr ""
+msgstr "Opción 8"
 
 #: engines/harvester/metaengine.cpp:37
 msgid "Enable gore"
@@ -10496,54 +10505,40 @@ msgstr ""
 "pulses el botón izquierdo cuando el script solicite los discos 2 o 3."
 
 #: engines/harvester/metaengine.cpp:69
-#, fuzzy
-#| msgid "Game"
 msgid "Gameplay"
-msgstr "Juego"
+msgstr "Jugabilidad"
 
 #: engines/harvester/metaengine.cpp:91 engines/ultima/ultima4/metaengine.cpp:82
 msgid "Speed up"
 msgstr "Acelerar"
 
 #: engines/harvester/metaengine.cpp:94
-#, fuzzy
-#| msgid "Game menu"
 msgid "Help menu"
-msgstr "Menú del juego"
+msgstr "Menú de ayuda"
 
 #: engines/harvester/metaengine.cpp:95
-#, fuzzy
-#| msgid "Attack 1"
 msgid "Attack modifier"
-msgstr "Ataque 1"
+msgstr "Modificador de ataque"
 
 #: engines/harvester/metaengine.cpp:96
-#, fuzzy
-#| msgid "High Quality"
 msgid "High attack"
-msgstr "Calidad alta"
+msgstr "Ataque alto"
 
 #: engines/harvester/metaengine.cpp:97
-#, fuzzy
-#| msgid "Medium"
 msgid "Medium attack"
-msgstr "Media"
+msgstr "Ataque medio"
 
 #: engines/harvester/metaengine.cpp:98
-#, fuzzy
-#| msgid "Attack"
 msgid "Low attack"
-msgstr "Atacar"
+msgstr "Ataque bajo"
 
 #: engines/harvester/metaengine.cpp:99
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Evasive movement modifier"
-msgstr "Modificador de movimiento rápido"
+msgstr "Modificador de esquivado"
 
 #: engines/harvester/metaengine.cpp:100
 msgid "Duck"
-msgstr ""
+msgstr "Agacharse"
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
@@ -10566,19 +10561,17 @@ msgid ""
 "Play optional content present in the game data but unused by the original "
 "release"
 msgstr ""
+"Muestra contenidos opcionales que se encuentran en el juego, pero que no "
+"utilizaba la versión original"
 
 #: engines/hollywood/runaway/engine.cpp:560
-#, fuzzy
-#| msgid "Perform default action"
 msgid "Perform action"
-msgstr "Realizar acción predeterminada"
+msgstr "Realizar acción"
 
 #: engines/hollywood/runaway/engine.cpp:566
 #: engines/hollywood/runaway/engine.cpp:609
-#, fuzzy
-#| msgid "Next action"
 msgid "Next action / Cancel"
-msgstr "Siguiente acción"
+msgstr "Siguiente acción/Cancelar"
 
 #: engines/hollywood/runaway/engine.cpp:572 engines/sherlock/metaengine.cpp:578
 msgid "Scroll left"
@@ -10589,34 +10582,24 @@ msgid "Scroll right"
 msgstr "Desplazar hacia la derecha"
 
 #: engines/hollywood/runaway/engine.cpp:582
-#, fuzzy
-#| msgid "Scroll to top left"
 msgid "Scroll to the left edge"
-msgstr "Ir a parte superior"
+msgstr "Desplazar hacia el extremo izquierdo"
 
 #: engines/hollywood/runaway/engine.cpp:587
-#, fuzzy
-#| msgid "Scroll to bottom right"
 msgid "Scroll to the right edge"
-msgstr "Ir a parte inferior dcha."
+msgstr "Desplazar hacia el extremo derecho"
 
 #: engines/hollywood/runaway/engine.cpp:598
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel action / Menu"
-msgstr "Cancelar acción"
+msgstr "Cancelar acción/Menú"
 
 #: engines/hollywood/runaway/engine.cpp:614
-#, fuzzy
-#| msgid "Skip intro / Exit map or inventory"
 msgid "Skip intro / Skip line"
-msgstr "Omitir introd./Salir de mapa o inventario"
+msgstr "Omitir introducción/línea"
 
 #: engines/hopkins/base_enhancements.cpp:313
-#, fuzzy
-#| msgid "Play"
 msgid "Player"
-msgstr "Jugar"
+msgstr "Jugador"
 
 #. I18N: Exits the game
 #: engines/hopkins/base_enhancements.cpp:314 engines/lab/metaengine.cpp:166
@@ -10632,118 +10615,100 @@ msgid "Exit"
 msgstr "Salir"
 
 #: engines/hopkins/base_enhancements.cpp:315
-#, fuzzy
-#| msgid "Guard down"
 msgid "Guard"
-msgstr "Guardia baja"
+msgstr "Guardia"
 
 #: engines/hopkins/base_enhancements.cpp:316
 msgid "Door"
-msgstr ""
+msgstr "Puerta"
 
 #: engines/hopkins/base_enhancements.cpp:317
-#, fuzzy
-#| msgid "Game Name:"
 msgid "Game paused"
-msgstr "Nombre de partida:"
+msgstr "Partida en pausa"
 
 #: engines/hopkins/base_enhancements.cpp:325
 msgid "M: close  A: autoplay  Esc: menu"
-msgstr ""
+msgstr "M: cerrar  A: automático  Esc: menú"
 
 #: engines/hopkins/base_enhancements.cpp:326
 msgid "M/Esc: close  A: autoplay"
-msgstr ""
+msgstr "M/Esc: cerrar  A: automático"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:51
-#, fuzzy
-#| msgid "Enter room"
 msgid "Exit 1: Containers room"
-msgstr "Entrar en habitación"
+msgstr "Salida 1: contenedores"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:51
-#, fuzzy
-#| msgid "Continue"
 msgid "Containers"
-msgstr "Continuar"
+msgstr "Contenedores"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:52
 msgid "Exit 2: Turbines room"
-msgstr ""
+msgstr "Salida 2: turbinas"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:52
 msgid "Turbines"
-msgstr ""
+msgstr "Turbinas"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:53
 msgid "Exit 3: Office"
-msgstr ""
+msgstr "Salida 3: oficina"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:53
-#, fuzzy
-#| msgid "Office manager"
 msgid "Office"
-msgstr "Administrador de la oficina"
+msgstr "Oficina"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:54
 msgid "Exit 4: Laboratory"
-msgstr ""
+msgstr "Salida 4: laboratorio"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:54
 msgid "Laboratory"
-msgstr ""
+msgstr "Laboratorio"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:55
 msgid "Exit 5: Resurrection room"
-msgstr ""
+msgstr "Salida 5: sala de resurrección"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:55
-#, fuzzy
-#| msgid "Use selection"
 msgid "Resurrection"
-msgstr "Usar selección"
+msgstr "Resurrección"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:56
-#, fuzzy
-#| msgid "Exit game"
 msgid "Exit 6: Dome"
-msgstr "Salir del juego"
+msgstr "Salida 6: cúpula"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:56
 msgid "Dome"
-msgstr ""
+msgstr "Cúpula"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:656
 msgid "WBASE AUTOPLAY"
-msgstr ""
+msgstr "WBASE REP. AUTOM."
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:659
 msgid "Fight your way to:"
-msgstr ""
+msgstr "Abrirte camino hasta:"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:671
 msgid "Up/Down: choose"
-msgstr ""
+msgstr "Arriba/Abajo: seleccionar"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:673
 msgid "Enter/Space: start"
-msgstr ""
+msgstr "Intro/Espacio: comenzar"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:676
 msgid "A: resume / M: map"
-msgstr ""
+msgstr "A: continuar / M: mapa"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:676
-#, fuzzy
-#| msgid "Select backup destination"
 msgid "Select a destination"
-msgstr "Selecciona el destino de la copia de seguridad"
+msgstr "Selecciona un destino"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:677
-#, fuzzy
-#| msgid "User canceled"
 msgid "Esc/A: cancel"
-msgstr "El usuario ha cancelado la acción"
+msgstr "Esc/A: cancelar"
 
 #: engines/hopkins/metaengine.cpp:48 engines/hopkins/metaengine.cpp:60
 msgid "Gore Mode"
@@ -10754,32 +10719,32 @@ msgid "Enable Gore Mode when available"
 msgstr "Activa el modo sangriento si está disponible"
 
 #: engines/hopkins/metaengine.cpp:72
-#, fuzzy
-#| msgid "Enable game-specific enhancements"
 msgid "Underwater base shooter enhancements"
-msgstr "Activar mejoras específicas para este juego"
+msgstr "Mejoras en los tiroteos en la base submarina"
 
 #: engines/hopkins/metaengine.cpp:73
 msgid "Enable navigation map and autoplay options for Windows base shooter"
 msgstr ""
+"Activa un mapa de navegación y opciones de reproducción automática durante "
+"los tiroteos de la base en la versión para Windows"
 
 #: engines/hopkins/metaengine.cpp:83
 msgid "Underwater base shooter Forced Autoplay"
-msgstr ""
+msgstr "Reproducción automática forzada en los tiroteos de la base"
 
 #: engines/hopkins/metaengine.cpp:84
 msgid "Require an autoplay destination in Windows base shooter"
 msgstr ""
+"Solicita un destino inmediato en los tiroteos de la base en la versión para "
+"Windows"
 
 #: engines/hopkins/metaengine.cpp:231
 msgid "Underwater base shooter"
-msgstr ""
+msgstr "Tiroteos en la base submarina"
 
 #: engines/hopkins/metaengine.cpp:233
-#, fuzzy
-#| msgid "Enhancements:"
 msgid "WBASE enhancements"
-msgstr "Mejoras:"
+msgstr "Mejoras de WBASE"
 
 #: engines/hopkins/metaengine.cpp:275 engines/tinsel/metaengine.cpp:307
 #: engines/twine/metaengine.cpp:307
@@ -10788,21 +10753,19 @@ msgstr "Menú de opciones"
 
 #: engines/hopkins/metaengine.cpp:313
 msgid "Exit through base doorway"
-msgstr ""
+msgstr "Salir por puertas de la base"
 
 #: engines/hopkins/metaengine.cpp:319
 msgid "Toggle floor and ceiling textures"
-msgstr ""
+msgstr "Mostrar/Ocultar texturas en suelos y techos"
 
 #: engines/hopkins/metaengine.cpp:333
-#, fuzzy
-#| msgid "Status menu navigation keymappings"
 msgid "WBASE enhancements: open navigation map"
-msgstr "Asignaciones de navegación del menú de estado"
+msgstr "Mejoras de WBASE: abrir mapa"
 
 #: engines/hopkins/metaengine.cpp:338
 msgid "WBASE enhancements: choose autoplay destination"
-msgstr ""
+msgstr "Mejoras de WBASE: seleccionar destino automático"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -11161,16 +11124,12 @@ msgid "Abort"
 msgstr "Abortar"
 
 #: engines/kingdom/metaengine.cpp:42
-#, fuzzy
-#| msgid "No music"
 msgid "Mono music"
-msgstr "Sin música"
+msgstr "Música en mono"
 
 #: engines/kingdom/metaengine.cpp:43
-#, fuzzy
-#| msgid "Use floppy version music"
 msgid "Use monophonic music"
-msgstr "Usar música de la versión en disquetes"
+msgstr "Reproduce música monofónica"
 
 #: engines/kyra/detection_tables.h:87
 msgid "Missing language specific game code and/or resources."
@@ -11315,11 +11274,12 @@ msgstr ""
 
 #: engines/kyra/metaengine.cpp:199 engines/kyra/metaengine.cpp:211
 msgid "Automap (ScummVM feature)"
-msgstr ""
+msgstr "Mapa automático (añadido de ScummVM)"
 
 #: engines/kyra/metaengine.cpp:200 engines/kyra/metaengine.cpp:212
 msgid "Enable the in-game automap overlay (toggle in-game with Tab)"
 msgstr ""
+"Activa el mapa automático superpuesto (pulsa Tab para mostrarlo u ocultarlo)"
 
 #: engines/kyra/metaengine.cpp:299
 msgid "Lands of Lore support is not compiled in"
@@ -11330,10 +11290,8 @@ msgid "Eye of Beholder support is not compiled in"
 msgstr "No se ha incluido el soporte para Eye of Beholder."
 
 #: engines/kyra/engine/eobcommon.cpp:387
-#, fuzzy
-#| msgid "Toggle audio"
 msgid "Toggle automap"
-msgstr "Activar/Desactivar audio"
+msgstr "Activar/Desactivar mapa automático"
 
 #: engines/kyra/engine/eobcommon.cpp:389
 msgid "Open / Close inventory"
@@ -11706,30 +11664,21 @@ msgid "Select index"
 msgstr "Seleccionar índice"
 
 #: engines/macs2/actionbar.cpp:893
-#, fuzzy
-#| msgid "Quit game"
 msgid "Quit the game?"
-msgstr "Salir del juego"
+msgstr "¿Salir del juego?"
 
 #: engines/macs2/dialogs.cpp:36
-#, fuzzy
-#| msgid "Translation"
 msgid "Translation:"
-msgstr "Traducción"
+msgstr "Traducción:"
 
 #: engines/macs2/dialogs.cpp:39
-#, fuzzy
-#| msgid "<original>"
 msgid "Original"
-msgstr "<original>"
+msgstr "Original"
 
 #: engines/macs2/dialogs.cpp:52
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid "Use TTS to read the dialogue (if TTS is available)"
 msgstr ""
-"Utiliza la conversión de texto a voz para leer los subtítulos (si está "
-"disponible)"
+"Lee los diálogos mediante la conversión de texto a voz (si está disponible)"
 
 #: engines/macs2/dialogs.cpp:56 engines/scumm/dialogs.cpp:1167
 msgid "Enhancements:"
@@ -11756,6 +11705,8 @@ msgid ""
 "Optional generated dialogue speech (SPEECH/*.wav) and other audio/visual "
 "polish."
 msgstr ""
+"Utiliza diálogos generados opcionales (SPEECH/*.wav) y otros refinamientos "
+"audiovisuales."
 
 #: engines/macs2/dialogs.cpp:72 engines/scumm/dialogs.cpp:1180
 #: engines/scumm/metaengine.cpp:954 engines/scumm/metaengine.cpp:981
@@ -11776,7 +11727,7 @@ msgstr "Ajustes de modernización de interfaz"
 
 #: engines/macs2/dialogs.cpp:78
 msgid "Activates some modern comforts for a smoother user experience."
-msgstr ""
+msgstr "Activa mejoras modernas para una mejor experiencia de usuario."
 
 #: engines/macs2/metaengine.cpp:53
 msgid "Change cursor mode"
@@ -11873,33 +11824,31 @@ msgstr "Modo de juego picante"
 
 #: engines/mads/metaengine.cpp:122
 msgid "Use original Macintosh menus (experimental)"
-msgstr ""
+msgstr "Utilizar menús originales de Macintosh (experimental)"
 
 #: engines/mads/metaengine.cpp:123
 msgid "Use the Macintosh menu bar and original desktop framing"
-msgstr ""
+msgstr "Muestra la barra de menú y marcos de escritorio originales de Macintosh"
 
 #: engines/mads/metaengine.cpp:134
 msgid "Use Pro Audio Spectrum 16 instead of AdLib"
-msgstr ""
+msgstr "Usar Pro Audio Spectrum 16 en vez de AdLib"
 
 #: engines/mads/metaengine.cpp:135
 msgid ""
 "Use the Pro Audio Spectrum 16 driver for music and sound effects instead of "
 "the AdLib driver."
 msgstr ""
+"Utiliza el controlador de Pro Audio Spectrum 16 para reproducir música y "
+"efectos de sonido en vez del controlador AdLib."
 
 #: engines/mads/metaengine.cpp:147
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Enable restored main menu content"
-msgstr "Activar contenidos restaurados"
+msgstr "Activar contenidos restaurados del menú principal"
 
 #: engines/mads/metaengine.cpp:148
-#, fuzzy
-#| msgid "Restore some scenes originally in the Windows edition"
 msgid "Restore unused content in the main menu."
-msgstr "Restaura algunas escenas de la versión para Windows"
+msgstr "Restaura contenidos no usados en el menú principal."
 
 #: engines/mads/metaengine.cpp:266
 msgid "Start menu keymappings"
@@ -11940,11 +11889,11 @@ msgstr "Reiniciar animación"
 #: engines/mads/nebular/mac_menus.cpp:822
 #, c-format
 msgid "A saved game named '%s' already exists. Replace it?"
-msgstr ""
+msgstr "Ya existe una partida llamada \"%s\". ¿Quieres sustituirla?"
 
 #: engines/mads/nebular/mac_menus.cpp:824
 msgid "Replace"
-msgstr ""
+msgstr "Sustituir"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -12007,53 +11956,36 @@ msgid "View party member 6"
 msgstr "Ver miembro 6"
 
 #: engines/mm/mm1/metaengine.cpp:77
-#, fuzzy
-#| msgid "Previous object"
 msgid "Previous quest"
-msgstr "Objeto anterior"
+msgstr "Misión anterior"
 
 #: engines/mm/mm1/metaengine.cpp:78
-#, fuzzy
-#| msgid "Next object"
 msgid "Next quest"
-msgstr "Siguiente objeto"
+msgstr "Siguiente misión"
 
 #: engines/mm/mm1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:84
-#, fuzzy
-#| msgid "Close inventory"
 msgid "Close bestiary"
-msgstr "Cerrar inventario"
+msgstr "Cerrar bestiario"
 
 #: engines/mm/mm1/metaengine.cpp:85
-#, fuzzy
-#| msgid "Show options menu"
 msgid "Show monster image"
-msgstr "Mostrar menú de opciones"
+msgstr "Mostrar imagen de monstruo"
 
 #: engines/mm/mm1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Previous object"
 msgid "Previous monster"
-msgstr "Objeto anterior"
+msgstr "Monstruo anterior"
 
 #: engines/mm/mm1/metaengine.cpp:87
-#, fuzzy
-#| msgid "Next object"
 msgid "Next monster"
-msgstr "Siguiente objeto"
+msgstr "Siguiente monstruo"
 
 #: engines/mm/mm1/metaengine.cpp:90
-#, fuzzy
-#| msgctxt "group"
-#| msgid "First letter"
 msgid "First monster"
-msgstr "Letra inicial"
+msgstr "Primer monstruo"
 
 #: engines/mm/mm1/metaengine.cpp:91
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Last monster"
-msgstr "Modo rápido"
+msgstr "Último monstruo"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:101 engines/ultima/ultima4/metaengine.cpp:50
@@ -12082,28 +12014,20 @@ msgid "Retreat"
 msgstr "Retirarse"
 
 #: engines/mm/mm1/metaengine.cpp:115
-#, fuzzy
-#| msgid "Combat"
 msgid "Combat log"
-msgstr "Combatir"
+msgstr "Registro de combates"
 
 #: engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Combat speed up"
 msgid "Combat log up"
-msgstr "Acelerar velocidad de combate"
+msgstr "Subir registro de combates"
 
 #: engines/mm/mm1/metaengine.cpp:117
-#, fuzzy
-#| msgid "Combat speed down"
 msgid "Combat log down"
-msgstr "Decelerar velocidad de combate"
+msgstr "Bajar registro de combates"
 
 #: engines/mm/mm1/metaengine.cpp:118
-#, fuzzy
-#| msgid "Close dialog"
 msgid "Close combat log"
-msgstr "Cerrar ventana"
+msgstr "Cerrar registro de combates"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:120
@@ -12117,10 +12041,8 @@ msgid "Protect"
 msgstr "Proteger"
 
 #: engines/mm/mm1/metaengine.cpp:123 engines/mm/mm1/metaengine.cpp:145
-#, fuzzy
-#| msgid "Best"
 msgid "Bestiary"
-msgstr "Mejor"
+msgstr "Bestiario"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:131
@@ -12158,10 +12080,8 @@ msgid "Unlock"
 msgstr "Abrir con llave"
 
 #: engines/mm/mm1/metaengine.cpp:155
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show active quest"
-msgstr "Mostrar citas"
+msgstr "Mostrar misión activa"
 
 #: engines/mm/mm1/metaengine.cpp:162 engines/ultima/ultima4/metaengine.cpp:112
 msgid "Goto location"
@@ -12188,16 +12108,12 @@ msgid "Might and Magic 1 - Combat"
 msgstr "Might and Magic 1 - Combate"
 
 #: engines/mm/mm1/metaengine.cpp:197
-#, fuzzy
-#| msgid "Might and Magic 1 - Menus"
 msgid "Might and Magic 1 - Quest Log"
-msgstr "Might and Magic 1 - Menús"
+msgstr "Might and Magic 1 - Registro de misiones"
 
 #: engines/mm/mm1/metaengine.cpp:198
-#, fuzzy
-#| msgid "Might and Magic 1 - Party"
 msgid "Might and Magic 1 - Bestiary"
-msgstr "Might and Magic 1 - Grupo"
+msgstr "Might and Magic 1 - Bestiario"
 
 #: engines/mm/mm1/metaengine.cpp:200
 msgid "Might and Magic 1 - Cheats"
@@ -12721,23 +12637,17 @@ msgstr ""
 "oficial de HeR Interactive."
 
 #: engines/nancy/metaengine.cpp:165
-#, fuzzy
-#| msgid "Game options"
 msgid "Game description is null"
-msgstr "Opciones del juego"
+msgstr "La descripción del juego está en blanco"
 
 #: engines/nancy/metaengine.cpp:172
-#, fuzzy
-#| msgid "AGOS 2 support is not compiled in"
 msgid "Support for Nancy Drew 18 is not compiled in"
-msgstr "No se ha incluido el soporte para AGOS 2."
+msgstr "No se ha incluido el soporte para Nancy Drew 18."
 
 #: engines/nancy/metaengine.cpp:178
-#, fuzzy
-#| msgid "Escape from Monkey Island support is not compiled in"
 msgid "Support for Nancy Drew 19 and newer is not compiled in"
 msgstr ""
-"No se ha incluido el soporte para Escape from/La fuga de Monkey Island."
+"No se ha incluido el soporte para Nancy Drew 19 y los juegos posteriores."
 
 #: engines/nancy/state/loadsave.cpp:108
 msgid "Would you like to load or save a game?"
@@ -13357,7 +13267,7 @@ msgstr "Activa los gráficos y contenidos en alta resolución"
 
 #: engines/sci/detection_options.h:58
 msgid "Keep all pixels the same size (portraits appear larger)"
-msgstr ""
+msgstr "Conservar tamaño de píxeles (los retratos se mostrarán más grandes)"
 
 #: engines/sci/detection_options.h:59
 msgid ""
@@ -13365,6 +13275,10 @@ msgid ""
 "stretching them unevenly. High-resolution portraits cover slightly more of "
 "the scene, and scenes look slightly shorter than in the original release"
 msgstr ""
+"Muestra los textos y gráficos en baja resolución exactamente con el doble de "
+"tamaño en vez de estirarlos de forma irregular. Los retratos en alta "
+"resolución cubren un poco más la escena y las escenas se mostrarán algo más "
+"pequeñas que en la versión original"
 
 #: engines/sci/detection_options.h:70
 msgid "Enable black-lined video"
@@ -14486,10 +14400,8 @@ msgstr ""
 "por el momento."
 
 #: engines/scumm/metaengine.cpp:469
-#, fuzzy
-#| msgid "Hero Craft support is not compiled in"
 msgid "Rebel Assault II PlayStation support is not compiled in"
-msgstr "No se ha incluido el soporte para Hero Craft."
+msgstr "No se ha incluido el soporte para Rebel Assault II para PlayStation."
 
 #: engines/scumm/metaengine.cpp:546
 msgid "HE v71+ support is not compiled in"
@@ -14518,13 +14430,15 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:746
 msgid "Use PAL timing for SID audio"
-msgstr ""
+msgstr "Usar frecuencia PAL para audios SID"
 
 #: engines/scumm/metaengine.cpp:747
 msgid ""
 "This lowers the pitch and slows down playback compared to the original NTSC "
 "timing."
 msgstr ""
+"El sonido se reproducirá más grave y lento en comparación con la frecuencia "
+"original NTSC."
 
 #: engines/scumm/metaengine.cpp:756
 msgid "Trim FM-TOWNS games to 200 pixels height"
@@ -14685,18 +14599,25 @@ msgid ""
 "Play additional sections included in the demo's game data but omitted from "
 "its original sequence"
 msgstr ""
+"Activa secciones adicionales que están incluidas en los datos de la demo, "
+"pero que se omitieron respecto a la secuencia original"
 
 #: engines/scumm/metaengine.cpp:982
 msgid ""
 "Play extra chapters included in the demo's game data but omitted from its "
 "original sequence"
 msgstr ""
+"Activa capítulos adicionales que están incluidos en los datos de la demo, "
+"pero que se omitieron respecto a la secuencia original"
 
 #: engines/scumm/metaengine.cpp:991
 msgid ""
 "Enable the full game's view jolt and recovery rules, including the demo's "
 "unused crash and repair animations"
 msgstr ""
+"Activa las sacudidas de cámara y las reglas de recuperación del juego "
+"completo, incluyendo las animaciones sin usar en la demo de choque y "
+"reparación"
 
 #: engines/scumm/metaengine.cpp:999 engines/ultima/metaengine.cpp:89
 msgid "Enable cheats"
@@ -14707,15 +14628,19 @@ msgid ""
 "Enable the original game's cheat shortcuts for rescuing animals, changing "
 "shellshock and skipping flights"
 msgstr ""
+"Activa los atajos de teclado del juego original para los trucos de rescatar "
+"animales, cambios en las sacudidas y la omisión de vuelos"
 
 #: engines/scumm/metaengine.cpp:1008
 msgid "Programmer's Easter egg"
-msgstr ""
+msgstr "Huevo de pascua del programador"
 
 #: engines/scumm/metaengine.cpp:1009
 msgid ""
 "Replace the rhinoceros interview text with the hidden programmer dialogue"
 msgstr ""
+"Sustituye el texto de la entrevista con el rinoceronte con un diálogo oculto "
+"de un programador"
 
 #: engines/scumm/metaengine.cpp:1198
 msgid "Down left"
@@ -14779,10 +14704,8 @@ msgid "Rebel Assault II controls"
 msgstr "Controles de Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1412
-#, fuzzy
-#| msgid "Change voices"
 msgid "Change view"
-msgstr "Cambiar voces"
+msgstr "Cambiar vista"
 
 #: engines/scumm/metaengine.cpp:1412
 msgid "Cover"
@@ -14797,15 +14720,12 @@ msgid "Skip / menu"
 msgstr "Omitir/Menú"
 
 #: engines/scumm/saveload.cpp:201
-#, fuzzy
-#| msgid ""
-#| "This game does not support saving from the menu. Use in-game interface"
 msgid ""
 "This game does not support saving from the menu. Progress is saved "
 "automatically when a level is completed"
 msgstr ""
-"Este juego no permite guardar desde el menú. Debes utilizar la interfaz del "
-"propio juego."
+"Este juego no permite guardar desde el menú. La partida se guardará al "
+"superar un nivel."
 
 #: engines/scumm/saveload.cpp:2017
 #, c-format
@@ -15124,204 +15044,173 @@ msgstr "Difícil"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:38
 #: engines/scumm/insane/mortimer/dialogs.cpp:158
-#, fuzzy
-#| msgid "New kid"
 msgid "New pilot"
-msgstr "Cambiar personaje"
+msgstr "Piloto nuevo"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:38
-#, fuzzy
-#| msgid "Select dialog"
 msgid "Select difficulty"
-msgstr "Seleccionar diálogo"
+msgstr "Seleccionar dificultad"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:40
-#, fuzzy
-#| msgid "Pick the game:"
 msgid "Pilot name:"
-msgstr "Elige el juego:"
+msgstr "Nombre:"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:44
-#, fuzzy
-#| msgid "Delete Character"
 msgid "Character:"
-msgstr "Borrar personaje"
+msgstr "Personaje:"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:46
 msgid "Sally"
-msgstr ""
+msgstr "Sally"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:47
-#, fuzzy
-#| msgid "Shield"
 msgid "Sid"
-msgstr "Escudo"
+msgstr "Sid"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:50
 msgid "Flight difficulty:"
-msgstr ""
+msgstr "Dificultad de vuelos:"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:51
 msgid "Riddle difficulty:"
-msgstr ""
+msgstr "Dificultad de enigmas:"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:56
 msgid "Choose how difficult flying and recovering from crashes should be."
-msgstr ""
+msgstr "Elige la dificultad a la hora de volar y recuperarte de choques."
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:59
 msgid "Choose the riddle difficulty and the cost and number of guesses."
 msgstr ""
+"Elige la dificultad a la hora de enfrentarte a enigmas y el coste/número de "
+"ayudas."
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:62
 msgid "Fixed (demo)"
-msgstr ""
+msgstr "Fija (demo)"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:63
 msgid "The demo includes only one set of riddles."
-msgstr ""
+msgstr "La demo solo incluye un conjunto de enigmas."
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:143
-#, fuzzy
-#| msgid "Please select an action"
 msgid "Please enter a pilot name."
-msgstr "Selecciona una acción"
+msgstr "Debes introducir un nombre."
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:143
 msgid "Please enter a shorter pilot name."
-msgstr ""
+msgstr "Debes introducir un nombre más corto."
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:155
-#, fuzzy
-#| msgid "Select option"
 msgid "Select pilot"
-msgstr "Seleccionar opción"
+msgstr "Seleccionar piloto"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:156
 msgid "Progress is saved after each riddle is solved."
-msgstr ""
+msgstr "La partida se guardará al superar cada enigma."
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:162
-#, fuzzy
-#| msgid "Score"
 msgid "High Scores"
-msgstr "Puntos"
+msgstr "Mejores puntuaciones"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:163
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Play Mortimer"
-msgstr "Tiempo: "
+msgstr "Jugar a Mortimer"
 
 #: engines/scumm/insane/mortimer/mortimer.cpp:76
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip cutscene / open menu"
-msgstr "Omitir escena"
+msgstr "Omitir escena/Abrir menú"
 
 #: engines/scumm/insane/mortimer/mortimer.cpp:80
-#, fuzzy
-#| msgid "Volume controls"
 msgid "Mouse control"
-msgstr "Controles de volumen"
+msgstr "Controlar con ratón"
 
 #: engines/scumm/insane/mortimer/mortimer.cpp:81
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Joystick control"
-msgstr "Controles táctiles"
+msgstr "Controlar con joystick"
 
 #: engines/scumm/insane/mortimer/mortimer.cpp:1250
-#, fuzzy
-#| msgid "This game cannot be saved at this time. Please try again later"
 msgid "Could not save the high scores. Please try again."
 msgstr ""
-"No se puede guardar la partida en este momento. Vuelve a intentarlo más "
-"tarde."
+"No se ha podido guardar la lista de mejores puntuaciones. Vuelve a "
+"intentarlo."
 
 #: engines/scumm/insane/mortimer/mortimer.cpp:1362
-#, fuzzy
-#| msgid "Play intro"
 msgid "Play again?"
-msgstr "Reproducir introducción"
+msgstr "¿Volver a jugar?"
 
 #: engines/scumm/insane/mortimer/saveload.cpp:49
 msgid "Progress is saved automatically when a riddle is solved."
-msgstr ""
+msgstr "La partida se guardará automáticamente al resolver un enigma."
 
 #: engines/scumm/insane/mortimer/saveload.cpp:111
 msgid ""
 "Could not save your pilot. Progress will be saved again when you finish "
 "another riddle or quit."
 msgstr ""
+"No se ha podido guardar a tu piloto. La partida se volverá a guardar cuando "
+"resuelvas otro enigma o salgas del juego."
 
 #: engines/scumm/insane/mortimer/saveload.cpp:141
 msgid ""
 "There are no free pilot slots. Delete a saved pilot from the launcher before "
 "creating another."
 msgstr ""
+"No hay espacios libres para piloto. Debes eliminar a un piloto guardado "
+"usando el iniciador para poder crear a otro."
 
 #: engines/scumm/insane/rebel2/psx/level2.cpp:886
-#, fuzzy
-#| msgid "Could not open Macintosh resource file %s"
 msgid "Could not open the PlayStation Level 2 resources"
-msgstr "No se ha podido abrir el archivo de recursos de Macintosh %s"
+msgstr "No se han podido abrir los recursos del nivel 2 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/level2.cpp:892
 msgid "Could not read the PlayStation Level 2 resources"
-msgstr ""
+msgstr "No se han podido leer los recursos del nivel 2 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/level2.cpp:897
 msgid "Could not play the PlayStation Level 2 videos"
-msgstr ""
+msgstr "No se han podido reproducir los vídeos del nivel 2 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:342
-#, fuzzy
-#| msgid "Game does not contain menu resources"
 msgid "Could not load the PlayStation menu resources"
-msgstr "El juego no tiene los recursos de los menús"
+msgstr "No se han podido cargar los recursos de los menús de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:347
-#, fuzzy
-#| msgid "Could not locate engine data %s"
 msgid "Could not load the PlayStation movie fonts"
-msgstr "No se ha podido localizar el archivo de datos del motor \"%s\""
+msgstr "No se han podido cargar las fuentes de los vídeos de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:352
-#, fuzzy
-#| msgid "Could not apply aspect ratio setting."
 msgid "Could not play the PlayStation introduction"
-msgstr "No se ha podido aplicar la corrección de relación de aspecto."
+msgstr "No se ha podido reproducir la introducción de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:389
 msgid "Could not load the PlayStation Level 1 resources"
-msgstr ""
+msgstr "No se han podido abrir los recursos del nivel 1 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:396
 msgid "Could not play the PlayStation Level 1 introduction"
-msgstr ""
+msgstr "No se ha podido reproducir la introducción del nivel 1 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:408
-#, fuzzy
-#| msgid "Could not apply aspect ratio setting."
 msgid "Could not play the PlayStation Level 1 ending"
-msgstr "No se ha podido aplicar la corrección de relación de aspecto."
+msgstr "No se ha podido reproducir el final del nivel 1 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:411
 msgid "Could not play the PlayStation Level 1 death video"
 msgstr ""
+"No se ha podido reproducir el vídeo de muerte del nivel 1 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:414
 msgid "Could not play the PlayStation game-over video"
-msgstr ""
+msgstr "No se ha podido reproducir el vídeo de fin de partida de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:417
 msgid "Could not run the PlayStation Level 1 gameplay"
-msgstr ""
+msgstr "No se ha podido ejecutar el sistema de juego del nivel 1 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:421
 msgid "Rebel Assault II PlayStation support requires TinyGL"
-msgstr ""
+msgstr "El soporte para Rebel Assault II de PlayStation necesita TinyGL"
 
 #: engines/sherlock/metaengine.cpp:59
 msgid "Pixellated scene transitions"
@@ -15810,18 +15699,12 @@ msgid "You are missing recommended data files:"
 msgstr "Te faltan estos archivos de datos recomendados:"
 
 #: engines/stark/stark.cpp:307
-#, fuzzy
-#| msgid ""
-#| "The 'fonts' folder is required to experience the text style as it was "
-#| "designed. The Steam release is known to be missing it. You can get the "
-#| "fonts from the demo version of the game."
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it."
 msgstr ""
 "La carpeta fonts es necesaria para poder experimentar el estilo de textos "
-"tal y como fue pensado. Se sabe que la versión de Steam no la tiene. Puedes "
-"conseguir los contenidos de fonts en la versión de demostración del juego."
+"tal y como fue pensado. Se sabe que la versión de Steam no la tiene."
 
 #: engines/stark/stark.cpp:315
 msgid ""
@@ -15844,15 +15727,16 @@ msgstr ""
 "confirmación aparezcan con el diseño correcto."
 
 #: engines/stark/stark.cpp:332
-#, fuzzy
-#| msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
 msgid ""
 "\n"
 "\n"
 "You can download the missing files from the demo version from the ScummVM "
 "website."
 msgstr ""
-"No se encuentra el archivo 'toon.dat'. Descárgalo de la página de ScummVM"
+"\n"
+"\n"
+"Puedes conseguir los archivos que faltan de la versión de demostración en la "
+"página web de ScummVM."
 
 #: engines/supernova/supernova.cpp:193
 #, c-format
@@ -18018,16 +17902,12 @@ msgstr ""
 "compilación. Es probable que no sea jugable en su totalidad o parcialmente."
 
 #: engines/wintermute/keymapper_tables.h:69
-#, fuzzy
-#| msgid "Pause game"
 msgid "Pause game anytime"
-msgstr "Pausar el juego"
+msgstr "Pausar en cualquier momento"
 
 #: engines/wintermute/keymapper_tables.h:74
-#, fuzzy
-#| msgid "Highlight items"
 msgid "Highlight active items"
-msgstr "Resaltar objetos"
+msgstr "Resaltar objetos activos"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:211
