@@ -115,9 +115,8 @@ public:
 	}
 
 	bool msgFocus(const FocusMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
+	void timeout() override;
 };
 
 } // namespace Interactions

@@ -263,11 +263,6 @@ void Dead::finish() {
 
 bool SpaceDead::msgFocus(const FocusMessage &msg) {
 	setBounds(Common::Rect(8, 8, 312, 152));
-
-	g_engine->playFX(2);
-	g_engine->playFX(2);
-	g_engine->playFX(2);
-
 	return true;
 }
 
@@ -275,16 +270,15 @@ void SpaceDead::draw() {
 	auto s = getSurface();
 	s.clear();
 	drawSkullGraphic(s);
+
+	delaySeconds(5);
+	g_engine->playFX(2);
+	g_engine->playFX(2);
+	g_engine->playFX(2);
 }
 
-bool SpaceDead::msgAction(const ActionMessage &msg) {
+void SpaceDead::timeout() {
 	g_engine->replaceView("MainMenu", true);
-	return true;
-}
-
-bool SpaceDead::msgKeypress(const KeypressMessage &msg) {
-	g_engine->replaceView("MainMenu", true);
-	return true;
 }
 
 } // namespace Interactions

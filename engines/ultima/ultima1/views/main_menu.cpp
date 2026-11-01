@@ -31,6 +31,7 @@ namespace Views {
 MainMenu::MainMenu() : FullScreenDialog("MainMenu"), _cursor("Cursor", this) {
 	// Position the cursor right after "Thy choice: "
 	_cursor.setPosition(Common::Point(25, 18));
+	_cursor.show();
 }
 
 void MainMenu::draw() {
