@@ -67,7 +67,7 @@ int SmushMixer::souMixerStart() {
 	return 0;
 }
 
-void SmushMixer::souMixerMix(const uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, uint32 feedSize, int32 mixBufStartIndex, int volume, int pan, int signedFlag, int swapEndiannessFlag) {
+void SmushMixer::souMixerMix(const uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, uint32 feedSize, int32 mixBufStartIndex, int volume, int pan) {
 	// The original could divide by zero here, let's avoid that...
 	if (!_mixBuf || !srcBuf || !inFrameCount || !feedSize)
 		return;
@@ -86,25 +86,12 @@ void SmushMixer::souMixerMix(const uint8 *srcBuf, int32 inFrameCount, int wordSi
 		int leftAmp = _mixerTable[17 * volumeIndex + 8 - panOffset];
 		int rightAmp = _mixerTable[17 * volumeIndex + 8 + panOffset];
 
-		if (wordSize == 8) {
+		if (wordSize == 8)
 			mixMono8(srcBuf, inFrameCount, feedSize, mixBufStartIndex, leftAmp, rightAmp);
-		} else if (signedFlag) {
-			if (swapEndiannessFlag)
-				mixMono16Swap((const uint16 *)srcBuf, inFrameCount, feedSize, mixBufStartIndex, leftAmp, rightAmp);
-			else
-				mixMono16((const int16 *)srcBuf, inFrameCount, feedSize, mixBufStartIndex, leftAmp, rightAmp);
-		} else {
-			mixMono16Unsigned((const uint16 *)srcBuf, inFrameCount, feedSize, mixBufStartIndex, leftAmp, rightAmp);
-		}
-	} else if (wordSize == 8) {
-		mixStereo8(srcBuf, inFrameCount, feedSize, mixBufStartIndex, volume + 1);
-	} else if (signedFlag) {
-		if (swapEndiannessFlag)
-			mixStereo16Swap((const uint16 *)srcBuf, inFrameCount, feedSize, mixBufStartIndex, volume + 1);
 		else
-			mixStereo16((const int16 *)srcBuf, inFrameCount, feedSize, mixBufStartIndex, volume + 1);
+			mixMono16((const int16 *)srcBuf, inFrameCount, feedSize, mixBufStartIndex, leftAmp, rightAmp);
 	} else {
-		mixStereo16Unsigned((const uint16 *)srcBuf, inFrameCount, feedSize, mixBufStartIndex, volume + 1);
+		mixStereo16((const int16 *)srcBuf, inFrameCount, feedSize, mixBufStartIndex, volume + 1);
 	}
 }
 
@@ -185,67 +172,6 @@ void SmushMixer::mixMono8(const uint8 *srcBuf, int32 inFrameCount, uint32 feedSi
 
 			mixBufCurCell += 2;
 			position += ratio;
-			srcBuf += position >> 16;
-			position &= 0xFFFF;
-		}
-		break;
-	}
-}
-
-void SmushMixer::mixStereo8(const uint8 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume) {
-	int32 *mixBufCurCell = &_mixBuf[2 * mixBufStartIndex];
-	uint32 ratio = ((uint32)inFrameCount << 16) / feedSize;
-	uint32 position = 0;
-	int32 left, right, interpolatedLeft, interpolatedRight;
-
-	switch (ratio) {
-	case 0x8000:
-		for (int i = 0; i < inFrameCount - 1; i++) {
-			left = (srcBuf[0] ^ 0x80) << 8;
-			right = (srcBuf[1] ^ 0x80) << 8;
-			interpolatedLeft = ((srcBuf[0] + srcBuf[2]) << 7) ^ 0x8000;
-			interpolatedRight = ((srcBuf[1] + srcBuf[3]) << 7) ^ 0x8000;
-
-			mixBufCurCell[0] += left * volume;
-			mixBufCurCell[1] += right * volume;
-			mixBufCurCell[2] += interpolatedLeft * volume;
-			mixBufCurCell[3] += interpolatedRight * volume;
-
-			srcBuf += 2;
-			mixBufCurCell += 4;
-		}
-
-		left = (srcBuf[0] ^ 0x80) << 8;
-		right = (srcBuf[1] ^ 0x80) << 8;
-		mixBufCurCell[0] += left * volume;
-		mixBufCurCell[1] += right * volume;
-		mixBufCurCell[2] += left * volume;
-		mixBufCurCell[3] += right * volume;
-		break;
-	case 0x10000:
-		for (uint32 i = 0; i < 2 * feedSize; i++) {
-			mixBufCurCell[0] += ((srcBuf[0] ^ 0x80) << 8) * volume;
-
-			srcBuf++;
-			mixBufCurCell++;
-		}
-		break;
-	case 0x20000:
-		for (uint32 i = 0; i < feedSize; i++) {
-			mixBufCurCell[0] += ((srcBuf[0] ^ 0x80) << 8) * volume;
-			mixBufCurCell[1] += ((srcBuf[1] ^ 0x80) << 8) * volume;
-
-			srcBuf += 4;
-			mixBufCurCell += 2;
-		}
-		break;
-	default:
-		for (uint32 i = 0; i < feedSize; i++) {
-			mixBufCurCell[0] += ((srcBuf[0] ^ 0x80) << 8) * volume;
-			mixBufCurCell[1] += ((srcBuf[1] ^ 0x80) << 8) * volume;
-
-			mixBufCurCell += 2;
-			position += 2 * ratio;
 			srcBuf += position >> 16;
 			position &= 0xFFFF;
 		}
@@ -364,243 +290,6 @@ void SmushMixer::mixStereo16(const int16 *srcBuf, int32 inFrameCount, uint32 fee
 	}
 }
 
-void SmushMixer::mixMono16Unsigned(const uint16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp) {
-	int32 *mixBufCurCell = &_mixBuf[2 * mixBufStartIndex];
-	uint32 ratio = ((uint32)inFrameCount << 16) / feedSize;
-	uint32 position = 0;
-	int32 sample, interpolated;
-
-	switch (ratio) {
-	case 0x8000:
-		for (int i = 0; i < inFrameCount - 1; i++) {
-			sample = (int16)(srcBuf[0] ^ 0x8000);
-			// The disasm interpolates with the sample two positions ahead
-			interpolated = (sample + (int16)(srcBuf[2] ^ 0x8000)) >> 1;
-
-			mixBufCurCell[0] += sample * leftAmp;
-			mixBufCurCell[1] += sample * rightAmp;
-			mixBufCurCell[2] += interpolated * leftAmp;
-			mixBufCurCell[3] += interpolated * rightAmp;
-
-			srcBuf++;
-			mixBufCurCell += 4;
-		}
-
-		sample = (int16)(srcBuf[0] ^ 0x8000);
-		mixBufCurCell[0] += sample * leftAmp;
-		mixBufCurCell[1] += sample * rightAmp;
-		mixBufCurCell[2] += sample * leftAmp;
-		mixBufCurCell[3] += sample * rightAmp;
-		break;
-	case 0x10000:
-		for (uint32 i = 0; i < feedSize; i++) {
-			sample = (int16)(srcBuf[0] ^ 0x8000);
-			mixBufCurCell[0] += sample * leftAmp;
-			mixBufCurCell[1] += sample * rightAmp;
-
-			srcBuf++;
-			mixBufCurCell += 2;
-		}
-		break;
-	case 0x20000:
-		for (uint32 i = 0; i < feedSize; i++) {
-			sample = (int16)(srcBuf[0] ^ 0x8000);
-			mixBufCurCell[0] += sample * leftAmp;
-			mixBufCurCell[1] += sample * rightAmp;
-
-			srcBuf += 2;
-			mixBufCurCell += 2;
-		}
-		break;
-	default:
-		for (uint32 i = 0; i < feedSize; i++) {
-			sample = (int16)(srcBuf[0] ^ 0x8000);
-			mixBufCurCell[0] += sample * leftAmp;
-			mixBufCurCell[1] += sample * rightAmp;
-
-			mixBufCurCell += 2;
-			position += ratio;
-			srcBuf += position >> 16;
-			position &= 0xFFFF;
-		}
-		break;
-	}
-}
-
-void SmushMixer::mixStereo16Unsigned(const uint16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume) {
-	int32 *mixBufCurCell = &_mixBuf[2 * mixBufStartIndex];
-	uint32 ratio = ((uint32)inFrameCount << 16) / feedSize;
-	uint32 position = 0;
-	int32 left, right;
-
-	switch (ratio) {
-	case 0x8000:
-		for (int i = 0; i < inFrameCount - 1; i++) {
-			left = (int16)(srcBuf[0] ^ 0x8000);
-			right = (int16)(srcBuf[1] ^ 0x8000);
-
-			mixBufCurCell[0] += left * volume;
-			mixBufCurCell[1] += right * volume;
-			mixBufCurCell[2] += ((left + (int16)(srcBuf[2] ^ 0x8000)) >> 1) * volume;
-			mixBufCurCell[3] += ((right + (int16)(srcBuf[3] ^ 0x8000)) >> 1) * volume;
-
-			srcBuf += 2;
-			mixBufCurCell += 4;
-		}
-
-		left = (int16)(srcBuf[0] ^ 0x8000);
-		right = (int16)(srcBuf[1] ^ 0x8000);
-		mixBufCurCell[0] += left * volume;
-		mixBufCurCell[1] += right * volume;
-		mixBufCurCell[2] += left * volume;
-		mixBufCurCell[3] += right * volume;
-		break;
-	case 0x10000:
-		for (uint32 i = 0; i < 2 * feedSize; i++) {
-			mixBufCurCell[0] += (int16)(srcBuf[0] ^ 0x8000) * volume;
-
-			srcBuf++;
-			mixBufCurCell++;
-		}
-		break;
-	case 0x20000:
-		for (uint32 i = 0; i < feedSize; i++) {
-			mixBufCurCell[0] += (int16)(srcBuf[0] ^ 0x8000) * volume;
-			mixBufCurCell[1] += (int16)(srcBuf[1] ^ 0x8000) * volume;
-
-			srcBuf += 4;
-			mixBufCurCell += 2;
-		}
-		break;
-	default:
-		for (uint32 i = 0; i < feedSize; i++) {
-			mixBufCurCell[0] += (int16)(srcBuf[0] ^ 0x8000) * volume;
-			mixBufCurCell[1] += (int16)(srcBuf[1] ^ 0x8000) * volume;
-
-			mixBufCurCell += 2;
-			position += 2 * ratio;
-			srcBuf += position >> 16;
-			position &= 0xFFFF;
-		}
-		break;
-	}
-}
-
-void SmushMixer::mixMono16Swap(const uint16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp) {
-	int32 *mixBufCurCell = &_mixBuf[2 * mixBufStartIndex];
-	uint32 ratio = ((uint32)inFrameCount << 16) / feedSize;
-	uint32 position = 0;
-	int32 sample, interpolated;
-
-	switch (ratio) {
-	case 0x8000:
-		for (int i = 0; i < inFrameCount - 1; i++) {
-			sample = (uint16)SWAP_BYTES_16(srcBuf[0]);
-			interpolated = (int16)SWAP_BYTES_16((uint16)(((int16)srcBuf[0] + (int16)srcBuf[2]) >> 1));
-
-			mixBufCurCell[0] += sample * leftAmp;
-			mixBufCurCell[1] += sample * rightAmp;
-			mixBufCurCell[2] += interpolated * leftAmp;
-			mixBufCurCell[3] += interpolated * rightAmp;
-
-			srcBuf++;
-			mixBufCurCell += 4;
-		}
-
-		sample = (int16)SWAP_BYTES_16(srcBuf[0]);
-		mixBufCurCell[0] += sample * leftAmp;
-		mixBufCurCell[1] += sample * rightAmp;
-		mixBufCurCell[2] += sample * leftAmp;
-		mixBufCurCell[3] += sample * rightAmp;
-		break;
-	case 0x10000:
-		for (uint32 i = 0; i < feedSize; i++) {
-			sample = (uint16)SWAP_BYTES_16(srcBuf[0]);
-			mixBufCurCell[0] += sample * leftAmp;
-			mixBufCurCell[1] += sample * rightAmp;
-
-			srcBuf++;
-			mixBufCurCell += 2;
-		}
-		break;
-	case 0x20000:
-		for (uint32 i = 0; i < feedSize; i++) {
-			sample = (uint16)SWAP_BYTES_16(srcBuf[0]);
-			mixBufCurCell[0] += sample * leftAmp;
-			mixBufCurCell[1] += sample * rightAmp;
-
-			srcBuf += 2;
-			mixBufCurCell += 2;
-		}
-		break;
-	default:
-		for (uint32 i = 0; i < feedSize; i++) {
-			sample = (uint16)SWAP_BYTES_16(srcBuf[0]);
-			mixBufCurCell[0] += sample * leftAmp;
-			mixBufCurCell[1] += sample * rightAmp;
-
-			mixBufCurCell += 2;
-			position += ratio;
-			srcBuf += position >> 16;
-			position &= 0xFFFF;
-		}
-		break;
-	}
-}
-
-void SmushMixer::mixStereo16Swap(const uint16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume) {
-	int32 *mixBufCurCell = &_mixBuf[2 * mixBufStartIndex];
-	uint32 ratio = ((uint32)inFrameCount << 16) / feedSize;
-	uint32 position = 0;
-
-	switch (ratio) {
-	case 0x8000:
-		for (int i = 0; i < inFrameCount - 1; i++) {
-			mixBufCurCell[0] += volume * (uint16)SWAP_BYTES_16(srcBuf[0]);
-			mixBufCurCell[1] += volume * (uint16)SWAP_BYTES_16(srcBuf[1]);
-			mixBufCurCell[2] += volume * (uint16)SWAP_BYTES_16((uint16)(((int16)srcBuf[0] + (int16)srcBuf[2]) >> 1));
-			mixBufCurCell[3] += volume * (uint16)SWAP_BYTES_16((uint16)(((int16)srcBuf[1] + (int16)srcBuf[3]) >> 1));
-
-			srcBuf += 2;
-			mixBufCurCell += 4;
-		}
-
-		mixBufCurCell[0] += volume * (uint16)SWAP_BYTES_16(srcBuf[0]);
-		mixBufCurCell[1] += volume * (uint16)SWAP_BYTES_16(srcBuf[1]);
-		mixBufCurCell[2] += volume * (uint16)SWAP_BYTES_16(srcBuf[0]);
-		mixBufCurCell[3] += volume * (uint16)SWAP_BYTES_16(srcBuf[1]);
-		break;
-	case 0x10000:
-		for (uint32 i = 0; i < 2 * feedSize; i++) {
-			mixBufCurCell[0] += volume * (uint16)SWAP_BYTES_16(srcBuf[0]);
-
-			srcBuf++;
-			mixBufCurCell++;
-		}
-		break;
-	case 0x20000:
-		for (uint32 i = 0; i < feedSize; i++) {
-			mixBufCurCell[0] += volume * (uint16)SWAP_BYTES_16(srcBuf[0]);
-			mixBufCurCell[1] += volume * (uint16)SWAP_BYTES_16(srcBuf[1]);
-
-			srcBuf += 4;
-			mixBufCurCell += 2;
-		}
-		break;
-	default:
-		for (uint32 i = 0; i < feedSize; i++) {
-			mixBufCurCell[0] += volume * (uint16)SWAP_BYTES_16(srcBuf[0]);
-			mixBufCurCell[1] += volume * (uint16)SWAP_BYTES_16(srcBuf[1]);
-
-			mixBufCurCell += 2;
-			position += 2 * ratio;
-			srcBuf += position >> 16;
-			position &= 0xFFFF;
-		}
-		break;
-	}
-}
-
 SmushDriverStream::SmushDriverStream(SmushDriver *driver) {
 	_driver = driver;
 }
@@ -623,10 +312,7 @@ SmushDriver::SmushDriver(SmushTimer *timer, bool remastered) {
 	_ringPlayPosition = 0;
 	_lastBlock = -1;
 	_driverRate = 0;
-	_driverVolume = 0;
 	_fillTimer = 0;
-	memset(_volumeTable, 0, sizeof(_volumeTable));
-	_volumeTableBuilt = false;
 }
 
 SmushDriver::~SmushDriver() {
@@ -664,61 +350,8 @@ void SmushDriver::sndDrivTerminate() {
 	sndDrivCloseRing();
 }
 
-int SmushDriver::sndDrivSetVol(int volume) {
-	if (!_volumeTableBuilt) {
-		_volumeTable[0] = -10000;
-		_volumeTable[1] = -7000;
-		_volumeTable[2] = -6000;
-		_volumeTable[3] = -5200;
-		_volumeTable[4] = -5000;
-		_volumeTable[5] = -4500;
-		_volumeTable[6] = -4200;
-		_volumeTable[7] = -4100;
-		_volumeTable[8] = -4000;
-
-		int position = 16000;
-		for (int i = 8; i < 32; i++) {
-			int value = (int)(((uint64)2987803337LL * (uint64)(position - 16000)) >> 32) >> 4;
-			position += 2000;
-			_volumeTable[i] = value + (value >> 31) - 4000;
-		}
-
-		position = 32000;
-		for (int i = 32; i < 64; i++) {
-			int value = (int)(((uint64)2216757315LL * (uint64)(position - 32000)) >> 32) >> 4;
-			position += 1000;
-			_volumeTable[i] = value + (value >> 31) - 2000;
-		}
-
-		position = 64000;
-		for (int i = 64; i < 128; i++) {
-			int value = (int)(((uint64)2181570691LL * (uint64)(position - 64000)) >> 32) >> 5;
-			position += 1000;
-			_volumeTable[i] = value + (value >> 31) - 1000;
-		}
-
-		_volumeTableBuilt = true;
-	}
-
-	_driverVolume = volume & 0x7F;
-
-	int centibels = _volumeTable[_driverVolume];
-	int hostVolume = (int)(Audio::Mixer::kMaxChannelVolume * pow(10.0, centibels / 2000.0) + 0.5);
-	_system->setChannelVolume(_soundHandle, hostVolume);
-
-	return 0;
-}
-
-int SmushDriver::sndDrivGetVol() {
-	return _driverVolume;
-}
-
 int SmushDriver::sndDrivGetRate() {
 	return _driverRate;
-}
-
-int SmushDriver::sndDrivDummy(int rate) {
-	return rate;
 }
 
 void SmushDriver::sndDrivFillThread() {
@@ -746,48 +379,21 @@ void SmushDriver::sndDrivFillThread() {
 	_timer->sysReset(_fillTimer, 1193180 / (_driverRate / 1024));
 }
 
-void SmushDriver::sndDrivMix(const uint8 *srcBuf, int32 mixBufStartIndex, uint32 feedSize, int32 srcByteCount, int reserved, int volume, int pan, int format) {
-	int channelCount, wordSize, signedFlag;
+void SmushDriver::sndDrivMix(const uint8 *srcBuf, int32 mixBufStartIndex, uint32 feedSize, int32 srcByteCount, int volume, int pan, int format) {
+	int channelCount;
+	int wordSize;
 
-	switch (format) {
-	case 0:
+	// The disasm mixes the tail of a first stream, which has no format yet, as 8 bit mono
+	if (format == 0) {
 		channelCount = 1;
 		wordSize = 8;
-		signedFlag = 1;
-		break;
-	case 1:
-		channelCount = 2;
-		wordSize = 8;
-		signedFlag = 1;
-		break;
-	case 2:
-		channelCount = 1;
+	} else {
+		// Movies only have signed 16 bit audio: format 4 is mono, format 5 is stereo
+		channelCount = (format == 5) ? 2 : 1;
 		wordSize = 16;
-		signedFlag = 0;
-		break;
-	case 3:
-		channelCount = 2;
-		wordSize = 16;
-		signedFlag = 0;
-		break;
-	case 4:
-		channelCount = 1;
-		wordSize = 16;
-		signedFlag = 1;
-		break;
-	case 5:
-		channelCount = 2;
-		wordSize = 16;
-		signedFlag = 1;
-		break;
-	default:
-		channelCount = format;
-		wordSize = format;
-		signedFlag = format;
-		break;
 	}
 
-	_mixer.souMixerMix(srcBuf, srcByteCount / (channelCount * (wordSize >> 3)), wordSize, channelCount, feedSize, mixBufStartIndex, volume, (pan + 127) / 2, signedFlag, 0);
+	_mixer.souMixerMix(srcBuf, srcByteCount / (channelCount * (wordSize >> 3)), wordSize, channelCount, feedSize, mixBufStartIndex, volume, (pan + 127) / 2);
 }
 
 void SmushDriver::sndDrivFillThreadCallback(int timer, void *context) {

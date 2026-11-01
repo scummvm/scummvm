@@ -449,7 +449,7 @@ void SmushSound::souEngineFill(int frameCount, SmushDriver *driver) {
 					else
 						chunkFrames = _sampleRate * (chunkBytes / _bytesPerFrame[rt->previousFormat]) / rt->previousRate;
 
-					driver->sndDrivMix(chan->stagingBuffer - rt->tailBytes + 6144, destOffset, chunkFrames, chunkBytes, 1,
+					driver->sndDrivMix(chan->stagingBuffer - rt->tailBytes + 6144, destOffset, chunkFrames, chunkBytes,
 					                   rt->previousVolume * rt->tailBytes * SOU_MASTER_VOLUME / 780288, chan->pan, rt->previousFormat);
 
 					destOffset += chunkFrames;
@@ -519,7 +519,7 @@ void SmushSound::souEngineFill(int frameCount, SmushDriver *driver) {
 						else
 							chunkFrames = _sampleRate * (chunkBytes / _bytesPerFrame[rt->format]) / rt->rate;
 
-						driver->sndDrivMix(rt->dataStart + ringPosition, destOffset, chunkFrames, chunkBytes, 1,
+						driver->sndDrivMix(rt->dataStart + ringPosition, destOffset, chunkFrames, chunkBytes,
 						                   (rt->gain * volume) >> 4, chan->pan, rt->format);
 
 						rt->remaining -= chunkBytes;
