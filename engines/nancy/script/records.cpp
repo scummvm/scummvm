@@ -42,6 +42,7 @@
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/scenecontext.h"
+#include "engines/nancy/script/timer.h"
 #include "engines/nancy/script/transformer.h"
 #include "engines/nancy/script/types.h"
 #include "engines/nancy/script/xsheet.h"
@@ -73,7 +74,8 @@ static const RecordKindNames kRecordKindNames[kNumRecordKinds] = {
 	{ "AnimOverlay", "ND.AnimOvlAR" },
 	{ "Physics", "ND.PhysicsAR" },
 	{ "Xsheet", "ND.XsheetAR" },
-	{ "Transformer", "ND.TransformerAR" }
+	{ "Transformer", "ND.TransformerAR" },
+	{ "Timer", "ND.TimerAR" }
 };
 
 const char *getRecordKindName(RecordKind kind) {
@@ -114,6 +116,8 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 		return new XsheetRecord(context);
 	case kRecordTransformer:
 		return new TransformerRecord(context);
+	case kRecordTimer:
+		return new TimerRecord(context);
 	default:
 		return nullptr;
 	}
