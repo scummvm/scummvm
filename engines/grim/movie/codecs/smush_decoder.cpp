@@ -114,16 +114,20 @@ bool SmushDecoder::handleFramesHeader() {
 	byte *f_header = new byte[size];
 	_file->read(f_header, size);
 
-	do {
+	// The disasm stops with 4 bytes or less left: the Wave header is declared 8 bytes
+	// long, but it is followed by the total size of the audio, which is part of FLHD
+	while (size - pos > 4) {
+		int blockSize = READ_BE_UINT32(f_header + pos + 4);
+
 		if (READ_BE_UINT32(f_header + pos) == MKTAG('B', 'l', '1', '6')) {
-			pos += READ_BE_UINT32(f_header + pos + 4) + 8;
+			pos += blockSize + 8;
 		} else if (READ_BE_UINT32(f_header + pos) == MKTAG('W', 'a', 'v', 'e')) {
 			_wave->flobdecDecodeHeader(f_header + pos + 8);
-			pos += 20;
+			pos += blockSize + 8;
 		} else {
 			error("SmushDecoder::handleFramesHeader() unknown tag");
 		}
-	} while (pos < size);
+	}
 	delete[] f_header;
 
 	return true;
