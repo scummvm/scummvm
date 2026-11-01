@@ -51,18 +51,11 @@ void MondainLogic::entering() {
 	// conjured hazards, stale position markers)
 	_G(map).resetMondainMap();
 
-	// Fixed starting positions - the player by the time machine on the west
-	// wall, Mondain across the room to the east. These match the MTILE_PLAYER
-	// marker baked into MONDAIN_MAP; Mondain is drawn purely as an overlay,
-	// so his cell stays 0 in the map data
+	// Set initial position
 	sg._locationPosition = Common::Point(3, 4);
 	sg._mondainPos = Common::Point(15, 4);
 
-	// The original re-launches a dedicated executable for this encounter, so
-	// every bit of its state starts from that executable's static
-	// initializers. We reuse the one long-lived Savegame, so reset the same
-	// state here to those values - otherwise a second visit (via the debug
-	// map command, say) would inherit a dead or half-fought Mondain
+	// Set Mondain's state
 	sg._mondainHits = 1000;
 	sg._mondainPhase = 2;
 	sg._mondainPhaseAnimOffset = 0;
@@ -165,6 +158,8 @@ void MondainLogic::damage(Data::Direction dir, int effectNum, int maxDistance, i
 	writeString("Hit Mondain! ");
 	writeString("%d damage!\n", strike);
 	playFX(2);
+
+	endOfTurn();
 }
 
 bool MondainLogic::isWithinRange7() const {
