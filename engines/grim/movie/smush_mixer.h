@@ -31,6 +31,17 @@ namespace Grim {
 
 #define SMUSH_RING_BLOCK_SIZE 6144
 
+// The demo decodes every IACT chunk into 1024 stereo 16 bit samples
+#define SMUSH_DEMO_AUDIO_BLOCK_SIZE 4096
+#define SMUSH_DEMO_AUDIO_RATE 22050
+#define SMUSH_DEMO_AUDIO_BYTES_PER_SECOND (SMUSH_DEMO_AUDIO_RATE * 2 * 2)
+
+// Milliseconds of audio in the demo driver ring, to buffer before playing,
+// and under which the driver stops to buffer again
+#define SMUSH_DEMO_DRIVER_BUFFER_MS 5000
+#define SMUSH_DEMO_DRIVER_START_MS 1000
+#define SMUSH_DEMO_DRIVER_LOW_MS 500
+
 class SmushTimer;
 class SmushSound;
 
