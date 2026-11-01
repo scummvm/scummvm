@@ -117,6 +117,7 @@ protected:
 	void run(double sceneTime, double elapsedTime) override;
 	bool hasTransform() const override { return true; }
 	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
 
 	void onMouseMove(const ScriptPoint &point, bool inViewport) override;
 	bool getCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot) override;
@@ -152,6 +153,7 @@ private:
 
 	bool _wraps = true;
 	bool _hasUturn = true;
+	bool _canRotate = true;	// Nancy24: whether the sides turn the view
 	bool _isFacade = false;
 	RecordGraphic _facade;
 };

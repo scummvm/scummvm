@@ -306,6 +306,7 @@ void SummaryRecord::readTable(int tableIndex) {
 	// whether the player can turn around
 	readField(L, tableIndex, "wrap", _wraps);
 	readField(L, tableIndex, "enableUturn", _hasUturn);
+	readField(L, tableIndex, "enableRotate", _canRotate);
 	readField(L, tableIndex, "facade", _isFacade);
 
 	// The background is behind everything else
@@ -424,9 +425,9 @@ SummaryRecord::Turn SummaryRecord::getTurnAt(const ScriptPoint &point, bool inVi
 	assert(boot);
 
 	const Common::Point place = point.toPoint();
-	if (boot->leftNodeHotspot.contains(place)) {
+	if (_canRotate && boot->leftNodeHotspot.contains(place)) {
 		return canTurn(kTurnLeft) ? kTurnLeft : kNoTurn;
-	} else if (boot->rightNodeHotspot.contains(place)) {
+	} else if (_canRotate && boot->rightNodeHotspot.contains(place)) {
 		return canTurn(kTurnRight) ? kTurnRight : kNoTurn;
 	} else if (boot->uturnNodeHotspot.contains(place)) {
 		return _hasUturn ? kTurnAround : kNoTurn;
@@ -519,7 +520,7 @@ void SummaryRecord::run(double sceneTime, double elapsedTime) {
 	_sceneTime = sceneTime;
 	updateTheme(sceneTime);
 
-	if (_numFrames <= 1 || _turn == kNoTurn) {
+	if (_numFrames <= 1 || _turn == kNoTurn || !_canRotate) {
 		return;
 	}
 
@@ -539,6 +540,25 @@ void SummaryRecord::run(double sceneTime, double elapsedTime) {
 bool SummaryRecord::getField(const Common::String &key) {
 	if (key == "frame") {
 		lua_pushinteger(getLua(), _frame);
+		return true;
+	} else if (key == "enableRotate") {
+		lua_pushboolean(getLua(), _canRotate);
+		return true;
+	} else if (key == "enableUturn") {
+		lua_pushboolean(getLua(), _hasUturn);
+		return true;
+	}
+
+	return false;
+}
+
+// Nancy24 scripts stop the player from turning while something is going on
+bool SummaryRecord::setField(const Common::String &key) {
+	if (key == "enableRotate") {
+		_canRotate = lua_toboolean(getLua(), 3) != 0;
+		return true;
+	} else if (key == "enableUturn") {
+		_hasUturn = lua_toboolean(getLua(), 3) != 0;
 		return true;
 	}
 
