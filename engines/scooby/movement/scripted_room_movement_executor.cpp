@@ -633,7 +633,7 @@ bool ScriptedRoomMovementExecutor::finishScoobyMovement(int16 targetX, int16 tar
 														   int16 destinationBias,
 														   uint16 encodedObjectId) {
 	// Ghidra 0x0000566A-0x0000566D: start the complete companion route and retain its D6 position result.
-	MovementResult result = movePlayerToRoomPosition(targetX, targetY, movementMode, destinationBias);
+	MovementResult result = moveScoobyToRoomPosition(targetX, targetY, movementMode, destinationBias);
 	if (!result.completed) {
 		return false;
 	}
@@ -675,7 +675,7 @@ bool ScriptedRoomMovementExecutor::finishScoobyMovement(int16 targetX, int16 tar
 	return true;
 }
 
-MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
+MovementResult ScriptedRoomMovementExecutor::moveScoobyToRoomPosition(
 	int16 targetX, int16 targetY,
 	int16 movementScale,
 	int16 animationBias) {
@@ -683,9 +683,9 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 	// when both signed integer coordinates already equal the target. Incoming D6 is incidental here.
 	_state.actorMovementFlags &= static_cast<uint8>(~kScoobyActorMask);
 	_state.interactionFlags &= 0xDF;
-	if (getIntegerCoordinate(_state.actorXFixedCoordinates[1]) == targetX &&
-		getIntegerCoordinate(_state.actorYFixedCoordinates[1]) == targetY) {
-		return MovementResult(true, _state.actorPositionIndices[1]);
+	if (getIntegerCoordinate(_state.actorXFixedCoordinates[kScoobyActorSlot]) == targetX &&
+		getIntegerCoordinate(_state.actorYFixedCoordinates[kScoobyActorSlot]) == targetY) {
+		return MovementResult(true, _state.actorPositionIndices[kScoobyActorSlot]);
 	}
 
 	// Ghidra 0x000056D2-0x000056F9: progress bit four, a clear direct trace, or no visible waypoint selects the

@@ -35,9 +35,7 @@ namespace Scooby {
 class ScoobyDooRom;
 
 // A C++ port of the GEMS 2.5 Z80 sound driver (Sega of America / Extended Play, 5/21/92) that the
-// cartridge copies to Z80 RAM from ROM 0x001BB94A-0x001BD1CF. The ROM image is byte-identical to the
-// published GEMS 2.5 Z80.ASM, so this port follows that source routine by routine; the original
-// label names are kept in the comments.
+// cartridge copies to Z80 RAM from ROM 0x001BB94A-0x001BD1CF.
 //
 // The 68000 side talks to the driver through a 64-byte command FIFO in Z80 RAM. The public methods
 // below reproduce the 68000 library routines (GEMS.A) that the game calls; each one writes the same
@@ -48,7 +46,6 @@ class ScoobyDooRom;
 //     samples are clocked per rendered chip sample at the Timer A rate the original programs.
 //   - The 68000-space read caches (the 16-byte sequence buffers and XFER68K banking) are replaced by
 //     direct ROM reads; ROM contents never change, so the bytes read are identical.
-//   - YM2612 LFO (register 0x22) is not forwarded; ScummVM's FM core does not implement it.
 class GemsDriver : public GenesisSoundChipClient {
 public:
 	GemsDriver(const ScoobyDooRom &rom, Audio::Mixer *mixer);

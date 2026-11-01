@@ -121,7 +121,7 @@ public:
 	// reverse consumption order under g_nCompanionActorMovementPointIndex at 0xFF0670. Actual movement paths
 	// return native D6's directional position; the same-coordinate path's incidental incoming D6 is replaced by
 	// the current typed companion position rather than introducing register-state emulation.
-	MovementResult movePlayerToRoomPosition(int16 targetX, int16 targetY,
+	MovementResult moveScoobyToRoomPosition(int16 targetX, int16 targetY,
 											int16 movementScale,
 											int16 animationBias);
 
@@ -145,6 +145,7 @@ public:
 private:
 	static const uint8 kShaggyActorMask = 0x01;
 	static const uint8 kScoobyActorMask = 0x02;
+	static const int kScoobyActorSlot = 1;
 	static const int kRouteWaypointDataOffset = 0x20;
 
 	// Small named replacement for the C# private (short HorizontalStep, short VerticalStep, short PositionIndex)

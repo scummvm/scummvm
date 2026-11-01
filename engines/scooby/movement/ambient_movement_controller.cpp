@@ -50,6 +50,6 @@ bool AmbientMovementController::tryStartRandomMove() {
 	_state.randomMoveAnimation = kAnimationByPackedIndex[static_cast<size_t>((rotatedMove & 0x0C) >> 2)];
 	int16 targetX = static_cast<int16>((packedMove & 0x0FFF) << 3);
 	int16 targetY = static_cast<int16>(_rom.readInt16(moveAddress + 2) << 3);
-	return _movement.movePlayerToRoomPosition(targetX, targetY, 1, 0).completed;
+	return _movement.moveScoobyToRoomPosition(targetX, targetY, 1, 0).completed;
 }
 } // namespace Scooby
