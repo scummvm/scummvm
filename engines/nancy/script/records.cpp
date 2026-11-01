@@ -2146,6 +2146,9 @@ bool MovieRecord::setField(const Common::String &key) {
 		_player.setVolume((byte)CLIP<int>((int)(luaL_checknumber(L, 3) * 100.0 + 0.5), 0, 100));
 	} else if (key == "pauseOnLastFrame") {
 		_pausesOnLastFrame = lua_toboolean(L, 3) != 0;
+	} else if (key == "paused") {
+		// Nancy24 has no Play and Pause anymore
+		_isPaused = lua_toboolean(L, 3) != 0;
 	} else if (key == "visible") {
 		_isVisible = lua_toboolean(L, 3) != 0;
 	} else if (key == "frame") {
