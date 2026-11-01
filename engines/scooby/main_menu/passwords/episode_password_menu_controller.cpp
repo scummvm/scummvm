@@ -26,8 +26,7 @@
 
 #include "common/array.h"
 
-#include "password_alphabet.h"
-#include "password_entry_decoder.h"
+#include "password_display_state.h"
 #include "scooby/scooby.h"
 
 namespace Scooby {
@@ -140,7 +139,7 @@ MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 					_playAudioCommand(0x27);
 					_passwordDisplay.insertSymbol(
 						passwordRow, passwordPosition,
-						kSymbols[gridRow * kGridColumnCount + gridColumn]);
+						kPasswordSymbols[gridRow * kGridColumnCount + gridColumn]);
 					passwordPosition++;
 					if (passwordPosition >= kPasswordPositionCount) {
 						passwordPosition = 0;
@@ -162,8 +161,8 @@ MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 		// 0x000091FC before use.
 		int displayPosition = passwordPosition + passwordPosition / 5;
 		_presentation.updatePasswordGridCursors(gridColumn, gridRow, displayPosition, passwordRow);
-		_presentation.writePriorityTileRow(_passwordDisplay.Rows()[0], kDisplayColumn, kFirstDisplayRow);
-		_presentation.writePriorityTileRow(_passwordDisplay.Rows()[1], kDisplayColumn, kFirstDisplayRow + 1);
+		_presentation.writePriorityTileRow(_passwordDisplay.rows()[0], kDisplayColumn, kFirstDisplayRow);
+		_presentation.writePriorityTileRow(_passwordDisplay.rows()[1], kDisplayColumn, kFirstDisplayRow + 1);
 	}
 }
 
@@ -220,6 +219,52 @@ Optional<MainMenuExit> EpisodePasswordMenuController::exitPasswordGridToMenu() {
 	return Optional<MainMenuExit>(_prepareOptionsAndDispatch());
 }
 
+const int kPasswordStateByteCount = 29;
+
+// Ghidra: ReadNextPasswordBit (0x00009392). The complete contiguous body is
+// 0x00009392-0x000093A1. The original consumes undefined adjacent scratch only while building
+// the ignored byte at 0xFF003D; returning zero for that six-bit tail avoids preserving
+// unobservable RAM state.
+bool ReadNextPasswordBit(Span<const uint8> symbols, int &bitOffset) {
+	// Ghidra 0x00009392-0x0000939B: reload each five-bit symbol and align its first bit to the high side.
+	int symbolIndex = bitOffset / 5;
+	int bitIndex = 4 - bitOffset % 5;
+
+	// Ghidra 0x0000939C-0x000093A1: advance the cursor and return the shifted bit through managed state.
+	bitOffset++;
+	return symbolIndex < static_cast<int>(symbols.size()) &&
+		   (symbols[static_cast<size_t>(symbolIndex)] & (1 << bitIndex)) != 0;
+}
+
+
+void DecodePasswordSymbolXorChain(Span<uint8> packedPassword) {
+	// Ghidra 0x0000876C-0x00008783: recover the five-bit room from checksum XOR original prefix.
+	uint8 previousEncodedByte = packedPassword[0];
+	packedPassword[0] = static_cast<uint8>((packedPassword[1] ^ previousEncodedByte) & 0x1F);
+
+	// Ghidra 0x00008784-0x0000879D: invert all 29 chained state bytes using encoded predecessors.
+	for (int index = 0; index < kPasswordStateByteCount; index++) {
+		size_t packedIndex = static_cast<size_t>(index + 2);
+		uint8 encodedByte = packedPassword[packedIndex];
+		packedPassword[packedIndex] = static_cast<uint8>(encodedByte ^ previousEncodedByte);
+		previousEncodedByte = encodedByte;
+	}
+}
+
+uint8 ReadPasswordByteFromSymbols(Span<const uint8> symbols, int &bitOffset) {
+	// Ghidra 0x00009382-0x00009385: clear D2 and arm eight DBF iterations.
+	uint8 result = 0;
+
+	// Ghidra 0x00009386-0x00009391: read and rotate eight extend bits into D2, most-significant first.
+	for (int bit = 0; bit < 8; bit++) {
+		result = static_cast<uint8>((result << 1) | (ReadNextPasswordBit(symbols, bitOffset)
+														 ? 1
+														 : 0));
+	}
+
+	return result;
+}
+
 // Validates the entered password and installs its room and progress state.
 //
 // Ghidra: validatePasswordEntry (0x00009298). The contiguous body 0x00009298-0x00009381 converts
@@ -233,10 +278,10 @@ Optional<MainMenuExit> EpisodePasswordMenuController::validatePasswordEntry() {
 	for (int rowIndex = 0; rowIndex < kPasswordRowCount; rowIndex++) {
 		for (int symbolIndex = 0; symbolIndex < kPasswordPositionCount; symbolIndex++) {
 			int displayIndex = symbolIndex + symbolIndex / kSymbolsPerGroup;
-			char rowCharacter = _passwordDisplay.Rows()[static_cast<size_t>(rowIndex)][static_cast<size_t>(displayIndex)];
-			const char *found = strchr(kSymbols, rowCharacter);
+			char rowCharacter = _passwordDisplay.rows()[static_cast<size_t>(rowIndex)][static_cast<size_t>(displayIndex)];
+			const char *found = strchr(kPasswordSymbols, rowCharacter);
 			symbols[static_cast<size_t>(destinationIndex++)] =
-				static_cast<uint8>(found - kSymbols);
+				static_cast<uint8>(found - kPasswordSymbols);
 		}
 	}
 

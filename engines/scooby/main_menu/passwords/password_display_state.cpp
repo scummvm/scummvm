@@ -1,5 +1,5 @@
 /* ScummVM - Graphic Adventure Engine
- *
+*
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
@@ -19,15 +19,7 @@
  *
  */
 
-#include "password_display_builder.h"
-
-#include "common/scummsys.h"
-#include "common/algorithm.h"
-
-#include "common/array.h"
-
-#include "common/debug.h"
-#include "password_alphabet.h"
+#include "password_display_state.h"
 
 namespace Scooby {
 namespace {
@@ -92,7 +84,7 @@ void BuildPasswordChecksumAndPrefixXor(Span<uint8> packedPassword) {
 }
 } // namespace
 
-Common::Array<Common::String> Build(int16 roomId, Span<const uint8> passwordStateBytes) {
+Common::Array<Common::String> PasswordDisplayState::buildPasswordStrings(int16 roomId, Span<const uint8> passwordStateBytes) {
 	Common::Array<uint8> packedBytes(kPasswordStateByteCount + 2);
 	uint8 roomByte = static_cast<uint8>(roomId);
 	uint8 rollingByte = static_cast<uint8>((roomByte << 2) | (roomByte >> 7));
@@ -148,7 +140,7 @@ Common::Array<Common::String> Build(int16 roomId, Span<const uint8> passwordStat
 
 			int characterIndex = symbolIndex + symbolIndex / kSymbolsPerGroup;
 			characters[static_cast<size_t>(characterIndex)] =
-				kSymbols[symbolAccumulator];
+				kPasswordSymbols[symbolAccumulator];
 			if (symbolIndex % kSymbolsPerGroup == kSymbolsPerGroup - 1) {
 				characters[static_cast<size_t>(characterIndex + 1)] = ' ';
 			}
@@ -157,15 +149,15 @@ Common::Array<Common::String> Build(int16 roomId, Span<const uint8> passwordStat
 		rows[static_cast<size_t>(rowIndex)] = characters;
 	}
 
-	for (int i =0; i < kRowCount; i++) {
-		debug("%s", rows[i].c_str());
-	}
-
-	Common::String debugStr;
-	for (int i = 0; i < 29; i++) {
-		debugStr += Common::String::format("%2x ", passwordStateBytes[i]);
-	}
-	debug("state bytes = %s", debugStr.c_str());
+	// for (int i =0; i < kRowCount; i++) {
+	// 	debug("%s", rows[i].c_str());
+	// }
+	//
+	// Common::String debugStr;
+	// for (int i = 0; i < 29; i++) {
+	// 	debugStr += Common::String::format("%2x ", passwordStateBytes[i]);
+	// }
+	// debug("state bytes = %s", debugStr.c_str());
 	return rows;
 }
 } // namespace Scooby

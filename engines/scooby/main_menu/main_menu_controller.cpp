@@ -212,8 +212,8 @@ MainMenuExit MainMenuController::presentOptionsAndDispatch() {
 	// Ghidra RunMainMenu 0x0000859C-0x000085AD: publish the staged option frame to plane A at C000.
 	_menuPresentation.commitStagedMenuPlane();
 	if ((_state.InitializationFlags & kAlternateMenuMask) != 0) {
-		_menuPresentation.writeIndexedTileRow(_passwordDisplay.Rows()[0], 1, 7);
-		_menuPresentation.writeIndexedTileRow(_passwordDisplay.Rows()[1], 1, 8);
+		_menuPresentation.writeIndexedTileRow(_passwordDisplay.rows()[0], 1, 7);
+		_menuPresentation.writeIndexedTileRow(_passwordDisplay.rows()[1], 1, 8);
 	}
 
 	Optional<int> selection = selectMainMenuOption(optionCount, _baseTileIndex);

@@ -22,8 +22,7 @@ MODULE_OBJS = \
     main_menu/object_selection/room_object_selection_catalog.o \
     main_menu/object_selection/room_object_selection_controller.o \
     main_menu/passwords/episode_password_menu_controller.o \
-    main_menu/passwords/password_display_builder.o \
-    main_menu/passwords/password_entry_decoder.o \
+    main_menu/passwords/password_display_state.o \
     main_menu/reveal/menu_reveal_compositor.o \
     main_menu/room_selection/room_selection_catalog.o \
     main_menu/room_selection/room_selection_controller.o \

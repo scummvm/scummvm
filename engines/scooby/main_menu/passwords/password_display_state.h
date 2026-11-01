@@ -27,7 +27,6 @@
 #include "common/array.h"
 #include "common/str.h"
 
-#include "password_display_builder.h"
 #include "scooby/common/span.h"
 #include "scooby/runtime/runtime_state.h"
 
@@ -35,17 +34,22 @@
 
 namespace Scooby {
 
+// The two-row shape produced by Build; each entry is one 30-character display row.
+static const int kRowCount = 2;
+
+static const char kPasswordSymbols[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!+#%*?";
+
 class PasswordDisplayState {
 public:
 	// Gets the two 30-character rows projected from original shared text workspace
 	// g_abSharedTextWorkspace at 0xFF08BC-0xFF08F9. No image-backed value is consumed;
 	// Refresh replaces both rows before their first read.
-	const Common::Array<Common::String> &Rows() const { return _rows; }
+	const Common::Array<Common::String> &rows() const { return _rows; }
 
 	// Rebuilds both rows from the current room and the confirmed 29-byte password state.
 	// state: runtime state supplying the room and complete progress table.
 	void refresh(const RuntimeState &state) {
-		_rows = Build(state.RoomId, MakeSpan(state.ProgressStateBytes));
+		_rows = buildPasswordStrings(state.RoomId, MakeSpan(state.ProgressStateBytes));
 	}
 
 	// Replaces one symbol while preserving the authored space after every five positions.
@@ -56,6 +60,21 @@ public:
 		Common::String &row = _rows[static_cast<size_t>(rowIndex)];
 		row[static_cast<size_t>(symbolIndex + symbolIndex / kSymbolsPerGroup)] = symbol;
 	}
+
+private:
+	// Produces the two authored rows, preserving the space after every five-character group.
+	// The final symbol receives the two zero bits that follow the 248 encoded source bits.
+	// roomId: room word whose low byte seeds the original rotate-through-extend sequence.
+	// passwordStateBytes: progress state beginning at original RAM 0xFF2A00; only its first 29 bytes are encoded.
+	// Returns two 30-character display rows, each ending in a space.
+	//
+	// The rolling byte and five-bit checksum precede 29 prefix-XOR bytes, yielding 248 encoded bits.
+	// Fifty five-bit symbols consume those bits plus two terminal zero bits through alphabet
+	// ABCDEFGHIJKLMNOPQRSTUVWXYZ!+#%*?. Each row contains five groups of five symbols and preserves
+	// the trailing group space. The original DBF loop copies exactly 29 bytes from the 256-byte
+	// progress table, so later progress bytes do not participate.
+	static Common::Array<Common::String> buildPasswordStrings(int16 roomId,
+										Span<const uint8> passwordStateBytes);
 
 private:
 	static const int kSymbolsPerGroup = 5;
