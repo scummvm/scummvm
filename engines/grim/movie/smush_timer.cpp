@@ -31,17 +31,6 @@ SmushTimer::SmushTimer() {
 	_sysTickIncrement = 0;
 	_timerThreadLastTime = 0;
 	_sysInitCount = 0;
-	_sysDisableFlag = 0;
-	_sysAbortFlag = 0;
-	_sysQueueFlag = 0;
-	_sysTickBusy = 0;
-	_sysDispatcherDisable = 0;
-	_timerHandlerCoreIsReentrant = 0;
-	_dispatcherAbortRequest = 0;
-	_dispatcherActive = 0;
-	_dispatcherSkip = 0;
-	_dispatcherLast = 0;
-	_dispatcherSaved = 0;
 }
 
 SmushTimer::~SmushTimer() {
@@ -81,12 +70,6 @@ void SmushTimer::timerThread() {
 
 void SmushTimer::timerTick() {
 	_sysGlobalTimer += _sysTickIncrement;
-	if (_sysDisableFlag)
-		return;
-
-	_sysTickBusy = 1;
-	_sysQueueFlag = _sysAbortFlag;
-	_sysAbortFlag = 0;
 
 	for (int i = 1; i <= SYS_MAX_TIMERS; i++) {
 		SmushTimerSlot *slot = &_timers[i];
@@ -95,27 +78,11 @@ void SmushTimer::timerTick() {
 
 		slot->accumulator += _sysTickIncrement;
 		slot->extSync += _sysTickIncrement;
-
-		if ((slot->flags & 5) != 1 || !slot->period || slot->accumulator < slot->period)
-			continue;
-
-		while (true) {
-			slot->accumulator -= slot->period;
-			if (slot->flags & SYS_TIMER_ONE_SHOT) {
-				slot->period = 0;
-				slot->callback(i, slot->context);
-				break;
-			}
-
-			slot->callback(i, slot->context);
-			if (slot->accumulator < slot->period)
-				break;
-		}
 	}
 
 	for (int i = 1; i <= SYS_MAX_TIMERS; i++) {
 		SmushTimerSlot *slot = &_timers[i];
-		if (!slot->callback || (slot->flags & 5) != 0 || !slot->period || slot->reentrant)
+		if (!slot->callback || !slot->period || slot->reentrant)
 			continue;
 
 		slot->reentrant = 1;
@@ -135,61 +102,6 @@ void SmushTimer::timerTick() {
 		}
 		slot->reentrant = 0;
 	}
-
-	_sysAbortFlag = _sysQueueFlag;
-	_sysTickBusy = 0;
-
-	if (!_timerHandlerCoreIsReentrant && !_sysDispatcherDisable) {
-		_timerHandlerCoreIsReentrant = 1;
-		sysTimerDispatcher();
-		_timerHandlerCoreIsReentrant = 0;
-	}
-}
-
-void SmushTimer::sysTimerDispatcher() {
-	if (_dispatcherSkip) {
-		_dispatcherSkip--;
-		if (_dispatcherSkip)
-			return;
-	}
-
-	if (_dispatcherAbortRequest) {
-		_dispatcherAbortRequest = 0;
-		_dispatcherActive = 1;
-		return;
-	}
-
-	_dispatcherAbortRequest = 0;
-	_dispatcherActive = 1;
-	sysTimerDispatcherLoop();
-	_dispatcherActive = 0;
-	_dispatcherLast = _dispatcherSaved;
-
-	_sysAbortFlag = 0;
-}
-
-void SmushTimer::sysTimerDispatcherLoop() {
-	for (int i = 1; i <= SYS_MAX_TIMERS; i++) {
-		SmushTimerSlot *slot = &_timers[i];
-		slot->busy = 1;
-
-		if (slot->callback && (slot->flags & 5) == 4 && slot->period && slot->accumulator >= slot->period) {
-			while (true) {
-				slot->accumulator -= slot->period;
-				if (slot->flags & SYS_TIMER_ONE_SHOT) {
-					slot->period = 0;
-					slot->callback(i, slot->context);
-					break;
-				}
-
-				slot->callback(i, slot->context);
-				if (slot->accumulator < slot->period)
-					break;
-			}
-		}
-
-		slot->busy = 0;
-	}
 }
 
 int SmushTimer::sysAlloc(SmushTimerCallback callback, int period, int flags, void *context) {
@@ -207,7 +119,6 @@ int SmushTimer::sysAlloc(SmushTimerCallback callback, int period, int flags, voi
 	slot->flags = flags;
 	slot->period = period;
 	slot->callback = callback;
-	slot->busy = 0;
 	slot->extSync = 0;
 
 	return i;
@@ -218,14 +129,6 @@ void SmushTimer::sysFree(int timer) {
 		_timers[timer].callback = nullptr;
 }
 
-void SmushTimer::sysDisable() {
-	_sysDisableFlag++;
-}
-
-void SmushTimer::sysEnable() {
-	_sysDisableFlag--;
-}
-
 void SmushTimer::sysReset(int timer, int period) {
 	if (timer > 0 && timer <= SYS_MAX_TIMERS) {
 		_timers[timer].period = period;
@@ -233,26 +136,8 @@ void SmushTimer::sysReset(int timer, int period) {
 	}
 }
 
-void SmushTimer::sysDelay(int ticks) {
-	int start = _sysGlobalTimer;
-	int end = ticks + _sysGlobalTimer;
-	int now = _sysGlobalTimer;
-
-	do {
-		if (now >= end)
-			break;
-
-		sysGetTime();
-		now = _sysGlobalTimer;
-	} while (_sysGlobalTimer >= start);
-}
-
 int SmushTimer::sysGetTime() {
 	return _sysGlobalTimer;
-}
-
-int SmushTimer::sysGetCount() {
-	return _sysTickIncrement;
 }
 
 void SmushTimer::sysExtSync(int value) {

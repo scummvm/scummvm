@@ -40,7 +40,6 @@ struct SmushTimerSlot {
 	void *context;
 	int reentrant;
 	int accumulator;
-	int busy;
 	int extSync;
 };
 
@@ -52,21 +51,8 @@ private:
 	int _sysTickIncrement;
 	uint32 _timerThreadLastTime;
 	int _sysInitCount;
-	int _sysDisableFlag;
-	int _sysAbortFlag;
-	int _sysQueueFlag;
-	int _sysTickBusy;
-	int _sysDispatcherDisable;
-	int _timerHandlerCoreIsReentrant;
-	int _dispatcherAbortRequest;
-	int _dispatcherActive;
-	int _dispatcherSkip;
-	int _dispatcherLast;
-	int _dispatcherSaved;
 
 	void timerTick();
-	void sysTimerDispatcher();
-	void sysTimerDispatcherLoop();
 
 public:
 	SmushTimer();
@@ -78,12 +64,8 @@ public:
 
 	int sysAlloc(SmushTimerCallback callback, int period, int flags, void *context);
 	void sysFree(int timer);
-	void sysDisable();
-	void sysEnable();
 	void sysReset(int timer, int period);
-	void sysDelay(int ticks);
 	int sysGetTime();
-	int sysGetCount();
 	void sysExtSync(int value);
 
 };
