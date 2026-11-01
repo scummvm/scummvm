@@ -35,6 +35,7 @@ class Commands : public Graphics::Views::UIElement {
 private:
 	Graphics::Views::GfxSurface _surface;
 	Gfx::TextCursor _textCursor;
+	bool _lineWrapped = false;		// Text filled the line, leaving the cursor at the start of the next
 
 	/**
 	 * Ensures the commands view is updated on-screen, and then delays for a set amount.

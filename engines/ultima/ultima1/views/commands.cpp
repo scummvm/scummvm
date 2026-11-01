@@ -74,19 +74,37 @@ bool Commands::msgGame(const GameMessage &msg) {
 void Commands::writeString(const Common::String &msg) {
 	_textCursor.hide();
 
-	// Text starting a line is indented a column, lining up with the command
-	// text that follows the '>' prompt. The prompt glyph itself stays in column 0
-	Common::String text;
-	bool lineStart = _surface.getTextPos().x == 0;
-	for (uint i = 0; i < msg.size(); ++i) {
-		if (lineStart && msg[i] != '\n' && msg[i] != '\x10')
-			text += ' ';
+	Common::String line;
+	auto flush = [&]() {
+		if (line.empty())
+			return;
 
-		text += msg[i];
-		lineStart = msg[i] == '\n';
+		// Text starting a line is indented a column, lining up with the command
+		// text that follows the '>' prompt. The prompt glyph itself stays in column 0
+		if (_surface.getTextPos().x == 0 && line[0] != '\x10')
+			line = " " + line;
+
+		_surface.writeString(line);
+		_lineWrapped = _surface.getTextPos().x == 0;
+		line.clear();
+	};
+
+	for (uint i = 0; i < msg.size(); ++i) {
+		if (msg[i] != '\n') {
+			line += msg[i];
+			continue;
+		}
+
+		flush();
+
+		// Text that exactly filled the line has already moved to the next one
+		if (_lineWrapped)
+			_lineWrapped = false;
+		else
+			_surface.writeString("\n");
 	}
 
-	_surface.writeString(text);
+	flush();
 
 	if (msg.contains('\n')) {
 		delay(NEWLINE_DELAY);
@@ -96,6 +114,7 @@ void Commands::writeString(const Common::String &msg) {
 void Commands::resetLine() {
 	_surface.fillRect(Graphics::Views::TextRect(0, 4, 29, 4), 0);	// Clear entire bottom row
 	_surface.setTextPos(Common::Point(0, 4));
+	_lineWrapped = false;
 }
 
 void Commands::showCursor() {
