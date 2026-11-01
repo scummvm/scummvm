@@ -43,13 +43,8 @@ private:
 	byte _mixerTable[17 * 17];
 
 	void mixMono8(const uint8 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp);
-	void mixStereo8(const uint8 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume);
 	void mixMono16(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp);
 	void mixStereo16(const int16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume);
-	void mixMono16Unsigned(const uint16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp);
-	void mixStereo16Unsigned(const uint16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume);
-	void mixMono16Swap(const uint16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int leftAmp, int rightAmp);
-	void mixStereo16Swap(const uint16 *srcBuf, int32 inFrameCount, uint32 feedSize, int32 mixBufStartIndex, int volume);
 
 public:
 	SmushMixer();
@@ -58,7 +53,7 @@ public:
 	int souMixerInitialize(int outChannelCount, int mixBufSize);
 	int souMixerTerminate();
 	int souMixerStart();
-	void souMixerMix(const uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, uint32 feedSize, int32 mixBufStartIndex, int volume, int pan, int signedFlag, int swapEndiannessFlag);
+	void souMixerMix(const uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, uint32 feedSize, int32 mixBufStartIndex, int volume, int pan);
 	int souMixerEnd(int16 *destBuf, int frameCount);
 
 };
@@ -95,10 +90,7 @@ private:
 	int _lastBlock;
 	int _driverRate;
 	bool _remastered;
-	int _driverVolume;
 	int _fillTimer;
-	int _volumeTable[128];
-	bool _volumeTableBuilt;
 
 	int sndDrivOpenRing();
 	void sndDrivCloseRing();
@@ -113,12 +105,9 @@ public:
 
 	int sndDrivInitialize(int rate, int channelCount, SmushSound *sound);
 	void sndDrivTerminate();
-	int sndDrivSetVol(int volume);
-	int sndDrivGetVol();
 	int sndDrivGetRate();
-	int sndDrivDummy(int rate);
 	void sndDrivFillThread();
-	void sndDrivMix(const uint8 *srcBuf, int32 mixBufStartIndex, uint32 feedSize, int32 srcByteCount, int reserved, int volume, int pan, int format);
+	void sndDrivMix(const uint8 *srcBuf, int32 mixBufStartIndex, uint32 feedSize, int32 srcByteCount, int volume, int pan, int format);
 	static void sndDrivFillThreadCallback(int timer, void *context);
 
 	int ringRead(int16 *buffer, int numSamples);
