@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-10-31 16:56+0000\n"
+"POT-Creation-Date: 2026-11-01 10:48+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -1085,8 +1085,8 @@ msgstr "פעולה"
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:158 engines/fool/metaengine.cpp:159
 #: engines/freescape/movement.cpp:36 engines/got/metaengine.cpp:70
-#: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
-#: engines/grim/grim.cpp:563 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
+#: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:500
+#: engines/grim/grim.cpp:582 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
 #: engines/scumm/metaengine.cpp:1237
 #: engines/scumm/insane/mortimer/mortimer.cpp:94
 #: engines/supernova/metaengine.cpp:273 engines/twine/metaengine.cpp:430
@@ -1109,8 +1109,8 @@ msgstr "למעלה"
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:164 engines/fool/metaengine.cpp:165
 #: engines/freescape/movement.cpp:45 engines/got/metaengine.cpp:71
-#: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
-#: engines/grim/grim.cpp:568 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
+#: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:505
+#: engines/grim/grim.cpp:587 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
 #: engines/scumm/metaengine.cpp:1204
 #: engines/scumm/insane/mortimer/mortimer.cpp:94
 #: engines/supernova/metaengine.cpp:279 engines/twine/metaengine.cpp:437
@@ -1133,8 +1133,8 @@ msgstr "למטה"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:170 engines/fool/metaengine.cpp:171
 #: engines/glk/dialogs.cpp:371 engines/got/metaengine.cpp:72
-#: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
-#: engines/grim/grim.cpp:573 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
+#: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:510
+#: engines/grim/grim.cpp:592 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
 #: engines/scumm/metaengine.cpp:1217
 #: engines/scumm/insane/mortimer/mortimer.cpp:94
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
@@ -1156,8 +1156,8 @@ msgstr "שמאלה"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:176 engines/fool/metaengine.cpp:177
 #: engines/glk/dialogs.cpp:373 engines/got/metaengine.cpp:73
-#: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
-#: engines/grim/grim.cpp:578 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
+#: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:515
+#: engines/grim/grim.cpp:597 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
 #: engines/scumm/metaengine.cpp:1224
 #: engines/scumm/insane/mortimer/mortimer.cpp:94
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
@@ -3968,7 +3968,7 @@ msgstr "מקש ימני"
 #: engines/metaengine.cpp:99 engines/agos/metaengine.cpp:178
 #: engines/buried/metaengine.cpp:167 engines/crab/input/input.cpp:261
 #: engines/cruise/metaengine.cpp:217 engines/dm/metaengine.cpp:126
-#: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
+#: engines/grim/grim.cpp:569 engines/hdb/metaengine.cpp:258
 #: engines/hypno/metaengine.cpp:243 engines/hypno/metaengine.cpp:339
 #: engines/hypno/metaengine.cpp:456 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
@@ -3996,7 +3996,7 @@ msgstr "תפריט משחק"
 #: engines/metaengine.cpp:112 engines/access/metaengine.cpp:252
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:94
-#: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
+#: engines/grim/grim.cpp:552 engines/grim/grim.cpp:652
 #: engines/illusions/metaengine.cpp:142 engines/macs2/metaengine.cpp:58
 #: engines/made/metaengine.cpp:155 engines/mohawk/myst.cpp:566
 #: engines/mohawk/riven.cpp:847 engines/prince/metaengine.cpp:269
@@ -4023,8 +4023,8 @@ msgstr "תיבת דו-שיח לניבוי קלט"
 #. and allows confirming popup dialog prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
 #: engines/metaengine.cpp:131 engines/bladerunner/metaengine.cpp:273
-#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:539
-#: engines/grim/grim.cpp:639 engines/sky/metaengine.cpp:101
+#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:558
+#: engines/grim/grim.cpp:658 engines/sky/metaengine.cpp:101
 #: engines/wintermute/keymapper_tables.h:57
 msgid "Confirm"
 msgstr "אישור"
@@ -5988,8 +5988,8 @@ msgstr "R2"
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114
-#: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
-#: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
+#: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:564
+#: engines/grim/grim.cpp:664 engines/hdb/metaengine.cpp:264
 #: engines/macs2/metaengine.cpp:70 engines/made/metaengine.cpp:190
 #: engines/phoenixvr/metaengine.cpp:110 engines/scumm/metaengine.cpp:1345
 #: engines/toltecs/metaengine.cpp:252
@@ -6383,8 +6383,8 @@ msgstr "להמריא"
 #: engines/cine/metaengine.cpp:337 engines/crab/input/input.cpp:251
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
-#: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
-#: engines/grim/grim.cpp:621 engines/harvester/metaengine.cpp:92
+#: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:540
+#: engines/grim/grim.cpp:640 engines/harvester/metaengine.cpp:92
 #: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:603
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
@@ -8129,7 +8129,7 @@ msgstr "הצגת כתוביות סיום של המשחק"
 msgid "Faster game speed"
 msgstr "מהירות סרט מהירה"
 
-#: engines/cine/metaengine.cpp:327 engines/grim/grim.cpp:506
+#: engines/cine/metaengine.cpp:327 engines/grim/grim.cpp:525
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:242
 #: engines/scumm/help.cpp:250 engines/sludge/keymapper_tables.h:316
 msgid "Examine"
@@ -9133,7 +9133,7 @@ msgstr ""
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
 #: engines/efh/metaengine.cpp:530 engines/freescape/games/castle/castle.cpp:572
-#: engines/grim/grim.cpp:501 engines/grim/grim.cpp:596
+#: engines/grim/grim.cpp:520 engines/grim/grim.cpp:615
 #: engines/hpl1/metaengine.cpp:82 engines/icb/icb.cpp:131
 #: engines/icb/icb.cpp:197 engines/ultima/ultima8/metaengine.cpp:56
 msgid "Run"
@@ -10255,49 +10255,49 @@ msgstr ""
 "הרצה של ScummVM בכל זאת עשויה לגרום לבעיות במשחק ואפילו לקריסות.\n"
 "האם בכל זאת להריץ את %s?"
 
-#: engines/grim/grim.cpp:511 engines/grim/grim.cpp:611
+#: engines/grim/grim.cpp:530 engines/grim/grim.cpp:630
 #, fuzzy
 #| msgid "Use/Talk"
 msgid "Use / Talk"
 msgstr "שימוש/שיחה"
 
-#: engines/grim/grim.cpp:516 engines/grim/grim.cpp:616
+#: engines/grim/grim.cpp:535 engines/grim/grim.cpp:635
 #, fuzzy
 #| msgid "Pick up/Put away"
 msgid "Pick up / Put away"
 msgstr "איסוף/סילוק"
 
-#: engines/grim/grim.cpp:526 engines/grim/grim.cpp:626
+#: engines/grim/grim.cpp:545 engines/grim/grim.cpp:645
 msgid "Skip dialog lines"
 msgstr "דילוג על שורות בשיחה"
 
 #. I18N: Cycle means rotate through
-#: engines/grim/grim.cpp:584
+#: engines/grim/grim.cpp:603
 #, fuzzy
 #| msgid "Cycle Objects Up"
 msgid "Cycle objects up"
 msgstr "גלילת עצמים מעלה"
 
 #. I18N: Cycle means rotate through
-#: engines/grim/grim.cpp:590
+#: engines/grim/grim.cpp:609
 #, fuzzy
 #| msgid "Cycle Objects Down"
 msgid "Cycle objects down"
 msgstr "גלילת עצמים מטה"
 
-#: engines/grim/grim.cpp:601
+#: engines/grim/grim.cpp:620
 #, fuzzy
 #| msgid "Quick Room Exit"
 msgid "Quick room exit"
 msgstr "יציאה מהירה מהחדר"
 
-#: engines/grim/grim.cpp:606
+#: engines/grim/grim.cpp:625
 #, fuzzy
 #| msgid "Examine/Look"
 msgid "Examine / Look"
 msgstr "בחינה/מבט"
 
-#: engines/grim/grim.cpp:1386
+#: engines/grim/grim.cpp:1403
 msgid "Error: the game could not be saved."
 msgstr "שגיאהL לא ניתן לשמור את המשחק."
 
