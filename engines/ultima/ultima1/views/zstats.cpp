@@ -32,7 +32,7 @@ namespace Views {
 constexpr int LINES_PER_PAGE = 26;
 
 bool ZStats::msgFocus(const FocusMessage &msg) {
-	g_engine->send("Commands", GameMessage("SPACE"));
+	g_engine->baseView()->findView("Commands")->send(GameMessage("SPACE"));
 
 	buildLines();
 	_pageStart = 0;
@@ -41,7 +41,7 @@ bool ZStats::msgFocus(const FocusMessage &msg) {
 
 bool ZStats::msgUnfocus(const UnfocusMessage &msg) {
 	// Switch back to an action prompt in the commands area
-	g_engine->send("Commands", GameMessage("PROMPT"));
+	g_engine->baseView()->findView("Commands")->send(GameMessage("PROMPT"));
 	return Dialog::msgUnfocus(msg);
 }
 
