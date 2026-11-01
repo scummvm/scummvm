@@ -884,6 +884,14 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		NANCY_GUIOPTIONS
 	},
+	{ // MD5 by bluegr
+		"nancy24", nullptr,
+		AD_ENTRY1s("ciftree.dat", "1a418226443084fc802f20a8465b6605", 78604194),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		NANCY_GUIOPTIONS
+	},
 
 	// Do not delete
 	AD_TABLE_END_MARKER
