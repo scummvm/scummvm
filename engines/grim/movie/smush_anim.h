@@ -62,12 +62,9 @@ private:
 	bool _useDriver;
 
 	int _playing;
-	int _playFlags;
 
 	byte _staging[4096 + 64];
 	uint32 _palette[256];
-	uint32 _paletteSaved[256];
-	uint32 _paletteTarget[256];
 	byte *_frameSource;
 	int _frameWidth;
 	int _frameHeight;
@@ -77,7 +74,6 @@ private:
 	int _sourceY;
 	int _paused;
 	int _done;
-	int _flags;
 	int _lastResult;
 	int _frameReady;
 	int _paletteFlag;
@@ -94,9 +90,6 @@ private:
 	int _frameCount;
 	int _dropCount;
 	int _behind;
-	int _fadeStart;
-	int _fadeSteps;
-	int _fadeRemaining;
 	int _firstUpdate;
 	int _streamStop;
 
@@ -108,10 +101,7 @@ private:
 	int audioGetTime();
 	int getFramesDue();
 	int stepAnimation();
-	void fadePalette();
 	void decodeIACT(const byte *block);
-	void smushPlayBlitDouble(const byte *source, int sourcePitch, byte *destination, int destinationPitch, int width, int rows);
-	void smushPlayBlitDoubleRows(const byte *source, int sourcePitch, byte *destination, int destinationPitch, int width, int rows);
 	void smushPlayBlitCopy(const byte *source, int sourcePitch, byte *destination, int destinationPitch, int width, int rows);
 
 public:
@@ -127,7 +117,7 @@ public:
 
 	int initialize(int bufferBytes, int width, int height);
 	void terminate();
-	int open(const Common::String &name, int flags, int offset);
+	int open(const Common::String &name, int offset);
 	int close();
 	int update(int *frameDecoded, int *finished, int *paletteChanged, const uint32 **palette);
 	void pause();
