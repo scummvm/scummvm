@@ -27,6 +27,9 @@
 namespace Ultima {
 namespace Ultima1 {
 
+// The highest any of the six attributes can reach, as with strength rewards
+constexpr int MAX_ATTRIBUTE = 99;
+
 Console::Console() : GUI::Debugger() {
 	registerCmd("view", WRAP_METHOD(Console, cmdView));
 	registerCmd("map", WRAP_METHOD(Console, cmdMap));
@@ -35,6 +38,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("coins", WRAP_METHOD(Console, cmdCoins));
 	registerCmd("fuel", WRAP_METHOD(Console, cmdFuel));
 	registerCmd("space", WRAP_METHOD(Console, cmdSpace));
+	registerCmd("stats", WRAP_METHOD(Console, cmdStats));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("locations", WRAP_METHOD(Console, cmdLocations));
@@ -140,6 +144,16 @@ bool Console::cmdSpace(int argc, const char **argv) {
 	_G(logic)->entering();
 
 	return false;
+}
+
+bool Console::cmdStats(int argc, const char **argv) {
+	Data::Savegame &sg = _G(savegame);
+
+	sg._strength = sg._agility = sg._stamina = sg._charisma = sg._wisdom = sg._intelligence = MAX_ATTRIBUTE;
+
+	g_engine->baseView()->findView("Stats")->draw();
+	debugPrintf("All attributes set to %d\n", MAX_ATTRIBUTE);
+	return true;
 }
 
 bool Console::cmdInventory(int argc, const char **argv) {
