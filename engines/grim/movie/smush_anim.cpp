@@ -34,11 +34,11 @@ namespace Grim {
 // The audio ring holds 120 blocks, about 5.5 seconds
 #define SMUSH_DEMO_AUDIO_BLOCKS 120
 
-// The file ring is read in CD sectors (2048 bytes): 12 per call, 64 as the
-// first read; the biggest read is a frame plus 200 KB
-#define SMUSH_DEMO_STREAM_CHUNK 24576
-#define SMUSH_DEMO_STREAM_PREFETCH 0x20000
-#define SMUSH_DEMO_STREAM_SLACK 204800
+// The file ring is read 12 sectors per call and 64 as the first read;
+// the biggest read is a frame plus 100 sectors
+#define SMUSH_DEMO_STREAM_CHUNK (12 * SMUSH_DEMO_SECTOR_SIZE)
+#define SMUSH_DEMO_STREAM_PREFETCH (64 * SMUSH_DEMO_SECTOR_SIZE)
+#define SMUSH_DEMO_STREAM_SLACK (100 * SMUSH_DEMO_SECTOR_SIZE)
 
 SmushAnimPlay::SmushAnimPlay(SmushTimer *timer, SmushSound *sound) {
 	_timer = timer;
