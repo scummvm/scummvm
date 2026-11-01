@@ -22,6 +22,9 @@
 #include "common/system.h"
 #include "common/timer.h"
 
+#include "gui/debugger.h"
+
+#include "engines/grim/grim.h"
 #include "engines/grim/imuse/imuse_engine.h"
 #include "engines/grim/imuse/imuse_defs.h"
 #include "engines/grim/imuse/imuse_tables.h"
@@ -590,6 +593,71 @@ int IMuse::imSetCuePoint(int cueId) {
 
 int IMuse::imSetAttribute(int attrIndex, int attrVal) {
 	return scriptParse(IMUSE_C_SCRIPT_SET_ATTRIBUTE, attrIndex, attrVal);
+}
+
+// Debugger utility functions
+
+void IMuse::listStates() {
+	const IMuseStateTable *stateTable = _demo ? _grimDemoStateMusicTable : _grimStateMusicTable;
+	int stateTableSize = _demo ? ARRAYSIZE(_grimDemoStateMusicTable) : ARRAYSIZE(_grimStateMusicTable);
+	GUI::Debugger *debugger = g_grim->getDebugger();
+
+	debugger->debugPrintf("+---------+-------------------------+--------------------------------------+\n");
+	debugger->debugPrintf("| %7s | %-23s | %-36s |\n", "stateId", "internalName", "name");
+	debugger->debugPrintf("+---------+-------------------------+--------------------------------------+\n");
+	for (int i = 0; i < stateTableSize; i++) {
+		debugger->debugPrintf("| %7d | %-23s | %-36s |\n", stateTable[i].soundId, stateTable[i].internalName, stateTable[i].name);
+	}
+	debugger->debugPrintf("+---------+-------------------------+--------------------------------------+\n\n");
+}
+
+void IMuse::listSeqs() {
+	const IMuseStateTable *seqTable = _demo ? _grimDemoSeqMusicTable : _grimSeqMusicTable;
+	int seqTableSize = _demo ? ARRAYSIZE(_grimDemoSeqMusicTable) : ARRAYSIZE(_grimSeqMusicTable);
+	GUI::Debugger *debugger = g_grim->getDebugger();
+
+	debugger->debugPrintf("+---------+-------------------------+--------------------------------------+\n");
+	debugger->debugPrintf("| %7s | %-23s | %-36s |\n", "seqId", "internalName", "name");
+	debugger->debugPrintf("+---------+-------------------------+--------------------------------------+\n");
+	for (int i = 0; i < seqTableSize; i++) {
+		debugger->debugPrintf("| %7d | %-23s | %-36s |\n", seqTable[i].soundId, seqTable[i].internalName, seqTable[i].name);
+	}
+	debugger->debugPrintf("+---------+-------------------------+--------------------------------------+\n\n");
+}
+
+void IMuse::listCues() {
+	g_grim->getDebugger()->debugPrintf("Cue points are not used by this game, no cues available.\n\n");
+}
+
+void IMuse::listTracks() {
+	GUI::Debugger *debugger = g_grim->getDebugger();
+
+	debugger->debugPrintf("Virtual audio tracks currently playing:\n");
+	debugger->debugPrintf("+-------------------------------------------------------------------------+\n");
+	debugger->debugPrintf("| # | soundId | group | hasStream | vol/effVol/pan  | priority | jumpHook |\n");
+	debugger->debugPrintf("+---+---------+-------+-----------+-----------------+----------+----------+\n");
+
+	for (int i = 0; i < _trackCount; i++) {
+		IMuseTrack curTrack = _tracks[i];
+		if (curTrack.soundId != 0) {
+			debugger->debugPrintf("| %1d |  %5d  |   %d   |     %d     |   %3d/%3d/%3d   |   %3d    |   %3d    |\n",
+				i, curTrack.soundId, curTrack.group, imGetParam(curTrack.soundId, IMUSE_P_SND_HAS_STREAM),
+				curTrack.vol, curTrack.effVol, curTrack.pan, curTrack.priority, curTrack.jumpHook);
+		} else {
+			debugger->debugPrintf("| %1d |   ---   |  ---  |    ---    |   ---/---/---   |   ---    |   ---    |\n", i);
+		}
+	}
+	debugger->debugPrintf("+---+---------+-------+-----------+-----------------+----------+----------+\n\n");
+}
+
+void IMuse::listGroups() {
+	GUI::Debugger *debugger = g_grim->getDebugger();
+
+	debugger->debugPrintf("Volume groups:\n");
+	debugger->debugPrintf("\tSFX:      %3d\n", _groupsHandler->getGroupVol(IMUSE_GROUP_SFX));
+	debugger->debugPrintf("\tSPEECH:   %3d\n", _groupsHandler->getGroupVol(IMUSE_GROUP_SPEECH));
+	debugger->debugPrintf("\tMUSIC:    %3d\n", _groupsHandler->getGroupVol(IMUSE_GROUP_MUSIC));
+	debugger->debugPrintf("\tMUSICEFF: %3d\n\n", _groupsHandler->getGroupVol(IMUSE_GROUP_MUSICEFF));
 }
 
 } // End of namespace Grim

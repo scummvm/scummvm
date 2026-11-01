@@ -441,6 +441,13 @@ public:
 
 	// Script
 	int scriptTriggerCallback(char *marker);
+
+	// Debugger utility functions
+	void listStates();
+	void listSeqs();
+	void listCues();
+	void listTracks();
+	void listGroups();
 };
 
 extern IMuse *g_imuse;
