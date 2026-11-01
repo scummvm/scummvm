@@ -1465,6 +1465,10 @@ void SoundRecord::readTable(int tableIndex) {
 	readField(L, tableIndex, "loop", _isLooping);
 	readField(L, tableIndex, "useCC", _usesCaption);
 
+	lua_getfield(L, tableIndex, "channelType");
+	readChannelType(-1);
+	lua_pop(L, 1);
+
 	if (pushField(L, tableIndex, "sounds")) {
 		readStringList(L, -1, _names);
 		lua_pop(L, 1);
@@ -1479,6 +1483,35 @@ SoundRecord::SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") 
 	// FX1, which Nancy22 and Nancy23 have further up
 	const GameType gameType = g_nancy->getGameType();
 	_channel = (gameType >= kGameTypeNancy22 && gameType <= kGameTypeNancy23) ? 16 : 14;
+}
+
+void SoundRecord::readChannelType(int index) {
+	lua_State *L = getLua();
+
+	if (lua_isnoneornil(L, index)) {
+		_channelType.clear();
+		return;
+	}
+
+	_channelType = luaL_checkstring(L, index);
+	if (_channelType != "VOICE" && _channelType != "EFFECTS" && _channelType != "MUSIC") {
+		luaL_error(L, "%s was passed an invalid value", "channelType");
+	}
+}
+
+// A sound without a channelType set by the script uses the type of its channel
+const char *SoundRecord::getChannelType() const {
+	if (!_channelType.empty()) {
+		return _channelType.c_str();
+	} else if (_channel >= 26 && _channel <= 29) {
+		return "VOICE";
+	} else if (_channel >= 3 && _channel <= 25) {
+		return "EFFECTS";
+	} else if (_channel <= 2) {
+		return "MUSIC";
+	}
+
+	return "";
 }
 
 // A sound that is playing while a movie gets skipped is cut short
@@ -1521,7 +1554,15 @@ void SoundRecord::runOnce() {
 	_sound.volume = (uint16)CLIP<int>((int)(_volume * 100.0), 0, 100);
 
 	g_nancy->_sound->loadSound(_sound);
-	g_nancy->_sound->playSound(_sound);
+	if (_channelType == "VOICE") {
+		g_nancy->_sound->playSound(_channel, Audio::Mixer::kSpeechSoundType);
+	} else if (_channelType == "MUSIC") {
+		g_nancy->_sound->playSound(_channel, Audio::Mixer::kMusicSoundType);
+	} else if (_channelType == "EFFECTS") {
+		g_nancy->_sound->playSound(_channel, Audio::Mixer::kSFXSoundType);
+	} else {
+		g_nancy->_sound->playSound(_sound);
+	}
 
 	_isPlaying = g_nancy->_sound->isSoundPlaying(_sound);
 	_wasPreempted = false;
@@ -1579,6 +1620,8 @@ bool SoundRecord::setField(const Common::String &key) {
 		}
 
 		_channel = checkSoundChannel(L, 3);
+	} else if (key == "channelType") {
+		readChannelType(3);
 	} else if (key == "volume") {
 		_volume = luaL_checknumber(L, 3);
 	} else if (key == "useCC") {
@@ -1618,6 +1661,8 @@ bool SoundRecord::getField(const Common::String &key) {
 		lua_pushcfunction(L, soundStopIfPlaying);
 	} else if (key == "channel") {
 		pushSoundChannel(L, _channel);
+	} else if (key == "channelType") {
+		lua_pushstring(L, getChannelType());
 	} else if (key == "volume") {
 		lua_pushnumber(L, _volume);
 	} else if (key == "loop") {

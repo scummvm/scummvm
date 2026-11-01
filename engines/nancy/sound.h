@@ -70,6 +70,8 @@ public:
 
 	void playSound(uint16 channelID);
 	void playSound(const SoundDescription &description);
+	// Nancy24 scripts can pick the volume a sound goes by, whatever its channel
+	void playSound(uint16 channelID, Audio::Mixer::SoundType type);
 	void playSound(const Common::String &chunkName);
 
 	void pauseSound(uint16 channelID, bool pause);

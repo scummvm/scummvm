@@ -387,6 +387,12 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 }
 
 void SoundManager::playSound(uint16 channelID) {
+	if (channelID < _channels.size()) {
+		playSound(channelID, _channels[channelID].type);
+	}
+}
+
+void SoundManager::playSound(uint16 channelID, Audio::Mixer::SoundType type) {
 	if (channelID >= _channels.size() || _channels[channelID].stream == nullptr || isSoundPlaying(channelID))
 		return;
 
@@ -444,7 +450,7 @@ void SoundManager::playSound(uint16 channelID) {
 		}
 	}
 
-	_mixer->playStream(	chan.type,
+	_mixer->playStream(	type,
 						&chan.handle,
 						chan.streamForMixer,
 						channelID,

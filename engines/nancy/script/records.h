@@ -352,8 +352,13 @@ protected:
 	bool setField(const Common::String &key) override;
 
 private:
+	// Nancy24: "VOICE", "MUSIC" or "EFFECTS", the volume the sound goes by
+	void readChannelType(int index);
+	const char *getChannelType() const;
+
 	Common::Array<Common::String> _names;
 	uint16 _channel;	// FX1 unless the table says otherwise
+	Common::String _channelType;	// empty for the one of the channel
 	double _volume = 1.0;
 	bool _isLooping = false;
 	bool _usesCaption = true;
