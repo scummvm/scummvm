@@ -87,78 +87,6 @@ static void drawWrappedTile(Graphics::Views::GfxSurface &s, const Graphics::Mana
 		s.xorBlitFrom(tile, Common::Rect(splitX, splitY, w, h), Common::Point(Data::SPACE_SECTOR_MIN_X, Data::SPACE_SECTOR_MIN_Y));
 }
 
-// Star/heat hazard bitmap (18 rows x 19 cols), matching SPACE.EXE's own raw
-// table for drawStarGraphic. 1 -> _G(colors)._star1, 2 -> _G(colors)._star2
-static const int8 STAR_BITMAP[18][19] = {
-	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0 },
-	{ 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 },
-	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-	{ 1, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1, 1 },
-	{ 0, 0, 1, 1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 1, 1, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 1, 1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 1, 1, 0, 0 },
-	{ 1, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1, 1 },
-	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-	{ 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 },
-	{ 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
-};
-
-// Docking/encounter anchor bitmap (20 rows x 20 cols), matching SPACE.EXE's
-// own raw table for drawPlanetGraphic. Any nonzero value -> _G(colors)._edge
-static const int8 PLANET_BITMAP[20][20] = {
-	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-	{ 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1 },
-	{ 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1 },
-	{ 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0 },
-	{ 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0 },
-	{ 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1 },
-	{ 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1 },
-	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
-};
-
-// Space station bitmap (18 rows x 21 cols), matching SPACE.EXE's own raw
-// table for drawStationGraphic. 1/2 -> _G(colors)._stationHighlight,
-// 4 -> _G(colors)._stationEdge, 3 -> _G(colors)._stationBorder
-static const int8 STATION_BITMAP[18][21] = {
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 4, 1, 1, 1, 2, 3, 2, 3, 2, 3, 1, 1, 4, 0, 0, 0, 0 },
-	{ 0, 0, 0, 4, 1, 1, 2, 3, 2, 2, 2, 3, 2, 3, 2, 1, 1, 4, 0, 0, 0 },
-	{ 0, 0, 4, 1, 1, 3, 2, 2, 2, 2, 2, 3, 2, 3, 2, 2, 1, 1, 4, 0, 0 },
-	{ 0, 4, 1, 1, 3, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 3, 2, 1, 1, 4, 0 },
-	{ 0, 4, 1, 1, 3, 3, 3, 2, 2, 3, 3, 3, 2, 3, 3, 3, 3, 1, 1, 4, 0 },
-	{ 4, 1, 1, 2, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 3, 3, 3, 2, 1, 1, 4 },
-	{ 4, 1, 1, 1, 3, 2, 2, 3, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 4 },
-	{ 4, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 2, 3, 2, 2, 1, 1, 4 },
-	{ 4, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 4 },
-	{ 0, 4, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 4, 0 },
-	{ 0, 4, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 4, 0 },
-	{ 0, 0, 4, 1, 1, 2, 2, 3, 2, 3, 3, 3, 3, 2, 2, 2, 1, 1, 4, 0, 0 },
-	{ 0, 0, 0, 4, 1, 1, 2, 3, 2, 3, 2, 3, 2, 2, 2, 1, 1, 4, 0, 0, 0 },
-	{ 0, 0, 0, 0, 4, 1, 1, 1, 2, 3, 2, 3, 2, 1, 1, 1, 4, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0 },
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
-};
-
 bool SpaceMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_SPACE);
 	return Map::msgFocus(msg);
@@ -213,7 +141,7 @@ void SpaceMap::draw() {
 void SpaceMap::drawStarGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 	for (int row = 0; row < 18; ++row) {
 		for (int col = 0; col < 19; ++col) {
-			switch (STAR_BITMAP[row][col]) {
+			switch (Data::SPACE_STAR_BITMAP[row][col]) {
 			case 1:
 				s.setPixel(x + col, y + row, _G(colors)._star1);
 				break;
@@ -230,7 +158,7 @@ void SpaceMap::drawStarGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 void SpaceMap::drawPlanetGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 	for (int row = 0; row < 20; ++row) {
 		for (int col = 0; col < 20; ++col) {
-			if (PLANET_BITMAP[row][col] != 0)
+			if (Data::SPACE_PLANET_BITMAP[row][col] != 0)
 				s.setPixel(x + col, y + row, _G(colors)._edge);
 		}
 	}
@@ -239,7 +167,7 @@ void SpaceMap::drawPlanetGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 void SpaceMap::drawStationGraphic(Graphics::Views::GfxSurface &s, int x, int y) {
 	for (int row = 0; row < 18; ++row) {
 		for (int col = 0; col < 21; ++col) {
-			switch (STATION_BITMAP[row][col]) {
+			switch (Data::SPACE_STATION_BITMAP[row][col]) {
 			case 1:
 			case 2:
 				s.setPixel(x + col, y + row, _G(colors)._stationHighlight);

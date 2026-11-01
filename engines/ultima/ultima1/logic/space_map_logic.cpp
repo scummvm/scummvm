@@ -57,25 +57,75 @@ static int wrapCoord(int value, int minVal, int maxVal, int wrapSize) {
 	return value;
 }
 
-// The ship tile is a 32x19 canvas, but most of that is blank padding left
-// over from the original's byte-alignment pre-shift copies (see
-// loadShipTiles) - the actual ship silhouette drawn within it is much
-// smaller. Using the full tile as the collision box was triggering "Crunch!"
-// roughly a whole ship-width before the ship visually touched anything, so
-// use a smaller, roughly-centred box instead
-constexpr int SHIP_COLLISION_WIDTH = 16;
-constexpr int SHIP_COLLISION_HEIGHT = 10;
-constexpr int SHIP_COLLISION_OFFSET_X = (Data::SPACE_SHIP_TILE_WIDTH - SHIP_COLLISION_WIDTH) / 2;
-constexpr int SHIP_COLLISION_OFFSET_Y = (Data::SPACE_SHIP_TILE_HEIGHT - SHIP_COLLISION_HEIGHT) / 2;
+// True if the given pixel of a row-major bitmap is set. Positions outside it are not
+static bool bitmapPixel(const int8 *bitmap, int width, int height, int x, int y) {
+	return x >= 0 && x < width && y >= 0 && y < height && bitmap[y * width + x] != 0;
+}
 
-// True if a ship at (x,y) (its tile's top-left) would overlap the given
-// rect - used to detect running into the station or another ship (the only
-// thing that actually triggers "Crunch!"; the sector edges just wrap)
-static bool overlapsRect(int x, int y, int rx, int ry, int rw, int rh) {
-	x += SHIP_COLLISION_OFFSET_X;
-	y += SHIP_COLLISION_OFFSET_Y;
-	return x < rx + rw && x + SHIP_COLLISION_WIDTH > rx &&
-		y < ry + rh && y + SHIP_COLLISION_HEIGHT > ry;
+static bool shipTilePixel(const Graphics::ManagedSurface &tile, int x, int y) {
+	return x >= 0 && x < tile.w && y >= 0 && y < tile.h && *(const byte *)tile.getBasePtr(x, y) != 0;
+}
+
+static const Graphics::ManagedSurface &shipTile(const Data::SpaceMapShip &ship) {
+	return _G(map).spaceShipTiles()[ship._shipType * 4 + ship._facing];
+}
+
+// True if anything other than the given ship is drawn on the given pixel of the
+// sector view: the station, the star, the docking anchor, or another ship
+static bool pixelDrawn(const Data::SpaceMapCell &cell, int shipIndex, bool isStationSector, int px, int py) {
+	if (isStationSector && bitmapPixel(&Data::SPACE_STATION_BITMAP[0][0], Data::SPACE_STATION_WIDTH,
+			Data::SPACE_STATION_HEIGHT, px - Data::SPACE_STATION_SCREEN_X, py - Data::SPACE_STATION_SCREEN_Y))
+		return true;
+
+	if (cell._hazardX != 0 && bitmapPixel(&Data::SPACE_STAR_BITMAP[0][0], Data::SPACE_STAR_WIDTH,
+			Data::SPACE_STAR_HEIGHT, px - cell._hazardX, py - cell._hazardY))
+		return true;
+
+	if (cell._anchorX != 0 && bitmapPixel(&Data::SPACE_PLANET_BITMAP[0][0], Data::SPACE_PLANET_WIDTH,
+			Data::SPACE_PLANET_HEIGHT, px - cell._anchorX, py - cell._anchorY))
+		return true;
+
+	for (int i = 0; i < Data::SPACE_SHIPS_PER_SECTOR; ++i) {
+		const Data::SpaceMapShip &other = cell._ships[i];
+		if (i == shipIndex || other._shipType == Data::SHIP_NONE)
+			continue;
+
+		// A ship drawn across the sector edge has its far part wrapped around
+		for (int wrapX = 0; wrapX <= Data::SPACE_SECTOR_WRAP_WIDTH; wrapX += Data::SPACE_SECTOR_WRAP_WIDTH) {
+			for (int wrapY = 0; wrapY <= Data::SPACE_SECTOR_WRAP_HEIGHT; wrapY += Data::SPACE_SECTOR_WRAP_HEIGHT) {
+				if (shipTilePixel(shipTile(other), px + wrapX - other._x, py + wrapY - other._y))
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+// True if the player's ship, were it at (x,y), would have any of its pixels
+// land on something already drawn in the sector. This is the only thing that
+// triggers a collision; the sector edges just wrap
+static bool shipCollides(const Data::SpaceMapCell &cell, int shipIndex, bool isStationSector, int x, int y) {
+	const Graphics::ManagedSurface &tile = shipTile(cell._ships[shipIndex]);
+
+	for (int row = 0; row < tile.h; ++row) {
+		for (int col = 0; col < tile.w; ++col) {
+			if (!shipTilePixel(tile, col, row))
+				continue;
+
+			// The part of the ship past the sector edge is drawn wrapped
+			int px = x + col, py = y + row;
+			if (px >= Data::SPACE_SECTOR_MAX_X)
+				px = Data::SPACE_SECTOR_MIN_X + px - Data::SPACE_SECTOR_MAX_X;
+			if (py >= Data::SPACE_SECTOR_MAX_Y)
+				py = Data::SPACE_SECTOR_MIN_Y + py - Data::SPACE_SECTOR_MAX_Y;
+
+			if (pixelDrawn(cell, shipIndex, isStationSector, px, py))
+				return true;
+		}
+	}
+
+	return false;
 }
 
 bool SpaceMapLogic::move(Data::Direction dir) {
@@ -177,22 +227,16 @@ void SpaceMapLogic::tick() {
 		int newX = wrapCoord(ship._x + _G(sectorDriftX), Data::SPACE_SECTOR_MIN_X, Data::SPACE_SECTOR_MAX_X, Data::SPACE_SECTOR_WRAP_WIDTH);
 		int newY = wrapCoord(ship._y + _G(sectorDriftY), Data::SPACE_SECTOR_MIN_Y, Data::SPACE_SECTOR_MAX_Y, Data::SPACE_SECTOR_WRAP_HEIGHT);
 
-		if (cell._hazardX != 0 && ABS(newX - cell._hazardX) < STAR_DEATH_RANGE && ABS(newY - cell._hazardY) < STAR_DEATH_RANGE) {
-			writeString("Thy ship melts near the star!\n");
-			death();
-			return;
-		}
-
 		int oldX = ship._x, oldY = ship._y;
 		ship._x = (int16)newX;
 		ship._y = (int16)newY;
 
 		bool isStationSector = _G(savegame)._sectorX == Data::SPACE_STATION_X && _G(savegame)._sectorY == Data::SPACE_STATION_Y;
+		bool crunch = shipCollides(cell, _G(savegame)._shipIndex, isStationSector, newX, newY);
 
 		// Coming to rest exactly in one of the station's docking slots (the
-		// right position AND facing, for the ship's own type) docks safely;
-		// anything else that touches the station or another ship is a crunch
-		if (isStationSector && cell.dockedEdge(_G(savegame)._shipIndex) >= 0) {
+		// right position AND facing, for the ship's own type) docks safely
+		if (!crunch && isStationSector && cell.dockedEdge(_G(savegame)._shipIndex) >= 0) {
 			_G(sectorDriftX) = 0;
 			_G(sectorDriftY) = 0;
 			g_engine->addView("SpaceStation");
@@ -200,18 +244,13 @@ void SpaceMapLogic::tick() {
 			return;
 		}
 
-		bool crunch = false;
-		if (isStationSector) {
-			crunch = overlapsRect(newX, newY, Data::SPACE_STATION_SCREEN_X, Data::SPACE_STATION_SCREEN_Y,
-				Data::SPACE_STATION_WIDTH, Data::SPACE_STATION_HEIGHT);
-		}
-		for (int i = 0; !crunch && i < Data::SPACE_SHIPS_PER_SECTOR; ++i) {
-			if (i == _G(savegame)._shipIndex)
-				continue;
-			const Data::SpaceMapShip &other = cell._ships[i];
-			if (other._shipType != Data::SHIP_NONE)
-				crunch = overlapsRect(newX, newY, other._x + SHIP_COLLISION_OFFSET_X, other._y + SHIP_COLLISION_OFFSET_Y,
-					SHIP_COLLISION_WIDTH, SHIP_COLLISION_HEIGHT);
+		// Touching anything within range of the star is fatal, wherever the
+		// ship was touching
+		if (crunch && cell._hazardX != 0 && ABS(newX - cell._hazardX) < STAR_DEATH_RANGE &&
+				ABS(newY - cell._hazardY) < STAR_DEATH_RANGE) {
+			writeString("Thy ship melts near the star!\n");
+			death();
+			return;
 		}
 
 		if (crunch && isStationSector && ABS(newX - Data::SPACE_STATION_SCREEN_X) < LANDING_RANGE &&

@@ -57,6 +57,15 @@ constexpr int SPACE_SECTOR_WRAP_HEIGHT = SPACE_SECTOR_MAX_Y - SPACE_SECTOR_MIN_Y
 constexpr int SPACE_STATION_SCREEN_X = 60, SPACE_STATION_SCREEN_Y = 75;
 constexpr int SPACE_STATION_WIDTH = 21, SPACE_STATION_HEIGHT = 18;
 
+// The star/heat hazard and docking/encounter anchor bitmaps' dimensions, and
+// the raw bitmaps of all three sector graphics (row-major, 0 is transparent).
+// The collision checks need the same pixels the overhead view draws
+constexpr int SPACE_STAR_WIDTH = 19, SPACE_STAR_HEIGHT = 18;
+constexpr int SPACE_PLANET_WIDTH = 20, SPACE_PLANET_HEIGHT = 20;
+extern const int8 SPACE_STAR_BITMAP[SPACE_STAR_HEIGHT][SPACE_STAR_WIDTH];
+extern const int8 SPACE_PLANET_BITMAP[SPACE_PLANET_HEIGHT][SPACE_PLANET_WIDTH];
+extern const int8 SPACE_STATION_BITMAP[SPACE_STATION_HEIGHT][SPACE_STATION_WIDTH];
+
 // Direction names shown in the cockpit view, indexed by Data::Direction
 // (1-4): the arrow keys read as Left / Right / Climb / Dive rather than the
 // overhead view's West / East / North / South
