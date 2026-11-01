@@ -21,7 +21,7 @@
 
 #include "room_script_command_10_executor.h"
 
-#include "lead_actor_position_transition_animation_catalog.h"
+#include "actor_facing_animation.h"
 #include "scooby/common/optional.h"
 #include "scooby/common/span.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
@@ -52,7 +52,7 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 			int16 temporaryPositionIndex = static_cast<int16>(commandFlags >> 14);
 			previousPositionIndex = _state.actorPositionIndices[0];
 			_state.actorPositionIndices[0] = temporaryPositionIndex;
-			if (!playShaggyActorPositionTransition(previousPositionIndex, temporaryPositionIndex)) {
+			if (!playShaggyActorTurnAnimation(previousPositionIndex, temporaryPositionIndex)) {
 				return;
 			}
 		}
@@ -89,7 +89,7 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 		if ((commandFlags & 0x2000) != 0) {
 			int16 temporaryPositionIndex = _state.actorPositionIndices[0];
 			_state.actorPositionIndices[0] = previousPositionIndex;
-			if (!playShaggyActorPositionTransition(temporaryPositionIndex, previousPositionIndex)) {
+			if (!playShaggyActorTurnAnimation(temporaryPositionIndex, previousPositionIndex)) {
 				return;
 			}
 		}
@@ -106,10 +106,10 @@ void RoomScriptCommand10Executor::generateDialogueMaskTiles(uint8 nonzeroPalette
 	_scene.loadTilesAt(makeSpan(packedTiles), firstTileIndex);
 }
 
-bool RoomScriptCommand10Executor::playShaggyActorPositionTransition(int16 previousPositionIndex,
+bool RoomScriptCommand10Executor::playShaggyActorTurnAnimation(int16 previousPositionIndex,
 																  int16 nextPositionIndex) {
 	_state.actorAnimationOffsets[0] =
-		resolveLeadPositionTransition(previousPositionIndex, nextPositionIndex);
+		resolveShaggyTurnAnimation(previousPositionIndex, nextPositionIndex);
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 
 	while (true) {

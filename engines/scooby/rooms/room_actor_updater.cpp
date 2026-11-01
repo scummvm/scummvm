@@ -23,13 +23,12 @@
 
 #include "common/array.h"
 
-#include "companion_actor_position_transition_animation_catalog.h"
+#include "actor_facing_animation.h"
 #include "room_collision_probe_result.h"
 #include "room_object.h"
 #include "room_scene_data.h"
 #include "scooby/common/contracts.h"
 #include "scooby/common/span.h"
-#include "scooby/movement/actor_directional_animation_catalog.h"
 
 namespace Scooby {
 void RoomActorUpdater::updateRoomActorsAndInterface() {
@@ -419,15 +418,15 @@ bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candi
 	}
 
 	if (noDirection) {
-		if ((_state.shaggyActorDirectionalAnimationLatchFlags & 0x02) != 0) {
+		if ((_state.shaggyActorWalkingAnimationLatchFlags & 0x02) != 0) {
 			moveLeadLeft(candidateX, stepMagnitude);
-		} else if ((_state.shaggyActorDirectionalAnimationLatchFlags & 0x01) != 0) {
+		} else if ((_state.shaggyActorWalkingAnimationLatchFlags & 0x01) != 0) {
 			moveLeadRight(candidateX, stepMagnitude, maximumX);
 		} else {
 			uint32 verticalStep = stepMagnitude >> 1;
-			if ((_state.shaggyActorDirectionalAnimationLatchFlags & 0x04) != 0) {
+			if ((_state.shaggyActorWalkingAnimationLatchFlags & 0x04) != 0) {
 				moveLeadUp(candidateY, verticalStep, maximumY, false);
-			} else if ((_state.shaggyActorDirectionalAnimationLatchFlags & 0x08) != 0) {
+			} else if ((_state.shaggyActorWalkingAnimationLatchFlags & 0x08) != 0) {
 				moveLeadDown(candidateY, verticalStep, maximumY, false);
 			} else {
 				if ((_state.actorMovementFlags & kShaggyActorMask) != 0) {
@@ -443,9 +442,9 @@ bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candi
 	} else if (_state.isButtonDown(ControllerButtons::Left)) {
 		moveLeadLeft(candidateX, stepMagnitude);
 	} else {
-		if ((_state.shaggyActorDirectionalAnimationLatchFlags & 0x02) != 0 &&
+		if ((_state.shaggyActorWalkingAnimationLatchFlags & 0x02) != 0 &&
 			_state.actorAnimationOffsets[kShaggyActorSlot] <= 3) {
-			_state.shaggyActorDirectionalAnimationLatchFlags &= 0xFD;
+			_state.shaggyActorWalkingAnimationLatchFlags &= 0xFD;
 		}
 
 		if (_state.isButtonDown(ControllerButtons::Right)) {
@@ -453,12 +452,12 @@ bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candi
 		}
 	}
 
-	if ((_state.shaggyActorDirectionalAnimationLatchFlags & 0x01) != 0 &&
+	if ((_state.shaggyActorWalkingAnimationLatchFlags & 0x01) != 0 &&
 		_state.actorAnimationOffsets[kShaggyActorSlot] <= 3) {
-		_state.shaggyActorDirectionalAnimationLatchFlags &= 0xFE;
+		_state.shaggyActorWalkingAnimationLatchFlags &= 0xFE;
 	}
 
-	if ((_state.shaggyActorDirectionalAnimationLatchFlags & 0x03) != 0) {
+	if ((_state.shaggyActorWalkingAnimationLatchFlags & 0x03) != 0) {
 		return false;
 	}
 
@@ -489,15 +488,15 @@ void RoomActorUpdater::moveLeadLeft(int &candidateX, uint32 stepMagnitude) {
 			return;
 		}
 
-		_state.shaggyActorDirectionalAnimationLatchFlags &= 0xFD;
+		_state.shaggyActorWalkingAnimationLatchFlags &= 0xFD;
 		movementMagnitude = stepMagnitude;
 	} else {
 		movementMagnitude = stepMagnitude >> 1;
-		int16 animationOffset = resolveLead(
+		int16 animationOffset = resolveShaggyWalkingAnimation(
 			_state.actorPositionIndices[kShaggyActorSlot], 1);
 		if (_state.actorAnimationOffsets[kShaggyActorSlot] != animationOffset) {
 			requestActorAnimation(kShaggyActorSlot, animationOffset);
-			_state.shaggyActorDirectionalAnimationLatchFlags |= 0x02;
+			_state.shaggyActorWalkingAnimationLatchFlags |= 0x02;
 			return;
 		}
 	}
@@ -516,15 +515,15 @@ void RoomActorUpdater::moveLeadRight(int &candidateX, uint32 stepMagnitude, int1
 			return;
 		}
 
-		_state.shaggyActorDirectionalAnimationLatchFlags &= 0xFE;
+		_state.shaggyActorWalkingAnimationLatchFlags &= 0xFE;
 		movementMagnitude = stepMagnitude;
 	} else {
 		movementMagnitude = stepMagnitude >> 1;
-		int16 animationOffset = resolveLead(
+		int16 animationOffset = resolveShaggyWalkingAnimation(
 			_state.actorPositionIndices[kShaggyActorSlot], 0);
 		if (_state.actorAnimationOffsets[kShaggyActorSlot] != animationOffset) {
 			requestActorAnimation(kShaggyActorSlot, animationOffset);
-			_state.shaggyActorDirectionalAnimationLatchFlags |= 0x01;
+			_state.shaggyActorWalkingAnimationLatchFlags |= 0x01;
 			return;
 		}
 	}
@@ -543,14 +542,14 @@ bool RoomActorUpdater::moveLeadUp(int &candidateY, uint32 movementMagnitude, int
 			return true;
 		}
 
-		_state.shaggyActorDirectionalAnimationLatchFlags &= 0xF3;
+		_state.shaggyActorWalkingAnimationLatchFlags &= 0xF3;
 	} else {
-		int16 animationOffset = resolveLead(
+		int16 animationOffset = resolveShaggyWalkingAnimation(
 			_state.actorPositionIndices[kShaggyActorSlot], 2);
 		movementMagnitude >>= 1;
 		if (_state.actorAnimationOffsets[kShaggyActorSlot] != animationOffset) {
 			requestActorAnimation(kShaggyActorSlot, animationOffset);
-			_state.shaggyActorDirectionalAnimationLatchFlags |= 0x04;
+			_state.shaggyActorWalkingAnimationLatchFlags |= 0x04;
 			return false;
 		}
 	}
@@ -580,14 +579,14 @@ void RoomActorUpdater::moveLeadDown(int &candidateY, uint32 movementMagnitude, i
 			return;
 		}
 
-		_state.shaggyActorDirectionalAnimationLatchFlags &= 0xF3;
+		_state.shaggyActorWalkingAnimationLatchFlags &= 0xF3;
 	} else {
-		int16 animationOffset = resolveLead(
+		int16 animationOffset = resolveShaggyWalkingAnimation(
 			_state.actorPositionIndices[kShaggyActorSlot], 3);
 		movementMagnitude >>= 1;
 		if (_state.actorAnimationOffsets[kShaggyActorSlot] != animationOffset) {
 			requestActorAnimation(kShaggyActorSlot, animationOffset);
-			_state.shaggyActorDirectionalAnimationLatchFlags |= 0x08;
+			_state.shaggyActorWalkingAnimationLatchFlags |= 0x08;
 			return;
 		}
 	}
@@ -774,7 +773,7 @@ void RoomActorUpdater::beginNextLeadMovementPoint(const ActorMovementPoint &poin
 	int16 relativeAnimation = static_cast<int16>(
 		_state.actorAnimationOffsets[kShaggyActorSlot] - _state.actorPositionIndices[kShaggyActorSlot]);
 	_state.actorAnimationOffsets[kShaggyActorSlot] = relativeAnimation == 0
-													   ? resolveLead(
+													   ? resolveShaggyWalkingAnimation(
 															 _state.actorPositionIndices[kShaggyActorSlot],
 															 point.positionIndex)
 													   : static_cast<int16>(point.positionIndex +
@@ -1019,7 +1018,7 @@ void RoomActorUpdater::advanceCompanionScriptedMovement() {
 	if (_state.scoobyActorMovementPointIndex >= 0) {
 		_state.scoobyActorMovementPointIndex--;
 		if (_state.scoobyActorMovementPointIndex >= 0) {
-			beginNextCompanionMovementPoint(
+			beginNextScoobyMovementPoint(
 				_state.scoobyActorMovementPoints[_state.scoobyActorMovementPointIndex]);
 			return;
 		}
@@ -1034,13 +1033,13 @@ void RoomActorUpdater::advanceCompanionScriptedMovement() {
 
 	_state.interactionFlags |= 0x20;
 	_state.actorAnimationOffsets[kScoobyActorSlot] =
-		resolveCompanionPositionTransition(
+		resolveScoobyTurnAnimation(
 			_state.actorPositionIndices[kScoobyActorSlot], _state.randomMoveDirection);
 	_state.actorAnimationDelays[kScoobyActorSlot] = -1;
 	_state.actorAnimationRestartFlags |= kScoobyActorMask;
 }
 
-void RoomActorUpdater::beginNextCompanionMovementPoint(const ActorMovementPoint &point) {
+void RoomActorUpdater::beginNextScoobyMovementPoint(const ActorMovementPoint &point) {
 	_state.actorTargetXCoordinates[kScoobyActorSlot] = point.targetX;
 	_state.actorTargetYCoordinates[kScoobyActorSlot] = point.targetY;
 	_state.scoobyActorHorizontalMovementStep = point.horizontalStep;
@@ -1048,7 +1047,7 @@ void RoomActorUpdater::beginNextCompanionMovementPoint(const ActorMovementPoint 
 	int16 relativeAnimation = static_cast<int16>(
 		_state.actorAnimationOffsets[kScoobyActorSlot] - _state.actorPositionIndices[kScoobyActorSlot]);
 	_state.actorAnimationOffsets[kScoobyActorSlot] = relativeAnimation == 0
-															? resolveCompanion(
+															? resolveScoobyWalkingAnimation(
 																  _state.actorPositionIndices[kScoobyActorSlot],
 																  point.positionIndex)
 															: static_cast<int16>(point.positionIndex +

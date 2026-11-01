@@ -438,7 +438,7 @@ public:
 	// g_bLeadActorDirectionalAnimationLatchFlags at 0xFF0ACC. Work RAM has no image-backed value;
 	// InitializeRoomActors clears the byte before UpdateRoomActorsAndInterface uses bits zero through three to
 	// avoid restarting a transition animation while its direction remains active.
-	uint8 shaggyActorDirectionalAnimationLatchFlags{};
+	uint8 shaggyActorWalkingAnimationLatchFlags{};
 
 	// The automatic-interaction gates from Ghidra g_bAutomaticInteractionFlags at 0xFF0AC9. No image-backed
 	// value is consumed; runtime reset clears every gate. Room-script action 0x01 sets bit zero without

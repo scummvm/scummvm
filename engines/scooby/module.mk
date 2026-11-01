@@ -30,16 +30,14 @@ MODULE_OBJS = \
     main_menu/sound_test/sound_test_catalog.o \
     main_menu/sound_test/sound_test_controller.o \
     main_menu/vblank/main_menu_vblank_handler.o \
-    movement/actor_directional_animation_catalog.o \
     movement/ambient_movement_controller.o \
     movement/scripted_room_movement_executor.o \
     presentation/frame_presenter.o \
     randomness/deterministic_random.o \
     rooms/actor_animation_descriptor_catalog.o \
+    rooms/actor_facing_animation.o \
     rooms/actor_sprite_transformer.o \
-    rooms/companion_actor_position_transition_animation_catalog.o \
     rooms/duel_room_script_action_executor.o \
-    rooms/lead_actor_position_transition_animation_catalog.o \
     rooms/room_actor_animator.o \
     rooms/room_actor_initializer.o \
     rooms/room_actor_updater.o \

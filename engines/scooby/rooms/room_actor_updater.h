@@ -135,7 +135,7 @@ private:
 	void setCenteredCursor();
 	void updateScoobyActor();
 	void advanceCompanionScriptedMovement();
-	void beginNextCompanionMovementPoint(const ActorMovementPoint &point);
+	void beginNextScoobyMovementPoint(const ActorMovementPoint &point);
 	void updateActorPrioritiesAndScales();
 	void updateCompactActorScale(int actor, int16 &retainedPreviousScaleRow);
 	void updateDynamicActors();

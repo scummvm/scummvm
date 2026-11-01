@@ -21,8 +21,7 @@
 
 #include "room_script_command_1e_executor.h"
 
-#include "companion_actor_position_transition_animation_catalog.h"
-#include "lead_actor_position_transition_animation_catalog.h"
+#include "actor_facing_animation.h"
 
 namespace Scooby {
 
@@ -41,7 +40,7 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 			int16 previousPositionIndex = _state.actorPositionIndices[0];
 			_state.actorPositionIndices[0] = nextPositionIndex;
 			_state.actorAnimationOffsets[0] =
-				resolveLeadPositionTransition(previousPositionIndex, nextPositionIndex);
+				resolveShaggyTurnAnimation(previousPositionIndex, nextPositionIndex);
 
 			// Ghidra 0x000026C6-0x000026E5: slot zero always requests restart. A negative selector also
 			// advances all animation streams at least once until hold bit zero is set; nonnegative selectors
@@ -65,7 +64,7 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 			int16 previousPositionIndex = _state.actorPositionIndices[1];
 			_state.actorPositionIndices[1] = nextPositionIndex;
 			_state.actorAnimationOffsets[1] =
-				resolveCompanionPositionTransition(
+				resolveScoobyTurnAnimation(
 					previousPositionIndex, nextPositionIndex);
 
 			// Ghidra 0x00002708-0x0000272B: nonnegative selectors exit without requesting a slot-one restart.

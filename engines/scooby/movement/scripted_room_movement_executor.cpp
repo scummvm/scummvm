@@ -21,7 +21,7 @@
 
 #include "scripted_room_movement_executor.h"
 
-#include "actor_directional_animation_catalog.h"
+#include "scooby/rooms/actor_facing_animation.h"
 #include "scooby/common/contracts.h"
 
 namespace Scooby {
@@ -569,7 +569,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 	// nonzero signed bias wraps with the new position before publishing the selected animation.
 	_state.actorAnimationOffsets[0] =
 		animationBias == 0
-			? resolveLead(_state.actorPositionIndices[0], positionIndex)
+			? resolveShaggyWalkingAnimation(_state.actorPositionIndices[0], positionIndex)
 			: static_cast<int16>(positionIndex + animationBias);
 
 	// Ghidra 0x000055DA-0x00005613: restart immediately, wait for both restart consumption and graphics
@@ -1010,7 +1010,7 @@ MovementResult ScriptedRoomMovementExecutor::moveScoobyActorDirectly(
 	// nonzero signed bias wraps with the new position before publishing both animation and position.
 	_state.actorAnimationOffsets[1] =
 		animationBias == 0
-			? resolveCompanion(_state.actorPositionIndices[1], positionIndex)
+			? resolveScoobyWalkingAnimation(_state.actorPositionIndices[1], positionIndex)
 			: static_cast<int16>(positionIndex + animationBias);
 	_state.actorPositionIndices[1] = positionIndex;
 

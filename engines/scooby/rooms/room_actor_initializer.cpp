@@ -39,7 +39,7 @@ void RoomActorInitializer::initializeRoomActors() {
 
 	// Ghidra 0x00007AC6-0x00007ADD: clear directional latches, preserve dynamic movement bits, and seed the
 	// lead actor's automatic idle-animation countdown.
-	_state.shaggyActorDirectionalAnimationLatchFlags = 0;
+	_state.shaggyActorWalkingAnimationLatchFlags = 0;
 	_state.actorMovementFlags &= 0xFC;
 	_state.shaggyActorIdleAnimationTimer = 300;
 
