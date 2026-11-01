@@ -63,8 +63,7 @@ void SpaceLogic::entering() {
 void SpaceLogic::endOfTurn() {
 	redrawMap();
 	redrawStats();
-	// TODO: death in space (hits/shields at zero) returns to Sosaria via
-	// OUT.EXE, not the land resurrection sequence
+	prompt();
 }
 
 int SpaceLogic::shipFuel() const {

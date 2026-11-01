@@ -321,7 +321,9 @@ bool SpaceMapLogic::view() {
 	cockpitLogic->setupSectorEnemies();
 	_G(logic) = cockpitLogic;
 	g_engine->replaceView("SpaceCockpit");
-	return true;
+
+	prompt();
+	return false;
 }
 
 } // namespace Logic

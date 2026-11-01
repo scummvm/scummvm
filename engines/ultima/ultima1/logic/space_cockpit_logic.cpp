@@ -389,7 +389,9 @@ bool SpaceCockpitLogic::view() {
 	// enemy craft first!")
 	_G(logic) = Common::SharedPtr<Logic>(new SpaceMapLogic());
 	g_engine->replaceView("SpaceMap");
-	return true;
+
+	prompt();
+	return false;
 }
 
 } // namespace Logic
