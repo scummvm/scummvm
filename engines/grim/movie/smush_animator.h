@@ -201,18 +201,11 @@ private:
 	int _frameCount;
 	int _blockSize;
 	uint32 _tag;
-	int _fileMode;
 	int _flags;
-	int _seeking;
-	int _skipping;
-	int _skipStart;
-	int _skipBase;
-	int _skipEnd;
-	int _quit;
 	int _pause;
 
+	void animatorInitialize();
 	void readBlock(int size);
-	int checkSkip();
 	void decodeBlocks(int flags);
 	bool moreData();
 
@@ -220,12 +213,9 @@ public:
 	SmushAnimator(SmushDecoder *decoder);
 	~SmushAnimator();
 
-	int animatorInitialize();
-	int animatorNewAnim(int flags, int skipLength, int skipUntil);
+	void animatorNewAnim(int flags);
 	int animatorRender(int flags);
-	int animatorQuery();
-	void animatorQuit();
-	int animatorPause(int mode);
+	void animatorPause(bool pause);
 
 };
 

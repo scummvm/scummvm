@@ -179,7 +179,7 @@ void SmushPlayer::init() {
 	if (_smushAnim && !_currentVideoIsTheora) {
 		_smushAnim->anmStop();
 		_smushAnim->anmStart(15, 24589);
-		_smushAnimator->animatorNewAnim(24589, -1, -1);
+		_smushAnimator->animatorNewAnim(24589);
 	}
 }
 
@@ -235,7 +235,7 @@ bool SmushPlayer::prepareFrame() {
 			// The disasm restarts looping movies with the frame rate of the header
 			int delay = _smushDecoder->getFrameDelay();
 			_smushAnim->anmStart(delay ? (delay / 2 + 1000000) / delay : 15, 24589);
-			_smushAnimator->animatorNewAnim(24589, -1, -1);
+			_smushAnimator->animatorNewAnim(24589);
 		} else {
 			_videoFinished = true;
 		}
@@ -246,7 +246,7 @@ bool SmushPlayer::prepareFrame() {
 
 int SmushPlayer::animatorRender(int flags) {
 	int state = _smushAnimator->animatorRender(flags);
-	if (state < 0 || state == 5)
+	if (state < 0)
 		return state;
 
 	_internalSurface = _smushDecoder->getFrameSurface();

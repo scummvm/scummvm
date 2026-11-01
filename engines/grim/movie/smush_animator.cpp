@@ -34,7 +34,6 @@ namespace Grim {
 #define SMUSH_TAG_NULL MKTAG('n', 'u', 'l', 'l')
 #define SMUSH_TAG_END MKTAG('e', 'n', 'd', ' ')
 #define SMUSH_TAG_PAUSE MKTAG('p', 'a', 'u', 's')
-#define SMUSH_TAG_WAIT MKTAG('w', 'a', 'i', 't')
 
 SmushAnimator::SmushAnimator(SmushDecoder *decoder) {
 	_decoder = decoder;
@@ -50,61 +49,24 @@ SmushAnimator::~SmushAnimator() {
 	free(_buffer);
 }
 
-int SmushAnimator::animatorInitialize() {
+void SmushAnimator::animatorInitialize() {
 	_flags = 0;
 	_frame = 0;
 	_blockSize = 0;
 	_tag = SMUSH_TAG_NULL;
 	_frameCount = 1;
-	_fileMode = 0;
-	_quit = 0;
 	_pause = 0;
-	_seeking = 0;
-	_skipping = 0;
-	_skipStart = -1;
-	_skipBase = 0;
-	_skipEnd = -1;
-	return 0;
 }
 
-int SmushAnimator::animatorNewAnim(int flags, int skipLength, int skipUntil) {
+void SmushAnimator::animatorNewAnim(int flags) {
 	animatorInitialize();
 
 	_frameCount = _decoder->getFrameCount();
-	_seeking = 0;
 	_flags = flags;
-	_fileMode = 1;
-
-	_skipStart = skipUntil;
-	_skipBase = _frame;
-	_skipEnd = skipLength;
-	return 0;
 }
 
-int SmushAnimator::animatorQuery() {
-	return _fileMode;
-}
-
-void SmushAnimator::animatorQuit() {
-	_quit = 1;
-}
-
-int SmushAnimator::animatorPause(int mode) {
-	if (mode == 2) {
-		_pause = (_pause == 0);
-		return _pause;
-	}
-
-	if (mode == 4) {
-		if (_pause) {
-			_pause = 3;
-			return _pause;
-		}
-	} else if (mode != 5) {
-		_pause = mode;
-	}
-
-	return _pause;
+void SmushAnimator::animatorPause(bool pause) {
+	_pause = pause;
 }
 
 void SmushAnimator::readBlock(int size) {
@@ -114,7 +76,6 @@ void SmushAnimator::readBlock(int size) {
 		_block = nullptr;
 		_blockStatus = 0;
 		_frame = -1;
-		_fileMode = 0;
 		return;
 	}
 
@@ -134,22 +95,6 @@ void SmushAnimator::readBlock(int size) {
 	_blockStatus = 1;
 }
 
-int SmushAnimator::checkSkip() {
-	if (!_skipping) {
-		if (_fileMode) {
-			if (_skipEnd >= 0 && _frame > _skipEnd + _skipBase)
-				return 1;
-		} else if (_skipStart >= 0) {
-			if (_frame < _skipStart)
-				return 1;
-
-			_skipStart = -1;
-		}
-	}
-
-	return 0;
-}
-
 void SmushAnimator::decodeBlocks(int flags) {
 	int allFlags = _flags | flags;
 	int decodeFlags = ((allFlags >> 13) & 4) | (allFlags & 0x30);
@@ -162,11 +107,6 @@ bool SmushAnimator::moreData() {
 }
 
 int SmushAnimator::animatorRender(int flags) {
-	if (_quit) {
-		_quit = 0;
-		return -1;
-	}
-
 	while (true) {
 		switch (_tag) {
 		case MKTAG('A', 'N', 'N', 'O'):
@@ -184,48 +124,25 @@ int SmushAnimator::animatorRender(int flags) {
 				return -2;
 
 			_tag = SMUSH_TAG_NULL;
-			if (_block) {
-				_frame++;
-				if (_skipping || !checkSkip()) {
-					decodeBlocks(flags);
-
-					if (_frame < _frameCount - 1 || _skipping) {
-						if (_pause == 1)
-							_tag = SMUSH_TAG_PAUSE;
-						else if (_pause == 3)
-							_pause = 1;
-					} else if (moreData() || _seeking) {
-						_tag = SMUSH_TAG_NULL;
-					} else {
-						_tag = SMUSH_TAG_END;
-					}
-
-					if (_skipping)
-						return 2;
-
-					// The disasm never renders the last frame
-					if (_frame >= 10)
-						return _frame < _frameCount - 1 ? 0 : 4;
-
-					return 1;
-				}
-
-				if (_frame >= _frameCount - 1) {
-					if (moreData() || _seeking)
-						_tag = SMUSH_TAG_NULL;
-					else
-						_tag = SMUSH_TAG_END;
-				}
-			} else {
+			if (!_block)
 				return -2;
-			}
-			break;
-		case SMUSH_TAG_NULL:
-			if (_seeking) {
-				_seeking = 0;
-				_skipping = 1;
+
+			_frame++;
+			decodeBlocks(flags);
+
+			if (_frame < _frameCount - 1) {
+				if (_pause)
+					_tag = SMUSH_TAG_PAUSE;
+			} else if (!moreData()) {
+				_tag = SMUSH_TAG_END;
 			}
 
+			// The disasm never renders the last frame
+			if (_frame >= 10)
+				return _frame < _frameCount - 1 ? 0 : 4;
+
+			return 1;
+		case SMUSH_TAG_NULL:
 			readBlock(8);
 			if (_blockStatus == -2 || !_block)
 				return -2;
@@ -235,26 +152,16 @@ int SmushAnimator::animatorRender(int flags) {
 			break;
 		case SMUSH_TAG_END:
 			_frame++;
-			checkSkip();
 
-			if (moreData() || _seeking)
+			if (moreData())
 				_tag = SMUSH_TAG_NULL;
 
 			return 4;
 		case SMUSH_TAG_PAUSE:
-			if (_pause != 1) {
-				if (_pause == 3)
-					_pause = 1;
-
+			if (!_pause)
 				_tag = SMUSH_TAG_NULL;
-			}
 
 			return 3;
-		case SMUSH_TAG_WAIT:
-			if (moreData() || _seeking)
-				_tag = SMUSH_TAG_NULL;
-
-			return 5;
 		default:
 			return -2;
 		}

@@ -98,15 +98,6 @@ int SmushAnimPlay::anmRender(SmushAnimClient *client) {
 }
 
 int SmushAnimPlay::anmRenderBody(SmushAnimClient *client) {
-	if (_state == 5) {
-		int result = client->animatorRender(_flags);
-		_state = result;
-		if (result < 0)
-			_finished = 1;
-
-		return result;
-	}
-
 	if (!_framesDue)
 		return 6;
 
@@ -117,7 +108,7 @@ int SmushAnimPlay::anmRenderBody(SmushAnimClient *client) {
 	_lateTicks--;
 	_framesDue = 0;
 
-	if (drift > 0 || _state == 2 || _state == 3 || _state == 4) {
+	if (drift > 0 || _state == 3 || _state == 4) {
 		if (_currentDelay > _nominalDelay)
 			_currentDelay = _nominalDelay;
 
@@ -151,7 +142,7 @@ int SmushAnimPlay::anmRenderBody(SmushAnimClient *client) {
 	}
 
 	int flags = _flags;
-	if (_skipFlag && !(flags & 2))
+	if (_skipFlag)
 		flags |= 0x8000;
 
 	_state = client->animatorRender(flags);
@@ -161,26 +152,6 @@ int SmushAnimPlay::anmRenderBody(SmushAnimClient *client) {
 		_started = 1;
 
 	return _state;
-}
-
-void SmushAnimPlay::anmSetRate(int fps) {
-	_nominalDelay = 1193180 / fps;
-	_currentDelay = 1193180 / fps;
-	_timer->sysReset(_frameTimer, 1193180 / fps);
-	_timer->sysReset(_syncTimer, _nominalDelay);
-}
-
-void SmushAnimPlay::anmSyncUp() {
-	_lateTicks = 0;
-	_timer->sysReset(_frameTimer, _currentDelay);
-}
-
-bool SmushAnimPlay::anmRenderQuery() {
-	return _state == 5 || _framesDue;
-}
-
-int SmushAnimPlay::anmGetTime() {
-	return 1000 * _currentDelay / 1193180;
 }
 
 void SmushAnimPlay::frameTimer(int timer, void *context) {
@@ -193,21 +164,12 @@ void SmushAnimPlay::syncTimer(int timer, void *context) {
 	if (!anim->_started)
 		return;
 
-	if (anim->_flags & 1) {
-		if (!anim->_syncPaused && anim->_lateTicks >= 7) {
-			anim->_syncPaused = 1;
-			anim->_sound->souEnginePause();
-		} else if (anim->_syncPaused) {
-			if (anim->_lateTicks < 0) {
-				anim->_syncPaused = 0;
-				anim->_sound->souEngineResume();
-			}
-		}
-	} else if (anim->_syncPaused) {
-		if (anim->_lateTicks < 0) {
-			anim->_syncPaused = 0;
-			anim->_sound->souEngineResume();
-		}
+	if (!anim->_syncPaused && anim->_lateTicks >= 7) {
+		anim->_syncPaused = 1;
+		anim->_sound->souEnginePause();
+	} else if (anim->_syncPaused && anim->_lateTicks < 0) {
+		anim->_syncPaused = 0;
+		anim->_sound->souEngineResume();
 	}
 
 	if (anim->_lateTicks < 20 && !anim->_syncPaused)
