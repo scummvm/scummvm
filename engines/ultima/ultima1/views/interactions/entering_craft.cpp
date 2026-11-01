@@ -186,6 +186,7 @@ void EnteringCraft::nextPage() {
 		close();
 		_G(map).load(Data::MAP_MONDAIN);
 		_G(logic)->entering();
+		prompt();
 	}
 }
 

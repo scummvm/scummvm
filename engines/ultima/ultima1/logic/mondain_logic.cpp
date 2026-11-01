@@ -675,6 +675,8 @@ void MondainLogic::endOfTurn() {
 
 	if (_G(savegame)._hits <= 0)
 		g_engine->addView("Lose");
+	else
+		prompt();
 }
 
 bool MondainLogic::get() {
