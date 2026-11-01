@@ -71,10 +71,10 @@ private:
 
 	// Replaces the C# private "(short X, short Y)" tuple return.
 	struct TargetCoordinates {
-		int16 X;
-		int16 Y;
+		int16 x;
+		int16 y;
 
-		TargetCoordinates(int16 x, int16 y) : X(x), Y(y) {
+		TargetCoordinates(int16 newX, int16 newY) : x(newX), y(newY) {
 		}
 	};
 

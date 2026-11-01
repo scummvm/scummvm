@@ -53,18 +53,18 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 	}
 
 	// Ghidra 0x000041BE-0x000041C5: suppress normal scroll derivation and edge streaming.
-	_state.VideoFlags |= 0x02;
+	_state.videoFlags |= 0x02;
 
 	// Ghidra 0x000041C6-0x000041ED: decode 106 tiles and publish them at the packed base's tile index.
 	Common::Array<uint8> packedTiles = decompressRingLz(
 		_rom, kTileStreamOffset);
-	_scene.loadTilesAt(makeSpan(packedTiles), _state.RoomDynamicTileBaseAttribute & 0x07FF);
+	_scene.loadTilesAt(makeSpan(packedTiles), _state.roomDynamicTileBaseAttribute & 0x07FF);
 
 	// Ghidra 0x000041EE-0x0000420F: decode all 317 rows and add the packed base to every cell with original
 	// word wrapping before any row is published.
 	Common::Array<uint8> packedRows =
 		decompressRingLz(_rom, kCellStreamOffset);
-	uint16 tileBaseAttribute = _state.RoomDynamicTileBaseAttribute;
+	uint16 tileBaseAttribute = _state.roomDynamicTileBaseAttribute;
 	for (size_t byteOffset = 0; byteOffset < packedRows.size(); byteOffset += sizeof(uint16)) {
 		uint16 cell = readUInt16BigEndian(packedRows, static_cast<int>(byteOffset));
 		writeUInt16BigEndian(packedRows, static_cast<int>(byteOffset),
@@ -79,7 +79,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 	bool oddRetrace = false;
 	size_t sourceByteOffset = 0;
 	while (sourceByteOffset < packedRows.size()) {
-		_state.ForegroundVerticalScroll = verticalScroll;
+		_state.foregroundVerticalScroll = verticalScroll;
 		_updateActorAnimationFrames();
 		if (!waitForRoomVerticalBlank()) {
 			_requestSessionExit(SessionExit::HostClosed);
@@ -105,10 +105,10 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 
 	// Ghidra 0x00004250-0x00004263: set the inclusive 300-retrace countdown, update animations before every
 	// signed test, and retain the back edge until the installed callback decrements through -1.
-	_state.RetraceCountdown = 0x012C;
+	_state.retraceCountdown = 0x012C;
 	while (true) {
 		_updateActorAnimationFrames();
-		if (_state.RetraceCountdown < 0) {
+		if (_state.retraceCountdown < 0) {
 			break;
 		}
 
@@ -119,7 +119,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 	}
 
 	// Ghidra 0x00004264-0x0000426F: disable complete room updates and finish the action-owned fade.
-	_state.DisplayFlags &= 0xBF;
+	_state.displayFlags &= 0xBF;
 	if (!_presenter.fadePaletteOut(&_handleRoomVBlank)) {
 		_requestSessionExit(SessionExit::HostClosed);
 		return;

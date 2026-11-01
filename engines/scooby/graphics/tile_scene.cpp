@@ -399,7 +399,7 @@ void TileScene::render(IndexedFrame &frame) {
 							 makeSpan(_dynamicSprites));
 	}
 
-	int roomBottom = _roomInterfaceVisible ? kRoomInterfaceSplitY : IndexedFrame::Height;
+	int roomBottom = _roomInterfaceVisible ? kRoomInterfaceSplitY : IndexedFrame::height;
 	drawLayer(frame, _backgroundLayer, _layerColumns, _layerRows, _backgroundHorizontalOffset,
 			  makeSpan(_backgroundLineHorizontalOffsets), _backgroundVerticalOffset, false, 0,
 			  roomBottom);
@@ -415,7 +415,7 @@ void TileScene::render(IndexedFrame &frame) {
 	if (_roomInterfaceVisible) {
 		drawLayer(frame, _interfaceLayer, kDefaultLayerColumns, kDefaultLayerRows, _interfaceHorizontalScroll,
 				  Span<const int16>(),
-				  0, false, kRoomInterfaceSplitY, IndexedFrame::Height);
+				  0, false, kRoomInterfaceSplitY, IndexedFrame::height);
 	}
 
 	if (_spritesVisible) {
@@ -429,7 +429,7 @@ void TileScene::render(IndexedFrame &frame) {
 	if (_roomInterfaceVisible) {
 		drawLayer(frame, _interfaceLayer, kDefaultLayerColumns, kDefaultLayerRows, _interfaceHorizontalScroll,
 				  Span<const int16>(),
-				  0, true, kRoomInterfaceSplitY, IndexedFrame::Height);
+				  0, true, kRoomInterfaceSplitY, IndexedFrame::height);
 	}
 
 	if (_spritesVisible) {
@@ -453,7 +453,7 @@ void TileScene::drawWalkAreaOverlay(IndexedFrame &frame, int roomBottom) {
 	for (int y = 0; y < rows; y++) {
 		for (int x = y & 1; x < width; x += 2) {
 			if (_walkAreaOverlay[static_cast<size_t>(y * width + x)] != 0) {
-				frame._pixels[static_cast<size_t>(y * IndexedFrame::Width + left + x)] =
+				frame._pixels[static_cast<size_t>(y * IndexedFrame::width + left + x)] =
 					IndexedFrame::kDebugOverlayColorIndex;
 			}
 		}
@@ -475,7 +475,7 @@ uint8 TileScene::stepLevel(uint8 current, uint8 target) {
 }
 
 int TileScene::contentLeft() const {
-	return (IndexedFrame::Width - contentWidth()) / 2;
+	return (IndexedFrame::width - contentWidth()) / 2;
 }
 
 int TileScene::contentWidth() const {
@@ -483,10 +483,10 @@ int TileScene::contentWidth() const {
 	case HorizontalDisplayMode::H32:
 		return 32 * kTileSize;
 	case HorizontalDisplayMode::H40:
-		return IndexedFrame::Width;
+		return IndexedFrame::width;
 	}
 	SDM_UNREACHABLE("Unhandled horizontal display mode.");
-	return IndexedFrame::Width;
+	return IndexedFrame::width;
 }
 
 Common::Array<TileCell> TileScene::decodeLayer(Span<const uint8> packedCells, int columnCount,
@@ -525,7 +525,7 @@ void TileScene::drawLayer(IndexedFrame &frame, const Common::Array<TileCell> &la
 						  int horizontalOffset, Span<const int16> lineHorizontalOffsets,
 						  int verticalOffset, bool highPriority, int startY, int endY) {
 	int contentWidth = this->contentWidth();
-	int outputLeft = (IndexedFrame::Width - contentWidth) / 2;
+	int outputLeft = (IndexedFrame::width - contentWidth) / 2;
 	int layerWidth = columnCount * kTileSize;
 	int layerHeight = rowCount * kTileSize;
 	for (int y = startY; y < endY; ++y) {
@@ -560,7 +560,7 @@ void TileScene::drawLayer(IndexedFrame &frame, const Common::Array<TileCell> &la
 
 			uint8 color = _tilePixels[static_cast<size_t>(tilePixelOffset)];
 			if (color != 0) {
-				frame._pixels[static_cast<size_t>(y * IndexedFrame::Width + outputLeft + x)] =
+				frame._pixels[static_cast<size_t>(y * IndexedFrame::width + outputLeft + x)] =
 					static_cast<uint8>(cell.paletteIndex * 16 + color);
 			}
 		}

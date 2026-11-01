@@ -56,11 +56,11 @@ private:
 	// Preserves a mutable reference to the resolved room-object record and its aligned command-word offset,
 	// replacing the C# "(RoomObject RoomObject, int ByteOffset)" tuple return.
 	struct RoomObjectWordAddress {
-		RoomObject &TargetRoomObject;
-		int ByteOffset;
+		RoomObject &targetRoomObject;
+		int byteOffset;
 
-		RoomObjectWordAddress(RoomObject &targetRoomObject, int byteOffset)
-			: TargetRoomObject(targetRoomObject), ByteOffset(byteOffset) {
+		RoomObjectWordAddress(RoomObject &newTargetRoomObject, int newByteOffset)
+			: targetRoomObject(newTargetRoomObject), byteOffset(newByteOffset) {
 		}
 	};
 

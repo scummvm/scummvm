@@ -93,13 +93,13 @@ private:
 	static const uint8 kUpDirectionMask = 0x01;
 
 	struct InteractionActionMenuFrame {
-		int32 ScriptStartOffset;
-		int32 ScriptEndOffset;
-		uint8 UsedFlags;
+		int32 scriptStartOffset;
+		int32 scriptEndOffset;
+		uint8 usedFlags;
 
-		InteractionActionMenuFrame(int32 scriptStartOffset, int32 scriptEndOffset,
-								   uint8 usedFlags)
-			: ScriptStartOffset(scriptStartOffset), ScriptEndOffset(scriptEndOffset), UsedFlags(usedFlags) {
+		InteractionActionMenuFrame(int32 newScriptStartOffset, int32 newScriptEndOffset,
+								   uint8 newUsedFlags)
+			: scriptStartOffset(newScriptStartOffset), scriptEndOffset(newScriptEndOffset), usedFlags(newUsedFlags) {
 		}
 	};
 

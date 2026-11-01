@@ -56,16 +56,16 @@ void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
 void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 	// Ghidra 0x00003142-0x00003265: replace raster-counter setup and every VDP transfer with the same
 	// logical custom tiles, border cells, authored pattern tiles, and five-row plane-A frame publication.
-	int16 savedFirstActorPositionIndex = _state.ActorPositionIndices[kDuelFirstActorSlot];
+	int16 savedFirstActorPositionIndex = _state.actorPositionIndices[kDuelFirstActorSlot];
 	initializeDuelPresentation();
 
 	// Ghidra 0x00003266-0x000032CB: initialize every explicitly written duel flag, position, momentum,
 	// knockback, cooldown, health, and target-facing value. Prior snapshots and the cached turn step retain
 	// their Work RAM contents because this range does not clear them.
-	_state.DuelStateFlags = 0x01;
-	_state.RoomBehaviorFlags |= 0x04;
-	_state.InteractionFlags |= 0x40;
-	_state.ActorPositionIndices[kDuelFirstActorSlot] = 0;
+	_state.duelStateFlags = 0x01;
+	_state.roomBehaviorFlags |= 0x04;
+	_state.interactionFlags |= 0x40;
+	_state.actorPositionIndices[kDuelFirstActorSlot] = 0;
 	Common::fill(_duelMomentum.begin(), _duelMomentum.end(), 0);
 	Common::fill(_duelKnockback.begin(), _duelKnockback.end(), 0);
 	Common::fill(_duelMomentumCooldowns.begin(), _duelMomentumCooldowns.end(), 0);
@@ -82,14 +82,14 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 	// Ghidra 0x000032F0-0x00003327: select actor zero's duel descriptor and retain both outcomes of the
 	// graphics-ready back edge. The original loop has no explicit retrace call but relies on asynchronous
 	// room VBlank publication, so service one callback and clocked host frame before each continuation.
-	_state.ActorAnimationDescriptorOffsets[kDuelFirstActorSlot] = kDuelFirstActorDescriptorOffset;
-	_state.ActorCompactFrameFlags &= 0xFE;
-	_state.ActorAnimationOffsets[kDuelFirstActorSlot] = 2;
-	_state.ActorAnimationRestartFlags |= 0x01;
-	_state.ActorAnimationDelays[kDuelFirstActorSlot] = -1;
+	_state.actorAnimationDescriptorOffsets[kDuelFirstActorSlot] = kDuelFirstActorDescriptorOffset;
+	_state.actorCompactFrameFlags &= 0xFE;
+	_state.actorAnimationOffsets[kDuelFirstActorSlot] = 2;
+	_state.actorAnimationRestartFlags |= 0x01;
+	_state.actorAnimationDelays[kDuelFirstActorSlot] = -1;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorGraphicsReadyFlags & 0x01) != 0) {
+		if ((_state.actorGraphicsReadyFlags & 0x01) != 0) {
 			break;
 		}
 
@@ -141,7 +141,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 			break;
 		}
 
-		if (_state.isButtonDown(ControllerButtons::Start) && (_state.PreviousControllerOneInput & 0x80) != 0) {
+		if (_state.isButtonDown(ControllerButtons::Start) && (_state.previousControllerOneInput & 0x80) != 0) {
 			pauseAudioDriver();
 			playAudioCommand(0x59);
 			while (_state.isButtonDown(ControllerButtons::Start)) {
@@ -193,7 +193,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 				_duelKnockback[kDuelSecondActor]--;
 			}
 		} else {
-			_state.DuelStateFlags &= 0x67;
+			_state.duelStateFlags &= 0x67;
 		}
 
 		if (_duelKnockback[kDuelFirstActor] != 0) {
@@ -203,7 +203,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 				_duelKnockback[kDuelFirstActor]--;
 			}
 		} else {
-			_state.DuelStateFlags &= 0xB9;
+			_state.duelStateFlags &= 0xB9;
 		}
 
 		// Ghidra 0x000034AE-0x00003561: accelerate the second actor whenever its cooldown permits;
@@ -231,13 +231,13 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 		// result, the 20-frame throttle, cached-target branch, every signed turn-step outcome, momentum
 		// clamp, and actor-two restart side effect.
 		if ((_duelKnockback[kDuelSecondActor] == 0 || _duelMomentum[kDuelSecondActor] == 0) &&
-			(_state.ActorAnimationHoldFlags & 0x04) != 0) {
-			int16 candidateFacing = _state.ActorAnimationOffsets[kDuelSecondActorSlot];
-			if ((_state.DuelStateFlags & 0x08) != 0) {
+			(_state.actorAnimationHoldFlags & 0x04) != 0) {
+			int16 candidateFacing = _state.actorAnimationOffsets[kDuelSecondActorSlot];
+			if ((_state.duelStateFlags & 0x08) != 0) {
 				candidateFacing++;
 			}
 
-			if ((_state.DuelStateFlags & 0x10) != 0) {
+			if ((_state.duelStateFlags & 0x10) != 0) {
 				candidateFacing--;
 			}
 
@@ -249,8 +249,8 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 					_duelLastTargetFacing = targetFacing;
 					int16 directionDifference =
 						static_cast<int16>((targetFacing - candidateFacing) & 0x07);
-					if ((directionDifference > 4 && (_state.DuelStateFlags & 0x08) == 0) ||
-						(_state.DuelStateFlags & 0x10) != 0) {
+					if ((directionDifference > 4 && (_state.duelStateFlags & 0x08) == 0) ||
+						(_state.duelStateFlags & 0x10) != 0) {
 						_duelTurnStep = -1;
 					} else {
 						_duelTurnStep = 1;
@@ -260,14 +260,14 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 				candidateFacing = static_cast<int16>((candidateFacing + _duelTurnStep) & 0x07);
 			}
 
-			if (candidateFacing != _state.ActorAnimationOffsets[kDuelSecondActorSlot]) {
+			if (candidateFacing != _state.actorAnimationOffsets[kDuelSecondActorSlot]) {
 				_duelMomentum[kDuelSecondActor]--;
 				if (_duelMomentum[kDuelSecondActor] < 0) {
 					_duelMomentum[kDuelSecondActor] = 0;
 				}
 
-				_state.ActorAnimationOffsets[kDuelSecondActorSlot] = candidateFacing;
-				_state.ActorAnimationRestartFlags |= 0x04;
+				_state.actorAnimationOffsets[kDuelSecondActorSlot] = candidateFacing;
+				_state.actorAnimationRestartFlags |= 0x04;
 			}
 		}
 
@@ -275,9 +275,9 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 		// combine both duel-state and active-low controller turn inputs, clamp momentum after a facing
 		// change, and restart actor zero.
 		if ((_duelKnockback[kDuelFirstActor] != 0 || _duelMomentum[kDuelFirstActor] != 0) &&
-			(_state.ActorAnimationHoldFlags & 0x01) != 0) {
-			int16 candidateFacing = _state.ActorAnimationOffsets[kDuelFirstActorSlot];
-			if ((_state.DuelStateFlags & 0x02) != 0) {
+			(_state.actorAnimationHoldFlags & 0x01) != 0) {
+			int16 candidateFacing = _state.actorAnimationOffsets[kDuelFirstActorSlot];
+			if ((_state.duelStateFlags & 0x02) != 0) {
 				candidateFacing++;
 			}
 
@@ -285,7 +285,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 				candidateFacing++;
 			}
 
-			if ((_state.DuelStateFlags & 0x04) != 0) {
+			if ((_state.duelStateFlags & 0x04) != 0) {
 				candidateFacing--;
 			}
 
@@ -294,14 +294,14 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 			}
 
 			candidateFacing &= 0x07;
-			if (candidateFacing != _state.ActorAnimationOffsets[kDuelFirstActorSlot]) {
+			if (candidateFacing != _state.actorAnimationOffsets[kDuelFirstActorSlot]) {
 				_duelMomentum[kDuelFirstActor]--;
 				if (_duelMomentum[kDuelFirstActor] < 0) {
 					_duelMomentum[kDuelFirstActor] = 0;
 				}
 
-				_state.ActorAnimationOffsets[kDuelFirstActorSlot] = candidateFacing;
-				_state.ActorAnimationRestartFlags |= 0x01;
+				_state.actorAnimationOffsets[kDuelFirstActorSlot] = candidateFacing;
+				_state.actorAnimationRestartFlags |= 0x01;
 			}
 		}
 
@@ -310,19 +310,19 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 		// collision-condition outcomes and the second-impact call edge.
 		_duelCollisionFlags &= 0xFC;
 		DuelMovementDelta secondMomentumDelta = kDuelMovementDeltas[static_cast<size_t>(
-			_state.ActorAnimationOffsets[kDuelSecondActorSlot] * 8 + _duelMomentum[kDuelSecondActor])];
+			_state.actorAnimationOffsets[kDuelSecondActorSlot] * 8 + _duelMomentum[kDuelSecondActor])];
 		DuelMovementDelta secondKnockbackDelta = kDuelMovementDeltas[static_cast<size_t>(
-			_state.ActorPositionIndices[kDuelSecondActorSlot] * 8 + _duelKnockback[kDuelSecondActor])];
+			_state.actorPositionIndices[kDuelSecondActorSlot] * 8 + _duelKnockback[kDuelSecondActor])];
 		_stagedCollisionX = static_cast<int16>(
-			getIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelSecondActorSlot]) + secondMomentumDelta.X +
-			secondKnockbackDelta.X);
+			getIntegerCoordinate(_state.actorXFixedCoordinates[kDuelSecondActorSlot]) + secondMomentumDelta.x +
+			secondKnockbackDelta.x);
 		_stagedCollisionY = static_cast<int16>(
-			getIntegerCoordinate(_state.ActorYFixedCoordinates[kDuelSecondActorSlot]) + secondMomentumDelta.Y +
-			secondKnockbackDelta.Y);
-		_state.ActorXFixedCoordinates[kDuelSecondActorSlot] =
-			replaceIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelSecondActorSlot], _stagedCollisionX);
-		_state.ActorYFixedCoordinates[kDuelSecondActorSlot] =
-			replaceIntegerCoordinate(_state.ActorYFixedCoordinates[kDuelSecondActorSlot], _stagedCollisionY);
+			getIntegerCoordinate(_state.actorYFixedCoordinates[kDuelSecondActorSlot]) + secondMomentumDelta.y +
+			secondKnockbackDelta.y);
+		_state.actorXFixedCoordinates[kDuelSecondActorSlot] =
+			replaceIntegerCoordinate(_state.actorXFixedCoordinates[kDuelSecondActorSlot], _stagedCollisionX);
+		_state.actorYFixedCoordinates[kDuelSecondActorSlot] =
+			replaceIntegerCoordinate(_state.actorYFixedCoordinates[kDuelSecondActorSlot], _stagedCollisionY);
 		if (_collisionProbe.probeStagedCollision(_stagedCollisionX, _stagedCollisionY)) {
 			resolveDuelSecondActorImpact();
 			_duelCollisionFlags |= 0x02;
@@ -331,19 +331,19 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 		// Ghidra 0x00003724-0x0000378F: independently apply the first actor's two vectors, stage and
 		// publish its wrapped integer coordinates, and retain both first-impact outcomes.
 		DuelMovementDelta firstMomentumDelta = kDuelMovementDeltas[static_cast<size_t>(
-			_state.ActorAnimationOffsets[kDuelFirstActorSlot] * 8 + _duelMomentum[kDuelFirstActor])];
+			_state.actorAnimationOffsets[kDuelFirstActorSlot] * 8 + _duelMomentum[kDuelFirstActor])];
 		DuelMovementDelta firstKnockbackDelta = kDuelMovementDeltas[static_cast<size_t>(
-			_state.ActorPositionIndices[kDuelFirstActorSlot] * 8 + _duelKnockback[kDuelFirstActor])];
+			_state.actorPositionIndices[kDuelFirstActorSlot] * 8 + _duelKnockback[kDuelFirstActor])];
 		_stagedCollisionX = static_cast<int16>(
-			getIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelFirstActorSlot]) + firstMomentumDelta.X +
-			firstKnockbackDelta.X);
+			getIntegerCoordinate(_state.actorXFixedCoordinates[kDuelFirstActorSlot]) + firstMomentumDelta.x +
+			firstKnockbackDelta.x);
 		_stagedCollisionY = static_cast<int16>(
-			getIntegerCoordinate(_state.ActorYFixedCoordinates[kDuelFirstActorSlot]) + firstMomentumDelta.Y +
-			firstKnockbackDelta.Y);
-		_state.ActorXFixedCoordinates[kDuelFirstActorSlot] =
-			replaceIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelFirstActorSlot], _stagedCollisionX);
-		_state.ActorYFixedCoordinates[kDuelFirstActorSlot] =
-			replaceIntegerCoordinate(_state.ActorYFixedCoordinates[kDuelFirstActorSlot], _stagedCollisionY);
+			getIntegerCoordinate(_state.actorYFixedCoordinates[kDuelFirstActorSlot]) + firstMomentumDelta.y +
+			firstKnockbackDelta.y);
+		_state.actorXFixedCoordinates[kDuelFirstActorSlot] =
+			replaceIntegerCoordinate(_state.actorXFixedCoordinates[kDuelFirstActorSlot], _stagedCollisionX);
+		_state.actorYFixedCoordinates[kDuelFirstActorSlot] =
+			replaceIntegerCoordinate(_state.actorYFixedCoordinates[kDuelFirstActorSlot], _stagedCollisionY);
 		if (_collisionProbe.probeStagedCollision(_stagedCollisionX, _stagedCollisionY)) {
 			resolveDuelFirstActorImpact();
 			_duelCollisionFlags |= 0x01;
@@ -354,67 +354,67 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 		// only its corresponding actor. Every restoration preserves fractional coordinate words.
 		if (testDuelActorOverlap()) {
 			resolveDuelActorCollision();
-			_state.ActorXFixedCoordinates[kDuelFirstActorSlot] = replaceIntegerCoordinate(
-				_state.ActorXFixedCoordinates[kDuelFirstActorSlot], _duelPreviousXCoordinates[kDuelFirstActor]);
-			_state.ActorYFixedCoordinates[kDuelFirstActorSlot] = replaceIntegerCoordinate(
-				_state.ActorYFixedCoordinates[kDuelFirstActorSlot], _duelPreviousYCoordinates[kDuelFirstActor]);
-			_state.ActorXFixedCoordinates[kDuelSecondActorSlot] = replaceIntegerCoordinate(
-				_state.ActorXFixedCoordinates[kDuelSecondActorSlot],
+			_state.actorXFixedCoordinates[kDuelFirstActorSlot] = replaceIntegerCoordinate(
+				_state.actorXFixedCoordinates[kDuelFirstActorSlot], _duelPreviousXCoordinates[kDuelFirstActor]);
+			_state.actorYFixedCoordinates[kDuelFirstActorSlot] = replaceIntegerCoordinate(
+				_state.actorYFixedCoordinates[kDuelFirstActorSlot], _duelPreviousYCoordinates[kDuelFirstActor]);
+			_state.actorXFixedCoordinates[kDuelSecondActorSlot] = replaceIntegerCoordinate(
+				_state.actorXFixedCoordinates[kDuelSecondActorSlot],
 				_duelPreviousXCoordinates[kDuelSecondActor]);
-			_state.ActorYFixedCoordinates[kDuelSecondActorSlot] = replaceIntegerCoordinate(
-				_state.ActorYFixedCoordinates[kDuelSecondActorSlot],
+			_state.actorYFixedCoordinates[kDuelSecondActorSlot] = replaceIntegerCoordinate(
+				_state.actorYFixedCoordinates[kDuelSecondActorSlot],
 				_duelPreviousYCoordinates[kDuelSecondActor]);
-			_state.ActorAnimationOffsets[kDuelFirstActorSlot] = _duelPreviousFacings[kDuelFirstActor];
-			_state.ActorAnimationOffsets[kDuelSecondActorSlot] = _duelPreviousFacings[kDuelSecondActor];
-			_state.ActorAnimationRestartFlags |= 0x05;
-			_state.ActorAnimationDelays[kDuelFirstActorSlot] = -1;
-			_state.ActorAnimationDelays[kDuelSecondActorSlot] = -1;
+			_state.actorAnimationOffsets[kDuelFirstActorSlot] = _duelPreviousFacings[kDuelFirstActor];
+			_state.actorAnimationOffsets[kDuelSecondActorSlot] = _duelPreviousFacings[kDuelSecondActor];
+			_state.actorAnimationRestartFlags |= 0x05;
+			_state.actorAnimationDelays[kDuelFirstActorSlot] = -1;
+			_state.actorAnimationDelays[kDuelSecondActorSlot] = -1;
 		} else {
 			if ((_duelCollisionFlags & 0x01) != 0) {
-				_state.ActorXFixedCoordinates[kDuelFirstActorSlot] = replaceIntegerCoordinate(
-					_state.ActorXFixedCoordinates[kDuelFirstActorSlot],
+				_state.actorXFixedCoordinates[kDuelFirstActorSlot] = replaceIntegerCoordinate(
+					_state.actorXFixedCoordinates[kDuelFirstActorSlot],
 					_duelPreviousXCoordinates[kDuelFirstActor]);
-				_state.ActorYFixedCoordinates[kDuelFirstActorSlot] = replaceIntegerCoordinate(
-					_state.ActorYFixedCoordinates[kDuelFirstActorSlot],
+				_state.actorYFixedCoordinates[kDuelFirstActorSlot] = replaceIntegerCoordinate(
+					_state.actorYFixedCoordinates[kDuelFirstActorSlot],
 					_duelPreviousYCoordinates[kDuelFirstActor]);
-				_state.ActorAnimationOffsets[kDuelFirstActorSlot] = _duelPreviousFacings[kDuelFirstActor];
-				_state.ActorAnimationDelays[kDuelFirstActorSlot] = -1;
-				_state.ActorAnimationRestartFlags |= 0x01;
+				_state.actorAnimationOffsets[kDuelFirstActorSlot] = _duelPreviousFacings[kDuelFirstActor];
+				_state.actorAnimationDelays[kDuelFirstActorSlot] = -1;
+				_state.actorAnimationRestartFlags |= 0x01;
 			}
 
 			if ((_duelCollisionFlags & 0x02) != 0) {
-				_state.ActorXFixedCoordinates[kDuelSecondActorSlot] = replaceIntegerCoordinate(
-					_state.ActorXFixedCoordinates[kDuelSecondActorSlot],
+				_state.actorXFixedCoordinates[kDuelSecondActorSlot] = replaceIntegerCoordinate(
+					_state.actorXFixedCoordinates[kDuelSecondActorSlot],
 					_duelPreviousXCoordinates[kDuelSecondActor]);
-				_state.ActorYFixedCoordinates[kDuelSecondActorSlot] = replaceIntegerCoordinate(
-					_state.ActorYFixedCoordinates[kDuelSecondActorSlot],
+				_state.actorYFixedCoordinates[kDuelSecondActorSlot] = replaceIntegerCoordinate(
+					_state.actorYFixedCoordinates[kDuelSecondActorSlot],
 					_duelPreviousYCoordinates[kDuelSecondActor]);
-				_state.ActorAnimationOffsets[kDuelSecondActorSlot] = _duelPreviousFacings[kDuelSecondActor];
-				_state.ActorAnimationDelays[kDuelSecondActorSlot] = -1;
-				_state.ActorAnimationRestartFlags |= 0x04;
+				_state.actorAnimationOffsets[kDuelSecondActorSlot] = _duelPreviousFacings[kDuelSecondActor];
+				_state.actorAnimationDelays[kDuelSecondActorSlot] = -1;
+				_state.actorAnimationRestartFlags |= 0x04;
 			}
 		}
 
 		// Ghidra 0x00003860-0x000038A3: snapshot both actor facings and signed integer coordinates,
 		// rebuild both status buffers, and return through the unconditional main-loop back edge.
-		_duelPreviousFacings[kDuelSecondActor] = _state.ActorAnimationOffsets[kDuelSecondActorSlot];
-		_duelPreviousFacings[kDuelFirstActor] = _state.ActorAnimationOffsets[kDuelFirstActorSlot];
+		_duelPreviousFacings[kDuelSecondActor] = _state.actorAnimationOffsets[kDuelSecondActorSlot];
+		_duelPreviousFacings[kDuelFirstActor] = _state.actorAnimationOffsets[kDuelFirstActorSlot];
 		_duelPreviousXCoordinates[kDuelFirstActor] =
-			getIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelFirstActorSlot]);
+			getIntegerCoordinate(_state.actorXFixedCoordinates[kDuelFirstActorSlot]);
 		_duelPreviousYCoordinates[kDuelFirstActor] =
-			getIntegerCoordinate(_state.ActorYFixedCoordinates[kDuelFirstActorSlot]);
+			getIntegerCoordinate(_state.actorYFixedCoordinates[kDuelFirstActorSlot]);
 		_duelPreviousXCoordinates[kDuelSecondActor] =
-			getIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelSecondActorSlot]);
+			getIntegerCoordinate(_state.actorXFixedCoordinates[kDuelSecondActorSlot]);
 		_duelPreviousYCoordinates[kDuelSecondActor] =
-			getIntegerCoordinate(_state.ActorYFixedCoordinates[kDuelSecondActorSlot]);
+			getIntegerCoordinate(_state.actorYFixedCoordinates[kDuelSecondActorSlot]);
 		buildDuelStatusBarTiles();
 	}
 
 	// Ghidra 0x000038A4-0x000038DB: retain both signed-health terminal branches, their distinct actor
 	// animation/restart bits and first-room-object result, and the selected hold-bit index.
-	_state.ActorAnimationOffsets[static_cast<size_t>(defeatedActorSlot)] = 8;
-	_state.ActorAnimationRestartFlags |= static_cast<uint8>(1 << defeatedActorSlot);
-	_state.RoomObjects[0].ScriptStateWords[0] =
+	_state.actorAnimationOffsets[static_cast<size_t>(defeatedActorSlot)] = 8;
+	_state.actorAnimationRestartFlags |= static_cast<uint8>(1 << defeatedActorSlot);
+	_state.roomObjects[0].scriptStateWords[0] =
 		defeatedActorSlot == kDuelSecondActorSlot ? static_cast<int16>(1) : static_cast<int16>(0);
 
 	// Ghidra 0x000038DC-0x00003939: update at least once until the selected actor holds, servicing the
@@ -423,7 +423,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 	// position index and descriptor mode, and clear only the three authored lifecycle bits.
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorAnimationHoldFlags & (1 << defeatedActorSlot)) != 0) {
+		if ((_state.actorAnimationHoldFlags & (1 << defeatedActorSlot)) != 0) {
 			break;
 		}
 
@@ -435,12 +435,12 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 	_executeAction03();
 	stopAudioPlayback(0x7B);
 	playAudioCommand(0x71);
-	_state.ActorPositionIndices[kDuelFirstActorSlot] = savedFirstActorPositionIndex;
-	_state.InteractionFlags &= 0xBF;
-	_state.ActorAnimationDescriptorOffsets[kDuelFirstActorSlot] = 0x32700;
-	_state.ActorCompactFrameFlags |= 0x01;
-	_state.DuelStateFlags &= 0xFE;
-	_state.RoomBehaviorFlags &= 0xFB;
+	_state.actorPositionIndices[kDuelFirstActorSlot] = savedFirstActorPositionIndex;
+	_state.interactionFlags &= 0xBF;
+	_state.actorAnimationDescriptorOffsets[kDuelFirstActorSlot] = 0x32700;
+	_state.actorCompactFrameFlags |= 0x01;
+	_state.duelStateFlags &= 0xFE;
+	_state.roomBehaviorFlags &= 0xFB;
 }
 
 void DuelRoomScriptActionExecutor::initializeDuelPresentation() {
@@ -477,13 +477,13 @@ void DuelRoomScriptActionExecutor::initializeDuelPresentation() {
 
 		writeUInt16BigEndian(firstTiles, destinationOffset, 0x0FF8);
 		destinationOffset += static_cast<int>(sizeof(uint16));
-		writeUInt16BigEndian(firstTiles, destinationOffset, _state.BlankTileCell);
+		writeUInt16BigEndian(firstTiles, destinationOffset, _state.blankTileCell);
 		destinationOffset += static_cast<int>(sizeof(uint16));
-		writeUInt16BigEndian(firstTiles, destinationOffset, _state.BlankTileCell);
+		writeUInt16BigEndian(firstTiles, destinationOffset, _state.blankTileCell);
 		destinationOffset += static_cast<int>(sizeof(uint16));
 	}
 
-	int columnBank = (_state.DisplayFlags & 0x10) != 0 ? 32 : 0;
+	int columnBank = (_state.displayFlags & 0x10) != 0 ? 32 : 0;
 	_scene.loadLayerRows(firstTiles.slice(0, 0x30), TileLayer::Foreground, columnBank + 5, 22, 24, 1);
 	_scene.loadTilesAt(_rom.readBytes(kDuelPatternTilesOffset, 0x380), kDuelPatternTileIndex);
 	for (int row = 0; row < 5; row++) {
@@ -606,16 +606,16 @@ int16 DuelRoomScriptActionExecutor::computeDuelRelativeDirection() {
 	// Ghidra 0x00003A7A-0x00003AA3: derive both wrapped signed deltas, magnitudes, and sign quadrant.
 	int16 sector = 0;
 	int16 horizontalMagnitude = static_cast<int16>(
-		getIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelSecondActorSlot]) -
-		getIntegerCoordinate(_state.ActorXFixedCoordinates[kDuelFirstActorSlot]));
+		getIntegerCoordinate(_state.actorXFixedCoordinates[kDuelSecondActorSlot]) -
+		getIntegerCoordinate(_state.actorXFixedCoordinates[kDuelFirstActorSlot]));
 	if (horizontalMagnitude < 0) {
 		horizontalMagnitude = static_cast<int16>(-horizontalMagnitude);
 		sector = 2;
 	}
 
 	int16 verticalMagnitude = static_cast<int16>(
-		getIntegerCoordinate(_state.ActorYFixedCoordinates[kDuelSecondActorSlot]) -
-		getIntegerCoordinate(_state.ActorYFixedCoordinates[kDuelFirstActorSlot]));
+		getIntegerCoordinate(_state.actorYFixedCoordinates[kDuelSecondActorSlot]) -
+		getIntegerCoordinate(_state.actorYFixedCoordinates[kDuelFirstActorSlot]));
 	if (verticalMagnitude < 0) {
 		verticalMagnitude = static_cast<int16>(-verticalMagnitude);
 		sector++;
@@ -664,7 +664,7 @@ int16 DuelRoomScriptActionExecutor::computeDuelRelativeDirection() {
 void DuelRoomScriptActionExecutor::resolveDuelActorCollision() {
 	// Ghidra 0x00003AF0-0x00003B13: arm both impact groups, issue collision sound 0x72, and resolve
 	// the relative and opposite directions used by both damage calculations.
-	_state.DuelStateFlags |= 0xC0;
+	_state.duelStateFlags |= 0xC0;
 	playAudioCommand(0x72);
 	int16 relativeDirection = computeDuelRelativeDirection();
 	int16 oppositeDirection = kOppositeDuelFacingDirections[static_cast<size_t>(relativeDirection)];
@@ -672,13 +672,13 @@ void DuelRoomScriptActionExecutor::resolveDuelActorCollision() {
 	// Ghidra 0x00003B14-0x00003B41: weight first-actor momentum against both facings and subtract the
 	// resulting word from second-actor health with 16-bit wrapping.
 	int16 secondActorDamage = _duelMomentum[kDuelFirstActor];
-	if (relativeDirection != _state.ActorAnimationOffsets[kDuelFirstActorSlot]) {
+	if (relativeDirection != _state.actorAnimationOffsets[kDuelFirstActorSlot]) {
 		secondActorDamage = halveWordLogically(secondActorDamage);
 	}
 
-	if (oppositeDirection == _state.ActorAnimationOffsets[kDuelSecondActorSlot]) {
+	if (oppositeDirection == _state.actorAnimationOffsets[kDuelSecondActorSlot]) {
 		secondActorDamage = 0;
-	} else if (relativeDirection == _state.ActorAnimationOffsets[kDuelSecondActorSlot]) {
+	} else if (relativeDirection == _state.actorAnimationOffsets[kDuelSecondActorSlot]) {
 		secondActorDamage = halveWordLogically(secondActorDamage);
 	}
 
@@ -687,13 +687,13 @@ void DuelRoomScriptActionExecutor::resolveDuelActorCollision() {
 	// Ghidra 0x00003B42-0x00003B89: mirror the facing weights for second-actor momentum, subtract first
 	// health, and distinguish unequal impacts with authored audio commands 0x25 and 0x28.
 	int16 firstActorDamage = _duelMomentum[kDuelSecondActor];
-	if (oppositeDirection != _state.ActorAnimationOffsets[kDuelSecondActorSlot]) {
+	if (oppositeDirection != _state.actorAnimationOffsets[kDuelSecondActorSlot]) {
 		firstActorDamage = halveWordLogically(firstActorDamage);
 	}
 
-	if (relativeDirection == _state.ActorAnimationOffsets[kDuelFirstActorSlot]) {
+	if (relativeDirection == _state.actorAnimationOffsets[kDuelFirstActorSlot]) {
 		firstActorDamage = 0;
-	} else if (oppositeDirection == _state.ActorAnimationOffsets[kDuelFirstActorSlot]) {
+	} else if (oppositeDirection == _state.actorAnimationOffsets[kDuelFirstActorSlot]) {
 		firstActorDamage = halveWordLogically(firstActorDamage);
 	}
 
@@ -712,11 +712,11 @@ void DuelRoomScriptActionExecutor::resolveDuelActorCollision() {
 	_duelMomentum[kDuelSecondActor] = 0;
 	_duelMomentumCooldowns[kDuelSecondActor] = 8;
 	_duelKnockbackCooldowns[kDuelSecondActor] = 8;
-	_state.DuelStateFlags |= _random.advanceDuelImpactFlagChoice() ? 0x10 : 0x08;
+	_state.duelStateFlags |= _random.advanceDuelImpactFlagChoice() ? 0x10 : 0x08;
 
 	// Ghidra 0x00003BEA-0x00003C61: publish the relative second-actor direction, convert it to the
 	// first direction, then preserve the cleared-momentum copy, clamp, cooldown, and random-flag order.
-	_state.ActorPositionIndices[kDuelSecondActorSlot] = relativeDirection;
+	_state.actorPositionIndices[kDuelSecondActorSlot] = relativeDirection;
 	int16 firstActorDirection = kOppositeDuelFacingDirections[static_cast<size_t>(
 		relativeDirection)];
 	_duelKnockback[kDuelFirstActor] = _duelMomentum[kDuelSecondActor];
@@ -727,8 +727,8 @@ void DuelRoomScriptActionExecutor::resolveDuelActorCollision() {
 	_duelMomentum[kDuelFirstActor] = 0;
 	_duelMomentumCooldowns[kDuelFirstActor] = 8;
 	_duelKnockbackCooldowns[kDuelFirstActor] = 8;
-	_state.DuelStateFlags |= _random.advanceDuelImpactFlagChoice() ? 0x04 : 0x02;
-	_state.ActorPositionIndices[kDuelFirstActorSlot] = firstActorDirection;
+	_state.duelStateFlags |= _random.advanceDuelImpactFlagChoice() ? 0x04 : 0x02;
+	_state.actorPositionIndices[kDuelFirstActorSlot] = firstActorDirection;
 
 	// Ghidra 0x00003C62-0x00003C6F: the final opposite-table read restores only D0 to the relative
 	// direction. The sole caller does not consume that register clobber, so it has no managed state.
@@ -739,9 +739,9 @@ void DuelRoomScriptActionExecutor::resolveDuelFirstActorImpact() {
 	playAudioCommand(0x60);
 
 	// Ghidra 0x00003C7A-0x00003C97: consume an armed first-impact group by charging its prior knockback.
-	if ((_state.DuelStateFlags & 0x40) != 0) {
+	if ((_state.duelStateFlags & 0x40) != 0) {
 		_duelHealth[kDuelFirstActor] -= _duelKnockback[kDuelFirstActor];
-		_state.DuelStateFlags &= 0xBF;
+		_state.duelStateFlags &= 0xBF;
 	}
 
 	// Ghidra 0x00003C98-0x00003CB9: transfer current momentum without a clamp, then arm both cooldowns.
@@ -751,11 +751,11 @@ void DuelRoomScriptActionExecutor::resolveDuelFirstActorImpact() {
 	_duelKnockbackCooldowns[kDuelFirstActor] = 8;
 
 	// Ghidra 0x00003CBA-0x00003CE5: advance shared random state and select one first-impact direction bit.
-	_state.DuelStateFlags |= _random.advanceDuelImpactFlagChoice() ? 0x04 : 0x02;
+	_state.duelStateFlags |= _random.advanceDuelImpactFlagChoice() ? 0x04 : 0x02;
 
 	// Ghidra 0x00003CE6-0x00003CFD: publish the opposite of the first actor's current authored facing.
-	_state.ActorPositionIndices[kDuelFirstActorSlot] =
-		kOppositeDuelFacingDirections[static_cast<size_t>(_state.ActorAnimationOffsets[kDuelFirstActorSlot])];
+	_state.actorPositionIndices[kDuelFirstActorSlot] =
+		kOppositeDuelFacingDirections[static_cast<size_t>(_state.actorAnimationOffsets[kDuelFirstActorSlot])];
 }
 
 void DuelRoomScriptActionExecutor::resolveDuelSecondActorImpact() {
@@ -763,9 +763,9 @@ void DuelRoomScriptActionExecutor::resolveDuelSecondActorImpact() {
 	playAudioCommand(0x60);
 
 	// Ghidra 0x00003D08-0x00003D25: consume an armed second-impact group by charging its prior knockback.
-	if ((_state.DuelStateFlags & 0x80) != 0) {
+	if ((_state.duelStateFlags & 0x80) != 0) {
 		_duelHealth[kDuelSecondActor] -= _duelKnockback[kDuelSecondActor];
-		_state.DuelStateFlags &= 0x7F;
+		_state.duelStateFlags &= 0x7F;
 	}
 
 	// Ghidra 0x00003D26-0x00003D47: transfer current momentum without a clamp, then arm both cooldowns.
@@ -775,11 +775,11 @@ void DuelRoomScriptActionExecutor::resolveDuelSecondActorImpact() {
 	_duelKnockbackCooldowns[kDuelSecondActor] = 8;
 
 	// Ghidra 0x00003D48-0x00003D73: advance shared random state and select one second-impact direction bit.
-	_state.DuelStateFlags |= _random.advanceDuelImpactFlagChoice() ? 0x10 : 0x08;
+	_state.duelStateFlags |= _random.advanceDuelImpactFlagChoice() ? 0x10 : 0x08;
 
 	// Ghidra 0x00003D74-0x00003D85: publish the opposite of the second actor's current authored facing.
-	_state.ActorPositionIndices[kDuelSecondActorSlot] =
-		kOppositeDuelFacingDirections[static_cast<size_t>(_state.ActorAnimationOffsets[kDuelSecondActorSlot])];
+	_state.actorPositionIndices[kDuelSecondActorSlot] =
+		kOppositeDuelFacingDirections[static_cast<size_t>(_state.actorAnimationOffsets[kDuelSecondActorSlot])];
 }
 
 bool DuelRoomScriptActionExecutor::testDuelActorOverlap() {
@@ -790,32 +790,32 @@ bool DuelRoomScriptActionExecutor::testDuelActorOverlap() {
 	DuelActorBounds secondBounds = readDuelActorBounds(kDuelSecondActorSlot, kDuelSecondActorDescriptorOffset);
 
 	// Ghidra 0x00003A44-0x00003A67: require inclusive signed overlap on both axes and return zero or one.
-	return intervalsOverlapInclusively(firstBounds.Left, firstBounds.Right, secondBounds.Left,
-									   secondBounds.Right) &&
-		   intervalsOverlapInclusively(firstBounds.Top, firstBounds.Bottom, secondBounds.Top, secondBounds.Bottom);
+	return intervalsOverlapInclusively(firstBounds.left, firstBounds.right, secondBounds.left,
+									   secondBounds.right) &&
+		   intervalsOverlapInclusively(firstBounds.top, firstBounds.bottom, secondBounds.top, secondBounds.bottom);
 }
 
 DuelRoomScriptActionExecutor::DuelActorBounds DuelRoomScriptActionExecutor::readDuelActorBounds(int actorSlot,
 																								int descriptorOffset) {
 	int16 frameTableEntryOffset = static_cast<int16>(
 		_rom.readUInt16(descriptorOffset + kDuelAnimationFrameTableOffsetField) +
-		_state.ActorAnimationOffsets[static_cast<size_t>(actorSlot)] * static_cast<int>(sizeof(
+		_state.actorAnimationOffsets[static_cast<size_t>(actorSlot)] * static_cast<int>(sizeof(
 																				int16)));
 	int16 frameOffset = _rom.readInt16(descriptorOffset + frameTableEntryOffset);
 	int boundsOffset = descriptorOffset + frameOffset + kDuelCollisionBoundsFrameOffset;
 	int16 actorX = getIntegerCoordinate(
-		_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)]);
+		_state.actorXFixedCoordinates[static_cast<size_t>(actorSlot)]);
 	int16 actorY = getIntegerCoordinate(
-		_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)]);
+		_state.actorYFixedCoordinates[static_cast<size_t>(actorSlot)]);
 
 	DuelActorBounds bounds;
-	bounds.Left = static_cast<int16>(actorX - _rom.readInt16(boundsOffset));
-	bounds.Top = static_cast<int16>(actorY - _rom.readInt16(
+	bounds.left = static_cast<int16>(actorX - _rom.readInt16(boundsOffset));
+	bounds.top = static_cast<int16>(actorY - _rom.readInt16(
 												 boundsOffset + static_cast<int>(sizeof(int16))));
-	bounds.Right =
+	bounds.right =
 		static_cast<int16>(actorX - _rom.readInt16(
 										boundsOffset + 2 * static_cast<int>(sizeof(int16))));
-	bounds.Bottom =
+	bounds.bottom =
 		static_cast<int16>(actorY - _rom.readInt16(
 										boundsOffset + 3 * static_cast<int>(sizeof(int16))));
 	return bounds;

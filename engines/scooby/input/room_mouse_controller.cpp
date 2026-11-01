@@ -61,14 +61,14 @@ void RoomMouseController::reset() {
 
 ControllerButtons RoomMouseController::updateIdle(RuntimeState &state, MouseInput &mouse) {
 	// The open request lives for exactly one actor update; a room that keeps the cursor closed ignores it.
-	state.MouseOpenInterfaceRequest = false;
-	if (state.RoomId != _roomId) {
+	state.mouseOpenInterfaceRequest = false;
+	if (state.roomId != _roomId) {
 		reset();
-		_roomId = state.RoomId;
+		_roomId = state.roomId;
 	}
 
 	_busySamples = 0;
-	bool interfaceOpen = (state.DisplayFlags & kDisplayInterfaceMask) != 0;
+	bool interfaceOpen = (state.displayFlags & kDisplayInterfaceMask) != 0;
 	if (mouse.takeRightClick()) {
 		_clickStage = ClickStage::None;
 		if (_walking) {
@@ -118,15 +118,15 @@ ControllerButtons RoomMouseController::updateIdle(RuntimeState &state, MouseInpu
 
 		// Ask the original open path to show the cursor (honoured only where an A/B press would open it).
 		if (_clickStage == ClickStage::Placing || !_suppressAutoOpen) {
-			state.MouseOpenInterfaceRequest = true;
+			state.mouseOpenInterfaceRequest = true;
 		}
 
 		// A room that keeps the cursor closed (scripted suppression) still lets the click walk.
 		if (_clickStage == ClickStage::Placing && ++_clickWait > kInterfaceWaitLimit) {
 			_clickStage = ClickStage::None;
 			if (_clickPosition.y < kInterfaceTopY) {
-				startWalk(state, static_cast<int16>(_clickPosition.x + state.CameraX),
-						  static_cast<int16>(_clickPosition.y + state.CameraY), false);
+				startWalk(state, static_cast<int16>(_clickPosition.x + state.cameraX),
+						  static_cast<int16>(_clickPosition.y + state.cameraY), false);
 			}
 		}
 
@@ -159,7 +159,7 @@ ControllerButtons RoomMouseController::updateIdle(RuntimeState &state, MouseInpu
 }
 
 void RoomMouseController::updateBusy(RuntimeState &state) {
-	state.MouseOpenInterfaceRequest = false;
+	state.mouseOpenInterfaceRequest = false;
 	_clickStage = ClickStage::None;
 	if (_walking && ++_busySamples > kBusyLimit) {
 		_walking = false;
@@ -173,13 +173,13 @@ void RoomMouseController::resolveClick(RuntimeState &state, MouseInput &mouse) {
 		return;
 	}
 
-	if ((state.InteractionFlags & kAlternateInteractionMask) != 0) {
+	if ((state.interactionFlags & kAlternateInteractionMask) != 0) {
 		mouse.pulse(ControllerButtons::B);
 		return;
 	}
 
-	if (state.CurrentInteraction != 0) {
-		_clickInteraction = state.CurrentInteraction;
+	if (state.currentInteraction != 0) {
+		_clickInteraction = state.currentInteraction;
 		// B would use the chosen verb, else the default one (activeVerbIcon, else cachedVerbIcon). An open
 		// door's default verb is SHUT: walk into it instead.
 		if (state.activeVerbIcon == NONE && state.cachedVerbIcon == SHUT) {
@@ -194,8 +194,8 @@ void RoomMouseController::resolveClick(RuntimeState &state, MouseInput &mouse) {
 
 	// Nothing to interact with: close the cursor (original A) and walk to the point.
 	mouse.pulse(ControllerButtons::A);
-	startWalk(state, static_cast<int16>(_clickPosition.x + state.CameraX),
-			  static_cast<int16>(_clickPosition.y + state.CameraY), false);
+	startWalk(state, static_cast<int16>(_clickPosition.x + state.cameraX),
+			  static_cast<int16>(_clickPosition.y + state.cameraY), false);
 }
 
 void RoomMouseController::walkIntoClickedObject(RuntimeState &state, MouseInput &mouse) {
@@ -204,8 +204,8 @@ void RoomMouseController::walkIntoClickedObject(RuntimeState &state, MouseInput 
 	int16 worldY;
 	Common::Rect shapeArea;
 	if (!findWalkInTarget(state, _clickInteraction, worldX, worldY, shapeArea)) {
-		worldX = static_cast<int16>(_clickPosition.x + state.CameraX);
-		worldY = static_cast<int16>(_clickPosition.y + state.CameraY);
+		worldX = static_cast<int16>(_clickPosition.x + state.cameraX);
+		worldY = static_cast<int16>(_clickPosition.y + state.cameraY);
 	}
 
 	// Close the cursor (original A); the walk then lets the original walk-in check
@@ -222,21 +222,21 @@ bool RoomMouseController::findWalkInTarget(RuntimeState &state, int16 interactio
 	// pad player would be stopped). Fixed (actor-backed) objects and the two actors have no such shape; the
 	// caller walks to the click point instead.
 	int index = interaction - kRoomObjectFirstInteraction;
-	if (_rom == nullptr || index < 0 || index >= static_cast<int>(state.RoomObjects.size())) {
+	if (_rom == nullptr || index < 0 || index >= static_cast<int>(state.roomObjects.size())) {
 		return false;
 	}
 
-	const RoomObject &roomObject = state.RoomObjects[static_cast<size_t>(index)];
+	const RoomObject &roomObject = state.roomObjects[static_cast<size_t>(index)];
 	Common::Rect tiles;
-	if ((roomObject.Flags & kFixedRoomObjectMask) != 0 ||
+	if ((roomObject.flags & kFixedRoomObjectMask) != 0 ||
 		!InteractionResolver(*_rom, state).getDynamicObjectTileBounds(roomObject, tiles) || tiles.isEmpty()) {
 		return false;
 	}
 
 	shapeArea = Common::Rect(static_cast<int16>(tiles.left * 8), static_cast<int16>(tiles.top * 8),
 							 static_cast<int16>(tiles.right * 8), static_cast<int16>(tiles.bottom * 8));
-	int leadX = integerCoordinate(state.ActorXFixedCoordinates[0]);
-	int leadY = integerCoordinate(state.ActorYFixedCoordinates[0]);
+	int leadX = integerCoordinate(state.actorXFixedCoordinates[0]);
+	int leadY = integerCoordinate(state.actorYFixedCoordinates[0]);
 	int minimumX = tiles.left * 8 + 4;
 	int maximumX = tiles.right * 8 - 4;
 	int minimumY = tiles.top * 8 + 4;
@@ -256,24 +256,24 @@ bool RoomMouseController::findWalkInTarget(RuntimeState &state, int16 interactio
 
 void RoomMouseController::placeCursor(RuntimeState &state, const Common::Point &target) const {
 	if (target.y < kInterfaceTopY) {
-		state.CursorX = static_cast<int16>(CLIP<int>(target.x - kCrosshairHotspot, kCursorMinimumX, kCursorMaximumX));
-		state.CursorY = static_cast<int16>(CLIP<int>(target.y - kCrosshairHotspot, 0, kInterfaceTopY - 1));
+		state.cursorX = static_cast<int16>(CLIP<int>(target.x - kCrosshairHotspot, kCursorMinimumX, kCursorMaximumX));
+		state.cursorY = static_cast<int16>(CLIP<int>(target.y - kCrosshairHotspot, 0, kInterfaceTopY - 1));
 		return;
 	}
 
 	if (isBarArrow(state, target)) {
 		// The C arrow has no original highlight; park the cursor at the top of the room (CursorY < 8 is never
 		// resolved) so no verb is highlighted while the host crosshair points at the arrow.
-		state.CursorY = 0;
+		state.cursorY = 0;
 		return;
 	}
 
 	// Snap to the centre the original pad movement uses for the hovered bar entry, so the highlight sprite
 	// (RoomSpriteRenderer) and MenuCommand (RoomActorUpdater) agree on it.
-	bool verbBar = (state.DisplayFlags & kDisplayRightInterfaceMask) == 0;
+	bool verbBar = (state.displayFlags & kDisplayRightInterfaceMask) == 0;
 	int column = CLIP(floorDivide(target.x - (verbBar ? 16 : 8), kBarColumnWidth), 0, kBarColumnCount - 1);
-	state.CursorX = static_cast<int16>(column * kBarColumnWidth + (verbBar ? 0x1C : 0x14));
-	state.CursorY = static_cast<int16>(target.y >= kInterfaceSecondRowY ? kInterfaceSecondRowY + 3 : 0xB4);
+	state.cursorX = static_cast<int16>(column * kBarColumnWidth + (verbBar ? 0x1C : 0x14));
+	state.cursorY = static_cast<int16>(target.y >= kInterfaceSecondRowY ? kInterfaceSecondRowY + 3 : 0xB4);
 }
 
 bool RoomMouseController::isBarArrow(const RuntimeState &state, const Common::Point &target) const {
@@ -281,7 +281,7 @@ bool RoomMouseController::isBarArrow(const RuntimeState &state, const Common::Po
 		return false;
 	}
 
-	bool verbBar = (state.DisplayFlags & kDisplayRightInterfaceMask) == 0;
+	bool verbBar = (state.displayFlags & kDisplayRightInterfaceMask) == 0;
 	int column = CLIP(floorDivide(target.x - (verbBar ? 16 : 8), kBarColumnWidth), 0, kBarColumnCount - 1);
 	return verbBar ? column == kBarColumnCount - 1 : column == 0;
 }
@@ -309,7 +309,7 @@ void RoomMouseController::startWalk(RuntimeState &state, int16 worldX, int16 wor
 
 ControllerButtons RoomMouseController::stepWalk(RuntimeState &state) {
 	// The A press that closes the cursor lands first; the original ignores the d-pad while it is open.
-	if ((state.DisplayFlags & kDisplayInterfaceMask) != 0) {
+	if ((state.displayFlags & kDisplayInterfaceMask) != 0) {
 		if (++_walkInterfaceWait > kInterfaceWaitLimit) {
 			_walking = false;
 		}
@@ -317,8 +317,8 @@ ControllerButtons RoomMouseController::stepWalk(RuntimeState &state) {
 		return ControllerButtons::None;
 	}
 
-	int leadX = integerCoordinate(state.ActorXFixedCoordinates[0]);
-	int leadY = integerCoordinate(state.ActorYFixedCoordinates[0]);
+	int leadX = integerCoordinate(state.actorXFixedCoordinates[0]);
+	int leadY = integerCoordinate(state.actorYFixedCoordinates[0]);
 	bool finalWaypoint = false;
 	bool moveX = false;
 	bool moveY = false;
@@ -365,7 +365,7 @@ ControllerButtons RoomMouseController::stepWalk(RuntimeState &state) {
 	if (moveY) {
 		bool up = deltaY < 0;
 		// Rooms with the inverted foreground polarity move Shaggy down the screen on Up.
-		if ((state.TransitionFlags & kForegroundPolarityMask) != 0) {
+		if ((state.transitionFlags & kForegroundPolarityMask) != 0) {
 			up = !up;
 		}
 
@@ -399,12 +399,12 @@ bool RoomMouseController::planWalkPath(RuntimeState &state) {
 	// (RoomCollisionProbe::probeLeadActorCollision), sampled on a kPathCellSize grid. The route only runs
 	// horizontally and vertically (see stepWalk): a vertical step costs twice a horizontal one, matching
 	// Shaggy's speeds, and every turn costs extra, so the route keeps to a few long straight legs.
-	if (_rom == nullptr || !state.ActiveRoomScene) {
+	if (_rom == nullptr || !state.activeRoomScene) {
 		return false;
 	}
 
-	const int16 maximumX = static_cast<int16>(state.RoomWidthTiles * 8 - 1);
-	const int16 maximumY = static_cast<int16>(state.RoomHeightTiles * 8 - 1);
+	const int16 maximumX = static_cast<int16>(state.roomWidthTiles * 8 - 1);
+	const int16 maximumY = static_cast<int16>(state.roomHeightTiles * 8 - 1);
 	if (maximumX <= 0 || maximumY <= 0) {
 		return false;
 	}
@@ -422,12 +422,12 @@ bool RoomMouseController::planWalkPath(RuntimeState &state) {
 			int centerY = MIN<int>(row * kPathCellSize + kPathCellSize / 2, maximumY);
 			centers[cell] = Common::Point(static_cast<int16>(centerX), static_cast<int16>(centerY));
 			open[cell] = probe.probeLeadActorCollision(centers[cell].x << 16, centers[cell].y << 16, maximumX,
-													   maximumY).IsClear ? 1 : 0;
+													   maximumY).isClear ? 1 : 0;
 		}
 	}
 
-	const int leadX = CLIP<int>(integerCoordinate(state.ActorXFixedCoordinates[0]), 0, maximumX);
-	const int leadY = CLIP<int>(integerCoordinate(state.ActorYFixedCoordinates[0]), 0, maximumY);
+	const int leadX = CLIP<int>(integerCoordinate(state.actorXFixedCoordinates[0]), 0, maximumX);
+	const int leadY = CLIP<int>(integerCoordinate(state.actorYFixedCoordinates[0]), 0, maximumY);
 	const int startCell = (leadY / kPathCellSize) * columns + leadX / kPathCellSize;
 
 	// Dijkstra over (cell, arrival direction) with circular buckets (Dial's algorithm): every edge costs at
@@ -529,7 +529,7 @@ bool RoomMouseController::planWalkPath(RuntimeState &state) {
 	}
 
 	Common::Point destination = centers[goalState / kDirectionCount];
-	if (!goalInArea && probe.probeLeadActorCollision(targetX << 16, targetY << 16, maximumX, maximumY).IsClear &&
+	if (!goalInArea && probe.probeLeadActorCollision(targetX << 16, targetY << 16, maximumX, maximumY).isClear &&
 		isSegmentClear(probe, destination.x, destination.y, targetX, targetY, maximumX, maximumY)) {
 		destination = Common::Point(static_cast<int16>(targetX), static_cast<int16>(targetY));
 	}
@@ -563,7 +563,7 @@ bool RoomMouseController::isSegmentClear(const RoomCollisionProbe &probe, int x0
 	for (int step = 1; step <= steps; step++) {
 		int x = x0 + ((x1 - x0) * step + (x1 >= x0 ? steps / 2 : -steps / 2)) / steps;
 		int y = y0 + ((y1 - y0) * step + (y1 >= y0 ? steps / 2 : -steps / 2)) / steps;
-		if (!probe.probeLeadActorCollision(x << 16, y << 16, maximumX, maximumY).IsClear) {
+		if (!probe.probeLeadActorCollision(x << 16, y << 16, maximumX, maximumY).isClear) {
 			return false;
 		}
 	}

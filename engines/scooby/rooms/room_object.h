@@ -39,52 +39,52 @@ public:
 	static const int kRecordSize = 0x1A;
 
 	RoomObject()
-		: TilePatchIndex(0), ShapeIndex(0), InventoryGraphicIndex(0), RoomId(0), PositionIndex(0),
-		  AnimationCountdown(0), ScriptStateWords(3), FixedX(0), FixedY(0), suggestedVerb(0),
-		  ActionArgument(0), Flags(0), FixedPositionIndex(0) {
-		Common::fill(ScriptStateWords.begin(), ScriptStateWords.end(), 0);
+		: tilePatchIndex(0), shapeIndex(0), inventoryGraphicIndex(0), roomId(0), positionIndex(0),
+		  animationCountdown(0), scriptStateWords(3), fixedX(0), fixedY(0), suggestedVerb(0),
+		  actionArgument(0), flags(0), fixedPositionIndex(0) {
+		Common::fill(scriptStateWords.begin(), scriptStateWords.end(), 0);
 	}
 
 	// Record offset +0x00. Command 0x05 sets bit 15 when a visible portable
 	// object leaves the active room; command 0x0B replaces it or sets both
 	// high bits before queued tile-patch publication.
-	int16 TilePatchIndex;
+	int16 tilePatchIndex;
 
 	// Record offset +0x02. One-based collision or actor-shape index, or zero for no shape.
-	int16 ShapeIndex;
+	int16 shapeIndex;
 
 	// Record offset +0x04. Inventory graphic index.
-	int16 InventoryGraphicIndex;
+	int16 inventoryGraphicIndex;
 
 	// Record offset +0x06 (g_wRoomObjectRoomIdStart). Room in which the object participates.
-	int16 RoomId;
+	int16 roomId;
 
 	// Record offset +0x08. One-based room-position selector.
-	int16 PositionIndex;
+	int16 positionIndex;
 
 	// Record offset +0x0A. Signed animation countdown.
-	int16 AnimationCountdown;
+	int16 animationCountdown;
 
 	// Record offsets +0x0C-+0x11. Three indexed script-state words.
-	Common::Array<int16> ScriptStateWords;
+	Common::Array<int16> scriptStateWords;
 
 	// Record offset +0x12. Signed fixed world X coordinate.
-	int16 FixedX;
+	int16 fixedX;
 
 	// Record offset +0x14. Signed fixed world Y coordinate.
-	int16 FixedY;
+	int16 fixedY;
 
 	// Record offset +0x16 high byte. Signed action icon.
 	int8 suggestedVerb;
 
 	// Record offset +0x17. Adjacent authored action byte.
-	uint8 ActionArgument;
+	uint8 actionArgument;
 
 	// Record offset +0x18 high byte (g_bRoomObjectFlagsStart). Object behavior flags.
-	uint8 Flags;
+	uint8 flags;
 
 	// Record offset +0x19 (g_sbRoomObjectFixedPositionIndexStart). Signed dynamic-actor index.
-	int8 FixedPositionIndex;
+	int8 fixedPositionIndex;
 
 	// Reads one byte through the complete original record layout (offsets +0x00 through +0x19).
 	uint8 readCommandByte(int byteOffset) const {
@@ -96,33 +96,33 @@ public:
 	uint16 readCommandWord(int byteOffset) const {
 		switch (byteOffset) {
 		case 0x00:
-			return static_cast<uint16>(TilePatchIndex);
+			return static_cast<uint16>(tilePatchIndex);
 		case 0x02:
-			return static_cast<uint16>(ShapeIndex);
+			return static_cast<uint16>(shapeIndex);
 		case 0x04:
-			return static_cast<uint16>(InventoryGraphicIndex);
+			return static_cast<uint16>(inventoryGraphicIndex);
 		case 0x06:
-			return static_cast<uint16>(RoomId);
+			return static_cast<uint16>(roomId);
 		case 0x08:
-			return static_cast<uint16>(PositionIndex);
+			return static_cast<uint16>(positionIndex);
 		case 0x0A:
-			return static_cast<uint16>(AnimationCountdown);
+			return static_cast<uint16>(animationCountdown);
 		case 0x0C:
-			return static_cast<uint16>(ScriptStateWords[0]);
+			return static_cast<uint16>(scriptStateWords[0]);
 		case 0x0E:
-			return static_cast<uint16>(ScriptStateWords[1]);
+			return static_cast<uint16>(scriptStateWords[1]);
 		case 0x10:
-			return static_cast<uint16>(ScriptStateWords[2]);
+			return static_cast<uint16>(scriptStateWords[2]);
 		case 0x12:
-			return static_cast<uint16>(FixedX);
+			return static_cast<uint16>(fixedX);
 		case 0x14:
-			return static_cast<uint16>(FixedY);
+			return static_cast<uint16>(fixedY);
 		case 0x16:
-			return static_cast<uint16>((static_cast<uint8>(suggestedVerb) << 8) | ActionArgument);
+			return static_cast<uint16>((static_cast<uint8>(suggestedVerb) << 8) | actionArgument);
 		case 0x18:
-			return static_cast<uint16>((Flags << 8) | static_cast<uint8>(FixedPositionIndex));
+			return static_cast<uint16>((flags << 8) | static_cast<uint8>(fixedPositionIndex));
 		default:
-			return static_cast<uint16>(ScriptStateWords[static_cast<size_t>((byteOffset - 0x0C) /
+			return static_cast<uint16>(scriptStateWords[static_cast<size_t>((byteOffset - 0x0C) /
 																				 static_cast<int>(sizeof(int16)))]);
 		}
 	}
@@ -136,48 +136,48 @@ public:
 	void writeCommandWord(int byteOffset, uint16 value) {
 		switch (byteOffset) {
 		case 0x00:
-			TilePatchIndex = static_cast<int16>(value);
+			tilePatchIndex = static_cast<int16>(value);
 			break;
 		case 0x02:
-			ShapeIndex = static_cast<int16>(value);
+			shapeIndex = static_cast<int16>(value);
 			break;
 		case 0x04:
-			InventoryGraphicIndex = static_cast<int16>(value);
+			inventoryGraphicIndex = static_cast<int16>(value);
 			break;
 		case 0x06:
-			RoomId = static_cast<int16>(value);
+			roomId = static_cast<int16>(value);
 			break;
 		case 0x08:
-			PositionIndex = static_cast<int16>(value);
+			positionIndex = static_cast<int16>(value);
 			break;
 		case 0x0A:
-			AnimationCountdown = static_cast<int16>(value);
+			animationCountdown = static_cast<int16>(value);
 			break;
 		case 0x0C:
-			ScriptStateWords[0] = static_cast<int16>(value);
+			scriptStateWords[0] = static_cast<int16>(value);
 			break;
 		case 0x0E:
-			ScriptStateWords[1] = static_cast<int16>(value);
+			scriptStateWords[1] = static_cast<int16>(value);
 			break;
 		case 0x10:
-			ScriptStateWords[2] = static_cast<int16>(value);
+			scriptStateWords[2] = static_cast<int16>(value);
 			break;
 		case 0x12:
-			FixedX = static_cast<int16>(value);
+			fixedX = static_cast<int16>(value);
 			break;
 		case 0x14:
-			FixedY = static_cast<int16>(value);
+			fixedY = static_cast<int16>(value);
 			break;
 		case 0x16:
 			suggestedVerb = static_cast<int8>(value >> 8);
-			ActionArgument = static_cast<uint8>(value);
+			actionArgument = static_cast<uint8>(value);
 			break;
 		case 0x18:
-			Flags = static_cast<uint8>(value >> 8);
-			FixedPositionIndex = static_cast<int8>(value);
+			flags = static_cast<uint8>(value >> 8);
+			fixedPositionIndex = static_cast<int8>(value);
 			break;
 		default:
-			ScriptStateWords[static_cast<size_t>((byteOffset - 0x0C) / static_cast<int>(sizeof(
+			scriptStateWords[static_cast<size_t>((byteOffset - 0x0C) / static_cast<int>(sizeof(
 																				int16)))] =
 				static_cast<int16>(value);
 			break;

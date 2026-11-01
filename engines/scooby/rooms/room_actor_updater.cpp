@@ -67,21 +67,21 @@ void RoomActorUpdater::updateRoomActorsAndInterface() {
 }
 
 void RoomActorUpdater::updateLeadActorPath() {
-	if (!hasFlag(_state.ActorPathActiveFlags, kLeadActorSlot)) {
+	if (!hasFlag(_state.actorPathActiveFlags, kLeadActorSlot)) {
 		return;
 	}
 
-	_state.ActorPathCadenceCountdowns[kLeadActorSlot]--;
-	if (_state.ActorPathCadenceCountdowns[kLeadActorSlot] >= 0) {
+	_state.actorPathCadenceCountdowns[kLeadActorSlot]--;
+	if (_state.actorPathCadenceCountdowns[kLeadActorSlot] >= 0) {
 		return;
 	}
 
-	_state.ActorPathCadenceCountdowns[kLeadActorSlot] = static_cast<int8>(
-		_state.ActorPathCadenceReloads[kLeadActorSlot]);
+	_state.actorPathCadenceCountdowns[kLeadActorSlot] = static_cast<int8>(
+		_state.actorPathCadenceReloads[kLeadActorSlot]);
 	while (true) {
 		PathRecord record = readAndAdvancePathRecord(kLeadActorSlot);
-		int16 x = record.X;
-		int16 y = record.Y;
+		int16 x = record.x;
+		int16 y = record.y;
 		if (x >= 0) {
 			setActorIntegerCoordinates(kLeadActorSlot, x, y);
 			return;
@@ -94,10 +94,10 @@ void RoomActorUpdater::updateLeadActorPath() {
 
 		if (x == -4 || x == -5) {
 			uint16 scale = static_cast<uint16>(y);
-			if (_state.ActorHorizontalScaleFactors[kLeadActorSlot] != scale) {
-				_state.ActorHorizontalScaleFactors[kLeadActorSlot] = scale;
-				_state.ActorVerticalScaleFactors[kLeadActorSlot] = scale;
-				_state.ActorPositionUpdateFlags |= kLeadActorMask;
+			if (_state.actorHorizontalScaleFactors[kLeadActorSlot] != scale) {
+				_state.actorHorizontalScaleFactors[kLeadActorSlot] = scale;
+				_state.actorVerticalScaleFactors[kLeadActorSlot] = scale;
+				_state.actorPositionUpdateFlags |= kLeadActorMask;
 			}
 
 			if (x == -5) {
@@ -111,31 +111,31 @@ void RoomActorUpdater::updateLeadActorPath() {
 			return;
 		}
 
-		_state.ActorPathRecordOffsets[kLeadActorSlot] = 0;
+		_state.actorPathRecordOffsets[kLeadActorSlot] = 0;
 	}
 }
 
 bool RoomActorUpdater::updateInterfaceTransitionAndCursor() {
-	if (_state.RoomInterfaceTransitionCountdown < 0) {
-		if ((_state.InteractionFlags & kInteractionMenuSuppressionMask) != 0) {
-			return (_state.ActorMovementFlags & kLeadActorMask) == 0;
+	if (_state.roomInterfaceTransitionCountdown < 0) {
+		if ((_state.interactionFlags & kInteractionMenuSuppressionMask) != 0) {
+			return (_state.actorMovementFlags & kLeadActorMask) == 0;
 		}
 
-		if ((_state.ProgressStateBytes[0] & kProgressInterfaceSuppressionMask) != 0) {
+		if ((_state.progressStateBytes[0] & kProgressInterfaceSuppressionMask) != 0) {
 			return false;
 		}
 
 		if (isNewPress(ControllerButtons::C)) { // button C pressed
 			publishLowerInterfaceCells(kLowerInterfaceClosingCellsOffset);
-			_state.RoomInterfaceTransitionCountdown = 0x10;
+			_state.roomInterfaceTransitionCountdown = 0x10;
 		}
 	}
 
-	if (_state.RoomInterfaceTransitionCountdown >= 0) {
+	if (_state.roomInterfaceTransitionCountdown >= 0) {
 		advanceRoomInterfaceTransition();
 	}
 
-	if ((_state.DisplayFlags & kDisplayInterfaceMask) == 0) {
+	if ((_state.displayFlags & kDisplayInterfaceMask) == 0) {
 		return false;
 	}
 
@@ -151,27 +151,27 @@ bool RoomActorUpdater::updateInterfaceTransitionAndCursor() {
 
 // transition to/from inventory
 void RoomActorUpdater::advanceRoomInterfaceTransition() {
-	if ((_state.DisplayFlags & kDisplayRightInterfaceMask) != 0) {
-		_state.RoomInterfaceHorizontalScroll += 16;
+	if ((_state.displayFlags & kDisplayRightInterfaceMask) != 0) {
+		_state.roomInterfaceHorizontalScroll += 16;
 	} else {
-		_state.RoomInterfaceHorizontalScroll -= 16;
+		_state.roomInterfaceHorizontalScroll -= 16;
 	}
 
-	_scene.setInterfaceScroll(_state.RoomInterfaceHorizontalScroll);
+	_scene.setInterfaceScroll(_state.roomInterfaceHorizontalScroll);
 
-	_state.RoomInterfaceTransitionCountdown--;
-	if (_state.RoomInterfaceTransitionCountdown != 0) {
+	_state.roomInterfaceTransitionCountdown--;
+	if (_state.roomInterfaceTransitionCountdown != 0) {
 		return;
 	}
 
-	if ((_state.InteractionFlags & kInteractionMenuSuppressionMask) == 0) {
-		if ((_state.ProgressStateBytes[0] & kProgressInterfaceSuppressionMask) == 0) {
+	if ((_state.interactionFlags & kInteractionMenuSuppressionMask) == 0) {
+		if ((_state.progressStateBytes[0] & kProgressInterfaceSuppressionMask) == 0) {
 			publishLowerInterfaceCells(kLowerInterfaceOpeningCellsOffset);
 		}
 	}
 
-	_state.RoomInterfaceTransitionCountdown = -1;
-	_state.DisplayFlags ^= kDisplayRightInterfaceMask;
+	_state.roomInterfaceTransitionCountdown = -1;
+	_state.displayFlags ^= kDisplayRightInterfaceMask;
 }
 
 void RoomActorUpdater::publishLowerInterfaceCells(int sourceOffset) {
@@ -182,7 +182,7 @@ void RoomActorUpdater::publishLowerInterfaceCells(int sourceOffset) {
 			uint16 packedCell = static_cast<uint16>(
 				_rom.readUInt16(sourceOffset + row * kLowerInterfaceSourceRowByteStride +
 								column * static_cast<int>(sizeof(uint16))) +
-				_state.ActionPromptTileAttributes);
+				_state.actionPromptTileAttributes);
 			writeUInt16BigEndian(packedRowSpan, column * static_cast<int>(sizeof(uint16)), packedCell);
 		}
 
@@ -192,27 +192,27 @@ void RoomActorUpdater::publishLowerInterfaceCells(int sourceOffset) {
 }
 
 void RoomActorUpdater::updateInteractionCursor() {
-	if (_state.CursorY >= 0xA8) {
-		_state.CursorVerticalStep = 3;
-		if ((_state.PreviousControllerOneInput & kCursorLeftMask) == 0) {
-			_state.CursorHorizontalStep = 2;
-		} else if ((_state.PreviousControllerOneInput & kCursorRightMask) == 0) {
-			_state.CursorHorizontalStep = 2;
+	if (_state.cursorY >= 0xA8) {
+		_state.cursorVerticalStep = 3;
+		if ((_state.previousControllerOneInput & kCursorLeftMask) == 0) {
+			_state.cursorHorizontalStep = 2;
+		} else if ((_state.previousControllerOneInput & kCursorRightMask) == 0) {
+			_state.cursorHorizontalStep = 2;
 		} else {
-			_state.CursorHorizontalStep = 0x28;
+			_state.cursorHorizontalStep = 0x28;
 		}
 	} else {
-		_state.CursorHorizontalStep = 2;
-		_state.CursorVerticalStep = 2;
+		_state.cursorHorizontalStep = 2;
+		_state.cursorVerticalStep = 2;
 	}
 
-	if ((_state.DisplayFlags & kDisplayTransitionMask) == 0) {
-		if ((_state.ActorVisibilityBlockFlags & kLeadActorMask) == 0) {
-			if ((_state.RoomBehaviorFlags & kRoomBehaviorDuelMask) == 0) {
-				if ((_state.TransitionFlags & kTransitionHideLeadMask) == 0) {
-					if ((_state.TransitionFlags & kTransitionCenteredCursorMask) == 0) {
+	if ((_state.displayFlags & kDisplayTransitionMask) == 0) {
+		if ((_state.actorVisibilityBlockFlags & kLeadActorMask) == 0) {
+			if ((_state.roomBehaviorFlags & kRoomBehaviorDuelMask) == 0) {
+				if ((_state.transitionFlags & kTransitionHideLeadMask) == 0) {
+					if ((_state.transitionFlags & kTransitionCenteredCursorMask) == 0) {
 						requestActorAnimation(kLeadActorSlot, static_cast<int16>(
-																  _state.ActorPositionIndices[kLeadActorSlot] + 4));
+																  _state.actorPositionIndices[kLeadActorSlot] + 4));
 					}
 				}
 			}
@@ -220,50 +220,50 @@ void RoomActorUpdater::updateInteractionCursor() {
 	}
 
 	if (_state.isButtonDown(ControllerButtons::Left)) {
-		_state.CursorX -= _state.CursorHorizontalStep;
-		if (_state.CursorX < -8) {
-			_state.CursorX = -8;
+		_state.cursorX -= _state.cursorHorizontalStep;
+		if (_state.cursorX < -8) {
+			_state.cursorX = -8;
 		}
 	}
 
 	if (_state.isButtonDown(ControllerButtons::Right)) {
-		_state.CursorX += _state.CursorHorizontalStep;
-		if (_state.CursorX > 0xF7) {
-			_state.CursorX = 0xF7;
+		_state.cursorX += _state.cursorHorizontalStep;
+		if (_state.cursorX > 0xF7) {
+			_state.cursorX = 0xF7;
 		}
 	}
 
 	if (_state.isButtonDown(ControllerButtons::Up)) {
-		if (_state.CursorY >= 0xC0) {
-			_state.CursorY = 0xBF;
+		if (_state.cursorY >= 0xC0) {
+			_state.cursorY = 0xBF;
 		} else {
-			_state.CursorY -= _state.CursorVerticalStep;
-			if (_state.CursorY < 0) {
-				_state.CursorY = 0;
+			_state.cursorY -= _state.cursorVerticalStep;
+			if (_state.cursorY < 0) {
+				_state.cursorY = 0;
 			}
 		}
 	}
 
 	if (_state.isButtonDown(ControllerButtons::Down)) {
-		if (_state.CursorY >= 0xA8) {
-			if ((_state.PreviousControllerOneInput & kCursorDownMask) != 0) {
-				_state.CursorY = 0xC0;
+		if (_state.cursorY >= 0xA8) {
+			if ((_state.previousControllerOneInput & kCursorDownMask) != 0) {
+				_state.cursorY = 0xC0;
 			}
 		}
 
-		_state.CursorY += _state.CursorVerticalStep;
-		if (_state.CursorY > 0xCF) {
-			_state.CursorY = 0xCF;
+		_state.cursorY += _state.cursorVerticalStep;
+		if (_state.cursorY > 0xCF) {
+			_state.cursorY = 0xCF;
 		}
 	}
 
-	if (_state.CursorY >= 0xA8) {
+	if (_state.cursorY >= 0xA8) {
 		updateMenuCommandFromCursor();
-		if ((_state.DisplayFlags & kDisplayRightInterfaceMask) == 0) {
+		if ((_state.displayFlags & kDisplayRightInterfaceMask) == 0) {
 			return;
 		}
 
-		if (_state.MenuCommand == 5 || _state.MenuCommand == 10) {
+		if (_state.menuCommand == 5 || _state.menuCommand == 10) {
 			return;
 		}
 	}
@@ -280,20 +280,20 @@ void RoomActorUpdater::updateInteractionCursor() {
 		}
 	}
 
-	if (_state.CurrentInteraction != 0) {
-		_state.DisplayFlags |= kDisplayTransitionMask;
+	if (_state.currentInteraction != 0) {
+		_state.displayFlags |= kDisplayTransitionMask;
 		return;
 	}
 
-	if ((_state.DisplayFlags & kDisplayTransitionMask) == 0) {
+	if ((_state.displayFlags & kDisplayTransitionMask) == 0) {
 		closeInteractionInterface();
 	}
 }
 
 void RoomActorUpdater::updateMenuCommandFromCursor() {
 	int16 command = 1;
-	int16 remainingX = _state.CursorX;
-	if ((_state.DisplayFlags & kDisplayRightInterfaceMask) == 0) {
+	int16 remainingX = _state.cursorX;
+	if ((_state.displayFlags & kDisplayRightInterfaceMask) == 0) {
 		remainingX -= 8;
 	}
 
@@ -308,11 +308,11 @@ void RoomActorUpdater::updateMenuCommandFromCursor() {
 		command = 6;
 	}
 
-	if (_state.CursorY > 0xC0) {
+	if (_state.cursorY > 0xC0) {
 		command += 6;
 	}
 
-	if ((_state.DisplayFlags & kDisplayRightInterfaceMask) == 0) {
+	if ((_state.displayFlags & kDisplayRightInterfaceMask) == 0) {
 		if (command > 5) {
 			command--;
 			if (command > 10) {
@@ -327,42 +327,42 @@ void RoomActorUpdater::updateMenuCommandFromCursor() {
 		command--;
 	}
 
-	_state.MenuCommand = command;
+	_state.menuCommand = command;
 }
 
 void RoomActorUpdater::closeInteractionInterface() {
-	_state.DisplayFlags &= static_cast<uint8>(~kDisplayInterfaceMask);
+	_state.displayFlags &= static_cast<uint8>(~kDisplayInterfaceMask);
 	_state.pendingVerbIcon = _state.activeVerbIcon;
 	_drawSelectedActionIcon(0);
-	if (_state.CurrentInteraction == 0) {
+	if (_state.currentInteraction == 0) {
 		return;
 	}
 
 	// Managed-only guard: Shaggy and Scooby (interactions 1 and 2) have no room-object record, and the original
 	// reads the bytes in front of the object table here (cancelling with A while the cursor is on either of
 	// them). Show LOOK, the action ActionMenuController::resolveActionIcon gives both actors while hovering.
-	if (_state.CurrentInteraction < kRoomObjectFirstInteraction) {
+	if (_state.currentInteraction < kRoomObjectFirstInteraction) {
 		_state.pendingVerbIcon = LOOK;
 		_drawSelectedActionIcon(0);
 		return;
 	}
 
-	const RoomObject &roomObject = _state.RoomObjects[_state.CurrentInteraction - kRoomObjectFirstInteraction];
+	const RoomObject &roomObject = _state.roomObjects[_state.currentInteraction - kRoomObjectFirstInteraction];
 	_state.pendingVerbIcon = static_cast<VerbEnum>(roomObject.suggestedVerb);
 	_drawSelectedActionIcon(0);
 }
 
 void RoomActorUpdater::updateLeadActorAndCamera() {
-	int16 maximumX = static_cast<int16>(_state.RoomWidthTiles * 8 - 1);
-	int16 maximumY = static_cast<int16>(_state.RoomHeightTiles * 8 - 1);
-	if (hasFlag(_state.ActorPathActiveFlags, kLeadActorSlot)) {
+	int16 maximumX = static_cast<int16>(_state.roomWidthTiles * 8 - 1);
+	int16 maximumY = static_cast<int16>(_state.roomHeightTiles * 8 - 1);
+	if (hasFlag(_state.actorPathActiveFlags, kLeadActorSlot)) {
 		endActorPathAtTerminal(kLeadActorSlot);
 		updateCameraAndInteractionEntry(maximumX, maximumY);
 		return;
 	}
 
-	if ((_state.RoomBehaviorFlags & kRoomBehaviorDuelMask) != 0) {
-		if ((_state.DuelStateFlags & 0x01) != 0) {
+	if ((_state.roomBehaviorFlags & kRoomBehaviorDuelMask) != 0) {
+		if ((_state.duelStateFlags & 0x01) != 0) {
 			updateCameraAndInteractionEntry(maximumX, maximumY);
 		} else {
 			tryOpenInteractionInterface();
@@ -371,45 +371,45 @@ void RoomActorUpdater::updateLeadActorAndCamera() {
 		return;
 	}
 
-	if ((_state.ActorVisibilityBlockFlags & kLeadActorMask) != 0) {
+	if ((_state.actorVisibilityBlockFlags & kLeadActorMask) != 0) {
 		return;
 	}
 
-	if ((_state.TransitionFlags & kTransitionHideLeadMask) != 0) {
+	if ((_state.transitionFlags & kTransitionHideLeadMask) != 0) {
 		tryOpenInteractionInterface();
 		return;
 	}
 
-	if ((_state.DisplayFlags & kDisplayTransitionMask) != 0 && (_state.ActorMovementFlags & kLeadActorMask) ==
+	if ((_state.displayFlags & kDisplayTransitionMask) != 0 && (_state.actorMovementFlags & kLeadActorMask) ==
 																   0) {
 		return;
 	}
 
-	int candidateX = _state.ActorXFixedCoordinates[kLeadActorSlot];
-	int candidateY = _state.ActorYFixedCoordinates[kLeadActorSlot];
+	int candidateX = _state.actorXFixedCoordinates[kLeadActorSlot];
+	int candidateY = _state.actorYFixedCoordinates[kLeadActorSlot];
 	uint32 stepMagnitude = static_cast<uint32>(static_cast<uint16>(
-							   0x100 - _state.ActorHorizontalScaleFactors[kLeadActorSlot])) *
+							   0x100 - _state.actorHorizontalScaleFactors[kLeadActorSlot])) *
 						   0x155u;
-	if ((_state.ActorMovementFlags & kLeadActorMask) == 0) {
-		_state.LeadActorHorizontalMovementStep = 0x100;
-		_state.LeadActorVerticalMovementStep = 0x100;
+	if ((_state.actorMovementFlags & kLeadActorMask) == 0) {
+		_state.leadActorHorizontalMovementStep = 0x100;
+		_state.leadActorVerticalMovementStep = 0x100;
 	}
 
-	if ((_state.DisplayFlags & kDisplayTransitionMask) != 0) {
+	if ((_state.displayFlags & kDisplayTransitionMask) != 0) {
 		advanceLeadScriptedMovement();
 	} else {
 		bool advancedScriptedMovement = updateLeadControlledCandidate(candidateX, candidateY, stepMagnitude,
 																	  maximumX, maximumY);
 		if (!advancedScriptedMovement) {
-			_state.ActorMovementFlags &= static_cast<uint8>(~kLeadActorMask);
+			_state.actorMovementFlags &= static_cast<uint8>(~kLeadActorMask);
 			RoomCollisionProbeResult probe = _collisionProbe.probeLeadActorCollision(candidateX, candidateY,
 																					 maximumX, maximumY);
-			if (probe.IsClear) {
-				_state.ActorXFixedCoordinates[kLeadActorSlot] = candidateX;
-				_state.ActorYFixedCoordinates[kLeadActorSlot] = candidateY;
+			if (probe.isClear) {
+				_state.actorXFixedCoordinates[kLeadActorSlot] = candidateX;
+				_state.actorYFixedCoordinates[kLeadActorSlot] = candidateY;
 			} else {
 				adjustLeadMovementAroundCollision(candidateX, candidateY, maximumX, maximumY,
-												  probe.RetainedDataRegister);
+												  probe.retainedDataRegister);
 			}
 		}
 	}
@@ -421,24 +421,24 @@ void RoomActorUpdater::updateLeadActorAndCamera() {
 bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candidateY,
 													 uint32 stepMagnitude,
 													 int16 maximumX, int16 maximumY) {
-	bool noDirection = (_state.ControllerOneInput & kDirectionMask) == kDirectionMask;
+	bool noDirection = (_state.controllerOneInput & kDirectionMask) == kDirectionMask;
 	if (!noDirection) {
-		_state.LeadActorIdleAnimationTimer = 300;
+		_state.leadActorIdleAnimationTimer = 300;
 	}
 
 	if (noDirection) {
-		if ((_state.LeadActorDirectionalAnimationLatchFlags & 0x02) != 0) {
+		if ((_state.leadActorDirectionalAnimationLatchFlags & 0x02) != 0) {
 			moveLeadLeft(candidateX, stepMagnitude);
-		} else if ((_state.LeadActorDirectionalAnimationLatchFlags & 0x01) != 0) {
+		} else if ((_state.leadActorDirectionalAnimationLatchFlags & 0x01) != 0) {
 			moveLeadRight(candidateX, stepMagnitude, maximumX);
 		} else {
 			uint32 verticalStep = stepMagnitude >> 1;
-			if ((_state.LeadActorDirectionalAnimationLatchFlags & 0x04) != 0) {
+			if ((_state.leadActorDirectionalAnimationLatchFlags & 0x04) != 0) {
 				moveLeadUp(candidateY, verticalStep, maximumY, false);
-			} else if ((_state.LeadActorDirectionalAnimationLatchFlags & 0x08) != 0) {
+			} else if ((_state.leadActorDirectionalAnimationLatchFlags & 0x08) != 0) {
 				moveLeadDown(candidateY, verticalStep, maximumY, false);
 			} else {
-				if ((_state.ActorMovementFlags & kLeadActorMask) != 0) {
+				if ((_state.actorMovementFlags & kLeadActorMask) != 0) {
 					advanceLeadScriptedMovement();
 					return true;
 				}
@@ -451,9 +451,9 @@ bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candi
 	} else if (_state.isButtonDown(ControllerButtons::Left)) {
 		moveLeadLeft(candidateX, stepMagnitude);
 	} else {
-		if ((_state.LeadActorDirectionalAnimationLatchFlags & 0x02) != 0 &&
-			_state.ActorAnimationOffsets[kLeadActorSlot] <= 3) {
-			_state.LeadActorDirectionalAnimationLatchFlags &= 0xFD;
+		if ((_state.leadActorDirectionalAnimationLatchFlags & 0x02) != 0 &&
+			_state.actorAnimationOffsets[kLeadActorSlot] <= 3) {
+			_state.leadActorDirectionalAnimationLatchFlags &= 0xFD;
 		}
 
 		if (_state.isButtonDown(ControllerButtons::Right)) {
@@ -461,12 +461,12 @@ bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candi
 		}
 	}
 
-	if ((_state.LeadActorDirectionalAnimationLatchFlags & 0x01) != 0 &&
-		_state.ActorAnimationOffsets[kLeadActorSlot] <= 3) {
-		_state.LeadActorDirectionalAnimationLatchFlags &= 0xFE;
+	if ((_state.leadActorDirectionalAnimationLatchFlags & 0x01) != 0 &&
+		_state.actorAnimationOffsets[kLeadActorSlot] <= 3) {
+		_state.leadActorDirectionalAnimationLatchFlags &= 0xFE;
 	}
 
-	if ((_state.LeadActorDirectionalAnimationLatchFlags & 0x03) != 0) {
+	if ((_state.leadActorDirectionalAnimationLatchFlags & 0x03) != 0) {
 		return false;
 	}
 
@@ -491,21 +491,21 @@ bool RoomActorUpdater::updateLeadControlledCandidate(int &candidateX, int &candi
 
 void RoomActorUpdater::moveLeadLeft(int &candidateX, uint32 stepMagnitude) {
 	uint32 movementMagnitude;
-	if (_state.ActorAnimationOffsets[kLeadActorSlot] == 1) {
-		_state.ActorPositionIndices[kLeadActorSlot] = 1;
-		if ((_state.ActorGraphicsReadyFlags & kActorGraphicsReadyMask) == 0) {
+	if (_state.actorAnimationOffsets[kLeadActorSlot] == 1) {
+		_state.actorPositionIndices[kLeadActorSlot] = 1;
+		if ((_state.actorGraphicsReadyFlags & kActorGraphicsReadyMask) == 0) {
 			return;
 		}
 
-		_state.LeadActorDirectionalAnimationLatchFlags &= 0xFD;
+		_state.leadActorDirectionalAnimationLatchFlags &= 0xFD;
 		movementMagnitude = stepMagnitude;
 	} else {
 		movementMagnitude = stepMagnitude >> 1;
 		int16 animationOffset = resolveLead(
-			_state.ActorPositionIndices[kLeadActorSlot], 1);
-		if (_state.ActorAnimationOffsets[kLeadActorSlot] != animationOffset) {
+			_state.actorPositionIndices[kLeadActorSlot], 1);
+		if (_state.actorAnimationOffsets[kLeadActorSlot] != animationOffset) {
 			requestActorAnimation(kLeadActorSlot, animationOffset);
-			_state.LeadActorDirectionalAnimationLatchFlags |= 0x02;
+			_state.leadActorDirectionalAnimationLatchFlags |= 0x02;
 			return;
 		}
 	}
@@ -518,21 +518,21 @@ void RoomActorUpdater::moveLeadLeft(int &candidateX, uint32 stepMagnitude) {
 
 void RoomActorUpdater::moveLeadRight(int &candidateX, uint32 stepMagnitude, int16 maximumX) {
 	uint32 movementMagnitude;
-	if (_state.ActorAnimationOffsets[kLeadActorSlot] == 0) {
-		_state.ActorPositionIndices[kLeadActorSlot] = 0;
-		if ((_state.ActorGraphicsReadyFlags & kActorGraphicsReadyMask) == 0) {
+	if (_state.actorAnimationOffsets[kLeadActorSlot] == 0) {
+		_state.actorPositionIndices[kLeadActorSlot] = 0;
+		if ((_state.actorGraphicsReadyFlags & kActorGraphicsReadyMask) == 0) {
 			return;
 		}
 
-		_state.LeadActorDirectionalAnimationLatchFlags &= 0xFE;
+		_state.leadActorDirectionalAnimationLatchFlags &= 0xFE;
 		movementMagnitude = stepMagnitude;
 	} else {
 		movementMagnitude = stepMagnitude >> 1;
 		int16 animationOffset = resolveLead(
-			_state.ActorPositionIndices[kLeadActorSlot], 0);
-		if (_state.ActorAnimationOffsets[kLeadActorSlot] != animationOffset) {
+			_state.actorPositionIndices[kLeadActorSlot], 0);
+		if (_state.actorAnimationOffsets[kLeadActorSlot] != animationOffset) {
 			requestActorAnimation(kLeadActorSlot, animationOffset);
-			_state.LeadActorDirectionalAnimationLatchFlags |= 0x01;
+			_state.leadActorDirectionalAnimationLatchFlags |= 0x01;
 			return;
 		}
 	}
@@ -545,25 +545,25 @@ void RoomActorUpdater::moveLeadRight(int &candidateX, uint32 stepMagnitude, int1
 
 bool RoomActorUpdater::moveLeadUp(int &candidateY, uint32 movementMagnitude, int16 maximumY,
 								  bool horizontalDirectionHeld) {
-	if (horizontalDirectionHeld || _state.ActorAnimationOffsets[kLeadActorSlot] == 2) {
-		_state.ActorPositionIndices[kLeadActorSlot] = 2;
-		if ((_state.ActorGraphicsReadyFlags & kActorGraphicsReadyMask) == 0) {
+	if (horizontalDirectionHeld || _state.actorAnimationOffsets[kLeadActorSlot] == 2) {
+		_state.actorPositionIndices[kLeadActorSlot] = 2;
+		if ((_state.actorGraphicsReadyFlags & kActorGraphicsReadyMask) == 0) {
 			return true;
 		}
 
-		_state.LeadActorDirectionalAnimationLatchFlags &= 0xF3;
+		_state.leadActorDirectionalAnimationLatchFlags &= 0xF3;
 	} else {
 		int16 animationOffset = resolveLead(
-			_state.ActorPositionIndices[kLeadActorSlot], 2);
+			_state.actorPositionIndices[kLeadActorSlot], 2);
 		movementMagnitude >>= 1;
-		if (_state.ActorAnimationOffsets[kLeadActorSlot] != animationOffset) {
+		if (_state.actorAnimationOffsets[kLeadActorSlot] != animationOffset) {
 			requestActorAnimation(kLeadActorSlot, animationOffset);
-			_state.LeadActorDirectionalAnimationLatchFlags |= 0x04;
+			_state.leadActorDirectionalAnimationLatchFlags |= 0x04;
 			return false;
 		}
 	}
 
-	if ((_state.TransitionFlags & kTransitionForegroundPolarityMask) != 0) {
+	if ((_state.transitionFlags & kTransitionForegroundPolarityMask) != 0) {
 		candidateY = candidateY + static_cast<int>(movementMagnitude);
 		if (getIntegerCoordinate(candidateY) > maximumY) {
 			candidateY = replaceIntegerCoordinate(candidateY, maximumY);
@@ -582,25 +582,25 @@ bool RoomActorUpdater::moveLeadUp(int &candidateY, uint32 movementMagnitude, int
 
 void RoomActorUpdater::moveLeadDown(int &candidateY, uint32 movementMagnitude, int16 maximumY,
 									bool horizontalDirectionHeld) {
-	if (horizontalDirectionHeld || _state.ActorAnimationOffsets[kLeadActorSlot] == 3) {
-		_state.ActorPositionIndices[kLeadActorSlot] = 3;
-		if ((_state.ActorGraphicsReadyFlags & kActorGraphicsReadyMask) == 0) {
+	if (horizontalDirectionHeld || _state.actorAnimationOffsets[kLeadActorSlot] == 3) {
+		_state.actorPositionIndices[kLeadActorSlot] = 3;
+		if ((_state.actorGraphicsReadyFlags & kActorGraphicsReadyMask) == 0) {
 			return;
 		}
 
-		_state.LeadActorDirectionalAnimationLatchFlags &= 0xF3;
+		_state.leadActorDirectionalAnimationLatchFlags &= 0xF3;
 	} else {
 		int16 animationOffset = resolveLead(
-			_state.ActorPositionIndices[kLeadActorSlot], 3);
+			_state.actorPositionIndices[kLeadActorSlot], 3);
 		movementMagnitude >>= 1;
-		if (_state.ActorAnimationOffsets[kLeadActorSlot] != animationOffset) {
+		if (_state.actorAnimationOffsets[kLeadActorSlot] != animationOffset) {
 			requestActorAnimation(kLeadActorSlot, animationOffset);
-			_state.LeadActorDirectionalAnimationLatchFlags |= 0x08;
+			_state.leadActorDirectionalAnimationLatchFlags |= 0x08;
 			return;
 		}
 	}
 
-	if ((_state.TransitionFlags & kTransitionForegroundPolarityMask) != 0) {
+	if ((_state.transitionFlags & kTransitionForegroundPolarityMask) != 0) {
 		candidateY = candidateY - static_cast<int>(movementMagnitude);
 		if (getIntegerCoordinate(candidateY) < 0) {
 			candidateY = replaceIntegerCoordinate(candidateY, 0);
@@ -616,19 +616,19 @@ void RoomActorUpdater::moveLeadDown(int &candidateY, uint32 movementMagnitude, i
 }
 
 void RoomActorUpdater::updateLeadIdleAnimation() {
-	_state.LeadActorIdleAnimationTimer--;
-	if (_state.LeadActorIdleAnimationTimer < 0) {
-		_state.LeadActorIdleAnimationTimer = 300;
+	_state.leadActorIdleAnimationTimer--;
+	if (_state.leadActorIdleAnimationTimer < 0) {
+		_state.leadActorIdleAnimationTimer = 300;
 		requestActorAnimation(kLeadActorSlot, static_cast<int16>(
-												  _state.ActorPositionIndices[kLeadActorSlot] + 0x20));
+												  _state.actorPositionIndices[kLeadActorSlot] + 0x20));
 		return;
 	}
 
-	int16 animationOffset = _state.ActorAnimationOffsets[kLeadActorSlot];
-	int16 desiredOffset = static_cast<int16>(_state.ActorPositionIndices[kLeadActorSlot] + 4);
+	int16 animationOffset = _state.actorAnimationOffsets[kLeadActorSlot];
+	int16 desiredOffset = static_cast<int16>(_state.actorPositionIndices[kLeadActorSlot] + 4);
 	if (animationOffset < 0x20 || animationOffset >= 0x24 ||
-		(_state.ActorAnimationHoldFlags & kActorAnimationHoldMask) != 0) {
-		if (animationOffset != desiredOffset && (_state.ActorAnimationRestartFlags & kLeadActorMask) == 0) {
+		(_state.actorAnimationHoldFlags & kActorAnimationHoldMask) != 0) {
+		if (animationOffset != desiredOffset && (_state.actorAnimationRestartFlags & kLeadActorMask) == 0) {
 			requestActorAnimation(kLeadActorSlot, desiredOffset);
 		}
 	}
@@ -652,7 +652,7 @@ void RoomActorUpdater::adjustLeadMovementAroundCollision(int &candidateX, int &c
 		for (int attempt = 0; attempt < 4; attempt++) {
 			candidateY = replaceIntegerCoordinate(candidateY, static_cast<int16>(
 																  getIntegerCoordinate(candidateY) - 1));
-			if (_collisionProbe.probeLeadActorCollision(candidateX, candidateY, maximumX, maximumY).IsClear) {
+			if (_collisionProbe.probeLeadActorCollision(candidateX, candidateY, maximumX, maximumY).isClear) {
 				beginLeadVerticalCollisionAdjustment(candidateX, candidateY, movementStep);
 				return;
 			}
@@ -664,7 +664,7 @@ void RoomActorUpdater::adjustLeadMovementAroundCollision(int &candidateX, int &c
 		for (int attempt = 0; attempt < 4; attempt++) {
 			candidateY = replaceIntegerCoordinate(candidateY, static_cast<int16>(
 																  getIntegerCoordinate(candidateY) + 1));
-			if (_collisionProbe.probeLeadActorCollision(candidateX, candidateY, maximumX, maximumY).IsClear) {
+			if (_collisionProbe.probeLeadActorCollision(candidateX, candidateY, maximumX, maximumY).isClear) {
 				beginLeadVerticalCollisionAdjustment(candidateX, candidateY, movementStep);
 				return;
 			}
@@ -677,7 +677,7 @@ void RoomActorUpdater::adjustLeadMovementAroundCollision(int &candidateX, int &c
 	for (int attempt = 0; attempt < 3; attempt++) {
 		candidateX = replaceIntegerCoordinate(candidateX, static_cast<int16>(
 															  getIntegerCoordinate(candidateX) - 1));
-		if (_collisionProbe.probeLeadActorCollision(candidateX, candidateY, maximumX, maximumY).IsClear) {
+		if (_collisionProbe.probeLeadActorCollision(candidateX, candidateY, maximumX, maximumY).isClear) {
 			beginLeadHorizontalCollisionAdjustment(candidateX, candidateY, horizontalStep);
 			return;
 		}
@@ -689,7 +689,7 @@ void RoomActorUpdater::adjustLeadMovementAroundCollision(int &candidateX, int &c
 	for (int attempt = 0; attempt < 3; attempt++) {
 		candidateX = replaceIntegerCoordinate(candidateX, static_cast<int16>(
 															  getIntegerCoordinate(candidateX) + 1));
-		if (_collisionProbe.probeLeadActorCollision(candidateX, candidateY, maximumX, maximumY).IsClear) {
+		if (_collisionProbe.probeLeadActorCollision(candidateX, candidateY, maximumX, maximumY).isClear) {
 			beginLeadHorizontalCollisionAdjustment(candidateX, candidateY, horizontalStep);
 			return;
 		}
@@ -698,101 +698,101 @@ void RoomActorUpdater::adjustLeadMovementAroundCollision(int &candidateX, int &c
 
 void RoomActorUpdater::beginLeadVerticalCollisionAdjustment(int candidateX, int candidateY,
 															int16 movementStep) {
-	_state.LeadActorVerticalMovementStep = movementStep;
-	_state.LeadActorHorizontalMovementStep = 0;
-	_state.ActorXFixedCoordinates[kLeadActorSlot] = candidateX;
-	_state.ActorTargetXCoordinates[kLeadActorSlot] = getIntegerCoordinate(candidateX);
-	_state.ActorMovementFlags |= kLeadActorMask;
-	_state.ActorTargetYCoordinates[kLeadActorSlot] = getIntegerCoordinate(candidateY);
+	_state.leadActorVerticalMovementStep = movementStep;
+	_state.leadActorHorizontalMovementStep = 0;
+	_state.actorXFixedCoordinates[kLeadActorSlot] = candidateX;
+	_state.actorTargetXCoordinates[kLeadActorSlot] = getIntegerCoordinate(candidateX);
+	_state.actorMovementFlags |= kLeadActorMask;
+	_state.actorTargetYCoordinates[kLeadActorSlot] = getIntegerCoordinate(candidateY);
 	advanceLeadScriptedMovement();
 }
 
 void RoomActorUpdater::beginLeadHorizontalCollisionAdjustment(int candidateX, int candidateY,
 															  int16 movementStep) {
-	_state.LeadActorHorizontalMovementStep = movementStep;
-	_state.LeadActorVerticalMovementStep = 0;
-	_state.ActorTargetXCoordinates[kLeadActorSlot] = getIntegerCoordinate(candidateX);
-	_state.ActorMovementFlags |= kLeadActorMask;
-	_state.ActorYFixedCoordinates[kLeadActorSlot] = candidateY;
-	_state.ActorTargetYCoordinates[kLeadActorSlot] = getIntegerCoordinate(candidateY);
+	_state.leadActorHorizontalMovementStep = movementStep;
+	_state.leadActorVerticalMovementStep = 0;
+	_state.actorTargetXCoordinates[kLeadActorSlot] = getIntegerCoordinate(candidateX);
+	_state.actorMovementFlags |= kLeadActorMask;
+	_state.actorYFixedCoordinates[kLeadActorSlot] = candidateY;
+	_state.actorTargetYCoordinates[kLeadActorSlot] = getIntegerCoordinate(candidateY);
 	advanceLeadScriptedMovement();
 }
 
 void RoomActorUpdater::advanceLeadScriptedMovement() {
-	_state.LeadActorIdleAnimationTimer = 300;
-	int32 horizontalDelta = scaleMovementStep(_state.ActorHorizontalScaleFactors[kLeadActorSlot], 0x155,
-											  _state.LeadActorHorizontalMovementStep);
-	int32 verticalDelta = scaleMovementStep(_state.ActorVerticalScaleFactors[kLeadActorSlot], 0xAA,
-											_state.LeadActorVerticalMovementStep);
-	_state.ActorXFixedCoordinates[kLeadActorSlot] = _state.ActorXFixedCoordinates[kLeadActorSlot] +
+	_state.leadActorIdleAnimationTimer = 300;
+	int32 horizontalDelta = scaleMovementStep(_state.actorHorizontalScaleFactors[kLeadActorSlot], 0x155,
+											  _state.leadActorHorizontalMovementStep);
+	int32 verticalDelta = scaleMovementStep(_state.actorVerticalScaleFactors[kLeadActorSlot], 0xAA,
+											_state.leadActorVerticalMovementStep);
+	_state.actorXFixedCoordinates[kLeadActorSlot] = _state.actorXFixedCoordinates[kLeadActorSlot] +
 													horizontalDelta;
-	_state.ActorYFixedCoordinates[kLeadActorSlot] = _state.ActorYFixedCoordinates[kLeadActorSlot] +
+	_state.actorYFixedCoordinates[kLeadActorSlot] = _state.actorYFixedCoordinates[kLeadActorSlot] +
 													verticalDelta;
 
-	int16 actorX = getIntegerCoordinate(_state.ActorXFixedCoordinates[kLeadActorSlot]);
-	int16 targetX = _state.ActorTargetXCoordinates[kLeadActorSlot];
-	if (_state.LeadActorHorizontalMovementStep >= 0) {
+	int16 actorX = getIntegerCoordinate(_state.actorXFixedCoordinates[kLeadActorSlot]);
+	int16 targetX = _state.actorTargetXCoordinates[kLeadActorSlot];
+	if (_state.leadActorHorizontalMovementStep >= 0) {
 		if (actorX >= targetX) {
-			_state.ActorXFixedCoordinates[kLeadActorSlot] = replaceIntegerCoordinate(
-				_state.ActorXFixedCoordinates[kLeadActorSlot], targetX);
-			_state.LeadActorHorizontalMovementStep = 0;
+			_state.actorXFixedCoordinates[kLeadActorSlot] = replaceIntegerCoordinate(
+				_state.actorXFixedCoordinates[kLeadActorSlot], targetX);
+			_state.leadActorHorizontalMovementStep = 0;
 		}
 	} else if (actorX <= targetX) {
-		_state.LeadActorHorizontalMovementStep = 0;
+		_state.leadActorHorizontalMovementStep = 0;
 	}
 
-	int16 actorY = getIntegerCoordinate(_state.ActorYFixedCoordinates[kLeadActorSlot]);
-	int16 targetY = _state.ActorTargetYCoordinates[kLeadActorSlot];
-	if (_state.LeadActorVerticalMovementStep >= 0) {
+	int16 actorY = getIntegerCoordinate(_state.actorYFixedCoordinates[kLeadActorSlot]);
+	int16 targetY = _state.actorTargetYCoordinates[kLeadActorSlot];
+	if (_state.leadActorVerticalMovementStep >= 0) {
 		if (actorY >= targetY) {
-			_state.ActorYFixedCoordinates[kLeadActorSlot] = replaceIntegerCoordinate(
-				_state.ActorYFixedCoordinates[kLeadActorSlot], targetY);
-			_state.LeadActorVerticalMovementStep = 0;
+			_state.actorYFixedCoordinates[kLeadActorSlot] = replaceIntegerCoordinate(
+				_state.actorYFixedCoordinates[kLeadActorSlot], targetY);
+			_state.leadActorVerticalMovementStep = 0;
 		}
 	} else if (actorY <= targetY) {
-		_state.ActorYFixedCoordinates[kLeadActorSlot] = replaceIntegerCoordinate(
-			_state.ActorYFixedCoordinates[kLeadActorSlot], targetY);
-		_state.LeadActorVerticalMovementStep = 0;
+		_state.actorYFixedCoordinates[kLeadActorSlot] = replaceIntegerCoordinate(
+			_state.actorYFixedCoordinates[kLeadActorSlot], targetY);
+		_state.leadActorVerticalMovementStep = 0;
 	}
 
-	if (_state.LeadActorHorizontalMovementStep != 0 || _state.LeadActorVerticalMovementStep != 0) {
+	if (_state.leadActorHorizontalMovementStep != 0 || _state.leadActorVerticalMovementStep != 0) {
 		return;
 	}
 
-	if (_state.LeadActorMovementPointIndex >= 0) {
-		_state.LeadActorMovementPointIndex--;
-		if (_state.LeadActorMovementPointIndex >= 0) {
-			beginNextLeadMovementPoint(_state.LeadActorMovementPoints[_state.LeadActorMovementPointIndex]);
+	if (_state.leadActorMovementPointIndex >= 0) {
+		_state.leadActorMovementPointIndex--;
+		if (_state.leadActorMovementPointIndex >= 0) {
+			beginNextLeadMovementPoint(_state.leadActorMovementPoints[_state.leadActorMovementPointIndex]);
 			return;
 		}
 	}
 
-	_state.ActorMovementFlags &= static_cast<uint8>(~kLeadActorMask);
-	if ((_state.DisplayFlags & kDisplayTransitionMask) != 0) {
+	_state.actorMovementFlags &= static_cast<uint8>(~kLeadActorMask);
+	if ((_state.displayFlags & kDisplayTransitionMask) != 0) {
 		requestActorAnimation(kLeadActorSlot, static_cast<int16>(
-												  _state.ActorPositionIndices[kLeadActorSlot] + 4));
+												  _state.actorPositionIndices[kLeadActorSlot] + 4));
 	}
 }
 
 void RoomActorUpdater::beginNextLeadMovementPoint(const ActorMovementPoint &point) {
-	_state.ActorTargetXCoordinates[kLeadActorSlot] = point.TargetX;
-	_state.ActorTargetYCoordinates[kLeadActorSlot] = point.TargetY;
-	_state.LeadActorHorizontalMovementStep = point.HorizontalStep;
-	_state.LeadActorVerticalMovementStep = point.VerticalStep;
+	_state.actorTargetXCoordinates[kLeadActorSlot] = point.targetX;
+	_state.actorTargetYCoordinates[kLeadActorSlot] = point.targetY;
+	_state.leadActorHorizontalMovementStep = point.horizontalStep;
+	_state.leadActorVerticalMovementStep = point.verticalStep;
 	int16 relativeAnimation = static_cast<int16>(
-		_state.ActorAnimationOffsets[kLeadActorSlot] - _state.ActorPositionIndices[kLeadActorSlot]);
-	_state.ActorAnimationOffsets[kLeadActorSlot] = relativeAnimation == 0
+		_state.actorAnimationOffsets[kLeadActorSlot] - _state.actorPositionIndices[kLeadActorSlot]);
+	_state.actorAnimationOffsets[kLeadActorSlot] = relativeAnimation == 0
 													   ? resolveLead(
-															 _state.ActorPositionIndices[kLeadActorSlot],
-															 point.PositionIndex)
-													   : static_cast<int16>(point.PositionIndex +
+															 _state.actorPositionIndices[kLeadActorSlot],
+															 point.positionIndex)
+													   : static_cast<int16>(point.positionIndex +
 																			relativeAnimation);
-	_state.ActorPositionIndices[kLeadActorSlot] = point.PositionIndex;
-	_state.ActorAnimationRestartFlags |= kLeadActorMask;
+	_state.actorPositionIndices[kLeadActorSlot] = point.positionIndex;
+	_state.actorAnimationRestartFlags |= kLeadActorMask;
 }
 
 void RoomActorUpdater::updateCameraAndInteractionEntry(int16 maximumX, int16 maximumY) {
-	if ((_state.RoomBehaviorFlags & kRoomBehaviorCameraLockMask) == 0) {
+	if ((_state.roomBehaviorFlags & kRoomBehaviorCameraLockMask) == 0) {
 		updateCameraX(maximumX);
 		updateCameraY(maximumY);
 	}
@@ -801,8 +801,8 @@ void RoomActorUpdater::updateCameraAndInteractionEntry(int16 maximumX, int16 max
 }
 
 void RoomActorUpdater::updateCameraX(int16 maximumX) {
-	int16 actorX = getIntegerCoordinate(_state.ActorXFixedCoordinates[kLeadActorSlot]);
-	int16 relativeX = static_cast<int16>(actorX - _state.CameraX);
+	int16 actorX = getIntegerCoordinate(_state.actorXFixedCoordinates[kLeadActorSlot]);
+	int16 relativeX = static_cast<int16>(actorX - _state.cameraX);
 	int16 nextCameraX;
 	if (relativeX <= 0x4B) {
 		nextCameraX = static_cast<int16>(actorX - 0x4B);
@@ -819,21 +819,21 @@ void RoomActorUpdater::updateCameraX(int16 maximumX) {
 		return;
 	}
 
-	uint16 previousTile = static_cast<uint16>(_state.CameraX) >> 3;
-	_state.CameraX = nextCameraX;
+	uint16 previousTile = static_cast<uint16>(_state.cameraX) >> 3;
+	_state.cameraX = nextCameraX;
 	uint16 nextTile = static_cast<uint16>(nextCameraX) >> 3;
 	if (previousTile == nextTile) {
 		return;
 	}
 
-	_state.TileStreamingEdgeFlags |= previousTile < nextTile
+	_state.tileStreamingEdgeFlags |= previousTile < nextTile
 										 ? static_cast<uint8>(0x01)
 										 : static_cast<uint8>(0x02);
 }
 
 void RoomActorUpdater::updateCameraY(int16 maximumY) {
-	int16 actorY = getIntegerCoordinate(_state.ActorYFixedCoordinates[kLeadActorSlot]);
-	int16 relativeY = static_cast<int16>(actorY - _state.CameraY);
+	int16 actorY = getIntegerCoordinate(_state.actorYFixedCoordinates[kLeadActorSlot]);
+	int16 relativeY = static_cast<int16>(actorY - _state.cameraY);
 	int16 nextCameraY;
 	if (relativeY <= 0x32) {
 		nextCameraY = static_cast<int16>(actorY - 0x32);
@@ -850,24 +850,24 @@ void RoomActorUpdater::updateCameraY(int16 maximumY) {
 		return;
 	}
 
-	uint16 previousTile = static_cast<uint16>(_state.CameraY) >> 3;
-	_state.CameraY = nextCameraY;
+	uint16 previousTile = static_cast<uint16>(_state.cameraY) >> 3;
+	_state.cameraY = nextCameraY;
 	uint16 nextTile = static_cast<uint16>(nextCameraY) >> 3;
 	if (previousTile == nextTile) {
 		return;
 	}
 
-	_state.TileStreamingEdgeFlags |= previousTile < nextTile
+	_state.tileStreamingEdgeFlags |= previousTile < nextTile
 										 ? static_cast<uint8>(0x08)
 										 : static_cast<uint8>(0x04);
 }
 
 void RoomActorUpdater::tryOpenInteractionInterface() {
-	if ((_state.DisplayFlags & kDisplayTransitionMask) != 0) {
+	if ((_state.displayFlags & kDisplayTransitionMask) != 0) {
 		return;
 	}
 
-	if ((_state.ProgressStateBytes[0] & kProgressInterfaceSuppressionMask) != 0) {
+	if ((_state.progressStateBytes[0] & kProgressInterfaceSuppressionMask) != 0) {
 		return;
 	}
 
@@ -879,101 +879,101 @@ void RoomActorUpdater::tryOpenInteractionInterface() {
 	// Managed-only mouse support: the pointer opens the cursor interface like an A/B press would
 	// (input/room_mouse_controller.h).
 	if (!shouldOpen) {
-		shouldOpen = _state.MouseOpenInterfaceRequest;
+		shouldOpen = _state.mouseOpenInterfaceRequest;
 	}
 
 	if (!shouldOpen) {
 		return;
 	}
 
-	_state.DisplayFlags |= kDisplayInterfaceMask;
-	_state.InteractionFlags &= 0xFE;
-	_state.CursorHorizontalStep = 2;
-	_state.CursorVerticalStep = 2;
+	_state.displayFlags |= kDisplayInterfaceMask;
+	_state.interactionFlags &= 0xFE;
+	_state.cursorHorizontalStep = 2;
+	_state.cursorVerticalStep = 2;
 	_state.activeVerbIcon = NONE;
-	_state.PreviousInteraction = 0;
-	_state.SecondaryInteraction = 0;
+	_state.previousInteraction = 0;
+	_state.secondaryInteraction = 0;
 
-	if ((_state.TransitionFlags & kTransitionCenteredCursorMask) != 0) {
+	if ((_state.transitionFlags & kTransitionCenteredCursorMask) != 0) {
 		setCenteredCursor();
 		return;
 	}
 
-	if ((_state.ActorVisibilityBlockFlags & kLeadActorMask) == 0) {
-		if ((_state.TransitionFlags & kTransitionHideLeadMask) != 0) {
+	if ((_state.actorVisibilityBlockFlags & kLeadActorMask) == 0) {
+		if ((_state.transitionFlags & kTransitionHideLeadMask) != 0) {
 			setCenteredCursor();
 			return;
 		}
 
-		if ((_state.RoomBehaviorFlags & kRoomBehaviorDuelMask) == 0) {
+		if ((_state.roomBehaviorFlags & kRoomBehaviorDuelMask) == 0) {
 			requestActorAnimation(kLeadActorSlot, static_cast<int16>(
-													  _state.ActorPositionIndices[kLeadActorSlot] + 4));
+													  _state.actorPositionIndices[kLeadActorSlot] + 4));
 		}
 	}
 
-	_state.CursorX = static_cast<int16>(
-		getIntegerCoordinate(_state.ActorXFixedCoordinates[kLeadActorSlot]) - _state.CameraX);
-	_state.CursorY = static_cast<int16>(
-		getIntegerCoordinate(_state.ActorYFixedCoordinates[kLeadActorSlot]) - _state.CameraY - 0x2C);
+	_state.cursorX = static_cast<int16>(
+		getIntegerCoordinate(_state.actorXFixedCoordinates[kLeadActorSlot]) - _state.cameraX);
+	_state.cursorY = static_cast<int16>(
+		getIntegerCoordinate(_state.actorYFixedCoordinates[kLeadActorSlot]) - _state.cameraY - 0x2C);
 }
 
 void RoomActorUpdater::setCenteredCursor() {
-	_state.CursorX = 0x80;
-	_state.CursorY = 0x50;
+	_state.cursorX = 0x80;
+	_state.cursorY = 0x50;
 }
 
 void RoomActorUpdater::updateCompanionActor() {
-	if ((_state.VideoFlags & kVideoCompanionUpdateBlockMask) != 0) {
+	if ((_state.videoFlags & kVideoCompanionUpdateBlockMask) != 0) {
 		return;
 	}
 
 	// Scooby walks beside Shaggy. Used in Maze room.
-	if ((_state.VideoFlags & kVideoScoobyShaggySideBySideWalking) != 0) {
-		_state.ActorXFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
-			_state.ActorXFixedCoordinates[kCompanionActorSlot],
-			getIntegerCoordinate(_state.ActorXFixedCoordinates[kLeadActorSlot]));
-		_state.ActorYFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
-			_state.ActorYFixedCoordinates[kCompanionActorSlot],
-			getIntegerCoordinate(_state.ActorYFixedCoordinates[kLeadActorSlot]));
+	if ((_state.videoFlags & kVideoScoobyShaggySideBySideWalking) != 0) {
+		_state.actorXFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
+			_state.actorXFixedCoordinates[kCompanionActorSlot],
+			getIntegerCoordinate(_state.actorXFixedCoordinates[kLeadActorSlot]));
+		_state.actorYFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
+			_state.actorYFixedCoordinates[kCompanionActorSlot],
+			getIntegerCoordinate(_state.actorYFixedCoordinates[kLeadActorSlot]));
 		// Ghidra 0x00006D4E-0x00006D8E: controller input is active-low, so all four direction bits set means no
 		// direction is held. With no direction held, or with the interaction display open, select the lead
 		// pose's steady animation (+4); otherwise select its walking animation (+0).
-		int16 animationOffset = _state.ActorPositionIndices[kLeadActorSlot];
-		if ((_state.ControllerOneInput & kDirectionMask) == kDirectionMask ||
-			(_state.DisplayFlags & kDisplayInterfaceMask) != 0) {
+		int16 animationOffset = _state.actorPositionIndices[kLeadActorSlot];
+		if ((_state.controllerOneInput & kDirectionMask) == kDirectionMask ||
+			(_state.displayFlags & kDisplayInterfaceMask) != 0) {
 			animationOffset += 4;
 		}
 
-		if (_state.ActorAnimationOffsets[kCompanionActorSlot] != animationOffset) {
+		if (_state.actorAnimationOffsets[kCompanionActorSlot] != animationOffset) {
 			requestActorAnimation(kCompanionActorSlot, animationOffset);
 		}
 
 		return;
 	}
 
-	if (hasFlag(_state.ActorPathActiveFlags, kCompanionActorSlot)) {
+	if (hasFlag(_state.actorPathActiveFlags, kCompanionActorSlot)) {
 		updateStandardActorPath(kCompanionActorSlot);
 		return;
 	}
 
-	if ((_state.ActorMovementFlags & kCompanionActorMask) == 0) {
-		if (_state.RandomMoveTimer >= 0) {
-			_state.RandomMoveTimer--;
+	if ((_state.actorMovementFlags & kCompanionActorMask) == 0) {
+		if (_state.randomMoveTimer >= 0) {
+			_state.randomMoveTimer--;
 		}
 
 		return;
 	}
 
-	if ((_state.InteractionFlags & 0x20) != 0) {
-		if ((_state.ActorAnimationRestartFlags & kCompanionActorMask) == 0) {
-			if ((_state.ActorAnimationHoldFlags & kCompanionActorMask) != 0) {
-				_state.ActorAnimationOffsets[kCompanionActorSlot] = static_cast<int16>(
-					_state.RandomMoveAnimation + _state.RandomMoveDirection);
-				_state.ActorPositionIndices[kCompanionActorSlot] = _state.RandomMoveDirection;
-				_state.ActorAnimationDelays[kCompanionActorSlot] = -1;
-				_state.ActorAnimationRestartFlags |= kCompanionActorMask;
-				_state.ActorMovementFlags &= static_cast<uint8>(~kCompanionActorMask);
-				_state.InteractionFlags &= 0xDF;
+	if ((_state.interactionFlags & 0x20) != 0) {
+		if ((_state.actorAnimationRestartFlags & kCompanionActorMask) == 0) {
+			if ((_state.actorAnimationHoldFlags & kCompanionActorMask) != 0) {
+				_state.actorAnimationOffsets[kCompanionActorSlot] = static_cast<int16>(
+					_state.randomMoveAnimation + _state.randomMoveDirection);
+				_state.actorPositionIndices[kCompanionActorSlot] = _state.randomMoveDirection;
+				_state.actorAnimationDelays[kCompanionActorSlot] = -1;
+				_state.actorAnimationRestartFlags |= kCompanionActorMask;
+				_state.actorMovementFlags &= static_cast<uint8>(~kCompanionActorMask);
+				_state.interactionFlags &= 0xDF;
 			}
 		}
 
@@ -984,145 +984,145 @@ void RoomActorUpdater::updateCompanionActor() {
 }
 
 void RoomActorUpdater::advanceCompanionScriptedMovement() {
-	int32 horizontalDelta = scaleMovementStep(_state.ActorHorizontalScaleFactors[kCompanionActorSlot],
+	int32 horizontalDelta = scaleMovementStep(_state.actorHorizontalScaleFactors[kCompanionActorSlot],
 											  0x12A,
-											  _state.CompanionActorHorizontalMovementStep);
-	int32 verticalDelta = scaleMovementStep(_state.ActorVerticalScaleFactors[kCompanionActorSlot], 0x95,
-											_state.CompanionActorVerticalMovementStep);
-	_state.ActorXFixedCoordinates[kCompanionActorSlot] =
-		_state.ActorXFixedCoordinates[kCompanionActorSlot] + horizontalDelta;
-	_state.ActorYFixedCoordinates[kCompanionActorSlot] =
-		_state.ActorYFixedCoordinates[kCompanionActorSlot] + verticalDelta;
+											  _state.companionActorHorizontalMovementStep);
+	int32 verticalDelta = scaleMovementStep(_state.actorVerticalScaleFactors[kCompanionActorSlot], 0x95,
+											_state.companionActorVerticalMovementStep);
+	_state.actorXFixedCoordinates[kCompanionActorSlot] =
+		_state.actorXFixedCoordinates[kCompanionActorSlot] + horizontalDelta;
+	_state.actorYFixedCoordinates[kCompanionActorSlot] =
+		_state.actorYFixedCoordinates[kCompanionActorSlot] + verticalDelta;
 
-	int16 actorX = getIntegerCoordinate(_state.ActorXFixedCoordinates[kCompanionActorSlot]);
-	int16 targetX = _state.ActorTargetXCoordinates[kCompanionActorSlot];
-	if (_state.CompanionActorHorizontalMovementStep >= 0) {
+	int16 actorX = getIntegerCoordinate(_state.actorXFixedCoordinates[kCompanionActorSlot]);
+	int16 targetX = _state.actorTargetXCoordinates[kCompanionActorSlot];
+	if (_state.companionActorHorizontalMovementStep >= 0) {
 		if (actorX >= targetX) {
-			_state.ActorXFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
-				_state.ActorXFixedCoordinates[kCompanionActorSlot], targetX);
-			_state.CompanionActorHorizontalMovementStep = 0;
+			_state.actorXFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
+				_state.actorXFixedCoordinates[kCompanionActorSlot], targetX);
+			_state.companionActorHorizontalMovementStep = 0;
 		}
 	} else if (actorX <= targetX) {
-		_state.CompanionActorHorizontalMovementStep = 0;
+		_state.companionActorHorizontalMovementStep = 0;
 	}
 
-	int16 actorY = getIntegerCoordinate(_state.ActorYFixedCoordinates[kCompanionActorSlot]);
-	int16 targetY = _state.ActorTargetYCoordinates[kCompanionActorSlot];
-	if (_state.CompanionActorVerticalMovementStep >= 0) {
+	int16 actorY = getIntegerCoordinate(_state.actorYFixedCoordinates[kCompanionActorSlot]);
+	int16 targetY = _state.actorTargetYCoordinates[kCompanionActorSlot];
+	if (_state.companionActorVerticalMovementStep >= 0) {
 		if (actorY >= targetY) {
-			_state.ActorYFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
-				_state.ActorYFixedCoordinates[kCompanionActorSlot], targetY);
-			_state.CompanionActorVerticalMovementStep = 0;
+			_state.actorYFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
+				_state.actorYFixedCoordinates[kCompanionActorSlot], targetY);
+			_state.companionActorVerticalMovementStep = 0;
 		}
 	} else if (actorY <= targetY) {
-		_state.ActorYFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
-			_state.ActorYFixedCoordinates[kCompanionActorSlot], targetY);
-		_state.CompanionActorVerticalMovementStep = 0;
+		_state.actorYFixedCoordinates[kCompanionActorSlot] = replaceIntegerCoordinate(
+			_state.actorYFixedCoordinates[kCompanionActorSlot], targetY);
+		_state.companionActorVerticalMovementStep = 0;
 	}
 
-	if (_state.CompanionActorHorizontalMovementStep != 0 || _state.CompanionActorVerticalMovementStep != 0) {
+	if (_state.companionActorHorizontalMovementStep != 0 || _state.companionActorVerticalMovementStep != 0) {
 		return;
 	}
 
-	if (_state.CompanionActorMovementPointIndex >= 0) {
-		_state.CompanionActorMovementPointIndex--;
-		if (_state.CompanionActorMovementPointIndex >= 0) {
+	if (_state.companionActorMovementPointIndex >= 0) {
+		_state.companionActorMovementPointIndex--;
+		if (_state.companionActorMovementPointIndex >= 0) {
 			beginNextCompanionMovementPoint(
-				_state.CompanionActorMovementPoints[_state.CompanionActorMovementPointIndex]);
+				_state.companionActorMovementPoints[_state.companionActorMovementPointIndex]);
 			return;
 		}
 	}
 
-	if ((_state.DisplayFlags & kDisplayTransitionMask) != 0) {
+	if ((_state.displayFlags & kDisplayTransitionMask) != 0) {
 		requestActorAnimation(kCompanionActorSlot, static_cast<int16>(
-													   _state.ActorPositionIndices[kCompanionActorSlot] + 4));
-		_state.ActorMovementFlags &= static_cast<uint8>(~kCompanionActorMask);
+													   _state.actorPositionIndices[kCompanionActorSlot] + 4));
+		_state.actorMovementFlags &= static_cast<uint8>(~kCompanionActorMask);
 		return;
 	}
 
-	_state.InteractionFlags |= 0x20;
-	_state.ActorAnimationOffsets[kCompanionActorSlot] =
+	_state.interactionFlags |= 0x20;
+	_state.actorAnimationOffsets[kCompanionActorSlot] =
 		resolveCompanionPositionTransition(
-			_state.ActorPositionIndices[kCompanionActorSlot], _state.RandomMoveDirection);
-	_state.ActorAnimationDelays[kCompanionActorSlot] = -1;
-	_state.ActorAnimationRestartFlags |= kCompanionActorMask;
+			_state.actorPositionIndices[kCompanionActorSlot], _state.randomMoveDirection);
+	_state.actorAnimationDelays[kCompanionActorSlot] = -1;
+	_state.actorAnimationRestartFlags |= kCompanionActorMask;
 }
 
 void RoomActorUpdater::beginNextCompanionMovementPoint(const ActorMovementPoint &point) {
-	_state.ActorTargetXCoordinates[kCompanionActorSlot] = point.TargetX;
-	_state.ActorTargetYCoordinates[kCompanionActorSlot] = point.TargetY;
-	_state.CompanionActorHorizontalMovementStep = point.HorizontalStep;
-	_state.CompanionActorVerticalMovementStep = point.VerticalStep;
+	_state.actorTargetXCoordinates[kCompanionActorSlot] = point.targetX;
+	_state.actorTargetYCoordinates[kCompanionActorSlot] = point.targetY;
+	_state.companionActorHorizontalMovementStep = point.horizontalStep;
+	_state.companionActorVerticalMovementStep = point.verticalStep;
 	int16 relativeAnimation = static_cast<int16>(
-		_state.ActorAnimationOffsets[kCompanionActorSlot] - _state.ActorPositionIndices[kCompanionActorSlot]);
-	_state.ActorAnimationOffsets[kCompanionActorSlot] = relativeAnimation == 0
+		_state.actorAnimationOffsets[kCompanionActorSlot] - _state.actorPositionIndices[kCompanionActorSlot]);
+	_state.actorAnimationOffsets[kCompanionActorSlot] = relativeAnimation == 0
 															? resolveCompanion(
-																  _state.ActorPositionIndices[kCompanionActorSlot],
-																  point.PositionIndex)
-															: static_cast<int16>(point.PositionIndex +
+																  _state.actorPositionIndices[kCompanionActorSlot],
+																  point.positionIndex)
+															: static_cast<int16>(point.positionIndex +
 																				 relativeAnimation);
-	_state.ActorPositionIndices[kCompanionActorSlot] = point.PositionIndex;
-	_state.ActorAnimationDelays[kCompanionActorSlot] = -1;
-	_state.ActorAnimationRestartFlags |= kCompanionActorMask;
+	_state.actorPositionIndices[kCompanionActorSlot] = point.positionIndex;
+	_state.actorAnimationDelays[kCompanionActorSlot] = -1;
+	_state.actorAnimationRestartFlags |= kCompanionActorMask;
 }
 
 void RoomActorUpdater::updateActorPrioritiesAndScales() {
 	updateActorPriority(kCompanionActorSlot);
-	if ((_state.TransitionFlags & kTransitionCompanionCopyMask) != 0) {
-		_state.ActorHighPriorityFlags = static_cast<uint8>((_state.ActorHighPriorityFlags & 0xF0) |
+	if ((_state.transitionFlags & kTransitionCompanionCopyMask) != 0) {
+		_state.actorHighPriorityFlags = static_cast<uint8>((_state.actorHighPriorityFlags & 0xF0) |
 														   0x03);
-		_state.ActorXFixedCoordinates[2] = _state.ActorXFixedCoordinates[kLeadActorSlot];
-		_state.ActorYFixedCoordinates[2] = _state.ActorYFixedCoordinates[kLeadActorSlot];
-		if (getIntegerCoordinate(_state.ActorXFixedCoordinates[kLeadActorSlot]) >= 0xF3) {
-			_state.ActorVerticalScaleFactors[2] = 0;
-			_state.ActorHorizontalScaleFactors[2] = 0x80;
+		_state.actorXFixedCoordinates[2] = _state.actorXFixedCoordinates[kLeadActorSlot];
+		_state.actorYFixedCoordinates[2] = _state.actorYFixedCoordinates[kLeadActorSlot];
+		if (getIntegerCoordinate(_state.actorXFixedCoordinates[kLeadActorSlot]) >= 0xF3) {
+			_state.actorVerticalScaleFactors[2] = 0;
+			_state.actorHorizontalScaleFactors[2] = 0x80;
 		} else {
-			_state.ActorVerticalScaleFactors[2] = 0x80;
-			_state.ActorHorizontalScaleFactors[2] = 0;
+			_state.actorVerticalScaleFactors[2] = 0x80;
+			_state.actorHorizontalScaleFactors[2] = 0;
 		}
 
-		_state.ActorYFixedCoordinates[2] = replaceIntegerCoordinate(_state.ActorYFixedCoordinates[2],
+		_state.actorYFixedCoordinates[2] = replaceIntegerCoordinate(_state.actorYFixedCoordinates[2],
 																	static_cast<int16>(
 																		getIntegerCoordinate(
-																			_state.ActorYFixedCoordinates[kLeadActorSlot]) -
+																			_state.actorYFixedCoordinates[kLeadActorSlot]) -
 																		0x14));
 		int16 pairedX = static_cast<int16>(
-			getIntegerCoordinate(_state.ActorXFixedCoordinates[kLeadActorSlot]) + 0x14);
+			getIntegerCoordinate(_state.actorXFixedCoordinates[kLeadActorSlot]) + 0x14);
 		if (pairedX > 0x160) {
 			pairedX = 0x160;
 		}
 
-		_state.ActorXFixedCoordinates[2] = replaceIntegerCoordinate(_state.ActorXFixedCoordinates[2], pairedX);
-		if (getIntegerCoordinate(_state.ActorXFixedCoordinates[3]) == 0x150) {
-			_state.ActorXFixedCoordinates[3] =
-				replaceIntegerCoordinate(_state.ActorXFixedCoordinates[3], 0x150);
+		_state.actorXFixedCoordinates[2] = replaceIntegerCoordinate(_state.actorXFixedCoordinates[2], pairedX);
+		if (getIntegerCoordinate(_state.actorXFixedCoordinates[3]) == 0x150) {
+			_state.actorXFixedCoordinates[3] =
+				replaceIntegerCoordinate(_state.actorXFixedCoordinates[3], 0x150);
 		}
 	}
 
 	int16 retainedPreviousScaleRow = static_cast<int16>(
-		_state.RoomWidthTiles * static_cast<int>(sizeof(int16)));
+		_state.roomWidthTiles * static_cast<int>(sizeof(int16)));
 	for (int actor = 5; actor >= 0; actor--) {
-		if (hasFlag(_state.ActorCompactFrameFlags, actor)) {
-			if ((_state.TransitionFlags & kTransitionSkipCompactScaleMask) == 0) {
+		if (hasFlag(_state.actorCompactFrameFlags, actor)) {
+			if ((_state.transitionFlags & kTransitionSkipCompactScaleMask) == 0) {
 				updateCompactActorScale(actor, retainedPreviousScaleRow);
 			}
 		}
 	}
 
-	if ((_state.RoomBehaviorFlags & kRoomBehaviorTransitionScaleMask) != 0) {
-		uint16 transitionActor = _state.TransitionActorIndex;
-		_state.ActorHorizontalScaleFactors[transitionActor] = _state.ActorHorizontalScaleFactors[kLeadActorSlot];
-		_state.ActorVerticalScaleFactors[transitionActor] = _state.ActorVerticalScaleFactors[kLeadActorSlot];
+	if ((_state.roomBehaviorFlags & kRoomBehaviorTransitionScaleMask) != 0) {
+		uint16 transitionActor = _state.transitionActorIndex;
+		_state.actorHorizontalScaleFactors[transitionActor] = _state.actorHorizontalScaleFactors[kLeadActorSlot];
+		_state.actorVerticalScaleFactors[transitionActor] = _state.actorVerticalScaleFactors[kLeadActorSlot];
 	}
 }
 
 void RoomActorUpdater::updateCompactActorScale(int actor, int16 &retainedPreviousScaleRow) {
-	int16 actorY = getIntegerCoordinate(_state.ActorYFixedCoordinates[actor]);
+	int16 actorY = getIntegerCoordinate(_state.actorYFixedCoordinates[actor]);
 	int actorTileY = static_cast<uint16>(actorY) >> 3;
 	int16 previousScale = 0;
 	int16 row = 0;
 	do {
-		int16 scale = _rom.readInt16(_state.RoomCoordinateDataOffset +
+		int16 scale = _rom.readInt16(_state.roomCoordinateDataOffset +
 									 row * static_cast<int>(sizeof(int16)));
 		if (scale >= 0) {
 			previousScale = scale;
@@ -1131,9 +1131,9 @@ void RoomActorUpdater::updateCompactActorScale(int actor, int16 &retainedPreviou
 	} while (++row < actorTileY);
 
 	int16 nextScale = 0;
-	int16 nextRow = static_cast<int16>(_state.RoomHeightTiles);
-	for (; row < static_cast<int16>(_state.RoomHeightTiles); row++) {
-		int16 scale = _rom.readInt16(_state.RoomCoordinateDataOffset +
+	int16 nextRow = static_cast<int16>(_state.roomHeightTiles);
+	for (; row < static_cast<int16>(_state.roomHeightTiles); row++) {
+		int16 scale = _rom.readInt16(_state.roomCoordinateDataOffset +
 									 row * static_cast<int>(sizeof(int16)));
 		if (scale >= 0) {
 			nextScale = scale;
@@ -1148,39 +1148,39 @@ void RoomActorUpdater::updateCompactActorScale(int actor, int16 &retainedPreviou
 	int16 interpolatedScale = static_cast<int16>(
 		nextScale * 0x10 - (scaleDifference * remainingPixels) / rowSpanPixels);
 	uint8 actorMask = this->actorMask(actor);
-	if (_state.ActorHorizontalScaleFactors[actor] != static_cast<uint16>(interpolatedScale)) {
-		_state.ActorHorizontalScaleFactors[actor] = static_cast<uint16>(interpolatedScale);
-		_state.ActorPositionUpdateFlags |= actorMask;
+	if (_state.actorHorizontalScaleFactors[actor] != static_cast<uint16>(interpolatedScale)) {
+		_state.actorHorizontalScaleFactors[actor] = static_cast<uint16>(interpolatedScale);
+		_state.actorPositionUpdateFlags |= actorMask;
 	}
 
-	if (_state.ActorVerticalScaleFactors[actor] != static_cast<uint16>(interpolatedScale)) {
-		_state.ActorVerticalScaleFactors[actor] = static_cast<uint16>(interpolatedScale);
-		_state.ActorPositionUpdateFlags |= actorMask;
+	if (_state.actorVerticalScaleFactors[actor] != static_cast<uint16>(interpolatedScale)) {
+		_state.actorVerticalScaleFactors[actor] = static_cast<uint16>(interpolatedScale);
+		_state.actorPositionUpdateFlags |= actorMask;
 	}
 }
 
 void RoomActorUpdater::updateDynamicActors() {
 	for (int actor = 2; actor < 6; actor++) {
-		if ((_state.TransitionFlags & kTransitionCompanionCopyMask) != 0 && actor < 4) {
+		if ((_state.transitionFlags & kTransitionCompanionCopyMask) != 0 && actor < 4) {
 			continue;
 		}
 
-		if (!hasFlag(_state.ActiveActorFlags, actor)) {
+		if (!hasFlag(_state.activeActorFlags, actor)) {
 			continue;
 		}
 
-		if (hasFlag(_state.ActorMovementFlags, actor)) {
+		if (hasFlag(_state.actorMovementFlags, actor)) {
 			advanceDynamicActorMovement(actor);
-		} else if (hasFlag(_state.ActorPathActiveFlags, actor)) {
+		} else if (hasFlag(_state.actorPathActiveFlags, actor)) {
 			updateStandardActorPath(actor);
 		}
 
-		if (getIntegerCoordinate(_state.ActorXFixedCoordinates[actor]) == _state.ActorTargetXCoordinates[actor] &&
-			getIntegerCoordinate(_state.ActorYFixedCoordinates[actor]) == _state.ActorTargetYCoordinates[actor]) {
-			_state.ActorMovementFlags &= static_cast<uint8>(~actorMask(actor));
+		if (getIntegerCoordinate(_state.actorXFixedCoordinates[actor]) == _state.actorTargetXCoordinates[actor] &&
+			getIntegerCoordinate(_state.actorYFixedCoordinates[actor]) == _state.actorTargetYCoordinates[actor]) {
+			_state.actorMovementFlags &= static_cast<uint8>(~actorMask(actor));
 		}
 
-		if (!hasFlag(_state.ActorPriorityUpdateBlockFlags, actor)) {
+		if (!hasFlag(_state.actorPriorityUpdateBlockFlags, actor)) {
 			updateActorPriority(actor);
 		}
 	}
@@ -1188,63 +1188,63 @@ void RoomActorUpdater::updateDynamicActors() {
 
 void RoomActorUpdater::advanceDynamicActorMovement(int actor) {
 	int movementIndex = actor - 2;
-	int16 targetX = _state.ActorTargetXCoordinates[actor];
-	int16 actorX = getIntegerCoordinate(_state.ActorXFixedCoordinates[actor]);
+	int16 targetX = _state.actorTargetXCoordinates[actor];
+	int16 actorX = getIntegerCoordinate(_state.actorXFixedCoordinates[actor]);
 	if (actorX != targetX) {
-		int32 targetFixedX = composePackedTargetCoordinate(_state.ActorTargetXCoordinates, actor,
-														   static_cast<uint16>(_state.ActorTargetYCoordinates[0]));
+		int32 targetFixedX = composePackedTargetCoordinate(_state.actorTargetXCoordinates, actor,
+														   static_cast<uint16>(_state.actorTargetYCoordinates[0]));
 		if (actorX < targetX) {
-			_state.ActorXFixedCoordinates[actor] =
-				_state.ActorXFixedCoordinates[actor] + _state.RoomObjectActorHorizontalSteps[movementIndex];
-			if (_state.ActorXFixedCoordinates[actor] >= targetFixedX) {
-				_state.ActorXFixedCoordinates[actor] = targetFixedX;
+			_state.actorXFixedCoordinates[actor] =
+				_state.actorXFixedCoordinates[actor] + _state.roomObjectActorHorizontalSteps[movementIndex];
+			if (_state.actorXFixedCoordinates[actor] >= targetFixedX) {
+				_state.actorXFixedCoordinates[actor] = targetFixedX;
 			}
 		} else {
-			_state.ActorXFixedCoordinates[actor] =
-				_state.ActorXFixedCoordinates[actor] - _state.RoomObjectActorHorizontalSteps[movementIndex];
-			if (_state.ActorXFixedCoordinates[actor] <= targetFixedX) {
-				_state.ActorXFixedCoordinates[actor] = targetFixedX;
+			_state.actorXFixedCoordinates[actor] =
+				_state.actorXFixedCoordinates[actor] - _state.roomObjectActorHorizontalSteps[movementIndex];
+			if (_state.actorXFixedCoordinates[actor] <= targetFixedX) {
+				_state.actorXFixedCoordinates[actor] = targetFixedX;
 			}
 		}
 	}
 
-	int16 targetY = _state.ActorTargetYCoordinates[actor];
-	int16 actorY = getIntegerCoordinate(_state.ActorYFixedCoordinates[actor]);
+	int16 targetY = _state.actorTargetYCoordinates[actor];
+	int16 actorY = getIntegerCoordinate(_state.actorYFixedCoordinates[actor]);
 	if (actorY == targetY) {
 		return;
 	}
 
-	int32 targetFixedY = composePackedTargetCoordinate(_state.ActorTargetYCoordinates, actor,
+	int32 targetFixedY = composePackedTargetCoordinate(_state.actorTargetYCoordinates, actor,
 													   static_cast<uint16>(static_cast<
 																			   uint32>(
-																			   _state.ActorPathStreamOffsets[0]) >>
+																			   _state.actorPathStreamOffsets[0]) >>
 																		   16));
 	if (actorY < targetY) {
-		_state.ActorYFixedCoordinates[actor] =
-			_state.ActorYFixedCoordinates[actor] + _state.RoomObjectActorVerticalSteps[movementIndex];
-		if (_state.ActorYFixedCoordinates[actor] >= targetFixedY) {
-			_state.ActorYFixedCoordinates[actor] = targetFixedY;
+		_state.actorYFixedCoordinates[actor] =
+			_state.actorYFixedCoordinates[actor] + _state.roomObjectActorVerticalSteps[movementIndex];
+		if (_state.actorYFixedCoordinates[actor] >= targetFixedY) {
+			_state.actorYFixedCoordinates[actor] = targetFixedY;
 		}
 	} else {
-		_state.ActorYFixedCoordinates[actor] =
-			_state.ActorYFixedCoordinates[actor] - _state.RoomObjectActorVerticalSteps[movementIndex];
-		if (_state.ActorYFixedCoordinates[actor] <= targetFixedY) {
-			_state.ActorYFixedCoordinates[actor] = targetFixedY;
+		_state.actorYFixedCoordinates[actor] =
+			_state.actorYFixedCoordinates[actor] - _state.roomObjectActorVerticalSteps[movementIndex];
+		if (_state.actorYFixedCoordinates[actor] <= targetFixedY) {
+			_state.actorYFixedCoordinates[actor] = targetFixedY;
 		}
 	}
 }
 
 void RoomActorUpdater::updateStandardActorPath(int actor) {
-	_state.ActorPathCadenceCountdowns[actor]--;
-	if (_state.ActorPathCadenceCountdowns[actor] >= 0) {
+	_state.actorPathCadenceCountdowns[actor]--;
+	if (_state.actorPathCadenceCountdowns[actor] >= 0) {
 		return;
 	}
 
-	_state.ActorPathCadenceCountdowns[actor] = static_cast<int8>(_state.ActorPathCadenceReloads[actor]);
+	_state.actorPathCadenceCountdowns[actor] = static_cast<int8>(_state.actorPathCadenceReloads[actor]);
 	while (true) {
 		PathRecord record = readAndAdvancePathRecord(actor);
-		int16 x = record.X;
-		int16 y = record.Y;
+		int16 x = record.x;
+		int16 y = record.y;
 		if (x >= 0) {
 			setActorIntegerCoordinates(actor, x, y);
 			return;
@@ -1255,13 +1255,13 @@ void RoomActorUpdater::updateStandardActorPath(int actor) {
 			continue;
 		}
 
-		_state.ActorPathRecordOffsets[actor] = 0;
+		_state.actorPathRecordOffsets[actor] = 0;
 		if (x == -2) {
 			clearActorPath(actor);
 			return;
 		}
 
-		if (hasFlag(_state.ActorAnimationLoopExitFlags, actor)) {
+		if (hasFlag(_state.actorAnimationLoopExitFlags, actor)) {
 			clearActorPath(actor);
 			return;
 		}
@@ -1269,51 +1269,51 @@ void RoomActorUpdater::updateStandardActorPath(int actor) {
 }
 
 void RoomActorUpdater::endActorPathAtTerminal(int actor) {
-	if (!hasFlag(_state.ActorPathActiveFlags, actor)) {
+	if (!hasFlag(_state.actorPathActiveFlags, actor)) {
 		return;
 	}
 
-	int32 streamOffset = _state.ActorPathStreamOffsets[actor];
-	int16 previousRecordOffset = static_cast<int16>(_state.ActorPathRecordOffsets[actor] - 4);
+	int32 streamOffset = _state.actorPathStreamOffsets[actor];
+	int16 previousRecordOffset = static_cast<int16>(_state.actorPathRecordOffsets[actor] - 4);
 	int16 previousX = _rom.readInt16(streamOffset + previousRecordOffset);
 	if (previousX == -2) {
 		clearActorPath(actor);
 	} else if (previousX == -1) {
-		if (hasFlag(_state.ActorAnimationLoopExitFlags, actor)) {
+		if (hasFlag(_state.actorAnimationLoopExitFlags, actor)) {
 			clearActorPath(actor);
 		}
 	}
 }
 
 RoomActorUpdater::PathRecord RoomActorUpdater::readAndAdvancePathRecord(int actor) {
-	int16 recordOffset = static_cast<int16>(_state.ActorPathRecordOffsets[actor]);
-	_state.ActorPathRecordOffsets[actor] += 4;
-	int32 sourceOffset = _state.ActorPathStreamOffsets[actor] + recordOffset;
+	int16 recordOffset = static_cast<int16>(_state.actorPathRecordOffsets[actor]);
+	_state.actorPathRecordOffsets[actor] += 4;
+	int32 sourceOffset = _state.actorPathStreamOffsets[actor] + recordOffset;
 	PathRecord record;
-	record.X = _rom.readInt16(sourceOffset);
-	record.Y = _rom.readInt16(sourceOffset + static_cast<int>(sizeof(int16)));
+	record.x = _rom.readInt16(sourceOffset);
+	record.y = _rom.readInt16(sourceOffset + static_cast<int>(sizeof(int16)));
 	return record;
 }
 
 void RoomActorUpdater::clearActorPath(int actor) {
 	uint8 actorMask = this->actorMask(actor);
-	_state.ActorPathActiveFlags &= static_cast<uint8>(~actorMask);
-	_state.ActorAnimationLoopExitFlags &= static_cast<uint8>(~actorMask);
+	_state.actorPathActiveFlags &= static_cast<uint8>(~actorMask);
+	_state.actorAnimationLoopExitFlags &= static_cast<uint8>(~actorMask);
 }
 
 void RoomActorUpdater::updateActorPriority(int actor) {
-	int x = static_cast<uint16>(getIntegerCoordinate(_state.ActorXFixedCoordinates[actor])) >> 3;
-	int y = static_cast<uint16>(getIntegerCoordinate(_state.ActorYFixedCoordinates[actor])) >> 3;
+	int x = static_cast<uint16>(getIntegerCoordinate(_state.actorXFixedCoordinates[actor])) >> 3;
+	int y = static_cast<uint16>(getIntegerCoordinate(_state.actorYFixedCoordinates[actor])) >> 3;
 	int16 byteOffset = static_cast<int16>(
-		y * _state.RoomWidthTiles * static_cast<int>(sizeof(int16)) +
+		y * _state.roomWidthTiles * static_cast<int>(sizeof(int16)) +
 		x * static_cast<int>(sizeof(int16)));
-	SDM_ASSERT(_state.ActiveRoomScene, "UpdateActorPriority requires an active room scene.");
+	SDM_ASSERT(_state.activeRoomScene, "UpdateActorPriority requires an active room scene.");
 
 	// The original reads past the decoded collision map into the shared 0xFFE000 workspace when an actor
 	// stands beyond the room's right or bottom edge (for example, while a script walks it off-screen).
 	// Those stale bytes have no authored meaning, so leave the actor's current priority unchanged instead
 	// of indexing outside the managed map.
-	const Common::Array<uint8> &collisionCells = _state.ActiveRoomScene->CollisionCells;
+	const Common::Array<uint8> &collisionCells = _state.activeRoomScene->collisionCells;
 	if (byteOffset < 0 ||
 		static_cast<size_t>(byteOffset) + sizeof(uint16) > collisionCells.size()) {
 		return;
@@ -1322,24 +1322,24 @@ void RoomActorUpdater::updateActorPriority(int actor) {
 	int16 collisionCell = static_cast<int16>(readBigEndian16(collisionCells, byteOffset));
 	uint8 actorMask = this->actorMask(actor);
 	if (collisionCell < 0) {
-		_state.ActorHighPriorityFlags |= actorMask;
+		_state.actorHighPriorityFlags |= actorMask;
 	} else {
-		_state.ActorHighPriorityFlags &= static_cast<uint8>(~actorMask);
+		_state.actorHighPriorityFlags &= static_cast<uint8>(~actorMask);
 	}
 }
 
 void RoomActorUpdater::requestActorAnimation(int actor, int16 animationOffset) {
-	_state.ActorAnimationOffsets[actor] = animationOffset;
-	_state.ActorAnimationRestartFlags |= actorMask(actor);
+	_state.actorAnimationOffsets[actor] = animationOffset;
+	_state.actorAnimationRestartFlags |= actorMask(actor);
 }
 
 void RoomActorUpdater::setActorIntegerCoordinates(int actor, int16 x, int16 y) {
-	_state.ActorXFixedCoordinates[actor] = replaceIntegerCoordinate(_state.ActorXFixedCoordinates[actor], x);
-	_state.ActorYFixedCoordinates[actor] = replaceIntegerCoordinate(_state.ActorYFixedCoordinates[actor], y);
+	_state.actorXFixedCoordinates[actor] = replaceIntegerCoordinate(_state.actorXFixedCoordinates[actor], x);
+	_state.actorYFixedCoordinates[actor] = replaceIntegerCoordinate(_state.actorYFixedCoordinates[actor], y);
 }
 
 bool RoomActorUpdater::isNewPress(ControllerButtons button) const {
-	return _state.isButtonDown(button) && (_state.PreviousControllerOneInput & static_cast<uint8>(button)) != 0;
+	return _state.isButtonDown(button) && (_state.previousControllerOneInput & static_cast<uint8>(button)) != 0;
 }
 
 int32 RoomActorUpdater::scaleMovementStep(uint16 scale, uint16 multiplier,

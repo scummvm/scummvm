@@ -29,15 +29,15 @@
 namespace Scooby {
 
 struct RoomCollisionProbeResult {
-	bool IsClear; // Whether the candidate point did not select an occupied collision nibble.
-	int16 RetainedDataRegister;
+	bool isClear; // Whether the candidate point did not select an occupied collision nibble.
+	int16 retainedDataRegister;
 	// Original D0 word consumed when direction input selects no explicit result.
 
-	RoomCollisionProbeResult() : IsClear(false), RetainedDataRegister(0) {
+	RoomCollisionProbeResult() : isClear(false), retainedDataRegister(0) {
 	}
 
-	RoomCollisionProbeResult(bool isClear, int16 retainedDataRegister)
-		: IsClear(isClear), RetainedDataRegister(retainedDataRegister) {
+	RoomCollisionProbeResult(bool newIsClear, int16 newRetainedDataRegister)
+		: isClear(newIsClear), retainedDataRegister(newRetainedDataRegister) {
 	}
 };
 } // namespace Scooby

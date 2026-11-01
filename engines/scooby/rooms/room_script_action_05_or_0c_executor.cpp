@@ -33,13 +33,13 @@ const Common::Array<PaletteColor> RoomScriptAction05Or0CExecutor::kBlankPalette(
 
 void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 	// Ghidra 0x000045A4-0x000045B1: preserve the progress-bit-one early-return branch.
-	if ((_state.ProgressStateBytes[0] & 0x02) != 0) {
+	if ((_state.progressStateBytes[0] & 0x02) != 0) {
 		return;
 	}
 
 	// Ghidra 0x000045B2-0x000045C3: set progress bit one, then preserve Action0C's direct branch to the
 	// separate Action1D owner instead of executing any Action05 presentation work.
-	_state.ProgressStateBytes[0] |= 0x02;
+	_state.progressStateBytes[0] |= 0x02;
 	if (_rom.readUInt16(_state.roomScriptCurrentOffset + static_cast<int>(sizeof(uint16))) ==
 		kShortcutAction) {
 		_executeRoomScriptAction1D();
@@ -48,7 +48,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 
 	// Ghidra 0x000045C4-0x000045D1: managed locals replace the saved register set; retain the full-byte
 	// actor-upload wait rather than narrowing it to an authored actor mask.
-	while (_state.ActorTileUploadPendingFlags != 0) {
+	while (_state.actorTileUploadPendingFlags != 0) {
 		if (!_waitForRoomVerticalBlank()) {
 			return;
 		}
@@ -56,14 +56,14 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 
 	// Ghidra 0x000045D2-0x000045E7: close the room-update gate, wait one retrace, and replace the original
 	// 128 hardware writes wrapping across 64-word CRAM with their logical all-colors-black result.
-	_state.DisplayFlags &= static_cast<uint8>(~kRoomUpdateEnabledMask);
+	_state.displayFlags &= static_cast<uint8>(~kRoomUpdateEnabledMask);
 	if (!_waitForRoomVerticalBlank()) {
 		return;
 	}
 
 	_scene.replacePaletteRange(makeSpan(kBlankPalette), 0);
-	int16 savedCameraX = _state.CameraX;
-	int16 savedCameraY = _state.CameraY;
+	int16 savedCameraX = _state.cameraX;
+	int16 savedCameraY = _state.cameraY;
 	{
 		// Ghidra 0x000045E8-0x0000461D: the scoped logical-content snapshot replaces the complete 0x2200-word
 		// VRAM readback and restore. Construction/destruction order below reproduces the C# "using (...) {
@@ -73,14 +73,14 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 		TileScene::ContentReplacementGuard contentGuard = _scene.beginTemporaryContentReplacement();
 
 		struct CameraRestoreGuard {
-			RuntimeState &State;
-			int16 SavedX;
-			int16 SavedY;
+			RuntimeState &state;
+			int16 savedX;
+			int16 savedY;
 
 			~CameraRestoreGuard() {
 				// Ghidra 0x00004720-0x0000472F: restore camera Y then X while native interrupts are masked.
-				State.CameraY = SavedY;
-				State.CameraX = SavedX;
+				state.cameraY = savedY;
+				state.cameraX = savedX;
 			}
 		} cameraRestoreGuard{_state, savedCameraX, savedCameraY};
 
@@ -90,8 +90,8 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 
 		// Ghidra 0x0000462E-0x00004651: save and zero both cameras; new complete layer arrays replace the two
 		// hardware plane clears.
-		_state.CameraX = 0;
-		_state.CameraY = 0;
+		_state.cameraX = 0;
+		_state.cameraY = 0;
 		Common::Array<uint8> foregroundPlane(static_cast<size_t>(kPlaneColumns) *
 											 static_cast<size_t>(kPlaneRows) * sizeof(uint16));
 		Common::Array<uint8> backgroundPlane(foregroundPlane.size());
@@ -143,7 +143,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 			cameraToggleCounter--;
 			if (cameraToggleCounter < 0) {
 				cameraToggleCounter = 3;
-				_state.CameraX ^= 0x0100;
+				_state.cameraX ^= 0x0100;
 			}
 
 			if (!_waitForRoomVerticalBlank()) {
@@ -172,13 +172,13 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 	_tileStreamer.drawRoomViewport();
 
 	// Ghidra 0x0000475C-0x0000476B: preserve both consecutive writes that reopen room updates.
-	_state.DisplayFlags |= kRoomUpdateEnabledMask;
-	_state.DisplayFlags |= kRoomUpdateEnabledMask;
+	_state.displayFlags |= kRoomUpdateEnabledMask;
+	_state.displayFlags |= kRoomUpdateEnabledMask;
 
 	// Ghidra 0x0000476C-0x0000477B: update actor animation, request interaction refresh through bit one, and
 	// call its separate canonical function boundary.
 	_updateActorAnimationFrames();
-	_state.InteractionFlags |= kInteractionRefreshMask;
+	_state.interactionFlags |= kInteractionRefreshMask;
 	_refreshInteractionDisplay();
 
 	// Ghidra 0x0000477C-0x00004781: D0=5 gives the original WaitForFrames six retraces.
@@ -188,13 +188,13 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 
 	// Ghidra 0x00004782-0x000047A5: close room updates for one final retrace, republish all 64 room palette
 	// colors, and reopen the gate.
-	_state.DisplayFlags &= static_cast<uint8>(~kRoomUpdateEnabledMask);
+	_state.displayFlags &= static_cast<uint8>(~kRoomUpdateEnabledMask);
 	if (!_waitForRoomVerticalBlank()) {
 		return;
 	}
 
-	_scene.replacePaletteRange(makeSpan(_state.TargetPalette), 0);
-	_state.DisplayFlags |= kRoomUpdateEnabledMask;
+	_scene.replacePaletteRange(makeSpan(_state.targetPalette), 0);
+	_state.displayFlags |= kRoomUpdateEnabledMask;
 
 	// Ghidra 0x000047A6-0x000047AB: both completed branches converge on the separate Action1D owner.
 	_executeRoomScriptAction1D();

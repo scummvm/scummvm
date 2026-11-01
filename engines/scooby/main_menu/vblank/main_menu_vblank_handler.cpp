@@ -26,12 +26,12 @@ const Common::Array<int> MainMenuVBlankHandler::kLightningPaletteOffsets{0x16CF8
 
 void MainMenuVBlankHandler::handleMainMenuVBlank() {
 	// Ghidra 0x0000A38C-0x0000A49F: gate and advance the complete periodic lightning state machine.
-	if ((_state.VideoFlags & kMenuLightningEnabledMask) != 0) {
+	if ((_state.videoFlags & kMenuLightningEnabledMask) != 0) {
 		advanceLightning();
 	}
 
 	// Ghidra 0x0000A4A0-0x0000A4A3: advance every independent menu-animation output.
-	_presentation.advanceMenuAnimation((_state.InitializationFlags & kMenuAnimationEnabledMask) != 0);
+	_presentation.advanceMenuAnimation((_state.initializationFlags & kMenuAnimationEnabledMask) != 0);
 
 	// Ghidra 0x0000A4A4-0x0000A4E7: continue through the independently installed shared callback tail.
 	handleInputVBlankTail();
@@ -43,20 +43,20 @@ void MainMenuVBlankHandler::handleInputVBlankTail() {
 
 	// Ghidra 0x0000A4A8-0x0000A4BB: a held Start button sets room-script flag bit zero.
 	if (_state.isButtonDown(ControllerButtons::Start)) {
-		_state.RoomScriptFlags |= 0x01;
+		_state.roomScriptFlags |= 0x01;
 	}
 
 	// Ghidra 0x0000A4BC-0x0000A4CD: decrement the independent signed byte countdown through -1.
-	if (_state.AuxiliaryRetraceCountdown >= 0) {
-		_state.AuxiliaryRetraceCountdown--;
+	if (_state.auxiliaryRetraceCountdown >= 0) {
+		_state.auxiliaryRetraceCountdown--;
 	}
 
 	// Ghidra 0x0000A4CE-0x0000A4D5: release WaitForVerticalBlank's display-flag handshake.
-	_state.DisplayFlags &= 0xFE;
+	_state.displayFlags &= 0xFE;
 
 	// Ghidra 0x0000A4D6-0x0000A4E5: decrement the caller-owned signed word countdown through -1.
-	if (_state.RetraceCountdown >= 0) {
-		_state.RetraceCountdown--;
+	if (_state.retraceCountdown >= 0) {
+		_state.retraceCountdown--;
 	}
 }
 

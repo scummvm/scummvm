@@ -62,17 +62,17 @@ private:
 	// Preserves the recovered per-family cumulative-coordinate, tile, and shape table geometry shared by every
 	// actor sprite layout family, replacing the C# "private readonly record struct ActorSpriteLayout".
 	struct ActorSpriteLayout {
-		int PartCount;
-		int UnflippedXOffset;
-		int FlippedXOffset;
-		int YOffset;
-		int TileOffset;
-		int ShapeOffset;
+		int partCount;
+		int unflippedXOffset;
+		int flippedXOffset;
+		int yOffset;
+		int tileOffset;
+		int shapeOffset;
 
-		ActorSpriteLayout(int partCount, int unflippedXOffset, int flippedXOffset, int yOffset, int tileOffset,
-						  int shapeOffset)
-			: PartCount(partCount), UnflippedXOffset(unflippedXOffset), FlippedXOffset(flippedXOffset),
-			  YOffset(yOffset), TileOffset(tileOffset), ShapeOffset(shapeOffset) {
+		ActorSpriteLayout(int newPartCount, int newUnflippedXOffset, int newFlippedXOffset, int newYOffset, int newTileOffset,
+						  int newShapeOffset)
+			: partCount(newPartCount), unflippedXOffset(newUnflippedXOffset), flippedXOffset(newFlippedXOffset),
+			  yOffset(newYOffset), tileOffset(newTileOffset), shapeOffset(newShapeOffset) {
 		}
 	};
 

@@ -35,23 +35,23 @@ const Common::Array<uint8> kEmptyPackedCell = {0, 0};
 
 void RoomTileStreamer::drawRoomViewport() {
 	// Ghidra 0x00007950-0x000079A1: derive the width-strided source and camera-relative ring destination.
-	SDM_ASSERT(_state.ActiveRoomScene, "DrawRoomViewport requires an active room scene.");
-	const RoomSceneData &room = *_state.ActiveRoomScene;
-	uint16 cameraTileX = static_cast<uint16>(_state.CameraX) >> 3;
-	uint16 cameraTileY = static_cast<uint16>(_state.CameraY) >> 3;
+	SDM_ASSERT(_state.activeRoomScene, "DrawRoomViewport requires an active room scene.");
+	const RoomSceneData &room = *_state.activeRoomScene;
+	uint16 cameraTileX = static_cast<uint16>(_state.cameraX) >> 3;
+	uint16 cameraTileY = static_cast<uint16>(_state.cameraY) >> 3;
 	uint16 sourceByteOffset = static_cast<uint16>(
-		(cameraTileY * _state.RoomWidthTiles + cameraTileX) * static_cast<int>(sizeof(uint16)));
+		(cameraTileY * _state.roomWidthTiles + cameraTileX) * static_cast<int>(sizeof(uint16)));
 	uint16 sourceRowByteStride =
-		static_cast<uint16>(_state.RoomWidthTiles * static_cast<int>(sizeof(uint16)));
+		static_cast<uint16>(_state.roomWidthTiles * static_cast<int>(sizeof(uint16)));
 	int destinationColumn = cameraTileX & (kNameTableColumnCount - 1);
 	int destinationStartRow = (cameraTileY + 2) & (kNameTableRowCount - 1);
 
 	// Ghidra 0x000079A2-0x000079D9: publish all 19 rows and 32 columns from the background workspace.
-	publishViewport(makeSpan(room.BackgroundCells), TileLayer::Background, sourceByteOffset,
+	publishViewport(makeSpan(room.backgroundCells), TileLayer::Background, sourceByteOffset,
 					sourceRowByteStride, destinationColumn, destinationStartRow);
 
 	// Ghidra 0x000079DA-0x00007A0F: repeat the same source and destination traversal for the foreground.
-	publishViewport(makeSpan(room.ForegroundCells), TileLayer::Foreground, sourceByteOffset,
+	publishViewport(makeSpan(room.foregroundCells), TileLayer::Foreground, sourceByteOffset,
 					sourceRowByteStride, destinationColumn, destinationStartRow);
 
 	// Ghidra 0x00007A10-0x00007A29: refresh every bordering edge in the original unconditional order.
@@ -64,120 +64,120 @@ void RoomTileStreamer::drawRoomViewport() {
 void RoomTileStreamer::updateScrollingAndStreamTiles() {
 	// Ghidra 0x0000FA78-0x0000FA83: video bit one bypasses every update through edge-mask clearing but still
 	// reaches both final logical scroll publications.
-	if ((_state.VideoFlags & kScrollDerivationBypassMask) == 0) {
+	if ((_state.videoFlags & kScrollDerivationBypassMask) == 0) {
 		// Ghidra 0x0000FA84-0x0000FAE3: retain both inactive-pan and active-pan paths, word wrapping, crossing
 		// detection, signed direction selection, and equality-only completion.
-		if ((_state.TransitionFlags & kCameraPanActiveMask) != 0) {
-			_state.CameraX += _state.CameraPanStep;
-			int cameraRemainder = _state.CameraX & 0x07;
-			int crossingRemainder = static_cast<int16>(8 + _state.CameraPanStep) & 0x07;
+		if ((_state.transitionFlags & kCameraPanActiveMask) != 0) {
+			_state.cameraX += _state.cameraPanStep;
+			int cameraRemainder = _state.cameraX & 0x07;
+			int crossingRemainder = static_cast<int16>(8 + _state.cameraPanStep) & 0x07;
 			if (cameraRemainder == crossingRemainder) {
-				if (_state.CameraPanStep < 0) {
-					_state.TileStreamingEdgeFlags |= kLeftEdgeMask;
+				if (_state.cameraPanStep < 0) {
+					_state.tileStreamingEdgeFlags |= kLeftEdgeMask;
 				} else {
-					_state.TileStreamingEdgeFlags |= kRightEdgeMask;
+					_state.tileStreamingEdgeFlags |= kRightEdgeMask;
 				}
 			}
 
-			if (_state.CameraX == _state.CameraPanTargetX) {
-				_state.TransitionFlags &= static_cast<uint8>(~kCameraPanActiveMask);
+			if (_state.cameraX == _state.cameraPanTargetX) {
+				_state.transitionFlags &= static_cast<uint8>(~kCameraPanActiveMask);
 			}
 		}
 
 		// Ghidra 0x0000FAE4-0x0000FB17: derive the wrapped background X displacement, then retain both
 		// normal-copy and actor-zero-relative foreground branches selected by interaction bit six.
-		_state.BackgroundHorizontalScroll = static_cast<int16>(-(_state.CameraX & 0x03FF));
-		_state.ForegroundHorizontalScroll = _state.BackgroundHorizontalScroll;
-		if ((_state.InteractionFlags & kForegroundOverrideMask) != 0) {
-			int16 actorX = static_cast<int16>(_state.ActorXFixedCoordinates[0] >> 16);
-			_state.ForegroundHorizontalScroll = static_cast<int16>(actorX - _state.CameraX - 0x2C);
+		_state.backgroundHorizontalScroll = static_cast<int16>(-(_state.cameraX & 0x03FF));
+		_state.foregroundHorizontalScroll = _state.backgroundHorizontalScroll;
+		if ((_state.interactionFlags & kForegroundOverrideMask) != 0) {
+			int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16);
+			_state.foregroundHorizontalScroll = static_cast<int16>(actorX - _state.cameraX - 0x2C);
 		}
 
 		// Ghidra 0x0000FB18-0x0000FB49: derive the wrapped background Y displacement, then retain both
 		// normal-copy and negated actor-zero-relative foreground branches.
-		_state.BackgroundVerticalScroll = static_cast<int16>(_state.CameraY & 0x00FF);
-		_state.ForegroundVerticalScroll = _state.BackgroundVerticalScroll;
-		if ((_state.InteractionFlags & kForegroundOverrideMask) != 0) {
-			int16 actorY = static_cast<int16>(_state.ActorYFixedCoordinates[0] >> 16);
-			_state.ForegroundVerticalScroll = static_cast<int16>(-(actorY - _state.CameraY - 0x30));
+		_state.backgroundVerticalScroll = static_cast<int16>(_state.cameraY & 0x00FF);
+		_state.foregroundVerticalScroll = _state.backgroundVerticalScroll;
+		if ((_state.interactionFlags & kForegroundOverrideMask) != 0) {
+			int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[0] >> 16);
+			_state.foregroundVerticalScroll = static_cast<int16>(-(actorY - _state.cameraY - 0x30));
 		}
 
 		// Ghidra 0x0000FB4A-0x0000FBCB: retain the disabled branch, signed delay branch, four-entry high-byte
 		// cursor cycle, all 22 adjacent phase pairs, and equality-only terminal offset.
-		if ((_state.RoomBehaviorFlags & kRoomScrollAnimationMask) != 0) {
+		if ((_state.roomBehaviorFlags & kRoomScrollAnimationMask) != 0) {
 			bool applyPhaseOffsets = true;
-			if (_state.ScrollAnimationPhaseOffset < 0) {
-				_state.ScrollAnimationDelay--;
-				if (_state.ScrollAnimationDelay >= 0) {
+			if (_state.scrollAnimationPhaseOffset < 0) {
+				_state.scrollAnimationDelay--;
+				if (_state.scrollAnimationDelay >= 0) {
 					applyPhaseOffsets = false;
 				} else {
 					int8 delayIndex = static_cast<int8>(
-						static_cast<uint16>(_state.ScrollAnimationDelayCursor) >> 8);
-					_state.ScrollAnimationDelay =
+						static_cast<uint16>(_state.scrollAnimationDelayCursor) >> 8);
+					_state.scrollAnimationDelay =
 						static_cast<int8>(_rom.readByte(kRoomScrollPhaseDelaysOffset + delayIndex));
 					int16 nextDelayIndex = static_cast<int16>(delayIndex + 1);
 					if (nextDelayIndex == kRoomScrollPhaseDelayCount) {
 						nextDelayIndex = 0;
 					}
 
-					_state.ScrollAnimationDelayCursor = static_cast<int16>(
-						(static_cast<uint16>(_state.ScrollAnimationDelayCursor) & 0x00FF) |
+					_state.scrollAnimationDelayCursor = static_cast<int16>(
+						(static_cast<uint16>(_state.scrollAnimationDelayCursor) & 0x00FF) |
 						((static_cast<uint16>(nextDelayIndex) & 0x00FF) << 8));
-					_state.ScrollAnimationPhaseOffset = 0;
+					_state.scrollAnimationPhaseOffset = 0;
 				}
 			}
 
 			if (applyPhaseOffsets) {
-				int16 phaseOffset = _state.ScrollAnimationPhaseOffset;
-				_state.ScrollAnimationPhaseOffset =
+				int16 phaseOffset = _state.scrollAnimationPhaseOffset;
+				_state.scrollAnimationPhaseOffset =
 					static_cast<int16>(phaseOffset + static_cast<int>(sizeof(uint16)));
-				if (_state.ScrollAnimationPhaseOffset == kRoomScrollPhaseTerminalOffset) {
-					_state.ScrollAnimationPhaseOffset = -1;
+				if (_state.scrollAnimationPhaseOffset == kRoomScrollPhaseTerminalOffset) {
+					_state.scrollAnimationPhaseOffset = -1;
 				}
 
-				_state.ForegroundVerticalScroll += _rom.readInt16(kRoomScrollPhaseOffsetsOffset + phaseOffset);
-				_state.BackgroundVerticalScroll += _rom.readInt16(kRoomScrollPhaseOffsetsOffset + phaseOffset + static_cast<int>(sizeof(uint16)));
+				_state.foregroundVerticalScroll += _rom.readInt16(kRoomScrollPhaseOffsetsOffset + phaseOffset);
+				_state.backgroundVerticalScroll += _rom.readInt16(kRoomScrollPhaseOffsetsOffset + phaseOffset + static_cast<int>(sizeof(uint16)));
 			}
 		}
 
 		// Ghidra 0x0000FBCC-0x0000FC09: test every edge independently in right, left, top, bottom order, then
 		// clear the complete byte including unconsumed high bits.
-		if ((_state.TileStreamingEdgeFlags & kRightEdgeMask) != 0) {
+		if ((_state.tileStreamingEdgeFlags & kRightEdgeMask) != 0) {
 			streamRoomRightEdgeColumns();
 		}
 
-		if ((_state.TileStreamingEdgeFlags & kLeftEdgeMask) != 0) {
+		if ((_state.tileStreamingEdgeFlags & kLeftEdgeMask) != 0) {
 			streamRoomLeftEdgeColumns();
 		}
 
-		if ((_state.TileStreamingEdgeFlags & kTopEdgeMask) != 0) {
+		if ((_state.tileStreamingEdgeFlags & kTopEdgeMask) != 0) {
 			streamRoomTopEdgeRows();
 		}
 
-		if ((_state.TileStreamingEdgeFlags & kBottomEdgeMask) != 0) {
+		if ((_state.tileStreamingEdgeFlags & kBottomEdgeMask) != 0) {
 			streamRoomBottomEdgeRows();
 		}
 
-		_state.TileStreamingEdgeFlags = 0;
+		_state.tileStreamingEdgeFlags = 0;
 	}
 
 	// Ghidra 0x0000FC0A-0x0000FC23: replace both WriteSingleVramWord horizontal-scroll transfers with logical
 	// foreground/background publication in the same order.
-	_scene.setHorizontalOffsets(_state.ForegroundHorizontalScroll, _state.BackgroundHorizontalScroll);
+	_scene.setHorizontalOffsets(_state.foregroundHorizontalScroll, _state.backgroundHorizontalScroll);
 
 	// Ghidra 0x0000FC24-0x0000FC39: replace the paired VSRAM longword write with logical vertical-scroll
 	// publication and return without retaining VDP command state.
-	_scene.setVerticalOffsets(_state.ForegroundVerticalScroll, _state.BackgroundVerticalScroll);
+	_scene.setVerticalOffsets(_state.foregroundVerticalScroll, _state.backgroundVerticalScroll);
 }
 
 void RoomTileStreamer::streamRoomRightEdgeColumns() {
 	// Ghidra 0x0000FC3A-0x0000FC51: equality with width minus 32 alone skips the complete right edge.
-	uint16 cameraTileX = static_cast<uint16>(_state.CameraX) >> 3;
-	uint16 rightmostCameraTileX = static_cast<uint16>(_state.RoomWidthTiles -
+	uint16 cameraTileX = static_cast<uint16>(_state.cameraX) >> 3;
+	uint16 rightmostCameraTileX = static_cast<uint16>(_state.roomWidthTiles -
 													  kViewportWidthTiles);
 	if (cameraTileX != rightmostCameraTileX) {
 		// Ghidra 0x0000FC52-0x0000FCB1: select column X+32 from row Y-1 and derive its first segment.
-		uint16 cameraTileY = static_cast<uint16>(_state.CameraY) >> 3;
+		uint16 cameraTileY = static_cast<uint16>(_state.cameraY) >> 3;
 		uint16 sourceX = static_cast<uint16>(cameraTileX + kViewportWidthTiles);
 
 		// Ghidra 0x0000FCB2-0x0000FCFB / 0x0000FCFC-0x0000FD05 / 0x0000FD06-0x0000FD53: publish the first
@@ -191,11 +191,11 @@ void RoomTileStreamer::streamRoomRightEdgeColumns() {
 
 void RoomTileStreamer::streamRoomLeftEdgeColumns() {
 	// Ghidra 0x0000FD5E-0x0000FD69: column zero alone skips the complete left edge.
-	uint16 cameraTileX = static_cast<uint16>(_state.CameraX) >> 3;
+	uint16 cameraTileX = static_cast<uint16>(_state.cameraX) >> 3;
 	if (cameraTileX != 0) {
 		// Ghidra 0x0000FD6A-0x0000FDC7: select column X-1 from row Y-1 and derive its first segment.
 		uint16 sourceX = static_cast<uint16>(cameraTileX - 1);
-		uint16 cameraTileY = static_cast<uint16>(_state.CameraY) >> 3;
+		uint16 cameraTileY = static_cast<uint16>(_state.cameraY) >> 3;
 
 		// Ghidra 0x0000FDC8-0x0000FE11 / 0x0000FE12-0x0000FE1B / 0x0000FE1C-0x0000FE69: publish the first
 		// segment and any wrapped remainder through the shared column publisher.
@@ -208,10 +208,10 @@ void RoomTileStreamer::streamRoomLeftEdgeColumns() {
 
 void RoomTileStreamer::streamRoomTopEdgeRows() {
 	// Ghidra 0x0000FE74-0x0000FE7F: row zero alone skips the complete top edge.
-	uint16 cameraTileY = static_cast<uint16>(_state.CameraY) >> 3;
+	uint16 cameraTileY = static_cast<uint16>(_state.cameraY) >> 3;
 	if (cameraTileY != 0) {
 		// Ghidra 0x0000FE80-0x0000FEDF: select row Y-1 from column X-1 and derive its first segment.
-		uint16 cameraTileX = static_cast<uint16>(_state.CameraX) >> 3;
+		uint16 cameraTileX = static_cast<uint16>(_state.cameraX) >> 3;
 		uint16 sourceX = static_cast<uint16>(cameraTileX - 1);
 		uint16 sourceY = static_cast<uint16>(cameraTileY - 1);
 		int destinationRow = (cameraTileY + 1) & (kNameTableRowCount - 1);
@@ -226,13 +226,13 @@ void RoomTileStreamer::streamRoomTopEdgeRows() {
 
 void RoomTileStreamer::streamRoomBottomEdgeRows() {
 	// Ghidra 0x0000FF68-0x0000FF7F: equality with height minus 19 alone skips the complete bottom edge.
-	uint16 cameraTileY = static_cast<uint16>(_state.CameraY) >> 3;
-	uint16 bottommostCameraTileY = static_cast<uint16>(_state.RoomHeightTiles -
+	uint16 cameraTileY = static_cast<uint16>(_state.cameraY) >> 3;
+	uint16 bottommostCameraTileY = static_cast<uint16>(_state.roomHeightTiles -
 													   kViewportHeightTiles);
 	if (cameraTileY != bottommostCameraTileY) {
 		// Ghidra 0x0000FF80-0x0000FFE1: select row Y+19 from column X-1 and derive its first segment.
 		uint16 sourceY = static_cast<uint16>(cameraTileY + kViewportHeightTiles);
-		uint16 cameraTileX = static_cast<uint16>(_state.CameraX) >> 3;
+		uint16 cameraTileX = static_cast<uint16>(_state.cameraX) >> 3;
 		uint16 sourceX = static_cast<uint16>(cameraTileX - 1);
 		int destinationRow = (sourceY + 2) & (kNameTableRowCount - 1);
 
@@ -269,7 +269,7 @@ void RoomTileStreamer::publishColumn(Span<const uint8> packedCells, TileLayer la
 
 void RoomTileStreamer::publishHorizontalEdgeRow(uint16 sourceX, int sourceY, int destinationRow) {
 	uint16 sourceRowByteStride =
-		static_cast<uint16>(_state.RoomWidthTiles * static_cast<int>(sizeof(uint16)));
+		static_cast<uint16>(_state.roomWidthTiles * static_cast<int>(sizeof(uint16)));
 	int16 sourceByteOffset = static_cast<int16>(sourceY * sourceRowByteStride +
 												sourceX * static_cast<int>(sizeof(uint16)));
 	int destinationColumn = sourceX & (kNameTableColumnCount - 1);
@@ -278,12 +278,12 @@ void RoomTileStreamer::publishHorizontalEdgeRow(uint16 sourceX, int sourceY, int
 		firstSegmentColumnCount = kEdgeRowWidthTiles;
 	}
 
-	SDM_ASSERT(_state.ActiveRoomScene, "PublishHorizontalEdgeRow requires an active room scene.");
-	const RoomSceneData &room = *_state.ActiveRoomScene;
-	publishRow(makeSpan(room.BackgroundCells), TileLayer::Background, sourceByteOffset,
+	SDM_ASSERT(_state.activeRoomScene, "PublishHorizontalEdgeRow requires an active room scene.");
+	const RoomSceneData &room = *_state.activeRoomScene;
+	publishRow(makeSpan(room.backgroundCells), TileLayer::Background, sourceByteOffset,
 			   destinationColumn, destinationRow, firstSegmentColumnCount);
-	if ((_state.InteractionFlags & kForegroundOverrideMask) == 0) {
-		publishRow(makeSpan(room.ForegroundCells), TileLayer::Foreground, sourceByteOffset,
+	if ((_state.interactionFlags & kForegroundOverrideMask) == 0) {
+		publishRow(makeSpan(room.foregroundCells), TileLayer::Foreground, sourceByteOffset,
 				   destinationColumn, destinationRow, firstSegmentColumnCount);
 	}
 
@@ -295,11 +295,11 @@ void RoomTileStreamer::publishHorizontalEdgeRow(uint16 sourceX, int sourceY, int
 	int secondSegmentColumnCount = -remainingBalance;
 	int secondSourceByteOffset =
 		sourceByteOffset + firstSegmentColumnCount * static_cast<int>(sizeof(uint16));
-	publishRow(makeSpan(room.BackgroundCells), TileLayer::Background, secondSourceByteOffset,
+	publishRow(makeSpan(room.backgroundCells), TileLayer::Background, secondSourceByteOffset,
 			   0,
 			   destinationRow, secondSegmentColumnCount);
-	if ((_state.InteractionFlags & kForegroundOverrideMask) == 0) {
-		publishRow(makeSpan(room.ForegroundCells), TileLayer::Foreground,
+	if ((_state.interactionFlags & kForegroundOverrideMask) == 0) {
+		publishRow(makeSpan(room.foregroundCells), TileLayer::Foreground,
 				   secondSourceByteOffset,
 				   0, destinationRow, secondSegmentColumnCount);
 	}
@@ -327,7 +327,7 @@ void RoomTileStreamer::publishRow(Span<const uint8> packedCells, TileLayer layer
 
 void RoomTileStreamer::publishVerticalEdgeColumn(uint16 sourceX, int cameraTileY) {
 	uint16 sourceRowByteStride =
-		static_cast<uint16>(_state.RoomWidthTiles * static_cast<int>(sizeof(uint16)));
+		static_cast<uint16>(_state.roomWidthTiles * static_cast<int>(sizeof(uint16)));
 	int16 sourceByteOffset =
 		static_cast<int16>(sourceX * static_cast<int>(sizeof(uint16)) +
 						   cameraTileY * sourceRowByteStride - sourceRowByteStride);
@@ -338,12 +338,12 @@ void RoomTileStreamer::publishVerticalEdgeColumn(uint16 sourceX, int cameraTileY
 		firstSegmentRowCount = kEdgeColumnHeightTiles;
 	}
 
-	SDM_ASSERT(_state.ActiveRoomScene, "PublishVerticalEdgeColumn requires an active room scene.");
-	const RoomSceneData &room = *_state.ActiveRoomScene;
-	publishColumn(makeSpan(room.BackgroundCells), TileLayer::Background, sourceByteOffset,
+	SDM_ASSERT(_state.activeRoomScene, "PublishVerticalEdgeColumn requires an active room scene.");
+	const RoomSceneData &room = *_state.activeRoomScene;
+	publishColumn(makeSpan(room.backgroundCells), TileLayer::Background, sourceByteOffset,
 				  sourceRowByteStride, destinationColumn, destinationStartRow, firstSegmentRowCount);
-	if ((_state.InteractionFlags & kForegroundOverrideMask) == 0) {
-		publishColumn(makeSpan(room.ForegroundCells), TileLayer::Foreground, sourceByteOffset,
+	if ((_state.interactionFlags & kForegroundOverrideMask) == 0) {
+		publishColumn(makeSpan(room.foregroundCells), TileLayer::Foreground, sourceByteOffset,
 					  sourceRowByteStride, destinationColumn, destinationStartRow, firstSegmentRowCount);
 	}
 
@@ -354,11 +354,11 @@ void RoomTileStreamer::publishVerticalEdgeColumn(uint16 sourceX, int cameraTileY
 
 	int secondSegmentRowCount = -remainingBalance;
 	int secondSourceByteOffset = sourceByteOffset + firstSegmentRowCount * sourceRowByteStride;
-	publishColumn(makeSpan(room.BackgroundCells), TileLayer::Background,
+	publishColumn(makeSpan(room.backgroundCells), TileLayer::Background,
 				  secondSourceByteOffset,
 				  sourceRowByteStride, destinationColumn, 0, secondSegmentRowCount);
-	if ((_state.InteractionFlags & kForegroundOverrideMask) == 0) {
-		publishColumn(makeSpan(room.ForegroundCells), TileLayer::Foreground,
+	if ((_state.interactionFlags & kForegroundOverrideMask) == 0) {
+		publishColumn(makeSpan(room.foregroundCells), TileLayer::Foreground,
 					  secondSourceByteOffset, sourceRowByteStride, destinationColumn, 0, secondSegmentRowCount);
 	}
 }

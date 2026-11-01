@@ -34,12 +34,12 @@ const Common::Array<uint8> DialogueController::kDialogueCountdownStepBytes{
 void DialogueController::drawDialogueText(const DialogueTextSource &source) {
 	// Ghidra 0x0000A054-0x0000A06B: the 0x3FF DBF loop writes all 1,024 Window cells. One logical fill
 	// replaces the hardware address setup and individually interrupt-masked WriteSingleVramWord calls.
-	_scene.fillWindow(decodeTileCell(_state.BlankTileCell));
+	_scene.fillWindow(decodeTileCell(_state.blankTileCell));
 
 	// Ghidra 0x0000A06C-0x0000A07D: preserve the distinct measurement boundary, raw-length publication,
 	// first text-row address, and initial two-row Window boundary.
 	int16 remainingLength = measureNullTerminatedString(source);
-	_state.TextDisplayCountdown = remainingLength;
+	_state.textDisplayCountdown = remainingLength;
 	int sourceIndex = 0;
 	int row = 1;
 	uint8 windowPositionBits = kInitialWindowRowCount;
@@ -70,12 +70,12 @@ void DialogueController::drawDialogueText(const DialogueTextSource &source) {
 
 	// Ghidra 0x0000A110-0x0000A11F: publish the complete low-byte register-18 value. Logical clipping
 	// replaces the hardware register write while retaining both its low-five-bit boundary and bit-seven side.
-	_state.WindowVerticalPositionBits = windowPositionBits;
+	_state.windowVerticalPositionBits = windowPositionBits;
 	_scene.setWindowVerticalPosition(windowPositionBits);
 
 	// Ghidra 0x0000A120-0x0000A12F: reload the originally measured length, shift its word left four,
 	// and retain the wrapped countdown used by dialogue dismissal.
-	_state.TextDisplayCountdown <<= 4;
+	_state.textDisplayCountdown <<= 4;
 }
 
 int16 DialogueController::drawTimedInteractionText(const DialogueTextSource &source, int16 row,
@@ -114,7 +114,7 @@ int16 DialogueController::drawTimedInteractionText(const DialogueTextSource &sou
 
 	// Ghidra 0x0000A042-0x0000A053: return the line-count word and publish the low word of its unsigned
 	// multiplication by 300 after restoring the original caller-owned register context.
-	_state.TextDisplayCountdown = static_cast<int16>(static_cast<uint16>(lineCount) * 300);
+	_state.textDisplayCountdown = static_cast<int16>(static_cast<uint16>(lineCount) * 300);
 	return lineCount;
 }
 
@@ -122,7 +122,7 @@ void DialogueController::writeInteractionLine(const DialogueTextSource &source, 
 											  int16 lineLength, uint16 destinationAddress) {
 	int16 characterCounter = static_cast<int16>(lineLength - 1);
 	do {
-		uint16 packedCell = static_cast<uint16>(_state.InterfaceTileAttributes +
+		uint16 packedCell = static_cast<uint16>(_state.interfaceTileAttributes +
 												source.readByte(_rom, sourceIndex++));
 		uint16 cellOffset = static_cast<uint16>(
 			static_cast<uint16>(destinationAddress - kInterfaceNameTableAddress) /
@@ -142,7 +142,7 @@ void DialogueController::writeCenteredLine(const DialogueTextSource &source, int
 		kFirstTextCellAddress + (row - 1) * kWindowRowByteStride + kCenteringWidth - (lineLength & 0xFFFE));
 	int16 characterCounter = static_cast<int16>(lineLength - 1);
 	do {
-		uint16 packedCell = static_cast<uint16>(_state.InterfaceTileAttributes +
+		uint16 packedCell = static_cast<uint16>(_state.interfaceTileAttributes +
 												source.readByte(_rom, sourceIndex++));
 		uint16 cellOffset = static_cast<uint16>(
 			static_cast<uint16>(destinationAddress - kWindowNameTableAddress) /
@@ -179,11 +179,11 @@ void DialogueController::clearDialogueText() {
 Optional<SessionExit> DialogueController::presentDialogueAndWait(
 	const DialogueTextSource &source) {
 	// Ghidra 0x0000A130-0x0000A13B: retain only the caller's display bit three for later OR restoration.
-	uint8 dialogueDisplayFlag = static_cast<uint8>(_state.DisplayFlags & kDialogueDisplayMask);
+	uint8 dialogueDisplayFlag = static_cast<uint8>(_state.displayFlags & kDialogueDisplayMask);
 
 	// Ghidra 0x0000A13C-0x0000A14F: clear that bit, then preserve all three distinct original boundaries
 	// in order. A managed non-returning dismissal bypasses every cleanup and restoration below.
-	_state.DisplayFlags &= static_cast<uint8>(~kDialogueDisplayMask);
+	_state.displayFlags &= static_cast<uint8>(~kDialogueDisplayMask);
 	drawDialogueText(source);
 	Optional<SessionExit> requestedExit = waitForDialogueDismissal();
 	if (requestedExit.hasValue()) {
@@ -195,20 +195,20 @@ Optional<SessionExit> DialogueController::presentDialogueAndWait(
 	// Ghidra 0x0000A150-0x0000A15F: replace the VDP register-18 write with the same logical Window
 	// clipping byte and publish the recovered RAM mirror after the scene update.
 	_scene.setWindowVerticalPosition(kInitialWindowRowCount);
-	_state.WindowVerticalPositionBits = kInitialWindowRowCount;
+	_state.windowVerticalPositionBits = kInitialWindowRowCount;
 
 	// Ghidra 0x0000A160-0x0000A167: OR only the saved bit into the callback-updated display byte.
-	_state.DisplayFlags |= dialogueDisplayFlag;
+	_state.displayFlags |= dialogueDisplayFlag;
 
 	// Ghidra 0x0000A168-0x0000A171: request an interaction-display refresh and return normally.
-	_state.InteractionFlags |= kInteractionRefreshMask;
+	_state.interactionFlags |= kInteractionRefreshMask;
 	return Optional<SessionExit>();
 }
 
 Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 	// Ghidra 0x0000A18C-0x0000A191: logically shift the complete unsigned countdown word once.
-	_state.TextDisplayCountdown = static_cast<int16>(
-		static_cast<uint16>(_state.TextDisplayCountdown) >> 1);
+	_state.textDisplayCountdown = static_cast<int16>(
+		static_cast<uint16>(_state.textDisplayCountdown) >> 1);
 
 	// Ghidra 0x0000A192-0x0000A1A9: A release has priority over the B release test. Native interrupts
 	// updated input during these spins; each managed continuation services that asynchronous boundary.
@@ -240,13 +240,13 @@ Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 		}
 
 		// Ghidra 0x0000A1B2-0x0000A1C9: only the conjunction of room-script bits one and zero returns.
-		if ((_state.RoomScriptFlags & 0x02) != 0 && (_state.RoomScriptFlags & 0x01) != 0) {
+		if ((_state.roomScriptFlags & 0x02) != 0 && (_state.roomScriptFlags & 0x01) != 0) {
 			return Optional<SessionExit>();
 		}
 
 		// Ghidra 0x0000A1CA-0x0000A1E7: retain both independent gates around random animation selection.
-		if ((_state.InteractionFlags & kDialogueInteractionAnimationMask) != 0 &&
-			(_state.ActorAnimationHoldFlags & kActorZeroHoldMask) != 0) {
+		if ((_state.interactionFlags & kDialogueInteractionAnimationMask) != 0 &&
+			(_state.actorAnimationHoldFlags & kActorZeroHoldMask) != 0) {
 			SDM_ASSERT(_chooseRandomInteractionAnimation != nullptr,
 					   "DialogueController chooseRandomInteractionAnimation callback is not bound.");
 			(*_chooseRandomInteractionAnimation)();
@@ -260,12 +260,12 @@ Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 
 		// Ghidra 0x0000A1EC-0x0000A1FF: sign-extend the word byte offset, read the selected big-endian word,
 		// publish wrapping subtraction, and return only when the original unsigned operation borrowed.
-		int16 timingOffset = _state.DialogueTimingTableOffset;
+		int16 timingOffset = _state.dialogueTimingTableOffset;
 		uint16 countdownStep = static_cast<uint16>(
 			(kDialogueCountdownStepBytes[static_cast<size_t>(timingOffset)] << 8) |
 			kDialogueCountdownStepBytes[static_cast<size_t>(timingOffset + 1)]);
-		uint16 countdown = static_cast<uint16>(_state.TextDisplayCountdown);
-		_state.TextDisplayCountdown = static_cast<int16>(countdown - countdownStep);
+		uint16 countdown = static_cast<uint16>(_state.textDisplayCountdown);
+		_state.textDisplayCountdown = static_cast<int16>(countdown - countdownStep);
 		if (countdown < countdownStep) {
 			return Optional<SessionExit>();
 		}

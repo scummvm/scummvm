@@ -33,45 +33,45 @@ void RoomScriptCommand0BExecutor::scriptCommand0BSetBackgroundGfx(int mode) {
 		// and preserve both outcomes of fixed-position flag bit one.
 		uint16 encodedObjectId = _rom.readUInt16(commandOffset + 2);
 		uint16 objectId = static_cast<uint16>(encodedObjectId & 0x7FFF);
-		RoomObject &roomObject = _state.RoomObjects[objectId - 3];
+		RoomObject &roomObject = _state.roomObjects[objectId - 3];
 		int16 tilePatchIndex = _rom.readInt16(commandOffset + 4);
-		if ((roomObject.Flags & kFixedPositionMask) != 0) {
+		if ((roomObject.flags & kFixedPositionMask) != 0) {
 			// Ghidra 0x00002E14-0x00002E1D: a fixed-position object replaces only its tile-patch word.
-			roomObject.TilePatchIndex = tilePatchIndex;
+			roomObject.tilePatchIndex = tilePatchIndex;
 		} else {
 			// Ghidra 0x00002E1E-0x00002E2F: snapshot the prior room ID and retain both command-value outcomes;
 			// only a nonzero value replaces the shape word.
-			int16 previousRoomId = roomObject.RoomId;
+			int16 previousRoomId = roomObject.roomId;
 			if (tilePatchIndex != 0) {
-				roomObject.ShapeIndex = tilePatchIndex;
+				roomObject.shapeIndex = tilePatchIndex;
 			}
 
 			// Ghidra 0x00002E30-0x00002E43: a non-active-room object replaces tile-patch and skips every
 			// pending-publication and encoded-identity branch.
-			if (previousRoomId != _state.RoomId) {
-				roomObject.TilePatchIndex = tilePatchIndex;
+			if (previousRoomId != _state.roomId) {
+				roomObject.tilePatchIndex = tilePatchIndex;
 			} else {
 				bool publishTilePatch = false;
 				if (tilePatchIndex == 0) {
 					// Ghidra 0x00002E44-0x00002E5B: zero preserves an already-zero tile and skips publication;
 					// otherwise set both retirement bits before joining the common path.
-					if (roomObject.TilePatchIndex != 0) {
-						roomObject.TilePatchIndex = static_cast<int16>(
-							static_cast<uint16>(roomObject.TilePatchIndex) | kTilePatchRetirementMask);
+					if (roomObject.tilePatchIndex != 0) {
+						roomObject.tilePatchIndex = static_cast<int16>(
+							static_cast<uint16>(roomObject.tilePatchIndex) | kTilePatchRetirementMask);
 						publishTilePatch = true;
 					}
 				} else {
 					// Ghidra 0x00002E5C-0x00002E61: nonzero replaces the complete tile-patch word.
-					roomObject.TilePatchIndex = tilePatchIndex;
+					roomObject.tilePatchIndex = tilePatchIndex;
 					publishTilePatch = true;
 				}
 
 				if (publishTilePatch) {
 					// Ghidra 0x00002E62-0x00002E77: queue flag bit zero, preserve both encoded-sign outcomes,
 					// and retain both busy-loop outcomes until asynchronous publication clears it.
-					roomObject.Flags |= kTilePatchPendingMask;
+					roomObject.flags |= kTilePatchPendingMask;
 					if (static_cast<int16>(encodedObjectId) < 0) {
-						while ((roomObject.Flags & kTilePatchPendingMask) != 0) {
+						while ((roomObject.flags & kTilePatchPendingMask) != 0) {
 							if (!_waitForRoomVerticalBlank()) {
 								return;
 							}

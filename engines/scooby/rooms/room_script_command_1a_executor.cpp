@@ -42,26 +42,26 @@ void RoomScriptCommand1AExecutor::executeRoomScriptCommand1A(int mode) {
 				// Ghidra 0x00002636-0x0000265F: disable the modulo-eight selector bit, retain the doubled-word
 				// source offset and unsigned end-minus-start count, and replace CRAM DMA with publication of
 				// the same logical target-palette slice.
-				_state.AnimatedPaletteRangeFlags &= static_cast<uint8>(~rangeMask);
+				_state.animatedPaletteRangeFlags &= static_cast<uint8>(~rangeMask);
 				uint16 startIndex = _rom.readUInt16(commandOffset + 4);
 				int16 paletteIndexShifted = static_cast<int16>(startIndex << 1);
 				int paletteIndex = paletteIndexShifted / static_cast<int>(sizeof(uint16));
 				uint16 colorCount =
 					static_cast<uint16>(_rom.readUInt16(commandOffset + 6) - startIndex);
-				_scene.replacePaletteRange(makeSpan(_state.TargetPalette)
+				_scene.replacePaletteRange(makeSpan(_state.targetPalette)
 											   .slice(static_cast<size_t>(paletteIndex),
 													  static_cast<size_t>(colorCount)),
 										   paletteIndex);
 			} else {
 				// Ghidra 0x00002660-0x00002687: write the selected start and end, initialize the live
 				// countdown before its identical reload interval, then enable the bit after every field.
-				_state.AnimatedPaletteRangeStartIndices[static_cast<size_t>(rangeIndex)] =
+				_state.animatedPaletteRangeStartIndices[static_cast<size_t>(rangeIndex)] =
 					_rom.readUInt16(commandOffset + 4);
-				_state.AnimatedPaletteRangeEndIndices[static_cast<size_t>(rangeIndex)] =
+				_state.animatedPaletteRangeEndIndices[static_cast<size_t>(rangeIndex)] =
 					_rom.readUInt16(commandOffset + 6);
-				_state.AnimatedPaletteRangeCountdowns[static_cast<size_t>(rangeIndex)] = interval;
-				_state.AnimatedPaletteRangeIntervals[static_cast<size_t>(rangeIndex)] = interval;
-				_state.AnimatedPaletteRangeFlags |= rangeMask;
+				_state.animatedPaletteRangeCountdowns[static_cast<size_t>(rangeIndex)] = interval;
+				_state.animatedPaletteRangeIntervals[static_cast<size_t>(rangeIndex)] = interval;
+				_state.animatedPaletteRangeFlags |= rangeMask;
 			}
 		}
 	}

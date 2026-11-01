@@ -25,79 +25,79 @@ namespace Scooby {
 
 void RoomScriptCameraPanExecutor::scriptAction0DLockCamera() {
 	// Ghidra 0x00004482-0x00004489: set only the camera-follow lock.
-	_state.RoomBehaviorFlags |= 0x02;
+	_state.roomBehaviorFlags |= 0x02;
 	// Ghidra 0x0000448A-0x0000448B: return with every other room-behavior flag preserved.
 }
 
 void RoomScriptCameraPanExecutor::scriptAction0EUnlockCamera() {
 	// Ghidra 0x0000448C-0x00004493: clear only the camera-follow lock.
-	_state.RoomBehaviorFlags &= 0xFD;
+	_state.roomBehaviorFlags &= 0xFD;
 	// Ghidra 0x00004494-0x00004495: return with every other room-behavior flag preserved.
 }
 
 void RoomScriptCameraPanExecutor::scriptAction0FCameraPanRight() {
 	// Ghidra 0x000043C0-0x000043C7: disable automatic camera following without changing other behavior.
-	_state.RoomBehaviorFlags |= 0x02;
+	_state.roomBehaviorFlags |= 0x02;
 
 	// Ghidra 0x000043C8-0x000043EF: clear only camera-X bit zero, then preserve the separate signed 16-bit
 	// next-tile comparison and its early return.
-	_state.CameraX &= 0xFFFE;
-	int16 alignedNextTileX = static_cast<int16>((_state.CameraX + 8) & 0xFFF8);
-	int16 cameraTargetX = static_cast<int16>((_state.RoomWidthTiles - 32) << 3);
+	_state.cameraX &= 0xFFFE;
+	int16 alignedNextTileX = static_cast<int16>((_state.cameraX + 8) & 0xFFF8);
+	int16 cameraTargetX = static_cast<int16>((_state.roomWidthTiles - 32) << 3);
 	if (alignedNextTileX >= cameraTargetX) {
 		return;
 	}
 
 	// Ghidra 0x000043F0-0x00004409: retain both normal and alternate positive-step branches.
-	_state.CameraPanStep = (_state.TransitionFlags & 0x10) == 0
+	_state.cameraPanStep = (_state.transitionFlags & 0x10) == 0
 							   ? static_cast<int16>(2)
 							   : static_cast<int16>(8);
 
 	// Ghidra 0x0000440A-0x00004425: publish the exact target, activate the pan, advance animations at least
 	// once, and preserve the complete back edge. Original VBlank interrupts update camera X asynchronously,
 	// so service one callback-aware clocked frame after every still-active iteration.
-	_state.CameraPanTargetX = cameraTargetX;
-	_state.TransitionFlags |= kCameraPanActiveMask;
+	_state.cameraPanTargetX = cameraTargetX;
+	_state.transitionFlags |= kCameraPanActiveMask;
 	do {
 		_updateActorAnimationFrames();
-		if ((_state.TransitionFlags & kCameraPanActiveMask) != 0) {
+		if ((_state.transitionFlags & kCameraPanActiveMask) != 0) {
 			if (!_waitForRoomVerticalBlank()) {
 				return;
 			}
 		}
-	} while ((_state.TransitionFlags & kCameraPanActiveMask) != 0);
+	} while ((_state.transitionFlags & kCameraPanActiveMask) != 0);
 
 	// Ghidra 0x00004426-0x00004427: return after the scrolling owner reaches the exact target.
 }
 
 void RoomScriptCameraPanExecutor::scriptAction10CameraPanLeft() {
 	// Ghidra 0x00004428-0x0000442F: disable automatic camera following without changing other behavior.
-	_state.RoomBehaviorFlags |= 0x02;
+	_state.roomBehaviorFlags |= 0x02;
 
 	// Ghidra 0x00004430-0x00004445: align camera X to an even pixel and preserve the zero early return.
-	_state.CameraX &= 0xFFFE;
-	if (_state.CameraX == 0) {
+	_state.cameraX &= 0xFFFE;
+	if (_state.cameraX == 0) {
 		return;
 	}
 
 	// Ghidra 0x00004446-0x00004467: target the left edge and retain both normal and alternate step branches.
-	_state.CameraPanTargetX = 0;
-	_state.CameraPanStep = (_state.TransitionFlags & 0x10) == 0
+	_state.cameraPanTargetX = 0;
+	_state.cameraPanStep = (_state.transitionFlags & 0x10) == 0
 							   ? static_cast<int16>(-2)
 							   : static_cast<int16>(-8);
 
 	// Ghidra 0x00004468-0x0000447F: activate the pan, advance animations at least once, and preserve the
 	// complete back edge. Original VBlank interrupts update camera X asynchronously, so service the installed
 	// room callback and shared clock after every still-active managed iteration.
-	_state.TransitionFlags |= kCameraPanActiveMask;
+	_state.transitionFlags |= kCameraPanActiveMask;
 	do {
 		_updateActorAnimationFrames();
-		if ((_state.TransitionFlags & kCameraPanActiveMask) != 0) {
+		if ((_state.transitionFlags & kCameraPanActiveMask) != 0) {
 			if (!_waitForRoomVerticalBlank()) {
 				return;
 			}
 		}
-	} while ((_state.TransitionFlags & kCameraPanActiveMask) != 0);
+	} while ((_state.transitionFlags & kCameraPanActiveMask) != 0);
 
 	// Ghidra 0x00004480-0x00004481: return after the scrolling owner reaches the exact target.
 }

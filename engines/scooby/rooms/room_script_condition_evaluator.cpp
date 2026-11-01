@@ -36,7 +36,7 @@ bool RoomScriptConditionEvaluator::evaluateRoomScriptCondition() {
 		int16 byteOffset = _rom.readInt16(commandOffset + 6);
 		int bitMask = 1 << (_rom.readUInt16(commandOffset + 8) & 0x07);
 		left = 0;
-		if ((_state.ProgressStateBytes[static_cast<size_t>(byteOffset)] & bitMask) != 0) {
+		if ((_state.progressStateBytes[static_cast<size_t>(byteOffset)] & bitMask) != 0) {
 			left = 1;
 		}
 	} else if ((flags & 0x02) != 0) {
@@ -46,7 +46,7 @@ bool RoomScriptConditionEvaluator::evaluateRoomScriptCondition() {
 		uint16 objectId = _rom.readUInt16(commandOffset + 8);
 		if (objectId == 1) {
 			if (fieldOffset == 6) {
-				left = _state.RoomId;
+				left = _state.roomId;
 			} else {
 				left = readRoomObjectConditionWord(fieldOffset, objectId);
 			}
@@ -67,7 +67,7 @@ bool RoomScriptConditionEvaluator::evaluateRoomScriptCondition() {
 		int16 byteOffset = _rom.readInt16(commandOffset + 10);
 		int bitMask = 1 << (_rom.readUInt16(commandOffset + 12) & 0x07);
 		right = 0;
-		if ((_state.ProgressStateBytes[static_cast<size_t>(byteOffset)] & bitMask) != 0) {
+		if ((_state.progressStateBytes[static_cast<size_t>(byteOffset)] & bitMask) != 0) {
 			right = 1;
 		}
 	} else if ((flags & 0x08) != 0) {
@@ -121,7 +121,7 @@ int16 RoomScriptConditionEvaluator::readRoomObjectConditionWord(uint16 fieldOffs
 	uint16 tableByteOffset =
 		static_cast<uint16>(fieldOffset + (objectId - 3) * RoomObject::kRecordSize);
 	tableByteOffset &= 0xFFFE;
-	return _state.RoomObjects[tableByteOffset / RoomObject::kRecordSize].readScriptConditionWord(
+	return _state.roomObjects[tableByteOffset / RoomObject::kRecordSize].readScriptConditionWord(
 		tableByteOffset % RoomObject::kRecordSize);
 }
 } // namespace Scooby

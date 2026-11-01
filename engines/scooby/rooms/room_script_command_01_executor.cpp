@@ -32,7 +32,7 @@ void RoomScriptCommand01Executor::executeRoomScriptCommand01(int mode, int16 int
 	}
 
 	// Ghidra 0x0000246E-0x00002479: a clear condition-evaluation gate takes the shared cursor branch.
-	if ((_state.AutomaticInteractionFlags & kConditionEvaluationMask) == 0) {
+	if ((_state.automaticInteractionFlags & kConditionEvaluationMask) == 0) {
 		goto AdvanceCursor;
 	}
 
@@ -44,7 +44,7 @@ void RoomScriptCommand01Executor::executeRoomScriptCommand01(int mode, int16 int
 	// Ghidra 0x00002482-0x00002491: mode five clears room-behavior bit zero and branches past the independent
 	// mode-six test to the secondary-selector field.
 	if (interactionMode == 5) {
-		_state.RoomBehaviorFlags &= static_cast<uint8>(~kRoomBehaviorModeMask);
+		_state.roomBehaviorFlags &= static_cast<uint8>(~kRoomBehaviorModeMask);
 		goto TestSecondarySelector;
 	}
 
@@ -54,7 +54,7 @@ void RoomScriptCommand01Executor::executeRoomScriptCommand01(int mode, int16 int
 		goto StopDispatch;
 	}
 
-	_state.RoomBehaviorFlags |= kRoomBehaviorModeMask;
+	_state.roomBehaviorFlags |= kRoomBehaviorModeMask;
 
 TestSecondarySelector:
 	// Ghidra 0x000024A2-0x000024A9: a zero secondary-selector field latches the dispatch stop.
@@ -63,26 +63,26 @@ TestSecondarySelector:
 	}
 
 	// Ghidra 0x000024AA-0x000024B1: a nonzero current secondary interaction skips its zero-only setup.
-	if (_state.SecondaryInteraction != 0) {
+	if (_state.secondaryInteraction != 0) {
 		goto RecheckInteractionMode;
 	}
 
 	// Ghidra 0x000024B2-0x000024C5: latch the zero-secondary path, then preserve both independent
 	// interaction-bit-zero outcomes instead of assuming the second secondary read remains zero.
-	_state.AutomaticInteractionFlags |= kSecondaryInteractionLatchMask;
-	if ((_state.InteractionFlags & kAlternateInteractionMask) != 0) {
+	_state.automaticInteractionFlags |= kSecondaryInteractionLatchMask;
+	if ((_state.interactionFlags & kAlternateInteractionMask) != 0) {
 		goto RetestSecondaryInteraction;
 	}
 
 	// Ghidra 0x000024C6-0x000024D7: set alternate targeting, clear the complete secondary word, and take the
 	// same signed cursor branch used by every failed condition.
-	_state.InteractionFlags |= kAlternateInteractionMask;
-	_state.SecondaryInteraction = 0;
+	_state.interactionFlags |= kAlternateInteractionMask;
+	_state.secondaryInteraction = 0;
 	goto AdvanceCursor;
 
 RetestSecondaryInteraction:
 	// Ghidra 0x000024D8-0x000024E1: re-read the secondary word; zero advances, while nonzero continues.
-	if (_state.SecondaryInteraction == 0) {
+	if (_state.secondaryInteraction == 0) {
 		goto AdvanceCursor;
 	}
 
@@ -94,13 +94,13 @@ RecheckInteractionMode:
 
 	// Ghidra 0x000024EA-0x000024F7: independently re-read and compare the secondary interaction with record
 	// field +4; a mismatch advances and an exact match falls through to the stop latch.
-	if (_state.SecondaryInteraction != _rom.readInt16(commandOffset + 4)) {
+	if (_state.secondaryInteraction != _rom.readInt16(commandOffset + 4)) {
 		goto AdvanceCursor;
 	}
 
 StopDispatch:
 	// Ghidra 0x000024F8-0x00002501: latch bit zero and return without advancing the command cursor.
-	_state.AutomaticInteractionFlags |= kStopDispatchMask;
+	_state.automaticInteractionFlags |= kStopDispatchMask;
 	return;
 
 AdvanceCursor:

@@ -30,26 +30,26 @@ const Common::Array<int16> kAnimationByPackedIndex = {0x000C, 0x0051, 0x0014, 0x
 } // namespace
 
 bool AmbientMovementController::tryStartRandomMove() {
-	if ((_state.InteractionFlags & 0x80) != 0 || (_state.ActorMovementFlags & 0x02) != 0 ||
-		(_state.VideoFlags & 0x04) != 0 || _state.RandomMoveTimer >= 0 ||
-		(_state.ActorAnimationHoldFlags & 0x02) == 0) {
+	if ((_state.interactionFlags & 0x80) != 0 || (_state.actorMovementFlags & 0x02) != 0 ||
+		(_state.videoFlags & 0x04) != 0 || _state.randomMoveTimer >= 0 ||
+		(_state.actorAnimationHoldFlags & 0x02) == 0) {
 		return true;
 	}
 
-	_state.RandomMoveTimer = 100;
-	if (_state.RandomMoveCount == 0) {
+	_state.randomMoveTimer = 100;
+	if (_state.randomMoveCount == 0) {
 		return true;
 	}
 
 	uint16 selectedMove = _random.scaleNextRandomValue(
-		static_cast<uint16>(_state.RandomMoveCount));
-	int moveAddress = _state.RoomMovementDataOffset + selectedMove * 4;
+		static_cast<uint16>(_state.randomMoveCount));
+	int moveAddress = _state.roomMovementDataOffset + selectedMove * 4;
 	uint16 packedMove = _rom.readUInt16(moveAddress);
 	uint16 rotatedMove = static_cast<uint16>((packedMove << 4) | (packedMove >> 12));
-	_state.RandomMoveDirection = static_cast<int16>(rotatedMove & 0x03);
-	_state.RandomMoveAnimation = kAnimationByPackedIndex[static_cast<size_t>((rotatedMove & 0x0C) >> 2)];
+	_state.randomMoveDirection = static_cast<int16>(rotatedMove & 0x03);
+	_state.randomMoveAnimation = kAnimationByPackedIndex[static_cast<size_t>((rotatedMove & 0x0C) >> 2)];
 	int16 targetX = static_cast<int16>((packedMove & 0x0FFF) << 3);
 	int16 targetY = static_cast<int16>(_rom.readInt16(moveAddress + 2) << 3);
-	return _movement.movePlayerToRoomPosition(targetX, targetY, 1, 0).Completed;
+	return _movement.movePlayerToRoomPosition(targetX, targetY, 1, 0).completed;
 }
 } // namespace Scooby

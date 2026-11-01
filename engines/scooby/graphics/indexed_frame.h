@@ -36,14 +36,14 @@ namespace Scooby {
 
 class IndexedFrame {
 public:
-	static const int Width = 320;
-	static const int Height = 224;
+	static const int width = 320;
+	static const int height = 224;
 	// Managed-only debug overlays (TileScene::setWalkAreaOverlay): one fixed colour after the 64 Genesis
 	// palette entries, so an overlay never depends on the room's palette.
 	static const uint8 kDebugOverlayColorIndex = 64;
 
 	IndexedFrame(Graphics::Screen &screen) : _palette(64), _screen(screen) {
-		_pixels.resize(static_cast<size_t>(Width) * static_cast<size_t>(Height), 0);
+		_pixels.resize(static_cast<size_t>(width) * static_cast<size_t>(height), 0);
 		Common::fill(_palette.begin(), _palette.end(), PaletteColor());
 	}
 

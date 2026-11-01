@@ -33,8 +33,8 @@ namespace Scooby {
 
 MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 	// Ghidra 0x00008FCA-0x00008FE9: initialize the episode, select its plane, and present three rows.
-	_episodeInitializer.initialize(_state.EpisodeIndex);
-	int promptPlaneOffset = _state.EpisodeIndex == 0
+	_episodeInitializer.initialize(_state.episodeIndex);
+	int promptPlaneOffset = _state.episodeIndex == 0
 								? kEpisodeOneMenuPlaneOffset
 								: kEpisodeTwoMenuPlaneOffset;
 	Optional<int> selection = _presentMenuAndSelectOption(promptPlaneOffset, kPromptOptionCount);
@@ -53,13 +53,13 @@ MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 
 	// Ghidra 0x00008FF8-0x00009039: stage the grid, drain the pending commit, and rebuild both rows.
 	_presentation.stageByteRleData(kPasswordGridMenuPlaneOffset);
-	while (_state.RetraceCountdown >= 0) {
+	while (_state.retraceCountdown >= 0) {
 		if (!_waitForVerticalBlank()) {
 			return MainMenuExit::HostClosed;
 		}
 	}
 
-	_state.RetraceCountdown = kSelectionCommitCountdown;
+	_state.retraceCountdown = kSelectionCommitCountdown;
 	_presentation.commitMenuSceneBuffers();
 	_passwordDisplay.refresh(_state);
 	_presentation.commitStagedMenuPlane();
@@ -72,10 +72,10 @@ MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 	MouseModeScope mouseMode(mouse, MouseInput::Mode::Handled);
 	while (true) {
 		// Ghidra 0x0000903A-0x00009051: compose one five-retrace password-grid update cycle.
-		_state.RetraceCountdown = kSelectionCommitCountdown;
+		_state.retraceCountdown = kSelectionCommitCountdown;
 		_presentation.composeWideMenuRevealTiles(_presentation.animatedRowMaskOffset(), 0);
 		_presentation.composeNarrowMenuRevealTiles(_presentation.animatedRowMaskOffset(), 0);
-		while (_state.RetraceCountdown >= 0) {
+		while (_state.retraceCountdown >= 0) {
 			// Managed-only mouse support: hovering a grid entry selects it and clicking it activates it like B;
 			// clicking a character of the entered password moves the entry cursor there.
 			bool mouseActivated = false;
@@ -320,11 +320,11 @@ Optional<MainMenuExit> EpisodePasswordMenuController::validatePasswordEntry() {
 	}
 
 	// Ghidra 0x0000933E-0x0000937D: mark password resume and replace the complete progress-table lifetime.
-	_state.InitializationFlags |= kPasswordResumeMask;
-	Common::fill(_state.ProgressStateBytes.begin(), _state.ProgressStateBytes.end(), 0);
+	_state.initializationFlags |= kPasswordResumeMask;
+	Common::fill(_state.progressStateBytes.begin(), _state.progressStateBytes.end(), 0);
 	Common::copy(packedPassword.begin() + 2, packedPassword.begin() + 2 + kPasswordStateByteCount,
-			  _state.ProgressStateBytes.begin());
-	_state.InitialRoomId = roomByte;
+			  _state.progressStateBytes.begin());
+	_state.initialRoomId = roomByte;
 
 	// Ghidra 0x0000937E-0x00009381: tail-transfer through the existing selected-room commit.
 	return Optional<MainMenuExit>(_commitSelectedRoom());

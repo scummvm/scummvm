@@ -53,7 +53,7 @@ public:
 	Common::Error syncGame(Common::Serializer &s);
 
 	// Returns whether the session is idle in the main room loop
-	bool canSaveGame() const { return _state.SaveAllowed; }
+	bool canSaveGame() const { return _state.saveAllowed; }
 
 	const RuntimeState &getState() const { return _state; }
 

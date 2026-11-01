@@ -189,8 +189,8 @@ void RoomScriptCommandExecutor::scriptCommand04IfStatementNested(int mode) {
 
 	// Ghidra 0x00002752-0x00002769: save the parent cursors, install the nested exclusive bound from signed
 	// field +2, start at fixed record offset +0x10, and invoke the currently installed script dispatcher.
-	int parentEndOffset = _state.RoomScriptEndOffset;
-	_state.RoomScriptEndOffset = commandOffset + _rom.readInt16(commandOffset + 2);
+	int parentEndOffset = _state.roomScriptEndOffset;
+	_state.roomScriptEndOffset = commandOffset + _rom.readInt16(commandOffset + 2);
 	_state.roomScriptCurrentOffset = commandOffset + 16;
 	_requestedSessionExit = _invokeRoomScriptDispatchCallback(mode);
 	if (_requestedSessionExit.hasValue()) {
@@ -200,14 +200,14 @@ void RoomScriptCommandExecutor::scriptCommand04IfStatementNested(int mode) {
 
 	// Ghidra 0x0000276A-0x0000277B: bit zero discards the saved parent cursors and returns with the nested
 	// dispatcher's A5 and A6 values still active.
-	if ((_state.AutomaticInteractionFlags & 0x01) != 0) {
+	if ((_state.automaticInteractionFlags & 0x01) != 0) {
 		return;
 	}
 
 	// Ghidra 0x0000277C-0x0000278B: preserve the nested post-dispatch A5, restore the parent A5/A6 pair,
 	// then replace A5 with the nested cursor plus the parent's signed field +4.
 	int nestedCursorOffset = _state.roomScriptCurrentOffset;
-	_state.RoomScriptEndOffset = parentEndOffset;
+	_state.roomScriptEndOffset = parentEndOffset;
 	_state.roomScriptCurrentOffset = nestedCursorOffset + _rom.readInt16(commandOffset + 4);
 }
 
@@ -222,11 +222,11 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 		case 1:
 			// Ghidra 0x00002B5E-0x00002B75: identity one selects actor slot zero and joins the
 			// restart-pending loop without passing through the identity-two comparison.
-			_state.ActorAnimationOffsets[0] = animationOffset;
-			_state.ActorAnimationRestartFlags |= 0x01;
+			_state.actorAnimationOffsets[0] = animationOffset;
+			_state.actorAnimationRestartFlags |= 0x01;
 			while (true) {
 				_updateActorAnimationFrames();
-				if ((_state.ActorAnimationRestartFlags & 0x01) == 0) {
+				if ((_state.actorAnimationRestartFlags & 0x01) == 0) {
 					break;
 				}
 
@@ -239,11 +239,11 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 		case 2:
 			// Ghidra 0x00002B76-0x00002B9F: identity two selects actor slot one; both outcomes of
 			// the restart-bit test remain in the loop before the common epilogue.
-			_state.ActorAnimationOffsets[1] = animationOffset;
-			_state.ActorAnimationRestartFlags |= 0x02;
+			_state.actorAnimationOffsets[1] = animationOffset;
+			_state.actorAnimationRestartFlags |= 0x02;
 			while (true) {
 				_updateActorAnimationFrames();
-				if ((_state.ActorAnimationRestartFlags & 0x02) == 0) {
+				if ((_state.actorAnimationRestartFlags & 0x02) == 0) {
 					break;
 				}
 
@@ -256,18 +256,18 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 		default: {
 			// Ghidra 0x00002BA0-0x00002BB3: every identity other than one or two retains the
 			// low-word 0x1A-byte object-table calculation and the signed fixed-position-index branch.
-			RoomObject &roomObject = _state.RoomObjects[objectId - 3];
-			if (roomObject.FixedPositionIndex >= 0) {
+			RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			if (roomObject.fixedPositionIndex >= 0) {
 				// Ghidra 0x00002BB4-0x00002BEB: retarget the corresponding actor slot, force its
 				// delay due, request restart, and retain both graphics-ready loop outcomes.
-				int actorSlot = static_cast<uint8>(roomObject.FixedPositionIndex) + 2;
+				int actorSlot = static_cast<uint8>(roomObject.fixedPositionIndex) + 2;
 				uint8 actorMask = static_cast<uint8>(1 << (actorSlot & 0x07));
-				_state.ActorAnimationOffsets[actorSlot] = animationOffset;
-				_state.ActorAnimationDelays[actorSlot] = -1;
-				_state.ActorAnimationRestartFlags |= actorMask;
+				_state.actorAnimationOffsets[actorSlot] = animationOffset;
+				_state.actorAnimationDelays[actorSlot] = -1;
+				_state.actorAnimationRestartFlags |= actorMask;
 				while (true) {
 					_updateActorAnimationFrames();
-					if ((_state.ActorGraphicsReadyFlags & actorMask) != 0) {
+					if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 						break;
 					}
 
@@ -283,7 +283,7 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 			// object 0, not of the selected object. The selected object's tile-patch word (which the actor
 			// initializers use as its animation) is deliberately left unchanged; e.g. the mine cart keeps
 			// its repaired animation 3 while its actor plays the riding animation during the room 6 -> 18 trip.
-			_state.RoomObjects[0].TilePatchIndex = animationOffset;
+			_state.roomObjects[0].tilePatchIndex = animationOffset;
 			break;
 		}
 		}
@@ -301,21 +301,21 @@ void RoomScriptCommandExecutor::scriptCommand07RefreshObject(int mode) {
 		// Ghidra 0x00002BFC-0x00002C1F: retain the low-word object-table calculation and both active-room
 		// outcomes. A match sets only object flag bit zero and skips every inventory branch.
 		uint16 objectId = _rom.readUInt16(commandOffset + 2);
-		RoomObject &roomObject = _state.RoomObjects[objectId - 3];
-		if (roomObject.RoomId == _state.RoomId) {
-			roomObject.Flags |= 0x01;
+		RoomObject &roomObject = _state.roomObjects[objectId - 3];
+		if (roomObject.roomId == _state.roomId) {
+			roomObject.flags |= 0x01;
 		}
 		// Ghidra 0x00002C20-0x00002C27: a non-active object enters page handling only for room ID one.
-		else if (roomObject.RoomId == 1) {
+		else if (roomObject.roomId == 1) {
 			// Ghidra 0x00002C28-0x00002C37: count every nonnegative inventory word through the negative
 			// sentinel. The vector's size is the typed representation of the same complete ordered scan.
-			uint16 inventoryCount = static_cast<uint16>(_state.InventoryObjectIndices.size());
+			uint16 inventoryCount = static_cast<uint16>(_state.inventoryObjectIndices.size());
 
 			// Ghidra 0x00002C38-0x00002C4F: preserve the logical word shift, wrapped MenuPage-minus-one
 			// comparison, unchanged-page exit, and changed-page write before the prompt commit call.
 			uint16 inventoryPage = static_cast<uint16>(inventoryCount >> 2);
-			if (inventoryPage != static_cast<uint16>(_state.MenuPage - 1)) {
-				_state.MenuPage = static_cast<int16>(inventoryPage);
+			if (inventoryPage != static_cast<uint16>(_state.menuPage - 1)) {
+				_state.menuPage = static_cast<int16>(inventoryPage);
 				_commitActionPromptUpdate();
 			}
 		}
@@ -333,11 +333,11 @@ void RoomScriptCommandExecutor::scriptCommand0ASetInventoryGfx(int mode) {
 		// Ghidra 0x00002DC4-0x00002DD9: retain the unsigned word multiply and low-word object-table index,
 		// then replace the complete inventory-graphic word from command field +4.
 		uint16 objectId = _rom.readUInt16(commandOffset + 2);
-		RoomObject &roomObject = _state.RoomObjects[objectId - 3];
-		roomObject.InventoryGraphicIndex = _rom.readInt16(commandOffset + 4);
+		RoomObject &roomObject = _state.roomObjects[objectId - 3];
+		roomObject.inventoryGraphicIndex = _rom.readInt16(commandOffset + 4);
 
 		// Ghidra 0x00002DDA-0x00002DE3: preserve both room-ID outcomes; only inventory room one calls on.
-		if (roomObject.RoomId == 1) {
+		if (roomObject.roomId == 1) {
 			// Ghidra 0x00002DE4-0x00002DEB: wait exactly one retrace before committing the prompt update.
 			// Host closure replaces this native returning path with the managed session-exit handover.
 			if (!waitForRoomVerticalBlank()) {
@@ -408,15 +408,15 @@ void RoomScriptCommandExecutor::scriptCommand11ChangeRoom(int mode) {
 	if (mode != 0) {
 		// Ghidra 0x00004F12-0x00004F21: replace the room identity and lead actor's signed position index
 		// independently from the coordinate-table offset between them in the record.
-		_state.RoomId = _rom.readInt16(commandOffset + 2);
-		_state.ActorPositionIndices[0] = _rom.readInt16(commandOffset + 6);
+		_state.roomId = _rom.readInt16(commandOffset + 2);
+		_state.actorPositionIndices[0] = _rom.readInt16(commandOffset + 6);
 
 		// Ghidra 0x00004F22-0x00004F39: save every display flag, clear only the room-update gate during
 		// the complete callback-aware fade, and restore the exact byte before either continuation.
-		uint8 displayFlags = _state.DisplayFlags;
-		_state.DisplayFlags &= 0xBF;
+		uint8 displayFlags = _state.displayFlags;
+		_state.displayFlags &= 0xBF;
 		bool fadeCompleted = _presenter.fadePaletteOut(&_handleRoomVBlank);
-		_state.DisplayFlags = displayFlags;
+		_state.displayFlags = displayFlags;
 		if (!fadeCompleted) {
 			_requestedSessionExit = SessionExit::HostClosed;
 			return;
@@ -424,7 +424,7 @@ void RoomScriptCommandExecutor::scriptCommand11ChangeRoom(int mode) {
 
 		// Ghidra 0x00004F3A-0x00004F49: scale the coordinate index by four with word wrapping, publish
 		// the initial coordinate byte offset, and invoke the separate room-reload owner.
-		_state.InitialRoomPositionCoordinateOffset =
+		_state.initialRoomPositionCoordinateOffset =
 			static_cast<int16>(_rom.readUInt16(commandOffset + 4) << 2);
 		_requestedSessionExit = _reloadAndPresentRoom();
 		if (_requestedSessionExit.hasValue()) {
@@ -445,7 +445,7 @@ void RoomScriptCommandExecutor::scriptCommand12SetObjShape(int mode) {
 		// Ghidra 0x00004F54-0x00004F69: subtract the three-identity prefix, retain the signed low word of
 		// the 0x1A-byte product used by indexed addressing, and replace shape word +0x02 unconditionally.
 		uint16 objectId = _rom.readUInt16(commandOffset + 2);
-		_state.RoomObjects[objectId - 3].ShapeIndex = _rom.readInt16(commandOffset + 4);
+		_state.roomObjects[objectId - 3].shapeIndex = _rom.readInt16(commandOffset + 4);
 	}
 
 	// Ghidra 0x00004F6A-0x00004F6F: every native mode consumes the complete six-byte command.
@@ -457,8 +457,8 @@ void RoomScriptCommandExecutor::scriptCommand13Jump(int mode) {
 
 	// Ghidra 0x00002446-0x0000245F: execution mode skips the flag test; scan mode with bit four set
 	// latches only stop bit zero and returns with the exact command cursor unchanged.
-	if (mode == 0 && (_state.AutomaticInteractionFlags & 0x10) != 0) {
-		_state.AutomaticInteractionFlags |= 0x01;
+	if (mode == 0 && (_state.automaticInteractionFlags & 0x10) != 0) {
+		_state.automaticInteractionFlags |= 0x01;
 		return;
 	}
 
@@ -475,7 +475,7 @@ void RoomScriptCommandExecutor::scriptCommand14SetObjShape(int mode) {
 		// Ghidra 0x00002E82-0x00002E97: subtract the three-identity prefix, retain the signed low word of
 		// the 0x1A-byte product used by indexed addressing, and replace shape word +0x02 unconditionally.
 		uint16 objectId = _rom.readUInt16(commandOffset + 2);
-		_state.RoomObjects[objectId - 3].ShapeIndex = _rom.readInt16(commandOffset + 4);
+		_state.roomObjects[objectId - 3].shapeIndex = _rom.readInt16(commandOffset + 4);
 	}
 
 	// Ghidra 0x00002E98-0x00002E9D: every native mode consumes the complete six-byte command.
@@ -489,10 +489,10 @@ void RoomScriptCommandExecutor::scriptCommand15WaitNFrames(int mode) {
 	if (mode != 0) {
 		// Ghidra 0x000048DC-0x000048F1: copy the complete signed word, update animations before every
 		// signed test, and retain the back edge until the installed callback decrements through -1.
-		_state.RetraceCountdown = _rom.readInt16(commandOffset + 2);
+		_state.retraceCountdown = _rom.readInt16(commandOffset + 2);
 		while (true) {
 			_updateActorAnimationFrames();
-			if (_state.RetraceCountdown < 0) {
+			if (_state.retraceCountdown < 0) {
 				break;
 			}
 
@@ -521,13 +521,13 @@ void RoomScriptCommandExecutor::scriptCommand16HideActor(int mode) {
 		} else {
 			// Ghidra 0x00002AE8-0x00002AF9: every other identity retains the signed low word of the
 			// 0x1A-byte table offset, reads byte +0x19, adds two, and keeps its modulo-eight bit number.
-			RoomObject &roomObject = _state.RoomObjects[objectId - 3];
-			actorSlot = (static_cast<uint8>(roomObject.FixedPositionIndex) + 2) & 0x07;
+			RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
 		}
 
 		// Ghidra 0x00002AFA-0x00002B07: managed callback execution is non-reentrant, so one byte update
 		// replaces the interrupt-masked dynamic bit set while preserving all other actor slots.
-		_state.ActorVisibilityBlockFlags |= static_cast<uint8>(1 << actorSlot);
+		_state.actorVisibilityBlockFlags |= static_cast<uint8>(1 << actorSlot);
 	}
 
 	// Ghidra 0x00002B08-0x00002B0D: every native mode and identity consumes the four-byte command.
@@ -549,8 +549,8 @@ void RoomScriptCommandExecutor::scriptCommand17WaitForObjAnim(int mode) {
 		} else {
 			// Ghidra 0x00004FD8-0x00004FED: every other identity retains the signed low-word table
 			// offset, zero-extends byte +0x19, adds two, and keeps the modulo-eight bit number.
-			RoomObject &roomObject = _state.RoomObjects[objectId - 3];
-			actorSlot = (static_cast<uint8>(roomObject.FixedPositionIndex) + 2) & 0x07;
+			RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
 		}
 
 		// Ghidra 0x00004FEE-0x00004FFB: update every actor at least once and retain the back edge until
@@ -559,7 +559,7 @@ void RoomScriptCommandExecutor::scriptCommand17WaitForObjAnim(int mode) {
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
 		while (true) {
 			_updateActorAnimationFrames();
-			if ((_state.ActorAnimationHoldFlags & actorMask) != 0) {
+			if ((_state.actorAnimationHoldFlags & actorMask) != 0) {
 				break;
 			}
 
@@ -590,12 +590,12 @@ void RoomScriptCommandExecutor::scriptCommand18ChangeRoomNoFade(int mode) {
 	if (mode != 0) {
 		// Ghidra 0x00004EE8-0x00004EF7: replace the room identity and lead actor's signed position index
 		// independently from the coordinate-table offset between them in the command record.
-		_state.RoomId = _rom.readInt16(commandOffset + 2);
-		_state.ActorPositionIndices[0] = _rom.readInt16(commandOffset + 6);
+		_state.roomId = _rom.readInt16(commandOffset + 2);
+		_state.actorPositionIndices[0] = _rom.readInt16(commandOffset + 6);
 
 		// Ghidra 0x00004EF8-0x00004F07: scale the coordinate index by four with word wrapping, publish
 		// the signed initial byte offset, and retain the separate room-state reset function boundary.
-		_state.InitialRoomPositionCoordinateOffset =
+		_state.initialRoomPositionCoordinateOffset =
 			static_cast<int16>(_rom.readUInt16(commandOffset + 4) << 2);
 		_requestedSessionExit = _resetRoomStateForReload();
 		if (_requestedSessionExit.hasValue()) {

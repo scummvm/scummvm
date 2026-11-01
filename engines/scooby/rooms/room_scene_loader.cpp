@@ -42,36 +42,36 @@ void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
 void RoomSceneLoader::loadRoomScene() {
 	// Ghidra 0x0000758A-0x000075AB: clear the complete pattern/layer destination and all four scroll words.
 	_scene.clearContent();
-	_state.CameraX = 0;
-	_state.CameraY = 0;
-	_state.ForegroundHorizontalScroll = 0;
-	_state.BackgroundHorizontalScroll = 0;
-	_state.ForegroundVerticalScroll = 0;
-	_state.BackgroundVerticalScroll = 0;
+	_state.cameraX = 0;
+	_state.cameraY = 0;
+	_state.foregroundHorizontalScroll = 0;
+	_state.backgroundHorizontalScroll = 0;
+	_state.foregroundVerticalScroll = 0;
+	_state.backgroundVerticalScroll = 0;
 
 	// Ghidra 0x000075AC-0x0000761B: restore shared colors, classify every object against the selected room,
 	// and copy that room's second 32-color palette through the signed room-index path.
 	Common::Array<PaletteColor> sharedPalette =
 		readPalette(_rom, kDefaultSharedPaletteOffset, 32);
-	Common::copy(sharedPalette.begin(), sharedPalette.end(), _state.TargetPalette.begin());
+	Common::copy(sharedPalette.begin(), sharedPalette.end(), _state.targetPalette.begin());
 
-	for (RoomObject &roomObject : _state.RoomObjects) {
-		roomObject.Flags = roomObject.RoomId == _state.RoomId
-							   ? static_cast<uint8>(roomObject.Flags | 0x01)
-							   : static_cast<uint8>(roomObject.Flags & 0xFE);
+	for (RoomObject &roomObject : _state.roomObjects) {
+		roomObject.flags = roomObject.roomId == _state.roomId
+							   ? static_cast<uint8>(roomObject.flags | 0x01)
+							   : static_cast<uint8>(roomObject.flags & 0xFE);
 	}
 
-	int16 roomIndex = static_cast<int16>(_state.RoomId - 2);
-	int32 descriptorOffset = _state.ActiveEpisodeDescriptorOffset;
+	int16 roomIndex = static_cast<int16>(_state.roomId - 2);
+	int32 descriptorOffset = _state.activeEpisodeDescriptorOffset;
 	int paletteOffset = static_cast<int>(_rom.readUInt32(descriptorOffset + kEpisodePaletteBaseField)) +
 						roomIndex * kRoomPaletteByteStride + kRoomPaletteOffsetWithinRecord;
 	Common::Array<PaletteColor> roomPalette =
 		readPalette(_rom, paletteOffset, 32);
-	Common::copy(roomPalette.begin(), roomPalette.end(), _state.TargetPalette.begin() + 32);
+	Common::copy(roomPalette.begin(), roomPalette.end(), _state.targetPalette.begin() + 32);
 
 	// Ghidra 0x0000761C-0x0000762B: every room load clears the foreground override and all palette ranges.
-	_state.InteractionFlags &= 0xBF;
-	_state.AnimatedPaletteRangeFlags = 0;
+	_state.interactionFlags &= 0xBF;
+	_state.animatedPaletteRangeFlags = 0;
 
 	// Ghidra 0x0000762C-0x00007675: select the 20-byte room record with unsigned word multiplication,
 	// decode its pattern stream, and retain the distinct under-0x400 minimum-allocation branch.
@@ -94,14 +94,14 @@ void RoomSceneLoader::loadRoomScene() {
 	// Ghidra 0x00007676-0x000076B1: derive the interface base, generate all 95 mask tiles, discard the
 	// write-only end-address value after accounting for it, and derive the following prompt destination.
 	uint16 patternByteOffset = static_cast<uint16>(reservedRoomTileByteCount);
-	_state.InterfaceTileAttributes = static_cast<uint16>(((patternByteOffset >> 5) - 0x20) |
+	_state.interfaceTileAttributes = static_cast<uint16>(((patternByteOffset >> 5) - 0x20) |
 														 kPriorityAttribute);
 	uint16 maskTileByteOffset =
-		static_cast<uint16>(((_state.InterfaceTileAttributes & 0x07FF) + 0x20) << 5);
+		static_cast<uint16>(((_state.interfaceTileAttributes & 0x07FF) + 0x20) << 5);
 	Common::Array<uint8> dialogueMaskTiles = colorise4bppMaskTiles(_rom, 0x0F, 0x01);
 	_scene.overwritePackedPatternBytes(makeSpan(dialogueMaskTiles), maskTileByteOffset);
 	patternByteOffset += kMaskTileByteCount;
-	_state.ActionPromptTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |
+	_state.actionPromptTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |
 															kPriorityAttribute);
 
 	// Ghidra 0x000076B2-0x0000773B: publish the prompt stream and the deliberately overlapping cursor,
@@ -115,34 +115,34 @@ void RoomSceneLoader::loadRoomScene() {
 		makeSpan(actionPromptTiles).slice(0, static_cast<size_t>(actionPromptByteCount)),
 		patternByteOffset);
 	patternByteOffset += actionPromptWordCount + actionPromptWordCount;
-	_state.CursorSpriteTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |
+	_state.cursorSpriteTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |
 															kPriorityAttribute);
 	_scene.overwritePackedPatternBytes(_rom.readBytes(kCursorSpriteTilesOffset, kCursorSpriteTileByteCount),
 									   patternByteOffset);
 	patternByteOffset += kCursorSpriteTileByteCount;
-	_state.TallInterfaceSpriteTileIndex = static_cast<uint16>(patternByteOffset >> 5);
+	_state.tallInterfaceSpriteTileIndex = static_cast<uint16>(patternByteOffset >> 5);
 	_scene.overwritePackedPatternBytes(
 		_rom.readBytes(kTallInterfaceSpriteTilesOffset, kTallInterfaceSpriteTileByteCount), patternByteOffset);
 	patternByteOffset += kTallInterfaceSpriteAdvanceByteCount;
-	_state.ShortInterfaceSpriteTileIndex = static_cast<uint16>(patternByteOffset >> 5);
+	_state.shortInterfaceSpriteTileIndex = static_cast<uint16>(patternByteOffset >> 5);
 	_scene.overwritePackedPatternBytes(
 		_rom.readBytes(kShortInterfaceSpriteTilesOffset, kShortInterfaceSpriteTileByteCount),
 		patternByteOffset);
 	patternByteOffset += kShortInterfaceSpriteTileByteCount;
-	_state.BlankTileCell = static_cast<uint16>((patternByteOffset >> 5) | kPriorityAttribute);
+	_state.blankTileCell = static_cast<uint16>((patternByteOffset >> 5) | kPriorityAttribute);
 
 	// Ghidra 0x0000773C-0x00007759: materialize the all-one blank tile and reserve the following tile as
 	// the dynamic room-script pattern base.
 	Common::Array<uint8> blankTile(static_cast<size_t>(kBlankTileByteCount),
 								   static_cast<uint8>(0x11));
 	_scene.overwritePackedPatternBytes(makeSpan(blankTile), patternByteOffset);
-	_state.RoomDynamicTileBaseAttribute = static_cast<uint16>(((patternByteOffset >> 5) + 1) |
+	_state.roomDynamicTileBaseAttribute = static_cast<uint16>(((patternByteOffset >> 5) + 1) |
 															  kPriorityAttribute);
 
 	// Ghidra 0x0000775A-0x000077AB: the cleared logical scene subsumes the 0xD000 name-table fill; build
 	// all six 64-cell lower-interface rows, including each row's 61-copy, 3-word skip, and 3-cell fill branch.
 	uint16 repeatedInterfaceCell =
-		static_cast<uint16>(_rom.readUInt16(kInterfaceTemplateOffset) + _state.ActionPromptTileAttributes);
+		static_cast<uint16>(_rom.readUInt16(kInterfaceTemplateOffset) + _state.actionPromptTileAttributes);
 	Common::Array<uint8> packedInterfaceCells(
 		static_cast<size_t>(kInterfaceTemplateRowCount * kInterfaceTemplateColumnCount *
 								 static_cast<int>(sizeof(uint16))),
@@ -155,7 +155,7 @@ void RoomSceneLoader::loadRoomScene() {
 																								sizeof(
 																									uint16));
 			uint16 cell =
-				static_cast<uint16>(_rom.readUInt16(sourceOffset) + _state.ActionPromptTileAttributes);
+				static_cast<uint16>(_rom.readUInt16(sourceOffset) + _state.actionPromptTileAttributes);
 			writeUInt16BigEndian(packedInterfaceCellsSpan,
 								 (row * kInterfaceTemplateColumnCount + column) * static_cast<int>(sizeof(
 																					  uint16)),
@@ -177,19 +177,19 @@ void RoomSceneLoader::loadRoomScene() {
 	// terms around the temporary display-bit-four inversion and interface save/clear boundary.
 	_actionMenu.composeInventoryGrid();
 	_actionMenu.commitActionPromptTiles();
-	if ((_state.ProgressStateBytes[0] & 0x02) != 0 || (_state.InteractionFlags & 0x04) != 0) {
-		_state.DisplayFlags ^= 0x10;
+	if ((_state.progressStateBytes[0] & 0x02) != 0 || (_state.interactionFlags & 0x04) != 0) {
+		_state.displayFlags ^= 0x10;
 		_roomInterfaceTransitions.saveAndClearInteractionTileBlock();
-		_state.DisplayFlags ^= 0x10;
+		_state.displayFlags ^= 0x10;
 	}
 
 	// Ghidra 0x000077E4-0x00007805: publish the room-name text and resolve the selected layout dimensions.
-	_state.RoomNameTextOffset = static_cast<int>(_rom.readUInt32(descriptorOffset + kEpisodeRoomNameBaseField)) +
+	_state.roomNameTextOffset = static_cast<int>(_rom.readUInt32(descriptorOffset + kEpisodeRoomNameBaseField)) +
 								static_cast<int>(_rom.readUInt32(roomRecordOffset));
 	int roomLayoutOffset = static_cast<int>(_rom.readUInt32(descriptorOffset + kEpisodeLayoutBaseField)) +
 						   static_cast<int>(_rom.readUInt32(roomRecordOffset + 8));
-	_state.RoomWidthTiles = _rom.readUInt16(roomLayoutOffset);
-	_state.RoomHeightTiles = _rom.readUInt16(roomLayoutOffset + static_cast<int>(sizeof(uint16)));
+	_state.roomWidthTiles = _rom.readUInt16(roomLayoutOffset);
+	_state.roomHeightTiles = _rom.readUInt16(roomLayoutOffset + static_cast<int>(sizeof(uint16)));
 
 	// Ghidra 0x00007806-0x00007869: decode foreground, background, and collision sections through both
 	// relative-prefix jumps, then retain independent working maps and pristine snapshots.
@@ -203,46 +203,46 @@ void RoomSceneLoader::loadRoomScene() {
 								 static_cast<int>(_rom.readUInt32(foregroundSectionOffset));
 	Common::Array<uint8> collisionCells = decompressRingLz(
 		_rom, collisionSectionOffset + static_cast<int>(sizeof(uint32)));
-	_state.ActiveRoomScene = makeUnique<RoomSceneData>(
+	_state.activeRoomScene = makeUnique<RoomSceneData>(
 		makeSpan(backgroundCells), makeSpan(foregroundCells), makeSpan(collisionCells));
-	_state.RoomCoordinateDataOffset = collisionSectionOffset + static_cast<int>(sizeof(uint32)) +
+	_state.roomCoordinateDataOffset = collisionSectionOffset + static_cast<int>(sizeof(uint32)) +
 									  static_cast<int>(_rom.readUInt32(collisionSectionOffset));
 
 	// Ghidra 0x0000786A-0x0000789F: locate the eight initial coordinate pairs and count every ambient entry
 	// through the first all-one sentinel, retaining count eight when no earlier sentinel occurs.
-	_state.RoomPositionCoordinateTableOffset =
-		_state.RoomCoordinateDataOffset +
-		static_cast<int16>(_state.RoomHeightTiles * static_cast<int>(sizeof(uint16)));
-	_state.RoomMovementDataOffset = _state.RoomPositionCoordinateTableOffset +
+	_state.roomPositionCoordinateTableOffset =
+		_state.roomCoordinateDataOffset +
+		static_cast<int16>(_state.roomHeightTiles * static_cast<int>(sizeof(uint16)));
+	_state.roomMovementDataOffset = _state.roomPositionCoordinateTableOffset +
 									kPositionCoordinateTableByteCount;
 	int16 randomMoveCount = 0;
 	while (randomMoveCount != 8 &&
 		   _rom.readUInt32(
-			   _state.RoomMovementDataOffset + randomMoveCount * static_cast<int>(sizeof(uint32))) !=
+			   _state.roomMovementDataOffset + randomMoveCount * static_cast<int>(sizeof(uint32))) !=
 			   0xFFFFFFFFu) {
 		randomMoveCount++;
 	}
 
-	_state.RandomMoveCount = randomMoveCount;
+	_state.randomMoveCount = randomMoveCount;
 
 	// Ghidra 0x000078A0-0x000078D9: the interaction-bit-three branch skips every coordinate read and write;
 	// otherwise replace only the integer halves of actor slots zero and one, retaining fractional halves.
-	if ((_state.InteractionFlags & 0x08) == 0) {
-		int initialPositionOffset = _state.RoomPositionCoordinateTableOffset + _state.InitialRoomPositionCoordinateOffset;
+	if ((_state.interactionFlags & 0x08) == 0) {
+		int initialPositionOffset = _state.roomPositionCoordinateTableOffset + _state.initialRoomPositionCoordinateOffset;
 		int16 initialX = static_cast<int16>(_rom.readInt16(initialPositionOffset) << 3);
 		int16 initialY = static_cast<int16>(
 			_rom.readInt16(initialPositionOffset + static_cast<int>(sizeof(uint16))) << 3);
-		_state.ActorXFixedCoordinates[0] = (_state.ActorXFixedCoordinates[0] & 0xFFFF) | (initialX << 16);
-		_state.ActorXFixedCoordinates[1] = (_state.ActorXFixedCoordinates[1] & 0xFFFF) | (initialX << 16);
-		_state.ActorYFixedCoordinates[0] = (_state.ActorYFixedCoordinates[0] & 0xFFFF) | (initialY << 16);
-		_state.ActorYFixedCoordinates[1] =
-			(_state.ActorYFixedCoordinates[1] & 0xFFFF) | (static_cast<int16>(initialY - 1) << 16);
+		_state.actorXFixedCoordinates[0] = (_state.actorXFixedCoordinates[0] & 0xFFFF) | (initialX << 16);
+		_state.actorXFixedCoordinates[1] = (_state.actorXFixedCoordinates[1] & 0xFFFF) | (initialX << 16);
+		_state.actorYFixedCoordinates[0] = (_state.actorYFixedCoordinates[0] & 0xFFFF) | (initialY << 16);
+		_state.actorYFixedCoordinates[1] =
+			(_state.actorYFixedCoordinates[1] & 0xFFFF) | (static_cast<int16>(initialY - 1) << 16);
 	}
 
 	// Ghidra 0x000078DA-0x00007945: preserve logical word shifts, signed lower clamps, signed viewport-bound
 	// branches, and 16-bit scaling while selecting the initial camera from actor zero.
-	int16 actorX = static_cast<int16>(_state.ActorXFixedCoordinates[0] >> 16);
-	int16 actorY = static_cast<int16>(_state.ActorYFixedCoordinates[0] >> 16);
+	int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16);
+	int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[0] >> 16);
 	int16 cameraTileX = static_cast<int16>((static_cast<uint16>(actorX) >> 3) - 16);
 	int16 cameraTileY = static_cast<int16>((static_cast<uint16>(actorY) >> 3) - 10);
 	if (cameraTileX < 0) {
@@ -254,19 +254,19 @@ void RoomSceneLoader::loadRoomScene() {
 	}
 
 	int16 horizontalOverflow =
-		static_cast<int16>(cameraTileX + kViewportWidthTiles - _state.RoomWidthTiles);
+		static_cast<int16>(cameraTileX + kViewportWidthTiles - _state.roomWidthTiles);
 	if (horizontalOverflow > 0) {
 		cameraTileX -= horizontalOverflow;
 	}
 
 	int16 verticalOverflow =
-		static_cast<int16>(cameraTileY + kViewportHeightTiles - _state.RoomHeightTiles);
+		static_cast<int16>(cameraTileY + kViewportHeightTiles - _state.roomHeightTiles);
 	if (verticalOverflow > 0) {
 		cameraTileY -= verticalOverflow;
 	}
 
-	_state.CameraX = static_cast<int16>(cameraTileX << 3);
-	_state.CameraY = static_cast<int16>(cameraTileY << 3);
+	_state.cameraX = static_cast<int16>(cameraTileX << 3);
+	_state.cameraY = static_cast<int16>(cameraTileY << 3);
 
 	// Ghidra 0x00007946-0x0000794F: draw the initial room viewport, initialize room actors, and return.
 	_tileStreamer.drawRoomViewport();

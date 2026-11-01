@@ -101,8 +101,8 @@ private:
 
 	// Replaces the C# (short X, short Y) tuple return of ReadAndAdvancePathRecord.
 	struct PathRecord {
-		int16 X;
-		int16 Y;
+		int16 x;
+		int16 y;
 	};
 
 	void updateLeadActorPath();

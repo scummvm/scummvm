@@ -40,18 +40,18 @@ void RoomScriptCommand20Executor::executeRoomScriptCommand20(int mode) {
 		} else if (objectId == 2) {
 			actorSlot = 1;
 		} else {
-			const RoomObject &roomObject = _state.RoomObjects[objectId - 3];
-			actorSlot = (static_cast<uint8>(roomObject.FixedPositionIndex) + 2) & 0x07;
+			const RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
 		}
 
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
-		if ((_state.ActorMovementFlags & actorMask) != 0) {
+		if ((_state.actorMovementFlags & actorMask) != 0) {
 			// Ghidra 0x00004928-0x00004937: active movement clears only the selected movement bit and
 			// bypasses the one-shot animation-loop exit request.
-			_state.ActorMovementFlags &= static_cast<uint8>(~actorMask);
+			_state.actorMovementFlags &= static_cast<uint8>(~actorMask);
 		} else {
 			// Ghidra 0x00004938-0x0000493D: movement already clear sets only the selected loop-exit bit.
-			_state.ActorAnimationLoopExitFlags |= actorMask;
+			_state.actorAnimationLoopExitFlags |= actorMask;
 		}
 	}
 

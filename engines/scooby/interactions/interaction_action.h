@@ -29,23 +29,23 @@
 namespace Scooby {
 
 struct InteractionAction {
-	int32 LabelTextOffset;
-	int32 ResponseDialogueOffset;
-	int16 RoomObjectStateValue;
-	int16 ScriptLength;
-	int32 ScriptStartOffset;
+	int32 labelTextOffset;
+	int32 responseDialogueOffset;
+	int16 roomObjectStateValue;
+	int16 scriptLength;
+	int32 scriptStartOffset;
 
 	InteractionAction()
-		: LabelTextOffset(0), ResponseDialogueOffset(0), RoomObjectStateValue(0), ScriptLength(0),
-		  ScriptStartOffset(0) {
+		: labelTextOffset(0), responseDialogueOffset(0), roomObjectStateValue(0), scriptLength(0),
+		  scriptStartOffset(0) {
 	}
 
-	InteractionAction(int32 labelTextOffset, int32 responseDialogueOffset,
-					  int16 roomObjectStateValue, int16 scriptLength,
-					  int32 scriptStartOffset)
-		: LabelTextOffset(labelTextOffset), ResponseDialogueOffset(responseDialogueOffset),
-		  RoomObjectStateValue(roomObjectStateValue), ScriptLength(scriptLength),
-		  ScriptStartOffset(scriptStartOffset) {
+	InteractionAction(int32 newLabelTextOffset, int32 newResponseDialogueOffset,
+					  int16 newRoomObjectStateValue, int16 newScriptLength,
+					  int32 newScriptStartOffset)
+		: labelTextOffset(newLabelTextOffset), responseDialogueOffset(newResponseDialogueOffset),
+		  roomObjectStateValue(newRoomObjectStateValue), scriptLength(newScriptLength),
+		  scriptStartOffset(newScriptStartOffset) {
 	}
 };
 } // namespace Scooby

@@ -36,14 +36,14 @@ namespace Scooby {
 
 // Replaces the C# (bool Completed, short PositionIndex) tuple return.
 struct MovementResult {
-	bool Completed;
-	int16 PositionIndex;
+	bool completed;
+	int16 positionIndex;
 
-	MovementResult() : Completed(false), PositionIndex(0) {
+	MovementResult() : completed(false), positionIndex(0) {
 	}
 
-	MovementResult(bool completed, int16 positionIndex) : Completed(completed),
-														  PositionIndex(positionIndex) {
+	MovementResult(bool newCompleted, int16 newPositionIndex) : completed(newCompleted),
+														        positionIndex(newPositionIndex) {
 	}
 };
 
@@ -150,15 +150,15 @@ private:
 	// Small named replacement for the C# private (short HorizontalStep, short VerticalStep, short PositionIndex)
 	// tuple returned by the two staged-origin velocity calculators.
 	struct VelocityResult {
-		int16 HorizontalStep;
-		int16 VerticalStep;
-		int16 PositionIndex;
+		int16 horizontalStep;
+		int16 verticalStep;
+		int16 positionIndex;
 
-		VelocityResult() : HorizontalStep(0), VerticalStep(0), PositionIndex(0) {
+		VelocityResult() : horizontalStep(0), verticalStep(0), positionIndex(0) {
 		}
 
-		VelocityResult(int16 horizontalStep, int16 verticalStep, int16 positionIndex)
-			: HorizontalStep(horizontalStep), VerticalStep(verticalStep), PositionIndex(positionIndex) {
+		VelocityResult(int16 newHorizontalStep, int16 newVerticalStep, int16 newPositionIndex)
+			: horizontalStep(newHorizontalStep), verticalStep(newVerticalStep), positionIndex(newPositionIndex) {
 		}
 	};
 

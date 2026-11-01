@@ -28,7 +28,7 @@ namespace Scooby {
 
 void RoomObjectTilePatchRenderer::applyRoomObjectTilePatch(int16 tilePatchIndex) {
 	// Ghidra 0x00007D54-0x00007D5F: preserve the video-mode tail edge as a distinct original boundary.
-	if ((_state.VideoFlags & kTransferPatchDirectlyMask) != 0) {
+	if ((_state.videoFlags & kTransferPatchDirectlyMask) != 0) {
 		transferRoomObjectTilePatch(tilePatchIndex);
 		return;
 	}
@@ -40,16 +40,16 @@ void RoomObjectTilePatchRenderer::applyRoomObjectTilePatch(int16 tilePatchIndex)
 	}
 
 	RoomShapePatch patch = readPatchDescriptor(tilePatchIndex);
-	SDM_ASSERT(_state.ActiveRoomScene, "ApplyRoomObjectTilePatch requires an active room scene.");
-	RoomSceneData &room = *_state.ActiveRoomScene;
+	SDM_ASSERT(_state.activeRoomScene, "ApplyRoomObjectTilePatch requires an active room scene.");
+	RoomSceneData &room = *_state.activeRoomScene;
 	Common::Array<uint8> &workingCells =
-		patch.Layer == TileLayer::Background ? room.BackgroundCells : room.ForegroundCells;
+		patch.layer == TileLayer::Background ? room.backgroundCells : room.foregroundCells;
 	int16 roomRowByteStride =
-		static_cast<int16>(_state.RoomWidthTiles * static_cast<int>(sizeof(uint16)));
-	int16 patchByteOffset = static_cast<int16>(patch.Y * roomRowByteStride +
-											   patch.X * static_cast<int>(sizeof(uint16)));
+		static_cast<int16>(_state.roomWidthTiles * static_cast<int>(sizeof(uint16)));
+	int16 patchByteOffset = static_cast<int16>(patch.y * roomRowByteStride +
+											   patch.x * static_cast<int>(sizeof(uint16)));
 	int16 rowGapByteCount =
-		static_cast<int16>(roomRowByteStride - patch.Width * static_cast<int>(sizeof(uint16)));
+		static_cast<int16>(roomRowByteStride - patch.width * static_cast<int>(sizeof(uint16)));
 
 	if (tilePatchIndex > 0) {
 		// Ghidra 0x00007D6A-0x00007DBD / 0x00007DBE-0x00007DDD: resolve the positive descriptor and copy every
@@ -58,12 +58,12 @@ void RoomObjectTilePatchRenderer::applyRoomObjectTilePatch(int16 tilePatchIndex)
 	} else {
 		// Ghidra 0x00007E9A-0x00007EF9: clear the index sign bit, resolve the same descriptor, and select the
 		// matching pristine snapshot independently for background and foreground records.
-		const Common::Array<uint8> &snapshotCells = patch.Layer == TileLayer::Background
-														? room.BackgroundCellSnapshot
-														: room.ForegroundCellSnapshot;
+		const Common::Array<uint8> &snapshotCells = patch.layer == TileLayer::Background
+														? room.backgroundCellSnapshot
+														: room.foregroundCellSnapshot;
 
 		// Ghidra 0x00007EFA-0x00007F1D: restore every word with equal source and destination row strides.
-		restorePatch(workingCells, snapshotCells, patchByteOffset, rowGapByteCount, patch.Width, patch.Height);
+		restorePatch(workingCells, snapshotCells, patchByteOffset, rowGapByteCount, patch.width, patch.height);
 
 		// Ghidra 0x00007F1E-0x00007F21: rejoin the common camera-relative publication path.
 	}
@@ -79,10 +79,10 @@ void RoomObjectTilePatchRenderer::applyRoomObjectTilePatch(int16 tilePatchIndex)
 void RoomObjectTilePatchRenderer::copyAuthoredPatch(const RoomShapePatch &patch,
 													Common::Array<uint8> &workingCells,
 													int destinationByteOffset, int16 rowGapByteCount) {
-	int sourceOffset = patch.RecordOffset + kDescriptorTileCellsField;
-	int16 remainingRows = static_cast<int16>(patch.Height - 1);
+	int sourceOffset = patch.recordOffset + kDescriptorTileCellsField;
+	int16 remainingRows = static_cast<int16>(patch.height - 1);
 	do {
-		int16 remainingColumns = static_cast<int16>(patch.Width - 1);
+		int16 remainingColumns = static_cast<int16>(patch.width - 1);
 		do {
 			uint16 cellValue = _rom.readUInt16(sourceOffset);
 			workingCells[static_cast<size_t>(destinationByteOffset)] =
@@ -127,12 +127,12 @@ void RoomObjectTilePatchRenderer::restorePatch(Common::Array<uint8> &workingCell
 void RoomObjectTilePatchRenderer::publishPatchCells(const RoomShapePatch &patch,
 													const Common::Array<uint8> &workingCells,
 													int sourceByteOffset, int16 rowGapByteCount) {
-	uint16 cameraTileX = static_cast<uint16>(_state.CameraX) >> 3;
-	uint16 cameraTileY = static_cast<uint16>(_state.CameraY) >> 3;
-	int16 startColumn = static_cast<int16>(patch.X - cameraTileX);
-	int16 endColumn = static_cast<int16>(patch.X + patch.Width - cameraTileX);
-	int16 currentRow = static_cast<int16>(patch.Y - cameraTileY);
-	int16 endRow = static_cast<int16>(patch.Y + patch.Height - cameraTileY);
+	uint16 cameraTileX = static_cast<uint16>(_state.cameraX) >> 3;
+	uint16 cameraTileY = static_cast<uint16>(_state.cameraY) >> 3;
+	int16 startColumn = static_cast<int16>(patch.x - cameraTileX);
+	int16 endColumn = static_cast<int16>(patch.x + patch.width - cameraTileX);
+	int16 currentRow = static_cast<int16>(patch.y - cameraTileY);
+	int16 endRow = static_cast<int16>(patch.y + patch.height - cameraTileY);
 
 	do {
 		int16 currentColumn = startColumn;
@@ -150,7 +150,7 @@ void RoomObjectTilePatchRenderer::publishPatchCells(const RoomShapePatch &patch,
 							int destinationRow = (static_cast<uint16>(cameraTileY + currentRow) +
 												  kLayerRowBias) &
 												 kLayerRowMask;
-							_scene.loadLayerRows(packedCell, patch.Layer, destinationColumn, destinationRow, 1,
+							_scene.loadLayerRows(packedCell, patch.layer, destinationColumn, destinationRow, 1,
 												 1);
 						}
 					}
@@ -175,7 +175,7 @@ RoomObjectTilePatchRenderer::RoomShapePatch RoomObjectTilePatchRenderer::readPat
 		descriptorIndex &= kRestorePatchIndexMask;
 	}
 
-	int episodeDescriptorOffset = _state.ActiveEpisodeDescriptorOffset;
+	int episodeDescriptorOffset = _state.activeEpisodeDescriptorOffset;
 	int shapeDataOffset = static_cast<int>(_rom.readUInt32(episodeDescriptorOffset + kEpisodeRoomShapeDataField));
 	int shapeOffsetTableOffset =
 		static_cast<int>(_rom.readUInt32(episodeDescriptorOffset + kEpisodeRoomShapeOffsetTableField));
@@ -201,20 +201,20 @@ void RoomObjectTilePatchRenderer::transferRoomObjectTilePatch(int16 tilePatchInd
 	RoomShapePatch patch = readPatchDescriptor(tilePatchIndex);
 	uint16 destinationRowByteOffset = static_cast<uint16>(
 		kLayerRowBias * (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16)) +
-		patch.Y * (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16)) +
-		patch.X * static_cast<int>(sizeof(uint16)));
+		patch.y * (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16)) +
+		patch.x * static_cast<int>(sizeof(uint16)));
 	uint16 rowByteCount =
-		static_cast<uint16>(static_cast<uint16>(patch.Width) * sizeof(uint16));
-	int16 remainingRows = static_cast<int16>(patch.Height - 1);
+		static_cast<uint16>(static_cast<uint16>(patch.width) * sizeof(uint16));
+	int16 remainingRows = static_cast<int16>(patch.height - 1);
 
 	if (tilePatchIndex > 0) {
 		// Ghidra 0x00007C8C-0x00007CBF: resolve the positive record and its selected name-table address.
-		int sourceByteOffset = patch.RecordOffset + kDescriptorTileCellsField;
+		int sourceByteOffset = patch.recordOffset + kDescriptorTileCellsField;
 		do {
 			// Ghidra 0x00007CC0-0x00007CD9: publish one unsigned-width authored row, advance both cursors,
 			// and preserve the exact DBF height lifecycle.
-			publishDirectPatchRow(_rom.readBytes(sourceByteOffset, rowByteCount), patch.Layer,
-								  destinationRowByteOffset, static_cast<uint16>(patch.Width));
+			publishDirectPatchRow(_rom.readBytes(sourceByteOffset, rowByteCount), patch.layer,
+								  destinationRowByteOffset, static_cast<uint16>(patch.width));
 			sourceByteOffset += rowByteCount;
 			destinationRowByteOffset += (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16));
 			remainingRows--;
@@ -226,21 +226,21 @@ void RoomObjectTilePatchRenderer::transferRoomObjectTilePatch(int16 tilePatchInd
 
 	// Ghidra 0x00007CE0-0x00007D27: clear the descriptor sign bit, resolve the same record and plane, and
 	// derive the pristine snapshot source from x plus y times the fixed 32-cell row stride.
-	SDM_ASSERT(_state.ActiveRoomScene, "TransferRoomObjectTilePatch requires an active room scene.");
-	const RoomSceneData &room = *_state.ActiveRoomScene;
+	SDM_ASSERT(_state.activeRoomScene, "TransferRoomObjectTilePatch requires an active room scene.");
+	const RoomSceneData &room = *_state.activeRoomScene;
 	const Common::Array<uint8> &snapshotCells =
-		patch.Layer == TileLayer::Background
-			? room.BackgroundCellSnapshot
-			: room.ForegroundCellSnapshot;
+		patch.layer == TileLayer::Background
+			? room.backgroundCellSnapshot
+			: room.foregroundCellSnapshot;
 	int16 snapshotByteOffset = static_cast<int16>(
-		patch.Y * kDirectTransferSnapshotColumnCount * static_cast<int>(sizeof(uint16)) +
-		patch.X * static_cast<int>(sizeof(uint16)));
+		patch.y * kDirectTransferSnapshotColumnCount * static_cast<int>(sizeof(uint16)) +
+		patch.x * static_cast<int>(sizeof(uint16)));
 	do {
 		// Ghidra 0x00007D28-0x00007D4D: publish one unsigned-width pristine row, retain the helper's source
 		// advancement plus explicit row gap as one 32-cell stride, and preserve the exact DBF lifecycle.
 		publishDirectPatchRow(
 			makeSpan(snapshotCells).slice(static_cast<size_t>(snapshotByteOffset), rowByteCount),
-			patch.Layer, destinationRowByteOffset, static_cast<uint16>(patch.Width));
+			patch.layer, destinationRowByteOffset, static_cast<uint16>(patch.width));
 		snapshotByteOffset += kDirectTransferSnapshotColumnCount * static_cast<int>(sizeof(uint16));
 		destinationRowByteOffset += (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16));
 		remainingRows--;

@@ -27,7 +27,7 @@
 namespace Scooby {
 
 Optional<int16> RoomSelectionController::select(int16 initialRoomId) {
-	Span<const Common::String> labels = _catalog.getRoomLabels(_state.EpisodeIndex);
+	Span<const Common::String> labels = _catalog.getRoomLabels(_state.episodeIndex);
 	int pageIndex = initialRoomId / kPageSize;
 	int rowIndex = initialRoomId % kPageSize;
 	int lastPageIndex = (static_cast<int>(labels.size()) - 2) / kPageSize;
@@ -44,8 +44,8 @@ Optional<int16> RoomSelectionController::select(int16 initialRoomId) {
 			}
 
 			_presentation.updateCatalogSelectionHighlight(rowIndex);
-			uint8 currentInput = _state.ControllerOneInput;
-			uint8 previousInput = _state.PreviousControllerOneInput;
+			uint8 currentInput = _state.controllerOneInput;
+			uint8 previousInput = _state.previousControllerOneInput;
 			if (wasPressed(currentInput, previousInput, ControllerButtons::Up)) {
 				if (rowIndex != 0) {
 					rowIndex--;

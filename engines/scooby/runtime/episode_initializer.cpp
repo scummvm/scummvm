@@ -33,17 +33,17 @@ void EpisodeInitializer::initialize(int episodeIndex) {
 			kDescriptorTableOffset + episodeIndex * static_cast<int>(sizeof(uint32))));
 
 	// Ghidra 0x00007F34-0x00007F45: clear all 0x100 progress bytes at original RAM 0xFF2A00.
-	Common::fill(_state.ProgressStateBytes.begin(), _state.ProgressStateBytes.end(), 0);
+	Common::fill(_state.progressStateBytes.begin(), _state.progressStateBytes.end(), 0);
 
 	// Ghidra 0x00007F46-0x00007F59: copy the descriptor's authored [start, end) progress range.
 	int progressStartOffset = static_cast<int>(_rom.readUInt32(descriptorOffset));
 	int progressEndOffset = static_cast<int>(_rom.readUInt32(descriptorOffset + static_cast<int>(sizeof(uint32))));
 	Span<const uint8> progressBytes =
 		_rom.readBytes(progressStartOffset, progressEndOffset - progressStartOffset);
-	Common::copy(progressBytes.begin(), progressBytes.end(), _state.ProgressStateBytes.begin());
+	Common::copy(progressBytes.begin(), progressBytes.end(), _state.progressStateBytes.begin());
 
 	// Ghidra 0x00007F5A-0x00007F64: follow descriptor +0x30 and publish its initial room word.
 	int initialRoomOffset = static_cast<int>(_rom.readUInt32(descriptorOffset + kInitialRoomPointerOffset));
-	_state.RoomId = _rom.readInt16(initialRoomOffset);
+	_state.roomId = _rom.readInt16(initialRoomOffset);
 }
 } // namespace Scooby

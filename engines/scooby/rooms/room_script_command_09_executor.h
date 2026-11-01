@@ -58,11 +58,11 @@ private:
 	// Preserves a mutable reference to the resolved room-object record and its command-byte offset, replacing
 	// the C# "(RoomObject RoomObject, int ByteOffset)" tuple return.
 	struct RoomObjectByteLocation {
-		RoomObject &TargetRoomObject;
-		int ByteOffset;
+		RoomObject &targetRoomObject;
+		int byteOffset;
 
-		RoomObjectByteLocation(RoomObject &targetRoomObject, int byteOffset)
-			: TargetRoomObject(targetRoomObject), ByteOffset(byteOffset) {
+		RoomObjectByteLocation(RoomObject &newTargetRoomObject, int newByteOffset)
+			: targetRoomObject(newTargetRoomObject), byteOffset(newByteOffset) {
 		}
 	};
 

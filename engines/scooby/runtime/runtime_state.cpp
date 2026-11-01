@@ -29,70 +29,70 @@ namespace Scooby {
 
 void RuntimeState::xorProgressStateWord(int byteOffset, uint16 mask) {
 	uint offset = static_cast<uint>(byteOffset);
-	uint16 current = static_cast<uint16>((uint16(ProgressStateBytes[offset]) << 8) |
-										 uint16(ProgressStateBytes[offset + 1]));
+	uint16 current = static_cast<uint16>((uint16(progressStateBytes[offset]) << 8) |
+										 uint16(progressStateBytes[offset + 1]));
 	uint16 updated = static_cast<uint16>(current ^ mask);
-	ProgressStateBytes[offset] = static_cast<uint8>(updated >> 8);
-	ProgressStateBytes[offset + 1] = static_cast<uint8>(updated);
+	progressStateBytes[offset] = static_cast<uint8>(updated >> 8);
+	progressStateBytes[offset + 1] = static_cast<uint8>(updated);
 }
 
 void RuntimeState::resetRuntimeState(const ScoobyDooRom &rom) {
 	// Ghidra 0x0000A27A-0x0000A385: restore runtime globals and the shared half of the fade target.
-	MenuPage = 0;
-	InitialRoomPositionCoordinateOffset = 0;
-	RoomInterfaceHorizontalScroll = 0;
-	RoomId = 0;
-	LeadActorMovementPointIndex = -1;
-	CompanionActorMovementPointIndex = -1;
-	ActorPositionUpdateFlags = 0;
-	ControllerOneInput = 0xFF;
-	PreviousControllerOneInput = 0xFF;
+	menuPage = 0;
+	initialRoomPositionCoordinateOffset = 0;
+	roomInterfaceHorizontalScroll = 0;
+	roomId = 0;
+	leadActorMovementPointIndex = -1;
+	companionActorMovementPointIndex = -1;
+	actorPositionUpdateFlags = 0;
+	controllerOneInput = 0xFF;
+	previousControllerOneInput = 0xFF;
 	// 0x0000A2BA-0x0000A2C9 resets unused controller-two current/previous samples to 0xFF.
-	DialogueTimingTableOffset = 4;
-	RoomCoordinateDataOffset = 0;
-	CameraX = 0;
-	CameraY = 0;
-	RandomMoveTimer = 0;
-	LeftActionPromptIndex = 0;
-	RightActionPromptIndex = 0;
-	DisplayFlags = 0;
-	InteractionFlags = 0;
-	RoomBehaviorFlags = 0;
-	TransitionFlags = 0;
-	DuelStateFlags = 0;
-	VideoFlags = 0;
-	TileStreamingEdgeFlags = 0;
-	AutomaticInteractionFlags = 0;
-	RoomScriptFlags = 0;
-	LeftActionPromptCountdown = 0;
-	RightActionPromptCountdown = 0;
+	dialogueTimingTableOffset = 4;
+	roomCoordinateDataOffset = 0;
+	cameraX = 0;
+	cameraY = 0;
+	randomMoveTimer = 0;
+	leftActionPromptIndex = 0;
+	rightActionPromptIndex = 0;
+	displayFlags = 0;
+	interactionFlags = 0;
+	roomBehaviorFlags = 0;
+	transitionFlags = 0;
+	duelStateFlags = 0;
+	videoFlags = 0;
+	tileStreamingEdgeFlags = 0;
+	automaticInteractionFlags = 0;
+	roomScriptFlags = 0;
+	leftActionPromptCountdown = 0;
+	rightActionPromptCountdown = 0;
 	// 0x0000A338-0x0000A341 snapshots VDP register 1 byte 0x64 into unread hardware-only RAM.
-	ForegroundHorizontalScroll = 0;
-	BackgroundHorizontalScroll = 0;
-	ForegroundVerticalScroll = 0;
-	BackgroundVerticalScroll = 0;
-	CurrentInteraction = 0;
-	AuxiliaryRetraceCountdown = 0;
-	RoomInterfaceTransitionCountdown = -1;
+	foregroundHorizontalScroll = 0;
+	backgroundHorizontalScroll = 0;
+	foregroundVerticalScroll = 0;
+	backgroundVerticalScroll = 0;
+	currentInteraction = 0;
+	auxiliaryRetraceCountdown = 0;
+	roomInterfaceTransitionCountdown = -1;
 
 	Common::Array<PaletteColor> sharedPalette = readPalette(
 		rom, 0x32480, 32);
-	Common::copy(sharedPalette.begin(), sharedPalette.end(), TargetPalette.begin());
+	Common::copy(sharedPalette.begin(), sharedPalette.end(), targetPalette.begin());
 }
 
 void RuntimeState::advanceRoomScriptBlock(const ScoobyDooRom &rom) {
-	int16 length = rom.readInt16(RoomScriptEndOffset);
-	roomScriptCurrentOffset = RoomScriptEndOffset + static_cast<int>(sizeof(int16));
-	RoomScriptEndOffset = roomScriptCurrentOffset + length;
+	int16 length = rom.readInt16(roomScriptEndOffset);
+	roomScriptCurrentOffset = roomScriptEndOffset + static_cast<int>(sizeof(int16));
+	roomScriptEndOffset = roomScriptCurrentOffset + length;
 }
 
 bool RuntimeState::isButtonDown(ControllerButtons button) const {
-	return (ControllerOneInput & static_cast<uint8>(button)) == 0;
+	return (controllerOneInput & static_cast<uint8>(button)) == 0;
 }
 
 bool RuntimeState::wasButtonDown(ControllerButtons button) const {
 	// button was down previously but is now up.
-	return (PreviousControllerOneInput & static_cast<uint8>(button)) == 0 && (ControllerOneInput & static_cast<uint8>(button)) != 0;
+	return (previousControllerOneInput & static_cast<uint8>(button)) == 0 && (controllerOneInput & static_cast<uint8>(button)) != 0;
 }
 
 } // namespace Scooby

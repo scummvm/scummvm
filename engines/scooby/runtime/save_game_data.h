@@ -57,13 +57,13 @@ struct SavedRoomObject {
 	// Record words +0x00 through +0x16, in record order (RoomObject::readCommandWord).
 	static const int kWordCount = 12;
 
-	uint16 Words[kWordCount];
+	uint16 words[kWordCount];
 	// Record offset +0x18 (RoomObject::Flags).
-	uint8 Flags;
+	uint8 flags;
 
-	SavedRoomObject() : Flags(0) {
+	SavedRoomObject() : flags(0) {
 		for (int i = 0; i < kWordCount; i++) {
-			Words[i] = 0;
+			words[i] = 0;
 		}
 	}
 };

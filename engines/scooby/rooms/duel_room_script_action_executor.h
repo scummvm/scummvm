@@ -81,15 +81,15 @@ public:
 
 private:
 	struct DuelMovementDelta {
-		int16 X;
-		int16 Y;
+		int16 x;
+		int16 y;
 	};
 
 	struct DuelActorBounds {
-		int16 Left;
-		int16 Top;
-		int16 Right;
-		int16 Bottom;
+		int16 left;
+		int16 top;
+		int16 right;
+		int16 bottom;
 	};
 
 	static const int kDuelAnimationFrameTableOffsetField = 0x04;

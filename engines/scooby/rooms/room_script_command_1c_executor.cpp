@@ -31,7 +31,7 @@ void RoomScriptCommand1CExecutor::executeRoomScriptCommand1C(int mode) {
 	// Ghidra 0x0000255E-0x00002561: scan mode skips all progress, identity, and movement effects.
 	if (mode != 0) {
 		// Ghidra 0x00002562-0x00002569: execution clears the projected progress bit before selection.
-		_state.ProgressStateBytes[0] &= 0xFB;
+		_state.progressStateBytes[0] &= 0xFB;
 
 		// Ghidra 0x0000256A-0x00002593: identities one and two select actor bits zero and one; every other
 		// word retains the wrapped signed object-record offset, zero-extends byte +0x19, adds two, and uses
@@ -43,15 +43,15 @@ void RoomScriptCommand1CExecutor::executeRoomScriptCommand1C(int mode) {
 		} else if (objectId == 2) {
 			actorSlot = 1;
 		} else {
-			const RoomObject &roomObject = _state.RoomObjects[objectId - 3];
-			actorSlot = (static_cast<uint8>(roomObject.FixedPositionIndex) + 2) & 0x07;
+			const RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
 		}
 
 		// Ghidra 0x00002594-0x000025A5: both movement-bit outcomes remain explicit; only an active selected
 		// actor restores progress byte-zero bit two.
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
-		if ((_state.ActorMovementFlags & actorMask) != 0) {
-			_state.ProgressStateBytes[0] |= 0x04;
+		if ((_state.actorMovementFlags & actorMask) != 0) {
+			_state.progressStateBytes[0] |= 0x04;
 		}
 	}
 

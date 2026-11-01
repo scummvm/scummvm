@@ -32,37 +32,37 @@ bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectId, int
 															uint16 encodedObjectId) {
 	// Ghidra 0x00004B24-0x00004B4B: select the 0x1A-byte typed record, replace both target words, and retain
 	// the signed-negative attached-actor return after restoring all three saved input words.
-	RoomObject &roomObject = _state.RoomObjects[static_cast<uint16>(objectId - 3)];
-	roomObject.FixedX = targetX;
-	roomObject.FixedY = targetY;
-	if (roomObject.FixedPositionIndex < 0) {
+	RoomObject &roomObject = _state.roomObjects[static_cast<uint16>(objectId - 3)];
+	roomObject.fixedX = targetX;
+	roomObject.fixedY = targetY;
+	if (roomObject.fixedPositionIndex < 0) {
 		return true;
 	}
 
 	// Ghidra 0x00004B4C-0x00004B6B: zero-extend the dynamic index, map it to actor slots two through five,
 	// retain modulo-eight bit selection, and snapshot the slot's current horizontal 16.16 step.
-	uint8 dynamicActorIndex = static_cast<uint8>(roomObject.FixedPositionIndex);
+	uint8 dynamicActorIndex = static_cast<uint8>(roomObject.fixedPositionIndex);
 	int actorSlot = dynamicActorIndex + 2;
 	uint8 actorMask = static_cast<uint8>(1 << (actorSlot & 0x07));
-	int32 baseHorizontalStep = _state.RoomObjectActorHorizontalSteps[dynamicActorIndex];
+	int32 baseHorizontalStep = _state.roomObjectActorHorizontalSteps[dynamicActorIndex];
 
 	if (movementMode < 0) {
 		// Ghidra 0x00004B6C-0x00004BAB: direct placement replaces only integer coordinate halves. A negative
 		// animation returns; otherwise restart at delay -1 and wait for published actor graphics.
-		_state.ActorXFixedCoordinates[actorSlot] =
-			replaceIntegerCoordinate(_state.ActorXFixedCoordinates[actorSlot], targetX);
-		_state.ActorYFixedCoordinates[actorSlot] =
-			replaceIntegerCoordinate(_state.ActorYFixedCoordinates[actorSlot], targetY);
+		_state.actorXFixedCoordinates[actorSlot] =
+			replaceIntegerCoordinate(_state.actorXFixedCoordinates[actorSlot], targetX);
+		_state.actorYFixedCoordinates[actorSlot] =
+			replaceIntegerCoordinate(_state.actorYFixedCoordinates[actorSlot], targetY);
 		if (animationOffset < 0) {
 			return true;
 		}
 
-		_state.ActorAnimationOffsets[actorSlot] = animationOffset;
-		_state.ActorAnimationDelays[actorSlot] = -1;
-		_state.ActorAnimationRestartFlags |= actorMask;
+		_state.actorAnimationOffsets[actorSlot] = animationOffset;
+		_state.actorAnimationDelays[actorSlot] = -1;
+		_state.actorAnimationRestartFlags |= actorMask;
 		while (true) {
 			_updateActorAnimationFrames();
-			if ((_state.ActorGraphicsReadyFlags & actorMask) != 0) {
+			if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 				return true;
 			}
 
@@ -85,25 +85,25 @@ bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectId, int
 
 	// Ghidra 0x00004BB8-0x00004BC1: publish the wrapped horizontal result and its logical-right-shifted vertical
 	// half-step for the selected dynamic slot.
-	_state.RoomObjectActorHorizontalSteps[dynamicActorIndex] = horizontalStep;
-	_state.RoomObjectActorVerticalSteps[dynamicActorIndex] =
+	_state.roomObjectActorHorizontalSteps[dynamicActorIndex] = horizontalStep;
+	_state.roomObjectActorVerticalSteps[dynamicActorIndex] =
 		static_cast<int32>(static_cast<uint32>(horizontalStep) >> 1);
 
 	// Ghidra 0x00004BC2-0x00004BD3: restore the saved target words into actor target slots two through five.
-	_state.ActorTargetXCoordinates[actorSlot] = targetX;
-	_state.ActorTargetYCoordinates[actorSlot] = targetY;
+	_state.actorTargetXCoordinates[actorSlot] = targetX;
+	_state.actorTargetYCoordinates[actorSlot] = targetY;
 
 	// Ghidra 0x00004BD4-0x00004BFB: a negative animation skips only animation replacement; every nonnegative
 	// value starts at delay -1 and requests restart before movement becomes active.
 	if (animationOffset >= 0) {
-		_state.ActorAnimationOffsets[actorSlot] = animationOffset;
-		_state.ActorAnimationDelays[actorSlot] = -1;
-		_state.ActorAnimationRestartFlags |= actorMask;
+		_state.actorAnimationOffsets[actorSlot] = animationOffset;
+		_state.actorAnimationDelays[actorSlot] = -1;
+		_state.actorAnimationRestartFlags |= actorMask;
 	}
 
 	// Ghidra 0x00004BFC-0x00004C0F: set movement active unconditionally. Encoded bit 15 returns without
 	// waiting, while preserving every movement and optional animation side effect above.
-	_state.ActorMovementFlags |= actorMask;
+	_state.actorMovementFlags |= actorMask;
 	if (static_cast<int16>(encodedObjectId) < 0) {
 		return true;
 	}
@@ -112,7 +112,7 @@ bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectId, int
 	// callback advances the actor to its target and clears the selected movement bit.
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorMovementFlags & actorMask) == 0) {
+		if ((_state.actorMovementFlags & actorMask) == 0) {
 			return true;
 		}
 
@@ -128,15 +128,15 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 															   uint16 encodedObjectId) {
 	// Ghidra 0x00005002-0x0000501B: clear stale lead movement and return only when both signed integer
 	// coordinates already equal the requested destination.
-	_state.ActorMovementFlags &= static_cast<uint8>(~kLeadActorMask);
-	if (getIntegerCoordinate(_state.ActorXFixedCoordinates[0]) == targetX &&
-		getIntegerCoordinate(_state.ActorYFixedCoordinates[0]) == targetY) {
+	_state.actorMovementFlags &= static_cast<uint8>(~kLeadActorMask);
+	if (getIntegerCoordinate(_state.actorXFixedCoordinates[0]) == targetX &&
+		getIntegerCoordinate(_state.actorYFixedCoordinates[0]) == targetY) {
 		return true;
 	}
 
 	// Ghidra 0x0000501C-0x00005043: progress bit four, a clear direct trace, or no visible waypoint all
 	// tail-enter direct movement with a freshly reset queued-point index.
-	if ((_state.ProgressStateBytes[0] & 0x10) != 0 || !traceLeadPathToTarget(targetX, targetY)) {
+	if ((_state.progressStateBytes[0] & 0x10) != 0 || !traceLeadPathToTarget(targetX, targetY)) {
 		return moveLeadActorDirectly(targetX, targetY, movementScale, animationBias, encodedObjectId,
 									 true);
 	}
@@ -147,7 +147,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 									 true);
 	}
 
-	int waypointDataOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset;
+	int waypointDataOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
 	int16 firstWaypointRawX = _rom.readInt16(waypointDataOffset);
 	int16 firstWaypointRawY = _rom.readInt16(waypointDataOffset + 2);
 	int16 secondWaypointRawX = _rom.readInt16(waypointDataOffset + 4);
@@ -171,10 +171,10 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 											 true);
 			}
 
-			_state.LeadActorMovementPoints[0].TargetX = targetX;
-			_state.LeadActorMovementPoints[0].TargetY = targetY;
+			_state.leadActorMovementPoints[0].targetX = targetX;
+			_state.leadActorMovementPoints[0].targetY = targetY;
 			buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
-			_state.LeadActorMovementPointIndex = 1;
+			_state.leadActorMovementPointIndex = 1;
 			return moveLeadActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 										 encodedObjectId, false);
 		}
@@ -184,10 +184,10 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 										 true);
 		}
 
-		_state.LeadActorMovementPoints[0].TargetX = targetX;
-		_state.LeadActorMovementPoints[0].TargetY = targetY;
+		_state.leadActorMovementPoints[0].targetX = targetX;
+		_state.leadActorMovementPoints[0].targetY = targetY;
 		buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
-		_state.LeadActorMovementPointIndex = 1;
+		_state.leadActorMovementPointIndex = 1;
 		return moveLeadActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
 	}
@@ -196,10 +196,10 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 	// then preserves the blocked-first/clear-second three-segment route and its reverse queue order.
 	if (visibleWaypoints == 1) {
 		if (!tracePathFromFirstWaypoint(targetX, targetY)) {
-			_state.LeadActorMovementPoints[0].TargetX = targetX;
-			_state.LeadActorMovementPoints[0].TargetY = targetY;
+			_state.leadActorMovementPoints[0].targetX = targetX;
+			_state.leadActorMovementPoints[0].targetY = targetY;
 			buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
-			_state.LeadActorMovementPointIndex = 1;
+			_state.leadActorMovementPointIndex = 1;
 			return moveLeadActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 										 encodedObjectId, false);
 		}
@@ -209,13 +209,13 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 										 true);
 		}
 
-		_state.LeadActorMovementPoints[0].TargetX = targetX;
-		_state.LeadActorMovementPoints[0].TargetY = targetY;
+		_state.leadActorMovementPoints[0].targetX = targetX;
+		_state.leadActorMovementPoints[0].targetY = targetY;
 		buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
-		_state.LeadActorMovementPoints[1].TargetX = secondWaypointX;
-		_state.LeadActorMovementPoints[1].TargetY = secondWaypointY;
+		_state.leadActorMovementPoints[1].targetX = secondWaypointX;
+		_state.leadActorMovementPoints[1].targetY = secondWaypointY;
 		appendLeadRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
-		_state.LeadActorMovementPointIndex = 2;
+		_state.leadActorMovementPointIndex = 2;
 		return moveLeadActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
 	}
@@ -223,10 +223,10 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 	// Ghidra 0x00005146-0x0000519B: every remaining nonzero mask (including the produced mask two) mirrors the
 	// prior branch through waypoint two, preserving both its two-segment and three-segment outcomes.
 	if (!tracePathFromSecondWaypoint(targetX, targetY)) {
-		_state.LeadActorMovementPoints[0].TargetX = targetX;
-		_state.LeadActorMovementPoints[0].TargetY = targetY;
+		_state.leadActorMovementPoints[0].targetX = targetX;
+		_state.leadActorMovementPoints[0].targetY = targetY;
 		buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
-		_state.LeadActorMovementPointIndex = 1;
+		_state.leadActorMovementPointIndex = 1;
 		return moveLeadActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
 	}
@@ -236,13 +236,13 @@ bool ScriptedRoomMovementExecutor::moveLeadActorToRoomPosition(int16 targetX, in
 									 true);
 	}
 
-	_state.LeadActorMovementPoints[0].TargetX = targetX;
-	_state.LeadActorMovementPoints[0].TargetY = targetY;
+	_state.leadActorMovementPoints[0].targetX = targetX;
+	_state.leadActorMovementPoints[0].targetY = targetY;
 	buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
-	_state.LeadActorMovementPoints[1].TargetX = firstWaypointX;
-	_state.LeadActorMovementPoints[1].TargetY = firstWaypointY;
+	_state.leadActorMovementPoints[1].targetX = firstWaypointX;
+	_state.leadActorMovementPoints[1].targetY = firstWaypointY;
 	appendLeadRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
-	_state.LeadActorMovementPointIndex = 2;
+	_state.leadActorMovementPointIndex = 2;
 	return moveLeadActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 								 encodedObjectId, false);
 }
@@ -251,7 +251,7 @@ void ScriptedRoomMovementExecutor::buildLeadRouteFromFirstWaypoint(int16 targetX
 																   int16 movementScale) {
 	// Ghidra 0x0000519C-0x000051CB: stage the first waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
 	int originXFixed = static_cast<int16>(_rom.readInt16(waypointOffset) << 3) << 16;
 	int originYFixed = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))) << 3 << 16;
 
@@ -261,16 +261,16 @@ void ScriptedRoomMovementExecutor::buildLeadRouteFromFirstWaypoint(int16 targetX
 		movementScale);
 
 	// Ghidra 0x000051D0-0x000051E3: publish the outputs into queue slot zero without replacing its target.
-	_state.LeadActorMovementPoints[0].HorizontalStep = velocity.HorizontalStep;
-	_state.LeadActorMovementPoints[0].VerticalStep = velocity.VerticalStep;
-	_state.LeadActorMovementPoints[0].PositionIndex = velocity.PositionIndex;
+	_state.leadActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
+	_state.leadActorMovementPoints[0].verticalStep = velocity.verticalStep;
+	_state.leadActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::buildLeadRouteFromSecondWaypoint(int16 targetX, int16 targetY,
 																	int16 movementScale) {
 	// Ghidra 0x000051E4-0x00005215: stage the second waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset + 4;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset + 4;
 	int originXFixed = static_cast<int16>(_rom.readInt16(waypointOffset) << 3) << 16;
 	int originYFixed = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))) << 3 << 16;
 
@@ -280,16 +280,16 @@ void ScriptedRoomMovementExecutor::buildLeadRouteFromSecondWaypoint(int16 target
 		movementScale);
 
 	// Ghidra 0x0000521A-0x0000522D: publish the outputs into queue slot zero without replacing its target.
-	_state.LeadActorMovementPoints[0].HorizontalStep = velocity.HorizontalStep;
-	_state.LeadActorMovementPoints[0].VerticalStep = velocity.VerticalStep;
-	_state.LeadActorMovementPoints[0].PositionIndex = velocity.PositionIndex;
+	_state.leadActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
+	_state.leadActorMovementPoints[0].verticalStep = velocity.verticalStep;
+	_state.leadActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::appendLeadRouteFromFirstWaypoint(int16 targetX, int16 targetY,
 																	int16 movementScale) {
 	// Ghidra 0x0000522E-0x0000525D: stage the first waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
 	int originXFixed = static_cast<int16>(_rom.readInt16(waypointOffset) << 3) << 16;
 	int originYFixed = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))) << 3 << 16;
 
@@ -299,16 +299,16 @@ void ScriptedRoomMovementExecutor::appendLeadRouteFromFirstWaypoint(int16 target
 		movementScale);
 
 	// Ghidra 0x00005262-0x00005275: publish the outputs into queue slot one without replacing its target.
-	_state.LeadActorMovementPoints[1].HorizontalStep = velocity.HorizontalStep;
-	_state.LeadActorMovementPoints[1].VerticalStep = velocity.VerticalStep;
-	_state.LeadActorMovementPoints[1].PositionIndex = velocity.PositionIndex;
+	_state.leadActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
+	_state.leadActorMovementPoints[1].verticalStep = velocity.verticalStep;
+	_state.leadActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::appendLeadRouteFromSecondWaypoint(int16 targetX, int16 targetY,
 																	 int16 movementScale) {
 	// Ghidra 0x00005276-0x000052A7: stage the second waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset + 4;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset + 4;
 	int originXFixed = static_cast<int16>(_rom.readInt16(waypointOffset) << 3) << 16;
 	int originYFixed = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))) << 3 << 16;
 
@@ -318,9 +318,9 @@ void ScriptedRoomMovementExecutor::appendLeadRouteFromSecondWaypoint(int16 targe
 		movementScale);
 
 	// Ghidra 0x000052AC-0x000052BF: publish the outputs into queue slot one without replacing its target.
-	_state.LeadActorMovementPoints[1].HorizontalStep = velocity.HorizontalStep;
-	_state.LeadActorMovementPoints[1].VerticalStep = velocity.VerticalStep;
-	_state.LeadActorMovementPoints[1].PositionIndex = velocity.PositionIndex;
+	_state.leadActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
+	_state.leadActorMovementPoints[1].verticalStep = velocity.verticalStep;
+	_state.leadActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
 ScriptedRoomMovementExecutor::VelocityResult
@@ -401,8 +401,8 @@ ScriptedRoomMovementExecutor::computeMovementVelocityFromStagedOrigin(
 	// truncation, publish both steps, and return the D4.w/D5.w/D6.w outputs to the route builder.
 	horizontalStep *= movementScale;
 	verticalStep *= movementScale;
-	_state.LeadActorHorizontalMovementStep = horizontalStep;
-	_state.LeadActorVerticalMovementStep = verticalStep;
+	_state.leadActorHorizontalMovementStep = horizontalStep;
+	_state.leadActorVerticalMovementStep = verticalStep;
 	return VelocityResult(horizontalStep, verticalStep, positionIndex);
 }
 
@@ -418,7 +418,7 @@ uint16 ScriptedRoomMovementExecutor::divideUnsignedWordPreservingOverflow(uint32
 
 bool ScriptedRoomMovementExecutor::tracePathFromFirstWaypoint(int16 targetX, int16 targetY) {
 	// Ghidra 0x000052C0-0x000052CF: resolve the active movement block's first signed waypoint pair.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
 	int16 waypointX = _rom.readInt16(waypointOffset);
 	int16 waypointY = _rom.readInt16(waypointOffset + sizeof(int16));
 
@@ -432,7 +432,7 @@ bool ScriptedRoomMovementExecutor::tracePathFromFirstWaypoint(int16 targetX, int
 
 bool ScriptedRoomMovementExecutor::tracePathFromSecondWaypoint(int16 targetX, int16 targetY) {
 	// Ghidra 0x000052F4-0x00005305: resolve the active movement block's second signed waypoint pair.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset + 4;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset + 4;
 	int16 waypointX = _rom.readInt16(waypointOffset);
 	int16 waypointY = _rom.readInt16(waypointOffset + sizeof(int16));
 
@@ -447,7 +447,7 @@ bool ScriptedRoomMovementExecutor::tracePathFromSecondWaypoint(int16 targetX, in
 uint16 ScriptedRoomMovementExecutor::classifyLeadWaypointVisibility() {
 	// Ghidra 0x0000532A-0x00005339: clear the result and select the first of exactly two waypoint pairs.
 	uint16 visibility = 0;
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
 	for (int waypointIndex = 0; waypointIndex < 2; ++waypointIndex) {
 		// Ghidra 0x0000533A-0x00005359: preserve the result, bit index, and cursor around the staged trace, then
 		// set only the bit whose waypoint has a clear lead-to-waypoint path.
@@ -468,7 +468,7 @@ uint16 ScriptedRoomMovementExecutor::classifyLeadWaypointVisibility() {
 bool ScriptedRoomMovementExecutor::traceLeadPathToTarget(int16 targetX, int16 targetY) {
 	// Ghidra 0x00005364-0x00005377: stage both complete lead coordinates and preserve the original fallthrough
 	// into the separately owned trace continuation.
-	return tracePathFromStagedOrigin(_state.ActorXFixedCoordinates[0], _state.ActorYFixedCoordinates[0],
+	return tracePathFromStagedOrigin(_state.actorXFixedCoordinates[0], _state.actorYFixedCoordinates[0],
 									 targetX,
 									 targetY);
 }
@@ -541,8 +541,8 @@ ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::compu
 	int16 targetX, int16 targetY, int16 movementScale) {
 	// Ghidra 0x0000547A-0x0000548D: stage both complete lead coordinates and retain the fallthrough into the
 	// separately owned velocity calculation with target and scale inputs unchanged.
-	return computeMovementVelocityFromStagedOrigin(_state.ActorXFixedCoordinates[0],
-												   _state.ActorYFixedCoordinates[0],
+	return computeMovementVelocityFromStagedOrigin(_state.actorXFixedCoordinates[0],
+												   _state.actorYFixedCoordinates[0],
 												   targetX, targetY, movementScale);
 }
 
@@ -553,34 +553,34 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 	// Ghidra 0x0000558A-0x00005591: only the full entry resets the queued movement-point index; routed internal
 	// entry 0x00005592 retains the caller's prepared reverse-order queue.
 	if (resetMovementPointIndex) {
-		_state.LeadActorMovementPointIndex = 0;
+		_state.leadActorMovementPointIndex = 0;
 	}
 
 	// Ghidra 0x00005592-0x000055AF: install the target, preserve and clear display bit three, then stage
 	// current lead coordinates and calculate this segment's velocity through its separate original owner.
-	_state.ActorTargetXCoordinates[0] = targetX;
-	_state.ActorTargetYCoordinates[0] = targetY;
-	uint8 savedDisplayBit = static_cast<uint8>(_state.DisplayFlags & 0x08);
-	_state.DisplayFlags &= static_cast<uint8>(~0x08);
+	_state.actorTargetXCoordinates[0] = targetX;
+	_state.actorTargetYCoordinates[0] = targetY;
+	uint8 savedDisplayBit = static_cast<uint8>(_state.displayFlags & 0x08);
+	_state.displayFlags &= static_cast<uint8>(~0x08);
 	VelocityResult velocity = computeLeadMovementVelocity(targetX, targetY, movementScale);
-	int16 positionIndex = velocity.PositionIndex;
+	int16 positionIndex = velocity.positionIndex;
 
 	// Ghidra 0x000055B0-0x000055D9: zero bias uses the authored previous-to-next directional matrix; every
 	// nonzero signed bias wraps with the new position before publishing the selected animation.
-	_state.ActorAnimationOffsets[0] =
+	_state.actorAnimationOffsets[0] =
 		animationBias == 0
-			? resolveLead(_state.ActorPositionIndices[0], positionIndex)
+			? resolveLead(_state.actorPositionIndices[0], positionIndex)
 			: static_cast<int16>(positionIndex + animationBias);
 
 	// Ghidra 0x000055DA-0x00005613: restart immediately, wait for both restart consumption and graphics
 	// publication, then mark lead movement active. Native interrupt-owned progress is serviced per back edge.
-	_state.ActorPositionIndices[0] = positionIndex;
-	_state.ActorAnimationDelays[0] = -1;
-	_state.ActorAnimationRestartFlags |= kLeadActorMask;
+	_state.actorPositionIndices[0] = positionIndex;
+	_state.actorAnimationDelays[0] = -1;
+	_state.actorAnimationRestartFlags |= kLeadActorMask;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorAnimationRestartFlags & kLeadActorMask) == 0 &&
-			(_state.ActorGraphicsReadyFlags & kLeadActorMask) != 0) {
+		if ((_state.actorAnimationRestartFlags & kLeadActorMask) == 0 &&
+			(_state.actorGraphicsReadyFlags & kLeadActorMask) != 0) {
 			break;
 		}
 
@@ -589,14 +589,14 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 		}
 	}
 
-	_state.ActorMovementFlags |= kLeadActorMask;
+	_state.actorMovementFlags |= kLeadActorMask;
 
 	// Ghidra 0x00005614-0x00005629: a negative encoded identity leaves movement asynchronous. Every nonnegative
 	// identity waits at least once until the room callback clears the complete routed movement.
 	if (static_cast<int16>(encodedObjectId) >= 0) {
 		while (true) {
 			_updateActorAnimationFrames();
-			if ((_state.ActorMovementFlags & kLeadActorMask) == 0) {
+			if ((_state.actorMovementFlags & kLeadActorMask) == 0) {
 				break;
 			}
 
@@ -607,12 +607,12 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 
 		// Ghidra 0x0000562A-0x00005653: select position plus four, restart at delay -1, and wait only for
 		// restart consumption before continuing to the normal restoration path.
-		_state.ActorAnimationOffsets[0] = static_cast<int16>(positionIndex + 4);
-		_state.ActorAnimationDelays[0] = -1;
-		_state.ActorAnimationRestartFlags |= kLeadActorMask;
+		_state.actorAnimationOffsets[0] = static_cast<int16>(positionIndex + 4);
+		_state.actorAnimationDelays[0] = -1;
+		_state.actorAnimationRestartFlags |= kLeadActorMask;
 		while (true) {
 			_updateActorAnimationFrames();
-			if ((_state.ActorAnimationRestartFlags & kLeadActorMask) == 0) {
+			if ((_state.actorAnimationRestartFlags & kLeadActorMask) == 0) {
 				break;
 			}
 
@@ -624,7 +624,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 
 	// Ghidra 0x00005654-0x00005669: normal return replaces only display bit three with its saved value,
 	// retaining every other callback-owned display change made during the waits.
-	_state.DisplayFlags = static_cast<uint8>((_state.DisplayFlags & ~0x08) | savedDisplayBit);
+	_state.displayFlags = static_cast<uint8>((_state.displayFlags & ~0x08) | savedDisplayBit);
 	return true;
 }
 
@@ -634,7 +634,7 @@ bool ScriptedRoomMovementExecutor::finishCompanionMovement(int16 targetX, int16 
 														   uint16 encodedObjectId) {
 	// Ghidra 0x0000566A-0x0000566D: start the complete companion route and retain its D6 position result.
 	MovementResult result = movePlayerToRoomPosition(targetX, targetY, movementMode, destinationBias);
-	if (!result.Completed) {
+	if (!result.completed) {
 		return false;
 	}
 
@@ -646,7 +646,7 @@ bool ScriptedRoomMovementExecutor::finishCompanionMovement(int16 targetX, int16 
 
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorMovementFlags & kCompanionActorMask) == 0) {
+		if ((_state.actorMovementFlags & kCompanionActorMask) == 0) {
 			break;
 		}
 
@@ -657,12 +657,12 @@ bool ScriptedRoomMovementExecutor::finishCompanionMovement(int16 targetX, int16 
 
 	// Ghidra 0x00005684-0x000056AD: wrap the retained position plus four, restart companion animation at delay
 	// -1, then update at least once and wait only for callback consumption of its restart request.
-	_state.ActorAnimationOffsets[1] = static_cast<int16>(result.PositionIndex + 4);
-	_state.ActorAnimationDelays[1] = -1;
-	_state.ActorAnimationRestartFlags |= kCompanionActorMask;
+	_state.actorAnimationOffsets[1] = static_cast<int16>(result.positionIndex + 4);
+	_state.actorAnimationDelays[1] = -1;
+	_state.actorAnimationRestartFlags |= kCompanionActorMask;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorAnimationRestartFlags & kCompanionActorMask) == 0) {
+		if ((_state.actorAnimationRestartFlags & kCompanionActorMask) == 0) {
 			break;
 		}
 
@@ -681,16 +681,16 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 	int16 animationBias) {
 	// Ghidra 0x000056B0-0x000056D1: clear stale companion movement and interaction bit five, then return only
 	// when both signed integer coordinates already equal the target. Incoming D6 is incidental here.
-	_state.ActorMovementFlags &= static_cast<uint8>(~kCompanionActorMask);
-	_state.InteractionFlags &= 0xDF;
-	if (getIntegerCoordinate(_state.ActorXFixedCoordinates[1]) == targetX &&
-		getIntegerCoordinate(_state.ActorYFixedCoordinates[1]) == targetY) {
-		return MovementResult(true, _state.ActorPositionIndices[1]);
+	_state.actorMovementFlags &= static_cast<uint8>(~kCompanionActorMask);
+	_state.interactionFlags &= 0xDF;
+	if (getIntegerCoordinate(_state.actorXFixedCoordinates[1]) == targetX &&
+		getIntegerCoordinate(_state.actorYFixedCoordinates[1]) == targetY) {
+		return MovementResult(true, _state.actorPositionIndices[1]);
 	}
 
 	// Ghidra 0x000056D2-0x000056F9: progress bit four, a clear direct trace, or no visible waypoint selects the
 	// full direct-movement entry and resets the companion queue index.
-	if ((_state.ProgressStateBytes[0] & 0x10) != 0 || !traceCompanionPathToTarget(targetX, targetY)) {
+	if ((_state.progressStateBytes[0] & 0x10) != 0 || !traceCompanionPathToTarget(targetX, targetY)) {
 		return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
 	}
 
@@ -699,7 +699,7 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 		return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
 	}
 
-	int waypointDataOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset;
+	int waypointDataOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
 	int16 firstWaypointRawX = _rom.readInt16(waypointDataOffset);
 	int16 firstWaypointRawY = _rom.readInt16(waypointDataOffset + 2);
 	int16 secondWaypointRawX = _rom.readInt16(waypointDataOffset + 4);
@@ -721,10 +721,10 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 				return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
 			}
 
-			_state.CompanionActorMovementPoints[0].TargetX = targetX;
-			_state.CompanionActorMovementPoints[0].TargetY = targetY;
+			_state.companionActorMovementPoints[0].targetX = targetX;
+			_state.companionActorMovementPoints[0].targetY = targetY;
 			buildCompanionRouteFromSecondWaypoint(targetX, targetY, movementScale);
-			_state.CompanionActorMovementPointIndex = 1;
+			_state.companionActorMovementPointIndex = 1;
 			return moveCompanionActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 											  false);
 		}
@@ -733,10 +733,10 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 			return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
 		}
 
-		_state.CompanionActorMovementPoints[0].TargetX = targetX;
-		_state.CompanionActorMovementPoints[0].TargetY = targetY;
+		_state.companionActorMovementPoints[0].targetX = targetX;
+		_state.companionActorMovementPoints[0].targetY = targetY;
 		buildCompanionRouteFromFirstWaypoint(targetX, targetY, movementScale);
-		_state.CompanionActorMovementPointIndex = 1;
+		_state.companionActorMovementPointIndex = 1;
 		return moveCompanionActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias, false);
 	}
 
@@ -744,10 +744,10 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 	// then preserves the blocked-first/clear-second three-segment route in reverse queue order.
 	if (visibleWaypoints == 1) {
 		if (!tracePathFromFirstWaypoint(targetX, targetY)) {
-			_state.CompanionActorMovementPoints[0].TargetX = targetX;
-			_state.CompanionActorMovementPoints[0].TargetY = targetY;
+			_state.companionActorMovementPoints[0].targetX = targetX;
+			_state.companionActorMovementPoints[0].targetY = targetY;
 			buildCompanionRouteFromFirstWaypoint(targetX, targetY, movementScale);
-			_state.CompanionActorMovementPointIndex = 1;
+			_state.companionActorMovementPointIndex = 1;
 			return moveCompanionActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 											  false);
 		}
@@ -756,23 +756,23 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 			return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
 		}
 
-		_state.CompanionActorMovementPoints[0].TargetX = targetX;
-		_state.CompanionActorMovementPoints[0].TargetY = targetY;
+		_state.companionActorMovementPoints[0].targetX = targetX;
+		_state.companionActorMovementPoints[0].targetY = targetY;
 		buildCompanionRouteFromSecondWaypoint(targetX, targetY, movementScale);
-		_state.CompanionActorMovementPoints[1].TargetX = secondWaypointX;
-		_state.CompanionActorMovementPoints[1].TargetY = secondWaypointY;
+		_state.companionActorMovementPoints[1].targetX = secondWaypointX;
+		_state.companionActorMovementPoints[1].targetY = secondWaypointY;
 		appendCompanionRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
-		_state.CompanionActorMovementPointIndex = 2;
+		_state.companionActorMovementPointIndex = 2;
 		return moveCompanionActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias, false);
 	}
 
 	// Ghidra 0x000057FC-0x00005851: every remaining nonzero mask (including the produced mask two) mirrors the
 	// prior branch through waypoint two, retaining both two-segment and three-segment outcomes.
 	if (!tracePathFromSecondWaypoint(targetX, targetY)) {
-		_state.CompanionActorMovementPoints[0].TargetX = targetX;
-		_state.CompanionActorMovementPoints[0].TargetY = targetY;
+		_state.companionActorMovementPoints[0].targetX = targetX;
+		_state.companionActorMovementPoints[0].targetY = targetY;
 		buildCompanionRouteFromSecondWaypoint(targetX, targetY, movementScale);
-		_state.CompanionActorMovementPointIndex = 1;
+		_state.companionActorMovementPointIndex = 1;
 		return moveCompanionActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 										  false);
 	}
@@ -781,13 +781,13 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 		return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
 	}
 
-	_state.CompanionActorMovementPoints[0].TargetX = targetX;
-	_state.CompanionActorMovementPoints[0].TargetY = targetY;
+	_state.companionActorMovementPoints[0].targetX = targetX;
+	_state.companionActorMovementPoints[0].targetY = targetY;
 	buildCompanionRouteFromFirstWaypoint(targetX, targetY, movementScale);
-	_state.CompanionActorMovementPoints[1].TargetX = firstWaypointX;
-	_state.CompanionActorMovementPoints[1].TargetY = firstWaypointY;
+	_state.companionActorMovementPoints[1].targetX = firstWaypointX;
+	_state.companionActorMovementPoints[1].targetY = firstWaypointY;
 	appendCompanionRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
-	_state.CompanionActorMovementPointIndex = 2;
+	_state.companionActorMovementPointIndex = 2;
 	return moveCompanionActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias, false);
 }
 
@@ -796,7 +796,7 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromFirstWaypoint(
 	int16 movementScale) {
 	// Ghidra 0x00005852-0x00005881: stage the first waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
 	int originXFixed = static_cast<int16>(_rom.readInt16(waypointOffset) << 3) << 16;
 	int originYFixed = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))) << 3 << 16;
 
@@ -805,9 +805,9 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromFirstWaypoint(
 		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x00005886-0x00005899: publish the outputs into queue slot zero without replacing its target.
-	_state.CompanionActorMovementPoints[0].HorizontalStep = velocity.HorizontalStep;
-	_state.CompanionActorMovementPoints[0].VerticalStep = velocity.VerticalStep;
-	_state.CompanionActorMovementPoints[0].PositionIndex = velocity.PositionIndex;
+	_state.companionActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
+	_state.companionActorMovementPoints[0].verticalStep = velocity.verticalStep;
+	_state.companionActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::buildCompanionRouteFromSecondWaypoint(
@@ -815,7 +815,7 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromSecondWaypoint(
 	int16 movementScale) {
 	// Ghidra 0x0000589A-0x000058CB: stage the second waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset + 4;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset + 4;
 	int originXFixed = static_cast<int16>(_rom.readInt16(waypointOffset) << 3) << 16;
 	int originYFixed = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))) << 3 << 16;
 
@@ -824,9 +824,9 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromSecondWaypoint(
 		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x000058D0-0x000058E3: publish the outputs into queue slot zero without replacing its target.
-	_state.CompanionActorMovementPoints[0].HorizontalStep = velocity.HorizontalStep;
-	_state.CompanionActorMovementPoints[0].VerticalStep = velocity.VerticalStep;
-	_state.CompanionActorMovementPoints[0].PositionIndex = velocity.PositionIndex;
+	_state.companionActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
+	_state.companionActorMovementPoints[0].verticalStep = velocity.verticalStep;
+	_state.companionActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::appendCompanionRouteFromFirstWaypoint(
@@ -834,7 +834,7 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromFirstWaypoint(
 	int16 movementScale) {
 	// Ghidra 0x000058E4-0x00005913: stage the first waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
 	int originXFixed = static_cast<int16>(_rom.readInt16(waypointOffset) << 3) << 16;
 	int originYFixed = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))) << 3 << 16;
 
@@ -843,9 +843,9 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromFirstWaypoint(
 		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x00005918-0x0000592B: publish the outputs into queue slot one without replacing its target.
-	_state.CompanionActorMovementPoints[1].HorizontalStep = velocity.HorizontalStep;
-	_state.CompanionActorMovementPoints[1].VerticalStep = velocity.VerticalStep;
-	_state.CompanionActorMovementPoints[1].PositionIndex = velocity.PositionIndex;
+	_state.companionActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
+	_state.companionActorMovementPoints[1].verticalStep = velocity.verticalStep;
+	_state.companionActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::appendCompanionRouteFromSecondWaypoint(
@@ -853,7 +853,7 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromSecondWaypoint(
 	int16 movementScale) {
 	// Ghidra 0x0000592C-0x0000595D: stage the second waypoint as wrapped signed 16.16 coordinates with zero
 	// fractional halves.
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset + 4;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset + 4;
 	int originXFixed = static_cast<int16>(_rom.readInt16(waypointOffset) << 3) << 16;
 	int originYFixed = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))) << 3 << 16;
 
@@ -862,15 +862,15 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromSecondWaypoint(
 		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x00005962-0x00005975: publish the outputs into queue slot one without replacing its target.
-	_state.CompanionActorMovementPoints[1].HorizontalStep = velocity.HorizontalStep;
-	_state.CompanionActorMovementPoints[1].VerticalStep = velocity.VerticalStep;
-	_state.CompanionActorMovementPoints[1].PositionIndex = velocity.PositionIndex;
+	_state.companionActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
+	_state.companionActorMovementPoints[1].verticalStep = velocity.verticalStep;
+	_state.companionActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
 uint16 ScriptedRoomMovementExecutor::classifyCompanionWaypointVisibility() {
 	// Ghidra 0x00005976-0x00005985: clear the result and select the first of exactly two waypoint pairs.
 	uint16 visibility = 0;
-	int waypointOffset = _state.RoomMovementDataOffset + kRouteWaypointDataOffset;
+	int waypointOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
 	for (int waypointIndex = 0; waypointIndex < 2; ++waypointIndex) {
 		// Ghidra 0x00005986-0x000059A5: preserve the result, bit index, and cursor around the staged trace,
 		// then set only the bit whose waypoint has a clear companion-to-waypoint path.
@@ -891,7 +891,7 @@ uint16 ScriptedRoomMovementExecutor::classifyCompanionWaypointVisibility() {
 bool ScriptedRoomMovementExecutor::traceCompanionPathToTarget(int16 targetX, int16 targetY) {
 	// Ghidra 0x000059B0-0x000059C7: stage both complete companion coordinates and preserve the original tail
 	// branch into the separately owned trace continuation.
-	return tracePathFromStagedOrigin(_state.ActorXFixedCoordinates[1], _state.ActorYFixedCoordinates[1],
+	return tracePathFromStagedOrigin(_state.actorXFixedCoordinates[1], _state.actorYFixedCoordinates[1],
 									 targetX,
 									 targetY);
 }
@@ -900,8 +900,8 @@ ScriptedRoomMovementExecutor::VelocityResult ScriptedRoomMovementExecutor::compu
 	int16 targetX, int16 targetY, int16 movementScale) {
 	// Ghidra 0x000059C8-0x000059DB: stage both complete companion coordinates and retain the fallthrough into
 	// the separately owned velocity calculation with target and scale inputs unchanged.
-	return computeCompanionVelocityFromStagedOrigin(_state.ActorXFixedCoordinates[1],
-													_state.ActorYFixedCoordinates[1], targetX, targetY,
+	return computeCompanionVelocityFromStagedOrigin(_state.actorXFixedCoordinates[1],
+													_state.actorYFixedCoordinates[1], targetX, targetY,
 													movementScale);
 }
 
@@ -983,8 +983,8 @@ ScriptedRoomMovementExecutor::computeCompanionVelocityFromStagedOrigin(
 	// truncation, publish both steps, and return the D4.w/D5.w/D6.w outputs to the route builder.
 	horizontalStep *= movementScale;
 	verticalStep *= movementScale;
-	_state.CompanionActorHorizontalMovementStep = horizontalStep;
-	_state.CompanionActorVerticalMovementStep = verticalStep;
+	_state.companionActorHorizontalMovementStep = horizontalStep;
+	_state.companionActorVerticalMovementStep = verticalStep;
 	return VelocityResult(horizontalStep, verticalStep, positionIndex);
 }
 
@@ -996,32 +996,32 @@ MovementResult ScriptedRoomMovementExecutor::moveCompanionActorDirectly(
 	// Ghidra 0x00005AD8-0x00005ADF: only the full entry resets the companion queue; routed internal entry
 	// 0x00005AE0 retains the prepared reverse-order movement points.
 	if (resetMovementPointIndex) {
-		_state.CompanionActorMovementPointIndex = 0;
+		_state.companionActorMovementPointIndex = 0;
 	}
 
 	// Ghidra 0x00005AE0-0x00005AEF: install the companion target and calculate this segment's three velocity
 	// outputs through the separate original owner.
-	_state.ActorTargetXCoordinates[1] = targetX;
-	_state.ActorTargetYCoordinates[1] = targetY;
+	_state.actorTargetXCoordinates[1] = targetX;
+	_state.actorTargetYCoordinates[1] = targetY;
 	VelocityResult velocity = computeCompanionMovementVelocity(targetX, targetY, movementScale);
-	int16 positionIndex = velocity.PositionIndex;
+	int16 positionIndex = velocity.positionIndex;
 
 	// Ghidra 0x00005AF0-0x00005B1F: zero bias uses the authored previous-to-next directional matrix; every
 	// nonzero signed bias wraps with the new position before publishing both animation and position.
-	_state.ActorAnimationOffsets[1] =
+	_state.actorAnimationOffsets[1] =
 		animationBias == 0
-			? resolveCompanion(_state.ActorPositionIndices[1], positionIndex)
+			? resolveCompanion(_state.actorPositionIndices[1], positionIndex)
 			: static_cast<int16>(positionIndex + animationBias);
-	_state.ActorPositionIndices[1] = positionIndex;
+	_state.actorPositionIndices[1] = positionIndex;
 
 	// Ghidra 0x00005B20-0x00005B4B: restart immediately, update at least once, and wait until restart
 	// consumption and graphics publication are both complete. Service native callback progress per back edge.
-	_state.ActorAnimationDelays[1] = -1;
-	_state.ActorAnimationRestartFlags |= kCompanionActorMask;
+	_state.actorAnimationDelays[1] = -1;
+	_state.actorAnimationRestartFlags |= kCompanionActorMask;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorAnimationRestartFlags & kCompanionActorMask) == 0 &&
-			(_state.ActorGraphicsReadyFlags & kCompanionActorMask) != 0) {
+		if ((_state.actorAnimationRestartFlags & kCompanionActorMask) == 0 &&
+			(_state.actorGraphicsReadyFlags & kCompanionActorMask) != 0) {
 			break;
 		}
 
@@ -1031,7 +1031,7 @@ MovementResult ScriptedRoomMovementExecutor::moveCompanionActorDirectly(
 	}
 
 	// Ghidra 0x00005B4C-0x00005B55: mark companion movement active and return D6's semantic position.
-	_state.ActorMovementFlags |= kCompanionActorMask;
+	_state.actorMovementFlags |= kCompanionActorMask;
 	return MovementResult(true, positionIndex);
 }
 

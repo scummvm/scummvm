@@ -39,18 +39,18 @@ void RoomScriptCommand19Executor::scriptCommand19ShowActor(int mode) {
 		} else if (objectId == 2) {
 			actorSlot = 1;
 		} else {
-			const RoomObject &roomObject = _state.RoomObjects[objectId - 3];
-			actorSlot = (static_cast<uint8>(roomObject.FixedPositionIndex) + 2) & 0x07;
+			const RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
 		}
 
 		// Ghidra 0x00002B38-0x00002B4D: request the selected actor's current frame and update at least once.
 		// Original interrupts publish staged graphics asynchronously, so service the installed room callback
 		// after each failed ready test before retaining the native back edge.
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
-		_state.ActorPositionUpdateFlags |= actorMask;
+		_state.actorPositionUpdateFlags |= actorMask;
 		while (true) {
 			_updateActorAnimationFrames();
-			if ((_state.ActorGraphicsReadyFlags & actorMask) != 0) {
+			if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 				break;
 			}
 
@@ -60,7 +60,7 @@ void RoomScriptCommand19Executor::scriptCommand19ShowActor(int mode) {
 		}
 
 		// Ghidra 0x00002B4E-0x00002B53: clear only the selected visibility block after publication.
-		_state.ActorVisibilityBlockFlags &= static_cast<uint8>(~actorMask);
+		_state.actorVisibilityBlockFlags &= static_cast<uint8>(~actorMask);
 	}
 
 	// Ghidra 0x00002B54-0x00002B59: every native mode and selector branch consumes four bytes.

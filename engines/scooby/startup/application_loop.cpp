@@ -41,8 +41,8 @@ void ApplicationLoop::run() {
 		// Ghidra RunStartupSequence 0x00000904-0x00000915: g_lResumeAudioCommand = 0x2F, then PlayAudioCommand
 		// starts that title song before the intro, so it plays under the logos and continues into the main menu.
 		// RunAdventure's InitializeAudioDriver stops it when a session (including a loaded save) begins.
-		_state.ResumeAudioCommand = 0x2F;
-		gemsStartSong(_state.ResumeAudioCommand);
+		_state.resumeAudioCommand = 0x2F;
+		gemsStartSong(_state.resumeAudioCommand);
 		Graphics::FrameLimiter limiter(g_system, kFramesPerSecond); // NTSC - 60Hz
 		if (!_state._saveGameData.shouldLoadGameData) {
 			IntroSequence intro(_rom, _scene);
@@ -106,7 +106,7 @@ void ApplicationLoop::initializeRuntimeState(RuntimeState &state,
 	// scene operations complete synchronously, so there is no pending hardware state to poll here.
 
 	// Ghidra 0x0000A256-0x0000A267: clear the episode selection and install the startup random seed.
-	state.EpisodeIndex = 0;
+	state.episodeIndex = 0;
 	random.initializeStartupSeed();
 
 	// Ghidra 0x0000A268-0x0000A271: preserve the distinct RNG call boundary. Zero replaces the hardware V
@@ -114,7 +114,7 @@ void ApplicationLoop::initializeRuntimeState(RuntimeState &state,
 	(void)random.scaleNextRandomValue(0);
 
 	// Ghidra 0x0000A272-0x0000A279: clear the mixed startup/menu flags.
-	state.InitializationFlags = 0;
+	state.initializationFlags = 0;
 
 	// Native control then falls through to the separately recovered ResetRuntimeState entry at
 	// 0x0000A27A.

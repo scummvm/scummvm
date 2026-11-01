@@ -58,15 +58,15 @@ const RoomSpriteRenderer::ActorSpriteLayout RoomSpriteRenderer::kActorSpriteLayo
 void RoomSpriteRenderer::refreshRoomSprites() {
 	// Ghidra 0x0000AF24-0x0000AF4D: initialize the ascending six-slot traversal and snapshot the active,
 	// pending-upload, and graphics-ready masks. The unused VDP command word has no managed state.
-	uint8 pendingFlags = _state.ActorTileUploadPendingFlags;
-	uint8 readyFlags = _state.ActorGraphicsReadyFlags;
+	uint8 pendingFlags = _state.actorTileUploadPendingFlags;
+	uint8 readyFlags = _state.actorGraphicsReadyFlags;
 	for (int actor = 0; actor < kActorCount; actor++) {
 		uint8 actorMask = static_cast<uint8>(1 << actor);
 
 		// Ghidra 0x0000AF4E-0x0000AF79: inactive slots skip all work. In transition mode, the selected actor
 		// and the stale-D0-zero path bypass the VDP counter; all other paths require 0xE000-0xF000. The
 		// managed scene has no unsafe DMA interval, so every active path reaches the same logical check.
-		if ((_state.ActiveActorFlags & actorMask) == 0) {
+		if ((_state.activeActorFlags & actorMask) == 0) {
 			continue;
 		}
 
@@ -81,12 +81,12 @@ void RoomSpriteRenderer::refreshRoomSprites() {
 		}
 
 		size_t transferByteCount = static_cast<size_t>(
-			_state.ActorTileTransferWordCounts[static_cast<size_t>(actor)] * sizeof(uint16));
-		Common::Array<uint8> &actorTileData = _state.ActorTileData[static_cast<size_t>(actor)];
+			_state.actorTileTransferWordCounts[static_cast<size_t>(actor)] * sizeof(uint16));
+		Common::Array<uint8> &actorTileData = _state.actorTileData[static_cast<size_t>(actor)];
 		_scene.loadTilesAt(makeSpan(actorTileData).slice(0, transferByteCount),
 						   kActorTileDestinationIndices[static_cast<size_t>(actor)]);
 		pendingFlags &= static_cast<uint8>(~actorMask);
-		_state.ActorFramePublicationLatchFlags &= static_cast<uint8>(~actorMask);
+		_state.actorFramePublicationLatchFlags &= static_cast<uint8>(~actorMask);
 		readyFlags |= actorMask;
 		break;
 	}
@@ -95,8 +95,8 @@ void RoomSpriteRenderer::refreshRoomSprites() {
 	// inactive or nonpending slot and exits after slot five when no upload was selected.
 
 	// Ghidra 0x0000AFA2-0x0000AFAD: commit the local pending and ready snapshots after either termination.
-	_state.ActorTileUploadPendingFlags = pendingFlags;
-	_state.ActorGraphicsReadyFlags = readyFlags;
+	_state.actorTileUploadPendingFlags = pendingFlags;
+	_state.actorGraphicsReadyFlags = readyFlags;
 
 	// Ghidra 0x0000AFAE-0x0000AFB1: rebuild the complete room sprite table after tile publication.
 	buildRoomSpriteTable();
@@ -107,8 +107,8 @@ void RoomSpriteRenderer::refreshRoomSprites() {
 	// Ghidra 0x0000AFC4-0x0000AFD9: visit all six signed delays independently, decrement only positive values,
 	// preserve zero and negative values, and return.
 	for (int actor = 0; actor < kActorCount; actor++) {
-		if (_state.ActorAnimationDelays[static_cast<size_t>(actor)] > 0) {
-			_state.ActorAnimationDelays[static_cast<size_t>(actor)]--;
+		if (_state.actorAnimationDelays[static_cast<size_t>(actor)] > 0) {
+			_state.actorAnimationDelays[static_cast<size_t>(actor)]--;
 		}
 	}
 }
@@ -116,8 +116,8 @@ void RoomSpriteRenderer::refreshRoomSprites() {
 void RoomSpriteRenderer::buildRoomSpriteTable() {
 	// Ghidra 0x0000A984-0x0000A99D: snapshot the preceding actor-presence mask, clear the current mask, start
 	// link numbering at one, and replace the shared sprite scratch cursor with an ordered list.
-	uint8 previousActorSpritePresenceFlags = _state.ActorSpritePresenceFlags;
-	_state.ActorSpritePresenceFlags = 0;
+	uint8 previousActorSpritePresenceFlags = _state.actorSpritePresenceFlags;
+	_state.actorSpritePresenceFlags = 0;
 	Common::Array<SpriteInstance> sprites;
 
 	// Ghidra 0x0000A99E-0x0000AAB5: retain the independent hidden, direct-cursor, transition-suppressed,
@@ -139,7 +139,7 @@ void RoomSpriteRenderer::buildRoomSpriteTable() {
 
 	// Ghidra 0x0000AC48-0x0000AC67: derive the six-slot actor candidate mask from active and blocked flags.
 	uint8 actorSpriteBuildCandidateFlags =
-		static_cast<uint8>(_state.ActiveActorFlags & ~_state.ActorVisibilityBlockFlags);
+		static_cast<uint8>(_state.activeActorFlags & ~_state.actorVisibilityBlockFlags);
 	while (actorSpriteBuildCandidateFlags != 0) {
 		// Ghidra 0x0000AC94-0x0000ACC9: scan slots five through zero. Transition bit two selects the first
 		// candidate immediately; otherwise select greatest signed integer Y and retain the higher-slot tie.
@@ -151,13 +151,13 @@ void RoomSpriteRenderer::buildRoomSpriteTable() {
 				continue;
 			}
 
-			if ((_state.TransitionFlags & 0x04) != 0) {
+			if ((_state.transitionFlags & 0x04) != 0) {
 				selectedActor = actor;
 				break;
 			}
 
 			int16 actorY =
-				static_cast<int16>(_state.ActorYFixedCoordinates[static_cast<size_t>(actor)] >> 16);
+				static_cast<int16>(_state.actorYFixedCoordinates[static_cast<size_t>(actor)] >> 16);
 			if (greatestY >= actorY) {
 				continue;
 			}
@@ -171,12 +171,12 @@ void RoomSpriteRenderer::buildRoomSpriteTable() {
 		uint8 selectedActorMask = static_cast<uint8>(1 << selectedActor);
 		actorSpriteBuildCandidateFlags &= static_cast<uint8>(~selectedActorMask);
 		if ((previousActorSpritePresenceFlags & selectedActorMask) == 0) {
-			if ((_state.ActorGraphicsReadyFlags & selectedActorMask) == 0) {
+			if ((_state.actorGraphicsReadyFlags & selectedActorMask) == 0) {
 				continue;
 			}
 		}
 
-		_state.ActorSpritePresenceFlags |= selectedActorMask;
+		_state.actorSpritePresenceFlags |= selectedActorMask;
 		appendRoomActorSprites(sprites, selectedActor);
 	}
 
@@ -188,36 +188,36 @@ void RoomSpriteRenderer::buildRoomSpriteTable() {
 }
 
 void RoomSpriteRenderer::appendCursorOrLowerInterfaceSprite(Common::Array<SpriteInstance> &sprites) {
-	if ((_state.DisplayFlags & 0x08) == 0) {
+	if ((_state.displayFlags & 0x08) == 0) {
 		return;
 	}
 
-	if (_state.CursorY < 0x00A8) {
-		_state.CursorHorizontalStep = 2;
-		_state.CursorVerticalStep = 2;
+	if (_state.cursorY < 0x00A8) {
+		_state.cursorHorizontalStep = 2;
+		_state.cursorVerticalStep = 2;
 		// Managed-only mouse support: the host cursor already shows this crosshair at the pointer.
-		if (_state.MouseCursorActive) {
+		if (_state.mouseCursorActive) {
 			return;
 		}
 
-		addPackedSprite(sprites, static_cast<uint16>(_state.CursorX + kVisibleCoordinateBias),
-						static_cast<uint16>(_state.CursorY + kVisibleCoordinateBias), 0x0500,
-						_state.CursorSpriteTileAttributes);
+		addPackedSprite(sprites, static_cast<uint16>(_state.cursorX + kVisibleCoordinateBias),
+						static_cast<uint16>(_state.cursorY + kVisibleCoordinateBias), 0x0500,
+						_state.cursorSpriteTileAttributes);
 		return;
 	}
 
-	if (_state.RoomInterfaceTransitionCountdown >= 0) {
+	if (_state.roomInterfaceTransitionCountdown >= 0) {
 		return;
 	}
 
 	int16 packedY = 0x0128;
-	if (_state.CursorY >= 0x00C0) {
+	if (_state.cursorY >= 0x00C0) {
 		packedY = 0x0140;
-	} else if ((_state.DisplayFlags & 0x10) == 0) {
+	} else if ((_state.displayFlags & 0x10) == 0) {
 		packedY += 8;
 	}
 
-	int16 remainingX = _state.CursorX;
+	int16 remainingX = _state.cursorX;
 	int16 snappedX = 0;
 	while (true) {
 		remainingX -= 0x28;
@@ -230,14 +230,14 @@ void RoomSpriteRenderer::appendCursorOrLowerInterfaceSprite(Common::Array<Sprite
 
 	uint16 sizeAttributes;
 	uint16 tileAttributes;
-	if ((_state.DisplayFlags & 0x10) == 0) {
+	if ((_state.displayFlags & 0x10) == 0) {
 		snappedX += 8;
 		if (snappedX > 0x00A8) {
 			snappedX = 0x00A8;
 		}
 
 		sizeAttributes = 0x0D00;
-		tileAttributes = _state.ShortInterfaceSpriteTileIndex;
+		tileAttributes = _state.shortInterfaceSpriteTileIndex;
 	} else {
 		if (snappedX > 0x00C8) {
 			snappedX = 0x00C8;
@@ -248,11 +248,11 @@ void RoomSpriteRenderer::appendCursorOrLowerInterfaceSprite(Common::Array<Sprite
 		}
 
 		sizeAttributes = 0x0E00;
-		tileAttributes = _state.TallInterfaceSpriteTileIndex;
+		tileAttributes = _state.tallInterfaceSpriteTileIndex;
 	}
 
-	if (_state.CursorHorizontalStep != 2) {
-		_state.CursorX = static_cast<int16>(snappedX + 0x14);
+	if (_state.cursorHorizontalStep != 2) {
+		_state.cursorX = static_cast<int16>(snappedX + 0x14);
 	}
 
 	addPackedSprite(sprites, static_cast<uint16>(snappedX + 0x88), static_cast<uint16>(packedY),
@@ -260,11 +260,11 @@ void RoomSpriteRenderer::appendCursorOrLowerInterfaceSprite(Common::Array<Sprite
 }
 
 void RoomSpriteRenderer::appendScriptedCoordinateSprite(Common::Array<SpriteInstance> &sprites) {
-	if ((_state.RoomBehaviorFlags & 0x10) == 0) {
+	if ((_state.roomBehaviorFlags & 0x10) == 0) {
 		return;
 	}
 
-	int32 coordinateOffset = _state.ScriptedCoordinateSprite._coordinateOffset;
+	int32 coordinateOffset = _state.scriptedCoordinateSprite._coordinateOffset;
 	uint16 packedX = static_cast<uint16>(
 		_rom.readUInt16(kScriptedSpriteCoordinateTableOffset + coordinateOffset) + 0x90);
 	uint16 packedY = static_cast<uint16>(
@@ -272,43 +272,43 @@ void RoomSpriteRenderer::appendScriptedCoordinateSprite(Common::Array<SpriteInst
 						coordinateOffset) +
 		0x90);
 	coordinateOffset += static_cast<int32>(sizeof(uint16));
-	_state.ScriptedCoordinateSprite._coordinateOffset = coordinateOffset;
-	if ((_state.RoomBehaviorFlags & 0x20) != 0 && coordinateOffset == kScriptedSpriteYCoordinateByteOffset) {
-		_state.ScriptedCoordinateSprite._coordinateOffset -= static_cast<int32>(sizeof(uint16));
+	_state.scriptedCoordinateSprite._coordinateOffset = coordinateOffset;
+	if ((_state.roomBehaviorFlags & 0x20) != 0 && coordinateOffset == kScriptedSpriteYCoordinateByteOffset) {
+		_state.scriptedCoordinateSprite._coordinateOffset -= static_cast<int32>(sizeof(uint16));
 	}
 
-	_state.ScriptedCoordinateSprite._frameDelay--;
-	if (_state.ScriptedCoordinateSprite._frameDelay < 0) {
-		_state.ScriptedCoordinateSprite._frameDelay = 7;
-		_state.RoomBehaviorFlags ^= 0x40;
+	_state.scriptedCoordinateSprite._frameDelay--;
+	if (_state.scriptedCoordinateSprite._frameDelay < 0) {
+		_state.scriptedCoordinateSprite._frameDelay = 7;
+		_state.roomBehaviorFlags ^= 0x40;
 	}
 
-	int frameTileOffset = (_state.RoomBehaviorFlags & 0x40) == 0 ? 0 : 4;
+	int frameTileOffset = (_state.roomBehaviorFlags & 0x40) == 0 ? 0 : 4;
 	addPackedSprite(sprites, packedX, packedY, 0x0500,
-					static_cast<uint16>(_state.ScriptedCoordinateSprite._tileAttributes +
+					static_cast<uint16>(_state.scriptedCoordinateSprite._tileAttributes +
 										frameTileOffset));
 }
 
 void RoomSpriteRenderer::appendInteractionStripSprites(Common::Array<SpriteInstance> &sprites) {
-	if ((_state.InteractionFlags & 0x04) == 0) {
+	if ((_state.interactionFlags & 0x04) == 0) {
 		return;
 	}
 
-	if (_state.InteractionStripColumn < 0) {
+	if (_state.interactionStripColumn < 0) {
 		return;
 	}
 
-	uint16 packedX = static_cast<uint16>((_state.InteractionStripColumn << 3) + 0x80);
-	uint16 packedY = static_cast<uint16>((_state.InteractionStripRow << 3) + 0x128);
-	uint16 sizeAttributes = static_cast<uint16>(0x0C00 | _state.InteractionStripHeightAttributes);
+	uint16 packedX = static_cast<uint16>((_state.interactionStripColumn << 3) + 0x80);
+	uint16 packedY = static_cast<uint16>((_state.interactionStripRow << 3) + 0x128);
+	uint16 sizeAttributes = static_cast<uint16>(0x0C00 | _state.interactionStripHeightAttributes);
 	for (int sprite = 0; sprite < 8; sprite++) {
-		addPackedSprite(sprites, packedX, packedY, sizeAttributes, _state.TallInterfaceSpriteTileIndex);
+		addPackedSprite(sprites, packedX, packedY, sizeAttributes, _state.tallInterfaceSpriteTileIndex);
 		packedX += 0x20;
 	}
 }
 
 void RoomSpriteRenderer::appendDuelOverlaySprites(Common::Array<SpriteInstance> &sprites) {
-	if ((_state.DuelStateFlags & 0x01) == 0) {
+	if ((_state.duelStateFlags & 0x01) == 0) {
 		return;
 	}
 
@@ -343,38 +343,38 @@ void RoomSpriteRenderer::appendRoomActorSprites(Common::Array<SpriteInstance> &s
 
 	// Ghidra 0x0000AD16-0x0000AD53: derive the actor's base tile. Preserve all three independent pending gates
 	// before latching and snapshotting pending frame identity, scale, and compact-frame anchors.
-	if ((_state.ActorFramePublicationLatchFlags & actorMask) == 0) {
-		if ((_state.ActorCompactConversionPendingFlags & actorMask) == 0) {
-			if ((_state.ActorTileUploadPendingFlags & actorMask) == 0) {
-				_state.ActorFramePublicationLatchFlags |= actorMask;
-				_state.ActorCurrentFrameDataOffsets[static_cast<size_t>(actor)] =
-					_state.ActorPendingFrameDataOffsets[static_cast<size_t>(actor)];
-				_state.ActorPreviousHorizontalScales[static_cast<size_t>(actor)] =
-					_state.ActorHorizontalScaleFactors[static_cast<size_t>(actor)];
-				_state.ActorPreviousVerticalScales[static_cast<size_t>(actor)] =
-					_state.ActorVerticalScaleFactors[static_cast<size_t>(actor)];
-				_state.ActorPublishedFrameAnchorX[static_cast<size_t>(actor)] =
-					_state.ActorFrameAnchorX[static_cast<size_t>(actor)];
-				_state.ActorPublishedFrameAnchorY[static_cast<size_t>(actor)] =
-					_state.ActorFrameAnchorY[static_cast<size_t>(actor)];
+	if ((_state.actorFramePublicationLatchFlags & actorMask) == 0) {
+		if ((_state.actorCompactConversionPendingFlags & actorMask) == 0) {
+			if ((_state.actorTileUploadPendingFlags & actorMask) == 0) {
+				_state.actorFramePublicationLatchFlags |= actorMask;
+				_state.actorCurrentFrameDataOffsets[static_cast<size_t>(actor)] =
+					_state.actorPendingFrameDataOffsets[static_cast<size_t>(actor)];
+				_state.actorPreviousHorizontalScales[static_cast<size_t>(actor)] =
+					_state.actorHorizontalScaleFactors[static_cast<size_t>(actor)];
+				_state.actorPreviousVerticalScales[static_cast<size_t>(actor)] =
+					_state.actorVerticalScaleFactors[static_cast<size_t>(actor)];
+				_state.actorPublishedFrameAnchorX[static_cast<size_t>(actor)] =
+					_state.actorFrameAnchorX[static_cast<size_t>(actor)];
+				_state.actorPublishedFrameAnchorY[static_cast<size_t>(actor)] =
+					_state.actorFrameAnchorY[static_cast<size_t>(actor)];
 			}
 		}
 	}
 
 	// Ghidra 0x0000AD54-0x0000AD59: a negative frame-pointer high byte terminates this actor immediately.
-	if (!_state.ActorCurrentFrameDataOffsets[static_cast<size_t>(actor)].hasValue()) {
+	if (!_state.actorCurrentFrameDataOffsets[static_cast<size_t>(actor)].hasValue()) {
 		return;
 	}
-	int32 frameDataOffset = _state.ActorCurrentFrameDataOffsets[static_cast<size_t>(actor)].value();
+	int32 frameDataOffset = _state.actorCurrentFrameDataOffsets[static_cast<size_t>(actor)].value();
 
 	// Ghidra 0x0000AD5A-0x0000AD8F: derive signed camera-relative coordinates and retain each of the four
 	// viewport rejection branches independently.
 	int16 relativeX = static_cast<int16>(
-		static_cast<int16>(_state.ActorXFixedCoordinates[static_cast<size_t>(actor)] >> 16) -
-		_state.CameraX);
+		static_cast<int16>(_state.actorXFixedCoordinates[static_cast<size_t>(actor)] >> 16) -
+		_state.cameraX);
 	int16 relativeY = static_cast<int16>(
-		static_cast<int16>(_state.ActorYFixedCoordinates[static_cast<size_t>(actor)] >> 16) -
-		_state.CameraY);
+		static_cast<int16>(_state.actorYFixedCoordinates[static_cast<size_t>(actor)] >> 16) -
+		_state.cameraY);
 	if (relativeX < -0x50) {
 		return;
 	}
@@ -395,9 +395,9 @@ void RoomSpriteRenderer::appendRoomActorSprites(Common::Array<SpriteInstance> &s
 	// the direct frame record's authored X/Y anchors through separate branches.
 	int16 packedX = static_cast<int16>(relativeX + 0x80);
 	int16 packedY = static_cast<int16>(relativeY + 0x90);
-	if ((_state.ActorCompactFrameFlags & actorMask) != 0) {
-		packedX -= _state.ActorPublishedFrameAnchorX[static_cast<size_t>(actor)];
-		packedY -= _state.ActorPublishedFrameAnchorY[static_cast<size_t>(actor)];
+	if ((_state.actorCompactFrameFlags & actorMask) != 0) {
+		packedX -= _state.actorPublishedFrameAnchorX[static_cast<size_t>(actor)];
+		packedY -= _state.actorPublishedFrameAnchorY[static_cast<size_t>(actor)];
 	} else {
 		packedX -= _rom.readInt16(frameDataOffset);
 		packedY -= _rom.readInt16(frameDataOffset + static_cast<int>(sizeof(int16)));
@@ -435,26 +435,26 @@ void RoomSpriteRenderer::appendRoomActorSprites(Common::Array<SpriteInstance> &s
 	uint16 frameAttributes = _rom.readUInt16(frameDataOffset + 10);
 	int xOffsetTableOffset;
 	if ((frameAttributes & 0x0800) == 0) {
-		xOffsetTableOffset = layout->UnflippedXOffset;
+		xOffsetTableOffset = layout->unflippedXOffset;
 	} else {
-		xOffsetTableOffset = layout->FlippedXOffset;
+		xOffsetTableOffset = layout->flippedXOffset;
 	}
 
 	// Ghidra 0x0000AEEC-0x0000AF21: consume every selected table entry with 16-bit cumulative arithmetic,
 	// combine slot tile base, authored tile offset, frame attributes, and actor priority, and append in order.
-	for (int part = 0; part < layout->PartCount; part++) {
+	for (int part = 0; part < layout->partCount; part++) {
 		int tableByteOffset = part * static_cast<int>(sizeof(uint16));
 		packedX += _rom.readInt16(xOffsetTableOffset + tableByteOffset);
-		packedY += _rom.readInt16(layout->YOffset + tableByteOffset);
+		packedY += _rom.readInt16(layout->yOffset + tableByteOffset);
 		uint16 tileAttributes =
-			static_cast<uint16>(baseTileIndex + _rom.readUInt16(layout->TileOffset + tableByteOffset));
+			static_cast<uint16>(baseTileIndex + _rom.readUInt16(layout->tileOffset + tableByteOffset));
 		tileAttributes |= frameAttributes;
-		if ((_state.ActorHighPriorityFlags & actorMask) != 0) {
+		if ((_state.actorHighPriorityFlags & actorMask) != 0) {
 			tileAttributes |= 0x8000;
 		}
 
 		addPackedSprite(sprites, static_cast<uint16>(packedX), static_cast<uint16>(packedY),
-						_rom.readUInt16(layout->ShapeOffset + tableByteOffset), tileAttributes);
+						_rom.readUInt16(layout->shapeOffset + tableByteOffset), tileAttributes);
 	}
 
 	// Ghidra 0x0000AF22-0x0000AF23: return the advanced logical list to actor arbitration.

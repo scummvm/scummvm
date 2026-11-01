@@ -40,7 +40,7 @@ bool SoundTestController::run() {
 
 bool SoundTestController::runLoop() {
 	// Ghidra 0x0000940C-0x0000943B: retain the prior input, current animation, audio reset, and scene asset.
-	uint8 previousInput = _state.PreviousControllerOneInput;
+	uint8 previousInput = _state.previousControllerOneInput;
 	composeAnimatedTiles();
 	_initializeAudioDriver();
 	_presentation.stageByteRleData(kSceneAssetOffset);
@@ -54,14 +54,14 @@ bool SoundTestController::runLoop() {
 		return false;
 	}
 
-	_state.RetraceCountdown = kUpdateCountdown;
+	_state.retraceCountdown = kUpdateCountdown;
 	_presentation.commitStagedMenuPlane();
 	_presentation.commitMenuSceneBuffers();
 
 	while (true) {
 		// Ghidra 0x0000946C-0x0000947B: compose one animated menu frame without consuming selection state.
 		composeAnimatedTiles();
-		while (_state.RetraceCountdown >= 0) {
+		while (_state.retraceCountdown >= 0) {
 			// Ghidra 0x0000947C-0x00009667: update selection, preserve audio call sites, or take C's exit.
 			if (processInput(group, index, previousInput, displayedSelection)) {
 				_presentation.setTextPriority(false);
@@ -71,19 +71,19 @@ bool SoundTestController::runLoop() {
 
 				_presentation.commitMenuSceneBuffers();
 				_initializeAudioDriver();
-				_playAudioCommand(_state.ResumeAudioCommand);
+				_playAudioCommand(_state.resumeAudioCommand);
 				return true;
 			}
 
 			// Ghidra 0x00009668-0x0000967B: retain this sample while the callback advances the countdown.
-			previousInput = _state.ControllerOneInput;
+			previousInput = _state.controllerOneInput;
 			if (!_waitForVerticalBlank()) {
 				return false;
 			}
 		}
 
 		// Ghidra 0x0000967C-0x00009692: publish the completed animation frame and detect a new selection.
-		_state.RetraceCountdown = kUpdateCountdown;
+		_state.retraceCountdown = kUpdateCountdown;
 		_presentation.commitMenuSceneBuffers();
 		int selection = group * kIndicesPerFullGroup + index;
 		if (displayedSelection != selection) {
@@ -176,16 +176,16 @@ void SoundTestController::normalizeSelection(int &group, int &index) {
 bool SoundTestController::wasPressed(ControllerButtons button, uint8 previousInput) const {
 	uint8 mask = static_cast<uint8>(button);
 	return _state.isButtonDown(button) &&
-		   ((previousInput & mask) != 0 || (_state.ControllerOneAccumulatedChanges & mask) != 0);
+		   ((previousInput & mask) != 0 || (_state.controllerOneAccumulatedChanges & mask) != 0);
 }
 
 void SoundTestController::consumeInputEdge() {
-	_state.ControllerOneAccumulatedChanges = 0;
-	_state.ControllerOneChangeBaseline = _state.ControllerOneInput;
+	_state.controllerOneAccumulatedChanges = 0;
+	_state.controllerOneChangeBaseline = _state.controllerOneInput;
 }
 
 bool SoundTestController::waitForPendingCommit() {
-	while (_state.RetraceCountdown >= 0) {
+	while (_state.retraceCountdown >= 0) {
 		if (!_waitForVerticalBlank()) {
 			return false;
 		}

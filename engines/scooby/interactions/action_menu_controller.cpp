@@ -49,7 +49,7 @@ void ActionMenuController::refreshSelectedActionIcons() {
 
 	// Ghidra 0x00001BDE-0x00001BF5: clear only display bit three, stage the active icon, and invoke the
 	// existing renderer in mode zero even when the staged identity is zero.
-	_state.DisplayFlags &= static_cast<uint8>(~kSelectedActionIconRefreshMask);
+	_state.displayFlags &= static_cast<uint8>(~kSelectedActionIconRefreshMask);
 	_state.pendingVerbIcon = _state.activeVerbIcon;
 	drawSelectedActionIcon(0);
 
@@ -63,15 +63,15 @@ void ActionMenuController::refreshSelectedActionIcons() {
 
 void ActionMenuController::synchronizeActionIcon() {
 	VerbEnum previousActionIcon = NONE;
-	if (_state.PreviousInteraction != _state.CurrentInteraction &&
-		resolveActionIcon(_state.PreviousInteraction, previousActionIcon) &&
+	if (_state.previousInteraction != _state.currentInteraction &&
+		resolveActionIcon(_state.previousInteraction, previousActionIcon) &&
 		previousActionIcon != _state.activeVerbIcon) {
 		_state.pendingVerbIcon = previousActionIcon;
 		drawSelectedActionIcon(0);
 	}
 
 	VerbEnum currentActionIcon = NONE;
-	if (_state.activeVerbIcon == 0 && resolveActionIcon(_state.CurrentInteraction, currentActionIcon)) {
+	if (_state.activeVerbIcon == 0 && resolveActionIcon(_state.currentInteraction, currentActionIcon)) {
 		_state.cachedVerbIcon = currentActionIcon;
 		if (currentActionIcon != 0) {
 			_state.pendingVerbIcon = currentActionIcon;
@@ -81,8 +81,8 @@ void ActionMenuController::synchronizeActionIcon() {
 }
 
 bool ActionMenuController::updateActionMenu() {
-	int16 command = _state.MenuCommand;
-	if ((_state.DisplayFlags & kMenuDisplayMask) == 0) { // action menu
+	int16 command = _state.menuCommand;
+	if ((_state.displayFlags & kMenuDisplayMask) == 0) { // action menu
 		if (command == 0) {
 			return true;
 		}
@@ -97,37 +97,37 @@ bool ActionMenuController::updateActionMenu() {
 			if (selectedAction != _state.activeVerbIcon) {
 				_state.pendingVerbIcon = _state.activeVerbIcon;
 				drawSelectedActionIcon(0);
-				_state.InteractionFlags &= static_cast<uint8>(~kAlternateInteractionMask);
+				_state.interactionFlags &= static_cast<uint8>(~kAlternateInteractionMask);
 				_state.activeVerbIcon = selectedAction;
 				_state.pendingVerbIcon = selectedAction;
 				drawSelectedActionIcon(1);
 			}
 		}
 
-		_state.MenuCommand = 0;
+		_state.menuCommand = 0;
 		return _waitForRoomVerticalBlank();
 	}
 
 	// inventory mode
 	if (command == 5 || command == 10) { // inventory page up/down buttons
-		if ((_state.InteractionFlags & kAlternateInteractionMask) == 0) {
-			_state.CurrentInteraction = 0;
+		if ((_state.interactionFlags & kAlternateInteractionMask) == 0) {
+			_state.currentInteraction = 0;
 		} else {
-			_state.SecondaryInteraction = 0;
+			_state.secondaryInteraction = 0;
 		}
 
 		if (_state.isButtonDown(ControllerButtons::B)) {
 			if (command == 10) { // down button
-				int16 lastPage = _state.InventoryObjectIndices.empty()
+				int16 lastPage = _state.inventoryObjectIndices.empty()
 									 ? static_cast<int16>(0)
-									 : static_cast<int16>((static_cast<int>(_state.InventoryObjectIndices.size()) - 1) >> 2);
-				if (!_state.InventoryObjectIndices.empty() && lastPage != _state.MenuPage) {
-					_state.MenuPage++;
+									 : static_cast<int16>((static_cast<int>(_state.inventoryObjectIndices.size()) - 1) >> 2);
+				if (!_state.inventoryObjectIndices.empty() && lastPage != _state.menuPage) {
+					_state.menuPage++;
 					queueRightActionPrompt(1);
 					commitActionPromptUpdate();
 				}
-			} else if (_state.MenuPage != 0) { // up button
-				_state.MenuPage--;
+			} else if (_state.menuPage != 0) { // up button
+				_state.menuPage--;
 				queueLeftActionPrompt(1);
 				commitActionPromptUpdate();
 			}
@@ -136,21 +136,21 @@ bool ActionMenuController::updateActionMenu() {
 		}
 	} else {
 		int16 adjustedCommand = command > 4 ? static_cast<int16>(command - 1) : command;
-		int menuIndex = _state.MenuPage * 4 + adjustedCommand;
-		int16 interaction = menuIndex == 0 || menuIndex > static_cast<int>(_state.InventoryObjectIndices.size())
+		int menuIndex = _state.menuPage * 4 + adjustedCommand;
+		int16 interaction = menuIndex == 0 || menuIndex > static_cast<int>(_state.inventoryObjectIndices.size())
 								? static_cast<int16>(0)
-								: static_cast<int16>(_state.InventoryObjectIndices[static_cast<size_t>(
+								: static_cast<int16>(_state.inventoryObjectIndices[static_cast<size_t>(
 														 menuIndex - 1)] +
 													 3);
-		if ((_state.InteractionFlags & kAlternateInteractionMask) == 0) {
-			_state.CurrentInteraction = interaction;
+		if ((_state.interactionFlags & kAlternateInteractionMask) == 0) {
+			_state.currentInteraction = interaction;
 		} else {
-			_state.SecondaryInteraction =
-				interaction == _state.CurrentInteraction ? static_cast<int16>(0) : interaction;
+			_state.secondaryInteraction =
+				interaction == _state.currentInteraction ? static_cast<int16>(0) : interaction;
 		}
 	}
 
-	_state.MenuCommand = 0;
+	_state.menuCommand = 0;
 	return _waitForRoomVerticalBlank();
 }
 
@@ -162,18 +162,18 @@ bool ActionMenuController::resolveActionIcon(int16 interaction, VerbEnum &action
 
 	actionIcon = interaction < 3
 					 ? LOOK
-					 : static_cast<VerbEnum>(_state.RoomObjects[interaction - 3].suggestedVerb);
+					 : static_cast<VerbEnum>(_state.roomObjects[interaction - 3].suggestedVerb);
 	return true;
 }
 
 void ActionMenuController::composeInventoryGrid() {
 	// Ghidra 0x00005D1C-0x00005D51: count through the original sentinel and clamp only a page above the
 	// unsigned last-page quotient. The typed list omits the sentinel but retains its word-count result.
-	int16 itemCount = static_cast<int16>(_state.InventoryObjectIndices.size());
+	int16 itemCount = static_cast<int16>(_state.inventoryObjectIndices.size());
 	if (itemCount != 0) {
 		int16 lastPage = static_cast<int16>(static_cast<uint16>(itemCount - 1) >> 2);
-		if (lastPage < _state.MenuPage) {
-			_state.MenuPage = lastPage;
+		if (lastPage < _state.menuPage) {
+			_state.menuPage = lastPage;
 		}
 	}
 
@@ -183,21 +183,21 @@ void ActionMenuController::composeInventoryGrid() {
 	// rejection branch, and select the episode's immutable inventory-graphic record table.
 	if (itemCount != 0) {
 		int16 lastItemIndex = static_cast<int16>(itemCount - 1);
-		int16 pageStart = static_cast<int16>(_state.MenuPage << 2);
+		int16 pageStart = static_cast<int16>(_state.menuPage << 2);
 		if (pageStart <= lastItemIndex) {
 			int16 remainingLastIndex = static_cast<int16>(lastItemIndex - pageStart);
 			int16 inventoryListIndex = pageStart;
 			int graphicTableOffset = static_cast<int>(
-				_rom.readUInt32(_state.ActiveEpisodeDescriptorOffset + kEpisodeInventoryGraphicTableField));
+				_rom.readUInt32(_state.activeEpisodeDescriptorOffset + kEpisodeInventoryGraphicTableField));
 			int patternDestinationOffset = 0;
 
 			// Ghidra 0x00005D88-0x00005DF9: consume at least one selected item, stop after its page has
 			// no further item or all eight slots are consumed, and retain the zero-graphic no-write branch.
 			do {
 				int32 roomObjectIndex =
-					_state.InventoryObjectIndices[static_cast<size_t>(inventoryListIndex++)];
+					_state.inventoryObjectIndices[static_cast<size_t>(inventoryListIndex++)];
 				int16 graphicIndex =
-					_state.RoomObjects[static_cast<size_t>(roomObjectIndex)].InventoryGraphicIndex;
+					_state.roomObjects[static_cast<size_t>(roomObjectIndex)].inventoryGraphicIndex;
 				if (graphicIndex != 0) {
 					int graphicRecordOffset = graphicTableOffset + static_cast<int16>(
 																	   static_cast<uint16>(graphicIndex - 1) * kInventoryGraphicRecordSize);
@@ -277,7 +277,7 @@ void ActionMenuController::commitActionPromptTiles() {
 void ActionMenuController::refreshActionPrompts() {
 	// Ghidra 0x00005B92-0x00005BA1: queue left mode two only for page zero; every nonzero page queues zero.
 	int16 leftMode = 0;
-	if (_state.MenuPage == 0) {
+	if (_state.menuPage == 0) {
 		leftMode = 2;
 	}
 
@@ -286,9 +286,9 @@ void ActionMenuController::refreshActionPrompts() {
 	// Ghidra 0x00005BA2-0x00005BC1: scan the complete inclusive object table and count every inventory
 	// object whose room ID is exactly one, preserving the original word-width accumulator.
 	int16 inventoryObjectCount = 0;
-	for (size_t index = 0; index < _state.RoomObjects.size(); index++) {
-		const RoomObject &roomObject = _state.RoomObjects[index];
-		if (roomObject.RoomId == 1) {
+	for (size_t index = 0; index < _state.roomObjects.size(); index++) {
+		const RoomObject &roomObject = _state.roomObjects[index];
+		if (roomObject.roomId == 1) {
 			inventoryObjectCount++;
 		}
 	}
@@ -300,7 +300,7 @@ void ActionMenuController::refreshActionPrompts() {
 		rightMode = 2;
 	} else {
 		int16 lastPage = static_cast<int16>(static_cast<uint16>(inventoryObjectCount - 1) >> 2);
-		if (lastPage == _state.MenuPage) {
+		if (lastPage == _state.menuPage) {
 			rightMode = 2;
 		}
 	}
@@ -346,7 +346,7 @@ void ActionMenuController::drawSelectedActionIcon(int mode) {
 			uint16 packedCell = static_cast<uint16>(
 				_rom.readUInt16(sourceOffset + row * kInterfaceColumnCount * static_cast<int>(sizeof(uint16)) +
 								column * static_cast<int>(sizeof(uint16))) +
-				_state.ActionPromptTileAttributes);
+				_state.actionPromptTileAttributes);
 			writeUInt16BigEndian(packedCellsSpan,
 								 (row * kActionIconCellColumnCount + column) * static_cast<int>(sizeof(uint16)),
 								 packedCell);
@@ -362,7 +362,7 @@ void ActionMenuController::drawSelectedActionIcon(int mode) {
 void ActionMenuController::queueLeftActionPrompt(int16 mode) {
 	// Ghidra 0x00005C5A-0x00005C63: every nonnegative signed countdown takes the back edge while the
 	// installed room callback and shared frame clock perform the original prompt and retrace work.
-	while (_state.LeftActionPromptCountdown >= 0) {
+	while (_state.leftActionPromptCountdown >= 0) {
 		if (!_waitForRoomVerticalBlank()) {
 			return;
 		}
@@ -370,14 +370,14 @@ void ActionMenuController::queueLeftActionPrompt(int16 mode) {
 
 	// Ghidra 0x00005C64-0x00005C73: start the inclusive countdown at eight, store the exact mode word,
 	// and return without changing the right prompt.
-	_state.LeftActionPromptCountdown = 8;
-	_state.LeftActionPromptIndex = mode;
+	_state.leftActionPromptCountdown = 8;
+	_state.leftActionPromptIndex = mode;
 }
 
 void ActionMenuController::queueRightActionPrompt(int16 mode) {
 	// Ghidra 0x00005C74-0x00005C7D: every nonnegative signed countdown takes the back edge while the
 	// installed room callback and shared frame clock perform the original prompt and retrace work.
-	while (_state.RightActionPromptCountdown >= 0) {
+	while (_state.rightActionPromptCountdown >= 0) {
 		if (!_waitForRoomVerticalBlank()) {
 			return;
 		}
@@ -385,14 +385,14 @@ void ActionMenuController::queueRightActionPrompt(int16 mode) {
 
 	// Ghidra 0x00005C7E-0x00005C8D: start the inclusive countdown at eight, store the exact mode word,
 	// and return without changing the left prompt.
-	_state.RightActionPromptCountdown = 8;
-	_state.RightActionPromptIndex = mode;
+	_state.rightActionPromptCountdown = 8;
+	_state.rightActionPromptIndex = mode;
 }
 
 void ActionMenuController::commitActionPromptUpdate() {
 	// Ghidra 0x00005CF6-0x00005D01: retain the actor-zero-only pending-upload loop. The original interrupt
 	// advances publication asynchronously, so service one callback-aware clocked frame on each back edge.
-	while ((_state.ActorTileUploadPendingFlags & 0x01) != 0) {
+	while ((_state.actorTileUploadPendingFlags & 0x01) != 0) {
 		if (!_waitForRoomVerticalBlank()) {
 			return;
 		}
@@ -403,8 +403,8 @@ void ActionMenuController::commitActionPromptUpdate() {
 
 	// Ghidra 0x00005D06-0x00005D19: queue publication through display bit five and retain its busy loop until
 	// the installed room VBlank owner commits the staged patterns and cells, then clears the same latch.
-	_state.DisplayFlags |= kActionPromptPublicationPendingMask;
-	while ((_state.DisplayFlags & kActionPromptPublicationPendingMask) != 0) {
+	_state.displayFlags |= kActionPromptPublicationPendingMask;
+	while ((_state.displayFlags & kActionPromptPublicationPendingMask) != 0) {
 		if (!_waitForRoomVerticalBlank()) {
 			return;
 		}

@@ -30,19 +30,19 @@
 namespace Scooby {
 
 struct ActorMovementPoint {
-	int16 TargetX;        // Signed destination X integer coordinate.
-	int16 TargetY;        // Signed destination Y integer coordinate.
-	int16 HorizontalStep; // Signed horizontal 8.8 multiplier applied to the actor's scale-derived step.
-	int16 VerticalStep;   // Signed vertical 8.8 multiplier applied to the actor's scale-derived step.
-	int16 PositionIndex;  // Signed authored position selected when this destination becomes active.
+	int16 targetX;        // Signed destination X integer coordinate.
+	int16 targetY;        // Signed destination Y integer coordinate.
+	int16 horizontalStep; // Signed horizontal 8.8 multiplier applied to the actor's scale-derived step.
+	int16 verticalStep;   // Signed vertical 8.8 multiplier applied to the actor's scale-derived step.
+	int16 positionIndex;  // Signed authored position selected when this destination becomes active.
 
-	ActorMovementPoint() : TargetX(0), TargetY(0), HorizontalStep(0), VerticalStep(0), PositionIndex(0) {
+	ActorMovementPoint() : targetX(0), targetY(0), horizontalStep(0), verticalStep(0), positionIndex(0) {
 	}
 
-	ActorMovementPoint(int16 targetX, int16 targetY, int16 horizontalStep,
-					   int16 verticalStep, int16 positionIndex)
-		: TargetX(targetX), TargetY(targetY), HorizontalStep(horizontalStep), VerticalStep(verticalStep),
-		  PositionIndex(positionIndex) {
+	ActorMovementPoint(int16 newTargetX, int16 newTargetY, int16 newHorizontalStep,
+					   int16 newVerticalStep, int16 newPositionIndex)
+		: targetX(newTargetX), targetY(newTargetY), horizontalStep(newHorizontalStep), verticalStep(newVerticalStep),
+		  positionIndex(newPositionIndex) {
 	}
 };
 } // namespace Scooby

@@ -36,30 +36,30 @@ namespace Scooby {
 class RoomSceneData {
 public:
 	// Creates independent working maps and pristine snapshots from one completed room decode.
-	RoomSceneData(Span<const uint8> backgroundCells,
-				  Span<const uint8> foregroundCells,
-				  Span<const uint8> collisionCells)
-		: BackgroundCells(backgroundCells.toArray()), BackgroundCellSnapshot(backgroundCells.toArray()),
-		  ForegroundCells(foregroundCells.toArray()), ForegroundCellSnapshot(foregroundCells.toArray()),
-		  CollisionCells(collisionCells.toArray()) {
+	RoomSceneData(Span<const uint8> newBackgroundCells,
+				  Span<const uint8> newForegroundCells,
+				  Span<const uint8> newCollisionCells)
+		: backgroundCells(newBackgroundCells.toArray()), backgroundCellSnapshot(newBackgroundCells.toArray()),
+		  foregroundCells(newForegroundCells.toArray()), foregroundCellSnapshot(newForegroundCells.toArray()),
+		  collisionCells(newCollisionCells.toArray()) {
 	}
 
 	// Ghidra g_awRoomBackgroundCells at 0xFF7000. Positive room-object tile
 	// patches replace rectangular cell ranges in place.
-	Common::Array<uint8> BackgroundCells;
+	Common::Array<uint8> backgroundCells;
 
 	// Ghidra g_awRoomBackgroundCellSnapshot at 0xFFA800. Negative room-object
 	// tile patches restore rectangular ranges from this unchanged copy.
-	Common::Array<uint8> BackgroundCellSnapshot;
+	Common::Array<uint8> backgroundCellSnapshot;
 
 	// Ghidra g_awMenuRowShiftQueueOrRoomForegroundCells at 0xFF8C00 (room lifetime).
-	Common::Array<uint8> ForegroundCells;
+	Common::Array<uint8> foregroundCells;
 
 	// Ghidra g_abNarrowRevealOrRoomForegroundSnapshotWorkspace at 0xFFC400 (room lifetime).
-	Common::Array<uint8> ForegroundCellSnapshot;
+	Common::Array<uint8> foregroundCellSnapshot;
 
 	// Ghidra g_abWideRevealOrRoomCollisionWorkspace at 0xFFE000 (room lifetime).
-	Common::Array<uint8> CollisionCells;
+	Common::Array<uint8> collisionCells;
 };
 } // namespace Scooby
 

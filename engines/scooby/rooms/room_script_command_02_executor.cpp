@@ -33,15 +33,15 @@ void RoomScriptCommand02Executor::scriptCommand02AddPlayerChoiceInteractionLine(
 	// Ghidra 0x000025AC-0x000025AF: a nonzero execution mode skips registration.
 	if (mode == 0) {
 		// Ghidra 0x000025B0-0x000025BB: scan mode still skips registration unless bit two is set.
-		if ((_state.AutomaticInteractionFlags & kRegistrationEnabledMask) != 0) {
+		if ((_state.automaticInteractionFlags & kRegistrationEnabledMask) != 0) {
 			// Ghidra 0x000025BC-0x000025D3: resolve the episode text base and enforce the signed five-entry
 			// bound before any indexed table write.
 			uint32 interactionTextBaseOffset =
-				_rom.readUInt32(_state.ActiveEpisodeDescriptorOffset + kInteractionTextBaseField);
-			if (_state.InteractionActions.count() < InteractionActionRegistry::Capacity) {
+				_rom.readUInt32(_state.activeEpisodeDescriptorOffset + kInteractionTextBaseField);
+			if (_state.interactionActions.count() < InteractionActionRegistry::capacity) {
 				// Ghidra 0x000025D4-0x0000261B: append the two wrapped episode-relative text addresses, signed
 				// state value, wrapped word script length, and nested-script start as one entry.
-				_state.InteractionActions.registerEntry(InteractionAction(
+				_state.interactionActions.registerEntry(InteractionAction(
 					static_cast<int32>(interactionTextBaseOffset + _rom.readUInt32(commandOffset + 2)),
 					static_cast<int32>(interactionTextBaseOffset + _rom.readUInt32(commandOffset + 6)),
 					_rom.readInt16(commandOffset + 12),

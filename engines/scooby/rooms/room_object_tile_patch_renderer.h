@@ -75,17 +75,17 @@ private:
 
 	// Preserves the recovered fixed-record patch geometry shared by both original entry points.
 	struct RoomShapePatch {
-		int RecordOffset;
-		int16 X;
-		int16 Y;
-		int16 Width;
-		int16 Height;
-		TileLayer Layer;
+		int recordOffset;
+		int16 x;
+		int16 y;
+		int16 width;
+		int16 height;
+		TileLayer layer;
 
-		RoomShapePatch(int recordOffset, int16 x, int16 y, int16 width,
-					   int16 height,
-					   TileLayer layer)
-			: RecordOffset(recordOffset), X(x), Y(y), Width(width), Height(height), Layer(layer) {
+		RoomShapePatch(int newRecordOffset, int16 newX, int16 newY, int16 newWidth,
+					   int16 newHeight,
+					   TileLayer newLayer)
+			: recordOffset(newRecordOffset), x(newX), y(newY), width(newWidth), height(newHeight), layer(newLayer) {
 		}
 	};
 

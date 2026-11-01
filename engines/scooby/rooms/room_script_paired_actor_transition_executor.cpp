@@ -29,7 +29,7 @@ void RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction15() {
 		// actor zero reaches a hold command. Room VBlank remains asynchronous on the original, so service the
 		// installed callback before each managed continuation.
 		_updateActorAnimationFrames();
-		if ((_state.ActorAnimationHoldFlags & 0x01) != 0) {
+		if ((_state.actorAnimationHoldFlags & 0x01) != 0) {
 			break;
 		}
 
@@ -41,18 +41,18 @@ void RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction15() {
 	// Ghidra 0x0000433C-0x00004355: test slots two through five in order. A clear bit exits immediately; after
 	// active slot five, retain the terminal branch that selects six without testing active bit six.
 	int transitionActor = 2;
-	while ((_state.ActiveActorFlags & (1 << transitionActor)) != 0) {
+	while ((_state.activeActorFlags & (1 << transitionActor)) != 0) {
 		transitionActor++;
 		if (transitionActor == 6) {
 			break;
 		}
 	}
 
-	_state.TransitionActorIndex = static_cast<uint16>(transitionActor);
+	_state.transitionActorIndex = static_cast<uint16>(transitionActor);
 
 	// Ghidra 0x00004356-0x00004363: enable paired transition processing and discard all prior readiness.
-	_state.RoomBehaviorFlags |= 0x08;
-	_state.ActorTransitionFrameReadyFlags = 0;
+	_state.roomBehaviorFlags |= 0x08;
+	_state.actorTransitionFrameReadyFlags = 0;
 
 	// Ghidra 0x00004364-0x00004369: replace WaitForVerticalBlank's hardware handshake with one installed room
 	// callback followed by one host presentation, then return after that single retrace.
@@ -63,6 +63,6 @@ void RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction15() {
 
 void RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction16() {
 	// Ghidra 0x0000436A-0x00004373: clear only room-behavior bit three and return.
-	_state.RoomBehaviorFlags &= 0xF7;
+	_state.roomBehaviorFlags &= 0xF7;
 }
 } // namespace Scooby

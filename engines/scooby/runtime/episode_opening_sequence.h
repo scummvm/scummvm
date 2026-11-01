@@ -75,46 +75,46 @@ private:
 	struct OpeningState {
 		// Replaces Ghidra g_sbEpisodeOpeningAnimationCountdown at 0xFF0AD0. No image-backed value is
 		// consumed; the opening writes one before its first signed-byte decrement.
-		int8 AnimationCountdown{};
+		int8 animationCountdown{};
 
 		// Replaces the first 448 bytes of Ghidra g_abWideMenuAndOpeningWorkspace at
 		// 0xFF3800-0xFF39BF. The parent clears all 224 signed words before the first update; each
 		// update publishes the current values, then builds the next call's values.
-		Common::Array<int16> BackgroundLineHorizontalOffsets = Common::Array<int16>(224);
+		Common::Array<int16> backgroundLineHorizontalOffsets = Common::Array<int16>(224);
 
 		// Replaces Ghidra g_wEpisodeOpeningAnimationTileOffset at 0xFF0A1C. No image-backed value is
 		// consumed; the opening writes zero before alternating it with 0x3C.
-		int16 AnimationTileOffset{};
+		int16 animationTileOffset{};
 
 		// Replaces Ghidra g_wEpisodeOpeningHorizontalOffset at 0xFF0A18. No image-backed value is
 		// consumed; the opening starts it at -158 and advances it through 270.
-		int16 HorizontalOffset{};
+		int16 horizontalOffset{};
 
 		// Replaces the Ghidra g_bSharedDecodeBufferStart projection at 0xFF3000-0xFF31BF. The parent
 		// clears all 224 signed words before the first update; each update publishes the current
 		// values, then builds the next call's values.
-		Common::Array<int16> ForegroundLineHorizontalOffsets = Common::Array<int16>(224);
+		Common::Array<int16> foregroundLineHorizontalOffsets = Common::Array<int16>(224);
 
 		// Replaces Ghidra g_wEpisodeOpeningLeadingSpriteXOffset at 0xFF0A14. No image-backed value is
 		// consumed; the opening clears it before sprite publication.
-		int16 LeadingSpriteXOffset{};
+		int16 leadingSpriteXOffset{};
 
 		// Replaces Ghidra g_wEpisodeOpeningScrollBandBase at 0xFF09F0. No image-backed value is
 		// consumed; the opening clears it before the first scroll update.
-		int16 ScrollBandBase{};
+		int16 scrollBandBase{};
 
 		// Replaces Ghidra g_alEpisodeOpeningScrollAccumulators at 0xFF09F4-0xFF0A13. Process
 		// initialization supplies zero for untouched low words; the opening then preserves the
 		// original selective clears before its scroll child advances signed 16.16 values.
-		Common::Array<int32> ScrollAccumulators = Common::Array<int32>(8);
+		Common::Array<int32> scrollAccumulators = Common::Array<int32>(8);
 
 		// Replaces Ghidra g_wEpisodeOpeningSpriteYBase at 0xFF0A1A. No image-backed value is
 		// consumed; the opening writes 159 before sprite publication.
-		int16 SpriteYBase{};
+		int16 spriteYBase{};
 
 		// Replaces Ghidra g_wEpisodeOpeningVerticalPhase at 0xFF0A16. No image-backed value is
 		// consumed; the opening clears it before loading the inline phase sequence.
-		int16 VerticalPhase{};
+		int16 verticalPhase{};
 	};
 
 	static const int kAnimationTileBankStride = 0x3C;

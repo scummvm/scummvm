@@ -40,8 +40,8 @@ void RoomScriptCommand1FExecutor::executeRoomScriptCommand1F(int mode) {
 		} else if (objectId == 2) {
 			actorSlot = 1;
 		} else {
-			const RoomObject &roomObject = _state.RoomObjects[objectId - 3];
-			actorSlot = (static_cast<uint8>(roomObject.FixedPositionIndex) + 2) & 0x07;
+			const RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
 		}
 
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
@@ -49,7 +49,7 @@ void RoomScriptCommand1FExecutor::executeRoomScriptCommand1F(int mode) {
 			// Ghidra 0x00004FA0-0x00004FAD: advance every stream at least once. An active selected movement
 			// bit takes the back edge immediately without consulting path state.
 			_updateActorAnimationFrames();
-			if ((_state.ActorMovementFlags & actorMask) != 0) {
+			if ((_state.actorMovementFlags & actorMask) != 0) {
 				if (!waitForRoomVerticalBlank()) {
 					return;
 				}
@@ -59,7 +59,7 @@ void RoomScriptCommand1FExecutor::executeRoomScriptCommand1F(int mode) {
 
 			// Ghidra 0x00004FAE-0x00004FB7: with movement clear, an active selected path bit takes the same
 			// back edge; only the distinct both-clear outcome exits.
-			if ((_state.ActorPathActiveFlags & actorMask) == 0) {
+			if ((_state.actorPathActiveFlags & actorMask) == 0) {
 				break;
 			}
 

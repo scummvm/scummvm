@@ -33,9 +33,9 @@ namespace Scooby {
 class InteractionActionRegistry {
 public:
 	// The five-entry bound enforced by original command 02 before any indexed write.
-	static const int Capacity = 5;
+	static const int capacity = 5;
 
-	InteractionActionRegistry() : _entries(Capacity), _count(0) {
+	InteractionActionRegistry() : _entries(capacity), _count(0) {
 	}
 
 	// Ghidra g_wInteractionActionCount at 0xFF080E.

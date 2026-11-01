@@ -39,7 +39,7 @@ public:
 	}
 
 	// Seeds option selection from the prior sample retained by controller polling.
-	void beginSelection() { _previousInput = _state.PreviousControllerOneInput; }
+	void beginSelection() { _previousInput = _state.previousControllerOneInput; }
 
 	// Tests one ordinary active-low press edge against the retained comparison sample.
 	// button: single button whose press edge is required.
@@ -56,12 +56,12 @@ public:
 	bool acceptBufferedPress(ControllerButtons button) {
 		uint8 mask = static_cast<uint8>(button);
 		if (!_state.isButtonDown(button) ||
-			((_previousInput & mask) == 0 && (_state.ControllerOneAccumulatedChanges & mask) == 0)) {
+			((_previousInput & mask) == 0 && (_state.controllerOneAccumulatedChanges & mask) == 0)) {
 			return false;
 		}
 
-		_state.ControllerOneAccumulatedChanges = 0;
-		_state.ControllerOneChangeBaseline = _state.ControllerOneInput;
+		_state.controllerOneAccumulatedChanges = 0;
+		_state.controllerOneChangeBaseline = _state.controllerOneInput;
 		return true;
 	}
 
@@ -69,11 +69,11 @@ public:
 	// mask: button group whose released value has every bit set.
 	// Returns true when the prior group was released and the current group is not.
 	bool wasAnyPressed(uint8 mask) const {
-		return (_previousInput & mask) == mask && (_state.ControllerOneInput & mask) != mask;
+		return (_previousInput & mask) == mask && (_state.controllerOneInput & mask) != mask;
 	}
 
 	// Retains the current controller sample for the next menu-side edge test.
-	void captureCurrent() { _previousInput = _state.ControllerOneInput; }
+	void captureCurrent() { _previousInput = _state.controllerOneInput; }
 
 private:
 	RuntimeState &_state;

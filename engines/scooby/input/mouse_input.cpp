@@ -139,22 +139,22 @@ ControllerButtons MouseInput::sampleControllerButtons(RuntimeState &state, Input
 	if (_mode == Mode::Intro) {
 		// Leave the click for takeIntroSkipClick; no pointer and no controller presses during the intros.
 		updateCursor(InputScreen::Intro);
-		state.MouseCursorActive = false;
-		state.MouseOpenInterfaceRequest = false;
+		state.mouseCursorActive = false;
+		state.mouseOpenInterfaceRequest = false;
 		return ControllerButtons::None;
 	}
 
 	updateCursor(screen);
-	state.MouseCursorActive = _active && screen == InputScreen::Room;
+	state.mouseCursorActive = _active && screen == InputScreen::Room;
 	ControllerButtons held = ControllerButtons::None;
 	bool roomIdle = _mode == Mode::RoomIdle && screen == InputScreen::Room &&
-					(state.DisplayFlags & kInteractionPendingMask) == 0;
+					(state.displayFlags & kInteractionPendingMask) == 0;
 	if (screen == InputScreen::Room && !roomIdle) {
 		_room.updateBusy(state);
 	}
 
 	if (!_active) {
-		state.MouseOpenInterfaceRequest = false;
+		state.mouseOpenInterfaceRequest = false;
 	} else if (roomIdle) {
 		held = _room.updateIdle(state, *this);
 	} else if (_mode == Mode::SoundTest) {

@@ -37,7 +37,7 @@ void IndexedFrame::present() {
 	pal[kDebugOverlayColorIndex * 3 + 2] = 0x40;
 	_screen.setPalette(pal, 0, 64 + 1);
 
-	_screen.copyRectToSurface(_pixels.data(), Width, 0, 0, Width, Height);
+	_screen.copyRectToSurface(_pixels.data(), width, 0, 0, width, height);
 	_screen.makeAllDirty();
 	_screen.update();
 }

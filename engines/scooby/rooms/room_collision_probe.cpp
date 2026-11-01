@@ -47,12 +47,12 @@ RoomCollisionProbeResult RoomCollisionProbe::probeLeadActorCollision(int candida
 	}
 
 	// Preserve unsigned tile division, word-sized row arithmetic, bit-15 removal, and the distinct empty-cell return.
-	uint16 rowByteStride = static_cast<uint16>(_state.RoomWidthTiles * sizeof(uint16));
+	uint16 rowByteStride = static_cast<uint16>(_state.roomWidthTiles * sizeof(uint16));
 	int16 collisionByteOffset = static_cast<int16>(
 		(static_cast<uint16>(x) >> 3) * sizeof(uint16) +
 		(static_cast<uint16>(y) >> 3) * rowByteStride);
-	SDM_ASSERT(_state.ActiveRoomScene, "ProbeLeadActorCollision requires an active room scene.");
-	uint16 collisionCell = readBigEndian16(_state.ActiveRoomScene->CollisionCells, collisionByteOffset);
+	SDM_ASSERT(_state.activeRoomScene, "ProbeLeadActorCollision requires an active room scene.");
+	uint16 collisionCell = readBigEndian16(_state.activeRoomScene->collisionCells, collisionByteOffset);
 	uint16 descriptorIndex = collisionCell & kCollisionCellDescriptorIndexMask;
 	if (descriptorIndex == 0) {
 		return RoomCollisionProbeResult(true, 0);
@@ -89,15 +89,15 @@ bool RoomCollisionProbe::probeStagedCollision(int16 x, int16 y) const {
 
 	// Preserve unsigned tile division, wrapped word row arithmetic, direct low-eleven-bit cell selection,
 	// and the distinct empty-cell return.
-	uint16 rowByteStride = static_cast<uint16>(_state.RoomWidthTiles * sizeof(uint16));
+	uint16 rowByteStride = static_cast<uint16>(_state.roomWidthTiles * sizeof(uint16));
 	int16 collisionByteOffset = static_cast<int16>(
 		(static_cast<uint16>(x) >> 3) * sizeof(uint16) +
 		(static_cast<uint16>(y) >> 3) * rowByteStride);
-	SDM_ASSERT(_state.ActiveRoomScene, "ProbeStagedCollision requires an active room scene.");
+	SDM_ASSERT(_state.activeRoomScene, "ProbeStagedCollision requires an active room scene.");
 
 	// The original has no upper bound check and would read stale bytes after the collision map in the
 	// shared 0xFFE000 workspace. Treat positions beyond the decoded map like negative ones: blocked.
-	const Common::Array<uint8> &collisionCells = _state.ActiveRoomScene->CollisionCells;
+	const Common::Array<uint8> &collisionCells = _state.activeRoomScene->collisionCells;
 	if (collisionByteOffset < 0 ||
 		static_cast<size_t>(collisionByteOffset) + sizeof(uint16) > collisionCells.size()) {
 		return true;

@@ -84,7 +84,7 @@ public:
 	// Ghidra: runEpisodeOnePasswordMenu (0x00008FB8-0x00008FC1).
 	MainMenuExit runEpisodeOnePasswordMenu() {
 		// Ghidra 0x00008FB8-0x00008FBF: select the first descriptor-backed episode.
-		_state.EpisodeIndex = 0;
+		_state.episodeIndex = 0;
 
 		// Ghidra 0x00008FC0-0x00008FC1: skip the episode-two write and enter the shared password flow.
 		return runSharedEpisodePasswordMenu();
@@ -96,7 +96,7 @@ public:
 	// Ghidra: runEpisodeTwoPasswordMenu (0x00008FC2-0x00009161, 0x00009184-0x00009279).
 	MainMenuExit runEpisodeTwoPasswordMenu() {
 		// Ghidra 0x00008FC2-0x00008FC9: select the second descriptor-backed episode.
-		_state.EpisodeIndex = 1;
+		_state.episodeIndex = 1;
 		return runSharedEpisodePasswordMenu();
 	}
 

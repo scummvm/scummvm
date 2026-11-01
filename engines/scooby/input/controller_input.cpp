@@ -27,13 +27,13 @@
 namespace Scooby {
 
 void ControllerInput::pollControllers(RuntimeState &state, InputScreen screen) {
-	state.PreviousControllerOneInput = state.ControllerOneInput;
+	state.previousControllerOneInput = state.controllerOneInput;
 	// Managed-only mouse support: merge the controller presses produced by mouse activity (mouse_input.h).
 	_mouse.beginPoll();
 	ControllerButtons buttons = getControllerButtons(_backButton);
 	buttons |= _mouse.sampleControllerButtons(state, screen);
-	state.ControllerOneInput = static_cast<uint8>(~static_cast<uint8>(buttons));
-	state.ControllerOneAccumulatedChanges |= state.ControllerOneChangeBaseline ^ state.ControllerOneInput;
+	state.controllerOneInput = static_cast<uint8>(~static_cast<uint8>(buttons));
+	state.controllerOneAccumulatedChanges |= state.controllerOneChangeBaseline ^ state.controllerOneInput;
 }
 
 bool ControllerInput::isIntroSkipPressed() {

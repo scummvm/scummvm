@@ -66,14 +66,14 @@ MainMenuExit MainMenuController::runMainMenu(const Common::Functor0<void> &befor
 		return MainMenuExit::HostClosed;
 	}
 
-	_state.InitializationFlags &= 0xEB;
-	_state.VideoFlags &= 0x7F;
-	_selectedRoomId = _state.RoomId;
+	_state.initializationFlags &= 0xEB;
+	_state.videoFlags &= 0x7F;
+	_selectedRoomId = _state.roomId;
 	_wideRevealOffset = 0xE0;
 	_narrowRevealOffset = 0xE0;
-	_state.VideoFlags &= 0xF7;
-	_state.VideoFlags |= 0x10;
-	_state.VideoFlags |= 0x02;
+	_state.videoFlags &= 0xF7;
+	_state.videoFlags |= 0x10;
+	_state.videoFlags |= 0x02;
 	_menuVBlank.reset();
 	_baseTileIndex = _menuPresentation.loadInitialAssets();
 	_passwordDisplay.refresh(_state);
@@ -81,7 +81,7 @@ MainMenuExit MainMenuController::runMainMenu(const Common::Functor0<void> &befor
 		return MainMenuExit::HostClosed;
 	}
 
-	_state.VideoFlags |= 0x80;
+	_state.videoFlags |= 0x80;
 	if (!waitForMainMenuVerticalBlank()) {
 		return MainMenuExit::HostClosed;
 	}
@@ -96,7 +96,7 @@ MainMenuExit MainMenuController::runMainMenu(const Common::Functor0<void> &befor
 bool MainMenuController::runMenuReveal() {
 	int revealDataPointer = 0x17064;
 	for (int remainingFrames = 0x1B; remainingFrames >= 0; remainingFrames--) {
-		_state.RetraceCountdown = kRevealCountdown;
+		_state.retraceCountdown = kRevealCountdown;
 		if (remainingFrames == 0x1B || remainingFrames == 0x0D) {
 			playAudioCommand(0x0B);
 		}
@@ -124,7 +124,7 @@ bool MainMenuController::runMenuReveal() {
 				narrowRowMaskOffset = _narrowRevealOffset;
 				narrowColumnMaskOffset = _narrowRevealOffset;
 				if (_narrowRevealOffset == 0) {
-					_state.InitializationFlags |= kRevealCompleteMask;
+					_state.initializationFlags |= kRevealCompleteMask;
 				} else {
 					_narrowRevealOffset -= 0x20;
 				}
@@ -150,14 +150,14 @@ bool MainMenuController::runMenuReveal() {
 
 		// Ghidra RunMainMenu 0x00008500-0x00008511: publish the staged reveal frame to plane A at C000.
 		_menuPresentation.commitStagedMenuPlane();
-		_state.RetraceCountdown = kRevealCountdown;
+		_state.retraceCountdown = kRevealCountdown;
 	}
 
 	return true;
 }
 
 bool MainMenuController::waitForRevealCommit(bool &skipRemainingReveal) {
-	while (_state.RetraceCountdown >= 0) {
+	while (_state.retraceCountdown >= 0) {
 		if (!waitForMainMenuVerticalBlank()) {
 			skipRemainingReveal = false;
 			return false;
@@ -177,7 +177,7 @@ MainMenuExit MainMenuController::prepareOptionsAndDispatch() {
 	// Ghidra RunMainMenu 0x0000851E-0x0000853D: reset both masks and recompose the completed reveal.
 	_wideRevealOffset = 0;
 	_narrowRevealOffset = 0;
-	_state.InitializationFlags |= kRevealCompleteMask;
+	_state.initializationFlags |= kRevealCompleteMask;
 	_menuPresentation.composeWideMenuRevealTiles(0, 0);
 	_menuPresentation.composeNarrowMenuRevealTiles(0, 0);
 	return presentOptionsAndDispatch();
@@ -187,13 +187,13 @@ MainMenuExit MainMenuController::presentOptionsAndDispatch() {
 	int assetOffset;
 	int optionCount;
 	DispatchTable dispatchTable;
-	if ((_state.InitializationFlags & kAlternateMenuMask) == 0) {
+	if ((_state.initializationFlags & kAlternateMenuMask) == 0) {
 		assetOffset = 0x1896C;
 		optionCount = 3;
 		dispatchTable = DispatchTable::Primary;
 	} else {
 		dispatchTable = DispatchTable::Alternate;
-		if ((_state.InitializationFlags & kDebugMenuMask) == 0) {
+		if ((_state.initializationFlags & kDebugMenuMask) == 0) {
 			assetOffset = 0x18BFA;
 			optionCount = 2;
 		} else {
@@ -211,7 +211,7 @@ MainMenuExit MainMenuController::presentOptionsAndDispatch() {
 
 	// Ghidra RunMainMenu 0x0000859C-0x000085AD: publish the staged option frame to plane A at C000.
 	_menuPresentation.commitStagedMenuPlane();
-	if ((_state.InitializationFlags & kAlternateMenuMask) != 0) {
+	if ((_state.initializationFlags & kAlternateMenuMask) != 0) {
 		_menuPresentation.writeIndexedTileRow(_passwordDisplay.rows()[0], 1, 7);
 		_menuPresentation.writeIndexedTileRow(_passwordDisplay.rows()[1], 1, 8);
 	}
@@ -225,7 +225,7 @@ MainMenuExit MainMenuController::presentOptionsAndDispatch() {
 }
 
 bool MainMenuController::waitForPendingCommit() {
-	while (_state.RetraceCountdown >= 0) {
+	while (_state.retraceCountdown >= 0) {
 		if (!waitForMainMenuVerticalBlank()) {
 			return false;
 		}
@@ -243,7 +243,7 @@ Optional<int> MainMenuController::presentMenuAndSelectOption(int assetOffset, in
 		return Optional<int>();
 	}
 
-	_state.RetraceCountdown = kSelectionCommitCountdown;
+	_state.retraceCountdown = kSelectionCommitCountdown;
 
 	// Ghidra 0x00008D52-0x00008D67: commit composed tiles and publish the staged complete plane-A map.
 	_menuPresentation.commitMenuSceneBuffers();
@@ -311,14 +311,14 @@ Optional<int> MainMenuController::selectMainMenuOption(int optionCount, int base
 	MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::Handled);
 	while (true) {
 		// Ghidra 0x00008D8E-0x00008E11: stage both menu buffers and advance the original unlock sequence.
-		_state.RetraceCountdown = kSelectionCommitCountdown;
+		_state.retraceCountdown = kSelectionCommitCountdown;
 		_menuPresentation.composeWideMenuRevealTiles(_menuPresentation.animatedRowMaskOffset(), 0);
 		_menuPresentation.composeNarrowMenuRevealTiles(_menuPresentation.animatedRowMaskOffset(), 0);
-		while (_state.RetraceCountdown >= 0) {
-			uint8 currentInput = _state.ControllerOneInput;
-			if ((_state.InitializationFlags & kDebugMenuMask) == 0 &&
+		while (_state.retraceCountdown >= 0) {
+			uint8 currentInput = _state.controllerOneInput;
+			if ((_state.initializationFlags & kDebugMenuMask) == 0 &&
 				debugMenuUnlockSequence.checkCheatCode(currentInput)) {
-				_state.InitializationFlags |= kDebugMenuMask;
+				_state.initializationFlags |= kDebugMenuMask;
 				playAudioCommand(3);
 			}
 
@@ -363,7 +363,7 @@ Optional<int> MainMenuController::selectMainMenuOption(int optionCount, int base
 				}
 
 				_menuPresentation.commitMenuSceneBuffers();
-				_state.RetraceCountdown = kSelectionCommitCountdown;
+				_state.retraceCountdown = kSelectionCommitCountdown;
 				int selection = selectionOffset / kMenuOptionSpacing;
 				_menuPresentation.updateSelectionCursor(selectionOffset, Optional<uint16>());
 				return Optional<int>(selection);
@@ -397,7 +397,7 @@ bool MainMenuController::waitForMainMenuVerticalBlank() {
 }
 
 void MainMenuController::invokeMainMenuVBlank() {
-	_state.DisplayFlags |= 0x01;
+	_state.displayFlags |= 0x01;
 	_menuVBlank.handleMainMenuVBlank();
 }
 
@@ -413,15 +413,15 @@ MainMenuExit MainMenuController::commitSelectedRoom(int16 selectedRoomId) {
 	}
 
 	// Ghidra 0x00008CDA-0x00008D07: commit initialization state and the selected room.
-	_state.InitializationFlags |= 0x01;
-	if (_state.RoomId != selectedRoomId) {
-		_state.InitialRoomPositionCoordinateOffset = 0;
+	_state.initializationFlags |= 0x01;
+	if (_state.roomId != selectedRoomId) {
+		_state.initialRoomPositionCoordinateOffset = 0;
 	}
 
-	_state.RoomId = selectedRoomId;
+	_state.roomId = selectedRoomId;
 
 	// Ghidra 0x00008D08-0x00008D33: hardware layout writes collapse into the room handover.
-	_state.VideoFlags &= 0xFD;
+	_state.videoFlags &= 0xFD;
 	return MainMenuExit::ContinueToRoom;
 }
 
@@ -483,33 +483,33 @@ MainMenuExit MainMenuController::runRoomObjectRelocationMenu() {
 	// Ghidra 0x00008C60-0x00008C7F: preserve the selected object index and record context while the
 	// room catalog receives that object's current room as its initial selection.
 	RoomObject &roomObject =
-		_state.RoomObjects[static_cast<size_t>(selectedObjectIndex.value())];
-	Optional<int16> selectedRoomId = _roomSelection.select(roomObject.RoomId);
+		_state.roomObjects[static_cast<size_t>(selectedObjectIndex.value())];
+	Optional<int16> selectedRoomId = _roomSelection.select(roomObject.roomId);
 	if (!selectedRoomId.hasValue()) {
 		return MainMenuExit::HostClosed;
 	}
 
 	// Ghidra 0x00008C80-0x00008CBF: an unchanged room skips every mutation. Departing room one scans
 	// to the exact object and shifts every later index left; entering room one appends at the sentinel.
-	if (selectedRoomId.value() != roomObject.RoomId) {
-		if (roomObject.RoomId == kInventoryRoomId) {
+	if (selectedRoomId.value() != roomObject.roomId) {
+		if (roomObject.roomId == kInventoryRoomId) {
 			size_t inventoryIndex = 0;
-			while (_state.InventoryObjectIndices[inventoryIndex] != selectedObjectIndex.value()) {
+			while (_state.inventoryObjectIndices[inventoryIndex] != selectedObjectIndex.value()) {
 				inventoryIndex++;
 			}
 
-			while (inventoryIndex < _state.InventoryObjectIndices.size() - 1) {
-				_state.InventoryObjectIndices[inventoryIndex] = _state.InventoryObjectIndices[inventoryIndex +
+			while (inventoryIndex < _state.inventoryObjectIndices.size() - 1) {
+				_state.inventoryObjectIndices[inventoryIndex] = _state.inventoryObjectIndices[inventoryIndex +
 																							  1];
 				inventoryIndex++;
 			}
 
-			_state.InventoryObjectIndices.pop_back();
+			_state.inventoryObjectIndices.pop_back();
 		} else if (selectedRoomId.value() == kInventoryRoomId) {
-			_state.InventoryObjectIndices.push_back(selectedObjectIndex.value());
+			_state.inventoryObjectIndices.push_back(selectedObjectIndex.value());
 		}
 
-		roomObject.RoomId = selectedRoomId.value();
+		roomObject.roomId = selectedRoomId.value();
 	}
 
 	// Ghidra 0x00008CC0-0x00008CD5: replace the selector highlight with all 13 immutable sprite records

@@ -46,7 +46,7 @@ void writeUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value)
 void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { // maze sequence. maybe
 	// Ghidra 0x000044BA-0x000044C1: preserve the full-byte busy branch. Original interrupts keep publishing
 	// actor tiles during the spin, so each continuation services one callback-aware clocked frame.
-	while (_state.ActorTileUploadPendingFlags != 0) {
+	while (_state.actorTileUploadPendingFlags != 0) {
 		if (!_waitForRoomVerticalBlank()) {
 			return;
 		}
@@ -54,13 +54,13 @@ void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { //
 
 	// Ghidra 0x000044C2-0x000044C9: select actor-zero-relative foreground scrolling and suppress all normal
 	// foreground edge-stream transfers until action 0x08, action 0x32, or room loading clears it.
-	_state.InteractionFlags |= kForegroundOverrideMask;
+	_state.interactionFlags |= kForegroundOverrideMask;
 
 	// Ghidra 0x000044CA-0x000044F5: decode all 70 authored tiles and publish them at the packed base's low
 	// 11-bit tile index. The operation-owned array replaces the FF3000/FF4000 shared workspace.
 	Common::Array<uint8> packedTiles = decompressRingLz(
 		_rom, kTileStreamOffset);
-	uint16 tileBaseAttribute = _state.RoomDynamicTileBaseAttribute;
+	uint16 tileBaseAttribute = _state.roomDynamicTileBaseAttribute;
 	_scene.loadTilesAt(makeSpan(packedTiles), tileBaseAttribute & kTileIndexMask);
 
 	// Ghidra 0x000044F6-0x00004509: replace all 64x32 plane-A cells with dynamic base plus one. The original
@@ -89,7 +89,7 @@ void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { //
 
 void RoomScriptForegroundOverrideExecutor::scriptAction08FlashlightModeOff() {
 	// Ghidra 0x00004534-0x0000453B: clear only the authored foreground-override mode.
-	_state.InteractionFlags &= static_cast<uint8>(~kForegroundOverrideMask);
+	_state.interactionFlags &= static_cast<uint8>(~kForegroundOverrideMask);
 	// Ghidra 0x0000453C-0x0000453D: return with every other interaction flag preserved.
 }
 } // namespace Scooby

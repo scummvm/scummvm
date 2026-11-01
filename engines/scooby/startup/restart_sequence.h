@@ -52,7 +52,7 @@ public:
 	// recreating the native window or emulating CPU control flow.
 	bool run(const Common::Functor0<void> *beforeRetrace = nullptr) {
 		// Ghidra 0x00008F9A-0x00008FA5: clear display bit 6 and complete the shared fade-out contract.
-		_state.DisplayFlags &= 0xBF;
+		_state.displayFlags &= 0xBF;
 		if (!_presenter.fadePaletteOut(beforeRetrace)) {
 			return false;
 		}

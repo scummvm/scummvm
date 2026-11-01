@@ -59,9 +59,9 @@ Common::Array<SpriteInstance> decodePackedSpriteTableData(Span<const uint8> pack
 
 SpriteLayer::SpriteLayer()
 	: _highPriority(
-		  static_cast<size_t>(IndexedFrame::Width) * static_cast<size_t>(IndexedFrame::Height),
+		  static_cast<size_t>(IndexedFrame::width) * static_cast<size_t>(IndexedFrame::height),
 		  false),
-	  _pixels(static_cast<size_t>(IndexedFrame::Width) * static_cast<size_t>(IndexedFrame::Height), 0) {
+	  _pixels(static_cast<size_t>(IndexedFrame::width) * static_cast<size_t>(IndexedFrame::height), 0) {
 }
 
 void SpriteLayer::clear() { _sprites.clear(); }
@@ -76,7 +76,7 @@ void SpriteLayer::compose(Span<const uint8> tilePixels, int contentWidth, int ve
 						  Span<const SpriteInstance> dynamicSprites) {
 	Common::fill(_pixels.begin(), _pixels.end(), 0);
 	Common::fill(_highPriority.begin(), _highPriority.end(), false);
-	int outputLeft = (IndexedFrame::Width - contentWidth) / 2;
+	int outputLeft = (IndexedFrame::width - contentWidth) / 2;
 	for (size_t i = 0; i < _sprites.size(); ++i) {
 		composeSprite(tilePixels, contentWidth, outputLeft, _sprites[i], verticalOffset);
 	}
@@ -100,7 +100,7 @@ void SpriteLayer::composeSprite(Span<const uint8> tilePixels, int contentWidth, 
 	int height = sprite.heightInTiles * kTileSize;
 	for (int pixelY = 0; pixelY < height; ++pixelY) {
 		int targetY = sprite.y + verticalOffset + pixelY;
-		if (static_cast<unsigned>(targetY) >= static_cast<unsigned>(IndexedFrame::Height)) {
+		if (static_cast<unsigned>(targetY) >= static_cast<unsigned>(IndexedFrame::height)) {
 			continue;
 		}
 
@@ -111,7 +111,7 @@ void SpriteLayer::composeSprite(Span<const uint8> tilePixels, int contentWidth, 
 			}
 
 			size_t targetOffset =
-				static_cast<size_t>(targetY) * static_cast<size_t>(IndexedFrame::Width) +
+				static_cast<size_t>(targetY) * static_cast<size_t>(IndexedFrame::width) +
 				static_cast<size_t>(outputLeft) + static_cast<size_t>(logicalX);
 			if (_pixels[targetOffset] != 0) {
 				continue;

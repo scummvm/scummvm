@@ -38,19 +38,19 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 		if ((selector & 0x7FFF) == 1) {
 			// Ghidra 0x000026A4-0x000026C5: slot zero writes its new position before selecting the row-major
 			// lead matrix entry from the prior and next signed words.
-			int16 previousPositionIndex = _state.ActorPositionIndices[0];
-			_state.ActorPositionIndices[0] = nextPositionIndex;
-			_state.ActorAnimationOffsets[0] =
+			int16 previousPositionIndex = _state.actorPositionIndices[0];
+			_state.actorPositionIndices[0] = nextPositionIndex;
+			_state.actorAnimationOffsets[0] =
 				resolveLeadPositionTransition(previousPositionIndex, nextPositionIndex);
 
 			// Ghidra 0x000026C6-0x000026E5: slot zero always requests restart. A negative selector also
 			// advances all animation streams at least once until hold bit zero is set; nonnegative selectors
 			// retain the immediate exit.
-			_state.ActorAnimationRestartFlags |= kLeadActorMask;
+			_state.actorAnimationRestartFlags |= kLeadActorMask;
 			if (static_cast<int16>(selector) < 0) {
 				while (true) {
 					_updateActorAnimationFrames();
-					if ((_state.ActorAnimationHoldFlags & kLeadActorMask) != 0) {
+					if ((_state.actorAnimationHoldFlags & kLeadActorMask) != 0) {
 						break;
 					}
 
@@ -62,9 +62,9 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 		} else {
 			// Ghidra 0x000026E6-0x00002707: every other masked selector chooses slot one, writes its new
 			// position, and selects the row-major companion matrix entry from the prior and next words.
-			int16 previousPositionIndex = _state.ActorPositionIndices[1];
-			_state.ActorPositionIndices[1] = nextPositionIndex;
-			_state.ActorAnimationOffsets[1] =
+			int16 previousPositionIndex = _state.actorPositionIndices[1];
+			_state.actorPositionIndices[1] = nextPositionIndex;
+			_state.actorAnimationOffsets[1] =
 				resolveCompanionPositionTransition(
 					previousPositionIndex, nextPositionIndex);
 
@@ -72,10 +72,10 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 			// Negative selectors set it, advance animation at least once until hold bit one is set, then
 			// retain the native final rewrite of the preserved next-position word.
 			if (static_cast<int16>(selector) < 0) {
-				_state.ActorAnimationRestartFlags |= kCompanionActorMask;
+				_state.actorAnimationRestartFlags |= kCompanionActorMask;
 				while (true) {
 					_updateActorAnimationFrames();
-					if ((_state.ActorAnimationHoldFlags & kCompanionActorMask) != 0) {
+					if ((_state.actorAnimationHoldFlags & kCompanionActorMask) != 0) {
 						break;
 					}
 
@@ -83,7 +83,7 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 						return;
 					}
 				}
-				_state.ActorPositionIndices[1] = nextPositionIndex;
+				_state.actorPositionIndices[1] = nextPositionIndex;
 			}
 		}
 	}

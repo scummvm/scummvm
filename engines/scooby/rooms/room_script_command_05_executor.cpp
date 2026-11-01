@@ -37,9 +37,9 @@ void RoomScriptCommand05MoveObject::scriptCommand05MoveObject(int mode) {
 			// Ghidra 0x000028C4-0x000028DD: resolve the 0x1A-byte record through the original low-word
 			// multiply and select its fixed-position or portable-object ecosystem from flag bit one.
 			int objectIndex = objectId - 3;
-			RoomObject &roomObject = _state.RoomObjects[static_cast<size_t>(objectIndex)];
+			RoomObject &roomObject = _state.roomObjects[static_cast<size_t>(objectIndex)];
 			int16 newRoomId = _rom.readInt16(commandOffset + 4);
-			if ((roomObject.Flags & kFixedPositionMask) != 0) {
+			if ((roomObject.flags & kFixedPositionMask) != 0) {
 				if (!relocateFixedObject(roomObject, newRoomId)) {
 					return;
 				}
@@ -54,28 +54,28 @@ void RoomScriptCommand05MoveObject::scriptCommand05MoveObject(int mode) {
 }
 
 bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, int16 newRoomId) {
-	int16 currentRoomId = _state.RoomId;
+	int16 currentRoomId = _state.roomId;
 
 	// Ghidra 0x000028DE-0x00002907: detach an actor only when its object belongs to the active room. Dynamic
 	// byte-bit selection is modulo eight, including the stored-index branch, before the index returns to -1.
-	if (roomObject.RoomId == currentRoomId) {
+	if (roomObject.roomId == currentRoomId) {
 		uint8 previousActorMask =
-			static_cast<uint8>(1 << ((static_cast<uint8>(roomObject.FixedPositionIndex) + 2) &
+			static_cast<uint8>(1 << ((static_cast<uint8>(roomObject.fixedPositionIndex) + 2) &
 									 0x07));
-		_state.ActiveActorFlags &= static_cast<uint8>(~previousActorMask);
-		_state.ActorTileUploadPendingFlags &= static_cast<uint8>(~previousActorMask);
-		roomObject.FixedPositionIndex = -1;
+		_state.activeActorFlags &= static_cast<uint8>(~previousActorMask);
+		_state.actorTileUploadPendingFlags &= static_cast<uint8>(~previousActorMask);
+		roomObject.fixedPositionIndex = -1;
 	}
 
 	// Ghidra 0x00002908-0x0000292F: publish the new room, return when it is not active, or choose the first
 	// inactive actor slot from two through five; reaching sentinel slot six is a distinct no-slot exit.
-	roomObject.RoomId = newRoomId;
+	roomObject.roomId = newRoomId;
 	if (newRoomId != currentRoomId) {
 		return true;
 	}
 
 	int actorSlot = kDynamicActorFirstSlot;
-	while ((_state.ActiveActorFlags & (1 << actorSlot)) != 0) {
+	while ((_state.activeActorFlags & (1 << actorSlot)) != 0) {
 		actorSlot++;
 		if (actorSlot == kDynamicActorSlotLimit) {
 			return true;
@@ -86,7 +86,7 @@ bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, 
 	// the DBF catalog without a match is a separate return and does not activate the selected free slot.
 	int descriptorOffset = 0;
 	int descriptorCatalogIndex = -1;
-	if (!_actorDescriptorCatalog.tryResolve(roomObject.ShapeIndex, descriptorOffset, descriptorCatalogIndex)) {
+	if (!_actorDescriptorCatalog.tryResolve(roomObject.shapeIndex, descriptorOffset, descriptorCatalogIndex)) {
 		return true;
 	}
 
@@ -96,37 +96,37 @@ bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, 
 	// aliases and preallocated graphics-work pointers with typed movement state and on-demand tile storage.
 	int dynamicActorIndex = actorSlot - kDynamicActorFirstSlot;
 	uint8 actorMask = static_cast<uint8>(1 << actorSlot);
-	_state.RoomObjectActorHorizontalSteps[static_cast<size_t>(dynamicActorIndex)] =
+	_state.roomObjectActorHorizontalSteps[static_cast<size_t>(dynamicActorIndex)] =
 		static_cast<int32>(horizontalStep);
-	_state.RoomObjectActorVerticalSteps[static_cast<size_t>(dynamicActorIndex)] =
+	_state.roomObjectActorVerticalSteps[static_cast<size_t>(dynamicActorIndex)] =
 		static_cast<int32>(horizontalStep >> 1);
-	_state.ActorAnimationDescriptorOffsets[static_cast<size_t>(actorSlot)] = descriptorOffset;
-	_state.ActorAnimationOffsets[static_cast<size_t>(actorSlot)] = roomObject.TilePatchIndex;
-	_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)] = replaceIntegerCoordinate(
-		_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)], roomObject.FixedX);
-	_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)] = replaceIntegerCoordinate(
-		_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)], roomObject.FixedY);
-	_state.ActorAnimationDelays[static_cast<size_t>(actorSlot)] = -1;
-	_state.ActorTargetXCoordinates[static_cast<size_t>(actorSlot)] = roomObject.FixedX;
-	_state.ActorTargetYCoordinates[static_cast<size_t>(actorSlot)] = roomObject.FixedY;
-	roomObject.FixedPositionIndex = static_cast<int8>(dynamicActorIndex);
-	_state.ActorCompactFrameFlags &= static_cast<uint8>(~actorMask);
-	if ((roomObject.Flags & kCompactActorMask) != 0) {
-		_state.ActorCompactFrameFlags |= actorMask;
+	_state.actorAnimationDescriptorOffsets[static_cast<size_t>(actorSlot)] = descriptorOffset;
+	_state.actorAnimationOffsets[static_cast<size_t>(actorSlot)] = roomObject.tilePatchIndex;
+	_state.actorXFixedCoordinates[static_cast<size_t>(actorSlot)] = replaceIntegerCoordinate(
+		_state.actorXFixedCoordinates[static_cast<size_t>(actorSlot)], roomObject.fixedX);
+	_state.actorYFixedCoordinates[static_cast<size_t>(actorSlot)] = replaceIntegerCoordinate(
+		_state.actorYFixedCoordinates[static_cast<size_t>(actorSlot)], roomObject.fixedY);
+	_state.actorAnimationDelays[static_cast<size_t>(actorSlot)] = -1;
+	_state.actorTargetXCoordinates[static_cast<size_t>(actorSlot)] = roomObject.fixedX;
+	_state.actorTargetYCoordinates[static_cast<size_t>(actorSlot)] = roomObject.fixedY;
+	roomObject.fixedPositionIndex = static_cast<int8>(dynamicActorIndex);
+	_state.actorCompactFrameFlags &= static_cast<uint8>(~actorMask);
+	if ((roomObject.flags & kCompactActorMask) != 0) {
+		_state.actorCompactFrameFlags |= actorMask;
 	}
 
-	_state.ActorTileUploadPendingFlags &= static_cast<uint8>(~actorMask);
-	_state.ActorCompactConversionPendingFlags &= static_cast<uint8>(~actorMask);
-	_state.ActorGraphicsReadyFlags &= static_cast<uint8>(~actorMask);
-	_state.ActorAnimationRestartFlags |= actorMask;
-	_state.ActiveActorFlags |= actorMask;
+	_state.actorTileUploadPendingFlags &= static_cast<uint8>(~actorMask);
+	_state.actorCompactConversionPendingFlags &= static_cast<uint8>(~actorMask);
+	_state.actorGraphicsReadyFlags &= static_cast<uint8>(~actorMask);
+	_state.actorAnimationRestartFlags |= actorMask;
+	_state.activeActorFlags |= actorMask;
 
 	// Ghidra 0x000029E4-0x000029FD: advance at least once and retain the graphics-ready back edge. The
 	// original interrupt publishes pending graphics asynchronously, so service the room callback before each
 	// managed continuation and repeat the final room assignment after publication.
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorGraphicsReadyFlags & actorMask) != 0) {
+		if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 			break;
 		}
 
@@ -135,23 +135,23 @@ bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, 
 		}
 	}
 
-	roomObject.RoomId = newRoomId;
+	roomObject.roomId = newRoomId;
 	return true;
 }
 
 bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObject, int objectIndex,
 														 uint16 encodedObjectId,
 														 int16 newRoomId) {
-	int16 previousRoomId = roomObject.RoomId;
+	int16 previousRoomId = roomObject.roomId;
 
 	// Ghidra 0x000029FE-0x00002A2B: when a positive-identity visible patch leaves the active room, mark its
 	// tile index and object flags before waiting one retrace. Each room, sign, and zero-patch branch remains.
-	if (previousRoomId == _state.RoomId) {
+	if (previousRoomId == _state.roomId) {
 		if (static_cast<int16>(encodedObjectId) >= 0) {
-			if (roomObject.TilePatchIndex != 0) {
-				roomObject.TilePatchIndex =
-					static_cast<int16>(static_cast<uint16>(roomObject.TilePatchIndex) | 0x8000);
-				roomObject.Flags |= kObjectTilePatchPendingMask;
+			if (roomObject.tilePatchIndex != 0) {
+				roomObject.tilePatchIndex =
+					static_cast<int16>(static_cast<uint16>(roomObject.tilePatchIndex) | 0x8000);
+				roomObject.flags |= kObjectTilePatchPendingMask;
 				if (!_waitForRoomVerticalBlank()) {
 					return true;
 				}
@@ -161,10 +161,10 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 
 	// Ghidra 0x00002A2C-0x00002A43: publish the new room and mark a positive-identity object entering the
 	// active room. A different room or negative identity independently skips the flag update.
-	roomObject.RoomId = newRoomId;
-	if (newRoomId == _state.RoomId) {
+	roomObject.roomId = newRoomId;
+	if (newRoomId == _state.roomId) {
 		if (static_cast<int16>(encodedObjectId) >= 0) {
-			roomObject.Flags |= kObjectTilePatchPendingMask;
+			roomObject.flags |= kObjectTilePatchPendingMask;
 		}
 	}
 
@@ -172,16 +172,16 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 	// later entry left through the original sentinel position. The typed list removes that sentinel.
 	if (previousRoomId == kInventoryRoomId) {
 		size_t inventoryIndex = 0;
-		while (_state.InventoryObjectIndices[inventoryIndex] != objectIndex) {
+		while (_state.inventoryObjectIndices[inventoryIndex] != objectIndex) {
 			inventoryIndex++;
 		}
 
-		while (inventoryIndex < _state.InventoryObjectIndices.size() - 1) {
-			_state.InventoryObjectIndices[inventoryIndex] = _state.InventoryObjectIndices[inventoryIndex + 1];
+		while (inventoryIndex < _state.inventoryObjectIndices.size() - 1) {
+			_state.inventoryObjectIndices[inventoryIndex] = _state.inventoryObjectIndices[inventoryIndex + 1];
 			inventoryIndex++;
 		}
 
-		_state.InventoryObjectIndices.pop_back();
+		_state.inventoryObjectIndices.pop_back();
 		if (newRoomId != kInventoryRoomId) {
 			return refreshActionPromptsAfterRelocation(encodedObjectId);
 		}
@@ -193,11 +193,11 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 		return false;
 	}
 
-	size_t inventoryObjectCount = _state.InventoryObjectIndices.size();
-	_state.InventoryObjectIndices.push_back(objectIndex);
+	size_t inventoryObjectCount = _state.inventoryObjectIndices.size();
+	_state.inventoryObjectIndices.push_back(objectIndex);
 	int16 inventoryPage = static_cast<int16>(inventoryObjectCount >> 2);
-	if (static_cast<int16>(_state.MenuPage + 1) != inventoryPage) {
-		_state.MenuPage = inventoryPage;
+	if (static_cast<int16>(_state.menuPage + 1) != inventoryPage) {
+		_state.menuPage = inventoryPage;
 	}
 
 	return refreshActionPromptsAfterRelocation(encodedObjectId);
@@ -206,7 +206,7 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 bool RoomScriptCommand05MoveObject::refreshActionPromptsAfterRelocation(uint16 encodedObjectId) {
 	// Ghidra 0x00002AA6-0x00002AC9: interaction bit two and a negative encoded identity independently skip
 	// all three calls. Otherwise preserve WaitForVerticalBlank, CommitActionPromptUpdate, then refresh.
-	if ((_state.InteractionFlags & kSuppressActionPromptRefreshMask) != 0) {
+	if ((_state.interactionFlags & kSuppressActionPromptRefreshMask) != 0) {
 		return false;
 	}
 

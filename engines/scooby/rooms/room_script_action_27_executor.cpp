@@ -31,17 +31,17 @@ namespace Scooby {
 void RoomScriptAction27Executor::executeRoomScriptAction27() {
 	// Ghidra 0x00003F58-0x00003F79: enter forced staged-actor selection, retain the signed horizontal
 	// step in D1 across input-loop iterations, seed no-input state, and clear inactive path slot two.
-	_state.TransitionFlags |= 0x04;
+	_state.transitionFlags |= 0x04;
 	int16 horizontalStep = 0;
-	_state.ControllerOneInput = 0xFF;
-	if ((_state.ActorPathActiveFlags & 0x04) == 0) {
-		_state.ActorPathRecordOffsets[kCompanionActorSlot] = 0;
+	_state.controllerOneInput = 0xFF;
+	if ((_state.actorPathActiveFlags & 0x04) == 0) {
+		_state.actorPathRecordOffsets[kCompanionActorSlot] = 0;
 	}
 
 	while (true) {
 		// Ghidra 0x00003F7A-0x00003FBD: advance animations, retain left/right's active-low signed
 		// step with right taking precedence, and move both actors only inside the inclusive X bounds.
-		_state.RetraceCountdown = 0;
+		_state.retraceCountdown = 0;
 		_updateActorAnimationFrames();
 		if (_state.isButtonDown(ControllerButtons::Left)) {
 			horizontalStep = -2;
@@ -52,7 +52,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 		}
 
 		int16 candidateX = static_cast<int16>(
-			getIntegerWord(_state.ActorXFixedCoordinates[kMovingActorSlot]) + horizontalStep);
+			getIntegerWord(_state.actorXFixedCoordinates[kMovingActorSlot]) + horizontalStep);
 		if (candidateX >= kMinimumX && candidateX <= kMaximumX) {
 			setPairedActorX(candidateX);
 		}
@@ -65,7 +65,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 		} else if (_state.isButtonDown(ControllerButtons::B)) {
 			testedButton = ControllerButtons::B;
 		} else {
-			while (_state.RetraceCountdown >= 0) {
+			while (_state.retraceCountdown >= 0) {
 				if (!waitForRoomVerticalBlank()) {
 					return;
 				}
@@ -84,7 +84,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 				}
 
 				candidateX = static_cast<int16>(
-					getIntegerWord(_state.ActorXFixedCoordinates[kMovingActorSlot]) + horizontalStep);
+					getIntegerWord(_state.actorXFixedCoordinates[kMovingActorSlot]) + horizontalStep);
 				if (candidateX < kMinimumX || candidateX > kMaximumX) {
 					break;
 				}
@@ -98,21 +98,21 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 
 	// Ghidra 0x00004008-0x00004027: write slot three's current integer Y before each retrace, advance
 	// by signed word steps of two, and replace the final value with exactly 0x004A.
-	int16 movingActorY = getIntegerWord(_state.ActorYFixedCoordinates[kMovingActorSlot]);
+	int16 movingActorY = getIntegerWord(_state.actorYFixedCoordinates[kMovingActorSlot]);
 	do {
-		setIntegerWord(_state.ActorYFixedCoordinates, kMovingActorSlot, movingActorY);
+		setIntegerWord(_state.actorYFixedCoordinates, kMovingActorSlot, movingActorY);
 		if (!waitForRoomVerticalBlank()) {
 			return;
 		}
 
 		movingActorY += 2;
 	} while (movingActorY < kTargetY);
-	setIntegerWord(_state.ActorYFixedCoordinates, kMovingActorSlot, kTargetY);
+	setIntegerWord(_state.actorYFixedCoordinates, kMovingActorSlot, kTargetY);
 
 	// Ghidra 0x00004028-0x00004051: endpoint 0x0094 accepts unsigned path offsets 0x005C-0x0078;
 	// every other endpoint accepts 0x00F8-0x0114, retaining both inclusive comparison branches.
-	uint16 pathRecordOffset = _state.ActorPathRecordOffsets[kCompanionActorSlot];
-	bool success = getIntegerWord(_state.ActorXFixedCoordinates[kMovingActorSlot]) == kMaximumX
+	uint16 pathRecordOffset = _state.actorPathRecordOffsets[kCompanionActorSlot];
+	bool success = getIntegerWord(_state.actorXFixedCoordinates[kMovingActorSlot]) == kMaximumX
 					   ? (pathRecordOffset >= 0x005C && pathRecordOffset <= 0x0078)
 					   : (pathRecordOffset >= 0x00F8 && pathRecordOffset <= 0x0114);
 
@@ -120,20 +120,20 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 	// the independent failure branch selecting animation 0x1B and result zero.
 	if (success) {
 		playAudioCommand(0x63);
-		_state.ActorAnimationOffsets[kMovingActorSlot] = 0x1C;
-		_state.RoomObjects[0].ScriptStateWords[0] = 1;
+		_state.actorAnimationOffsets[kMovingActorSlot] = 0x1C;
+		_state.roomObjects[0].scriptStateWords[0] = 1;
 	} else {
-		_state.ActorAnimationOffsets[kMovingActorSlot] = 0x1B;
-		_state.RoomObjects[0].ScriptStateWords[0] = 0;
+		_state.actorAnimationOffsets[kMovingActorSlot] = 0x1B;
+		_state.roomObjects[0].scriptStateWords[0] = 0;
 	}
 
 	// Ghidra 0x0000407E-0x000040AD: restart slot three, advance every actor until its command stream
 	// holds, preserve audio command 0x62, and block companion visibility only for nonzero result. Native
 	// room VBlank can interrupt the hold loop, so wait for one callback-aware retrace before continuing.
-	_state.ActorAnimationRestartFlags |= 0x08;
+	_state.actorAnimationRestartFlags |= 0x08;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorAnimationHoldFlags & 0x08) != 0) {
+		if ((_state.actorAnimationHoldFlags & 0x08) != 0) {
 			break;
 		}
 
@@ -143,8 +143,8 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 	}
 
 	playAudioCommand(0x62);
-	if (_state.RoomObjects[0].ScriptStateWords[0] != 0) {
-		_state.ActorVisibilityBlockFlags |= 0x04;
+	if (_state.roomObjects[0].scriptStateWords[0] != 0) {
+		_state.actorVisibilityBlockFlags |= 0x04;
 	}
 
 	// Ghidra 0x000040AE-0x000040B9: after each retrace, decrement only slot three's signed integer
@@ -155,21 +155,21 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 		}
 
 		movingActorY =
-			static_cast<int16>(getIntegerWord(_state.ActorYFixedCoordinates[kMovingActorSlot]) - 1);
-		setIntegerWord(_state.ActorYFixedCoordinates, kMovingActorSlot, movingActorY);
+			static_cast<int16>(getIntegerWord(_state.actorYFixedCoordinates[kMovingActorSlot]) - 1);
+		setIntegerWord(_state.actorYFixedCoordinates, kMovingActorSlot, movingActorY);
 	} while (movingActorY != 0);
 
 	// Ghidra 0x000040BA-0x000040DF: leave forced actor selection, suppress the complete room-update
 	// block during FadePaletteOut, restore it afterward, reveal the companion on both outcomes, and return.
-	_state.TransitionFlags &= 0xFB;
-	_state.DisplayFlags &= 0xBF;
+	_state.transitionFlags &= 0xFB;
+	_state.displayFlags &= 0xBF;
 	if (!_presenter.fadePaletteOut(&_handleRoomVBlank)) {
 		_requestSessionExit(SessionExit::HostClosed);
 		return;
 	}
 
-	_state.DisplayFlags |= 0x40;
-	_state.ActorVisibilityBlockFlags &= 0xFB;
+	_state.displayFlags |= 0x40;
+	_state.actorVisibilityBlockFlags &= 0xFB;
 }
 
 int16 RoomScriptAction27Executor::getIntegerWord(int coordinate) {
@@ -183,8 +183,8 @@ void RoomScriptAction27Executor::setIntegerWord(Common::Array<int32> &coordinate
 }
 
 void RoomScriptAction27Executor::setPairedActorX(int16 integer) {
-	setIntegerWord(_state.ActorXFixedCoordinates, kMovingActorSlot, integer);
-	setIntegerWord(_state.ActorXFixedCoordinates, kPairedActorSlot, integer);
+	setIntegerWord(_state.actorXFixedCoordinates, kMovingActorSlot, integer);
+	setIntegerWord(_state.actorXFixedCoordinates, kPairedActorSlot, integer);
 }
 
 bool RoomScriptAction27Executor::waitForRoomVerticalBlank() {

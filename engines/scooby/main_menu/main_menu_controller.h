@@ -143,7 +143,7 @@ private:
 
 	bool waitForMainMenuVerticalBlank();
 	void invokeMainMenuVBlank();
-	bool isRevealAnimationEnabled() const { return (_state.InitializationFlags & kRevealCompleteMask) != 0; }
+	bool isRevealAnimationEnabled() const { return (_state.initializationFlags & kRevealCompleteMask) != 0; }
 
 	// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
 	// command: original audio command supplied in register D0.

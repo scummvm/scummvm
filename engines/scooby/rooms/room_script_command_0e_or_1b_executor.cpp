@@ -49,7 +49,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 				// coordinates. A negative animation skips restart; otherwise retain both graphics-ready loop
 				// outcomes and its asynchronous publication handover.
 				if (movementMode < 0) {
-					if (!placeActorDirectly(0, target.X, target.Y, movementArgument, -1, 0x01)) {
+					if (!placeActorDirectly(0, target.x, target.y, movementArgument, -1, 0x01)) {
 						return;
 					}
 				} else {
@@ -57,7 +57,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 					// lead-actor movement boundary and the original encoded identity context. Managed host
 					// closure bypasses the native record epilogue as a non-returning handover.
 					if (!_movement.moveLeadActorToRoomPosition(
-							target.X, target.Y, movementMode, movementArgument,
+							target.x, target.y, movementMode, movementArgument,
 							encodedObjectId)) {
 						_requestMovementHostClose();
 						return;
@@ -77,13 +77,13 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 				// coordinates. Its nonnegative animation starts at delay one and retains both graphics-ready
 				// outcomes instead of inheriting actor zero's delay.
 				if (movementMode < 0) {
-					if (!placeActorDirectly(1, target.X, target.Y, movementArgument, 1, 0x02)) {
+					if (!placeActorDirectly(1, target.x, target.y, movementArgument, 1, 0x02)) {
 						return;
 					}
 				} else {
 					// Ghidra 0x00004AC2-0x00004ACD: nonnegative movement mode preserves the complete companion
 					// movement and finish boundary, including encoded bit 15.
-					if (!_movement.finishCompanionMovement(target.X, target.Y, movementMode,
+					if (!_movement.finishCompanionMovement(target.x, target.y, movementMode,
 														   movementArgument,
 														   encodedObjectId)) {
 						_requestMovementHostClose();
@@ -98,7 +98,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 				// movement mode, independent coordinate-source branch, animation argument, and encoded
 				// identity context at the room-object movement boundary.
 				TargetCoordinates target = readTargetCoordinates(commandOffset, command);
-				if (!_movement.moveRoomObjectToPosition(objectId, target.X, target.Y,
+				if (!_movement.moveRoomObjectToPosition(objectId, target.x, target.y,
 														_rom.readInt16(commandOffset + 4),
 														_rom.readInt16(commandOffset + 6),
 														encodedObjectId)) {
@@ -125,7 +125,7 @@ RoomScriptCommand0EOr1BExecutor::TargetCoordinates RoomScriptCommand0EOr1BExecut
 	}
 
 	int16 positionByteOffset = static_cast<int16>(_rom.readUInt16(commandOffset + 8) << 2);
-	int32 positionOffset = _state.RoomPositionCoordinateTableOffset + positionByteOffset;
+	int32 positionOffset = _state.roomPositionCoordinateTableOffset + positionByteOffset;
 	return TargetCoordinates(static_cast<int16>(_rom.readInt16(positionOffset) << 3),
 							 static_cast<int16>(_rom.readInt16(positionOffset + 2) << 3));
 }
@@ -135,20 +135,20 @@ bool RoomScriptCommand0EOr1BExecutor::placeActorDirectly(int actorSlot, int16 ta
 														 int16 animationOffset,
 														 int16 initialDelay,
 														 uint8 actorMask) {
-	_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)] =
-		replaceIntegerCoordinate(_state.ActorXFixedCoordinates[static_cast<size_t>(actorSlot)], targetX);
-	_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)] =
-		replaceIntegerCoordinate(_state.ActorYFixedCoordinates[static_cast<size_t>(actorSlot)], targetY);
+	_state.actorXFixedCoordinates[static_cast<size_t>(actorSlot)] =
+		replaceIntegerCoordinate(_state.actorXFixedCoordinates[static_cast<size_t>(actorSlot)], targetX);
+	_state.actorYFixedCoordinates[static_cast<size_t>(actorSlot)] =
+		replaceIntegerCoordinate(_state.actorYFixedCoordinates[static_cast<size_t>(actorSlot)], targetY);
 	if (animationOffset < 0) {
 		return true;
 	}
 
-	_state.ActorAnimationOffsets[static_cast<size_t>(actorSlot)] = animationOffset;
-	_state.ActorAnimationDelays[static_cast<size_t>(actorSlot)] = initialDelay;
-	_state.ActorAnimationRestartFlags |= actorMask;
+	_state.actorAnimationOffsets[static_cast<size_t>(actorSlot)] = animationOffset;
+	_state.actorAnimationDelays[static_cast<size_t>(actorSlot)] = initialDelay;
+	_state.actorAnimationRestartFlags |= actorMask;
 	while (true) {
 		_updateActorAnimationFrames();
-		if ((_state.ActorGraphicsReadyFlags & actorMask) != 0) {
+		if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 			return true;
 		}
 

@@ -39,7 +39,7 @@ bool Console::Cmd_test(int argc, const char **argv) {
 }
 
 bool Console::Cmd_info(int argc, const char **argv) {
-	debugPrintf("RoomId: %d\n", _applicationLoop->getState().RoomId);
+	debugPrintf("RoomId: %d\n", _applicationLoop->getState().roomId);
 	return true;
 }
 

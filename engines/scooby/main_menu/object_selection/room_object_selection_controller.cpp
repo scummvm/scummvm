@@ -27,9 +27,9 @@
 namespace Scooby {
 
 Optional<int16> RoomObjectSelectionController::select() {
-	Span<const Common::String> labels = _catalog.getLabels(_state.EpisodeIndex);
+	Span<const Common::String> labels = _catalog.getLabels(_state.episodeIndex);
 	// Original g_wLastRoomObjectIndex at 0xFF06F4 stores N - 1, not the record count.
-	int lastObjectIndex = static_cast<int>(_state.RoomObjects.size()) - 1;
+	int lastObjectIndex = static_cast<int>(_state.roomObjects.size()) - 1;
 	int pageIndex = 0;
 	int rowIndex = 0;
 	// Ghidra 0x00008BC8-0x00008BCE and 0x00008C0E-0x00008C14 use (last - 1) >> 4.
@@ -46,8 +46,8 @@ Optional<int16> RoomObjectSelectionController::select() {
 			}
 
 			_presentation.updateCatalogSelectionHighlight(rowIndex);
-			uint8 currentInput = _state.ControllerOneInput;
-			uint8 previousInput = _state.PreviousControllerOneInput;
+			uint8 currentInput = _state.controllerOneInput;
+			uint8 previousInput = _state.previousControllerOneInput;
 			if (wasPressed(currentInput, previousInput, ControllerButtons::Up)) {
 				if (rowIndex != 0) {
 					rowIndex--;

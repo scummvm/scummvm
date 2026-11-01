@@ -67,98 +67,98 @@ void RoomActorAnimator::updateActorAnimationFrames() {
 }
 
 void RoomActorAnimator::coupleTransitionAnimation() {
-	if ((_state.TransitionFlags & kTransitionMask) == 0 || (_state.ActorAnimationRestartFlags & 0x01) == 0) {
+	if ((_state.transitionFlags & kTransitionMask) == 0 || (_state.actorAnimationRestartFlags & 0x01) == 0) {
 		return;
 	}
 
-	_state.ActorAnimationDelays[2] = _state.ActorAnimationDelays[0];
-	_state.ActorAnimationOffsets[2] =
-		kTransitionAnimationByOffset[static_cast<size_t>(static_cast<uint16>(_state.ActorAnimationOffsets[0]))];
-	_state.ActorAnimationRestartFlags |= 0x04;
+	_state.actorAnimationDelays[2] = _state.actorAnimationDelays[0];
+	_state.actorAnimationOffsets[2] =
+		kTransitionAnimationByOffset[static_cast<size_t>(static_cast<uint16>(_state.actorAnimationOffsets[0]))];
+	_state.actorAnimationRestartFlags |= 0x04;
 }
 
 bool RoomActorAnimator::canAdvanceActor(int actor, uint8 actorMask) const {
-	if ((_state.ActiveActorFlags & actorMask) == 0 || _state.ActorAnimationDelays[actor] > 0 ||
-		((_state.RoomBehaviorFlags & kTransitionMask) != 0 &&
-		 (_state.ActorTransitionFrameReadyFlags & actorMask) != 0)) {
+	if ((_state.activeActorFlags & actorMask) == 0 || _state.actorAnimationDelays[actor] > 0 ||
+		((_state.roomBehaviorFlags & kTransitionMask) != 0 &&
+		 (_state.actorTransitionFrameReadyFlags & actorMask) != 0)) {
 		return false;
 	}
 
-	if ((_state.ActorAnimationRestartFlags & actorMask) != 0 ||
-		(_state.ActorPositionUpdateFlags & actorMask) != 0 || actor == 1) {
+	if ((_state.actorAnimationRestartFlags & actorMask) != 0 ||
+		(_state.actorPositionUpdateFlags & actorMask) != 0 || actor == 1) {
 		return true;
 	}
 
 	int16 screenX = static_cast<int16>(
-		static_cast<int16>(_state.ActorXFixedCoordinates[actor] >> 16) - _state.CameraX);
+		static_cast<int16>(_state.actorXFixedCoordinates[actor] >> 16) - _state.cameraX);
 	int16 screenY = static_cast<int16>(
-		static_cast<int16>(_state.ActorYFixedCoordinates[actor] >> 16) - _state.CameraY);
+		static_cast<int16>(_state.actorYFixedCoordinates[actor] >> 16) - _state.cameraY);
 	return screenX >= -80 && screenX <= 336 && screenY >= -80 && screenY <= 232;
 }
 
 void RoomActorAnimator::advanceActor(int actor, uint8 actorMask) {
-	int descriptorOffset = _state.ActorAnimationDescriptorOffsets[actor];
-	if ((_state.ActorAnimationRestartFlags & actorMask) != 0) {
-		if ((_state.ActorTileUploadPendingFlags & actorMask) != 0 ||
-			(_state.ActorCompactConversionPendingFlags & actorMask) != 0) {
+	int descriptorOffset = _state.actorAnimationDescriptorOffsets[actor];
+	if ((_state.actorAnimationRestartFlags & actorMask) != 0) {
+		if ((_state.actorTileUploadPendingFlags & actorMask) != 0 ||
+			(_state.actorCompactConversionPendingFlags & actorMask) != 0) {
 			return;
 		}
 
-		_state.ActorAnimationHoldFlags &= static_cast<uint8>(~actorMask);
-		_state.ActorGraphicsReadyFlags &= static_cast<uint8>(~actorMask);
+		_state.actorAnimationHoldFlags &= static_cast<uint8>(~actorMask);
+		_state.actorGraphicsReadyFlags &= static_cast<uint8>(~actorMask);
 		int16 animationTableOffset = static_cast<int16>(
 			_rom.readUInt16(descriptorOffset + 2) +
-			_state.ActorAnimationOffsets[actor] * static_cast<int>(sizeof(int16)));
-		_state.ActorAnimationCommandOffsets[actor] = _rom.readInt16(descriptorOffset + animationTableOffset);
-		_state.ActorAnimationDelays[actor] = -1;
-		_state.ActorAnimationRestartFlags &= static_cast<uint8>(~actorMask);
+			_state.actorAnimationOffsets[actor] * static_cast<int>(sizeof(int16)));
+		_state.actorAnimationCommandOffsets[actor] = _rom.readInt16(descriptorOffset + animationTableOffset);
+		_state.actorAnimationDelays[actor] = -1;
+		_state.actorAnimationRestartFlags &= static_cast<uint8>(~actorMask);
 	}
 
-	if ((_state.ActorAnimationHoldFlags & actorMask) != 0) {
-		if ((_state.ActorPositionUpdateFlags & actorMask) == 0) {
+	if ((_state.actorAnimationHoldFlags & actorMask) != 0) {
+		if ((_state.actorPositionUpdateFlags & actorMask) == 0) {
 			return;
 		}
 
-		_state.ActorPositionUpdateFlags &= static_cast<uint8>(~actorMask);
-		stageActorFrame(actor, actorMask, descriptorOffset, _state.ActorSelectedFrameOffsets[actor]);
+		_state.actorPositionUpdateFlags &= static_cast<uint8>(~actorMask);
+		stageActorFrame(actor, actorMask, descriptorOffset, _state.actorSelectedFrameOffsets[actor]);
 		return;
 	}
 
 	while (true) {
-		int16 commandOffset = _state.ActorAnimationCommandOffsets[actor];
-		_state.ActorAnimationCommandOffsets[actor] = static_cast<int16>(commandOffset + 4);
+		int16 commandOffset = _state.actorAnimationCommandOffsets[actor];
+		_state.actorAnimationCommandOffsets[actor] = static_cast<int16>(commandOffset + 4);
 		int16 argument = _rom.readInt16(descriptorOffset + commandOffset + 2);
 		switch (_rom.readInt16(descriptorOffset + commandOffset)) {
 		case 4:
-			_state.ActorStagedAnimationDelays[actor] = argument;
+			_state.actorStagedAnimationDelays[actor] = argument;
 			continue;
 		case 5:
-			_state.ActorAnimationDelays[actor] = argument;
+			_state.actorAnimationDelays[actor] = argument;
 			return;
 		case 3:
-			if ((_state.ActorAnimationLoopExitFlags & actorMask) == 0) {
-				_state.ActorAnimationCommandOffsets[actor] = argument;
+			if ((_state.actorAnimationLoopExitFlags & actorMask) == 0) {
+				_state.actorAnimationCommandOffsets[actor] = argument;
 				continue;
 			}
 
-			_state.ActorAnimationLoopExitFlags &= static_cast<uint8>(~actorMask);
-			_state.ActorGraphicsReadyFlags &= static_cast<uint8>(~actorMask);
-			_state.ActorAnimationOffsets[actor] = argument;
+			_state.actorAnimationLoopExitFlags &= static_cast<uint8>(~actorMask);
+			_state.actorGraphicsReadyFlags &= static_cast<uint8>(~actorMask);
+			_state.actorAnimationOffsets[actor] = argument;
 			continue;
 		case 2:
-			_state.ActorSelectedFrameOffsets[actor] = argument;
-			if (actor == 0 || actor == _state.TransitionActorIndex) {
-				_state.ActorTransitionFrameReadyFlags |= actorMask;
+			_state.actorSelectedFrameOffsets[actor] = argument;
+			if (actor == 0 || actor == _state.transitionActorIndex) {
+				_state.actorTransitionFrameReadyFlags |= actorMask;
 			}
 
 			stageActorFrame(actor, actorMask, descriptorOffset, argument);
 			return;
 		case 9:
-			_state.ActorAnimationHoldFlags |= actorMask;
+			_state.actorAnimationHoldFlags |= actorMask;
 			return;
 		case 13:
-			_state.ActorGraphicsReadyFlags &= static_cast<uint8>(~actorMask);
-			_state.ActorAnimationOffsets[actor] = argument;
+			_state.actorGraphicsReadyFlags &= static_cast<uint8>(~actorMask);
+			_state.actorAnimationOffsets[actor] = argument;
 			continue;
 		case 6:
 			applyCommandPositionDelta(actor, argument);
@@ -180,29 +180,29 @@ void RoomActorAnimator::advanceActor(int actor, uint8 actorMask) {
 void RoomActorAnimator::applyCommandPositionDelta(int actor, int16 packedDelta) {
 	int8 xDelta = static_cast<int8>(static_cast<uint8>(packedDelta));
 	int8 yDelta = static_cast<int8>(static_cast<uint16>(packedDelta) >> 8);
-	_state.ActorXFixedCoordinates[actor] = _state.ActorXFixedCoordinates[actor] + (xDelta << 16);
-	_state.ActorYFixedCoordinates[actor] = _state.ActorYFixedCoordinates[actor] + (yDelta << 16);
+	_state.actorXFixedCoordinates[actor] = _state.actorXFixedCoordinates[actor] + (xDelta << 16);
+	_state.actorYFixedCoordinates[actor] = _state.actorYFixedCoordinates[actor] + (yDelta << 16);
 }
 
 void RoomActorAnimator::stageActorFrame(int actor, uint8 actorMask, int descriptorOffset,
 										int16 selectedFrameOffset) {
 	int frameDataOffset = descriptorOffset + selectedFrameOffset;
 	int compressedSourceOffset = descriptorOffset + static_cast<int>(_rom.readUInt32(frameDataOffset + 6));
-	_state.ActorTileTransferWordCounts[actor] = getTileTransferWordCount(frameDataOffset);
-	if ((_state.ActorCompactFrameFlags & actorMask) != 0) {
-		if ((_state.ActorTileUploadPendingFlags & actorMask) != 0) {
+	_state.actorTileTransferWordCounts[actor] = getTileTransferWordCount(frameDataOffset);
+	if ((_state.actorCompactFrameFlags & actorMask) != 0) {
+		if ((_state.actorTileUploadPendingFlags & actorMask) != 0) {
 			return;
 		}
 
-		_state.ActorCompactFrameSourceOffsets[actor] = compressedSourceOffset;
-		_state.ActorCompactConversionPendingFlags |= actorMask;
+		_state.actorCompactFrameSourceOffsets[actor] = compressedSourceOffset;
+		_state.actorCompactConversionPendingFlags |= actorMask;
 	} else {
-		_state.ActorTileData[actor] = _rom.decompressByteRle(compressedSourceOffset);
-		_state.ActorTileUploadPendingFlags |= actorMask;
+		_state.actorTileData[actor] = _rom.decompressByteRle(compressedSourceOffset);
+		_state.actorTileUploadPendingFlags |= actorMask;
 	}
 
-	_state.ActorPendingFrameDataOffsets[actor] = frameDataOffset;
-	_state.ActorAnimationDelays[actor] = _state.ActorStagedAnimationDelays[actor];
+	_state.actorPendingFrameDataOffsets[actor] = frameDataOffset;
+	_state.actorAnimationDelays[actor] = _state.actorStagedAnimationDelays[actor];
 }
 
 uint16 RoomActorAnimator::getTileTransferWordCount(int frameDataOffset) const {
@@ -229,19 +229,19 @@ uint16 RoomActorAnimator::getTileTransferWordCount(int frameDataOffset) const {
 void RoomActorAnimator::convertCompactFrames() {
 	for (int actor = kActorCount - 1; actor >= 0; --actor) {
 		uint8 actorMask = static_cast<uint8>(1 << actor);
-		if ((_state.ActorCompactConversionPendingFlags & actorMask) == 0 || !canConvertCompactFrame(actor)) {
+		if ((_state.actorCompactConversionPendingFlags & actorMask) == 0 || !canConvertCompactFrame(actor)) {
 			continue;
 		}
 
-		int descriptorOffset = _state.ActorAnimationDescriptorOffsets[actor];
-		int frameDataOffset = descriptorOffset + _state.ActorSelectedFrameOffsets[actor];
+		int descriptorOffset = _state.actorAnimationDescriptorOffsets[actor];
+		int frameDataOffset = descriptorOffset + _state.actorSelectedFrameOffsets[actor];
 		Common::Array<uint8> decodedPixels = _rom.decompressByteRle(
-			_state.ActorCompactFrameSourceOffsets[actor].value());
+			_state.actorCompactFrameSourceOffsets[actor].value());
 		int sourceOffset = actor == 0 && _rom.readByte(frameDataOffset + 4) == kExtendedSpriteLayout
 							   ? 0x1000
 							   : 0;
-		uint16 horizontalScale = _state.ActorHorizontalScaleFactors[actor];
-		uint16 verticalScale = _state.ActorVerticalScaleFactors[actor];
+		uint16 horizontalScale = _state.actorHorizontalScaleFactors[actor];
+		uint16 verticalScale = _state.actorVerticalScaleFactors[actor];
 		uint16 frameX = _rom.readUInt16(frameDataOffset);
 		uint16 anchorX =
 			(_rom.readByte(frameDataOffset + 10) & 0x08) != 0
@@ -251,11 +251,11 @@ void RoomActorAnimator::convertCompactFrames() {
 										horizontalScale))
 				: scaleUnsignedWord(frameX, horizontalScale);
 		uint16 anchorY = scaleUnsignedWord(_rom.readUInt16(frameDataOffset + 2), verticalScale);
-		_state.ActorFrameAnchorX[actor] = static_cast<int16>(anchorX);
-		_state.ActorFrameAnchorY[actor] = static_cast<int16>(anchorY);
+		_state.actorFrameAnchorX[actor] = static_cast<int16>(anchorX);
+		_state.actorFrameAnchorY[actor] = static_cast<int16>(anchorY);
 
 		Common::Array<uint8> tileData;
-		if ((_state.TransitionFlags & kTransitionMask) != 0 && static_cast<int16>(anchorY) < 2) {
+		if ((_state.transitionFlags & kTransitionMask) != 0 && static_cast<int16>(anchorY) < 2) {
 			tileData = _rom.readByte(frameDataOffset + 4) == kCompactSprite48Layout
 						   ? _spriteTransformer.expandCompactSprite48UsingPrimaryLayout(
 								 decodedPixels, sourceOffset)
@@ -271,59 +271,59 @@ void RoomActorAnimator::convertCompactFrames() {
 								 verticalScale);
 		}
 
-		_state.ActorTileData[actor] = tileData;
-		_state.ActorCompactFrameSourceOffsets[actor].reset();
-		if ((_state.RoomBehaviorFlags & kTransitionMask) == 0 ||
-			(actor != 0 && actor != _state.TransitionActorIndex)) {
-			_state.ActorTileUploadPendingFlags |= actorMask;
-			_state.ActorCompactConversionPendingFlags &= static_cast<uint8>(~actorMask);
+		_state.actorTileData[actor] = tileData;
+		_state.actorCompactFrameSourceOffsets[actor].reset();
+		if ((_state.roomBehaviorFlags & kTransitionMask) == 0 ||
+			(actor != 0 && actor != _state.transitionActorIndex)) {
+			_state.actorTileUploadPendingFlags |= actorMask;
+			_state.actorCompactConversionPendingFlags &= static_cast<uint8>(~actorMask);
 		}
 	}
 }
 
 bool RoomActorAnimator::canConvertCompactFrame(int actor) const {
-	if ((_state.RoomBehaviorFlags & kTransitionMask) == 0 ||
-		(actor != 0 && actor != _state.TransitionActorIndex)) {
+	if ((_state.roomBehaviorFlags & kTransitionMask) == 0 ||
+		(actor != 0 && actor != _state.transitionActorIndex)) {
 		return true;
 	}
 
-	uint8 transitionActorMask = static_cast<uint8>(1 << _state.TransitionActorIndex);
-	return (_state.ActorTransitionFrameReadyFlags & 0x01) != 0 &&
-		   (_state.ActorTransitionFrameReadyFlags & transitionActorMask) != 0;
+	uint8 transitionActorMask = static_cast<uint8>(1 << _state.transitionActorIndex);
+	return (_state.actorTransitionFrameReadyFlags & 0x01) != 0 &&
+		   (_state.actorTransitionFrameReadyFlags & transitionActorMask) != 0;
 }
 
 void RoomActorAnimator::publishTransitionPair() {
-	uint16 transitionActor = _state.TransitionActorIndex;
+	uint16 transitionActor = _state.transitionActorIndex;
 	uint8 transitionActorMask = static_cast<uint8>(1 << transitionActor);
-	if ((_state.RoomBehaviorFlags & kTransitionMask) == 0 ||
-		(_state.ActorTransitionFrameReadyFlags & 0x01) == 0 ||
-		(_state.ActorTransitionFrameReadyFlags & transitionActorMask) == 0) {
+	if ((_state.roomBehaviorFlags & kTransitionMask) == 0 ||
+		(_state.actorTransitionFrameReadyFlags & 0x01) == 0 ||
+		(_state.actorTransitionFrameReadyFlags & transitionActorMask) == 0) {
 		return;
 	}
 
-	_state.ActorTransitionFrameReadyFlags = 0;
-	int frameDataOffset = _state.ActorAnimationDescriptorOffsets[0] + _state.ActorSelectedFrameOffsets[0];
-	int16 actorX = static_cast<int16>(_state.ActorXFixedCoordinates[0] >> 16);
-	int16 actorY = static_cast<int16>(_state.ActorYFixedCoordinates[0] >> 16);
+	_state.actorTransitionFrameReadyFlags = 0;
+	int frameDataOffset = _state.actorAnimationDescriptorOffsets[0] + _state.actorSelectedFrameOffsets[0];
+	int16 actorX = static_cast<int16>(_state.actorXFixedCoordinates[0] >> 16);
+	int16 actorY = static_cast<int16>(_state.actorYFixedCoordinates[0] >> 16);
 	int16 pairedX = static_cast<int16>(
 		actorX - scaleTransitionOffset(_rom.readInt16(frameDataOffset + 14),
-									   _state.ActorHorizontalScaleFactors[0]));
+									   _state.actorHorizontalScaleFactors[0]));
 	int16 pairedY = static_cast<int16>(
 		actorY - scaleTransitionOffset(_rom.readInt16(frameDataOffset + 16),
-									   _state.ActorVerticalScaleFactors[0]));
-	_state.ActorXFixedCoordinates[transitionActor] =
-		replaceIntegerCoordinate(_state.ActorXFixedCoordinates[transitionActor], pairedX);
-	_state.ActorYFixedCoordinates[transitionActor] =
-		replaceIntegerCoordinate(_state.ActorYFixedCoordinates[transitionActor], pairedY);
+									   _state.actorVerticalScaleFactors[0]));
+	_state.actorXFixedCoordinates[transitionActor] =
+		replaceIntegerCoordinate(_state.actorXFixedCoordinates[transitionActor], pairedX);
+	_state.actorYFixedCoordinates[transitionActor] =
+		replaceIntegerCoordinate(_state.actorYFixedCoordinates[transitionActor], pairedY);
 
-	_state.ActorCompactConversionPendingFlags &= static_cast<uint8>(~(0x01 | transitionActorMask));
+	_state.actorCompactConversionPendingFlags &= static_cast<uint8>(~(0x01 | transitionActorMask));
 	uint8 transitionPairMask = static_cast<uint8>(0x01 | transitionActorMask);
-	_state.ActorTileUploadPendingFlags |= transitionPairMask;
+	_state.actorTileUploadPendingFlags |= transitionPairMask;
 	do {
 		if (!_waitForRoomVerticalBlank()) {
 			return;
 		}
-	} while ((_state.ActorTileUploadPendingFlags & transitionPairMask) != 0);
+	} while ((_state.actorTileUploadPendingFlags & transitionPairMask) != 0);
 }
 
 uint16 RoomActorAnimator::scaleUnsignedWord(uint16 value, uint16 scale) {

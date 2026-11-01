@@ -50,27 +50,27 @@ const uint8 kEngineOwnedByteZeroMask = 0x0E;
 } // namespace
 
 void SaveGameData::capture(const RuntimeState &state) {
-	episodeIdx = state.EpisodeIndex;
-	roomId = state.RoomId;
-	entryPositionOffset = state.InitialRoomPositionCoordinateOffset;
+	episodeIdx = state.episodeIndex;
+	roomId = state.roomId;
+	entryPositionOffset = state.initialRoomPositionCoordinateOffset;
 
 	progressBytes.resize(kProgressByteCount);
 	for (int i = 0; i < kProgressByteCount; i++) {
-		progressBytes[i] = state.ProgressStateBytes[i];
+		progressBytes[i] = state.progressStateBytes[i];
 	}
 
-	roomObjects.resize(state.RoomObjects.size());
-	for (uint i = 0; i < state.RoomObjects.size(); i++) {
-		const RoomObject &roomObject = state.RoomObjects[i];
+	roomObjects.resize(state.roomObjects.size());
+	for (uint i = 0; i < state.roomObjects.size(); i++) {
+		const RoomObject &roomObject = state.roomObjects[i];
 		SavedRoomObject &saved = roomObjects[i];
 		for (int w = 0; w < SavedRoomObject::kWordCount; w++) {
-			saved.Words[w] = roomObject.readCommandWord(w * 2);
+			saved.words[w] = roomObject.readCommandWord(w * 2);
 		}
 
-		saved.Flags = roomObject.Flags;
+		saved.flags = roomObject.flags;
 	}
 
-	inventoryObjectIndices = state.InventoryObjectIndices;
+	inventoryObjectIndices = state.inventoryObjectIndices;
 }
 
 bool SaveGameData::sync(Common::Serializer &s) {
@@ -106,10 +106,10 @@ bool SaveGameData::sync(Common::Serializer &s) {
 	for (uint i = 0; i < objectCount; i++) {
 		SavedRoomObject &saved = roomObjects[i];
 		for (int w = 0; w < SavedRoomObject::kWordCount; w++) {
-			s.syncAsUint16LE(saved.Words[w]);
+			s.syncAsUint16LE(saved.words[w]);
 		}
 
-		s.syncAsByte(saved.Flags);
+		s.syncAsByte(saved.flags);
 	}
 
 	uint16 inventoryCount = static_cast<uint16>(inventoryObjectIndices.size());
@@ -148,34 +148,34 @@ bool SaveGameData::sync(Common::Serializer &s) {
 }
 
 bool SaveGameData::applyWorldState(RuntimeState &state) const {
-	if (roomObjects.size() != state.RoomObjects.size()) {
+	if (roomObjects.size() != state.roomObjects.size()) {
 		warning("Scooby: save holds %u room objects but the episode has %u; keeping the password state",
-				roomObjects.size(), state.RoomObjects.size());
+				roomObjects.size(), state.roomObjects.size());
 		return false;
 	}
 
 	// Byte zero bits one to three are engine-owned flags, not progress: the room/interface transition the
 	// resume scripts started (cleared by FinishRoomStartup) and the command 0x1C/0x1D actor holds. They are
 	// always clear in a save made at idle, but the resume path is still mid-transition here, so keep them.
-	state.ProgressStateBytes[0] = static_cast<uint8>((progressBytes[0] & ~kEngineOwnedByteZeroMask) |
-													 (state.ProgressStateBytes[0] & kEngineOwnedByteZeroMask));
+	state.progressStateBytes[0] = static_cast<uint8>((progressBytes[0] & ~kEngineOwnedByteZeroMask) |
+													 (state.progressStateBytes[0] & kEngineOwnedByteZeroMask));
 	for (int i = 1; i < kProgressByteCount; i++) {
-		state.ProgressStateBytes[i] = progressBytes[i];
+		state.progressStateBytes[i] = progressBytes[i];
 	}
 
 	for (uint i = 0; i < roomObjects.size(); i++) {
-		RoomObject &roomObject = state.RoomObjects[i];
+		RoomObject &roomObject = state.roomObjects[i];
 		const SavedRoomObject &saved = roomObjects[i];
 		for (int w = 0; w < SavedRoomObject::kWordCount; w++) {
-			roomObject.writeCommandWord(w * 2, saved.Words[w]);
+			roomObject.writeCommandWord(w * 2, saved.words[w]);
 		}
 
 		// FixedPositionIndex (record +0x19) is left alone: loading the saved room reassigns it.
-		roomObject.Flags = saved.Flags;
+		roomObject.flags = saved.flags;
 	}
 
-	state.InventoryObjectIndices = inventoryObjectIndices;
-	state.InitialRoomPositionCoordinateOffset = entryPositionOffset;
+	state.inventoryObjectIndices = inventoryObjectIndices;
+	state.initialRoomPositionCoordinateOffset = entryPositionOffset;
 	return true;
 }
 
