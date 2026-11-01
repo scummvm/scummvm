@@ -111,7 +111,7 @@ SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 
 	if (!_demo) {
 		_smushTimer = new SmushTimer();
-		_smushDriver = new SmushDriver(_smushTimer);
+		_smushDriver = new SmushDriver(_smushTimer, g_grim->isRemastered());
 		_smushSound = new SmushSound(_smushTimer, _smushDriver);
 		_smushWave = new SmushWave(_smushSound);
 		_smushAnim = new SmushAnimPlay(_smushTimer, _smushSound);
