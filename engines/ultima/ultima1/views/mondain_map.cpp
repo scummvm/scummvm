@@ -87,14 +87,15 @@ void MondainMap::draw() {
 			sg._mondainHazardPos.y * TILE_HEIGHT + 8));
 	}
 
-	// Draw Mondain himself - his current pose, plus (while he's reacting to
-	// a hit) a small flash effect just to the left of him
-	const auto &mondainPos = sg._mondainPos;
-
+	// While the gem is being struck, its animation plays over its own tile -
+	// it doesn't follow Mondain around the room
 	if (sg._mondainHitAnimFrame != 0) {
 		const Graphics::ManagedSurface &hitTileImg = tiles[sg._mondainHitAnimFrame + 5];
-		s.blitFrom(hitTileImg, Common::Point((mondainPos.x - 1) * TILE_WIDTH + 8, mondainPos.y * TILE_HEIGHT + 8));
+		s.blitFrom(hitTileImg, Common::Point(Data::MONDAIN_GEM_X * TILE_WIDTH + 8, Data::MONDAIN_GEM_Y * TILE_HEIGHT + 8));
 	}
+
+	// Draw Mondain himself - his current pose
+	const auto &mondainPos = sg._mondainPos;
 
 	const Graphics::ManagedSurface &mondainTileImg = tiles[sg._mondainPhase + sg._mondainPhaseAnimOffset];
 	s.blitFrom(mondainTileImg, Common::Point(mondainPos.x * TILE_WIDTH + 8, mondainPos.y * TILE_HEIGHT + 8));

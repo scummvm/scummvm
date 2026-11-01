@@ -115,6 +115,10 @@ enum LocationTileId {
 };
 
 enum MondainTileId {
+	// The gem Mondain is creating, which stays put in the room however he
+	// moves. While it's being struck, frames 1-4 of the hit animation (tiles
+	// 6-9) are drawn over it
+	MTILE_GEM = 6,
 	// Tiles 14-19 are the 6 animation frames of a hazard Mondain briefly
 	// conjures onto an empty cell (see updateMondainState / MondainLogic::tick)
 	MTILE_HAZARD = 14,

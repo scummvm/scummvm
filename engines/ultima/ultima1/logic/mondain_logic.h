@@ -43,10 +43,11 @@ private:
 	int _castSpell = 0;
 
 	/**
-	 * Returns true if Mondain is standing in any of the 8 cells surrounding
-	 * the player's current position
+	 * Returns true if the gem he's creating is in any of the 8 cells surrounding
+	 * the player's current position. As in the original, it's the gem's tile
+	 * that counts rather than where Mondain himself is standing
 	 */
-	bool isAdjacentToMondain() const;
+	bool isAdjacentToGem() const;
 
 	/**
 	 * Returns true if the player is within a Manhattan distance of 7 of

@@ -118,7 +118,7 @@ bool MondainLogic::move(Data::Direction dir) {
 		redrawStats();
 	}
 
-	if (isAdjacentToMondain() && sg._mondainHitAnimFrame == 0) {
+	if (isAdjacentToGem() && sg._mondainHitAnimFrame == 0) {
 		sg._mondainHitAnimFrame = 1;
 		sg._mondainHitAnimDir = 1;
 		sg._mondainCombatFlag = 1;
@@ -417,13 +417,21 @@ void MondainLogic::tick() {
 	}
 }
 
-bool MondainLogic::isAdjacentToMondain() const {
+bool MondainLogic::isAdjacentToGem() const {
 	const Common::Point &pos = _G(savegame)._locationPosition;
-	const Common::Point &mondainPos = _G(savegame)._mondainPos;
 
-	int dx = ABS(pos.x - mondainPos.x);
-	int dy = ABS(pos.y - mondainPos.y);
-	return dx <= 1 && dy <= 1 && (dx != 0 || dy != 0);
+	for (int dy = -1; dy <= 1; ++dy) {
+		for (int dx = -1; dx <= 1; ++dx) {
+			int x = pos.x + dx, y = pos.y + dy;
+			if ((dx == 0 && dy == 0) || x <= 0 || x >= Data::MONDAIN_WIDTH || y <= 0 || y >= Data::MONDAIN_HEIGHT)
+				continue;
+
+			if (_G(map).getMapTile(x, y) == Data::MTILE_GEM)
+				return true;
+		}
+	}
+
+	return false;
 }
 
 void MondainLogic::updateMondainState() {
@@ -678,7 +686,7 @@ bool MondainLogic::get() {
 	Data::Savegame &sg = _G(savegame);
 	writeString("Get (Gem)");
 
-	if (sg._gemDestroyedFlag || !isAdjacentToMondain()) {
+	if (sg._gemDestroyedFlag || !isAdjacentToGem()) {
 		writeString("..'tis nothing here!\n");
 		playFX(1);
 		return true;
@@ -687,6 +695,7 @@ bool MondainLogic::get() {
 	// Destroy the gem - it can only be done once, adjacent to Mondain
 	sg._mondainCombatFlag = 1;
 	sg._gemDestroyedFlag = true;
+	_G(map)[Data::MONDAIN_GEM_Y][Data::MONDAIN_GEM_X] = 0;
 	sg._mondainHitAnimFrame = 0;
 
 	int damage = sg._hits * 3 / 4;

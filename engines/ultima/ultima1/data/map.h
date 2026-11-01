@@ -46,6 +46,10 @@ constexpr int CITY_SIZE = CITY_WIDTH * CITY_HEIGHT;
 constexpr int MONDAIN_WIDTH = 19;
 constexpr int MONDAIN_HEIGHT = 9;
 
+// Where the gem Mondain is creating sits in his room
+constexpr int MONDAIN_GEM_X = 14;
+constexpr int MONDAIN_GEM_Y = 4;
+
 constexpr int LOCATION_COUNT = 84;
 
 enum {
