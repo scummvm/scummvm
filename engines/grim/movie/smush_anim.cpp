@@ -202,7 +202,6 @@ SmushDemoPlayer::SmushDemoPlayer(SmushDemoVideo *video, SmushDemoDriver *driver)
 	_lastResult = 0;
 	_frameReady = 0;
 	_paletteFlag = 0;
-	_annotation = 0;
 	_staged = 0;
 	_audioPaused = 0;
 	_audioStartFrame = 0;
@@ -332,10 +331,6 @@ int SmushDemoPlayer::chunkCallback(const byte *chunk, int size, int flags) {
 		if (!remaining)
 			return 0;
 	}
-}
-
-void SmushDemoPlayer::setAnnotation(int value) {
-	_annotation = value;
 }
 
 void SmushDemoPlayer::setFrameRate(int fps) {
@@ -536,14 +531,7 @@ int SmushDemoPlayer::initialize(int bufferBytes, int width, int height) {
 		return 0;
 	}
 
-	if (_anim->anmBuffersInitialize(0, 0)) {
-		_anim->anmTerminate();
-		_stream->streamTerminate();
-		return 0;
-	}
-
 	if (_anim->anmRegisterCodecs(width, height)) {
-		_anim->anmBuffersTerminate();
 		_anim->anmTerminate();
 		_stream->streamTerminate();
 		return 0;
@@ -554,13 +542,12 @@ int SmushDemoPlayer::initialize(int bufferBytes, int width, int height) {
 
 void SmushDemoPlayer::terminate() {
 	_anim->anmUnregisterCodecs();
-	_anim->anmBuffersTerminate();
 	_anim->anmTerminate();
 	_stream->streamTerminate();
 }
 
 int SmushDemoPlayer::open(const Common::String &name, int flags, int offset) {
-	if (!name.empty() && !Common::File::exists(Common::Path(name)))
+	if (!Common::File::exists(Common::Path(name)))
 		return 1;
 
 	memset(&_audio, 0, sizeof(_audio));
@@ -570,12 +557,8 @@ int SmushDemoPlayer::open(const Common::String &name, int flags, int offset) {
 		return 1;
 
 	_anim->animatorInitialize();
-	_anim->animatorNewAnim(name, 0, -1, -1, 0, offset);
-
-	if (!name.empty())
-		_stream->streamFill(0x20000);
-	else
-		_stream->streamInitMemory();
+	_anim->animatorNewAnim(name, offset);
+	_stream->streamFill(0x20000);
 
 	memset(_palette, 0, sizeof(_palette));
 	_paused = 0;
@@ -584,7 +567,6 @@ int SmushDemoPlayer::open(const Common::String &name, int flags, int offset) {
 	_lastResult = 0;
 	_frameReady = 0;
 	_paletteFlag = 0;
-	_annotation = 0;
 	_staged = 0;
 	_audioPaused = 0;
 	_audioStartFrame = 0;
@@ -604,7 +586,7 @@ int SmushDemoPlayer::open(const Common::String &name, int flags, int offset) {
 	_fadeStart = 0;
 	_fadeRemaining = 0;
 	_fadeSteps = 1;
-	_streamStop = name.empty() ? 1 : 0;
+	_streamStop = 0;
 	return 0;
 }
 
@@ -617,10 +599,9 @@ int SmushDemoPlayer::close() {
 	return 0;
 }
 
-int SmushDemoPlayer::update(int *frameDecoded, int *finished, int *annotation, int *paletteChanged, const uint32 **palette) {
+int SmushDemoPlayer::update(int *frameDecoded, int *finished, int *paletteChanged, const uint32 **palette) {
 	*finished = 0;
 	*frameDecoded = 0;
-	*annotation = 0;
 	*paletteChanged = 0;
 	*palette = nullptr;
 
@@ -629,12 +610,7 @@ int SmushDemoPlayer::update(int *frameDecoded, int *finished, int *annotation, i
 		return 0;
 
 	if (!_frameReady) {
-		int saved = _annotation;
-		_annotation = 0;
 		stepAnimation();
-		if (!_frameReady && !_annotation)
-			_annotation = saved;
-
 		audioFill();
 	}
 
@@ -662,7 +638,6 @@ int SmushDemoPlayer::update(int *frameDecoded, int *finished, int *annotation, i
 
 		*paletteChanged = _paletteFlag;
 		*palette = _palette;
-		*annotation = _annotation;
 		_paletteFlag = 0;
 		_frameReady = 0;
 		_lastUpdate = time;
@@ -730,11 +705,10 @@ int SmushDemoPlayer::smushPlayStartMovie(const Common::String &name, int flags, 
 
 int SmushDemoPlayer::smushPlayUpdateMovie(int *finished) {
 	int frameDecoded;
-	int annotation;
 	int paletteChanged;
 	const uint32 *palette;
 
-	update(&frameDecoded, finished, &annotation, &paletteChanged, &palette);
+	update(&frameDecoded, finished, &paletteChanged, &palette);
 	if (!*finished && frameDecoded) {
 		if (paletteChanged)
 			_video->videoSetPalette(palette, 0, 256);

@@ -81,7 +81,6 @@ private:
 	int _lastResult;
 	int _frameReady;
 	int _paletteFlag;
-	int _annotation;
 	int _staged;
 	int _audioPaused;
 	int _audioStartFrame;
@@ -123,7 +122,6 @@ public:
 	int postFrame(int frame, int frameCount) override;
 	int frameCallback(int flags, bool paletteChanged, bool display, int paletteState) override;
 	int chunkCallback(const byte *chunk, int size, int flags) override;
-	void setAnnotation(int value) override;
 	void setFrameRate(int fps) override;
 	void setFrameBuffer(byte *buffer, int x, int y, int sourceX, int sourceY, int width, int height) override;
 
@@ -131,7 +129,7 @@ public:
 	void terminate();
 	int open(const Common::String &name, int flags, int offset);
 	int close();
-	int update(int *frameDecoded, int *finished, int *annotation, int *paletteChanged, const uint32 **palette);
+	int update(int *frameDecoded, int *finished, int *paletteChanged, const uint32 **palette);
 	void pause();
 	void resume();
 	void getFrameBuffer(const byte **pixels, int *width, int *height);
