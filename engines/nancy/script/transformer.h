@@ -65,6 +65,7 @@ public:
 	int finishBlend(lua_State *L);
 	int isBlending(lua_State *L);
 	int attach(lua_State *L);
+	int removeAllStages(lua_State *L);
 
 protected:
 	void readTable(int tableIndex) override;
@@ -110,6 +111,7 @@ private:
 
 	Common::Array<Stage> _stages;
 	bool _isSineLerp = true;
+	double _timeMultiplier = 1.0;	// Nancy24: how much faster the blends go
 	ScriptMatrix _blendedTransform;	// where the stages are going
 	GraphNode *_node;
 };

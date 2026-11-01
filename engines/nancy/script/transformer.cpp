@@ -37,6 +37,7 @@ TransformerRecord::TransformerRecord(SceneContext &context) :
 
 void TransformerRecord::readTable(int tableIndex) {
 	readField(getLua(), tableIndex, "sinLerp", _isSineLerp);
+	readField(getLua(), tableIndex, "timeMultiplier", _timeMultiplier);
 	_node->setZ(getLocalZ());
 }
 
@@ -201,7 +202,7 @@ void TransformerRecord::updateTransform() {
 void TransformerRecord::run(double sceneTime, double elapsedTime) {
 	bool hasChanged = false;
 	for (uint i = 0; i < _stages.size(); ++i) {
-		hasChanged |= advanceStage(_stages[i], elapsedTime);
+		hasChanged |= advanceStage(_stages[i], elapsedTime * _timeMultiplier);
 	}
 
 	if (hasChanged) {
@@ -265,6 +266,13 @@ int TransformerRecord::finishBlend(lua_State *L) {
 	return 0;
 }
 
+// transformer:RemoveAllStages(), Nancy24
+int TransformerRecord::removeAllStages(lua_State *L) {
+	_stages.clear();
+	updateTransform();
+	return 0;
+}
+
 // transformer:IsBlending(name)
 int TransformerRecord::isBlending(lua_State *L) {
 	lua_pushboolean(L, checkStage(L, 2).isBlending());
@@ -322,6 +330,10 @@ static int transformerAttach(lua_State *L) {
 	return checkTransformer(L)->attach(L);
 }
 
+static int transformerRemoveAllStages(lua_State *L) {
+	return checkTransformer(L)->removeAllStages(L);
+}
+
 static const luaL_Reg kTransformerFunctions[] = {
 	{ "Attach", transformerAttach },
 	{ "Blend", transformerBlend },
@@ -330,6 +342,7 @@ static const luaL_Reg kTransformerFunctions[] = {
 	{ "PushTranslation", transformerPushTranslation },
 	{ "PushRotation", transformerPushRotation },
 	{ "PushScale", transformerPushScale },
+	{ "RemoveAllStages", transformerRemoveAllStages },
 	{ nullptr, nullptr }
 };
 
@@ -341,6 +354,9 @@ bool TransformerRecord::getField(const Common::String &key) {
 		return true;
 	} else if (key == "blendedTransform") {
 		pushMatrix(L, _blendedTransform);
+		return true;
+	} else if (key == "timeMultiplier") {
+		lua_pushnumber(L, _timeMultiplier);
 		return true;
 	}
 
@@ -374,6 +390,11 @@ bool TransformerRecord::setField(const Common::String &key) {
 		readValue(L, 3, stage->kind, value);
 		setStage(*stage, value);
 		updateTransform();
+		return true;
+	}
+
+	if (key == "timeMultiplier") {
+		_timeMultiplier = luaL_checknumber(L, 3);
 		return true;
 	}
 
