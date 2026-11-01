@@ -317,6 +317,8 @@ void PrisonerEngine::handleInventoryInput() {
 
 	restoreScreen(backedupScreen);
 
+	resetFrameValues();
+
 	updateScreen(true, -1, -1);
 
 	_inventoryInputRunning = false;

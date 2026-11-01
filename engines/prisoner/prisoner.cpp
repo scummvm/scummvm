@@ -673,9 +673,11 @@ bool PrisonerEngine::isRightButtonKey(Common::KeyCode keyCode) const {
 	return keyCode == Common::KEYCODE_DELETE || keyCode == Common::KEYCODE_KP_PERIOD;
 }
 
+// Called after scene changes, videos, loading and the menus. (resetScreensaverValues) restarts
+// the stand-by time, so the screensaver doesn't start right after a long video or scene change.
 void PrisonerEngine::resetFrameValues() {
 	initFrameTime();
-	// TODO: Screensaver
+	_lastInputTicks = getTicks();
 }
 
 void PrisonerEngine::initFrameTime() {
@@ -1095,6 +1097,7 @@ void PrisonerEngine::resumeGame() {
 	_selectedMenuIndex = MAIN_PANEL;
 	this->_screen->clear();
 	_pauseToken.clear();
+	resetFrameValues();
 }
 
 void PrisonerEngine::runPauseScreen() {
