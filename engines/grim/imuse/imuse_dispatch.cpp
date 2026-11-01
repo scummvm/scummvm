@@ -916,7 +916,7 @@ int IMuse::dispatchConvertMap(uint8 *rawMap, int32 *destMap) {
 			// - The 4 bytes string 'MAP '
 			// - Size of the map
 			destMap[0] = READ_BE_UINT32(destMap);
-			destMap[1] = READ_BE_UINT32(destMap + 4);
+			destMap[1] = READ_BE_UINT32((uint8 *)destMap + 4);
 
 			mapCurPos = (uint8 *)destMap + 8;
 			endOfMapPtr = (uint8 *)destMap + effMapSize;
