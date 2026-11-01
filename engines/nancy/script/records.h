@@ -432,6 +432,7 @@ protected:
 	void run(double sceneTime, double elapsedTime) override;
 	void onZChanged() override;
 	bool prepareReset() override;
+	bool isPaused() const override { return _isPaused; }
 	bool hasTransform() const override { return true; }
 	void onTransformChanged() override { applyPosition(); }
 	bool getField(const Common::String &key) override;

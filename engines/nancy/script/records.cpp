@@ -1999,7 +1999,7 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 
 	_skipFrame = -1;
 
-	if (!_isPaused && _player.update()) {
+	if (_player.update()) {
 		drawFrame();
 	}
 

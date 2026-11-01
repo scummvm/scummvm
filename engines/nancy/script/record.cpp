@@ -166,7 +166,7 @@ void Record::update(double sceneTime, double elapsedTime) {
 
 	_wasActive = _isActive;
 
-	if (!_isActive) {
+	if (!_isActive || isPaused()) {
 		return;
 	}
 

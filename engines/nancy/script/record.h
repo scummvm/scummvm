@@ -206,6 +206,9 @@ protected:
 	// Whether the record can start over, after getting itself ready for it
 	virtual bool prepareReset() { return false; }
 
+	// A paused record doesn't run at all, not even once, until it goes on
+	virtual bool isPaused() const { return false; }
+
 	// Whether the functions of the scripts take the place of what the record does
 	// by itself: Run, Render, and everything the player does
 	virtual bool isScripted() const { return false; }
