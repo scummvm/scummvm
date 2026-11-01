@@ -123,10 +123,10 @@ void Frame::readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, u
 		readChannelD5(stream, offset, size);
 	} else if (version >= kFileVer600 && version < kFileVer700) {
 		readChannelD6(stream, offset, size);
-	} else if (version >= kFileVer700 && version < kFileVer1100) {
+	} else if (version >= kFileVer700 && version <= kFileVer1100) {
 		readChannelD7(stream, offset, size);
 	} else {
-		error("Frame::readChannel(): Unsupported Director version: %d", version);
+		error("Frame::readChannel(): Unsupported Director version: %d (0x%x)", version, version);
 	}
 }
 
