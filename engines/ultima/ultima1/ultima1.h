@@ -94,6 +94,9 @@ public:
 	// The flight speed set while in the cockpit view (the overhead vs
 	// cockpit distinction is carried by which SpaceLogic subclass is active)
 	int _cockpitSpeed = 0;
+	// The speed it was when the cockpit view was entered, which the drift on
+	// return to the overhead view is scaled relative to
+	int _cockpitEntrySpeed = 1;
 	// The overhead sector view's current drift velocity (sectorChangeX/Y),
 	// applied to the player's ship position each frame, and the number of
 	// frames left to keep showing its engine exhaust trail (_countdown)

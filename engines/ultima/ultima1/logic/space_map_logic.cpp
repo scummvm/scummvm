@@ -31,6 +31,9 @@ namespace Logic {
 
 constexpr int MAX_DRIFT = 9;
 
+// The fastest the cockpit's speed can be set from the overhead view's drift
+constexpr int MAX_DRIFT_SPEED = 8;
+
 // Flying within this many units (on both axes) of a sector's star/heat
 // hazard is fatal (checkStarProximity)
 constexpr int STAR_DEATH_RANGE = 25;
@@ -312,11 +315,47 @@ bool SpaceMapLogic::fire() {
 	return true;
 }
 
-bool SpaceMapLogic::view() {
-	writeString("View\n");
+// The original's integer square root, which rounds up
+static int isqrt(int value) {
+	int result = 0;
+	while (value > 0)
+		value -= 2 * ++result - 1;
 
-	// TODO: the original refuses the switch with no fuel or while docked,
-	// and seeds the cockpit's heading from the current drift
+	return result;
+}
+
+bool SpaceMapLogic::view() {
+	writeString("View");
+
+	Data::SpaceMapCell &cell = _G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY];
+	if (cell.dockedEdge(_G(savegame)._shipIndex) >= 0) {
+		writeString("?\n");
+		writeString("View can't be changed\n");
+		writeString("whilst in space dock.\n");
+		return true;
+	}
+
+	writeString("\n");
+	if (shipFuel() == 0) {
+		writeString("Not enough fuel!\n");
+		return true;
+	}
+
+	// The cockpit's speed is the overhead view's current drift. If the ship is
+	// at rest, it starts at the slowest speed in the direction it's facing
+	int speed = isqrt(_G(sectorDriftX) * _G(sectorDriftX) + _G(sectorDriftY) * _G(sectorDriftY));
+	if (speed > MAX_DRIFT_SPEED) {
+		speed = MAX_DRIFT_SPEED;
+	} else if (speed == 0) {
+		speed = 1;
+
+		const Data::SpaceMapShip &ship = cell._ships[_G(savegame)._shipIndex];
+		_G(sectorDriftX) = Data::SPACE_FACING_DX[ship._facing];
+		_G(sectorDriftY) = Data::SPACE_FACING_DY[ship._facing];
+	}
+
+	_G(cockpitSpeed) = _G(cockpitEntrySpeed) = speed;
+
 	Common::SharedPtr<SpaceCockpitLogic> cockpitLogic(new SpaceCockpitLogic());
 	cockpitLogic->setupSectorEnemies();
 	_G(logic) = cockpitLogic;

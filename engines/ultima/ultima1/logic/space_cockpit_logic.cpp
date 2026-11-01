@@ -381,13 +381,45 @@ void SpaceCockpitLogic::abortHyperjump() {
 	prompt();
 }
 
-bool SpaceCockpitLogic::view() {
-	writeString("View\n");
+// Scales one axis of the overhead view's drift by how the cockpit's speed has
+// changed since it was entered, rounding to the nearest whole step (the
+// original's updateSectorChangeX/Y and snapToNearestSector)
+static int scaleDrift(int drift) {
+	int ratio = _G(cockpitSpeed) * 1000 / MAX<int>(_G(cockpitEntrySpeed), 1);
+	int value = (int16)(drift * ratio);
 
-	// TODO: the original refuses this switch back to the overhead view
-	// while any enemies remain in the sector ("Thou must eliminate all
-	// enemy craft first!")
-	_G(logic) = Common::SharedPtr<Logic>(new SpaceMapLogic());
+	if (value % 100 > 49)
+		value += 100;
+	if (value % 1000 > 499)
+		value += 1000;
+
+	return MIN(value / 1000, 6);
+}
+
+bool SpaceCockpitLogic::view() {
+	writeString("View");
+
+	if (_G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._enemyCount != 0) {
+		writeString("?\n");
+		writeString("Thou must eliminate all\n");
+		writeString("enemy craft first!\n");
+		return true;
+	}
+
+	writeString("\n");
+
+	_G(sectorDriftX) = scaleDrift(_G(sectorDriftX));
+	_G(sectorDriftY) = scaleDrift(_G(sectorDriftY));
+
+	// A ship brought to rest heads off slowly in the direction it's facing
+	if (_G(sectorDriftX) == 0 && _G(sectorDriftY) == 0) {
+		const Data::SpaceMapShip &ship = _G(savegame)._starmap
+			._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._ships[_G(savegame)._shipIndex];
+		_G(sectorDriftX) = Data::SPACE_FACING_DX[ship._facing];
+		_G(sectorDriftY) = Data::SPACE_FACING_DY[ship._facing];
+	}
+
+	_G(logic) =Common::SharedPtr<Logic>(new SpaceMapLogic());
 	g_engine->replaceView("SpaceMap");
 
 	prompt();
