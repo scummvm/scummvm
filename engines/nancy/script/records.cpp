@@ -1020,6 +1020,24 @@ bool loadTreeImage(const Common::String &name, const Common::String &treeName, G
 #endif
 }
 
+// Overlays get their pictures from the image cache of the resource manager,
+// and hold on to the cached picture while they use it. Saved pictures aren't
+// cached: every record has its own.
+static bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image) {
+	if (treeName.equalsIgnoreCase(kPictureTreeName)) {
+		return loadTreeImage(name, treeName, image);
+	}
+
+	cached = g_nancy->_resource->loadCachedImage(name, treeName);
+	if (!cached) {
+		return false;
+	}
+
+	// The record draws from the cached picture, without a copy of its own
+	image.create(*cached, Common::Rect(cached->w, cached->h));
+	return true;
+}
+
 void OverlayRecord::readTable(int tableIndex) {
 	lua_State *L = getLua();
 
@@ -1032,7 +1050,7 @@ void OverlayRecord::readTable(int tableIndex) {
 	Common::String treeName;
 	readField(L, tableIndex, "tree", treeName);
 
-	if (!loadTreeImage(imageName, treeName, _image)) {
+	if (!loadCachedImage(imageName, treeName, _cachedImage, _image)) {
 		luaL_error(L, "Could not load overlay %s", imageName.c_str());
 	}
 
@@ -1239,7 +1257,7 @@ void AnimOverlayRecord::readTable(int tableIndex) {
 	Common::String treeName;
 	readField(L, tableIndex, "tree", treeName);
 
-	if (!loadTreeImage(imageName, treeName, _image)) {
+	if (!loadCachedImage(imageName, treeName, _cachedImage, _image)) {
 		luaL_error(L, "Could not load overlay %s", imageName.c_str());
 	}
 

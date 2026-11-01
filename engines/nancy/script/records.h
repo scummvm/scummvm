@@ -23,6 +23,7 @@
 #define NANCY_SCRIPT_RECORDS_H
 
 #include "common/array.h"
+#include "common/ptr.h"
 #include "common/rect.h"
 
 #include "engines/nancy/commontypes.h"
@@ -266,7 +267,8 @@ protected:
 private:
 	void applyRects();
 
-	Graphics::ManagedSurface _image;
+	Common::SharedPtr<Graphics::ManagedSurface> _cachedImage;	// kept while the record uses it
+	Graphics::ManagedSurface _image;	// the cached picture, or a saved one
 	ScriptRect _source;
 	ScriptRect _dest;
 	uint32 _modColor = 0xFFFFFFFF;	// what the colors of the picture get multiplied with
@@ -308,7 +310,8 @@ private:
 	void applyFrame();
 	void beginLoop();
 
-	Graphics::ManagedSurface _image;
+	Common::SharedPtr<Graphics::ManagedSurface> _cachedImage;	// kept while the record uses it
+	Graphics::ManagedSurface _image;	// the cached picture, or a saved one
 	Common::Array<ScriptRect> _sources;
 	ScriptRect _dest;
 	uint32 _modColor = 0xFFFFFFFF;

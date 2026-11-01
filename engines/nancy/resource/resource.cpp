@@ -249,6 +249,43 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 	return true;
 }
 
+// How many pictures the image cache keeps decoded
+static const uint kImageCacheSize = 16;
+
+Common::SharedPtr<Graphics::ManagedSurface> ResourceManager::loadCachedImage(const Common::String &name, const Common::String &treeName) {
+	const Common::String key = treeName + "/" + name;
+	++_imageCacheUses;
+
+	ImageCache::iterator found = _imageCache.find(key);
+	if (found != _imageCache.end()) {
+		found->_value.lastUse = _imageCacheUses;
+		return found->_value.image;
+	}
+
+	Common::SharedPtr<Graphics::ManagedSurface> image(new Graphics::ManagedSurface());
+	if (!loadImage(Common::Path(name), *image, treeName)) {
+		return Common::SharedPtr<Graphics::ManagedSurface>();
+	}
+
+	// The picture used longest ago leaves the cache. Whoever still uses it
+	// keeps it until they are done with it.
+	if (_imageCache.size() >= kImageCacheSize) {
+		ImageCache::iterator oldest = _imageCache.begin();
+		for (ImageCache::iterator it = _imageCache.begin(); it != _imageCache.end(); ++it) {
+			if (it->_value.lastUse < oldest->_value.lastUse) {
+				oldest = it;
+			}
+		}
+
+		_imageCache.erase(oldest);
+	}
+
+	CachedImage &cached = _imageCache[key];
+	cached.image = image;
+	cached.lastUse = _imageCacheUses;
+	return image;
+}
+
 IFF *ResourceManager::loadIFF(const Common::Path &name) {
 	// First, try to load external .cif
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name.append(".cif"));

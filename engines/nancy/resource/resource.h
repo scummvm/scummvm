@@ -22,6 +22,10 @@
 #ifndef NANCY_RESOURCE_RESOURCE_H
 #define NANCY_RESOURCE_RESOURCE_H
 
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/ptr.h"
+
 #include "engines/nancy/resource/cif.h"
 
 namespace Graphics {
@@ -42,6 +46,13 @@ public:
 	// Ciftree images may have additional data dictating how they need to be blitted on screen (see ConversationCel).
 	// This is accessed via the outSrc/outDest parameters.
 	bool loadImage(const Common::Path &name, Graphics::ManagedSurface &surf, const Common::String &treeName = Common::String(), Common::Rect *outSrc = nullptr, Common::Rect *outDest = nullptr);
+
+	// Loads a picture through the image cache. Nancy19+ scripts make many records
+	// of the same pictures, and Nancy24 makes a new scene for every screen of
+	// the phone, so decoding a picture each time was slow. The cache keeps the
+	// pictures it loaded last decoded, and hands the same one to everyone who
+	// asks for it. Null when there is no such picture.
+	Common::SharedPtr<Graphics::ManagedSurface> loadCachedImage(const Common::String &name, const Common::String &treeName);
 
 	// Loads a single IFF file. These can either be inside standalone .cif files, or embedded inside a ciftree
 	IFF *loadIFF(const Common::Path &name);
@@ -79,7 +90,18 @@ public:
 	bool exportCifTree(const Common::String &treeName, const Common::Array<Common::Path> &names);
 
 private:
+	// An entry of the image cache. When the cache is full, the picture used
+	// longest ago makes room.
+	struct CachedImage {
+		Common::SharedPtr<Graphics::ManagedSurface> image;
+		uint32 lastUse = 0;
+	};
+
+	typedef Common::HashMap<Common::String, CachedImage, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ImageCache;
+
 	Common::Array<Common::String> _cifTreeNames;
+	ImageCache _imageCache;		// by tree and name
+	uint32 _imageCacheUses = 0;	// counts the lookups, for lastUse
 };
 
 } // End of namespace Nancy
