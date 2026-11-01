@@ -190,7 +190,7 @@ msgid "static0-small.3"
 msgstr " scalpel"
 
 msgid "static0-small.4"
-msgstr " card"
+msgstr " letter"
 
 msgid "static0-small.5"
 msgstr " remote control"
@@ -229,7 +229,7 @@ msgid "static0-small.16"
 msgstr " long distance grease gun"
 
 msgid "static0-small.17"
-msgstr " “honeysuckle” steak"
+msgstr " “tough” steak"
 
 msgid "static0-small.18"
 msgstr " papyrus"
@@ -334,7 +334,7 @@ msgid "static0-small.51"
 msgstr " secret diary of Dr. Frankenstein"
 
 msgid "static0-small.52"
-msgstr " weight loss brochure"
+msgstr " sticky weight loss brochure"
 
 msgid "static0-small.53"
 msgstr " stick"
@@ -535,7 +535,7 @@ msgid "static0-large.1"
 msgstr "Hollywood Monsters."
 
 msgid "static0-large.2"
-msgstr "Not working."
+msgstr "That wouldn't work."
 
 msgid "static0-large.3"
 msgstr "I don't think it'll work."
@@ -574,10 +574,10 @@ msgid "static0-large.14"
 msgstr "It's already open."
 
 msgid "static0-large.15"
-msgstr "It's now open."
+msgstr "It's already open."
 
 msgid "static0-large.16"
-msgstr "It seems to be closed."
+msgstr "It doesn't seem to close."
 
 msgid "static0-large.17"
 msgstr "It cannot be closed."
@@ -586,10 +586,10 @@ msgid "static0-large.18"
 msgstr "It's already closed."
 
 msgid "static0-large.19"
-msgstr "It's closed."
+msgstr "It's already closed."
 
 msgid "static0-large.20"
-msgstr "Not interested in it."
+msgstr "I don't think they'd be interested."
 
 msgid "static0-large.21"
 msgstr "Doesn't seem to want it."
@@ -604,25 +604,25 @@ msgid "static0-large.24"
 msgstr "I don't think it can be moved."
 
 msgid "static0-large.25"
-msgstr "It does't seem to move."
+msgstr "It doesn't seem to move."
 
 msgid "static0-large.26"
-msgstr "I don't know."
+msgstr "I don't know him."
 
 msgid "static0-large.27"
 msgstr "Hi!"
 
 msgid "static0-large.28"
-msgstr "No reply."
+msgstr "I don't think I'll get an answer."
 
 msgid "static0-large.29"
 msgstr "How's it going?"
 
 msgid "static0-large.30"
-msgstr "Still nothing."
+msgstr "I don't have it yet."
 
 msgid "static0-large.31"
-msgstr "Still nothing."
+msgstr "I don't have it yet."
 
 msgid "static0-large.32"
 msgstr "Nothing of interest."
@@ -679,7 +679,7 @@ msgid "static0-large.49"
 msgstr "The only part still missing is his head."
 
 msgid "static0-large.50"
-msgstr "Hang on, Frankie, old friend! I'm here for you ..."
+msgstr "Hang on, Frankie, old friend! It won't be long now ..."
 
 msgid "static0-large.51"
 msgstr "As expected! ..."
@@ -694,7 +694,7 @@ msgid "static0-large.54"
 msgstr "It seems it closes automatically."
 
 msgid "static0-large.55"
-msgstr "I think it does it by itself."
+msgstr "I think it closes automatically when it starts moving."
 
 msgid "static0-large.56"
 msgstr "I'm not going back in this maze."
@@ -718,7 +718,7 @@ msgid "static0-large.62"
 msgstr "... To walk these tunnels is more dangerous than a piranha in the toilet!"
 
 msgid "static0-large.63"
-msgstr "It's the poor man's means of transportation. Uncomfortable, but quick."
+msgstr "It's not a bad way to get around. Uncomfortable, but quick."
 
 msgid "static0-large.64"
 msgstr "It's nice"
@@ -727,13 +727,13 @@ msgid "static0-large.65"
 msgstr "It may be a little rusty but it runs like a champ."
 
 msgid "static0-large.66"
-msgstr "It may be an “antique” but..."
+msgstr "Old, yes, but sturdy ..."
 
 msgid "static0-large.67"
 msgstr "... they don't make them like this anymore."
 
 msgid "static0-large.68"
-msgstr "I should lead to a gallery ..."
+msgstr "It must lead to one of the mine tunnels ..."
 
 msgid "static0-large.69"
 msgstr "...but I can't see anything from here."
@@ -742,16 +742,16 @@ msgid "static0-large.70"
 msgstr "It's dark."
 
 msgid "static0-large.71"
-msgstr "For a mine abandoned so long ago it sure is kept in a good condition."
+msgstr "It's still in good condition, considering how long the mine has been abandoned."
 
 msgid "static0-large.72"
-msgstr "I seems very deep. I can't even see where it ends."
+msgstr "It seems very deep. I can't even see where it ends."
 
 msgid "static0-large.73"
 msgstr "It closes automatically."
 
 msgid "static0-large.74"
-msgstr "It closes only after a button has been pressed."
+msgstr "It closes automatically when it starts moving."
 
 msgid "static0-large.75"
 msgstr "It starts the elevator."
@@ -832,7 +832,7 @@ msgid "static0-large.100"
 msgstr "I don't want anyone angry at me."
 
 msgid "static0-large.101"
-msgstr "I don't think hitting anything will get me anywhere."
+msgstr "I wouldn't achieve anything by sticking that there."
 
 msgid "static0-large.102"
 msgstr "No, I don't want to stick it there."
@@ -841,7 +841,7 @@ msgid "static0-large.103"
 msgstr "No, I'm not that cruel."
 
 msgid "static0-large.104"
-msgstr "Hell no! I might get fried!"
+msgstr "Better not! I might burn them!"
 
 msgid "static0-large.105"
 msgstr "It's not necessary. It's not locked."
@@ -859,7 +859,7 @@ msgid "static0-large.109"
 msgstr "He seems content. I don't think he wants it."
 
 msgid "static0-large.110"
-msgstr "Although he can spare to lose a few pounds, I don't see the need for it."
+msgstr "Although he could stand to lose a few pounds, I don't see the need for it."
 
 msgid "static0-large.111"
 msgstr "Doesn't need it."
@@ -880,7 +880,7 @@ msgid "static0-large.116"
 msgstr "Why would anybody with so much hair need more?"
 
 msgid "static0-large.117"
-msgstr "I don't need it myself ...\t"
+msgstr "It could do them some good ...\t"
 
 msgid "static0-large.118"
 msgstr "... but I prefer to keep it for now. I may need it later."
@@ -898,13 +898,13 @@ msgid "static0-large.122"
 msgstr "It's too small. I won't be able to sharpen it."
 
 msgid "static0-large.123"
-msgstr "Better not! It cuts very badly."
+msgstr "Better not! I wouldn't be able to cut it neatly."
 
 msgid "static0-large.124"
 msgstr "Done!"
 
 msgid "static0-large.125"
-msgstr "It holds up very well considering it needs to be in water."
+msgstr "It keeps well even without water."
 
 msgid "static0-large.126"
 msgstr "I'll sharpen it..."
@@ -913,10 +913,10 @@ msgid "static0-large.127"
 msgstr "Done! That's a great stake."
 
 msgid "static0-large.128"
-msgstr "I think I'll give it a try."
+msgstr "I think it'll pass for the real thing."
 
 msgid "static0-large.129"
-msgstr "It seems to move when I approach!... so, Karl wasn't wrong then."
+msgstr "It seems to move when I bring them close together!... so, Karl wasn't wrong then."
 
 msgid "static0-large.130"
 msgstr "I will tie them together. This way I will obtain a longer rope."
@@ -931,7 +931,7 @@ msgid "static0-large.133"
 msgstr "I think a certain kitten is in for a big surprise!"
 
 msgid "static0-large.134"
-msgstr "I need something to attach it to."
+msgstr "I'd need something to stick it on with."
 
 msgid "static0-large.135"
 msgstr "I could turn this monstrosity into a work of art, but time is short."
@@ -943,7 +943,7 @@ msgid "static0-large.137"
 msgstr "Okay, now we'll see if it's true that I look like Robert Feynman ..."
 
 msgid "static0-large.138"
-msgstr "... In the face, at least!"
+msgstr "... I'll cut out his face."
 
 msgid "static0-large.139"
 msgstr "I'll leave quietly and let him sleep it off."
@@ -955,16 +955,16 @@ msgid "static0-large.141"
 msgstr "I won't even try. He's totally out of it."
 
 msgid "static0-large.142"
-msgstr "Until he's awake, it won't help at all."
+msgstr "Until it's awake, it won't help at all."
 
 msgid "static0-large.143"
-msgstr "He's plastered. I'd better leave him."
+msgstr "It's dazed. I'd better leave it alone."
 
 msgid "static0-large.144"
 msgstr "That's the last thing he needs right now"
 
 msgid "static0-large.145"
-msgstr "Better not. It's so small that if it grows hair all over it'll look like a rat."
+msgstr "Better not. He's so small that if he grows hair all over he'll look like a rat."
 
 msgid "static0-large.146"
 msgstr "Right now I have nothing interesting to write about."
@@ -997,7 +997,7 @@ msgid "static0-large.155"
 msgstr "Signed: Gunther Hecker"
 
 msgid "static0-large.156"
-msgstr "P.S. If you see our brother Markus, give him a big hug from me.“"
+msgstr "P.S. If you see our brother Markus, give him a big hug from me.”"
 
 msgid "static0-large.157"
 msgstr "It's used to operate Dr. Fly's device."
@@ -1030,7 +1030,7 @@ msgid "static0-large.166"
 msgstr "It's empty."
 
 msgid "static0-large.167"
-msgstr "Sue's tape is stuck."
+msgstr "Sue's tape is inside."
 
 msgid "static0-large.168"
 msgstr "Let's see if Sue recorded anything ..."
@@ -1039,7 +1039,7 @@ msgid "static0-large.169"
 msgstr "What's happening?"
 
 msgid "static0-large.170"
-msgstr "Get him!"
+msgstr "Get them!"
 
 msgid "static0-large.171"
 msgstr "Who are you ...?"
@@ -1066,7 +1066,7 @@ msgid "static0-large.178"
 msgstr "What do we do with them?"
 
 msgid "static0-large.179"
-msgstr "We'll take the girl, she can prove be useful later... he, he, he...!"
+msgstr "We'll take the girl, she can prove useful later... he, he, he...!"
 
 msgid "static0-large.180"
 msgstr "And what about Frankie ...?"
@@ -1159,7 +1159,7 @@ msgid "static0-large.209"
 msgstr "The stamp is from Egypt."
 
 msgid "static0-large.210"
-msgstr "Nice trick."
+msgstr "It looks convincing."
 
 msgid "static0-large.211"
 msgstr "I don't need to, I lied to the Werewolf."
@@ -1183,7 +1183,7 @@ msgid "static0-large.217"
 msgstr "I'll let him sleep. With his size one glass was more than enough to knock him out."
 
 msgid "static0-large.218"
-msgstr "I've always liked the kind briefcase that doctors always carry."
+msgstr "I've always liked those bags doctors carry."
 
 msgid "static0-large.219"
 msgstr "It's empty."
@@ -1201,7 +1201,7 @@ msgid "static0-large.223"
 msgstr "I don't know what's inside but it sure weighs a lot."
 
 msgid "static0-large.224"
-msgstr "Good quality. But not even close to the one the ghost of Canterbury has."
+msgstr "Good quality. Not even the ghost of Canterbury had one like this."
 
 msgid "static0-large.225"
 msgstr "I must be careful not to spill it."
@@ -1219,7 +1219,7 @@ msgid "static0-large.229"
 msgstr "By the looks of it Frankie was pretty nervous."
 
 msgid "static0-large.230"
-msgstr "It'd be better if no one finds about it until after I've found out what the hell is going on."
+msgstr "It'd be better if no one finds out about it until after I've found out what the hell is going on."
 
 msgid "static0-large.231"
 msgstr "It has only a number. 407."
@@ -1240,13 +1240,13 @@ msgid "static0-large.236"
 msgstr "... because if it isn't I don't know what I'm going to do with it."
 
 msgid "static0-large.237"
-msgstr "I can't throw it away. I need it to rebuild Frankenstein. He's my only lead at the moment."
+msgstr "I'd have to be brainless to get rid of it. I need it to put Frankenstein back together."
 
 msgid "static0-large.238"
-msgstr "The tiger has gone through the steak."
+msgstr "That steak must have given the tiger indigestion."
 
 msgid "static0-large.239"
-msgstr "Palmani Piero! These glasses cost a fortune!"
+msgstr "Piero Palmani! Those glasses must cost a fortune!"
 
 msgid "static0-large.240"
 msgstr "I don't need them at the moment."
@@ -1285,7 +1285,7 @@ msgid "static0-large.251"
 msgstr "Not even split ends after four thousand years!"
 
 msgid "static0-large.252"
-msgstr "The Mummy left with so much hurry that forgot to take it."
+msgstr "The Mummy left in such a hurry that he forgot to take it."
 
 msgid "static0-large.253"
 msgstr "It would accomplish nothing here."
@@ -1303,7 +1303,7 @@ msgid "static0-large.257"
 msgstr "I need them for the experiment."
 
 msgid "static0-large.258"
-msgstr "Who knew that resin makes so damn good adhesive!"
+msgstr "Who knew resin made such good glue!"
 
 msgid "static0-large.259"
 msgstr "It looks like a broken branch. I guess it could have fallen from a tree."
@@ -1336,7 +1336,7 @@ msgid "static0-large.268"
 msgstr "It's very old, but it may still be usable."
 
 msgid "static0-large.269"
-msgstr "The fuse is ready to go."
+msgstr "It's fueled and ready to use."
 
 msgid "static0-large.270"
 msgstr "It's a good rope."
@@ -1351,16 +1351,16 @@ msgid "static0-large.273"
 msgstr "It's not my size."
 
 msgid "static0-large.274"
-msgstr "She has strength, character, personality ..."
+msgstr "It has strength, character, personality ..."
 
 msgid "static0-large.275"
-msgstr "... it's a pity that she's horrible."
+msgstr "... it's a pity that it's horrible."
 
 msgid "static0-large.276"
-msgstr "It's a torso and the biggest arms I've seen in my life."
+msgstr "They're the biggest torso and arms I've seen in my life."
 
 msgid "static0-large.277"
-msgstr "It seems too hard to cook ..."
+msgstr "It seems too strong to cook with ..."
 
 msgid "static0-large.278"
 msgstr "By the color, it must be pineapple."
@@ -1381,7 +1381,7 @@ msgid "static0-large.283"
 msgstr "Now isn't the time to play cards."
 
 msgid "static0-large.284"
-msgstr "Good thinking! I should try it."
+msgstr "Good thinking! I should suggest it."
 
 msgid "static0-large.285"
 msgstr "It's full of patches."
@@ -1429,7 +1429,7 @@ msgid "static0-large.299"
 msgstr "I don't think so."
 
 msgid "static0-large.300"
-msgstr "It's very flat. Ideal for jumping."
+msgstr "It's very flat. Perfect for skipping across water."
 
 msgid "static0-large.301"
 msgstr "It's lined with rabbit fur on the inside. It must be very warm."
@@ -1441,7 +1441,7 @@ msgid "static0-large.303"
 msgstr "Good shovel."
 
 msgid "static0-large.304"
-msgstr "“Find and carve your own diamonds - Utopia or Reality?” ..."
+msgstr "“Find and cut your own diamonds - Utopia or Reality?” ..."
 
 msgid "static0-large.305"
 msgstr "... by Ruby Topaz."
@@ -1462,13 +1462,13 @@ msgid "static0-large.310"
 msgstr "Not my style."
 
 msgid "static0-large.311"
-msgstr "Must be a hair product or something."
+msgstr "It must be a hair growth lotion."
 
 msgid "static0-large.312"
 msgstr "The frame seems to be carved mahogany."
 
 msgid "static0-large.313"
-msgstr "It's one of those ice buckets."
+msgstr "They're the kind of tongs used with ice buckets."
 
 msgid "static0-large.314"
 msgstr "Mirror, mirror on the wall ..."
@@ -1483,7 +1483,7 @@ msgid "static0-large.317"
 msgstr "“Get your ideal figure without giving up eating! You only need forty pounds of sausages and a little bit of willpower.”"
 
 msgid "static0-large.318"
-msgstr "“The evil twins Cocteau”"
+msgstr "“The evil Cocteau Twins”"
 
 msgid "static0-large.319"
 msgstr "It increases everything, except your money."
@@ -1492,16 +1492,16 @@ msgid "static0-large.320"
 msgstr "It never hurts to have an umbrella."
 
 msgid "static0-large.321"
-msgstr "At one point in my life when I had to choose between continuing playing the sax in that old dump or taking up my journalistic career ..."
+msgstr "At one point in my life, I had to choose between continuing to play the sax in that old dump and starting my career in journalism ..."
 
 msgid "static0-large.322"
 msgstr "... the owner of the dump made the decision for me by throwing my ass out on the street."
 
 msgid "static0-large.323"
-msgstr "That pig had guts!"
+msgstr "What a pig!"
 
 msgid "static0-large.324"
-msgstr "No time for reminisce."
+msgstr "No time for reminiscing."
 
 msgid "static0-large.325"
 msgstr "It still has some egg whites."
@@ -1516,16 +1516,16 @@ msgid "static0-large.328"
 msgstr "It's thick and seems durable."
 
 msgid "static0-large.329"
-msgstr "I'm still pretty good!"
+msgstr "It turned out pretty well."
 
 msgid "static0-large.330"
-msgstr "Black plastic quick-drying paint."
+msgstr "Quick-drying black emulsion paint."
 
 msgid "static0-large.331"
 msgstr "Sue gave it to me. I don't know if it will serve me for anything."
 
 msgid "static0-large.332"
-msgstr "I'll never forget “Barefoot” Vito's home run in the championship finals who gave the L.A. Monsters the victory ..."
+msgstr "I'll never forget “Barefoot” Vito's home run in the championship finals, which gave the L.A. Monsters the victory ..."
 
 msgid "static0-large.333"
 msgstr "A bit dizzy, but it'll recover soon."
@@ -1561,13 +1561,13 @@ msgid "static0-large.343"
 msgstr "It seems that both pieces are holding well together."
 
 msgid "static0-large.344"
-msgstr "Sounds like something is moving inside. It could be candy."
+msgstr "Something seems to be moving inside. It must be nearly ready."
 
 msgid "static0-large.345"
 msgstr "Nature is wise. I'd better stay away."
 
 msgid "static0-large.346"
-msgstr "I'd have to wake him up first."
+msgstr "I'd have to wake it up first."
 
 msgid "static0-large.347"
 msgstr "I don't need to at the moment."
@@ -1633,13 +1633,13 @@ msgid "static0-large.367"
 msgstr "... I don't understand this sudden change in attitude. Very suspicious."
 
 msgid "static0-large.368"
-msgstr "That's the second time I get the same ..."
+msgstr "This is the second time the same thing has happened ..."
 
 msgid "static0-large.369"
-msgstr "... I don't understand what the hell is happening."
+msgstr "... I don't understand what the hell is happening to them."
 
 msgid "static0-large.370"
-msgstr "This is too much! I got the same again ...!"
+msgstr "This is too much! It's happened to another one of them! ..."
 
 msgid "static0-large.371"
 msgstr "... If I don't figure this out soon I'll go nuts."
@@ -1663,7 +1663,7 @@ msgid "static0-large.377"
 msgstr "I'd better not. I'd rather leave it for Charlie to open it."
 
 msgid "static0-large.378"
-msgstr "I don't see what I would gain by cutting the crystal."
+msgstr "I don't see what I would gain by cutting the glass."
 
 msgid "static0-large.379"
 msgstr "I see no reason to do that."
@@ -1684,19 +1684,19 @@ msgid "static0-large.384"
 msgstr "I have no doubt. Today is the day. I've been waiting for weeks for a storm like this one tonight. At last, after all these years of research,"
 
 msgid "static0-large.385"
-msgstr "after having endured the ridicule of my more skeptical colleagues, and after hundreds of unsuccessful attempts, I, Victor Frankenstein, will show the world that I am not as crazy as some accused me of."
+msgstr "after having endured the ridicule of my more skeptical colleagues, and after hundreds of unsuccessful attempts, I, Victor Frankenstein, will show the world that I am not as crazy as some claimed."
 
 msgid "static0-large.386"
 msgstr "I have no doubt. Today is the day. I've been waiting for weeks for a storm like this one tonight. At last, after all these years of research,"
 
 msgid "static0-large.387"
-msgstr "after having endured the ridicule of my more skeptical colleagues, and after hundreds of unsuccessful attempts, I, Victor Frankenstein, will show the world that I am not as crazy as some accused me of."
+msgstr "after having endured the ridicule of my more skeptical colleagues, and after hundreds of unsuccessful attempts, I, Victor Frankenstein, will show the world that I am not as crazy as some claimed."
 
 msgid "static0-large.388"
-msgstr "Everything is ready. The creature is lying on the operating table and the serum of life is waiting for the machine to power on in order to fullfil its sublime mission."
+msgstr "Everything is ready. The creature lies on the operating table, and the serum of life waits inside the revitalizing machine for the moment to fulfill its sublime mission."
 
 msgid "static0-large.389"
-msgstr "The only thing left to do is flip the switch and hope that the powerful galvanic energy of lightning will do the rest."
+msgstr "All I need to do is start the conducting mechanism and wait for the powerful galvanic energy of a lightning bolt to do the rest."
 
 msgid "static0-large.390"
 msgstr "I must admit though that, over the years, there were times when even I thought that I would never be able to successfully develop the formula for the life serum."
@@ -1708,7 +1708,7 @@ msgid "static0-large.392"
 msgstr "Calcium, glucose, citric acid, the blood of a living being and amniotic fluid to catalyze the mix ..."
 
 msgid "static0-large.393"
-msgstr "At last, I mustn't forget to protect my eyes properly. In the last experiment the tremendous flash which resulted from the lightning hitting the revitalizing machine almost left me blind for the rest of my life."
+msgstr "I mustn't forget to protect my eyes properly. In the last experiment, the tremendous flash when lightning hit the revitalizing machine almost left me blind for the rest of my life..."
 
 msgid "static0-large.394"
 msgstr "Well, the moment has finally arrived. A new era dawns for the world of medicine today ..."
@@ -1717,7 +1717,7 @@ msgid "static0-large.395"
 msgstr "Otto Hannover behind bars!"
 
 msgid "static0-large.396"
-msgstr "Two journalists discover the terrible plan of M.K.O. tycoon to dispose of the stars and replace them with look-alikes!"
+msgstr "Two journalists uncover the M.K.O. tycoon's terrible plan to dispose of the stars and replace them with replicas!"
 
 msgid "static0-large.397"
 msgstr "Hollywood Monsters are safe!"
@@ -1747,16 +1747,16 @@ msgid "static0-large.405"
 msgstr "                                                                                                   !!! NO VOICEOVER OR SUBTITLES ARE NECESSARY !!!"
 
 msgid "static0-large.406"
-msgstr "I think I should just press the buttons buttons here."
+msgstr "I think I should just press the buttons here."
 
 msgid "static0-large.407"
 msgstr "You know, recently I was taking a walk in the garden when I heard voices coming from behind a bush ..."
 
 msgid "static0-large.408"
-msgstr "... I crept closer and overheard what they were saying. I almost froze..."
+msgstr "... what they were saying terrified me ..."
 
 msgid "static0-large.409"
-msgstr "... then I approached carefully and what really scared me to death was to realize that one of them was ..."
+msgstr "... I moved closer and was even more frightened when I saw that it was ..."
 
 msgid "static50-small.1"
 msgstr " agenda"
@@ -1780,7 +1780,7 @@ msgid "static50-small.7"
 msgstr " tape recorder"
 
 msgid "static50-small.8"
-msgstr " rag with coals"
+msgstr " coal wrapped in a rag"
 
 msgid "static50-small.9"
 msgstr " card"
@@ -1834,7 +1834,7 @@ msgid "static50-small.25"
 msgstr " sun hat"
 
 msgid "static50-small.26"
-msgstr " knife"
+msgstr " Swiss army knife"
 
 msgid "static50-small.27"
 msgstr " divining rod"
@@ -1897,7 +1897,7 @@ msgid "static50-large.6"
 msgstr "Impossible."
 
 msgid "static50-large.7"
-msgstr "I should make a career out of it."
+msgstr "I'd get a run in my stockings."
 
 msgid "static50-large.8"
 msgstr "I might break a nail."
@@ -1906,7 +1906,7 @@ msgid "static50-large.9"
 msgstr "I already have it."
 
 msgid "static50-large.10"
-msgstr "It looks open."
+msgstr "It doesn't seem to open."
 
 msgid "static50-large.11"
 msgstr "I don't think that can be opened."
@@ -1915,22 +1915,22 @@ msgid "static50-large.12"
 msgstr "It's already open."
 
 msgid "static50-large.13"
-msgstr "It's now open."
+msgstr "It's already open."
 
 msgid "static50-large.14"
-msgstr "It seems to be closed."
+msgstr "It doesn't seem to close."
 
 msgid "static50-large.15"
 msgstr "I don't think that can be closed."
 
 msgid "static50-large.16"
-msgstr "It's already closed"
+msgstr "It's already closed."
 
 msgid "static50-large.17"
-msgstr "It's closed."
+msgstr "It's already closed."
 
 msgid "static50-large.18"
-msgstr "Not interested in it."
+msgstr "I don't think they'd be interested."
 
 msgid "static50-large.19"
 msgstr "Doesn't seem to want it."
@@ -1942,19 +1942,19 @@ msgid "static50-large.21"
 msgstr "No, I prefer to keep it."
 
 msgid "static50-large.22"
-msgstr "It does't seem to move."
+msgstr "It doesn't seem to move."
 
 msgid "static50-large.23"
 msgstr "Hello!"
 
 msgid "static50-large.24"
-msgstr "No reply."
+msgstr "I don't think I'll get an answer."
 
 msgid "static50-large.25"
 msgstr "Hello, how are you?"
 
 msgid "static50-large.26"
-msgstr "Still nothing."
+msgstr "I don't have it yet."
 
 msgid "static50-large.27"
 msgstr "It doesn't look like a good idea to me."
@@ -2002,7 +2002,7 @@ msgid "static50-large.41"
 msgstr "This isn't the time to listen to the tape. What I need is to get more interviews. "
 
 msgid "static50-large.42"
-msgstr "A good journalist is never apart from his tape recorder."
+msgstr "A good journalist never parts with her tape recorder."
 
 msgid "static50-large.43"
 msgstr "At this moment I don't need to take notes."
@@ -2017,7 +2017,7 @@ msgid "static50-large.46"
 msgstr "It's a gift from my dad."
 
 msgid "static50-large.47"
-msgstr "I'll take only the papers."
+msgstr "I'm only carrying my ID."
 
 msgid "static50-large.48"
 msgstr "I don't have anything written down that I can use right now."
@@ -2038,7 +2038,7 @@ msgid "static50-large.53"
 msgstr "I still have enough free space left on the tape."
 
 msgid "static50-large.54"
-msgstr "If I use the rag I won't get dirty."
+msgstr "Wrapped in the rag, it shouldn't get me dirty."
 
 msgid "static50-large.55"
 msgstr "“M.K.O. Studios”"
@@ -2071,7 +2071,7 @@ msgid "static50-large.64"
 msgstr "It's a simple leather rag."
 
 msgid "static50-large.65"
-msgstr "I hope Bruno won't miss it later."
+msgstr "I hope it takes Bruno a while to notice it's missing."
 
 msgid "static50-large.66"
 msgstr "“Mambo - Greatest Hits”"
@@ -2092,7 +2092,7 @@ msgid "static50-large.71"
 msgstr "Still stunned. It hasn't recovered yet."
 
 msgid "static50-large.72"
-msgstr "I wonder where the hell did Ron get this."
+msgstr "I wonder where the hell Ron got this."
 
 msgid "static50-large.73"
 msgstr "I don't know what he thinks I'm going to do with this."
@@ -2101,13 +2101,13 @@ msgid "static50-large.74"
 msgstr "It's pretty. I think I'll take it. "
 
 msgid "static50-large.75"
-msgstr "Better not. I could get dirty."
+msgstr "Better not. It could get dirty in here."
 
 msgid "static50-large.76"
 msgstr "It's a Swiss army knife."
 
 msgid "static50-large.77"
-msgstr "Who would've guessed that these things are actually worth something!"
+msgstr "I've never believed these things were any use."
 
 msgid "static50-large.78"
 msgstr "Really nice of Ron..."
@@ -2119,13 +2119,13 @@ msgid "static50-large.80"
 msgstr "I'm not very fond of card games."
 
 msgid "static50-large.81"
-msgstr "I don't need to shave their eyebrows."
+msgstr "These aren't much use for plucking eyebrows."
 
 msgid "static50-large.82"
-msgstr "That's strange. It smells like woman's perfume."
+msgstr "That's strange. It smells like women's perfume."
 
 msgid "static50-large.83"
-msgstr "Black plastic painting. The quick drying type."
+msgstr "Quick-drying black emulsion paint."
 
 msgid "static50-large.84"
 msgstr "This is the most complete makeup kit I've seen in my life!"
@@ -2332,7 +2332,7 @@ msgid "stage401-large.547"
 msgstr "He's one of the most vile and despicable beings that's ever existed."
 
 msgid "stage401-large.548"
-msgstr "He destroyed my life, when he was only just a child. He tricked the love of my life with his secret powers into abandoning me."
+msgstr "He destroyed my life when I was just a boy. He used his occult powers to bewitch the love of my life and make her leave me forever."
 
 msgid "stage401-large.549"
 msgstr "Oh, my beloved! If only I could tell you how much I have suffered ..."
@@ -2551,7 +2551,7 @@ msgid "stage402-large.508"
 msgstr "This is wide enough for me."
 
 msgid "stage402-large.509"
-msgstr "I'd better leave the skull-crusher here."
+msgstr "I'd better leave the skull-crusher there to hold it in place."
 
 msgid "stage403-small.1"
 msgstr " corridor"
@@ -2572,7 +2572,7 @@ msgid "stage403-small.6"
 msgstr " door"
 
 msgid "stage403-small.7"
-msgstr " candle\t"
+msgstr " oil lamp\t"
 
 msgid "stage403-small.8"
 msgstr " skeleton"
@@ -2650,7 +2650,7 @@ msgid "stage403-large.519"
 msgstr "Looks like some type of spring."
 
 msgid "stage403-large.520"
-msgstr "With this contraption the sping works."
+msgstr "With this contraption the spring works."
 
 msgid "stage403-large.521"
 msgstr "Phew!"
@@ -2833,7 +2833,7 @@ msgid "stage406-large.502"
 msgstr "There's no denying that my entry was, the least, spectacular."
 
 msgid "stage406-large.503"
-msgstr "But risking my life once was more that enough."
+msgstr "But risking my life once was more than enough."
 
 msgid "stage406-large.504"
 msgstr "I still have that feeling in my gut ..."
@@ -2911,7 +2911,7 @@ msgid "stage406-large.528"
 msgstr "... You lost!"
 
 msgid "stage406-large.529"
-msgstr "Give me that! Don't play with me!"
+msgstr "Hand over what you wagered!"
 
 msgid "stage406-large.530"
 msgstr "This... well... you see..."
@@ -2947,7 +2947,7 @@ msgid "stage406-large.540"
 msgstr "That's a really good idea! ..."
 
 msgid "stage406-large.541"
-msgstr "I think it'll in come handy that vampires aren't reflected in mirrors ..."
+msgstr "I think it'll come in handy that vampires aren't reflected in mirrors ..."
 
 msgid "stage406-large.542"
 msgstr "... I can see the cards that she holds reflected in the mirror through her body!"
@@ -3019,7 +3019,7 @@ msgid "stage406-large.564"
 msgstr "Yes, that's right, I'm his niece!"
 
 msgid "stage406-large.565"
-msgstr "You and Gwendolyn look so much alike ..."
+msgstr "You and Gwendolyn don't look much alike ..."
 
 msgid "stage406-large.566"
 msgstr "Do not even mention this cow's name to me."
@@ -3115,7 +3115,7 @@ msgid "stage406-large.596"
 msgstr "If you lose I'll take your pants. It is only fair, right?"
 
 msgid "stage406-large.597"
-msgstr "Great! Poker is my favourite vice!"
+msgstr "Great! Poker is my favorite vice!"
 
 msgid "stage406-large.598"
 msgstr "And I suppose you have a deck of cards with you?"
@@ -3394,13 +3394,13 @@ msgid "stage408-large.502"
 msgstr "Full moon tonight."
 
 msgid "stage408-large.503"
-msgstr "No I don't want to."
+msgstr "I can't. It's broken."
 
 msgid "stage408-large.504"
 msgstr "My kidneys probably couldn't handle it."
 
 msgid "stage408-large.505"
-msgstr "I think it's time for a little exercise ..."
+msgstr "I think it's time for a little switcheroo ..."
 
 msgid "stage408-large.506"
 msgstr "I think I'd better leave things as they are."
@@ -3448,7 +3448,7 @@ msgid "stage408-large.520"
 msgstr "Full of sweets. Jelly beans, goat milk candy pills, gums and those little things ..."
 
 msgid "stage408-large.521"
-msgstr "It's about to fall on Gwendolyn."
+msgstr "Gwendolyn must have dropped it."
 
 msgid "stage408-large.522"
 msgstr "I'll cut a steak out of the meat. It can always come in handy."
@@ -3997,16 +3997,16 @@ msgid "stage407-large.609"
 msgstr "It only lasted a few minutes, but later I saw her interviewing the Creature from the Black Lagoon."
 
 msgid "stage407-large.610"
-msgstr "As I understand it, he likes to keep very close “relations” with his peers."
+msgstr "I gather you don't get on very well with your fellow actors."
 
 msgid "stage407-large.611"
-msgstr "Of coure, I can't honestly say that I've never had intercourse with any of mine either..."
+msgstr "It's true I've never had much to do with them ..."
 
 msgid "stage407-large.612"
-msgstr "... but with the actresses I taught, I always maintained a proper relationship ..."
+msgstr "... but I've always been on good terms with classically trained actors ..."
 
 msgid "stage407-large.613"
-msgstr "... However, I haven't even mentioned yet this dummy hairy Werewolf, always unkempt and unshaven ..."
+msgstr "... just don't mention that hairy mannequin, the Werewolf, always scruffy and unshaven."
 
 msgid "stage407-large.614"
 msgstr "... all happy and smiley about his promising career. The only thing he has going for him is his youthful body ..."
@@ -4036,7 +4036,7 @@ msgid "stage409-small.4"
 msgstr " music score"
 
 msgid "stage409-large.500"
-msgstr "What a piece of junk! ... maybe I could sell it for a quick back at an antiques shop."
+msgstr "What a piece of junk! ... maybe I could sell it for a quick buck at an antiques shop."
 
 msgid "stage409-large.501"
 msgstr "It leads to the corridor."
@@ -4048,10 +4048,10 @@ msgid "stage409-large.503"
 msgstr "... and with a taste for the macabre!"
 
 msgid "stage409-large.504"
-msgstr "Although my fingers are no longer than before, I'll give it a try ..."
+msgstr "Although my fingers aren't what they used to be, I'll give it a try ..."
 
 msgid "stage409-large.505"
-msgstr "... ehm, how did this song went? ..."
+msgstr "... um, how did that old song go? ..."
 
 msgid "stage409-large.506"
 msgstr "Damn! This thing is alive and won't let me play."
@@ -4063,7 +4063,7 @@ msgid "stage409-large.508"
 msgstr "I think now it would be useless."
 
 msgid "stage409-large.509"
-msgstr "I think it's time to make some changes ..."
+msgstr "I think it's time for a little switcheroo ..."
 
 msgid "stage409-large.510"
 msgstr "Well, it's done. Am I great or what?"
@@ -4282,7 +4282,7 @@ msgid "stage501-large.506"
 msgstr "Damn! The brakes aren't working in this part of the tunnels .."
 
 msgid "stage501-large.507"
-msgstr "... and that's precisely where I wanna go!"
+msgstr "... and that's exactly where the award is!"
 
 msgid "stage501-large.508"
 msgstr "I don't trust this wagon at all. I'd rather enter the mine by some other means."
@@ -4429,13 +4429,13 @@ msgid "stage503-large.510"
 msgstr "I must get this deck at all costs ..."
 
 msgid "stage503-large.511"
-msgstr "... Sherilyn is wating for me in the castle with open le... eeeeh I mean arms."
+msgstr "... Sherilyn is waiting for me in the castle with open le... eeeeh I mean arms."
 
 msgid "stage503-large.512"
 msgstr "Actually they make a good duet."
 
 msgid "stage503-large.513"
-msgstr "That rhythm!... She's really a genious with the maracas."
+msgstr "That rhythm!... She's really a genius with the maracas."
 
 msgid "stage503-large.514"
 msgstr "Girls!"
@@ -4576,7 +4576,7 @@ msgid "stage503-large.559"
 msgstr "Nearby??? There must be miles and miles of tunnels around here."
 
 msgid "stage503-large.560"
-msgstr "We know. It actually took us more than six weeks to get here ..."
+msgstr "We know. We've actually been here for more than six weeks ..."
 
 msgid "stage503-large.561"
 msgstr "... but we never lost hope, we'll find him sooner or later."
@@ -4777,7 +4777,7 @@ msgid "stage504-large.506"
 msgstr "Impossible. I must remove that pile of rocks first."
 
 msgid "stage504-large.507"
-msgstr "He's a little messed up, but you can't help but admire him tenacity."
+msgstr "He's a little messed up, but you can't help but admire his tenacity."
 
 msgid "stage504-large.508"
 msgstr "It doesn't seem serious ..."
@@ -4825,16 +4825,16 @@ msgid "stage504-large.522"
 msgstr "I think I should get out of here as soon as possible ..."
 
 msgid "stage504-large.523"
-msgstr "I need to use something else."
+msgstr "I'd need something to stick it on with."
 
 msgid "stage504-large.524"
-msgstr "Pefrect! He didn't even notice the change."
+msgstr "Perfect! He didn't even notice the change."
 
 msgid "stage504-large.525"
 msgstr "I don't need to change it again."
 
 msgid "stage504-large.526"
-msgstr "I don't have time for this."
+msgstr "I wasn't quick enough."
 
 msgid "stage504-large.527"
 msgstr "My God, the divining rod went crazy! ..."
@@ -4843,7 +4843,7 @@ msgid "stage504-large.528"
 msgstr "... I'm starting to think that behind this wall lies the mother lode of diamonds that I have been searching for!"
 
 msgid "stage504-large.529"
-msgstr "I'm having goosebumps. Penelope, my love, we'll be together soon."
+msgstr "I'll start digging right away. Penelope, my love, we'll be together soon."
 
 msgid "stage504-large.530"
 msgstr "Karl believes he'll find diamonds, but I'd bet that behind this wall lies a nice big piece of gold."
@@ -5098,7 +5098,7 @@ msgid "stage507-large.501"
 msgstr "It's bound to collapse any minute now ..."
 
 msgid "stage507-large.502"
-msgstr "... I'm not going near it with the wagon."
+msgstr "... I'm staying close to the mine cart."
 
 msgid "stage507-large.503"
 msgstr "In times, it must have been used to store tools."
@@ -5371,7 +5371,7 @@ msgid "stage511-large.527"
 msgstr "I just have to see how certain people live."
 
 msgid "stage511-large.528"
-msgstr "I don't think the Werewolf will let me leave without returning his mirror first ..."
+msgstr "I don't think the Werewolf will let me take his mirror ..."
 
 msgid "stage511-large.529"
 msgstr "... I'm pretty sure he's spending hours in front of it."
@@ -5452,13 +5452,13 @@ msgid "stage511-large.554"
 msgstr "How is your relationship with your colleagues?"
 
 msgid "stage511-large.555"
-msgstr "Actually, I've been in relationships with many of them."
+msgstr "To be honest, I don't have much to do with them."
 
 msgid "stage511-large.556"
-msgstr "You could say that I've tasted everything that Hollywood could offer ..."
+msgstr "You could say I've met all sorts ..."
 
 msgid "stage511-large.557"
-msgstr "... Some were excellent, but to tell you the truth, there were a lot I wouldn't recommend."
+msgstr "... some monsters are wonderful, and others are best avoided."
 
 msgid "stage511-large.558"
 msgstr "Did you give an interview to colleague of mine from the newspaper?"
@@ -5647,7 +5647,7 @@ msgid "stage512-large.505"
 msgstr "It's more comfortable than the stairs."
 
 msgid "stage512-large.506"
-msgstr "No, I can't go that way with all those bottles there."
+msgstr "No, I can't carry all these bottles around with me."
 
 msgid "stage512-large.507"
 msgstr "Not much left."
@@ -5866,10 +5866,10 @@ msgid "stage301-large.513"
 msgstr "I can't handle it with my size."
 
 msgid "stage301-large.514"
-msgstr "Well, it goes without saying. Frankie ..."
+msgstr "It's definitely Frankie's ..."
 
 msgid "stage301-large.515"
-msgstr "... is huge."
+msgstr "... it's enormous."
 
 msgid "stage301-large.516"
 msgstr "It's risky, but it might work ..."
@@ -5929,7 +5929,7 @@ msgid "stage302-large.507"
 msgstr "... bad sign."
 
 msgid "stage302-large.508"
-msgstr "Not ineterested."
+msgstr "Not interested."
 
 msgid "stage302-large.509"
 msgstr "It's grease for the gears."
@@ -5977,7 +5977,7 @@ msgid "stage303-large.505"
 msgstr "It doesn't move."
 
 msgid "stage303-large.506"
-msgstr "I must be really carefull with these. They can smash my hand in the blink of an eye."
+msgstr "I must be really careful with these. They can smash my hand in the blink of an eye."
 
 msgid "stage303-large.507"
 msgstr "It's full of dust."
@@ -6001,7 +6001,7 @@ msgid "stage303-large.513"
 msgstr "Let's see if it helps me get rid of that damn rock."
 
 msgid "stage303-large.514"
-msgstr "Perfect... The only thing I still haven't managed to do is not to puke everytime I see Dr. Fly."
+msgstr "Perfect ... I don't understand how Dr. Fly's stomach doesn't dissolve."
 
 msgid "stage304-small.1"
 msgstr " roof"
@@ -6025,7 +6025,7 @@ msgid "stage304-large.503"
 msgstr "I'd better leave it alone."
 
 msgid "stage304-large.504"
-msgstr "I don't think that's the best place to put it."
+msgstr "I don't think there could be a better place for it."
 
 msgid "stage304-large.505"
 msgstr "It's activated via a remote control."
@@ -6061,7 +6061,7 @@ msgid "stage305-small.9"
 msgstr " umbrella"
 
 msgid "stage305-small.10"
-msgstr " bookcase"
+msgstr " library"
 
 msgid "stage305-large.500"
 msgstr "Man! ..."
@@ -6070,7 +6070,7 @@ msgid "stage305-large.501"
 msgstr "... that's Igor, the old servant of Dr. Frankenstein ..."
 
 msgid "stage305-large.502"
-msgstr "... You could say that the years haven't exactly been kind to him!"
+msgstr "... he hasn't aged a day!"
 
 msgid "stage305-large.503"
 msgstr "It leads upstairs ..."
@@ -6079,7 +6079,7 @@ msgid "stage305-large.504"
 msgstr "... but that damn Igor stands in my way."
 
 msgid "stage305-large.505"
-msgstr "It's a bookcase."
+msgstr "It's the library."
 
 msgid "stage305-large.506"
 msgstr "I've always liked these clocks."
@@ -6106,7 +6106,7 @@ msgid "stage305-large.513"
 msgstr "Porcelain kitchenware and stuff like that."
 
 msgid "stage305-large.514"
-msgstr "I can't see it very well but it looks great."
+msgstr "I can't see it very well, but it looks big."
 
 msgid "stage305-large.515"
 msgstr "You can't kill love!"
@@ -6121,7 +6121,7 @@ msgid "stage305-large.518"
 msgstr "And they never forget!"
 
 msgid "stage305-large.519"
-msgstr "I know!"
+msgstr "You know it!"
 
 msgid "stage305-large.520"
 msgstr "Hi, Igor."
@@ -6157,7 +6157,7 @@ msgid "stage305-large.530"
 msgstr "He fled ..."
 
 msgid "stage305-large.531"
-msgstr "... He fled when he regained his consciousness and faced the horrible things that have happened in his laboratory ..."
+msgstr "... he fled when his conscience awoke and he faced the terrible things that had happened in his laboratory ..."
 
 msgid "stage305-large.532"
 msgstr "... He fled when his hair stood on end, horrified, after reading his own diary which recounted his necrophilic practices ...\t\t\t"
@@ -6301,7 +6301,7 @@ msgid "stage306-large.517"
 msgstr "... and look, this one has automatic rotation."
 
 msgid "stage306-large.518"
-msgstr "It can't be rotated manually. I should have to use the buttons on its base."
+msgstr "It can't be rotated manually. I'll have to use the buttons on its base."
 
 msgid "stage306-large.519"
 msgstr "It's a simple button."
@@ -6331,7 +6331,7 @@ msgid "stage306-large.527"
 msgstr "And they never forget!"
 
 msgid "stage306-large.528"
-msgstr "I know!"
+msgstr "You know it!"
 
 msgid "stage308-small.1"
 msgstr " path"
@@ -6388,7 +6388,7 @@ msgid "stage308-large.509"
 msgstr "It's a little old, but it looks like it's in a good condition."
 
 msgid "stage308-large.510"
-msgstr "It doesn't vent the smoke out."
+msgstr "Smoke keeps coming out of it."
 
 msgid "stage308-large.511"
 msgstr "It's open."
@@ -6439,7 +6439,7 @@ msgid "stage309-large.502"
 msgstr "I can't do it with the old man in front of me."
 
 msgid "stage309-large.503"
-msgstr "It looks very old. I don't know what it is."
+msgstr "It looks very old. I don't know what it's about."
 
 msgid "stage309-large.504"
 msgstr "The secret to rebuilding Frankenstein must be inside."
@@ -6457,7 +6457,7 @@ msgid "stage309-large.508"
 msgstr "I can't reach it."
 
 msgid "stage309-large.509"
-msgstr "It 'a wonderful day."
+msgstr "It's a wonderful day."
 
 msgid "stage309-large.510"
 msgstr "Nothing like a warm and welcome home."
@@ -6529,7 +6529,7 @@ msgid "stage309-large.532"
 msgstr "Unfortunately no. Victor left for shores unknown years ago and I haven't heard from him since."
 
 msgid "stage309-large.533"
-msgstr "Before he left, he entrusted me with something to give, either to his offspring or to him when I deemed him ready ..."
+msgstr "Before he left, he entrusted me with something to give to his creature when he was ready ..."
 
 msgid "stage309-large.534"
 msgstr "... but that time hasn't arrived yet."
@@ -6562,7 +6562,7 @@ msgid "stage309-large.543"
 msgstr "Igor, the servant of Frankenstein, is a little crazy, right?"
 
 msgid "stage309-large.544"
-msgstr "Just a little? He's always been a few cards short of a full deck, but lately he's gotten into a cult that's completely out of control."
+msgstr "Just a little? He's always been a few cards short of a full deck, but lately he's joined a cult that's driven him completely off the rails."
 
 msgid "stage309-large.545"
 msgstr "Sometimes I can hear him sing and dance until dawn from high up on the trees."
@@ -6574,16 +6574,16 @@ msgid "stage309-large.547"
 msgstr "Come back whenever you want. It's been a pleasure."
 
 msgid "stage309-large.548"
-msgstr "And what did he entrusted you with?"
+msgstr "And what did he entrust you with?"
 
 msgid "stage309-large.549"
-msgstr "His diary. Something that Victor worked in, for many years ..."
+msgstr "His diary. Something that Victor worked on for many years ..."
 
 msgid "stage309-large.550"
 msgstr "... I have kept it safe in the top shelf, away from the hands of strangers."
 
 msgid "stage309-large.551"
-msgstr "And why Frankie isn't ready?"
+msgstr "And why isn't Frankie ready?"
 
 msgid "stage309-large.552"
 msgstr "He has so much more to learn about this world."
@@ -6598,13 +6598,13 @@ msgid "stage309-large.555"
 msgstr "Impossible!"
 
 msgid "stage309-large.556"
-msgstr "I gave my word to Victor that his journal would never be touched again by anyone, except for me and his offspring."
+msgstr "I gave Victor my word that no hands but mine or his creature's would ever touch his diary."
 
 msgid "stage309-large.557"
 msgstr "Let's talk about something else."
 
 msgid "stage309-large.558"
-msgstr "Anything I can get you?"
+msgstr "Whatever you'd like."
 
 msgid "stage309-large.559"
 msgstr "Laxative?"
@@ -6634,7 +6634,7 @@ msgid "stage309-large.567"
 msgstr "Don't you ever get tired of playing the same music instrument every day?"
 
 msgid "stage309-large.568"
-msgstr "Well, I'd love to have more ..."
+msgstr "Well, I'd love to have a whole orchestra ..."
 
 msgid "stage309-large.569"
 msgstr "... but my resources are very limited and a poor old man like me can't afford to cater to his every whim.\t"
@@ -6727,7 +6727,7 @@ msgid "stage310-large.502"
 msgstr "What a hateful little girl!"
 
 msgid "stage310-large.503"
-msgstr "It's one of the flowers the little girl disliked and threw into the creek."
+msgstr "It's one of the flowers that obnoxious little girl was throwing into the creek."
 
 msgid "stage310-large.504"
 msgstr "That was hard ..."
@@ -6817,7 +6817,7 @@ msgid "stage310-large.532"
 msgstr "... and you know I can do it."
 
 msgid "stage310-large.533"
-msgstr "And don't you afraid that you'll get it dirty, sitting there?"
+msgstr "And aren't you afraid that you'll get it dirty, sitting there?"
 
 msgid "stage310-large.534"
 msgstr "I'm cautious and treat it very carefully and gently ..."
@@ -6844,7 +6844,7 @@ msgid "stage310-large.541"
 msgstr "You can't hurt me. I don't care. I know that everything you say is out of sheer envy."
 
 msgid "stage310-large.542"
-msgstr "Don't worry. It's enough for me that I've spoken my mind."
+msgstr "Don't worry. Just knowing I've spoken to you should be enough."
 
 msgid "stage310-large.543"
 msgstr "Well, I'd like to talk about something else."
@@ -6859,7 +6859,7 @@ msgid "stage310-large.546"
 msgstr "I said no. Wasn't I perfectly clear?"
 
 msgid "stage310-large.547"
-msgstr "I have only a dozen. I can't afford to give one away."
+msgstr "I only have a few dozen. I can't afford to give one away."
 
 msgid "stage310-large.548"
 msgstr "No. I couldn't let hands like yours touch something so delicate."
@@ -6868,7 +6868,7 @@ msgid "stage310-large.549"
 msgstr "Dream on."
 
 msgid "stage310-large.550"
-msgstr "I won't give you anything, stinky!"
+msgstr "It's about time you got lost."
 
 msgid "stage310-large.551"
 msgstr "It wouldn't hurt to try to cover your stink ..."
@@ -6880,7 +6880,7 @@ msgid "stage310-large.553"
 msgstr "Never, ever."
 
 msgid "stage310-large.554"
-msgstr "I would't give you one, even if your life depended on it."
+msgstr "I wouldn't give you one, even if your life depended on it."
 
 msgid "stage310-large.555"
 msgstr "These daisies belong to me, and there's nothing you can do to make me give you one."
@@ -6895,7 +6895,7 @@ msgid "stage310-large.558"
 msgstr "... she slipped!"
 
 msgid "stage310-large.559"
-msgstr "A “good” girl like her, I'm pretty sure, knows how to swim."
+msgstr "Well, no harm done. A clever girl like her is sure to know how to swim ..."
 
 msgid "stage307-small.1"
 msgstr " stairs"
@@ -6910,7 +6910,7 @@ msgid "stage307-small.4"
 msgstr " table"
 
 msgid "stage307-small.5"
-msgstr " drawer"
+msgstr " tubs"
 
 msgid "stage307-small.6"
 msgstr " control panel"
@@ -6937,7 +6937,7 @@ msgid "stage307-large.502"
 msgstr "It communicates with the library."
 
 msgid "stage307-large.503"
-msgstr "It's only natural."
+msgstr "It looks natural."
 
 msgid "stage307-large.504"
 msgstr "It looks like it hasn't been used in a long time."
@@ -6949,7 +6949,7 @@ msgid "stage307-large.506"
 msgstr "It's full of dust."
 
 msgid "stage307-large.507"
-msgstr "It's somewhat old but still usable."
+msgstr "They're a bit old, but still usable."
 
 msgid "stage307-large.508"
 msgstr "It doesn't seem very complicated."
@@ -7018,13 +7018,13 @@ msgid "stage307-large.529"
 msgstr "... Unless ..."
 
 msgid "stage307-large.530"
-msgstr "... Now I get it ..."
+msgstr "... now I remember ..."
 
 msgid "stage307-large.531"
 msgstr "... The brain!!!"
 
 msgid "stage307-large.532"
-msgstr "It has something to do with the brain of Frankenstein!"
+msgstr "They must have been talking about Frankenstein's brain!"
 
 msgid "stage307-large.533"
 msgstr "I have to recover it at any cost."
@@ -7090,7 +7090,7 @@ msgid "stage307-large.553"
 msgstr "... about their machiavellian plan. I almost froze. From what I could hear, he was planning to replace all the famous monsters with doubles so he could manipulate them at will and ..."
 
 msgid "stage307-large.554"
-msgstr "... this Dr. Karloff was the one who was going to take care of it. I couldn't stand hearing any more so I rushed out of there and tried to tell someone what was going on ..."
+msgstr "... that Dr. Karloff is the one carrying it out. I didn't hear any more; I rushed off to tell someone what was happening ..."
 
 msgid "stage307-large.555"
 msgstr "... The ballroom was so crowded that I couldn't find my good friend the Invisible Man ..."
@@ -7129,7 +7129,7 @@ msgid "stage307-large.566"
 msgstr "I think I'll wait until I have the whole body."
 
 msgid "stage307-large.567"
-msgstr "No, I prefer not to, until I have all the pieces together."
+msgstr "I'll wait until I have something to join all the pieces together."
 
 msgid "stage307-large.568"
 msgstr "I'll place all the pieces of Frankie on the table and sew them together with the needle and thread."
@@ -7150,7 +7150,7 @@ msgid "stage307-large.573"
 msgstr "The sap of a plant is like the blood of a living being. This will do."
 
 msgid "stage307-large.574"
-msgstr "The remains of an egg will serve as amniotic fluid."
+msgstr "This leftover egg white will serve as amniotic fluid."
 
 msgid "stage307-large.575"
 msgstr "I don't have all the ingredients to prepare the serum of life."
@@ -7180,13 +7180,13 @@ msgid "stage307-large.583"
 msgstr "I'm sure it was one of those damn zombies. Last night, with all the mess of the party, somebody must have gotten in my pantry, took it ..."
 
 msgid "stage307-large.584"
-msgstr "... then hid it in the warehouse and then forgot to pick it up."
+msgstr "... then hid it in the cellars and then forgot to pick it up."
 
 msgid "stage307-large.585"
-msgstr "This will go great with our fricassee!"
+msgstr "If I catch him, I'll make a fricassee out of him!"
 
 msgid "stage307-large.586"
-msgstr "Elmer, Merci mon ami. I've looking all over for it! I'll store it in the pantry and go get some rest ..."
+msgstr "Elmer, thanks for bringing it back, mon ami! I'll put it in my pantry and get some rest ..."
 
 msgid "stage307-large.587"
 msgstr "... I believe I've earned it after all that happened last night. Bon soir!"
@@ -7297,7 +7297,7 @@ msgid "stage202-large.502"
 msgstr "... and that “kitten” must be her pet!"
 
 msgid "stage202-large.503"
-msgstr "She's kept a fine figure even if she's thousands of years old. Literaly."
+msgstr "She's kept a fine figure even if she's thousands of years old. Literally."
 
 msgid "stage202-large.504"
 msgstr "It's Osso Miyake ..."
@@ -7321,7 +7321,7 @@ msgid "stage202-large.510"
 msgstr "He's probably less dangerous than the Princess."
 
 msgid "stage202-large.511"
-msgstr "It doesn't look enough for him to lose a tooth."
+msgstr "Losing a tooth doesn't seem to have bothered him much."
 
 msgid "stage202-large.512"
 msgstr "If I had found Sue and resolved this whole matter, I'd probably take a dive."
@@ -7330,7 +7330,7 @@ msgid "stage202-large.513"
 msgstr "She probably uses the tent as a locker room to change into her swimsuit."
 
 msgid "stage202-large.514"
-msgstr "I don't know what'll happen to the Princess should I be able to remove her glasses."
+msgstr "I don't know what the Princess might do if I took her glasses."
 
 msgid "stage202-large.515"
 msgstr "They're so dark I can't even see her eyes."
@@ -7345,7 +7345,7 @@ msgid "stage202-large.518"
 msgstr "Here, kitten. Here's a tasty piece of meat"
 
 msgid "stage202-large.519"
-msgstr "Too bad, you didn't have a strong denture, pal!"
+msgstr "Too bad, pal! You had a movie-star smile!"
 
 msgid "stage202-large.520"
 msgstr "Hi, I am Ron Ashman of The Quill."
@@ -7372,7 +7372,7 @@ msgid "stage202-large.527"
 msgstr "Excuse me, can I bother for a moment?"
 
 msgid "stage202-large.528"
-msgstr "ou are trying my patience, you know ..."
+msgstr "You are trying my patience, you know ..."
 
 msgid "stage202-large.529"
 msgstr "... What the hell do you want this time?"
@@ -7399,7 +7399,7 @@ msgid "stage202-large.536"
 msgstr "... but I'm still trying to manage his cravings ..."
 
 msgid "stage202-large.537"
-msgstr "... When he sees something tasty he just can't controll himself."
+msgstr "... When he sees something tasty he just can't control himself."
 
 msgid "stage202-large.538"
 msgstr "I can see, you're living the good life here."
@@ -7912,7 +7912,7 @@ msgid "stage205-large.511"
 msgstr "There's no maze that can stand up to my navigating skills!"
 
 msgid "stage205-large.512"
-msgstr "Without a doubt it's the first Sacred Seal of the the Maze of Horus."
+msgstr "Without a doubt it's the first Sacred Seal of the Maze of Horus."
 
 msgid "stage205-large.513"
 msgstr "Luckily I have a good memory and I remember the path."
@@ -8023,7 +8023,7 @@ msgid "stage208-small.10"
 msgstr " Amesis-Huni's sarcophagus"
 
 msgid "stage208-large.500"
-msgstr "Quiet, quiet! Don't move. Don't walk out that door ..."
+msgstr "Stop! Stop! Don't move. Don't go out that door ..."
 
 msgid "stage208-large.501"
 msgstr "... I've almost deciphered it ..."
@@ -8059,7 +8059,7 @@ msgid "stage208-large.511"
 msgstr "He's one of the eccentric Hecker brothers ..."
 
 msgid "stage208-large.512"
-msgstr "I like it because it has a firm grip."
+msgstr "He must really like it; he's holding it tightly."
 
 msgid "stage208-large.513"
 msgstr "Damn!"
@@ -8089,7 +8089,7 @@ msgid "stage208-large.521"
 msgstr "It's the entrance to the sacred altar of Karnak."
 
 msgid "stage208-large.522"
-msgstr "No can do."
+msgstr "I can't reach it."
 
 msgid "stage208-large.523"
 msgstr "I have no special interest in this sarcophagus."
@@ -8176,7 +8176,7 @@ msgid "stage208-large.550"
 msgstr "My brothers are extraordinary, but I haven't seen them in a long time."
 
 msgid "stage208-large.551"
-msgstr "Karl sent me a letter a few months back, but Markus hasn't written recently ..."
+msgstr "I sent Karl a letter a few months ago, but I haven't written to Markus in a while ..."
 
 msgid "stage208-large.552"
 msgstr "... He must still be angry with me. He's always been a bit resentful."
@@ -8185,7 +8185,7 @@ msgid "stage208-large.553"
 msgstr "Well... How are they faring?"
 
 msgid "stage208-large.554"
-msgstr "Please, don't bother me any more. I need to concentrate."
+msgstr "I won't bother you any longer."
 
 msgid "stage208-large.555"
 msgstr "As you wish."
@@ -8389,13 +8389,13 @@ msgid "stage210-large.508"
 msgstr "My grandfather, Amenophis, gave me this advice ..."
 
 msgid "stage210-large.509"
-msgstr "... If you want to protect your treasure from outisiders ..."
+msgstr "... If you want to protect your treasure from outsiders ..."
 
 msgid "stage210-large.510"
 msgstr "... You'd best put everything in a magically sealed room ..."
 
 msgid "stage210-large.511"
-msgstr "... That only my Staff can open it."
+msgstr "... that only your staff can open."
 
 msgid "stage210-large.512"
 msgstr "Good morning, my friend!"
@@ -8470,7 +8470,7 @@ msgid "stage210-large.535"
 msgstr "... She'll bury me alive if she could."
 
 msgid "stage210-large.536"
-msgstr "How was the party in Hannover's castle?"
+msgstr "How was the party in Hannover's mansion?"
 
 msgid "stage210-large.537"
 msgstr "Well, the truth is I was a little nervous and didn't have a great time."
@@ -8599,13 +8599,13 @@ msgid "stage210-large.578"
 msgstr "My grandfather, Amenophis, gave me this advice ..."
 
 msgid "stage210-large.579"
-msgstr "... If you want to protect your treasure from outisiders ..."
+msgstr "... If you want to protect your treasure from outsiders ..."
 
 msgid "stage210-large.580"
 msgstr "... You'd best put everything in a magically sealed room ..."
 
 msgid "stage210-large.581"
-msgstr "... That only your Staff can open it."
+msgstr "... that only your staff can open."
 
 msgid "stage211-small.1"
 msgstr " entrance"
@@ -8644,7 +8644,7 @@ msgid "stage211-large.507"
 msgstr "I fought hard to get that role in “The Curse of the Nile”."
 
 msgid "stage211-large.508"
-msgstr "Do you know that the producer wanted me to perform my role stiff and expressionless like Frankenstein?"
+msgstr "Did you know the producer wanted that stiff, expressionless Frankenstein to play my part?"
 
 msgid "stage211-large.509"
 msgstr "Well, many people think that Frankenstein and you look a lot alike physically."
@@ -8686,7 +8686,7 @@ msgid "stage101-large.502"
 msgstr "It's empty. I don't know where the dog is."
 
 msgid "stage101-large.503"
-msgstr "There's something up there."
+msgstr "It's a bit of a walk over there."
 
 msgid "stage101-large.504"
 msgstr "I won't leave here until I've found out what happened to Sue."
@@ -8761,7 +8761,7 @@ msgid "stage102-large.509"
 msgstr "I have no idea how it ended up down there. "
 
 msgid "stage102-large.510"
-msgstr "The mechanism controls the hook and the pulley."
+msgstr "The mechanical pulley's hook slides along it."
 
 msgid "stage102-large.511"
 msgstr "I guess it's used to move the barrels. "
@@ -8830,7 +8830,7 @@ msgid "stage102-large.532"
 msgstr "Lucky! The chain is just long enough."
 
 msgid "stage102-large.533"
-msgstr "Maybe it needs greasing."
+msgstr "Maybe greasing it will let me move the hook."
 
 msgid "stage102-large.534"
 msgstr "It doesn't need any more greasing."
@@ -8869,7 +8869,7 @@ msgid "stage103-large.500"
 msgstr "Wow! There's no doubt that was one hell of a party last night."
 
 msgid "stage103-large.501"
-msgstr "It lead's to the lobby."
+msgstr "It leads to the lobby."
 
 msgid "stage103-large.502"
 msgstr "Better not. I could get my coat dirty."
@@ -8905,13 +8905,13 @@ msgid "stage103-large.512"
 msgstr "I was sure it was one of those damn zombies. Last night, with all the mess of the party, somebody must have gotten in my pantry, took it ..."
 
 msgid "stage103-large.513"
-msgstr "... then hid it in the callars and then forgot to pick it up."
+msgstr "... then hid it in the cellars and then forgot to pick it up."
 
 msgid "stage103-large.514"
-msgstr "This will go great with our fricasee!"
+msgstr "If I catch him, I'll make a fricassee out of him!"
 
 msgid "stage103-large.515"
-msgstr "Elmer, Merci mon ami. I've looking all over for it! I'll store it in the pantry and go get some rest ..."
+msgstr "Elmer, thanks for bringing it back, mon ami! I'll put it in my pantry and get some rest ..."
 
 msgid "stage103-large.516"
 msgstr "... I believe I've earned it after all that happened last night. Bon soir!"
@@ -8923,7 +8923,7 @@ msgid "stage103-large.518"
 msgstr "It's a bit disgusting, but I don't have a choice ..."
 
 msgid "stage103-large.519"
-msgstr "Done! I hope it's goo doesn't leave stains on my coat. I have a reputation to maintain."
+msgstr "Done! I hope its goo doesn't leave stains on my coat. I have a reputation to maintain."
 
 msgid "stage104-small.1"
 msgstr " door"
@@ -8974,7 +8974,7 @@ msgid "stage104-large.505"
 msgstr "It's there to keep people away from the statue."
 
 msgid "stage104-large.506"
-msgstr "It's used and flat."
+msgstr "It doesn't seem to be damaged."
 
 msgid "stage104-large.507"
 msgstr "The plaque says it's by Michelangelo, “The patient man of Ulm”. "
@@ -8992,10 +8992,10 @@ msgid "stage104-large.511"
 msgstr "Full of leftovers from the party."
 
 msgid "stage104-large.512"
-msgstr "With the way he looks, I really doubt he can talk right now and ..."
+msgstr "Judging by his looks, I doubt he can even speak, and ..."
 
 msgid "stage104-large.513"
-msgstr "... I don't want to be the one who wakes him up."
+msgstr "... I'm not going to find out."
 
 msgid "stage104-large.514"
 msgstr "He just sits there to prevent people from going upstairs."
@@ -9130,7 +9130,7 @@ msgid "stage105-large.533"
 msgstr "... but to be honest, I think the main reason they come is to laugh at the nominees who don't get the Award."
 
 msgid "stage105-large.534"
-msgstr "This year the Werewolf grabed, or should I say pawed, the most coveted one, the Actor of the Year Award and was the big winner of the night ..."
+msgstr "This year the Werewolf grabbed, or should I say pawed, the most coveted one, the Actor of the Year Award and was the big winner of the night ..."
 
 msgid "stage105-large.535"
 msgstr "... He was also about to win the Best Dramatic Role, but in the end it was wrapped around the Mummy. You should have seen how the Werewolf howled."
@@ -9262,7 +9262,7 @@ msgid "stage105-large.577"
 msgstr "I have enough information, thanks Charlie."
 
 msgid "stage105-large.578"
-msgstr "You're welcome, Ron. And remember me. Someday I'll be up there in the charts."
+msgstr "You're welcome, Ron. Remember me when I'm on the movie posters."
 
 msgid "stage105-large.579"
 msgstr "Absolutely!!! I'm sure you'll go far."
@@ -9340,16 +9340,16 @@ msgid "stage106-large.511"
 msgstr "He's made a good career out of films like “Poltergeist” and similar ones."
 
 msgid "stage106-large.512"
-msgstr "This saliva is like sulfuric acid. I need somthing to put it in."
+msgstr "This saliva is like sulfuric acid. I need something to put it in."
 
 msgid "stage106-large.513"
-msgstr "It's drool from Dr. Fly's mouth. I must me careful not to step on it if I want to keep both of my feet."
+msgstr "It's drool from Dr. Fly's mouth. I must be careful not to step on it if I want to keep both of my feet."
 
 msgid "stage106-large.514"
 msgstr "It doesn't look like he has realized it yet."
 
 msgid "stage106-large.515"
-msgstr "I don't have time for this."
+msgstr "I wasn't quick enough."
 
 msgid "stage106-large.516"
 msgstr "It's a receipt for the wardrobe."
@@ -9373,7 +9373,7 @@ msgid "stage106-large.522"
 msgstr "Hey, Junior, look what I have here for you."
 
 msgid "stage106-large.523"
-msgstr "I'll take skull-crusher, buddy, you can do without it."
+msgstr "I'll take the skull-crusher, buddy. You won't be able to hold everything."
 
 msgid "stage106-large.524"
 msgstr "I love this guy."
@@ -9406,10 +9406,10 @@ msgid "stage106-large.533"
 msgstr "One can always meet interesting monsters ..."
 
 msgid "stage106-large.534"
-msgstr "... I met the Cockroach Woman tonight and I'm really looking forward to rubbing her antennae this evening, if you get me."
+msgstr "... I met the Cockroach Woman tonight, and I'm already rubbing my antennae together thinking about tomorrow evening with her."
 
 msgid "stage106-large.535"
-msgstr "Have you met a colleague of mine from The Quill?"
+msgstr "Did a colleague of mine from The Quill interview you?"
 
 msgid "stage106-large.536"
 msgstr "No, I'm afraid not."
@@ -9466,7 +9466,7 @@ msgid "stage106-large.553"
 msgstr "A device capable of controlling the atmospheric pressure and precipitation ..."
 
 msgid "stage106-large.554"
-msgstr "... I've got good results with rainfalls, but the weather control still needs some adjustments."
+msgstr "... I've had good results with rain, but the fair-weather setting still needs some adjustment."
 
 msgid "stage106-large.555"
 msgstr "Hi, I'm Ron Ashman of The Quill. Sorry for the interruption."
@@ -9586,16 +9586,16 @@ msgid "stage107-large.503"
 msgstr "The Ghost of Aldourie Castle. Nobody can play the role of the stereotypical castle ghost like him ..."
 
 msgid "stage107-large.504"
-msgstr "... but otherwise, he's completely boring."
+msgstr "... which is only natural, after all."
 
 msgid "stage107-large.505"
 msgstr "It seems the musicians from last night left it behind."
 
 msgid "stage107-large.506"
-msgstr "It's used to adjust the height the microphone."
+msgstr "It's used to hold the microphone."
 
 msgid "stage107-large.507"
-msgstr "As I understand it, an actor is highly respected by his peers for ..."
+msgstr "I understand he's highly respected by his fellow actors for ..."
 
 msgid "stage107-large.508"
 msgstr "... his ability to jump from one role to another."
@@ -9619,7 +9619,7 @@ msgid "stage107-large.514"
 msgstr "“I'll be out for a while. For any enquiries please talk to Joseph.”"
 
 msgid "stage107-large.515"
-msgstr "Singed: Francois"
+msgstr "Signed: Francois"
 
 msgid "stage107-large.516"
 msgstr "Impossible. It's linked to the Ghost and the heavy ball."
@@ -9631,7 +9631,7 @@ msgid "stage107-large.518"
 msgstr "It must weigh a ton."
 
 msgid "stage107-large.519"
-msgstr "The saw almost broke but I just managed to cut it."
+msgstr "The saw broke, but I managed to cut through the chain."
 
 msgid "stage107-large.520"
 msgstr "Well, that's the rope of the bell. Let's see what you can do."
@@ -9688,10 +9688,10 @@ msgid "stage107-large.537"
 msgstr "It seems that almost everyone last night had one glass too many ..."
 
 msgid "stage107-large.538"
-msgstr "Bah, these monsters don't even know what it trully means to drink ..."
+msgstr "Bah, these monsters don't even know what it truly means to drink ..."
 
 msgid "stage107-large.539"
-msgstr "... If they tried even a sip of my special cocktail, the “Nessie Boom”, they'd black out instantly."
+msgstr "... If they tried my special cocktail, the “Nessie Boom”, their heads would fall off."
 
 msgid "stage107-large.540"
 msgstr "Tell me about yourself. You were born in Scotland, right?"
@@ -9703,7 +9703,7 @@ msgid "stage107-large.542"
 msgstr "...  in the most beautiful part of Scotland."
 
 msgid "stage107-large.543"
-msgstr "Let's talk again about this cocktail of your, this “Nessie Boom”."
+msgstr "Let's talk again about this cocktail of yours, this “Nessie Boom”."
 
 msgid "stage107-large.544"
 msgstr "What do you want to know, lad?"
@@ -9739,7 +9739,7 @@ msgid "stage107-large.554"
 msgstr "You can bet it is."
 
 msgid "stage107-large.555"
-msgstr "A sip of my “Nessie Boom” and heads start spinning."
+msgstr "One sip of my “Nessie Boom” and heads will roll."
 
 msgid "stage107-large.556"
 msgstr "Maybe you could teach me how to prepare the cocktail ..."
@@ -9757,7 +9757,7 @@ msgid "stage107-large.560"
 msgstr "As you wish."
 
 msgid "stage107-large.561"
-msgstr "And what this cocktail of yours looks like?"
+msgstr "And what does this cocktail of yours look like?"
 
 msgid "stage107-large.562"
 msgstr "You see, lad, the real “Nessie Boom” has a light blue color which can only be compared to that of the Scottish sky ..."
@@ -9781,10 +9781,10 @@ msgid "stage107-large.568"
 msgstr "Any chance you've seen Sue Bergman at the party? She's a colleague of mine from the newspaper."
 
 msgid "stage107-large.569"
-msgstr "No, Quasimodo haven't heard ..."
+msgstr "No, Quasimodo is sorry ..."
 
 msgid "stage107-large.570"
-msgstr "... eh Quasimodo haven't seen this colleague of your."
+msgstr "... Quasimodo hasn't seen anyone from your newspaper."
 
 msgid "stage107-large.571"
 msgstr "Did you notice anything unusual at the party?"
@@ -9799,7 +9799,7 @@ msgid "stage107-large.574"
 msgstr "I haven't seen you in a lot of movies lately."
 
 msgid "stage107-large.575"
-msgstr "The truth is that Quasimondo isn't much interested in the scripts he gets lately."
+msgstr "The truth is that Quasimodo isn't much interested in the scripts he gets lately."
 
 msgid "stage107-large.576"
 msgstr "What Quasimodo likes the most is pulling the ropes to ring the bells ..."
@@ -9829,7 +9829,7 @@ msgid "stage107-large.584"
 msgstr "... but now no one is better than Quasimodo in pulling ropes."
 
 msgid "stage107-large.585"
-msgstr "You say no one else is able without help? I can't believe that!"
+msgstr "I can't believe it. It must be impossible to do it without help."
 
 msgid "stage107-large.586"
 msgstr "It's true, Quasimodo never lies."
@@ -9853,16 +9853,16 @@ msgid "stage107-large.592"
 msgstr "I'd really like to see you in action. How about a little demonstration?"
 
 msgid "stage107-large.593"
-msgstr "Happy to, but Quasimodo can't see any bells around."
+msgstr "Happy to, but Quasimodo can't see any bell towers around."
 
 msgid "stage107-large.594"
 msgstr "Well, I just happen to know one around here ..."
 
 msgid "stage107-large.595"
-msgstr "... You see, the American bells are somewhat different from the ones you're familiar with."
+msgstr "... You see, American bell towers are a little different from the ones you're used to."
 
 msgid "stage107-large.596"
-msgstr "Great. Qusimodo will go there and Quasimodo will give demonstration."
+msgstr "Okay. Take Quasimodo there and Quasimodo will give a demonstration."
 
 msgid "stage108-small.1"
 msgstr " stairs"
@@ -9991,7 +9991,7 @@ msgid "stage108-large.534"
 msgstr "The kitchen is quite dirty, Francois, wouldn't you say?"
 
 msgid "stage108-large.535"
-msgstr "That's not true monsieur. It has that very old and neglected look that gives it that necessary dramatic flair ..."
+msgstr "That's not true, monsieur. The kitchen is just very old, which makes it look neglected ..."
 
 msgid "stage108-large.536"
 msgstr "... In fact it's so clean you could eat directly from the floor without any problems."
@@ -10015,10 +10015,10 @@ msgid "stage108-large.542"
 msgstr "And you didn't prepare anything with brains?"
 
 msgid "stage108-large.543"
-msgstr "Of courese I did! ..."
+msgstr "Of course I did! ..."
 
 msgid "stage108-large.544"
-msgstr "... My famous rare medium brains kebab a la “Francois” ..."
+msgstr "... My famous bloody brain kebab a la “Francois” ..."
 
 msgid "stage108-large.545"
 msgstr "... a cake with cerebellum and blueberries ..."
@@ -10033,13 +10033,13 @@ msgid "stage108-large.548"
 msgstr "Do you think that every brain that I cook comes with a designation of origin, monsieur?"
 
 msgid "stage108-large.549"
-msgstr "I'm just happy to even have enough for my meals!"
+msgstr "I'm happy enough if they arrive in one piece!"
 
 msgid "stage108-large.550"
 msgstr "Let's change the subject."
 
 msgid "stage108-large.551"
-msgstr "Fine by me ..."
+msgstr "Better yet ..."
 
 msgid "stage108-large.552"
 msgstr "Why don't you disappear?"
@@ -10270,7 +10270,7 @@ msgid "stage801-large.545"
 msgstr "Thank you, cousin, I'll leave you to your fishing."
 
 msgid "stage801-large.546"
-msgstr "Forget it, come back later ..."
+msgstr "Forget it, I'll come back later ..."
 
 msgid "stage801-large.547"
 msgstr "the son of"
@@ -10294,7 +10294,7 @@ msgid "stage801-large.553"
 msgstr "the brother of"
 
 msgid "stage801-large.554"
-msgstr "the brother-in-law of"
+msgstr "the father-in-law of"
 
 msgid "stage801-large.555"
 msgstr "the son-in-law of"
@@ -10366,10 +10366,10 @@ msgid "stage801-large.577"
 msgstr "the sister of"
 
 msgid "stage801-large.578"
-msgstr "the sister-in-law of"
+msgstr "the mother-in-law of"
 
 msgid "stage801-large.579"
-msgstr "the daughter in-law of"
+msgstr "the daughter-in-law of"
 
 msgid "stage801-large.580"
 msgstr "the great-grandmother of"
@@ -10381,7 +10381,7 @@ msgid "stage801-large.582"
 msgstr "the granddaughter of"
 
 msgid "stage801-large.583"
-msgstr "and"
+msgstr "and who was"
 
 msgid "stage801-large.584"
 msgstr "whose best friend was"
@@ -10414,7 +10414,7 @@ msgid "stage801-large.593"
 msgstr "whose lover tried to kill"
 
 msgid "stage801-large.594"
-msgstr "who eloped with"
+msgstr "whose secret lover ran off with"
 
 msgid "stage801-large.595"
 msgstr "No doubt you still remember"
@@ -10435,22 +10435,22 @@ msgid "stage801-large.600"
 msgstr "Do you remember"
 
 msgid "stage801-large.601"
-msgstr "Tell me"
+msgstr "Tell me the name of"
 
 msgid "stage801-large.602"
-msgstr "Say"
+msgstr "Give me the name of"
 
 msgid "stage801-large.603"
-msgstr "Therefore, you should know"
+msgstr "Therefore, you should know the name of"
 
 msgid "stage801-large.604"
-msgstr "That means you can tell me"
+msgstr "That means you can tell me the name of"
 
 msgid "stage801-large.605"
-msgstr "So you'll have no problem telling me"
+msgstr "So you'll have no problem naming"
 
 msgid "stage801-large.606"
-msgstr "Tell me then"
+msgstr "Then tell me the name of"
 
 msgid "stage801-large.607"
 msgstr "John"
@@ -10678,7 +10678,7 @@ msgid "stage802-large.505"
 msgstr "I wonder what kind of bird built such a big nest."
 
 msgid "stage802-large.506"
-msgstr "Something is moving up there. The chick could hatch any minute now."
+msgstr "Something is moving inside. The chick must be about to hatch."
 
 msgid "stage802-large.507"
 msgstr "I can't do that, you have to let nature take its course."
@@ -10693,13 +10693,13 @@ msgid "stage802-large.510"
 msgstr "Maybe this hat can give it the warmth it needs ..."
 
 msgid "stage802-large.511"
-msgstr "I'll place the helmet in the nest."
+msgstr "I'll put the egg inside the hat, in the nest ..."
 
 msgid "stage802-large.512"
 msgstr "Wow!... It didn't even take a minute."
 
 msgid "stage802-large.513"
-msgstr "Look at how cute is is."
+msgstr "Look at how cute it is."
 
 msgid "stage802-large.514"
 msgstr "I don't think this is the right kind of food to feed to a chick."
@@ -10771,10 +10771,10 @@ msgid "stage910-large.515"
 msgstr "... you know, the typical."
 
 msgid "stage910-large.516"
-msgstr "Pick Sue, boss. I'm not a journalist for parties and celebrity goosip."
+msgstr "Pick Sue, boss. I'm not a journalist for parties and celebrity gossip."
 
 msgid "stage910-large.517"
-msgstr "I don't give a damn. All I know is that you don't wanna go and that Sue is nowhere to be found."
+msgstr "I don't care who goes, but you know that if you refuse, Bergman will refuse too."
 
 msgid "stage910-large.518"
 msgstr "Hi, boss! Sorry I'm late."
@@ -10795,7 +10795,7 @@ msgid "stage910-large.523"
 msgstr "A woman can mingle much better in this kind of party ..."
 
 msgid "stage910-large.524"
-msgstr "... not to mention that Ashman hasn't once in his life been to a party that wasn't held in the back alley of a street."
+msgstr "... not to mention that Ashman has never been to a party anywhere but the bowling alley on his street."
 
 msgid "stage910-large.525"
 msgstr "On the other hand, I've attended high society parties all my life and I've learned to fit in like a fish in the water. This story is mine!"
@@ -10852,7 +10852,7 @@ msgid "stage910-large.542"
 msgstr "Sue wouldn't abandon a story for no good reason."
 
 msgid "stage910-large.543"
-msgstr "Good, I want you go to Hanover's mansion and have a look around. See what you can come up with."
+msgstr "Good, I want you to go to Hannover's mansion and have a look around. See what you can come up with."
 
 msgid "stage910-large.544"
 msgstr "I agree, boss. I'll go immediately."
@@ -10933,10 +10933,10 @@ msgid "stage911-large.509"
 msgstr "And speaking of something else, is it true that you recently got your fifth divorce?"
 
 msgid "stage911-large.510"
-msgstr "I see you took it the wrong way ..."
+msgstr "I can see you've had a hard time ..."
 
 msgid "stage911-large.511"
-msgstr "... what I mean is, you don't have to climb a skyscraper every time you got a date hoping this time it'll end well."
+msgstr "... I hope you won't have to climb any buildings to make your next marriage work."
 
 msgid "stage912-large.500"
 msgstr "Well, It may not be so bad to have an assistant, after all."
@@ -10948,7 +10948,7 @@ msgid "stage912-large.502"
 msgstr "Your imagination is running wild again, like that time ..."
 
 msgid "stage912-large.503"
-msgstr "... you thought you had a close encounter with an alien and it tuned out to be a hoax."
+msgstr "... you thought you had a story about aliens, but it turned out to be a flop."
 
 msgid "stage912-large.504"
 msgstr "Yeah, look who's talking, like you're never wrong ..."
@@ -10957,7 +10957,7 @@ msgid "stage912-large.505"
 msgstr "... then what about the time you brought this exclusive interview with the President and ..."
 
 msgid "stage912-large.506"
-msgstr "... it turned out to be a dock worker who did imitations with his voice in the local pubs? ..."
+msgstr "... it turned out to be a dockworker who imitated the President's voice at the harbor bar to entertain his friends ...?"
 
 msgid "stage912-large.507"
 msgstr "That's not what happened and you know it, what happened is ..."
@@ -11020,7 +11020,7 @@ msgid "stage913-large.518"
 msgstr "I only hope this Ashman guy won't spoil our plans. Do you have any news about him?"
 
 msgid "stage913-large.519"
-msgstr "The truth is that he's surprising closer than I thought ..."
+msgstr "The truth is, he's surprising me. He's getting closer than I thought ..."
 
 msgid "stage913-large.520"
 msgstr "... but I won't let him become a problem."
@@ -11128,7 +11128,7 @@ msgid "stage921-large.520"
 msgstr "Ha, ha, ha, ha, ha, ha, ha, ha, ha, ha, ha, ha, ha, ahhhhhh... ha, ha!"
 
 msgid "stage921-large.521"
-msgstr "Well, you had this coming!"
+msgstr "Get lost already!"
 
 msgid "stage601-small.1"
 msgstr " door"
@@ -11170,7 +11170,7 @@ msgid "stage601-large.505"
 msgstr "All right, all right, I'm leaving already ..."
 
 msgid "stage601-large.506"
-msgstr "Gone like the wind!"
+msgstr "What an attitude!"
 
 msgid "stage601-large.507"
 msgstr "Here again?"
@@ -11182,7 +11182,7 @@ msgid "stage601-large.509"
 msgstr "Get out!"
 
 msgid "stage601-large.510"
-msgstr "And again!"
+msgstr "And don't come back!"
 
 msgid "stage601-large.511"
 msgstr "Who the hell does he think he is?"
@@ -11251,7 +11251,7 @@ msgid "stage602-small.2"
 msgstr " outside"
 
 msgid "stage602-small.3"
-msgstr " archives"
+msgstr " filing cabinet"
 
 msgid "stage602-small.4"
 msgstr " coffee machine"
@@ -11269,7 +11269,7 @@ msgid "stage602-small.8"
 msgstr " handbag"
 
 msgid "stage602-small.9"
-msgstr " agenda"
+msgstr " phone book"
 
 msgid "stage602-small.10"
 msgstr " telephone"
@@ -11287,7 +11287,7 @@ msgid "stage602-large.502"
 msgstr "It's locked."
 
 msgid "stage602-large.503"
-msgstr "It's one of those common file archives you usually find in offices."
+msgstr "It's one of those standard office filing cabinets."
 
 msgid "stage602-large.504"
 msgstr "I don't think it contains anything interesting."
@@ -11353,7 +11353,7 @@ msgid "stage602-large.524"
 msgstr "I wanted one so much. It's an absolutely wonderful handbag."
 
 msgid "stage602-large.525"
-msgstr "She must be the secretary."
+msgstr "It must belong to the secretary."
 
 msgid "stage602-large.526"
 msgstr "It must belong to Taffy."
@@ -11380,7 +11380,7 @@ msgid "stage602-large.533"
 msgstr "Nice, thank you very much!"
 
 msgid "stage602-large.534"
-msgstr "Poor thing must me hungry. I'll go find some milk for him."
+msgstr "Poor thing must be hungry. I'll go find some milk for him."
 
 msgid "stage602-large.535"
 msgstr "That girl has a big heart. As big as her chest probably!"
@@ -11389,7 +11389,7 @@ msgid "stage602-large.536"
 msgstr "No, I prefer mine."
 
 msgid "stage602-large.537"
-msgstr "It's a typical office agenda."
+msgstr "It's a typical office phone book."
 
 msgid "stage602-large.538"
 msgstr "Let's see ..."
@@ -11443,7 +11443,7 @@ msgid "stage602-large.554"
 msgstr "... He's not taking any chances. He wants a big star to ensure the box office success ..."
 
 msgid "stage602-large.555"
-msgstr "Yes, Mr. Hannover has already informed me that all the artsy stuff are under your jurisdiction, but ..."
+msgstr "Mr. Hannover already warned me you'd bring up cinema as an art form, but ..."
 
 msgid "stage602-large.556"
 msgstr "... his decision on this is irrevocable. Sorry, Mr. Ford."
@@ -11605,7 +11605,7 @@ msgid "stage603-large.511"
 msgstr "It wouldn't hurt to learn how to play golf ..."
 
 msgid "stage603-large.512"
-msgstr "... I could play on Saturdays with Kelling and that idiot Howard Dole."
+msgstr "... I could play golf with Kelling on Saturdays, like that suck-up Howard Dole does."
 
 msgid "stage603-large.513"
 msgstr "It's like the one in Taffy's office."
@@ -11707,7 +11707,7 @@ msgid "stage603-large.545"
 msgstr "Good, I can't deny that I make a lot, but it's not like it used to be ..."
 
 msgid "stage603-large.546"
-msgstr "... The movie budgets are becoming more and astronomical and as for the salaries of the actors, don't even ask about it! They're eating all our profits."
+msgstr "... The movie budgets are becoming more and more astronomical and as for the salaries of the actors, don't even ask about it! They're eating all our profits."
 
 msgid "stage603-large.547"
 msgstr "At this rate I don't know how long I can keep M.K.O. above water ..."
@@ -11752,7 +11752,7 @@ msgid "stage603-large.560"
 msgstr "Tell me about the Werewolf who won the Actor of the Year Award ..."
 
 msgid "stage603-large.561"
-msgstr "The Werewolf? He's undoubtetly our biggest star at the moment, the Alpha male ..."
+msgstr "The Werewolf? He's undoubtedly our biggest star at the moment, the Alpha male ..."
 
 msgid "stage603-large.562"
 msgstr "... He earned this award with his merit. All his films have been huge box office successes ..."
@@ -11908,7 +11908,7 @@ msgid "stage604-large.510"
 msgstr "It's impossible to remove it."
 
 msgid "stage604-large.511"
-msgstr "Too heavy."
+msgstr "It's quite thick."
 
 msgid "stage604-large.512"
 msgstr "I don't think I can even bend it with my hands."
@@ -11998,7 +11998,7 @@ msgid "stage605-large.518"
 msgstr "Thank you."
 
 msgid "stage605-large.519"
-msgstr "No thanks are necessary."
+msgstr "I don't think that's necessary anymore."
 
 msgid "stage605-large.520"
 msgstr "Here, pal. I have the pass here to enter the museum."
@@ -12037,7 +12037,7 @@ msgid "stage605-large.531"
 msgstr "Mr. Hannover hasn't informed me of anybody coming in today ..."
 
 msgid "stage605-large.532"
-msgstr "... so if you want to go in you'll have to bring me a wrtitten permission by Mr. Hannover himself."
+msgstr "... so if you want to go in you'll have to bring me written permission from Mr. Hannover himself."
 
 msgid "stage605-large.533"
 msgstr "Never mind. I'll come back later."
@@ -12151,7 +12151,7 @@ msgid "stage607-large.509"
 msgstr "Ron, what the hell are you doing?"
 
 msgid "stage607-large.510"
-msgstr "I wonder how long it will take you."
+msgstr "I wonder how long it'll be before they come to skin me."
 
 msgid "stage607-large.511"
 msgstr "Do you think you can get me out sometime THIS century?"
@@ -12208,7 +12208,7 @@ msgid "stage607-large.528"
 msgstr "I've been locked up for hours in this dump."
 
 msgid "stage607-large.529"
-msgstr "... What the hell have you been doing all this time?"
+msgstr "My hair's a mess, I'm hungry, my dress is wrinkled ... What the hell have you been doing all this time?"
 
 msgid "stage607-large.530"
 msgstr "Tell me how it happened."
@@ -12331,7 +12331,7 @@ msgid "stage609-small.3"
 msgstr " metal ring"
 
 msgid "stage609-small.4"
-msgstr " pulley"
+msgstr " rotating arm"
 
 msgid "stage609-small.5"
 msgstr " hook"
@@ -12364,10 +12364,10 @@ msgid "stage609-large.504"
 msgstr "Impossible. If I move a muscle now, Hannover will kill me."
 
 msgid "stage609-large.505"
-msgstr "If I remember correctly, this kind of mechanism is very strong."
+msgstr "If I'm not mistaken, it keeps the mechanism steady."
 
 msgid "stage609-large.506"
-msgstr "It controls the rope which is connected to the mechanism."
+msgstr "The rope linking the whole mechanism runs through it."
 
 msgid "stage609-large.507"
 msgstr "It seems its purpose is to move them above the pool of wax and then drop them inside."
@@ -12391,7 +12391,7 @@ msgid "stage609-large.513"
 msgstr "No point even thinking that this lunatic will listen to reason."
 
 msgid "stage609-large.514"
-msgstr "I've never seen anyone more upset ..."
+msgstr "I've never seen a more deranged man ..."
 
 msgid "stage609-large.515"
 msgstr "... or more ugly!"
@@ -12511,7 +12511,7 @@ msgid "stage609-large.553"
 msgstr "Stop! At the slightest movement I'll fill you with holes like Emmental cheese."
 
 msgid "stage609-large.554"
-msgstr "Keep an eye on her Hannover ..."
+msgstr "Keep an eye on him, Hannover ..."
 
 msgid "stage609-large.555"
 msgstr "... First, I'll take care of the girl. It's not polite to keep a lady waiting, ha ha ha!"
@@ -12697,7 +12697,7 @@ msgid "stage610-large.525"
 msgstr "I'm almost finished putting makeup on Dr. Karloff's wax figures ..."
 
 msgid "stage610-large.526"
-msgstr "... They seem so real I could swear I saw them move out of the corner of my eye."
+msgstr "... they're so lifelike they look as though they could move at any moment."
 
 msgid "stage610-large.527"
 msgstr "Hey Charlie."
@@ -12865,10 +12865,10 @@ msgid "stage701-large.510"
 msgstr "I hope Frankenstein is still there."
 
 msgid "stage701-large.511"
-msgstr "Gee! That a man is unbearable!"
+msgstr "Gee! That man is unbearable!"
 
 msgid "stage701-large.512"
-msgstr "I don't know why, but the doghouse is empty."
+msgstr "What for? The doghouse is empty."
 
 msgid "stage701-large.513"
 msgstr "Here, nice doggy!"
@@ -12913,7 +12913,7 @@ msgid "stage701-large.526"
 msgstr "Look, Junior, do you like flowers?"
 
 msgid "stage701-large.527"
-msgstr "Well okay."
+msgstr "He certainly likes them!"
 
 msgid "stage701-large.528"
 msgstr "Good evening ..."
@@ -12970,7 +12970,7 @@ msgid "stage701-large.545"
 msgstr "What a pity!"
 
 msgid "stage701-large.546"
-msgstr "I'm sure you'd have enjoyed my company."
+msgstr "I'm sure I'd have enjoyed your company."
 
 msgid "stage701-large.547"
 msgstr "I got out to get some air, but it's chilly actually so I decided to return to the party."
@@ -13033,7 +13033,7 @@ msgid "stage701-large.566"
 msgstr "... so we have time."
 
 msgid "stage701-large.567"
-msgstr "Wow! Taffy is fast!"
+msgstr "Oh! Taffy is ready."
 
 msgid "stage701-large.568"
 msgstr "Excuse me Miss Bergman, I have an urgent matter to attend to."
@@ -13075,10 +13075,10 @@ msgid "stage702-large.509"
 msgstr "You know, recently I was taking a walk in the garden when I heard voices coming from behind a bush ..."
 
 msgid "stage702-large.510"
-msgstr "... I crept closer and overheard what they were saying. I almost froze ..."
+msgstr "... what they were saying terrified me ..."
 
 msgid "stage702-large.511"
-msgstr "... then I approached carefully and what really scared me to death was to realize that one of them was ..."
+msgstr "... I moved closer and was even more frightened when I saw that it was ..."
 
 msgid "stage703-small.1"
 msgstr " door"
@@ -13138,7 +13138,7 @@ msgid "stage703-large.512"
 msgstr "Clean. It hasn't been used."
 
 msgid "stage703-large.513"
-msgstr "This punch is not so great."
+msgstr "That punch looks pretty good."
 
 msgid "stage703-large.514"
 msgstr "I don't like to drink when I'm working."
@@ -13201,7 +13201,7 @@ msgid "stage704-large.506"
 msgstr "I can't believe it!"
 
 msgid "stage704-large.507"
-msgstr "If anyone finds about it, I'll be the laughing stock of the office."
+msgstr "If anyone finds out about it, I'll be the laughing stock of the office."
 
 msgid "stage704-large.508"
 msgstr "Please give me a pen and paper... Quick!"
@@ -13240,7 +13240,7 @@ msgid "stage704-large.519"
 msgstr "You're looking for a bandaged man with sunglasses and a raincoat."
 
 msgid "stage704-large.520"
-msgstr "I'm getting right to it, boss."
+msgstr "You should have said so in the first place, boss."
 
 msgid "stage704-large.521"
 msgstr "I'm surrounded by incompetents."
@@ -13279,7 +13279,7 @@ msgid "stage704-large.532"
 msgstr "I'll just take the first page ..."
 
 msgid "stage704-large.533"
-msgstr "I don't think he've seen me. I'd better get out of here."
+msgstr "I don't think he's seen me. I'd better get out of here."
 
 msgid "stage704-large.534"
 msgstr "No, I prefer my own agenda."
@@ -13306,7 +13306,7 @@ msgid "stage704-large.541"
 msgstr "You're not listed on the guest list!"
 
 msgid "stage704-large.542"
-msgstr "Don't insist, I can't let you go!"
+msgstr "Don't insist, I can't let you in!"
 
 msgid "stage704-large.543"
 msgstr "No."
@@ -13417,7 +13417,7 @@ msgid "stage705-large.508"
 msgstr "That title sounds familiar."
 
 msgid "stage705-large.509"
-msgstr "It's full of party hats."
+msgstr "It's full of party horns."
 
 msgid "stage705-large.510"
 msgstr "I think something is moving back there."
@@ -13426,10 +13426,10 @@ msgid "stage705-large.511"
 msgstr "I love mambo!"
 
 msgid "stage705-large.512"
-msgstr "Charlie, put another!"
+msgstr "Charlie, put another record on!"
 
 msgid "stage705-large.513"
-msgstr "I'm listening!"
+msgstr "You got it!"
 
 msgid "stage705-large.514"
 msgstr "Excuse me, I have something urgent to do."
@@ -13615,7 +13615,7 @@ msgid "stage706-large.536"
 msgstr "I'm working for Mr. Hannover."
 
 msgid "stage706-large.537"
-msgstr "It's a good job: simple, well-paid and I see lots of action."
+msgstr "It's a good job: creative, well-paid and full of action."
 
 msgid "stage706-large.538"
 msgstr "I have to leave Bruno, see you later."
@@ -13660,7 +13660,7 @@ msgid "stage707-large.501"
 msgstr "Nothing more romantic than a fireplace."
 
 msgid "stage707-large.502"
-msgstr "I think he did well to put out the fire."
+msgstr "I was right to put out the fire."
 
 msgid "stage707-large.503"
 msgstr "It's an antique, so it's been used mainly for decorative purposes."
@@ -13720,7 +13720,7 @@ msgid "stage707-large.521"
 msgstr "Wow! I wonder what exactly did it do ...?"
 
 msgid "stage707-large.522"
-msgstr "I'll try not to get dirty."
+msgstr "I'll take some, being careful not to get dirty."
 
 msgid "stage707-large.523"
 msgstr "I have enough."
@@ -13744,7 +13744,7 @@ msgid "stage707-large.529"
 msgstr "I don't know if I have enough water to extinguish the fire ..."
 
 msgid "stage707-large.530"
-msgstr "Burnt out."
+msgstr "It's out."
 
 msgid "stage707-large.531"
 msgstr "I don't want to burn the flowers."
@@ -13807,7 +13807,7 @@ msgid "stage708-large.507"
 msgstr "... I can't stand working in an office."
 
 msgid "stage708-large.508"
-msgstr "I don't know what to do with it."
+msgstr "I wonder what it's doing here."
 
 msgid "stage708-large.509"
 msgstr "It's empty."
@@ -13951,10 +13951,10 @@ msgid "stage710-large.502"
 msgstr "Don't just stand there looking like an idiot ..."
 
 msgid "stage710-large.503"
-msgstr "... try to find a way to get to me out of here."
+msgstr "... try to find a way to get me out of here."
 
 msgid "stage710-large.504"
-msgstr "I don't know if I can use it for anyting, but ..."
+msgstr "I don't know if I can use it for anything, but ..."
 
 msgid "stage710-large.505"
 msgstr "It's from an old movie, “Birmingham”."
@@ -13969,7 +13969,7 @@ msgid "stage710-large.508"
 msgstr "Better leave it where it is."
 
 msgid "stage710-large.509"
-msgstr "It's one of those metal plates that cover access holes in the walls."
+msgstr "I think it's one of those plates that cover access to the electrical wiring."
 
 msgid "stage710-large.510"
 msgstr "It's covering the rathole."
@@ -13987,7 +13987,7 @@ msgid "stage710-large.514"
 msgstr "It's quite high and looks very sturdy."
 
 msgid "stage710-large.515"
-msgstr "It doesn't lead anywhere."
+msgstr "It doesn't lead anywhere in its current position."
 
 msgid "stage710-large.516"
 msgstr "It's used for calling that idiot guard, Jerry."
@@ -14038,7 +14038,7 @@ msgid "stage710-large.531"
 msgstr "... but they're tangled with each other."
 
 msgid "stage710-large.532"
-msgstr "The rat got out for a little stroll."
+msgstr "No more little strolls for that rat."
 
 msgid "stage710-large.533"
 msgstr "I'd better wait until the rat comes out."
@@ -14068,7 +14068,7 @@ msgid "stage710-large.541"
 msgstr "I can't, the lock is on the outside."
 
 msgid "stage710-large.542"
-msgstr "I'm going to do it, if it helps me get out of here sooner than later."
+msgstr "I'll end up doing it if he doesn't help me get out of here soon."
 
 msgid "stage710-large.543"
 msgstr "I know you always act like a child, but really... now isn't the time to play games."
@@ -14095,10 +14095,10 @@ msgid "stage710-large.550"
 msgstr "You haven't done anything useful either."
 
 msgid "stage710-large.551"
-msgstr "Sue, you won't be able to fool even the most naive man in the wolrd."
+msgstr "Sue, you won't be able to fool even the most naive man in the world."
 
 msgid "stage710-large.552"
-msgstr "Are you refering to yourself, my dear?"
+msgstr "Are you referring to yourself, my dear?"
 
 msgid "stage710-large.553"
 msgstr "Hey, Sue. I see they gave you the luxury suite again, eh? He, he, he ..."
@@ -14182,7 +14182,7 @@ msgid "stage710-large.579"
 msgstr "I'm sorry, Mr. Hannover will skin me alive if I do."
 
 msgid "stage710-large.580"
-msgstr "I need to paint my toenails, but I can't reach them."
+msgstr "I need you to paint my toenails. I can't reach them."
 
 msgid "stage710-large.581"
 msgstr "Paint your toenails???"
@@ -14224,7 +14224,7 @@ msgid "stage710-large.593"
 msgstr "Well, that'd be nice."
 
 msgid "stage710-large.594"
-msgstr "But I don't think that I owe it to you."
+msgstr "But I don't think I should."
 
 msgid "stage710-large.595"
 msgstr "Ron ..."
@@ -14245,7 +14245,7 @@ msgid "stage710-large.600"
 msgstr "No ..."
 
 msgid "stage710-large.601"
-msgstr "... if only you had a way to make the guard leave his post ..."
+msgstr "... if only I could find a way to get it off the guard upstairs ..."
 
 msgid "stage710-large.602"
 msgstr "Perhaps you should ask for help."
@@ -14260,7 +14260,7 @@ msgid "stage710-large.605"
 msgstr "I can't think of anything. How about you?"
 
 msgid "stage710-large.606"
-msgstr "Nothing much."
+msgstr "Yes, that would be best."
 
 msgid "stage710-large.607"
 msgstr "This guard is so stubborn and stupid! Exactly like you actually!"
