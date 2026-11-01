@@ -29,6 +29,10 @@
 
 #include "engines/nancy/state/scene.h"
 
+#ifdef ENABLE_NANCY_V4
+#include "engines/nancy/script/api.h"
+#endif
+
 #include "engines/nancy/ui/ndui/manager.h"
 #include "engines/nancy/ui/ndui/panel.h"
 #include "engines/nancy/ui/ndui/button.h"
@@ -498,7 +502,12 @@ void Manager::onTasklistAction(const Action &action) {
 	}
 
 	int16 flag = _tasklistFlags.getValOrDefault(action.sender, kEvNoEvent);
-	if (flag != kEvNoEvent && NancySceneState.getEventFlag(flag, g_nancy->_false)) {
+	bool isDone = flag == kEvNoEvent || !NancySceneState.getEventFlag(flag, g_nancy->_false);
+#ifdef ENABLE_NANCY_V4
+	isDone = isDone && Script::isTaskComplete(action.sender);
+#endif
+
+	if (!isDone) {
 		takeAction(kActionSetValue, action.sender, 0.0);
 	} else {
 		TasklistData *tasklistData = (TasklistData *)NancySceneState.getPuzzleData(TasklistData::getTag());

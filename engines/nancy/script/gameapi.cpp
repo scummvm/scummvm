@@ -1737,11 +1737,86 @@ static int playerAddJournalEntry(lua_State *L) {
 	return 0;
 }
 
-// Player:AddTask(text, flag[, character]): the task can be checked off once the flag is set
+// Nancy24 tells whether a task is done with a completion function of the
+// scripts, in place of a flag. The functions belong to the Lua state of the
+// scene that gave them, which is the scene of the task list stream, and are
+// dropped when that scene goes away.
+struct TaskCompletion {
+	SceneContext *context;
+	uint character;
+	Common::String text;
+	int ref;
+};
+
+static Common::Array<TaskCompletion> s_taskCompletions;
+
+static void setTaskCompletion(lua_State *L, int index, uint character, const Common::String &text) {
+	SceneContext *context = LuaState::getContext(L);
+	if (!context) {
+		return;
+	}
+
+	for (uint i = 0; i < s_taskCompletions.size(); ++i) {
+		const TaskCompletion &completion = s_taskCompletions[i];
+		if (completion.character == character && completion.text.equalsIgnoreCase(text)) {
+			luaL_unref(completion.context->getLua(), LUA_REGISTRYINDEX, completion.ref);
+			s_taskCompletions.remove_at(i);
+			break;
+		}
+	}
+
+	TaskCompletion completion;
+	completion.context = context;
+	completion.character = character;
+	completion.text = text;
+	lua_pushvalue(L, index);
+	completion.ref = luaL_ref(L, LUA_REGISTRYINDEX);
+	s_taskCompletions.push_back(completion);
+}
+
+bool isTaskComplete(const Common::String &text) {
+	const uint character = g_nancy->getPlayerCharacter();
+	for (const TaskCompletion &completion : s_taskCompletions) {
+		if (completion.character != character || !completion.text.equalsIgnoreCase(text)) {
+			continue;
+		}
+
+		lua_State *L = completion.context->getLua();
+		lua_rawgeti(L, LUA_REGISTRYINDEX, completion.ref);
+		if (!LuaState::call(L, 0, 1, "Error in the completion function of a task")) {
+			return false;
+		}
+
+		const bool isComplete = lua_toboolean(L, -1) != 0;
+		lua_pop(L, 1);
+		return isComplete;
+	}
+
+	return true;
+}
+
+void forgetTaskCompletions(SceneContext *context) {
+	for (uint i = 0; i < s_taskCompletions.size();) {
+		if (s_taskCompletions[i].context == context) {
+			s_taskCompletions.remove_at(i);
+		} else {
+			++i;
+		}
+	}
+}
+
+// Player:AddTask(text, flag[, character]): the task can be checked off once the
+// flag is set. Nancy24 gives a function that says whether it is done instead.
 static int playerAddTask(lua_State *L) {
 	const Common::String text = luaL_checkstring(L, 2);
-	const Common::String flagName = luaL_checkstring(L, 3);
 	const uint character = checkCharacter(L, 4);
+
+	Common::String flagName;
+	if (lua_isfunction(L, 3)) {
+		setTaskCompletion(L, 3, character, text);
+	} else {
+		flagName = luaL_checkstring(L, 3);
+	}
 
 	ScriptJournalData *data = getJournalData(character);
 	if (!data) {
@@ -1781,6 +1856,42 @@ static int playerLoadTaskFlag(lua_State *L) {
 	for (ScriptJournalData::Task &task : data->tasks[character]) {
 		if (task.text.equalsIgnoreCase(text) && task.flagName.empty()) {
 			task.flagName = flagName;
+		}
+	}
+
+	return 0;
+}
+
+// Player:LoadTaskCompletion(text, function[, character]), Nancy24: gives a task
+// the function that says whether it is done, as the task list does once it
+// gets loaded. A task that was checked off but isn't done anymore gets unchecked.
+static int playerLoadTaskCompletion(lua_State *L) {
+	const Common::String text = luaL_checkstring(L, 2);
+	if (!lua_isfunction(L, 3)) {
+		return luaL_argerror(L, 3, "Completion argument must be a function");
+	}
+
+	lua_settop(L, 3);
+	const uint character = checkCharacter(L, 4);
+	setTaskCompletion(L, 3, character, text);
+
+	TasklistData *tasklistData = (TasklistData *)NancySceneState.getPuzzleData(TasklistData::getTag());
+	if (!tasklistData || character != g_nancy->getPlayerCharacter()) {
+		return 0;
+	}
+
+	for (uint i = 0; i < tasklistData->checkedEntries.size(); ++i) {
+		if (tasklistData->checkedEntries[i].equalsIgnoreCase(text)) {
+			if (!isTaskComplete(text)) {
+				tasklistData->checkedEntries.remove_at(i);
+
+				UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+				if (ui) {
+					ui->takeAction(UI::NDUI::kActionSetValue, text, 0.0);
+				}
+			}
+
+			break;
 		}
 	}
 
@@ -1906,6 +2017,7 @@ static const luaL_Reg kPlayerFunctions[] = {
 	{ "AddJournalEntry", playerAddJournalEntry },
 	{ "AddTask", playerAddTask },
 	{ "LoadTaskFlag", playerLoadTaskFlag },
+	{ "LoadTaskCompletion", playerLoadTaskCompletion },
 	{ nullptr, nullptr }
 };
 

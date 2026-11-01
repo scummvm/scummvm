@@ -29,6 +29,7 @@
 #include "engines/nancy/resource/resource.h"
 #include "engines/nancy/util.h"
 
+#include "engines/nancy/script/api.h"
 #include "engines/nancy/script/convo.h"
 #include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
@@ -74,6 +75,8 @@ SceneContext::~SceneContext() {
 	for (ConvoResponse *response : _convoResponses) {
 		delete response;
 	}
+
+	forgetTaskCompletions(this);
 
 	for (GraphNode *node : _graphNodes) {
 		delete node;
