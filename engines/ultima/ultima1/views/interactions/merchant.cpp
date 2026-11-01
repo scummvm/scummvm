@@ -430,7 +430,7 @@ void Merchant::chooseBuy() {
 			_transportIds[2] = Data::TRANSPORT_RAFT;
 			_transportIds[3] = Data::TRANSPORT_FRIGATE;
 		}
-		if (_G(moveCtr) > 3000) {
+		if (_G(savegame)._moveCount > 3000) {
 			if (_G(map)._grassCount && !fleetFull)
 				_transportIds[4] = Data::TRANSPORT_AIRCAR;
 			if (sg._transports[Data::TRANSPORT_SHUTTLE] == 0)
@@ -512,7 +512,7 @@ void Merchant::chooseSell() {
 }
 
 void Merchant::drawArmoryBuy() {
-	int maxIdx = (_G(moveCtr) > 3000) ? 5 : 3;
+	int maxIdx = (_G(savegame)._moveCount > 3000) ? 5 : 3;
 	for (int idx = 1; idx <= maxIdx; ++idx) {
 		int price = ((200 - _G(savegame)._intelligence) / 4) * idx;
 		drawShopLine(listY() + idx, 9, 26, idx, Data::ARMOR_NAMES[idx], price, 3);
@@ -520,7 +520,7 @@ void Merchant::drawArmoryBuy() {
 }
 
 void Merchant::armoryBuyKeypress(Common::KeyCode keycode) {
-	int maxIdx = (_G(moveCtr) > 3000) ? 5 : 3;
+	int maxIdx = (_G(savegame)._moveCount > 3000) ? 5 : 3;
 	int idx = keycode - Common::KEYCODE_a;
 
 	if (idx < 1 || idx > maxIdx) {
@@ -579,9 +579,9 @@ void Merchant::weaponsRange(int &minIdx, int &maxIdx) const {
 
 	// The stock widens as the game goes on: one more weapon offered per 1500
 	// moves, up to a cap of 3 extra tiers (then a 4th once past 3000 moves).
-	// The original takes moveCtr % 0x7FFF before the /1500, but with the
+	// The original takes the savegame _moveCount % 0x7FFF before the /1500, but with the
 	// > 3000 branch forcing tier 3 that modulo never changes the result
-	uint32 moveCtr = _G(moveCtr);
+	uint32 moveCtr = _G(savegame)._moveCount;
 	int tier = (moveCtr <= 3000) ? MIN<uint32>((moveCtr % 0x7FFF) / 1500, 3) : 3;
 
 	minIdx = base;

@@ -105,9 +105,6 @@ bool Ultima1Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
-	if (s.isSaving())
-		_G(savegame)._moveCount = _moveCtr;
-
 	_savegame.synchronize(s);
 
 	if (s.isLoading()) {

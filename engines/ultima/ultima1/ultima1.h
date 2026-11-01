@@ -90,7 +90,6 @@ public:
 	Data::Savegame _savegame;
 	Common::SharedPtr<Logic::Logic> _logic;
 	int _creaturesCount = 0;
-	uint32 _moveCtr = 0;
 	int _transportFoodCtr = 0;
 	// The flight speed set while in the cockpit view (the overhead vs
 	// cockpit distinction is carried by which SpaceLogic subclass is active)

@@ -132,7 +132,7 @@ int Logic::getRandomNumber(int maxNumber) {
 }
 
 void Logic::endOfTurn() {
-	_G(moveCtr)++;
+	_G(savegame)._moveCount++;
 	updateCreatures();
 
 	redrawMap();
