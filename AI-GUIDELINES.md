@@ -44,23 +44,24 @@ is responsible for:
 
 ## Submitting Whole Engines
 
-We, as a project mostly interested in game preservation and portability. Thus, an engine supporting
-particular game or games, is not adding value by itself.
+We, as a project are mostly interested in game preservation and portability. Thus, an engine supporting 
+a particular game or games, is not adding value by itself.
 
-The expectation, is that when you submit an engine, then:
+The expectation is that when you submit an engine:
 
-- You join the ScummVM Team and become this engine primary maintainer
-- Meaning, you do understand the engine internals well
-- Meaning, when a bugreport is submitted, you *know* which parts of the engine are involved and can work on fixing
-- Meaning, that in general, you would be able to work with the engine even without AI
+- You join the ScummVM Team and become this engine's primary maintainer
+- As the primary maintainer:
+  - You have a deep understanding of the engine internals
+  - Are able to navigate and maintain the engine without AI assistance
+  - Are committed to monitoring, engaging with and fixing bug reports filed against the engine
 
-In essence, if you used AI in your engine development, you used it as a tool to speed up things, not to replace your reasoning and thinking.
+In essence, if you used AI in your engine development you used it as a tool to amplify your own abilities as a developer, not to replace your reasoning and thinking.
 
-Engines, fully reversed by swarm of agents are of no value to us. Save your tokens and run the game in DosBox, Wine, or some kind of an emulator or a VM.
+Engines fully reversed by a swarm of agents are of no value to us. Save your tokens and run the game in DOSBox, Wine, or some kind of an emulator or a VM.
 
 ## Attribution
 
-When AI tools contribute to the project’s development, we require disclosure. In the past, we required attirbution in
+When AI tools contribute to the project’s development, we require disclosure. In the past, we required attribution in
 the commit log messages, but we dropped this as a hard requirement.
 
 ## AI and Art
