@@ -138,7 +138,7 @@ public:
 	// behavior. The native graphics wait advances animation at least once; every continuing managed back edge
 	// services the installed room callback through the sole 60 Hz frame owner. Host closure is the managed
 	// non-returning handover.
-	MovementResult moveCompanionActorDirectly(int16 targetX, int16 targetY,
+	MovementResult moveScoobyActorDirectly(int16 targetX, int16 targetY,
 											  int16 movementScale,
 											  int16 animationBias, bool resetMovementPointIndex);
 

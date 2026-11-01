@@ -52,7 +52,7 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 			int16 temporaryPositionIndex = static_cast<int16>(commandFlags >> 14);
 			previousPositionIndex = _state.actorPositionIndices[0];
 			_state.actorPositionIndices[0] = temporaryPositionIndex;
-			if (!playLeadActorPositionTransition(previousPositionIndex, temporaryPositionIndex)) {
+			if (!playShaggyActorPositionTransition(previousPositionIndex, temporaryPositionIndex)) {
 				return;
 			}
 		}
@@ -89,7 +89,7 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 		if ((commandFlags & 0x2000) != 0) {
 			int16 temporaryPositionIndex = _state.actorPositionIndices[0];
 			_state.actorPositionIndices[0] = previousPositionIndex;
-			if (!playLeadActorPositionTransition(temporaryPositionIndex, previousPositionIndex)) {
+			if (!playShaggyActorPositionTransition(temporaryPositionIndex, previousPositionIndex)) {
 				return;
 			}
 		}
@@ -106,7 +106,7 @@ void RoomScriptCommand10Executor::generateDialogueMaskTiles(uint8 nonzeroPalette
 	_scene.loadTilesAt(makeSpan(packedTiles), firstTileIndex);
 }
 
-bool RoomScriptCommand10Executor::playLeadActorPositionTransition(int16 previousPositionIndex,
+bool RoomScriptCommand10Executor::playShaggyActorPositionTransition(int16 previousPositionIndex,
 																  int16 nextPositionIndex) {
 	_state.actorAnimationOffsets[0] =
 		resolveLeadPositionTransition(previousPositionIndex, nextPositionIndex);

@@ -105,7 +105,7 @@ private:
 		int16 y;
 	};
 
-	void updateLeadActorPath();
+	void updateShaggyActorPath();
 	bool updateInterfaceTransitionAndCursor();
 	void advanceRoomInterfaceTransition();
 	void publishLowerInterfaceCells(int sourceOffset);

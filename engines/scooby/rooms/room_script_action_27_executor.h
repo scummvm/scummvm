@@ -59,7 +59,7 @@ public:
 	void executeRoomScriptAction27();
 
 private:
-	static const int kCompanionActorSlot = 2;
+	static const int kPathActorSlot = 2;
 	static const int kMovingActorSlot = 3;
 	static const int kPairedActorSlot = 4;
 	static const int16 kMaximumX = 0x0094;

@@ -313,22 +313,22 @@ public:
 	// The signed lead-actor horizontal movement step from Ghidra g_nLeadActorHorizontalMovementStep at
 	// 0xFF062E–0xFF062F. Work RAM starts at zero; scripted movement installs this signed 8.8 multiplier, while
 	// direct movement and collision adjustment can replace or clear it.
-	int16 leadActorHorizontalMovementStep{};
+	int16 shaggyActorHorizontalMovementStep{};
 
 	// The signed lead-actor vertical movement step from Ghidra g_nLeadActorVerticalMovementStep at
 	// 0xFF0630–0xFF0631. Work RAM starts at zero; scripted movement installs this signed 8.8 multiplier, while
 	// direct movement and collision adjustment can replace or clear it.
-	int16 leadActorVerticalMovementStep{};
+	int16 shaggyActorVerticalMovementStep{};
 
 	// The signed companion horizontal movement step from Ghidra g_nCompanionActorHorizontalMovementStep at
 	// 0xFF063A–0xFF063B. Work RAM starts at zero; companion movement installs this signed 8.8 multiplier and
 	// the room updater clears it at the signed target boundary.
-	int16 companionActorHorizontalMovementStep{};
+	int16 scoobyActorHorizontalMovementStep{};
 
 	// The signed companion vertical movement step from Ghidra g_nCompanionActorVerticalMovementStep at
 	// 0xFF063C–0xFF063D. Work RAM starts at zero; companion movement installs this signed 8.8 multiplier and
 	// the room updater clears it at the signed target boundary.
-	int16 companionActorVerticalMovementStep{};
+	int16 scoobyActorVerticalMovementStep{};
 
 	// The six-slot path-traversal mask from Ghidra g_bActorPathActiveFlags at 0xFF0AC0. Ghidra has no image-
 	// backed byte for this Work RAM location; InitializeRoomActors clears the complete mask before script
@@ -438,7 +438,7 @@ public:
 	// g_bLeadActorDirectionalAnimationLatchFlags at 0xFF0ACC. Work RAM has no image-backed value;
 	// InitializeRoomActors clears the byte before UpdateRoomActorsAndInterface uses bits zero through three to
 	// avoid restarting a transition animation while its direction remains active.
-	uint8 leadActorDirectionalAnimationLatchFlags{};
+	uint8 shaggyActorDirectionalAnimationLatchFlags{};
 
 	// The automatic-interaction gates from Ghidra g_bAutomaticInteractionFlags at 0xFF0AC9. No image-backed
 	// value is consumed; runtime reset clears every gate. Room-script action 0x01 sets bit zero without
@@ -712,7 +712,7 @@ public:
 
 	// The lead actor's signed queued movement-point index from Ghidra g_nLeadActorMovementPointIndex at
 	// 0xFF065A. No image-backed value is consumed; runtime reset writes -1 for no queued point.
-	int16 leadActorMovementPointIndex{};
+	int16 shaggyActorMovementPointIndex{};
 
 	// The two queued lead-actor points represented by Ghidra g_awLeadActorMovementTargetXCoordinates,
 	// g_awLeadActorMovementTargetYCoordinates, g_awLeadActorMovementHorizontalSteps,
@@ -720,7 +720,7 @@ public:
 	// RAM starts with zero records; MoveLeadActorToRoomPosition writes the coordinates, signed 8.8
 	// multipliers, and destination positions before the room updater consumes them in descending
 	// LeadActorMovementPointIndex order.
-	Common::Array<ActorMovementPoint> leadActorMovementPoints = Common::Array<ActorMovementPoint>(2);
+	Common::Array<ActorMovementPoint> shaggyActorMovementPoints = Common::Array<ActorMovementPoint>(2);
 
 	// The left action-prompt countdown from Ghidra g_sbLeftActionPromptCountdown at 0xFF0AB1. No image-backed
 	// value is consumed; runtime reset writes zero. Prompt queuing waits for a negative value before writing
@@ -807,7 +807,7 @@ public:
 	// Work RAM has no image-backed value; InitializeRoomActors writes 300. The room updater decrements it
 	// while actor zero is stationary, resets it on movement paths, and requests animation offset 0x20 plus the
 	// signed room-position index after it becomes negative.
-	int16 leadActorIdleAnimationTimer{};
+	int16 shaggyActorIdleAnimationTimer{};
 
 	// The command replayed after the sound-test menu from Ghidra g_lResumeAudioCommand at 0xFF06A6. No image-
 	// backed value is consumed; RunStartupSequence writes 0x2F before the first menu, and LoadRoomObjectTable
@@ -816,7 +816,7 @@ public:
 
 	// The companion actor's signed queued movement-point index from Ghidra g_nCompanionActorMovementPointIndex
 	// at 0xFF0670. No image-backed value is consumed; runtime reset writes -1 for no queued point.
-	int16 companionActorMovementPointIndex{};
+	int16 scoobyActorMovementPointIndex{};
 
 	// The two queued companion points represented by Ghidra g_awCompanionActorMovementTargetXCoordinates,
 	// g_awCompanionActorMovementTargetYCoordinates, g_awCompanionActorMovementHorizontalSteps,
@@ -824,7 +824,7 @@ public:
 	// 0xFF0672–0xFF0685. Work RAM starts with zero records; MovePlayerToRoomPosition writes the coordinates
 	// and invokes the separate route builders that write signed 8.8 multipliers and destination positions
 	// before the room updater consumes them in descending CompanionActorMovementPointIndex order.
-	Common::Array<ActorMovementPoint> companionActorMovementPoints = Common::Array<ActorMovementPoint>(2);
+	Common::Array<ActorMovementPoint> scoobyActorMovementPoints = Common::Array<ActorMovementPoint>(2);
 
 	// The right action-prompt countdown from Ghidra g_sbRightActionPromptCountdown at 0xFF0AB2. No image-
 	// backed value is consumed; runtime reset writes zero. Prompt queuing waits for a negative value before

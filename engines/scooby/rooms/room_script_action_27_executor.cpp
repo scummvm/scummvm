@@ -35,7 +35,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 	int16 horizontalStep = 0;
 	_state.controllerOneInput = 0xFF;
 	if ((_state.actorPathActiveFlags & 0x04) == 0) {
-		_state.actorPathRecordOffsets[kCompanionActorSlot] = 0;
+		_state.actorPathRecordOffsets[kPathActorSlot] = 0;
 	}
 
 	while (true) {
@@ -111,7 +111,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 
 	// Ghidra 0x00004028-0x00004051: endpoint 0x0094 accepts unsigned path offsets 0x005C-0x0078;
 	// every other endpoint accepts 0x00F8-0x0114, retaining both inclusive comparison branches.
-	uint16 pathRecordOffset = _state.actorPathRecordOffsets[kCompanionActorSlot];
+	uint16 pathRecordOffset = _state.actorPathRecordOffsets[kPathActorSlot];
 	bool success = getIntegerWord(_state.actorXFixedCoordinates[kMovingActorSlot]) == kMaximumX
 					   ? (pathRecordOffset >= 0x005C && pathRecordOffset <= 0x0078)
 					   : (pathRecordOffset >= 0x00F8 && pathRecordOffset <= 0x0114);

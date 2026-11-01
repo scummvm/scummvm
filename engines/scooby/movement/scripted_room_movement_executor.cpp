@@ -171,10 +171,10 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 											 true);
 			}
 
-			_state.leadActorMovementPoints[0].targetX = targetX;
-			_state.leadActorMovementPoints[0].targetY = targetY;
+			_state.shaggyActorMovementPoints[0].targetX = targetX;
+			_state.shaggyActorMovementPoints[0].targetY = targetY;
 			buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
-			_state.leadActorMovementPointIndex = 1;
+			_state.shaggyActorMovementPointIndex = 1;
 			return moveShaggyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 										 encodedObjectId, false);
 		}
@@ -184,10 +184,10 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 										 true);
 		}
 
-		_state.leadActorMovementPoints[0].targetX = targetX;
-		_state.leadActorMovementPoints[0].targetY = targetY;
+		_state.shaggyActorMovementPoints[0].targetX = targetX;
+		_state.shaggyActorMovementPoints[0].targetY = targetY;
 		buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
-		_state.leadActorMovementPointIndex = 1;
+		_state.shaggyActorMovementPointIndex = 1;
 		return moveShaggyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
 	}
@@ -196,10 +196,10 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 	// then preserves the blocked-first/clear-second three-segment route and its reverse queue order.
 	if (visibleWaypoints == 1) {
 		if (!tracePathFromFirstWaypoint(targetX, targetY)) {
-			_state.leadActorMovementPoints[0].targetX = targetX;
-			_state.leadActorMovementPoints[0].targetY = targetY;
+			_state.shaggyActorMovementPoints[0].targetX = targetX;
+			_state.shaggyActorMovementPoints[0].targetY = targetY;
 			buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
-			_state.leadActorMovementPointIndex = 1;
+			_state.shaggyActorMovementPointIndex = 1;
 			return moveShaggyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 										 encodedObjectId, false);
 		}
@@ -209,13 +209,13 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 										 true);
 		}
 
-		_state.leadActorMovementPoints[0].targetX = targetX;
-		_state.leadActorMovementPoints[0].targetY = targetY;
+		_state.shaggyActorMovementPoints[0].targetX = targetX;
+		_state.shaggyActorMovementPoints[0].targetY = targetY;
 		buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
-		_state.leadActorMovementPoints[1].targetX = secondWaypointX;
-		_state.leadActorMovementPoints[1].targetY = secondWaypointY;
+		_state.shaggyActorMovementPoints[1].targetX = secondWaypointX;
+		_state.shaggyActorMovementPoints[1].targetY = secondWaypointY;
 		appendLeadRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
-		_state.leadActorMovementPointIndex = 2;
+		_state.shaggyActorMovementPointIndex = 2;
 		return moveShaggyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
 	}
@@ -223,10 +223,10 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 	// Ghidra 0x00005146-0x0000519B: every remaining nonzero mask (including the produced mask two) mirrors the
 	// prior branch through waypoint two, preserving both its two-segment and three-segment outcomes.
 	if (!tracePathFromSecondWaypoint(targetX, targetY)) {
-		_state.leadActorMovementPoints[0].targetX = targetX;
-		_state.leadActorMovementPoints[0].targetY = targetY;
+		_state.shaggyActorMovementPoints[0].targetX = targetX;
+		_state.shaggyActorMovementPoints[0].targetY = targetY;
 		buildLeadRouteFromSecondWaypoint(targetX, targetY, movementScale);
-		_state.leadActorMovementPointIndex = 1;
+		_state.shaggyActorMovementPointIndex = 1;
 		return moveShaggyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 									 encodedObjectId, false);
 	}
@@ -236,13 +236,13 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorToRoomPosition(int16 targetX, 
 									 true);
 	}
 
-	_state.leadActorMovementPoints[0].targetX = targetX;
-	_state.leadActorMovementPoints[0].targetY = targetY;
+	_state.shaggyActorMovementPoints[0].targetX = targetX;
+	_state.shaggyActorMovementPoints[0].targetY = targetY;
 	buildLeadRouteFromFirstWaypoint(targetX, targetY, movementScale);
-	_state.leadActorMovementPoints[1].targetX = firstWaypointX;
-	_state.leadActorMovementPoints[1].targetY = firstWaypointY;
+	_state.shaggyActorMovementPoints[1].targetX = firstWaypointX;
+	_state.shaggyActorMovementPoints[1].targetY = firstWaypointY;
 	appendLeadRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
-	_state.leadActorMovementPointIndex = 2;
+	_state.shaggyActorMovementPointIndex = 2;
 	return moveShaggyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 								 encodedObjectId, false);
 }
@@ -261,9 +261,9 @@ void ScriptedRoomMovementExecutor::buildLeadRouteFromFirstWaypoint(int16 targetX
 		movementScale);
 
 	// Ghidra 0x000051D0-0x000051E3: publish the outputs into queue slot zero without replacing its target.
-	_state.leadActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
-	_state.leadActorMovementPoints[0].verticalStep = velocity.verticalStep;
-	_state.leadActorMovementPoints[0].positionIndex = velocity.positionIndex;
+	_state.shaggyActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
+	_state.shaggyActorMovementPoints[0].verticalStep = velocity.verticalStep;
+	_state.shaggyActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::buildLeadRouteFromSecondWaypoint(int16 targetX, int16 targetY,
@@ -280,9 +280,9 @@ void ScriptedRoomMovementExecutor::buildLeadRouteFromSecondWaypoint(int16 target
 		movementScale);
 
 	// Ghidra 0x0000521A-0x0000522D: publish the outputs into queue slot zero without replacing its target.
-	_state.leadActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
-	_state.leadActorMovementPoints[0].verticalStep = velocity.verticalStep;
-	_state.leadActorMovementPoints[0].positionIndex = velocity.positionIndex;
+	_state.shaggyActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
+	_state.shaggyActorMovementPoints[0].verticalStep = velocity.verticalStep;
+	_state.shaggyActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::appendLeadRouteFromFirstWaypoint(int16 targetX, int16 targetY,
@@ -299,9 +299,9 @@ void ScriptedRoomMovementExecutor::appendLeadRouteFromFirstWaypoint(int16 target
 		movementScale);
 
 	// Ghidra 0x00005262-0x00005275: publish the outputs into queue slot one without replacing its target.
-	_state.leadActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
-	_state.leadActorMovementPoints[1].verticalStep = velocity.verticalStep;
-	_state.leadActorMovementPoints[1].positionIndex = velocity.positionIndex;
+	_state.shaggyActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
+	_state.shaggyActorMovementPoints[1].verticalStep = velocity.verticalStep;
+	_state.shaggyActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::appendLeadRouteFromSecondWaypoint(int16 targetX, int16 targetY,
@@ -318,9 +318,9 @@ void ScriptedRoomMovementExecutor::appendLeadRouteFromSecondWaypoint(int16 targe
 		movementScale);
 
 	// Ghidra 0x000052AC-0x000052BF: publish the outputs into queue slot one without replacing its target.
-	_state.leadActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
-	_state.leadActorMovementPoints[1].verticalStep = velocity.verticalStep;
-	_state.leadActorMovementPoints[1].positionIndex = velocity.positionIndex;
+	_state.shaggyActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
+	_state.shaggyActorMovementPoints[1].verticalStep = velocity.verticalStep;
+	_state.shaggyActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
 ScriptedRoomMovementExecutor::VelocityResult
@@ -401,8 +401,8 @@ ScriptedRoomMovementExecutor::computeMovementVelocityFromStagedOrigin(
 	// truncation, publish both steps, and return the D4.w/D5.w/D6.w outputs to the route builder.
 	horizontalStep *= movementScale;
 	verticalStep *= movementScale;
-	_state.leadActorHorizontalMovementStep = horizontalStep;
-	_state.leadActorVerticalMovementStep = verticalStep;
+	_state.shaggyActorHorizontalMovementStep = horizontalStep;
+	_state.shaggyActorVerticalMovementStep = verticalStep;
 	return VelocityResult(horizontalStep, verticalStep, positionIndex);
 }
 
@@ -553,7 +553,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 	// Ghidra 0x0000558A-0x00005591: only the full entry resets the queued movement-point index; routed internal
 	// entry 0x00005592 retains the caller's prepared reverse-order queue.
 	if (resetMovementPointIndex) {
-		_state.leadActorMovementPointIndex = 0;
+		_state.shaggyActorMovementPointIndex = 0;
 	}
 
 	// Ghidra 0x00005592-0x000055AF: install the target, preserve and clear display bit three, then stage
@@ -691,12 +691,12 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 	// Ghidra 0x000056D2-0x000056F9: progress bit four, a clear direct trace, or no visible waypoint selects the
 	// full direct-movement entry and resets the companion queue index.
 	if ((_state.progressStateBytes[0] & 0x10) != 0 || !traceCompanionPathToTarget(targetX, targetY)) {
-		return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
+		return moveScoobyActorDirectly(targetX, targetY, movementScale, animationBias, true);
 	}
 
 	uint16 visibleWaypoints = classifyCompanionWaypointVisibility();
 	if (visibleWaypoints == 0) {
-		return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
+		return moveScoobyActorDirectly(targetX, targetY, movementScale, animationBias, true);
 	}
 
 	int waypointDataOffset = _state.roomMovementDataOffset + kRouteWaypointDataOffset;
@@ -718,77 +718,77 @@ MovementResult ScriptedRoomMovementExecutor::movePlayerToRoomPosition(
 			secondWaypointRawX * secondWaypointRawX + secondWaypointRawY * secondWaypointRawY;
 		if (firstSquaredMagnitude < secondSquaredMagnitude) {
 			if (tracePathFromSecondWaypoint(targetX, targetY)) {
-				return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
+				return moveScoobyActorDirectly(targetX, targetY, movementScale, animationBias, true);
 			}
 
-			_state.companionActorMovementPoints[0].targetX = targetX;
-			_state.companionActorMovementPoints[0].targetY = targetY;
+			_state.scoobyActorMovementPoints[0].targetX = targetX;
+			_state.scoobyActorMovementPoints[0].targetY = targetY;
 			buildCompanionRouteFromSecondWaypoint(targetX, targetY, movementScale);
-			_state.companionActorMovementPointIndex = 1;
-			return moveCompanionActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
+			_state.scoobyActorMovementPointIndex = 1;
+			return moveScoobyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 											  false);
 		}
 
 		if (tracePathFromFirstWaypoint(targetX, targetY)) {
-			return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
+			return moveScoobyActorDirectly(targetX, targetY, movementScale, animationBias, true);
 		}
 
-		_state.companionActorMovementPoints[0].targetX = targetX;
-		_state.companionActorMovementPoints[0].targetY = targetY;
+		_state.scoobyActorMovementPoints[0].targetX = targetX;
+		_state.scoobyActorMovementPoints[0].targetY = targetY;
 		buildCompanionRouteFromFirstWaypoint(targetX, targetY, movementScale);
-		_state.companionActorMovementPointIndex = 1;
-		return moveCompanionActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias, false);
+		_state.scoobyActorMovementPointIndex = 1;
+		return moveScoobyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias, false);
 	}
 
 	// Ghidra 0x000057A2-0x000057FB: visibility mask one first tries a two-segment route through waypoint one,
 	// then preserves the blocked-first/clear-second three-segment route in reverse queue order.
 	if (visibleWaypoints == 1) {
 		if (!tracePathFromFirstWaypoint(targetX, targetY)) {
-			_state.companionActorMovementPoints[0].targetX = targetX;
-			_state.companionActorMovementPoints[0].targetY = targetY;
+			_state.scoobyActorMovementPoints[0].targetX = targetX;
+			_state.scoobyActorMovementPoints[0].targetY = targetY;
 			buildCompanionRouteFromFirstWaypoint(targetX, targetY, movementScale);
-			_state.companionActorMovementPointIndex = 1;
-			return moveCompanionActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
+			_state.scoobyActorMovementPointIndex = 1;
+			return moveScoobyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias,
 											  false);
 		}
 
 		if (tracePathFromSecondWaypoint(targetX, targetY)) {
-			return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
+			return moveScoobyActorDirectly(targetX, targetY, movementScale, animationBias, true);
 		}
 
-		_state.companionActorMovementPoints[0].targetX = targetX;
-		_state.companionActorMovementPoints[0].targetY = targetY;
+		_state.scoobyActorMovementPoints[0].targetX = targetX;
+		_state.scoobyActorMovementPoints[0].targetY = targetY;
 		buildCompanionRouteFromSecondWaypoint(targetX, targetY, movementScale);
-		_state.companionActorMovementPoints[1].targetX = secondWaypointX;
-		_state.companionActorMovementPoints[1].targetY = secondWaypointY;
+		_state.scoobyActorMovementPoints[1].targetX = secondWaypointX;
+		_state.scoobyActorMovementPoints[1].targetY = secondWaypointY;
 		appendCompanionRouteFromFirstWaypoint(secondWaypointX, secondWaypointY, movementScale);
-		_state.companionActorMovementPointIndex = 2;
-		return moveCompanionActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias, false);
+		_state.scoobyActorMovementPointIndex = 2;
+		return moveScoobyActorDirectly(firstWaypointX, firstWaypointY, movementScale, animationBias, false);
 	}
 
 	// Ghidra 0x000057FC-0x00005851: every remaining nonzero mask (including the produced mask two) mirrors the
 	// prior branch through waypoint two, retaining both two-segment and three-segment outcomes.
 	if (!tracePathFromSecondWaypoint(targetX, targetY)) {
-		_state.companionActorMovementPoints[0].targetX = targetX;
-		_state.companionActorMovementPoints[0].targetY = targetY;
+		_state.scoobyActorMovementPoints[0].targetX = targetX;
+		_state.scoobyActorMovementPoints[0].targetY = targetY;
 		buildCompanionRouteFromSecondWaypoint(targetX, targetY, movementScale);
-		_state.companionActorMovementPointIndex = 1;
-		return moveCompanionActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
+		_state.scoobyActorMovementPointIndex = 1;
+		return moveScoobyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias,
 										  false);
 	}
 
 	if (tracePathFromFirstWaypoint(targetX, targetY)) {
-		return moveCompanionActorDirectly(targetX, targetY, movementScale, animationBias, true);
+		return moveScoobyActorDirectly(targetX, targetY, movementScale, animationBias, true);
 	}
 
-	_state.companionActorMovementPoints[0].targetX = targetX;
-	_state.companionActorMovementPoints[0].targetY = targetY;
+	_state.scoobyActorMovementPoints[0].targetX = targetX;
+	_state.scoobyActorMovementPoints[0].targetY = targetY;
 	buildCompanionRouteFromFirstWaypoint(targetX, targetY, movementScale);
-	_state.companionActorMovementPoints[1].targetX = firstWaypointX;
-	_state.companionActorMovementPoints[1].targetY = firstWaypointY;
+	_state.scoobyActorMovementPoints[1].targetX = firstWaypointX;
+	_state.scoobyActorMovementPoints[1].targetY = firstWaypointY;
 	appendCompanionRouteFromSecondWaypoint(firstWaypointX, firstWaypointY, movementScale);
-	_state.companionActorMovementPointIndex = 2;
-	return moveCompanionActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias, false);
+	_state.scoobyActorMovementPointIndex = 2;
+	return moveScoobyActorDirectly(secondWaypointX, secondWaypointY, movementScale, animationBias, false);
 }
 
 void ScriptedRoomMovementExecutor::buildCompanionRouteFromFirstWaypoint(
@@ -805,9 +805,9 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromFirstWaypoint(
 		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x00005886-0x00005899: publish the outputs into queue slot zero without replacing its target.
-	_state.companionActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
-	_state.companionActorMovementPoints[0].verticalStep = velocity.verticalStep;
-	_state.companionActorMovementPoints[0].positionIndex = velocity.positionIndex;
+	_state.scoobyActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
+	_state.scoobyActorMovementPoints[0].verticalStep = velocity.verticalStep;
+	_state.scoobyActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::buildCompanionRouteFromSecondWaypoint(
@@ -824,9 +824,9 @@ void ScriptedRoomMovementExecutor::buildCompanionRouteFromSecondWaypoint(
 		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x000058D0-0x000058E3: publish the outputs into queue slot zero without replacing its target.
-	_state.companionActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
-	_state.companionActorMovementPoints[0].verticalStep = velocity.verticalStep;
-	_state.companionActorMovementPoints[0].positionIndex = velocity.positionIndex;
+	_state.scoobyActorMovementPoints[0].horizontalStep = velocity.horizontalStep;
+	_state.scoobyActorMovementPoints[0].verticalStep = velocity.verticalStep;
+	_state.scoobyActorMovementPoints[0].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::appendCompanionRouteFromFirstWaypoint(
@@ -843,9 +843,9 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromFirstWaypoint(
 		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x00005918-0x0000592B: publish the outputs into queue slot one without replacing its target.
-	_state.companionActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
-	_state.companionActorMovementPoints[1].verticalStep = velocity.verticalStep;
-	_state.companionActorMovementPoints[1].positionIndex = velocity.positionIndex;
+	_state.scoobyActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
+	_state.scoobyActorMovementPoints[1].verticalStep = velocity.verticalStep;
+	_state.scoobyActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
 void ScriptedRoomMovementExecutor::appendCompanionRouteFromSecondWaypoint(
@@ -862,9 +862,9 @@ void ScriptedRoomMovementExecutor::appendCompanionRouteFromSecondWaypoint(
 		computeCompanionVelocityFromStagedOrigin(originXFixed, originYFixed, targetX, targetY, movementScale);
 
 	// Ghidra 0x00005962-0x00005975: publish the outputs into queue slot one without replacing its target.
-	_state.companionActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
-	_state.companionActorMovementPoints[1].verticalStep = velocity.verticalStep;
-	_state.companionActorMovementPoints[1].positionIndex = velocity.positionIndex;
+	_state.scoobyActorMovementPoints[1].horizontalStep = velocity.horizontalStep;
+	_state.scoobyActorMovementPoints[1].verticalStep = velocity.verticalStep;
+	_state.scoobyActorMovementPoints[1].positionIndex = velocity.positionIndex;
 }
 
 uint16 ScriptedRoomMovementExecutor::classifyCompanionWaypointVisibility() {
@@ -983,12 +983,12 @@ ScriptedRoomMovementExecutor::computeCompanionVelocityFromStagedOrigin(
 	// truncation, publish both steps, and return the D4.w/D5.w/D6.w outputs to the route builder.
 	horizontalStep *= movementScale;
 	verticalStep *= movementScale;
-	_state.companionActorHorizontalMovementStep = horizontalStep;
-	_state.companionActorVerticalMovementStep = verticalStep;
+	_state.scoobyActorHorizontalMovementStep = horizontalStep;
+	_state.scoobyActorVerticalMovementStep = verticalStep;
 	return VelocityResult(horizontalStep, verticalStep, positionIndex);
 }
 
-MovementResult ScriptedRoomMovementExecutor::moveCompanionActorDirectly(
+MovementResult ScriptedRoomMovementExecutor::moveScoobyActorDirectly(
 	int16 targetX, int16 targetY,
 	int16 movementScale,
 	int16 animationBias,
@@ -996,7 +996,7 @@ MovementResult ScriptedRoomMovementExecutor::moveCompanionActorDirectly(
 	// Ghidra 0x00005AD8-0x00005ADF: only the full entry resets the companion queue; routed internal entry
 	// 0x00005AE0 retains the prepared reverse-order movement points.
 	if (resetMovementPointIndex) {
-		_state.companionActorMovementPointIndex = 0;
+		_state.scoobyActorMovementPointIndex = 0;
 	}
 
 	// Ghidra 0x00005AE0-0x00005AEF: install the companion target and calculate this segment's three velocity

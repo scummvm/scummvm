@@ -42,8 +42,8 @@ void RuntimeState::resetRuntimeState(const ScoobyDooRom &rom) {
 	initialRoomPositionCoordinateOffset = 0;
 	roomInterfaceHorizontalScroll = 0;
 	roomId = 0;
-	leadActorMovementPointIndex = -1;
-	companionActorMovementPointIndex = -1;
+	shaggyActorMovementPointIndex = -1;
+	scoobyActorMovementPointIndex = -1;
 	actorPositionUpdateFlags = 0;
 	controllerOneInput = 0xFF;
 	previousControllerOneInput = 0xFF;

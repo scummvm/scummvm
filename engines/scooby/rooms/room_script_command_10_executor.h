@@ -73,7 +73,7 @@ private:
 	static const int kRecordSize = 8;
 
 	void generateDialogueMaskTiles(uint8 nonzeroPaletteIndex);
-	bool playLeadActorPositionTransition(int16 previousPositionIndex, int16 nextPositionIndex);
+	bool playShaggyActorPositionTransition(int16 previousPositionIndex, int16 nextPositionIndex);
 
 	const ScoobyDooRom &_rom;
 	TileScene &_scene;

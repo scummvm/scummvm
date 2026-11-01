@@ -61,7 +61,7 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 				// Ghidra 0x00004D38-0x00004D63: companion direct movement remains distinct, then actor slot
 				// one independently copies the source room object's position selector.
 				if (!_movement
-						 .moveCompanionActorDirectly(target.x, target.y, movementModeOrScale, movementArgument,
+						 .moveScoobyActorDirectly(target.x, target.y, movementModeOrScale, movementArgument,
 													 true)
 						 .completed) {
 					_requestMovementHostClose();
