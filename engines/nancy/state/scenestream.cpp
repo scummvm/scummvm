@@ -571,22 +571,37 @@ Common::String SceneStreamManager::getSceneName(const Common::String &name) cons
 	return stream ? stream->getSceneName() : Common::String();
 }
 
-double SceneStreamManager::getSceneTime(const Common::String &name) const {
 #ifdef ENABLE_NANCY_V4
-	const Script::SceneContext *scene = nullptr;
+const Script::SceneContext *SceneStreamManager::findScriptScene(const Common::String &name) const {
 	if (name.equalsIgnoreCase(kMainStreamName)) {
-		scene = NancySceneState.getScriptScene();
-	} else {
-		const SceneStream *stream = name.empty() ? _running : find(name);
-		scene = stream ? stream->getScriptScene() : nullptr;
+		return NancySceneState.getScriptScene();
 	}
 
+	const SceneStream *stream = name.empty() ? _running : find(name);
+	return stream ? stream->getScriptScene() : nullptr;
+}
+#endif
+
+double SceneStreamManager::getSceneTime(const Common::String &name) const {
+#ifdef ENABLE_NANCY_V4
+	const Script::SceneContext *scene = findScriptScene(name);
 	if (scene) {
 		return scene->getTime();
 	}
 #endif
 
 	return -1.0;
+}
+
+int SceneStreamManager::getSceneFrame(const Common::String &name) const {
+#ifdef ENABLE_NANCY_V4
+	const Script::SceneContext *scene = findScriptScene(name);
+	if (scene) {
+		return scene->getFrame();
+	}
+#endif
+
+	return -1;
 }
 
 // Nancy17 takes an item out of the inventory while its scene is up, in a stream

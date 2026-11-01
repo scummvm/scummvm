@@ -195,6 +195,9 @@ public:
 	// there is none
 	double getSceneTime(const Common::String &name) const;
 
+	// Nancy24: the frame of the scene the stream is in, or -1 when there is none
+	int getSceneFrame(const Common::String &name) const;
+
 	bool isRunning(const Common::String &name) const { return find(name) != nullptr; }
 
 	// The stream whose records are running or getting input; null for the main one
@@ -262,6 +265,8 @@ private:
 	Common::String _environment;
 
 #ifdef ENABLE_NANCY_V4
+	const Script::SceneContext *findScriptScene(const Common::String &name) const;
+
 	Script::ScriptMatrix _mainStreamTransform;
 #endif
 	ViewTransform _mainStreamViewTransform;
