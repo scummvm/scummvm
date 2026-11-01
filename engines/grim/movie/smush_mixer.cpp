@@ -336,7 +336,7 @@ int SmushDriver::sndDrivInitialize(int rate, int channelCount, SmushSound *sound
 		return -1;
 
 	_sound = sound;
-	_fillTimer = _timer->sysAlloc(sndDrivFillThreadCallback, 1193180 / (rate / 1024), SYS_TIMER_ONE_SHOT, this);
+	_fillTimer = _timer->sysAlloc(sndDrivFillThreadCallback, SMUSH_TIMER_FREQUENCY / (rate / 1024), SYS_TIMER_ONE_SHOT, this);
 
 	return 0;
 }
@@ -376,7 +376,7 @@ void SmushDriver::sndDrivFillThread() {
 		}
 	}
 
-	_timer->sysReset(_fillTimer, 1193180 / (_driverRate / 1024));
+	_timer->sysReset(_fillTimer, SMUSH_TIMER_FREQUENCY / (_driverRate / 1024));
 }
 
 void SmushDriver::sndDrivMix(const uint8 *srcBuf, int32 mixBufStartIndex, uint32 feedSize, int32 srcByteCount, int volume, int pan, int format) {
@@ -514,7 +514,7 @@ int SmushDemoDriver::sndDrivOpen(int rate, int channels, int bits, SmushDemoAudi
 	audio->data = new byte[audio->size]();
 
 	_blockAlign = (bits >> 3) * channels;
-	_bufferSize = 5000 * _rate * _blockAlign / 1000;
+	_bufferSize = SMUSH_DEMO_DRIVER_BUFFER_MS * _rate * _blockAlign / 1000;
 
 	{
 		Common::StackLock lock(_mutex);
@@ -535,7 +535,7 @@ int SmushDemoDriver::sndDrivOpen(int rate, int channels, int bits, SmushDemoAudi
 	_waiting = 1;
 	_paused = 0;
 	_msPerByte = 1000.0 / (double)(_rate * _blockAlign);
-	_threshold = 1000 * _rate * _blockAlign / 1000;
+	_threshold = SMUSH_DEMO_DRIVER_START_MS * _rate * _blockAlign / 1000;
 	return 0;
 }
 
@@ -580,11 +580,11 @@ int SmushDemoDriver::sndDrivGetTime(SmushDemoAudio *audio) {
 		_lastPosition = position;
 
 		if (!_waiting) {
-			if (_written < played + 500 * _rate * _blockAlign / 1000) {
+			if (_written < played + SMUSH_DEMO_DRIVER_LOW_MS * _rate * _blockAlign / 1000) {
 				Common::StackLock lock(_mutex);
 				_playing = false;
 				_waiting = 1;
-				_threshold = played + 500 * _rate * _blockAlign / 1000;
+				_threshold = played + SMUSH_DEMO_DRIVER_LOW_MS * _rate * _blockAlign / 1000;
 			}
 		}
 	}
@@ -626,8 +626,10 @@ void SmushDemoDriver::sndDrivFill(SmushDemoAudio *audio) {
 
 	int ringSize = _bufferSize;
 	int playedAbsolute = _lastPosition + ringSize * _wrapCount;
+	// The disasm never reads the last 1024 bytes of the produced audio
+	// and keeps a block of the ring free
 	int available = audio->produced - audio->consumed - 1024;
-	int space = playedAbsolute - _written + ringSize - 4096;
+	int space = playedAbsolute - _written + ringSize - SMUSH_DEMO_AUDIO_BLOCK_SIZE;
 	if (space >= available)
 		space = available;
 

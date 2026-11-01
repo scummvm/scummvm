@@ -28,6 +28,9 @@ namespace Grim {
 
 #define SYS_MAX_TIMERS 19
 
+// Ticks per second of the system timer (the 8253 clock frequency)
+#define SMUSH_TIMER_FREQUENCY 1193180
+
 #define SYS_TIMER_ONE_SHOT 2
 #define SYS_TIMER_EXT_SYNC 8
 

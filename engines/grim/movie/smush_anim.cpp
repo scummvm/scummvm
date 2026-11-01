@@ -31,6 +31,15 @@
 
 namespace Grim {
 
+// The audio ring holds 120 blocks, about 5.5 seconds
+#define SMUSH_DEMO_AUDIO_BLOCKS 120
+
+// The file ring is read in CD sectors (2048 bytes): 12 per call, 64 as the
+// first read; the biggest read is a frame plus 200 KB
+#define SMUSH_DEMO_STREAM_CHUNK 24576
+#define SMUSH_DEMO_STREAM_PREFETCH 0x20000
+#define SMUSH_DEMO_STREAM_SLACK 204800
+
 SmushAnimPlay::SmushAnimPlay(SmushTimer *timer, SmushSound *sound) {
 	_timer = timer;
 	_sound = sound;
@@ -59,8 +68,8 @@ int SmushAnimPlay::anmStart(int fps, int flags) {
 	_skipFlag = 0;
 	_started = 0;
 	_state = 0;
-	_nominalDelay = 1193180 / fps;
-	_currentDelay = 1193180 / fps;
+	_nominalDelay = SMUSH_TIMER_FREQUENCY / fps;
+	_currentDelay = SMUSH_TIMER_FREQUENCY / fps;
 
 	_frameTimer = _timer->sysAlloc(frameTimer, 1, SYS_TIMER_ONE_SHOT, this);
 	if (!_frameTimer)
@@ -104,6 +113,7 @@ int SmushAnimPlay::anmRenderBody(SmushAnimClient *client) {
 	if (!_started)
 		client->resetFrameCounter();
 
+	// Frames are 66.67 ms long (15 fps); the result is in frames
 	int drift = (int)(int64)(((double)_sound->souEngineQueryTime(0) - (double)client->getFrameCounter() * 66.66666666667) * 0.0149999999999925);
 	_lateTicks--;
 	_framesDue = 0;
@@ -335,7 +345,7 @@ void SmushDemoPlayer::decodeIACT(const byte *block) {
 	byte *destination = _audio.data + _audio.produced % _audio.size;
 	const byte *cursor = block + 3;
 
-	for (int i = 0; i < 1024; i++) {
+	for (int i = 0; i < SMUSH_DEMO_AUDIO_BLOCK_SIZE / 4; i++) {
 		int16 sample;
 
 		if (*cursor == 128) {
@@ -361,7 +371,7 @@ void SmushDemoPlayer::decodeIACT(const byte *block) {
 		destination += 2;
 	}
 
-	_audio.produced += 4096;
+	_audio.produced += SMUSH_DEMO_AUDIO_BLOCK_SIZE;
 }
 
 int SmushDemoPlayer::audioOpen(int rate, int channels, int bits) {
@@ -413,14 +423,14 @@ void SmushDemoPlayer::audioFill() {
 
 	if (_frame - _audioStartFrame > 5) {
 		int produced = _audio.produced;
-		if (produced * _fps / 88200 >= _frameCount - 1) {
+		if (produced * _fps / SMUSH_DEMO_AUDIO_BYTES_PER_SECOND >= _frameCount - 1) {
 			int space = _audio.size + _audio.consumed - produced;
-			if (space > 4096) {
-				int blocks = (space - 1) >> 12;
+			if (space > SMUSH_DEMO_AUDIO_BLOCK_SIZE) {
+				int blocks = (space - 1) / SMUSH_DEMO_AUDIO_BLOCK_SIZE;
 				do {
-					memset(_audio.data + _audio.produced % _audio.size, 0, 4096);
+					memset(_audio.data + _audio.produced % _audio.size, 0, SMUSH_DEMO_AUDIO_BLOCK_SIZE);
 					blocks--;
-					_audio.produced += 4096;
+					_audio.produced += SMUSH_DEMO_AUDIO_BLOCK_SIZE;
 				} while (blocks);
 			}
 		}
@@ -460,7 +470,7 @@ int SmushDemoPlayer::stepAnimation() {
 		if ((int16)result != 11)
 			break;
 
-		if (!_stream->streamFill(24576))
+		if (!_stream->streamFill(SMUSH_DEMO_STREAM_CHUNK))
 			break;
 	}
 
@@ -475,14 +485,15 @@ bool SmushDemoPlayer::streamStep() {
 		return false;
 
 	bool read = false;
-	while (_stream->streamFill(24576))
+	while (_stream->streamFill(SMUSH_DEMO_STREAM_CHUNK))
 		read = true;
 
 	return read;
 }
 
 int SmushDemoPlayer::initialize(int bufferBytes, int width, int height) {
-	if (_stream->streamInitialize(bufferBytes - (width * height + 204800), width * height + 204800))
+	int maxRead = width * height + SMUSH_DEMO_STREAM_SLACK;
+	if (_stream->streamInitialize(bufferBytes - maxRead, maxRead))
 		return 0;
 
 	if (_anim->anmInitialize(width, height)) {
@@ -510,14 +521,14 @@ int SmushDemoPlayer::open(const Common::String &name, int offset) {
 		return 1;
 
 	memset(&_audio, 0, sizeof(_audio));
-	_audio.size = 491520;
+	_audio.size = SMUSH_DEMO_AUDIO_BLOCKS * SMUSH_DEMO_AUDIO_BLOCK_SIZE;
 
-	if (audioOpen(22050, 2, 16))
+	if (audioOpen(SMUSH_DEMO_AUDIO_RATE, 2, 16))
 		return 1;
 
 	_anim->animatorInitialize();
 	_anim->animatorNewAnim(name, offset);
-	_stream->streamFill(0x20000);
+	_stream->streamFill(SMUSH_DEMO_STREAM_PREFETCH);
 
 	memset(_palette, 0, sizeof(_palette));
 	_paused = 0;

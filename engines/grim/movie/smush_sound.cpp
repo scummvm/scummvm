@@ -233,7 +233,7 @@ int SmushSound::souEngineExternalSync(double ticks) {
 		int now = _timer->sysGetTime();
 		if (now > _syncMark) {
 			int elapsed = now - _syncMark;
-			if (elapsed / 5 < 1193180) {
+			if (elapsed / 5 < SMUSH_TIMER_FREQUENCY) {
 				_syncMark = 0;
 				_syncAccumulator -= (double)elapsed;
 			}
@@ -372,7 +372,7 @@ int SmushSound::souEngineStartStream(const byte *data, int size, uint32 volume, 
 
 void SmushSound::souEngineFill(int frameCount, SmushDriver *driver) {
 	_fillCounter++;
-	souEngineExternalSync((double)frameCount * 1193180.0 / (double)_sampleRate);
+	souEngineExternalSync((double)frameCount * SMUSH_TIMER_FREQUENCY / (double)_sampleRate);
 
 	if (_pauseCount)
 		return;

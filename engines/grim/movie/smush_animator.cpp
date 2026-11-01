@@ -564,12 +564,12 @@ int SmushDemoAnim::animatorRender(int flags) {
 
 			return 1;
 		default:
-			warning("Read invalid frame header -- CD may be dirty or damaged.");
+			warning("Read invalid frame header");
 			return -3;
 		}
 
 		if (_tag > 0x77) {
-			warning("Read invalid frame header -- CD may be dirty or damaged.");
+			warning("Read invalid frame header");
 			return -3;
 		}
 	}
