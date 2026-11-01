@@ -267,12 +267,16 @@ protected:
 	bool setField(const Common::String &key) override;
 
 private:
+	void readDest(int index);
+	void readDestTable(Common::Array<ScriptRect> &dests);
 	void applyRects();
 
 	Common::SharedPtr<Graphics::ManagedSurface> _cachedImage;	// kept while the record uses it
 	Graphics::ManagedSurface _image;	// the cached picture, or a saved one
 	ScriptRect _source;
 	ScriptRect _dest;
+	bool _hasDestTable = false;					// Nancy24: onScreen is a table of rects
+	Common::Array<ScriptRect> _tableDests;		// what it had when last drawn
 	uint32 _modColor = 0xFFFFFFFF;	// what the colors of the picture get multiplied with
 	bool _hasPicture = false;
 	RecordGraphic _graphic;

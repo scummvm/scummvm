@@ -270,6 +270,50 @@ static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image
 	graphic.setNeedsRedraw(true);
 }
 
+// Lays a picture placePicture() made over another surface, as it would show
+// on the screen. The origin is where the surface is in the viewport.
+static void blendPicture(Graphics::ManagedSurface &target, const RecordGraphic &picture, bool isKeyed, const Common::Point &origin) {
+	const Graphics::ManagedSurface &image = picture._drawSurface;
+	Common::Rect area = picture.getScreenPositionRaw();
+	area.translate(-origin.x, -origin.y);
+
+	byte transR, transG, transB;
+	image.format.colorToRGB(g_nancy->_graphics->getTransColor(), transR, transG, transB);
+	const bool hasAlpha = image.format.aBits() != 0;
+
+	for (int y = MAX<int>(0, -area.top); y < image.h && area.top + y < target.h; ++y) {
+		for (int x = MAX<int>(0, -area.left); x < image.w && area.left + x < target.w; ++x) {
+			byte alpha, red, green, blue;
+			image.format.colorToARGB(image.getPixel(x, y), alpha, red, green, blue);
+			if (isKeyed) {
+				if (red == transR && green == transG && blue == transB) {
+					continue;
+				}
+
+				if (!hasAlpha) {
+					alpha = 0xFF;
+				}
+			}
+
+			if (alpha == 0) {
+				continue;
+			}
+
+			const int targetX = area.left + x;
+			const int targetY = area.top + y;
+			byte oldAlpha, oldRed, oldGreen, oldBlue;
+			target.format.colorToARGB(target.getPixel(targetX, targetY), oldAlpha, oldRed, oldGreen, oldBlue);
+
+			const uint rest = 255 - alpha;
+			target.setPixel(targetX, targetY, target.format.ARGBToColor(
+				alpha + oldAlpha * rest / 255,
+				(red * alpha + oldRed * rest) / 255,
+				(green * alpha + oldGreen * rest) / 255,
+				(blue * alpha + oldBlue * rest) / 255));
+		}
+	}
+}
+
 static Graphics::ManagedSurface *s_drawTarget = nullptr;
 
 Graphics::ManagedSurface *getDrawTarget() {
@@ -1083,7 +1127,7 @@ void OverlayRecord::readTable(int tableIndex) {
 
 	_dest = _source;
 	if (pushField(L, tableIndex, "onScreen")) {
-		_dest = checkRect(L, -1);
+		readDest(-1);
 		lua_pop(L, 1);
 	}
 
@@ -1099,17 +1143,81 @@ void OverlayRecord::readTable(int tableIndex) {
 	_graphic.registerGraphics();
 }
 
+// The onScreen of an overlay is a rect, or in Nancy24 also a table of rects;
+// the picture is then shown at each of them. The scripts change the rects in
+// the table as they go, so the table is kept as it is.
+void OverlayRecord::readDest(int index) {
+	lua_State *L = getLua();
+
+	_hasDestTable = lua_istable(L, index);
+	if (_hasDestTable) {
+		lua_pushvalue(L, index);
+		storeValue("onScreen");
+		readDestTable(_tableDests);
+	} else {
+		_dest = checkRect(L, index);
+	}
+}
+
+void OverlayRecord::readDestTable(Common::Array<ScriptRect> &dests) {
+	lua_State *L = getLua();
+
+	dests.clear();
+	pushStoredValue("onScreen");
+	if (lua_istable(L, -1)) {
+		lua_pushnil(L);
+		while (lua_next(L, -2)) {
+			const ScriptRect *dest = testRect(L, -1);
+			if (dest) {
+				dests.push_back(*dest);
+			}
+
+			lua_pop(L, 1);
+		}
+	}
+
+	lua_pop(L, 1);
+}
+
 void OverlayRecord::applyRects() {
 	Common::Rect source = _source.toRect();
 	source.clip(Common::Rect(_image.w, _image.h));
 
 	// A script can leave the picture out until it knows what to show
-	_hasPicture = !source.isEmpty();
+	_hasPicture = !source.isEmpty() && (!_hasDestTable || !_tableDests.empty());
 	if (!_hasPicture) {
 		return;
 	}
 
-	placePicture(_graphic, _image, source, _dest, getTransform(), _modColor);
+	if (!_hasDestTable) {
+		placePicture(_graphic, _image, source, _dest, getTransform(), _modColor);
+		return;
+	}
+
+	// The copies of the picture are drawn into one surface that covers them all
+	const ScriptMatrix transform = getTransform();
+	const bool isKeyed = transform.isTranslation() && _modColor == kNoModColor;
+	Common::Array<RecordGraphic> pictures(_tableDests.size());
+	Common::Rect area;
+	for (uint i = 0; i < _tableDests.size(); ++i) {
+		placePicture(pictures[i], _image, source, _tableDests[i], transform, _modColor);
+		if (i == 0) {
+			area = pictures[i].getScreenPositionRaw();
+		} else {
+			area.extend(pictures[i].getScreenPositionRaw());
+		}
+	}
+
+	Graphics::ManagedSurface &out = _graphic._drawSurface;
+	out.create(MAX<int>(area.width(), 1), MAX<int>(area.height(), 1), g_nancy->_graphics->getTransparentPixelFormat());
+	out.clear(0);
+	_graphic.setTransparent(false);
+	for (const RecordGraphic &picture : pictures) {
+		blendPicture(out, picture, isKeyed, Common::Point(area.left, area.top));
+	}
+
+	_graphic.moveTo(area);
+	_graphic.setNeedsRedraw(true);
 }
 
 void OverlayRecord::onZChanged() {
@@ -1121,6 +1229,15 @@ void OverlayRecord::registerGraphics() {
 }
 
 void OverlayRecord::updateGraphics() {
+	if (_hasDestTable && isActive()) {
+		Common::Array<ScriptRect> dests;
+		readDestTable(dests);
+		if (dests != _tableDests) {
+			_tableDests = dests;
+			applyRects();
+		}
+	}
+
 	_graphic.setVisible(isActive() && _hasPicture);
 
 	if (_hasAttachment) {
@@ -1165,7 +1282,11 @@ bool OverlayRecord::getField(const Common::String &key) {
 	lua_State *L = getLua();
 
 	if (key == "onScreen") {
-		pushRect(L, _dest);
+		if (_hasDestTable) {
+			pushStoredValue("onScreen");
+		} else {
+			pushRect(L, _dest);
+		}
 	} else if (key == "source") {
 		pushRect(L, _source);
 	} else if (key == "modColor") {
@@ -1182,12 +1303,16 @@ bool OverlayRecord::setField(const Common::String &key) {
 
 	// Only a change gets the picture drawn anew
 	if (key == "onScreen") {
-		const ScriptRect dest = checkRect(L, 3);
-		if (dest == _dest) {
-			return true;
-		}
+		if (lua_istable(L, 3) || _hasDestTable) {
+			readDest(3);
+		} else {
+			const ScriptRect dest = checkRect(L, 3);
+			if (dest == _dest) {
+				return true;
+			}
 
-		_dest = dest;
+			_dest = dest;
+		}
 	} else if (key == "source") {
 		const ScriptRect source = checkRect(L, 3);
 		if (source == _source) {
