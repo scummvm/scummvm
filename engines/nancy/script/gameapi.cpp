@@ -1048,6 +1048,21 @@ static const SoundChannelName kNancy22SoundChannelNames[] = {
 	{ "AllGlobal", kChannelAllGlobal }
 };
 
+// Nancy24 has three Global channels instead of five, and channels of its own
+// for the sounds of the inventory and the phone
+static const SoundChannelName kNancy24SoundChannelNames[] = {
+	{ "Theme", 0 }, { "UIMusic", 1 }, { "EngineMusic", 2 },
+	{ "Global1", 3 }, { "Global2", 4 }, { "Global3", 5 },
+	{ "Ambient1", 6 }, { "Ambient2", 7 }, { "Ambient3", 8 }, { "Ambient4", 9 },
+	{ "Ambient5", 10 }, { "Ambient6", 11 }, { "Ambient7", 12 }, { "Ambient8", 13 },
+	{ "FX1", 14 }, { "FX2", 15 }, { "FX3", 16 }, { "FX4", 17 }, { "FX5", 18 }, { "FX6", 19 }, { "FX7", 20 }, { "FX8", 21 },
+	{ "InvFX", 22 }, { "PhoneFX", 23 }, { "UIFX", 24 }, { "EngineFX", 25 },
+	{ "NPCVoice", 26 }, { "PlayerVoice", 27 }, { "UIVoice", 28 }, { "EngineVoice", 29 },
+	{ "All", kChannelAll }, { "AllExceptTheme", kChannelAllExceptTheme }, { "AllMusic", kChannelAllMusic },
+	{ "AllFX", kChannelAllFX }, { "AllAmbient", kChannelAllAmbient }, { "AllVoice", kChannelAllVoice },
+	{ "AllGlobal", kChannelAllGlobal }
+};
+
 // Where the channels of each kind begin, and the end of the last kind
 struct SoundChannelLayout {
 	uint16 firstMusic;
@@ -1060,9 +1075,16 @@ struct SoundChannelLayout {
 
 static const SoundChannelLayout kSoundChannelLayout = { 0, 6, 6, 14, 24, kNumSoundChannels };
 static const SoundChannelLayout kNancy22SoundChannelLayout = { 0, 3, 8, 16, 26, kNumSoundChannels };
+static const SoundChannelLayout kNancy24SoundChannelLayout = { 0, 3, 6, 14, 26, kNumSoundChannels };
 
 static const SoundChannelLayout &getSoundChannelLayout() {
-	return g_nancy->getGameType() >= kGameTypeNancy22 ? kNancy22SoundChannelLayout : kSoundChannelLayout;
+	if (g_nancy->getGameType() <= kGameTypeNancy21) {
+		return kSoundChannelLayout;
+	} else if (g_nancy->getGameType() <= kGameTypeNancy23) {
+		return kNancy22SoundChannelLayout;
+	}
+
+	return kNancy24SoundChannelLayout;
 }
 
 void pushSoundChannel(lua_State *L, uint16 channel) {
@@ -1092,7 +1114,14 @@ bool isVoicePlaying() {
 static int soundChannelIndex(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
 
-	if (g_nancy->getGameType() >= kGameTypeNancy22) {
+	if (g_nancy->getGameType() >= kGameTypeNancy24) {
+		for (const SoundChannelName &channel : kNancy24SoundChannelNames) {
+			if (scumm_stricmp(channel.name, name) == 0) {
+				pushSoundChannel(L, channel.channel);
+				return 1;
+			}
+		}
+	} else if (g_nancy->getGameType() >= kGameTypeNancy22) {
 		for (const SoundChannelName &channel : kNancy22SoundChannelNames) {
 			if (scumm_stricmp(channel.name, name) == 0) {
 				pushSoundChannel(L, channel.channel);

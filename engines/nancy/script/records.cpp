@@ -1476,7 +1476,9 @@ void SoundRecord::readTable(int tableIndex) {
 }
 
 SoundRecord::SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") {
-	_channel = g_nancy->getGameType() >= kGameTypeNancy22 ? 16 : 14;
+	// FX1, which Nancy22 and Nancy23 have further up
+	const GameType gameType = g_nancy->getGameType();
+	_channel = (gameType >= kGameTypeNancy22 && gameType <= kGameTypeNancy23) ? 16 : 14;
 }
 
 // A sound that is playing while a movie gets skipped is cut short
