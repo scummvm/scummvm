@@ -199,7 +199,7 @@ int SmushDemoStream::streamInitialize(int ringSize, int maxRead) {
 
 	_ring = new byte[maxRead + ringSize]();
 	_maxRead = maxRead;
-	_ringSize = ringSize & 0xFFFFF800;
+	_ringSize = ringSize & ~(SMUSH_DEMO_SECTOR_SIZE - 1);
 	_file = nullptr;
 	memset(_ring, 0, _ringSize);
 	return 0;
@@ -252,9 +252,9 @@ int SmushDemoStream::streamDoOpen() {
 	_file = file;
 	_fileSize = _file->size();
 
-	_file->seek(_openOffset & 0xFFFFF800);
-	_alignSkip = _openOffset & 0x7FF;
-	_fileOffset = _openOffset & 0xFFFFF800;
+	_file->seek(_openOffset & ~(SMUSH_DEMO_SECTOR_SIZE - 1));
+	_alignSkip = _openOffset & (SMUSH_DEMO_SECTOR_SIZE - 1);
+	_fileOffset = _openOffset & ~(SMUSH_DEMO_SECTOR_SIZE - 1);
 	_rewindPos = _writePos;
 	_restart = 1;
 	_hasData = 0;
@@ -283,23 +283,23 @@ bool SmushDemoStream::streamFill(int limit) {
 
 	if (_readPos > _writePos) {
 		if (_readPos != 0) {
-			size = (_readPos - _writePos - 2048) & 0xFFFFF800;
-			if (size < 2048)
+			size = (_readPos - _writePos - SMUSH_DEMO_SECTOR_SIZE) & ~(SMUSH_DEMO_SECTOR_SIZE - 1);
+			if (size < SMUSH_DEMO_SECTOR_SIZE)
 				return false;
-		} else if (_ringSize - _writePos > 2048) {
-			size = _ringSize - _writePos - 2048;
+		} else if (_ringSize - _writePos > SMUSH_DEMO_SECTOR_SIZE) {
+			size = _ringSize - _writePos - SMUSH_DEMO_SECTOR_SIZE;
 		} else {
-			size = (_readPos - _writePos - 2048) & 0xFFFFF800;
-			if (size < 2048)
+			size = (_readPos - _writePos - SMUSH_DEMO_SECTOR_SIZE) & ~(SMUSH_DEMO_SECTOR_SIZE - 1);
+			if (size < SMUSH_DEMO_SECTOR_SIZE)
 				return false;
 		}
 	} else if (_readPos != 0) {
 		size = _ringSize - _writePos;
-	} else if (_ringSize - _writePos > 2048) {
-		size = _ringSize - _writePos - 2048;
+	} else if (_ringSize - _writePos > SMUSH_DEMO_SECTOR_SIZE) {
+		size = _ringSize - _writePos - SMUSH_DEMO_SECTOR_SIZE;
 	} else {
-		size = (_readPos - _writePos - 2048) & 0xFFFFF800;
-		if (size < 2048)
+		size = (_readPos - _writePos - SMUSH_DEMO_SECTOR_SIZE) & ~(SMUSH_DEMO_SECTOR_SIZE - 1);
+		if (size < SMUSH_DEMO_SECTOR_SIZE)
 			return false;
 	}
 

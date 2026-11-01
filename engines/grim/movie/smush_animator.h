@@ -31,6 +31,9 @@ class SeekableReadStream;
 
 namespace Grim {
 
+// The demo reads its files in CD sectors
+#define SMUSH_DEMO_SECTOR_SIZE 2048
+
 class SmushDecoder;
 class Blocky8;
 class Codec48Decoder;
