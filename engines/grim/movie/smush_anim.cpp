@@ -45,7 +45,6 @@ SmushAnimPlay::SmushAnimPlay(SmushTimer *timer, SmushSound *sound) {
 	_sound = sound;
 	_frameTimer = 0;
 	_syncTimer = 0;
-	_flags = 0;
 	_finished = 0;
 	_framesDue = 0;
 	_lateTicks = 0;
@@ -61,8 +60,7 @@ SmushAnimPlay::~SmushAnimPlay() {
 	anmStop();
 }
 
-int SmushAnimPlay::anmStart(int fps, int flags) {
-	_flags = flags;
+int SmushAnimPlay::anmStart(int fps) {
 	_lateTicks = 0;
 	_framesDue = 0;
 	_skipFlag = 0;
@@ -151,7 +149,7 @@ int SmushAnimPlay::anmRenderBody(SmushAnimClient *client) {
 		_skipFlag = 1;
 	}
 
-	int flags = _flags;
+	int flags = 0;
 	if (_skipFlag)
 		flags |= 0x8000;
 

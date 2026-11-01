@@ -178,8 +178,8 @@ void SmushPlayer::init() {
 
 	if (_smushAnim && !_currentVideoIsTheora) {
 		_smushAnim->anmStop();
-		_smushAnim->anmStart(15, 24589);
-		_smushAnimator->animatorNewAnim(24589);
+		_smushAnim->anmStart(15);
+		_smushAnimator->animatorNewAnim();
 	}
 }
 
@@ -234,8 +234,8 @@ bool SmushPlayer::prepareFrame() {
 			_smushDecoder->start();
 			// The disasm restarts looping movies with the frame rate of the header
 			int delay = _smushDecoder->getFrameDelay();
-			_smushAnim->anmStart(delay ? (delay / 2 + 1000000) / delay : 15, 24589);
-			_smushAnimator->animatorNewAnim(24589);
+			_smushAnim->anmStart(delay ? (delay / 2 + 1000000) / delay : 15);
+			_smushAnimator->animatorNewAnim();
 		} else {
 			_videoFinished = true;
 		}
