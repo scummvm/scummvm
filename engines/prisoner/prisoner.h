@@ -1130,6 +1130,7 @@ public:
 	void loadInventoryItemsAnimation(Common::String &pakName, int16 pakSlot, int16 slotBaseIndex);
 	void updateInventoryItems();
 	void handleInventoryInput();
+	void movePointerWithKey(Common::KeyCode key);
 
 	/* Fonts */
 	int16 addFont(Common::String &pakName, int16 pakSlot, int16 outlineIndex, int16 inkIndex);

@@ -180,6 +180,50 @@ void PrisonerEngine::updateInventoryItems() {
 
 }
 
+void PrisonerEngine::movePointerWithKey(Common::KeyCode key) {
+	int16 x = _mouseX;
+	int16 y = _mouseY;
+	switch (key) {
+	case Common::KEYCODE_LEFT:
+		if (x > 0)
+			x--;
+		break;
+	case Common::KEYCODE_RIGHT:
+		if (x < 639)
+			x++;
+		break;
+	case Common::KEYCODE_UP:
+		if (y > 0)
+			y--;
+		break;
+	case Common::KEYCODE_DOWN:
+		if (y < 479)
+			y++;
+		break;
+	case Common::KEYCODE_HOME:
+		x = 0;
+		y = 0;
+		break;
+	case Common::KEYCODE_PAGEUP:
+		x = 639;
+		y = 0;
+		break;
+	case Common::KEYCODE_END:
+		x = 0;
+		y = 479;
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+		x = 639;
+		y = 479;
+		break;
+	default:
+		return;
+	}
+	_mouseX = x;
+	_mouseY = y;
+	_system->warpMouse(x, y);
+}
+
 void PrisonerEngine::handleInventoryInput() {
 
 	bool canLeave = true, backedupScreen;
@@ -197,7 +241,6 @@ void PrisonerEngine::handleInventoryInput() {
 
 	oldInventoryItemCursor = _inventoryItemCursor;
 
-	// TODO: Keyboard stuff
 	inpSetWaitRelease(true);
 
 	_currInventoryItemSlotBaseIndex = _inventoryItemSlotBaseIndex;
@@ -232,6 +275,7 @@ void PrisonerEngine::handleInventoryInput() {
 		}
 
 		getInputStatus(keyState, buttonState);
+		movePointerWithKey(keyState);
 
 		_screen->fillRect(0, 398, 639, 479, 0);
 
@@ -280,6 +324,7 @@ void PrisonerEngine::handleInventoryInput() {
 				while (_screenTextShowing && !shouldQuit()) {
 					updateEvents();
 					getInputStatus(keyState, buttonState);
+					movePointerWithKey(keyState);
 					updateBackground(true);
 					updateInventoryItems();
 					_screen->setClipRect(0, 82, 639, 397);
