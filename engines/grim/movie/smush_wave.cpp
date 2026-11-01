@@ -53,38 +53,16 @@ int SmushWave::moduleShutdown() {
 	return 0;
 }
 
-const char *SmushWave::flobdecInfo(int index) {
-	switch (index) {
-	case 0:
-		return "Audio";
-	case 1:
-		return "Decompresses VBR-ADPCM 16-bit audio.";
-	case 2:
-		return "Decompresses Variable Bit Rate ADPCM 16-bit audio.";
-	default:
-		return "";
-	}
-}
-
-uint32 SmushWave::flobdecGetID() {
-	return MKTAG('W', 'a', 'v', 'e');
-}
-
-int SmushWave::flobdecGetType() {
-	return 4;
-}
-
 void SmushWave::flobdecReset() {
 	_chunkCounter = 0;
 }
 
-int SmushWave::flobdecDecodeHeader(const byte *header) {
+void SmushWave::flobdecDecodeHeader(const byte *header) {
 	_chunkCounter = 0;
 	_totalSize = READ_LE_UINT32(header + 8);
-	return 0;
 }
 
-int SmushWave::flobdecDecodeBody(const byte *body) {
+void SmushWave::flobdecDecodeBody(const byte *body) {
 	const byte *data = body + 4;
 	int sampleCount = READ_BE_INT32(body);
 	if (sampleCount < 0) {
@@ -144,19 +122,6 @@ int SmushWave::flobdecDecodeBody(const byte *body) {
 		_sound->souEngineStart(packet, -1, 127, 0, 64);
 		_chunkCounter++;
 	}
-
-	if (_chunkCounter && _totalSize > 100000)
-		return 0;
-
-	return 128;
-}
-
-int SmushWave::flobdecSetVal() {
-	return -1;
-}
-
-int SmushWave::flobdecGetVal() {
-	return -1;
 }
 
 } // End of namespace Grim

@@ -48,14 +48,9 @@ public:
 	int moduleStartup();
 	int moduleShutdown();
 
-	const char *flobdecInfo(int index);
-	uint32 flobdecGetID();
-	int flobdecGetType();
 	void flobdecReset();
-	int flobdecDecodeHeader(const byte *header);
-	int flobdecDecodeBody(const byte *body);
-	int flobdecSetVal();
-	int flobdecGetVal();
+	void flobdecDecodeHeader(const byte *header);
+	void flobdecDecodeBody(const byte *body);
 
 };
 
