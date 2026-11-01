@@ -27,7 +27,7 @@
 namespace Grim {
 
 #define SOU_MAX_CHANNELS 16
-#define SOU_FREE_ID -255
+#define SOU_MASTER_VOLUME 127
 
 class SmushTimer;
 class SmushDriver;
@@ -43,7 +43,6 @@ struct SmushSoundChannel {
 	uint8 state;
 	uint8 format;
 	int soundClass;
-	int soundId;
 	int age;
 	int dataAreaSize;
 	int writePosition;
@@ -68,8 +67,6 @@ struct SmushSoundPlayback {
 	int tailBytes;
 	uint8 previousFormat;
 	int gain;
-	int repeatAccumulator;
-	int loopRemaining;
 };
 
 class SmushSound {
@@ -80,23 +77,14 @@ private:
 	SmushSoundChannel _channels[SOU_MAX_CHANNELS];
 	SmushSoundPlayback _playback[SOU_MAX_CHANNELS];
 	int _channelCount;
-	int _masterVolume;
 	int _sampleRate;
-	int _duckFloor;
-	int _duckRate;
-	int _duckLevel;
 	int _resetFlag;
 	int _bytesPerFrame[6];
-	uint8 _groupVolumes[256];
 	int _pauseCount;
 	int _engineOk;
 	int _syncMark;
 	double _syncAccumulator;
 	int _fillCounter;
-	int _musicParam;
-	int _voiceParam;
-	int _normalParam;
-	int _panInvert;
 	int _driverRate;
 	int _reserveRam;
 	int _bufferSizes[SOU_MAX_CHANNELS + 1];
@@ -104,11 +92,9 @@ private:
 	int engineInitialize(int rate, int reserveRam, const int *bufferSizes);
 	int engineTerminate();
 	int engineAllocChannel(int size, int reserveRam);
-	uint8 getGroupVolume(uint8 index);
-	void setGroupVolume(uint8 index, uint8 volume);
 	int souEngineMarkSyncTime();
 	int souEngineExternalSync(double ticks);
-	int souEngineStartCreative(const byte *data, int size, int soundId, int volume, int pan, int soundClass);
+	int souEngineStartStream(const byte *data, int size, uint32 volume, int pan, int soundClass, int tag1, int chunkCounter, int tag2);
 
 public:
 	SmushSound(SmushTimer *timer, SmushDriver *driver);
@@ -117,24 +103,12 @@ public:
 	int moduleStartup();
 	int moduleShutdown();
 
-	int souEngineStart(const byte *data, int soundId, int volume, int pan, int soundClass);
-	void souEngineStop(int soundId);
+	int souEngineStart(const byte *data, int volume, int pan, int soundClass);
 	void souEnginePause();
 	int souEngineResume();
 	void souEngineStopAll();
-	void souEngineSetVol(int soundId, int volume);
-	int souEngineGetVol(int soundId);
-	void souEngineSetPan(int soundId, int pan);
-	int souEngineGetPan(int soundId);
-	int souEngineSetHVol(int volume);
-	int souEngineGetHVol();
-	int souEngineSetRate(int rate);
 	int souEngineGetRate();
-	int souEngineQuery(int soundId);
 	int souEngineQueryTime(int channelIndex);
-	int souEngineSetParam(int soundId, int param, int value1, int value2);
-	int souEngineGetParam(int soundId, int param, int *value1, int *value2);
-	int souEngineStartStream(const byte *data, int size, int soundId, uint32 volume, int pan, int soundClass, int tag1, int chunkCounter, int tag2, int copyFlag);
 	void souEngineFill(int frameCount, SmushDriver *driver);
 
 };
