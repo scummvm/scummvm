@@ -23,49 +23,14 @@
  *
  */
 
-// Not nice, decompression code should probably go to common/zlib.cpp one day...
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/memstream.h"
-
-#if defined(USE_ZLIB)
-  #ifdef __SYMBIAN32__
-	#include <zlib\zlib.h>
-  #else
-	#include <zlib.h>
-  #endif
-#else
-  #error Sorry, zlib is required for the Prisoner engine
-#endif
+#include "common/compression/deflate.h"
 
 #include "prisoner/kroarchive.h"
 
 namespace Prisoner {
-
-int uncompress (Bytef *dest, uint32 *destLen, Bytef *source, uint32 sourceLen) {
-	z_stream stream;
-	int err;
-	stream.next_in = (Bytef*)source;
-	stream.avail_in = (uInt)sourceLen;
-	stream.next_out = dest;
-	stream.avail_out = (uInt)*destLen;
-	stream.zalloc = (alloc_func)0;
-	stream.zfree = (free_func)0;
-	err = inflateInit2_(&stream, -MAX_WBITS, ZLIB_VERSION, sizeof(z_stream));
-	if (err != Z_OK) return err;
-	err = inflate(&stream, Z_FINISH);
-	if (err != Z_STREAM_END) {
-		inflateEnd(&stream);
-		if (err == Z_NEED_DICT || (err == Z_BUF_ERROR && stream.avail_in == 0))
-			return Z_DATA_ERROR;
-		return err;
-	}
-	*destLen = stream.total_out;
-	err = inflateEnd(&stream);
-	return err;
-}
 
 void decryptBuffer(byte *buf, uint32 size) {
 	byte value = 0x5A;
@@ -133,10 +98,11 @@ byte *KroArchive::load(uint index) {
 	}
 	case 4: // zlib compressed
 	{
-		uint32 dstLen = entry->size;
+		uint dstLen = entry->size;
 		byte *compressedData = new byte[entry->compressedSize];
 		_fd->read(compressedData, entry->compressedSize);
-		if (uncompress(data, &dstLen, compressedData, entry->compressedSize) != Z_OK)
+		// Raw deflate data without a zlib header
+		if (!Common::inflateZlibHeaderless(data, &dstLen, compressedData, entry->compressedSize))
 			error("KroArchive::load(%d) Error decompressing type %d", index, entry->compressionType);
 		delete[] compressedData;
 		break;
