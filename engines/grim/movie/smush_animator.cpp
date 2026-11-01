@@ -598,7 +598,7 @@ int SmushDemoAnim::anmFrameObject(int flags, const byte *chunk) {
 	int height = (int16)READ_LE_UINT16(chunk + 8);
 
 	if (chunk[0] == 48 && _codec48)
-		return _codec48->decode(_bitmap, &_rect, drawX, drawY, chunk, flags, _client);
+		return _codec48->decode(&_rect, drawX, drawY, chunk, _client);
 
 	if (chunk[0] != 47 || !_blocky8)
 		return -1;

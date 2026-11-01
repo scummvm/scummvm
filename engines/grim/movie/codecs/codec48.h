@@ -26,7 +26,6 @@
 
 namespace Grim {
 
-struct SmushDemoBitmap;
 struct SmushDemoRect;
 class SmushDemoClient;
 
@@ -36,17 +35,12 @@ public:
 	~Codec48Decoder();
 	int init(int width, int height);
 	void deinit();
-	int decode(const SmushDemoBitmap *bitmap, const SmushDemoRect *rect, int x, int y, const byte *chunk, int flags, SmushDemoClient *client);
+	int decode(const SmushDemoRect *rect, int x, int y, const byte *chunk, SmushDemoClient *client);
 
 private:
 	void makeTable(int pitch, int index);
-	void drawBlended(byte *bitmap, int bitmapPitch, const byte *previous, const byte *current, int x, int y, int sourceX, int sourceY, int width, int height, int sourcePitch);
-	void blendFrames(byte *dst, const byte *previous, const byte *current, int width, int height, int dstPitch, int sourcePitch);
-
-	void bompDecodeLine(byte *dst, const byte *src, int len);
 
 	void decode3(byte *dst, const byte *src, int bufOffset);
-	void decode5(byte *dst, const byte *src, int width, int height);
 	void scaleBlock(byte *dst, const byte *src);
 	void copyBlock(byte *dst, int deltaBufOffset, int offset);
 
