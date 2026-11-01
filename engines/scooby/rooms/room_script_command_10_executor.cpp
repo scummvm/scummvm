@@ -103,13 +103,13 @@ void RoomScriptCommand10Executor::generateDialogueMaskTiles(uint8 nonzeroPalette
 	Common::Array<uint8> packedTiles = colorise4bppMaskTiles(
 		_rom, nonzeroPaletteIndex, 1);
 	int firstTileIndex = (_state.InterfaceTileAttributes & 0x07FF) + kMaskTileBaseDelta;
-	_scene.loadTilesAt(MakeSpan(packedTiles), firstTileIndex);
+	_scene.loadTilesAt(makeSpan(packedTiles), firstTileIndex);
 }
 
 bool RoomScriptCommand10Executor::playLeadActorPositionTransition(int16 previousPositionIndex,
 																  int16 nextPositionIndex) {
 	_state.ActorAnimationOffsets[0] =
-		ResolveLeadPositionTransition(previousPositionIndex, nextPositionIndex);
+		resolveLeadPositionTransition(previousPositionIndex, nextPositionIndex);
 	_state.ActorAnimationRestartFlags |= kLeadActorMask;
 
 	while (true) {

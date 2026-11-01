@@ -137,7 +137,7 @@ void RoomObjectTilePatchRenderer::publishPatchCells(const RoomShapePatch &patch,
 	do {
 		int16 currentColumn = startColumn;
 		do {
-			Span<const uint8> packedCell = MakeSpan(workingCells).slice(static_cast<size_t>(sourceByteOffset), sizeof(uint16));
+			Span<const uint8> packedCell = makeSpan(workingCells).slice(static_cast<size_t>(sourceByteOffset), sizeof(uint16));
 
 			// Ghidra 0x00007E14-0x00007E7D: read every affected working-map cell and retain all four
 			// independent signed clipping branches before replacing the single-word VDP write.
@@ -239,7 +239,7 @@ void RoomObjectTilePatchRenderer::transferRoomObjectTilePatch(int16 tilePatchInd
 		// Ghidra 0x00007D28-0x00007D4D: publish one unsigned-width pristine row, retain the helper's source
 		// advancement plus explicit row gap as one 32-cell stride, and preserve the exact DBF lifecycle.
 		publishDirectPatchRow(
-			MakeSpan(snapshotCells).slice(static_cast<size_t>(snapshotByteOffset), rowByteCount),
+			makeSpan(snapshotCells).slice(static_cast<size_t>(snapshotByteOffset), rowByteCount),
 			patch.Layer, destinationRowByteOffset, static_cast<uint16>(patch.Width));
 		snapshotByteOffset += kDirectTransferSnapshotColumnCount * static_cast<int>(sizeof(uint16));
 		destinationRowByteOffset += (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16));

@@ -61,7 +61,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 		return;
 	}
 
-	_scene.replacePaletteRange(MakeSpan(kBlankPalette), 0);
+	_scene.replacePaletteRange(makeSpan(kBlankPalette), 0);
 	int16 savedCameraX = _state.CameraX;
 	int16 savedCameraY = _state.CameraY;
 	{
@@ -120,7 +120,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 
 		// Plane publication preserves the inherited H32 mode; the 64-column backing extent exists for the
 		// original 256-pixel camera toggle and does not widen the visible viewport to H40.
-		_scene.replaceCompleteLayers(MakeSpan(backgroundPlane), MakeSpan(foregroundPlane),
+		_scene.replaceCompleteLayers(makeSpan(backgroundPlane), makeSpan(foregroundPlane),
 									 kPlaneColumns, kPlaneRows);
 
 		// Ghidra 0x0000468E-0x000046B7: stage all 64 authored colors. The content scope suppresses sprites
@@ -150,7 +150,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 				return;
 			}
 
-			_scene.replacePaletteRange(MakeSpan(animatedPalette), 0);
+			_scene.replacePaletteRange(makeSpan(animatedPalette), 0);
 			PaletteColor firstAnimatedColor = animatedPalette[40];
 			for (int color = 40; color < 47; color++) {
 				animatedPalette[static_cast<size_t>(color)] =
@@ -161,7 +161,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 		}
 
 		// Ghidra 0x00004716-0x0000471F: blank the temporary palette before room restoration.
-		_scene.replacePaletteRange(MakeSpan(kBlankPalette), 0);
+		_scene.replacePaletteRange(makeSpan(kBlankPalette), 0);
 
 		// cameraRestoreGuard and contentGuard fall out of scope here, in that order, reproducing the C#
 		// finally-then-dispose sequence.
@@ -193,7 +193,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 		return;
 	}
 
-	_scene.replacePaletteRange(MakeSpan(_state.TargetPalette), 0);
+	_scene.replacePaletteRange(makeSpan(_state.TargetPalette), 0);
 	_state.DisplayFlags |= kRoomUpdateEnabledMask;
 
 	// Ghidra 0x000047A6-0x000047AB: both completed branches converge on the separate Action1D owner.

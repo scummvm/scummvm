@@ -33,7 +33,7 @@
 
 namespace Scooby {
 namespace {
-void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
+void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
 	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
 	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
@@ -89,7 +89,7 @@ void RoomSceneLoader::loadRoomScene() {
 	int copyByteCount = MIN(static_cast<int>(roomTiles.size()),
 								 static_cast<int>(publishedRoomTiles.size()));
 	Common::copy(roomTiles.begin(), roomTiles.begin() + copyByteCount, publishedRoomTiles.begin());
-	_scene.overwritePackedPatternBytes(MakeSpan(publishedRoomTiles), 0);
+	_scene.overwritePackedPatternBytes(makeSpan(publishedRoomTiles), 0);
 
 	// Ghidra 0x00007676-0x000076B1: derive the interface base, generate all 95 mask tiles, discard the
 	// write-only end-address value after accounting for it, and derive the following prompt destination.
@@ -99,7 +99,7 @@ void RoomSceneLoader::loadRoomScene() {
 	uint16 maskTileByteOffset =
 		static_cast<uint16>(((_state.InterfaceTileAttributes & 0x07FF) + 0x20) << 5);
 	Common::Array<uint8> dialogueMaskTiles = colorise4bppMaskTiles(_rom, 0x0F, 0x01);
-	_scene.overwritePackedPatternBytes(MakeSpan(dialogueMaskTiles), maskTileByteOffset);
+	_scene.overwritePackedPatternBytes(makeSpan(dialogueMaskTiles), maskTileByteOffset);
 	patternByteOffset += kMaskTileByteCount;
 	_state.ActionPromptTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |
 															kPriorityAttribute);
@@ -112,7 +112,7 @@ void RoomSceneLoader::loadRoomScene() {
 		static_cast<uint16>(static_cast<int>(actionPromptTiles.size()) >> 1);
 	int actionPromptByteCount = actionPromptWordCount * static_cast<int>(sizeof(uint16));
 	_scene.overwritePackedPatternBytes(
-		MakeSpan(actionPromptTiles).slice(0, static_cast<size_t>(actionPromptByteCount)),
+		makeSpan(actionPromptTiles).slice(0, static_cast<size_t>(actionPromptByteCount)),
 		patternByteOffset);
 	patternByteOffset += actionPromptWordCount + actionPromptWordCount;
 	_state.CursorSpriteTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |
@@ -135,7 +135,7 @@ void RoomSceneLoader::loadRoomScene() {
 	// the dynamic room-script pattern base.
 	Common::Array<uint8> blankTile(static_cast<size_t>(kBlankTileByteCount),
 								   static_cast<uint8>(0x11));
-	_scene.overwritePackedPatternBytes(MakeSpan(blankTile), patternByteOffset);
+	_scene.overwritePackedPatternBytes(makeSpan(blankTile), patternByteOffset);
 	_state.RoomDynamicTileBaseAttribute = static_cast<uint16>(((patternByteOffset >> 5) + 1) |
 															  kPriorityAttribute);
 
@@ -147,7 +147,7 @@ void RoomSceneLoader::loadRoomScene() {
 		static_cast<size_t>(kInterfaceTemplateRowCount * kInterfaceTemplateColumnCount *
 								 static_cast<int>(sizeof(uint16))),
 		0);
-	Span<uint8> packedInterfaceCellsSpan = MakeSpan(packedInterfaceCells);
+	Span<uint8> packedInterfaceCellsSpan = makeSpan(packedInterfaceCells);
 	for (int row = 0; row < kInterfaceTemplateRowCount; row++) {
 		for (int column = 0; column < kInterfaceTemplateExplicitColumnCount; column++) {
 			int sourceOffset =
@@ -156,21 +156,21 @@ void RoomSceneLoader::loadRoomScene() {
 																									uint16));
 			uint16 cell =
 				static_cast<uint16>(_rom.readUInt16(sourceOffset) + _state.ActionPromptTileAttributes);
-			WriteUInt16BigEndian(packedInterfaceCellsSpan,
+			writeUInt16BigEndian(packedInterfaceCellsSpan,
 								 (row * kInterfaceTemplateColumnCount + column) * static_cast<int>(sizeof(
 																					  uint16)),
 								 cell);
 		}
 
 		for (int column = kInterfaceTemplateExplicitColumnCount; column < kInterfaceTemplateColumnCount; column++) {
-			WriteUInt16BigEndian(packedInterfaceCellsSpan,
+			writeUInt16BigEndian(packedInterfaceCellsSpan,
 								 (row * kInterfaceTemplateColumnCount + column) * static_cast<int>(sizeof(
 																					  uint16)),
 								 repeatedInterfaceCell);
 		}
 	}
 
-	_scene.loadLayerRows(MakeSpan(packedInterfaceCells), TileLayer::Interface, 0,
+	_scene.loadLayerRows(makeSpan(packedInterfaceCells), TileLayer::Interface, 0,
 						 kInterfaceTemplateStartRow, kInterfaceTemplateColumnCount, kInterfaceTemplateRowCount);
 
 	// Ghidra 0x000077AC-0x000077E3: preserve both unconditional child calls and both independent condition
@@ -204,7 +204,7 @@ void RoomSceneLoader::loadRoomScene() {
 	Common::Array<uint8> collisionCells = decompressRingLz(
 		_rom, collisionSectionOffset + static_cast<int>(sizeof(uint32)));
 	_state.ActiveRoomScene = makeUnique<RoomSceneData>(
-		MakeSpan(backgroundCells), MakeSpan(foregroundCells), MakeSpan(collisionCells));
+		makeSpan(backgroundCells), makeSpan(foregroundCells), makeSpan(collisionCells));
 	_state.RoomCoordinateDataOffset = collisionSectionOffset + static_cast<int>(sizeof(uint32)) +
 									  static_cast<int>(_rom.readUInt32(collisionSectionOffset));
 

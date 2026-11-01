@@ -428,7 +428,7 @@ void InteractionActionMenuExecutor::publishBinaryMaskTiles(uint8 nonzeroPaletteI
 	int firstMaskTileIndex = (destinationAttributes & kInterfaceTileIndexMask) + kInterfaceMaskTileBaseDelta;
 	Common::Array<uint8> maskTiles =
 		colorise4bppMaskTiles(_rom, nonzeroPaletteIndex, zeroPaletteIndex);
-	_scene.loadTilesAt(MakeSpan(maskTiles), firstMaskTileIndex);
+	_scene.loadTilesAt(makeSpan(maskTiles), firstMaskTileIndex);
 }
 
 bool InteractionActionMenuExecutor::waitForRoomRetrace() {

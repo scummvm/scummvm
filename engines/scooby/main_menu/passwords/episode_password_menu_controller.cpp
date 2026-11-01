@@ -225,7 +225,7 @@ const int kPasswordStateByteCount = 29;
 // 0x00009392-0x000093A1. The original consumes undefined adjacent scratch only while building
 // the ignored byte at 0xFF003D; returning zero for that six-bit tail avoids preserving
 // unobservable RAM state.
-bool ReadNextPasswordBit(Span<const uint8> symbols, int &bitOffset) {
+bool readNextPasswordBit(Span<const uint8> symbols, int &bitOffset) {
 	// Ghidra 0x00009392-0x0000939B: reload each five-bit symbol and align its first bit to the high side.
 	int symbolIndex = bitOffset / 5;
 	int bitIndex = 4 - bitOffset % 5;
@@ -237,7 +237,7 @@ bool ReadNextPasswordBit(Span<const uint8> symbols, int &bitOffset) {
 }
 
 
-void DecodePasswordSymbolXorChain(Span<uint8> packedPassword) {
+void decodePasswordSymbolXorChain(Span<uint8> packedPassword) {
 	// Ghidra 0x0000876C-0x00008783: recover the five-bit room from checksum XOR original prefix.
 	uint8 previousEncodedByte = packedPassword[0];
 	packedPassword[0] = static_cast<uint8>((packedPassword[1] ^ previousEncodedByte) & 0x1F);
@@ -251,13 +251,13 @@ void DecodePasswordSymbolXorChain(Span<uint8> packedPassword) {
 	}
 }
 
-uint8 ReadPasswordByteFromSymbols(Span<const uint8> symbols, int &bitOffset) {
+uint8 readPasswordByteFromSymbols(Span<const uint8> symbols, int &bitOffset) {
 	// Ghidra 0x00009382-0x00009385: clear D2 and arm eight DBF iterations.
 	uint8 result = 0;
 
 	// Ghidra 0x00009386-0x00009391: read and rotate eight extend bits into D2, most-significant first.
 	for (int bit = 0; bit < 8; bit++) {
-		result = static_cast<uint8>((result << 1) | (ReadNextPasswordBit(symbols, bitOffset)
+		result = static_cast<uint8>((result << 1) | (readNextPasswordBit(symbols, bitOffset)
 														 ? 1
 														 : 0));
 	}
@@ -290,10 +290,10 @@ Optional<MainMenuExit> EpisodePasswordMenuController::validatePasswordEntry() {
 	int bitOffset = 0;
 	for (int index = 0; index < static_cast<int>(packedPassword.size()); index++) {
 		packedPassword[static_cast<size_t>(index)] =
-			ReadPasswordByteFromSymbols(MakeSpan(symbols), bitOffset);
+			readPasswordByteFromSymbols(makeSpan(symbols), bitOffset);
 	}
 
-	DecodePasswordSymbolXorChain(MakeSpan(packedPassword));
+	decodePasswordSymbolXorChain(makeSpan(packedPassword));
 
 	// Ghidra 0x000092F2-0x0000931B: reproduce the cleared-X rotate chain across all 29 state bytes.
 	uint8 roomByte = packedPassword[0];

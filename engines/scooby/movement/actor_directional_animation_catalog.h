@@ -34,12 +34,12 @@ namespace Scooby {
 // Resolves one companion directional transition through the original wrapped word offset.
 // previousPositionIndex: signed matrix row. nextPositionIndex: signed matrix column.
 // Returns the selected descriptor-relative animation offset.
-int16 ResolveCompanion(int16 previousPositionIndex, int16 nextPositionIndex);
+int16 resolveCompanion(int16 previousPositionIndex, int16 nextPositionIndex);
 
 // Resolves one lead directional transition through the original wrapped word offset.
 // previousPositionIndex: signed matrix row. nextPositionIndex: signed matrix column.
 // Returns the selected descriptor-relative animation offset.
-int16 ResolveLead(int16 previousPositionIndex, int16 nextPositionIndex);
+int16 resolveLead(int16 previousPositionIndex, int16 nextPositionIndex);
 } // namespace Scooby
 
 #endif // SCOOBY_ACTOR_DIRECTIONAL_ANIMATION_CATALOG_H

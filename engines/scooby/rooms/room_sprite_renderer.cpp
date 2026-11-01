@@ -83,7 +83,7 @@ void RoomSpriteRenderer::refreshRoomSprites() {
 		size_t transferByteCount = static_cast<size_t>(
 			_state.ActorTileTransferWordCounts[static_cast<size_t>(actor)] * sizeof(uint16));
 		Common::Array<uint8> &actorTileData = _state.ActorTileData[static_cast<size_t>(actor)];
-		_scene.loadTilesAt(MakeSpan(actorTileData).slice(0, transferByteCount),
+		_scene.loadTilesAt(makeSpan(actorTileData).slice(0, transferByteCount),
 						   kActorTileDestinationIndices[static_cast<size_t>(actor)]);
 		pendingFlags &= static_cast<uint8>(~actorMask);
 		_state.ActorFramePublicationLatchFlags &= static_cast<uint8>(~actorMask);
@@ -184,7 +184,7 @@ void RoomSpriteRenderer::buildRoomSpriteTable() {
 	// logical link when records exist, or clear the complete table through the separate empty-table branch.
 	// MakeSpan on an empty vector safely yields an empty span, so the empty and non-empty C# branches collapse
 	// into one publication call here.
-	_scene.replaceSprites(MakeSpan(sprites));
+	_scene.replaceSprites(makeSpan(sprites));
 }
 
 void RoomSpriteRenderer::appendCursorOrLowerInterfaceSprite(Common::Array<SpriteInstance> &sprites) {

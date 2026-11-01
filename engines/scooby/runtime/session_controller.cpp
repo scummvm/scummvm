@@ -202,7 +202,7 @@ Optional<SessionExit> SessionController::presentRoom() {
 	// Ghidra 0x000021B0-0x000021C9: g_awSharedPalette and its contiguous room half form the complete
 	// 64-color target. Gate normal room updates while FadePaletteIn services each native retrace.
 	_state.DisplayFlags &= static_cast<uint8>(~kRoomUpdateEnabledMask);
-	if (!_presenter.fadePaletteIn(MakeSpan(_state.TargetPalette), &_handleRoomVBlankFunctor)) {
+	if (!_presenter.fadePaletteIn(makeSpan(_state.TargetPalette), &_handleRoomVBlankFunctor)) {
 		return Optional<SessionExit>(SessionExit::HostClosed);
 	}
 

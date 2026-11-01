@@ -39,7 +39,7 @@ int MainMenuPresentation::loadInitialAssets() {
 	_menuAnimation.reset();
 	_textAttributes = kBaseTextAttributes;
 	Common::Array<uint8> initialTiles = decompressRingLz(_rom, 0x1155A);
-	_scene.loadTiles(MakeSpan(initialTiles));
+	_scene.loadTiles(makeSpan(initialTiles));
 	int initialTileCount = static_cast<int>(initialTiles.size()) / kPackedBytesPerTile;
 
 	Common::Array<Common::Array<uint8>> additionalTileChunks{_rom.decompressByteRle(0x16D38),
@@ -64,7 +64,7 @@ int MainMenuPresentation::loadInitialAssets() {
 void MainMenuPresentation::restoreBinaryMaskTiles() {
 	int firstMaskTileIndex = (_textAttributes & 0x07FF) + 0x20;
 	Common::Array<uint8> maskTiles = colorise4bppMaskTiles(_rom, 0x0F, 0);
-	_scene.loadTilesAt(MakeSpan(maskTiles), firstMaskTileIndex);
+	_scene.loadTilesAt(makeSpan(maskTiles), firstMaskTileIndex);
 }
 
 bool MainMenuPresentation::fadePaletteIn(const Common::Functor0<void> &beforeRetrace) {
@@ -72,7 +72,7 @@ bool MainMenuPresentation::fadePaletteIn(const Common::Functor0<void> &beforeRet
 		_rom, 0x16CB8);
 	Common::Array<PaletteColor> overlay = readPalette(_rom, 0x32482, 30);
 	Common::copy(overlay.begin(), overlay.end(), targetPalette.begin() + 1);
-	return _presenter.fadePaletteIn(MakeSpan(targetPalette), &beforeRetrace);
+	return _presenter.fadePaletteIn(makeSpan(targetPalette), &beforeRetrace);
 }
 
 void MainMenuPresentation::stageByteRleData(int sourceOffset) {
@@ -80,22 +80,22 @@ void MainMenuPresentation::stageByteRleData(int sourceOffset) {
 }
 
 void MainMenuPresentation::composeWideMenuRevealTiles(int16 rowMaskOffset, int16 columnMaskOffset) {
-	_wideRevealTiles = ComposeWide(
-		_rom, MakeSpan(_wideRevealSource), rowMaskOffset, columnMaskOffset,
+	_wideRevealTiles = composeWide(
+		_rom, makeSpan(_wideRevealSource), rowMaskOffset, columnMaskOffset,
 		_menuAnimation.rowShiftStartIndex());
 }
 
 void MainMenuPresentation::composeNarrowMenuRevealTiles(int16 rowMaskOffset,
 														int16 columnMaskOffset) {
-	_narrowRevealTiles = ComposeNarrow(
-		_rom, MakeSpan(_narrowRevealSource), rowMaskOffset, columnMaskOffset,
+	_narrowRevealTiles = composeNarrow(
+		_rom, makeSpan(_narrowRevealSource), rowMaskOffset, columnMaskOffset,
 		_menuAnimation.rowShiftStartIndex());
 }
 
 void MainMenuPresentation::loadLightningPalette(int sourceOffset) {
 	Common::Array<PaletteColor> palette =
 		readPalette(_rom, sourceOffset, kColorsPerPaletteLine);
-	_scene.replacePaletteRange(MakeSpan(palette), kLightningPaletteStartIndex);
+	_scene.replacePaletteRange(makeSpan(palette), kLightningPaletteStartIndex);
 }
 
 void MainMenuPresentation::applyLightningPatch(int sourceOffset, int column, int row, int width, int height) {
@@ -108,7 +108,7 @@ void MainMenuPresentation::restoreLightningPatch(int column, int row, int width,
 		int sourceOffset = ((row + rowOffset) * kMenuPlaneColumns + column) * static_cast<int>(sizeof(
 																				  uint16));
 		Span<const uint8> patch =
-			MakeSpan(_fixedBackgroundMap)
+			makeSpan(_fixedBackgroundMap)
 				.slice(static_cast<size_t>(sourceOffset),
 					   static_cast<size_t>(width * static_cast<int>(sizeof(uint16))));
 		_scene.loadLayerRows(patch, TileLayer::Background, column, row + rowOffset, width, 1);
@@ -116,14 +116,14 @@ void MainMenuPresentation::restoreLightningPatch(int column, int row, int width,
 }
 
 void MainMenuPresentation::commitRevealSceneBuffers(bool includeNarrowTiles) {
-	_scene.loadTilesAt(MakeSpan(_wideRevealTiles), kWideRevealTileIndex);
+	_scene.loadTilesAt(makeSpan(_wideRevealTiles), kWideRevealTileIndex);
 	if (includeNarrowTiles) {
-		_scene.loadTilesAt(MakeSpan(_narrowRevealTiles), kNarrowRevealTileIndex);
+		_scene.loadTilesAt(makeSpan(_narrowRevealTiles), kNarrowRevealTileIndex);
 	}
 }
 
 void MainMenuPresentation::commitStagedMenuPlane() {
-	_scene.loadLayerRows(MakeSpan(_currentRleData), TileLayer::Foreground, 0, 0,
+	_scene.loadLayerRows(makeSpan(_currentRleData), TileLayer::Foreground, 0, 0,
 						 kMenuPlaneColumns,
 						 kMenuPlaneRows);
 }
@@ -141,7 +141,7 @@ void MainMenuPresentation::updateSelectionCursor(int verticalOffset, Optional<ui
 		kSelectionCursorSizeInTiles, packedAttributes & 0x07FF,
 		static_cast<uint8>((packedAttributes >> 13) & 3), (packedAttributes & 0x0800) != 0,
 		(packedAttributes & 0x1000) != 0, (packedAttributes & 0x8000) != 0);
-	_scene.setDynamicSprites(MakeSpan(cursor));
+	_scene.setDynamicSprites(makeSpan(cursor));
 }
 
 void MainMenuPresentation::updatePasswordGridCursors(int gridColumn, int gridRow, int displayPosition,
@@ -157,7 +157,7 @@ void MainMenuPresentation::updatePasswordGridCursors(int gridColumn, int gridRow
 	cursors[1] = SpriteInstance(kPasswordEntryCursorBaseX + displayPosition * 8,
 								kPasswordEntryCursorBaseY + passwordRow * 8, 1, 1,
 								kPasswordGridCursorTileIndex, 0, false, false, false);
-	_scene.setDynamicSprites(MakeSpan(cursors));
+	_scene.setDynamicSprites(makeSpan(cursors));
 }
 
 Optional<int> MainMenuPresentation::selectionRowAt(const Common::Point &pos, int rowCount, int rowSpacing) const {
@@ -212,7 +212,7 @@ void MainMenuPresentation::writeIndexedTileRow(const Common::String &text, int c
 	while (sourceOffset < static_cast<int>(cells.size())) {
 		int rowLength = MIN(static_cast<int>(cells.size()) - sourceOffset,
 							kMenuPlaneColumns - columnIndex);
-		Span<const TileCell> rowCells = MakeSpan(cells).slice(
+		Span<const TileCell> rowCells = makeSpan(cells).slice(
 			static_cast<size_t>(sourceOffset), static_cast<size_t>(rowLength));
 		_scene.replaceLayerRow(rowCells, TileLayer::Foreground, columnIndex, rowIndex);
 		sourceOffset += rowLength;
@@ -225,7 +225,7 @@ void MainMenuPresentation::writeIndexedTile(uint8 character, int columnIndex, in
 	Common::Array<TileCell> cell(1);
 	cell[0] = decodeTileCell(
 		static_cast<uint16>(_textAttributes + character));
-	_scene.replaceLayerRow(MakeSpan(cell), TileLayer::Foreground, columnIndex, rowIndex);
+	_scene.replaceLayerRow(makeSpan(cell), TileLayer::Foreground, columnIndex, rowIndex);
 }
 
 void MainMenuPresentation::writePriorityTileRow(const Common::String &text, int columnIndex, int rowIndex) {
@@ -245,12 +245,12 @@ void MainMenuPresentation::updateCatalogSelectionHighlight(int rowIndex) {
 	}
 
 	_scene.setSpriteVerticalOffset(0);
-	_scene.replaceSprites(MakeSpan(sprites));
+	_scene.replaceSprites(makeSpan(sprites));
 }
 
 void MainMenuPresentation::restoreMainMenuSpriteLayout() {
 	_scene.setSpriteVerticalOffset(0);
-	_scene.loadSprites(MakeSpan(_menuLayout));
+	_scene.loadSprites(makeSpan(_menuLayout));
 }
 
 void MainMenuPresentation::writeCenteredTileRow(const Common::String &text, int rowIndex) {
@@ -274,14 +274,14 @@ void MainMenuPresentation::stageInitialMenuAssets(int firstAdditionalTileIndex,
 												  const Common::Array<uint8> &fixedTileBlock) {
 	int nextTileIndex = firstAdditionalTileIndex;
 	for (const Common::Array<uint8> &tileChunk : additionalTileChunks) {
-		_scene.loadTilesAt(MakeSpan(tileChunk), nextTileIndex);
+		_scene.loadTilesAt(makeSpan(tileChunk), nextTileIndex);
 		nextTileIndex += static_cast<int>(tileChunk.size()) / kPackedBytesPerTile;
 	}
 
 	restoreBinaryMaskTiles();
 	Common::Array<uint8> solidTiles(static_cast<size_t>(4 * kPackedBytesPerTile), 0xAA);
-	_scene.loadTilesAt(MakeSpan(solidTiles), 0x7D0);
-	_scene.loadLayerRows(MakeSpan(fixedTileBlock), TileLayer::Background, 0, 0, 32, 28);
-	_scene.loadSprites(MakeSpan(_menuLayout));
+	_scene.loadTilesAt(makeSpan(solidTiles), 0x7D0);
+	_scene.loadLayerRows(makeSpan(fixedTileBlock), TileLayer::Background, 0, 0, 32, 28);
+	_scene.loadSprites(makeSpan(_menuLayout));
 }
 } // namespace Scooby

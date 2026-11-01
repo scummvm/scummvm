@@ -32,12 +32,12 @@
 
 namespace Scooby {
 namespace {
-uint16 ReadUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
+uint16 readUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
 	return static_cast<uint16>((bytes[static_cast<size_t>(offset)] << 8) |
 							   bytes[static_cast<size_t>(offset + 1)]);
 }
 
-void WriteUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
+void writeUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
 	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
 	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
@@ -61,7 +61,7 @@ void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { //
 	Common::Array<uint8> packedTiles = decompressRingLz(
 		_rom, kTileStreamOffset);
 	uint16 tileBaseAttribute = _state.RoomDynamicTileBaseAttribute;
-	_scene.loadTilesAt(MakeSpan(packedTiles), tileBaseAttribute & kTileIndexMask);
+	_scene.loadTilesAt(makeSpan(packedTiles), tileBaseAttribute & kTileIndexMask);
 
 	// Ghidra 0x000044F6-0x00004509: replace all 64x32 plane-A cells with dynamic base plus one. The original
 	// FillVramWords helper preserves D0=0xC000 for the following upper-left map overlay.
@@ -76,13 +76,13 @@ void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { //
 												 static_cast<int>(sizeof(uint16)))
 			.toArray();
 	for (size_t byteOffset = 0; byteOffset < packedForeground.size(); byteOffset += sizeof(uint16)) {
-		WriteUInt16BigEndian(
+		writeUInt16BigEndian(
 			packedForeground, static_cast<int>(byteOffset),
-			static_cast<uint16>(ReadUInt16BigEndian(packedForeground, static_cast<int>(byteOffset)) +
+			static_cast<uint16>(readUInt16BigEndian(packedForeground, static_cast<int>(byteOffset)) +
 								tileBaseAttribute));
 	}
 
-	_scene.loadLayerRows(MakeSpan(packedForeground), TileLayer::Foreground, 0, 0,
+	_scene.loadLayerRows(makeSpan(packedForeground), TileLayer::Foreground, 0, 0,
 						 kForegroundMapColumnCount, kForegroundMapRowCount);
 	// Ghidra 0x00004532-0x00004533: return with the foreground override installed.
 }

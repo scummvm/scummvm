@@ -51,7 +51,7 @@ namespace Scooby {
 // Equal reveal offsets select 5/15 through 40/120 rows/columns. Once reveal completes, the
 // column mask remains fully selected while the row mask follows the menu triangle phase. The
 // 2,400-byte result is published at tile indices 0x780-0x7CA.
-Common::Array<uint8> ComposeWide(const ScoobyDooRom &rom,
+Common::Array<uint8> composeWide(const ScoobyDooRom &rom,
 								 Span<const uint8> source,
 								 int16 rowMaskOffset, int16 columnMaskOffset,
 								 int rowShiftStartIndex);
@@ -69,7 +69,7 @@ Common::Array<uint8> ComposeWide(const ScoobyDooRom &rom,
 // use the zero guards originally supplied by cleared Ghidra g_abWideMenuAndOpeningWorkspace and
 // g_abActorGraphicsAndNarrowMenuWorkspace storage around 0xFF3800 and 0xFF5800. The 1,024-byte
 // result is published at tile indices 0x640-0x65F only after wide reveal reaches zero.
-Common::Array<uint8> ComposeNarrow(const ScoobyDooRom &rom,
+Common::Array<uint8> composeNarrow(const ScoobyDooRom &rom,
 								   Span<const uint8> source,
 								   int16 rowMaskOffset, int16 columnMaskOffset,
 								   int rowShiftStartIndex);

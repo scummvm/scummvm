@@ -37,7 +37,7 @@ const Common::Array<int16> kLeadAnimationOffsets = {
 	0x0000, 0x0015, 0x001A, 0x0018, 0x0014, 0x0001, 0x001B, 0x0019, 0x001E, 0x001F, 0x0002, 0x0017,
 	0x001C, 0x001D, 0x0016, 0x0003};
 
-int16 Resolve(const Common::Array<int16> &offsets, int16 previousPositionIndex,
+int16 resolve(const Common::Array<int16> &offsets, int16 previousPositionIndex,
 			  int16 nextPositionIndex) {
 	int16 byteOffset = static_cast<int16>(
 		previousPositionIndex * kPositionCount * static_cast<int>(sizeof(int16)) +
@@ -46,11 +46,11 @@ int16 Resolve(const Common::Array<int16> &offsets, int16 previousPositionIndex,
 }
 } // namespace
 
-int16 ResolveCompanion(int16 previousPositionIndex, int16 nextPositionIndex) {
-	return Resolve(kCompanionAnimationOffsets, previousPositionIndex, nextPositionIndex);
+int16 resolveCompanion(int16 previousPositionIndex, int16 nextPositionIndex) {
+	return resolve(kCompanionAnimationOffsets, previousPositionIndex, nextPositionIndex);
 }
 
-int16 ResolveLead(int16 previousPositionIndex, int16 nextPositionIndex) {
-	return Resolve(kLeadAnimationOffsets, previousPositionIndex, nextPositionIndex);
+int16 resolveLead(int16 previousPositionIndex, int16 nextPositionIndex) {
+	return resolve(kLeadAnimationOffsets, previousPositionIndex, nextPositionIndex);
 }
 } // namespace Scooby

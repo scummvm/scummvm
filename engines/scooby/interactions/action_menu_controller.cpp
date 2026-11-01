@@ -32,12 +32,12 @@ namespace Scooby {
 const Common::Array<VerbEnum> ActionMenuController::kActionIconByCommand{NONE, TAKE, LOOK, OPEN, PUSH, EAT, GIVE, TALK, SHUT, PULL, USE};
 
 namespace {
-void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
+void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
 	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
 	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 
-void CopyBytes(Span<const uint8> source, Span<uint8> destination) {
+void copyBytes(Span<const uint8> source, Span<uint8> destination) {
 	for (size_t i = 0; i < source.size(); ++i) {
 		destination[i] = source[i];
 	}
@@ -202,7 +202,7 @@ void ActionMenuController::composeInventoryGrid() {
 					int graphicRecordOffset = graphicTableOffset + static_cast<int16>(
 																	   static_cast<uint16>(graphicIndex - 1) * kInventoryGraphicRecordSize);
 					uint16 graphicAttributes = _rom.readUInt16(graphicRecordOffset);
-					CopyBytes(_rom.readBytes(graphicRecordOffset + static_cast<int>(sizeof(uint16)),
+					copyBytes(_rom.readBytes(graphicRecordOffset + static_cast<int>(sizeof(uint16)),
 											 kInventoryGraphicTileByteCount),
 							  _graphicsWorkspace.inventoryPatterns().slice(
 								  static_cast<size_t>(patternDestinationOffset),
@@ -221,13 +221,13 @@ void ActionMenuController::composeInventoryGrid() {
 						for (int column = 0; column < kInventoryIconColumnCount; column++) {
 							uint16 cell = static_cast<uint16>(
 								firstTileCell + column * kInventoryIconRowCount + row);
-							WriteUInt16BigEndian(MakeSpan(_inventoryCellWorkspace),
+							writeUInt16BigEndian(makeSpan(_inventoryCellWorkspace),
 												 slotByteOffset + row * kInventoryGridRowByteCount +
 													 column * static_cast<int>(sizeof(uint16)),
 												 cell);
 						}
 
-						WriteUInt16BigEndian(MakeSpan(_inventoryCellWorkspace),
+						writeUInt16BigEndian(makeSpan(_inventoryCellWorkspace),
 											 slotByteOffset + row * kInventoryGridRowByteCount +
 												 kInventoryIconColumnCount * static_cast<int>(sizeof(uint16)),
 											 kBlankInventoryCell);
@@ -250,7 +250,7 @@ void ActionMenuController::composeInventoryGrid() {
 
 		for (int row = 0; row < kInventoryIconRowCount; row++) {
 			for (int column = 0; column <= kInventoryIconColumnCount; column++) {
-				WriteUInt16BigEndian(MakeSpan(_inventoryCellWorkspace),
+				writeUInt16BigEndian(makeSpan(_inventoryCellWorkspace),
 									 slotByteOffset + row * kInventoryGridRowByteCount +
 										 column * static_cast<int>(sizeof(uint16)),
 									 kBlankInventoryCell);
@@ -265,13 +265,13 @@ void ActionMenuController::commitActionPromptTiles() {
 
 	// Ghidra 0x00005CC8-0x00005CE5: publish six complete 20-word rows at AACC, advancing by the
 	// original 0x80-byte plane row stride after every write.
-	_scene.loadLayerRows(MakeSpan(_inventoryCellWorkspace), TileLayer::Interface,
+	_scene.loadLayerRows(makeSpan(_inventoryCellWorkspace), TileLayer::Interface,
 						 kInventoryGridStartColumn, kInventoryGridStartRow, kInventoryGridColumnCount,
 						 kInventoryIconRowCount * 2);
 
 	// Ghidra 0x00005CE6-0x00005CF5: fill every word in the following 64-cell row with literal zero.
 	Common::Array<TileCell> blankCells(kInterfaceColumnCount);
-	_scene.replaceLayerRow(MakeSpan(blankCells), TileLayer::Interface, 0, kInterfaceClearRow);
+	_scene.replaceLayerRow(makeSpan(blankCells), TileLayer::Interface, 0, kInterfaceClearRow);
 }
 
 void ActionMenuController::refreshActionPrompts() {
@@ -340,14 +340,14 @@ void ActionMenuController::drawSelectedActionIcon(int mode) {
 	// destination row by 0x80 bytes and adding the packed tile attributes to every authored word.
 	Common::Array<uint8> packedCells(kActionIconCellColumnCount * kActionIconCellRowCount *
 									 sizeof(uint16));
-	Span<uint8> packedCellsSpan = MakeSpan(packedCells);
+	Span<uint8> packedCellsSpan = makeSpan(packedCells);
 	for (int row = 0; row < kActionIconCellRowCount; row++) {
 		for (int column = 0; column < kActionIconCellColumnCount; column++) {
 			uint16 packedCell = static_cast<uint16>(
 				_rom.readUInt16(sourceOffset + row * kInterfaceColumnCount * static_cast<int>(sizeof(uint16)) +
 								column * static_cast<int>(sizeof(uint16))) +
 				_state.ActionPromptTileAttributes);
-			WriteUInt16BigEndian(packedCellsSpan,
+			writeUInt16BigEndian(packedCellsSpan,
 								 (row * kActionIconCellColumnCount + column) * static_cast<int>(sizeof(uint16)),
 								 packedCell);
 		}

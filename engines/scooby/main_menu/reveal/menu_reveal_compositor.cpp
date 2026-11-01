@@ -37,18 +37,18 @@ const int kWideOutputOffsetTable = 0xB5C0;
 const int kWideSourceHeight = 40;
 const int kWideSourceWidth = 120;
 
-void WriteUInt32BigEndian(Common::Array<uint8> &output, int offset, uint32 value) {
+void writeUInt32BigEndian(Common::Array<uint8> &output, int offset, uint32 value) {
 	output[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 24);
 	output[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
 	output[static_cast<size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
 	output[static_cast<size_t>(offset + 3)] = static_cast<uint8>(value);
 }
 
-bool MaskSelects(const ScoobyDooRom &rom, int maskOffset, int index) {
+bool maskSelects(const ScoobyDooRom &rom, int maskOffset, int index) {
 	return (rom.readByte(maskOffset + index / 8) & (0x80 >> (index % 8))) != 0;
 }
 
-void PackRow(const ScoobyDooRom &rom, Span<const uint8> selectedPixels,
+void packRow(const ScoobyDooRom &rom, Span<const uint8> selectedPixels,
 			 int selectedPixelCount, Common::Array<uint8> &output, int destinationRow,
 			 int longwordsPerRow,
 			 int outputOffsetTable) {
@@ -66,11 +66,11 @@ void PackRow(const ScoobyDooRom &rom, Span<const uint8> selectedPixels,
 		int offsetIndex = destinationRow * longwordsPerRow + group;
 		uint16 destinationOffset = rom.readUInt16(outputOffsetTable + offsetIndex *
 																		  static_cast<int>(sizeof(uint16)));
-		WriteUInt32BigEndian(output, destinationOffset, packedPixels);
+		writeUInt32BigEndian(output, destinationOffset, packedPixels);
 	}
 }
 
-Common::Array<uint8> Compose(const ScoobyDooRom &rom,
+Common::Array<uint8> compose(const ScoobyDooRom &rom,
 							 Span<const uint8> source,
 							 int16 rowMaskOffset, int16 columnMaskOffset,
 							 int rowShiftStartIndex, int sourceWidth, int sourceHeight,
@@ -88,14 +88,14 @@ Common::Array<uint8> Compose(const ScoobyDooRom &rom,
 						   kRowShiftTableOffset + shiftIndex * static_cast<int>(sizeof(uint16))) *
 					   rowShiftDirection;
 		shiftIndex = (shiftIndex + 1) % kRowShiftCount;
-		if (!MaskSelects(rom, rowMask, sourceRow)) {
+		if (!maskSelects(rom, rowMask, sourceRow)) {
 			continue;
 		}
 
 		int selectedPixelCount = 0;
 		int shiftedRowStart = sourceRow * sourceWidth + rowShift;
 		for (int sourceColumn = 0; sourceColumn < sourceWidth; sourceColumn++) {
-			if (!MaskSelects(rom, columnMask, sourceColumn)) {
+			if (!maskSelects(rom, columnMask, sourceColumn)) {
 				continue;
 			}
 
@@ -106,7 +106,7 @@ Common::Array<uint8> Compose(const ScoobyDooRom &rom,
 					: static_cast<uint8>(0);
 		}
 
-		PackRow(rom, MakeSpan(selectedPixels), selectedPixelCount, output, destinationRow++,
+		packRow(rom, makeSpan(selectedPixels), selectedPixelCount, output, destinationRow++,
 				longwordsPerRow,
 				outputOffsetTable);
 	}
@@ -115,19 +115,19 @@ Common::Array<uint8> Compose(const ScoobyDooRom &rom,
 }
 } // namespace
 
-Common::Array<uint8> ComposeWide(const ScoobyDooRom &rom,
+Common::Array<uint8> composeWide(const ScoobyDooRom &rom,
 								 Span<const uint8> source,
 								 int16 rowMaskOffset, int16 columnMaskOffset,
 								 int rowShiftStartIndex) {
-	return Compose(rom, source, rowMaskOffset, columnMaskOffset, rowShiftStartIndex, kWideSourceWidth,
+	return compose(rom, source, rowMaskOffset, columnMaskOffset, rowShiftStartIndex, kWideSourceWidth,
 				   kWideSourceHeight, -1, kWideOutputOffsetTable);
 }
 
-Common::Array<uint8> ComposeNarrow(const ScoobyDooRom &rom,
+Common::Array<uint8> composeNarrow(const ScoobyDooRom &rom,
 								   Span<const uint8> source,
 								   int16 rowMaskOffset, int16 columnMaskOffset,
 								   int rowShiftStartIndex) {
-	return Compose(rom, source, rowMaskOffset, columnMaskOffset, rowShiftStartIndex, kNarrowSourceWidth,
+	return compose(rom, source, rowMaskOffset, columnMaskOffset, rowShiftStartIndex, kNarrowSourceWidth,
 				   kNarrowSourceHeight, 1, kNarrowOutputOffsetTable);
 }
 } // namespace Scooby

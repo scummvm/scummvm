@@ -49,7 +49,7 @@ public:
 	// Rebuilds both rows from the current room and the confirmed 29-byte password state.
 	// state: runtime state supplying the room and complete progress table.
 	void refresh(const RuntimeState &state) {
-		_rows = buildPasswordStrings(state.RoomId, MakeSpan(state.ProgressStateBytes));
+		_rows = buildPasswordStrings(state.RoomId, makeSpan(state.ProgressStateBytes));
 	}
 
 	// Replaces one symbol while preserving the authored space after every five positions.

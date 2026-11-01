@@ -174,7 +174,7 @@ void IntroSequence::begin(State state, int frameCount) {
 }
 
 void IntroSequence::fadeIn(State nextState, int nextFrameCount) {
-	_scene.advancePaletteToward(MakeSpan(_targetPalette));
+	_scene.advancePaletteToward(makeSpan(_targetPalette));
 	if (--_remainingFrames == 0) {
 		begin(nextState, nextFrameCount);
 	}
@@ -195,7 +195,7 @@ void IntroSequence::loadFirstScreen() {
 	_scene.loadLayerRows(_rom.readBytes(0x23226, 12 * 4 * static_cast<int>(sizeof(uint16))),
 						 TileLayer::Foreground,
 						 10, 11, 12, 4);
-	_scene.loadTiles(MakeSpan(decompressRingLz(_rom, 0x23286)));
+	_scene.loadTiles(makeSpan(decompressRingLz(_rom, 0x23286)));
 	readTargetPalette(0x236A0);
 }
 
@@ -204,7 +204,7 @@ void IntroSequence::loadFourthScreen() {
 	_scene.loadLayerRows(_rom.readBytes(0x2249A, 26 * 9 * static_cast<int>(sizeof(uint16))),
 						 TileLayer::Foreground,
 						 3, 8, 26, 9);
-	_scene.loadTiles(MakeSpan(decompressRingLz(_rom, 0x2266E)));
+	_scene.loadTiles(makeSpan(decompressRingLz(_rom, 0x2266E)));
 	readTargetPalette(0x231A6);
 }
 
@@ -225,7 +225,7 @@ void IntroSequence::loadThirdScreen() {
 	_scene.loadLayerRows(_rom.readBytes(0x21B40, 64 * 6 * static_cast<int>(sizeof(uint16))),
 						 TileLayer::Background,
 						 0, 9, 64, 6);
-	_scene.loadTiles(MakeSpan(decompressRingLz(_rom, 0x21E40)));
+	_scene.loadTiles(makeSpan(decompressRingLz(_rom, 0x21E40)));
 	_scene.setHorizontalOffsets(0, -256);
 	readTargetPalette(0x2241A);
 }

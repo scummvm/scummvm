@@ -34,7 +34,7 @@ namespace Scooby {
 // previousPositionIndex: signed row index used by the original word calculation.
 // nextPositionIndex: signed column index used by the original word calculation.
 // Returns the descriptor-relative animation offset stored at the selected matrix entry.
-int16 ResolveLeadPositionTransition(int16 previousPositionIndex, int16 nextPositionIndex);
+int16 resolveLeadPositionTransition(int16 previousPositionIndex, int16 nextPositionIndex);
 } // namespace Scooby
 
 #endif // SCOOBY_LEAD_ACTOR_POSITION_TRANSITION_ANIMATION_CATALOG_H

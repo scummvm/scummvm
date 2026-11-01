@@ -40,14 +40,14 @@ const Common::Array<DuelRoomScriptActionExecutor::DuelMovementDelta>
 		{0, 0}, {0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}, {0, 0}, {1, -1}, {2, -2}, {3, -3}, {3, -3}, {4, -4}, {4, -4}, {5, -5}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {0, 0}, {1, 1}, {2, 2}, {3, 3}, {3, 3}, {4, 4}, {4, 4}, {5, 5}, {0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 0}, {-1, 1}, {-2, 2}, {-3, 3}, {-3, 3}, {-4, 4}, {-4, 4}, {-5, 5}, {0, 0}, {-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}, {0, 0}, {-1, -1}, {-2, -2}, {-3, -3}, {-3, -3}, {-4, -4}, {-4, -4}, {-5, -5}};
 
 namespace {
-void WriteUInt32BigEndian(Span<uint8> bytes, int offset, uint32 value) {
+void writeUInt32BigEndian(Span<uint8> bytes, int offset, uint32 value) {
 	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 24);
 	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
 	bytes[static_cast<size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
 	bytes[static_cast<size_t>(offset + 3)] = static_cast<uint8>(value);
 }
 
-void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
+void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
 	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
 	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
@@ -444,42 +444,42 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 }
 
 void DuelRoomScriptActionExecutor::initializeDuelPresentation() {
-	Span<uint8> firstTiles = MakeSpan(_firstDuelStatusTiles);
+	Span<uint8> firstTiles = makeSpan(_firstDuelStatusTiles);
 
 	int destinationOffset = 0;
-	WriteUInt32BigEndian(firstTiles, destinationOffset, 0xFF);
+	writeUInt32BigEndian(firstTiles, destinationOffset, 0xFF);
 	destinationOffset += static_cast<int>(sizeof(uint32));
 	for (int index = 0; index < 6; index++) {
-		WriteUInt32BigEndian(firstTiles, destinationOffset, 0xF0);
+		writeUInt32BigEndian(firstTiles, destinationOffset, 0xF0);
 		destinationOffset += static_cast<int>(sizeof(uint32));
 	}
 
-	WriteUInt32BigEndian(firstTiles, destinationOffset, 0xFF);
+	writeUInt32BigEndian(firstTiles, destinationOffset, 0xFF);
 	destinationOffset += static_cast<int>(sizeof(uint32));
-	WriteUInt32BigEndian(firstTiles, destinationOffset, 0xFFFFFFFFu);
+	writeUInt32BigEndian(firstTiles, destinationOffset, 0xFFFFFFFFu);
 	destinationOffset += static_cast<int>(sizeof(uint32));
 	for (int index = 0; index < 6; index++) {
-		WriteUInt32BigEndian(firstTiles, destinationOffset, 0);
+		writeUInt32BigEndian(firstTiles, destinationOffset, 0);
 		destinationOffset += static_cast<int>(sizeof(uint32));
 	}
 
-	WriteUInt32BigEndian(firstTiles, destinationOffset, 0xFFFFFFFFu);
+	writeUInt32BigEndian(firstTiles, destinationOffset, 0xFFFFFFFFu);
 	_scene.loadTilesAt(firstTiles.slice(0, 0x40), 0x7F8);
 
 	destinationOffset = 0;
 	for (int group = 0; group < 2; group++) {
-		WriteUInt16BigEndian(firstTiles, destinationOffset, 0x07F8);
+		writeUInt16BigEndian(firstTiles, destinationOffset, 0x07F8);
 		destinationOffset += static_cast<int>(sizeof(uint16));
 		for (int index = 0; index < 8; index++) {
-			WriteUInt16BigEndian(firstTiles, destinationOffset, 0x07F9);
+			writeUInt16BigEndian(firstTiles, destinationOffset, 0x07F9);
 			destinationOffset += static_cast<int>(sizeof(uint16));
 		}
 
-		WriteUInt16BigEndian(firstTiles, destinationOffset, 0x0FF8);
+		writeUInt16BigEndian(firstTiles, destinationOffset, 0x0FF8);
 		destinationOffset += static_cast<int>(sizeof(uint16));
-		WriteUInt16BigEndian(firstTiles, destinationOffset, _state.BlankTileCell);
+		writeUInt16BigEndian(firstTiles, destinationOffset, _state.BlankTileCell);
 		destinationOffset += static_cast<int>(sizeof(uint16));
-		WriteUInt16BigEndian(firstTiles, destinationOffset, _state.BlankTileCell);
+		writeUInt16BigEndian(firstTiles, destinationOffset, _state.BlankTileCell);
 		destinationOffset += static_cast<int>(sizeof(uint16));
 	}
 
@@ -502,12 +502,12 @@ void DuelRoomScriptActionExecutor::writeDuelFrameCells(int sourceOffset, int sta
 				static_cast<uint16>(kDuelPatternTileIndex + tileOffset));
 	}
 
-	_scene.replaceLayerRow(MakeSpan(cells), TileLayer::Foreground, startColumn, row);
+	_scene.replaceLayerRow(makeSpan(cells), TileLayer::Foreground, startColumn, row);
 }
 
 void DuelRoomScriptActionExecutor::publishDuelStatusTiles() {
-	_scene.loadTilesAt(MakeSpan(_firstDuelStatusTiles), 0x518);
-	_scene.loadTilesAt(MakeSpan(_secondDuelStatusTiles), 0x520);
+	_scene.loadTilesAt(makeSpan(_firstDuelStatusTiles), 0x518);
+	_scene.loadTilesAt(makeSpan(_secondDuelStatusTiles), 0x520);
 }
 
 bool DuelRoomScriptActionExecutor::waitForRoomFrames(int frameCounter) {
@@ -565,10 +565,10 @@ void DuelRoomScriptActionExecutor::stopAudioPlayback(int command) {
 
 void DuelRoomScriptActionExecutor::buildDuelStatusBarTiles() {
 	// Ghidra 0x0000393A-0x00003985: replace the full first shared workspace with palette-A health tiles.
-	buildDuelHealthTiles(MakeSpan(_firstDuelStatusTiles), _duelHealth[kDuelFirstActor], 0xA0000000u);
+	buildDuelHealthTiles(makeSpan(_firstDuelStatusTiles), _duelHealth[kDuelFirstActor], 0xA0000000u);
 
 	// Ghidra 0x00003986-0x000039D3: replace the full second shared workspace with palette-9 health tiles.
-	buildDuelHealthTiles(MakeSpan(_secondDuelStatusTiles), _duelHealth[kDuelSecondActor], 0x90000000u);
+	buildDuelHealthTiles(makeSpan(_secondDuelStatusTiles), _duelHealth[kDuelSecondActor], 0x90000000u);
 }
 
 void DuelRoomScriptActionExecutor::buildDuelHealthTiles(Span<uint8> tiles, int16 health,
@@ -589,7 +589,7 @@ void DuelRoomScriptActionExecutor::buildDuelHealthTiles(Span<uint8> tiles, int16
 		Span<uint8> tile = tiles.slice(static_cast<size_t>(tileIndex * 0x20), 0x20);
 		tile.fill(0);
 		for (int row = 2; row < 6; row++) {
-			WriteUInt32BigEndian(tile, row * static_cast<int>(sizeof(uint32)), packedRow);
+			writeUInt32BigEndian(tile, row * static_cast<int>(sizeof(uint32)), packedRow);
 		}
 	}
 }

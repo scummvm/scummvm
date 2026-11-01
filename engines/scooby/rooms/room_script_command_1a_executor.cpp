@@ -48,7 +48,7 @@ void RoomScriptCommand1AExecutor::executeRoomScriptCommand1A(int mode) {
 				int paletteIndex = paletteIndexShifted / static_cast<int>(sizeof(uint16));
 				uint16 colorCount =
 					static_cast<uint16>(_rom.readUInt16(commandOffset + 6) - startIndex);
-				_scene.replacePaletteRange(MakeSpan(_state.TargetPalette)
+				_scene.replacePaletteRange(makeSpan(_state.TargetPalette)
 											   .slice(static_cast<size_t>(paletteIndex),
 													  static_cast<size_t>(colorCount)),
 										   paletteIndex);

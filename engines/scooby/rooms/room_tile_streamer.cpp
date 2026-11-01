@@ -47,11 +47,11 @@ void RoomTileStreamer::drawRoomViewport() {
 	int destinationStartRow = (cameraTileY + 2) & (kNameTableRowCount - 1);
 
 	// Ghidra 0x000079A2-0x000079D9: publish all 19 rows and 32 columns from the background workspace.
-	publishViewport(MakeSpan(room.BackgroundCells), TileLayer::Background, sourceByteOffset,
+	publishViewport(makeSpan(room.BackgroundCells), TileLayer::Background, sourceByteOffset,
 					sourceRowByteStride, destinationColumn, destinationStartRow);
 
 	// Ghidra 0x000079DA-0x00007A0F: repeat the same source and destination traversal for the foreground.
-	publishViewport(MakeSpan(room.ForegroundCells), TileLayer::Foreground, sourceByteOffset,
+	publishViewport(makeSpan(room.ForegroundCells), TileLayer::Foreground, sourceByteOffset,
 					sourceRowByteStride, destinationColumn, destinationStartRow);
 
 	// Ghidra 0x00007A10-0x00007A29: refresh every bordering edge in the original unconditional order.
@@ -280,10 +280,10 @@ void RoomTileStreamer::publishHorizontalEdgeRow(uint16 sourceX, int sourceY, int
 
 	SDM_ASSERT(_state.ActiveRoomScene, "PublishHorizontalEdgeRow requires an active room scene.");
 	const RoomSceneData &room = *_state.ActiveRoomScene;
-	publishRow(MakeSpan(room.BackgroundCells), TileLayer::Background, sourceByteOffset,
+	publishRow(makeSpan(room.BackgroundCells), TileLayer::Background, sourceByteOffset,
 			   destinationColumn, destinationRow, firstSegmentColumnCount);
 	if ((_state.InteractionFlags & kForegroundOverrideMask) == 0) {
-		publishRow(MakeSpan(room.ForegroundCells), TileLayer::Foreground, sourceByteOffset,
+		publishRow(makeSpan(room.ForegroundCells), TileLayer::Foreground, sourceByteOffset,
 				   destinationColumn, destinationRow, firstSegmentColumnCount);
 	}
 
@@ -295,11 +295,11 @@ void RoomTileStreamer::publishHorizontalEdgeRow(uint16 sourceX, int sourceY, int
 	int secondSegmentColumnCount = -remainingBalance;
 	int secondSourceByteOffset =
 		sourceByteOffset + firstSegmentColumnCount * static_cast<int>(sizeof(uint16));
-	publishRow(MakeSpan(room.BackgroundCells), TileLayer::Background, secondSourceByteOffset,
+	publishRow(makeSpan(room.BackgroundCells), TileLayer::Background, secondSourceByteOffset,
 			   0,
 			   destinationRow, secondSegmentColumnCount);
 	if ((_state.InteractionFlags & kForegroundOverrideMask) == 0) {
-		publishRow(MakeSpan(room.ForegroundCells), TileLayer::Foreground,
+		publishRow(makeSpan(room.ForegroundCells), TileLayer::Foreground,
 				   secondSourceByteOffset,
 				   0, destinationRow, secondSegmentColumnCount);
 	}
@@ -312,7 +312,7 @@ void RoomTileStreamer::publishMapCell(Span<const uint8> packedCells, TileLayer l
 	Span<const uint8> sourceCell =
 		static_cast<uint32>(sourceByteOffset) <= boundary
 			? packedCells.slice(static_cast<size_t>(sourceByteOffset), sizeof(uint16))
-			: MakeSpan(kEmptyPackedCell);
+			: makeSpan(kEmptyPackedCell);
 	_scene.loadLayerRows(sourceCell, layer, destinationColumn, destinationRow, 1, 1);
 }
 
@@ -340,10 +340,10 @@ void RoomTileStreamer::publishVerticalEdgeColumn(uint16 sourceX, int cameraTileY
 
 	SDM_ASSERT(_state.ActiveRoomScene, "PublishVerticalEdgeColumn requires an active room scene.");
 	const RoomSceneData &room = *_state.ActiveRoomScene;
-	publishColumn(MakeSpan(room.BackgroundCells), TileLayer::Background, sourceByteOffset,
+	publishColumn(makeSpan(room.BackgroundCells), TileLayer::Background, sourceByteOffset,
 				  sourceRowByteStride, destinationColumn, destinationStartRow, firstSegmentRowCount);
 	if ((_state.InteractionFlags & kForegroundOverrideMask) == 0) {
-		publishColumn(MakeSpan(room.ForegroundCells), TileLayer::Foreground, sourceByteOffset,
+		publishColumn(makeSpan(room.ForegroundCells), TileLayer::Foreground, sourceByteOffset,
 					  sourceRowByteStride, destinationColumn, destinationStartRow, firstSegmentRowCount);
 	}
 
@@ -354,11 +354,11 @@ void RoomTileStreamer::publishVerticalEdgeColumn(uint16 sourceX, int cameraTileY
 
 	int secondSegmentRowCount = -remainingBalance;
 	int secondSourceByteOffset = sourceByteOffset + firstSegmentRowCount * sourceRowByteStride;
-	publishColumn(MakeSpan(room.BackgroundCells), TileLayer::Background,
+	publishColumn(makeSpan(room.BackgroundCells), TileLayer::Background,
 				  secondSourceByteOffset,
 				  sourceRowByteStride, destinationColumn, 0, secondSegmentRowCount);
 	if ((_state.InteractionFlags & kForegroundOverrideMask) == 0) {
-		publishColumn(MakeSpan(room.ForegroundCells), TileLayer::Foreground,
+		publishColumn(makeSpan(room.ForegroundCells), TileLayer::Foreground,
 					  secondSourceByteOffset, sourceRowByteStride, destinationColumn, 0, secondSegmentRowCount);
 	}
 }

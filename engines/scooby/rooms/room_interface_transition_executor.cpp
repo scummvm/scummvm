@@ -101,7 +101,7 @@ void RoomInterfaceTransitionExecutor::finishRoomStartup() {
 							 kInterfaceMaskTileBaseDelta;
 	Common::Array<uint8> binaryMaskTiles =
 		colorise4bppMaskTiles(_rom, kMaskNonzeroPaletteIndex, kMaskZeroPaletteIndex);
-	_scene.loadTilesAt(MakeSpan(binaryMaskTiles), firstMaskTileIndex);
+	_scene.loadTilesAt(makeSpan(binaryMaskTiles), firstMaskTileIndex);
 
 	// Ghidra 0x000048AC-0x000048B5: clear only progress byte-zero bit one after every restoration side effect.
 	_state.ProgressStateBytes[0] &= 0xFD;

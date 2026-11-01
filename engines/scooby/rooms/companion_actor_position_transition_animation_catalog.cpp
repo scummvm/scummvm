@@ -34,7 +34,7 @@ const Common::Array<int16> kAnimationOffsets = {
 	0x003A, 0x003B, 0x0034, 0x0007};
 } // namespace
 
-int16 ResolveCompanionPositionTransition(int16 previousPositionIndex, int16 nextPositionIndex) {
+int16 resolveCompanionPositionTransition(int16 previousPositionIndex, int16 nextPositionIndex) {
 	int16 byteOffset = static_cast<int16>(
 		previousPositionIndex * kPositionCount * static_cast<int>(sizeof(int16)) +
 		nextPositionIndex * static_cast<int>(sizeof(int16)));

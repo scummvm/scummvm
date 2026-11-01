@@ -41,12 +41,12 @@ bool StudioLogoSequence::run() {
 	MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::Intro);
 	_scene.reset(HorizontalDisplayMode::H32);
 	Common::Array<uint8> initialTiles = decompressRingLz(_rom, 0x287C8);
-	_scene.loadTiles(MakeSpan(initialTiles));
+	_scene.loadTiles(makeSpan(initialTiles));
 	Common::Array<uint8> stagedTilemap = decompressRingLz(_rom, 0x28220);
 	Common::Array<uint8> finalTilemap = decompressRingLz(_rom, 0x2864C);
 	Common::Array<PaletteColor> targetPalette = readPalette(_rom, 0x2967A);
 
-	StepResult animatedResult = runAnimatedStep(MakeSpan(stagedTilemap), MakeSpan(targetPalette));
+	StepResult animatedResult = runAnimatedStep(makeSpan(stagedTilemap), makeSpan(targetPalette));
 	if (animatedResult == StepResult::HostClosed) {
 		return false;
 	}
@@ -55,8 +55,8 @@ bool StudioLogoSequence::run() {
 	// screen in the title intro, instead of only cutting the animated step short and still holding the final
 	// logo for its full 200-frame wait.
 	if (animatedResult == StepResult::Completed) {
-		_scene.replacePaletteRange(MakeSpan(targetPalette), 0);
-		_scene.loadLayerRows(MakeSpan(finalTilemap), TileLayer::Foreground, 4, 5, 25, 15);
+		_scene.replacePaletteRange(makeSpan(targetPalette), 0);
+		_scene.loadLayerRows(makeSpan(finalTilemap), TileLayer::Foreground, 4, 5, 25, 15);
 		if (runFinalStep() == StepResult::HostClosed) {
 			return false;
 		}

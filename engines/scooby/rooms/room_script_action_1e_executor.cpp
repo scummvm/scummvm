@@ -32,12 +32,12 @@
 
 namespace Scooby {
 namespace {
-uint16 ReadUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
+uint16 readUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
 	return static_cast<uint16>((bytes[static_cast<size_t>(offset)] << 8) |
 							   bytes[static_cast<size_t>(offset + 1)]);
 }
 
-void WriteUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
+void writeUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
 	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
 	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
@@ -58,7 +58,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 	// Ghidra 0x000041C6-0x000041ED: decode 106 tiles and publish them at the packed base's tile index.
 	Common::Array<uint8> packedTiles = decompressRingLz(
 		_rom, kTileStreamOffset);
-	_scene.loadTilesAt(MakeSpan(packedTiles), _state.RoomDynamicTileBaseAttribute & 0x07FF);
+	_scene.loadTilesAt(makeSpan(packedTiles), _state.RoomDynamicTileBaseAttribute & 0x07FF);
 
 	// Ghidra 0x000041EE-0x0000420F: decode all 317 rows and add the packed base to every cell with original
 	// word wrapping before any row is published.
@@ -66,8 +66,8 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 		decompressRingLz(_rom, kCellStreamOffset);
 	uint16 tileBaseAttribute = _state.RoomDynamicTileBaseAttribute;
 	for (size_t byteOffset = 0; byteOffset < packedRows.size(); byteOffset += sizeof(uint16)) {
-		uint16 cell = ReadUInt16BigEndian(packedRows, static_cast<int>(byteOffset));
-		WriteUInt16BigEndian(packedRows, static_cast<int>(byteOffset),
+		uint16 cell = readUInt16BigEndian(packedRows, static_cast<int>(byteOffset));
+		writeUInt16BigEndian(packedRows, static_cast<int>(byteOffset),
 							 static_cast<uint16>(cell + tileBaseAttribute));
 	}
 
@@ -98,7 +98,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 
 		destinationRow = (destinationRow + 1) & kLayerRowMask;
 		_scene.loadLayerRows(
-			MakeSpan(packedRows).slice(sourceByteOffset, static_cast<size_t>(kRowByteCount)),
+			makeSpan(packedRows).slice(sourceByteOffset, static_cast<size_t>(kRowByteCount)),
 			TileLayer::Foreground, 0, destinationRow, kCellsPerRow, 1);
 		sourceByteOffset += static_cast<size_t>(kRowByteCount);
 	}

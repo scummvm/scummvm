@@ -395,13 +395,13 @@ void TileScene::render(IndexedFrame &frame) {
 	Common::fill(frame._pixels.begin(), frame._pixels.end(), static_cast<uint8>(0));
 	Common::copy(_palette.begin(), _palette.end(), frame._palette.begin());
 	if (_spritesVisible) {
-		_spriteLayer.compose(MakeSpan(_tilePixels), contentWidth(), _spriteVerticalOffset,
-							 MakeSpan(_dynamicSprites));
+		_spriteLayer.compose(makeSpan(_tilePixels), contentWidth(), _spriteVerticalOffset,
+							 makeSpan(_dynamicSprites));
 	}
 
 	int roomBottom = _roomInterfaceVisible ? kRoomInterfaceSplitY : IndexedFrame::Height;
 	drawLayer(frame, _backgroundLayer, _layerColumns, _layerRows, _backgroundHorizontalOffset,
-			  MakeSpan(_backgroundLineHorizontalOffsets), _backgroundVerticalOffset, false, 0,
+			  makeSpan(_backgroundLineHorizontalOffsets), _backgroundVerticalOffset, false, 0,
 			  roomBottom);
 	// Managed-only debug overlay (Console "showWalkArea"): requested anew for every room frame.
 	if (_walkAreaOverlayPending) {
@@ -423,7 +423,7 @@ void TileScene::render(IndexedFrame &frame) {
 	}
 
 	drawLayer(frame, _backgroundLayer, _layerColumns, _layerRows, _backgroundHorizontalOffset,
-			  MakeSpan(_backgroundLineHorizontalOffsets), _backgroundVerticalOffset, true, 0,
+			  makeSpan(_backgroundLineHorizontalOffsets), _backgroundVerticalOffset, true, 0,
 			  roomBottom);
 	drawForegroundAndWindow(frame, true, roomBottom);
 	if (_roomInterfaceVisible) {
@@ -507,13 +507,13 @@ void TileScene::drawForegroundAndWindow(IndexedFrame &frame, bool highPriority, 
 				  Span<const int16>(), 0,
 				  highPriority, 0, windowBoundary);
 		drawLayer(frame, _foregroundLayer, _layerColumns, _layerRows, _foregroundHorizontalOffset,
-				  MakeSpan(_foregroundLineHorizontalOffsets), _foregroundVerticalOffset, highPriority,
+				  makeSpan(_foregroundLineHorizontalOffsets), _foregroundVerticalOffset, highPriority,
 				  windowBoundary, roomBottom);
 		return;
 	}
 
 	drawLayer(frame, _foregroundLayer, _layerColumns, _layerRows, _foregroundHorizontalOffset,
-			  MakeSpan(_foregroundLineHorizontalOffsets), _foregroundVerticalOffset, highPriority, 0,
+			  makeSpan(_foregroundLineHorizontalOffsets), _foregroundVerticalOffset, highPriority, 0,
 			  windowBoundary);
 	drawLayer(frame, _windowLayer, kWindowLayerColumns, kWindowLayerRows, 0, Span<const int16>(),
 			  0,

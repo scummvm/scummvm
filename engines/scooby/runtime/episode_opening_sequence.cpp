@@ -42,14 +42,14 @@ bool EpisodeOpeningSequence::runEpisodeOpeningSequence() {
 
 	// Ghidra 0x0000140E-0x00001475: decode the complete pattern set and both 128x28 plane maps; VRAM
 	// destinations E000 and C000 become logical background and foreground ownership.
-	_scene.loadTiles(MakeSpan(
+	_scene.loadTiles(makeSpan(
 		decompressRingLz(
 			_rom, static_cast<int>(_rom.readUInt32(episodeAssetRecord)))));
 	Common::Array<uint8> backgroundCells = decompressRingLz(
 		_rom, static_cast<int>(_rom.readUInt32(episodeAssetRecord + kBackgroundAssetField)));
 	Common::Array<uint8> foregroundCells = decompressRingLz(
 		_rom, static_cast<int>(_rom.readUInt32(episodeAssetRecord + kForegroundAssetField)));
-	_scene.replaceCompleteLayers(MakeSpan(backgroundCells), MakeSpan(foregroundCells),
+	_scene.replaceCompleteLayers(makeSpan(backgroundCells), makeSpan(foregroundCells),
 								 kLayerColumns,
 								 kLayerRows);
 
@@ -66,7 +66,7 @@ bool EpisodeOpeningSequence::runEpisodeOpeningSequence() {
 			kOpeningSpriteDescriptorOffset + static_cast<int>(_rom.readUInt32(
 												 descriptorOffset + kSpriteDescriptorDataField));
 		Common::Array<uint8> streamTiles = _rom.decompressByteRle(streamOffset);
-		_scene.loadTilesAt(MakeSpan(streamTiles),
+		_scene.loadTilesAt(makeSpan(streamTiles),
 						   kSpriteTileBankStart + streamIndex * kAnimationTileBankStride);
 	}
 
@@ -113,7 +113,7 @@ bool EpisodeOpeningSequence::runEpisodeOpeningSequence() {
 	writeEpisodeOpeningSpriteTable();
 	playAudioCommand(0x7C);
 	playAudioCommand(0x1E);
-	if (!_presenter.fadePaletteIn(MakeSpan(_state.TargetPalette), &_invokeOpeningVBlankFunctor)) {
+	if (!_presenter.fadePaletteIn(makeSpan(_state.TargetPalette), &_invokeOpeningVBlankFunctor)) {
 		return false;
 	}
 
@@ -192,8 +192,8 @@ void EpisodeOpeningSequence::invokeOpeningVBlank() {
 void EpisodeOpeningSequence::updateEpisodeOpeningScene() {
 	// Ghidra 0x000017AE-0x000017E9: publish 224 prepared plane-A and plane-B words to the interleaved
 	// horizontal-scroll table; interrupt, VDP increment, DMA, and VRAM addresses become one logical copy.
-	_scene.setLineHorizontalOffsets(MakeSpan(_sequenceState.ForegroundLineHorizontalOffsets),
-									MakeSpan(_sequenceState.BackgroundLineHorizontalOffsets));
+	_scene.setLineHorizontalOffsets(makeSpan(_sequenceState.ForegroundLineHorizontalOffsets),
+									makeSpan(_sequenceState.BackgroundLineHorizontalOffsets));
 
 	// Ghidra 0x000017EA-0x00001803: switch the background's static upper band to -256 once horizontal
 	// travel is nonnegative, then select the episode-specific accumulator and raster-band layout.
@@ -202,8 +202,8 @@ void EpisodeOpeningSequence::updateEpisodeOpeningScene() {
 	}
 
 	Common::Array<int32> &scrollAccumulators = _sequenceState.ScrollAccumulators;
-	Span<int16> foreground = MakeSpan(_sequenceState.ForegroundLineHorizontalOffsets);
-	Span<int16> background = MakeSpan(_sequenceState.BackgroundLineHorizontalOffsets);
+	Span<int16> foreground = makeSpan(_sequenceState.ForegroundLineHorizontalOffsets);
+	Span<int16> background = makeSpan(_sequenceState.BackgroundLineHorizontalOffsets);
 	if (_state.EpisodeIndex != 0) {
 		// Ghidra 0x00001804-0x000018F1: advance eight signed 16.16 values and fill all 224 episode-two
 		// lines through the exact inclusive DBF extents before returning.
@@ -249,7 +249,7 @@ void EpisodeOpeningSequence::writeEpisodeOpeningSpriteTable() {
 	// Ghidra 0x000016C4-0x0000175B: replace interrupt masking and the FC00 VDP write cursor with one
 	// complete logical table, retain each packed word calculation, and terminate through the fixed extent.
 	Common::Array<SpriteInstance> sprites(kSpriteTableSize);
-	Span<SpriteInstance> spriteSpan = MakeSpan(sprites);
+	Span<SpriteInstance> spriteSpan = makeSpan(sprites);
 	writeEpisodeOpeningSpriteGroup(
 		spriteSpan.slice(0, kSpriteGroupSize),
 		static_cast<int16>(_sequenceState.LeadingSpriteXOffset + 0x7C + _sequenceState.HorizontalOffset),

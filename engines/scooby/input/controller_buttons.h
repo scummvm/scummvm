@@ -64,7 +64,7 @@ inline ControllerButtons &operator|=(ControllerButtons &a, ControllerButtons b) 
 
 inline ControllerButtons &operator&=(ControllerButtons &a, ControllerButtons b) { return a = a & b; }
 
-inline bool Any(ControllerButtons value) { return static_cast<uint8>(value) != 0; }
+inline bool any(ControllerButtons value) { return static_cast<uint8>(value) != 0; }
 } // namespace Scooby
 
 #endif // SCOOBY_CONTROLLER_BUTTONS_H

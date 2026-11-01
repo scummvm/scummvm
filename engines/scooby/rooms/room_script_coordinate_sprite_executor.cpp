@@ -63,7 +63,7 @@ void RoomScriptCoordinateSpriteExecutor::scriptAction18ShowObjectAltSprite() {
 		packedTiles[i] = patternFrame[i];
 		packedTiles[i + static_cast<size_t>(kPatternFrameByteCount)] = patternFrame[i];
 	}
-	_scene.loadTilesAt(MakeSpan(packedTiles), kPatternTileIndex);
+	_scene.loadTilesAt(makeSpan(packedTiles), kPatternTileIndex);
 
 	// Ghidra 0x00004306-0x0000430F: reset the managed offset for coordinate table 0x323BE-0x3244D.
 	_state.ScriptedCoordinateSprite._coordinateOffset = 0;

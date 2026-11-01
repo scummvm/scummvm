@@ -569,7 +569,7 @@ bool ScriptedRoomMovementExecutor::moveLeadActorDirectly(int16 targetX, int16 ta
 	// nonzero signed bias wraps with the new position before publishing the selected animation.
 	_state.ActorAnimationOffsets[0] =
 		animationBias == 0
-			? ResolveLead(_state.ActorPositionIndices[0], positionIndex)
+			? resolveLead(_state.ActorPositionIndices[0], positionIndex)
 			: static_cast<int16>(positionIndex + animationBias);
 
 	// Ghidra 0x000055DA-0x00005613: restart immediately, wait for both restart consumption and graphics
@@ -1010,7 +1010,7 @@ MovementResult ScriptedRoomMovementExecutor::moveCompanionActorDirectly(
 	// nonzero signed bias wraps with the new position before publishing both animation and position.
 	_state.ActorAnimationOffsets[1] =
 		animationBias == 0
-			? ResolveCompanion(_state.ActorPositionIndices[1], positionIndex)
+			? resolveCompanion(_state.ActorPositionIndices[1], positionIndex)
 			: static_cast<int16>(positionIndex + animationBias);
 	_state.ActorPositionIndices[1] = positionIndex;
 

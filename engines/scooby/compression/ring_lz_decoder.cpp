@@ -68,7 +68,7 @@ struct InitializedBlock {
 
 // Ghidra: InitializeRingLzBlock (0x000098F8). Starts a compressed block with
 // its first descriptor longword and ring cursor.
-InitializedBlock InitializeRingLzBlock(const ScoobyDooRom &rom, int sourceOffset) {
+InitializedBlock initializeRingLzBlock(const ScoobyDooRom &rom, int sourceOffset) {
 	const int initialBitCount = 32;
 	const int initialWriteOffset = 1;
 	uint32 initialBits = rom.readUInt32(sourceOffset);
@@ -85,7 +85,7 @@ Common::Array<uint8> decompressRingLz(const ScoobyDooRom &rom, int sourceOffset)
 	Common::fill(window.begin(), window.end(), 0);
 	Common::Array<uint8> output;
 
-	InitializedBlock block = InitializeRingLzBlock(rom, sourceOffset);
+	InitializedBlock block = initializeRingLzBlock(rom, sourceOffset);
 	BitReader reader = block.reader;
 	int writeOffset = block.writeOffset;
 

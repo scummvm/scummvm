@@ -176,7 +176,7 @@ void RoomVBlankHandler::updateWalkAreaOverlay() {
 		}
 	}
 
-	_scene.setWalkAreaOverlay(MakeSpan(_walkAreaOverlay));
+	_scene.setWalkAreaOverlay(makeSpan(_walkAreaOverlay));
 }
 
 void RoomVBlankHandler::rotateAnimatedPaletteRanges() {
@@ -278,7 +278,7 @@ void RoomVBlankHandler::publishActionPromptCells(int16 promptIndex, int template
 				packedCell);
 		}
 
-		_scene.replaceLayerRow(MakeSpan(cells), TileLayer::Interface,
+		_scene.replaceLayerRow(makeSpan(cells), TileLayer::Interface,
 							   kActionPromptStartColumn,
 							   startRow + row);
 	}

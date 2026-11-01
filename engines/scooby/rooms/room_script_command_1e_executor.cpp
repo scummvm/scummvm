@@ -41,7 +41,7 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 			int16 previousPositionIndex = _state.ActorPositionIndices[0];
 			_state.ActorPositionIndices[0] = nextPositionIndex;
 			_state.ActorAnimationOffsets[0] =
-				ResolveLeadPositionTransition(previousPositionIndex, nextPositionIndex);
+				resolveLeadPositionTransition(previousPositionIndex, nextPositionIndex);
 
 			// Ghidra 0x000026C6-0x000026E5: slot zero always requests restart. A negative selector also
 			// advances all animation streams at least once until hold bit zero is set; nonnegative selectors
@@ -65,7 +65,7 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 			int16 previousPositionIndex = _state.ActorPositionIndices[1];
 			_state.ActorPositionIndices[1] = nextPositionIndex;
 			_state.ActorAnimationOffsets[1] =
-				ResolveCompanionPositionTransition(
+				resolveCompanionPositionTransition(
 					previousPositionIndex, nextPositionIndex);
 
 			// Ghidra 0x00002708-0x0000272B: nonnegative selectors exit without requesting a slot-one restart.

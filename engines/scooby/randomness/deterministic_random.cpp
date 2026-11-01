@@ -23,14 +23,14 @@
 
 namespace Scooby {
 namespace {
-inline uint32 RotateLeft32(uint32 value, int count) {
+inline uint32 rotateLeft32(uint32 value, int count) {
 	return (value << count) | (value >> (32 - count));
 }
 } // namespace
 
 uint16 DeterministicRandom::scaleNextRandomValue(uint16 scale) {
 	// Rotate the complete seed left once, complement it, and persist it.
-	_state = ~RotateLeft32(_state, 1);
+	_state = ~rotateLeft32(_state, 1);
 
 	// Return the upper word of one unsigned 16x16-bit product.
 	uint32 product = uint32(scale) * uint16(_state);
@@ -38,7 +38,7 @@ uint16 DeterministicRandom::scaleNextRandomValue(uint16 scale) {
 }
 
 bool DeterministicRandom::advanceDuelImpactFlagChoice() {
-	_state = RotateLeft32(RotateLeft32(~_state, 1), 16);
+	_state = rotateLeft32(rotateLeft32(~_state, 1), 16);
 	return (_state & 0x00008000u) != 0;
 }
 } // namespace Scooby

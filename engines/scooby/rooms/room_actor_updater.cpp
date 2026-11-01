@@ -33,7 +33,7 @@
 
 namespace Scooby {
 namespace {
-void WriteUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
+void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
 	bytes[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
 	bytes[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
@@ -176,14 +176,14 @@ void RoomActorUpdater::advanceRoomInterfaceTransition() {
 
 void RoomActorUpdater::publishLowerInterfaceCells(int sourceOffset) {
 	Common::Array<uint8> packedRow(kLowerInterfaceColumnCount * sizeof(uint16));
-	Span<uint8> packedRowSpan = MakeSpan(packedRow);
+	Span<uint8> packedRowSpan = makeSpan(packedRow);
 	for (int row = 0; row < kLowerInterfaceRowCount; row++) {
 		for (int column = 0; column < kLowerInterfaceColumnCount; column++) {
 			uint16 packedCell = static_cast<uint16>(
 				_rom.readUInt16(sourceOffset + row * kLowerInterfaceSourceRowByteStride +
 								column * static_cast<int>(sizeof(uint16))) +
 				_state.ActionPromptTileAttributes);
-			WriteUInt16BigEndian(packedRowSpan, column * static_cast<int>(sizeof(uint16)), packedCell);
+			writeUInt16BigEndian(packedRowSpan, column * static_cast<int>(sizeof(uint16)), packedCell);
 		}
 
 		_scene.loadLayerRows(packedRowSpan, TileLayer::Interface, kLowerInterfaceStartColumn,
@@ -501,7 +501,7 @@ void RoomActorUpdater::moveLeadLeft(int &candidateX, uint32 stepMagnitude) {
 		movementMagnitude = stepMagnitude;
 	} else {
 		movementMagnitude = stepMagnitude >> 1;
-		int16 animationOffset = ResolveLead(
+		int16 animationOffset = resolveLead(
 			_state.ActorPositionIndices[kLeadActorSlot], 1);
 		if (_state.ActorAnimationOffsets[kLeadActorSlot] != animationOffset) {
 			requestActorAnimation(kLeadActorSlot, animationOffset);
@@ -528,7 +528,7 @@ void RoomActorUpdater::moveLeadRight(int &candidateX, uint32 stepMagnitude, int1
 		movementMagnitude = stepMagnitude;
 	} else {
 		movementMagnitude = stepMagnitude >> 1;
-		int16 animationOffset = ResolveLead(
+		int16 animationOffset = resolveLead(
 			_state.ActorPositionIndices[kLeadActorSlot], 0);
 		if (_state.ActorAnimationOffsets[kLeadActorSlot] != animationOffset) {
 			requestActorAnimation(kLeadActorSlot, animationOffset);
@@ -553,7 +553,7 @@ bool RoomActorUpdater::moveLeadUp(int &candidateY, uint32 movementMagnitude, int
 
 		_state.LeadActorDirectionalAnimationLatchFlags &= 0xF3;
 	} else {
-		int16 animationOffset = ResolveLead(
+		int16 animationOffset = resolveLead(
 			_state.ActorPositionIndices[kLeadActorSlot], 2);
 		movementMagnitude >>= 1;
 		if (_state.ActorAnimationOffsets[kLeadActorSlot] != animationOffset) {
@@ -590,7 +590,7 @@ void RoomActorUpdater::moveLeadDown(int &candidateY, uint32 movementMagnitude, i
 
 		_state.LeadActorDirectionalAnimationLatchFlags &= 0xF3;
 	} else {
-		int16 animationOffset = ResolveLead(
+		int16 animationOffset = resolveLead(
 			_state.ActorPositionIndices[kLeadActorSlot], 3);
 		movementMagnitude >>= 1;
 		if (_state.ActorAnimationOffsets[kLeadActorSlot] != animationOffset) {
@@ -782,7 +782,7 @@ void RoomActorUpdater::beginNextLeadMovementPoint(const ActorMovementPoint &poin
 	int16 relativeAnimation = static_cast<int16>(
 		_state.ActorAnimationOffsets[kLeadActorSlot] - _state.ActorPositionIndices[kLeadActorSlot]);
 	_state.ActorAnimationOffsets[kLeadActorSlot] = relativeAnimation == 0
-													   ? ResolveLead(
+													   ? resolveLead(
 															 _state.ActorPositionIndices[kLeadActorSlot],
 															 point.PositionIndex)
 													   : static_cast<int16>(point.PositionIndex +
@@ -1042,7 +1042,7 @@ void RoomActorUpdater::advanceCompanionScriptedMovement() {
 
 	_state.InteractionFlags |= 0x20;
 	_state.ActorAnimationOffsets[kCompanionActorSlot] =
-		ResolveCompanionPositionTransition(
+		resolveCompanionPositionTransition(
 			_state.ActorPositionIndices[kCompanionActorSlot], _state.RandomMoveDirection);
 	_state.ActorAnimationDelays[kCompanionActorSlot] = -1;
 	_state.ActorAnimationRestartFlags |= kCompanionActorMask;
@@ -1056,7 +1056,7 @@ void RoomActorUpdater::beginNextCompanionMovementPoint(const ActorMovementPoint 
 	int16 relativeAnimation = static_cast<int16>(
 		_state.ActorAnimationOffsets[kCompanionActorSlot] - _state.ActorPositionIndices[kCompanionActorSlot]);
 	_state.ActorAnimationOffsets[kCompanionActorSlot] = relativeAnimation == 0
-															? ResolveCompanion(
+															? resolveCompanion(
 																  _state.ActorPositionIndices[kCompanionActorSlot],
 																  point.PositionIndex)
 															: static_cast<int16>(point.PositionIndex +

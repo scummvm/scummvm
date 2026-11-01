@@ -114,17 +114,17 @@ private:
 };
 
 template<typename T>
-inline Span<T> MakeSpan(Common::Array<T> &a) {
+inline Span<T> makeSpan(Common::Array<T> &a) {
 	return Span<T>(a.data(), a.size());
 }
 
 template<typename T>
-inline Span<const T> MakeSpan(const Common::Array<T> &a) {
+inline Span<const T> makeSpan(const Common::Array<T> &a) {
 	return Span<const T>(a.data(), a.size());
 }
 
 template<typename T, size_t N>
-inline Span<T> MakeSpan(T (&a)[N]) {
+inline Span<T> makeSpan(T (&a)[N]) {
 	return Span<T>(a, N);
 }
 } // namespace Scooby

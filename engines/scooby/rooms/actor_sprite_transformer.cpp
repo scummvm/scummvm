@@ -25,12 +25,12 @@
 
 namespace Scooby {
 namespace {
-inline void WriteUInt16BigEndian(Common::Array<uint8> &output, int offset, uint16 value) {
+inline void writeUInt16BigEndian(Common::Array<uint8> &output, int offset, uint16 value) {
 	output[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 8);
 	output[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value);
 }
 
-inline void WriteUInt32BigEndian(Common::Array<uint8> &output, int offset, uint32 value) {
+inline void writeUInt32BigEndian(Common::Array<uint8> &output, int offset, uint32 value) {
 	output[static_cast<size_t>(offset)] = static_cast<uint8>(value >> 24);
 	output[static_cast<size_t>(offset + 1)] = static_cast<uint8>(value >> 16);
 	output[static_cast<size_t>(offset + 2)] = static_cast<uint8>(value >> 8);
@@ -67,8 +67,8 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite48UsingPrimaryLa
 									: sourceRow < 64
 										? 0x300 + (sourceRow - 32) * 4 + longword * 0x80
 										: 0x600 + (sourceRow - 64) * 4 + longword * 0x40;
-			WriteUInt16BigEndian(output, destinationOffset, packedHighWord);
-			WriteUInt16BigEndian(output, destinationOffset + 2, packedLowWord);
+			writeUInt16BigEndian(output, destinationOffset, packedHighWord);
+			writeUInt16BigEndian(output, destinationOffset + 2, packedLowWord);
 		}
 	}
 
@@ -99,8 +99,8 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite80UsingSecondary
 				sourceRow < 32
 					? sourceRow * 4 + longword * 0x80
 					: 0x500 + (sourceRow - 32) * 4 + longword * 0x40;
-			WriteUInt16BigEndian(output, destinationOffset, packedHighWord);
-			WriteUInt16BigEndian(output, destinationOffset + 2, packedLowWord);
+			writeUInt16BigEndian(output, destinationOffset, packedHighWord);
+			writeUInt16BigEndian(output, destinationOffset + 2, packedLowWord);
 		}
 	}
 
@@ -150,7 +150,7 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite48(
 									: destinationRow < 64
 										? 0x300 + (destinationRow - 32) * 4 + longword * 0x80
 										: 0x600 + (destinationRow - 64) * 4 + longword * 0x40;
-			WriteUInt32BigEndian(output, destinationOffset, packedPixels);
+			writeUInt32BigEndian(output, destinationOffset, packedPixels);
 		}
 
 		// Ghidra 0x0000D9F6-0x0000DA37: left-align a partial longword, zero the remaining row, advance the
@@ -204,7 +204,7 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite80(
 				destinationRow < 32
 					? destinationRow * 4 + longword * 0x80
 					: 0x500 + (destinationRow - 32) * 4 + longword * 0x40;
-			WriteUInt32BigEndian(output, destinationOffset, packedPixels);
+			writeUInt32BigEndian(output, destinationOffset, packedPixels);
 		}
 
 		++destinationRow;
