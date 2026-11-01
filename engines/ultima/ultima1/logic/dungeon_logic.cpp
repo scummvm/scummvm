@@ -382,6 +382,12 @@ bool DungeonLogic::inform() {
 }
 
 void DungeonLogic::updateCreatures() {
+	// The view is updated after the monsters have acted
+	moveCreatures();
+	showNearbyText();
+}
+
+void DungeonLogic::moveCreatures() {
 	Data::Savegame &sg = _G(savegame);
 	Data::MapDungeon &dungeon = _G(dungeon);
 	const Common::Point &pos = sg._locationPosition;
@@ -588,13 +594,6 @@ void DungeonLogic::showNearbyText() {
 				cell._tileNum == Data::DTILE_DOOR || isBlockingMonster)
 			break;
 	}
-}
-
-void DungeonLogic::endOfTurn() {
-	showNearbyText();
-
-	// Calls updateCreatures() in turn
-	Logic::endOfTurn();
 }
 
 int DungeonLogic::getMonsterDistance(int maxDistance) const {

@@ -80,6 +80,11 @@ private:
 	void showNearbyText();
 
 	/**
+	 * Gives each monster its turn to attack the player or step closer
+	 */
+	void moveCreatures();
+
+	/**
 	 * Get the distance to the closest monster, if any, in front of the player
 	 */
 	int getMonsterDistance(int maxDistance) const;
@@ -189,14 +194,9 @@ protected:
 	bool inform() override;
 
 	/**
-	 * Handles updating creatures/NPCs
+	 * Handles updating creatures/NPCs, then announcing what's in view
 	 */
 	void updateCreatures() override;
-
-	/**
-	 * Called after an action is done
-	 */
-	void endOfTurn() override;
 
 public:
 	DungeonLogic();
