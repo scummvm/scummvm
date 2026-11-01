@@ -191,6 +191,15 @@ List of fixed bugs in GF scripts:
 	the key '2' which means "play and endpause". This patch adds a 'manny:stop_chore' call after the chore has
 	done.
 
+	Fix lag and starved sounds in the safe tumblers puzzle - vd.lua.patchr
+	The function 'vd.play_wheel_sfx' starts a wheel sound with
+	'if not sound_playing("vdWeel1.wav") or sound_playing("vdWeel2.wav") or ...'. Because of the operator precedence
+	the 'not' applies only to the first call, so a new sound is started almost every time the function is called
+	(twice per frame while the wheel is turning). Those sounds take all the iMUSE tracks with priority 64, so the
+	tumbler sounds, which have priority 0, can't start, and 'Tumbler.make_noise' loops without yielding until a track
+	frees up, stalling the game. This patch moves the 'not' after the whole expression, like the remastered version
+	of the script does, so a new wheel sound is started only when none of them is playing.
+
 	Fix Manny's walking backwards animation - ma_back_off.key.patchr
 	The animation has 16 frames, but the 16th frame looks the same at the 15th one so we just say that it only
 	has 15 frames.
