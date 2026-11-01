@@ -73,7 +73,7 @@ Codec48Decoder::~Codec48Decoder() {
 	delete[] _interTable;
 }
 
-int Codec48Decoder::decode(const SmushDemoBitmap *bitmap, const SmushDemoRect *rect, int x, int y, const byte *chunk, int flags, SmushDemoClient *client) {
+int Codec48Decoder::decode(const SmushDemoRect *rect, int x, int y, const byte *chunk, SmushDemoClient *client) {
 	if (!_initialized)
 		return -1;
 
@@ -129,27 +129,14 @@ int Codec48Decoder::decode(const SmushDemoBitmap *bitmap, const SmushDemoRect *r
 		// Raw frame
 		memcpy(_deltaBuf[_curBuf], gfxData, READ_LE_UINT32(header + 4));
 		break;
-	case 2:
-		// Blast object
-		bompDecodeLine(_deltaBuf[_curBuf], gfxData, READ_LE_UINT32(header + 4));
-		break;
 	case 3:
 		// 8x8 block encoding
 		if (!(seqNb && seqNb != _prevSeqNb + 1)) {
-			if (seqNb & 1 || !(header[12] & 1) || header[12] & 0x10)
+			if (seqNb & 1 || !(header[12] & 1))
 				_curBuf ^= 1;
-
-			if ((seqNb & 1) && (flags & 0x10) && (header[12] & 1) && !(header[12] & 0x30)) {
-				_prevSeqNb = seqNb;
-				return 1;
-			}
 
 			decode3(_deltaBuf[_curBuf], gfxData, _deltaBuf[_curBuf ^ 1] - _deltaBuf[_curBuf]);
 		}
-		break;
-	case 5:
-		// Frame stored at half size, scaled up with the interpolation table
-		decode5(_deltaBuf[_curBuf], gfxData, _blockX * 8, _blockY * 8);
 		break;
 	default:
 		break;
@@ -178,88 +165,8 @@ int Codec48Decoder::decode(const SmushDemoBitmap *bitmap, const SmushDemoRect *r
 	if (y + height > rect->y + rect->height)
 		height = rect->y + rect->height - y;
 
-	if (header[12] & 2)
-		return 0;
-
-	if (header[12] & 0x10) {
-		drawBlended(bitmap->pixels, bitmap->width, _deltaBuf[_curBuf ^ 1], _deltaBuf[_curBuf], x, y, sourceX, sourceY, width, height, _pitch);
-		return 0;
-	}
-
 	client->setFrameBuffer(_deltaBuf[_curBuf], x, y, sourceX, sourceY, width, height);
 	return 0;
-}
-
-void Codec48Decoder::drawBlended(byte *bitmap, int bitmapPitch, const byte *previous, const byte *current, int x, int y, int sourceX, int sourceY, int width, int height, int sourcePitch) {
-	int offset = sourceY * sourcePitch + sourceX;
-	blendFrames(bitmap + y * bitmapPitch + x, previous + offset, current + offset, width, height, bitmapPitch, sourcePitch);
-}
-
-void Codec48Decoder::blendFrames(byte *dst, const byte *previous, const byte *current, int width, int height, int dstPitch, int sourcePitch) {
-	for (int row = 0; row < height; row++) {
-		for (int col = 0; col < width; col++)
-			dst[col] = _interTable[previous[col] | (current[col] << 8)];
-
-		dst += dstPitch;
-		previous += sourcePitch;
-		current += sourcePitch;
-	}
-}
-
-void Codec48Decoder::decode5(byte *dst, const byte *src, int width, int height) {
-	byte *out = dst + width;
-	int rows = height;
-
-	do {
-		byte pixel = *src++;
-		out[0] = pixel;
-		out[1] = pixel;
-		out += 2;
-
-		int count = width - 2;
-		do {
-			byte previous = pixel;
-			pixel = *src++;
-			out[0] = _interTable[(previous << 8) | pixel];
-			out[1] = pixel;
-			out += 2;
-			count -= 2;
-		} while (count > 0);
-
-		out += width;
-		rows -= 2;
-	} while (rows > 0);
-
-	memcpy(dst, dst + width, width);
-
-	out = dst + width * 2;
-	rows = height - 2;
-	do {
-		for (int i = 0; i < width; i++)
-			out[i] = _interTable[out[i - width] | (out[i + width] << 8)];
-
-		out += width * 2;
-		rows -= 2;
-	} while (rows > 0);
-}
-
-void Codec48Decoder::bompDecodeLine(byte *dst, const byte *src, int len) {
-	do {
-		byte code = *src++;
-		int num = (code >> 1) + 1;
-
-		len -= num;
-
-		if (code & 1) {
-			byte color = *src++;
-			memset(dst, color, num);
-		} else {
-			memcpy(dst, src, num);
-			src += num;
-		}
-
-		dst += num;
-	} while (len != 0);
 }
 
 void Codec48Decoder::makeTable(int pitch, int index) {
