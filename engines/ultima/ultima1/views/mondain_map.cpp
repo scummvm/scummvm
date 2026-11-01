@@ -59,7 +59,8 @@ void MondainMap::draw() {
 	// Draw the visible map contents
 	for (int oy = 0; oy < Data::MONDAIN_HEIGHT; oy++) {
 		for (int ox = 0; ox < Data::MONDAIN_WIDTH; ox++) {
-			int tileId = _G(map).getTileAt(ox, oy);
+			// Not getTileAt, which would pick up the location entities left over from the last city or castle
+			int tileId = _G(map).getMapTile(ox, oy);
 
 			const Graphics::ManagedSurface &tileImg = tiles[tileId];
 			s.blitFrom(tileImg, Common::Point(ox * TILE_WIDTH + 8, oy * TILE_HEIGHT + 8));
