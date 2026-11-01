@@ -151,8 +151,6 @@ bool Console::cmdInventory(int argc, const char **argv) {
 		sg._weapons[i] = 9;
 	for (int i = 1; i < Data::SPELL_COUNT; ++i)
 		sg._spells[i] = 99;
-	for (int i = 1; i < Data::TRANSPORT_COUNT; ++i)
-		sg._transports[i] = 9;
 
 	sg._redGems = sg._greenGems = sg._blueGem = sg._whiteGem = 1;
 	sg._hits = sg._food = sg._coins = 9999;
