@@ -820,15 +820,14 @@ void Actor::walkForward() {
 	_walking = false;
 
 	if (!_followBoxes) {
-		Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
-		                           _moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
+		Math::Vector3d forwardVec(-_moveYaw.getSine(),
+		                           _moveYaw.getCosine(), 0);
 
 		// EMI: Y is up-down, actors use an X-Z plane for movement
 		if (g_grim->getGameType() == GType_MONKEY4) {
-			float temp = forwardVec.z();
 			forwardVec.x() = -forwardVec.x();
 			forwardVec.z() = forwardVec.y();
-			forwardVec.y() = temp;
+			forwardVec.y() = 0;
 		}
 
 		_pos += forwardVec * dist;
@@ -849,15 +848,14 @@ void Actor::walkForward() {
 
 		g_grim->getCurrSet()->findClosestSector(_pos, &currSector, &_pos);
 		if (!currSector) { // Shouldn't happen...
-			Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
-			                           _moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
+			Math::Vector3d forwardVec(-_moveYaw.getSine(),
+			                           _moveYaw.getCosine(), 0);
 
 			// EMI: Y is up-down, actors use an X-Z plane for movement
 			if (g_grim->getGameType() == GType_MONKEY4) {
-				float temp = forwardVec.z();
 				forwardVec.x() = -forwardVec.x();
 				forwardVec.z() = forwardVec.y();
-				forwardVec.y() = temp;
+				forwardVec.y() = 0;
 			}
 
 			if (backwards)
@@ -878,18 +876,18 @@ void Actor::walkForward() {
 				Math::Angle ax = Math::Vector2d(normal.x(), normal.z()).getAngle();
 				Math::Angle ay = Math::Vector2d(normal.y(), normal.z()).getAngle();
 
-				float z1 = -_moveYaw.getCosine() * (ay - _pitch).getCosine();
-				float z2 = _moveYaw.getSine() * (ax - _pitch).getCosine();
-				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(),
-				                             _moveYaw.getCosine() * ay.getSine() * _pitch.getCosine(), z1 + z2);
+				float z1 = -_moveYaw.getCosine() * ay.getCosine();
+				float z2 = _moveYaw.getSine() * ax.getCosine();
+				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine(),
+				                             _moveYaw.getCosine() * ay.getSine(), z1 + z2);
 			} else {
 				Math::Angle ax = Math::Vector2d(normal.x(), normal.y()).getAngle();
 				Math::Angle az = Math::Vector2d(normal.z(), normal.y()).getAngle();
 
-				float y1 = _moveYaw.getCosine() * (az - _pitch).getCosine();
-				float y2 = _moveYaw.getSine() * (ax - _pitch).getCosine();
-				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(), y1 + y2,
-				                            -_moveYaw.getCosine() * az.getSine() * _pitch.getCosine());
+				float y1 = _moveYaw.getCosine() * az.getCosine();
+				float y2 = _moveYaw.getSine() * ax.getCosine();
+				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine(), y1 + y2,
+				                            -_moveYaw.getCosine() * az.getSine());
 			}
 
 			if (backwards)
