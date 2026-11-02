@@ -71,7 +71,7 @@ enum FloppyProtectionText {
 };
 
 // Pascal strings stored one after the other in a resource.
-static void readProtectionStrings(Common::Array<Common::String> &texts, const uint8 *data, int size, int count) {
+void readProtectionStrings(Common::Array<Common::String> &texts, const uint8 *data, int size, int count) {
 	int offset = 0;
 	for (int i = 0; i < count; ++i) {
 		if (offset >= size || data[offset] > size - offset - 1)
@@ -84,7 +84,7 @@ static void readProtectionStrings(Common::Array<Common::String> &texts, const ui
 		error("Unexpected data in copy protection text resource");
 }
 
-static int protectionInputChar(const Common::KeyState &kbd) {
+int protectionInputChar(const Common::KeyState &kbd) {
 	const uint32 chr = kbd.ascii;
 	if (chr >= 0x20 && chr < 0x7F)
 		return chr;
@@ -102,8 +102,8 @@ static int protectionInputChar(const Common::KeyState &kbd) {
 	}
 }
 // only ASCII + characters handled in protectionInputChar()
-static bool protectionCharAllowed(int chr) {
-	static const uint8 allowed[32] = {
+bool protectionCharAllowed(int chr) {
+	const uint8 allowed[32] = {
 		0, 0, 0, 0, 0x07, 0xF3, 0xFF, 0xDF, 0xFE, 0xFF, 0xFF, 0x07, 0xFE, 0xFF, 0xFF, 0x07,
 		0x04, 0, 0, 0, 0x3F, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
