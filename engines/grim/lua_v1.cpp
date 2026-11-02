@@ -53,6 +53,19 @@ byte clamp_color(int c) {
 		return c;
 }
 
+Common::String getLuaMessage() {
+	lua_Object strObj = lua_getparam(1);
+	if (lua_isnil(strObj))
+		return "(nil)";
+	if (!lua_isstring(strObj))
+		return {};
+	Common::String msg(lua_getstring(strObj));
+	// Our print functions will handle the newline
+	if (msg[msg.size() - 1] == '\n')
+		msg.deleteLastChar();
+	return msg;
+}
+
 int32 luaA_passresults();
 
 void Lua_V1::new_dofile() {
@@ -65,42 +78,27 @@ void Lua_V1::new_dofile() {
 // Debugging message functions
 
 void Lua_V1::PrintDebug() {
-	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Info)) {
-		Common::String msg("Debug: ");
-		lua_Object strObj = lua_getparam(1);
-		if (lua_isnil(strObj))
-			msg += "(nil)";
-		if (!lua_isstring(strObj))
-			return;
-		msg += Common::String(lua_getstring(strObj));
-		debugN("%s\n", msg.c_str());
-	}
+	if (!Debug::isChannelEnabled(Debug::Scripts))
+		return;
+	Common::String msg("Debug: ");
+	msg += getLuaMessage();
+	debug("%s", msg.c_str());
 }
 
 void Lua_V1::PrintError() {
-	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Error)) {
-		Common::String msg("Error: ");
-		lua_Object strObj = lua_getparam(1);
-		if (lua_isnil(strObj))
-			msg += "(nil)";
-		if (!lua_isstring(strObj))
-			return;
-		msg += Common::String(lua_getstring(strObj));
-		debugN("%s\n", msg.c_str());
-	}
+	if (!Debug::isChannelEnabled(Debug::Scripts))
+		return;
+	Common::String msg("Error: ");
+	msg += getLuaMessage();
+	warning("%s", msg.c_str());
 }
 
 void Lua_V1::PrintWarning() {
-	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Warning)) {
-		Common::String msg("Warning: ");
-		lua_Object strObj = lua_getparam(1);
-		if (lua_isnil(strObj))
-			msg += "(nil)";
-		if (!lua_isstring(strObj))
-			return;
-		msg += Common::String(lua_getstring(strObj));
-		debugN("%s\n", msg.c_str());
-	}
+	if (!Debug::isChannelEnabled(Debug::Scripts))
+		return;
+	Common::String msg("Warning: ");
+	msg += getLuaMessage();
+	warning( "%s", msg.c_str());
 }
 
 void Lua_V1::FunctionName() {

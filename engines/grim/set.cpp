@@ -398,7 +398,7 @@ void Set::Setup::load(Set *set, int id, TextSplitter &ts) {
 		// Don't even try to load if it's the "none" bitmap
 		if (strcmp(buf, "<none>.lbm") != 0) {
 			_bkgndZBm = Bitmap::create(buf);
-			Debug::debug(Debug::Bitmaps | Debug::Sets,
+			Debug::debug(Debug::Sets,
 						 "Loading scene z-buffer bitmap: %s\n", buf);
 		}
 	}
@@ -895,7 +895,7 @@ void Set::setSetup(int num) {
 Bitmap::Ptr Set::loadBackground(const char *fileName) {
 	Bitmap::Ptr bg = Bitmap::create(fileName);
 	if (!bg) {
-		Debug::warning(Debug::Bitmaps | Debug::Sets,
+		Debug::warning(Debug::Sets,
 					   "Unable to load scene bitmap: %s, loading dfltroom instead", fileName);
 		if (g_grim->getGameType() == GType_MONKEY4) {
 			bg = Bitmap::create("dfltroom.til");
@@ -903,10 +903,10 @@ Bitmap::Ptr Set::loadBackground(const char *fileName) {
 			bg = Bitmap::create("dfltroom.bm");
 		}
 		if (!bg) {
-			Debug::error(Debug::Bitmaps | Debug::Sets, "Unable to load dfltroom");
+			Debug::error(Debug::Sets, "Unable to load dfltroom");
 		}
 	} else {
-		Debug::debug(Debug::Bitmaps | Debug::Sets,
+		Debug::debug(Debug::Sets,
 					 "Loaded scene bitmap: %s", fileName);
 	}
 	return bg;

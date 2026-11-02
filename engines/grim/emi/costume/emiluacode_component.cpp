@@ -40,7 +40,7 @@ int EMILuaCodeComponent::update(uint time) {
 }
 
 void EMILuaCodeComponent::setKey(int val) {
-	Debug::debug(Debug::Lua, "LuaC component: executing code [%s]", _name.c_str());
+	Debug::debug(Debug::Costumes, "LuaC component: executing code [%s]", _name.c_str());
 	lua_dostring(_name.c_str());
 }
 

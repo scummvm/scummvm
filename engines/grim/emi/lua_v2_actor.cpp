@@ -969,7 +969,7 @@ void Lua_V2::AttachActor() {
 	}
 
 	attached->attachToActor(actor, joint);
-	Debug::debug(Debug::Actors | Debug::Scripts, "Lua_V2::AttachActor: attaching %s to %s (on %s)", attached->getName().c_str(), actor->getName().c_str(), joint ? joint : "(none)");
+	Debug::debug(Debug::Scripts, "Lua_V2::AttachActor: attaching %s to %s (on %s)", attached->getName().c_str(), actor->getName().c_str(), joint ? joint : "(none)");
 
 	g_emi->invalidateSortOrder();
 }
@@ -985,7 +985,7 @@ void Lua_V2::DetachActor() {
 	if (!attached)
 		return;
 
-	Debug::debug(Debug::Actors | Debug::Scripts, "Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
+	Debug::debug(Debug::Scripts, "Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
 	attached->detach();
 
 	g_emi->invalidateSortOrder();

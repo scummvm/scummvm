@@ -20,20 +20,18 @@
  */
 
 #include "common/debug-channels.h"
+#include "common/debug.h"
 
 #include "engines/grim/debug.h"
 
 namespace Grim {
-
-void Debug::registerDebugChannels() {
-}
 
 bool Debug::isChannelEnabled(DebugChannel chan) {
 	return DebugMan.isDebugChannelEnabled(chan);
 }
 
 void Debug::debug(DebugChannel channel, const char *s, ...) {
-	if (isChannelEnabled(channel | Debug::Info)) {
+	if (isChannelEnabled(channel)) {
 		va_list args;
 		va_start(args, s);
 		Common::String buf = Common::String::vformat(s, args);
@@ -44,7 +42,7 @@ void Debug::debug(DebugChannel channel, const char *s, ...) {
 }
 
 void Debug::warning(DebugChannel channel, const char *s, ...) {
-	if (isChannelEnabled(channel | Debug::Warning)) {
+	if (isChannelEnabled(channel)) {
 		va_list args;
 		va_start(args, s);
 		Common::String buf = Common::String::vformat(s, args);
@@ -55,18 +53,7 @@ void Debug::warning(DebugChannel channel, const char *s, ...) {
 }
 
 void Debug::error(DebugChannel channel, const char *s, ...) {
-	if (isChannelEnabled(channel | Debug::Error)) {
-		va_list args;
-		va_start(args, s);
-		Common::String buf = Common::String::vformat(s, args);
-		va_end(args);
-
-		::error("%s", buf.c_str());
-	}
-}
-
-void Debug::error(const char *s, ...) {
-	if (isChannelEnabled(Debug::Error)) {
+	if (isChannelEnabled(channel)) {
 		va_list args;
 		va_start(args, s);
 		Common::String buf = Common::String::vformat(s, args);

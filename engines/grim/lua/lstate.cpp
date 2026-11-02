@@ -213,7 +213,7 @@ void lua_open() {
 	luaT_init();
 	luaB_predefine();
 	luaL_addlibtolist(stdErrorRimFunc, ARRAYSIZE(stdErrorRimFunc));
-	if (Debug::isChannelEnabled(Debug::Lua))
+	if (Debug::isChannelEnabled(Debug::LuaTrace))
 		lua_callhook = callHook;
 }
 
