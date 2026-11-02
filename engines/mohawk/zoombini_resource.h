@@ -52,12 +52,12 @@ constexpr const char *ZMB_MHK_ZOOMBINI = "ZOOMBINI.MHK";
 // MIDIMAC.MHK - Macintosh profile (mostly SMF type 1 multi-track,
 // authored for QuickTime / Roland SC-55 with no inline setup),
 // used by the Macintosh release.
-// ScummVM can optionally play the Mac-authored soundtrack through @ref ZoombiniPage::openMidiArchive().
+// The engine selects either archive using the MIDI soundtrack option.
 constexpr const char *ZMB_MHK_MIDIMPC = "MIDIMPC.MHK"; // Broderbund v1.x releases only
 constexpr const char *ZMB_MHK_MIDIMAC = "MIDIMAC.MHK"; // Broderbund v1.x releases only
 constexpr const char *ZMB_MHK_TEXTSTR = "TEXTSTR.MHK"; // Broderbund v1.0 Europe releases only
-constexpr const char *ZMB_MHK_MUSIC = "MUSIC.MHK";     // The Learning Company v2.0 Picker background music only
-constexpr const char *ZMB_MHK_HELP = "HELP.MHK";       // The Learning Company v2.0 release only
+constexpr const char *ZMB_MHK_MUSIC = "MUSIC.MHK";     // The Learning Company v2.0 only - Picker Background Music
+constexpr const char *ZMB_MHK_HELP = "HELP.MHK";       // The Learning Company v2.0 only - HelpDialog Voices
 constexpr const char *ZMB_MHK_XFER = "XFER.MHK";
 constexpr const char *ZMB_MHK_MAP = "MAP.MHK";
 constexpr const char *ZMB_MHK_RODMAP = "RODMAP.MHK";
@@ -87,9 +87,12 @@ struct ZmbResource {
 	 * So let's separate each namespace.
 	 */
 	enum ArchiveKind : uint16 {
-		/** Resource from the active archives in @ref MohawkEngine::_mhks. */
+		/** Resource from the active page archives in @ref MohawkEngine::_mhk. */
 		kPage = 0,
-		/** Resources from ZOOMBINI.MHK, etc. */
+		/** Resource from shared system archives.
+		 * - ZOOMBINI.MHK
+		 * - (v1.x) MIDIMPC.MHK or MIDIMAC.MHK
+		 * - (v2.0) MUSIC.MHK and HELP.MHK */
 		kSystem = 1,
 	};
 
@@ -99,8 +102,8 @@ struct ZmbResource {
 	 * The archive kind is part of the address because page archives and the system
 	 * archive can contain the same numeric resource ID with different content.
 	 * @ref ZmbResource::kPage addresses the active page archive stack, while
-	 * @ref ZmbResource::kSystem addresses ZOOMBINI.MHK and the supported system
-	 * fallback archives.
+	 * @ref ZmbResource::kSystem addresses the shared MIDI and PCM music archives,
+	 * and ZOOMBINI.MHK with the supported system fallback archives for other resources.
 	 *
 	 * A default-constructed value has no resource ID. SCRB and SCRS sound IDs are
 	 * converted to this explicit form while the script is parsed, so callers do
@@ -163,68 +166,169 @@ enum class ZoombiniPageCategory : uint16 {
 	kDialog = 3,
 };
 
-enum class ZoombiniPageType : uint16 {
-	kNone = 0,
-	/** Map */
+enum class ZoombiniPageType : int16 {
+	kNone = -1,
+	/**
+	 * Logo Movie
+	 *
+	 * @remarks
+	 * Page archive:
+	 * - v1.x: LOGO025.MOV (CDToons)
+	 * - v2.0: LOGO025.BIK (Bink)
+	 * - v2.0 Demo: LOGODEMO.BIK (Bink)
+	 */
+	kLogo = 0,
+	/**
+	 * Map
+	 *
+	 * @remarks
+	 * Page archive:
+	 * - v1.0US/v1.xEU family:  MAP.MHK
+	 * - v1.1US/v2.0TLC family: RODMAP.MHK
+	 */
 	kRodMap = 1,
-	/** Intersection */
+	/**
+	 * Intersection
+	 *
+	 * @remarks
+	 * Page archive: XFER.MHK
+	 */
 	kXfer = 2,
-	/** Zoombini Isle */
+	/**
+	 * Zoombini Isle
+	 *
+	 * @remarks
+	 * Page archive:
+	 * - PICKER.MHK
+	 */
 	kPicker = 3,
-	/** Shelter Rock */
+	/**
+	 * Shelter Rock
+	 *
+	 * @remarks
+	 * Page archive: BASECAMP.MHK
+	 */
 	kBasecamp1 = 4,
-	/** Shade Tree */
+	/**
+	 * Shade Tree
+	 *
+	 * @remarks
+	 * Page archive: BCTWO.MHK
+	 */
 	kBasecamp2 = 5,
-	/** Zoombiniville */
+	/**
+	 * Zoombiniville
+	 *
+	 * @remarks
+	 * Page archive: TOWN.MHK
+	 */
 	kTown = 6,
 	// Route1: The Big, the Bad, and the Hungry
-	/** Allergic Cliffs */
+	/**
+	 * Allergic Cliffs
+	 *
+	 * @remarks
+	 * Page archive: BRIDGE.MHK
+	 */
 	kBridge = 7,
 	/**
-	 * Stone Cold Caves.
-	 * Archive filename: TUNNELS.MHK.
+	 * Stone Cold Caves
+	 *
+	 * @remarks
+	 * Page archive: TUNNELS.MHK
 	 */
 	kTunnels = 8,
-	/** Pizza Pass */
+	/**
+	 * Pizza Pass
+	 *
+	 * @remarks
+	 * Page archive: PIZZA.MHK
+	 */
 	kPizza = 9,
 	// Route2: Who's Bayou
-	/** Captain Cajun's Ferryboat */
+	/**
+	 * Captain Cajun's Ferryboat
+	 *
+	 * @remarks
+	 * Page archive: FERRY.MHK
+	 */
 	kFerry = 10,
-	/** Titanic Tattooed Toads */
+	/**
+	 * Titanic Tattooed Toads
+	 *
+	 * @remarks
+	 * Page archive: LILLY.MHK
+	 */
 	kLilly = 11,
-	/** Stone Rise */
+	/**
+	 * Stone Rise
+	 *
+	 * @remarks
+	 * Page archive: SLIDES.MHK
+	 */
 	kSlides = 12,
 	// Route3: The Deep, Dark Forest
-	/** Fleens! */
+	/**
+	 * Fleens!
+	 *
+	 * @remarks
+	 * Page archive: FLEENS.MHK
+	 */
 	kFleens = 13,
-	/** Hotel Dimensia */
+	/**
+	 * Hotel Dimensia
+	 *
+	 * @remarks
+	 * Page archive: HOTEL.MHK
+	 */
 	kHotel = 14,
-	/** Mudball Wall */
+	/**
+	 * Mudball Wall
+	 *
+	 * @remarks
+	 * Page archive: NET.MHK (NETDEMO.MHK in v2.0 demo)
+	 */
 	kNet = 15,
 	// Route4: Mountains of Despair
 	/**
-	 * The Lion's Lair.
-	 * Archive filename: CAVES.MHK.
+	 * The Lion's Lair
+	 *
+	 * @remarks
+	 * Page archive: CAVES.MHK
 	 */
 	kCaves = 16,
-	/** Mirror Machine */
+	/**
+	 * Mirror Machine
+	 *
+	 * @remarks
+	 * Page archive: SMOKE.MHK
+	 */
 	kSmoke = 17,
-	/** Bubblewonder Abyss */
+	/**
+	 * Bubblewonder Abyss
+	 *
+	 * @remarks
+	 * Page archive: MAZE2.MHK
+	 */
 	kMaze = 18,
-	/** Virtual page for a logo movie */
-	kLogo = 19,
-	/** Virtual page for a option dialog */
-	kDialogOptions = 20,
-	/** Virtual page for a save/load dialog */
-	kDialogSaveLoad = 21,
+	// Dialog page IDs are the original dialog kind plus 100.
+	/** Virtual page for an options dialog */
+	kDialogOptions = 101,
+	/** Virtual page for @ref Mohawk::ZoombiniDialogLoad. */
+	kDialogLoad = 102,
+	/** Virtual page for @ref Mohawk::ZoombiniDialogSave. */
+	kDialogSave = 103,
 	/** Virtual page for a message box dialog */
-	kDialogMsgBox = 22,
+	kDialogMsgBox = 104,
 	/** Virtual page for a credits dialog */
-	kCreditScreen = 23,
+	kCreditScreen = 105,
 	/** Virtual page for a help dialog */
-	kDialogHelp = 24,
+	kDialogHelp = 106,
+	// Additional ScummVM dialog page IDs.
+	/** Virtual page for version dialog. */
+	kDialogVersion = 201,
 	/** Virtual page for a console debug screen */
-	kDialogDebug = 26,
+	kDialogDebug = 202,
 };
 
 enum class ZoombiniDialogType : uint16 {
@@ -233,8 +337,8 @@ enum class ZoombiniDialogType : uint16 {
 	kLoad = 2,
 	kSave = 3,
 	kAsk = 4,
-	kHelp = 5,
-	kCredits = 6,
+	kCredits = 5,
+	kHelp = 6,
 };
 
 enum class ZoombiniFontUsage : uint32 {

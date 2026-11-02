@@ -409,13 +409,6 @@ void ZoombiniPage::openArchive(const Common::String &mhkName) {
 	_vm->addPageArchive(mhk);
 }
 
-void ZoombiniPage::openMidiArchive() {
-	// The engine owns the selected v1.x MIDI archive for the whole game.
-	// Pages retain this helper to ensure that a profile change takes effect at
-	// their next open boundary without placing the archive in the page stack.
-	_vm->loadMidiArchive();
-}
-
 ZmbEventHandleResult ZoombiniPage::handleLButtonDown(const Common::Point &absPos, const Common::Point &relPos) {
 	// Manual sticky mouse (Ctrl+J) and auto-sticky mouse (Ctrl+U) both route a
 	// picked-up item through the click-to-pick / click-to-drop path, so a click
@@ -449,6 +442,10 @@ ZmbEventHandleResult ZoombiniPage::handleLButtonUp(const Common::Point &absPos, 
 		}
 	}
 	return onLButtonUp(absPos, relPos);
+}
+
+ZmbEventHandleResult ZoombiniPage::handleMButtonDown(const Common::Point &absPos, const Common::Point &relPos) {
+	return onMButtonDown(absPos, relPos);
 }
 
 ZmbEventHandleResult ZoombiniPage::handleRButtonDown(const Common::Point &absPos, const Common::Point &relPos) {

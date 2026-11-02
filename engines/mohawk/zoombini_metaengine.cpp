@@ -23,6 +23,7 @@
 #include "mohawk/detection.h"
 
 #include "common/config-manager.h"
+#include "common/keyboard.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "common/ustr.h"
@@ -114,6 +115,27 @@ const char *Mohawk::ZmbReleaseInfo::getCodePageName(Common::CodePage codePage) {
 	}
 }
 
+Mohawk::MohawkMetaEngine_Zoombini::MidiSoundtrack Mohawk::MohawkMetaEngine_Zoombini::getDefaultMidiSoundtrack(Common::Platform platform) {
+	switch (platform) {
+	case Common::kPlatformMacintosh:
+		return MidiSoundtrack::kMacintosh;
+	case Common::kPlatformWindows:
+	default:
+		return MidiSoundtrack::kWindowsMPC;
+	}
+}
+
+Mohawk::MohawkMetaEngine_Zoombini::MidiSoundtrack Mohawk::MohawkMetaEngine_Zoombini::normalizeMidiSoundtrack(int soundtrack, Common::Platform platform) {
+	switch (soundtrack) {
+	case static_cast<int>(MidiSoundtrack::kWindowsMPC):
+		return MidiSoundtrack::kWindowsMPC;
+	case static_cast<int>(MidiSoundtrack::kMacintosh):
+		return MidiSoundtrack::kMacintosh;
+	default:
+		return getDefaultMidiSoundtrack(platform);
+	}
+}
+
 bool Mohawk::MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(Common::Platform platform, Common::Language language, bool isDemo, bool isUsV10, MidiSoundtrack &soundtrack) {
 	switch (platform) {
 	case Common::kPlatformMacintosh:
@@ -173,6 +195,95 @@ bool Mohawk::ZmbReleaseInfo::isExtraFamily(const Common::String &extra, Family f
 
 bool Mohawk::ZmbReleaseInfo::isV1() const {
 	return isFamily(Family::kUsV10) || isFamily(Family::kEuropeV1x) || isFamily(Family::kUsV11);
+}
+
+const Common::Array<Common::KeyCode> &Mohawk::ZmbReleaseInfo::getShortcutKeys(ShortcutKind kind, bool isV1xEurope, Common::Language lang, bool fixSwappedSoundMusic) {
+	static const Common::Array<Common::KeyCode> kNone;
+	static const Common::Array<Common::KeyCode> kB = {Common::KEYCODE_b};
+	static const Common::Array<Common::KeyCode> kBAndV = {Common::KEYCODE_b, Common::KEYCODE_v};
+	static const Common::Array<Common::KeyCode> kD = {Common::KEYCODE_d};
+	static const Common::Array<Common::KeyCode> kDAndEAndF = {Common::KEYCODE_d, Common::KEYCODE_e, Common::KEYCODE_f};
+	static const Common::Array<Common::KeyCode> kDAndEAndFAndJ = {Common::KEYCODE_d, Common::KEYCODE_e, Common::KEYCODE_f, Common::KEYCODE_j};
+	static const Common::Array<Common::KeyCode> kDAndEAndFAndK = {Common::KEYCODE_d, Common::KEYCODE_e, Common::KEYCODE_f, Common::KEYCODE_k};
+	static const Common::Array<Common::KeyCode> kI = {Common::KEYCODE_i};
+	static const Common::Array<Common::KeyCode> kJ = {Common::KEYCODE_j};
+	static const Common::Array<Common::KeyCode> kK = {Common::KEYCODE_k};
+	static const Common::Array<Common::KeyCode> kL = {Common::KEYCODE_l};
+	static const Common::Array<Common::KeyCode> kLAndC = {Common::KEYCODE_l, Common::KEYCODE_c};
+	static const Common::Array<Common::KeyCode> kS = {Common::KEYCODE_s};
+	static const Common::Array<Common::KeyCode> kSAndR = {Common::KEYCODE_s, Common::KEYCODE_r};
+	static const Common::Array<Common::KeyCode> kV = {Common::KEYCODE_v};
+	static const Common::Array<Common::KeyCode> kVAndB = {Common::KEYCODE_v, Common::KEYCODE_b};
+	static const Common::Array<Common::KeyCode> kY = {Common::KEYCODE_y};
+
+	switch (kind) {
+	case ShortcutKind::kVersionDialog:
+		return isV1xEurope ? kI : kV;
+	case ShortcutKind::kOptionsSound:
+		if (!isV1xEurope)
+			return kD;
+		if (lang == Common::IT_ITA) {
+			return kVAndB;
+		} else if (lang == Common::JA_JPN) {
+			return kY;
+		} else {
+			return kBAndV;
+		}
+	case ShortcutKind::kOptionsMusic:
+		if (isV1xEurope) {
+			if (lang == Common::JA_JPN)
+				return kBAndV;
+			return kY;
+		}
+		return kB;
+	case ShortcutKind::kGameplaySound:
+		// Italian gameplay uses Ctrl+V; its default keymap also maps Ctrl+B to this key.
+		if (isV1xEurope && lang == Common::IT_ITA)
+			return kV;
+		if (isV1xEurope && lang != Common::JA_JPN && !fixSwappedSoundMusic)
+			return kY;
+		return getShortcutKeys(ShortcutKind::kOptionsSound, isV1xEurope, lang);
+	case ShortcutKind::kGameplayMusic:
+		if (isV1xEurope && lang != Common::IT_ITA && lang != Common::JA_JPN && !fixSwappedSoundMusic)
+			return kBAndV;
+		return getShortcutKeys(ShortcutKind::kOptionsMusic, isV1xEurope, lang);
+	case ShortcutKind::kStickyMouse:
+		if (isV1xEurope && lang == Common::JA_JPN)
+			return kK;
+		return kJ;
+	case ShortcutKind::kLanguageSelection:
+		if (!isV1xEurope)
+			return kNone;
+		if (lang == Common::JA_JPN)
+			return kDAndEAndFAndJ;
+		else if (lang == Common::IT_ITA)
+			return kDAndEAndFAndK;
+		return kDAndEAndF;
+	case ShortcutKind::kLoadGame:
+		return isV1xEurope ? kLAndC : kL;
+	case ShortcutKind::kSaveGame:
+		return isV1xEurope ? kSAndR : kS;
+	}
+	return kNone;
+}
+
+bool Mohawk::ZmbReleaseInfo::isShortcut(ShortcutKind kind, const Common::KeyState &kbd, bool fixSwappedSoundMusic) const {
+	const bool isV1xEurope = isFamily(Family::kEuropeV1x);
+
+	// On some releases, version dialog can be spawned by Tab.
+	if (kind == ShortcutKind::kVersionDialog && isV1xEurope && kbd.hasFlags(0) && kbd.keycode == Common::KEYCODE_TAB)
+		return true;
+
+	// The other Keycodes requires Ctrl.
+	if (!kbd.hasFlags(Common::KBD_CTRL))
+		return false;
+
+	const Common::Array<Common::KeyCode> &keys = getShortcutKeys(kind, isV1xEurope, _lang, fixSwappedSoundMusic);
+	for (Common::KeyCode key : keys) {
+		if (kbd.keycode == key)
+			return true;
+	}
+	return false;
 }
 
 bool Mohawk::ZmbReleaseInfo::isDemo(Family family) const {
@@ -468,9 +579,10 @@ Mohawk::MohawkMetaEngine_Zoombini::MacFontSmoothing Mohawk::MohawkMetaEngine_Zoo
 	}
 }
 
-void Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings() {
+void Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings(Common::Platform platform) {
 	// Bug fixes.
 	ConfMan.registerDefault(kOptionFixAudioPops, true);
+	ConfMan.registerDefault(kOptionFixSwappedSoundMusicShortcuts, true);
 	ConfMan.registerDefault(kOptionFixFleensTreeDescendFeetBug, true);
 	ConfMan.registerDefault(kOptionFixHotelMidiHaltBug, true);
 	ConfMan.registerDefault(kOptionFixCavesL4MidiSilentBug, true);
@@ -484,7 +596,7 @@ void Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings() {
 	ConfMan.registerDefault(kOptionPaletteFilter, static_cast<int>(PaletteFilter::kBrightenPalette));
 	ConfMan.registerDefault(kOptionMacFontSmoothing, static_cast<int>(MacFontSmoothing::kDisabled));
 	ConfMan.registerDefault(kOptionPrngAlgorithm, static_cast<int>(PrngAlgorithm::kOriginalPrng));
-	ConfMan.registerDefault(kOptionMidiSoundtrack, static_cast<int>(MidiSoundtrack::kWindowsMPC));
+	ConfMan.registerDefault(kOptionMidiSoundtrack, static_cast<int>(getDefaultMidiSoundtrack(platform)));
 	ConfMan.registerDefault(kOptionColorBlindMode, false);
 	ConfMan.registerDefault(kOptionMazeAlwaysPlayCelebrationSfx, false);
 	ConfMan.registerDefault(kOptionTownAlwaysPlayMemorialSfx, true);

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "mohawk/mohawk.h"
 
 #include "mohawk/zoombini.h"
@@ -73,100 +75,120 @@ ZmbEventHandleResult ZoombiniInteractive::onKeyDown(const Common::KeyState &kbd,
 	if (kbdRepeat)
 		return ZmbEventHandleResult::kConsumed;
 
-	// The serialized flag gates only keyboard dispatch. Console builtin_debug
-	// and page builtin_debug actions call their typed handlers directly.
-	if (_vm->isBuiltinDebugMode() || kbd.keycode == Common::KEYCODE_F1) {
+	// Page debug shortcuts require built-in debug mode, stored in @ref Mohawk::ZmbStateFile::_flagDebug.
+	// This flag is saved and restored with the game state.
+	// Console builtin_debug and page builtin_debug actions bypass this keyboard-only filter.
+	if (_vm->isBuiltinDebugMode()) {
 		const ZmbEventHandleResult debugResult = onDebugKeyDown(kbd);
 		if (debugResult == ZmbEventHandleResult::kConsumed)
 			return debugResult;
 	}
 
 	// Page and feature handlers own the key before the shared dispatcher.
-	ZmbEventHandleResult result = ZoombiniPage::onKeyDown(kbd, kbdRepeat);
+	const ZmbEventHandleResult result = ZoombiniPage::onKeyDown(kbd, kbdRepeat);
 	if (result == ZmbEventHandleResult::kConsumed)
 		return result;
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	const bool fixSwappedSoundMusic = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixSwappedSoundMusicShortcuts);
+	// Version Dialog (CTRL-V)
+	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kVersionDialog, kbd)) {
+		_vm->openVersionDialog();
+		return ZmbEventHandleResult::kConsumed;
+	}
+	// Dialog & Sound Effects (CTRL-D)
+	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kGameplaySound, kbd, fixSwappedSoundMusic)) {
+		_vm->_state->toggleSound();
+		return ZmbEventHandleResult::kConsumed;
+	}
+	// Background Music (CTRL-B)
+	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kGameplayMusic, kbd, fixSwappedSoundMusic)) {
+		_vm->_state->toggleMusic();
+		return ZmbEventHandleResult::kConsumed;
+	}
+	// Sticky Mouse (CTRL-J)
+	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kStickyMouse, kbd)) {
+		_vm->_state->toggleStickyMouse();
+		return ZmbEventHandleResult::kConsumed;
+	}
+	// TODO: Support live language switching; keep these keys reserved until then.
+	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kLanguageSelection, kbd)) {
+		return ZmbEventHandleResult::kConsumed;
+	}
+	// Load Game (CTRL-L)
+	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kLoadGame, kbd)) {
+		_vm->openLoadDialogWithSavePrompt();
+		return ZmbEventHandleResult::kConsumed;
+	}
+	// Save Game (CTRL-S)
+	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kSaveGame, kbd)) {
+		_vm->openSaveDialog();
+		return ZmbEventHandleResult::kConsumed;
+	}
 
-	result = ZmbEventHandleResult::kConsumed;
 	if (kbd.hasFlags(Common::KBD_CTRL)) {
 		switch (kbd.keycode) {
 		case Common::KEYCODE_p: // Map button (CTRL-P) - ScummVM addition
 			onMapButtonActivated();
-			break;
+			return ZmbEventHandleResult::kConsumed;
 		case Common::KEYCODE_n: // New Game (CTRL-N)
 			_vm->_state->startNewGame(true);
-			break;
-		case Common::KEYCODE_m: // Japanese/Latin generated names (CTRL-M)
-			if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
+			return ZmbEventHandleResult::kConsumed;
+		case Common::KEYCODE_m: // Switch name generation between Japanese/Latin (CTRL-M, v1.0JP only)
+			if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
 				const bool japaneseNames = _vm->_text->toggleJapaneseNames();
 				showNotiBoxLong(japaneseNames ? ZoombiniText::kNotiBoxJapaneseNames : ZoombiniText::kNotiBoxEnglishNames);
-			} else {
-				result = ZmbEventHandleResult::kPassthrough;
+				return ZmbEventHandleResult::kConsumed;
 			}
-			break;
-		case Common::KEYCODE_l: // Load Game (CTRL-L)
-			_vm->openLoadDialogWithSavePrompt();
-			break;
-		case Common::KEYCODE_s: // Save Game (CTRL-S)
-			_vm->openSaveDialog();
 			break;
 		case Common::KEYCODE_q: // Quit (CTRL-Q)
 			Engine::quitGame();
-			break;
-		case Common::KEYCODE_d: // Dialog & Sound Effects (CTRL-D)
-			_vm->_state->toggleSound();
-			break;
-		case Common::KEYCODE_b: // Background Music (CTRL-B)
-			_vm->_state->toggleMusic();
-			break;
-		case Common::KEYCODE_j: // Sticky Mouse (CTRL-J)
-			_vm->_state->toggleStickyMouse();
-			break;
+			return ZmbEventHandleResult::kConsumed;
 		case Common::KEYCODE_u: // Auto-Sticky Mouse (CTRL-U)
 			_vm->_state->toggleAutoStickyMouse();
-			break;
+			return ZmbEventHandleResult::kConsumed;
 		case Common::KEYCODE_t: // Transition (CTRL-T)
 			_vm->_state->toggleTransitions();
-			break;
+			return ZmbEventHandleResult::kConsumed;
 		case Common::KEYCODE_a: // Help Audio (CTRL-A, v2.0TLC only)
-			if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
+			if (relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 				_vm->_state->toggleHelpAudio();
-			else
-				result = ZmbEventHandleResult::kPassthrough;
+				return ZmbEventHandleResult::kConsumed;
+			}
 			break;
 		case Common::KEYCODE_k: // TouchSense (CTRL-K, v2.0TLC only)
-			if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
+			if (relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 				_vm->_state->toggleTouchSense();
-			else
-				result = ZmbEventHandleResult::kPassthrough;
+				return ZmbEventHandleResult::kConsumed;
+			}
 			break;
 		case Common::KEYCODE_g: // Less/More Action (CTRL-G)
 			_vm->_state->toggleLessMoreAction();
-			break;
+			return ZmbEventHandleResult::kConsumed;
 		case Common::KEYCODE_h: // Hide/Show Cursor (CTRL-H)
 			_vm->_state->toggleCursorVisibility();
-			break;
+			return ZmbEventHandleResult::kConsumed;
 		default:
-			result = ZmbEventHandleResult::kPassthrough;
 			break;
 		}
 	} else {
 		switch (kbd.keycode) {
 		case Common::KEYCODE_SLASH:
 		case Common::KEYCODE_QUESTION: // Options Dialog
-			if (!_vm->hasDialogOpened())
+			if ((kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) && !_vm->hasDialogOpened()) {
 				_vm->openOptionsDialog();
+				return ZmbEventHandleResult::kConsumed;
+			}
 			break;
 		case Common::KEYCODE_F1: // Play help sound
-			debugReplayActiveHelpSound();
+			if (kbd.hasFlags(0)) {
+				replayActiveHelpSound();
+				return ZmbEventHandleResult::kConsumed;
+			}
 			break;
 		default:
-			result = ZmbEventHandleResult::kPassthrough;
 			break;
 		}
 	}
-
-	if (result == ZmbEventHandleResult::kConsumed)
-		return result;
 
 	if (_vm->handleBuiltinCheatSpace(kbd))
 		return ZmbEventHandleResult::kConsumed;
@@ -177,6 +199,11 @@ ZmbEventHandleResult ZoombiniInteractive::onKeyDown(const Common::KeyState &kbd,
 }
 
 Common::String ZoombiniInteractive::debugGetGlobalDebugCommandHelp() const {
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+
+	// v1.xEU family shadowes some debug shortcuts with normal shortcuts.
+	const char *shadowed = relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x) ? " (shadowed)" : "";
+
 	Common::String output;
 	output += Common::String::format("  %s | %s\n", kGlobalDebugActionEnable, kGlobalDebugActionDisable);
 	output += "    Enable the original serialized flag or use its ScummVM disable counterpart.\n";
@@ -196,19 +223,19 @@ Common::String ZoombiniInteractive::debugGetGlobalDebugCommandHelp() const {
 	output += "    Request a full-screen redraw by merging the whole screen into the dirty region.\n";
 	output += Common::String::format("  %s (@)\n", kGlobalDebugActionUnlockRoutes);
 	output += "    Apply the original route-unlock bits.\n";
-	output += Common::String::format("  %s (Ctrl+E)\n", kGlobalDebugActionRunnerRectsAll);
+	output += Common::String::format("  %s (Ctrl+E)%s\n", kGlobalDebugActionRunnerRectsAll, shadowed);
 	output += "    Draw all runner click rectangles, render-state signs, and global-list positions.\n";
-	output += Common::String::format("  %s (Ctrl+F)\n", kGlobalDebugActionRunnerRectsFiltered);
+	output += Common::String::format("  %s (Ctrl+F)%s\n", kGlobalDebugActionRunnerRectsFiltered, shadowed);
 	output += "    Draw Snoid-only runner click rectangles, render-state signs, and global-list positions.\n";
 	output += Common::String::format("  %s (Ctrl+X)\n", kGlobalDebugActionRunnerIdsAll);
 	output += "    Draw all runner click rectangles and IDs.\n";
-	output += Common::String::format("  %s (Ctrl+Y)\n", kGlobalDebugActionRunnerIdsFiltered);
+	output += Common::String::format("  %s (Ctrl+Y)%s\n", kGlobalDebugActionRunnerIdsFiltered, shadowed);
 	output += "    Draw Snoid-only runner click rectangles and IDs.\n";
 	output += Common::String::format("  %s (Ctrl+Z)\n", kGlobalDebugActionRunnerDebug);
 	output += "    Toggle the palette-14 runner-debug backdrop.\n";
-	output += Common::String::format("  %s (Ctrl+I)\n", kGlobalDebugActionForceParty);
+	output += Common::String::format("  %s (Ctrl+I)%s\n", kGlobalDebugActionForceParty, shadowed);
 	output += "    Force every available Zoombini into the active party.\n";
-	output += Common::String::format("  %s (Ctrl+R)\n", kGlobalDebugActionDragCoords);
+	output += Common::String::format("  %s (Ctrl+R)%s\n", kGlobalDebugActionDragCoords, shadowed);
 	output += "    Toggle dragged-Zoombini coordinate notifications.\n";
 	return output;
 }
@@ -267,7 +294,7 @@ ZoombiniInteractive::GlobalDebugAction ZoombiniInteractive::parseGlobalDebugActi
 	return GlobalDebugAction::kInvalid;
 }
 
-bool ZoombiniInteractive::debugReplayActiveHelpSound() {
+bool ZoombiniInteractive::replayActiveHelpSound() {
 	if (!_activeHelpSoundId.hasId())
 		return false;
 

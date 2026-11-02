@@ -196,8 +196,8 @@ public:
 	bool debugDoGlobalDebugCommand(int argc, const char **argv, Common::String &output);
 	/** Return whether the page supplies an F1 help sound for debug replay. */
 	bool debugCanReplayActiveHelpSound() const { return _activeHelpSoundId.hasId(); }
-	/** Replay the page-owned F1 help sound for the page builtin_debug command. */
-	virtual bool debugReplayActiveHelpSound();
+	/** Replay the page-owned help sound for F1 input. */
+	virtual bool replayActiveHelpSound();
 
 protected:
 	/** Handle a page-owned built-in debug key before shared retail shortcuts. */
@@ -918,7 +918,7 @@ private:
 
 	/** Short notification-box rectangle. */
 	const Common::Rect _notiBoxShortRect = Common::Rect(0x0115, 0x01CA, 0x016C, 0x01DD);
-	/** 
+	/**
 	 * Long notification-box rectangle.
 	 * In v1.0JP, this rect is widened.
 	 */

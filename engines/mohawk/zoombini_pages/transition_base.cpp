@@ -48,9 +48,36 @@ ZmbEventHandleResult ZoombiniTransition::onLButtonDown(const Common::Point &absP
 	return ZmbEventHandleResult::kConsumed;
 }
 
+bool ZoombiniTransition::shouldIgnorePageSkipKey(const Common::KeyState &kbd) {
+	// Do not skip on modified keys or screenshot keys.
+	if (!kbd.hasFlags(0))
+		return true;
+
+	switch (kbd.keycode) {
+	case Common::KEYCODE_RSHIFT:
+	case Common::KEYCODE_LSHIFT:
+	case Common::KEYCODE_RCTRL:
+	case Common::KEYCODE_LCTRL:
+	case Common::KEYCODE_RALT:
+	case Common::KEYCODE_LALT:
+	case Common::KEYCODE_RMETA:
+	case Common::KEYCODE_LMETA:
+	case Common::KEYCODE_LSUPER:
+	case Common::KEYCODE_RSUPER:
+	case Common::KEYCODE_MODE:
+	case Common::KEYCODE_PRINT:
+	case Common::KEYCODE_SYSREQ:
+		return true;
+	default:
+		return false;
+	}
+}
+
 ZmbEventHandleResult ZoombiniTransition::onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) {
-	(void)kbd;
 	(void)kbdRepeat;
+
+	if (shouldIgnorePageSkipKey(kbd))
+		return ZmbEventHandleResult::kConsumed;
 
 	close();
 	return ZmbEventHandleResult::kConsumed;

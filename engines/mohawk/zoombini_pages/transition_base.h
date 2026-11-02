@@ -47,6 +47,10 @@ public:
 	ZmbEventHandleResult onLButtonDown(const Common::Point &absPos, const Common::Point &relPos) override;
 	/** Handle keyboard advance/skip input for the transition. */
 	ZmbEventHandleResult onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) override;
+
+protected:
+	/** Identify modified and system keys that must not skip a transition. */
+	static bool shouldIgnorePageSkipKey(const Common::KeyState &kbd);
 };
 
 } // End of namespace Mohawk

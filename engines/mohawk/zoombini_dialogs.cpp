@@ -1161,68 +1161,102 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 	// Hide the v1.x-only MIDI settings on the TLC v2.0 rebuilds, as they does not have any MIDI resources.
 	Common::String guiOptions = ConfMan.get("guioptions", _domain);
 	const Common::String extra = ConfMan.get("extra", _domain);
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+	const Common::Language lang = Common::parseLanguage(ConfMan.get("language", _domain));
+
 	_isV1x = !ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kTlcV20);
 	_isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
-	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
-	const Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
 
+	// We don't need to track widget's lifecycle ourselves.
+	// The parent widget will automatically destory children widgets when they are destoryed.
 	GUI::StaticTextWidget *text = nullptr;
 
 	if (!_isDemo) {
 		new ZoombiniSeparatorWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.SaveFilesSeparator");
-		_saveFilesHeader = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.SaveFilesHeader",
-													 _c("Manage savefiles", "zoombini-options"), Common::U32String(), GUI::ThemeEngine::kFontStyleBold);
+		_saveFilesHeader = new GUI::StaticTextWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.SaveFilesHeader",
+			_c("Manage savefiles", "zoombini-options"),
+			Common::U32String(),
+			GUI::ThemeEngine::kFontStyleBold);
 		_saveFilesHeader->setAlign(Graphics::TextAlign::kTextAlignStart);
 
-		_importSavesButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ImportSaves",
-												   _c("Import Saves", "zoombini-options"),
-												   _("Copy the original game's ZOOMBINI.WHO roster and ZOOM####.TXT saves "
-													 "from a directory into this ScummVM game."),
-												   kImportSavesCmd);
+		_importSavesButton = new GUI::ButtonWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.ImportSaves",
+			_c("Import Saves", "zoombini-options"),
+			_("Copy the original game's ZOOMBINI.WHO roster and ZOOM####.TXT saves "
+			  "from a directory into this ScummVM game."),
+			kImportSavesCmd);
 		_importSavesButton->setTarget(this);
 
-		_exportSavesButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ExportSaves",
-												   _c("Export Saves", "zoombini-options"),
-												   _("Copy this ScummVM game's saves into the original game's ZOOMBINI.WHO / ZOOM####.TXT layout."),
-												   kExportSavesCmd);
+		_exportSavesButton = new GUI::ButtonWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.ExportSaves",
+			_c("Export Saves", "zoombini-options"),
+			_("Copy this ScummVM game's saves into the original game's ZOOMBINI.WHO / ZOOM####.TXT layout."),
+			kExportSavesCmd);
 		_exportSavesButton->setTarget(this);
 
-		_manageSavesButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ManageSaves",
-												   _("Manage"),
-												   Common::U32String(),
-												   kManageSavesCmd);
+		_manageSavesButton = new GUI::ButtonWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.ManageSaves",
+			_("Manage"),
+			Common::U32String(),
+			kManageSavesCmd);
 		_manageSavesButton->setTarget(this);
 	}
 
 	new ZoombiniSeparatorWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.BugFixesSeparator");
-	text = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.BugFixes",
-									 _c("Bug fixes", "zoombini-options"), Common::U32String(), GUI::ThemeEngine::kFontStyleBold);
+	text = new GUI::StaticTextWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.BugFixes",
+		_c("Bug fixes", "zoombini-options"),
+		Common::U32String(),
+		GUI::ThemeEngine::kFontStyleBold);
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
-	_audioPopFixCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.AudioDiscontinuityFix",
-												   _("Fix audio pops/clicks"),
-												   _("Reduces audible pops at the end of some sound effects."));
+	_audioPopFixCheckbox = new GUI::CheckboxWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.AudioDiscontinuityFix",
+		_("Fix audio pops/clicks"),
+		_("Reduces audible pops at the end of some sound effects."));
 
-	// Current demos contain only Pizza, Net and/or Smoke, apart from the map and Picker.
+	if (ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kEuropeV1x)) {
+		switch (lang) {
+		case Common::EN_GRB:
+		case Common::FR_FRA:
+		case Common::DE_DEU:
+			_fixSwappedSoundMusicShortcutsCheckbox = new GUI::CheckboxWidget(
+				widgetsBoss(), "ZoombiniEngineOptionsDialog.FixSwappedSoundMusicShortcuts",
+				_("Fix swapped sound/music shortcuts"),
+				_("In the original game, sound and music shortcuts are swapped between gameplay and the in-game Options dialog. Enable to use the Options-described shortcuts during gameplay."));
+			break;
+		default:
+			break;
+		}
+	}
+
+	// Current demos does not contain puzzle and hotel fleens.
 	if (!_isDemo) {
-		_fixFleensTreeDescendFeetBugCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.FixFleensTreeDescendFeetBug",
-																	   _("Fleens!: Fix tree-descending Zoombini feet display bug"),
-																	   _("In 'Fleens!', corrects the malformed one-frame poses when a Zoombini descends from the tree."));
+		_fixFleensTreeDescendFeetBugCheckbox = new GUI::CheckboxWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.FixFleensTreeDescendFeetBug",
+			_("Fleens!: Fix tree-descending Zoombini feet display bug"),
+			_("In 'Fleens!', corrects the malformed one-frame poses when a Zoombini descends from the tree."));
 	}
 
 	if (_isV1x && !_isDemo) {
-		_fixHotelMidiHaltBugCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.FixHotelMidiHaltBug",
-															   _("Hotel Dimensia: Fix MIDI background music halt bug"),
-															   _("In 'Hotel Dimensia', keeps MIDI music playing when a Zoombini is dropped."));
+		_fixHotelMidiHaltBugCheckbox = new GUI::CheckboxWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.FixHotelMidiHaltBug",
+			_("Hotel Dimensia: Fix MIDI background music halt bug"),
+			_("In 'Hotel Dimensia', keeps MIDI music playing when a Zoombini is dropped."));
 
-		_fixCavesL4MidiSilentBugCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.FixCavesL4MidiSilentBug",
-																   _("The Lion's Lair: Fix missing Level 4 background MIDI bug"),
-																   _("In 'The Lion's Lair', plays the Level 4 MIDI music that the original engine left unused."));
+		_fixCavesL4MidiSilentBugCheckbox = new GUI::CheckboxWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.FixCavesL4MidiSilentBug",
+			_("The Lion's Lair: Fix missing Level 4 background MIDI bug"),
+			_("In 'The Lion's Lair', plays the Level 4 MIDI music that the original engine left unused."));
 	}
 
 	new ZoombiniSeparatorWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.EnhancementsSeparator");
-	text = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.Enhancements",
-									 _c("Enhancements", "zoombini-options"), Common::U32String(), GUI::ThemeEngine::kFontStyleBold);
+	text = new GUI::StaticTextWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.Enhancements",
+		_c("Enhancements", "zoombini-options"),
+		Common::U32String(),
+		GUI::ThemeEngine::kFontStyleBold);
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
 	const Common::U32String tickRateTooltip = _("Selects exact 60TPS (16.67ms per tick) or the original's 17ms tick.");
@@ -1235,13 +1269,18 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 
 	const Common::U32String interpolationTooltip = _("Interpolates positions of Zoombinis and related objects at the target frame rate. "
 													 "Requires accurate 60TPS timing; sprite animations keep their original speed.");
-	_posInterpolationCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.PosInterpolation",
-														_("Enable position interpolation (Experimental)"), interpolationTooltip, kPosInterpolationChangedCmd);
+	_posInterpolationCheckbox = new GUI::CheckboxWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.PosInterpolation",
+		_("Enable position interpolation (Experimental)"),
+		interpolationTooltip,
+		kPosInterpolationChangedCmd);
 	_posInterpolationCheckbox->setTarget(this);
 
 	const Common::U32String targetFrameRateTooltip = _("Selects target presentation frame rate when position interpolation is enabled.");
-	_targetFrameRateLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.TargetFrameRateLabel",
-													  _("Target frame rate:"), targetFrameRateTooltip);
+	_targetFrameRateLabel = new GUI::StaticTextWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.TargetFrameRateLabel",
+		_("Target frame rate:"),
+		targetFrameRateTooltip);
 	_targetFrameRateLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
 	_targetFrameRatePopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.TargetFrameRate", targetFrameRateTooltip);
 	_targetFrameRatePopUp->appendEntry(_("60FPS"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TargetFrameRate::k60FPS));
@@ -1249,23 +1288,30 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 	_targetFrameRatePopUp->appendEntry(_("180FPS"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TargetFrameRate::k180FPS));
 	_targetFrameRatePopUp->appendEntry(_("240FPS"), static_cast<uint32>(MohawkMetaEngine_Zoombini::TargetFrameRate::k240FPS));
 
-	_enhancedKbdShortcutsCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.EnhancedKbdShortcuts",
-															_("Enable enhanced keyboard shortcuts"),
-															_("Enables some ScummVM-only keyboard shortcuts for quality of life improvements."));
+	_enhancedKbdShortcutsCheckbox = new GUI::CheckboxWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.EnhancedKbdShortcuts",
+		_("Enable enhanced keyboard shortcuts"),
+		_("Enables some ScummVM-only keyboard shortcuts for quality of life improvements."));
 
-	_showRemappedOptionDialogShortcutsCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ShowRemappedOptionDialogShortcuts",
-																		 _("Show remapped shortcuts in the in-game Options dialog"),
-																		 _("Shows the current ScummVM key mappings in the in-game Options dialog when the keymaps were modified."));
+	_showRemappedOptionDialogShortcutsCheckbox = new GUI::CheckboxWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.ShowRemappedOptionDialogShortcuts",
+		_("Show remapped shortcuts in the in-game Options dialog"),
+		_("Shows the current ScummVM key mappings in the in-game Options dialog when the keymaps were modified."));
 
 	new ZoombiniSeparatorWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.AdjustmentsSeparator");
-	text = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.Adjustments",
-									 _c("Adjustments", "zoombini-options"), Common::U32String(), GUI::ThemeEngine::kFontStyleBold);
+	text = new GUI::StaticTextWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.Adjustments",
+		_c("Adjustments", "zoombini-options"),
+		Common::U32String(),
+		GUI::ThemeEngine::kFontStyleBold);
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
 	const Common::U32String paletteFilterTooltip = _("Chooses between the Windows version's brightness filter and the unmodified palette. "
 													 "Macintosh versions always use the unmodified palette.");
-	_paletteFilterLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.PaletteFilterLabel",
-													_("Palette filter:"), paletteFilterTooltip);
+	_paletteFilterLabel = new GUI::StaticTextWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.PaletteFilterLabel",
+		_("Palette filter:"),
+		paletteFilterTooltip);
 	_paletteFilterLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
 	_paletteFilterPopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.PaletteFilter", paletteFilterTooltip);
 	if (platform != Common::kPlatformMacintosh)
@@ -1284,12 +1330,12 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 	_prngAlgorithmPopUp->appendEntry(_("ScummVM Standard PRNG"), static_cast<uint32>(MohawkMetaEngine_Zoombini::PrngAlgorithm::kStandardPrng));
 
 	if (_isV1x) {
-		static constexpr const char *kMidiSoundtrackMacintosh = "Macintosh";
-		static constexpr const char *kMidiSoundtrackWindowsMPC = "Windows MPC";
 		const Common::U32String midiSoundtrackTooltip = _("Selects the Windows or Macintosh MIDI soundtrack. "
 														  "Both are the same tunes arranged for different synthesizers.");
-		_midiSoundtrackLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MidiSoundtrackLabel",
-														 _("MIDI soundtrack:"), midiSoundtrackTooltip);
+		_midiSoundtrackLabel = new GUI::StaticTextWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.MidiSoundtrackLabel",
+			_("MIDI soundtrack:"),
+			midiSoundtrackTooltip);
 		_midiSoundtrackLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
 		_midiSoundtrackPopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MidiSoundtrack", midiSoundtrackTooltip);
 		// A release with one MIDI archive cannot switch soundtracks.
@@ -1297,7 +1343,7 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 		bool alwaysUseWinMidi = false;
 		MohawkMetaEngine_Zoombini::MidiSoundtrack singleSoundtrack;
 		const bool isUsV10 = ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kUsV10);
-		if (MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(platform, language, _isDemo, isUsV10, singleSoundtrack)) {
+		if (MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(platform, lang, _isDemo, isUsV10, singleSoundtrack)) {
 			switch (singleSoundtrack) {
 			case MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh:
 				alwaysUseMacMidi = true;
@@ -1307,25 +1353,42 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 				break;
 			}
 		}
+
+		Common::U32String strMidiSoundtrackMacintosh;
+		Common::U32String strMidiSoundtrackWindowsMPC;
+		switch (platform) {
+		case Common::kPlatformMacintosh:
+			strMidiSoundtrackMacintosh = _("Macintosh (Original)");
+			strMidiSoundtrackWindowsMPC = _("Windows MPC");
+			break;
+		case Common::kPlatformWindows:
+			strMidiSoundtrackWindowsMPC = _("Windows MPC (Original)");
+			strMidiSoundtrackMacintosh = _("Macintosh");
+			break;
+		default:
+			break;
+		}
 		if (alwaysUseMacMidi) {
-			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackMacintosh, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
+			_midiSoundtrackPopUp->appendEntry(strMidiSoundtrackMacintosh, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
 			_midiSoundtrackPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
 			_midiSoundtrackPopUp->setEnabled(false);
 		} else if (alwaysUseWinMidi) {
-			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackWindowsMPC, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
+			_midiSoundtrackPopUp->appendEntry(strMidiSoundtrackWindowsMPC, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
 			_midiSoundtrackPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
 			_midiSoundtrackPopUp->setEnabled(false);
 		} else {
-			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackWindowsMPC, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
-			_midiSoundtrackPopUp->appendEntry(kMidiSoundtrackMacintosh, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
+			_midiSoundtrackPopUp->appendEntry(strMidiSoundtrackWindowsMPC, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
+			_midiSoundtrackPopUp->appendEntry(strMidiSoundtrackMacintosh, static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh));
 		}
 	}
 
 	// Windows ClearType did not support 256-color screens, so this option is only for Macintosh targets.
 	if (platform == Common::kPlatformMacintosh) {
 		const Common::U32String macFontSmoothingTooltip = _("Approximates classic Mac OS 8.5+ QuickDraw font smoothing.");
-		_macFontSmoothingLabel = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MacFontSmoothingLabel",
-														   _("Font smoothing:"), macFontSmoothingTooltip);
+		_macFontSmoothingLabel = new GUI::StaticTextWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.MacFontSmoothingLabel",
+			_("Font smoothing:"),
+			macFontSmoothingTooltip);
 		_macFontSmoothingLabel->setAlign(Graphics::TextAlign::kTextAlignEnd);
 		_macFontSmoothingPopUp = new GUI::PopUpWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MacFontSmoothing", macFontSmoothingTooltip);
 		_macFontSmoothingPopUp->appendEntry(_("Disabled"), static_cast<uint32>(MohawkMetaEngine_Zoombini::MacFontSmoothing::kDisabled));
@@ -1335,45 +1398,58 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 		// Font AA requires 32bit color surface support
 		macFontSmoothingAvailable = false;
 #else
-		// Classic CJK TrueType fonts contains a bitmap strike, and 
-		macFontSmoothingAvailable = language != Common::KO_KOR && language != Common::JA_JPN;
+		// Classic CJK TrueType fonts used by Zoombinis contains a bitmap strike, so disable font smoothing options.
+		macFontSmoothingAvailable = lang != Common::KO_KOR && lang != Common::JA_JPN;
 #endif
 		_macFontSmoothingLabel->setEnabled(macFontSmoothingAvailable);
 		_macFontSmoothingPopUp->setEnabled(macFontSmoothingAvailable);
 	}
 
-	_colorBlindModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ColorBlindMode",
-													  _("Color Blind Mode (Experimental)"), _("Experimental color blind assistance"));
+	_colorBlindModeCheckbox = new GUI::CheckboxWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.ColorBlindMode",
+		_("Color Blind Mode (Experimental)"),
+		_("Experimental color blind assistance"));
 
 	if (!_isDemo) {
-		_alwaysMazePlayCelebrationSfxCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MazeAlwaysPlayCelebrationSfx",
-																		_("Bubblewonder Abyss: always play Zoombini celebration SFX after a landing"),
-																		_("In 'Bubblewonder Abyss', always plays a Zoombini's celebration SFX after a landing. It was audible only on some conditions."));
+		_alwaysMazePlayCelebrationSfxCheckbox = new GUI::CheckboxWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.MazeAlwaysPlayCelebrationSfx",
+			_("Bubblewonder Abyss: always play celebration SFX on a landing"),
+			_("In 'Bubblewonder Abyss', always plays a Zoombini's celebration SFX after a landing. It was audible only on some conditions."));
 
-		_alwaysTownPlayMemorialSfxCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.TownAlwaysPlayMemorialSfx",
-																	 _("Zoombiniville: always play memorial card SFX"),
-																	 _("In 'Zoombiniville', immediately plays a button SFX when opening a memorial card. Turning this off makes the BGM or narration suppress it."));
+		_alwaysTownPlayMemorialSfxCheckbox = new GUI::CheckboxWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.TownAlwaysPlayMemorialSfx",
+			_("Zoombiniville: always play memorial card SFX"),
+			_("In 'Zoombiniville', immediately plays a button SFX when opening a memorial card. Turning this off makes the BGM or narration suppress it."));
 
-		_mazeRestoreUnusedL4LayoutCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MazeRestoreUnusedL4Layout",
-																	 _("Bubblewonder Abyss: restore unused level-4 layout"),
-																	 _("In 'Bubblewonder Abyss', restores the unused level 4 maze layout."));
+		_mazeRestoreUnusedL4LayoutCheckbox = new GUI::CheckboxWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.MazeRestoreUnusedL4Layout",
+			_("Bubblewonder Abyss: restore unused level-4 layout"),
+			_("In 'Bubblewonder Abyss', restores the unused level 4 maze layout."));
 
-		_mazeRandomizeInitialLayoutCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.MazeRandomizeInitialLayout",
-																	  _("Bubblewonder Abyss: randomize initial maze layout"),
-																	  _("In 'Bubblewonder Abyss', randomizes the next maze layout when the game starts."));
+		_mazeRandomizeInitialLayoutCheckbox = new GUI::CheckboxWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.MazeRandomizeInitialLayout",
+			_("Bubblewonder Abyss: randomize initial maze layout"),
+			_("In 'Bubblewonder Abyss', randomizes the next maze layout when the game starts."));
 
-		_ferryHighlightTraitMatchCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.FerryHighlightTraitMatch",
-																	_("Ferryboat: Restore unused zoombini trait match highlight"),
-																	_("In 'Captain Cajun's Ferryboat', force-enables the dormant trait-match highlight from the original engine. When enabled, matching traits are highlighted after accepted placements."));
+		_ferryHighlightTraitMatchCheckbox = new GUI::CheckboxWidget(
+			widgetsBoss(), "ZoombiniEngineOptionsDialog.FerryHighlightTraitMatch",
+			_("Ferryboat: Restore unused zoombini trait match highlight"),
+			_("In 'Captain Cajun's Ferryboat', force-enables the dormant trait-match highlight from the original engine. When enabled, matching traits are highlighted after accepted placements."));
 	}
 
 	new ZoombiniSeparatorWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ResetOptionsSeparator");
-	text = new GUI::StaticTextWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.ResetOptions",
-									 _c("Reset options", "zoombini-options"), Common::U32String(), GUI::ThemeEngine::kFontStyleBold);
+	text = new GUI::StaticTextWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.ResetOptions",
+		_c("Reset options", "zoombini-options"),
+		Common::U32String(),
+		GUI::ThemeEngine::kFontStyleBold);
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
-	_resetButton = new GUI::ButtonWidget(widgetsBoss(), "ZoombiniEngineOptionsDialog.Reset",
-										 _("Reset"), Common::U32String(), kResetOptionsCmd);
+	_resetButton = new GUI::ButtonWidget(
+		widgetsBoss(), "ZoombiniEngineOptionsDialog.Reset",
+		_("Reset"),
+		Common::U32String(),
+		kResetOptionsCmd);
 	_resetButton->setTarget(this);
 }
 
@@ -1418,6 +1494,9 @@ void ZoombiniOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::
 		.addWidget("BugFixesSeparator", "", -1, 2)
 		.addWidget("BugFixes", "OptionsLabel")
 		.addWidget("AudioDiscontinuityFix", "Checkbox");
+
+	if (_fixSwappedSoundMusicShortcutsCheckbox)
+		layouts.addWidget("FixSwappedSoundMusicShortcuts", "Checkbox");
 
 	if (!_isDemo) {
 		layouts.addWidget("FixFleensTreeDescendFeetBug", "Checkbox");
@@ -1500,6 +1579,8 @@ void ZoombiniOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::
 
 void ZoombiniOptionsWidget::resetToDefaults() {
 	_audioPopFixCheckbox->setState(true);
+	if (_fixSwappedSoundMusicShortcutsCheckbox)
+		_fixSwappedSoundMusicShortcutsCheckbox->setState(true);
 	if (_fixFleensTreeDescendFeetBugCheckbox)
 		_fixFleensTreeDescendFeetBugCheckbox->setState(true);
 	if (_fixHotelMidiHaltBugCheckbox)
@@ -1516,8 +1597,11 @@ void ZoombiniOptionsWidget::resetToDefaults() {
 	if (_macFontSmoothingPopUp)
 		_macFontSmoothingPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::MacFontSmoothing::kDisabled));
 	_prngAlgorithmPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::PrngAlgorithm::kOriginalPrng));
-	if (_midiSoundtrackPopUp)
-		_midiSoundtrackPopUp->setSelectedTag(static_cast<uint32>(MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC));
+	if (_midiSoundtrackPopUp) {
+		const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+		const MohawkMetaEngine_Zoombini::MidiSoundtrack soundtrack = MohawkMetaEngine_Zoombini::getDefaultMidiSoundtrack(platform);
+		_midiSoundtrackPopUp->setSelectedTag(static_cast<uint32>(soundtrack));
+	}
 	_colorBlindModeCheckbox->setState(false);
 	if (_alwaysMazePlayCelebrationSfxCheckbox)
 		_alwaysMazePlayCelebrationSfxCheckbox->setState(false);
@@ -1533,6 +1617,8 @@ void ZoombiniOptionsWidget::resetToDefaults() {
 
 void ZoombiniOptionsWidget::load() {
 	_audioPopFixCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixAudioPops, _domain));
+	if (_fixSwappedSoundMusicShortcutsCheckbox)
+		_fixSwappedSoundMusicShortcutsCheckbox->setState(ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixSwappedSoundMusicShortcuts, _domain));
 	if (_fixFleensTreeDescendFeetBugCheckbox)
 		_fixFleensTreeDescendFeetBugCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixFleensTreeDescendFeetBug, _domain));
 	if (_fixHotelMidiHaltBugCheckbox)
@@ -1555,8 +1641,12 @@ void ZoombiniOptionsWidget::load() {
 		_macFontSmoothingPopUp->setSelectedTag(static_cast<uint32>(smoothing));
 	}
 	_prngAlgorithmPopUp->setSelectedTag(ConfMan.getInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionPrngAlgorithm, _domain));
-	if (_midiSoundtrackPopUp)
-		_midiSoundtrackPopUp->setSelectedTag(ConfMan.getInt(Mohawk::MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack, _domain));
+	if (_midiSoundtrackPopUp && _midiSoundtrackPopUp->isEnabled()) {
+		const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+		const int storedSoundtrack = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack, _domain);
+		const MohawkMetaEngine_Zoombini::MidiSoundtrack soundtrack = MohawkMetaEngine_Zoombini::normalizeMidiSoundtrack(storedSoundtrack, platform);
+		_midiSoundtrackPopUp->setSelectedTag(static_cast<uint32>(soundtrack));
+	}
 	_colorBlindModeCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionColorBlindMode, _domain));
 	if (_alwaysMazePlayCelebrationSfxCheckbox)
 		_alwaysMazePlayCelebrationSfxCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionMazeAlwaysPlayCelebrationSfx, _domain));
@@ -1576,6 +1666,8 @@ bool ZoombiniOptionsWidget::save() {
 	const MohawkMetaEngine_Zoombini::PaletteFilter paletteFilter = static_cast<MohawkMetaEngine_Zoombini::PaletteFilter>(_paletteFilterPopUp->getSelectedTag());
 	const MohawkMetaEngine_Zoombini::PrngAlgorithm prngAlgorithm = static_cast<MohawkMetaEngine_Zoombini::PrngAlgorithm>(_prngAlgorithmPopUp->getSelectedTag());
 	ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixAudioPops, _audioPopFixCheckbox->getState(), _domain);
+	if (_fixSwappedSoundMusicShortcutsCheckbox)
+		ConfMan.setBool(MohawkMetaEngine_Zoombini::kOptionFixSwappedSoundMusicShortcuts, _fixSwappedSoundMusicShortcutsCheckbox->getState(), _domain);
 	if (_fixFleensTreeDescendFeetBugCheckbox)
 		ConfMan.setBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixFleensTreeDescendFeetBug, _fixFleensTreeDescendFeetBugCheckbox->getState(), _domain);
 	if (_fixHotelMidiHaltBugCheckbox)

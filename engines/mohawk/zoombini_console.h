@@ -396,8 +396,8 @@ private:
 	bool parseUnsignedInt(const char *str, uint32 &result);
 	/** Parse a memorial date in yyyyMMdd form. */
 	static bool parseMemorialDate(const char *value, uint16 &year, byte &month, byte &day);
-	/** Parse a qualified Zoombini resource argument. */
-	bool parseResourceId(const char *str, ZmbResource &outRes);
+	/** Parse a resource argument, using @p defaultKind when no archive prefix is supplied. */
+	bool parseResourceId(const char *str, ZmbResource &outRes, ZmbResource::ArchiveKind defaultKind = ZmbResource::kPage);
 	/** Build the text description of one parsed SCRB feature. */
 	Common::String buildScrbDescription(const ZmbResource &resource);
 	/** Build the text description of one parsed SCRS snoid script. */

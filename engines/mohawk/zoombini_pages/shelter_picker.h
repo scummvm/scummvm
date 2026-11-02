@@ -285,13 +285,10 @@ protected:
 		kResSound1006_PressDiceButton = 1006,
 		kResSound1007_RemoveZoombini = 1007,
 		kResSound1008_AllZoombinisGenerated = 1008,
-		kResSound30001_Isle = 30001,
 
 		// Sound ranges used by getScriptSoundPriority().
 		kResSoundRange1000_PressMatrixButton = 1000,
 		kResSoundRange1007_RemoveZoombini = 1007,
-
-		kResMidi30001_Isle = 30001,
 	};
 
 	enum Shape4200Id {

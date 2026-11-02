@@ -86,6 +86,12 @@ uint32 ZoombiniRandom::generateNewSeed() {
 }
 
 uint16 ZoombiniRandom::getOriginalRandomNumber(uint32 max) {
+	// Mac M68K original engine uses a 16-bit divisor, unlike Win x86/Mac PPC targets' 32-bit divisor.
+	// If 'max' is 65534, the divisor 'max + 1' becomes zero from 65535 on M68K targets, causing a DIV/0.
+	// Restrict the value of 'max' to avoid this problem.
+	if (65534 < max)
+		error("ZoombiniRandom: original PRNG upper bound %u exceeds 65534", static_cast<uint>(max));
+
 	// A zero-width range is still a wrapper call, but it consumes no LCG step.
 	if (max == 0)
 		return 0;

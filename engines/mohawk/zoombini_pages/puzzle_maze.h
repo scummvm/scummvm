@@ -460,8 +460,6 @@ private:
 		kResSoundRange10004_CollisionBubble0 = 10004,
 		kResSoundRange11000_SpecialBase = 11000,
 		kResSoundRange12000_ExitBase = 12000,
-
-		kResMidi30035_MazeBgmBase = 30035
 	};
 
 	/** Grid entity lifecycle and collision callbacks. */

@@ -322,8 +322,6 @@ private:
 		kResSoundRange11015_Startup = 11015,
 		kResSoundRange11016_Startup = 11016,
 		kResSoundRange11017_Startup = 11017,
-
-		kResMidi30030_SmokeBgmBase = 30030,
 	};
 
 	/** Level 4 callbacks that chain the mirrored runner display into the next phase. */

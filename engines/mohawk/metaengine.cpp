@@ -369,7 +369,8 @@ void MohawkMetaEngine::registerDefaultSettings(const Common::String &target) con
 
 #ifdef ENABLE_ZOOMBINI
 	if (gameId == "zoombini") {
-		return Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings();
+		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+		return Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings(platform);
 	}
 #endif
 

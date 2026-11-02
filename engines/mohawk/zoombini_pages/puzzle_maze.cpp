@@ -93,9 +93,6 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniPuzzleMaze::getScriptSoun
 }
 
 void ZoombiniPuzzleMaze::open() {
-	// MIDI BGM (tMID 30035-30038) - Broderbund v1.x only.
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
-		openMidiArchive();
 	openArchive(ZMB_MHK_MAZE2);
 }
 
@@ -103,7 +100,7 @@ void ZoombiniPuzzleMaze::setBackgroundMusic() {
 	// Select the MIDI track from the active route difficulty.
 	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		const int16 routeLevel = _puzzleLevel - kPuzzleLevel1;
-		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30035_MazeBgmBase + routeLevel)));
+		_vm->_midi->playMidi(ZmbResource(ZmbResource::kSystem, static_cast<int16>(kSysResMidi30035_MazeBgmBase + routeLevel)));
 	}
 }
 

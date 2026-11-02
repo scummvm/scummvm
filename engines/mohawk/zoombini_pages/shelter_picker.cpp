@@ -83,10 +83,6 @@ void ZoombiniShelterPicker::open() {
 	// The preview name is selected before any Picker archive is opened.
 	generateZoombiniName();
 
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
-		openArchive(ZMB_MHK_MUSIC);
-	else
-		openMidiArchive(); // v1.x MIDI BGM (tMID 30000-30001).
 	openArchive(ZMB_MHK_PICKER);
 }
 
@@ -97,9 +93,9 @@ void ZoombiniShelterPicker::setBackgroundMusic() {
 	// music lifecycle point because its Load dialog is synchronous. This keeps the music
 	// audible while that dialog is open and does not add, remove, or move any RNG call.
 	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
-		_vm->_sound->playSound(ZmbResource(ZmbResource::kPage, kResSound30001_Isle), Audio::Mixer::kMusicSoundType, true);
+		_vm->_sound->playSound(ZmbResource(ZmbResource::kSystem, kSysResSound30001_Isle), Audio::Mixer::kMusicSoundType, true);
 	else
-		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, kResMidi30001_Isle));
+		_vm->_midi->playMidi(ZmbResource(ZmbResource::kSystem, kSysResMidi30001_Isle));
 
 	_pickerEntryNarrationPending = true;
 }

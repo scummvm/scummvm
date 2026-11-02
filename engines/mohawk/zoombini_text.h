@@ -221,6 +221,7 @@ public:
 		 * ScummVM added save delete feature on v1.x, so we need to provide value for this ourselves.
 		 */
 		kDialogBodyRemoveGame,
+		// DIALOG: Save/Load/Confirmation
 		kDialogButtonNewGame = 1200,
 		kDialogButtonReplaceTitle,
 		kDialogButtonLoseThem,
@@ -240,8 +241,10 @@ public:
 		kDialogButtonNext,
 		/** (v1.1US/v2.0TLC only) Picker Help update-version easter-egg text key. */
 		kDialogHelpPickerUpdateVersion,
+		// DIALOG: Version
+		kVersionInformation = 1300,
 		// Notification Box
-		kNotiBoxMusicOn = 1300,
+		kNotiBoxMusicOn = 1400,
 		kNotiBoxMusicOff,
 		kNotiBoxSoundOn,
 		kNotiBoxSoundOff,

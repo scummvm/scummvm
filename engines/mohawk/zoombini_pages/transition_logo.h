@@ -52,6 +52,8 @@ public:
 
 	/** Load the logo feature used by the video transition. */
 	void loadFeatures() override;
+	/** Quit on Ctrl+Q, skip on game keys, and leave system shortcuts available. */
+	ZmbEventHandleResult onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) override;
 	/** Update video decoding and the startup reveal presentation. */
 	void onPreTickFrame() override;
 	/** Update the page when the video produces an animation frame. */

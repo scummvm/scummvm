@@ -22,6 +22,8 @@
 #ifndef MOHAWK_ZOOMBINI_METAENGINE_H
 #define MOHAWK_ZOOMBINI_METAENGINE_H
 
+#include "common/array.h"
+#include "common/keyboard.h"
 #include "common/language.h"
 #include "common/platform.h"
 #include "common/rect.h"
@@ -84,6 +86,34 @@ public:
 		kRodMap
 	};
 
+	/** Shortcuts whose key assignments vary by release. */
+	enum class ShortcutKind {
+		/** Open the version information dialog. */
+		kVersionDialog,
+		/** Toggle sound effects using the Options dialog assignment and its release-specific aliases. */
+		kOptionsSound,
+		/** Toggle music using the Options dialog assignment. */
+		kOptionsMusic,
+		/**
+		 * Toggle sound with the Options sound/music keys swapped during EUv1.x family gameplay, except IT/JP.
+		 * Enabling the shortcut fix restores the Options sound assignment.
+		 */
+		kGameplaySound,
+		/**
+		 * Toggle music with the Options sound/music keys swapped during EUv1.x family gameplay, except IT/JP.
+		 * Enabling the shortcut fix restores the Options music assignment.
+		 */
+		kGameplayMusic,
+		/** Toggle sticky mouse. */
+		kStickyMouse,
+		/** Reserve the release's language-selection keys during gameplay. */
+		kLanguageSelection,
+		/** Open the Load dialog. */
+		kLoadGame,
+		/** Open the Save dialog. */
+		kSaveGame
+	};
+
 	/** Kinds of in-game UI layout requiring release-specific position, size and spacing adjustments. */
 	enum class LayoutKind {
 		/** Credit Dialog: text-line drawing rect in @ref Mohawk::ZoombiniDialogCredits. */
@@ -96,7 +126,7 @@ public:
 		kOptionsTitle,
 		/** Save/load Dialog: title text rect in @ref Mohawk::ZoombiniDialogSaveLoad. */
 		kSaveLoadTitle,
-		/** Save Dialog: editable save-name text/caret rect in @ref Mohawk::ZoombiniDialogSaveLoad. */
+		/** Save Dialog: editable save-name text/caret rect in @ref Mohawk::ZoombiniDialogSave. */
 		kSaveNameInput,
 		/** RODMAP: hit rects for the practice level selection in @ref Mohawk::ZoombiniInteractiveRodMap. */
 		kMapLegendClick,
@@ -149,6 +179,19 @@ public:
 	static bool isExtraFamily(const Common::String &extra, Family family);
 	/** Match any v1 implementation family. */
 	bool isV1() const;
+	/**
+	 * Return the release-specific Control shortcut keys for an action, including contextual aliases.
+	 * @param fixSwappedSoundMusic Use Options assignments for gameplay sound and music
+	 *                             when the release reverses them; ignored for other actions.
+	 * @return Ordered keys: the first is the primary key emitted by the keymapper
+	 *         to the in-game input handlers; subsequent keys are alternative inputs.
+	 */
+	static const Common::Array<Common::KeyCode> &getShortcutKeys(ShortcutKind kind, bool isV1xEurope, Common::Language lang, bool fixSwappedSoundMusic = false);
+	/**
+	 * Match a Control shortcut key or the version dialog's unmodified Tab shortcut.
+	 * @param fixSwappedSoundMusic Apply the optional gameplay sound/music assignment fix.
+	 */
+	bool isShortcut(ShortcutKind kind, const Common::KeyState &kbd, bool fixSwappedSoundMusic = false) const;
 	/** Whether the detector marks the release as a demo. */
 	bool isDemo() const { return _demo; }
 	/** Match a demo without implicitly restricting its language. */
@@ -243,6 +286,8 @@ public:
 	 * This is a Zoombini-internal constexpr key to represent Mohawk-inherited string key.
 	 */
 	constexpr static const char *kOptionFixAudioPops = "fix_audio_pops";
+	/** Use the Options sound/music shortcuts during gameplay in European English, French and German releases. */
+	static constexpr const char *kOptionFixSwappedSoundMusicShortcuts = "fix_swapped_sound_music_shortcuts";
 	/** Enable the Fleens tree-descend feet fix. */
 	constexpr static const char *kOptionFixFleensTreeDescendFeetBug = "fix_fleens_tree_descend_feet_bug";
 	/** Enable the Hotel MIDI halt fix. */
@@ -251,7 +296,7 @@ public:
 	constexpr static const char *kOptionFixCavesL4MidiSilentBug = "fix_caves_l4_midi_silent_bug";
 
 	// Gameplay improvements.
-	/** Persisted animation tick-rate selection. */
+	/** Animation tick-rate selection. */
 	enum class TickRate : uint32 {
 		/**
 		 * Accurate 60TPS tickrate for modern displays.
@@ -268,7 +313,7 @@ public:
 	static constexpr const char *kOptionPositionInterpolation = "position_interpolation";
 	/** Requested presentation frequency in Hz, independent of animation tick timing. */
 	static constexpr const char *kOptionTargetFrameRate = "target_frame_rate";
-	/** Persisted presentation frequencies, all integer multiples of the 60 Hz animation clock. */
+	/** Supported presentation frequencies, all integer multiples of the 60 Hz animation clock. */
 	enum class TargetFrameRate : uint32 {
 		/** Present once per animation tick. */
 		k60FPS = 60,
@@ -287,7 +332,7 @@ public:
 	constexpr static const char *kOptionShowRemappedOptionDialogShortcuts = "show_remapped_option_dialog_shortcuts";
 
 	// Gameplay tuning.
-	/** Persisted palette-filter selection. */
+	/** Palette-filter selection. */
 	enum class PaletteFilter : uint32 {
 		/**
 		 * Original Windows engine's palette brightening filter.
@@ -318,7 +363,7 @@ public:
 	static constexpr const char *kOptionMacFontSmoothing = "mac_font_smoothing";
 	/** Return a supported smoothing mode, or no smoothing for an unknown value. */
 	static MacFontSmoothing normalizeFontSmoothing(int smoothing);
-	/** Persisted pseudo-random generator selection. */
+	/** Pseudo-random generator selection. */
 	enum class PrngAlgorithm : uint32 {
 		/**
 		 * Original engine's LCG PRNG.
@@ -352,6 +397,10 @@ public:
 	 * @remarks Broderbund v1.x only; TLC v2.0 rebuild does not contain any MIDI resources.
 	 */
 	static constexpr const char *kOptionMidiSoundtrack = "midi_soundtrack";
+	/** Return the original MIDI soundtrack for the target platform. */
+	static MidiSoundtrack getDefaultMidiSoundtrack(Common::Platform platform);
+	/** Resolve a stored MIDI soundtrack, falling back to the target platform's original. */
+	static MidiSoundtrack normalizeMidiSoundtrack(int soundtrack, Common::Platform platform);
 	/** Override the soundtrack for a known single-archive v1 release; otherwise leave it unchanged and return false. */
 	static bool getFixedMidiSoundtrack(Common::Platform platform, Common::Language language, bool isDemo, bool isUsV10, MidiSoundtrack &soundtrack);
 	/** Enable color-blind presentation adjustments. */
@@ -367,8 +416,8 @@ public:
 	/** Restore the dormant Ferry trait-match highlight in every game mode. */
 	constexpr static const char *kOptionFerryHighlightTraitMatch = "ferry_restore_unused_highlight_trait_match";
 
-	/** Register Zoombini-specific configuration defaults with ConfMan. */
-	static void registerDefaultSettings();
+	/** Register Zoombini-specific configuration defaults for the target platform with ConfMan. */
+	static void registerDefaultSettings(Common::Platform platform);
 };
 
 } // End of namespace Mohawk

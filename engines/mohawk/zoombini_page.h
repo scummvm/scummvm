@@ -400,14 +400,6 @@ public:
 
 	/** Open a page-owned archive and push it onto the archive stack. */
 	void openArchive(const Common::String &name);
-	/**
-	 * Ensure that the v1.x shared MIDI background-music archive is open.
-	 *
-	 * v1.x hybrid Mac/PC discs ship two device-profile archives with the SAME
-	 * tMID resource IDs come from MIDIMPC.MHK (Windows/MPC) or MIDIMAC.MHK (Macintosh).
-	 * Callers must check the version of the release before calling this; TLC v2.0 has no MIDI.
-	 */
-	void openMidiArchive();
 	ZoombiniPageType getPageType() const { return _pageType; }
 	ZoombiniPageCategory getPageCategory() const { return _pageCategory; }
 	/**
@@ -464,6 +456,8 @@ public:
 	ZmbEventHandleResult handleLButtonDown(const Common::Point &absPos, const Common::Point &relPos);
 	/** Route a left-button release through dialogs, features, and page logic. */
 	ZmbEventHandleResult handleLButtonUp(const Common::Point &absPos, const Common::Point &relPos);
+	/** Route a middle-button press to the page. */
+	ZmbEventHandleResult handleMButtonDown(const Common::Point &absPos, const Common::Point &relPos);
 	/** Route a right-button press through a page override, then the primary-click path. */
 	ZmbEventHandleResult handleRButtonDown(const Common::Point &absPos, const Common::Point &relPos);
 	/** Route a right-button release through a page override, then the primary-click path. */
@@ -472,6 +466,12 @@ public:
 	virtual ZmbEventHandleResult onLButtonDown(const Common::Point &absPos, const Common::Point &relPos);
 	/** Handle a page-specific left-button release. */
 	virtual ZmbEventHandleResult onLButtonUp(const Common::Point &absPos, const Common::Point &relPos);
+	/** Handle a page-specific middle-button press. */
+	virtual ZmbEventHandleResult onMButtonDown(const Common::Point &absPos, const Common::Point &relPos) {
+		(void)absPos;
+		(void)relPos;
+		return ZmbEventHandleResult::kPassthrough;
+	}
 	/** Optionally override the default right-button press fallback. */
 	virtual ZmbEventHandleResult onRButtonDown(const Common::Point &absPos, const Common::Point &relPos) {
 		(void)absPos;
@@ -910,6 +910,7 @@ public:
 	void resetDrawOnRegSlots();
 
 	// [*] Constant
+	/** Resource IDs in the shared system archives. */
 	enum SystemResourceId : int16 {
 		kSysResShapeBitmap0001_Dialog = 1,
 		kSysResShapeBitmap0020_Credits = 20,
@@ -1100,6 +1101,21 @@ public:
 		kSysResSoundRange0997_ArriveSFX = 997,
 		kSysResSoundRange20000_Base = 20000,
 		kSysResSoundRange29999_Last = 29999,
+		/** First sound ID routed to the shared v2 retail PCM music archive. */
+		kSysResSoundRange30000_MusicBase = 30000,
+
+		/** Zoombini Isle MIDI music in the 1.x MIDI archive. */
+		kSysResMidi30001_Isle = 30001,
+		/** Zoombini Isle PCM music in the v2.0 retail MUSIC.MHK archive. */
+		kSysResSound30001_Isle = 30001,
+		/** First of four Hotel music resources, indexed by route difficulty 0-3. */
+		kSysResMidi30020_HotelBgmBase = 30020,
+		/** First of four Caves music resources, indexed by route difficulty 0-3. */
+		kSysResMidi30025_CavesBgmBase = 30025,
+		/** First of four Smoke music resources, indexed by route difficulty 0-3. */
+		kSysResMidi30030_SmokeBgmBase = 30030,
+		/** First of four Maze music resources, indexed by route difficulty 0-3. */
+		kSysResMidi30035_MazeBgmBase = 30035,
 
 		// Help text resources.
 		kSysResStrl1300_HelpPicker = 1300,
