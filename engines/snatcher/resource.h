@@ -35,6 +35,7 @@ namespace Snatcher {
 
 class SnatcherEngine;
 class SceneModule;
+class FanTranslationHandler;
 class FIO;
 
 class SceneHandler {

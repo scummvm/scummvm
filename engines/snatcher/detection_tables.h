@@ -21,8 +21,7 @@
 
 namespace {
 
-#define FLAGS(id, a, b, c) { id, a, Common::UNK_LANG, Common::kPlatformUnknown, b, c, Common::UNK_LANG, Common::UNK_LANG }
-#define FLAGS_FAN(id, a, b, c, fanLang, repLang) { id, a, Common::UNK_LANG, Common::kPlatformUnknown, b, c, fanLang, repLang }
+#define FLAGS(id, a, b, c) { id, a, Common::UNK_LANG, Common::kPlatformUnknown, b, c, Common::UNK_LANG }
 
 #define SNATCHER_FLAGS(a, b, c) FLAGS(Snatcher::GI_SNATCHER, a, b, c)
 

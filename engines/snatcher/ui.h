@@ -35,12 +35,13 @@ class SeekableWriteStream;
 namespace Snatcher {
 
 class CmdQueue;
+class FanTranslationHandler;
 class GraphicsEngine;
 class ResourcePointer;
 class ScriptArray;
 class UI {
 public:
-	UI(GraphicsEngine *gfx, CmdQueue *que, ResourcePointer *scd);
+	UI(GraphicsEngine *gfx, CmdQueue *que, ResourcePointer *scd, FanTranslationHandler *translator);
 	~UI();
 
 	void setControllerConfig(uint8 cfg) { _controllerCfg = cfg; }
@@ -100,6 +101,7 @@ private:
 	uint8 *_dialogTextBuffer;
 
 	const uint8 *_scriptTextResource;
+	const uint8 *_scriptCurText;
 	uint8 _controllerCfg;
 	int16 _progress;
 
@@ -164,6 +166,7 @@ private:
 	GraphicsEngine *_gfx;
 	CmdQueue *_que;
 	ResourcePointer *_scd;
+	FanTranslationHandler *_translator;
 };
 
 } // End of namespace Snatcher

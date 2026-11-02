@@ -3,6 +3,7 @@ MODULE := engines/snatcher
 MODULE_OBJS := \
 	action.o \
 	animator_scd.o \
+	fantranslations.o \
 	graphics.o \
 	memory.o \
 	mem_mapping.o \
@@ -34,3 +35,10 @@ include $(srcdir)/rules.mk
 
 # Detection objects
 DETECT_OBJS += $(MODULE)/detection.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_SNATCHER), STATIC_PLUGIN)
+# External dependencies for detection.
+DETECT_OBJS += $(MODULE)/fantranslations.o
+endif

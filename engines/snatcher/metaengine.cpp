@@ -20,6 +20,7 @@
 */
 
 #include "snatcher/detection.h"
+#include "snatcher/fantranslations.h"
 #include "snatcher/saveload.h"
 #include "snatcher/snatcher.h"
 #include "common/config-manager.h"
@@ -34,18 +35,19 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
+namespace Snatcher {
+
 const ADExtraGuiOptionsMap gameGuiOptions[] = {
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 class SnatcherMetaEngine : public AdvancedMetaEngine<SnatcherGameDescription> {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "snatcher";
 	}
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
-    bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const SnatcherGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
@@ -64,40 +66,41 @@ const ADExtraGuiOptionsMap *SnatcherMetaEngine::getAdvancedExtraGuiOptions() con
 }
 
 bool SnatcherMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+		   (f == kSupportsLoadingDuringStartup) ||
+		   (f == kSupportsDeleteSave) ||
+		   (f == kSavesSupportMetaInfo) ||
+		   (f == kSavesSupportThumbnail) ||
+		   (f == kSavesSupportCreationDate) ||
+		   (f == kSavesSupportPlayTime) ||
+		   (f == kSimpleSavesNames);
 }
 
 bool Snatcher::SnatcherEngine::hasFeature(EngineFeature f) const {
-	return
-	    (f == kSupportsReturnToLauncher) ||
-	    (f == kSupportsLoadingDuringRuntime) ||
-	    (f == kSupportsSavingDuringRuntime) ||
-	    (f == kSupportsChangingOptionsDuringRuntime);
+	return (f == kSupportsReturnToLauncher) ||
+		   (f == kSupportsLoadingDuringRuntime) ||
+		   (f == kSupportsSavingDuringRuntime) ||
+		   (f == kSupportsChangingOptionsDuringRuntime);
 }
 
 Common::Error SnatcherMetaEngine::createInstance(OSystem *syst, Engine **engine, const SnatcherGameDescription *desc) const {
-	const SnatcherGameDescription *gd = (const SnatcherGameDescription*)desc;
+	const SnatcherGameDescription *gd = (const SnatcherGameDescription *)desc;
 	Snatcher::GameDescription dsc = gd->ex_desc;
 
-	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
-	if (platform != Common::kPlatformUnknown)
-		dsc.platform = platform;
+	dsc.platform = desc->ad_desc.platform;
+	dsc.lang = desc->ad_desc.language;
 
-	if (dsc.lang == Common::UNK_LANG) {
-		Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
-		if (lang != Common::UNK_LANG)
-			dsc.lang = lang;
-		else
-			dsc.lang = Common::EN_ANY;
+	
+	Common::List<Common::Language> langList = FanTranslationHandler::listTranslations(dsc.platform);
+
+	if (!langList.empty()) {
+		langList.push_back(dsc.lang);
+		Common::updateGameGUIOptions(desc->ad_desc.guiOptions, getGameGUIOptionsDescriptionLanguages(langList), getGameGUIOptionsDescriptionPlatform(desc->ad_desc.platform));
 	}
+
+	dsc.fanLang = Common::parseLanguage(ConfMan.get("language"));
+	if (dsc.fanLang == dsc.lang)
+		dsc.fanLang = Common::UNK_LANG;
 
 	switch (dsc.gameID) {
 	case Snatcher::GI_SNATCHER:
@@ -175,6 +178,7 @@ public:
 	SnatcherOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
 	void load() override;
 	bool save() override;
+
 private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 
@@ -203,15 +207,13 @@ static const char *buttonConfStrings[6] = {
 	_s("A - Cancel, B - Draw Blaster, C - Select/Shoot"),
 	_s("A - Cancel, B - Select/Shoot, C - Draw Blaster"),
 	_s("A - Select/Shoot, B - Cancel, C - Draw Blaster"),
-	_s("A - Select/Shoot, B - Draw Blaster, C - Cancel")
-};	
+	_s("A - Select/Shoot, B - Draw Blaster, C - Cancel")};
 
-SnatcherOptionsWidget::SnatcherOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-	OptionsContainerWidget(boss, name, "SnatcherOptionsWidget", domain), _buttonConfPopup(nullptr), _enableLightgunBox(nullptr), _monoSoundBox(nullptr) {
+SnatcherOptionsWidget::SnatcherOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) : OptionsContainerWidget(boss, name, "SnatcherOptionsWidget", domain), _buttonConfPopup(nullptr), _enableLightgunBox(nullptr), _monoSoundBox(nullptr) {
 	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "SnatcherOptionsWidget.ButtonRemapLabel", _("Buttons Config:"));
 	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
-	_buttonConfPopup = new GUI::PopUpWidget(widgetsBoss(), "SnatcherOptionsWidget.ButtonRemapPopup",_("Select Controller Buttons Config"));
+	_buttonConfPopup = new GUI::PopUpWidget(widgetsBoss(), "SnatcherOptionsWidget.ButtonRemapPopup", _("Select Controller Buttons Config"));
 	assert(_buttonConfPopup);
 	for (int i = 0; i < ARRAYSIZE(buttonConfStrings); ++i) {
 		Common::U32String entryLabel = Common::U32String(buttonConfStrings[i]);
@@ -241,19 +243,19 @@ bool SnatcherOptionsWidget::save() {
 void SnatcherOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
 		.addLayout(GUI::ThemeLayout::kLayoutVertical)
-			.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-				.addPadding(0, 30, 0, 0)
-				.addWidget("ButtonRemapLabel", "OptionsLabel")
-				.addPadding(10, 0, 0, 0)
-				.addSpace(10)
-				.addWidget("ButtonRemapPopup", "PopupWidget")
-			.closeLayout()
-			.addPadding(0, 0, 10, 0)
-			.addWidget("EnableLightgunBox", "Checkbox")	
-			.addPadding(0, 0, 10, 0)
-			.addWidget("MonoSoundBox", "Checkbox")
+		.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+		.addPadding(0, 30, 0, 0)
+		.addWidget("ButtonRemapLabel", "OptionsLabel")
+		.addPadding(10, 0, 0, 0)
+		.addSpace(10)
+		.addWidget("ButtonRemapPopup", "PopupWidget")
 		.closeLayout()
-	.closeDialog();
+		.addPadding(0, 0, 10, 0)
+		.addWidget("EnableLightgunBox", "Checkbox")
+		.addPadding(0, 0, 10, 0)
+		.addWidget("MonoSoundBox", "Checkbox")
+		.closeLayout()
+		.closeDialog();
 }
 
 const char *const kLightGunKeymapName = "snlightgun";
@@ -301,8 +303,10 @@ Common::KeymapArray SnatcherMetaEngine::initKeymaps(const char *target) const {
 	return res;
 }
 
+} // End of namespace Snatcher
+
 #if PLUGIN_ENABLED_DYNAMIC(SNATCHER)
-	REGISTER_PLUGIN_DYNAMIC(SNATCHER, PLUGIN_TYPE_ENGINE, SnatcherMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(SNATCHER, PLUGIN_TYPE_ENGINE, Snatcher::SnatcherMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SNATCHER, PLUGIN_TYPE_ENGINE, SnatcherMetaEngine);
+	REGISTER_PLUGIN_STATIC(SNATCHER, PLUGIN_TYPE_ENGINE, Snatcher::SnatcherMetaEngine);
 #endif
