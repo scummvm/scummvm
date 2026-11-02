@@ -260,6 +260,9 @@ private:
 	Graphics::ManagedSurface _inventoryPanelSurface; // two panels (320x30 each)
 	Graphics::ManagedSurface _inventoryImagesSurface;
 	Graphics::ManagedSurface _verbsPanelSurface;
+	Graphics::ManagedSurface _facingIgorFramesSurface[4]; // 13500 bytes each: Igor sprite frames, one per facing direction
+	Graphics::ManagedSurface _igorHeadFramesSurface; // 3696 bytes: Igor head close-up frames
+	Graphics::ManagedSurface _animFramesBufferSurface; // 65535 bytes: scratch buffer for screen and animation data
 
 	uint8 *_screenVGA;
 	uint8 *_facingIgorFrames[4];
