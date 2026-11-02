@@ -448,8 +448,27 @@ static const luaL_Reg kKeyFunctions[] = {
 static const uint kDifficultyJunior = 0;
 static const uint kDifficultySenior = 2;
 
+// Game:ShowLink(key), Nancy25: opens the URL in the autotext entry for the
+// key in a web browser. Returns whether it was opened.
+static int gameShowLink(lua_State *L) {
+	const char *key = luaL_checkstring(L, 2);
+
+	Common::String url;
+	if (!findText(key, url)) {
+		return luaL_error(L, "Autotext '%s' not found", key);
+	}
+
+	lua_pushboolean(L, g_system->hasFeature(OSystem::kFeatureOpenUrl) && g_system->openUrl(url));
+	return 1;
+}
+
 static int gameIndex(lua_State *L) {
 	const Common::String key = luaL_checkstring(L, 2);
+
+	if (key == "ShowLink") {
+		lua_pushcfunction(L, gameShowLink);
+		return 1;
+	}
 
 	// Nancy25: replaces Streams.environment, the environment of the main
 	// stream's scene
