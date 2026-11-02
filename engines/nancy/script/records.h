@@ -271,7 +271,7 @@ protected:
 	void readTable(int tableIndex) override;
 	void onZChanged() override;
 	bool hasTransform() const override { return true; }
-	void onTransformChanged() override { applyRects(); }
+	void onTransformChanged() override;
 	void renderNow() override;
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
@@ -289,6 +289,7 @@ private:
 	Common::Array<ScriptRect> _tableDests;		// what it had when last drawn
 	uint32 _modColor = 0xFFFFFFFF;	// what the colors of the picture get multiplied with
 	bool _hasPicture = false;
+	bool _isPlacementStale = false;		// the transform changed while it was hidden
 	RecordGraphic _graphic;
 
 	// The picture as a script had it drawn by itself, which lasts for a frame

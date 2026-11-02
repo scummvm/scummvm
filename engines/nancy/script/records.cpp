@@ -1220,7 +1220,19 @@ void OverlayRecord::readDestTable(Common::Array<ScriptRect> &dests) {
 	lua_pop(L, 1);
 }
 
+// A hidden picture gets placed once it shows again. The map of Nancy25 moves
+// many hidden ones with its camera.
+void OverlayRecord::onTransformChanged() {
+	if (isActive()) {
+		applyRects();
+	} else {
+		_isPlacementStale = true;
+	}
+}
+
 void OverlayRecord::applyRects() {
+	_isPlacementStale = false;
+
 	Common::Rect source = _source.toRect();
 	source.clip(Common::Rect(_image.w, _image.h));
 
@@ -1277,6 +1289,10 @@ void OverlayRecord::updateGraphics() {
 			_tableDests = dests;
 			applyRects();
 		}
+	}
+
+	if (_isPlacementStale && isActive()) {
+		applyRects();
 	}
 
 	_graphic.setVisible(isActive() && _hasPicture);
