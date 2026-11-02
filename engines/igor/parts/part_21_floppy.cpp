@@ -52,8 +52,6 @@ const int kWritingFrames = 0x3B1D;
 const uint8 kWritingEndFrames[5] = { 0, 1, 2, 6, 1 };
 const int kPhysicsDoorCell = 114 * 320 + 181;
 
-bool IN_ACTION_111;
-
 void IgorEngine::part21FloppyExecuteAction(int action) {
 	switch (action) {
 	case 101:
@@ -171,11 +169,11 @@ void IgorEngine::part21FloppyUseNoteWithSandwiches() {
 		igorSay({ { 223, 2, 0 }, { 225, 1, 0 } });
 		return;
 	}
-	IN_ACTION_111 = true;
+	_part21FloppyInAction111 = true;
 	igorSay({ { 208, 1, 0 }, { 209, 1, 0 } });
 	// Igor's talking head is not animated here
 	waitForEndOfIgorDialogue(false);
-	IN_ACTION_111 = false;
+	_part21FloppyInAction111 = false;
 	int k = 1;
 	do {
 		if (compareGameTick(61) && k <= 4) {
@@ -352,7 +350,7 @@ void IgorEngine::part21FloppyMargaretTakesNote() {
 }
 
 void IgorEngine::part21FloppyUpdateBackground() {
-	if (IN_ACTION_111 && compareGameTick(61)) {
+	if (_part21FloppyInAction111 && compareGameTick(61)) {
 		const int i = getRandomNumber(2) + 3;
 		drawAnimRect(kWritingOffset, kWritingFrames + i * 720, 24, 30);
 	}

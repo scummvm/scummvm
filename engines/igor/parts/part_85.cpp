@@ -25,17 +25,13 @@
 
 namespace Igor {
 
-static int VAR_CURRENT_TALKING_ACTOR;
-static bool VAR_WATER_SOUND_PLAYING;
-
-
 void IgorEngine::part85UpdatePhilipLauraDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 		decodeAnimFrame(_animFramesBuffer - 1 + READ_LE_UINT16(_animFramesBuffer + 0x7480), _screenVGA, true);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		if (VAR_CURRENT_TALKING_ACTOR != 0) {
+		if (_part85CurrentTalkingActor != 0) {
 			_gameState.counter[0] = getRandomNumber(4) + 8;
 		} else {
 			_gameState.counter[0] = getRandomNumber(4) + 13;
@@ -187,7 +183,7 @@ void IgorEngine::part85UpdateBackground() {
 		scrollPalette(185, 191);
 		setPaletteRange(185, 191);
 	}
-	if (!VAR_WATER_SOUND_PLAYING) {
+	if (!_part85WaterSoundPlaying) {
 		return;
 	}
 	if (_game.flags & kFlagFloppy /*|| !_gameState.dialogueTextRunning*/) {
@@ -226,7 +222,7 @@ void IgorEngine::part85() {
 
 	// In the CD version the water sound is embedded in the CD track
 	if(_game.flags & kFlagFloppy) {
-		VAR_WATER_SOUND_PLAYING = true;
+		_part85WaterSoundPlaying = true;
 		playSound(17, 1);
 	}
 
@@ -249,25 +245,25 @@ void IgorEngine::part85() {
 	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	cutsceneSayStart(113, 59, 63, 0, 38, 205, 3, 547);
-	VAR_CURRENT_TALKING_ACTOR = 1;
+	_part85CurrentTalkingActor = 1;
 	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	cutsceneSayStart(89, 56, 63, 63, 0, 208, 1, 548);
-	VAR_CURRENT_TALKING_ACTOR = 0;
+	_part85CurrentTalkingActor = 0;
 	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	cutsceneSayStart(113, 59, 63, 0, 38, { { 209, 2, 549 }, { 211, 1, 550 }, { 212, 1, 551 }, { 213, 1, 552 }, { 214, 1, 553 } });
-	VAR_CURRENT_TALKING_ACTOR = 1;
+	_part85CurrentTalkingActor = 1;
 	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	part85PlayAnimationFrame(0, 0x7481, 2, 7, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	cutsceneSayStart(89, 56, 63, 63, 0, { { 215, 1, 554 }, { 216, 2, 555 }, { 218, 1, 556 } });
-	VAR_CURRENT_TALKING_ACTOR = 0;
+	_part85CurrentTalkingActor = 0;
 	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	cutsceneSayStart(113, 59, 63, 0, 38, { { 219, 2, 557 }, { 221, 2, 558 } });
-	VAR_CURRENT_TALKING_ACTOR = 1;
+	_part85CurrentTalkingActor = 1;
 	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
@@ -276,7 +272,7 @@ void IgorEngine::part85() {
 	part85PlayAnimationFrame(0, 0x7481, 18, 37, 20);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	part85ScrollRight();
-	VAR_WATER_SOUND_PLAYING = false;
+	_part85WaterSoundPlaying = false;
 	stopSound();
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	part85PlayAnimationFrame(0x74CA, 0xA6C4, 1, 6, 32);

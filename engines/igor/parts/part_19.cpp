@@ -23,8 +23,6 @@
 
 namespace Igor {
 
-static int VAR_CURRENT_TALKING_ACTOR;
-
 void IgorEngine::part19ExecuteAction(int action) {
 	switch (action) {
 	case 101:
@@ -100,10 +98,10 @@ void IgorEngine::part19UsePapyrusOnDryer() {
 void IgorEngine::part19UpdateWomenDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		part19DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 : 40);
+		part19DrawTalkingFrame((_part19CurrentTalkingActor == 0) ? 35 : 40);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		part19DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 35 + getRandomNumber(4) : 40 + getRandomNumber(4));
+		part19DrawTalkingFrame((_part19CurrentTalkingActor == 0) ? 35 + getRandomNumber(4) : 40 + getRandomNumber(4));
 		break;
 	}
 }
@@ -133,7 +131,7 @@ void IgorEngine::part19SlugCutscene() { // sub_137_07AD
 	decodeAnimFrame(src, _screenVGA, true);
 	memcpy(_screenLayer1, _screenVGA, 46080);
 	fadeIn(624);
-	VAR_CURRENT_TALKING_ACTOR = 0;
+	_part19CurrentTalkingActor = 0;
 	cutsceneSayWithCallback(243, 92, 63, 23, 33, 212, 3, 920, &IgorEngine::part19UpdateWomenDialogue);
 	for (int i = 2; i <= 9; ++i) {
 		src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + i * 2) - 1;
@@ -142,7 +140,7 @@ void IgorEngine::part19SlugCutscene() { // sub_137_07AD
 	}
 	cutsceneSayStart(227, 91, 0, 63, 63, { { 215, 1, 921 }, { 216, 2, 922 } });
 	_gameState.counter[1] = 10;
-	VAR_CURRENT_TALKING_ACTOR = 1;
+	_part19CurrentTalkingActor = 1;
 	_updateRoomBackground = &IgorEngine::part19UpdateBackground;
 	waitForEndOfCutsceneDialogue(227, 91, 0, 63, 63);
 	_updateRoomBackground = 0;
@@ -168,13 +166,13 @@ void IgorEngine::part19SlugCutscene() { // sub_137_07AD
 	src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x40B5) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
 	waitForTimer(30);
-	VAR_CURRENT_TALKING_ACTOR = 0;
+	_part19CurrentTalkingActor = 0;
 	cutsceneSayWithCallback(243, 92, 63, 23, 33, 218, 1, 923, &IgorEngine::part19UpdateWomenDialogue);
-	VAR_CURRENT_TALKING_ACTOR = 1;
+	_part19CurrentTalkingActor = 1;
 	cutsceneSayWithCallback(227, 91, 0, 63, 63, 219, 2, 924, &IgorEngine::part19UpdateWomenDialogue);
-	VAR_CURRENT_TALKING_ACTOR = 0;
+	_part19CurrentTalkingActor = 0;
 	cutsceneSayWithCallback(243, 92, 63, 23, 33, 221, 2, 925, &IgorEngine::part19UpdateWomenDialogue);
-	VAR_CURRENT_TALKING_ACTOR = 1;
+	_part19CurrentTalkingActor = 1;
 	cutsceneSayWithCallback(227, 91, 0, 63, 63, 223, 2, 926, &IgorEngine::part19UpdateWomenDialogue);
 	_objectsState[kToiletGirlsHaveLeftStateIndex] = 1;
 	fadeOut(624);

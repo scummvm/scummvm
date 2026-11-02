@@ -388,6 +388,17 @@ private:
 	bool _part68NpcPresent;
 	uint8 _parkLadyIdleStep;
 
+	int _part14NewChurchMosaicStone;
+	int _part14CurrentChurchMosaicStone;
+	int _part16CurrentTalkingActor;
+	int _part17CurrentTalkingActor;
+	int _part19CurrentTalkingActor;
+	bool _part21InAction111;
+	bool _part21FloppyInAction111; // same as _part21InAction111, but for the Spanish floppy variant of part 21
+	int _part85CurrentTalkingActor;
+	bool _part85WaterSoundPlaying;
+	int _partMargaretRoomAnimCounter;
+
 	uint8 _currentPalette[768];
 	uint8 _paletteBuffer[768];
 	uint8 _igorPalette[48];

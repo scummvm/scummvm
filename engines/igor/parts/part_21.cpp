@@ -27,8 +27,6 @@ static const uint8 PART_21_ANIM_DATA_1[7] = { 0, 11, 12, 13, 20, 21, 14 };
 
 static const uint8 PART_21_ANIM_DATA_2[11] = { 0, 4, 5, 4, 5, 4, 5, 4, 5, 6, 0 };
 
-static bool IN_ACTION_111;
-
 void IgorEngine::part21ExecuteAction(int action) {
 	switch (action) {
 	case 101:
@@ -148,11 +146,11 @@ void IgorEngine::part21UseNoteWithSandwiches() {
 		igorSay(223, 2, 1196);
 		return;
 	}
-	IN_ACTION_111 = true;
+	_part21InAction111 = true;
 	igorSay({ { 208, 1, 1184 }, { 209, 1, 1185 } });
 	// Igor's talking head is not animated here; the writing frames take its place
 	waitForEndOfIgorDialogue(false);
-	IN_ACTION_111 = false;
+	_part21InAction111 = false;
 	const int offset = 28183;
 	drawAnimRect(offset, 0xCBE1, 26, 50);
 	waitForTimer(100);
@@ -372,7 +370,7 @@ void IgorEngine::part21SetMargaretBackgroundFrame(int frame) {
 }
 
 void IgorEngine::part21UpdateBackground() {
-	if (IN_ACTION_111 && compareGameTick(3, 24)) {
+	if (_part21InAction111 && compareGameTick(3, 24)) {
 		const int offset = 28183;
 		int i = getRandomNumber(1) + 1;
 		drawAnimRect(offset, 0xBCA5 + i * 1300, 26, 50);

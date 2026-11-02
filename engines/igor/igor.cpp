@@ -93,6 +93,17 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_musicData = nullptr;
 
 	_fastMode = 1;
+
+	_part14NewChurchMosaicStone = 0;
+	_part14CurrentChurchMosaicStone = 0;
+	_part16CurrentTalkingActor = 0;
+	_part17CurrentTalkingActor = 0;
+	_part19CurrentTalkingActor = 0;
+	_part21InAction111 = false;
+	_part21FloppyInAction111 = false;
+	_part85CurrentTalkingActor = 0;
+	_part85WaterSoundPlaying = false;
+	_partMargaretRoomAnimCounter = 0;
 }
 
 IgorEngine::~IgorEngine() {
