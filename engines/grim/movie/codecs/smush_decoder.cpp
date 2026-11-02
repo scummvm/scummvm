@@ -87,7 +87,7 @@ bool SmushDecoder::readHeader() {
 
 	int16 flags = _file->readUint16LE();
 	// Output information for checking out the flags
-	if (Debug::isChannelEnabled(Debug::Movie | Debug::Info)) {
+	if (Debug::isChannelEnabled(Debug::Movie)) {
 		warning("SMUSH Flags:");
 		for (int i = 0; i < 16; i++) {
 			warning(" %d", (flags & (1 << i)) != 0);

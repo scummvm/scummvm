@@ -22,38 +22,31 @@
 #ifndef GRIM_DEBUG_H
 #define GRIM_DEBUG_H
 
-#include "common/debug.h"
-#include "common/streamdebug.h"
-
 namespace Grim {
 
 class Debug {
 public:
 	enum DebugChannel {
-		Info = 1,
-		Warning = 2 << 0,
-		Error = 2 << 1,
-		Engine = 2 << 2,
-		Lua = 2 << 3,
-		Bitmaps = 2 << 4,
-		Models = 2 << 5,
-		Actors = 2 << 6,
-		Costumes = 2 << 7,
-		Chores = 2 << 8,
-		Fonts = 2 << 9,
-		Keyframes = 2 << 10,
-		Materials = 2 << 11,
-		Movie = 2 << 12,
-		Sound = 2 << 13,
-		Scripts = 2 << 14,
-		Sets = 2 << 15,
-		TextObjects = 2 << 16,
-		Patchr = 2 << 17,
-		Lipsync = 2 << 18,
-		Sprites = 2 << 19
+		Actors = 1,
+		Bitmaps,
+		Chores,
+		Costumes,
+		Engine,
+		Fonts,
+		Keyframes,
+		Lipsync,
+		LuaTrace,
+		Materials,
+		Models,
+		Movie,
+		Patchr,
+		Scripts,
+		Sets,
+		Sound,
+		Sprites,
+		TextObjects
 	};
 
-	static void registerDebugChannels();
 	static bool isChannelEnabled(DebugChannel chan);
 
 	/**
@@ -77,18 +70,7 @@ public:
 	 * @param channel The debug channel to use.
 	 */
 	static void error(DebugChannel channel, const char *s, ...);
-	/**
-	 * Prints a message to the console (stderr) and exit the program immediately,
-	 * only if the debug channel Error is active.
-	 *
-	 * @param channel The debug channel to use.
-	 */
-	static void error(const char *s, ...);
 };
-
-inline Debug::DebugChannel operator|(Debug::DebugChannel a, Debug::DebugChannel b) {
-	return (Debug::DebugChannel)((int)a | (int) b);
-}
 
 }
 

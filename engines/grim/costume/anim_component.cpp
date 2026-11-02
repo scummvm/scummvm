@@ -57,7 +57,7 @@ void AnimComponent::setKey(int val) {
 	// bitmaps were not loading with the scene. This was because they were requested
 	// as a different case then they were stored (tu_0_dorcu_door_open versus
 	// TU_0_DORCU_door_open), which was causing problems in the string comparison.
-	Debug::warning(Debug::Bitmaps | Debug::Costumes, "Missing scene bitmap: %s", _name.c_str());
+	Debug::warning(Debug::Costumes, "Missing scene bitmap: %s", _name.c_str());
 
 /* In case you feel like drawing the missing bitmap anyway...
 	// Assume that all objects the scene file forgot about are OBJSTATE_STATE class
