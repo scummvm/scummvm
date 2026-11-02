@@ -15,13 +15,26 @@ along with our theme files:
  * NotoSerif-Regular.ttf
  * NotoSans-Bold.ttf
  * NotoSans-Regular.ttf
+ * NotoSansJP-Bold.otf
+ * NotoSansJP-Regular.otf
+ * NotoSansKR-Bold.otf
+ * NotoSansKR-Regular.otf
+ * NotoSansSC-Bold.otf
+ * NotoSansSC-Regular.otf
+ * NotoSansTC-Bold.otf
+ * NotoSansTC-Regular.otf
  * NotoSansRunic-Regular.ttf
  * SourceCodeVariable-Roman.ttf
+ * Unifont-Regular.otf
 
 Copyright 2010, 2012 Adobe Systems Incorporated (http://www.adobe.com/),
 with Reserved Font Name 'Source'. All Rights Reserved. Source is a
 trademark of Adobe Systems Incorporated in the United States and/or other
 countries.
+
+Copyright (c) 1998-2026 Roman Czyborra, Paul Hardy, Qianqian Fang,
+Andrew Miller, Johnnie Weaver, David Corbett, Ælla Chiana Moskopp,
+Rebecca Bettencourt, Ho-Seok Ee, et al.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

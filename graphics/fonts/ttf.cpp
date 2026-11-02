@@ -174,6 +174,7 @@ public:
 	int getFontAscent() const override;
 
 	int getMaxCharWidth() const override;
+	GlyphPresence hasGlyph(uint32 chr) const override;
 
 	int getCharWidth(uint32 chr) const override;
 
@@ -563,6 +564,13 @@ int TTFFont::getFontAscent() const {
 
 int TTFFont::getMaxCharWidth() const {
 	return _width;
+}
+
+GlyphPresence TTFFont::hasGlyph(uint32 chr) const {
+	// In late-caching mode, the cache does not represent complete font coverage, so query the FreeType charmap directly.
+	// With a fixed mapping, the cache contains the complete supported character set and is keyed by the 8-bit input codes.
+	const bool isPresent = _allowLateCaching ? FT_Get_Char_Index(_face, chr) != 0 : _glyphs.contains(chr);
+	return isPresent ? GlyphPresence::kPresent : GlyphPresence::kAbsent;
 }
 
 int TTFFont::getCharWidth(uint32 chr) const {
