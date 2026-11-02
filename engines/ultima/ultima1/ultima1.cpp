@@ -123,6 +123,10 @@ Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
 		_G(map).load(_G(savegame)._mapNum);
 	}
 
+	// Locations save their map as well, so changes to it like an unlocked cell aren't lost
+	if (_G(logic)->isPersisted())
+		_G(map).synchronize(s);
+
 	return Common::kNoError;
 }
 

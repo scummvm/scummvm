@@ -170,6 +170,9 @@ public:
 	}
 
 	void entering() override;
+	bool isPersisted() const override {
+		return true;
+	}
 
 	/**
 	 * Called to leave the location

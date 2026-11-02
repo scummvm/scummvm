@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "graphics/managed_surface.h"
 #include "ultima/ultima1/data/tiles.h"
 
@@ -157,6 +158,12 @@ public:
 	 * @param mapNum
 	 */
 	void load(int mapNum);
+
+	/**
+	 * Saves or loads the contents of the current location's map, for the
+	 * locations the player can make changes to. Does nothing for any others
+	 */
+	void synchronize(Common::Serializer &s);
 
 	/**
 	 * Restores the Mondain encounter room to its pristine layout, discarding

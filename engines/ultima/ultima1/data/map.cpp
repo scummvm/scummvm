@@ -175,6 +175,22 @@ void Map::resetMondainMap() {
 	Common::copy(&MONDAIN_MAP[0][0], &MONDAIN_MAP[0][0] + MONDAIN_WIDTH * MONDAIN_HEIGHT, &_mondainMap[0][0]);
 }
 
+void Map::synchronize(Common::Serializer &s) {
+	switch (_mapType) {
+	case MAPTYPE_CITY:
+	case MAPTYPE_CASTLE:
+		s.syncBytes(&_cityMap[_mapStyle][0], CITY_SIZE);
+		break;
+
+	case MAPTYPE_MONDAIN:
+		s.syncBytes(&_mondainMap[0][0], MONDAIN_WIDTH * MONDAIN_HEIGHT);
+		break;
+
+	default:
+		break;
+	}
+}
+
 void Map::load(int mapNum) {
 	_G(savegame)._mapNum = mapNum;
 

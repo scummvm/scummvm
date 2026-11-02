@@ -197,6 +197,9 @@ public:
 	}
 
 	void entering() override;
+	bool isPersisted() const override {
+		return true;
+	}
 
 	/**
 	 * Called once per game frame - advances Mondain's hit-reaction and

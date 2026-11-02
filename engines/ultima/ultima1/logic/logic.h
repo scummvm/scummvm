@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA2_LOGIC_H
-#define ULTIMA2_LOGIC_H
+#ifndef ULTIMA1_LOGIC_H
+#define ULTIMA1_LOGIC_H
 
 #include "common/events.h"
 #include "common/ptr.h"
@@ -188,6 +188,14 @@ public:
 	 * Called once per game frame for any logic updates
 	 */
 	virtual void tick() {}
+
+	/**
+	 * Returns whether this logic's map can be changed by the player, so its
+	 * contents have to be kept in savegames
+	 */
+	virtual bool isPersisted() const {
+		return false;
+	}
 };
 
 /**
