@@ -282,6 +282,7 @@ void HotspotRenderer::drawMarker(Surface *surface, const HotspotInfo &hotspot, i
 	addDrawRect(bounds);
 
 	switch (markerShape) {
+	case kMarkerDefault:
 	case kMarkerCrosshair:
 		drawCrosshairMarker(surface, x, y, format);
 		break;

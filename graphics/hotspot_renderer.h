@@ -63,12 +63,12 @@ struct HotspotInfo {
  * Marker shape types.
  */
 enum MarkerShape {
+	kMarkerDefault = -1,
 	kMarkerCrosshair,
 	kMarkerSquare,
 	kMarkerPoint
 };
 
-const int kMarkerDefault = -1;
 
 struct HotspotStyle {
 	int markerSize = 10;

@@ -795,7 +795,7 @@ void Engine::drawHotspots() {
 		}
 		_hotspotShowText = !ConfMan.hasKey("show_hotspot_text") || ConfMan.getBool("show_hotspot_text");
 		const int marker = ConfMan.hasKey("hotspot_marker") ? ConfMan.getInt("hotspot_marker") : Graphics::kMarkerDefault;
-		_hotspotMarker = marker == Graphics::kMarkerDefault ? Graphics::kMarkerCrosshair :
+		_hotspotMarker = marker == Graphics::kMarkerDefault ? Graphics::kMarkerDefault :
 			CLIP(marker, (int)Graphics::kMarkerCrosshair, (int)Graphics::kMarkerPoint);
 	}
 	if (_hotspotRenderer->empty()) {
