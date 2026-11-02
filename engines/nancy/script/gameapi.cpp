@@ -713,6 +713,15 @@ static void writeSavedUint32(Common::Array<byte> &out, uint32 value) {
 	}
 }
 
+static void writeSavedNumber(Common::Array<byte> &out, double number) {
+	uint64 bits;
+	memcpy(&bits, &number, sizeof(bits));
+
+	out.push_back(kSavedNumber);
+	writeSavedUint32(out, (uint32)bits);
+	writeSavedUint32(out, (uint32)(bits >> 32));
+}
+
 // Packs the value at a stack index. Returns false for what can't be kept.
 static bool writeSavedValue(lua_State *L, int index, Common::Array<byte> &out, int depth) {
 	index = absoluteIndex(L, index);
@@ -724,16 +733,9 @@ static bool writeSavedValue(lua_State *L, int index, Common::Array<byte> &out, i
 	case LUA_TBOOLEAN:
 		out.push_back(lua_toboolean(L, index) ? kSavedTrue : kSavedFalse);
 		return true;
-	case LUA_TNUMBER: {
-		const double number = lua_tonumber(L, index);
-		uint64 bits;
-		memcpy(&bits, &number, sizeof(bits));
-
-		out.push_back(kSavedNumber);
-		writeSavedUint32(out, (uint32)bits);
-		writeSavedUint32(out, (uint32)(bits >> 32));
+	case LUA_TNUMBER:
+		writeSavedNumber(out, lua_tonumber(L, index));
 		return true;
-	}
 	case LUA_TSTRING: {
 		size_t length;
 		const char *text = lua_tolstring(L, index, &length);
@@ -775,7 +777,21 @@ static bool writeSavedValue(lua_State *L, int index, Common::Array<byte> &out, i
 		return true;
 	}
 	case LUA_TUSERDATA: {
-		// Rects are the only objects that can be kept, e.g. the parts of the
+		// The original's vectors are tables of their components, which get
+		// kept as such: Nancy25's StackingWin_SC reads them back with [1] and [2]
+		const ScriptVector *vector = testVector(L, index);
+		if (vector) {
+			out.push_back(kSavedTable);
+			writeSavedUint32(out, (uint32)vector->size);
+			for (int i = 0; i < vector->size; ++i) {
+				writeSavedNumber(out, i + 1);
+				writeSavedNumber(out, vector->v[i]);
+			}
+
+			return true;
+		}
+
+		// Of the other objects only rects can be kept, e.g. the parts of the
 		// screen Nancy23's photo manager gets handed
 		const ScriptRect *rect = testRect(L, index);
 		if (!rect) {
