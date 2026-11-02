@@ -20,6 +20,8 @@
  */
 
 #include "common/array.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/scummsys.h"
 #include "common/util.h"
 
@@ -902,15 +904,22 @@ static const luaL_Reg kQuaternionHelperFunctions[] = {
 // for the car of the driving game that plays back a recorded drive, and Nancy23
 // for the dot that moves along the metro map.
 // Path:New{ { x, y, time }, ... } takes them in the order of their times.
+// From Nancy24 on, a path holds waypoints instead: named numbers at a time,
+// which Nancy25 moves the car on its map with.
 // TODO: The curves through the places that path:GetPosition(time, false) gives,
 // and RemovePoint, GetGuides and SetGuides, which no script uses
 static const char *const kPathType = "ND.Path";
 static const char *const kPathHelperType = "ND.PathHelper";
 
+typedef Common::HashMap<Common::String, double> PathFields;
+
 struct PathPoint {
-	double x;
-	double y;
-	double time;
+	double time = 0.0;
+	PathFields fields;
+
+	double get(const char *name) const {
+		return fields.getValOrDefault(name, 0.0);
+	}
 };
 
 typedef Common::Array<PathPoint> PathPoints;
@@ -935,8 +944,8 @@ static int pathNew(lua_State *L) {
 		lua_getfield(L, -1, "x");
 		lua_getfield(L, -2, "y");
 		lua_getfield(L, -3, "time");
-		points[i].x = luaL_checknumber(L, -3);
-		points[i].y = luaL_checknumber(L, -2);
+		points[i].fields["x"] = luaL_checknumber(L, -3);
+		points[i].fields["y"] = luaL_checknumber(L, -2);
 		points[i].time = luaL_checknumber(L, -1);
 		lua_pop(L, 4);
 	}
@@ -951,21 +960,45 @@ static int pathCollect(lua_State *L) {
 	return 0;
 }
 
+// path.count, Nancy24: how many waypoints there are; path.time: the time of the
+// last one, or 0 when there is none
+static int pathIndex(lua_State *L) {
+	const PathPoints &points = checkPath(L, 1);
+	const Common::String key = luaL_checkstring(L, 2);
+
+	if (key == "count") {
+		lua_pushinteger(L, points.size());
+		return 1;
+	}
+
+	if (key == "time") {
+		lua_pushnumber(L, points.empty() ? 0.0 : points.back().time);
+		return 1;
+	}
+
+	return indexFunctions(L);
+}
+
 // path:AddPoint({ x, y, time }) or path:AddPoint(x, y, time), Nancy20, which
 // puts the place after the ones up to its time
 static int pathAddPoint(lua_State *L) {
 	PathPoints &points = checkPath(L, 1);
 
-	PathPoint point = { 0.0, 0.0, 0.0 };
+	PathPoint point;
+	double x = 0.0;
+	double y = 0.0;
 	if (lua_istable(L, 2)) {
-		readField(L, 2, "x", point.x);
-		readField(L, 2, "y", point.y);
+		readField(L, 2, "x", x);
+		readField(L, 2, "y", y);
 		readField(L, 2, "time", point.time);
 	} else {
-		point.x = luaL_checknumber(L, 2);
-		point.y = luaL_checknumber(L, 3);
+		x = luaL_checknumber(L, 2);
+		y = luaL_checknumber(L, 3);
 		point.time = luaL_checknumber(L, 4);
 	}
+
+	point.fields["x"] = x;
+	point.fields["y"] = y;
 
 	uint index = 0;
 	while (index < points.size() && points[index].time <= point.time) {
@@ -974,6 +1007,101 @@ static int pathAddPoint(lua_State *L) {
 
 	points.insert_at(index, point);
 	return 0;
+}
+
+// path:AddWaypoint({ time = t, name = number, ... }), Nancy24: inserts the
+// waypoint in time order, ahead of any waypoints with the same time. Like the
+// original, it removes "time" from the table.
+static int pathAddWaypoint(lua_State *L) {
+	PathPoints &points = checkPath(L, 1);
+	if (!lua_istable(L, 2)) {
+		return luaL_error(L, "AddWaypoint must be fed a table as its sole parameter");
+	}
+
+	PathPoint point;
+	if (!readField(L, 2, "time", point.time)) {
+		return luaL_error(L, "AddWaypoint must be fed a table with a 'time' field");
+	}
+
+	lua_pushnil(L);
+	lua_setfield(L, 2, "time");
+
+	lua_pushnil(L);
+	while (lua_next(L, 2)) {
+		if (lua_type(L, -2) != LUA_TSTRING) {
+			return luaL_error(L, "AddWaypoint only takes named numbers");
+		}
+
+		point.fields[lua_tostring(L, -2)] = luaL_checknumber(L, -1);
+		lua_pop(L, 1);
+	}
+
+	uint index = 0;
+	while (index < points.size() && points[index].time < point.time) {
+		++index;
+	}
+
+	points.insert_at(index, point);
+	return 0;
+}
+
+// path:GetInterpolants(time[, loops]), Nancy24: returns a table of the named
+// numbers at the given time, linearly interpolated between the waypoints on
+// either side of it. A number that only one of the two waypoints has is taken
+// from that waypoint. Before the first waypoint and after the last one, their
+// numbers are returned as is, unless the path loops, in which case it starts
+// over after its last waypoint.
+static int pathGetInterpolants(lua_State *L) {
+	const PathPoints &points = checkPath(L, 1);
+	double time = luaL_checknumber(L, 2);
+	const bool loops = lua_toboolean(L, 3) != 0;
+
+	PathFields result;
+	if (points.size() == 1) {
+		result = points[0].fields;
+	} else if (points.size() > 1) {
+		const double lastTime = points.back().time;
+		if (loops && lastTime > 0.0 && (time >= lastTime || time < 0.0)) {
+			time -= floor(time / lastTime) * lastTime;
+		}
+
+		// The first waypoint after the time
+		uint next = 0;
+		while (next < points.size() && points[next].time <= time) {
+			++next;
+		}
+
+		if (next == 0 || next == points.size()) {
+			result = points[next == 0 ? 0 : next - 1].fields;
+		} else {
+			const PathPoint &from = points[next - 1];
+			const PathPoint &to = points[next];
+			const double progress = (time - from.time) / (to.time - from.time);
+
+			for (const auto &field : from.fields) {
+				PathFields::const_iterator other = to.fields.find(field._key);
+				if (other == to.fields.end()) {
+					result[field._key] = field._value;
+				} else {
+					result[field._key] = field._value + (other->_value - field._value) * progress;
+				}
+			}
+
+			for (const auto &field : to.fields) {
+				if (!result.contains(field._key)) {
+					result[field._key] = field._value;
+				}
+			}
+		}
+	}
+
+	lua_createtable(L, 0, result.size());
+	for (const auto &field : result) {
+		lua_pushnumber(L, field._value);
+		lua_setfield(L, -2, field._key.c_str());
+	}
+
+	return 1;
 }
 
 // path:GetPosition(time[, straight[, loops]]): where the path is at a time, in a
@@ -1003,8 +1131,8 @@ static int pathGetPosition(lua_State *L) {
 	}
 
 	if (at) {
-		position.v[0] = at->x;
-		position.v[1] = at->y;
+		position.v[0] = at->get("x");
+		position.v[1] = at->get("y");
 		pushVector(L, position);
 		return 1;
 	}
@@ -1019,17 +1147,19 @@ static int pathGetPosition(lua_State *L) {
 	const double span = to.time - from.time;
 	const double progress = span != 0.0 ? (time - from.time) / span : 0.0;
 
-	position.v[0] = from.x + (to.x - from.x) * progress;
-	position.v[1] = from.y + (to.y - from.y) * progress;
+	position.v[0] = from.get("x") + (to.get("x") - from.get("x")) * progress;
+	position.v[1] = from.get("y") + (to.get("y") - from.get("y")) * progress;
 	pushVector(L, position);
 	return 1;
 }
 
 static const luaL_Reg kPathFunctions[] = {
-	{ "__index", indexFunctions },
+	{ "__index", pathIndex },
 	{ "__gc", pathCollect },
 	{ "GetPosition", pathGetPosition },
 	{ "AddPoint", pathAddPoint },
+	{ "AddWaypoint", pathAddWaypoint },
+	{ "GetInterpolants", pathGetInterpolants },
 	{ nullptr, nullptr }
 };
 
