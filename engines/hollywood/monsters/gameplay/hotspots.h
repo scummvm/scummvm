@@ -30,6 +30,7 @@
 #include "hollywood/monsters/scenes/scene_data.h"
 
 namespace Graphics {
+struct HotspotInfo;
 struct Surface;
 }
 
@@ -65,6 +66,8 @@ public:
 
 	byte resolveItemAt(const Graphics::Surface &savedFramebuffer, uint16 cursorX, uint16 cursorY,
 		uint16 xOffset, uint16 yOffset) const;
+	void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots,
+		const Graphics::Surface &savedFramebuffer, uint16 xOffset, uint16 yOffset) const;
 	byte defaultStripForItem(byte itemId) const;
 	bool hasVerbAction(byte itemId, byte stripIndex) const;
 	SceneVerbActionRecord verbActionRecord(byte itemId, byte stripIndex) const;

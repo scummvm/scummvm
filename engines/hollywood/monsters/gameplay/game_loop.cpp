@@ -213,6 +213,7 @@ bool GameplayLoop::run() {
 		_delegate->presentGameplayFrame(_hoverCaption, _panelState);
 	}
 
+	_vm->drawSceneHotspots();
 	_vm->cursor()->leaveInteractiveMode();
 	return true;
 }
@@ -233,6 +234,7 @@ bool GameplayLoop::pollEvents() {
 			return true;
 		case Common::EVENT_MAINMENU:
 			{
+				_vm->drawSceneHotspots();
 				const bool previousCanSave = _vm->canSave();
 				_vm->setCanSave(true);
 				_vm->openMainMenuDialog();
@@ -323,6 +325,7 @@ void GameplayLoop::handleKeyUp(const Common::KeyState &keyState) {
 }
 
 void GameplayLoop::handleLeftClick() {
+	_vm->drawSceneHotspots();
 	if (_panelState.inventoryPanelVisible) {
 		const uint16 cursorX = _vm->cursor()->surfaceX();
 		const uint16 cursorY = _vm->cursor()->surfaceY();
@@ -560,6 +563,7 @@ void GameplayLoop::closeInventoryPanel() {
 }
 
 void GameplayLoop::openOptionsMenu() {
+	_vm->drawSceneHotspots();
 	const Common::String previousLanguage = _vm->textTranslation()->language();
 	const bool restoreInventoryPanel = _panelState.inventoryPanelVisible;
 	const bool restoreVerbPanel = _panelState.verbPanelVisible && !restoreInventoryPanel;

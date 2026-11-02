@@ -41,6 +41,7 @@ class Serializer;
 
 namespace Hollywood {
 
+class GameplayLoopDelegate;
 class HollywoodFont;
 
 class HollywoodEngine : public Engine {
@@ -92,6 +93,7 @@ public:
 	}
 	bool canSave() const { return _canSave; }
 	void setCanSave(bool canSave) { _canSave = canSave; }
+	void drawSceneHotspots(const GameplayLoopDelegate *scene = nullptr);
 
 	enum {
 		kScreenWidth = 640,
@@ -100,6 +102,11 @@ public:
 		kSceneBufferHeight = 480,
 		kSceneItemCount = 21
 	};
+
+protected:
+	void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) override;
+	Graphics::HotspotRenderer *createHotspotRenderer() override;
+	bool hideCursorForHotspots() const override { return false; }
 
 private:
 	uint nextSubtitleLanguageIndex() const;
@@ -120,6 +127,7 @@ private:
 	uint16 _debugSceneSolveRequest;
 	bool _scene7100RescueFailureVariant;
 	bool _canSave;
+	const GameplayLoopDelegate *_hotspotScene;
 };
 
 } // End of namespace Hollywood

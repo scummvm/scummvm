@@ -19,6 +19,10 @@
  *
  */
 
+#include "common/frac.h"
+#include "common/system.h"
+#include "common/ustr.h"
+#include "graphics/hotspot_renderer.h"
 #include "graphics/surface.h"
 
 #include "hollywood/monsters/hollywood.h"
@@ -28,6 +32,79 @@
 #include "hollywood/monsters/graphics.h"
 
 namespace Hollywood {
+
+class HollywoodHotspotRenderer : public Graphics::HotspotRenderer {
+protected:
+	void prepareRender(const Common::Array<Graphics::HotspotInfo> &hotspots,
+			int gameWidth, int gameHeight, int overlayWidth, int overlayHeight) override {
+		_screenSize = Common::Point(gameWidth, gameHeight);
+		_gameArea = Common::Rect(overlayWidth, overlayHeight);
+
+		const int stretchMode = g_system->getStretchMode();
+		const OSystem::GraphicsMode *mode = g_system->getSupportedStretchModes();
+		while (mode && mode->name && mode->id != stretchMode)
+			++mode;
+		if (!mode || !mode->name)
+			return;
+
+		const bool fit = !strcmp(mode->name, "fit");
+		const bool center = !strcmp(mode->name, "center");
+		const bool integral = !strcmp(mode->name, "pixel-perfect") || !strcmp(mode->name, "even-pixels");
+		if (!fit && !center && !integral)
+			return;
+
+		// Desktop backends can center the game inside a larger overlay.
+		const Common::Rect safeArea = g_system->getSafeOverlayArea();
+		if (safeArea.isEmpty())
+			return;
+
+		int width = safeArea.width();
+		int height = safeArea.height();
+		const frac_t aspect = intToFrac(gameWidth) / gameHeight;
+		if (fit) {
+			const frac_t overlayAspect = intToFrac(width) / height;
+			if (overlayAspect < aspect)
+				height = intToFrac(width) / aspect;
+			else if (overlayAspect > aspect)
+				width = fracToInt(height * aspect);
+		} else {
+			width = gameWidth * g_system->getScaleFactor();
+			height = intToFrac(width) / aspect;
+			if (width > safeArea.width() || height > safeArea.height()) {
+				const int divisor = 1 + MAX((width - 1) / safeArea.width(), (height - 1) / safeArea.height());
+				width /= divisor;
+				height /= divisor;
+			} else if (integral) {
+				const int factor = MIN(safeArea.width() / width, safeArea.height() / height);
+				width *= factor;
+				height *= factor;
+			}
+		}
+
+		int16 left = (overlayWidth - width) / 2;
+		int16 top = (overlayHeight - height) / 2;
+		safeArea.constrain(left, top, width, height);
+		_gameArea = Common::Rect(left, top, left + width, top + height);
+		_sizeScale = _style.scaleWithGame ? MIN((float)width / gameWidth, (float)height / gameHeight) : 1.0f;
+		_markerSize = MAX(2, (int)(_style.markerSize * _sizeScale));
+		_pointRadius = MAX(1, (int)(_style.pointRadius * _sizeScale));
+		_lineThickness = MAX(1, (int)(_style.lineThickness * _sizeScale));
+	}
+
+	Common::Point placeHotspot(const Graphics::HotspotInfo &hotspot, Common::Point position) override {
+		return Common::Point(
+			_gameArea.left + hotspot.position.x * _gameArea.width() / _screenSize.x,
+			_gameArea.top + hotspot.position.y * _gameArea.height() / _screenSize.y);
+	}
+
+private:
+	Common::Point _screenSize;
+	Common::Rect _gameArea;
+};
+
+Graphics::HotspotRenderer *HollywoodEngine::createHotspotRenderer() {
+	return new HollywoodHotspotRenderer();
+}
 
 const uint kSceneChunk3ColorToItemMapOffset = 0x100;
 const uint kSceneColorMapSize = 0x100;
@@ -152,6 +229,59 @@ byte SceneHotspotTable::resolveItemAt(const Graphics::Surface &savedFramebuffer,
 	}
 
 	return 0;
+}
+
+void SceneHotspotTable::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots,
+		const Graphics::Surface &savedFramebuffer, uint16 xOffset, uint16 yOffset) const {
+	const int width = MIN<int>(HollywoodEngine::kScreenWidth, savedFramebuffer.w - xOffset);
+	const int height = MIN<int>(HollywoodEngine::kScreenHeight, savedFramebuffer.h - yOffset);
+	Common::Rect bounds[HollywoodEngine::kSceneItemCount];
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			const byte item = resolveItemAt(savedFramebuffer, x, y, xOffset, yOffset);
+			if (item == 0 || item >= ARRAYSIZE(bounds))
+				continue;
+			const Common::Rect pixel(x, y, x + 1, y + 1);
+			if (bounds[item].isEmpty())
+				bounds[item] = pixel;
+			else
+				bounds[item].extend(pixel);
+		}
+	}
+
+	for (uint item = 1; item < ARRAYSIZE(bounds); ++item) {
+		const Common::String name = itemName(item);
+		if (bounds[item].isEmpty() || name.empty())
+			continue;
+
+		const Common::Point center = bounds[item].center();
+		Common::Point position = center;
+		// Irregular or disconnected hit regions may not contain their center.
+		if (resolveItemAt(savedFramebuffer, center.x, center.y, xOffset, yOffset) != item) {
+			uint bestDistance = width * width + height * height;
+			for (int y = bounds[item].top; y < bounds[item].bottom; ++y) {
+				for (int x = bounds[item].left; x < bounds[item].right; ++x) {
+					const Common::Point point(x, y);
+					const uint distance = point.sqrDist(center);
+					if (distance < bestDistance && resolveItemAt(savedFramebuffer, x, y, xOffset, yOffset) == item) {
+						position = point;
+						bestDistance = distance;
+					}
+				}
+			}
+		}
+
+		Common::U32String label(name, Common::kDos850);
+		for (uint i = 0; i < name.size(); ++i) {
+			switch ((byte)name[i]) {
+			case '%': label.setChar('\'', i); break;
+			case 0xf0: label.setChar(0x201c, i); break;
+			case 0xf1: label.setChar(0x201d, i); break;
+			default: break;
+			}
+		}
+		hotspots.push_back(Graphics::HotspotInfo(position, label));
+	}
 }
 
 byte SceneHotspotTable::defaultStripForItem(byte itemId) const {

@@ -34,6 +34,7 @@
 #include "hollywood/monsters/console.h"
 #include "hollywood/debug.h"
 #include "hollywood/monsters/font.h"
+#include "hollywood/monsters/gameplay/game_loop.h"
 #include "hollywood/monsters/gameplay/travel_screen.h"
 #include "hollywood/resource.h"
 #include "hollywood/monsters/scenes/intro/demo_montage.h"
@@ -159,7 +160,8 @@ HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDes
 		_sceneRestartRequested(false),
 		_debugSceneSolveRequest(0),
 		_scene7100RescueFailureVariant(false),
-		_canSave(false) {
+		_canSave(false),
+		_hotspotScene(nullptr) {
 }
 
 HollywoodEngine::~HollywoodEngine() {
@@ -388,6 +390,21 @@ bool HollywoodEngine::hasFeature(EngineFeature f) const {
 		f == kSupportsSubtitleOptions ||
 		f == kSupportsLoadingDuringRuntime ||
 		f == kSupportsSavingDuringRuntime;
+}
+
+void HollywoodEngine::drawSceneHotspots(const GameplayLoopDelegate *scene) {
+	if (!_showHotspots)
+		return;
+
+	_hotspotScene = scene;
+	drawHotspots();
+	_hotspotScene = nullptr;
+}
+
+void HollywoodEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
+	if (_hotspotScene && !_hotspotScene->shouldExitGameplayLoop())
+		_hotspotScene->hotspots().getHotspotPositions(hotspots, _hotspotScene->savedFramebuffer(),
+			_hotspotScene->viewportXOffset(), _hotspotScene->viewportYOffset());
 }
 
 void HollywoodEngine::syncSoundSettings() {

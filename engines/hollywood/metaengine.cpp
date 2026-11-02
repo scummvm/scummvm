@@ -20,7 +20,11 @@
  */
 
 #include "base/plugins.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
@@ -83,7 +87,12 @@ void HollywoodMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 Common::Array<Common::Keymap *> HollywoodMetaEngine::initKeymaps(const char *target) const {
 	if (getGameId(target) == "runaway")
 		return RunawayEngine::initKeymaps();
-	return MetaEngine::initKeymaps(target);
+	Common::KeymapArray keymaps = MetaEngine::initKeymaps(target);
+	Common::Action *action = new Common::Action(Common::kStandardActionToggleHotspots, _("Show hotspots"));
+	action->setEvent(Common::EVENT_HOTSPOTS_SHOW);
+	action->addDefaultInputMapping("h");
+	keymaps[0]->addAction(action);
+	return keymaps;
 }
 
 } // End of namespace Hollywood
