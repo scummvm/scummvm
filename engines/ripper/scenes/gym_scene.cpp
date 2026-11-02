@@ -288,8 +288,8 @@ uint16 GymScene::service(uint frame) {
 bool GymScene::playStateMedia(uint state, uint16 &command) {
 	const Common::String path = Common::String::format("fd_gym%u.smk", state);
 	command = 0;
-	const bool played = _engine->getMedia()->playPuzzleSequence(
-		path, 0, this, &command);
+	const bool played = _engine->getMedia()->playPuzzleSequenceSegment(
+		path, 0, 0xffffffff, 100, 0, this, &command);
 	debugC(played ? 2 : 1, kDebugPuzzles,
 		"Ripper: gym selector media='%s' state=%u command=0x%04x result=%d",
 		path.c_str(), state, command, played);
