@@ -238,7 +238,9 @@ private:
 	bool _isAngle;
 };
 
-// "color": the "base" color the image gets multiplied with
+// "color": the "base" color the image gets multiplied with. From Nancy25 on,
+// its red, green and blue are scaled by a random factor between "min" and
+// "max" for each particle.
 class ParticleColorStage : public ParticleStage {
 public:
 	ParticleColorStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
@@ -247,17 +249,36 @@ public:
 			_color = checkColor(L, -1);
 			lua_pop(L, 1);
 		}
+
+		_isScaled = g_nancy->getGameType() >= kGameTypeNancy25;
+		if (_isScaled) {
+			readField(L, tableIndex, "min", _min);
+			readField(L, tableIndex, "max", _max);
+		}
 	}
 
 protected:
 	void initParticles(uint first, uint count) override {
 		for (uint i = first; i < first + count; ++i) {
-			_record.getParticle(i).color = _color;
+			_record.getParticle(i).color = _isScaled ? getScaledColor() : _color;
 		}
 	}
 
 private:
+	// Like the original, the factor is converted to 0-255 and the result is
+	// divided by 256
+	uint32 getScaledColor() const {
+		const uint32 factor = (uint32)(int32)(lerp(_min, _max, randomFraction()) * 255.0);
+		const uint32 red = ((_color >> 16) & 0xFF) * factor >> 8;
+		const uint32 green = ((_color >> 8) & 0xFF) * factor >> 8;
+		const uint32 blue = (_color & 0xFF) * factor >> 8;
+		return (_color & 0xFF000000) | (red & 0xFF) << 16 | (green & 0xFF) << 8 | (blue & 0xFF);
+	}
+
 	uint32 _color = 0xFFFFFFFF;
+	bool _isScaled = false;
+	double _min = 1.0;
+	double _max = 1.0;
 };
 
 // "sources": the parts of the image to pick from, as a list of rects
@@ -486,6 +507,36 @@ public:
 		readVectorField(L, tableIndex, "max", _max, 3);
 	}
 
+	// Nancy25: scripts can read and change "min" and "max", the range of
+	// positions the particles start at
+	bool getField(lua_State *L, const Common::String &key) override {
+		const double *corner = getCorner(key);
+		if (!corner) {
+			return false;
+		}
+
+		pushVector(L, ScriptVector(corner[0], corner[1], corner[2]));
+		return true;
+	}
+
+	bool setField(lua_State *L, const Common::String &key) override {
+		double *corner = getCorner(key);
+		if (!corner) {
+			return false;
+		}
+
+		const ScriptVector *vector = testVector(L, -1);
+		if (!vector) {
+			luaL_typerror(L, -1, "Vector");
+		}
+
+		for (int i = 0; i < 3; ++i) {
+			corner[i] = vector->v[i];
+		}
+
+		return true;
+	}
+
 protected:
 	void initParticles(uint first, uint count) override {
 		for (uint i = first; i < first + count; ++i) {
@@ -494,6 +545,16 @@ protected:
 				particle.position[j] = lerp(_min[j], _max[j], randomFraction());
 			}
 		}
+	}
+
+	double *getCorner(const Common::String &key) {
+		if (key == "min") {
+			return _min;
+		} else if (key == "max") {
+			return _max;
+		}
+
+		return nullptr;
 	}
 
 private:
