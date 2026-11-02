@@ -28,32 +28,32 @@
 namespace Igor {
 
 // Copy protection screen of the floppy version
-static const int kFloppyProtectionTries = 3;
-static const int kFloppyProtectionWordCount = 100;
-static const int kFloppyProtectionEntrySize = 14;
-static const int kFloppyProtectionWordLength = 10;
-static const int kFloppyProtectionCodeOffset = 0x45;
-static const int kFloppyProtectionInputX = 122;
-static const int kFloppyProtectionInputY = 75;
-static const int kFloppyProtectionInputFullX = 197;
-static const int kFloppyProtectionTitleX = 136;
-static const int kFloppyProtectionPromptX = 93;
-static const int kFloppyProtectionPromptY = 42;
-static const int kFloppyProtectionQuestionX = 81;
-static const int kFloppyProtectionQuestionY = 52;
-static const int kFloppyProtectionReplyX = 100;
-static const int kFloppyProtectionReplyY = 86;
-static const int kFloppyProtectionReplyTicks = 2 * 200;
-static const int kFloppyProtectionBlinkTick = 61;
-static const int kFloppyProtectionBlinkPeriod = 64;
-static const int kFloppyProtectionBoxX = 120;
-static const int kFloppyProtectionBoxY = 56;
-static const int kFloppyProtectionBoxWidth = 80;
-static const int kFloppyProtectionBoxHeight = 11;
-static const int kFloppyProtectionCaretRow = 8;
-static const int kFloppyProtectionCaretWidth = 7;
-static const int kFloppyProtectionGlyphRows = 9;
-static const int kFloppyProtectionMaxInput = 32;
+const int kFloppyProtectionTries = 3;
+const int kFloppyProtectionWordCount = 100;
+const int kFloppyProtectionEntrySize = 14;
+const int kFloppyProtectionWordLength = 10;
+const int kFloppyProtectionCodeOffset = 0x45;
+const int kFloppyProtectionInputX = 122;
+const int kFloppyProtectionInputY = 75;
+const int kFloppyProtectionInputFullX = 197;
+const int kFloppyProtectionTitleX = 136;
+const int kFloppyProtectionPromptX = 93;
+const int kFloppyProtectionPromptY = 42;
+const int kFloppyProtectionQuestionX = 81;
+const int kFloppyProtectionQuestionY = 52;
+const int kFloppyProtectionReplyX = 100;
+const int kFloppyProtectionReplyY = 86;
+const int kFloppyProtectionReplyTicks = 2 * 200;
+const int kFloppyProtectionBlinkTick = 61;
+const int kFloppyProtectionBlinkPeriod = 64;
+const int kFloppyProtectionBoxX = 120;
+const int kFloppyProtectionBoxY = 56;
+const int kFloppyProtectionBoxWidth = 80;
+const int kFloppyProtectionBoxHeight = 11;
+const int kFloppyProtectionCaretRow = 8;
+const int kFloppyProtectionCaretWidth = 7;
+const int kFloppyProtectionGlyphRows = 9;
+const int kFloppyProtectionMaxInput = 32;
 
 enum {
 	kFloppyColorInputFill = 0xFB

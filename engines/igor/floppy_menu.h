@@ -25,22 +25,22 @@
 namespace Igor {
 
 // Geometry and colors of the panel shared by the floppy options menu and the copy protection.
-static const int kFloppyMenuX = 53;
-static const int kFloppyMenuY = 19;
-static const int kFloppyMenuWidth = 214;
-static const int kFloppyMenuHeight = 106;
-static const int kFloppyMenuSize = 320 * kFloppyMenuHeight;
-static const int kFloppyButtonX = 55;
-static const int kFloppyButtonY = 21;
-static const int kFloppyButtonWidth = 42;
-static const int kFloppyButtonHeight = 13;
-static const int kFloppyControlPanelFirstRow = 36;
-static const int kFloppyControlPanelRows = 85;
-static const int kFloppyCaptionY = 22;
-static const int kFloppyCaptionLastRow = 34;
-static const int kFloppyLastFadedColor = 248;
-static const int kFloppyFadeSteps = 30;
-static const int kFloppyFadeCount = 3 * (kFloppyLastFadedColor + 1);
+const int kFloppyMenuX = 53;
+const int kFloppyMenuY = 19;
+const int kFloppyMenuWidth = 214;
+const int kFloppyMenuHeight = 106;
+const int kFloppyMenuSize = 320 * kFloppyMenuHeight;
+const int kFloppyButtonX = 55;
+const int kFloppyButtonY = 21;
+const int kFloppyButtonWidth = 42;
+const int kFloppyButtonHeight = 13;
+const int kFloppyControlPanelFirstRow = 36;
+const int kFloppyControlPanelRows = 85;
+const int kFloppyCaptionY = 22;
+const int kFloppyCaptionLastRow = 34;
+const int kFloppyLastFadedColor = 248;
+const int kFloppyFadeSteps = 30;
+const int kFloppyFadeCount = 3 * (kFloppyLastFadedColor + 1);
 
 enum {
 	kFloppyColorCaption = 0xF9,
