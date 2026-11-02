@@ -29,6 +29,7 @@ MODULE_OBJS := \
 	he/script_v70he.o \
 	he/sound_he.o \
 	help.o \
+	hotspots.o \
 	imuse/imuse.o \
 	imuse/imuse_part.o \
 	imuse/imuse_player.o \

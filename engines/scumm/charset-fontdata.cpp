@@ -691,16 +691,12 @@ static const byte specialCharsetData[] = {
 	0x3C, 0x66, 0x60, 0x60, 0x66, 0x3C, 0x18, 0x38,
 };
 
-#ifdef USE_TTS
-
 static const uint16 specialCharactersEncoding[] = {
 	0x0024, 0x0025, 0x0060, 0x0040, 0xc3bc, 0xc3a4, 0xc39c, 0xc3b6,	// $, %, `, @, ü, ä, Ü, ö
 	0xc384, 0xc396, 0xc39f, 0xc396, 0xc39f, 0xc384, 0xc39c, 0x0020,	// Ä, Ö, ß, Ö, ß, Ä, Ü, ↑ (replaced with space)
 	0xc3a0, 0xc3a2, 0xc3a7, 0xc3a9, 0xc3a8, 0xc3aa, 0xc3af, 0xc3ae,	// à, â, ç, é, è, ê, ï, î
 	0xc3b4, 0xc3b9, 0xc3bb, 0xc3a1, 0xc3ac, 0xc3b2					// ô, ù, û, á, ì, ò
 };
-
-#endif
 
 CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	: CharsetRendererV3(vm) {
@@ -814,8 +810,6 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	_vm->quitGame();
 #endif
 }
-
-#ifdef USE_TTS
 
 Common::U32String CharsetRendererV2::convertText(const Common::String &text, Common::Language language) const {
 	const byte *map = nullptr;
@@ -932,8 +926,6 @@ Common::U32String CharsetRendererV2::convertText(const Common::String &text, Com
 
 	return result;
 }
-
-#endif
 
 CharsetRendererV2::~CharsetRendererV2() {
 	if (_deleteFontPtr)

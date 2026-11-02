@@ -329,6 +329,9 @@ void ScummEngine::beginTextInput() {
 	Common::Keymap *engineDefault = keymapper->getKeymap("engine-default");
 
 	engineDefault->setEnabled(false);
+	Common::Keymap *hotspots = keymapper->getKeymap("scumm-hotspots");
+	if (hotspots)
+		hotspots->setEnabled(false);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 }
 
@@ -337,6 +340,9 @@ void ScummEngine::endTextInput() {
 	Common::Keymap *engineDefault = keymapper->getKeymap("engine-default");
 
 	engineDefault->setEnabled(true);
+	Common::Keymap *hotspots = keymapper->getKeymap("scumm-hotspots");
+	if (hotspots)
+		hotspots->setEnabled(true);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 

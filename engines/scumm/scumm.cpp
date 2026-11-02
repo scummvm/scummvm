@@ -3350,6 +3350,7 @@ load_game:
 			playActorSounds();
 	}
 
+	drawHotspots();
 	scummLoop_handleSound();
 
 	camera._last = camera._cur;

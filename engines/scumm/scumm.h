@@ -1515,6 +1515,9 @@ protected:
 	bool _supportsEGADithering = false;
 	bool _enableSegaShadowMode = false;
 
+	void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) override;
+	Graphics::HotspotRenderer *createHotspotRenderer() override;
+	bool hideCursorForHotspots() const override { return false; }
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom);

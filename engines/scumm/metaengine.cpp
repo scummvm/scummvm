@@ -1180,6 +1180,21 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 	}
 #endif
 
+	if (gameId != "rebel1" && gameId != "rebel2" &&
+		gameId != "moonbase" &&
+		gameId != "baseball" && gameId != "baseball2001" && gameId != "Baseball2003" &&
+		gameId != "basketball" &&
+		gameId != "football" && gameId != "football2002" &&
+		gameId != "soccer" && gameId != "SoccerMLS" && gameId != "Soccer2004") {
+		Keymap *hotspotMap = new Keymap(Keymap::kKeymapTypeGame, "scumm-hotspots", _("Hotspots"));
+		hotspotMap->setPartialMatchAllowed(false);
+		act = new Action(kStandardActionToggleHotspots, _("Show/hide hotspots"));
+		act->setEvent(Common::EVENT_HOTSPOTS_SHOW);
+		act->addDefaultInputMapping("h");
+		hotspotMap->addAction(act);
+		keymaps.push_back(hotspotMap);
+	}
+
 	if (gameId == "rebel1" || gameId == "rebel2") {
 		for (uint i = 0; i < keymaps.size(); ++i) {
 			if (keymaps[i]->getId() == "engine-default") {

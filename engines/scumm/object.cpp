@@ -21,7 +21,9 @@
 
 #include "scumm/actor.h"
 #include "scumm/bomp.h"
+#include "scumm/charset.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/hotspots.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
@@ -552,6 +554,85 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 
 	// Now compute the distance between the two points
 	return getDist(x, y, x2, y2);
+}
+
+void ScummEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
+	if (!_currentRoom || _cursor.state <= 0 || _userPut <= 0)
+		return;
+	// Full Throttle uses actor 27 for its action menu.
+	if (_game.id == GID_FT && _numActors > 27) {
+		const Actor *menuActor = _actors[27];
+		if (menuActor->_visible && menuActor->_costume == 5 && menuActor->_room == _currentRoom)
+			return;
+	}
+	const VirtScreen *vs = &_virtscr[kMainVirtScreen];
+	const int top = _game.version >= 7 ? _screenTop : 0;
+	const int bottom = MIN<int>(vs->h, top + _screenHeight - vs->topline);
+	if (bottom <= top || _screenWidth <= 0 || _screenHeight <= 0)
+		return;
+	auto add = [&](int x, int y, const byte *name, Graphics::HotspotType type) {
+		byte text[2048] = {};
+		if (name)
+			convertMessageToString(name, text, sizeof(text));
+		Common::U32String label = _charset->convertText((const char *)text, _language);
+		int screenX = x - vs->xstart;
+		int screenY = y - top + vs->topline;
+		if (_game.platform == Common::kPlatformNES && _NESStartStrip > 0)
+			screenX += 16;
+		if (screenX < 0 || screenX >= _screenWidth || screenY < 0 || screenY >= _screenHeight)
+			return;
+		if (_useMacScreenCorrectHeight && _macScreen)
+			screenY += _macScreenDrawOffset;
+		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+			screenX = screenX * 2 + (kHercWidth - _screenWidth * 2) / 2;
+			if (_game.version < 3)
+				screenY = (screenY - vs->topline) * 2 + vs->topline;
+			else
+				screenY = screenY * 7 / 4;
+		} else if (_textSurfaceMultiplier == 2 || _macScreen || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
+			screenX *= 2;
+			screenY *= 2;
+		}
+		hotspots.push_back(Graphics::HotspotInfo(Common::Point(screenX, screenY), label, type));
+	};
+	for (int i = 1; i < _numLocalObjects; ++i) {
+		const ObjectData &obj = _objs[i];
+		if (obj.obj_nr < 1 || obj.width <= 0 || obj.height <= 0)
+			continue;
+		const int left = MAX<int>(vs->xstart, obj.x_pos);
+		const int right = MIN<int>(vs->xstart + vs->w, obj.x_pos + obj.width);
+		const int upper = MAX<int>(top, obj.y_pos);
+		const int lower = MIN<int>(bottom, obj.y_pos + obj.height);
+		if (left >= right || upper >= lower)
+			continue;
+		bool found = false;
+		const int fractions[] = {2, 1, 3};
+		for (int row = 0; row < 3 && !found; ++row) {
+			for (int col = 0; col < 3 && !found; ++col) {
+				const int x = left + (right - left - 1) * fractions[col] / 4;
+				const int y = upper + (lower - upper - 1) * fractions[row] / 4;
+				if (findObject(x, y) == obj.obj_nr) {
+					add(x, y, getObjOrActorName(obj.obj_nr), Graphics::kHotspotObject);
+					found = true;
+				}
+			}
+		}
+	}
+	for (int i = 1; i < _numActors; ++i) {
+		Actor *actor = _actors[i];
+		if (!actor->_visible || actor->_room != _currentRoom || i == VAR(VAR_EGO))
+			continue;
+		const int x = actor->getPos().x;
+		const int y = (actor->_top + actor->_bottom) / 2;
+		if (x < vs->xstart || x >= vs->xstart + vs->w || y < top || y >= bottom)
+			continue;
+		if (getActorFromPos(x, y) == i)
+			add(x, y, actor->getActorName(), Graphics::kHotspotNPC);
+	}
+}
+
+Graphics::HotspotRenderer *ScummEngine::createHotspotRenderer() {
+	return new ScummHotspotRenderer();
 }
 
 int ScummEngine::findObject(int x, int y) {
