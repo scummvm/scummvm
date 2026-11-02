@@ -400,17 +400,59 @@ static int pointSubtract(lua_State *L) {
 	return 1;
 }
 
+// Either side can be a number, which multiplies both coordinates
+static ScriptPoint checkPointFactor(lua_State *L, int index) {
+	if (lua_isnumber(L, index)) {
+		const int32 factor = (int32)lua_tonumber(L, index);
+		return ScriptPoint(factor, factor);
+	}
+
+	return checkPoint(L, index);
+}
+
+static int pointMultiply(lua_State *L) {
+	const ScriptPoint a = checkPointFactor(L, 1);
+	const ScriptPoint b = checkPointFactor(L, 2);
+	pushPoint(L, ScriptPoint(a.x * b.x, a.y * b.y));
+	return 1;
+}
+
+static int pointNegate(lua_State *L) {
+	const ScriptPoint &point = checkPoint(L, 1);
+	pushPoint(L, ScriptPoint(-point.x, -point.y));
+	return 1;
+}
+
+static int pointToString(lua_State *L) {
+	const ScriptPoint &point = checkPoint(L, 1);
+	lua_pushstring(L, Common::String::format("P(%d, %d)", point.x, point.y).c_str());
+	return 1;
+}
+
 static const luaL_Reg kPointFunctions[] = {
 	{ "__index", pointIndex },
 	{ "__newindex", pointNewIndex },
 	{ "__eq", pointEquals },
 	{ "__add", pointAdd },
+	{ "__mul", pointMultiply },
 	{ "__sub", pointSubtract },
+	{ "__unm", pointNegate },
+	{ "__tostring", pointToString },
 	{ nullptr, nullptr }
 };
 
+// Point.origin is a new point every time, since scripts can change points
+static int pointHelperIndex(lua_State *L) {
+	if (lua_type(L, 2) == LUA_TSTRING && strcmp(lua_tostring(L, 2), "origin") == 0) {
+		pushPoint(L, ScriptPoint(0, 0));
+		return 1;
+	}
+
+	return indexFunctions(L);
+}
+
 static const luaL_Reg kPointHelperFunctions[] = {
-	{ "__index", indexFunctions },
+	{ "__index", pointHelperIndex },
 	{ "New", pointNew },
 	{ nullptr, nullptr }
 };
