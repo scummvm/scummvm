@@ -90,7 +90,7 @@ static void scaleNN(byte *dst, const byte *src,
 			if (Size == sizeof(Color)) {
 				*(Color *)dst1 = *(const Color *)src1;
 			} else {
-				memcpy(dst1, src, Size);
+				memcpy(dst1, src1, Size);
 			}
 			dst1 += dstIncX * Size;
 		}
