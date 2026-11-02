@@ -1263,12 +1263,21 @@ static const luaL_Reg kSoundChannelFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// Sound:Duration(file), Nancy24: how many seconds a sound file plays, or 0 for
+// one that doesn't exist
+static int soundDuration(lua_State *L) {
+	const Audio::Timestamp length = g_nancy->_sound->getFileLength(luaL_checkstring(L, 2));
+	lua_pushnumber(L, (double)length.totalNumberOfFrames() / length.framerate());
+	return 1;
+}
+
 static const luaL_Reg kSoundFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Stop", soundStop },
 	{ "SetVolume", soundSetVolume },
 	{ "GetVolume", soundGetVolume },
 	{ "IsPlaying", soundIsPlaying },
+	{ "Duration", soundDuration },
 	{ nullptr, nullptr }
 };
 

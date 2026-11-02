@@ -759,6 +759,23 @@ Audio::Timestamp SoundManager::getLength(const Common::String &chunkName) {
 	return getLength(_commonSounds[chunkName]);
 }
 
+Audio::Timestamp SoundManager::getFileLength(const Common::String &soundName) {
+	if (soundName == "silence") {
+		return Audio::Timestamp();
+	}
+
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(Common::Path(soundName + ".his"));
+	if (!file) {
+		return Audio::Timestamp();
+	}
+
+	Audio::SeekableAudioStream *stream = makeHISStream(file, DisposeAfterUse::NO);
+	const Audio::Timestamp length = stream ? stream->getLength() : Audio::Timestamp();
+	delete stream;
+	delete file;
+	return length;
+}
+
 void SoundManager::recalculateSoundEffects() {
 	_shouldRecalculate = true;
 
