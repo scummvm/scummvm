@@ -1474,7 +1474,8 @@ void Scene::showInventoryButtons() {
 }
 
 void Scene::inheritBrotherProgress(uint characterIndex) {
-	if (characterIndex != kPlayerCharacterFrank && characterIndex != kPlayerCharacterJoe) {
+	if (g_nancy->getGameType() != kGameTypeNancy15 ||
+			(characterIndex != kPlayerCharacterFrank && characterIndex != kPlayerCharacterJoe)) {
 		return;
 	}
 

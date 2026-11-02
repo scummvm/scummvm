@@ -54,8 +54,10 @@ static const uint16 kNoSceneNancy17					= 0x7fff;	// what the Nancy17 data has i
 // Nancy15 alternates between three protagonists (Nancy and the Hardy boys
 // Frank and Joe), each of whom keeps their own UI and journal. The two
 // brothers share their progress: whichever is played second inherits it
-// from the other.
-static const uint kMaxPlayerCharacters				= 3;
+// from the other. Nancy25 has five playable characters: Bess, George, Nancy,
+// Ned and the tutorial's character.
+static const uint kMaxPlayerCharactersNancy15		= 3;	// before Nancy25
+static const uint kMaxPlayerCharacters				= 5;
 static const uint kPlayerCharacterFrank				= 1;
 static const uint kPlayerCharacterJoe				= 2;
 

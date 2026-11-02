@@ -147,6 +147,11 @@ static uint activePlayerCharacterSlot() {
 	return MIN<uint>(g_nancy->getPlayerCharacter(), kMaxPlayerCharacters - 1);
 }
 
+// Saved games of the games before Nancy25 store three characters
+static uint numSavedPlayerCharacters() {
+	return g_nancy->getGameType() >= kGameTypeNancy25 ? kMaxPlayerCharacters : kMaxPlayerCharactersNancy15;
+}
+
 Common::Array<JournalData::Entry> &JournalData::entries(uint16 surfaceID) {
 	return journalEntries[activePlayerCharacterSlot()][surfaceID];
 }
@@ -167,7 +172,7 @@ void JournalData::synchronize(Common::Serializer &ser) {
 	// Nancy15+ protagonists each keep their own journal. Only their slots are
 	// written, so the save format of every earlier game is untouched.
 	if (g_nancy->getGameType() >= kGameTypeNancy15) {
-		for (uint i = 1; i < kMaxPlayerCharacters; ++i) {
+		for (uint i = 1; i < numSavedPlayerCharacters(); ++i) {
 			syncOneJournal(ser, journalEntries[i]);
 		}
 	}
@@ -488,7 +493,7 @@ void CellPhoneData::synchronize(Common::Serializer &ser) {
 	// Nancy15+ protagonists each carry their own phone. Only their slots are
 	// written, so the save format of every earlier game is untouched.
 	if (g_nancy->getGameType() >= kGameTypeNancy15 && ser.getVersion() >= 12) {
-		for (uint i = 1; i < kMaxPlayerCharacters; ++i) {
+		for (uint i = 1; i < numSavedPlayerCharacters(); ++i) {
 			syncPhone(ser, phones[i]);
 		}
 	}
@@ -719,7 +724,7 @@ PlayerCharacterData::Inventory &PlayerCharacterData::getInventory(uint character
 void PlayerCharacterData::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint16LE(characterIndex);
 
-	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+	for (uint i = 0; i < numSavedPlayerCharacters(); ++i) {
 		ser.syncString(designs[i]);
 	}
 
@@ -762,7 +767,7 @@ void PlayerCharacterData::synchronize(Common::Serializer &ser) {
 }
 
 void InventorySoundOverrideData::synchronize(Common::Serializer &ser) {
-	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+	for (uint i = 0; i < numSavedPlayerCharacters(); ++i) {
 		uint16 count = overrides[i].size();
 		ser.syncAsUint16LE(count);
 
@@ -1110,7 +1115,7 @@ void ScriptPictureData::synchronize(Common::Serializer &ser) {
 }
 
 void ScriptJournalData::synchronize(Common::Serializer &ser) {
-	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+	for (uint i = 0; i < numSavedPlayerCharacters(); ++i) {
 		uint16 numEntries = journalEntries[i].size();
 		ser.syncAsUint16LE(numEntries);
 		journalEntries[i].resize(numEntries);
@@ -1132,7 +1137,7 @@ void ScriptJournalData::synchronize(Common::Serializer &ser) {
 }
 
 void PhoneBookData::synchronize(Common::Serializer &ser) {
-	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+	for (uint i = 0; i < numSavedPlayerCharacters(); ++i) {
 		uint16 numEntries = entries[i].size();
 		ser.syncAsUint16LE(numEntries);
 		entries[i].resize(numEntries);
