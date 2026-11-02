@@ -1138,6 +1138,7 @@ Math::Angle Actor::getYawTo(const Math::Vector3d &p) const {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		dpos.y() = dpos.z();
+		dpos.x() = -dpos.x();
 	}
 	if (dpos.x() == 0 && dpos.y() == 0)
 		return 0;
