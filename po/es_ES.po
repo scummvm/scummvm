@@ -11828,7 +11828,8 @@ msgstr "Utilizar menús originales de Macintosh (experimental)"
 
 #: engines/mads/metaengine.cpp:123
 msgid "Use the Macintosh menu bar and original desktop framing"
-msgstr "Muestra la barra de menú y marcos de escritorio originales de Macintosh"
+msgstr ""
+"Muestra la barra de menú y marcos de escritorio originales de Macintosh"
 
 #: engines/mads/metaengine.cpp:134
 msgid "Use Pro Audio Spectrum 16 instead of AdLib"
@@ -15206,7 +15207,8 @@ msgstr "No se ha podido reproducir el vídeo de fin de partida de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:417
 msgid "Could not run the PlayStation Level 1 gameplay"
-msgstr "No se ha podido ejecutar el sistema de juego del nivel 1 de PlayStation"
+msgstr ""
+"No se ha podido ejecutar el sistema de juego del nivel 1 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:421
 msgid "Rebel Assault II PlayStation support requires TinyGL"
