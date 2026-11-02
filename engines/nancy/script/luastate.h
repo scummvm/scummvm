@@ -41,7 +41,9 @@ public:
 	LuaState(SceneContext *context = nullptr);
 	~LuaState();
 
-	lua_State *get() const { return _state; }
+	// The thread whose code is running: the state itself, or one of the
+	// coroutines of its scripts while it runs
+	lua_State *get() const { return _running; }
 
 	// Loads the script of that name and runs its main chunk. Returns false when
 	// there is no such script, or when it fails.
@@ -55,7 +57,16 @@ public:
 	static SceneContext *getContext(lua_State *L);
 
 private:
+	static int resumeCoroutine(lua_State *L);
+	static int wrapCoroutine(lua_State *L);
+	static int callWrappedCoroutine(lua_State *L);
+
+	// Calls the original coroutine.resume, which is at the index below the
+	// coroutine and its arguments, with that coroutine as the running thread
+	static void resume(lua_State *L, int functionIndex);
+
 	lua_State *_state;
+	lua_State *_running;
 };
 
 } // End of namespace Script

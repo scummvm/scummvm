@@ -36,8 +36,9 @@
 namespace Nancy {
 namespace Script {
 
-// Registry key of the scene a state belongs to
+// Registry keys of the scene a state belongs to, and of the state itself
 static const char kContextKey = 0;
+static const char kStateKey = 0;
 
 static void openLibrary(lua_State *L, lua_CFunction open, const char *name) {
 	lua_pushcfunction(L, open);
@@ -167,11 +168,79 @@ static int stringCompareNoCase(lua_State *L) {
 	return compareStrings(L, true);
 }
 
+static LuaState *getState(lua_State *L) {
+	lua_pushlightuserdata(L, (void *)const_cast<char *>(&kStateKey));
+	lua_rawget(L, LUA_REGISTRYINDEX);
+	LuaState *state = (LuaState *)lua_touserdata(L, -1);
+	lua_pop(L, 1);
+	return state;
+}
+
+// The code of a coroutine runs on a thread of its own. The engine's functions
+// work on the thread that is running, which the two below keep track of; a
+// record that a coroutine reads a field of has to find the key on its stack.
+void LuaState::resume(lua_State *L, int functionIndex) {
+	LuaState *state = getState(L);
+	lua_State *previous = state->_running;
+	state->_running = lua_tothread(L, functionIndex + 1);
+
+	const int status = lua_pcall(L, lua_gettop(L) - functionIndex, LUA_MULTRET, 0);
+	state->_running = previous;
+	if (status != 0) {
+		lua_error(L);
+	}
+}
+
+// coroutine.resume(coroutine, ...)
+int LuaState::resumeCoroutine(lua_State *L) {
+	luaL_argcheck(L, lua_isthread(L, 1), 1, "coroutine expected");
+
+	lua_pushvalue(L, lua_upvalueindex(1));
+	lua_insert(L, 1);
+	resume(L, 1);
+	return lua_gettop(L);
+}
+
+// coroutine.wrap(function) gives a function that resumes a new coroutine, and
+// raises its errors where it was called, like the one of the library
+int LuaState::wrapCoroutine(lua_State *L) {
+	lua_pushvalue(L, lua_upvalueindex(1));
+	lua_pushvalue(L, 1);
+	lua_call(L, 1, 1);
+
+	lua_pushvalue(L, lua_upvalueindex(2));
+	lua_pushcclosure(L, callWrappedCoroutine, 2);
+	return 1;
+}
+
+int LuaState::callWrappedCoroutine(lua_State *L) {
+	lua_pushvalue(L, lua_upvalueindex(2));
+	lua_insert(L, 1);
+	lua_pushvalue(L, lua_upvalueindex(1));
+	lua_insert(L, 2);
+	resume(L, 1);
+
+	if (!lua_toboolean(L, 1)) {
+		lua_settop(L, 2);
+		if (lua_isstring(L, -1)) {
+			luaL_where(L, 1);
+			lua_insert(L, -2);
+			lua_concat(L, 2);
+		}
+
+		lua_error(L);
+	}
+
+	return lua_gettop(L) - 1;
+}
+
 LuaState::LuaState(SceneContext *context) {
 	_state = luaL_newstate();
 	if (!_state) {
 		error("Could not create a Lua state");
 	}
+
+	_running = _state;
 
 	// Scripts get the base, table, string and math libraries, minus what
 	// would let them run other code or reach outside of the game
@@ -179,6 +248,17 @@ LuaState::LuaState(SceneContext *context) {
 	openLibrary(_state, luaopen_table, LUA_TABLIBNAME);
 	openLibrary(_state, luaopen_string, LUA_STRLIBNAME);
 	openLibrary(_state, luaopen_math, LUA_MATHLIBNAME);
+
+	// resume and wrap go through the originals, the latter through create
+	lua_getglobal(_state, "coroutine");
+	lua_getfield(_state, -1, "create");
+	lua_getfield(_state, -2, "resume");
+	lua_pushvalue(_state, -1);
+	lua_pushcclosure(_state, resumeCoroutine, 1);
+	lua_setfield(_state, -4, "resume");
+	lua_pushcclosure(_state, wrapCoroutine, 2);
+	lua_setfield(_state, -2, "wrap");
+	lua_pop(_state, 1);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy20) {
 		setLibraryFunction(_state, LUA_TABLIBNAME, "sort", tableSort);
@@ -222,6 +302,10 @@ LuaState::LuaState(SceneContext *context) {
 	lua_pushlightuserdata(_state, context);
 	lua_rawset(_state, LUA_REGISTRYINDEX);
 
+	lua_pushlightuserdata(_state, (void *)const_cast<char *>(&kStateKey));
+	lua_pushlightuserdata(_state, this);
+	lua_rawset(_state, LUA_REGISTRYINDEX);
+
 	registerAPI(_state);
 }
 
@@ -250,17 +334,17 @@ bool LuaState::runScript(const Common::String &name) {
 	delete stream;
 
 	Common::String chunkName = "=" + name;
-	int status = luaL_loadbuffer(_state, buffer, size, chunkName.c_str());
+	int status = luaL_loadbuffer(_running, buffer, size, chunkName.c_str());
 	delete[] buffer;
 
 	if (status != 0) {
-		warning("Could not load script %s: %s", name.c_str(), lua_tostring(_state, -1));
-		lua_pop(_state, 1);
+		warning("Could not load script %s: %s", name.c_str(), lua_tostring(_running, -1));
+		lua_pop(_running, 1);
 		return false;
 	}
 
 	Common::String what = "Failed initial run-through of script " + name;
-	return call(_state, 0, 0, what.c_str());
+	return call(_running, 0, 0, what.c_str());
 }
 
 bool LuaState::call(lua_State *L, int numArgs, int numResults, const char *what) {
