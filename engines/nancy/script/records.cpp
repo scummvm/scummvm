@@ -719,17 +719,19 @@ void NavLogicRecord::run(double sceneTime, double elapsedTime) {
 	}
 }
 
+// The mouse is taken back to where the hotspot was before the transform, so a
+// turned hotspot is turned with its picture
 bool NavLogicRecord::isOver(const ScriptPoint &point) const {
-	if (!_ref) {
-		return transformRect(_hotspot, getTransform()).contains(point.x, point.y);
-	}
-
 	double x = point.x;
 	double y = point.y;
 	getTransform().inverse().transformPoint(x, y);
 
 	int refX = (int)x;
 	int refY = (int)y;
+	if (!_ref) {
+		return _hotspot.contains(refX, refY);
+	}
+
 	if (!_source.isEmpty() || !_hotspot.isEmpty()) {
 		if (!_hotspot.contains(refX, refY)) {
 			return false;
