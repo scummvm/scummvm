@@ -170,8 +170,6 @@ static const uint32 kNoModColor = 0xFFFFFFFF;
 // end up around, and so does a color the picture gets multiplied with, which
 // can darken it or make it see-through.
 static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image, const Common::Rect &source, const ScriptRect &dest, const ScriptMatrix &transform, uint32 modColor) {
-	// Larger than anything a script shows, and small enough to draw quickly
-	const int kMaxSize = 2048;
 	const int kLimit = 16000;
 
 	const bool isMovedOnly = transform.isTranslation();
@@ -193,7 +191,8 @@ static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image
 	const double offsetY = transform.m[3][1];
 	const double determinant = a * d - b * c;
 
-	Common::Rect area = getTransformedDest(dest, transform, source.width(), source.height());
+	const Common::Rect placed = getTransformedDest(dest, transform, source.width(), source.height());
+	Common::Rect area = placed;
 	if (!isMovedOnly) {
 		double minX = 0.0;
 		double minY = 0.0;
@@ -212,8 +211,19 @@ static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image
 
 		area.left = CLIP<int>((int)floor(minX), -kLimit, kLimit);
 		area.top = CLIP<int>((int)floor(minY), -kLimit, kLimit);
-		area.right = area.left + CLIP<int>((int)ceil(maxX) - area.left, 1, kMaxSize);
-		area.bottom = area.top + CLIP<int>((int)ceil(maxY) - area.top, 1, kMaxSize);
+		area.right = CLIP<int>((int)ceil(maxX), area.left, kLimit);
+		area.bottom = CLIP<int>((int)ceil(maxY), area.top, kLimit);
+	}
+
+	// Nothing shows outside the viewport, so only the part inside it gets drawn.
+	// The map of Nancy25 is far larger than the viewport when zoomed in.
+	const VIEW *viewport = GetEngineData(VIEW);
+	assert(viewport);
+
+	area.clip(Common::Rect(viewport->screenPosition.width(), viewport->screenPosition.height()));
+	const bool isOnScreen = !area.isEmpty();
+	if (!isOnScreen) {
+		area = Common::Rect(1, 1);
 	}
 
 	// Drawn with an alpha of its own, in place of the color that stands for
@@ -233,32 +243,56 @@ static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image
 	const uint modB = modColor & 0xFF;
 
 	// A picture squashed flat, or one without a size, shows nothing
-	const bool canDraw = isMovedOnly || (fabs(determinant) > 1e-9 && dest.width() != 0 && dest.height() != 0);
+	const bool canDraw = isOnScreen && (isMovedOnly || (fabs(determinant) > 1e-9 && dest.width() != 0 && dest.height() != 0));
 	const double scaleX = dest.width() != 0 ? (double)source.width() / dest.width() : 0.0;
 	const double scaleY = dest.height() != 0 ? (double)source.height() / dest.height() : 0.0;
 
+	// Back from the viewport to where a pixel is in the picture, which moves by
+	// the same steps from one pixel to the next
+	const double stepXAcross = d / determinant * scaleX;
+	const double stepYAcross = -b / determinant * scaleY;
+	const double stepXDown = -c / determinant * scaleX;
+	const double stepYDown = a / determinant * scaleY;
+	const double firstX = area.left + 0.5 - offsetX;
+	const double firstY = area.top + 0.5 - offsetY;
+	const double rowStartX = ((firstX * d - firstY * c) / determinant - dest.left) * scaleX;
+	const double rowStartY = ((firstY * a - firstX * b) / determinant - dest.top) * scaleY;
+
+	// A picture in the format drawn into, which keeps its colors, gets copied
+	// as it is
+	const bool isCopied = image.format == out.format && modColor == kNoModColor;
+	const uint32 colorMask = ~(uint32)(image.format.aMax() << image.format.aShift);
+	const uint32 transColor = g_nancy->_graphics->getTransColor() & colorMask;
+
 	for (int y = 0; canDraw && y < out.h; ++y) {
-		for (int x = 0; x < out.w; ++x) {
-			int sourceX = x;
-			int sourceY = y;
+		uint32 *outRow = (uint32 *)out.getBasePtr(0, y);
+		double pictureX = rowStartX + y * stepXDown;
+		double pictureY = rowStartY + y * stepYDown;
+
+		for (int x = 0; x < out.w; ++x, pictureX += stepXAcross, pictureY += stepYAcross) {
+			int sourceX = area.left - placed.left + x;
+			int sourceY = area.top - placed.top + y;
 
 			if (!isMovedOnly) {
-				// Back from the viewport to where the pixel is in the picture
-				const double movedX = area.left + x + 0.5 - offsetX;
-				const double movedY = area.top + y + 0.5 - offsetY;
-				const double placedX = (movedX * d - movedY * c) / determinant;
-				const double placedY = (movedY * a - movedX * b) / determinant;
-
-				sourceX = (int)floor((placedX - dest.left) * scaleX);
-				sourceY = (int)floor((placedY - dest.top) * scaleY);
+				sourceX = (int)floor(pictureX);
+				sourceY = (int)floor(pictureY);
 			}
 
 			if (sourceX < 0 || sourceX >= source.width() || sourceY < 0 || sourceY >= source.height()) {
 				continue;
 			}
 
+			const uint32 pixel = image.getPixel(source.left + sourceX, source.top + sourceY);
+			if (isCopied) {
+				if ((pixel & colorMask) != transColor) {
+					outRow[x] = pixel;
+				}
+
+				continue;
+			}
+
 			byte alpha, red, green, blue;
-			image.format.colorToARGB(image.getPixel(source.left + sourceX, source.top + sourceY), alpha, red, green, blue);
+			image.format.colorToARGB(pixel, alpha, red, green, blue);
 			if (red == transR && green == transG && blue == transB) {
 				continue;
 			}
@@ -267,7 +301,7 @@ static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image
 				alpha = 0xFF;
 			}
 
-			out.setPixel(x, y, out.format.ARGBToColor(alpha * modA / 255, red * modR / 255, green * modG / 255, blue * modB / 255));
+			outRow[x] = out.format.ARGBToColor(alpha * modA / 255, red * modR / 255, green * modG / 255, blue * modB / 255);
 		}
 	}
 
