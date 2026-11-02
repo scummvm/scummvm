@@ -524,9 +524,17 @@ void KitEngine::updatePlayerMovement(float deltaTime) {
 		return;
 	movement.normalize();
 
+	Math::Vector3d delta;
+	if (_smoothMovement) {
+		float moveSpeed = _playerSteps[_playerStepIndex] * 25.0f;
+		delta = movement * moveSpeed * deltaTime;
+	} else {
+		delta = movement * _playerSteps[_playerStepIndex];
+	}
+
 	// The runner advances one full step per completed script frame.
 	float height = _position.y();
-	resolveCollisions(_position + movement * _playerSteps[_playerStepIndex]);
+	resolveCollisions(_position + delta);
 	checkIfStillInArea();
 	bool blocked = (_position - _lastPosition).length() < 1;
 	_lastPosition = _position;
