@@ -155,13 +155,12 @@ void MondainLogic::damage(Data::Direction dir, int effectNum, int maxDistance, i
 
 	if (!foundMondain || getRandomNumber(1, 100) > hitChance) {
 		writeString("Missed!\n");
-		return;
+	} else {
+		sg._mondainHits -= strike;
+		writeString("Hit Mondain! ");
+		writeString("%d damage!\n", strike);
+		playFX(2);
 	}
-
-	sg._mondainHits -= strike;
-	writeString("Hit Mondain! ");
-	writeString("%d damage!\n", strike);
-	playFX(2);
 
 	endOfTurn();
 }
