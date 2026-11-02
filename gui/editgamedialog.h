@@ -95,6 +95,8 @@ protected:
 	StaticTextWidget *_hotspotMarkerPopUpDesc;
 	PopUpWidget *_hotspotMarkerPopUp;
 	CheckboxWidget *_showHotspotTextCheckbox;
+	StaticTextWidget *_hotspotKeyModePopUpDesc;
+	PopUpWidget *_hotspotKeyModePopUp;
 
 	ScrollContainerWidget *_gameContainer;
 	OptionsContainerWidget *_engineOptions;

@@ -1560,6 +1560,14 @@
 						type = 'Checkbox'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'HotspotKeyModePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'HotspotKeyModePopup'
+						type = 'PopUp'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 

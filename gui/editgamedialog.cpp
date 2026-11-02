@@ -28,6 +28,7 @@
 #include "common/gui_options.h"
 #include "common/translation.h"
 #include "common/system.h"
+#include "engines/engine.h"
 
 #include "gui/browser.h"
 #include "gui/gui-manager.h"
@@ -357,6 +358,17 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	_showHotspotTextCheckbox->setState(showHotspotText);
 	_showHotspotTextCheckbox->setEnabled(hotspotsEnabled);
 
+	_hotspotKeyModePopUpDesc = new StaticTextWidget(miscContainer,
+			"GameOptions_Misc_Container.HotspotKeyModePopupDesc", _("Hotspot key mode:"));
+	_hotspotKeyModePopUp = new PopUpWidget(miscContainer, "GameOptions_Misc_Container.HotspotKeyModePopup");
+	_hotspotKeyModePopUp->appendEntry(_("<default>"), (uint32)-1);
+	_hotspotKeyModePopUp->appendEntry(_("Hold to show"), kHotspotKeyModeHold);
+	_hotspotKeyModePopUp->appendEntry(_("Toggle"), kHotspotKeyModeToggle);
+	_hotspotKeyModePopUp->setSelectedTag(ConfMan.hasKey("hotspot_key_mode", _domain) ?
+		(uint32)ConfMan.getInt("hotspot_key_mode", _domain) : (uint32)-1);
+	_hotspotKeyModePopUp->setEnabled(hotspotsEnabled);
+	_hotspotKeyModePopUpDesc->setEnabled(hotspotsEnabled);
+
 	_enableHotspotsCheckbox->setState(hotspotsEnabled);
 
 	//
@@ -575,6 +587,10 @@ void EditGameDialog::apply() {
 	ConfMan.setBool("enable_hotspots", _enableHotspotsCheckbox->getState(), _domain);
 	ConfMan.setInt("hotspot_marker", _hotspotMarkerPopUp->getSelectedTag(), _domain);
 	ConfMan.setBool("show_hotspot_text", _showHotspotTextCheckbox->getState(), _domain);
+	if (_hotspotKeyModePopUp->getSelectedTag() == (uint32)-1)
+		ConfMan.removeKey("hotspot_key_mode", _domain);
+	else
+		ConfMan.setInt("hotspot_key_mode", _hotspotKeyModePopUp->getSelectedTag(), _domain);
 
 	OptionsDialog::apply();
 }
@@ -586,6 +602,8 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_hotspotMarkerPopUpDesc->setEnabled(enabled);
 		_hotspotMarkerPopUp->setEnabled(enabled);
 		_showHotspotTextCheckbox->setEnabled(enabled);
+		_hotspotKeyModePopUpDesc->setEnabled(enabled);
+		_hotspotKeyModePopUp->setEnabled(enabled);
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	}

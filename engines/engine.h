@@ -147,6 +147,11 @@ private:
 	friend class Engine;
 };
 
+enum HotspotKeyMode {
+	kHotspotKeyModeHold,
+	kHotspotKeyModeToggle
+};
+
 class Engine {
 public:
 	/**
@@ -557,7 +562,7 @@ protected:
 	 */
 	virtual void drawHotspots();
 	virtual Graphics::HotspotRenderer *createHotspotRenderer();
-	virtual bool hideCursorForHotspots() const { return !hotspotsUseToggle(); }
+	virtual bool hideCursorForHotspots() const { return effectiveHotspotKeyMode() == kHotspotKeyModeHold; }
 
 	/**
 	 * Returns whether hotspot markers need to be re-rendered this frame.
@@ -583,7 +588,8 @@ public:
 	 */
 	virtual void showHotspots(bool show);
 	bool isShowingHotspots() const { return _showHotspots; }
-	virtual bool hotspotsUseToggle() const { return true; }
+	virtual HotspotKeyMode hotspotsKeyMode() const { return kHotspotKeyModeToggle; }
+	HotspotKeyMode effectiveHotspotKeyMode() const;
 
 	/**
 	 * Request the engine to quit.

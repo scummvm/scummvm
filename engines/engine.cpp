@@ -768,6 +768,13 @@ void Engine::showHotspots(bool show) {
 void Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
 }
 
+HotspotKeyMode Engine::effectiveHotspotKeyMode() const {
+	const int mode = ConfMan.hasKey("hotspot_key_mode") ? ConfMan.getInt("hotspot_key_mode") : -1;
+	if (mode == kHotspotKeyModeHold || mode == kHotspotKeyModeToggle)
+		return (HotspotKeyMode)mode;
+	return hotspotsKeyMode();
+}
+
 bool Engine::hotspotDirty() const {
 	return true;
 }
@@ -798,14 +805,13 @@ void Engine::drawHotspots() {
 		_hotspotMarker = marker == Graphics::kMarkerDefault ? Graphics::kMarkerDefault :
 			CLIP(marker, (int)Graphics::kMarkerCrosshair, (int)Graphics::kMarkerPoint);
 	}
-	if (_hotspotRenderer->empty()) {
-		if (_hotspotCursorHidden) {
-			CursorMan.showMouse(_hotspotPrevCursorVisible);
-			_hotspotCursorHidden = false;
-		}
-	} else if (!_hotspotCursorHidden && hideCursorForHotspots()) {
+	const bool shouldHideCursor = !_hotspotRenderer->empty() && hideCursorForHotspots();
+	if (shouldHideCursor && !_hotspotCursorHidden) {
 		_hotspotPrevCursorVisible = CursorMan.showMouse(false);
 		_hotspotCursorHidden = true;
+	} else if (!shouldHideCursor && _hotspotCursorHidden) {
+		CursorMan.showMouse(_hotspotPrevCursorVisible);
+		_hotspotCursorHidden = false;
 	}
 	_hotspotRenderer->renderOverlay(*_system, (Graphics::MarkerShape)_hotspotMarker, _hotspotShowText, _hotspotForceRedraw);
 	_hotspotForceRedraw = false;
