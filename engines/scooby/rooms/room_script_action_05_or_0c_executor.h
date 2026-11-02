@@ -30,7 +30,9 @@
 #include "room_tile_streamer.h"
 #include "scooby/assets/rom.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/interactions/interaction_controller.h"
 #include "scooby/rooms/room_actor_animator.h"
+#include "scooby/rooms/room_interface_transition_executor.h"
 #include "scooby/runtime/runtime_state.h"
 #include "scooby/types.h"
 
@@ -46,20 +48,20 @@ public:
 	// state: shared progress, camera, input, display, actor, and interaction state.
 	// actorAnimator: owner of the recovered actor-animation update called after room restoration.
 	// waitForRoomVerticalBlank: callback-aware clocked frame used by every room wait.
-	// refreshInteractionDisplay: canonical interaction-display refresh called after restoration.
-	// executeRoomScriptAction1D: separate transition owner reached by both action branches.
+	// interactions: owner of the canonical interaction-display refresh called after restoration.
+	// roomInterfaceTransitions: owner of the separate Action1D transition reached by both action branches.
 	// tileStreamer: owner of the explicit room viewport redraw after content restoration.
 	RoomScriptAction05Or0CExecutor(const ScoobyDooRom &rom, TileScene &scene,
 								   RuntimeState &state,
 								   RoomActorAnimator &actorAnimator,
 								   Common::Functor0<bool> &waitForRoomVerticalBlank,
-								   Common::Functor0<void> &refreshInteractionDisplay,
-								   Common::Functor0<void> &executeRoomScriptAction1D,
+								   InteractionController &interactions,
+								   RoomInterfaceTransitionExecutor &roomInterfaceTransitions,
 								   RoomTileStreamer &tileStreamer)
 		: _rom(rom), _scene(scene), _state(state), _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank),
-		  _refreshInteractionDisplay(refreshInteractionDisplay),
-		  _executeRoomScriptAction1D(executeRoomScriptAction1D), _tileStreamer(tileStreamer) {
+		  _interactions(interactions), _roomInterfaceTransitions(roomInterfaceTransitions),
+		  _tileStreamer(tileStreamer) {
 	}
 
 	// Runs the shared progress gate, the complete Action05 presentation, or Action0C's direct transition.
@@ -97,8 +99,8 @@ private:
 	RuntimeState &_state;
 	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
-	Common::Functor0<void> &_refreshInteractionDisplay;
-	Common::Functor0<void> &_executeRoomScriptAction1D;
+	InteractionController &_interactions;
+	RoomInterfaceTransitionExecutor &_roomInterfaceTransitions;
 	RoomTileStreamer &_tileStreamer;
 };
 } // namespace Scooby

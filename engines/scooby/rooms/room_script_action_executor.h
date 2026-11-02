@@ -40,6 +40,7 @@
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/interactions/interaction_controller.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/randomness/deterministic_random.h"
 #include "scooby/rooms/room_actor_animator.h"
@@ -66,11 +67,10 @@ public:
 	// actorAnimator: owner of the recovered actor-animation update called by action handlers.
 	// roomVBlank: owner of the installed room callback that advances state during busy waits.
 	// presentRoom: canonical room-presentation owner called by Action02.
-	// processAutomaticInteractions: canonical automatic-interaction update called by Action04.
-	// refreshInteractionDisplay: canonical interaction-display refresh called by Action05.
-	// finishRoomStartup: existing owner of Ghidra FinishRoomStartup at 0x00004862, selected by action 0x1C
-	//     and also called directly during room startup.
-	// executeRoomScriptAction1D: transition owner selected by action-table index 0x1D.
+	// interactions: owner of the automatic-interaction update called by Action04 and the
+	//     interaction-display refresh called by Action05.
+	// roomInterfaceTransitions: owner of Ghidra FinishRoomStartup at 0x00004862 (action 0x1C, also called
+	//     directly during room startup) and of the transition selected by action-table index 0x1D.
 	// tileStreamer: owner of room-plane restoration called by Action05.
 	// restartApplication: managed owner of Ghidra RestartApplication.
 	RoomScriptActionExecutor(const ScoobyDooRom &rom, TileScene &scene,
@@ -80,11 +80,9 @@ public:
 							 RoomActorAnimator &actorAnimator,
 							 RoomVBlankHandler &roomVBlank,
 							 Common::Functor0<Optional<SessionExit>> &presentRoom,
-							 Common::Functor0<Optional<SessionExit>>
-								 &processAutomaticInteractions,
-							 Common::Functor0<void> &refreshInteractionDisplay,
-							 Common::Functor0<void> &finishRoomStartup,
-							 Common::Functor0<void> &executeRoomScriptAction1D, RoomTileStreamer &tileStreamer,
+							 InteractionController &interactions,
+							 RoomInterfaceTransitionExecutor &roomInterfaceTransitions,
+							 RoomTileStreamer &tileStreamer,
 							 Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication);
 
 	// Dispatches one nested action through its original table index.
@@ -151,8 +149,8 @@ private:
 	RoomActorAnimator &_actorAnimator;
 	RoomVBlankHandler &_roomVBlank;
 	Common::Functor0<Optional<SessionExit>> &_presentRoom;
-	Common::Functor0<Optional<SessionExit>> &_processAutomaticInteractions;
-	Common::Functor0<void> &_finishRoomStartup;
+	InteractionController &_interactions;
+	RoomInterfaceTransitionExecutor &_roomInterfaceTransitions;
 
 	Common::Functor0Mem<bool, RoomScriptActionExecutor> _waitForRoomVerticalBlankFunctor;
 	Common::Functor1Mem<SessionExit, void, RoomScriptActionExecutor> _requestSessionExitFunctor;
@@ -215,6 +213,8 @@ private:
 	Common::Functor0Mem<void, RoomScriptCoordinateSpriteExecutor> _action17Functor;
 	Common::Functor0Mem<void, RoomScriptCoordinateSpriteExecutor> _action18Functor;
 	Common::Functor0Mem<void, RoomScriptCoordinateSpriteExecutor> _action19Functor;
+	Common::Functor0Mem<void, RoomInterfaceTransitionExecutor> _action1CFunctor;
+	Common::Functor0Mem<void, RoomInterfaceTransitionExecutor> _action1DFunctor;
 	Common::Functor0Mem<void, RoomScriptAction1EExecutor> _action1EFunctor;
 	Common::Functor0Mem<void, RoomScriptAction27Executor> _action27Functor;
 	Common::Functor0Mem<void, DuelRoomScriptActionExecutor> _action32Functor;

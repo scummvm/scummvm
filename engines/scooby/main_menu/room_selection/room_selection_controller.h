@@ -37,18 +37,20 @@
 
 namespace Scooby {
 
+class MainMenuController;
+
 class RoomSelectionController {
 public:
 	// Binds authored room labels and selector presentation to the installed menu callback.
 	// catalog: both decoded episode room-name catalogs.
 	// presentation: logical menu text and sprite owner.
 	// state: managed controller samples retained by the menu callback.
-	// waitForVerticalBlank: one menu retrace, including callback and host-close handling.
+	// mainMenu: owner of the menu retrace wait, including callback and host-close handling.
 	RoomSelectionController(const RoomSelectionCatalog &catalog,
 							MainMenuPresentation &presentation,
-							RuntimeState &state, Common::Functor0<bool> &waitForVerticalBlank)
+							RuntimeState &state, MainMenuController &mainMenu)
 		: _catalog(catalog), _presentation(presentation), _state(state),
-		  _waitForVerticalBlank(waitForVerticalBlank) {
+		  _mainMenu(mainMenu) {
 	}
 
 	// Displays the active room catalog until B confirms one room identifier.
@@ -70,7 +72,7 @@ private:
 	const RoomSelectionCatalog &_catalog;
 	MainMenuPresentation &_presentation;
 	RuntimeState &_state;
-	Common::Functor0<bool> &_waitForVerticalBlank;
+	MainMenuController &_mainMenu;
 };
 } // namespace Scooby
 

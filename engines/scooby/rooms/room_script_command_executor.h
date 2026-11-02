@@ -83,10 +83,9 @@ public:
 	// presentRoom: canonical room-presentation owner called by nested Action02.
 	// resetRoomStateForReload: canonical room-state reset owner called by command 0x18.
 	// reloadAndPresentRoom: canonical room reload and presentation owner called by command 0x11.
-	// processAutomaticInteractions: canonical automatic-interaction update called by nested Action04.
-	// refreshInteractionDisplay: canonical interaction-display refresh called by nested Action05.
-	// finishRoomStartup: existing owner of the action-table target at index 0x1C.
-	// executeRoomScriptAction1D: transition owner selected by action-table index 0x1D.
+	// interactions: owner of the automatic-interaction update (nested Action04) and interaction-display
+	//     refresh (nested Action05).
+	// roomInterfaceTransitions: owner of the action-table targets at indices 0x1C and 0x1D.
 	// dialogue: shared dialogue owner used by command 0x10.
 	// invokeRoomScriptDispatchCallback: runtime owner of the scan or execution dispatcher installed by the
 	//     current script caller.
@@ -102,9 +101,8 @@ public:
 		Common::Functor0<Optional<SessionExit>> &presentRoom,
 		Common::Functor0<Optional<SessionExit>> &resetRoomStateForReload,
 		Common::Functor0<Optional<SessionExit>> &reloadAndPresentRoom,
-		Common::Functor0<Optional<SessionExit>> &processAutomaticInteractions,
-		Common::Functor0<void> &refreshInteractionDisplay, Common::Functor0<void> &finishRoomStartup,
-		Common::Functor0<void> &executeRoomScriptAction1D, DialogueController &dialogue,
+		InteractionController &interactions, RoomInterfaceTransitionExecutor &roomInterfaceTransitions,
+		DialogueController &dialogue,
 		Common::Functor1<int, Optional<SessionExit>> &invokeRoomScriptDispatchCallback,
 		ActionMenuController &actionMenu, RoomTileStreamer &tileStreamer,
 		Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication);

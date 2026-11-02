@@ -40,6 +40,7 @@
 namespace Scooby {
 
 class InteractionActionMenuExecutor;
+class RoomScriptController;
 
 class InteractionController {
 public:
@@ -51,25 +52,15 @@ public:
 	// actionMenu: shared owner of action selection and prompt publication.
 	// dialogue: shared owner of dialogue and interaction text rendering.
 	// interactionActionMenu: complete interaction-action choice and nested-frame owner.
+	// roomScripts: owner of the mode-selecting room-script dispatcher and the separate initialization scan.
 	InteractionController(const ScoobyDooRom &rom, RuntimeState &state,
 						  Common::Functor0<bool> &waitForRoomVerticalBlank,
 						  DeterministicRandom &random,
 						  ActionMenuController &actionMenu, DialogueController &dialogue,
-						  InteractionActionMenuExecutor &interactionActionMenu)
+						  InteractionActionMenuExecutor &interactionActionMenu, RoomScriptController &roomScripts)
 		: _rom(rom), _state(state), _resolver(rom, state), _actionMenu(actionMenu), _dialogue(dialogue),
-		  _interactionActionMenu(interactionActionMenu),
-		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank), _random(random),
-		  _invokeRoomScriptDispatchCallback(nullptr), _runRoomScriptInitializationCommands(nullptr) {
-	}
-
-	// Binds the script initialization, scan, and execution owners used by interaction windows.
-	// invokeRoomScriptDispatchCallback: mode-selecting room-script dispatcher.
-	// runRoomScriptInitializationCommands: separate initialization-scan owner.
-	void bindRoomScriptDispatch(
-		Common::Functor1<int, Optional<SessionExit>> &invokeRoomScriptDispatchCallback,
-		Common::Functor0<Optional<SessionExit>> &runRoomScriptInitializationCommands) {
-		_invokeRoomScriptDispatchCallback = &invokeRoomScriptDispatchCallback;
-		_runRoomScriptInitializationCommands = &runRoomScriptInitializationCommands;
+		  _interactionActionMenu(interactionActionMenu), _roomScripts(roomScripts),
+		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank), _random(random) {
 	}
 
 	// Copies the current interaction fields into their original previous-frame slots.
@@ -192,10 +183,9 @@ private:
 	ActionMenuController &_actionMenu;
 	DialogueController &_dialogue;
 	InteractionActionMenuExecutor &_interactionActionMenu;
+	RoomScriptController &_roomScripts;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 	DeterministicRandom &_random;
-	Common::Functor1<int, Optional<SessionExit>> *_invokeRoomScriptDispatchCallback;
-	Common::Functor0<Optional<SessionExit>> *_runRoomScriptInitializationCommands;
 };
 } // namespace Scooby
 

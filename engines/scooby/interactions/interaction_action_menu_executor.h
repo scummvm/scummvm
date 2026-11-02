@@ -42,6 +42,9 @@
 
 namespace Scooby {
 
+class InteractionController;
+class RoomScriptController;
+
 class InteractionActionMenuExecutor {
 public:
 	// Binds the menu's nested script lifetime to text, interface, animation, and retrace owners.
@@ -52,19 +55,17 @@ public:
 	// presenter: host retrace boundary used by native busy-wait handovers.
 	// actorAnimator: owner of the recovered actor-animation service.
 	// roomVBlank: owner of the installed room callback that advances asynchronous state.
-	// chooseRandomInteractionAnimation: recovered actor-zero interaction-animation selector.
-	// runRoomScriptInitializationCommands: non-consuming action registration scan.
-	// runRoomScriptCommands: execution-mode room-script dispatcher.
+	// interactions: owner of the recovered actor-zero interaction-animation selector.
+	// roomScripts: owner of the non-consuming action registration scan and the execution-mode
+	//     room-script dispatcher.
 	// dialogue: shared interaction text and dialogue owner.
 	// actionMenu: owner of the action-prompt composition, publication, and left/right refresh boundaries.
 	InteractionActionMenuExecutor(
 		const ScoobyDooRom &rom, TileScene &scene,
 		SharedGraphicsWorkspace &graphicsWorkspace, RuntimeState &state,
 		FramePresenter &presenter, RoomActorAnimator &actorAnimator,
-		RoomVBlankHandler &roomVBlank, Common::Functor0<void> &chooseRandomInteractionAnimation,
-		Common::Functor0<Optional<SessionExit>> &runRoomScriptInitializationCommands,
-		Common::Functor0<Optional<SessionExit>> &runRoomScriptCommands,
-		DialogueController &dialogue,
+		RoomVBlankHandler &roomVBlank, InteractionController &interactions,
+		RoomScriptController &roomScripts, DialogueController &dialogue,
 		ActionMenuController &actionMenu);
 
 	// Runs registered interaction actions until the current or every nested script frame closes.
@@ -128,9 +129,8 @@ private:
 	FramePresenter &_presenter;
 	RoomActorAnimator &_actorAnimator;
 	RoomVBlankHandler &_roomVBlank;
-	Common::Functor0<void> &_chooseRandomInteractionAnimation;
-	Common::Functor0<Optional<SessionExit>> &_runRoomScriptInitializationCommands;
-	Common::Functor0<Optional<SessionExit>> &_runRoomScriptCommands;
+	InteractionController &_interactions;
+	RoomScriptController &_roomScripts;
 	DialogueController &_dialogue;
 	ActionMenuController &_actionMenu;
 };

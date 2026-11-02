@@ -31,14 +31,12 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 	const RoomCollisionProbe &collisionProbe, DeterministicRandom &random,
 	FramePresenter &presenter, RoomActorAnimator &actorAnimator,
 	RoomVBlankHandler &roomVBlank, Common::Functor0<Optional<SessionExit>> &presentRoom,
-	Common::Functor0<Optional<SessionExit>> &processAutomaticInteractions,
-	Common::Functor0<void> &refreshInteractionDisplay, Common::Functor0<void> &finishRoomStartup,
-	Common::Functor0<void> &executeRoomScriptAction1D, RoomTileStreamer &tileStreamer,
+	InteractionController &interactions, RoomInterfaceTransitionExecutor &roomInterfaceTransitions,
+	RoomTileStreamer &tileStreamer,
 	Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication)
 	: _rom(rom), _state(state), _random(random), _presenter(presenter),
 	  _actorAnimator(actorAnimator), _roomVBlank(roomVBlank),
-	  _presentRoom(presentRoom), _processAutomaticInteractions(processAutomaticInteractions),
-	  _finishRoomStartup(finishRoomStartup),
+	  _presentRoom(presentRoom), _interactions(interactions), _roomInterfaceTransitions(roomInterfaceTransitions),
 	  _waitForRoomVerticalBlankFunctor(this, &RoomScriptActionExecutor::waitForRoomVerticalBlank),
 	  _requestSessionExitFunctor(this, &RoomScriptActionExecutor::requestSessionExit),
 	  _tryExecuteRoomScriptAction02Functor(this, &RoomScriptActionExecutor::tryExecuteScriptAction02PresentRoom),
@@ -98,11 +96,13 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 	  _action17Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::scriptAction17ShowObjectSprite),
 	  _action18Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::scriptAction18ShowObjectAltSprite),
 	  _action19Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::scriptAction19HideObjectSprite),
+	  _action1CFunctor(&roomInterfaceTransitions, &RoomInterfaceTransitionExecutor::finishRoomStartup),
+	  _action1DFunctor(&roomInterfaceTransitions, &RoomInterfaceTransitionExecutor::executeRoomScriptAction1D),
 	  _action1EFunctor(&_action1EExecutor, &RoomScriptAction1EExecutor::executeRoomScriptAction1E),
 	  _action27Functor(&_action27Executor, &RoomScriptAction27Executor::executeRoomScriptAction27),
 	  _action32Functor(&_duelActionExecutor, &DuelRoomScriptActionExecutor::executeRoomScriptAction32),
 	  _action05Or0CExecutor(rom, scene, state, actorAnimator, _waitForRoomVerticalBlankFunctor,
-							refreshInteractionDisplay, executeRoomScriptAction1D, tileStreamer),
+							interactions, roomInterfaceTransitions, tileStreamer),
 	  _action1EExecutor(rom, scene, state, presenter, actorAnimator, roomVBlank,
 						restartApplication, _requestSessionExitFunctor),
 	  _action27Executor(state, presenter, actorAnimator, roomVBlank,
@@ -143,8 +143,8 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 	_handlers[0x19] = &_action19Functor;
 	_handlers[0x1A] = &_action1AFunctor;
 	_handlers[0x1B] = &_action1BFunctor;
-	_handlers[0x1C] = &_finishRoomStartup;
-	_handlers[0x1D] = &executeRoomScriptAction1D;
+	_handlers[0x1C] = &_action1CFunctor;
+	_handlers[0x1D] = &_action1DFunctor;
 	_handlers[0x1E] = &_action1EFunctor;
 	_handlers[0x1F] = &_action1FFunctor;
 	_handlers[0x20] = &_action20Functor;
@@ -243,7 +243,7 @@ void RoomScriptActionExecutor::scriptAction04WaitForButtonPress() {
 	while (true) {
 		// Ghidra 0x00004568-0x0000456F: every repeated native iteration calls both separate original
 		// owners. A managed non-returning handover from the first call bypasses the second as native control did.
-		_requestedSessionExit = _processAutomaticInteractions();
+		_requestedSessionExit = _interactions.processAutomaticInteractions();
 		if (_requestedSessionExit.hasValue()) {
 			return;
 		}
@@ -298,7 +298,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction06() {
 
 	// Ghidra 0x00004828-0x0000482D: the set outcome calls and returns through the separate canonical
 	// FinishRoomStartup boundary; do not absorb that original function into this action.
-	_finishRoomStartup();
+	_roomInterfaceTransitions.finishRoomStartup();
 }
 
 // Establishes actor-slot-one exclusion and blocks its visibility.

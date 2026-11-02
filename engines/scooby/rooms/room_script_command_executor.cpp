@@ -36,9 +36,8 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	Common::Functor0<Optional<SessionExit>> &presentRoom,
 	Common::Functor0<Optional<SessionExit>> &resetRoomStateForReload,
 	Common::Functor0<Optional<SessionExit>> &reloadAndPresentRoom,
-	Common::Functor0<Optional<SessionExit>> &processAutomaticInteractions,
-	Common::Functor0<void> &refreshInteractionDisplay, Common::Functor0<void> &finishRoomStartup,
-	Common::Functor0<void> &executeRoomScriptAction1D, DialogueController &dialogue,
+	InteractionController &interactions, RoomInterfaceTransitionExecutor &roomInterfaceTransitions,
+	DialogueController &dialogue,
 	Common::Functor1<int, Optional<SessionExit>> &invokeRoomScriptDispatchCallback,
 	ActionMenuController &actionMenu, RoomTileStreamer &tileStreamer,
 	Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication)
@@ -102,8 +101,8 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 						 _requestSessionExitFunctor),
 	  _command20Executor(rom, state), _command21Executor(rom, state),
 	  _actions(rom, scene, state, collisionProbe, random, presenter, actorAnimator,
-			   roomVBlank, presentRoom, processAutomaticInteractions, refreshInteractionDisplay,
-			   finishRoomStartup, executeRoomScriptAction1D, tileStreamer, restartApplication),
+			   roomVBlank, presentRoom, interactions, roomInterfaceTransitions, tileStreamer,
+			   restartApplication),
 	  _conditionEvaluator(rom, state), _handlers(kHandlerCount), _interactionModeSnapshot(0) {
 	_handlers[0x00] = &_command00Functor;
 	_handlers[0x01] = &_command01Functor;

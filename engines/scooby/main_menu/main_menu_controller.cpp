@@ -40,23 +40,12 @@ MainMenuController::MainMenuController(const ScoobyDooRom &rom, MainMenuPresenta
 	  _presenter(presenter), _restartSequence(restartSequence), _menuInputState(state), _passwordDisplay(),
 	  _roomObjectSelectionCatalog(rom), _roomSelectionCatalog(rom), _soundTestCatalog(rom),
 	  _episodeInitializer(rom, state),
-	  _waitForMainMenuVerticalBlankFunctor(this, &MainMenuController::waitForMainMenuVerticalBlank),
-	  _initializeAudioDriverFunctor(this, &MainMenuController::initializeAudioDriver),
-	  _playAudioCommandFunctor(this, &MainMenuController::playAudioCommand),
-	  _presentMenuAndSelectOptionFunctor(this, &MainMenuController::presentMenuAndSelectOption),
-	  _prepareOptionsAndDispatchFunctor(this, &MainMenuController::prepareOptionsAndDispatch),
-	  _commitSelectedRoomFunctor(this, &MainMenuController::commitSelectedRoomAtCurrentSelection),
-	  _waitForFramesBeforeMainMenuVBlankFunctor(this, &MainMenuController::waitForFramesBeforeMainMenuVBlank),
 	  _invokeMainMenuVBlankFunctor(this, &MainMenuController::invokeMainMenuVBlank),
-	  _roomObjectSelection(_roomObjectSelectionCatalog, menuPresentation, state,
-						   _waitForMainMenuVerticalBlankFunctor),
-	  _roomSelection(_roomSelectionCatalog, menuPresentation, state, _waitForMainMenuVerticalBlankFunctor),
-	  _soundTest(_soundTestCatalog, menuPresentation, input, state, _waitForMainMenuVerticalBlankFunctor,
-				 _initializeAudioDriverFunctor, _playAudioCommandFunctor),
+	  _roomObjectSelection(_roomObjectSelectionCatalog, menuPresentation, state, *this),
+	  _roomSelection(_roomSelectionCatalog, menuPresentation, state, *this),
+	  _soundTest(_soundTestCatalog, menuPresentation, input, state, *this),
 	  _episodePasswordMenu(_episodeInitializer, menuPresentation, _menuInputState, _passwordDisplay, state,
-						   _presentMenuAndSelectOptionFunctor, _prepareOptionsAndDispatchFunctor,
-						   _commitSelectedRoomFunctor, _waitForMainMenuVerticalBlankFunctor,
-						   _waitForFramesBeforeMainMenuVBlankFunctor, _playAudioCommandFunctor) {
+						   *this) {
 }
 
 MainMenuExit MainMenuController::runMainMenu(const Common::Functor0<void> &beforeMenuRetrace) {
@@ -264,8 +253,7 @@ bool MainMenuController::presentCompressedMenuPlane(int assetOffset) {
 }
 
 bool MainMenuController::waitForFramesBeforeMainMenuVBlank(int frameCounter) {
-	Common::Functor0Mem<void, MainMenuController> beforeRetrace(this, &MainMenuController::invokeMainMenuVBlank);
-	return _presenter.waitForFrames(frameCounter, &beforeRetrace);
+	return _presenter.waitForFrames(frameCounter, &_invokeMainMenuVBlankFunctor);
 }
 
 MainMenuExit MainMenuController::dispatchSelection(DispatchTable dispatchTable, int selection) {

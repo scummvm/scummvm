@@ -36,6 +36,8 @@
 
 namespace Scooby {
 
+class MainMenuController;
+
 class SoundTestController {
 public:
 	// Binds the recovered loop to its catalog, menu scene, input state, and host handovers.
@@ -43,17 +45,13 @@ public:
 	// presentation: logical owner of menu composition and indexed text writes.
 	// input: controller sampler whose semantic Back binding is scoped to this menu.
 	// state: shared controller and signed-retrace state used by the installed callback.
-	// waitForVerticalBlank: host wait that invokes the installed main-menu callback once.
-	// initializeAudioDriver: gemsStopAll boundary retained at each original call site.
-	// playAudioCommand: gemsStartSong boundary retained at each original call site.
+	// mainMenu: owner of the host wait that invokes the installed main-menu callback once, and of the
+	//     gemsStopAll/gemsStartSong boundaries retained at each original call site.
 	SoundTestController(const SoundTestCatalog &catalog, MainMenuPresentation &presentation,
 						ControllerInput &input, RuntimeState &state,
-						Common::Functor0<bool> &waitForVerticalBlank,
-						Common::Functor0<void> &initializeAudioDriver,
-						Common::Functor1<int, void> &playAudioCommand)
+						MainMenuController &mainMenu)
 		: _catalog(catalog), _presentation(presentation), _input(input), _state(state),
-		  _waitForVerticalBlank(waitForVerticalBlank), _initializeAudioDriver(initializeAudioDriver),
-		  _playAudioCommand(playAudioCommand) {
+		  _mainMenu(mainMenu) {
 	}
 
 	// Runs the complete recovered sound-test loop until C returns to the main-menu options.
@@ -87,9 +85,7 @@ private:
 	MainMenuPresentation &_presentation;
 	ControllerInput &_input;
 	RuntimeState &_state;
-	Common::Functor0<bool> &_waitForVerticalBlank;
-	Common::Functor0<void> &_initializeAudioDriver;
-	Common::Functor1<int, void> &_playAudioCommand;
+	MainMenuController &_mainMenu;
 };
 } // namespace Scooby
 

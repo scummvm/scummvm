@@ -26,6 +26,7 @@
 #include "interaction_action_menu_executor.h"
 #include "scooby/common/contracts.h"
 #include "scooby/rooms/room_object.h"
+#include "scooby/rooms/room_script_controller.h"
 
 namespace Scooby {
 
@@ -165,9 +166,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 			_rom.readUInt16(interactionScriptHeaderOffset + static_cast<int>(sizeof(uint16)));
 		_state.roomScriptCurrentOffset = interactionScriptStartOffset;
 		_state.roomScriptEndOffset = interactionScriptEndOffset;
-		SDM_ASSERT(_runRoomScriptInitializationCommands != nullptr,
-				   "InteractionController runRoomScriptInitializationCommands callback is not bound.");
-		Optional<SessionExit> initializationExit = (*_runRoomScriptInitializationCommands)();
+		Optional<SessionExit> initializationExit = _roomScripts.runRoomScriptInitializationCommands();
 		if (initializationExit.hasValue()) {
 			return initializationExit;
 		}
@@ -183,9 +182,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		_state.automaticInteractionFlags = kSelectedInteractionScanMask;
 		VerbEnum verb = _state.selectedVerb;
 		uint8 interactionFlags = _state.interactionFlags;
-		SDM_ASSERT(_invokeRoomScriptDispatchCallback != nullptr,
-				   "InteractionController invokeRoomScriptDispatchCallback callback is not bound.");
-		Optional<SessionExit> scanExit = (*_invokeRoomScriptDispatchCallback)(0);
+		Optional<SessionExit> scanExit = _roomScripts.invokeRoomScriptDispatchCallback(0);
 		if (scanExit.hasValue()) {
 			return scanExit;
 		}
@@ -201,9 +198,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 				nestedScriptHeaderOffset + kNestedSelectedInteractionScriptHeaderByteCount;
 			_state.automaticInteractionFlags &= static_cast<uint8>(~kAutomaticInteractionMarkerMask);
 			_actionMenu.refreshSelectedActionIcons();
-			SDM_ASSERT(_invokeRoomScriptDispatchCallback != nullptr,
-					   "InteractionController invokeRoomScriptDispatchCallback callback is not bound.");
-			Optional<SessionExit> executionExit = (*_invokeRoomScriptDispatchCallback)(1);
+			Optional<SessionExit> executionExit = _roomScripts.invokeRoomScriptDispatchCallback(1);
 			if (executionExit.hasValue()) {
 				return executionExit;
 			}
@@ -471,9 +466,7 @@ Optional<SessionExit> InteractionController::processAutomaticInteractions() {
 			interactionScriptBaseOffset + static_cast<int>(_rom.readUInt32(interactionRecordOffset));
 		_state.roomScriptCurrentOffset = scriptHeaderOffset + kInteractionScriptHeaderByteCount;
 		_state.roomScriptEndOffset = _state.roomScriptCurrentOffset + _rom.readInt16(scriptHeaderOffset);
-		SDM_ASSERT(_invokeRoomScriptDispatchCallback != nullptr,
-				   "InteractionController invokeRoomScriptDispatchCallback callback is not bound.");
-		Optional<SessionExit> scanExit = (*_invokeRoomScriptDispatchCallback)(0);
+		Optional<SessionExit> scanExit = _roomScripts.invokeRoomScriptDispatchCallback(0);
 		if (scanExit.hasValue()) {
 			return scanExit;
 		}
@@ -494,9 +487,7 @@ Optional<SessionExit> InteractionController::processAutomaticInteractions() {
 			nestedScriptHeaderOffset + _rom.readInt16(
 										   nestedScriptHeaderOffset + static_cast<int>(sizeof(uint16)));
 		_state.roomScriptCurrentOffset = nestedScriptHeaderOffset + kNestedInteractionScriptHeaderByteCount;
-		SDM_ASSERT(_invokeRoomScriptDispatchCallback != nullptr,
-				   "InteractionController invokeRoomScriptDispatchCallback callback is not bound.");
-		Optional<SessionExit> executionExit = (*_invokeRoomScriptDispatchCallback)(1);
+		Optional<SessionExit> executionExit = _roomScripts.invokeRoomScriptDispatchCallback(1);
 		if (executionExit.hasValue()) {
 			return executionExit;
 		}

@@ -23,6 +23,8 @@
 
 #include "common/scummsys.h"
 
+#include "scooby/main_menu/main_menu_controller.h"
+
 namespace Scooby {
 
 const char SoundTestController::kHexDigits[17] = "0123456789ABCDEF";
@@ -42,7 +44,7 @@ bool SoundTestController::runLoop() {
 	// Ghidra 0x0000940C-0x0000943B: retain the prior input, current animation, audio reset, and scene asset.
 	uint8 previousInput = _state.previousControllerOneInput;
 	composeAnimatedTiles();
-	_initializeAudioDriver();
+	_mainMenu.initializeAudioDriver();
 	_presentation.stageByteRleData(kSceneAssetOffset);
 	_presentation.setTextPriority(true);
 	int group = 0;
@@ -70,14 +72,14 @@ bool SoundTestController::runLoop() {
 				}
 
 				_presentation.commitMenuSceneBuffers();
-				_initializeAudioDriver();
-				_playAudioCommand(_state.resumeAudioCommand);
+				_mainMenu.initializeAudioDriver();
+				_mainMenu.playAudioCommand(_state.resumeAudioCommand);
 				return true;
 			}
 
 			// Ghidra 0x00009668-0x0000967B: retain this sample while the callback advances the countdown.
 			previousInput = _state.controllerOneInput;
-			if (!_waitForVerticalBlank()) {
+			if (!_mainMenu.waitForMainMenuVerticalBlank()) {
 				return false;
 			}
 		}
@@ -90,7 +92,7 @@ bool SoundTestController::runLoop() {
 			displayedSelection = selection;
 
 			// Ghidra 0x00009694-0x000096C3: select the NUL row, synchronize, clear, and center its name.
-			if (!_waitForVerticalBlank()) {
+			if (!_mainMenu.waitForMainMenuVerticalBlank()) {
 				return false;
 			}
 
@@ -133,13 +135,13 @@ bool SoundTestController::processInput(int &group, int &index, uint8 previousInp
 	normalizeSelection(group, index);
 	if (wasPressed(ControllerButtons::B, previousInput)) {
 		consumeInputEdge();
-		_initializeAudioDriver();
-		_playAudioCommand(_catalog.getAudioCommand(displayedSelection));
+		_mainMenu.initializeAudioDriver();
+		_mainMenu.playAudioCommand(_catalog.getAudioCommand(displayedSelection));
 	}
 
 	if (wasPressed(ControllerButtons::A, previousInput)) {
 		consumeInputEdge();
-		_initializeAudioDriver();
+		_mainMenu.initializeAudioDriver();
 	}
 
 	return wasPressed(ControllerButtons::C, previousInput);
@@ -186,7 +188,7 @@ void SoundTestController::consumeInputEdge() {
 
 bool SoundTestController::waitForPendingCommit() {
 	while (_state.retraceCountdown >= 0) {
-		if (!_waitForVerticalBlank()) {
+		if (!_mainMenu.waitForMainMenuVerticalBlank()) {
 			return false;
 		}
 	}

@@ -42,7 +42,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 	_state.progressStateBytes[0] |= 0x02;
 	if (_rom.readUInt16(_state.roomScriptCurrentOffset + static_cast<int>(sizeof(uint16))) ==
 		kShortcutAction) {
-		_executeRoomScriptAction1D();
+		_roomInterfaceTransitions.executeRoomScriptAction1D();
 		return;
 	}
 
@@ -179,7 +179,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 	// call its separate canonical function boundary.
 	_actorAnimator.updateActorAnimationFrames();
 	_state.interactionFlags |= kInteractionRefreshMask;
-	_refreshInteractionDisplay();
+	_interactions.refreshInteractionDisplay();
 
 	// Ghidra 0x0000477C-0x00004781: D0=5 gives the original WaitForFrames six retraces.
 	if (!waitForFrames(5)) {
@@ -197,7 +197,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 	_state.displayFlags |= kRoomUpdateEnabledMask;
 
 	// Ghidra 0x000047A6-0x000047AB: both completed branches converge on the separate Action1D owner.
-	_executeRoomScriptAction1D();
+	_roomInterfaceTransitions.executeRoomScriptAction1D();
 }
 
 bool RoomScriptAction05Or0CExecutor::waitForFrames(int frameCounter) {

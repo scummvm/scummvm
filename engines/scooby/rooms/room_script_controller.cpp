@@ -31,23 +31,15 @@ RoomScriptController::RoomScriptController(
 	Common::Functor0<Optional<SessionExit>> &presentRoom,
 	Common::Functor0<Optional<SessionExit>> &resetRoomStateForReload,
 	Common::Functor0<Optional<SessionExit>> &reloadAndPresentRoom, InteractionController &interactions,
-	Common::Functor0<void> &refreshInteractionDisplay, Common::Functor0<void> &finishRoomStartup,
-	Common::Functor0<void> &executeRoomScriptAction1D, DialogueController &dialogue,
+	RoomInterfaceTransitionExecutor &roomInterfaceTransitions, DialogueController &dialogue,
 	ActionMenuController &actionMenu, RoomTileStreamer &tileStreamer,
 	Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication)
-	: _rom(rom), _state(state), _interactions(interactions),
-	  _processAutomaticInteractionsFunctor(&_interactions,
-										   &InteractionController::processAutomaticInteractions),
+	: _rom(rom), _state(state),
 	  _invokeRoomScriptDispatchCallbackFunctor(this, &RoomScriptController::invokeRoomScriptDispatchCallback),
-	  _runRoomScriptInitializationCommandsFunctor(
-		  this, &RoomScriptController::runRoomScriptInitializationCommands),
 	  _commands(rom, scene, state, collisionProbe, movement, random, presenter, actorAnimator,
 				roomVBlank, presentRoom, resetRoomStateForReload, reloadAndPresentRoom,
-				_processAutomaticInteractionsFunctor, refreshInteractionDisplay, finishRoomStartup,
-				executeRoomScriptAction1D, dialogue, _invokeRoomScriptDispatchCallbackFunctor,
+				interactions, roomInterfaceTransitions, dialogue, _invokeRoomScriptDispatchCallbackFunctor,
 				actionMenu, tileStreamer, restartApplication) {
-	_interactions.bindRoomScriptDispatch(_invokeRoomScriptDispatchCallbackFunctor,
-										 _runRoomScriptInitializationCommandsFunctor);
 }
 
 Optional<SessionExit> RoomScriptController::runRoomScriptInitializationCommands() {

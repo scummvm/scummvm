@@ -27,6 +27,7 @@
 #include "common/array.h"
 
 #include "password_display_state.h"
+#include "scooby/main_menu/main_menu_controller.h"
 #include "scooby/scooby.h"
 
 namespace Scooby {
@@ -37,24 +38,24 @@ MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 	int promptPlaneOffset = _state.episodeIndex == 0
 								? kEpisodeOneMenuPlaneOffset
 								: kEpisodeTwoMenuPlaneOffset;
-	Optional<int> selection = _presentMenuAndSelectOption(promptPlaneOffset, kPromptOptionCount);
+	Optional<int> selection = _mainMenu.presentMenuAndSelectOption(promptPlaneOffset, kPromptOptionCount);
 	if (!selection.hasValue()) {
 		return MainMenuExit::HostClosed;
 	}
 
 	// Ghidra 0x00008FEA-0x00008FF7: row zero enters the runtime; row two returns to title options.
 	if (selection.value() == 0) {
-		return _commitSelectedRoom();
+		return _mainMenu.commitSelectedRoomAtCurrentSelection();
 	}
 
 	if (selection.value() == 2) {
-		return _prepareOptionsAndDispatch();
+		return _mainMenu.prepareOptionsAndDispatch();
 	}
 
 	// Ghidra 0x00008FF8-0x00009039: stage the grid, drain the pending commit, and rebuild both rows.
 	_presentation.stageByteRleData(kPasswordGridMenuPlaneOffset);
 	while (_state.retraceCountdown >= 0) {
-		if (!_waitForVerticalBlank()) {
+		if (!_mainMenu.waitForMainMenuVerticalBlank()) {
 			return MainMenuExit::HostClosed;
 		}
 	}
@@ -136,7 +137,7 @@ MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 						return exit.value();
 					}
 				} else {
-					_playAudioCommand(0x27);
+					_mainMenu.playAudioCommand(0x27);
 					_passwordDisplay.insertSymbol(
 						passwordRow, passwordPosition,
 						kPasswordSymbols[gridRow * kGridColumnCount + gridColumn]);
@@ -150,7 +151,7 @@ MainMenuExit EpisodePasswordMenuController::runSharedEpisodePasswordMenu() {
 
 			// Ghidra 0x000091CA-0x000091E1: retain the sample and receive one installed-callback retrace.
 			_inputState.captureCurrent();
-			if (!_waitForVerticalBlank()) {
+			if (!_mainMenu.waitForMainMenuVerticalBlank()) {
 				return MainMenuExit::HostClosed;
 			}
 		}
@@ -208,7 +209,7 @@ Optional<MainMenuExit> EpisodePasswordMenuController::noOpPasswordGridAction() {
 // replaces that VRAM write.
 Optional<MainMenuExit> EpisodePasswordMenuController::exitPasswordGridToMenu() {
 	// Ghidra 0x0000927A-0x0000927D: receive one installed-callback retrace before changing the cursor table.
-	if (!_waitForVerticalBlank()) {
+	if (!_mainMenu.waitForMainMenuVerticalBlank()) {
 		return Optional<MainMenuExit>(MainMenuExit::HostClosed);
 	}
 
@@ -216,7 +217,7 @@ Optional<MainMenuExit> EpisodePasswordMenuController::exitPasswordGridToMenu() {
 	_presentation.updateSelectionCursor(0, Optional<uint16>());
 
 	// Ghidra 0x00009294-0x00009297: tail-transfer to RunMainMenu's option-selection phase.
-	return Optional<MainMenuExit>(_prepareOptionsAndDispatch());
+	return Optional<MainMenuExit>(_mainMenu.prepareOptionsAndDispatch());
 }
 
 const int kPasswordStateByteCount = 29;
@@ -309,13 +310,13 @@ Optional<MainMenuExit> EpisodePasswordMenuController::validatePasswordEntry() {
 
 	if (rollingByte != expectedChecksum) {
 		// Ghidra 0x0000931C-0x00009327: reject with command 5 and return to the grid loop.
-		_playAudioCommand(5);
+		_mainMenu.playAudioCommand(5);
 		return Optional<MainMenuExit>();
 	}
 
 	// Ghidra 0x00009328-0x0000933D: discard the grid return, accept with command 0x59, and wait 61 retraces.
-	_playAudioCommand(0x59);
-	if (!_waitForFrames(kValidPasswordWaitCounter)) {
+	_mainMenu.playAudioCommand(0x59);
+	if (!_mainMenu.waitForFramesBeforeMainMenuVBlank(kValidPasswordWaitCounter)) {
 		return Optional<MainMenuExit>(MainMenuExit::HostClosed);
 	}
 
@@ -327,7 +328,7 @@ Optional<MainMenuExit> EpisodePasswordMenuController::validatePasswordEntry() {
 	_state.initialRoomId = roomByte;
 
 	// Ghidra 0x0000937E-0x00009381: tail-transfer through the existing selected-room commit.
-	return Optional<MainMenuExit>(_commitSelectedRoom());
+	return Optional<MainMenuExit>(_mainMenu.commitSelectedRoomAtCurrentSelection());
 }
 
 // Moves the active password position left with wrap from zero to 24.
@@ -337,7 +338,7 @@ Optional<MainMenuExit> EpisodePasswordMenuController::validatePasswordEntry() {
 Optional<MainMenuExit> EpisodePasswordMenuController::movePasswordCursorLeft(
 	int16 &passwordPosition) {
 	// Ghidra 0x000093A2-0x000093AB: issue the movement audio command through its deferred owner.
-	_playAudioCommand(0x75);
+	_mainMenu.playAudioCommand(0x75);
 
 	// Ghidra 0x000093AC-0x000093B5: subtract as a signed word and wrap a negative result to 24.
 	passwordPosition--;
@@ -355,7 +356,7 @@ Optional<MainMenuExit> EpisodePasswordMenuController::movePasswordCursorLeft(
 Optional<MainMenuExit> EpisodePasswordMenuController::movePasswordCursorRight(
 	int16 &passwordPosition) {
 	// Ghidra 0x000093B6-0x000093BF: issue the movement audio command through its deferred owner.
-	_playAudioCommand(0x75);
+	_mainMenu.playAudioCommand(0x75);
 
 	// Ghidra 0x000093C0-0x000093CB: increment as a word and wrap a signed result above 24 to zero.
 	passwordPosition++;
@@ -373,7 +374,7 @@ Optional<MainMenuExit> EpisodePasswordMenuController::movePasswordCursorRight(
 Optional<MainMenuExit> EpisodePasswordMenuController::togglePasswordCursorRow(
 	int16 &passwordRow) {
 	// Ghidra 0x000093CC-0x000093D5: issue the movement audio command through its deferred owner.
-	_playAudioCommand(0x75);
+	_mainMenu.playAudioCommand(0x75);
 
 	// Ghidra 0x000093D6-0x000093DB: toggle only bit zero of the caller-owned D5 word.
 	passwordRow ^= 1;
@@ -390,7 +391,7 @@ Optional<MainMenuExit> EpisodePasswordMenuController::restorePasswordEntryFromCu
 	// Ghidra 0x000093DC-0x000093DF: native all-register preservation maps to direct managed ownership.
 
 	// Ghidra 0x000093E0-0x000093ED: play command 0x63, then rebuild both rows from room and progress state.
-	_playAudioCommand(0x63);
+	_mainMenu.playAudioCommand(0x63);
 	_passwordDisplay.refresh(_state);
 
 	// Ghidra 0x000093EE-0x000093F7: restore caller context, then reset original D4 and D5 to zero.

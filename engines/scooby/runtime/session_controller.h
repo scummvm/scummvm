@@ -180,11 +180,6 @@ private:
 	Common::Functor0Mem<Optional<SessionExit>, SessionController> _resetRoomStateForReloadFunctor;
 	Common::Functor0Mem<Optional<SessionExit>, SessionController> _reloadAndPresentRoomFunctor;
 	Common::Functor1Mem<const Common::Functor0<void> *, bool, SessionController> _restartApplicationFunctor;
-	Common::Functor0Mem<void, InteractionController> _refreshInteractionDisplayFunctor;
-	Common::Functor0Mem<void, RoomInterfaceTransitionExecutor> _finishRoomStartupFunctor;
-	Common::Functor0Mem<void, RoomInterfaceTransitionExecutor> _executeRoomScriptAction1DFunctor;
-	Common::Functor0Mem<Optional<SessionExit>, RoomScriptController> _runRoomScriptInitializationCommandsFunctor;
-	Common::Functor0Mem<Optional<SessionExit>, RoomScriptController> _runRoomScriptCommandsFunctor;
 	ActionMenuController _actionMenu;
 	RoomCollisionProbe _roomCollisionProbe;
 	RoomActorUpdater _roomActorUpdater;
@@ -192,7 +187,6 @@ private:
 	ScriptedRoomMovementExecutor _scriptedRoomMovement;
 	DialogueController _dialogue;
 	InteractionController _interactions;
-	Common::Functor0Mem<void, InteractionController> _chooseRandomInteractionAnimationFunctor;
 	RoomInterfaceTransitionExecutor _roomInterfaceTransitions;
 	RoomSceneLoader _roomSceneLoader;
 	RoomScriptController _roomScripts;

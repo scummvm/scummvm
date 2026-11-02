@@ -87,6 +87,40 @@ public:
 	// room-object loading, and actor-runtime initialization.
 	MainMenuExit runMainMenu(const Common::Functor0<void> &beforeMenuRetrace);
 
+	// Services shared with the room-object, room, sound-test, and episode-password sub-controllers.
+
+	// Runs one main-menu retrace through the installed callback.
+	// Returns false when the host requests shutdown.
+	bool waitForMainMenuVerticalBlank();
+
+	// Runs Ghidra waitForFrames (frameCounter plus one retraces), invoking the installed main-menu
+	// callback before each retrace.
+	// frameCounter: original DBF loop counter.
+	// Returns false when the host requests shutdown.
+	bool waitForFramesBeforeMainMenuVBlank(int frameCounter);
+
+	// Publishes a compressed menu plane, then transfers control to the shared option-selection loop.
+	// assetOffset: ROM address of the compressed 32x28 menu plane supplied in A0.
+	// optionCount: number of selectable rows preserved from the caller's D0 word.
+	// Returns the selected zero-based row, or empty after a host close request.
+	//
+	// Ghidra: presentMenuAndSelectOption (0x00008D36).
+	Optional<int> presentMenuAndSelectOption(int assetOffset, int optionCount);
+
+	// Recomposes the completed reveal, then re-enters the shared title options at RunMainMenu 0x0000851E
+	// and dispatches the next selection.
+	MainMenuExit prepareOptionsAndDispatch();
+
+	// Commits the room retained in original scratch word 0xFF000A; see commitSelectedRoom.
+	MainMenuExit commitSelectedRoomAtCurrentSelection() { return commitSelectedRoom(_selectedRoomId); }
+
+	// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
+	// command: original audio command supplied in register D0.
+	void playAudioCommand(int command) { gemsStartSong(command); }
+
+	// Ghidra InitializeAudioDriver (gemsStopAll, 0x001F6F52).
+	void initializeAudioDriver() { gemsStopAll(); }
+
 private:
 	enum class DispatchTable {
 		Primary,
@@ -111,17 +145,8 @@ private:
 
 	bool runMenuReveal();
 	bool waitForRevealCommit(bool &skipRemainingReveal);
-	MainMenuExit prepareOptionsAndDispatch();
 	MainMenuExit presentOptionsAndDispatch();
 	bool waitForPendingCommit();
-
-	// Publishes a compressed menu plane, then transfers control to the shared option-selection loop.
-	// assetOffset: ROM address of the compressed 32x28 menu plane supplied in A0.
-	// optionCount: number of selectable rows preserved from the caller's D0 word.
-	// Returns the selected zero-based row, or empty after a host close request.
-	//
-	// Ghidra: presentMenuAndSelectOption (0x00008D36).
-	Optional<int> presentMenuAndSelectOption(int assetOffset, int optionCount);
 
 	// Decodes and publishes one compressed menu plane after exactly one menu retrace.
 	// assetOffset: ROM address of the byte-RLE menu plane supplied through original register A0.
@@ -141,17 +166,8 @@ private:
 	// Ghidra: selectMainMenuOption (0x00008D6A).
 	Optional<int> selectMainMenuOption(int optionCount, int baseTileIndex);
 
-	bool waitForMainMenuVerticalBlank();
 	void invokeMainMenuVBlank();
 	bool isRevealAnimationEnabled() const { return (_state.initializationFlags & kRevealCompleteMask) != 0; }
-
-	// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
-	// command: original audio command supplied in register D0.
-	void playAudioCommand(int command) { gemsStartSong(command); }
-
-	// Common::Functor1Mem binding target combining waitForFrames with the installed main-menu VBlank
-	// callback that the nested lambda previously captured.
-	bool waitForFramesBeforeMainMenuVBlank(int frameCounter);
 
 	// Runs the sound test and resumes the shared options phase at its original tail branch.
 	MainMenuExit runSoundTestMenu();
@@ -166,10 +182,6 @@ private:
 	// callback-pointer writes become the room-presentation handover owned after this method
 	// returns.
 	MainMenuExit commitSelectedRoom(int16 selectedRoomId);
-
-	// Common::Functor0Mem binding target for commitSelectedRoom, which needs the currently selected
-	// room ID baked in since a Common::Functor0 callback takes no arguments.
-	MainMenuExit commitSelectedRoomAtCurrentSelection() { return commitSelectedRoom(_selectedRoomId); }
 
 	// Runs the restart-choice menu and propagates its branch to menu continuation or reset.
 	// Returns the selected control-flow handover, including a host close during either recovered
@@ -196,9 +208,6 @@ private:
 	// word while preserving scan, shift, and append order.
 	MainMenuExit runRoomObjectRelocationMenu();
 
-	// Ghidra InitializeAudioDriver (gemsStopAll, 0x001F6F52).
-	void initializeAudioDriver() { gemsStopAll(); }
-
 	const ScoobyDooRom &_rom;
 	MainMenuPresentation &_menuPresentation;
 	MainMenuVBlankHandler &_menuVBlank;
@@ -212,13 +221,6 @@ private:
 	RoomSelectionCatalog _roomSelectionCatalog;
 	SoundTestCatalog _soundTestCatalog;
 	EpisodeInitializer _episodeInitializer;
-	Common::Functor0Mem<bool, MainMenuController> _waitForMainMenuVerticalBlankFunctor;
-	Common::Functor0Mem<void, MainMenuController> _initializeAudioDriverFunctor;
-	Common::Functor1Mem<int, void, MainMenuController> _playAudioCommandFunctor;
-	Common::Functor2Mem<int, int, Optional<int>, MainMenuController> _presentMenuAndSelectOptionFunctor;
-	Common::Functor0Mem<MainMenuExit, MainMenuController> _prepareOptionsAndDispatchFunctor;
-	Common::Functor0Mem<MainMenuExit, MainMenuController> _commitSelectedRoomFunctor;
-	Common::Functor1Mem<int, bool, MainMenuController> _waitForFramesBeforeMainMenuVBlankFunctor;
 	Common::Functor0Mem<void, MainMenuController> _invokeMainMenuVBlankFunctor;
 	RoomObjectSelectionController _roomObjectSelection;
 	RoomSelectionController _roomSelection;

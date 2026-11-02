@@ -24,6 +24,8 @@
 // #include "common/algorithm.h"
 #include "common/scummsys.h"
 
+#include "scooby/main_menu/main_menu_controller.h"
+
 namespace Scooby {
 
 Optional<int16> RoomSelectionController::select(int16 initialRoomId) {
@@ -39,7 +41,7 @@ Optional<int16> RoomSelectionController::select(int16 initialRoomId) {
 		}
 
 		while (true) {
-			if (!_waitForVerticalBlank()) {
+			if (!_mainMenu.waitForMainMenuVerticalBlank()) {
 				return Optional<int16>();
 			}
 
@@ -89,7 +91,7 @@ Optional<int16> RoomSelectionController::select(int16 initialRoomId) {
 
 bool RoomSelectionController::publishPage(Span<const Common::String> labels, int pageIndex,
 										  int lastRowIndex) {
-	if (!_waitForVerticalBlank()) {
+	if (!_mainMenu.waitForMainMenuVerticalBlank()) {
 		return false;
 	}
 

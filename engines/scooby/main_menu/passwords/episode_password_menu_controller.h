@@ -45,6 +45,8 @@
 
 namespace Scooby {
 
+class MainMenuController;
+
 class EpisodePasswordMenuController {
 public:
 	// Binds the shared episode prompt to menu, state, input, presentation, and handover owners.
@@ -53,29 +55,17 @@ public:
 	// inputState: comparison sample shared with option selection.
 	// passwordDisplay: two-row password text retained across menu phases.
 	// state: shared episode, progress, controller, and retrace state.
-	// presentMenuAndSelectOption: recovered three-choice menu presenter.
-	// prepareOptionsAndDispatch: shared title-options tail used by the native row-two branch.
-	// commitSelectedRoom: room handover reached by prompt row zero.
-	// waitForVerticalBlank: one installed-callback menu retrace with host-close propagation.
-	// waitForFrames: a callback-aware recovered multi-retrace wait.
-	// playAudioCommand: deferred high-level audio command boundary.
+	// mainMenu: owner of the recovered three-choice menu presenter, the shared title-options tail used by
+	//     the native row-two branch, the room handover reached by prompt row zero, the single- and
+	//     multi-retrace menu waits, and the audio command boundary.
 	EpisodePasswordMenuController(EpisodeInitializer &episodeInitializer,
 								  MainMenuPresentation &presentation,
 								  MainMenuInputState &inputState,
 								  PasswordDisplayState &passwordDisplay,
 								  RuntimeState &state,
-								  Common::Functor2<int, int, Optional<int>> &presentMenuAndSelectOption,
-								  Common::Functor0<MainMenuExit> &prepareOptionsAndDispatch,
-								  Common::Functor0<MainMenuExit> &commitSelectedRoom,
-								  Common::Functor0<bool> &waitForVerticalBlank,
-								  Common::Functor1<int, bool> &waitForFrames,
-								  Common::Functor1<int, void> &playAudioCommand)
+								  MainMenuController &mainMenu)
 		: _episodeInitializer(episodeInitializer), _presentation(presentation), _inputState(inputState),
-		  _passwordDisplay(passwordDisplay), _state(state),
-		  _presentMenuAndSelectOption(presentMenuAndSelectOption),
-		  _prepareOptionsAndDispatch(prepareOptionsAndDispatch), _commitSelectedRoom(commitSelectedRoom),
-		  _waitForVerticalBlank(waitForVerticalBlank), _waitForFrames(waitForFrames),
-		  _playAudioCommand(playAudioCommand) {
+		  _passwordDisplay(passwordDisplay), _state(state), _mainMenu(mainMenu) {
 	}
 
 	// Selects episode one before entering the shared password and room handover.
@@ -142,12 +132,7 @@ private:
 	MainMenuInputState &_inputState;
 	PasswordDisplayState &_passwordDisplay;
 	RuntimeState &_state;
-	Common::Functor2<int, int, Optional<int>> &_presentMenuAndSelectOption;
-	Common::Functor0<MainMenuExit> &_prepareOptionsAndDispatch;
-	Common::Functor0<MainMenuExit> &_commitSelectedRoom;
-	Common::Functor0<bool> &_waitForVerticalBlank;
-	Common::Functor1<int, bool> &_waitForFrames;
-	Common::Functor1<int, void> &_playAudioCommand;
+	MainMenuController &_mainMenu;
 };
 } // namespace Scooby
 

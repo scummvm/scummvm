@@ -25,9 +25,11 @@
 
 #include "dialogue_text_source.h"
 #include "interaction_action_registry.h"
+#include "interaction_controller.h"
 #include "scooby/common/span.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_layer.h"
+#include "scooby/rooms/room_script_controller.h"
 #include "scooby/scooby.h"
 
 namespace Scooby {
@@ -72,22 +74,18 @@ InteractionActionMenuExecutor::InteractionActionMenuExecutor(
 	SharedGraphicsWorkspace &graphicsWorkspace,
 	RuntimeState &state, FramePresenter &presenter,
 	RoomActorAnimator &actorAnimator, RoomVBlankHandler &roomVBlank,
-	Common::Functor0<void> &chooseRandomInteractionAnimation,
-	Common::Functor0<Optional<SessionExit>> &runRoomScriptInitializationCommands,
-	Common::Functor0<Optional<SessionExit>> &runRoomScriptCommands, DialogueController &dialogue,
+	InteractionController &interactions, RoomScriptController &roomScripts, DialogueController &dialogue,
 	ActionMenuController &actionMenu)
 	: _rom(rom), _scene(scene), _graphicsWorkspace(graphicsWorkspace), _state(state), _presenter(presenter),
 	  _actorAnimator(actorAnimator), _roomVBlank(roomVBlank),
-	  _chooseRandomInteractionAnimation(chooseRandomInteractionAnimation),
-	  _runRoomScriptInitializationCommands(runRoomScriptInitializationCommands),
-	  _runRoomScriptCommands(runRoomScriptCommands), _dialogue(dialogue),
+	  _interactions(interactions), _roomScripts(roomScripts), _dialogue(dialogue),
 	  _actionMenu(actionMenu) {
 }
 
 Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() {
 	// Ghidra 0x00001C0C-0x00001C1B: preserve the first independent registration scan and the immediate
 	// zero-action return before changing any interface, interaction, or script-frame state.
-	Optional<SessionExit> initialScanExit = _runRoomScriptInitializationCommands();
+	Optional<SessionExit> initialScanExit = _roomScripts.runRoomScriptInitializationCommands();
 	if (initialScanExit.hasValue()) {
 		return initialScanExit;
 	}
@@ -138,7 +136,7 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 		// consuming that window, and preserve the zero-count branch that unwinds exactly one frame.
 		_state.roomScriptCurrentOffset = currentFrame.scriptStartOffset;
 		_state.roomScriptEndOffset = currentFrame.scriptEndOffset;
-		Optional<SessionExit> frameScanExit = _runRoomScriptInitializationCommands();
+		Optional<SessionExit> frameScanExit = _roomScripts.runRoomScriptInitializationCommands();
 		if (frameScanExit.hasValue()) {
 			return frameScanExit;
 		}
@@ -298,7 +296,7 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 		_state.interfaceTileAttributes &= kInterfacePaletteClearMask;
 		publishBinaryMaskTiles(6, 1, _state.interfaceTileAttributes);
 		_dialogue.drawDialogueText(DialogueTextSource(selectedAction.labelTextOffset));
-		_chooseRandomInteractionAnimation();
+		_interactions.chooseRandomInteractionAnimation();
 		_state.interactionFlags |= kInteractionAnimationMask;
 		Optional<SessionExit> dismissalExit = _dialogue.waitForDialogueDismissal();
 		if (dismissalExit.hasValue()) {
@@ -347,7 +345,7 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 		_dialogue.drawDialogueText(DialogueTextSource(Common::String()));
 		_state.automaticInteractionFlags = 0;
 		int32 selectedScriptStartOffset = _state.roomScriptCurrentOffset;
-		Optional<SessionExit> executionExit = _runRoomScriptCommands();
+		Optional<SessionExit> executionExit = _roomScripts.runRoomScriptCommands();
 		if (executionExit.hasValue()) {
 			return executionExit;
 		}

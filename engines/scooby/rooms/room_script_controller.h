@@ -38,6 +38,7 @@
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/randomness/deterministic_random.h"
 #include "scooby/rooms/room_actor_animator.h"
+#include "scooby/rooms/room_interface_transition_executor.h"
 #include "scooby/rooms/vblank/room_vblank_handler.h"
 #include "scooby/runtime/runtime_state.h"
 
@@ -60,10 +61,8 @@ public:
 	// presentRoom: canonical room-presentation owner called by nested Action02.
 	// resetRoomStateForReload: canonical room-state reset owner called by command 0x18.
 	// reloadAndPresentRoom: canonical room reload and presentation owner called by command 0x11.
-	// interactions: interaction owner called by nested Action04 and bound to script dispatch.
-	// refreshInteractionDisplay: canonical interaction-display refresh called by nested Action05.
-	// finishRoomStartup: existing owner of the nested action-table target at index 0x1C.
-	// executeRoomScriptAction1D: transition owner selected by action-table index 0x1D.
+	// interactions: interaction owner called by nested Action04 and Action05.
+	// roomInterfaceTransitions: owner of the nested action-table targets at indices 0x1C and 0x1D.
 	// dialogue: shared dialogue owner used by room-script dialogue commands.
 	// actionMenu: owner of the action-prompt commit (commands 0x05 and 0x07), action-prompt refresh
 	//     (command 0x05), and action-icon renderer (command 0x09).
@@ -78,9 +77,7 @@ public:
 						 Common::Functor0<Optional<SessionExit>> &resetRoomStateForReload,
 						 Common::Functor0<Optional<SessionExit>> &reloadAndPresentRoom,
 						 InteractionController &interactions,
-						 Common::Functor0<void> &refreshInteractionDisplay,
-						 Common::Functor0<void> &finishRoomStartup,
-						 Common::Functor0<void> &executeRoomScriptAction1D, DialogueController &dialogue,
+						 RoomInterfaceTransitionExecutor &roomInterfaceTransitions, DialogueController &dialogue,
 						 ActionMenuController &actionMenu, RoomTileStreamer &tileStreamer,
 						 Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication);
 
@@ -124,6 +121,12 @@ public:
 	// read through the ROM asset owner; command slots 0x0E and 0x1B retain their shared target.
 	Optional<SessionExit> runRoomScriptCommands();
 
+	// Runs the current script window in scan mode (mode zero) or execution mode (any other value).
+	// Returns the managed handover from an original non-returning command path, otherwise no value.
+	//
+	// Replaces the original g_pRoomScriptDispatchCallback indirection at 0xFF0878-0xFF087B.
+	Optional<SessionExit> invokeRoomScriptDispatchCallback(int mode);
+
 private:
 	static const int kEpisodeRoomRecordTableField = 0x08;
 	static const int kEpisodeRoomScriptBaseField = 0x2C;
@@ -142,15 +145,10 @@ private:
 	// scan deliberately adds no progress requirement before rechecking its exclusive bound.
 	Optional<SessionExit> dispatchRoomScriptCommands();
 
-	Optional<SessionExit> invokeRoomScriptDispatchCallback(int mode);
-
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
-	InteractionController &_interactions;
 
-	Common::Functor0Mem<Optional<SessionExit>, InteractionController> _processAutomaticInteractionsFunctor;
 	Common::Functor1Mem<int, Optional<SessionExit>, RoomScriptController> _invokeRoomScriptDispatchCallbackFunctor;
-	Common::Functor0Mem<Optional<SessionExit>, RoomScriptController> _runRoomScriptInitializationCommandsFunctor;
 
 	RoomScriptCommandExecutor _commands;
 };
