@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA1_DATA_RENDER_MODE_H
-#define ULTIMA1_DATA_RENDER_MODE_H
+#ifndef ULTIMA1_GFX_RENDER_MODE_H
+#define ULTIMA1_GFX_RENDER_MODE_H
 
 #include "common/scummsys.h"
 
@@ -71,6 +71,12 @@ struct RenderColors {
  * Sets the screen palette for a mode
  */
 void setPalette(RenderMode mode);
+
+/**
+ * Sets the screen palette to the one shown briefly when the player is struck
+ * by Mondain - the colors inverted. setPalette restores the normal one
+ */
+void setHitFlashPalette(RenderMode mode);
 
 } // namespace Data
 } // namespace Ultima1

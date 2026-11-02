@@ -160,6 +160,26 @@ void Ultima1Engine::queueEffect(const Common::Array<byte> &samples) {
 	_effectStream->queueBuffer(data, samples.size(), DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 }
 
+void Ultima1Engine::setHitFlash(bool on) {
+	if (on)
+		Data::setHitFlashPalette(_renderMode);
+	else
+		Data::setPalette(_renderMode);
+
+	updateScreen();
+}
+
+void Ultima1Engine::pauseForEffect(int num) {
+	pauseMillis(SoundEffects::render(num).size() * 1000 / SoundEffects::SAMPLE_RATE);
+}
+
+void Ultima1Engine::flashScreen(int effectNum) {
+	setHitFlash(true);
+	playFX(effectNum);
+	pauseForEffect(effectNum);
+	setHitFlash(false);
+}
+
 void Ultima1Engine::pauseMillis(uint32 millis) {
 	g_system->delayMillis(millis);
 }

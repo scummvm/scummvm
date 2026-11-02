@@ -110,12 +110,16 @@ bool MondainLogic::move(Data::Direction dir) {
 		if (damage == 0)
 			damage = 1;
 
+		// The screen is inverted while the player is burned
+		g_engine->setHitFlash(true);
 		writeString("Burned! ");
 		writeString("%d damage!\n", damage);
 		playFX(2);
 
 		sg._hits -= damage;
 		redrawStats();
+		g_engine->pauseForEffect(2);
+		g_engine->setHitFlash(false);
 	}
 
 	if (isAdjacentToGem() && sg._mondainHitAnimFrame == 0) {
@@ -645,7 +649,7 @@ void MondainLogic::mondainSpellAttack() {
 	default:
 		// Psionic shock
 		writeString("psionic shock!\n");
-		playFX(5);
+		g_engine->flashScreen(5);
 
 		hit = getRandomNumber(1, 200) > 140;
 		if (hit) {

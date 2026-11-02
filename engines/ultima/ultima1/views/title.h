@@ -25,7 +25,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "ultima/shared/engine/view.h"
-#include "ultima/ultima1/data/render_mode.h"
+#include "ultima/ultima1/gfx/render_mode.h"
 
 namespace Ultima {
 namespace Ultima1 {

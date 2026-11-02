@@ -23,7 +23,7 @@
 #include "common/translation.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
-#include "ultima/ultima1/data/render_mode.h"
+#include "ultima/ultima1/gfx/render_mode.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -75,6 +75,14 @@ void RenderColors::set(RenderMode mode) {
 	}
 }
 
+// CGA's palette 0, with a white background, as shown in the hit flash
+static const byte CGA_HIT_FLASH_PALETTE[4 * 3] = {
+	0xff, 0xff, 0xff, // 0: white
+	0x00, 0xaa, 0x00, // 1: green
+	0xaa, 0x00, 0x00, // 2: red
+	0xaa, 0x55, 0x00  // 3: brown
+};
+
 void setPalette(RenderMode mode) {
 	if (mode == RENDER_EGA) {
 		g_system->getPaletteManager()->setPalette(Graphics::Palette::createEGAPalette());
@@ -86,6 +94,30 @@ void setPalette(RenderMode mode) {
 	for (int i = 0; i < 256; ++i)
 		palette.set(&CGA_PALETTE[3 * 3], i, 1);
 	palette.set(CGA_PALETTE, 0, 4);
+
+	g_system->getPaletteManager()->setPalette(palette);
+}
+
+void setHitFlashPalette(RenderMode mode) {
+	if (mode == RENDER_EGA) {
+		// The standard EGA palette is read-only static data, so invert a copy of it
+		const Graphics::Palette egaPalette = Graphics::Palette::createEGAPalette();
+		Graphics::Palette palette(16);
+		byte r, g, b;
+
+		for (int i = 0; i < 16; ++i) {
+			egaPalette.get(i, r, g, b);
+			palette.set(i, 255 - r, 255 - g, 255 - b);
+		}
+
+		g_system->getPaletteManager()->setPalette(palette);
+		return;
+	}
+
+	Graphics::Palette palette(256);
+	for (int i = 0; i < 256; ++i)
+		palette.set(&CGA_HIT_FLASH_PALETTE[3 * 3], i, 1);
+	palette.set(CGA_HIT_FLASH_PALETTE, 0, 4);
 
 	g_system->getPaletteManager()->setPalette(palette);
 }

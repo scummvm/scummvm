@@ -41,7 +41,7 @@
 #include "ultima/detection.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/map_dungeon.h"
-#include "ultima/ultima1/data/render_mode.h"
+#include "ultima/ultima1/gfx/render_mode.h"
 #include "ultima/ultima1/data/savegame.h"
 #include "ultima/ultima1/data/space_map.h"
 #include "ultima/ultima1/data/tiles.h"
@@ -158,6 +158,21 @@ public:
 	 * Plays one of the sound effects (0 to 9), if sound is turned on
 	 */
 	void playFX(int num);
+
+	/**
+	 * Inverts the screen's colors, or puts them back, as when Mondain strikes the player
+	 */
+	void setHitFlash(bool on);
+
+	/**
+	 * Waits for as long as a sound effect lasts
+	 */
+	void pauseForEffect(int num);
+
+	/**
+	 * Briefly inverts the screen's colors for the duration of a sound effect
+	 */
+	void flashScreen(int effectNum);
 
 	/**
 	 * Pause for a given number of milliseconds
