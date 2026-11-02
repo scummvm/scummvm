@@ -33,8 +33,9 @@ namespace Snatcher {
 
 class ActionSequenceHandler;
 class CmdQueue;
-class GraphicsEngine;
+class FanTranslationHandler;
 class FIO;
+class GraphicsEngine;
 class MemAccessHandler;
 class ResourcePointer;
 class SaveLoadManager;
@@ -116,6 +117,9 @@ private:
 	CmdQueue *_cmdQueue;
 	MemAccessHandler *_memHandler;
 	ScriptEngine *_scriptEngine;
+
+	// Fan Translations
+	FanTranslationHandler *_translator;
 
 public:
 	// Input

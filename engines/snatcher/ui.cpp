@@ -20,6 +20,7 @@
 */
 
 
+#include "snatcher/fantranslations.h"
 #include "snatcher/graphics.h"
 #include "snatcher/mem_mapping.h"
 #include "snatcher/resource.h"
@@ -32,13 +33,13 @@
 
 namespace Snatcher {
 
-UI::UI(GraphicsEngine *gfx, CmdQueue *que, ResourcePointer *scd) : _gfx(gfx), _que(que), _scd(scd), _sceneId(0), _textLineBreak(0), _dialogTextBuffer(nullptr), _textColor(0),
-	_scriptTextResource(nullptr),/*_makestrbt1(0),*/ _textY(0), _headLineYOffset(0), _sceneTextOffsCur(0), _textLineEnd(0), _sceneInfo(0), _sceneTextOffset(0), _flashLight(),
-		_sceneTextOffsStart(0), _waitCursorFrame(0), _waitCursorAnimDelay(0), _progress(-1), _progress2(-1), _controllerCfg(0), _verbInterfaceMode(0), _verbsInterpreterMode(0),
-			_lastVerbFirstPage(0), _numVerbsFirstPage(0), _numVerbsLastPage(0), _lastVerbLastPage(0), _numVerbsMax(0), _verbsTabCurPage(0), _lastVerbDrawn(0), _verbTextBuffer(nullptr), _scriptVerbsArray(nullptr),
-				_scriptSentenceArray(nullptr), _prevSelectedVerb(0), _selectedVerb(0), _lastHiliteVerb(0), _hiliteVerb(0), _savedHiliteVerb(0), _textInputMarginLeft(0), _videoPhoneMode(0),
-					_textInputColumnCur(0), _textInputColumnMax(0), _textInputCursorState(0), _textInputCursorBlinkCnt(0), _underscoreStr(nullptr), _textInputStr(nullptr), _vkeybPosTotal(0),
-						_vkeybColumnWidth(0), _verbsTabLayoutMap(nullptr), _verbsTabOffsX(0), _verbsTabOffsY(0), _hilitePosX(0), _hilitePosY(0), _vkeybVisible(false) {
+UI::UI(GraphicsEngine *gfx, CmdQueue *que, ResourcePointer *scd, FanTranslationHandler *translator) : _gfx(gfx), _que(que), _scd(scd), _translator(translator), _sceneId(0), _textLineBreak(0),
+	_dialogTextBuffer(nullptr), _textColor(0), _scriptTextResource(nullptr), _scriptCurText(nullptr), _textY(0), _headLineYOffset(0), _sceneTextOffsCur(0), _textLineEnd(0), _sceneInfo(0),
+		_flashLight(), _sceneTextOffsStart(0), _waitCursorFrame(0), _waitCursorAnimDelay(0), _progress(-1), _progress2(-1), _controllerCfg(0), _verbInterfaceMode(0), _verbsInterpreterMode(0),
+			_lastVerbFirstPage(0), _numVerbsFirstPage(0), _numVerbsLastPage(0), _lastVerbLastPage(0), _numVerbsMax(0), _verbsTabCurPage(0), _lastVerbDrawn(0), _verbTextBuffer(nullptr), _sceneTextOffset(0),
+				_scriptVerbsArray(nullptr), _scriptSentenceArray(nullptr), _prevSelectedVerb(0), _selectedVerb(0), _lastHiliteVerb(0), _hiliteVerb(0), _savedHiliteVerb(0), _textInputMarginLeft(0),
+					_videoPhoneMode(0), _textInputColumnCur(0), _textInputColumnMax(0), _textInputCursorState(0), _textInputCursorBlinkCnt(0), _underscoreStr(nullptr), _textInputStr(nullptr),
+						_vkeybPosTotal(0), _vkeybColumnWidth(0), _verbsTabLayoutMap(nullptr), _verbsTabOffsX(0), _verbsTabOffsY(0), _hilitePosX(0), _hilitePosY(0), _vkeybVisible(false) {
 
 	_dialogTextBuffer = new uint8[256]();
 	_verbTextBuffer = new uint8[50]();
@@ -544,7 +545,7 @@ bool UI::canSaveHere() const {
 
 void UI::printDialogStringHead() {
 	static const uint8 strHead[] = { 0xFC, 0x00, 0xF9, 0x01, 0xFB, 0x10, 0x00, 0xFE };
-	const uint8 *s = _scd->makePtr(MemMapping::MEM_UIDATA_06).getDataFromTable(_sceneId)();
+	const uint8 *s = _translator->process(_scd->makePtr(MemMapping::MEM_UIDATA_06 + _sceneId * 2).readUINT16(), _scd->makePtr(MemMapping::MEM_UIDATA_06).getDataFromTable(_sceneId)());
 	memcpy(_dialogTextBuffer, strHead, sizeof(strHead));
 	_dialogTextBuffer[6] = _headLineYOffset;
 	_dialogTextBuffer[8] = (*s & 0x80) ? 3 : (*s++ & 7);
@@ -576,10 +577,15 @@ void UI::printDialogStringBody() {
 	//_makestrbt1 = 0xFF;
 	*d++ = _sceneId ? 24 : 40;
 	*d++ = _textY;
-
 	_textLineBreak = 0;
-	assert(_scriptTextResource);
-	const uint8 *s = _scriptTextResource + _sceneTextOffsCur;
+
+	if (_sceneTextOffsCur == _sceneTextOffsStart) {
+		assert(_scriptTextResource);
+		_scriptCurText = _translator->process(MemMapping::MEM_SCRIPT_TEXT_LOCATION + _sceneTextOffsStart, _scriptTextResource + _sceneTextOffsStart);
+	}
+
+	const uint8 *s = _scriptCurText + _sceneTextOffsCur - _sceneTextOffsStart;
+
 	for (int i = 0; i < 50;++i) {
 		uint8 in = *s++;
 		++_sceneTextOffsCur;
@@ -671,7 +677,7 @@ uint8 UI::drawVerb(uint8 id) {
 		return 0xFF;
 
 	uint16 offs = _scriptVerbsArray->read(id);
-	const uint8 *s = _scriptTextResource + offs;
+	const uint8 *s = _translator->process(MemMapping::MEM_SCRIPT_TEXT_LOCATION + offs, _scriptTextResource + offs);
 
 	uint8 *d = _verbTextBuffer + 9;
 	for (int i = 0; i < 33; ++i) {

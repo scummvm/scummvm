@@ -38,9 +38,7 @@ struct GameDescription {
 	bool isBigEndian;
 	bool usePALTiming;
 
-	// language overwrites of fan translations (only needed for multilingual games)
 	Common::Language fanLang;
-	Common::Language replacedLang;
 };
 
 } // End of namespace Snatcher

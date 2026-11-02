@@ -26,6 +26,8 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 
+#include "snatcher/mem_mapping.h"
+
 namespace Snatcher {
 
 class SnatcherEngine;
@@ -90,7 +92,8 @@ struct Script {
 };
 
 struct GameState {
-	GameState() : frameNo(0), frameState(0), modFinish(0), modPhaseTop(0), modPhaseSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0), pendingSaveLoad(0), phase(0), updateFlags(0), saveInfo(), conf(), script(0x3800, phase), totalPlayTime(0) {}
+	GameState() : frameNo(0), frameState(0), modFinish(0), modPhaseTop(0), modPhaseSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0),
+		pendingSaveLoad(0), phase(0), updateFlags(0), saveInfo(), conf(), script(MemMapping::MEM_SCRIPT_TEXT_LOCATION - MemMapping::MEM_SCRIPT_LOCATION, phase), totalPlayTime(0) {}
 	int16 frameNo;
 	int16 frameState;
 	int16 modFinish;

@@ -21,6 +21,7 @@
 
 
 #include "snatcher/action.h"
+#include "snatcher/fantranslations.h"
 #include "snatcher/graphics.h"
 #include "snatcher/memory.h"
 #include "snatcher/mem_mapping.h"
@@ -186,7 +187,10 @@ void CmdQueue::m_printText(const uint16 *&data) {
 		return;
 	uint32 addr = *reinterpret_cast<const uint32*>(data);
 	data += 2;
-	_vm->gfx()->printText(addr >= MemMapping::MEM_MODULE_LOCATION ? _vm->_module->getPtr(addr)() : _vm->_scd->makePtr(addr)());
+
+	const uint8 *text = addr >= MemMapping::MEM_MODULE_LOCATION ? _vm->_module->getPtr(addr)() : _vm->_scd->makePtr(addr)();
+	_vm->gfx()->printText(_vm->_translator->process(addr, text));
+
 	_progress = -1;
 }
 
@@ -336,11 +340,13 @@ void CmdQueue::m_loadResource(const uint16 *&data) {
 			delete[] _state->script.data;
 			_state->script.data = _vm->_fio->fileData(index, &_state->script.dataSize);
 			assert(_state->script.data);
+			_vm->_translator->loadFile(index, FanTranslationHandler::kScript);
 			_vm->_ui->setScriptTextResource(_state->script.getTextResource());
 		} else if (dest == MemMapping::MEM_MODULE_LOCATION) {
 			delete _vm->_module;
 			_vm->_module = _vm->_fio->loadModule(index);
 			assert(_vm->_module);
+			_vm->_translator->loadFile(index, FanTranslationHandler::kModule);
 		} else {
 			error("%s(): Unexpected target address 0x%08x", __FUNCTION__, dest);
 		}

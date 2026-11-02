@@ -105,6 +105,7 @@ uint32 MEM_PALDATA_42                	=	0;
 
 uint32 MEM_MODULE_LOCATION				=	0;
 uint32 MEM_SCRIPT_LOCATION				=	0;
+uint32 MEM_SCRIPT_TEXT_LOCATION			=	0;
 uint32 MEM_SUBCODE_LOCATION				=	0;
 
 void initMapping(int mappingNum) {
@@ -188,6 +189,7 @@ void initMapping(int mappingNum) {
 
 	MEM_MODULE_LOCATION				=	0x28000;
 	MEM_SCRIPT_LOCATION				=	0x1A800;
+	MEM_SCRIPT_TEXT_LOCATION		=	0x1E000;
 	MEM_SUBCODE_LOCATION			=	0xD400;
 
 	if (mappingNum == 1)

@@ -20,6 +20,7 @@
 */
 
 #include "snatcher/action.h"
+#include "snatcher/fantranslations.h"
 #include "snatcher/graphics.h"
 #include "snatcher/memory.h"
 #include "snatcher/mem_mapping.h"
@@ -52,7 +53,7 @@ namespace Snatcher {
 
 SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _scd(nullptr), _gfx(nullptr), _snd(nullptr), _input(),
 	_scriptEngine(nullptr), _cmdQueue(nullptr), _aseq(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(), _saveMan(nullptr), _reset(0),
-		_updateGameSettings(false), _memHandler(nullptr), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
+		_updateGameSettings(false), _memHandler(nullptr), _translator(nullptr), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
 	assert(system);
 	MemMapping::initMapping(_game.usePALTiming ? 1 : 0);
 }
@@ -69,6 +70,7 @@ SnatcherEngine::~SnatcherEngine() {
 	delete _scriptEngine;
 	delete _snd;
 	delete _ui;
+	delete _translator;
 }
 
 Common::Error SnatcherEngine::run() {
@@ -97,6 +99,10 @@ Common::Error SnatcherEngine::run() {
 }
 
 bool SnatcherEngine::initResource() {
+	_translator = new FanTranslationHandler(_game.platform, _game.lang, _game.fanLang, FanTranslationHandler::kTranslate);
+	if (!_translator)
+		return false;
+
 	_fio = new FIO(this);
 	if (!_fio)
 		return false;
@@ -108,6 +114,8 @@ bool SnatcherEngine::initResource() {
 	_scd = new ResourcePointer(data, size, 0, MemMapping::MEM_SUBCODE_LOCATION, true);
 	if (!_scd)
 		return false;
+
+	_translator->loadFile(96, FanTranslationHandler::kSCD);
 
 	return true;
 }
@@ -173,8 +181,9 @@ bool SnatcherEngine::initScriptEngine() {
 	if (!_cmdQueue)
 		return false;
 
+	assert(_translator);
 	assert(_scd);
-	_ui = new UI(_gfx, _cmdQueue, _scd);
+	_ui = new UI(_gfx, _cmdQueue, _scd, _translator);
 	if (!_ui)
 		return false;
 
@@ -788,7 +797,8 @@ void SnatcherEngine::applyGameSettings() {
 }
 
 void SnatcherEngine::pauseEngineIntern(bool pause) {
-	_snd->pause(pause);
+	if (_snd)
+		_snd->pause(pause);
 }
 
 bool SnatcherEngine::canLoadGameStateCurrently(Common::U32String*) {

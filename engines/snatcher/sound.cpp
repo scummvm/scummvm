@@ -92,10 +92,14 @@ const SoundEngine::PCMStatus &SoundEngine::pcmGetStatus() const {
 }
 
 void SoundEngine::pause(bool toggle) {
-	_dev->pause(toggle);
+	if (_dev)
+		_dev->pause(toggle);
 }
 
 void SoundEngine::update() {
+	if (!_dev)
+		return;
+
 	_dev->update();
 
 	_pcmStatus.statusBits = _dev->pcmGetStatus();

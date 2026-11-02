@@ -108,6 +108,7 @@ extern uint32 MEM_PALDATA_42;
 
 extern uint32 MEM_MODULE_LOCATION;
 extern uint32 MEM_SCRIPT_LOCATION;
+extern uint32 MEM_SCRIPT_TEXT_LOCATION;
 extern uint32 MEM_SUBCODE_LOCATION;
 
 extern void initMapping(int mappingNum);
