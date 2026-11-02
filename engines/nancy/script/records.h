@@ -461,8 +461,9 @@ protected:
 
 private:
 	bool isSeeThrough() const;
+	// The movie is at another frame, or shows another part of it
 	void drawFrame();
-	void applyPosition() { drawFrame(); }
+	void applyPosition();
 
 	Common::String _name;
 	MoviePlayer _player;
@@ -471,8 +472,10 @@ private:
 	ScriptRect _dest;
 	uint32 _modColor = 0xFFFFFFFF;	// what the colors of the frames get multiplied with
 
-	// What a turned, resized or colored frame gets drawn from
+	// What a turned, resized or colored frame gets drawn from. It is kept while
+	// the movie stays at the frame, for the transform to move it around.
 	Graphics::ManagedSurface _frame;
+	bool _hasFrame = false;
 
 	int _numLoops = 1;		// 0 for forever
 	int _numPlayed = 0;

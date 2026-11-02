@@ -2221,6 +2221,11 @@ bool MovieRecord::isSeeThrough() const {
 }
 
 void MovieRecord::drawFrame() {
+	_hasFrame = false;
+	applyPosition();
+}
+
+void MovieRecord::applyPosition() {
 	if (isSeeThrough()) {
 		return;
 	}
@@ -2244,12 +2249,15 @@ void MovieRecord::drawFrame() {
 	}
 
 	// Turned, resized or colored frames get drawn anew, the way overlays are
-	if (_frame.w != _player.getWidth() || _frame.h != _player.getHeight()) {
-		_frame.create(_player.getWidth(), _player.getHeight(), g_nancy->_graphics->getScreenPixelFormat());
-	}
+	if (!_hasFrame || _frame.w != _player.getWidth() || _frame.h != _player.getHeight()) {
+		if (_frame.w != _player.getWidth() || _frame.h != _player.getHeight()) {
+			_frame.create(_player.getWidth(), _player.getHeight(), g_nancy->_graphics->getScreenPixelFormat());
+		}
 
-	_frame.clear(0);
-	_player.drawFrame(_frame, Common::Point(0, 0));
+		_frame.clear(0);
+		_player.drawFrame(_frame, Common::Point(0, 0));
+		_hasFrame = true;
+	}
 
 	Common::Rect clipped = source;
 	clipped.clip(Common::Rect(_frame.w, _frame.h));
