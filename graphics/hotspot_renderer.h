@@ -25,6 +25,9 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/ustr.h"
+#include "graphics/surface.h"
+
+class OSystem;
 
 namespace Graphics {
 
@@ -65,13 +68,44 @@ enum MarkerShape {
 	kMarkerPoint
 };
 
+const int kMarkerDefault = -1;
+
+struct HotspotStyle {
+	int markerSize = 10;
+	int pointRadius = 3;
+	int lineThickness = 1;
+	int borderThickness = 1;
+	int labelGap = 8;
+	int paddingX = 4;
+	int paddingY = 2;
+	uint32 markerColor = 0xffffff;
+	uint32 textColor = 0xffffff;
+	uint32 backgroundColor = 0;
+	uint32 borderColor = 0xffffff;
+	byte markerOpacity = 180;
+	byte backgroundOpacity = 153;
+	byte borderOpacity = 180;
+	bool labelBorder = true;
+	bool scaleWithGame = true;
+	const Font *font = nullptr;
+};
+
 /**
  * Renderer for drawing hotspot markers on overlay surface.
  */
 class HotspotRenderer {
 public:
 	HotspotRenderer();
-	~HotspotRenderer();
+	virtual ~HotspotRenderer();
+
+	const HotspotStyle &getStyle() const { return _style; }
+	void setStyle(const HotspotStyle &style);
+	void invalidate();
+	void releaseResources();
+	bool empty() const { return _hotspots.empty(); }
+	void setHotspots(Common::Array<HotspotInfo> hotspots);
+	void exchangeHotspots(Common::Array<HotspotInfo> &hotspots);
+	void renderOverlay(OSystem &system, MarkerShape markerShape, bool showText, bool forceRedraw = false);
 
 	/**
 	 * Render hotspot markers on an overlay surface.
@@ -94,34 +128,78 @@ public:
 		MarkerShape markerShape,
 		bool showText);
 
-private:
-	enum {
-		kBaseMarkerSize = 10,  ///< Size of square and crosshair markers at 1x scale
-		kBasePointRadius = 3,  ///< Radius of point marker at 1x scale
-		kBaseLineThickness = 1 ///< Thickness of lines for markers and text boxes at 1x scale
+protected:
+	struct LabelLayout {
+		Common::Rect textRect, boxRect;
+		int baseTextWidth = 0, baseTextHeight = 0;
 	};
+	virtual LabelLayout layoutHotspotLabel(const HotspotInfo &hotspot, Common::Point position,
+		int overlayWidth, int overlayHeight, const Font *font) const;
+	void addDrawRect(Common::Rect rect);
+	virtual void prepareRender(const Common::Array<HotspotInfo> &hotspots,
+		int gameWidth, int gameHeight, int overlayWidth, int overlayHeight) {}
+	virtual Common::Point placeHotspot(const HotspotInfo &hotspot, Common::Point position) { return position; }
+	virtual void drawMarker(Surface *surface, const HotspotInfo &hotspot, int x, int y, const PixelFormat &format, MarkerShape markerShape);
+	virtual void drawHotspotLabelBackground(Surface *surface, const LabelLayout &layout, const HotspotInfo &hotspot,
+		int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
+	virtual void drawHotspotLabel(Surface *surface, const LabelLayout &layout, const HotspotInfo &hotspot,
+		int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
+	void blendPixel(Surface *surface, int px, int py, const PixelFormat &format,
+		int distance, int solidSize);
 
+private:
+	HotspotRenderer(const HotspotRenderer &) = delete;
+	HotspotRenderer &operator=(const HotspotRenderer &) = delete;
+	/** 1-bit-per-pixel glyph coverage mask, packed 8 pixels per byte (LSB first) per row. */
+	struct LabelMask {
+		Common::Array<byte> bits;
+		int width = 0, height = 0, stride = 0;
+	};
+	struct CachedLabel {
+		Common::U32String text;
+		LabelMask mask;
+		const Font *font;
+		PixelFormat format;
+		uint64 lastUse;
+	};
+	Common::Array<CachedLabel> _labels;
+	uint _labelBytes = 0;
+	uint64 _labelClock = 0;
+	Common::Array<Common::Point> _positions;
+	Common::Array<LabelLayout> _labelLayouts;
+	void clearLabels();
+	static void packLabelMask(const Surface &scaled, LabelMask &mask);
+	const LabelMask &getLabelMask(const Common::U32String &text, const Font *font,
+		int width, int height, int baseWidth, int baseHeight, const PixelFormat &format, LabelMask &scratch);
+	Common::Rect _drawBounds, _previousBounds;
+	Surface _overlay;
+	Common::Array<HotspotInfo> _hotspots;
+	bool _dirty = true;
+	Common::Point _gameSize;
+	int _screenChangeID = -1;
+	MarkerShape _shape = kMarkerCrosshair;
+	const Font *_font = nullptr;
+	void drawLabel(Surface *surface, const LabelLayout &layout, const HotspotInfo &hotspot,
+		int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font, bool background);
+	void renderFrame(Surface *surface, const Common::Array<HotspotInfo> &hotspots,
+		int gameWidth, int gameHeight, int overlayWidth, int overlayHeight,
+		const PixelFormat &format, MarkerShape markerShape, const Font *font);
+
+protected:
+	HotspotStyle _style;
 	float _sizeScale;   ///< Overlay/game scale factor applied to marker geometry
 	int _markerSize;    ///< Scaled size of square and crosshair markers
 	int _pointRadius;   ///< Scaled radius of point marker
 	int _lineThickness; ///< Scaled thickness of lines for markers and text boxes
+	uint32 _markerBlendColor; ///< Precomputed ARGBToColor(markerOpacity, markerColor) for alpha-blended overlays, recomputed once per renderFrame()
 
-	void drawMarker(Surface *surface, int x, int y, const PixelFormat &format, MarkerShape markerShape);
-	void drawCrosshairMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
-	void drawSquareMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
+	void drawCrosshairMarker(Surface *surface, int x, int y, const PixelFormat &format);
+	void drawSquareMarker(Surface *surface, int x, int y, const PixelFormat &format);
 	void drawPointMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
-	void drawHotspotLabel(Surface *surface, int overlayX, int overlayY, const Common::U32String &label,
-		int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
+	void fillBlendRect(Surface *surface, Common::Rect rect, const PixelFormat &format, uint32 color, byte opacity);
 	void drawLabelBox(Surface *surface, const Common::Rect &rect,
 		int overlayWidth, int overlayHeight, const PixelFormat &format);
-	void drawRect(Surface *surface, const Common::Rect &rect,
-		int overlayWidth, int overlayHeight, const PixelFormat &format);
 
-	void drawLine(Surface *surface, int x1, int y1, int x2, int y2,
-		int width, int height, const PixelFormat &format, int lineThickness);
-
-	void blendPixel(Surface *surface, int px, int py, const PixelFormat &format,
-		int distance, int solidSize);
 };
 
 } // End of namespace Graphics

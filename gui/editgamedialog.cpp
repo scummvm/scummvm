@@ -338,10 +338,12 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	_hotspotMarkerPopUpDesc = new StaticTextWidget(miscContainer,
 			"GameOptions_Misc_Container.HotspotMarkerPopupDesc", _("Hotspot marker:"));
 	_hotspotMarkerPopUp = new PopUpWidget(miscContainer, "GameOptions_Misc_Container.HotspotMarkerPopup");
+	_hotspotMarkerPopUp->appendEntry(_("<default>"), (uint32)Graphics::kMarkerDefault);
 	_hotspotMarkerPopUp->appendEntry(_("Point"), Graphics::kMarkerPoint);
 	_hotspotMarkerPopUp->appendEntry(_("Square"), Graphics::kMarkerSquare);
 	_hotspotMarkerPopUp->appendEntry(_("Crosshair"), Graphics::kMarkerCrosshair);
-	_hotspotMarkerPopUp->setSelectedTag(ConfMan.getInt("hotspot_marker", _domain));
+	_hotspotMarkerPopUp->setSelectedTag(ConfMan.hasKey("hotspot_marker", _domain) ?
+		(uint32)ConfMan.getInt("hotspot_marker", _domain) : (uint32)Graphics::kMarkerDefault);
 	_hotspotMarkerPopUp->setEnabled(hotspotsEnabled);
 	_hotspotMarkerPopUpDesc->setEnabled(hotspotsEnabled);
 

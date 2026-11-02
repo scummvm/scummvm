@@ -56,6 +56,7 @@ class Dialog;
 }
 namespace Graphics {
 struct HotspotInfo;
+class HotspotRenderer;
 }
 
 /**
@@ -205,6 +206,11 @@ protected:
 	 * overlay), and this remembers the state to restore afterwards.
 	 */
 	bool _hotspotPrevCursorVisible;
+	bool _hotspotCursorHidden = false;
+	Graphics::HotspotRenderer *_hotspotRenderer = nullptr;
+	Common::Array<Graphics::HotspotInfo> _hotspotScratch;
+	bool _hotspotShowText = true;
+	int _hotspotMarker = 0;
 
 private:
 	/**
@@ -550,6 +556,8 @@ protected:
 	 * circles, automatically converting from game coordinates to overlay coordinates.
 	 */
 	virtual void drawHotspots();
+	virtual Graphics::HotspotRenderer *createHotspotRenderer();
+	virtual bool hideCursorForHotspots() const { return true; }
 
 	/**
 	 * Returns whether hotspot markers need to be re-rendered this frame.
