@@ -49,8 +49,8 @@
 
 // Owns the executable nested room-script action mapping and its recovered function boundaries.
 //
-// Ghidra g_apRoomScriptActionHandlers at ROM 0x00002EB4-0x00002FAB contains 62 pointer entries. The managed
-// table preserves all indices, the shared target selected by 0x05 and 0x0C, and the existing
+// Ghidra g_apRoomScriptActionHandlers at ROM 0x00002EB4-0x00002FAB contains 62 pointer entries. The switch
+// in execute() preserves all indices, the shared target selected by 0x05 and 0x0C, and the existing
 // FinishRoomStartup owner at 0x1C.
 
 namespace Scooby {
@@ -91,8 +91,6 @@ public:
 	Optional<SessionExit> execute(uint16 action);
 
 private:
-	static const int kHandlerCount = 62;
-
 	void scriptAction00NoOp();
 	void executeRoomScriptAction01();
 	void scriptAction02PresentRoom();
@@ -155,69 +153,7 @@ private:
 	Common::Functor0Mem<bool, RoomScriptActionExecutor> _waitForRoomVerticalBlankFunctor;
 	Common::Functor1Mem<SessionExit, void, RoomScriptActionExecutor> _requestSessionExitFunctor;
 	Common::Functor0Mem<bool, RoomScriptActionExecutor> _tryExecuteRoomScriptAction02Functor;
-
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action00Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action01Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action02Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action03Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action04Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action06Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action09Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action0AFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action0BFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action11Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action12Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action13Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action14Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action1AFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action1BFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action1FFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action20Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action21Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action22Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action23Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action24Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action25Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action26Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action28Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action29Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action2AFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action2BFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action2CFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action2DFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action2EFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action2FFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action30Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action31Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action33Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action34Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action35Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action36Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action37Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action38Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action39Functor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action3AFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action3BFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action3CFunctor;
-	Common::Functor0Mem<void, RoomScriptActionExecutor> _action3DFunctor;
-
-	Common::Functor0Mem<void, RoomScriptAction05Or0CExecutor> _action05Or0CFunctor;
-	Common::Functor0Mem<void, RoomScriptForegroundOverrideExecutor> _action07Functor;
-	Common::Functor0Mem<void, RoomScriptForegroundOverrideExecutor> _action08Functor;
-	Common::Functor0Mem<void, RoomScriptCameraPanExecutor> _action0DFunctor;
-	Common::Functor0Mem<void, RoomScriptCameraPanExecutor> _action0EFunctor;
-	Common::Functor0Mem<void, RoomScriptCameraPanExecutor> _action0FFunctor;
-	Common::Functor0Mem<void, RoomScriptCameraPanExecutor> _action10Functor;
-	Common::Functor0Mem<void, RoomScriptPairedActorTransitionExecutor> _action15Functor;
-	Common::Functor0Mem<void, RoomScriptPairedActorTransitionExecutor> _action16Functor;
-	Common::Functor0Mem<void, RoomScriptCoordinateSpriteExecutor> _action17Functor;
-	Common::Functor0Mem<void, RoomScriptCoordinateSpriteExecutor> _action18Functor;
-	Common::Functor0Mem<void, RoomScriptCoordinateSpriteExecutor> _action19Functor;
-	Common::Functor0Mem<void, RoomInterfaceTransitionExecutor> _action1CFunctor;
-	Common::Functor0Mem<void, RoomInterfaceTransitionExecutor> _action1DFunctor;
-	Common::Functor0Mem<void, RoomScriptAction1EExecutor> _action1EFunctor;
-	Common::Functor0Mem<void, RoomScriptAction27Executor> _action27Functor;
-	Common::Functor0Mem<void, DuelRoomScriptActionExecutor> _action32Functor;
+	Common::Functor0Mem<void, RoomScriptActionExecutor> _scriptAction03FadeOutFunctor;
 
 	RoomScriptAction05Or0CExecutor _action05Or0CExecutor;
 	RoomScriptAction1EExecutor _action1EExecutor;
@@ -228,7 +164,6 @@ private:
 	RoomScriptForegroundOverrideExecutor _foregroundOverrideExecutor;
 	RoomScriptPairedActorTransitionExecutor _pairedActorTransitionExecutor;
 
-	Common::Array<Common::Functor0<void> *> _handlers;
 	Optional<SessionExit> _requestedSessionExit;
 };
 } // namespace Scooby

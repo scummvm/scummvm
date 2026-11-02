@@ -40,67 +40,7 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 	  _waitForRoomVerticalBlankFunctor(this, &RoomScriptActionExecutor::waitForRoomVerticalBlank),
 	  _requestSessionExitFunctor(this, &RoomScriptActionExecutor::requestSessionExit),
 	  _tryExecuteRoomScriptAction02Functor(this, &RoomScriptActionExecutor::tryExecuteScriptAction02PresentRoom),
-	  _action00Functor(this, &RoomScriptActionExecutor::scriptAction00NoOp),
-	  _action01Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction01),
-	  _action02Functor(this, &RoomScriptActionExecutor::scriptAction02PresentRoom),
-	  _action03Functor(this, &RoomScriptActionExecutor::scriptAction03FadeOut),
-	  _action04Functor(this, &RoomScriptActionExecutor::scriptAction04WaitForButtonPress),
-	  _action06Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction06),
-	  _action09Functor(this, &RoomScriptActionExecutor::scriptAction09HideScoobyDoo),
-	  _action0AFunctor(this, &RoomScriptActionExecutor::scriptAction0AShowScoobyDoo),
-	  _action0BFunctor(this, &RoomScriptActionExecutor::scriptAction0BScoobyDooStartAnimation),
-	  _action11Functor(this, &RoomScriptActionExecutor::scriptAction11StopShaggyLeadMode),
-	  _action12Functor(this, &RoomScriptActionExecutor::scriptAction12StartShaggyLeadMode),
-	  _action13Functor(this, &RoomScriptActionExecutor::scriptAction13PlaySfx1),
-	  _action14Functor(this, &RoomScriptActionExecutor::scriptAction14PlaySfx2),
-	  _action1AFunctor(this, &RoomScriptActionExecutor::scriptAction1AStartVerticalScroll),
-	  _action1BFunctor(this, &RoomScriptActionExecutor::scriptAction1BStopVerticalScroll),
-	  _action1FFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction1F),
-	  _action20Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction20),
-	  _action21Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction21),
-	  _action22Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction22),
-	  _action23Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction23),
-	  _action24Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction24),
-	  _action25Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction25),
-	  _action26Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction26),
-	  _action28Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction28),
-	  _action29Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction29),
-	  _action2AFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction2A),
-	  _action2BFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction2B),
-	  _action2CFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction2C),
-	  _action2DFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction2D),
-	  _action2EFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction2E),
-	  _action2FFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction2F),
-	  _action30Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction30),
-	  _action31Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction31),
-	  _action33Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction33),
-	  _action34Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction34),
-	  _action35Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction35),
-	  _action36Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction36),
-	  _action37Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction37),
-	  _action38Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction38),
-	  _action39Functor(this, &RoomScriptActionExecutor::executeRoomScriptAction39),
-	  _action3AFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction3A),
-	  _action3BFunctor(this, &RoomScriptActionExecutor::executeRoomScriptAction3B),
-	  _action3CFunctor(this, &RoomScriptActionExecutor::scriptAction3CEnableScoobyAndShaggyWalkingSideBySide),
-	  _action3DFunctor(this, &RoomScriptActionExecutor::scriptAction3DDisableScoobyAndShaggyWalkingSideBySide),
-	  _action05Or0CFunctor(&_action05Or0CExecutor, &RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C),
-	  _action07Functor(&_foregroundOverrideExecutor, &RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn),
-	  _action08Functor(&_foregroundOverrideExecutor, &RoomScriptForegroundOverrideExecutor::scriptAction08FlashlightModeOff),
-	  _action0DFunctor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::scriptAction0DLockCamera),
-	  _action0EFunctor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::scriptAction0EUnlockCamera),
-	  _action0FFunctor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::scriptAction0FCameraPanRight),
-	  _action10Functor(&_cameraPanExecutor, &RoomScriptCameraPanExecutor::scriptAction10CameraPanLeft),
-	  _action15Functor(&_pairedActorTransitionExecutor, &RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction15),
-	  _action16Functor(&_pairedActorTransitionExecutor, &RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction16),
-	  _action17Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::scriptAction17ShowObjectSprite),
-	  _action18Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::scriptAction18ShowObjectAltSprite),
-	  _action19Functor(&_coordinateSpriteExecutor, &RoomScriptCoordinateSpriteExecutor::scriptAction19HideObjectSprite),
-	  _action1CFunctor(&roomInterfaceTransitions, &RoomInterfaceTransitionExecutor::finishRoomStartup),
-	  _action1DFunctor(&roomInterfaceTransitions, &RoomInterfaceTransitionExecutor::executeRoomScriptAction1D),
-	  _action1EFunctor(&_action1EExecutor, &RoomScriptAction1EExecutor::executeRoomScriptAction1E),
-	  _action27Functor(&_action27Executor, &RoomScriptAction27Executor::executeRoomScriptAction27),
-	  _action32Functor(&_duelActionExecutor, &DuelRoomScriptActionExecutor::executeRoomScriptAction32),
+	  _scriptAction03FadeOutFunctor(this, &RoomScriptActionExecutor::scriptAction03FadeOut),
 	  _action05Or0CExecutor(rom, scene, state, actorAnimator, _waitForRoomVerticalBlankFunctor,
 							interactions, roomInterfaceTransitions, tileStreamer),
 	  _action1EExecutor(rom, scene, state, presenter, actorAnimator, roomVBlank,
@@ -110,77 +50,203 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 	  _cameraPanExecutor(state, actorAnimator, _waitForRoomVerticalBlankFunctor),
 	  _coordinateSpriteExecutor(rom, scene, state),
 	  _duelActionExecutor(rom, scene, state, collisionProbe, random, presenter, actorAnimator,
-						  roomVBlank, _tryExecuteRoomScriptAction02Functor, _action03Functor,
+						  roomVBlank, _tryExecuteRoomScriptAction02Functor, _scriptAction03FadeOutFunctor,
 						  _requestSessionExitFunctor),
 	  _foregroundOverrideExecutor(rom, scene, state, _waitForRoomVerticalBlankFunctor),
-	  _pairedActorTransitionExecutor(state, actorAnimator, _waitForRoomVerticalBlankFunctor),
-	  _handlers(kHandlerCount) {
-	_handlers[0x00] = &_action00Functor;
-	_handlers[0x01] = &_action01Functor;
-	_handlers[0x02] = &_action02Functor;
-	_handlers[0x03] = &_action03Functor;
-	_handlers[0x04] = &_action04Functor;
-	_handlers[0x05] = &_action05Or0CFunctor;
-	_handlers[0x06] = &_action06Functor;
-	_handlers[0x07] = &_action07Functor;
-	_handlers[0x08] = &_action08Functor;
-	_handlers[0x09] = &_action09Functor;
-	_handlers[0x0A] = &_action0AFunctor;
-	_handlers[0x0B] = &_action0BFunctor;
-	_handlers[0x0C] = &_action05Or0CFunctor;
-	_handlers[0x0D] = &_action0DFunctor;
-	_handlers[0x0E] = &_action0EFunctor;
-	_handlers[0x0F] = &_action0FFunctor;
-	_handlers[0x10] = &_action10Functor;
-	_handlers[0x11] = &_action11Functor;
-	_handlers[0x12] = &_action12Functor;
-	_handlers[0x13] = &_action13Functor;
-	_handlers[0x14] = &_action14Functor;
-	_handlers[0x15] = &_action15Functor;
-	_handlers[0x16] = &_action16Functor;
-	_handlers[0x17] = &_action17Functor;
-	_handlers[0x18] = &_action18Functor;
-	_handlers[0x19] = &_action19Functor;
-	_handlers[0x1A] = &_action1AFunctor;
-	_handlers[0x1B] = &_action1BFunctor;
-	_handlers[0x1C] = &_action1CFunctor;
-	_handlers[0x1D] = &_action1DFunctor;
-	_handlers[0x1E] = &_action1EFunctor;
-	_handlers[0x1F] = &_action1FFunctor;
-	_handlers[0x20] = &_action20Functor;
-	_handlers[0x21] = &_action21Functor;
-	_handlers[0x22] = &_action22Functor;
-	_handlers[0x23] = &_action23Functor;
-	_handlers[0x24] = &_action24Functor;
-	_handlers[0x25] = &_action25Functor;
-	_handlers[0x26] = &_action26Functor;
-	_handlers[0x27] = &_action27Functor;
-	_handlers[0x28] = &_action28Functor;
-	_handlers[0x29] = &_action29Functor;
-	_handlers[0x2A] = &_action2AFunctor;
-	_handlers[0x2B] = &_action2BFunctor;
-	_handlers[0x2C] = &_action2CFunctor;
-	_handlers[0x2D] = &_action2DFunctor;
-	_handlers[0x2E] = &_action2EFunctor;
-	_handlers[0x2F] = &_action2FFunctor;
-	_handlers[0x30] = &_action30Functor;
-	_handlers[0x31] = &_action31Functor;
-	_handlers[0x32] = &_action32Functor;
-	_handlers[0x33] = &_action33Functor;
-	_handlers[0x34] = &_action34Functor;
-	_handlers[0x35] = &_action35Functor;
-	_handlers[0x36] = &_action36Functor;
-	_handlers[0x37] = &_action37Functor;
-	_handlers[0x38] = &_action38Functor;
-	_handlers[0x39] = &_action39Functor;
-	_handlers[0x3A] = &_action3AFunctor;
-	_handlers[0x3B] = &_action3BFunctor;
-	_handlers[0x3C] = &_action3CFunctor;
-	_handlers[0x3D] = &_action3DFunctor;
+	  _pairedActorTransitionExecutor(state, actorAnimator, _waitForRoomVerticalBlankFunctor) {
 }
 
 Optional<SessionExit> RoomScriptActionExecutor::execute(uint16 action) {
-	(*_handlers[static_cast<size_t>(action)])();
+	// Ghidra g_apRoomScriptActionHandlers (ROM 0x00002EB4-0x00002FAB): 62 entries in original index order.
+	switch (action) {
+	case 0x00:
+		scriptAction00NoOp();
+		break;
+	case 0x01:
+		executeRoomScriptAction01();
+		break;
+	case 0x02:
+		scriptAction02PresentRoom();
+		break;
+	case 0x03:
+		scriptAction03FadeOut();
+		break;
+	case 0x04:
+		scriptAction04WaitForButtonPress();
+		break;
+	case 0x05: // Shares its Ghidra table target with 0x0C.
+	case 0x0C:
+		_action05Or0CExecutor.executeRoomScriptAction05Or0C();
+		break;
+	case 0x06:
+		executeRoomScriptAction06();
+		break;
+	case 0x07:
+		_foregroundOverrideExecutor.scriptAction07FlashlightModeOn();
+		break;
+	case 0x08:
+		_foregroundOverrideExecutor.scriptAction08FlashlightModeOff();
+		break;
+	case 0x09:
+		scriptAction09HideScoobyDoo();
+		break;
+	case 0x0A:
+		scriptAction0AShowScoobyDoo();
+		break;
+	case 0x0B:
+		scriptAction0BScoobyDooStartAnimation();
+		break;
+	case 0x0D:
+		_cameraPanExecutor.scriptAction0DLockCamera();
+		break;
+	case 0x0E:
+		_cameraPanExecutor.scriptAction0EUnlockCamera();
+		break;
+	case 0x0F:
+		_cameraPanExecutor.scriptAction0FCameraPanRight();
+		break;
+	case 0x10:
+		_cameraPanExecutor.scriptAction10CameraPanLeft();
+		break;
+	case 0x11:
+		scriptAction11StopShaggyLeadMode();
+		break;
+	case 0x12:
+		scriptAction12StartShaggyLeadMode();
+		break;
+	case 0x13:
+		scriptAction13PlaySfx1();
+		break;
+	case 0x14:
+		scriptAction14PlaySfx2();
+		break;
+	case 0x15:
+		_pairedActorTransitionExecutor.executeRoomScriptAction15();
+		break;
+	case 0x16:
+		_pairedActorTransitionExecutor.executeRoomScriptAction16();
+		break;
+	case 0x17:
+		_coordinateSpriteExecutor.scriptAction17ShowObjectSprite();
+		break;
+	case 0x18:
+		_coordinateSpriteExecutor.scriptAction18ShowObjectAltSprite();
+		break;
+	case 0x19:
+		_coordinateSpriteExecutor.scriptAction19HideObjectSprite();
+		break;
+	case 0x1A:
+		scriptAction1AStartVerticalScroll();
+		break;
+	case 0x1B:
+		scriptAction1BStopVerticalScroll();
+		break;
+	case 0x1C:
+		_roomInterfaceTransitions.finishRoomStartup();
+		break;
+	case 0x1D:
+		_roomInterfaceTransitions.executeRoomScriptAction1D();
+		break;
+	case 0x1E:
+		_action1EExecutor.executeRoomScriptAction1E();
+		break;
+	case 0x1F:
+		executeRoomScriptAction1F();
+		break;
+	case 0x20:
+		executeRoomScriptAction20();
+		break;
+	case 0x21:
+		executeRoomScriptAction21();
+		break;
+	case 0x22:
+		executeRoomScriptAction22();
+		break;
+	case 0x23:
+		executeRoomScriptAction23();
+		break;
+	case 0x24:
+		executeRoomScriptAction24();
+		break;
+	case 0x25:
+		executeRoomScriptAction25();
+		break;
+	case 0x26:
+		executeRoomScriptAction26();
+		break;
+	case 0x27:
+		_action27Executor.executeRoomScriptAction27();
+		break;
+	case 0x28:
+		executeRoomScriptAction28();
+		break;
+	case 0x29:
+		executeRoomScriptAction29();
+		break;
+	case 0x2A:
+		executeRoomScriptAction2A();
+		break;
+	case 0x2B:
+		executeRoomScriptAction2B();
+		break;
+	case 0x2C:
+		executeRoomScriptAction2C();
+		break;
+	case 0x2D:
+		executeRoomScriptAction2D();
+		break;
+	case 0x2E:
+		executeRoomScriptAction2E();
+		break;
+	case 0x2F:
+		executeRoomScriptAction2F();
+		break;
+	case 0x30:
+		executeRoomScriptAction30();
+		break;
+	case 0x31:
+		executeRoomScriptAction31();
+		break;
+	case 0x32:
+		_duelActionExecutor.executeRoomScriptAction32();
+		break;
+	case 0x33:
+		executeRoomScriptAction33();
+		break;
+	case 0x34:
+		executeRoomScriptAction34();
+		break;
+	case 0x35:
+		executeRoomScriptAction35();
+		break;
+	case 0x36:
+		executeRoomScriptAction36();
+		break;
+	case 0x37:
+		executeRoomScriptAction37();
+		break;
+	case 0x38:
+		executeRoomScriptAction38();
+		break;
+	case 0x39:
+		executeRoomScriptAction39();
+		break;
+	case 0x3A:
+		executeRoomScriptAction3A();
+		break;
+	case 0x3B:
+		executeRoomScriptAction3B();
+		break;
+	case 0x3C:
+		scriptAction3CEnableScoobyAndShaggyWalkingSideBySide();
+		break;
+	case 0x3D:
+		scriptAction3DDisableScoobyAndShaggyWalkingSideBySide();
+		break;
+	default:
+		error("Room script action 0x%04X is outside the 62-entry handler table", action);
+	}
+
 	return _requestedSessionExit;
 }
 
