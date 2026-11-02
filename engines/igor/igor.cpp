@@ -60,10 +60,14 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_inventoryImagesBuffer = (uint8 *)_inventoryImagesSurface.getPixels();
 	_verbsPanelBuffer = (uint8 *)_verbsPanelSurface.getPixels();
 	for (int i = 0; i < 4; i++) {
-		_facingIgorFrames[i] = (uint8 *)malloc(13500);
+		_facingIgorFramesSurface[i].create(13500, 1, clut8);
+		_facingIgorFrames[i] = (uint8 *)_facingIgorFramesSurface[i].getPixels();
 	}
-	_igorHeadFrames = (uint8 *)malloc(3696);
-	_animFramesBuffer = (uint8 *)malloc(65535);
+	_igorHeadFramesSurface.create(3696, 1, clut8);
+	_igorHeadFrames = (uint8 *)_igorHeadFramesSurface.getPixels();
+	// 65535 isn't representable as a single ManagedSurface dimension (int16), so split it into two factors
+	_animFramesBufferSurface.create(255, 257, clut8);
+	_animFramesBuffer = (uint8 *)_animFramesBufferSurface.getPixels();
 	_verbsPanelSize = 0; // set when the panel is loaded
 
 	_floppyProtectionPassed = false;
@@ -97,11 +101,6 @@ IgorEngine::~IgorEngine() {
 	free(_musicData);
 	free(_resourceEntries);
 	free(_soundOffsets);
-	for (int i = 0; i < 4; ++i) {
-		free(_facingIgorFrames[i]);
-	}
-	free(_igorHeadFrames);
-	free(_animFramesBuffer);
 
 	delete _screen;
 }
