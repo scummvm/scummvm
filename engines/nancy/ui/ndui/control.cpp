@@ -53,13 +53,14 @@ void Control::read(Common::SeekableReadStream &stream) {
 	if (g_nancy->getGameType() >= kGameTypeNancy17) {
 		readFilename(stream, _tooltip);
 
-		// The texts are the keys of autotext entries, when there are any by their name
+		// Texts and tooltips are autotext keys when an autotext entry by that name
+		// exists. Nancy25 has an entry for the empty key, which is never shown.
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-		if (autotext && autotext->texts.contains(_text)) {
+		if (autotext && !_text.empty() && autotext->texts.contains(_text)) {
 			_text = autotext->texts[_text];
 		}
 
-		if (autotext && autotext->texts.contains(_tooltip)) {
+		if (autotext && !_tooltip.empty() && autotext->texts.contains(_tooltip)) {
 			_tooltip = autotext->texts[_tooltip];
 		}
 	}

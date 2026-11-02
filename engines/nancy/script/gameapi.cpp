@@ -2057,6 +2057,11 @@ static const luaL_Reg kPlayerFunctions[] = {
 bool findText(const Common::String &key, Common::String &text) {
 	static const char *const kTableNames[] = { "AUTOTEXT", "CONVO" };
 
+	// Nancy25 has an autotext entry for the empty key, which means no text
+	if (key.empty()) {
+		return false;
+	}
+
 	for (const char *tableName : kTableNames) {
 		const CVTX *table = (const CVTX *)g_nancy->getEngineData(tableName);
 		if (table && table->texts.contains(key)) {
