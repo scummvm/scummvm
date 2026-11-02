@@ -439,6 +439,17 @@ double SceneStreamManager::getZ(const Common::String &name) const {
 	return stream ? stream->getZOffset() : 0.0;
 }
 
+int32 SceneStreamManager::getFrontZOffset() const {
+	int32 front = 0;
+	for (const SceneStream *stream : _streams) {
+		if (stream && !stream->isEnded()) {
+			front = MAX(front, stream->getZOffset());
+		}
+	}
+
+	return front;
+}
+
 void SceneStreamManager::getStreamNames(Common::Array<Common::String> &names, bool withUI) const {
 	if (withUI && find(kUIStreamName)) {
 		names.push_back(kUIStreamName);

@@ -1397,8 +1397,16 @@ static int sceneBeginStream(lua_State *L) {
 		// TODO: "restartParent" and "isUI", which no script sets
 		readField(L, 2, "captureInput", flags.capturesInput);
 
-		// A stream is a step closer than the one that began it
-		flags.zOffset = 1;
+		// Before Nancy24, a stream is a step closer than the one that began it.
+		// From then on, a stream that keeps the input goes 10 in front of the
+		// frontmost stream, which is more than the z of a record spans, and any
+		// other one shares the z of the stream that began it.
+		if (g_nancy->getGameType() < kGameTypeNancy24) {
+			flags.zOffset = 1;
+		} else if (flags.capturesInput) {
+			const State::SceneStreamManager &streams = NancySceneState.getStreams();
+			flags.zOffset = streams.getFrontZOffset() + 10 - streams.getRunningZOffset();
+		}
 	} else {
 		name = luaL_checkstring(L, 2);
 		sceneName = luaL_checkstring(L, 3);

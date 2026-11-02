@@ -245,9 +245,12 @@ public:
 	// What a stream gets drawn with; null when there is no such stream
 	const ViewTransform *getViewTransform(const Common::String &name);
 
-	// Nancy21: where a stream is among the others. Every stream is a step closer
-	// than the one that began it, and the main stream is at 0.
+	// Nancy21: where a stream is among the others. The main stream is at 0.
 	double getZ(const Common::String &name) const;
+
+	// The z of the frontmost stream, and of the one that is running
+	int32 getFrontZOffset() const;
+	int32 getRunningZOffset() const { return _running ? _running->getZOffset() : 0; }
 
 	// Keeps the streams in the saved game, and starts them again after loading
 	void store();
