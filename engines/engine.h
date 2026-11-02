@@ -557,7 +557,7 @@ protected:
 	 */
 	virtual void drawHotspots();
 	virtual Graphics::HotspotRenderer *createHotspotRenderer();
-	virtual bool hideCursorForHotspots() const { return true; }
+	virtual bool hideCursorForHotspots() const { return !hotspotsUseToggle(); }
 
 	/**
 	 * Returns whether hotspot markers need to be re-rendered this frame.
@@ -582,6 +582,8 @@ public:
 	 * @param show true to show hotspots, false to hide them
 	 */
 	virtual void showHotspots(bool show);
+	bool isShowingHotspots() const { return _showHotspots; }
+	virtual bool hotspotsUseToggle() const { return true; }
 
 	/**
 	 * Request the engine to quit.

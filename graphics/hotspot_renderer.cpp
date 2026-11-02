@@ -44,6 +44,8 @@ void HotspotRenderer::releaseResources() {
 	clearLabels();
 	_positions.clear();
 	_labelLayouts.clear();
+	_labelRects.clear();
+	_markerRects.clear();
 	_previousBounds = Common::Rect();
 	_drawBounds = Common::Rect();
 	_dirty = true;
@@ -235,10 +237,10 @@ void HotspotRenderer::renderFrame(Surface *surface, const Common::Array<HotspotI
 	if (format.bytesPerPixel < 2 || gameWidth <= 0 || gameHeight <= 0 || overlayWidth <= 0 || overlayHeight <= 0)
 		return;
 
-	float scaleX = (float)overlayWidth / (float)gameWidth;
-	float scaleY = (float)overlayHeight / (float)gameHeight;
+	const float rawScaleX = (float)overlayWidth / (float)gameWidth;
+	const float rawScaleY = (float)overlayHeight / (float)gameHeight;
 
-	_sizeScale = _style.scaleWithGame ? MIN(scaleX, scaleY) : 1.0f;
+	_sizeScale = _style.scaleWithGame ? MIN(rawScaleX, rawScaleY) : 1.0f;
 	_markerSize = MAX(2, (int)(_style.markerSize * _sizeScale));
 	_pointRadius = MAX(1, (int)(_style.pointRadius * _sizeScale));
 	_lineThickness = MAX(1, (int)(_style.lineThickness * _sizeScale));
@@ -252,11 +254,20 @@ void HotspotRenderer::renderFrame(Surface *surface, const Common::Array<HotspotI
 	_labelLayouts.resize(hotspots.size());
 	for (uint i = 0; i < hotspots.size(); ++i) {
 		_positions[i] = placeHotspot(hotspots[i], Common::Point(
-			(int)(hotspots[i].position.x * scaleX), (int)(hotspots[i].position.y * scaleY)));
+			(int)(hotspots[i].position.x * rawScaleX), (int)(hotspots[i].position.y * rawScaleY)));
+	}
+
+	prepareCollisionRects(hotspots);
+
+	for (uint i = 0; i < hotspots.size(); ++i) {
 		_labelLayouts[i] = font && !hotspots[i].name.empty() ?
 			layoutHotspotLabel(hotspots[i], _positions[i], overlayWidth, overlayHeight, font) : LabelLayout();
 	}
 	if (font) {
+		for (uint i = 0; i < hotspots.size(); ++i)
+			if (!hotspots[i].name.empty())
+				drawLeaderLine(surface, _labelLayouts[i], hotspots[i], _positions[i],
+					overlayWidth, overlayHeight, format);
 		for (uint i = 0; i < hotspots.size(); ++i)
 			if (!hotspots[i].name.empty())
 				drawHotspotLabelBackground(surface, _labelLayouts[i], hotspots[i],
@@ -271,6 +282,17 @@ void HotspotRenderer::renderFrame(Surface *surface, const Common::Array<HotspotI
 					overlayWidth, overlayHeight, format, font);
 	}
 	_drawBounds.clip(Common::Rect(overlayWidth, overlayHeight));
+}
+
+void HotspotRenderer::prepareCollisionRects(const Common::Array<HotspotInfo> &hotspots) {
+	_labelRects.resize(0);
+	_markerRects.resize(0);
+	const int radius = MAX<int>(_markerSize / 2, _pointRadius) + _lineThickness + 2;
+	for (uint i = 0; i < hotspots.size(); ++i) {
+		const int x = _positions[i].x;
+		const int y = _positions[i].y;
+		_markerRects.push_back(Common::Rect(x - radius, y - radius, x + radius + 1, y + radius + 1));
+	}
 }
 
 void HotspotRenderer::drawMarker(Surface *surface, const HotspotInfo &hotspot, int x, int y, const PixelFormat &format, MarkerShape markerShape) {
@@ -295,6 +317,19 @@ void HotspotRenderer::drawMarker(Surface *surface, const HotspotInfo &hotspot, i
 	}
 }
 
+void HotspotRenderer::drawLeaderLine(Surface *surface, const LabelLayout &layout,
+		const HotspotInfo &hotspot, Common::Point markerPos, int overlayWidth, int overlayHeight,
+		const PixelFormat &format) {
+	if (layout.boxRect.isEmpty())
+		return;
+	const int x = markerPos.x;
+	const int y = markerPos.y;
+	const Common::Rect &box = layout.boxRect;
+	if (box.top != y - box.height() / 2)
+		drawLine(surface, x, y, CLIP(x, (int)box.left, (int)box.right - 1),
+			CLIP(y, (int)box.top, (int)box.bottom - 1), overlayWidth, overlayHeight, format, _lineThickness);
+}
+
 void HotspotRenderer::drawHotspotLabelBackground(Surface *surface, const LabelLayout &layout,
 		const HotspotInfo &hotspot, int overlayWidth, int overlayHeight,
 		const PixelFormat &format, const Font *font) {
@@ -307,41 +342,146 @@ void HotspotRenderer::drawHotspotLabel(Surface *surface, const LabelLayout &layo
 	drawLabel(surface, layout, hotspot, overlayWidth, overlayHeight, format, font, false);
 }
 
+bool HotspotRenderer::isLabelSlotFree(const Common::Rect &candidate, int borderGrow) const {
+	Common::Rect spaced(candidate);
+	spaced.grow(borderGrow + 2);
+	for (uint i = 0; i < _labelRects.size(); ++i)
+		if (spaced.intersects(_labelRects[i]))
+			return false;
+	for (uint i = 0; i < _markerRects.size(); ++i)
+		if (spaced.intersects(_markerRects[i]))
+			return false;
+	return true;
+}
+
+static int labelDistanceScore(const Common::Rect &candidate, Common::Point markerPos) {
+	const int markerX = markerPos.x, markerY = markerPos.y;
+	const int dx = CLIP(markerX, (int)candidate.left, (int)candidate.right - 1) - markerX;
+	const int dy = CLIP(markerY, (int)candidate.top, (int)candidate.bottom - 1) - markerY;
+	return dx * dx + dy * dy;
+}
+
+Common::Rect HotspotRenderer::findInlineLabelSlot(Common::Point markerPos, int width, int height,
+		int overlayWidth, int overlayHeight, int gap, int borderGrow) const {
+	const int preferredY = markerPos.y - height / 2;
+	const int markerRadius = MAX<int>(_markerSize / 2, _pointRadius) + _lineThickness + 2;
+	const int rightX = markerPos.x + markerRadius + gap;
+	const int leftX = markerPos.x - markerRadius - gap - width;
+	const int candidateX[] = {rightX, leftX};
+	for (int side = 0; side < 2; ++side) {
+		const int x = candidateX[side];
+		if (x < 2 || x + width > overlayWidth - 2 || preferredY < 2 || preferredY + height > overlayHeight - 2)
+			continue;
+		Common::Rect candidate(x, preferredY, x + width, preferredY + height);
+		if (isLabelSlotFree(candidate, borderGrow))
+			return candidate;
+	}
+	return Common::Rect();
+}
+
+Common::Rect HotspotRenderer::findGridLabelSlot(Common::Point markerPos, int width, int height,
+		int overlayWidth, int overlayHeight, int gap, int borderGrow) const {
+	const int xStep = MAX(2, width / 4);
+	const int rightmostX = overlayWidth - width - 2;
+	Common::Rect bestCandidate;
+	bool found = false;
+	int bestScore = 0;
+	for (int row = 0; row <= (overlayHeight - height - 4) / (height + gap); ++row) {
+		const int y = 2 + row * (height + gap);
+		if (y < 2 || y + height > overlayHeight - 2)
+			continue;
+		for (int x = 2; x <= rightmostX; x += xStep) {
+			Common::Rect candidate(x, y, x + width, y + height);
+			if (!isLabelSlotFree(candidate, borderGrow))
+				continue;
+			const int score = labelDistanceScore(candidate, markerPos);
+			if (!found || score < bestScore) {
+				found = true;
+				bestScore = score;
+				bestCandidate = candidate;
+			}
+		}
+		if (rightmostX >= 2 && (rightmostX - 2) % xStep != 0) {
+			Common::Rect candidate(rightmostX, y, rightmostX + width, y + height);
+			if (isLabelSlotFree(candidate, borderGrow)) {
+				const int score = labelDistanceScore(candidate, markerPos);
+				if (!found || score < bestScore) {
+					found = true;
+					bestScore = score;
+					bestCandidate = candidate;
+				}
+			}
+		}
+	}
+	return found ? bestCandidate : Common::Rect();
+}
+
+Common::Rect HotspotRenderer::findLabelPlacement(int width, int height, Common::Point markerPos,
+		int overlayWidth, int overlayHeight, int gap) {
+	if (width > overlayWidth - 4 || height > overlayHeight - 4)
+		return Common::Rect();
+	const int borderGrow = _style.labelBorder ? MAX(1, (int)(_style.borderThickness * _sizeScale)) - 1 : 0;
+	Common::Rect boxRect = findInlineLabelSlot(markerPos, width, height, overlayWidth, overlayHeight, gap, borderGrow);
+	if (boxRect.isEmpty())
+		boxRect = findGridLabelSlot(markerPos, width, height, overlayWidth, overlayHeight, gap, borderGrow);
+	if (boxRect.isEmpty())
+		return Common::Rect();
+	Common::Rect grown(boxRect);
+	grown.grow(borderGrow);
+	_labelRects.push_back(grown);
+	return boxRect;
+}
+
+static Common::U32String truncateToWidth(const Common::U32String &text, const Font *font, int maxWidth) {
+	if (maxWidth <= 0 || font->getStringWidth(text) <= maxWidth)
+		return text;
+
+	Common::U32String ellipsis("...");
+	while (!ellipsis.empty() && font->getStringWidth(ellipsis) > maxWidth)
+		ellipsis = ellipsis.substr(0, ellipsis.size() - 1);
+	if (ellipsis.empty())
+		return ellipsis;
+
+	uint lo = 0, hi = text.size();
+	while (lo < hi) {
+		const uint mid = lo + (hi - lo + 1) / 2;
+		if (font->getStringWidth(text.substr(0, mid) + ellipsis) <= maxWidth)
+			lo = mid;
+		else
+			hi = mid - 1;
+	}
+	return lo > 0 ? text.substr(0, lo) + ellipsis : ellipsis;
+}
+
 HotspotRenderer::LabelLayout HotspotRenderer::layoutHotspotLabel(const HotspotInfo &hotspot, Common::Point position,
-		int overlayWidth, int overlayHeight, const Font *font) const {
+		int overlayWidth, int overlayHeight, const Font *font) {
 	LabelLayout layout;
-	const Common::U32String &label = hotspot.name;
-	layout.baseTextWidth = font->getStringWidth(label);
+	const int gap = MAX(0, (int)(_style.labelGap * _sizeScale));
+	const int padX = MAX(0, (int)(_style.paddingX * _sizeScale));
+	const int padY = MAX(0, (int)(_style.paddingY * _sizeScale));
+	const int borderGrow = _style.labelBorder ? MAX(1, (int)(_style.borderThickness * _sizeScale)) - 1 : 0;
+
+	// Leave room for padding/border so the truncated text still fits within the overlay.
+	const int maxTextWidth = MAX(1, overlayWidth - 4 - 2 * padX - 2 * borderGrow);
+	const int maxBaseTextWidth = MAX(1, (int)(maxTextWidth / MAX(_sizeScale, 0.0001f)));
+	layout.displayText = truncateToWidth(hotspot.name, font, maxBaseTextWidth);
+
+	layout.baseTextWidth = font->getStringWidth(layout.displayText);
 	const int baseTextWidth = layout.baseTextWidth;
 	layout.baseTextHeight = font->getFontHeight();
 	const int baseTextHeight = layout.baseTextHeight;
 	if (baseTextWidth <= 0 || baseTextHeight <= 0)
 		return layout;
 
-	int gap = MAX(0, (int)(_style.labelGap * _sizeScale));
-	int padX = MAX(0, (int)(_style.paddingX * _sizeScale));
-	int padY = MAX(0, (int)(_style.paddingY * _sizeScale));
+	const int width = MAX(1, (int)(baseTextWidth * _sizeScale)) + 2 * padX;
+	const int height = MAX(1, (int)(baseTextHeight * _sizeScale)) + 2 * padY;
 
-	Common::Rect overlayBounds(0, 0, (int16)overlayWidth, (int16)overlayHeight);
+	Common::Rect boxRect = findLabelPlacement(width, height, position, overlayWidth, overlayHeight, gap);
+	if (boxRect.isEmpty())
+		return layout;
 
-	Common::Rect textRect((int16)MAX(1, (int)(baseTextWidth * _sizeScale)),
-		(int16)MAX(1, (int)(baseTextHeight * _sizeScale)));
-	textRect.moveTo(position.x + _markerSize / 2 + gap, position.y - textRect.height() / 2);
-
-	// swap to left side if the text would go off the right edge of the overlay
-	if (textRect.right + padX > overlayBounds.right)
-		textRect.moveTo(position.x - _markerSize / 2 - gap - textRect.width(), textRect.top);
-
-	if (textRect.bottom + padY > overlayBounds.bottom)
-		textRect.moveTo(textRect.left, overlayBounds.bottom - textRect.height() - padY);
-	if (textRect.top - padY < overlayBounds.top)
-		textRect.moveTo(textRect.left, overlayBounds.top + padY);
-
-	Common::Rect boxRect((int16)(textRect.left - padX), (int16)(textRect.top - padY),
-		(int16)(textRect.right + padX), (int16)(textRect.bottom + padY));
-
-	layout.textRect = textRect;
 	layout.boxRect = boxRect;
+	layout.textRect = Common::Rect(boxRect.left + padX, boxRect.top + padY, boxRect.right - padX, boxRect.bottom - padY);
 	return layout;
 }
 
@@ -350,7 +490,7 @@ void HotspotRenderer::drawLabel(Surface *surface, const LabelLayout &layout,
 		const PixelFormat &format, const Font *font, bool background) {
 	if (layout.textRect.isEmpty())
 		return;
-	const Common::U32String &label = hotspot.name;
+	const Common::U32String &label = layout.displayText;
 	const int baseTextWidth = layout.baseTextWidth;
 	const int baseTextHeight = layout.baseTextHeight;
 	const Common::Rect &textRect = layout.textRect;
@@ -494,6 +634,34 @@ void HotspotRenderer::fillBlendRect(Surface *surface, Common::Rect rect,
 			byte r, g, b;
 			format.colorToRGB(surface->getPixel(px, py), r, g, b);
 			surface->setPixel(px, py, format.RGBToColor((r * alpha + red) / 255, (g * alpha + green) / 255, (b * alpha + blue) / 255));
+		}
+	}
+}
+
+void HotspotRenderer::drawLine(Surface *surface, int x1, int y1, int x2, int y2,
+		int width, int height, const PixelFormat &format, int lineThickness) {
+	addDrawRect(Common::Rect(MIN(x1, x2), MIN(y1, y2), MAX(x1, x2) + 1, MAX(y1, y2) + 1));
+	const int dx = ABS(x2 - x1), dy = ABS(y2 - y1);
+	const int sx = x1 < x2 ? 1 : -1, sy = y1 < y2 ? 1 : -1;
+	const bool horizontal = dx >= dy;
+	int error = dx - dy;
+	for (;;) {
+		for (int offset = 1 - lineThickness; offset < lineThickness; ++offset) {
+			const int px = x1 + (horizontal ? 0 : offset);
+			const int py = y1 + (horizontal ? offset : 0);
+			if (px >= 0 && px < width && py >= 0 && py < height)
+				blendPixel(surface, px, py, format, ABS(offset), lineThickness);
+		}
+		if (x1 == x2 && y1 == y2)
+			break;
+		const int twiceError = error * 2;
+		if (twiceError > -dy) {
+			error -= dy;
+			x1 += sx;
+		}
+		if (twiceError < dx) {
+			error += dx;
+			y1 += sy;
 		}
 	}
 }

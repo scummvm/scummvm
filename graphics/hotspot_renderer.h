@@ -131,15 +131,26 @@ public:
 protected:
 	struct LabelLayout {
 		Common::Rect textRect, boxRect;
+		Common::U32String displayText;
 		int baseTextWidth = 0, baseTextHeight = 0;
 	};
 	virtual LabelLayout layoutHotspotLabel(const HotspotInfo &hotspot, Common::Point position,
-		int overlayWidth, int overlayHeight, const Font *font) const;
+		int overlayWidth, int overlayHeight, const Font *font);
+	Common::Rect findLabelPlacement(int width, int height, Common::Point markerPos,
+		int overlayWidth, int overlayHeight, int gap);
+	Common::Rect findInlineLabelSlot(Common::Point markerPos, int width, int height,
+		int overlayWidth, int overlayHeight, int gap, int borderGrow) const;
+	Common::Rect findGridLabelSlot(Common::Point markerPos, int width, int height,
+		int overlayWidth, int overlayHeight, int gap, int borderGrow) const;
+	bool isLabelSlotFree(const Common::Rect &candidate, int borderGrow) const;
 	void addDrawRect(Common::Rect rect);
 	virtual void prepareRender(const Common::Array<HotspotInfo> &hotspots,
 		int gameWidth, int gameHeight, int overlayWidth, int overlayHeight) {}
+	void prepareCollisionRects(const Common::Array<HotspotInfo> &hotspots);
 	virtual Common::Point placeHotspot(const HotspotInfo &hotspot, Common::Point position) { return position; }
 	virtual void drawMarker(Surface *surface, const HotspotInfo &hotspot, int x, int y, const PixelFormat &format, MarkerShape markerShape);
+	virtual void drawLeaderLine(Surface *surface, const LabelLayout &layout, const HotspotInfo &hotspot,
+		Common::Point markerPos, int overlayWidth, int overlayHeight, const PixelFormat &format);
 	virtual void drawHotspotLabelBackground(Surface *surface, const LabelLayout &layout, const HotspotInfo &hotspot,
 		int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
 	virtual void drawHotspotLabel(Surface *surface, const LabelLayout &layout, const HotspotInfo &hotspot,
@@ -167,6 +178,8 @@ private:
 	uint64 _labelClock = 0;
 	Common::Array<Common::Point> _positions;
 	Common::Array<LabelLayout> _labelLayouts;
+	Common::Array<Common::Rect> _labelRects;
+	Common::Array<Common::Rect> _markerRects;
 	void clearLabels();
 	static void packLabelMask(const Surface &scaled, LabelMask &mask);
 	const LabelMask &getLabelMask(const Common::U32String &text, const Font *font,
@@ -199,6 +212,8 @@ protected:
 	void fillBlendRect(Surface *surface, Common::Rect rect, const PixelFormat &format, uint32 color, byte opacity);
 	void drawLabelBox(Surface *surface, const Common::Rect &rect,
 		int overlayWidth, int overlayHeight, const PixelFormat &format);
+	void drawLine(Surface *surface, int x1, int y1, int x2, int y2,
+		int width, int height, const PixelFormat &format, int lineThickness);
 
 };
 
