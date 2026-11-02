@@ -30,8 +30,8 @@ namespace Scooby {
 
 StudioLogoSequence::StudioLogoSequence(const ScoobyDooRom &rom, TileScene &scene,
 									   FramePresenter &presenter, ControllerInput &input,
-									   Common::Functor0<void> &handleRoomVBlank)
-	: _handleRoomVBlank(handleRoomVBlank), _presenter(presenter), _input(input), _rom(rom),
+									   RoomVBlankHandler &roomVBlank)
+	: _roomVBlank(roomVBlank), _presenter(presenter), _input(input), _rom(rom),
 	  _scene(scene) {
 }
 
@@ -138,7 +138,7 @@ StudioLogoSequence::StepResult StudioLogoSequence::waitForFrame() {
 	// RunStartupSequence installs HandleRoomVBlank at 0x000008CE before
 	// every logo wait reached from 0x000009AC-0x00000BB5; service that
 	// still-installed callback before presenting the frame.
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	if (!_presenter.waitForVerticalBlank()) {
 		return StepResult::HostClosed;
 	}

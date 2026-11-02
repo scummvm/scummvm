@@ -71,17 +71,17 @@ InteractionActionMenuExecutor::InteractionActionMenuExecutor(
 	const ScoobyDooRom &rom, TileScene &scene,
 	SharedGraphicsWorkspace &graphicsWorkspace,
 	RuntimeState &state, FramePresenter &presenter,
-	Common::Functor0<void> &updateActorAnimationFrames, Common::Functor0<void> &handleRoomVBlank,
+	RoomActorAnimator &actorAnimator, RoomVBlankHandler &roomVBlank,
 	Common::Functor0<void> &chooseRandomInteractionAnimation,
 	Common::Functor0<Optional<SessionExit>> &runRoomScriptInitializationCommands,
 	Common::Functor0<Optional<SessionExit>> &runRoomScriptCommands, DialogueController &dialogue,
-	Common::Functor0<void> &commitActionPromptUpdate, Common::Functor0<void> &refreshActionPrompts)
+	ActionMenuController &actionMenu)
 	: _rom(rom), _scene(scene), _graphicsWorkspace(graphicsWorkspace), _state(state), _presenter(presenter),
-	  _updateActorAnimationFrames(updateActorAnimationFrames), _handleRoomVBlank(handleRoomVBlank),
+	  _actorAnimator(actorAnimator), _roomVBlank(roomVBlank),
 	  _chooseRandomInteractionAnimation(chooseRandomInteractionAnimation),
 	  _runRoomScriptInitializationCommands(runRoomScriptInitializationCommands),
 	  _runRoomScriptCommands(runRoomScriptCommands), _dialogue(dialogue),
-	  _commitActionPromptUpdate(commitActionPromptUpdate), _refreshActionPrompts(refreshActionPrompts) {
+	  _actionMenu(actionMenu) {
 }
 
 Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() {
@@ -209,7 +209,7 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 			// Ghidra 0x00001DAA-0x00001E57: request one strip publication, update actor frames, preserve
 			// both edge-triggered direction branches and every used-entry skip, then wait for bit zero to clear.
 			_state.displayFlags |= kInteractionStripPublicationMask;
-			_updateActorAnimationFrames();
+			_actorAnimator.updateActorAnimationFrames();
 
 			// Managed-only mouse support: hovering an entry selects it; clicking it chooses it like B.
 			bool mouseChose = false;
@@ -403,15 +403,15 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 		return Optional<SessionExit>(SessionExit::HostClosed);
 	}
 
-	_commitActionPromptUpdate();
-	_refreshActionPrompts();
+	_actionMenu.commitActionPromptUpdate();
+	_actionMenu.refreshActionPrompts();
 	return Optional<SessionExit>();
 }
 
 bool InteractionActionMenuExecutor::runInterfaceTransitionCountdown() {
 	_state.roomInterfaceTransitionCountdown = 0x10;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if (_state.roomInterfaceTransitionCountdown < 0) {
 			return true;
 		}
@@ -432,7 +432,7 @@ void InteractionActionMenuExecutor::publishBinaryMaskTiles(uint8 nonzeroPaletteI
 }
 
 bool InteractionActionMenuExecutor::waitForRoomRetrace() {
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	return _presenter.waitForVerticalBlank();
 }
 

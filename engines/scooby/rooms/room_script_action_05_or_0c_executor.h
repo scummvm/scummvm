@@ -29,9 +29,10 @@
 
 #include "room_tile_streamer.h"
 #include "scooby/assets/rom.h"
-#include "scooby/types.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/rooms/room_actor_animator.h"
 #include "scooby/runtime/runtime_state.h"
+#include "scooby/types.h"
 
 // Owns the shared Action05/0C progress gate and Action05's temporary room-presentation lifecycle.
 
@@ -43,19 +44,19 @@ public:
 	// rom: verified cartridge containing the command record and temporary presentation assets.
 	// scene: logical scene that replaces the original VRAM, CRAM, and sprite-table operations.
 	// state: shared progress, camera, input, display, actor, and interaction state.
-	// updateActorAnimationFrames: recovered actor-animation update called after room restoration.
+	// actorAnimator: owner of the recovered actor-animation update called after room restoration.
 	// waitForRoomVerticalBlank: callback-aware clocked frame used by every room wait.
 	// refreshInteractionDisplay: canonical interaction-display refresh called after restoration.
 	// executeRoomScriptAction1D: separate transition owner reached by both action branches.
 	// tileStreamer: owner of the explicit room viewport redraw after content restoration.
 	RoomScriptAction05Or0CExecutor(const ScoobyDooRom &rom, TileScene &scene,
 								   RuntimeState &state,
-								   Common::Functor0<void> &updateActorAnimationFrames,
+								   RoomActorAnimator &actorAnimator,
 								   Common::Functor0<bool> &waitForRoomVerticalBlank,
 								   Common::Functor0<void> &refreshInteractionDisplay,
 								   Common::Functor0<void> &executeRoomScriptAction1D,
 								   RoomTileStreamer &tileStreamer)
-		: _rom(rom), _scene(scene), _state(state), _updateActorAnimationFrames(updateActorAnimationFrames),
+		: _rom(rom), _scene(scene), _state(state), _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank),
 		  _refreshInteractionDisplay(refreshInteractionDisplay),
 		  _executeRoomScriptAction1D(executeRoomScriptAction1D), _tileStreamer(tileStreamer) {
@@ -94,7 +95,7 @@ private:
 	const ScoobyDooRom &_rom;
 	TileScene &_scene;
 	RuntimeState &_state;
-	Common::Functor0<void> &_updateActorAnimationFrames;
+	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 	Common::Functor0<void> &_refreshInteractionDisplay;
 	Common::Functor0<void> &_executeRoomScriptAction1D;

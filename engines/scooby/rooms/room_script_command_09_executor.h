@@ -27,6 +27,7 @@
 #include "common/func.h"
 
 #include "scooby/assets/rom.h"
+#include "scooby/interactions/action_menu_controller.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns command 0x09's room-object byte mutation and action-icon handover.
@@ -38,10 +39,10 @@ public:
 	// Binds command records to the typed room-object table and the canonical icon renderer.
 	// rom: verified cartridge containing command fields.
 	// state: shared room-object and action-icon state.
-	// drawSelectedActionIcon: recovered action-icon renderer called for the current interaction.
+	// actionMenu: owner of the recovered action-icon renderer called for the current interaction.
 	RoomScriptCommand09Executor(const ScoobyDooRom &rom, RuntimeState &state,
-								Common::Functor1<int, void> &drawSelectedActionIcon)
-		: _rom(rom), _state(state), _drawSelectedActionIcon(drawSelectedActionIcon) {
+								ActionMenuController &actionMenu)
+		: _rom(rom), _state(state), _actionMenu(actionMenu) {
 	}
 
 	// Replaces an indexed room-object byte and retires any active action icon.
@@ -70,7 +71,7 @@ private:
 
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
-	Common::Functor1<int, void> &_drawSelectedActionIcon;
+	ActionMenuController &_actionMenu;
 };
 } // namespace Scooby
 

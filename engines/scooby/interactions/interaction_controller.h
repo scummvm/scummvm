@@ -39,6 +39,8 @@
 
 namespace Scooby {
 
+class InteractionActionMenuExecutor;
+
 class InteractionController {
 public:
 	// Binds interaction state transitions to collision resolution, action menus, and retraces.
@@ -48,14 +50,16 @@ public:
 	// random: shared original random-value owner.
 	// actionMenu: shared owner of action selection and prompt publication.
 	// dialogue: shared owner of dialogue and interaction text rendering.
+	// interactionActionMenu: complete interaction-action choice and nested-frame owner.
 	InteractionController(const ScoobyDooRom &rom, RuntimeState &state,
 						  Common::Functor0<bool> &waitForRoomVerticalBlank,
 						  DeterministicRandom &random,
-						  ActionMenuController &actionMenu, DialogueController &dialogue)
+						  ActionMenuController &actionMenu, DialogueController &dialogue,
+						  InteractionActionMenuExecutor &interactionActionMenu)
 		: _rom(rom), _state(state), _resolver(rom, state), _actionMenu(actionMenu), _dialogue(dialogue),
+		  _interactionActionMenu(interactionActionMenu),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank), _random(random),
-		  _invokeRoomScriptDispatchCallback(nullptr), _runInteractionActionMenu(nullptr),
-		  _runRoomScriptInitializationCommands(nullptr) {
+		  _invokeRoomScriptDispatchCallback(nullptr), _runRoomScriptInitializationCommands(nullptr) {
 	}
 
 	// Binds the script initialization, scan, and execution owners used by interaction windows.
@@ -66,13 +70,6 @@ public:
 		Common::Functor0<Optional<SessionExit>> &runRoomScriptInitializationCommands) {
 		_invokeRoomScriptDispatchCallback = &invokeRoomScriptDispatchCallback;
 		_runRoomScriptInitializationCommands = &runRoomScriptInitializationCommands;
-	}
-
-	// Binds the distinct nested interaction-action menu executor after script dispatch is available.
-	// runInteractionActionMenu: complete interaction-action choice and nested-frame owner.
-	void bindInteractionActionMenu(
-		Common::Functor0<Optional<SessionExit>> &runInteractionActionMenu) {
-		_runInteractionActionMenu = &runInteractionActionMenu;
 	}
 
 	// Copies the current interaction fields into their original previous-frame slots.
@@ -194,10 +191,10 @@ private:
 	InteractionResolver _resolver;
 	ActionMenuController &_actionMenu;
 	DialogueController &_dialogue;
+	InteractionActionMenuExecutor &_interactionActionMenu;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 	DeterministicRandom &_random;
 	Common::Functor1<int, Optional<SessionExit>> *_invokeRoomScriptDispatchCallback;
-	Common::Functor0<Optional<SessionExit>> *_runInteractionActionMenu;
 	Common::Functor0<Optional<SessionExit>> *_runRoomScriptInitializationCommands;
 };
 } // namespace Scooby

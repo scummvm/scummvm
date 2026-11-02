@@ -29,6 +29,7 @@
 #include "scooby/assets/rom.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/interactions/dialogue_controller.h"
+#include "scooby/rooms/room_actor_animator.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns room-script command 0x10's dialogue and optional lead-actor transitions.
@@ -42,16 +43,16 @@ public:
 	// scene: logical tile scene receiving regenerated dialogue mask patterns.
 	// state: shared command cursor, actor state, interaction flags, and tile attributes.
 	// dialogue: shared dialogue composition and dismissal owner.
-	// updateActorAnimationFrames: recovered actor-animation interpreter used by transition waits.
+	// actorAnimator: owner of the recovered actor-animation interpreter used by transition waits.
 	// waitForRoomVerticalBlank: callback-aware clocked frame advancing transition state.
 	// requestSessionExit: publishes a managed non-returning dialogue handover.
 	RoomScriptCommand10Executor(const ScoobyDooRom &rom, TileScene &scene,
 								RuntimeState &state, DialogueController &dialogue,
-								Common::Functor0<void> &updateActorAnimationFrames,
+								RoomActorAnimator &actorAnimator,
 								Common::Functor0<bool> &waitForRoomVerticalBlank,
 								Common::Functor1<SessionExit, void> &requestSessionExit)
 		: _rom(rom), _scene(scene), _state(state), _dialogue(dialogue),
-		  _updateActorAnimationFrames(updateActorAnimationFrames),
+		  _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank), _requestSessionExit(requestSessionExit) {
 	}
 
@@ -78,7 +79,7 @@ private:
 	TileScene &_scene;
 	RuntimeState &_state;
 	DialogueController &_dialogue;
-	Common::Functor0<void> &_updateActorAnimationFrames;
+	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 	Common::Functor1<SessionExit, void> &_requestSessionExit;
 };

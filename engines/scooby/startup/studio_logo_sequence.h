@@ -26,10 +26,11 @@
 
 #include "scooby/assets/rom.h"
 #include "scooby/common/span.h"
-#include "scooby/types.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/input/controller_input.h"
 #include "scooby/presentation/frame_presenter.h"
+#include "scooby/rooms/vblank/room_vblank_handler.h"
+#include "scooby/types.h"
 
 // Owns the tile, tilemap, palette, and timing sequence that bridges the
 // intro into the main menu.
@@ -39,11 +40,11 @@ namespace Scooby {
 class StudioLogoSequence {
 public:
 	// Binds the recovered studio-logo assets to the shared scene and
-	// retrace presenter. handleRoomVBlank is the room callback installed
+	// retrace presenter. roomVBlank owns the room callback installed
 	// before the startup logo sequence begins.
 	StudioLogoSequence(const ScoobyDooRom &rom, TileScene &scene,
 					   FramePresenter &presenter,
-					   ControllerInput &input, Common::Functor0<void> &handleRoomVBlank);
+					   ControllerInput &input, RoomVBlankHandler &roomVBlank);
 
 	// Runs the opening portion of Ghidra RunAdventure at 0x00000BF4 without
 	// changing its asset offsets, inclusive waits, or tilemap upload order.
@@ -75,7 +76,7 @@ private:
 	// update; its hardware-only DMA/Z80 bus path has no managed counterpart.
 	void uploadStagedTilemapBand(Span<const uint8> source, int band);
 
-	Common::Functor0<void> &_handleRoomVBlank;
+	RoomVBlankHandler &_roomVBlank;
 	FramePresenter &_presenter;
 	ControllerInput &_input;
 	const ScoobyDooRom &_rom;

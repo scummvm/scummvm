@@ -29,14 +29,14 @@ namespace Scooby {
 RoomScriptActionExecutor::RoomScriptActionExecutor(
 	const ScoobyDooRom &rom, TileScene &scene, RuntimeState &state,
 	const RoomCollisionProbe &collisionProbe, DeterministicRandom &random,
-	FramePresenter &presenter, Common::Functor0<void> &updateActorAnimationFrames,
-	Common::Functor0<void> &handleRoomVBlank, Common::Functor0<Optional<SessionExit>> &presentRoom,
+	FramePresenter &presenter, RoomActorAnimator &actorAnimator,
+	RoomVBlankHandler &roomVBlank, Common::Functor0<Optional<SessionExit>> &presentRoom,
 	Common::Functor0<Optional<SessionExit>> &processAutomaticInteractions,
 	Common::Functor0<void> &refreshInteractionDisplay, Common::Functor0<void> &finishRoomStartup,
 	Common::Functor0<void> &executeRoomScriptAction1D, RoomTileStreamer &tileStreamer,
 	Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication)
 	: _rom(rom), _state(state), _random(random), _presenter(presenter),
-	  _updateActorAnimationFrames(updateActorAnimationFrames), _handleRoomVBlank(handleRoomVBlank),
+	  _actorAnimator(actorAnimator), _roomVBlank(roomVBlank),
 	  _presentRoom(presentRoom), _processAutomaticInteractions(processAutomaticInteractions),
 	  _finishRoomStartup(finishRoomStartup),
 	  _waitForRoomVerticalBlankFunctor(this, &RoomScriptActionExecutor::waitForRoomVerticalBlank),
@@ -101,19 +101,19 @@ RoomScriptActionExecutor::RoomScriptActionExecutor(
 	  _action1EFunctor(&_action1EExecutor, &RoomScriptAction1EExecutor::executeRoomScriptAction1E),
 	  _action27Functor(&_action27Executor, &RoomScriptAction27Executor::executeRoomScriptAction27),
 	  _action32Functor(&_duelActionExecutor, &DuelRoomScriptActionExecutor::executeRoomScriptAction32),
-	  _action05Or0CExecutor(rom, scene, state, updateActorAnimationFrames, _waitForRoomVerticalBlankFunctor,
+	  _action05Or0CExecutor(rom, scene, state, actorAnimator, _waitForRoomVerticalBlankFunctor,
 							refreshInteractionDisplay, executeRoomScriptAction1D, tileStreamer),
-	  _action1EExecutor(rom, scene, state, presenter, updateActorAnimationFrames, handleRoomVBlank,
+	  _action1EExecutor(rom, scene, state, presenter, actorAnimator, roomVBlank,
 						restartApplication, _requestSessionExitFunctor),
-	  _action27Executor(state, presenter, updateActorAnimationFrames, handleRoomVBlank,
+	  _action27Executor(state, presenter, actorAnimator, roomVBlank,
 						_requestSessionExitFunctor),
-	  _cameraPanExecutor(state, updateActorAnimationFrames, _waitForRoomVerticalBlankFunctor),
+	  _cameraPanExecutor(state, actorAnimator, _waitForRoomVerticalBlankFunctor),
 	  _coordinateSpriteExecutor(rom, scene, state),
-	  _duelActionExecutor(rom, scene, state, collisionProbe, random, presenter, updateActorAnimationFrames,
-						  handleRoomVBlank, _tryExecuteRoomScriptAction02Functor, _action03Functor,
+	  _duelActionExecutor(rom, scene, state, collisionProbe, random, presenter, actorAnimator,
+						  roomVBlank, _tryExecuteRoomScriptAction02Functor, _action03Functor,
 						  _requestSessionExitFunctor),
 	  _foregroundOverrideExecutor(rom, scene, state, _waitForRoomVerticalBlankFunctor),
-	  _pairedActorTransitionExecutor(state, updateActorAnimationFrames, _waitForRoomVerticalBlankFunctor),
+	  _pairedActorTransitionExecutor(state, actorAnimator, _waitForRoomVerticalBlankFunctor),
 	  _handlers(kHandlerCount) {
 	_handlers[0x00] = &_action00Functor;
 	_handlers[0x01] = &_action01Functor;
@@ -226,7 +226,7 @@ void RoomScriptActionExecutor::scriptAction03FadeOut() {
 
 	// Ghidra 0x0000455C-0x00004565: run the separate recovered fade owner, then restore the complete
 	// saved byte so callback-side flag mutations during the fade do not escape this action.
-	bool fadeCompleted = _presenter.fadePaletteOut(&_handleRoomVBlank);
+	bool fadeCompleted = _presenter.fadePaletteOut(_roomVBlank.beforeRetraceCallback());
 	_state.displayFlags = displayFlags;
 	if (!fadeCompleted) {
 		_requestedSessionExit = SessionExit::HostClosed;
@@ -248,7 +248,7 @@ void RoomScriptActionExecutor::scriptAction04WaitForButtonPress() {
 			return;
 		}
 
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 
 		// Ghidra 0x00004570-0x00004589: A has priority. A released falls through to B, newly pressed A
 		// returns, and held A repeats immediately without sampling either B state.
@@ -441,7 +441,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction20() {
 void RoomScriptActionExecutor::executeRoomScriptAction21() {
 	while (true) {
 		// Ghidra 0x0000415A-0x0000415D: advance every actor animation before each input sample.
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 
 		// Ghidra 0x0000415E-0x00004171: active-low Left has first priority and publishes result zero.
 		if (_state.isButtonDown(ControllerButtons::Left)) {
@@ -491,7 +491,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction22() {
 	// Sprite publication occurs asynchronously during the original room interrupt, so service the installed
 	// room callback and one clocked host frame before each managed continuation.
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorGraphicsReadyFlags & kShaggyActorMask) != 0) {
 			break;
 		}
@@ -526,7 +526,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction24() {
 void RoomScriptActionExecutor::executeRoomScriptAction25() {
 	while (true) {
 		// Ghidra 0x000040FC-0x000040FF: advance every actor animation at least once.
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 
 		// Ghidra 0x00004100-0x00004109: return when slot zero's path is inactive; otherwise retain the
 		// complete back edge. The original relies on asynchronous room interrupts to update path state,
@@ -602,7 +602,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction2B() {
 	// relies on asynchronous room VBlank interrupts; service its callback and clock on each continuation.
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorGraphicsReadyFlags & kShaggyActorMask) != 0) {
 			break;
 		}
@@ -714,7 +714,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction35() {
 
 	// Ghidra 0x00003030-0x0000303D: restart actor zero and immediately advance all animation streams.
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
-	_updateActorAnimationFrames();
+	_actorAnimator.updateActorAnimationFrames();
 
 	// Ghidra 0x0000303E-0x0000304D: replace only actor zero's signed integer coordinate halves,
 	// preserving both fractional low words.
@@ -724,7 +724,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction35() {
 	// Ghidra 0x0000304E-0x00003071: advance until actor zero holds. Interaction bit seven bypasses
 	// actor-one traversal waiting; otherwise a still-active path returns through the complete update loop.
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) == 0) {
 			if (!waitForRoomVerticalBlank()) {
 				return;
@@ -756,7 +756,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction35() {
 
 	// Ghidra 0x0000308E-0x0000309B: restart actor two and immediately advance all animation streams.
 	_state.actorAnimationRestartFlags |= 0x04;
-	_updateActorAnimationFrames();
+	_actorAnimator.updateActorAnimationFrames();
 
 	// Ghidra 0x0000309C-0x000030A5: block visibility for actors zero and one, then return.
 	_state.actorVisibilityBlockFlags |= kShaggyAndScoobyActorMask;
@@ -788,7 +788,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction37() {
 
 	// Ghidra 0x000030B8-0x000030C5: restart actor zero and immediately advance all animation streams.
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
-	_updateActorAnimationFrames();
+	_actorAnimator.updateActorAnimationFrames();
 
 	// Ghidra 0x000030C6-0x000030D5: replace only actor zero's signed integer coordinate halves,
 	// preserving both fractional low words.
@@ -798,7 +798,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction37() {
 	// Ghidra 0x000030D6-0x000030F9: advance until actor zero holds. Interaction bit seven bypasses
 	// actor-one traversal waiting; otherwise a still-active path returns through the complete update loop.
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) == 0) {
 			if (!waitForRoomVerticalBlank()) {
 				return;
@@ -830,7 +830,7 @@ void RoomScriptActionExecutor::executeRoomScriptAction37() {
 
 	// Ghidra 0x00003116-0x00003123: restart actor two and immediately advance all animation streams.
 	_state.actorAnimationRestartFlags |= 0x04;
-	_updateActorAnimationFrames();
+	_actorAnimator.updateActorAnimationFrames();
 
 	// Ghidra 0x00003124-0x0000312D: block visibility for actors zero and one, then return.
 	_state.actorVisibilityBlockFlags |= kShaggyAndScoobyActorMask;
@@ -903,7 +903,7 @@ void RoomScriptActionExecutor::scriptAction3DDisableScoobyAndShaggyWalkingSideBy
 }
 
 bool RoomScriptActionExecutor::waitForRoomVerticalBlank() {
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	if (_presenter.waitForVerticalBlank()) {
 		return true;
 	}

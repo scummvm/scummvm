@@ -61,7 +61,7 @@ bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectId, int
 		_state.actorAnimationDelays[actorSlot] = -1;
 		_state.actorAnimationRestartFlags |= actorMask;
 		while (true) {
-			_updateActorAnimationFrames();
+			_actorAnimator.updateActorAnimationFrames();
 			if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 				return true;
 			}
@@ -111,7 +111,7 @@ bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectId, int
 	// Ghidra 0x00004C10-0x00004C1F: update animations at least once and retain the back edge until the room
 	// callback advances the actor to its target and clears the selected movement bit.
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorMovementFlags & actorMask) == 0) {
 			return true;
 		}
@@ -578,7 +578,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 	_state.actorAnimationDelays[kShaggyActorSlot] = -1;
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationRestartFlags & kShaggyActorMask) == 0 &&
 			(_state.actorGraphicsReadyFlags & kShaggyActorMask) != 0) {
 			break;
@@ -595,7 +595,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 	// identity waits at least once until the room callback clears the complete routed movement.
 	if (static_cast<int16>(encodedObjectId) >= 0) {
 		while (true) {
-			_updateActorAnimationFrames();
+			_actorAnimator.updateActorAnimationFrames();
 			if ((_state.actorMovementFlags & kShaggyActorMask) == 0) {
 				break;
 			}
@@ -611,7 +611,7 @@ bool ScriptedRoomMovementExecutor::moveShaggyActorDirectly(int16 targetX, int16 
 		_state.actorAnimationDelays[kShaggyActorSlot] = -1;
 		_state.actorAnimationRestartFlags |= kShaggyActorMask;
 		while (true) {
-			_updateActorAnimationFrames();
+			_actorAnimator.updateActorAnimationFrames();
 			if ((_state.actorAnimationRestartFlags & kShaggyActorMask) == 0) {
 				break;
 			}
@@ -645,7 +645,7 @@ bool ScriptedRoomMovementExecutor::finishScoobyMovement(int16 targetX, int16 tar
 	}
 
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorMovementFlags & kScoobyActorMask) == 0) {
 			break;
 		}
@@ -661,7 +661,7 @@ bool ScriptedRoomMovementExecutor::finishScoobyMovement(int16 targetX, int16 tar
 	_state.actorAnimationDelays[kScoobyActorSlot] = -1;
 	_state.actorAnimationRestartFlags |= kScoobyActorMask;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationRestartFlags & kScoobyActorMask) == 0) {
 			break;
 		}
@@ -1019,7 +1019,7 @@ MovementResult ScriptedRoomMovementExecutor::moveScoobyActorDirectly(
 	_state.actorAnimationDelays[kScoobyActorSlot] = -1;
 	_state.actorAnimationRestartFlags |= kScoobyActorMask;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationRestartFlags & kScoobyActorMask) == 0 &&
 			(_state.actorGraphicsReadyFlags & kScoobyActorMask) != 0) {
 			break;

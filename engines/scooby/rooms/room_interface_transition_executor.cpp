@@ -47,7 +47,7 @@ void RoomInterfaceTransitionExecutor::executeRoomScriptAction1D() {
 	// Ghidra 0x0000484C-0x00004859: update every actor stream before each signed test and retain the complete
 	// nonnegative back edge while clocked room retraces advance the transition.
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if (_state.roomInterfaceTransitionCountdown < 0) {
 			break;
 		}
@@ -70,7 +70,7 @@ void RoomInterfaceTransitionExecutor::finishRoomStartup() {
 	// preserve the nonnegative back edge while callback-aware clocked frames advance asynchronous state.
 	_state.roomInterfaceTransitionCountdown = 0x10;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if (_state.roomInterfaceTransitionCountdown < 0) {
 			break;
 		}

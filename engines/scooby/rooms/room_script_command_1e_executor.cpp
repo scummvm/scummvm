@@ -48,7 +48,7 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 			_state.actorAnimationRestartFlags |= kShaggyActorMask;
 			if (static_cast<int16>(selector) < 0) {
 				while (true) {
-					_updateActorAnimationFrames();
+					_actorAnimator.updateActorAnimationFrames();
 					if ((_state.actorAnimationHoldFlags & kShaggyActorMask) != 0) {
 						break;
 					}
@@ -73,7 +73,7 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 			if (static_cast<int16>(selector) < 0) {
 				_state.actorAnimationRestartFlags |= kScoobyActorMask;
 				while (true) {
-					_updateActorAnimationFrames();
+					_actorAnimator.updateActorAnimationFrames();
 					if ((_state.actorAnimationHoldFlags & kScoobyActorMask) != 0) {
 						break;
 					}
@@ -92,7 +92,7 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 }
 
 bool RoomScriptCommand1EExecutor::waitForRoomVerticalBlank() {
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	if (_presenter.waitForVerticalBlank()) {
 		return true;
 	}

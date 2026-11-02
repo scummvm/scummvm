@@ -23,6 +23,7 @@
 
 #include "common/scummsys.h"
 
+#include "interaction_action_menu_executor.h"
 #include "scooby/common/contracts.h"
 #include "scooby/rooms/room_object.h"
 
@@ -215,9 +216,7 @@ Optional<SessionExit> InteractionController::runSelectedInteraction() {
 		_state.roomScriptEndOffset = interactionScriptEndOffset;
 		if (verb == TALK) {
 			uint8 automaticInteractionFlags = _state.automaticInteractionFlags;
-			SDM_ASSERT(_runInteractionActionMenu != nullptr,
-					   "InteractionController runInteractionActionMenu callback is not bound.");
-			Optional<SessionExit> menuExit = (*_runInteractionActionMenu)();
+			Optional<SessionExit> menuExit = _interactionActionMenu.runInteractionActionMenu();
 			if (menuExit.hasValue()) {
 				return menuExit;
 			}

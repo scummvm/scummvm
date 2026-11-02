@@ -59,7 +59,7 @@ void RoomScriptCameraPanExecutor::scriptAction0FCameraPanRight() {
 	_state.cameraPanTargetX = cameraTargetX;
 	_state.transitionFlags |= kCameraPanActiveMask;
 	do {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.transitionFlags & kCameraPanActiveMask) != 0) {
 			if (!_waitForRoomVerticalBlank()) {
 				return;
@@ -91,7 +91,7 @@ void RoomScriptCameraPanExecutor::scriptAction10CameraPanLeft() {
 	// room callback and shared clock after every still-active managed iteration.
 	_state.transitionFlags |= kCameraPanActiveMask;
 	do {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.transitionFlags & kCameraPanActiveMask) != 0) {
 			if (!_waitForRoomVerticalBlank()) {
 				return;

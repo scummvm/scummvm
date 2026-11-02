@@ -28,6 +28,7 @@
 
 #include "scooby/assets/rom.h"
 #include "scooby/movement/scripted_room_movement_executor.h"
+#include "scooby/rooms/room_actor_animator.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns indexed and immediate room-script placement commands for actors and room objects.
@@ -39,16 +40,16 @@ public:
 	// Binds authored placement records to actor state and its asynchronous publication owners.
 	// rom: verified cartridge containing command records and active-room coordinates.
 	// state: shared script cursor, room-position source, and actor state.
-	// updateActorAnimationFrames: recovered actor-animation interpreter used by direct placement.
+	// actorAnimator: owner of the recovered actor-animation interpreter used by direct placement.
 	// waitForRoomVerticalBlank: callback-aware clocked frame that publishes staged graphics.
 	// movement: shared owner of the original scripted movement boundaries.
 	// requestMovementHostClose: records the non-returning handover from shared movement waits.
 	RoomScriptCommand0EOr1BExecutor(const ScoobyDooRom &rom, RuntimeState &state,
-									Common::Functor0<void> &updateActorAnimationFrames,
+									RoomActorAnimator &actorAnimator,
 									Common::Functor0<bool> &waitForRoomVerticalBlank,
 									ScriptedRoomMovementExecutor &movement,
 									Common::Functor0<void> &requestMovementHostClose)
-		: _rom(rom), _state(state), _updateActorAnimationFrames(updateActorAnimationFrames),
+		: _rom(rom), _state(state), _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank), _movement(movement),
 		  _requestMovementHostClose(requestMovementHostClose) {
 	}
@@ -86,7 +87,7 @@ private:
 
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
-	Common::Functor0<void> &_updateActorAnimationFrames;
+	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 	ScriptedRoomMovementExecutor &_movement;
 	Common::Functor0<void> &_requestMovementHostClose;

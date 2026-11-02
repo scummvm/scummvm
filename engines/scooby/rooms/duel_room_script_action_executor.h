@@ -32,6 +32,8 @@
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/randomness/deterministic_random.h"
+#include "scooby/rooms/room_actor_animator.h"
+#include "scooby/rooms/vblank/room_vblank_handler.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns room-script action 0x32's persistent duel state, presentation resources, and recovered collision
@@ -48,8 +50,8 @@ public:
 	// collisionProbe: shared owner of decoded room collision queries.
 	// random: shared deterministic state used for each actor's impact-direction choice.
 	// presenter: shared host presentation owner enforcing the room retrace cadence.
-	// updateActorAnimationFrames: recovered actor-animation update used by the duel loop.
-	// handleRoomVBlank: installed room callback used at every recovered retrace boundary.
+	// actorAnimator: owner of the recovered actor-animation update used by the duel loop.
+	// roomVBlank: owner of the installed room callback used at every recovered retrace boundary.
 	// executeAction02: action-0x02 boundary; returns false for a managed session exit.
 	// executeAction03: canonical action-0x03 boundary called during duel teardown.
 	// requestSessionExit: parent handover used when the host closes during a wait.
@@ -57,13 +59,13 @@ public:
 								 RuntimeState &state, const RoomCollisionProbe &collisionProbe,
 								 DeterministicRandom &random,
 								 FramePresenter &presenter,
-								 Common::Functor0<void> &updateActorAnimationFrames,
-								 Common::Functor0<void> &handleRoomVBlank, Common::Functor0<bool> &executeAction02,
+								 RoomActorAnimator &actorAnimator,
+								 RoomVBlankHandler &roomVBlank, Common::Functor0<bool> &executeAction02,
 								 Common::Functor0<void> &executeAction03,
 								 Common::Functor1<SessionExit, void> &requestSessionExit)
 		: _rom(rom), _scene(scene), _state(state), _collisionProbe(collisionProbe), _random(random),
-		  _presenter(presenter), _updateActorAnimationFrames(updateActorAnimationFrames),
-		  _handleRoomVBlank(handleRoomVBlank), _executeAction02(executeAction02),
+		  _presenter(presenter), _actorAnimator(actorAnimator),
+		  _roomVBlank(roomVBlank), _executeAction02(executeAction02),
 		  _executeAction03(executeAction03),
 		  _requestSessionExit(requestSessionExit) {
 	}
@@ -147,8 +149,8 @@ private:
 	const RoomCollisionProbe &_collisionProbe;
 	DeterministicRandom &_random;
 	FramePresenter &_presenter;
-	Common::Functor0<void> &_updateActorAnimationFrames;
-	Common::Functor0<void> &_handleRoomVBlank;
+	RoomActorAnimator &_actorAnimator;
+	RoomVBlankHandler &_roomVBlank;
 	Common::Functor0<bool> &_executeAction02;
 	Common::Functor0<void> &_executeAction03;
 	Common::Functor1<SessionExit, void> &_requestSessionExit;

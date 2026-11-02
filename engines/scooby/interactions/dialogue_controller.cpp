@@ -23,6 +23,7 @@
 
 #include "common/scummsys.h"
 
+#include "interaction_controller.h"
 #include "scooby/common/contracts.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_layer.h"
@@ -231,10 +232,8 @@ Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 	while (true) {
 		// Ghidra 0x0000A1AA-0x0000A1B1: both original services run on every complete loop iteration.
 		// A nested managed exit from automatic processing bypasses all subsequent native work.
-		_updateActorAnimationFrames();
-		SDM_ASSERT(_processAutomaticInteractions != nullptr,
-				   "DialogueController processAutomaticInteractions callback is not bound.");
-		Optional<SessionExit> automaticInteractionExit = (*_processAutomaticInteractions)();
+		_actorAnimator.updateActorAnimationFrames();
+		Optional<SessionExit> automaticInteractionExit = _interactions.processAutomaticInteractions();
 		if (automaticInteractionExit.hasValue()) {
 			return automaticInteractionExit;
 		}
@@ -247,9 +246,7 @@ Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 		// Ghidra 0x0000A1CA-0x0000A1E7: retain both independent gates around random animation selection.
 		if ((_state.interactionFlags & kDialogueInteractionAnimationMask) != 0 &&
 			(_state.actorAnimationHoldFlags & kActorZeroHoldMask) != 0) {
-			SDM_ASSERT(_chooseRandomInteractionAnimation != nullptr,
-					   "DialogueController chooseRandomInteractionAnimation callback is not bound.");
-			(*_chooseRandomInteractionAnimation)();
+			_interactions.chooseRandomInteractionAnimation();
 		}
 
 		// Ghidra 0x0000A1E8-0x0000A1EB: replace the native VBlank handshake with the installed room
@@ -300,7 +297,7 @@ Optional<SessionExit> DialogueController::waitForDialogueDismissal() {
 }
 
 bool DialogueController::waitForRoomRetrace() {
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	return _presenter.waitForVerticalBlank();
 }
 } // namespace Scooby

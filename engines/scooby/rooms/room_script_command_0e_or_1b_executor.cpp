@@ -147,7 +147,7 @@ bool RoomScriptCommand0EOr1BExecutor::placeActorDirectly(int actorSlot, int16 ta
 	_state.actorAnimationDelays[static_cast<size_t>(actorSlot)] = initialDelay;
 	_state.actorAnimationRestartFlags |= actorMask;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 			return true;
 		}

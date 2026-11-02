@@ -29,6 +29,7 @@
 #include "scooby/assets/rom.h"
 #include "scooby/graphics/shared_graphics_workspace.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/rooms/room_actor_animator.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns the room/interface tile-block transition, its clocked timing, and its later restoration.
@@ -42,15 +43,15 @@ public:
 	// scene: logical lower-interface layer saved, cleared, and restored by the transition.
 	// graphicsWorkspace: aliased packed bytes shared with inventory-pattern composition.
 	// state: progress, countdown, and saved tile-block state shared across the transition.
-	// updateActorAnimationFrames: recovered actor-animation update retained during the wait.
+	// actorAnimator: owner of the recovered actor-animation update retained during the wait.
 	// waitForRoomVerticalBlank: callback-aware room frame boundary advancing the countdown.
 	RoomInterfaceTransitionExecutor(const ScoobyDooRom &rom, TileScene &scene,
 									SharedGraphicsWorkspace &graphicsWorkspace,
 									RuntimeState &state,
-									Common::Functor0<void> &updateActorAnimationFrames,
+									RoomActorAnimator &actorAnimator,
 									Common::Functor0<bool> &waitForRoomVerticalBlank)
 		: _rom(rom), _scene(scene), _graphicsWorkspace(graphicsWorkspace), _state(state),
-		  _updateActorAnimationFrames(updateActorAnimationFrames),
+		  _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank) {
 	}
 
@@ -97,7 +98,7 @@ private:
 	TileScene &_scene;
 	SharedGraphicsWorkspace &_graphicsWorkspace;
 	RuntimeState &_state;
-	Common::Functor0<void> &_updateActorAnimationFrames;
+	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 };
 } // namespace Scooby

@@ -42,6 +42,8 @@
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/randomness/deterministic_random.h"
+#include "scooby/rooms/room_actor_animator.h"
+#include "scooby/rooms/vblank/room_vblank_handler.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns the executable nested room-script action mapping and its recovered function boundaries.
@@ -61,8 +63,8 @@ public:
 	// collisionProbe: shared owner of decoded room collision queries.
 	// random: shared deterministic sequence advanced by random selections and duel impacts.
 	// presenter: shared retrace and palette-transition owner used by dedicated actions.
-	// updateActorAnimationFrames: recovered actor-animation update called by action handlers.
-	// handleRoomVBlank: installed room callback that advances state during busy waits.
+	// actorAnimator: owner of the recovered actor-animation update called by action handlers.
+	// roomVBlank: owner of the installed room callback that advances state during busy waits.
 	// presentRoom: canonical room-presentation owner called by Action02.
 	// processAutomaticInteractions: canonical automatic-interaction update called by Action04.
 	// refreshInteractionDisplay: canonical interaction-display refresh called by Action05.
@@ -75,8 +77,8 @@ public:
 							 RuntimeState &state,
 							 const RoomCollisionProbe &collisionProbe, DeterministicRandom &random,
 							 FramePresenter &presenter,
-							 Common::Functor0<void> &updateActorAnimationFrames,
-							 Common::Functor0<void> &handleRoomVBlank,
+							 RoomActorAnimator &actorAnimator,
+							 RoomVBlankHandler &roomVBlank,
 							 Common::Functor0<Optional<SessionExit>> &presentRoom,
 							 Common::Functor0<Optional<SessionExit>>
 								 &processAutomaticInteractions,
@@ -146,8 +148,8 @@ private:
 	RuntimeState &_state;
 	DeterministicRandom &_random;
 	FramePresenter &_presenter;
-	Common::Functor0<void> &_updateActorAnimationFrames;
-	Common::Functor0<void> &_handleRoomVBlank;
+	RoomActorAnimator &_actorAnimator;
+	RoomVBlankHandler &_roomVBlank;
 	Common::Functor0<Optional<SessionExit>> &_presentRoom;
 	Common::Functor0<Optional<SessionExit>> &_processAutomaticInteractions;
 	Common::Functor0<void> &_finishRoomStartup;

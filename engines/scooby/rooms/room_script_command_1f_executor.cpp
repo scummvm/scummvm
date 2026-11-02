@@ -48,7 +48,7 @@ void RoomScriptCommand1FExecutor::executeRoomScriptCommand1F(int mode) {
 		while (true) {
 			// Ghidra 0x00004FA0-0x00004FAD: advance every stream at least once. An active selected movement
 			// bit takes the back edge immediately without consulting path state.
-			_updateActorAnimationFrames();
+			_actorAnimator.updateActorAnimationFrames();
 			if ((_state.actorMovementFlags & actorMask) != 0) {
 				if (!waitForRoomVerticalBlank()) {
 					return;
@@ -74,7 +74,7 @@ void RoomScriptCommand1FExecutor::executeRoomScriptCommand1F(int mode) {
 }
 
 bool RoomScriptCommand1FExecutor::waitForRoomVerticalBlank() {
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	if (_presenter.waitForVerticalBlank()) {
 		return true;
 	}

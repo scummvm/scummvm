@@ -27,6 +27,7 @@
 #include "common/func.h"
 
 #include "scooby/assets/rom.h"
+#include "scooby/rooms/room_actor_animator.h"
 #include "scooby/rooms/room_collision_probe.h"
 #include "scooby/runtime/runtime_state.h"
 
@@ -53,14 +54,14 @@ public:
 	// rom: verified cartridge containing the active room's immutable route waypoints.
 	// state: shared room-object, actor-coordinate, animation, and movement state.
 	// collisionProbe: shared owner of decoded room collision queries.
-	// updateActorAnimationFrames: recovered actor-animation update used by synchronous waits.
+	// actorAnimator: owner of the recovered actor-animation update used by synchronous waits.
 	// waitForRoomVerticalBlank: callback-aware clocked frame that publishes and advances movement.
 	ScriptedRoomMovementExecutor(const ScoobyDooRom &rom, RuntimeState &state,
 								 const RoomCollisionProbe &collisionProbe,
-								 Common::Functor0<void> &updateActorAnimationFrames,
+								 RoomActorAnimator &actorAnimator,
 								 Common::Functor0<bool> &waitForRoomVerticalBlank)
 		: _rom(rom), _state(state), _collisionProbe(collisionProbe),
-		  _updateActorAnimationFrames(updateActorAnimationFrames),
+		  _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank) {
 	}
 
@@ -210,7 +211,7 @@ private:
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
 	const RoomCollisionProbe &_collisionProbe;
-	Common::Functor0<void> &_updateActorAnimationFrames;
+	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 };
 } // namespace Scooby

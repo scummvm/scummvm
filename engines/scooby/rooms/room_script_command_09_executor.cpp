@@ -41,7 +41,7 @@ void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
 		if (objectId == static_cast<uint16>(_state.currentInteraction)) {
 			_state.pendingVerbIcon =
 				static_cast<VerbEnum>(location.targetRoomObject.readCommandByte(location.byteOffset));
-			_drawSelectedActionIcon(0);
+			_actionMenu.drawSelectedActionIcon(0);
 		}
 
 		// Ghidra 0x00002D9A-0x00002DA7: replace the resolved byte, then retain both outcomes of the

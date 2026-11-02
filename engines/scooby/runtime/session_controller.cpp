@@ -34,18 +34,14 @@ SessionController::SessionController(const ScoobyDooRom &rom, TileScene &scene, 
 	: _rom(rom), _state(state), _input(input), _roomTileStreamer(_rom, scene, _state),
 	  _roomActorInitializer(_rom, _state), _roomObjectTilePatches(_rom, scene, _state),
 	  _roomSprites(_rom, scene, _state),
-	  _roomVBlank(_rom, _input, _roomObjectTilePatches, scene, _roomSprites, _state, _roomTileStreamer),
+	  _roomVBlank(_rom, _input, _roomObjectTilePatches, scene, _roomSprites, _state, _roomTileStreamer,
+				  _actionMenu, _roomActorUpdater),
 	  _presenter(scene, frame, limiter), _restartSequence(_state, _presenter), _graphicsWorkspace(),
 	  _waitForRoomVerticalBlankFunctor(this, &SessionController::waitForRoomVerticalBlank),
 	  _presentRoomFunctor(this, &SessionController::presentRoom),
 	  _resetRoomStateForReloadFunctor(this, &SessionController::resetRoomStateForReload),
 	  _reloadAndPresentRoomFunctor(this, &SessionController::reloadAndPresentRoom),
 	  _restartApplicationFunctor(this, &SessionController::restartApplication),
-	  _drawSelectedActionIconFunctor(&_actionMenu, &ActionMenuController::drawSelectedActionIcon),
-	  _commitActionPromptUpdateFunctor(&_actionMenu, &ActionMenuController::commitActionPromptUpdate),
-	  _refreshActionPromptsFunctor(&_actionMenu, &ActionMenuController::refreshActionPrompts),
-	  _commitActionPromptTilesFunctor(&_actionMenu, &ActionMenuController::commitActionPromptTiles),
-	  _updateRoomActorsAndInterfaceFunctor(&_roomActorUpdater, &RoomActorUpdater::updateRoomActorsAndInterface),
 	  _refreshInteractionDisplayFunctor(&_interactions, &InteractionController::refreshInteractionDisplay),
 	  _finishRoomStartupFunctor(&_roomInterfaceTransitions, &RoomInterfaceTransitionExecutor::finishRoomStartup),
 	  _executeRoomScriptAction1DFunctor(&_roomInterfaceTransitions,
@@ -53,54 +49,41 @@ SessionController::SessionController(const ScoobyDooRom &rom, TileScene &scene, 
 	  _runRoomScriptInitializationCommandsFunctor(&_roomScripts,
 												  &RoomScriptController::runRoomScriptInitializationCommands),
 	  _runRoomScriptCommandsFunctor(&_roomScripts, &RoomScriptController::runRoomScriptCommands),
-	  _runInteractionActionMenuFunctor(&_interactionActionMenu,
-									   &InteractionActionMenuExecutor::runInteractionActionMenu),
 	  _actionMenu(_rom, scene, _graphicsWorkspace, _state, _waitForRoomVerticalBlankFunctor),
 	  _roomCollisionProbe(_rom, _state),
-	  _roomActorUpdater(_rom, scene, _state, _roomCollisionProbe, _drawSelectedActionIconFunctor),
+	  _roomActorUpdater(_rom, scene, _state, _roomCollisionProbe, _actionMenu),
 	  _actorAnimations(_rom, _state, _waitForRoomVerticalBlankFunctor),
-	  _updateActorAnimationFramesFunctor(&_actorAnimations, &RoomActorAnimator::updateActorAnimationFrames),
-	  _handleRoomVBlankFunctor(&_roomVBlank, &RoomVBlankHandler::handleRoomVBlank),
-	  _scriptedRoomMovement(_rom, _state, _roomCollisionProbe, _updateActorAnimationFramesFunctor,
-							_waitForRoomVerticalBlankFunctor),
-	  _dialogue(_rom, scene, _state, _presenter, _updateActorAnimationFramesFunctor, _handleRoomVBlankFunctor),
-	  _interactions(_rom, _state, _waitForRoomVerticalBlankFunctor, random, _actionMenu, _dialogue),
-	  _processAutomaticInteractionsFunctor(&_interactions, &InteractionController::processAutomaticInteractions),
+	  _scriptedRoomMovement(_rom, _state, _roomCollisionProbe, _actorAnimations, _waitForRoomVerticalBlankFunctor),
+	  _dialogue(_rom, scene, _state, _presenter, _actorAnimations, _roomVBlank, _interactions),
+	  _interactions(_rom, _state, _waitForRoomVerticalBlankFunctor, random, _actionMenu, _dialogue,
+					_interactionActionMenu),
 	  _chooseRandomInteractionAnimationFunctor(&_interactions,
 											   &InteractionController::chooseRandomInteractionAnimation),
-	  _roomInterfaceTransitions(_rom, scene, _graphicsWorkspace, _state, _updateActorAnimationFramesFunctor,
+	  _roomInterfaceTransitions(_rom, scene, _graphicsWorkspace, _state, _actorAnimations,
 								_waitForRoomVerticalBlankFunctor),
 	  _roomSceneLoader(_rom, scene, _state, _actionMenu, _roomActorInitializer, _roomInterfaceTransitions,
 					   _roomTileStreamer),
 	  _roomScripts(_rom, scene, _state, _roomCollisionProbe, _scriptedRoomMovement, random, _presenter,
-				   _updateActorAnimationFramesFunctor, _handleRoomVBlankFunctor, _presentRoomFunctor,
-				   _resetRoomStateForReloadFunctor, _reloadAndPresentRoomFunctor, _interactions,
-				   _refreshInteractionDisplayFunctor, _finishRoomStartupFunctor,
-				   _executeRoomScriptAction1DFunctor, _dialogue, _commitActionPromptUpdateFunctor,
-				   _refreshActionPromptsFunctor, _drawSelectedActionIconFunctor, _roomTileStreamer,
-				   _restartApplicationFunctor),
+				   _actorAnimations, _roomVBlank, _presentRoomFunctor, _resetRoomStateForReloadFunctor,
+				   _reloadAndPresentRoomFunctor, _interactions, _refreshInteractionDisplayFunctor,
+				   _finishRoomStartupFunctor, _executeRoomScriptAction1DFunctor, _dialogue, _actionMenu,
+				   _roomTileStreamer, _restartApplicationFunctor),
 	  _interactionActionMenu(_rom, scene, _graphicsWorkspace, _state, _presenter,
-							 _updateActorAnimationFramesFunctor, _handleRoomVBlankFunctor,
-							 _chooseRandomInteractionAnimationFunctor,
+							 _actorAnimations, _roomVBlank, _chooseRandomInteractionAnimationFunctor,
 							 _runRoomScriptInitializationCommandsFunctor, _runRoomScriptCommandsFunctor,
-							 _dialogue, _commitActionPromptUpdateFunctor, _refreshActionPromptsFunctor),
-	  _studioLogos(_rom, scene, _presenter, _input, _handleRoomVBlankFunctor),
+							 _dialogue, _actionMenu),
+	  _studioLogos(_rom, scene, _presenter, _input, _roomVBlank),
 	  _mainMenuPresentation(_rom, scene, _presenter), _mainMenuVBlank(_input, _mainMenuPresentation, random, _state),
 	  _episodeOpening(_rom, scene, _presenter, _mainMenuVBlank, _state),
 	  _mainMenu(_rom, _mainMenuPresentation, _mainMenuVBlank, _input, _state, _presenter, _restartSequence),
 	  _ambientMovement(_rom, random, _state, _scriptedRoomMovement) {
-	// Ghidra 0x00007F1E-region wiring: install the action-prompt tile commit and room-actor update owners
-	// once their targets exist, matching the original delegate assignments performed immediately after
-	// each target's construction.
-	_roomVBlank.bindActionPromptTileCommit(_commitActionPromptTilesFunctor);
-	_roomVBlank.bindRoomActorUpdate(_updateRoomActorsAndInterfaceFunctor);
-	_dialogue.bindDismissalInteractions(_processAutomaticInteractionsFunctor,
-										_chooseRandomInteractionAnimationFunctor);
-	_interactions.bindInteractionActionMenu(_runInteractionActionMenuFunctor);
+	// Several owners above receive references to members declared after them (for example _roomVBlank
+	// receives _actionMenu and _roomActorUpdater, and _dialogue receives _interactions). This is safe
+	// because constructors only store these references; none is called until construction completes.
 }
 
 Optional<SessionExit> SessionController::runMainMenu() {
-	switch (_mainMenu.runMainMenu(_handleRoomVBlankFunctor)) {
+	switch (_mainMenu.runMainMenu(*_roomVBlank.beforeRetraceCallback())) {
 	case MainMenuExit::ContinueToRoom:
 		return Optional<SessionExit>();
 	case MainMenuExit::RestartRequested:
@@ -202,7 +185,7 @@ Optional<SessionExit> SessionController::presentRoom() {
 	// Ghidra 0x000021B0-0x000021C9: g_awSharedPalette and its contiguous room half form the complete
 	// 64-color target. Gate normal room updates while FadePaletteIn services each native retrace.
 	_state.displayFlags &= static_cast<uint8>(~kRoomUpdateEnabledMask);
-	if (!_presenter.fadePaletteIn(makeSpan(_state.targetPalette), &_handleRoomVBlankFunctor)) {
+	if (!_presenter.fadePaletteIn(makeSpan(_state.targetPalette), _roomVBlank.beforeRetraceCallback())) {
 		return Optional<SessionExit>(SessionExit::HostClosed);
 	}
 
@@ -470,7 +453,7 @@ SessionExit SessionController::runGame() {
 
 		if (_state.isButtonDown(ControllerButtons::Start) && (_state.transitionFlags & 0x10) == 0) {
 			_state.displayFlags &= 0xBF;
-			if (!_presenter.fadePaletteOut(&_handleRoomVBlankFunctor)) {
+			if (!_presenter.fadePaletteOut(_roomVBlank.beforeRetraceCallback())) {
 				return SessionExit::HostClosed;
 			}
 

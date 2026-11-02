@@ -29,6 +29,8 @@
 #include "scooby/assets/rom.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"
+#include "scooby/rooms/room_actor_animator.h"
+#include "scooby/rooms/vblank/room_vblank_handler.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns room-script action 0x1E's streamed reset presentation and handover.
@@ -42,18 +44,18 @@ public:
 	// scene: logical tile scene receiving dynamic patterns and cyclic foreground rows.
 	// state: shared scroll, countdown, display, and dynamic-tile state.
 	// presenter: shared retrace and palette-transition owner.
-	// updateActorAnimationFrames: recovered actor-animation update retained during the sequence.
-	// handleRoomVBlank: installed room callback run at every recovered retrace boundary.
+	// actorAnimator: owner of the recovered actor-animation update retained during the sequence.
+	// roomVBlank: owner of the installed room callback run at every recovered retrace boundary.
 	// restartApplication: managed owner of the non-returning original reset handover.
 	// requestSessionExit: publishes the managed result of the original non-returning tail branch.
 	RoomScriptAction1EExecutor(const ScoobyDooRom &rom, TileScene &scene,
 							   RuntimeState &state, FramePresenter &presenter,
-							   Common::Functor0<void> &updateActorAnimationFrames,
-							   Common::Functor0<void> &handleRoomVBlank,
+							   RoomActorAnimator &actorAnimator,
+							   RoomVBlankHandler &roomVBlank,
 							   Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication,
 							   Common::Functor1<SessionExit, void> &requestSessionExit)
 		: _rom(rom), _scene(scene), _state(state), _presenter(presenter),
-		  _updateActorAnimationFrames(updateActorAnimationFrames), _handleRoomVBlank(handleRoomVBlank),
+		  _actorAnimator(actorAnimator), _roomVBlank(roomVBlank),
 		  _restartApplication(restartApplication), _requestSessionExit(requestSessionExit) {
 	}
 
@@ -81,8 +83,8 @@ private:
 	TileScene &_scene;
 	RuntimeState &_state;
 	FramePresenter &_presenter;
-	Common::Functor0<void> &_updateActorAnimationFrames;
-	Common::Functor0<void> &_handleRoomVBlank;
+	RoomActorAnimator &_actorAnimator;
+	RoomVBlankHandler &_roomVBlank;
 	Common::Functor1<const Common::Functor0<void> *, bool> &_restartApplication;
 	Common::Functor1<SessionExit, void> &_requestSessionExit;
 };

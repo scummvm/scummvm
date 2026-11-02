@@ -27,14 +27,13 @@ RoomScriptController::RoomScriptController(
 	const ScoobyDooRom &rom, TileScene &scene, RuntimeState &state,
 	const RoomCollisionProbe &collisionProbe, ScriptedRoomMovementExecutor &movement,
 	DeterministicRandom &random, FramePresenter &presenter,
-	Common::Functor0<void> &updateActorAnimationFrames, Common::Functor0<void> &handleRoomVBlank,
+	RoomActorAnimator &actorAnimator, RoomVBlankHandler &roomVBlank,
 	Common::Functor0<Optional<SessionExit>> &presentRoom,
 	Common::Functor0<Optional<SessionExit>> &resetRoomStateForReload,
 	Common::Functor0<Optional<SessionExit>> &reloadAndPresentRoom, InteractionController &interactions,
 	Common::Functor0<void> &refreshInteractionDisplay, Common::Functor0<void> &finishRoomStartup,
 	Common::Functor0<void> &executeRoomScriptAction1D, DialogueController &dialogue,
-	Common::Functor0<void> &commitActionPromptUpdate, Common::Functor0<void> &refreshActionPrompts,
-	Common::Functor1<int, void> &drawSelectedActionIcon, RoomTileStreamer &tileStreamer,
+	ActionMenuController &actionMenu, RoomTileStreamer &tileStreamer,
 	Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication)
 	: _rom(rom), _state(state), _interactions(interactions),
 	  _processAutomaticInteractionsFunctor(&_interactions,
@@ -42,12 +41,11 @@ RoomScriptController::RoomScriptController(
 	  _invokeRoomScriptDispatchCallbackFunctor(this, &RoomScriptController::invokeRoomScriptDispatchCallback),
 	  _runRoomScriptInitializationCommandsFunctor(
 		  this, &RoomScriptController::runRoomScriptInitializationCommands),
-	  _commands(rom, scene, state, collisionProbe, movement, random, presenter, updateActorAnimationFrames,
-				handleRoomVBlank, presentRoom, resetRoomStateForReload, reloadAndPresentRoom,
+	  _commands(rom, scene, state, collisionProbe, movement, random, presenter, actorAnimator,
+				roomVBlank, presentRoom, resetRoomStateForReload, reloadAndPresentRoom,
 				_processAutomaticInteractionsFunctor, refreshInteractionDisplay, finishRoomStartup,
 				executeRoomScriptAction1D, dialogue, _invokeRoomScriptDispatchCallbackFunctor,
-				commitActionPromptUpdate, refreshActionPrompts, drawSelectedActionIcon, tileStreamer,
-				restartApplication) {
+				actionMenu, tileStreamer, restartApplication) {
 	_interactions.bindRoomScriptDispatch(_invokeRoomScriptDispatchCallbackFunctor,
 										 _runRoomScriptInitializationCommandsFunctor);
 }

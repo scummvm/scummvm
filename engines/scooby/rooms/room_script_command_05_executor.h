@@ -28,6 +28,8 @@
 
 #include "actor_animation_descriptor_catalog.h"
 #include "scooby/assets/rom.h"
+#include "scooby/interactions/action_menu_controller.h"
+#include "scooby/rooms/room_actor_animator.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns room-object relocation across actor slots, inventory order, and action-prompt publication.
@@ -40,21 +42,18 @@ public:
 	// rom: verified cartridge containing command records and the parallel actor-shape catalogs.
 	// state: shared room objects, actor slots, inventory order, and script cursor.
 	// actorDescriptorCatalog: shared owner of the parallel actor-shape catalogs.
-	// updateActorAnimationFrames: recovered animation update used while a new actor waits for graphics.
+	// actorAnimator: owner of the recovered animation update used while a new actor waits for graphics.
 	// waitForRoomVerticalBlank: callback-aware clocked frame publishing actor and object state.
-	// commitActionPromptUpdate: recovered action-prompt commit boundary.
-	// refreshActionPrompts: recovered action-prompt refresh boundary.
+	// actionMenu: owner of the recovered action-prompt commit and refresh boundaries.
 	RoomScriptCommand05MoveObject(const ScoobyDooRom &rom, RuntimeState &state,
 								const ActorAnimationDescriptorCatalog &actorDescriptorCatalog,
-								Common::Functor0<void> &updateActorAnimationFrames,
+								RoomActorAnimator &actorAnimator,
 								Common::Functor0<bool> &waitForRoomVerticalBlank,
-								Common::Functor0<void> &commitActionPromptUpdate,
-								Common::Functor0<void> &refreshActionPrompts)
+								ActionMenuController &actionMenu)
 		: _rom(rom), _state(state), _actorDescriptorCatalog(actorDescriptorCatalog),
-		  _updateActorAnimationFrames(updateActorAnimationFrames),
+		  _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank),
-		  _commitActionPromptUpdate(commitActionPromptUpdate),
-		  _refreshActionPrompts(refreshActionPrompts) {
+		  _actionMenu(actionMenu) {
 	}
 
 	// Relocates one room object and consumes its complete six-byte command record.
@@ -93,10 +92,9 @@ private:
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
 	const ActorAnimationDescriptorCatalog &_actorDescriptorCatalog;
-	Common::Functor0<void> &_updateActorAnimationFrames;
+	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
-	Common::Functor0<void> &_commitActionPromptUpdate;
-	Common::Functor0<void> &_refreshActionPrompts;
+	ActionMenuController &_actionMenu;
 };
 } // namespace Scooby
 

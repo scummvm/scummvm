@@ -66,9 +66,7 @@ void RoomVBlankHandler::handleRoomVBlank() {
 
 		// Ghidra 0x0000A6B0-0x0000A6BF: update room actors and interface state, reopen the gate, and
 		// replace the final interrupt-mask restoration with ordinary managed callback return semantics.
-		SDM_ASSERT(_updateRoomActorsAndInterface != nullptr,
-				   "The room VBlank actor-update owner has not been bound.");
-		(*_updateRoomActorsAndInterface)();
+		_roomActorUpdater.updateRoomActorsAndInterface();
 		_state.displayFlags |= kRoomUpdateEnabledMask;
 	}
 
@@ -226,9 +224,7 @@ void RoomVBlankHandler::commitPendingActionPromptDuringVBlank() {
 	// Ghidra 0x00005CAE-0x00005CB5: clear the pending latch and retain the deliberate fallthrough into the
 	// separately recovered 0x00005CB6 prompt-tile publication body.
 	_state.displayFlags &= static_cast<uint8>(~kActionPromptPublicationPendingMask);
-	SDM_ASSERT(_commitActionPromptTiles != nullptr,
-			   "The room VBlank prompt-tile owner has not been bound.");
-	(*_commitActionPromptTiles)();
+	_actionMenu.commitActionPromptTiles();
 }
 
 void RoomVBlankHandler::updateActionPromptTimers() {

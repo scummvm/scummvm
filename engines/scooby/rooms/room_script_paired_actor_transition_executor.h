@@ -26,6 +26,7 @@
 
 #include "common/func.h"
 
+#include "scooby/rooms/room_actor_animator.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns room-script entry and exit for paired actor-transition publication.
@@ -36,12 +37,12 @@ class RoomScriptPairedActorTransitionExecutor {
 public:
 	// Binds the paired transition lifecycle to its shared actor and behavior state.
 	// state: shared actor-transition state mutated and consumed across room updates.
-	// updateActorAnimationFrames: recovered actor-animation update run by transition setup.
+	// actorAnimator: owner of the recovered actor-animation update run by transition setup.
 	// waitForRoomVerticalBlank: callback-aware clocked frame servicing transition retraces.
 	RoomScriptPairedActorTransitionExecutor(RuntimeState &state,
-											Common::Functor0<void> &updateActorAnimationFrames,
+											RoomActorAnimator &actorAnimator,
 											Common::Functor0<bool> &waitForRoomVerticalBlank)
-		: _state(state), _updateActorAnimationFrames(updateActorAnimationFrames),
+		: _state(state), _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank) {
 	}
 
@@ -58,7 +59,7 @@ public:
 
 private:
 	RuntimeState &_state;
-	Common::Functor0<void> &_updateActorAnimationFrames;
+	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 };
 } // namespace Scooby

@@ -177,7 +177,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 
 	// Ghidra 0x0000476C-0x0000477B: update actor animation, request interaction refresh through bit one, and
 	// call its separate canonical function boundary.
-	_updateActorAnimationFrames();
+	_actorAnimator.updateActorAnimationFrames();
 	_state.interactionFlags |= kInteractionRefreshMask;
 	_refreshInteractionDisplay();
 

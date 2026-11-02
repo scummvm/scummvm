@@ -113,7 +113,7 @@ bool RoomScriptCommand10Executor::playShaggyActorTurnAnimation(int16 previousPos
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) == 0) {
 			break;
 		}
@@ -124,7 +124,7 @@ bool RoomScriptCommand10Executor::playShaggyActorTurnAnimation(int16 previousPos
 	}
 
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) != 0) {
 			break;
 		}

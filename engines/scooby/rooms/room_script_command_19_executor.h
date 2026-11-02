@@ -27,6 +27,7 @@
 #include "common/func.h"
 
 #include "scooby/assets/rom.h"
+#include "scooby/rooms/room_actor_animator.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns command 0x19's actor-frame publication and visibility transition.
@@ -38,12 +39,12 @@ public:
 	// Binds actor selection to animation publication and the installed room callback.
 	// rom: verified cartridge containing command fields.
 	// state: shared room-object, actor-publication, and visibility state.
-	// updateActorAnimationFrames: recovered actor-animation update invoked until publication completes.
+	// actorAnimator: owner of the recovered actor-animation update invoked until publication completes.
 	// waitForRoomVerticalBlank: callback-aware clocked frame publishing staged actor graphics.
 	RoomScriptCommand19Executor(const ScoobyDooRom &rom, RuntimeState &state,
-								Common::Functor0<void> &updateActorAnimationFrames,
+								RoomActorAnimator &actorAnimator,
 								Common::Functor0<bool> &waitForRoomVerticalBlank)
-		: _rom(rom), _state(state), _updateActorAnimationFrames(updateActorAnimationFrames),
+		: _rom(rom), _state(state), _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank) {
 	}
 
@@ -57,7 +58,7 @@ public:
 private:
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
-	Common::Functor0<void> &_updateActorAnimationFrames;
+	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 };
 } // namespace Scooby

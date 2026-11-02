@@ -125,7 +125,7 @@ bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, 
 	// original interrupt publishes pending graphics asynchronously, so service the room callback before each
 	// managed continuation and repeat the final room assignment after publication.
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 			break;
 		}
@@ -218,8 +218,8 @@ bool RoomScriptCommand05MoveObject::refreshActionPromptsAfterRelocation(uint16 e
 		return true;
 	}
 
-	_commitActionPromptUpdate();
-	_refreshActionPrompts();
+	_actionMenu.commitActionPromptUpdate();
+	_actionMenu.refreshActionPrompts();
 	return false;
 }
 

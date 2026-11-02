@@ -30,6 +30,7 @@
 #include "room_collision_probe.h"
 #include "scooby/assets/rom.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/interactions/action_menu_controller.h"
 #include "scooby/movement/actor_movement_point.h"
 #include "scooby/runtime/runtime_state.h"
 
@@ -44,11 +45,11 @@ public:
 	// scene: logical scene replacing direct interface name-table writes.
 	// state: shared six-slot actor, input, camera, and interaction state.
 	// collisionProbe: shared decoder for room collision cells and their per-pixel masks.
-	// drawSelectedActionIcon: distinct original action-icon renderer invoked in mode zero.
+	// actionMenu: owner of the distinct original action-icon renderer invoked in mode zero.
 	RoomActorUpdater(const ScoobyDooRom &rom, TileScene &scene, RuntimeState &state,
-					 const RoomCollisionProbe &collisionProbe, Common::Functor1<int, void> &drawSelectedActionIcon)
+					 const RoomCollisionProbe &collisionProbe, ActionMenuController &actionMenu)
 		: _rom(rom), _scene(scene), _state(state), _collisionProbe(collisionProbe),
-		  _drawSelectedActionIcon(drawSelectedActionIcon) {
+		  _actionMenu(actionMenu) {
 	}
 
 	// Services every room actor and the interactive lower interface once.
@@ -167,7 +168,7 @@ private:
 	TileScene &_scene;
 	RuntimeState &_state;
 	const RoomCollisionProbe &_collisionProbe;
-	Common::Functor1<int, void> &_drawSelectedActionIcon;
+	ActionMenuController &_actionMenu;
 };
 } // namespace Scooby
 

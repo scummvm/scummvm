@@ -26,6 +26,7 @@
 
 #include "common/func.h"
 
+#include "action_menu_controller.h"
 #include "dialogue_controller.h"
 #include "interaction_action.h"
 #include "scooby/assets/rom.h"
@@ -33,6 +34,8 @@
 #include "scooby/graphics/shared_graphics_workspace.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"
+#include "scooby/rooms/room_actor_animator.h"
+#include "scooby/rooms/vblank/room_vblank_handler.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns interaction-action choice presentation, nested script frames, and interface restoration.
@@ -47,23 +50,22 @@ public:
 	// graphicsWorkspace: aliased workspace used to preserve the selected interface half.
 	// state: shared interaction, script, actor, and input state.
 	// presenter: host retrace boundary used by native busy-wait handovers.
-	// updateActorAnimationFrames: recovered actor-animation service.
-	// handleRoomVBlank: installed room callback that advances asynchronous state.
+	// actorAnimator: owner of the recovered actor-animation service.
+	// roomVBlank: owner of the installed room callback that advances asynchronous state.
 	// chooseRandomInteractionAnimation: recovered actor-zero interaction-animation selector.
 	// runRoomScriptInitializationCommands: non-consuming action registration scan.
 	// runRoomScriptCommands: execution-mode room-script dispatcher.
 	// dialogue: shared interaction text and dialogue owner.
-	// commitActionPromptUpdate: action-prompt composition and publication boundary.
-	// refreshActionPrompts: left and right action-prompt refresh boundary.
+	// actionMenu: owner of the action-prompt composition, publication, and left/right refresh boundaries.
 	InteractionActionMenuExecutor(
 		const ScoobyDooRom &rom, TileScene &scene,
 		SharedGraphicsWorkspace &graphicsWorkspace, RuntimeState &state,
-		FramePresenter &presenter, Common::Functor0<void> &updateActorAnimationFrames,
-		Common::Functor0<void> &handleRoomVBlank, Common::Functor0<void> &chooseRandomInteractionAnimation,
+		FramePresenter &presenter, RoomActorAnimator &actorAnimator,
+		RoomVBlankHandler &roomVBlank, Common::Functor0<void> &chooseRandomInteractionAnimation,
 		Common::Functor0<Optional<SessionExit>> &runRoomScriptInitializationCommands,
 		Common::Functor0<Optional<SessionExit>> &runRoomScriptCommands,
 		DialogueController &dialogue,
-		Common::Functor0<void> &commitActionPromptUpdate, Common::Functor0<void> &refreshActionPrompts);
+		ActionMenuController &actionMenu);
 
 	// Runs registered interaction actions until the current or every nested script frame closes.
 	// Returns the managed handover from an original non-returning descendant, otherwise no value.
@@ -124,14 +126,13 @@ private:
 	SharedGraphicsWorkspace &_graphicsWorkspace;
 	RuntimeState &_state;
 	FramePresenter &_presenter;
-	Common::Functor0<void> &_updateActorAnimationFrames;
-	Common::Functor0<void> &_handleRoomVBlank;
+	RoomActorAnimator &_actorAnimator;
+	RoomVBlankHandler &_roomVBlank;
 	Common::Functor0<void> &_chooseRandomInteractionAnimation;
 	Common::Functor0<Optional<SessionExit>> &_runRoomScriptInitializationCommands;
 	Common::Functor0<Optional<SessionExit>> &_runRoomScriptCommands;
 	DialogueController &_dialogue;
-	Common::Functor0<void> &_commitActionPromptUpdate;
-	Common::Functor0<void> &_refreshActionPrompts;
+	ActionMenuController &_actionMenu;
 };
 } // namespace Scooby
 

@@ -42,7 +42,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 		// Ghidra 0x00003F7A-0x00003FBD: advance animations, retain left/right's active-low signed
 		// step with right taking precedence, and move both actors only inside the inclusive X bounds.
 		_state.retraceCountdown = 0;
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if (_state.isButtonDown(ControllerButtons::Left)) {
 			horizontalStep = -2;
 		}
@@ -132,7 +132,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 	// room VBlank can interrupt the hold loop, so wait for one callback-aware retrace before continuing.
 	_state.actorAnimationRestartFlags |= 0x08;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationHoldFlags & 0x08) != 0) {
 			break;
 		}
@@ -163,7 +163,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 	// block during FadePaletteOut, restore it afterward, reveal the companion on both outcomes, and return.
 	_state.transitionFlags &= 0xFB;
 	_state.displayFlags &= 0xBF;
-	if (!_presenter.fadePaletteOut(&_handleRoomVBlank)) {
+	if (!_presenter.fadePaletteOut(_roomVBlank.beforeRetraceCallback())) {
 		_requestSessionExit(SessionExit::HostClosed);
 		return;
 	}
@@ -188,7 +188,7 @@ void RoomScriptAction27Executor::setPairedActorX(int16 integer) {
 }
 
 bool RoomScriptAction27Executor::waitForRoomVerticalBlank() {
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	if (_presenter.waitForVerticalBlank()) {
 		return true;
 	}

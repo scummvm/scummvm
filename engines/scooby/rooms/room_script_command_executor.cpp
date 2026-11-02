@@ -32,7 +32,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	const ScoobyDooRom &rom, TileScene &scene, RuntimeState &state,
 	const RoomCollisionProbe &collisionProbe, ScriptedRoomMovementExecutor &movement,
 	DeterministicRandom &random, FramePresenter &presenter,
-	Common::Functor0<void> &updateActorAnimationFrames, Common::Functor0<void> &handleRoomVBlank,
+	RoomActorAnimator &actorAnimator, RoomVBlankHandler &roomVBlank,
 	Common::Functor0<Optional<SessionExit>> &presentRoom,
 	Common::Functor0<Optional<SessionExit>> &resetRoomStateForReload,
 	Common::Functor0<Optional<SessionExit>> &reloadAndPresentRoom,
@@ -40,13 +40,12 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	Common::Functor0<void> &refreshInteractionDisplay, Common::Functor0<void> &finishRoomStartup,
 	Common::Functor0<void> &executeRoomScriptAction1D, DialogueController &dialogue,
 	Common::Functor1<int, Optional<SessionExit>> &invokeRoomScriptDispatchCallback,
-	Common::Functor0<void> &commitActionPromptUpdate, Common::Functor0<void> &refreshActionPrompts,
-	Common::Functor1<int, void> &drawSelectedActionIcon, RoomTileStreamer &tileStreamer,
+	ActionMenuController &actionMenu, RoomTileStreamer &tileStreamer,
 	Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication)
 	: _rom(rom), _state(state), _presenter(presenter), _reloadAndPresentRoom(reloadAndPresentRoom),
 	  _resetRoomStateForReload(resetRoomStateForReload),
-	  _updateActorAnimationFrames(updateActorAnimationFrames), _handleRoomVBlank(handleRoomVBlank),
-	  _commitActionPromptUpdate(commitActionPromptUpdate),
+	  _actorAnimator(actorAnimator), _roomVBlank(roomVBlank),
+	  _actionMenu(actionMenu),
 	  _invokeRoomScriptDispatchCallback(invokeRoomScriptDispatchCallback),
 	  _waitForRoomVerticalBlankFunctor(this, &RoomScriptCommandExecutor::waitForRoomVerticalBlank),
 	  _requestMovementHostCloseFunctor(this, &RoomScriptCommandExecutor::requestMovementHostClose),
@@ -86,24 +85,24 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _command20Functor(&_command20Executor, &RoomScriptCommand20Executor::executeRoomScriptCommand20),
 	  _command21Functor(&_command21Executor, &RoomScriptCommand21Executor::executeRoomScriptCommand21),
 	  _actorDescriptorCatalog(rom), _command01Executor(rom, state), _command02Executor(rom, state),
-	  _command05Executor(rom, state, _actorDescriptorCatalog, updateActorAnimationFrames,
-						 _waitForRoomVerticalBlankFunctor, commitActionPromptUpdate, refreshActionPrompts),
-	  _command08Executor(rom, state, random), _command09Executor(rom, state, drawSelectedActionIcon),
+	  _command05Executor(rom, state, _actorDescriptorCatalog, actorAnimator,
+						 _waitForRoomVerticalBlankFunctor, actionMenu),
+	  _command08Executor(rom, state, random), _command09Executor(rom, state, actionMenu),
 	  _command0BExecutor(rom, state, _waitForRoomVerticalBlankFunctor),
-	  _command0EOr1BExecutor(rom, state, updateActorAnimationFrames, _waitForRoomVerticalBlankFunctor,
+	  _command0EOr1BExecutor(rom, state, actorAnimator, _waitForRoomVerticalBlankFunctor,
 							 movement, _requestMovementHostCloseFunctor),
 	  _command0FExecutor(rom, state, _actorDescriptorCatalog, movement, _requestMovementHostCloseFunctor),
-	  _command10Executor(rom, scene, state, dialogue, updateActorAnimationFrames,
+	  _command10Executor(rom, scene, state, dialogue, actorAnimator,
 						 _waitForRoomVerticalBlankFunctor, _requestSessionExitFunctor),
-	  _command19Executor(rom, state, updateActorAnimationFrames, _waitForRoomVerticalBlankFunctor),
+	  _command19Executor(rom, state, actorAnimator, _waitForRoomVerticalBlankFunctor),
 	  _command1AExecutor(rom, scene, state), _command1CExecutor(rom, state), _command1DExecutor(rom, state),
-	  _command1EExecutor(rom, state, presenter, updateActorAnimationFrames, handleRoomVBlank,
+	  _command1EExecutor(rom, state, presenter, actorAnimator, roomVBlank,
 						 _requestSessionExitFunctor),
-	  _command1FExecutor(rom, state, presenter, updateActorAnimationFrames, handleRoomVBlank,
+	  _command1FExecutor(rom, state, presenter, actorAnimator, roomVBlank,
 						 _requestSessionExitFunctor),
 	  _command20Executor(rom, state), _command21Executor(rom, state),
-	  _actions(rom, scene, state, collisionProbe, random, presenter, updateActorAnimationFrames,
-			   handleRoomVBlank, presentRoom, processAutomaticInteractions, refreshInteractionDisplay,
+	  _actions(rom, scene, state, collisionProbe, random, presenter, actorAnimator,
+			   roomVBlank, presentRoom, processAutomaticInteractions, refreshInteractionDisplay,
 			   finishRoomStartup, executeRoomScriptAction1D, tileStreamer, restartApplication),
 	  _conditionEvaluator(rom, state), _handlers(kHandlerCount), _interactionModeSnapshot(0) {
 	_handlers[0x00] = &_command00Functor;
@@ -225,7 +224,7 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 			_state.actorAnimationOffsets[kShaggyActorSlot] = animationOffset;
 			_state.actorAnimationRestartFlags |= kShaggyActorMask;
 			while (true) {
-				_updateActorAnimationFrames();
+				_actorAnimator.updateActorAnimationFrames();
 				if ((_state.actorAnimationRestartFlags & kShaggyActorMask) == 0) {
 					break;
 				}
@@ -242,7 +241,7 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 			_state.actorAnimationOffsets[kScoobyActorSlot] = animationOffset;
 			_state.actorAnimationRestartFlags |= kScoobyActorMask;
 			while (true) {
-				_updateActorAnimationFrames();
+				_actorAnimator.updateActorAnimationFrames();
 				if ((_state.actorAnimationRestartFlags & kScoobyActorMask) == 0) {
 					break;
 				}
@@ -266,7 +265,7 @@ void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
 				_state.actorAnimationDelays[actorSlot] = -1;
 				_state.actorAnimationRestartFlags |= actorMask;
 				while (true) {
-					_updateActorAnimationFrames();
+					_actorAnimator.updateActorAnimationFrames();
 					if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 						break;
 					}
@@ -316,7 +315,7 @@ void RoomScriptCommandExecutor::scriptCommand07RefreshObject(int mode) {
 			uint16 inventoryPage = static_cast<uint16>(inventoryCount >> 2);
 			if (inventoryPage != static_cast<uint16>(_state.menuPage - 1)) {
 				_state.menuPage = static_cast<int16>(inventoryPage);
-				_commitActionPromptUpdate();
+				_actionMenu.commitActionPromptUpdate();
 			}
 		}
 	}
@@ -344,7 +343,7 @@ void RoomScriptCommandExecutor::scriptCommand0ASetInventoryGfx(int mode) {
 				return;
 			}
 
-			_commitActionPromptUpdate();
+			_actionMenu.commitActionPromptUpdate();
 		}
 	}
 
@@ -415,7 +414,7 @@ void RoomScriptCommandExecutor::scriptCommand11ChangeRoom(int mode) {
 		// the complete callback-aware fade, and restore the exact byte before either continuation.
 		uint8 displayFlags = _state.displayFlags;
 		_state.displayFlags &= 0xBF;
-		bool fadeCompleted = _presenter.fadePaletteOut(&_handleRoomVBlank);
+		bool fadeCompleted = _presenter.fadePaletteOut(_roomVBlank.beforeRetraceCallback());
 		_state.displayFlags = displayFlags;
 		if (!fadeCompleted) {
 			_requestedSessionExit = SessionExit::HostClosed;
@@ -491,7 +490,7 @@ void RoomScriptCommandExecutor::scriptCommand15WaitNFrames(int mode) {
 		// signed test, and retain the back edge until the installed callback decrements through -1.
 		_state.retraceCountdown = _rom.readInt16(commandOffset + 2);
 		while (true) {
-			_updateActorAnimationFrames();
+			_actorAnimator.updateActorAnimationFrames();
 			if (_state.retraceCountdown < 0) {
 				break;
 			}
@@ -558,7 +557,7 @@ void RoomScriptCommandExecutor::scriptCommand17WaitForObjAnim(int mode) {
 		// this loop to decrement animation delays; service and present that retrace before each continuation.
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
 		while (true) {
-			_updateActorAnimationFrames();
+			_actorAnimator.updateActorAnimationFrames();
 			if ((_state.actorAnimationHoldFlags & actorMask) != 0) {
 				break;
 			}
@@ -574,7 +573,7 @@ void RoomScriptCommandExecutor::scriptCommand17WaitForObjAnim(int mode) {
 }
 
 bool RoomScriptCommandExecutor::waitForRoomVerticalBlank() {
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	if (_presenter.waitForVerticalBlank()) {
 		return true;
 	}

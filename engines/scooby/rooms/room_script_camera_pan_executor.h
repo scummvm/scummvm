@@ -26,6 +26,7 @@
 
 #include "common/func.h"
 
+#include "scooby/rooms/room_actor_animator.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns room-script camera-follow control and the shared blocking horizontal-pan lifecycle.
@@ -35,11 +36,11 @@ class RoomScriptCameraPanExecutor {
 public:
 	// Binds the camera-pan actions to their shared state and asynchronous room-update boundary.
 	// state: shared camera, room-behavior, and transition state.
-	// updateActorAnimationFrames: recovered animation update called while a pan remains active.
+	// actorAnimator: owner of the recovered animation update called while a pan remains active.
 	// waitForRoomVerticalBlank: callback-aware clocked frame whose scrolling owner advances the pan.
-	RoomScriptCameraPanExecutor(RuntimeState &state, Common::Functor0<void> &updateActorAnimationFrames,
+	RoomScriptCameraPanExecutor(RuntimeState &state, RoomActorAnimator &actorAnimator,
 								Common::Functor0<bool> &waitForRoomVerticalBlank)
-		: _state(state), _updateActorAnimationFrames(updateActorAnimationFrames),
+		: _state(state), _actorAnimator(actorAnimator),
 		  _waitForRoomVerticalBlank(waitForRoomVerticalBlank) {
 	}
 
@@ -69,7 +70,7 @@ private:
 	static const uint8 kCameraPanActiveMask = 0x20;
 
 	RuntimeState &_state;
-	Common::Functor0<void> &_updateActorAnimationFrames;
+	RoomActorAnimator &_actorAnimator;
 	Common::Functor0<bool> &_waitForRoomVerticalBlank;
 };
 } // namespace Scooby

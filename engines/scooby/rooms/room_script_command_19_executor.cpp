@@ -49,7 +49,7 @@ void RoomScriptCommand19Executor::scriptCommand19ShowActor(int mode) {
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
 		_state.actorPositionUpdateFlags |= actorMask;
 		while (true) {
-			_updateActorAnimationFrames();
+			_actorAnimator.updateActorAnimationFrames();
 			if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
 				break;
 			}

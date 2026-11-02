@@ -68,7 +68,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 	size_t sourceByteOffset = 0;
 	while (sourceByteOffset < packedRows.size()) {
 		_state.foregroundVerticalScroll = verticalScroll;
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if (!waitForRoomVerticalBlank()) {
 			_requestSessionExit(SessionExit::HostClosed);
 			return;
@@ -95,7 +95,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 	// signed test, and retain the back edge until the installed callback decrements through -1.
 	_state.retraceCountdown = 0x012C;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if (_state.retraceCountdown < 0) {
 			break;
 		}
@@ -108,20 +108,20 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 
 	// Ghidra 0x00004264-0x0000426F: disable complete room updates and finish the action-owned fade.
 	_state.displayFlags &= 0xBF;
-	if (!_presenter.fadePaletteOut(&_handleRoomVBlank)) {
+	if (!_presenter.fadePaletteOut(_roomVBlank.beforeRetraceCallback())) {
 		_requestSessionExit(SessionExit::HostClosed);
 		return;
 	}
 
 	// Ghidra 0x00004270-0x00004273: the original tail branch never resumes command dispatch; RestartApplication
 	// performs its second fade and publishes the managed reset handover instead.
-	_requestSessionExit(_restartApplication(&_handleRoomVBlank)
+	_requestSessionExit(_restartApplication(_roomVBlank.beforeRetraceCallback())
 							? SessionExit::RestartRequested
 							: SessionExit::HostClosed);
 }
 
 bool RoomScriptAction1EExecutor::waitForRoomVerticalBlank() {
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	return _presenter.waitForVerticalBlank();
 }
 } // namespace Scooby

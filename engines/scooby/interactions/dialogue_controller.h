@@ -32,11 +32,15 @@
 #include "scooby/common/optional.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"
+#include "scooby/rooms/room_actor_animator.h"
+#include "scooby/rooms/vblank/room_vblank_handler.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns shared dialogue and interaction text rendering, dismissal, and cleanup boundaries.
 
 namespace Scooby {
+
+class InteractionController;
 
 class DialogueController {
 public:
@@ -45,27 +49,18 @@ public:
 	// scene: logical scene receiving Window cells and clipping.
 	// state: shared text attributes, countdown, and Window position state.
 	// presenter: host retrace boundary used while dialogue remains visible.
-	// updateActorAnimationFrames: recovered actor-animation service.
-	// handleRoomVBlank: installed room callback that polls controls and publishes frame state.
+	// actorAnimator: owner of the recovered actor-animation service.
+	// roomVBlank: owner of the installed room callback that polls controls and publishes frame state.
+	// interactions: owner of the automatic-interaction scan and interaction-animation selection reached
+	//     while a dialogue remains visible.
 	DialogueController(const ScoobyDooRom &rom, TileScene &scene,
 					   RuntimeState &state,
 					   FramePresenter &presenter,
-					   Common::Functor0<void> &updateActorAnimationFrames,
-					   Common::Functor0<void> &handleRoomVBlank)
+					   RoomActorAnimator &actorAnimator,
+					   RoomVBlankHandler &roomVBlank,
+					   InteractionController &interactions)
 		: _rom(rom), _scene(scene), _state(state), _presenter(presenter),
-		  _updateActorAnimationFrames(updateActorAnimationFrames), _handleRoomVBlank(handleRoomVBlank),
-		  _chooseRandomInteractionAnimation(nullptr),
-		  _processAutomaticInteractions(nullptr) {
-	}
-
-	// Binds the interaction owners reached while a dialogue remains visible.
-	// processAutomaticInteractions: automatic-interaction scan and nested execution owner.
-	// chooseRandomInteractionAnimation: interaction-animation selection boundary.
-	void bindDismissalInteractions(
-		Common::Functor0<Optional<SessionExit>> &processAutomaticInteractions,
-		Common::Functor0<void> &chooseRandomInteractionAnimation) {
-		_processAutomaticInteractions = &processAutomaticInteractions;
-		_chooseRandomInteractionAnimation = &chooseRandomInteractionAnimation;
+		  _actorAnimator(actorAnimator), _roomVBlank(roomVBlank), _interactions(interactions) {
 	}
 
 	// Clears the Window plane and draws centered, wrapped text from row one.
@@ -145,10 +140,9 @@ private:
 	TileScene &_scene;
 	RuntimeState &_state;
 	FramePresenter &_presenter;
-	Common::Functor0<void> &_updateActorAnimationFrames;
-	Common::Functor0<void> &_handleRoomVBlank;
-	Common::Functor0<void> *_chooseRandomInteractionAnimation;
-	Common::Functor0<Optional<SessionExit>> *_processAutomaticInteractions;
+	RoomActorAnimator &_actorAnimator;
+	RoomVBlankHandler &_roomVBlank;
+	InteractionController &_interactions;
 };
 } // namespace Scooby
 

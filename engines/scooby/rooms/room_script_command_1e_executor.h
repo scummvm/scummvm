@@ -28,6 +28,8 @@
 
 #include "scooby/assets/rom.h"
 #include "scooby/presentation/frame_presenter.h"
+#include "scooby/rooms/room_actor_animator.h"
+#include "scooby/rooms/vblank/room_vblank_handler.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns command 0x1E's actor-position transition selection and optional hold wait.
@@ -40,17 +42,17 @@ public:
 	// rom: verified cartridge containing command fields.
 	// state: shared script cursor, actor positions, animation selections, and control masks.
 	// presenter: shared host presentation owner enforcing the room retrace cadence.
-	// updateActorAnimationFrames: recovered animation update used by requested hold waits.
-	// handleRoomVBlank: installed room callback that advances interrupt-owned animation delays.
+	// actorAnimator: owner of the recovered animation update used by requested hold waits.
+	// roomVBlank: owner of the installed room callback that advances interrupt-owned animation delays.
 	// requestSessionExit: parent handover used when the host closes during a wait.
 	RoomScriptCommand1EExecutor(const ScoobyDooRom &rom, RuntimeState &state,
 								FramePresenter &presenter,
-								Common::Functor0<void> &updateActorAnimationFrames,
-								Common::Functor0<void> &handleRoomVBlank,
+								RoomActorAnimator &actorAnimator,
+								RoomVBlankHandler &roomVBlank,
 								Common::Functor1<SessionExit, void> &requestSessionExit)
 		: _rom(rom), _state(state), _presenter(presenter),
-		  _updateActorAnimationFrames(updateActorAnimationFrames),
-		  _handleRoomVBlank(handleRoomVBlank), _requestSessionExit(requestSessionExit) {
+		  _actorAnimator(actorAnimator),
+		  _roomVBlank(roomVBlank), _requestSessionExit(requestSessionExit) {
 	}
 
 	// Selects one lead or companion position-transition animation and optionally waits for its hold.
@@ -69,8 +71,8 @@ private:
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
 	FramePresenter &_presenter;
-	Common::Functor0<void> &_updateActorAnimationFrames;
-	Common::Functor0<void> &_handleRoomVBlank;
+	RoomActorAnimator &_actorAnimator;
+	RoomVBlankHandler &_roomVBlank;
 	Common::Functor1<SessionExit, void> &_requestSessionExit;
 };
 } // namespace Scooby

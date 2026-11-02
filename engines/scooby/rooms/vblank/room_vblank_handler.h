@@ -29,6 +29,8 @@
 #include "scooby/assets/rom.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/input/controller_input.h"
+#include "scooby/interactions/action_menu_controller.h"
+#include "scooby/rooms/room_actor_updater.h"
 #include "scooby/rooms/room_object_tile_patch_renderer.h"
 #include "scooby/rooms/room_sprite_renderer.h"
 #include "scooby/rooms/room_tile_streamer.h"
@@ -52,32 +54,27 @@ public:
 	// sprites: owner of actor tile and room sprite publication.
 	// state: shared room flags and countdowns updated by the callback.
 	// tileStreamer: owner of scrolling publication and newly exposed room-edge tiles.
+	// actionMenu: owner of the staged action-prompt tile publication.
+	// roomActorUpdater: owner of the per-retrace actor and interactive interface update.
 	RoomVBlankHandler(const ScoobyDooRom &rom, ControllerInput &input,
 					  RoomObjectTilePatchRenderer &objectTilePatches, TileScene &scene,
 					  RoomSpriteRenderer &sprites, RuntimeState &state,
-					  RoomTileStreamer &tileStreamer)
-		: _commitActionPromptTiles(nullptr), _updateRoomActorsAndInterface(nullptr), _rom(rom),
+					  RoomTileStreamer &tileStreamer, ActionMenuController &actionMenu,
+					  RoomActorUpdater &roomActorUpdater)
+		: _actionMenu(actionMenu), _roomActorUpdater(roomActorUpdater),
+		  _beforeRetraceCallback(this, &RoomVBlankHandler::handleRoomVBlank), _rom(rom),
 		  _input(input), _objectTilePatches(objectTilePatches), _scene(scene), _sprites(sprites),
 		  _state(state), _tileStreamer(tileStreamer), _walkAreaScene(nullptr), _walkAreaRoomId(-1),
 		  _walkAreaCameraX(0), _walkAreaCameraY(0) {
-	}
-
-	// Binds the prompt-tile owner after the mutually dependent menu and VBlank owners exist.
-	// commitActionPromptTiles: publishes the fully staged prompt patterns and interface cells.
-	void bindActionPromptTileCommit(Common::Functor0<void> &commitActionPromptTiles) {
-		_commitActionPromptTiles = &commitActionPromptTiles;
-	}
-
-	// Binds the distinct actor and interface updater after its action-menu dependency exists.
-	// updateRoomActorsAndInterface: services all actor slots and interactive interface state.
-	void bindRoomActorUpdate(Common::Functor0<void> &updateRoomActorsAndInterface) {
-		_updateRoomActorsAndInterface = &updateRoomActorsAndInterface;
 	}
 
 	// Services one room retrace in the original callback order.
 	//
 	// Ghidra: handleRoomVBlank (0x0000A65C).
 	void handleRoomVBlank();
+
+	// Returns handleRoomVBlank as the before-retrace callback taken by FramePresenter fades and waits.
+	const Common::Functor0<void> *beforeRetraceCallback() const { return &_beforeRetraceCallback; }
 
 private:
 	static const uint8 kActionPromptPublicationPendingMask = 0x20;
@@ -135,8 +132,9 @@ private:
 	// cleared, while the record retains its original bit 14 for the post-publication clear branch.
 	void updateRoomObjectAnimations();
 
-	Common::Functor0<void> *_commitActionPromptTiles;
-	Common::Functor0<void> *_updateRoomActorsAndInterface;
+	ActionMenuController &_actionMenu;
+	RoomActorUpdater &_roomActorUpdater;
+	Common::Functor0Mem<void, RoomVBlankHandler> _beforeRetraceCallback;
 	const ScoobyDooRom &_rom;
 	ControllerInput &_input;
 	RoomObjectTilePatchRenderer &_objectTilePatches;

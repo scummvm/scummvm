@@ -324,7 +324,7 @@ void RoomActorUpdater::updateMenuCommandFromCursor() {
 void RoomActorUpdater::closeInteractionInterface() {
 	_state.displayFlags &= static_cast<uint8>(~kDisplayInterfaceMask);
 	_state.pendingVerbIcon = _state.activeVerbIcon;
-	_drawSelectedActionIcon(0);
+	_actionMenu.drawSelectedActionIcon(0);
 	if (_state.currentInteraction == 0) {
 		return;
 	}
@@ -334,13 +334,13 @@ void RoomActorUpdater::closeInteractionInterface() {
 	// them). Show LOOK, the action ActionMenuController::resolveActionIcon gives both actors while hovering.
 	if (_state.currentInteraction < kRoomObjectFirstInteraction) {
 		_state.pendingVerbIcon = LOOK;
-		_drawSelectedActionIcon(0);
+		_actionMenu.drawSelectedActionIcon(0);
 		return;
 	}
 
 	const RoomObject &roomObject = _state.roomObjects[_state.currentInteraction - kRoomObjectFirstInteraction];
 	_state.pendingVerbIcon = static_cast<VerbEnum>(roomObject.suggestedVerb);
-	_drawSelectedActionIcon(0);
+	_actionMenu.drawSelectedActionIcon(0);
 }
 
 void RoomActorUpdater::updateShaggyActorAndCamera() {

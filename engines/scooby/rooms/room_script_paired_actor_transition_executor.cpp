@@ -28,7 +28,7 @@ void RoomScriptPairedActorTransitionExecutor::executeRoomScriptAction15() {
 		// Ghidra 0x0000432C-0x0000433B: advance all animations at least once and retain the back edge until
 		// actor zero reaches a hold command. Room VBlank remains asynchronous on the original, so service the
 		// installed callback before each managed continuation.
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationHoldFlags & kShaggyActorMask) != 0) {
 			break;
 		}

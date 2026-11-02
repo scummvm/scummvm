@@ -74,7 +74,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 	_state.actorAnimationRestartFlags |= kShaggyActorMask;
 	_state.actorAnimationDelays[kDuelFirstActorSlot] = -1;
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorGraphicsReadyFlags & kShaggyActorMask) != 0) {
 			break;
 		}
@@ -116,7 +116,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 			return;
 		}
 
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if (_duelHealth[kDuelFirstActor] < 0) {
 			defeatedActorSlot = kDuelFirstActorSlot;
 			break;
@@ -408,7 +408,7 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 	// restoration with completion of logical duel presentation, preserve audio ordering, restore the saved
 	// position index and descriptor mode, and clear only the three authored lifecycle bits.
 	while (true) {
-		_updateActorAnimationFrames();
+		_actorAnimator.updateActorAnimationFrames();
 		if ((_state.actorAnimationHoldFlags & (1 << defeatedActorSlot)) != 0) {
 			break;
 		}
@@ -507,7 +507,7 @@ bool DuelRoomScriptActionExecutor::waitForRoomFrames(int frameCounter) {
 }
 
 bool DuelRoomScriptActionExecutor::waitForRoomVerticalBlank() {
-	_handleRoomVBlank();
+	_roomVBlank.handleRoomVBlank();
 	if (_presenter.waitForVerticalBlank()) {
 		return true;
 	}
