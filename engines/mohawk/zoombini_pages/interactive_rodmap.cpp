@@ -738,6 +738,8 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 	(void)feature;
 	(void)relPos;
 
+	// TODO: Implement the SA/SB minigames and secret warps from hotspots 8/9 to SB/SA (pageType 20/19).
+	// Keep SB's 4/5/6/8/Space controls local to its page.
 	for (uint32 i = 0; i < ARRAYSIZE(_pageClickRects); i++) {
 		if (!_pageClickRects[i].contains(absPos) || !isPageHoverable(i))
 			continue;
@@ -1071,7 +1073,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::legendLevel1004_onLButtonDown(Zm
 }
 
 /**
- * Keyboard shortcuts for level selection in practice mode: Ctrl+1 ~ Ctrl+4 to select levels 1 to 4.
+ * Keyboard shortcuts for level selection in practice mode: 1 ~ 4 to select levels 1 to 4.
  * Only works when already in practice mode, does not toggle practice mode on.
  */
 ZmbEventHandleResult ZoombiniInteractiveRodMap::legendLevel1004_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat) {

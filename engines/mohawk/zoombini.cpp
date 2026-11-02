@@ -31,6 +31,7 @@
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/fs.h"
 #include "common/gui_options.h"
 #include "common/language.h"
@@ -55,9 +56,11 @@
 #include "mohawk/zoombini_pages/dialog_credits.h"
 #include "mohawk/zoombini_pages/dialog_debug.h"
 #include "mohawk/zoombini_pages/dialog_help.h"
+#include "mohawk/zoombini_pages/dialog_load.h"
 #include "mohawk/zoombini_pages/dialog_msgbox.h"
 #include "mohawk/zoombini_pages/dialog_options.h"
-#include "mohawk/zoombini_pages/dialog_saveload.h"
+#include "mohawk/zoombini_pages/dialog_save.h"
+#include "mohawk/zoombini_pages/dialog_version.h"
 #include "mohawk/zoombini_pages/interactive_base.h"
 #include "mohawk/zoombini_pages/interactive_rodmap.h"
 #include "mohawk/zoombini_pages/puzzle_bridge.h"
@@ -197,6 +200,7 @@ MohawkEngine_Zoombini::~MohawkEngine_Zoombini() {
 	delete _activePage;
 	delete _sysMhk;
 	delete _helpMhk;
+	delete _musicMhk;
 	delete _midiMhk;
 	delete _snoidShapeOffsetRegs;
 	delete _smallSnoidShapeOffsetRegs;
@@ -263,12 +267,15 @@ Common::Error MohawkEngine_Zoombini::run() {
 	_text = new ZoombiniText(this);
 	applyGameSettings();
 
-	// Load ZOOMBINI.MHK
+	// Load system MHK archives.
 	_sysMhk = loadSystemArchive();
-	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20))
+	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) { // v2.0TLC
 		_helpMhk = loadHelpArchive();
-	if (_relInfo.isV1())
+		if (!_relInfo.isDemo())
+			_musicMhk = loadMusicArchive();
+	} else { // v1.x
 		loadMidiArchive();
+	}
 
 	ZoombiniCursorManager *zmbCursor = new ZoombiniCursorManager(this);
 	zmbCursor->preloadCursors();
@@ -447,6 +454,9 @@ void MohawkEngine_Zoombini::processEvent(ZoombiniPage *page, const Common::Event
 	case Common::EVENT_LBUTTONUP:
 		page->handleLButtonUp(event.mouse, event.relMouse);
 		break;
+	case Common::EVENT_MBUTTONDOWN:
+		page->handleMButtonDown(event.mouse, event.relMouse);
+		break;
 	case Common::EVENT_RBUTTONDOWN:
 		page->handleRButtonDown(event.mouse, event.relMouse);
 		break;
@@ -584,12 +594,12 @@ uint16 MohawkEngine_Zoombini::playBuiltinMidiTestResource(bool advance) {
 	const uint16 resourceId = getBuiltinMidiTestResource();
 	if (!_state || _state->getEnableMusic()) {
 		if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
-			const ZmbResource musicResource(ZmbResource::kPage, static_cast<int16>(resourceId));
+			const ZmbResource musicResource(ZmbResource::kSystem, static_cast<int16>(resourceId));
 			if (resourceId == kBuiltinTlcMidiTestSoundResourceId && hasResource(ID_SND, musicResource) && !_sound->isSoundPlaying(musicResource))
 				_sound->playSound(musicResource, Audio::Mixer::kMusicSoundType);
 		} else {
 			if (advance || !_midi->isPlaying())
-				_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(resourceId)));
+				_midi->playMidi(ZmbResource(ZmbResource::kSystem, static_cast<int16>(resourceId)));
 		}
 	}
 
@@ -875,15 +885,34 @@ MohawkMetaEngine_Zoombini::PaletteFilter MohawkEngine_Zoombini::getConfiguredPal
 }
 
 void MohawkEngine_Zoombini::applyGameSettings() {
-	bool needsRedraw = false;
-	if (_text && _text->applyFontSmoothing())
-		needsRedraw = true;
+	// Check MIDI settings
+	if (_midiMhk && _midi) {
+		const int midiSoundtrackVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack);
+		const MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack = MohawkMetaEngine_Zoombini::normalizeMidiSoundtrack(midiSoundtrackVal, getPlatform());
+		// Detect MIDI archive selection change.
+		if (_midiSoundtrackKind != midiSoundtrack) {
+			// Reload MIDI archive then restart the BGM song if any was being played.
+			const int16 songId = _midi->getPlayingResourceId();
+			_midi->stop();
 
+			loadMidiArchive();
+
+			if (songId != ZmbResource::RESOURCE_NONE)
+				_midi->playMidi(ZmbResource(ZmbResource::kSystem, songId));
+		}
+	}
+
+	// Check if PRNG requires a reset.
 	if (_rnd) {
 		const int prngAlgorithmVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionPrngAlgorithm);
 		const MohawkMetaEngine_Zoombini::PrngAlgorithm prngAlgorithm = static_cast<MohawkMetaEngine_Zoombini::PrngAlgorithm>(prngAlgorithmVal);
 		_rnd->setAlgorithm(prngAlgorithm);
 	}
+
+	// Check if the screen requires redraw.
+	bool needsRedraw = false;
+	if (_text && _text->applyFontSmoothing())
+		needsRedraw = true;
 
 	const MohawkMetaEngine_Zoombini::PaletteFilter paletteFilter = getConfiguredPaletteFilter();
 	if (_paletteFilter != paletteFilter) {
@@ -945,8 +974,16 @@ void MohawkEngine_Zoombini::applyGameSettings() {
 Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	using namespace Common;
 
+	// We cannot use _vm instance here, as this function is called from MetaEngine.
 	const String guiOptions = ConfMan.get("guioptions", target);
 	const String extra = ConfMan.get("extra", target);
+	const Language lang = parseLanguage(ConfMan.get("language", target));
+	const bool isV1xEurope = ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kEuropeV1x);
+
+	// Remapping actions keep Options semantics even when the original gameplay shortcuts are selected.
+	const Array<KeyCode> &keysSound = ZmbReleaseInfo::getShortcutKeys(ZmbReleaseInfo::ShortcutKind::kOptionsSound, isV1xEurope, lang);
+	const Array<KeyCode> &keysMusic = ZmbReleaseInfo::getShortcutKeys(ZmbReleaseInfo::ShortcutKind::kOptionsMusic, isV1xEurope, lang);
+	const Array<KeyCode> &keysStickyMouse = ZmbReleaseInfo::getShortcutKeys(ZmbReleaseInfo::ShortcutKind::kStickyMouse, isV1xEurope, lang);
 
 	Keymap *defaultKeymap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymappings"));
 	defaultKeymap->setPartialMatchAllowed(false);
@@ -1039,18 +1076,21 @@ Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	shortcutKeymap->addAction(act);
 
 	act = new Action(MohawkMetaEngine_Zoombini::kActionToggleDialogAndSfx, _c("Toggle SFX", "zoombini-keymap"));
-	act->setKeyEvent(KeyState(KEYCODE_d, 'd', KBD_CTRL));
-	act->addDefaultInputMapping("C+d");
+	act->setKeyEvent(KeyState(keysSound[0], keysSound[0], KBD_CTRL));
+	for (KeyCode key : keysSound)
+		act->addDefaultInputMapping(String::format("C+%c", static_cast<char>(key)));
 	shortcutKeymap->addAction(act);
 
 	act = new Action(MohawkMetaEngine_Zoombini::kActionToggleMusic, _c("Toggle BGM", "zoombini-keymap"));
-	act->setKeyEvent(KeyState(KEYCODE_b, 'b', KBD_CTRL));
-	act->addDefaultInputMapping("C+b");
+	act->setKeyEvent(KeyState(keysMusic[0], keysMusic[0], KBD_CTRL));
+	for (KeyCode key : keysMusic)
+		act->addDefaultInputMapping(String::format("C+%c", static_cast<char>(key)));
 	shortcutKeymap->addAction(act);
 
 	act = new Action(MohawkMetaEngine_Zoombini::kActionToggleStickyMouse, _c("Toggle sticky mouse", "zoombini-keymap"));
-	act->setKeyEvent(KeyState(KEYCODE_j, 'j', KBD_CTRL));
-	act->addDefaultInputMapping("C+j");
+	act->setKeyEvent(KeyState(keysStickyMouse[0], keysStickyMouse[0], KBD_CTRL));
+	for (KeyCode key : keysStickyMouse)
+		act->addDefaultInputMapping(String::format("C+%c", static_cast<char>(key)));
 	shortcutKeymap->addAction(act);
 
 	act = new Action(MohawkMetaEngine_Zoombini::kActionToggleAutoStickyMouse, _c("Toggle auto sticky mouse", "zoombini-keymap"));
@@ -1239,28 +1279,34 @@ MohawkArchive *MohawkEngine_Zoombini::loadHelpArchive() {
 	return mhkArchive;
 }
 
+MohawkArchive *MohawkEngine_Zoombini::loadMusicArchive() {
+	MohawkArchive *mhkArchive = new MohawkArchive();
+	const Common::Path archivePath = Common::Path(_mhkArchiveRoot).append(ZMB_MHK_MUSIC);
+	if (mhkArchive->openFile(archivePath))
+		return mhkArchive;
+
+	delete mhkArchive;
+	error("engine: cannot open or parse required resource file '%s'", archivePath.toString().c_str());
+	return nullptr;
+}
+
 MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 	if (!_relInfo.isV1())
 		return nullptr;
 
 	const int midiSoundtrackVal = ConfMan.getInt(MohawkMetaEngine_Zoombini::kOptionMidiSoundtrack);
-	MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack = static_cast<MohawkMetaEngine_Zoombini::MidiSoundtrack>(midiSoundtrackVal);
-	switch (midiSoundtrack) {
-	case MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC:
-	case MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh:
-		break;
-	default:
-		midiSoundtrack = MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC;
-		break;
-	}
-	// The release classifier reflects the original game tree's MIDI archives.
-	MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(getPlatform(), _relInfo.getLanguage(), _relInfo.isDemo(), _relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10), midiSoundtrack);
-	if (_midiMhk && _midiMhkSoundtrack == midiSoundtrack)
-		return _midiMhk;
+	MohawkMetaEngine_Zoombini::MidiSoundtrack midiSoundtrack = MohawkMetaEngine_Zoombini::normalizeMidiSoundtrack(midiSoundtrackVal, getPlatform());
+
+	// MIDI archive is loaded, and the selected MIDI archive config have not changed.
+	if (_midiMhk && _midiSoundtrackKind == midiSoundtrack)
+		return _midiMhk; // Reuse the cached _midiMhk.
+
+	// Create a new _midiMhk archive instance.
 	if (_midiMhk) {
 		delete _midiMhk;
 		_midiMhk = nullptr;
 	}
+
 	const char *archiveName;
 	switch (midiSoundtrack) {
 	case MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh:
@@ -1272,6 +1318,7 @@ MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 		break;
 	}
 	const Common::Path archivePath = Common::Path(_mhkArchiveRoot).append(archiveName);
+
 	MohawkArchive *mhkArchive = new MohawkArchive();
 	if (!mhkArchive->openFile(archivePath)) {
 		delete mhkArchive;
@@ -1280,7 +1327,7 @@ MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 	}
 
 	_midiMhk = mhkArchive;
-	_midiMhkSoundtrack = midiSoundtrack;
+	_midiSoundtrackKind = midiSoundtrack;
 	return _midiMhk;
 }
 
@@ -1556,8 +1603,13 @@ bool MohawkEngine_Zoombini::hasDialogOpened() const {
 
 bool MohawkEngine_Zoombini::hasSaveLoadDialogOpened() const {
 	for (uint32 i = 0; i < _dialogPageStack.size(); i++) {
-		if (_dialogPageStack[i]->getPageType() == ZoombiniPageType::kDialogSaveLoad)
+		switch (_dialogPageStack[i]->getPageType()) {
+		case ZoombiniPageType::kDialogLoad:
+		case ZoombiniPageType::kDialogSave:
 			return true;
+		default:
+			break;
+		}
 	}
 
 	return false;
@@ -1639,7 +1691,7 @@ ZoombiniDialogResult MohawkEngine_Zoombini::openSaveDialog() {
 			return ZoombiniDialogResult::kNo;
 	}
 
-	ZoombiniDialog *dialogPage = new ZoombiniDialogSaveLoad(this, ZoombiniDialogSaveLoad::kSaveMode);
+	ZoombiniDialog *dialogPage = new ZoombiniDialogSave(this);
 	return loadModalDialog(dialogPage);
 }
 
@@ -1662,12 +1714,7 @@ ZoombiniDialogResult MohawkEngine_Zoombini::openLoadDialog(bool newGameMode) {
 		return ZoombiniDialogResult::kNo;
 	}
 
-	ZoombiniDialogSaveLoad::SaveLoadMode mode;
-	if (newGameMode)
-		mode = ZoombiniDialogSaveLoad::kLoadOrNewMode;
-	else
-		mode = ZoombiniDialogSaveLoad::kLoadMode;
-	ZoombiniDialog *dialogPage = new ZoombiniDialogSaveLoad(this, mode);
+	ZoombiniDialog *dialogPage = new ZoombiniDialogLoad(this, newGameMode);
 	return loadModalDialog(dialogPage);
 }
 
@@ -1740,11 +1787,16 @@ void MohawkEngine_Zoombini::openDebugDialog(const ZoombiniDebugCommand &cmd) {
 	loadModalDialog(dialogPage);
 }
 
+void MohawkEngine_Zoombini::openVersionDialog() {
+	loadModalDialog(new ZoombiniDialogVersion(this));
+}
+
 ZoombiniDialogResult MohawkEngine_Zoombini::loadModalDialog(ZoombiniDialog *dialogPage) {
 	// Pause every active non-music SND instance except for the standard SND 999 button click.
 	// The exact streams resume when this dialog closes.
 	// A dialog may additionally pause a page music stream that it must resume on close.
-	_sound->pauseActiveSoundsForDialog();
+	if (dialogPage->pausesSounds())
+		_sound->pauseActiveSoundsForDialog();
 	// Modal input uses the standard cursor instead of a page-local hover cursor.
 	ZoombiniPage *inputPage = _dialogPageStack.empty() ? _activePage : _dialogPageStack.top();
 	if (inputPage) {
@@ -1786,8 +1838,10 @@ void MohawkEngine_Zoombini::closeActiveDialog() {
 	ZoombiniDialog *dialogPage = _dialogPageStack.pop();
 	_lastDialogResult = dialogPage->getResult();
 	assert(dialogPage != nullptr);
+	const bool pausedSounds = dialogPage->pausesSounds();
 	delete dialogPage;
-	_sound->resumeActiveSoundsAfterDialog();
+	if (pausedSounds)
+		_sound->resumeActiveSoundsAfterDialog();
 	resetFidgetActivity();
 	updateImeCompositionState();
 
@@ -1813,12 +1867,6 @@ ZmbResource::ArchiveKind MohawkEngine_Zoombini::setActiveResourceKind(ZmbResourc
 	return lastKind;
 }
 
-ZmbResource MohawkEngine_Zoombini::setActiveResource(ZmbResource resource) {
-	ZmbResource lastResource = _activeResource;
-	_activeResource = resource;
-	return lastResource;
-}
-
 ZmbResource MohawkEngine_Zoombini::resolveLegacySoundResource(int16 soundId) const {
 	if (soundId < 1000 || 20000 <= soundId)
 		return ZmbResource(ZmbResource::kSystem, soundId);
@@ -1833,45 +1881,65 @@ Common::SeekableReadStream *MohawkEngine_Zoombini::getResource(uint32 tag, uint1
 	}
 
 	const int16 zmbId = static_cast<int16>(id);
-	if (tag == ID_SND && _activeResource.hasId() && _activeResource._id == zmbId)
-		return getResource(tag, _activeResource);
+	// v1.x BGM: MIDI resources from MIDIMPC.MHK / MIDIMAC.MHK.
+	if (tag == ID_TMID)
+		return getResource(tag, ZmbResource(ZmbResource::kSystem, zmbId));
 
+	// Resolve bare SND IDs by range: 1000-19999 use page archives, otherwise system archives.
 	if (tag == ID_SND)
 		return getResource(tag, resolveLegacySoundResource(zmbId));
 
+	// Other resource types use the currently selected archive namespace.
 	return getResource(tag, ZmbResource(_activeResourceKind, zmbId));
 }
 
 Common::SeekableReadStream *MohawkEngine_Zoombini::getResource(uint32 tag, ZmbResource res) {
 	// Pre-check resource existence so the failure message identifies the searched archive.
 	// @ref ZmbResource::kPage selects the current page archive.
-	// @ref ZmbResource::kSystem selects ZOOMBINI.MHK and the optional TLC HELP.MHK.
-	// The Mohawk base-class error path reports only "Archive does not contain 'XXXX' NNNN!".
-	// Without the archive name, the caller cannot distinguish a wrong target from a missing resource.
+	// @ref ZmbResource::kSystem selects MIDI(v1)/PCM(v2) music archives for BGM,
+	// and selects ZOOMBINI.MHK and the optional TLC HELP.MHK.
+
 	const Common::String tagString = Common::tag2string(tag, true);
 	if (res._id < 0) {
 		error("engine: negative resource id %d", res._id);
 		return nullptr;
 	}
-	const uint16 archiveId = static_cast<uint16>(res._id);
+	const uint16 resId = static_cast<uint16>(res._id);
+
 	switch (res._archiveKind) {
 	case ZmbResource::kSystem:
-		if (_sysMhk && _sysMhk->hasResource(tag, archiveId))
-			return _sysMhk->getResource(tag, archiveId);
-		if (_helpMhk && _helpMhk->hasResource(tag, archiveId))
-			return _helpMhk->getResource(tag, archiveId);
+		// v1.x BGM: MIDI resources from MIDIMPC.MHK / MIDIMAC.MHK.
+		if (tag == ID_TMID) {
+			if (_midiMhk) {
+				if (_midiMhk->hasResource(ID_TMID, resId))
+					return _midiMhk->getResource(ID_TMID, resId);
+				// v1.0EU Macintosh MIDI payloads use the SND tag.
+				if (_midiMhk->hasResource(ID_SND, resId))
+					return _midiMhk->getResource(ID_SND, resId);
+			}
+			error("engine: required MIDI resource id %d (0x%04x) not found in kSystem (MIDI archive)", res._id, res._id);
+			return nullptr;
+		}
+		// v2.0 BGM: One SND resource from MUSIC.MHK.
+		if (tag == ID_SND && _relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20) && ZoombiniPage::kSysResSoundRange30000_MusicBase <= resId) {
+			if (_musicMhk && _musicMhk->hasResource(tag, resId))
+				return _musicMhk->getResource(tag, resId);
+			error("engine: required sound resource id %d (0x%04x) not found in kSystem (MUSIC.MHK)", res._id, res._id);
+			return nullptr;
+		}
+		// ZOOMBINI.MHK
+		if (_sysMhk && _sysMhk->hasResource(tag, resId))
+			return _sysMhk->getResource(tag, resId);
+		// v2.0 Help Voices: HELP.MHK
+		if (_helpMhk && _helpMhk->hasResource(tag, resId))
+			return _helpMhk->getResource(tag, resId);
 		error("engine: required resource '%s' id %d (0x%04x) not found in kSystem (ZOOMBINI.MHK/HELP.MHK)",
 			  tagString.c_str(), res._id, res._id);
 		return nullptr;
 	case ZmbResource::kPage:
-		if (tag == ID_TMID) {
-			MohawkArchive *midiMhk = loadMidiArchive();
-			if (midiMhk && midiMhk->hasResource(tag, archiveId))
-				return midiMhk->getResource(tag, archiveId);
-		}
-		if (MohawkEngine::hasResource(tag, archiveId))
-			return MohawkEngine::getResource(tag, archiveId);
-		error("engine: required resource '%s' id %d (0x%04x) not found in kPage (current page/shared MIDI archive)",
+		if (MohawkEngine::hasResource(tag, resId))
+			return MohawkEngine::getResource(tag, resId);
+		error("engine: required resource '%s' id %d (0x%04x) not found in kPage (page archive)",
 			  tagString.c_str(), res._id, res._id);
 		return nullptr;
 	default:
@@ -1887,13 +1955,12 @@ bool MohawkEngine_Zoombini::hasResource(uint32 tag, ZmbResource res) {
 	const uint16 archiveId = static_cast<uint16>(res._id);
 	switch (res._archiveKind) {
 	case ZmbResource::kSystem:
+		if (tag == ID_TMID)
+			return _midiMhk && (_midiMhk->hasResource(ID_TMID, archiveId) || _midiMhk->hasResource(ID_SND, archiveId));
+		if (tag == ID_SND && _relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20) && ZoombiniPage::kSysResSoundRange30000_MusicBase <= archiveId)
+			return _musicMhk && _musicMhk->hasResource(tag, archiveId);
 		return (_sysMhk && _sysMhk->hasResource(tag, archiveId)) || (_helpMhk && _helpMhk->hasResource(tag, archiveId));
 	case ZmbResource::kPage:
-		if (tag == ID_TMID) {
-			MohawkArchive *midiMhk = loadMidiArchive();
-			if (midiMhk && midiMhk->hasResource(tag, archiveId))
-				return true;
-		}
 		return MohawkEngine::hasResource(tag, archiveId);
 	default:
 		warning("Invalid ZmbResourceKind: %u", static_cast<uint32>(res._archiveKind));
@@ -1908,14 +1975,21 @@ Common::Array<int16> MohawkEngine_Zoombini::getResourceIDList(ZmbResource::Archi
 
 	switch (kind) {
 	case ZmbResource::kSystem:
+		if (tag == ID_TMID) {
+			if (_midiMhk) {
+				archiveIds.push_back(_midiMhk->getResourceIDList(ID_TMID));
+				archiveIds.push_back(_midiMhk->getResourceIDList(ID_SND));
+			}
+			break;
+		}
+		if (tag == ID_SND && _musicMhk)
+			archiveIds.push_back(_musicMhk->getResourceIDList(tag));
 		if (_sysMhk)
 			archiveIds.push_back(_sysMhk->getResourceIDList(tag));
 		if (_helpMhk)
 			archiveIds.push_back(_helpMhk->getResourceIDList(tag));
 		break;
 	case ZmbResource::kPage:
-		if (tag == ID_TMID && _midiMhk)
-			archiveIds.push_back(_midiMhk->getResourceIDList(tag));
 		for (Mohawk::Archive *mhk : _mhk)
 			archiveIds.push_back(mhk->getResourceIDList(tag));
 		break;

@@ -263,9 +263,8 @@ bool ZoombiniConsole::CmdSub_MidiPlay(int argc, const char **argv) {
 		return true;
 	}
 
-	// tMID uses the page resource kind but is owned by the selected shared MIDI archive.
 	ZmbResource resource;
-	if (!parseResourceId(argv[2], resource) || resource._archiveKind != ZmbResource::kPage)
+	if (!parseResourceId(argv[2], resource, ZmbResource::kSystem))
 		return true;
 
 	if (!_vm->hasResource(ID_TMID, resource)) {
@@ -477,7 +476,7 @@ bool ZoombiniConsole::CmdSub_DumpMidi(int argc, const char **argv) {
 		debugPrintf("Usage: %s %s <midi-id>\n\n", kCmdDump, kSubCmdDumpMidi);
 		debugPrintf("<midi-id> is a decimal tMID resource ID in the shared MIDI archive.\n");
 		debugPrintf("The output file is written below dumps/ as\n");
-		debugPrintf("ZOOMBINI_MIDI_pNNNN.mid.\n\n");
+		debugPrintf("ZOOMBINI_MIDI_sNNNN.mid.\n\n");
 		debugPrintf("Options:\n");
 		printHelpOption();
 		return true;
@@ -489,26 +488,25 @@ bool ZoombiniConsole::CmdSub_DumpMidi(int argc, const char **argv) {
 		return true;
 	}
 
-	// tMID uses the page resource kind but is owned by the selected shared MIDI archive.
 	ZmbResource resource;
-	if (!parseResourceId(argv[2], resource) || resource._archiveKind != ZmbResource::kPage)
+	if (!parseResourceId(argv[2], resource, ZmbResource::kSystem))
 		return true;
 	const int16 resid = resource._id;
 
-	if (!_vm->hasResource(ID_TMID, ZmbResource(ZmbResource::kPage, resid))) {
+	if (!_vm->hasResource(ID_TMID, resource)) {
 		debugPrintf("Cannot find resource MIDI(%s)\n", argv[2]);
 		debugPrintf("\n");
 		return true;
 	}
 
-	Common::SeekableReadStream *midiStream = _vm->getResource(ID_TMID, ZmbResource(ZmbResource::kPage, resid));
+	Common::SeekableReadStream *midiStream = _vm->getResource(ID_TMID, resource);
 	if (!midiStream) {
 		debugPrintf("Failed to read MIDI resource(%s)\n", argv[2]);
 		debugPrintf("\n");
 		return true;
 	}
 
-	Common::String filename = Common::String::format("ZOOMBINI_MIDI_p%04d.mid", resid);
+	Common::String filename = Common::String::format("ZOOMBINI_MIDI_s%04d.mid", resid);
 	Common::String filepath = "dumps/" + filename;
 
 	Common::DumpFile out;
@@ -3324,7 +3322,7 @@ bool ZoombiniConsole::CmdSub_PageBuiltinDebug(int argc, const char **argv) {
 
 	if (scumm_stricmp(argv[2], "replay-help") == 0) {
 		ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(page);
-		if (!interactive || !interactive->debugReplayActiveHelpSound()) {
+		if (!interactive || !interactive->replayActiveHelpSound()) {
 			debugPrintf("The active page has no F1 help sound.\n\n");
 			return true;
 		}
@@ -3975,8 +3973,22 @@ bool ZoombiniConsole::parseUnsignedInt(const char *str, uint32 &result) {
 	return success;
 }
 
-bool ZoombiniConsole::parseResourceId(const char *str, ZmbResource &outRes) {
-	bool success = ZmbResource::parse(str, outRes);
+bool ZoombiniConsole::parseResourceId(const char *str, ZmbResource &outRes, ZmbResource::ArchiveKind defaultKind) {
+	Common::String arg = str;
+	if (arg.find(':') == Common::String::npos) {
+		Common::String prefix;
+		switch (defaultKind) {
+		case ZmbResource::kSystem:
+			prefix = "s:";
+			break;
+		case ZmbResource::kPage:
+			prefix = "p:";
+			break;
+		}
+		arg = prefix + arg;
+	}
+
+	bool success = ZmbResource::parse(arg.c_str(), outRes);
 	if (!success) {
 		debugPrintf("Cannot parse resourceId(%s), try <archive>:<ID> with ID in the 0-32767 range (hex supported with 0x prefix)\n", str);
 		debugPrintf("\n");

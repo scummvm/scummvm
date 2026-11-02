@@ -1059,7 +1059,13 @@ ZmbEventHandleResult ZoombiniTransitionXfer::onLButtonDown(const Common::Point &
 }
 
 ZmbEventHandleResult ZoombiniTransitionXfer::onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) {
-	(void)kbdRepeat;
+	if (!kbdRepeat && _vm->getRelInfo().isShortcut(ZmbReleaseInfo::ShortcutKind::kVersionDialog, kbd)) {
+		_vm->openVersionDialog();
+		return ZmbEventHandleResult::kConsumed;
+	}
+
+	if (shouldIgnorePageSkipKey(kbd))
+		return ZmbEventHandleResult::kPassthrough;
 
 	// Enhanced shortcuts skip the transition without waiting for the auto-close timer or sound to finish.
 	if (_vm->useEnhancedKbdShortcuts() && !isClosed()) {
@@ -1074,6 +1080,7 @@ ZmbEventHandleResult ZoombiniTransitionXfer::onKeyDown(const Common::KeyState &k
 			break;
 		}
 	}
+
 	return ZmbEventHandleResult::kPassthrough;
 }
 

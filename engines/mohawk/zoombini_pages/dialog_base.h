@@ -46,6 +46,8 @@ public:
 
 	/** Select the dialog background and capture the covered page surface. */
 	void setBackgroundBitmap() override;
+	/** Whether this dialog suspends currently playing non-music sounds. */
+	virtual bool pausesSounds() const { return true; }
 	/** Dispatch dialog-owned keys, then apply the original Ctrl+Q fallback. */
 	ZmbEventHandleResult onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) override;
 
@@ -66,7 +68,7 @@ protected:
 	};
 
 	/**
-	 * Classify Return, keypad Enter, and Escape without choosing a button.
+	 * Classify Return, keypad Enter, Escape and their control-character aliases without choosing a button.
 	 * Concrete dialogs retain ownership of action mapping and dialog state.
 	 */
 	static DialogKeyAction classifyDialogKey(const Common::KeyState &kbd);

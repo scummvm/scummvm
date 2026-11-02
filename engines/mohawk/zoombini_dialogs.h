@@ -285,6 +285,8 @@ private:
 	GUI::ButtonWidget *_manageSavesButton = nullptr;
 	/** Audio-pop compatibility option control. */
 	GUI::CheckboxWidget *_audioPopFixCheckbox;
+	/** v1.xEU (BR, FR, GE) sound/music shortcuts swap-fix option control. */
+	GUI::CheckboxWidget *_fixSwappedSoundMusicShortcutsCheckbox = nullptr;
 	/** Fleens tree-descending feet compatibility option control. */
 	GUI::CheckboxWidget *_fixFleensTreeDescendFeetBugCheckbox = nullptr;
 	/** Hotel MIDI-halt compatibility option control. */

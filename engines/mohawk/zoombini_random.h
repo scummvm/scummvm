@@ -32,9 +32,9 @@ namespace Mohawk {
 /**
  * Reimplement the original Z1 bounded generator or use ScummVM's default PRNG.
  *
- * The compatibility stream uses the MSVC LCG transition constants, but its
- * game-owned bounded helper consumes all 16 high state bits rather than the
- * 15-bit result returned by the MSVC CRT rand() function.
+ * The compatibility stream uses the MSVC LCG transition constants on both
+ * Windows and Macintosh targets, but it consumes all 16 high state bits
+ * rather than the 15-bit result returned by the MSVC CRT rand() function.
  * The active algorithm is selected by the "prng_algorithm" config option.
  */
 class ZoombiniRandom {
@@ -49,6 +49,11 @@ private:
 	/**
 	 * Generate one inclusive bounded value with the compatibility algorithm.
 	 * A zero upper bound returns zero without advancing @ref ZoombiniRandom::_randState.
+	 *
+	 * @remarks
+	 * Upper bounds above 65534 are rejected.
+	 * It is because the behavior between Win x86/Mac PPC targets and Mac 68K targets
+	 * on value 63353 deviates due to their processors' word length difference.
 	 */
 	uint16 getOriginalRandomNumber(uint32 max);
 
@@ -80,6 +85,12 @@ public:
 	int16 getRandomNumber(int16 max);
 	/**
 	 * Generate a random signed integer in the interval [min, max].
+	 *
+	 * @remarks
+	 * The compatibility algorithm rejects a range of 65536,
+	 * since the behavior between Win x86/Mac PPC targets and Mac 68K targets
+	 * on value 63353 deviates due to their processors' word length difference.
+	 *
 	 * @param min The lower bound.
 	 * @param max The upper bound.
 	 * @return A random number in the interval [min, max].

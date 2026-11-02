@@ -206,8 +206,6 @@ private:
 		kResSoundRange9999_PageRangeLast = 9999,
 		kResSoundRange10000_PageRangeBase = 10000,
 		kResSoundRange10999_PageRangeLast = 10999,
-
-		kResMidi30020_HotelBgmBase = 30020,
 	};
 
 	/** Snoid callbacks used while placing a guest in a room. */

@@ -128,10 +128,12 @@ public:
 	MohawkArchive *_sysMhk = nullptr;
 	/** Optional help archive containing on-screen help resources. */
 	MohawkArchive *_helpMhk = nullptr;
-	/** Shared v1 archive containing the tMID resources used by music and the built-in MIDI test. */
+	/** Shared v2 retail archive containing PCM background music. */
+	MohawkArchive *_musicMhk = nullptr;
+	/** Shared v1 archive containing MIDI resources used by music and the built-in MIDI test. */
 	MohawkArchive *_midiMhk = nullptr;
 	/** Soundtrack of the currently opened shared MIDI archive. */
-	MohawkMetaEngine_Zoombini::MidiSoundtrack _midiMhkSoundtrack = MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC;
+	MohawkMetaEngine_Zoombini::MidiSoundtrack _midiSoundtrackKind = MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC;
 
 	/**
 	 * Registration-point offsets for system snoid shapes (tBMP 3000 in ZOOMBINI.MHK).
@@ -208,10 +210,15 @@ public:
 
 	/** Open and return the system MHK archive selected by the detected release. */
 	MohawkArchive *loadSystemArchive();
-	/** Open and return the optional help MHK archive selected by the detected release. */
-	MohawkArchive *loadHelpArchive();
-	/** Lazily open and return the shared v1 MIDI archive selected by the music profile option. */
+	/**
+	 * (v1.x only) Open and return the MIDI music archive.
+	 * Also reloads the archive after MIDI soundtrack selection is changed.
+	 */
 	MohawkArchive *loadMidiArchive();
+	/** (v2.0 only) Open and return the help voice MHK archive.  */
+	MohawkArchive *loadHelpArchive();
+	/** (v2.0 only) Open and return the PCM music archive. */
+	MohawkArchive *loadMusicArchive();
 	/** Add detected Zoombini resource roots to the search path in priority order. */
 	void initSearchPaths();
 	/** Load next interactive/transition page from the page queue. */
@@ -375,6 +382,8 @@ public:
 	void requestMsgBoxDialog(uint32 textKey);
 	/** Open the credits dialog. */
 	void openCreditsDialog();
+	/** Open the version information dialog. */
+	void openVersionDialog();
 	/** Open help for the specified page type when the release provides it. */
 	void openHelpDialog(ZoombiniPageType forPage);
 	/** Record Picker's one-shot version-update Help request. */
@@ -391,18 +400,11 @@ public:
 	/** Change acitve resourceKind, and return last active resourceKind. */
 	/** Select the archive namespace used by legacy numeric resource lookups. */
 	ZmbResource::ArchiveKind setActiveResourceKind(ZmbResource::ArchiveKind kind);
-	/**
-	 * Temporarily select one exact resource for a legacy ID-only lookup.
-	 *
-	 * This preserves explicit @ref ZmbResource ownership while base audio APIs
-	 * still request only the numeric resource ID.
-	 */
-	ZmbResource setActiveResource(ZmbResource resource);
 	/** Resolve a legacy bare SND ID using the original archive convention. */
 	ZmbResource resolveLegacySoundResource(int16 soundId) const;
-	/** Open a resource by numeric ID using the active legacy namespace. */
+	/** Open a numeric-ID resource, using system scope for MIDI and the active legacy namespace for others. */
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id) override;
-	/** Open a resource by its explicit archive kind and numeric ID. */
+	/** Open an archive-qualified resource. */
 	Common::SeekableReadStream *getResource(uint32 tag, ZmbResource res);
 	/** Return whether an explicit resource exists in the selected archive namespace. */
 	bool hasResource(uint32 tag, ZmbResource res);
@@ -548,8 +550,6 @@ private:
 	ZoombiniPage *_activePage = nullptr;
 	/** Archive namespace used by legacy numeric resource calls. */
 	ZmbResource::ArchiveKind _activeResourceKind = ZmbResource::kPage;
-	/** Exact resource temporarily selected for legacy resource consumers. */
-	ZmbResource _activeResource;
 	/** Stable engine-lifetime decoded system SCRB resources keyed by their raw 16-bit ID. */
 	Common::StableMap<int16, ZmbScriptDecoder::DecodedScrb> _systemDecodedScrbCache;
 	/** Stable engine-lifetime decoded system SCRS resources keyed by their raw 16-bit ID. */
@@ -586,7 +586,7 @@ private:
 	bool _builtinCheatCaptureArmed = false;
 	/** Bounded printable phrase collected after Ctrl+A. */
 	Common::String _builtinCheatCapture;
-	/** v1.x page tMID resource IDs cycled by the built-in MIDI test. */
+	/** Shared v1.x MIDI resource IDs cycled by the built-in MIDI test. */
 	static constexpr uint16 kBuiltinMidiTestResourceIds[18]{
 		30000,
 		30001,
@@ -607,7 +607,7 @@ private:
 		30037,
 		30038,
 	};
-	/** TLC v2 Picker-page SND accepted by the built-in MIDI test. */
+	/** Shared TLC v2 PCM music SND accepted by the built-in MIDI test. */
 	static constexpr uint16 kBuiltinTlcMidiTestSoundResourceId = 30001;
 	/** Runtime-only MIDI test mode selected by the built-in phrase. */
 	bool _builtinMidiTestMode = false;

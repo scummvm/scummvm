@@ -169,7 +169,7 @@ void ZoombiniGraphics::showStartupLoadingScreen() {
 	const int textY = (_screenRect.height() - font->getFontHeight()) / 2;
 
 #ifdef USE_RGB_COLOR
-	// Preserve font hinting with best effort if a 2bpp/4bpp RGB surface is available.
+	// Preserve glyph anti-aliasing with best effort if a 2bpp/4bpp RGB surface is available.
 	const Common::Rect bboxRect = font->getBoundingBox(loadingText);
 	if (!bboxRect.isEmpty()) {
 		// Render only the glyph bounds in true color so FreeType coverage survives.
@@ -178,7 +178,7 @@ void ZoombiniGraphics::showStartupLoadingScreen() {
 		textSurface.create(bboxRect.width(), bboxRect.height(), textFormat);
 		textSurface.fillRect(textSurface.getRect(), 0);
 
-		// Render text to a 4bpp surface with explicit #FEFEFE RGB color, possibly with a hinting.
+		// Render text to a 4bpp surface with explicit #FEFEFE RGB color, while preserving glyph coverage.
 		const uint32 fgRgbColor = textFormat.ARGBToColor(0xFF, fgColor, fgColor, fgColor);
 		font->drawAlphaString(&textSurface, loadingText, -bboxRect.left, -bboxRect.top,
 							  textSurface.w, fgRgbColor, Graphics::kTextAlignLeft, 0, false, true);
@@ -189,14 +189,14 @@ void ZoombiniGraphics::showStartupLoadingScreen() {
 		Common::Rect clippedDestRect = destRect;
 		clippedDestRect.clip(_screenRect);
 		if (!clippedDestRect.isEmpty())
-			quantizeHintedTextPixels(&textSurface, _shapeScreen, destRect, clippedDestRect, loadingPalette,
-									 ARRAYSIZE(loadingPalette) / 3, fgColor);
+			quantizeAATextPixels(&textSurface, _shapeScreen, destRect, clippedDestRect, loadingPalette,
+								 ARRAYSIZE(loadingPalette) / 3, fgColor);
 
 		textSurface.free();
 	}
 #else
 	// RGB surface is not available.
-	// Draw to a CLUT8 surface directly without hinting.
+	// Draw directly to a CLUT8 surface without anti-aliasing.
 	font->drawString(_shapeScreen, loadingText, textX, textY, _screenRect.width(), fgColor, Graphics::kTextAlignLeft, 0, false, true);
 #endif
 
@@ -606,6 +606,9 @@ Common::Rect ZoombiniGraphics::executeDrawCommand(ScreenKind screenKind, const D
 	case DrawCommand::Kind::kFill:
 		fillRectToScreen(screenKind, bounds, drawCmd._color);
 		break;
+	case DrawCommand::Kind::kFrame:
+		frameRectToScreen(screenKind, bounds, drawCmd._color);
+		break;
 	case DrawCommand::Kind::kText: {
 		TextConf tc = drawCmd._textConf;
 		if (tc._hasClipRect)
@@ -1005,6 +1008,50 @@ void ZoombiniGraphics::fillRectToScreen(ScreenKind screenKind, const Common::Rec
 
 void ZoombiniGraphics::fillArea(ScreenKind screenKind, uint32 color) {
 	fillArea(screenKind, _screenRect, color);
+}
+
+void ZoombiniGraphics::frameArea(ScreenKind screenKind, const Common::Rect &rect, uint32 color) {
+	if (rect.isEmpty())
+		return;
+
+	if (!_presentationCapture || screenKind != kShapeScreen) {
+		frameRectToScreen(screenKind, rect, color);
+		return;
+	}
+
+	DrawCommand drawCmd;
+	drawCmd._kind = DrawCommand::Kind::kFrame;
+	drawCmd._bounds = rect;
+	drawCmd._color = color;
+	submitDrawCommand(screenKind, drawCmd);
+}
+
+void ZoombiniGraphics::frameRectToScreen(ScreenKind screenKind, const Common::Rect &rect, uint32 color) {
+	if (rect.isEmpty() || !rect.intersects(_screenRect))
+		return;
+
+	Graphics::Surface *screen = getScreen(screenKind);
+	recordDirtyRect(screenKind, rect);
+	if (_isRenderClipActive) {
+		if (!_hasRenderClipRect)
+			return;
+
+		for (const Common::Rect &clip : _renderClipRects) {
+			if (!rect.intersects(clip))
+				continue;
+
+			// Keep clipped edges outside the sub-surface so they do not become new borders.
+			Common::Rect paddedClip = clip;
+			paddedClip.grow(1);
+			Common::Rect localRect = rect;
+			localRect.clip(paddedClip);
+			localRect.translate(-clip.left, -clip.top);
+			Graphics::Surface subScreen = screen->getSubArea(clip);
+			subScreen.frameRect(localRect, color);
+		}
+		return;
+	}
+	screen->frameRect(rect, color);
 }
 
 void ZoombiniGraphics::drawText(ScreenKind screenKind, uint32 textKey, const Common::Rect &destRect) {
@@ -1658,7 +1705,7 @@ Common::Rect ZoombiniGraphics::positionTextLines(Common::Array<Common::U32String
 
 		// QuickDraw positions the baseline at blockTop + lineHeight - descent.
 		// FIXME: Strangely, calculating leading manaully renders more faithfully to the original, compared to using getFontLeading() directly.
-		// May be due to the TTFFont/FreeType's integer metric rounding error? 
+		// May be due to the TTFFont/FreeType's integer metric rounding error?
 		const int descent = font->getFontDescent();
 		const int ascent = font->getFontAscent();
 		if (0 <= descent && 0 <= ascent)
@@ -1729,8 +1776,8 @@ void ZoombiniGraphics::copyTextPixels(Graphics::Surface *textSurface, Graphics::
 }
 
 #ifdef USE_RGB_COLOR
-void ZoombiniGraphics::quantizeHintedTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, const byte *paletteBytes, uint paletteColorCount, uint32 color) {
-	// textSurface has 4bpp pixels of hinted text drawing.
+void ZoombiniGraphics::quantizeAATextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, const byte *paletteBytes, uint paletteColorCount, uint32 color) {
+	// textSurface contains 32-bit pixels with glyph coverage in the alpha channel.
 	// Those pixels will be quantized to a CLUT8 target surface: screen.
 	assert(0 < paletteColorCount && paletteColorCount <= Graphics::PALETTE_COUNT);
 	assert(color < paletteColorCount);
@@ -1794,8 +1841,8 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 	do {
 #ifdef USE_RGB_COLOR
 		if (useAA) {
-			// Text hinting on CLUT surfaces are achieved by these pipeline:
-			// - Render texts on a temporary BGRA32 surface, with hinting.
+			// Text antialiasing on CLUT surfaces are achieved by these pipeline:
+			// - Render texts on a temporary BGRA32 surface, with AA active.
 			// - Quantize a temp BGRA32 surface to a target CLUT surface with its palettes.
 			// So, it requires a build with 16bit color support.
 			textSurface.create(destRect.width(), destRect.height(), Graphics::PixelFormat::createFormatBGRA32());
@@ -1828,7 +1875,7 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 			const Common::Rect bbox = font->getBoundingBox(line, localLeft, localTop, localWidth, Graphics::kTextAlignLeft);
 			do {
 #ifdef USE_RGB_COLOR
-				// @ref ZoombiniGraphics::quantizeHintedTextPixels treats source alpha as glyph coverage and blends against the screen.
+				// @ref ZoombiniGraphics::quantizeAATextPixels treats source alpha as glyph coverage and blends against the screen.
 				// Fill the screen first so antialiased edges blend with this background; an opaque surface fill would become the text color.
 				if (useAA) {
 					Common::Rect screenBBox = bbox;
@@ -1885,7 +1932,7 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 					do {
 #ifdef USE_RGB_COLOR
 						if (useAA) {
-							quantizeHintedTextPixels(&textSurface, screen, destRect, clipped, _paletteBytes, ARRAYSIZE(_paletteBytes) / 3, color);
+							quantizeAATextPixels(&textSurface, screen, destRect, clipped, _paletteBytes, ARRAYSIZE(_paletteBytes) / 3, color);
 							break;
 						}
 #endif
@@ -1898,7 +1945,7 @@ void ZoombiniGraphics::drawTextLines(ScreenKind screenKind, const Graphics::Font
 		do {
 #ifdef USE_RGB_COLOR
 			if (useAA) {
-				quantizeHintedTextPixels(&textSurface, screen, destRect, screenRect, _paletteBytes, ARRAYSIZE(_paletteBytes) / 3, color);
+				quantizeAATextPixels(&textSurface, screen, destRect, screenRect, _paletteBytes, ARRAYSIZE(_paletteBytes) / 3, color);
 				break;
 			}
 #endif

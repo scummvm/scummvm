@@ -27,57 +27,28 @@
 namespace Mohawk {
 
 /**
- * Save/load dialog page.
+ * Shared frame, save-entry list, scrolling and command buttons for save/load dialogs.
  *
- * The mode selects whether the dialog writes a new save, loads an existing
- * save, or offers both loading and starting a new game. Save entries are
- * presented in a scrollable list, while the text-box callback handles the
- * restricted filename input used by the save path.
+ * Used by @ref Mohawk::ZoombiniDialogSave and @ref Mohawk::ZoombiniDialogLoad.
+ * The list displays saved-game names from the current target's @ref Mohawk::ZmbRosterFile.
+ * Save shows existing names for reference while editing a save name; Load highlights the entry to load.
+ *
+ * Derived dialogs have to handle text editing, entry selection and the confirmed operation.
  */
 class ZoombiniDialogSaveLoad : public ZoombiniDialog {
 public:
-	/** Which operation the dialog exposes to the player. */
-	enum SaveLoadMode {
-		/** Save the current journey. */
-		kSaveMode,
-		/** Load an existing journey. */
-		kLoadMode,
-		/** Load an existing journey or start a new one. */
-		kLoadOrNewMode,
-	};
-
-	/** Create a save/load dialog in @p mode. */
-	ZoombiniDialogSaveLoad(MohawkEngine_Zoombini *vm, SaveLoadMode mode);
-	/** Release save entries, text input, and dialog features. */
+	/** Release the shared dialog features. */
 	~ZoombiniDialogSaveLoad() override;
 
-	/** Return true when this instance writes a save entry. */
-	bool isSaveDialog() const { return _mode == kSaveMode; }
-	/** Return true when this instance loads or offers a new game. */
-	bool isLoadDialog() const { return _mode != kSaveMode; }
-
-	/** Load save-entry rows, buttons, and text-box features. */
-	void loadFeatures() override;
-	/** Advance save-entry animations and delayed actions. */
-	void onPreTickFrame() override;
-#if ZOOMBINI_ENABLE_IME_COMPOSITION
-	/** Update, commit, or cancel IME composition in the save-name field. */
-	ZmbEventHandleResult onImeComposition(const Common::ImeComposition &composition) override;
-	/** Enable native IME composition only for the save-name variant. */
-	bool wantsImeComposition() const override { return _mode == kSaveMode; }
-#endif
-
-	/** Return the screen rectangle occupied by a save entry row. */
+	/** Return the first visible save-name row rectangle for drawing and Load-dialog hit testing. */
 	Common::Rect getSaveEntryBaseRect();
 
-	/** Draw the save/load frame and visible entry rows. */
-	void dialogFrame_onPostRender(ZmbFeature *feature);
-	/** Handle selection of a save entry or dialog command. */
-	ZmbEventHandleResult dialogFrame_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos);
-	/** Handle keyboard selection and text-box focus. */
-	ZmbEventHandleResult dialogFrame_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat);
-	/** Insert one printable Unicode character into the save-name field. */
-	ZmbEventHandleResult saveTextBox_handleTyping(char32_t character);
+	/** Draw the title, visible entries and any dialog-specific controls. */
+	virtual void dialogFrame_onPostRender(ZmbFeature *feature) = 0;
+	/** Leave frame clicks unhandled unless a derived dialog selects entries. */
+	virtual ZmbEventHandleResult dialogFrame_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos);
+	/** Handle dialog-specific text editing or save-entry selection. */
+	virtual ZmbEventHandleResult dialogFrame_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat) = 0;
 
 	/** Update scroll-button shapes before drawing the list. */
 	void scrollButtons_onPreRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
@@ -105,33 +76,35 @@ public:
 	/** Handle keyboard input for okay/cancel and load/new commands. */
 	ZmbEventHandleResult longButtons_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat);
 
-private:
-	/** Keep the selected save row within the visible list. */
-	void clampLoadSelection();
-	/** Remove ASCII spaces exposed at the start of the editable save name. */
-	void removeLeadingSaveInputSpaces();
+protected:
+	/** Initialize the title and list layout. */
+	ZoombiniDialogSaveLoad(MohawkEngine_Zoombini *vm, ZoombiniPageType pageType, ZoombiniText::Key titleKey, const Common::Rect &titleRect, ZoombiniText::Key yesKey, ZoombiniText::Key noKey, uint16 saveEntryTop);
+	/**
+	 * Create the frame, scroll buttons and command buttons when the concrete dialog loads its features.
+	 * Bind frame drawing and input to the derived dialog, using its supplied system SCRBs.
+	 */
+	void loadSaveLoadFeatures(int16 frameScrb, int16 scrollButtonsScrb, int16 longButtonsScrb);
+	/** Draw the localized title. */
+	void drawDialogTitle();
+	/**
+	 * Draw up to 8 saved-game names starting at @ref Mohawk::ZoombiniDialogSaveLoad::_saveEntryBaseIdx.
+	 * Called by the Save and Load frame post-render hooks whenever the frame is redrawn.
+	 * Save draws an unselected reference list; Load highlights its selected entry.
+	 *
+	 * @param textPalette Text color for unselected names.
+	 * @param selectedIdx Zero-based index in the full roster, independent of the scroll position.
+	 *                    Set to -1 to disable highlighting, as the Save dialog does.
+	 */
+	void drawSaveEntries(uint32 textPalette, int32 selectedIdx = -1);
 	/** Mark the dialog frame and save rows for redraw. */
 	void markDialogFrameDirty();
-	/** Return the text currently displayed in the save-name field. */
-	Common::U32String getDisplayedSaveInputText() const;
+	/** Perform the derived dialog's confirmed save or load operation. */
+	virtual void confirm() = 0;
 
-	/** Operation exposed by this dialog instance. */
-	SaveLoadMode _mode;
-	/** Feature that renders the frame and save-entry rows. */
-	ZmbFeature *_dialogFrameFeature = nullptr;
 	/** Feature that renders the long command buttons. */
 	ZmbFeature *_longButtonsFeature = nullptr;
-
-	/** Title rectangle selected for the current release and mode. */
-	Common::Rect _titleRect;
-	/** Localized title key selected for the current mode. */
-	ZoombiniText::Key _titleKey;
-	/** Index of the first save entry displayed in the list. */
+	/** Zero-based roster index of the first visible save name; scrolling moves this 8-row viewport. */
 	int32 _saveEntryBaseIdx = 0;
-	/** Index of the currently selected save entry; load modes begin on the first row. */
-	int32 _saveEntrySelectedIdx = 0;
-	/** Frame at which the last save entry was clicked. */
-	uint32 _lastSaveEntryClickedFrame = 0;
 
 	// MapRect & MapSave data
 	/** Fixed indexes of the save-list and command buttons. */
@@ -149,41 +122,22 @@ private:
 	/** Number of save rows visible at once. */
 	static constexpr int32 SAVESLOTS_PER_SCREEN = 8;
 
+private:
+	/** Feature that renders the frame and save-entry rows. */
+	ZmbFeature *_dialogFrameFeature = nullptr;
+	/** Title rectangle adjusted for the current release. */
+	Common::Rect _titleRect;
+	/** Localized title key supplied by the derived dialog. */
+	ZoombiniText::Key _titleKey;
+	/** Top coordinate of the first visible save-entry row. */
+	const uint16 _saveEntryTop;
 	/** Pressed and enabled state of the save-list scroll buttons. */
 	Common::StableMap<uint32, ButtonState> _scrollButtonStateMap;
 
-	/**
-	 * Dialog layout rectangles are instance members because Common::Rect requires
-	 * runtime construction and ScummVM prohibits global C++ constructors.
-	 */
-	/** Rectangle containing the save-as caption. */
-	const Common::Rect _saveAsCaptionRect = Common::Rect(0x00BB, 0x010F, 0x017C, 0x0122);
-	/** Rectangle containing the editable save-name field, with Japanese vertical placement. */
-	Common::Rect _saveTextBoxRect = Common::Rect(0x00C0, 0x012A, 0x01C8, 0x013C);
 	/** Left edge of a save-entry row. */
 	static constexpr uint16 _saveEntryLeft = 192;
 	/** Right edge of a save-entry row. */
 	static constexpr uint16 _saveEntryRight = 405;
-	/** Top coordinate of save rows in save mode. */
-	static constexpr uint16 _saveEntrySaveModeTop = 94;
-
-	// Text input for SaveDialog
-	/** Committed text in the save-name field. */
-	Common::U32String _saveInputText;
-	/** Uncommitted native-IME composition text. */
-	Common::U32String _saveInputCompositionText;
-	/** Cursor position within the active IME composition. */
-	uint32 _saveInputCompositionCursorPos = 0;
-	/** Cursor position within the committed save-name text. */
-	uint32 _saveInputCursorPos = 0;
-	/** Last timestamp used to blink the save-name cursor. */
-	uint32 _saveInputCursorLastBlinkTimeMs = 0;
-	/** Whether the save-name cursor is currently visible. */
-	bool _saveInputCursorVisible = true;
-	/** Maximum serialized byte length accepted for a save name. */
-	static constexpr uint32 MAX_SAVENAME_BYTES = 22;
-	/** Top coordinate of save rows in load mode. */
-	static constexpr uint16 _saveEntryLoadModeTop = 110;
 	/** Height of one save-entry row. */
 	static constexpr uint16 _saveEntryHeight = 20;
 };

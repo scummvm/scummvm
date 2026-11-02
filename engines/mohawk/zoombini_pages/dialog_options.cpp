@@ -491,6 +491,16 @@ ZmbEventHandleResult ZoombiniDialogOptions::redToggleButtons_onKeyDown(ZmbFeatur
 
 	ButtonState *buttonState = nullptr;
 	ToggleButtonState *toggleState = nullptr;
+
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kOptionsSound, kbd)) {
+		toggleState = &_toggleButtonStateMap[kOptionDialogButton05_Sound];
+	} else if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kOptionsMusic, kbd)) {
+		toggleState = &_toggleButtonStateMap[kOptionDialogButton06_Music];
+	} else if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kStickyMouse, kbd)) {
+		toggleState = &_toggleButtonStateMap[kOptionDialogButton07_StickyMouse];
+	}
+
 	switch (kbd.keycode) {
 	case Common::KEYCODE_n:
 		buttonState = &_redButtonStateMap[kOptionDialogButton01_NewGame];
@@ -503,15 +513,6 @@ ZmbEventHandleResult ZoombiniDialogOptions::redToggleButtons_onKeyDown(ZmbFeatur
 		break;
 	case Common::KEYCODE_q:
 		buttonState = &_redButtonStateMap[kOptionDialogButton04_Quit];
-		break;
-	case Common::KEYCODE_d:
-		toggleState = &_toggleButtonStateMap[kOptionDialogButton05_Sound];
-		break;
-	case Common::KEYCODE_b:
-		toggleState = &_toggleButtonStateMap[kOptionDialogButton06_Music];
-		break;
-	case Common::KEYCODE_j:
-		toggleState = &_toggleButtonStateMap[kOptionDialogButton07_StickyMouse];
 		break;
 	case Common::KEYCODE_t:
 		toggleState = &_toggleButtonStateMap[kOptionDialogButton08_Transitions];
@@ -586,6 +587,7 @@ ZmbEventHandleResult ZoombiniDialogOptions::longButtons_onLButtonDown(ZmbFeature
 ZmbEventHandleResult ZoombiniDialogOptions::longButtons_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat) {
 	switch (classifyDialogKey(kbd)) {
 	case kDialogKeyAccept:
+	// Known issue: Escape/Ctrl+[ activate OK here, unlike the checked original Options handlers.
 	case kDialogKeyCancel:
 		if (!kbdRepeat && !_longButtonStateMap[kOptionDialogButton11_Okay].isAnimating())
 			_longButtonStateMap[kOptionDialogButton11_Okay].press(_vm, feature, _currentFrameCounter);

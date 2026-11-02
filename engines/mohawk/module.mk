@@ -127,10 +127,13 @@ MODULE_OBJS += \
 	zoombini_pages/dialog_base.o \
 	zoombini_pages/dialog_options.o \
 	zoombini_pages/dialog_saveload.o \
+	zoombini_pages/dialog_save.o \
+	zoombini_pages/dialog_load.o \
 	zoombini_pages/dialog_msgbox.o \
 	zoombini_pages/dialog_credits.o \
 	zoombini_pages/dialog_help.o \
-	zoombini_pages/dialog_debug.o
+	zoombini_pages/dialog_debug.o \
+	zoombini_pages/dialog_version.o
 endif
 
 # For games use truetype font

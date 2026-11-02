@@ -116,9 +116,6 @@ Audio::Mixer::SoundType ZoombiniPuzzleCaves::getFeatureSoundType(const ZmbFeatur
 }
 
 void ZoombiniPuzzleCaves::open() {
-	// MIDI BGM (tMID 30025-30028) - Broderbund v1.x only.
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
-		openMidiArchive();
 	openArchive(ZMB_MHK_CAVES);
 }
 
@@ -129,7 +126,7 @@ void ZoombiniPuzzleCaves::setBackgroundMusic() {
 	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) { // TLC v2.0 has no MIDI resources.
 		const int16 routeLevel = _puzzleLevel - kPuzzleLevel1;
 		if (routeLevel < 3 || ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixCavesL4MidiSilentBug))
-			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30025_CavesBgmBase + routeLevel)));
+			_vm->_midi->playMidi(ZmbResource(ZmbResource::kSystem, static_cast<int16>(kSysResMidi30025_CavesBgmBase + routeLevel)));
 	}
 }
 
@@ -381,7 +378,7 @@ void ZoombiniPuzzleCaves::loadFeatures() {
 }
 
 void ZoombiniPuzzleCaves::initHelpPrompt() {
-	// Level 4 retains this resource but suppresses its F1 replay in @ref ZoombiniPuzzleCaves::debugReplayActiveHelpSound().
+	// Level 4 retains this resource but suppresses its F1 replay in @ref ZoombiniPuzzleCaves::replayActiveHelpSound().
 	_activeHelpSoundId = ZmbResource(ZmbResource::kSystem, kSysResSound20065_CavesHelp);
 }
 
@@ -554,10 +551,10 @@ Common::String ZoombiniPuzzleCaves::debugGetBuiltinDebugCommandHelp() const {
 	return output;
 }
 
-bool ZoombiniPuzzleCaves::debugReplayActiveHelpSound() {
+bool ZoombiniPuzzleCaves::replayActiveHelpSound() {
 	if (_puzzleLevel == kPuzzleLevel4)
 		return false;
-	return ZoombiniInteractive::debugReplayActiveHelpSound();
+	return ZoombiniInteractive::replayActiveHelpSound();
 }
 
 void ZoombiniPuzzleCaves::debugReinitDifficulty() {
@@ -761,11 +758,6 @@ bool ZoombiniPuzzleCaves::runBuiltinDebugAction(BuiltinDebugAction action, int16
 }
 
 ZmbEventHandleResult ZoombiniPuzzleCaves::onDebugKeyDown(const Common::KeyState &kbd) {
-	if (kbd.keycode == Common::KEYCODE_F1) {
-		debugReplayActiveHelpSound();
-		return ZmbEventHandleResult::kConsumed;
-	}
-
 	BuiltinDebugAction action = BuiltinDebugAction::kInvalid;
 	int16 argument = -1;
 	if (kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) {

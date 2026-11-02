@@ -247,8 +247,10 @@ public:
 	/** Stop MIDI playback and release the player. */
 	~ZoombiniMidiPlayer() override;
 
-	/** Start playback of a resolved Zoombini MIDI resource. */
+	/** Start playback of a system resource from the shared Zoombini MIDI archive. */
 	void playMidi(ZmbResource resource);
+	/** Return the playing MIDI resource ID, or @ref ZmbResource::RESOURCE_NONE when stopped. */
+	int16 getPlayingResourceId() const { return isPlaying() ? _resourceId : ZmbResource::RESOURCE_NONE; }
 	/** Apply the ScummVM music volume while respecting the game BGM gate. */
 	void syncBgmVolume(bool enabled);
 	/** Stop the current MIDI track. */
@@ -260,6 +262,8 @@ private:
 
 	/** Engine instance that owns this MIDI player. */
 	MohawkEngine_Zoombini *_vm;
+	/** Resource ID of the last MIDI track loaded for playback. */
+	int16 _resourceId = ZmbResource::RESOURCE_NONE;
 };
 
 } // End of namespace Mohawk

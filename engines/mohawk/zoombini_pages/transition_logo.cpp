@@ -34,6 +34,14 @@
 
 namespace Mohawk {
 
+ZmbEventHandleResult ZoombiniTransitionLogo::onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) {
+	if (kbd.hasFlags(Common::KBD_CTRL) && kbd.keycode == Common::KEYCODE_q) { // QUIT (Ctrl-Q)
+		Engine::quitGame();
+		return ZmbEventHandleResult::kConsumed;
+	}
+	return ZoombiniTransition::onKeyDown(kbd, kbdRepeat);
+}
+
 ZoombiniTransitionLogo::ZoombiniTransitionLogo(MohawkEngine_Zoombini *vm)
 	: ZoombiniTransition(vm, ZoombiniPageType::kLogo) {
 }

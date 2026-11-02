@@ -356,6 +356,8 @@ public:
 	void fillArea(ScreenKind screenKind, const Common::Rect &rect, uint32 color = kTransparentKey);
 	/** Fill the entire selected screen with one palette color. */
 	void fillArea(ScreenKind screenKind, uint32 color = kTransparentKey);
+	/** Draw a one-pixel border inside the given rectangle. */
+	void frameArea(ScreenKind screenKind, const Common::Rect &rect, uint32 color);
 
 	// [*] Palette (256 color)
 	/** Apply palette from a SHPL resource. */
@@ -560,6 +562,8 @@ public:
 			kThickLine = 3,
 			/** Draw text with its captured formatting. */
 			kText = 4,
+			/** Draw a one-pixel rectangle border. */
+			kFrame = 5,
 		};
 		/** Drawing operation selected for immediate execution or replay. */
 		Kind _kind = Kind::kImage;
@@ -839,7 +843,7 @@ private:
 	 * @param color Palette index used for glyphs, including the outline color during an outline pass.
 	 * @param hAlign Horizontal alignment within destRect; vertical placement is already reflected in destRect.
 	 * @param policy Native horizontal alignment policy.
-	 * @param useAA Whether to render alpha coverage and quantize it to the palette.
+	 * @param useAA Whether to preserve glyph coverage and quantize it to the palette.
 	 * @param fillBackgroundColor Palette index for each line's glyph bounds; kTransparentKey disables background fill.
 	 * @param clipRect Optional borrowed, read-only clip in game-screen pixels; nullptr disables only this extra clip.
 	 * An empty non-null rectangle suppresses output. The rectangle is used only during this call and is not retained.
@@ -859,8 +863,8 @@ private:
 	static void copyTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect);
 #ifdef USE_RGB_COLOR
 	/**
-	 * Quantize 32-bit text coverage into a CLUT8 screen using the supplied RGB palette.
-	 * This preserves antialiased TrueType output on indexed surfaces.
+	 * Quantize32-bit glyph coverage into a CLUT8 screen using the supplied RGB palette.
+	 * This preserves glyph anti-aliasing on indexed surfaces.
 	 *
 	 * @param textSurface Non-null borrowed 32-bit source surface whose alpha channel supplies glyph coverage.
 	 * @param screen Non-null borrowed CLUT8 destination, read for background colors and updated with blended palette indices.
@@ -870,7 +874,7 @@ private:
 	 * @param paletteColorCount Number of valid palette entries, from 1 through Graphics::PALETTE_COUNT.
 	 * @param color Foreground palette index, less than paletteColorCount; fully covered pixels use this exact index.
 	 */
-	void quantizeHintedTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, const byte *paletteBytes, uint paletteColorCount, uint32 color);
+	void quantizeAATextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, const byte *paletteBytes, uint paletteColorCount, uint32 color);
 #endif
 	/**
 	 * Record a drawn rectangle for dirty tracking and screen or background invalidation.
@@ -938,7 +942,7 @@ private:
 	bool _isDirtyRectTracking = false;
 	/** Preserve logical draw bounds while limiting presentation damage to the active clip. */
 	bool _isPresentationDraw = false;
-	/** Caller-owned destination for authored draw capture, or nullptr when capture is inactive. */
+	/** Destination for authored draw capture, or nullptr when capture is inactive. */
 	Common::Array<DrawCommand> *_presentationCapture = nullptr;
 	/** Motion group assigned to subsequent captured commands, or zero for the feature root. */
 	uint32 _presentationMotionKey = 0;
@@ -954,6 +958,8 @@ private:
 	void drawLineToScreen(ScreenKind screenKind, const DrawCommand &drawCmd, const Common::Point &offset);
 	/** Fill pixels through the active render clip without recording another command. */
 	void fillRectToScreen(ScreenKind screenKind, const Common::Rect &rect, uint32 color);
+	/** Draw a rectangle border through the active render clip without recording another command. */
+	void frameRectToScreen(ScreenKind screenKind, const Common::Rect &rect, uint32 color);
 	/**
 	 * Draw text immediately and record its dirty bounds without capturing another command.
 	 *

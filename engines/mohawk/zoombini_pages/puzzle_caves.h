@@ -108,7 +108,7 @@ protected:
 	/** Run one Lion's Lair built-in debug action. */
 	bool debugDoBuiltinDebugCommand(int argc, const char **argv, Common::String &output) override;
 	/** Replay the F1 sound only on the three supported difficulties. */
-	bool debugReplayActiveHelpSound() override;
+	bool replayActiveHelpSound() override;
 	/** Handle Lion's Lair built-in debug keys. */
 	ZmbEventHandleResult onDebugKeyDown(const Common::KeyState &kbd) override;
 	/** Parse one console-facing Lion's Lair action name. */
@@ -187,8 +187,6 @@ private:
 		kResSoundRange6008_Priority = 6008,
 		kResSoundRange8200_PageRangeBase = 8200,
 		kResSoundRange12001_PageRangeLast = 12001,
-
-		kResMidi30025_CavesBgmBase = 30025,
 	};
 
 	/**

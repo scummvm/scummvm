@@ -212,6 +212,7 @@ void ZoombiniText::patchKoreanExeCredits() {
 }
 
 const ZoombiniText::ResTextEntry ZoombiniText::kV10EU_ResTextEntries[] = {
+	{ZoombiniText::kVersionInformation, 1040, 1},
 	{ZoombiniText::kPicker, 2000, 0},
 	{ZoombiniText::kBridge, 2000, 1},
 	{ZoombiniText::kCaves, 2000, 2},
@@ -425,6 +426,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10JPMacDemoTextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10ES_PETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x89210, 126},
 	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0}, // NO-OP
 	{ZoombiniText::kPicker, 0x899B4, 13},
 	{ZoombiniText::kBridge, 0x899C2, 16},
@@ -581,6 +583,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10ES_PETextEntries[] = {
 // Key-address-size map for the Portuguese v1.0 PE32 executable.
 // Lengths are the text byte counts before each trailing NUL terminator.
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10PT_PETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x8925B, 125},
 	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0}, // NO-OP
 	{ZoombiniText::kPicker, 0x89A30, 20},
 	{ZoombiniText::kBridge, 0x89A45, 21},
@@ -735,6 +738,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10PT_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_PETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x8A51A, 118},
 	{ZoombiniText::kTown, 0x8AD89, 13},
 	{ZoombiniText::kPicker, 0x8ACA4, 13},
 	{ZoombiniText::kBridge, 0x8ACB2, 15},
@@ -878,6 +882,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_NETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0xCEE00, 118},
 	{ZoombiniText::kTown, 0xDBF3F, 13},
 	{ZoombiniText::kPicker, 0xDBE5A, 13},
 	{ZoombiniText::kBridge, 0xDBE68, 15},
@@ -1021,6 +1026,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_NETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_NETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0xD4A00, 118},
 	{ZoombiniText::kTown, 0xD955D, 13},
 	{ZoombiniText::kPicker, 0xD9478, 13},
 	{ZoombiniText::kBridge, 0xD9486, 15},
@@ -1173,6 +1179,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_NETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_PETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x89156, 118},
 	{ZoombiniText::kTown, 0x899A9, 13},
 	{ZoombiniText::kPicker, 0x898C4, 13},
 	{ZoombiniText::kBridge, 0x898D2, 15},
@@ -1325,6 +1332,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV11USMacTextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x9EFE, 118},
 	{ZoombiniText::kTown, 0x9B96, 13},
 	{ZoombiniText::kPicker, 0x9E70, 13},
 	{ZoombiniText::kBridge, 0x9720, 15},
@@ -1468,6 +1476,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11USMacTextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10USMacTextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x919C, 118},
 	{ZoombiniText::kTown, 0x8E1E, 13},
 	{ZoombiniText::kPicker, 0x8F8E, 13},
 	{ZoombiniText::kBridge, 0x89A8, 15},
@@ -1804,10 +1813,12 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV20USMacTextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV20USMacRawTextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x9A56C, 135},
 	{ZoombiniText::kDialogHelpLevel, 0x9A704, 5},
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10USMacDemoTextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x912C, 123},
 	{ZoombiniText::kTown, 0x8DAE, 13},
 	{ZoombiniText::kPicker, 0x8F1E, 13},
 	{ZoombiniText::kBridge, 0x8938, 15},
@@ -1960,6 +1971,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10USMacDemoTextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10USDemo_NETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0xD4000, 123},
 	{ZoombiniText::kTown, 0xD8B1F, 13},
 	{ZoombiniText::kPicker, 0xD8A3A, 13},
 	{ZoombiniText::kBridge, 0xD8A48, 15},
@@ -2112,6 +2124,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10USDemo_NETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV20US_PETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x874CC, 135},
 	{ZoombiniText::kTown, 0x92680, 13},
 	{ZoombiniText::kPicker, 0x928C4, 13},
 	{ZoombiniText::kBridge, 0x92264, 15},
@@ -2266,6 +2279,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV20US_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV20PL_PETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0xC04E4, 135},
 	// One route pair shares a source buffer without a NUL between its logical entries.
 	// Short dialog button labels use a prefix when the executable has no standalone copy.
 	{ZoombiniText::kTown, 0xD012C, 8},
@@ -2426,6 +2440,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV20PL_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV20USDemo_PETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x864CC, 140},
 	{ZoombiniText::kTown, 0x91648, 13},
 	{ZoombiniText::kPicker, 0x9188C, 13},
 	{ZoombiniText::kBridge, 0x9122C, 15},
@@ -2580,6 +2595,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV20USDemo_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV111KR_PETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0x8B130, 118},
 	{ZoombiniText::kPicker, 0x8B8EC, 9},
 	{ZoombiniText::kBridge, 0x8B8F6, 13},
 	{ZoombiniText::kCaves, 0x8B97D, 9},
@@ -2722,6 +2738,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV111KR_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV111KR_NETextEntries[] = {
+	{ZoombiniText::kVersionInformation, 0xDF800, 118},
 	{ZoombiniText::kPicker, 0x78400, 9},
 	{ZoombiniText::kBridge, 0x7840A, 13},
 	{ZoombiniText::kCaves, 0x78491, 9},
@@ -3568,6 +3585,13 @@ bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 	Common::Array<Common::U32String> archiveStrings;
 	archiveStrings.reserve(ARRAYSIZE(kV10EU_ResTextEntries));
 	for (const ResTextEntry &entry : kV10EU_ResTextEntries) {
+		uint16 strIdx = entry.stringIndex;
+		if (entry.key == kVersionInformation) {
+			if (_relInfo.isDemo())
+				strIdx -= 1;
+			if (_relInfo.getPlatform() == Common::kPlatformMacintosh)
+				strIdx += 2;
+		}
 		if (!resStringCache.contains(entry.resourceId)) {
 			Common::Array<Common::U32String> texts;
 			if (!readTextStrStrings(textStrArchive, entry.resourceId, _resCodePage, texts)) {
@@ -3577,11 +3601,11 @@ bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 			resStringCache[entry.resourceId] = texts;
 		}
 		const Common::Array<Common::U32String> &texts = resStringCache[entry.resourceId];
-		if (texts.size() <= entry.stringIndex) {
-			warning("ZoombiniText: failed to load Europe TEXTSTR.MHK STRL %d string %u", entry.resourceId, entry.stringIndex);
+		if (texts.size() <= strIdx) {
+			warning("ZoombiniText: failed to load Europe TEXTSTR.MHK STRL %d string %u", entry.resourceId, strIdx);
 			return false;
 		}
-		archiveStrings.push_back(texts[entry.stringIndex]);
+		archiveStrings.push_back(texts[strIdx]);
 	}
 
 	Common::Array<CreditParagraph> archiveCredits;
@@ -3605,12 +3629,12 @@ bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 		}
 	}
 
-	for (uint entryIndex = 0; entryIndex < ARRAYSIZE(kV10EU_ResTextEntries); entryIndex++) {
-		const ResTextEntry &entry = kV10EU_ResTextEntries[entryIndex];
+	for (uint entryIdx = 0; entryIdx < ARRAYSIZE(kV10EU_ResTextEntries); entryIdx++) {
+		const ResTextEntry &entry = kV10EU_ResTextEntries[entryIdx];
 		// The executable's New Game label names an unsaved game; the STRL value
 		// with the same key is the startup dialog button and has its own key.
 		if (entry.key != kNewGame)
-			_strMap[entry.key] = archiveStrings[entryIndex];
+			_strMap[entry.key] = archiveStrings[entryIdx];
 	}
 	if (sources.textStrCreditEntryCount)
 		_creditParagraphs = archiveCredits;
@@ -3677,10 +3701,11 @@ void ZoombiniText::initMacintoshFonts() {
 #if defined(WIN32)
 		_fallbackTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", "MS Gothic", kSizeMode));
 #endif
-		// Without hinting, quality of modern CJK font rendering in low resolution is terrible.
-		// Thus, prefer light hinting for modern CJK fonts when RGB rendering is available.
-		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic", kSizeMode, Graphics::kTTFRenderModeLight));
-		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", kSizeMode, Graphics::kTTFRenderModeLight));
+		// Use monochrome grid fitting with grayscale coverage for small CJK fallback glyphs.
+		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Regular.otf", "Noto Sans JP Regular",
+														   kSizeMode, Graphics::kTTFRenderModeNormalWithGridFitting));
+		_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic", kSizeMode, Graphics::kTTFRenderModeNormalWithGridFitting));
+
 		return;
 	case Common::EN_USA:
 	case Common::EN_GRB:
@@ -3761,10 +3786,11 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 			systemFontWarn = Common::U32String::format(systemFontWarnTemplate, "msgothic.ttc", fontSrcInst.decode(Common::kUtf8).c_str()).encode(Common::kUtf8);
 			_optimalTTFLoaders.push_back(new WinSysTTFLoader("msgothic.ttc", kFontNameMsGothic, systemFontWarn, fontSizeMode));
 #endif
-			// Without hinting, quality of modern CJK font rendering in low resolution is terrible.
-			// Thus, prefer light hinting for modern CJK fonts when RGB rendering is available.
-			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic", fontSizeMode, Graphics::kTTFRenderModeLight));
-			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Bold.otf", "Noto Sans JP Bold", fontSizeMode, Graphics::kTTFRenderModeLight));
+			// Use monochrome grid fitting with grayscale coverage for small CJK fallback glyphs.
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("VL-Gothic-Regular.ttf", "VL Gothic",
+															   fontSizeMode, Graphics::kTTFRenderModeNormalWithGridFitting));
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansJP-Regular.otf", "Noto Sans JP Regular",
+															   fontSizeMode, Graphics::kTTFRenderModeNormalWithGridFitting));
 		} else {
 			fontSrcInst = Common::U32String::format(srcInstTemplate, "'/CORNER.TTF'").encode(Common::kUtf8);
 			_optimalTTFLoaders.push_back(new FileTTFLoader("CORNER.TTF", kFontNameCornerstone, fontSrcInst, fontSizeMode));
@@ -3793,9 +3819,9 @@ void ZoombiniText::initWindowsFonts(const char *fontCabinet) {
 #endif
 			_textFontSelection.point = 12;
 			_titleFontSelection.point = 18;
-			// Without hinting, quality of Noto Sans rendering in low resolution is terrible.
-			// Thus, prefer light hinting for Noto Sans when RGB rendering is available.
-			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansKR-Bold.otf", "Noto Sans KR Bold", fontSizeMode, Graphics::kTTFRenderModeLight));
+			// Use monochrome grid fitting with grayscale coverage for small CJK fallback glyphs.
+			_fallbackTTFLoaders.push_back(new ArchiveTTFLoader("NotoSansKR-Bold.otf", "Noto Sans KR Bold",
+															   fontSizeMode, Graphics::kTTFRenderModeNormalWithGridFitting));
 			// TODO: Unifont support? The font is small while supporting every possible Unicode glyphs.
 		} else {
 			error("ZoombiniText: unsupported language (%s) for Broderbund v1.1 US-based release", Common::getLanguageDescription(language));
@@ -4377,8 +4403,8 @@ bool ZoombiniText::tryExecutableSource(const ExeTextSource &source) {
 			break;
 		}
 
-		for (uint entryIndex = 0; entryIndex < table.entryCount; entryIndex++) {
-			const ExeTextEntry &entry = table.entries[entryIndex];
+		for (uint entryIdx = 0; entryIdx < table.entryCount; entryIdx++) {
+			const ExeTextEntry &entry = table.entries[entryIdx];
 			if (textData->size() < static_cast<uint64>(entry.offset) + entry.length) {
 				loaded = false;
 				break;

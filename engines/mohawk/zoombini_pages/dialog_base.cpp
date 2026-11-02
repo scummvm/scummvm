@@ -42,6 +42,17 @@ ZoombiniDialog::~ZoombiniDialog() {
 }
 
 ZoombiniDialog::DialogKeyAction ZoombiniDialog::classifyDialogKey(const Common::KeyState &kbd) {
+	if (kbd.hasFlags(Common::KBD_CTRL)) {
+		switch (kbd.keycode) {
+		case Common::KEYCODE_m:
+			return kDialogKeyAccept;
+		case Common::KEYCODE_LEFTBRACKET:
+			return kDialogKeyCancel;
+		default:
+			break;
+		}
+	}
+
 	switch (kbd.keycode) {
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
