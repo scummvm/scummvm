@@ -451,6 +451,13 @@ static const uint kDifficultySenior = 2;
 static int gameIndex(lua_State *L) {
 	const Common::String key = luaL_checkstring(L, 2);
 
+	// Nancy25: replaces Streams.environment, the environment of the main
+	// stream's scene
+	if (key == "environment") {
+		lua_pushstring(L, NancySceneState.getStreams().getEnvironment().c_str());
+		return 1;
+	}
+
 	if (key == "difficulty") {
 		lua_pushstring(L, NancySceneState.getDifficulty() == kDifficultySenior ? "senior" : "junior");
 		return 1;
@@ -1517,22 +1524,6 @@ static int sceneRecords(lua_State *L) {
 	return 1;
 }
 
-static const luaL_Reg kSceneFunctions[] = {
-	{ "__index", sceneIndex },
-	{ "__newindex", sceneNewIndex },
-	{ "ARs", sceneRecords },
-	{ "Include", sceneInclude },
-	{ "BeginStream", sceneBeginStream },
-	{ "EndStream", sceneEndStream },
-	{ "ChangeScene", sceneChangeScene },
-	{ "GraphNode", sceneGraphNode },
-	{ "TransferChild", sceneTransferChild },
-	// Available since Nancy19, but used by game scripts from Nancy22 onwards
-	{ "Change", sceneChangeScene },
-	{ "Attach", sceneAttach },
-	{ nullptr, nullptr }
-};
-
 // Streams
 
 // Streams.environment is the environment of the main stream's scene
@@ -1613,6 +1604,30 @@ static const luaL_Reg kStreamsFunctions[] = {
 	{ "GetZ", streamsGetZ },
 	{ "GetTransform", streamsGetTransform },
 	{ "SetTransform", streamsSetTransform },
+	{ nullptr, nullptr }
+};
+
+static const luaL_Reg kSceneFunctions[] = {
+	{ "__index", sceneIndex },
+	{ "__newindex", sceneNewIndex },
+	{ "ARs", sceneRecords },
+	{ "Include", sceneInclude },
+	{ "BeginStream", sceneBeginStream },
+	{ "EndStream", sceneEndStream },
+	{ "ChangeScene", sceneChangeScene },
+	{ "GraphNode", sceneGraphNode },
+	{ "TransferChild", sceneTransferChild },
+	// Available since Nancy19, but used by game scripts from Nancy22 onwards
+	{ "Change", sceneChangeScene },
+	{ "Attach", sceneAttach },
+	// Nancy25 moved the Streams functions here, with "Stream" in their names
+	{ "GetStreamScene", streamsGetScene },
+	{ "GetStreamTime", streamsGetTime },
+	{ "GetStreamFrame", streamsGetFrame },
+	{ "GetStreams", streamsGetStreams },
+	{ "GetStreamZ", streamsGetZ },
+	{ "GetStreamTransform", streamsGetTransform },
+	{ "SetStreamTransform", streamsSetTransform },
 	{ nullptr, nullptr }
 };
 
@@ -2381,11 +2396,15 @@ void registerGameAPI(lua_State *L) {
 	lua_pushstring(L, "<n>");
 	lua_setfield(L, -2, "newline");
 	lua_pop(L, 1);
-	registerGlobal(L, "Streams", "ND.Streams", kStreamsFunctions);
-	luaL_getmetatable(L, "ND.Streams");
-	lua_pushstring(L, State::SceneStreamManager::getMainStreamName());
-	lua_setfield(L, -2, "mainName");
-	lua_pop(L, 1);
+	// Nancy25 has no Streams object, its functions are in Scene and Game
+	if (g_nancy->getGameType() < kGameTypeNancy25) {
+		registerGlobal(L, "Streams", "ND.Streams", kStreamsFunctions);
+		luaL_getmetatable(L, "ND.Streams");
+		lua_pushstring(L, State::SceneStreamManager::getMainStreamName());
+		lua_setfield(L, -2, "mainName");
+		lua_pop(L, 1);
+	}
+
 	registerGlobal(L, "Player", "ND.CurPlayer", kPlayerFunctions);
 	registerGlobal(L, "Message", "ND.Message", kMessageFunctions);
 	registerGlobal(L, "Viewport", "ND.Viewport", kViewportFunctions);
