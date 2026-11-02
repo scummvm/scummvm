@@ -23,8 +23,6 @@
 
 namespace Igor {
 
-static int VAR_CURRENT_TALKING_ACTOR;
-
 void IgorEngine::part17ExecuteAction(int action) {
 	debugC(9, kDebugGame, "part17ExecuteAction %d", action);
 	switch (action) {
@@ -83,7 +81,7 @@ void IgorEngine::part17TalkToPhilipAndJimmy() {
 		cutsceneSayWithCallback(156, 32, 35, 38, 47, 210, 2, 638, &IgorEngine::part17UpdateJimmyDialogue);
 	}
 
-	VAR_CURRENT_TALKING_ACTOR = 0;
+	_part17CurrentTalkingActor = 0;
 	if (_gameState.counter[4] == 1) {
 		debug("part17TalkToPhilipAndJimmy: counter[4] == 1");
 		cutsceneSayWithCallback(135, 33, 63, 63, 0, { { 203, 1, 634 }, { 204, 2, 635 } }, &IgorEngine::part17UpdatePhilipDialogue);
@@ -99,7 +97,7 @@ void IgorEngine::part17TalkToPhilipAndJimmy() {
 
 	waitForTimer(255);
 	const int randomDialogue = getRandomNumber(3);
-	VAR_CURRENT_TALKING_ACTOR = 1;
+	_part17CurrentTalkingActor = 1;
 	cutsceneSayWithCallback(135, 33, 63, 63, 0, 215 + randomDialogue, 1, 641 + randomDialogue, &IgorEngine::part17UpdatePhilipDialogue);
 
 	part17PhilipDialogueAndTail();
@@ -237,14 +235,14 @@ void IgorEngine::part17UpdateJimmyDialogue(int action) {
 void IgorEngine::part17UpdatePhilipDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		if (VAR_CURRENT_TALKING_ACTOR == 0) {
+		if (_part17CurrentTalkingActor == 0) {
 			part17PhilipToJimmyAnimFrame(0);
 		} else {
 			part17PhilipToIgor(0);
 		}
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		if (VAR_CURRENT_TALKING_ACTOR == 0) {
+		if (_part17CurrentTalkingActor == 0) {
 			debug("part17PhilipToJimmyAnimFrame");
 			part17PhilipToJimmyAnimFrame(getRandomNumber(6));
 		} else {
@@ -544,7 +542,7 @@ void IgorEngine::part17() {
 	enterPartLoop();
 	if (takeResumeDialogue(1)) { // loaded while talking to philip
 		// the lines before the menu are not played again, only philip's pose is drawn
-		VAR_CURRENT_TALKING_ACTOR = 1;
+		_part17CurrentTalkingActor = 1;
 		part17PhilipToIgor(0);
 		part17PhilipDialogueAndTail();
 		finishResumedDialogue();

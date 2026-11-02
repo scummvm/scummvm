@@ -23,9 +23,6 @@
 
 namespace Igor {
 
-
-static int VAR_MARGARET_ROOM_ANIM_COUNTER;
-
 // The Spanish floppy has other animation blocks, so the tables are at other places
 static const int kMargaretBasePoseTable = 0x2A63;
 static const int kMargaretFramesBase = 0x2A75;
@@ -37,13 +34,13 @@ static const int kMargaretFloppyFramesTable = 0xE338;
 void IgorEngine::partMargaretDrawBasePose() {
 	const bool floppy = _game.version == kIdSpaFloppy;
 	const int table = floppy ? kMargaretFloppyBasePoseTable : kMargaretBasePoseTable;
-	const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + table + VAR_MARGARET_ROOM_ANIM_COUNTER * 2) - 1;
+	const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + table + _partMargaretRoomAnimCounter * 2) - 1;
 	decodeAnimFrame(src, _screenVGA);
 }
 
 void IgorEngine::partMargaretDrawFrame(int frame) {
 	const bool floppy = _game.version == kIdSpaFloppy;
-	const int offset = ((VAR_MARGARET_ROOM_ANIM_COUNTER - 1) * 5 + frame) * 2;
+	const int offset = ((_partMargaretRoomAnimCounter - 1) * 5 + frame) * 2;
 	const int base = floppy ? kMargaretFloppyFramesBase : kMargaretFramesBase;
 	const int table = floppy ? kMargaretFloppyFramesTable : kMargaretFramesTable;
 	const uint8 *src = _animFramesBuffer + base + READ_LE_UINT16(_animFramesBuffer + offset + table) - 1;
@@ -68,9 +65,9 @@ void IgorEngine::partMargaret() {
 		playMusic(8);
 	_gameState.enableLight = 1;
 	const bool floppy = _game.version == kIdSpaFloppy;
-	VAR_MARGARET_ROOM_ANIM_COUNTER = _objectsState[kMargaretSceneStateIndex] + 1;
-	if (VAR_MARGARET_ROOM_ANIM_COUNTER == 9) {
-		VAR_MARGARET_ROOM_ANIM_COUNTER = 1;
+	_partMargaretRoomAnimCounter = _objectsState[kMargaretSceneStateIndex] + 1;
+	if (_partMargaretRoomAnimCounter == 9) {
+		_partMargaretRoomAnimCounter = 1;
 	}
 	loadRoomData(PAL_MargaretRoom, IMG_MargaretRoom, BOX_MargaretRoom, MSK_MargaretRoom, TXT_MargaretRoom);
 	static const int anm[] = { FRM_MargaretRoom1, FRM_MargaretRoom2, FRM_MargaretRoom3, FRM_MargaretRoom4, 0 };
@@ -81,7 +78,7 @@ void IgorEngine::partMargaret() {
 	memset(_currentPalette, 0, 768);
 	fadeIn(768);
 	_gameState.igorMoving = false;
-	switch (VAR_MARGARET_ROOM_ANIM_COUNTER) {
+	switch (_partMargaretRoomAnimCounter) {
 	case 1:
 		ADD_DIALOGUE_TEXT(223, 1, 1118);
 		ADD_DIALOGUE_TEXT(224, 1, 1119);

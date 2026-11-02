@@ -23,9 +23,6 @@
 
 namespace Igor {
 
-
-static int VAR_CURRENT_TALKING_ACTOR;
-
 void IgorEngine::part16ExecuteAction(int action) {
 	debugC(9, kDebugGame, "part16ExecuteAction %d", action);
 	switch (action) {
@@ -66,10 +63,10 @@ void IgorEngine::part16TakeFlask() {
 void IgorEngine::part16UpdateMargaretHarrisonDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
-		part16DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? 34 : 48);
+		part16DrawTalkingFrame((_part16CurrentTalkingActor == 0) ? 34 : 48);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
-		part16DrawTalkingFrame((VAR_CURRENT_TALKING_ACTOR == 0) ? getRandomNumber(4) + 30 : getRandomNumber(4) + 44);
+		part16DrawTalkingFrame((_part16CurrentTalkingActor == 0) ? getRandomNumber(4) + 30 : getRandomNumber(4) + 44);
 		break;
 	}
 }
@@ -156,7 +153,7 @@ void IgorEngine::part16PhotoCutscene() {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + i * 2) - 1, _screenVGA, true);
 		waitForTimer(25);
 	}
-	VAR_CURRENT_TALKING_ACTOR = 0;
+	_part16CurrentTalkingActor = 0;
 	cutsceneSayWithCallback(175, 78, 0, 58, 40, { { 215, 1, 735 }, { 216, 1, 736 }, { 217, 1, 737 } }, &IgorEngine::part16UpdateMargaretHarrisonDialogue);
 	for (int i = 35; i <= 41; ++i) {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + i * 2) - 1, _screenVGA, true);
@@ -167,7 +164,7 @@ void IgorEngine::part16PhotoCutscene() {
 		decodeAnimFrame(_animFramesBuffer + 0x8CE + READ_LE_UINT16(_animFramesBuffer + 0x6F36 + i * 2) - 1, _screenVGA, true);
 		waitForTimer(35);
 	}
-	VAR_CURRENT_TALKING_ACTOR = 1;
+	_part16CurrentTalkingActor = 1;
 	cutsceneSayWithCallback(175, 78, 0, 58, 40, { { 220, 1, 739 }, { 221, 1, 740 } }, &IgorEngine::part16UpdateMargaretHarrisonDialogue);
 	cutsceneSayWithCallback(88, 69, 63, 32, 0, 222, 2, 741, &IgorEngine::part16UpdateMargaretDialogue);
 	playSound(26, 1);
