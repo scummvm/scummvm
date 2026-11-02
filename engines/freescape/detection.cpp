@@ -1263,7 +1263,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
+		GUIO3(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_MODERN_MOVEMENT)
 	},
 	{
 		"3dkit",
