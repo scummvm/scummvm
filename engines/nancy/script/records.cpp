@@ -1382,11 +1382,8 @@ void OverlayRecord::drawCopy(int tableIndex) {
 		return;
 	}
 
-	const VIEW *viewport = GetEngineData(VIEW);
-	assert(viewport);
-	transform.m[3][0] -= viewport->screenPosition.left;
-	transform.m[3][1] -= viewport->screenPosition.top;
-
+	// The target canvas covers the viewport, and record positions are
+	// already relative to the viewport
 	RecordGraphic picture;
 	placePicture(picture, _image, from, dest, transform, modColor);
 	blendPicture(*target, picture, transform.isTranslation() && modColor == kNoModColor, Common::Point());
