@@ -566,7 +566,7 @@ void Panel::finishBlending() {
 	_isDirty = true;
 }
 
-// Every show needs a matching hide before the panel goes away
+// Before Nancy19, every show needs a matching hide before the panel goes away
 void Panel::show() {
 	++_showCount;
 	if (_isCollapsed) {
@@ -597,20 +597,31 @@ void Panel::setCollapsed(bool isCollapsed) {
 	}
 }
 
+// Nancy19 and up don't count: a hide always hides, and tells the scripts. Nancy25
+// opens the phone without showing its panel, and closes it by hiding that.
 void Panel::hide() {
-	--_showCount;
-	if (_showCount == 0) {
-		setVisible(false);
-		_isShownWhenExpanded = false;
-		if (_capture) {
-			_capture->_isPressed = false;
-			_capture = nullptr;
+	if (g_nancy->getGameType() < kGameTypeNancy19) {
+		--_showCount;
+		if (_showCount < 0) {
+			_showCount = 0;
+			return;
 		}
 
-		fireEvent(kEventHide);
-	} else if (_showCount < 0) {
+		if (_showCount > 0) {
+			return;
+		}
+	} else {
 		_showCount = 0;
 	}
+
+	setVisible(false);
+	_isShownWhenExpanded = false;
+	if (_capture) {
+		_capture->_isPressed = false;
+		_capture = nullptr;
+	}
+
+	fireEvent(kEventHide);
 }
 
 void Panel::fireEvent(int32 eventType) {
