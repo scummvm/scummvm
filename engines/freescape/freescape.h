@@ -458,6 +458,7 @@ public:
 	Math::Vector3d _lastPosition;
 	int _playerHeightNumber;
 	int _playerHeightMaxNumber;
+	uint16 _initialPlayerHeight;
 	uint16 _playerHeight;
 	uint16 _playerWidth;
 	uint16 _playerDepth;
