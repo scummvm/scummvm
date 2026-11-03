@@ -237,12 +237,6 @@ bool Scene1080::shouldAnimatePrimarySpeechLine() const {
 	return true;
 }
 
-byte Scene1080::primarySpeechAnimationBaseFrame(byte animationGroup) const {
-	if (animationGroup == kScene1080FrancoisSpeechGroup)
-		return 0;
-	return 0;
-}
-
 void Scene1080::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene1080FrancoisSpeechGroup)
 		_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, frameIndex);
