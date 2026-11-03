@@ -68,7 +68,6 @@ private:
 	static const uint8 kFixedPositionMask = 0x02;
 	static const int kRecordSize = 12;
 
-	// Replaces the C# private "(short X, short Y)" tuple return.
 	struct RelativeDestination {
 		int16 x;
 		int16 y;

@@ -24,8 +24,6 @@
 #include "common/algorithm.h"
 #include "scooby/scooby.h"
 
-#include "scooby/common/contracts.h"
-
 namespace Scooby {
 
 SessionController::SessionController(const ScoobyDooRom &rom, TileScene &scene, IndexedFrame &frame,
@@ -80,7 +78,7 @@ Optional<SessionExit> SessionController::runMainMenu() {
 		return Optional<SessionExit>(SessionExit::HostClosed);
 	}
 
-	SDM_UNREACHABLE("Unhandled main-menu exit.");
+	error("Unhandled main-menu exit.");
 	return Optional<SessionExit>(SessionExit::HostClosed); // unreachable, silences -Wreturn-type
 }
 

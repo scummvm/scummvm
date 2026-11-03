@@ -24,20 +24,7 @@
 
 #include "common/error.h"
 
-// This project is built with -fno-exceptions, so the C# source's
-// "throw new InvalidOperationException(...)" in unreachable/invariant-
-// violation branches (an exhaustive switch's default case, a corrupt-state
-// check) becomes a fail-fast abort instead. These macros are intentionally
-// NOT compiled out in release builds (unlike assert()/NDEBUG): an
-// unreachable branch that is actually reached means the port has a bug,
-// and silently continuing would corrupt game state.
-
-#define SDM_UNREACHABLE(message)                                                                 \
-	do {                                                                                         \
-		error("Unreachable state at %s:%d: %s\n", __FILE__, __LINE__, (message)); \
-	} while (false)
-
-#define SDM_ASSERT(condition, message)                                                              \
+#define SCOOBY_ASSERT(condition, message)                                                              \
 	do {                                                                                            \
 		if (!(condition)) {                                                                         \
 			error("Assertion failed at %s:%d: %s\n", __FILE__, __LINE__, (message)); \

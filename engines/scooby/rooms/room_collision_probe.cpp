@@ -51,7 +51,7 @@ RoomCollisionProbeResult RoomCollisionProbe::probeShaggyActorCollision(int candi
 	int16 collisionByteOffset = static_cast<int16>(
 		(static_cast<uint16>(x) >> 3) * sizeof(uint16) +
 		(static_cast<uint16>(y) >> 3) * rowByteStride);
-	SDM_ASSERT(_state.activeRoomScene, "ProbeLeadActorCollision requires an active room scene.");
+	SCOOBY_ASSERT(_state.activeRoomScene, "ProbeLeadActorCollision requires an active room scene.");
 	uint16 collisionCell = readUInt16BigEndian(_state.activeRoomScene->collisionCells, collisionByteOffset);
 	uint16 descriptorIndex = collisionCell & kCollisionCellDescriptorIndexMask;
 	if (descriptorIndex == 0) {
@@ -93,7 +93,7 @@ bool RoomCollisionProbe::probeStagedCollision(int16 x, int16 y) const {
 	int16 collisionByteOffset = static_cast<int16>(
 		(static_cast<uint16>(x) >> 3) * sizeof(uint16) +
 		(static_cast<uint16>(y) >> 3) * rowByteStride);
-	SDM_ASSERT(_state.activeRoomScene, "ProbeStagedCollision requires an active room scene.");
+	SCOOBY_ASSERT(_state.activeRoomScene, "ProbeStagedCollision requires an active room scene.");
 
 	// The original has no upper bound check and would read stale bytes after the collision map in the
 	// shared 0xFFE000 workspace. Treat positions beyond the decoded map like negative ones: blocked.

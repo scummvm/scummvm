@@ -40,19 +40,6 @@
 // Preserves the shared RAM and register-backed state recovered from Ghidra
 // RunAdventure at 0x00000BF4 and its callees.
 //
-// This is a mechanical, field-for-field translation of the C# RuntimeState
-// class: every property becomes a public field with the same name and the
-// same default value (C#'s implicit value-type zero-initialization is made
-// explicit here via "{}" member initializers). Per-field commentary below
-// is the original C# XML doc summary with only its <c>/<see> markup
-// stripped; the original's per-field <remarks> describing *other*
-// subsystems' use of a field are intentionally not duplicated here -- they
-// belong beside the ported code that actually does the reading/writing
-// (Rooms/, Interactions/, MainMenu/, Movement/), where they are carried
-// over as that file is ported. RoomSceneData? -> Common::ScopedPtr (single
-// owner, nullable, replaced wholesale by LoadRoomScene) per this project's
-// no-raw-owning-pointers rule; every other C# nullable value type (T?)
-// becomes Optional<T> (C++11 has no standard optional).
 
 namespace Scooby {
 

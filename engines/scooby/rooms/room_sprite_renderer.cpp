@@ -182,7 +182,7 @@ void RoomSpriteRenderer::buildRoomSpriteTable() {
 
 	// Ghidra 0x0000AC68-0x0000AC93: every actor path returns to the candidate test. Terminate the preceding
 	// logical link when records exist, or clear the complete table through the separate empty-table branch.
-	// MakeSpan on an empty vector safely yields an empty span, so the empty and non-empty C# branches collapse
+	// MakeSpan on an empty vector safely yields an empty span, so the empty and non-empty branches collapse
 	// into one publication call here.
 	_scene.replaceSprites(makeSpan(sprites));
 }

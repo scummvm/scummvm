@@ -22,7 +22,6 @@
 #include "tile_scene.h"
 
 #include "genesis_asset_decoder.h"
-#include "scooby/common/contracts.h"
 #include "common/algorithm.h"
 #include "common/util.h"
 
@@ -51,7 +50,7 @@ Common::Array<TileCell> &TileScene::layerFor(TileLayer layer) {
 	case TileLayer::Interface:
 		return _interfaceLayer;
 	}
-	SDM_UNREACHABLE("Unhandled tile layer.");
+	error("Unhandled tile layer.");
 	return _foregroundLayer; // unreachable, silences -Wreturn-type
 }
 
@@ -485,7 +484,7 @@ int TileScene::contentWidth() const {
 	case HorizontalDisplayMode::H40:
 		return IndexedFrame::width;
 	}
-	SDM_UNREACHABLE("Unhandled horizontal display mode.");
+	error("Unhandled horizontal display mode.");
 	return IndexedFrame::width;
 }
 

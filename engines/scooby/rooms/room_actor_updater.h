@@ -96,7 +96,6 @@ private:
 	static const uint8 kVideoScoobyShaggySideBySideWalking = 0x40;
 	static const uint8 kVideoScoobyUpdateBlockMask = 0x04;
 
-	// Replaces the C# (short X, short Y) tuple return of ReadAndAdvancePathRecord.
 	struct PathRecord {
 		int16 x;
 		int16 y;

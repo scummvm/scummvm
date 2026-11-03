@@ -163,8 +163,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 		// Ghidra 0x00004716-0x0000471F: blank the temporary palette before room restoration.
 		_scene.replacePaletteRange(makeSpan(kBlankPalette), 0);
 
-		// cameraRestoreGuard and contentGuard fall out of scope here, in that order, reproducing the C#
-		// finally-then-dispose sequence.
+		// cameraRestoreGuard and contentGuard fall out of scope here, in that order
 	}
 
 	// Ghidra 0x00004730-0x0000475B: scope disposal replaces the pattern snapshot write, logical plane,

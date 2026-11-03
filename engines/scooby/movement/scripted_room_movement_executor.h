@@ -35,7 +35,6 @@
 
 namespace Scooby {
 
-// Replaces the C# (bool Completed, short PositionIndex) tuple return.
 struct MovementResult {
 	bool completed;
 	int16 positionIndex;
@@ -146,8 +145,6 @@ public:
 private:
 	static const int kRouteWaypointDataOffset = 0x20;
 
-	// Small named replacement for the C# private (short HorizontalStep, short VerticalStep, short PositionIndex)
-	// tuple returned by the two staged-origin velocity calculators.
 	struct VelocityResult {
 		int16 horizontalStep;
 		int16 verticalStep;

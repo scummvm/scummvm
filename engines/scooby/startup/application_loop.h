@@ -31,8 +31,6 @@
 #include "scooby/randomness/deterministic_random.h"
 #include "scooby/runtime/runtime_state.h"
 
-// Owns recovered top-level sequencing independently from the raylib platform boundary.
-
 namespace Scooby {
 
 class ApplicationLoop {

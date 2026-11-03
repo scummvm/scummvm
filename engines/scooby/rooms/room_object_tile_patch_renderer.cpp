@@ -40,7 +40,7 @@ void RoomObjectTilePatchRenderer::applyRoomObjectTilePatch(int16 tilePatchIndex)
 	}
 
 	RoomShapePatch patch = readPatchDescriptor(tilePatchIndex);
-	SDM_ASSERT(_state.activeRoomScene, "ApplyRoomObjectTilePatch requires an active room scene.");
+	SCOOBY_ASSERT(_state.activeRoomScene, "ApplyRoomObjectTilePatch requires an active room scene.");
 	RoomSceneData &room = *_state.activeRoomScene;
 	Common::Array<uint8> &workingCells =
 		patch.layer == TileLayer::Background ? room.backgroundCells : room.foregroundCells;
@@ -226,7 +226,7 @@ void RoomObjectTilePatchRenderer::transferRoomObjectTilePatch(int16 tilePatchInd
 
 	// Ghidra 0x00007CE0-0x00007D27: clear the descriptor sign bit, resolve the same record and plane, and
 	// derive the pristine snapshot source from x plus y times the fixed 32-cell row stride.
-	SDM_ASSERT(_state.activeRoomScene, "TransferRoomObjectTilePatch requires an active room scene.");
+	SCOOBY_ASSERT(_state.activeRoomScene, "TransferRoomObjectTilePatch requires an active room scene.");
 	const RoomSceneData &room = *_state.activeRoomScene;
 	const Common::Array<uint8> &snapshotCells =
 		patch.layer == TileLayer::Background

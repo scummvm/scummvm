@@ -410,7 +410,7 @@ uint16 ScriptedRoomMovementExecutor::divideUnsignedWordPreservingOverflow(uint32
 																		  uint16 divisor) {
 	// The original M68K DIVU.W traps on a zero divisor; authored movement data never supplies one, so this
 	// project fails fast rather than emulating the trap (exceptions are disallowed).
-	SDM_ASSERT(divisor != 0, "DivideUnsignedWordPreservingOverflow requires a nonzero divisor.");
+	SCOOBY_ASSERT(divisor != 0, "DivideUnsignedWordPreservingOverflow requires a nonzero divisor.");
 	uint32 quotient = dividend / divisor;
 	// DIVU leaves the destination register unchanged when its quotient does not fit in the low word.
 	return quotient <= 0xFFFFu ? static_cast<uint16>(quotient) : static_cast<uint16>(dividend);

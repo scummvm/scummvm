@@ -1298,7 +1298,7 @@ void RoomActorUpdater::updateActorPriority(int actor) {
 	int16 byteOffset = static_cast<int16>(
 		y * _state.roomWidthTiles * static_cast<int>(sizeof(int16)) +
 		x * static_cast<int>(sizeof(int16)));
-	SDM_ASSERT(_state.activeRoomScene, "UpdateActorPriority requires an active room scene.");
+	SCOOBY_ASSERT(_state.activeRoomScene, "UpdateActorPriority requires an active room scene.");
 
 	// The original reads past the decoded collision map into the shared 0xFFE000 workspace when an actor
 	// stands beyond the room's right or bottom edge (for example, while a script walks it off-screen).

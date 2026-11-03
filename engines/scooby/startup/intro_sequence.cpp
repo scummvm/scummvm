@@ -23,7 +23,6 @@
 
 #include "common/algorithm.h"
 
-#include "scooby/common/contracts.h"
 #include "scooby/compression/ring_lz_decoder.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 
@@ -106,7 +105,7 @@ void IntroSequence::advanceFrame() {
 	case State::Complete:
 		break;
 	default:
-		SDM_UNREACHABLE("Unhandled startup state.");
+		error("Unhandled startup state.");
 	}
 }
 
@@ -142,7 +141,7 @@ void IntroSequence::skipCurrentStep() {
 	case State::Complete:
 		break;
 	default:
-		SDM_UNREACHABLE("Unhandled startup state.");
+		error("Unhandled startup state.");
 	}
 }
 

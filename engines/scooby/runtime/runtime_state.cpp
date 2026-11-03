@@ -21,8 +21,6 @@
 
 #include "runtime_state.h"
 
-// #include "common/algorithm.h"
-
 #include "scooby/graphics/genesis_asset_decoder.h"
 
 namespace Scooby {

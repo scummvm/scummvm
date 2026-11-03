@@ -77,8 +77,6 @@ private:
 
 	static Scooby::ControllerButtons keyToButton(Common::KeyCode keycode);
 	static Scooby::ControllerButtons mappedActionEventToButton(uint16 action);
-	static Scooby::ControllerButtons getKeyboardAndMouseButtons(Scooby::ControllerButtons backButton);
-	static Scooby::ControllerButtons getGamepadButtons();
 
 	ControllerButtons _buttons = ControllerButtons::None;
 	// The controller button the currently held Escape key is mapped to, or None.

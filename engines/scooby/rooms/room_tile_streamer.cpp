@@ -35,7 +35,7 @@ const Common::Array<uint8> kEmptyPackedCell = {0, 0};
 
 void RoomTileStreamer::drawRoomViewport() {
 	// Ghidra 0x00007950-0x000079A1: derive the width-strided source and camera-relative ring destination.
-	SDM_ASSERT(_state.activeRoomScene, "DrawRoomViewport requires an active room scene.");
+	SCOOBY_ASSERT(_state.activeRoomScene, "DrawRoomViewport requires an active room scene.");
 	const RoomSceneData &room = *_state.activeRoomScene;
 	uint16 cameraTileX = static_cast<uint16>(_state.cameraX) >> 3;
 	uint16 cameraTileY = static_cast<uint16>(_state.cameraY) >> 3;
@@ -278,7 +278,7 @@ void RoomTileStreamer::publishHorizontalEdgeRow(uint16 sourceX, int sourceY, int
 		firstSegmentColumnCount = kEdgeRowWidthTiles;
 	}
 
-	SDM_ASSERT(_state.activeRoomScene, "PublishHorizontalEdgeRow requires an active room scene.");
+	SCOOBY_ASSERT(_state.activeRoomScene, "PublishHorizontalEdgeRow requires an active room scene.");
 	const RoomSceneData &room = *_state.activeRoomScene;
 	publishRow(makeSpan(room.backgroundCells), TileLayer::Background, sourceByteOffset,
 			   destinationColumn, destinationRow, firstSegmentColumnCount);
@@ -338,7 +338,7 @@ void RoomTileStreamer::publishVerticalEdgeColumn(uint16 sourceX, int cameraTileY
 		firstSegmentRowCount = kEdgeColumnHeightTiles;
 	}
 
-	SDM_ASSERT(_state.activeRoomScene, "PublishVerticalEdgeColumn requires an active room scene.");
+	SCOOBY_ASSERT(_state.activeRoomScene, "PublishVerticalEdgeColumn requires an active room scene.");
 	const RoomSceneData &room = *_state.activeRoomScene;
 	publishColumn(makeSpan(room.backgroundCells), TileLayer::Background, sourceByteOffset,
 				  sourceRowByteStride, destinationColumn, destinationStartRow, firstSegmentRowCount);

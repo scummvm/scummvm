@@ -34,7 +34,7 @@ namespace Scooby {
 
 class ScoobyDooRom;
 
-// A C++ port of the GEMS 2.5 Z80 sound driver (Sega of America / Extended Play, 5/21/92) that the
+// A C++ reimplementation of the GEMS Z80 sound driver that the
 // cartridge copies to Z80 RAM from ROM 0x001BB94A-0x001BD1CF.
 //
 // The 68000 side talks to the driver through a 64-byte command FIFO in Z80 RAM. The public methods
@@ -73,7 +73,7 @@ public:
 	void onRenderSample() override;
 
 private:
-	// 68000 side (GEMS.A).
+	// 68000 side (GEMS).
 	void putCommandByte(uint8 value);
 	void putCommand(uint8 command);
 	void putCommand(uint8 command, uint8 argument);

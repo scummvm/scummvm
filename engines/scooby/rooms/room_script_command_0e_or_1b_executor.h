@@ -70,7 +70,6 @@ private:
 	static const int kIndexedRecordSize = 10;
 	static const int kImmediateRecordSize = 12;
 
-	// Replaces the C# private "(short X, short Y)" tuple return.
 	struct TargetCoordinates {
 		int16 x;
 		int16 y;

@@ -79,8 +79,7 @@ private:
 	bool relocateFixedObject(RoomObject &roomObject, int16 newRoomId);
 
 	// Returns true when host closure interrupted a synchronous wait (the caller must abort without consuming
-	// the command record), false on normal completion. Mirrors the C# source's asymmetric true/false polarity
-	// relative to RelocateFixedObject exactly.
+	// the command record), false on normal completion.
 	bool relocatePortableObject(RoomObject &roomObject, int objectIndex, uint16 encodedObjectId,
 								int16 newRoomId);
 

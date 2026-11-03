@@ -60,7 +60,7 @@ private:
 	static const int kVisibleCoordinateBias = 0x80;
 
 	// Preserves the recovered per-family cumulative-coordinate, tile, and shape table geometry shared by every
-	// actor sprite layout family, replacing the C# "private readonly record struct ActorSpriteLayout".
+	// actor sprite layout family.
 	struct ActorSpriteLayout {
 		int partCount;
 		int unflippedXOffset;

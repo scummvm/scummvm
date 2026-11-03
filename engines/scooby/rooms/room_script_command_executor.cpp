@@ -75,9 +75,6 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 Optional<SessionExit> RoomScriptCommandExecutor::execute(uint16 command, int mode,
 														 int16 interactionModeSnapshot) {
 	_interactionModeSnapshot = interactionModeSnapshot;
-	// if (command != 1 && command != 3 && command != 2 && (_state.AutomaticInteractionFlags & 0x10) == 0) {
-	// 	debug("executing command: %x, mode: %d", command, mode);
-	// }
 
 	// Ghidra g_apRoomScriptCommandHandlers (ROM 0x00002354-0x000023DB): 34 entries in original index order.
 	switch (command) {

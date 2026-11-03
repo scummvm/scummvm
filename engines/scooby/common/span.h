@@ -70,8 +70,7 @@ public:
 	Span(T *data, size_t size) : _data(data), _size(size) {
 	}
 
-	// Allows Span<T> to convert to Span<const T> implicitly, matching the
-	// ReadOnlySpan<T> conversion the C# source relies on everywhere.
+	// Allows Span<T> to convert to Span<const T> implicitly.
 	template<typename U>
 	Span(const Span<U> &other,
 		 typename SpanDetail::EnableIf<SpanDetail::IsSame<T, const U>::value>::type * = nullptr)

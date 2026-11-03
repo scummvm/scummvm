@@ -21,7 +21,6 @@
 
 #include "room_selection_controller.h"
 
-// #include "common/algorithm.h"
 #include "common/scummsys.h"
 
 #include "scooby/main_menu/main_menu_controller.h"
