@@ -31,11 +31,6 @@ namespace Hollywood {
 class HollywoodEngine;
 struct Scene4010ReleaseProfile;
 
-/**
- * Switches between normal and alternate background modes at runtime. The
- * normal framebuffer is preserved before the alternate resource is loaded so
- * a later state refresh can restore the original background.
- */
 class Scene4010 : public PlayableScene {
 public:
 	Scene4010(HollywoodEngine *vm);
@@ -93,8 +88,6 @@ private:
 	void runDestinationUnlockAnimation();
 	void takeThrownItem();
 	void applyBaseFramebufferPatch(uint chunkIndex);
-	void ensureNormalBaseFramebuffer();
-	void applyD01BackgroundForCurrentState();
 	void copySmallRow(uint sourceOffset, uint destinationOffset);
 	void setScenePoint(uint baseOffset, byte itemId, uint16 x, uint16 y);
 	void clearVerbActionRecord(uint recordIndex);
@@ -106,8 +99,6 @@ private:
 	TimedAnimationChannel _roomIdleChannel;
 	TimedAnimationChannel _paletteCycleChannel;
 	TimedAnimationChannel _secondaryAmbientChannel;
-	Graphics::ManagedSurface _normalBaseFramebuffer;
-	bool _normalBaseFramebufferInitialized;
 	byte _heckerAnimationState;
 	byte _heckerLoopCount;
 	byte _previousSecondaryAmbientCue;

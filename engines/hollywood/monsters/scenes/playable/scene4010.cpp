@@ -19,8 +19,6 @@
  *
  */
 
-#include "graphics/pixelformat.h"
-
 #include "hollywood/monsters/hollywood.h"
 #include "hollywood/monsters/gameplay/game_state.h"
 #include "hollywood/monsters/graphics.h"
@@ -153,8 +151,6 @@ Scene4010::Scene4010(HollywoodEngine *vm) :
 		_roomIdleChannel(),
 		_paletteCycleChannel(),
 		_secondaryAmbientChannel(),
-		_normalBaseFramebuffer(),
-		_normalBaseFramebufferInitialized(false),
 		_heckerAnimationState(0),
 		_heckerLoopCount(0),
 		_previousSecondaryAmbientCue(0),
@@ -163,12 +159,10 @@ Scene4010::Scene4010(HollywoodEngine *vm) :
 		_heckerPoseTransitionPending(false),
 		_roomAnimationPaused(false) {
 	_sceneLayers.configure(kScene4010LayerSpecs);
-	_normalBaseFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
-		Graphics::PixelFormat::createFormatCLUT8());
 }
 
 uint Scene4010::framebufferResourceChunkIndex() const {
-	return _releaseProfile.framebufferChunkIndex;
+	return alternateBackgroundActive() ? 5 : _releaseProfile.framebufferChunkIndex;
 }
 
 void Scene4010::initializeCustomPreviewState() {
@@ -331,8 +325,7 @@ bool Scene4010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		return true;
 
 	if (selector == 0xff) {
-		ensureNormalBaseFramebuffer();
-		applyD01BackgroundForCurrentState();
+		restoreBaseFramebufferFromOriginal();
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 		if (_releaseProfile.usesDemoThrownItemLayout)
@@ -1050,25 +1043,6 @@ void Scene4010::takeThrownItem() {
 void Scene4010::applyBaseFramebufferPatch(uint chunkIndex) {
 	if (_sceneChunkTable.isValidChunk(chunkIndex))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _baseFramebuffer);
-}
-
-void Scene4010::ensureNormalBaseFramebuffer() {
-	if (_normalBaseFramebufferInitialized)
-		return;
-
-	_normalBaseFramebuffer.copyFrom(_baseFramebufferOriginal);
-	_normalBaseFramebufferInitialized = true;
-}
-
-void Scene4010::applyD01BackgroundForCurrentState() {
-	if (alternateBackgroundActive()) {
-		loadFixedChunk(5, _baseFramebuffer, kSceneBufferByteCount);
-		_baseFramebufferOriginal.copyFrom(_baseFramebuffer);
-		return;
-	}
-
-	_baseFramebuffer.copyFrom(_normalBaseFramebuffer);
-	_baseFramebufferOriginal.copyFrom(_normalBaseFramebuffer);
 }
 
 void Scene4010::copySmallRow(uint sourceOffset, uint destinationOffset) {

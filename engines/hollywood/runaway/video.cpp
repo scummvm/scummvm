@@ -30,9 +30,12 @@ namespace Hollywood {
 bool RunawayVideo::load(const char *name) {
 	close();
 	Common::File file;
-	if (!file.open(Common::Path(name)) || file.size() < 1024 || file.size() > 256 * 1024 * 1024)
+	if (!file.open(Common::Path(name)))
 		return false;
-	_data.resize(file.size());
+	const int64 fileSize = file.size();
+	if (fileSize < 1024 || fileSize > 256 * 1024 * 1024)
+		return false;
+	_data.resize((uint)fileSize);
 	if (file.read(_data.data(), _data.size()) != _data.size())
 		return false;
 	if (READ_BE_UINT32(_data.data()) != MKTAG('R', 'I', 'F', 'F')) {
