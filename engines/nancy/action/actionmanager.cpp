@@ -314,9 +314,13 @@ void ActionManager::processActionRecords() {
 			record->execute();
 		}
 
-		if (g_nancy->getGameType() >= kGameTypeNancy4 && NancySceneState.getState() == State::Scene::kLoad) {
-			// changeScene() must have been called, abort any further processing.
-			// Both old and new behavior is needed (nancy3 intro narration, nancy4 garden gate)
+		// changeScene() must have been called, abort any further processing.
+		// Both old and new behavior is needed (nancy3 intro narration, nancy4 garden gate).
+		// Nancy17 runs the rest of the records first, and changes the scene in the
+		// next frame (scene 2075, where Bess puts on the costume and a record after
+		// the scene change marks that she's wearing it)
+		if (g_nancy->getGameType() >= kGameTypeNancy4 && g_nancy->getGameType() < kGameTypeNancy17 &&
+				NancySceneState.getState() == State::Scene::kLoad) {
 			return;
 		}
 	}
