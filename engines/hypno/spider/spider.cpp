@@ -1107,18 +1107,24 @@ void SpiderEngine::loadAssetsDemo() {
 	ChangeLevel *cl = new ChangeLevel("c1.mi_");
 
 	Scene *sc = (Scene *) _levels["sixdemo/mis/demo.mis"];
+	Sound *snd = new Sound("demo/sound.lib/mouse.raw");
+	sc->hots[1].actions.push_back(snd);
 	sc->hots[1].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/mis/alley.mis");
+	sc->hots[2].actions.push_back(snd);
 	sc->hots[2].actions.push_back(cl);
 
 	cl = new ChangeLevel("<puz_matr>");
+	sc->hots[3].actions.push_back(snd);
 	sc->hots[3].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/mis/shoctalk.mis");
+	sc->hots[4].actions.push_back(snd);
 	sc->hots[4].actions.push_back(cl);
 
 	cl = new ChangeLevel("sixdemo/mis/order.mis");
+	sc->hots[5].actions.push_back(snd);
 	sc->hots[5].actions.push_back(cl);
 	sc->music = "demo/sound.lib/menu_mus.raw";
 
