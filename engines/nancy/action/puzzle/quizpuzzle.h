@@ -52,6 +52,7 @@ private:
 	// Sanity cap. Nancy 8 and Nancy 9 store a fixed five boxes; Nancy 15 keeps
 	// 30 slots of 27 bytes per save slot, so 30 is the engine's own maximum.
 	static const uint kMaxBoxes = 30;
+	static const uint16 kTextZ = 15;		// Nancy16+: the layer of the typed text, over the scene's overlays
 	// Nancy 15 rejects a keystroke once the typed text no longer fits a save
 	// slot's 27-byte text buffer, with room left for the cursor character.
 	static const uint kMaxTypedLengthNancy15 = 24;
