@@ -439,7 +439,7 @@ int16 ScriptOpcodes::op_gotoScene(Script *script) {
 }
 
 int16 ScriptOpcodes::op_sub_22310(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
@@ -450,7 +450,7 @@ int16 ScriptOpcodes::op_waitForInput(Script *script) {
 }
 
 int16 ScriptOpcodes::op_sub_2234D(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
@@ -460,12 +460,12 @@ int16 ScriptOpcodes::op_random(Script *script) {
 }
 
 int16 ScriptOpcodes::op_paletteFunc(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
 int16 ScriptOpcodes::op_copyPalette(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
@@ -480,7 +480,7 @@ int16 ScriptOpcodes::op_clearScriptContinueFlag(Script *script) {
 }
 
 int16 ScriptOpcodes::op_setSomeArrayValue(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
@@ -683,7 +683,7 @@ int16 ScriptOpcodes::op_addInventoryItemCombination(Script *script) {
 }
 
 int16 ScriptOpcodes::op_getSomeArrayValue(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
@@ -715,12 +715,12 @@ int16 ScriptOpcodes::op_disableDialogKeyword(Script *script) {
 }
 
 int16 ScriptOpcodes::op_sub_23259(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
 int16 ScriptOpcodes::op_sub_2328A(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
@@ -743,12 +743,12 @@ int16 ScriptOpcodes::op_getActorY(Script *script) {
 }
 
 int16 ScriptOpcodes::op_setActorX(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
 int16 ScriptOpcodes::op_setActorY(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
@@ -1069,7 +1069,7 @@ int16 ScriptOpcodes::op_setScriptZoneEnterLeaveFlag(Script *script) {
 }
 
 int16 ScriptOpcodes::op_setMouseAddXY(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
@@ -1430,7 +1430,7 @@ int16 ScriptOpcodes::op_actor21E0D(Script *script) {
 }
 
 int16 ScriptOpcodes::op_addZoneAction91(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
@@ -1441,12 +1441,12 @@ int16 ScriptOpcodes::op_setUpdateDirtyRectsFlag(Script *script) {
 }
 
 int16 ScriptOpcodes::op_sub_21FD9(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
 int16 ScriptOpcodes::op_sub_220B8(Script *script) {
-	debug("ARGS!"); // TODO; Unused?
+	// Unused
 	return 0;
 }
 
