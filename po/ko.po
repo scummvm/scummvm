@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-01 10:48+0000\n"
+"POT-Creation-Date: 2026-11-03 03:57+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -113,7 +113,7 @@ msgstr "위로"
 
 #: gui/browser.cpp:84 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:67
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:272
-#: gui/downloadpacksdialog.cpp:465 gui/editgamedialog.cpp:381
+#: gui/downloadpacksdialog.cpp:465 gui/editgamedialog.cpp:395
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:122
 #: gui/integrity-dialog.cpp:253 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2420
@@ -124,10 +124,10 @@ msgstr "위로"
 #: gui/saveload-dialog.cpp:839 gui/saveload-dialog.cpp:1243
 #: gui/shaderbrowser-dialog.cpp:80 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:612
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:874
-#: engines/engine.cpp:899 backends/dialogs/gtk/gtk-dialogs.cpp:65
-#: backends/events/default/default-events.cpp:207
-#: backends/events/default/default-events.cpp:231
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:881
+#: engines/engine.cpp:906 backends/dialogs/gtk/gtk-dialogs.cpp:65
+#: backends/events/default/default-events.cpp:214
+#: backends/events/default/default-events.cpp:238
 #: backends/platform/android/options.cpp:293
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
@@ -335,7 +335,7 @@ msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
 #: gui/launcher.cpp:534 gui/launcher.cpp:1970 gui/options.cpp:3500
 #: gui/options.cpp:3874 base/main.cpp:612
-#: backends/events/default/default-events.cpp:207 engines/buried/buried.cpp:598
+#: backends/events/default/default-events.cpp:214 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:95 engines/colony/intro.cpp:248
 #: engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -381,13 +381,13 @@ msgstr "현재 저장소 작업이 완료될 때까지 기다린 후 다시 시�
 msgid "JSON code contents are malformed."
 msgstr "JSON 코드 내용이 잘못되었습니다."
 
-#: gui/cloudconnectionwizard.cpp:585 gui/editgamedialog.cpp:382
+#: gui/cloudconnectionwizard.cpp:585 gui/editgamedialog.cpp:396
 #: gui/editrecorddialog.cpp:67 gui/integrity-dialog.cpp:260
 #: gui/fluidsynth-dialog.cpp:154 gui/massadd.cpp:90 gui/message.cpp:157
 #: gui/message.cpp:161 gui/message.cpp:232 gui/message.cpp:271
 #: gui/message.cpp:275 gui/options.cpp:2422 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 base/main.cpp:679 base/main.cpp:704
-#: engines/engine.cpp:920 backends/platform/wii/options.cpp:46
+#: engines/engine.cpp:927 backends/platform/wii/options.cpp:46
 #: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
@@ -445,7 +445,7 @@ msgid "Select directory where to download game data"
 msgstr "게임 데이터를 다운로드할 디렉터리를 선택"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:117
-#: gui/dump-all-dialogs.cpp:142 gui/editgamedialog.cpp:639 gui/launcher.cpp:321
+#: gui/dump-all-dialogs.cpp:142 gui/editgamedialog.cpp:659 gui/launcher.cpp:321
 msgid "Select directory with game data"
 msgstr "게임 데이터가 있는 디렉터리를 선택"
 
@@ -585,271 +585,195 @@ msgstr "셰이더 팩"
 msgid "Pick the game:"
 msgstr "게임을 선택하세요:"
 
-#: gui/editgamedialog.cpp:142 engines/dialogs.cpp:309
+#: gui/editgamedialog.cpp:143 engines/dialogs.cpp:309
 msgid "Game"
 msgstr "게임"
 
-#: gui/editgamedialog.cpp:166 gui/options.cpp:2077 gui/options.cpp:2258
+#: gui/editgamedialog.cpp:167 gui/options.cpp:2077 gui/options.cpp:2258
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/editgamedialog.cpp:166 gui/options.cpp:2077 gui/options.cpp:2258
+#: gui/editgamedialog.cpp:167 gui/options.cpp:2077 gui/options.cpp:2258
 #: backends/graphics/atari/atari-graphics.cpp:1058
 #: backends/graphics/sdl/sdl-graphics.cpp:491
 msgid "Graphics"
 msgstr "그래픽"
 
-#: gui/editgamedialog.cpp:172
+#: gui/editgamedialog.cpp:173
 msgid "Override global graphic settings"
 msgstr "글로벌 그래픽 설정 재정의"
 
-#: gui/editgamedialog.cpp:174
+#: gui/editgamedialog.cpp:175
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "글로벌 그래픽 설정 재정의"
 
-#: gui/editgamedialog.cpp:187 gui/options.cpp:2292 engines/dialogs.cpp:354
+#: gui/editgamedialog.cpp:188 gui/options.cpp:2292 engines/dialogs.cpp:354
 msgid "Keymaps"
 msgstr "키설정"
 
-#: gui/editgamedialog.cpp:199 gui/options.cpp:2304 engines/dialogs.cpp:366
+#: gui/editgamedialog.cpp:200 gui/options.cpp:2304 engines/dialogs.cpp:366
 msgid "Backend"
 msgstr "백엔드"
 
-#: gui/editgamedialog.cpp:206
+#: gui/editgamedialog.cpp:207
 msgid "Override global backend settings"
 msgstr "글로벌 백엔드 설정 재정의"
 
-#: gui/editgamedialog.cpp:208
+#: gui/editgamedialog.cpp:209
 msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "글로벌 백엔드 설정 재정의"
 
-#: gui/editgamedialog.cpp:222 gui/options.cpp:2322 engines/dialogs.cpp:329
+#: gui/editgamedialog.cpp:223 gui/options.cpp:2322 engines/dialogs.cpp:329
 msgid "Audio"
 msgstr "오디오"
 
-#: gui/editgamedialog.cpp:225
+#: gui/editgamedialog.cpp:226
 msgid "Override global audio settings"
 msgstr "글로벌 오디오 설정 재정의"
 
-#: gui/editgamedialog.cpp:227
+#: gui/editgamedialog.cpp:228
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "글로벌 오디오 설정 재정의"
 
-#: gui/editgamedialog.cpp:236 gui/options.cpp:2327
+#: gui/editgamedialog.cpp:237 gui/options.cpp:2327
 msgid "Volume"
 msgstr "볼륨"
 
-#: gui/editgamedialog.cpp:238 gui/options.cpp:2329
+#: gui/editgamedialog.cpp:239 gui/options.cpp:2329
 msgctxt "lowres"
 msgid "Volume"
 msgstr "볼륨"
 
-#: gui/editgamedialog.cpp:241
+#: gui/editgamedialog.cpp:242
 msgid "Override global volume settings"
 msgstr "글로벌 볼륨 설정 재정의"
 
-#: gui/editgamedialog.cpp:243
+#: gui/editgamedialog.cpp:244
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "글로벌 볼륨 설정 재정의"
 
-#: gui/editgamedialog.cpp:254 gui/options.cpp:2337
+#: gui/editgamedialog.cpp:255 gui/options.cpp:2337
 msgid "MIDI"
 msgstr "미디"
 
-#: gui/editgamedialog.cpp:257
+#: gui/editgamedialog.cpp:258
 msgid "Override global MIDI settings"
 msgstr "글로벌 미디 설정 재정의"
 
-#: gui/editgamedialog.cpp:259
+#: gui/editgamedialog.cpp:260
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "글로벌 미디 설정 재정의"
 
-#: gui/editgamedialog.cpp:269 gui/options.cpp:2343
+#: gui/editgamedialog.cpp:270 gui/options.cpp:2343
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:272
+#: gui/editgamedialog.cpp:273
 msgid "Override global MT-32 settings"
 msgstr "글로벌 MT-32 설정 재정의"
 
-#: gui/editgamedialog.cpp:274
+#: gui/editgamedialog.cpp:275
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "글로벌 MT-32 설정 재정의"
 
-#: gui/editgamedialog.cpp:283 gui/options.cpp:2350
+#: gui/editgamedialog.cpp:284 gui/options.cpp:2350
 msgid "Paths"
 msgstr "경로"
 
-#: gui/editgamedialog.cpp:285 gui/options.cpp:2352
+#: gui/editgamedialog.cpp:286 gui/options.cpp:2352
 msgctxt "lowres"
 msgid "Paths"
 msgstr "경로"
 
-#: gui/editgamedialog.cpp:293
+#: gui/editgamedialog.cpp:294
 msgid "Check Integrity"
 msgstr "무결성 확인"
 
-#: gui/editgamedialog.cpp:293
+#: gui/editgamedialog.cpp:294
 msgid "Perform integrity check for all game files"
 msgstr "모든 게임 파일에 대한 무결성 검사를 수행"
 
-#: gui/editgamedialog.cpp:298
+#: gui/editgamedialog.cpp:299
 msgid "Game Path:"
 msgstr "게임 경로:"
 
-#: gui/editgamedialog.cpp:300
+#: gui/editgamedialog.cpp:301
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "게임 경로:"
 
-#: gui/editgamedialog.cpp:305 gui/options.cpp:2559
+#: gui/editgamedialog.cpp:306 gui/options.cpp:2559
 msgid "Extra Path:"
 msgstr "추가 경로:"
 
-#: gui/editgamedialog.cpp:305 gui/editgamedialog.cpp:307
-#: gui/editgamedialog.cpp:308
+#: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:308
+#: gui/editgamedialog.cpp:309
 msgid "Specifies path to additional data used by the game"
 msgstr "게임에서 사용하는 추가 데이터 경로를 지정"
 
-#: gui/editgamedialog.cpp:307 gui/options.cpp:2561
+#: gui/editgamedialog.cpp:308 gui/options.cpp:2561
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "추가 경로:"
 
-#: gui/editgamedialog.cpp:308 gui/options.cpp:2534 gui/options.cpp:2562
+#: gui/editgamedialog.cpp:309 gui/options.cpp:2534 gui/options.cpp:2562
 #: gui/options.cpp:2571 gui/options.cpp:2859
 #: backends/platform/libretro/src/libretro-options-widget.cpp:277
 msgctxt "path"
 msgid "None"
 msgstr "없음"
 
-#: gui/editgamedialog.cpp:314 gui/options.cpp:2523
+#: gui/editgamedialog.cpp:315 gui/options.cpp:2523
 msgid "Save Path:"
 msgstr "저장 경로:"
 
-#: gui/editgamedialog.cpp:314 gui/editgamedialog.cpp:316
-#: gui/editgamedialog.cpp:317 gui/options.cpp:2523 gui/options.cpp:2525
+#: gui/editgamedialog.cpp:315 gui/editgamedialog.cpp:317
+#: gui/editgamedialog.cpp:318 gui/options.cpp:2523 gui/options.cpp:2525
 msgid "Specifies where your saved games are put"
 msgstr "저장된 게임이 저장되는 위치를 지정"
 
-#: gui/editgamedialog.cpp:316 gui/options.cpp:2525
+#: gui/editgamedialog.cpp:317 gui/options.cpp:2525
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "저장 경로:"
 
-#: gui/editgamedialog.cpp:317 gui/options.cpp:1846 gui/options.cpp:2526
+#: gui/editgamedialog.cpp:318 gui/options.cpp:1846 gui/options.cpp:2526
 #: backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "기본값"
 
-#: gui/editgamedialog.cpp:324
+#: gui/editgamedialog.cpp:325
 msgctxt "lowres"
 msgid "Misc"
 msgstr "기타"
 
-#: gui/editgamedialog.cpp:324 gui/fluidsynth-dialog.cpp:139
+#: gui/editgamedialog.cpp:325 gui/fluidsynth-dialog.cpp:139
 #: gui/options.cpp:2370
 msgid "Misc"
 msgstr "기타"
 
-#: gui/editgamedialog.cpp:333
+#: gui/editgamedialog.cpp:334
 #, fuzzy
 #| msgid "Enable short transitions"
 msgid "Enable hotspot display"
 msgstr "짧은 전환을 활성화"
 
-#: gui/editgamedialog.cpp:334
+#: gui/editgamedialog.cpp:335
 msgid "Enable visual markers and labels for interactive objects"
 msgstr ""
 
-#: gui/editgamedialog.cpp:339
+#: gui/editgamedialog.cpp:340
 msgid "Hotspot marker:"
 msgstr ""
 
-#: gui/editgamedialog.cpp:341
-msgid "Point"
-msgstr ""
-
-#. I18N: Hardware key on controller
-#: gui/editgamedialog.cpp:342 backends/platform/sdl/ps3/ps3.cpp:46
-#: backends/platform/sdl/psp2/psp2.cpp:47 engines/dragons/metaengine.cpp:182
-msgid "Square"
-msgstr "네모 버튼"
-
-#: gui/editgamedialog.cpp:343
-#, fuzzy
-#| msgid "Cross"
-msgid "Crosshair"
-msgstr "엑스 버튼"
-
-#: gui/editgamedialog.cpp:352
-#, fuzzy
-#| msgid "Show hotspots"
-msgid "Show hotspot labels"
-msgstr "핫스팟 표시"
-
-#: gui/editgamedialog.cpp:353
-msgid "Display text labels next to hotspot markers"
-msgstr ""
-
-#: gui/editgamedialog.cpp:367 engines/dialogs.cpp:385
-msgid "Achievements"
-msgstr "도전과제"
-
-#: gui/editgamedialog.cpp:371 engines/dialogs.cpp:389
-msgid "Statistics"
-msgstr "통계"
-
-#: gui/editgamedialog.cpp:388
-msgid "ID:"
-msgstr "ID:"
-
-#: gui/editgamedialog.cpp:388 gui/editgamedialog.cpp:390
-#: gui/editgamedialog.cpp:391
-msgid ""
-"Short game identifier used for referring to saved games and running the game "
-"from the command line"
-msgstr ""
-"저장된 게임을 참조하고 명령줄에서 게임을 실행하는 데 사용되는 짧은 게임 식별"
-"자"
-
-#: gui/editgamedialog.cpp:390
-msgctxt "lowres"
-msgid "ID:"
-msgstr "ID:"
-
-#: gui/editgamedialog.cpp:395 gui/editrecorddialog.cpp:58
-msgid "Name:"
-msgstr "이름:"
-
-#: gui/editgamedialog.cpp:395 gui/editgamedialog.cpp:397
-#: gui/editgamedialog.cpp:398
-msgid "Full title of the game"
-msgstr "게임의 전체 제목"
-
-#: gui/editgamedialog.cpp:397
-msgctxt "lowres"
-msgid "Name:"
-msgstr "이름:"
-
-#: gui/editgamedialog.cpp:404 engines/mohawk/dialogs.cpp:158
-#: engines/mohawk/dialogs.cpp:377
-msgid "Language:"
-msgstr "언어:"
-
-#: gui/editgamedialog.cpp:404 gui/editgamedialog.cpp:405
-msgid ""
-"Language of the game. This will not turn your Spanish game version into "
-"English"
-msgstr "게임 언어입니다. 이렇게 하면 스페인어 게임 버전이 영어로 바뀌지 않음"
-
-#: gui/editgamedialog.cpp:406 gui/editgamedialog.cpp:421 gui/options.cpp:1615
+#: gui/editgamedialog.cpp:342 gui/editgamedialog.cpp:364
+#: gui/editgamedialog.cpp:420 gui/editgamedialog.cpp:435 gui/options.cpp:1615
 #: gui/options.cpp:1629 gui/options.cpp:1646 gui/options.cpp:1660
 #: gui/options.cpp:1677 gui/options.cpp:1715 gui/options.cpp:1731
 #: gui/options.cpp:2146 gui/options.cpp:2604 gui/options.cpp:2685
@@ -866,37 +790,130 @@ msgstr "게임 언어입니다. 이렇게 하면 스페인어 게임 버전이 �
 msgid "<default>"
 msgstr "<기본값>"
 
-#: gui/editgamedialog.cpp:417
+#: gui/editgamedialog.cpp:343
+msgid "Point"
+msgstr ""
+
+#. I18N: Hardware key on controller
+#: gui/editgamedialog.cpp:344 backends/platform/sdl/ps3/ps3.cpp:46
+#: backends/platform/sdl/psp2/psp2.cpp:47 engines/dragons/metaengine.cpp:182
+msgid "Square"
+msgstr "네모 버튼"
+
+#: gui/editgamedialog.cpp:345
+#, fuzzy
+#| msgid "Cross"
+msgid "Crosshair"
+msgstr "엑스 버튼"
+
+#: gui/editgamedialog.cpp:355
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Show hotspot labels"
+msgstr "핫스팟 표시"
+
+#: gui/editgamedialog.cpp:356
+msgid "Display text labels next to hotspot markers"
+msgstr ""
+
+#: gui/editgamedialog.cpp:362
+#, fuzzy
+#| msgid "Look mode"
+msgid "Hotspot key mode:"
+msgstr "보기 모드"
+
+#: gui/editgamedialog.cpp:365
+msgid "Hold to show"
+msgstr ""
+
+#: gui/editgamedialog.cpp:366
+#, fuzzy
+#| msgid "Toggle sfx"
+msgid "Toggle"
+msgstr "특수효과 전환"
+
+#: gui/editgamedialog.cpp:381 engines/dialogs.cpp:385
+msgid "Achievements"
+msgstr "도전과제"
+
+#: gui/editgamedialog.cpp:385 engines/dialogs.cpp:389
+msgid "Statistics"
+msgstr "통계"
+
+#: gui/editgamedialog.cpp:402
+msgid "ID:"
+msgstr "ID:"
+
+#: gui/editgamedialog.cpp:402 gui/editgamedialog.cpp:404
+#: gui/editgamedialog.cpp:405
+msgid ""
+"Short game identifier used for referring to saved games and running the game "
+"from the command line"
+msgstr ""
+"저장된 게임을 참조하고 명령줄에서 게임을 실행하는 데 사용되는 짧은 게임 식별"
+"자"
+
+#: gui/editgamedialog.cpp:404
+msgctxt "lowres"
+msgid "ID:"
+msgstr "ID:"
+
+#: gui/editgamedialog.cpp:409 gui/editrecorddialog.cpp:58
+msgid "Name:"
+msgstr "이름:"
+
+#: gui/editgamedialog.cpp:409 gui/editgamedialog.cpp:411
+#: gui/editgamedialog.cpp:412
+msgid "Full title of the game"
+msgstr "게임의 전체 제목"
+
+#: gui/editgamedialog.cpp:411
+msgctxt "lowres"
+msgid "Name:"
+msgstr "이름:"
+
+#: gui/editgamedialog.cpp:418 engines/mohawk/dialogs.cpp:158
+#: engines/mohawk/dialogs.cpp:377
+msgid "Language:"
+msgstr "언어:"
+
+#: gui/editgamedialog.cpp:418 gui/editgamedialog.cpp:419
+msgid ""
+"Language of the game. This will not turn your Spanish game version into "
+"English"
+msgstr "게임 언어입니다. 이렇게 하면 스페인어 게임 버전이 영어로 바뀌지 않음"
+
+#: gui/editgamedialog.cpp:431
 msgid "Platform:"
 msgstr "플랫폼:"
 
-#: gui/editgamedialog.cpp:417 gui/editgamedialog.cpp:419
-#: gui/editgamedialog.cpp:420
+#: gui/editgamedialog.cpp:431 gui/editgamedialog.cpp:433
+#: gui/editgamedialog.cpp:434
 msgid "Platform the game was originally designed for"
 msgstr "게임이 원래 동작하도록 디자인된 플랫폼"
 
-#: gui/editgamedialog.cpp:419
+#: gui/editgamedialog.cpp:433
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "플랫폼:"
 
-#: gui/editgamedialog.cpp:619 gui/options.cpp:3428
+#: gui/editgamedialog.cpp:639 gui/options.cpp:3428
 msgid "Select SoundFont"
 msgstr "사운드폰트 선택"
 
-#: gui/editgamedialog.cpp:658
+#: gui/editgamedialog.cpp:678
 msgid "Select additional game directory"
 msgstr "추가 게임 디렉터리를 선택"
 
-#: gui/editgamedialog.cpp:671 gui/options.cpp:3276
+#: gui/editgamedialog.cpp:691 gui/options.cpp:3276
 msgid "Select directory for saved games"
 msgstr "저장된 게임을 위한 디렉터리를 선택"
 
-#: gui/editgamedialog.cpp:678 gui/options.cpp:3283
+#: gui/editgamedialog.cpp:698 gui/options.cpp:3283
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "선택한 디렉터리에 기록할 수 없습니다. 다른 디렉터리를 선택하세요."
 
-#: gui/editgamedialog.cpp:683
+#: gui/editgamedialog.cpp:703
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -904,7 +921,7 @@ msgstr ""
 "저장된 게임 동기화 기능은 기본이 아닌 디렉터리에서는 작동하지 않습니다. 저장"
 "된 게임을 동기화하려면 기본 디렉터리를 사용하세요."
 
-#: gui/editgamedialog.cpp:717
+#: gui/editgamedialog.cpp:737
 msgid "This game ID is already taken. Please choose another one."
 msgstr "이 게임 ID는 이미 사용 중입니다. 다른 ID를 선택하세요."
 
@@ -1655,7 +1672,7 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM은 선택한 디렉터리에서 아무 게임도 찾지 못했습니다!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:742 engines/engine.cpp:1318
+#: gui/launcher.cpp:742 engines/engine.cpp:1325
 msgid "Unknown variant"
 msgstr "알 수 없는 변종 게임"
 
@@ -2727,7 +2744,7 @@ msgstr ""
 "\n"
 "그리고 더 많은 정보..."
 
-#: gui/options.cpp:2977 engines/engine.cpp:648
+#: gui/options.cpp:2977 engines/engine.cpp:651
 #: engines/access/metaengine.cpp:325 engines/drascula/metaengine.cpp:255
 #: engines/harold/metaengine.cpp:76 engines/queen/metaengine.cpp:269
 #: engines/sherlock/metaengine.cpp:410 engines/ultima/nuvie/metaengine.cpp:71
@@ -2887,7 +2904,7 @@ msgstr "게임플레이 녹화 또는 재생"
 
 #: gui/recorderdialog.cpp:71 gui/recorderdialog.cpp:211
 #: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
-#: dists/android.strings.xml.cpp:44 engines/engine.cpp:642
+#: dists/android.strings.xml.cpp:44 engines/engine.cpp:645
 msgid "Delete"
 msgstr "삭제"
 
@@ -3433,8 +3450,8 @@ msgid "Graphic adventure game engine"
 msgstr "그래픽 고급 게임 엔진"
 
 #: dists/android.strings.xml.cpp:33
-#: backends/events/default/default-events.cpp:231
-#: backends/events/default/default-events.cpp:372
+#: backends/events/default/default-events.cpp:238
+#: backends/events/default/default-events.cpp:379
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
 #: engines/chamber/metaengine.cpp:88 engines/colony/intro.cpp:300
 #: engines/drascula/metaengine.cpp:304 engines/hdb/metaengine.cpp:275
@@ -3702,46 +3719,46 @@ msgstr "확인(~O~)"
 msgid "~C~ancel"
 msgstr "취소(~C~)"
 
-#: engines/engine.cpp:373
+#: engines/engine.cpp:376
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "'%dx%d' 해상도로 전환할 수 없습니다."
 
-#: engines/engine.cpp:381
+#: engines/engine.cpp:384
 msgid "Could not initialize color format."
 msgstr "색상 형식을 초기화할 수 없습니다."
 
-#: engines/engine.cpp:389
+#: engines/engine.cpp:392
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "'%s' 비디오 모드로 전환할 수 없습니다."
 
-#: engines/engine.cpp:397
+#: engines/engine.cpp:400
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "'%s' 늘리기 모드로 전환할 수 없습니다."
 
-#: engines/engine.cpp:404
+#: engines/engine.cpp:407
 msgid "Could not apply aspect ratio setting."
 msgstr "화면비 설정을 적용할 수 없습니다."
 
-#: engines/engine.cpp:409
+#: engines/engine.cpp:412
 msgid "Could not apply fullscreen setting."
 msgstr "전체 화면 설정을 적용할 수 없습니다."
 
-#: engines/engine.cpp:414
+#: engines/engine.cpp:417
 msgid "Could not apply filtering setting."
 msgstr "필터링 설정을 적용할 수 없습니다."
 
-#: engines/engine.cpp:419
+#: engines/engine.cpp:422
 msgid "Could not apply shader setting."
 msgstr "셰이더 설정을 적용할 수 없습니다."
 
-#: engines/engine.cpp:529
+#: engines/engine.cpp:532
 msgid "Error"
 msgstr "오류"
 
-#: engines/engine.cpp:592
+#: engines/engine.cpp:595
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -3755,7 +3772,7 @@ msgstr ""
 "것을 권장합니다.\n"
 "문서(CD 오디오)에서 추가 정보를 확인해 주세요."
 
-#: engines/engine.cpp:615
+#: engines/engine.cpp:618
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -3769,11 +3786,11 @@ msgstr ""
 "추출해야 합니다.\n"
 "자세한 내용은 설명서(CD 오디오)를 참조하세요."
 
-#: engines/engine.cpp:643
+#: engines/engine.cpp:646
 msgid "Skip autosave"
 msgstr "자동 저장 건너뛰기"
 
-#: engines/engine.cpp:645
+#: engines/engine.cpp:648
 #, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %s, and an autosave "
@@ -3787,21 +3804,21 @@ msgstr ""
 "이 저장된 게임을 새 슬롯으로 옮기거나 더 이상 필요하지 않으면 삭제하세요.\n"
 "그 대신에, 자동 저장을 건너뛸 수 있습니다 (5 분 후에 다시 메세지 표시)."
 
-#: engines/engine.cpp:655
+#: engines/engine.cpp:658
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "오류: 저장 게임을 새 슬롯에 복사할 수 없음"
 
-#: engines/engine.cpp:682 engines/savestate.cpp:103
+#: engines/engine.cpp:685 engines/savestate.cpp:103
 #: backends/platform/ios7/ios7_osys_main.cpp:269 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:218
 msgid "Autosave"
 msgstr "자동 저장"
 
-#: engines/engine.cpp:690
+#: engines/engine.cpp:693
 msgid "Error occurred making autosave"
 msgstr "자동 저장을 하는 중 오류가 발생함"
 
-#: engines/engine.cpp:846
+#: engines/engine.cpp:853
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -3810,15 +3827,15 @@ msgstr ""
 "저장된 게임 (%s)을 불러오는 데 실패했습니다! 기본 정보와 추가 지원을 받는 방"
 "법에 대한 지침은 README를 참조하세요."
 
-#: engines/engine.cpp:870
+#: engines/engine.cpp:877
 msgid "WARNING: "
 msgstr "경고: "
 
-#: engines/engine.cpp:870
+#: engines/engine.cpp:877
 msgid " Shall we still run the game?"
 msgstr " 그래도 게임을 실행하겠습니까?"
 
-#: engines/engine.cpp:871
+#: engines/engine.cpp:878
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -3828,12 +3845,12 @@ msgstr ""
 "이 불안정할 가능성이 높으며 세이브 파일이 앞으로 나올 ScummVM 버전에서 지원되"
 "지 않을 수도 있습니다."
 
-#: engines/engine.cpp:874 engines/engine.cpp:899
+#: engines/engine.cpp:881 engines/engine.cpp:906
 #: engines/wintermute/wintermute.cpp:174
 msgid "Start anyway"
 msgstr "무시하고 시작"
 
-#: engines/engine.cpp:893
+#: engines/engine.cpp:900
 #, c-format
 msgid ""
 "WARNING: the game you are about to start contains the add-on \"%s\" which is "
@@ -3844,7 +3861,7 @@ msgstr ""
 "되어 있습니다. 따라서 불안정할 가능성이 높으며, 저장된 게임은 향후 ScummVM 버"
 "전에서 작동하지 않을 수 있습니다."
 
-#: engines/engine.cpp:919
+#: engines/engine.cpp:926
 msgid ""
 "WARNING: The game you are about to start is newly supported and is in "
 "testing mode.\n"
@@ -3853,7 +3870,7 @@ msgstr ""
 "경고: 지금 시작하려는 게임은 새로 지원되는 테스트 모드 게임입니다.\n"
 "버그나 이상 현상을 발견하시면 버그 추적 시스템에 신고해 주세요."
 
-#: engines/engine.cpp:935
+#: engines/engine.cpp:942
 #, c-format
 msgid ""
 "The game \"%s\" you are trying to add is an add-on for \"%s\" that cannot be "
@@ -3863,11 +3880,11 @@ msgstr ""
 "추가하려는 게임 \"%s\"은 \"%s\"의 애드온이므로 단독으로 실행할 수 없습니다. "
 "애드온 콘텐츠를 기본 게임의 하위 디렉터리에 복사한 후 기본 게임을 실행하세요."
 
-#: engines/engine.cpp:952
+#: engines/engine.cpp:959
 msgid "This game is not supported."
 msgstr "이 게임은 지원되지 않습니다."
 
-#: engines/engine.cpp:952
+#: engines/engine.cpp:959
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -3875,15 +3892,15 @@ msgstr ""
 "이 게임은 다음과 같은 이유로 지원되지 않습니다:\n"
 "\n"
 
-#: engines/engine.cpp:1098
+#: engines/engine.cpp:1105
 msgid "Loading game is currently unavailable"
 msgstr "현재는 게임을 불러올 수 없음"
 
-#: engines/engine.cpp:1127
+#: engines/engine.cpp:1134
 msgid "Saving game is currently unavailable"
 msgstr "현재는 게임을 저장할 수 없음"
 
-#: engines/engine.cpp:1296
+#: engines/engine.cpp:1303
 #, c-format
 msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
@@ -3892,7 +3909,7 @@ msgstr ""
 "디렉터리 '%s'는 게임 '%s'의 애드온처럼 보이지만 ScummVM은 일치하는 애드온을 "
 "찾을 수 없습니다."
 
-#: engines/engine.cpp:1324
+#: engines/engine.cpp:1331
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
 msgstr "디렉터리 '%s'은(는) 여러 개의 애드온과 일치합니다. 하나를 선택하세요."
@@ -4277,7 +4294,7 @@ msgstr "다운로드 완료하였습니다."
 msgid "Download failed."
 msgstr "다운로드 실패하였습니다."
 
-#: backends/events/default/default-events.cpp:207
+#: backends/events/default/default-events.cpp:214
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
@@ -4285,7 +4302,7 @@ msgstr ""
 "정말 런처로 돌아가겠습니까?\n"
 "저장하지 않은 진행 사항은 모두 사라집니다."
 
-#: backends/events/default/default-events.cpp:231
+#: backends/events/default/default-events.cpp:238
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
@@ -4293,25 +4310,25 @@ msgstr ""
 "정말 종료하겠습니까?\n"
 "저장되지 않은 진행 상황은 모두 사라집니다."
 
-#: backends/events/default/default-events.cpp:346
+#: backends/events/default/default-events.cpp:353
 msgid "Global"
 msgstr "글로벌"
 
-#: backends/events/default/default-events.cpp:349
+#: backends/events/default/default-events.cpp:356
 #: engines/twine/metaengine.cpp:302
 msgid "Global Main Menu"
 msgstr "글로벌 메인 메뉴"
 
-#: backends/events/default/default-events.cpp:359
+#: backends/events/default/default-events.cpp:366
 msgid "Display keyboard"
 msgstr "키보드 표시"
 
-#: backends/events/default/default-events.cpp:366
+#: backends/events/default/default-events.cpp:373
 #: engines/ngi/metaengine.cpp:149
 msgid "Toggle mute"
 msgstr "음소거 전환"
 
-#: backends/events/default/default-events.cpp:394
+#: backends/events/default/default-events.cpp:401
 msgid "Open Debugger"
 msgstr "디버거 열기"
 
