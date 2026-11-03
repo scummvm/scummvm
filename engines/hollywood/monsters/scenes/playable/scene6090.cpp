@@ -755,7 +755,7 @@ void Scene6090::runInterruptionClips() {
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
 
-	_paletteCurrent = firstPalette;
+	_paletteCurrent = Common::move(firstPalette);
 	_sceneFramebuffer.copyRectToSurface(firstBase.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 	for (uint frame = 0; frame < 0x2e && !Engine::shouldQuit() &&
@@ -792,7 +792,7 @@ void Scene6090::runInterruptionClips() {
 
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
-	_paletteCurrent = secondPalette;
+	_paletteCurrent = Common::move(secondPalette);
 	if (showRestoredSubtitle && _speechOverlay.visible)
 		setPaletteEntry6Bit(_speechOverlay.colorIndex, 0x3f, 0x3f, 0x3f);
 	_sceneFramebuffer.copyRectToSurface(secondBase.rawSurface(), 0, 0,

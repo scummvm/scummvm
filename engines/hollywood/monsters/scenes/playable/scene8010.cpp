@@ -841,7 +841,7 @@ bool Scene8010::runFishermanGeneratedPrimarySpeechLine(byte promptLineIndex) {
 		kScene8010FishermanSpeechBlue);
 	_primarySpeechOverlay.visible = true;
 	_primarySpeechOverlay.colorIndex = 0xfb;
-	_primarySpeechOverlay.lines = lines;
+	_primarySpeechOverlay.lines = Common::move(lines);
 	calculateSpeechOverlayBounds(_primarySpeechOverlay, kScene8010FishermanSpeechCenterX,
 		kScene8010FishermanSpeechTopY, true, _activeActorWorldY);
 

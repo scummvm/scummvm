@@ -1824,7 +1824,7 @@ bool PlayableScene::playFullscreenDeltaAnimation(const Common::Array<byte> &base
 		}
 	}
 
-	_paletteCurrent = blackPalette;
+	_paletteCurrent = Common::move(blackPalette);
 	_displayPalette.markAllDirty();
 	presentFrame();
 
