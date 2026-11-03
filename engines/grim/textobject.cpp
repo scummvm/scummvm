@@ -63,14 +63,14 @@ TextObject::~TextObject() {
 }
 
 void TextObject::setText(const Common::String &text, bool delaySetup) {
-	destroy();
+	invalidate();
 	_textID = text;
 	if (!delaySetup)
 		setupText();
 }
 
 void TextObject::reset() {
-	destroy();
+	invalidate();
 	setupText();
 }
 
@@ -156,7 +156,7 @@ int TextObject::getTextCharPosition(int pos) {
 	return width;
 }
 
-void TextObject::destroy() {
+void TextObject::invalidate() {
 	if (_created) {
 		g_driver->destroyTextObject(this);
 		_created = false;
