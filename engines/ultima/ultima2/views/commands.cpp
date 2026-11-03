@@ -69,17 +69,16 @@ bool Commands::msgGame(const GameMessage &msg) {
 }
 
 void Commands::writeString(const Common::String &msg) {
-	// We only want short delays when printing movement actions on the map
-	bool isShort = _surface.getTextPos().x == 1 && msg.hasSuffix("\n");
-
 	_textCursor.hide();
 	_surface.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
 	_surface.writeString(msg);
 
-	// Delay after each line. For short lines, like movement east/west/etc. keep it short,
-	// but for longer lines have a more substantial delay to allow time for reading
-	if (msg.contains('\n'))
-		delay(isShort ? NEWLINE_DELAY_SHORT : NEWLINE_DELAY_LONG);
+	// Delay after each line. For command lines, like movement east/west/etc. keep it short,
+	// but for all other lines use a longer delay to give time to read it
+	if (msg.contains('\n')) {
+		delay(_isCommand ? NEWLINE_DELAY_SHORT : NEWLINE_DELAY_LONG);
+		_isCommand = false;
+	}
 }
 
 void Commands::resetLine() {
@@ -97,6 +96,7 @@ void Commands::prompt() {
 	_surface.setColor(Gfx::textColor(Gfx::TEXT_NORMAL));
 	_surface.writeString("Cmd: ");
 	showCursor();
+	_isCommand = true;
 }
 
 void Commands::delay(uint milli) {

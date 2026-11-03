@@ -39,6 +39,7 @@ class Commands : public Graphics::Views::UIElement {
 private:
 	Graphics::Views::GfxSurface _surface;
 	Gfx::TextCursor _textCursor;
+	bool _isCommand = false;
 
 	void delay(uint milli);
 	void writeString(const Common::String &msg);

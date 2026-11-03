@@ -110,8 +110,8 @@ void Commands::writeString(const Common::String &msg) {
 
 	flush();
 
-	// Delay after each line. For short lines, like movement east/west/etc. keep it short,
-	// but for longer lines have a more substantial delay to allow time for reading
+	// Delay after each line. For command lines, like movement east/west/etc. keep it short,
+	// but all other lines have a more substantial delay to allow time for reading
 	if (msg.contains('\n'))
 		delay(isShort ? NEWLINE_DELAY_SHORT : NEWLINE_DELAY_LONG);
 }
