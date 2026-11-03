@@ -49,40 +49,6 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _waitForRoomVerticalBlankFunctor(this, &RoomScriptCommandExecutor::waitForRoomVerticalBlank),
 	  _requestMovementHostCloseFunctor(this, &RoomScriptCommandExecutor::requestMovementHostClose),
 	  _requestSessionExitFunctor(this, &RoomScriptCommandExecutor::requestSessionExit),
-	  _command00Functor(this, &RoomScriptCommandExecutor::scriptCommand00NoOp),
-	  _command01Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand01),
-	  _command03Functor(this, &RoomScriptCommandExecutor::scriptCommand03IfStatement),
-	  _command04Functor(this, &RoomScriptCommandExecutor::scriptCommand04IfStatementNested),
-	  _command06Functor(this, &RoomScriptCommandExecutor::scriptCommand06PlayObjAnim),
-	  _command07Functor(this, &RoomScriptCommandExecutor::scriptCommand07RefreshObject),
-	  _command0AFunctor(this, &RoomScriptCommandExecutor::scriptCommand0ASetInventoryGfx),
-	  _command0CFunctor(this, &RoomScriptCommandExecutor::scriptCommand0CRunAction),
-	  _command0DFunctor(this, &RoomScriptCommandExecutor::scriptCommand0DPlayOrStopAudio),
-	  _command11Functor(this, &RoomScriptCommandExecutor::scriptCommand11ChangeRoom),
-	  _command12Functor(this, &RoomScriptCommandExecutor::scriptCommand12SetObjShape),
-	  _command13Functor(this, &RoomScriptCommandExecutor::scriptCommand13Jump),
-	  _command14Functor(this, &RoomScriptCommandExecutor::scriptCommand14SetObjShape),
-	  _command15Functor(this, &RoomScriptCommandExecutor::scriptCommand15WaitNFrames),
-	  _command16Functor(this, &RoomScriptCommandExecutor::scriptCommand16HideActor),
-	  _command17Functor(this, &RoomScriptCommandExecutor::scriptCommand17WaitForObjAnim),
-	  _command18Functor(this, &RoomScriptCommandExecutor::scriptCommand18ChangeRoomNoFade),
-	  _command02Functor(&_command02Executor, &RoomScriptCommand02Executor::scriptCommand02AddPlayerChoiceInteractionLine),
-	  _command05Functor(&_command05Executor, &RoomScriptCommand05MoveObject::scriptCommand05MoveObject),
-	  _command08Functor(&_command08Executor, &RoomScriptCommand08Executor::scriptCommand08SetVariable),
-	  _command09Functor(&_command09Executor, &RoomScriptCommand09Executor::executeRoomScriptCommand09),
-	  _command0BFunctor(&_command0BExecutor, &RoomScriptCommand0BExecutor::scriptCommand0BSetBackgroundGfx),
-	  _command0EFunctor(&_command0EOr1BExecutor,
-						&RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition),
-	  _command0FFunctor(&_command0FExecutor, &RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo),
-	  _command10Functor(&_command10Executor, &RoomScriptCommand10Executor::scriptCommand10Dialog),
-	  _command19Functor(&_command19Executor, &RoomScriptCommand19Executor::scriptCommand19ShowActor),
-	  _command1AFunctor(&_command1AExecutor, &RoomScriptCommand1AExecutor::executeRoomScriptCommand1A),
-	  _command1CFunctor(&_command1CExecutor, &RoomScriptCommand1CExecutor::executeRoomScriptCommand1C),
-	  _command1DFunctor(&_command1DExecutor, &RoomScriptCommand1DExecutor::executeRoomScriptCommand1D),
-	  _command1EFunctor(&_command1EExecutor, &RoomScriptCommand1EExecutor::executeRoomScriptCommand1E),
-	  _command1FFunctor(&_command1FExecutor, &RoomScriptCommand1FExecutor::executeRoomScriptCommand1F),
-	  _command20Functor(&_command20Executor, &RoomScriptCommand20Executor::executeRoomScriptCommand20),
-	  _command21Functor(&_command21Executor, &RoomScriptCommand21Executor::executeRoomScriptCommand21),
 	  _actorDescriptorCatalog(rom), _command01Executor(rom, state), _command02Executor(rom, state),
 	  _command05Executor(rom, state, _actorDescriptorCatalog, actorAnimator,
 						 _waitForRoomVerticalBlankFunctor, actionMenu),
@@ -103,41 +69,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _actions(rom, scene, state, collisionProbe, random, presenter, actorAnimator,
 			   roomVBlank, presentRoom, interactions, roomInterfaceTransitions, tileStreamer,
 			   restartApplication),
-	  _conditionEvaluator(rom, state), _handlers(kHandlerCount), _interactionModeSnapshot(0) {
-	_handlers[0x00] = &_command00Functor;
-	_handlers[0x01] = &_command01Functor;
-	_handlers[0x02] = &_command02Functor;
-	_handlers[0x03] = &_command03Functor;
-	_handlers[0x04] = &_command04Functor;
-	_handlers[0x05] = &_command05Functor;
-	_handlers[0x06] = &_command06Functor;
-	_handlers[0x07] = &_command07Functor;
-	_handlers[0x08] = &_command08Functor;
-	_handlers[0x09] = &_command09Functor;
-	_handlers[0x0A] = &_command0AFunctor;
-	_handlers[0x0B] = &_command0BFunctor;
-	_handlers[0x0C] = &_command0CFunctor;
-	_handlers[0x0D] = &_command0DFunctor;
-	_handlers[0x0E] = &_command0EFunctor;
-	_handlers[0x0F] = &_command0FFunctor;
-	_handlers[0x10] = &_command10Functor;
-	_handlers[0x11] = &_command11Functor;
-	_handlers[0x12] = &_command12Functor;
-	_handlers[0x13] = &_command13Functor;
-	_handlers[0x14] = &_command14Functor;
-	_handlers[0x15] = &_command15Functor;
-	_handlers[0x16] = &_command16Functor;
-	_handlers[0x17] = &_command17Functor;
-	_handlers[0x18] = &_command18Functor;
-	_handlers[0x19] = &_command19Functor;
-	_handlers[0x1A] = &_command1AFunctor;
-	_handlers[0x1B] = &_command0EFunctor;
-	_handlers[0x1C] = &_command1CFunctor;
-	_handlers[0x1D] = &_command1DFunctor;
-	_handlers[0x1E] = &_command1EFunctor;
-	_handlers[0x1F] = &_command1FFunctor;
-	_handlers[0x20] = &_command20Functor;
-	_handlers[0x21] = &_command21Functor;
+	  _conditionEvaluator(rom, state), _interactionModeSnapshot(0) {
 }
 
 Optional<SessionExit> RoomScriptCommandExecutor::execute(uint16 command, int mode,
@@ -146,7 +78,113 @@ Optional<SessionExit> RoomScriptCommandExecutor::execute(uint16 command, int mod
 	// if (command != 1 && command != 3 && command != 2 && (_state.AutomaticInteractionFlags & 0x10) == 0) {
 	// 	debug("executing command: %x, mode: %d", command, mode);
 	// }
-	(*_handlers[static_cast<size_t>(command)])(mode);
+
+	// Ghidra g_apRoomScriptCommandHandlers (ROM 0x00002354-0x000023DB): 34 entries in original index order.
+	switch (command) {
+	case 0x00:
+		scriptCommand00NoOp(mode);
+		break;
+	case 0x01:
+		executeRoomScriptCommand01(mode);
+		break;
+	case 0x02:
+		_command02Executor.scriptCommand02AddPlayerChoiceInteractionLine(mode);
+		break;
+	case 0x03:
+		scriptCommand03IfStatement(mode);
+		break;
+	case 0x04:
+		scriptCommand04IfStatementNested(mode);
+		break;
+	case 0x05:
+		_command05Executor.scriptCommand05MoveObject(mode);
+		break;
+	case 0x06:
+		scriptCommand06PlayObjAnim(mode);
+		break;
+	case 0x07:
+		scriptCommand07RefreshObject(mode);
+		break;
+	case 0x08:
+		_command08Executor.scriptCommand08SetVariable(mode);
+		break;
+	case 0x09:
+		_command09Executor.executeRoomScriptCommand09(mode);
+		break;
+	case 0x0A:
+		scriptCommand0ASetInventoryGfx(mode);
+		break;
+	case 0x0B:
+		_command0BExecutor.scriptCommand0BSetBackgroundGfx(mode);
+		break;
+	case 0x0C:
+		scriptCommand0CRunAction(mode);
+		break;
+	case 0x0D:
+		scriptCommand0DPlayOrStopAudio(mode);
+		break;
+	case 0x0E: // Shares its Ghidra table target with 0x1B.
+	case 0x1B:
+		_command0EOr1BExecutor.scriptCommand0EOr1BMoveToPosition(mode);
+		break;
+	case 0x0F:
+		_command0FExecutor.scriptCommand0FWalkRelativeTo(mode);
+		break;
+	case 0x10:
+		_command10Executor.scriptCommand10Dialog(mode);
+		break;
+	case 0x11:
+		scriptCommand11ChangeRoom(mode);
+		break;
+	case 0x12:
+		scriptCommand12SetObjShape(mode);
+		break;
+	case 0x13:
+		scriptCommand13Jump(mode);
+		break;
+	case 0x14:
+		scriptCommand14SetObjShape(mode);
+		break;
+	case 0x15:
+		scriptCommand15WaitNFrames(mode);
+		break;
+	case 0x16:
+		scriptCommand16HideActor(mode);
+		break;
+	case 0x17:
+		scriptCommand17WaitForObjAnim(mode);
+		break;
+	case 0x18:
+		scriptCommand18ChangeRoomNoFade(mode);
+		break;
+	case 0x19:
+		_command19Executor.scriptCommand19ShowActor(mode);
+		break;
+	case 0x1A:
+		_command1AExecutor.executeRoomScriptCommand1A(mode);
+		break;
+	case 0x1C:
+		_command1CExecutor.executeRoomScriptCommand1C(mode);
+		break;
+	case 0x1D:
+		_command1DExecutor.executeRoomScriptCommand1D(mode);
+		break;
+	case 0x1E:
+		_command1EExecutor.executeRoomScriptCommand1E(mode);
+		break;
+	case 0x1F:
+		_command1FExecutor.executeRoomScriptCommand1F(mode);
+		break;
+	case 0x20:
+		_command20Executor.executeRoomScriptCommand20(mode);
+		break;
+	case 0x21:
+		_command21Executor.executeRoomScriptCommand21(mode);
+		break;
+	default:
+		error("Room script command 0x%04X is outside the 34-entry handler table", command);
+	}
+
 	return _requestedSessionExit;
 }
 

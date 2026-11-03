@@ -63,8 +63,8 @@
 // Owns the executable room-script command mapping and its recovered handler boundaries.
 //
 // Ghidra g_apRoomScriptCommandHandlers at ROM 0x00002354-0x000023DB contains 34
-// pointer entries. The managed table preserves every command index and the shared target used by commands
-// 0x0E and 0x1B without treating executable lookup data as a ROM asset.
+// pointer entries. The switch in execute() preserves every command index and the shared target used by
+// commands 0x0E and 0x1B without treating executable lookup data as a ROM asset.
 
 namespace Scooby {
 
@@ -116,8 +116,6 @@ public:
 								  int16 interactionModeSnapshot);
 
 private:
-	static const int kHandlerCount = 34;
-
 	// Consumes the one-word command record without changing command-specific state.
 	// mode: ignored because scan and execution modes consume the same record.
 	//
@@ -270,41 +268,6 @@ private:
 	Common::Functor0Mem<void, RoomScriptCommandExecutor> _requestMovementHostCloseFunctor;
 	Common::Functor1Mem<SessionExit, void, RoomScriptCommandExecutor> _requestSessionExitFunctor;
 
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command00Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command01Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command03Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command04Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command06Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command07Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command0AFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command0CFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command0DFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command11Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command12Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command13Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command14Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command15Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command16Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command17Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommandExecutor> _command18Functor;
-
-	Common::Functor1Mem<int, void, RoomScriptCommand02Executor> _command02Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommand05MoveObject> _command05Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommand08Executor> _command08Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommand09Executor> _command09Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommand0BExecutor> _command0BFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommand0EOr1BExecutor> _command0EFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommand0FExecutor> _command0FFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommand10Executor> _command10Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommand19Executor> _command19Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommand1AExecutor> _command1AFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommand1CExecutor> _command1CFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommand1DExecutor> _command1DFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommand1EExecutor> _command1EFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommand1FExecutor> _command1FFunctor;
-	Common::Functor1Mem<int, void, RoomScriptCommand20Executor> _command20Functor;
-	Common::Functor1Mem<int, void, RoomScriptCommand21Executor> _command21Functor;
-
 	ActorAnimationDescriptorCatalog _actorDescriptorCatalog;
 	RoomScriptCommand01Executor _command01Executor;
 	RoomScriptCommand02Executor _command02Executor;
@@ -326,7 +289,6 @@ private:
 	RoomScriptActionExecutor _actions;
 	RoomScriptConditionEvaluator _conditionEvaluator;
 
-	Common::Array<Common::Functor1<int, void> *> _handlers;
 	int16 _interactionModeSnapshot;
 	Optional<SessionExit> _requestedSessionExit;
 };
