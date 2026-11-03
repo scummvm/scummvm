@@ -1,3 +1,4 @@
 begin_section("Prisoner");
-	add_person("Name 1", "Handle 1", "");
+	add_person("Benjamin Haisch", "john_doe", "");
+	add_person("Ricardo Sabino", "", "");
 end_section();
