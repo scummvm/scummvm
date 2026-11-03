@@ -334,7 +334,10 @@ void Score::step() {
 			_lingo->processEvents(_movie->_inputEventQueue, true);
 		}
 		if (_version >= kFileVer300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
-			if (!_skipIdle)
+			// Like input events, idle is only sent when no Lingo is mid-execution.
+			// Otherwise a handler frozen by "go" (e.g. one called from idle itself)
+			// can be overtaken by a re-entrant idle before it resumes.
+			if (!_skipIdle && !_window->frozenLingoStateCount())
 				_movie->processEvent(kEventIdle);
 
 			if (_version >= kFileVer600) {
