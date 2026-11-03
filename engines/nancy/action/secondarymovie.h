@@ -140,7 +140,8 @@ public:
 	byte _playDirection = kPlayMovieForward;
 	uint16 _firstFrame = 0;
 	uint16 _lastFrame = 0;
-	// Nancy14-only: when non-zero, hide the movie once it reaches its last frame.
+	// Nancy14+: when non-zero, the movie is hidden once it's done, instead of
+	// keeping its last frame on screen
 	uint16 _hideOnFinish = 0;
 	// Nancy15 AR 44: a "play style" selector (1 or 3). Read but currently
 	// unused by playback.

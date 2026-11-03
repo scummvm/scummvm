@@ -1101,7 +1101,7 @@ void PlaySecondaryMovie::updateGraphics() {
 	// anymore. Neither follows the viewport through execute(), so keep them
 	// attached to their background frame here. Records that never got to show a
 	// frame, or random movies that were stopped, have nothing to keep on screen.
-	if (_fullFrame.empty() || _randomStopRequested) {
+	if (_fullFrame.empty() || _randomStopRequested || (_isFinished && _hideOnFinish)) {
 		return;
 	}
 
@@ -1449,11 +1449,21 @@ void PlaySecondaryMovie::execute() {
 				_isFinished = false;
 				_decoder.seekToFrame(_playDirection == kPlayMovieReverse ? _lastFrame : _firstFrame);
 				_decoder.pauseVideo(false);
-			} else if (!g_nancy->_sound->isSoundPlaying(_sound)) {
-				// Stop the video and block it from starting again, but also wait for
-				// sound to end before changing state
-				g_nancy->_sound->stopSound(_sound);
-				_state = kActionTrigger;
+			} else {
+				// Hide it right away, as the flags of its last frame may stop the
+				// record from running; e.g. pouring the hot sauce in Nancy17 scene
+				// 3008, where the bottle overlay takes over
+				if (_hideOnFinish) {
+					setVisible(false);
+					_mask.setVisible(false);
+				}
+
+				if (!g_nancy->_sound->isSoundPlaying(_sound)) {
+					// Stop the video and block it from starting again, but also wait for
+					// sound to end before changing state
+					g_nancy->_sound->stopSound(_sound);
+					_state = kActionTrigger;
+				}
 			}
 		}
 
