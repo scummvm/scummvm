@@ -568,7 +568,9 @@ uint DigitalVideoCastMember::getTimeScale() {
 uint DigitalVideoCastMember::getMovieCurrentTime() {
 	if (!_video)
 		return 0;
-	int ticks = 1 + ((_video->getTime() * getTimeScale() - 1)/1000);
+	// Round up to ticks. getTime() is unsigned, so "1 + (ms * scale - 1) / 1000"
+	// would underflow to the end of the movie when the time is 0.
+	int ticks = (_video->getTime() * getTimeScale() + 999) / 1000;
 	int stamp = MIN<int>(ticks, getMovieTotalTime());
 
 	return stamp;
@@ -588,7 +590,7 @@ uint DigitalVideoCastMember::getMovieTotalTime() {
 	if (!_video)
 		return 0;
 
-	int ticks = 1 + ((_video->getDuration().msecs() * getTimeScale() - 1)/1000);
+	int ticks = (_video->getDuration().msecs() * getTimeScale() + 999) / 1000;
 	return ticks;
 }
 
