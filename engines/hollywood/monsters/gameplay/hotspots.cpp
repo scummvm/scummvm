@@ -19,7 +19,9 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/frac.h"
+#include "common/rotationmode.h"
 #include "common/system.h"
 #include "common/ustr.h"
 #include "graphics/hotspot_renderer.h"
@@ -51,6 +53,10 @@ protected:
 		const bool center = !strcmp(mode->name, "center");
 		const bool integral = !strcmp(mode->name, "pixel-perfect") || !strcmp(mode->name, "even-pixels");
 		if (!fit && !center && !integral)
+			return;
+
+		if (g_system->hasFeature(OSystem::kFeatureRotationMode) &&
+				Common::parseRotationMode(ConfMan.getInt("rotation_mode")) != Common::kRotationNormal)
 			return;
 
 		// Desktop backends can center the game inside a larger overlay.
