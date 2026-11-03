@@ -266,9 +266,10 @@ bool Console::cmdIntangible(int argc, const char **argv) {
 }
 
 bool Console::cmdHP(int argc, const char **argv) {
-	_G(savegame)._hp = 9999;
+	int hp = argc == 2 ? atoi(argv[1]) : 9999;
+	_G(savegame)._hp = hp;
 	g_engine->baseView()->findView("Stats")->draw();
-	debugPrintf("HP set to 9999\n");
+	debugPrintf("HP set to %d\n", hp);
 	return true;
 }
 
