@@ -432,7 +432,7 @@ Common::Rect HotspotRenderer::findLabelPlacement(int width, int height, Common::
 	return boxRect;
 }
 
-static Common::U32String truncateToWidth(const Common::U32String &text, const Font *font, int maxWidth) {
+Common::U32String HotspotRenderer::truncateToWidth(const Common::U32String &text, const Font *font, int maxWidth) {
 	if (maxWidth <= 0 || font->getStringWidth(text) <= maxWidth)
 		return text;
 

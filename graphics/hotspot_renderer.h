@@ -136,6 +136,7 @@ protected:
 	};
 	virtual LabelLayout layoutHotspotLabel(const HotspotInfo &hotspot, Common::Point position,
 		int overlayWidth, int overlayHeight, const Font *font);
+	static Common::U32String truncateToWidth(const Common::U32String &text, const Font *font, int maxWidth);
 	Common::Rect findLabelPlacement(int width, int height, Common::Point markerPos,
 		int overlayWidth, int overlayHeight, int gap);
 	Common::Rect findInlineLabelSlot(Common::Point markerPos, int width, int height,
