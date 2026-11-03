@@ -26,6 +26,7 @@
 
 #include "common/array.h"
 #include "common/func.h"
+#include "common/rect.h"
 
 #include "room_collision_probe.h"
 #include "scooby/assets/rom.h"
@@ -82,11 +83,6 @@ public:
 	void executeRoomScriptAction32();
 
 private:
-	struct DuelMovementDelta {
-		int16 x;
-		int16 y;
-	};
-
 	struct DuelActorBounds {
 		int16 left;
 		int16 top;
@@ -116,7 +112,7 @@ private:
 	// The 64 logical X/Y pairs from Ghidra g_aswDuelMovementDeltas at 0x00003D96-0x00003E95. Each facing
 	// contributes eight signed X words followed by eight signed Y words in ROM; this typed projection
 	// preserves the same facing-then-magnitude indexing.
-	static const Common::Array<DuelMovementDelta> kDuelMovementDeltas;
+	static const Common::Array<Common::Point> kDuelMovementDeltas;
 
 	void initializeDuelPresentation();
 	void writeDuelFrameCells(int sourceOffset, int startColumn, int row);

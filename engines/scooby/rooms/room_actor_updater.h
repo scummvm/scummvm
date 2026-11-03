@@ -26,6 +26,7 @@
 
 #include "common/array.h"
 #include "common/func.h"
+#include "common/rect.h"
 
 #include "room_collision_probe.h"
 #include "scooby/assets/rom.h"
@@ -96,11 +97,6 @@ private:
 	static const uint8 kVideoScoobyShaggySideBySideWalking = 0x40;
 	static const uint8 kVideoScoobyUpdateBlockMask = 0x04;
 
-	struct PathRecord {
-		int16 x;
-		int16 y;
-	};
-
 	void updateShaggyActorPath();
 	bool updateInterfaceTransitionAndCursor();
 	void advanceRoomInterfaceTransition();
@@ -138,7 +134,7 @@ private:
 	void advanceDynamicActorMovement(int actor);
 	void updateStandardActorPath(int actor);
 	void endActorPathAtTerminal(int actor);
-	PathRecord readAndAdvancePathRecord(int actor);
+	Common::Point readAndAdvancePathRecord(int actor);
 	void clearActorPath(int actor);
 	void updateActorPriority(int actor);
 	void requestActorAnimation(int actor, int16 animationOffset);

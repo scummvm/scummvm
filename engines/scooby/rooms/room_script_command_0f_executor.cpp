@@ -40,7 +40,7 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 		if (tryResolveTargetAnimationDescriptor(targetIdentity, animationDescriptorOffset)) {
 			// Ghidra 0x00004C7A-0x00004CFF: retain all three source-identity branches, the type-two record
 			// call for every room-object source, and both fixed-position and shape-relative outcomes.
-			RelativeDestination target = resolveRelativeDestination(commandOffset, animationDescriptorOffset);
+			Common::Point target = resolveRelativeDestination(commandOffset, animationDescriptorOffset);
 			int16 movementArgument = _rom.readInt16(commandOffset + 6);
 			int16 movementModeOrScale = _rom.readInt16(commandOffset + 10);
 
@@ -105,21 +105,21 @@ bool RoomScriptCommand0FExecutor::tryResolveTargetAnimationDescriptor(uint16 tar
 	return _actorDescriptorCatalog.tryResolve(targetObject.shapeIndex, descriptorOffset, catalogIndex);
 }
 
-RoomScriptCommand0FExecutor::RelativeDestination RoomScriptCommand0FExecutor::resolveRelativeDestination(
+Common::Point RoomScriptCommand0FExecutor::resolveRelativeDestination(
 	int commandOffset, int animationDescriptorOffset) {
 	uint16 sourceIdentity = _rom.readUInt16(commandOffset + 4);
 	int16 relativeX = _rom.readInt16(commandOffset + 8);
 	if (sourceIdentity == 1) {
 		// Ghidra 0x00004C7A-0x00004C97: source one adds the relative X with word wrap and retains actor
 		// zero's current integer Y without introducing a separate vertical command offset.
-		return RelativeDestination(
+		return Common::Point(
 			static_cast<int16>(relativeX + getIntegerCoordinate(_state.actorXFixedCoordinates[kShaggyActorSlot])),
 			getIntegerCoordinate(_state.actorYFixedCoordinates[kShaggyActorSlot]));
 	}
 
 	if (sourceIdentity == 2) {
 		// Ghidra 0x00004C98-0x00004CAD: source two repeats the independent actor-one coordinate branch.
-		return RelativeDestination(
+		return Common::Point(
 			static_cast<int16>(relativeX + getIntegerCoordinate(_state.actorXFixedCoordinates[kScoobyActorSlot])),
 			getIntegerCoordinate(_state.actorYFixedCoordinates[kScoobyActorSlot]));
 	}
@@ -128,11 +128,11 @@ RoomScriptCommand0FExecutor::RelativeDestination RoomScriptCommand0FExecutor::re
 	// room-position selector to relative X, and calls the distinct type-two descriptor-record function.
 	RoomObject &sourceObject = resolveRoomObject(sourceIdentity);
 	int16 positionOffset = static_cast<int16>(relativeX + sourceObject.positionIndex);
-	RelativeDestination descriptor = findInteractionTypeTwoRecord(animationDescriptorOffset, positionOffset);
+	Common::Point descriptor = findInteractionTypeTwoRecord(animationDescriptorOffset, positionOffset);
 	if ((sourceObject.flags & kFixedPositionMask) != 0) {
 		// Ghidra 0x00004CD0-0x00004CDD: fixed placement doubles only descriptor X with word wrap, adds
 		// authored fixed X, and replaces descriptor Y with authored fixed Y.
-		return RelativeDestination(static_cast<int16>((descriptor.x << 1) + sourceObject.fixedX),
+		return Common::Point(static_cast<int16>((descriptor.x << 1) + sourceObject.fixedX),
 								   sourceObject.fixedY);
 	}
 
@@ -144,7 +144,7 @@ RoomScriptCommand0FExecutor::RelativeDestination RoomScriptCommand0FExecutor::re
 	int16 shapePointerByteOffset = static_cast<int16>((sourceObject.shapeIndex - 1) << 2);
 	int shapeOffset = static_cast<int>(_rom.readUInt32(shapePointerTableOffset + shapePointerByteOffset) +
 									   _rom.readUInt32(episodeDescriptorOffset + kEpisodeShapeDataBaseField));
-	return RelativeDestination(static_cast<int16>(descriptor.x + _rom.readInt16(shapeOffset + 8)),
+	return Common::Point(static_cast<int16>(descriptor.x + _rom.readInt16(shapeOffset + 8)),
 							   static_cast<int16>(descriptor.y + _rom.readInt16(shapeOffset + 10)));
 }
 
@@ -156,7 +156,7 @@ int16 RoomScriptCommand0FExecutor::getIntegerCoordinate(int fixedCoordinate) {
 	return static_cast<int16>(fixedCoordinate >> 16);
 }
 
-RoomScriptCommand0FExecutor::RelativeDestination RoomScriptCommand0FExecutor::findInteractionTypeTwoRecord(
+Common::Point RoomScriptCommand0FExecutor::findInteractionTypeTwoRecord(
 	int animationDescriptorOffset, int16 positionOffset) {
 	// Ghidra 0x0000197E-0x0000198D: double the signed selector with word wrapping, add the descriptor's
 	// word-table offset, resolve its signed list offset, and preserve the immutable descriptor base.
@@ -176,7 +176,7 @@ RoomScriptCommand0FExecutor::RelativeDestination RoomScriptCommand0FExecutor::fi
 	int interactionRecordOffset =
 		animationDescriptorOffset + _rom.readInt16(
 										interactionEntryOffset + static_cast<int>(sizeof(int16)));
-	return RelativeDestination(_rom.readInt16(interactionRecordOffset + 0x0E),
+	return Common::Point(_rom.readInt16(interactionRecordOffset + 0x0E),
 							   _rom.readInt16(interactionRecordOffset + 0x10));
 }
 } // namespace Scooby

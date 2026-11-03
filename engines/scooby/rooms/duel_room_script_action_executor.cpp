@@ -35,7 +35,7 @@ namespace Scooby {
 const Common::Array<int16> DuelRoomScriptActionExecutor::kOppositeDuelFacingDirections{
 	4, 5, 6, 7, 0, 1, 2, 3};
 
-const Common::Array<DuelRoomScriptActionExecutor::DuelMovementDelta>
+const Common::Array<Common::Point>
 	DuelRoomScriptActionExecutor::kDuelMovementDeltas{
 		{0, 0}, {0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}, {0, 0}, {1, -1}, {2, -2}, {3, -3}, {3, -3}, {4, -4}, {4, -4}, {5, -5}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {0, 0}, {1, 1}, {2, 2}, {3, 3}, {3, 3}, {4, 4}, {4, 4}, {5, 5}, {0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 0}, {-1, 1}, {-2, 2}, {-3, 3}, {-3, 3}, {-4, 4}, {-4, 4}, {-5, 5}, {0, 0}, {-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}, {0, 0}, {-1, -1}, {-2, -2}, {-3, -3}, {-3, -3}, {-4, -4}, {-4, -4}, {-5, -5}};
 
@@ -295,9 +295,9 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 		// momentum and knockback vectors with signed word wrap, stage the integer result, and preserve both
 		// collision-condition outcomes and the second-impact call edge.
 		_duelCollisionFlags &= 0xFC;
-		DuelMovementDelta secondMomentumDelta = kDuelMovementDeltas[static_cast<size_t>(
+		Common::Point secondMomentumDelta = kDuelMovementDeltas[static_cast<size_t>(
 			_state.actorAnimationOffsets[kDuelSecondActorSlot] * 8 + _duelMomentum[kDuelSecondActor])];
-		DuelMovementDelta secondKnockbackDelta = kDuelMovementDeltas[static_cast<size_t>(
+		Common::Point secondKnockbackDelta = kDuelMovementDeltas[static_cast<size_t>(
 			_state.actorPositionIndices[kDuelSecondActorSlot] * 8 + _duelKnockback[kDuelSecondActor])];
 		_stagedCollisionX = static_cast<int16>(
 			getIntegerCoordinate(_state.actorXFixedCoordinates[kDuelSecondActorSlot]) + secondMomentumDelta.x +
@@ -316,9 +316,9 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 
 		// Ghidra 0x00003724-0x0000378F: independently apply the first actor's two vectors, stage and
 		// publish its wrapped integer coordinates, and retain both first-impact outcomes.
-		DuelMovementDelta firstMomentumDelta = kDuelMovementDeltas[static_cast<size_t>(
+		Common::Point firstMomentumDelta = kDuelMovementDeltas[static_cast<size_t>(
 			_state.actorAnimationOffsets[kDuelFirstActorSlot] * 8 + _duelMomentum[kDuelFirstActor])];
-		DuelMovementDelta firstKnockbackDelta = kDuelMovementDeltas[static_cast<size_t>(
+		Common::Point firstKnockbackDelta = kDuelMovementDeltas[static_cast<size_t>(
 			_state.actorPositionIndices[kDuelFirstActorSlot] * 8 + _duelKnockback[kDuelFirstActor])];
 		_stagedCollisionX = static_cast<int16>(
 			getIntegerCoordinate(_state.actorXFixedCoordinates[kDuelFirstActorSlot]) + firstMomentumDelta.x +

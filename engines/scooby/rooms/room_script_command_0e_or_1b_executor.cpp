@@ -41,7 +41,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 			case 1: {
 				// Ghidra 0x000049D8-0x000049FB: identity one independently selects indexed or immediate
 				// coordinates before loading its animation or movement argument.
-				TargetCoordinates target = readTargetCoordinates(commandOffset, command);
+				Common::Point target = readTargetCoordinates(commandOffset, command);
 				int16 movementMode = _rom.readInt16(commandOffset + 4);
 				int16 movementArgument = _rom.readInt16(commandOffset + 6);
 
@@ -69,7 +69,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 			case 2: {
 				// Ghidra 0x00004A50-0x00004A79: identity two repeats both coordinate-source branches
 				// independently for the companion actor.
-				TargetCoordinates target = readTargetCoordinates(commandOffset, command);
+				Common::Point target = readTargetCoordinates(commandOffset, command);
 				int16 movementMode = _rom.readInt16(commandOffset + 4);
 				int16 movementArgument = _rom.readInt16(commandOffset + 6);
 
@@ -97,7 +97,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 				// Ghidra 0x00004ACE-0x00004B0D: every other nonzero identity retains its masked 16-bit value,
 				// movement mode, independent coordinate-source branch, animation argument, and encoded
 				// identity context at the room-object movement boundary.
-				TargetCoordinates target = readTargetCoordinates(commandOffset, command);
+				Common::Point target = readTargetCoordinates(commandOffset, command);
 				if (!_movement.moveRoomObjectToPosition(objectId, target.x, target.y,
 														_rom.readInt16(commandOffset + 4),
 														_rom.readInt16(commandOffset + 6),
@@ -118,15 +118,15 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 		commandOffset + (command == kIndexedPositionCommand ? kIndexedRecordSize : kImmediateRecordSize);
 }
 
-RoomScriptCommand0EOr1BExecutor::TargetCoordinates RoomScriptCommand0EOr1BExecutor::readTargetCoordinates(
+Common::Point RoomScriptCommand0EOr1BExecutor::readTargetCoordinates(
 	int commandOffset, uint16 command) {
 	if (command != kIndexedPositionCommand) {
-		return TargetCoordinates(_rom.readInt16(commandOffset + 8), _rom.readInt16(commandOffset + 10));
+		return Common::Point(_rom.readInt16(commandOffset + 8), _rom.readInt16(commandOffset + 10));
 	}
 
 	int16 positionByteOffset = static_cast<int16>(_rom.readUInt16(commandOffset + 8) << 2);
 	int32 positionOffset = _state.roomPositionCoordinateTableOffset + positionByteOffset;
-	return TargetCoordinates(static_cast<int16>(_rom.readInt16(positionOffset) << 3),
+	return Common::Point(static_cast<int16>(_rom.readInt16(positionOffset) << 3),
 							 static_cast<int16>(_rom.readInt16(positionOffset + 2) << 3));
 }
 

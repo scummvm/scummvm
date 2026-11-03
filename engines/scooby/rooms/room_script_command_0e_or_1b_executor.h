@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 
 #include "common/func.h"
+#include "common/rect.h"
 
 #include "scooby/assets/rom.h"
 #include "scooby/movement/scripted_room_movement_executor.h"
@@ -70,15 +71,7 @@ private:
 	static const int kIndexedRecordSize = 10;
 	static const int kImmediateRecordSize = 12;
 
-	struct TargetCoordinates {
-		int16 x;
-		int16 y;
-
-		TargetCoordinates(int16 newX, int16 newY) : x(newX), y(newY) {
-		}
-	};
-
-	TargetCoordinates readTargetCoordinates(int commandOffset, uint16 command);
+	Common::Point readTargetCoordinates(int commandOffset, uint16 command);
 	bool placeActorDirectly(int actorSlot, int16 targetX, int16 targetY,
 							int16 animationOffset,
 							int16 initialDelay, uint8 actorMask);

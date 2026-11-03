@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 
 #include "common/func.h"
+#include "common/rect.h"
 
 #include "actor_animation_descriptor_catalog.h"
 #include "scooby/assets/rom.h"
@@ -68,16 +69,8 @@ private:
 	static const uint8 kFixedPositionMask = 0x02;
 	static const int kRecordSize = 12;
 
-	struct RelativeDestination {
-		int16 x;
-		int16 y;
-
-		RelativeDestination(int16 newX, int16 newY) : x(newX), y(newY) {
-		}
-	};
-
 	bool tryResolveTargetAnimationDescriptor(uint16 targetIdentity, int &descriptorOffset);
-	RelativeDestination resolveRelativeDestination(int commandOffset, int animationDescriptorOffset);
+	Common::Point resolveRelativeDestination(int commandOffset, int animationDescriptorOffset);
 	RoomObject &resolveRoomObject(uint16 objectId);
 	static int16 getIntegerCoordinate(int fixedCoordinate);
 
@@ -91,7 +84,7 @@ private:
 	// extension. Four-byte {type, recordOffset} entries are scanned without a sentinel, bound, or fallback
 	// until type 2; that entry resolves a descriptor-relative record whose signed coordinate words are at
 	// +0x0E/+0x10.
-	RelativeDestination
+	Common::Point
 	findInteractionTypeTwoRecord(int animationDescriptorOffset, int16 positionOffset);
 
 	const ScoobyDooRom &_rom;

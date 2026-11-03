@@ -70,7 +70,7 @@ void RoomActorUpdater::updateShaggyActorPath() {
 	_state.actorPathCadenceCountdowns[kShaggyActorSlot] = static_cast<int8>(
 		_state.actorPathCadenceReloads[kShaggyActorSlot]);
 	while (true) {
-		PathRecord record = readAndAdvancePathRecord(kShaggyActorSlot);
+		Common::Point record = readAndAdvancePathRecord(kShaggyActorSlot);
 		int16 x = record.x;
 		int16 y = record.y;
 		if (x >= 0) {
@@ -1233,7 +1233,7 @@ void RoomActorUpdater::updateStandardActorPath(int actor) {
 
 	_state.actorPathCadenceCountdowns[actor] = static_cast<int8>(_state.actorPathCadenceReloads[actor]);
 	while (true) {
-		PathRecord record = readAndAdvancePathRecord(actor);
+		Common::Point record = readAndAdvancePathRecord(actor);
 		int16 x = record.x;
 		int16 y = record.y;
 		if (x >= 0) {
@@ -1276,14 +1276,11 @@ void RoomActorUpdater::endActorPathAtTerminal(int actor) {
 	}
 }
 
-RoomActorUpdater::PathRecord RoomActorUpdater::readAndAdvancePathRecord(int actor) {
+Common::Point RoomActorUpdater::readAndAdvancePathRecord(int actor) {
 	int16 recordOffset = static_cast<int16>(_state.actorPathRecordOffsets[actor]);
 	_state.actorPathRecordOffsets[actor] += 4;
 	int32 sourceOffset = _state.actorPathStreamOffsets[actor] + recordOffset;
-	PathRecord record;
-	record.x = _rom.readInt16(sourceOffset);
-	record.y = _rom.readInt16(sourceOffset + static_cast<int>(sizeof(int16)));
-	return record;
+	return Common::Point(_rom.readInt16(sourceOffset), _rom.readInt16(sourceOffset + static_cast<int>(sizeof(int16))));
 }
 
 void RoomActorUpdater::clearActorPath(int actor) {
