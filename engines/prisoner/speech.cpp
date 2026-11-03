@@ -34,8 +34,6 @@ void PrisonerEngine::startTalkieSpeech(int16 pakSlot, uint32 &finishedTime, int1
 	_talkieDataResourceCacheSlot = -1;
 	_talkieSpeechPlayNow = false;
 
-	// TODO: Check if sound and speech are enabled
-
 	if (_lipSyncScriptNumber == -1) {
 		_talkieDataResourceCacheSlot = _res->load<SoundResource>(soundPakName, pakSlot, 16);
 		SoundResource *soundResource = _res->get<SoundResource>(_talkieDataResourceCacheSlot);

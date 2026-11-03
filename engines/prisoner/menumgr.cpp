@@ -395,15 +395,6 @@ void PrisonerEngine::loadMenuPanels() {
 		xentry++;
 	}
 
-
-
-	//uint16 s = sizeof(_byte_19184);
-	//byte *bytes = (byte *)malloc(s + 1);
-	//memcpy(bytes, _byte_19184, s);
-	//decryptBuffer(bytes, s);
-	//bytes[s] = '\0';
-	//debug("%c", _byte_19184);
-
 	runMainMenu_initMessages();
 	runMainMenu_addClickBoxes(67, 77);
 	_currMenuIndex = _inGame ? 0 : 1;
@@ -453,14 +444,6 @@ void PrisonerEngine::runMainMenu_addClickBoxes(int16 x, int16 y) {
 				i);
 		}
 	}
-	// TODO: Remove after debugging
-	// addClickBox(x + 111, y + 119, x + 402, y + 140, 0);
-	// addClickBox(x + 111, y + 144, x + 402, y + 165, 1);
-	// addClickBox(x + 111, y + 177, x + 402, y + 198, 2);
-	// addClickBox(x + 111, y + 202, x + 402, y + 223, 3);
-	// addClickBox(x + 111, y + 235, x + 402, y + 256, 4);
-	// addClickBox(x + 111, y + 260, x + 402, y + 281, 5);
-	// addClickBox(x + 98, y + 13, x + 413, y + 39, 6);
 }
 
 void PrisonerEngine::drawClickBoxLabels() {
@@ -610,8 +593,6 @@ void PrisonerEngine::doMenuAction(uint8 clickBoxIndex) {
 	case kMainMenuNewGame:
 		inpKeybSetWaitRelease(true);
 		displayDialog(kDialogCancel, titleStr, newGameActionStr, &PrisonerEngine::dialogActionNewGame);
-
-		debug("CLICK ON = %d", clickBoxIndex);
 		break;
 	case kMainMenuLoadGame:
 		inpKeybSetWaitRelease(true);
@@ -1369,15 +1350,6 @@ void PrisonerEngine::updateMainMenu(int16 x, int16 y) {
 
 	menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[kMainPanel]);
 	_screen->drawAnimationElement(menuPanel, 0, x, y, 0);
-
-	// TODO: Remove after debugging
-	//_screen->drawLine(x + 111, y + 119, x + 402, y + 140, 250);
-	//_screen->drawLine(x + 111, y + 144, x + 402, y + 165, 250);
-	//_screen->drawLine(x + 111, y + 177, x + 402, y + 198, 250);
-	//_screen->drawLine(x + 111, y + 202, x + 402, y + 223, 250);
-	//_screen->drawLine(x + 111, y + 235, x + 402, y + 256, 4);
-	//_screen->drawLine(x + 111, y + 260, x + 402, y + 281, 5);
-	//_screen->drawLine(x + 98, y + 13, x + 413, y + 39, 6);
 
 	PakMenuDirectoryEntry mainPanelData = kPrisonerPanelData[kMainPanel];
 	setFontColors(_menuFont, mainPanelData.outlineColor, mainPanelData.inkColor);

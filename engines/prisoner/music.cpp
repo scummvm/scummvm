@@ -36,7 +36,7 @@ void PrisonerEngine::playMusic(int16 musicIndex, bool loop, int16 loopCount) {
 		stopMusic(musicIndex);
 		// If no other volume was set use the default one
 		if (!musicSlot.volumeFlag)
-			setMusicVolume(musicIndex, 100); // TODO
+			setMusicVolume(musicIndex, 100);
 		musicSlot.isPlaying = true;
 		musicSlot.shouldResume = false;
 		musicSlot.loop = loop;

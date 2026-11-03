@@ -263,7 +263,6 @@ void PrisonerEngine::handleInventoryInput() {
 		if (canLeave) {
 			if (_mouseY >= 82) {
 				_inventoryBarFlag = true;
-				debug("break");
 				break;
 			}
 		} else {
@@ -363,9 +362,6 @@ void PrisonerEngine::handleInventoryInput() {
 	updateScreen(true, -1, -1);
 
 	_inventoryInputRunning = false;
-
-	debug("inv done");
-
 }
 
 } // End of namespace Prisoner
