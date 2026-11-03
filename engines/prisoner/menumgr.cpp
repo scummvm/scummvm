@@ -36,7 +36,7 @@
 
 namespace Prisoner {
 
-static const _PakMenuDirectoryEntry _kPrisonerPanelData[] = {
+static const PakMenuDirectoryEntry kPrisonerPanelData[] = {
 	/* Menu data from .exe */
 	/*
 	S_PANEL.PUK 0, 255 255
@@ -55,33 +55,33 @@ static const _PakMenuDirectoryEntry _kPrisonerPanelData[] = {
 	S_PANEL.PUK 13 89 87
 	*/
 
-	{SAVE_PANEL, "S_PANEL", 0, 255, 255},
-	{OPTIONS_PANEL, "S_PANEL", 1, 156, 156},
-	{MAIN_PANEL, "S_PANEL", 2, 156, 156},
-	{VOLOPT_PANEL, "S_PANEL", 3, 156, 156},
-	{DIVOPT_PANEL, "S_PANEL", 4, 156, 156},
-	{PAUSE_PANEL, "S_PANEL", 5, 156, 156},
-	{SNDCFG_PANEL, "S_PANEL", 6, 156, 156},
-	{LOAD_PANEL, "S_PANEL", 7, 126, 126},
-	{ASKER1_PANEL, "S_PANEL", 8, 255, 255},
-	{ASKER2_PANEL, "S_PANEL", 9, 255, 255},
-	{ASKER3_PANEL, "S_PANEL", 10, 255, 255},
-	{OPTGFX_PANEL, "S_PANEL", 11, 156, 156},
-	{FORLOOKINV_PANEL, "S_PANEL", 12, 155, 153},
-	{FORIDM_PANEL, "S_PANEL", 13, 89, 87},
-	{PANEL_SIZE_END, NULL, 0, 0, 0}};
+	{kSavePanel, "S_PANEL", 0, 255, 255},
+	{kOptionsPanel, "S_PANEL", 1, 156, 156},
+	{kMainPanel, "S_PANEL", 2, 156, 156},
+	{kVolOptPanel, "S_PANEL", 3, 156, 156},
+	{kDivOptPanel, "S_PANEL", 4, 156, 156},
+	{kPausePanel, "S_PANEL", 5, 156, 156},
+	{kSndCfgPanel, "S_PANEL", 6, 156, 156},
+	{kLoadPanel, "S_PANEL", 7, 126, 126},
+	{kAsker1Panel, "S_PANEL", 8, 255, 255},
+	{kAsker2Panel, "S_PANEL", 9, 255, 255},
+	{kAsker3Panel, "S_PANEL", 10, 255, 255},
+	{kOptGfxPanel, "S_PANEL", 11, 156, 156},
+	{kForLookInvPanel, "S_PANEL", 12, 155, 153},
+	{kForIdmPanel, "S_PANEL", 13, 89, 87},
+	{kMenuPanelCount, NULL, 0, 0, 0}};
 
-enum MAIN_MENU_OPTIONS {
-	RET_GAME = 0,
-	NEW_GAME,
-	LOAD_GAME,
-	SAVE_GAME,
-	OPTIONS,
-	EXIT,
-	MAIN_MENU_SIZE,
+enum MainMenuItem {
+	kMainMenuReturnToGame = 0,
+	kMainMenuNewGame,
+	kMainMenuLoadGame,
+	kMainMenuSaveGame,
+	kMainMenuOptions,
+	kMainMenuExit,
+	kMainMenuCount,
 };
 
-static const _MenuOffset _mainMenuOffsets[] = {
+static const MenuOffset kMainMenuOffsets[] = {
 	{111, 119, 402, 140},
 	{111, 144, 402, 165},
 	{111, 177, 402, 198},
@@ -92,9 +92,9 @@ static const _MenuOffset _mainMenuOffsets[] = {
 
 // Confirm boxes (original: some_dialog? and addDialogClickBoxes). The title, then up to six
 // lines of text, and the buttons, which depend on how many there are.
-static const _MenuOffset kDialogTitleOffset = { 98,  13, 418,  38};
+static const MenuOffset kDialogTitleOffset = { 98,  13, 418,  38};
 
-static const _MenuOffset kDialogLineOffsets[] = {
+static const MenuOffset kDialogLineOffsets[] = {
 	{ 93,  85, 418, 108},
 	{ 94, 119, 419, 142},
 	{ 94, 143, 419, 166},
@@ -103,7 +103,7 @@ static const _MenuOffset kDialogLineOffsets[] = {
 	{ 94, 235, 419, 258}
 };
 
-static const _MenuOffset kDialogButtonOffsets[3][3] = {
+static const MenuOffset kDialogButtonOffsets[3][3] = {
 	{{204, 302, 295, 329}},
 	{{ 93, 301, 184, 328}, {321, 301, 412, 329}},
 	{{ 91, 301, 182, 328}, {206, 301, 297, 328}, {321, 301, 412, 328}}
@@ -123,7 +123,7 @@ enum OptionsMenuItem {
 };
 
 // From runOptionsMenu_addClickBoxes, the last entry is the title
-static const _MenuOffset kOptionsMenuOffsets[] = {
+static const MenuOffset kOptionsMenuOffsets[] = {
 	{111,  73, 403,  94},
 	{111, 132, 403, 153},
 	{111, 189, 403, 210},
@@ -151,7 +151,7 @@ enum TextMusicMenuBox {
 	kTextMusicBoxCount
 };
 
-static const _MenuOffset kTextMusicMenuOffsets[] = {
+static const MenuOffset kTextMusicMenuOffsets[] = {
 	{ 98,  13, 414,  39},
 	{ 90, 134, 243, 155},
 	{ 90, 191, 243, 212},
@@ -193,7 +193,7 @@ enum VolumeMenuBox {
 	kVolumeBoxCount = kVolumeBoxFirstSwitch + 3
 };
 
-static const _MenuOffset kVolumeMenuOffsets[] = {
+static const MenuOffset kVolumeMenuOffsets[] = {
 	{ 98,  13, 413,  38},
 	{ 93, 300, 164, 329},
 	{349, 301, 421, 330},
@@ -245,7 +245,7 @@ enum DisplayMenuBox {
 	kDisplayBoxCount
 };
 
-static const _MenuOffset kDisplayMenuOffsets[] = {
+static const MenuOffset kDisplayMenuOffsets[] = {
 	{ 98,  12, 413,  38},
 	{109,  72, 323,  96},
 	{109, 130, 323, 154},
@@ -288,7 +288,7 @@ enum {
 	kDisplayRowCancel
 };
 
-static int8 findMenuItemAtPos(const _MenuOffset *offsets, int8 count, int16 x, int16 y) {
+static int8 findMenuItemAtPos(const MenuOffset *offsets, int8 count, int16 x, int16 y) {
 	for (int8 i = 0; i < count; i++) {
 		if (x >= offsets[i].x1 && x <= offsets[i].x2 && y >= offsets[i].y1 && y <= offsets[i].y2)
 			return i;
@@ -332,7 +332,7 @@ static const byte testfile_data[] = {
 	0x6B, 0x00, 0x00, 0x00, 0x00, 0x12, 0x3F, 0x07
 };
 
-Common::StringArray MainMenuIds = {"M_RETG", "M_NEWG", "M_LOADG", "M_SAVEG", "M_OPT", "EXIT_G", "MAINM"};
+static const char *const kMainMenuTextIds[] = {"M_RETG", "M_NEWG", "M_LOADG", "M_SAVEG", "M_OPT", "EXIT_G", "MAINM"};
 // The back entry reads "Return to game" (M_RETG) when the options were opened from the game
 static const char *const kOptionsMenuTextIds[] = {"M_SND", "M_DVOPT", "M_GFX", "BSAVOPT", "M_BACK", "M_OPT"};
 
@@ -348,16 +348,16 @@ void PrisonerEngine::loadDialogData() {
 // confirms, the others close the box. The dialog type sets the buttons: OK alone, OK and Cancel,
 // or OK, Ignore and Cancel.
 void PrisonerEngine::displayDialog(
-	DIALOG_TYPE type,
+	DialogType type,
 	Common::String &titleStrId,
 	Common::String &actionStrId,
 	DialogAction actionCallback
 	) {
 	Common::StringArray buttonIds;
 	buttonIds.push_back("OK");
-	if (type == IGNORE)
+	if (type == kDialogIgnore)
 		buttonIds.push_back("IGNORE");
-	if (type == CANCEL || type == IGNORE)
+	if (type == kDialogCancel || type == kDialogIgnore)
 		buttonIds.push_back("CANCEL");
 
 	_isDialogMenuShowing = true;
@@ -381,13 +381,13 @@ void PrisonerEngine::displayDialog(
 			_dialogLines.push_back(lines[i]);
 	}
 
-	const MENU_PANELS panels[] = {ASKER1_PANEL, ASKER2_PANEL, ASKER3_PANEL};
+	const MenuPanel panels[] = {kAsker1Panel, kAsker2Panel, kAsker3Panel};
 	_dialogPanelIndex = panels[_dialogButtonLabels.size() - 1];
 	_dialogPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[_dialogPanelIndex]);
 }
 
 void PrisonerEngine::loadMenuPanels() {
-	const _PakMenuDirectoryEntry *xentry = _kPrisonerPanelData;
+	const PakMenuDirectoryEntry *xentry = kPrisonerPanelData;
 	uint8 i = 0;
 	while (xentry->pakName) {
 		Common::String pakName = xentry->pakName;
@@ -407,21 +407,22 @@ void PrisonerEngine::loadMenuPanels() {
 	runMainMenu_initMessages();
 	runMainMenu_addClickBoxes(67, 77);
 	_currMenuIndex = _inGame ? 0 : 1;
-	_selectedMenuIndex = MAIN_PANEL;
+	_selectedMenuIndex = kMainPanel;
 	_menuMouseCursorActive = 1;
 	_menuMouseCursor = 13;
 }
 
-const _PakMenuDirectoryEntry &PrisonerEngine::getMenuPanelData(MENU_PANELS panel) const {
-	return _kPrisonerPanelData[panel];
+const PakMenuDirectoryEntry &PrisonerEngine::getMenuPanelData(MenuPanel panel) const {
+	return kPrisonerPanelData[panel];
 }
 
 void PrisonerEngine::loadOnscreenMenuText() {
 }
 
 void PrisonerEngine::runMainMenu_initMessages() {
-	for (Common::StringArray::iterator id = MainMenuIds.begin(); id != MainMenuIds.end(); id++) {
-		_menuItems.push_back(getGlobalText(*id));
+	for (uint i = 0; i < ARRAYSIZE(kMainMenuTextIds); i++) {
+		Common::String id = kMainMenuTextIds[i];
+		_menuItems.push_back(getGlobalText(id));
 	}
 
 	updateActiveMenuItems();
@@ -445,10 +446,10 @@ void PrisonerEngine::runMainMenu_addClickBoxes(int16 x, int16 y) {
 	for (uint8 i = 0; i < _menuItems.size(); i++) {
 		if (_activeMenuItems[i]) {
 			addClickBox(
-				x + _mainMenuOffsets[i].x1,
-				y + _mainMenuOffsets[i].y1,
-				x + _mainMenuOffsets[i].x2,
-				y + _mainMenuOffsets[i].y2,
+				x + kMainMenuOffsets[i].x1,
+				y + kMainMenuOffsets[i].y1,
+				x + kMainMenuOffsets[i].x2,
+				y + kMainMenuOffsets[i].y2,
 				i);
 		}
 	}
@@ -469,16 +470,16 @@ void PrisonerEngine::handleMainMenuInput() {
 	Common::KeyCode keyState;
 	uint16 buttonState;
 
-	if (_selectedMenuIndex == OPTIONS_PANEL) {
+	if (_selectedMenuIndex == kOptionsPanel) {
 		handleOptionsMenuInput();
 		return;
-	} else if (_selectedMenuIndex == OPTGFX_PANEL) {
+	} else if (_selectedMenuIndex == kOptGfxPanel) {
 		handleDisplaySettingsInput();
 		return;
-	} else if (_selectedMenuIndex == DIVOPT_PANEL) {
+	} else if (_selectedMenuIndex == kDivOptPanel) {
 		handleTextMusicInput();
 		return;
-	} else if (_selectedMenuIndex == VOLOPT_PANEL) {
+	} else if (_selectedMenuIndex == kVolOptPanel) {
 		handleVolumeInput();
 		return;
 	}
@@ -487,7 +488,7 @@ void PrisonerEngine::handleMainMenuInput() {
 
 	// Hit-test the item rectangles directly; the click box indices don't match the
 	// menu items once inactive items are left out
-	int8 itemIndex = findMenuItemAtPos(_mainMenuOffsets, MAIN_MENU_SIZE, _mouseX - kMenuPanelX, _mouseY - kMenuPanelY);
+	int8 itemIndex = findMenuItemAtPos(kMainMenuOffsets, kMainMenuCount, _mouseX - kMenuPanelX, _mouseY - kMenuPanelY);
 	if ((buttonState & kLeftButton) && itemIndex != -1 && _activeMenuItems[itemIndex]) {
 		inpMouseSetWaitRelease(true);
 		_currMenuIndex = itemIndex;
@@ -496,14 +497,14 @@ void PrisonerEngine::handleMainMenuInput() {
 
 	if (keyState == Common::KEYCODE_DOWN) {
 		do {
-			_currMenuIndex = (_currMenuIndex + 1) % MAIN_MENU_SIZE;
+			_currMenuIndex = (_currMenuIndex + 1) % kMainMenuCount;
 		} while (!_activeMenuItems[_currMenuIndex]);
 		inpKeybSetWaitRelease(true);
 	} else if (keyState == Common::KEYCODE_UP) {
 		do {
-			_currMenuIndex = (_currMenuIndex - 1) % MAIN_MENU_SIZE;
+			_currMenuIndex = (_currMenuIndex - 1) % kMainMenuCount;
 			if (_currMenuIndex < 0) {
-				_currMenuIndex += MAIN_MENU_SIZE;
+				_currMenuIndex += kMainMenuCount;
 			}
 		} while (!_activeMenuItems[_currMenuIndex]);
 		inpKeybSetWaitRelease(true);
@@ -603,30 +604,30 @@ void PrisonerEngine::doMenuAction(uint8 clickBoxIndex) {
 	Common::String exitActionStr("DO_QUIT");
 
 	switch (clickBoxIndex) {
-	case RET_GAME:
+	case kMainMenuReturnToGame:
 		resumeGame();
 		break;
-	case NEW_GAME:
+	case kMainMenuNewGame:
 		inpKeybSetWaitRelease(true);
-		displayDialog(CANCEL, titleStr, newGameActionStr, &PrisonerEngine::dialogActionNewGame);
+		displayDialog(kDialogCancel, titleStr, newGameActionStr, &PrisonerEngine::dialogActionNewGame);
 
 		debug("CLICK ON = %d", clickBoxIndex);
 		break;
-	case LOAD_GAME:
+	case kMainMenuLoadGame:
 		inpKeybSetWaitRelease(true);
 		openSaveLoadScreen(false);
 		break;
-	case SAVE_GAME:
+	case kMainMenuSaveGame:
 		inpKeybSetWaitRelease(true);
 		openSaveLoadScreen(true);
 		break;
-	case OPTIONS:
+	case kMainMenuOptions:
 		inpKeybSetWaitRelease(true);
 		loadOptionsMenu(false);
 		break;
-	case EXIT:
+	case kMainMenuExit:
 		inpKeybSetWaitRelease(true);
-		displayDialog(CANCEL, titleStr, exitActionStr, &PrisonerEngine::dialogActionExit);
+		displayDialog(kDialogCancel, titleStr, exitActionStr, &PrisonerEngine::dialogActionExit);
 		break;
 	default:
 		break;
@@ -634,7 +635,7 @@ void PrisonerEngine::doMenuAction(uint8 clickBoxIndex) {
 }
 
 void PrisonerEngine::loadOptionsMenu(bool fromGame) {
-	_selectedMenuIndex = OPTIONS_PANEL;
+	_selectedMenuIndex = kOptionsPanel;
 	_currOptionsMenuIndex = kOptionsMenuSound;
 	_optionsOpenedFromGame = fromGame;
 
@@ -649,7 +650,7 @@ void PrisonerEngine::openMainMenu() {
 	memcpy(_menuBackgroundSurface->getPixels(), _screen->getScreen()->getPixels(), 640 * 480);
 	_menuBackgroundSaved = true;
 	_mainMenuRequested = true;
-	_selectedMenuIndex = MAIN_PANEL;
+	_selectedMenuIndex = kMainPanel;
 	pauseGame();
 }
 
@@ -665,7 +666,7 @@ void PrisonerEngine::closeOptionsMenu() {
 	if (_optionsOpenedFromGame) {
 		resumeGame();
 	} else {
-		_selectedMenuIndex = MAIN_PANEL;
+		_selectedMenuIndex = kMainPanel;
 	}
 }
 
@@ -716,8 +717,8 @@ void PrisonerEngine::doOptionsMenuAction(int8 itemIndex) {
 	case kOptionsMenuSaveSettings: {
 		// Show "Saving..." message in the options title while the settings are written
 		Common::String savingId = "MSGSOPT";
-		const _MenuOffset *off = &kOptionsMenuOffsets[kOptionsMenuCount];
-		AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[OPTIONS_PANEL]);
+		const MenuOffset *off = &kOptionsMenuOffsets[kOptionsMenuCount];
+		AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[kOptionsPanel]);
 		_screen->drawAnimationElement(menuPanel, 0, kMenuPanelX, kMenuPanelY, 0);
 		drawTextEx(kMenuPanelX + off->x1, kMenuPanelX + off->x2, kMenuPanelY + off->y1, kMenuPanelY + off->y2, getGlobalText(savingId));
 		_screen->update();
@@ -744,7 +745,7 @@ void PrisonerEngine::loadDisplaySettings() {
 
 // The display settings screen edits copies of the settings, OK applies them
 void PrisonerEngine::loadDisplaySettingsMenu() {
-	_selectedMenuIndex = OPTGFX_PANEL;
+	_selectedMenuIndex = kOptGfxPanel;
 	_displayRow = kDisplayRowScrolling;
 	_displayScrolling = _halfScreenScrolling;
 	_displayStandbyMinutes = _screensaverTime / kTicksPerMinute;
@@ -769,7 +770,7 @@ void PrisonerEngine::closeDisplaySettingsMenu(bool apply) {
 		ConfMan.setInt("standby_minutes", _displayStandbyMinutes);
 		ConfMan.setInt("animation_speed", _animationSpeed);
 	}
-	_selectedMenuIndex = OPTIONS_PANEL;
+	_selectedMenuIndex = kOptionsPanel;
 }
 
 // Left/minus (delta -1) and right/plus (delta 1) change the value of the current row
@@ -922,20 +923,20 @@ static void drawButtonHighlight(Screen *screen, AnimationResource *panel, int16 
 }
 
 void PrisonerEngine::updateDisplaySettingsMenu(int16 x, int16 y) {
-	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[OPTGFX_PANEL]);
+	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[kOptGfxPanel]);
 	drawPanelSequence(_screen, menuPanel, 0, x, y);
 
-	_PakMenuDirectoryEntry panelData = _kPrisonerPanelData[OPTGFX_PANEL];
+	PakMenuDirectoryEntry panelData = kPrisonerPanelData[kOptGfxPanel];
 	setFontColors(_menuFont, panelData.outlineColor, panelData.inkColor);
 	setActiveFont(_menuFont);
 
 	const int8 textBoxes[] = {kDisplayBoxTitle, kDisplayBoxScrollingLabel, kDisplayBoxStandbyLabel, kDisplayBoxSpeedLabel, kDisplayBoxOk, kDisplayBoxCancel};
 	for (uint i = 0; i < _displayMenuItems.size(); i++) {
-		const _MenuOffset *off = &kDisplayMenuOffsets[textBoxes[i]];
+		const MenuOffset *off = &kDisplayMenuOffsets[textBoxes[i]];
 		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _displayMenuItems[i]);
 	}
 
-	const _MenuOffset *off = &kDisplayMenuOffsets[kDisplayBoxStandbyValue];
+	const MenuOffset *off = &kDisplayMenuOffsets[kDisplayBoxStandbyValue];
 	drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, Common::String::format("%02d", _displayStandbyMinutes));
 
 	off = &kDisplayMenuOffsets[kDisplayBoxScrollingToggle];
@@ -961,7 +962,7 @@ void PrisonerEngine::loadTextMusicSettings() {
 
 // The screen edits copies of the settings, OK applies them
 void PrisonerEngine::loadTextMusicMenu() {
-	_selectedMenuIndex = DIVOPT_PANEL;
+	_selectedMenuIndex = kDivOptPanel;
 	_textMusicRow = kTextMusicRowDialog;
 	if (_speechMuted)
 		_textMusicDialogType = kDialogTypeText;
@@ -992,7 +993,7 @@ void PrisonerEngine::closeTextMusicMenu(bool apply) {
 		if (_textMusicDigital != _digitalMusic)
 			switchMusicType(_textMusicDigital);
 	}
-	_selectedMenuIndex = OPTIONS_PANEL;
+	_selectedMenuIndex = kOptionsPanel;
 }
 
 // Left/right change the value of the current row
@@ -1098,7 +1099,7 @@ void PrisonerEngine::handleTextMusicInput() {
 // Marks the chosen box of an option with the panel's marker and darkens the others
 // (original: runOptionsMenu_sub_33770)
 void PrisonerEngine::drawTextMusicChoice(AnimationResource *panel, int16 x, int16 y, int16 box, bool chosen) {
-	const _MenuOffset *off = &kTextMusicMenuOffsets[box];
+	const MenuOffset *off = &kTextMusicMenuOffsets[box];
 	if (chosen)
 		drawPanelSequence(_screen, panel, 2, x + off->x1, y + off->y1);
 	else
@@ -1106,17 +1107,17 @@ void PrisonerEngine::drawTextMusicChoice(AnimationResource *panel, int16 x, int1
 }
 
 void PrisonerEngine::updateTextMusicMenu(int16 x, int16 y) {
-	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[DIVOPT_PANEL]);
+	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[kDivOptPanel]);
 	drawPanelSequence(_screen, menuPanel, 0, x, y);
 
-	_PakMenuDirectoryEntry panelData = _kPrisonerPanelData[DIVOPT_PANEL];
+	PakMenuDirectoryEntry panelData = kPrisonerPanelData[kDivOptPanel];
 	setFontColors(_menuFont, panelData.outlineColor, panelData.inkColor);
 	setActiveFont(_menuFont);
 
 	const int8 textBoxes[] = {kTextMusicBoxTitle, kTextMusicBoxDialogLabel, kTextMusicBoxEndLabel,
 		kTextMusicBoxMusicLabel, kTextMusicBoxOk, kTextMusicBoxCancel};
 	for (uint i = 0; i < _textMusicMenuItems.size(); i++) {
-		const _MenuOffset *off = &kTextMusicMenuOffsets[textBoxes[i]];
+		const MenuOffset *off = &kTextMusicMenuOffsets[textBoxes[i]];
 		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _textMusicMenuItems[i]);
 	}
 
@@ -1128,7 +1129,7 @@ void PrisonerEngine::updateTextMusicMenu(int16 x, int16 y) {
 	drawTextMusicChoice(menuPanel, x, y, kTextMusicBoxMusicMidi, !_textMusicDigital);
 	drawTextMusicChoice(menuPanel, x, y, kTextMusicBoxMusicDigital, _textMusicDigital);
 
-	const _MenuOffset *off = &kTextMusicMenuOffsets[kTextMusicBoxDialogLabel + _textMusicRow];
+	const MenuOffset *off = &kTextMusicMenuOffsets[kTextMusicBoxDialogLabel + _textMusicRow];
 	drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
 }
 
@@ -1185,7 +1186,7 @@ void PrisonerEngine::applyVolumeSettings() {
 }
 
 void PrisonerEngine::loadVolumeMenu() {
-	_selectedMenuIndex = VOLOPT_PANEL;
+	_selectedMenuIndex = kVolOptPanel;
 	_volumeRow = 0;
 
 	// ScummVM's volumes go from 0 to 256, the game's from 0 to 100 in steps of 5
@@ -1219,7 +1220,7 @@ void PrisonerEngine::closeVolumeMenu(bool apply) {
 	}
 	stopVolumeTestSounds();
 	syncSoundSettings();
-	_selectedMenuIndex = OPTIONS_PANEL;
+	_selectedMenuIndex = kOptionsPanel;
 }
 
 void PrisonerEngine::changeVolumeSetting(int16 row, int16 volume) {
@@ -1306,15 +1307,15 @@ void PrisonerEngine::handleVolumeInput() {
 }
 
 void PrisonerEngine::updateVolumeMenu(int16 x, int16 y) {
-	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[VOLOPT_PANEL]);
+	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[kVolOptPanel]);
 	drawPanelSequence(_screen, menuPanel, 0, x, y);
 
-	_PakMenuDirectoryEntry panelData = _kPrisonerPanelData[VOLOPT_PANEL];
+	PakMenuDirectoryEntry panelData = kPrisonerPanelData[kVolOptPanel];
 	setFontColors(_menuFont, panelData.outlineColor, panelData.inkColor);
 	setActiveFont(_menuFont);
 
 	for (uint i = 0; i < _volumeMenuItems.size(); i++) {
-		const _MenuOffset *off = &kVolumeMenuOffsets[i];
+		const MenuOffset *off = &kVolumeMenuOffsets[i];
 		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _volumeMenuItems[i]);
 	}
 
@@ -1322,12 +1323,12 @@ void PrisonerEngine::updateVolumeMenu(int16 x, int16 y) {
 		int16 litCells = _volumeValues[row] / kVolumeStep;
 		if (litCells > 0)
 			drawPanelSequence(_screen, menuPanel, kVolumeSliderElements[row] + litCells - 1, x + kVolumeCellX, y + kVolumeCellY[row]);
-		const _MenuOffset *off = &kVolumeMenuOffsets[kVolumeBoxFirstSwitch + row];
+		const MenuOffset *off = &kVolumeMenuOffsets[kVolumeBoxFirstSwitch + row];
 		drawPanelSequence(_screen, menuPanel, _volumeEnabled[row] ? kVolumeSwitchOnElement : kVolumeSwitchOffElement,
 			x + off->x1, y + off->y1);
 	}
 
-	const _MenuOffset *off = &kVolumeMenuOffsets[kVolumeBoxFirstLabel + _volumeRow];
+	const MenuOffset *off = &kVolumeMenuOffsets[kVolumeBoxFirstLabel + _volumeRow];
 	drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
 }
 
@@ -1342,7 +1343,7 @@ void PrisonerEngine::openConfigDialog() {
 void PrisonerEngine::updateDialogMenu(int16 x, int16 y) {
 	_screen->drawAnimationElement(_dialogPanel, 0, x, y, 0);
 
-	const _MenuOffset *off = &kDialogTitleOffset;
+	const MenuOffset *off = &kDialogTitleOffset;
 	drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _dialogTitle);
 
 	uint firstLine = (ARRAYSIZE(kDialogLineOffsets) - _dialogLines.size()) / 2;
@@ -1358,7 +1359,7 @@ void PrisonerEngine::updateDialogMenu(int16 x, int16 y) {
 	}
 
 	// The dialog panels have no highlight of their own, use the main menu's
-	AnimationResource *mainPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[MAIN_PANEL]);
+	AnimationResource *mainPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[kMainPanel]);
 	off = &kDialogButtonOffsets[buttonCount - 1][_dialogMenuFocus];
 	drawButtonHighlight(_screen, mainPanel, x + off->x1, x + off->x2, y + off->y1 + 4);
 }
@@ -1366,7 +1367,7 @@ void PrisonerEngine::updateDialogMenu(int16 x, int16 y) {
 void PrisonerEngine::updateMainMenu(int16 x, int16 y) {
 	AnimationResource *menuPanel;
 
-	menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[MAIN_PANEL]);
+	menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[kMainPanel]);
 	_screen->drawAnimationElement(menuPanel, 0, x, y, 0);
 
 	// TODO: Remove after debugging
@@ -1378,12 +1379,12 @@ void PrisonerEngine::updateMainMenu(int16 x, int16 y) {
 	//_screen->drawLine(x + 111, y + 260, x + 402, y + 281, 5);
 	//_screen->drawLine(x + 98, y + 13, x + 413, y + 39, 6);
 
-	_PakMenuDirectoryEntry mainPanelData = _kPrisonerPanelData[MAIN_PANEL];
+	PakMenuDirectoryEntry mainPanelData = kPrisonerPanelData[kMainPanel];
 	setFontColors(_menuFont, mainPanelData.outlineColor, mainPanelData.inkColor);
 	setActiveFont(_menuFont);
 
 	if (_isDialogMenuShowing) {
-		_PakMenuDirectoryEntry dialogPanelData = _kPrisonerPanelData[_dialogPanelIndex];
+		PakMenuDirectoryEntry dialogPanelData = kPrisonerPanelData[_dialogPanelIndex];
 		setFontColors(_menuFont, dialogPanelData.outlineColor, dialogPanelData.inkColor);
 		setActiveFont(_menuFont);
 
@@ -1392,7 +1393,7 @@ void PrisonerEngine::updateMainMenu(int16 x, int16 y) {
 	}
 
 	for (uint8 i = 0; i < _menuItems.size(); i++) {
-		const _MenuOffset *off = &(_mainMenuOffsets[i]);
+		const MenuOffset *off = &(kMainMenuOffsets[i]);
 		drawTextEx(
 			x + off->x1,
 			x + off->x2,
@@ -1411,26 +1412,26 @@ void PrisonerEngine::updateMainMenu(int16 x, int16 y) {
 	}
 
 	// Draws panel element 1 (the highlight) at the focused item's top left corner
-	const _MenuOffset *off = &(_mainMenuOffsets[_currMenuIndex]);
+	const MenuOffset *off = &(kMainMenuOffsets[_currMenuIndex]);
 	drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
 }
 
 void PrisonerEngine::updateOptionsMenu(int16 x, int16 y) {
 	AnimationResource *menuPanel;
 
-	menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[OPTIONS_PANEL]);
+	menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[kOptionsPanel]);
 	_screen->drawAnimationElement(menuPanel, 0, x, y, 0);
 
-	_PakMenuDirectoryEntry optionsPanelData = _kPrisonerPanelData[OPTIONS_PANEL];
+	PakMenuDirectoryEntry optionsPanelData = kPrisonerPanelData[kOptionsPanel];
 	setFontColors(_menuFont, optionsPanelData.outlineColor, optionsPanelData.inkColor);
 	setActiveFont(_menuFont);
 
 	for (uint i = 0; i < _optionsMenuItems.size(); i++) {
-		const _MenuOffset *off = &kOptionsMenuOffsets[i];
+		const MenuOffset *off = &kOptionsMenuOffsets[i];
 		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _optionsMenuItems[i]);
 	}
 
-	const _MenuOffset *off = &kOptionsMenuOffsets[_currOptionsMenuIndex];
+	const MenuOffset *off = &kOptionsMenuOffsets[_currOptionsMenuIndex];
 	drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
 }
 
@@ -1450,7 +1451,7 @@ enum SaveLoadMenuBox {
 	kSaveLoadBoxCount
 };
 
-static const _MenuOffset kSaveLoadMenuOffsets[] = {
+static const MenuOffset kSaveLoadMenuOffsets[] = {
 	{261,  62, 428,  83},
 	{261,  87, 428, 108},
 	{261, 120, 428, 141},
@@ -1520,7 +1521,7 @@ void PrisonerEngine::openSaveLoadScreen(bool saving) {
 		openMainMenu();
 
 	_saveLoadSaving = saving;
-	_selectedMenuIndex = saving ? SAVE_PANEL : LOAD_PANEL;
+	_selectedMenuIndex = saving ? kSavePanel : kLoadPanel;
 	_menuFunctionArray[_selectedMenuIndex] = &PrisonerEngine::updateSaveLoadMenu;
 
 	_saveLoadMenuItems.clear();
@@ -1590,7 +1591,7 @@ void PrisonerEngine::closeSaveLoadScreen() {
 	if (_saveLoadFromGame)
 		resumeGame();
 	else
-		_selectedMenuIndex = MAIN_PANEL;
+		_selectedMenuIndex = kMainPanel;
 }
 
 // The thumbnail of the selected save (sg_readThumbnail). The new save shows the game screen.
@@ -1677,7 +1678,7 @@ void PrisonerEngine::confirmSaveLoadEntry() {
 	} else {
 		if (isPaused())
 			_pauseToken.clear();
-		_selectedMenuIndex = MAIN_PANEL;
+		_selectedMenuIndex = kMainPanel;
 		loadGameState(entry.slot);
 	}
 }
@@ -1706,7 +1707,7 @@ void PrisonerEngine::moveSaveLoadSelection(int16 delta) {
 }
 
 int16 PrisonerEngine::getSaveLoadTextWidth() {
-	const _MenuOffset *off = &kSaveLoadMenuOffsets[kSaveLoadBoxFirstRow];
+	const MenuOffset *off = &kSaveLoadMenuOffsets[kSaveLoadBoxFirstRow];
 	Common::String space = " ";
 	return off->x2 - off->x1 - 2 * getTextWidth(space);
 }
@@ -1731,7 +1732,7 @@ void PrisonerEngine::handleSaveLoadInput() {
 			if (count > 0) {
 				Common::String titleStr("T_WARN");
 				Common::String actionStr("DELSAVE");
-				displayDialog(CANCEL, titleStr, actionStr, &PrisonerEngine::dialogActionDeleteSave);
+				displayDialog(kDialogCancel, titleStr, actionStr, &PrisonerEngine::dialogActionDeleteSave);
 			}
 			break;
 		case kSaveLoadBoxCancel:
@@ -1829,7 +1830,7 @@ void PrisonerEngine::handleSaveLoadInput() {
 			if (count > 0) {
 				Common::String titleStr("T_WARN");
 				Common::String actionStr("DELSAVE");
-				displayDialog(CANCEL, titleStr, actionStr, &PrisonerEngine::dialogActionDeleteSave);
+				displayDialog(kDialogCancel, titleStr, actionStr, &PrisonerEngine::dialogActionDeleteSave);
 			}
 			break;
 		case Common::KEYCODE_RETURN:
@@ -1857,13 +1858,13 @@ void PrisonerEngine::updateSaveLoadMenu(int16 x, int16 y) {
 	AnimationResource *menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[_selectedMenuIndex]);
 	drawPanelSequence(_screen, menuPanel, 0, x, y);
 
-	_PakMenuDirectoryEntry panelData = _kPrisonerPanelData[_selectedMenuIndex];
+	PakMenuDirectoryEntry panelData = kPrisonerPanelData[_selectedMenuIndex];
 	setFontColors(_menuFont, panelData.outlineColor, panelData.inkColor);
 	setActiveFont(_menuFont);
 
 	const int8 textBoxes[] = {kSaveLoadBoxTitle, kSaveLoadBoxOk, kSaveLoadBoxDelete, kSaveLoadBoxCancel};
 	for (uint i = 0; i < _saveLoadMenuItems.size(); i++) {
-		const _MenuOffset *off = &kSaveLoadMenuOffsets[textBoxes[i]];
+		const MenuOffset *off = &kSaveLoadMenuOffsets[textBoxes[i]];
 		drawTextEx(x + off->x1, x + off->x2, y + off->y1, y + off->y2, _saveLoadMenuItems[i]);
 	}
 
@@ -1871,7 +1872,7 @@ void PrisonerEngine::updateSaveLoadMenu(int16 x, int16 y) {
 	const int16 visibleCount = MIN<int16>(count - _saveLoadTop, kSaveLoadRows);
 	for (int16 i = 0; i < visibleCount; i++) {
 		const int16 entryIndex = _saveLoadTop + i;
-		const _MenuOffset *off = &kSaveLoadMenuOffsets[kSaveLoadBoxFirstRow + i];
+		const MenuOffset *off = &kSaveLoadMenuOffsets[kSaveLoadBoxFirstRow + i];
 		Common::String text;
 		if (entryIndex == _saveLoadSelected) {
 			drawPanelSequence(_screen, menuPanel, 1, x + off->x1, y + off->y1);
@@ -1900,7 +1901,7 @@ void PrisonerEngine::updateSaveLoadMenu(int16 x, int16 y) {
 	}
 
 	updateSaveLoadThumbnail();
-	const _MenuOffset *off = &kSaveLoadMenuOffsets[kSaveLoadBoxThumbnail];
+	const MenuOffset *off = &kSaveLoadMenuOffsets[kSaveLoadBoxThumbnail];
 	Graphics::Surface *screen = _screen->getScreen();
 	for (int16 thumbY = 0; thumbY < kSaveLoadThumbnailHeight; thumbY++)
 		memcpy(screen->getBasePtr(x + off->x1, y + off->y1 + thumbY),

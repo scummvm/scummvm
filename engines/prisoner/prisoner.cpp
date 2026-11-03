@@ -70,11 +70,11 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_digitalMusic = !(ConfMan.hasKey("midi_music") && ConfMan.getBool("midi_music"));
 
-	_menuFunctionArray[MAIN_PANEL] = &PrisonerEngine::updateMainMenu;
-	_menuFunctionArray[OPTIONS_PANEL] = &PrisonerEngine::updateOptionsMenu;
-	_menuFunctionArray[OPTGFX_PANEL] = &PrisonerEngine::updateDisplaySettingsMenu;
-	_menuFunctionArray[DIVOPT_PANEL] = &PrisonerEngine::updateTextMusicMenu;
-	_menuFunctionArray[VOLOPT_PANEL] = &PrisonerEngine::updateVolumeMenu;
+	_menuFunctionArray[kMainPanel] = &PrisonerEngine::updateMainMenu;
+	_menuFunctionArray[kOptionsPanel] = &PrisonerEngine::updateOptionsMenu;
+	_menuFunctionArray[kOptGfxPanel] = &PrisonerEngine::updateDisplaySettingsMenu;
+	_menuFunctionArray[kDivOptPanel] = &PrisonerEngine::updateTextMusicMenu;
+	_menuFunctionArray[kVolOptPanel] = &PrisonerEngine::updateVolumeMenu;
 }
 
 PrisonerEngine::~PrisonerEngine() {
@@ -314,7 +314,7 @@ Common::Error PrisonerEngine::run() {
 		pakName = "F_ICETXT";
 		_globalTextResourceCacheSlot = loadTextResource(pakName, 0);
 		pakName = "S_PANEL";
-		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, getMenuPanelData(FORLOOKINV_PANEL).pakSlot, 11);
+		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, getMenuPanelData(kForLookInvPanel).pakSlot, 11);
 	}
 
 	loadMenuPanels();
@@ -853,7 +853,7 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 
 	// The original save/load screens handle all keys themselves (Escape cancels), but not those
 	// of their delete confirmation box
-	if (_mainMenuRequested && !_isDialogMenuShowing && (_selectedMenuIndex == SAVE_PANEL || _selectedMenuIndex == LOAD_PANEL)) {
+	if (_mainMenuRequested && !_isDialogMenuShowing && (_selectedMenuIndex == kSavePanel || _selectedMenuIndex == kLoadPanel)) {
 		handleSaveLoadInput();
 		return 0;
 	}
@@ -865,8 +865,8 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 
 	if (_inGame) {
 		// The display settings screen handles Escape itself (cancel)
-		if (keyState == Common::KEYCODE_ESCAPE && !(_mainMenuRequested && (_selectedMenuIndex == OPTGFX_PANEL || _selectedMenuIndex == DIVOPT_PANEL ||
-			_selectedMenuIndex == VOLOPT_PANEL))) {
+		if (keyState == Common::KEYCODE_ESCAPE && !(_mainMenuRequested && (_selectedMenuIndex == kOptGfxPanel || _selectedMenuIndex == kDivOptPanel ||
+			_selectedMenuIndex == kVolOptPanel))) {
 			inpKeybSetWaitRelease(true);
 			if (!_mainMenuRequested) {
 				openMainMenu();
@@ -1138,7 +1138,7 @@ void PrisonerEngine::pauseGame() {
 
 void PrisonerEngine::resumeGame() {
 	_mainMenuRequested = false;
-	_selectedMenuIndex = MAIN_PANEL;
+	_selectedMenuIndex = kMainPanel;
 	this->_screen->clear();
 	_pauseToken.clear();
 	resetFrameValues();
@@ -1151,7 +1151,7 @@ void PrisonerEngine::runPauseScreen() {
 	const int16 kPictureY = 170;
 	const int16 kGameAreaY = 82;
 
-	AnimationResource *pausePanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[PAUSE_PANEL]);
+	AnimationResource *pausePanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[kPausePanel]);
 	Graphics::Surface *screen = _screen->getScreen();
 
 	CursorMan.showMouse(false);

@@ -24,44 +24,44 @@
 
 namespace Prisoner {
 
-enum MENU_PANELS {
-	SAVE_PANEL,
-	OPTIONS_PANEL,
-	MAIN_PANEL,
-	VOLOPT_PANEL,
-	DIVOPT_PANEL,
-	PAUSE_PANEL,
-	SNDCFG_PANEL,
-	LOAD_PANEL,
-	ASKER1_PANEL,
-	ASKER2_PANEL,
-	ASKER3_PANEL,
-	OPTGFX_PANEL,
-	FORLOOKINV_PANEL,
-	FORIDM_PANEL,
-	PANEL_SIZE_END
+enum MenuPanel {
+	kSavePanel,
+	kOptionsPanel,
+	kMainPanel,
+	kVolOptPanel,
+	kDivOptPanel,
+	kPausePanel,
+	kSndCfgPanel,
+	kLoadPanel,
+	kAsker1Panel,
+	kAsker2Panel,
+	kAsker3Panel,
+	kOptGfxPanel,
+	kForLookInvPanel,
+	kForIdmPanel,
+	kMenuPanelCount
 };
 
-struct _PakMenuDirectoryEntry {
-	MENU_PANELS menuPanel;
+struct PakMenuDirectoryEntry {
+	MenuPanel menuPanel;
 	const char *pakName;
 	uint32 pakSlot;
 	uint8 outlineColor;
 	uint8 inkColor;
 };
 
-struct _MenuOffset {
+struct MenuOffset {
 	int16 x1;
 	int16 y1;
 	int16 x2;
 	int16 y2;
 };
 
-enum DIALOG_TYPE {
-	DUMMY,
-	OK,
-	CANCEL,
-	IGNORE,
+enum DialogType {
+	kDialogNone,
+	kDialogOk,
+	kDialogCancel,
+	kDialogIgnore,
 };
 
 

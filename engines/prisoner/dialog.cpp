@@ -121,13 +121,13 @@ void PrisonerEngine::startDialog(int16 dialogIndex) {
 	_dialogYAdd = _dialogFontHeight / 2;
 	_dialogRectY2 = _dialogRectY1 + _dialogActiveKeywordsCount * _dialogFontHeight + _dialogYAdd * 2;
 
-	_dialogPanelResourceCacheSlot = _menuPanelResourceCacheSlots[FORIDM_PANEL];
+	_dialogPanelResourceCacheSlot = _menuPanelResourceCacheSlots[kForIdmPanel];
 
 }
 
 void PrisonerEngine::initDialog() {
 	_dialogs.clear();
-	_dialogPanelResourceCacheSlot = _menuPanelResourceCacheSlots[FORIDM_PANEL];
+	_dialogPanelResourceCacheSlot = _menuPanelResourceCacheSlots[kForIdmPanel];
 }
 
 void PrisonerEngine::unloadDialogPanel() {

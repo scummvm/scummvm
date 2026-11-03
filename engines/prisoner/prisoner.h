@@ -835,7 +835,7 @@ public:
 		_zoneFontColor, _screenTextFontColor, _inventoryScreenTextFontColor;
 
 	/* Menu */
-	int16 _menuPanelResourceCacheSlots[MENU_PANELS::PANEL_SIZE_END];
+	int16 _menuPanelResourceCacheSlots[MenuPanel::kMenuPanelCount];
 	Common::StringArray _menuItems;
 	Common::Array<bool> _activeMenuItems;
 	Common::StringArray _optionsMenuItems;
@@ -858,13 +858,13 @@ public:
 	int16 _volumeTestSlots[3];
 	Audio::SoundHandle _volumeTestHandles[3];
 	typedef void (PrisonerEngine::*MenuFunction)(int16, int16);
-	MenuFunction _menuFunctionArray[MENU_PANELS::PANEL_SIZE_END];
+	MenuFunction _menuFunctionArray[MenuPanel::kMenuPanelCount];
 
 	/* Dialog */
 	Common::String _dialogTitle;
 	Common::StringArray _dialogLines;
 	Common::StringArray _dialogButtonLabels;
-	MENU_PANELS _dialogPanelIndex;
+	MenuPanel _dialogPanelIndex;
 	AnimationResource *_dialogPanel;
 	bool _isDialogMenuShowing;
 	int8 _dialogMenuFocus;
@@ -1252,10 +1252,10 @@ public:
 	void resumeGame();
 
 	/* Menu */
-	void displayDialog(DIALOG_TYPE type, Common::String &titleStrId, Common::String &actionStrId, DialogAction dlgAction);
+	void displayDialog(DialogType type, Common::String &titleStrId, Common::String &actionStrId, DialogAction dlgAction);
 	void loadDialogData();
 	void loadMenuPanels();
-	const _PakMenuDirectoryEntry &getMenuPanelData(MENU_PANELS panel) const;
+	const PakMenuDirectoryEntry &getMenuPanelData(MenuPanel panel) const;
 	void loadOptionsMenu(bool fromGame);
 	void openMainMenu();
 	void openOptionsMenuFromGame();
