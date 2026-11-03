@@ -303,7 +303,8 @@ void RunawayActor::draw(Graphics::ManagedSurface &surface, Common::Point positio
 		{85,80,75}, {75,70,65}, {70,65,60} };
 	if (sunlit) {
 		const byte windowLight[2][3] = {{90, 85, 80}, {80, 75, 70}};
-		memcpy(lights[1], windowLight, sizeof(windowLight));
+		memcpy(lights[1], windowLight[0], sizeof(windowLight[0]));
+		memcpy(lights[2], windowLight[1], sizeof(windowLight[1]));
 	}
 	uint16 palette[256];
 	for (uint i = 0; i < 256; ++i) {
