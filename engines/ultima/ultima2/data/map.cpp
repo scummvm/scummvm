@@ -85,8 +85,9 @@ bool Map::canLoad(int mapEra, int mapType) const {
 		return false;
 
 	// Towers/dungeons use a different on-disk layout than the fixed-size
-	// overworld/town/castle grid, so only their existence is checked here
-	return (mapType >= 4 && mapType != 9) || f.size() == MAP_WIDTH * MAP_HEIGHT;
+	// overworld/town/castle grid, so only their existence is checked here.
+	// Many of the other files are padded out to 4224 bytes, which the game ignores
+	return (mapType >= 4 && mapType != 9) || f.size() >= (MAP_WIDTH * MAP_HEIGHT);
 }
 
 void Map::load(int mapEra, int mapType) {
