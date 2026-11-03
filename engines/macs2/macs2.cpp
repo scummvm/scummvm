@@ -2212,6 +2212,7 @@ void Macs2Engine::rebuildHotspotSnapshot() const {
 		Common::Array<int32> sumX(_numHotspots, 0);
 		Common::Array<int32> sumY(_numHotspots, 0);
 		Common::Array<int32> count(_numHotspots, 0);
+		Common::Array<Common::Rect> bounds(_numHotspots);
 
 		for (int y = 0; y < _hotspotMap.h; ++y) {
 			for (int x = 0; x < _hotspotMap.w; ++x) {
@@ -2225,6 +2226,11 @@ void Macs2Engine::rebuildHotspotSnapshot() const {
 						sumX[i] += x;
 						sumY[i] += y;
 						count[i]++;
+						const Common::Rect px(x, y, x + 1, y + 1);
+						if (bounds[i].isEmpty())
+							bounds[i] = px;
+						else
+							bounds[i].extend(px);
 						break;
 					}
 				}
@@ -2241,7 +2247,26 @@ void Macs2Engine::rebuildHotspotSnapshot() const {
 			if ((uint)(i + 1) < _hotspotOverrides.size() && _hotspotOverrides[i + 1] != 0xFFFF) {
 				entry.index = _hotspotOverrides[i + 1];
 			}
-			entry.center = Common::Point(sumX[i] / count[i], sumY[i] / count[i]);
+
+			const uint8 color = (uint8)_hotspotColorTable[i];
+			const Common::Point center(sumX[i] / count[i], sumY[i] / count[i]);
+			Common::Point position = center;
+			if (_hotspotMap.getPixel(center.x, center.y) != color) {
+				uint bestDistance = (uint)(_hotspotMap.w * _hotspotMap.w + _hotspotMap.h * _hotspotMap.h);
+				for (int y = bounds[i].top; y < bounds[i].bottom; ++y) {
+					for (int x = bounds[i].left; x < bounds[i].right; ++x) {
+						if (_hotspotMap.getPixel(x, y) != color)
+							continue;
+						const Common::Point point(x, y);
+						const uint distance = point.sqrDist(center);
+						if (distance < bestDistance) {
+							position = point;
+							bestDistance = distance;
+						}
+					}
+				}
+			}
+			entry.center = position;
 			_hotspotSnapshot.sceneHotspots.push_back(entry);
 		}
 	}
