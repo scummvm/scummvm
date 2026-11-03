@@ -1514,6 +1514,8 @@ void ToucheEngine::getHotspotPositions(Common::Array< ::Graphics::HotspotInfo> &
 
 	int scrollX = _flagsTable[614];
 	int scrollY = _flagsTable[615];
+	const int roomHeight = (_flagsTable[606] != 0) ? kScreenHeight : kRoomHeight;
+	const Common::Rect visibleRect(0, 0, kScreenWidth, roomHeight);
 
 	for (uint i = 0; i < _programHitBoxTable.size(); ++i) {
 		const ProgramHitBoxData &hitBox = _programHitBoxTable[i];
@@ -1528,7 +1530,7 @@ void ToucheEngine::getHotspotPositions(Common::Array< ::Graphics::HotspotInfo> &
 			continue;
 
 		int16 str = hitBox.str;
-		int screenX, screenY;
+		Common::Rect screenRect;
 		::Graphics::HotspotType hotspotType;
 
 		if (hitBox.item & 0x4000) {
@@ -1542,24 +1544,24 @@ void ToucheEngine::getHotspotPositions(Common::Array< ::Graphics::HotspotInfo> &
 			if (!charRect.isValidRect())
 				continue;
 
-			screenX = (charRect.left + charRect.right) / 2;
-			screenY = (charRect.top + charRect.bottom) / 2;
+			screenRect = charRect;
 			hotspotType = ::Graphics::kHotspotNPC;
 		} else {
 			const Common::Rect &objRect = hitBox.hitBoxes[0];
 			if (!objRect.isValidRect())
 				continue;
 
-			int centerX = (objRect.left + objRect.right) / 2;
-			int centerY = (objRect.top + objRect.bottom) / 2;
-
-			screenX = centerX - scrollX;
-			screenY = centerY - scrollY;
+			screenRect = objRect;
+			screenRect.translate(-scrollX, -scrollY);
 			hotspotType = ::Graphics::kHotspotObject;
 		}
 
-		if (screenX < 0 || screenX >= kScreenWidth || screenY < 0 || screenY >= kRoomHeight)
+		const Common::Rect visiblePart = screenRect.findIntersectingRect(visibleRect);
+		if (visiblePart.isEmpty())
 			continue;
+
+		const Common::Point center = screenRect.center();
+		const Common::Point position = visibleRect.contains(center) ? center : visiblePart.center();
 
 		Common::String name;
 		if (str > 0) {
@@ -1568,12 +1570,13 @@ void ToucheEngine::getHotspotPositions(Common::Array< ::Graphics::HotspotInfo> &
 				name = Common::String(strData);
 		}
 
-		hotspots.push_back(::Graphics::HotspotInfo(Common::Point(screenX, screenY), name, hotspotType));
+		hotspots.push_back(::Graphics::HotspotInfo(position, name, hotspotType));
 	}
 }
 
 void ToucheEngine::rebuildHotspotSnapshot() const {
 	_hotspotSnapshot.flag618 = _flagsTable[618];
+	_hotspotSnapshot.flag606 = _flagsTable[606];
 	_hotspotSnapshot.scrollX = _flagsTable[614];
 	_hotspotSnapshot.scrollY = _flagsTable[615];
 	_hotspotSnapshot.currentEpisodeNum = _currentEpisodeNum;
@@ -1591,17 +1594,20 @@ void ToucheEngine::rebuildHotspotSnapshot() const {
 	for (int i = 0; i < NUM_KEYCHARS; ++i) {
 		_hotspotSnapshot.chars[i].num = _keyCharsTable[i].num;
 		_hotspotSnapshot.chars[i].flags = _keyCharsTable[i].flags;
+		_hotspotSnapshot.chars[i].strNum = _keyCharsTable[i].strNum;
 		_hotspotSnapshot.chars[i].prevBoundingRect = _keyCharsTable[i].prevBoundingRect;
 	}
 }
 
 bool ToucheEngine::hotspotDirty() const {
 	const int16 flag618 = _flagsTable[618];
+	const int16 flag606 = _flagsTable[606];
 	const int16 scrollX = _flagsTable[614];
 	const int16 scrollY = _flagsTable[615];
 
 	// Fast path: any scalar change forces a snapshot rebuild.
 	if (flag618 != _hotspotSnapshot.flag618 ||
+		flag606 != _hotspotSnapshot.flag606 ||
 		scrollX != _hotspotSnapshot.scrollX ||
 		scrollY != _hotspotSnapshot.scrollY ||
 		_currentEpisodeNum != _hotspotSnapshot.currentEpisodeNum ||
@@ -1634,6 +1640,7 @@ bool ToucheEngine::hotspotDirty() const {
 			const HotspotSnapshot::CharEntry &cs = _hotspotSnapshot.chars[charIdx];
 			if (kc.num != cs.num ||
 				kc.flags != cs.flags ||
+				kc.strNum != cs.strNum ||
 				kc.prevBoundingRect != cs.prevBoundingRect) {
 				rebuildHotspotSnapshot();
 				return true;

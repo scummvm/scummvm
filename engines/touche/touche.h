@@ -926,9 +926,11 @@ protected:
 		struct CharEntry {
 			uint16 num;
 			uint16 flags;
+			int16 strNum;
 			Common::Rect prevBoundingRect;
 		};
 		int16 flag618;
+		int16 flag606;
 		int16 scrollX;
 		int16 scrollY;
 		int currentEpisodeNum;
