@@ -99,6 +99,9 @@ protected:
 	uint16 _drawnTextHeight;
 	bool _needsTextRedraw;
 
+	// Otherwise a line is as long as its text, and may run past the right of the bounds
+	bool _wrapsLines = true;
+
 private:
 	// Color IDs are font color IDs, or this for the color given to setDefaultTextRGB()
 	static const int kDefaultRGB = -1;

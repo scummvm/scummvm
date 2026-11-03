@@ -39,22 +39,29 @@ static const float kTicksPerSecond = 50.0f;
 // Upper limit for the height of a single rendered entry
 static const uint kMaxTextHeight = 8000;
 
+// How far past the right of the rect a line can go
+static const uint kMaxLineWidth = 1024;
+
 class AutotextScrollRenderer : public Misc::HypertextParser {
 public:
 	void render(const Common::String &text, uint width, uint fontID, uint colorID, Graphics::ManagedSurface &image);
 };
 
+// The lines of the text aren't wrapped; one that is too long goes past the right
+// of the rect, and is aligned in the rect otherwise
 void AutotextScrollRenderer::render(const Common::String &text, uint width, uint fontID, uint colorID, Graphics::ManagedSurface &image) {
-	_fullSurface.create(width, kMaxTextHeight, g_nancy->_graphics->getInputPixelFormat());
+	const uint surfaceWidth = MAX(width, kMaxLineWidth);
+	_fullSurface.create(surfaceWidth, kMaxTextHeight, g_nancy->_graphics->getInputPixelFormat());
 	_fullSurface.clear(g_nancy->_graphics->getTransColor());
 	_defaultTextColor = colorID;
+	_wrapsLines = false;
 
 	addTextLine(text);
-	drawAllText(_fullSurface.getBounds(), 0, fontID, fontID);
+	drawAllText(Common::Rect(width, kMaxTextHeight), 0, fontID, fontID);
 
 	uint height = CLIP<uint>(_drawnTextHeight, 1, kMaxTextHeight);
-	image.create(width, height, _fullSurface.format);
-	image.blitFrom(_fullSurface, Common::Rect(width, height), Common::Point());
+	image.create(surfaceWidth, height, _fullSurface.format);
+	image.blitFrom(_fullSurface, Common::Rect(surfaceWidth, height), Common::Point());
 	image.setTransparentColor(g_nancy->_graphics->getTransColor());
 }
 
@@ -160,11 +167,12 @@ void AutotextScroll::updateGraphics() {
 void AutotextScroll::redraw() {
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 
-	// A line is drawn only when all of it fits in the rect, whose bottom edge it
-	// can't use; e.g. the name in scene 4580 of Nancy17 is in a rect too small
-	// for it, and doesn't show
+	// A line is drawn only when it fits in the height of the rect, whose bottom edge
+	// it can't use; e.g. the name in scene 4580 of Nancy17 is in a rect too small
+	// for it, and doesn't show. A line that is too long still shows whole.
 	const Font *font = g_nancy->_graphics->getFont(_fontID);
 	const Common::Rect clip(_bounds.left, _bounds.top, _bounds.right, _bounds.bottom - 1);
+	const Common::Rect surfaceBounds(_drawSurface.w, _drawSurface.h);
 
 	for (const ScrollingText *text : _texts) {
 		const int lineHeight = font ? MAX<int>(font->getFontHeight(), 1) : text->image.h;
@@ -177,7 +185,7 @@ void AutotextScroll::redraw() {
 
 			Common::Rect line(_bounds.left, top + y, _bounds.left + text->image.w, top + MIN<int>(y + lineHeight, text->image.h));
 
-			Common::Rect visible = line.findIntersectingRect(clip);
+			Common::Rect visible = line.findIntersectingRect(surfaceBounds);
 			if (visible.isEmpty()) {
 				continue;
 			}
