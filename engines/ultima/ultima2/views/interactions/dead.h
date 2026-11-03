@@ -32,7 +32,7 @@ namespace Interactions {
 using namespace Graphics::Views;
 
 /**
- * Shown when the player dies, to allow them time to see the death message
+ * Shown when the player dies, consumes all events to freeze the display.
  */
 class Dead : public Interaction {
 public:
@@ -42,9 +42,6 @@ public:
 	}
 
 	bool msgFocus(const FocusMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool tick() override { return true; }
 };
 
 } // namespace Interactions

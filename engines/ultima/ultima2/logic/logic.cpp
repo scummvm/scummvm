@@ -59,8 +59,10 @@ void Logic::redrawStats() {
 
 void Logic::playerDied() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("\n%s is dead!\n", sg._name);
+	sg._hp = sg._food = 0;
+	redrawStats();
 
+	writeString("\n%s is dead!\n", sg._name);
 	g_engine->replaceView("Dead", true);
 }
 

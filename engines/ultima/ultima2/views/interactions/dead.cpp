@@ -38,16 +38,6 @@ bool Dead::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool Dead::msgAction(const ActionMessage &msg) {
-	g_engine->replaceView("Title", true);
-	return true;
-}
-
-bool Dead::msgKeypress(const KeypressMessage &msg) {
-	g_engine->replaceView("Title", true);
-	return true;
-}
-
 } // namespace Interactions
 } // namespace Views
 } // namespace Ultima2
