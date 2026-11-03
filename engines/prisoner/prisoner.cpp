@@ -58,7 +58,6 @@ namespace Prisoner {
 
 PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "e_video");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 
 	// Setup mixer
@@ -103,6 +102,11 @@ Common::Error PrisonerEngine::run() {
 
 	_screen = new Screen(this);
 	_resLoader = new PrisonerResourceLoader(_languageChar);
+
+	// Videos with speech are in a language-specific folder, e.g. E_VIDEO (like the original)
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, Common::String::format("%c_video", tolower(_languageChar)));
+
 	_res = new ResourceManager(_resLoader);
 	_scriptOpcodes = new ScriptOpcodes(this);
 	_scriptOpcodes->setupOpcodes();
@@ -1044,9 +1048,18 @@ void PrisonerEngine::playMux(Common::String filename) {
 	MuxPlayer *muxPlayer;
 
 	debug("playMux('%s')", filename.c_str());
-	// TODO: Make language-specific filename if required
 	// Set char for the SVGA videos
 	filename.setChar('S', 0);
+	if (!Common::File::exists(Common::Path(filename))) {
+		// The GOG release keeps the videos with speech (the endings) in the VIDEO folder, with the
+		// language letter after the S: SAFINAL1.MUX instead of A_VIDEO/SFINAL1.MUX
+		Common::String languageFilename = filename;
+		languageFilename.insertChar(tolower(_languageChar), 1);
+		if (Common::File::exists(Common::Path(languageFilename)))
+			filename = languageFilename;
+		else
+			warning("playMux: Video '%s' not found", filename.c_str());
+	}
 	_screensaverAborted = false;
 	if (_moduleScriptCalled) {
 		_newModuleIndex = -1;
