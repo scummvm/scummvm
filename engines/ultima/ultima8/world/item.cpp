@@ -1981,7 +1981,10 @@ void Item::leaveFastArea() {
 		if (p) {
 			p->terminateDeferred();
 			_gravityPid = 0;
-			collideMove(_x, _y, 0, true, false);
+
+			// Fixes bug #16036 - A collideMove to zero with teleport will not move if floor is found.
+			// If the item is already not in a fast area, the item could move to zero, which is usually below the floor.
+			//collideMove(_x, _y, 0, true, false);
 		}
 	}
 }
