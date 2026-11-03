@@ -59,6 +59,7 @@ public:
 	void stopVideo();
 	void rewindVideo();
 	bool endOfVideo();
+	void reloadVideo();
 
 	uint getTimeScale();
 	uint getMovieCurrentTime();
@@ -105,6 +106,7 @@ public:
 	bool _avimovie, _qtmovie;
 	bool _dirty;
 	bool _emptyFile;
+	bool _useLinkedPath;
 	FrameRateType _frameRateType;
 	DigitalVideoType _videoType;
 
