@@ -140,7 +140,7 @@ void SpiderEngine::runMatrix(Code *code) {
 				}
 
 				if (isDemo())
-					playSound("sixdemo/demo/sound.lib/matrix.raw", 1);
+					playSound("demo/sound.lib/matrix.raw", 1);
 				else
 					playSound("sound.lib/matrix.raw", 1);
 
@@ -172,7 +172,7 @@ void SpiderEngine::runMatrix(Code *code) {
 
 		if (found) {
 			if (isDemo())
-				playSound("sixdemo/demo/sound.lib/matrix_2.raw", 1);
+				playSound("demo/sound.lib/matrix_2.raw", 1);
 			else {
 				MVideo video("cine/shv001s.smk", Common::Point(0, 0), false, false, false);
 				runIntro(video);
