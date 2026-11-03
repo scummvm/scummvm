@@ -482,6 +482,10 @@ CursorManager::CursorType EventFlagsMultiHS::getHoverCursor() const {
 	return _hoverCursor;
 }
 
+bool EventFlagsMultiHS::runsOnClick() const {
+	return g_nancy->getGameType() >= kGameTypeNancy17;
+}
+
 void EventFlagsMultiHS::execute() {
 	switch (_state) {
 	case kBegin:

@@ -157,6 +157,11 @@ public:
 
 	bool canHaveHotspot() const override { return true; }
 
+	// Nancy17 sets the flags on the click itself, so the records before this one
+	// see them in the next pass, even when a record after it changes the scene
+	// then (scene 2075, where Bess puts on the costume)
+	bool runsOnClick() const override;
+
 protected:
 	Common::String getRecordTypeName() const override {
 		switch (_hotspotType) {

@@ -133,6 +133,10 @@ public:
 	// Used for handling kCursorType dependency
 	virtual bool canHaveHotspot() const { return false; }
 
+	// Records returning true run as soon as their hotspot is clicked, instead of
+	// waiting for their turn in the next pass over the records
+	virtual bool runsOnClick() const { return false; }
+
 	// Records returning true survive the upcoming scene change (i.e. are not
 	// deleted by Scene::clearSceneData / ActionManager::clearActionRecords).
 	// `nextSceneIsNoArt` is true when the incoming scene is a "NO_ART_SCENE": a

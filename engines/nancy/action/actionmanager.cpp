@@ -86,6 +86,9 @@ void ActionManager::handleInput(NancyInput &input) {
 					}
 				} else {
 					rec->_state = ActionRecord::ExecutionState::kActionTrigger;
+					if (rec->runsOnClick()) {
+						rec->execute();
+					}
 
 					input.eatMouseInput();
 
