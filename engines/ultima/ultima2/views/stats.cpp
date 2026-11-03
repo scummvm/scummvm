@@ -43,12 +43,12 @@ void Stats::draw() {
 
 	s.setColor(normal);
 	s.writeString(Common::Point(0, 0), "H.P.=");
-	s.setColor(sg._hp == 0 ? highlight : normal);
+	s.setColor(sg._hp < 100 ? highlight : normal);
 	s.writeString(Common::Point(5, 0), "%4d", sg._hp);
 
 	s.setColor(normal);
 	s.writeString(Common::Point(0, 1), "Food=");
-	s.setColor(sg._food == 0 ? highlight : normal);
+	s.setColor(sg._food < 100 ? highlight : normal);
 	s.writeString(Common::Point(5, 1), "%4d", sg._food);
 
 	s.setColor(normal);
