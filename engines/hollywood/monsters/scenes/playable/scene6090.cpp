@@ -970,9 +970,11 @@ void Scene6090::runRopeRescueSequence() {
 
 	startRealtimePrimarySpeechLine(15, 30, 0x13e, 0x50,
 		0x20, 0x32, 0, kScene6090InvalidSpeechGroup, kScene6090PrimarySpeechId);
-	waitForRealtimeSpeech(false);
+	if (waitForRealtimeSpeech(false))
+		return;
 	beginSecondarySpeechLine(15, 31);
-	walkActiveActorTo(0xaa, 0x118, 5, 0);
+	if (animationPlaybackShouldStop() || !walkActiveActorTo(0xaa, 0x118, 5, 0))
+		return;
 
 	_compositeMode = kSpecialComposite;
 	for (uint frame = 0; frame + 1 < ARRAYSIZE(kScene6090SpecialEffectFrameMap) &&
@@ -1000,7 +1002,8 @@ void Scene6090::runRopeRescueSequence() {
 	_escapeChannel.reset(0, kScene6090FrameMillis);
 	_muffledSpeechStarted = false;
 	beginSecondarySpeechLine(15, 34);
-	walkActiveActorTo(0xf0, 0x115, 4, 0);
+	if (animationPlaybackShouldStop() || !walkActiveActorTo(0xf0, 0x115, 4, 0))
+		return;
 
 	_escapePaletteSource = _paletteCurrent;
 	_paletteFadeThreshold = 1;
@@ -1017,22 +1020,39 @@ void Scene6090::runRopeRescueSequence() {
 
 	beginPrimarySpeechLineWithAnimationGroup(15, 35, 0xe4, 0x78,
 		0x3f, 0x28, 0x32, kScene6090SueSpeechGroup);
+	if (animationPlaybackShouldStop())
+		return;
 	if (restoreRescueLine) {
 		beginSecondarySpeechLine(15, 32);
+		if (animationPlaybackShouldStop())
+			return;
 		_paletteFadeChannel.reset(0, kScene6090FrameMillis);
 		_escapePaletteActive = true;
 	}
 	beginPrimarySpeechLineWithAnimationGroup(15, 36, 0xe4, 0x78,
 		0x3f, 0x28, 0x32, kScene6090SueSpeechGroup);
+	if (animationPlaybackShouldStop())
+		return;
 	beginSecondarySpeechLine(15, 37);
+	if (animationPlaybackShouldStop())
+		return;
 	beginPrimarySpeechLineWithAnimationGroup(15, 38, 0xe4, 0x78,
 		0x3f, 0x28, 0x32, kScene6090SueSpeechGroup);
+	if (animationPlaybackShouldStop())
+		return;
 	beginSecondarySpeechLine(15, 39);
+	if (animationPlaybackShouldStop())
+		return;
 	beginPrimarySpeechLineWithAnimationGroup(15, 40, 0xe4, 0x78,
 		0x3f, 0x28, 0x32, kScene6090SueSpeechGroup);
+	if (animationPlaybackShouldStop())
+		return;
 	_soundBank0.playSample(0x15, 100);
-	waitSceneMillis(2000, false);
+	if (waitSceneMillis(2000, false))
+		return;
 	beginSecondarySpeechLine(15, 41);
+	if (animationPlaybackShouldStop())
+		return;
 	_vm->gameState().mainFlowStateId = kScene9150State;
 }
 

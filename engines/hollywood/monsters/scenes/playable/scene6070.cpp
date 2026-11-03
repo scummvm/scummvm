@@ -581,14 +581,18 @@ void Scene6070::runArrivalCutscene() {
 
 	_viewportMaxXOffset = kScene6070ArrivalViewportMaxX;
 	_viewportXOffset = MIN<uint16>(_viewportXOffset, _viewportMaxXOffset);
-	walkActiveActorTo(0x288, 0x19a, 5, 0);
-	waitSceneMillis(2000, false);
+	if (!walkActiveActorTo(0x288, 0x19a, 5, 0) || waitSceneMillis(2000, false))
+		return;
 
 	_sceneLayers.setLayerVisible(kScene6070ArrivalLayer, true);
 	playAnimationFrames(kScene6070ArrivalLayer,
 		AnimationFrameRange(0, ARRAYSIZE(kScene6070ArrivalFrameMap) - 1,
 			kScene6070OverlayFrameMillis));
+	if (animationPlaybackShouldStop())
+		return;
 	runCurtainClearToBlack();
+	if (animationPlaybackShouldStop())
+		return;
 	_vm->gameState().scene6070SuePresent = true;
 	_vm->gameState().mainFlowStateId = kScene7100DialogueEntryState;
 }
