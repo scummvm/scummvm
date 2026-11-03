@@ -67,6 +67,7 @@ Scene9130::Scene9130(HollywoodEngine *vm) :
 		_activeContinuationIndex(0),
 		_activeSpeechStyleIndex(0),
 		_activeSpeechCue(false),
+		_speechFallbackMillis(0),
 		_nextSpeechFrameIndex(0),
 		_clipFrameIndex(0) {
 	_paletteResource.resize(kPaletteSize);
@@ -139,14 +140,17 @@ void Scene9130::runClipAndDialogue() {
 	range.noFinalFrameDelay();
 	_animationPlayer.playAndPresent(_clipFrameIndex, range);
 
-	while (_speech.isPlaying() && !_skipRequested && !Engine::shouldQuit()) {
+	while ((_speech.isPlaying() || _speechFallbackMillis != 0) && !_skipRequested && !Engine::shouldQuit()) {
 		presentFrame();
 		if (delay(10)) {
 			if (_skipRequested || Engine::shouldQuit())
 				return;
 			_speech.stop();
+			_speechFallbackMillis = 0;
 			clearSubtitle();
 			maybeStartNextSpeechLine();
+		} else {
+			_speechFallbackMillis -= MIN<uint32>(_speechFallbackMillis, 10);
 		}
 	}
 }
@@ -162,14 +166,16 @@ bool Scene9130::waitForAnimationFrame(uint32 millis, bool allowSkip) {
 	TimedPresentationLoop loop(*this, millis, 5, allowSkip);
 	while (loop.beginFrame()) {
 		maybeStartNextSpeechLine();
-		loop.finishFrame();
+		const uint32 slice = loop.finishFrame();
+		_speechFallbackMillis -= MIN(_speechFallbackMillis, slice);
 	}
 
 	if (!consumeStepAdvanceRequest())
 		return animationPlaybackShouldStop();
 
-	if (_speech.isPlaying() || _subtitle.visible) {
+	if (_speech.isPlaying() || _speechFallbackMillis != 0 || _subtitle.visible) {
 		_speech.stop();
+		_speechFallbackMillis = 0;
 		clearSubtitle();
 		return false;
 	}
@@ -183,7 +189,7 @@ void Scene9130::drawClipFrame(byte frameIndex) {
 }
 
 void Scene9130::maybeStartNextSpeechLine() {
-	if (_speech.isPlaying())
+	if (_speech.isPlaying() || _speechFallbackMillis != 0)
 		return;
 
 	if (_activeSpeechCue) {
@@ -239,13 +245,14 @@ bool Scene9130::startCurrentSpeechSegment() {
 	const uint16 sampleId = _activeVoiceSampleId == 0 ? 0 : _activeVoiceSampleId + _activeContinuationIndex;
 	++_activeContinuationIndex;
 	_speech.stop();
-	if (sampleId != 0)
-		_speech.playSample(sampleId, 100);
+	const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+	_speechFallbackMillis = started ? 0 : MAX<uint32>(1200, _subtitle.lines.size() * 1100);
 	return true;
 }
 
 void Scene9130::stopAudio() {
 	_speech.stop();
+	_speechFallbackMillis = 0;
 	_music->stop();
 }
 

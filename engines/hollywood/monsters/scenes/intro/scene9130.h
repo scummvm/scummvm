@@ -57,6 +57,7 @@ private:
 	byte _activeContinuationIndex;
 	byte _activeSpeechStyleIndex;
 	bool _activeSpeechCue;
+	uint32 _speechFallbackMillis;
 	byte _nextSpeechFrameIndex;
 	byte _clipFrameIndex;
 };
