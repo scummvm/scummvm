@@ -4439,6 +4439,8 @@ void ScummEngine::fadeIn(int effect) {
 }
 
 void ScummEngine::fadeOut(int effect) {
+	suspendHotspots();
+
 	// Screen fades are disabled in the Amiga version of
 	// Maniac Mansion, verified on WinUAE
 	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformAmiga) {

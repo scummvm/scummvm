@@ -557,7 +557,7 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 }
 
 void ScummEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
-	if (!_currentRoom || _cursor.state <= 0 || _userPut <= 0)
+	if (!_currentRoom || !_screenEffectFlag || _cursor.state <= 0 || _userPut <= 0)
 		return;
 	// Full Throttle uses actor 27 for its action menu.
 	if (_game.id == GID_FT && _numActors > 27) {
