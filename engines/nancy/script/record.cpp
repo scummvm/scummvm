@@ -28,6 +28,7 @@
 #include "engines/nancy/script/record.h"
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/scenecontext.h"
+#include "engines/nancy/script/transformer.h"
 #include "engines/nancy/script/types.h"
 
 namespace Nancy {
@@ -40,7 +41,28 @@ Record::Record(SceneContext &context, const char *typeName) :
 		_context(context),
 		_typeName(typeName) {}
 
-Record::~Record() {}
+Record::~Record() {
+	delete _stages;
+}
+
+void Record::onStagesChanged() {
+}
+
+BlendStages &Record::getStages() {
+	if (!_stages) {
+		_stages = new BlendStages(*this);
+	}
+
+	return *_stages;
+}
+
+ScriptMatrix Record::getLocalTransform() const {
+	if (_stages && !_stages->isEmpty()) {
+		return _stages->getTransform();
+	}
+
+	return _transform;
+}
 
 lua_State *Record::getLua() const {
 	return _context.getLua();

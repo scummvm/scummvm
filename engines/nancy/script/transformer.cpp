@@ -31,26 +31,9 @@ namespace Script {
 
 static const double kMinBlendTime = 0.001;
 
-TransformerRecord::TransformerRecord(SceneContext &context) :
-		Record(context, "ND.TransformerAR"),
-		_node(context.createGraphNode()) {}
+// BlendStages
 
-void TransformerRecord::readTable(int tableIndex) {
-	readField(getLua(), tableIndex, "sinLerp", _isSineLerp);
-	readField(getLua(), tableIndex, "timeMultiplier", _timeMultiplier);
-	_node->setZ(getLocalZ());
-}
-
-// The node goes wherever the record gets attached to
-void TransformerRecord::onZChanged() {
-	if (_node->getParent() != getParentNode()) {
-		_node->setParent(getParentNode());
-	}
-
-	_node->setZ(getLocalZ());
-}
-
-TransformerRecord::Stage *TransformerRecord::findStage(const Common::String &name) {
+BlendStages::Stage *BlendStages::findStage(const Common::String &name) {
 	for (Stage &stage : _stages) {
 		if (stage.name == name) {
 			return &stage;
@@ -60,18 +43,18 @@ TransformerRecord::Stage *TransformerRecord::findStage(const Common::String &nam
 	return nullptr;
 }
 
-TransformerRecord::Stage &TransformerRecord::checkStage(lua_State *L, int index) {
+BlendStages::Stage &BlendStages::checkStage(lua_State *L, int index) {
 	const char *name = luaL_checkstring(L, index);
 	Stage *stage = findStage(name);
 	if (!stage) {
-		luaL_argerror(L, index, Common::String::format("Transformer AR does not have a stage by the name '%s'", name).c_str());
+		luaL_argerror(L, index, Common::String::format("AR does not have a stage by the name '%s'", name).c_str());
 	}
 
 	return *stage;
 }
 
 // An angle, or x and y: a vector, a point, or two numbers
-void TransformerRecord::readValue(lua_State *L, int index, StageKind kind, double value[2]) {
+void BlendStages::readValue(lua_State *L, int index, StageKind kind, double value[2]) {
 	if (kind == kRotation) {
 		value[0] = luaL_checknumber(L, index);
 		return;
@@ -94,7 +77,7 @@ void TransformerRecord::readValue(lua_State *L, int index, StageKind kind, doubl
 	lua_pop(L, 2);
 }
 
-ScriptMatrix TransformerRecord::makeMatrix(StageKind kind, const double value[2]) {
+ScriptMatrix BlendStages::makeMatrix(StageKind kind, const double value[2]) {
 	ScriptMatrix matrix;
 
 	switch (kind) {
@@ -118,9 +101,7 @@ ScriptMatrix TransformerRecord::makeMatrix(StageKind kind, const double value[2]
 	return matrix;
 }
 
-void TransformerRecord::pushValue(const Stage &stage) {
-	lua_State *L = getLua();
-
+void BlendStages::pushValue(lua_State *L, const Stage &stage) {
 	if (stage.kind == kRotation) {
 		lua_pushnumber(L, stage.current[0]);
 		return;
@@ -131,7 +112,7 @@ void TransformerRecord::pushValue(const Stage &stage) {
 	Script::pushVector(L, vector);
 }
 
-void TransformerRecord::setStage(Stage &stage, const double value[2]) {
+void BlendStages::setStage(Stage &stage, const double value[2]) {
 	for (int i = 0; i < 2; ++i) {
 		stage.start[i] = stage.current[i] = stage.target[i] = value[i];
 	}
@@ -139,7 +120,7 @@ void TransformerRecord::setStage(Stage &stage, const double value[2]) {
 	stage.matrix = stage.blended = makeMatrix(stage.kind, value);
 }
 
-void TransformerRecord::applyProgress(Stage &stage, double progress) {
+void BlendStages::applyProgress(Stage &stage, double progress) {
 	for (int i = 0; i < 2; ++i) {
 		stage.current[i] = stage.start[i] + (stage.target[i] - stage.start[i]) * progress;
 	}
@@ -147,20 +128,20 @@ void TransformerRecord::applyProgress(Stage &stage, double progress) {
 	stage.matrix = makeMatrix(stage.kind, stage.current);
 }
 
-bool TransformerRecord::advanceStage(Stage &stage, double seconds) {
+bool BlendStages::advanceStage(Stage &stage, double seconds) {
 	if (!stage.isBlending()) {
 		return false;
 	}
 
-	lua_State *L = getLua();
+	lua_State *L = _owner.getContext().getLua();
 	stage.time += seconds;
 	double progress = CLIP(stage.time / stage.duration, 0.0, 1.0);
 
 	// The scripts can bend the progress; otherwise it slows down towards the end
 	lua_pushnumber(L, progress);
-	if (callFunction((stage.name + "AffectLerp").c_str(), 1, 1)) {
+	if (_owner.callFunction((stage.name + "AffectLerp").c_str(), 1, 1)) {
 		if (!lua_isnumber(L, -1)) {
-			warning("TransformerAR::AffectLerp: Value returned was not a number");
+			warning("AR::AffectLerp: Value returned was not a number");
 		}
 
 		progress = lua_tonumber(L, -1);
@@ -180,14 +161,15 @@ bool TransformerRecord::advanceStage(Stage &stage, double seconds) {
 
 		// The stage may go away along with the record in there
 		const Common::String doneName = stage.name + "Done";
-		callFunction(doneName.c_str());
+		update();
+		_owner.callFunction(doneName.c_str());
 	}
 
 	return true;
 }
 
 // The stages make the transform in the order they were pushed in
-void TransformerRecord::updateTransform() {
+void BlendStages::update() {
 	ScriptMatrix transform;
 	ScriptMatrix blendedTransform;
 	for (const Stage &stage : _stages) {
@@ -195,43 +177,47 @@ void TransformerRecord::updateTransform() {
 		blendedTransform = blendedTransform * stage.blended;
 	}
 
+	_transform = transform;
 	_blendedTransform = blendedTransform;
-	_node->setTransform(transform);
+
+	_owner.onStagesChanged();
 }
 
-void TransformerRecord::run(double sceneTime, double elapsedTime) {
+bool BlendStages::advance(double seconds) {
 	bool hasChanged = false;
 	for (uint i = 0; i < _stages.size(); ++i) {
-		hasChanged |= advanceStage(_stages[i], elapsedTime * _timeMultiplier);
+		hasChanged |= advanceStage(_stages[i], seconds * _timeMultiplier);
 	}
 
 	if (hasChanged) {
-		updateTransform();
+		update();
 	}
+
+	return hasChanged;
 }
 
-// transformer:Push<Translation|Rotation|Scale>(name, value)
-int TransformerRecord::pushStage(lua_State *L, StageKind kind) {
+// ar:Push<Translation|Rotation|Scale>(name, value)
+int BlendStages::push(lua_State *L, StageKind kind) {
 	const char *name = luaL_checkstring(L, 2);
 	if (findStage(name)) {
-		return luaL_argerror(L, 2, Common::String::format("Transformer AR already has a stage by the name '%s'", name).c_str());
+		return luaL_argerror(L, 2, Common::String::format("AR already has a stage by the name '%s'", name).c_str());
 	}
 
 	Stage stage;
 	stage.name = name;
 	stage.kind = kind;
 
-	double value[2];
+	double value[2] = { 0.0, 0.0 };
 	readValue(L, 3, kind, value);
 	setStage(stage, value);
 
 	_stages.push_back(stage);
-	updateTransform();
+	update();
 	return 0;
 }
 
-// transformer:Blend(name, seconds, value)
-int TransformerRecord::blend(lua_State *L) {
+// ar:Blend(name, seconds, value)
+int BlendStages::blend(lua_State *L) {
 	Stage &stage = checkStage(L, 2);
 	const double duration = luaL_checknumber(L, 3);
 
@@ -244,13 +230,12 @@ int TransformerRecord::blend(lua_State *L) {
 	stage.duration = MAX(kMinBlendTime, duration);
 	stage.time = 0.0;
 
-	updateTransform();
+	update();
 	return 0;
 }
 
-// transformer:FinishBlend([name]) puts a stage where it is going right away, or
-// all of them
-int TransformerRecord::finishBlend(lua_State *L) {
+// ar:FinishBlend([name]) puts a stage where it is going right away, or all of them
+int BlendStages::finishBlend(lua_State *L) {
 	Common::String name;
 	if (lua_gettop(L) > 1) {
 		name = checkStage(L, 2).name;
@@ -262,21 +247,141 @@ int TransformerRecord::finishBlend(lua_State *L) {
 		}
 	}
 
-	updateTransform();
+	update();
 	return 0;
 }
 
-// transformer:RemoveAllStages(), Nancy24
-int TransformerRecord::removeAllStages(lua_State *L) {
+// ar:RemoveAllStages(), Nancy24
+int BlendStages::removeAll(lua_State *L) {
 	_stages.clear();
-	updateTransform();
+	update();
 	return 0;
 }
 
-// transformer:IsBlending(name)
-int TransformerRecord::isBlending(lua_State *L) {
+// ar:IsBlending(name)
+int BlendStages::isBlending(lua_State *L) {
 	lua_pushboolean(L, checkStage(L, 2).isBlending());
 	return 1;
+}
+
+bool BlendStages::getField(lua_State *L, const Common::String &key) {
+	const Stage *stage = findStage(key);
+	if (stage) {
+		pushValue(L, *stage);
+		return true;
+	}
+
+	return false;
+}
+
+// Setting a stage puts it at the value at once
+bool BlendStages::setField(lua_State *L, const Common::String &key) {
+	Stage *stage = findStage(key);
+	if (!stage) {
+		return false;
+	}
+
+	if (stage->isBlending()) {
+		luaL_error(L, "Stage %s is in the midst of blending. It cannot be overridden.", key.c_str());
+	}
+
+	double value[2] = { 0.0, 0.0 };
+	readValue(L, 3, stage->kind, value);
+	setStage(*stage, value);
+	update();
+	return true;
+}
+
+static BlendStages &checkStages(lua_State *L) {
+	return checkRecord(L, 1)->getStages();
+}
+
+static int stagesPushTranslation(lua_State *L) {
+	return checkStages(L).push(L, BlendStages::kTranslation);
+}
+
+static int stagesPushRotation(lua_State *L) {
+	return checkStages(L).push(L, BlendStages::kRotation);
+}
+
+static int stagesPushScale(lua_State *L) {
+	return checkStages(L).push(L, BlendStages::kScale);
+}
+
+static int stagesBlend(lua_State *L) {
+	return checkStages(L).blend(L);
+}
+
+static int stagesFinishBlend(lua_State *L) {
+	return checkStages(L).finishBlend(L);
+}
+
+static int stagesIsBlending(lua_State *L) {
+	return checkStages(L).isBlending(L);
+}
+
+static int stagesRemoveAll(lua_State *L) {
+	return checkStages(L).removeAll(L);
+}
+
+static const luaL_Reg kStageFunctions[] = {
+	{ "Blend", stagesBlend },
+	{ "FinishBlend", stagesFinishBlend },
+	{ "IsBlending", stagesIsBlending },
+	{ "PushTranslation", stagesPushTranslation },
+	{ "PushRotation", stagesPushRotation },
+	{ "PushScale", stagesPushScale },
+	{ "RemoveAllStages", stagesRemoveAll },
+	{ nullptr, nullptr }
+};
+
+bool BlendStages::pushFunction(lua_State *L, const Common::String &key) {
+	for (const luaL_Reg *function = kStageFunctions; function->name; ++function) {
+		if (key == function->name) {
+			lua_pushcfunction(L, function->func);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// TransformerRecord
+
+TransformerRecord::TransformerRecord(SceneContext &context, const char *typeName) :
+		Record(context, typeName),
+		_node(context.createGraphNode()) {}
+
+void TransformerRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+
+	bool isSineLerp = true;
+	readField(L, tableIndex, "sinLerp", isSineLerp);
+	getStages().setSineLerp(isSineLerp);
+
+	double timeMultiplier = 1.0;
+	readField(L, tableIndex, "timeMultiplier", timeMultiplier);
+	getStages().setTimeMultiplier(timeMultiplier);
+
+	_node->setZ(getLocalZ());
+}
+
+// The node goes wherever the record gets attached to
+void TransformerRecord::onZChanged() {
+	if (_node->getParent() != getParentNode()) {
+		_node->setParent(getParentNode());
+	}
+
+	_node->setZ(getLocalZ());
+}
+
+// The stages move the node
+void TransformerRecord::onStagesChanged() {
+	_node->setTransform(getLocalTransform());
+}
+
+void TransformerRecord::run(double sceneTime, double elapsedTime) {
+	getStages().advance(elapsedTime);
 }
 
 // transformer:Attach(record, ...)
@@ -293,108 +398,48 @@ int TransformerRecord::attach(lua_State *L) {
 	return 0;
 }
 
-static TransformerRecord *checkTransformer(lua_State *L) {
+static int transformerAttach(lua_State *L) {
 	TransformerRecord *transformer = dynamic_cast<TransformerRecord *>(checkRecord(L, 1));
 	if (!transformer) {
 		luaL_typerror(L, 1, "ND.TransformerAR");
 	}
 
-	return transformer;
+	return transformer->attach(L);
 }
-
-static int transformerPushTranslation(lua_State *L) {
-	return checkTransformer(L)->pushStage(L, TransformerRecord::kTranslation);
-}
-
-static int transformerPushRotation(lua_State *L) {
-	return checkTransformer(L)->pushStage(L, TransformerRecord::kRotation);
-}
-
-static int transformerPushScale(lua_State *L) {
-	return checkTransformer(L)->pushStage(L, TransformerRecord::kScale);
-}
-
-static int transformerBlend(lua_State *L) {
-	return checkTransformer(L)->blend(L);
-}
-
-static int transformerFinishBlend(lua_State *L) {
-	return checkTransformer(L)->finishBlend(L);
-}
-
-static int transformerIsBlending(lua_State *L) {
-	return checkTransformer(L)->isBlending(L);
-}
-
-static int transformerAttach(lua_State *L) {
-	return checkTransformer(L)->attach(L);
-}
-
-static int transformerRemoveAllStages(lua_State *L) {
-	return checkTransformer(L)->removeAllStages(L);
-}
-
-static const luaL_Reg kTransformerFunctions[] = {
-	{ "Attach", transformerAttach },
-	{ "Blend", transformerBlend },
-	{ "FinishBlend", transformerFinishBlend },
-	{ "IsBlending", transformerIsBlending },
-	{ "PushTranslation", transformerPushTranslation },
-	{ "PushRotation", transformerPushRotation },
-	{ "PushScale", transformerPushScale },
-	{ "RemoveAllStages", transformerRemoveAllStages },
-	{ nullptr, nullptr }
-};
 
 bool TransformerRecord::getField(const Common::String &key) {
 	lua_State *L = getLua();
 
-	if (key == "transform") {
+	if (key == "Attach") {
+		lua_pushcfunction(L, transformerAttach);
+		return true;
+	} else if (key == "transform") {
 		pushMatrix(L, _node->getTransform());
 		return true;
 	} else if (key == "blendedTransform") {
-		pushMatrix(L, _blendedTransform);
+		pushMatrix(L, getStages().getBlendedTransform());
 		return true;
 	} else if (key == "timeMultiplier") {
-		lua_pushnumber(L, _timeMultiplier);
+		lua_pushnumber(L, getStages().getTimeMultiplier());
 		return true;
 	}
 
-	for (const luaL_Reg *function = kTransformerFunctions; function->name; ++function) {
-		if (key == function->name) {
-			lua_pushcfunction(L, function->func);
-			return true;
-		}
-	}
-
-	const Stage *stage = findStage(key);
-	if (stage) {
-		pushValue(*stage);
+	if (BlendStages::pushFunction(L, key)) {
 		return true;
 	}
 
-	return false;
+	return getStages().getField(L, key);
 }
 
-// Setting a stage puts it at the value at once
 bool TransformerRecord::setField(const Common::String &key) {
 	lua_State *L = getLua();
 
-	Stage *stage = findStage(key);
-	if (stage) {
-		if (stage->isBlending()) {
-			luaL_error(L, "Stage %s is in the midst of blending. It cannot be overridden.", key.c_str());
-		}
-
-		double value[2];
-		readValue(L, 3, stage->kind, value);
-		setStage(*stage, value);
-		updateTransform();
+	if (getStages().setField(L, key)) {
 		return true;
 	}
 
 	if (key == "timeMultiplier") {
-		_timeMultiplier = luaL_checknumber(L, 3);
+		getStages().setTimeMultiplier(luaL_checknumber(L, 3));
 		return true;
 	}
 

@@ -35,6 +35,7 @@ struct NancyInput;
 
 namespace Script {
 
+class BlendStages;
 class GraphNode;
 class SceneContext;
 
@@ -163,6 +164,14 @@ public:
 	// after the nodes it is under moved it
 	ScriptMatrix getTransform() const;
 
+	// The record's own, before the nodes it is under: the product of its blend
+	// stages when it has any
+	ScriptMatrix getLocalTransform() const;
+
+	// The blend stages of the record, which Nancy22 has in Transformers
+	BlendStages &getStages();
+	virtual void onStagesChanged();
+
 	// Nancy21: puts the record under a node; null for none
 	GraphNode *getParentNode() const { return _parentNode; }
 	void setParentNode(GraphNode *node);
@@ -257,6 +266,8 @@ private:
 	bool _isScriptOwned = false;
 	uint _numObjects = 0;	// the objects standing for the record that Lua still has
 	bool _isDropped = false;
+
+	BlendStages *_stages = nullptr;
 };
 
 // Makes the "AR" object, and the types of the records

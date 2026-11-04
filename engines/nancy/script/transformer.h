@@ -32,47 +32,56 @@ namespace Script {
 
 class GraphNode;
 
-// Nancy22 moves, turns and resizes what a scene shows with Transformer records.
-// The records a Transformer gets with Attach() are moved by its transform on top
-// of their own, and so are other Transformers attached to it:
+// The named stages a transform is made of, in the order they were pushed:
 //
-//   piece = AR:Transformer({})
 //   piece:PushTranslation("t", Vector:New(100, 50))
 //   piece:PushRotation("r", 0)
-//   piece:Attach(pieceOVL)
 //   piece:Blend("r", 0.5, math.pi)    -- turns it half around in half a second
 //
-// The transform is made of named stages, in the order they were pushed. Setting
-// the field of a stage's name puts it at a value right away; Blend() takes it
-// there over a time, slowly at the end unless the table said sinLerp = false.
-// While a stage blends, a function "<stage>AffectLerp" of the record can bend
-// the progress from 0 to 1, and "<stage>Done" gets called once it is there.
-class TransformerRecord : public Record {
+// Setting the field of a stage's name puts it at a value right away; Blend() takes
+// it there over a time, slowly at the end unless the record said sinLerp = false.
+// While a stage blends, a function "<stage>AffectLerp" of the record can bend the
+// progress from 0 to 1, and "<stage>Done" gets called once it is there.
+// Nancy22 has them in Transformer records.
+class BlendStages {
 public:
-	TransformerRecord(SceneContext &context);
-
-	GraphNode *getNode() const { return _node; }
-
 	enum StageKind {
 		kTranslation,
 		kRotation,
 		kScale
 	};
 
-	// The functions of the scripts, which return their number of results
-	int pushStage(lua_State *L, StageKind kind);
+	BlendStages(Record &owner) : _owner(owner) {}
+
+	bool isEmpty() const { return _stages.empty(); }
+
+	// The product of the stages, and where they are going
+	const ScriptMatrix &getTransform() const { return _transform; }
+	const ScriptMatrix &getBlendedTransform() const { return _blendedTransform; }
+
+	void setSineLerp(bool isSineLerp) { _isSineLerp = isSineLerp; }
+	bool isSineLerp() const { return _isSineLerp; }
+
+	double getTimeMultiplier() const { return _timeMultiplier; }
+	void setTimeMultiplier(double multiplier) { _timeMultiplier = multiplier; }
+
+	// Moves the blends on. Returns whether anything changed.
+	bool advance(double seconds);
+
+	// The functions of the scripts, which return their number of results. The
+	// record is at stack index 1.
+	int push(lua_State *L, StageKind kind);
 	int blend(lua_State *L);
 	int finishBlend(lua_State *L);
 	int isBlending(lua_State *L);
-	int attach(lua_State *L);
-	int removeAllStages(lua_State *L);
+	int removeAll(lua_State *L);
 
-protected:
-	void readTable(int tableIndex) override;
-	void run(double sceneTime, double elapsedTime) override;
-	void onZChanged() override;
-	bool getField(const Common::String &key) override;
-	bool setField(const Common::String &key) override;
+	// The value of a stage, by its name
+	bool getField(lua_State *L, const Common::String &key);
+	bool setField(lua_State *L, const Common::String &key);
+
+	// The functions above, for the records that have them
+	static bool pushFunction(lua_State *L, const Common::String &key);
 
 private:
 	struct Stage {
@@ -98,7 +107,7 @@ private:
 
 	static void readValue(lua_State *L, int index, StageKind kind, double value[2]);
 	static ScriptMatrix makeMatrix(StageKind kind, const double value[2]);
-	void pushValue(const Stage &stage);
+	void pushValue(lua_State *L, const Stage &stage);
 
 	// Puts a stage at a value at once
 	void setStage(Stage &stage, const double value[2]);
@@ -107,12 +116,38 @@ private:
 	// Moves a stage on in its blend. Returns whether it was blending.
 	bool advanceStage(Stage &stage, double seconds);
 
-	void updateTransform();
+	// Works out the product of the stages, and tells the record
+	void update();
 
+	Record &_owner;
 	Common::Array<Stage> _stages;
 	bool _isSineLerp = true;
 	double _timeMultiplier = 1.0;	// Nancy24: how much faster the blends go
-	ScriptMatrix _blendedTransform;	// where the stages are going
+	ScriptMatrix _transform;
+	ScriptMatrix _blendedTransform;
+};
+
+// Nancy22 moves, turns and resizes what a scene shows with Transformer records.
+// The records a Transformer gets with Attach() are moved by its transform on top
+// of their own, and so are other Transformers attached to it.
+class TransformerRecord : public Record {
+public:
+	TransformerRecord(SceneContext &context, const char *typeName = "ND.TransformerAR");
+
+	GraphNode *getNode() const { return _node; }
+
+	int attach(lua_State *L);
+
+	void onStagesChanged() override;
+
+protected:
+	void readTable(int tableIndex) override;
+	void run(double sceneTime, double elapsedTime) override;
+	void onZChanged() override;
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+
+private:
 	GraphNode *_node;
 };
 
