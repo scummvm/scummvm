@@ -19,13 +19,15 @@
  *
  */
 
-#include "room_script_command_05_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns room-object relocation across actor slots, inventory order, and action-prompt publication.
+
 namespace Scooby {
 
-void RoomScriptCommand05MoveObject::scriptCommand05MoveObject(int mode) {
+void RoomScriptCommandExecutor::scriptCommand05MoveObject(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000028A0-0x000028C3: scan mode and masked identities zero, one, and two each take their own
@@ -53,7 +55,7 @@ void RoomScriptCommand05MoveObject::scriptCommand05MoveObject(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
-bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, int16 newRoomId) {
+bool RoomScriptCommandExecutor::relocateFixedObject(RoomObject &roomObject, int16 newRoomId) {
 	int16 currentRoomId = _state.roomId;
 
 	// Ghidra 0x000028DE-0x00002907: detach an actor only when its object belongs to the active room. Dynamic
@@ -130,7 +132,7 @@ bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, 
 			break;
 		}
 
-		if (!_waitForRoomVerticalBlank()) {
+		if (!waitForRoomVerticalBlank()) {
 			return false;
 		}
 	}
@@ -139,7 +141,7 @@ bool RoomScriptCommand05MoveObject::relocateFixedObject(RoomObject &roomObject, 
 	return true;
 }
 
-bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObject, int objectIndex,
+bool RoomScriptCommandExecutor::relocatePortableObject(RoomObject &roomObject, int objectIndex,
 														 uint16 encodedObjectId,
 														 int16 newRoomId) {
 	int16 previousRoomId = roomObject.roomId;
@@ -152,7 +154,7 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 				roomObject.tilePatchIndex =
 					static_cast<int16>(static_cast<uint16>(roomObject.tilePatchIndex) | 0x8000);
 				roomObject.flags |= kObjectTilePatchPendingMask;
-				if (!_waitForRoomVerticalBlank()) {
+				if (!waitForRoomVerticalBlank()) {
 					return true;
 				}
 			}
@@ -203,7 +205,7 @@ bool RoomScriptCommand05MoveObject::relocatePortableObject(RoomObject &roomObjec
 	return refreshActionPromptsAfterRelocation(encodedObjectId);
 }
 
-bool RoomScriptCommand05MoveObject::refreshActionPromptsAfterRelocation(uint16 encodedObjectId) {
+bool RoomScriptCommandExecutor::refreshActionPromptsAfterRelocation(uint16 encodedObjectId) {
 	// Ghidra 0x00002AA6-0x00002AC9: interaction bit two and a negative encoded identity independently skip
 	// all three calls. Otherwise preserve WaitForVerticalBlank, CommitActionPromptUpdate, then refresh.
 	if ((_state.interactionFlags & kSuppressActionPromptRefreshMask) != 0) {
@@ -214,7 +216,7 @@ bool RoomScriptCommand05MoveObject::refreshActionPromptsAfterRelocation(uint16 e
 		return false;
 	}
 
-	if (!_waitForRoomVerticalBlank()) {
+	if (!waitForRoomVerticalBlank()) {
 		return true;
 	}
 
@@ -223,7 +225,4 @@ bool RoomScriptCommand05MoveObject::refreshActionPromptsAfterRelocation(uint16 e
 	return false;
 }
 
-int RoomScriptCommand05MoveObject::replaceIntegerCoordinate(int coordinate, int16 integer) {
-	return (coordinate & 0x0000FFFF) | (static_cast<int>(integer) << 16);
-}
 } // namespace Scooby

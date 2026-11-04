@@ -19,13 +19,15 @@
  *
  */
 
-#include "room_script_command_1e_executor.h"
+#include "room_script_command_executor.h"
 
 #include "actor_facing_animation.h"
 
+// Owns command 0x1E's actor-position transition selection and optional hold wait.
+
 namespace Scooby {
 
-void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
+void RoomScriptCommandExecutor::executeRoomScriptCommand1E(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x0000268E-0x00002691: scan mode bypasses every selector, position, animation, and wait effect.
@@ -91,13 +93,4 @@ void RoomScriptCommand1EExecutor::executeRoomScriptCommand1E(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
-bool RoomScriptCommand1EExecutor::waitForRoomVerticalBlank() {
-	_roomVBlank.handleRoomVBlank();
-	if (_presenter.waitForVerticalBlank()) {
-		return true;
-	}
-
-	_requestSessionExit(SessionExit::HostClosed);
-	return false;
-}
 } // namespace Scooby

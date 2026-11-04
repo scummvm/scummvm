@@ -19,13 +19,15 @@
  *
  */
 
-#include "room_script_command_19_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns command 0x19's actor-frame publication and visibility transition.
+
 namespace Scooby {
 
-void RoomScriptCommand19Executor::scriptCommand19ShowActor(int mode) {
+void RoomScriptCommandExecutor::scriptCommand19ShowActor(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002B0E-0x00002B11: scan mode skips every actor-selection and publication effect.
@@ -54,7 +56,7 @@ void RoomScriptCommand19Executor::scriptCommand19ShowActor(int mode) {
 				break;
 			}
 
-			if (!_waitForRoomVerticalBlank()) {
+			if (!waitForRoomVerticalBlank()) {
 				return;
 			}
 		}

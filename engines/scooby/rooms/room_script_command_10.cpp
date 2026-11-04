@@ -19,7 +19,7 @@
  *
  */
 
-#include "room_script_command_10_executor.h"
+#include "room_script_command_executor.h"
 
 #include "actor_facing_animation.h"
 #include "scooby/common/optional.h"
@@ -27,9 +27,11 @@
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/interactions/dialogue_text_source.h"
 
+// Owns room-script command 0x10's dialogue and optional lead-actor transitions.
+
 namespace Scooby {
 
-void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
+void RoomScriptCommandExecutor::scriptCommand10Dialog(int mode) {
 	int commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004D80-0x00004D83: scan mode bypasses the complete stateful body and joins the common
@@ -73,7 +75,7 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 		Optional<SessionExit> requestedExit =
 			_dialogue.presentDialogueAndWait(DialogueTextSource(dialogueOffset));
 		if (requestedExit.hasValue()) {
-			_requestSessionExit(requestedExit.value());
+			requestSessionExit(requestedExit.value());
 			return;
 		}
 
@@ -96,17 +98,17 @@ void RoomScriptCommand10Executor::scriptCommand10Dialog(int mode) {
 	}
 
 	// Ghidra 0x00004EDE-0x00004EE3: both modes consume the command, flags, and longword displacement.
-	_state.roomScriptCurrentOffset = commandOffset + kRecordSize;
+	_state.roomScriptCurrentOffset = commandOffset + kCommand10RecordSize;
 }
 
-void RoomScriptCommand10Executor::generateDialogueMaskTiles(uint8 nonzeroPaletteIndex) {
+void RoomScriptCommandExecutor::generateDialogueMaskTiles(uint8 nonzeroPaletteIndex) {
 	Common::Array<uint8> packedTiles = colorise4bppMaskTiles(
 		_rom, nonzeroPaletteIndex, 1);
 	int firstTileIndex = (_state.interfaceTileAttributes & 0x07FF) + kMaskTileBaseDelta;
 	_scene.loadTilesAt(makeSpan(packedTiles), firstTileIndex);
 }
 
-bool RoomScriptCommand10Executor::playShaggyActorTurnAnimation(int16 previousPositionIndex,
+bool RoomScriptCommandExecutor::playShaggyActorTurnAnimation(int16 previousPositionIndex,
 																  int16 nextPositionIndex) {
 	_state.actorAnimationOffsets[kShaggyActorSlot] =
 		resolveShaggyTurnAnimation(previousPositionIndex, nextPositionIndex);
@@ -118,7 +120,7 @@ bool RoomScriptCommand10Executor::playShaggyActorTurnAnimation(int16 previousPos
 			break;
 		}
 
-		if (!_waitForRoomVerticalBlank()) {
+		if (!waitForRoomVerticalBlank()) {
 			return false;
 		}
 	}
@@ -129,7 +131,7 @@ bool RoomScriptCommand10Executor::playShaggyActorTurnAnimation(int16 previousPos
 			break;
 		}
 
-		if (!_waitForRoomVerticalBlank()) {
+		if (!waitForRoomVerticalBlank()) {
 			return false;
 		}
 	}

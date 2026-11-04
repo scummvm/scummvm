@@ -19,13 +19,15 @@
  *
  */
 
-#include "room_script_command_0f_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns relative room-script movement across actor and room-object coordinate sources.
+
 namespace Scooby {
 
-void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
+void RoomScriptCommandExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004C20-0x00004C23: scan mode skips every effect and joins the fixed-width epilogue.
@@ -51,7 +53,7 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 				// retains the native non-returning handover and bypasses that post-movement copy.
 				if (!_movement.moveShaggyActorToRoomPosition(target.x, target.y, movementModeOrScale,
 														   movementArgument, encodedTargetIdentity)) {
-					_requestMovementHostClose();
+					requestMovementHostClose();
 					return;
 				}
 
@@ -64,7 +66,7 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 						 .moveScoobyActorDirectly(target.x, target.y, movementModeOrScale, movementArgument,
 													 true)
 						 .completed) {
-					_requestMovementHostClose();
+					requestMovementHostClose();
 					return;
 				}
 
@@ -75,7 +77,7 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 				// mode, encoded target context, and the common retained-register restoration.
 				if (!_movement.moveRoomObjectToPosition(targetIdentity, target.x, target.y, movementModeOrScale,
 														movementArgument, encodedTargetIdentity)) {
-					_requestMovementHostClose();
+					requestMovementHostClose();
 					return;
 				}
 
@@ -85,10 +87,10 @@ void RoomScriptCommand0FExecutor::scriptCommand0FWalkRelativeTo(int mode) {
 	}
 
 	// Ghidra 0x00004D7A-0x00004D7F: every mode, catalog outcome, source, and target consumes 12 bytes.
-	_state.roomScriptCurrentOffset = commandOffset + kRecordSize;
+	_state.roomScriptCurrentOffset = commandOffset + kCommand0FRecordSize;
 }
 
-bool RoomScriptCommand0FExecutor::tryResolveTargetAnimationDescriptor(uint16 targetIdentity,
+bool RoomScriptCommandExecutor::tryResolveTargetAnimationDescriptor(uint16 targetIdentity,
 																	  int &descriptorOffset) {
 	if (targetIdentity == 1) {
 		descriptorOffset = _state.actorAnimationDescriptorOffsets[kShaggyActorSlot];
@@ -105,7 +107,7 @@ bool RoomScriptCommand0FExecutor::tryResolveTargetAnimationDescriptor(uint16 tar
 	return _actorDescriptorCatalog.tryResolve(targetObject.shapeIndex, descriptorOffset, catalogIndex);
 }
 
-Common::Point RoomScriptCommand0FExecutor::resolveRelativeDestination(
+Common::Point RoomScriptCommandExecutor::resolveRelativeDestination(
 	int commandOffset, int animationDescriptorOffset) {
 	uint16 sourceIdentity = _rom.readUInt16(commandOffset + 4);
 	int16 relativeX = _rom.readInt16(commandOffset + 8);
@@ -148,15 +150,15 @@ Common::Point RoomScriptCommand0FExecutor::resolveRelativeDestination(
 							   static_cast<int16>(descriptor.y + _rom.readInt16(shapeOffset + 10)));
 }
 
-RoomObject &RoomScriptCommand0FExecutor::resolveRoomObject(uint16 objectId) {
+RoomObject &RoomScriptCommandExecutor::resolveRoomObject(uint16 objectId) {
 	return _state.roomObjects[objectId - 3];
 }
 
-int16 RoomScriptCommand0FExecutor::getIntegerCoordinate(int fixedCoordinate) {
+int16 RoomScriptCommandExecutor::getIntegerCoordinate(int fixedCoordinate) {
 	return static_cast<int16>(fixedCoordinate >> 16);
 }
 
-Common::Point RoomScriptCommand0FExecutor::findInteractionTypeTwoRecord(
+Common::Point RoomScriptCommandExecutor::findInteractionTypeTwoRecord(
 	int animationDescriptorOffset, int16 positionOffset) {
 	// Ghidra 0x0000197E-0x0000198D: double the signed selector with word wrapping, add the descriptor's
 	// word-table offset, resolve its signed list offset, and preserve the immutable descriptor base.

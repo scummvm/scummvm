@@ -19,13 +19,15 @@
  *
  */
 
-#include "room_script_command_21_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns command 0x21's per-actor path-stream installation.
+
 namespace Scooby {
 
-void RoomScriptCommand21Executor::executeRoomScriptCommand21(int mode) {
+void RoomScriptCommandExecutor::executeRoomScriptCommand21(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00004944-0x00004947: scan mode bypasses actor resolution and every path-state write.

@@ -19,15 +19,17 @@
  *
  */
 
-#include "room_script_command_02_executor.h"
+#include "room_script_command_executor.h"
 
 #include "scooby/interactions/interaction_action.h"
 #include "scooby/interactions/interaction_action_registry.h"
 
+// Registers the interaction-action menu entry embedded in room-script command 02.
+
 namespace Scooby {
 
 // loads a interaction line that the player can select. Used when talking to Actors.
-void RoomScriptCommand02Executor::scriptCommand02AddPlayerChoiceInteractionLine(int mode) {
+void RoomScriptCommandExecutor::scriptCommand02AddPlayerChoiceInteractionLine(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x000025AC-0x000025AF: a nonzero execution mode skips registration.

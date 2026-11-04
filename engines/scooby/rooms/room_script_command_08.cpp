@@ -19,13 +19,15 @@
  *
  */
 
-#include "room_script_command_08_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns word-width value transfers between progress state and complete room-object records.
+
 namespace Scooby {
 
-void RoomScriptCommand08Executor::scriptCommand08SetVariable(int mode) {
+void RoomScriptCommandExecutor::scriptCommand08SetVariable(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002C56-0x00002C59: mode zero skips every update and retains the common cursor advance.
@@ -113,7 +115,7 @@ void RoomScriptCommand08Executor::scriptCommand08SetVariable(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 12;
 }
 
-RoomScriptCommand08Executor::RoomObjectWordAddress RoomScriptCommand08Executor::resolveRoomObjectWordAddress(
+RoomScriptCommandExecutor::RoomObjectWordAddress RoomScriptCommandExecutor::resolveRoomObjectWordAddress(
 	uint16 objectId, uint16 fieldOffset) {
 	uint16 tableByteOffset =
 		static_cast<uint16>(fieldOffset + (objectId - 3) * RoomObject::kRecordSize);

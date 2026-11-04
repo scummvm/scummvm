@@ -19,13 +19,15 @@
  *
  */
 
-#include "room_script_command_0e_or_1b_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns indexed and immediate room-script placement commands for actors and room objects.
+
 namespace Scooby {
 
-void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode) {
+void RoomScriptCommandExecutor::scriptCommand0EOr1BMoveToPosition(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 	uint16 command = _rom.readUInt16(commandOffset);
 
@@ -59,7 +61,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 					if (!_movement.moveShaggyActorToRoomPosition(
 							target.x, target.y, movementMode, movementArgument,
 							encodedObjectId)) {
-						_requestMovementHostClose();
+						requestMovementHostClose();
 						return;
 					}
 				}
@@ -86,7 +88,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 					if (!_movement.finishScoobyMovement(target.x, target.y, movementMode,
 														   movementArgument,
 														   encodedObjectId)) {
-						_requestMovementHostClose();
+						requestMovementHostClose();
 						return;
 					}
 				}
@@ -102,7 +104,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 														_rom.readInt16(commandOffset + 4),
 														_rom.readInt16(commandOffset + 6),
 														encodedObjectId)) {
-					_requestMovementHostClose();
+					requestMovementHostClose();
 					return;
 				}
 
@@ -118,7 +120,7 @@ void RoomScriptCommand0EOr1BExecutor::scriptCommand0EOr1BMoveToPosition(int mode
 		commandOffset + (command == kIndexedPositionCommand ? kIndexedRecordSize : kImmediateRecordSize);
 }
 
-Common::Point RoomScriptCommand0EOr1BExecutor::readTargetCoordinates(
+Common::Point RoomScriptCommandExecutor::readTargetCoordinates(
 	int commandOffset, uint16 command) {
 	if (command != kIndexedPositionCommand) {
 		return Common::Point(_rom.readInt16(commandOffset + 8), _rom.readInt16(commandOffset + 10));
@@ -130,7 +132,7 @@ Common::Point RoomScriptCommand0EOr1BExecutor::readTargetCoordinates(
 							 static_cast<int16>(_rom.readInt16(positionOffset + 2) << 3));
 }
 
-bool RoomScriptCommand0EOr1BExecutor::placeActorDirectly(int actorSlot, int16 targetX,
+bool RoomScriptCommandExecutor::placeActorDirectly(int actorSlot, int16 targetX,
 														 int16 targetY,
 														 int16 animationOffset,
 														 int16 initialDelay,
@@ -152,14 +154,10 @@ bool RoomScriptCommand0EOr1BExecutor::placeActorDirectly(int actorSlot, int16 ta
 			return true;
 		}
 
-		if (!_waitForRoomVerticalBlank()) {
+		if (!waitForRoomVerticalBlank()) {
 			return false;
 		}
 	}
 }
 
-int RoomScriptCommand0EOr1BExecutor::replaceIntegerCoordinate(int fixedCoordinate,
-															  int16 integerCoordinate) {
-	return (fixedCoordinate & 0x0000FFFF) | (static_cast<int>(integerCoordinate) << 16);
-}
 } // namespace Scooby

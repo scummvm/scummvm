@@ -19,21 +19,23 @@
  *
  */
 
-#include "room_script_command_1d_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns command 0x1C's actor-movement projection into episode progress state.
+
 namespace Scooby {
 
-void RoomScriptCommand1DExecutor::executeRoomScriptCommand1D(int mode) {
+void RoomScriptCommandExecutor::executeRoomScriptCommand1C(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
-	// Ghidra 0x00002510-0x00002513: scan mode skips all progress, identity, and hold-state effects.
+	// Ghidra 0x0000255E-0x00002561: scan mode skips all progress, identity, and movement effects.
 	if (mode != 0) {
-		// Ghidra 0x00002514-0x0000251B: execution clears the projected progress bit before selection.
-		_state.progressStateBytes[0] &= 0xF7;
+		// Ghidra 0x00002562-0x00002569: execution clears the projected progress bit before selection.
+		_state.progressStateBytes[0] &= 0xFB;
 
-		// Ghidra 0x0000251C-0x00002545: identities one and two select actor bits zero and one; every other
+		// Ghidra 0x0000256A-0x00002593: identities one and two select actor bits zero and one; every other
 		// word retains the wrapped signed object-record offset, zero-extends byte +0x19, adds two, and uses
 		// the low three bits as the actor bit number.
 		uint16 objectId = _rom.readUInt16(commandOffset + 2);
@@ -47,15 +49,15 @@ void RoomScriptCommand1DExecutor::executeRoomScriptCommand1D(int mode) {
 			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
 		}
 
-		// Ghidra 0x00002546-0x00002557: both hold-bit outcomes remain explicit; only an active selected actor
-		// restores progress byte-zero bit three.
+		// Ghidra 0x00002594-0x000025A5: both movement-bit outcomes remain explicit; only an active selected
+		// actor restores progress byte-zero bit two.
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
-		if ((_state.actorAnimationHoldFlags & actorMask) != 0) {
-			_state.progressStateBytes[0] |= 0x08;
+		if ((_state.actorMovementFlags & actorMask) != 0) {
+			_state.progressStateBytes[0] |= 0x04;
 		}
 	}
 
-	// Ghidra 0x00002558-0x0000255D: every mode and identity branch consumes the four-byte command.
+	// Ghidra 0x000025A6-0x000025AB: every mode and identity branch consumes the four-byte command.
 	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
 } // namespace Scooby

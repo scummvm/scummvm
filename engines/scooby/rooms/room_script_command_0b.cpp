@@ -19,12 +19,14 @@
  *
  */
 
-#include "room_script_command_0b_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns command 0x0B's room-object shape and tile-patch publication lifecycle.
+
 namespace Scooby {
-void RoomScriptCommand0BExecutor::scriptCommand0BSetBackgroundGfx(int mode) {
+void RoomScriptCommandExecutor::scriptCommand0BSetBackgroundGfx(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002DF2-0x00002DF5: dispatcher mode zero skips every object-state branch.
@@ -72,7 +74,7 @@ void RoomScriptCommand0BExecutor::scriptCommand0BSetBackgroundGfx(int mode) {
 					roomObject.flags |= kTilePatchPendingMask;
 					if (static_cast<int16>(encodedObjectId) < 0) {
 						while ((roomObject.flags & kTilePatchPendingMask) != 0) {
-							if (!_waitForRoomVerticalBlank()) {
+							if (!waitForRoomVerticalBlank()) {
 								return;
 							}
 						}

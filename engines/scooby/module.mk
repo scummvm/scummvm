@@ -50,23 +50,23 @@ MODULE_OBJS = \
     rooms/room_script_action_27_executor.o \
     rooms/room_script_action_executor.o \
     rooms/room_script_camera_pan_executor.o \
-    rooms/room_script_command_01_executor.o \
-    rooms/room_script_command_02_executor.o \
-    rooms/room_script_command_05_executor.o \
-    rooms/room_script_command_08_executor.o \
-    rooms/room_script_command_09_executor.o \
-    rooms/room_script_command_0b_executor.o \
-    rooms/room_script_command_0e_or_1b_executor.o \
-    rooms/room_script_command_0f_executor.o \
-    rooms/room_script_command_10_executor.o \
-    rooms/room_script_command_19_executor.o \
-    rooms/room_script_command_1a_executor.o \
-    rooms/room_script_command_1c_executor.o \
-    rooms/room_script_command_1d_executor.o \
-    rooms/room_script_command_1e_executor.o \
-    rooms/room_script_command_1f_executor.o \
-    rooms/room_script_command_20_executor.o \
-    rooms/room_script_command_21_executor.o \
+    rooms/room_script_command_01.o \
+    rooms/room_script_command_02.o \
+    rooms/room_script_command_05.o \
+    rooms/room_script_command_08.o \
+    rooms/room_script_command_09.o \
+    rooms/room_script_command_0b.o \
+    rooms/room_script_command_0e_or_1b.o \
+    rooms/room_script_command_0f.o \
+    rooms/room_script_command_10.o \
+    rooms/room_script_command_19.o \
+    rooms/room_script_command_1a.o \
+    rooms/room_script_command_1c.o \
+    rooms/room_script_command_1d.o \
+    rooms/room_script_command_1e.o \
+    rooms/room_script_command_1f.o \
+    rooms/room_script_command_20.o \
+    rooms/room_script_command_21.o \
     rooms/room_script_command_executor.o \
     rooms/room_script_condition_evaluator.o \
     rooms/room_script_controller.o \

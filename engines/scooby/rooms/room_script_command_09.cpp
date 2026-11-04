@@ -19,13 +19,15 @@
  *
  */
 
-#include "room_script_command_09_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns command 0x09's room-object byte mutation and action-icon handover.
+
 namespace Scooby {
 
-void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
+void RoomScriptCommandExecutor::executeRoomScriptCommand09(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002D5E-0x00002D61: inherited Z from dispatcher mode zero skips every state mutation.
@@ -58,7 +60,7 @@ void RoomScriptCommand09Executor::executeRoomScriptCommand09(int mode) {
 	_state.roomScriptCurrentOffset = commandOffset + 6;
 }
 
-RoomScriptCommand09Executor::RoomObjectByteLocation RoomScriptCommand09Executor::resolveRoomObjectByte(
+RoomScriptCommandExecutor::RoomObjectByteLocation RoomScriptCommandExecutor::resolveRoomObjectByte(
 	uint16 objectId, int8 displacement) {
 	uint16 recordOffset = static_cast<uint16>((objectId - 3) * RoomObject::kRecordSize);
 	int16 wrappedRecordOffset = static_cast<int16>(recordOffset + displacement);

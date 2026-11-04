@@ -19,15 +19,17 @@
  *
  */
 
-#include "room_script_command_1a_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
 #include "scooby/common/span.h"
 
+// Owns command 0x1A's animated palette-range configuration and publication.
+
 namespace Scooby {
 
-void RoomScriptCommand1AExecutor::executeRoomScriptCommand1A(int mode) {
+void RoomScriptCommandExecutor::executeRoomScriptCommand1A(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x00002626-0x00002629: scan mode skips every selector, configuration, and palette effect.

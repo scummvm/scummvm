@@ -19,18 +19,20 @@
  *
  */
 
-#include "room_script_command_20_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns command 0x1F's combined actor movement and path-completion wait.
+
 namespace Scooby {
 
-void RoomScriptCommand20Executor::executeRoomScriptCommand20(int mode) {
+void RoomScriptCommandExecutor::executeRoomScriptCommand1F(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
-	// Ghidra 0x000048F8-0x000048FB: scan mode bypasses actor resolution and both state mutations.
+	// Ghidra 0x00004F70-0x00004F73: scan mode bypasses actor resolution and the complete wait loop.
 	if (mode != 0) {
-		// Ghidra 0x000048FC-0x00004927: identities one and two select actor bits zero and one; every other
+		// Ghidra 0x00004F74-0x00004F9F: identities one and two select actor bits zero and one; every other
 		// word retains the wrapped signed object-record offset, zero-extends byte +0x19, adds two, and uses
 		// the low three bits as the actor bit number.
 		uint16 objectId = _rom.readUInt16(commandOffset + 2);
@@ -45,17 +47,32 @@ void RoomScriptCommand20Executor::executeRoomScriptCommand20(int mode) {
 		}
 
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
-		if ((_state.actorMovementFlags & actorMask) != 0) {
-			// Ghidra 0x00004928-0x00004937: active movement clears only the selected movement bit and
-			// bypasses the one-shot animation-loop exit request.
-			_state.actorMovementFlags &= static_cast<uint8>(~actorMask);
-		} else {
-			// Ghidra 0x00004938-0x0000493D: movement already clear sets only the selected loop-exit bit.
-			_state.actorAnimationLoopExitFlags |= actorMask;
+		while (true) {
+			// Ghidra 0x00004FA0-0x00004FAD: advance every stream at least once. An active selected movement
+			// bit takes the back edge immediately without consulting path state.
+			_actorAnimator.updateActorAnimationFrames();
+			if ((_state.actorMovementFlags & actorMask) != 0) {
+				if (!waitForRoomVerticalBlank()) {
+					return;
+				}
+
+				continue;
+			}
+
+			// Ghidra 0x00004FAE-0x00004FB7: with movement clear, an active selected path bit takes the same
+			// back edge; only the distinct both-clear outcome exits.
+			if ((_state.actorPathActiveFlags & actorMask) == 0) {
+				break;
+			}
+
+			if (!waitForRoomVerticalBlank()) {
+				return;
+			}
 		}
 	}
 
-	// Ghidra 0x0000493E-0x00004943: every mode, identity, and movement outcome consumes four bytes.
+	// Ghidra 0x00004FB8-0x00004FBD: every mode, identity, and wait outcome consumes four bytes.
 	_state.roomScriptCurrentOffset = commandOffset + 4;
 }
+
 } // namespace Scooby

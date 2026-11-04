@@ -19,18 +19,23 @@
  *
  */
 
-#include "room_script_command_1f_executor.h"
+#include "room_script_command_executor.h"
 
 #include "common/scummsys.h"
 
+// Owns command 0x1D's actor-animation hold projection into episode progress state.
+
 namespace Scooby {
 
-void RoomScriptCommand1FExecutor::executeRoomScriptCommand1F(int mode) {
+void RoomScriptCommandExecutor::executeRoomScriptCommand1D(int mode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
-	// Ghidra 0x00004F70-0x00004F73: scan mode bypasses actor resolution and the complete wait loop.
+	// Ghidra 0x00002510-0x00002513: scan mode skips all progress, identity, and hold-state effects.
 	if (mode != 0) {
-		// Ghidra 0x00004F74-0x00004F9F: identities one and two select actor bits zero and one; every other
+		// Ghidra 0x00002514-0x0000251B: execution clears the projected progress bit before selection.
+		_state.progressStateBytes[0] &= 0xF7;
+
+		// Ghidra 0x0000251C-0x00002545: identities one and two select actor bits zero and one; every other
 		// word retains the wrapped signed object-record offset, zero-extends byte +0x19, adds two, and uses
 		// the low three bits as the actor bit number.
 		uint16 objectId = _rom.readUInt16(commandOffset + 2);
@@ -44,42 +49,15 @@ void RoomScriptCommand1FExecutor::executeRoomScriptCommand1F(int mode) {
 			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
 		}
 
+		// Ghidra 0x00002546-0x00002557: both hold-bit outcomes remain explicit; only an active selected actor
+		// restores progress byte-zero bit three.
 		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
-		while (true) {
-			// Ghidra 0x00004FA0-0x00004FAD: advance every stream at least once. An active selected movement
-			// bit takes the back edge immediately without consulting path state.
-			_actorAnimator.updateActorAnimationFrames();
-			if ((_state.actorMovementFlags & actorMask) != 0) {
-				if (!waitForRoomVerticalBlank()) {
-					return;
-				}
-
-				continue;
-			}
-
-			// Ghidra 0x00004FAE-0x00004FB7: with movement clear, an active selected path bit takes the same
-			// back edge; only the distinct both-clear outcome exits.
-			if ((_state.actorPathActiveFlags & actorMask) == 0) {
-				break;
-			}
-
-			if (!waitForRoomVerticalBlank()) {
-				return;
-			}
+		if ((_state.actorAnimationHoldFlags & actorMask) != 0) {
+			_state.progressStateBytes[0] |= 0x08;
 		}
 	}
 
-	// Ghidra 0x00004FB8-0x00004FBD: every mode, identity, and wait outcome consumes four bytes.
+	// Ghidra 0x00002558-0x0000255D: every mode and identity branch consumes the four-byte command.
 	_state.roomScriptCurrentOffset = commandOffset + 4;
-}
-
-bool RoomScriptCommand1FExecutor::waitForRoomVerticalBlank() {
-	_roomVBlank.handleRoomVBlank();
-	if (_presenter.waitForVerticalBlank()) {
-		return true;
-	}
-
-	_requestSessionExit(SessionExit::HostClosed);
-	return false;
 }
 } // namespace Scooby

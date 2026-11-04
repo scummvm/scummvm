@@ -19,11 +19,13 @@
  *
  */
 
-#include "room_script_command_01_executor.h"
+#include "room_script_command_executor.h"
+
+// Owns the conditional interaction scan and cursor control selected by room-script command 0x01.
 
 namespace Scooby {
 
-void RoomScriptCommand01Executor::executeRoomScriptCommand01(int mode, int16 interactionMode) {
+void RoomScriptCommandExecutor::executeRoomScriptCommand01(int mode, int16 interactionMode) {
 	int32 commandOffset = _state.roomScriptCurrentOffset;
 
 	// Ghidra 0x0000246A-0x0000246D: execution mode bypasses every condition branch.

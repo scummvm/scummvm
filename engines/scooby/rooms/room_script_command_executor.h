@@ -26,32 +26,17 @@
 
 #include "common/array.h"
 #include "common/func.h"
+#include "common/rect.h"
 
 #include "actor_animation_descriptor_catalog.h"
 #include "room_collision_probe.h"
 #include "room_script_action_executor.h"
-#include "room_script_command_01_executor.h"
-#include "room_script_command_02_executor.h"
-#include "room_script_command_05_executor.h"
-#include "room_script_command_08_executor.h"
-#include "room_script_command_09_executor.h"
-#include "room_script_command_0b_executor.h"
-#include "room_script_command_0e_or_1b_executor.h"
-#include "room_script_command_0f_executor.h"
-#include "room_script_command_10_executor.h"
-#include "room_script_command_19_executor.h"
-#include "room_script_command_1a_executor.h"
-#include "room_script_command_1c_executor.h"
-#include "room_script_command_1d_executor.h"
-#include "room_script_command_1e_executor.h"
-#include "room_script_command_1f_executor.h"
-#include "room_script_command_20_executor.h"
-#include "room_script_command_21_executor.h"
 #include "room_script_condition_evaluator.h"
 #include "room_tile_streamer.h"
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/interactions/action_menu_controller.h"
 #include "scooby/interactions/dialogue_controller.h"
 #include "scooby/movement/scripted_room_movement_executor.h"
 #include "scooby/presentation/frame_presenter.h"
@@ -121,12 +106,6 @@ private:
 	//
 	// Ghidra: executeRoomScriptCommand00 (0x0000250C).
 	void scriptCommand00NoOp(int mode);
-
-	// Forwards to the recovered command 0x01 owner with the retained interaction-mode snapshot.
-	// mode: original D0 mode selected by the calling script loop.
-	void executeRoomScriptCommand01(int mode) {
-		_command01Executor.executeRoomScriptCommand01(mode, _interactionModeSnapshot);
-	}
 
 	// Chooses the fixed record end or its authored signed failure displacement.
 	// mode: ignored because the shared condition record has the same meaning in either mode.
@@ -254,6 +233,283 @@ private:
 		_requestedSessionExit = exit;
 	}
 
+	// Shared by the command implementations below.
+	static const uint8 kFixedPositionMask = 0x02;
+	static int replaceIntegerCoordinate(int coordinate, int16 integer);
+
+	// ---- Command 0x01, implemented in room_script_command_01.cpp ----
+
+	// Evaluates the interaction condition in scan mode or follows its signed record displacement.
+	// mode: zero evaluates the condition; nonzero skips directly by the record displacement.
+	// interactionMode: stable D7 interaction-mode snapshot retained by the scan dispatcher.
+	//
+	// Ghidra: executeRoomScriptCommand01 (0x0000246A).
+	void executeRoomScriptCommand01(int mode, int16 interactionMode);
+
+	static const uint8 kAlternateInteractionMask = 0x01;
+	static const uint8 kConditionEvaluationMask = 0x02;
+	static const uint8 kRoomBehaviorModeMask = 0x01;
+	static const uint8 kSecondaryInteractionLatchMask = 0x20;
+	static const uint8 kStopDispatchMask = 0x01;
+
+	// ---- Command 0x02, implemented in room_script_command_02.cpp ----
+
+	// Conditionally registers one menu choice, then follows the record's signed cursor displacement.
+	// mode: zero scans and may register the entry; nonzero only advances the cursor.
+	//
+	// Ghidra: executeRoomScriptCommand02 (0x000025AC). Active episode descriptor field +0x20 is 0x0014199C for
+	// episode zero and 0x001AF33C for episode one. The original stores five parallel arrays;
+	// InteractionActionRegistry preserves each indexed relationship as one value without retaining mutable
+	// cartridge pointers.
+	void scriptCommand02AddPlayerChoiceInteractionLine(int mode);
+
+	static const int kInteractionTextBaseField = 0x20;
+	static const int kNestedScriptField = 0x0E;
+	static const uint8 kRegistrationEnabledMask = 0x04;
+
+	// ---- Command 0x05, implemented in room_script_command_05.cpp ----
+
+	// Relocates one room object and consumes its complete six-byte command record.
+	// mode: zero scans the record; any nonzero value applies the relocation.
+	//
+	// Ghidra: executeRoomScriptCommand05 (0x000028A0). The 36-entry descriptor and movement-step catalogs
+	// remain ROM-owned authored data. Four dynamic actor movement slots replace the original overlapping RAM
+	// aliases, while the typed inventory list replaces its trailing -1 word.
+	void scriptCommand05MoveObject(int mode);
+
+	static const uint8 kCompactActorMask = 0x08;
+	static const int kDynamicActorCount = 4;
+	static const int kDynamicActorFirstSlot = 2;
+	static const int kDynamicActorSlotLimit = kDynamicActorFirstSlot + kDynamicActorCount;
+	static const int16 kInventoryRoomId = 1;
+	static const uint8 kObjectTilePatchPendingMask = 0x01;
+	static const uint8 kSuppressActionPromptRefreshMask = 0x04;
+
+	// Returns false when host closure interrupted a synchronous wait (the caller must abort without consuming
+	// the command record), true on normal completion.
+	bool relocateFixedObject(RoomObject &roomObject, int16 newRoomId);
+
+	// Returns true when host closure interrupted a synchronous wait (the caller must abort without consuming
+	// the command record), false on normal completion.
+	bool relocatePortableObject(RoomObject &roomObject, int objectIndex, uint16 encodedObjectId,
+								int16 newRoomId);
+
+	// Returns true when host closure interrupted the wait, false otherwise.
+	bool refreshActionPromptsAfterRelocation(uint16 encodedObjectId);
+
+	// ---- Command 0x08, implemented in room_script_command_08.cpp ----
+
+	// Transfers one selected value through the command's complete source and destination operation matrix.
+	// mode: zero scans past the command; nonzero applies its value transfer.
+	//
+	// Ghidra: executeRoomScriptCommand08 (0x00002C56). Room-object addresses retain the original wrapped word
+	// sum and even alignment, including offsets that cross into a neighboring record. The progress-word XOR
+	// uses the command destination held in D3; raw instruction 0x00002D08 instead indexes through inherited
+	// A3.W, which neither dispatcher establishes.
+	void scriptCommand08SetVariable(int mode);
+
+	// Preserves a mutable reference to the resolved room-object record and its aligned command-word offset,
+	struct RoomObjectWordAddress {
+		RoomObject &targetRoomObject;
+		int byteOffset;
+
+		RoomObjectWordAddress(RoomObject &newTargetRoomObject, int newByteOffset)
+			: targetRoomObject(newTargetRoomObject), byteOffset(newByteOffset) {
+		}
+	};
+
+	RoomObjectWordAddress resolveRoomObjectWordAddress(uint16 objectId, uint16 fieldOffset);
+
+	// ---- Command 0x09, implemented in room_script_command_09.cpp ----
+
+	// Replaces an indexed room-object byte and retires any active action icon.
+	// mode: zero scans past the command; nonzero applies its object and icon updates.
+	//
+	// Ghidra: executeRoomScriptCommand09 (0x00002D5E). The signed command displacement is relative to record
+	// field +0x16 and may select any byte in an adjacent typed record. The canonical icon renderer and its
+	// hardware handover preserve the original resolved A1 address.
+	void executeRoomScriptCommand09(int mode);
+
+	static const int kActionIconByteOffset = 0x16;
+
+	// Preserves a mutable reference to the resolved room-object record and its command-byte offset.
+	struct RoomObjectByteLocation {
+		RoomObject &targetRoomObject;
+		int byteOffset;
+
+		RoomObjectByteLocation(RoomObject &newTargetRoomObject, int newByteOffset)
+			: targetRoomObject(newTargetRoomObject), byteOffset(newByteOffset) {
+		}
+	};
+
+	RoomObjectByteLocation resolveRoomObjectByte(uint16 objectId, int8 displacement);
+
+	// ---- Command 0x0B, implemented in room_script_command_0b.cpp ----
+
+	// Updates one object's shape and tile patch, optionally waiting for publication.
+	// mode: zero scans past the command; nonzero applies its complete object update.
+	//
+	// Ghidra: executeRoomScriptCommand0B (0x00002DF2). Encoded identity bit 15 controls synchronous completion
+	// independently from the low 15-bit object identity. The callback-aware clocked frame replaces the
+	// original asynchronous interrupt progress observed by the busy loop.
+	void scriptCommand0BSetBackgroundGfx(int mode);
+
+	static const uint8 kTilePatchPendingMask = 0x01;
+	static const uint16 kTilePatchRetirementMask = 0xC000;
+
+	// ---- Command 0x0E/0x1B, implemented in room_script_command_0e_or_1b.cpp ----
+
+	// Places or moves one encoded actor or room object from an indexed or immediate destination.
+	// mode: zero scans the record; nonzero executes every identity and movement branch.
+	//
+	// Ghidra: executeRoomScriptCommand0EOr1B (0x000049BA). Command 0x0E consumes ten bytes and scales one
+	// indexed room-position pair by eight; command 0x1B consumes twelve bytes and uses its immediate signed
+	// coordinates. Encoded identity bit 15 suppresses nonnegative movement completion waits but is masked from
+	// identity selection; room-object direct placement still waits for a requested animation's graphics.
+	// Negative movement mode replaces only the integer half of each 16.16 coordinate; actor zero restarts at
+	// delay -1, while actor one retains the original asymmetric delay 1.
+	void scriptCommand0EOr1BMoveToPosition(int mode);
+
+	static const uint16 kIndexedPositionCommand = 0x0E;
+	static const int kIndexedRecordSize = 10;
+	static const int kImmediateRecordSize = 12;
+
+	Common::Point readTargetCoordinates(int commandOffset, uint16 command);
+	bool placeActorDirectly(int actorSlot, int16 targetX, int16 targetY,
+							int16 animationOffset,
+							int16 initialDelay, uint8 actorMask);
+
+	// ---- Command 0x0F, implemented in room_script_command_0f.cpp ----
+
+	// Moves one encoded target relative to an actor or room-object coordinate source.
+	// mode: zero scans the record; nonzero executes every descriptor, source, and target branch.
+	//
+	// Ghidra: executeRoomScriptCommand0F (0x00004C20). The 12-byte record masks target bit 15 for selection
+	// but retains the encoded word for lead and room-object nonnegative movement completion policy;
+	// room-object direct placement still waits for requested animation graphics, while companion-direct
+	// movement does not inspect it. Source identities one and two use actor integer coordinates; every other
+	// source uses its room-position selector and the target animation descriptor's type-two record before
+	// fixed or shape-relative placement.
+	void scriptCommand0FWalkRelativeTo(int mode);
+
+	static const int kEpisodeShapeDataBaseField = 0x1C;
+	static const int kEpisodeShapePointerTableField = 0x24;
+	static const int kCommand0FRecordSize = 12;
+
+	bool tryResolveTargetAnimationDescriptor(uint16 targetIdentity, int &descriptorOffset);
+	Common::Point resolveRelativeDestination(int commandOffset, int animationDescriptorOffset);
+	RoomObject &resolveRoomObject(uint16 objectId);
+	static int16 getIntegerCoordinate(int fixedCoordinate);
+
+	// Resolves signed coordinates through an animation descriptor's type-two interaction record.
+	// animationDescriptorOffset: ROM offset of the selected actor animation descriptor.
+	// positionOffset: signed position selector used to index the descriptor's word table.
+	// Returns the type-two record's signed X and Y coordinates.
+	//
+	// Ghidra: findInteractionTypeTwoRecord (0x0000197E). The complete body is 0x0000197E-0x000019AF.
+	// Descriptor-relative offsets and the doubled position selector retain signed word wrapping and sign
+	// extension. Four-byte {type, recordOffset} entries are scanned without a sentinel, bound, or fallback
+	// until type 2; that entry resolves a descriptor-relative record whose signed coordinate words are at
+	// +0x0E/+0x10.
+	Common::Point
+	findInteractionTypeTwoRecord(int animationDescriptorOffset, int16 positionOffset);
+
+	// ---- Command 0x10, implemented in room_script_command_10.cpp ----
+
+	// Presents one authored dialogue with optional hold setup and reversible actor movement.
+	// mode: zero scans the eight-byte record; nonzero executes every encoded branch.
+	//
+	// Ghidra: executeRoomScriptCommand10 (0x00004D80). Flag bit 12 primes actor-zero hold
+	// and interaction state. Bit 13 independently gates the transition before and after dialogue, bits
+	// 14-15 select its temporary position, bits 4-5 replace tile palette bits 13-14, and bits 0-3 select
+	// the mask's nonzero palette index. The managed scene receives the same 95 generated patterns without
+	// retaining the original VRAM transport.
+	void scriptCommand10Dialog(int mode);
+
+	static const int kDialogueBaseField = 0x20;
+	static const int kMaskTileBaseDelta = 0x20;
+	static const uint16 kPaletteAttributePreservationMask = 0x9FFF;
+	static const int kCommand10RecordSize = 8;
+
+	void generateDialogueMaskTiles(uint8 nonzeroPaletteIndex);
+	bool playShaggyActorTurnAnimation(int16 previousPositionIndex, int16 nextPositionIndex);
+
+	// ---- Command 0x19, implemented in room_script_command_19.cpp ----
+
+	// Publishes a selected actor's current frame before restoring its visibility.
+	// mode: zero scans the four-byte record; nonzero performs the publication transition.
+	//
+	// Ghidra: executeRoomScriptCommand19 (0x00002B0E). Every identity other than one or two retains the
+	// wrapped object-table branch, and byte-bit selection remains modulo eight.
+	void scriptCommand19ShowActor(int mode);
+
+	// ---- Command 0x1A, implemented in room_script_command_1a.cpp ----
+
+	// Configures, disables, or immediately restores one animated palette range.
+	// mode: zero scans the ten-byte record; nonzero evaluates its signed selector and control word.
+	//
+	// Ghidra: executeRoomScriptCommand1A (0x00002626). The selector comparison is signed, and the disable
+	// transfer retains its exclusive end and word-width arithmetic.
+	void executeRoomScriptCommand1A(int mode);
+
+	// ---- Command 0x1C, implemented in room_script_command_1c.cpp ----
+
+	// Mirrors the selected actor's movement-active bit into progress byte-zero bit two.
+	// mode: zero scans the four-byte record; nonzero evaluates every actor-identity branch.
+	//
+	// Ghidra: executeRoomScriptCommand1C (0x0000255E). Object-selected actors retain the signed low word of
+	// the native record offset and the fixed-position byte's unsigned modulo-eight bit.
+	void executeRoomScriptCommand1C(int mode);
+
+	// ---- Command 0x1D, implemented in room_script_command_1d.cpp ----
+
+	// Mirrors the selected actor's animation-hold bit into progress byte-zero bit three.
+	// mode: zero scans the four-byte record; nonzero evaluates every actor-identity branch.
+	//
+	// Ghidra: executeRoomScriptCommand1D (0x00002510). Object-selected actors retain the signed low word of
+	// the native record offset and the fixed-position byte's unsigned modulo-eight bit.
+	void executeRoomScriptCommand1D(int mode);
+
+	// ---- Command 0x1E, implemented in room_script_command_1e.cpp ----
+
+	// Selects one lead or companion position-transition animation and optionally waits for its hold.
+	// mode: zero scans the six-byte record; nonzero executes every selector and sign branch.
+	//
+	// Ghidra: executeRoomScriptCommand1E (0x0000268E). Selector bit fifteen requests the hold wait
+	// independently of the actor choice, and the two actor branches deliberately restart asymmetrically.
+	// Managed continuations service the installed room callback and one clocked host frame because native
+	// VBlank can interrupt either tight wait and decrement positive animation delays.
+	void executeRoomScriptCommand1E(int mode);
+
+	// ---- Command 0x1F, implemented in room_script_command_1f.cpp ----
+
+	// Advances animation until the selected actor has neither movement nor path traversal active.
+	// mode: zero scans the four-byte record; nonzero evaluates every identity and wait branch.
+	//
+	// Ghidra: executeRoomScriptCommand1F (0x00004F70). The native loop checks movement before path state and
+	// always performs at least one animation update. Managed continuations service the installed room callback
+	// and one clocked host frame to replace asynchronous movement and path progress.
+	void executeRoomScriptCommand1F(int mode);
+
+	// ---- Command 0x20, implemented in room_script_command_20.cpp ----
+
+	// Cancels selected active movement or requests an animation-loop exit when movement is clear.
+	// mode: zero scans the four-byte record; nonzero evaluates every identity and state branch.
+	//
+	// Ghidra: executeRoomScriptCommand20 (0x000048F8). The movement-active and movement-clear branches
+	// deliberately update different masks without changing the other one.
+	void executeRoomScriptCommand20(int mode);
+
+	// ---- Command 0x21, implemented in room_script_command_21.cpp ----
+
+	// Installs an inline path stream and starts traversal for the selected actor.
+	// mode: zero scans the variable-length record; nonzero installs all selected path state.
+	//
+	// Ghidra: executeRoomScriptCommand21 (0x00004944). Unlike the preceding actor-selection commands, dynamic
+	// selection sign-extends the room object's fixed-position byte before indexing every six-slot path array.
+	// The record extent is also a signed word even though authored extents are positive.
+	void executeRoomScriptCommand21(int mode);
+
 	const ScoobyDooRom &_rom;
 	RuntimeState &_state;
 	FramePresenter &_presenter;
@@ -262,30 +518,13 @@ private:
 	RoomActorAnimator &_actorAnimator;
 	RoomVBlankHandler &_roomVBlank;
 	ActionMenuController &_actionMenu;
+	TileScene &_scene;
+	DeterministicRandom &_random;
+	DialogueController &_dialogue;
+	ScriptedRoomMovementExecutor &_movement;
 	Common::Functor1<int, Optional<SessionExit>> &_invokeRoomScriptDispatchCallback;
 
-	Common::Functor0Mem<bool, RoomScriptCommandExecutor> _waitForRoomVerticalBlankFunctor;
-	Common::Functor0Mem<void, RoomScriptCommandExecutor> _requestMovementHostCloseFunctor;
-	Common::Functor1Mem<SessionExit, void, RoomScriptCommandExecutor> _requestSessionExitFunctor;
-
 	ActorAnimationDescriptorCatalog _actorDescriptorCatalog;
-	RoomScriptCommand01Executor _command01Executor;
-	RoomScriptCommand02Executor _command02Executor;
-	RoomScriptCommand05MoveObject _command05Executor;
-	RoomScriptCommand08Executor _command08Executor;
-	RoomScriptCommand09Executor _command09Executor;
-	RoomScriptCommand0BExecutor _command0BExecutor;
-	RoomScriptCommand0EOr1BExecutor _command0EOr1BExecutor;
-	RoomScriptCommand0FExecutor _command0FExecutor;
-	RoomScriptCommand10Executor _command10Executor;
-	RoomScriptCommand19Executor _command19Executor;
-	RoomScriptCommand1AExecutor _command1AExecutor;
-	RoomScriptCommand1CExecutor _command1CExecutor;
-	RoomScriptCommand1DExecutor _command1DExecutor;
-	RoomScriptCommand1EExecutor _command1EExecutor;
-	RoomScriptCommand1FExecutor _command1FExecutor;
-	RoomScriptCommand20Executor _command20Executor;
-	RoomScriptCommand21Executor _command21Executor;
 	RoomScriptActionExecutor _actions;
 	RoomScriptConditionEvaluator _conditionEvaluator;
 
