@@ -202,7 +202,7 @@ void OverworldLogic::enterMoongate(int x, int y) {
 
 	// Each waypoint leads to a different one of the other eras, arriving
 	// at that era's moongate for the same waypoint
-	int waypoint = sg._patrolWaypoint >> 1;
+	int waypoint = sg._moongateWaypoint >> 1;
 	int era = waypoint;
 	if (era >= sg._mapEra)
 		++era;
@@ -215,7 +215,7 @@ void OverworldLogic::enterMoongate(int x, int y) {
 		return;
 	}
 
-	_G(map)._tiles[y][x] = (Data::TileId)sg._patrolTerrain;
+	_G(map)._tiles[y][x] = (Data::TileId)sg._moongateTerrain;
 	sg._mapEra = era;
 	_G(map).load(era, 0);
 
@@ -226,7 +226,7 @@ void OverworldLogic::enterMoongate(int x, int y) {
 
 void OverworldLogic::updatePatrolMarker() {
 	Data::Savegame &sg = _G(savegame);
-	if (sg.saveDisabled() || --sg._patrolTimer != 0)
+	if (sg.saveDisabled() || --sg._moongateTimer != 0)
 		return;
 
 	auto moongateAt = [&](int waypoint) -> Data::TileId & {
@@ -234,19 +234,22 @@ void OverworldLogic::updatePatrolMarker() {
 		return _G(map)._tiles[pos[1]][pos[0]];
 	};
 
-	Data::TileId &oldTile = moongateAt(sg._patrolWaypoint >> 1);
+	Data::TileId &oldTile = moongateAt(sg._moongateWaypoint >> 1);
 	if (oldTile == Data::TILE_MOONGATE)
-		oldTile = (Data::TileId)sg._patrolTerrain;
+		oldTile = (Data::TileId)sg._moongateTerrain;
 
-	sg._patrolTimer = 8;
-	sg._patrolWaypoint = (sg._patrolWaypoint + 2) & 7;
+	sg._moongateTimer = 8;
+	sg._moongateWaypoint = (sg._moongateWaypoint + 2) & 7;
 
 	// Only bare terrain (water up to mountains) can host it
-	Data::TileId &newTile = moongateAt(sg._patrolWaypoint >> 1);
+	Data::TileId &newTile = moongateAt(sg._moongateWaypoint >> 1);
 	if (newTile > Data::TILE_MOUNTAIN)
 		return;
 
-	sg._patrolTerrain = newTile;
+	// Save the previous tile id
+	sg._moongateTerrain = newTile;
+
+	// Replace the tile with the moongate tile
 	newTile = Data::TILE_MOONGATE;
 }
 

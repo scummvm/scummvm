@@ -106,12 +106,12 @@ struct Savegame {
 
 	bool _ringQuestFlag = false;
 	bool _enilnoOwned = false;
-	byte _patrolWaypoint = 0;
+	byte _moongateWaypoint = 0;
 
 	// Turns until the moongate hops to its next waypoint, and the terrain
 	// tile it's currently covering
-	byte _patrolTimer = 0;
-	byte _patrolTerrain = 0;
+	byte _moongateTimer = 0;
+	byte _moongateTerrain = 0;
 
 	byte _offerRewardItems[9] = {};
 

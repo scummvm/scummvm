@@ -95,9 +95,9 @@ void Savegame::synchronize(Common::Serializer &s) {
 
 	s.syncAsByte(_ringQuestFlag);
 	s.syncAsByte(_enilnoOwned);
-	s.syncAsByte(_patrolWaypoint);
-	s.syncAsByte(_patrolTimer);
-	s.syncAsByte(_patrolTerrain);
+	s.syncAsByte(_moongateWaypoint);
+	s.syncAsByte(_moongateTimer);
+	s.syncAsByte(_moongateTerrain);
 
 	s.syncAsByte(_dungeonLevel);
 	s.syncAsSByte(_facingX);
@@ -217,7 +217,7 @@ bool Savegame::importOriginal(Common::SeekableReadStream &stream) {
 	_launchMapY = buf[OFS_LAUNCH_MAP_Y];
 	_ringQuestFlag = buf[OFS_RING_QUEST_FLAG] != 0;
 	_orbitTarget = buf[OFS_ORBIT_TARGET];
-	_patrolWaypoint = buf[OFS_PATROL_WAYPOINT];
+	_moongateWaypoint = buf[OFS_PATROL_WAYPOINT];
 
 	for (int i = 0; i < 9; ++i)
 		_offerRewardItems[i] = buf[OFS_OFFER_REWARD_ITEMS + i];
@@ -281,7 +281,7 @@ void Savegame::exportOriginal(Common::WriteStream &stream) const {
 	buf[OFS_LAUNCH_MAP_Y] = _launchMapY;
 	buf[OFS_RING_QUEST_FLAG] = _ringQuestFlag ? 1 : 0;
 	buf[OFS_ORBIT_TARGET] = (byte)_orbitTarget;
-	buf[OFS_PATROL_WAYPOINT] = _patrolWaypoint;
+	buf[OFS_PATROL_WAYPOINT] = _moongateWaypoint;
 
 	for (int i = 0; i < 9; ++i)
 		buf[OFS_OFFER_REWARD_ITEMS + i] = _offerRewardItems[i];
