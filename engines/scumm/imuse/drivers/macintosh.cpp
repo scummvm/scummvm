@@ -1297,42 +1297,33 @@ ChanControlNode *IMuseChannel_Macintosh::allocateNode(int prio) {
 namespace Scumm {
 using namespace IMSMacintosh;
 
-IMuseDriver_Macintosh::IMuseDriver_Macintosh(ScummEngine *vm, Audio::Mixer *mixer, byte gameID) : MidiDriver(), _isOpen(false), _device(nullptr), _imsParts(nullptr), _channels(nullptr),
-	_numParts(32), _numChannels(8), _baseTempo(16666), _quality(1), _musicVolume(0xFFFFFFFF), _sfxVolume(0xFFFFFFFF), _version(-1) {
+struct IMuseDriverConfig {
+	uint16 numChannels;
+	uint16 baseTempo;
+};
+
+IMuseDriver_Macintosh::IMuseDriver_Macintosh(ScummEngine *vm, Audio::Mixer *mixer, byte gameID) : _vm(vm), _mixer(mixer), MidiDriver(), _isOpen(false), _device(nullptr),
+	_imsParts(nullptr), _channels(nullptr), _numParts(32), _numChannels(8), _baseTempo(16666), _quality(1), _musicVolume(0xFFFFFFFF), _sfxVolume(0xFFFFFFFF), _version(-1), _altVersion(-1) {
 
 	switch (gameID) {
 	case GID_TENTACLE:
+		_version = 1;
+		break;
 	case GID_SAMNMAX:
-		if (gameID == GID_SAMNMAX) {
-			_version = 2;
-			_numChannels = 12;
-		} else {
-			_version = 1;
-			_numChannels = 16;
-		}
-		_baseTempo = 46439;
-		_device = new NewMacSoundSystem(vm, mixer);
+		_version = 2;
 		break;
 	case GID_INDY4:
-		// TODO: Detect the PowerPC version. Which version should it be?
-		if (vm->_isModernMacVersion) {
-			_version = 1;
-			_numChannels = 16;
-			_baseTempo = 46439;
-			_device = new NewMacSoundSystem(vm, mixer);
-		} else {
-			_version = 0;
-			_device = new DJMSoundSystem(mixer);
-		}
-		break;
+		_altVersion = 1; // PPC version
+	// fallthrough
 	case GID_MONKEY2:
 		_version = 0;
-		_device = new DJMSoundSystem(mixer);
 		break;
 	default:
 		error("%s(): Unsupported game ID %d", __FUNCTION__, gameID);
 		break;
 	}
+
+	createDevice(_version);
 }
 
 IMuseDriver_Macintosh::~IMuseDriver_Macintosh() {
@@ -1346,8 +1337,6 @@ int IMuseDriver_Macintosh::open() {
 
 	if (_version < 0 || _version > 2)
 		return MERR_DEVICE_NOT_AVAILABLE;
-
-	createChannels();
 
 	static const char *const fileNames[3][4] = {
 		{
@@ -1370,8 +1359,18 @@ int IMuseDriver_Macintosh::open() {
 		}
 	};
 
-	if (!_device->init(fileNames[_version], ARRAYSIZE(fileNames[_version]), false, true) || !_device->start())
-		return MERR_DEVICE_NOT_AVAILABLE;
+	while ((!_device->init(fileNames[_version], ARRAYSIZE(fileNames[_version]), false, true) || !_device->start()) && _version != _altVersion) {
+		if (_altVersion != -1) {
+			_device->deinit();
+			delete _device;
+			createDevice(_altVersion);
+			_altVersion = -1;
+		} else {
+			return MERR_DEVICE_NOT_AVAILABLE;
+		}
+	}
+
+	createChannels();
 
 	_isOpen = true;
 
@@ -1458,6 +1457,26 @@ MidiChannel *IMuseDriver_Macintosh::allocateChannel() {
 
 MidiChannel *IMuseDriver_Macintosh::getPercussionChannel() {
 	return (_isOpen && _version > 0) ? _imsParts[kRhythmPart] : nullptr;
+}
+
+void IMuseDriver_Macintosh::createDevice(int version) {
+	assert(_vm);
+	assert(_mixer);
+	_version = version;
+
+	const IMuseDriverConfig driverConfigs[] = {
+		{ 8, 16666 },
+		{ 16, 46439 },
+		{ 12, 46439 }
+	};
+
+	_baseTempo = driverConfigs[version].baseTempo;
+	_numChannels = driverConfigs[version].numChannels;
+
+	if (version == 0)
+		_device = new DJMSoundSystem(_mixer);
+	else
+		_device = new NewMacSoundSystem(_vm, _mixer);
 }
 
 void IMuseDriver_Macintosh::createChannels() {

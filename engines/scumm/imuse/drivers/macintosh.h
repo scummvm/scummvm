@@ -57,6 +57,7 @@ public:
 	MidiChannel *getPercussionChannel() override;
 
 private:
+	void createDevice(int version);
 	void createChannels();
 	void releaseChannels();
 
@@ -69,10 +70,14 @@ private:
 	IMSMacintosh::IMuseChannel_Macintosh **_imsParts;
 	IMSMacintosh::ChanControlNode **_channels;
 
+	ScummEngine *_vm;
+	Audio::Mixer *_mixer;
+
 	byte _numChannels;
 	byte _numParts;
 	uint32 _baseTempo;
 	int8 _version;
+	int8 _altVersion;
 };
 
 } // End of namespace Scumm
