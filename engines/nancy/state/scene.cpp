@@ -99,8 +99,8 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE(verticalScrollDelta);
 	ser.syncAsUint16LE(horizontalEdgeSize);
 	ser.syncAsUint16LE(verticalEdgeSize);
-	ser.syncAsUint16LE((uint32 &)slowMoveTimeDelta);
-	ser.syncAsUint16LE((uint32 &)fastMoveTimeDelta);
+	slowMoveTimeDelta.syncAsUint16LE(ser);
+	fastMoveTimeDelta.syncAsUint16LE(ser);
 	ser.skip(1); // CD required for scene
 
 	auto *bootSummary = GetEngineData(BSUM);
@@ -233,7 +233,7 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 		registerGraphics();
 
 		if (prevState != NancyState::kPause) {
-			g_nancy->setTotalPlayTime((uint32)_timers.pushedPlayTime);
+			g_nancy->setTotalPlayTime(_timers.pushedPlayTime.getTotalMilliseconds());
 		}
 
 		_actionManager.onPause(false);
@@ -442,7 +442,7 @@ void Scene::setPlayerTime(Time time, byte relative) {
 	if (relative == kRelativeClockBump) {
 		// Relative, add the specified time to current playerTime. The originals wrap
 		// a negative time around to the previous day, which no game script needs.
-		if ((int64)(uint32)_timers.playerTime + (int32)(uint32)time < 0) {
+		if ((int64)_timers.playerTime.getTotalMilliseconds() + (int32)time.getTotalMilliseconds() < 0) {
 			warning("Moving the player time back past 00:00 is not supported");
 			return;
 		}
@@ -1789,7 +1789,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	}
 
 	for (uint i = 0; i < 30; ++i) {
-		ser.syncAsUint32LE((uint32 &)_flags.logicConditions[i].timestamp);
+		_flags.logicConditions[i].timestamp.syncAsUint32LE(ser);
 	}
 
 	const uint numItems = g_nancy->getStaticData().numItems;
@@ -1833,9 +1833,9 @@ void Scene::synchronize(Common::Serializer &ser) {
 		_flags.disabledItems.resize(numItems);
 	}
 
-	ser.syncAsUint32LE((uint32 &)_timers.lastTotalTime);
-	ser.syncAsUint32LE((uint32 &)_timers.sceneTime);
-	ser.syncAsUint32LE((uint32 &)_timers.playerTime);
+	_timers.lastTotalTime.syncAsUint32LE(ser);
+	_timers.sceneTime.syncAsUint32LE(ser);
+	_timers.playerTime.syncAsUint32LE(ser);
 	ser.syncAsSint16LE(_timers.playerDay, 11);
 
 	if (ser.isLoading() && ser.getVersion() < 11) {
@@ -1846,12 +1846,12 @@ void Scene::synchronize(Common::Serializer &ser) {
 			_timers.playerTime = _timers.playerTime.getHours() * 3600000 + _timers.playerTime.getMinutes() * 60000;
 		}
 	}
-	ser.syncAsUint32LE((uint32 &)_timers.pushedPlayTime);
-	ser.syncAsUint32LE((uint32 &)_timers.timerTime);
+	_timers.pushedPlayTime.syncAsUint32LE(ser);
+	_timers.timerTime.syncAsUint32LE(ser);
 	ser.syncAsByte(_timers.timerIsActive);
 	ser.skip(1, 0, 2);
 
-	g_nancy->setTotalPlayTime((uint32)_timers.lastTotalTime);
+	g_nancy->setTotalPlayTime(_timers.lastTotalTime.getTotalMilliseconds());
 
 	uint numSavedEventFlags = g_nancy->getStaticData().numEventFlags;
 	if (ser.getVersion() < 7 && g_nancy->getGameType() == kGameTypeNancy10) {
@@ -2418,11 +2418,11 @@ void Scene::run() {
 	}
 
 	_timers.sceneTime += deltaTime;
-	_frameSeconds = (uint32)deltaTime / 1000.0;
+	_frameSeconds = deltaTime.getTotalMilliseconds() / 1000.0;
 
 	// Advance the Nancy 11+ software timers before processing action records,
 	// so any flags they fire this frame are visible to record dependencies
-	tickSoftwareTimers((uint32)deltaTime);
+	tickSoftwareTimers(deltaTime.getTotalMilliseconds());
 
 	// Calculate the in-game time (playerTime)
 	if (currentPlayTime > _timers.playerTimeNextMinute) {

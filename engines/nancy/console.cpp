@@ -1631,7 +1631,7 @@ bool NancyConsole::Cmd_getPlayerTime(int argc, const char **argv) {
 		time.getDays(),
 		time.getHours(),
 		time.getMinutes(),
-		(uint32)time);
+		time.getTotalMilliseconds());
 
 	auto *bootSummary = GetEngineData(BSUM);
 	if (bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
@@ -1674,7 +1674,7 @@ bool NancyConsole::Cmd_setPlayerTime(int argc, const char **argv) {
 		time.getDays(),
 		time.getHours(),
 		time.getMinutes(),
-		(uint32)time);
+		time.getTotalMilliseconds());
 
 	return cmdExit(0, nullptr);
 }

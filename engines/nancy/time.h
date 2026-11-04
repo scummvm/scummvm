@@ -23,6 +23,7 @@
 #define NANCY_TIME_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Nancy {
 
@@ -66,6 +67,12 @@ public:
 	friend bool operator>= (const Time &l, const Time &r)	{ return !(l < r); }
 	friend bool operator>= (const Time &l, const uint32 &r)	{ return !(l < r); }
 	friend bool operator>= (const uint32 &l, const Time &r)	{ return !(l < r); }
+
+	uint32 getTotalMilliseconds() const	{ return _milliseconds; }
+
+	// Reads or writes the milliseconds, as 32 or 16 bits
+	void syncAsUint32LE(Common::Serializer &ser)			{ ser.syncAsUint32LE(_milliseconds); }
+	void syncAsUint16LE(Common::Serializer &ser)			{ ser.syncAsUint16LE(_milliseconds); }
 
 	uint16 getSeconds() const		{ return (_milliseconds / 1000) % 60; }
 	uint16 getMinutes() const		{ return (_milliseconds / 60000) % 60; }

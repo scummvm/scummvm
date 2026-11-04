@@ -221,7 +221,7 @@ void Nancy5Clock::updateGraphics() {
 	if (NancySceneState.getEventFlag(320, true)) {
 		_currentDay = 3;
 		Time timerTime = NancySceneState.getTimerTime();
-		int32 countdownFrameID = MIN<int32>((uint32)timerTime / (_clockData->countdownTime / 12), 13);
+		int32 countdownFrameID = MIN<int32>(timerTime.getTotalMilliseconds() / (_clockData->countdownTime / 12), 13);
 		if (countdownFrameID != _countdownProgress) {
 			_countdownProgress = countdownFrameID;
 

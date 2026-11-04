@@ -485,17 +485,17 @@ static int gameIndex(lua_State *L) {
 	// How long the game has been played, as { days, hours, minutes, seconds,
 	// totalSeconds }; the seconds have fractions
 	if (key == "time") {
-		const uint32 time = (uint32)NancySceneState._timers.lastTotalTime;
+		const Time &time = NancySceneState._timers.lastTotalTime;
 		lua_createtable(L, 0, 5);
-		lua_pushinteger(L, time / 86400000);
+		lua_pushinteger(L, time.getDays());
 		lua_setfield(L, -2, "days");
-		lua_pushinteger(L, time / 3600000 % 24);
+		lua_pushinteger(L, time.getHours());
 		lua_setfield(L, -2, "hours");
-		lua_pushinteger(L, time / 60000 % 60);
+		lua_pushinteger(L, time.getMinutes());
 		lua_setfield(L, -2, "minutes");
-		lua_pushnumber(L, (time % 60000) / 1000.0);
+		lua_pushnumber(L, (time.getTotalMilliseconds() % 60000) / 1000.0);
 		lua_setfield(L, -2, "seconds");
-		lua_pushnumber(L, time / 1000.0);
+		lua_pushnumber(L, time.getTotalMilliseconds() / 1000.0);
 		lua_setfield(L, -2, "totalSeconds");
 		return 1;
 	}
