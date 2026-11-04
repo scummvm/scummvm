@@ -87,6 +87,7 @@ struct HotspotStyle {
 	byte borderOpacity = 180;
 	bool labelBorder = true;
 	bool scaleWithGame = true;
+	bool scaleWithOverlay = true;
 	const Font *font = nullptr;
 };
 
@@ -201,7 +202,7 @@ private:
 
 protected:
 	HotspotStyle _style;
-	float _sizeScale;   ///< Overlay/game scale factor applied to marker geometry
+	float _sizeScale;   ///< Visual scale applied to markers and labels
 	int _markerSize;    ///< Scaled size of square and crosshair markers
 	int _pointRadius;   ///< Scaled radius of point marker
 	int _lineThickness; ///< Scaled thickness of lines for markers and text boxes

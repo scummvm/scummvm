@@ -241,6 +241,8 @@ void HotspotRenderer::renderFrame(Surface *surface, const Common::Array<HotspotI
 	const float rawScaleY = (float)overlayHeight / (float)gameHeight;
 
 	_sizeScale = _style.scaleWithGame ? MIN(rawScaleX, rawScaleY) : 1.0f;
+	if (_style.scaleWithOverlay)
+		_sizeScale = CLIP(MIN(overlayWidth / 640.0f, overlayHeight / 480.0f), 1.0f, 3.0f);
 	_markerSize = MAX(2, (int)(_style.markerSize * _sizeScale));
 	_pointRadius = MAX(1, (int)(_style.pointRadius * _sizeScale));
 	_lineThickness = MAX(1, (int)(_style.lineThickness * _sizeScale));
