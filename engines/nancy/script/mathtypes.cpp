@@ -29,6 +29,7 @@
 
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/mathtypes.h"
+#include "engines/nancy/script/types.h"
 
 namespace Nancy {
 namespace Script {
@@ -467,10 +468,36 @@ static int pushTransformedVector(lua_State *L, const ScriptVector &vector, const
 	return 1;
 }
 
+// The vector at no depth, for the transforms of Nancy26
+static ScriptVector getFlatVector(const ScriptVector &vector) {
+	ScriptVector place = vector;
+	if (place.size < 3) {
+		place.v[2] = 0.0;
+	}
+
+	place.size = 3;
+	return place;
+}
+
+// vector:TransformCoord(matrix) and vector:TransformNormal(matrix), Nancy26
+static int vectorTransformCoord(lua_State *L) {
+	return pushTransformedVector(L, getFlatVector(checkVector(L, 1)), checkMatrix(L, 2), "coord");
+}
+
+static int vectorTransformNormal(lua_State *L) {
+	return pushTransformedVector(L, getFlatVector(checkVector(L, 1)), checkMatrix(L, 2), "normal");
+}
+
 // vector:Transform(kind, matrix). Nancy22 moves any vector by its x, y and z,
 // with no z for a 2D one, and gives a 3D vector back.
 static int vectorTransform(lua_State *L) {
 	const ScriptVector &vector = checkVector(L, 1);
+
+	// Nancy26 leaves out what kind of transform it is
+	if (testMatrix(L, 2)) {
+		return vectorTransformCoord(L);
+	}
+
 	const char *kind = luaL_checkstring(L, 2);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy22) {
@@ -501,6 +528,8 @@ static const luaL_Reg kVectorFunctions[] = {
 	{ "Lerp", vectorLerp },
 	{ "Reflect", vectorReflect },
 	{ "Transform", vectorTransform },
+	{ "TransformCoord", vectorTransformCoord },
+	{ "TransformNormal", vectorTransformNormal },
 	{ nullptr, nullptr }
 };
 
@@ -792,6 +821,34 @@ static int matrixTransform(lua_State *L) {
 	return pushTransformedVector(L, checkVector(L, 3), matrix, kind);
 }
 
+// What Nancy26's matrix:TransformCoord and TransformNormal take: a vector, a
+// point, a table with x and y, or two numbers
+static ScriptVector readTransformInput(lua_State *L, int index) {
+	if (lua_isnumber(L, index)) {
+		return ScriptVector(luaL_checknumber(L, index), luaL_checknumber(L, index + 1), 0.0);
+	}
+
+	const ScriptVector *vector = testVector(L, index);
+	if (vector) {
+		return getFlatVector(*vector);
+	}
+
+	ScriptPoint point;
+	if (!readPoint(L, index, point)) {
+		luaL_argerror(L, index, "Expected a Vector, a Point, a table with x and y, or two numbers");
+	}
+
+	return ScriptVector(point.x, point.y, 0.0);
+}
+
+static int matrixTransformCoord(lua_State *L) {
+	return pushTransformedVector(L, readTransformInput(L, 2), checkMatrix(L, 1), "coord");
+}
+
+static int matrixTransformNormal(lua_State *L) {
+	return pushTransformedVector(L, readTransformInput(L, 2), checkMatrix(L, 1), "normal");
+}
+
 static const luaL_Reg kMatrixFunctions[] = {
 	{ "__index", matrixIndex },
 	{ "__newindex", matrixNewIndex },
@@ -800,6 +857,8 @@ static const luaL_Reg kMatrixFunctions[] = {
 	{ "Inverse", matrixInverse },
 	{ "Transpose", matrixTranspose },
 	{ "Transform", matrixTransform },
+	{ "TransformCoord", matrixTransformCoord },
+	{ "TransformNormal", matrixTransformNormal },
 	{ nullptr, nullptr }
 };
 

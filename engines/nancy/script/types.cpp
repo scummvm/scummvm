@@ -278,8 +278,32 @@ static int rectRightBottomSet(lua_State *L) {
 	return 1;
 }
 
+static int rectToString(lua_State *L) {
+	const ScriptRect &rect = checkRect(L, 1);
+	lua_pushstring(L, Common::String::format("R(%d, %d, %d, %d)", rect.left, rect.top, rect.right, rect.bottom).c_str());
+	return 1;
+}
+
+// rect .. text and point .. text, Nancy26, joins what both print as
+static int concatToStrings(lua_State *L) {
+	for (int i = 1; i <= 2; ++i) {
+		if (!luaL_callmeta(L, i, "__tostring")) {
+			lua_pushvalue(L, i);
+		}
+
+		if (!lua_isstring(L, -1)) {
+			return luaL_error(L, "attempt to concatenate a %s value", luaL_typename(L, i));
+		}
+	}
+
+	lua_concat(L, 2);
+	return 1;
+}
+
 static const luaL_Reg kRectFunctions[] = {
 	{ "__index", rectIndex },
+	{ "__tostring", rectToString },
+	{ "__concat", concatToStrings },
 	{ "__newindex", rectNewIndex },
 	{ "__eq", rectEquals },
 	{ "Contains", rectContains },
@@ -438,6 +462,7 @@ static const luaL_Reg kPointFunctions[] = {
 	{ "__sub", pointSubtract },
 	{ "__unm", pointNegate },
 	{ "__tostring", pointToString },
+	{ "__concat", concatToStrings },
 	{ nullptr, nullptr }
 };
 
