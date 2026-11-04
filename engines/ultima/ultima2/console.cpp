@@ -39,6 +39,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("hp", WRAP_METHOD(Console, cmdHP));
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
+	registerCmd("transport", WRAP_METHOD(Console, cmdTransport));
 	registerCmd("stats", WRAP_METHOD(Console, cmdStats));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 	registerCmd("space", WRAP_METHOD(Console, cmdSpace));
@@ -286,6 +287,96 @@ bool Console::cmdGold(int argc, const char **argv) {
 	_G(savegame)._gold = 9999;
 	g_engine->baseView()->findView("Stats")->draw();
 	debugPrintf("Gold set to 9999\n");
+	return true;
+}
+
+bool Console::cmdTransport(int argc, const char **argv) {
+	static const Data::TileId TRANSPORTS[] = {
+		Data::TILE_HORSE, Data::TILE_SHIP, Data::TILE_AIRPLANE, Data::TILE_ROCKET
+	};
+	static const char *const NAMES[] = { "horse", "ship", "airplane", "rocket" };
+
+	// The items each needs, to board and then to launch
+	static const int ITEMS[][2] = {
+		{ -1, -1 },
+		{ Data::ITEM_BLUE_TASSLE, -1 },
+		{ Data::ITEM_SKULL_KEY, Data::ITEM_BRASS_BUTTON },
+		{ Data::ITEM_ANKH, Data::ITEM_TRI_LITHIUM }
+	};
+
+	int type = (argc == 2) ? atoi(argv[1]) : -1;
+	if (type < 0 || type >= (int)ARRAYSIZE(TRANSPORTS)) {
+		debugPrintf("transport <type>, where type is 0 for a horse, 1 for a ship, 2 for an airplane or 3 for a rocket\n");
+		return true;
+	}
+
+	Data::Savegame &sg = _G(savegame);
+	if (sg._mapType != 0) {
+		debugPrintf("Only supported on the overworld map\n");
+		return true;
+	}
+
+	Logic::OverworldLogic *logic = dynamic_cast<Logic::OverworldLogic *>(_G(logic).get());
+	assert(logic);
+
+	// Ships need water, and the others are put on grass
+	Data::TileId transport = TRANSPORTS[type];
+	Data::TileId terrain = (transport == Data::TILE_SHIP) ? Data::TILE_WATER : Data::TILE_GRASS;
+	Data::MapMonsters &monsters = _G(map)._monsters;
+
+	// Boarding means stepping onto it from the side, so one that's only
+	// diagonally next to somewhere to walk from can't be reached
+	auto reachable = [&](int x, int y) {
+		static const int OFFSETS[4][2] = { { 0, -1 }, { 0, 1 }, { -1, 0 }, { 1, 0 } };
+		for (int i = 0; i < 4; ++i) {
+			int nx = (x + OFFSETS[i][0] + Data::MAP_WIDTH) % Data::MAP_WIDTH;
+			int ny = (y + OFFSETS[i][1] + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
+			if (logic->isWalkable(_G(map).tileAt(nx, ny)))
+				return true;
+		}
+
+		return false;
+	};
+
+	// Prefer tiles that can be reached, but settle for any if there aren't any
+	for (int pass = 0; pass < 2; ++pass) {
+		for (int radius = 1; radius <= 10; ++radius) {
+			for (int dy = -radius; dy <= radius; ++dy) {
+				for (int dx = -radius; dx <= radius; ++dx) {
+					if (MAX(ABS(dx), ABS(dy)) != radius)
+						continue;
+
+					int x = (sg._mapX + dx + Data::MAP_WIDTH) % Data::MAP_WIDTH;
+					int y = (sg._mapY + dy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
+					if (_G(map).tileAt(x, y) != terrain || (pass == 0 && !reachable(x, y)))
+						continue;
+
+					bool occupied = false;
+					for (int i = 0; i < Data::MAP_MONSTER_COUNT && !occupied; ++i)
+						occupied = monsters.isActive(i) && monsters._mapX[i] == x && monsters._mapY[i] == y;
+					if (occupied)
+						continue;
+
+					_G(map)._tiles[y][x] = transport;
+					g_engine->focusedView()->redraw();
+					debugPrintf("Spawned a %s at (%d,%d)\n", NAMES[type], x, y);
+
+					// Give any items needed to board and launch it that aren't already owned
+					for (int i = 0; i < 2 && ITEMS[type][i] >= 0; ++i) {
+						int item = ITEMS[type][i];
+						if (sg._items[item] == 0) {
+							sg._items[item] = 1;
+							debugPrintf("Added %s\n", Data::itemName(item));
+						}
+					}
+
+					return true;
+				}
+			}
+		}
+	}
+
+	debugPrintf("Couldn't find a free %s tile nearby\n", (terrain == Data::TILE_WATER) ? "water" : "grass");
 	return true;
 }
 
