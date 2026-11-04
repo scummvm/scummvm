@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-03 03:57+0000\n"
+"POT-Creation-Date: 2026-11-04 00:14+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -11836,9 +11836,8 @@ msgid "Help / map"
 msgstr ""
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
 #, fuzzy
-msgid "Show hotspots"
+msgid "Show/hide hotspots"
 msgstr "Mostrar ficheiros ocultos"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
@@ -16931,6 +16930,11 @@ msgstr "Seleccionar tema"
 #, fuzzy
 msgid "Select previous actor"
 msgstr "~A~nterior"
+
+#: engines/twp/metaengine.cpp:176
+#, fuzzy
+msgid "Show hotspots"
+msgstr "Mostrar ficheiros ocultos"
 
 #: engines/twp/twp.cpp:833
 msgid ""

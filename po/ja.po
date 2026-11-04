@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-03 03:57+0000\n"
+"POT-Creation-Date: 2026-11-04 00:14+0000\n"
 "PO-Revision-Date: 2026-08-03 18:22+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -12079,8 +12079,9 @@ msgid "Help / map"
 msgstr ""
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
-msgid "Show hotspots"
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Show/hide hotspots"
 msgstr "ホットスポットを表示"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
@@ -17419,6 +17420,10 @@ msgstr "次の役者を選択"
 #| msgid "Select Previous Actor"
 msgid "Select previous actor"
 msgstr "前の役者を選択"
+
+#: engines/twp/metaengine.cpp:176
+msgid "Show hotspots"
+msgstr "ホットスポットを表示"
 
 #: engines/twp/twp.cpp:833
 msgid ""

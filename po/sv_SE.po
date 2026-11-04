@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-03 03:57+0000\n"
+"POT-Creation-Date: 2026-11-04 00:14+0000\n"
 "PO-Revision-Date: 2026-11-03 12:39+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -11602,8 +11602,9 @@ msgid "Help / map"
 msgstr "Hjälp/karta"
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
-msgid "Show hotspots"
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Show/hide hotspots"
 msgstr "Visa känsliga punkter"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
@@ -14882,7 +14883,8 @@ msgstr "Gåtsvårighetsgrad:"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:56
 msgid "Choose how difficult flying and recovering from crashes should be."
-msgstr "Välj hur svårt det ska vara att flyga och återhämta sig efter krascher."
+msgstr ""
+"Välj hur svårt det ska vara att flyga och återhämta sig efter krascher."
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:59
 msgid "Choose the riddle difficulty and the cost and number of guesses."
@@ -16400,6 +16402,10 @@ msgstr "Välj nästa skådespelare"
 #: engines/twp/metaengine.cpp:174
 msgid "Select previous actor"
 msgstr "Välj föregående skådespelare"
+
+#: engines/twp/metaengine.cpp:176
+msgid "Show hotspots"
+msgstr "Visa känsliga punkter"
 
 #: engines/twp/twp.cpp:833
 msgid ""

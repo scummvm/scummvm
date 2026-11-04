@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-03 03:57+0000\n"
+"POT-Creation-Date: 2026-11-04 00:14+0000\n"
 "PO-Revision-Date: 2026-10-10 14:55+0000\n"
 "Last-Translator: НеСкажу НеСкажувич Нескажувов <j4rik.228@yandex.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -11705,8 +11705,9 @@ msgid "Help / map"
 msgstr "Помощь / карта"
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
-msgid "Show hotspots"
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Show/hide hotspots"
 msgstr "Показать горячие точки"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
@@ -16592,6 +16593,10 @@ msgstr "Выбрать следующего актера"
 #: engines/twp/metaengine.cpp:174
 msgid "Select previous actor"
 msgstr "Выбрать предыдущего актера"
+
+#: engines/twp/metaengine.cpp:176
+msgid "Show hotspots"
+msgstr "Показать горячие точки"
 
 #: engines/twp/twp.cpp:833
 msgid ""

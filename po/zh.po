@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-03 03:57+0000\n"
+"POT-Creation-Date: 2026-11-04 00:14+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -11299,10 +11299,9 @@ msgid "Help / map"
 msgstr ""
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
 #, fuzzy
 #| msgid "Show hints"
-msgid "Show hotspots"
+msgid "Show/hide hotspots"
 msgstr "顯示提示"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
@@ -16223,6 +16222,12 @@ msgstr "着色器"
 #| msgid "Select Group by"
 msgid "Select previous actor"
 msgstr "以什麼類別分類"
+
+#: engines/twp/metaengine.cpp:176
+#, fuzzy
+#| msgid "Show hints"
+msgid "Show hotspots"
+msgstr "顯示提示"
 
 #: engines/twp/twp.cpp:833
 msgid ""

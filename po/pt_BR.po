@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-03 03:57+0000\n"
+"POT-Creation-Date: 2026-11-04 00:14+0000\n"
 "PO-Revision-Date: 2026-06-17 22:10+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -12566,8 +12566,9 @@ msgid "Help / map"
 msgstr ""
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
-msgid "Show hotspots"
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Show/hide hotspots"
 msgstr "Exibir pontos de acesso"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
@@ -17958,6 +17959,10 @@ msgstr "Selecionar Próximo Ator"
 #| msgid "Select Previous Actor"
 msgid "Select previous actor"
 msgstr "Selecionar Ator Anterior"
+
+#: engines/twp/metaengine.cpp:176
+msgid "Show hotspots"
+msgstr "Exibir pontos de acesso"
 
 #: engines/twp/twp.cpp:833
 msgid ""

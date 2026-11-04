@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-03 03:57+0000\n"
+"POT-Creation-Date: 2026-11-04 00:14+0000\n"
 "PO-Revision-Date: 2026-08-27 16:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -11329,8 +11329,9 @@ msgid "Help / map"
 msgstr "Ajuda / mapa"
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
-msgid "Show hotspots"
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Show/hide hotspots"
 msgstr "Mostra punts d'interès"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
@@ -15980,6 +15981,10 @@ msgstr "Selecciona l'actor següent"
 #: engines/twp/metaengine.cpp:174
 msgid "Select previous actor"
 msgstr "Selecciona l'actor anterior"
+
+#: engines/twp/metaengine.cpp:176
+msgid "Show hotspots"
+msgstr "Mostra punts d'interès"
 
 #: engines/twp/twp.cpp:833
 msgid ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-03 03:57+0000\n"
+"POT-Creation-Date: 2026-11-04 00:14+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -12218,8 +12218,9 @@ msgid "Help / map"
 msgstr ""
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
-msgid "Show hotspots"
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Show/hide hotspots"
 msgstr "显示热点"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
@@ -17394,6 +17395,10 @@ msgstr "选择下一个演员"
 #| msgid "Select Previous Actor"
 msgid "Select previous actor"
 msgstr "选择上一个演员"
+
+#: engines/twp/metaengine.cpp:176
+msgid "Show hotspots"
+msgstr "显示热点"
 
 #: engines/twp/twp.cpp:833
 msgid ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-03 03:57+0000\n"
+"POT-Creation-Date: 2026-11-04 00:14+0000\n"
 "PO-Revision-Date: 2026-02-09 20:22+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -11837,9 +11837,8 @@ msgid "Help / map"
 msgstr ""
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
 #, fuzzy
-msgid "Show hotspots"
+msgid "Show/hide hotspots"
 msgstr "Zobrazit skryté soubory"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
@@ -16926,6 +16925,11 @@ msgstr "Vyberte Vzhled"
 #, fuzzy
 msgid "Select previous actor"
 msgstr "~P~ředchozí"
+
+#: engines/twp/metaengine.cpp:176
+#, fuzzy
+msgid "Show hotspots"
+msgstr "Zobrazit skryté soubory"
 
 #: engines/twp/twp.cpp:833
 msgid ""
