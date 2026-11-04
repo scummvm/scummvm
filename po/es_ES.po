@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-04 00:14+0000\n"
-"PO-Revision-Date: 2026-11-01 11:37+0000\n"
+"PO-Revision-Date: 2026-11-04 10:05+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -814,20 +814,16 @@ msgstr ""
 "Muestra etiquetas de texto junto a los marcadores de las zonas interactivas"
 
 #: gui/editgamedialog.cpp:362
-#, fuzzy
-#| msgid "Hotspot marker:"
 msgid "Hotspot key mode:"
-msgstr "Icono zonas int.:"
+msgstr "Modo zonas int.:"
 
 #: gui/editgamedialog.cpp:365
 msgid "Hold to show"
-msgstr ""
+msgstr "Mantener pulsada tecla para mostrar"
 
 #: gui/editgamedialog.cpp:366
-#, fuzzy
-#| msgid "Toggle sfx"
 msgid "Toggle"
-msgstr "Activar/Desactivar efectos de sonido"
+msgstr "Alternar pulsación"
 
 #: gui/editgamedialog.cpp:381 engines/dialogs.cpp:385
 msgid "Achievements"
@@ -11764,10 +11760,8 @@ msgid "Help / map"
 msgstr "Ayuda/Mapa"
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Show hotspots"
 msgid "Show/hide hotspots"
-msgstr "Mostrar zonas interactivas"
+msgstr "Mostrar/Ocultar zonas interactivas"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"
