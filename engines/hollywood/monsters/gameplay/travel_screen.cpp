@@ -93,7 +93,6 @@ bool TravelScreen::showViewer() {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
-				Engine::quitGame();
 				return true;
 			case Common::EVENT_MAINMENU:
 				_vm->openMainMenuDialog();
@@ -136,8 +135,7 @@ bool TravelScreen::showUnlockTransition(byte slotIndex) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
-				Engine::quitGame();
-				break;
+				return true;
 			case Common::EVENT_MAINMENU:
 				_vm->openMainMenuDialog();
 				if (_vm->isSceneRestartRequested())
@@ -179,8 +177,8 @@ bool TravelScreen::runSelection(byte currentChapterId, uint16 &selectedStateId) 
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
-				Engine::quitGame();
-				break;
+				_vm->cursor()->leaveInteractiveMode();
+				return true;
 			case Common::EVENT_MAINMENU:
 				_vm->openMainMenuDialog();
 				if (_vm->isSceneRestartRequested()) {

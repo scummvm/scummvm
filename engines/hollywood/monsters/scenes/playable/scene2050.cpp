@@ -486,11 +486,10 @@ void Scene2050::runMuralPuzzleSubscreen() {
 		}
 
 		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
+		while (!done && g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
-				Engine::quitGame();
 				done = true;
 				break;
 			case Common::EVENT_MAINMENU:

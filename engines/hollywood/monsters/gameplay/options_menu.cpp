@@ -280,9 +280,8 @@ void GameplayOptionsMenu::pollEvents(bool &done) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
 			done = true;
-			break;
+			return;
 		case Common::EVENT_MOUSEMOVE:
 			_vm->cursor()->updatePosition(event.mouse);
 			break;
