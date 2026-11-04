@@ -154,8 +154,17 @@ void CursorManager::init(const ScriptBootData &boot) {
 
 	_defaultCursorType = MAX(getCursorTypeByName(boot.defaultCursorName), 0);
 
-	g_nancy->_resource->loadImage(boot.cursorImageName, _uiCursorsSurface);
-	g_nancy->_resource->loadImage(boot.itemCursorImageName, _invCursorsSurface);
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		// The cursor of an item is the one named like it
+		const INVD *inventory = GetEngineData(INVD);
+		_itemCursorTypes.clear();
+		for (uint i = 0; inventory && i < inventory->items.size(); ++i) {
+			_itemCursorTypes.push_back(getCursorTypeByName(inventory->items[i].name));
+		}
+	} else {
+		g_nancy->_resource->loadImage(boot.cursorImageName, _uiCursorsSurface);
+		g_nancy->_resource->loadImage(boot.itemCursorImageName, _invCursorsSurface);
+	}
 
 	_isInitialized = true;
 
@@ -170,15 +179,34 @@ void CursorManager::addScriptedCursors(const Common::Array<ScriptBootData::Curso
 			slot.bounds = cursor.sources[i];
 			slot.hotspot = cursor.hotspots[i];
 
-			// The rects of the cursor sheet include their last row and column
-			if (!slot.bounds.isEmpty()) {
+			// The rects of the cursor sheet include their last row and column.
+			// Nancy26's are exclusive, like all its other rects.
+			if (!slot.bounds.isEmpty() && cursor.imageName.empty()) {
 				++slot.bounds.right;
 				++slot.bounds.bottom;
+			}
+
+			if (!cursor.imageName.empty()) {
+				slot.image = getScriptedCursorImage(cursor.imageName);
 			}
 
 			_cursors.push_back(slot);
 		}
 	}
+}
+
+int CursorManager::getScriptedCursorImage(const Common::Path &name) {
+	for (uint i = 0; i < _scriptedCursorImageNames.size(); ++i) {
+		if (_scriptedCursorImageNames[i] == name) {
+			return i;
+		}
+	}
+
+	Common::SharedPtr<Graphics::ManagedSurface> image(new Graphics::ManagedSurface());
+	g_nancy->_resource->loadImage(name, *image);
+	_scriptedCursorImageNames.push_back(name);
+	_scriptedCursorImages.push_back(image);
+	return _scriptedCursorImages.size() - 1;
 }
 
 int CursorManager::getCursorTypeByName(const Common::String &name) const {
@@ -207,7 +235,13 @@ uint CursorManager::resolveScriptedCursorID(CursorType type, int16 itemID, bool 
 	const uint variant = hotspotVariant ? ScriptBootData::kCursorHot : ScriptBootData::kCursorRegular;
 
 	// A held item replaces every cursor that doesn't ask to be kept
-	const uint itemSlot = ((uint)_numCursorTypes + (uint)itemID) * ScriptBootData::kNumCursorVariants + variant;
+	uint itemSlot = ((uint)_numCursorTypes + (uint)itemID) * ScriptBootData::kNumCursorVariants + variant;
+	if (!_itemCursorTypes.empty()) {
+		// Nancy26: the cursor named like the item
+		const int itemType = itemID >= 0 && (uint)itemID < _itemCursorTypes.size() ? _itemCursorTypes[itemID] : -1;
+		itemSlot = itemType >= 0 ? (uint)itemType * ScriptBootData::kNumCursorVariants + variant : _cursors.size();
+	}
+
 	const bool keepsCursor = cursorType < _cursorOverridesItem.size() && _cursorOverridesItem[cursorType];
 	if (itemID != -1 && !keepsCursor && itemSlot < _cursors.size() && !_cursors[itemSlot].bounds.isEmpty()) {
 		_hasItem = true;
@@ -514,7 +548,9 @@ void CursorManager::applyCursor() {
 		Common::Rect bounds = _cursors[_curCursorID].bounds;
 		Common::Point hotspot = _cursors[_curCursorID].hotspot;
 
-		if (_hasItem)
+		if (_cursors[_curCursorID].image >= 0)
+			surf = _scriptedCursorImages[_cursors[_curCursorID].image].get();
+		else if (_hasItem)
 			surf = &_invCursorsSurface;
 		else
 			surf = !isNancy13 ? &g_nancy->_graphics->_object0 : &_uiCursorsSurface;

@@ -23,6 +23,7 @@
 #define NANCY_CURSOR_H
 
 #include "common/array.h"
+#include "common/ptr.h"
 #include "common/stream.h"
 
 #include "graphics/managed_surface.h"
@@ -159,6 +160,7 @@ public:
 	void setCursor(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant = true);
 	void setCursorType(CursorType type, bool setFromScript = false, bool hotspotVariant = true);
 	void setCursorItemID(int16 itemID);
+	bool isHoldingItem() const { return _curItemID != -1; }
 	void showCursor(bool shouldShow);
 
 	void warpCursor(const Common::Point &pos);
@@ -186,10 +188,12 @@ private:
 
 	uint resolveScriptedCursorID(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant);
 	void addScriptedCursors(const Common::Array<ScriptBootData::Cursor> &cursors);
+	int getScriptedCursorImage(const Common::Path &name);
 
 	struct Cursor {
 		Common::Rect bounds;
 		Common::Point hotspot;
+		int image = -1;	// Nancy26: the one of _scriptedCursorImages it is in
 	};
 
 	// CURS data
@@ -205,6 +209,12 @@ private:
 
 	Graphics::ManagedSurface _invCursorsSurface;
 	Graphics::ManagedSurface _uiCursorsSurface;	// Nancy13+
+
+	// Nancy26: every cursor names its picture, and the cursor of an item has
+	// the name of the item
+	Common::Array<Common::Path> _scriptedCursorImageNames;
+	Common::Array<Common::SharedPtr<Graphics::ManagedSurface> > _scriptedCursorImages;
+	Common::Array<int> _itemCursorTypes;	// by item; -1 for none
 
 	Common::Point _warpedMousePos;
 	CursorType _curCursorType;
