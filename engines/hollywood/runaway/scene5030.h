@@ -45,7 +45,7 @@ public:
 	};
 
 	RunawayScene5030(Audio::Mixer *mixer, RunawayInventory &inventory, const RunawayStrings &strings) :
-		_audio(mixer), _inventory(inventory), _strings(strings), _interrogation(mixer), _random("runawayShack") {}
+		_audio(mixer), _inventory(inventory), _strings(strings), _interrogation(mixer), _random("runawayShack"), _actor() {}
 	bool load();
 	void start(uint32 now);
 	void click(Common::Point mouse, RunawayVerb verb, byte item);

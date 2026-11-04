@@ -135,6 +135,7 @@ Scene8010::Scene8010(HollywoodEngine *vm) :
 		_secondaryAmbientChannel(),
 		_fishermanQuizEntries(),
 		_fishermanQuizFinalEntry(),
+		_fishermanQuizChoiceEntryIndex(),
 		_fishermanState(0),
 		_fishermanRepeatCount(0),
 		_previousSecondaryAmbientCue(0),
