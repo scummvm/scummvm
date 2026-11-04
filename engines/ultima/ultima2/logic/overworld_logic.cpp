@@ -121,7 +121,7 @@ OverworldLogic::StepResult OverworldLogic::stepOnto(int x, int y) {
 	if (sg._mapType == 0 && dest == Data::TILE_MOONGATE &&
 			sg._mount != Data::TILE_SHIP && sg._mount != Data::TILE_ROCKET) {
 		int cost = (sg._mount == Data::TILE_HORSE || sg._mount == Data::TILE_AIRPLANE) ? 50 : 25;
-		if (!sg.deductFood(cost)) {
+		if (!eatFood(cost)) {
 			playerDied();
 			return STEP_DIED;
 		}
@@ -136,7 +136,7 @@ OverworldLogic::StepResult OverworldLogic::stepOnto(int x, int y) {
 	else if (sg._mount == Data::TILE_HORSE || sg._mount == Data::TILE_AIRPLANE)
 		foodCost = 50;
 
-	if (foodCost != 0 && !sg.deductFood(foodCost)) {
+	if (foodCost != 0 && !eatFood(foodCost)) {
 		playerDied();
 		return STEP_DIED;
 	}

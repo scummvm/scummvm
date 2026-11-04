@@ -68,6 +68,7 @@ bool Ultima2Engine::isEnhanced() const {
 void Ultima2Engine::loadOptions() {
 	_statBoostChoice = Shared::configuredOption("stat_boost_choice", isEnhanced());
 	_mixedCaseText = Shared::configuredOption("mixed_case_text", isEnhanced());
+	_lessHunger = Shared::configuredOption("less_hunger", isEnhanced());
 }
 
 Common::String Ultima2Engine::getGameId() const {

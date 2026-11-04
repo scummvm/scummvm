@@ -99,6 +99,9 @@ public:
 	// Upgrade does. When off, all text is in capitals
 	bool _mixedCaseText = false;
 
+	// Food is eaten at half the original rate
+	bool _lessHunger = false;
+
 	// Debug flag toggled by the "intangible" console command, allowing
 	// movement through normally impassable terrain
 	bool _intangible = false;

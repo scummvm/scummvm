@@ -522,12 +522,16 @@ bool Logic::offer(Data::Direction dir) {
 	return true;
 }
 
+bool Logic::eatFood(int amount) {
+	return _G(savegame).deductFood(g_engine->_lessHunger ? amount / 2 : amount);
+}
+
 bool Logic::pass() {
 	Data::Savegame &sg = _G(savegame);
 	writeString("Pass\n");
 
 	// Waiting costs a little food outside towers and dungeons
-	if (sg._mapType < 4 && !sg.deductFood(10)) {
+	if (sg._mapType < 4 && !eatFood(10)) {
 		playerDied();
 		return false;
 	}

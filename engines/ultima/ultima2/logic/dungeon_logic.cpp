@@ -563,7 +563,7 @@ void DungeonLogic::updateCreatures() {
 		writeString("Torch Burned out!\n");
 	}
 
-	if (!sg.deductFood(16))
+	if (!eatFood(16))
 		playerDied();
 }
 

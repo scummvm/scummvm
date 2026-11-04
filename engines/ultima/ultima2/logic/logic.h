@@ -192,6 +192,12 @@ public:
 	}
 
 	/**
+	 * Uses up some food, given in hundredths of a unit, or half that if the
+	 * option for less hunger is on. Returns false if food ran out
+	 */
+	bool eatFood(int amount);
+
+	/**
 	 * Handles the player dying - clears their resources and returns to
 	 * the title screen
 	 */

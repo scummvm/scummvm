@@ -208,10 +208,10 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
-		GAMEOPTION_ULTIMA3_LESS_HUNGER,
+		GAMEOPTION_LESS_HUNGER,
 		{
 			_s("Halve food consumption"),
-			_s("The party eats food at half the original rate, as in the Ultima III Upgrade"),
+			_s("Food is eaten at half the original rate. The Ultima III Upgrade does this"),
 			"less_hunger",
 			false,
 			0,
