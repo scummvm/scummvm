@@ -1087,7 +1087,7 @@ void ParticleRecord::registerGraphics() {
 }
 
 void ParticleRecord::updateGraphics() {
-	if (!isActive() || _count == 0) {
+	if (!isShown() || _count == 0) {
 		if (_canvas) {
 			_canvas->setVisible(false);
 		}

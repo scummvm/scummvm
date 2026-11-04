@@ -21,6 +21,8 @@
 
 #include "common/algorithm.h"
 
+#include "engines/nancy/nancy.h"
+
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
@@ -31,6 +33,10 @@
 #include "engines/nancy/script/transformer.h"
 #include "engines/nancy/script/types.h"
 
+#ifdef ENABLE_NANCY_V5
+#include "engines/nancy/script/v5/recordnode.h"
+#endif
+
 namespace Nancy {
 namespace Script {
 
@@ -39,11 +45,38 @@ static const char *const kRecordMarker = "__record";
 
 Record::Record(SceneContext &context, const char *typeName) :
 		_context(context),
-		_typeName(typeName) {}
+		_typeName(typeName) {
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		createNodeState();
+	}
+#endif
+}
 
 Record::~Record() {
+#ifdef ENABLE_NANCY_V5
+	destroyNodeState();
+#endif
+
 	delete _stages;
 }
+
+bool Record::isActive() const {
+#ifdef ENABLE_NANCY_V5
+	if (_nodeState) {
+		return _nodeState->isActive();
+	}
+#endif
+
+	return _isActive && !_isDone;
+}
+
+// What the records draw with. Nancy26 has its own, in v5/recordnode.cpp.
+#ifndef ENABLE_NANCY_V5
+bool Record::isShown() const {
+	return isActive();
+}
+#endif
 
 void Record::onStagesChanged() {
 }
@@ -129,9 +162,20 @@ void Record::create(int tableIndex) {
 	readField(L, tableIndex, "z", _z);
 	readField(L, tableIndex, "scriptOwns", _isScriptOwned);
 
+#ifdef ENABLE_NANCY_V5
+	if (_nodeState) {
+		readNodeFields(tableIndex);
+	}
+#endif
+
 	lua_getfield(L, tableIndex, "active");
 	if (lua_isboolean(L, -1)) {
 		_isActive = lua_toboolean(L, -1) != 0;
+#ifdef ENABLE_NANCY_V5
+		if (_nodeState) {
+			setActiveFlags(_isActive);
+		}
+#endif
 	} else if (lua_isfunction(L, -1)) {
 		_hasActiveFunction = true;
 	}
@@ -174,6 +218,13 @@ void Record::onObjectCollected() {
 }
 
 void Record::update(double sceneTime, double elapsedTime) {
+#ifdef ENABLE_NANCY_V5
+	if (_nodeState) {
+		updateNode(sceneTime, elapsedTime);
+		return;
+	}
+#endif
+
 	if (_isDone) {
 		return;
 	}
@@ -264,6 +315,12 @@ void Record::limitZ(double z) {
 
 void Record::finish() {
 	_isDone = true;
+#ifdef ENABLE_NANCY_V5
+	if (_nodeState) {
+		setActiveFlags(false);
+	}
+#endif
+
 	if (getContext().isSkipping()) {
 		_hasEndedInSkip = true;
 	}
@@ -288,6 +345,14 @@ bool Record::reset() {
 	_hasRunOnce = false;
 	_isDone = false;
 	_hasStarted = false;
+
+	// Nancy26's Reset makes the record active, like Restart
+#ifdef ENABLE_NANCY_V5
+	if (_nodeState) {
+		setActiveFlags(true);
+	}
+#endif
+
 	callFunction("OnReset");
 	return true;
 }
@@ -344,6 +409,14 @@ int Record::getScriptField() {
 	lua_State *L = getLua();
 	const Common::String key = luaL_checkstring(L, 2);
 
+	// What a script stored under the name of a function for the player's input
+	// wins over the base fields of Nancy26
+#ifdef ENABLE_NANCY_V5
+	if (_nodeState && !isEventFunctionName(key)) {
+		return getNodeScriptField(key);
+	}
+#endif
+
 	if (key == "active") {
 		lua_pushboolean(L, isActive());
 		return 1;
@@ -391,6 +464,17 @@ int Record::getScriptField() {
 int Record::setScriptField() {
 	lua_State *L = getLua();
 	const Common::String key = luaL_checkstring(L, 2);
+
+#ifdef ENABLE_NANCY_V5
+	if (_nodeState) {
+		if (!setNodeField(key) && !setField(key)) {
+			lua_pushvalue(L, 3);
+			storeValue(key.c_str());
+		}
+
+		return 0;
+	}
+#endif
 
 	if (key == "active") {
 		if (lua_isfunction(L, 3)) {

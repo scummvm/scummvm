@@ -1,0 +1,365 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+// The parts of Record that make every record of Nancy26 a node of a tree
+
+#include "engines/nancy/script/graphnode.h"
+#include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/luastate.h"
+#include "engines/nancy/script/record.h"
+#include "engines/nancy/script/scenecontext.h"
+#include "engines/nancy/script/transformer.h"
+#include "engines/nancy/script/types.h"
+
+#include "engines/nancy/script/v5/recordnode.h"
+
+namespace Nancy {
+namespace Script {
+
+void Record::createNodeState() {
+	_nodeState = new RecordNodeState();
+
+	// Every record goes by a name of its own
+	static uint s_numRecords = 0;
+	_nodeState->uniqueAlias = Common::String::format("AR%u", ++s_numRecords);
+}
+
+void Record::destroyNodeState() {
+	if (!_nodeState) {
+		return;
+	}
+
+	delete _nodeState;
+	_nodeState = nullptr;
+}
+
+bool Record::isNodeEnabled() const {
+	if (!_nodeState->localEnabled) {
+		return false;
+	}
+
+	return !_parentNode || _parentNode->isEnabled();
+}
+
+bool Record::isNodeVisible() const {
+	if (!_nodeState->localVisible) {
+		return false;
+	}
+
+	return !_parentNode || _parentNode->isVisible();
+}
+
+bool Record::isNodePaused() const {
+	if (_nodeState->localPaused) {
+		return true;
+	}
+
+	return _parentNode && _parentNode->isPaused();
+}
+
+void Record::setLocalEnabled(bool isEnabled) {
+	_nodeState->localEnabled = isEnabled;
+}
+
+void Record::setLocalVisible(bool isVisible) {
+	_nodeState->localVisible = isVisible;
+}
+
+void Record::setLocalPaused(bool isPaused) {
+	_nodeState->localPaused = isPaused;
+}
+
+void Record::setActiveFlags(bool isActive) {
+	_nodeState->localEnabled = isActive;
+	_nodeState->localVisible = isActive;
+	_nodeState->localPaused = !isActive;
+}
+
+double Record::getKeyZ() const {
+	return _nodeState->keyZ;
+}
+
+const Common::String &Record::getUniqueAlias() const {
+	return _nodeState->uniqueAlias;
+}
+
+const Common::String &Record::getName() const {
+	return _nodeState->localName.empty() ? _nodeState->uniqueAlias : _nodeState->localName;
+}
+
+// What the records draw with. The records of the other games are shown while
+// they are active.
+
+bool Record::isShown() const {
+	return _nodeState ? isNodeVisible() : isActive();
+}
+
+static bool readOptionalBool(lua_State *L, int tableIndex, const char *name, bool &value) {
+	lua_getfield(L, tableIndex, name);
+	const bool isBool = lua_isboolean(L, -1);
+	if (isBool) {
+		value = lua_toboolean(L, -1) != 0;
+	}
+
+	lua_pop(L, 1);
+	return isBool;
+}
+
+static bool readOptionalNumber(lua_State *L, int tableIndex, const char *name, double &value) {
+	lua_getfield(L, tableIndex, name);
+	const bool isNumber = lua_type(L, -1) == LUA_TNUMBER;
+	if (isNumber) {
+		value = lua_tonumber(L, -1);
+	}
+
+	lua_pop(L, 1);
+	return isNumber;
+}
+
+void Record::readNodeFields(int tableIndex) {
+	lua_State *L = getLua();
+
+	// The exe passes over values of another type, which scripts use for
+	// their own purposes, e.g. a function as localVisible in RandomMovie_SC
+	readOptionalBool(L, tableIndex, "localEnabled", _nodeState->localEnabled);
+	readOptionalBool(L, tableIndex, "localVisible", _nodeState->localVisible);
+	readOptionalBool(L, tableIndex, "localPaused", _nodeState->localPaused);
+	readOptionalNumber(L, tableIndex, "keyZ", _nodeState->keyZ);
+
+	lua_getfield(L, tableIndex, "localName");
+	if (lua_type(L, -1) == LUA_TSTRING) {
+		_nodeState->localName = lua_tostring(L, -1);
+	}
+
+	lua_pop(L, 1);
+}
+
+// An "active" function sets all three flags every frame. The record gets
+// activated when it becomes enabled, visible and unpaused, and runs while it
+// isn't paused; a record that is done is paused until it gets reset.
+void Record::updateNode(double sceneTime, double elapsedTime) {
+	// A record that is done stays so until it gets reset, even when its "active"
+	// function says otherwise, e.g. RandomMovie_SC's pause timer
+	if (_isDone) {
+		return;
+	}
+
+	lua_State *L = getLua();
+
+	if (_hasActiveFunction) {
+		pushStoredValue("active");
+		push();
+		if (LuaState::call(L, 1, 1, "Error in AR's active function")) {
+			setActiveFlags(lua_toboolean(L, -1) != 0);
+			lua_pop(L, 1);
+		}
+	}
+
+	const bool isActiveNow = isNodeEnabled() && isNodeVisible() && !isNodePaused();
+	if (isActiveNow != _wasActive) {
+		_wasActive = isActiveNow;
+
+		// The records made of script functions call them by themselves
+		if (isActiveNow) {
+			onActivation();
+			if (!isScripted()) {
+				callFunction("OnActivation");
+			}
+		} else {
+			onDeactivation();
+			if (!isScripted()) {
+				callFunction("OnDeactivation");
+			}
+		}
+	}
+
+	if (isNodePaused() || isPaused()) {
+		return;
+	}
+
+	_hasStarted = true;
+
+	if (!_hasRunOnce) {
+		_hasRunOnce = true;
+		runOnce();
+		callFunction("RunOnce");
+	}
+
+	if (isScripted()) {
+		lua_pushnumber(L, sceneTime);
+		lua_pushnumber(L, elapsedTime);
+		callFunction("Run", 2);
+	} else {
+		run(sceneTime, elapsedTime);
+	}
+}
+
+bool Record::resetInactive() {
+	if (!prepareReset()) {
+		return false;
+	}
+
+	_hasRunOnce = false;
+	_isDone = false;
+	_hasStarted = false;
+	_hasActiveFunction = false;
+	setActiveFlags(false);
+	callFunction("OnReset");
+	return true;
+}
+
+// ar:ResetInactive()
+static int recordResetInactive(lua_State *L) {
+	if (!checkRecord(L, 1)->resetInactive()) {
+		return luaL_error(L, "Cannot reset AR");
+	}
+
+	return 0;
+}
+
+int Record::getNodeScriptField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	// The kinds that can be done say so themselves
+	if (key == "done" && getField(key)) {
+		return 1;
+	}
+
+	if (getNodeField(key) || getField(key)) {
+		return 1;
+	}
+
+	pushStoredValue(key.c_str());
+	if (!lua_isnil(L, -1)) {
+		return 1;
+	}
+
+	lua_pop(L, 1);
+	return indexFunctions(L);
+}
+
+// The fields and functions every record has
+bool Record::getNodeField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "active") {
+		lua_pushboolean(L, isActive());
+	} else if (key == "done") {
+		lua_pushboolean(L, _isDone);
+	} else if (key == "z") {
+		lua_pushnumber(L, _z);
+	} else if (key == "keyZ") {
+		lua_pushnumber(L, _nodeState->keyZ);
+	} else if (key == "enabled") {
+		lua_pushboolean(L, isNodeEnabled());
+	} else if (key == "visible") {
+		lua_pushboolean(L, isNodeVisible());
+	} else if (key == "paused") {
+		lua_pushboolean(L, isNodePaused());
+	} else if (key == "localEnabled") {
+		lua_pushboolean(L, _nodeState->localEnabled);
+	} else if (key == "localVisible") {
+		lua_pushboolean(L, _nodeState->localVisible);
+	} else if (key == "localPaused") {
+		lua_pushboolean(L, _nodeState->localPaused);
+	} else if (key == "transform") {
+		pushMatrix(L, getTransform());
+	} else if (key == "invTransform") {
+		pushMatrix(L, getTransform().inverse());
+	} else if (key == "name") {
+		lua_pushstring(L, getName().c_str());
+	} else if (key == "uniqueAlias") {
+		lua_pushstring(L, _nodeState->uniqueAlias.c_str());
+	} else if (key == "ResetInactive") {
+		lua_pushcfunction(L, recordResetInactive);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+bool Record::setNodeField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "active") {
+		if (lua_isfunction(L, 3)) {
+			lua_pushvalue(L, 3);
+			storeValue("active");
+			_hasActiveFunction = true;
+		} else {
+			setActiveFlags(lua_toboolean(L, 3) != 0);
+			_hasActiveFunction = false;
+		}
+	} else if (key == "z") {
+		const double z = luaL_checknumber(L, 3);
+		if (z != _z) {
+			_z = z;
+			onZChanged();
+		}
+	} else if (key == "keyZ") {
+		_nodeState->keyZ = luaL_checknumber(L, 3);
+	} else if (key == "localEnabled") {
+		_nodeState->localEnabled = lua_toboolean(L, 3) != 0;
+	} else if (key == "localVisible") {
+		_nodeState->localVisible = lua_toboolean(L, 3) != 0;
+	} else if (key == "localPaused") {
+		_nodeState->localPaused = lua_toboolean(L, 3) != 0;
+	} else if (key == "enabled" || key == "visible" || key == "paused" ||
+			key == "transform" || key == "invTransform" || key == "name" ||
+			key == "uniqueAlias" || key == "done") {
+		luaL_error(L, "Cannot set field '%s' of an AR", key.c_str());
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+// What the records under a node take on, which are the ones of the Transformer
+// that owns it. The owner counts the nodes above it in already.
+
+bool GraphNode::isEnabled() const {
+	if (_owner) {
+		return _owner->isNodeEnabled();
+	}
+
+	return !_parent || _parent->isEnabled();
+}
+
+bool GraphNode::isVisible() const {
+	if (_owner) {
+		return _owner->isNodeVisible();
+	}
+
+	return !_parent || _parent->isVisible();
+}
+
+bool GraphNode::isPaused() const {
+	if (_owner) {
+		return _owner->isNodePaused();
+	}
+
+	return _parent && _parent->isPaused();
+}
+
+} // End of namespace Script
+} // End of namespace Nancy

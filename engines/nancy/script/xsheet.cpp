@@ -304,7 +304,7 @@ void XsheetRecord::registerGraphics() {
 
 void XsheetRecord::updateGraphics() {
 	_hasShown |= hasStarted();
-	_xsheet.setVisible(isActive() && _hasShown);
+	_xsheet.setVisible(isShown() && _hasShown);
 }
 
 bool XsheetRecord::getField(const Common::String &key) {

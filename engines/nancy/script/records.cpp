@@ -1014,7 +1014,7 @@ void OverrideRecord::updateGraphics() {
 	const bool hasRender = lua_isfunction(L, -1);
 	lua_pop(L, 1);
 
-	if (!hasRender || !isActive()) {
+	if (!hasRender || !isShown()) {
 		if (_canvas) {
 			_canvas->setVisible(false);
 		}
@@ -1282,7 +1282,7 @@ void OverlayRecord::registerGraphics() {
 }
 
 void OverlayRecord::updateGraphics() {
-	if (_hasDestTable && isActive()) {
+	if (_hasDestTable && isShown()) {
 		Common::Array<ScriptRect> dests;
 		readDestTable(dests);
 		if (dests != _tableDests) {
@@ -1291,11 +1291,11 @@ void OverlayRecord::updateGraphics() {
 		}
 	}
 
-	if (_isPlacementStale && isActive()) {
+	if (_isPlacementStale && isShown()) {
 		applyRects();
 	}
 
-	_graphic.setVisible(isActive() && _hasPicture);
+	_graphic.setVisible(isShown() && _hasPicture);
 
 	if (_hasAttachment) {
 		_attachment.setVisible(_isAttachmentDrawn);
@@ -1617,7 +1617,7 @@ void AnimOverlayRecord::registerGraphics() {
 }
 
 void AnimOverlayRecord::updateGraphics() {
-	_graphic.setVisible(isActive() && _isVisible && _hasPicture);
+	_graphic.setVisible(isShown() && _isVisible && _hasPicture);
 }
 
 // anim:Play() and anim:Pause(), for the records that play something
@@ -2290,6 +2290,13 @@ bool MovieRecord::isSkippable() const {
 		return false;
 	}
 
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: not while the movie is hidden or paused with what it hangs under
+	if (g_nancy->getGameType() >= kGameTypeNancy26 && (!isNodeVisible() || isNodePaused())) {
+		return false;
+	}
+#endif
+
 	return !_pausesOnLastFrame || (_player.isRangePlaying() && !_hasCalledOnPause);
 }
 
@@ -2375,7 +2382,7 @@ void MovieRecord::onZChanged() {
 }
 
 void MovieRecord::updateGraphics() {
-	_graphic.setVisible(isActive() && _isVisible && !isSeeThrough());
+	_graphic.setVisible(isShown() && _isVisible && !isSeeThrough());
 }
 
 void MovieRecord::describeState(Common::Array<Common::String> &lines) const {

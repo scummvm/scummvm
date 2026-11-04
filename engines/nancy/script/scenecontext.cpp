@@ -535,8 +535,8 @@ const ViewTransform *SceneContext::getViewTransform() const {
 	return NancySceneState.getStreams().getViewTransform(_streamName);
 }
 
-GraphNode *SceneContext::createGraphNode() {
-	GraphNode *node = new GraphNode(*this);
+GraphNode *SceneContext::createGraphNode(Record *owner) {
+	GraphNode *node = new GraphNode(*this, owner);
 	_graphNodes.push_back(node);
 	return node;
 }

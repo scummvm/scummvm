@@ -350,7 +350,7 @@ bool BlendStages::pushFunction(lua_State *L, const Common::String &key) {
 
 TransformerRecord::TransformerRecord(SceneContext &context, const char *typeName) :
 		Record(context, typeName),
-		_node(context.createGraphNode()) {}
+		_node(context.createGraphNode(this)) {}
 
 void TransformerRecord::readTable(int tableIndex) {
 	lua_State *L = getLua();

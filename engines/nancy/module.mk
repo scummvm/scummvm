@@ -240,7 +240,8 @@ MODULE_OBJS += \
 # Nancy26 and newer, whose UI is made of records as well
 ifdef ENABLE_NANCY_V5
 MODULE_OBJS += \
-  script/v5/bootobjects.o
+  script/v5/bootobjects.o \
+  script/v5/recordnode.o
 endif
 endif
 

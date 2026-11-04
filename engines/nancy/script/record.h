@@ -38,6 +38,7 @@ namespace Script {
 class BlendStages;
 class GraphNode;
 class SceneContext;
+struct RecordNodeState;
 
 // What the player does that records get told about
 enum RecordEvent {
@@ -121,7 +122,7 @@ public:
 	// Whether messages sent to the given name are for this record
 	virtual bool hasMessagingName(const Common::String &name) { return false; }
 
-	bool isActive() const { return _isActive && !_isDone; }
+	bool isActive() const;
 	bool isDone() const { return _isDone; }
 	bool hasStarted() const { return _hasStarted; }
 	bool hasRunOnce() const { return _hasRunOnce; }
@@ -168,9 +169,39 @@ public:
 	// stages when it has any
 	ScriptMatrix getLocalTransform() const;
 
+	// Whether what the record draws gets shown: while it is visible from Nancy26
+	// on, while it is active before
+	bool isShown() const;
+
 	// The blend stages of the record, which Nancy22 has in Transformers
 	BlendStages &getStages();
 	virtual void onStagesChanged();
+
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: works like reset(), but leaves the record inactive
+	bool resetInactive();
+
+	// Nancy26: every record is a node of a tree, which can be enabled (gets the
+	// player's input), visible (gets drawn) and paused (doesn't run). A record is
+	// each of them when it says so itself, and the Transformers it is attached to
+	// don't say otherwise. "active" stands for all three: enabled, visible and
+	// not paused.
+	bool isNodeEnabled() const;
+	bool isNodeVisible() const;
+	bool isNodePaused() const;
+	void setLocalEnabled(bool isEnabled);
+	void setLocalVisible(bool isVisible);
+	void setLocalPaused(bool isPaused);
+	void setActiveFlags(bool isActive);
+
+	// Nancy26: the order keys go to the records in, highest first
+	double getKeyZ() const;
+
+	// Nancy26: the name the record goes by of its own, and the one its
+	// messages come from
+	const Common::String &getUniqueAlias() const;
+	const Common::String &getName() const;
+#endif
 
 	// Nancy21: puts the record under a node; null for none
 	GraphNode *getParentNode() const { return _parentNode; }
@@ -268,6 +299,20 @@ private:
 	bool _isDropped = false;
 
 	BlendStages *_stages = nullptr;
+
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: what makes the record a node of the tree, and what goes with it.
+	// The other games have none.
+	void createNodeState();
+	void destroyNodeState();
+	void readNodeFields(int tableIndex);
+	void updateNode(double sceneTime, double elapsedTime);
+	int getNodeScriptField(const Common::String &key);
+	bool getNodeField(const Common::String &key);
+	bool setNodeField(const Common::String &key);
+
+	RecordNodeState *_nodeState = nullptr;
+#endif
 };
 
 // Makes the "AR" object, and the types of the records

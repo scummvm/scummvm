@@ -139,8 +139,9 @@ public:
 	// The panels a scene adds to the UI call into its scripts, so they go when it does
 	void setMakesUI() { _makesUI = true; }
 
-	// Nancy21: a new node to group records under, which lasts as long as the scene
-	GraphNode *createGraphNode();
+	// Nancy21: a new node to group records under, which lasts as long as the scene.
+	// A Transformer record owns the one it is.
+	GraphNode *createGraphNode(Record *owner = nullptr);
 
 	// Lets the records under a node know that it changed its z or transform,
 	// once the frame is over

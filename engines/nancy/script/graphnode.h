@@ -29,6 +29,7 @@ struct lua_State;
 namespace Nancy {
 namespace Script {
 
+class Record;
 class SceneContext;
 
 // Nancy21 lets a scene group its records under nodes of their own, made with
@@ -39,13 +40,23 @@ class SceneContext;
 // record is such a node.
 class GraphNode {
 public:
-	GraphNode(SceneContext &context) : _context(context) {}
+	// A Transformer record is the owner of its node
+	GraphNode(SceneContext &context, Record *owner = nullptr) : _context(context), _owner(owner) {}
 
 	SceneContext &getContext() const { return _context; }
+	Record *getOwner() const { return _owner; }
 
 	// Including those of the nodes above
 	double getZ() const;
 	ScriptMatrix getTransform() const;
+
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: what the records under the node take on, which are the ones
+	// of the Transformer that owns it, after the nodes above it had their say
+	bool isEnabled() const;
+	bool isVisible() const;
+	bool isPaused() const;
+#endif
 
 	// The node's own, which Nancy22's Transformer records set
 	void setZ(double z);
@@ -66,6 +77,7 @@ public:
 
 private:
 	SceneContext &_context;
+	Record *_owner;
 	double _z = 0.0;
 	ScriptMatrix _transform;
 	GraphNode *_parent = nullptr;
