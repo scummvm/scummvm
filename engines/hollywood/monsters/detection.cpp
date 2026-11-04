@@ -33,7 +33,7 @@ const ADGameDescription fallbackWindowsDescription = {
 	AD_ENTRY1(nullptr, nullptr),
 	Common::UNK_LANG,
 	Common::kPlatformWindows,
-	ADGF_UNSTABLE,
+	ADGF_TESTING,
 	GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 };
 
@@ -43,7 +43,7 @@ const ADGameDescription fallbackDosDescription = {
 	AD_ENTRY1(nullptr, nullptr),
 	Common::UNK_LANG,
 	Common::kPlatformDOS,
-	ADGF_UNSTABLE,
+	ADGF_TESTING,
 	GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 };
 

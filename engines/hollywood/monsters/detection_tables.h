@@ -33,7 +33,7 @@
 			"RESOURCE.S0D", "96bba558e5508affca4ffab8d546de83", 1408634),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_DEMO | ADGF_UNSTABLE,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
@@ -47,7 +47,7 @@
 			"RESOURCE.S0D", "96bba558e5508affca4ffab8d546de83", 1408634),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSTABLE,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO3(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI, GUIO_NOSPEECH)
 	},
 
@@ -61,7 +61,7 @@
 			"RESOURCE.004", "a79d937879665b899c255957c7310d42", 265002432),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE | kMonstersTranslationFlags,
+		ADGF_TESTING | kMonstersTranslationFlags,
 		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
@@ -75,7 +75,7 @@
 			"RESOURCE.004", "fb9f09029e73eb5ee708b995db9823d0", 256474138),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
@@ -88,7 +88,7 @@
 			"RESOURCE.003", "352126965c51832ce970faece65cc2f8", 9444153),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE | kMonstersTranslationFlags,
+		ADGF_TESTING | kMonstersTranslationFlags,
 		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
@@ -103,7 +103,7 @@
 			"RESOURCE.004", "a79d937879665b899c255957c7310d42", 265002432),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
@@ -116,7 +116,7 @@
 			"RESOURCE.003", "352126965c51832ce970faece65cc2f8", 9444153),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | kMonstersTranslationFlags,
+		ADGF_TESTING | kMonstersTranslationFlags,
 		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
