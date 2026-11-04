@@ -778,6 +778,10 @@ const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat(uint bpp) {
 }
 
 Common::Rect GraphicsManager::getScreenBounds() {
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		return Common::Rect(1024, 768);
+	}
+
 	return (g_nancy->getGameType() >= kGameTypeNancy16) ? Common::Rect(800, 600) : Common::Rect(640, 480);
 }
 

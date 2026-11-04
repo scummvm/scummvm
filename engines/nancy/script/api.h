@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
+#include "engines/nancy/enginedata.h"
+
 struct lua_State;
 
 namespace Common {
@@ -58,6 +60,11 @@ struct BootTables {
 	CVTX *texts = nullptr;
 	ScriptBootData *boot = nullptr;
 	int playerIndex = -1;	// the character whose own boot script is running
+
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: the font whose file is running, which FontsInit:Create fills
+	ScriptBootData::BitmapFont *font = nullptr;
+#endif
 };
 
 // Runs one of the boot scripts. Returns false when there is no such script.

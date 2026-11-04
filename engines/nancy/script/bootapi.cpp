@@ -25,11 +25,16 @@
 #include "engines/nancy/nancy.h"
 
 #include "engines/nancy/script/api.h"
+#include "engines/nancy/script/bootapi.h"
 #include "engines/nancy/script/luabind.h"
 #include "engines/nancy/script/luastate.h"
 #include "engines/nancy/script/types.h"
 
 #include "engines/nancy/ui/ndui/button.h"
+
+#ifdef ENABLE_NANCY_V5
+#include "engines/nancy/script/v5/bootobjects.h"
+#endif
 
 namespace Nancy {
 namespace Script {
@@ -45,18 +50,24 @@ namespace Script {
 
 static const BootTables *s_tables = nullptr;
 
+const BootTables *getBootTables() {
+	return s_tables;
+}
+
 bool runBootScript(const char *name, const BootTables &tables) {
 	LuaState state;
 
+	// Nancy26's font list runs the file of every font from within itself
+	const BootTables *outerTables = s_tables;
 	s_tables = &tables;
 	bool result = state.runScript(name);
-	s_tables = nullptr;
+	s_tables = outerTables;
 
 	return result;
 }
 
 // Every Create function takes the object itself and one table
-static void checkCreateArguments(lua_State *L, const char *typeName, bool hasTable) {
+void checkCreateArguments(lua_State *L, const char *typeName, bool hasTable) {
 	checkUserData(L, 1, typeName);
 	luaL_checktype(L, 2, LUA_TTABLE);
 
@@ -86,7 +97,7 @@ static bool compareNames(const Common::String &a, const Common::String &b) {
 }
 
 // The keys of a table that are strings, in alphabetical order
-static void getSortedKeys(lua_State *L, int tableIndex, Common::Array<Common::String> &keys) {
+void getSortedKeys(lua_State *L, int tableIndex, Common::Array<Common::String> &keys) {
 	lua_pushnil(L);
 	while (lua_next(L, tableIndex)) {
 		if (lua_type(L, -2) == LUA_TSTRING) {
@@ -210,11 +221,23 @@ static int envCreate(lua_State *L) {
 
 	for (const Common::String &code : codes) {
 		lua_getfield(L, 2, code.c_str());
-		luaL_checktype(L, -1, LUA_TTABLE);
+		if (!lua_isstring(L, -1)) {
+			luaL_checktype(L, -1, LUA_TTABLE);
+		}
+
 		int env = lua_gettop(L);
 
 		ENVS::Environment environment;
 		environment.code = code;
+
+		// Nancy26 only names the ambient script of each environment
+		if (lua_isstring(L, env)) {
+			environment.name = code;
+			environment.ambientScriptName = Common::Path(lua_tostring(L, env));
+			envs.environments.push_back(environment);
+			lua_pop(L, 1);
+			continue;
+		}
 
 		if (!readField(L, env, "fullName", environment.name)) {
 			luaL_error(L, "Environments must specify the 'fullName' field");
@@ -315,6 +338,12 @@ static int inventoryCreate(lua_State *L) {
 	checkCreateArguments(L, "ND.InventoryInit", s_tables && s_tables->inventory && s_tables->boot);
 	INVD &inventory = *s_tables->inventory;
 
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		return createNancy26Inventory(L, inventory);
+	}
+#endif
+
 	Common::String imageName;
 	if (!readField(L, 2, "ovl", imageName)) {
 		luaL_error(L, "InventoryInit:Create fed with table that has no 'ovl' field");
@@ -407,13 +436,13 @@ static void readCursor(lua_State *L, int cursorTable, ScriptBootData::Cursor &cu
 	readField(L, cursorTable, "overrideInv", cursor.overridesItem);
 }
 
-static void requireCursorField(lua_State *L, const char *name, Common::String &value) {
+void requireCursorField(lua_State *L, const char *name, Common::String &value) {
 	if (!readField(L, 2, name, value)) {
 		luaL_error(L, "CursorInit:Create fed with table that has no '%s' field", name);
 	}
 }
 
-static bool hasCursor(const ScriptBootData &boot, const Common::String &name) {
+bool hasCursor(const ScriptBootData &boot, const Common::String &name) {
 	for (const ScriptBootData::Cursor &cursor : boot.cursors) {
 		if (cursor.name.equalsIgnoreCase(name)) {
 			return true;
@@ -426,6 +455,12 @@ static bool hasCursor(const ScriptBootData &boot, const Common::String &name) {
 static int cursorCreate(lua_State *L) {
 	checkCreateArguments(L, "ND.CursorInit", s_tables && s_tables->boot);
 	ScriptBootData &boot = *s_tables->boot;
+
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		return createNancy26Cursors(L, boot);
+	}
+#endif
 
 	Common::String imageName;
 	requireCursorField(L, "ovl", imageName);
@@ -491,6 +526,13 @@ static int cursorCreateInv(lua_State *L) {
 // FontsInit and ColorsInit, whose tables go by number
 
 static int fontsCreate(lua_State *L) {
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: the file of a font made of pictures describes it
+	if (s_tables && s_tables->font) {
+		return createBitmapFont(L, *s_tables->font);
+	}
+#endif
+
 	checkCreateArguments(L, "ND.FontsInit", s_tables && s_tables->boot);
 	ScriptBootData &boot = *s_tables->boot;
 
@@ -663,6 +705,12 @@ void registerBootAPI(lua_State *L) {
 	};
 
 	registerGlobal(L, "FontsInit", "ND.FontsInit", kFontsInitFunctions);
+
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		registerNancy26BootAPI(L);
+	}
+#endif
 }
 
 } // End of namespace Script

@@ -83,6 +83,14 @@ namespace Nancy {
 //       protagonists each carry their own cell phone
 static const int kSavegameVersion = 12;
 
+struct CVTX;
+struct ENVS;
+struct EVNT;
+struct INVD;
+struct PCUI;
+struct VIEW;
+struct ScriptBootData;
+
 class ResourceManager;
 class IFF;
 class InputManager;
@@ -204,6 +212,10 @@ private:
 	void bootGameEngine();
 #ifdef ENABLE_NANCY_V4
 	void bootScriptedGameEngine();	// Nancy19+
+	void bootScriptedGameData(ScriptBootData *boot, EVNT *flags, INVD *inventory, ENVS *environments, PCUI *players, VIEW *viewport, CVTX *autotext, CVTX *convo);
+#endif
+#ifdef ENABLE_NANCY_V5
+	void bootNancy26Data(ScriptBootData *boot, EVNT *flags, INVD *inventory, ENVS *environments, VIEW *viewport, CVTX *autotext);	// Nancy26+
 #endif
 
 	State::State *getStateObject(NancyState::NancyState state) const;

@@ -1,5 +1,7 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
-add_engine nancy "Nancy Drew" yes "nancy_v3a nancy_v4" "The Vampire Diaries, Nancy Drew 1-17" "16bit highres vorbis bink"
+add_engine nancy "Nancy Drew" yes "nancy_v3a nancy_v4 nancy_v5" "The Vampire Diaries, Nancy Drew 1-17" "16bit highres vorbis bink"
 add_engine nancy_v3a "Nancy Drew 18" yes "" "" "png"
 add_engine nancy_v4 "Nancy Drew 19 and newer" yes "" "" "png lua"
+# Built only along with nancy_v4, whose scripts it adds to
+add_engine nancy_v5 "Nancy Drew 26 and newer" yes "" "" "png lua"

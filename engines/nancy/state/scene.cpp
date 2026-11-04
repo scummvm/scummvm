@@ -2015,7 +2015,9 @@ UI::Clock *Scene::getClock() {
 void Scene::init() {
 	// A design may have been picked before the game itself started, so refresh
 	// the engine data the widgets below are built from
-	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+	// Nancy26 has no player characters to pick from
+	const PCUI *pcui = GetEngineData(PCUI);
+	if (g_nancy->getGameType() >= kGameTypeNancy15 && (!pcui || !pcui->characters.empty())) {
 		g_nancy->setPlayerCharacter(g_nancy->getPlayerCharacter());
 	}
 
