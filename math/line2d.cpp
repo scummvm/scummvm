@@ -31,9 +31,12 @@ namespace Math {
  */
 
 Line2d::Line2d(const Vector2d &direction, const Vector2d &point) {
-	_a = direction.getX();
-	_b = direction.getY();
-	_c = point.getY() * (point.getX() + direction.getX()) - point.getX() * (point.getY() + direction.getY());
+	// The normal vector is perpendicular to the direction (-dy, dx)
+	_a = -direction.getY();
+	_b = direction.getX();
+
+	// C is the dot product of the normal vector and a point on the line
+	_c = _a * point.getX() + _b * point.getY();
 }
 
 Line2d Line2d::getPerpendicular(const Vector2d &point) const {
@@ -41,7 +44,7 @@ Line2d Line2d::getPerpendicular(const Vector2d &point) const {
 }
 
 Vector2d Line2d::getDirection() const {
-	return Vector2d(-_b, _a);
+	return Vector2d(_b, -_a);
 }
 
 float Line2d::getDistanceTo(const Vector2d &point, Vector2d *intersection) const {
