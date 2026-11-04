@@ -103,6 +103,8 @@ void SpiderEngine::runMatrix(Code *code) {
 
 	menuArea = Common::Rect(0, 0, menu->w, menu->h);
 	drawImage(*menu, 0, 0, transparent);
+	if (isDemo())
+		playMusic("demo/sound.lib/hpuzloop.raw");
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
