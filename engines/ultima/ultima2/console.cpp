@@ -39,6 +39,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("hp", WRAP_METHOD(Console, cmdHP));
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
+	registerCmd("stats", WRAP_METHOD(Console, cmdStats));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 	registerCmd("space", WRAP_METHOD(Console, cmdSpace));
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
@@ -285,6 +286,15 @@ bool Console::cmdGold(int argc, const char **argv) {
 	_G(savegame)._gold = 9999;
 	g_engine->baseView()->findView("Stats")->draw();
 	debugPrintf("Gold set to 9999\n");
+	return true;
+}
+
+bool Console::cmdStats(int argc, const char **argv) {
+	Data::Savegame &sg = _G(savegame);
+
+	sg._strength = sg._agility = sg._stamina = Data::MAX_BCD_BYTE;
+	sg._charisma = sg._wisdom = sg._intelligence = Data::MAX_BCD_BYTE;
+	debugPrintf("Attributes set to %d\n", Data::MAX_BCD_BYTE);
 	return true;
 }
 
