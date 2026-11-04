@@ -308,12 +308,16 @@ void Scene1050::runCloakroomAttendantConversation() {
 
 	beginSecondarySpeechLine(kScene1050DialogueStageId, firstConversation ? 0 : 1);
 	beginCloakroomAttendantSpeechLine(firstConversation ? 0 : 1, _random.getRandomBit() != 0);
+	if (animationPlaybackShouldStop())
+		return;
 	state.scene1050CloakroomAttendantConversationSeen = true;
 	applySceneStateToHotspotsAndPatches(1);
 
-	while (!finished && !Engine::shouldQuit()) {
+	while (!finished && !animationPlaybackShouldStop()) {
 		DialogueMenu menu(_vm, this);
 		const byte selectedChoice = menu.choose(kScene1050DialogueStageId, records, depthIndex, nodeIndex);
+		if (animationPlaybackShouldStop())
+			return;
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(kScene1050DialogueStageId, 7);
 			beginCloakroomAttendantSpeechLine(7, _random.getRandomBit() != 0);
@@ -329,6 +333,8 @@ void Scene1050::runCloakroomAttendantConversation() {
 		if (record.responseFrameIndex != 0 && record.responseFrameIndex != 0xff)
 			beginCloakroomAttendantSpeechLine(record.responseFrameIndex, _random.getRandomBit() != 0);
 
+		if (animationPlaybackShouldStop())
+			return;
 		handleDialogueEffect(record.disableAfterUse);
 		if (record.disableAfterUse != 0)
 			record.enabled = 0;
@@ -526,6 +532,8 @@ void Scene1050::runTravelUnlockEffect(byte destinationId) {
 		.actorReplacement(13, kScene1050TravelOverlayDescriptorCount,
 			kTravelUnlockFrames, kTravelUnlockFrameCount, kScene1050FrameMillis)
 		.stopSound();
+	if (animationPlaybackShouldStop())
+		return;
 	unlockTravelDestination(destinationId);
 }
 

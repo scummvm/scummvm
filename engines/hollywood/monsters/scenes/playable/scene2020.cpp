@@ -658,6 +658,8 @@ void Scene2020::runPrincessSpeechTransition(bool opening) {
 
 void Scene2020::beginPrincessSpeechLine(byte frameIndex) {
 	runPrincessSpeechTransition(true);
+	if (animationPlaybackShouldStop())
+		return;
 	beginPrimarySpeechLineWithAnimationGroup(kScene2020PrincessDialoguePrimaryRow, frameIndex,
 		0x00ab, 0x00e5, 0x3f, 0x20, 0x34, 0);
 	runPrincessSpeechTransition(false);
@@ -672,6 +674,8 @@ void Scene2020::runPrincessDialogue() {
 		for (byte frame = 0; frame < 3; ++frame) {
 			beginSecondarySpeechLine(kScene2020PrincessDialogueStageId, frame);
 			beginPrincessSpeechLine(frame);
+			if (animationPlaybackShouldStop())
+				return;
 		}
 		state.scene2020PrincessConversationSeen = true;
 	} else {

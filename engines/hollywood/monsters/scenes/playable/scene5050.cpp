@@ -224,7 +224,8 @@ void Scene5050::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 void Scene5050::runSpecialTransitionToMineSwitches() {
 	setActiveActorPose(0x069, 0x157, 2);
 	drawPlayableComposite();
-	fadePaletteFromBlack();
+	if (fadePaletteFromBlack())
+		return;
 
 	_specialTransitionActive = true;
 	runActorReplacement(ActionOverlaySpec(7, kScene5050SpecialTransitionDescriptorCount,
@@ -232,7 +233,8 @@ void Scene5050::runSpecialTransitionToMineSwitches() {
 		.hookAt(14, kScene5050SpecialHoldHook)
 		.noFinalFrameDelay());
 	_specialTransitionActive = false;
-	fadePaletteToBlack();
+	if (fadePaletteToBlack())
+		return;
 	_specialExitAlreadyFaded = true;
 
 	GameplayState &state = _vm->gameState();
