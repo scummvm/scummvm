@@ -87,6 +87,7 @@ public:
 	ModelNode *_rootHierNode;
 	Math::Vector3d _bboxPos;
 	Math::Vector3d _bboxSize;
+	Math::Vector3d _center;
 };
 
 class MeshFace {

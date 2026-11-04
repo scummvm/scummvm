@@ -593,7 +593,7 @@ private:
 	Math::Vector3d getSimplePuckVector() const;
 	void calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll);
 
-	bool getSphereInfo(bool adjustZ, float &size, Math::Vector3d &pos) const;
+	bool getSphereInfo(float &size, Math::Vector3d &pos) const;
 	EMIModel *findModelWithMesh(const Common::String &mesh);
 
 	Common::String _name;

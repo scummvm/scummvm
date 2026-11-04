@@ -2043,7 +2043,7 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 	}
 	Math::Vector3d p;
 	float size;
-	if (!getSphereInfo(false, size, p))
+	if (!getSphereInfo(size, p))
 		return dest;
 	Math::Vector2d p1(pos.x(), pos.y());
 	Math::Vector2d p2(dest.x(), dest.y());
@@ -2117,7 +2117,7 @@ void Actor::getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const
 	}
 }
 
-bool Actor::getSphereInfo(bool adjustZ, float &size, Math::Vector3d &p) const {
+bool Actor::getSphereInfo(float &size, Math::Vector3d &p) const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		EMICostume *costume = static_cast<EMICostume *>(getCurrentCostume());
 		if (!costume) {
@@ -2133,11 +2133,7 @@ bool Actor::getSphereInfo(bool adjustZ, float &size, Math::Vector3d &p) const {
 		Model *model = getCurrentCostume()->getModel();
 		assert(model);
 
-		p = _pos + model->_insertOffset;
-		// center the sphere on the model center.
-		if (adjustZ) {
-			p.z() += model->_bboxSize.z() / 2.f;
-		}
+		p = _pos + model->_insertOffset + model->_center;
 		size = model->_radius * _collisionScale;
 	}
 	return true;
@@ -2154,11 +2150,7 @@ bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d
 
 	Math::Vector3d p1, p2;
 	float size1, size2;
-	// you may ask: why center the sphere of the first actor only (by setting adjustZ to true)?
-	// because it seems the original does so.
-	// if you change this code test this places: the rocks in lb and bv (both when booting directly in the
-	// set and when coming in from another one) and the poles in xb.
-	if (!this->getSphereInfo(true, size1, p1) || !actor->getSphereInfo(false, size2, p2)) {
+	if (!this->getSphereInfo(size1, p1) || !actor->getSphereInfo(size2, p2)) {
 		return false;
 	}
 

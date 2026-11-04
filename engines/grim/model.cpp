@@ -47,41 +47,6 @@ Model::Model(const Common::String &filename, Common::SeekableReadStream *data, C
 		TextSplitter ts(_fname, data);
 		loadText(&ts);
 	}
-
-	Math::Vector3d max;
-
-	_rootHierNode->update();
-	bool first = true;
-	for (int i = 0; i < _numHierNodes; ++i) {
-		ModelNode &node = _rootHierNode[i];
-		if (node._mesh) {
-			g_driver->createMesh(node._mesh);
-			Mesh &mesh = *node._mesh;
-			Math::Vector3d p = mesh._matrix.getPosition();
-			float x = p.x();
-			float y = p.y();
-			float z = p.z();
-			for (int k = 0; k < mesh._numVertices * 3; k += 3) {
-				if (first || mesh._vertices[k] + x < _bboxPos.x())
-					_bboxPos.x() = mesh._vertices[k] + x;
-				if (first || mesh._vertices[k + 1] + y < _bboxPos.y())
-					_bboxPos.y() = mesh._vertices[k + 1] + y;
-				if (first || mesh._vertices[k + 2] + z < _bboxPos.z())
-					_bboxPos.z() = mesh._vertices[k + 2] + z;
-
-				if (first || mesh._vertices[k] + x > max.x())
-					max.x() = mesh._vertices[k] + x;
-				if (first || mesh._vertices[k + 1] + y > max.y())
-					max.y() = mesh._vertices[k + 1] + y;
-				if (first || mesh._vertices[k + 2] + z > max.z())
-					max.z() = mesh._vertices[k + 2] + z;
-
-				first = false;
-			}
-		}
-	}
-
-	_bboxSize = max - _bboxPos;
 }
 
 Model::~Model() {
@@ -122,7 +87,11 @@ void Model::loadBinary(Common::SeekableReadStream *data) {
 		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
 	}
 	_radius = data->readFloatLE();
-	data->seek(36, SEEK_CUR);
+	_bboxPos.readFromStream(data);
+	Math::Vector3d bboxMax;
+	bboxMax.readFromStream(data);
+	_bboxSize = bboxMax - _bboxPos;
+	_center.readFromStream(data);
 	_insertOffset.readFromStream(data);
 }
 
@@ -204,6 +173,42 @@ void Model::loadText(TextSplitter *ts) {
 
 	if (!ts->isEof())
 		Debug::warning(Debug::Models, "Unexpected junk at end of model text");
+
+	Math::Vector3d max;
+
+	_rootHierNode->update();
+	bool first = true;
+	for (int i = 0; i < _numHierNodes; ++i) {
+		ModelNode &node = _rootHierNode[i];
+		if (node._mesh) {
+			g_driver->createMesh(node._mesh);
+			Mesh &mesh = *node._mesh;
+			Math::Vector3d p = mesh._matrix.getPosition();
+			float x = p.x();
+			float y = p.y();
+			float z = p.z();
+			for (int k = 0; k < mesh._numVertices * 3; k += 3) {
+				if (first || mesh._vertices[k] + x < _bboxPos.x())
+					_bboxPos.x() = mesh._vertices[k] + x;
+				if (first || mesh._vertices[k + 1] + y < _bboxPos.y())
+					_bboxPos.y() = mesh._vertices[k + 1] + y;
+				if (first || mesh._vertices[k + 2] + z < _bboxPos.z())
+					_bboxPos.z() = mesh._vertices[k + 2] + z;
+
+				if (first || mesh._vertices[k] + x > max.x())
+					max.x() = mesh._vertices[k] + x;
+				if (first || mesh._vertices[k + 1] + y > max.y())
+					max.y() = mesh._vertices[k + 1] + y;
+				if (first || mesh._vertices[k + 2] + z > max.z())
+					max.z() = mesh._vertices[k + 2] + z;
+
+				first = false;
+			}
+		}
+	}
+
+	_bboxSize = max - _bboxPos;
+	_center = _bboxPos + _bboxSize / 2.f;
 }
 
 void Model::draw() const {
