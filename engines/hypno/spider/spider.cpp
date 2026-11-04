@@ -1138,6 +1138,7 @@ void SpiderEngine::loadAssetsDemo() {
 
 	sc->intros.push_back("demo/aleyc01s.smk");
 	sc->music = "demo/sound.lib/alleymus.raw";
+	sc->musicRate = 11025;
 	sc->levelIfWin = "sixdemo/mis/demo.mis";
 	sc->levelIfLose = "sixdemo/mis/demo.mis";
 
