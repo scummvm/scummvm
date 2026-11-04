@@ -521,7 +521,7 @@ void Actor::setPos(const Math::Vector3d &position) {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		Math::Vector3d moveVec = position - _pos;
 		for (Actor *a : g_grim->getActiveActors()) {
-			handleCollisionWith(a, _collisionMode, &moveVec);
+			handleCollisionWith(a, &moveVec);
 		}
 	}
 }
@@ -782,22 +782,9 @@ void Actor::stopTurning() {
 }
 
 void Actor::moveTo(const Math::Vector3d &pos) {
-	// The walking actor doesn't always have the collision mode set, but it must however check
-	// the collisions. E.g. the set hl doesn't set Manny's mode, but it must check for
-	// collisions with Raoul.
-	// On the other hand, it must not *set* the sphere mode, it must just use it for this call:
-	// the set xb sets Manny's collision scale as 1 and mode as Off. If you then go to set tb
-	// and talk to Doug at the photo window, Manny's mode *must be* Off, otherwise Doug will
-	// collide, miss the target point and will walk away, leaving Manny waiting for him at
-	// the window forever.
-	CollisionMode mode = _collisionMode;
-	if (_collisionMode == CollisionOff) {
-		mode = CollisionSphere;
-	}
-
 	Math::Vector3d moveVec = pos - _pos;
 	for (Actor *a : g_grim->getActiveActors()) {
-		handleCollisionWith(a, mode, &moveVec);
+		handleCollisionWith(a, &moveVec);
 	}
 	_pos += moveVec;
 }
@@ -2028,7 +2015,7 @@ Math::Vector3d Actor::handleCollisionTo(const Math::Vector3d &from, const Math::
 	for (Actor *a : Actor::getPool()) {
 		if (a != this && a->isInSet(_setName) && a->isVisible()) {
 			p = a->getTangentPos(from, p);
-			handleCollisionWith(a, _collisionMode, &moveVec);
+			handleCollisionWith(a, &moveVec);
 		}
 	}
 	return p;
@@ -2143,7 +2130,7 @@ bool Actor::getSphereInfo(bool adjustZ, float &size, Math::Vector3d &p) const {
 	return true;
 }
 
-bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d *vec) const {
+bool Actor::handleCollisionWith(Actor *actor, Math::Vector3d *vec) const {
 	if (actor->_collisionMode == CollisionOff || actor == this) {
 		return false;
 	}
@@ -2162,10 +2149,7 @@ bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d
 		return false;
 	}
 
-	CollisionMode mode1 = mode;
-	CollisionMode mode2 = actor->_collisionMode;
-
-	if (mode1 == CollisionSphere && mode2 == CollisionSphere) {
+	if (actor->_collisionMode == CollisionSphere) {
 		Math::Vector3d pos = p1 + *vec;
 		float distance = (pos - p2).getMagnitude();
 		if (distance < size1 + size2) {
@@ -2179,10 +2163,7 @@ bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d
 			collisionHandlerCallback(actor);
 			return true;
 		}
-	} else if (mode1 == CollisionBox && mode2 == CollisionBox) {
-		warning("Collision between box and box not implemented!");
-		return false;
-	} else {
+	} else if (actor->_collisionMode == CollisionBox) {
 		Math::Vector3d bboxSize1, bboxSize2;
 		Math::Vector3d bboxPos1, bboxPos2;
 
@@ -2202,29 +2183,16 @@ bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d
 		Math::Vector2d circle;
 		float radius;
 
-		if (mode1 == CollisionBox) {
-			pos = p1 + *vec;
-			bboxPos = pos + bboxPos1;
-			size =  bboxSize1;
-			scale = _collisionScale;
-			yaw = _yaw;
+		pos = p2;
+		bboxPos = p2  + bboxPos2;
+		size = bboxSize2;
+		scale = actor->_collisionScale;
+		yaw = actor->_yaw;
 
-			circle.setX(p2.x());
-			circle.setY(p2.y());
-			circlePos = p2;
-			radius = size2;
-		} else {
-			pos = p2;
-			bboxPos = p2  + bboxPos2;
-			size = bboxSize2;
-			scale = actor->_collisionScale;
-			yaw = actor->_yaw;
-
-			circle.setX(p1.x() + vec->x());
-			circle.setY(p1.y() + vec->y());
-			circlePos = p1;
-			radius = size1;
-		}
+		circle.setX(p1.x() + vec->x());
+		circle.setY(p1.y() + vec->y());
+		circlePos = p1;
+		radius = size1;
 
 		rect._topLeft = Math::Vector2d(bboxPos.x(), bboxPos.y() + size.y());
 		rect._topRight = Math::Vector2d(bboxPos.x() + size.x(), bboxPos.y() + size.y());
