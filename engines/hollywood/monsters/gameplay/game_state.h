@@ -835,9 +835,6 @@ struct GameplayState {
 			return 0;
 
 		const uint index = (uint)itemId * kInventoryVerbCount + stripIndex;
-		if (index >= kFixedInventoryActionTableEntryCount)
-			return 0;
-
 		return fixedInventoryVerbHandlerIdsByItemAndStrip[index];
 	}
 
@@ -846,9 +843,6 @@ struct GameplayState {
 			return 0;
 
 		const uint index = (uint)primaryItemId * kInventoryOwnerSlotStride + secondaryItemId;
-		if (index >= kInventoryItemRelationTableEntryCount)
-			return 0;
-
 		if (relationMode == 1)
 			return dialogueRelationMode1HandlerIdsByItemPair[index];
 		if (relationMode == 2)
