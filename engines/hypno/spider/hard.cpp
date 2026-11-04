@@ -88,7 +88,9 @@ void SpiderEngine::runMatrix(Code *code) {
 		v = new MVideo("puz_ally/matintro.smk", Common::Point(0, 0), false, false, false);
 	}
 
-	playVideo(*v);
+	disableCursor();
+	runIntro(*v);
+	defaultCursor();
 	delete v;
 	Graphics::Surface *menu;
 	Common::Rect menuArea(0, 0, 0, 0);
