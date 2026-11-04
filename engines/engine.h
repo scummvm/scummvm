@@ -587,6 +587,8 @@ public:
 	 * @param show true to show hotspots, false to hide them
 	 */
 	virtual void showHotspots(bool show);
+	/** Release the hotspot overlay without changing the user's toggle state. */
+	void suspendHotspots();
 	bool isShowingHotspots() const { return _showHotspots; }
 	virtual HotspotKeyMode hotspotsKeyMode() const { return kHotspotKeyModeToggle; }
 	HotspotKeyMode effectiveHotspotKeyMode() const;

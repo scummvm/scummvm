@@ -29,6 +29,7 @@ DECLARE_SINGLETON(GUI::EventRecorder);
 }
 
 #include "common/debug-channels.h"
+#include "engines/engine.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/mixer/mixer.h"
 #include "common/config-manager.h"
@@ -811,6 +812,8 @@ void EventRecorder::preDrawOverlayGui() {
 	if ((_initialized) || (_needRedraw)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
+		if (g_engine)
+			g_engine->suspendHotspots();
 		g_system->showOverlay();
 		g_gui.checkScreenChange();
 		g_gui.theme()->clearAll();

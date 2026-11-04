@@ -164,10 +164,16 @@ void HotspotRenderer::exchangeHotspots(Common::Array<HotspotInfo> &hotspots) {
 	}
 }
 
+void HotspotRenderer::hideOverlay(OSystem &system) {
+	if (_ownsOverlay && system.isOverlayVisible())
+		system.hideOverlay();
+	_ownsOverlay = false;
+	_dirty = true;
+}
+
 void HotspotRenderer::renderOverlay(OSystem &system, MarkerShape markerShape, bool showText, bool forceRedraw) {
 	if (_hotspots.empty()) {
-		if (system.isOverlayVisible())
-			system.hideOverlay();
+		hideOverlay(system);
 		_overlay.free();
 		_previousBounds = Common::Rect();
 		_drawBounds = Common::Rect();
@@ -184,13 +190,17 @@ void HotspotRenderer::renderOverlay(OSystem &system, MarkerShape markerShape, bo
 	if (width <= 0 || height <= 0 || gameWidth <= 0 || gameHeight <= 0 || format.bytesPerPixel < 2)
 		return;
 	const bool visible = system.isOverlayVisible();
+	if (visible && !_ownsOverlay)
+		return;
 	const bool resized = _overlay.w != width || _overlay.h != height || _overlay.format != format;
 	if (!_dirty && !forceRedraw && !resized && visible && format.aBits() &&
 		_gameSize.x == gameWidth && _gameSize.y == gameHeight && _screenChangeID == screenChangeID &&
 		_shape == markerShape && _font == font)
 		return;
-	if (!visible)
+	if (!visible) {
 		system.showOverlay(false);
+		_ownsOverlay = true;
+	}
 	if (resized)
 		_overlay.create(width, height, format);
 	if (format.aBits()) {

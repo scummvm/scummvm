@@ -103,6 +103,8 @@ public:
 	void setStyle(const HotspotStyle &style);
 	void invalidate();
 	void releaseResources();
+	bool ownsOverlay() const { return _ownsOverlay; }
+	void hideOverlay(OSystem &system);
 	bool empty() const { return _hotspots.empty(); }
 	void setHotspots(Common::Array<HotspotInfo> hotspots);
 	void exchangeHotspots(Common::Array<HotspotInfo> &hotspots);
@@ -190,6 +192,7 @@ private:
 	Surface _overlay;
 	Common::Array<HotspotInfo> _hotspots;
 	bool _dirty = true;
+	bool _ownsOverlay = false;
 	Common::Point _gameSize;
 	int _screenChangeID = -1;
 	MarkerShape _shape = kMarkerCrosshair;

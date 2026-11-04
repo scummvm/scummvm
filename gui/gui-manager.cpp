@@ -20,6 +20,7 @@
  */
 
 #include "common/events.h"
+#include "engines/engine.h"
 #include "common/translation.h"
 #include "common/zip-set.h"
 #include "gui/EventRecorder.h"
@@ -595,6 +596,8 @@ void GuiManager::runLoop() {
 #endif
 
 	if (!_stateIsSaved) {
+		if (g_engine)
+			g_engine->suspendHotspots();
 		saveState();
 		_theme->enable();
 		didSaveState = true;
