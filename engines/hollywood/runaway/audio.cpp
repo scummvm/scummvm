@@ -131,6 +131,10 @@ void RunawayAudio::playPointer() {
 	if (!readRunawayGlobalChunk(150, data) || data.size() % 2)
 		return;
 	byte *samples = (byte *)malloc(data.size());
+	if (!samples) {
+		warning("Runaway demo: cannot allocate pointer sound buffer");
+		return;
+	}
 	memcpy(samples, data.data(), data.size());
 	_mixer->stopHandle(_pointer);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_pointer,
