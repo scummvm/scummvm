@@ -563,16 +563,12 @@ void PrisonerEngine::dialogActionNewGame() {
 	_currModuleIndex = -1;
 	_currSceneIndex = -1;
 
-	// The original never resets the global vars, so a new game started from a running one
-	// would inherit its progress.
 	resetGlobalScriptVars();
 	setTotalPlayTime(0);
 
 	_newModuleIndex = 2;
 	_newSceneIndex = 39;
 
-	//enterScene(2, -1);
-	//checkForSceneChange();
 }
 
 void PrisonerEngine::dialogActionExit() {
