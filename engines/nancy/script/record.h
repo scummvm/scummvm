@@ -219,6 +219,11 @@ public:
 	// messages come from
 	const Common::String &getUniqueAlias() const;
 	const Common::String &getName() const;
+
+	// Nancy26: a message another record sent, from the Lua state L, with numArgs
+	// arguments from firstArg on. Leaves what the record's Receive function
+	// returned on the stack of L, and returns how many values that is.
+	int receiveMessage(lua_State *L, const Common::String &sender, const Common::String &action, int firstArg, int numArgs);
 #endif
 
 	// Nancy21: puts the record under a node; null for none

@@ -29,7 +29,8 @@ namespace Script {
 
 // Nancy26 makes every record a node of a tree: it is enabled, visible and
 // paused by its own say and by what the Transformers above it say, and can be
-// see-through. Records of the other games have none of this.
+// see-through. Messages reach it by its names. Records of the other games
+// have none of this.
 struct RecordNodeState {
 	bool localEnabled = true;
 	bool localVisible = true;

@@ -29,6 +29,10 @@
 
 #include "engines/nancy/script/types.h"
 
+#ifdef ENABLE_NANCY_V5
+#include "engines/nancy/script/v5/streamtree.h"
+#endif
+
 struct lua_State;
 
 namespace Nancy {
@@ -112,6 +116,13 @@ public:
 	void setFrame(uint frame) { _frame = frame; }
 	int32 getZOffset() const { return _zOffset; }
 
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: what the stream of the scene says about all its records
+	bool isStreamEnabled() const { return !_streamState || _streamState->isEnabled; }
+	bool isStreamVisible() const { return !_streamState || _streamState->isVisible; }
+	bool isStreamPaused() const { return _streamState && _streamState->isPaused; }
+#endif
+
 	// Nancy21: the zoom of the stream the scene is in
 	const ViewTransform *getViewTransform() const;
 
@@ -189,6 +200,10 @@ private:
 	bool _isLoading = false;
 	uint _frame;
 	int32 _zOffset;
+
+#ifdef ENABLE_NANCY_V5
+	const StreamNodeState *_streamState = nullptr;	// Nancy26
+#endif
 
 	LuaState *_lua;
 	Common::Array<Record *> _records;

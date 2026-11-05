@@ -52,6 +52,12 @@ SceneContext::SceneContext(const Common::String &streamName, const Common::Strin
 		_sceneName(sceneName),
 		_frame(frame),
 		_zOffset(zOffset) {
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		_streamState = NancySceneState.getStreams().getNodeState(streamName);
+	}
+#endif
+
 	_lua = new LuaState(this);
 }
 

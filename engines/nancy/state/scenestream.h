@@ -35,6 +35,12 @@
 #include "engines/nancy/script/mathtypes.h"
 #endif
 
+#ifdef ENABLE_NANCY_V5
+#include "engines/nancy/script/v5/streamtree.h"
+
+struct lua_State;
+#endif
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -133,6 +139,12 @@ public:
 #endif
 	ViewTransform &getViewTransform() { return _viewTransform; }
 
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: what the stream says about the records of its scenes
+	Script::StreamNodeState &getNodeState() { return _nodeState; }
+	const Script::StreamNodeState &getNodeState() const { return _nodeState; }
+#endif
+
 	Common::Array<Child> _children;
 
 private:
@@ -159,6 +171,9 @@ private:
 	Script::SceneContext *_scriptScene = nullptr;
 
 	Script::ScriptMatrix _transform;	// Nancy21
+#endif
+#ifdef ENABLE_NANCY_V5
+	Script::StreamNodeState _nodeState;	// Nancy26
 #endif
 
 	// The zoom of everything the stream draws
@@ -228,6 +243,16 @@ public:
 	// false when there is none.
 	bool receiveMessage(const Script::Message &message, bool &wasTaken);
 
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: a message to a stream by its name, sent from the Lua state L. It
+	// enables, disables, pauses, locks or unlocks the stream, or asks whether it
+	// is paused. Returns the number of results left on the stack of L.
+	int receiveNancy26Message(lua_State *L, const Common::String &sender, const Common::String &name, const Common::String &action);
+
+	// Nancy26: what a stream says about its records; null for no such stream
+	Script::StreamNodeState *getNodeState(const Common::String &name);
+#endif
+
 #ifdef ENABLE_NANCY_V4
 	// Enhancement: Esc skips what is being said in any of the streams, or else
 	// the movies they play. Returns whether there was something to skip.
@@ -271,6 +296,9 @@ private:
 	const Script::SceneContext *findScriptScene(const Common::String &name) const;
 
 	Script::ScriptMatrix _mainStreamTransform;
+#endif
+#ifdef ENABLE_NANCY_V5
+	Script::StreamNodeState _mainNodeState;
 #endif
 	ViewTransform _mainStreamViewTransform;
 };

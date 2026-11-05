@@ -30,6 +30,7 @@
 #include "engines/nancy/script/types.h"
 
 #include "engines/nancy/script/v5/cliptransformer.h"
+#include "engines/nancy/script/v5/messaging.h"
 #include "engines/nancy/script/v5/recordnode.h"
 
 namespace Nancy {
@@ -48,12 +49,13 @@ void Record::destroyNodeState() {
 		return;
 	}
 
+	deregisterAliases(this);
 	delete _nodeState;
 	_nodeState = nullptr;
 }
 
 bool Record::isNodeEnabled() const {
-	if (!_nodeState->localEnabled) {
+	if (!_nodeState->localEnabled || !_context.isStreamEnabled()) {
 		return false;
 	}
 
@@ -61,7 +63,7 @@ bool Record::isNodeEnabled() const {
 }
 
 bool Record::isNodeVisible() const {
-	if (!_nodeState->localVisible) {
+	if (!_nodeState->localVisible || !_context.isStreamVisible()) {
 		return false;
 	}
 
@@ -69,7 +71,7 @@ bool Record::isNodeVisible() const {
 }
 
 bool Record::isNodePaused() const {
-	if (_nodeState->localPaused) {
+	if (_nodeState->localPaused || _context.isStreamPaused()) {
 		return true;
 	}
 
@@ -327,6 +329,61 @@ bool Record::resetInactive() {
 	return true;
 }
 
+int Record::receiveMessage(lua_State *from, const Common::String &sender, const Common::String &action, int firstArg, int numArgs) {
+	// Every record answers these by itself first
+	Common::String upperAction = action;
+	upperAction.toUppercase();
+	if (upperAction == "ENABLE") {
+		_nodeState->localEnabled = true;
+	} else if (upperAction == "DISABLE") {
+		_nodeState->localEnabled = false;
+	} else if (upperAction == "SHOW") {
+		_nodeState->localVisible = true;
+	} else if (upperAction == "HIDE") {
+		_nodeState->localVisible = false;
+	} else if (upperAction == "PLAY") {
+		_nodeState->localPaused = false;
+	} else if (upperAction == "PAUSE") {
+		_nodeState->localPaused = true;
+	}
+
+	lua_State *L = getLua();
+	firstArg = absoluteIndex(from, firstArg);
+
+	pushStoredValue("Receive");
+	if (!lua_isfunction(L, -1)) {
+		lua_pop(L, 1);
+		return 0;
+	}
+
+	const int base = lua_gettop(L) - 1;
+	push();
+	lua_pushstring(L, sender.c_str());
+	lua_pushstring(L, action.c_str());
+	for (int i = 0; i < numArgs; ++i) {
+		if (L == from) {
+			lua_pushvalue(L, firstArg + i);
+		} else {
+			copyValue(from, firstArg + i, L);
+		}
+	}
+
+	if (!LuaState::call(L, numArgs + 3, LUA_MULTRET, "Error running override 'Receive' of AR")) {
+		return 0;
+	}
+
+	const int numResults = lua_gettop(L) - base;
+	if (L != from) {
+		for (int i = 0; i < numResults; ++i) {
+			copyValue(L, base + 1 + i, from);
+		}
+
+		lua_settop(L, base);
+	}
+
+	return numResults;
+}
+
 // ar:ResetInactive()
 static int recordResetInactive(lua_State *L) {
 	if (!checkRecord(L, 1)->resetInactive()) {
@@ -399,6 +456,14 @@ bool Record::getNodeField(const Common::String &key) {
 		lua_pushstring(L, getName().c_str());
 	} else if (key == "uniqueAlias") {
 		lua_pushstring(L, _nodeState->uniqueAlias.c_str());
+	} else if (key == "Send" || key == "TrySend") {
+		lua_pushcfunction(L, recordSend);
+	} else if (key == "SendAsAlias" || key == "TrySendAsAlias") {
+		lua_pushcfunction(L, recordSendAsAlias);
+	} else if (key == "RegisterAlias") {
+		lua_pushcfunction(L, recordRegisterAlias);
+	} else if (key == "DeregisterAlias") {
+		lua_pushcfunction(L, recordDeregisterAlias);
 	} else if (key == "ResetInactive") {
 		lua_pushcfunction(L, recordResetInactive);
 	} else if (BlendStages::pushFunction(L, key)) {
