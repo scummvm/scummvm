@@ -535,10 +535,10 @@ bool TextBufferWindow::unputCharUni(uint32 ch) {
 void TextBufferWindow::clear() {
 	int i;
 
-	_attr.fgset = Windows::_overrideFgSet;
-	_attr.bgset = Windows::_overrideBgSet;
-	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : 0;
-	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
+	_attr.fgset = Windows::_overrideFgSet || (_attr.fgset && _attr.fgcolor == zcolor_Default);
+	_attr.bgset = Windows::_overrideBgSet || (_attr.bgset && _attr.bgcolor == zcolor_Default);
+	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : (uint)zcolor_Default;
+	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : (uint)zcolor_Default;
 	_attr.reverse = false;
 
 	_ladjw = _radjw = 0;

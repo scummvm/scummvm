@@ -192,10 +192,10 @@ void TextGridWindow::moveCursor(const Point &pos) {
 }
 
 void TextGridWindow::clear() {
-	_attr.fgset = Windows::_overrideFgSet;
-	_attr.bgset = Windows::_overrideBgSet;
-	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : 0;
-	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
+	_attr.fgset = Windows::_overrideFgSet || (_attr.fgset && _attr.fgcolor == zcolor_Default);
+	_attr.bgset = Windows::_overrideBgSet || (_attr.bgset && _attr.bgcolor == zcolor_Default);
+	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : (uint)zcolor_Default;
+	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : (uint)zcolor_Default;
 	_attr.reverse = false;
 
 	for (int k = 0; k < _height; k++) {

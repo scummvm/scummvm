@@ -244,8 +244,8 @@ void WindowStream::setZColors(uint fg, uint bg) {
 		PropFontInfo *info = &g_conf->_propInfo;
 
 		if (fg == zcolor_Default) {
-			_window->_attr.fgset = false;
-			_window->_attr.fgcolor = 0;
+			_window->_attr.fgset = true;
+			_window->_attr.fgcolor = zcolor_Default;
 			Windows::_overrideFgSet = false;
 			Windows::_overrideFgVal = 0;
 
@@ -266,8 +266,8 @@ void WindowStream::setZColors(uint fg, uint bg) {
 
 	if (/*bg != zcolor_Transparent &&*/ bg != zcolor_Cursor) {
 		if (bg == zcolor_Default) {
-			_window->_attr.bgset = false;
-			_window->_attr.bgcolor = 0;
+			_window->_attr.bgset = true;
+			_window->_attr.bgcolor = zcolor_Default;
 			Windows::_overrideBgSet = false;
 			Windows::_overrideBgVal = 0;
 

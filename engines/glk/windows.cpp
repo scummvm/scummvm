@@ -788,6 +788,9 @@ uint Attributes::attrBg(const WindowStyle *styles) {
 
 	uint zfore = fgset ? fgcolor : Windows::_overrideFgVal;
 	uint zback = bgset ? bgcolor : Windows::_overrideBgVal;
+	// A retained default selection must not inherit a later stream override.
+	zfset = zfset && zfore != zcolor_Default;
+	zbset = zbset && zback != zcolor_Default;
 
 	if (zfset && zfore != Windows::_zcolor_fg) {
 		Windows::_zcolor_Foreground = zfore;
@@ -825,6 +828,8 @@ uint Attributes::attrFg(const WindowStyle *styles) {
 
 	uint zfore = fgset ? fgcolor : Windows::_overrideFgVal;
 	uint zback = bgset ? bgcolor : Windows::_overrideBgVal;
+	zfset = zfset && zfore != zcolor_Default;
+	zbset = zbset && zback != zcolor_Default;
 
 	if (zfset && zfore != Windows::_zcolor_fg) {
 		Windows::_zcolor_Foreground = zfore;
