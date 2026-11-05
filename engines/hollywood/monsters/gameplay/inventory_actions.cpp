@@ -1009,15 +1009,7 @@ bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *de
 		uint16 handlerId, byte owner) {
 	// Shared handlers from InstallSceneActionCallbackTable (0x004d6000);
 	// main-scene handlers are dispatched separately.
-	const bool sharedHandler =
-		handlerId == 0 || handlerId == 1 || handlerId == 35 ||
-		handlerId == 41 || handlerId == 45 || handlerId == 49 ||
-		(handlerId >= 2 && handlerId <= 34) ||
-		handlerId == 36 || handlerId == 37 ||
-		handlerId == 38 || handlerId == 39 || handlerId == 40 ||
-		handlerId == 42 || handlerId == 43 || handlerId == 44 ||
-		handlerId == 46 || handlerId == 47 || handlerId == 48 ||
-		(handlerId >= 50 && handlerId <= 71);
+	const bool sharedHandler = handlerId <= 71;
 	const bool ronHandler = owner == 0 && isRonInventoryAction(handlerId);
 	if (!sharedHandler && !ronHandler)
 		return false;
