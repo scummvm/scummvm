@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-05 00:15+0000\n"
-"PO-Revision-Date: 2026-11-02 00:39+0000\n"
+"PO-Revision-Date: 2026-11-05 17:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -816,20 +816,16 @@ msgid "Display text labels next to hotspot markers"
 msgstr "Affiche les étiquettes de texte à côté des marqueurs de zone réactive"
 
 #: gui/editgamedialog.cpp:362
-#, fuzzy
-#| msgid "Hotspot marker:"
 msgid "Hotspot key mode:"
-msgstr "Marqueur des zones réactives :"
+msgstr "Touche Mode zones réactives :"
 
 #: gui/editgamedialog.cpp:365
 msgid "Hold to show"
-msgstr ""
+msgstr "Maintenir pour afficher"
 
 #: gui/editgamedialog.cpp:366
-#, fuzzy
-#| msgid "Toggle sfx"
 msgid "Toggle"
-msgstr "Act. / Désact. les bruitages"
+msgstr "Act. / Désact."
 
 #: gui/editgamedialog.cpp:381 engines/dialogs.cpp:385
 msgid "Achievements"
@@ -11781,10 +11777,8 @@ msgid "Help / map"
 msgstr "Aide / carte"
 
 #: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Show hotspots"
 msgid "Show/hide hotspots"
-msgstr "Afficher les zones réactives"
+msgstr "Afficher/masquer les zones réactives"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"
