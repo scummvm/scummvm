@@ -39,7 +39,6 @@ const byte kGameplayLastStrip = 8;
 const uint32 kGameplayLoopTickMillis = 10;
 const uint32 kGameplayMaxFrameDeltaMillis = 250;
 const uint32 kGameplayPanelHoverMillis = 75;
-const uint16 kGameplayVerbPanelTopY = 0x19f;
 const uint16 kGameplayInventoryOpenY = 0x1df;
 const uint16 kGameplayInventoryCloseY = 0x122;
 const uint16 kGameplayVerbPanelStripWidth = 0x58;
@@ -691,8 +690,7 @@ void GameplayLoop::selectPanelStrip(byte stripIndex) {
 }
 
 byte GameplayLoop::panelStripAt(uint16 cursorX, uint16 cursorY) const {
-	if (cursorY < kGameplayVerbPanelTopY ||
-			cursorY < kGameplayVerbPanelStripTopY ||
+	if (cursorY < kGameplayVerbPanelStripTopY ||
 			cursorY >= kGameplayVerbPanelStripTopY + kGameplayVerbPanelStripHeight)
 		return 0;
 
