@@ -19,9 +19,10 @@
  *
  */
 
-#include "xyzzy/view.h"
+#include "graphics/views/view.h"
 
-namespace Xyzzy {
+namespace Graphics {
+namespace Views {
 
 void View::checkFocusedControl(const Common::Point &mousePos) {
 	if (_focusedElement) {
@@ -78,4 +79,5 @@ bool View::msgMouseUp(const MouseUpMessage &msg) {
 	return child ? child->send(msg) : false;
 }
 
-} // namespace Xyzzy
+} // namespace Views
+} // namespace Graphics
