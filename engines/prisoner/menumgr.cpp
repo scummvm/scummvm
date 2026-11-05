@@ -572,6 +572,12 @@ void PrisonerEngine::dialogActionNewGame() {
 }
 
 void PrisonerEngine::dialogActionExit() {
+	if (isPaused())
+		_pauseToken.clear();
+	_moduleScriptCalled = true;
+	_muxClearScreenBefore = true;
+	_muxClearScreenAfter = true;
+	playMux("vtitre.mux");
 	_mainLoopDone = true;
 }
 
