@@ -61,8 +61,15 @@ enum RecordKind {
 	kRecordXsheet		= 12,	// Nancy22
 	kRecordTransformer	= 13,	// Nancy22
 	kRecordTimer		= 14,	// Nancy24
+	kRecordHotspot		= 15,	// Nancy26
+	kRecordSink			= 16,
+	kRecordButton		= 17,
+	kRecordEditBox		= 18,
+	kRecordRadioButton	= 19,
+	kRecordCheckBox		= 20,
+	kRecordSlider		= 21,
 
-	kNumRecordKinds		= 15
+	kNumRecordKinds		= 22
 };
 
 // What scripts call the kind ("NavLogic"), and the type of its objects ("ND.NavLogic")
@@ -122,6 +129,12 @@ public:
 
 	// The viewport that shows the background, once it has been loaded
 	void setBackground(UI::Viewport *background);
+
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: the left and right arrow keys turn the view, and the down
+	// arrow turns it around. Returns whether the key did something.
+	bool turnByKey(Common::KeyCode key);
+#endif
 
 	void registerGraphics() override;
 

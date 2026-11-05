@@ -221,6 +221,23 @@ public:
 	// Nancy26: the record's own transform changed, by its stages or a script
 	virtual void onLocalTransformChanged();
 
+	// Nancy26: the records the mouse can be over, which take the clicks. The
+	// point is in the coordinates of the screen. A button is 0 for the left one
+	// and 1 for the right one.
+	virtual bool isMouseRegion() const { return false; }
+	virtual bool hitTest(const ScriptPoint &point) const { return false; }
+	virtual void setMouseOver(bool isOver) {}
+	virtual bool pressRegion(int button) { return false; }	// returns whether it took the click
+	virtual void releaseRegion(int button) {}
+	virtual bool getRegionCursor(uint &cursorType, bool &isHot) const { return false; }
+
+	// Nancy26: whether the keys go no further than this record
+	virtual bool capturesKeys() const { return false; }
+
+	// Nancy26: a key that went down, for the records that type; returns
+	// whether the record took it
+	virtual bool handleKey(Common::KeyCode key, uint16 ascii) { return false; }
+
 	// Nancy26: the name the record goes by of its own, and the one its
 	// messages come from
 	const Common::String &getUniqueAlias() const;

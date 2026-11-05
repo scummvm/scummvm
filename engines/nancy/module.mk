@@ -245,8 +245,10 @@ MODULE_OBJS += \
   script/v5/cliptransformer.o \
   script/v5/messaging.o \
   script/v5/recordnode.o \
+  script/v5/scriptinput.o \
   script/v5/streamtree.o \
-  script/v5/textrecord.o
+  script/v5/textrecord.o \
+  script/v5/widgets.o
 endif
 endif
 

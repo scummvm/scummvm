@@ -51,6 +51,7 @@ namespace Nancy {
 
 class NancyEngine;
 class NancyConsole;
+struct NancyInput;
 struct SceneChangeDescription;
 
 namespace Action {
@@ -568,6 +569,12 @@ private:
 
 	// Whether esc was already down last frame, so a held key only skips once
 	bool _escHeld = false;
+#ifdef ENABLE_NANCY_V5
+	// Nancy26 hands its records all the input
+	void handleNancy26Input(NancyInput &input);
+
+	bool _isEscSkipping = false;	// the press that skipped stays away from the scripts
+#endif
 
 	// Set when esc skipped a cinematic this frame
 	bool _hasSkippedMovie = false;

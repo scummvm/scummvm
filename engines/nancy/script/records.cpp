@@ -51,6 +51,7 @@
 #include "engines/nancy/script/v5/cliptransformer.h"
 #include "engines/nancy/script/v5/streamtree.h"
 #include "engines/nancy/script/v5/textrecord.h"
+#include "engines/nancy/script/v5/widgets.h"
 #endif
 
 #include "engines/nancy/state/scene.h"
@@ -81,7 +82,14 @@ static const RecordKindNames kRecordKindNames[kNumRecordKinds] = {
 	{ "Physics", "ND.PhysicsAR" },
 	{ "Xsheet", "ND.XsheetAR" },
 	{ "Transformer", "ND.TransformerAR" },
-	{ "Timer", "ND.TimerAR" }
+	{ "Timer", "ND.TimerAR" },
+	{ "Hotspot", "ND.Hotspot" },
+	{ "Sink", "ND.SinkAR" },
+	{ "Button", "ND.ButtonAR" },
+	{ "EditBox", "ND.EditBoxAR" },
+	{ "RadioButton", "ND.RadioButton" },
+	{ "CheckBox", "ND.CheckBox" },
+	{ "Slider", "ND.Slider" }
 };
 
 const char *getRecordKindName(RecordKind kind) {
@@ -95,7 +103,20 @@ const char *getRecordTypeName(RecordKind kind) {
 Record *makeRecord(RecordKind kind, SceneContext &context) {
 	switch (kind) {
 	case kRecordNavLogic:
+#ifdef ENABLE_NANCY_V5
+		// Nancy26's NavLogic is another name for a Hotspot
+		if (g_nancy->getGameType() >= kGameTypeNancy26) {
+			return new HotspotRecord(context);
+		}
+#endif
+
 		return new NavLogicRecord(context);
+#ifdef ENABLE_NANCY_V5
+	case kRecordHotspot:
+		return new HotspotRecord(context);
+	case kRecordSink:
+		return new SinkRecord(context);
+#endif
 	case kRecordSummary:
 		return new SummaryRecord(context);
 	case kRecordOverlay:
@@ -629,6 +650,40 @@ bool SummaryRecord::onMouseEvent(RecordEvent event, const ScriptPoint &point, bo
 		return false;
 	}
 }
+
+#ifdef ENABLE_NANCY_V5
+bool SummaryRecord::turnByKey(Common::KeyCode key) {
+	if (_numFrames <= 1 || !_canRotate) {
+		return false;
+	}
+
+	switch (key) {
+	case Common::KEYCODE_LEFT:
+		if (!canTurn(kTurnLeft)) {
+			return false;
+		}
+
+		setFrame((_frame + 1) % _numFrames);
+		return true;
+	case Common::KEYCODE_RIGHT:
+		if (!canTurn(kTurnRight)) {
+			return false;
+		}
+
+		setFrame((_frame + _numFrames - 1) % _numFrames);
+		return true;
+	case Common::KEYCODE_DOWN:
+		if (!_hasUturn) {
+			return false;
+		}
+
+		setFrame((_frame + _numFrames / 2) % _numFrames);
+		return true;
+	default:
+		return false;
+	}
+}
+#endif
 
 void SummaryRecord::run(double sceneTime, double elapsedTime) {
 	_sceneTime = sceneTime;

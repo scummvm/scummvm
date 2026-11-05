@@ -32,6 +32,7 @@
 #include "engines/nancy/script/v5/cliptransformer.h"
 #include "engines/nancy/script/v5/messaging.h"
 #include "engines/nancy/script/v5/recordnode.h"
+#include "engines/nancy/script/v5/scriptinput.h"
 
 namespace Nancy {
 namespace Script {
@@ -50,6 +51,7 @@ void Record::destroyNodeState() {
 	}
 
 	deregisterAliases(this);
+	forgetInputRecord(this);
 	delete _nodeState;
 	_nodeState = nullptr;
 }

@@ -2797,6 +2797,13 @@ void Scene::handleInput() {
 
 	NancyInput input = g_nancy->_input->getInput();
 
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		handleNancy26Input(input);
+		return;
+	}
+#endif
+
 	// Warp the mouse below the inactive zone during dialogue scenes
 	if (_activeConversation != nullptr) {
 		const Common::Rect &inactiveZone = g_nancy->_cursor->getPrimaryVideoInactiveZone();
