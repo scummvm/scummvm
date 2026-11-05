@@ -553,6 +553,7 @@ public:
 	Common::Platform getPlatform() const;
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 
 	Common::RandomSource *_rnd;
 
@@ -613,6 +614,8 @@ public:
 	bool _loadingSavegame;
 
 	PauseToken _pauseToken;
+	// The original keeps the music and sounds playing in the main menu during the game
+	bool _keepSoundsOnPause;
 
 	/* AutoSave */
 	bool _autoSaveRequested;

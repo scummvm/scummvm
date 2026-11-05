@@ -62,6 +62,7 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	}
 
 	_midi = nullptr;
+	_keepSoundsOnPause = false;
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
@@ -1152,7 +1153,17 @@ void PrisonerEngine::pauseGame() {
 	updateActiveMenuItems();
 
 	debug("pause game");
+	_keepSoundsOnPause = true;
 	_pauseToken = pauseEngine();
+}
+
+void PrisonerEngine::pauseEngineIntern(bool pause) {
+	if (_keepSoundsOnPause) {
+		if (!pause)
+			_keepSoundsOnPause = false;
+		return;
+	}
+	Engine::pauseEngineIntern(pause);
 }
 
 void PrisonerEngine::resumeGame() {
