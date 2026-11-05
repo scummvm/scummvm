@@ -152,6 +152,7 @@ public:
 	void redrawFull();
 
 	void initIconsSet();
+	void clearIconsSet();
 
 	void displayTopDialogOnly(bool mode);
 
