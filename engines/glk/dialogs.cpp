@@ -36,6 +36,9 @@
 #include "glk/options.h"
 #include "glk/preview.h"
 #include "glk/screen.h"
+#include "glk/events.h"
+#include "glk/window_text_buffer.h"
+#include "glk/window_text_grid.h"
 
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -1159,8 +1162,28 @@ bool GlkOptionsWidget::validate() {
 }
 
 bool GlkOptionsWidget::save() {
-	// Accepted preferences take effect at the next interpreter startup.
-	return synchronizeDraft(true) && _settings->apply();
+	bool appearanceChanged = false;
+	if (!synchronizeDraft(true) || !_settings->apply(&appearanceChanged))
+		return false;
+
+	GlkEngine *engine = _hostContext == kInGameOptions ? dynamic_cast<GlkEngine *>(g_engine) : nullptr;
+	if (appearanceChanged && engine && engine->getTargetName() == _domain) {
+		engine->_conf->reload();
+		engine->_conf->_imageW = engine->_screen->w;
+		engine->_conf->_imageH = engine->_screen->h;
+		engine->_screen->initialize();
+		for (Windows::iterator it = engine->_windows->begin(); it != engine->_windows->end(); ++it) {
+			Window *window = *it;
+			if (window->_type == wintype_TextBuffer)
+				static_cast<TextBufferWindow *>(window)->refreshStyles();
+			else if (window->_type == wintype_TextGrid)
+				static_cast<TextGridWindow *>(window)->refreshStyles();
+		}
+		engine->_windows->rearrange();
+		Windows::_forceRedraw = true;
+		engine->_events->redraw();
+	}
+	return true;
 }
 
 void GlkOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {

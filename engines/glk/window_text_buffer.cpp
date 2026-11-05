@@ -123,7 +123,7 @@ void TextBufferWindow::refreshStyles() {
 	// copy updated engine styles/font info into the window's private copy
 	Common::copy(&g_conf->_tStyles[0], &g_conf->_tStyles[style_NUMSTYLES], _styles);
 	_font = g_conf->_propInfo;
-	rearrange(_bbox);
+	_width = -1; // Reflow even when only proportional font measurements changed.
 }
 
 void TextBufferWindow::reflow() {

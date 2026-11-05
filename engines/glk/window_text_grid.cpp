@@ -82,7 +82,6 @@ void TextGridWindow::rearrange(const Rect &box) {
 void TextGridWindow::refreshStyles() {
 	Common::copy(&g_conf->_gStyles[0], &g_conf->_gStyles[style_NUMSTYLES], _styles);
 	_font = g_conf->_monoInfo;
-	rearrange(_bbox);
 }
 
 void TextGridWindow::touch(int line) {

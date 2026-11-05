@@ -243,6 +243,20 @@ void Conf::synchronize() {
 	}
 }
 
+void Conf::reload() {
+	const bool installedGlobal = _installedGlobal;
+	const bool speak = _speak;
+	const bool speakInput = _speakInput;
+	const Common::String speakLanguage = _speakLanguage;
+	*this = defaults();
+	_installedGlobal = installedGlobal;
+	load();
+	// Speech attachments are synchronized after the game menu restores TTS.
+	_speak = speak;
+	_speakInput = speakInput;
+	_speakLanguage = speakLanguage;
+}
+
 void Conf::load(const Common::String &domain) {
 	GlkPreferences preferences(domain.empty() ? ConfMan.getActiveDomain() : ConfMan.getDomain(domain), domain.empty());
 	load(preferences);
