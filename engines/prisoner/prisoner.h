@@ -624,6 +624,7 @@ public:
 	/* Screensaver */
 	bool _screensaverRunning;
 	bool _screensaverAborted;
+	bool _bootMenuShowing;
 	int32 _screensaverTime;
 	int32 _lastInputTicks;
 

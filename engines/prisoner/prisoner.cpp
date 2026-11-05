@@ -174,6 +174,7 @@ Common::Error PrisonerEngine::run() {
 	_updateDirtyRectsFlag = true;
 	_autoSaveRequested = false;
 	_mainMenuRequested = false;
+	_moduleScriptCalled = false;
 	_currOptionsMenuIndex = 0;
 	_optionsOpenedFromGame = false;
 	_isDialogMenuShowing = false;
@@ -189,6 +190,7 @@ Common::Error PrisonerEngine::run() {
 
 	_screensaverRunning = false;
 	_screensaverAborted = false;
+	_bootMenuShowing = true;
 	_screensaverTime = kTicksPerMinute;
 
 	_cameraFollowsActorIndex = -1;
@@ -329,7 +331,7 @@ Common::Error PrisonerEngine::run() {
 		_inGame = true;
 	} else {
 		playIntroVideos();
-		// TODO: Later: _mainMenuRequested = true;
+		_mainMenuRequested = true;
 	}
 
 	mainLoop();
@@ -381,10 +383,8 @@ void PrisonerEngine::syncSoundSettings() {
 
 void PrisonerEngine::checkScreensaver() {
 	// A stand-by time of 0 disables the screensaver
-	if (_screensaverTime > 0 && _screensaverTime < (int32)getTicks() - _lastInputTicks) {
-		_mainMenuRequested = false;
+	if (_screensaverTime > 0 && _screensaverTime < (int32)getTicks() - _lastInputTicks)
 		runScreensaver();
-	}
 }
 
 void PrisonerEngine::mainLoop() {
@@ -403,7 +403,10 @@ void PrisonerEngine::mainLoop() {
 
 			updateFrameTime();
 			updateAnimationFrameTicks();
-			checkScreensaver();
+
+			// The screensaver only runs in the menu shown at startup
+			if (_bootMenuShowing)
+				checkScreensaver();
 
 			// Start each menu frame from what was behind the menu, so a panel never
 			// shows through the one drawn after it
@@ -434,6 +437,7 @@ void PrisonerEngine::mainLoop() {
 
 		// Only the game screen captured by openMainMenu() in this frame is valid
 		_menuBackgroundSaved = false;
+		_bootMenuShowing = false;
 
 		if (_menuMouseCursorActive) {
 			_menuMouseCursorActive = false;
@@ -600,6 +604,7 @@ void PrisonerEngine::updateEvents() {
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN: {
 			uint16 button = event.type == Common::EVENT_LBUTTONDOWN ? kLeftButton : kRightButton;
+			_lastInputTicks = getTicks();
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
 			_buttonState |= button;
@@ -1037,6 +1042,9 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 		break;
 
 	}
+
+	if (!isPaused())
+		checkScreensaver();
 
 	return 0;
 }
