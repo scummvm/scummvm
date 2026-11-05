@@ -9269,7 +9269,7 @@ static inline int get_luma_mv(VC1Context *v, int dir, int16 *tx, int16 *ty) {
 
 static inline int get_chroma_mv(VC1Context *v, int dir, int16 *tx, int16 *ty) {
 	PictureState *s = &v->s;
-	int idx = !v->mb_type[s->block_index[0]] | (!v->mb_type[s->block_index[1]] << 1) |
+	int idx = (!v->mb_type[s->block_index[0]]) | (!v->mb_type[s->block_index[1]] << 1) |
 			  (!v->mb_type[s->block_index[2]] << 2) | (!v->mb_type[s->block_index[3]] << 3);
 	static const uint8 index2[16] = {0, 0, 0, 0x01, 0, 0x02, 0x12, 0, 0, 0x03, 0x13, 0, 0x23, 0, 0, 0};
 	int valid_count = popcount4[idx];
