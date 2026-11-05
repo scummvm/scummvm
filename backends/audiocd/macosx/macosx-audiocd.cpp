@@ -252,8 +252,8 @@ bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int dur
 	// Fake emulation since we're really playing an AIFF file
 	_emulating = true;
 
-	_mixer->playStream(soundType, &_handle,
-	                   Audio::makeLoopingAudioStream(seekStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
+	g_system->getMixer()->playStream(soundType, &_handle,
+		Audio::makeLoopingAudioStream(seekStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
 	return true;
 }
 
