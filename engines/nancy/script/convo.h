@@ -59,6 +59,8 @@ public:
 	ConvoRecord(SceneContext &context, bool isVideo);
 	virtual ~ConvoRecord();
 
+	RecordType getType() const override { return _isVideo ? kRecordVideoConvo : kRecordSoundConvo; }
+
 	void updateGraphics() override;
 	void registerGraphics() override;
 

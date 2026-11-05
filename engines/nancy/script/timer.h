@@ -88,6 +88,8 @@ class TimerRecord : public Record {
 public:
 	TimerRecord(SceneContext &context);
 
+	RecordType getType() const override { return kRecordTimer; }
+
 protected:
 	void readTable(int tableIndex) override;
 	void run(double sceneTime, double elapsedTime) override;

@@ -78,6 +78,8 @@ struct Particle {
 class ParticleRecord : public Record {
 public:
 	ParticleRecord(SceneContext &context) : Record(context, "ND.ParticleAR") {}
+
+	RecordType getType() const override { return kRecordParticle; }
 	~ParticleRecord() override;
 
 	void updateGraphics() override;

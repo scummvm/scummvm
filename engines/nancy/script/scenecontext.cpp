@@ -146,9 +146,9 @@ bool SceneContext::load() {
 	// Nothing can be made before there is a summary. A scene can go on to make
 	// more of them, and so can the scripts it includes; the last one that names
 	// a background is the one that shows.
-	_summary = _newRecords.empty() ? nullptr : dynamic_cast<SummaryRecord *>(_newRecords[0]);
+	_summary = _newRecords.empty() ? nullptr : toSummaryRecord(_newRecords[0]);
 	for (Record *record : _newRecords) {
-		SummaryRecord *summary = dynamic_cast<SummaryRecord *>(record);
+		SummaryRecord *summary = toSummaryRecord(record);
 		if (_summary && summary && !summary->getBackgroundName().empty()) {
 			_summary = summary;
 		}

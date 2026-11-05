@@ -40,6 +40,34 @@ class GraphNode;
 class SceneContext;
 struct RecordNodeState;
 
+// The types of records a script can make, in the order of their names
+enum RecordType {
+	kRecordNavLogic		= 0,
+	kRecordSummary		= 1,
+	kRecordOverlay		= 2,
+	kRecordMovie		= 3,
+	kRecordSound		= 4,
+	kRecordVideoConvo	= 5,
+	kRecordSoundConvo	= 6,
+	kRecordText			= 7,
+	kRecordOverride		= 8,
+	kRecordParticle		= 9,
+	kRecordAnimOverlay	= 10,
+	kRecordPhysics		= 11,	// Nancy21
+	kRecordXsheet		= 12,	// Nancy22
+	kRecordTransformer	= 13,	// Nancy22
+	kRecordTimer		= 14,	// Nancy24
+	kRecordHotspot		= 15,	// Nancy26
+	kRecordSink			= 16,
+	kRecordButton		= 17,
+	kRecordEditBox		= 18,
+	kRecordRadioButton	= 19,
+	kRecordCheckBox		= 20,
+	kRecordSlider		= 21,
+
+	kNumRecordTypes		= 22
+};
+
 // What the player does that records get told about
 enum RecordEvent {
 	kEventLeftClick		= 0,
@@ -77,6 +105,10 @@ public:
 	virtual ~Record();
 
 	const char *getTypeName() const { return _typeName; }
+
+	// Which of the types above the record is
+	virtual RecordType getType() const = 0;
+
 	SceneContext &getContext() const { return _context; }
 
 	// Takes over the fields of the table that made the record

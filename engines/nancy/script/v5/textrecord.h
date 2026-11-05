@@ -36,6 +36,8 @@ class BitmapTextRecord : public Record {
 public:
 	BitmapTextRecord(SceneContext &context) : Record(context, "ND.TextAR") {}
 
+	RecordType getType() const override { return kRecordText; }
+
 	void updateGraphics() override;
 	void registerGraphics() override;
 

@@ -42,6 +42,8 @@ class HotspotRecord : public Record {
 public:
 	HotspotRecord(SceneContext &context) : Record(context, "ND.Hotspot") {}
 
+	RecordType getType() const override { return kRecordHotspot; }
+
 	bool isMouseRegion() const override { return true; }
 	bool hitTest(const ScriptPoint &point) const override;
 	void setMouseOver(bool isOver) override;
@@ -98,6 +100,8 @@ private:
 class SinkRecord : public Record {
 public:
 	SinkRecord(SceneContext &context) : Record(context, "ND.SinkAR") {}
+
+	RecordType getType() const override { return kRecordSink; }
 
 	bool isMouseRegion() const override { return _handlesMouse; }
 	bool hitTest(const ScriptPoint &point) const override;

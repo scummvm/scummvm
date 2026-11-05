@@ -142,6 +142,8 @@ class TransformerRecord : public Record {
 public:
 	TransformerRecord(SceneContext &context, const char *typeName = "ND.TransformerAR");
 
+	RecordType getType() const override { return kRecordTransformer; }
+
 	GraphNode *getNode() const { return _node; }
 
 	int attach(lua_State *L);

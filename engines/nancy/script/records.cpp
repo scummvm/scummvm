@@ -67,7 +67,7 @@ struct RecordKindNames {
 	const char *typeName;
 };
 
-static const RecordKindNames kRecordKindNames[kNumRecordKinds] = {
+static const RecordKindNames kRecordKindNames[kNumRecordTypes] = {
 	{ "NavLogic", "ND.NavLogic" },
 	{ "Summary", "ND.Summary" },
 	{ "Overlay", "ND.Overlay" },
@@ -92,16 +92,16 @@ static const RecordKindNames kRecordKindNames[kNumRecordKinds] = {
 	{ "Slider", "ND.Slider" }
 };
 
-const char *getRecordKindName(RecordKind kind) {
-	return kRecordKindNames[kind].kindName;
+const char *getRecordKindName(RecordType type) {
+	return kRecordKindNames[type].kindName;
 }
 
-const char *getRecordTypeName(RecordKind kind) {
-	return kRecordKindNames[kind].typeName;
+const char *getRecordTypeName(RecordType type) {
+	return kRecordKindNames[type].typeName;
 }
 
-Record *makeRecord(RecordKind kind, SceneContext &context) {
-	switch (kind) {
+Record *makeRecord(RecordType type, SceneContext &context) {
+	switch (type) {
 	case kRecordNavLogic:
 #ifdef ENABLE_NANCY_V5
 		// Nancy26's NavLogic is another name for a Hotspot

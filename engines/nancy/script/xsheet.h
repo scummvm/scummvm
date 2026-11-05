@@ -98,6 +98,8 @@ class XsheetRecord : public Record {
 public:
 	XsheetRecord(SceneContext &context) : Record(context, "ND.XsheetAR") {}
 
+	RecordType getType() const override { return kRecordXsheet; }
+
 	void updateGraphics() override;
 	void registerGraphics() override;
 

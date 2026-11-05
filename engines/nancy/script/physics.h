@@ -78,6 +78,8 @@ private:
 class PhysicsRecord : public Record {
 public:
 	PhysicsRecord(SceneContext &context);
+
+	RecordType getType() const override { return kRecordPhysics; }
 	~PhysicsRecord() override;
 
 	b2World *getWorld() const { return _world; }

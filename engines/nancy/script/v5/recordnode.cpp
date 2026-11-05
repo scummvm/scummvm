@@ -128,6 +128,24 @@ bool Record::isShown() const {
 	return _nodeState ? isNodeVisible() : isActive();
 }
 
+// The owner of a node, which in Nancy26 is a Transformer or a widget made of one
+static const ClipTransformerRecord *toClipTransformer(const Record *owner) {
+	if (!owner) {
+		return nullptr;
+	}
+
+	switch (owner->getType()) {
+	case kRecordTransformer:
+	case kRecordButton:
+	case kRecordCheckBox:
+	case kRecordRadioButton:
+	case kRecordSlider:
+		return static_cast<const ClipTransformerRecord *>(owner);
+	default:
+		return nullptr;
+	}
+}
+
 Common::Rect Record::getScreenClip() const {
 	Common::Rect clip;
 	if (!_nodeState) {
@@ -136,7 +154,7 @@ Common::Rect Record::getScreenClip() const {
 
 	bool hasClip = false;
 	for (const GraphNode *node = _parentNode; node; node = node->getParent()) {
-		const ClipTransformerRecord *transformer = dynamic_cast<const ClipTransformerRecord *>(node->getOwner());
+		const ClipTransformerRecord *transformer = toClipTransformer(node->getOwner());
 		const ScriptRect *nodeClip = transformer ? transformer->getClip() : nullptr;
 		if (!nodeClip) {
 			continue;

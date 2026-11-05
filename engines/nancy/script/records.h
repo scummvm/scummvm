@@ -44,40 +44,12 @@ namespace Script {
 
 struct RefImage;
 
-// The kinds of records a script can make, in the order of the names below
-enum RecordKind {
-	kRecordNavLogic		= 0,
-	kRecordSummary		= 1,
-	kRecordOverlay		= 2,
-	kRecordMovie		= 3,
-	kRecordSound		= 4,
-	kRecordVideoConvo	= 5,
-	kRecordSoundConvo	= 6,
-	kRecordText			= 7,
-	kRecordOverride		= 8,
-	kRecordParticle		= 9,
-	kRecordAnimOverlay	= 10,
-	kRecordPhysics		= 11,	// Nancy21
-	kRecordXsheet		= 12,	// Nancy22
-	kRecordTransformer	= 13,	// Nancy22
-	kRecordTimer		= 14,	// Nancy24
-	kRecordHotspot		= 15,	// Nancy26
-	kRecordSink			= 16,
-	kRecordButton		= 17,
-	kRecordEditBox		= 18,
-	kRecordRadioButton	= 19,
-	kRecordCheckBox		= 20,
-	kRecordSlider		= 21,
+// What scripts call the type ("NavLogic"), and the Lua type of its objects ("ND.NavLogic")
+const char *getRecordKindName(RecordType type);
+const char *getRecordTypeName(RecordType type);
 
-	kNumRecordKinds		= 22
-};
-
-// What scripts call the kind ("NavLogic"), and the type of its objects ("ND.NavLogic")
-const char *getRecordKindName(RecordKind kind);
-const char *getRecordTypeName(RecordKind kind);
-
-// Returns null for the kinds that are not supported
-Record *makeRecord(RecordKind kind, SceneContext &context);
+// Returns null for the types that are not supported
+Record *makeRecord(RecordType type, SceneContext &context);
 
 // What the "Draw" object of the scripts draws on: the record whose "Render"
 // function is running. Null at any other time.
@@ -123,6 +95,8 @@ protected:
 class SummaryRecord : public Record {
 public:
 	SummaryRecord(SceneContext &context) : Record(context, "ND.Summary") {}
+
+	RecordType getType() const override { return kRecordSummary; }
 
 	const Common::String &getEnvironment() const { return _environment; }
 	const Common::String &getBackgroundName() const { return _backgroundName; }
@@ -185,10 +159,17 @@ private:
 	RecordGraphic _facade;
 };
 
+// The record as a summary, or null for a record of another type
+inline SummaryRecord *toSummaryRecord(Record *record) {
+	return record && record->getType() == kRecordSummary ? static_cast<SummaryRecord *>(record) : nullptr;
+}
+
 // Changes the scene and sets flags, either right away or when its hotspot gets clicked
 class NavLogicRecord : public Record {
 public:
 	NavLogicRecord(SceneContext &context) : Record(context, "ND.NavLogic") {}
+
+	RecordType getType() const override { return kRecordNavLogic; }
 
 protected:
 	void readTable(int tableIndex) override;
@@ -245,6 +226,8 @@ private:
 class OverrideRecord : public Record {
 public:
 	OverrideRecord(SceneContext &context) : Record(context, "ND.OverrideAR") {}
+
+	RecordType getType() const override { return kRecordOverride; }
 	virtual ~OverrideRecord();
 
 	void updateGraphics() override;
@@ -280,6 +263,8 @@ bool loadTreeImage(const Common::String &name, const Common::String &treeName, G
 class OverlayRecord : public Record {
 public:
 	OverlayRecord(SceneContext &context) : Record(context, "ND.Overlay") {}
+
+	RecordType getType() const override { return kRecordOverlay; }
 
 	void updateGraphics() override;
 	void registerGraphics() override;
@@ -324,6 +309,8 @@ private:
 class AnimOverlayRecord : public Record {
 public:
 	AnimOverlayRecord(SceneContext &context) : Record(context, "ND.AnimOvlAR") {}
+
+	RecordType getType() const override { return kRecordAnimOverlay; }
 
 	void updateGraphics() override;
 	void registerGraphics() override;
@@ -376,6 +363,8 @@ class SoundRecord : public Record {
 public:
 	SoundRecord(SceneContext &context);
 
+	RecordType getType() const override { return kRecordSound; }
+
 	void onSkip() override;
 	bool skipSpeech() override;
 	void stopIfPlaying();
@@ -416,6 +405,8 @@ private:
 class TextRecord : public Record {
 public:
 	TextRecord(SceneContext &context) : Record(context, "ND.TextAR") {}
+
+	RecordType getType() const override { return kRecordText; }
 
 	void updateGraphics() override;
 	void registerGraphics() override;
@@ -462,6 +453,8 @@ private:
 class MovieRecord : public Record {
 public:
 	MovieRecord(SceneContext &context) : Record(context, "ND.Movie") {}
+
+	RecordType getType() const override { return kRecordMovie; }
 
 	void updateGraphics() override;
 	void registerGraphics() override;

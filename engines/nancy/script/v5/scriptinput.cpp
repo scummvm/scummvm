@@ -141,7 +141,7 @@ static bool callInputFunction(Record *record, const char *name, int numArgs = 0)
 }
 
 static bool isOverride(Record *record) {
-	return dynamic_cast<OverrideRecord *>(record) != nullptr;
+	return record->getType() == kRecordOverride;
 }
 
 static void updateHover(const Common::Array<Record *> &records) {
@@ -228,7 +228,7 @@ static void updateCursor(const Common::Array<Record *> &records) {
 			continue;
 		}
 
-		SummaryRecord *summary = dynamic_cast<SummaryRecord *>(record);
+		SummaryRecord *summary = toSummaryRecord(record);
 		if (summary && state.hasMouse && summary->sendChangeCursor(state.mouse, true, cursorType, isHot)) {
 			cursor.setCursorType((CursorManager::CursorType)cursorType, true, isHot);
 			return;
@@ -267,7 +267,7 @@ static void pressButton(const Common::Array<Record *> &records, int button) {
 			continue;
 		}
 
-		SummaryRecord *summary = dynamic_cast<SummaryRecord *>(record);
+		SummaryRecord *summary = toSummaryRecord(record);
 		if (summary && summary->sendMouseEvent(button == 0 ? kEventLeftDown : kEventRightDown, state.mouse, true)) {
 			return;
 		}
@@ -293,7 +293,7 @@ static void releaseButton(const Common::Array<Record *> &records, int button) {
 			continue;
 		}
 
-		SummaryRecord *summary = dynamic_cast<SummaryRecord *>(record);
+		SummaryRecord *summary = toSummaryRecord(record);
 		if (summary) {
 			summary->sendMouseEvent(button == 0 ? kEventLeftUp : kEventRightUp, state.mouse, true);
 			if (button == 0 && summary->sendMouseEvent(kEventLeftClick, state.mouse, true)) {
@@ -359,7 +359,7 @@ static void sendKey(const Common::Array<Record *> &records, Common::KeyCode key,
 			continue;
 		}
 
-		SummaryRecord *summary = dynamic_cast<SummaryRecord *>(record);
+		SummaryRecord *summary = toSummaryRecord(record);
 		if (summary && isDown && summary->turnByKey(key)) {
 			return;
 		}
@@ -404,7 +404,7 @@ void handleNancy26Input(NancyInput &input) {
 			}
 
 			record->callFunction("OnNewFrame");
-		} else if (hasMoved && dynamic_cast<SummaryRecord *>(record)) {
+		} else if (hasMoved && record->getType() == kRecordSummary) {
 			record->sendMouseMove(state.mouse, true);
 		}
 	}

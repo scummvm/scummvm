@@ -884,7 +884,7 @@ static const luaL_Reg kRecordFunctions[] = {
 
 // AR:<kind>(table)
 static int createRecord(lua_State *L) {
-	const RecordKind kind = (RecordKind)lua_tointeger(L, lua_upvalueindex(1));
+	const RecordType type = (RecordType)lua_tointeger(L, lua_upvalueindex(1));
 	const char *kindName = lua_tostring(L, lua_upvalueindex(2));
 
 	SceneContext *context = LuaState::getContext(L);
@@ -899,11 +899,11 @@ static int createRecord(lua_State *L) {
 		return luaL_argerror(L, 1, "Expected a table as the parameter");
 	}
 
-	if (kind != kRecordSummary && !context->hasRecords()) {
+	if (type != kRecordSummary && !context->hasRecords()) {
 		return luaL_error(L, "Summary AR must be the first AR in the scene");
 	}
 
-	Record *record = makeRecord(kind, *context);
+	Record *record = makeRecord(type, *context);
 	if (!record) {
 		return luaL_error(L, "AR:%s is not supported yet", kindName);
 	}
@@ -922,8 +922,8 @@ static int recordGetActualField(lua_State *L) {
 }
 
 void registerRecordAPI(lua_State *L) {
-	for (uint i = 0; i < kNumRecordKinds; ++i) {
-		const char *typeName = getRecordTypeName((RecordKind)i);
+	for (uint i = 0; i < kNumRecordTypes; ++i) {
+		const char *typeName = getRecordTypeName((RecordType)i);
 		if (luaL_newmetatable(L, typeName)) {
 			luaL_register(L, nullptr, kRecordFunctions);
 
@@ -953,11 +953,11 @@ void registerRecordAPI(lua_State *L) {
 
 	// One function for every kind, which knows the kind it makes
 	luaL_getmetatable(L, "ND.AR");
-	for (uint i = 0; i < kNumRecordKinds; ++i) {
+	for (uint i = 0; i < kNumRecordTypes; ++i) {
 		lua_pushinteger(L, i);
-		lua_pushstring(L, getRecordKindName((RecordKind)i));
+		lua_pushstring(L, getRecordKindName((RecordType)i));
 		lua_pushcclosure(L, createRecord, 2);
-		lua_setfield(L, -2, getRecordKindName((RecordKind)i));
+		lua_setfield(L, -2, getRecordKindName((RecordType)i));
 	}
 
 	lua_pop(L, 1);
