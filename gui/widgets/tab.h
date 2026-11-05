@@ -101,6 +101,9 @@ public:
 	 */
 	void setActiveTab(int tabID);
 
+	/** Returns the first widget of the active tab. */
+	Widget *getActiveTabWidgets() const { return _firstWidget; }
+
 	int getTabCount();
 
 	void setTabTitle(int tabID, const Common::U32String &title) {

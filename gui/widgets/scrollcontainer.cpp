@@ -107,6 +107,16 @@ void ScrollContainerWidget::applyScrollPos() {
 	g_gui.scheduleTopDialogRedraw();
 }
 
+int ScrollContainerWidget::getMaxScrollPos() const {
+	return MAX(0, _verticalScroll->_numEntries - _limitH);
+}
+
+void ScrollContainerWidget::setScrollPos(int pos) {
+	_fluidScroller->stopAnimation();
+	_scrollPos = _fluidScroller->setPosition((float)CLIP(pos, 0, getMaxScrollPos()));
+	applyScrollPos();
+}
+
 void ScrollContainerWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (_isMouseDown && _isDragging) {
 		_fluidScroller->startFling();
