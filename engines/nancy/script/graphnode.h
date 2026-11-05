@@ -56,6 +56,7 @@ public:
 	bool isEnabled() const;
 	bool isVisible() const;
 	bool isPaused() const;
+	double getAlpha() const;
 #endif
 
 	// The node's own, which Nancy22's Transformer records set

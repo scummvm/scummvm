@@ -177,7 +177,17 @@ public:
 	// draw in; empty for all of it
 	Common::Rect getScreenClip() const;
 
-	// The blend stages of the record, which Nancy22 has in Transformers
+	// A color what the record draws gets multiplied with, made as see-through
+	// as the record is
+	uint32 applyAlpha(uint32 modColor) const;
+
+	// The same, for a picture that gets drawn now. Nancy26 draws it again once
+	// the record is made more or less see-through.
+	uint32 takeModColor(uint32 modColor);
+	bool hasAlphaChanged() const;
+
+	// The blend stages of the record: Nancy22 has them in Transformers, and
+	// Nancy26 in every record
 	BlendStages &getStages();
 	virtual void onStagesChanged();
 
@@ -186,13 +196,14 @@ public:
 	bool resetInactive();
 
 	// Nancy26: every record is a node of a tree, which can be enabled (gets the
-	// player's input), visible (gets drawn) and paused (doesn't run). A record is
-	// each of them when it says so itself, and the Transformers it is attached to
-	// don't say otherwise. "active" stands for all three: enabled, visible and
-	// not paused.
+	// player's input), visible (gets drawn) and paused (doesn't run), and can be
+	// see-through. A record is each of them when it says so itself, and the
+	// Transformers it is attached to don't say otherwise. "active" stands for
+	// all three: enabled, visible and not paused.
 	bool isNodeEnabled() const;
 	bool isNodeVisible() const;
 	bool isNodePaused() const;
+	double getAlpha() const;
 	void setLocalEnabled(bool isEnabled);
 	void setLocalVisible(bool isVisible);
 	void setLocalPaused(bool isPaused);
@@ -200,6 +211,9 @@ public:
 
 	// Nancy26: the order keys go to the records in, highest first
 	double getKeyZ() const;
+
+	// Nancy26: the record's own transform changed, by its stages or a script
+	virtual void onLocalTransformChanged();
 
 	// Nancy26: the name the record goes by of its own, and the one its
 	// messages come from

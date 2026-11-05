@@ -76,6 +76,10 @@ bool Record::isNodePaused() const {
 	return _parentNode && _parentNode->isPaused();
 }
 
+double Record::getAlpha() const {
+	return _parentNode ? _nodeState->localAlpha * _parentNode->getAlpha() : _nodeState->localAlpha;
+}
+
 void Record::setLocalEnabled(bool isEnabled) {
 	_nodeState->localEnabled = isEnabled;
 }
@@ -107,7 +111,7 @@ const Common::String &Record::getName() const {
 }
 
 // What the records draw with. The records of the other games are shown while
-// they are active, and whole.
+// they are active, whole and as they are.
 
 bool Record::isShown() const {
 	return _nodeState ? isNodeVisible() : isActive();
@@ -148,6 +152,52 @@ Common::Rect Record::getScreenClip() const {
 	return clip;
 }
 
+uint32 Record::applyAlpha(uint32 modColor) const {
+	if (!_nodeState) {
+		return modColor;
+	}
+
+	const double alpha = getAlpha();
+	if (alpha >= 1.0) {
+		return modColor;
+	}
+
+	const uint32 a = (uint32)CLIP<double>((modColor >> 24) * alpha + 0.5, 0.0, 255.0);
+	return (a << 24) | (modColor & 0xFFFFFF);
+}
+
+uint32 Record::takeModColor(uint32 modColor) {
+	if (_nodeState) {
+		_nodeState->drawnAlpha = getAlpha();
+	}
+
+	return applyAlpha(modColor);
+}
+
+bool Record::hasAlphaChanged() const {
+	return _nodeState && getAlpha() != _nodeState->drawnAlpha;
+}
+
+// Nancy26's records take their own transform and alpha from their stages
+void Record::onStagesChanged() {
+	if (!_nodeState || !_stages) {
+		return;
+	}
+
+	_transform = _stages->getTransform();
+	if (_stages->hasAlpha()) {
+		_nodeState->localAlpha = _stages->getAlpha();
+	}
+
+	onLocalTransformChanged();
+}
+
+void Record::onLocalTransformChanged() {
+	if (hasTransform()) {
+		onTransformChanged();
+	}
+}
+
 static bool readOptionalBool(lua_State *L, int tableIndex, const char *name, bool &value) {
 	lua_getfield(L, tableIndex, name);
 	const bool isBool = lua_isboolean(L, -1);
@@ -178,6 +228,7 @@ void Record::readNodeFields(int tableIndex) {
 	readOptionalBool(L, tableIndex, "localEnabled", _nodeState->localEnabled);
 	readOptionalBool(L, tableIndex, "localVisible", _nodeState->localVisible);
 	readOptionalBool(L, tableIndex, "localPaused", _nodeState->localPaused);
+	readOptionalNumber(L, tableIndex, "localAlpha", _nodeState->localAlpha);
 	readOptionalNumber(L, tableIndex, "keyZ", _nodeState->keyZ);
 
 	lua_getfield(L, tableIndex, "localName");
@@ -186,6 +237,16 @@ void Record::readNodeFields(int tableIndex) {
 	}
 
 	lua_pop(L, 1);
+
+	bool isSineLerp = true;
+	if (readOptionalBool(L, tableIndex, "sinLerp", isSineLerp)) {
+		getStages().setSineLerp(isSineLerp);
+	}
+
+	if (pushField(L, tableIndex, "localTransform")) {
+		_transform = checkMatrix(L, -1);
+		lua_pop(L, 1);
+	}
 }
 
 // An "active" function sets all three flags every frame. The record gets
@@ -237,6 +298,10 @@ void Record::updateNode(double sceneTime, double elapsedTime) {
 		_hasRunOnce = true;
 		runOnce();
 		callFunction("RunOnce");
+	}
+
+	if (_stages) {
+		_stages->advance(elapsedTime);
 	}
 
 	if (isScripted()) {
@@ -304,6 +369,10 @@ bool Record::getNodeField(const Common::String &key) {
 		lua_pushnumber(L, _z);
 	} else if (key == "keyZ") {
 		lua_pushnumber(L, _nodeState->keyZ);
+	} else if (key == "alpha") {
+		lua_pushnumber(L, getAlpha());
+	} else if (key == "localAlpha") {
+		lua_pushnumber(L, _nodeState->localAlpha);
 	} else if (key == "enabled") {
 		lua_pushboolean(L, isNodeEnabled());
 	} else if (key == "visible") {
@@ -320,12 +389,22 @@ bool Record::getNodeField(const Common::String &key) {
 		pushMatrix(L, getTransform());
 	} else if (key == "invTransform") {
 		pushMatrix(L, getTransform().inverse());
+	} else if (key == "localTransform") {
+		pushMatrix(L, getLocalTransform());
+	} else if (key == "localInvTransform") {
+		pushMatrix(L, getLocalTransform().inverse());
+	} else if (key == "blendedTransform") {
+		pushMatrix(L, _stages ? _stages->getBlendedTransform() : getLocalTransform());
 	} else if (key == "name") {
 		lua_pushstring(L, getName().c_str());
 	} else if (key == "uniqueAlias") {
 		lua_pushstring(L, _nodeState->uniqueAlias.c_str());
 	} else if (key == "ResetInactive") {
 		lua_pushcfunction(L, recordResetInactive);
+	} else if (BlendStages::pushFunction(L, key)) {
+		return true;
+	} else if (_stages && _stages->getField(L, key)) {
+		return true;
 	} else {
 		return false;
 	}
@@ -353,15 +432,29 @@ bool Record::setNodeField(const Common::String &key) {
 		}
 	} else if (key == "keyZ") {
 		_nodeState->keyZ = luaL_checknumber(L, 3);
+	} else if (key == "localAlpha") {
+		_nodeState->localAlpha = luaL_checknumber(L, 3);
 	} else if (key == "localEnabled") {
 		_nodeState->localEnabled = lua_toboolean(L, 3) != 0;
 	} else if (key == "localVisible") {
 		_nodeState->localVisible = lua_toboolean(L, 3) != 0;
 	} else if (key == "localPaused") {
 		_nodeState->localPaused = lua_toboolean(L, 3) != 0;
-	} else if (key == "enabled" || key == "visible" || key == "paused" ||
-			key == "transform" || key == "invTransform" || key == "name" ||
-			key == "uniqueAlias" || key == "done") {
+	} else if (key == "localTransform") {
+		if (_stages && !_stages->isEmpty()) {
+			luaL_error(L, "Cannot set the localTransform of an AR that has stages");
+		}
+
+		const ScriptMatrix &transform = checkMatrix(L, 3);
+		if (transform != _transform) {
+			_transform = transform;
+			onLocalTransformChanged();
+		}
+	} else if (_stages && _stages->setField(L, key)) {
+		return true;
+	} else if (key == "enabled" || key == "visible" || key == "paused" || key == "alpha" ||
+			key == "transform" || key == "invTransform" || key == "localInvTransform" ||
+			key == "blendedTransform" || key == "name" || key == "uniqueAlias" || key == "done") {
 		luaL_error(L, "Cannot set field '%s' of an AR", key.c_str());
 	} else {
 		return false;
@@ -395,6 +488,14 @@ bool GraphNode::isPaused() const {
 	}
 
 	return _parent && _parent->isPaused();
+}
+
+double GraphNode::getAlpha() const {
+	if (_owner) {
+		return _owner->getAlpha();
+	}
+
+	return _parent ? _parent->getAlpha() : 1.0;
 }
 
 } // End of namespace Script

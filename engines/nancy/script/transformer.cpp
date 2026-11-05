@@ -53,9 +53,9 @@ BlendStages::Stage &BlendStages::checkStage(lua_State *L, int index) {
 	return *stage;
 }
 
-// An angle, or x and y: a vector, a point, or two numbers
+// An angle or an alpha, or x and y: a vector, a point, or two numbers
 void BlendStages::readValue(lua_State *L, int index, StageKind kind, double value[2]) {
-	if (kind == kRotation) {
+	if (kind == kRotation || kind == kAlpha) {
 		value[0] = luaL_checknumber(L, index);
 		return;
 	}
@@ -96,13 +96,15 @@ ScriptMatrix BlendStages::makeMatrix(StageKind kind, const double value[2]) {
 		matrix.m[0][0] = value[0];
 		matrix.m[1][1] = value[1];
 		break;
+	case kAlpha:
+		break;
 	}
 
 	return matrix;
 }
 
 void BlendStages::pushValue(lua_State *L, const Stage &stage) {
-	if (stage.kind == kRotation) {
+	if (stage.kind == kRotation || stage.kind == kAlpha) {
 		lua_pushnumber(L, stage.current[0]);
 		return;
 	}
@@ -172,13 +174,23 @@ bool BlendStages::advanceStage(Stage &stage, double seconds) {
 void BlendStages::update() {
 	ScriptMatrix transform;
 	ScriptMatrix blendedTransform;
+	double alpha = 1.0;
+	bool hasAlpha = false;
+
 	for (const Stage &stage : _stages) {
-		transform = transform * stage.matrix;
-		blendedTransform = blendedTransform * stage.blended;
+		if (stage.kind == kAlpha) {
+			alpha *= stage.current[0];
+			hasAlpha = true;
+		} else {
+			transform = transform * stage.matrix;
+			blendedTransform = blendedTransform * stage.blended;
+		}
 	}
 
 	_transform = transform;
 	_blendedTransform = blendedTransform;
+	_alpha = alpha;
+	_hasAlpha = hasAlpha;
 
 	_owner.onStagesChanged();
 }
@@ -196,7 +208,7 @@ bool BlendStages::advance(double seconds) {
 	return hasChanged;
 }
 
-// ar:Push<Translation|Rotation|Scale>(name, value)
+// ar:Push<Translation|Rotation|Scale|Alpha>(name, value)
 int BlendStages::push(lua_State *L, StageKind kind) {
 	const char *name = luaL_checkstring(L, 2);
 	if (findStage(name)) {
@@ -308,6 +320,10 @@ static int stagesPushScale(lua_State *L) {
 	return checkStages(L).push(L, BlendStages::kScale);
 }
 
+static int stagesPushAlpha(lua_State *L) {
+	return checkStages(L).push(L, BlendStages::kAlpha);
+}
+
 static int stagesBlend(lua_State *L) {
 	return checkStages(L).blend(L);
 }
@@ -331,6 +347,7 @@ static const luaL_Reg kStageFunctions[] = {
 	{ "PushTranslation", stagesPushTranslation },
 	{ "PushRotation", stagesPushRotation },
 	{ "PushScale", stagesPushScale },
+	{ "PushAlpha", stagesPushAlpha },
 	{ "RemoveAllStages", stagesRemoveAll },
 	{ nullptr, nullptr }
 };

@@ -28,12 +28,14 @@ namespace Nancy {
 namespace Script {
 
 // Nancy26 makes every record a node of a tree: it is enabled, visible and
-// paused by its own say and by what the Transformers above it say. Records of
-// the other games have none of this.
+// paused by its own say and by what the Transformers above it say, and can be
+// see-through. Records of the other games have none of this.
 struct RecordNodeState {
 	bool localEnabled = true;
 	bool localVisible = true;
 	bool localPaused = false;
+	double localAlpha = 1.0;
+	double drawnAlpha = 1.0;	// what the picture was last drawn with
 	double keyZ = 0.0;
 
 	Common::String localName;

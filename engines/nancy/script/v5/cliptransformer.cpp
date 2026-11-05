@@ -36,10 +36,26 @@ void ClipTransformerRecord::readTable(int tableIndex) {
 		_hasClip = true;
 		lua_pop(L, 1);
 	}
+
+	// The table can give the record a transform of its own
+	getNode()->setTransform(getLocalTransform());
 }
 
+// The record's own transform moves the node, which the stages make when there
+// are any. Every record moves its stages on by itself.
+void ClipTransformerRecord::onStagesChanged() {
+	Record::onStagesChanged();
+}
+
+void ClipTransformerRecord::onLocalTransformChanged() {
+	getNode()->setTransform(getLocalTransform());
+}
+
+// What else a Transformer of the earlier games has, every record has here
 bool ClipTransformerRecord::getField(const Common::String &key) {
-	if (key == "clip") {
+	if (key == "Attach") {
+		return TransformerRecord::getField(key);
+	} else if (key == "clip") {
 		if (_hasClip) {
 			pushRect(getLua(), _clip);
 		} else {
@@ -49,12 +65,12 @@ bool ClipTransformerRecord::getField(const Common::String &key) {
 		return true;
 	}
 
-	return TransformerRecord::getField(key);
+	return false;
 }
 
 bool ClipTransformerRecord::setField(const Common::String &key) {
 	if (key != "clip") {
-		return TransformerRecord::setField(key);
+		return false;
 	}
 
 	lua_State *L = getLua();

@@ -80,10 +80,22 @@ bool Record::isShown() const {
 Common::Rect Record::getScreenClip() const {
 	return Common::Rect();
 }
-#endif
+
+uint32 Record::applyAlpha(uint32 modColor) const {
+	return modColor;
+}
+
+uint32 Record::takeModColor(uint32 modColor) {
+	return modColor;
+}
+
+bool Record::hasAlphaChanged() const {
+	return false;
+}
 
 void Record::onStagesChanged() {
 }
+#endif
 
 BlendStages &Record::getStages() {
 	if (!_stages) {

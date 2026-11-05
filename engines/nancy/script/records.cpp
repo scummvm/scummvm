@@ -1252,18 +1252,19 @@ void OverlayRecord::applyRects() {
 		return;
 	}
 
+	const uint32 modColor = takeModColor(_modColor);
 	if (!_hasDestTable) {
-		placePicture(_graphic, _image, source, _dest, getTransform(), _modColor);
+		placePicture(_graphic, _image, source, _dest, getTransform(), modColor);
 		return;
 	}
 
 	// The copies of the picture are drawn into one surface that covers them all
 	const ScriptMatrix transform = getTransform();
-	const bool isKeyed = transform.isTranslation() && _modColor == kNoModColor;
+	const bool isKeyed = transform.isTranslation() && modColor == kNoModColor;
 	Common::Array<RecordGraphic> pictures(_tableDests.size());
 	Common::Rect area;
 	for (uint i = 0; i < _tableDests.size(); ++i) {
-		placePicture(pictures[i], _image, source, _tableDests[i], transform, _modColor);
+		placePicture(pictures[i], _image, source, _tableDests[i], transform, modColor);
 		if (i == 0) {
 			area = pictures[i].getScreenPositionRaw();
 		} else {
@@ -1301,7 +1302,7 @@ void OverlayRecord::updateGraphics() {
 		}
 	}
 
-	if (_isPlacementStale && isShown()) {
+	if ((_isPlacementStale || hasAlphaChanged()) && isShown()) {
 		applyRects();
 	}
 
@@ -1568,7 +1569,7 @@ void AnimOverlayRecord::applyFrame() {
 		return;
 	}
 
-	placePicture(_graphic, _image, source, _dest, getTransform(), _modColor);
+	placePicture(_graphic, _image, source, _dest, getTransform(), takeModColor(_modColor));
 }
 
 // Starts over from the first frame
@@ -1628,6 +1629,10 @@ void AnimOverlayRecord::registerGraphics() {
 }
 
 void AnimOverlayRecord::updateGraphics() {
+	if (hasAlphaChanged() && isShown() && _hasPicture) {
+		applyFrame();
+	}
+
 	_graphic.setClipRect(getScreenClip());
 	_graphic.setVisible(isShown() && _isVisible && _hasPicture);
 }
@@ -2242,7 +2247,7 @@ void MovieRecord::readTable(int tableIndex) {
 
 // Scripts hide a movie that keeps playing with a color without any alpha
 bool MovieRecord::isSeeThrough() const {
-	return (_modColor >> 24) == 0;
+	return (applyAlpha(_modColor) >> 24) == 0;
 }
 
 void MovieRecord::drawFrame() {
@@ -2257,8 +2262,9 @@ void MovieRecord::applyPosition() {
 
 	const ScriptMatrix transform = getTransform();
 	const Common::Rect source = _source.toRect();
+	const uint32 modColor = takeModColor(_modColor);
 
-	if (transform.isTranslation() && _modColor == kNoModColor) {
+	if (transform.isTranslation() && modColor == kNoModColor) {
 		Graphics::ManagedSurface &surface = _graphic._drawSurface;
 		if (surface.w != source.width() || surface.h != source.height() || !surface.getPixels()) {
 			surface.create(MAX<int>(source.width(), 1), MAX<int>(source.height(), 1), g_nancy->_graphics->getScreenPixelFormat());
@@ -2286,7 +2292,7 @@ void MovieRecord::applyPosition() {
 
 	Common::Rect clipped = source;
 	clipped.clip(Common::Rect(_frame.w, _frame.h));
-	placePicture(_graphic, _frame, clipped, _dest, transform, _modColor);
+	placePicture(_graphic, _frame, clipped, _dest, transform, modColor);
 }
 
 void MovieRecord::runOnce() {
@@ -2394,6 +2400,10 @@ void MovieRecord::onZChanged() {
 }
 
 void MovieRecord::updateGraphics() {
+	if (hasAlphaChanged() && isShown()) {
+		applyPosition();
+	}
+
 	_graphic.setClipRect(getScreenClip());
 	_graphic.setVisible(isShown() && _isVisible && !isSeeThrough());
 }

@@ -28,8 +28,10 @@
 namespace Nancy {
 namespace Script {
 
-// Nancy26's Transformer, which cuts off what is attached to it at its "clip"
-// rect, a rect in its own coordinates.
+// Nancy26's Transformer. Every record has blend stages and a transform of its
+// own by now, so what is left to it is to be the node the records attached to
+// it hang under. They take on whether it is enabled, visible and paused, and
+// how see-through it is, and get cut off at its "clip" rect.
 class ClipTransformerRecord : public TransformerRecord {
 public:
 	ClipTransformerRecord(SceneContext &context, const char *typeName = "ND.TransformerAR") :
@@ -39,8 +41,12 @@ public:
 	// Transformer; null for nowhere
 	const ScriptRect *getClip() const { return _hasClip ? &_clip : nullptr; }
 
+	void onStagesChanged() override;
+	void onLocalTransformChanged() override;
+
 protected:
 	void readTable(int tableIndex) override;
+	void run(double sceneTime, double elapsedTime) override {}
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
 

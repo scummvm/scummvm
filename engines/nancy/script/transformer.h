@@ -42,13 +42,15 @@ class GraphNode;
 // it there over a time, slowly at the end unless the record said sinLerp = false.
 // While a stage blends, a function "<stage>AffectLerp" of the record can bend the
 // progress from 0 to 1, and "<stage>Done" gets called once it is there.
-// Nancy22 has them in Transformer records.
+// Nancy22 has them in Transformer records only; in Nancy26 every record has them,
+// and a stage can also make the record see-through.
 class BlendStages {
 public:
 	enum StageKind {
 		kTranslation,
 		kRotation,
-		kScale
+		kScale,
+		kAlpha		// Nancy26
 	};
 
 	BlendStages(Record &owner) : _owner(owner) {}
@@ -58,6 +60,10 @@ public:
 	// The product of the stages, and where they are going
 	const ScriptMatrix &getTransform() const { return _transform; }
 	const ScriptMatrix &getBlendedTransform() const { return _blendedTransform; }
+
+	// The product of the alpha stages; 1 without any
+	double getAlpha() const { return _alpha; }
+	bool hasAlpha() const { return _hasAlpha; }
 
 	void setSineLerp(bool isSineLerp) { _isSineLerp = isSineLerp; }
 	bool isSineLerp() const { return _isSineLerp; }
@@ -88,7 +94,7 @@ private:
 		Common::String name;
 		StageKind kind = kTranslation;
 
-		// x and y; a rotation has its angle in x
+		// x and y; a rotation and an alpha have their value in x
 		double start[2] = { 0.0, 0.0 };
 		double current[2] = { 0.0, 0.0 };
 		double target[2] = { 0.0, 0.0 };
@@ -125,6 +131,8 @@ private:
 	double _timeMultiplier = 1.0;	// Nancy24: how much faster the blends go
 	ScriptMatrix _transform;
 	ScriptMatrix _blendedTransform;
+	double _alpha = 1.0;
+	bool _hasAlpha = false;
 };
 
 // Nancy22 moves, turns and resizes what a scene shows with Transformer records.
