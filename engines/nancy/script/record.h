@@ -263,6 +263,10 @@ public:
 	virtual void releaseRegion(int button) {}
 	virtual bool getRegionCursor(uint &cursorType, bool &isHot) const { return false; }
 
+	// Nancy26: the mouse wheel turned while the mouse was at the point, in the
+	// coordinates of the screen. Returns whether the record took it.
+	virtual bool scrollRegion(const ScriptPoint &point, int notches) { return false; }
+
 	// Nancy26: whether the keys go no further than this record
 	virtual bool capturesKeys() const { return false; }
 

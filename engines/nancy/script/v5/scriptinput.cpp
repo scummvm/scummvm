@@ -307,6 +307,10 @@ static void scrollWheel(const Common::Array<Record *> &records, int notches) {
 	InputState &state = getState();
 
 	for (Record *record : records) {
+		if (record->scrollRegion(state.mouse, notches)) {
+			return;
+		}
+
 		if (isOverride(record)) {
 			lua_pushinteger(record->getContext().getLua(), notches);
 			if (callInputFunction(record, "OnMouseScroll", 1)) {

@@ -56,6 +56,24 @@ static bool readCursorValue(lua_State *L, int index, uint &cursorType, bool &isH
 	return testCursor(L, index, cursorType, isHot);
 }
 
+static int setTableField(lua_State *L) {
+	lua_settable(L, 1);
+	return 0;
+}
+
+// Sets a field of another record the way a script would, with the value at the
+// top of the stack, which gets popped
+static void setRecordField(Record *record, const char *key) {
+	lua_State *L = record->getContext().getLua();
+	lua_pushcfunction(L, setTableField);
+	lua_insert(L, -2);
+	record->push();
+	lua_insert(L, -2);
+	lua_pushstring(L, key);
+	lua_insert(L, -2);
+	LuaState::call(L, 3, 0, "Error setting a field of an AR");
+}
+
 // HotspotRecord
 
 void HotspotRecord::readCursorField(int valueIndex, Cursor &cursor) {
@@ -145,6 +163,9 @@ void HotspotRecord::setMouseOver(bool isOver) {
 
 	_isMouseOver = isOver;
 	callFunction(isOver ? "OnMouseOver" : "OnMouseLeave");
+	if (_widget) {
+		_widget->onHotspotOver(isOver);
+	}
 }
 
 bool HotspotRecord::pressRegion(int button) {
@@ -154,6 +175,9 @@ bool HotspotRecord::pressRegion(int button) {
 
 	_pressedButton = button;
 	callFunction(button == 0 ? "OnLeftDown" : "OnRightDown");
+	if (_widget) {
+		_widget->onHotspotDown(button);
+	}
 
 	return true;
 }
@@ -169,12 +193,19 @@ void HotspotRecord::releaseRegion(int button) {
 
 	if (!_isMouseOver) {
 		callFunction("OnLoseMouseFocus");
+		if (_widget) {
+			_widget->onHotspotUp(button, false);
+		}
 
 		return;
 	}
 
 	callFunction(button == 0 ? "OnLeftUp" : "OnRightUp");
-	fire();
+	if (_widget) {
+		_widget->onHotspotUp(button, true);
+	} else {
+		fire();
+	}
 }
 
 void HotspotRecord::fire() {
@@ -369,6 +400,427 @@ bool SinkRecord::setField(const Common::String &key) {
 		_hasCursor = readCursorValue(L, 3, _cursorType, _cursorIsHot);
 	} else {
 		return false;
+	}
+
+	return true;
+}
+
+// WidgetRecord
+
+WidgetRecord::WidgetRecord(SceneContext &context, RecordType type) :
+		ClipTransformerRecord(context, getRecordTypeName(type)),
+		_type(type) {}
+
+// A record the table holds, which then hangs under the widget
+Record *WidgetRecord::readRecordField(int tableIndex, const char *name) {
+	lua_State *L = getLua();
+
+	if (!pushField(L, tableIndex, name)) {
+		return nullptr;
+	}
+
+	Record *record = toRecord(L, -1);
+	lua_pop(L, 1);
+
+	if (record) {
+		record->setParentNode(getNode());
+	}
+
+	return record;
+}
+
+void WidgetRecord::readTable(int tableIndex) {
+	ClipTransformerRecord::readTable(tableIndex);
+	lua_State *L = getLua();
+
+	_hotspot = dynamic_cast<HotspotRecord *>(readRecordField(tableIndex, "hs"));
+	if (_hotspot) {
+		_hotspot->setWidget(this);
+	}
+
+	_baseOverlay = readRecordField(tableIndex, "baseOvl");
+	_upOverlay = readRecordField(tableIndex, "upOvl");
+	_downOverlay = readRecordField(tableIndex, "downOvl");
+	_overOverlay = readRecordField(tableIndex, "overOvl");
+	_selectedOverlay = readRecordField(tableIndex, "selectedOvl");
+	_text = readRecordField(tableIndex, "text");
+
+	if (pushField(L, tableIndex, "baseColor")) {
+		_baseColor = checkColor(L, -1);
+		lua_pop(L, 1);
+	}
+
+	if (pushField(L, tableIndex, "disabledColor")) {
+		_disabledColor = checkColor(L, -1);
+		lua_pop(L, 1);
+	}
+
+	readField(L, tableIndex, "isSelected", _isSelected);
+	readField(L, tableIndex, "groupName", _groupName);
+
+	bool isInitiallySelected = false;
+	if (readField(L, tableIndex, "initiallySelected", isInitiallySelected) && isInitiallySelected) {
+		setSelected(true, false);
+	}
+
+	_wasEnabled = !isNodeEnabled();
+	updateState();
+}
+
+void WidgetRecord::showOverlay(Record *overlay, bool isShown, bool isEnabled) {
+	if (!overlay) {
+		return;
+	}
+
+	overlay->setLocalVisible(isShown);
+
+	if (isEnabled != _wasEnabled) {
+		pushColor(overlay->getContext().getLua(), isEnabled ? _baseColor : _disabledColor);
+		setRecordField(overlay, "modColor");
+	}
+}
+
+void WidgetRecord::updateState() {
+	const bool isEnabled = isNodeEnabled();
+	const bool isOver = _hotspot && _hotspot->isMouseOver() && isEnabled;
+	const bool isDown = _hotspot && _hotspot->isDown() && isEnabled;
+
+	showOverlay(_baseOverlay, true, isEnabled);
+	showOverlay(_selectedOverlay, _isSelected, isEnabled);
+	showOverlay(_downOverlay, isDown && isOver, isEnabled);
+	showOverlay(_overOverlay, isOver && !isDown, isEnabled);
+	showOverlay(_upOverlay, !(isOver && !isDown) && !(isDown && isOver) && !(_isSelected && _selectedOverlay), isEnabled);
+
+	if (_text && isEnabled != _wasEnabled) {
+		pushColor(getLua(), isEnabled ? _baseColor : _disabledColor);
+		setRecordField(_text, "modColor");
+	}
+
+	_wasEnabled = isEnabled;
+}
+
+void WidgetRecord::updateGraphics() {
+	// The overlays show what the widget is up to even while it is paused
+	updateState();
+}
+
+void WidgetRecord::onHotspotOver(bool isOver) {
+	callFunction(isOver ? "OnMouseOver" : "OnMouseLeave");
+	updateState();
+}
+
+void WidgetRecord::onHotspotDown(int button) {
+	if (button != 0) {
+		return;
+	}
+
+	switch (_type) {
+	case kRecordCheckBox:
+		setSelected(!_isSelected, true);
+		break;
+	case kRecordRadioButton:
+		setSelected(true, true);
+		break;
+	default:
+		break;
+	}
+
+	callFunction("OnDown");
+	updateState();
+}
+
+void WidgetRecord::onHotspotUp(int button, bool isOver) {
+	if (button != 0) {
+		return;
+	}
+
+	callFunction(isOver ? "OnUp" : "OnLoseMouseFocus");
+	updateState();
+}
+
+// A radio button that gets selected deselects the others of its group
+void WidgetRecord::setSelected(bool isSelected, bool callsScripts) {
+	if (isSelected == _isSelected) {
+		return;
+	}
+
+	_isSelected = isSelected;
+
+	if (isSelected && _type == kRecordRadioButton) {
+		for (Record *record : getContext().getRecords()) {
+			if (record == this || record->getType() != kRecordRadioButton) {
+				continue;
+			}
+
+			WidgetRecord *other = static_cast<WidgetRecord *>(record);
+			if (other->_groupName.equalsIgnoreCase(_groupName)) {
+				other->setSelected(false, callsScripts);
+			}
+		}
+	}
+
+	if (callsScripts) {
+		callFunction(isSelected ? "OnSelect" : "OnDeselect");
+	}
+
+	updateState();
+}
+
+bool WidgetRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	Record *record = nullptr;
+	if (key == "hs") {
+		record = _hotspot;
+	} else if (key == "baseOvl") {
+		record = _baseOverlay;
+	} else if (key == "upOvl") {
+		record = _upOverlay;
+	} else if (key == "downOvl") {
+		record = _downOverlay;
+	} else if (key == "overOvl") {
+		record = _overOverlay;
+	} else if (key == "selectedOvl") {
+		record = _selectedOverlay;
+	} else if (key == "text") {
+		record = _text;
+	} else if (key == "baseColor") {
+		pushColor(L, _baseColor);
+		return true;
+	} else if (key == "disabledColor") {
+		pushColor(L, _disabledColor);
+		return true;
+	} else if (key == "isSelected") {
+		lua_pushboolean(L, _isSelected);
+		return true;
+	} else if (key == "groupName") {
+		lua_pushstring(L, _groupName.c_str());
+		return true;
+	} else {
+		return ClipTransformerRecord::getField(key);
+	}
+
+	if (record) {
+		record->push();
+	} else {
+		lua_pushnil(L);
+	}
+
+	return true;
+}
+
+bool WidgetRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "baseColor") {
+		_baseColor = checkColor(L, 3);
+		_wasEnabled = !isNodeEnabled();
+	} else if (key == "disabledColor") {
+		_disabledColor = checkColor(L, 3);
+		_wasEnabled = !isNodeEnabled();
+	} else if (key == "isSelected") {
+		setSelected(lua_toboolean(L, 3) != 0, false);
+	} else {
+		return ClipTransformerRecord::setField(key);
+	}
+
+	updateState();
+	return true;
+}
+
+// SliderRecord
+
+void SliderRecord::readTable(int tableIndex) {
+	WidgetRecord::readTable(tableIndex);
+	lua_State *L = getLua();
+
+	_knobOverlay = readRecordField(tableIndex, "knobOvl");
+
+	if (pushField(L, tableIndex, "knobArea")) {
+		_knobArea = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	// Without one, the knob goes along the hotspot
+	if (_knobArea.isEmpty() && _hotspot) {
+		_knobArea = _hotspot->getOnScreen();
+	}
+
+	if (pushField(L, tableIndex, "scrollArea")) {
+		_scrollArea = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	if (pushField(L, tableIndex, "scrollAmount")) {
+		readPoint(L, -1, _scrollAmount);
+		lua_pop(L, 1);
+	}
+
+	if (pushField(L, tableIndex, "knobPos")) {
+		readPoint(L, -1, _knobPos);
+		lua_pop(L, 1);
+	}
+
+	setKnobPos(_knobPos, false);
+}
+
+// The knob is as large as the part of the picture it shows
+static ScriptPoint getOverlaySize(Record *overlay) {
+	ScriptPoint size;
+	if (!overlay) {
+		return size;
+	}
+
+	lua_State *L = overlay->getContext().getLua();
+	overlay->push();
+	lua_getfield(L, -1, "source");
+	const ScriptRect *source = testRect(L, -1);
+	if (source) {
+		size = ScriptPoint(source->width(), source->height());
+	}
+
+	lua_pop(L, 2);
+	return size;
+}
+
+ScriptPoint SliderRecord::getKnobMax() const {
+	const ScriptPoint knobSize = getOverlaySize(_knobOverlay);
+	return ScriptPoint(MAX<int>(0, _knobArea.width() - knobSize.x), MAX<int>(0, _knobArea.height() - knobSize.y));
+}
+
+void SliderRecord::setKnobPos(const ScriptPoint &pos, bool callsScripts) {
+	const ScriptPoint knobMax = getKnobMax();
+	const ScriptPoint newPos(CLIP<int>(pos.x, 0, knobMax.x), CLIP<int>(pos.y, 0, knobMax.y));
+
+	const bool hasMoved = newPos.x != _knobPos.x || newPos.y != _knobPos.y;
+	_knobPos = newPos;
+	placeKnob();
+
+	if (hasMoved && callsScripts) {
+		callFunction("OnKnobMoved");
+	}
+}
+
+void SliderRecord::placeKnob() {
+	if (!_knobOverlay) {
+		return;
+	}
+
+	const ScriptPoint knobSize = getOverlaySize(_knobOverlay);
+	ScriptRect dest(0, 0, knobSize.x, knobSize.y);
+	dest.translate(_knobArea.left + _knobPos.x, _knobArea.top + _knobPos.y);
+
+	pushRect(_knobOverlay->getContext().getLua(), dest);
+	setRecordField(_knobOverlay, "onScreen");
+}
+
+// A click on the knob drags it from where it was taken; anywhere else on the
+// bar, the knob jumps there first
+void SliderRecord::onHotspotDown(int button) {
+	if (button != 0) {
+		return;
+	}
+
+	const ScriptPoint mouse = getScriptMousePoint();
+	const ScriptPoint knobSize = getOverlaySize(_knobOverlay);
+	const ScriptRect knob(_knobArea.left + _knobPos.x, _knobArea.top + _knobPos.y,
+		_knobArea.left + _knobPos.x + knobSize.x, _knobArea.top + _knobPos.y + knobSize.y);
+
+	if (knob.contains(mouse.x, mouse.y)) {
+		_dragOffset = ScriptPoint(mouse.x - knob.left, mouse.y - knob.top);
+	} else {
+		_dragOffset = ScriptPoint(knobSize.x / 2, knobSize.y / 2);
+		setKnobPos(ScriptPoint(mouse.x - _knobArea.left - _dragOffset.x, mouse.y - _knobArea.top - _dragOffset.y), true);
+	}
+
+	_isDragging = true;
+	WidgetRecord::onHotspotDown(button);
+}
+
+void SliderRecord::onHotspotUp(int button, bool isOver) {
+	if (button == 0) {
+		_isDragging = false;
+	}
+
+	WidgetRecord::onHotspotUp(button, isOver);
+}
+
+void SliderRecord::run(double sceneTime, double elapsedTime) {
+	ClipTransformerRecord::run(sceneTime, elapsedTime);
+
+	if (_isDragging) {
+		const ScriptPoint mouse = getScriptMousePoint();
+		setKnobPos(ScriptPoint(mouse.x - _knobArea.left - _dragOffset.x, mouse.y - _knobArea.top - _dragOffset.y), true);
+	}
+}
+
+bool SliderRecord::scrollRegion(const ScriptPoint &point, int notches) {
+	if (!isNodeEnabled() || (_scrollAmount.x == 0 && _scrollAmount.y == 0)) {
+		return false;
+	}
+
+	if (!_scrollArea.contains(point.x, point.y) && !_knobArea.contains(point.x, point.y)) {
+		return false;
+	}
+
+	setKnobPos(ScriptPoint(_knobPos.x - notches * _scrollAmount.x, _knobPos.y - notches * _scrollAmount.y), true);
+	return true;
+}
+
+void SliderRecord::updateState() {
+	WidgetRecord::updateState();
+
+	if (_knobOverlay) {
+		_knobOverlay->setLocalVisible(true);
+	}
+}
+
+bool SliderRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "knobOvl") {
+		if (_knobOverlay) {
+			_knobOverlay->push();
+		} else {
+			lua_pushnil(L);
+		}
+	} else if (key == "knobArea") {
+		pushRect(L, _knobArea);
+	} else if (key == "scrollArea") {
+		pushRect(L, _scrollArea);
+	} else if (key == "scrollAmount") {
+		pushPoint(L, _scrollAmount);
+	} else if (key == "knobPos") {
+		pushPoint(L, _knobPos);
+	} else if (key == "knobMax") {
+		pushPoint(L, getKnobMax());
+	} else if (key == "percent") {
+		const ScriptPoint knobMax = getKnobMax();
+		pushVector(L, ScriptVector(knobMax.x > 0 ? (double)_knobPos.x / knobMax.x : 0.0,
+			knobMax.y > 0 ? (double)_knobPos.y / knobMax.y : 0.0, 0.0));
+	} else {
+		return WidgetRecord::getField(key);
+	}
+
+	return true;
+}
+
+bool SliderRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "knobPos") {
+		ScriptPoint pos;
+		readPoint(L, 3, pos);
+		setKnobPos(pos, false);
+	} else if (key == "scrollArea") {
+		_scrollArea = checkRect(L, 3);
+	} else if (key == "scrollAmount") {
+		readPoint(L, 3, _scrollAmount);
+	} else if (key == "knobArea") {
+		_knobArea = checkRect(L, 3);
+		setKnobPos(_knobPos, false);
+	} else {
+		return WidgetRecord::setField(key);
 	}
 
 	return true;

@@ -25,10 +25,13 @@
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/types.h"
 
+#include "engines/nancy/script/v5/cliptransformer.h"
+
 namespace Nancy {
 namespace Script {
 
 struct RefImage;
+class WidgetRecord;
 
 // Nancy26's place on the screen the mouse can be over and click, which NavLogic
 // records are as well. The player's input goes to the hotspot the mouse is over
@@ -43,6 +46,9 @@ public:
 	HotspotRecord(SceneContext &context) : Record(context, "ND.Hotspot") {}
 
 	RecordType getType() const override { return kRecordHotspot; }
+
+	// A button or another widget takes over what the hotspot does
+	void setWidget(WidgetRecord *widget) { _widget = widget; }
 
 	bool isMouseRegion() const override { return true; }
 	bool hitTest(const ScriptPoint &point) const override;
@@ -93,6 +99,7 @@ private:
 
 	bool _isMouseOver = false;
 	int _pressedButton = -1;	// 0 for the left one, 1 for the right one
+	WidgetRecord *_widget = nullptr;
 };
 
 // Nancy26: catches the player's input in a part of the screen, so whatever is
@@ -123,6 +130,90 @@ private:
 	bool _hasCursor = false;
 	uint _cursorType = 0;
 	bool _cursorIsHot = false;
+};
+
+// Nancy26's buttons, check boxes and radio buttons: a hotspot and overlays,
+// shown one at a time for the state the widget is in. The records the widget
+// is made of hang under it, so it hides, shows and moves them all.
+class WidgetRecord : public ClipTransformerRecord {
+public:
+	WidgetRecord(SceneContext &context, RecordType type);
+
+	RecordType getType() const override { return _type; }
+
+	// What its hotspot tells it
+	virtual void onHotspotOver(bool isOver);
+	virtual void onHotspotDown(int button);
+	virtual void onHotspotUp(int button, bool isOver);
+
+	bool isSelected() const { return _isSelected; }
+	void setSelected(bool isSelected, bool callsScripts);
+	const Common::String &getGroupName() const { return _groupName; }
+
+	void updateGraphics() override;
+
+protected:
+	void readTable(int tableIndex) override;
+	bool prepareReset() override { return true; }
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+
+	// Picks the overlay for the state of the widget
+	virtual void updateState();
+
+	Record *readRecordField(int tableIndex, const char *name);
+	void showOverlay(Record *overlay, bool isShown, bool isEnabled);
+
+	RecordType _type;
+	HotspotRecord *_hotspot = nullptr;
+	Record *_baseOverlay = nullptr;
+	Record *_upOverlay = nullptr;
+	Record *_downOverlay = nullptr;
+	Record *_overOverlay = nullptr;
+	Record *_selectedOverlay = nullptr;
+	Record *_text = nullptr;
+
+	uint32 _baseColor = 0xFFFFFFFF;
+	uint32 _disabledColor = 0xFF7F7F7F;
+
+	bool _isSelected = false;
+	Common::String _groupName;	// of a radio button
+	bool _wasEnabled = true;
+};
+
+// Nancy26: a knob that the mouse drags around the knob area, or the wheel moves
+// while the mouse is in the scroll area. "percent" is where the knob is, from
+// 0 to 1 across and down.
+class SliderRecord : public WidgetRecord {
+public:
+	SliderRecord(SceneContext &context) : WidgetRecord(context, kRecordSlider) {}
+
+	void onHotspotDown(int button) override;
+	void onHotspotUp(int button, bool isOver) override;
+
+	// The wheel moves the knob while the mouse is in the scroll area
+	bool scrollRegion(const ScriptPoint &point, int notches) override;
+
+protected:
+	void readTable(int tableIndex) override;
+	void run(double sceneTime, double elapsedTime) override;
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+	void updateState() override;
+
+private:
+	// How far the knob can go across and down
+	ScriptPoint getKnobMax() const;
+	void setKnobPos(const ScriptPoint &pos, bool callsScripts);
+	void placeKnob();
+
+	Record *_knobOverlay = nullptr;
+	ScriptRect _knobArea;
+	ScriptRect _scrollArea;
+	ScriptPoint _scrollAmount;
+	ScriptPoint _knobPos;
+	ScriptPoint _dragOffset;	// from the knob to the mouse, while dragged
+	bool _isDragging = false;
 };
 
 } // End of namespace Script

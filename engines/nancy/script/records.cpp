@@ -116,6 +116,14 @@ Record *makeRecord(RecordType type, SceneContext &context) {
 		return new HotspotRecord(context);
 	case kRecordSink:
 		return new SinkRecord(context);
+	case kRecordButton:
+		return new WidgetRecord(context, kRecordButton);
+	case kRecordRadioButton:
+		return new WidgetRecord(context, kRecordRadioButton);
+	case kRecordCheckBox:
+		return new WidgetRecord(context, kRecordCheckBox);
+	case kRecordSlider:
+		return new SliderRecord(context);
 #endif
 	case kRecordSummary:
 		return new SummaryRecord(context);
