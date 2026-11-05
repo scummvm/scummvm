@@ -88,6 +88,7 @@ Score::Score(Movie *movie, bool haveInteractivity) {
 	_activeFade = false;
 	_exitFrameCalled = false;
 	_stopPlayCalled = false;
+	_stopMovieEventSent = false;
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
@@ -376,8 +377,10 @@ void Score::stopPlay() {
 	_stopPlayCalled = true;
 
 	if (_haveInteractivity) {
-		if (_version >= kFileVer300)
+		if (_version >= kFileVer300 && !_stopMovieEventSent) {
+			_stopMovieEventSent = true;
 			_movie->processEvent(kEventStopMovie);
+		}
 
 		_lingo->executePerFrameHook(-1, 0);
 	}
@@ -476,6 +479,17 @@ void Score::updateCurrentFrame() {
 			}
 			nextFrameNumberToLoad = ref.frameI;
 		} else {
+			// Handle a quirk that always dispatches stopMovie event at end frame.
+			if (_vm->_dispatchStopMovieAtEnd && _haveInteractivity && _version >= kFileVer300) {
+				// Let the movie script handle the end before the normal frame-1 wrap.
+				// stopPlay() may run after this handler stops the movie and must still call the perFrameHook.
+				_stopMovieEventSent = true; // A flag to prevent stopPlay() sending stopMovie twice.
+				_movie->processEvent(kEventStopMovie);
+				if (_playState == kPlayStopped)
+					return;
+				_stopMovieEventSent = false; // Clear the marker if the movie continues.
+			}
+
 			if (debugChannelSet(-1, kDebugNoLoop)) {
 				_playState = kPlayStopped;
 				processFrozenScripts();

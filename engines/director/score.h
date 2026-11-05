@@ -228,6 +228,7 @@ public:
 	bool _activeFade;
 	bool _exitFrameCalled;
 	bool _stopPlayCalled;
+	bool _stopMovieEventSent; // A quirk may dispatch stopMovie in end frame, before stopPlay() runs.
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
 	bool _skipTransition;
