@@ -37,6 +37,16 @@ ifdef USE_TINYGL
 TESTS += $(srcdir)/test/graphics/tinygl*.h
 endif
 
+# libmad regression tests use the null test backend, not the PSP hardware decoder.
+TESTS := $(filter-out $(srcdir)/test/audio/mp3.h,$(wildcard $(TESTS)))
+ifdef USE_MAD
+ifndef PSP
+ifneq ($(strip $(POSIX) $(WIN32)),)
+TESTS += $(srcdir)/test/audio/mp3.h
+endif
+endif
+endif
+
 # libcommon needs libformats and libformats needs libcommon: so libcommon is put twice
 TEST_LIBS +=	audio/libaudio.a math/libmath.a common/libcommon.a common/formats/libformats.a common/compression/libcompression.a common/libcommon.a image/libimage.a graphics/libgraphics.a
 
