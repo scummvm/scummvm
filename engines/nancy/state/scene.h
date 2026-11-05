@@ -570,7 +570,8 @@ private:
 	// Whether esc was already down last frame, so a held key only skips once
 	bool _escHeld = false;
 #ifdef ENABLE_NANCY_V5
-	// Nancy26 hands its records all the input
+	// Nancy26 makes its UI of records, and hands its records all the input
+	void initNancy26UI();
 	void handleNancy26Input(NancyInput &input);
 
 	bool _isEscSkipping = false;	// the press that skipped stays away from the scripts

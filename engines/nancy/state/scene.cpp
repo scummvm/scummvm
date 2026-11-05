@@ -2320,7 +2320,7 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 	const Common::String sceneName = _nextScriptSceneName.empty() ?
 		Common::String::format("s%u", _sceneState.nextScene.sceneID) : _nextScriptSceneName;
 
-	Script::SceneContext *scriptScene = new Script::SceneContext("MainStream", sceneName, _sceneState.nextScene.frameID, 0);
+	Script::SceneContext *scriptScene = new Script::SceneContext(SceneStreamManager::getMainStreamName(), sceneName, _sceneState.nextScene.frameID, 0);
 	if (!scriptScene->load()) {
 		// A scene that can't be loaded leaves the player where they are
 		warning("Failed to load scene %s", sceneName.c_str());
@@ -3186,6 +3186,13 @@ void Scene::initUI() {
 	delete _ndui;
 	_ndui = new UI::NDUI::Manager();
 
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		initNancy26UI();
+		return;
+	}
+#endif
+
 	// The UI of Nancy19 is made by the scripts of a stream of its own, which
 	// gets back to the scene once the panels are there
 	if (g_nancy->getGameType() >= kGameTypeNancy19) {
@@ -3233,7 +3240,14 @@ void Scene::initUI() {
 // Nancy22 begins the stream of the managers along with the game. They keep what
 // the scripts of every scene ask them for, and send each other messages.
 void Scene::beginManagers() {
-	_streams.begin(SceneStreamManager::getManagerStreamName(), "ManagerMain_SC", 0, StreamFlags());
+	// Nancy26's are in front of everything
+	StreamFlags flags;
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		flags.z = 10.0;
+	}
+
+	const char *sceneName = g_nancy->getGameType() >= kGameTypeNancy26 ? "MANAGER_MAIN_SC" : "ManagerMain_SC";
+	_streams.begin(SceneStreamManager::getManagerStreamName(), sceneName, 0, flags);
 	_streams.loadNow(SceneStreamManager::getManagerStreamName());
 }
 

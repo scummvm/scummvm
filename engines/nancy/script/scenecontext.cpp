@@ -147,6 +147,12 @@ bool SceneContext::load() {
 	// more of them, and so can the scripts it includes; the last one that names
 	// a background is the one that shows.
 	_summary = _newRecords.empty() ? nullptr : toSummaryRecord(_newRecords[0]);
+
+	// Nancy26's included scripts make records first, and a scene has only one summary
+	for (uint i = 0; !_summary && i < _newRecords.size() && g_nancy->getGameType() >= kGameTypeNancy26; ++i) {
+		_summary = toSummaryRecord(_newRecords[i]);
+	}
+
 	for (Record *record : _newRecords) {
 		SummaryRecord *summary = toSummaryRecord(record);
 		if (_summary && summary && !summary->getBackgroundName().empty()) {

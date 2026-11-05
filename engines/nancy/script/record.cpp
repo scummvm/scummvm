@@ -899,7 +899,8 @@ static int createRecord(lua_State *L) {
 		return luaL_argerror(L, 1, "Expected a table as the parameter");
 	}
 
-	if (type != kRecordSummary && !context->hasRecords()) {
+	// Nancy26's scenes include scripts that make records before the summary
+	if (type != kRecordSummary && !context->hasRecords() && g_nancy->getGameType() < kGameTypeNancy26) {
 		return luaL_error(L, "Summary AR must be the first AR in the scene");
 	}
 

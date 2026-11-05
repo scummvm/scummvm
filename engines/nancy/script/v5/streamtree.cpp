@@ -259,5 +259,22 @@ void Scene::onMainStreamBandChanged() {
 	_viewport.setZOrder(Script::RecordGraphic::getBackgroundZOrder(_scriptScene->getZOffset()));
 }
 
+// Nancy26 makes its UI of records like any other scene, which the exe puts
+// over the whole screen. The stream of the cheat tools comes with it.
+void Scene::initNancy26UI() {
+	// The exe begins the managers first, which the scripts of the UI call on
+	beginManagers();
+
+	StreamFlags uiFlags;
+	uiFlags.isInViewport = false;
+	_streams.begin(SceneStreamManager::getUIStreamName(), "UI_MAIN_SC", 0, uiFlags);
+	_streams.loadNow(SceneStreamManager::getUIStreamName());
+
+	StreamFlags cheatFlags;
+	cheatFlags.z = 10.0;
+	cheatFlags.isInViewport = false;
+	_streams.begin("CHEAT", "CHEAT_MAIN_SC", 0, cheatFlags);
+}
+
 } // End of namespace State
 } // End of namespace Nancy

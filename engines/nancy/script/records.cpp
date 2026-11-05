@@ -2295,9 +2295,13 @@ void MovieRecord::readTable(int tableIndex) {
 	readField(L, tableIndex, "visible", _isVisible);
 
 	// The whole of every frame, unless a part of it is asked for
+	// An empty source, like Nancy26's (-1, -1, -1, -1), shows the whole movie
 	_source = ScriptRect(0, 0, _player.getWidth(), _player.getHeight());
 	if (pushField(L, tableIndex, "source")) {
-		_source = checkRect(L, -1);
+		if (!checkRect(L, -1).isEmpty()) {
+			_source = checkRect(L, -1);
+		}
+
 		lua_pop(L, 1);
 	}
 
