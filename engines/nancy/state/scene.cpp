@@ -529,14 +529,18 @@ void Scene::addItemToInventory(int16 id) {
 
 	if (_flags.items[id] == g_nancy->_false) {
 		_flags.items[id] = g_nancy->_true;
+		++_inventoryChangeCount;
 		if (_flags.heldItem == id) {
 			setHeldItem(-1);
 		}
 
-		g_nancy->_sound->playSound("BUOK");
+		// Nancy26's scripts play their own sounds and show the items themselves
+		if (g_nancy->getGameType() < kGameTypeNancy26) {
+			g_nancy->_sound->playSound("BUOK");
 
-		if (_ndui) {
-			_ndui->showInventoryItem(id, true);
+			if (_ndui) {
+				_ndui->showInventoryItem(id, true);
+			}
 		}
 
 		if (g_nancy->getGameType() <= kGameTypeNancy9) {
@@ -547,7 +551,7 @@ void Scene::addItemToInventory(int16 id) {
 			// inserted at the front, except that when the UIIV chunk opts in
 			// (appendItemsWhileOpen) an item added while the popup is open goes
 			// to the end. That's how the most recently dropped item ends up last.
-			bool addToBack = false;
+			bool addToBack = g_nancy->getGameType() >= kGameTypeNancy26;
 			if (_inventoryPopup.isOpen()) {
 				const UIIV *uiivData = GetEngineData(UIIV);
 				addToBack = uiivData && uiivData->appendItemsWhileOpen;
@@ -582,6 +586,7 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 
 	if (_flags.items[id] == g_nancy->_true || getHeldItem() == id) {
 		_flags.items[id] = g_nancy->_false;
+		++_inventoryChangeCount;
 
 		// Unlike adding an item, this is silent: the inventory UI plays the
 		// click itself when the player takes an item out
@@ -591,7 +596,7 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 			setHeldItem(-1);
 		}
 
-		if (_ndui) {
+		if (_ndui && g_nancy->getGameType() < kGameTypeNancy26) {
 			_ndui->showInventoryItem(id, false);
 		}
 
@@ -796,6 +801,10 @@ void Scene::setCharacterItemDisabledState(uint characterIndex, int16 id, byte st
 }
 
 void Scene::setHeldItem(int16 id) {
+	if (id != _flags.heldItem) {
+		++_heldItemChangeCount;
+	}
+
 	_flags.heldItem = id; g_nancy->_cursor->setCursorItemID(id);
 }
 

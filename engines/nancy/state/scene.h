@@ -196,6 +196,15 @@ public:
 	void setPlayerDay(int16 day);
 
 	void addItemToInventory(int16 id);
+
+	// Nancy10 and up: the items, in the order the inventory shows them
+	const Common::Array<int16> &getInventoryOrder() { return _inventoryBox.getOrder(); }
+
+	// How many times an item came into the inventory or left it, and how many
+	// times the item in the hand changed. Nancy26's scripts check these to know
+	// when to show the inventory anew.
+	uint getInventoryChangeCount() const { return _inventoryChangeCount; }
+	uint getHeldItemChangeCount() const { return _heldItemChangeCount; }
 	void removeItemFromInventory(int16 id, bool pickUp = true);
 
 	// Nancy15+ inventory action records and dependencies pick the character to
@@ -576,6 +585,9 @@ private:
 
 	bool _isEscSkipping = false;	// the press that skipped stays away from the scripts
 #endif
+
+	uint _inventoryChangeCount = 0;
+	uint _heldItemChangeCount = 0;
 
 	// Set when esc skipped a cinematic this frame
 	bool _hasSkippedMovie = false;

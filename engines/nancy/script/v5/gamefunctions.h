@@ -28,8 +28,8 @@ namespace Nancy {
 namespace Script {
 
 // What Nancy26 adds to the objects of the earlier games: the saved games and
-// settings in Game, Flags:All(), Key:IsDown(), the volume of the groups
-// of sounds and more. Fields that mean
+// settings in Game, the inventory by the names of the items, Flags:All(),
+// Key:IsDown(), the volume of the groups of sounds and more. Fields that mean
 // something else from Nancy26 on are read here before the earlier games' code
 // gets them. Called once the objects of the earlier games are there.
 void registerNancy26GameAPI(lua_State *L);

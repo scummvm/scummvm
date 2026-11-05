@@ -397,6 +397,156 @@ static int viewportIndex(lua_State *L) {
 	return callReplaced(L);
 }
 
+// Inventory
+
+// The inventory goes by the names of the items, and the item in the player's
+// hand stays in it
+
+static const INVD::Item *findItem(const Common::String &name) {
+	const INVD *inventory = GetEngineData(INVD);
+	if (inventory) {
+		for (const INVD::Item &item : inventory->items) {
+			if (item.name.equalsIgnoreCase(name)) {
+				return &item;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+static const INVD::Item &checkItem(lua_State *L, int index) {
+	const char *name = luaL_checkstring(L, index);
+	const INVD::Item *item = findItem(name);
+	if (!item) {
+		luaL_error(L, "There is no inventory item %s", name);
+	}
+
+	return *item;
+}
+
+static int inventoryAdd(lua_State *L) {
+	const INVD::Item &item = checkItem(L, 2);
+	if (!NancySceneState.hasItem(item.id)) {
+		NancySceneState.addItemToInventory(item.id);
+	}
+
+	return 0;
+}
+
+static int inventoryRemove(lua_State *L) {
+	const INVD::Item &item = checkItem(L, 2);
+	if (NancySceneState.getHeldItem() == item.id) {
+		NancySceneState.setHeldItem(-1);
+	}
+
+	if (NancySceneState.hasItem(item.id)) {
+		NancySceneState.removeItemFromInventory(item.id, false);
+	}
+
+	return 0;
+}
+
+static int inventoryContains(lua_State *L) {
+	lua_pushboolean(L, NancySceneState.hasItem(checkItem(L, 2).id) == g_nancy->_true);
+	return 1;
+}
+
+static int inventoryExists(lua_State *L) {
+	lua_pushboolean(L, findItem(luaL_checkstring(L, 2)) != nullptr);
+	return 1;
+}
+
+static int inventoryIsViewable(lua_State *L) {
+	const INVD::Item *item = findItem(luaL_checkstring(L, 2));
+	lua_pushboolean(L, item && !item->sceneName.empty());
+	return 1;
+}
+
+static int inventoryScene(lua_State *L) {
+	const INVD::Item *item = findItem(luaL_checkstring(L, 2));
+	lua_pushstring(L, item ? item->sceneName.toString().c_str() : "");
+	return 1;
+}
+
+// Every item there is
+static int inventoryAll(lua_State *L) {
+	const INVD *inventory = GetEngineData(INVD);
+	lua_newtable(L);
+	for (uint i = 0; inventory && i < inventory->items.size(); ++i) {
+		lua_pushstring(L, inventory->items[i].name.c_str());
+		lua_rawseti(L, -2, i + 1);
+	}
+
+	return 1;
+}
+
+static const luaL_Reg kInventoryFunctions[] = {
+	{ "Add", inventoryAdd },
+	{ "Remove", inventoryRemove },
+	{ "Contains", inventoryContains },
+	{ "Exists", inventoryExists },
+	{ "IsViewable", inventoryIsViewable },
+	{ "Scene", inventoryScene },
+	{ "All", inventoryAll },
+	{ nullptr, nullptr }
+};
+
+static bool pushInventoryField(lua_State *L, const Common::String &key) {
+	for (const luaL_Reg *function = kInventoryFunctions; function->name; ++function) {
+		if (key == function->name) {
+			lua_pushcfunction(L, function->func);
+			return true;
+		}
+	}
+
+	const INVD *inventory = GetEngineData(INVD);
+	if (key == "current") {
+		// The items in the order they came into the inventory
+		const Common::Array<int16> &order = NancySceneState.getInventoryOrder();
+		lua_createtable(L, order.size(), 0);
+		for (uint i = 0; inventory && i < order.size(); ++i) {
+			lua_pushstring(L, inventory->items[order[i]].name.c_str());
+			lua_rawseti(L, -2, i + 1);
+		}
+	} else if (key == "inHand") {
+		const int16 heldItem = NancySceneState.getHeldItem();
+		lua_pushstring(L, inventory && heldItem >= 0 && (uint)heldItem < inventory->items.size() ? inventory->items[heldItem].name.c_str() : "");
+	} else if (key == "currentChangeCount") {
+		lua_pushinteger(L, NancySceneState.getInventoryChangeCount());
+	} else if (key == "inHandChangeCount") {
+		lua_pushinteger(L, NancySceneState.getHeldItemChangeCount());
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+// Inventory.inHand = name, or "" to put it away
+static int inventoryNewIndex(lua_State *L) {
+	const Common::String key = luaL_checkstring(L, 2);
+	if (key != "inHand") {
+		return luaL_error(L, "Inventory does not have a settable field %s", key.c_str());
+	}
+
+	const Common::String name = luaL_checkstring(L, 3);
+	const int16 heldItem = name.empty() ? -1 : checkItem(L, 3).id;
+	if (heldItem != NancySceneState.getHeldItem()) {
+		NancySceneState.setHeldItem(heldItem);
+	}
+
+	return 0;
+}
+
+static int inventoryIndex(lua_State *L) {
+	if (pushInventoryField(L, luaL_checkstring(L, 2))) {
+		return 1;
+	}
+
+	return callReplaced(L);
+}
+
 // Save, Sound, Scene and Log
 
 // Save:IsNameAcceptable(name): whether a saved game can go by the name
@@ -475,9 +625,15 @@ void registerNancy26GameAPI(lua_State *L) {
 	replaceFunction(L, "ND.KeyHelper", "__index", keyIndex);
 	replaceFunction(L, "ND.Game", "__index", gameIndex);
 	replaceFunction(L, "ND.Viewport", "__index", viewportIndex);
+	replaceFunction(L, "ND.Inventory", "__index", inventoryIndex);
 
 	static const luaL_Reg kGameSetters[] = {
 		{ "__newindex", gameNewIndex },
+		{ nullptr, nullptr }
+	};
+
+	static const luaL_Reg kInventorySetters[] = {
+		{ "__newindex", inventoryNewIndex },
 		{ nullptr, nullptr }
 	};
 
@@ -503,6 +659,7 @@ void registerNancy26GameAPI(lua_State *L) {
 	};
 
 	addFunctions(L, "ND.Game", kGameSetters);
+	addFunctions(L, "ND.Inventory", kInventorySetters);
 	addFunctions(L, "ND.Save", kSaveFunctions);
 	addFunctions(L, "ND.Sound", kSoundFunctions);
 	addFunctions(L, "ND.Scene", kSceneFunctions);
