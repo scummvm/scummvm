@@ -69,7 +69,7 @@ public:
 	virtual bool setScreenViewport();
 	virtual void setWindowed(bool windowed) = 0;
 
-	virtual Graphics::PixelFormat getPixelFormat() const = 0;
+	virtual Graphics::PixelFormat getPixelFormat(bool hasAlpha) const = 0;
 	/**
 	 * Fade the screen to black
 	 *
