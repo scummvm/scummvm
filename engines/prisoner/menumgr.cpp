@@ -399,8 +399,6 @@ void PrisonerEngine::loadMenuPanels() {
 	runMainMenu_addClickBoxes(67, 77);
 	_currMenuIndex = _inGame ? 0 : 1;
 	_selectedMenuIndex = kMainPanel;
-	_menuMouseCursorActive = 1;
-	_menuMouseCursor = 13;
 }
 
 const PakMenuDirectoryEntry &PrisonerEngine::getMenuPanelData(MenuPanel panel) const {

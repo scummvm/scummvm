@@ -395,6 +395,13 @@ void PrisonerEngine::mainLoop() {
 		updateEvents();
 
 		if (_mainMenuRequested) {
+			// The original's menus show the menu cursor while they run (runMainMenu)
+			if (!_menuMouseCursorActive) {
+				_menuMouseCursorActive = true;
+				_menuMouseCursor = kCursorMenu;
+				updateMouseCursor();
+			}
+
 			updateFrameTime();
 			updateAnimationFrameTicks();
 			checkScreensaver();
@@ -429,6 +436,13 @@ void PrisonerEngine::mainLoop() {
 
 		// Only the game screen captured by openMainMenu() in this frame is valid
 		_menuBackgroundSaved = false;
+
+		// Leaving the menus brings back the game's cursor
+		if (_menuMouseCursorActive) {
+			_menuMouseCursorActive = false;
+			_menuMouseCursor = -1;
+			updateMouseCursor();
+		}
 
 		if (isPaused()) {
 			handleInput(_cameraX + _mouseX, _cameraY + _mouseY);
