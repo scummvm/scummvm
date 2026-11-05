@@ -20,10 +20,14 @@
  */
 
 #include "made/screen.h"
+#include "video/reelmagic.h"
+
 #include "made/made.h"
+#include "made/mpegplayer.h"
 #include "made/screenfx.h"
 #include "made/database.h"
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "graphics/surface.h"
@@ -31,6 +35,10 @@
 #include "graphics/cursorman.h"
 
 namespace Made {
+
+// The ReelMagic card treated the first palette entry of the graphics layer as
+// transparent, letting the MPEG picture behind it show through.
+static const byte kTransparentIndex = 0;
 
 enum TextChannelIndex {
 	kTapeRecorderName = 84,
@@ -81,6 +89,20 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_screenLock = false;
 	_paletteLock = false;
 
+	_trueColor = (_vm->getFeatures() & GF_REELMAGIC) != 0;
+	// Mode 13h reaches the card as 400 scanlines. Replicate the VGA artwork
+	// exactly; the decoded picture carries the resampling (doc/reelmagic.txt).
+	_graphicsScale = _trueColor && !ConfMan.getBool("reelmagic_video_reduce") ? 2 : 1;
+	_outputScreen = nullptr;
+	_videoLayer = nullptr;
+	_fxScreen = nullptr;
+	if (_trueColor) {
+		_fxScreen = new Graphics::Surface();
+		_fxScreen->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	}
+	memset(_outputPalette, 0, sizeof(_outputPalette));
+	memset(_outputColors, 0, sizeof(_outputColors));
+
 	_paletteInitialized = false;
 	_needPalette = false;
 	_oldPaletteColorCount = 256;
@@ -123,6 +145,14 @@ Screen::~Screen() {
 
 	delete _backgroundScreen;
 	delete _workScreen;
+	if (_outputScreen) {
+		_outputScreen->free();
+		delete _outputScreen;
+	}
+	if (_fxScreen) {
+		_fxScreen->free();
+		delete _fxScreen;
+	}
 	if (_vm->getGameID() != GID_RTZ && _vm->getGameID() != GID_RSBESTNDE && _vm->getGameID() != GID_RSBUSYNDE)
 		delete _screenMask;
 	delete _fx;
@@ -241,6 +271,28 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 }
 
 void Screen::setRGBPalette(byte *palRGB, int start, int count) {
+	if (_trueColor) {
+		// There is no backend palette in true colour; presentWorkScreen() looks
+		// the colours up itself.
+		memcpy(_outputPalette + start * 3, palRGB, count * 3);
+
+		const Graphics::PixelFormat format = _vm->_system->getScreenFormat();
+		for (int i = start; i < start + count && i < 256; i++) {
+			const byte *rgb = _outputPalette + i * 3;
+			_outputColors[i] = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+		}
+
+		// The cursor is paletted too, so it follows the screen palette
+		CursorMan.replaceCursorPalette(_outputPalette, 0, 256);
+
+		// Palette effects recolor the displayed mirror, rather than the work
+		// screen, which may be only partially drawn.
+		if (_fxScreen)
+			blitTrueColorRect((const byte *)_fxScreen->getPixels(), _fxScreen->pitch,
+				0, 0, _fxScreen->w, _fxScreen->h);
+		return;
+	}
+
 	_vm->_system->getPaletteManager()->setPalette(palRGB, start, count);
 }
 
@@ -380,7 +432,7 @@ void Screen::updateSprites() {
 	drawSpriteChannels(_backgroundScreenDrawCtx, 3, 0);
 	drawSpriteChannels(_workScreenDrawCtx, 1, 2);
 
-	_vm->_system->copyRectToScreen(_workScreen->getPixels(), _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+	presentWorkScreen();
 	_vm->_screen->updateScreenAndWait(10);
 }
 
@@ -929,22 +981,109 @@ int16 Screen::getTextWidth(int16 fontNum, const char *text) {
 }
 
 Graphics::Surface *Screen::lockScreen() {
-	return _vm->_system->lockScreen();
+	if (!_trueColor)
+		return _vm->_system->lockScreen();
+
+	// copyFxRect() reveals the new picture over the old one a few pixels at a
+	// time, so it needs to read and write the screen as 8 bit paletted pixels.
+	// Hand it the mirror, which still holds what is showing.
+	return _fxScreen;
 }
 
 void Screen::unlockScreen() {
-	_vm->_system->unlockScreen();
+	if (!_trueColor) {
+		_vm->_system->unlockScreen();
+		return;
+	}
+
+	blitTrueColorRect((const byte *)_fxScreen->getPixels(), _fxScreen->pitch,
+		0, 0, _fxScreen->w, _fxScreen->h);
 }
 
 void Screen::showWorkScreen() {
-	_vm->_system->copyRectToScreen(_workScreen->getPixels(), _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+	presentWorkScreen();
+}
+
+void Screen::presentWorkScreen() {
+	if (!_trueColor) {
+		_vm->_system->copyRectToScreen(_workScreen->getPixels(), _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+		return;
+	}
+
+	// The ReelMagic card mixed its MPEG picture in as an underlay: wherever the
+	// graphics layer holds the transparent palette index the video shows
+	// through, everywhere else the graphics win.
+	const Graphics::PixelFormat format = _vm->_system->getScreenFormat();
+	if (!_outputScreen) {
+		_outputScreen = new Graphics::Surface();
+		_outputScreen->create(getOutputWidth(), getOutputHeight(), format);
+	}
+
+	blitTrueColorRect((const byte *)_workScreen->getPixels(), _workScreen->pitch,
+		0, 0, _workScreen->w, _workScreen->h);
+
+	// Keep the mirror the screen effects draw on in step with what is showing
+	if (_fxScreen)
+		memcpy(_fxScreen->getPixels(), _workScreen->getPixels(), _workScreen->pitch * _workScreen->h);
+}
+
+void Screen::refreshVideo() {
+	if (_trueColor && _fxScreen)
+		blitTrueColorRect((const byte *)_fxScreen->getPixels(), _fxScreen->pitch,
+			0, 0, _fxScreen->w, _fxScreen->h);
+}
+
+int Screen::getOutputWidth() const {
+	return _workScreen->w * _graphicsScale;
+}
+
+int Screen::getOutputHeight() const {
+	return _workScreen->h * _graphicsScale;
+}
+
+void Screen::blitTrueColorRect(const byte *src, int srcPitch, int x, int y, int w, int h) {
+	const Graphics::PixelFormat format = _vm->_system->getScreenFormat();
+	if (!_outputScreen) {
+		_outputScreen = new Graphics::Surface();
+		_outputScreen->create(getOutputWidth(), getOutputHeight(), format);
+	}
+
+	const Common::Rect rect(x, y, x + w, y + h);
+	const Common::Rect output = Video::ReelMagicCompositor::blitGraphics(src, srcPitch,
+		_outputColors, kTransparentIndex, *_outputScreen, _videoLayer, rect,
+		_graphicsScale, _graphicsScale);
+	if (!output.isEmpty())
+		_vm->_system->copyRectToScreen(_outputScreen->getBasePtr(output.left, output.top),
+			_outputScreen->pitch, output.left, output.top, output.width(), output.height());
 }
 
 void Screen::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
-	_vm->_system->copyRectToScreen(buf, pitch, x, y, w, h);
+	if (!_trueColor) {
+		_vm->_system->copyRectToScreen(buf, pitch, x, y, w, h);
+		return;
+	}
+
+	// The effects hand over 8 bit graphics, which the backend cannot take here.
+	// Convert them, and remember them, since an effect builds its picture up out
+	// of many of these and may go on to draw on the mirror directly.
+	blitTrueColorRect((const byte *)buf, pitch, x, y, w, h);
+
+	if (_fxScreen) {
+		Common::Rect rect(x, y, x + w, y + h);
+		rect.clip(Common::Rect(_fxScreen->w, _fxScreen->h));
+		if (!rect.isEmpty()) {
+			const byte *src = (const byte *)buf + (rect.top - y) * pitch + rect.left - x;
+			for (int i = rect.top; i < rect.bottom; ++i, src += pitch)
+				memcpy(_fxScreen->getBasePtr(rect.left, i), src, rect.width());
+		}
+	}
 }
 
 void Screen::updateScreenAndWait(int delay) {
+	// Keep any background movie moving while the script goes about its business
+	if (_vm->_mpegPlayer)
+		_vm->_mpegPlayer->update();
+
 	_vm->_system->updateScreen();
 	uint32 startTime = _vm->_system->getMillis();
 	while (_vm->_system->getMillis() < startTime + delay) {
@@ -986,8 +1125,14 @@ void Screen::setMouseCursor(const Graphics::Cursor *cursor) {
 	CursorMan.replaceCursor(cursor, FRAC_HALF, FRAC_HALF);
 }
 
+void Screen::setMouseCursor(const Graphics::Surface &surface, int hotspotX, int hotspotY) {
+	CursorMan.replaceCursor(surface, hotspotX, hotspotY, 0, nullptr,
+		FRAC_ONE * _graphicsScale, FRAC_ONE * _graphicsScale);
+}
+
 void Screen::setDefaultMouseCursor() {
-	CursorMan.replaceCursor(defaultMouseCursor, 16, 16, 9, 2, 0);
+	CursorMan.replaceCursor(defaultMouseCursor, 16, 16, 9, 2, 0, nullptr, nullptr,
+		FRAC_ONE * _graphicsScale, FRAC_ONE * _graphicsScale);
 }
 
 } // End of namespace Made
