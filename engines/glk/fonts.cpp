@@ -56,7 +56,7 @@ void FontInfo::drawCaret(const Point &pos) {
 		break;
 
 	case FAT_LINE:
-		s.fillRect(Rect(x, y - _baseLine + 1, x + 1, y - 1), color);
+		s.fillRect(Rect(x, y - _baseLine + 1, x + 2, y), color);
 		break;
 
 	default:
