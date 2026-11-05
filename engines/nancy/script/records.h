@@ -80,6 +80,10 @@ Graphics::ManagedSurface *getDrawTarget();
 // the record that is rendering draws
 int drawOverlay(lua_State *L);
 
+// Where something that was placed in the viewport ends up once the transform
+// of its record has moved it
+Common::Rect getTransformedDest(const ScriptRect &dest, const ScriptMatrix &transform, int width, int height);
+
 // What a record draws. Records are placed in the coordinates of the viewport.
 class RecordGraphic : public RenderObject {
 public:

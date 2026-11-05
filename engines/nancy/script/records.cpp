@@ -50,6 +50,7 @@
 #ifdef ENABLE_NANCY_V5
 #include "engines/nancy/script/v5/cliptransformer.h"
 #include "engines/nancy/script/v5/streamtree.h"
+#include "engines/nancy/script/v5/textrecord.h"
 #endif
 
 #include "engines/nancy/state/scene.h"
@@ -112,6 +113,12 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 	case kRecordSoundConvo:
 		return new ConvoRecord(context, false);
 	case kRecordText:
+#ifdef ENABLE_NANCY_V5
+		if (g_nancy->getGameType() >= kGameTypeNancy26) {
+			return new BitmapTextRecord(context);
+		}
+#endif
+
 		return new TextRecord(context);
 	case kRecordParticle:
 		return new ParticleRecord(context);
@@ -174,9 +181,7 @@ void RecordGraphic::setScriptZ(double z, const SceneContext &context) {
 	setViewTransform(context.getViewTransform());
 }
 
-// Where something that was placed in the viewport ends up once the transform
-// of its record has moved it
-static Common::Rect getTransformedDest(const ScriptRect &dest, const ScriptMatrix &transform, int width, int height) {
+Common::Rect getTransformedDest(const ScriptRect &dest, const ScriptMatrix &transform, int width, int height) {
 	// Far enough for anything a script moves around, and safe to add a size to
 	const int kLimit = 16000;
 
