@@ -144,6 +144,7 @@ void Scene5080::advanceCustomGameplayLoop(uint32 delta) {
 bool Scene5080::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 183: // Mirar libro (look at book): use Karl's book description.
+	case 303: // Dormant scene-local alias for looking at Karl's book.
 		beginStaticSecondarySpeechLine(0xaa, 0);
 		return true;
 	case 301: // Usar vagoneta (use mine cart): return to the switch room.
@@ -151,9 +152,6 @@ bool Scene5080::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 302: // Coger libro (take book): play the pickup and grant Karl's book.
 		runBookPickup();
-		return true;
-	case 303: // Dormant scene-local alias for looking at Karl's book.
-		beginStaticSecondarySpeechLine(0xaa, 0);
 		return true;
 	case 304: // Mirar armario (look at wardrobe): Karl keeps his belongings here.
 		beginSecondarySpeechLine(2, 0);

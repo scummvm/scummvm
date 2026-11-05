@@ -343,13 +343,11 @@ bool Scene4030::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(11, 0);
 		return true;
 	case 315: // Coger candil (take oil lamp): not movable here.
+	case 317: // Coger esqueleto sentado (take seated skeleton): too weak.
 		beginSecondarySpeechLine(14, 0);
 		return true;
 	case 316: // Mirar candil (look at oil lamp).
 		beginSecondarySpeechLine(15, _vm->gameState().scene4030LooseBoneState != 0 ? 1 : 0);
-		return true;
-	case 317: // Coger esqueleto sentado (take seated skeleton): too weak.
-		beginSecondarySpeechLine(14, 0);
 		return true;
 	case 318: // Mirar esqueleto sentado (look at seated skeleton).
 		beginSecondarySpeechLine(15, 0);

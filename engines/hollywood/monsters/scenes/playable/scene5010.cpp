@@ -183,23 +183,17 @@ bool Scene5010::dispatchCustomSceneAction(uint16 handlerId) {
 		prepareMineTransport(true);
 		return true;
 	case 305: // Mirar tunel oscuro (look at dark tunnel).
+	case 307: // Mirar tunel oscuro (look at dark tunnel), duplicate hotspot.
 		beginSecondarySpeechLine(5, 0);
 		return true;
 	case 306: // Usar/entrar tunel oscuro (use/enter dark tunnel): short transport branch.
 		prepareMineTransport(false);
 		return true;
-	case 307: // Mirar tunel oscuro (look at dark tunnel), duplicate hotspot.
-		beginSecondarySpeechLine(5, 0);
-		return true;
 	case 308: // Mirar sistema de agujas (look at switch system).
-		beginSecondarySpeechLine(6, 0);
-		return true;
-	case 309: // Usar sistema de agujas (use switch system): choose mine destination.
-		runSwitchPanel();
-		return true;
 	case 310: // Mirar sistema de agujas (look at switch system), duplicate hotspot.
 		beginSecondarySpeechLine(6, 0);
 		return true;
+	case 309: // Usar sistema de agujas (use switch system): choose mine destination.
 	case 311: // Usar sistema de agujas (use switch system), duplicate hotspot.
 		runSwitchPanel();
 		return true;

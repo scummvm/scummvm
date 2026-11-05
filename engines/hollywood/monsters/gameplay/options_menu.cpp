@@ -373,40 +373,10 @@ void GameplayOptionsMenu::handleLeftClick(uint16 cursorX, uint16 cursorY, bool &
 		refreshTestAudio = true;
 		break;
 	case kHitMusicDown:
-		if (applyVolumeHitAction(action)) {
-			syncSettings = true;
-			refreshTestAudio = true;
-			startHeldVolume(action);
-		}
-		break;
 	case kHitMusicUp:
-		if (applyVolumeHitAction(action)) {
-			syncSettings = true;
-			refreshTestAudio = true;
-			startHeldVolume(action);
-		}
-		break;
 	case kHitSoundDown:
-		if (applyVolumeHitAction(action)) {
-			syncSettings = true;
-			refreshTestAudio = true;
-			startHeldVolume(action);
-		}
-		break;
 	case kHitSoundUp:
-		if (applyVolumeHitAction(action)) {
-			syncSettings = true;
-			refreshTestAudio = true;
-			startHeldVolume(action);
-		}
-		break;
 	case kHitVoiceDown:
-		if (applyVolumeHitAction(action)) {
-			syncSettings = true;
-			refreshTestAudio = true;
-			startHeldVolume(action);
-		}
-		break;
 	case kHitVoiceUp:
 		if (applyVolumeHitAction(action)) {
 			syncSettings = true;
@@ -415,11 +385,6 @@ void GameplayOptionsMenu::handleLeftClick(uint16 cursorX, uint16 cursorY, bool &
 		}
 		break;
 	case kHitTextSpeedDown:
-		if (applyVolumeHitAction(action)) {
-			syncSettings = true;
-			startHeldVolume(action);
-		}
-		break;
 	case kHitTextSpeedUp:
 		if (applyVolumeHitAction(action)) {
 			syncSettings = true;

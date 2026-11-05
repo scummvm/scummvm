@@ -263,13 +263,11 @@ bool Scene6050::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(state.scene6050GuardAllowsEntry ? 6 : 4, 0);
 		return true;
 	case 306: // Usar/abrir puerta principal (use/open main door): still closed.
+	case 308: // Usar/abrir segunda puerta (use/open second door): still closed.
 		beginSecondarySpeechLine(5, 0);
 		return true;
 	case 307: // Mirar puerta al piso superior (look at upstairs door).
 		beginSecondarySpeechLine(4, state.scene6050GuardAllowsEntry ? 1 : 0);
-		return true;
-	case 308: // Usar/abrir segunda puerta (use/open second door): still closed.
-		beginSecondarySpeechLine(5, 0);
 		return true;
 	case 309: // Hablar con guardia (talk to guard).
 		runGuardDialogue();

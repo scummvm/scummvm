@@ -158,6 +158,8 @@ bool Scene1080::dispatchCustomSceneAction(uint16 handlerId) {
 	case 178: // Usar globo inflado con gas (use the balloon directly from inventory, without a target).
 		// The original shared handler (0x004d1e50) calls 314 in scene 1080
 		// while Francois is present; otherwise it gives a refusal.
+	case 314: // Scene-local balloon distraction callback (0x00417740).
+		// Invoked by 178, not a separate verb: plays the entire release/reaction sequence.
 		handleFrancoisDistraction();
 		return true;
 	case 301: // Ir a escalera (go to stairs).
@@ -201,10 +203,6 @@ bool Scene1080::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 313: // Mirar platos sucios (look at dirty plates).
 		beginSecondarySpeechLine(11, 0);
-		return true;
-	case 314: // Scene-local balloon distraction callback (0x00417740).
-		// Invoked by 178, not a separate verb: plays the entire release/reaction sequence.
-		handleFrancoisDistraction();
 		return true;
 	default:
 		return false;
