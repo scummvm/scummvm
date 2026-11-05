@@ -180,6 +180,8 @@ protected:
 	int16 sfMovieCall(int16 argc, int16 *argv);
 	int16 sfCursorXY(int16 argc, int16 *argv);
 	int16 sfSoundFile(int16 argc, int16 *argv);
+
+	int16 sfUnknown(int16 argc, int16 *argv);
 };
 
 } // End of namespace Made

@@ -27,12 +27,14 @@
 namespace Made {
 
 enum MadeGameID {
-	GID_RTZ			= 0,
+	GID_NONE		= 0,
 	GID_MANHOLE		= 1,
-	GID_LGOP2		= 2,
+	GID_MANHOLE_NE	= 2,
 	GID_RODNEY		= 3,
-	GID_RSBESTNDE	= 4,
-	GID_RSBUSYNDE	= 5
+	GID_LGOP2		= 4,
+	GID_RTZ			= 5,
+	GID_RSBESTNDE	= 6,
+	GID_RSBUSYNDE	= 7
 };
 
 enum MadeGameFeatures {
@@ -48,7 +50,6 @@ struct MadeGameDescription {
 	ADGameDescription desc;
 
 	int gameID;
-	int gameType;
 	uint32 features;
 	uint8 version;
 	uint8 subVersion;
