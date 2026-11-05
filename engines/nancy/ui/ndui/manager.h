@@ -96,6 +96,16 @@ public:
 	void requestSave(const Common::String &name);
 	void requestLoad(const Common::String &name);
 
+	// Nancy26's scripts start new games and quit by themselves
+	void requestNewGame() { _request.type = kRequestNewGame; }
+	void requestQuit() { _request.type = kRequestQuit; }
+
+	// Whether there is a saved game of that name
+	bool hasSave(const Common::String &name) const { return findSaveSlot(name) != -1; }
+
+	// The names of the saved games
+	void getSaveNames(Common::Array<Common::String> &names) const;
+
 	// Goes on with the quit or load that was put off to ask whether to save first
 	void runPendingAction();
 

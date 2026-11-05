@@ -243,6 +243,7 @@ MODULE_OBJS += \
   script/v5/bitmaptext.o \
   script/v5/bootobjects.o \
   script/v5/cliptransformer.o \
+  script/v5/gamefunctions.o \
   script/v5/messaging.o \
   script/v5/recordnode.o \
   script/v5/scriptinput.o \

@@ -728,8 +728,12 @@ void SceneContext::handleInput(NancyInput &input) {
 	}
 }
 
-void SceneContext::changeScene(const Common::String &streamName, const Common::String &sceneName, uint16 frame) {
+void SceneContext::changeScene(const Common::String &name, const Common::String &sceneName, uint16 frame) {
 	State::SceneStreamManager &streams = NancySceneState.getStreams();
+
+	// No name stands for the stream of this scene, which isn't always the one
+	// that runs: Nancy26 hands the input to the records of all streams at once
+	const Common::String &streamName = name.empty() ? _streamName : name;
 
 	_hasChangedScene = true;
 

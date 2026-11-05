@@ -114,6 +114,12 @@ Common::KeyCode checkKey(lua_State *L, int index);
 // Returns false when there is none.
 bool findText(const Common::String &key, Common::String &text);
 
+#ifdef ENABLE_NANCY_V5
+// Nancy26: the functions an Override draws with in its Render function
+// ("DrawRect", "DrawLine", "DrawTri", "DrawCircle"). Returns false for others.
+bool pushRecordDrawFunction(lua_State *L, const Common::String &name);
+#endif
+
 // The panels and controls scripts build the UI out of
 void registerUIAPI(lua_State *L);
 

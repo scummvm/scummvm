@@ -32,6 +32,10 @@
 #include "engines/nancy/script/record.h"
 #include "engines/nancy/script/types.h"
 
+#ifdef ENABLE_NANCY_V5
+#include "engines/nancy/script/v5/gamefunctions.h"
+#endif
+
 namespace Nancy {
 namespace Script {
 
@@ -90,6 +94,12 @@ void registerAPI(lua_State *L) {
 	registerUIAPI(L);
 	registerConvoAPI(L);
 	registerRecordAPI(L);
+
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		registerNancy26GameAPI(L);
+	}
+#endif
 }
 
 } // End of namespace Script

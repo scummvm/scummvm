@@ -167,6 +167,15 @@ int Manager::findSaveSlot(const Common::String &name) const {
 	return -1;
 }
 
+void Manager::getSaveNames(Common::Array<Common::String> &names) const {
+	SaveStateList saves = g_nancy->getMetaEngine()->listSaves(ConfMan.getActiveDomainName().c_str());
+	for (const SaveStateDescriptor &save : saves) {
+		if (save.getSaveSlot() != g_nancy->getMetaEngine()->getMaximumSaveSlot() && save.getSaveSlot() != g_nancy->getAutosaveSlot()) {
+			names.push_back(save.getDescription());
+		}
+	}
+}
+
 // The dialogs show a scaled down picture of the game
 void Manager::setSaveScreenshot(const Graphics::ManagedSurface &image, const Common::Rect &src) {
 	Graphics::ManagedSurface *texture = _textures.getValOrDefault(kScreenshotTexture, nullptr);

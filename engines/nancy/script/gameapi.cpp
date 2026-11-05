@@ -721,6 +721,25 @@ static const luaL_Reg kDrawFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+#ifdef ENABLE_NANCY_V5
+bool pushRecordDrawFunction(lua_State *L, const Common::String &name) {
+	// Nancy26's Overrides draw by themselves: this:DrawRect(rect, color)
+	if (!name.hasPrefix("Draw")) {
+		return false;
+	}
+
+	const Common::String shape = name.substr(4);
+	for (const luaL_Reg *function = kDrawFunctions; function->name; ++function) {
+		if (shape == function->name && shape != "OVL") {
+			lua_pushcfunction(L, function->func);
+			return true;
+		}
+	}
+
+	return false;
+}
+#endif
+
 // Save and Load, which keep what a script hands them in the saved game
 
 enum SavedValueTag {
@@ -1134,7 +1153,15 @@ void pushSoundChannel(lua_State *L, uint16 channel) {
 	pushValue(L, kSoundChannelType, channel);
 }
 
+static bool findSoundChannel(const char *name, uint16 &result);
+
+// Nancy26 also names channels with strings ("UIFX")
 uint16 checkSoundChannel(lua_State *L, int index) {
+	uint16 channel = 0;
+	if (lua_type(L, index) == LUA_TSTRING && findSoundChannel(lua_tostring(L, index), channel)) {
+		return channel;
+	}
+
 	return *(const uint16 *)checkUserData(L, index, kSoundChannelType);
 }
 
@@ -1154,38 +1181,46 @@ bool isVoicePlaying() {
 	return false;
 }
 
-static int soundChannelIndex(lua_State *L) {
-	const char *name = luaL_checkstring(L, 2);
-
+static bool findSoundChannel(const char *name, uint16 &result) {
 	if (g_nancy->getGameType() >= kGameTypeNancy24) {
 		for (const SoundChannelName &channel : kNancy24SoundChannelNames) {
 			if (scumm_stricmp(channel.name, name) == 0) {
-				pushSoundChannel(L, channel.channel);
-				return 1;
+				result = channel.channel;
+				return true;
 			}
 		}
 	} else if (g_nancy->getGameType() >= kGameTypeNancy22) {
 		for (const SoundChannelName &channel : kNancy22SoundChannelNames) {
 			if (scumm_stricmp(channel.name, name) == 0) {
-				pushSoundChannel(L, channel.channel);
-				return 1;
+				result = channel.channel;
+				return true;
 			}
 		}
 	} else {
 		for (const SoundChannelName &channel : kSoundChannelNames) {
 			if (scumm_stricmp(channel.name, name) == 0) {
-				pushSoundChannel(L, channel.channel);
-				return 1;
+				result = channel.channel;
+				return true;
 			}
 		}
 
 		if (g_nancy->getGameType() >= kGameTypeNancy21 && scumm_stricmp(name, "AllExceptTheme") == 0) {
-			pushSoundChannel(L, kChannelAllExceptTheme);
-			return 1;
+			result = kChannelAllExceptTheme;
+			return true;
 		}
 	}
 
-	lua_pushnil(L);
+	return false;
+}
+
+static int soundChannelIndex(lua_State *L) {
+	uint16 channel = 0;
+	if (findSoundChannel(luaL_checkstring(L, 2), channel)) {
+		pushSoundChannel(L, channel);
+	} else {
+		lua_pushnil(L);
+	}
+
 	return 1;
 }
 
@@ -1377,12 +1412,30 @@ static int sceneInclude(lua_State *L) {
 }
 
 // Scene:ChangeScene(stream, scene), which goes to the first frame of the scene
+// Nancy26 also takes Scene:ChangeScene(scene), (scene, frame) and
+// (stream, scene, frame); no stream stands for the one of the scene
 static int sceneChangeScene(lua_State *L) {
 	SceneContext *context = checkContext(L);
-	const char *streamName = luaL_checkstring(L, 2);
-	const char *sceneName = luaL_checkstring(L, 3);
+	const int top = lua_gettop(L);
 
-	context->changeScene(streamName, sceneName, 0);
+	Common::String streamName;
+	Common::String sceneName;
+	int frame = 0;
+
+	if (top == 2 && g_nancy->getGameType() >= kGameTypeNancy26) {
+		sceneName = luaL_checkstring(L, 2);
+	} else if (top == 3 && lua_type(L, 3) == LUA_TNUMBER) {
+		sceneName = luaL_checkstring(L, 2);
+		frame = luaL_checkint(L, 3);
+	} else {
+		streamName = luaL_checkstring(L, 2);
+		sceneName = luaL_checkstring(L, 3);
+		if (top >= 4) {
+			frame = luaL_checkint(L, 4);
+		}
+	}
+
+	context->changeScene(streamName, sceneName, (uint16)frame);
 	lua_pushboolean(L, true);
 	return 1;
 }
@@ -1591,7 +1644,8 @@ static int streamsGetFrame(lua_State *L) {
 // Streams:GetStreams(withUI), Nancy21: the names of the running streams, the
 // main stream among them. The one of the UI is only in there when asked for.
 static int streamsGetStreams(lua_State *L) {
-	const bool withUI = lua_toboolean(L, 2) != 0;
+	// Nancy26 lists them all
+	const bool withUI = lua_toboolean(L, 2) != 0 || g_nancy->getGameType() >= kGameTypeNancy26;
 
 	Common::Array<Common::String> names;
 	NancySceneState.getStreams().getStreamNames(names, withUI);
@@ -2233,9 +2287,14 @@ static const luaL_Reg kViewportFunctions[] = {
 	{ nullptr, nullptr }
 };
 
-// Log:Write(text)
+// Log:Write(text), or from Nancy26 on, Log:Write(location, text)
 static int logWrite(lua_State *L) {
-	debugC(1, kDebugScene, "Script: %s", luaL_checkstring(L, 2));
+	if (lua_gettop(L) >= 3) {
+		debugC(1, kDebugScene, "Script: %s: %s", luaL_checkstring(L, 2), luaL_checkstring(L, 3));
+	} else {
+		debugC(1, kDebugScene, "Script: %s", luaL_checkstring(L, 2));
+	}
+
 	return 0;
 }
 

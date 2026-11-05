@@ -1172,6 +1172,12 @@ bool OverrideRecord::getField(const Common::String &key) {
 		return true;
 	}
 
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		return pushRecordDrawFunction(getLua(), key);
+	}
+#endif
+
 	return false;
 }
 
