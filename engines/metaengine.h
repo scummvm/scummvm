@@ -37,7 +37,7 @@ class Engine;
 class OSystem;
 
 namespace Common {
-class Action;
+struct Action;
 class Keymap;
 class FSList;
 class OutSaveFile;
