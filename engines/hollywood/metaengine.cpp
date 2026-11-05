@@ -20,9 +20,7 @@
  */
 
 #include "base/plugins.h"
-#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
-#include "backends/keymapper/standard-actions.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
@@ -88,10 +86,7 @@ Common::Array<Common::Keymap *> HollywoodMetaEngine::initKeymaps(const char *tar
 	if (getGameId(target) == "runaway")
 		return RunawayEngine::initKeymaps();
 	Common::KeymapArray keymaps = MetaEngine::initKeymaps(target);
-	Common::Action *action = new Common::Action(Common::kStandardActionToggleHotspots, _("Show/hide hotspots"));
-	action->setEvent(Common::EVENT_HOTSPOTS_SHOW);
-	action->addDefaultInputMapping("h");
-	keymaps[0]->addAction(action);
+	keymaps[0]->addAction(createHotspotAction());
 	return keymaps;
 }
 
