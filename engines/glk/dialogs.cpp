@@ -365,6 +365,12 @@ GlkOptionsWidget::GlkOptionsWidget(GuiObject *boss, const Common::String &name,
 	// I18N: Add space between words so wrapped lines reach both margins.
 	_justify = createCheckbox("GlkOptionsReading.justifylbl", _("Justify text:"),
 		"GlkOptionsReading.justify", _("Enable text justification"));
+#ifdef USE_TTS
+	_speak = createCheckbox("GlkOptionsReading.speaklbl", _("Enable Text to Speech"),
+		"GlkOptionsReading.speak", _("Use TTS to read the text"));
+	_speakInput = createCheckbox("GlkOptionsReading.speakinputlbl", _("Also read input text"),
+		"GlkOptionsReading.speak_input", _("Use TTS to read the input text"));
+#endif
 	// I18N: Point size of the font whose characters all have the same width.
 	_monosize = createEdit("GlkOptionsReading.monosizelbl", _("Fixed-width font size:"),
 		"GlkOptionsReading.monosize", _("Fixed-width font size in points (10-25)"));
@@ -554,15 +560,15 @@ GlkOptionsWidget::GlkOptionsWidget(GuiObject *boss, const Common::String &name,
 		_("Preview the current draft without changing the running game"), kPreviewCmd);
 	_restoreDefaults = new GlkOptionsButtonWidget(widgetsBoss(),
 		"GlkOptionsDialog.RestoreDefaults", _("Use Global Defaults"),
-		_("Remove this game's appearance overrides and use global preferences where available."),
+		_("Remove this game's appearance overrides and use global preferences where available. Speech settings are unchanged."),
 		kRestoreDefaultsCmd);
 	_interpreterDefaults = new GlkOptionsButtonWidget(widgetsBoss(),
 		"GlkOptionsDialog.InterpreterDefaults", _("Use Interpreter Defaults"),
-		_("Remove this game's appearance overrides and ignore global appearance preferences."),
+		_("Remove this game's appearance overrides and ignore global appearance preferences. Speech settings are unchanged."),
 		kInterpreterDefaultsCmd);
 	_saveGlobal = new GlkOptionsButtonWidget(widgetsBoss(),
 		"GlkOptionsDialog.SaveGlobal", _("Save Customizations as Global Defaults"),
-		_("Use this game's appearance customizations as global defaults when you choose OK. When using interpreter defaults, also clear global appearance settings that this game has not customized. Cancel discards them. Later edits affect only this game."),
+		_("Use this game's appearance and speech customizations as global defaults when you choose OK. When using interpreter defaults, also clear global appearance settings that this game has not customized. Cancel discards them. Later edits affect only this game."),
 		kSaveGlobalCmd);
 	createOptionLabel(widgetsBoss(), "GlkOptionsDialog.RestartNotice",
 		_("Appearance changes may apply the next time this game starts."), Common::U32String(), GUI::ThemeEngine::kFontStyleNormal);
@@ -589,6 +595,10 @@ GlkOptionsWidget::GlkOptionsWidget(GuiObject *boss, const Common::String &name,
 	_controls.push_back(ControlBinding("lockcols", _lockcols, "GlkOptionsLayout.lockcolslbl"));
 	_controls.push_back(ControlBinding("lockrows", _lockrows, "GlkOptionsLayout.lockrowslbl"));
 	_controls.push_back(ControlBinding("justify", _justify, "GlkOptionsReading.justifylbl"));
+#ifdef USE_TTS
+	_controls.push_back(ControlBinding("speak", _speak, "GlkOptionsReading.speaklbl"));
+	_controls.push_back(ControlBinding("speak_input", _speakInput, "GlkOptionsReading.speakinputlbl"));
+#endif
 	_controls.push_back(ControlBinding("caps", _caps, "GlkOptionsInteraction.capslbl"));
 	_controls.push_back(ControlBinding("graphics", _graphics, "GlkOptionsInteraction.graphicslbl"));
 	_controls.push_back(ControlBinding("linkstyle", _linkStyle, "GlkOptionsInteraction.linkstyle"));
@@ -709,6 +719,10 @@ void GlkOptionsWidget::loadControls() {
 	_lockcols->setState(_settings->getBool("lockcols", _conf->_lockCols != 0));
 	_lockrows->setState(_settings->getBool("lockrows", _conf->_lockRows != 0));
 	_justify->setState(_settings->getBool("justify", _conf->_propInfo._justify != 0));
+#ifdef USE_TTS
+	_speak->setState(_settings->getBool("speak", false));
+	_speakInput->setState(_settings->getBool("speak_input", false));
+#endif
 	_caps->setState(_settings->getBool("caps", _conf->_propInfo._caps != 0));
 	_graphics->setState(_settings->getBool("graphics", _conf->_graphics));
 
@@ -955,7 +969,8 @@ bool GlkOptionsWidget::synchronizePending(GlkOptionsState &pending, bool reportE
 		int integer = 0;
 		double number = 0;
 		bool valid = true;
-		switch (contract->type) {
+		// Speech checkboxes use the draft without joining appearance resets.
+		switch (contract ? contract->type : kGlkOptionBoolean) {
 		case kGlkOptionInteger:
 		case kGlkOptionFont:
 			valid = GlkOptionsState::parseInteger(text, contract->minimum, contract->maximum, integer);
@@ -1710,6 +1725,10 @@ void GlkOptionsWidget::defineLayout(GUI::ThemeEval &layouts,
 	reading.addOptionRow("propsizelbl", "propsize", _propsize);
 	reading.addOptionRow("monosizelbl", "monosize", _monosize);
 	reading.addOptionRow("justifylbl", "justify", _justify);
+#ifdef USE_TTS
+	reading.addOptionRow("speaklbl", "speak", _speak);
+	reading.addOptionRow("speakinputlbl", "speak_input", _speakInput);
+#endif
 	reading.close();
 
 	GlkOptionsPageLayout compatibility(layouts, *this,

@@ -286,6 +286,23 @@ bool GlkOptionsState::stageGlobalPreferences(Common::String &invalidKey) {
 			}
 		}
 	}
+#ifdef USE_TTS
+	const char *const speechKeys[] = { "speak", "speak_input" };
+	for (uint i = 0; i < ARRAYSIZE(speechKeys); ++i) {
+		const char *key = speechKeys[i];
+		if (!_draftPreferences.contains(key))
+			continue;
+		const Common::String value = _draftPreferences.getVal(key);
+		bool enabled = false;
+		if (!GlkPreferences::parseBool(value, enabled)) {
+			invalidKey = key;
+			return false;
+		}
+		bool current = false;
+		if (!GlkPreferences::parseBool(application.getValOrDefault(key), current) || current != enabled)
+			application.setVal(key, value);
+	}
+#endif
 	_applicationPreferences = application;
 	// Only edited properties may stop pinning this target to their old values.
 	const Common::StringMap edits(_editedPreferences);
