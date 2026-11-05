@@ -826,5 +826,306 @@ bool SliderRecord::setField(const Common::String &key) {
 	return true;
 }
 
+// EditBoxRecord
+
+// The edit box that has the keyboard
+static EditBoxRecord *s_focusedEditBox = nullptr;
+
+EditBoxRecord::EditBoxRecord(SceneContext &context) : Record(context, "ND.EditBoxAR") {}
+
+EditBoxRecord::~EditBoxRecord() {
+	if (s_focusedEditBox == this) {
+		s_focusedEditBox = nullptr;
+	}
+}
+
+void EditBoxRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+
+	if (pushField(L, tableIndex, "onScreen")) {
+		_dest = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	readField(L, tableIndex, "fontIdx", _fontID);
+	readField(L, tableIndex, "selectedColor", _selectedColor);
+	readField(L, tableIndex, "unselectedColor", _unselectedColor);
+	readField(L, tableIndex, "disabledSelectedColor", _disabledSelectedColor);
+	readField(L, tableIndex, "disabledUnselectedColor", _disabledUnselectedColor);
+	readField(L, tableIndex, "enteredString", _text);
+
+	if (pushField(L, tableIndex, "caretColor")) {
+		_caretColor = checkColor(L, -1);
+		lua_pop(L, 1);
+	}
+
+	if (pushField(L, tableIndex, "selectionBgColor")) {
+		_selectionColor = checkColor(L, -1);
+		lua_pop(L, 1);
+	}
+
+	if (pushField(L, tableIndex, "cursor")) {
+		_hasCursor = readCursorValue(L, -1, _cursorType, _cursorIsHot);
+		lua_pop(L, 1);
+	}
+
+	// The picture behind the text hangs where the box does
+	if (pushField(L, tableIndex, "baseOvl")) {
+		Record *overlay = toRecord(L, -1);
+		lua_pop(L, 1);
+		if (overlay) {
+			overlay->setParentNode(getParentNode());
+		}
+	}
+
+	_graphic.init();
+	_graphic.setVisible(false);
+	applyDest();
+	onZChanged();
+	_graphic.registerGraphics();
+}
+
+bool EditBoxRecord::hasFocus() const {
+	return s_focusedEditBox == this && isNodeEnabled();
+}
+
+void EditBoxRecord::applyDest() {
+	const int width = MAX<int>(_dest.width(), 1);
+	const int height = MAX<int>(_dest.height(), 1);
+	if (_graphic._drawSurface.w != width || _graphic._drawSurface.h != height) {
+		_graphic._drawSurface.create(width, height, g_nancy->_graphics->getTransparentPixelFormat());
+	}
+
+	double x = _dest.left;
+	double y = _dest.top;
+	getTransform().transformPoint(x, y);
+	_graphic.moveTo(Common::Rect((int)x, (int)y, (int)x + width, (int)y + height));
+	_isDirty = true;
+}
+
+void EditBoxRecord::onZChanged() {
+	_graphic.setScriptZ(getZ(), getContext());
+}
+
+void EditBoxRecord::registerGraphics() {
+	_graphic.registerGraphics();
+}
+
+bool EditBoxRecord::hitTest(const ScriptPoint &point) const {
+	double x = point.x;
+	double y = point.y;
+	getTransform().inverse().transformPoint(x, y);
+	return _dest.contains((int)floor(x), (int)floor(y));
+}
+
+bool EditBoxRecord::pressRegion(int button) {
+	if (button != 0) {
+		return false;
+	}
+
+	s_focusedEditBox = this;
+	_isDirty = true;
+	callFunction("OnClicked");
+	return true;
+}
+
+bool EditBoxRecord::getRegionCursor(uint &cursorType, bool &isHot) const {
+	if (!_hasCursor) {
+		return false;
+	}
+
+	cursorType = _cursorType;
+	isHot = _cursorIsHot;
+	return true;
+}
+
+void EditBoxRecord::setString(const Common::String &text, bool callsScripts) {
+	if (text == _text) {
+		return;
+	}
+
+	_text = text;
+	_isDirty = true;
+	if (callsScripts) {
+		callFunction("OnEdit");
+	}
+}
+
+void EditBoxRecord::selectAll() {
+	s_focusedEditBox = this;
+	_isAllSelected = true;
+	_isDirty = true;
+}
+
+void EditBoxRecord::endSelection() {
+	_isAllSelected = false;
+	_isDirty = true;
+}
+
+bool EditBoxRecord::handleKey(Common::KeyCode key, uint16 ascii) {
+	if (!hasFocus()) {
+		return false;
+	}
+
+	switch (key) {
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		callFunction("OnEditComplete");
+		return true;
+	case Common::KEYCODE_TAB:
+		if (g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
+			callFunction("OnShiftTabPressed");
+		} else {
+			callFunction("OnTabPressed");
+		}
+
+		return true;
+	case Common::KEYCODE_BACKSPACE:
+		if (_isAllSelected) {
+			_isAllSelected = false;
+			setString("", true);
+		} else if (!_text.empty()) {
+			Common::String text = _text;
+			text.deleteLastChar();
+			setString(text, true);
+		}
+
+		return true;
+	default:
+		break;
+	}
+
+	if (ascii < 32 || ascii >= 127) {
+		return false;
+	}
+
+	Common::String text = _isAllSelected ? Common::String() : _text;
+	text += (char)ascii;
+
+	// A letter there is no room for stays out
+	if (getBitmapTextWidth(text, _fontID) > _dest.width()) {
+		callFunction("OnTooWide");
+		return true;
+	}
+
+	_isAllSelected = false;
+	setString(text, true);
+	return true;
+}
+
+static uint32 toSurfaceColor(const Graphics::ManagedSurface &surface, uint32 argb) {
+	return surface.format.ARGBToColor(argb >> 24, (argb >> 16) & 0xFF, (argb >> 8) & 0xFF, argb & 0xFF);
+}
+
+void EditBoxRecord::updateGraphics() {
+	_graphic.setClipRect(getScreenClip());
+	_graphic.setVisible(isShown());
+
+	const bool isFocused = hasFocus();
+	if (isFocused != _hadFocus) {
+		_hadFocus = isFocused;
+		_isDirty = true;
+	}
+
+	if (!_isDirty && !hasAlphaChanged()) {
+		return;
+	}
+
+	_isDirty = false;
+
+	Graphics::ManagedSurface &surface = _graphic._drawSurface;
+	surface.clear(0);
+
+	int colorID = isFocused ? _selectedColor : _unselectedColor;
+	if (!isNodeEnabled()) {
+		colorID = isFocused ? _disabledSelectedColor : _disabledUnselectedColor;
+	}
+
+	_layout.layout(Common::String::format("<f%d><vc>", _fontID) + _text, surface.w, surface.h, colorID);
+	const ScriptRect &bounds = _layout.getBounds();
+
+	if (_isAllSelected && !_text.empty()) {
+		const Common::Rect area(MAX<int>(bounds.left, 0), 0, MIN<int>(bounds.right, surface.w), surface.h);
+		if (!area.isEmpty()) {
+			surface.fillRect(area, toSurfaceColor(surface, applyAlpha(_selectionColor)));
+		}
+	}
+
+	_layout.draw(surface, Common::Point(0, 0), takeModColor(0xFFFFFFFF));
+
+	// The caret goes after the text while the box has the keyboard
+	if (isFocused) {
+		const int x = CLIP<int>(_text.empty() ? 1 : bounds.right + 1, 0, surface.w - 1);
+		surface.vLine(x, 2, surface.h - 3, toSurfaceColor(surface, applyAlpha(_caretColor)));
+	}
+
+	_graphic.setNeedsRedraw(true);
+}
+
+static int editBoxSelectAll(lua_State *L) {
+	EditBoxRecord *editBox = dynamic_cast<EditBoxRecord *>(checkRecord(L, 1));
+	if (editBox) {
+		editBox->selectAll();
+	}
+
+	return 0;
+}
+
+static int editBoxEndSelection(lua_State *L) {
+	EditBoxRecord *editBox = dynamic_cast<EditBoxRecord *>(checkRecord(L, 1));
+	if (editBox) {
+		editBox->endSelection();
+	}
+
+	return 0;
+}
+
+bool EditBoxRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		pushRect(L, _dest);
+	} else if (key == "enteredString") {
+		lua_pushstring(L, _text.c_str());
+	} else if (key == "fontIdx") {
+		lua_pushinteger(L, _fontID);
+	} else if (key == "selectedColor") {
+		lua_pushinteger(L, _selectedColor);
+	} else if (key == "unselectedColor") {
+		lua_pushinteger(L, _unselectedColor);
+	} else if (key == "disabledSelectedColor") {
+		lua_pushinteger(L, _disabledSelectedColor);
+	} else if (key == "disabledUnselectedColor") {
+		lua_pushinteger(L, _disabledUnselectedColor);
+	} else if (key == "caretColor") {
+		pushColor(L, _caretColor);
+	} else if (key == "selectionBgColor" || key == "disabledSelectionBgColor") {
+		pushColor(L, _selectionColor);
+	} else if (key == "SelectAll") {
+		lua_pushcfunction(L, editBoxSelectAll);
+	} else if (key == "EndSelection") {
+		lua_pushcfunction(L, editBoxEndSelection);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+bool EditBoxRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		_dest = checkRect(L, 3);
+		applyDest();
+	} else if (key == "enteredString") {
+		setString(luaL_checkstring(L, 3), false);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
 } // End of namespace Script
 } // End of namespace Nancy

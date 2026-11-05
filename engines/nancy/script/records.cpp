@@ -124,6 +124,8 @@ Record *makeRecord(RecordType type, SceneContext &context) {
 		return new WidgetRecord(context, kRecordCheckBox);
 	case kRecordSlider:
 		return new SliderRecord(context);
+	case kRecordEditBox:
+		return new EditBoxRecord(context);
 #endif
 	case kRecordSummary:
 		return new SummaryRecord(context);

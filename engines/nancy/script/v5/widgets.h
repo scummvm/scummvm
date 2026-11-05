@@ -25,6 +25,7 @@
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/types.h"
 
+#include "engines/nancy/script/v5/bitmaptext.h"
 #include "engines/nancy/script/v5/cliptransformer.h"
 
 namespace Nancy {
@@ -214,6 +215,65 @@ private:
 	ScriptPoint _knobPos;
 	ScriptPoint _dragOffset;	// from the knob to the mouse, while dragged
 	bool _isDragging = false;
+};
+
+// Nancy26: a line of text the player types in, like the name of a saved game.
+// A click gives it the keyboard; its scripts hear of every change (OnEdit), of
+// Enter (OnEditComplete), of Tab, and of a letter that didn't fit (OnTooWide).
+// What is selected gets replaced by what is typed next.
+class EditBoxRecord : public Record {
+public:
+	EditBoxRecord(SceneContext &context);
+
+	RecordType getType() const override { return kRecordEditBox; }
+	~EditBoxRecord() override;
+
+	bool isMouseRegion() const override { return true; }
+	bool hitTest(const ScriptPoint &point) const override;
+	bool pressRegion(int button) override;
+	bool getRegionCursor(uint &cursorType, bool &isHot) const override;
+	bool handleKey(Common::KeyCode key, uint16 ascii) override;
+
+	void updateGraphics() override;
+	void registerGraphics() override;
+
+	void selectAll();
+	void endSelection();
+
+protected:
+	void readTable(int tableIndex) override;
+	bool prepareReset() override { return true; }
+	void onZChanged() override;
+	bool hasTransform() const override { return true; }
+	void onTransformChanged() override { applyDest(); }
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+
+private:
+	bool hasFocus() const;
+	void applyDest();
+	void setString(const Common::String &text, bool callsScripts);
+
+	ScriptRect _dest;
+	Common::String _text;
+	bool _isAllSelected = false;
+
+	int _fontID = 0;
+	int _selectedColor = 0;		// font colors, while it has the keyboard and while not
+	int _unselectedColor = 0;
+	int _disabledSelectedColor = 0;
+	int _disabledUnselectedColor = 0;
+	uint32 _caretColor = 0xFFFFFFFF;
+	uint32 _selectionColor = 0xFF3F3F3F;
+
+	bool _hasCursor = false;
+	uint _cursorType = 0;
+	bool _cursorIsHot = false;
+
+	RecordGraphic _graphic;
+	BitmapText _layout;
+	bool _isDirty = true;
+	bool _hadFocus = false;
 };
 
 } // End of namespace Script
