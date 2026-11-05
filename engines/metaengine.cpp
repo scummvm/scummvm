@@ -69,6 +69,13 @@ Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) 
 	}
 }
 
+Common::Action *MetaEngine::createHotspotAction() {
+	Common::Action *action = new Common::Action(Common::kStandardActionToggleHotspots, _("Show/hide hotspots"));
+	action->setEvent(Common::EVENT_HOTSPOTS_SHOW);
+	action->addDefaultInputMapping("h");
+	return action;
+}
+
 Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 

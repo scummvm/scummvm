@@ -37,6 +37,7 @@ class Engine;
 class OSystem;
 
 namespace Common {
+class Action;
 class Keymap;
 class FSList;
 class OutSaveFile;
@@ -387,6 +388,9 @@ public:
 	 * Return the keymap used by the target.
 	 */
 	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
+
+	/** Create the standard hotspot action; ownership passes to the receiving keymap. */
+	static Common::Action *createHotspotAction();
 
 	/**
 	 * Register the default values for the settings that the engine uses into the
