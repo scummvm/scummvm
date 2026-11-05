@@ -49,6 +49,7 @@
 
 #ifdef ENABLE_NANCY_V5
 #include "engines/nancy/script/v5/cliptransformer.h"
+#include "engines/nancy/script/v5/streamtree.h"
 #endif
 
 #include "engines/nancy/state/scene.h"
@@ -142,15 +143,30 @@ static const int kBackgroundZ = 6;
 // Scripts tell apart z values as close as 0.001, and every stream is one step
 // closer than the one that began it
 static const double kStepsPerScriptZ = 1000.0;
-static const int kMaxScriptZOrder = 59000;
 
 uint16 RecordGraphic::getScriptZOrder(double z, int32 zOffset) {
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		return getBandZOrder(z, zOffset);
+	}
+#endif
+
 	const double steps = (z - kBackgroundScriptZ + zOffset) * kStepsPerScriptZ;
 	return (uint16)CLIP<int>(kBackgroundZ + (int)floor(steps + 0.5), 0, kMaxScriptZOrder);
 }
 
 uint16 RecordGraphic::getBackgroundZOrder(int32 zOffset) {
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		return getBandBackgroundZOrder(zOffset);
+	}
+#endif
+
 	return getScriptZOrder(kBackgroundScriptZ, zOffset);
+}
+
+bool RecordGraphic::isViewportRelative() const {
+	return g_nancy->getGameType() < kGameTypeNancy26;
 }
 
 void RecordGraphic::setScriptZ(double z, const SceneContext &context) {

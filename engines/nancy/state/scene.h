@@ -355,6 +355,11 @@ public:
 	bool receiveMainSceneMessage(const Script::Message &message, bool &wasTaken);
 #endif
 
+#ifdef ENABLE_NANCY_V5
+	// Nancy26: the main stream was put at another place among the streams
+	void onMainStreamBandChanged();
+#endif
+
 	// Used from nancy2 onwards
 	void specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime);
 	void specialEffect(byte type, uint16 totalTime, uint16 fadeToBlackTime, Common::Rect rect);

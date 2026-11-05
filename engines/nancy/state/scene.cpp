@@ -2345,6 +2345,11 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 	delete _scriptScene;
 	_scriptScene = scriptScene;
 
+	// Nancy26 puts the background at the bottom of the main stream's band
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		_viewport.setZOrder(Script::RecordGraphic::getBackgroundZOrder(_scriptScene->getZOffset()));
+	}
+
 	g_nancy->_graphics->suppressNextDraw();
 
 	debugC(0, kDebugScene, "Loading new scene %s, frame %i", sceneName.c_str(), _sceneState.nextScene.frameID);

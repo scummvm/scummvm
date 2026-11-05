@@ -195,6 +195,12 @@ public:
 	// Nancy26: works like reset(), but leaves the record inactive
 	bool resetInactive();
 
+	// Nancy26 orders records like a tree: a record's z only places it among the
+	// records under the same node, and a node with all it holds goes where its
+	// own z puts it. The scene works out the place of every record in that
+	// order, and getZ() then gives a z that keeps it.
+	void setDrawRank(int rank);
+
 	// Nancy26: every record is a node of a tree, which can be enabled (gets the
 	// player's input), visible (gets drawn) and paused (doesn't run), and can be
 	// see-through. A record is each of them when it says so itself, and the

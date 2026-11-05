@@ -61,6 +61,18 @@ SceneContext::SceneContext(const Common::String &streamName, const Common::Strin
 	_lua = new LuaState(this);
 }
 
+// Nancy26 draws whole streams over each other, so the z of a record only counts
+// within the band of its stream
+int32 SceneContext::getZOffset() const {
+#ifdef ENABLE_NANCY_V5
+	if (_streamState) {
+		return _streamState->band;
+	}
+#endif
+
+	return _zOffset;
+}
+
 SceneContext::~SceneContext() {
 	// Taking the records down can have the UI send messages
 	_isEnding = true;
@@ -440,6 +452,12 @@ void SceneContext::run(double elapsedTime) {
 
 	renderAttachment();
 	applyGraphNodeChanges();
+
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		updateDrawRanks();
+	}
+#endif
 
 	for (Record *record : _records) {
 		record->updateGraphics();

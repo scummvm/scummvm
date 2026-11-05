@@ -112,6 +112,13 @@ const Common::String &Record::getName() const {
 	return _nodeState->localName.empty() ? _nodeState->uniqueAlias : _nodeState->localName;
 }
 
+void Record::setDrawRank(int rank) {
+	if (rank != _nodeState->drawRank) {
+		_nodeState->drawRank = rank;
+		onZChanged();
+	}
+}
+
 // What the records draw with. The records of the other games are shown while
 // they are active, whole and as they are.
 

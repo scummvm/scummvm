@@ -94,8 +94,13 @@ public:
 	static uint16 getScriptZOrder(double z, int32 zOffset);
 	static uint16 getBackgroundZOrder(int32 zOffset);
 
+	// The highest z order of what the records draw
+	static const int kMaxScriptZOrder = 59000;
+
 protected:
-	bool isViewportRelative() const override { return true; }
+	// Nancy26 has the viewport at the top left of the screen, and lets records
+	// draw on all of it, the UI along the bottom included
+	bool isViewportRelative() const override;
 };
 
 // The first record of every scene, which names the area the scene belongs to

@@ -75,6 +75,11 @@ struct StreamFlags {
 	bool capturesInput = false;	// the streams after this one get no input
 	bool runsFirst = false;		// put in front of the running streams
 	int32 zOffset = 0;			// added to the z order of everything the stream draws
+
+	// Nancy26
+	double z = 0.0;				// where the stream is among the others
+	bool isInViewport = true;	// false for the ones placed on the whole screen
+	bool isSaved = true;		// kept in saved games
 };
 
 // Nancy17 runs several scenes side by side, each in a stream of its own. The scene
@@ -143,6 +148,9 @@ public:
 	// Nancy26: what the stream says about the records of its scenes
 	Script::StreamNodeState &getNodeState() { return _nodeState; }
 	const Script::StreamNodeState &getNodeState() const { return _nodeState; }
+
+	// The stream was put at another place among the others
+	void onBandChanged();
 #endif
 
 	Common::Array<Child> _children;
@@ -251,6 +259,13 @@ public:
 
 	// Nancy26: what a stream says about its records; null for no such stream
 	Script::StreamNodeState *getNodeState(const Common::String &name);
+
+	// Nancy26: the streams in the order they get drawn in, the main one as null
+	void getDrawOrder(Common::Array<SceneStream *> &streams) const;
+
+	// Nancy26: a stream that keeps the input goes in front of the others of its
+	// tree, the managers and the cheat tools left aside; the z it gets for that
+	double getCapturingZ(double z, bool isInViewport) const;
 #endif
 
 #ifdef ENABLE_NANCY_V4
@@ -298,7 +313,11 @@ private:
 	Script::ScriptMatrix _mainStreamTransform;
 #endif
 #ifdef ENABLE_NANCY_V5
+	// Nancy26: puts every stream at its place in the order they get drawn in
+	void updateBands();
+
 	Script::StreamNodeState _mainNodeState;
+	uint32 _numBegun = 0;
 #endif
 	ViewTransform _mainStreamViewTransform;
 };

@@ -48,6 +48,7 @@ public:
 
 	// Including those of the nodes above
 	double getZ() const;
+	double getLocalZ() const { return _z; }
 	ScriptMatrix getTransform() const;
 
 #ifdef ENABLE_NANCY_V5

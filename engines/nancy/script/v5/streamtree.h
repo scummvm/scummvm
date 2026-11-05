@@ -29,11 +29,34 @@ namespace Script {
 
 // Nancy26: a stream is a node above the records of its scenes. Messages to its
 // name enable, disable, pause and lock it, which its records take on.
+//
+// The streams of the viewport and the ones of the UI make two trees, the UI on
+// top. In each, streams get drawn in the order of their z, the ones begun later
+// in front of the ones with the same z.
 struct StreamNodeState {
 	bool isEnabled = true;
 	bool isVisible = true;
 	bool isPaused = false;
+
+	bool isInViewport = true;
+	double z = 0.0;
+	uint32 sequence = 0;	// when it was begun
+
+	// Where the stream comes in the order all the streams get drawn in, from
+	// the bottom. Everything the stream draws goes in the range of z orders of
+	// that place, so it ends up above the streams before it.
+	int32 band = 0;
 };
+
+// Nancy26 draws every stream as a whole over the ones before it, so each gets a
+// band of z orders of its own, with the background at the bottom. These give
+// the z order of a script z, and of the background, in a band.
+uint16 getBandZOrder(double z, int32 band);
+uint16 getBandBackgroundZOrder(int32 band);
+
+// The scene works out the place of each of its records in the order of the
+// tree they make; this is the script z that keeps a record at its place
+double getRankZ(int rank);
 
 } // End of namespace Script
 } // End of namespace Nancy

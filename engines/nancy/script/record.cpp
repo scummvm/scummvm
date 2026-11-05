@@ -35,6 +35,7 @@
 
 #ifdef ENABLE_NANCY_V5
 #include "engines/nancy/script/v5/recordnode.h"
+#include "engines/nancy/script/v5/streamtree.h"
 #endif
 
 namespace Nancy {
@@ -303,6 +304,12 @@ void Record::render() {
 }
 
 double Record::getZ() const {
+#ifdef ENABLE_NANCY_V5
+	if (_nodeState && _nodeState->drawRank >= 0) {
+		return getRankZ(_nodeState->drawRank);
+	}
+#endif
+
 	return _parentNode ? _z + _parentNode->getZ() : _z;
 }
 

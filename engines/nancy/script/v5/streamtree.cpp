@@ -36,7 +36,166 @@
 #include "engines/nancy/state/scenestream.h"
 
 namespace Nancy {
+namespace Script {
+
+// Each band is this many z orders, with the background at the bottom. The
+// scripts use z from -100 to 10, and tell apart z values as close as 0.05.
+static const int kBandSize = 5000;
+static const int kBandBackgroundZ = 50;
+static const double kLowestScriptZ = -100.0;
+static const double kStepsPerScriptZ = 40.0;
+
+static int getBandStart(int32 band) {
+	return CLIP<int>(band, 0, RecordGraphic::kMaxScriptZOrder / kBandSize - 1) * kBandSize;
+}
+
+uint16 getBandZOrder(double z, int32 band) {
+	const int steps = (int)floor((z - kLowestScriptZ) * kStepsPerScriptZ + 0.5);
+	return (uint16)(getBandStart(band) + CLIP<int>(kBandBackgroundZ * 2 + steps, kBandBackgroundZ + 1, kBandSize - 1));
+}
+
+uint16 getBandBackgroundZOrder(int32 band) {
+	return (uint16)(getBandStart(band) + kBandBackgroundZ);
+}
+
+double getRankZ(int rank) {
+	return kLowestScriptZ + (rank + 1) / kStepsPerScriptZ;
+}
+
+// The records of a scene
+
+void SceneContext::onBandChanged() {
+	for (Record *record : _records) {
+		record->onParentNodeChanged();
+	}
+
+	for (Record *record : _newRecords) {
+		record->onParentNodeChanged();
+	}
+}
+
+namespace {
+
+// The z values from the topmost node down to a record, which order the records
+// the way the tree does
+struct DrawKey {
+	Record *record;
+	uint index;		// of creation, for records with the same place
+	Common::Array<double> path;
+};
+
+bool isDrawnBefore(const DrawKey &a, const DrawKey &b) {
+	for (uint i = 0; i < a.path.size() && i < b.path.size(); ++i) {
+		if (a.path[i] != b.path[i]) {
+			return a.path[i] < b.path[i];
+		}
+	}
+
+	if (a.path.size() != b.path.size()) {
+		return a.path.size() < b.path.size();
+	}
+
+	return a.index < b.index;
+}
+
+} // End of anonymous namespace
+
+void SceneContext::updateDrawRanks() {
+	Common::Array<DrawKey> keys;
+	keys.resize(_records.size());
+
+	for (uint i = 0; i < _records.size(); ++i) {
+		DrawKey &key = keys[i];
+		key.record = _records[i];
+		key.index = i;
+		key.path.push_back(_records[i]->getLocalZ());
+		for (const GraphNode *node = _records[i]->getParentNode(); node; node = node->getParent()) {
+			key.path.insert_at(0, node->getLocalZ());
+		}
+	}
+
+	Common::sort(keys.begin(), keys.end(), isDrawnBefore);
+
+	for (uint i = 0; i < keys.size(); ++i) {
+		keys[i].record->setDrawRank(i);
+	}
+}
+
+} // End of namespace Script
+
 namespace State {
+
+// The streams
+
+static bool isDrawnBefore(const Script::StreamNodeState *a, const Script::StreamNodeState *b) {
+	if (a->isInViewport != b->isInViewport) {
+		return a->isInViewport;
+	}
+
+	if (a->z != b->z) {
+		return a->z < b->z;
+	}
+
+	return a->sequence < b->sequence;
+}
+
+void SceneStreamManager::getDrawOrder(Common::Array<SceneStream *> &streams) const {
+	streams.clear();
+	for (SceneStream *stream : _streams) {
+		if (stream && stream->isEnded()) {
+			continue;
+		}
+
+		const Script::StreamNodeState *state = stream ? &stream->getNodeState() : &_mainNodeState;
+
+		uint i = 0;
+		while (i < streams.size()) {
+			const Script::StreamNodeState *other = streams[i] ? &streams[i]->getNodeState() : &_mainNodeState;
+			if (isDrawnBefore(state, other)) {
+				break;
+			}
+
+			++i;
+		}
+
+		streams.insert_at(i, stream);
+	}
+}
+
+void SceneStreamManager::updateBands() {
+	Common::Array<SceneStream *> streams;
+	getDrawOrder(streams);
+
+	for (uint i = 0; i < streams.size(); ++i) {
+		Script::StreamNodeState &state = streams[i] ? streams[i]->getNodeState() : _mainNodeState;
+		if (state.band == (int32)i) {
+			continue;
+		}
+
+		state.band = i;
+		if (streams[i]) {
+			streams[i]->onBandChanged();
+		} else {
+			NancySceneState.onMainStreamBandChanged();
+		}
+	}
+}
+
+double SceneStreamManager::getCapturingZ(double z, bool isInViewport) const {
+	// The managers and the cheat tools stay in front
+	for (SceneStream *stream : _streams) {
+		const Script::StreamNodeState &state = stream ? stream->getNodeState() : _mainNodeState;
+		if (stream && (stream->isEnded() || stream->getName().equalsIgnoreCase(getManagerStreamName()) || stream->getName().equalsIgnoreCase("CHEAT"))) {
+			continue;
+		}
+
+		if (state.isInViewport == isInViewport && state.z >= z) {
+			z = state.z + 1.0;
+		}
+	}
+
+	return z;
+}
 
 Script::StreamNodeState *SceneStreamManager::getNodeState(const Common::String &name) {
 	if (name.equalsIgnoreCase(getMainStreamName())) {
@@ -76,6 +235,28 @@ int SceneStreamManager::receiveNancy26Message(lua_State *L, const Common::String
 
 	debugC(1, kDebugScene, "%s asked stream %s to %s", sender.c_str(), name.c_str(), action.c_str());
 	return 0;
+}
+
+void SceneStream::onBandChanged() {
+	if (!_scriptScene) {
+		return;
+	}
+
+	_scriptScene->onBandChanged();
+	if (_background) {
+		_background->setZOrder(Script::RecordGraphic::getBackgroundZOrder(_scriptScene->getZOffset()));
+	}
+}
+
+// The main stream, and the streams the game begins along with it
+
+void Scene::onMainStreamBandChanged() {
+	if (!_scriptScene) {
+		return;
+	}
+
+	_scriptScene->onBandChanged();
+	_viewport.setZOrder(Script::RecordGraphic::getBackgroundZOrder(_scriptScene->getZOffset()));
 }
 
 } // End of namespace State

@@ -1436,7 +1436,17 @@ static int sceneBeginStream(lua_State *L) {
 		// From then on, a stream that keeps the input goes 10 in front of the
 		// frontmost stream, which is more than the z of a record spans, and any
 		// other one shares the z of the stream that began it.
-		if (g_nancy->getGameType() < kGameTypeNancy24) {
+		if (g_nancy->getGameType() >= kGameTypeNancy26) {
+			// Nancy26 places streams by a z of their own
+#ifdef ENABLE_NANCY_V5
+			readField(L, 2, "z", flags.z);
+			readField(L, 2, "inVP", flags.isInViewport);
+			readField(L, 2, "save", flags.isSaved);
+			if (flags.capturesInput) {
+				flags.z = NancySceneState.getStreams().getCapturingZ(flags.z, flags.isInViewport);
+			}
+#endif
+		} else if (g_nancy->getGameType() < kGameTypeNancy24) {
 			flags.zOffset = 1;
 		} else if (flags.capturesInput) {
 			const State::SceneStreamManager &streams = NancySceneState.getStreams();

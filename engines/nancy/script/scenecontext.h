@@ -114,9 +114,13 @@ public:
 	const Common::String &getSceneName() const { return _sceneName; }
 	uint getFrame() const { return _frame; }
 	void setFrame(uint frame) { _frame = frame; }
-	int32 getZOffset() const { return _zOffset; }
+	int32 getZOffset() const;
 
 #ifdef ENABLE_NANCY_V5
+	// Nancy26: the stream of the scene was put at another place among the
+	// others, so everything it draws goes elsewhere
+	void onBandChanged();
+
 	// Nancy26: what the stream of the scene says about all its records
 	bool isStreamEnabled() const { return !_streamState || _streamState->isEnabled; }
 	bool isStreamVisible() const { return !_streamState || _streamState->isVisible; }
@@ -187,6 +191,9 @@ private:
 	bool callSceneFunction(const char *name, int numArgs);
 	void pushMessage(const Message &message);
 	void runFrame(double elapsedTime);
+#ifdef ENABLE_NANCY_V5
+	void updateDrawRanks();	// Nancy26
+#endif
 	void deleteDroppedRecords();
 	void renderAttachment();
 	bool hasSkippableRecord() const;

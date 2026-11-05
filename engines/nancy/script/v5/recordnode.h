@@ -38,6 +38,7 @@ struct RecordNodeState {
 	double localAlpha = 1.0;
 	double drawnAlpha = 1.0;	// what the picture was last drawn with
 	double keyZ = 0.0;
+	int drawRank = -1;			// the place among the records of the scene
 
 	Common::String localName;
 	Common::String uniqueAlias;	// "AR<number>", which no other record has
