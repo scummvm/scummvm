@@ -39,6 +39,7 @@ class Conf {
 private:
 	InterpreterType _interpType;
 	bool _installedGlobal;
+	bool _zcodeVersion6;
 	const GlkPreferences *_preferences;
 
 	bool exists(const Common::String &key) const;
@@ -78,6 +79,8 @@ public:
 	 */
 	Common::String encodeColor(uint color) const;
 
+	uint getStyleColorDefault(const GlkPreferences &preferences, bool grid, int style, bool foreground) const;
+
 public:
 	uint _width, _height;
 	Graphics::PixelFormat _screenFormat;
@@ -113,7 +116,11 @@ public:
 	 * Constructor
 	 */
 	Conf(InterpreterType interpType, bool installGlobal = true,
-		const Graphics::PixelFormat &format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+		const Graphics::PixelFormat &format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+		bool zcodeVersion6 = false);
+
+	// Fresh preferences must retain interpreter defaults, not active game styles.
+	Conf defaults() const;
 
 	/**
 	 * Loads the configuration from the ScummVM configuration

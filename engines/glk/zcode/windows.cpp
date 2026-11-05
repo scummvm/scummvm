@@ -135,7 +135,7 @@ Window &Window::operator=(winid_t win) {
 	_win = win;
 
 	// Set the screen colors
-	if (win)
+	if (win && g_vm->h_version == V6)
 		win->_stream->setZColors(g_vm->_defaultForeground, g_vm->_defaultBackground);
 
 	return *this;

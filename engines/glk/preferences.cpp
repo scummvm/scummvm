@@ -108,7 +108,8 @@ GlkPreferences::GlkPreferences(const Common::ConfigManager::Domain *target, bool
 bool GlkPreferences::useLayer(int layer, const Common::String &key) const {
 	// Configuration-only target constraints still apply to inherited values.
 	return _layers[layer] && !(((layer == 2 && _inheritAppearance) ||
-		(layer == 3 && _ignoreGlobalAppearance)) && findGlkOptionContract(key));
+		(layer == 3 && _ignoreGlobalAppearance)) &&
+		(findGlkOptionContract(key) || key == "foreground" || key == "background"));
 }
 
 static bool parsePreferenceBool(const Common::String &key, const Common::String &text, bool &value) {

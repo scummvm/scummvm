@@ -351,11 +351,11 @@ bool GlkOptionsState::parseFloat(const Common::String &text, double minimum, dou
 }
 
 Common::String GlkOptionsState::getStoredStyleColor(bool grid, int style, bool foreground, bool inherited) const {
+	const GlkPreferences current = preferences(inherited);
 	Common::String color;
-	if (preferences(inherited).styleColor(grid, style, foreground, color) != kGlkInterpreterDefault)
+	if (current.styleColor(grid, style, foreground, color) != kGlkInterpreterDefault)
 		return color;
-	const WindowStyle *styles = grid ? _defaults._gStyles : _defaults._tStyles;
-	return _defaults.encodeColor(foreground ? styles[style].fg : styles[style].bg);
+	return _defaults.encodeColor(_defaults.getStyleColorDefault(current, grid, style, foreground));
 }
 
 Common::String GlkOptionsState::getStyleForeground(bool grid, int style) const {

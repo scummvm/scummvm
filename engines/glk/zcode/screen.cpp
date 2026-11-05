@@ -67,8 +67,9 @@ void FrotzScreen::loadVersion6Fonts(Common::Archive *archive) {
 	pi._morePrompt = "[MORE]";
 	pi._lineSeparation = 0;
 
-	g_vm->_defaultForeground = 0;
-	g_vm->_defaultBackground = (int)zcolor_Transparent;
+	// Capture the defaults before bitmap windows use transparent backgrounds.
+	g_vm->_defaultForeground = g_conf->_tStyles[style_Normal].fg;
+	g_vm->_defaultBackground = g_conf->_tStyles[style_Normal].bg;
 	g_conf->_tMarginX = 3;
 	g_conf->_tMarginY = 3;
 

@@ -25,7 +25,15 @@
 #include "glk/zcode/frotz_types.h"
 
 namespace Glk {
+
+class Conf;
+class GlkPreferences;
+
 namespace ZCode {
+
+void initializeAppearanceDefaults(Conf &conf, bool version6);
+void loadAppearanceDefaults(Conf &conf, const GlkPreferences &preferences, bool version6);
+uint getDefaultColor(const Conf &conf, const GlkPreferences &preferences, bool version6, bool foreground);
 
 /**
  * Configuration flags
@@ -159,7 +167,7 @@ struct UserOptions {
 	/**
 	 * Initializes the options
 	 */
-	void initialize(uint hVersion, uint storyId);
+	void initialize(uint hVersion);
 
 	/**
 	 * Returns true if the game being played is one of the original Infocom releases

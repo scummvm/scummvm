@@ -39,6 +39,7 @@ protected:
 	 * Setup the video mode
 	 */
 	void initGraphicsMode() override;
+	void createConfiguration() override;
 
 	/**
 	 * Create the screen class

@@ -22,6 +22,7 @@
 #include "glk/conf.h"
 #include "glk/utils.h"
 #include "glk/windows.h"
+#include "glk/zcode/config.h"
 #include "common/config-manager.h"
 
 namespace Glk {
@@ -62,8 +63,8 @@ WindowStyleStatic G_STYLES[style_NUMSTYLES] = {
 Conf *g_conf;
 
 Conf::Conf(InterpreterType interpType, bool installGlobal,
-		const Graphics::PixelFormat &format) : _interpType(interpType),
-		_installedGlobal(installGlobal), _preferences(nullptr), _graphics(true),
+		const Graphics::PixelFormat &format, bool zcodeVersion6) : _interpType(interpType),
+		_installedGlobal(installGlobal), _zcodeVersion6(zcodeVersion6), _preferences(nullptr), _graphics(true),
 #ifndef USE_HIGHRES
 		_width(320), _height(200),
 #else
@@ -110,10 +111,8 @@ Conf::Conf(InterpreterType interpType, bool installGlobal,
 	_propInfo._spaces = 0;
 	_propInfo._caps = 0;
 
-	const int DEFAULT_MARGIN_X = (_interpType == INTERPRETER_ZCODE) ? 0 : 15;
-	const int DEFAULT_MARGIN_Y = (_interpType == INTERPRETER_ZCODE) ? 0 : 15;
-	_wMarginX = _wMarginSaveX = DEFAULT_MARGIN_X;
-	_wMarginY = _wMarginSaveY = DEFAULT_MARGIN_Y;
+	_wMarginX = _wMarginSaveX = 15;
+	_wMarginY = _wMarginSaveY = 15;
 
 	// For simplicity's sake, only allow graphics when in non-paletted graphics modes
 	if (_screenFormat.bytesPerPixel == 1)
@@ -131,8 +130,16 @@ Conf::Conf(InterpreterType interpType, bool installGlobal,
 		_gStyles[i].reverse = G_STYLES[i].reverse;
 	}
 
+	if (_interpType == INTERPRETER_ZCODE) {
+		ZCode::initializeAppearanceDefaults(*this, _zcodeVersion6);
+	}
+
 	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
 	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
+}
+
+Conf Conf::defaults() const {
+	return Conf(_interpType, false, _screenFormat, _zcodeVersion6);
 }
 
 void Conf::synchronize() {
@@ -243,10 +250,19 @@ void Conf::load(const Common::String &domain) {
 
 void Conf::load(const GlkPreferences &preferences) {
 	_preferences = &preferences;
+	if (_interpType == INTERPRETER_ZCODE)
+		ZCode::loadAppearanceDefaults(*this, preferences, _zcodeVersion6);
 	synchronize();
 	_preferences = nullptr;
 	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
 	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
+}
+
+uint Conf::getStyleColorDefault(const GlkPreferences &preferences, bool grid, int style, bool foreground) const {
+	if (_interpType != INTERPRETER_ZCODE)
+		return foreground ? (grid ? _gStyles : _tStyles)[style].fg : (grid ? _gStyles : _tStyles)[style].bg;
+
+	return ZCode::getDefaultColor(*this, preferences, _zcodeVersion6, foreground);
 }
 
 uint Conf::parseColor(const Common::String &str) {
