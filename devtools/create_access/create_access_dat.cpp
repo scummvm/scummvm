@@ -132,7 +132,7 @@ void writeAmazonCommonData() {
 		outputFile->writeWord(Amazon::FONT6x6_INDEX[idx]);
 
 	outputFile->writeWord(Amazon::FONT6x6_DATA_SIZE);
-	outputFile->write(Amazon::FONT2_DATA, Amazon::FONT6x6_DATA_SIZE);
+	outputFile->write(Amazon::FONT6x6_DATA, Amazon::FONT6x6_DATA_SIZE);
 }
 
 
@@ -396,7 +396,7 @@ bool processExecutable(int exeIdx, const char *name) {
 		charOffsets.push_back(exeFile.readWord());
 
 	outputFile->writeWord(charOffsets.size());
-	charOffsets.push_back(charsEnd);
+	charOffsets.push_back(charsEnd - dataSegmentOffset);
 	for (uint idx = 0; idx < charOffsets.size() - 1; ++idx) {
 		if (charOffsets[idx] == 0) {
 			outputFile->writeWord(0);
@@ -421,7 +421,7 @@ bool processExecutable(int exeIdx, const char *name) {
 	exeFile.seek(roomsStart);
 	for (uint idx = 0; idx < numRooms; ++idx)
 		roomOffsets.push_back(exeFile.readWord());
-	roomOffsets.push_back(roomsEnd);
+	roomOffsets.push_back(roomsEnd - dataSegmentOffset);
 
 	exeFile.seek(travelPosOffset);
 	for (uint idx = 0; idx < numRooms; ++idx) {
