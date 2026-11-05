@@ -40,6 +40,8 @@
 namespace Ultima {
 namespace Ultima3 {
 
+constexpr int SAVEGAME_VERSION = 6;
+
 Ultima3Engine *g_engine;
 
 // The renderer stored in the configuration, falling back to the default one
@@ -157,7 +159,7 @@ bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
-	s.syncVersion(6);
+	s.syncVersion(SAVEGAME_VERSION);
 
 	_savegame.synchronize(s);
 	if (_savegame._mapLoaded) {

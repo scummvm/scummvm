@@ -40,6 +40,8 @@
 namespace Ultima {
 namespace Ultima2 {
 
+constexpr int SAVEGAME_VERSION = 1;
+
 Ultima2Engine *g_engine;
 
 Ultima2Engine::Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
@@ -158,7 +160,14 @@ bool Ultima2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error Ultima2Engine::syncGame(Common::Serializer &s) {
+	Common::Serializer::Version version = SAVEGAME_VERSION;
+	s.syncAsUint32LE(version);
+	s.setVersion(version);
+
 	_savegame.synchronize(s);
+
+	// The overworld maps that have been left need to be in place before the map is loaded
+	_G(map).synchronizeSaved(s);
 
 	if (s.isLoading()) {
 		if (_G(savegame)._inFlight)

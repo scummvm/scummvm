@@ -52,6 +52,7 @@ bool Yell::msgKeypress(const KeypressMessage &msg) {
 			sg._items[Data::ITEM_HELM] = MIN(sg._items[Data::ITEM_HELM] + 1, Data::MAX_BCD_BYTE);
 
 			// Show the ScummVM secret map
+			_G(map).saveOverworld();
 			sg._overworldReturnX = sg._mapX;
 			sg._overworldReturnY = sg._mapY;
 			sg._mapX = 31;

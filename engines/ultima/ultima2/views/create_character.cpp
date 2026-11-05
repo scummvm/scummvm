@@ -45,6 +45,7 @@ void CreateCharacter::reset() {
 	_name.clear();
 
 	_G(savegame) = Data::Savegame();
+	_G(map).clearSaved();
 	positionCursor();
 	redraw();
 }

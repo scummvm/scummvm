@@ -479,6 +479,7 @@ bool Logic::launch() {
 			sg._inSpace = true;
 		}
 
+		_G(map).saveOverworld();
 		SpaceLogic::takeOff();
 		return false;
 	} else {

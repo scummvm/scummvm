@@ -23,6 +23,7 @@
 #define ULTIMA2_DATA_MAP_H
 
 #include "common/array.h"
+#include "common/hash-str.h"
 #include "common/serializer.h"
 #include "common/str.h"
 #include "ultima/ultima2/data/tiles.h"
@@ -52,6 +53,17 @@ struct Map {
 	Common::Array<Common::String> _talk;
 
 private:
+	/**
+	 * An overworld map as it was when the party last left it. The original
+	 * writes these back to its map files, so that changes like a vehicle left
+	 * behind are still there when the party returns
+	 */
+	struct SavedMap {
+		byte _tiles[MAP_HEIGHT][MAP_WIDTH];
+		MapMonsters _monsters;
+	};
+	Common::HashMap<Common::String, SavedMap> _saved;
+
 	void loadTalk(int mapEra, int mapType);
 
 	/**
@@ -85,6 +97,24 @@ public:
 	 * map to have been loaded first
 	 */
 	void synchronize(Common::Serializer &s, bool isDungeon);
+
+	/**
+	 * Keeps the current overworld map as it is, to be loaded again in place
+	 * of the one in its file. Called before leaving it for somewhere else
+	 */
+	void saveOverworld();
+
+	/**
+	 * Forgets all the overworld maps that were kept
+	 */
+	void clearSaved() {
+		_saved.clear();
+	}
+
+	/**
+	 * Saves or restores the overworld maps that were kept
+	 */
+	void synchronizeSaved(Common::Serializer &s);
 
 	/**
 	 * Returns the given line of the map's NPC dialogue, or an empty string

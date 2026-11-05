@@ -96,28 +96,40 @@ void Map::load(int mapEra, int mapType) {
 		return;
 	}
 
-	Common::File f;
 	Common::String filename = mapFilename(mapEra, mapType);
-	if (!f.open(filename.c_str()))
-		error("Could not open %s", filename.c_str());
+	auto saved = (mapType == 0) ? _saved.find(filename) : _saved.end();
 
-	for (int y = 0; y < MAP_HEIGHT; ++y) {
-		for (int x = 0; x < MAP_WIDTH; ++x)
-			_tiles[y][x] = (TileId)(f.readByte() / 4);
-	}
+	if (saved != _saved.end()) {
+		for (int y = 0; y < MAP_HEIGHT; ++y) {
+			for (int x = 0; x < MAP_WIDTH; ++x)
+				_tiles[y][x] = (TileId)saved->_value._tiles[y][x];
+		}
 
-	_monsters.load(mapEra, mapType);
-	loadTalk(mapEra, mapType);
+		_monsters = saved->_value._monsters;
+		loadTalk(mapEra, mapType);
+	} else {
+		Common::File f;
+		if (!f.open(filename.c_str()))
+			error("Could not open %s", filename.c_str());
 
-	// The files store each monster's tile baked into the map; restore the
-	// terrain underneath, since monsters are tracked and drawn separately
-	for (int slot = 0; slot < MAP_MONSTER_COUNT; ++slot) {
-		if (!_monsters.isActive(slot))
-			continue;
+		for (int y = 0; y < MAP_HEIGHT; ++y) {
+			for (int x = 0; x < MAP_WIDTH; ++x)
+				_tiles[y][x] = (TileId)(f.readByte() / 4);
+		}
 
-		int x = _monsters._mapX[slot], y = _monsters._mapY[slot];
-		if (x < MAP_WIDTH && y < MAP_HEIGHT && _tiles[y][x] == _monsters.tileType(slot))
-			_tiles[y][x] = (TileId)(_monsters._glyphTile[slot] / 4);
+		_monsters.load(mapEra, mapType);
+		loadTalk(mapEra, mapType);
+
+		// The files store each monster's tile baked into the map; restore the
+		// terrain underneath, since monsters are tracked and drawn separately
+		for (int slot = 0; slot < MAP_MONSTER_COUNT; ++slot) {
+			if (!_monsters.isActive(slot))
+				continue;
+
+			int x = _monsters._mapX[slot], y = _monsters._mapY[slot];
+			if (x < MAP_WIDTH && y < MAP_HEIGHT && _tiles[y][x] == _monsters.tileType(slot))
+				_tiles[y][x] = (TileId)(_monsters._glyphTile[slot] / 4);
+		}
 	}
 
 	if (mapType == 0)
@@ -126,6 +138,42 @@ void Map::load(int mapEra, int mapType) {
 		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CityCastleLogic());
 
 	showMapView(mapType == 0 ? "OverworldMap" : "LocationMap");
+}
+
+void Map::saveOverworld() {
+	SavedMap &saved = _saved[mapFilename(_G(savegame)._mapEra, 0)];
+
+	for (int y = 0; y < MAP_HEIGHT; ++y) {
+		for (int x = 0; x < MAP_WIDTH; ++x)
+			saved._tiles[y][x] = _tiles[y][x];
+	}
+
+	saved._monsters = _monsters;
+}
+
+void Map::synchronizeSaved(Common::Serializer &s) {
+	uint32 count = _saved.size();
+	s.syncAsUint32LE(count);
+
+	if (s.isSaving()) {
+		for (auto &it : _saved) {
+			Common::String name = it._key;
+			s.syncString(name);
+			s.syncBytes(&it._value._tiles[0][0], MAP_WIDTH * MAP_HEIGHT);
+			it._value._monsters.synchronize(s);
+		}
+	} else {
+		_saved.clear();
+
+		for (uint32 i = 0; i < count; ++i) {
+			Common::String name;
+			s.syncString(name);
+
+			SavedMap &saved = _saved[name];
+			s.syncBytes(&saved._tiles[0][0], MAP_WIDTH * MAP_HEIGHT);
+			saved._monsters.synchronize(s);
+		}
+	}
 }
 
 void Map::synchronize(Common::Serializer &s, bool isDungeon) {

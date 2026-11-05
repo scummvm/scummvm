@@ -216,6 +216,7 @@ void OverworldLogic::enterMoongate(int x, int y) {
 	}
 
 	_G(map)._tiles[y][x] = (Data::TileId)sg._moongateTerrain;
+	_G(map).saveOverworld();
 	sg._mapEra = era;
 	_G(map).load(era, 0);
 
@@ -725,6 +726,7 @@ void OverworldLogic::enterLocalMap(int mapType) {
 	Data::Savegame &sg = _G(savegame);
 	sg._overworldReturnX = sg._mapX;
 	sg._overworldReturnY = sg._mapY;
+	_G(map).saveOverworld();
 	sg._mapX = 31;
 	sg._mapY = 62;
 	sg._mapType = mapType;
@@ -735,6 +737,7 @@ void OverworldLogic::enterDungeon(int mapType) {
 	Data::Savegame &sg = _G(savegame);
 	sg._overworldReturnX = sg._mapX;
 	sg._overworldReturnY = sg._mapY;
+	_G(map).saveOverworld();
 	sg._mapX = 5;
 	sg._mapY = 5;
 	sg._dungeonLevel = 0;

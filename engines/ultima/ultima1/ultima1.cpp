@@ -39,6 +39,8 @@
 namespace Ultima {
 namespace Ultima1 {
 
+constexpr int SAVEGAME_VERSION = 1;
+
 Ultima1Engine *g_engine;
 
 Ultima1Engine::Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
@@ -105,6 +107,8 @@ bool Ultima1Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
+	s.syncVersion(SAVEGAME_VERSION);
+
 	_savegame.synchronize(s);
 
 	if (s.isLoading()) {

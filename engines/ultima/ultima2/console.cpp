@@ -478,6 +478,7 @@ bool Console::cmdLoad(int argc, const char **argv) {
 		return true;
 	}
 
+	_G(map).clearSaved();
 	_G(map).load(sg._mapEra, sg._mapType);
 	_G(logic)->entering();
 	debugPrintf("Imported %s: %s, HP=%d food=%d gold=%d, at (%d,%d) era %d type %d\n",
