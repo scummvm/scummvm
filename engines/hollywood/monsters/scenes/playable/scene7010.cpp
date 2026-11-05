@@ -318,7 +318,7 @@ void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY
 			false, 0, 0, 0, 0, _activeActorDrawOrderMode);
 		presentFrame();
 
-		while (!_skipRequested && !stepAdvanced && !Engine::shouldQuit()) {
+		while (!_skipRequested && !Engine::shouldQuit()) {
 			if (pollEvents(true)) {
 				if (Engine::shouldQuit() || _vm->isSceneRestartRequested()) {
 					_actorPathPlaybackActive = false;

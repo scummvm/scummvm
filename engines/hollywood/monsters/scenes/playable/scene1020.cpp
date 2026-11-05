@@ -189,8 +189,8 @@ bool Scene1020::shouldLoadArenaChunk(uint index) const {
 	if (index <= 13)
 		return true;
 	if (isFirstEntryState())
-		return index >= 14 && index <= 19;
-	return index >= 20 && index <= 22;
+		return index <= 19;
+	return index >= 20;
 }
 
 void Scene1020::initializeCustomPreviewState() {

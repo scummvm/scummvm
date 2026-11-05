@@ -859,7 +859,7 @@ void RunawayScene5030::updateAction() {
 		}
 		if (_step >= 81)
 			finishAction();
-	} else if (_action != kNone && _action != kWalkingAction && _action != kPeekConversation) {
+	} else if (_action != kNone && _action != kWalkingAction) {
 		_step = elapsed / 60;
 		uint length = 0;
 		switch (_action) {
