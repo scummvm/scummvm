@@ -22,16 +22,13 @@
 #ifndef GUI_DUMP_ALL_DIALOGS_H
 #define GUI_DUMP_ALL_DIALOGS_H
 
-#include "common/str.h"
-#include "graphics/surface.h"
-#include "gui/dialog.h"
-
 namespace GUI {
 
-void saveGUISnapshot(Graphics::Surface surf, const Common::String &filename);
-void dumpDialogs(const Common::String &message, const Common::String &lang);
-void dumpAllDialogs(const Common::String &message = "test");
-void loopThroughTabs(GUI::Dialog &dialog, const Common::String &lang, Graphics::Surface surf, const Common::String name);
+/**
+ * Dump snapshots of all the dialogs, as configured by the --dump-* options
+ * (see DumpConfig in dialog-dumper.h).
+ */
+void dumpAllDialogs();
 
 } // End of namespace GUI
 

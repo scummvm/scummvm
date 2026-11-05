@@ -21,6 +21,8 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/file.h"
+#include "common/fs.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -33,6 +35,8 @@
 #include "gui/dialog.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/scrollcontainer.h"
+
+#include "image/png.h"
 
 namespace GUI {
 
@@ -1110,6 +1114,45 @@ Widget *OptionsContainerWidget::findWidget(int x, int y) {
 void OptionsContainerWidget::removeWidget(Widget *widget) {
 	_boss->removeWidget(widget);
 	Widget::removeWidget(widget);
+}
+
+void Widget::dumpWidget(Graphics::Surface &surf, const Common::String &baseName,
+		const Common::String &lang, int width, int height) {
+	// Widgets without their own state are captured as part of the dialog.
+}
+
+void Widget::dumpWidgetChain(Widget *first, Graphics::Surface &surf, const Common::String &baseName,
+		const Common::String &lang, int width, int height) {
+	for (Widget *w = first; w; w = w->next()) {
+		if (w->hasDumpableChildren())
+			w->dumpWidget(surf, baseName, lang, width, height);
+	}
+}
+
+static Common::String g_snapshotDir = "snapshots";
+
+void setSnapshotDirectory(const Common::String &dir) {
+	g_snapshotDir = dir.empty() ? Common::String("snapshots") : dir;
+}
+
+bool saveWidgetSnapshot(Graphics::Surface &surf, const Common::String &fileName) {
+	if (!surf.getPixels())
+		return false;
+
+	Common::FSNode dumpDir(Common::Path(g_snapshotDir, '/'));
+	if (!dumpDir.isDirectory() && !dumpDir.createDirectory())
+		return false;
+
+	Common::DumpFile outFile;
+	if (!outFile.open(Common::Path(Common::String::format("%s/%s", g_snapshotDir.c_str(), fileName.c_str()), '/')))
+		return false;
+
+	Image::writePNG(outFile, surf);
+	outFile.finalize();
+	outFile.close();
+
+	debug("Dumped dialog snapshot %s", fileName.c_str());
+	return true;
 }
 
 } // End of namespace GUI
