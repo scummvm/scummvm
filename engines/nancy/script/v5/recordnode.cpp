@@ -29,6 +29,7 @@
 #include "engines/nancy/script/transformer.h"
 #include "engines/nancy/script/types.h"
 
+#include "engines/nancy/script/v5/cliptransformer.h"
 #include "engines/nancy/script/v5/recordnode.h"
 
 namespace Nancy {
@@ -106,10 +107,45 @@ const Common::String &Record::getName() const {
 }
 
 // What the records draw with. The records of the other games are shown while
-// they are active.
+// they are active, and whole.
 
 bool Record::isShown() const {
 	return _nodeState ? isNodeVisible() : isActive();
+}
+
+Common::Rect Record::getScreenClip() const {
+	Common::Rect clip;
+	if (!_nodeState) {
+		return clip;
+	}
+
+	bool hasClip = false;
+	for (const GraphNode *node = _parentNode; node; node = node->getParent()) {
+		const ClipTransformerRecord *transformer = dynamic_cast<const ClipTransformerRecord *>(node->getOwner());
+		const ScriptRect *nodeClip = transformer ? transformer->getClip() : nullptr;
+		if (!nodeClip) {
+			continue;
+		}
+
+		// The rect is in the coordinates of the Transformer, which moves and
+		// resizes it onto the screen. A flip swaps its corners.
+		const ScriptRect moved = transformRect(*nodeClip, node->getTransform());
+		const Common::Rect area(MIN(moved.left, moved.right), MIN(moved.top, moved.bottom), MAX(moved.left, moved.right), MAX(moved.top, moved.bottom));
+
+		if (hasClip) {
+			clip.clip(area);
+		} else {
+			clip = area;
+			hasClip = true;
+		}
+
+		// Nothing is left to draw in, which an empty rect can't say
+		if (clip.isEmpty()) {
+			return Common::Rect(-1, -1, 0, 0);
+		}
+	}
+
+	return clip;
 }
 
 static bool readOptionalBool(lua_State *L, int tableIndex, const char *name, bool &value) {

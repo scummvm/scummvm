@@ -284,6 +284,10 @@ void GraphicsManager::drawObjects(Graphics::ManagedSurface &target, const Common
 		DrawnObject entry;
 		entry.object = object;
 		entry.position = getDrawnPosition(*object);
+		if (!object->getClipRect().isEmpty()) {
+			entry.position.clip(object->getClipRect());
+		}
+
 		entry.isOpaque = !object->_drawSurface.hasTransparentColor() && object->_drawSurface.format != _transparentPixelFormat;
 		if (!entry.position.isEmpty()) {
 			drawn.push_back(entry);

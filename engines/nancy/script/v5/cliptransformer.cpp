@@ -1,0 +1,70 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "engines/nancy/script/graphnode.h"
+#include "engines/nancy/script/luabind.h"
+
+#include "engines/nancy/script/v5/cliptransformer.h"
+
+namespace Nancy {
+namespace Script {
+
+void ClipTransformerRecord::readTable(int tableIndex) {
+	TransformerRecord::readTable(tableIndex);
+	lua_State *L = getLua();
+
+	if (pushField(L, tableIndex, "clip")) {
+		_clip = checkRect(L, -1);
+		_hasClip = true;
+		lua_pop(L, 1);
+	}
+}
+
+bool ClipTransformerRecord::getField(const Common::String &key) {
+	if (key == "clip") {
+		if (_hasClip) {
+			pushRect(getLua(), _clip);
+		} else {
+			lua_pushnil(getLua());
+		}
+
+		return true;
+	}
+
+	return TransformerRecord::getField(key);
+}
+
+bool ClipTransformerRecord::setField(const Common::String &key) {
+	if (key != "clip") {
+		return TransformerRecord::setField(key);
+	}
+
+	lua_State *L = getLua();
+	_hasClip = !lua_isnil(L, 3);
+	if (_hasClip) {
+		_clip = checkRect(L, 3);
+	}
+
+	return true;
+}
+
+} // End of namespace Script
+} // End of namespace Nancy

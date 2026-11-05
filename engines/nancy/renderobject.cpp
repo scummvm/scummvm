@@ -99,6 +99,13 @@ void RenderObject::setTransparent(bool isTransparent) {
 	}
 }
 
+void RenderObject::setClipRect(const Common::Rect &clip) {
+	if (clip != _clipRect) {
+		_clipRect = clip;
+		_needsRedraw = true;
+	}
+}
+
 void RenderObject::grabPalette(byte *colors, uint paletteStart, uint paletteSize) {
 	if (colors) {
 		_drawSurface.grabPalette(colors, paletteStart, paletteSize);

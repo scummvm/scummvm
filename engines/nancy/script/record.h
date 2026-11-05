@@ -173,6 +173,10 @@ public:
 	// on, while it is active before
 	bool isShown() const;
 
+	// Nancy26: the part of the screen the Transformers the record is under let it
+	// draw in; empty for all of it
+	Common::Rect getScreenClip() const;
+
 	// The blend stages of the record, which Nancy22 has in Transformers
 	BlendStages &getStages();
 	virtual void onStagesChanged();

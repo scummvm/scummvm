@@ -47,6 +47,10 @@
 #include "engines/nancy/script/types.h"
 #include "engines/nancy/script/xsheet.h"
 
+#ifdef ENABLE_NANCY_V5
+#include "engines/nancy/script/v5/cliptransformer.h"
+#endif
+
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/viewport.h"
@@ -115,6 +119,12 @@ Record *makeRecord(RecordKind kind, SceneContext &context) {
 	case kRecordXsheet:
 		return new XsheetRecord(context);
 	case kRecordTransformer:
+#ifdef ENABLE_NANCY_V5
+		if (g_nancy->getGameType() >= kGameTypeNancy26) {
+			return new ClipTransformerRecord(context);
+		}
+#endif
+
 		return new TransformerRecord(context);
 	case kRecordTimer:
 		return new TimerRecord(context);
@@ -1295,6 +1305,7 @@ void OverlayRecord::updateGraphics() {
 		applyRects();
 	}
 
+	_graphic.setClipRect(getScreenClip());
 	_graphic.setVisible(isShown() && _hasPicture);
 
 	if (_hasAttachment) {
@@ -1617,6 +1628,7 @@ void AnimOverlayRecord::registerGraphics() {
 }
 
 void AnimOverlayRecord::updateGraphics() {
+	_graphic.setClipRect(getScreenClip());
 	_graphic.setVisible(isShown() && _isVisible && _hasPicture);
 }
 
@@ -2382,6 +2394,7 @@ void MovieRecord::onZChanged() {
 }
 
 void MovieRecord::updateGraphics() {
+	_graphic.setClipRect(getScreenClip());
 	_graphic.setVisible(isShown() && _isVisible && !isSeeThrough());
 }
 

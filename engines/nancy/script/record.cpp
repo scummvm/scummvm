@@ -76,6 +76,10 @@ bool Record::isActive() const {
 bool Record::isShown() const {
 	return isActive();
 }
+
+Common::Rect Record::getScreenClip() const {
+	return Common::Rect();
+}
 #endif
 
 void Record::onStagesChanged() {
