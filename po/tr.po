@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-04 00:14+0000\n"
+"POT-Creation-Date: 2026-11-05 00:15+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -67,7 +67,7 @@ msgstr "Etkin motorlar:"
 #. I18N: Close dialog button
 #: gui/about.cpp:516 gui/about.cpp:648 gui/downloadpacksdialog.cpp:298
 #: gui/downloadpacksdialog.cpp:389 gui/integrity-dialog.cpp:354
-#: gui/gui-manager.cpp:168 gui/helpdialog.cpp:128 gui/imagealbum-dialog.cpp:133
+#: gui/gui-manager.cpp:169 gui/helpdialog.cpp:128 gui/imagealbum-dialog.cpp:133
 #: gui/textviewer.cpp:56 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:571
 #: engines/drascula/metaengine.cpp:245 engines/queen/metaengine.cpp:264
@@ -127,8 +127,8 @@ msgstr "Yukarı git"
 #: gui/saveload-dialog.cpp:839 gui/saveload-dialog.cpp:1243
 #: gui/shaderbrowser-dialog.cpp:80 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:612
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:881
-#: engines/engine.cpp:906 backends/dialogs/gtk/gtk-dialogs.cpp:65
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:889
+#: engines/engine.cpp:914 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:214
 #: backends/events/default/default-events.cpp:238
 #: backends/platform/android/options.cpp:293
@@ -277,8 +277,8 @@ msgstr ""
 "Buraya Gezginden JSON Kodunu Kopyalayın, ve ardından Sonraki Butonuna "
 "Tıklayın:"
 
-#: gui/cloudconnectionwizard.cpp:386 gui/gui-manager.cpp:256
-#: gui/gui-manager.cpp:271
+#: gui/cloudconnectionwizard.cpp:386 gui/gui-manager.cpp:257
+#: gui/gui-manager.cpp:272
 msgid "Paste"
 msgstr "Yapıştır"
 
@@ -396,7 +396,7 @@ msgstr "JSON kod içerikleri hatalı."
 #: gui/message.cpp:161 gui/message.cpp:232 gui/message.cpp:271
 #: gui/message.cpp:275 gui/options.cpp:2422 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 base/main.cpp:679 base/main.cpp:704
-#: engines/engine.cpp:927 backends/platform/wii/options.cpp:46
+#: engines/engine.cpp:935 backends/platform/wii/options.cpp:46
 #: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
@@ -1100,12 +1100,12 @@ msgstr ""
 "Bütün FluidSynth ayarlarını varsayilan degerlerine döndürmeyi gerçekten "
 "istiyor musun?"
 
-#: gui/gui-manager.cpp:159 gui/options.cpp:2361
+#: gui/gui-manager.cpp:160 gui/options.cpp:2361
 msgid "GUI"
 msgstr "GUI"
 
 #. I18N: Action in In Cold Blood
-#: gui/gui-manager.cpp:163 engines/harold/metaengine.cpp:57
+#: gui/gui-manager.cpp:164 engines/harold/metaengine.cpp:57
 #: engines/hpl1/metaengine.cpp:91 engines/icb/icb.cpp:95
 #: engines/icb/icb.cpp:173 engines/lab/metaengine.cpp:160
 #: engines/macs2/metaengine.cpp:46 engines/mohawk/myst.cpp:572
@@ -1116,7 +1116,7 @@ msgstr "GUI"
 msgid "Interact"
 msgstr "Etkileşim"
 
-#: gui/gui-manager.cpp:174 engines/metaengine.cpp:137
+#: gui/gui-manager.cpp:175 engines/metaengine.cpp:137
 #: engines/awe/metaengine.cpp:57 engines/bagel/metaengine.cpp:66
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:158 engines/fool/metaengine.cpp:159
@@ -1140,7 +1140,7 @@ msgstr "Etkileşim"
 msgid "Up"
 msgstr "Yukarı"
 
-#: gui/gui-manager.cpp:180 engines/metaengine.cpp:143
+#: gui/gui-manager.cpp:181 engines/metaengine.cpp:143
 #: engines/awe/metaengine.cpp:58 engines/bagel/metaengine.cpp:67
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:164 engines/fool/metaengine.cpp:165
@@ -1164,7 +1164,7 @@ msgstr "Yukarı"
 msgid "Down"
 msgstr "Aşağı"
 
-#: gui/gui-manager.cpp:186 engines/metaengine.cpp:149
+#: gui/gui-manager.cpp:187 engines/metaengine.cpp:149
 #: engines/awe/metaengine.cpp:59 engines/bagel/metaengine.cpp:68
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:170 engines/fool/metaengine.cpp:171
@@ -1187,7 +1187,7 @@ msgstr "Aşağı"
 msgid "Left"
 msgstr "Sol"
 
-#: gui/gui-manager.cpp:192 engines/metaengine.cpp:155
+#: gui/gui-manager.cpp:193 engines/metaengine.cpp:155
 #: engines/awe/metaengine.cpp:60 engines/bagel/metaengine.cpp:69
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:176 engines/fool/metaengine.cpp:177
@@ -1210,13 +1210,13 @@ msgstr "Sol"
 msgid "Right"
 msgstr "Sağ"
 
-#: gui/gui-manager.cpp:198
+#: gui/gui-manager.cpp:199
 #, fuzzy
 #| msgid "Backend"
 msgid "Backspace"
 msgstr "Altyapı"
 
-#: gui/gui-manager.cpp:204
+#: gui/gui-manager.cpp:205
 #, fuzzy
 #| msgid "Delete char"
 msgid "Delete Character"
@@ -1224,18 +1224,18 @@ msgstr "Karakteri sil"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
-#: gui/gui-manager.cpp:210 engines/sherlock/metaengine.cpp:1117
+#: gui/gui-manager.cpp:211 engines/sherlock/metaengine.cpp:1117
 #: engines/sherlock/metaengine.cpp:1222
 msgid "Go to end of line"
 msgstr ""
 
-#: gui/gui-manager.cpp:220
+#: gui/gui-manager.cpp:221
 #, fuzzy
 #| msgid "Select SoundFont"
 msgid "Select to end of line"
 msgstr "Soundfont Seç"
 
-#: gui/gui-manager.cpp:230
+#: gui/gui-manager.cpp:231
 #, fuzzy
 #| msgid "Select directory for plugins"
 msgid "Select to start of line"
@@ -1243,20 +1243,20 @@ msgstr "Eklentilerin klasörünü seç"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
-#: gui/gui-manager.cpp:240 engines/sherlock/metaengine.cpp:1110
+#: gui/gui-manager.cpp:241 engines/sherlock/metaengine.cpp:1110
 #: engines/sherlock/metaengine.cpp:1215
 msgid "Go to start of line"
 msgstr ""
 
-#: gui/gui-manager.cpp:251 gui/gui-manager.cpp:266
+#: gui/gui-manager.cpp:252 gui/gui-manager.cpp:267
 msgid "Cut"
 msgstr ""
 
-#: gui/gui-manager.cpp:261 gui/gui-manager.cpp:276
+#: gui/gui-manager.cpp:262 gui/gui-manager.cpp:277
 msgid "Copy"
 msgstr ""
 
-#: gui/gui-manager.cpp:282 engines/drascula/metaengine.cpp:310
+#: gui/gui-manager.cpp:283 engines/drascula/metaengine.cpp:310
 #: engines/pegasus/pegasus.cpp:2819 engines/wintermute/keymapper_tables.h:342
 #: engines/wintermute/keymapper_tables.h:383
 #: engines/wintermute/keymapper_tables.h:418
@@ -1621,7 +1621,7 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM belirlenen klasörde bir oyun bulamadı!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:742 engines/engine.cpp:1325
+#: gui/launcher.cpp:742 engines/engine.cpp:1333
 #, fuzzy
 msgid "Unknown variant"
 msgstr "Bilinmeyen varyant"
@@ -3821,35 +3821,35 @@ msgstr "Otokayıt"
 msgid "Error occurred making autosave"
 msgstr "Otokayıt yaparken hata oluştu"
 
-#: engines/engine.cpp:853
+#: engines/engine.cpp:861
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
 
-#: engines/engine.cpp:877
+#: engines/engine.cpp:885
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:877
+#: engines/engine.cpp:885
 #, fuzzy
 msgid " Shall we still run the game?"
 msgstr "Oyunun tam ismi"
 
-#: engines/engine.cpp:878
+#: engines/engine.cpp:886
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:881 engines/engine.cpp:906
+#: engines/engine.cpp:889 engines/engine.cpp:914
 #: engines/wintermute/wintermute.cpp:174
 msgid "Start anyway"
 msgstr ""
 
-#: engines/engine.cpp:900
+#: engines/engine.cpp:908
 #, c-format
 msgid ""
 "WARNING: the game you are about to start contains the add-on \"%s\" which is "
@@ -3857,14 +3857,14 @@ msgid ""
 "and any saved game you make might not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:926
+#: engines/engine.cpp:934
 msgid ""
 "WARNING: The game you are about to start is newly supported and is in "
 "testing mode.\n"
 "If you encounter any bugs or oddities, please report them to our bugtracker."
 msgstr ""
 
-#: engines/engine.cpp:942
+#: engines/engine.cpp:950
 #, c-format
 msgid ""
 "The game \"%s\" you are trying to add is an add-on for \"%s\" that cannot be "
@@ -3872,34 +3872,34 @@ msgid ""
 "the base game, and start the base game itself."
 msgstr ""
 
-#: engines/engine.cpp:959
+#: engines/engine.cpp:967
 #, fuzzy
 msgid "This game is not supported."
 msgstr "Bu oyun, başlatıcısan kaydedilmiş oyun yüklemeyi desteklemiyor."
 
-#: engines/engine.cpp:959
+#: engines/engine.cpp:967
 #, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr "Bu oyun, başlatıcısan kaydedilmiş oyun yüklemeyi desteklemiyor."
 
-#: engines/engine.cpp:1105
+#: engines/engine.cpp:1113
 msgid "Loading game is currently unavailable"
 msgstr ""
 
-#: engines/engine.cpp:1134
+#: engines/engine.cpp:1142
 msgid "Saving game is currently unavailable"
 msgstr ""
 
-#: engines/engine.cpp:1303
+#: engines/engine.cpp:1311
 #, c-format
 msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
 
-#: engines/engine.cpp:1331
+#: engines/engine.cpp:1339
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
 msgstr ""
