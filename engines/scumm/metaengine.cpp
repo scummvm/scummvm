@@ -1188,10 +1188,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		gameId != "soccer" && gameId != "SoccerMLS" && gameId != "Soccer2004") {
 		Keymap *hotspotMap = new Keymap(Keymap::kKeymapTypeGame, "scumm-hotspots", _("Hotspots"));
 		hotspotMap->setPartialMatchAllowed(false);
-		act = new Action(kStandardActionToggleHotspots, _("Show/hide hotspots"));
-		act->setEvent(Common::EVENT_HOTSPOTS_SHOW);
-		act->addDefaultInputMapping("h");
-		hotspotMap->addAction(act);
+		hotspotMap->addAction(createHotspotAction());
 		keymaps.push_back(hotspotMap);
 	}
 
