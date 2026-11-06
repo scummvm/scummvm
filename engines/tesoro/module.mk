@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	tesoro.o \
 	console.o \
 	metaengine.o \
+	core/animimage.o \
 	core/archive.o \
 	core/archiveindex.o \
 	core/namekey.o
