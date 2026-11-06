@@ -1336,7 +1336,7 @@ void Scene::setLogicCondition(int16 label, byte flag) {
 			label -= 2000;
 		}
 
-		if (label > kEvNoEvent && (uint)label < 30) {
+		if ((uint)label < 30) {
 			_flags.logicConditions[label].flag = flag;
 			_flags.logicConditions[label].timestamp = g_nancy->getTotalPlayTime();
 		}
