@@ -220,14 +220,14 @@ void WhackItPuzzle::updateBee(Bee &bee, uint32 numTicks) {
 	switch (bee.state) {
 	case kDown:
 		// A bee that is down doesn't move its wings
-		if (_isActive && now > bee.stateEndTime) {
+		if (_isPlaying && now > bee.stateEndTime) {
 			bee.state = kReviving;
 			bee.stateEndTime = getRandomTime(_revivingTime[0], _revivingTime[1]);
 		}
 
 		return;
 	case kReviving:
-		if (!_isActive) {
+		if (!_isPlaying) {
 			return;
 		}
 
@@ -316,7 +316,7 @@ void WhackItPuzzle::redraw() {
 		_drawSurface.blitFrom(_image, puff.animation.getSrc(), puff.animation.getDest(puff.pos).origin());
 	}
 
-	if (_isActive && _isMouseInside) {
+	if (_isPlaying && _isMouseInside) {
 		_drawSurface.blitFrom(_image, _canSrc, _mousePos + _canOffset);
 	}
 
@@ -378,7 +378,7 @@ void WhackItPuzzle::execute() {
 			bool isAllDown = numFlying + numAngry == 0;
 			NancySceneState.setEventFlag(_allDownFlag.label, isAllDown ? g_nancy->_true : g_nancy->_false);
 			if (isAllDown && _stopsWhenAllDown) {
-				_isActive = false;
+				_isPlaying = false;
 			}
 
 			// A puff knocks down every flying bee it touches while it lasts
@@ -461,7 +461,7 @@ void WhackItPuzzle::handleInput(NancyInput &input) {
 	_mousePos = mouseRect.origin();
 	_isMouseInside = true;
 
-	if (!_isActive) {
+	if (!_isPlaying) {
 		return;
 	}
 

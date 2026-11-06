@@ -145,7 +145,7 @@ protected:
 	// -- Runtime --
 	Common::Array<Bee> _bees;
 	Common::Array<Puff> _puffs;
-	bool _isActive = true;
+	bool _isPlaying = true;
 	int32 _numStings = 0;
 	uint32 _lastStingTime = 0;
 	bool _hasStung = false;
