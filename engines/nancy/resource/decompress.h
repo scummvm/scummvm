@@ -51,7 +51,7 @@ private:
 	bool readByte(byte &b);
 	bool writeByte(byte b);
 
-	byte _buf[kBufSize];
+	byte _buf[kBufSize] = {};
 	uint _bufpos;
 	bool _err;
 	byte _val;
