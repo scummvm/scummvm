@@ -20,23 +20,25 @@
  */
 
 #include "tesoro/tesoro.h"
-#include "graphics/framelimiter.h"
-#include "tesoro/detection.h"
-#include "tesoro/console.h"
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
+#include "tesoro/console.h"
+#include "tesoro/detection.h"
+
+#include "graphics/managed_surface.h"
 
 namespace Tesoro {
 
 TesoroEngine *g_engine;
 
 TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Tesoro") {
+																			   _gameDescription(gameDesc), _clock(syst->getMillis()), _randomSource("Tesoro") {
 	g_engine = this;
 }
 
@@ -50,6 +52,41 @@ uint32 TesoroEngine::getFeatures() const {
 
 Common::String TesoroEngine::getGameId() const {
 	return _gameDescription->gameId;
+}
+
+// Throwaway: draws one image unscaled with its top left corner at (x, y).
+static void drawImage(Graphics::ManagedSurface &dst, int x, int y, const AnimImage &image) {
+	const byte *blob = image.data();
+	if (!blob)
+		return;
+	const uint height = READ_LE_UINT16(blob + 10);
+	const uint type = READ_LE_UINT16(blob + 12);
+	if (type == 2) // shadow: intensities, not colours
+		return;
+
+	for (uint row = 0; row < height; ++row) {
+		const int py = y + (int)row;
+		if (py < 0 || py >= dst.h)
+			continue;
+		const byte *entry = blob + 0x10 + 8 * row;
+		const byte *item = blob + READ_LE_UINT32(entry);
+		uint items = READ_LE_UINT16(entry + 4);
+		int px = x;
+		while (items--) {
+			px += READ_LE_UINT16(item + 4); // empty pixels before the run
+			const uint length = READ_LE_UINT16(item + 6);
+			const uint32 first = READ_LE_UINT32(item);
+			for (uint k = 0; k < length; ++k) {
+				const int cx = px + (int)k;
+				if (cx < 0 || cx >= dst.w)
+					continue;
+				const uint16 colour = type == 1 ? READ_LE_UINT16(blob + first + 2 * k) : (uint16)first;
+				*(uint16 *)dst.getBasePtr(cx, py) = colour;
+			}
+			px += length;
+			item += 8;
+		}
+	}
 }
 
 Common::Error TesoroEngine::run() {
@@ -71,11 +108,6 @@ Common::Error TesoroEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	// Draw a series of boxes on screen as a sample
-	for (int i = 0; i < 100; ++i)
-		_screen->frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
-	_screen->update();
-
 	// Simple event handling loop
 	Common::Event e;
 
@@ -84,8 +116,18 @@ Common::Error TesoroEngine::run() {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
 
-		// Delay for a bit. All events loops should have a delay
-		// to prevent the system being unduly loaded
+		if (_animPlayer.bank()) {
+			_animPlayer.advance(gameTime());
+			const AnimBank &bank = *_animPlayer.bank();
+			// get the current step
+			const AnimStep &seq = bank.step(_animPlayer.current());
+
+			_screen->fillRect(Common::Rect(0, 0, 640, 480), 0x4208); // clear to grey
+			if (seq.hasImage())
+				drawImage(*_screen, 300 + seq.imageX, 300 - seq.imageY, bank.image(seq.imageIndex));
+			_screen->markAllDirty(); // writes through getBasePtr don't mark the screen dirty
+		}
+
 		limiter.delayBeforeSwap();
 		_screen->update();
 		limiter.startFrame();
@@ -103,6 +145,47 @@ Common::Error TesoroEngine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
+}
+
+bool TesoroEngine::showImage(const char *name, int index) {
+
+	const uint32 offset = g_engine->_archive.findEntry(name);
+	if (!offset) {
+		debug("No entry called %s\n", name);
+		return false;
+	}
+	AnimBank bank;
+	if (!bank.load(*g_engine->_archive.seekEntry(offset), offset, AnimBank::kLoadNow, false)) {
+		debug("Could not load %s\n", name);
+		return false;
+	}
+	if (index >= bank.imageCount()) {
+		debug("%s has %u images\n", name, bank.imageCount());
+		return false;
+	}
+
+	_screen->fillRect(Common::Rect(0, 0, g_engine->_screen->w, g_engine->_screen->h), 0x4208); // dark grey, so the shape shows
+	drawImage(*g_engine->_screen, 20, 20, bank.image(index));
+	_screen->markAllDirty();
+	_screen->update();
+	return true;
+}
+
+bool TesoroEngine::playAnim(const char *name) {
+	Common::String upper(name);
+	upper.toUppercase(); // archive names are upper case
+	const uint32 offset = _archive.findEntry(upper.c_str());
+	if (!offset) {
+		debug("No entry called %s", upper.c_str());
+		return false;
+	}
+	if (!_animPlayer.load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow, false)) {
+		debug("Could not load %s", upper.c_str());
+		return false;
+	}
+	// All steps up to the first one without an image, looping, with the cycle length totalled.
+	_animPlayer.setRange(0, -1, true, true, gameTime());
+	return true;
 }
 
 } // End of namespace Tesoro

@@ -27,11 +27,11 @@
 namespace Tesoro {
 
 static const uint32 kFileHeaderSize = 0x18;
-static const uint32 kFileSequenceSize = 0x18;
+static const uint32 kFileStepSize = 0x18;
 
 enum {
-	kSequenceDwords = 2, // sequence contains raw 32-bit dwords
-	kSequencePoints = 4  // sequence contains points (x | y << 16) and a scale
+	kStepDwords = 2, // step contains raw 32-bit dwords
+	kStepPoints = 4  // step contains points (x | y << 16) and a scale
 };
 
 /**
@@ -51,7 +51,7 @@ bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mod
 	byte head[kFileHeaderSize];
 	if (!readExactly(dat, head, sizeof(head)))
 		return false;
-	const uint32 sequenceCount = READ_LE_UINT16(head);
+	const uint32 stepCount = READ_LE_UINT16(head);
 	const uint32 imageCount = READ_LE_UINT16(head + 4);
 
 	_mode = mode;
@@ -59,15 +59,15 @@ bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mod
 	for (uint i = 0; i < 3; ++i)
 		_header[i] = READ_LE_UINT32(head + 8 + 4 * i);
 
-	_sequences.resize(sequenceCount);
-	for (uint32 i = 0; i < sequenceCount; ++i) {
-		byte rec[kFileSequenceSize];
+	_steps.resize(stepCount);
+	for (uint32 i = 0; i < stepCount; ++i) {
+		byte rec[kFileStepSize];
 		if (!readExactly(dat, rec, sizeof(rec))) {
 			*this = AnimBank();
 			return false;
 		}
 
-		AnimSequence &seq = _sequences[i];
+		AnimStep &seq = _steps[i];
 		seq.imageX = (int16)READ_LE_UINT16(rec);
 		seq.imageY = (int16)READ_LE_UINT16(rec + 2);
 		seq.x = (int16)READ_LE_UINT16(rec + 4);
@@ -88,13 +88,13 @@ bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mod
 			return false;
 		}
 
-		if (seq.type == kSequenceDwords || seq.type == kSequencePoints) {
-			const bool points = seq.type == kSequencePoints;
+		if (seq.type == kStepDwords || seq.type == kStepPoints) {
+			const bool points = seq.type == kStepPoints;
 			const uint32 count = extraSize >= 2 ? READ_LE_UINT16(&extra[0]) : 0;
 			const uint32 skip = points ? 8 : 6;
 			const uint32 stride = points ? 6 : 4;
 			if (count && skip + count * stride > extraSize)
-				warning("AnimBank: sequence %u claims more points than its data holds", i);
+				warning("AnimBank: step %u claims more points than its data holds", i);
 
 			// Points the data does not hold read as zero.
 			extra.resize(MAX<uint32>(extraSize, skip + count * stride), 0);
@@ -110,8 +110,8 @@ bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mod
 			while (d + 1 < count && (int16)(seq.entries[d + 1] & 0xffff) >= (int16)(seq.entries[d] & 0xffff))
 				++d;
 			seq.firstDescent = d;
-		} else if (seq.type > kSequencePoints || seq.type == 3) {
-			warning("AnimBank: sequence %u has unsupported type %u", i, seq.type);
+		} else if (seq.type > kStepPoints || seq.type == 3) {
+			warning("AnimBank: step %u has unsupported type %u", i, seq.type);
 		}
 	}
 
@@ -132,17 +132,136 @@ bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mod
 		}
 	}
 
-	// Positions are relative to the first sequence.
-	if (!_sequences.empty()) {
-		const int16 x0 = _sequences[0].x, y0 = _sequences[0].y;
-		for (uint32 i = 1; i < sequenceCount; ++i) {
-			_sequences[i].x = (int16)(uint16)(_sequences[i].x - x0);
-			_sequences[i].y = (int16)(uint16)(_sequences[i].y - y0);
+	// Positions are relative to the first step.
+	if (!_steps.empty()) {
+		const int16 x0 = _steps[0].x, y0 = _steps[0].y;
+		for (uint32 i = 1; i < stepCount; ++i) {
+			_steps[i].x = (int16)(uint16)(_steps[i].x - x0);
+			_steps[i].y = (int16)(uint16)(_steps[i].y - y0);
 		}
-		_sequences[0].x = 0;
-		_sequences[0].y = 0;
+		_steps[0].x = 0;
+		_steps[0].y = 0;
 	}
 	return true;
+}
+
+bool AnimPlayer::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, bool is555) {
+	Common::SharedPtr<AnimBank> bank(new AnimBank());
+	if (!bank->load(dat, entryOffset, mode, is555))
+		return false;
+
+	_bank = bank;
+	_flags = bank->hasHeaderFlag() ? kHeaderFlag : 0;
+	return true;
+}
+
+void AnimPlayer::setRange(uint16 first, int last, bool loop, bool sumDurations, int32 now) {
+	const uint32 count = _bank ? _bank->stepCount() : 0;
+
+	_flags = (_flags & ~6u) | (loop ? kLoop : 0) | kPlaying;
+	_first = first;
+
+	if (count == 0) {
+		_last = _first = _current = 0;
+		_totalDuration = 0;
+		_flags = 0;
+	} else {
+		if (last == -1) {
+			_last = first;
+			while ((uint32)_last + 1 < count) {
+				if (_bank->step(_last + 1).hasImage()) {
+					++_last;
+				} else {
+					// A looping range includes the step that has no image.
+					if (loop)
+						++_last;
+					break;
+				}
+			}
+		} else {
+			_last = (uint16)last;
+		}
+
+		_current = first;
+		_totalDuration = 0;
+		if (sumDurations && first <= _last) {
+			for (uint32 i = first; i <= _last; ++i) {
+				if (i >= count) {
+					warning("AnimPlayer: range %u..%u leaves the bank's %u steps", first, _last, count);
+					break;
+				}
+				_totalDuration += _bank->step(i).duration;
+			}
+		}
+
+		// A range of one step is not played.
+		if (first == _last)
+			_flags &= ~kPlaying;
+	}
+
+	_loopX = 0;
+	_loopY = 0;
+	_startTime = now;
+}
+
+void AnimPlayer::advance(int32 now) {
+	if (!_bank || _bank->stepCount() == 0)
+		return;
+
+	const AnimBank &bank = *_bank;
+	const uint32 count = bank.stepCount();
+	if (_current >= count || _first >= count || _last >= count) {
+		warning("AnimPlayer: range %u..%u, current %u leave the bank's %u steps", _first, _last, _current, count);
+		return;
+	}
+
+	if ((_flags & kPlaying) && !(_flags & kPaused)) {
+		// Cycle lengths already passed are skipped.
+		if (_totalDuration) {
+			const uint32 elapsed = (uint32)now - (uint32)_startTime;
+			now = (int32)((uint32)now - (elapsed / _totalDuration) * _totalDuration);
+		}
+
+		uint32 duration = bank.step(_current).duration;
+		while ((int32)((uint32)now - (uint32)_startTime) > (int32)duration) {
+			if ((_flags & kLoop) && (uint32)_current + 1 == _last) {
+				// Back to the first step, keeping the movement the loop made.
+				_startTime = (int32)((uint32)_startTime + duration);
+				_current = _first;
+				_loopX = (int16)(uint16)(_loopX + bank.step(_last).x - bank.step(_first).x);
+				_loopY = (int16)(uint16)(_loopY + bank.step(_last).y - bank.step(_first).y);
+			} else {
+				if (_current == _last) {
+					_flags &= ~kPlaying;
+					break;
+				}
+				_startTime = (int32)((uint32)_startTime + duration);
+				++_current;
+			}
+			duration = bank.step(_current).duration;
+		}
+	}
+
+	const AnimStep &seq = bank.step(_current);
+	if (_current != _last && (_flags & kPlaying)) {
+		if (!(_flags & kHeaderFlag)) {
+			_movementX = (int16)(uint16)(_loopX + seq.x);
+			_movementY = (int16)(uint16)(_loopY + seq.y);
+		} else if (seq.duration == 0) {
+			warning("AnimPlayer: cannot interpolate a step of no duration");
+		} else {
+			// Moves from this step's movement towards the next one's.
+			const AnimStep &next = bank.step(_current + 1);
+			const int32 t = (int32)((uint32)now - (uint32)_startTime);
+			const int32 qx = (int32)((uint32)(next.x - seq.x) * (uint32)t) / (int32)seq.duration;
+			const int32 qy = (int32)((uint32)(next.y - seq.y) * (uint32)t) / (int32)seq.duration;
+			_movementX = (int16)(uint16)(qx + _loopX + seq.x);
+			_movementY = (int16)(uint16)(qy + _loopY + seq.y);
+		}
+	} else {
+		_movementX = seq.x;
+		_movementY = seq.y;
+	}
 }
 
 } // End of namespace Tesoro

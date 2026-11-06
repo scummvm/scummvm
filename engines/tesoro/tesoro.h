@@ -29,13 +29,14 @@
 #include "common/hash-str.h"
 #include "common/random.h"
 #include "common/serializer.h"
-#include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 
 #include "tesoro/detection.h"
 #include "tesoro/core/archive.h"
+#include "tesoro/core/animbank.h"
+#include "tesoro/core/clock.h"
 
 namespace Tesoro {
 
@@ -44,18 +45,22 @@ struct TesoroGameDescription;
 class TesoroEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
+	GameClock _clock;
 	Common::RandomSource _randomSource;
-
+	Archive _archive;
+	AnimPlayer _animPlayer;
 
 protected:
 	// Engine APIs
 	Common::Error run() override;
 public:
 	Graphics::Screen *_screen = nullptr;
-	Archive _archive;
 public:
 	TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~TesoroEngine() override;
+
+	int32 gameTime() { return _clock.update(_system->getMillis()); }
+
 
 	uint32 getFeatures() const;
 
@@ -99,6 +104,10 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	// temp functions
+	bool showImage(const char *name, int index);
+	bool playAnim(const char *name);
 };
 
 extern TesoroEngine *g_engine;

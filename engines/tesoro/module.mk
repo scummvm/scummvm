@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	core/animbank.o \
 	core/archive.o \
 	core/archiveindex.o \
+	core/clock.o \
 	core/namekey.o
 
 # This module can be built as a plugin

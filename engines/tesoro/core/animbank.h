@@ -30,10 +30,10 @@
 namespace Tesoro {
 
 /** One step of an animation: how long it lasts, which image it shows and optional point data. */
-struct AnimSequence {
+struct AnimStep {
 	int16 imageX;			// where the image is drawn, relative to the object
 	int16 imageY;
-	int16 x;				// movement of the object at this step, relative to the first sequence
+	int16 x;				// movement of the object at this step, relative to the first step
 	int16 y;
 	uint16 duration;
 	uint16 type;			// 2: dword entries, 4: point entries, otherwise none
@@ -49,7 +49,7 @@ struct AnimSequence {
 	bool hasImage() const { return imageIndex >= 0; }
 };
 
-/** The data of an animation file: sequences and their images. Shared by every player made from it. */
+/** The data of an animation file: steps and their images. Shared by every player made from it. */
 class AnimBank {
 public:
 	/** Image loading modes. */
@@ -58,16 +58,10 @@ public:
 	/** Reads the animation stored at an archive entry offset. In deferred mode the images are skipped. */
 	bool load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, bool is555);
 
-	// /** Loads the images skipped by a deferred load. */
-	// bool loadDeferredImages(Common::SeekableReadStream &dat, bool is555);
-
-	// /** Multiplies the brightness of all literal images by factor / 256, in place. */
-	// void scaleBrightness(uint16 factor, bool is555);
-
 	bool hasHeaderFlag() const { return _headerFlag; }
 	uint32 headerDword(uint i) const { return _header[i]; }
-	uint32 sequenceCount() const { return _sequences.size(); }
-	const AnimSequence &sequence(uint i) const { return _sequences[i]; }
+	uint32 stepCount() const { return _steps.size(); }
+	const AnimStep &step(uint i) const { return _steps[i]; }
 	uint32 imageCount() const { return _images.size(); }
 	const AnimImage &image(uint i) const { return _images[i]; }
 	AnimImage &mutableImage(uint i) { return _images[i]; }
@@ -78,9 +72,65 @@ private:
 	int _mode = kLoadNow;
 	bool _headerFlag = false;
 	uint32 _header[3] = {};
-	Common::Array<AnimSequence> _sequences;
+	Common::Array<AnimStep> _steps;
 	Common::Array<AnimImage> _images;
 	Common::Array<uint32> _imagePositions;	// stream position of each image
+};
+
+
+/**
+ * Wrapper over a bank with playback state. Multiple players can share the same bank.
+ * Copies share the bank and keep their own play state.
+ * */
+class AnimPlayer {
+public:
+	enum Flags {
+		kPlaying = 1,
+		kPaused = 2,
+		kLoop = 4,
+		kHeaderFlag = 8
+	};
+
+	bool load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, bool is555);
+
+	/**
+	 * Plays the steps first..last. A last of -1 extends the range up to the next step without image.
+	 * sumDurations totals their durations. now is the game clock.
+	 */
+	void setRange(uint16 first, int last, bool loop, bool sumDurations, int32 now);
+
+	/** Moves the play head to the step the game time has reached and updates the movement. */
+	void advance(int32 now);
+
+	void setFlags(uint32 flags) { _flags = flags; }
+
+	/** Puts the play head on a step without touching anything else. */
+	void setCurrent(uint16 step) { _current = step; }
+
+	/** Forgets the movement computed by advance(). */
+	void clearMovement() { _movementX = _movementY = 0; }
+	void setMovement(int16 x, int16 y) { _movementX = x; _movementY = y; }
+
+	AnimBank *bank() const { return _bank.get(); }
+	uint32 flags() const { return _flags; }
+	uint16 first() const { return _first; }
+	uint16 last() const { return _last; }
+	uint16 current() const { return _current; }
+	int16 movementX() const { return _movementX; }
+	int16 movementY() const { return _movementY; }
+
+private:
+	Common::SharedPtr<AnimBank> _bank;
+	int32 _startTime = 0;
+	uint32 _totalDuration = 0;
+	uint32 _flags = 0;
+	uint16 _first = 0;
+	uint16 _last = 0;
+	uint16 _current = 0;		// step being played
+	int16 _loopX = 0;			// movement gathered by completed loops
+	int16 _loopY = 0;
+	int16 _movementX = 0;		// where the current step puts the object
+	int16 _movementY = 0;
 };
 
 } // End of namespace Tesoro
