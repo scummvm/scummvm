@@ -70,6 +70,7 @@ private:
 	bool Cmd_setEventFlags(int argc, const char **argv);
 	bool Cmd_getInventory(int argc, const char **argv);
 	bool Cmd_setInventory(int argc, const char **argv);
+	bool Cmd_holdItem(int argc, const char **argv);
 	bool Cmd_getMoney(int argc, const char **argv);
 	bool Cmd_setMoney(int argc, const char **argv);
 	bool Cmd_getPlayerTime(int argc, const char **argv);
