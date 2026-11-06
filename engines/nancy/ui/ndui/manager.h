@@ -130,6 +130,10 @@ public:
 	// Nancy17: the control under the mouse that has a tooltip, and the panel's control that shows it
 	void setHoveredTooltip(const Control *control, Tooltip *tooltip);
 
+	// Nancy18 movies can keep the mouse away from the panels for as long as they play
+	void lockMouseInput() { ++_mouseInputLocks; }
+	void unlockMouseInput() { if (_mouseInputLocks > 0) --_mouseInputLocks; }
+
 	const Graphics::ManagedSurface *getTexture(const Common::String &name);
 
 	// Creates a control from a template, as the last one of a panel
@@ -224,6 +228,7 @@ private:
 	// Nancy17 tooltips are drawn on top of every panel
 	RenderObject _tooltipWindow{kTooltipZ};
 	const Control *_hoveredControl = nullptr;
+	uint _mouseInputLocks = 0;
 	uint16 _heldArrowKeys = 0;	// the input of the last frame, to tell when an arrow key goes down
 	Tooltip *_hoveredTooltip = nullptr;
 	const Control *_tooltipControl = nullptr;

@@ -30,6 +30,7 @@
 
 #include "engines/nancy/action/secondarymovie.h"
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/ui/ndui/manager.h"
 
 #include "common/random.h"
 #include "common/serializer.h"
@@ -55,6 +56,10 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
 
 	if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
 		g_nancy->setMouseEnabled(true);
+	}
+
+	if (_hasLockedUIMouse && NancySceneState.getNDUI()) {
+		NancySceneState.getNDUI()->unlockMouseInput();
 	}
 }
 
@@ -371,7 +376,14 @@ void PlaySecondaryMovie::applyStartingRandomSequence() {
 			_lastFrame = src.lastFrame;
 			_videoFormat = kLargeVideoFormat;
 			_videoSceneChange = kMovieNoSceneChange;
-			_playerCursorAllowed = (byte)_randomPlayerCursorAllowed;
+			// In Nancy18 a random movie doesn't take the cursor away from the scene,
+			// only from the panels of the UI
+			if (g_nancy->getGameType() >= kGameTypeNancy18) {
+				_playerCursorAllowed = kPlayerCursorAllowed;
+				_locksUIMouse = _randomPlayerCursorAllowed == kNoPlayerCursorAllowed;
+			} else {
+				_playerCursorAllowed = (byte)_randomPlayerCursorAllowed;
+			}
 			_playDirection = kPlayMovieForward;
 		}
 	}
@@ -1275,6 +1287,11 @@ void PlaySecondaryMovie::execute() {
 
 		if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
 			g_nancy->setMouseEnabled(false);
+		}
+
+		if (_locksUIMouse && !_hasLockedUIMouse && NancySceneState.getNDUI()) {
+			NancySceneState.getNDUI()->lockMouseInput();
+			_hasLockedUIMouse = true;
 		}
 
 		NancySceneState.setActiveMovie(this);

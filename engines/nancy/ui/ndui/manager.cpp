@@ -336,6 +336,10 @@ void Manager::handleInput(NancyInput &input) {
 
 	_hoveredControl = nullptr;
 
+	if (_mouseInputLocks > 0) {
+		return;
+	}
+
 	// The panels drawn on top get the mouse first
 	bool isOverUI = false;
 	bool isOverControl = false;

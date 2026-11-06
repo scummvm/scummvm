@@ -250,6 +250,8 @@ public:
 	bool _randomStopRequested = false;
 	bool _randomPaused = false;
 	bool _isHiddenByDependencies = false;	// Nancy18: taken off screen until the dependencies hold again
+	bool _locksUIMouse = false;			// Nancy18: the panels get no mouse input while the movie plays
+	bool _hasLockedUIMouse = false;
 
 	// Whether the mouse is over the movie (which drives both the hover-based
 	// sequence chain and the click that opens a character's conversation), and
