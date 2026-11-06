@@ -91,7 +91,7 @@ protected:
 
 	// _cards[tab * kCardsPerTab + i] = state of card i on tab `tab`
 	CardState _cards[kNumTabs * kCardsPerTab];
-	bool _typeUsed[kMaxTypes];  // faces already handed out while filling _cards
+	bool _typeUsed[kMaxTypes] = {};  // faces already handed out while filling _cards
 
 	int    _currentTab      = 0;
 	int    _firstFlip       = -1;   // absolute card index of first face-up unmatched card
