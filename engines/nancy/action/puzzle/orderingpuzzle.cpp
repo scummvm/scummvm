@@ -93,7 +93,7 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 	uint16 maxNumElements = 15;
 	if (ser.getVersion() == kGameTypeVampire) {
 		// Hardcoded in The Vampire Diaries
-		numElements = maxNumElements = 5;
+		maxNumElements = 5;
 	} else {
 		ser.syncAsUint16LE(numElements);
 	}
