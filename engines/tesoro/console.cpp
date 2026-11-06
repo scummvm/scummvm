@@ -24,14 +24,21 @@
 namespace Tesoro {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+	registerCmd("entries",   WRAP_METHOD(Console, entries));
+	registerCmd("entry",   WRAP_METHOD(Console, entry));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
+bool Console::entries(int argc, const char **argv) {
+	debugPrintf("Entries: %d\n", g_engine->_archive.index().count());
+	return true;
+}
+
+bool Console::entry(int argc, const char **argv) {
+	debugPrintf("Entry %s\n", argv[0]);
+	g_engine->_archive.findEntry(argv[0]);
 	return true;
 }
 

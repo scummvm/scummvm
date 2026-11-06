@@ -25,11 +25,14 @@
 
 #include "gui/debugger.h"
 
+#include "tesoro/tesoro.h"
+
 namespace Tesoro {
 
 class Console : public GUI::Debugger {
 private:
-	bool Cmd_test(int argc, const char **argv);
+	bool entries(int argc, const char **argv);
+	bool entry(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

@@ -35,6 +35,7 @@
 #include "graphics/screen.h"
 
 #include "tesoro/detection.h"
+#include "tesoro/core/archive.h"
 
 namespace Tesoro {
 
@@ -44,11 +45,14 @@ class TesoroEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
 public:
 	Graphics::Screen *_screen = nullptr;
+	Archive _archive;
 public:
 	TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~TesoroEngine() override;

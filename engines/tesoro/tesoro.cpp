@@ -57,6 +57,11 @@ Common::Error TesoroEngine::run() {
 	initGraphics(320, 200);
 	_screen = new Graphics::Screen();
 
+	if (!_archive.open("TESORO.DAT", "TESORO.TRE")) {
+		GUIErrorMessage("Could not open TESORO.DAT and TESORO.TRE");
+		return Common::kReadingFailed;
+	}
+
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
