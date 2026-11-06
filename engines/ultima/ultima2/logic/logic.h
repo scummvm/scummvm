@@ -201,7 +201,7 @@ public:
 	 * Handles the player dying - clears their resources and returns to
 	 * the title screen
 	 */
-	void playerDied();
+	void playerDied(bool showDied = true);
 
 	/**
 	 * Resumes end of turn processing after a command deferred it (returned

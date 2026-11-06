@@ -130,7 +130,7 @@ void SpaceLogic::warpFinished() {
 
 		if (sg._readiedArmor < SAFE_ARMOR) {
 			writeString("\nYou have exploded!\n\n");
-			playerDied();
+			playerDied(false);
 			return;
 		}
 	}
