@@ -220,7 +220,6 @@ void SetupMenu::run() {
 			Audio::Mixer::SoundType type = Audio::Mixer::SoundType::kSpeechSoundType;
 			switch (i) {
 			case 0 :
-				type = Audio::Mixer::SoundType::kSpeechSoundType;
 				ConfMan.setInt("speech_volume", endPos * 255, ConfMan.getActiveDomainName());
 				break;
 			case 1 :
