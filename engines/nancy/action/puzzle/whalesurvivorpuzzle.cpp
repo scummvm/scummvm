@@ -401,7 +401,10 @@ void WhaleSurvivorPuzzle::execute() {
 
 		switch (_gameState) {
 		case kStartScreen:
-			// Waiting for the player to click – keep start screen visible.
+		case kHitAnimation:
+			// Keep the start screen or the "Oh no! Try again" overlay visible
+			// until the player clicks Start (full restart via kTryAgain) or
+			// Quit (loss scene). Both are handled in handleInput().
 			redraw();
 			break;
 
@@ -416,13 +419,6 @@ void WhaleSurvivorPuzzle::execute() {
 			_countdownEndMs = nowMs + _tryAgainDelayMs;
 			_executeWin     = true;
 			_gameState      = kCountdown;
-			redraw();
-			break;
-
-		case kHitAnimation:
-			// Show the "Oh no! Try again" overlay and wait for the player
-			// to click Start (full restart via kTryAgain) or Quit (loss
-			// scene). Both transitions are handled in handleInput().
 			redraw();
 			break;
 
