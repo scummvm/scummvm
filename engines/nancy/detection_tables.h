@@ -668,6 +668,18 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_TESTING | ADGF_DROPPLATFORM,
 		NANCY_GUIOPTIONS
 	},
+	{	// French Steam version from cedricl31 in bug #17426
+		"nancy11", nullptr,
+		{
+			{ "ciftree.dat", 0, "822cdaa603871a1786824cffd0b7bca8", 56370839 },
+			{ "gre_oil_cinematic.bik", 0, "28a2b6f939f1c7795e47a99337d7343a", 21514180 },
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_TESTING | ADGF_DROPPLATFORM,
+		NANCY_GUIOPTIONS
+	},
 	{
 		"nancy11", nullptr,
 		{
