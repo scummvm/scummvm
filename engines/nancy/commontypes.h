@@ -378,8 +378,8 @@ struct Hint {
 };
 
 struct SoundChannelInfo {
-	byte numChannels;
-	byte numSceneSpecificChannels;
+	byte numChannels = 0;
+	byte numSceneSpecificChannels = 0;
 	Common::Array<byte> speechChannels;
 	Common::Array<byte> musicChannels;
 	Common::Array<byte> sfxChannels;
