@@ -198,8 +198,8 @@ void Window::renderChannel(Channel *channel, const Common::Rect &rect, Graphics:
 	}
 
 	size_t startIdx = 0;
-	if (channel->isTrail()) {
-		// trails mode, don't redraw anything stationary below the target
+	if (channel->isTrail() || channel->isVideoDirectToStage()) {
+		// don't redraw anything stationary below the target
 		for (size_t i = 0; i < dirtyChannels.size(); i++) {
 			if (dirtyChannels[i] == channel) {
 				startIdx = i;
