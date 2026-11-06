@@ -159,14 +159,14 @@ struct INV : public EngineData {
 
 	Common::Rect scrollbarSrcBounds;
 	Common::Point scrollbarDefaultPos;
-	uint16 scrollbarMaxScroll;
+	uint16 scrollbarMaxScroll = 0;
 
 	Common::Array<Common::Rect> ornamentSrcs;
 	Common::Array<Common::Rect> ornamentDests;
 
 	Common::Array<Common::Rect> curtainAnimationSrcs;
 	Common::Rect curtainsScreenPosition;
-	uint16 curtainsFrameTime;
+	uint16 curtainsFrameTime = 0;
 
 	uint16 captionAutoClearTime = 3000;
 
