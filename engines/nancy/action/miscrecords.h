@@ -79,7 +79,7 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	byte _type = 1;
+	byte _effectType = 1;
 	uint16 _fadeToBlackTime = 0;
 	uint16 _frameTime = 0;
 	uint16 _totalTime = 0;
