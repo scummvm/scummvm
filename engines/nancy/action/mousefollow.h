@@ -63,7 +63,6 @@ public:
 protected:
 
 	bool _isPickedUp = false;
-	byte _rotation = 0;
 
 	const VIEW *_viewportData = nullptr;
 };
