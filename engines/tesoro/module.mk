@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	console.o \
 	metaengine.o \
 	core/animimage.o \
+	core/animbank.o \
 	core/archive.o \
 	core/archiveindex.o \
 	core/namekey.o

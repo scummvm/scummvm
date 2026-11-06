@@ -33,6 +33,7 @@ class Console : public GUI::Debugger {
 private:
 	bool entries(int argc, const char **argv);
 	bool entry(int argc, const char **argv);
+	bool animbank(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;
