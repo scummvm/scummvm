@@ -242,7 +242,6 @@ private:
 	const byte _datFileMinorVersion;
 
 	GameFlow _gameFlow;
-	OSystem *_system;
 
 	const ADGameDescription *_gameDescription;
 	const GameType _gameType;
