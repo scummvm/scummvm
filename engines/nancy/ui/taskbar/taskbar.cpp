@@ -315,8 +315,11 @@ void Taskbar::setClickSoundMode(uint buttonIndex, uint mode) {
 	persistOverride(buttonIndex);
 }
 
+// The saved overrides and notifications mirror the TASK buttons one to one
+static_assert(TaskbarData::kNumButtons == TASK::kNumButtons, "TaskbarData and TASK button counts differ");
+
 void Taskbar::persistOverride(uint index) {
-	if (index >= TASK::kNumButtons || index >= TaskbarData::kNumButtons) {
+	if (index >= TaskbarData::kNumButtons) {
 		return;
 	}
 	TaskbarData *data = (TaskbarData *)NancySceneState.getPuzzleData(TaskbarData::getTag());
@@ -330,7 +333,7 @@ void Taskbar::persistOverride(uint index) {
 }
 
 void Taskbar::persistNotifications(uint index) {
-	if (index >= TASK::kNumButtons || index >= TaskbarData::kNumButtons) {
+	if (index >= TaskbarData::kNumButtons) {
 		return;
 	}
 	TaskbarData *data = (TaskbarData *)NancySceneState.getPuzzleData(TaskbarData::getTag());
@@ -347,7 +350,7 @@ void Taskbar::syncFromPuzzleData() {
 	if (!data) {
 		return;
 	}
-	for (uint i = 0; i < TASK::kNumButtons && i < TaskbarData::kNumButtons; ++i) {
+	for (uint i = 0; i < TaskbarData::kNumButtons; ++i) {
 		_overrides[i].active = data->overrides[i].active;
 		_overrides[i].startScene = data->overrides[i].startScene;
 		_overrides[i].endScene = data->overrides[i].endScene;
