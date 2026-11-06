@@ -627,6 +627,12 @@ void Manager::endConversation() {
 
 void Manager::setCaption(const Common::String &text) {
 	_caption = text;
+
+	// Nancy26's UI is made of records, which get the captions through messages
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		return;
+	}
+
 	takeAction(kActionSetText, "CCText", text);
 }
 

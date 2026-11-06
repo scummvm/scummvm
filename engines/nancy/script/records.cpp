@@ -49,6 +49,7 @@
 
 #ifdef ENABLE_NANCY_V5
 #include "engines/nancy/script/v5/cliptransformer.h"
+#include "engines/nancy/script/v5/messaging.h"
 #include "engines/nancy/script/v5/streamtree.h"
 #include "engines/nancy/script/v5/textrecord.h"
 #include "engines/nancy/script/v5/widgets.h"
@@ -1936,6 +1937,16 @@ void SoundRecord::runOnce() {
 	_duration = _isPlaying ? g_nancy->_sound->getLength(_sound).msecs() / 1000.0 : 0.0;
 	_endTime = getContext().getTime() + _duration;
 
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		if (_isPlaying && _usesCaption) {
+			sendCaption(true);
+		}
+
+		return;
+	}
+#endif
+
 	// What the sound says is kept under its name
 	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
 	_caption.clear();
@@ -1943,6 +1954,23 @@ void SoundRecord::runOnce() {
 		ui->setCaption(_caption);
 	}
 }
+
+#ifdef ENABLE_NANCY_V5
+void SoundRecord::sendCaption(bool isShown) {
+	lua_State *L = getLua();
+	const int top = lua_gettop(L);
+
+	if (isShown) {
+		lua_pushstring(L, _sound.name.c_str());
+		sendMessage(L, getName(), "CC", "SetIfExists", top + 1, 1);
+	} else {
+		sendMessage(L, getName(), "CC", "Clear", top + 1, 0);
+	}
+
+	lua_settop(L, top);
+	_hasSentCaption = isShown;
+}
+#endif
 
 void SoundRecord::run(double sceneTime, double elapsedTime) {
 	// The sound is cut off when another sound starts on its channel, or the
@@ -1962,6 +1990,12 @@ void SoundRecord::run(double sceneTime, double elapsedTime) {
 		}
 
 		_caption.clear();
+#ifdef ENABLE_NANCY_V5
+		if (_hasSentCaption) {
+			sendCaption(false);
+		}
+#endif
+
 		finish();
 	}
 }

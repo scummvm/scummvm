@@ -380,6 +380,12 @@ protected:
 private:
 	// Nancy24: "VOICE", "MUSIC" or "EFFECTS", the volume the sound goes by
 	void readChannelType(int index);
+
+#ifdef ENABLE_NANCY_V5
+	// Nancy26 has the UI show what a sound says through messages to "CC": its
+	// text, if the sound has one, and taking it down again once the sound is over
+	void sendCaption(bool isShown);
+#endif
 	const char *getChannelType() const;
 
 	Common::Array<Common::String> _names;
@@ -391,6 +397,7 @@ private:
 
 	SoundDescription _sound;
 	Common::String _caption;	// what the sound says, while it is the one on screen
+	bool _hasSentCaption = false;	// Nancy26: told the UI to show it
 	bool _isPlaying = false;
 	bool _wasPreempted = false;
 	uint32 _channelSerial = 0;	// of the channel, once the sound started
