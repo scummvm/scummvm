@@ -662,8 +662,8 @@ void ArcadePuzzle::paddleMovement() {
 		_paddleRight = _paddleLeft + _paddleWidth - 1;
 	}
 
-	if (_paddleLeft  != _paddlePrevLeft  || _paddleRight != _paddlePrevRight ||
-	    _paddleTop   != _paddlePrevTop   || _paddleBottom!= _paddlePrevBottom) {
+	// The paddle only moves horizontally
+	if (_paddleLeft != _paddlePrevLeft || _paddleRight != _paddlePrevRight) {
 		_paddleNeedsRedraw = true;
 	}
 }
