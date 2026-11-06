@@ -31,6 +31,7 @@
 #include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
+#include "buried/subtitle_manager.h"
 #include "buried/scene_view.h"
 #include "buried/environ/scene_common.h"
 
@@ -648,6 +649,8 @@ int InteractiveNewsNetwork::movieCallback(Window *viewWindow, VideoWindow *movie
 	// Restart sound if the movie has ended
 	if (animationID == -1 && status == MOVIE_STOPPED) {
 		_vm->_sound->restart();
+		// Remove any lingering subtitle card from the clip.
+		_vm->_subtitles->markSubtitlesDirty(viewWindow);
 		return SC_FALSE;
 	}
 
@@ -655,10 +658,14 @@ int InteractiveNewsNetwork::movieCallback(Window *viewWindow, VideoWindow *movie
 }
 
 int InteractiveNewsNetwork::timerCallback(Window *viewWindow) {
-	// Check to see if audio has stopped
-	if (_playingAudio && _audioChannel != -1 && !_vm->_sound->isSoundEffectPlaying(_audioChannel)) {
+	if (_playingAudio && _vm->_subtitles->isSubtitledAudioPlaying()) {
+		// Add subtitles e.g. for voice over text of non-video content.
+		_vm->_subtitles->markSubtitlesDirty(viewWindow);
+	} else if (_playingAudio && _audioChannel != -1 && !_vm->_sound->isSoundEffectPlaying(_audioChannel)) {
+		// Audio was playing but now stopped.
 		_audioChannel = -1;
 		_playingAudio = false;
+		_vm->_subtitles->markSubtitlesDirty(viewWindow);
 	}
 
 	return SC_TRUE;
