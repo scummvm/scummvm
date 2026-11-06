@@ -171,6 +171,9 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		if (flag) {
+#if !BLADERUNNER_ORIGINAL_BUGS
+			Actor_Change_Animation_Mode(kActorIsabella, kAnimationModeIdle);
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 			*animation = kModelIsabellaIdle;
 			_animationState = 0;
 		}
@@ -436,6 +439,11 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 			_animationNext = kModelIsabellaMoreCalmTalk;
 			_var1 = 0;
 		}
+		break;
+			
+	case 23: // Restored Content
+		_animationState = 1;
+		_animationFrame = 0;
 		break;
 
 	default:
