@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-05 00:15+0000\n"
+"POT-Creation-Date: 2026-11-06 02:11+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -1100,7 +1100,7 @@ msgstr "图形界面"
 msgid "Interact"
 msgstr "互动"
 
-#: gui/gui-manager.cpp:175 engines/metaengine.cpp:137
+#: gui/gui-manager.cpp:175 engines/metaengine.cpp:144
 #: engines/awe/metaengine.cpp:57 engines/bagel/metaengine.cpp:66
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:158 engines/fool/metaengine.cpp:159
@@ -1124,7 +1124,7 @@ msgstr "互动"
 msgid "Up"
 msgstr "向上"
 
-#: gui/gui-manager.cpp:181 engines/metaengine.cpp:143
+#: gui/gui-manager.cpp:181 engines/metaengine.cpp:150
 #: engines/awe/metaengine.cpp:58 engines/bagel/metaengine.cpp:67
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:164 engines/fool/metaengine.cpp:165
@@ -1148,7 +1148,7 @@ msgstr "向上"
 msgid "Down"
 msgstr "向下"
 
-#: gui/gui-manager.cpp:187 engines/metaengine.cpp:149
+#: gui/gui-manager.cpp:187 engines/metaengine.cpp:156
 #: engines/awe/metaengine.cpp:59 engines/bagel/metaengine.cpp:68
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:170 engines/fool/metaengine.cpp:171
@@ -1171,7 +1171,7 @@ msgstr "向下"
 msgid "Left"
 msgstr "向左"
 
-#: gui/gui-manager.cpp:193 engines/metaengine.cpp:155
+#: gui/gui-manager.cpp:193 engines/metaengine.cpp:162
 #: engines/awe/metaengine.cpp:60 engines/bagel/metaengine.cpp:69
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:176 engines/fool/metaengine.cpp:177
@@ -3953,14 +3953,20 @@ msgstr "%s 引擎匹配的游戏 ID："
 msgid "Game not implemented"
 msgstr "游戏未实现"
 
-#: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
+#: engines/metaengine.cpp:73
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Show/hide hotspots"
+msgstr "显示热点"
+
+#: engines/metaengine.cpp:82 engines/saga/metaengine.cpp:267
 #: engines/scumm/metaengine.cpp:1187
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default game keymappings"
 msgstr "默认游戏按键绑定"
 
-#: engines/metaengine.cpp:82 backends/platform/maemo/maemo.cpp:161
+#: engines/metaengine.cpp:89 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:158 engines/asylum/metaengine.cpp:159
 #: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:277
@@ -3989,7 +3995,7 @@ msgstr "默认游戏按键绑定"
 msgid "Left click"
 msgstr "左键点击"
 
-#: engines/metaengine.cpp:88 backends/platform/maemo/maemo.cpp:165
+#: engines/metaengine.cpp:95 backends/platform/maemo/maemo.cpp:165
 #: engines/fool/metaengine.cpp:143 engines/mtropolis/metaengine.cpp:173
 #: engines/saga/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:337
@@ -3999,7 +4005,7 @@ msgstr "左键点击"
 msgid "Middle click"
 msgstr "中键点击"
 
-#: engines/metaengine.cpp:93 backends/platform/maemo/maemo.cpp:169
+#: engines/metaengine.cpp:100 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:164 engines/asylum/metaengine.cpp:165
 #: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:283
@@ -4029,7 +4035,7 @@ msgid "Right click"
 msgstr "右键点击"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:99 engines/agos/metaengine.cpp:178
+#: engines/metaengine.cpp:106 engines/agos/metaengine.cpp:178
 #: engines/buried/metaengine.cpp:167 engines/crab/input/input.cpp:261
 #: engines/cruise/metaengine.cpp:217 engines/dm/metaengine.cpp:126
 #: engines/grim/grim.cpp:569 engines/hdb/metaengine.cpp:258
@@ -4047,7 +4053,7 @@ msgstr "右键点击"
 msgid "Pause"
 msgstr "暂停"
 
-#: engines/metaengine.cpp:105 engines/harvester/metaengine.cpp:93
+#: engines/metaengine.cpp:112 engines/harvester/metaengine.cpp:93
 #: engines/hollywood/runaway/engine.cpp:592
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
@@ -4057,7 +4063,7 @@ msgstr "游戏菜单"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:252
+#: engines/metaengine.cpp:119 engines/access/metaengine.cpp:252
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:94
 #: engines/grim/grim.cpp:552 engines/grim/grim.cpp:652
@@ -4074,30 +4080,30 @@ msgstr "游戏菜单"
 msgid "Skip"
 msgstr "跳过"
 
-#: engines/metaengine.cpp:119 engines/sky/metaengine.cpp:121
+#: engines/metaengine.cpp:126 engines/sky/metaengine.cpp:121
 #: engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "跳过行"
 
-#: engines/metaengine.cpp:126 engines/fool/metaengine.cpp:154
+#: engines/metaengine.cpp:133 engines/fool/metaengine.cpp:154
 msgid "Predictive input dialog"
 msgstr "预测输入对话框"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialog prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:131 engines/bladerunner/metaengine.cpp:273
+#: engines/metaengine.cpp:138 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:558
 #: engines/grim/grim.cpp:658 engines/sky/metaengine.cpp:101
 #: engines/wintermute/keymapper_tables.h:57
 msgid "Confirm"
 msgstr "确认"
 
-#: engines/metaengine.cpp:434
+#: engines/metaengine.cpp:441
 msgid "Autosave on"
 msgstr "自动保存已开启"
 
-#: engines/metaengine.cpp:434
+#: engines/metaengine.cpp:441
 msgid "Autosave off"
 msgstr "自动保存已关闭"
 
@@ -7179,7 +7185,7 @@ msgstr "开关音效"
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/agos/metaengine.cpp:204 engines/queen/metaengine.cpp:192
 #: engines/sky/metaengine.cpp:131 engines/teenagent/metaengine.cpp:239
-#: engines/touche/metaengine.cpp:173
+#: engines/touche/metaengine.cpp:170
 msgid "Toggle fast mode"
 msgstr "开关快速模式"
 
@@ -7864,7 +7870,7 @@ msgstr "跳过过场动画"
 #: engines/sludge/keymapper_tables.h:455 engines/sludge/keymapper_tables.h:487
 #: engines/sludge/keymapper_tables.h:538 engines/teenagent/metaengine.cpp:213
 #: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
-#: engines/touche/metaengine.cpp:147
+#: engines/touche/metaengine.cpp:144
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Skip dialog"
@@ -8230,7 +8236,7 @@ msgstr ""
 "按下“OK”现在转换，否则在下次启动游戏时将再次询问你。\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:1260 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1275 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "存档使用较高版本的 ScummVM 创建。无法载入。"
@@ -12209,19 +12215,13 @@ msgid "Cycle game speed"
 msgstr "减速游戏"
 
 #: engines/macs2/metaengine.cpp:81 engines/sherlock/metaengine.cpp:846
-#: engines/touche/metaengine.cpp:153
+#: engines/touche/metaengine.cpp:150
 msgid "Open options menu"
 msgstr "打开设置菜单"
 
 #: engines/macs2/metaengine.cpp:86
 msgid "Help / map"
 msgstr ""
-
-#: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Show hotspots"
-msgid "Show/hide hotspots"
-msgstr "显示热点"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"
@@ -13135,6 +13135,12 @@ msgstr "未编译入 AGOS 2 支持"
 #, fuzzy
 #| msgid "Escape from Monkey Island support is not compiled in"
 msgid "Support for Nancy Drew 19 and newer is not compiled in"
+msgstr "未编译入《逃离猴岛》支持"
+
+#: engines/nancy/metaengine.cpp:185
+#, fuzzy
+#| msgid "Escape from Monkey Island support is not compiled in"
+msgid "Support for Nancy Drew 26 and newer is not compiled in"
 msgstr "未编译入《逃离猴岛》支持"
 
 #: engines/nancy/state/loadsave.cpp:108
@@ -16939,29 +16945,29 @@ msgstr "已保存游戏"
 msgid "Main menu / Exit"
 msgstr "主菜单"
 
-#: engines/touche/metaengine.cpp:141
+#: engines/touche/metaengine.cpp:138
 #, fuzzy
 #| msgid "Skip sequence/open quit dialogue"
 msgid "Skip sequence / open quit dialog"
 msgstr "跳过镜头/打开退出对话框"
 
 #. I18N: The actor walking pace is increased
-#: engines/touche/metaengine.cpp:160
+#: engines/touche/metaengine.cpp:157
 msgid "Enable fast walk"
 msgstr "启用快速行走"
 
 #. I18N: The actor walking pace is decreased
-#: engines/touche/metaengine.cpp:167
+#: engines/touche/metaengine.cpp:164
 msgid "Disable fast walk"
 msgstr "禁用快速行走"
 
-#: engines/touche/metaengine.cpp:179
+#: engines/touche/metaengine.cpp:176
 #, fuzzy
 #| msgid "Toggle between voice/text/text and voice"
 msgid "Toggle between voice / text / text and voice"
 msgstr "切换纯语音/纯文本/文本与语音"
 
-#: engines/touche/metaengine.cpp:188
+#: engines/touche/metaengine.cpp:185
 msgid "Press \"Yes\" Key"
 msgstr "按下“是”按键"
 

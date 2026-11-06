@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-05 00:15+0000\n"
+"POT-Creation-Date: 2026-11-06 02:11+0000\n"
 "PO-Revision-Date: 2026-11-04 10:05+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -1107,7 +1107,7 @@ msgstr "Interfaz"
 msgid "Interact"
 msgstr "Interactuar"
 
-#: gui/gui-manager.cpp:175 engines/metaengine.cpp:137
+#: gui/gui-manager.cpp:175 engines/metaengine.cpp:144
 #: engines/awe/metaengine.cpp:57 engines/bagel/metaengine.cpp:66
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:158 engines/fool/metaengine.cpp:159
@@ -1131,7 +1131,7 @@ msgstr "Interactuar"
 msgid "Up"
 msgstr "Arriba"
 
-#: gui/gui-manager.cpp:181 engines/metaengine.cpp:143
+#: gui/gui-manager.cpp:181 engines/metaengine.cpp:150
 #: engines/awe/metaengine.cpp:58 engines/bagel/metaengine.cpp:67
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:164 engines/fool/metaengine.cpp:165
@@ -1155,7 +1155,7 @@ msgstr "Arriba"
 msgid "Down"
 msgstr "Abajo"
 
-#: gui/gui-manager.cpp:187 engines/metaengine.cpp:149
+#: gui/gui-manager.cpp:187 engines/metaengine.cpp:156
 #: engines/awe/metaengine.cpp:59 engines/bagel/metaengine.cpp:68
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:170 engines/fool/metaengine.cpp:171
@@ -1178,7 +1178,7 @@ msgstr "Abajo"
 msgid "Left"
 msgstr "Izquierda"
 
-#: gui/gui-manager.cpp:193 engines/metaengine.cpp:155
+#: gui/gui-manager.cpp:193 engines/metaengine.cpp:162
 #: engines/awe/metaengine.cpp:60 engines/bagel/metaengine.cpp:69
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:176 engines/fool/metaengine.cpp:177
@@ -4008,12 +4008,16 @@ msgstr "IDs de juegos disponibles para el motor %s:"
 msgid "Game not implemented"
 msgstr "Juego no implementado"
 
-#: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
+#: engines/metaengine.cpp:73
+msgid "Show/hide hotspots"
+msgstr "Mostrar/Ocultar zonas interactivas"
+
+#: engines/metaengine.cpp:82 engines/saga/metaengine.cpp:267
 #: engines/scumm/metaengine.cpp:1187
 msgid "Default game keymappings"
 msgstr "Asignaciones predet. del juego"
 
-#: engines/metaengine.cpp:82 backends/platform/maemo/maemo.cpp:161
+#: engines/metaengine.cpp:89 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:158 engines/asylum/metaengine.cpp:159
 #: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:277
@@ -4040,7 +4044,7 @@ msgstr "Asignaciones predet. del juego"
 msgid "Left click"
 msgstr "Clic izquierdo"
 
-#: engines/metaengine.cpp:88 backends/platform/maemo/maemo.cpp:165
+#: engines/metaengine.cpp:95 backends/platform/maemo/maemo.cpp:165
 #: engines/fool/metaengine.cpp:143 engines/mtropolis/metaengine.cpp:173
 #: engines/saga/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:337
@@ -4048,7 +4052,7 @@ msgstr "Clic izquierdo"
 msgid "Middle click"
 msgstr "Clic central"
 
-#: engines/metaengine.cpp:93 backends/platform/maemo/maemo.cpp:169
+#: engines/metaengine.cpp:100 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:164 engines/asylum/metaengine.cpp:165
 #: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:283
@@ -4076,7 +4080,7 @@ msgid "Right click"
 msgstr "Clic derecho"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:99 engines/agos/metaengine.cpp:178
+#: engines/metaengine.cpp:106 engines/agos/metaengine.cpp:178
 #: engines/buried/metaengine.cpp:167 engines/crab/input/input.cpp:261
 #: engines/cruise/metaengine.cpp:217 engines/dm/metaengine.cpp:126
 #: engines/grim/grim.cpp:569 engines/hdb/metaengine.cpp:258
@@ -4094,7 +4098,7 @@ msgstr "Clic derecho"
 msgid "Pause"
 msgstr "Pausar"
 
-#: engines/metaengine.cpp:105 engines/harvester/metaengine.cpp:93
+#: engines/metaengine.cpp:112 engines/harvester/metaengine.cpp:93
 #: engines/hollywood/runaway/engine.cpp:592
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
@@ -4104,7 +4108,7 @@ msgstr "Menú del juego"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:252
+#: engines/metaengine.cpp:119 engines/access/metaengine.cpp:252
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:94
 #: engines/grim/grim.cpp:552 engines/grim/grim.cpp:652
@@ -4121,30 +4125,30 @@ msgstr "Menú del juego"
 msgid "Skip"
 msgstr "Omitir"
 
-#: engines/metaengine.cpp:119 engines/sky/metaengine.cpp:121
+#: engines/metaengine.cpp:126 engines/sky/metaengine.cpp:121
 #: engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "Omitir frase"
 
-#: engines/metaengine.cpp:126 engines/fool/metaengine.cpp:154
+#: engines/metaengine.cpp:133 engines/fool/metaengine.cpp:154
 msgid "Predictive input dialog"
 msgstr "Ventana de escritura predictiva"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialog prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:131 engines/bladerunner/metaengine.cpp:273
+#: engines/metaengine.cpp:138 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:558
 #: engines/grim/grim.cpp:658 engines/sky/metaengine.cpp:101
 #: engines/wintermute/keymapper_tables.h:57
 msgid "Confirm"
 msgstr "Confirmar"
 
-#: engines/metaengine.cpp:434
+#: engines/metaengine.cpp:441
 msgid "Autosave on"
 msgstr "Autoguardados activados"
 
-#: engines/metaengine.cpp:434
+#: engines/metaengine.cpp:441
 msgid "Autosave off"
 msgstr "Autoguardados desactivados"
 
@@ -7198,7 +7202,7 @@ msgstr "Activar/Desactivar efectos de sonido"
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/agos/metaengine.cpp:204 engines/queen/metaengine.cpp:192
 #: engines/sky/metaengine.cpp:131 engines/teenagent/metaengine.cpp:239
-#: engines/touche/metaengine.cpp:173
+#: engines/touche/metaengine.cpp:170
 msgid "Toggle fast mode"
 msgstr "Activar/Desactivar modo rápido"
 
@@ -7891,7 +7895,7 @@ msgstr "Omitir escena"
 #: engines/sludge/keymapper_tables.h:455 engines/sludge/keymapper_tables.h:487
 #: engines/sludge/keymapper_tables.h:538 engines/teenagent/metaengine.cpp:213
 #: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
-#: engines/touche/metaengine.cpp:147
+#: engines/touche/metaengine.cpp:144
 msgid "Skip dialog"
 msgstr "Omitir diálogo"
 
@@ -8224,7 +8228,7 @@ msgstr ""
 "De lo contrario, este mensaje aparecerá cada vez que se inicie el juego.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:1260 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1275 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -11751,17 +11755,13 @@ msgid "Cycle game speed"
 msgstr "Alternar velocidad del juego"
 
 #: engines/macs2/metaengine.cpp:81 engines/sherlock/metaengine.cpp:846
-#: engines/touche/metaengine.cpp:153
+#: engines/touche/metaengine.cpp:150
 msgid "Open options menu"
 msgstr "Abrir menú de opciones"
 
 #: engines/macs2/metaengine.cpp:86
 msgid "Help / map"
 msgstr "Ayuda/Mapa"
-
-#: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-msgid "Show/hide hotspots"
-msgstr "Mostrar/Ocultar zonas interactivas"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"
@@ -12659,6 +12659,13 @@ msgstr "No se ha incluido el soporte para Nancy Drew 18."
 
 #: engines/nancy/metaengine.cpp:178
 msgid "Support for Nancy Drew 19 and newer is not compiled in"
+msgstr ""
+"No se ha incluido el soporte para Nancy Drew 19 y los juegos posteriores."
+
+#: engines/nancy/metaengine.cpp:185
+#, fuzzy
+#| msgid "Support for Nancy Drew 19 and newer is not compiled in"
+msgid "Support for Nancy Drew 26 and newer is not compiled in"
 msgstr ""
 "No se ha incluido el soporte para Nancy Drew 19 y los juegos posteriores."
 
@@ -16239,25 +16246,25 @@ msgstr "Guardar/Cargar partida"
 msgid "Main menu / Exit"
 msgstr "Menú principal/Salir"
 
-#: engines/touche/metaengine.cpp:141
+#: engines/touche/metaengine.cpp:138
 msgid "Skip sequence / open quit dialog"
 msgstr "Omitir secuencia/abrir ventana de salida"
 
 #. I18N: The actor walking pace is increased
-#: engines/touche/metaengine.cpp:160
+#: engines/touche/metaengine.cpp:157
 msgid "Enable fast walk"
 msgstr "Activar movimiento rápido"
 
 #. I18N: The actor walking pace is decreased
-#: engines/touche/metaengine.cpp:167
+#: engines/touche/metaengine.cpp:164
 msgid "Disable fast walk"
 msgstr "Desactivar movimiento rápido"
 
-#: engines/touche/metaengine.cpp:179
+#: engines/touche/metaengine.cpp:176
 msgid "Toggle between voice / text / text and voice"
 msgstr "Alternar entre voces/textos/textos con voces"
 
-#: engines/touche/metaengine.cpp:188
+#: engines/touche/metaengine.cpp:185
 msgid "Press \"Yes\" Key"
 msgstr "Pulsar tecla \"Sí\""
 

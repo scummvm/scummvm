@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-05 00:15+0000\n"
+"POT-Creation-Date: 2026-11-06 02:11+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1108,7 +1108,7 @@ msgstr "GUI"
 msgid "Interact"
 msgstr "소통"
 
-#: gui/gui-manager.cpp:175 engines/metaengine.cpp:137
+#: gui/gui-manager.cpp:175 engines/metaengine.cpp:144
 #: engines/awe/metaengine.cpp:57 engines/bagel/metaengine.cpp:66
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:158 engines/fool/metaengine.cpp:159
@@ -1132,7 +1132,7 @@ msgstr "소통"
 msgid "Up"
 msgstr "위쪽"
 
-#: gui/gui-manager.cpp:181 engines/metaengine.cpp:143
+#: gui/gui-manager.cpp:181 engines/metaengine.cpp:150
 #: engines/awe/metaengine.cpp:58 engines/bagel/metaengine.cpp:67
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:164 engines/fool/metaengine.cpp:165
@@ -1156,7 +1156,7 @@ msgstr "위쪽"
 msgid "Down"
 msgstr "아래쪽"
 
-#: gui/gui-manager.cpp:187 engines/metaengine.cpp:149
+#: gui/gui-manager.cpp:187 engines/metaengine.cpp:156
 #: engines/awe/metaengine.cpp:59 engines/bagel/metaengine.cpp:68
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:170 engines/fool/metaengine.cpp:171
@@ -1179,7 +1179,7 @@ msgstr "아래쪽"
 msgid "Left"
 msgstr "왼쪽"
 
-#: gui/gui-manager.cpp:193 engines/metaengine.cpp:155
+#: gui/gui-manager.cpp:193 engines/metaengine.cpp:162
 #: engines/awe/metaengine.cpp:60 engines/bagel/metaengine.cpp:69
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:176 engines/fool/metaengine.cpp:177
@@ -3936,12 +3936,18 @@ msgstr "%s 엔진에 일치하는 게임 ID:"
 msgid "Game not implemented"
 msgstr "게임이 구현되지 않았음"
 
-#: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
+#: engines/metaengine.cpp:73
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Show/hide hotspots"
+msgstr "핫스팟 표시"
+
+#: engines/metaengine.cpp:82 engines/saga/metaengine.cpp:267
 #: engines/scumm/metaengine.cpp:1187
 msgid "Default game keymappings"
 msgstr "기본 게임 키설정"
 
-#: engines/metaengine.cpp:82 backends/platform/maemo/maemo.cpp:161
+#: engines/metaengine.cpp:89 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:158 engines/asylum/metaengine.cpp:159
 #: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:277
@@ -3968,7 +3974,7 @@ msgstr "기본 게임 키설정"
 msgid "Left click"
 msgstr "왼쪽 클릭"
 
-#: engines/metaengine.cpp:88 backends/platform/maemo/maemo.cpp:165
+#: engines/metaengine.cpp:95 backends/platform/maemo/maemo.cpp:165
 #: engines/fool/metaengine.cpp:143 engines/mtropolis/metaengine.cpp:173
 #: engines/saga/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:337
@@ -3976,7 +3982,7 @@ msgstr "왼쪽 클릭"
 msgid "Middle click"
 msgstr "중간 클릭"
 
-#: engines/metaengine.cpp:93 backends/platform/maemo/maemo.cpp:169
+#: engines/metaengine.cpp:100 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:164 engines/asylum/metaengine.cpp:165
 #: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:283
@@ -4004,7 +4010,7 @@ msgid "Right click"
 msgstr "오른쪽 클릭"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:99 engines/agos/metaengine.cpp:178
+#: engines/metaengine.cpp:106 engines/agos/metaengine.cpp:178
 #: engines/buried/metaengine.cpp:167 engines/crab/input/input.cpp:261
 #: engines/cruise/metaengine.cpp:217 engines/dm/metaengine.cpp:126
 #: engines/grim/grim.cpp:569 engines/hdb/metaengine.cpp:258
@@ -4022,7 +4028,7 @@ msgstr "오른쪽 클릭"
 msgid "Pause"
 msgstr "일시 정지"
 
-#: engines/metaengine.cpp:105 engines/harvester/metaengine.cpp:93
+#: engines/metaengine.cpp:112 engines/harvester/metaengine.cpp:93
 #: engines/hollywood/runaway/engine.cpp:592
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
@@ -4032,7 +4038,7 @@ msgstr "게임 메뉴"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:252
+#: engines/metaengine.cpp:119 engines/access/metaengine.cpp:252
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:94
 #: engines/grim/grim.cpp:552 engines/grim/grim.cpp:652
@@ -4049,30 +4055,30 @@ msgstr "게임 메뉴"
 msgid "Skip"
 msgstr "건너뛰기"
 
-#: engines/metaengine.cpp:119 engines/sky/metaengine.cpp:121
+#: engines/metaengine.cpp:126 engines/sky/metaengine.cpp:121
 #: engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "대사 건너뛰기"
 
-#: engines/metaengine.cpp:126 engines/fool/metaengine.cpp:154
+#: engines/metaengine.cpp:133 engines/fool/metaengine.cpp:154
 msgid "Predictive input dialog"
 msgstr "예측 입력 대화 상자"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialog prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:131 engines/bladerunner/metaengine.cpp:273
+#: engines/metaengine.cpp:138 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:558
 #: engines/grim/grim.cpp:658 engines/sky/metaengine.cpp:101
 #: engines/wintermute/keymapper_tables.h:57
 msgid "Confirm"
 msgstr "확인"
 
-#: engines/metaengine.cpp:434
+#: engines/metaengine.cpp:441
 msgid "Autosave on"
 msgstr "자동 저장 켬"
 
-#: engines/metaengine.cpp:434
+#: engines/metaengine.cpp:441
 msgid "Autosave off"
 msgstr "자동 저장 끔"
 
@@ -7009,7 +7015,7 @@ msgstr "사운드 효과 전환"
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/agos/metaengine.cpp:204 engines/queen/metaengine.cpp:192
 #: engines/sky/metaengine.cpp:131 engines/teenagent/metaengine.cpp:239
-#: engines/touche/metaengine.cpp:173
+#: engines/touche/metaengine.cpp:170
 msgid "Toggle fast mode"
 msgstr "빠른 모드 전환"
 
@@ -7673,7 +7679,7 @@ msgstr "컷씬 건너뛰기"
 #: engines/sludge/keymapper_tables.h:455 engines/sludge/keymapper_tables.h:487
 #: engines/sludge/keymapper_tables.h:538 engines/teenagent/metaengine.cpp:213
 #: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
-#: engines/touche/metaengine.cpp:147
+#: engines/touche/metaengine.cpp:144
 msgid "Skip dialog"
 msgstr "대화 건너뛰기"
 
@@ -8006,7 +8012,7 @@ msgstr ""
 "니다.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:1260 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1275 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -11578,19 +11584,13 @@ msgid "Cycle game speed"
 msgstr "더 느린 게임 속도"
 
 #: engines/macs2/metaengine.cpp:81 engines/sherlock/metaengine.cpp:846
-#: engines/touche/metaengine.cpp:153
+#: engines/touche/metaengine.cpp:150
 msgid "Open options menu"
 msgstr "옵션 메뉴 열기"
 
 #: engines/macs2/metaengine.cpp:86
 msgid "Help / map"
 msgstr ""
-
-#: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Show hotspots"
-msgid "Show/hide hotspots"
-msgstr "핫스팟 표시"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"
@@ -12506,6 +12506,12 @@ msgstr "AGOS 2 지원은 컴파일되지 않았음"
 #, fuzzy
 #| msgid "Escape from Monkey Island support is not compiled in"
 msgid "Support for Nancy Drew 19 and newer is not compiled in"
+msgstr "원숭이섬 탈출 지원이 컴파일 되지 않았음"
+
+#: engines/nancy/metaengine.cpp:185
+#, fuzzy
+#| msgid "Escape from Monkey Island support is not compiled in"
+msgid "Support for Nancy Drew 26 and newer is not compiled in"
 msgstr "원숭이섬 탈출 지원이 컴파일 되지 않았음"
 
 #: engines/nancy/state/loadsave.cpp:108
@@ -16022,25 +16028,25 @@ msgstr "게임 저장 및 로드"
 msgid "Main menu / Exit"
 msgstr "메인 메뉴 / 나가기"
 
-#: engines/touche/metaengine.cpp:141
+#: engines/touche/metaengine.cpp:138
 msgid "Skip sequence / open quit dialog"
 msgstr "시퀀스 건너뛰기 / 종료 대화 상자 열기"
 
 #. I18N: The actor walking pace is increased
-#: engines/touche/metaengine.cpp:160
+#: engines/touche/metaengine.cpp:157
 msgid "Enable fast walk"
 msgstr "빠른 걷기 활성화"
 
 #. I18N: The actor walking pace is decreased
-#: engines/touche/metaengine.cpp:167
+#: engines/touche/metaengine.cpp:164
 msgid "Disable fast walk"
 msgstr "빠른 걷기 비활성화"
 
-#: engines/touche/metaengine.cpp:179
+#: engines/touche/metaengine.cpp:176
 msgid "Toggle between voice / text / text and voice"
 msgstr "음성 / 텍스트 / 텍스트 및 음성 간 전환"
 
-#: engines/touche/metaengine.cpp:188
+#: engines/touche/metaengine.cpp:185
 msgid "Press \"Yes\" Key"
 msgstr "\"예\" 키를 누름"
 
