@@ -186,15 +186,8 @@ Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 	}
 #endif
 
-	if (gd) {
-		*engine = Nancy::NancyEngine::create(gameType, syst, gd);
-	}
-
-	if (gd) {
-		return Common::kNoError;
-	} else {
-		return Common::Error();
-	}
+	*engine = Nancy::NancyEngine::create(gameType, syst, gd);
+	return Common::kNoError;
 }
 
 int NancyMetaEngine::getMaximumSaveSlot() const { int r = ConfMan.getInt("nancy_max_saves"); return r ? r : AdvancedMetaEngine::getMaximumSaveSlot(); }
