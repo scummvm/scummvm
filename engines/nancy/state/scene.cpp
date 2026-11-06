@@ -2813,8 +2813,9 @@ void Scene::handleInput() {
 	}
 #endif
 
-	// Warp the mouse below the inactive zone during dialogue scenes
-	if (_activeConversation != nullptr) {
+	// Warp the mouse below the inactive zone during dialogue scenes. From Nancy17 on
+	// the mouse stays where the player puts it.
+	if (_activeConversation != nullptr && g_nancy->getGameType() <= kGameTypeNancy16) {
 		const Common::Rect &inactiveZone = g_nancy->_cursor->getPrimaryVideoInactiveZone();
 
 		if (g_nancy->getGameType() == kGameTypeVampire) {

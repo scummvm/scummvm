@@ -354,7 +354,7 @@ void ConversationSound::execute() {
 		Common::Point adjustedMousePos = g_nancy->_input->getInput().mousePos;
 		adjustedMousePos.x -= cursorHotspot.x;
 		adjustedMousePos.y -= cursorHotspot.y - 1;
-		if (g_nancy->_cursor->getPrimaryVideoInactiveZone().bottom > adjustedMousePos.y) {
+		if (g_nancy->getGameType() <= kGameTypeNancy16 && g_nancy->_cursor->getPrimaryVideoInactiveZone().bottom > adjustedMousePos.y) {
 			g_nancy->_cursor->warpCursor(Common::Point(initialMousePos.x + cursorHotspot.x, initialMousePos.y + cursorHotspot.y));
 			g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 		}
