@@ -1469,8 +1469,10 @@ void PlaySecondaryMovie::execute() {
 			} else {
 				// Hide it right away, as the flags of its last frame may stop the
 				// record from running; e.g. pouring the hot sauce in Nancy17 scene
-				// 3008, where the bottle overlay takes over
-				if (_hideOnFinish) {
+				// 3008, where the bottle overlay takes over. A movie that changes
+				// the scene stays until the next one replaces it, or the scene would
+				// show without it for a moment, like Helena in Nancy18 scene 2320.
+				if (_hideOnFinish && _videoSceneChange != kMovieSceneChange) {
 					setVisible(false);
 					_mask.setVisible(false);
 				}
