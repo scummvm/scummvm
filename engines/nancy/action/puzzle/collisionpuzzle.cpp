@@ -63,6 +63,7 @@ void CollisionPuzzle::init() {
 
 				switch (id) {
 				case 1 :
+				case 6 :
 					newPiece._w = 2;
 					break;
 				case 2 :
@@ -77,9 +78,6 @@ void CollisionPuzzle::init() {
 				case 5 :
 					newPiece._w = 2;
 					newPiece._h = 2;
-					break;
-				case 6 :
-					newPiece._w = 2;
 					break;
 				default :
 					continue;
