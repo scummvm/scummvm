@@ -226,12 +226,22 @@ protected:
 	 * overlay-to-window).
 	 */
 	Common::Point convertVirtualToWindow(const int x, const int y) const {
-		const int targetX = _activeArea.drawRect.left;
-		const int targetY = _activeArea.drawRect.top;
-		const int targetWidth = _activeArea.drawRect.width();
-		const int targetHeight = _activeArea.drawRect.height();
-		const int sourceWidth = _activeArea.width;
-		const int sourceHeight = _activeArea.height;
+		return convertVirtualToWindow(x, y, _activeArea.drawRect, _activeArea.width, _activeArea.height);
+	}
+
+	/**
+	 * Converts the given point from overlay coordinates to window coordinates,
+	 * regardless of which virtual screen is currently active.
+	 */
+	Common::Point convertOverlayToWindow(const int x, const int y) const {
+		return convertVirtualToWindow(x, y, _overlayDrawRect, getOverlayWidth(), getOverlayHeight());
+	}
+
+	Common::Point convertVirtualToWindow(const int x, const int y, const Common::Rect &drawRect, const int sourceWidth, const int sourceHeight) const {
+		const int targetX = drawRect.left;
+		const int targetY = drawRect.top;
+		const int targetWidth = drawRect.width();
+		const int targetHeight = drawRect.height();
 
 		if (sourceWidth == 0 || sourceHeight == 0) {
 			error("convertVirtualToWindow called without a valid draw rect");
@@ -245,16 +255,16 @@ protected:
 			windowY = targetY + (y * targetHeight + sourceHeight / 2) / sourceHeight;
 			break;
 		case Common::kRotation90:
-			windowX = targetX + ((y - (sourceHeight - 1)) * targetWidth + sourceHeight / 2) / sourceHeight;
+			windowX = targetX + (((sourceHeight - 1) - y) * targetWidth + sourceHeight / 2) / sourceHeight;
 			windowY = targetY + (x * targetHeight + sourceWidth / 2) / sourceWidth;
 			break;
 		case Common::kRotation180:
-			windowX = targetX + ((x - (sourceWidth - 1)) * targetWidth + sourceWidth / 2) / sourceWidth;
-			windowY = targetY + ((y - (sourceHeight - 1)) * targetHeight + sourceHeight / 2) / sourceHeight;
+			windowX = targetX + (((sourceWidth - 1) - x) * targetWidth + sourceWidth / 2) / sourceWidth;
+			windowY = targetY + (((sourceHeight - 1) - y) * targetHeight + sourceHeight / 2) / sourceHeight;
 			break;
 		case Common::kRotation270:
 			windowX = targetX + (y * targetWidth + sourceHeight / 2) / sourceHeight;
-			windowY = targetY + ((x - (sourceWidth - 1)) * targetHeight + sourceWidth / 2) / sourceWidth;
+			windowY = targetY + (((sourceWidth - 1) - x) * targetHeight + sourceWidth / 2) / sourceWidth;
 			break;
 		}
 
