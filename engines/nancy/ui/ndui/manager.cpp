@@ -285,6 +285,12 @@ Panel *Manager::findPanel(const Common::String &name) const {
 }
 
 InvButton *Manager::findItemButton(int16 itemID) const {
+	for (InvButton *button : _attachedItemButtons) {
+		if (button->getItemID() == itemID) {
+			return button;
+		}
+	}
+
 	for (Panel *panel : _panels) {
 		InvButton *button = panel->findItemButton(itemID);
 		if (button) {

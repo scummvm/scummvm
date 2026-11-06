@@ -91,7 +91,8 @@ public:
 
 	// Nancy17 keeps the items apart from the panel that shows them, which comes
 	// with nothing but a template for their buttons
-	void addItemButtons(const Common::Array<byte> &buttonTemplate);
+	void addItemButtons(const Common::Array<byte> &buttonTemplate, const Common::Array<int16> &skippedItems);
+	InvButton *findInvButton(const Common::String &name) const;
 	Tooltip *getTooltip() const { return _tooltip; }
 
 	void updateGraphics() override;
@@ -166,6 +167,7 @@ private:
 	Common::Array<Control *> _arrangeOrder;
 	Common::Array<RadioButton *> _radioButtons;
 	Common::Array<EditBox *> _editBoxes;
+	Common::Array<InvButton *> _invButtons;	// Item buttons placed by the UI data, not made for the inventory
 	EditBox *_focus = nullptr;
 	int _nextID = 1;
 

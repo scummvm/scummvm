@@ -336,9 +336,31 @@ void Manager::createItemButtons() {
 		return;
 	}
 
-	if (panel && _templates.contains("InvButton")) {
-		panel->addItemButtons(_templates["InvButton"]);
+	if (!panel || !_templates.contains("InvButton")) {
+		return;
 	}
+
+	// Names are unique in the UI. An item named like a button the UI data places
+	// elsewhere uses that button, like the PDA of Nancy18 on the lower bar.
+	const INVD *items = GetEngineData(INVD);
+	Common::Array<int16> attachedItems;
+	_attachedItemButtons.clear();
+
+	for (uint i = 0; items && i < items->items.size(); ++i) {
+		const INVD::Item &item = items->items[i];
+
+		for (Panel *other : _panels) {
+			InvButton *button = other != panel ? other->findInvButton(item.name) : nullptr;
+			if (button) {
+				button->attachItem(item);
+				_attachedItemButtons.push_back(button);
+				attachedItems.push_back(item.id);
+				break;
+			}
+		}
+	}
+
+	panel->addItemButtons(_templates["InvButton"], attachedItems);
 }
 
 void Manager::showInventoryItem(int16 itemID, bool show) {

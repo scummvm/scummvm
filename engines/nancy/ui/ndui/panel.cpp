@@ -24,6 +24,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
 
+#include "common/algorithm.h"
 #include "common/memstream.h"
 
 #include "engines/nancy/ui/ndui/panel.h"
@@ -302,9 +303,12 @@ Control *Panel::addNewControl(int32 type, Common::SeekableReadStream &stream) {
 	case kControlCheckBox:
 		control = new CheckBox(this);
 		break;
-	case kControlInvButton:
-		control = new InvButton(this);
+	case kControlInvButton: {
+		InvButton *button = new InvButton(this);
+		_invButtons.push_back(button);
+		control = button;
 		break;
+	}
 	case kControlVarStatic:
 		control = new VarStatic(this);
 		break;
@@ -323,7 +327,7 @@ Control *Panel::addNewControl(int32 type, Common::SeekableReadStream &stream) {
 	return control;
 }
 
-void Panel::addItemButtons(const Common::Array<byte> &buttonTemplate) {
+void Panel::addItemButtons(const Common::Array<byte> &buttonTemplate, const Common::Array<int16> &skippedItems) {
 	const INVD *items = GetEngineData(INVD);
 	if (!items) {
 		return;
@@ -332,6 +336,10 @@ void Panel::addItemButtons(const Common::Array<byte> &buttonTemplate) {
 	_kind = kObjectInvPanel;
 
 	for (const INVD::Item &item : items->items) {
+		if (Common::find(skippedItems.begin(), skippedItems.end(), item.id) != skippedItems.end()) {
+			continue;
+		}
+
 		Common::MemoryReadStream stream(buttonTemplate.data(), buttonTemplate.size());
 		stream.skip(33 + 4); // version and control type
 
@@ -662,6 +670,13 @@ bool Panel::removeControl(const Common::String &name) {
 			}
 		}
 
+		for (uint j = 0; j < _invButtons.size(); ++j) {
+			if (_invButtons[j] == control) {
+				_invButtons.remove_at(j);
+				break;
+			}
+		}
+
 		if (_focus == control) {
 			_focus = nullptr;
 		}
@@ -729,6 +744,16 @@ bool Panel::isItemButton(const Common::String &name) const {
 	}
 
 	return false;
+}
+
+InvButton *Panel::findInvButton(const Common::String &name) const {
+	for (InvButton *button : _invButtons) {
+		if (button->getName().equalsIgnoreCase(name)) {
+			return button;
+		}
+	}
+
+	return nullptr;
 }
 
 InvButton *Panel::findItemButton(int16 itemID) const {

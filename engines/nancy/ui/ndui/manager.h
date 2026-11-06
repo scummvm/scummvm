@@ -218,6 +218,7 @@ private:
 	InvButton *findItemButton(int16 itemID) const;
 
 	Common::Array<Panel *> _panels;
+	Common::Array<InvButton *> _attachedItemButtons;	// Buttons placed by the UI data that act as an item, like the PDA
 	Common::String _eventSender;
 	Common::String _caption;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _textures;

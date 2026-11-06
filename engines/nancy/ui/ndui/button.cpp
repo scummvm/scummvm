@@ -138,6 +138,11 @@ void InvButton::readExtra(Common::SeekableReadStream &stream) {
 
 void InvButton::setItem(const INVD::Item &item) {
 	_name = item.name;
+	attachItem(item);
+	_elements[1].setTexture(_elements[1]._textureName, item.sourceRect);
+}
+
+void InvButton::attachItem(const INVD::Item &item) {
 	_itemID = item.id;
 	_kind = item.kind;
 	_valueIndex = item.valueIndex;
@@ -147,8 +152,6 @@ void InvButton::setItem(const INVD::Item &item) {
 	_sceneName = item.sceneName.toString();
 	uint16 sceneID = 0;
 	_scene = parseSceneName(_sceneName, sceneID) ? sceneID : 0;
-
-	_elements[1].setTexture(_elements[1]._textureName, item.sourceRect);
 }
 
 bool InvButton::doAction(const Action &action) {
