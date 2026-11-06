@@ -108,6 +108,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId)
 	_scaleX = _scaleY = 100;
 	_dirty = false;
 	_emptyFile = false;
+	_useLinkedPath = false;
 
 	memset(_ditheringPalette, 0, 256*3);
 }
@@ -145,6 +146,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_center = _vflags & 0x01;
 	_dirty = false;
 	_emptyFile = false;
+	_useLinkedPath = false;
 
 	memset(_ditheringPalette, 0, 256*3);
 
@@ -188,6 +190,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Digita
 	_avimovie = source._avimovie;
 	_qtmovie = source._qtmovie;
 	_dirty = source._dirty;
+	_useLinkedPath = source._useLinkedPath;
 	_frameRateType = source._frameRateType;
 	_videoType = source._videoType;
 
@@ -252,7 +255,9 @@ CastMember *DigitalVideoCastMember::createFromXtra(Cast *cast, uint16 castId, Xt
 }
 
 bool DigitalVideoCastMember::loadVideoFromCast() {
-	Common::String path = getCast()->getVideoPath(_castId);
+	// Once Lingo has set the fileName, it takes precedence over any
+	// alias stored in the embedded MooV resource
+	Common::String path = _useLinkedPath ? getCast()->getLinkedPath(_castId) : getCast()->getVideoPath(_castId);
 	if (!path.empty())
 		return loadVideo(path);
 	return false;
@@ -568,7 +573,9 @@ uint DigitalVideoCastMember::getTimeScale() {
 uint DigitalVideoCastMember::getMovieCurrentTime() {
 	if (!_video)
 		return 0;
-	int ticks = 1 + ((_video->getTime() * getTimeScale() - 1)/1000);
+	// Round up to ticks. getTime() is unsigned, so "1 + (ms * scale - 1) / 1000"
+	// would underflow to the end of the movie when the time is 0.
+	int ticks = (_video->getTime() * getTimeScale() + 999) / 1000;
 	int stamp = MIN<int>(ticks, getMovieTotalTime());
 
 	return stamp;
@@ -588,7 +595,7 @@ uint DigitalVideoCastMember::getMovieTotalTime() {
 	if (!_video)
 		return 0;
 
-	int ticks = 1 + ((_video->getDuration().msecs() * getTimeScale() - 1)/1000);
+	int ticks = (_video->getDuration().msecs() * getTimeScale() + 999) / 1000;
 	return ticks;
 }
 
@@ -870,11 +877,15 @@ void DigitalVideoCastMember::setField(int field, const Datum &d) {
 		// Update the filename, then force the video to be replaced.
 		// Channel dimensions are replaced by the video.
 		CastMember::setField(field, d);
-		loadVideoFromCast();
-		if (_channel) {
-			Common::Rect rect = getInitialRect();
-			_channel->setWidth(rect.width());
-			_channel->setHeight(rect.height());
+		if (_needsReload) {
+			_needsReload = false;
+			_useLinkedPath = true;
+			reloadVideo();
+			if (_channel) {
+				Common::Rect rect = getInitialRect();
+				_channel->setWidth(rect.width());
+				_channel->setHeight(rect.height());
+			}
 		}
 		return;
 	case kTheFrameRate:
@@ -924,6 +935,26 @@ void DigitalVideoCastMember::setField(int field, const Datum &d) {
 
 bool DigitalVideoCastMember::canWriteCastData() {
 	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer1100;
+}
+
+void DigitalVideoCastMember::reloadVideo() {
+	_emptyFile = false;
+
+	if (!loadVideoFromCast())
+		return;
+
+	debugC(2, kDebugLoading, "DigitalVideoCastMember::reloadVideo(): cast %d now uses %s", _castId, _filename.c_str());
+
+	if (_channel) {
+		// Restart playback on the new file; scripts usually set
+		// movieTime/movieRate right after changing the fileName
+		_channel->_movieTime = 0;
+		_channel->_startTime = 0;
+		_channel->_stopTime = 0;
+		startVideo();
+	}
+
+	_dirty = true;
 }
 
 uint32 DigitalVideoCastMember::getCastDataSize() {

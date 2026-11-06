@@ -4124,6 +4124,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	//									  "DAEDALUS.DAT",  "4eb2fab14f1b932ae9f01d8b05a411de", 69538, 404),
 	MACGAME2("daedalus",   "", "DAEDALUS",	   "0c7bbb4b24823e5ab871cb4c1d6f3710", 483490,
 							   "DAEDALUS.DAT", "2b9e22ee93e5d58f383ef389fa09e12b", 69538, 404),
+	MACGAME2("daedalus",   "", "DAEDALUS",	   "3c25d0ce5582fd3f627e6ee1e846d276", 486588,
+							   "DAEDALUS.DAT", "27ef08567a2247b547fb1124333de84e", 70179, 404),
 	// MACGAME2_l("daedalus", "Minimal",  "DAEDALUS",	  "0c7bbb4b24823e5ab871cb4c1d6f3710", 483490,
 	//									  "DAEDALUS.DAT", "2b9e22ee93e5d58f383ef389fa09e12b", 69538, Common::DE_DEU, 404),
 	MACGAME2_l("daedalus", "", "DAEDALUS",	   "0c7bbb4b24823e5ab871cb4c1d6f3710", 483490,
