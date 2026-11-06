@@ -91,6 +91,16 @@ Common::KeymapArray ScoobyMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("c");
 	engineKeyMap->addAction(act);
 
+	act = new Action(kStandardActionLoad, _("Load game"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionLoad);
+	act->addDefaultInputMapping("C+l");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionSave, _("Save game"));
+	act->setCustomEngineActionEvent(Scooby::kScoobyActionSave);
+	act->addDefaultInputMapping("C+s");
+	engineKeyMap->addAction(act);
+
 	act = new Action("QUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(Scooby::kScoobyActionQuit);
 	act->addDefaultInputMapping("C+q");

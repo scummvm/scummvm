@@ -119,6 +119,12 @@ bool ControllerInput::processEvents(ControllerButtons backButton, bool mapEscape
 					_escapeButton = backButton;
 					_buttons |= backButton;
 				}
+			} else if (e.customType == kScoobyActionLoad) {
+				g_engine->loadGameDialog();
+			} else if (e.customType == kScoobyActionSave) {
+				g_engine->saveGameDialog();
+			} else if (e.customType == kScoobyActionQuit) {
+				g_engine->quitGame();
 			} else {
 				_buttons |= mappedActionEventToButton(static_cast<ScoobyAction>(e.customType));
 			}

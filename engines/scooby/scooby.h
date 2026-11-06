@@ -56,7 +56,10 @@ enum ScoobyAction {
 	kScoobyActionUp,
 	kScoobyActionDown,
 	kScoobyActionLeft,
-	kScoobyActionRight
+	kScoobyActionRight,
+
+	kScoobyActionLoad,
+	kScoobyActionSave
 };
 
 class ScoobyEngine : public Engine {
