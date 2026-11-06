@@ -1081,7 +1081,8 @@ void ArcadePuzzle::applyCollision() {
 	}
 
 	case 1: case 2:
-		// Paddle edge: negate both components
+	case 0x10:
+		// Paddle edge or catch-all out-of-bounds: negate both components
 		_ballDX = -_ballDX;
 		_ballDY = -_ballDY;
 		break;
@@ -1123,12 +1124,6 @@ void ArcadePuzzle::applyCollision() {
 		_ballDX = -_ballDX;
 		_ballDY = -_ballDY;
 		playBrickHitSound();
-		break;
-
-	case 0x10:
-		// Catch-all out-of-bounds: negate
-		_ballDX = -_ballDX;
-		_ballDY = -_ballDY;
 		break;
 
 	case -1:
