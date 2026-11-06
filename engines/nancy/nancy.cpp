@@ -65,7 +65,6 @@ NancyEngine::NancyEngine(GameType type, OSystem *syst, const ADGameDescription *
 		Engine(syst),
 		_gameDescription(gd),
 		_gameType(type),
-		_system(syst),
 		_datFileMajorVersion(1),
 		_datFileMinorVersion(0),
 		_false(type <= kGameTypeNancy2 ? 1 : 0),
@@ -454,8 +453,8 @@ const Common::String NancyEngine::getEventFlagName(uint flagID) const {
 	if (flagID >= 2000) {
 		flagID -= 2000;
 
-		const Common::Array<Common::String> &flagNames = dynamic_cast<const EVNT *>(getEngineData("EVNT"))->eventFlagNames;
-		return (flagID < flagNames.size()) ? flagNames[flagID] : "";
+		const EVNT *evnt = dynamic_cast<const EVNT *>(getEngineData("EVNT"));
+		return evnt && flagID < evnt->eventFlagNames.size() ? evnt->eventFlagNames[flagID] : "";
 	}
 
 	const GenericEventFlagCategory *categories = kGenericEventFlagCategories;
