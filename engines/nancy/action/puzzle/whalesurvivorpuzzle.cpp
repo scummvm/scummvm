@@ -757,9 +757,6 @@ void WhaleSurvivorPuzzle::checkCollisions() {
 			--_fishCount;
 			int divisor = _scoreDivisor > 0 ? (int)_scoreDivisor : 500;
 			_score += (int)((float)divisor * _underwaterMultiplier);
-			if (_prevScore != _score)
-				_needsRedraw = true;
-
 			_porpoiseAnim = kPorpoiseEat;
 
 			if (_eatSound.name != "NO SOUND")
