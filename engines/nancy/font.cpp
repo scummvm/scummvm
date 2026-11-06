@@ -594,7 +594,6 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			offset = _atSignOffset;
 			break;
 		default:
-			offset = -1;
 			break;
 		}
 	}
