@@ -97,7 +97,7 @@ public:
 	uint _verticalHeight;
 	float _objectsBaseDensity;
 
-	uint _startX, _startY;
+	uint _startX = 0, _startY = 0;
 
 	Common::Array<uint16> _cells;
 	Common::Array<byte> _walls;
