@@ -81,7 +81,7 @@ public:
 	IMSMacSoundSystem(Audio::Mixer *mixer, byte version);
 	virtual ~IMSMacSoundSystem();
 
-	bool init(const char *const *instrFileNames, int numInstrFileNames, bool stereo, bool internal16Bit);
+	bool init(const char *const *instrFileNames, int numInstrFileNames, bool stereo, bool internal16Bit, bool enableWarnings);
 	void deinit();
 	virtual bool start() = 0;
 	void stop();
@@ -104,7 +104,7 @@ public:
 	void setMasterVolume(Audio::Mixer::SoundType type, uint16 volume);
 
 protected:
-	bool setupResourceFork(Common::MacResManager &rm, const char *const *fileNames, int numFileNames);
+	bool setupResourceFork(Common::MacResManager &rm, const char *const *fileNames, int numFileNames, bool enableWarnings);
 	Common::SharedPtr<MacSndResource> getSndResource(uint16 id);
 	void fillPitchTable();
 
@@ -122,7 +122,7 @@ protected:
 	DeviceChannel **_channels;
 
 private:
-	virtual bool loadInstruments(const char *const *fileNames, int numFileNames) = 0;
+	virtual bool loadInstruments(const char *const *fileNames, int numFileNames, bool enableWarnings) = 0;
 	virtual void setInstrument(DeviceChannel *chan) = 0;
 	virtual void recalcFrequency(DeviceChannel *chan) = 0;
 	virtual void recalcVolume(DeviceChannel *chan) = 0;
@@ -154,7 +154,7 @@ public:
 	void setQuality(int qual) override;
 
 private:
-	bool loadInstruments(const char *const *fileNames, int numFileNames) override;
+	bool loadInstruments(const char *const *fileNames, int numFileNames, bool enableWarnings) override;
 	void setInstrument(DeviceChannel *chan) override;
 	void recalcFrequency(DeviceChannel *chan) override;
 	void recalcVolume(DeviceChannel *chan) override;
@@ -174,7 +174,7 @@ public:
 	void setQuality(int qual) override {}
 
 private:
-	bool loadInstruments(const char *const *fileNames, int numFileNames) override;
+	bool loadInstruments(const char *const *fileNames, int numFileNames, bool) override;
 	Common::SharedPtr<MacSndResource> getNoteRangeSndResource(uint16 id, byte note);
 	void setInstrument(DeviceChannel *chan) override;
 	void recalcFrequency(DeviceChannel *chan) override;
@@ -357,8 +357,8 @@ IMSMacSoundSystem::~IMSMacSoundSystem() {
 	delete[] _mixBuffer16Bit;
 }
 
-bool IMSMacSoundSystem::init(const char *const *instrFileNames, int numInstrFileNames, bool stereo, bool internal16Bit) {
-	if (!loadInstruments(instrFileNames, numInstrFileNames))
+bool IMSMacSoundSystem::init(const char *const *instrFileNames, int numInstrFileNames, bool stereo, bool internal16Bit, bool enableWarnings) {
+	if (!loadInstruments(instrFileNames, numInstrFileNames, enableWarnings))
 		return false;
 
 	_internal16Bit = internal16Bit;
@@ -656,7 +656,7 @@ void IMSMacSoundSystem::setMasterVolume(Audio::Mixer::SoundType type, uint16 vol
 		_macstr->setMasterVolume(type, volume);
 }
 
-bool IMSMacSoundSystem::setupResourceFork(Common::MacResManager &rm, const char *const *fileNames, int numFileNames) {
+bool IMSMacSoundSystem::setupResourceFork(Common::MacResManager &rm, const char *const *fileNames, int numFileNames, bool enableWarnings) {
 	const Common::CodePage tryCodePages[] = {
 		Common::kMacRoman,
 		Common::kISO8859_1
@@ -680,7 +680,8 @@ bool IMSMacSoundSystem::setupResourceFork(Common::MacResManager &rm, const char 
 	}
 
 	if (resFile.empty()) {
-		warning("%s(): Resource fork not found", __FUNCTION__);
+		if (enableWarnings)
+			warning("%s(): Resource fork not found", __FUNCTION__);
 		return false;
 	}
 
@@ -775,9 +776,9 @@ void DJMSoundSystem::setQuality(int qual) {
 		error("%s(): Unknown error", __FUNCTION__);
 }
 
-bool DJMSoundSystem::loadInstruments(const char *const *fileNames, int numFileNames) {
+bool DJMSoundSystem::loadInstruments(const char *const *fileNames, int numFileNames, bool enableWarnings) {
 	Common::MacResManager resMan;
-	if (!setupResourceFork(resMan, fileNames, numFileNames))
+	if (!setupResourceFork(resMan, fileNames, numFileNames, enableWarnings))
 		return false;
 
 	_smpResources.clear();
@@ -845,7 +846,7 @@ bool NewMacSoundSystem::start() {
 	return _musicChan ? _sdrv->playDoubleBuffer(_musicChan, _stereo ? 2 : 1, _internal16Bit ? 16 : 8, 0x56220000, &_dbCbProc,  _internal16Bit ? _numChannels : 1) : false;
 }
 
-bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFileNames) {
+bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFileNames, bool enableWarnings) {
 	if ((_container.empty() && !_fileMan->open(fileNames[0])) || (!_container.empty() && (!_fileMan->open(_container) || !_fileMan->openSubFile(fileNames[0]))))
 		return false;
 
@@ -870,7 +871,7 @@ bool NewMacSoundSystem::loadInstruments(const char *const *fileNames, int numFil
 		return false;
 
 	Common::MacResManager resMan;
-	if (!setupResourceFork(resMan, &fileNames[1], numFileNames - 1))
+	if (!setupResourceFork(resMan, &fileNames[1], numFileNames - 1, enableWarnings))
 		return false;
 
 	Common::MacResIDArray instIDs = resMan.getResIDArray(MKTAG('I', 'N', 'S', 'T'));
@@ -1313,8 +1314,9 @@ IMuseDriver_Macintosh::IMuseDriver_Macintosh(ScummEngine *vm, Audio::Mixer *mixe
 		_version = 2;
 		break;
 	case GID_INDY4:
-		_altVersion = 1; // PPC version
-	// fallthrough
+		_version = 1;		// PPC version
+		_altVersion = 0;	// Original Mac version
+		break;
 	case GID_MONKEY2:
 		_version = 0;
 		break;
@@ -1359,7 +1361,7 @@ int IMuseDriver_Macintosh::open() {
 		}
 	};
 
-	while ((!_device->init(fileNames[_version], ARRAYSIZE(fileNames[_version]), false, true) || !_device->start()) && _version != _altVersion) {
+	while ((!_device->init(fileNames[_version], ARRAYSIZE(fileNames[_version]), false, true, _altVersion == -1) || !_device->start()) && _version != _altVersion) {
 		if (_altVersion != -1) {
 			_device->deinit();
 			delete _device;
