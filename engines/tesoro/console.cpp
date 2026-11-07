@@ -27,9 +27,22 @@ namespace Tesoro {
 Console::Console() : GUI::Debugger() {
 	registerCmd("showimage", WRAP_METHOD(Console, showimage));
 	registerCmd("playanim", WRAP_METHOD(Console, playanim));
+	registerCmd("rowdump", WRAP_METHOD(Console, rowdump));
 }
 
 Console::~Console() {
+}
+
+bool Console::rowdump(int argc, const char **argv) {
+	if (argc < 4) {
+		debugPrintf("Usage: %s NAME.ANM IMAGE ROW [X]\n", argv[0]);
+		return true;
+	}
+	Common::String name(argv[1]);
+	name.toUppercase();
+	const int x = argc > 4 ? atoi(argv[4]) : 20;
+	debugPrintf("%s", g_engine->dumpRow(name.c_str(), atoi(argv[2]), atoi(argv[3]), x).c_str());
+	return true;	// stay in the console so the output can be read
 }
 
 bool Console::showimage(int argc, const char **argv) {

@@ -120,11 +120,11 @@ Common::Error TesoroEngine::run() {
 			_animPlayer.advance(gameTime());
 			const AnimBank &bank = *_animPlayer.bank();
 			// get the current step
-			const AnimStep &seq = bank.step(_animPlayer.current());
+			const AnimStep &step = bank.step(_animPlayer.current());
 
 			_screen->fillRect(Common::Rect(0, 0, 640, 480), 0x4208); // clear to grey
-			if (seq.hasImage())
-				drawImage(*_screen, 300 + seq.imageX, 300 - seq.imageY, bank.image(seq.imageIndex));
+			if (step.hasImage())
+				drawImage(*_screen, 300 + step.imageX, 300 - step.imageY, bank.image(step.imageIndex));
 			_screen->markAllDirty(); // writes through getBasePtr don't mark the screen dirty
 		}
 
@@ -186,6 +186,69 @@ bool TesoroEngine::playAnim(const char *name) {
 	// All steps up to the first one without an image, looping, with the cycle length totalled.
 	_animPlayer.setRange(0, -1, true, true, gameTime());
 	return true;
+}
+
+Common::String TesoroEngine::dumpRow(const char *name, uint index, uint imageRow, int x) {
+	const uint32 offset = _archive.findEntry(name);
+	if (!offset)
+		return Common::String::format("No entry called %s\n", name);
+	AnimBank bank;
+	if (!bank.load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow, false))
+		return Common::String::format("Could not load %s\n", name);
+	if (index >= bank.imageCount())
+		return Common::String::format("The bank has %u images\n", bank.imageCount());
+
+	const AnimImage &image = bank.image(index);
+	const byte *blob = image.data();
+	if (!blob)
+		return "That image is not loaded\n";
+	const int y = 20;
+	const uint height = READ_LE_UINT16(blob + 10);
+	const uint type = READ_LE_UINT16(blob + 12);
+	if (type != 1 && type != 3)
+		return Common::String::format("Image %u is type %u (shadow): it is not in the row list\n", index, type);
+	if (imageRow >= height || y + (int)imageRow >= RenderQueue::kRows)
+		return Common::String::format("The image has %u rows\n", height);
+
+	_queue.reset();
+	_queue.addSprite(x, y, 5, image, 0);
+
+	Common::String out = Common::String::format("image %u: %u x %u, type %u, drawn at (%d, %d); image row %u is screen row %d\n",
+		index, READ_LE_UINT16(blob + 8), height, type, x, y, imageRow, y + (int)imageRow);
+
+		const RenderQueue::Row &row = _queue.row(y + imageRow);
+	const byte *entry = blob + 0x10 + 8 * imageRow;
+	const byte *item = blob + READ_LE_UINT32(entry);
+	uint items = READ_LE_UINT16(entry + 4);
+	int n = row.head();	// the queue's span, walked in step with the image's runs
+	bool same = true;
+	int px = x;
+
+	out += "each run of the image, then the span the queue holds for it:\n";
+	while (items--) {
+		const uint gap = READ_LE_UINT16(item + 4), length = READ_LE_UINT16(item + 6);
+		const uint32 first = READ_LE_UINT32(item);
+		px += gap;
+		const int x0 = px, x1 = px + (int)length - 1;
+		const long source = type == 1 ? (long)first : (long)(first & 0xffff);
+		out += Common::String::format("  run  gap %u, length %u -> columns %d..%d, %ld\n", gap, length, x0, x1, source);
+		if (n) {
+			const RenderQueue::Span &s = row.span(n);
+			const long spanSource = type == 1 ? (long)((const byte *)s.pixels - blob) : (long)s.colour;
+			out += Common::String::format("  span columns %d..%d, depth %u, %ld\n", s.x0, s.x1, s.depth, spanSource);
+			same = same && s.x0 == x0 && s.x1 == x1 && spanSource == source;
+			n = s.next;
+		} else {
+			out += "  span (none)\n";
+			same = false;
+		}
+		px += length;
+		item += 8;
+	}
+	if (n)
+		same = false;	// the queue holds more spans than the image has runs
+	out += same ? "MATCH\n" : "DIFFERENT\n";
+	return out;
 }
 
 } // End of namespace Tesoro

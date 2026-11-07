@@ -9,7 +9,8 @@ MODULE_OBJS = \
 	core/archive.o \
 	core/archiveindex.o \
 	core/clock.o \
-	core/namekey.o
+	core/namekey.o \
+	core/renderqueue.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TESORO), DYNAMIC_PLUGIN)

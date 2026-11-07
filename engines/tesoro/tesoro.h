@@ -37,6 +37,7 @@
 #include "tesoro/core/archive.h"
 #include "tesoro/core/animbank.h"
 #include "tesoro/core/clock.h"
+#include "tesoro/core/renderqueue.h"
 
 namespace Tesoro {
 
@@ -49,6 +50,9 @@ private:
 	Common::RandomSource _randomSource;
 	Archive _archive;
 	AnimPlayer _animPlayer;
+
+
+	RenderQueue _queue;
 
 protected:
 	// Engine APIs
@@ -108,6 +112,7 @@ public:
 	// temp functions
 	bool showImage(const char *name, int index);
 	bool playAnim(const char *name);
+	Common::String dumpRow(const char *name, uint index, uint imageRow, int x = 20);
 };
 
 extern TesoroEngine *g_engine;
