@@ -1,0 +1,109 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+static const uint8 PART_75_ANIM_DATA_1[18] = {
+	0, 8, 9, 8, 9, 8, 9, 8, 9, 8, 9, 10, 11, 12, 13, 14, 15, 16
+};
+
+static const uint8 PART_75_ANIM_DATA_2[37] = {
+	 0, 31, 32, 33, 34, 31, 32, 33, 34, 31, 32, 33, 34, 31, 32, 33, 34, 31, 32,
+	33, 34, 31, 32, 33, 34, 31, 32, 33, 34, 31, 32, 33, 34, 31, 32, 33, 34
+};
+
+void IgorEngine::part75UpdatePhilipDialogue(int action) {
+	switch (action) {
+	case kUpdateDialogueAnimEndOfSentence:
+		part75DrawPhilipFrame(2);
+		break;
+	case kUpdateDialogueAnimMiddleOfSentence:
+		part75DrawPhilipFrame(getRandomNumber(4) + 2);
+		break;
+	}
+}
+
+void IgorEngine::part75DrawPhilipFrame(int frame) {
+	const uint8 *src = _animFramesBuffer + READ_LE_UINT16(_animFramesBuffer + 0x5E6D + frame * 2) - 1;
+	decodeAnimFrame(src, _screenVGA);
+}
+
+void IgorEngine::part75() {
+	const bool savingWasAllowed = _canSaveGame;
+	_canSaveGame = false;
+	if (isCDVersion())
+		playMusic(8);
+	partMainMeanwhile();
+	_gameState.enableLight = 1;
+	_talkColorIndex = 255;
+	_talkShadowIndex = 0;
+	loadRoomData(PAL_PhilipRoom, IMG_PhilipRoom, BOX_PhilipRoom, MSK_PhilipRoom, TXT_PhilipRoom);
+	static const int anm[] = { ANM_PhilipVodka, AOF_PhilipVodka, 0 };
+	loadAnimData(anm);
+	copyLayerToScreen(_screenLayer1Surface);
+	_updateDialogue = &IgorEngine::part75UpdatePhilipDialogue;
+	part75DrawPhilipFrame(1);
+	part75DrawPhilipFrame(7);
+	memset(_currentPalette, 0, 768);
+	fadeIn(768);
+	_gameState.igorMoving = false;
+	cutsceneSay(187, 82, 63, 63, 0, { { 201, 1, 1156 }, { 202, 2, 1157 }, { 204, 1, 1158 } });
+	for (int i = 1; i <= 17; ++i) {
+		part75DrawPhilipFrame(PART_75_ANIM_DATA_1[i]);
+		waitForTimer(30);
+	}
+	cutsceneSay(187, 82, 63, 63, 0, { { 205, 1, 1159 }, { 206, 1, 1160 } });
+	for (int i = 17; i <= 30; ++i) {
+		part75DrawPhilipFrame(i);
+		waitForTimer(15);
+	}
+	cutsceneSayStart(187, 82, 63, 63, 0, 208, 1);
+	playSound(62, 1);
+	for (int i = 1; i <= 36; ++i) {
+		part75DrawPhilipFrame(PART_75_ANIM_DATA_2[i]);
+		waitForTimer(15);
+	}
+	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+	cutsceneSayStart(187, 82, 63, 63, 0, 209, 1);
+	part75DrawPhilipFrame(35);
+	waitForTimer(255);
+	part75DrawPhilipFrame(36);
+	waitForTimer(140);
+	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+	cutsceneSayStart(187, 82, 63, 63, 0, 210, 1);
+	for (int i = 1; i <= 40; ++i) {
+		part75DrawPhilipFrame(getRandomNumber(3) + 37);
+		waitForTimer(30);
+	}
+	memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+	_gameState.dialogueTextRunning = false;
+	_updateDialogue = 0;
+	_talkColorIndex = kTalkColor;
+	_talkShadowIndex = kTalkShadowColor;
+	_currentPart = 122;
+	fadeOut(768);
+	_canSaveGame = savingWasAllowed;
+}
+
+
+} // End of namespace Igor
