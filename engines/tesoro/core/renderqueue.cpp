@@ -26,9 +26,9 @@
 
 namespace Tesoro {
 
-RenderQueue::Row::Row(uint nodes, bool mask) {
+RenderQueue::Row::Row(uint spans, bool mask) {
 	_mask = mask;
-	_nodes.resize(nodes);
+	_spans.resize(spans);
 }
 
 void RenderQueue::Row::clear() {
@@ -40,11 +40,11 @@ void RenderQueue::Row::clear() {
 int RenderQueue::Row::allocate() {
 	if (_free) {
 		const int node = _free;
-		_free = _nodes[node].next;
+		_free = _spans[node].next;
 		return node;
 	}
 
-	if (_bump >= _nodes.size()) {
+	if (_bump >= _spans.size()) {
 		// The original does not check and overwrites the next row.
 		warning("RenderQueue: row is full");
 		return -1;
@@ -63,7 +63,7 @@ void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels
 		if (!cur)
 			break;
 
-		Span &node = _nodes[cur];
+		Span &node = _spans[cur];
 		const int32 nx0 = node.x0;
 		const int32 nx1 = node.x1;
 
@@ -79,14 +79,14 @@ void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels
 						const int right = allocate();
 						if (right < 0)
 							return;
-						Span &old = _nodes[cur];
-						_nodes[right] = old;
+						Span &old = _spans[cur];
+						_spans[right] = old;
 						if (_mask || old.pixels < 2) {
-							_nodes[right].x0 = (int16)(xe + 1);
+							_spans[right].x0 = (int16)(xe + 1);
 						} else {
 							const int32 skipped = xe - nx0 + 1;
-							_nodes[right].x0 = (int16)(_nodes[right].x0 + skipped);
-							_nodes[right].pixels += skipped * 2;
+							_spans[right].x0 = (int16)(_spans[right].x0 + skipped);
+							_spans[right].pixels += skipped * 2;
 						}
 						old.x1 = (int16)(startX - 1);
 						old.next = right;
@@ -124,12 +124,12 @@ void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels
 					const int left = allocate();
 					if (left < 0)
 						return;
-					_nodes[left].next = cur;
-					_nodes[left].x1 = (int16)(nx0 - 1);
-					_nodes[left].x0 = startX;
-					_nodes[left].pixels = drawn ? 0 : pixels;
-					_nodes[left].colour = colour;
-					_nodes[left].depth = depth;
+					_spans[left].next = cur;
+					_spans[left].x1 = (int16)(nx0 - 1);
+					_spans[left].x0 = startX;
+					_spans[left].pixels = drawn ? 0 : pixels;
+					_spans[left].colour = colour;
+					_spans[left].depth = depth;
 					setNext(pred, left);
 				} else if (xe <= nx1) {
 					hidden = true;
@@ -153,20 +153,20 @@ void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels
 	const int added = allocate();
 	if (added < 0)
 		return;
-	_nodes[added].next = next(pred);
-	_nodes[added].x0 = startX;
-	_nodes[added].x1 = (int16)xe;
-	_nodes[added].pixels = pixels;
-	_nodes[added].colour = colour;
-	_nodes[added].depth = depth;
+	_spans[added].next = next(pred);
+	_spans[added].x0 = startX;
+	_spans[added].x1 = (int16)xe;
+	_spans[added].pixels = pixels;
+	_spans[added].colour = colour;
+	_spans[added].depth = depth;
 	setNext(pred, added);
 }
 
 RenderQueue::RenderQueue() {
 	for (uint i = 0; i < kRows; ++i)
-		_rows.push_back(Row(kLiteralNodes));
+		_rows.push_back(Row(kLiteralSpans));
 	for (uint i = 0; i < kRows; ++i)
-		_maskRows.push_back(Row(kMaskNodes, true));
+		_maskRows.push_back(Row(kMaskSpans, true));
 }
 
 void RenderQueue::reset() {
