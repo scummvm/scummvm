@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-06 02:11+0000\n"
-"PO-Revision-Date: 2026-11-05 17:39+0000\n"
+"PO-Revision-Date: 2026-11-07 07:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -12688,11 +12688,9 @@ msgstr ""
 "version"
 
 #: engines/nancy/metaengine.cpp:185
-#, fuzzy
-#| msgid "Support for Nancy Drew 19 and newer is not compiled in"
 msgid "Support for Nancy Drew 26 and newer is not compiled in"
 msgstr ""
-"La prise en charge de Nancy Drew 19 et plus n'a pas été activée dans cette "
+"La prise en charge de Nancy Drew 26 et plus n'a pas été activée dans cette "
 "version"
 
 #: engines/nancy/state/loadsave.cpp:108
