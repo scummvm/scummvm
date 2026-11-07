@@ -347,7 +347,7 @@ void RaycastLevelBuilder::writeTransparentWalls(uint startX, uint startY, uint t
 	const RCLB::Theme &theme = _themeData->themes[themeID];
 	uint numWallsToWrite = (int)((float)theme.objectWallDensity * _objectsBaseDensity);
 
-	for (uint numWrittenWalls = 0; numWrittenWalls < numWallsToWrite;) {
+	for (uint numWrittenWalls = 0; numWrittenWalls < numWallsToWrite; ++numWrittenWalls) {
 		bool vertical = g_nancy->_randomSource->getRandomBit();
 		bool foundWallLocation = false;
 
@@ -444,8 +444,6 @@ void RaycastLevelBuilder::writeTransparentWalls(uint startX, uint startY, uint t
 
 		_wallMap[y * _fullWidth + x] = selectedTransparentWallIDs;
 		_wallMap[otherY * _fullWidth + otherX] = selectedTransparentWallIDs;
-
-		++numWrittenWalls;
 	}
 }
 
@@ -455,7 +453,7 @@ void RaycastLevelBuilder::writeObjectWalls(uint startX, uint startY, uint themeI
 
 	uint textureVerticalHeight = _verticalHeight * 128; // 128 is a constant inside RayCast
 
-	for (uint numWrittenWalls = 0; numWrittenWalls < numWallsToWrite;) {
+	for (uint numWrittenWalls = 0; numWrittenWalls < numWallsToWrite; ++numWrittenWalls) {
 		bool vertical = g_nancy->_randomSource->getRandomBit();
 		bool foundWallLocation = false;
 
@@ -569,8 +567,6 @@ void RaycastLevelBuilder::writeObjectWalls(uint startX, uint startY, uint themeI
 		ceiling = (int)ceiling - 2 < 0 ? 0 : ceiling - 2;
 
 		_floorCeilingLightMap[y * _fullWidth + x] = (lightmapValue & 0xF000) | (ceiling << 4) | floor;
-
-		++numWrittenWalls;
 	}
 }
 
@@ -578,7 +574,7 @@ void RaycastLevelBuilder::writeDoors(uint startX, uint startY, uint themeID) {
 	const RCLB::Theme &theme = _themeData->themes[themeID];
 	uint numDoorsToWrite = (int)((float)theme.doorDensity * _objectsBaseDensity);
 
-	for (uint numWrittenWalls = 0; numWrittenWalls < numDoorsToWrite;) {
+	for (uint numWrittenWalls = 0; numWrittenWalls < numDoorsToWrite; ++numWrittenWalls) {
 		bool vertical = g_nancy->_randomSource->getRandomBit();
 		bool foundDoorLocation = false;
 
