@@ -527,7 +527,7 @@ public:
 	void setCollisionMode(CollisionMode mode);
 	void setCollisionScale(float scale);
 
-	bool handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d *vec) const;
+	bool handleCollisionWith(Actor *actor, Math::Vector3d *vec) const;
 
 	static void saveStaticState(SaveGame *state);
 	static void restoreStaticState(SaveGame *state);
