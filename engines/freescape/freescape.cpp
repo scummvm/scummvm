@@ -229,6 +229,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_playerHeightNumber = 1;
 	_playerHeightMaxNumber = 1;
 	_angleRotationIndex = 0;
+	_initialPlayerHeight = 0;
 
 	// TODO: this is not the same for every game
 	_playerStepIndex = 6;
@@ -979,6 +980,12 @@ void FreescapeEngine::processInput() {
 			case kActionTurnBack:
 				rotate(180, 0, 0);
 				break;
+			case kActionRiseOrFlyUp:
+				rise();
+				break;
+			case kActionLowerOrFlyDown:
+				lower();
+				break;
 			case kActionToggleClipMode:
 				_noClipMode = !_noClipMode;
 				_flyMode = _noClipMode;
@@ -1039,16 +1046,10 @@ void FreescapeEngine::processInput() {
 				_strafeRight = false;
 				break;
 			case kActionRiseOrFlyUp:
-				if (!_flyMode)
-					rise();
-				else
-					_moveUp = false;
+				_moveUp = false;
 				break;
 			case kActionLowerOrFlyDown:
-				if (!_flyMode)
-					lower();
-				else
-					_moveDown = false;
+				_moveDown = false;
 				break;
 			default:
 				releasedKey(event.customType);

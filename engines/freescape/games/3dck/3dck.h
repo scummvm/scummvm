@@ -164,7 +164,6 @@ private:
 	Common::Array<uint16> _controlData;
 
 	byte _palette[256 * 3] = {};
-	uint16 _initialPlayerHeight;
 	uint16 _initialCondition = 0, _timerInterval = 0, _activationRange = 0;
 	uint32 _kitVariables[256] = {};
 	uint32 _changedVariables = 0;

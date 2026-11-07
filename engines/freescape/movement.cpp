@@ -91,6 +91,19 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	act->addDefaultInputMapping("u");
 	engineKeyMap->addAction(act);
 
+	act = new Common::Action("RISE", _("Rise / Fly up"));
+	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("LOWER", _("Lower / Fly down"));
+	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
+
+
 	act = new Common::Action("SKIP", _("Skip"));
 	act->setCustomEngineActionEvent(kActionSkip);
 	act->addDefaultInputMapping("SPACE");
@@ -379,7 +392,10 @@ void FreescapeEngine::changePlayerHeight(int index) {
 	int scale = _currentArea->getScale();
 
 	_position.setValue(1, _position.y() - _playerHeight);
-	_playerHeight = 32 * (index + 1) - 16 / float(scale);
+	if (_initialPlayerHeight > 0)
+		_playerHeight = (index == 0) ? _initialPlayerHeight / 2 : _initialPlayerHeight;
+	else
+		_playerHeight = 32 * (index + 1) - 16 / float(scale);
 	assert(_playerHeight > 0);
 	_position.setValue(1, _position.y() + _playerHeight);
 }
