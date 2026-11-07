@@ -200,44 +200,6 @@ void drawTranslatedStillHeading(Graphics::Surface &still, int stillIndex, const 
 	drawConfiguredHighQualityTextLines(still, translation, prefix, "LiberationSerif-BoldItalic.ttf", 255, 255, 255, 0, 0, 0);
 }
 
-bool applyPatchImage(Graphics::Surface &surface, Common::SeekableReadStream *stream, const char *debugName) {
-	Common::ScopedPtr<Common::SeekableReadStream> patchStream(stream);
-	if (!patchStream)
-		return false;
-
-	Image::PNGDecoder decoder;
-	if (!decoder.loadStream(*patchStream) || !decoder.getSurface()) {
-		warning("%s: Could not decode translated patch", debugName);
-		return false;
-	}
-
-	const Graphics::Surface *patch = decoder.getSurface();
-	const int width = MIN<int>(surface.w, patch->w);
-	const int height = MIN<int>(surface.h, patch->h);
-	for (int y = 0; y < height; ++y) {
-		for (int x = 0; x < width; ++x) {
-			uint8 srcA, srcR, srcG, srcB;
-			patch->format.colorToARGB(patch->getPixel(x, y), srcA, srcR, srcG, srcB);
-			if (srcA == 0)
-				continue;
-
-			if (srcA == 0xff) {
-				surface.setPixel(x, y, surface.format.ARGBToColor(0xff, srcR, srcG, srcB));
-				continue;
-			}
-
-			uint8 dstA, dstR, dstG, dstB;
-			surface.format.colorToARGB(surface.getPixel(x, y), dstA, dstR, dstG, dstB);
-			const uint invA = 255 - srcA;
-			const uint8 outR = (srcR * srcA + dstR * invA) / 255;
-			const uint8 outG = (srcG * srcA + dstG * invA) / 255;
-			const uint8 outB = (srcB * srcA + dstB * invA) / 255;
-			surface.setPixel(x, y, surface.format.ARGBToColor(0xff, outR, outG, outB));
-		}
-	}
-	return true;
-}
-
 void drawTranslatedEnding(Graphics::Surface &surface, const TextTranslationData &translation, const Common::String &prefix) {
 #ifdef USE_FREETYPE2
 	const TextStringTable &strings = translation.strings;
@@ -321,6 +283,44 @@ void drawTranslatedEnding(Graphics::Surface &surface, const TextTranslationData 
 
 } // End of anonymous namespace
 
+bool applyPatchImage(Graphics::Surface &surface, Common::SeekableReadStream *stream, const char *debugName) {
+	Common::ScopedPtr<Common::SeekableReadStream> patchStream(stream);
+	if (!patchStream)
+		return false;
+
+	Image::PNGDecoder decoder;
+	if (!decoder.loadStream(*patchStream) || !decoder.getSurface()) {
+		warning("%s: Could not decode image patch", debugName);
+		return false;
+	}
+
+	const Graphics::Surface *patch = decoder.getSurface();
+	const int width = MIN<int>(surface.w, patch->w);
+	const int height = MIN<int>(surface.h, patch->h);
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			uint8 srcA, srcR, srcG, srcB;
+			patch->format.colorToARGB(patch->getPixel(x, y), srcA, srcR, srcG, srcB);
+			if (srcA == 0)
+				continue;
+
+			if (srcA == 0xff) {
+				surface.setPixel(x, y, surface.format.ARGBToColor(0xff, srcR, srcG, srcB));
+				continue;
+			}
+
+			uint8 dstA, dstR, dstG, dstB;
+			surface.format.colorToARGB(surface.getPixel(x, y), dstA, dstR, dstG, dstB);
+			const uint invA = 255 - srcA;
+			const uint8 outR = (srcR * srcA + dstR * invA) / 255;
+			const uint8 outG = (srcG * srcA + dstG * invA) / 255;
+			const uint8 outB = (srcB * srcA + dstB * invA) / 255;
+			surface.setPixel(x, y, surface.format.ARGBToColor(0xff, outR, outG, outB));
+		}
+	}
+	return true;
+}
+
 void applyTranslatedComputerCard(Graphics::Surface &card, const char *path, const TextTranslationData &translation) {
 #ifdef USE_FREETYPE2
 	if (!translation.packageArchive)
@@ -387,6 +387,34 @@ void applyTranslatedComputerButtons(Graphics::Surface &computer, const TextTrans
 	computer.copyRectToSurface(*converted, 576, 608, Common::Rect(163, 70, 217, 94));
 	converted->free();
 	delete converted;
+}
+
+bool applyTranslatedCinemaTitleButton(Graphics::Surface &buttons, const TextTranslationData &translation) {
+#ifdef USE_FREETYPE2
+	if (translation.strings.getString("cinema_title_button.line1") &&
+		translation.strings.getString("cinema_title_button_pressed.line1")) {
+		drawConfiguredHighQualityTextLines(buttons, translation, "cinema_title_button.", "LiberationSans-BoldItalic.ttf", 53, 55, 106, 142, 146, 232);
+		drawConfiguredHighQualityTextLines(buttons, translation, "cinema_title_button_pressed.", "LiberationSans-BoldItalic.ttf", 136, 90, 155, 183, 169, 211);
+		return true;
+	}
+#endif
+	return false;
+}
+
+void applyTranslatedCinemaMenu(Graphics::Surface &menu, const TextTranslationData &translation) {
+#ifdef USE_FREETYPE2
+	if (!translation.packageArchive)
+		return;
+	const char *patch = translation.strings.getString("cinema_menu.patch");
+	if (!patch || !translation.strings.getString("cinema_menu.buttons.line1") ||
+		!translation.strings.getString("cinema_menu.instruction.line1"))
+		return;
+	if (!applyPatchImage(menu, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "applyTranslatedCinemaMenu"))
+		return;
+
+	drawConfiguredHighQualityTextLines(menu, translation, "cinema_menu.buttons.", "LiberationSans-BoldItalic.ttf", 32, 40, 48, 0, 0, 0);
+	drawConfiguredHighQualityTextLines(menu, translation, "cinema_menu.instruction.", "LiberationSerif-Regular.ttf", 216, 176, 32, 0, 0, 0);
+#endif
 }
 
 void applyTranslatedTitleMenu(Graphics::Surface &title, const TextTranslationData &translation) {

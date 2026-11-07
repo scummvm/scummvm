@@ -19,11 +19,13 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "graphics/font.h"
 #include "graphics/screen.h"
 #include "graphics/surface.h"
 #include "harold/bcb/bcb.h"
+#include "harold/bcb/cinema.h"
 #include "harold/bcb/script.h"
 #include "harold/bcb/static_data.h"
 
@@ -52,15 +54,35 @@ bool BCBEngine::showInitialLogoScreen() {
 bool BCBEngine::showTitleScreen() {
 	stopGameOverMusic();
 	if (_titleBitmap && _titleBitmap->format != g_system->getScreenFormat()) {
+		delete _cinemaMenu;
+		_cinemaMenu = nullptr;
 		_titleBitmap->free();
 		delete _titleBitmap;
 		_titleBitmap = nullptr;
 	}
 
+	const Common::String &target = ConfMan.getActiveDomainName();
+	const bool completed = ConfMan.hasKey("bcb_completed", target) && ConfMan.getBool("bcb_completed", target);
+	if (completed && !_cinemaMenu) {
+		_cinemaMenu = new CinemaViewer(*this);
+		if (!_cinemaMenu->load()) {
+			delete _cinemaMenu;
+			_cinemaMenu = nullptr;
+		}
+	}
+	const bool cinemaAvailable = completed && _cinemaMenu;
+	if (_titleBitmap && _cinemaAvailable != cinemaAvailable) {
+		_titleBitmap->free();
+		delete _titleBitmap;
+		_titleBitmap = nullptr;
+	}
+	_cinemaAvailable = cinemaAvailable;
 	if (!_titleBitmap) {
 		_titleBitmap = loadBitmap("16mtitle.bmp");
 		if (_titleBitmap && _selectedTextLanguagePackageAvailable)
 			applyTranslatedTitleMenu(*_titleBitmap, _textTranslation);
+		if (_titleBitmap && _cinemaAvailable)
+			CinemaViewer::drawTitleButton(*this, *_titleBitmap);
 	}
 	if (!_titleBitmap)
 		return false;
@@ -99,6 +121,8 @@ bool BCBEngine::transitionFromLogoToTitle() {
 }
 
 bool BCBEngine::startNewGameFromTitle() {
+	delete _cinemaMenu;
+	_cinemaMenu = nullptr;
 	_titleButtonsActive = false;
 	_systemButtonsVisible = false;
 	stopMenuBackgroundMusic();
@@ -134,6 +158,19 @@ bool BCBEngine::showPendingStillImageScreen() {
 	_screen->update();
 	still->free();
 	delete still;
+
+	if (stillImageToShowId == 0x39 || stillImageToShowId == 0x3a) {
+		const Common::String &target = ConfMan.getActiveDomainName();
+		if (!ConfMan.hasKey("bcb_completed", target) || !ConfMan.getBool("bcb_completed", target)) {
+			ConfMan.setBool("bcb_completed", true, target);
+			ConfMan.flushToDisk();
+			if (_titleBitmap) {
+				_titleBitmap->free();
+				delete _titleBitmap;
+				_titleBitmap = nullptr;
+			}
+		}
+	}
 
 	_currentDisplayState = 6;
 	_pendingStillElapsedTimerTicks = 0;

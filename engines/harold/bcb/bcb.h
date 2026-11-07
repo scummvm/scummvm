@@ -68,9 +68,11 @@ enum BCBAction {
 };
 
 class Debugger;
+class CinemaViewer;
 
 class BCBEngine : public Engine {
 	friend class Debugger;
+	friend class CinemaViewer;
 
 public:
 	BCBEngine(OSystem *syst, const HaroldGameDescription *desc);
@@ -85,6 +87,8 @@ public:
 	bool canSaveAutosaveCurrently() override;
 
 private:
+	void runCinemaViewer();
+	void pauseEngineIntern(bool paused) override;
 	void loadFonts();
 	bool initializeSearchPaths();
 	bool showInitialLogoScreen();
@@ -205,14 +209,15 @@ private:
 	void drawAnalogClockAndChip(int baseHourOffset, int gameClockTicks, bool present = true);
 	void renderClockAndChipToSurface(Graphics::Surface &surface, int baseHourOffset, int gameClockTicks);
 	Graphics::Surface *loadBitmap(const char *fileName);
+	Graphics::Surface *loadProgramBitmap(const char *fileName) const;
 	const Graphics::Surface *getUiBitmap(const char *fileName);
-	Graphics::Surface *loadBitmapFromStream(Common::SeekableReadStream *stream, const char *debugName) const;
+	Graphics::Surface *loadImageFromStream(Common::SeekableReadStream *stream, const char *fileName) const;
 	Graphics::Surface *loadDiscBitmap(const char *relativePath) const;
 	Graphics::Surface *loadDiscBitmapFromAnyDisc(const char *relativePath) const;
 	Common::SeekableReadStream *createProgramReadStream(const char *relativePath) const;
 	Common::SeekableReadStream *createDiscReadStream(int discNumber, const char *relativePath) const;
 	Common::SeekableReadStream *createActiveDiscReadStream(const char *relativePath) const;
-	Common::SeekableReadStream *createActiveDiscHighColorReadStream(const char *relativePath) const;
+	Common::SeekableReadStream *createDiscImageReadStream(int discNumber, const char *relativePath, Common::String &resolvedPath, bool searchAllDiscs = false) const;
 	void blitScreenWithLineReveal(const Graphics::Surface &surface, bool presentFinalFrame = true);
 	void drawTitleButton(uint buttonIndex, bool pressed);
 	void handleLeftButtonDown(const Common::Point &mousePosition);
@@ -271,6 +276,9 @@ private:
 	Video::AVIDecoder *_mapMoveVideo = nullptr;
 	Video::AVIDecoder *_activeMovieVideo = nullptr;
 	Graphics::Surface *_titleBitmap = nullptr;
+	CinemaViewer *_cinemaViewer = nullptr;
+	CinemaViewer *_cinemaMenu = nullptr;
+	bool _cinemaAvailable = false;
 	Graphics::Surface *_uiBitmap = nullptr;
 	Common::String _uiBitmapName;
 	Graphics::Surface *_chipBitmap = nullptr;

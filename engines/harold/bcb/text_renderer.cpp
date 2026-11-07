@@ -621,12 +621,38 @@ Graphics::Surface *downscaleRgbaLayerInternal(const Graphics::Surface &source, i
 	Graphics::Surface temp;
 	temp.create(width, source.h, source.format);
 	temp.fillRect(Common::Rect(width, source.h), 0);
+	Common::Array<int> rowStarts, rowEnds;
+	if (!opaque) {
+		rowStarts.resize(source.h);
+		rowEnds.resize(source.h);
+		for (int y = 0; y < source.h; ++y) {
+			rowStarts[y] = width;
+			rowEnds[y] = 0;
+		}
+	}
 	for (int y = sourceAlphaBounds.top; y < sourceAlphaBounds.bottom; ++y) {
 		const byte *sourceRow = (const byte *)source.getBasePtr(0, y);
 		byte *tempRow = (byte *)temp.getBasePtr(0, y);
 		if (y > sourceAlphaBounds.top && !memcmp(sourceRow, sourceRow - source.pitch, source.w * 4)) {
 			memcpy(tempRow, tempRow - temp.pitch, width * 4);
+			if (!opaque) {
+				rowStarts[y] = rowStarts[y - 1];
+				rowEnds[y] = rowEnds[y - 1];
+			}
 			continue;
+		}
+		int rowFirst = firstOutX, rowLast = lastOutX;
+		if (!opaque) {
+			int left = sourceAlphaBounds.left, right = sourceAlphaBounds.right;
+			while (left < right && !sourceRow[left * 4 + 3])
+				++left;
+			if (left == right)
+				continue;
+			while (!sourceRow[(right - 1) * 4 + 3])
+				--right;
+			findOutputBoundsForSourceBounds(horizontalBounds, width, Common::Rect(left, 0, right, 1), true, rowFirst, rowLast);
+			rowStarts[y] = rowFirst;
+			rowEnds[y] = rowLast;
 		}
 		if (opaque) {
 			const uint32 *pixels = reinterpret_cast<const uint32 *>(sourceRow);
@@ -634,7 +660,7 @@ Graphics::Surface *downscaleRgbaLayerInternal(const Graphics::Surface &source, i
 			for (int x = source.w - 2; x >= 0; --x)
 				runEnds[x] = pixels[x] == pixels[x + 1] ? runEnds[x + 1] : x + 1;
 		}
-		for (int outX = firstOutX; outX < lastOutX; ++outX) {
+		for (int outX = rowFirst; outX < rowLast; ++outX) {
 			const int xmin = horizontalBounds[outX * 2 + 0];
 			const int xmax = horizontalBounds[outX * 2 + 1];
 			const int *kernel = &horizontalCoefficients[outX * horizontalKernelSize];
@@ -668,7 +694,16 @@ Graphics::Surface *downscaleRgbaLayerInternal(const Graphics::Surface &source, i
 		const int *kernel = &verticalCoefficients[outY * verticalKernelSize];
 		byte *targetRow = (byte *)target->getBasePtr(0, outY);
 		const byte *tempRow = static_cast<const byte *>(temp.getBasePtr(0, ymin));
-		for (int x = firstOutX; x < lastOutX; ++x) {
+		int rowFirst = firstOutX, rowLast = lastOutX;
+		if (!opaque) {
+			rowFirst = width;
+			rowLast = 0;
+			for (int y = ymin; y < ymin + ymax; ++y) {
+				rowFirst = MIN(rowFirst, rowStarts[y]);
+				rowLast = MAX(rowLast, rowEnds[y]);
+			}
+		}
+		for (int x = rowFirst; x < rowLast; ++x) {
 			byte *targetPixel = targetRow + x * 4;
 			if (opaque)
 				resampleRgbaPixel<true, false>(tempRow + x * 4, temp.pitch, kernel, ymax, targetPixel);

@@ -29,6 +29,7 @@
 #include "harold/bcb/script.h"
 #include "harold/bcb/static_data.h"
 #include "image/bmp.h"
+#include "image/pict.h"
 
 namespace BCB {
 
@@ -37,6 +38,8 @@ bool BCBEngine::initializeSearchPaths() {
 	_programFiles.addDirectory(gameDataDir, 0, 1, false);
 	_programFiles.addSubDirectoryMatching(gameDataDir, "program", 0, 1, false);
 	_programFiles.addSubDirectoryMatching(gameDataDir, "bcb/program", 0, 2, false);
+	_programFiles.addSubDirectoryMatching(gameDataDir, "pict", 0, 1, false);
+	_programFiles.addSubDirectoryMatching(gameDataDir, "BLUE CHICAGO BLUES/pict", 0, 1, false);
 	for (int i = 0; i < 5; ++i)
 		_discFiles[i].addSubDirectoryMatching(gameDataDir, Common::String::format("bcb%d", i + 1), 0, 8);
 
@@ -58,36 +61,99 @@ Common::SeekableReadStream *BCBEngine::createActiveDiscReadStream(const char *re
 	return createDiscReadStream(CLIP<int>(_activeMediaDiscNumber, 1, 5), relativePath);
 }
 
-Common::SeekableReadStream *BCBEngine::createActiveDiscHighColorReadStream(const char *relativePath) const {
-	Common::SeekableReadStream *stream = createActiveDiscReadStream(relativePath);
-	if (stream)
-		return stream;
-
-	Common::String fallbackPath(relativePath);
-	int marker = fallbackPath.find("/16m/");
-	if (marker < 0)
+Common::SeekableReadStream *BCBEngine::createDiscImageReadStream(int discNumber, const char *relativePath, Common::String &resolvedPath, bool searchAllDiscs) const {
+	resolvedPath = relativePath;
+	if (discNumber < 1 || discNumber > 5)
 		return nullptr;
 
-	fallbackPath = fallbackPath.substr(0, marker) + "/256/" + fallbackPath.substr(marker + 5);
-	return createActiveDiscReadStream(fallbackPath.c_str());
+	Common::String fallbackPath(relativePath);
+	fallbackPath.toLowercase();
+	if (!fallbackPath.hasPrefix("bmp/") || !fallbackPath.hasSuffix(".bmp")) {
+		for (int offset = 0; offset < (searchAllDiscs ? 5 : 1); ++offset) {
+			Common::SeekableReadStream *stream = createDiscReadStream((discNumber - 1 + offset) % 5 + 1, relativePath);
+			if (stream)
+				return stream;
+		}
+		return nullptr;
+	}
+
+	const int marker = fallbackPath.find("/16m/");
+	Common::String pictPath = fallbackPath;
+	if (marker >= 0)
+		pictPath = pictPath.substr(0, marker) + pictPath.substr(marker + 4);
+	pictPath = "pict/" + pictPath.substr(4, pictPath.size() - 8) + ".pic";
+	Common::String paths[3] = {relativePath, pictPath, ""};
+	const int pathCount = marker >= 0 ? 3 : 2;
+	const int discCount = marker >= 0 || searchAllDiscs ? 5 : 1;
+	if (marker >= 0)
+		paths[2] = fallbackPath.substr(0, marker) + "/256/" + fallbackPath.substr(marker + 5);
+
+	for (int pathIndex = 0; pathIndex < pathCount; ++pathIndex) {
+		resolvedPath = paths[pathIndex];
+		for (int offset = 0; offset < discCount; ++offset) {
+			const int sourceDisc = (discNumber - 1 + offset) % 5 + 1;
+			Common::SeekableReadStream *stream = createDiscReadStream(sourceDisc, resolvedPath.c_str());
+			if (stream)
+				return stream;
+		}
+	}
+	return nullptr;
 }
 
-Graphics::Surface *BCBEngine::loadBitmapFromStream(Common::SeekableReadStream *stream, const char *debugName) const {
+Graphics::Surface *BCBEngine::loadImageFromStream(Common::SeekableReadStream *stream, const char *fileName) const {
 	Common::ScopedPtr<Common::SeekableReadStream> file(stream);
 	if (!file)
 		return nullptr;
 
-	Image::BitmapDecoder decoder;
-	if (!decoder.loadStream(*file)) {
-		warning("BCBEngine::loadBitmapFromStream(): Could not decode %s", debugName);
+	Common::String name(fileName);
+	name.toLowercase();
+	Common::ScopedPtr<Image::ImageDecoder> decoder;
+	if (name.hasSuffix(".pic") || name.hasSuffix(".pict"))
+		decoder.reset(new Image::PICTDecoder());
+	else
+		decoder.reset(new Image::BitmapDecoder());
+	if (!decoder->loadStream(*file)) {
+		warning("BCBEngine::loadImageFromStream(): Could not decode %s", fileName);
 		return nullptr;
 	}
 
-	const Graphics::Surface *source = decoder.getSurface();
+	const Graphics::Surface *source = decoder->getSurface();
 	if (!source)
 		return nullptr;
 
-	return source->convertTo(g_system->getScreenFormat(), decoder.getPalette().data(), decoder.getPalette().size());
+	return source->convertTo(g_system->getScreenFormat(), decoder->getPalette().data(), decoder->getPalette().size());
+}
+
+Graphics::Surface *BCBEngine::loadProgramBitmap(const char *fileName) const {
+	Common::SeekableReadStream *stream = createProgramReadStream(fileName);
+	if (stream)
+		return loadImageFromStream(stream, fileName);
+
+	static const struct {
+		const char *bitmap;
+		const char *picture;
+	} imageNames[] = {
+		{"16mchip.bmp", "PCHIP.PIC"},
+		{"16mlogo.bmp", "PRSLOGO.PIC"},
+		{"16mmain.bmp", "PMAIN.PIC"},
+		{"16mmainn.bmp", "PMAIN_N.PIC"},
+		{"16mmap.bmp", "PMAP.PIC"},
+		{"16msys.bmp", "PSYSTEM.PIC"},
+		{"16mtitle.bmp", "PTITLE.PIC"},
+		{"256com.bmp", "PCOM.PIC"}
+	};
+	const Common::String requestedName(fileName);
+	for (uint i = 0; i < ARRAYSIZE(imageNames); ++i) {
+		if (!requestedName.equalsIgnoreCase(imageNames[i].bitmap))
+			continue;
+		stream = createProgramReadStream(imageNames[i].picture);
+		if (!stream && requestedName.equalsIgnoreCase("256com.bmp")) {
+			for (int disc = 1; disc <= 5 && !stream; ++disc)
+				stream = createDiscReadStream(disc, "pict/comp/pcom.pic");
+		}
+		return loadImageFromStream(stream, imageNames[i].picture);
+	}
+	return nullptr;
 }
 
 const Graphics::Surface *BCBEngine::getUiBitmap(const char *fileName) {
@@ -99,7 +165,7 @@ const Graphics::Surface *BCBEngine::getUiBitmap(const char *fileName) {
 		bitmap = nullptr;
 	}
 	if (!bitmap) {
-		bitmap = loadBitmapFromStream(createProgramReadStream(fileName), fileName);
+		bitmap = loadProgramBitmap(fileName);
 		if (!isChip)
 			_uiBitmapName = fileName;
 	}
@@ -116,30 +182,19 @@ Graphics::Surface *BCBEngine::loadBitmap(const char *fileName) {
 		copy->copyFrom(*source);
 		return copy;
 	}
-	return loadBitmapFromStream(createProgramReadStream(fileName), fileName);
+	return loadProgramBitmap(fileName);
 }
 
 Graphics::Surface *BCBEngine::loadDiscBitmap(const char *relativePath) const {
-	return loadBitmapFromStream(createActiveDiscHighColorReadStream(relativePath), relativePath);
+	Common::String resolvedPath;
+	Common::SeekableReadStream *stream = createDiscImageReadStream(CLIP<int>(_activeMediaDiscNumber, 1, 5), relativePath, resolvedPath);
+	return loadImageFromStream(stream, resolvedPath.c_str());
 }
 
 Graphics::Surface *BCBEngine::loadDiscBitmapFromAnyDisc(const char *relativePath) const {
-	for (int discNumber = 1; discNumber <= 5; ++discNumber) {
-		Common::SeekableReadStream *stream = createDiscReadStream(discNumber, relativePath);
-		if (stream)
-			return loadBitmapFromStream(stream, relativePath);
-
-		Common::String fallbackPath(relativePath);
-		const int marker = fallbackPath.find("/16m/");
-		if (marker >= 0) {
-			fallbackPath = fallbackPath.substr(0, marker) + "/256/" + fallbackPath.substr(marker + 5);
-			stream = createDiscReadStream(discNumber, fallbackPath.c_str());
-			if (stream)
-				return loadBitmapFromStream(stream, fallbackPath.c_str());
-		}
-	}
-
-	return nullptr;
+	Common::String resolvedPath;
+	Common::SeekableReadStream *stream = createDiscImageReadStream(CLIP<int>(_activeMediaDiscNumber, 1, 5), relativePath, resolvedPath, true);
+	return loadImageFromStream(stream, resolvedPath.c_str());
 }
 
 Common::SeekableReadStream *BCBEngine::createMovieReadStream(int movieId) const {

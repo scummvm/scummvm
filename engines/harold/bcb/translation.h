@@ -76,8 +76,11 @@ Common::String makeTextStringKey(TextTranslationType type, uint primaryId, uint 
 void listAvailableTranslationPackages(const Common::FSNode &gameDataDir, Common::Array<TranslationPackageDefinition> &packages);
 bool isTranslationPackageAvailable(const Common::FSNode &gameDataDir, const Common::String &code);
 bool loadTranslationPackage(const Common::FSNode &gameDataDir, const Common::String &code, TextTranslationData &translation);
+bool applyPatchImage(Graphics::Surface &surface, Common::SeekableReadStream *stream, const char *debugName);
 void applyTranslatedStillImage(Graphics::Surface &still, int stillIndex, const TextTranslationData &translation);
 void applyTranslatedTitleMenu(Graphics::Surface &title, const TextTranslationData &translation);
+void applyTranslatedCinemaMenu(Graphics::Surface &menu, const TextTranslationData &translation);
+bool applyTranslatedCinemaTitleButton(Graphics::Surface &buttons, const TextTranslationData &translation);
 void applyTranslatedComputerButtons(Graphics::Surface &computer, const TextTranslationData &translation);
 void applyTranslatedComputerCard(Graphics::Surface &card, const char *path, const TextTranslationData &translation);
 

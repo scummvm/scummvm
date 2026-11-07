@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "graphics/screen.h"
 #include "harold/bcb/bcb.h"
+#include "harold/bcb/cinema.h"
 #include "harold/bcb/script.h"
 #include "harold/bcb/static_data.h"
 #include "video/avi_decoder.h"
@@ -122,6 +123,13 @@ void BCBEngine::handleLeftButtonDown(const Common::Point &mousePosition) {
 
 	if (_currentDisplayState != 0 || !_titleButtonsActive)
 		return;
+
+	if (_cinemaAvailable && !_titleLoadSlotsActive && CinemaViewer::titleButtonRect().contains(mousePosition)) {
+		CinemaViewer::pressTitleButton(*this);
+		delayWithEventPolling(80);
+		runCinemaViewer();
+		return;
+	}
 
 	for (uint i = 1; i < ARRAYSIZE(kTitleButtonTable); ++i) {
 		const ButtonControlRecord &button = kTitleButtonTable[i];

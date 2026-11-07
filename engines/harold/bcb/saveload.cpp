@@ -33,6 +33,7 @@
 #include "graphics/surface.h"
 
 #include "harold/bcb/bcb.h"
+#include "harold/bcb/cinema.h"
 #include "harold/bcb/script.h"
 #include "harold/bcb/static_data.h"
 
@@ -89,11 +90,11 @@ bool BCBEngine::hasFeature(EngineFeature f) const {
 }
 
 bool BCBEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return true;
+	return !_cinemaViewer;
 }
 
 bool BCBEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return true;
+	return !_cinemaViewer;
 }
 
 bool BCBEngine::canSaveAutosaveCurrently() {
@@ -154,6 +155,8 @@ Common::Error BCBEngine::loadGameState(int slot) {
 	if (!validSave)
 		return Common::kReadingFailed;
 
+	delete _cinemaMenu;
+	_cinemaMenu = nullptr;
 	resetTransientRuntimeStateAfterLoad();
 	processGameStateDispatcher(false);
 	return Common::kNoError;

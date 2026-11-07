@@ -31,6 +31,7 @@
 #include "graphics/sjis.h"
 #include "graphics/surface.h"
 #include "harold/bcb/debugger.h"
+#include "harold/bcb/cinema.h"
 #include "harold/bcb/script.h"
 #include "harold/bcb/static_data.h"
 #include "video/avi_decoder.h"
@@ -86,6 +87,7 @@ BCBEngine::BCBEngine(OSystem *syst, const HaroldGameDescription *desc)
 }
 
 BCBEngine::~BCBEngine() {
+	delete _cinemaMenu;
 	delete _screen;
 	if (_uiBitmap) {
 		_uiBitmap->free();

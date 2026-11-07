@@ -7,6 +7,10 @@ ifdef ENABLE_BCB
 MODULE_OBJS += \
 	bcb/bcb.o \
 	bcb/captions.o \
+	bcb/cinema.o \
+	bcb/cinema_data.o \
+	bcb/cinema_tables.o \
+	bcb/cinema_video.o \
 	bcb/computer.o \
 	bcb/debugger.o \
 	bcb/executable_data.o \
