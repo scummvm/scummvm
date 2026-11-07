@@ -41,7 +41,7 @@ namespace Mohawk {
 
 struct MohawkGameDescription;
 
-/** Immutable release identity and release-specific conventions derived from the detector. */
+/** Detector release identity, selected game language and release-specific conventions. */
 class ZmbReleaseInfo {
 public:
 	/** Broad implementation lineages; localized variants retain their parent family. */
@@ -54,8 +54,7 @@ public:
 		 */
 		kUsV10,
 		/**
-		 * v1.0BR, v1.0FR, v1.0GE, v1.0BR Demo,
-		 * v1.1BR, v1.1FR, v1.1GE, v1.1FR_2002,
+		 * v1.0EU, v1.0BR Demo, v1.1EU, v1.1FR_2002,
 		 * v1.0IT and v1.0JP.
 		 *
 		 * @remarks
@@ -106,7 +105,7 @@ public:
 		kGameplayMusic,
 		/** Toggle sticky mouse. */
 		kStickyMouse,
-		/** Reserve the release's language-selection keys during gameplay. */
+		/** Select a supported language, or reserve unavailable language keys. */
 		kLanguageSelection,
 		/** Open the Load dialog. */
 		kLoadGame,
@@ -120,6 +119,8 @@ public:
 		kCreditsText,
 		/** Credit Dialog: text clipping area to scroll in @ref Mohawk::ZoombiniDialogCredits. */
 		kCreditsScroll,
+		/** Credit Dialog: leftOffset adjusts the TLC Miles logo's X coordinate in @ref Mohawk::ZoombiniDialogCredits. */
+		kCreditsV20MilesLogo,
 		/** MsgBox Dialog: body text rect in @ref Mohawk::ZoombiniDialogMsgBox. */
 		kMsgBoxBody,
 		/** Options Dialog: title text rect in @ref Mohawk::ZoombiniDialogOptions. */
@@ -144,18 +145,28 @@ public:
 		kMapPracticeRowStep,
 		/** RODMAP: text rect for map-icon hover puzzle-name tooltip in @ref Mohawk::ZoombiniInteractiveRodMap. */
 		kMapTooltip,
+		/** RodMap: text bounds for the TLC options button label. */
+		kMapOptionsLabel,
 		/** PICKER: text rect for Zoombini name preview in @ref Mohawk::ZoombiniShelterPicker. */
 		kPickerName,
-		/** NotiBox: long noti box bounds for its background and redraw area in @ref Mohawk::ZoombiniInteractive. */
-		kNotiBoxLong,
-		/** NotiBox: text rect inside either noti box size in @ref Mohawk::ZoombiniInteractive. */
+		/** PICKER: Generate button hit rectangle in @ref Mohawk::ZoombiniShelterPicker. */
+		kPickerGenerateButton,
+		/** PICKER: Dice button hit rectangle in @ref Mohawk::ZoombiniShelterPicker. */
+		kPickerDiceButton,
+		/** TOWN: bottomOffset adjusts the memorial body text bounds in @ref Mohawk::ZoombiniShelterTown. */
+		kTownMemorialBody,
+		/** BASECAMP2: left-max storage scroll button hit rectangle in @ref Mohawk::ZoombiniShelterBasecampTwo. */
+		kBasecamp2ScrollLeftMaxButton,
+		/** BASECAMP2: left-one storage scroll button hit rectangle in @ref Mohawk::ZoombiniShelterBasecampTwo. */
+		kBasecamp2ScrollLeftOneButton,
+		/** XFER: population-sign text insets in @ref Mohawk::ZoombiniTransitionXfer. */
+		kXferTownPopulationText,
+		/** NotiBox: text rect inside any noti-box size in @ref Mohawk::ZoombiniInteractive. */
 		kNotiBoxText,
 		/** Help Dialog: rect adjustment for the dialog title and page heading in @ref Mohawk::ZoombiniDialogHelp. */
 		kHelpHeading,
 		/** Help Dialog: instruction body text rect in @ref Mohawk::ZoombiniDialogHelp. */
 		kHelpBody,
-		/** Help Dialog: Previous, Next and Okay button text rects in @ref Mohawk::ZoombiniDialogHelp. */
-		kHelpButtonText,
 	};
 
 	/** Independent offsets added to the four edges of a page-owned rectangle. */
@@ -169,8 +180,14 @@ public:
 		Common::Rect apply(const Common::Rect &rect) const;
 	};
 
-	/** Snapshot detector flags and normalize an unknown language to US English. */
+	/** Construct an instance with release information. */
 	explicit ZmbReleaseInfo(const MohawkGameDescription &gameDesc);
+	/** Whether this release contains selectable BR/FR/DE resources. */
+	bool isMultilingualRelease() const { return _isMultilingual; }
+	/** Whether @p lang is supported by multilingual Europe releases: BR/FR/DE. */
+	static bool isMultilingualReleaseLanguage(Common::Language lang);
+	/** Set a selectable language on a multilingual release; return false for unsupported requests. */
+	bool setLanguage(Common::Language lang);
 	/** Match a broad implementation lineage. */
 	bool isFamily(Family family) const;
 	/** Match both the implementation family and its language. */
@@ -193,7 +210,7 @@ public:
 	 */
 	bool isShortcut(ShortcutKind kind, const Common::KeyState &kbd, bool fixSwappedSoundMusic = false) const;
 	/** Whether the detector marks the release as a demo. */
-	bool isDemo() const { return _demo; }
+	bool isDemo() const { return _isDemo; }
 	/** Match a demo without implicitly restricting its language. */
 	bool isDemo(Family family) const;
 	/** Match a demo in one implementation family and language. */
@@ -217,7 +234,12 @@ public:
 	LayoutAdjustment getMapRouteLayoutAdjustment(uint32 routeIdx) const;
 	/** Return the adjustment for a zero-based Options navigation or toggle label. */
 	LayoutAdjustment getOptionsLabelLayoutAdjustment(uint32 buttonIdx) const;
-	/** Language used by the engine, including the unknown-language fallback. */
+	/**
+	 * Detected or selected game language.
+	 *
+	 * @remarks
+	 * Returns UNK_LANG until a multilingual target is initialized.
+	 */
 	Common::Language getLanguage() const { return _lang; }
 	/** Platform recorded by the detector. */
 	Common::Platform getPlatform() const { return _platform; }
@@ -237,12 +259,14 @@ public:
 private:
 	/** Detector feature bits used to identify the implementation family. */
 	const uint32 _features;
-	/** Detector language normalized to US English when unknown. */
+	/** In-game language, selected from the detector or the multilingual target setting. */
 	Common::Language _lang;
 	/** Detector platform used for release-specific text encodings. */
 	const Common::Platform _platform;
 	/** Whether the detector marks this release as a demo. */
-	const bool _demo;
+	const bool _isDemo;
+	/** Whether the detector identifies a complete multilingual Europe release. */
+	const bool _isMultilingual;
 };
 
 class MohawkMetaEngine_Zoombini {

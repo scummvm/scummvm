@@ -212,7 +212,7 @@ void ZoombiniText::patchKoreanExeCredits() {
 }
 
 const ZoombiniText::ResTextEntry ZoombiniText::kV10EU_ResTextEntries[] = {
-	{ZoombiniText::kVersionInformation, 1040, 1},
+	{ZoombiniText::kDialogBodyVersionInfo, 1040, 1},
 	{ZoombiniText::kPicker, 2000, 0},
 	{ZoombiniText::kBridge, 2000, 1},
 	{ZoombiniText::kCaves, 2000, 2},
@@ -426,7 +426,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10JPMacDemoTextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10ES_PETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x89210, 126},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x89210, 126},
 	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0}, // NO-OP
 	{ZoombiniText::kPicker, 0x899B4, 13},
 	{ZoombiniText::kBridge, 0x899C2, 16},
@@ -583,7 +583,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10ES_PETextEntries[] = {
 // Key-address-size map for the Portuguese v1.0 PE32 executable.
 // Lengths are the text byte counts before each trailing NUL terminator.
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10PT_PETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x8925B, 125},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x8925B, 125},
 	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0}, // NO-OP
 	{ZoombiniText::kPicker, 0x89A30, 20},
 	{ZoombiniText::kBridge, 0x89A45, 21},
@@ -738,7 +738,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10PT_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_PETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x8A51A, 118},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x8A51A, 118},
 	{ZoombiniText::kTown, 0x8AD89, 13},
 	{ZoombiniText::kPicker, 0x8ACA4, 13},
 	{ZoombiniText::kBridge, 0x8ACB2, 15},
@@ -882,7 +882,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_NETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0xCEE00, 118},
+	{ZoombiniText::kDialogBodyVersionInfo, 0xCEE00, 118},
 	{ZoombiniText::kTown, 0xDBF3F, 13},
 	{ZoombiniText::kPicker, 0xDBE5A, 13},
 	{ZoombiniText::kBridge, 0xDBE68, 15},
@@ -1026,7 +1026,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11US_NETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_NETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0xD4A00, 118},
+	{ZoombiniText::kDialogBodyVersionInfo, 0xD4A00, 118},
 	{ZoombiniText::kTown, 0xD955D, 13},
 	{ZoombiniText::kPicker, 0xD9478, 13},
 	{ZoombiniText::kBridge, 0xD9486, 15},
@@ -1179,7 +1179,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_NETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_PETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x89156, 118},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x89156, 118},
 	{ZoombiniText::kTown, 0x899A9, 13},
 	{ZoombiniText::kPicker, 0x898C4, 13},
 	{ZoombiniText::kBridge, 0x898D2, 15},
@@ -1332,7 +1332,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10US_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV11USMacTextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x9EFE, 118},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x9EFE, 118},
 	{ZoombiniText::kTown, 0x9B96, 13},
 	{ZoombiniText::kPicker, 0x9E70, 13},
 	{ZoombiniText::kBridge, 0x9720, 15},
@@ -1476,7 +1476,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV11USMacTextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10USMacTextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x919C, 118},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x919C, 118},
 	{ZoombiniText::kTown, 0x8E1E, 13},
 	{ZoombiniText::kPicker, 0x8F8E, 13},
 	{ZoombiniText::kBridge, 0x89A8, 15},
@@ -1813,12 +1813,12 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV20USMacTextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV20USMacRawTextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x9A56C, 135},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x9A56C, 135},
 	{ZoombiniText::kDialogHelpLevel, 0x9A704, 5},
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10USMacDemoTextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x912C, 123},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x912C, 123},
 	{ZoombiniText::kTown, 0x8DAE, 13},
 	{ZoombiniText::kPicker, 0x8F1E, 13},
 	{ZoombiniText::kBridge, 0x8938, 15},
@@ -1971,7 +1971,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10USMacDemoTextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10USDemo_NETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0xD4000, 123},
+	{ZoombiniText::kDialogBodyVersionInfo, 0xD4000, 123},
 	{ZoombiniText::kTown, 0xD8B1F, 13},
 	{ZoombiniText::kPicker, 0xD8A3A, 13},
 	{ZoombiniText::kBridge, 0xD8A48, 15},
@@ -2124,7 +2124,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10USDemo_NETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV20US_PETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x874CC, 135},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x874CC, 135},
 	{ZoombiniText::kTown, 0x92680, 13},
 	{ZoombiniText::kPicker, 0x928C4, 13},
 	{ZoombiniText::kBridge, 0x92264, 15},
@@ -2279,7 +2279,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV20US_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV20PL_PETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0xC04E4, 135},
+	{ZoombiniText::kDialogBodyVersionInfo, 0xC04E4, 135},
 	// One route pair shares a source buffer without a NUL between its logical entries.
 	// Short dialog button labels use a prefix when the executable has no standalone copy.
 	{ZoombiniText::kTown, 0xD012C, 8},
@@ -2440,7 +2440,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV20PL_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV20USDemo_PETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x864CC, 140},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x864CC, 140},
 	{ZoombiniText::kTown, 0x91648, 13},
 	{ZoombiniText::kPicker, 0x9188C, 13},
 	{ZoombiniText::kBridge, 0x9122C, 15},
@@ -2595,7 +2595,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV20USDemo_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV111KR_PETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0x8B130, 118},
+	{ZoombiniText::kDialogBodyVersionInfo, 0x8B130, 118},
 	{ZoombiniText::kPicker, 0x8B8EC, 9},
 	{ZoombiniText::kBridge, 0x8B8F6, 13},
 	{ZoombiniText::kCaves, 0x8B97D, 9},
@@ -2738,7 +2738,7 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV111KR_PETextEntries[] = {
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV111KR_NETextEntries[] = {
-	{ZoombiniText::kVersionInformation, 0xDF800, 118},
+	{ZoombiniText::kDialogBodyVersionInfo, 0xDF800, 118},
 	{ZoombiniText::kPicker, 0x78400, 9},
 	{ZoombiniText::kBridge, 0x7840A, 13},
 	{ZoombiniText::kCaves, 0x78491, 9},
@@ -3586,7 +3586,7 @@ bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 	archiveStrings.reserve(ARRAYSIZE(kV10EU_ResTextEntries));
 	for (const ResTextEntry &entry : kV10EU_ResTextEntries) {
 		uint16 strIdx = entry.stringIndex;
-		if (entry.key == kVersionInformation) {
+		if (entry.key == kDialogBodyVersionInfo) {
 			if (_relInfo.isDemo())
 				strIdx -= 1;
 			if (_relInfo.getPlatform() == Common::kPlatformMacintosh)
@@ -3636,8 +3636,25 @@ bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 		if (entry.key != kNewGame)
 			_strMap[entry.key] = archiveStrings[entryIdx];
 	}
+
 	if (sources.textStrCreditEntryCount)
 		_creditParagraphs = archiveCredits;
+
+	if (_relInfo.isMultilingualRelease()) {
+		static constexpr Key kLangSwitchKeys[] = {
+			kDialogBodySwitchLang,
+			kDialogBodySwitchLangUnsaved,
+			kDialogBodyCannotSwitchLangInPractice,
+			kDialogButtonLangSwitchCancel,
+			kDialogButtonLangSwitchChange,
+		};
+		static constexpr uint16 kFirstLanguageTextIndex = 42;
+		const Common::Array<Common::U32String> &dialogStrings = resStringCache[2018];
+		if (dialogStrings.size() < kFirstLanguageTextIndex + ARRAYSIZE(kLangSwitchKeys))
+			return false;
+		for (uint i = 0; i < ARRAYSIZE(kLangSwitchKeys); i++)
+			_strMap[kLangSwitchKeys[i]] = dialogStrings[kFirstLanguageTextIndex + i];
+	}
 
 	return true;
 }

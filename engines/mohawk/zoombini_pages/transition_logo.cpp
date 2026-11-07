@@ -25,6 +25,7 @@
 #include "video/bink_decoder.h"
 #endif
 
+#include "mohawk/cursors.h"
 #include "mohawk/video.h"
 
 #include "mohawk/zoombini.h"
@@ -47,8 +48,11 @@ ZoombiniTransitionLogo::ZoombiniTransitionLogo(MohawkEngine_Zoombini *vm)
 }
 
 ZoombiniTransitionLogo::~ZoombiniTransitionLogo() {
-	if (_cdtoonsVideo)
+	if (_cdtoonsVideo) {
 		_vm->_video->removeEntry(_cdtoonsVideo);
+		if (_vm->getRelInfo().isMultilingualRelease())
+			_vm->_cursor->showCursor();
+	}
 
 #if defined(USE_BINK) && defined(USE_RGB_COLOR)
 	if (_binkDecoder) {
@@ -134,6 +138,9 @@ void ZoombiniTransitionLogo::loadFeatures() {
 		}
 
 		_cdtoonsVideo->center();
+		// The multilingual EU title hides the pointer until the movie is closed.
+		if (_vm->getRelInfo().isMultilingualRelease())
+			_vm->_cursor->hideCursor();
 	}
 }
 

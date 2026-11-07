@@ -874,7 +874,7 @@ void ZoombiniTransitionXfer::loadFeatures() {
 		tc._outlinePalette = ZoombiniGraphics::kColor2D_Black; // palette #45 (shadow)
 		tc._hAlign = Graphics::kTextAlignCenter;
 		tc._vAlign = Graphics::kTextAlignCenter;
-		tc._wordWrap = false;
+		tc._wordWrap = true;
 		_vm->_gfx->drawText(ZoombiniGraphics::kBackScreen, textKey, textRect, tc);
 	}
 
@@ -1123,9 +1123,7 @@ void ZoombiniTransitionXfer::xfer5TownCount_onPostRender(ZmbFeature *feature) {
 	if (signRect.isEmpty())
 		return;
 
-	Common::Rect textRect = signRect;
-	textRect.left += 16;
-	textRect.top += 8;
+	const Common::Rect textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kXferTownPopulationText).apply(signRect);
 
 	Common::U32String text = _vm->_text->getLocalizedString(ZoombiniText::kXferVillePopulation);
 	text += Common::U32String::format(text.lastChar() == ' ' ? "%d" : " %d", _xfer5DisplayedTownCount);
@@ -1136,6 +1134,7 @@ void ZoombiniTransitionXfer::xfer5TownCount_onPostRender(ZmbFeature *feature) {
 	tc._outlinePalette = 0x70;
 	tc._hAlign = Graphics::kTextAlignLeft;
 	tc._vAlign = Graphics::kTextAlignStart;
+	tc._wordWrap = true;
 
 	_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, text, textRect, tc);
 

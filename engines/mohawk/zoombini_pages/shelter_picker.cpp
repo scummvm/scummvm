@@ -39,6 +39,9 @@ constexpr Common::Point ZoombiniShelterPicker::_zoombiniSeatPoints[16];
 ZoombiniShelterPicker::ZoombiniShelterPicker(MohawkEngine_Zoombini *vm)
 	: ZoombiniShelter(vm, ZoombiniPageType::kPicker), _previewSnoid(vm, 0, ZmbFeature::FLAG_00000001_TYPE_SNOID) {
 	_clickZoneRadius = kPickerClickZoneRadius;
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	_generateButtonRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kPickerGenerateButton).apply(_generateButtonRect);
+	_diceButtonRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kPickerDiceButton).apply(_diceButtonRect);
 	_isFirstVisit = _vm->_state->isFirstLaunch();
 	if (_isFirstVisit && 0 < _vm->_state->_r.getEntryCount() && _vm->_state->_currentSaveSlot == ZoombiniGameState::kUnsavedNewGame) {
 		_mode = kPickerMode_LoadGame;

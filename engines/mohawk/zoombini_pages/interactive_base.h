@@ -133,11 +133,11 @@ public:
 	void showNotiBoxShort(const Common::U32String &ustr);
 	/** Hide the short notification immediately. */
 	void hideNotiBoxShort();
-	/** Show a long notification with caller-supplied text. */
-	void showNotiBoxLong(const Common::U32String &ustr);
-	/** Show a long notification that remains until another owner replaces it. */
-	void showNotiBoxLongPersistent(const Common::U32String &ustr);
-	/** Show a localized long notification identified by @p textKey. */
+	/** Show a medium notification with caller-supplied text. */
+	void showNotiBoxMedium(const Common::U32String &ustr);
+	/** Show a medium notification that remains until another owner replaces it. */
+	void showNotiBoxMediumPersistent(const Common::U32String &ustr);
+	/** Show a localized notification identified by @p textKey using the release-specific medium or wide layout. */
 	void showNotiBoxLong(ZoombiniText::Key textKey);
 
 	/**
@@ -439,15 +439,28 @@ protected:
 	// [*] Notification Box
 	/** Number of 60 FPS frames for the long notification box. */
 	constexpr static uint32 NOTIBOX_LONG_SHOW_FRAME_DURATION = 90;
-	/** Show a short or long localized notification box with the requested lifetime. */
-	void showNotiBox(const Common::U32String &ustr, bool isNotiBoxLong, bool persistent);
-
-	enum NotiBoxHotspotIdx {
-		kHotspotNotiBoxShort = 0,
-		kHotspotNotiBoxLong = 1,
+	/** Notification layouts, indexed in the same order as their background shapes. */
+	enum NotiBoxKind {
+		/** Displays the dragged Zoombini's name or debug coordinates in all releases. */
+		kNotiBox00_Short = 0,
+		/**
+		 * Used in all releases for mouse pointer show/hide messages and custom text, including built-in debug output.
+		 * Also used for other option notifications in v1.0US/ES/PT/IT, v1.1US, v1.11KR and TLC v2.0, including demos.
+		 */
+		kNotiBox01_Medium = 1,
+		/**
+		 * Used for option notifications in v1.0EU/v1.1EU, v1.1FR_2002, v1.0BR Demo and v1.0JP retail/demo.
+		 * Covers sound, music, less/more action, sticky/auto-sticky mouse, transitions and Japanese name generation (Ctrl+M).
+		 * Mouse pointer show/hide messages and custom text use @ref ZoombiniInteractive::kNotiBox01_Medium instead.
+		 */
+		kNotiBox02_Wide = 2,
 	};
+	/** Show the selected notification layout with the requested lifetime. */
+	void showNotiBox(const Common::U32String &ustr, NotiBoxKind kind, bool persistent);
+	/** Return the active notification's background, text and redraw bounds. */
+	const Common::Rect &getNotiBoxRect() const;
 
-	/** Select the short or long notification-box shape. */
+	/** Select the active notification-box shape. */
 	void notiBox_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
 	/** Draw notification text after the notification-box shape. */
 	void notiBox_onPostRender(ZmbFeature *feature);
@@ -918,19 +931,16 @@ private:
 
 	/** Short notification-box rectangle. */
 	const Common::Rect _notiBoxShortRect = Common::Rect(0x0115, 0x01CA, 0x016C, 0x01DD);
-	/**
-	 * Long notification-box rectangle.
-	 * In v1.0JP, this rect is widened.
-	 */
-	Common::Rect _notiBoxLongRect = Common::Rect(0x0101, 0x01CA, 0x0183, 0x01DD);
-	/** Background shape selected for long notifications in the active release. */
-	uint16 _notiBoxLongShape = kSystemShape3001_02_NotiBoxLong;
+	/** Medium notification-box rectangle. */
+	const Common::Rect _notiBoxMediumRect = Common::Rect(0x0101, 0x01CA, 0x0183, 0x01DD);
+	/** Wide notification-box rectangle for localized European option messages. */
+	const Common::Rect _notiBoxWideRect = Common::Rect(0x00ED, 0x01CA, 0x01B5, 0x01DD);
 	/** Frame at which the current notification expires. */
 	uint32 _notiBoxShowUntilFrame = 0;
 	/** Text currently displayed in the notification box. */
 	Common::U32String _notiBoxText;
-	/** Whether the current notification uses the long layout. */
-	bool _isNotiBoxLong = false;
+	/** Layout used by the current notification. */
+	NotiBoxKind _notiBoxKind = kNotiBox00_Short;
 	/** Notification-box feature runner. */
 	ZmbFeature *_notiBoxFeature = nullptr;
 

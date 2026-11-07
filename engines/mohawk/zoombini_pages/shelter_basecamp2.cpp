@@ -24,6 +24,7 @@
 
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"
+#include "mohawk/zoombini_metaengine.h"
 #include "mohawk/zoombini_pages/shelter_basecamp2.h"
 #include "mohawk/zoombini_random.h"
 #include "mohawk/zoombini_sound.h"
@@ -44,6 +45,9 @@ ZoombiniShelterBasecampTwo::ZoombiniShelterBasecampTwo(MohawkEngine_Zoombini *vm
 							  kResBitmapShape9000_Buttons, false, _pedestalPoints,
 							  ZmbResource(ZmbResource::kPage, kResSound2000_StorageScrolling),
 							  ZmbResource(ZmbResource::kPage, kResSound2001_StorageScrollEnd)) {
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	_scrollButtonRects[0] = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kBasecamp2ScrollLeftMaxButton).apply(_scrollButtonRects[0]);
+	_scrollButtonRects[1] = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kBasecamp2ScrollLeftOneButton).apply(_scrollButtonRects[1]);
 }
 
 ZoombiniShelterBasecampTwo::~ZoombiniShelterBasecampTwo() {

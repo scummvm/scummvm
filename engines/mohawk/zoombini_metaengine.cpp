@@ -29,17 +29,34 @@
 #include "common/ustr.h"
 
 Mohawk::ZmbReleaseInfo::ZmbReleaseInfo(const MohawkGameDescription &gameDesc)
-	: _features(gameDesc.features),
-	  _lang(gameDesc.desc.language), _platform(gameDesc.desc.platform),
-	  _demo((gameDesc.desc.flags & ADGF_DEMO) != 0) {
-	if (_lang == Common::UNK_LANG)
-		_lang = Common::EN_USA;
+	: _features(gameDesc.features), _lang(gameDesc.desc.language), _platform(gameDesc.desc.platform), _isDemo((gameDesc.desc.flags & ADGF_DEMO) != 0),
+	  _isMultilingual(_lang == Common::UNK_LANG && !_isDemo && (_features & (GF_ZMB_10_EU | GF_ZMB_11_EU)) != 0) {
+	if (_lang == Common::UNK_LANG && !_isMultilingual)
+		error("ZmbReleaseInfo: single-language release cannot have a value of UNK_LANG");
 }
 
-Common::CodePage Mohawk::ZmbReleaseInfo::getExeCodePage(Common::Language language, Common::Platform platform) {
+bool Mohawk::ZmbReleaseInfo::isMultilingualReleaseLanguage(Common::Language lang) {
+	switch (lang) {
+	case Common::EN_GRB:
+	case Common::FR_FRA:
+	case Common::DE_DEU:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool Mohawk::ZmbReleaseInfo::setLanguage(Common::Language lang) {
+	if (!isMultilingualRelease() || !isMultilingualReleaseLanguage(lang))
+		return false;
+	_lang = lang;
+	return true;
+}
+
+Common::CodePage Mohawk::ZmbReleaseInfo::getExeCodePage(Common::Language lang, Common::Platform platform) {
 	switch (platform) {
 	case Common::kPlatformMacintosh:
-		switch (language) {
+		switch (lang) {
 		case Common::JA_JPN:
 			// FIXME: Implement proper MacJapanese support.
 			// Fortunately, the v1.0JP demo's Japanese text decodes correctly with CP932,
@@ -49,7 +66,7 @@ Common::CodePage Mohawk::ZmbReleaseInfo::getExeCodePage(Common::Language languag
 			return Common::kMacRoman;
 		}
 	case Common::kPlatformWindows:
-		switch (language) {
+		switch (lang) {
 		case Common::JA_JPN:
 			return Common::kWindows932;
 		case Common::KO_KOR:
@@ -66,12 +83,12 @@ Common::CodePage Mohawk::ZmbReleaseInfo::getExeCodePage(Common::Language languag
 	return Common::kCodePageInvalid;
 }
 
-Common::CodePage Mohawk::ZmbReleaseInfo::getResCodePage(Common::Language language, Common::Platform platform) {
+Common::CodePage Mohawk::ZmbReleaseInfo::getResCodePage(Common::Language lang, Common::Platform platform) {
 	switch (platform) {
 	case Common::kPlatformMacintosh:
-		return getExeCodePage(language, platform);
+		return getExeCodePage(lang, platform);
 	case Common::kPlatformWindows:
-		switch (language) {
+		switch (lang) {
 		case Common::EN_GRB:
 		case Common::FR_FRA:
 		case Common::DE_DEU:
@@ -136,19 +153,19 @@ Mohawk::MohawkMetaEngine_Zoombini::MidiSoundtrack Mohawk::MohawkMetaEngine_Zoomb
 	}
 }
 
-bool Mohawk::MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(Common::Platform platform, Common::Language language, bool isDemo, bool isUsV10, MidiSoundtrack &soundtrack) {
+bool Mohawk::MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(Common::Platform platform, Common::Language lang, bool isDemo, bool isUsV10, MidiSoundtrack &soundtrack) {
 	switch (platform) {
 	case Common::kPlatformMacintosh:
 		// Macintosh v1.0US retail, v1.0US Demo and v1.0JP Demo contain only MIDIMAC.MHK.
 		// Macintosh v1.1US retail, v1.xEU and v1.0JP retail contain both MIDIMAC.MHK and MIDIMPC.MHK.
-		if (isUsV10 || (isDemo && (language == Common::EN_USA || language == Common::JA_JPN))) {
+		if (isUsV10 || (isDemo && (lang == Common::EN_USA || lang == Common::JA_JPN))) {
 			soundtrack = MidiSoundtrack::kMacintosh;
 			return true;
 		}
 		break;
 	case Common::kPlatformWindows:
 		// Windows v1.0US retail, v1.0US Demo and v1.0JP Demo contain only MIDIMPC.MHK.
-		if (isUsV10 || (isDemo && (language == Common::EN_USA || language == Common::JA_JPN))) {
+		if (isUsV10 || (isDemo && (lang == Common::EN_USA || lang == Common::JA_JPN))) {
 			soundtrack = MidiSoundtrack::kWindowsMPC;
 			return true;
 		}
@@ -182,9 +199,9 @@ bool Mohawk::ZmbReleaseInfo::isExtraFamily(const Common::String &extra, Family f
 	case Family::kUsV10:
 		return extra.hasPrefix("v1.0US") || extra.hasPrefix("v1.0ES") || extra.hasPrefix("v1.0PT");
 	case Family::kEuropeV1x:
-		return extra.hasPrefix("v1.0BR") || extra.hasPrefix("v1.0FR") || extra.hasPrefix("v1.0GE") ||
-			   extra.hasPrefix("v1.0IT") || extra.hasPrefix("v1.0JP") ||
-			   extra.hasPrefix("v1.1BR") || extra.hasPrefix("v1.1FR") || extra.hasPrefix("v1.1GE");
+		return extra.hasPrefix("v1.0EU") || extra.hasPrefix("v1.1EU") ||
+			   extra.hasPrefix("v1.0BR Demo") || extra.hasPrefix("v1.1FR_2002") ||
+			   extra.hasPrefix("v1.0IT") || extra.hasPrefix("v1.0JP");
 	case Family::kUsV11:
 		return extra.hasPrefix("v1.1US") || extra.hasPrefix("v1.11KR");
 	case Family::kTlcV20:
@@ -349,6 +366,14 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjust
 			adjustment.leftOffset = 0x0064 - 0x00BE;
 			adjustment.rightOffset = 0x021C - 0x01C2;
 		}
+		if (_platform == Common::kPlatformMacintosh) {
+			adjustment.leftOffset += 8;
+			adjustment.rightOffset -= 8;
+			if ((_features & GF_ZMB_11_EU) != 0) {
+				adjustment.leftOffset -= 5;
+				adjustment.rightOffset += 5;
+			}
+		}
 		break;
 	case LayoutKind::kCreditsScroll:
 		if (isFamily(Family::kEuropeV1x)) {
@@ -358,9 +383,17 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjust
 			adjustment.leftOffset = 0x0064 - 0x00BE;
 			adjustment.rightOffset = 0x021C - 0x01C2;
 		}
+		if (_platform == Common::kPlatformMacintosh) {
+			adjustment.leftOffset += 8;
+			adjustment.rightOffset -= 8;
+		}
+		break;
+	case LayoutKind::kCreditsV20MilesLogo:
+		if (_platform == Common::kPlatformMacintosh)
+			adjustment.leftOffset = 1;
 		break;
 	case LayoutKind::kMsgBoxBody:
-		if (isFamily(Family::kEuropeV1x, Common::IT_ITA) || isFamily(Family::kEuropeV1x, Common::JA_JPN)) {
+		if (isFamily(Family::kEuropeV1x)) {
 			adjustment.topOffset = 0x0082 - 0x0091;
 			adjustment.bottomOffset = 0x00EB - 0x00DC;
 		}
@@ -372,34 +405,31 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjust
 		}
 		break;
 	case LayoutKind::kSaveLoadTitle:
-		if (isFamily(Family::kEuropeV1x, Common::JA_JPN)) {
+		if (isFamily(Family::kEuropeV1x)) {
 			adjustment.leftOffset = 0x00C8 - 0x00FA;
 			adjustment.rightOffset = 0x01C7 - 0x0198;
 		}
 		break;
 	case LayoutKind::kSaveNameInput:
 		if (isFamily(Family::kEuropeV1x, Common::JA_JPN)) {
-			adjustment.topOffset = 0x012C - 0x012A;
+			if (_platform == Common::kPlatformMacintosh)
+				adjustment.topOffset = -1;
+			else
+				adjustment.topOffset = 0x012C - 0x012A;
 			adjustment.bottomOffset = 0x013E - 0x013C;
 		}
 		break;
 	case LayoutKind::kMapLegendClick:
-		if (isFamily(Family::kEuropeV1x) || isDemo(Family::kUsV10)) {
-			adjustment.leftOffset = 0x01C1 - 0x01D0;
-			adjustment.rightOffset = 0x0255 - 0x0264;
-		}
+		if (isFamily(Family::kEuropeV1x))
+			adjustment.leftOffset = 444 - 464;
 		break;
 	case LayoutKind::kMapLegendTitle:
 		if (isFamily(Family::kEuropeV1x)) {
 			adjustment.topOffset = -3 - 3;
-			adjustment.bottomOffset = (-3 + 38) - (3 + 15);
-		} else if (isFamily(Family::kUsV10, Common::ES_ESP)) {
-			adjustment.bottomOffset = 18 - 15;
+			adjustment.bottomOffset = (-3 + 38) - (3 + 18);
 		} else if (isFamily(Family::kUsV10, Common::PT_PRT)) {
 			adjustment.topOffset = 2 - 3;
-			adjustment.bottomOffset = (2 + 23) - (3 + 15);
-		} else if (isFamily(Family::kUsV10) || isFamily(Family::kTlcV20, Common::PL_POL)) {
-			adjustment.bottomOffset = 18 - 15;
+			adjustment.bottomOffset = (2 + 23) - (3 + 18);
 		}
 		break;
 	case LayoutKind::kMapLegendRow:
@@ -410,14 +440,9 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjust
 		}
 		break;
 	case LayoutKind::kMapStatsTitle:
-		if (isFamily(Family::kUsV10) || isFamily(Family::kEuropeV1x)) {
-			adjustment.bottomOffset = 18 - 15;
-			if (isFamily(Family::kUsV10, Common::PT_PRT)) {
-				adjustment.topOffset = 2 - 3;
-				adjustment.bottomOffset = (2 + 23) - (3 + 15);
-			}
-		} else if (isFamily(Family::kTlcV20, Common::PL_POL)) {
-			adjustment.bottomOffset = 18 - 15;
+		if (isFamily(Family::kUsV10, Common::PT_PRT)) {
+			adjustment.topOffset = 2 - 3;
+			adjustment.bottomOffset = (2 + 23) - (3 + 18);
 		}
 		break;
 	case LayoutKind::kMapStatsRow:
@@ -444,14 +469,41 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjust
 			adjustment.bottomOffset = adjustment.topOffset;
 		}
 		break;
+	case LayoutKind::kMapOptionsLabel:
+		if (isFamily(Family::kTlcV20) && _platform == Common::kPlatformMacintosh)
+			adjustment.leftOffset = 3;
+		break;
 	case LayoutKind::kPickerName:
 		if (!isFamily(Family::kUsV11, Common::KO_KOR))
 			adjustment.topOffset = 1 - 4;
 		break;
-	case LayoutKind::kNotiBoxLong:
-		if (isFamily(Family::kEuropeV1x, Common::JA_JPN)) {
-			adjustment.leftOffset = 0x00ED - 0x0101;
-			adjustment.rightOffset = 0x01B5 - 0x0183;
+	case LayoutKind::kPickerGenerateButton:
+		if (isFamily(Family::kTlcV20))
+			adjustment.bottomOffset = 1;
+		break;
+	case LayoutKind::kPickerDiceButton:
+		if (isFamily(Family::kTlcV20))
+			adjustment.topOffset = -1;
+		break;
+	case LayoutKind::kTownMemorialBody:
+		if (_platform == Common::kPlatformMacintosh && isFamily(Family::kEuropeV1x, Common::JA_JPN))
+			adjustment.bottomOffset = 46 - 36;
+		break;
+	case LayoutKind::kBasecamp2ScrollLeftMaxButton:
+		if (isFamily(Family::kTlcV20))
+			adjustment.bottomOffset = 211 - 208;
+		break;
+	case LayoutKind::kBasecamp2ScrollLeftOneButton:
+		if (isFamily(Family::kTlcV20))
+			adjustment.bottomOffset = 207 - 205;
+		break;
+	case LayoutKind::kXferTownPopulationText:
+		if (isFamily(Family::kEuropeV1x)) {
+			adjustment.leftOffset = 10;
+			adjustment.topOffset = 4;
+		} else {
+			adjustment.leftOffset = 16;
+			adjustment.topOffset = 8;
 		}
 		break;
 	case LayoutKind::kNotiBoxText:
@@ -467,12 +519,6 @@ Mohawk::ZmbReleaseInfo::LayoutAdjustment Mohawk::ZmbReleaseInfo::getLayoutAdjust
 	case LayoutKind::kHelpBody:
 		if (isFamily(Family::kTlcV20))
 			adjustment.topOffset = 0x0070 - 0x0079;
-		break;
-	case LayoutKind::kHelpButtonText:
-		if (!isFamily(Family::kTlcV20)) {
-			adjustment.topOffset = 3;
-			adjustment.bottomOffset = adjustment.topOffset;
-		}
 		break;
 	}
 	return adjustment;

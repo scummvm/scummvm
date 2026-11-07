@@ -107,7 +107,8 @@ uint32 ZoombiniDialogCredits::getCreditScrollLineCount() const {
 }
 
 void ZoombiniDialogCredits::drawTlcEndLogos(int32 elapsedFrames, int32 baseLineIdx, int32 startLineIdx, int32 endLineIdx) {
-	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	if (!relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20))
 		return;
 
 	const int32 logoStartLineIdx = static_cast<int32>(_totalCreditLines + kTlcCreditsPreLogoBlankLineCount + 1);
@@ -120,9 +121,11 @@ void ZoombiniDialogCredits::drawTlcEndLogos(int32 elapsedFrames, int32 baseLineI
 		return;
 
 	const int16 logoY = static_cast<int16>(logoTopY);
+	const ZmbReleaseInfo::LayoutAdjustment milesLogoAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kCreditsV20MilesLogo);
+	const int16 milesLogoX = kTlcCreditsMilesLogoX + milesLogoAdjustment.leftOffset;
 	const ZmbResource creditsBitmap(ZmbResource::kSystem, kSysResShapeBitmap0020_Credits);
 	_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, creditsBitmap, kTlcCreditsBinkLogoShape, Common::Point(kTlcCreditsBinkLogoX, logoY), false);
-	_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, creditsBitmap, kTlcCreditsMilesLogoShape, Common::Point(kTlcCreditsMilesLogoX, logoY), false);
+	_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, creditsBitmap, kTlcCreditsMilesLogoShape, Common::Point(milesLogoX, logoY), false);
 }
 
 void ZoombiniDialogCredits::loadFeatures() {

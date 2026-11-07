@@ -177,6 +177,17 @@ bool MohawkEngine_Zoombini::tryAddZoombiniIsoRootSearchPath(const Common::FSNode
 
 MohawkEngine_Zoombini::MohawkEngine_Zoombini(OSystem *syst, const MohawkGameDescription *gameDesc)
 	: MohawkEngine(syst, gameDesc), _relInfo(*gameDesc) {
+	// Multilingual EU releases have UNK_LANG in the detector.
+	if (_relInfo.isMultilingualRelease()) {
+		Common::Language language = Common::parseLanguage(ConfMan.get("language"));
+		// Convert EN_ANY to EN_GRB, as English for this release is specific to the British (v1.xBR).
+		if (language == Common::EN_ANY)
+			language = Common::EN_GRB;
+		if (!ZmbReleaseInfo::isMultilingualReleaseLanguage(language))
+			language = Common::EN_GRB;
+		_relInfo.setLanguage(language);
+	}
+
 	_paletteFilter = getConfiguredPaletteFilter();
 
 #if ZOOMBINI_ENABLE_IME_COMPOSITION
@@ -228,34 +239,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 	setDebugger(new ZoombiniConsole(this));
 	initSearchPaths();
 
-	const Common::Language lang = _relInfo.getLanguage();
-	_mhkArchiveRoot = ZMB_MHK_ROOT_GENERIC;
-	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
-		switch (lang) {
-		case Common::EN_GRB:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_GB;
-			break;
-		case Common::FR_FRA:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_FR;
-			break;
-		case Common::DE_DEU:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_GE;
-			break;
-		case Common::IT_ITA:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_IT;
-			break;
-		case Common::ES_ESP:
-		case Common::PT_PRT:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_GENERIC;
-			break;
-		case Common::JA_JPN:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_JP;
-			break;
-		default:
-			error("engine: unsupported language for v1.x Europe variant: %s", Common::getLanguageLocale(lang));
-			break;
-		}
-	}
+	selectArchiveRoot();
 
 	_gfx = new ZoombiniGraphics(this);
 	_gfx->showStartupLoadingScreen();
@@ -283,25 +267,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 	_cursor->setDefaultCursor();
 	_cursor->showCursor();
 
-	// Load global registration-point offsets for snoid body-part shapes.
-	// Loaded from REGS 100+101 in ZOOMBINI.MHK.
-	// Each resource is a paired-axis table: one big-endian int16 per entry,
-	// with a reserved entry 0 and one entry per tBMP 3000 sub-image.
-	// Snoid rendering subtracts the pair as the layer's width and height.
-	_snoidShapeOffsetRegs = new ZmbShapeOffsetRegs();
-	_snoidShapeOffsetRegs->parseStreams(this, ZmbResource::kSystem, 100, 101);
-
-	// Load REGS 3200+3201 for small snoid shapes (tBMP 3200).
-	// Same paired-axis form as REGS 100+101, again consumed as width and height.
-	// Load these after swapping body-part tables.
-	_smallSnoidShapeOffsetRegs = new ZmbShapeOffsetRegs();
-	_smallSnoidShapeOffsetRegs->parseStreams(this, ZmbResource::kSystem, 3200, 3201);
-
-	// Load REGS 102+103 for SCRS-rendered Snoids using shape archive tBMP 3100.
-	// Same paired-axis form as REGS 100+101, sized for the script shape set.
-	// Selected for state 9 NORMAL playback, which is what Ferry's reject-flight (case 1's SCRS 1900-1906) needs.
-	_snoidScriptShapeRegs = new ZmbShapeOffsetRegs();
-	_snoidScriptShapeRegs->parseStreams(this, ZmbResource::kSystem, 102, 103);
+	loadSystemShapeOffsets();
 
 	// Load a roster of game saves
 	_state->loadRoster();
@@ -354,6 +320,59 @@ Common::Error MohawkEngine_Zoombini::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void MohawkEngine_Zoombini::selectArchiveRoot() {
+	const Common::Language lang = _relInfo.getLanguage();
+	_mhkArchiveRoot = ZMB_MHK_ROOT_GENERIC;
+	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
+		switch (lang) {
+		case Common::EN_GRB:
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_GB;
+			break;
+		case Common::FR_FRA:
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_FR;
+			break;
+		case Common::DE_DEU:
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_GE;
+			break;
+		case Common::IT_ITA:
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_IT;
+			break;
+		case Common::JA_JPN:
+			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_JP;
+			break;
+		default:
+			error("engine: unsupported language for v1.x Europe variant: %s", Common::getLanguageLocale(lang));
+			break;
+		}
+	}
+}
+
+void MohawkEngine_Zoombini::loadSystemShapeOffsets() {
+	delete _snoidShapeOffsetRegs;
+	delete _smallSnoidShapeOffsetRegs;
+	delete _snoidScriptShapeRegs;
+
+	// Load global registration-point offsets for snoid body-part shapes.
+	// Loaded from REGS 100+101 in ZOOMBINI.MHK.
+	// Each resource is a paired-axis table: one big-endian int16 per entry,
+	// with a reserved entry 0 and one entry per tBMP 3000 sub-image.
+	// Snoid rendering subtracts the pair as the layer's width and height.
+	_snoidShapeOffsetRegs = new ZmbShapeOffsetRegs();
+	_snoidShapeOffsetRegs->parseStreams(this, ZmbResource::kSystem, 100, 101);
+
+	// Load REGS 3200+3201 for small snoid shapes (tBMP 3200).
+	// Same paired-axis form as REGS 100+101, again consumed as width and height.
+	// Load these after swapping body-part tables.
+	_smallSnoidShapeOffsetRegs = new ZmbShapeOffsetRegs();
+	_smallSnoidShapeOffsetRegs->parseStreams(this, ZmbResource::kSystem, 3200, 3201);
+
+	// Load REGS 102+103 for SCRS-rendered Snoids using shape archive tBMP 3100.
+	// Same paired-axis form as REGS 100+101, sized for the script shape set.
+	// Selected for state 9 NORMAL playback, which is what Ferry's reject-flight (case 1's SCRS 1900-1906) needs.
+	_snoidScriptShapeRegs = new ZmbShapeOffsetRegs();
+	_snoidScriptShapeRegs->parseStreams(this, ZmbResource::kSystem, 102, 103);
 }
 
 void MohawkEngine_Zoombini::resetFidgetActivity() {
@@ -616,9 +635,9 @@ void MohawkEngine_Zoombini::showBuiltinNotiBox(const Common::U32String &text, bo
 	if (!interactive)
 		return;
 	if (persistent)
-		interactive->showNotiBoxLongPersistent(text);
+		interactive->showNotiBoxMediumPersistent(text);
 	else
-		interactive->showNotiBoxLong(text);
+		interactive->showNotiBoxMedium(text);
 }
 
 void MohawkEngine_Zoombini::beginQuitEvent(ZoombiniPage *page) {
@@ -1376,10 +1395,14 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		updateImeCompositionState();
 	}
 	_gfx->clearScreens();
+	
 	// GraphicsManager's page-image caches are keyed only by the 16-bit resource id.
 	// Page archives reuse those ids, so invalidate both page tBMP caches between page replacement.
 	// @ref ZoombiniGraphics keeps system-archive images in separate caches.
 	_gfx->clearCache();
+
+	if (_pendingLangSwitch != Common::UNK_LANG)
+		applyPendingLanguageSwitch();
 
 	if (_pageQueue.empty() && shouldQuit()) {
 		_quitEventState = kQuitEventDone;
@@ -1552,6 +1575,89 @@ bool MohawkEngine_Zoombini::consumeDemoStartupLogoReveal() {
 
 Common::Language MohawkEngine_Zoombini::getLanguage() const {
 	return _relInfo.getLanguage();
+}
+
+void MohawkEngine_Zoombini::requestLanguageSwitch(Common::Language destLang) {
+	if (!_relInfo.isMultilingualRelease() || destLang == getLanguage())
+		return;
+	if (hasDialogOpened() || !_pageQueue.empty() || shouldQuit())
+		return;
+	if (_pendingLangSwitch != Common::UNK_LANG)
+		return;
+
+	if (_state->inPracticeMode()) {
+		const Common::U32String message = _text->getLocalizedString(ZoombiniText::kDialogBodyCannotSwitchLangInPractice);
+		loadModalDialog(new ZoombiniDialogMsgBox(this, message, ZoombiniText::kDialogButtonLangSwitchCancel, ZoombiniText::kNone));
+		return;
+	}
+
+	ZoombiniText::Key messageKey = ZoombiniText::kDialogBodySwitchLang;
+	if (_state->needsSaveBeforeQuit())
+		messageKey = ZoombiniText::kDialogBodySwitchLangUnsaved;
+	const Common::U32String message = _text->getLocalizedString(messageKey);
+	ZoombiniDialog *dialog = new ZoombiniDialogMsgBox(this, message, ZoombiniText::kDialogButtonLangSwitchChange, ZoombiniText::kDialogButtonLangSwitchCancel);
+	const ZoombiniDialogResult result = loadModalDialog(dialog);
+	if (result != ZoombiniDialogResult::kYes || shouldQuit())
+		return;
+
+	_pendingLangSwitch = destLang;
+	// The EU release replays the title movie before opening a fresh Picker.
+	setNextPage(ZoombiniPageType::kLogo);
+	_activePage->close();
+}
+
+void MohawkEngine_Zoombini::applyPendingLanguageSwitch() {
+	// Consume the request after the previous page and its dialogs have been destroyed.
+	assert(!_activePage && _dialogPageStack.empty());
+	const Common::Language language = _pendingLangSwitch;
+	_pendingLangSwitch = Common::UNK_LANG;
+
+	// Stop playback and release the previous language's MIDI archive and text/font state.
+	_video->stopVideos();
+	_sound->releaseAllLoadedSounds();
+	_midi->stopMidi();
+	delete _midiMhk;
+	_midiMhk = nullptr;
+	delete _text;
+	_text = nullptr;
+
+	// Invalidate system images and decoded scripts before closing their archive.
+	_gfx->clearCommonCache();
+	_systemDecodedScrbCache.clear();
+	_systemDecodedScrsCache.clear();
+	delete _sysMhk;
+	_sysMhk = nullptr;
+
+	// Select the new resource directory and rebuild archives, shape offsets, text and fonts.
+	if (!_relInfo.setLanguage(language))
+		error("engine: invalid pending language change");
+	selectArchiveRoot();
+	_sysMhk = loadSystemArchive();
+	loadMidiArchive();
+	loadSystemShapeOffsets();
+	_text = new ZoombiniText(this);
+
+	// Reload cursor resources from the new system archive.
+	delete _cursor;
+	ZoombiniCursorManager *cursor = new ZoombiniCursorManager(this);
+	cursor->preloadCursors();
+	_cursor = cursor;
+	_cursor->setDefaultCursor();
+	_cursor->showCursor();
+
+	// Reset built-in debug modes and start a fresh journey without clearing the save roster.
+	_builtinDebug = ZmbBuiltinDebugRuntimeState();
+	_builtinMidiTestMode = false;
+	_state->resetForNewGame();
+
+	// (v1.xEU only)
+	// Persist the selection in the active game target for subsequent launches.
+	Common::Language configLanguage = language;
+	if (configLanguage == Common::EN_GRB) // Normalize EN_GRB into EN_ANY.
+		configLanguage = Common::EN_ANY;
+	ConfMan.set("language", Common::getLanguageCode(configLanguage));
+	ConfMan.flushToDisk();
+	debugC(1, kDebugPage02, "engine: changed language to %s", Common::getLanguageCode(language));
 }
 
 void MohawkEngine_Zoombini::setNextPage(ZoombiniPageType type) {

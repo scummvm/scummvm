@@ -259,7 +259,6 @@ Common::Rect ZoombiniDialogHelp::helpDialog_getButtonTextRect(ZmbFeature *featur
 	else
 		textRect = _helpDialogButtonRects[bsIdx];
 
-	textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kHelpButtonText).apply(textRect);
 	if (bs.isAnimating()) {
 		textRect.top += 2;
 		textRect.bottom += 2;

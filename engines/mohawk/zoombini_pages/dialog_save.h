@@ -22,7 +22,7 @@
 #ifndef MOHAWK_ZOOMBINI_PAGES_DIALOG_SAVE_H
 #define MOHAWK_ZOOMBINI_PAGES_DIALOG_SAVE_H
 
-#include "mohawk/zoombini_pages/dialog_saveload.h"
+#include "mohawk/zoombini_pages/dialog_saveload_base.h"
 
 namespace Mohawk {
 

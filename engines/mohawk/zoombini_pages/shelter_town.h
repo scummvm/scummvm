@@ -176,11 +176,8 @@ private:
 		Common::Point(0x0077, 0x0041),
 	};
 
-	/** Text-row bounds within a memorial card. */
-	static constexpr int16 kTownMemorialCardRowTopY[5]{
-		0x0000, 0x0024, 0x00C4, 0x00D2, 0x00E6};
-	static constexpr int16 kTownMemorialCardRowBottomY[5]{
-		0x0024, 0x00C4, 0x00D2, 0x00E6, 0x00F4};
+	/** Six vertical text-row boundaries relative to a memorial card's top inset. */
+	int16 _memorialCardRowBounds[6] = {0, 36, 196, 210, 230, 244};
 
 	/** Town actions accepted by the built-in debug console and keyboard dispatcher. */
 	enum class BuiltinDebugAction {

@@ -150,8 +150,7 @@ public:
 	ZmbShapeOffsetRegs *_smallSnoidShapeOffsetRegs = nullptr;
 
 	/**
-	 * Registration-point offsets for SCRS-script-rendered snoid shapes
-	 * (tBMP 3100 in ZOOMBINI.MHK).
+	 * Registration-point offsets for SCRS-script-rendered snoid shapes (tBMP 3100 in ZOOMBINI.MHK).
 	 * Loaded once at startup from REGS 102+103 in ZOOMBINI.MHK.
 	 * Used by Snoids in @ref kSnoidAnimState009_ScriptNormal.
 	 * This table pairs with shape archive tBMP 3100 instead of the tBMP 3000 idle and layered-animation pool.
@@ -239,6 +238,11 @@ public:
 	void setNextPage(ZoombiniPageType type);
 	/** Recreate the active puzzle with the current party, returning false when a transition or dialog prevents it. */
 	bool debugRetryPuzzle();
+	/**
+	 * Confirm a language switch and queue a engine restart.
+	 * @param destLang A language to switch.
+	 */
+	void requestLanguageSwitch(Common::Language destLang);
 
 	/**
 	 * Source SI page set by each puzzle or area before transitioning to @ref ZoombiniPageType::kXfer.
@@ -431,7 +435,7 @@ public:
 	/** Consume the one-shot demo startup-logo reveal request. */
 	bool consumeDemoStartupLogoReveal();
 
-	/** Return the detected game language. */
+	/** Return the current game language stored in the release information. */
 	Common::Language getLanguage() const override;
 	/** Return the root directory used for Zoombini archive discovery. */
 	Common::String getArchiveRoot() const { return _mhkArchiveRoot; }
@@ -541,18 +545,29 @@ private:
 	/** Run one modal dialog until it returns a result. */
 	ZoombiniDialogResult loadModalDialog(ZoombiniDialog *page);
 
-	/** Immutable detector identity shared by the engine services and pages. */
-	const ZmbReleaseInfo _relInfo;
+	/** Release identity and selected language shared by engine services and pages. */
+	ZmbReleaseInfo _relInfo;
 	/** Root path used while searching for the game's MHK archives. */
 	Common::String _mhkArchiveRoot;
+	/**
+	 * Language to switch on page switching.
+	 * Setting to UNK_LANG means language switching is not beinged pended.
+	 */
+	Common::Language _pendingLangSwitch = Common::UNK_LANG;
+	/** Select the resource directory for the effective game language. */
+	void selectArchiveRoot();
+	/** Load global registration tables from the current system archive. */
+	void loadSystemShapeOffsets();
+	/** Replace localized resources and initialize fresh state at the page transition boundary. */
+	void applyPendingLanguageSwitch();
 
 	/** Currently active page owned by the engine. */
 	ZoombiniPage *_activePage = nullptr;
 	/** Archive namespace used by legacy numeric resource calls. */
 	ZmbResource::ArchiveKind _activeResourceKind = ZmbResource::kPage;
-	/** Stable engine-lifetime decoded system SCRB resources keyed by their raw 16-bit ID. */
+	/** Decoded system SCRB resources keyed by ID (engine-lifetime). */
 	Common::StableMap<int16, ZmbScriptDecoder::DecodedScrb> _systemDecodedScrbCache;
-	/** Stable engine-lifetime decoded system SCRS resources keyed by their raw 16-bit ID. */
+	/** Decoded system SCRS resources keyed by ID (engine-lifetime). */
 	Common::StableMap<int16, ZmbScriptDecoder::DecodedScrs> _systemDecodedScrsCache;
 	/** Filter applied to indexed palettes. */
 	MohawkMetaEngine_Zoombini::PaletteFilter _paletteFilter = MohawkMetaEngine_Zoombini::PaletteFilter::kBrightenPalette;

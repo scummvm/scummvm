@@ -362,15 +362,18 @@ protected:
 	const Common::Rect _helpButtonClickRect = Common::Rect(0x0257, 0x018C, 0x027E, 0x01B1);
 
 	/**
-	 * Scroll button click rects (decoded, 36-byte stride).
-	 * [0] = Scroll Left Max (slot 4), [1] = Scroll Left One (slot 5),
-	 * [2] = Scroll Right One (slot 6), [3] = Scroll Right Max (slot 7).
+	 * Scroll button rects used for clicks, hover, cursor and redraw bounds.
+	 * The constructor selects the release-specific lower edges.
+	 * [0] = Scroll Left Max  (slot 4)
+	 * [1] = Scroll Left One  (slot 5)
+	 * [2] = Scroll Right One (slot 6)
+	 * [3] = Scroll Right Max (slot 7)
 	 */
-	const Common::Rect _scrollButtonRects[kStorageScrollButtonCount] = {
-		Common::Rect(0x0072, 0x0079, 0x0083, 0x00D0), // [0] Left Max
-		Common::Rect(0x0083, 0x0075, 0x0090, 0x00CD), // [1] Left One
-		Common::Rect(0x0151, 0x006B, 0x015E, 0x00C3), // [2] Right One
-		Common::Rect(0x015E, 0x006E, 0x0169, 0x00C6), // [3] Right Max
+	Common::Rect _scrollButtonRects[kStorageScrollButtonCount] = {
+		Common::Rect(0x0072, 0x0079, 0x0083, 0x00D0),
+		Common::Rect(0x0083, 0x0075, 0x0090, 0x00CD),
+		Common::Rect(0x0151, 0x006B, 0x015E, 0x00C3),
+		Common::Rect(0x015E, 0x006E, 0x0169, 0x00C6),
 	};
 
 	// -----------------------------------------------------------------------

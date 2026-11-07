@@ -62,9 +62,7 @@ enum MohawkGameFeatures {
 	GF_LB_10          = (1 << 4), // very early Living Books 1.0 games
 	/**
 	 * Logical Journey of the Zoombinis v1.0 (Europe)
-	 * - v1.0BR
-	 * - v1.0FR
-	 * - v1.0GE
+	 * - v1.0EU (English, French and German)
 	 * - v1.0IT
 	 * @remarks
 	 * Europe v1.x releases with localized resource directories.
@@ -73,9 +71,7 @@ enum MohawkGameFeatures {
 	GF_ZMB_10_EU      = (1 << 5),
 	/**
 	 * Logical Journey of the Zoombinis v1.1 (Europe)
-	 * - v1.1BR
-	 * - v1.1FR
-	 * - v1.1GE
+	 * - v1.1EU (English, French and German)
 	 * @remarks
 	 * Europe v1.x releases with ENGLISH/FRENCH/GERMAN resource directories.
 	 * European v1.1 releases are just a bugfix release of Europe v1.0.

@@ -357,7 +357,7 @@ protected:
 	/** Stable hit rectangle shared by the TLC option-button SCRBs. */
 	const Common::Rect _tlcOptionButtonClickRect = Common::Rect(480, 17, 545, 47);
 	/** Text rectangle used by the TLC-specific option-button label. */
-	const Common::Rect _tlcOptionButtonTextRect = Common::Rect(0x01E8, 0x0018, 0x021E, 0x0024);
+	Common::Rect _tlcOptionButtonTextRect = Common::Rect(0x01E8, 0x0018, 0x021E, 0x0024);
 
 	/** Indexes of controls owned by the route-map page. */
 	enum RodmapButtonIdx {
