@@ -1426,11 +1426,14 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 
 void LauncherSimple::handleKeyDown(Common::KeyState state) {
 	if (state.keycode == Common::KEYCODE_TAB) {
-		// Toggle between the game list and the quick search field.
-		if (getFocusWidget() == _searchWidget) {
-			setFocusWidget(_list);
-		} else if (getFocusWidget() == _list) {
+		// Toggle between the game list and the quick search field. Pressing
+		// Escape in the search field aborts editing and releases the focus,
+		// so handle the case where neither widget holds it rather than
+		// leaving Tab with nothing to do.
+		if (getFocusWidget() == _list) {
 			setFocusWidget(_searchWidget);
+		} else {
+			setFocusWidget(_list);
 		}
 	}
 	Dialog::handleKeyDown(state);
@@ -1675,11 +1678,14 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 
 void LauncherGrid::handleKeyDown(Common::KeyState state) {
 	if (state.keycode == Common::KEYCODE_TAB) {
-		// Toggle between the game list and the quick search field.
-		if (getFocusWidget() == _searchWidget) {
-			setFocusWidget(_grid);
-		} else {
+		// Toggle between the game grid and the quick search field. Pressing
+		// Escape in the search field aborts editing and releases the focus,
+		// so handle the case where neither widget holds it rather than
+		// leaving Tab with nothing to do.
+		if (getFocusWidget() == _grid) {
 			setFocusWidget(_searchWidget);
+		} else {
+			setFocusWidget(_grid);
 		}
 	}
 	Dialog::handleKeyDown(state);
