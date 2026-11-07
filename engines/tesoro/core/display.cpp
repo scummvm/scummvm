@@ -37,9 +37,38 @@ void Display::queueImage(int32 x, int32 y, uint16 depth, const AnimImage &image,
 
 void Display::startFrame() {
 	_queue.reset();
+	_scaled.clear();
+	_layerDepth = 0;
+}
+
+void Display::queueImageScaled(int32 x, int32 y, uint16 depth, const AnimImage &image, int32 scaleX, int32 scaleY, uint32 extra) {
+	if (_scaled.size() >= kMaxScaled) {
+		warning("Display: too many scaled images in one frame");
+		return;
+	}
+
+	Scaled item = { &image, x, y, depth, scaleX, scaleY, extra };
+	_scaled.push_back(item);
 }
 
 void Display::compose() {
+	// The scaled images are put on in order from the deepest to the nearest.
+	for (uint i = 0; i + 1 < _scaled.size(); ++i) {
+		uint deepest = i;
+		for (uint j = i + 1; j < _scaled.size(); ++j) {
+			if (_scaled[deepest].depth < _scaled[j].depth)
+				deepest = j;
+		}
+		SWAP(_scaled[i], _scaled[deepest]);
+	}
+
+	// Those behind the layer depth go on first, under the rows still to be composed.
+	uint drawn = 0;
+	while (drawn < _scaled.size() && _layerDepth < _scaled[drawn].depth) {
+		const Scaled &s = _scaled[drawn++];
+		_queue.rasterScaledImage(&_frame[0], s.x, s.y, s.depth, *s.image, s.scaleX, s.scaleY, s.extra);
+	}
+
 	uint16 *out = &_frame[0];
 	uint16 *const end = out + _frame.size();
 
@@ -64,6 +93,12 @@ void Display::compose() {
 			}
 			out += count;
 		}
+	}
+
+	// The rest go on top of the finished rows.
+	for (; drawn < _scaled.size(); ++drawn) {
+		const Scaled &s = _scaled[drawn];
+		_queue.rasterScaledImage(&_frame[0], s.x, s.y, s.depth, *s.image, s.scaleX, s.scaleY, s.extra);
 	}
 }
 

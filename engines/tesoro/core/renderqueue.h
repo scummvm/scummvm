@@ -99,12 +99,23 @@ public:
      */
     void addSprite(int32 x, int32 y, uint16 depth, const AnimImage &image, uint32 extra);
 
+    /**
+	 * Scaled images are instead rastered (640 pixels per row), scaled by scaleX and scaleY (16.16 fixed point, a
+	 * negative scaleY turning it upside down).
+     * Note that visible pieces are also entered in the row lists(thats the kNoPixels),
+     * so that queued images behind it do not paint over it when the rows are composed.
+     * Solid and shadow images are not painted:
+	 * their scaled stretches only go into the row lists.
+	 */
+	void rasterScaledImage(uint16 *frame, int32 x, int32 y, uint16 depth, const AnimImage &image, int32 scaleX, int32 scaleY, uint32 extra);
+
     const Row &row(uint y) const { return _rows[y]; }
 
     // Temporary: one solid span over every row, behind everything (depth 0xffff is the furthest).
     void fillBackground(uint16 colour);
 
 private:
+    void rasterScaledRows(uint16 *frame, const byte *image, uint y, uint count, int32 xFixed, int32 rowFixed, uint16 depth, bool clip, int32 scaleX, int32 rowStep);
     void queueRows(const byte *image, uint firstRow, uint count, uint y, int32 x, uint16 depth, bool clip, bool solid);
 
     Common::Array<Row> _rows;

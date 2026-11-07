@@ -81,6 +81,8 @@ Common::Error TesoroEngine::run() {
 	playAnim("JIMDERECHA.ANM", _animPlayer);
 	playAnim("JIMABAJO.ANM", _animPlayer2);
 
+
+
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
@@ -90,6 +92,7 @@ Common::Error TesoroEngine::run() {
 			_animPlayer2.advance(gameTime());
 			const AnimBank &bank = *_animPlayer.bank();
 			const AnimStep &step = bank.step(_animPlayer.current());
+
 			const AnimBank &bank2 = *_animPlayer2.bank();
 			const AnimStep &step2 = bank2.step(_animPlayer2.current());
 
@@ -97,8 +100,13 @@ Common::Error TesoroEngine::run() {
 			_display.fillBackground(0x4208);	// dark grey, the same colour as before
 
 			if (step.hasImage()) {
-				debug("Displaying image %d at (%d, %d)", step.imageIndex, 300 + step.imageX, 300 - step.imageY);
-				_display.queueImage(300 + step.imageX, 300 - step.imageY, 3, bank.image(step.imageIndex), 0);
+
+				const AnimImage &image = bank.image(step.imageIndex);
+				int32 y = 300 - step.imageY;
+				if (_scaleY < 0)	// an upside-down image grows upwards from y, so move it down to keep it on screen
+					y += (int32)(((int64)(READ_LE_UINT16(image.data() + 10) - 1) * -_scaleY) >> 16);
+				debug("Displaying image %d at (%d, %d), with scale (%d, %d)", step.imageIndex, 300 + step.imageX, 300 - step.imageY, _scaleX, _scaleY);
+				_display.queueImageScaled(300 + step.imageX, y, 3, image, _scaleX, _scaleY, 0);
 			}
 			if (step2.hasImage()) {
 				debug("Displaying image %d at (%d, %d)", step2.imageIndex, 300 + step2.imageX, 300 - step2.imageY);

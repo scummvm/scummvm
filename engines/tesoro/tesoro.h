@@ -52,6 +52,7 @@ private:
 	AnimPlayer _animPlayer;
 	AnimPlayer _animPlayer2;
 	Display _display;
+	int32 _scaleX = 0x10000, _scaleY = 0x10000;	// 0x10000 is normal scale
 
 protected:
 	// Engine APIs
@@ -63,7 +64,6 @@ public:
 	~TesoroEngine() override;
 
 	int32 gameTime() { return _clock.update(_system->getMillis()); }
-
 
 	uint32 getFeatures() const;
 
@@ -109,9 +109,8 @@ public:
 	}
 
 	// temp functions
-	bool showImage(const char *name, int index);
+	void setScale(int32 x, int32 y) { _scaleX = x; _scaleY = y; }
 	bool playAnim(const char *name, AnimPlayer &player);
-	Common::String dumpRow(const char *name, uint index, uint imageRow, int x = 20);
 };
 
 extern TesoroEngine *g_engine;

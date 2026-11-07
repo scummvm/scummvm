@@ -245,4 +245,116 @@ void RenderQueue::queueRows(const byte *image, uint firstRow, uint count, uint y
 	}
 }
 
+// 32-bit wrapping arithmetic like the original's.
+static int32 wrapMul(int32 a, int32 b) { return (int32)((uint32)a * (uint32)b); }
+
+void RenderQueue::rasterScaledImage(uint16 *frame, int32 x, int32 y, uint16 depth, const AnimImage &image, int32 scaleX, int32 scaleY, uint32 extra) {
+	const byte *data = image.data();
+	if (!data)
+		return;
+
+	const uint32 width = READ_LE_UINT16(data + 8);
+	const uint32 height = READ_LE_UINT16(data + 10);
+	const int32 right = (wrapMul(width - 1, scaleX) >> 16) + x;
+	int32 bottom = (wrapMul(height - 1, scaleY) >> 16) + y;
+	int32 rows = bottom - y;
+	const int32 xFixed = (int32)((uint32)x << 16);
+	int32 rowFixed, rowStep;
+
+	if (rows < 0) {
+		// Upside down: the original walks the image from its last row.
+		rows = -rows;
+		rowStep = -(int32)(0xffffffffu / (uint32)-scaleY);
+		y = bottom < 0 ? 0 : bottom;
+		rowFixed = -wrapMul((bottom + rows) - y, rowStep);
+		bottom += rows;
+	} else {
+		rowStep = (int32)(0xffffffffu / (uint32)scaleY);
+		if (y < 0) {
+			rowFixed = -wrapMul(rowStep, y);
+			y = 0;
+		} else {
+			rowFixed = 0;
+		}
+	}
+
+	if (bottom > kRows - 1)
+		bottom = kRows - 1;
+	const int32 count = (bottom - y) + 1;
+
+	if (!(x <= right && x < kWidth && right >= 0 && y < kRows && bottom >= 0))
+		return;
+
+	const uint type = READ_LE_UINT16(data + 12);
+	const bool clip = x < 0 || right > kWidth - 1;
+	if (type == 1)
+		rasterScaledRows(frame, data, y, count, xFixed, rowFixed, depth, clip, scaleX, rowStep);
+}
+
+void RenderQueue::rasterScaledRows(uint16 *frame, const byte *image, uint y, uint count, int32 xFixed, int32 rowFixed, uint16 depth, bool clip, int32 scaleX, int32 rowStep) {
+	if ((int16)count == 0)
+		return;
+
+	if ((scaleX >> 8) == 0) {
+		warning("RenderQueue: image scaled to nothing");
+		return;
+	}
+	const int32 inverseX = 0x1000000 / (scaleX >> 8);
+	int32 x = xFixed >> 16;
+
+	for (uint r = 0; r < (uint16)count; ++r, ++y) {
+		Row &row = _rows[y];
+		uint16 *out = frame + y * kWidth;
+		const int32 sourceRow = rowFixed >> 16;
+		rowFixed += rowStep;
+
+		const byte *entry = image + 0x10 + 8 * sourceRow;
+		const byte *item = image + READ_LE_UINT32(entry);
+		uint items = READ_LE_UINT16(entry + 4);
+		int32 sourceX = 0;
+
+		while (items) {
+			--items;
+			const byte *pixels = image + READ_LE_UINT32(item);
+			const uint32 start = (uint32)wrapMul(sourceX + READ_LE_UINT16(item + 4), scaleX);
+			sourceX += READ_LE_UINT16(item + 4) + READ_LE_UINT16(item + 6);
+			item += 8;
+			int32 xs = ((int32)start >> 16) + x;
+			int32 xe = ((wrapMul(sourceX, scaleX) - 0x7fff) >> 16) + x;
+			int32 offset = -(int32)(((start >> 8) & 0xff) * (uint32)(inverseX >> 8));
+			if (offset != 0) {
+				++xs;
+				offset += inverseX;
+			}
+
+			if (clip) {
+				if (xe < 0)
+					continue;
+				if (xs < 0) {
+					offset -= wrapMul(xs, inverseX);
+					xs = 0;
+				}
+				if (xs > kWidth - 1)
+					break;
+				if (xe > kWidth - 1)
+					xe = kWidth - 1;
+			}
+
+			if (xs > xe)
+				continue;
+
+			// Paint the pixels now ...
+			uint32 position = (uint32)offset;
+			uint16 *dst = out + xs;
+			for (uint n = (uint16)(xe - xs + 1); n != 0; --n) {
+				*dst++ = READ_LE_UINT16(pixels + 2 * (position >> 16));
+				position += inverseX;
+			}
+
+			// ... and enter the span without pixels, unless the image is not scaled.
+			const uintptr_t source = scaleX == 0x10000 ? (uintptr_t)(pixels + (offset >> 16) * 2) : 0;
+			row.insert(xs, xe, depth, source, 0, true);
+		}
+	}
+}
 } // End of namespace Tesoro

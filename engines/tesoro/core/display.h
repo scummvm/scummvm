@@ -45,6 +45,15 @@ public:
 	void queueImage(int32 x, int32 y, uint16 depth, const AnimImage &image, uint32 extra);
 
 	/**
+	 * Queues an image scaled by scaleX and scaleY (16.16 fixed point, 0x10000 unchanged, negative scaleY upside down)
+	 * Used for the pointer and for characters. Drawn when the frame is composed. Images
+	 * deeper than the layer depth (larger depth values) are put on the frame before the queued rows are composed, the
+	 * others after, on top; the layer depth is reset to 0 every frame, which puts everything with a depth of 0 in front.
+	 */
+	void queueImageScaled(int32 x, int32 y, uint16 depth, const AnimImage &image, int32 scaleX, int32 scaleY, uint32 extra);
+
+
+	/**
 	 * Copies the queued spans of every row into the frame, left to right.
 	 * A row must be covered from end to end (filled at least with the bg);
 	 */
@@ -59,7 +68,19 @@ public:
 	void fillBackground(uint16 colour) { _queue.fillBackground(colour); }
 
 private:
+	/** An image waiting for the compose. */
+	struct Scaled {
+		const AnimImage *image;
+		int32 x, y;
+		uint16 depth;
+		int32 scaleX, scaleY;
+		uint32 extra;
+	};
+	enum { kMaxScaled = 50 };
+
 	RenderQueue _queue;
+	Common::Array<Scaled> _scaled;
+	uint16 _layerDepth = 0;
 	Common::Array<uint16> _frame;
 };
 

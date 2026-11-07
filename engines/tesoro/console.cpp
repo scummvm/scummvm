@@ -26,6 +26,7 @@ namespace Tesoro {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("testCmd", WRAP_METHOD(Console, testCmd));
+	registerCmd("scale", WRAP_METHOD(Console, scale));
 }
 
 Console::~Console() {
@@ -34,6 +35,17 @@ Console::~Console() {
 bool Console::testCmd(int argc, const char **argv) {
 	debugPrintf("test\n");
 	return false;
+}
+
+bool Console::scale(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s SCALEX [SCALEY]   (0x10000 is normal size)\n", argv[0]);
+		return true;
+	}
+	const int32 sx = strtol(argv[1], nullptr, 0);	// base 0 reads 0x8000 and -0x10000
+	const int32 sy = argc > 2 ? strtol(argv[2], nullptr, 0) : sx;
+	g_engine->setScale(sx, sy);
+	return false;	// close the console so the picture is visible
 }
 
 
