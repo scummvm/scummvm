@@ -1625,8 +1625,6 @@ int IMuse::loadLip(const char *lipsyncFilename, int soundId) {
 
 		int fileSize = lipsyncFile->size();
 		if (fileSize <= IMUSE_LIPSYNC_MAX_SIZE) {
-			// Clear the old data, or it would be read after the end of the new file
-			memset(_lipsyncBufs[slot], 0, sizeof(_lipsyncBufs[slot]));
 			lipsyncFile->read(_lipsyncBufs[slot], fileSize);
 
 			if (memcmp(_lipsyncBufs[slot], "LIP!", 4))
