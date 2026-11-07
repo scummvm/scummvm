@@ -1,0 +1,628 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "room_script_command_executor.h"
+
+#include "common/scummsys.h"
+
+#include "room_object.h"
+#include "scooby/sound/gems_audio.h"
+
+namespace Scooby {
+
+RoomScriptCommandExecutor::RoomScriptCommandExecutor(
+	const ScoobyDooRom &rom, TileScene &scene, RuntimeState &state,
+	const RoomCollisionProbe &collisionProbe, ScriptedRoomMovementExecutor &movement,
+	DeterministicRandom &random, FramePresenter &presenter,
+	RoomActorAnimator &actorAnimator, RoomVBlankHandler &roomVBlank,
+	Common::Functor0<Optional<SessionExit>> &presentRoom,
+	Common::Functor0<Optional<SessionExit>> &resetRoomStateForReload,
+	Common::Functor0<Optional<SessionExit>> &reloadAndPresentRoom,
+	InteractionController &interactions, RoomInterfaceTransitionExecutor &roomInterfaceTransitions,
+	DialogueController &dialogue,
+	Common::Functor1<int, Optional<SessionExit>> &invokeRoomScriptDispatchCallback,
+	ActionMenuController &actionMenu, RoomTileStreamer &tileStreamer,
+	Common::Functor1<const Common::Functor0<void> *, bool> &restartApplication)
+	: _rom(rom), _state(state), _presenter(presenter), _reloadAndPresentRoom(reloadAndPresentRoom),
+	  _resetRoomStateForReload(resetRoomStateForReload),
+	  _actorAnimator(actorAnimator), _roomVBlank(roomVBlank),
+	  _actionMenu(actionMenu), _scene(scene), _random(random), _dialogue(dialogue), _movement(movement),
+	  _invokeRoomScriptDispatchCallback(invokeRoomScriptDispatchCallback),
+	  _actorDescriptorCatalog(rom),
+	  _actions(rom, scene, state, collisionProbe, random, presenter, actorAnimator,
+			   roomVBlank, presentRoom, interactions, roomInterfaceTransitions, tileStreamer,
+			   restartApplication),
+	  _conditionEvaluator(rom, state), _interactionModeSnapshot(0) {
+}
+
+Optional<SessionExit> RoomScriptCommandExecutor::execute(uint16 command, int mode,
+														 int16 interactionModeSnapshot) {
+	_interactionModeSnapshot = interactionModeSnapshot;
+
+	// Ghidra g_apRoomScriptCommandHandlers (ROM 0x00002354-0x000023DB): 34 entries in original index order.
+	switch (command) {
+	case 0x00:
+		scriptCommand00NoOp(mode);
+		break;
+	case 0x01:
+		executeRoomScriptCommand01(mode, _interactionModeSnapshot);
+		break;
+	case 0x02:
+		scriptCommand02AddPlayerChoiceInteractionLine(mode);
+		break;
+	case 0x03:
+		scriptCommand03IfStatement(mode);
+		break;
+	case 0x04:
+		scriptCommand04IfStatementNested(mode);
+		break;
+	case 0x05:
+		scriptCommand05MoveObject(mode);
+		break;
+	case 0x06:
+		scriptCommand06PlayObjAnim(mode);
+		break;
+	case 0x07:
+		scriptCommand07RefreshObject(mode);
+		break;
+	case 0x08:
+		scriptCommand08SetVariable(mode);
+		break;
+	case 0x09:
+		executeRoomScriptCommand09(mode);
+		break;
+	case 0x0A:
+		scriptCommand0ASetInventoryGfx(mode);
+		break;
+	case 0x0B:
+		scriptCommand0BSetBackgroundGfx(mode);
+		break;
+	case 0x0C:
+		scriptCommand0CRunAction(mode);
+		break;
+	case 0x0D:
+		scriptCommand0DPlayOrStopAudio(mode);
+		break;
+	case 0x0E: // Shares its Ghidra table target with 0x1B.
+	case 0x1B:
+		scriptCommand0EOr1BMoveToPosition(mode);
+		break;
+	case 0x0F:
+		scriptCommand0FWalkRelativeTo(mode);
+		break;
+	case 0x10:
+		scriptCommand10Dialog(mode);
+		break;
+	case 0x11:
+		scriptCommand11ChangeRoom(mode);
+		break;
+	case 0x12:
+		scriptCommand12SetObjShape(mode);
+		break;
+	case 0x13:
+		scriptCommand13Jump(mode);
+		break;
+	case 0x14:
+		scriptCommand14SetObjShape(mode);
+		break;
+	case 0x15:
+		scriptCommand15WaitNFrames(mode);
+		break;
+	case 0x16:
+		scriptCommand16HideActor(mode);
+		break;
+	case 0x17:
+		scriptCommand17WaitForObjAnim(mode);
+		break;
+	case 0x18:
+		scriptCommand18ChangeRoomNoFade(mode);
+		break;
+	case 0x19:
+		scriptCommand19ShowActor(mode);
+		break;
+	case 0x1A:
+		executeRoomScriptCommand1A(mode);
+		break;
+	case 0x1C:
+		executeRoomScriptCommand1C(mode);
+		break;
+	case 0x1D:
+		executeRoomScriptCommand1D(mode);
+		break;
+	case 0x1E:
+		executeRoomScriptCommand1E(mode);
+		break;
+	case 0x1F:
+		executeRoomScriptCommand1F(mode);
+		break;
+	case 0x20:
+		executeRoomScriptCommand20(mode);
+		break;
+	case 0x21:
+		executeRoomScriptCommand21(mode);
+		break;
+	default:
+		error("Room script command 0x%04X is outside the 34-entry handler table", command);
+	}
+
+	return _requestedSessionExit;
+}
+
+void RoomScriptCommandExecutor::scriptCommand00NoOp(int mode) {
+	(void)mode;
+
+	// Ghidra 0x0000250C-0x0000250D: test the current command word solely for A5's post-increment;
+	// the dispatcher has already read the word, so preserve only the two-byte cursor advance.
+	_state.roomScriptCurrentOffset += static_cast<int>(sizeof(uint16));
+
+	// Ghidra 0x0000250E-0x0000250F: return without consuming the inherited mode or changing other state.
+}
+
+void RoomScriptCommandExecutor::scriptCommand03IfStatement(int mode) {
+	(void)mode;
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002732-0x00002739: evaluate the complete shared condition and branch on its Z result.
+	if (_conditionEvaluator.evaluateRoomScriptCondition()) {
+		// Ghidra 0x0000273A-0x0000273F: true consumes the fixed 16-byte condition record and returns.
+		_state.roomScriptCurrentOffset = commandOffset + 16;
+	} else {
+		// Ghidra 0x00002740-0x00002749: false sign-extends record field +2 as the replacement A5 offset.
+		_state.roomScriptCurrentOffset = commandOffset + _rom.readInt16(commandOffset + 2);
+	}
+}
+
+void RoomScriptCommandExecutor::scriptCommand04IfStatementNested(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x0000274A-0x00002751: evaluate the complete shared condition and branch to the authored
+	// signed failure displacement when it is false.
+	if (!_conditionEvaluator.evaluateRoomScriptCondition()) {
+		// Ghidra 0x0000278C-0x00002795: false replaces A5 with command start plus signed field +2.
+		_state.roomScriptCurrentOffset = commandOffset + _rom.readInt16(commandOffset + 2);
+		return;
+	}
+
+	// Ghidra 0x00002752-0x00002769: save the parent cursors, install the nested exclusive bound from signed
+	// field +2, start at fixed record offset +0x10, and invoke the currently installed script dispatcher.
+	int parentEndOffset = _state.roomScriptEndOffset;
+	_state.roomScriptEndOffset = commandOffset + _rom.readInt16(commandOffset + 2);
+	_state.roomScriptCurrentOffset = commandOffset + 16;
+	_requestedSessionExit = _invokeRoomScriptDispatchCallback(mode);
+	if (_requestedSessionExit.hasValue()) {
+		// A native non-returning nested command never reaches either original callback-return path.
+		return;
+	}
+
+	// Ghidra 0x0000276A-0x0000277B: bit zero discards the saved parent cursors and returns with the nested
+	// dispatcher's A5 and A6 values still active.
+	if ((_state.automaticInteractionFlags & 0x01) != 0) {
+		return;
+	}
+
+	// Ghidra 0x0000277C-0x0000278B: preserve the nested post-dispatch A5, restore the parent A5/A6 pair,
+	// then replace A5 with the nested cursor plus the parent's signed field +4.
+	int nestedCursorOffset = _state.roomScriptCurrentOffset;
+	_state.roomScriptEndOffset = parentEndOffset;
+	_state.roomScriptCurrentOffset = nestedCursorOffset + _rom.readInt16(commandOffset + 4);
+}
+
+void RoomScriptCommandExecutor::scriptCommand06PlayObjAnim(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002B5A-0x00002B5D: mode zero retains the common six-byte cursor advance.
+	if (mode != 0) {
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		int16 animationOffset = _rom.readInt16(commandOffset + 4);
+		switch (objectId) {
+		case 1:
+			// Ghidra 0x00002B5E-0x00002B75: identity one selects actor slot zero and joins the
+			// restart-pending loop without passing through the identity-two comparison.
+			_state.actorAnimationOffsets[kShaggyActorSlot] = animationOffset;
+			_state.actorAnimationRestartFlags |= kShaggyActorMask;
+			while (true) {
+				_actorAnimator.updateActorAnimationFrames();
+				if ((_state.actorAnimationRestartFlags & kShaggyActorMask) == 0) {
+					break;
+				}
+
+				if (!waitForRoomVerticalBlank()) {
+					return;
+				}
+			}
+
+			break;
+		case 2:
+			// Ghidra 0x00002B76-0x00002B9F: identity two selects actor slot one; both outcomes of
+			// the restart-bit test remain in the loop before the common epilogue.
+			_state.actorAnimationOffsets[kScoobyActorSlot] = animationOffset;
+			_state.actorAnimationRestartFlags |= kScoobyActorMask;
+			while (true) {
+				_actorAnimator.updateActorAnimationFrames();
+				if ((_state.actorAnimationRestartFlags & kScoobyActorMask) == 0) {
+					break;
+				}
+
+				if (!waitForRoomVerticalBlank()) {
+					return;
+				}
+			}
+
+			break;
+		default: {
+			// Ghidra 0x00002BA0-0x00002BB3: every identity other than one or two retains the
+			// low-word 0x1A-byte object-table calculation and the signed fixed-position-index branch.
+			RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			if (roomObject.fixedPositionIndex >= 0) {
+				// Ghidra 0x00002BB4-0x00002BEB: retarget the corresponding actor slot, force its
+				// delay due, request restart, and retain both graphics-ready loop outcomes.
+				int actorSlot = static_cast<uint8>(roomObject.fixedPositionIndex) + 2;
+				uint8 actorMask = static_cast<uint8>(1 << (actorSlot & 0x07));
+				_state.actorAnimationOffsets[actorSlot] = animationOffset;
+				_state.actorAnimationDelays[actorSlot] = -1;
+				_state.actorAnimationRestartFlags |= actorMask;
+				while (true) {
+					_actorAnimator.updateActorAnimationFrames();
+					if ((_state.actorGraphicsReadyFlags & actorMask) != 0) {
+						break;
+					}
+
+					if (!waitForRoomVerticalBlank()) {
+						return;
+					}
+				}
+			}
+
+			// Ghidra 0x00002BEC-0x00002BF1: MOVE.W (4,A5),(0,A0) (opcode 0x316D) uses the plain
+			// (d16,An) destination mode, not an indexed one. A0 still holds the table base 0xFF1200, so
+			// for both signed fixed-position-index outcomes the original writes record +0x00 of room
+			// object 0, not of the selected object. The selected object's tile-patch word (which the actor
+			// initializers use as its animation) is deliberately left unchanged; e.g. the mine cart keeps
+			// its repaired animation 3 while its actor plays the riding animation during the room 6 -> 18 trip.
+			_state.roomObjects[0].tilePatchIndex = animationOffset;
+			break;
+		}
+		}
+	}
+
+	// Ghidra 0x00002BF2-0x00002BF7: every native return path consumes the command and its two arguments.
+	_state.roomScriptCurrentOffset = commandOffset + 6;
+}
+
+void RoomScriptCommandExecutor::scriptCommand07RefreshObject(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002BF8-0x00002BFB: mode zero retains the common four-byte cursor advance.
+	if (mode != 0) {
+		// Ghidra 0x00002BFC-0x00002C1F: retain the low-word object-table calculation and both active-room
+		// outcomes. A match sets only object flag bit zero and skips every inventory branch.
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		RoomObject &roomObject = _state.roomObjects[objectId - 3];
+		if (roomObject.roomId == _state.roomId) {
+			roomObject.flags |= 0x01;
+		}
+		// Ghidra 0x00002C20-0x00002C27: a non-active object enters page handling only for room ID one.
+		else if (roomObject.roomId == 1) {
+			// Ghidra 0x00002C28-0x00002C37: count every nonnegative inventory word through the negative
+			// sentinel. The vector's size is the typed representation of the same complete ordered scan.
+			uint16 inventoryCount = static_cast<uint16>(_state.inventoryObjectIndices.size());
+
+			// Ghidra 0x00002C38-0x00002C4F: preserve the logical word shift, wrapped MenuPage-minus-one
+			// comparison, unchanged-page exit, and changed-page write before the prompt commit call.
+			uint16 inventoryPage = static_cast<uint16>(inventoryCount >> 2);
+			if (inventoryPage != static_cast<uint16>(_state.menuPage - 1)) {
+				_state.menuPage = static_cast<int16>(inventoryPage);
+				_actionMenu.commitActionPromptUpdate();
+			}
+		}
+	}
+
+	// Ghidra 0x00002C50-0x00002C55: every native return path consumes the command and its argument.
+	_state.roomScriptCurrentOffset = commandOffset + 4;
+}
+
+void RoomScriptCommandExecutor::scriptCommand0ASetInventoryGfx(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002DC0-0x00002DC3: dispatcher mode zero skips the complete object and prompt update.
+	if (mode != 0) {
+		// Ghidra 0x00002DC4-0x00002DD9: retain the unsigned word multiply and low-word object-table index,
+		// then replace the complete inventory-graphic word from command field +4.
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		RoomObject &roomObject = _state.roomObjects[objectId - 3];
+		roomObject.inventoryGraphicIndex = _rom.readInt16(commandOffset + 4);
+
+		// Ghidra 0x00002DDA-0x00002DE3: preserve both room-ID outcomes; only inventory room one calls on.
+		if (roomObject.roomId == 1) {
+			// Ghidra 0x00002DE4-0x00002DEB: wait exactly one retrace before committing the prompt update.
+			// Host closure replaces this native returning path with the managed session-exit handover.
+			if (!waitForRoomVerticalBlank()) {
+				return;
+			}
+
+			_actionMenu.commitActionPromptUpdate();
+		}
+	}
+
+	// Ghidra 0x00002DEC-0x00002DF1: every native mode and room branch consumes the six-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 6;
+}
+
+void RoomScriptCommandExecutor::scriptCommand0CRunAction(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002E9E-0x00002EAD: mode zero skips dispatch; a nonzero mode selects the nested action
+	// from the managed equivalent of g_apRoomScriptActionHandlers.
+	if (mode != 0) {
+		_requestedSessionExit = _actions.execute(_rom.readUInt16(commandOffset + 2));
+		if (_requestedSessionExit.hasValue()) {
+			// The original non-returning action never reaches this command's shared cursor advance.
+			return;
+		}
+	}
+
+	// Ghidra 0x00002EAE-0x00002EB3: consume the command and action-index words in either mode.
+	_state.roomScriptCurrentOffset = commandOffset + 4;
+}
+
+void RoomScriptCommandExecutor::scriptCommand0DPlayOrStopAudio(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x000048B6-0x000048B9: dispatcher mode zero skips both audio call branches.
+	if (mode != 0) {
+		// Ghidra 0x000048BA-0x000048BF: retain both outcomes of the signed command-word test.
+		int16 encodedCommand = _rom.readInt16(commandOffset + 2);
+		if (encodedCommand < 0) {
+			// Ghidra 0x000048C0-0x000048CB: clear only bit 15, extend the result, and call the
+			// StopAudioPlayback handover before bypassing the play branch.
+			stopAudioPlayback(static_cast<uint16>(encodedCommand) & 0x7FFF);
+		} else {
+			// Ghidra 0x000048CC-0x000048D1: extend the nonnegative word unchanged and call the
+			// PlayAudioCommand handover.
+			playAudioCommand(encodedCommand);
+		}
+	}
+
+	// Ghidra 0x000048D2-0x000048D7: every mode and sign branch consumes the four-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 4;
+}
+
+// Ghidra PlayAudioCommand (gemsStartSong, 0x00009762).
+void RoomScriptCommandExecutor::playAudioCommand(int command) {
+	gemsStartSong(command);
+}
+
+// Ghidra StopAudioPlayback (gemsStopSong, 0x00009776).
+void RoomScriptCommandExecutor::stopAudioPlayback(int command) {
+	gemsStopSong(command);
+}
+
+void RoomScriptCommandExecutor::scriptCommand11ChangeRoom(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00004F0E-0x00004F11: scan mode skips every state and presentation effect.
+	if (mode != 0) {
+		// Ghidra 0x00004F12-0x00004F21: replace the room identity and lead actor's signed position index
+		// independently from the coordinate-table offset between them in the record.
+		_state.roomId = _rom.readInt16(commandOffset + 2);
+		_state.actorPositionIndices[kShaggyActorSlot] = _rom.readInt16(commandOffset + 6);
+
+		// Ghidra 0x00004F22-0x00004F39: save every display flag, clear only the room-update gate during
+		// the complete callback-aware fade, and restore the exact byte before either continuation.
+		uint8 displayFlags = _state.displayFlags;
+		_state.displayFlags &= 0xBF;
+		bool fadeCompleted = _presenter.fadePaletteOut(_roomVBlank.beforeRetraceCallback());
+		_state.displayFlags = displayFlags;
+		if (!fadeCompleted) {
+			_requestedSessionExit = SessionExit::HostClosed;
+			return;
+		}
+
+		// Ghidra 0x00004F3A-0x00004F49: scale the coordinate index by four with word wrapping, publish
+		// the initial coordinate byte offset, and invoke the separate room-reload owner.
+		_state.initialRoomPositionCoordinateOffset =
+			static_cast<int16>(_rom.readUInt16(commandOffset + 4) << 2);
+		_requestedSessionExit = _reloadAndPresentRoom();
+		if (_requestedSessionExit.hasValue()) {
+			// A native non-returning descendant never reaches this handler's final A5 advance.
+			return;
+		}
+	}
+
+	// Ghidra 0x00004F4A-0x00004F4F: every native mode consumes the complete eight-byte record.
+	_state.roomScriptCurrentOffset = commandOffset + 8;
+}
+
+void RoomScriptCommandExecutor::scriptCommand12SetObjShape(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00004F50-0x00004F53: scan mode skips only the room-object write.
+	if (mode != 0) {
+		// Ghidra 0x00004F54-0x00004F69: subtract the three-identity prefix, retain the signed low word of
+		// the 0x1A-byte product used by indexed addressing, and replace shape word +0x02 unconditionally.
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		_state.roomObjects[objectId - 3].shapeIndex = _rom.readInt16(commandOffset + 4);
+	}
+
+	// Ghidra 0x00004F6A-0x00004F6F: every native mode consumes the complete six-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 6;
+}
+
+void RoomScriptCommandExecutor::scriptCommand13Jump(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002446-0x0000245F: execution mode skips the flag test; scan mode with bit four set
+	// latches only stop bit zero and returns with the exact command cursor unchanged.
+	if (mode == 0 && (_state.automaticInteractionFlags & 0x10) != 0) {
+		_state.automaticInteractionFlags |= 0x01;
+		return;
+	}
+
+	// Ghidra 0x00002460-0x00002469: every other path adds the signed field at +0x02 to the original
+	// command cursor without imposing a fixed record size or a defensive progress requirement.
+	_state.roomScriptCurrentOffset = commandOffset + _rom.readInt16(commandOffset + 2);
+}
+
+void RoomScriptCommandExecutor::scriptCommand14SetObjShape(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002E7E-0x00002E81: scan mode skips only the room-object write.
+	if (mode != 0) {
+		// Ghidra 0x00002E82-0x00002E97: subtract the three-identity prefix, retain the signed low word of
+		// the 0x1A-byte product used by indexed addressing, and replace shape word +0x02 unconditionally.
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		_state.roomObjects[objectId - 3].shapeIndex = _rom.readInt16(commandOffset + 4);
+	}
+
+	// Ghidra 0x00002E98-0x00002E9D: every native mode consumes the complete six-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 6;
+}
+
+void RoomScriptCommandExecutor::scriptCommand15WaitNFrames(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x000048D8-0x000048DB: scan mode skips the complete countdown and animation loop.
+	if (mode != 0) {
+		// Ghidra 0x000048DC-0x000048F1: copy the complete signed word, update animations before every
+		// signed test, and retain the back edge until the installed callback decrements through -1.
+		_state.retraceCountdown = _rom.readInt16(commandOffset + 2);
+		while (true) {
+			_actorAnimator.updateActorAnimationFrames();
+			if (_state.retraceCountdown < 0) {
+				break;
+			}
+
+			if (!waitForRoomVerticalBlank()) {
+				return;
+			}
+		}
+	}
+
+	// Ghidra 0x000048F2-0x000048F7: every native mode consumes the complete four-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 4;
+}
+
+void RoomScriptCommandExecutor::scriptCommand16HideActor(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002AD0-0x00002AD3: scan mode skips every actor-selection and visibility effect.
+	if (mode != 0) {
+		// Ghidra 0x00002AD4-0x00002AE7: identities one and two select actor bits zero and one directly.
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		int actorSlot;
+		if (objectId == 1) {
+			actorSlot = 0;
+		} else if (objectId == 2) {
+			actorSlot = 1;
+		} else {
+			// Ghidra 0x00002AE8-0x00002AF9: every other identity retains the signed low word of the
+			// 0x1A-byte table offset, reads byte +0x19, adds two, and keeps its modulo-eight bit number.
+			RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
+		}
+
+		// Ghidra 0x00002AFA-0x00002B07: managed callback execution is non-reentrant, so one byte update
+		// replaces the interrupt-masked dynamic bit set while preserving all other actor slots.
+		_state.actorVisibilityBlockFlags |= static_cast<uint8>(1 << actorSlot);
+	}
+
+	// Ghidra 0x00002B08-0x00002B0D: every native mode and identity consumes the four-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 4;
+}
+
+void RoomScriptCommandExecutor::scriptCommand17WaitForObjAnim(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00004FBE-0x00004FC1: scan mode skips every actor-selection and animation effect.
+	if (mode != 0) {
+		// Ghidra 0x00004FC2-0x00004FD7: identities one and two select actor bits zero and one directly.
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		int actorSlot;
+		if (objectId == 1) {
+			actorSlot = 0;
+		} else if (objectId == 2) {
+			actorSlot = 1;
+		} else {
+			// Ghidra 0x00004FD8-0x00004FED: every other identity retains the signed low-word table
+			// offset, zero-extends byte +0x19, adds two, and keeps the modulo-eight bit number.
+			RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
+		}
+
+		// Ghidra 0x00004FEE-0x00004FFB: update every actor at least once and retain the back edge until
+		// the selected actor's animation command stream sets its hold bit. Native room VBlank can interrupt
+		// this loop to decrement animation delays; service and present that retrace before each continuation.
+		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
+		while (true) {
+			_actorAnimator.updateActorAnimationFrames();
+			if ((_state.actorAnimationHoldFlags & actorMask) != 0) {
+				break;
+			}
+
+			if (!waitForRoomVerticalBlank()) {
+				return;
+			}
+		}
+	}
+
+	// Ghidra 0x00004FFC-0x00005001: every native mode and identity consumes the four-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 4;
+}
+
+int RoomScriptCommandExecutor::replaceIntegerCoordinate(int coordinate, int16 integer) {
+	return (coordinate & 0x0000FFFF) | (static_cast<int>(integer) << 16);
+}
+
+bool RoomScriptCommandExecutor::waitForRoomVerticalBlank() {
+	_roomVBlank.handleRoomVBlank();
+	if (_presenter.waitForVerticalBlank()) {
+		return true;
+	}
+
+	_requestedSessionExit = SessionExit::HostClosed;
+	return false;
+}
+
+void RoomScriptCommandExecutor::scriptCommand18ChangeRoomNoFade(int mode) {
+	int commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00004EE4-0x00004EE7: scan mode skips every room-selection and reset effect.
+	if (mode != 0) {
+		// Ghidra 0x00004EE8-0x00004EF7: replace the room identity and lead actor's signed position index
+		// independently from the coordinate-table offset between them in the command record.
+		_state.roomId = _rom.readInt16(commandOffset + 2);
+		_state.actorPositionIndices[kShaggyActorSlot] = _rom.readInt16(commandOffset + 6);
+
+		// Ghidra 0x00004EF8-0x00004F07: scale the coordinate index by four with word wrapping, publish
+		// the signed initial byte offset, and retain the separate room-state reset function boundary.
+		_state.initialRoomPositionCoordinateOffset =
+			static_cast<int16>(_rom.readUInt16(commandOffset + 4) << 2);
+		_requestedSessionExit = _resetRoomStateForReload();
+		if (_requestedSessionExit.hasValue()) {
+			// A native returning reset has no host-close path; the managed wait hands that result outward.
+			return;
+		}
+	}
+
+	// Ghidra 0x00004F08-0x00004F0D: every native mode consumes the complete eight-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 8;
+}
+} // namespace Scooby

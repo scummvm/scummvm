@@ -1,0 +1,66 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "room_script_command_executor.h"
+
+#include "common/scummsys.h"
+
+// Owns command 0x21's per-actor path-stream installation.
+
+namespace Scooby {
+
+void RoomScriptCommandExecutor::executeRoomScriptCommand21(int mode) {
+	int32 commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00004944-0x00004947: scan mode bypasses actor resolution and every path-state write.
+	if (mode != 0) {
+		// Ghidra 0x00004948-0x0000496D: selectors one and two choose slots zero and one. Every other selector
+		// retains the wrapped signed object-record offset, sign-extends byte +0x19, and adds two.
+		uint16 objectId = _rom.readUInt16(commandOffset + 4);
+		int actorSlot;
+		if (objectId == 1) {
+			actorSlot = 0;
+		} else if (objectId == 2) {
+			actorSlot = 1;
+		} else {
+			const RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = roomObject.fixedPositionIndex + 2;
+		}
+
+		// Ghidra 0x0000496E-0x000049A3: install the inline stream, seed both cadence arrays from the command
+		// word's low byte, and restart traversal at byte offset zero for the exact selected slot.
+		_state.actorPathStreamOffsets[static_cast<size_t>(actorSlot)] = commandOffset + 8;
+		uint8 cadence = static_cast<uint8>(_rom.readUInt16(commandOffset + 6));
+		_state.actorPathCadenceCountdowns[static_cast<size_t>(actorSlot)] = static_cast<int8>(
+			cadence);
+		_state.actorPathCadenceReloads[static_cast<size_t>(actorSlot)] = cadence;
+		_state.actorPathRecordOffsets[static_cast<size_t>(actorSlot)] = 0;
+
+		// Ghidra 0x000049A4-0x000049AF: clear a stale one-shot loop exit before setting path traversal.
+		uint8 actorMask = static_cast<uint8>(1 << (actorSlot & 0x07));
+		_state.actorAnimationLoopExitFlags &= static_cast<uint8>(~actorMask);
+		_state.actorPathActiveFlags |= actorMask;
+	}
+
+	// Ghidra 0x000049B0-0x000049B9: every mode advances over the eight-byte header and signed inline extent.
+	_state.roomScriptCurrentOffset = commandOffset + 8 + _rom.readInt16(commandOffset + 2);
+}
+} // namespace Scooby

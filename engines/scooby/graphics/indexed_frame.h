@@ -1,0 +1,65 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef SCOOBY_INDEXED_FRAME_H
+#define SCOOBY_INDEXED_FRAME_H
+
+#include "common/scummsys.h"
+#include "common/algorithm.h"
+
+#include "common/array.h"
+
+#include "graphics/screen.h"
+#include "scooby/types.h"
+
+// Working framebuffer 320x224 indexed 8bpp, 64-color palette.
+
+namespace Scooby {
+
+class IndexedFrame {
+public:
+	static const int width = 320;
+	static const int height = 224;
+	// Managed-only debug overlays (TileScene::setWalkAreaOverlay): one fixed colour after the 64 Genesis
+	// palette entries, so an overlay never depends on the room's palette.
+	static const uint8 kDebugOverlayColorIndex = 64;
+
+	IndexedFrame(Graphics::Screen &screen) : _palette(64), _screen(screen) {
+		_pixels.resize(static_cast<size_t>(width) * static_cast<size_t>(height), 0);
+		Common::fill(_palette.begin(), _palette.end(), PaletteColor());
+	}
+
+	// Gets the palette index selected for every logical pixel.
+	Common::Array<uint8> _pixels;
+
+	// Gets the colors available to the indexed pixels in this frame.
+	Common::Array<PaletteColor> _palette;
+
+	Graphics::Screen &_screen;
+
+	void present();
+
+private:
+	static uint8 expandLevel(uint8 level);
+};
+} // namespace Scooby
+
+#endif // SCOOBY_INDEXED_FRAME_H
