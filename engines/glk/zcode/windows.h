@@ -83,7 +83,7 @@ private:
 	/**
 	 * Get a property value
 	 */
-	const uint &getProperty(WindowProperty propType);
+	uint getProperty(WindowProperty propType);
 
 	/**
 	 * Set a property value

@@ -46,7 +46,7 @@ GlkInterface::~GlkInterface() {
 
 void GlkInterface::initialize() {
 	/* Setup options */
-	UserOptions::initialize(h_version, _storyId);
+	UserOptions::initialize(h_version);
 
 	/* Setup colors array */
 	const int COLOR_MAP[zcolor_NUMCOLORS - 2] = {
@@ -67,54 +67,6 @@ void GlkInterface::initialize() {
 	zcolors[1] = zcolor_Default;		// Default
 	for (int i = 2; i < zcolor_NUMCOLORS; ++i)
 		zcolors[i] = zRGB(COLOR_MAP[i - 2]);
-
-	/*
-	 * Init glk stuff
-	 */
-
-	 // monor
-	glk_stylehint_set(wintype_AllTypes, style_Preformatted, stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Preformatted, stylehint_Weight, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Preformatted, stylehint_Oblique, 0);
-
-	// monob
-	glk_stylehint_set(wintype_AllTypes, style_Subheader, stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Subheader, stylehint_Weight, 1);
-	glk_stylehint_set(wintype_AllTypes, style_Subheader, stylehint_Oblique, 0);
-
-	// monoi
-	glk_stylehint_set(wintype_AllTypes, style_Alert, stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Alert, stylehint_Weight, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Alert, stylehint_Oblique, 1);
-
-	// monoz
-	glk_stylehint_set(wintype_AllTypes, style_BlockQuote, stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes, style_BlockQuote, stylehint_Weight, 1);
-	glk_stylehint_set(wintype_AllTypes, style_BlockQuote, stylehint_Oblique, 1);
-
-	// propr
-	glk_stylehint_set(wintype_TextBuffer, style_Normal, stylehint_Proportional, 1);
-	glk_stylehint_set(wintype_TextGrid, style_Normal, stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Normal, stylehint_Weight, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Normal, stylehint_Oblique, 0);
-
-	// propb
-	glk_stylehint_set(wintype_TextBuffer, style_Header, stylehint_Proportional, 1);
-	glk_stylehint_set(wintype_TextGrid, style_Header, stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Header, stylehint_Weight, 1);
-	glk_stylehint_set(wintype_AllTypes, style_Header, stylehint_Oblique, 0);
-
-	// propi
-	glk_stylehint_set(wintype_TextBuffer, style_Emphasized, stylehint_Proportional, 1);
-	glk_stylehint_set(wintype_TextGrid, style_Emphasized, stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Emphasized, stylehint_Weight, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Emphasized, stylehint_Oblique, 1);
-
-	// propi
-	glk_stylehint_set(wintype_TextBuffer, style_Note, stylehint_Proportional, 1);
-	glk_stylehint_set(wintype_TextGrid, style_Note, stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes, style_Note, stylehint_Weight, 1);
-	glk_stylehint_set(wintype_AllTypes, style_Note, stylehint_Oblique, 1);
 
 	/*
 	 * Get the screen size
@@ -175,10 +127,9 @@ void GlkInterface::initialize() {
 		showBeyondZorkTitle();
 
 	_wp.setup(h_version == 6);
-	for (uint i = 0; i < _wp.size(); ++i) {
-		_wp[i][TRUE_FG_COLOR] = zcolors[h_default_foreground];
-		_wp[i][TRUE_BG_COLOR] = zcolors[h_default_background];
-	}
+	for (uint i = 0; i < _wp.size(); ++i)
+		_wp[i].updateColors(h_version == V6 ? _defaultForeground : (uint)zcolor_Default,
+			h_version == V6 ? _defaultBackground : (uint)zcolor_Default);
 
 	/*
 	 * Icky magic bit setting

@@ -433,6 +433,7 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const Common::String &name, const Comm
 	: Widget(boss, name, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kPopUpWidget;
+	_naturalSize = false;
 	_cmd = cmd;
 
 	_selectedItem = -1;
@@ -443,6 +444,7 @@ PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const Comm
 	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kPopUpWidget;
+	_naturalSize = false;
 	_cmd = cmd;
 
 	_selectedItem = -1;
@@ -492,9 +494,24 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 	}
 }
 
+void PopUpWidget::getMinSize(int &minWidth, int &minHeight) {
+	minWidth = minHeight = -1;
+	if (!_naturalSize)
+		return;
+	const ThemeEval::WidgetMetrics &metrics = g_gui.xmlEval()->getWidgetMetrics();
+	_leftPadding = metrics.popUpPaddingLeft;
+	_rightPadding = metrics.popUpPaddingRight;
+	minHeight = MAX(metrics.popUpHeight, g_gui.getFontHeight());
+	minWidth = 0;
+	for (uint i = 0; i < _entries.size(); ++i)
+		minWidth = MAX(minWidth, g_gui.getStringWidth(_entries[i].name));
+	minWidth += minHeight + _leftPadding + _rightPadding;
+}
+
 void PopUpWidget::reflowLayout() {
-	_leftPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Left", 0);
-	_rightPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Right", 0);
+	const ThemeEval::WidgetMetrics &metrics = g_gui.xmlEval()->getWidgetMetrics();
+	_leftPadding = metrics.popUpPaddingLeft;
+	_rightPadding = metrics.popUpPaddingRight;
 
 	Widget::reflowLayout();
 }

@@ -11,6 +11,9 @@ MODULE_OBJS := \
 	glk_api.o \
 	glk_dispa.o \
 	metaengine.o \
+	options.o \
+	preferences.o \
+	preview.o \
 	pc_speaker.o \
 	picture.o \
 	quetzal.o \
