@@ -1660,12 +1660,11 @@ void Inter_v7::o7_printText(OpFuncParams &params) {
 		_vm->_draw->_transparency = 1;
 	}
 
-	// colMod is read from conf file (_off_=xxx).
-	// in Playtoons, it's not present in the conf file, thus always equal to the default value (0).
-	// Maybe used in ADIs...
-	//	if (!_vm->_draw->_transparency)
-	//		_vm->_draw->_backColor += colMod;
-	//	_vm->_draw->_frontColor += colMod;
+	int16 colorOffset = _vm->_draw->_colorOffset; // NB: _colorOffset is often 0, but set to 10 by o7_startAdi4Application
+	if (_vm->_draw->_transparency == 0 && (_vm->_draw->_backColor <= 255 - colorOffset))
+		_vm->_draw->_backColor += colorOffset;
+	if (_vm->_draw->_frontColor <= 255 - colorOffset)
+		_vm->_draw->_frontColor += colorOffset;
 
 	int16 oldTransparency = _vm->_draw->_transparency;
 	int i = 0;
