@@ -159,6 +159,19 @@ public:
 #ifdef ENABLE_NANCY_V4
 	// Nancy19: the script of the main scene; null while there is none
 	Script::SceneContext *getScriptScene() const { return _scriptScene; }
+
+	// Nancy24 tells whether a task is done with a completion function of the
+	// scripts, in place of a flag. The functions belong to the Lua state of the
+	// scene that gave them, which is the scene of the task list stream, and are
+	// dropped when that scene goes away.
+	struct TaskCompletion {
+		Script::SceneContext *context;
+		uint character;
+		Common::String text;
+		int ref;
+	};
+
+	Common::Array<TaskCompletion> &getTaskCompletions() { return _taskCompletions; }
 #endif
 	void addSceneVisit(uint16 sceneID) { _flags.sceneCounts.getOrCreateVal(sceneID)++; }
 	void pushScene(int16 itemID = -1);
@@ -558,6 +571,7 @@ private:
 	// Nancy19: the script of the scene, which takes the place of the action records
 	Script::SceneContext *_scriptScene = nullptr;
 	bool _isScriptedUIReady = false;
+	Common::Array<TaskCompletion> _taskCompletions;
 
 	// Nancy20: the main stream can also be in a scene that has a name instead of
 	// a number, like "s1002a_SC". These hold the name of the scene it is in and

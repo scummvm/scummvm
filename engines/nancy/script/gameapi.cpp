@@ -1868,46 +1868,34 @@ static int playerAddJournalEntry(lua_State *L) {
 	return 0;
 }
 
-// Nancy24 tells whether a task is done with a completion function of the
-// scripts, in place of a flag. The functions belong to the Lua state of the
-// scene that gave them, which is the scene of the task list stream, and are
-// dropped when that scene goes away.
-struct TaskCompletion {
-	SceneContext *context;
-	uint character;
-	Common::String text;
-	int ref;
-};
-
-static Common::Array<TaskCompletion> s_taskCompletions;
-
 static void setTaskCompletion(lua_State *L, int index, uint character, const Common::String &text) {
 	SceneContext *context = LuaState::getContext(L);
 	if (!context) {
 		return;
 	}
 
-	for (uint i = 0; i < s_taskCompletions.size(); ++i) {
-		const TaskCompletion &completion = s_taskCompletions[i];
+	Common::Array<State::Scene::TaskCompletion> &completions = NancySceneState.getTaskCompletions();
+	for (uint i = 0; i < completions.size(); ++i) {
+		const State::Scene::TaskCompletion &completion = completions[i];
 		if (completion.character == character && completion.text.equalsIgnoreCase(text)) {
 			luaL_unref(completion.context->getLua(), LUA_REGISTRYINDEX, completion.ref);
-			s_taskCompletions.remove_at(i);
+			completions.remove_at(i);
 			break;
 		}
 	}
 
-	TaskCompletion completion;
+	State::Scene::TaskCompletion completion;
 	completion.context = context;
 	completion.character = character;
 	completion.text = text;
 	lua_pushvalue(L, index);
 	completion.ref = luaL_ref(L, LUA_REGISTRYINDEX);
-	s_taskCompletions.push_back(completion);
+	completions.push_back(completion);
 }
 
 bool isTaskComplete(const Common::String &text) {
 	const uint character = g_nancy->getPlayerCharacter();
-	for (const TaskCompletion &completion : s_taskCompletions) {
+	for (const State::Scene::TaskCompletion &completion : NancySceneState.getTaskCompletions()) {
 		if (completion.character != character || !completion.text.equalsIgnoreCase(text)) {
 			continue;
 		}
@@ -1927,9 +1915,10 @@ bool isTaskComplete(const Common::String &text) {
 }
 
 void forgetTaskCompletions(SceneContext *context) {
-	for (uint i = 0; i < s_taskCompletions.size();) {
-		if (s_taskCompletions[i].context == context) {
-			s_taskCompletions.remove_at(i);
+	Common::Array<State::Scene::TaskCompletion> &completions = NancySceneState.getTaskCompletions();
+	for (uint i = 0; i < completions.size();) {
+		if (completions[i].context == context) {
+			completions.remove_at(i);
 		} else {
 			++i;
 		}
