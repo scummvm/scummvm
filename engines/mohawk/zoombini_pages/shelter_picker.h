@@ -416,13 +416,13 @@ protected:
 	};
 
 	/** Hit rectangle for the Generate button. */
-	const Common::Rect _generateButtonRect = Common::Rect(0x00CD, 0x0130, 0x0104, 0x0156);
+	Common::Rect _generateButtonRect = Common::Rect(0x00CD, 0x0130, 0x0104, 0x0156);
 	/** Hit rectangle for the generated Zoombini preview. */
 	const Common::Rect _previewZoombiniRect = Common::Rect(0x00CD, 0x015B, 0x0111, 0x01A4);
 	/** Hit rectangle for the generated Zoombini name box. */
 	const Common::Rect _nameBoxRect = Common::Rect(0x00C9, 0x01A3, 0x011F, 0x01B5);
 	/** Hit rectangle for the Dice button. */
-	const Common::Rect _diceButtonRect = Common::Rect(0x00CD, 0x01B8, 0x0104, 0x01DE);
+	Common::Rect _diceButtonRect = Common::Rect(0x00CD, 0x01B8, 0x0104, 0x01DE);
 
 	/** Hit rectangle for the Go button. */
 	const Common::Rect _goButtonClickRect = Common::Rect(0x0258, 0x01B9, 0x027F, 0x01DE);

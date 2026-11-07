@@ -1218,6 +1218,7 @@ ZoombiniOptionsWidget::ZoombiniOptionsWidget(GUI::GuiObject *boss, const Common:
 
 	if (ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kEuropeV1x)) {
 		switch (lang) {
+		case Common::EN_ANY:
 		case Common::EN_GRB:
 		case Common::FR_FRA:
 		case Common::DE_DEU:

@@ -43,11 +43,11 @@ constexpr int16 ZoombiniShelterTown::kInhabitantScrbTable[16];
 constexpr byte ZoombiniShelterTown::kTownMemorialCardScrbTypeBySlot[16];
 constexpr byte ZoombiniShelterTown::kTownMemorialCardTextTypeBySlot[16];
 constexpr Common::Point ZoombiniShelterTown::kTownMemorialMarkerOffsets[16];
-constexpr int16 ZoombiniShelterTown::kTownMemorialCardRowTopY[5];
-constexpr int16 ZoombiniShelterTown::kTownMemorialCardRowBottomY[5];
 
 ZoombiniShelterTown::ZoombiniShelterTown(MohawkEngine_Zoombini *vm)
 	: ZoombiniShelter(vm, ZoombiniPageType::kTown) {
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	_memorialCardRowBounds[1] += relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kTownMemorialBody).bottomOffset;
 }
 
 ZoombiniShelterTown::~ZoombiniShelterTown() {
@@ -1570,8 +1570,8 @@ void ZoombiniShelterTown::memorialCard_onPostRender(ZmbFeature *feature) {
 	textConf._wordWrap = true;
 
 	for (uint16 rowIdx = 0; rowIdx < 5; rowIdx++) {
-		Common::Rect textRect(cardRect.left, cardRect.top + topOffset + kTownMemorialCardRowTopY[rowIdx],
-							  cardRect.right, cardRect.top + topOffset + kTownMemorialCardRowBottomY[rowIdx]);
+		Common::Rect textRect(cardRect.left, cardRect.top + topOffset + _memorialCardRowBounds[rowIdx],
+							  cardRect.right, cardRect.top + topOffset + _memorialCardRowBounds[rowIdx + 1]);
 		textConf._fontUsage = rowFont[rowIdx];
 		_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, rowText[rowIdx], textRect, textConf);
 	}

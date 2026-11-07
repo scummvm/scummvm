@@ -221,6 +221,12 @@ public:
 		 * ScummVM added save delete feature on v1.x, so we need to provide value for this ourselves.
 		 */
 		kDialogBodyRemoveGame,
+		/** (v1.xEU only) Confirm about language switch. */
+		kDialogBodySwitchLang,
+		/** (v1.xEU only) Warn that the current game is unsaved before switching language. */
+		kDialogBodySwitchLangUnsaved,
+		/** (v1.xEU only) Explain that language switching is unavailable in practice mode. */
+		kDialogBodyCannotSwitchLangInPractice,
 		// DIALOG: Save/Load/Confirmation
 		kDialogButtonNewGame = 1200,
 		kDialogButtonReplaceTitle,
@@ -239,10 +245,16 @@ public:
 		kDialogHelpLevel,
 		kDialogButtonPrev,
 		kDialogButtonNext,
+		// DIALOG: Language Switch
+		/** (v1.xEU only) Cancel a language switch. */
+		kDialogButtonLangSwitchCancel,
+		/** (v1.xEU only) Confirm a language switch. */
+		kDialogButtonLangSwitchChange,
+		// DIALOG: Version
 		/** (v1.1US/v2.0TLC only) Picker Help update-version easter-egg text key. */
 		kDialogHelpPickerUpdateVersion,
-		// DIALOG: Version
-		kVersionInformation = 1300,
+		/** Version dialog */
+		kDialogBodyVersionInfo,
 		// Notification Box
 		kNotiBoxMusicOn = 1400,
 		kNotiBoxMusicOff,

@@ -3858,7 +3858,18 @@ void ZoombiniGameState::startNewGame(bool askSaveCurrentGame) {
 		return;
 	}
 
-	// Initialize a new game state
+	resetForNewGame();
+
+	ZoombiniPageType nextPageType;
+	if (activePage->getPageType() == ZoombiniPageType::kRodMap)
+		nextPageType = ZoombiniPageType::kRodMap;
+	else
+		nextPageType = ZoombiniPageType::kPicker;
+	_vm->setNextPage(nextPageType);
+	activePage->close();
+}
+
+void ZoombiniGameState::resetForNewGame() {
 	_journeyState = ZmbStateFile();
 	initVariantDefaults();
 	_journeyState._isDirty = true;
@@ -3872,13 +3883,6 @@ void ZoombiniGameState::startNewGame(bool askSaveCurrentGame) {
 
 	endPracticeState();
 	_practiceLevel = 0;
-	ZoombiniPageType nextPageType;
-	if (activePage->getPageType() == ZoombiniPageType::kRodMap)
-		nextPageType = ZoombiniPageType::kRodMap;
-	else
-		nextPageType = ZoombiniPageType::kPicker;
-	_vm->setNextPage(nextPageType);
-	activePage->close();
 }
 
 void ZoombiniGameState::initVariantDefaults() {

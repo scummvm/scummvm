@@ -42,6 +42,7 @@ ZoombiniInteractiveRodMap::ZoombiniInteractiveRodMap(MohawkEngine_Zoombini *vm)
 	const ZmbReleaseInfo::LayoutAdjustment legendClickAdjustment = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapLegendClick);
 	for (Common::Rect &rect : _levelLegendClickRects)
 		rect = legendClickAdjustment.apply(rect);
+	_tlcOptionButtonTextRect = relInfo.getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapOptionsLabel).apply(_tlcOptionButtonTextRect);
 	// Clickable Pos & Rect
 	for (uint32 i = 0; i < ARRAYSIZE(_pageClickPoints); i++) {
 		_pageClickRects[i] = Common::Rect(_pageClickPoints[i].x - 20, _pageClickPoints[i].y - 15, _pageClickPoints[i].x + 20, _pageClickPoints[i].y + 15);
@@ -1011,7 +1012,7 @@ void ZoombiniInteractiveRodMap::textLegend1004_postRender(ZmbFeature *feature) {
 	ZmbDrawRecord *record = feature->getDrawRecord(0, 0);
 	Common::Rect legendTitleRect = record->_drawnRect;
 	legendTitleRect.top += 3;
-	legendTitleRect.setHeight(15);
+	legendTitleRect.setHeight(18);
 	legendTitleRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapLegendTitle).apply(legendTitleRect);
 
 	ZoombiniGraphics::TextConf ttc;
@@ -1120,7 +1121,7 @@ void ZoombiniInteractiveRodMap::textJourneyStat1002_postRender(ZmbFeature *featu
 	const Common::Rect &panelRect = feature->getDrawRecord(0, 0)->_drawnRect;
 	Common::Rect titleRect = panelRect;
 	titleRect.top += 3;
-	titleRect.setHeight(15);
+	titleRect.setHeight(18);
 	titleRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kMapStatsTitle).apply(titleRect);
 
 	Common::U32String title;

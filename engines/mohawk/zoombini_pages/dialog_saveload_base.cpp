@@ -19,7 +19,7 @@
  *
  */
 
-#include "mohawk/zoombini_pages/dialog_saveload.h"
+#include "mohawk/zoombini_pages/dialog_saveload_base.h"
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"
 #include "mohawk/zoombini_state.h"

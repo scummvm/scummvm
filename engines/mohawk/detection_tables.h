@@ -900,19 +900,20 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
-	// English Windows, v1.0 Europe (Broderbund release)
+	// English/French/German Windows, v1.0 Europe (Broderbund release)
 	// Build Date: 1996-03-17 UTC
 	{
 		{
 			"zoombini",
-			"v1.0BR",
-			AD_ENTRY3s("ENGLISH/ZOOMBINI.MHK", "0672f65c40dd065840c896e41c13f980", 24460496,
-					   "ENGLISH/TEXTSTR.MHK", "d6d1e2ea8c20860df10658964ecee920", 11219,
+			"v1.0EU",
+			AD_ENTRY4s("ENGLISH/ZOOMBINI.MHK", "0672f65c40dd065840c896e41c13f980", 24460496,
+					   "FRENCH/ZOOMBINI.MHK", "8231e58525143ccf6e8b747df34b139f", 22784576,
+					   "GERMAN/ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa", 24195192,
 					   "ZOOMBINI.EXE", "d1ac90a9b21d93186c2ec37d1dae8e51", 934416),
-			Common::EN_GRB,
+			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -920,99 +921,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
-	// English Macintosh, v1.0 Europe (Broderbund release)
+	// English/French/German Macintosh, v1.0 Europe (Broderbund release)
 	// Build Date: 1996-03-18
 	// From Hajin Jang
 	{
 		{
 			"zoombini",
-			"v1.0BR",
-			AD_ENTRY2s("English/Zoombini.MHK", "0672f65c40dd065840c896e41c13f980", 24460496,
+			"v1.0EU",
+			AD_ENTRY4s("English/Zoombini.MHK", "0672f65c40dd065840c896e41c13f980", 24460496,
+					   "French/Zoombini.MHK", "8231e58525143ccf6e8b747df34b139f", 22784576,
+					   "German/Zoombini.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa", 24195192,
 					   "Zoombini", "rt:8e27d8dbd65b5a735fcd6ffd919efd1a", 719477),
-			Common::EN_GRB,
+			Common::UNK_LANG,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
-		},
-		GType_ZOOMBINI,
-		GF_ZMB_10_EU,
-		0
-	},
-
-	// Logical Journey of the Zoombinis
-	// French Windows, v1.0 Europe (Broderbund release)
-	// Build Date: 1996-03-17 UTC
-	{
-		{
-			"zoombini",
-			"v1.0FR",
-			AD_ENTRY3s("FRENCH/ZOOMBINI.MHK", "8231e58525143ccf6e8b747df34b139f", 22784576,
-					   "FRENCH/TEXTSTR.MHK", "4e4115e4dc62e5e575865b170842804a", 12407,
-					   "ZOOMBINI.EXE", "d1ac90a9b21d93186c2ec37d1dae8e51", 934416),
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
-		},
-		GType_ZOOMBINI,
-		GF_ZMB_10_EU,
-		0
-	},
-
-	// Logical Journey of the Zoombinis
-	// French Macintosh, v1.0 Europe (Broderbund release)
-	// Build Date: 1996-03-18
-	// From Hajin Jang
-	{
-		{
-			"zoombini",
-			"v1.0FR",
-			AD_ENTRY2s("French/Zoombini.MHK", "8231e58525143ccf6e8b747df34b139f", 22784576,
-					   "Zoombini", "rt:8e27d8dbd65b5a735fcd6ffd919efd1a", 719477),
-			Common::FR_FRA,
-			Common::kPlatformMacintosh,
-			ADGF_TESTING,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
-		},
-		GType_ZOOMBINI,
-		GF_ZMB_10_EU,
-		0
-	},
-
-	// Logical Journey of the Zoombinis
-	// German Windows, v1.0 Europe (Broderbund release)
-	// Build Date: 1996-03-17 UTC
-	{
-		{
-			"zoombini",
-			"v1.0GE",
-			AD_ENTRY3s("GERMAN/ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa", 24195192,
-					   "GERMAN/TEXTSTR.MHK", "3f5d4e26c2c70a5625c8c34e98f6e45d", 12347,
-					   "ZOOMBINI.EXE", "d1ac90a9b21d93186c2ec37d1dae8e51", 934416),
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
-		},
-		GType_ZOOMBINI,
-		GF_ZMB_10_EU,
-		0
-	},
-
-	// Logical Journey of the Zoombinis
-	// German Macintosh, v1.0 Europe (Broderbund release)
-	// Build Date: 1996-03-18
-	// From Hajin Jang
-	{
-		{
-			"zoombini",
-			"v1.0GE",
-			AD_ENTRY2s("German/Zoombini.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa", 24195192,
-					   "Zoombini", "rt:8e27d8dbd65b5a735fcd6ffd919efd1a", 719477),
-			Common::DE_DEU,
-			Common::kPlatformMacintosh,
-			ADGF_TESTING,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_10_EU,
@@ -1100,19 +1023,20 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
-	// English Windows, v1.1 Europe (Broderbund release)
+	// English/French/German Windows, v1.1 Europe (Broderbund release)
 	// Build Date: 1997-11-07 UTC
 	{
 		{
 			"zoombini",
-			"v1.1BR",
-			AD_ENTRY3s("ENGLISH/ZOOMBINI.MHK", "0672f65c40dd065840c896e41c13f980", 24460496,
-					   "ENGLISH/TEXTSTR.MHK", "cea2f283c996060087cb0f4a3b330f45", 11219,
+			"v1.1EU",
+			AD_ENTRY4s("ENGLISH/ZOOMBINI.MHK", "0672f65c40dd065840c896e41c13f980", 24460496,
+					   "FRENCH/ZOOMBINI.MHK", "8231e58525143ccf6e8b747df34b139f", 22784576,
+					   "GERMAN/ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa", 24195192,
 					   "ZOOMBINI._EX", "566dd6bc3d0e96d531de9cc660dd56fa", 934928),
-			Common::EN_GRB,
+			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_EU,
@@ -1120,99 +1044,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Logical Journey of the Zoombinis
-	// English Macintosh, v1.1 Europe (Broderbund release)
+	// English/French/German Macintosh, v1.1 Europe (Broderbund release)
 	// Build Date: 1997-12-01
 	// From Hajin Jang
 	{
 		{
 			"zoombini",
-			"v1.1BR",
-			AD_ENTRY2s("English/Zoombini.MHK", "0672f65c40dd065840c896e41c13f980", 24460496,
+			"v1.1EU",
+			AD_ENTRY4s("English/Zoombini.MHK", "0672f65c40dd065840c896e41c13f980", 24460496,
+					   "French/Zoombini.MHK", "8231e58525143ccf6e8b747df34b139f", 22784576,
+					   "German/Zoombini.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa", 24195192,
 					   "Zoombini", "rt:fb070c328777f30431bb88f7a04390b1", 710038),
-			Common::EN_GRB,
+			Common::UNK_LANG,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
-		},
-		GType_ZOOMBINI,
-		GF_ZMB_11_EU,
-		0
-	},
-
-	// Logical Journey of the Zoombinis
-	// French Windows, v1.1 Europe (Broderbund release)
-	// Build Date: 1997-11-07 UTC
-	{
-		{
-			"zoombini",
-			"v1.1FR",
-			AD_ENTRY3s("FRENCH/ZOOMBINI.MHK", "8231e58525143ccf6e8b747df34b139f", 22784576,
-					   "FRENCH/TEXTSTR.MHK", "93de3ced2f2b69819b52cf9b89529357", 12407,
-					   "ZOOMBINI._EX", "566dd6bc3d0e96d531de9cc660dd56fa", 934928),
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
-		},
-		GType_ZOOMBINI,
-		GF_ZMB_11_EU,
-		0
-	},
-
-	// Logical Journey of the Zoombinis
-	// French Macintosh, v1.1 Europe (Broderbund release)
-	// Build Date: 1997-12-01
-	// From Hajin Jang
-	{
-		{
-			"zoombini",
-			"v1.1FR",
-			AD_ENTRY2s("French/Zoombini.MHK", "8231e58525143ccf6e8b747df34b139f", 22784576,
-					   "Zoombini", "rt:fb070c328777f30431bb88f7a04390b1", 710038),
-			Common::FR_FRA,
-			Common::kPlatformMacintosh,
-			ADGF_TESTING,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
-		},
-		GType_ZOOMBINI,
-		GF_ZMB_11_EU,
-		0
-	},
-
-	// Logical Journey of the Zoombinis
-	// German Windows, v1.1 Europe (Broderbund release)
-	// Build Date: 1997-11-07 UTC
-	{
-		{
-			"zoombini",
-			"v1.1GE",
-			AD_ENTRY3s("GERMAN/ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa", 24195192,
-					   "GERMAN/TEXTSTR.MHK", "7016a1e04d8f29fd88027d3054f7ab92", 12347,
-					   "ZOOMBINI._EX", "566dd6bc3d0e96d531de9cc660dd56fa", 934928),
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
-		},
-		GType_ZOOMBINI,
-		GF_ZMB_11_EU,
-		0
-	},
-
-	// Logical Journey of the Zoombinis
-	// German Macintosh, v1.1 Europe (Broderbund release)
-	// Build Date: 1997-12-01
-	// From Hajin Jang
-	{
-		{
-			"zoombini",
-			"v1.1GE",
-			AD_ENTRY2s("German/Zoombini.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa", 24195192,
-					   "Zoombini", "rt:fb070c328777f30431bb88f7a04390b1", 710038),
-			Common::DE_DEU,
-			Common::kPlatformMacintosh,
-			ADGF_TESTING,
-			GUIO2(GUIO_NOASPECT, GUIO_NOLANG)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
 		GF_ZMB_11_EU,

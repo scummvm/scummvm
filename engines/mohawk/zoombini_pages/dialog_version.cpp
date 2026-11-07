@@ -48,7 +48,7 @@ void ZoombiniDialogVersion::setBackgroundBitmap() {
 	textConf._hAlign = Graphics::kTextAlignCenter;
 	textConf._vAlign = Graphics::kTextAlignCenter;
 	textConf._wordWrap = true;
-	_vm->_gfx->drawText(screenKind, ZoombiniText::kVersionInformation, textRect, textConf);
+	_vm->_gfx->drawText(screenKind, ZoombiniText::kDialogBodyVersionInfo, textRect, textConf);
 }
 
 ZmbEventHandleResult ZoombiniDialogVersion::onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) {

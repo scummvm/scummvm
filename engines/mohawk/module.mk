@@ -126,7 +126,7 @@ MODULE_OBJS += \
 	zoombini_pages/transition_xfer.o \
 	zoombini_pages/dialog_base.o \
 	zoombini_pages/dialog_options.o \
-	zoombini_pages/dialog_saveload.o \
+	zoombini_pages/dialog_saveload_base.o \
 	zoombini_pages/dialog_save.o \
 	zoombini_pages/dialog_load.o \
 	zoombini_pages/dialog_msgbox.o \

@@ -2440,6 +2440,8 @@ public:
 	// Options
 	/** Reset to a new-game baseline, optionally running the shortcut-only save preflight. */
 	void startNewGame(bool askSaveCurrentGame);
+	/** Initialize a fresh journey after confirmation, retaining the target's saved-game roster. */
+	void resetForNewGame();
 	/** Return whether sound effects are enabled. */
 	bool getEnableSound() { return _journeyState.getSfxEnabled(); }
 	/** Return whether background music is enabled. */

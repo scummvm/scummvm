@@ -58,10 +58,6 @@ ZoombiniInteractive::ZoombiniInteractive(MohawkEngine_Zoombini *vm, ZoombiniPage
 	_goMapButtonStateMap[kThreeButtons_SecondGo] = ButtonState();
 	_goMapButtonStateMap[kThreeButtons_Map] = ButtonState();
 	_helpButtonStateMap[kThreeButtons_Help] = ButtonState();
-
-	_notiBoxLongRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kNotiBoxLong).apply(_notiBoxLongRect);
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN))
-		_notiBoxLongShape = kSystemShape3001_03_NotiBoxWide;
 }
 
 ZoombiniInteractive::~ZoombiniInteractive() {
@@ -110,8 +106,20 @@ ZmbEventHandleResult ZoombiniInteractive::onKeyDown(const Common::KeyState &kbd,
 		_vm->_state->toggleStickyMouse();
 		return ZmbEventHandleResult::kConsumed;
 	}
-	// TODO: Support live language switching; keep these keys reserved until then.
 	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kLanguageSelection, kbd)) {
+		switch (kbd.keycode) {
+		case Common::KEYCODE_d:
+			_vm->requestLanguageSwitch(Common::DE_DEU);
+			break;
+		case Common::KEYCODE_e:
+			_vm->requestLanguageSwitch(Common::EN_GRB);
+			break;
+		case Common::KEYCODE_f:
+			_vm->requestLanguageSwitch(Common::FR_FRA);
+			break;
+		default:
+			break;
+		}
 		return ZmbEventHandleResult::kConsumed;
 	}
 	// Load Game (CTRL-L)
@@ -1264,27 +1272,50 @@ ZmbEventHandleResult ZoombiniInteractive::helpButton_onLButtonDown(ZmbFeature *f
 }
 
 void ZoombiniInteractive::showNotiBoxShort(const Common::U32String &ustr) {
-	showNotiBox(ustr, false, true);
+	showNotiBox(ustr, kNotiBox00_Short, true);
 }
 
 void ZoombiniInteractive::hideNotiBoxShort() {
 	_notiBoxShowUntilFrame = 0;
 }
 
-void ZoombiniInteractive::showNotiBoxLong(const Common::U32String &ustr) {
-	showNotiBox(ustr, true, false);
+void ZoombiniInteractive::showNotiBoxMedium(const Common::U32String &ustr) {
+	showNotiBox(ustr, kNotiBox01_Medium, false);
 }
 
-void ZoombiniInteractive::showNotiBoxLongPersistent(const Common::U32String &ustr) {
-	showNotiBox(ustr, true, true);
+void ZoombiniInteractive::showNotiBoxMediumPersistent(const Common::U32String &ustr) {
+	showNotiBox(ustr, kNotiBox01_Medium, true);
 }
 
 void ZoombiniInteractive::showNotiBoxLong(ZoombiniText::Key textKey) {
-	showNotiBoxLong(_vm->_text->getLocalizedString(textKey));
+	NotiBoxKind kind = kNotiBox01_Medium;
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x) && !relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::IT_ITA)) {
+		switch (textKey) {
+		case ZoombiniText::kNotiBoxHideCursor:
+		case ZoombiniText::kNotiBoxShowCursor:
+			break;
+		default:
+			kind = kNotiBox02_Wide;
+			break;
+		}
+	}
+	showNotiBox(_vm->_text->getLocalizedString(textKey), kind, false);
 }
 
-void ZoombiniInteractive::showNotiBox(const Common::U32String &ustr, bool isNotiBoxLong, bool persistent) {
-	_isNotiBoxLong = isNotiBoxLong;
+const Common::Rect &ZoombiniInteractive::getNotiBoxRect() const {
+	switch (_notiBoxKind) {
+	case kNotiBox00_Short:
+		return _notiBoxShortRect;
+	case kNotiBox02_Wide:
+		return _notiBoxWideRect;
+	default:
+		return _notiBoxMediumRect;
+	}
+}
+
+void ZoombiniInteractive::showNotiBox(const Common::U32String &ustr, NotiBoxKind kind, bool persistent) {
+	_notiBoxKind = kind;
 	_notiBoxText = ustr;
 	if (persistent)
 		_notiBoxShowUntilFrame = UINT32_MAX; // Virtually infinite duration
@@ -1298,8 +1329,10 @@ void ZoombiniInteractive::showNotiBox(const Common::U32String &ustr, bool isNoti
 		hooks.setPostRenderFunc(&ZoombiniInteractive::notiBox_onPostRender);
 
 		Common::Array<ZmbHotspot> hotspots;
-		hotspots.push_back(ZmbHotspot(kHotspotNotiBoxShort, kSystemShape3001_01_NotiBoxShort, 0, _notiBoxShortRect));
-		hotspots.push_back(ZmbHotspot(kHotspotNotiBoxLong, _notiBoxLongShape, 0, _notiBoxLongRect));
+		hotspots.push_back(ZmbHotspot(kNotiBox00_Short, kSystemShape3001_01_NotiBoxShort, 0, _notiBoxShortRect));
+		hotspots.push_back(ZmbHotspot(kNotiBox01_Medium, kSystemShape3001_02_NotiBoxLong, 0, _notiBoxMediumRect));
+		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kEuropeV1x))
+			hotspots.push_back(ZmbHotspot(kNotiBox02_Wide, kSystemShape3001_03_NotiBoxWide, 0, _notiBoxWideRect));
 
 		_notiBoxFeature = loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap3001_NotiBox), 0,
 										  hotspots, 0,
@@ -1308,10 +1341,10 @@ void ZoombiniInteractive::showNotiBox(const Common::U32String &ustr, bool isNoti
 		// The first pre-render pass computes the click rectangle from shape metadata.
 		// Explicitly invalidate the notification rectangle
 		// because the drawn bounds may still be clipped on that first frame.
-		addExternalDirtyRect(isNotiBoxLong ? _notiBoxLongRect : _notiBoxShortRect);
+		addExternalDirtyRect(getNotiBoxRect());
 	} else {
 		_notiBoxFeature->setNeedsRedraw(true);
-		addExternalDirtyRect(isNotiBoxLong ? _notiBoxLongRect : _notiBoxShortRect);
+		addExternalDirtyRect(getNotiBoxRect());
 	}
 }
 
@@ -1323,10 +1356,12 @@ void ZoombiniInteractive::notiBox_preRenderShape(ZmbFeature *feature, ZmbHotspot
 		_notiBoxFeature = nullptr;
 	}
 
-	hotspots[kHotspotNotiBoxShort]._shapeIdx = kSystemShape3001_01_NotiBoxShort;
-	hotspots[kHotspotNotiBoxLong]._shapeIdx = _notiBoxLongShape;
-	uint16 hideShapeIdx = _isNotiBoxLong ? kHotspotNotiBoxShort : kHotspotNotiBoxLong;
-	hotspots[hideShapeIdx]._shapeIdx = ZmbHotspot::kShapeNone;
+	for (uint32 i = 0; i < hotspots.size(); i++) {
+		if (i == _notiBoxKind)
+			hotspots[i]._shapeIdx = static_cast<int16>(i + 1);
+		else
+			hotspots[i]._shapeIdx = ZmbHotspot::kShapeNone;
+	}
 }
 
 void ZoombiniInteractive::notiBox_onPostRender(ZmbFeature *feature) {
@@ -1340,8 +1375,9 @@ void ZoombiniInteractive::notiBox_onPostRender(ZmbFeature *feature) {
 	ZoombiniGraphics::TextConf tc;
 	tc._vAlign = Graphics::kTextAlignCenter;
 	tc._hAlign = Graphics::kTextAlignCenter;
-	Common::Rect textRect = _isNotiBoxLong ? _notiBoxLongRect : _notiBoxShortRect;
-	textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kNotiBoxText).apply(textRect);
+	Common::Rect textRect = getNotiBoxRect();
+	if (!_vm->_builtinDebug._showDragCoordinates || !_draggedSnoid)
+		textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kNotiBoxText).apply(textRect);
 	_vm->_gfx->drawText(screenKind, _notiBoxText, textRect, tc);
 }
 
