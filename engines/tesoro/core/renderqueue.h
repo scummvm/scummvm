@@ -101,6 +101,9 @@ public:
 
     const Row &row(uint y) const { return _rows[y]; }
 
+    // Temporary: one solid span over every row, behind everything (depth 0xffff is the furthest).
+    void fillBackground(uint16 colour);
+
 private:
     void queueRows(const byte *image, uint firstRow, uint count, uint y, int32 x, uint16 depth, bool clip, bool solid);
 

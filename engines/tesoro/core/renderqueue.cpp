@@ -203,6 +203,12 @@ void RenderQueue::addSprite(int32 x, int32 y, uint16 depth, const AnimImage &ima
 	// 	queueMaskRows(data, skipped, count, y, x, depth, clip, extra);
 }
 
+void RenderQueue::fillBackground(uint16 colour) {
+	// for each row insert a solid span covering the entire width at the furthest depth
+	for (uint y = 0; y < kRows; ++y)
+		_rows[y].insert(0, kWidth - 1, 0xffff, kSolid, colour);
+}
+
 void RenderQueue::queueRows(const byte *image, uint firstRow, uint count, uint y, int32 x, uint16 depth, bool clip, bool solid) {
 	for (uint r = 0; r < count; ++r) {
 		const byte *entry = image + 0x10 + 8 * (firstRow + r);

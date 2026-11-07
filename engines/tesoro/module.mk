@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	core/archive.o \
 	core/archiveindex.o \
 	core/clock.o \
+	core/display.o \
 	core/namekey.o \
 	core/renderqueue.o
 

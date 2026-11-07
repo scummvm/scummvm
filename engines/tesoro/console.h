@@ -31,9 +31,7 @@ namespace Tesoro {
 
 class Console : public GUI::Debugger {
 private:
-	bool showimage(int argc, const char **argv);
 	bool playanim(int argc, const char **argv);
-	bool rowdump(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;
