@@ -2469,6 +2469,9 @@ void InitScript::Init_CDB() {
 	CDB_Set_Crime(kClueLucy, kCrimeAnimalMurder);
 	CDB_Set_Crime(kClueDragonflyAnklet, kCrimeAnimalMurder);
 	CDB_Set_Crime(kClueZubenSquadPhoto, kCrimeAnimalMurder);
+	if (_vm->_cutContent) {
+		CDB_Set_Crime(kClueDektoraConfession, kCrimeAnimalMurder);
+	}
 
 	CDB_Set_Crime(kCluePhoneCallGuzza, kCrimeEisendullerMurder);
 	CDB_Set_Crime(kClueDragonflyEarring, kCrimeEisendullerMurder);
