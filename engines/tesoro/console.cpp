@@ -25,14 +25,14 @@
 namespace Tesoro {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("playanim", WRAP_METHOD(Console, playanim));
+	registerCmd("testCmd", WRAP_METHOD(Console, testCmd));
 }
 
 Console::~Console() {
 }
 
-bool Console::playanim(int argc, const char **argv) {
-	g_engine->playAnim(argv[1]);
+bool Console::testCmd(int argc, const char **argv) {
+	debugPrintf("test\n");
 	return false;
 }
 

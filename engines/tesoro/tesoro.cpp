@@ -77,20 +77,33 @@ Common::Error TesoroEngine::run() {
 	Common::Event e;
 
 	Graphics::FrameLimiter limiter(g_system, 60);
+
+	playAnim("JIMDERECHA.ANM", _animPlayer);
+	playAnim("JIMABAJO.ANM", _animPlayer2);
+
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
 
-		if (_animPlayer.bank()) {
+		if (_animPlayer.bank() && _animPlayer2.bank()) {
 			_animPlayer.advance(gameTime());
+			_animPlayer2.advance(gameTime());
 			const AnimBank &bank = *_animPlayer.bank();
 			const AnimStep &step = bank.step(_animPlayer.current());
+			const AnimBank &bank2 = *_animPlayer2.bank();
+			const AnimStep &step2 = bank2.step(_animPlayer2.current());
 
 			_display.startFrame();
 			_display.fillBackground(0x4208);	// dark grey, the same colour as before
 
-			if (step.hasImage())
-				_display.queueImage(300 + step.imageX, 300 - step.imageY, 5, bank.image(step.imageIndex), 0);
+			if (step.hasImage()) {
+				debug("Displaying image %d at (%d, %d)", step.imageIndex, 300 + step.imageX, 300 - step.imageY);
+				_display.queueImage(300 + step.imageX, 300 - step.imageY, 3, bank.image(step.imageIndex), 0);
+			}
+			if (step2.hasImage()) {
+				debug("Displaying image %d at (%d, %d)", step2.imageIndex, 300 + step2.imageX, 300 - step2.imageY);
+				_display.queueImage(300 + step2.imageX, 300 - step2.imageY, 5, bank2.image(step2.imageIndex), 0);
+			}
 
 			_display.compose();
 			_screen->copyRectToSurface(_display.frame(), Display::kWidth * 2, 0, 0, Display::kWidth, Display::kHeight);
@@ -116,7 +129,7 @@ Common::Error TesoroEngine::syncGame(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
-bool TesoroEngine::playAnim(const char *name) {
+bool TesoroEngine::playAnim(const char *name, AnimPlayer &player) {
 	Common::String upper(name);
 	upper.toUppercase(); // archive names are upper case
 	const uint32 offset = _archive.findEntry(upper.c_str());
@@ -124,12 +137,12 @@ bool TesoroEngine::playAnim(const char *name) {
 		debug("No entry called %s", upper.c_str());
 		return false;
 	}
-	if (!_animPlayer.load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow, false)) {
+	if (!player.load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow, false)) {
 		debug("Could not load %s", upper.c_str());
 		return false;
 	}
 	// All steps up to the first one without an image, looping, with the cycle length totalled.
-	_animPlayer.setRange(0, -1, true, true, gameTime());
+	player.setRange(0, -1, true, true, gameTime());
 	return true;
 }
 

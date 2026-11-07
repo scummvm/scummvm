@@ -31,7 +31,7 @@ namespace Tesoro {
 
 class Console : public GUI::Debugger {
 private:
-	bool playanim(int argc, const char **argv);
+	bool testCmd(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

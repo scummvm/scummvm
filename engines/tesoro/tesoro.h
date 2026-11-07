@@ -50,6 +50,7 @@ private:
 	Common::RandomSource _randomSource;
 	Archive _archive;
 	AnimPlayer _animPlayer;
+	AnimPlayer _animPlayer2;
 	Display _display;
 
 protected:
@@ -109,7 +110,7 @@ public:
 
 	// temp functions
 	bool showImage(const char *name, int index);
-	bool playAnim(const char *name);
+	bool playAnim(const char *name, AnimPlayer &player);
 	Common::String dumpRow(const char *name, uint index, uint imageRow, int x = 20);
 };
 
