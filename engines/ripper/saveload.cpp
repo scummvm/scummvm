@@ -148,7 +148,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	}
 	const uint32 saveVersion = serializer.getVersion();
 	ScriptManager::SaveState scriptState;
-	SceneAudioManager::SaveState audioState;
+	SceneAudioManager::Snapshot audioState;
 	PuzzleState puzzleState;
 	if (!_scripts->syncGame(serializer, scriptState) ||
 			!_sceneAudio->syncGame(serializer, audioState) ||
@@ -188,7 +188,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	if (!_scripts->applySaveState(scriptState, runtime))
 		return Common::kReadingFailed;
-	_sceneAudio->applySaveState(audioState);
+	_sceneAudio->applySnapshot(audioState);
 	*_puzzleState = puzzleState;
 	g_system->copyRectToScreen(pixels.data(), kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);

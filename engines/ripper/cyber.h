@@ -21,7 +21,6 @@
 #ifndef RIPPER_CYBER_H
 #define RIPPER_CYBER_H
 
-#include "common/array.h"
 #include "common/str.h"
 
 namespace Ripper {
@@ -48,8 +47,6 @@ private:
 	bool runScriptLoop(bool active, uint action = 0,
 		const Common::String &programName = Common::String()) const;
 	Result restoreSession(Session &session, uint selectionIndex, Result result) const;
-	bool captureAudio(Common::Array<byte> &state) const;
-	bool restoreAudio(const Common::Array<byte> &state) const;
 
 	RipperEngine *_engine;
 };

@@ -341,23 +341,43 @@ bool SceneAudioManager::isActive() const {
 	return false;
 }
 
-SceneAudioManager::SaveState::SaveState() {
+SceneAudioManager::Snapshot::Snapshot() {
 	memset(active, 0, sizeof(active));
 }
 
-SceneAudioManager::SaveState::~SaveState() {
+SceneAudioManager::Snapshot::~Snapshot() {
 }
 
-bool SceneAudioManager::syncGame(Common::Serializer &serializer) {
-	SaveState state;
-	if (!syncGame(serializer, state))
+void SceneAudioManager::captureSnapshot(Snapshot &state) const {
+	for (uint i = 0; i < kSlotCount; ++i) {
+		state.streams[i].reset();
+		state.slots[i] = _slots[i];
+		state.active[i] = _slots[i].occupied && _mixer->isSoundHandleActive(_slots[i].handle);
+		state.slots[i].handle = Audio::SoundHandle();
+	}
+	debugC(2, kDebugAudio, "Ripper: captured scene audio snapshot slots=[%s]",
+		describeSlots().c_str());
+}
+
+bool SceneAudioManager::restoreSnapshot(Snapshot &state) {
+	if (!prepareSnapshot(state)) {
+		debugC(1, kDebugAudio, "Ripper: could not prepare scene audio snapshot");
 		return false;
-	if (serializer.isLoading())
-		applySaveState(state);
+	}
+	applySnapshot(state);
 	return true;
 }
 
-bool SceneAudioManager::syncGame(Common::Serializer &serializer, SaveState &state) {
+bool SceneAudioManager::syncGame(Common::Serializer &serializer) {
+	Snapshot state;
+	if (!syncGame(serializer, state))
+		return false;
+	if (serializer.isLoading())
+		applySnapshot(state);
+	return true;
+}
+
+bool SceneAudioManager::syncGame(Common::Serializer &serializer, Snapshot &state) {
 	if (serializer.getVersion() <= 2) {
 		Common::String audioPath;
 		byte active = 0;
@@ -442,26 +462,29 @@ bool SceneAudioManager::syncGame(Common::Serializer &serializer, SaveState &stat
 	}
 	if (serializer.err())
 		return false;
-	if (serializer.isLoading()) {
-		for (uint i = 0; i < kSlotCount; ++i) {
-			const Slot &slot = state.slots[i];
-			if (!slot.occupied)
-				continue;
-			if (state.active[i]) {
-				state.streams[i].reset(prepareStream(slot));
-				if (!state.streams[i])
-					return false;
-			} else {
-				Common::ScopedPtr<Common::SeekableReadStream> file(openSource(slot.path));
-				if (!file)
-					return false;
-			}
+	return !serializer.isLoading() || prepareSnapshot(state);
+}
+
+bool SceneAudioManager::prepareSnapshot(Snapshot &state) const {
+	for (uint i = 0; i < kSlotCount; ++i) {
+		state.streams[i].reset();
+		const Slot &slot = state.slots[i];
+		if (!slot.occupied)
+			continue;
+		if (state.active[i]) {
+			state.streams[i].reset(prepareStream(slot));
+			if (!state.streams[i])
+				return false;
+		} else {
+			Common::ScopedPtr<Common::SeekableReadStream> file(openSource(slot.path));
+			if (!file)
+				return false;
 		}
 	}
 	return true;
 }
 
-void SceneAudioManager::applySaveState(SaveState &state) {
+void SceneAudioManager::applySnapshot(Snapshot &state) {
 	clearAll(true);
 	uint restoredSlots = 0;
 	for (uint i = 0; i < kSlotCount; ++i) {
@@ -472,7 +495,7 @@ void SceneAudioManager::applySaveState(SaveState &state) {
 			start(_slots[i], state.streams[i].release());
 		++restoredSlots;
 	}
-	debugC(1, kDebugSaveLoad,
+	debugC(1, kDebugAudio,
 		"Ripper: restored named audio slots=%u active=%d slots=[%s]",
 		restoredSlots, isActive(), describeSlots().c_str());
 }

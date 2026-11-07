@@ -21,8 +21,6 @@
 #include "ripper/cyber.h"
 
 #include "common/debug.h"
-#include "common/memstream.h"
-#include "common/serializer.h"
 #include "common/system.h"
 
 #include "ripper/cursor.h"
@@ -42,7 +40,6 @@ namespace Ripper {
 
 namespace {
 
-static const uint kAudioSnapshotVersion = 3;
 static const uint kSceneSelectionIndex = 0;
 static const uint kCyberSelectionIndex = 22;
 static const char *const kCyberEntryMedia = "deckin.avi";
@@ -52,7 +49,7 @@ static const char *const kCyberScript = "cybrmenu.run";
 
 struct CyberManager::Session {
 	IndexedDisplaySnapshot display;
-	Common::Array<byte> audioState;
+	SceneAudioManager::Snapshot audioState;
 	SceneRuntimeState runtime;
 };
 
@@ -60,13 +57,11 @@ CyberManager::CyberManager(RipperEngine *engine) : _engine(engine) {
 }
 
 bool CyberManager::suspendSession(Session &session) const {
-	const bool displayCaptured = session.display.capture();
-	if (!displayCaptured)
+	if (!session.display.capture()) {
 		warning("Ripper: could not capture Cyber transition display");
-	if (!displayCaptured || !captureAudio(session.audioState)) {
-		session.display.restore();
 		return false;
 	}
+	_engine->getSceneAudio()->captureSnapshot(session.audioState);
 	_engine->getScripts()->suspendForCyber(session.runtime);
 	return true;
 }
@@ -117,7 +112,7 @@ CyberManager::Result CyberManager::restoreSession(Session &session,
 		uint selectionIndex, Result result) const {
 	const bool restoreVisibleCursor = session.runtime.awaitingInteraction;
 	_engine->getSceneAudio()->clearAll(true);
-	const bool audioRestored = restoreAudio(session.audioState);
+	const bool audioRestored = _engine->getSceneAudio()->restoreSnapshot(session.audioState);
 	_engine->getScripts()->restoreFromCyber(session.runtime);
 	session.display.restore();
 	CursorManager *cursor = _engine->getCursor();
@@ -130,33 +125,6 @@ CyberManager::Result CyberManager::restoreSession(Session &session,
 		_engine->getScripts()->updateInteractiveCursor(
 			_engine->getInput()->peekMouseState().position);
 	return audioRestored ? result : kLoadFailed;
-}
-
-bool CyberManager::captureAudio(Common::Array<byte> &state) const {
-	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::NO);
-	Common::Serializer serializer(nullptr, &stream);
-	serializer.setVersion(kAudioSnapshotVersion);
-	if (!_engine->getSceneAudio()->syncGame(serializer) || serializer.err())
-		return false;
-	state.resize(stream.size());
-	if (!state.empty())
-		memcpy(state.data(), stream.getData(), state.size());
-	debugC(2, kDebugCyber,
-		"Ripper: captured suspended Cyber audio state bytes=%u", state.size());
-	return true;
-}
-
-bool CyberManager::restoreAudio(const Common::Array<byte> &state) const {
-	if (state.empty())
-		return false;
-	Common::MemoryReadStream stream(state.data(), state.size(), DisposeAfterUse::NO);
-	Common::Serializer serializer(&stream, nullptr);
-	serializer.setVersion(kAudioSnapshotVersion);
-	const bool restored = _engine->getSceneAudio()->syncGame(serializer) && !serializer.err();
-	debugC(restored ? 2 : 1, kDebugCyber,
-		"Ripper: restored suspended Cyber audio state bytes=%u success=%d",
-		state.size(), restored);
-	return restored;
 }
 
 CyberManager::Result CyberManager::run() {
