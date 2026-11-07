@@ -45,10 +45,172 @@ namespace {
 
 static const uint16 kHelpCommand = 0x3b00;
 
+class SmackerFrameRenderer : private Common::NonCopyable {
+public:
+	SmackerFrameRenderer(RipperEngine *engine, Video::SmackerDecoder &decoder,
+			const Common::String &name, const SmackerPlaybackPlan &plan,
+			int x, int y, uint scale) :
+			_engine(engine), _decoder(decoder), _name(name), _plan(plan),
+			_x(x), _y(y), _scale(scale), _width(decoder.getWidth() * scale),
+			_height(decoder.getHeight() * scale), _paletteBaseValid(false) {}
+
+	bool captureBacking() {
+		if (_plan.rendering.transparentFirstPixel) {
+			Graphics::Surface *screen = g_system->lockScreen();
+			if (!screen || screen->format.bytesPerPixel != 1 || _x < 0 || _y < 0 ||
+					_x + (int)_width > screen->w || _y + (int)_height > screen->h) {
+				if (screen)
+					g_system->unlockScreen();
+				warning("Ripper: transparent Smacker overlay '%s' is outside the indexed display",
+					_name.c_str());
+				return false;
+			}
+			_backing.resize(_width * _height);
+			for (uint row = 0; row < _height; ++row)
+				memcpy(_backing.data() + row * _width,
+					screen->getBasePtr(_x, _y + row), _width);
+			g_system->unlockScreen();
+			debugC(2, kDebugVideo,
+				"Ripper: captured transparent Smacker backing media='%s' rect=%d,%d,%ux%u",
+				_name.c_str(), _x, _y, _width, _height);
+		}
+		return true;
+	}
+
+	bool applyPalette(bool forcePalette) {
+		const bool dirtyPalette = _decoder.hasDirtyPalette();
+		if (forcePalette || dirtyPalette) {
+			if (dirtyPalette) {
+				const byte *decoderPalette = _decoder.getPalette();
+				if (!decoderPalette) {
+					warning("Ripper: Smacker '%s' reported a dirty palette without data",
+						_name.c_str());
+					return false;
+				}
+				memcpy(_paletteBase, decoderPalette,
+					sizeof(_paletteBase));
+				_paletteBaseValid = true;
+			} else if (!_paletteBaseValid) {
+				// Packetized branches may omit an initial palette record and retain
+				// the palette installed by the preceding branch. Cache that inherited
+				// base before a callback applies temporary interface or combat colors.
+				g_system->getPaletteManager()->grabPalette(_paletteBase, 0, 256);
+				_paletteBaseValid = true;
+				debugC(3, kDebugVideo,
+					"Ripper: Smacker '%s' inherited display palette for callback base",
+					_name.c_str());
+			}
+			byte palette[256 * 3];
+			if (_plan.palette.sourcePalette) {
+				_plan.palette.sourcePalette->resize(sizeof(palette));
+				memcpy(_plan.palette.sourcePalette->data(), _paletteBase, sizeof(palette));
+			}
+			if (_plan.palette.preserveDisplayPalette)
+				return true;
+			if (_plan.palette.patchWacMediaPalette) {
+				g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+				memcpy(palette + 10 * 3, _paletteBase + 10 * 3, 140 * 3);
+			} else {
+				memcpy(palette, _paletteBase, sizeof(palette));
+			}
+			if (_plan.palette.patchInterfacePalette && !_plan.palette.patchWacMediaPalette)
+				_engine->applySharedPalettePatch(palette, 256);
+			if (!_plan.palette.patchWacMediaPalette)
+				_engine->getSettings()->applyVideoPalette(palette, 256,
+					_plan.palette.rememberVideoPalette);
+			g_system->getPaletteManager()->setPalette(palette, 0, 256);
+		}
+		return true;
+	}
+
+	bool draw(const Graphics::Surface *frame, bool forcePalette) {
+		const bool paletteApplied = applyPalette(forcePalette);
+		if (_plan.rendering.transparentFirstPixel) {
+			Graphics::Surface *screen = g_system->lockScreen();
+			if (!screen) {
+				warning("Ripper: could not lock display for transparent Smacker overlay '%s'",
+					_name.c_str());
+				return false;
+			}
+			for (uint row = 0; row < _height; ++row)
+				memcpy(screen->getBasePtr(_x, _y + row),
+					_backing.data() + row * _width, _width);
+			const byte transparentColor = *(const byte *)frame->getPixels();
+			for (uint sourceY = 0; sourceY < (uint)frame->h; ++sourceY) {
+				const byte *source = (const byte *)frame->getBasePtr(0, sourceY);
+				for (uint sourceX = 0; sourceX < (uint)frame->w; ++sourceX) {
+					if (source[sourceX] == transparentColor)
+						continue;
+					for (uint scaleY = 0; scaleY < _scale; ++scaleY) {
+						byte *destination = (byte *)screen->getBasePtr(
+							_x + sourceX * _scale,
+							_y + sourceY * _scale + scaleY);
+						memset(destination, source[sourceX], _scale);
+					}
+				}
+			}
+			g_system->unlockScreen();
+		} else if (_scale == 1) {
+			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, _x, _y, frame->w, frame->h);
+		} else {
+			Graphics::Surface *screen = g_system->lockScreen();
+			if (!screen) {
+				warning("Ripper: could not lock display for scaled Smacker '%s'",
+					_name.c_str());
+				return false;
+			}
+			Graphics::scaleBlit((byte *)screen->getBasePtr(_x, _y),
+				(const byte *)frame->getPixels(), screen->pitch, frame->pitch,
+				_width, _height, frame->w, frame->h, frame->format);
+			g_system->unlockScreen();
+		}
+		if (_plan.input.serviceSceneUi) {
+			_engine->getScripts()->drawDialogueOverlay(true);
+			_engine->getScripts()->drawBriefingOverlay();
+		}
+		// Callbacks may add overlays; present only after they finish composing.
+		if (!_plan.callback.sequenceCallback)
+			presentScreen();
+		return paletteApplied;
+	}
+
+	void restoreBacking() {
+		if (_plan.rendering.transparentFirstPixel && !_backing.empty() &&
+				!_plan.rendering.retainFinalTransparentFrame) {
+			for (uint row = 0; row < _height; ++row)
+				g_system->copyRectToScreen(_backing.data() + row * _width,
+					_width, _x, _y + row, _width, 1);
+			presentScreen();
+			debugC(2, kDebugVideo,
+				"Ripper: restored transparent Smacker backing media='%s' rect=%d,%d,%ux%u",
+				_name.c_str(), _x, _y, _width, _height);
+		} else if (_plan.rendering.transparentFirstPixel &&
+				_plan.rendering.retainFinalTransparentFrame) {
+			debugC(2, kDebugVideo,
+				"Ripper: retained final transparent Smacker frame media='%s' rect=%d,%d,%ux%u",
+				_name.c_str(), _x, _y, _width, _height);
+		}
+	}
+
+private:
+	RipperEngine *_engine;
+	Video::SmackerDecoder &_decoder;
+	const Common::String &_name;
+	const SmackerPlaybackPlan &_plan;
+	int _x;
+	int _y;
+	uint _scale;
+	uint _width;
+	uint _height;
+	byte _paletteBase[256 * 3];
+	bool _paletteBaseValid;
+	Common::Array<byte> _backing;
+};
+
 } // End of anonymous namespace
 
 MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer) :
-		_engine(engine), _input(input), _mixer(mixer), _stopSceneOnMouse(false) {
+		_engine(engine), _input(input), _mixer(mixer) {
 }
 
 MediaPlayer::~MediaPlayer() {
@@ -89,26 +251,23 @@ void MediaPlayer::pauseActiveMedia(bool pause) {
 	}
 }
 
-bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool allowSegmentAdvance, bool &paused, bool &skipToEnd,
-		bool &advanceSegment,
-		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop, bool allowSceneHelp,
+MediaPlayer::PlaybackInputResult MediaPlayer::servicePlaybackInput(
+		Video::SmackerDecoder &decoder, const SmackerInputPolicy &policy,
+		bool &paused, Audio::SoundHandle *externalAudio, bool toolbarOwnsInput,
 		const Common::String &name) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine,
-		allowSceneHelp && _engine->canLoadGameStateCurrently());
-	skipToEnd = false;
-	advanceSegment = false;
+		policy.serviceSceneUi && _engine->canLoadGameStateCurrently());
 	if (_input->pollEvents()) {
 		_engine->quitGame();
-		return false;
+		return kQuitPlayback;
 	}
 	if (!_engine->isDemo() &&
 			_engine->getSettings()->handlePresentationTextCommand(
 				_input->peekKey(), "media-playback")) {
 		_input->consumeKey();
-		return true;
+		return kContinuePlayback;
 	}
-	if (allowSceneHelp && !suppressSceneMouseStop && !_engine->isDemo() &&
+	if (policy.serviceSceneUi && !toolbarOwnsInput && !_engine->isDemo() &&
 			_engine->getScripts()->isAwaitingInteraction() &&
 			_input->peekKey() == kReplayPreviousSceneCommand) {
 		_input->consumeKey();
@@ -127,9 +286,9 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 			"Ripper: Ctrl+R restored interactive media='%s' frame=%d "
 			"paused=%d replayed=%d",
 			name.c_str(), decoder.getCurFrame(), decoder.isPaused(), replayed);
-		return true;
+		return kContinuePlayback;
 	}
-	if (allowSceneHelp && _input->peekKey() == kHelpCommand) {
+	if (policy.serviceSceneUi && _input->peekKey() == kHelpCommand) {
 		_input->consumeKey();
 		decoder.pauseVideo(true);
 		_mixer->pauseAll(true);
@@ -139,9 +298,9 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 		_mixer->pauseAll(false);
 		decoder.pauseVideo(false);
 		logPlaybackPause("Help", false, decoder, name, externalAudio);
-		return helpDisplayed;
+		return helpDisplayed ? kContinuePlayback : kStopPlayback;
 	}
-	if (allowSceneHelp) {
+	if (policy.serviceSceneUi) {
 		const uint16 command = _input->peekKey();
 		const int actionIndex =
 			_engine->getScripts()->resolveToolbarActionKey(command);
@@ -154,7 +313,7 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 					"Ripper: toolbar hotkey suspended interactive media='%s' frame=%d "
 					"command=0x%04x action=%u paused=%d toolbarPaused=%d externalAudio=%d",
 					name.c_str(), decoder.getCurFrame(), command, actionIndex + 1,
-					paused, suppressSceneMouseStop, pause.hasExternalAudio());
+					paused, toolbarOwnsInput, pause.hasExternalAudio());
 				dispatched = _engine->getScripts()->dispatchToolbarActionKey(
 					actionIndex, command, "interactive-media");
 			}
@@ -163,18 +322,17 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 				"command=0x%04x action=%u paused=%d dispatched=%d",
 				name.c_str(), decoder.getCurFrame(), command, actionIndex + 1,
 				decoder.isPaused(), dispatched);
-			return dispatched;
+			return dispatched ? kContinuePlayback : kStopPlayback;
 		}
 	}
-	if (!allowEscSpace || !_input->hasPendingKey())
-		return !(_stopSceneOnMouse && !suppressSceneMouseStop &&
-			_input->peekMouseState().pressed != 0);
+	if (!policy.allowEscSpace || !_input->hasPendingKey())
+		return policy.stopOnMouse && !toolbarOwnsInput &&
+			_input->peekMouseState().pressed != 0 ? kStopForMouse : kContinuePlayback;
 
 	const uint16 command = _input->consumeKey();
 	if (command == 0x1b) {
-		skipToEnd = true;
 		debugC(2, kDebugVideo, "Ripper: Escape advanced skippable presentation to end");
-		return false;
+		return kSkipToEnd;
 	}
 	if (command == 0x20) {
 		paused = !paused;
@@ -182,15 +340,14 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 		_mixer->pauseAll(paused);
 		logPlaybackPause("Space", paused, decoder, name, externalAudio);
 	}
-	if (command == 0x4d00 && allowSegmentAdvance) {
-		advanceSegment = true;
+	if (command == 0x4d00 && policy.allowSegmentAdvance) {
 		debugC(2, kDebugVideo, "Ripper: Right Arrow requested next IAVF segment");
-		return false;
+		return kAdvanceSegment;
 	}
-	return true;
+	return kContinuePlayback;
 }
 
-bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
+SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		const SmackerPlaybackPlan &plan) {
 	debugC(2, kDebugVideo, "Ripper: Smacker playback plan media='%s' %s",
 		name.c_str(), describeSmackerPlaybackPlan(plan).c_str());
@@ -199,45 +356,30 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	int y = plan.placement.y;
 	const Common::Rect &centerBounds = plan.placement.centerBounds;
 	Audio::SoundHandle *externalAudio = plan.timeline.externalAudio;
-	bool *stoppedByUser = plan.input.stoppedByUser;
 	const Common::Array<uint32> *frameAudioOffsets = plan.timeline.frameAudioOffsets;
 	const uint32 audioByteRate = plan.timeline.audioByteRate;
 	const uint32 timelineStartMillis = plan.timeline.timelineStartMillis;
 	uint displayScale = plan.placement.displayScale;
-	const bool patchInterfacePalette = plan.palette.patchInterfacePalette;
 	const uint frameLimit = plan.frames.frameLimit;
 	const int originY = plan.placement.originY;
-	const bool patchWacMediaPalette = plan.palette.patchWacMediaPalette;
-	const bool preserveDisplayPalette = plan.palette.preserveDisplayPalette;
 	const bool serviceSceneUi = plan.input.serviceSceneUi;
 	const bool loopFromStart = plan.loop.loopFromStart;
-	bool *advanceSegment = plan.input.advanceSegment;
 	const uint loopStartFrame = plan.loop.loopStartFrame;
 	MediaSequenceCallback *sequenceCallback = plan.callback.sequenceCallback;
-	uint16 *sequenceCommand = plan.callback.sequenceCommand;
-	Common::Array<byte> *sourcePalette = plan.palette.sourcePalette;
-	const bool rememberVideoPalette = plan.palette.rememberVideoPalette;
 	const uint firstFrame = plan.frames.firstFrame;
 	uint lastFrame = plan.frames.lastFrame;
 	const uint boundedLoopStartFrame = plan.loop.boundedLoopStartFrame;
-	const bool transparentFirstPixel = plan.rendering.transparentFirstPixel;
-	const bool retainFinalTransparentFrame = plan.rendering.retainFinalTransparentFrame;
-	if (stoppedByUser)
-		*stoppedByUser = false;
-	if (advanceSegment)
-		*advanceSegment = false;
-	if (sequenceCommand)
-		*sequenceCommand = 0;
+	SmackerPlaybackResult result;
 	RipperSmackerDecoder decoder;
 	if (!decoder.loadStreamWithDataFixes(stream, name)) {
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
-		return false;
+		return result;
 	}
 	const uint frameCount = decoder.getFrameCount();
 	if (frameCount == 0) {
 		warning("Ripper: invalid Smacker segment '%s' frames=%u..%u count=0",
 			name.c_str(), firstFrame, lastFrame);
-		return false;
+		return result;
 	}
 	const bool boundedSegment = firstFrame != 0 || lastFrame != 0xffffffff;
 	const bool boundedLoop = boundedLoopStartFrame != 0xffffffff;
@@ -248,7 +390,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				boundedLoopStartFrame > lastFrame))) {
 		warning("Ripper: invalid Smacker segment '%s' frames=%u..%u count=%u",
 			name.c_str(), firstFrame, lastFrame, frameCount);
-		return false;
+		return result;
 	}
 	// Each packetized branch chooses its own scale, regardless of the IAVF canvas.
 	if (displayScale == kAutoPacketizedDisplayScale)
@@ -264,7 +406,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				name.c_str(), outputWidth, outputHeight, centerBounds.left,
 				centerBounds.top, centerBounds.right, centerBounds.bottom);
 			decoder.close();
-			return false;
+			return result;
 		}
 		x = centerBounds.left + (centerBounds.width() - (int)outputWidth) / 2;
 		y = centerBounds.top + (centerBounds.height() - (int)outputHeight) / 2;
@@ -295,7 +437,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			name.c_str(), x, y, outputWidth, outputHeight,
 			displayWidth, displayHeight);
 		decoder.close();
-		return false;
+		return result;
 	}
 	debugC(1, kDebugVideo,
 		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d sceneUi=%d frameLimit=%u",
@@ -313,127 +455,13 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 
 	bool paused = false;
 	bool toolbarPaused = false;
-	bool completed = true;
+	result.completed = true;
 	uint presentedFrames = 0;
-	byte decoderPaletteBase[256 * 3];
-	bool decoderPaletteBaseValid = false;
-	Common::Array<byte> transparentBacking;
-	if (transparentFirstPixel) {
-		Graphics::Surface *screen = g_system->lockScreen();
-		if (!screen || screen->format.bytesPerPixel != 1 || x < 0 || y < 0 ||
-				x + (int)outputWidth > screen->w || y + (int)outputHeight > screen->h) {
-			if (screen)
-				g_system->unlockScreen();
-			warning("Ripper: transparent Smacker overlay '%s' is outside the indexed display",
-				name.c_str());
-			decoder.close();
-			return false;
-		}
-		transparentBacking.resize(outputWidth * outputHeight);
-		for (uint row = 0; row < outputHeight; ++row)
-			memcpy(transparentBacking.data() + row * outputWidth,
-				screen->getBasePtr(x, y + row), outputWidth);
-		g_system->unlockScreen();
-		debugC(2, kDebugVideo,
-			"Ripper: captured transparent Smacker backing media='%s' rect=%d,%d,%ux%u",
-			name.c_str(), x, y, outputWidth, outputHeight);
+	SmackerFrameRenderer renderer(_engine, decoder, name, plan, x, y, displayScale);
+	if (!renderer.captureBacking()) {
+		decoder.close();
+		return SmackerPlaybackResult();
 	}
-	auto applyDecoderPalette = [&](bool forcePalette) {
-		const bool dirtyPalette = decoder.hasDirtyPalette();
-		if (forcePalette || dirtyPalette) {
-			if (dirtyPalette) {
-				const byte *decoderPalette = decoder.getPalette();
-				if (!decoderPalette) {
-					warning("Ripper: Smacker '%s' reported a dirty palette without data",
-						name.c_str());
-					completed = false;
-					return;
-				}
-				memcpy(decoderPaletteBase, decoderPalette,
-					sizeof(decoderPaletteBase));
-				decoderPaletteBaseValid = true;
-			} else if (!decoderPaletteBaseValid) {
-				// Packetized branches may omit an initial palette record and retain
-				// the palette installed by the preceding branch. Cache that inherited
-				// base before a callback applies temporary interface or combat colors.
-				g_system->getPaletteManager()->grabPalette(decoderPaletteBase, 0, 256);
-				decoderPaletteBaseValid = true;
-				debugC(3, kDebugVideo,
-					"Ripper: Smacker '%s' inherited display palette for callback base",
-					name.c_str());
-			}
-			byte palette[256 * 3];
-			if (sourcePalette) {
-				sourcePalette->resize(sizeof(palette));
-				memcpy(sourcePalette->data(), decoderPaletteBase, sizeof(palette));
-			}
-			if (preserveDisplayPalette)
-				return;
-			if (patchWacMediaPalette) {
-				g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-				memcpy(palette + 10 * 3, decoderPaletteBase + 10 * 3, 140 * 3);
-			} else {
-				memcpy(palette, decoderPaletteBase, sizeof(palette));
-			}
-			if (patchInterfacePalette && !patchWacMediaPalette)
-				_engine->applySharedPalettePatch(palette, 256);
-			if (!patchWacMediaPalette)
-				_engine->getSettings()->applyVideoPalette(palette, 256,
-					rememberVideoPalette);
-			g_system->getPaletteManager()->setPalette(palette, 0, 256);
-		}
-	};
-	auto presentFrame = [&](const Graphics::Surface *frame, bool forcePalette) {
-		applyDecoderPalette(forcePalette);
-		if (transparentFirstPixel) {
-			Graphics::Surface *screen = g_system->lockScreen();
-			if (!screen) {
-				warning("Ripper: could not lock display for transparent Smacker overlay '%s'",
-					name.c_str());
-				completed = false;
-				return;
-			}
-			for (uint row = 0; row < outputHeight; ++row)
-				memcpy(screen->getBasePtr(x, y + row),
-					transparentBacking.data() + row * outputWidth, outputWidth);
-			const byte transparentColor = *(const byte *)frame->getPixels();
-			for (uint sourceY = 0; sourceY < (uint)frame->h; ++sourceY) {
-				const byte *source = (const byte *)frame->getBasePtr(0, sourceY);
-				for (uint sourceX = 0; sourceX < (uint)frame->w; ++sourceX) {
-					if (source[sourceX] == transparentColor)
-						continue;
-					for (uint scaleY = 0; scaleY < displayScale; ++scaleY) {
-						byte *destination = (byte *)screen->getBasePtr(
-							x + sourceX * displayScale,
-							y + sourceY * displayScale + scaleY);
-						memset(destination, source[sourceX], displayScale);
-					}
-				}
-			}
-			g_system->unlockScreen();
-		} else if (displayScale == 1) {
-			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
-		} else {
-			Graphics::Surface *screen = g_system->lockScreen();
-			if (!screen) {
-				warning("Ripper: could not lock display for scaled Smacker '%s'",
-					name.c_str());
-				completed = false;
-				return;
-			}
-			Graphics::scaleBlit((byte *)screen->getBasePtr(x, y),
-				(const byte *)frame->getPixels(), screen->pitch, frame->pitch,
-				outputWidth, outputHeight, frame->w, frame->h, frame->format);
-			g_system->unlockScreen();
-		}
-		if (serviceSceneUi) {
-			_engine->getScripts()->drawDialogueOverlay(true);
-			_engine->getScripts()->drawBriefingOverlay();
-		}
-		// Callbacks may add overlays; present only after they finish composing.
-		if (!sequenceCallback)
-			presentScreen();
-	};
 	// A branch callback may show its own cursor during playback.
 	if (!serviceSceneUi &&
 			(!sequenceCallback || !sequenceCallback->keepsCursorVisible()))
@@ -457,8 +485,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				name.c_str(), frame);
 			return false;
 		}
-		if (sequenceCommand)
-			*sequenceCommand = command;
+		result.command = command;
 		debugC(2, kDebugVideo,
 			"Ripper: interactive Smacker '%s' returned command=0x%04x frame=%u",
 			name.c_str(), command, frame);
@@ -468,14 +495,16 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		const bool stopSequence = serviceSequenceCallback(frame);
 		const bool refreshedPalette = sequencePaletteRefresh;
 		if (sequencePaletteRefresh) {
-			applyDecoderPalette(true);
+			if (!renderer.applyPalette(true))
+				result.completed = false;
 			sequencePaletteRefresh = false;
 		}
 		if (sequenceCallback && sequenceCallback->managesPalette()) {
 			byte palette[256 * 3];
 			// Combat transforms the active Smacker palette each frame; restore that
 			// base before applying the next callback transform.
-			applyDecoderPalette(true);
+			if (!renderer.applyPalette(true))
+				result.completed = false;
 			g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 			sequenceCallback->transformPalette(palette, 256);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
@@ -496,20 +525,23 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			warning("Ripper: could not advance Smacker '%s' to bounded segment frame=%u",
 				name.c_str(), firstFrame);
 			decoder.close();
-			return false;
+			return SmackerPlaybackResult();
 		}
-		presentFrame(frame, true);
+		if (!renderer.draw(frame, true))
+			result.completed = false;
 		++presentedFrames;
 		debugC(3, kDebugVideo,
 			"Ripper: entered bounded Smacker segment '%s' frame=%u..%u",
 			name.c_str(), firstFrame, lastFrame);
 		if (sequenceCallback && finishSequenceFramePresentation(firstFrame + 1)) {
 			decoder.close();
-			return true;
+			result.completed = true;
+			return result;
 		}
 		if (boundedSegment && firstFrame == lastFrame) {
 			decoder.close();
-			return true;
+			result.completed = true;
+			return result;
 		}
 	}
 	while (!_engine->shouldQuit()) {
@@ -518,7 +550,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				if (!decoder.rewind()) {
 					warning("Ripper: could not rewind looping scene Smacker '%s'",
 						name.c_str());
-					completed = false;
+					result.completed = false;
 					break;
 				}
 				presentedFrames = 0;
@@ -540,7 +572,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			if (loopStartFrame > decoder.getFrameCount()) {
 				warning("Ripper: Smacker '%s' loop start frame=%u exceeds frame count=%u",
 					name.c_str(), loopStartFrame, decoder.getFrameCount());
-				completed = false;
+				result.completed = false;
 				break;
 			}
 			const Graphics::Surface *frame =
@@ -548,10 +580,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			if (!frame) {
 				warning("Ripper: could not seek Smacker '%s' to loop start frame=%u",
 					name.c_str(), loopStartFrame);
-				completed = false;
+				result.completed = false;
 				break;
 			}
-			presentFrame(frame, true);
+			if (!renderer.draw(frame, true))
+				result.completed = false;
 			++presentedFrames;
 			debugC(3, kDebugVideo,
 				"Ripper: looped interactive Smacker '%s' to frame=%u after full reconstruction",
@@ -574,7 +607,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			_engine->getScripts()->updateInteractiveCursor(
 				_input->peekMouseState().position, &playbackUiFailed);
 		if (playbackUiFailed) {
-			completed = false;
+			result.completed = false;
 			break;
 		}
 		if (_engine->getScripts()->hasPendingRuntimeRestore() ||
@@ -595,39 +628,38 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				name.c_str(), toolbarPaused, paused);
 			presentScreen();
 		}
-		bool skipToEnd = false;
-		bool advanceToNextSegment = false;
-		if (!servicePlaybackInput(decoder, allowEscSpace && !callbackOwnsInput,
-				advanceSegment != nullptr,
-				paused, skipToEnd, advanceToNextSegment,
-				externalAudio, toolbarOwnsInput,
-				serviceSceneUi && !callbackOwnsInput, name)) {
-			completed = false;
-			if (advanceToNextSegment) {
-				if (advanceSegment)
-					*advanceSegment = true;
-				completed = true;
-			}
-			if (skipToEnd && decoder.getFrameCount() != 0) {
+		SmackerInputPolicy inputPolicy = plan.input;
+		inputPolicy.allowEscSpace = allowEscSpace && !callbackOwnsInput;
+		inputPolicy.serviceSceneUi = serviceSceneUi && !callbackOwnsInput;
+		const PlaybackInputResult inputResult = servicePlaybackInput(decoder,
+			inputPolicy, paused, externalAudio, toolbarOwnsInput, name);
+		if (inputResult != kContinuePlayback) {
+			result.completed = false;
+			result.stoppedByMouse = inputResult == kStopForMouse;
+			result.advanceSegment = inputResult == kAdvanceSegment;
+			if (result.advanceSegment)
+				result.completed = true;
+			if (inputResult == kSkipToEnd && decoder.getFrameCount() != 0) {
 				const uint finalFrame = decoder.getFrameCount() - 1;
 				// Smacker pixels and palette packets are stateful. Rebuild the
 				// terminal frame from a cleared surface so the engine-added
 				// Escape fast-forward cannot retain intermediate frame state.
 				const Graphics::Surface *frame = decoder.restartAtFrame(finalFrame);
 				if (frame) {
-					presentFrame(frame, true);
+					if (!renderer.draw(frame, true))
+						result.completed = false;
 					if (sequenceCallback)
 						presentScreen();
 					if (serviceSceneUi)
 						_engine->getSceneAudio()->service(finalFrame + 1);
-					completed = true;
+					result.completed = true;
 					debugC(2, kDebugVideo,
 						"Ripper: Escape reconstructed and presented final Smacker frame '%s' frame=%u; completing presentation",
 						name.c_str(), finalFrame);
 				}
 			}
-			if (!advanceToNextSegment && stoppedByUser && !_engine->shouldQuit())
-				*stoppedByUser = true;
+			if (!result.advanceSegment && !_engine->shouldQuit())
+				result.stoppedByUser = true;
 			break;
 		}
 		if (_engine->getScripts()->hasPendingRuntimeRestore() ||
@@ -653,7 +685,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		if (!paused && !toolbarPaused && frameDue) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			if (frame) {
-				presentFrame(frame, false);
+				if (!renderer.draw(frame, false))
+					result.completed = false;
 				++presentedFrames;
 				if (serviceSceneUi)
 					_engine->getSceneAudio()->service(presentedFrames);
@@ -667,10 +700,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 						if (!loopFrame) {
 							warning("Ripper: could not loop bounded Smacker '%s' to frame=%u",
 								name.c_str(), boundedLoopStartFrame);
-							completed = false;
+							result.completed = false;
 							break;
 						}
-						presentFrame(loopFrame, true);
+						if (!renderer.draw(loopFrame, true))
+							result.completed = false;
 						++presentedFrames;
 						debugC(3, kDebugVideo,
 							"Ripper: looped bounded Smacker '%s' frame=%u after endFrame=%u",
@@ -725,7 +759,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		decoder.pauseVideo(false);
 		logPlaybackPause("Space cleanup", false, decoder, name, externalAudio);
 	}
-	if (synchronizeToTimeline && completed) {
+	if (synchronizeToTimeline && result.completed) {
 		const uint32 elapsedMs = externalAudio && _mixer->isSoundHandleActive(*externalAudio) ?
 			_mixer->getSoundElapsedTime(*externalAudio) : g_system->getMillis(true) - timelineStartMillis;
 		debugC(2, kDebugVideo, "Ripper: completed IAVF Smacker '%s' targetMs=%u audioElapsedMs=%u",
@@ -733,21 +767,9 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			(uint32)((uint64)frameAudioOffsets->back() * 1000 / audioByteRate),
 			elapsedMs);
 	}
-	if (transparentFirstPixel && !transparentBacking.empty() && !retainFinalTransparentFrame) {
-		for (uint row = 0; row < outputHeight; ++row)
-			g_system->copyRectToScreen(transparentBacking.data() + row * outputWidth,
-				outputWidth, x, y + row, outputWidth, 1);
-		presentScreen();
-		debugC(2, kDebugVideo,
-			"Ripper: restored transparent Smacker backing media='%s' rect=%d,%d,%ux%u",
-			name.c_str(), x, y, outputWidth, outputHeight);
-	} else if (transparentFirstPixel && retainFinalTransparentFrame) {
-		debugC(2, kDebugVideo,
-			"Ripper: retained final transparent Smacker frame media='%s' rect=%d,%d,%ux%u",
-			name.c_str(), x, y, outputWidth, outputHeight);
-	}
+	renderer.restoreBacking();
 	decoder.close();
-	return completed;
+	return result;
 }
 
 

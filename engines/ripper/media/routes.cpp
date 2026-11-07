@@ -40,14 +40,13 @@ namespace {
 static const int kScenePresentationTop = 50;
 
 SmackerPlaybackPlan makeWacInterfaceSequencePlan(const Common::Rect &centerBounds,
-		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command) {
+		uint loopStartFrame, MediaSequenceCallback *callback) {
 	SmackerPlaybackPlan plan;
 	plan.placement.centerBounds = centerBounds;
 	plan.palette.patchInterfacePalette = false;
 	plan.palette.patchWacMediaPalette = true;
 	plan.loop.loopStartFrame = loopStartFrame;
 	plan.callback.sequenceCallback = callback;
-	plan.callback.sequenceCommand = command;
 	return plan;
 }
 
@@ -101,7 +100,7 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		plan.placement.x = x;
 		plan.placement.y = y;
 		plan.placement.originY = originY;
-		result = playValidatedSmacker(stream.release(), path, "presentation", plan);
+		result = playValidatedSmacker(stream.release(), path, "presentation", plan).completed;
 	} else if (isIavf) {
 		const bool hasPresentationText = !presentationText.empty();
 		const int originY = hasPresentationText ? 0 :
@@ -161,7 +160,7 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 	plan.palette.patchWacMediaPalette = true;
 	Common::String source;
 	const bool result = playValidatedSmacker(
-		openSource(path, kSourcePuzzleLibrary, source), path, "WAC", plan);
+		openSource(path, kSourcePuzzleLibrary, source), path, "WAC", plan).completed;
 	_input->drainKeys();
 	return result;
 }
@@ -212,11 +211,14 @@ bool MediaPlayer::playWacInterfaceSequence(const Common::String &path,
 		path.c_str(), centerBounds.left, centerBounds.top, centerBounds.right,
 		centerBounds.bottom, loopStartFrame, callback != nullptr);
 	const SmackerPlaybackPlan plan = makeWacInterfaceSequencePlan(
-		centerBounds, loopStartFrame, callback, command);
+		centerBounds, loopStartFrame, callback);
 	Common::String source;
-	return playValidatedSmacker(
+	const SmackerPlaybackResult result = playValidatedSmacker(
 		openSource(path, kSourceInterfaceLibrary, source), path,
 		"WAC interface sequence", plan);
+	if (command)
+		*command = result.command;
+	return result.completed;
 }
 
 bool MediaPlayer::playWacInterfaceSequenceStream(Common::SeekableReadStream *stream,
@@ -227,9 +229,12 @@ bool MediaPlayer::playWacInterfaceSequenceStream(Common::SeekableReadStream *str
 		name.c_str(), centerBounds.left, centerBounds.top, centerBounds.right,
 		centerBounds.bottom, loopStartFrame, callback != nullptr);
 	const SmackerPlaybackPlan plan = makeWacInterfaceSequencePlan(
-		centerBounds, loopStartFrame, callback, command);
-	return playValidatedSmacker(stream, name,
+		centerBounds, loopStartFrame, callback);
+	const SmackerPlaybackResult result = playValidatedSmacker(stream, name,
 		"streamed WAC interface sequence", plan);
+	if (command)
+		*command = result.command;
+	return result.completed;
 }
 
 bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y,
@@ -249,7 +254,7 @@ bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y
 	Common::String source;
 	return playValidatedSmacker(
 		openSource(path, kSourceInterfaceLibrary, source), path,
-		"interface sequence", plan);
+		"interface sequence", plan).completed;
 }
 
 bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartFrame,
@@ -263,11 +268,13 @@ bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartF
 	plan.placement.originY = kScenePresentationTop;
 	plan.loop.loopStartFrame = loopStartFrame;
 	plan.callback.sequenceCallback = callback;
-	plan.callback.sequenceCommand = command;
 	Common::String source;
-	return playValidatedSmacker(
+	const SmackerPlaybackResult result = playValidatedSmacker(
 		openSource(path, kSourceDirectFile, source), path,
 		"puzzle sequence", plan);
+	if (command)
+		*command = result.command;
+	return result.completed;
 }
 
 bool MediaPlayer::playPuzzleSequenceStream(Common::SeekableReadStream *stream,
@@ -284,9 +291,11 @@ bool MediaPlayer::playPuzzleSequenceStream(Common::SeekableReadStream *stream,
 	plan.input.serviceSceneUi = true;
 	plan.loop.loopStartFrame = loopStartFrame;
 	plan.callback.sequenceCallback = callback;
-	plan.callback.sequenceCommand = command;
-	return playValidatedSmacker(stream, name,
+	const SmackerPlaybackResult result = playValidatedSmacker(stream, name,
 		"archived puzzle sequence", plan);
+	if (command)
+		*command = result.command;
+	return result.completed;
 }
 
 bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
@@ -313,7 +322,7 @@ bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
 		plan.placement.y = y;
 		plan.placement.originY = kScenePresentationTop;
 		result = playValidatedSmacker(ownedStream.release(), name,
-			"archived scene", plan);
+			"archived scene", plan).completed;
 	} else {
 		IndexedDisplaySnapshot displayContext;
 		const bool captured = displayContext.capture();
@@ -352,14 +361,16 @@ bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint fir
 	plan.placement.y = y;
 	plan.placement.originY = kScenePresentationTop;
 	plan.callback.sequenceCallback = callback;
-	plan.callback.sequenceCommand = command;
 	plan.frames.firstFrame = firstFrame;
 	plan.frames.lastFrame = lastFrame;
 	plan.loop.boundedLoopStartFrame = boundedLoopStartFrame;
 	Common::String source;
-	return playValidatedSmacker(
+	const SmackerPlaybackResult result = playValidatedSmacker(
 		openSource(path, kSourceDirectFile, source), path,
 		"puzzle segment", plan);
+	if (command)
+		*command = result.command;
+	return result.completed;
 }
 
 bool MediaPlayer::playCombatSequence(const Common::String &path,
@@ -392,12 +403,14 @@ bool MediaPlayer::playScaledInteractiveSequence(const Common::String &path,
 	plan.palette.patchInterfacePalette = true;
 	plan.loop.loopStartFrame = loopStartFrame;
 	plan.callback.sequenceCallback = callback;
-	plan.callback.sequenceCommand = command;
 	plan.palette.rememberVideoPalette = false;
 	Common::String source;
-	return playValidatedSmacker(
+	const SmackerPlaybackResult result = playValidatedSmacker(
 		openSource(path, kSourceDirectFile, source), path,
 		description, plan);
+	if (command)
+		*command = result.command;
+	return result.completed;
 }
 
 bool MediaPlayer::playTransparentSmackerOverlay(const Common::String &path, int x, int y) {
@@ -412,7 +425,7 @@ bool MediaPlayer::playTransparentSmackerOverlay(const Common::String &path, int 
 	Common::String source;
 	return playValidatedSmacker(
 		openSource(path, kSourceDirectFile, source), path,
-		"transparent overlay", plan);
+		"transparent overlay", plan).completed;
 }
 
 bool MediaPlayer::playInteractiveIavf(const Common::String &path,
@@ -462,7 +475,6 @@ bool MediaPlayer::playScene(const Common::String &path, const ScenePlaybackOptio
 		path.c_str(), options.firstFrameOnly ? "first-frame-preview" : "sequence", options.x, options.y,
 		kScenePresentationTop, options.allowEscSpace);
 	bool result = false;
-	_stopSceneOnMouse = options.loopUntilInput && !options.firstFrameOnly;
 	const bool loop = options.loopUntilInput && !options.firstFrameOnly;
 	uint pass = 0;
 	do {
@@ -478,6 +490,7 @@ bool MediaPlayer::playScene(const Common::String &path, const ScenePlaybackOptio
 	if (isSmacker) {
 		SmackerPlaybackPlan plan;
 		plan.input.allowEscSpace = options.allowEscSpace;
+		plan.input.stopOnMouse = loop;
 		plan.placement.x = options.x;
 		plan.placement.y = options.y;
 		plan.frames.frameLimit = frameLimit;
@@ -485,10 +498,12 @@ bool MediaPlayer::playScene(const Common::String &path, const ScenePlaybackOptio
 		plan.input.serviceSceneUi = true;
 		plan.loop.loopFromStart = loop;
 		plan.callback.sequenceCallback = options.callback;
-		plan.callback.sequenceCommand = options.command;
-		result = playValidatedSmacker(stream.release(), path, "scene", plan);
-		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
-			result = true;
+		const SmackerPlaybackResult playback =
+			playValidatedSmacker(stream.release(), path, "scene", plan);
+		if (options.command)
+			*options.command = playback.command;
+		result = playback.completed || playback.stoppedByMouse;
+		if (playback.stoppedByMouse) {
 			debugC(1, kDebugVideo,
 				"Ripper: interactive scene media stopped by mouse; returning to hotspot polling");
 		}
@@ -505,6 +520,7 @@ bool MediaPlayer::playScene(const Common::String &path, const ScenePlaybackOptio
 		iavfOptions.originY = kScenePresentationTop;
 		iavfOptions.allowEscSpace = options.allowEscSpace;
 		iavfOptions.serviceSceneUi = true;
+		iavfOptions.stopOnMouse = loop;
 		result = playIavf(*stream, path, iavfOptions);
 		stream.reset();
 	} else {
@@ -516,7 +532,6 @@ bool MediaPlayer::playScene(const Common::String &path, const ScenePlaybackOptio
 		!_engine->shouldQuit() && result &&
 		!_engine->getScripts()->hasPendingSceneTransition());
 	_input->drainKeys();
-	_stopSceneOnMouse = false;
 	return result;
 }
 

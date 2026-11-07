@@ -116,20 +116,20 @@ Common::SeekableReadStream *MediaPlayer::openSource(const Common::String &path,
 	return nullptr;
 }
 
-bool MediaPlayer::playValidatedSmacker(Common::SeekableReadStream *stream,
+SmackerPlaybackResult MediaPlayer::playValidatedSmacker(Common::SeekableReadStream *stream,
 		const Common::String &name, const char *description,
 		const SmackerPlaybackPlan &plan) {
 	Common::ScopedPtr<Common::SeekableReadStream> ownedStream(stream);
 	if (!ownedStream) {
 		warning("Ripper: could not open %s Smacker '%s'", description, name.c_str());
-		return false;
+		return SmackerPlaybackResult();
 	}
 
 	const MediaFormat format = detectMediaFormat(*ownedStream);
 	if (format != kMediaFormatSmacker) {
 		warning("Ripper: unsupported %s media '%s' format=%s",
 			description, name.c_str(), mediaFormatName(format));
-		return false;
+		return SmackerPlaybackResult();
 	}
 
 	debugC(3, kDebugVideo,

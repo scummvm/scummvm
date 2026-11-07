@@ -46,11 +46,11 @@ struct SmackerPlacementPolicy {
 struct SmackerInputPolicy {
 	bool allowEscSpace;
 	bool serviceSceneUi;
-	bool *stoppedByUser;
-	bool *advanceSegment;
+	bool stopOnMouse;
+	bool allowSegmentAdvance;
 
 	SmackerInputPolicy() : allowEscSpace(false), serviceSceneUi(false),
-		stoppedByUser(nullptr), advanceSegment(nullptr) {}
+		stopOnMouse(false), allowSegmentAdvance(false) {}
 };
 
 struct SmackerTimelinePolicy {
@@ -94,9 +94,8 @@ struct SmackerLoopPolicy {
 
 struct SmackerCallbackPolicy {
 	MediaSequenceCallback *sequenceCallback;
-	uint16 *sequenceCommand;
 
-	SmackerCallbackPolicy() : sequenceCallback(nullptr), sequenceCommand(nullptr) {}
+	SmackerCallbackPolicy() : sequenceCallback(nullptr) {}
 };
 
 struct SmackerRenderingPolicy {
@@ -117,6 +116,14 @@ struct SmackerPlaybackPlan {
 	SmackerRenderingPolicy rendering;
 };
 
+struct SmackerPlaybackResult {
+	bool completed = false;
+	bool stoppedByUser = false;
+	bool stoppedByMouse = false;
+	bool advanceSegment = false;
+	uint16 command = 0;
+};
+
 struct IavfPlaybackOptions {
 	int x = -1;
 	int y = -1;
@@ -124,6 +131,7 @@ struct IavfPlaybackOptions {
 	uint displayScale = kAutoPacketizedDisplayScale;
 	bool allowEscSpace = false;
 	bool serviceSceneUi = false;
+	bool stopOnMouse = false;
 	bool rememberVideoPalette = true;
 	MediaSequenceCallback *callback = nullptr;
 	uint16 *command = nullptr;

@@ -136,6 +136,15 @@ public:
 	void pauseActiveMedia(bool pause);
 
 private:
+	enum PlaybackInputResult {
+		kContinuePlayback,
+		kStopPlayback,
+		kQuitPlayback,
+		kStopForMouse,
+		kSkipToEnd,
+		kAdvanceSegment
+	};
+
 	enum SourcePolicy {
 		kSourceDirectFile,
 		kSourceConfiguredPath,
@@ -174,20 +183,19 @@ private:
 		uint volumePercent, bool loop, const char *description);
 	Common::SeekableReadStream *openSource(const Common::String &path,
 		SourcePolicy policy, Common::String &source) const;
-	bool playValidatedSmacker(Common::SeekableReadStream *stream,
+	SmackerPlaybackResult playValidatedSmacker(Common::SeekableReadStream *stream,
 		const Common::String &name, const char *description,
 		const SmackerPlaybackPlan &plan);
 	bool playScaledInteractiveSequence(const Common::String &path,
 		const char *description, MediaSequenceCallback *callback, uint16 *command,
 		uint loopStartFrame = 0);
-	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
+	SmackerPlaybackResult playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		const SmackerPlaybackPlan &plan);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		const IavfPlaybackOptions &options);
-	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool allowSegmentAdvance, bool &paused, bool &skipToEnd,
-		bool &advanceSegment,
-		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop, bool allowSceneHelp,
+	PlaybackInputResult servicePlaybackInput(Video::SmackerDecoder &decoder,
+		const SmackerInputPolicy &policy, bool &paused,
+		Audio::SoundHandle *externalAudio, bool toolbarOwnsInput,
 		const Common::String &name);
 	void logPlaybackPause(const char *source, bool pause, Video::SmackerDecoder &decoder,
 		const Common::String &name, Audio::SoundHandle *externalAudio) const;
@@ -196,7 +204,6 @@ private:
 	InputManager *_input;
 	Audio::Mixer *_mixer;
 	Common::Array<ActivePlayback> _activePlaybacks;
-	bool _stopSceneOnMouse;
 };
 
 } // End of namespace Ripper

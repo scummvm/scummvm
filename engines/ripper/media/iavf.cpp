@@ -135,8 +135,6 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 				options.x, options.y, segmentOriginY, segmentX,
 				segmentY + segmentOriginY);
 		}
-		bool stoppedByUser = false;
-		bool advanceSegment = false;
 		Common::Array<uint32> relativeAudioOffsets;
 		const Common::Array<uint32> *frameAudioOffsets = &segment.frameAudioOffsets;
 		if (audioTimelineOffset != 0) {
@@ -152,7 +150,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		plan.placement.x = segmentX;
 		plan.placement.y = segmentY;
 		plan.timeline.externalAudio = audioActive ? &audioHandle : nullptr;
-		plan.input.stoppedByUser = &stoppedByUser;
+		plan.input.stopOnMouse = options.stopOnMouse;
 		plan.timeline.frameAudioOffsets = frameAudioOffsets;
 		plan.timeline.audioByteRate = audioByteRate;
 		plan.timeline.timelineStartMillis = timelineStartMillis;
@@ -161,21 +159,25 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		plan.placement.originY = segmentOriginY;
 		plan.input.serviceSceneUi = options.serviceSceneUi;
 		plan.palette.rememberVideoPalette = options.rememberVideoPalette;
-		plan.input.advanceSegment = &advanceSegment;
+		plan.input.allowSegmentAdvance = true;
 		plan.callback.sequenceCallback = options.callback;
-		plan.callback.sequenceCommand = options.command;
-		if (!smacker || !playSmacker(smacker,
-				Common::String::format("%s#%u", name.c_str(), i), plan)) {
+		SmackerPlaybackResult playback;
+		if (smacker)
+			playback = playSmacker(smacker,
+				Common::String::format("%s#%u", name.c_str(), i), plan);
+		if (options.command)
+			*options.command = playback.command;
+		if (!playback.completed) {
 			result = false;
 			break;
 		}
-		if (stoppedByUser)
+		if (playback.stoppedByUser)
 			break;
 		if (options.command && *options.command != 0)
 			break;
 		if (_engine->getScripts()->hasPendingSceneTransition())
 			break;
-		if (advanceSegment) {
+		if (playback.advanceSegment) {
 			if (i + 1 >= movie.segments.size()) {
 				debugC(1, kDebugVideo,
 					"Ripper: Right Arrow completed final IAVF segment '%s#%u'",
