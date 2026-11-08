@@ -270,6 +270,10 @@ int OverworldLogic::findTargetMonster(int x, int y) const {
 }
 
 bool OverworldLogic::monsterCanEnter(Data::TileId monsterTile, Data::TileId destTile, int x, int y) const {
+	// Nothing moves while time is negated
+	if (_G(savegame)._negateTimeTurns > 0)
+		return false;
+
 	if (monsterTile == Data::TILE_SEA_MONSTER || monsterTile == Data::TILE_SHIP)
 		return destTile == Data::TILE_WATER;
 
