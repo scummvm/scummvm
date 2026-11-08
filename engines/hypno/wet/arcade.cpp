@@ -864,6 +864,15 @@ void WetEngine::drawCursorArcade(const Common::Point &mousePos) {
 		return;
 	}
 
+	if (_levelId == 31) {
+		for (uint j = 0; j < _shoots.size(); j++) {
+			if (_shoots[j].name == "SP_BOSS1" || _shoots[j].name == "SP_BOSS2") {
+				changeCursor("torpedo");
+				return;
+			}
+		}
+	}
+
 	if (i >= 0)
 		changeCursor("target");
 	else
