@@ -1539,6 +1539,16 @@ bool PlaySecondaryMovie::isSkippable() {
 		Common::Rect(_decoder.getWidth(), _decoder.getHeight()) == NancySceneState.getViewport().getBounds();
 }
 
+void PlaySecondaryMovie::getCutShortFlags(Common::Array<int16> &labels) const {
+	if (isRandom() || _movieType == kInteractiveMovie || _state != kRun || _isFinished) {
+		return;
+	}
+
+	for (const FlagAtFrame &frameFlag : _frameFlags) {
+		labels.push_back(frameFlag.flagDesc.label);
+	}
+}
+
 bool PlaySecondaryMovie::skip() {
 	if (!isSkippable()) {
 		return false;
@@ -1579,6 +1589,8 @@ bool PlaySecondaryMovie::skip() {
 		if (isPending) {
 			NancySceneState.setEventFlag(frameFlag.flagDesc);
 		}
+
+		NancySceneState.addSkippedMovieFlag(frameFlag.flagDesc.label);
 	}
 
 	g_nancy->_sound->stopSound(_sound);

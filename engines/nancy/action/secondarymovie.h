@@ -127,6 +127,10 @@ public:
 	// the player isn't waiting on keep playing. Returns true when skipped.
 	bool skip();
 
+	// Gives the flags that the frames of a cinematic still playing set. A scene
+	// change cuts it short, like a skip, and the sounds they started go with it.
+	void getCutShortFlags(Common::Array<int16> &labels) const;
+
 	Common::Path _videoName;
 	Common::Path _paletteName;
 	Common::Path _bitmapOverlayName;

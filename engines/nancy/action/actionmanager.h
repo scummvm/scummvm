@@ -68,7 +68,7 @@ public:
 
 	// Enhancement: stops the lines being spoken by sound records that don't lead to
 	// another scene, after a cinematic got skipped
-	void stopSpeechSounds();
+	void stopSkippedMovieSounds(const Common::Array<int16> &movieFlags, bool stopsSpeech);
 
 	void synchronize(Common::Serializer &serializer);
 

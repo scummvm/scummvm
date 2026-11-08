@@ -2295,6 +2295,7 @@ void Scene::load(bool fromSaveFile) {
 	}
 
 	_timers.sceneTime = 0;
+	_skippedMovieFlags.clear();
 	g_nancy->_sound->clearListenerPositionOverride();
 	g_nancy->_sound->recalculateSoundEffects();
 
@@ -2390,6 +2391,7 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 	summary->setBackground(hasBackground ? &_viewport : nullptr);
 
 	_timers.sceneTime = 0;
+	_skippedMovieFlags.clear();
 	g_nancy->_sound->clearListenerPositionOverride();
 
 	// Only numbered scenes are counted, since the others have no number to count
@@ -2474,9 +2476,9 @@ void Scene::run() {
 
 	// The records a skipped cinematic set off have started by now; its dialogue
 	// shouldn't go on without it
-	if (_hasSkippedMovie) {
+	if (_hasSkippedMovie || !_skippedMovieFlags.empty()) {
+		_actionManager.stopSkippedMovieSounds(_skippedMovieFlags, _hasSkippedMovie);
 		_hasSkippedMovie = false;
-		_actionManager.stopSpeechSounds();
 	}
 
 	if (_isLoadingSecondChance) {
@@ -3384,6 +3386,14 @@ void Scene::clearSceneData(bool nextIsNoArt) {
 	// ambient loop). When it survives, clearActionRecords keeps the record alive,
 	// so the pointer must be kept too; otherwise it is cleared to avoid dangling.
 	bool clearActiveMovie = _activeMovie && !_activeMovie->survivesSceneChange(nextIsNoArt);
+
+	if (clearActiveMovie) {
+		Common::Array<int16> cutShortFlags = _skippedMovieFlags;
+		_activeMovie->getCutShortFlags(cutShortFlags);
+		if (!cutShortFlags.empty()) {
+			_actionManager.stopSkippedMovieSounds(cutShortFlags, false);
+		}
+	}
 
 	_actionManager.clearActionRecords(nextIsNoArt);
 
