@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "ultima/ultima2/gfx/composite.h"
+#include "ultima/ultima2/gfx/text.h"
 #include "ultima/ultima2/views/ending.h"
 #include "ultima/ultima2/data/map.h"
 #include "ultima/ultima2/ultima2.h"
@@ -69,10 +70,6 @@ bool Ending::msgFocus(const FocusMessage &msg) {
 	_panX = _panY = 0;
 	_lastStep = g_system->getMillis();
 
-	g_engine->baseView()->findView("Commands")->send(Graphics::Views::GameMessage("TEXT",
-		"\n\nYou have saved the universe,\nand completed Ultima ][! Seek\n"
-		"now to conquer wicked Exodus,\nFound in Ultima ]I[-D ]II[-P!\n"));
-
 	return View::msgFocus(msg);
 }
 
@@ -95,6 +92,12 @@ void Ending::draw() {
 			s.blitFrom(_tileGfx[tileId], Common::Point(ox * TILE_WIDTH, oy * TILE_HEIGHT));
 		}
 	}
+
+	s.setColor(textColor(Gfx::TEXT_NORMAL), 0);
+	s.writeString(Common::Point(0, 21), "You have saved the universe,\n"
+		"and completed Ultima ][! Seek\n"
+		"now to conquer wicked Exodus,\n"
+		"Found in Ultima ]I[-D ]II[-P!");
 
 	Gfx::compositeFinish(s);
 }
