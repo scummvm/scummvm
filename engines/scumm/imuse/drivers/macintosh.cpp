@@ -42,7 +42,7 @@ struct ChanControlNode;
 struct DeviceChannel {
 	DeviceChannel(const uint32 *pitchtable) : pitchTable(pitchtable), frequency(0), phase(0), end(nullptr), pos(nullptr), smpBuffStart(nullptr),
 		smpBuffEnd(nullptr), loopStart(nullptr), loopEnd(nullptr), pitch(0), mute(true), release(false), instr(nullptr), rhtm(false),
-			prog(0), baseFreq(0), note(0), prio(0), volPara(0), volumeL(0), volumeR(0), rate(0), totalLevelL(0), totalLevelR(0), node(nullptr), prev(nullptr), next(nullptr) {}
+			prog(0), baseFreq(0), note(0), prio(0), volPara(0), volumeL(0), volumeR(0), rate(0), totalLevelL(0), totalLevelR(0), node(nullptr) {}
 	~DeviceChannel() {}
 
 	void recalcFrequency();
@@ -72,8 +72,6 @@ struct DeviceChannel {
 	const ChanControlNode *node;
 	Common::SharedPtr<MacSndResource> instr;
 	const uint32 *pitchTable;
-	DeviceChannel *prev;
-	DeviceChannel *next;
 };
 
 class IMSMacSoundSystem : public VblTaskClientDriver, public MacLowLevelPCMDriver::CallbackClient {
@@ -329,7 +327,9 @@ void DeviceChannel::recalcFrequency() {
 
 IMSMacSoundSystem::IMSMacSoundSystem(Audio::Mixer *mixer, byte version) : VblTaskClientDriver(), _mixer(mixer), _macstr(nullptr), _sdrv(nullptr), _vblTskProc(this, &VblTaskClientDriver::vblCallback),
 	_musicChan(0), _sfxChan(0), _quality(22), _feedBufferSize(1024), _channels(nullptr), _timerParam(nullptr), _timerProc(nullptr), _pitchTable(nullptr),
-	_ampTable(nullptr), _mixTable(nullptr), _numChannels(version ? 12 : 8), _defaultInstrID(0), _version(version), _stereo(false) {
+	_ampTable(nullptr), _mixTable(nullptr), _numChannels(version ? 24 /*12*/: 8), _defaultInstrID(0), _version(version), _stereo(false) {
+	// The original PPC variant of the later version driver has 24 channels while the Mac implementation only has 12. Having 24 channels improves the
+	// quality quite a bit (NewMacSoundSystem::allocateChannel() would have to skip or cut short a lot of notes). So we go for the better variant here...
 	_pitchTable = new uint32[128]();
 	assert(_pitchTable);
 	_channels = new DeviceChannel*[_numChannels];
