@@ -288,6 +288,8 @@ public:
 	void requestStateChange(NancyState::NancyState state) { _gameStateRequested = state; }
 	void resetStateToInit() { _state = kInit; }
 
+	// A skipped movie moves the time of the scene on by what was left of it
+	void addSceneTime(uint32 millis) { _timers.sceneTime += millis; }
 	void resetAndStartTimer() { _timers.timerIsActive = true; _timers.timerTime = 0; }
 	void stopTimer() { _timers.timerIsActive = false; _timers.timerTime = 0; }
 

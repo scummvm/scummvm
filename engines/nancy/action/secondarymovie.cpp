@@ -1552,6 +1552,22 @@ bool PlaySecondaryMovie::skip() {
 		resolveSentinelFrames();
 	}
 
+	// The scene's records wait for times that count the whole movie in, like
+	// the scene change after the opening cinematic of Nancy18
+	if (_decoder.isVideoLoaded() && !_isFinished) {
+		int framesLeft;
+		if (_playDirection == kPlayMovieReverse) {
+			framesLeft = curFrame == -1 ? _lastFrame - _firstFrame + 1 : curFrame - _firstFrame;
+		} else {
+			framesLeft = _lastFrame - curFrame;
+		}
+
+		const int frameCount = _decoder.getFrameCount();
+		if (framesLeft > 0 && frameCount > 0) {
+			NancySceneState.addSceneTime((uint32)((uint64)_decoder.getDuration().msecs() * framesLeft / frameCount));
+		}
+	}
+
 	for (const FlagAtFrame &frameFlag : _frameFlags) {
 		bool isPending;
 		if (_playDirection == kPlayMovieReverse) {
