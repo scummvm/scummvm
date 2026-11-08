@@ -6,8 +6,10 @@ MODULE_OBJS = \
 	metaengine.o \
 	core/animimage.o \
 	core/animbank.o \
+	core/animset.o \
 	core/archive.o \
 	core/archiveindex.o \
+	core/camera.o \
 	core/clock.o \
 	core/display.o \
 	core/namekey.o \

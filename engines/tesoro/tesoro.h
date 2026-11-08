@@ -36,8 +36,10 @@
 #include "tesoro/detection.h"
 #include "tesoro/core/archive.h"
 #include "tesoro/core/animbank.h"
+#include "tesoro/core/camera.h"
 #include "tesoro/core/clock.h"
 #include "tesoro/core/display.h"
+#include "tesoro/core/object.h"
 
 namespace Tesoro {
 
@@ -49,8 +51,10 @@ private:
 	GameClock _clock;
 	Common::RandomSource _randomSource;
 	Archive _archive;
-	AnimPlayer _animPlayer;
-	AnimPlayer _animPlayer2;
+	Camera _camera;
+	Common::Array<AnimPlayer> _testPlayers;	// the "level" of the test object
+	Object *_testObject = nullptr;
+	int _scrollX = 0, _scrollY = 0;	// arrow keys held, -1 / 0 / 1
 	Display _display;
 	int32 _scaleX = 0x10000, _scaleY = 0x10000;	// 0x10000 is normal scale
 	AnimPlayer _font;
@@ -113,6 +117,9 @@ public:
 	void setScale(int32 x, int32 y) { _scaleX = x; _scaleY = y; }
 	void fadeOut(int steps, int delayMs) { _display.fadeOut(steps, delayMs, _screen); }
 	bool playAnim(const char *name, AnimPlayer &player);
+	/** Shows an animation bank as an object drawn through the camera. */
+	bool showObject(const char *name);
+	Camera &camera() { return _camera; }
 };
 
 extern TesoroEngine *g_engine;

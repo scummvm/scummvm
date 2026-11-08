@@ -94,4 +94,18 @@ void Object::moveTo(int32 x, int32 y, bool setCurrent) {
 	_previousY = y;
 }
 
+void Object::drawAnimation(const Camera &camera, Display &display, bool skipPastRight) {
+	AnimPlayer &player = _anim.current();
+	const AnimStep &step = player.bank()->step(player.current());
+	if (!step.hasImage())
+		return;
+
+	const int32 x = (int32)((uint32)(_x - camera.scaledX()) + (uint32)(int32)player.movementX() + 0x140 + (uint32)(int32)step.imageX);
+	if (skipPastRight && x >= 0x281)
+		return;
+
+	const int32 y = (int32)((uint32)(camera.scaledY() - _y) - (uint32)(int32)step.imageY - (uint32)(int32)player.movementY() + 0xf0);
+	display.queueImage(x, y, (uint16)_sortValue, player.bank()->image(step.imageIndex), 0);
+}
+
 } // End of namespace Tesoro

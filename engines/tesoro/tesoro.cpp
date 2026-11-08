@@ -37,12 +37,22 @@ namespace Tesoro {
 
 TesoroEngine *g_engine;
 
+static const int32 kScrollSpeed = 4;	// camera units per frame while an arrow key is held
+static const int32 kCameraDivisor = 300;	// scaledX = x * 300 / divisor, so 300 draws at world scale
+
+/** Test object that draws its animation through the camera. */
+class TestObject : public Object {
+public:
+	void draw(const Camera &camera, Display &display) override { drawAnimation(camera, display, true); }
+};
+
 TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																			   _gameDescription(gameDesc), _clock(syst->getMillis()), _randomSource("Tesoro") {
 	g_engine = this;
 }
 
 TesoroEngine::~TesoroEngine() {
+	delete _testObject;
 	delete _screen;
 }
 
@@ -78,9 +88,6 @@ Common::Error TesoroEngine::run() {
 
 	Graphics::FrameLimiter limiter(g_system, 60);
 
-	playAnim("JIMDERECHA.ANM", _animPlayer);
-	playAnim("JIMABAJO.ANM", _animPlayer2);
-
 	const uint32 fontOffset = _archive.findEntry("FUENTES.ANM");
 	if (!fontOffset || !_font.load(*_archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
 		warning("Tesoro: the font FUENTES.ANM cannot be read");
@@ -89,39 +96,35 @@ Common::Error TesoroEngine::run() {
 
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
+			if (e.type != Common::EVENT_KEYDOWN && e.type != Common::EVENT_KEYUP)
+				continue;
+			const int down = e.type == Common::EVENT_KEYDOWN ? 1 : 0;
+			switch (e.kbd.keycode) {
+			case Common::KEYCODE_LEFT: _scrollX = -down; break;
+			case Common::KEYCODE_RIGHT: _scrollX = down; break;
+			case Common::KEYCODE_DOWN: _scrollY = -down; break;
+			case Common::KEYCODE_UP: _scrollY = down; break;
+			default: break;
+			}
 		}
 
-		if (_animPlayer.bank() && _animPlayer2.bank()) {
-			_animPlayer.advance(gameTime());
-			_animPlayer2.advance(gameTime());
-			const AnimBank &bank = *_animPlayer.bank();
-			const AnimStep &step = bank.step(_animPlayer.current());
+		const int32 now = gameTime();
+		if (_scrollX || _scrollY)
+			_camera.moveTo(_camera.x() + _scrollX * kScrollSpeed, _camera.y() + _scrollY * kScrollSpeed, 0, now);
 
-			const AnimBank &bank2 = *_animPlayer2.bank();
-			const AnimStep &step2 = bank2.step(_animPlayer2.current());
+		_display.startFrame();
+		_display.fillBackground(0x4208);	// dark grey
 
-			_display.startFrame();
-			_display.fillBackground(0x4208);	// dark grey, the same colour as before
-
-			if (step.hasImage()) {
-
-				const AnimImage &image = bank.image(step.imageIndex);
-				int32 y = 300 - step.imageY;
-				if (_scaleY < 0)	// an upside-down image grows upwards from y, so move it down to keep it on screen
-					y += (int32)(((int64)(READ_LE_UINT16(image.data() + 10) - 1) * -_scaleY) >> 16);
-				debug("Displaying image %d at (%d, %d), with scale (%d, %d)", step.imageIndex, 300 + step.imageX, 300 - step.imageY, _scaleX, _scaleY);
-				_display.queueImageScaled(300 + step.imageX, y, 3, image, _scaleX, _scaleY, 0);
-			}
-			if (step2.hasImage()) {
-				debug("Displaying image %d at (%d, %d)", step2.imageIndex, 300 + step2.imageX, 300 - step2.imageY);
-				_display.queueImage(300 + step2.imageX, 300 - step2.imageY, 5, bank2.image(step2.imageIndex), 0);
-			}
-			_display.queueText((const byte *)"Hello, world!", 0xFFFF, Display::kWidth / 2, 50, Display::kWidth, 0, true, 16);
-
-			_display.compose();
-			_screen->copyRectToSurface(_display.frame(), Display::kWidth * 2, 0, 0, Display::kWidth, Display::kHeight);
-			_screen->addDirtyRect(Common::Rect(Display::kWidth, Display::kHeight));
+		if (_testObject) {
+			_camera.updateToward(kCameraDivisor, now);
+			_testObject->updateBounds(now);
+			_testObject->draw(_camera, _display);
 		}
+		_display.queueText((const byte *)"Hello, world!", 0xFFFF, Display::kWidth / 2, 50, Display::kWidth, 0, true, 16);
+
+		_display.compose();
+		_screen->copyRectToSurface(_display.frame(), Display::kWidth * 2, 0, 0, Display::kWidth, Display::kHeight);
+		_screen->addDirtyRect(Common::Rect(Display::kWidth, Display::kHeight));
 
 		limiter.delayBeforeSwap();
 		_screen->update();
@@ -156,6 +159,32 @@ bool TesoroEngine::playAnim(const char *name, AnimPlayer &player) {
 	}
 	// All steps up to the first one without an image, looping, with the cycle length totalled.
 	player.setRange(0, -1, true, true, gameTime());
+	return true;
+}
+
+bool TesoroEngine::showObject(const char *name) {
+	delete _testObject;
+	_testObject = nullptr;
+
+	_testPlayers.clear();
+	_testPlayers.resize(1);
+	if (!playAnim(name, _testPlayers[0]))
+		return false;
+
+	ObjectRecord record;
+	Common::strlcpy(record.name, "TEST", sizeof(record.name));
+	record.banks.push_back(0);
+
+	const int32 now = gameTime();
+	TestObject *object = new TestObject();
+	object->initAnimated(record, 0, _testPlayers, 0);
+	object->animation().selectBank(0, 0, -1, true, true, now);
+	_testObject = object;
+
+	// The centre may move 320 across and 240 up or down from the object at the origin.
+	_camera.init();
+	_camera.setBounds(-640, 480, 640, -480);
+	_camera.moveTo(0, 0, 0, now);
 	return true;
 }
 

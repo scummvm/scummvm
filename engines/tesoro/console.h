@@ -34,6 +34,8 @@ private:
 	bool testCmd(int argc, const char **argv);
 	bool scale(int argc, const char **argv);
 	bool fade(int argc, const char **argv);
+	bool object(int argc, const char **argv);
+	bool camera(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

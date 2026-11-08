@@ -28,6 +28,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("testCmd", WRAP_METHOD(Console, testCmd));
 	registerCmd("scale", WRAP_METHOD(Console, scale));
 	registerCmd("fade", WRAP_METHOD(Console, fade));
+	registerCmd("object", WRAP_METHOD(Console, object));
+	registerCmd("camera", WRAP_METHOD(Console, camera));
 }
 
 Console::~Console() {
@@ -56,6 +58,30 @@ bool Console::fade(int argc, const char **argv) {
 	}
 	g_engine->fadeOut(atoi(argv[1]), atoi(argv[2]));
 	return false;
+}
+
+bool Console::object(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s NAME.ANM\n", argv[0]);
+		return true;
+	}
+	if (!g_engine->showObject(argv[1])) {
+		debugPrintf("Cannot load %s\n", argv[1]);
+		return true;
+	}
+	return false;
+}
+
+bool Console::camera(int argc, const char **argv) {
+	Camera &camera = g_engine->camera();
+	if (argc == 3)
+		camera.moveTo(strtol(argv[1], nullptr, 0), strtol(argv[2], nullptr, 0), 0, g_engine->gameTime());
+	else if (argc != 1) {
+		debugPrintf("Usage: %s [X Y]\n", argv[0]);
+		return true;
+	}
+	debugPrintf("Camera at (%d, %d)\n", camera.x(), camera.y());
+	return true;
 }
 
 } // End of namespace Tesoro

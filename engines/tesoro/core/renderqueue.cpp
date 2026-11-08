@@ -19,10 +19,11 @@
  *
  */
 
-#include "tesoro/core/renderqueue.h"
-
 #include "common/endian.h"
 #include "common/textconsole.h"
+
+#include "tesoro/core/renderqueue.h"
+#include "tesoro/core/wrap.h"
 
 namespace Tesoro {
 
@@ -432,9 +433,6 @@ void RenderQueue::queueRows(const byte *image, uint firstRow, uint count, uint y
 		}
 	}
 }
-
-// 32-bit wrapping arithmetic like the original's.
-static int32 wrapMul(int32 a, int32 b) { return (int32)((uint32)a * (uint32)b); }
 
 void RenderQueue::rasterScaledImage(uint16 *frame, int32 x, int32 y, uint16 depth, const AnimImage &image, int32 scaleX, int32 scaleY, uint32 extra) {
 	const byte *data = image.data();

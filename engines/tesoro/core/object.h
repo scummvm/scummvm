@@ -25,10 +25,12 @@
 #include "common/array.h"
 
 #include "tesoro/core/animset.h"
+#include "tesoro/core/camera.h"
 #include "tesoro/core/objectlist.h"
 
 namespace Tesoro {
 
+class Display;
 class Room;
 
 struct ObjectRect {
@@ -89,6 +91,9 @@ public:
 	/** Ticks the animation and works out the hit rectangle and the area the object moved through. */
 	virtual void updateBounds(int32 now);
 
+	/** Called after updateBounds() for the objects a room shows: draws the object as seen by the camera. */
+	virtual void draw(const Camera &camera, Display &display) {}
+
 	uint32 flags() const { return _flags; }
 	void setFlags(uint32 flags) { _flags = flags; }
 	int32 x() const { return _x; }
@@ -120,6 +125,13 @@ public:
 	void moveTo(int32 x, int32 y, bool setCurrent);
 
 protected:
+	/**
+	 * Draws the image of the step the current player is on, positioned from the camera.
+	 * With skipPastRight an image whose left edge would be further right than the screen
+	 * is not sent at all.
+	 */
+	void drawAnimation(const Camera &camera, Display &display, bool skipPastRight);
+
 	Room *_room = nullptr;
 	uint32 _flags = 0;
 	int32 _x = 0, _y = 0;
