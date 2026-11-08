@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/nancy.h"
 #include "engines/nancy/resource/xsheetfile.h"
 
 #include "engines/nancy/script/api.h"
@@ -266,6 +267,16 @@ void XsheetRecord::run(double sceneTime, double elapsedTime) {
 	_xsheet.showFrame((uint)_frame);
 
 	if (_hasEnded && !_isPaused) {
+#ifdef ENABLE_NANCY_V5
+		// Nancy26 pauses the record itself, which its scripts see and undo
+		// through localPaused, e.g. the fidgets of the conversations
+		if (g_nancy->getGameType() >= kGameTypeNancy26) {
+			setLocalPaused(true);
+			callFunction("OnPause");
+			return;
+		}
+#endif
+
 		_isPaused = true;
 		callFunction("OnPause");
 	}
