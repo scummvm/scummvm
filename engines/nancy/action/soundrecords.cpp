@@ -261,6 +261,12 @@ void PlaySound::readDataNancy13(Common::SeekableReadStream &stream) {
 	_changeSceneImmediately = stream.readByte();
 	_sceneChange.sceneID = stream.readUint16LE();
 	_sceneChange.continueSceneSound = kContinueSceneSound;	// sounds keep playing into the new scene
+
+	// Nancy17 marks "no scene change" with a different value
+	if (g_nancy->getGameType() >= kGameTypeNancy17 && _sceneChange.sceneID == kNoSceneNancy17) {
+		_sceneChange.sceneID = kNoScene;
+	}
+
 	_afterSoundAction = stream.readByte();	// overlay-refresh control; unused
 
 	// The single event flag became a list of { label, value } pairs.
