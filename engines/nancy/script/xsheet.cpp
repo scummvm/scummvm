@@ -315,7 +315,17 @@ void XsheetRecord::registerGraphics() {
 
 void XsheetRecord::updateGraphics() {
 	_hasShown |= hasStarted();
-	_xsheet.setVisible(isShown() && _hasShown);
+	bool isVisible = isShown() && _hasShown;
+
+#ifdef ENABLE_NANCY_V5
+	// Nancy26 draws the record before it runs as well. The conversations
+	// pause the character until Nancy is done, when she speaks first.
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		isVisible = isShown();
+	}
+#endif
+
+	_xsheet.setVisible(isVisible);
 }
 
 bool XsheetRecord::getField(const Common::String &key) {
