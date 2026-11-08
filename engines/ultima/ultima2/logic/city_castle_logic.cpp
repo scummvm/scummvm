@@ -30,8 +30,13 @@ bool CityCastleLogic::shopkeeperAt(int x, int y) const {
 	if (x < 0 || x >= Data::MAP_WIDTH || y < 0 || y >= Data::MAP_HEIGHT)
 		return false;
 
+	// A monster moving about is a shopkeeper only if that's what it is, but
+	// some are part of the map itself and have no monster slot
 	int slot = findTargetMonster(x, y);
-	return slot >= 0 && _G(map)._monsters.tileType(slot) == Data::TILE_SHOPKEEP;
+	if (slot >= 0)
+		return _G(map)._monsters.tileType(slot) == Data::TILE_SHOPKEEP;
+
+	return _G(map).tileAt(x, y) == Data::TILE_SHOPKEEP;
 }
 
 void CityCastleLogic::exitToOverworld() {
