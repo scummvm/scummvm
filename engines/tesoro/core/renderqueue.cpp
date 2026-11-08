@@ -209,6 +209,194 @@ void RenderQueue::fillBackground(uint16 colour) {
 		_rows[y].insert(0, kWidth - 1, 0xffff, kSolid, colour);
 }
 
+uint16 RenderQueue::shade(const byte *table, uint16 page, uint16 colour) {
+	const uint index = ((colour >> 1) & 0x38e) | ((colour >> 9) & 0x70);
+	return READ_LE_UINT16(table + page * 256 + index);
+}
+
+void RenderQueue::mergeMask(uint y, uint16 *frameRow, const byte *table) {
+	Row &main = _rows[y];
+	Row &mask = _maskRows[y];
+	int mainPred = 0, maskPrev = 0;
+
+	while (mask.next(maskPrev)) {
+		const int s = mask.next(maskPrev);
+		const Span shadow = mask._spans[s];
+		int m = main.next(mainPred);
+		const int32 sx0 = shadow.x0, sx1 = shadow.x1;
+
+		// The first span of the row that reaches the shadow's start.
+		while (m && main._spans[m].x1 < sx0) {
+			mainPred = m;
+			m = main._spans[m].next;
+		}
+		if (!m) {
+			warning("RenderQueue: a shadow span finds no span to fall on");
+			return;
+		}
+
+		Span &under = main._spans[m];
+		const int32 mx0 = under.x0, mx1 = under.x1;
+
+		// Whether the shadow misses this span: its depth window does not hold it, or (without one) it is in front of the shadow.
+		bool misses;
+		if ((uint32)shadow.pixels != 0) {
+			const uint16 low = (uint16)shadow.pixels, high = (uint16)((uint32)shadow.pixels >> 16);
+			misses = under.depth < low || under.depth > high;
+		} else {
+			misses = shadow.depth > under.depth;
+		}
+
+		if (misses) {
+			if (sx1 <= mx1) {
+				// The shadow is dropped; its node goes back to the pool.
+				mask.setNext(0, shadow.next);
+				mask._spans[s].next = mask._free;
+				mask._free = s;
+				maskPrev = 0;
+			} else {
+				mask._spans[s].x0 = (int16)(mx1 + 1);
+				mainPred = m;
+			}
+			continue;
+		}
+
+		// Darkens a span in place (a solid colour), or turns it into a shadow span over its source.
+		const uint16 page = shadow.colour;
+		const uintptr_t source = under.pixels;
+		const bool literal = source > 1, solid = source == 1;
+
+		if (sx0 == mx0) {
+			if (sx1 > mx1 || sx1 == mx1) {
+				// The span is shadowed from end to end.
+				const int32 width = mx1 - mx0 + 1;
+				if (sx1 > mx1)
+					mask._spans[s].x0 = (int16)(mx1 + 1);
+				else
+					maskPrev = s;
+				mainPred = m;
+				if (solid) {
+					under.colour = shade(table, page, under.colour);
+				} else {
+					under.x0 = (int16)-1;
+					under.x1 = (int16)width;
+					under.colour = page;
+					if (!literal)
+						under.pixels = (uintptr_t)(frameRow + mx0);
+				}
+				continue;
+			}
+
+			// The shadow covers the front of the span, which keeps the rest.
+			const int front = main.allocate();
+			if (front < 0)
+				return;
+			Span &part = main._spans[front];
+			part = shadow;
+			part.next = m;
+			main.setNext(mainPred, front);
+			mainPred = front;
+			mask.setNext(0, shadow.next);
+			maskPrev = 0;
+			const int32 count = sx1 - sx0 + 1;
+			main._spans[m].x0 = (int16)(sx1 + 1);
+			if (literal) {
+				part.x0 = (int16)-1;
+				part.x1 = (int16)count;
+				part.pixels = source;
+				main._spans[m].pixels = source + count * 2;
+			} else if (solid) {
+				part.pixels = 1;
+				part.colour = shade(table, page, main._spans[m].colour);
+			} else {
+				part.x0 = (int16)-1;
+				part.x1 = (int16)count;
+				part.pixels = (uintptr_t)(frameRow + sx0);
+			}
+			continue;
+		}
+
+		if (sx1 > mx1) {
+			// The shadow starts inside the span and goes on past its end: the span is cut and its tail shadowed.
+			const int tail = main.allocate();
+			if (tail < 0)
+				return;
+			Span &part = main._spans[tail];
+			const int32 count = mx1 - sx0 + 1;
+			part.colour = page;
+			part.depth = shadow.depth;
+			part.next = main._spans[m].next;
+			main._spans[m].x1 = (int16)(sx0 - 1);
+			main._spans[m].next = tail;
+			mask._spans[s].x0 = (int16)(mx1 + 1);
+			mainPred = tail;
+			if (literal) {
+				part.x0 = (int16)-1;
+				part.x1 = (int16)count;
+				part.pixels = source + (sx0 - mx0) * 2;
+			} else if (solid) {
+				part.x1 = (int16)mx1;
+				part.x0 = (int16)sx0;
+				part.pixels = 1;
+				part.colour = shade(table, page, main._spans[m].colour);
+			} else {
+				part.x0 = (int16)-1;
+				part.x1 = (int16)count;
+				part.pixels = (uintptr_t)(frameRow + sx0);
+			}
+			continue;
+		}
+
+		// The shadow ends inside the span or with it: the span is cut, the shadow follows it, and the rest (if any) after that.
+		const int mid = main.allocate();
+		if (mid < 0)
+			return;
+		int rest = 0;
+		if (sx1 < mx1) {
+			rest = main.allocate();
+			if (rest < 0)
+				return;
+		}
+		Span &part = main._spans[mid];
+		part = shadow;
+		const int32 count = sx1 - sx0 + 1;
+		if (rest) {
+			Span &after = main._spans[rest];
+			after.x0 = (int16)(sx1 + 1);
+			after.x1 = (int16)mx1;
+			after.colour = main._spans[m].colour;
+			after.depth = main._spans[m].depth;
+			after.next = main._spans[m].next;
+			part.next = rest;
+		} else {
+			part.next = main._spans[m].next;
+		}
+		main._spans[m].next = mid;
+		main._spans[m].x1 = (int16)(sx0 - 1);
+		mainPred = mid;
+		mask.setNext(0, shadow.next);
+		maskPrev = 0;
+		if (literal) {
+			part.x0 = (int16)-1;
+			part.x1 = (int16)count;
+			part.pixels = source + (sx0 - mx0) * 2;
+			if (rest)
+				main._spans[rest].pixels = source + (sx1 - mx0) * 2 + 2;
+		} else if (solid) {
+			part.pixels = 1;
+			part.colour = shade(table, page, main._spans[m].colour);
+			if (rest)
+				main._spans[rest].pixels = 1;
+		} else {
+			part.x0 = (int16)-1;
+			part.x1 = (int16)count;
+			part.pixels = (uintptr_t)(frameRow + sx0);
+			if (rest)
+				main._spans[rest].pixels = 0;
+		}
+	}
+}
+
 void RenderQueue::queueRows(const byte *image, uint firstRow, uint count, uint y, int32 x, uint16 depth, bool clip, bool solid) {
 	for (uint r = 0; r < count; ++r) {
 		const byte *entry = image + 0x10 + 8 * (firstRow + r);

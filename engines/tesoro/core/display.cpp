@@ -45,6 +45,11 @@ void Display::queueImageScaled(int32 x, int32 y, uint16 depth, const AnimImage &
 	_scaled.push_back(item);
 }
 
+void Display::setShadeTable(const byte *table) {
+	_shades.resize(0x8000);
+	memcpy(&_shades[0], table, 0x8000);
+}
+
 void Display::startFrame() {
 	_queue.reset();
 	_texts.clear();
@@ -78,6 +83,21 @@ void Display::compose() {
 		const RenderQueue::Row &row = _queue.row(y);
 		for (int n = row.head(); n; n = row.span(n).next) {
 			const RenderQueue::Span &span = row.span(n);
+
+			if (span.x0 == -1) {
+				// A shadow span: x1 is its number of pixels and the colour is the page of the table.
+				const uint count = (uint16)span.x1;
+				if (out + count > end || _shades.empty()) {
+					warning("Display: spans run past the frame");
+					return;
+				}
+				const byte *pixels = (const byte *)span.pixels;
+				for (uint i = 0; i < count; ++i)
+					out[i] = RenderQueue::shade(&_shades[0], span.colour, READ_LE_UINT16(pixels + 2 * i));
+				out += count;
+				continue;
+			}
+
 			const uint count = (uint16)(span.x1 - span.x0 + 1);
 			if (out + count > end) {
 				warning("Display: spans run past the frame");

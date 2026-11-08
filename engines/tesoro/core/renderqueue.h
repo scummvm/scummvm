@@ -109,6 +109,15 @@ public:
 	 */
 	void rasterScaledImage(uint16 *frame, int32 x, int32 y, uint16 depth, const AnimImage &image, int32 scaleX, int32 scaleY, uint32 extra);
 
+    /**
+	 * Puts the shadow spans of a row into its main row: where a shadow falls on a span of the row it is turned into a shadow
+	 * span (x0 = -1, x1 = the number of pixels, colour = the shade table's page)
+	 */
+	void mergeMask(uint y, uint16 *frameRow, const byte *table);
+
+	/** The shade of a pixel colour on a page of the shade table. */
+	static uint16 shade(const byte *table, uint16 page, uint16 colour);
+
     const Row &row(uint y) const { return _rows[y]; }
 
     // Temporary: one solid span over every row, behind everything (depth 0xffff is the furthest).

@@ -64,16 +64,14 @@ public:
 
 	const uint16 *frame() const { return &_frame[0]; }
 
+	/** The table the shadows darken through, for the inventory shadow. */
+	void setShadeTable(const byte *table);
+
 	TextQueue &texts() { return _texts; }
 
 	/** The font bank (see TextQueue). */
 	void setFont(const AnimBank *bank) { _texts.setFont(bank); }
 
-	/**
-	 * Queues a text over the finished frame: colour is 5-6-5, tag the layer depth, centred puts the lines round (centreX, y)
-	 * (see TextQueue::add for the layout). Like the original it also sets the
-	 * layer depth to the tag, so a text call changes where scaled images go for the rest of the frame.
-	 */
 	void queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth, uint16 tag, bool centred, int32 lineHeight) {
 		_layerDepth = _texts.add(text, colour, centreX, y, maxWidth, tag, centred, lineHeight);
 	}
@@ -93,6 +91,7 @@ private:
 	enum { kMaxScaled = 50 };
 
 	RenderQueue _queue;
+	Common::Array<byte> _shades;
 	TextQueue _texts;
 	Common::Array<Scaled> _scaled;
 	uint16 _layerDepth = 0;
