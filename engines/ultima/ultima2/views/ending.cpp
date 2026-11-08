@@ -94,7 +94,7 @@ void Ending::draw() {
 	}
 
 	s.setColor(textColor(Gfx::TEXT_NORMAL), 0);
-	s.writeString(Common::Point(0, 21), "You have saved the universe,\n"
+	s.writeString(Common::Point(0, 20), "You have saved the universe,\n"
 		"and completed Ultima ][! Seek\n"
 		"now to conquer wicked Exodus,\n"
 		"Found in Ultima ]I[-D ]II[-P!");
