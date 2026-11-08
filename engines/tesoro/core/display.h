@@ -25,6 +25,7 @@
 #include "common/array.h"
 
 #include "tesoro/core/renderqueue.h"
+#include "tesoro/core/textqueue.h"
 
 namespace Tesoro {
 
@@ -52,9 +53,8 @@ public:
 	 */
 	void queueImageScaled(int32 x, int32 y, uint16 depth, const AnimImage &image, int32 scaleX, int32 scaleY, uint32 extra);
 
-
 	/**
-	 * Copies the queued spans of every row into the frame, left to right.
+	 * Composes the queued spans into the frame.
 	 * A row must be covered from end to end (filled at least with the bg);
 	 */
 	void compose();
@@ -63,6 +63,20 @@ public:
 	void startFrame();
 
 	const uint16 *frame() const { return &_frame[0]; }
+
+	TextQueue &texts() { return _texts; }
+
+	/** The font bank (see TextQueue). */
+	void setFont(const AnimBank *bank) { _texts.setFont(bank); }
+
+	/**
+	 * Queues a text over the finished frame: colour is 5-6-5, tag the layer depth, centred puts the lines round (centreX, y)
+	 * (see TextQueue::add for the layout). Like the original it also sets the
+	 * layer depth to the tag, so a text call changes where scaled images go for the rest of the frame.
+	 */
+	void queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth, uint16 tag, bool centred, int32 lineHeight) {
+		_layerDepth = _texts.add(text, colour, centreX, y, maxWidth, tag, centred, lineHeight);
+	}
 
 	// Temp: a flat colour behind everything, so every row is covered.
 	void fillBackground(uint16 colour) { _queue.fillBackground(colour); }
@@ -79,6 +93,7 @@ private:
 	enum { kMaxScaled = 50 };
 
 	RenderQueue _queue;
+	TextQueue _texts;
 	Common::Array<Scaled> _scaled;
 	uint16 _layerDepth = 0;
 	Common::Array<uint16> _frame;

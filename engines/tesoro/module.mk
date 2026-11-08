@@ -11,7 +11,8 @@ MODULE_OBJS = \
 	core/clock.o \
 	core/display.o \
 	core/namekey.o \
-	core/renderqueue.o
+	core/renderqueue.o \
+	core/textqueue.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TESORO), DYNAMIC_PLUGIN)

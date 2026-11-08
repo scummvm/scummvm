@@ -35,12 +35,6 @@ void Display::queueImage(int32 x, int32 y, uint16 depth, const AnimImage &image,
 	_queue.addSprite(x, y, depth, image, extra);
 }
 
-void Display::startFrame() {
-	_queue.reset();
-	_scaled.clear();
-	_layerDepth = 0;
-}
-
 void Display::queueImageScaled(int32 x, int32 y, uint16 depth, const AnimImage &image, int32 scaleX, int32 scaleY, uint32 extra) {
 	if (_scaled.size() >= kMaxScaled) {
 		warning("Display: too many scaled images in one frame");
@@ -49,6 +43,13 @@ void Display::queueImageScaled(int32 x, int32 y, uint16 depth, const AnimImage &
 
 	Scaled item = { &image, x, y, depth, scaleX, scaleY, extra };
 	_scaled.push_back(item);
+}
+
+void Display::startFrame() {
+	_queue.reset();
+	_texts.clear();
+	_scaled.clear();
+	_layerDepth = 0;
 }
 
 void Display::compose() {
@@ -100,6 +101,9 @@ void Display::compose() {
 		const Scaled &s = _scaled[drawn];
 		_queue.rasterScaledImage(&_frame[0], s.x, s.y, s.depth, *s.image, s.scaleX, s.scaleY, s.extra);
 	}
+
+	// The texts go over everything.
+	_texts.draw(&_frame[0]);
 }
 
 } // End of namespace Tesoro

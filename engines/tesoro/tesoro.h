@@ -53,6 +53,7 @@ private:
 	AnimPlayer _animPlayer2;
 	Display _display;
 	int32 _scaleX = 0x10000, _scaleY = 0x10000;	// 0x10000 is normal scale
+	AnimPlayer _font;
 
 protected:
 	// Engine APIs

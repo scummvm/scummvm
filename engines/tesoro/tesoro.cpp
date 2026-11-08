@@ -81,7 +81,11 @@ Common::Error TesoroEngine::run() {
 	playAnim("JIMDERECHA.ANM", _animPlayer);
 	playAnim("JIMABAJO.ANM", _animPlayer2);
 
-
+	const uint32 fontOffset = _archive.findEntry("FUENTES.ANM");
+	if (!fontOffset || !_font.load(*_archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow, false)) {
+		warning("Tesoro: the font FUENTES.ANM cannot be read");
+	}
+	_display.setFont(_font.bank());
 
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
@@ -112,6 +116,7 @@ Common::Error TesoroEngine::run() {
 				debug("Displaying image %d at (%d, %d)", step2.imageIndex, 300 + step2.imageX, 300 - step2.imageY);
 				_display.queueImage(300 + step2.imageX, 300 - step2.imageY, 5, bank2.image(step2.imageIndex), 0);
 			}
+			_display.queueText((const byte *)"Hello, world!", 0xFFFF, Display::kWidth / 2, 50, Display::kWidth, 0, true, 16);
 
 			_display.compose();
 			_screen->copyRectToSurface(_display.frame(), Display::kWidth * 2, 0, 0, Display::kWidth, Display::kHeight);
