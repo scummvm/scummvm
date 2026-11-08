@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	core/clock.o \
 	core/display.o \
 	core/namekey.o \
+	core/object.o \
 	core/renderqueue.o \
 	core/textqueue.o
 
