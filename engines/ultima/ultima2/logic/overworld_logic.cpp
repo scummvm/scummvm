@@ -611,6 +611,7 @@ void OverworldLogic::minaxDeathSequence() {
 	}
 
 	writeString("\nYou feel a strange force!\n");
+	g_engine->pauseMillis(1000);
 	g_engine->addView("Ending");
 }
 
