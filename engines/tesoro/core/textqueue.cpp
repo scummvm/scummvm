@@ -38,8 +38,6 @@ uint16 TextQueue::add(const byte *text, uint32 colour, int32 centreX, int32 y, i
 	const int32 glyphs = font.imageCount();
 	const int32 spaceWidth = font.step(kSpaceGlyph).hitW + 2;
 
-	if (_is555)
-		colour = (colour & 0x1f) | ((colour >> 1) & 0x7fe0);
 	if (lineHeight == 0)
 		lineHeight = (font.step(kSpaceGlyph).hitH * 3) / 2;
 

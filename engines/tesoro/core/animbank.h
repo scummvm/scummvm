@@ -56,7 +56,7 @@ public:
 	enum { kLoadNow = 0, kLoadDeferred = 2 };
 
 	/** Reads the animation stored at an archive entry offset. In deferred mode the images are skipped. */
-	bool load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, bool is555);
+	bool load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode);
 
 	bool hasHeaderFlag() const { return _headerFlag; }
 	uint32 headerDword(uint i) const { return _header[i]; }
@@ -91,7 +91,7 @@ public:
 		kHeaderFlag = 8
 	};
 
-	bool load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, bool is555);
+	bool load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode);
 
 	/**
 	 * Plays the steps first..last. A last of -1 extends the range up to the next step without image.

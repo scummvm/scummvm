@@ -39,8 +39,8 @@ public:
 		// any other value: the first dword of an item is a solid color
 	};
 
-	/** Reads a size-prefixed blob. is555 selects 5-5-5 pixels instead of 5-6-5. */
-	bool load(Common::SeekableReadStream &stream, bool is555);
+	/** Reads a size-prefixed blob. */
+	bool load(Common::SeekableReadStream &stream);
 
 	bool isLoaded() const { return !_data.empty(); }
 	const byte *data() const { return _data.empty() ? nullptr : &_data[0]; }
@@ -52,7 +52,7 @@ public:
 	uint16 type() const;
 
 private:
-	bool convert(bool is555);
+	bool convert();
 
 	Common::Array<byte> _data;
 };

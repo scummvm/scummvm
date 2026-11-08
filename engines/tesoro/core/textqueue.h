@@ -42,8 +42,6 @@ public:
 
 	void setFont(const AnimBank *bank) { _font = bank; }
 
-	void setPixelFormat555(bool is555) { _is555 = is555; }
-
 	void clear() { _lines.clear(); }
 	uint32 lineCount() const { return _lines.size(); }
 	const Line &line(uint32 i) const { return _lines[i]; }
@@ -57,7 +55,6 @@ public:
 
 private:
 	const AnimBank *_font = nullptr;
-	bool _is555 = false;
 	Common::Array<Line> _lines;
 };
 

@@ -30,10 +30,6 @@ static const uint32 kHeaderSize = 0x10;
 static const uint32 kSpanSize = 8;
 static const uint32 kItemSize = 8;
 
-static uint16 to555(uint16 w) {
-	return ((w >> 1) & 0x7fe0) | (w & 0x1f);
-}
-
 uint32 AnimImage::pixelOffset() const {
 	return READ_LE_UINT32(&_data[0]);
 }
@@ -53,7 +49,7 @@ uint16 AnimImage::type() const {
 	return READ_LE_UINT16(&_data[0xc]);
 }
 
-bool AnimImage::load(Common::SeekableReadStream &stream, bool is555) {
+bool AnimImage::load(Common::SeekableReadStream &stream) {
 	_data.clear();
 
 	const uint32 size = stream.readUint32LE();
@@ -65,22 +61,16 @@ bool AnimImage::load(Common::SeekableReadStream &stream, bool is555) {
 		_data.clear();
 		return false;
 	}
-	return convert(is555);
+	return convert();
 }
 
-bool AnimImage::convert(bool is555) {
+bool AnimImage::convert() {
 	byte *blob = &_data[0];
 	const uint32 size = _data.size();
 
 	if (pixelOffset() > size) {
 		_data.clear();
 		return false;
-	}
-
-	// The 5-5-5 conversion covers everything from the pixel data to the end of the blob.
-	if (is555) {
-		for (uint32 p = pixelOffset(); p + 2 <= size; p += 2)
-			WRITE_LE_UINT16(blob + p, to555(READ_LE_UINT16(blob + p)));
 	}
 
 	const uint32 spanCount = READ_LE_UINT16(blob + 0xa);
@@ -104,8 +94,6 @@ bool AnimImage::convert(bool is555) {
 			const uint32 value = READ_LE_UINT32(item);
 			if (imageType == kShadow)
 				WRITE_LE_UINT32(item, (value & 0x1f) << 2);
-			else if (is555)
-				WRITE_LE_UINT32(item, to555((uint16)value));
 		}
 	}
 	return true;

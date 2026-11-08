@@ -82,7 +82,7 @@ Common::Error TesoroEngine::run() {
 	playAnim("JIMABAJO.ANM", _animPlayer2);
 
 	const uint32 fontOffset = _archive.findEntry("FUENTES.ANM");
-	if (!fontOffset || !_font.load(*_archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow, false)) {
+	if (!fontOffset || !_font.load(*_archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
 		warning("Tesoro: the font FUENTES.ANM cannot be read");
 	}
 	_display.setFont(_font.bank());
@@ -150,7 +150,7 @@ bool TesoroEngine::playAnim(const char *name, AnimPlayer &player) {
 		debug("No entry called %s", upper.c_str());
 		return false;
 	}
-	if (!player.load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow, false)) {
+	if (!player.load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow)) {
 		debug("Could not load %s", upper.c_str());
 		return false;
 	}

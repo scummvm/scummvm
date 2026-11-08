@@ -41,7 +41,7 @@ static bool readExactly(Common::SeekableReadStream &s, byte *buf, uint32 size) {
 	return size == 0 || s.read(buf, size) == size;
 }
 
-bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, bool is555) {
+bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode) {
 	*this = AnimBank();
 
 	// The data starts four bytes after the offset given by the archive.
@@ -124,7 +124,7 @@ bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mod
 			const uint32 size = dat.readUint32LE();
 			ok = !dat.eos() && size <= (uint32)(dat.size() - dat.pos()) && dat.skip(size);
 		} else {
-			ok = _images[k].load(dat, is555);
+			ok = _images[k].load(dat);
 		}
 		if (!ok) {
 			*this = AnimBank();
@@ -145,9 +145,9 @@ bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mod
 	return true;
 }
 
-bool AnimPlayer::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, bool is555) {
+bool AnimPlayer::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode) {
 	Common::SharedPtr<AnimBank> bank(new AnimBank());
-	if (!bank->load(dat, entryOffset, mode, is555))
+	if (!bank->load(dat, entryOffset, mode))
 		return false;
 
 	_bank = bank;
