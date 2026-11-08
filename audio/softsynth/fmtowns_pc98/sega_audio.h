@@ -57,8 +57,8 @@ public:
 
 	// Convenience function, since it is so much easier to implement this on this level than having the samples buffer
 	// invoke a callback into the engine
-	// @ memstart: same 8-bit format as dataStart (in playPCMChannel), begin of the buffer in the PCM memory area
-	// @ memAreaSize: byte size of the buffer in the PCM memory area
+	// @param memstart: same 8-bit format as dataStart (in playPCMChannel), begin of the buffer in the PCM memory area
+	// @param memAreaSize: byte size of the buffer in the PCM memory area
 	void playPCMStream(Common::SharedPtr<Common::SeekableReadStream> &stream, uint8 memStart, uint16 memAreaSize, uint8 channel, uint16 rate, uint8 pan, uint8 vol);
 
 	// OPN registers

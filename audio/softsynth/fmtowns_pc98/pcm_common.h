@@ -42,7 +42,6 @@ public:
 	bool isActive() const;
 	void activate();
 	void deactivate();
-	uint16 pos() const;
 
 protected:
 	void setData(const int8 *data, uint32 dataEnd, uint32 dataStart = 0);
