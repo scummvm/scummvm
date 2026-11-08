@@ -71,6 +71,9 @@ struct NancyInput {
 	// Consumes just the wheel input, leaving the mouse position and buttons alone,
 	// so a widget that scrolls can still keep updating its hover state
 	void eatMouseWheelInput() { input &= ~kMouseWheel; }
+
+	// Takes away the esc press, which comes both as the menu key and as a key
+	void eatMainMenuKey();
 };
 
 // This class handles collecting events and translating them to a NancyInput object,
@@ -93,12 +96,16 @@ public:
 	InputManager() :
 		_inputs(0),
 		_mouseEnabled(true),
+		_isEscEaten(false),
 		_inputBeginState(NancyState::kNone) {}
 
 	void processEvents();
 
 	NancyInput getInput() const;
 	void forceCleanInput();
+	// Takes away an esc press that skipped something, so nothing else sees it,
+	// in this frame or later ones, until the key gets pressed again
+	void eatMainMenuKey();
 	void setMouseInputEnabled(bool enabled) { _mouseEnabled = enabled; }
 	void setKeymapEnabled(Common::String keymapName, bool enabled);
 	void setVKEnabled(bool enabled);
@@ -111,6 +118,7 @@ private:
 	uint16 _inputs;
 	Common::Array<Common::KeyState> _otherKbdInput;
 	bool _mouseEnabled;
+	bool _isEscEaten;
 	NancyState::NancyState _inputBeginState;
 };
 

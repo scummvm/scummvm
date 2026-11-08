@@ -2837,12 +2837,14 @@ void Scene::handleInput() {
 
 	// Check if player has pressed esc. While a dialogue line or a cinematic is
 	// playing, esc skips it instead of opening the main menu. Only the initial
-	// press counts, so holding the key down doesn't skip line after line.
+	// press counts, so holding the key down doesn't skip line after line. A
+	// press that skips is taken away, so it can't open the menu afterwards.
 	const bool escPressed = (input.input & NancyInput::kOpenMainMenu) != 0;
 	const bool escJustPressed = escPressed && !_escHeld;
 	_escHeld = escPressed;
 
 	if (escJustPressed) {
+		bool isSkipKey = true;
 		if (_activeConversation) {
 			_activeConversation->skipLine();
 		} else if (_activeMovie) {
@@ -2854,14 +2856,24 @@ void Scene::handleInput() {
 			bool hasSkipped = _scriptScene->skipMovies();
 			hasSkipped |= _streams.skipMovies();
 			if (!hasSkipped) {
-				_scriptScene->skipSpeech();
-				_streams.skipSpeech();
+				hasSkipped = _scriptScene->skipSpeech();
+				hasSkipped |= _streams.skipSpeech();
 			}
+
+			isSkipKey = hasSkipped;
 #endif
 		} else if (g_nancy->getGameType() <= kGameTypeNancy15) {
 			// Nancy16 has no main menu state
 			g_nancy->setState(NancyState::kMainMenu);
 			return;
+		} else {
+			isSkipKey = false;
+		}
+
+		if (isSkipKey) {
+			g_nancy->_input->eatMainMenuKey();
+			input.eatMainMenuKey();
+			_escHeld = false;
 		}
 	}
 

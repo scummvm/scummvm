@@ -473,7 +473,7 @@ namespace State {
 
 // Nancy26's records take care of all the input themselves. Esc opens the menu
 // through them, unless it skips the movies that play or what the characters
-// say; that press then stays away from them until it is let go.
+// say; that press is then taken away from everything.
 void Scene::handleNancy26Input(NancyInput &input) {
 	const bool escPressed = (input.input & NancyInput::kOpenMainMenu) != 0;
 	if (escPressed && !_escHeld && _scriptScene) {
@@ -484,15 +484,13 @@ void Scene::handleNancy26Input(NancyInput &input) {
 			hasSkipped |= _streams.skipSpeech();
 		}
 
-		_isEscSkipping = hasSkipped;
-	} else if (!escPressed) {
-		_isEscSkipping = false;
+		if (hasSkipped) {
+			g_nancy->_input->eatMainMenuKey();
+			input.eatMainMenuKey();
+		}
 	}
 
-	_escHeld = escPressed;
-	if (_isEscSkipping) {
-		input.input &= ~NancyInput::kOpenMainMenu;
-	}
+	_escHeld = (input.input & NancyInput::kOpenMainMenu) != 0;
 
 	Script::handleNancy26Input(input);
 }
