@@ -22,6 +22,7 @@
 #include "tesoro/core/display.h"
 
 #include "common/endian.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -43,6 +44,41 @@ void Display::queueImageScaled(int32 x, int32 y, uint16 depth, const AnimImage &
 
 	Scaled item = { &image, x, y, depth, scaleX, scaleY, extra };
 	_scaled.push_back(item);
+}
+
+void Display::fadeOut(int steps, int delayMs, Graphics::Screen *screen) {
+	if (steps <= 0) {
+		warning("Display: a fade needs at least one step");
+		return;
+	}
+
+	const Common::Array<uint16> saved = _frame;
+	const int step = 0x100 / steps;
+	if (step == 0) {
+		warning("Display: too many fade steps");
+		return;
+	}
+
+	for (int factor = 0x100 - step; factor >= 0; factor -= step) {
+		uint16 red[64], green[64], blue[64];
+		for (uint i = 0; i < 64; ++i) {
+			const uint16 scaled = (uint16)((i * factor) >> 8);
+			red[i] = (uint16)(scaled << 11);
+			green[i] = (uint16)(scaled << 5);
+			blue[i] = scaled;
+		}
+
+		const uint32 start = g_system->getMillis();
+		for (uint i = 0; i < _frame.size(); ++i) {
+			const uint16 p = saved[i];
+			_frame[i] = red[(p >> 11) & 0x1f] | blue[p & 0x1f] | green[(p >> 5) & 0x3f];
+		}
+		screen->copyRectToSurface(&_frame[0], kWidth * 2, 0, 0, kWidth, kHeight);
+		screen->addDirtyRect(Common::Rect(kWidth, kHeight));
+		screen->update();
+		while (g_system->getMillis() - start < (uint32)delayMs)
+			g_system->delayMillis(2);
+	}
 }
 
 void Display::setShadeTable(const byte *table) {

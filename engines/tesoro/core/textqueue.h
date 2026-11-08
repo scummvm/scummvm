@@ -46,7 +46,7 @@ public:
 	uint32 lineCount() const { return _lines.size(); }
 	const Line &line(uint32 i) const { return _lines[i]; }
 
-	uint16 add(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth, uint16 tag, bool centred, int32 lineHeight);
+	uint16 add(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth, uint16 layerDepth, bool centred, int32 lineHeight);
 
 	/** Moves every line from the one numbered first on, down by dy. */
 	void shiftLines(uint32 first, int32 dy);

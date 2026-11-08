@@ -23,6 +23,7 @@
 #define TESORO_CORE_DISPLAY_H
 
 #include "common/array.h"
+#include "graphics/screen.h"
 
 #include "tesoro/core/renderqueue.h"
 #include "tesoro/core/textqueue.h"
@@ -72,12 +73,18 @@ public:
 	/** The font bank (see TextQueue). */
 	void setFont(const AnimBank *bank) { _texts.setFont(bank); }
 
-	void queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth, uint16 tag, bool centred, int32 lineHeight) {
-		_layerDepth = _texts.add(text, colour, centreX, y, maxWidth, tag, centred, lineHeight);
+	void queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth, uint16 layerDepth, bool centred, int32 lineHeight) {
+		_layerDepth = _texts.add(text, colour, centreX, y, maxWidth, layerDepth, centred, lineHeight);
 	}
 
 	// Temp: a flat colour behind everything, so every row is covered.
 	void fillBackground(uint16 colour) { _queue.fillBackground(colour); }
+
+	/**
+	 * Fades the last composed frame to black in the given number of steps (the brightness goes down in equal steps,
+	 * reaching black on the last), showing each step on the screen and waiting delayMs between steps. Leaves the black frame in the buffer.
+	 */
+	void fadeOut(int steps, int delayMs, Graphics::Screen *screen);
 
 private:
 	/** An image waiting for the compose. */

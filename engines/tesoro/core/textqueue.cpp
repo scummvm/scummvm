@@ -29,10 +29,10 @@ namespace Tesoro {
 
 static const int kSpaceGlyph = 94;		// the glyph of 0x7f, whose width is the width of a space
 
-uint16 TextQueue::add(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth, uint16 tag, bool centred, int32 lineHeight) {
+uint16 TextQueue::add(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth, uint16 layerDepth, bool centred, int32 lineHeight) {
 	if (!_font || _font->stepCount() <= kSpaceGlyph) {
 		warning("TextQueue: the font is not available");
-		return tag;
+		return layerDepth;
 	}
 	const AnimBank &font = *_font;
 	const int32 glyphs = font.imageCount();
@@ -115,7 +115,7 @@ uint16 TextQueue::add(const byte *text, uint32 colour, int32 centreX, int32 y, i
 		_lines[i].y = top;
 		top += lineHeight;
 	}
-	return tag;
+	return layerDepth;
 }
 
 void TextQueue::shiftLines(uint32 first, int32 dy) {

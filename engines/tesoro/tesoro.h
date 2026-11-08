@@ -111,6 +111,7 @@ public:
 
 	// temp functions
 	void setScale(int32 x, int32 y) { _scaleX = x; _scaleY = y; }
+	void fadeOut(int steps, int delayMs) { _display.fadeOut(steps, delayMs, _screen); }
 	bool playAnim(const char *name, AnimPlayer &player);
 };
 

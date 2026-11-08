@@ -27,6 +27,7 @@ namespace Tesoro {
 Console::Console() : GUI::Debugger() {
 	registerCmd("testCmd", WRAP_METHOD(Console, testCmd));
 	registerCmd("scale", WRAP_METHOD(Console, scale));
+	registerCmd("fade", WRAP_METHOD(Console, fade));
 }
 
 Console::~Console() {
@@ -48,5 +49,13 @@ bool Console::scale(int argc, const char **argv) {
 	return false;	// close the console so the picture is visible
 }
 
+bool Console::fade(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: %s STEPS DELAY_MS\n", argv[0]);
+		return true;
+	}
+	g_engine->fadeOut(atoi(argv[1]), atoi(argv[2]));
+	return false;
+}
 
 } // End of namespace Tesoro
