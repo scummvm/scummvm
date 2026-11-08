@@ -65,7 +65,7 @@ static const KeybindingRecord GAMEPLAY_KEYS[] = {
 	{ KEYBIND_MAGIC, "MAGIC", _s("Magic"), "m", nullptr },
 	{ KEYBIND_NEGATE_TIME, "NEGATE_TIME", _s("Negate time"), "n", nullptr },
 	{ KEYBIND_OFFER, "OFFER", _s("Offer"), "o", nullptr },
-	{ KEYBIND_PASS, "PASS", _s("Pass"), "p", nullptr },
+	{ KEYBIND_PASS, "PASS", _s("Pass"), "p", "SPACE" },
 	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
 	{ KEYBIND_READY, "READY", _s("Ready"), "r", nullptr },
 	{ KEYBIND_STEAL, "STEAL", _s("Steal"), "s", nullptr },
