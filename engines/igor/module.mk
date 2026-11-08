@@ -1,25 +1,18 @@
 MODULE := engines/igor
 
 MODULE_OBJS = \
-	igor.o \
 	console.o \
-	metaengine.o \
-	walk.o \
-	palette.o \
-	font.o \
-	floppy_font.o \
-	room.o \
-	graphics.o \
-	resource.o \
-	input.o \
-	static_walk.o \
-	static_cursor.o \
-	static_room.o \
-	static_inventory.o \
-	static_palette.o \
-	static_text.o \
-	options.o \
 	copy_protection.o \
+	floppy_font.o \
+	font.o \
+	graphics.o \
+	igor.o \
+	input.o \
+	metaengine.o \
+	midi.o \
+	options.o \
+	palette.o \
+	part_main.o \
 	parts/part_0.o \
 	parts/part_1.o \
 	parts/part_2.o \
@@ -85,13 +78,20 @@ MODULE_OBJS = \
 	parts/part_90.o \
 	parts/part_95.o \
 	parts/part_credits.o \
+	parts/part_margaret.o \
 	parts/part_maze.o \
 	parts/part_maze_data.o \
-	parts/part_margaret.o \
+	resource.o \
+	room.o \
+	sound.o \
+	static_cursor.o \
+	static_inventory.o \
+	static_palette.o \
+	static_room.o \
+	static_text.o \
+	static_walk.o \
 	text.o \
-	part_main.o \
-	midi.o \
-	sound.o
+	walk.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_IGOR), DYNAMIC_PLUGIN)
