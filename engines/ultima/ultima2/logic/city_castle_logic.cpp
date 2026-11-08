@@ -104,33 +104,38 @@ void CityCastleLogic::updateCreatures() {
 		if (flag <= 0)
 			continue; // at rest (0), or a shop/quest NPC (negative/high-bit) - never moves
 
-		int sdx, sdy;
-		if (flag <= 2) {
-			int dx = sg._mapX - monsters._mapX[slot];
-			int dy = sg._mapY - monsters._mapY[slot];
-			sdx = signByte(dx * 4);
-			sdy = signByte(dy * 4);
+		if (flag >= 3) {
+			// Wanderers keep heading the way they were going (kept in _tempX/Y),
+			// picking a new random diagonal direction a quarter of the time
+			if (randByte() < 0x40) {
+				monsters._tempX[slot] = (byte)signByte(randByte());
+				monsters._tempY[slot] = (byte)signByte(randByte());
+			}
 
-			// Hostile monsters below 15 HP flee instead of approaching
-			if (flag == 1 && monsters._spellHP[slot] < 15) {
-				sdx = -sdx;
-				sdy = -sdy;
+			// They stay clear of the edges of the map and of the player's row and
+			// column, and only walk on grass and roads
+			int newX = (monsters._mapX[slot] + (int8)monsters._tempX[slot]) & 0x3F;
+			int newY = (monsters._mapY[slot] + (int8)monsters._tempY[slot]) & 0x3F;
+			if (newX >= 4 && newX < 0x3C && newX != sg._mapX && newY >= 4 && newY < 0x3C && newY != sg._mapY) {
+				Data::TileId tile = _G(map).tileAt(newX, newY);
+				if ((tile == Data::TILE_GRASS || tile == Data::TILE_ROAD) && !isOccupied(newX, newY)) {
+					monsters._mapX[slot] = newX;
+					monsters._mapY[slot] = newY;
+				}
 			}
-		} else {
-			// Wander: 75% chance to pick a fresh random direction, else
-			// keep going the way it was already headed (kept in _tempX/Y)
-			if (randByte() < 0xC0 || (monsters._tempX[slot] == 0 && monsters._tempY[slot] == 0)) {
-				static const int8 DX[4] = { 0, 0, -1, 1 };
-				static const int8 DY[4] = { -1, 1, 0, 0 };
-				int r = randByte() & 3;
-				sdx = DX[r];
-				sdy = DY[r];
-				monsters._tempX[slot] = (byte)sdx;
-				monsters._tempY[slot] = (byte)sdy;
-			} else {
-				sdx = (int8)monsters._tempX[slot];
-				sdy = (int8)monsters._tempY[slot];
-			}
+
+			continue;
+		}
+
+		int dx = sg._mapX - monsters._mapX[slot];
+		int dy = sg._mapY - monsters._mapY[slot];
+		int sdx = signByte(dx * 4);
+		int sdy = signByte(dy * 4);
+
+		// Hostile monsters below 15 HP flee instead of approaching
+		if (flag == 1 && monsters._spellHP[slot] < 15) {
+			sdx = -sdx;
+			sdy = -sdy;
 		}
 
 		int newX = (monsters._mapX[slot] + sdx + Data::MAP_WIDTH) % Data::MAP_WIDTH;
@@ -151,8 +156,8 @@ void CityCastleLogic::updateCreatures() {
 			if (monsters._spellHP[slot] < 16)
 				++monsters._spellHP[slot];
 
-			if (!tryMoveMonster(slot, sdx, sdy) && !tryMoveMonster(slot, 0, sdy))
-				tryMoveMonster(slot, sdx, 0);
+			if (!tryMoveCityMonster(slot, sdx, sdy) && !tryMoveCityMonster(slot, 0, sdy))
+				tryMoveCityMonster(slot, sdx, 0);
 		}
 	}
 
@@ -171,6 +176,39 @@ void CityCastleLogic::updateCreatures() {
 	}
 
 	// Villages/towns/castles don't spawn new monsters
+}
+
+bool CityCastleLogic::cityMonsterCanEnter(int slot, int x, int y) const {
+	Data::Savegame &sg = _G(savegame);
+	Data::MapMonsters &monsters = _G(map)._monsters;
+
+	// Nothing moves while time is negated
+	if (sg._negateTimeTurns > 0)
+		return false;
+
+	// Only grass, forest and roads can be walked on, and forcefields by all but the
+	// player's classes. The first row and column of a settlement's map can't be entered,
+	// which keeps them from wrapping around its edges
+	Data::TileId tile = _G(map).tileAt(x, y);
+	bool passable = tile == Data::TILE_GRASS || tile == Data::TILE_FOREST || tile == Data::TILE_ROAD ||
+		(tile == Data::TILE_FORCEFIELD && monsters._type[slot] < 0x78);
+
+	return passable && x != 0 && y != 0 && (x != sg._mapX || y != sg._mapY) && !isOccupied(x, y);
+}
+
+bool CityCastleLogic::tryMoveCityMonster(int slot, int dx, int dy) {
+	if (dx == 0 && dy == 0)
+		return false;
+
+	Data::MapMonsters &monsters = _G(map)._monsters;
+	int newX = (monsters._mapX[slot] + dx + Data::MAP_WIDTH) % Data::MAP_WIDTH;
+	int newY = (monsters._mapY[slot] + dy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
+	if (!cityMonsterCanEnter(slot, newX, newY))
+		return false;
+
+	monsters._mapX[slot] = newX;
+	monsters._mapY[slot] = newY;
+	return true;
 }
 
 bool CityCastleLogic::steal(Data::Direction dir) {

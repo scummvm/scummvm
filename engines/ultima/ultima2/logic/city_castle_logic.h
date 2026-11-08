@@ -56,6 +56,17 @@ private:
 	void boostAttribute(int stat, int goldHundreds);
 
 	/**
+	 * Returns true if the monster in a slot can step onto (x,y)
+	 */
+	bool cityMonsterCanEnter(int slot, int x, int y) const;
+
+	/**
+	 * Attempts to move a monster by the given delta, wrapping around the
+	 * map; returns false if blocked
+	 */
+	bool tryMoveCityMonster(int slot, int dx, int dy);
+
+	/**
 	 * Returns true if a shopkeeper is currently standing at (x,y)
 	 */
 	bool shopkeeperAt(int x, int y) const;
