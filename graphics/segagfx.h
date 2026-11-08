@@ -214,16 +214,6 @@ public:
 
 	/**
 	 * Render vram in its current state to the target buffer/surface.
-	 * @param surf/dest:		target surface or buffer
-	 * @param renderBlockX, renderBlockY, renderBlockWidth, renderBlockHeight:
-								block (8x8 pixels) coordinates of target render area. Values of -1 for maximum range / full screen rendering.
-	 * @param spritesOnly:		skip rendering of the planes and only render the sprites.
-	 */
-	//void render(Surface *surf, int renderBlockX = -1, int renderBlockY = -1, int renderBlockWidth = -1, int renderBlockHeight = -1, bool spritesOnly = false);
-	//void render(uint8 *dest, int renderBlockX = -1, int renderBlockY = -1, int renderBlockWidth = -1, int renderBlockHeight = -1, bool spritesOnly = false);
-
-	/**
-	 * Render vram in its current state to the target buffer/surface.
 	 * @param surf/dst:		Target surface or buffer.
 	 * @param x, y, w, h:		Pixel coordinates of source and target render area. Values of -1 for maximum range / full screen rendering.
 	 */
@@ -261,13 +251,19 @@ public:
 	typedef Common::Functor1Mem<SegaRenderer*, void, HINTClient> HINTHandler;
 
 	/**
-	 * Horizontal Interrupt
-	 * @hINT_enable:			enable/disable
-	 * @hINT_setCounter			number of scan lines between hINT handler invocation
-	 * @hINT_setHandler			set hINT handler callback
+	 * Enable or disable horizontal interrupt emulation
+	 * @param enable:			enable / disable
 	 */
 	void hINT_enable(bool enable);
+	/**
+	 * Set the number of scan lines between horizontal interrupt handler invocation
+	 * @param counter:			number of scan lines
+	 */
 	void hINT_setCounter(uint8 counter);
+	/**
+	 * Set horizontal interrupt handler callback
+	 * @param hdl:				callback function
+	 */
 	void hINT_setHandler(const HINTHandler *hdl);
 
 protected:

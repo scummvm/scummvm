@@ -24,7 +24,6 @@
 #include "audio/softsynth/fmtowns_pc98/pcm_common.h"
 #include "common/mutex.h"
 
-
 class SegaPCMChannel final : public PCMChannel_Base {
 public:
 	SegaPCMChannel(SegaAudioInterfaceInternal *sai) : PCMChannel_Base(), _sai(sai), _playing(false), _stream(), _streamSamplesLeft(0), _streamFeedLen(0), _streamStartAddr(0), _streamTempBuff(nullptr) {}
