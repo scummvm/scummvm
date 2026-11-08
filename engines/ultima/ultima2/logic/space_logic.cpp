@@ -71,6 +71,7 @@ void SpaceLogic::takeOff() {
 	_G(logic) = Common::SharedPtr<Logic>(logic);
 
 	showSpaceView();
+	g_engine->focusedView()->send(Graphics::Views::GameMessage("LAUNCH"));
 }
 
 void SpaceLogic::resume() {

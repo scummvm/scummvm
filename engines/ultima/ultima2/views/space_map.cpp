@@ -43,6 +43,12 @@ SpaceMap::SpaceMap() : View("SpaceMap") {
 }
 
 bool SpaceMap::msgGame(const GameMessage &msg) {
+	if (msg._name == "LAUNCH") {
+		// The rocket has just taken off
+		startWarp();
+		return true;
+	}
+
 	// The starfield is drawn differently by the composite renderer
 	if (msg._name == "RELOAD_TILES")
 		redraw();
@@ -76,7 +82,6 @@ bool SpaceMap::msgFocus(const FocusMessage &msg) {
 	_shipX = 0x80;
 	_shipY = 0x40;
 	_speed = 0x80;
-	startWarp();
 	return View::msgFocus(msg);
 }
 
