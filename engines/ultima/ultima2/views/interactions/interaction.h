@@ -43,6 +43,11 @@ protected:
 	void writeString(const char *format, ...);
 	void prompt();
 
+	/**
+	 * Clears the Commands window's current line, such as the prompt
+	 */
+	void resetLine();
+
 public:
 	Interaction(const Common::String &name);
 	~Interaction() override {}

@@ -37,6 +37,11 @@ bool RocketLanding::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	_lastStep = g_system->getMillis();
 
+	// The map being shown has wiped the commands that got the ship here, so show them again
+	int world = _G(savegame)._orbitTarget;
+	resetLine();
+	writeString("Cmd: Landing requested!\n");
+	writeString("You are orbiting %s.\n", world < Data::PLANET_COUNT ? Data::PLANET_NAMES[world] : "X");
 	writeString("(Press Any Key)");
 	return Interaction::msgFocus(msg);
 }

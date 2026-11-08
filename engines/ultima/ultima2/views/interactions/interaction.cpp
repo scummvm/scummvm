@@ -52,6 +52,10 @@ void Interaction::writeString(const char *format, ...) {
 	writeString(msg);
 }
 
+void Interaction::resetLine() {
+	g_engine->baseView()->findView("Commands")->send(GameMessage("RESET_LINE"));
+}
+
 void Interaction::prompt() {
 	g_engine->baseView()->findView("Commands")->send(GameMessage("PROMPT"));
 }
