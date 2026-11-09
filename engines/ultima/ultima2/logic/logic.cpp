@@ -365,7 +365,14 @@ bool Logic::cast() {
 bool Logic::castSpell(Data::SpellType spell) {
 	// Spells only work in towers and dungeons
 	playFX(Data::SFX_FAIL);
-	writeString("-Failed!\n");
+
+	if (spell == Data::SPELL_MAGIC_MISSILE) {
+		// WORKAROUND: Original line wraps on the final '!'
+		writeString("-Failed");
+	} else {
+		writeString("-Failed!\n");
+	}
+
 	return true;
 }
 
