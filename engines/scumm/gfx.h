@@ -577,6 +577,7 @@ public:
 	void addDirtyRect(int x, int y, int w, int h);
 	void toggleLayers(int flags);
 	void scrollLayer(int layer, int offset, int top, int bottom, bool fast);
+	int getScrollRemainder() const { return _layers[0].scrollRemainder; }
 	void update();
 	bool isScrolling(int layer, int direction, int threshold = 0) const {
 		return (layer & ~1) ? false :

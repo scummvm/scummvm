@@ -566,6 +566,11 @@ void ScummEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 			return;
 	}
 	const VirtScreen *vs = &_virtscr[kMainVirtScreen];
+	int screenLeft = vs->xstart;
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_townsScreen && _enableSmoothScrolling)
+		screenLeft += _scrollRequest + _townsScreen->getScrollRemainder();
+#endif
 	const int top = _game.version >= 7 ? _screenTop : 0;
 	const int bottom = MIN<int>(vs->h, top + _screenHeight - vs->topline);
 	if (bottom <= top || _screenWidth <= 0 || _screenHeight <= 0)
@@ -575,7 +580,7 @@ void ScummEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 		if (name)
 			convertMessageToString(name, text, sizeof(text));
 		Common::U32String label = _charset->convertText((const char *)text, _language);
-		int screenX = x - vs->xstart;
+		int screenX = x - screenLeft;
 		int screenY = y - top + vs->topline;
 		if (_game.platform == Common::kPlatformNES && _NESStartStrip > 0)
 			screenX += 16;
@@ -599,8 +604,8 @@ void ScummEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 		const ObjectData &obj = _objs[i];
 		if (obj.obj_nr < 1 || obj.width <= 0 || obj.height <= 0)
 			continue;
-		const int left = MAX<int>(vs->xstart, obj.x_pos);
-		const int right = MIN<int>(vs->xstart + vs->w, obj.x_pos + obj.width);
+		const int left = MAX<int>(screenLeft, obj.x_pos);
+		const int right = MIN<int>(screenLeft + vs->w, obj.x_pos + obj.width);
 		const int upper = MAX<int>(top, obj.y_pos);
 		const int lower = MIN<int>(bottom, obj.y_pos + obj.height);
 		if (left >= right || upper >= lower)
@@ -624,7 +629,7 @@ void ScummEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 			continue;
 		const int x = actor->getPos().x;
 		const int y = (actor->_top + actor->_bottom) / 2;
-		if (x < vs->xstart || x >= vs->xstart + vs->w || y < top || y >= bottom)
+		if (x < screenLeft || x >= screenLeft + vs->w || y < top || y >= bottom)
 			continue;
 		if (getActorFromPos(x, y) == i)
 			add(x, y, actor->getActorName(), Graphics::kHotspotNPC);

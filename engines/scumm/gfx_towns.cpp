@@ -21,6 +21,7 @@
 
 #include "common/endian.h"
 #include "common/config-manager.h"
+#include "graphics/hotspot_renderer.h"
 
 #include "scumm/scumm.h"
 #include "scumm/charset.h"
@@ -238,6 +239,7 @@ void ScummEngine::towns_updateGfx() {
 		_refreshNeedCatchUp = (dur / ARRAYSIZE(_refreshDuration)) > (1000 / 60);
 	}
 
+	const int scrollRemainder = _scrollRequest + _townsScreen->getScrollRemainder();
 	if (_enableSmoothScrolling) {
 		int scrlTop = _virtscr[kMainVirtScreen].topline * _textSurfaceMultiplier;
 		int scrlBottom = scrlTop + _virtscr[kMainVirtScreen].h * _textSurfaceMultiplier;
@@ -256,6 +258,10 @@ void ScummEngine::towns_updateGfx() {
 	}
 
 	_townsScreen->update();
+	// Refresh only an active overlay, after the camera frame is complete.
+	if (_enableSmoothScrolling && scrollRemainder != _scrollRequest + _townsScreen->getScrollRemainder() &&
+		camera._cur == camera._last && _hotspotRenderer && _hotspotRenderer->ownsOverlay())
+		drawHotspots();
 }
 
 bool ScummEngine::towns_isRectInStringBox(int x1, int y1, int x2, int y2) {
