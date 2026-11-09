@@ -148,19 +148,22 @@ public:
 template<bool inStereo, bool outStereo, bool reverseStereo>
 template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
 void RateConverter_Impl<inStereo, outStereo, reverseStereo>::writeFrame(st_sample_t *&outBuffer, int16 inL, int16 inR, st_volume_t volL_val, st_volume_t volR_val) {
+	// kMaxMixerVolume is 256 (a power of two); use arithmetic right-shift instead
+	// of signed integer division to avoid slow idiv/divs on ARM and 68k targets.
+	static_assert(Audio::Mixer::kMaxMixerVolume == 256, "Update shift if kMaxMixerVolume changes");
 	if (volL | volR) {
 		st_sample_t outL, outR;
 
 		if (volL != 0) {
 			if (volL != Audio::Mixer::kMaxMixerVolume)
-				outL = (inL * (int)volL_val) / Audio::Mixer::kMaxMixerVolume;
+				outL = (inL * (int)volL_val) >> 8;
 			else
 				outL = inL;
 		}
 
 		if (volR != 0) {
 			if (volR != Audio::Mixer::kMaxMixerVolume)
-				outR = (inR * (int)volR_val) / Audio::Mixer::kMaxMixerVolume;
+				outR = (inR * (int)volR_val) >> 8;
 			else
 				outR = inR;
 		}
@@ -331,13 +334,13 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::downsampleConvert(Au
 				st_sample_t outL, outR;
 				if (volL != 0) {
 					if (volL != Audio::Mixer::kMaxMixerVolume)
-						outL = (inL * (int)volL_val) / Audio::Mixer::kMaxMixerVolume;
+						outL = (inL * (int)volL_val) >> 8;
 					else
 						outL = inL;
 				}
 				if (volR != 0) {
 					if (volR != Audio::Mixer::kMaxMixerVolume)
-						outR = (inR * (int)volR_val) / Audio::Mixer::kMaxMixerVolume;
+						outR = (inR * (int)volR_val) >> 8;
 					else
 						outR = inR;
 				}
@@ -444,14 +447,14 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::interpolateConvert(A
 				st_sample_t outL, outR;
 				if (volL != 0) {
 					if (volL != Audio::Mixer::kMaxMixerVolume)
-						outL = (inL * (int)volL_val) / Audio::Mixer::kMaxMixerVolume;
+						outL = (inL * (int)volL_val) >> 8;
 					else
 						outL = inL;
 				}
 
 				if (volR != 0) {
 					if (volR != Audio::Mixer::kMaxMixerVolume)
-						outR = (inR * (int)volR_val) / Audio::Mixer::kMaxMixerVolume;
+						outR = (inR * (int)volR_val) >> 8;
 					else
 						outR = inR;
 				}

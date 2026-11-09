@@ -64,11 +64,11 @@ static inline void processSample(T& a, int b) {
 #else
 		val = (int)a + b;
 #endif
-
-		if (val > maxVal)
-			val = maxVal;
-		else if (val < minVal)
-			val = minVal;
+		// Two independent ternary expressions let compilers emit conditional-move
+		// instructions (cmov/csel) instead of a branch chain, avoiding mispredictions
+		// in the audio mix hot path (~350k-400k calls/sec at 44.1/48 kHz stereo).
+		val = val > maxVal ? maxVal : val;
+		val = val < minVal ? minVal : val;
 
 #ifdef OUTPUT_UNSIGNED_AUDIO
 		a = (T)(val ^ signMask);
