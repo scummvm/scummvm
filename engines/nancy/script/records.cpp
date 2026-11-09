@@ -1103,7 +1103,9 @@ void OverrideRecord::onZChanged() {
 
 // An override draws by having its "Render" function called every frame, which
 // draws through the "Draw" object. Here that goes onto a picture as large as
-// the viewport, which is started over every frame.
+// the viewport, which is started over every frame. The picture is only shown
+// again when it changed: the menus darken all the screen behind them, and
+// drawing all of it every frame made them slow.
 void OverrideRecord::updateGraphics() {
 	lua_State *L = getLua();
 
@@ -1113,7 +1115,7 @@ void OverrideRecord::updateGraphics() {
 
 	if (!hasRender || !isShown()) {
 		if (_canvas) {
-			_canvas->setVisible(false);
+			_canvas->setVisible(false, false);
 		}
 
 		return;
@@ -1128,19 +1130,27 @@ void OverrideRecord::updateGraphics() {
 		_canvas = new RecordGraphic();
 		_canvas->init();
 		_canvas->_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getTransparentPixelFormat());
+		_canvas->_drawSurface.clear(0);
 		_canvas->moveTo(bounds);
 		_canvas->setScriptZ(getZ(), getContext());
 		_canvas->registerGraphics();
+		_renderSurface.create(bounds.width(), bounds.height(), _canvas->_drawSurface.format);
 	}
 
-	_canvas->_drawSurface.clear(0);
+	_renderSurface.clear(0);
 
-	s_drawTarget = &_canvas->_drawSurface;
+	s_drawTarget = &_renderSurface;
 	callFunction("Render");
 	s_drawTarget = nullptr;
 
-	_canvas->setVisible(true);
-	_canvas->setNeedsRedraw(true);
+	Graphics::ManagedSurface &shown = _canvas->_drawSurface;
+	const uint32 size = shown.pitch * shown.h;
+	if (memcmp(shown.getPixels(), _renderSurface.getPixels(), size) != 0) {
+		memcpy(shown.getPixels(), _renderSurface.getPixels(), size);
+		_canvas->setNeedsRedraw(true);
+	}
+
+	_canvas->setVisible(true, false);
 }
 
 // this:Done()

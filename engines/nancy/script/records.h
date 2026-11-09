@@ -250,7 +250,9 @@ protected:
 	bool setField(const Common::String &key) override;
 
 private:
-	// What the "Render" function draws on, for the records that have one
+	// What the "Render" function draws on, for the records that have one, and
+	// what it shows
+	Graphics::ManagedSurface _renderSurface;
 	RecordGraphic *_canvas = nullptr;
 
 	Common::String _messagingName;	// Nancy22, from SetMessagingName
