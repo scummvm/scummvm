@@ -32,6 +32,8 @@ void FixedPipeline::activateInternal() {
 	GL_CALL(glDisable(GL_CULL_FACE));
 	GL_CALL(glDisable(GL_DEPTH_TEST));
 	GL_CALL(glDisable(GL_DITHER));
+	GL_CALL(glDisable(GL_COLOR_LOGIC_OP));
+	GL_CALL(glDisable(GL_INDEX_LOGIC_OP));
 
 	GL_CALL(glDisable(GL_LIGHTING));
 	GL_CALL(glDisable(GL_FOG));

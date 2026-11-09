@@ -57,6 +57,13 @@ void ShaderPipeline::activateInternal() {
 	GL_CALL(glDisable(GL_DEPTH_TEST));
 	GL_CALL(glDisable(GL_DITHER));
 
+#if !USE_FORCED_GLES2
+	if (OpenGLContext.type == kContextGL) {
+		GL_CALL(glDisable(GL_COLOR_LOGIC_OP));
+		GL_CALL(glDisable(GL_INDEX_LOGIC_OP));
+	}
+#endif
+
 	if (OpenGLContext.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 	}
