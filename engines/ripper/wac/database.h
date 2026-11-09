@@ -25,6 +25,9 @@
 #include "common/rect.h"
 
 #include "ripper/resources.h"
+#include "ripper/controls.h"
+#include "ripper/input.h"
+#include "ripper/modal_dialog.h"
 #include "ripper/wac/database_catalog.h"
 
 namespace Ripper {
@@ -34,7 +37,6 @@ class WacManager;
 class WacStillImageViewer;
 class WacVoiceLockRenderer;
 class RipperEngine;
-struct MouseState;
 
 class WacDatabaseSession {
 public:
@@ -54,20 +56,65 @@ private:
 		byte originalIndex() const { return catalog->originalIndex; }
 	};
 
+	enum class DatabaseInputMode {
+		kPlayback,
+		kTextPanel,
+		kViewer
+	};
+	enum class DatabaseInputOutcome {
+		kContinue,
+		kCloseEntry,
+		kExitWac,
+		kSelectEntry,
+		kRedrawText,
+		kRefreshPalette
+	};
+
+	struct TextScrollState {
+		uint firstVisible = 0;
+		uint maximumFirstVisible = 0;
+		uint visibleRows = 0;
+		ModalDialogManager::TextPanelScrollControl control = ModalDialogManager::kTextPanelScrollNone;
+		int dragOffset = 0;
+		bool dragging = false;
+	};
+
+	struct DatabaseInputState {
+		DatabaseInputMode mode;
+		TextScrollState text;
+
+		explicit DatabaseInputState(DatabaseInputMode mode_) : mode(mode_) {}
+	};
+
+	struct DatabaseInputResult {
+		DatabaseInputOutcome outcome;
+		MouseState mouse;
+
+		explicit DatabaseInputResult(DatabaseInputOutcome outcome_ = DatabaseInputOutcome::kContinue) :
+			outcome(outcome_) {}
+		bool closesEntry() const {
+			return outcome == DatabaseInputOutcome::kCloseEntry ||
+				outcome == DatabaseInputOutcome::kExitWac ||
+				outcome == DatabaseInputOutcome::kSelectEntry;
+		}
+	};
+
 	void serviceDatabaseCornerAnimation(bool textPanelActive = false);
 	void buildDatabaseEntries();
 	void drawDatabase() const;
 	void clearDatabaseMediaViewport();
-	uint16 serviceDatabaseMediaInput(byte activeEntryIndex,
-		uint *textFirstVisible = nullptr, uint textMaximumFirstVisible = 0,
-		uint textPageRows = 0, MouseState *publishedMouse = nullptr,
-		bool deferCursorUpdate = false);
+	DatabaseInputResult serviceDatabaseMediaInput(byte activeEntryIndex, DatabaseInputState &input);
+	DatabaseInputOutcome routeDatabaseAction(uint16 action);
+	bool navigateDatabase(uint16 command, bool allowTab);
+	bool resolveDatabaseRow(const Common::Point &point, uint &index) const;
+	bool scrollDatabaseTextKey(TextScrollState &scroll, uint16 command, bool &redraw);
+	bool scrollDatabaseTextMouse(TextScrollState &scroll, const MouseState &mouse);
 	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
-		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
+		TextScrollState &scroll);
 	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
 	uint16 runJournal(byte entryIndex, const Common::String &entryLabel);
 	bool drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress,
-		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
+		TextScrollState &scroll);
 	bool drawJournalTextPanelLine(const Common::Array<Common::String> &lines,
 		uint firstVisible, uint visibleRows, uint lineIndex);
 	uint16 runVoiceLock(byte entryIndex, const Common::String &entryLabel);
@@ -87,13 +134,9 @@ private:
 
 	WacManager *_wac;
 	Common::Array<DatabaseEntry> _databaseEntries;
-	uint _databaseSelection;
-	uint _databaseFirstVisible;
-	int _databaseTextScrollControl;
-	int _databaseTextScrollDragOffset;
+	ChooserModel _databaseChooser;
 	uint32 _databaseCornerLastMillis;
 	bool _databaseCornerAlternate;
-	bool _databaseTextScrollDragging;
 };
 
 } // End of namespace Ripper

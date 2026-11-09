@@ -56,7 +56,6 @@ static const int kWacMediaScrollStep = 10;
 static const uint kWacMediaPaletteFirst = 10;
 static const uint kWacMediaPaletteCount = 140;
 static const byte kWacDatabaseBackground = 4;
-static const uint16 kWacDatabaseSelectionChanged = 0xfffe;
 static const uint16 kNoAction = WacManager::kNoAction;
 static const uint16 kExitAction = WacManager::kExitAction;
 
@@ -244,18 +243,18 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 		completionFlag, presentationBounds.left, presentationBounds.top,
 		presentationBounds.width(), presentationBounds.height());
 
-	uint16 result = kNoAction;
+	using Outcome = WacDatabaseSession::DatabaseInputOutcome;
+	WacDatabaseSession::DatabaseInputState input(WacDatabaseSession::DatabaseInputMode::kViewer);
+	Outcome result = Outcome::kContinue;
 	bool presentationPressed = false;
 	while (!_database->engine()->shouldQuit()) {
-		MouseState mouse;
-		const uint16 command = _database->serviceDatabaseMediaInput(
-			entryIndex, nullptr, 0, 0, &mouse, true);
-		if (command == kWacDatabaseSelectionChanged ||
-				command == kExitAction || command == 0x1b) {
-			result = command;
+		const auto event = _database->serviceDatabaseMediaInput(entryIndex, input);
+		if (event.closesEntry()) {
+			result = event.outcome;
 			break;
 		}
-		if (command == MediaSequenceCallback::kContinueRefreshPalette) {
+		const MouseState &mouse = event.mouse;
+		if (event.outcome == Outcome::kRefreshPalette) {
 			g_system->getPaletteManager()->setPalette(
 				_image.palette.data() + kWacMediaPaletteFirst * 3,
 				kWacMediaPaletteFirst, kWacMediaPaletteCount);
@@ -327,16 +326,16 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 	_database->drawDatabase();
 	_database->engine()->getInput()->discardMouseTransitions();
 	debugC(1, kDebugWac,
-		"Ripper: left WAC still-image viewer entry=%u image='%s' result=0x%x scrollOffset=%u presentationAvailable=%d completion=0x%x value=%d",
-		entryIndex, imagePath.c_str(), result, _scrollOffset,
+		"Ripper: left WAC still-image viewer entry=%u image='%s' outcome=%d scrollOffset=%u presentationAvailable=%d completion=0x%x value=%d",
+		entryIndex, imagePath.c_str(), (int)result, _scrollOffset,
 		presentationAvailable, completionFlag,
 		completionFlag != 0 &&
 			_database->engine()->getMilestones()->isSet(completionFlag));
-	if (result == kWacDatabaseSelectionChanged &&
-			_database->_databaseSelection < _database->_databaseEntries.size())
+	if (result == Outcome::kSelectEntry &&
+			_database->_databaseChooser.selectedIndex() < _database->_databaseEntries.size())
 		return _database->dispatchDatabaseEntry(
-			_database->_databaseEntries[_database->_databaseSelection]);
-	return result == kExitAction ? kExitAction : kNoAction;
+			_database->_databaseEntries[_database->_databaseChooser.selectedIndex()]);
+	return result == Outcome::kExitWac ? kExitAction : kNoAction;
 }
 
 } // End of namespace Ripper

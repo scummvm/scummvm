@@ -69,8 +69,6 @@ static const int kWacJournalTextEntryWidth = 200;
 static const int kWacJournalTextEntryHeight = 42;
 static const int kWacJournalTextEntryTop =
 	kWacMediaTop + kWacTextPanelHeight + 5;
-static const uint16 kWacDatabaseSelectionChanged = 0xfffe;
-static const uint16 kWacDatabaseTextScrolled = 0xfffd;
 static const uint16 kNoAction = WacManager::kNoAction;
 static const uint16 kExitAction = WacManager::kExitAction;
 
@@ -89,14 +87,13 @@ static void shuffleJournalLine(Common::String &line,
 
 bool WacDatabaseSession::drawJournalTextPanel(
 		const Common::Array<Common::String> &lines, uint progress,
-		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows) {
+		TextScrollState &scroll) {
 	const Common::Rect bounds(kWacMediaLeft, kWacMediaTop,
 		kWacMediaLeft + kWacTextPanelWidth, kWacMediaTop + kWacTextPanelHeight);
 	if (!engine()->getModalDialog()->drawRetainedTextPanelLines(
-			lines, bounds, firstVisible, maximumFirstVisible, visibleRows,
+			lines, bounds, scroll.firstVisible, scroll.maximumFirstVisible, scroll.visibleRows,
 			ModalDialogManager::kWacPresentation,
-			static_cast<ModalDialogManager::TextPanelScrollControl>(
-				_databaseTextScrollControl)))
+			scroll.control))
 		return false;
 
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -181,17 +178,11 @@ uint16 WacDatabaseSession::runJournal(byte entryIndex,
 			shuffleJournalLine(displayLines[lineIndex], randomSource);
 	}
 
-	uint firstVisible = 0;
-	uint maximumFirstVisible = 0;
-	uint visibleRows = 0;
-	_databaseTextScrollControl =
-		ModalDialogManager::kTextPanelScrollNone;
-	_databaseTextScrollDragging = false;
-	_databaseTextScrollDragOffset = 0;
+	DatabaseInputState input(DatabaseInputMode::kTextPanel);
+	TextScrollState &scroll = input.text;
 	uint progress = sourceLines.empty() ? 100 :
 		revealedLines * 100 / sourceLines.size();
-	if (!drawJournalTextPanel(displayLines, progress, firstVisible,
-			maximumFirstVisible, visibleRows))
+	if (!drawJournalTextPanel(displayLines, progress, scroll))
 		return kNoAction;
 
 	engine()->getInput()->discardMouseTransitions();
@@ -260,27 +251,24 @@ uint16 WacDatabaseSession::runJournal(byte entryIndex,
 	if (unlocked && !revealComplete && !cancelled) {
 		audioStarted = engine()->getMedia()->playVoiceClip(
 			"wacjrnl.wav", journalAudio);
-		if (!drawJournalTextPanel(displayLines, progress, firstVisible,
-				maximumFirstVisible, visibleRows))
+		if (!drawJournalTextPanel(displayLines, progress, scroll))
 			cancelled = true;
 	}
 
-	uint16 result = cancelled ? 0x1b : kNoAction;
+	DatabaseInputOutcome result = cancelled ? DatabaseInputOutcome::kCloseEntry : DatabaseInputOutcome::kContinue;
 	uint32 revealStartMillis = g_system->getMillis(true);
 	uint32 lastShuffleMillis = revealStartMillis;
-	uint visibleShuffleLine = MAX<uint>(revealedLines, firstVisible);
+	uint visibleShuffleLine = MAX<uint>(revealedLines, scroll.firstVisible);
 	while (!cancelled && !engine()->shouldQuit()) {
-		const uint16 command = serviceDatabaseMediaInput(entryIndex,
-			&firstVisible, maximumFirstVisible, visibleRows);
+		const DatabaseInputResult event = serviceDatabaseMediaInput(entryIndex, input);
 		bool redraw = false;
 		int redrawLine = -1;
-		if (command == kWacDatabaseTextScrolled ||
-				command == MediaSequenceCallback::kContinueRefreshPalette) {
-			visibleShuffleLine = MAX<uint>(revealedLines, firstVisible);
+		if (event.outcome == DatabaseInputOutcome::kRedrawText ||
+				event.outcome == DatabaseInputOutcome::kRefreshPalette) {
+			visibleShuffleLine = MAX<uint>(revealedLines, scroll.firstVisible);
 			redraw = true;
-		} else if (command == kWacDatabaseSelectionChanged ||
-				command == kExitAction || command == 0x1b) {
-			result = command;
+		} else if (event.closesEntry()) {
+			result = event.outcome;
 			break;
 		}
 
@@ -303,7 +291,7 @@ uint16 WacDatabaseSession::runJournal(byte entryIndex,
 			progress = sourceLines.empty() ? 100 :
 				revealedLines * 100 / sourceLines.size();
 			revealStartMillis = now;
-			visibleShuffleLine = MAX<uint>(revealedLines, firstVisible);
+			visibleShuffleLine = MAX<uint>(revealedLines, scroll.firstVisible);
 			redraw = true;
 			debugC(2, kDebugWac,
 				"Ripper: WAC journal reveal line=%u/%u section=%u enabled=%d progress=%u complete=%d delayTicks=36",
@@ -313,9 +301,9 @@ uint16 WacDatabaseSession::runJournal(byte entryIndex,
 
 		if (unlocked && !revealComplete &&
 				now - lastShuffleMillis >= kWacJournalShuffleInterval) {
-			const uint firstShuffleLine = MAX<uint>(revealedLines, firstVisible);
+			const uint firstShuffleLine = MAX<uint>(revealedLines, scroll.firstVisible);
 			const uint shuffleLimit = MIN<uint>(displayLines.size(),
-				firstVisible + visibleRows);
+				scroll.firstVisible + scroll.visibleRows);
 			if (visibleShuffleLine < firstShuffleLine ||
 					visibleShuffleLine >= shuffleLimit)
 				visibleShuffleLine = firstShuffleLine;
@@ -328,12 +316,11 @@ uint16 WacDatabaseSession::runJournal(byte entryIndex,
 			lastShuffleMillis = now;
 		}
 
-		if (redraw && !drawJournalTextPanel(displayLines, progress, firstVisible,
-				maximumFirstVisible, visibleRows))
+		if (redraw && !drawJournalTextPanel(displayLines, progress, scroll))
 			break;
 		if (!redraw && redrawLine >= 0 &&
-				!drawJournalTextPanelLine(displayLines, firstVisible,
-					visibleRows, redrawLine))
+				!drawJournalTextPanelLine(displayLines, scroll.firstVisible,
+					scroll.visibleRows, redrawLine))
 			break;
 		presentScreen();
 		g_system->delayMillis(10);
@@ -342,19 +329,16 @@ uint16 WacDatabaseSession::runJournal(byte entryIndex,
 	if (audioStarted)
 		engine()->getMedia()->stopSoundEffect(journalAudio);
 	clearDatabaseMediaViewport();
-	_databaseTextScrollControl =
-		ModalDialogManager::kTextPanelScrollNone;
-	_databaseTextScrollDragging = false;
 	drawDatabase();
 	debugC(1, kDebugWac,
-		"Ripper: left WAC journal scene entry=%u result=0x%x unlocked=%d revealed=%u/%u section=%u audioStarted=%d",
-		entryIndex, result, unlocked, revealedLines, sourceLines.size(),
+		"Ripper: left WAC journal scene entry=%u outcome=%d unlocked=%d revealed=%u/%u section=%u audioStarted=%d",
+		entryIndex, (int)result, unlocked, revealedLines, sourceLines.size(),
 		revealFlagIndex, audioStarted);
-	if (result == kWacDatabaseSelectionChanged &&
-			_databaseSelection < _databaseEntries.size())
+	if (result == DatabaseInputOutcome::kSelectEntry &&
+			_databaseChooser.selectedIndex() < _databaseEntries.size())
 		return dispatchDatabaseEntry(
-			_databaseEntries[_databaseSelection]);
-	return result == kExitAction ? kExitAction : kNoAction;
+			_databaseEntries[_databaseChooser.selectedIndex()]);
+	return result == DatabaseInputOutcome::kExitWac ? kExitAction : kNoAction;
 }
 
 } // End of namespace Ripper

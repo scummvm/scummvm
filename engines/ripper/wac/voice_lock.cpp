@@ -49,7 +49,6 @@ static const int kWacDatabaseLeft = 400;
 static const int kWacDatabaseTop = 50;
 static const int kWacDatabaseRight = 590;
 static const int kWacDatabaseBottom = 332;
-static const uint16 kWacDatabaseSelectionChanged = 0xfffe;
 static const int kWacVoiceLockClientLeftInset = 5;
 static const int kWacVoiceLockClientTopInset = 20;
 static const int kWacVoiceLockClientRightInset = 20;
@@ -203,19 +202,18 @@ uint16 WacDatabaseSession::runVoiceLock(byte entryIndex,
 		kWacVoiceLockClientRightInset, kWacVoiceLockClientBottomInset,
 		kWacVoiceLockSelectionTolerance);
 
-	uint16 result = kNoAction;
+	DatabaseInputState input(DatabaseInputMode::kViewer);
+	DatabaseInputOutcome result = DatabaseInputOutcome::kContinue;
 	bool redraw = false;
 	bool solved = false;
 	while (!engine()->shouldQuit()) {
-		MouseState mouse;
-		const uint16 command = serviceDatabaseMediaInput(entryIndex,
-			nullptr, 0, 0, &mouse, true);
-		if (command == kWacDatabaseSelectionChanged || command == kExitAction ||
-				command == 0x1b) {
-			result = command;
+		const DatabaseInputResult event = serviceDatabaseMediaInput(entryIndex, input);
+		if (event.closesEntry()) {
+			result = event.outcome;
 			break;
 		}
-		if (command == MediaSequenceCallback::kContinueRefreshPalette)
+		const MouseState &mouse = event.mouse;
+		if (event.outcome == DatabaseInputOutcome::kRefreshPalette)
 			redraw = true;
 		const bool nextPuzzleHelpEnabled =
 			engine()->isPuzzleHelpEnabled();
@@ -565,7 +563,7 @@ uint16 WacDatabaseSession::runVoiceLock(byte entryIndex,
 			engine()->getMedia()->play("accesed.avi", true);
 		engine()->getMilestones()->set(
 			kMilestoneSecretAnimalLabOpen, true, "wac-voice-lock");
-		result = kExitAction;
+		result = DatabaseInputOutcome::kExitWac;
 		debugC(1, kDebugWac,
 			"Ripper: solved WAC voice-lock puzzle media='accesed.avi' played=%d milestone=%u selections=%u",
 			played, kMilestoneSecretAnimalLabOpen, selections.size());
@@ -577,14 +575,14 @@ uint16 WacDatabaseSession::runVoiceLock(byte entryIndex,
 	engine()->getCursor()->dispatchSelectionIndexChange(savedCursor);
 	engine()->getInput()->discardMouseTransitions();
 	debugC(1, kDebugWac,
-		"Ripper: left WAC voice-lock puzzle entry=%u result=0x%x editor=%d quantized=%d selections=%u solved=%d",
-		entryIndex, result, editorAvailable, quantized,
+		"Ripper: left WAC voice-lock puzzle entry=%u outcome=%d editor=%d quantized=%d selections=%u solved=%d",
+		entryIndex, (int)result, editorAvailable, quantized,
 		selections.size(), solved);
-	if (result == kWacDatabaseSelectionChanged &&
-			_databaseSelection < _databaseEntries.size())
+	if (result == DatabaseInputOutcome::kSelectEntry &&
+			_databaseChooser.selectedIndex() < _databaseEntries.size())
 		return dispatchDatabaseEntry(
-			_databaseEntries[_databaseSelection]);
-	return result == kExitAction ? kExitAction : kNoAction;
+			_databaseEntries[_databaseChooser.selectedIndex()]);
+	return result == DatabaseInputOutcome::kExitWac ? kExitAction : kNoAction;
 }
 
 } // End of namespace Ripper
