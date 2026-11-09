@@ -31,6 +31,7 @@
 namespace Tesoro {
 
 class Display;
+class Level;
 class Room;
 
 struct ObjectRect {
@@ -103,7 +104,9 @@ public:
 	int16 sortValue() const { return _sortValue; }
 	void setSortValue(int16 sort) { _sortValue = sort; }
 	uint64 nameKey() const { return _nameKey; }
-
+	/** Class number from the level file (the factory's switch value, low byte). */
+	byte kindId() const { return _kind; }
+	void setKindId(byte kind) { _kind = kind; }
 	const ObjectRect &hitRect() const { return _hitRect; }
 	const ObjectRect &movedArea() const { return _movedArea; }
 
@@ -113,6 +116,10 @@ public:
 	AnimSet &animation() { return _anim; }
 	const AnimSet &animation() const { return _anim; }
 
+	/** Binds the object to a level and runs onAttach(). */
+	void attachToLevel(Level *level);
+
+	Level *level() const { return _level; }
 	Room *room() const { return _room; }
 	void setRoom(Room *room) { _room = room; }
 
@@ -132,6 +139,10 @@ protected:
 	 */
 	void drawAnimation(const Camera &camera, Display &display, bool skipPastRight);
 
+	/** Called once the object is attached to a level */
+	virtual void onAttach() {}
+
+	Level *_level = nullptr;
 	Room *_room = nullptr;
 	uint32 _flags = 0;
 	int32 _x = 0, _y = 0;
@@ -146,6 +157,9 @@ protected:
 	ObjectRect _movedArea;
 	AnimSet _anim;
 };
+
+/** Attaches every object of the list to the level, in list order. */
+void attachAll(ObjectList &list, Level *level);
 
 } // End of namespace Tesoro
 

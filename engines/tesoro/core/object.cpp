@@ -26,6 +26,7 @@
 #include "tesoro/core/display.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/core/object.h"
+#include "tesoro/core/room.h"
 
 namespace Tesoro {
 
@@ -92,6 +93,21 @@ void Object::moveTo(int32 x, int32 y, bool setCurrent) {
 	}
 	_previousX = x;
 	_previousY = y;
+}
+
+void Object::attachToLevel(Level *level) {
+	if (level)
+		_level = level;
+
+	if ((_flags & kInRoomList) && _room)
+		_room->insertSorted(this);
+
+	onAttach();
+}
+
+void attachAll(ObjectList &list, Level *level) {
+	for (uint i = 0; i < list.size(); ++i)
+		list[i]->attachToLevel(level);
 }
 
 void Object::drawAnimation(const Camera &camera, Display &display, bool skipPastRight) {

@@ -10,11 +10,15 @@ MODULE_OBJS = \
 	core/archive.o \
 	core/archiveindex.o \
 	core/camera.o \
+	core/cameraframe.o \
 	core/clock.o \
 	core/display.o \
+	core/level.o \
 	core/namekey.o \
 	core/object.o \
 	core/renderqueue.o \
+	core/room.o \
+	core/spriteobject.o \
 	core/textqueue.o
 
 # This module can be built as a plugin

@@ -67,6 +67,8 @@ public:
 	AnimImage &mutableImage(uint i) { return _images[i]; }
 	int mode() const { return _mode; }
 
+	/** Zeroes the movement of one step. */
+	void clearStepMovement(uint i);
 
 private:
 	int _mode = kLoadNow;

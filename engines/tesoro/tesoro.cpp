@@ -19,7 +19,6 @@
  *
  */
 
-#include "tesoro/tesoro.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
@@ -28,23 +27,16 @@
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
-#include "tesoro/console.h"
-#include "tesoro/detection.h"
-
 #include "graphics/managed_surface.h"
+
+#include "tesoro/console.h"
+#include "tesoro/tesoro.h"
+#include "tesoro/detection.h"
+#include "tesoro/core/spriteobject.h"
 
 namespace Tesoro {
 
 TesoroEngine *g_engine;
-
-static const int32 kScrollSpeed = 4;	// camera units per frame while an arrow key is held
-static const int32 kCameraDivisor = 300;	// scaledX = x * 300 / divisor, so 300 draws at world scale
-
-/** Test object that draws its animation through the camera. */
-class TestObject : public Object {
-public:
-	void draw(const Camera &camera, Display &display) override { drawAnimation(camera, display, true); }
-};
 
 TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																			   _gameDescription(gameDesc), _clock(syst->getMillis()), _randomSource("Tesoro") {
@@ -93,6 +85,10 @@ Common::Error TesoroEngine::run() {
 		warning("Tesoro: the font FUENTES.ANM cannot be read");
 	}
 	_display.setFont(_font.bank());
+
+
+	int32 kScrollSpeed = 4;	// camera units per frame while an arrow key is held
+	int32 kCameraDivisor = 300;	// scaledX = x * 300 / divisor, so 300 draws at world scale
 
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
@@ -176,8 +172,9 @@ bool TesoroEngine::showObject(const char *name) {
 	record.banks.push_back(0);
 
 	const int32 now = gameTime();
-	TestObject *object = new TestObject();
-	object->initAnimated(record, 0, _testPlayers, 0);
+	SpriteObject *object = new SpriteObject();
+
+	object->init(record, 0, _testPlayers, 0);
 	object->animation().selectBank(0, 0, -1, true, true, now);
 	_testObject = object;
 

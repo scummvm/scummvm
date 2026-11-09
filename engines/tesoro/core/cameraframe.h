@@ -44,6 +44,9 @@ public:
 	/** Makes the camera show the rectangle of the first step and start at the frame's position. False if there is no bank. */
 	bool frameCamera(Camera &camera);
 
+protected:
+	void onAttach() override;
+
 private:
 	char _targetName[13] = {};
 	Object *_target = nullptr;

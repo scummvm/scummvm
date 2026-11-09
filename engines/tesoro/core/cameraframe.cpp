@@ -23,7 +23,7 @@
 
 #include "common/textconsole.h"
 
-
+#include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
 
 namespace Tesoro {
@@ -37,6 +37,17 @@ void CameraFrame::init(const ObjectRecord &record, int16 roomSortOffset, const C
 	_count = (uint16)(record.dataByte(0xd) + 1);
 	_flag = record.dataByte(0xe);
 	_value = (uint16)(record.dataByte(0xf) | record.dataByte(0x10) << 8);
+}
+
+void CameraFrame::onAttach() {
+	if (!_level || _anim.bankCount() == 0 || !_anim.player(0).bank()) {
+		warning("CameraFrame: nothing to frame");
+		return;
+	}
+
+	_target = _targetName[0] ? _level->findObject(nameKey64(_targetName)) : nullptr;
+
+	frameCamera(_level->camera());
 }
 
 bool CameraFrame::frameCamera(Camera &camera) {

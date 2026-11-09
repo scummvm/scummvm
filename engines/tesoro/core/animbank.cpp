@@ -145,6 +145,15 @@ bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mod
 	return true;
 }
 
+void AnimBank::clearStepMovement(uint i) {
+	if (i >= _steps.size()) {
+		warning("AnimBank: step %u does not exist", i);
+		return;
+	}
+	_steps[i].x = 0;
+	_steps[i].y = 0;
+}
+
 bool AnimPlayer::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode) {
 	Common::SharedPtr<AnimBank> bank(new AnimBank());
 	if (!bank->load(dat, entryOffset, mode))
