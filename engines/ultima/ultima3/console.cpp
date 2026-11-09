@@ -46,6 +46,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("enemy", WRAP_METHOD(Console, cmdEnemy));
 	registerCmd("hp", WRAP_METHOD(Console, cmdHP));
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
+	registerCmd("level", WRAP_METHOD(Console, cmdLevel));
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
@@ -432,6 +433,34 @@ bool Console::cmdFood(int argc, const char **argv) {
 
 	g_engine->focusedView()->redraw();
 	debugPrintf("Food set to %d\n", MAX_VALUE);
+	return true;
+}
+
+bool Console::cmdLevel(int argc, const char **argv) {
+	constexpr int MAX_LEVEL = 25;
+
+	int level = (argc == 2) ? atoi(argv[1]) : 0;
+	if (level < 1 || level > MAX_LEVEL) {
+		debugPrintf("level <1-%d>\n", MAX_LEVEL);
+		return true;
+	}
+
+	int first, last;
+	if (!getTargets(1, argv, 1, first, last))
+		return true;
+
+	for (int i = first; i <= last; ++i) {
+		Data::RosterEntry &e = _G(savegame).partyMember(i);
+
+		// The level is kept in the hundreds of the hit point limit, and takes
+		// a hundred experience for each level above the first
+		e._maxHitPoints = (Data::toBcd(level) << 8) | (e._maxHitPoints & 0xFF);
+		if (Data::fromBcd(e._experience >> 8) < level - 1)
+			e._experience = Data::toBcd(level - 1) << 8;
+	}
+
+	g_engine->focusedView()->redraw();
+	debugPrintf("Party level set to %d\n", level);
 	return true;
 }
 
