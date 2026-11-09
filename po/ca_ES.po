@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-06 02:11+0000\n"
-"PO-Revision-Date: 2026-08-27 16:22+0000\n"
+"PO-Revision-Date: 2026-11-10 01:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.7.1\n"
+"X-Generator: Weblate 2026.10.1\n"
 "X-Language-name: Català\n"
 
 #: audio/mac_plugin.cpp:30
@@ -5686,10 +5686,8 @@ msgstr ""
 "dedicats per a cada joc utilitzant **."
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:300
-#, fuzzy
-#| msgid "Active storage:"
 msgid "Android storage"
-msgstr "Emmagatzematge actiu:"
+msgstr "Emmagatzematge d'Android"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:303
 msgid ""
@@ -7970,10 +7968,8 @@ msgstr ""
 "l'Operation Stealth des del començament utilitzant noves partides desades."
 
 #: engines/colony/intro.cpp:264
-#, fuzzy
-#| msgid "Save game"
 msgid "Save this game?"
-msgstr "Desa la partida"
+msgstr "Voleu desar aquesta partida?"
 
 #: engines/colony/intro.cpp:298
 msgid "New Game"
@@ -9193,7 +9189,7 @@ msgstr "Aquest no és un fitxer Alan2 vàlid."
 
 #: engines/glk/comprehend/game.cpp:321
 msgid "Savegame"
-msgstr "Desa la partida"
+msgstr "Partida desada"
 
 #: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
@@ -10186,10 +10182,8 @@ msgid "Door"
 msgstr ""
 
 #: engines/hopkins/base_enhancements.cpp:317
-#, fuzzy
-#| msgid "Game Name:"
 msgid "Game paused"
-msgstr "Nom del joc:"
+msgstr "Partida en pausa"
 
 #: engines/hopkins/base_enhancements.cpp:325
 msgid "M: close  A: autoplay  Esc: menu"
@@ -10248,10 +10242,8 @@ msgid "Resurrection"
 msgstr "Utilitza la selecció"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:56
-#, fuzzy
-#| msgid "Exit game"
 msgid "Exit 6: Dome"
-msgstr "Surt del joc"
+msgstr "Sortida 6: Cúpula"
 
 #: engines/hopkins/base_enhancements_autoplay.cpp:56
 msgid "Dome"
@@ -11250,16 +11242,12 @@ msgid "Select index"
 msgstr "Seleccioneu un índex"
 
 #: engines/macs2/actionbar.cpp:893
-#, fuzzy
-#| msgid "Quit game"
 msgid "Quit the game?"
-msgstr "Surt del joc"
+msgstr "Voleu sortir del joc?"
 
 #: engines/macs2/dialogs.cpp:36
-#, fuzzy
-#| msgid "Translation"
 msgid "Translation:"
-msgstr "Traducció"
+msgstr "Traducció:"
 
 #: engines/macs2/dialogs.cpp:39
 #, fuzzy
@@ -12231,10 +12219,8 @@ msgid "Game description is null"
 msgstr "Opcions del joc"
 
 #: engines/nancy/metaengine.cpp:172
-#, fuzzy
-#| msgid "AGOS 2 support is not compiled in"
 msgid "Support for Nancy Drew 18 is not compiled in"
-msgstr "No s'ha compilat el suport per a AGOS 2"
+msgstr "No s'ha compilat el suport per a Nancy Drew 18"
 
 #: engines/nancy/metaengine.cpp:178
 #, fuzzy
@@ -14453,10 +14439,8 @@ msgid "Pilot name:"
 msgstr "Seleccioneu el joc:"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:44
-#, fuzzy
-#| msgid "Delete Character"
 msgid "Character:"
-msgstr "Suprimeix el personatge"
+msgstr "Personatge:"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:46
 msgid "Sally"
@@ -14491,10 +14475,8 @@ msgid "The demo includes only one set of riddles."
 msgstr ""
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:143
-#, fuzzy
-#| msgid "Please select an action"
 msgid "Please enter a pilot name."
-msgstr "Seleccioneu una acció"
+msgstr "Introduïu un nom de pilot."
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:143
 msgid "Please enter a shorter pilot name."
@@ -14517,10 +14499,8 @@ msgid "High Scores"
 msgstr "Puntuació"
 
 #: engines/scumm/insane/mortimer/dialogs.cpp:163
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Play Mortimer"
-msgstr "Temps de joc: "
+msgstr "Juga a Mortimer"
 
 #: engines/scumm/insane/mortimer/mortimer.cpp:76
 #, fuzzy
@@ -14541,17 +14521,12 @@ msgid "Joystick control"
 msgstr "Controls tàctils"
 
 #: engines/scumm/insane/mortimer/mortimer.cpp:1250
-#, fuzzy
-#| msgid "This game cannot be saved at this time. Please try again later"
 msgid "Could not save the high scores. Please try again."
-msgstr ""
-"Aquesta partida no es pot desar en aquest moment. Torneu-ho a provar més tard"
+msgstr "No s'han pogut desar les puntuacions més altes. Torneu-ho a provar."
 
 #: engines/scumm/insane/mortimer/mortimer.cpp:1362
-#, fuzzy
-#| msgid "Play intro"
 msgid "Play again?"
-msgstr "Reprodueix la introducció"
+msgstr "Voleu tornar a jugar?"
 
 #: engines/scumm/insane/mortimer/saveload.cpp:49
 msgid "Progress is saved automatically when a riddle is solved."
@@ -14594,10 +14569,8 @@ msgid "Could not load the PlayStation movie fonts"
 msgstr "No s'han pogut localitzar les dades del motor %s"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:352
-#, fuzzy
-#| msgid "Could not apply aspect ratio setting."
 msgid "Could not play the PlayStation introduction"
-msgstr "No s'ha pogut aplicar la configuració de la relació d'aspecte."
+msgstr "No s'ha pogut reproduir la introducció de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:389
 msgid "Could not load the PlayStation Level 1 resources"
@@ -14608,10 +14581,8 @@ msgid "Could not play the PlayStation Level 1 introduction"
 msgstr ""
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:408
-#, fuzzy
-#| msgid "Could not apply aspect ratio setting."
 msgid "Could not play the PlayStation Level 1 ending"
-msgstr "No s'ha pogut aplicar la configuració de la relació d'aspecte."
+msgstr "No s'ha pogut reproduir el final del nivell 1 de PlayStation"
 
 #: engines/scumm/insane/rebel2/psx/psx.cpp:411
 msgid "Could not play the PlayStation Level 1 death video"
@@ -15130,13 +15101,16 @@ msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 
 #: engines/stark/stark.cpp:332
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "You can download the missing files from the demo version from the ScummVM "
 "website."
-msgstr "Us falta el fitxer 'teenagent.dat'. Obteniu-lo a la pàgina de ScummVM"
+msgstr ""
+"\n"
+"\n"
+"Podeu descarregar els fitxers que falten de la versió de demostració des del "
+"lloc web de ScummVM."
 
 #: engines/supernova/supernova.cpp:193
 #, c-format
