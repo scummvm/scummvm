@@ -45,6 +45,8 @@ namespace Tesoro {
 
 struct TesoroGameDescription;
 
+class Level;
+
 class TesoroEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
@@ -53,8 +55,7 @@ private:
 	Archive _archive;
 	Camera _camera;
 	Common::Array<AnimPlayer> _testPlayers;	// the "level" of the test object
-	Object *_testObject = nullptr;
-	int _scrollX = 0, _scrollY = 0;	// arrow keys held, -1 / 0 / 1
+	Level *_level = nullptr;
 	Display _display;
 	int32 _scaleX = 0x10000, _scaleY = 0x10000;	// 0x10000 is normal scale
 	AnimPlayer _font;
@@ -116,10 +117,10 @@ public:
 	// temp functions
 	void setScale(int32 x, int32 y) { _scaleX = x; _scaleY = y; }
 	void fadeOut(int steps, int delayMs) { _display.fadeOut(steps, delayMs, _screen); }
-	bool playAnim(const char *name, AnimPlayer &player);
-	/** Shows an animation bank as an object drawn through the camera. */
-	bool showObject(const char *name);
-	Camera &camera() { return _camera; }
+	/** The camera of the level being shown, else the test object's. */
+	Camera &camera();
+	/** Loads a level from the archive and shows it. */
+	bool level(const char *name);
 };
 
 extern TesoroEngine *g_engine;

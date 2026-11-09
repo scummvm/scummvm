@@ -36,8 +36,8 @@ static const uint32 kMaxCount = 100000;
 static const uint32 kMaxExtra = 0x1000;
 
 Level::~Level() {
-	// for (uint i = 0; i < _owned.size(); ++i)
-	// 	delete _owned[i];
+	for (uint i = 0; i < _owned.size(); ++i)
+		delete _owned[i];
 }
 
 static bool readExactly(Common::SeekableReadStream &s, byte *buf, uint32 size) {
@@ -160,6 +160,23 @@ Object *Level::findObject(uint64 key) {
 			return _objects[i];
 	}
 	return nullptr;
+}
+
+void Level::drawRooms(int32 now, Display &display) {
+	for (uint r = 0; r < _rooms.size(); ++r) {
+		Room &room = _rooms[r];
+		_camera.updateToward(room.cameraDivisor(), now);
+
+		ObjectList &list = room.objects();
+		for (uint i = 0; i < list.size(); ++i) {
+			Object *object = list[i];
+			const uint32 flags = object->flags();
+			if (!(flags & kProcessed) && (flags & kVisible) && (flags & kActive)) {
+				object->updateBounds(now);
+				object->draw(_camera, display);
+			}
+		}
+	}
 }
 
 } // End of namespace Tesoro

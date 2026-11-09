@@ -32,6 +32,7 @@
 #include "tesoro/console.h"
 #include "tesoro/tesoro.h"
 #include "tesoro/detection.h"
+#include "tesoro/core/level.h"
 #include "tesoro/core/spriteobject.h"
 
 namespace Tesoro {
@@ -44,7 +45,7 @@ TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 }
 
 TesoroEngine::~TesoroEngine() {
-	delete _testObject;
+	delete _level;
 	delete _screen;
 }
 
@@ -86,36 +87,20 @@ Common::Error TesoroEngine::run() {
 	}
 	_display.setFont(_font.bank());
 
-
-	int32 kScrollSpeed = 4;	// camera units per frame while an arrow key is held
-	int32 kCameraDivisor = 300;	// scaledX = x * 300 / divisor, so 300 draws at world scale
-
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type != Common::EVENT_KEYDOWN && e.type != Common::EVENT_KEYUP)
-				continue;
-			const int down = e.type == Common::EVENT_KEYDOWN ? 1 : 0;
-			switch (e.kbd.keycode) {
-			case Common::KEYCODE_LEFT: _scrollX = -down; break;
-			case Common::KEYCODE_RIGHT: _scrollX = down; break;
-			case Common::KEYCODE_DOWN: _scrollY = -down; break;
-			case Common::KEYCODE_UP: _scrollY = down; break;
-			default: break;
-			}
+
 		}
 
 		const int32 now = gameTime();
-		if (_scrollX || _scrollY)
-			_camera.moveTo(_camera.x() + _scrollX * kScrollSpeed, _camera.y() + _scrollY * kScrollSpeed, 0, now);
 
 		_display.startFrame();
 		_display.fillBackground(0x4208);	// dark grey
 
-		if (_testObject) {
-			_camera.updateToward(kCameraDivisor, now);
-			_testObject->updateBounds(now);
-			_testObject->draw(_camera, _display);
+		if (_level) {
+			_level->drawRooms(now, _display);
 		}
+
 		_display.queueText((const byte *)"Hello, world!", 0xFFFF, Display::kWidth / 2, 50, Display::kWidth, 0, true, 16);
 
 		_display.compose();
@@ -141,47 +126,30 @@ Common::Error TesoroEngine::syncGame(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
-bool TesoroEngine::playAnim(const char *name, AnimPlayer &player) {
+Camera &TesoroEngine::camera() {
+	return _level ? _level->camera() : _camera;
+}
+
+bool TesoroEngine::level(const char *name) {
 	Common::String upper(name);
 	upper.toUppercase(); // archive names are upper case
 	const uint32 offset = _archive.findEntry(upper.c_str());
 	if (!offset) {
-		debug("No entry called %s", upper.c_str());
+		warning("Tesoro: level %s is not in the archive", upper.c_str());
 		return false;
 	}
-	if (!player.load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow)) {
-		debug("Could not load %s", upper.c_str());
+
+	Level *level = new Level();
+	if (!level->load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow, gameTime())) {
+		warning("Tesoro: level %s cannot be read", upper.c_str());
+		delete level;
 		return false;
 	}
-	// All steps up to the first one without an image, looping, with the cycle length totalled.
-	player.setRange(0, -1, true, true, gameTime());
-	return true;
-}
+	level->attachObjects();
 
-bool TesoroEngine::showObject(const char *name) {
-	delete _testObject;
-	_testObject = nullptr;
-
-	_testPlayers.clear();
-	_testPlayers.resize(1);
-	if (!playAnim(name, _testPlayers[0]))
-		return false;
-
-	ObjectRecord record;
-	Common::strlcpy(record.name, "TEST", sizeof(record.name));
-	record.banks.push_back(0);
-
-	const int32 now = gameTime();
-	SpriteObject *object = new SpriteObject();
-
-	object->init(record, 0, _testPlayers, 0);
-	object->animation().selectBank(0, 0, -1, true, true, now);
-	_testObject = object;
-
-	// The centre may move 320 across and 240 up or down from the object at the origin.
-	_camera.init();
-	_camera.setBounds(-640, 480, 640, -480);
-	_camera.moveTo(0, 0, 0, now);
+	// The level replaces whatever was shown before.
+	delete _level;
+	_level = level;
 	return true;
 }
 

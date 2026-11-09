@@ -33,10 +33,9 @@
 namespace Tesoro {
 
 /**
- * One scene file (.LVL): its animation banks, its rooms and the objects standing in them. A level is an object
- * itself, so it sits in the game's main object list and takes part in the frame passes.
+ * One scene file (.LVL).
+ * A level is an object itself, so it sits in the game's main object list and takes part in the frame passes.
  */
-class WalkFloor;
 
 class Level : public Object {
 public:
@@ -44,8 +43,7 @@ public:
 	~Level() override;
 
 	/**
-	 * Reads the level stored at an archive entry offset. mode is the animation load mode (AnimBank::kLoadNow or
-	 * kLoadDeferred), now the game clock. Objects of kinds that are not ported yet are skipped with a warning.
+	 * Reads the level stored at an archive entry offset.
 	 */
 	bool load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, int32 now);
 
@@ -55,7 +53,6 @@ public:
 	uint bankCount() const { return _levelPlayers.size(); }
 	const Common::Array<AnimPlayer> &levelPlayers() const { return _levelPlayers; }
 
-	/** Objects of the level in file order. */
 	ObjectList &objects() { return _objects; }
 
 	Camera &camera() { return _camera; }
@@ -70,19 +67,23 @@ public:
 	/** Binds every object to this level (see attachAll). */
 	void attachObjects();
 
-	/** Object with this name key, or null. Does not disturb the object list's cursor. */
 	Object *findObject(uint64 key);
+
+	/**
+	 * Runs the camera towards each room's focus
+	 * and updates the visible, active objects of that room.
+	 * */
+	void drawRooms(int32 now, Display &display);
 
 protected:
 
-	/** Builds the object of one level record, null for kinds not ported yet. */
 	virtual Object *createObject(const ObjectRecord &record, Room &room);
 
 private:
 	Common::Array<AnimPlayer> _levelPlayers;
 	Common::Array<Room> _rooms;
 	ObjectList _objects;
-	Common::Array<Object *> _owned;	// every object the level built, deleted with it
+	Common::Array<Object *> _owned;
 	Camera _camera;
 	Object *_special = nullptr;
 
