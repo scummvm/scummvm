@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-06 02:11+0000\n"
-"PO-Revision-Date: 2026-11-04 10:05+0000\n"
+"PO-Revision-Date: 2026-11-09 14:53+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -12663,11 +12663,9 @@ msgstr ""
 "No se ha incluido el soporte para Nancy Drew 19 y los juegos posteriores."
 
 #: engines/nancy/metaengine.cpp:185
-#, fuzzy
-#| msgid "Support for Nancy Drew 19 and newer is not compiled in"
 msgid "Support for Nancy Drew 26 and newer is not compiled in"
 msgstr ""
-"No se ha incluido el soporte para Nancy Drew 19 y los juegos posteriores."
+"No se ha incluido el soporte para Nancy Drew 26 y los juegos posteriores."
 
 #: engines/nancy/state/loadsave.cpp:108
 msgid "Would you like to load or save a game?"
