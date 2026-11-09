@@ -108,6 +108,8 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		tglPolygonOffset(-6.0, -6.0);
 	}
+
+	tglGetIntegerv(TGL_MAX_LIGHTS, &_maxLights);
 }
 
 const char *GfxTinyGL::getVideoDeviceName() {
@@ -858,7 +860,12 @@ void GfxTinyGL::disableLights() {
 }
 
 void GfxTinyGL::setupLight(Light *light, int lightId) {
+	if (lightId >= _maxLights) {
+		return;
+	}
+
 	tglEnable(TGL_LIGHTING);
+	tglEnable(TGL_LIGHT0 + lightId);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightDir[] = { 0.0f, 0.0f, -1.0f };
@@ -892,14 +899,12 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 		q_attenuation = 0.0f;
 	}
 
-	tglDisable(TGL_LIGHT0 + lightId);
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, spot_exp);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, cutoff);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_QUADRATIC_ATTENUATION, q_attenuation);
-	tglEnable(TGL_LIGHT0 + lightId);
 }
 
 void GfxTinyGL::turnOffLight(int lightId) {

@@ -140,8 +140,7 @@ public:
 
 	virtual void enableLights() = 0;
 	virtual void disableLights() = 0;
-	virtual void setupLight(Light *light, int lightId) = 0;
-	virtual void turnOffLight(int lightId) = 0;
+	virtual void setupLights(Common::List<Light *> &lightsList);
 
 	virtual void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) = 0;
 	virtual void selectTexture(const Texture *texture) = 0;
@@ -274,6 +273,9 @@ public:
 	virtual void setBlendMode(bool additive) = 0;
 protected:
 	Bitmap *createScreenshotBitmap(Graphics::Surface *src, int w, int h, bool flipOrientation);
+	virtual void setupLight(Light *light, int lightId) = 0;
+	virtual void turnOffLight(int lightId) = 0;
+
 	static const unsigned int _numSpecialtyTextures = 22;
 	Texture _specialtyTextures[_numSpecialtyTextures];
 	static const int _gameHeight = 480;
@@ -287,6 +289,7 @@ protected:
 	unsigned char _shadowColorR;
 	unsigned char _shadowColorG;
 	unsigned char _shadowColorB;
+	int _maxLights = 8;
 	bool _renderBitmaps;
 	bool _renderZBitmaps;
 	bool _shadowModeActive;
