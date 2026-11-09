@@ -600,6 +600,8 @@ void OverworldLogic::minaxDeathSequence() {
 	// endless victory pan
 	Graphics::Views::UIElement *curView = g_engine->focusedView();
 	for (int step = 0; step < 64; ++step) {
+		playFX(Data::SFX_HIT);
+
 		for (int i = 0; i < 64; ++i) {
 			int x = randByte() & 0x3F, y = randByte() & 0x3F;
 			_G(map)._tiles[y][x] = Data::TILE_EMPTY;
@@ -607,10 +609,13 @@ void OverworldLogic::minaxDeathSequence() {
 
 		curView->draw();
 		g_engine->updateScreen();
-		g_engine->pauseMillis(30);
+
+		// Long enough for the sound to play out
+		g_engine->pauseMillis(120);
 	}
 
 	writeString("\nYou feel a strange force!\n");
+	playFX(Data::SFX_BEEP);
 	g_engine->pauseMillis(1000);
 	g_engine->addView("Ending");
 }

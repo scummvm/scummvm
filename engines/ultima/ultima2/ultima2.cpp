@@ -133,7 +133,11 @@ Common::Error Ultima2Engine::run() {
 }
 
 byte Ultima2Engine::randByte() {
-	byte newVal = (byte)(_rngState[1] + _rngState[4] + _rngState[5] + 1);
+	// The original adds the three values with carry, so the carry from the
+	// first addition goes into the second. Without it the low bits repeat
+	// after only a few dozen values
+	int sum = _rngState[1] + _rngState[4] + 1;
+	byte newVal = (byte)(sum + _rngState[5] + (sum >> 8));
 	_rngState[5] = _rngState[4];
 	_rngState[4] = _rngState[3];
 	_rngState[3] = _rngState[2];

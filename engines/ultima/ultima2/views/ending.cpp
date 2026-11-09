@@ -70,6 +70,7 @@ bool Ending::msgFocus(const FocusMessage &msg) {
 	_panX = _panY = 0;
 	_lastStep = g_system->getMillis();
 
+	g_engine->playFX(Data::SFX_BEEP);
 	return View::msgFocus(msg);
 }
 
