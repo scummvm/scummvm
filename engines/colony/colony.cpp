@@ -350,9 +350,6 @@ bool ColonyEngine::updateScreenSize() {
 }
 
 void ColonyEngine::pauseEngineIntern(bool pause) {
-	if (_gfx)
-		_gfx->pause(pause);
-
 	if (pause && _gfx && _level >= 1 && _level <= 7) {
 		if (_savedScreen) {
 			_savedScreen->free();

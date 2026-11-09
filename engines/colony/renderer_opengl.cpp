@@ -75,15 +75,6 @@ public:
 			glDisable(GL_COLOR_LOGIC_OP);
 		}
 	}
-	void pause(bool pause) override {
-		// ScummVM dialogs share the GL context, but must not use XOR drawing.
-		if (pause) {
-			_savedXorMode = glIsEnabled(GL_COLOR_LOGIC_OP);
-			setXorMode(false);
-		} else {
-			setXorMode(_savedXorMode);
-		}
-	}
 	void setStippleData(const byte *data) override {
 		_stippleData = data;
 	}
@@ -149,7 +140,6 @@ private:
 	byte _palette[256 * 3] = {};
 	bool _wireframe = true;
 	int64_t _wireframeFillColor = 0; // -1 = no fill (outline only)
-	bool _savedXorMode = false;
 	const byte *_stippleData = nullptr; // GL_POLYGON_STIPPLE pattern (128 bytes), null = disabled
 	uint32 _stippleFgColor = 0;
 	uint32 _stippleBgColor = 0;

@@ -68,7 +68,6 @@ public:
 
 	// Buffer management
 	virtual void copyToScreen() = 0;
-	virtual void pause(bool pause) {}
 	virtual void setWireframe(bool enable, int64_t fillColor = -1) = 0;
 	virtual void setXorMode(bool enable) {}
 	virtual void setStippleData(const byte *data) {}
