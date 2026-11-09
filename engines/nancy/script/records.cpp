@@ -1400,10 +1400,10 @@ void OverlayRecord::updateGraphics() {
 	}
 
 	_graphic.setClipRect(getScreenClip());
-	_graphic.setVisible(isShown() && _hasPicture);
+	_graphic.setVisible(isShown() && _hasPicture, false);
 
 	if (_hasAttachment) {
-		_attachment.setVisible(_isAttachmentDrawn);
+		_attachment.setVisible(_isAttachmentDrawn, false);
 		_isAttachmentDrawn = false;
 	}
 }
@@ -1727,7 +1727,7 @@ void AnimOverlayRecord::updateGraphics() {
 	}
 
 	_graphic.setClipRect(getScreenClip());
-	_graphic.setVisible(isShown() && _isVisible && _hasPicture);
+	_graphic.setVisible(isShown() && _isVisible && _hasPicture, false);
 }
 
 // anim:Play() and anim:Pause(), for the records that play something
@@ -2236,7 +2236,7 @@ void TextRecord::registerGraphics() {
 }
 
 void TextRecord::updateGraphics() {
-	_graphic.setVisible(isActive());
+	_graphic.setVisible(isActive(), false);
 
 	if (_isDirty) {
 		_isDirty = false;
@@ -2535,7 +2535,7 @@ void MovieRecord::updateGraphics() {
 	}
 
 	_graphic.setClipRect(getScreenClip());
-	_graphic.setVisible(isShown() && _isVisible && !isSeeThrough());
+	_graphic.setVisible(isShown() && _isVisible && !isSeeThrough(), false);
 }
 
 void MovieRecord::describeState(Common::Array<Common::String> &lines) const {

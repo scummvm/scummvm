@@ -60,7 +60,8 @@ public:
 
 	void moveTo(const Common::Point &position);
 	void moveTo(const Common::Rect &bounds);
-	void setVisible(bool visible);
+	// Without forceRedraw, an object that stays shown or hidden isn't drawn again
+	void setVisible(bool visible, bool forceRedraw = true);
 	void setTransparent(bool isTransparent);
 	bool isVisible() const { return _isVisible; }
 

@@ -1019,7 +1019,7 @@ static uint32 toSurfaceColor(const Graphics::ManagedSurface &surface, uint32 arg
 
 void EditBoxRecord::updateGraphics() {
 	_graphic.setClipRect(getScreenClip());
-	_graphic.setVisible(isShown());
+	_graphic.setVisible(isShown(), false);
 
 	const bool isFocused = hasFocus();
 	if (isFocused != _hadFocus) {

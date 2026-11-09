@@ -86,7 +86,11 @@ void RenderObject::moveTo(const Common::Rect &bounds) {
 	_hasMoved = true;
 }
 
-void RenderObject::setVisible(bool visible) {
+void RenderObject::setVisible(bool visible, bool forceRedraw) {
+	if (!forceRedraw && visible == _isVisible) {
+		return;
+	}
+
 	_isVisible = visible;
 	_needsRedraw = true;
 }

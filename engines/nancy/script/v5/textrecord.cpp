@@ -115,7 +115,7 @@ void BitmapTextRecord::registerGraphics() {
 
 void BitmapTextRecord::updateGraphics() {
 	_graphic.setClipRect(getScreenClip());
-	_graphic.setVisible(isShown());
+	_graphic.setVisible(isShown(), false);
 
 	if (_isDirty || hasAlphaChanged()) {
 		_isDirty = false;

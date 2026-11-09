@@ -174,7 +174,7 @@ void XSheet::parkFreeRunning() {
 
 void XSheet::setVisible(bool isVisible) {
 	for (Tree *tree : _trees) {
-		tree->graphic.setVisible(isVisible);
+		tree->graphic.setVisible(isVisible, false);
 	}
 }
 
