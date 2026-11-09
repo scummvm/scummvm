@@ -512,6 +512,7 @@ private:
 	bool _hasCalledOnPause = false;
 	bool _isPaused = false;
 	bool _isVisible = true;
+	bool _hasJustStarted = false;
 	double _endTime = 0.0;
 };
 

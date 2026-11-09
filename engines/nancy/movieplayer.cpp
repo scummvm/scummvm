@@ -315,6 +315,8 @@ void MoviePlayer::playRange(int first, int last) {
 	_rangePlaying = (first != last);
 	_frameMillis = getFrameMillis();
 	_nextFrameTime = g_system->getMillis() + _frameMillis;
+	_playedMillis = 0.0;
+	_nextPlayedFrame = _frameMillis;
 }
 
 bool MoviePlayer::update() {
@@ -339,6 +341,32 @@ bool MoviePlayer::update() {
 		_nextFrameTime = now + _frameMillis;
 	}
 
+	return showNextFrame();
+}
+
+// Every frame is due at its own time from the start. A movie that is late
+// decodes a frame it missed without showing it, so it stays in time with its
+// sound even when the game draws fewer frames than the movie has. It doesn't
+// catch up on more than that at once: when decoding takes longer than the
+// frames last, each update would have more of them to decode than the last.
+bool MoviePlayer::advance(double elapsedMillis) {
+	if (!_rangePlaying || !_decoder) {
+		return false;
+	}
+
+	_playedMillis += elapsedMillis;
+
+	static const int kMaxFramesPerAdvance = 2;
+	int numShown = 0;
+	while (numShown < kMaxFramesPerAdvance && _playedMillis >= _nextPlayedFrame && showNextFrame()) {
+		_nextPlayedFrame += _frameMillis;
+		++numShown;
+	}
+
+	return numShown > 0;
+}
+
+bool MoviePlayer::showNextFrame() {
 	if (_decoder->endOfVideo() ||
 			(_step > 0 && _decoder->getCurFrame() >= _rangeLast) ||
 			(_step < 0 && _decoder->getCurFrame() <= _rangeLast)) {

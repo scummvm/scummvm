@@ -2438,6 +2438,7 @@ void MovieRecord::applyPosition() {
 void MovieRecord::runOnce() {
 	_player.playRange(_firstFrame, _lastFrame);
 	drawFrame();
+	_hasJustStarted = true;
 }
 
 // A movie that plays through and ends; one that loops forever never does. One
@@ -2459,6 +2460,11 @@ bool MovieRecord::isSkippable() const {
 }
 
 void MovieRecord::run(double sceneTime, double elapsedTime) {
+	// The frame that starts a movie went by before it, and can be a long one
+	// when the scene just loaded. The movie would skip ahead of its sound.
+	const double playedTime = _hasJustStarted ? 0.0 : elapsedTime;
+	_hasJustStarted = false;
+
 	// A movie that is being skipped moves on by one frame every time it runs, so
 	// the scripts that wait for one of its frames still see it. The frames on the
 	// way aren't decoded, and neither is the last one: a skipped movie ends, which
@@ -2494,7 +2500,7 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 
 	_skipFrame = -1;
 
-	if (_player.update()) {
+	if (_player.advance(playedTime * 1000.0)) {
 		drawFrame();
 	}
 
