@@ -85,13 +85,13 @@ public:
 	virtual void setActive(bool active) { _flags = (_flags & ~kActive) | (active ? kActive : 0); }
 	void setVisible(bool visible) { _flags = (_flags & ~kVisible) | (visible ? kVisible : 0); }
 
-	/** Advances the animation. Classes override this with their own per-frame step. */
+	/** Advances the animation */
 	virtual void updateAnimation(int32 now);
 
 	/** Ticks the animation and works out the hit rectangle and the area the object moved through. */
 	virtual void updateBounds(int32 now);
 
-	/** Called after updateBounds() for the objects a room shows: draws the object as seen by the camera. */
+	/** Called after updateBounds(), draws the object as seen by the camera. */
 	virtual void draw(const Camera &camera, Display &display) {}
 
 	uint32 flags() const { return _flags; }

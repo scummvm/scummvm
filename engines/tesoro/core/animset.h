@@ -46,6 +46,7 @@ public:
 	byte selectedBank() const { return _selected; }
 	void setSelectedBank(byte bank) { _selected = bank; }
 
+	AnimPlayer &player(uint i) { return _players[i]; }
 	AnimPlayer &current() { return _players[_bankIndex]; }
 
 	/** Makes a bank current and starts playing the steps first..last. */
@@ -61,8 +62,6 @@ private:
 	uint _bankIndex = 0;
 	byte _selected = 0;
 	bool _stashed = false;
-	uint32 _stashedBank = 0;
-	uint32 _stashedFlags = 0;
 };
 
 } // End of namespace Tesoro
