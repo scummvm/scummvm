@@ -1472,7 +1472,7 @@ void InsaneRebel1::runGame() {
 
 	if (!loadedStartupSave) {
 		playIntroSequence();
-		if (shouldAbortGameFlow())
+		if (_vm->shouldQuit())
 			return;
 	}
 

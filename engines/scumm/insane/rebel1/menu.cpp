@@ -941,13 +941,10 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	}
 
 	if (event.type == Common::EVENT_MAINMENU) {
-		if (_player && !_interactiveVideoActive && !_menuActive) {
-			_vm->_smushVideoShouldFinish = true;
+		if (_player && (!_interactiveVideoActive || _menuActive || _highScoresActive)) {
+			openGameplayMainMenu();
 			return true;
 		}
-
-		if (_menuActive || _highScoresActive)
-			return true;
 
 		const uint32 now = _vm->_system->getMillis();
 		const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
