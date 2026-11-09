@@ -83,17 +83,8 @@ bool TarotCardsPuzzle::loadConfiguration() {
 		_engine->getSettings()->getPuzzleLevel(), 1, 3);
 	const Common::String name = Common::String::format("card%u.ini",
 		puzzleLevel);
-	Common::SeekableReadStream *configStream =
-		_engine->getResources()->createReadStreamForPath(name);
-	if (!configStream) {
-		configStream = _engine->getResources()->scripts().createReadStreamForMember(name);
-		if (configStream) {
-			debugC(2, kDebugResources,
-				"Ripper: resolved tarot configuration '%s' through SCRIPT.PL",
-				name.c_str());
-		}
-	}
-	Common::ScopedPtr<Common::SeekableReadStream> stream(configStream);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_engine->getResources()->createReadStream(name, ResourceManager::kSourceScriptConfiguration));
 	Common::INIFile ini;
 	if (!stream || !ini.loadFromStream(*stream)) {
 		warning("Ripper: could not load tarot configuration '%s'",

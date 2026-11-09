@@ -65,9 +65,9 @@ void MediaPlayer::fadePalette(bool fadeIn, uint stepCount) {
 }
 
 bool MediaPlayer::displayScenePcx(const Common::String &path) {
-	Common::String source;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		openSource(path, kSourceConfiguredPath, source));
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceConfiguredPath));
 	Image::PCXDecoder decoder;
 	if (!stream || !decoder.loadStream(*stream)) {
 		warning("Ripper: could not decode scene PCX '%s'", path.c_str());

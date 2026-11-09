@@ -160,9 +160,23 @@ private:
 
 class ResourceManager {
 public:
+	enum SourcePolicy {
+		kSourceDirectFile,
+		kSourceConfiguredPath,
+		kSourceInterfaceLibrary,
+		kSourcePuzzleMedia,
+		kSourcePuzzlePiece,
+		kSourceSoundEffect,
+		kSourceBlockingAudio,
+		kSourceSceneAudio,
+		kSourceScriptConfiguration
+	};
+
 	ResourceManager();
 
 	bool initialize(bool loadNestedOptions);
+	Common::SeekableReadStream *createReadStream(const Common::String &path,
+		SourcePolicy policy, Common::String *source = nullptr) const;
 	Common::SeekableReadStream *createReadStreamForPath(
 		const Common::String &memberName) const;
 	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;

@@ -85,9 +85,8 @@ BrokenMugPuzzle::BrokenMugPuzzle(RipperEngine *engine) : _engine(engine),
 bool BrokenMugPuzzle::loadPiece(uint pieceIndex) {
 	const Common::String name = Common::String::format("mug%u.smk", pieceIndex);
 	ResourceManager *resources = _engine->getResources();
-	Common::SeekableReadStream *stream = resources && resources->puzzle().hasMember(name) ?
-		resources->puzzle().createReadStreamForMember(name) :
-		(resources ? resources->createReadStreamForPath(name) : nullptr);
+	Common::SeekableReadStream *stream = resources ?
+		resources->createReadStream(name, ResourceManager::kSourcePuzzlePiece) : nullptr;
 	if (!stream) {
 		warning("Ripper: unable to open broken mug asset '%s'", name.c_str());
 		return false;

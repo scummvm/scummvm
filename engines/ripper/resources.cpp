@@ -760,6 +760,69 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 	return true;
 }
 
+Common::SeekableReadStream *ResourceManager::createReadStream(const Common::String &path,
+		SourcePolicy policy, Common::String *source) const {
+	if (source)
+		source->clear();
+	Common::SeekableReadStream *stream = nullptr;
+	const char *resolvedSource = "";
+	if (policy == kSourceDirectFile || policy == kSourceSoundEffect ||
+			policy == kSourceBlockingAudio) {
+		Common::ScopedPtr<Common::File> file(new Common::File());
+		if (file->open(Common::Path(path))) {
+			stream = file.release();
+			resolvedSource = "filesystem";
+		}
+	}
+	if (!stream && (policy == kSourceConfiguredPath || policy == kSourceBlockingAudio ||
+			policy == kSourceSceneAudio || policy == kSourceScriptConfiguration)) {
+		stream = createReadStreamForPath(path);
+		if (stream)
+			resolvedSource = "search-path";
+	}
+	if (policy == kSourceInterfaceLibrary) {
+		stream = _interface.createReadStreamForMember(path);
+		if (stream)
+			resolvedSource = "interface-library";
+	}
+	if (policy == kSourcePuzzleMedia || policy == kSourcePuzzlePiece) {
+		const bool hasMember = _puzzle.hasMember(path);
+		if (hasMember) {
+			stream = _puzzle.createReadStreamForMember(path);
+			if (stream)
+				resolvedSource = "puzzle-library";
+		}
+		// Piece assets treat an existing archive member as authoritative, even
+		// when it cannot be opened. Media may fall back after an open failure.
+		if (!stream && (policy == kSourcePuzzleMedia || !hasMember)) {
+			stream = createReadStreamForPath(path);
+			if (stream)
+				resolvedSource = "search-path";
+		}
+	}
+	if (!stream && (policy == kSourceSoundEffect || policy == kSourceBlockingAudio ||
+			policy == kSourceSceneAudio) && _sound.hasMember(path)) {
+		stream = _sound.createReadStreamForMember(path);
+		if (stream) {
+			resolvedSource = "sound-library";
+			if (policy == kSourceSceneAudio)
+				debugC(2, kDebugAudio,
+					"Ripper: resolved scene audio '%s' through the sound library", path.c_str());
+		}
+	}
+	if (!stream && policy == kSourceScriptConfiguration) {
+		stream = _scripts.createReadStreamForMember(path);
+		if (stream) {
+			resolvedSource = "script-library";
+			debugC(2, kDebugResources,
+				"Ripper: resolved configuration '%s' through SCRIPT.PL", path.c_str());
+		}
+	}
+	if (source)
+		*source = resolvedSource;
+	return stream;
+}
+
 Common::SeekableReadStream *ResourceManager::createReadStreamForPath(
 		const Common::String &memberName) const {
 	const Common::Path directPath(memberName);

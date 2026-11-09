@@ -145,15 +145,6 @@ private:
 		kAdvanceSegment
 	};
 
-	enum SourcePolicy {
-		kSourceDirectFile,
-		kSourceConfiguredPath,
-		kSourceInterfaceLibrary,
-		kSourcePuzzleLibrary,
-		kSourceSoundEffect,
-		kSourceBlockingAudio
-	};
-
 	struct ActivePlayback {
 		Video::SmackerDecoder *decoder;
 		Common::String name;
@@ -181,8 +172,6 @@ private:
 		const Common::String &name, const Common::String &source,
 		Audio::SoundHandle &handle, Audio::Mixer::SoundType soundType,
 		uint volumePercent, bool loop, const char *description);
-	Common::SeekableReadStream *openSource(const Common::String &path,
-		SourcePolicy policy, Common::String &source) const;
 	SmackerPlaybackResult playValidatedSmacker(Common::SeekableReadStream *stream,
 		const Common::String &name, const char *description,
 		const SmackerPlaybackPlan &plan);

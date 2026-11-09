@@ -67,9 +67,9 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		return result;
 	}
 
-	Common::String source;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		openSource(path, kSourceDirectFile, source));
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceDirectFile));
 	if (!stream) {
 		warning("Ripper: could not open media '%s'", path.c_str());
 		return false;
@@ -158,9 +158,9 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 	plan.placement.y = y;
 	plan.palette.patchInterfacePalette = false;
 	plan.palette.patchWacMediaPalette = true;
-	Common::String source;
 	const bool result = playValidatedSmacker(
-		openSource(path, kSourcePuzzleLibrary, source), path, "WAC", plan).completed;
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourcePuzzleMedia), path, "WAC", plan).completed;
 	_input->drainKeys();
 	return result;
 }
@@ -169,9 +169,9 @@ bool MediaPlayer::playWacPresentation(const Common::String &path, int x, int y) 
 	debugC(1, kDebugVideo,
 		"Ripper: entering WAC packetized presentation media='%s' position=%d,%d scale=1",
 		path.c_str(), x, y);
-	Common::String source;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		openSource(path, kSourceDirectFile, source));
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceDirectFile));
 	if (!stream) {
 		warning("Ripper: could not open WAC packetized presentation '%s'", path.c_str());
 		return false;
@@ -212,9 +212,9 @@ bool MediaPlayer::playWacInterfaceSequence(const Common::String &path,
 		centerBounds.bottom, loopStartFrame, callback != nullptr);
 	const SmackerPlaybackPlan plan = makeWacInterfaceSequencePlan(
 		centerBounds, loopStartFrame, callback);
-	Common::String source;
 	const SmackerPlaybackResult result = playValidatedSmacker(
-		openSource(path, kSourceInterfaceLibrary, source), path,
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceInterfaceLibrary), path,
 		"WAC interface sequence", plan);
 	if (command)
 		*command = result.command;
@@ -251,9 +251,9 @@ bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y
 	plan.palette.preserveDisplayPalette = true;
 	plan.palette.sourcePalette = &sourcePalette;
 	plan.palette.rememberVideoPalette = false;
-	Common::String source;
 	return playValidatedSmacker(
-		openSource(path, kSourceInterfaceLibrary, source), path,
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceInterfaceLibrary), path,
 		"interface sequence", plan).completed;
 }
 
@@ -268,9 +268,9 @@ bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartF
 	plan.placement.originY = kScenePresentationTop;
 	plan.loop.loopStartFrame = loopStartFrame;
 	plan.callback.sequenceCallback = callback;
-	Common::String source;
 	const SmackerPlaybackResult result = playValidatedSmacker(
-		openSource(path, kSourceDirectFile, source), path,
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceDirectFile), path,
 		"puzzle sequence", plan);
 	if (command)
 		*command = result.command;
@@ -364,9 +364,9 @@ bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint fir
 	plan.frames.firstFrame = firstFrame;
 	plan.frames.lastFrame = lastFrame;
 	plan.loop.boundedLoopStartFrame = boundedLoopStartFrame;
-	Common::String source;
 	const SmackerPlaybackResult result = playValidatedSmacker(
-		openSource(path, kSourceDirectFile, source), path,
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceDirectFile), path,
 		"puzzle segment", plan);
 	if (command)
 		*command = result.command;
@@ -404,9 +404,9 @@ bool MediaPlayer::playScaledInteractiveSequence(const Common::String &path,
 	plan.loop.loopStartFrame = loopStartFrame;
 	plan.callback.sequenceCallback = callback;
 	plan.palette.rememberVideoPalette = false;
-	Common::String source;
 	const SmackerPlaybackResult result = playValidatedSmacker(
-		openSource(path, kSourceDirectFile, source), path,
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceDirectFile), path,
 		description, plan);
 	if (command)
 		*command = result.command;
@@ -422,17 +422,17 @@ bool MediaPlayer::playTransparentSmackerOverlay(const Common::String &path, int 
 	plan.placement.y = y;
 	plan.placement.originY = kScenePresentationTop;
 	plan.rendering.transparentFirstPixel = true;
-	Common::String source;
 	return playValidatedSmacker(
-		openSource(path, kSourceDirectFile, source), path,
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceDirectFile), path,
 		"transparent overlay", plan).completed;
 }
 
 bool MediaPlayer::playInteractiveIavf(const Common::String &path,
 		MediaSequenceCallback *callback, uint16 *command) {
-	Common::String source;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		openSource(path, kSourceDirectFile, source));
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceDirectFile));
 	if (!stream) {
 		warning("Ripper: could not open interactive IAVF media '%s'", path.c_str());
 		return false;
@@ -458,9 +458,9 @@ bool MediaPlayer::playScene(const Common::String &path, const ScenePlaybackOptio
 		"Ripper: entering scene presentation media='%s' firstFrameOnly=%d loopUntilInput=%d controls=%d callback=%d",
 		path.c_str(), options.firstFrameOnly, options.loopUntilInput, options.allowEscSpace,
 		options.callback != nullptr);
-	Common::String source;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		openSource(path, kSourceConfiguredPath, source));
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceConfiguredPath));
 	if (!stream) {
 		warning("Ripper: could not open scene media '%s'", path.c_str());
 		return false;
@@ -480,7 +480,8 @@ bool MediaPlayer::playScene(const Common::String &path, const ScenePlaybackOptio
 	do {
 		const bool repeatedLoopPass = pass++ != 0;
 		if (repeatedLoopPass) {
-			stream.reset(openSource(path, kSourceConfiguredPath, source));
+			stream.reset(_engine->getResources()->createReadStream(
+				path, ResourceManager::kSourceConfiguredPath));
 			if (!stream) {
 				warning("Ripper: could not reopen looping scene media '%s'", path.c_str());
 				result = false;

@@ -98,7 +98,6 @@ private:
 	static Common::String keyFromPath(const Common::String &path);
 	Slot *find(const Common::String &key);
 	const Slot *find(const Common::String &key) const;
-	Common::SeekableReadStream *openSource(const Common::String &path) const;
 	Audio::AudioStream *prepareStream(const Slot &slot) const;
 	bool prepareSnapshot(Snapshot &state) const;
 	bool start(Slot &slot);

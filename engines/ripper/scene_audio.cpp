@@ -56,20 +56,9 @@ Common::String SceneAudioManager::keyFromPath(const Common::String &path) {
 	return path.substr(start, end - start);
 }
 
-Common::SeekableReadStream *SceneAudioManager::openSource(const Common::String &path) const {
-	ResourceManager *resources = _engine->getResources();
-	Common::SeekableReadStream *stream = resources->createReadStreamForPath(path);
-	if (!stream && resources->sound().hasMember(path)) {
-		stream = resources->sound().createReadStreamForMember(path);
-		if (stream)
-			debugC(2, kDebugAudio,
-				"Ripper: resolved scene audio '%s' through the sound library", path.c_str());
-	}
-	return stream;
-}
-
 bool SceneAudioManager::load(const Common::String &path, bool preserve) {
-	Common::ScopedPtr<Common::SeekableReadStream> file(openSource(path));
+	Common::ScopedPtr<Common::SeekableReadStream> file(_engine->getResources()->createReadStream(
+		path, ResourceManager::kSourceSceneAudio));
 	if (!file) {
 		warning("Ripper: could not load audio '%s'", path.c_str());
 		return false;
@@ -131,7 +120,8 @@ Common::String SceneAudioManager::describeSlots() const {
 }
 
 Audio::AudioStream *SceneAudioManager::prepareStream(const Slot &slot) const {
-	Common::SeekableReadStream *file = openSource(slot.path);
+	Common::SeekableReadStream *file = _engine->getResources()->createReadStream(
+		slot.path, ResourceManager::kSourceSceneAudio);
 	if (!file) {
 		warning("Ripper: could not start audio slot key='%s' path='%s' slots=[%s]",
 			slot.key.c_str(), slot.path.c_str(), describeSlots().c_str());
@@ -476,7 +466,8 @@ bool SceneAudioManager::prepareSnapshot(Snapshot &state) const {
 			if (!state.streams[i])
 				return false;
 		} else {
-			Common::ScopedPtr<Common::SeekableReadStream> file(openSource(slot.path));
+			Common::ScopedPtr<Common::SeekableReadStream> file(_engine->getResources()->createReadStream(
+				slot.path, ResourceManager::kSourceSceneAudio));
 			if (!file)
 				return false;
 		}

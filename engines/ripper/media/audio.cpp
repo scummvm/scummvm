@@ -49,7 +49,8 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Common::String source;
 	Common::SeekableReadStream *audioStream =
-		openSource(path, kSourceBlockingAudio, source);
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceBlockingAudio, &source);
 	if (!audioStream) {
 		warning("Ripper: could not open blocking audio '%s' from the filesystem or sound library",
 			path.c_str());
@@ -187,7 +188,8 @@ bool MediaPlayer::playAudioClip(const Common::String &path, Audio::SoundHandle &
 		const char *description) {
 	Common::String source;
 	Common::SeekableReadStream *audioStream =
-		openSource(path, kSourceSoundEffect, source);
+		_engine->getResources()->createReadStream(
+			path, ResourceManager::kSourceSoundEffect, &source);
 	if (!audioStream) {
 		warning("Ripper: could not open %s '%s' from the filesystem or sound library",
 			description, path.c_str());

@@ -21,13 +21,10 @@
 #include "ripper/media.h"
 
 #include "common/debug.h"
-#include "common/file.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 
 #include "ripper/detection.h"
-#include "ripper/resources.h"
-#include "ripper/ripper.h"
 
 namespace Ripper {
 
@@ -54,66 +51,6 @@ const char *mediaFormatName(MediaFormat format) {
 	default:
 		return "unknown";
 	}
-}
-
-Common::SeekableReadStream *MediaPlayer::openSource(const Common::String &path,
-		SourcePolicy policy, Common::String &source) const {
-	source.clear();
-	ResourceManager *resources = _engine->getResources();
-
-	if (policy == kSourceDirectFile || policy == kSourceSoundEffect ||
-			policy == kSourceBlockingAudio) {
-		Common::ScopedPtr<Common::File> file(new Common::File());
-		if (file->open(Common::Path(path))) {
-			source = "filesystem";
-			return file.release();
-		}
-	}
-
-	if (policy == kSourceConfiguredPath || policy == kSourceBlockingAudio) {
-		Common::SeekableReadStream *stream =
-			resources ? resources->createReadStreamForPath(path) : nullptr;
-		if (stream) {
-			source = "search-path";
-			return stream;
-		}
-	}
-
-	if (policy == kSourceInterfaceLibrary) {
-		Common::SeekableReadStream *stream =
-			resources ? resources->interface().createReadStreamForMember(path) : nullptr;
-		if (stream) {
-			source = "interface-library";
-			return stream;
-		}
-	}
-
-	if (policy == kSourcePuzzleLibrary) {
-		Common::SeekableReadStream *stream =
-			resources && resources->puzzle().hasMember(path) ?
-				resources->puzzle().createReadStreamForMember(path) : nullptr;
-		if (stream) {
-			source = "puzzle-library";
-			return stream;
-		}
-		stream = resources ? resources->createReadStreamForPath(path) : nullptr;
-		if (stream) {
-			source = "search-path";
-			return stream;
-		}
-	}
-
-	if (policy == kSourceSoundEffect || policy == kSourceBlockingAudio) {
-		Common::SeekableReadStream *stream =
-			resources && resources->sound().hasMember(path) ?
-				resources->sound().createReadStreamForMember(path) : nullptr;
-		if (stream) {
-			source = "sound-library";
-			return stream;
-		}
-	}
-
-	return nullptr;
 }
 
 SmackerPlaybackResult MediaPlayer::playValidatedSmacker(Common::SeekableReadStream *stream,
