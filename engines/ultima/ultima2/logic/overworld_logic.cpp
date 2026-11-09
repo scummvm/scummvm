@@ -114,7 +114,7 @@ OverworldLogic::StepResult OverworldLogic::stepOnto(int x, int y) {
 	}
 
 	if (sg._legParalysisTurns > 0) {
-		writeString("--Paralized!\n");
+		writeString("--paralyzed!\n");
 		return STEP_PARALYZED;
 	}
 
@@ -475,7 +475,7 @@ bool OverworldLogic::attack(Data::Direction dir) {
 		writeString("Attack--");
 
 		if (sg._armParalysisTurns > 0) {
-			writeString("Paralized!\n");
+			writeString("paralyzed!\n");
 			return true;
 		}
 
@@ -617,7 +617,7 @@ void OverworldLogic::minaxDeathSequence() {
 
 void OverworldLogic::legParalysisTrap() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("Legs paralized!\n");
+	writeString("Legs paralyzed!\n");
 	playFX(Data::SFX_MAGIC);
 	showAttackTile(sg._mapX, sg._mapY);
 
@@ -631,7 +631,7 @@ void OverworldLogic::legParalysisTrap() {
 
 void OverworldLogic::armParalysisTrap() {
 	Data::Savegame &sg = _G(savegame);
-	writeString("Arms paralized!\n");
+	writeString("Arms paralyzed!\n");
 	playFX(Data::SFX_MAGIC);
 	showAttackTile(sg._mapX, sg._mapY);
 
