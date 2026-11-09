@@ -57,6 +57,7 @@ private:
 	bool cmdHP(int argc, const char **argv);
 	bool cmdFood(int argc, const char **argv);
 	bool cmdLevel(int argc, const char **argv);
+	bool cmdTransport(int argc, const char **argv);
 	bool cmdGold(int argc, const char **argv);
 	bool cmdInventory(int argc, const char **argv);
 	bool cmdLoad(int argc, const char **argv);

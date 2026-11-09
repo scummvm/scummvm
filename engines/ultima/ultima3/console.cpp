@@ -47,6 +47,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("hp", WRAP_METHOD(Console, cmdHP));
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
 	registerCmd("level", WRAP_METHOD(Console, cmdLevel));
+	registerCmd("transport", WRAP_METHOD(Console, cmdTransport));
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
@@ -461,6 +462,75 @@ bool Console::cmdLevel(int argc, const char **argv) {
 
 	g_engine->focusedView()->redraw();
 	debugPrintf("Party level set to %d\n", level);
+	return true;
+}
+
+bool Console::cmdTransport(int argc, const char **argv) {
+	constexpr byte TILE_WATER = 0, TILE_GRASS = 1, TILE_FOREST = 3;
+	constexpr int MAX_RADIUS = 10;
+
+	static const byte TRANSPORTS[] = { TRANSPORT_HORSE, TRANSPORT_SHIP };
+	static const char *const NAMES[] = { "horse", "ship" };
+
+	int type = (argc == 2) ? atoi(argv[1]) : -1;
+	if (type < 0 || type >= (int)ARRAYSIZE(TRANSPORTS)) {
+		debugPrintf("transport <type>, where type is 0 for a horse or 1 for a ship\n");
+		return true;
+	}
+
+	ensureGame();
+	Data::Savegame &sg = _G(savegame);
+	if (sg._location != Data::LOCATION_SOSARIA) {
+		debugPrintf("Only supported on the world map\n");
+		return true;
+	}
+
+	// Ships need water, and horses are put on grass
+	const byte transport = TRANSPORTS[type];
+	const byte terrain = (transport == TRANSPORT_SHIP) ? TILE_WATER : TILE_GRASS;
+	const Data::Creatures &creatures = _G(map)._creatures;
+
+	// It's boarded by walking onto it, so there has to be land beside it to walk from
+	auto reachable = [&](int x, int y) {
+		static const int OFFSETS[4][2] = { { 0, -1 }, { 0, 1 }, { -1, 0 }, { 1, 0 } };
+		for (int i = 0; i < 4; ++i) {
+			byte tile = _G(map).tile(x + OFFSETS[i][0], y + OFFSETS[i][1]);
+			if (tile >= TILE_GRASS && tile <= TILE_FOREST)
+				return true;
+		}
+
+		return false;
+	};
+
+	// Prefer a place that can be reached, but settle for any if there isn't one
+	for (int pass = 0; pass < 2; ++pass) {
+		for (int radius = 1; radius <= MAX_RADIUS; ++radius) {
+			for (int dy = -radius; dy <= radius; ++dy) {
+				for (int dx = -radius; dx <= radius; ++dx) {
+					if (MAX(ABS(dx), ABS(dy)) != radius)
+						continue;
+
+					int x = (sg._posX + dx) & (Data::MAP_SIZE - 1);
+					int y = (sg._posY + dy) & (Data::MAP_SIZE - 1);
+					if (_G(map).tile(x, y) != terrain || (pass == 0 && !reachable(x, y)))
+						continue;
+
+					bool occupied = false;
+					for (int i = 0; i < Data::CREATURE_COUNT && !occupied; ++i)
+						occupied = creatures._tile[i] && creatures._x[i] == x && creatures._y[i] == y;
+					if (occupied)
+						continue;
+
+					_G(map).setCell(x, y, transport * 4);
+					g_engine->focusedView()->redraw();
+					debugPrintf("Spawned a %s at (%d,%d)\n", NAMES[type], x, y);
+					return true;
+				}
+			}
+		}
+	}
+
+	debugPrintf("No suitable place for a %s within %d squares\n", NAMES[type], MAX_RADIUS);
 	return true;
 }
 
