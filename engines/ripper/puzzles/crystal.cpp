@@ -21,7 +21,6 @@
 #include "ripper/puzzles/crystal.h"
 
 #include "common/debug.h"
-#include "common/formats/ini-file.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
@@ -33,6 +32,7 @@
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
+#include "ripper/settings.h"
 
 namespace Ripper {
 
@@ -56,7 +56,6 @@ static const int kEdgeTop = kSceneOriginY + 30;
 static const int kEdgeBottom = kEdgeTop + 235;
 static const int kHeadX = 328;
 static const int kHeadY = kSceneOriginY;
-static const uint kDefaultPuzzleLevel = 2;
 static const uint kCrystalCompletionFadeSteps = 9;
 static const uint kEasySeedDelayTicks = 0x12;
 static const uint kDosTimerTickMillis = 55;
@@ -272,21 +271,6 @@ bool CrystalPuzzle::isSolved() const {
 	return true;
 }
 
-uint CrystalPuzzle::readPuzzleLevel() const {
-	Common::INIFile ini;
-	Common::String value;
-	uint puzzleLevel = kDefaultPuzzleLevel;
-	if (ini.loadFromFile("ripper.ini") &&
-			ini.getKey("puzzle level", "game", value)) {
-		const uint64 configuredLevel = value.asUint64();
-		if (configuredLevel >= 1 && configuredLevel <= 3)
-			puzzleLevel = (uint)configuredLevel;
-	}
-	debugC(2, kDebugPuzzles, "Ripper: crystal puzzle difficulty level=%u",
-		puzzleLevel);
-	return puzzleLevel;
-}
-
 void CrystalPuzzle::seedInitialPieces(uint puzzleLevel) {
 	if (puzzleLevel == 1) {
 		_pieceCells[0] = 9;
@@ -374,10 +358,11 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 	}
 
 	debugC(1, kDebugPuzzles,
-		"Ripper: entered crystal puzzle pieces=%u grid=%ux%u completionFlag=%u",
-		kPieceCount, kGridColumns, ARRAYSIZE(kGridRowY), completionFlag);
+		"Ripper: entered crystal puzzle pieces=%u grid=%ux%u completionFlag=%u difficulty=%u",
+		kPieceCount, kGridColumns, ARRAYSIZE(kGridRowY), completionFlag,
+		_engine->getSettings()->getPuzzleLevel());
 	_engine->getInput()->discardMouseTransitions();
-	seedInitialPieces(readPuzzleLevel());
+	seedInitialPieces(_engine->getSettings()->getPuzzleLevel());
 	render();
 
 	Result result = kExited;

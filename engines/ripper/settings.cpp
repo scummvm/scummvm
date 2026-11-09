@@ -23,11 +23,13 @@
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/formats/ini-file.h"
 #include "common/util.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
 
 #include "ripper/detection.h"
+#include "ripper/ini.h"
 #include "ripper/ripper.h"
 #include "ripper/diagnostics/screen_presenter.h"
 
@@ -125,8 +127,17 @@ void RipperSettings::load() {
 		ConfMan.getInt("ripper_video_mode") : 1, 0, 3);
 	_combatLevel = CLIP<int>(ConfMan.hasKey("ripper_combat_level") ?
 		ConfMan.getInt("ripper_combat_level") : 2, 1, 3);
-	_puzzleLevel = CLIP<int>(ConfMan.hasKey("ripper_puzzle_level") ?
-		ConfMan.getInt("ripper_puzzle_level") : 2, 1, 3);
+	_puzzleLevel = 2;
+	if (ConfMan.hasKey("ripper_puzzle_level")) {
+		_puzzleLevel = CLIP<int>(ConfMan.getInt("ripper_puzzle_level"), 1, 3);
+	} else if (!_demo) {
+		Common::INIFile ini;
+		if (ini.loadFromFile("ripper.ini")) {
+			const int level = getIniInt(ini, "game", "puzzle level", 2);
+			if (level >= 1 && level <= 3)
+				_puzzleLevel = level;
+		}
+	}
 	for (uint i = 0; i < kActionKeyCount; ++i) {
 		const int key = ConfMan.hasKey(kActionKeyConfigKeys[i]) ?
 			ConfMan.getInt(kActionKeyConfigKeys[i]) : kDefaultActionKeys[i];

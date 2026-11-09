@@ -56,7 +56,6 @@ private:
 	void returnDraggedPieceToTray();
 	bool isSolved() const;
 	bool complete(uint completionFlag);
-	uint readPuzzleLevel() const;
 	void seedInitialPieces(uint puzzleLevel);
 	void playMovementCue();
 	void updateCursor(const Common::Point &point);
