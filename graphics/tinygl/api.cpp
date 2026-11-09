@@ -581,8 +581,9 @@ void tglLightfv(TGLenum light, TGLenum type, const TGLfloat *v) {
 	p[0].op = TinyGL::OP_Light;
 	p[1].i = light;
 	p[2].i = type;
+	int num = type == TGL_SPOT_DIRECTION ? 3 : 4;
 	for (int i = 0; i < 4; i++) {
-		if (type != TGL_SPOT_DIRECTION)
+		if (i < num)
 			p[3 + i].f = v[i];
 		else
 			p[3 + i].f = 0.0f;
