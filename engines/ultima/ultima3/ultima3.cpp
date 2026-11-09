@@ -40,7 +40,7 @@
 namespace Ultima {
 namespace Ultima3 {
 
-constexpr int SAVEGAME_VERSION = 6;
+constexpr int SAVEGAME_VERSION = 1;
 
 Ultima3Engine *g_engine;
 
@@ -170,7 +170,7 @@ Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
 				_savegame._location == Data::LOCATION_AMBROSIA)
 			_worldMap.synchronize(s);
 
-		if (_savegame._location == Data::LOCATION_DUNGEON && s.getVersion() >= 5)
+		if (_savegame._location == Data::LOCATION_DUNGEON)
 			_dungeon.synchronize(s);
 	}
 

@@ -64,11 +64,7 @@ const char *Map::text(int index) const {
 }
 
 void Map::synchronize(Common::Serializer &s) {
-	// Earlier saves only held the cells
-	if (s.getVersion() < 3)
-		s.syncBytes(_cells, sizeof(_cells));
-	else
-		synchronizeData(s);
+	synchronizeData(s);
 }
 
 void Map::synchronizeData(Common::Serializer &s) {

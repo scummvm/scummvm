@@ -67,30 +67,19 @@ void Savegame::synchronize(Common::Serializer &s) {
 	s.syncBytes(_moveCount, sizeof(_moveCount));
 	s.syncAsByte(_mapLoaded);
 
-	if (s.getVersion() >= 2) {
-		s.syncAsByte(_allWeapons);
-		s.syncAsByte(_allArmour);
-		s.syncAsByte(_plusTwoWeapons);
-		s.syncAsByte(_plusTwoArmour);
-	}
+	s.syncAsByte(_allWeapons);
+	s.syncAsByte(_allArmour);
+	s.syncAsByte(_plusTwoWeapons);
+	s.syncAsByte(_plusTwoArmour);
 
-	if (s.getVersion() >= 3) {
-		s.syncAsByte(_worldX);
-		s.syncAsByte(_worldY);
-	}
+	s.syncAsByte(_worldX);
+	s.syncAsByte(_worldY);
+	s.syncAsByte(_lightTurns);
+	s.syncAsByte(_dungeonLevel);
+	s.syncAsByte(_facing);
 
-	if (s.getVersion() >= 4)
-		s.syncAsByte(_lightTurns);
-
-	if (s.getVersion() >= 5) {
-		s.syncAsByte(_dungeonLevel);
-		s.syncAsByte(_facing);
-	}
-
-	if (s.getVersion() >= 6) {
-		s.syncBytes(_moonPhase, sizeof(_moonPhase));
-		s.syncBytes(_moonCountdown, sizeof(_moonCountdown));
-	}
+	s.syncBytes(_moonPhase, sizeof(_moonPhase));
+	s.syncBytes(_moonCountdown, sizeof(_moonCountdown));
 }
 
 constexpr int ORIGINAL_ROSTER_SIZE = ROSTER_COUNT * 0x40;
