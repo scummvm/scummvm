@@ -206,7 +206,6 @@ GfxOpenGLS::GfxOpenGLS() {
 	_fclip = -1;
 	_selectedTexture = nullptr;
 	_emergTexture = 0;
-	_maxLights = 8;
 	_lights = new GLSLight[_maxLights];
 	_lightsEnabled = false;
 	_hasAmbientLight = false;

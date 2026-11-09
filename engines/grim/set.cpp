@@ -91,7 +91,6 @@ Set::~Set() {
 			delete _setups[i]._bkgndZBm;
 		}
 		delete[] _setups;
-		turnOffLights();
 		delete[] _lights;
 		for (int i = 0; i < _numSectors; ++i) {
 			delete _sectors[i];
@@ -848,28 +847,10 @@ void Set::setupLights(const Math::Vector3d &pos, bool inOverworld) {
 
 	// Sort the ligths from the nearest to the farthest to the pos.
 	Sorter sorter(pos);
-	Common::List<Light *>* lightsList = inOverworld ? &_overworldLightsList : &_lightsList;
-	Common::sort(lightsList->begin(), lightsList->end(), sorter);
+	Common::List<Light *> &lightsList = inOverworld ? _overworldLightsList : _lightsList;
+	Common::sort(lightsList.begin(), lightsList.end(), sorter);
 
-	int count = 0;
-	for (Light *l : *lightsList) {
-		if (l->_enabled) {
-			g_driver->setupLight(l, count);
-			++count;
-		}
-	}
-}
-
-void Set::turnOffLights() {
-	_enableLights = false;
-	int count = 0;
-	for (int i = 0; i < _numLights; i++) {
-		Light *l = &_lights[i];
-		if (l->_enabled) {
-			g_driver->turnOffLight(count);
-			++count;
-		}
-	}
+	g_driver->setupLights(lightsList);
 }
 
 void Set::setSetup(int num) {

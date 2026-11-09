@@ -86,8 +86,6 @@ public:
 
 	void enableLights() override;
 	void disableLights() override;
-	void setupLight(Light *light, int lightId) override;
-	void turnOffLight(int lightId) override;
 
 	void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) override;
 	void selectTexture(const Texture *texture) override;
@@ -129,6 +127,8 @@ public:
 
 protected:
 	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) override;
+	void setupLight(Light *light, int lightId) override;
+	void turnOffLight(int lightId) override;
 
 private:
 	Graphics::PixelFormat _pixelFormat;

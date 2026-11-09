@@ -81,7 +81,7 @@ static char dimFragSrc[] =
 GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
 		_smushTexIds(nullptr), _smushWidth(0), _smushHeight(0),
 		_useDepthShader(false), _useDimShader(0),
-		_maxLights(0), _storedDisplay(nullptr),
+		_storedDisplay(nullptr),
 #ifdef GL_ARB_fragment_program
 		_fragmentProgram(0), _dimFragProgram(0),
 #endif
@@ -987,6 +987,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	}
 
 	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0 + lightId);
 	GLfloat lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat lightDir[] = { 0.0f, 0.0f, -1.0f };
@@ -1020,14 +1021,12 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 		q_attenuation = 0.0f;
 	}
 
-	glDisable(GL_LIGHT0 + lightId);
 	glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, spot_exp);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
 	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, q_attenuation);
-	glEnable(GL_LIGHT0 + lightId);
 }
 
 void GfxOpenGL::turnOffLight(int lightId) {
