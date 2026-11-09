@@ -121,10 +121,19 @@ private:
 	};
 
 	class IdleMediaCallback;
+	struct FramePresentationPlan;
+	struct FramePresentationResult;
+	struct CallbackContext {
+		uint mediaFrame;
+		IdleMediaCallback *idleMediaCallback;
+
+		CallbackContext() : mediaFrame(0), idleMediaCallback(nullptr) {}
+	};
 
 	CallbackResult dispatchSceneAction(const CompiledScript &script, const ScriptCommand &command);
 	CallbackResult executeCallback(const CompiledScript &script, uint32 callbackOffset,
-		uint *nextFrame = nullptr, uint commandStart = 0);
+		uint *nextFrame = nullptr, uint commandStart = 0,
+		const CallbackContext &context = CallbackContext());
 	bool handleActiveRuntimeExit(CallbackResult result, const CompiledScript &script,
 		const char *callbackPhase);
 	bool acceptConcurrentRuntimeExit(CallbackResult result, const char *callbackPhase);
@@ -135,6 +144,10 @@ private:
 	void initializeBa0InteractionState(const ScriptFrame &frame);
 	void beginBa0InteractionWait(const Common::String &frameLabel, uint interactionCount);
 	bool advanceBa0ToFrame(uint nextFrame);
+	CallbackResult prepareFramePresentation(const ScriptFrame &frame,
+		const Common::String &label, FramePresentationPlan &plan);
+	FramePresentationResult executeFramePresentation(const ScriptFrame &frame,
+		const Common::String &label, const FramePresentationPlan &plan);
 	bool executeConcurrentFrame();
 	bool performPendingSceneTransition();
 	bool runWorldMapCheckpoint(uint chapter);
@@ -157,8 +170,6 @@ private:
 	bool _runtimeRestorePending;
 	Common::Array<Common::String> _playedScenes;
 	Common::String _previousInteractionSceneMediaPath;
-	uint _sceneCallbackFrame;
-	IdleMediaCallback *_activeIdleMediaCallback;
 	byte _chooserTemplateMode;
 	Common::ScopedPtr<BriefingManager> _briefing;
 	Common::ScopedPtr<DialogueChooser> _dialogue;

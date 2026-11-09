@@ -65,6 +65,39 @@ static const int kSceneInteractionOriginY = 50;
 static const uint kDefaultPaletteFadeSteps = 9;
 static const uint kSceneTextEntryMaximumLength = 60;
 
+struct ScriptManager::FramePresentationPlan {
+	Common::String mediaPath;
+	Common::String text;
+	uint idleWaitFrame = 0;
+	bool dialogueIdleCallback = false;
+	bool idleTextRequest = false;
+	bool waitsForSceneInput = false;
+	bool activatesInputDuringMedia = false;
+	bool loopUntilInput = false;
+	bool allowEscSpace = false;
+};
+
+struct ScriptManager::FramePresentationResult {
+	enum Flow {
+		kContinueFrame,
+		kWaitForInput,
+		kSelectFrame,
+		kChangeScene,
+		kTerminateRuntime,
+		kRuntimeReplaced,
+		kCyberEscape,
+		kFailed
+	};
+
+	Flow flow;
+	uint nextFrame;
+	const char *callbackPhase;
+
+	FramePresentationResult(Flow flow_, uint nextFrame_ = 0,
+			const char *callbackPhase_ = nullptr) :
+			flow(flow_), nextFrame(nextFrame_), callbackPhase(callbackPhase_) {}
+};
+
 class ScriptManager::IdleMediaCallback : public MediaSequenceCallback {
 public:
 	IdleMediaCallback(ScriptManager *manager, const CompiledScript &script,
@@ -134,12 +167,11 @@ public:
 
 private:
 	uint16 execute(uint frame, uint commandStart) {
-		_manager->_sceneCallbackFrame = frame;
-		_manager->_activeIdleMediaCallback = this;
+		CallbackContext context;
+		context.mediaFrame = frame;
+		context.idleMediaCallback = this;
 		_result = _manager->executeCallback(_script, _callbackOffset,
-			&_nextFrame, commandStart);
-		_manager->_activeIdleMediaCallback = nullptr;
-		_manager->_sceneCallbackFrame = 0;
+			&_nextFrame, commandStart, context);
 		if (_result == kCallbackSuspendedForText)
 			return 0;
 		_serviced = true;
@@ -208,8 +240,7 @@ SceneRuntimeState::SceneRuntimeState() : activeFrame(0), frontEndActionMask(0xff
 
 ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _demoScriptAbi(false),
 		_demoRuntimeComplete(false), _runtimeRestorePending(false),
-		_sceneCallbackFrame(0),
-		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0),
+		_chooserTemplateMode(0),
 		_briefing(new BriefingManager(engine)), _dialogue(new DialogueChooser()) {
 }
 
@@ -693,7 +724,7 @@ ScriptManager::CallbackResult ScriptManager::dispatchSceneAction(const CompiledS
 }
 
 ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScript &script, uint32 callbackOffset,
-		uint *nextFrame, uint commandStart) {
+		uint *nextFrame, uint commandStart, const CallbackContext &context) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Common::Array<ScriptCommand> commands;
 	if (nextFrame)
@@ -1034,22 +1065,22 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 			if (command.arguments.size() < 1)
 				return kCallbackFailed;
 			const uint targetFrame = command.arguments[0].value;
-			if (_sceneCallbackFrame < targetFrame) {
+			if (context.mediaFrame < targetFrame) {
 				warning("Ripper: scene callback frame=%u did not reach wait target=%u script='%s' offset=0x%x",
-					_sceneCallbackFrame, targetFrame, script.getMemberName().c_str(),
+					context.mediaFrame, targetFrame, script.getMemberName().c_str(),
 					command.offset);
 				return kCallbackFailed;
 			}
 			debugC(2, kDebugScene,
 				"Ripper: scene idle callback reached media frame=%u target=%u script='%s' offset=0x%x",
-				_sceneCallbackFrame, targetFrame, script.getMemberName().c_str(),
+				context.mediaFrame, targetFrame, script.getMemberName().c_str(),
 				command.offset);
 			break;
 		}
 
 		case kRequestTextInput: {
 			if (command.arguments.size() < 4 || !nextFrame ||
-					!_activeIdleMediaCallback)
+					!context.idleMediaCallback)
 				return kCallbackFailed;
 			const Common::String prompt = argumentString(command.arguments[0]);
 			const Common::String expected = argumentString(command.arguments[1]);
@@ -1063,7 +1094,7 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 
 			const byte templateMode = _chooserTemplateMode;
 			_chooserTemplateMode = 0;
-			if (!_activeIdleMediaCallback->beginTextRequest(prompt, expected,
+			if (!context.idleMediaCallback->beginTextRequest(prompt, expected,
 					failureFrame, command.selector, commandIndex + 1))
 				return kCallbackFailed;
 			debugC(2, kDebugCyber,
@@ -1313,178 +1344,37 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			return false;
 
 		if (frame.presentationType == 0 || frame.presentationType == 1) {
-			const Common::String mediaPath = _runtime.activeScript.getString(frame.mediaNameOffset);
-			const Common::String presentationText =
-				frame.presentationType == 0 && !_demoScriptAbi &&
-				_engine->getSettings()->getSubtitles() && frame.textOffset != 0 ?
-				_runtime.activeScript.getPresentationText(frame.textOffset) :
-				Common::String();
-			debugC(2, kDebugScene,
-				"Ripper: frame presentation label='%s' media='%s' origin=%d,%d "
-				"presentationText=%d textLength=%u",
-				label.c_str(), mediaPath.c_str(), frame.x, frame.y,
-				!presentationText.empty(), presentationText.size());
-			if (frame.presentationType == 0)
-				retainPreviousInteractionScene(mediaPath, "scene-frame-presentation");
-			markScenePlayed(label);
-			const bool dialogueIdleCallback =
-				frame.idleCallbackOffset != 0 && _dialogue->hasChoices();
-			if (dialogueIdleCallback) {
-				const CallbackResult idleResult = executeCallback(_runtime.activeScript, frame.idleCallbackOffset);
-				if (idleResult == kCallbackFailed)
-					return false;
-				if (handleActiveRuntimeExit(idleResult, _runtime.activeScript, "idle"))
-					return true;
-				if (idleResult != kCallbackContinue) {
-					warning("Ripper: dialogue idle callback for frame '%s' returned %d",
-						label.c_str(), idleResult);
-					return false;
-				}
-				debugC(1, kDebugDialogue,
-					"Ripper: activated frame dialogue chooser before media label='%s' idle=0x%x",
-					label.c_str(), frame.idleCallbackOffset);
-			}
-
-			uint idleWaitFrame = 0;
-			bool idleTextRequest = false;
-			if (frame.idleCallbackOffset != 0 && !_dialogue->hasChoices()) {
-				Common::Array<ScriptCommand> idleCommands;
-				if (!_runtime.activeScript.decodeCallback(frame.idleCallbackOffset, true, idleCommands))
-					return false;
-				for (uint commandIndex = 0; commandIndex < idleCommands.size(); ++commandIndex) {
-					const ScriptCommand &idleCommand = idleCommands[commandIndex];
-					if (idleCommand.opcode == kWaitForFrameCounter &&
-							!idleCommand.arguments.empty())
-						idleWaitFrame = idleCommand.arguments[0].value;
-					else if (idleCommand.opcode == kRequestTextInput)
-						idleTextRequest = true;
-				}
-				if (idleTextRequest && idleWaitFrame == 0) {
-					warning("Ripper: scene text request frame='%s' has no media-frame wait",
-						label.c_str());
-					return false;
-				}
-			}
-			const bool dialoguePending = _dialogue->isPending();
-			const bool waitsForSceneInput =
-				frame.interactionCount != 0 || dialoguePending || idleTextRequest;
-			const bool activatesInputDuringMedia =
-				(frame.presentationType == 1 && frame.interactionCount != 0) ||
-				dialoguePending || idleTextRequest;
-			if (activatesInputDuringMedia && !_runtime.awaitingInteraction)
-				beginBa0InteractionWait(label, frame.interactionCount);
-			// An idle callback may create a dialogue chooser. Keep type-1 media
-			// active while either the frame controls or that chooser await input.
-			const bool loopUntilInput = frame.presentationType == 1 &&
-				(frame.interactionCount != 0 || dialoguePending);
-			const bool allowEscSpace = frame.presentationType == 0;
-			debugC(2, kDebugVideo,
-				"Ripper: frame presentation controls label='%s' keyboard=%d mouse=%d dialogue=%d "
-				"idleTextRequest=%d waitFrame=%u",
-				label.c_str(), allowEscSpace, loopUntilInput, dialoguePending,
-				idleTextRequest, idleWaitFrame);
-			IdleMediaCallback idleCallback(this, _runtime.activeScript, frame.idleCallbackOffset,
-				idleWaitFrame, _runtime.activeFrame);
-			uint16 idleCommand = 0;
-			ScenePlaybackOptions options;
-			options.x = frame.x;
-			options.y = frame.y;
-			options.loopUntilInput = loopUntilInput;
-			options.allowEscSpace = allowEscSpace;
-			options.callback = idleTextRequest ? &idleCallback : nullptr;
-			options.command = &idleCommand;
-			const bool played = frame.presentationType == 0 ?
-				_engine->getMedia()->play(mediaPath, allowEscSpace, frame.x,
-					frame.y, true, presentationText) :
-				_engine->getMedia()->playScene(mediaPath, options);
-			if (!played)
+			FramePresentationPlan plan;
+			const CallbackResult idleResult = prepareFramePresentation(frame, label, plan);
+			if (idleResult == kCallbackFailed)
 				return false;
-			if (_runtimeRestorePending) {
-				debugC(1, kDebugSaveLoad,
-					"Ripper: unwound replaced active presentation media='%s'",
-					mediaPath.c_str());
+			if (handleActiveRuntimeExit(idleResult, _runtime.activeScript, "idle"))
 				return true;
-			}
-			if (_runtime.cyberKeyboardCommand == kCyberEscapeCommand) {
-				if (!serviceCyberKeyboardCommand())
-					return false;
+			if (idleResult != kCallbackContinue)
+				return false;
+
+			const FramePresentationResult presentation = executeFramePresentation(frame, label, plan);
+			switch (presentation.flow) {
+			case FramePresentationResult::kContinueFrame:
+				break;
+			case FramePresentationResult::kWaitForInput:
+			case FramePresentationResult::kRuntimeReplaced:
 				return true;
-			}
-			if (idleTextRequest) {
-				if (!idleCallback.serviced()) {
-					warning("Ripper: scene text request frame='%s' media='%s' ended before target=%u",
-						label.c_str(), mediaPath.c_str(), idleCallback.targetFrame());
-					return false;
-				}
-				if (!idleCallback.succeeded())
-					return false;
-				result = idleCallback.result();
-				callbackFrame = idleCallback.nextFrame();
-				debugC(2, kDebugScene,
-					"Ripper: scene text idle callback completed frame='%s' result=%d nextFrame=%u mediaCommand=0x%04x",
-					label.c_str(), result, callbackFrame, idleCommand);
-				if (handleActiveRuntimeExit(result, _runtime.activeScript, "media idle"))
-					return true;
-				if (result == kCallbackSelectFrame) {
-					_runtime.awaitingInteraction = false;
-					_engine->getSceneAudio()->resetTriggers();
-					nextFrame = callbackFrame;
-					continue;
-				}
-				if (result != kCallbackContinue)
-					return false;
-			}
-			if (frame.idleCallbackOffset != 0 && !dialogueIdleCallback &&
-					!idleTextRequest) {
-				// EE2.RUN frame EEZ1 relies on the idle callback running before
-				// chooser input so Q2_V5.WAV plays before its hotspot becomes active.
-				callbackFrame = _runtime.activeFrame;
-				result = executeCallback(_runtime.activeScript,
-						frame.idleCallbackOffset, &callbackFrame);
-				if (result == kCallbackFailed)
-					return false;
-				debugC(2, kDebugScene,
-					"Ripper: serviced frame idle callback before interaction "
-					"frame='%s' idle=0x%x result=%d nextFrame=%u",
-					label.c_str(), frame.idleCallbackOffset, result, callbackFrame);
-				if (handleActiveRuntimeExit(result, _runtime.activeScript,
-						"interaction idle"))
-					return true;
-				if (result == kCallbackChangeScene && !_runtime.pendingSceneMember.empty())
-					return performPendingSceneTransition();
-				if (result == kCallbackSelectFrame) {
-					_runtime.awaitingInteraction = false;
-					_engine->getSceneAudio()->resetTriggers();
-					nextFrame = callbackFrame;
-					continue;
-				}
-				if (result != kCallbackContinue)
-					return false;
-			}
-			if (!_runtime.pendingSceneMember.empty()) {
-				debugC(1, kDebugScene,
-					"Ripper: scene presentation returned transition target='%s' entry='%s'",
-					_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
+			case FramePresentationResult::kSelectFrame:
+				_runtime.awaitingInteraction = false;
+				_engine->getSceneAudio()->resetTriggers();
+				nextFrame = presentation.nextFrame;
+				continue;
+			case FramePresentationResult::kChangeScene:
 				return performPendingSceneTransition();
+			case FramePresentationResult::kTerminateRuntime:
+				return handleActiveRuntimeExit(kCallbackTerminateRuntime,
+					_runtime.activeScript, presentation.callbackPhase);
+			case FramePresentationResult::kCyberEscape:
+				return serviceCyberKeyboardCommand();
+			case FramePresentationResult::kFailed:
+				return false;
 			}
-			// Controlled AVI restores the surrounding display. Other media keeps
-			// its final frame, including full-screen documents such as KK_Z12.SMK.
-			if (allowEscSpace && mediaPath.hasSuffixIgnoreCase(".avi")) {
-				_dialogue->rebuildPresentationBands("controlled-avi-complete");
-			} else if (allowEscSpace) {
-				debugC(2, kDebugScene,
-					"Ripper: retained controlled sequence display media='%s'",
-					mediaPath.c_str());
-			}
-			if (frame.interactionCount != 0 && !_runtime.awaitingInteraction) {
-				beginBa0InteractionWait(label, frame.interactionCount);
-				debugC(2, kDebugScene,
-					"Ripper: activated post-presentation interactions "
-					"frame='%s' count=%u",
-					label.c_str(), frame.interactionCount);
-			}
-			if (waitsForSceneInput)
-				return true;
 		}
 
 		if (frame.interactionCount != 0 && !_runtime.awaitingInteraction) {
@@ -1515,6 +1405,158 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		}
 	}
 	return true;
+}
+
+ScriptManager::CallbackResult ScriptManager::prepareFramePresentation(
+		const ScriptFrame &frame, const Common::String &label, FramePresentationPlan &plan) {
+	plan.mediaPath = _runtime.activeScript.getString(frame.mediaNameOffset);
+	plan.text = frame.presentationType == 0 && !_demoScriptAbi &&
+		_engine->getSettings()->getSubtitles() && frame.textOffset != 0 ?
+		_runtime.activeScript.getPresentationText(frame.textOffset) : Common::String();
+	debugC(2, kDebugScene,
+		"Ripper: frame presentation label='%s' media='%s' origin=%d,%d "
+		"presentationText=%d textLength=%u",
+		label.c_str(), plan.mediaPath.c_str(), frame.x, frame.y,
+		!plan.text.empty(), plan.text.size());
+	if (frame.presentationType == 0)
+		retainPreviousInteractionScene(plan.mediaPath, "scene-frame-presentation");
+	markScenePlayed(label);
+	plan.dialogueIdleCallback = frame.idleCallbackOffset != 0 && _dialogue->hasChoices();
+	if (plan.dialogueIdleCallback) {
+		const CallbackResult result = executeCallback(_runtime.activeScript, frame.idleCallbackOffset);
+		if (result == kCallbackFailed || result == kCallbackTerminateRuntime)
+			return result;
+		if (result != kCallbackContinue) {
+			warning("Ripper: dialogue idle callback for frame '%s' returned %d",
+				label.c_str(), result);
+			return kCallbackFailed;
+		}
+		debugC(1, kDebugDialogue,
+			"Ripper: activated frame dialogue chooser before media label='%s' idle=0x%x",
+			label.c_str(), frame.idleCallbackOffset);
+	}
+
+	if (frame.idleCallbackOffset != 0 && !_dialogue->hasChoices()) {
+		Common::Array<ScriptCommand> idleCommands;
+		if (!_runtime.activeScript.decodeCallback(frame.idleCallbackOffset, true, idleCommands))
+			return kCallbackFailed;
+		for (uint commandIndex = 0; commandIndex < idleCommands.size(); ++commandIndex) {
+			const ScriptCommand &command = idleCommands[commandIndex];
+			if (command.opcode == kWaitForFrameCounter && !command.arguments.empty())
+				plan.idleWaitFrame = command.arguments[0].value;
+			else if (command.opcode == kRequestTextInput)
+				plan.idleTextRequest = true;
+		}
+		if (plan.idleTextRequest && plan.idleWaitFrame == 0) {
+			warning("Ripper: scene text request frame='%s' has no media-frame wait", label.c_str());
+			return kCallbackFailed;
+		}
+	}
+	const bool dialoguePending = _dialogue->isPending();
+	plan.waitsForSceneInput = frame.interactionCount != 0 || dialoguePending || plan.idleTextRequest;
+	plan.activatesInputDuringMedia = (frame.presentationType == 1 && frame.interactionCount != 0) ||
+		dialoguePending || plan.idleTextRequest;
+	// An idle callback may create a dialogue chooser. Keep type-1 media active
+	// while either the frame controls or that chooser await input.
+	plan.loopUntilInput = frame.presentationType == 1 && (frame.interactionCount != 0 || dialoguePending);
+	plan.allowEscSpace = frame.presentationType == 0;
+	return kCallbackContinue;
+}
+
+ScriptManager::FramePresentationResult ScriptManager::executeFramePresentation(
+		const ScriptFrame &frame, const Common::String &label, const FramePresentationPlan &plan) {
+	if (plan.activatesInputDuringMedia && !_runtime.awaitingInteraction)
+		beginBa0InteractionWait(label, frame.interactionCount);
+	debugC(2, kDebugVideo,
+		"Ripper: frame presentation controls label='%s' keyboard=%d mouse=%d dialogue=%d "
+		"idleTextRequest=%d waitFrame=%u",
+		label.c_str(), plan.allowEscSpace, plan.loopUntilInput, _dialogue->isPending(),
+		plan.idleTextRequest, plan.idleWaitFrame);
+	IdleMediaCallback idleCallback(this, _runtime.activeScript, frame.idleCallbackOffset,
+		plan.idleWaitFrame, _runtime.activeFrame);
+	uint16 idleCommand = 0;
+	ScenePlaybackOptions options;
+	options.x = frame.x;
+	options.y = frame.y;
+	options.loopUntilInput = plan.loopUntilInput;
+	options.allowEscSpace = plan.allowEscSpace;
+	options.callback = plan.idleTextRequest ? &idleCallback : nullptr;
+	options.command = &idleCommand;
+	const bool played = frame.presentationType == 0 ?
+		_engine->getMedia()->play(plan.mediaPath, plan.allowEscSpace, frame.x,
+			frame.y, true, plan.text) :
+		_engine->getMedia()->playScene(plan.mediaPath, options);
+	if (!played)
+		return FramePresentationResult(FramePresentationResult::kFailed);
+	if (_runtimeRestorePending) {
+		debugC(1, kDebugSaveLoad,
+			"Ripper: unwound replaced active presentation media='%s'", plan.mediaPath.c_str());
+		return FramePresentationResult(FramePresentationResult::kRuntimeReplaced);
+	}
+	if (_runtime.cyberKeyboardCommand == kCyberEscapeCommand)
+		return FramePresentationResult(FramePresentationResult::kCyberEscape);
+	if (plan.idleTextRequest) {
+		if (!idleCallback.serviced()) {
+			warning("Ripper: scene text request frame='%s' media='%s' ended before target=%u",
+				label.c_str(), plan.mediaPath.c_str(), idleCallback.targetFrame());
+			return FramePresentationResult(FramePresentationResult::kFailed);
+		}
+		if (!idleCallback.succeeded())
+			return FramePresentationResult(FramePresentationResult::kFailed);
+		const CallbackResult result = idleCallback.result();
+		const uint callbackFrame = idleCallback.nextFrame();
+		debugC(2, kDebugScene,
+			"Ripper: scene text idle callback completed frame='%s' result=%d nextFrame=%u mediaCommand=0x%04x",
+			label.c_str(), result, callbackFrame, idleCommand);
+		if (result == kCallbackTerminateRuntime)
+			return FramePresentationResult(FramePresentationResult::kTerminateRuntime,
+				callbackFrame, "media idle");
+		if (result == kCallbackSelectFrame)
+			return FramePresentationResult(FramePresentationResult::kSelectFrame, callbackFrame);
+		if (result != kCallbackContinue)
+			return FramePresentationResult(FramePresentationResult::kFailed);
+	}
+	if (frame.idleCallbackOffset != 0 && !plan.dialogueIdleCallback && !plan.idleTextRequest) {
+		// EE2.RUN frame EEZ1 relies on the idle callback running before chooser
+		// input so Q2_V5.WAV plays before its hotspot becomes active.
+		uint callbackFrame = _runtime.activeFrame;
+		const CallbackResult result = executeCallback(_runtime.activeScript, frame.idleCallbackOffset, &callbackFrame);
+		if (result == kCallbackFailed)
+			return FramePresentationResult(FramePresentationResult::kFailed);
+		debugC(2, kDebugScene,
+			"Ripper: serviced frame idle callback before interaction frame='%s' idle=0x%x result=%d nextFrame=%u",
+			label.c_str(), frame.idleCallbackOffset, result, callbackFrame);
+		if (result == kCallbackTerminateRuntime)
+			return FramePresentationResult(FramePresentationResult::kTerminateRuntime,
+				callbackFrame, "interaction idle");
+		if (result == kCallbackChangeScene && !_runtime.pendingSceneMember.empty())
+			return FramePresentationResult(FramePresentationResult::kChangeScene);
+		if (result == kCallbackSelectFrame)
+			return FramePresentationResult(FramePresentationResult::kSelectFrame, callbackFrame);
+		if (result != kCallbackContinue)
+			return FramePresentationResult(FramePresentationResult::kFailed);
+	}
+	if (!_runtime.pendingSceneMember.empty()) {
+		debugC(1, kDebugScene,
+			"Ripper: scene presentation returned transition target='%s' entry='%s'",
+			_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
+		return FramePresentationResult(FramePresentationResult::kChangeScene);
+	}
+	// Controlled AVI restores the surrounding display. Other media keeps its
+	// final frame, including full-screen documents such as KK_Z12.SMK.
+	if (plan.allowEscSpace && plan.mediaPath.hasSuffixIgnoreCase(".avi")) {
+		_dialogue->rebuildPresentationBands("controlled-avi-complete");
+	} else if (plan.allowEscSpace) {
+		debugC(2, kDebugScene, "Ripper: retained controlled sequence display media='%s'", plan.mediaPath.c_str());
+	}
+	if (frame.interactionCount != 0 && !_runtime.awaitingInteraction) {
+		beginBa0InteractionWait(label, frame.interactionCount);
+		debugC(2, kDebugScene,
+			"Ripper: activated post-presentation interactions frame='%s' count=%u",
+			label.c_str(), frame.interactionCount);
+	}
+	return FramePresentationResult(plan.waitsForSceneInput ?
+		FramePresentationResult::kWaitForInput : FramePresentationResult::kContinueFrame);
 }
 
 bool ScriptManager::captureCyberKeyboardCommand() {
