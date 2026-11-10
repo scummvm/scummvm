@@ -919,18 +919,21 @@ bool IgorEngine::originalSaveLoadPage(bool save) {
 	}
 	if (save && slots.size() < maxEntries) {
 		// the new savegame uses the first free slot
+		const int maxSlot = (int)maxEntries - 1;
 		int freeSlot = 0;
-		for (;;) {
+		for (; freeSlot <= maxSlot; ++freeSlot) {
 			bool used = (freeSlot == autosaveSlot);
 			for (uint i = 0; i < slots.size() && !used; ++i) {
 				used = (slots[i] == freeSlot);
 			}
 			if (!used)
 				break;
-			++freeSlot;
 		}
-		slots.push_back(freeSlot);
-		names.push_back(Common::String(kSaveLoadNameLength, ' '));
+		// every valid slot may already be taken (e.g. by the autosave)
+		if (freeSlot <= maxSlot) {
+			slots.push_back(freeSlot);
+			names.push_back(Common::String(kSaveLoadNameLength, ' '));
+		}
 	}
 	if (slots.empty()) {
 		saveLoadDrawTitle(l, kOptionsNoSavedGames, l.noSavedGamesX, kSaveLoadNoSavedGamesY, l.colorNoGames);
