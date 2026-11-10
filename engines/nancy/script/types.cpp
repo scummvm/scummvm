@@ -217,6 +217,16 @@ static int rectContains(lua_State *L) {
 	return 1;
 }
 
+// Rect:Clamp(point) and Rect:Clamp(x, y), Nancy27: the nearest point of the
+// rect, right and bottom edges included
+static int rectClamp(lua_State *L) {
+	const ScriptRect &rect = checkRect(L, 1);
+	const Common::Point32 point = checkPointArguments(L, 2);
+	pushPoint(L, Common::Point32(CLIP<int32>(point.x, rect.left, MAX(rect.left, rect.right)),
+								 CLIP<int32>(point.y, rect.top, MAX(rect.top, rect.bottom))));
+	return 1;
+}
+
 static int rectOffset(lua_State *L) {
 	ScriptRect rect = checkRect(L, 1);
 	Common::Point32 offset = checkPointArguments(L, 2);
@@ -325,6 +335,7 @@ static const luaL_Reg kRectFunctions[] = {
 	{ "__newindex", rectNewIndex },
 	{ "__eq", rectEquals },
 	{ "Contains", rectContains },
+	{ "Clamp", rectClamp },
 	{ "Offset", rectOffset },
 	{ "Intersect", rectIntersect },
 	{ "CenteredOn", rectCenteredOn },
@@ -496,7 +507,7 @@ static int pointSubtract(lua_State *L) {
 	return 1;
 }
 
-// Either side can be a number, which multiplies both coordinates.
+// Either side can be a number, which multiplies or divides both coordinates.
 // Before Nancy26, the number is truncated first.
 static void checkPointFactor(lua_State *L, int index, float &x, float &y) {
 	if (lua_isnumber(L, index)) {
@@ -515,6 +526,33 @@ static int pointMultiply(lua_State *L) {
 	checkPointFactor(L, 1, ax, ay);
 	checkPointFactor(L, 2, bx, by);
 	pushPointValue(L, PointValue(ax * bx, ay * by));
+	return 1;
+}
+
+// Nancy27
+static int pointDivide(lua_State *L) {
+	float ax, ay, bx, by;
+	checkPointFactor(L, 1, ax, ay);
+	checkPointFactor(L, 2, bx, by);
+	pushPointValue(L, PointValue(ax / bx, ay / by));
+	return 1;
+}
+
+// Halves go away from zero
+static double roundCoordinate(float value) {
+	return value > 0.0f ? floor(value + 0.5) : ceil(value - 0.5);
+}
+
+// Point:Rounded() and Point:Floored(), Nancy27
+static int pointRounded(lua_State *L) {
+	const PointValue &point = checkPoint(L, 1);
+	pushPointValue(L, PointValue(roundCoordinate(point.x), roundCoordinate(point.y)));
+	return 1;
+}
+
+static int pointFloored(lua_State *L) {
+	const PointValue &point = checkPoint(L, 1);
+	pushPointValue(L, PointValue(floor(point.x), floor(point.y)));
 	return 1;
 }
 
@@ -541,10 +579,13 @@ static const luaL_Reg kPointFunctions[] = {
 	{ "__eq", pointEquals },
 	{ "__add", pointAdd },
 	{ "__mul", pointMultiply },
+	{ "__div", pointDivide },
 	{ "__sub", pointSubtract },
 	{ "__unm", pointNegate },
 	{ "__tostring", pointToString },
 	{ "__concat", concatToStrings },
+	{ "Rounded", pointRounded },
+	{ "Floored", pointFloored },
 	{ nullptr, nullptr }
 };
 
