@@ -52,6 +52,53 @@ SmackerPlaybackPlan makeWacInterfaceSequencePlan(const Common::Rect &centerBound
 
 } // End of anonymous namespace
 
+MediaFormat detectMediaFormat(Common::SeekableReadStream &stream) {
+	const int64 originalPosition = stream.pos();
+	byte magic[8] = { 0 };
+	const uint32 bytesRead = stream.read(magic, sizeof(magic));
+	if (!stream.seek(originalPosition))
+		return kMediaFormatUnknown;
+	if (bytesRead >= 8 && memcmp(magic, "IAVF2.00", 8) == 0)
+		return kMediaFormatIavf;
+	if (bytesRead >= 4 &&
+			(memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0))
+		return kMediaFormatSmacker;
+	return kMediaFormatUnknown;
+}
+
+const char *mediaFormatName(MediaFormat format) {
+	switch (format) {
+	case kMediaFormatSmacker:
+		return "smacker";
+	case kMediaFormatIavf:
+		return "iavf";
+	default:
+		return "unknown";
+	}
+}
+
+SmackerPlaybackResult MediaPlayer::playValidatedSmacker(Common::SeekableReadStream *stream,
+		const Common::String &name, const char *description,
+		const SmackerPlaybackPlan &plan) {
+	Common::ScopedPtr<Common::SeekableReadStream> ownedStream(stream);
+	if (!ownedStream) {
+		warning("Ripper: could not open %s Smacker '%s'", description, name.c_str());
+		return SmackerPlaybackResult();
+	}
+
+	const MediaFormat format = detectMediaFormat(*ownedStream);
+	if (format != kMediaFormatSmacker) {
+		warning("Ripper: unsupported %s media '%s' format=%s",
+			description, name.c_str(), mediaFormatName(format));
+		return SmackerPlaybackResult();
+	}
+
+	debugC(3, kDebugVideo,
+		"Ripper: validated %s Smacker media='%s'",
+		description, name.c_str());
+	return playSmacker(ownedStream.release(), name, plan);
+}
+
 bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, int y,
 		bool sceneViewport, const Common::String &presentationText) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);

@@ -42,6 +42,27 @@
 
 namespace Ripper {
 
+Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan) {
+	return Common::String::format(
+		"position=%d,%d originY=%d scale=%u controls=%d "
+		"sceneUi=%d mouseStop=%d segmentAdvance=%d palette=interface:%d,wac:%d,preserve:%d,remember:%d "
+		"frames=%u..%u previewLimit=%u loop=start:%u,fromStart:%d,bounded:%u "
+		"timeline=%d callback=%d transparent=%d,retainFinal=%d",
+		plan.placement.x, plan.placement.y,
+		plan.placement.originY, plan.placement.displayScale,
+		plan.input.allowEscSpace, plan.input.serviceSceneUi,
+		plan.input.stopOnMouse, plan.input.allowSegmentAdvance,
+		plan.palette.patchInterfacePalette, plan.palette.patchWacMediaPalette,
+		plan.palette.preserveDisplayPalette, plan.palette.rememberVideoPalette,
+		plan.frames.firstFrame,
+		plan.frames.lastFrame, plan.frames.frameLimit, plan.loop.loopStartFrame,
+		plan.loop.loopFromStart, plan.loop.boundedLoopStartFrame,
+		plan.timeline.frameAudioOffsets != nullptr && plan.timeline.audioByteRate != 0,
+		plan.callback.sequenceCallback != nullptr,
+		plan.rendering.transparentFirstPixel,
+		plan.rendering.retainFinalTransparentFrame);
+}
+
 namespace {
 
 static const uint16 kHelpCommand = 0x3b00;
