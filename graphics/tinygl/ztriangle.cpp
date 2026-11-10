@@ -45,10 +45,15 @@ static bool applyStipplePattern(int x, int y, const byte *stipple) {
 	return (stipple[byteIndex] & bitmask);
 }
 
+template <int kBits>
+static byte colorToByte(int v) {
+	return (byte)(CLIP(v, 0, (1 << kBits) - 1) >> (kBits - 8));
+}
+
 template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
-                                    int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
-                                    int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
+                                    int x, int y, uint &z, int &r, int &g, int &b, int &a,
+                                    int &dzdx, int &drdx, int &dgdx, int &dbdx, int dadx,
                                     uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx,
                                     bool stippleEnabled) {
 	bool useStippleColor = false;
@@ -85,10 +90,11 @@ void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
 			uint sg = (_stippleColor >> 8) & 0xFF;
 			uint sr = _stippleColor & 0xFF;
 			writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>
-					(fbOffset + _a, a >> (ZB_POINT_ALPHA_BITS - 8), sr, sg, sb, z, fog, fog_r, fog_g, fog_b);
+					(fbOffset + _a, colorToByte<ZB_POINT_ALPHA_BITS>(a), sr, sg, sb, z, fog, fog_r, fog_g, fog_b);
 		} else {
 			writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>
-					(fbOffset + _a, a >> (ZB_POINT_ALPHA_BITS - 8), r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8),
+					(fbOffset + _a, colorToByte<ZB_POINT_ALPHA_BITS>(a), colorToByte<ZB_POINT_RED_BITS>(r),
+					 colorToByte<ZB_POINT_GREEN_BITS>(g), colorToByte<ZB_POINT_BLUE_BITS>(b),
 					z, fog, fog_r, fog_g, fog_b);
 		}
 	}
@@ -110,8 +116,8 @@ void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
                                   FrameBuffer::ColorMode colorMode,
                                   uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
                                   int x, int y, uint &z, int &t, int &s,
-                                  uint &r, uint &g, uint &b, uint &a,
-                                  int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
+                                  int &r, int &g, int &b, int &a,
+                                  int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, int dadx,
                                   uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
 		goto end;
@@ -525,7 +531,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				uint *pz = nullptr;
 				byte *ps = nullptr;
 				int pp;
-				uint z = 0, r, g, b, a, fog;
+				uint z = 0, fog;
+				int r, g, b, a;
 				int n = (x2 >> 16) - x1;
 				pp = pp1 + x1;
 				r = r1;
@@ -578,7 +585,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				uint *pz = nullptr;
 				byte *ps = nullptr;
 				int s, t;
-				uint z = 0, r, g, b, a, fog;
+				uint z = 0, fog;
+				int r, g, b, a;
 				int n, pp;
 				float sz, tz, fz, zinv;
 				int dsdx, dtdx;

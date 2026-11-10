@@ -285,9 +285,8 @@ static byte satAdd(byte a, byte b) {
 	return (byte)(r | -(r < a));
 }
 
-static byte sat16_to_8(uint32 x) {
-	x = (x + 128) >> 8; // rounding 16 to 8 
-	return (byte)(x | -!!(x >> 8)); // branchfree saturation
+static byte sat16_to_8(int v) {
+       return (byte)((CLIP(v, 0, 0xFF7F) + 128) >> 8);
 }
 
 static byte fpMul(byte a, byte b) {
@@ -300,7 +299,7 @@ static byte fpMul(byte a, byte b) {
 
 void FrameBuffer::applyTextureEnvironment(
 	int internalformat,
-	uint previousA, uint previousR, uint previousG, uint previousB,
+	int previousA, int previousR, int previousG, int previousB,
 	byte &texA, byte &texR, byte &texG, byte &texB)
 {
 	// summary notation is used from https://registry.khronos.org/OpenGL-Refpages/gl2.1/xhtml/glTexEnv.xml
@@ -476,7 +475,7 @@ void FrameBuffer::applyTextureEnvironment(
 }
 
 void FrameBuffer::applyModulation(
-	uint previousA, uint previousR, uint previousG, uint previousB,
+	int previousA, int previousR, int previousG, int previousB,
 	byte &texA, byte &texR, byte &texG, byte &texB) {
 	texA = fpMul(sat16_to_8(previousA), texA);
 	texR = fpMul(sat16_to_8(previousR), texR);
