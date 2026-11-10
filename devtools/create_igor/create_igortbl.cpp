@@ -340,7 +340,7 @@ static void createTableFile(FILE *fp) {
 	}
 
 	/* sounds tables */
-	for (i = 0; i < (int)TABLE_SIZE(_soundEntriesList); ++i) {
+	for (i = 0; _soundEntriesList[i].p; ++i) {
 		addPtrOffset(fp, _soundEntriesList[i].p);
 		writeSoundEntriesTable(fp, _soundEntriesList[i].p, _soundEntriesList[i].count);
 	}
