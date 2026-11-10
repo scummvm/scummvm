@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	puzzles/ki_skull_maze_model.o \
 	puzzles/kj_blob_shooter.o \
 	puzzles/kk_tile_match.o \
+	puzzles/kk_tile_match_model.o \
 	puzzles/puzzle.o \
 	puzzles/rolodex.o \
 	puzzles/shock_lever.o \
