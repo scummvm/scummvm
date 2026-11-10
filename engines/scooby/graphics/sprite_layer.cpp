@@ -29,8 +29,24 @@ const int kEntryByteCount = 8;
 const int kVisibleCoordinateBias = 128;
 }
 
-Common::Array<SpriteInstance> decodePackedSpriteTableData(Span<const uint8> packedEntries) {
+int getNumberOfSprites(const Span<const uint8> packedEntries) {
+	int numSprites = 0;
+	for (int nextIndex = 0; nextIndex * kEntryByteCount < packedEntries.size(); ) {
+		nextIndex = readUInt16BigEndian(packedEntries, nextIndex * kEntryByteCount + 2) & 0x007F;
+		numSprites++;
+		if (nextIndex == 0) {
+			break;
+		}
+	}
+	return numSprites;
+}
+
+Common::Array<SpriteInstance> decodePackedSpriteTableData(const Span<const uint8> packedEntries) {
+	int numSprites = getNumberOfSprites(packedEntries);
+
 	Common::Array<SpriteInstance> sprites;
+	sprites.reserve(numSprites);
+
 	int entryIndex = 0;
 	while (true) {
 		Span<const uint8> entry =
@@ -66,7 +82,7 @@ SpriteLayer::SpriteLayer()
 
 void SpriteLayer::clear() { _sprites.clear(); }
 
-void SpriteLayer::load(Span<const uint8> packedEntries) {
+void SpriteLayer::load(const Span<const uint8> packedEntries) {
 	_sprites = decodePackedSpriteTableData(packedEntries);
 }
 

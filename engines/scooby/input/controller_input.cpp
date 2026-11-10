@@ -41,8 +41,7 @@ bool ControllerInput::isIntroSkipPressed() {
 	// clear held buttons. Escape is the skip key here and is deliberately not mapped to a controller button.
 	bool escapePressed = processEvents(ControllerButtons::None, false);
 	// Managed-only mouse support: a left click skips like Escape.
-	bool clicked = _mouse.takeIntroSkipClick();
-	return escapePressed || clicked;
+	return escapePressed || _mouse.takeIntroSkipClick();
 }
 
 ControllerButtons ControllerInput::getControllerButtons(ControllerButtons backButton) {

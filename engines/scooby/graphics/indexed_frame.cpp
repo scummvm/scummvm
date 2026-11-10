@@ -26,9 +26,9 @@ namespace Scooby {
 void IndexedFrame::present() {
 	byte pal[(64 + 1) * 3];
 	for (int i = 0; i < 64; i++) {
-		pal[i*3] = expandLevel(_palette[i].redLevel);
-		pal[i*3+1] = expandLevel(_palette[i].greenLevel);
-		pal[i*3+2] = expandLevel(_palette[i].blueLevel);
+		pal[i * 3] = expandLevel(_palette[i].redLevel);
+		pal[i * 3 + 1] = expandLevel(_palette[i].greenLevel);
+		pal[i * 3 + 2] = expandLevel(_palette[i].blueLevel);
 	}
 
 	// Managed-only debug overlay colour (kDebugOverlayColorIndex): bright green.

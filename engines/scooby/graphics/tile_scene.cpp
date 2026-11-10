@@ -222,7 +222,7 @@ TileScene::ContentReplacementGuard TileScene::beginTemporaryContentReplacement()
 	return ContentReplacementGuard(this);
 }
 
-void TileScene::loadSprites(Span<const uint8> packedEntries) {
+void TileScene::loadSprites(const Span<const uint8> packedEntries) {
 	_spriteLayer.load(packedEntries);
 	_dynamicSprites.clear();
 }

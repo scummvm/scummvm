@@ -135,19 +135,19 @@ private:
 	int16 _roomId;
 	bool _suppressAutoOpen;
 
-	ClickStage _clickStage;
 	bool _clickPlaced;
+	ClickStage _clickStage;
 	int _clickWait;
 	Common::Point _clickPosition;
 	int16 _clickInteraction;
 
-	bool _walking;
 	int16 _walkTargetX;
 	int16 _walkTargetY;
 	int _walkBestDistance;
 	int _walkStall;
 	int _walkInterfaceWait;
 	int _busySamples;
+	bool _walking;
 	bool _walkPushToTarget;
 	bool _walkEndsWithPush; // The last waypoint is the exact walk-in target past the planned route.
 	Common::Rect _walkGoalArea;

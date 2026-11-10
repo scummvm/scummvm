@@ -147,11 +147,11 @@ private:
 	Mode _mode;
 	bool _active;
 	bool _moved;
-	Common::Point _position;
 	bool _leftClick;
+	bool _rightClick;
+	Common::Point _position;
 	Common::Point _leftClickPosition;
 	uint32 _leftClickPoll;
-	bool _rightClick;
 	uint32 _rightClickPoll;
 	int _wheel;
 	uint32 _wheelPoll;
