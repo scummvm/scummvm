@@ -377,8 +377,7 @@ SegaPCMChannel::~SegaPCMChannel() {
 
 void SegaPCMChannel::play(const int8 *data, uint16 dataSize, uint16 startAddress, uint16 loopStart, uint16 loopLen, uint16 rate, uint8 pan, uint8 vol) {
 	setData(data, (startAddress + dataSize) << 11, startAddress << 11);
-	if (_streamTempBuff != nullptr)
-		setupLoop(loopLen ? loopStart : (startAddress + dataSize), loopLen);
+	setupLoop(loopLen ? loopStart : (startAddress + dataSize), loopLen);
 	setRate(rate);
 	setPanPos(pan);
 	setVolume(vol);
