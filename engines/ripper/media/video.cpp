@@ -549,12 +549,10 @@ SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *strea
 			name.c_str(), firstFrame, lastFrame);
 		if (sequenceCallback && finishSequenceFramePresentation(firstFrame + 1)) {
 			decoder.close();
-			result.completed = true;
 			return result;
 		}
 		if (boundedSegment && firstFrame == lastFrame) {
 			decoder.close();
-			result.completed = true;
 			return result;
 		}
 	}
@@ -648,11 +646,10 @@ SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *strea
 		const PlaybackInputResult inputResult = servicePlaybackInput(decoder,
 			inputPolicy, paused, externalAudio, toolbarOwnsInput, name);
 		if (inputResult != kContinuePlayback) {
-			result.completed = false;
 			result.stoppedByMouse = inputResult == kStopForMouse;
 			result.advanceSegment = inputResult == kAdvanceSegment;
-			if (result.advanceSegment)
-				result.completed = true;
+			if (!result.advanceSegment && inputResult != kSkipToEnd)
+				result.completed = false;
 			if (inputResult == kSkipToEnd && decoder.getFrameCount() != 0) {
 				const uint finalFrame = decoder.getFrameCount() - 1;
 				// Smacker pixels and palette packets are stateful. Rebuild the
@@ -666,10 +663,11 @@ SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *strea
 						presentScreen();
 					if (serviceSceneUi)
 						_engine->getSceneAudio()->service(finalFrame + 1);
-					result.completed = true;
 					debugC(2, kDebugVideo,
-						"Ripper: Escape reconstructed and presented final Smacker frame '%s' frame=%u; completing presentation",
-						name.c_str(), finalFrame);
+						"Ripper: Escape reached final Smacker frame '%s' frame=%u completed=%d",
+						name.c_str(), finalFrame, result.completed);
+				} else {
+					result.completed = false;
 				}
 			}
 			if (!result.advanceSegment && !_engine->shouldQuit())
