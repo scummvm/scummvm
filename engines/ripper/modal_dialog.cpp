@@ -27,6 +27,7 @@
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
+#include "ripper/controls.h"
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
@@ -786,29 +787,8 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 			}
 			const uint maximumFirst = lines.size() > visibleRows ?
 				lines.size() - visibleRows : 0;
-			uint nextFirst = firstVisible;
-			switch (command) {
-			case 0x4700:
-				nextFirst = 0;
-				break;
-			case 0x4800:
-				nextFirst = firstVisible > 0 ? firstVisible - 1 : 0;
-				break;
-			case 0x4900:
-				nextFirst = firstVisible > visibleRows ? firstVisible - visibleRows : 0;
-				break;
-			case 0x4f00:
-				nextFirst = maximumFirst;
-				break;
-			case 0x5000:
-				nextFirst = MIN(firstVisible + 1, maximumFirst);
-				break;
-			case 0x5100:
-				nextFirst = MIN(firstVisible + visibleRows, maximumFirst);
-				break;
-			default:
-				break;
-			}
+			const uint nextFirst = calculateTextScroll(command, firstVisible,
+				visibleRows, maximumFirst).firstVisible;
 			if (nextFirst != firstVisible) {
 				firstVisible = nextFirst;
 				redraw = true;

@@ -26,6 +26,35 @@
 
 namespace Ripper {
 
+TextScrollResult calculateTextScroll(uint16 command, uint firstVisible,
+		uint visibleRows, uint maximumFirstVisible) {
+	TextScrollResult result = {firstVisible, true};
+	switch (command) {
+	case 0x4700:
+		result.firstVisible = 0;
+		break;
+	case 0x4800:
+		result.firstVisible = firstVisible > 0 ? firstVisible - 1 : 0;
+		break;
+	case 0x4900:
+		result.firstVisible = firstVisible > visibleRows ? firstVisible - visibleRows : 0;
+		break;
+	case 0x4f00:
+		result.firstVisible = maximumFirstVisible;
+		break;
+	case 0x5000:
+		result.firstVisible = MIN(firstVisible + 1, maximumFirstVisible);
+		break;
+	case 0x5100:
+		result.firstVisible = MIN(firstVisible + visibleRows, maximumFirstVisible);
+		break;
+	default:
+		result.recognized = false;
+		break;
+	}
+	return result;
+}
+
 uint UiControlRegistry::add(const Common::Rect &bounds, uint16 action) {
 	_controls.push_back(UiControl(bounds, action));
 	debugC(3, kDebugInput,

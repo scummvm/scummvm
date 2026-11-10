@@ -360,32 +360,12 @@ bool WacDatabaseSession::resolveDatabaseRow(const Common::Point &point, uint &in
 }
 
 bool WacDatabaseSession::scrollDatabaseTextKey(TextScrollState &scroll, uint16 command, bool &redraw) {
-	uint nextFirstVisible = scroll.firstVisible;
-	switch (command) {
-	case 0x4700:
-		nextFirstVisible = 0;
-		break;
-	case 0x4800:
-		nextFirstVisible = scroll.firstVisible > 0 ? scroll.firstVisible - 1 : 0;
-		break;
-	case 0x4900:
-		nextFirstVisible = scroll.firstVisible > scroll.visibleRows ?
-			scroll.firstVisible - scroll.visibleRows : 0;
-		break;
-	case 0x4f00:
-		nextFirstVisible = scroll.maximumFirstVisible;
-		break;
-	case 0x5000:
-		nextFirstVisible = MIN(scroll.firstVisible + 1, scroll.maximumFirstVisible);
-		break;
-	case 0x5100:
-		nextFirstVisible = MIN(scroll.firstVisible + scroll.visibleRows, scroll.maximumFirstVisible);
-		break;
-	default:
+	const TextScrollResult result = calculateTextScroll(command, scroll.firstVisible,
+		scroll.visibleRows, scroll.maximumFirstVisible);
+	if (!result.recognized)
 		return false;
-	}
-	if (nextFirstVisible != scroll.firstVisible) {
-		scroll.firstVisible = nextFirstVisible;
+	if (result.firstVisible != scroll.firstVisible) {
+		scroll.firstVisible = result.firstVisible;
 		redraw = true;
 		debugC(2, kDebugWac,
 			"Ripper: scrolled WAC database text panel firstLine=%u limit=%u command=0x%x",

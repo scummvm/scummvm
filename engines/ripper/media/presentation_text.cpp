@@ -24,6 +24,7 @@
 #include "common/system.h"
 #include "graphics/paletteman.h"
 
+#include "ripper/controls.h"
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
@@ -144,32 +145,8 @@ bool PresentationTextControl::serviceInput(bool allowDismissal) {
 				_sequenceId, allowDismissal);
 			break;
 		}
-		uint nextFirstVisible = _firstVisible;
-		switch (command) {
-		case 0x4700:
-			nextFirstVisible = 0;
-			break;
-		case 0x4800:
-			nextFirstVisible = _firstVisible > 0 ? _firstVisible - 1 : 0;
-			break;
-		case 0x4900:
-			nextFirstVisible = _firstVisible > _visibleRows ?
-				_firstVisible - _visibleRows : 0;
-			break;
-		case 0x4f00:
-			nextFirstVisible = _maximumFirstVisible;
-			break;
-		case 0x5000:
-			nextFirstVisible = MIN(_firstVisible + 1,
-				_maximumFirstVisible);
-			break;
-		case 0x5100:
-			nextFirstVisible = MIN(_firstVisible + _visibleRows,
-				_maximumFirstVisible);
-			break;
-		default:
-			break;
-		}
+		const uint nextFirstVisible = calculateTextScroll(command, _firstVisible,
+			_visibleRows, _maximumFirstVisible).firstVisible;
 		scrollTo(nextFirstVisible, "keyboard");
 	}
 

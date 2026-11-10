@@ -26,6 +26,14 @@
 
 namespace Ripper {
 
+struct TextScrollResult {
+	uint firstVisible;
+	bool recognized;
+};
+
+TextScrollResult calculateTextScroll(uint16 command, uint firstVisible,
+	uint visibleRows, uint maximumFirstVisible);
+
 struct UiControl {
 	Common::Rect bounds;
 	uint16 action;
