@@ -231,8 +231,12 @@ void BitmapText::layout(const Common::String &text, int width, int height, int o
 
 		if (!isEnd && text[pos] == '<' && readStyleTag(text, pos, style, isNewLine)) {
 			if (!isNewLine) {
+				// The tags before the first letter set the line up, its height too,
+				// which was taken from the font before them
 				if (line.letters.empty()) {
 					line.align = style.horizontalAlign;
+					face = getFace(findFont(style.fontID), style.isBold, style.isItalic);
+					line.height = face ? face->height : 0;
 				}
 
 				continue;
