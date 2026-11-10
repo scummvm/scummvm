@@ -93,6 +93,14 @@ void Milestones::setBit(uint flag, bool value) {
 		_flags[flag / 8] &= ~mask;
 }
 
+uint Milestones::chapter() const {
+	for (uint flag = kMilestoneCompletedAct3; flag != 0; --flag) {
+		if (isSet(flag))
+			return flag;
+	}
+	return 0;
+}
+
 bool Milestones::set(uint flag, bool value, const char *source) {
 	if (flag >= kFlagCount) {
 		warning("Ripper: milestone flag %u is outside the %u-flag store", flag, kFlagCount);

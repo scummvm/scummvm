@@ -65,7 +65,6 @@ private:
 	bool pageSelection(int direction);
 	bool selectViewportEdge(bool last);
 	void updateFirstVisible();
-	uint resolveChapter() const;
 	Common::String resolveTargetScript(uint locationIndex, uint chapter) const;
 	const Common::String &resourceString(uint resourceId) const;
 

@@ -78,6 +78,7 @@ public:
 
 	bool initialize(ResourceManager &resources);
 	bool isSet(uint flag) const;
+	uint chapter() const;
 	bool set(uint flag, bool value, const char *source);
 	bool toggle(uint flag, const char *source);
 	bool hasRipperIdentity() const;

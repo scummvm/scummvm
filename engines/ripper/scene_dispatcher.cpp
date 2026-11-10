@@ -296,13 +296,7 @@ bool SceneActionDispatcher::dispatch(RipperEngine *engine, const CompiledScript 
 	}
 	if (action >= kSceneActionKbProgram && action <= kSceneActionKrProgram && action != 44) {
 		const char *program = nullptr;
-		uint chapter = 0;
-		for (uint flag = kMilestoneCompletedAct3; flag != 0; --flag) {
-			if (engine->getMilestones()->isSet(flag)) {
-				chapter = flag;
-				break;
-			}
-		}
+		const uint chapter = engine->getMilestones()->chapter();
 		switch (action) {
 		case kSceneActionKbProgram: program = "kb"; break;
 		case kSceneActionKcOrWoffordProgram:

@@ -316,14 +316,6 @@ void WorldMap::updateFirstVisible() {
 		_firstVisible = _selectedVisible - visibleRows + 1;
 }
 
-uint WorldMap::resolveChapter() const {
-	for (uint flag = kMilestoneCompletedAct3; flag != 0; --flag) {
-		if (_engine->getMilestones()->isSet(flag))
-			return flag;
-	}
-	return 0;
-}
-
 Common::String WorldMap::resolveTargetScript(uint locationIndex, uint chapter) const {
 	if (locationIndex >= _locations.size())
 		return Common::String();
@@ -428,7 +420,7 @@ bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 	_engine->getCursor()->setVisible(false);
 	if (selected) {
 		const uint locationIndex = _visibleLocations[_selectedVisible];
-		chapter = resolveChapter();
+		chapter = _engine->getMilestones()->chapter();
 		targetScript = resolveTargetScript(locationIndex, chapter);
 		debugC(1, kDebugScene,
 			"Ripper: world map selected location=%u name='%s' chapter=%u target='%s'",
