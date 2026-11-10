@@ -51,7 +51,10 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 }
 
 
-VideoPlayer::Video::Video() : decoder(nullptr), doubleVideoDestX(0), doubleVideoDestY(0), doubleVideo(false), live(false), autoUpdate(false), highColorMap(nullptr) {
+VideoPlayer::Video::Video() : decoder(nullptr),
+	doubleVideoDestX(0), doubleVideoDestY(0), doubleVideo(false),
+	live(false), useBackSurface(false), autoUpdate(false),
+	highColorMap(nullptr) {
 }
 
 bool VideoPlayer::Video::isEmpty() const {
