@@ -47,6 +47,11 @@ Model::Model(const Common::String &filename, Common::SeekableReadStream *data, C
 		TextSplitter ts(_fname, data);
 		loadText(&ts);
 	}
+
+	for (int i = 0; i < _numHierNodes; ++i) {
+		if (_rootHierNode[i]._mesh)
+			g_driver->createMesh(_rootHierNode[i]._mesh);
+	}
 }
 
 Model::~Model() {
@@ -181,7 +186,6 @@ void Model::loadText(TextSplitter *ts) {
 	for (int i = 0; i < _numHierNodes; ++i) {
 		ModelNode &node = _rootHierNode[i];
 		if (node._mesh) {
-			g_driver->createMesh(node._mesh);
 			Mesh &mesh = *node._mesh;
 			Math::Vector3d p = mesh._matrix.getPosition();
 			float x = p.x();
