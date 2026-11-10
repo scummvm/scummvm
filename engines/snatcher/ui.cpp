@@ -500,14 +500,14 @@ void UI::loadState(Common::SeekableReadStream *in, SaveFlags flags) {
 	_verbsInterpreterMode = in->readUint16BE();
 	_progress = _progress2 = -1;
 
-	if (flags & kSaveFlagsTempData)
+	if (flags & kFlagTempData)
 		return;
 
 	_videoPhoneMode = in->readSint16BE();
 	_textInputColumnMax = in->readSint16BE();
 	_prevSelectedVerb = in->readByte();
 	_savedHiliteVerb = in->readByte();
-	if (flags & kSaveFlagsScriptedSave) {
+	if (flags & kFlagScriptedSave) {
 		resetVerbSelection();
 		_savedHiliteVerb = 0;
 	}
@@ -524,7 +524,7 @@ void UI::saveState(Common::SeekableWriteStream *out, SaveFlags flags) {
 	out->writeUint16BE(_verbInterfaceMode);
 	out->writeUint16BE(_verbsInterpreterMode);
 
-	if (flags & kSaveFlagsTempData)
+	if (flags & kFlagTempData)
 		return;
 
 	out->writeSint16BE(_videoPhoneMode);
@@ -1192,7 +1192,6 @@ void UI::moveFlashLight(int32 offsX, int32 offsY) {
 		int32 nY = _flashLight.posY + offsY;
 		if (nY >= -0x270000 && nY < 0x250000)
 			_flashLight.posY = nY;
-
 	} else if (offsY == 0) {
 		assert(offsX != 0);
 		int32 nX = _flashLight.posX + offsX;

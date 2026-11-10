@@ -29,6 +29,7 @@
 #include "common/endian.h"
 #include "common/func.h"
 #include "common/textconsole.h"
+#include "common/stream.h"
 
 #include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
@@ -48,7 +49,6 @@ public:
 	void setDefaults(int mode) override;
 	void update() override;
 	void hINTCallback(void *segaRenderer) override;
-	const uint8 *getSystemPalette() const override { return _sysPalette; }
 
 	void selectPalettes(uint32) override;
 	void getPresetColor(int pal, int index, uint8 &r, uint8 &g, uint8 &b) const override;
@@ -56,8 +56,12 @@ public:
 	void getColor(int index, uint8 &r, uint8 &g, uint8 &b) const override;
 	void adjustColor(int index, int8 r, int8 g, int8 b) override;
 
+	void loadState(Common::SeekableReadStream *in) override;
+	void saveState(Common::SeekableWriteStream *out) override;
+	void postLoadProcess() override;
+
 private:
-	void updateSystemPalette();
+	void updateSystemPalette() override;
 
 	typedef Common::Functor1Mem<PalEventSCD*, void, SCDPalette> EventProc;
 	Common::Array<EventProc*> _eventProcs;
@@ -76,28 +80,27 @@ private:
 	bool updateDelay(PalEventSCD *evt);
 	void fadeStep(uint16 *modColor, uint16 toR, uint16 toG, uint16 toB);
 
-	PalEventSCD *_eventQueue;
-	PalEventSCD *_eventCurPos;
+	PalEventSCD *_eventQueue = nullptr;
+	PalEventSCD *_eventCurPos = nullptr;
 
-	uint16 *_colors;
-	uint16 *_colors2;
-	uint8 *_sysPalette;
+	uint16 *_colors = nullptr;
+	uint16 *_colors2 = nullptr;
+	uint16 *_restorePalette = nullptr;
 
 private:
 	typedef Common::Functor1Mem<Graphics::SegaRenderer*, void, SCDPalette> HINTFunc;
 	Common::Array<HINTFunc*> _hINTProcs;
-	const HINTFunc *_hINTHandler;
+	const HINTFunc *_hINTHandler = nullptr;
 
 	void setHINTHandler(int8 num);
 	bool isValidHINTHandler() const { return _hINTHandler != nullptr && _hINTHandler->isValid(); }
 
 	void hIntHandler_dummy(Graphics::SegaRenderer*) {}
 	void hIntHandler_characterChatPortraitPalette(Graphics::SegaRenderer *sr);
-	int _transitionStep;
+	int _transitionStep = 0;
 };
 
-SCDPalette::SCDPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state) : Palette(pxf, pm, state), _eventProcs(),
-	_eventQueue(nullptr), _eventCurPos(nullptr), _colors(nullptr), _colors2(nullptr), _sysPalette(nullptr), _hINTHandler(nullptr), _transitionStep(0) {
+SCDPalette::SCDPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state) : Palette(pxf, pm, state), _eventProcs() {
 
 #define P_OP(a)	_eventProcs.push_back(new EventProc(this, &SCDPalette::event_##a));
 	_eventProcs.push_back(nullptr);
@@ -119,14 +122,13 @@ SCDPalette::SCDPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, Gra
 	_eventQueue = _eventCurPos = new PalEventSCD[12];
 	_colors = new uint16[128]();
 	_colors2 = new uint16[128]();
-	_sysPalette = new uint8[256]();
 }
 
 SCDPalette::~SCDPalette() {
 	delete[] _eventQueue;
 	delete[] _colors;
 	delete[] _colors2;
-	delete[] _sysPalette;
+	delete[] _restorePalette;
 
 	for (Common::Array<EventProc*>::const_iterator i = _eventProcs.begin(); i != _eventProcs.end(); ++i)
 		delete *i;
@@ -254,7 +256,120 @@ void SCDPalette::adjustColor(int index, int8 r, int8 g, int8 b) {
 	_gfxState.setFlag(7, 0);
 }
 
+void SCDPalette::loadState(Common::SeekableReadStream *in) {
+	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
+		error("%s(): Save file invalid or corrupt", __FUNCTION__);
+
+	if (_restorePalette == nullptr)
+		_restorePalette = new uint16[256];
+
+	memset(_restorePalette, 0, 256 * sizeof(uint16));
+
+	uint8 saveFlag = in->readByte();
+
+	for (int i = 0; i < 4; ++i) {
+		if (saveFlag & (1 << i)) {
+			for (int j = 0; j < 64; ++j)
+				_restorePalette[i * 64 + j] = in->readUint16BE();
+		}
+	}
+
+	if (saveFlag & 0x30) {
+		for (int i = 0; i < 2; ++i) {
+			if (saveFlag & (1 << (i + 4))) {
+				for (int j = 0; j < 64; ++j)
+					_restorePalette[128 + i * 64 + j] = _restorePalette[i * 64 + j] ^ in->readUint16BE();
+			}
+		}
+	}
+
+	if (saveFlag & 0xC0) {
+		for (int i = 0; i < 2; ++i) {
+			if (saveFlag & (1 << (i + 6)))
+				Common::copy<const uint16*, uint16*>(&_restorePalette[i * 64], &_restorePalette[i * 64 + 64], &_restorePalette[i * 64 + 128]);
+		}
+	}
+
+	_restoreAfterUnblock = true;
+}
+
+void SCDPalette::saveState(Common::SeekableWriteStream *out) {
+	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
+
+	const uint16 *palettes[] = { _colors2, &_colors2[64], _colors, &_colors[64] };
+
+	// We check several conditions trying to make the save file smaller
+	// instead of just dumping the whole palette data.
+	uint8 saveFlag = 0;
+	for (int i = 0; i < 64; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			if (palettes[j][i] != 0)
+				saveFlag |= (1 << j);
+		}
+	}
+
+	for (int i = 0; i < 2; ++i) {
+		if (saveFlag & (1 << i) && saveFlag & (1 << (i + 2))) {
+			saveFlag &= ~(1 << (i + 2));
+			if (!memcmp (palettes[i], palettes[i + 2], sizeof(uint16) * 64))
+				saveFlag |= (1 << (i + 6));
+			else
+				saveFlag |= (1 << (i + 4));
+		}
+	}
+
+	out->writeByte(saveFlag);
+
+	for (int i = 0; i < 4; ++i) {
+		if (saveFlag & (1 << i)) {
+			for (int j = 0; j < 64; ++j)
+				out->writeUint16BE(palettes[i][j]);
+		}
+	}
+
+	if (saveFlag & 0x30) {
+		for (int i = 0; i < 2; ++i) {
+			if (saveFlag & (1 << (i + 4))) {
+				for (int j = 0; j < 64; ++j)
+					out->writeUint16BE(palettes[i][j] ^ palettes[i + 2][j]);
+			}
+		}
+	}
+}
+
+void SCDPalette::postLoadProcess() {
+	if (!_restorePalette)
+		return;
+
+	uint16 *palettes[] = { _colors2, &_colors2[64], _colors, &_colors[64] };
+
+	bool restorePal = true;
+
+	for (int ii = 0; ii < 12; ++ii) {
+		// If the postload script has enqueued setPal or fadeFromBlack events we should skip the
+		// restoration of the saved palette.
+		if (_eventQueue[ii].cmd == 1 || _eventQueue[ii].cmd == 2)
+			restorePal = false;
+	}
+
+	if (restorePal) {
+		for (int ii = 0; ii < 12; ++ii) {
+			// Throw out any clearPal events, otherwise our palette restoration attempt would be doomed.
+			if (_eventQueue[ii].cmd == 10)
+				_eventQueue[ii].cmd = 0;
+		}
+		for (int i = 0; i < 4; ++i)
+			Common::copy<const uint16 *, uint16 *>(&_restorePalette[i * 64], &_restorePalette[i * 64 + 64], palettes[i]);
+	}
+
+	_restoreAfterUnblock = restorePal;
+	delete[] _restorePalette;
+	_restorePalette = nullptr;	
+}
+
 void SCDPalette::update() {
+	Palette::update();
+
 	if (!_gfxState.getVar(7) && !_gfxState.getVar(11))
 		return;
 
@@ -301,6 +416,9 @@ void SCDPalette::hINTCallback(void *segaRenderer) {
 }
 
 void SCDPalette::updateSystemPalette() {
+	if (_blocked)
+		return;
+
 	const uint16 *src = _colors2;
 	uint8 *dst = _sysPalette;
 

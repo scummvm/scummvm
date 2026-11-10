@@ -29,7 +29,7 @@ namespace Snatcher {
 
 class ScrollInternalState {
 public:
-	ScrollInternalState() : _offsSingle(0), _offsRep(0), _curPos(0), _curResult(0), _factor(1), _override(0) {}
+	ScrollInternalState() {}
 
 	void singleStep(int16 step) {
 		_offsSingle = step << 16;
@@ -73,13 +73,47 @@ public:
 		return _curResult;
 	}
 
+	void saveState(Common::SeekableWriteStream *out) {
+		out->writeSint32BE(_offsSingle);
+		out->writeSint32BE(_offsRep);
+		out->writeSint32BE(_curPos);
+		out->writeSint16BE(_curResult);
+		out->writeSint16BE(_factor);
+		out->writeSint16BE(_override);
+	}
+
+	void loadState(Common::SeekableReadStream *in) {
+		_s_offsSingle = in->readSint32BE();
+		_s_offsRep = in->readSint32BE();
+		_s_curPos = in->readSint32BE();
+		_s_curResult = in->readSint16BE();
+		_s_factor = in->readSint16BE();
+		_s_override = in->readSint16BE();
+	}
+
+	void postLoadProcess() {
+		_offsSingle = _s_offsSingle;
+		_offsRep = _s_offsRep;
+		_curPos = _s_curPos;
+		_curResult = _s_curResult;
+		_factor = _s_factor;
+		_override = _s_override;
+	}
+
 private:
-	int32 _offsSingle;
-	int32 _offsRep;
-	int32 _curPos;
-	int16 _curResult;
-	int16 _factor;
-	int16 _override;
+	int32 _offsSingle = 0;
+	int32 _offsRep = 0;
+	int32 _curPos = 0;
+	int16 _curResult = 0;
+	int16 _factor = 1;
+	int16 _override = 0;
+
+	int32 _s_offsSingle = 0;
+	int32 _s_offsRep = 0;
+	int32 _s_curPos = 0;
+	int16 _s_curResult = 0;
+	int16 _s_factor = 1;
+	int16 _s_override = 0;
 };
 
 class TransitionManager_SCD final : public TransitionManager {
@@ -111,8 +145,8 @@ public:
 
 	void hINTCallback(void *segaRenderer) override;
 
-	void saveState(Common::SeekableWriteStream *out) override;
-	void loadState(Common::SeekableReadStream *in) override;
+	void saveState(Common::SeekableWriteStream *out, SaveFlags flags) override;
+	void loadState(Common::SeekableReadStream *in, SaveFlags flags) override;
 	void postLoadProcess() override;
 
 private:
@@ -121,36 +155,37 @@ private:
 	void resetVars(int groupFlags);
 
 	GraphicsEngine::GfxState &_gfxState;
-	ScrollInternalState *_internalState;
-	int16 *_hScrollTable;
-	uint16 _hScrollTableLen;
+	ScrollInternalState *_internalState = nullptr;
+	int16 *_hScrollTable = nullptr;
+	uint16 _hScrollTableLen = 0;
 
-	uint8 _scrollType;
-	uint8 _trsCommandExt;
-	uint8 _trsCommand;
-	uint8 _resetCommand;
+	uint8 _scrollType = 0;
+	uint8 _trsCommandExt = 0;
+	uint8 _trsCommand = 0;
+	uint8 _resetCommand = 0;
 
-	uint8 _nextStep;
-	uint8 _lastStep;
-	uint8 _lineScrollOp;
-	uint8 _nextStepExt;
-	uint8 _lastStepExt;
-	uint8 _restoreDlgTab;
-	uint8 _transitionType;
-	uint8 _subPara;
-	int16 _transitionState;
-	int16 _transitionState2;
-	int16 _transitionStep;
-	int16 _tmpScrollOffset;
-	int16 _lineScrollOpState;
-	int16 _lineScrollTimer1;
-	int16 _lineScrollTimer2;
-	int16 _lineScrollTimer3;
-	int16 _lineScrollTimer4;
-	int16 _lineScrollTimer5;
-	bool _useEngineScrollOffsets;
+	uint8 _nextStep = 0;
+	uint8 _lastStep = 0;
+	uint8 _lineScrollOp = 0;
+	uint8 _nextStepExt = 0;
+	uint8 _lastStepExt = 0;
+	uint8 _restoreDlgTab = 0;
+	uint8 _transitionType = 0;
+	uint8 _subPara = 0;
+	int16 _transitionState = 0;
+	int16 _transitionState2 = 0;
+	int16 _transitionStep = 0;
+	int16 _tmpScrollOffset = 0;
+	int16 _lineScrollOpState = 0;
+	int16 _lineScrollTimer1 = 0;
+	int16 _lineScrollTimer2 = 0;
+	int16 _lineScrollTimer3 = 0;
+	int16 _lineScrollTimer4 = 0;
+	int16 _lineScrollTimer5 = 0;
+	bool _useEngineScrollOffsets = false;
 
-	uint8 *_saveData;
+	uint8 *_restoreData = nullptr;
+	bool _extendedRestore = false;
 
 private:
 	typedef Common::Functor1Mem<int, void, TransitionManager_SCD> TrsFunc;
@@ -193,8 +228,8 @@ private:
 
 	typedef Common::Functor1Mem<Graphics::SegaRenderer*, void, TransitionManager_SCD> HINTFunc;
 	Common::Array<HINTFunc*> _hINTProcs;
-	const HINTFunc *_hINTHandler;
-	const HINTFunc *_hINTHandlerNext;
+	const HINTFunc *_hINTHandler = nullptr;
+	const HINTFunc *_hINTHandlerNext = nullptr;
 
 	void setHINTHandler(uint8 num);
 
@@ -216,25 +251,22 @@ private:
 	void hIntHandler_videoPhoneCallEnd2(Graphics::SegaRenderer *sr);
 };
 
-TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0),
-	_transitionStep(0), _trsCommandExt(0), _trsCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _lineScrollOpState(0), _lineScrollTimer1(0),
-		_lineScrollTimer2(0), _lineScrollTimer3(0), _lineScrollTimer4(0), _lineScrollTimer5(0), _lineScrollOp(0), _restoreDlgTab(0), _transitionType(0), _transitionState(0),
-			_transitionState2(0), _tmpScrollOffset(0), _subPara(0), _useEngineScrollOffsets(false), _hINTHandler(nullptr), _hINTHandlerNext(nullptr), _saveData(nullptr) {
+TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state) {
 	_internalState = new ScrollInternalState[4];
 	assert(_internalState);
 	_internalState[kVertA].setFactor(-1);
 	_internalState[kVertB].setFactor(-1);
 	_hScrollTable = new int16[0x200]();
 	assert(_hScrollTable);
-	_saveData = new uint8[2]();
-	assert(_saveData);
+	_restoreData = new uint8[3]();
+	assert(_restoreData);
 	makeFunctions();
 }
 
 TransitionManager_SCD::~TransitionManager_SCD() {
 	delete[] _internalState;
 	delete[] _hScrollTable;
-	delete[] _saveData;
+	delete[] _restoreData;
 	_hINTHandler = _hINTHandlerNext = nullptr;
 	for (Common::Array<TrsFunc*>::const_iterator i = _trsProcs.begin(); i != _trsProcs.end(); ++i)
 		delete *i;
@@ -336,22 +368,54 @@ void TransitionManager_SCD::hINTCallback(void *segaRenderer) {
 		(*_hINTHandler)(static_cast<Graphics::SegaRenderer *>(segaRenderer));
 }
 
-void TransitionManager_SCD::saveState(Common::SeekableWriteStream *out) {
+void TransitionManager_SCD::saveState(Common::SeekableWriteStream *out, SaveFlags flags) {
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
 	out->writeByte(_lineScrollOp);
+
+	if (flags & (kFlagScriptedSave))
+		return;
+
+	out->writeByte(_scrollType);
+	out->writeByte(_nextStep);
+
+	for (int i = 0; i < 4; ++i)
+		_internalState[i].saveState(out);
 }
 
-void TransitionManager_SCD::loadState(Common::SeekableReadStream *in) {
+void TransitionManager_SCD::loadState(Common::SeekableReadStream *in, SaveFlags flags) {
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
-	in->read(_saveData, 1);
+
+	_extendedRestore = false;
+	uint8 *s = _restoreData;
+	*s++ = in->readByte();
+
+	if (flags & (kFlagScriptedSave))
+		return;
+
+	*s++ = in->readByte();
+	*s++ = in->readByte();
+
+	for (int i = 0; i < 4; ++i)
+		_internalState[i].loadState(in);
+
+	_extendedRestore = true;
 }
 
 void TransitionManager_SCD::postLoadProcess() {
-	const uint8 *s = _saveData;
+	const uint8 *s = _restoreData;
 	_lineScrollOp = *s++;
 	if (_lineScrollOp == 4)
 		doCommand(_lineScrollOp);
+
+	if (!_extendedRestore)
+		return;
+
+	_scrollType = *s++;
+	_nextStep = *s++;
+
+	for (int i = 0; i < 4; ++i) 
+		_internalState[i].postLoadProcess();
 }
 
 void TransitionManager_SCD::processCmdInternal() {

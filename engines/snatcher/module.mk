@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	memory.o \
 	mem_mapping.o \
 	metaengine.o \
+	palette.o \
 	palette_scd.o \
 	resource.o \
 	saveload.o \

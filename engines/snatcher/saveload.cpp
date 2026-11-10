@@ -41,7 +41,7 @@
 
 namespace Snatcher {
 
-SaveLoadManager::SaveLoadManager(SnatcherEngine *vm) : _vm(vm), _pendingSaveLoad(0), _pendingSaveFlags(kSaveFlagsNone), _enableSaving(true), _tryLoadFromLauncher(true), _desc() {
+SaveLoadManager::SaveLoadManager(SnatcherEngine *vm) : _vm(vm), _pendingSaveLoad(0), _pendingSaveFlags(kFlagNone), _enableSaving(true), _tryLoadFromLauncher(true), _desc() {
 	ConfMan.registerDefault("controller_conf", 0);
 	ConfMan.registerDefault("disable_stereo", false);
 	ConfMan.registerDefault("lightgun_usage", false);
@@ -107,7 +107,7 @@ void SaveLoadManager::requestSave(int slot, const Common::String &desc, bool scr
 	_pendingSaveLoad = -(slot + 1);
 	_desc = desc;
 	if (scriptedSave)
-		_pendingSaveFlags = kSaveFlagsScriptedSave;
+		_pendingSaveFlags = kFlagScriptedSave;
 }
 
 void SaveLoadManager::handleSaveLoad(GameState &state) {
@@ -118,7 +118,7 @@ void SaveLoadManager::handleSaveLoad(GameState &state) {
 	else if (_pendingSaveLoad < 0)
 		saveState(-_pendingSaveLoad - 1, state, _pendingSaveFlags);
 	state.pendingSaveLoad = _pendingSaveLoad = 0;
-	_pendingSaveFlags = kSaveFlagsNone;
+	_pendingSaveFlags = kFlagNone;
 }
 
 bool SaveLoadManager::isSaveSlotUsed(int16 slot) const {
@@ -144,10 +144,10 @@ void SaveLoadManager::enableSaving(bool enable) {
 
 void SaveLoadManager::saveTempState(Script &script) {
 	Common::MemoryWriteStreamDynamic out(DisposeAfterUse::NO);
-	_vm->_scriptEngine->saveState(&out, script, kSaveFlagsTempData);
-	_vm->gfx()->saveState(&out, kSaveFlagsTempData);
-	_vm->sound()->saveState(&out, kSaveFlagsTempData);
-	_vm->_ui->saveState(&out, kSaveFlagsTempData);
+	_vm->_scriptEngine->saveState(&out, script, kFlagTempData);
+	_vm->gfx()->saveState(&out, kFlagTempData);
+	_vm->sound()->saveState(&out, kFlagTempData);
+	_vm->_ui->saveState(&out, kFlagTempData);
 	_tempState = Common::SharedPtr<Common::MemoryReadStream>(new Common::MemoryReadStream(out.getData(), out.size(), DisposeAfterUse::YES));
 }
 
@@ -155,10 +155,10 @@ void SaveLoadManager::restoreTempState(Script &script) {
 	Common::MemoryReadStream *m = _tempState.get();
 	assert(m != nullptr);
 	m->seek(0);
-	_vm->_scriptEngine->loadState(m, script, kSaveFlagsTempData);
-	_vm->gfx()->loadState(m, kSaveFlagsTempData);
-	_vm->sound()->loadState(m, kSaveFlagsTempData);
-	_vm->_ui->loadState(m, kSaveFlagsTempData);
+	_vm->_scriptEngine->loadState(m, script, kFlagTempData);
+	_vm->gfx()->loadState(m, kFlagTempData);
+	_vm->sound()->loadState(m, kFlagTempData);
+	_vm->_ui->loadState(m, kFlagTempData);
 	_tempState.reset();
 }
 
@@ -217,9 +217,7 @@ void SaveLoadManager::loadState(int slot, GameState &state) {
 	state.modPhaseTop = in->readSint16BE();
 	state.prologue = in->readSint16BE();
 
-	SaveFlags flags = kSaveFlagsNone;
-	if (in->readByte())
-		flags = kSaveFlagsScriptedSave;
+	SaveFlags flags = static_cast<SaveFlags>(in->readUint16BE());
 
 	uint16 tsize = in->readUint16BE();
 	if (tsize) {
@@ -242,7 +240,7 @@ void SaveLoadManager::loadState(int slot, GameState &state) {
 
 	if (state.prologue == -1) {
 		state.phase = 0;
-		if (flags & kSaveFlagsScriptedSave)
+		if (flags & kFlagScriptedSave)
 			state.updateFlags = 0;
 		else
 			state.updateFlags &= ~0x80;
@@ -268,7 +266,8 @@ void SaveLoadManager::saveState(int slot, GameState &state, SaveFlags flags) {
 	out->writeSint16BE(state.modPhaseTop);
 	out->writeSint16BE(state.prologue);
 
-	out->writeByte((flags & kSaveFlagsScriptedSave) ? 1 : 0);
+	checkSceneSpecificSaveDataNeed(state, flags);
+	out->writeUint16BE(static_cast<uint16>(flags));
 
 	Common::MemoryReadStream *m = _tempState.get();
 	if (m) {
@@ -294,6 +293,13 @@ void SaveLoadManager::saveState(int slot, GameState &state, SaveFlags flags) {
 	delete out;
 
 	updateSaveSlotsStatus(state);
+}
+
+void SaveLoadManager::checkSceneSpecificSaveDataNeed(const GameState &state, SaveFlags &flags) {
+	const uint16 extDataNeedScenes[] = { 0x0F02 };
+
+	if (Common::find(extDataNeedScenes, &extDataNeedScenes[ARRAYSIZE(extDataNeedScenes)], state.script.curGfxScript) != &extDataNeedScenes[ARRAYSIZE(extDataNeedScenes)])
+		flags = static_cast<SaveFlags>(flags | kFlagNeedAnimExtData);
 }
 
 Common::SeekableReadStream *SaveLoadManager::openFileForLoading(int slot, GameState &state, SaveHeader &header) {

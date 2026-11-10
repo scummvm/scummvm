@@ -24,6 +24,7 @@
 
 #include "common/platform.h"
 #include "common/scummsys.h"
+#include "snatcher/saveflags.h"
 
 namespace Common {
 	class SeekableWriteStream;
@@ -70,8 +71,8 @@ public:
 	virtual void hINTCallback(void*) {}
 	const ScrollState &scroll_getState() const { return _result; }
 
-	virtual void saveState(Common::SeekableWriteStream *out) = 0;
-	virtual void loadState(Common::SeekableReadStream *in) = 0;
+	virtual void saveState(Common::SeekableWriteStream *out, SaveFlags flags) = 0;
+	virtual void loadState(Common::SeekableReadStream *in, SaveFlags flags) = 0;
 	virtual void postLoadProcess() = 0;
 
 protected:

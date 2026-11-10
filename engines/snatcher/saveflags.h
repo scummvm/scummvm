@@ -26,9 +26,11 @@
 namespace Snatcher {
 
 enum SaveFlags : int {
-	kSaveFlagsNone			=	0,
-	kSaveFlagsTempData		=	1 << 0,
-	kSaveFlagsScriptedSave	=	1 << 1
+	kFlagNone				=	0,
+	kFlagTempData			=	1 << 0,
+	kFlagScriptedSave		=	1 << 1,
+	kFlagNeedAnimExtData	=	1 << 2,
+	kFlagNeedPaletteData	=	1 << 3
 };
 
 } // End of namespace Snatcher

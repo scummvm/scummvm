@@ -84,6 +84,7 @@ public:
 private:
 	void loadState(int slot, GameState &state);
 	void saveState(int slot, GameState &state, SaveFlags flags);
+	void checkSceneSpecificSaveDataNeed(const GameState &state, SaveFlags &flags);
 
 	Common::SeekableReadStream *openFileForLoading(int slot, GameState &state, SaveHeader &header);
 	Common::OutSaveFile *openFileForSaving(int slot, const Common::String &desc, GameState &state);
