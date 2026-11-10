@@ -267,6 +267,9 @@ public:
 
 	static Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up);
 	static Math::Matrix4 makeProjMatrix(float fov, float nclip, float fclip);
+
+	static uint8 dimScreenRGB(uint8 r, uint8 g, uint8 b);
+
 	Texture *getSpecialtyTexturePtr(uint id) { if (id >= _numSpecialtyTextures) return nullptr; return &_specialtyTextures[id]; };
 	Texture *getSpecialtyTexturePtr(Common::String name);
 

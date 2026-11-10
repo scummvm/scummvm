@@ -3,11 +3,12 @@ in vec2 Texcoord;
 OUTPUT
 
 uniform sampler2D tex;
+// DimScreen: 1, 1. DimRegion (blended): 0, 1 - level
+uniform float colorScale;
+uniform float alpha;
 
 void main() {
 	vec4 c = texture(tex, Texcoord);
-
-	float val = (c.r + c.g + c.b) / 10.0;
-
-	outColor = vec4(val, val, val, 1);
+	float grey = max(max(c.r, c.g), c.b / 8.0) / 4.0;
+	outColor = vec4(vec3(grey * colorScale), alpha);
 }

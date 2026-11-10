@@ -138,12 +138,12 @@ private:
 	int _smushWidth;
 	int _smushHeight;
 	byte *_storedDisplay;
+	byte *_dimmedDisplay;
+	bool _storedDimmed;
 	bool _useDepthShader;
 #ifdef GL_ARB_fragment_program
 	GLuint _fragmentProgram;
-	GLuint _dimFragProgram;
 #endif
-	bool _useDimShader;
 	float _alpha;
 	const Actor *_currentActor;
 	GLenum _depthFunc;

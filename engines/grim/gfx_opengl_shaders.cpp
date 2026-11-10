@@ -1768,6 +1768,8 @@ void GfxOpenGLS::copyStoredToDisplay() {
 	_dimProgram->use();
 	_dimProgram->setUniform("scaleWH", Math::Vector2d(1.f, 1.f));
 	_dimProgram->setUniform("tex", 0);
+	_dimProgram->setUniform1f("colorScale", 1.f);
+	_dimProgram->setUniform1f("alpha", 1.f);
 
 	glBindTexture(GL_TEXTURE_2D, _storedDisplay);
 
@@ -1790,17 +1792,6 @@ void GfxOpenGLS::dimRegion(int xin, int yReal, int w, int h, float level) {
 	h = (int)(h * _scaleH);
 	int yin = _screenHeight - yReal - h;
 
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	g_system->presentBuffer();
-	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xin, yin, w, h, 0);
-
 	glBindBuffer(GL_ARRAY_BUFFER, _dimRegionVBO);
 
 	float width = w;
@@ -1821,16 +1812,19 @@ void GfxOpenGLS::dimRegion(int xin, int yReal, int w, int h, float level) {
 	_dimRegionProgram->use();
 	_dimRegionProgram->setUniform("scaleWH", Math::Vector2d(1.f / _screenWidth, 1.f / _screenHeight));
 	_dimRegionProgram->setUniform("tex", 0);
+	_dimRegionProgram->setUniform1f("colorScale", 0.f);
+	_dimRegionProgram->setUniform1f("alpha", 1.f - CLIP(level, 0.f, 1.f));
 
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
+	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
-
-	glDeleteTextures(1, &texture);
 }
 
 void GfxOpenGLS::irisAroundRegion(int x1, int y1, int x2, int y2) {

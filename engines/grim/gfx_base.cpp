@@ -181,6 +181,10 @@ void GfxBase::createSpecialtyTexture(uint id, const uint8 *data, int width, int 
 	createTexture(&_specialtyTextures[id], data, nullptr, true);
 }
 
+uint8 GfxBase::dimScreenRGB(uint8 r, uint8 g, uint8 b) {
+	return MAX(MAX(r, g), (uint8)(b >> 3)) >> 2;
+}
+
 Bitmap *GfxBase::createScreenshotBitmap(Graphics::Surface *src, int w, int h, bool flipOrientation) {
 	Graphics::Surface buffer;
 	buffer.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));

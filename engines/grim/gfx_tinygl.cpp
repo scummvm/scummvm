@@ -49,7 +49,7 @@ GfxBase *CreateGfxTinyGL() {
 
 GfxTinyGL::GfxTinyGL() :
 		_alpha(1.f),
-		_currentActor(nullptr), _smushImage(nullptr),
+		_currentActor(nullptr), _smushImage(nullptr), _storedImage(nullptr), _storedImageDirty(false),
 		_storedDisplay(nullptr) {
 	type = Graphics::RendererType::kRendererTypeTinyGL;
 	// TGL_LEQUAL as tglDepthFunc ensures that subsequent drawing attempts for
@@ -67,6 +67,7 @@ GfxTinyGL::~GfxTinyGL() {
 	_storedDisplay->free();
 	delete _storedDisplay;
 	releaseMovieFrame();
+	tglDeleteBlitImage(_storedImage);
 	for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
 		destroyTexture(&_specialtyTextures[i]);
 	}
@@ -1215,6 +1216,7 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h, bool useStored) {
 	if (useStored) {
 		bmp = createScreenshotBitmap(_storedDisplay, w, h, true);
 	} else {
+		TinyGL::presentBuffer();
 		Graphics::Surface *src = TinyGL::copyFromFrameBuffer(_pixelFormat);
 		bmp = createScreenshotBitmap(src, w, h, true);
 		src->free();
@@ -1233,19 +1235,45 @@ void GfxTinyGL::storeDisplay() {
 	_storedDisplay->free();
 	delete _storedDisplay;
 	_storedDisplay = TinyGL::copyFromFrameBuffer(_pixelFormat);
+	_storedImageDirty = true;
 }
 
 void GfxTinyGL::copyStoredToDisplay() {
-	Bitmap *bitmap = getScreenshot(_gameWidth, _gameHeight, true);
-	drawBitmap(bitmap, 0, 0, 0);
-	delete bitmap;
+	if (_storedImageDirty && _storedDisplay) {
+		if (_storedImage == nullptr)
+			_storedImage = tglGenBlitImage();
+		tglUploadBlitImage(_storedImage, *_storedDisplay, 0, false);
+		_storedImageDirty = false;
+	}
+	if (_storedImage)
+		tglBlitFast(_storedImage, 0, 0);
 }
 
 void GfxTinyGL::dimScreen() {
-	dimRegion(0, 0, _gameWidth, _gameHeight, 0.2f);
+	if (!_storedDisplay)
+		return;
+
+	Graphics::Surface dimmed;
+	dimmed.create(_storedDisplay->w, _storedDisplay->h, _storedDisplay->format);
+	for (int y = 0; y < dimmed.h; y++) {
+		for (int x = 0; x < dimmed.w; x++) {
+			uint8 r, g, b;
+			_storedDisplay->format.colorToRGB(_storedDisplay->getPixel(x, y), r, g, b);
+			uint8 v = dimScreenRGB(r, g, b);
+			dimmed.setPixel(x, y, dimmed.format.RGBToColor(v, v, v));
+		}
+	}
+
+	if (_storedImage == nullptr)
+		_storedImage = tglGenBlitImage();
+	tglUploadBlitImage(_storedImage, dimmed, 0, false);
+	_storedImageDirty = false;
+	dimmed.free();
 }
 
 void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
+	level = CLIP(level, 0.0f, 1.0f);
+
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 	tglOrthof(0, _gameWidth, _gameHeight, 0, 0, 1);
@@ -1254,11 +1282,12 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 
 	tglDisable(TGL_LIGHTING);
 	tglDisable(TGL_DEPTH_TEST);
+	tglDisable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
 	tglEnable(TGL_BLEND);
 	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 
-	tglColor4f(0, 0, 0, 1 - level);
+	tglColor4f(0.0f, 0.0f, 0.0f, 1.0f - level);
 
 	tglBegin(TGL_QUADS);
 	tglVertex2f(x, y);

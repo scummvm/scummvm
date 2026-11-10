@@ -134,6 +134,9 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	TinyGL::BlitImage *_emergFont[96];
 	TinyGL::BlitImage *_smushImage;
+	TinyGL::BlitImage *_storedImage;
+	// _storedDisplay changed after _storedImage was uploaded
+	bool _storedImageDirty;
 	Graphics::Surface *_storedDisplay;
 	float _alpha;
 	const Actor *_currentActor;
