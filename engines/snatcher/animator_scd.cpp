@@ -37,12 +37,8 @@
 
 namespace Snatcher {
 
-//#define		ANIM_DEBUG
-
 struct AnimObject {
-	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), palette(0), target(0), ovrTile(0), f1c(0),
-		timeStamp(0), phase(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), actionTimer(0), spriteTableLocation(0),
-			res(), scriptData(), spriteData(nullptr), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), scriptComFlags(0), freeze(0), blink(0), blinkCounter(0), blinkDuration(0) {}
+	AnimObject(int num) : id(num) {}
 
 	void clear() {
 		enable = blinkRate = drawFlags = 0;
@@ -67,39 +63,39 @@ struct AnimObject {
 		blink = blinkCounter = blinkDuration = 0;
 	}
 
-	uint16 enable;
-	uint16 blinkRate;
-	uint16 drawFlags;
-	int32 posX;
-	int32 posY;
-	int32 relSpeedX;
-	int32 relSpeedY;
-	uint8 palette;
-	uint16 target;
-	uint16 ovrTile;
-	uint8 f1c;
-	uint32 timeStamp;
-	uint8 phase;
-	uint8 controlFlags;
-	uint8 allowFrameDrop;
-	uint8 frameSeqCounter;
-	uint16 frame;
-	int16 frameDelay;
-	int16 actionTimer;
-	uint32 spriteTableLocation;
+	uint16 enable = 0;
+	uint16 blinkRate = 0;
+	uint16 drawFlags = 0;
+	int32 posX = 0;
+	int32 posY = 0;
+	int32 relSpeedX = 0;
+	int32 relSpeedY = 0;
+	uint8 palette = 0;
+	uint16 target = 0;
+	uint16 ovrTile = 0;
+	uint8 f1c = 0;
+	uint32 timeStamp = 0;
+	uint8 phase = 0;
+	uint8 controlFlags = 0;
+	uint8 allowFrameDrop = 0;
+	uint8 frameSeqCounter = 0;
+	uint16 frame = 0;
+	int16 frameDelay = 0;
+	int16 actionTimer = 0;
+	uint32 spriteTableLocation = 0;
 	ResourcePointer res;
 	ResourcePointer scriptData;
-	const uint16 *spriteData;
-	uint16 blink;
-	uint16 blinkCounter;
-	uint16 blinkDuration;
-	int32 absSpeedX;
-	int32 absSpeedY;
-	uint16 parent;
-	uint16 children;
-	uint16 next;
-	uint8 scriptComFlags;
-	uint8 freeze;
+	const uint16 *spriteData = nullptr;
+	uint16 blink = 0;
+	uint16 blinkCounter = 0;
+	uint16 blinkDuration = 0;
+	int32 absSpeedX = 0;
+	int32 absSpeedY = 0;
+	uint16 parent = 0;
+	uint16 children = 0;
+	uint16 next = 0;
+	uint8 scriptComFlags = 0;
+	uint8 freeze = 0;
 
 	const uint8 id;
 };
@@ -155,22 +151,22 @@ private:
 	bool reachedAudioTimeStamp(AnimObject &a) const;
 	void runAnimScript(AnimObject &a);
 
-	int _screenWidth, _screenHeight;
-	int _realScreenWidth, _realScreenHeight;
+	int _screenWidth = 256, _screenHeight = 224;
+	int _realScreenWidth = 0, _realScreenHeight = 0;
 
 	ResourcePointer _transferData;
-	uint8 *_tempBuffer;
-	uint16 *_spriteBuffer;
-	uint8 _transferMode;
-	uint16 _transferDelay;
-	uint16 _clearFlags;
-	uint8 _mode;
-	uint8 _modeChange;
-	uint16 _frameCountDown;
-	Graphics::SegaRenderer *_sr;
-	Palette *_pal;
-	TransitionManager *_trs;
-	SoundEngine *_snd;
+	uint8 *_tempBuffer = nullptr;
+	uint16 *_spriteBuffer = nullptr;
+	uint8 _transferMode = 0;
+	uint16 _transferDelay = 0;
+	uint16 _clearFlags = 0;
+	uint8 _mode = 1;
+	uint8 _modeChange = 0;
+	uint16 _frameCountDown = 0;
+	Graphics::SegaRenderer *_sr = nullptr;
+	Palette *_pal = nullptr;
+	TransitionManager *_trs = nullptr;
+	SoundEngine *_snd = nullptr;
 	const Graphics::SegaRenderer::HINTHandler _hINTClientProc;
 
 private:
@@ -263,15 +259,13 @@ public:
 	// boot logo animation
 	int drawBootLogoFrame(uint8 *screen, int frameNo) override;
 private:
-	int32 _bootsDelay, _bootsTotalFrames;
-	uint16 _bootsHScroll, _bootsVScroll, _bootsCol;
-	uint8 *_bootsSprTbl;
+	int32 _bootsDelay = 0, _bootsTotalFrames = 0;
+	uint16 _bootsHScroll = 0, _bootsVScroll = 0, _bootsCol = 0;
+	uint8 *_bootsSprTbl = nullptr;
 };
 
-Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd, bool enableAspectRatioCorrection) : Animator(state), _pal(pal), _trs(scr), _snd(snd), _mode(1),
-	_modeChange(0), _screenWidth(256), _screenHeight(224), _transferData(), _transferMode(0), _transferDelay(0), _clearFlags(0), _tempBuffer(nullptr), _spriteBuffer(nullptr), _sr(nullptr), _frameCountDown(0),
-		_animations(nullptr), _drawCommands(nullptr), _hINTClientProc(Graphics::SegaRenderer::HINTHandler(this, &Graphics::SegaRenderer::HINTClient::hINTCallback)), _realScreenWidth(0), _realScreenHeight(0),
-			_bootsDelay(0), _bootsSprTbl(nullptr), _bootsTotalFrames(0), _bootsHScroll(0), _bootsVScroll(0), _bootsCol(0) {
+Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd, bool enableAspectRatioCorrection) :
+	Animator(state), _pal(pal), _trs(scr), _snd(snd),  _hINTClientProc(Graphics::SegaRenderer::HINTHandler(this, &Graphics::SegaRenderer::HINTClient::hINTCallback)) {
 
 	makeAnimFunctions();
 
@@ -1183,7 +1177,7 @@ void Animator_SCD::runAnimScript(AnimObject &a) {
 	while (incr != -1) {
 		a.frame += incr;
 		a.controlFlags &= ~GraphicsEngine::kAnimHide;
-		const uint8 *in = a.scriptData() + (a.frame << 2);
+		const uint8 *in = a.scriptData() + a.frame * 4;
 		uint8 opcode = *in++;
 		if (opcode & 0x80) {
 			opcode -= 0x80;

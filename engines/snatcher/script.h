@@ -52,17 +52,10 @@ public:
 	bool enabled() const { return _enable; }
 	void run(GameState &state);
 
-	//void loadState(Common::SeekableReadStream *in);
-	//void saveState(Common::SeekableWriteStream *out);
-	//void appendRestoreData();
-
 private:
 	const uint16 *_readPos;
-	//const uint16 *_lastReadPos;
 	uint16 *_data;
 	uint16 *_writePos;
-	//uint16 *_restoreData;
-	//uint16 _restoreDataSize;
 	uint16 _currentOpcode;
 	int16 _progress;
 	uint16 _counter;

@@ -137,7 +137,7 @@ void SoundEngine::loadState(Common::SeekableReadStream *in, SaveFlags flags) {
 	_fmStatus.music = in->readByte();
 	_fmStatus.reduceVol2 = in->readByte();
 
-	if (flags & (kSaveFlagsScriptedSave | kSaveFlagsTempData)) {
+	if (flags & (kFlagScriptedSave | kFlagTempData)) {
 		_cdaRestoreTrack = -1;
 		return;
 	}
@@ -153,7 +153,7 @@ void SoundEngine::saveState(Common::SeekableWriteStream *out, SaveFlags flags) {
 	out->writeByte(_fmStatus.music);
 	out->writeByte(_fmStatus.reduceVol2);
 
-	if (flags & (kSaveFlagsScriptedSave | kSaveFlagsTempData))
+	if (flags & (kFlagScriptedSave | kFlagTempData))
 		return;
 
 	int16 cdaTrack = _dev->cdaGetCurTrack();

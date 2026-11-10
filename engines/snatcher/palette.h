@@ -28,18 +28,25 @@
 
 class PaletteManager;
 
+namespace Common {
+class SeekableWriteStream;
+class SeekableReadStream;
+}
+
 namespace Graphics {
-	struct PixelFormat;
+struct PixelFormat;
 }
 
 namespace Snatcher {
 
 class Palette {
 public:
-	Palette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state) : _pixelFormat(pxf ? *pxf : Graphics::PixelFormat::createFormatCLUT8()), _palMan(pm), _gfxState(state) {
-		assert(pm);
-	}
-	virtual ~Palette() {}
+	Palette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state);
+	virtual ~Palette();
+
+	const uint8 *getSystemPalette() const { return _sysPalette; }
+	void block();
+	void unblock();
 
 	virtual bool enqueueEvent(ResourcePointer &res) { return true; }
 	virtual void processEventQueue() {}
@@ -48,32 +55,31 @@ public:
 	virtual void update() {}
 	virtual void hINTCallback(void*) {}
 
-	virtual const uint8 *getSystemPalette() const { return nullptr; }
-
 	virtual void selectPalettes(uint32) {}
 	virtual void getPresetColor(int pal, int index, uint8 &r, uint8 &g, uint8 &b) const {}
 	virtual void setColor(int index, uint8 r, uint8 g, uint8 b) {}
 	virtual void getColor(int index, uint8 &r, uint8 &g, uint8 &b) const {}
 	virtual void adjustColor(int index, int8 r, int8 g, int8 b) {}
 
+	virtual void loadState(Common::SeekableReadStream *in) {}
+	virtual void saveState(Common::SeekableWriteStream *out) {};
+	virtual void postLoadProcess() {}
+
 protected:
-	const Graphics::PixelFormat _pixelFormat;
-	PaletteManager *_palMan;
+	virtual void updateSystemPalette() = 0;
+
+	uint8 *_sysPalette = nullptr;
+	bool _blocked = false;
+	bool _restoreAfterUnblock = false;
+	const Graphics::PixelFormat _pixelFormat = Graphics::PixelFormat();
+	PaletteManager *_palMan = nullptr;
 	GraphicsEngine::GfxState &_gfxState;
 
 private:
 	static Palette *createSegaPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state);
 
 public:
-	static Palette *create(const Graphics::PixelFormat *pxf, PaletteManager *pm, Common::Platform platform, GraphicsEngine::GfxState &state) {
-		switch (platform) {
-		case Common::kPlatformSegaCD:
-			return createSegaPalette(pxf, pm, state);
-		default:
-			break;
-		};
-		return 0;
-	}
+	static Palette *create(const Graphics::PixelFormat *pxf, PaletteManager *pm, Common::Platform platform, GraphicsEngine::GfxState &state);
 };
 
 } // End of namespace Snatcher

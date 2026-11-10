@@ -818,7 +818,7 @@ Common::Error SnatcherEngine::loadGameState(int slot) {
 }
 
 Common::Error SnatcherEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	_saveMan->requestSave(slot, desc, kSaveFlagsNone);
+	_saveMan->requestSave(slot, desc, kFlagNone);
 	return Common::kNoError;
 }
 

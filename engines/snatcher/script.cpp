@@ -555,8 +555,8 @@ void ScriptEngine::loadState(Common::SeekableReadStream *in, Script &script, Sav
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
 
-	if (!(flags & kSaveFlagsTempData)) {
-		if (flags & kSaveFlagsScriptedSave) {
+	if (!(flags & kFlagTempData)) {
+		if (flags & kFlagScriptedSave) {
 			uint8 num = in->readByte();
 			ARR_POS(4) = 0;
 			for (int i = 0; i < num; ++i) {
@@ -583,7 +583,7 @@ void ScriptEngine::loadState(Common::SeekableReadStream *in, Script &script, Sav
 	script.curFileNo = in->readByte();
 	script.curGfxScript = in->readSint16BE();
 
-	if (!(flags & kSaveFlagsTempData)) {
+	if (!(flags & kFlagTempData)) {
 		script.curPos = in->readUint16BE();
 		script.newPos = 0xFFFF;
 		in->readUint16BE();
@@ -593,8 +593,8 @@ void ScriptEngine::loadState(Common::SeekableReadStream *in, Script &script, Sav
 void ScriptEngine::saveState(Common::SeekableWriteStream *out, Script &script, SaveFlags flags) {
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
 
-	if (!(flags & kSaveFlagsTempData)) {
-		if (flags & kSaveFlagsScriptedSave) {
+	if (!(flags & kFlagTempData)) {
+		if (flags & kFlagScriptedSave) {
 			uint8 num = script.temp.arr4[0] & 0xFF;
 			out->writeByte(num);
 			for (int i = 0; i < num; ++i)
@@ -610,11 +610,11 @@ void ScriptEngine::saveState(Common::SeekableWriteStream *out, Script &script, S
 		out->writeByte(script.sentencePos);
 	}
 
-	out->writeByte(flags & kSaveFlagsScriptedSave ? script.temp.curFileNo : script.curFileNo);
+	out->writeByte(flags & kFlagScriptedSave ? script.temp.curFileNo : script.curFileNo);
 	out->writeSint16BE(script.curGfxScript);
 
-	if (!(flags & kSaveFlagsTempData)) {
-		if (flags & kSaveFlagsScriptedSave) {
+	if (!(flags & kFlagTempData)) {
+		if (flags & kFlagScriptedSave) {
 			out->writeUint16BE(script.temp.curPos);
 			out->writeUint16BE(0xFFFF);
 		} else {
