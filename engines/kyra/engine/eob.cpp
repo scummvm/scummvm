@@ -1046,7 +1046,7 @@ void EoBEngine::displayParchment(int id) {
 		gui_drawCharPortraitWithStats(i);
 	}
 
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
 	_screen->sega_getAnimator()->clearSprites();
@@ -1135,7 +1135,7 @@ bool EoBEngine::checkPartyStatusExtra() {
 		snd_stopSound();
 
 		Common::SeekableReadStreamEndian *in = _res->createEndianAwareReadStream("GO");
-		SCDRenderer *r = _screen->sega_getRenderer();
+		SegaCDRenderer *r = _screen->sega_getRenderer();
 		r->loadStreamToVRAM(in, 0x20);
 		delete in;
 

@@ -30,13 +30,13 @@
 namespace Kyra {
 
 void Screen_EoB::sega_initGraphics() {
-	_segaRenderer = new SCDRenderer(this);
+	_segaRenderer = new SegaCDRenderer(this);
 	_segaRenderer->setResolution(320, 224);
-	_segaRenderer->setPlaneTableLocation(SCDRenderer::kPlaneA, 0xC000);
-	_segaRenderer->setPlaneTableLocation(SCDRenderer::kPlaneB, 0xE000);
-	_segaRenderer->setPlaneTableLocation(SCDRenderer::kWindowPlane, 0xF000);
+	_segaRenderer->setPlaneTableLocation(SegaCDRenderer::kPlaneA, 0xC000);
+	_segaRenderer->setPlaneTableLocation(SegaCDRenderer::kPlaneB, 0xE000);
+	_segaRenderer->setPlaneTableLocation(SegaCDRenderer::kWindowPlane, 0xF000);
 	_segaRenderer->setupPlaneAB(512, 512);
-	_segaRenderer->setupWindowPlane(0, 0, SCDRenderer::kWinToLeft, SCDRenderer::kWinToTop);
+	_segaRenderer->setupWindowPlane(0, 0, SegaCDRenderer::kWinToLeft, SegaCDRenderer::kWinToTop);
 	_segaRenderer->setHScrollTableLocation(0xD800);
 	_segaRenderer->setSpriteTableLocation(0xDC00);
 	_segaAnimator = new SegaAnimator(_segaRenderer);
@@ -360,14 +360,14 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 	setCurPage(cp);
 }
 
-SCDRenderer::SCDRenderer(Screen_EoB *screen) : Graphics::SegaRenderer(), _screen(screen) {
+SegaCDRenderer::SegaCDRenderer(Screen_EoB *screen) : Graphics::SegaRenderer(), _screen(screen) {
 	setResolution(320, 224);
 }
 
-SCDRenderer::~SCDRenderer() {
+SegaCDRenderer::~SegaCDRenderer() {
 }
 
-void SCDRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr, bool compressedData) {
+void SegaCDRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr, bool compressedData) {
 	assert(in);
 	uint8 *dst = _vram + addr;
 
@@ -386,7 +386,7 @@ void SCDRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr, 
 	}
 }
 
-void SCDRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr, bool topToBottom, const uint16 *patternTable) {
+void SegaCDRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr, bool topToBottom, const uint16 *patternTable) {
 	uint16 addr = vramArea ? (vramArea == 1 ? 0xE000 : 0xF000) : 0xC000;
 	if (y & 0x8000) {
 		y &= ~0x8000;
@@ -444,7 +444,7 @@ void SCDRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, ui
 	}
 }
 
-void SCDRenderer::renderToPage(int destPageNum, int renderBlockX, int renderBlockY, int renderBlockWidth, int renderBlockHeight, bool spritesOnly) {
+void SegaCDRenderer::renderToPage(int destPageNum, int renderBlockX, int renderBlockY, int renderBlockWidth, int renderBlockHeight, bool spritesOnly) {
 	if (renderBlockX == -1)
 		renderBlockX = 0;
 	if (renderBlockY == -1)
@@ -463,7 +463,7 @@ void SCDRenderer::renderToPage(int destPageNum, int renderBlockX, int renderBloc
 	}
 }
 
-SegaAnimator::SegaAnimator(SCDRenderer *renderer) : _renderer(renderer), _needUpdate(false) {
+SegaAnimator::SegaAnimator(SegaCDRenderer *renderer) : _renderer(renderer), _needUpdate(false) {
 	_sprites = new Sprite[80];
 	assert(_sprites);
 	_tempBuffer = new uint16[320]();
@@ -727,7 +727,7 @@ const uint8 *SegaCDFont::getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHei
 	return res;
 }
 
-ScrollManager::ScrollManager(SCDRenderer *renderer) : _renderer(renderer) {
+ScrollManager::ScrollManager(SegaCDRenderer *renderer) : _renderer(renderer) {
 	_vScrollTimers = new ScrollTimer[2];
 	assert(_vScrollTimers);
 	_hScrollTimers = new ScrollTimer[2];

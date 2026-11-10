@@ -63,7 +63,7 @@ void EoBEngine::gui_drawPlayField(bool refresh, bool screenUpdt) {
 	_txt->clearDim(0);
 	_screen->sega_getAnimator()->clearSprites();
 	_screen->sega_getAnimator()->update();
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
 
@@ -110,7 +110,7 @@ void EoBEngine::gui_drawPlayField(bool refresh, bool screenUpdt) {
 	_screen->copyRegionToBuffer(0, 173, 0, 6, 120, _shakeBackBuffer1);
 	_screen->copyRegionToBuffer(0, 0, 117, 179, 6, _shakeBackBuffer2);
 
-	// Since we're not going to draw the character portrait boxes with the SCDRenderer but rather with our "normal" code, we have to backup
+	// Since we're not going to draw the character portrait boxes with the SegaCDRenderer but rather with our "normal" code, we have to backup
 	// some parts of the background between the character portraits. Unlike in the other versions the red splat shapes overlaps with that space.
 	for (int i = 0; i < 6; ++i) {
 		delete[] _redSplatBG[i];
@@ -137,7 +137,7 @@ void EoBEngine::gui_setupPlayFieldHelperPages(bool keepText) {
 	if (!keepText)
 		_txt->clearDim(0);
 
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	r->loadToVRAM(_scrYellow, 4992, 0x3CE0);
 	r->fillRectWithTiles(0, 0, 0, 22, 21, 0);
 	r->fillRectWithTiles(0, 22, 0, 18, 21, 0);
@@ -187,7 +187,7 @@ void EoBEngine::gui_drawCharacterStatsPage() {
 		return;
 	}
 
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	EoBCharacter *c = &_characters[_updateCharNum];
 
 	memset(_tempPattern, 0, 792);
@@ -243,7 +243,7 @@ void EoBEngine::gui_displayMap() {
 		gui_drawCharPortraitWithStats(i);
 	}
 
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
 	_screen->sega_getAnimator()->clearSprites();
@@ -327,7 +327,7 @@ void EoBEngine::gui_drawSpellbook() {
 		return;
 	}
 
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 10, 15, 12, 7, 0);
 	r->fillRectWithTiles(1, 10, 15, 12, 7, 0x6429);
 	memset(_tempPattern, 0, 168);
@@ -609,7 +609,7 @@ void EoBEngine::drawMapPage(int level) {
 	_txt->printShadedText(_mapStrings3[level - 1], 0, 0, 0xCC, 0, 48, 16, 0, false);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_loadTextBufferToVRAM(0, 0x7920, 384);
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 23, 8, 6, 2, 0x63C9, true);
 
 	Common::SeekableReadStreamEndian *in = _sres->resStreamEndian(hasLevelMap(level) ? 2 + level : 2);
@@ -943,7 +943,7 @@ void GUI_EoB_SegaCD::updateOptionsStrings() {
 	uint16 ntblInputMode[3] = { 0x34C, 0x360, 0x30C };
 	int speed = _vm->_configMouse ? _vm->_mouseSpeed : _vm->_padSpeed;
 
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configMouse ? 0x240 : 0x24C)) << 5], 0x180, 0x42E0);
 	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configMusic ? 0x258 : 0x264)) << 5], 0x180, 0x4460);
 	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configSounds ? 0x258 : 0x264)) << 5], 0x180, 0x45E0);
@@ -958,7 +958,7 @@ void GUI_EoB_SegaCD::updateOptionsStrings() {
 }
 
 void GUI_EoB_SegaCD::restParty_updateRestTime(int hours, bool init) {
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	if (init)
 		r->fillRectWithTiles(0, 1, 4, 20, 17, 0);
 	_screen->sega_clearTextBuffer(0);

@@ -50,7 +50,7 @@ private:
 	void copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 lineHeight, uint16 pitch);
 
 	Screen_EoB *_screen;
-	SCDRenderer *_renderer;
+	SegaCDRenderer *_renderer;
 	EoBEngine *_engine;
 	uint8 *_msgRenderBuffer;
 	uint32 _msgRenderBufferSize;
