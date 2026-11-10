@@ -29,10 +29,10 @@
 
 namespace Kyra {
 
-class SCDRenderer : public Graphics::SegaRenderer {
+class SegaCDRenderer : public Graphics::SegaRenderer {
 public:
-	SCDRenderer(Screen_EoB *screen);
-	~SCDRenderer();
+	SegaCDRenderer(Screen_EoB *screen);
+	~SegaCDRenderer();
 
 	void loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr, bool compressedData = false);
 	void fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr = false, bool topToBottom = false, const uint16 *patternTable = 0);
@@ -45,7 +45,7 @@ private:
 
 class SegaAnimator {
 public:
-	SegaAnimator(SCDRenderer *renderer);
+	SegaAnimator(SegaCDRenderer *renderer);
 	~SegaAnimator();
 
 	void initSprite(int id, int16 x, int16 y, uint16 nameTbl, uint16 hw);
@@ -66,13 +66,13 @@ private:
 
 	uint16 *_tempBuffer;
 	Sprite *_sprites;
-	SCDRenderer *_renderer;
+	SegaCDRenderer *_renderer;
 	bool _needUpdate;
 };
 
 class ScrollManager {
 public:
-	ScrollManager(SCDRenderer *renderer);
+	ScrollManager(SegaCDRenderer *renderer);
 	~ScrollManager();
 
 	void setVScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB);
@@ -92,7 +92,7 @@ private:
 
 	ScrollTimer *_vScrollTimers;
 	ScrollTimer *_hScrollTimers;
-	SCDRenderer *_renderer;
+	SegaCDRenderer *_renderer;
 };
 
 } // End of namespace Kyra

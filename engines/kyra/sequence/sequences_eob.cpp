@@ -2461,11 +2461,11 @@ void EoBEngine::seq_xdeath() {
 
 void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	uint16 *scrollTable = new uint16[0x200]();
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 
-	r->setPlaneTableLocation(SCDRenderer::kPlaneA, 0xE000);
+	r->setPlaneTableLocation(SegaCDRenderer::kPlaneA, 0xE000);
 	r->setupPlaneAB(1024, 256);
-	r->setHScrollMode(SCDRenderer::kHScroll1PixelRows);
+	r->setHScrollMode(SegaCDRenderer::kHScroll1PixelRows);
 
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	r->fillRectWithTiles(1, 0, 0, 128, 28, 1);
@@ -2535,9 +2535,9 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 
 	delete[] scrollTable;
 	_screen->sega_fadeToBlack(0);
-	r->setPlaneTableLocation(SCDRenderer::kPlaneA, 0xC000);
+	r->setPlaneTableLocation(SegaCDRenderer::kPlaneA, 0xC000);
 	r->setupPlaneAB(512, 512);
-	r->setHScrollMode(SCDRenderer::kHScrollFullScreen);
+	r->setHScrollMode(SegaCDRenderer::kHScrollFullScreen);
 	r->memsetVRAM(0xD800, 0, 0x400);
 	_screen->sega_selectPalette(0, 0);
 	in = containerAlt ? new Common::SeekableReadStreamEndianWrapper(new Common::SeekableSubReadStream(containerAlt, last * 35840, (last + 1) * 35840), true, DisposeAfterUse::YES) : _sres->resStreamEndian(last);
@@ -2575,7 +2575,7 @@ void EoBEngine::seq_segaFinalCredits() {
 	int temp = 0;
 	const uint8 *grid = _staticres->loadRawData(kEoB1CreditsTileGrid, temp);
 	const char *const *strings = _staticres->loadStrings(kEoB1CreditsStrings2, temp);
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	_screen->sega_fadeToBlack(0);
 	_screen->sega_selectPalette(7, 3, true);
 	_txt->clearDim(4);
@@ -2685,7 +2685,7 @@ void EoBEngine::seq_segaShowStats() {
 	if (shouldQuit())
 		return;
 
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	_txt->clearDim(5);
 
 	int styles = Font::kStyleFullWidth;
@@ -2789,7 +2789,7 @@ void EoBEngine::seq_segaSetupSequence(int sequenceId) {
 	_screen->clearPage(0);
 
 	// transposeScreenOutputY(0);
-	_screen->sega_getRenderer()->setupWindowPlane(0, (sequenceId == 53 || sequenceId == 54) ? 23 : 18, SCDRenderer::kWinToLeft, SCDRenderer::kWinToBottom);
+	_screen->sega_getRenderer()->setupWindowPlane(0, (sequenceId == 53 || sequenceId == 54) ? 23 : 18, SegaCDRenderer::kWinToLeft, SegaCDRenderer::kWinToBottom);
 	_screen->sega_getRenderer()->memsetVRAM(0xD840, 0xEE, 512);
 	_screen->sega_getAnimator()->clearSprites();
 	_screen->setScreenDim(2);
@@ -2799,11 +2799,11 @@ void EoBEngine::seq_segaRestoreAfterSequence() {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return;
 
-	SCDRenderer *r = _screen->sega_getRenderer();
+	SegaCDRenderer *r = _screen->sega_getRenderer();
 	_screen->sega_fadeToBlack(1);
 	_screen->sega_getAnimator()->clearSprites();
 	_screen->sega_getAnimator()->update();
-	r->setupWindowPlane(0, 0, SCDRenderer::kWinToLeft, SCDRenderer::kWinToTop);
+	r->setupWindowPlane(0, 0, SegaCDRenderer::kWinToLeft, SegaCDRenderer::kWinToTop);
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
 	r->writeUint16VSRAM(0, 0);
