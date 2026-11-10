@@ -435,7 +435,7 @@ private:
 	}
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite, bool kFogMode>
-	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc, float z, uint fog, byte fog_r, byte fog_g, byte fog_b) {
+	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc, uint z, uint fog, byte fog_r, byte fog_g, byte fog_b) {
 		if (kEnableAlphaTest) {
 			if (!checkAlphaTest(aSrc))
 				return;
