@@ -723,6 +723,20 @@ ScriptManager::CallbackResult ScriptManager::dispatchSceneAction(const CompiledS
 	return SceneActionDispatcher::dispatch(_engine, script, command) ? kCallbackContinue : kCallbackFailed;
 }
 
+static bool resolveCallbackBranchTarget(const CompiledScript &script,
+		const Common::Array<ScriptCommand> &commands, uint32 targetOffset,
+		uint &commandIndex) {
+	for (uint index = 0; index < commands.size(); ++index) {
+		if (commands[index].offset == targetOffset) {
+			commandIndex = index;
+			return true;
+		}
+	}
+	warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
+		targetOffset, script.getMemberName().c_str());
+	return false;
+}
+
 ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScript &script, uint32 callbackOffset,
 		uint *nextFrame, uint commandStart, const CallbackContext &context) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
@@ -766,16 +780,9 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 			}
 			if (actual != expected) {
 				branchTaken = true;
-				uint targetIndex = 0;
-				while (targetIndex < commands.size() &&
-					commands[targetIndex].offset != command.arguments[2].value)
-					++targetIndex;
-				if (targetIndex == commands.size()) {
-					warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
-						command.arguments[2].value, script.getMemberName().c_str());
+				if (!resolveCallbackBranchTarget(script, commands,
+						command.arguments[2].value, commandIndex))
 					return kCallbackFailed;
-				}
-				commandIndex = targetIndex;
 				continue;
 			}
 			break;
@@ -793,16 +800,9 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 				command.arguments[1].value, takeBranch);
 			if (takeBranch) {
 				branchTaken = true;
-				uint targetIndex = 0;
-				while (targetIndex < commands.size() &&
-					commands[targetIndex].offset != command.arguments[1].value)
-					++targetIndex;
-				if (targetIndex == commands.size()) {
-					warning("Ripper: dialogue branch target 0x%x is not a command boundary in '%s'",
-						command.arguments[1].value, script.getMemberName().c_str());
+				if (!resolveCallbackBranchTarget(script, commands,
+						command.arguments[1].value, commandIndex))
 					return kCallbackFailed;
-				}
-				commandIndex = targetIndex;
 				continue;
 			}
 			break;
@@ -831,16 +831,9 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 				command.arguments[2].value);
 			if (actual != expected) {
 				branchTaken = true;
-				uint targetIndex = 0;
-				while (targetIndex < commands.size() &&
-					commands[targetIndex].offset != command.arguments[2].value)
-					++targetIndex;
-				if (targetIndex == commands.size()) {
-					warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
-						command.arguments[2].value, script.getMemberName().c_str());
+				if (!resolveCallbackBranchTarget(script, commands,
+						command.arguments[2].value, commandIndex))
 					return kCallbackFailed;
-				}
-				commandIndex = targetIndex;
 				continue;
 			}
 			break;
@@ -854,16 +847,9 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 			debugC(3, kDebugScripts, "Ripper: default branch target=0x%x selected=%d",
 				command.arguments[0].value, useDefaultBranch);
 			if (useDefaultBranch) {
-				uint targetIndex = 0;
-				while (targetIndex < commands.size() &&
-					commands[targetIndex].offset != command.arguments[0].value)
-					++targetIndex;
-				if (targetIndex == commands.size()) {
-					warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
-						command.arguments[0].value, script.getMemberName().c_str());
+				if (!resolveCallbackBranchTarget(script, commands,
+						command.arguments[0].value, commandIndex))
 					return kCallbackFailed;
-				}
-				commandIndex = targetIndex;
 				continue;
 			}
 			break;
