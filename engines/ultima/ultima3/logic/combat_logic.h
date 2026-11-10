@@ -173,6 +173,11 @@ public:
 	bool allMonstersDead() const;
 
 	/**
+	 * Removes every monster from the fight
+	 */
+	void killAllMonsters();
+
+	/**
 	 * Returns how many turns of time being held still are left
 	 */
 	int negateTurns() const;

@@ -88,6 +88,11 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+
+	/**
+	 * Wins the fight at once, by killing every monster
+	 */
+	void win();
 };
 
 } // namespace Views

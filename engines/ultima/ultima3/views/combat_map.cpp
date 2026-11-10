@@ -108,6 +108,16 @@ void CombatMap::victory() {
 	close();
 }
 
+void CombatMap::win() {
+	_G(combat).killAllMonsters();
+	_G(combat).events().clear();
+
+	_next = NOTHING;
+	_overlay = false;
+	cancelInteraction();
+	victory();
+}
+
 void CombatMap::endTurn() {
 	_next = NEXT_PLAYER;
 }

@@ -25,6 +25,7 @@
 #include "ultima/ultima3/ultima3.h"
 #include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/logic/location_logic.h"
+#include "ultima/ultima3/views/combat_map.h"
 
 namespace Ultima {
 namespace Ultima3 {
@@ -48,6 +49,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
 	registerCmd("level", WRAP_METHOD(Console, cmdLevel));
 	registerCmd("transport", WRAP_METHOD(Console, cmdTransport));
+	registerCmd("enemies", WRAP_METHOD(Console, cmdEnemies));
+	registerCmd("win", WRAP_METHOD(Console, cmdWin));
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
@@ -532,6 +535,50 @@ bool Console::cmdTransport(int argc, const char **argv) {
 
 	debugPrintf("No suitable place for a %s within %d squares\n", NAMES[type], MAX_RADIUS);
 	return true;
+}
+
+bool Console::cmdEnemies(int argc, const char **argv) {
+	const Data::Savegame &sg = _G(savegame);
+	int count = 0;
+
+	if (dynamic_cast<Views::CombatMap *>(g_engine->focusedView())) {
+		// The monsters in the arena
+		const Data::Arena &arena = _G(combat)._arena;
+		for (int i = 0; i < Data::ARENA_MONSTERS; ++i) {
+			if (!arena._monsterHp[i])
+				continue;
+
+			debugPrintf("%-12s (%d,%d)  HP %d\n", Data::NAMES[_G(combat)._monsterClass],
+				arena._monsterX[i], arena._monsterY[i], arena._monsterHp[i]);
+			++count;
+		}
+	} else if (sg._location == Data::LOCATION_DUNGEON) {
+		debugPrintf("Dungeon levels have no creatures until a fight starts\n");
+		return true;
+	} else {
+		const Data::Creatures &c = _G(map)._creatures;
+		for (int i = 0; i < Data::CREATURE_COUNT; ++i) {
+			if (!c._tile[i])
+				continue;
+
+			debugPrintf("%-12s (%d,%d)\n", Data::NAMES[c._tile[i] >> 2], c._x[i], c._y[i]);
+			++count;
+		}
+	}
+
+	debugPrintf("%d creature%s\n", count, count == 1 ? "" : "s");
+	return true;
+}
+
+bool Console::cmdWin(int argc, const char **argv) {
+	Views::CombatMap *combat = dynamic_cast<Views::CombatMap *>(g_engine->focusedView());
+	if (!combat) {
+		debugPrintf("Only works in a fight\n");
+		return true;
+	}
+
+	combat->win();
+	return false;
 }
 
 bool Console::cmdGold(int argc, const char **argv) {

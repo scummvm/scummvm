@@ -275,6 +275,18 @@ bool CombatLogic::allMonstersDead() const {
 	return true;
 }
 
+void CombatLogic::killAllMonsters() {
+	for (int i = 0; i < ARENA_MONSTERS; ++i) {
+		if (!_arena._monsterHp[i])
+			continue;
+
+		_arena._monsterHp[i] = 0;
+		_arena.setTile(_arena._monsterX[i], _arena._monsterY[i], _arena._monsterUnder[i]);
+	}
+
+	syncShown();
+}
+
 int CombatLogic::monsterAt(int x, int y) const {
 	for (int i = ARENA_MONSTERS - 1; i >= 0; --i) {
 		if (_arena._monsterHp[i] && _arena._monsterX[i] == x && _arena._monsterY[i] == y)
