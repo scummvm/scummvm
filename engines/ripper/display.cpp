@@ -284,33 +284,38 @@ void BitmapFontRenderer::wrapText(const BitmapFontAsset &font,
 		lines.push_back(Common::String());
 }
 
+static int drawBitmapFontChar(byte *pixels, uint pitch, const BitmapFontAsset &font,
+		int x, int y, byte character, byte color, const Common::Rect *clip) {
+	if (character == ' ')
+		return font.spaceWidth;
+	if (character < font.firstCharacter ||
+			character >= font.firstCharacter + font.glyphs.size())
+		return 0;
+	const BitmapFontGlyph &glyph = font.glyphs[character - font.firstCharacter];
+	for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
+		for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
+			const byte source = font.pixels[
+				glyph.pixelOffset + glyphY * glyph.width + glyphX];
+			const int targetX = x + glyph.xOffset + glyphX;
+			const int targetY = y + glyph.yOffset + glyphY;
+			if (source != font.transparentColor &&
+					(!clip || (targetX >= clip->left && targetX < clip->right &&
+					targetY >= clip->top && targetY < clip->bottom)))
+				pixels[targetY * pitch + targetX] = color;
+		}
+	}
+	return glyph.xOffset + glyph.width + font.characterSpacing;
+}
+
 static void drawBitmapFontText(byte *pixels, uint pitch, const BitmapFontAsset &font,
 		int x, int y, const Common::String &text, byte color, const Common::Rect *clip) {
-	int drawX = x;
-	for (uint i = 0; i < text.size(); ++i) {
-		const byte character = (byte)text[i];
-		if (character == ' ') {
-			drawX += font.spaceWidth;
-			continue;
-		}
-		if (character < font.firstCharacter ||
-				character >= font.firstCharacter + font.glyphs.size())
-			continue;
-		const BitmapFontGlyph &glyph = font.glyphs[character - font.firstCharacter];
-		for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
-			for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
-				const byte source = font.pixels[
-					glyph.pixelOffset + glyphY * glyph.width + glyphX];
-				const int targetX = drawX + glyph.xOffset + glyphX;
-				const int targetY = y + glyph.yOffset + glyphY;
-				if (source != font.transparentColor &&
-						(!clip || (targetX >= clip->left && targetX < clip->right &&
-						targetY >= clip->top && targetY < clip->bottom)))
-					pixels[targetY * pitch + targetX] = color;
-			}
-		}
-		drawX += glyph.xOffset + glyph.width + font.characterSpacing;
-	}
+	for (uint i = 0; i < text.size(); ++i)
+		x += drawBitmapFontChar(pixels, pitch, font, x, y, (byte)text[i], color, clip);
+}
+
+int BitmapFontRenderer::drawChar(byte *pixels, uint pitch, const BitmapFontAsset &font,
+		int x, int y, byte character, byte color) {
+	return drawBitmapFontChar(pixels, pitch, font, x, y, character, color, nullptr);
 }
 
 void BitmapFontRenderer::drawText(byte *pixels, uint pitch, const BitmapFontAsset &font,

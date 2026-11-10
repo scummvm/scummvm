@@ -83,6 +83,9 @@ public:
 	static uint measureText(const BitmapFontAsset &font, const Common::String &text);
 	static void wrapText(const BitmapFontAsset &font, const Common::String &text,
 		uint maxWidth, Common::Array<Common::String> &lines);
+	// Draw the full glyph and return its horizontal advance.
+	static int drawChar(byte *pixels, uint pitch, const BitmapFontAsset &font,
+		int x, int y, byte character, byte color);
 	static void drawText(byte *pixels, uint pitch, const BitmapFontAsset &font,
 		int x, int y, const Common::String &text, byte color);
 	static void drawTextClipped(byte *pixels, uint pitch, const BitmapFontAsset &font,

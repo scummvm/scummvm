@@ -113,24 +113,9 @@ void DialogueChooser::draw(bool captureBacking) {
 			const int textY = row + (kChoiceRowHeight - _font.lineHeight) / 2;
 			for (uint c = 0; c < _choices[choiceIndex].text.size() &&
 					x < _chooserBounds.right - kChoiceHorizontalPadding; ++c) {
-				const byte ch = (byte)_choices[choiceIndex].text[c];
-				if (ch == ' ') {
-					x += _font.spaceWidth;
-					continue;
-				}
-				if (ch < _font.firstCharacter || ch >= _font.firstCharacter + _font.glyphs.size())
-					continue;
-				const BitmapFontGlyph &glyph = _font.glyphs[ch - _font.firstCharacter];
-				for (int gy = 0; gy < glyph.height; ++gy) {
-					for (int gx = 0; gx < glyph.width; ++gx) {
-						const byte pixel = _font.pixels[glyph.pixelOffset + gy * glyph.width + gx];
-						if (pixel != _font.transparentColor)
-							*(byte *)screen->getBasePtr(x + glyph.xOffset + gx,
-								textY + glyph.yOffset + gy) =
-									selected ? _selectedTextColor : _normalTextColor;
-					}
-				}
-				x += glyph.xOffset + glyph.width + _font.characterSpacing;
+				x += BitmapFontRenderer::drawChar((byte *)screen->getPixels(), screen->pitch,
+					_font, x, textY, (byte)_choices[choiceIndex].text[c],
+					selected ? _selectedTextColor : _normalTextColor);
 			}
 		}
 		_renderedChoicePixels.resize(renderedPixelCount);
