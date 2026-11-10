@@ -1125,6 +1125,18 @@ static const SoundChannelName kNancy24SoundChannelNames[] = {
 	{ "AllGlobal", kChannelAllGlobal }
 };
 
+// Nancy27 has no global channels, and has three more phone channels
+static const SoundChannelName kNancy27SoundChannelNames[] = {
+	{ "Theme", 0 }, { "UIMusic", 1 }, { "EngineMusic", 2 },
+	{ "Ambient1", 3 }, { "Ambient2", 4 }, { "Ambient3", 5 }, { "Ambient4", 6 },
+	{ "Ambient5", 7 }, { "Ambient6", 8 }, { "Ambient7", 9 }, { "Ambient8", 10 },
+	{ "FX1", 11 }, { "FX2", 12 }, { "FX3", 13 }, { "FX4", 14 }, { "FX5", 15 }, { "FX6", 16 }, { "FX7", 17 }, { "FX8", 18 },
+	{ "InvFX", 19 }, { "PhoneFX", 20 }, { "PhoneFX2", 21 }, { "PhoneFX3", 22 }, { "PhoneFX4", 23 }, { "UIFX", 24 }, { "EngineFX", 25 },
+	{ "NPCVoice", 26 }, { "PlayerVoice", 27 }, { "UIVoice", 28 }, { "EngineVoice", 29 },
+	{ "All", kChannelAll }, { "AllExceptTheme", kChannelAllExceptTheme }, { "AllMusic", kChannelAllMusic },
+	{ "AllFX", kChannelAllFX }, { "AllAmbient", kChannelAllAmbient }, { "AllVoice", kChannelAllVoice }
+};
+
 // Where the channels of each kind begin, and the end of the last kind
 struct SoundChannelLayout {
 	uint16 firstMusic;
@@ -1138,15 +1150,18 @@ struct SoundChannelLayout {
 static const SoundChannelLayout kSoundChannelLayout = { 0, 6, 6, 14, 24, kNumSoundChannels };
 static const SoundChannelLayout kNancy22SoundChannelLayout = { 0, 3, 8, 16, 26, kNumSoundChannels };
 static const SoundChannelLayout kNancy24SoundChannelLayout = { 0, 3, 6, 14, 26, kNumSoundChannels };
+static const SoundChannelLayout kNancy27SoundChannelLayout = { 0, 3, 3, 11, 26, kNumSoundChannels };
 
 static const SoundChannelLayout &getSoundChannelLayout() {
 	if (g_nancy->getGameType() <= kGameTypeNancy21) {
 		return kSoundChannelLayout;
 	} else if (g_nancy->getGameType() <= kGameTypeNancy23) {
 		return kNancy22SoundChannelLayout;
+	} else if (g_nancy->getGameType() <= kGameTypeNancy26) {
+		return kNancy24SoundChannelLayout;
 	}
 
-	return kNancy24SoundChannelLayout;
+	return kNancy27SoundChannelLayout;
 }
 
 void pushSoundChannel(lua_State *L, uint16 channel) {
@@ -1182,7 +1197,14 @@ bool isVoicePlaying() {
 }
 
 static bool findSoundChannel(const char *name, uint16 &result) {
-	if (g_nancy->getGameType() >= kGameTypeNancy24) {
+	if (g_nancy->getGameType() >= kGameTypeNancy27) {
+		for (const SoundChannelName &channel : kNancy27SoundChannelNames) {
+			if (scumm_stricmp(channel.name, name) == 0) {
+				result = channel.channel;
+				return true;
+			}
+		}
+	} else if (g_nancy->getGameType() >= kGameTypeNancy24) {
 		for (const SoundChannelName &channel : kNancy24SoundChannelNames) {
 			if (scumm_stricmp(channel.name, name) == 0) {
 				result = channel.channel;
