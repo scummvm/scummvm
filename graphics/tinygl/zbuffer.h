@@ -361,8 +361,8 @@ private:
 
 	template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 	void putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
-	                       int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
-	                       int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
+	                       int x, int y, uint &z, int &r, int &g, int &b, int &a,
+	                       int &dzdx, int &drdx, int &dgdx, int &dbdx, int dadx,
 	                       uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx,
 						   bool kStippleEnabled);
 
@@ -377,8 +377,8 @@ private:
 						 FrameBuffer::ColorMode colorMode,
 	                     uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
 	                     int x, int y, uint &z, int &t, int &s,
-	                     uint &r, uint &g, uint &b, uint &a,
-	                     int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
+	                     int &r, int &g, int &b, int &a,
+	                     int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, int dadx,
 	                     uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx);
 
 	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kDepthTestEnabled>
@@ -808,12 +808,12 @@ private:
 
 	void applyTextureEnvironment(
 		int internalformat,
-		uint previousA, uint previousR, uint previousG, uint previousB,
+		int previousA, int previousR, int previousG, int previousB,
 		byte &texA, byte &texR, byte &texG, byte &texB);
 
 	// the same as GL_TEXTURE_ENV_MODE == GL_MODULATE as fast-path for the default mode
 	void applyModulation(
-		uint previousA, uint previousR, uint previousG, uint previousB,
+		int previousA, int previousR, int previousG, int previousB,
 		byte &texA, byte &texR, byte &texG, byte &texB);
 
 	Buffer _offscreenBuffer;
