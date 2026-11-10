@@ -1256,9 +1256,16 @@ void GfxOpenGLS::turnOffLight(int lightId) {
 		return;
 	}
 
+	// Turning off light 0 means no light is enabled at all.
+	if (lightId == 0)
+		_hasAmbientLight = false;
+
+	// Mark the slot as an ambient light with no colour. A zero position
+	// would be a directional light, and the shaders would normalize a zero
+	// vector into NaN, which makes the whole model disappear.
 	_lights[lightId]._color = Math::Vector4d(0.0f, 0.0f, 0.0f, 0.0f);
-	_lights[lightId]._position = Math::Vector4d(0.0f, 0.0f, 0.0f, 0.0f);
-	_lights[lightId]._direction = Math::Vector4d(0.0f, 0.0f, 0.0f, 0.0f);
+	_lights[lightId]._position = Math::Vector4d(0.0f, 0.0f, 0.0f, -1.0f);
+	_lights[lightId]._direction = Math::Vector4d(0.0f, 0.0f, 0.0f, -1.0f);
 }
 
 
