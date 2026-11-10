@@ -91,6 +91,10 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	// _currentPart = 850;
 	_midiPlayer = nullptr;
 	_musicData = nullptr;
+	_resourceEntriesCount = 0;
+	_resourceEntries = nullptr;
+	_soundOffsetsCount = 0;
+	_soundOffsets = nullptr;
 
 	_fastMode = 1;
 
@@ -206,6 +210,7 @@ void IgorEngine::restart() {
 	_executeMainAction = 0;
 	_executeRoomAction = 0;
 	_previousMusic = 0;
+	free(_musicData);
 	_musicData = 0;
 	_scrollInventory = false;
 	_roomCursorOn = true;
@@ -217,8 +222,10 @@ void IgorEngine::restart() {
 	_updateRoomBackground = 0;
 
 	_resourceEntriesCount = 0;
+	free(_resourceEntries);
 	_resourceEntries = 0;
 	_soundOffsetsCount = 0;
+	free(_soundOffsets);
 	_soundOffsets = 0;
 
 	_demoActionsCounter = 0;
