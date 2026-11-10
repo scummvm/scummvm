@@ -115,7 +115,6 @@ ResourcePointer::ResourcePointer(uint8 *data, uint32 dataSize, uint32 offs, uint
 	if (_offset >= _moduleLocation)
 		_offset -= _moduleLocation;
 	checkOffset(0, __FUNCTION__);
-	checkOffset(0, __FUNCTION__);
 }
 
 ResourcePointer::ResourcePointer(const ResourcePointer &ptr) : _dataStart(ptr._dataStart), _dataSize(ptr._dataSize), _offset(ptr._offset), _moduleLocation(ptr._moduleLocation), _writeableDataStart(ptr._writeableDataStart), _ownBuffer(false) {
@@ -136,12 +135,10 @@ const uint8 *ResourcePointer::operator()() const {
 }
 
 const uint8 *ResourcePointer::operator++(int) {
-	checkOffset(0, __FUNCTION__);
 	return _dataStart + (_offset++);
 }
 
 const uint8 *ResourcePointer::operator++() {
-	checkOffset(1, __FUNCTION__);
 	return _dataStart + (++_offset);
 }
 
