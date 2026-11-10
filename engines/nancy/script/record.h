@@ -187,11 +187,11 @@ public:
 	// the function a script gave the record for it, or to what the kind of
 	// record does by itself. Positions are in the coordinates of the viewport.
 	// A click, a key and the cursor are up to the first record that takes them.
-	void sendMouseMove(const ScriptPoint &point, bool inViewport);
-	bool sendChangeCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot);
-	bool sendMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport);
+	void sendMouseMove(const Common::Point32 &point, bool inViewport);
+	bool sendChangeCursor(const Common::Point32 &point, bool inViewport, uint &cursorType, bool &isHot);
+	bool sendMouseEvent(RecordEvent event, const Common::Point32 &point, bool inViewport);
 	bool sendKeyEvent(RecordEvent event, Common::KeyCode key);
-	void sendMouseScroll(const ScriptPoint &point, bool inViewport, int notches);
+	void sendMouseScroll(const Common::Point32 &point, bool inViewport, int notches);
 
 	// Where the record puts what it shows, for the kinds that show something,
 	// after the nodes it is under moved it
@@ -257,7 +257,7 @@ public:
 	// point is in the coordinates of the screen. A button is 0 for the left one
 	// and 1 for the right one.
 	virtual bool isMouseRegion() const { return false; }
-	virtual bool hitTest(const ScriptPoint &point) const { return false; }
+	virtual bool hitTest(const Common::Point32 &point) const { return false; }
 	virtual void setMouseOver(bool isOver) {}
 	virtual bool pressRegion(int button) { return false; }	// returns whether it took the click
 	virtual void releaseRegion(int button) {}
@@ -265,7 +265,7 @@ public:
 
 	// Nancy26: the mouse wheel turned while the mouse was at the point, in the
 	// coordinates of the screen. Returns whether the record took it.
-	virtual bool scrollRegion(const ScriptPoint &point, int notches) { return false; }
+	virtual bool scrollRegion(const Common::Point32 &point, int notches) { return false; }
 
 	// Nancy26: whether the keys go no further than this record
 	virtual bool capturesKeys() const { return false; }
@@ -343,9 +343,9 @@ protected:
 	// by itself: Run, Render, and everything the player does
 	virtual bool isScripted() const { return false; }
 
-	virtual void onMouseMove(const ScriptPoint &point, bool inViewport) {}
-	virtual bool getCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot) { return false; }
-	virtual bool onMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport) { return false; }
+	virtual void onMouseMove(const Common::Point32 &point, bool inViewport) {}
+	virtual bool getCursor(const Common::Point32 &point, bool inViewport, uint &cursorType, bool &isHot) { return false; }
+	virtual bool onMouseEvent(RecordEvent event, const Common::Point32 &point, bool inViewport) { return false; }
 
 	// Whether the kind of record has a "transform", and what to do when it changes
 	virtual bool hasTransform() const { return false; }

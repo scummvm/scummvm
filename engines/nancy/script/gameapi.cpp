@@ -269,9 +269,9 @@ static int cursorIndex(lua_State *L) {
 
 	if (key == "activePoint") {
 		// Where the mouse is in the viewport, while it is in there
-		ScriptPoint point;
+		Common::Point32 point;
 		if (!SceneContext::getViewportMouse(g_nancy->_input->getInput(), point)) {
-			point = ScriptPoint(-1, -1);
+			point = Common::Point32(-1, -1);
 		}
 
 		pushPoint(L, point);
@@ -280,12 +280,12 @@ static int cursorIndex(lua_State *L) {
 
 	if (key == "activeUIPoint") {
 		// Where the mouse is on the screen
-		pushPoint(L, ScriptPoint(g_nancy->_input->getInput().mousePos));
+		pushPoint(L, Common::Point32(g_nancy->_input->getInput().mousePos));
 		return 1;
 	}
 
 	if (key == "inViewport") {
-		ScriptPoint point;
+		Common::Point32 point;
 		lua_pushboolean(L, SceneContext::getViewportMouse(g_nancy->_input->getInput(), point));
 		return 1;
 	}
@@ -335,7 +335,7 @@ static int cursorNewIndex(lua_State *L) {
 
 // Cursor:MoveTo(point), Nancy21: puts the mouse at a place in the viewport
 static int cursorMoveTo(lua_State *L) {
-	ScriptPoint point;
+	Common::Point32 point;
 	if (!readPoint(L, 2, point)) {
 		return luaL_argerror(L, 2, "expected a point");
 	}

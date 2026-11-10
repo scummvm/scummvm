@@ -476,7 +476,7 @@ void SceneContext::renderAttachment() {
 	const VIEW *viewport = GetEngineData(VIEW);
 	assert(viewport);
 
-	ScriptPoint mouse;
+	Common::Point32 mouse;
 	getViewportMouse(g_nancy->_input->getInput(), mouse);
 
 	ScriptMatrix transform;
@@ -608,7 +608,7 @@ void SceneContext::applyGraphNodeChanges() {
 	}
 }
 
-bool SceneContext::getViewportMouse(const NancyInput &input, ScriptPoint &point) {
+bool SceneContext::getViewportMouse(const NancyInput &input, Common::Point32 &point) {
 	const UI::Viewport &viewport = NancySceneState.getViewport();
 	const Common::Rect screenPosition = viewport.getScreenPosition();
 
@@ -624,7 +624,7 @@ bool SceneContext::getViewportMouse(const NancyInput &input, ScriptPoint &point)
 // which leaves the turning around in the background for when nothing else
 // takes a click.
 // Only clicks and keys can be taken; the rest goes to every record.
-void SceneContext::sendMouseEvent(int event, const ScriptPoint &point, bool inViewport) {
+void SceneContext::sendMouseEvent(int event, const Common::Point32 &point, bool inViewport) {
 	const bool canBeTaken = event == kEventLeftClick || event == kEventRightClick;
 
 	for (Record *record : _inputOrder) {
@@ -656,7 +656,7 @@ static const MoveKey kMoveKeys[] = {
 };
 
 void SceneContext::handleInput(NancyInput &input) {
-	ScriptPoint point;
+	Common::Point32 point;
 	const bool inViewport = getViewportMouse(input, point);
 
 	for (Record *record : _inputOrder) {

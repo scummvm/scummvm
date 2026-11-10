@@ -61,28 +61,17 @@ struct ScriptRect {
 	Common::Rect toRect() const;
 };
 
-struct ScriptPoint {
-	int32 x = 0;
-	int32 y = 0;
-
-	ScriptPoint() {}
-	ScriptPoint(int32 px, int32 py) : x(px), y(py) {}
-	ScriptPoint(const Common::Point &point) : x(point.x), y(point.y) {}
-
-	Common::Point toPoint() const { return Common::Point(x, y); }
-};
-
 void registerTypes(lua_State *L);
 
 void pushRect(lua_State *L, const ScriptRect &rect);
 ScriptRect *testRect(lua_State *L, int index);		// null when it is something else
 ScriptRect &checkRect(lua_State *L, int index);
 
-void pushPoint(lua_State *L, const ScriptPoint &point);
+void pushPoint(lua_State *L, const Common::Point32 &point);
 
 // Reads anything that has an x and a y: a point, a vector or a table.
 // Returns false when the value has neither.
-bool readPoint(lua_State *L, int index, ScriptPoint &point);
+bool readPoint(lua_State *L, int index, Common::Point32 &point);
 
 // The same, keeping the fractions a point can have from Nancy26 on
 bool readPointCoordinates(lua_State *L, int index, double &x, double &y);

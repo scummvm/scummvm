@@ -529,7 +529,7 @@ int Record::setScriptField() {
 	return 0;
 }
 
-void Record::sendMouseMove(const ScriptPoint &point, bool inViewport) {
+void Record::sendMouseMove(const Common::Point32 &point, bool inViewport) {
 	if (!isActive()) {
 		return;
 	}
@@ -546,7 +546,7 @@ void Record::sendMouseMove(const ScriptPoint &point, bool inViewport) {
 	}
 }
 
-bool Record::sendChangeCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot) {
+bool Record::sendChangeCursor(const Common::Point32 &point, bool inViewport, uint &cursorType, bool &isHot) {
 	if (!isActive()) {
 		return false;
 	}
@@ -570,7 +570,7 @@ bool Record::sendChangeCursor(const ScriptPoint &point, bool inViewport, uint &c
 	return hasCursor;
 }
 
-bool Record::sendMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport) {
+bool Record::sendMouseEvent(RecordEvent event, const Common::Point32 &point, bool inViewport) {
 	if (!isActive()) {
 		return false;
 	}
@@ -594,7 +594,7 @@ bool Record::sendMouseEvent(RecordEvent event, const ScriptPoint &point, bool in
 }
 
 // Only the records made of script functions handle mouse wheel events
-void Record::sendMouseScroll(const ScriptPoint &point, bool inViewport, int notches) {
+void Record::sendMouseScroll(const Common::Point32 &point, bool inViewport, int notches) {
 	if (!isActive() || !isScripted()) {
 		return;
 	}
@@ -800,7 +800,7 @@ static int recordRun(lua_State *L) {
 static int recordOnMouseMove(lua_State *L) {
 	Record *record = checkRecord(L, 1);
 
-	ScriptPoint point;
+	Common::Point32 point;
 	if (!readPoint(L, 2, point)) {
 		return luaL_argerror(L, 2, "Single parameter must be a Point or a table with x and y fields");
 	}
@@ -813,7 +813,7 @@ static int recordOnMouseMove(lua_State *L) {
 static int recordChangeCursor(lua_State *L) {
 	Record *record = checkRecord(L, 1);
 
-	ScriptPoint point;
+	Common::Point32 point;
 	if (!readPoint(L, 2, point)) {
 		return luaL_argerror(L, 2, "Single parameter must be a Point or a table with x and y fields");
 	}
@@ -833,7 +833,7 @@ static int recordOnMouseEvent(lua_State *L) {
 	const RecordEvent event = (RecordEvent)lua_tointeger(L, lua_upvalueindex(1));
 	Record *record = checkRecord(L, 1);
 
-	ScriptPoint point;
+	Common::Point32 point;
 	if (!readPoint(L, 2, point)) {
 		return luaL_argerror(L, 2, "Single parameter must be a Point or a table with x and y fields");
 	}

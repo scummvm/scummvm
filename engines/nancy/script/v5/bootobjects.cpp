@@ -68,13 +68,13 @@ static void readNancy26Cursor(lua_State *L, int cursorTable, ScriptBootData::Cur
 	cursor.sources[0] = cursor.sources[1] = checkRect(L, -1).toRect();
 	lua_pop(L, 1);
 
-	ScriptPoint hotspot;
+	Common::Point32 hotspot;
 	if (pushField(L, cursorTable, "activePt")) {
 		readPoint(L, -1, hotspot);
 		lua_pop(L, 1);
 	}
 
-	cursor.hotspots[0] = cursor.hotspots[1] = hotspot.toPoint();
+	cursor.hotspots[0] = cursor.hotspots[1] = Common::Point(hotspot.x, hotspot.y);
 }
 
 int createNancy26Cursors(lua_State *L, ScriptBootData &boot) {
@@ -83,13 +83,13 @@ int createNancy26Cursors(lua_State *L, ScriptBootData &boot) {
 	readField(L, 2, "leftNode", boot.leftNodeCursorName);
 	readField(L, 2, "uturnNode", boot.uturnNodeCursorName);
 
-	ScriptPoint offset;
+	Common::Point32 offset;
 	if (pushField(L, 2, "invOffset")) {
 		readPoint(L, -1, offset);
 		lua_pop(L, 1);
 	}
 
-	boot.itemCursorOffset = offset.toPoint();
+	boot.itemCursorOffset = Common::Point(offset.x, offset.y);
 
 	Common::Array<Common::String> names;
 	getSortedKeys(L, 2, names);

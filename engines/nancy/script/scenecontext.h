@@ -185,7 +185,7 @@ public:
 	bool describeManager(const Common::String &name, Common::String &text);
 
 	// Where the mouse is in the viewport. Returns whether it is inside of it.
-	static bool getViewportMouse(const NancyInput &input, ScriptPoint &point);
+	static bool getViewportMouse(const NancyInput &input, Common::Point32 &point);
 
 private:
 	bool callSceneFunction(const char *name, int numArgs);
@@ -198,7 +198,7 @@ private:
 	void renderAttachment();
 	bool hasSkippableRecord() const;
 	void pushSceneFunctions();
-	void sendMouseEvent(int event, const ScriptPoint &point, bool inViewport);
+	void sendMouseEvent(int event, const Common::Point32 &point, bool inViewport);
 	void sendKeyEvent(int event, Common::KeyCode key);
 
 	Common::String _streamName;

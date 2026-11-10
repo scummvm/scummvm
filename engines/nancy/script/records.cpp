@@ -561,7 +561,7 @@ void SummaryRecord::setFrame(uint frame) {
 	}
 }
 
-SummaryRecord::Turn SummaryRecord::getTurnAt(const ScriptPoint &point, bool inViewport) const {
+SummaryRecord::Turn SummaryRecord::getTurnAt(const Common::Point32 &point, bool inViewport) const {
 	// Only a background with several frames can be turned around in
 	if (_numFrames <= 1 || !inViewport) {
 		return kNoTurn;
@@ -570,7 +570,7 @@ SummaryRecord::Turn SummaryRecord::getTurnAt(const ScriptPoint &point, bool inVi
 	const ScriptBootData *boot = GetEngineData(ScriptBootData);
 	assert(boot);
 
-	const Common::Point place = point.toPoint();
+	const Common::Point place(point.x, point.y);
 	if (_canRotate && boot->leftNodeHotspot.contains(place)) {
 		return canTurn(kTurnLeft) ? kTurnLeft : kNoTurn;
 	} else if (_canRotate && boot->rightNodeHotspot.contains(place)) {
@@ -592,7 +592,7 @@ bool SummaryRecord::canTurn(Turn turn) const {
 	return turn == kTurnLeft ? _frame + 1 < _numFrames : _frame > 0;
 }
 
-void SummaryRecord::onMouseMove(const ScriptPoint &point, bool inViewport) {
+void SummaryRecord::onMouseMove(const Common::Point32 &point, bool inViewport) {
 	// The view turns by itself while the mouse stays on a side, after a first wait
 	Turn turn = getTurnAt(point, inViewport);
 	if (turn == kTurnAround) {
@@ -606,7 +606,7 @@ void SummaryRecord::onMouseMove(const ScriptPoint &point, bool inViewport) {
 	_turn = turn;
 }
 
-bool SummaryRecord::getCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot) {
+bool SummaryRecord::getCursor(const Common::Point32 &point, bool inViewport, uint &cursorType, bool &isHot) {
 	const ScriptBootData *boot = GetEngineData(ScriptBootData);
 	assert(boot);
 
@@ -634,7 +634,7 @@ bool SummaryRecord::getCursor(const ScriptPoint &point, bool inViewport, uint &c
 	return true;
 }
 
-bool SummaryRecord::onMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport) {
+bool SummaryRecord::onMouseEvent(RecordEvent event, const Common::Point32 &point, bool inViewport) {
 	switch (event) {
 	case kEventRightDown:
 		_isTurningFast = true;
@@ -852,7 +852,7 @@ void NavLogicRecord::run(double sceneTime, double elapsedTime) {
 
 // The mouse is taken back to where the hotspot was before the transform, so a
 // turned hotspot is turned with its picture
-bool NavLogicRecord::isOver(const ScriptPoint &point) const {
+bool NavLogicRecord::isOver(const Common::Point32 &point) const {
 	double x = point.x;
 	double y = point.y;
 	getTransform().inverse().transformPoint(x, y);
@@ -882,7 +882,7 @@ bool NavLogicRecord::isOver(const ScriptPoint &point) const {
 
 // A hotspot that is held down tells its scripts when the mouse leaves it and
 // comes back, with OnUp and OnDown
-void NavLogicRecord::onMouseMove(const ScriptPoint &point, bool inViewport) {
+void NavLogicRecord::onMouseMove(const Common::Point32 &point, bool inViewport) {
 	const bool wasMouseOver = _isMouseOver;
 	_isMouseOver = inViewport && isOver(point);
 
@@ -893,7 +893,7 @@ void NavLogicRecord::onMouseMove(const ScriptPoint &point, bool inViewport) {
 	}
 }
 
-bool NavLogicRecord::getCursor(const ScriptPoint &point, bool inViewport, uint &cursorType, bool &isHot) {
+bool NavLogicRecord::getCursor(const Common::Point32 &point, bool inViewport, uint &cursorType, bool &isHot) {
 	if (!_hasCursor || !isOver(point)) {
 		return false;
 	}
@@ -903,7 +903,7 @@ bool NavLogicRecord::getCursor(const ScriptPoint &point, bool inViewport, uint &
 	return true;
 }
 
-bool NavLogicRecord::onMouseEvent(RecordEvent event, const ScriptPoint &point, bool inViewport) {
+bool NavLogicRecord::onMouseEvent(RecordEvent event, const Common::Point32 &point, bool inViewport) {
 	if (_isPressedAndReleased) {
 		const RecordEvent downEvent = _isRightClick ? kEventRightDown : kEventLeftDown;
 		const RecordEvent upEvent = _isRightClick ? kEventRightUp : kEventLeftUp;

@@ -134,8 +134,8 @@ static bool addRefLayer(ScriptRef &ref, const Common::String &imageName, const C
 	return true;
 }
 
-static ScriptPoint checkPlace(lua_State *L, int index) {
-	ScriptPoint point;
+static Common::Point32 checkPlace(lua_State *L, int index) {
+	Common::Point32 point;
 	if (!readPoint(L, index, point)) {
 		luaL_argerror(L, index, "Single parameter must be a Point, a Vector or a table with x and y fields");
 	}
@@ -239,7 +239,7 @@ static int refRemove(lua_State *L) {
 // ref:At(place), Nancy20, the color there
 static int refAt(lua_State *L) {
 	const ScriptRef *ref = checkRef(L, 1);
-	const ScriptPoint place = checkPlace(L, 2);
+	const Common::Point32 place = checkPlace(L, 2);
 
 	uint32 pixel = 0;
 	ref->getPixel(place.x, place.y, pixel);
@@ -250,7 +250,7 @@ static int refAt(lua_State *L) {
 // ref:IsAt(place, color)
 static int refIsAt(lua_State *L) {
 	const ScriptRef *ref = checkRef(L, 1);
-	const ScriptPoint place = checkPlace(L, 2);
+	const Common::Point32 place = checkPlace(L, 2);
 	const uint32 color = checkColor(L, 3);
 
 	uint32 pixel;
@@ -261,7 +261,7 @@ static int refIsAt(lua_State *L) {
 // ref:IsOpaqueAt(place)
 static int refIsOpaqueAt(lua_State *L) {
 	const ScriptRef *ref = checkRef(L, 1);
-	const ScriptPoint place = checkPlace(L, 2);
+	const Common::Point32 place = checkPlace(L, 2);
 
 	uint32 pixel;
 	lua_pushboolean(L, ref->getPixel(place.x, place.y, pixel) && (pixel >> 24) != 0);
@@ -270,7 +270,7 @@ static int refIsOpaqueAt(lua_State *L) {
 
 // How much of the square of the given size around a place passes a test, from 0 to 1.
 // The places that have no pixel count as failing it.
-static double getAreaShare(const ScriptRef *ref, const ScriptPoint &place, int size, bool testColor, uint32 color) {
+static double getAreaShare(const ScriptRef *ref, const Common::Point32 &place, int size, bool testColor, uint32 color) {
 	if (size <= 0) {
 		return 0.0;
 	}
@@ -298,7 +298,7 @@ static double getAreaShare(const ScriptRef *ref, const ScriptPoint &place, int s
 // ref:IsInArea(place, color, size)
 static int refIsInArea(lua_State *L) {
 	const ScriptRef *ref = checkRef(L, 1);
-	const ScriptPoint place = checkPlace(L, 2);
+	const Common::Point32 place = checkPlace(L, 2);
 	const uint32 color = checkColor(L, 3);
 	const int size = luaL_checkint(L, 4);
 
@@ -309,7 +309,7 @@ static int refIsInArea(lua_State *L) {
 // ref:IsOpaqueInArea(place, size)
 static int refIsOpaqueInArea(lua_State *L) {
 	const ScriptRef *ref = checkRef(L, 1);
-	const ScriptPoint place = checkPlace(L, 2);
+	const Common::Point32 place = checkPlace(L, 2);
 	const int size = luaL_checkint(L, 3);
 
 	lua_pushnumber(L, getAreaShare(ref, place, size, false, 0));

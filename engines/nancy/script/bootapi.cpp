@@ -416,13 +416,13 @@ static void readCursor(lua_State *L, int cursorTable, ScriptBootData::Cursor &cu
 			hasAll = false;
 		}
 
-		ScriptPoint hotspot;
+		Common::Point32 hotspot;
 		if (pushField(L, cursorTable, kHotspotNames[i])) {
 			if (!readPoint(L, -1, hotspot)) {
 				hasAll = false;
 			}
 
-			cursor.hotspots[i] = hotspot.toPoint();
+			cursor.hotspots[i] = Common::Point(hotspot.x, hotspot.y);
 			lua_pop(L, 1);
 		} else {
 			hasAll = false;

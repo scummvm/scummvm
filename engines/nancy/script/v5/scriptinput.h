@@ -41,7 +41,7 @@ class Record;
 void handleNancy26Input(NancyInput &input);
 
 // Where the mouse is, in screen coordinates
-const ScriptPoint &getScriptMousePoint();
+const Common::Point32 &getScriptMousePoint();
 
 // Whether a button was just clicked twice in a row; 0 is the left one
 bool isDoubleClick(int button);

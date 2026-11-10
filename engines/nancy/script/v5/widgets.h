@@ -52,7 +52,7 @@ public:
 	void setWidget(WidgetRecord *widget) { _widget = widget; }
 
 	bool isMouseRegion() const override { return true; }
-	bool hitTest(const ScriptPoint &point) const override;
+	bool hitTest(const Common::Point32 &point) const override;
 	void setMouseOver(bool isOver) override;
 	bool pressRegion(int button) override;
 	void releaseRegion(int button) override;
@@ -112,7 +112,7 @@ public:
 	RecordType getType() const override { return kRecordSink; }
 
 	bool isMouseRegion() const override { return _handlesMouse; }
-	bool hitTest(const ScriptPoint &point) const override;
+	bool hitTest(const Common::Point32 &point) const override;
 	bool pressRegion(int button) override { return true; }
 	bool getRegionCursor(uint &cursorType, bool &isHot) const override;
 	bool capturesKeys() const override { return _handlesKeys; }
@@ -193,7 +193,7 @@ public:
 	void onHotspotUp(int button, bool isOver) override;
 
 	// The wheel moves the knob while the mouse is in the scroll area
-	bool scrollRegion(const ScriptPoint &point, int notches) override;
+	bool scrollRegion(const Common::Point32 &point, int notches) override;
 
 protected:
 	void readTable(int tableIndex) override;
@@ -204,16 +204,16 @@ protected:
 
 private:
 	// How far the knob can go across and down
-	ScriptPoint getKnobMax() const;
-	void setKnobPos(const ScriptPoint &pos, bool callsScripts);
+	Common::Point32 getKnobMax() const;
+	void setKnobPos(const Common::Point32 &pos, bool callsScripts);
 	void placeKnob();
 
 	Record *_knobOverlay = nullptr;
 	ScriptRect _knobArea;
 	ScriptRect _scrollArea;
-	ScriptPoint _scrollAmount;
-	ScriptPoint _knobPos;
-	ScriptPoint _dragOffset;	// from the knob to the mouse, while dragged
+	Common::Point32 _scrollAmount;
+	Common::Point32 _knobPos;
+	Common::Point32 _dragOffset;	// from the knob to the mouse, while dragged
 	bool _isDragging = false;
 };
 
@@ -229,7 +229,7 @@ public:
 	~EditBoxRecord() override;
 
 	bool isMouseRegion() const override { return true; }
-	bool hitTest(const ScriptPoint &point) const override;
+	bool hitTest(const Common::Point32 &point) const override;
 	bool pressRegion(int button) override;
 	bool getRegionCursor(uint &cursorType, bool &isHot) const override;
 	bool handleKey(Common::KeyCode key, uint16 ascii) override;

@@ -43,13 +43,13 @@ static const uint32 kDoubleClickTime = 500;	// milliseconds
 static const int kDoubleClickDistance = 4;
 
 struct InputState {
-	ScriptPoint mouse;
+	Common::Point32 mouse;
 	bool hasMouse = false;
 	Record *hovered = nullptr;
 	Record *pressed[2] = { nullptr, nullptr };
 
 	uint32 lastClickTime[2] = { 0, 0 };
-	ScriptPoint lastClickPoint[2];
+	Common::Point32 lastClickPoint[2];
 	bool isDoubleClick[2] = { false, false };
 
 	uint16 heldMoveKeys = 0;
@@ -62,7 +62,7 @@ static InputState &getState() {
 	return s_state;
 }
 
-const ScriptPoint &getScriptMousePoint() {
+const Common::Point32 &getScriptMousePoint() {
 	return getState().mouse;
 }
 
@@ -386,10 +386,10 @@ static const MoveKey kMoveKeys[] = {
 void handleNancy26Input(NancyInput &input) {
 	InputState &state = getState();
 
-	const ScriptPoint oldMouse = state.mouse;
+	const Common::Point32 oldMouse = state.mouse;
 	state.hasMouse = input.mousePos.x >= 0;
 	if (state.hasMouse) {
-		state.mouse = ScriptPoint(input.mousePos);
+		state.mouse = Common::Point32(input.mousePos);
 	}
 
 	state.isDoubleClick[0] = state.isDoubleClick[1] = false;
