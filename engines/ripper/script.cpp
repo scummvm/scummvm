@@ -281,7 +281,7 @@ bool ScriptManager::startCyberScript(const Common::String &memberName) {
 		return false;
 	if (_engine->shouldQuit())
 		return true;
-	return advanceBa0ToFrame(0);
+	return advanceActiveScriptToFrame(0);
 }
 
 void ScriptManager::logRuntimeFailure(const char *reason) const {
@@ -622,7 +622,7 @@ uint ScriptManager::resolveFrameIndex(const CompiledScript &script,
 	return 0;
 }
 
-void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
+void ScriptManager::beginActiveInteractionWait(const Common::String &frameLabel,
 		uint interactionCount) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (_engine->getInput()->pollEvents())
@@ -634,7 +634,7 @@ void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
 		_runtime.activeScript.getMemberName().c_str(), frameLabel.c_str(), interactionCount);
 }
 
-void ScriptManager::initializeBa0InteractionState(const ScriptFrame &frame) {
+void ScriptManager::initializeActiveInteractionState(const ScriptFrame &frame) {
 	_runtime.activeInteractionEnabled.clear();
 	_runtime.activeInteractionEnabled.resize(frame.interactionCount);
 	for (uint i = 0; i < frame.interactionCount; ++i) {
@@ -657,7 +657,7 @@ void ScriptManager::initializeBa0InteractionState(const ScriptFrame &frame) {
 		_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame, frame.interactionCount);
 }
 
-void ScriptManager::bindBa0Frame(uint frameIndex) {
+void ScriptManager::bindActiveFrame(uint frameIndex) {
 	if (_runtime.activeFrame < _runtime.activeScript.getFrames().size())
 		_runtime.previousFrameLabel = _runtime.activeScript.getString(_runtime.activeScript.getFrames()[_runtime.activeFrame].labelOffset);
 	else
@@ -1285,10 +1285,10 @@ bool ScriptManager::performPendingSceneTransition() {
 	_engine->getCursor()->setVisible(false);
 	g_system->fillScreen(0);
 	presentScreen();
-	return advanceBa0ToFrame(startFrame);
+	return advanceActiveScriptToFrame(startFrame);
 }
 
-bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
+bool ScriptManager::advanceActiveScriptToFrame(uint nextFrame) {
 	_engine->getCursor()->setVisible(false);
 	_runtime.hoveredInteraction = -1;
 	// Frame selection re-enters the loop so the concurrent runtime runs before the
@@ -1304,14 +1304,14 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			return false;
 		}
 
-		bindBa0Frame(nextFrame);
+		bindActiveFrame(nextFrame);
 		const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
 		const Common::String label = _runtime.activeScript.getString(frame.labelOffset);
 		debugC(1, kDebugScene,
 			"Ripper: entering active scene script='%s' frame=%u label='%s' type=%u interactions=%u",
 			_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame, label.c_str(),
 			frame.presentationType, frame.interactionCount);
-		initializeBa0InteractionState(frame);
+		initializeActiveInteractionState(frame);
 
 		uint callbackFrame = _runtime.activeFrame;
 		CallbackResult result = executeCallback(_runtime.activeScript, frame.enterCallbackOffset, &callbackFrame);
@@ -1364,7 +1364,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		}
 
 		if (frame.interactionCount != 0 && !_runtime.awaitingInteraction) {
-			beginBa0InteractionWait(label, frame.interactionCount);
+			beginActiveInteractionWait(label, frame.interactionCount);
 			return true;
 		}
 
@@ -1452,7 +1452,7 @@ ScriptManager::CallbackResult ScriptManager::prepareFramePresentation(
 ScriptManager::FramePresentationResult ScriptManager::executeFramePresentation(
 		const ScriptFrame &frame, const Common::String &label, const FramePresentationPlan &plan) {
 	if (plan.activatesInputDuringMedia && !_runtime.awaitingInteraction)
-		beginBa0InteractionWait(label, frame.interactionCount);
+		beginActiveInteractionWait(label, frame.interactionCount);
 	debugC(2, kDebugVideo,
 		"Ripper: frame presentation controls label='%s' keyboard=%d mouse=%d dialogue=%d "
 		"idleTextRequest=%d waitFrame=%u",
@@ -1536,7 +1536,7 @@ ScriptManager::FramePresentationResult ScriptManager::executeFramePresentation(
 		debugC(2, kDebugScene, "Ripper: retained controlled sequence display media='%s'", plan.mediaPath.c_str());
 	}
 	if (frame.interactionCount != 0 && !_runtime.awaitingInteraction) {
-		beginBa0InteractionWait(label, frame.interactionCount);
+		beginActiveInteractionWait(label, frame.interactionCount);
 		debugC(2, kDebugScene,
 			"Ripper: activated post-presentation interactions frame='%s' count=%u",
 			label.c_str(), frame.interactionCount);
@@ -1635,7 +1635,7 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 		return false;
 	}
 	_engine->getSceneAudio()->resetTriggers();
-	return advanceBa0ToFrame(nextFrame);
+	return advanceActiveScriptToFrame(nextFrame);
 }
 
 int ScriptManager::resolveToolbarActionKey(uint16 command) const {
@@ -1752,7 +1752,7 @@ bool ScriptManager::serviceScene() {
 					"Ripper: dialogue keyboard chooser returned control=-2 nextFrame=%u",
 					dialogueFrame);
 				_engine->getSceneAudio()->resetTriggers();
-				return advanceBa0ToFrame(dialogueFrame);
+				return advanceActiveScriptToFrame(dialogueFrame);
 			}
 		}
 		bool hotkeyHandled = false;
@@ -1774,7 +1774,7 @@ bool ScriptManager::serviceScene() {
 			debugC(1, kDebugDialogue,
 				"Ripper: dialogue chooser returned control=-2 nextFrame=%u", dialogueFrame);
 			_engine->getSceneAudio()->resetTriggers();
-			return advanceBa0ToFrame(dialogueFrame);
+			return advanceActiveScriptToFrame(dialogueFrame);
 		}
 		_dialogue->draw();
 		if (mouse.pressed != 0 || mouse.released != 0 || mouse.wheel != 0) {
@@ -1806,7 +1806,7 @@ bool ScriptManager::serviceScene() {
 
 	uint hoveredInteractionIndex = 0;
 	const ScriptInteraction *hoveredInteraction =
-		findBa0Interaction(mouse.position, &hoveredInteractionIndex);
+		findActiveInteraction(mouse.position, &hoveredInteractionIndex);
 
 	const uint cursorIndex = hoveredInteraction ?
 		(hoveredInteraction->conditionOffset != 0 ? 8 : hoveredInteraction->initialSelection) :
@@ -1880,7 +1880,7 @@ bool ScriptManager::serviceScene() {
 			_runtime.activeScript.getMemberName().c_str(), _runtime.concurrentScript.getMemberName().c_str(),
 			_runtime.concurrentEntryLabel.c_str(), nextFrame);
 		_engine->getSceneAudio()->resetTriggers();
-		return advanceBa0ToFrame(nextFrame);
+		return advanceActiveScriptToFrame(nextFrame);
 	}
 
 	debugC(3, kDebugScene,
@@ -1916,7 +1916,7 @@ bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *fa
 	}
 	if (_dialogue->isPending()) {
 		_dialogue->updateHover(point);
-		const ScriptInteraction *interaction = findBa0Interaction(point);
+		const ScriptInteraction *interaction = findActiveInteraction(point);
 		const uint cursorIndex = _dialogue->contains(point) ? kDialogueCursor :
 			(interaction ? (interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) :
 				_engine->getCursor()->getSelectionIndex());
@@ -1924,7 +1924,7 @@ bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *fa
 		_engine->getCursor()->update(cursorIndex);
 		return false;
 	}
-	const ScriptInteraction *interaction = findBa0Interaction(point);
+	const ScriptInteraction *interaction = findActiveInteraction(point);
 	const uint cursorIndex = interaction ?
 		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) :
 		_engine->getCursor()->getSelectionIndex();
@@ -1937,7 +1937,7 @@ void ScriptManager::updateModalSceneCursor(const Common::Point &point) {
 	// The modal borrows the scene's selection list. Outside its rectangle,
 	// service hotspot cursors without dispatching their actions.
 	const ScriptInteraction *interaction = _runtime.awaitingInteraction ?
-		findBa0Interaction(point) : nullptr;
+		findActiveInteraction(point) : nullptr;
 	uint cursorIndex = interaction ?
 		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) :
 		_engine->getCursor()->getSelectionIndex();
@@ -1953,7 +1953,7 @@ Common::Rect ScriptManager::interactionBounds(const ScriptInteraction &interacti
 		interaction.x + kSceneInteractionOriginY + interaction.width);
 }
 
-const ScriptInteraction *ScriptManager::findBa0Interaction(const Common::Point &point,
+const ScriptInteraction *ScriptManager::findActiveInteraction(const Common::Point &point,
 		uint *interactionIndex) const {
 	if (_runtime.activeFrame >= _runtime.activeScript.getFrames().size() || point.y >= 400)
 		return nullptr;

@@ -140,10 +140,10 @@ private:
 	bool captureCyberKeyboardCommand();
 	bool serviceCyberKeyboardCommand();
 	bool serviceToolbarActionKey(const char *source, bool &handled);
-	void bindBa0Frame(uint frameIndex);
-	void initializeBa0InteractionState(const ScriptFrame &frame);
-	void beginBa0InteractionWait(const Common::String &frameLabel, uint interactionCount);
-	bool advanceBa0ToFrame(uint nextFrame);
+	void bindActiveFrame(uint frameIndex);
+	void initializeActiveInteractionState(const ScriptFrame &frame);
+	void beginActiveInteractionWait(const Common::String &frameLabel, uint interactionCount);
+	bool advanceActiveScriptToFrame(uint nextFrame);
 	CallbackResult prepareFramePresentation(const ScriptFrame &frame,
 		const Common::String &label, FramePresentationPlan &plan);
 	FramePresentationResult executeFramePresentation(const ScriptFrame &frame,
@@ -153,7 +153,7 @@ private:
 	bool runWorldMapCheckpoint(uint chapter);
 	uint resolveFrameIndex(const CompiledScript &script, const Common::String &label) const;
 	Common::Rect interactionBounds(const ScriptInteraction &interaction) const;
-	const ScriptInteraction *findBa0Interaction(const Common::Point &point,
+	const ScriptInteraction *findActiveInteraction(const Common::Point &point,
 		uint *interactionIndex = nullptr) const;
 	bool isScenePlayed(const Common::String &scene) const;
 	void setScenePlayed(const Common::String &scene, bool played);
