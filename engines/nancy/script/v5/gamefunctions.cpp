@@ -29,9 +29,12 @@
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/sound.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/records.h"
+#include "engines/nancy/script/scenecontext.h"
 #include "engines/nancy/script/types.h"
 
 #include "engines/nancy/script/v5/gamefunctions.h"
@@ -602,6 +605,75 @@ static int soundSetGroupVolume(lua_State *L) {
 	return 0;
 }
 
+// Sound:PauseAbandoned() and Sound:UnpauseAbandoned(), Nancy27: pause and
+// resume the sounds that went on playing after their records were gone, as
+// the UI pops up over the game and goes away again
+
+struct PausedChannel {
+	uint16 channel;
+	uint32 serial;
+};
+
+static Common::Array<PausedChannel> s_pausedAbandonedChannels;
+
+static void addPlayingChannels(const SceneContext *context, Common::Array<bool> &isOwned) {
+	if (!context) {
+		return;
+	}
+
+	for (const Record *record : context->getRecords()) {
+		uint16 channel;
+		if (record->getType() == kRecordSound && ((const SoundRecord *)record)->getPlayingChannel(channel) && channel < isOwned.size()) {
+			isOwned[channel] = true;
+		}
+	}
+}
+
+static int soundPauseAbandoned(lua_State *L) {
+	Common::Array<bool> isOwned;
+	isOwned.resize(g_nancy->getStaticData().soundChannelInfo.numChannels, false);
+
+	Common::Array<State::SceneStream *> streams;
+	NancySceneState.getStreams().getDrawOrder(streams);
+	for (const State::SceneStream *stream : streams) {
+		addPlayingChannels(stream ? stream->getScriptScene() : NancySceneState.getScriptScene(), isOwned);
+	}
+
+	for (uint16 i = 0; i < isOwned.size(); ++i) {
+		if (isOwned[i] || !g_nancy->_sound->isSoundPlaying(i)) {
+			continue;
+		}
+
+		bool isPaused = false;
+		for (const PausedChannel &paused : s_pausedAbandonedChannels) {
+			isPaused = isPaused || paused.channel == i;
+		}
+
+		if (!isPaused) {
+			g_nancy->_sound->pauseSound(i, true);
+
+			PausedChannel paused;
+			paused.channel = i;
+			paused.serial = g_nancy->_sound->getChannelSerial(i);
+			s_pausedAbandonedChannels.push_back(paused);
+		}
+	}
+
+	return 0;
+}
+
+// A channel that got another sound in the meantime is left alone
+static int soundUnpauseAbandoned(lua_State *L) {
+	for (const PausedChannel &paused : s_pausedAbandonedChannels) {
+		if (g_nancy->_sound->getChannelSerial(paused.channel) == paused.serial) {
+			g_nancy->_sound->pauseSound(paused.channel, false);
+		}
+	}
+
+	s_pausedAbandonedChannels.clear();
+	return 0;
+}
+
 // Scene:IsStreamRunning(stream)
 static int sceneIsStreamRunning(lua_State *L) {
 	const char *streamName = luaL_checkstring(L, 2);
@@ -651,6 +723,8 @@ void registerNancy26GameAPI(lua_State *L) {
 	static const luaL_Reg kSoundFunctions[] = {
 		{ "GetGroupVolume", soundGetGroupVolume },
 		{ "SetGroupVolume", soundSetGroupVolume },
+		{ "PauseAbandoned", soundPauseAbandoned },
+		{ "UnpauseAbandoned", soundUnpauseAbandoned },
 		{ nullptr, nullptr }
 	};
 

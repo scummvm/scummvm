@@ -2056,6 +2056,16 @@ static int soundStopIfPlaying(lua_State *L) {
 	return 0;
 }
 
+bool SoundRecord::getPlayingChannel(uint16 &channel) const {
+	if (!_isPlaying || g_nancy->_sound->getChannelSerial(_channel) != _channelSerial ||
+			!g_nancy->_sound->isSoundPlaying(_channel)) {
+		return false;
+	}
+
+	channel = _channel;
+	return true;
+}
+
 void SoundRecord::stopIfPlaying() {
 	if (_isPlaying && g_nancy->_sound->getChannelSerial(_channel) == _channelSerial) {
 		g_nancy->_sound->stopSound(_sound);

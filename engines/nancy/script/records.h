@@ -371,6 +371,9 @@ public:
 	bool skipSpeech() override;
 	void stopIfPlaying();
 
+	// The channel the sound of the record plays on, while it does
+	bool getPlayingChannel(uint16 &channel) const;
+
 protected:
 	void readTable(int tableIndex) override;
 	void runOnce() override;
