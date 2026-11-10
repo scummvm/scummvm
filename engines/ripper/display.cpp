@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 #include "common/system.h"
+#include "graphics/blit.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
@@ -135,16 +136,13 @@ bool IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
 	const int destinationTop = MAX<int64>(y, clip.top);
 	const int destinationRight = MIN<int64>(bitmapRight, clip.right);
 	const int destinationBottom = MIN<int64>(bitmapBottom, clip.bottom);
+	const uint sourceX = destinationLeft - x;
 	for (int destinationY = destinationTop; destinationY < destinationBottom;
 			++destinationY) {
 		const uint sourceY = destinationY - y;
-		for (int destinationX = destinationLeft;
-				destinationX < destinationRight; ++destinationX) {
-			const uint sourceX = destinationX - x;
-			const byte pixel = bitmap.pixels[sourceY * bitmap.width + sourceX];
-			if (pixel != transparentColor)
-				pixels[destinationY * pitch + destinationX] = pixel;
-		}
+		Graphics::keyBlit(pixels + destinationY * pitch + destinationLeft,
+			bitmap.pixels.data() + sourceY * bitmap.width + sourceX,
+			pitch, bitmap.width, destinationRight - destinationLeft, 1, 1, transparentColor);
 	}
 	return true;
 }

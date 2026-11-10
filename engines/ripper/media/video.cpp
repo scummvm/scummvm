@@ -24,6 +24,7 @@
 #include "common/debug.h"
 #include "common/system.h"
 #include "graphics/blit.h"
+#include "graphics/managed_surface.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
@@ -136,19 +137,11 @@ public:
 				memcpy(screen->getBasePtr(_x, _y + row),
 					_backing.data() + row * _width, _width);
 			const byte transparentColor = *(const byte *)frame->getPixels();
-			for (uint sourceY = 0; sourceY < (uint)frame->h; ++sourceY) {
-				const byte *source = (const byte *)frame->getBasePtr(0, sourceY);
-				for (uint sourceX = 0; sourceX < (uint)frame->w; ++sourceX) {
-					if (source[sourceX] == transparentColor)
-						continue;
-					for (uint scaleY = 0; scaleY < _scale; ++scaleY) {
-						byte *destination = (byte *)screen->getBasePtr(
-							_x + sourceX * _scale,
-							_y + sourceY * _scale + scaleY);
-						memset(destination, source[sourceX], _scale);
-					}
-				}
-			}
+			Graphics::ManagedSurface destination;
+			destination.surfacePtr()->init(screen->w, screen->h, screen->pitch,
+				screen->getPixels(), screen->format);
+			destination.transBlitFrom(*frame, Common::Rect(frame->w, frame->h),
+				Common::Rect(_x, _y, _x + _width, _y + _height), transparentColor);
 			g_system->unlockScreen();
 		} else if (_scale == 1) {
 			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, _x, _y, frame->w, frame->h);
