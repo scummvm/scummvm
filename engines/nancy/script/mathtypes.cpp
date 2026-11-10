@@ -833,12 +833,12 @@ static ScriptVector readTransformInput(lua_State *L, int index) {
 		return getFlatVector(*vector);
 	}
 
-	ScriptPoint point;
-	if (!readPoint(L, index, point)) {
+	double x, y;
+	if (!readPointCoordinates(L, index, x, y)) {
 		luaL_argerror(L, index, "Expected a Vector, a Point, a table with x and y, or two numbers");
 	}
 
-	return ScriptVector(point.x, point.y, 0.0);
+	return ScriptVector(x, y, 0.0);
 }
 
 static int matrixTransformCoord(lua_State *L) {

@@ -145,9 +145,7 @@ void copyValue(lua_State *from, int index, lua_State *to) {
 		return;
 	}
 
-	ScriptPoint point;
-	if (lua_isuserdata(from, index) && readPoint(from, index, point)) {
-		pushPoint(to, point);
+	if (copyPoint(from, index, to)) {
 		return;
 	}
 

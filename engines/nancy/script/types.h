@@ -84,6 +84,13 @@ void pushPoint(lua_State *L, const ScriptPoint &point);
 // Returns false when the value has neither.
 bool readPoint(lua_State *L, int index, ScriptPoint &point);
 
+// The same, keeping the fractions a point can have from Nancy26 on
+bool readPointCoordinates(lua_State *L, int index, double &x, double &y);
+
+// Pushes a copy of a point, or of something else with an x and a y, onto
+// another Lua state. Returns false when the value has neither.
+bool copyPoint(lua_State *from, int index, lua_State *to);
+
 // Colors are 0xAARRGGBB
 void pushColor(lua_State *L, uint32 argb);
 uint32 *testColor(lua_State *L, int index);
