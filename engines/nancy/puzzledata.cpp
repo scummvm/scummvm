@@ -1089,6 +1089,29 @@ void ScriptSavedData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void BrainData::synchronize(Common::Serializer &ser) {
+	uint16 numResults = results.size();
+	ser.syncAsUint16LE(numResults);
+
+	Common::Array<Common::String> names;
+	if (ser.isSaving()) {
+		for (auto &entry : results) {
+			names.push_back(entry._key);
+		}
+	} else {
+		results.clear();
+		names.resize(numResults);
+	}
+
+	for (Common::String &name : names) {
+		ser.syncString(name);
+
+		byte result = results.getValOrDefault(name, false) ? 1 : 0;
+		ser.syncAsByte(result);
+		results.setVal(name, result != 0);
+	}
+}
+
 void ScriptPictureData::synchronize(Common::Serializer &ser) {
 	uint16 numPictures = pictures.size();
 	ser.syncAsUint16LE(numPictures);
@@ -1165,6 +1188,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new ScriptSavedData();
 	case ScriptJournalData::getTag():
 		return new ScriptJournalData();
+	case BrainData::getTag():
+		return new BrainData();
 	case ScriptPictureData::getTag():
 		return new ScriptPictureData();
 	case StreamData::getTag():

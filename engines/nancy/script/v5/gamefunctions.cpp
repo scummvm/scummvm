@@ -36,6 +36,7 @@
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/scenecontext.h"
 #include "engines/nancy/script/types.h"
+#include "engines/nancy/script/v5/brain.h"
 
 #include "engines/nancy/script/v5/gamefunctions.h"
 #include "engines/nancy/script/v5/scriptinput.h"
@@ -744,6 +745,8 @@ void registerNancy26GameAPI(lua_State *L) {
 	addFunctions(L, "ND.Sound", kSoundFunctions);
 	addFunctions(L, "ND.Scene", kSceneFunctions);
 	addFunctions(L, "ND.Log", kLogFunctions);
+
+	registerBrainAPI(L);
 }
 
 } // End of namespace Script

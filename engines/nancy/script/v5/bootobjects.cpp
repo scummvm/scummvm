@@ -27,6 +27,7 @@
 #include "engines/nancy/script/types.h"
 
 #include "engines/nancy/script/v5/bootobjects.h"
+#include "engines/nancy/script/v5/brain.h"
 
 #include "engines/nancy/ui/ndui/button.h"
 
@@ -321,6 +322,10 @@ void NancyEngine::bootNancy26Data(ScriptBootData *boot, EVNT *flags, INVD *inven
 
 	runRequiredScript("AutotextBoot", bootTables);
 	runRequiredScript("BuildNumber", bootTables);
+
+	if (getGameType() >= kGameTypeNancy27) {
+		_engineData.setVal("BrainLogic", new Script::BrainLogic());
+	}
 
 	Script::BootTables textTables;
 	textTables.texts = autotext;
