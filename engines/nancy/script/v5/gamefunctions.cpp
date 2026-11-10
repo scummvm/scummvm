@@ -528,14 +528,15 @@ static bool pushInventoryField(lua_State *L, const Common::String &key) {
 	return true;
 }
 
-// Inventory.inHand = name, or "" to put it away
+// Inventory.inHand = name, or "" to put it away. Nancy27 also puts it away
+// with nil.
 static int inventoryNewIndex(lua_State *L) {
 	const Common::String key = luaL_checkstring(L, 2);
 	if (key != "inHand") {
 		return luaL_error(L, "Inventory does not have a settable field %s", key.c_str());
 	}
 
-	const Common::String name = luaL_checkstring(L, 3);
+	const Common::String name = lua_isnil(L, 3) ? "" : luaL_checkstring(L, 3);
 	const int16 heldItem = name.empty() ? -1 : checkItem(L, 3).id;
 	if (heldItem != NancySceneState.getHeldItem()) {
 		NancySceneState.setHeldItem(heldItem);
