@@ -84,6 +84,7 @@ SegaRenderer::~SegaRenderer() {
 	delete[] _tempBufferSpritesPrio;
 	delete[] _tempBufferPlanes;
 	delete[] _tempBufferPlanesPrio;
+	delete[] _renderColorTable;
 }
 
 void SegaRenderer::setResolution(int w, int h) {

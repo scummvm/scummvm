@@ -325,6 +325,7 @@ Common::OutSaveFile *SaveLoadManager::openFileForSaving(int slot, const Common::
 		error("%s(): Unable to create thumbnail", __FUNCTION__);
 
 	Graphics::saveThumbnail(*out, tn);
+	tn.free();
 
 	TimeDate td;
 	_vm->_system->getTimeAndDate(td);
