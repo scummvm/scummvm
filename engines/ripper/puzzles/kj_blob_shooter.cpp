@@ -167,11 +167,8 @@ bool KjBlobShooter::loadConfig(uint difficulty) {
 
 bool KjBlobShooter::loadVisualAssets() {
 	ResourceManager *resources = _engine->getResources();
-	BitmapAssetSequence cursor;
-	if (!resources->loadBitmapSequence("kj_mouse.bbm", cursor) ||
-			cursor.frames.empty())
+	if (!resources->loadBitmapSequenceFirstFrame("kj_mouse.bbm", _cursorFrame))
 		return false;
-	_cursorFrame = Common::move(cursor.frames.front());
 
 	for (uint type = 0; type < kBlobTypeCount; ++type) {
 		if (!resources->loadBitmapLibrary(

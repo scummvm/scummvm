@@ -94,15 +94,14 @@ bool BoardArrangementPuzzle::loadPieceSet(const char *prefix,
 		Common::Array<BitmapAssetFrame> &frames) {
 	frames.clear();
 	for (uint piece = 0; piece < kPieceCount; ++piece) {
-		BitmapAssetSequence sequence;
+		BitmapAssetFrame asset;
 		const Common::String path = Common::String::format("%s%u.bbm", prefix, piece);
-		if (!_engine->getResources()->loadBitmapSequence(path, sequence) ||
-				sequence.frames.empty()) {
+		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, asset)) {
 			warning("Ripper: could not load board arrangement piece '%s'",
 				path.c_str());
 			return false;
 		}
-		frames.push_back(Common::move(sequence.frames.front()));
+		frames.push_back(Common::move(asset));
 	}
 	return true;
 }

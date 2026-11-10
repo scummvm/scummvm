@@ -100,15 +100,14 @@ bool GcCshPuzzle::loadAssets() {
 	for (uint choice = 0; choice < kChoiceCount; ++choice) {
 		_choiceFrames[choice].clear();
 		for (uint frameIndex = 0; frameIndex < kAnimationFrameCount; ++frameIndex) {
-			BitmapAssetSequence sequence;
+			BitmapAssetFrame asset;
 			const Common::String name = Common::String::format(
 				"gc_csh%u%u.bbm", choice, frameIndex);
-			if (!_engine->getResources()->loadBitmapSequence(name, sequence) ||
-					sequence.frames.empty()) {
+			if (!_engine->getResources()->loadBitmapSequenceFirstFrame(name, asset)) {
 				warning("Ripper: could not load GC/CSH choice bitmap '%s'", name.c_str());
 				return false;
 			}
-			_choiceFrames[choice].push_back(Common::move(sequence.frames.front()));
+			_choiceFrames[choice].push_back(Common::move(asset));
 		}
 	}
 

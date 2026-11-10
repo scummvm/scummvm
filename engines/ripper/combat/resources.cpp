@@ -149,11 +149,11 @@ bool CombatEncounter::loadBitmapAssets() {
 	_combatFrames.clear();
 	_crosshairFrames.clear();
 	for (uint i = 0; i < 5; ++i) {
-		BitmapAssetSequence sequence;
+		BitmapAssetFrame asset;
 		const Common::String name = Common::String::format("combat%u.bbm", i);
-		if (!resources->loadBitmapSequence(name, sequence) || sequence.frames.empty())
+		if (!resources->loadBitmapSequenceFirstFrame(name, asset))
 			return false;
-		_combatFrames.push_back(Common::move(sequence.frames[0]));
+		_combatFrames.push_back(Common::move(asset));
 		const BitmapAssetFrame &frame = _combatFrames.back();
 		debugC(3, kDebugCombat,
 			"Ripper: loaded combat overlay bitmap index=%u size=%ux%u transparent=%u paletteColors=%u",
@@ -161,12 +161,12 @@ bool CombatEncounter::loadBitmapAssets() {
 			frame.palette.size() / 3);
 	}
 	for (uint i = 0; i < 4; ++i) {
-		BitmapAssetSequence sequence;
+		BitmapAssetFrame asset;
 		const Common::String name = Common::String::format("%s%u.bbm",
 			_definition.crosshairPrefix, i);
-		if (!resources->loadBitmapSequence(name, sequence) || sequence.frames.empty())
+		if (!resources->loadBitmapSequenceFirstFrame(name, asset))
 			return false;
-		_crosshairFrames.push_back(Common::move(sequence.frames[0]));
+		_crosshairFrames.push_back(Common::move(asset));
 	}
 	for (uint i = 0; i < kEffectGroupCount; ++i) {
 		if (!resources->loadBitmapLibrary(_definition.effectLibraries[i], _effectFrames[i]))

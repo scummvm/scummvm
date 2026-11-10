@@ -766,6 +766,11 @@ Common::SeekableReadStream *ResourceManager::createReadStream(const Common::Stri
 		source->clear();
 	Common::SeekableReadStream *stream = nullptr;
 	const char *resolvedSource = "";
+	if (policy == kSourceSearchMember) {
+		stream = SearchMan.createReadStreamForMember(Common::Path(path));
+		if (stream)
+			resolvedSource = "search-member";
+	}
 	if (policy == kSourceDirectFile || policy == kSourceSoundEffect ||
 			policy == kSourceBlockingAudio) {
 		Common::ScopedPtr<Common::File> file(new Common::File());
@@ -875,9 +880,9 @@ bool ResourceManager::loadBitmap(const Common::String &memberName,
 }
 
 bool ResourceManager::loadBitmapSequence(const Common::String &memberName,
-		BitmapAssetSequence &sequence) const {
+		BitmapAssetSequence &sequence, SourcePolicy policy) const {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		SearchMan.createReadStreamForMember(Common::Path(memberName)));
+		createReadStream(memberName, policy));
 	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
 		warning("Ripper: could not decode bitmap sequence '%s'", memberName.c_str());
 		return false;
@@ -885,6 +890,15 @@ bool ResourceManager::loadBitmapSequence(const Common::String &memberName,
 
 	debugC(2, kDebugResources, "Ripper: decoded bitmap sequence '%s' frames=%u",
 		memberName.c_str(), sequence.frames.size());
+	return true;
+}
+
+bool ResourceManager::loadBitmapSequenceFirstFrame(const Common::String &memberName,
+		BitmapAssetFrame &frame, SourcePolicy policy) const {
+	BitmapAssetSequence sequence;
+	if (!loadBitmapSequence(memberName, sequence, policy) || sequence.frames.empty())
+		return false;
+	frame = Common::move(sequence.frames.front());
 	return true;
 }
 

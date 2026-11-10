@@ -161,6 +161,7 @@ private:
 class ResourceManager {
 public:
 	enum SourcePolicy {
+		kSourceSearchMember,
 		kSourceDirectFile,
 		kSourceConfiguredPath,
 		kSourceInterfaceLibrary,
@@ -181,7 +182,9 @@ public:
 		const Common::String &memberName) const;
 	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadBitmapSequence(const Common::String &memberName,
-		BitmapAssetSequence &sequence) const;
+		BitmapAssetSequence &sequence, SourcePolicy policy = kSourceSearchMember) const;
+	bool loadBitmapSequenceFirstFrame(const Common::String &memberName,
+		BitmapAssetFrame &frame, SourcePolicy policy = kSourceSearchMember) const;
 	bool loadBitmapLibrary(const Common::String &libraryName,
 		Common::Array<BitmapAssetFrame> &frames) const;
 	bool loadInterfaceBitmapSequence(const Common::String &memberName,

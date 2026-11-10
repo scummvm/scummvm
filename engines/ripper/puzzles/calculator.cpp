@@ -109,26 +109,24 @@ void CalculatorPuzzle::restoreBackground() const {
 bool CalculatorPuzzle::loadAssets() {
 	_buttons.clear();
 	for (uint i = 0; i < ARRAYSIZE(kButtonLayouts); ++i) {
-		BitmapAssetSequence sequence;
+		BitmapAssetFrame asset;
 		const Common::String name = Common::String::format("calc%u.bbm", i);
-		if (!_engine->getResources()->loadBitmapSequence(name, sequence) ||
-				sequence.frames.empty()) {
+		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(name, asset)) {
 			warning("Ripper: failed to load calculator button '%s'", name.c_str());
 			return false;
 		}
-		_buttons.push_back(Common::move(sequence.frames.front()));
+		_buttons.push_back(Common::move(asset));
 	}
 
 	_glyphs.clear();
 	for (uint i = 0; i < kGlyphCount; ++i) {
-		BitmapAssetSequence sequence;
+		BitmapAssetFrame asset;
 		const Common::String name = Common::String::format("calcnm%u.bbm", i);
-		if (!_engine->getResources()->loadBitmapSequence(name, sequence) ||
-				sequence.frames.empty()) {
+		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(name, asset)) {
 			warning("Ripper: failed to load calculator glyph '%s'", name.c_str());
 			return false;
 		}
-		_glyphs.push_back(Common::move(sequence.frames.front()));
+		_glyphs.push_back(Common::move(asset));
 	}
 
 	debugC(1, kDebugPuzzles,

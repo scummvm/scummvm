@@ -110,12 +110,10 @@ void ClockPuzzle::restoreBackground() const {
 }
 
 bool ClockPuzzle::loadFrame(const Common::String &name, BitmapAssetFrame &frame) {
-	BitmapAssetSequence sequence;
-	if (!_engine->getResources()->loadBitmapSequence(name, sequence) || sequence.frames.empty()) {
+	if (!_engine->getResources()->loadBitmapSequenceFirstFrame(name, frame)) {
 		warning("Ripper: could not load clock puzzle bitmap '%s'", name.c_str());
 		return false;
 	}
-	frame = Common::move(sequence.frames.front());
 	return true;
 }
 

@@ -217,18 +217,16 @@ bool KdShootingGallery::loadFrameData() {
 
 bool KdShootingGallery::loadVisualAssets() {
 	ResourceManager *resources = _engine->getResources();
-	BitmapAssetSequence cursor;
-	BitmapAssetSequence checkmark;
-	if (!resources->loadBitmapSequence("kd_mouse.bbm", cursor) ||
-			cursor.frames.empty() ||
-			!resources->loadBitmapSequence("kd_check.bbm", checkmark) ||
-			checkmark.frames.empty() ||
+	BitmapAssetFrame cursor;
+	BitmapAssetFrame checkmark;
+	if (!resources->loadBitmapSequenceFirstFrame("kd_mouse.bbm", cursor) ||
+			!resources->loadBitmapSequenceFirstFrame("kd_check.bbm", checkmark) ||
 			!resources->loadBitmapLibrary("kd_flame.pl", _flameFrames) ||
 			!resources->loadInterfaceBitmapFont("small.fnt", _font))
 		return false;
 
-	_cursorFrame = Common::move(cursor.frames.front());
-	_checkmarkFrame = Common::move(checkmark.frames.front());
+	_cursorFrame = Common::move(cursor);
+	_checkmarkFrame = Common::move(checkmark);
 	debugC(2, kDebugPuzzles,
 		"Ripper: loaded KD shooting-gallery visual assets cursor=%ux%u checkmark=%ux%u flameFrames=%u fontGlyphs=%u",
 		_cursorFrame.width, _cursorFrame.height,

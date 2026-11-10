@@ -19,8 +19,6 @@
 #include "ripper/puzzles/keypad_sequence.h"
 
 #include "common/debug.h"
-#include "common/ptr.h"
-#include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
 
@@ -102,15 +100,11 @@ KeypadSequencePuzzle::KeypadSequencePuzzle(RipperEngine *engine) :
 
 bool KeypadSequencePuzzle::loadFrame(const Common::String &path,
 		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(path));
-	BitmapAssetSequence sequence;
-	if (!stream || !decodeBitmapAssetSequence(*stream, sequence) ||
-			sequence.frames.empty()) {
+	if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, frame,
+			ResourceManager::kSourceConfiguredPath)) {
 		warning("Ripper: could not decode keypad bitmap '%s'", path.c_str());
 		return false;
 	}
-	frame = Common::move(sequence.frames.front());
 	return true;
 }
 

@@ -169,16 +169,15 @@ bool CircuitChipPuzzle::loadAssets() {
 
 	_chips.clear();
 	for (uint chip = 0; chip < kChipCount; ++chip) {
-		BitmapAssetSequence sequence;
+		BitmapAssetFrame asset;
 		const Common::String path =
 			Common::String::format("chip%u.bbm", chip + 1);
-		if (!_engine->getResources()->loadBitmapSequence(path, sequence) ||
-				sequence.frames.empty()) {
+		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, asset)) {
 			warning("Ripper: could not load circuit puzzle chip '%s'",
 				path.c_str());
 			return false;
 		}
-		_chips.push_back(Common::move(sequence.frames.front()));
+		_chips.push_back(Common::move(asset));
 	}
 
 	BitmapAssetSequence meterSequence;

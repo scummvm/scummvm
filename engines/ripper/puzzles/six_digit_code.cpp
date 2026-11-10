@@ -95,14 +95,11 @@ SixDigitCodePuzzle::SixDigitCodePuzzle(RipperEngine *engine) :
 
 bool SixDigitCodePuzzle::loadFrame(const Common::String &path,
 		BitmapAssetFrame &frame) {
-	BitmapAssetSequence sequence;
-	if (!_engine->getResources()->loadBitmapSequence(path, sequence) ||
-			sequence.frames.empty()) {
+	if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, frame)) {
 		warning("Ripper: could not decode six-digit code bitmap '%s'",
 			path.c_str());
 		return false;
 	}
-	frame = Common::move(sequence.frames.front());
 	return true;
 }
 

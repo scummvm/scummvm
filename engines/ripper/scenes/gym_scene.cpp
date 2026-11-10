@@ -79,14 +79,12 @@ GymScene::GymScene(RipperEngine *engine) : Scene(engine),
 
 bool GymScene::initialize() {
 	for (uint button = 0; button < ARRAYSIZE(_buttonFrames); ++button) {
-		BitmapAssetSequence sequence;
-		if (!_engine->getResources()->loadBitmapSequence(
-				kButtonBitmaps[button], sequence) || sequence.frames.empty()) {
+		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(
+				kButtonBitmaps[button], _buttonFrames[button])) {
 			warning("Ripper: could not load gym selector bitmap '%s'",
 				kButtonBitmaps[button]);
 			return false;
 		}
-		_buttonFrames[button] = Common::move(sequence.frames.front());
 		if (_buttonFrames[button].width != kButtonWidth[button] ||
 				_buttonFrames[button].height != kButtonHeight[button]) {
 			warning("Ripper: gym selector bitmap '%s' has invalid size=%ux%u",
