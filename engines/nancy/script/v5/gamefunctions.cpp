@@ -177,6 +177,7 @@ static int keyIndex(lua_State *L) {
 // What the cheat tools switch on
 static bool s_isCheatMode = false;
 static bool s_isFastConvo = false;
+static bool s_showsDiagnostics = false;	// Nancy27
 
 // How many times a new game began since the game was started
 static uint s_numRestarts = 0;
@@ -351,6 +352,8 @@ static bool pushGameField(lua_State *L, const Common::String &key) {
 		lua_pushboolean(L, s_isFastConvo);
 	} else if (key == "cheatMode") {
 		lua_pushboolean(L, s_isCheatMode);
+	} else if (key == "diags") {
+		lua_pushboolean(L, s_showsDiagnostics);
 	} else if (key == "needsSave") {
 		lua_pushboolean(L, true);
 	} else if (key == "restarts") {
@@ -378,6 +381,8 @@ static int gameNewIndex(lua_State *L) {
 		s_isCheatMode = lua_toboolean(L, 3) != 0;
 	} else if (key == "fastConvo") {
 		s_isFastConvo = lua_toboolean(L, 3) != 0;
+	} else if (key == "diags") {
+		s_showsDiagnostics = lua_toboolean(L, 3) != 0;
 	} else {
 		return luaL_error(L, "Field %s is not settable on Game ", key.c_str());
 	}
