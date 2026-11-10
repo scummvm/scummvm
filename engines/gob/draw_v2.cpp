@@ -632,12 +632,12 @@ void Draw_v2::printTotText(int16 id) {
 		}
 	}
 
+#ifdef USE_TTS
 	logText.trim();
 	if (!logText.empty() && DebugMan.isDebugChannelEnabled(kDebugGraphics))
 		debugC(1, kDebugGraphics, "TotText %d%s: %s", id, isSubtitle ? " (subtitle)" : "",
 		       logText.decode(_vm->_ttsEncoding).encode(Common::kUtf8).c_str());
 
-#ifdef USE_TTS
 	if (_previousTot != ttsMessage && !isSubtitle) {
 		if (_vm->_game->_hotspots->hoveringOverHotspot()) {
 			_vm->sayText(ttsMessage);
@@ -898,7 +898,7 @@ void Draw_v2::spriteOperation(int16 operation, bool ttsAddHotspotText) {
 		// slowly voicing each character
 		if (_vm->getGameType() == kGameTypeWeen && _vm->isCurrentTot("edit.tot")) {
 			_vm->stopTextToSpeech();
-			
+
 			if (!_vm->_weenVoiceNotepad) {
 				ttsAddHotspotText = false;
 			}
