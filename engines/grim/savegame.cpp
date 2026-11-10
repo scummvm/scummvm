@@ -105,6 +105,28 @@ bool SaveGame::isCompatible() const {
 	return _majorVersion == SAVEGAME_MAJOR_VERSION && _minorVersion <= SAVEGAME_MINOR_VERSION;
 }
 
+bool SaveGame::hasSection(uint32 sectionTag) {
+	if (_saving || _currentSection != 0)
+		return false;
+
+	int64 pos = _inSaveFile->pos();
+	bool found = false;
+	for (;;) {
+		uint32 tag = _inSaveFile->readUint32BE();
+		if (_inSaveFile->eos() || _inSaveFile->err() || tag == SAVEGAME_FOOTERTAG)
+			break;
+		if (tag == sectionTag) {
+			found = true;
+			break;
+		}
+		uint32 size = _inSaveFile->readUint32BE();
+		_inSaveFile->seek(size, SEEK_CUR);
+	}
+	_inSaveFile->clearErr();
+	_inSaveFile->seek(pos);
+	return found;
+}
+
 uint SaveGame::saveMajorVersion() const {
 	return _majorVersion;
 }

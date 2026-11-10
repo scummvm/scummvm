@@ -51,6 +51,7 @@ public:
 	static uint SAVEGAME_MINOR_VERSION;
 
 	bool isCompatible() const;
+	bool hasSection(uint32 sectionTag);
 
 	uint saveMajorVersion() const;
 	uint saveMinorVersion() const;

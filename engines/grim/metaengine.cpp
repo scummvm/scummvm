@@ -28,6 +28,9 @@
 #include "common/translation.h"
 #include "common/config-manager.h"
 
+#include "graphics/scaler.h"
+#include "graphics/surface.h"
+
 namespace Grim {
 
 static const ADExtraGuiOptionsMap gameGuiOptions[] = {
@@ -75,6 +78,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 Common::Error GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const Grim::GrimGameDescription *desc) const {
@@ -101,7 +105,9 @@ Common::Error GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 bool GrimMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail);
 }
 
 Common::KeymapArray GrimMetaEngine::initKeymaps(const char *target) const {
@@ -163,6 +169,58 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
+}
+
+SaveStateDescriptor GrimMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	const bool isEMI = gameId == "monkey4";
+	Common::String filename;
+
+	if (isEMI) {
+		if (platform == Common::kPlatformPS2)
+			filename = Common::String::format("efmi%03d.ps2", slot);
+		else
+			filename = Common::String::format("efmi%03d.gsv", slot);
+	} else {
+		filename = Common::String::format("grim%02d.gsv", slot);
+	}
+
+	SaveGame *savedState = SaveGame::openForLoading(filename);
+	if (!savedState || !savedState->isCompatible()) {
+		delete savedState;
+		return {};
+	}
+
+	SaveStateDescriptor desc(this, slot, Common::U32String());
+
+	// Grim stores a 250x188 screenshot, EMI a 160x120 one stretched to 256x128
+	const int width = isEMI ? 256 : 250;
+	const int height = isEMI ? 128 : 188;
+	if (savedState->hasSection('SIMG')) {
+		uint32 dataSize = savedState->beginSection('SIMG');
+		if (dataSize == (uint32)(width * height * 2)) {
+			Graphics::Surface screenshot;
+			screenshot.create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+			uint16 *pixels = (uint16 *)screenshot.getPixels();
+			for (int i = 0; i < width * height; i++)
+				pixels[i] = savedState->readLEUint16();
+			desc.setThumbnail(screenshot.scale(kThumbnailWidth, kThumbnailHeight2, true));
+			screenshot.free();
+		}
+		savedState->endSection();
+	}
+
+	uint32 descTag = platform == Common::kPlatformPS2 ? 'PS2S' : 'SUBS';
+	if (savedState->hasSection(descTag)) {
+		savedState->beginSection(descTag);
+		Common::String str = savedState->readString();
+		savedState->endSection();
+		desc.setDescription(str.c_str());
+	}
+
+	delete savedState;
+	return desc;
 }
 
 } // End of namespace Grim
