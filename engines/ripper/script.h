@@ -170,7 +170,6 @@ private:
 	bool _runtimeRestorePending;
 	Common::Array<Common::String> _playedScenes;
 	Common::String _previousInteractionSceneMediaPath;
-	byte _chooserTemplateMode;
 	Common::ScopedPtr<BriefingManager> _briefing;
 	Common::ScopedPtr<DialogueChooser> _dialogue;
 };

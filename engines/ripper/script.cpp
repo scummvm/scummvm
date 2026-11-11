@@ -240,7 +240,6 @@ SceneRuntimeState::SceneRuntimeState() : activeFrame(0), frontEndActionMask(0xff
 
 ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _demoScriptAbi(false),
 		_demoRuntimeComplete(false), _runtimeRestorePending(false),
-		_chooserTemplateMode(0),
 		_briefing(new BriefingManager(engine)), _dialogue(new DialogueChooser()) {
 }
 
@@ -687,10 +686,8 @@ ScriptManager::CallbackResult ScriptManager::dispatchSceneAction(const CompiledS
 	case kSceneActionInventory:
 		return openInventory(argument, true) ? kCallbackContinue : kCallbackFailed;
 	case kSceneActionSetChooserTemplateMode:
-		_chooserTemplateMode = 0;
-		debugC(2, kDebugScene,
-			"Ripper: scene action 30 captured active presentation templateMode=%u script='%s' offset=0x%x",
-			_chooserTemplateMode, script.getMemberName().c_str(), command.offset);
+		// The native action saves a media slot for the chooser. Scene text entry
+		// captures its backing directly from the active ScummVM display.
 		return kCallbackContinue;
 	case kSceneActionSetFrontEndActionMask:
 		_runtime.frontEndActionMask = (uint16)argument;
@@ -1078,15 +1075,13 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 				return kCallbackFailed;
 			}
 
-			const byte templateMode = _chooserTemplateMode;
-			_chooserTemplateMode = 0;
 			if (!context.idleMediaCallback->beginTextRequest(prompt, expected,
 					failureFrame, command.selector, commandIndex + 1))
 				return kCallbackFailed;
 			debugC(2, kDebugCyber,
-				"Ripper: suspended scene callback for text request script='%s' selector=%u layout=%u templateMode=%u resumeCommand=%u",
+				"Ripper: suspended scene callback for text request script='%s' selector=%u layout=%u resumeCommand=%u",
 				script.getMemberName().c_str(), command.selector, layoutVariant,
-				templateMode, commandIndex + 1);
+				commandIndex + 1);
 			return kCallbackSuspendedForText;
 		}
 
