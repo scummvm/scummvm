@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/menu.h"
+#include "ripper/ui/menu.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
@@ -36,7 +36,7 @@
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/settings.h"
-#include "ripper/toolbar.h"
+#include "ripper/ui/toolbar.h"
 
 namespace Ripper {
 

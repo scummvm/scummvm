@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/remote_control.h"
+#include "ripper/ui/remote_control.h"
 
 #include "common/debug.h"
 #include "common/system.h"

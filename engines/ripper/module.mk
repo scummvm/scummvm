@@ -23,12 +23,10 @@ MODULE_OBJS := \
 	media/scene_audio.o \
 	media/smacker_decoder.o \
 	media/video.o \
-	menu.o \
 	metaengine.o \
 	milestones.o \
 	modal/modal_dialog.o \
 	modal/presentation.o \
-	options_panel.o \
 	puzzles/board_arrangement.o \
 	puzzles/board_game.o \
 	puzzles/board_game_model.o \
@@ -60,7 +58,6 @@ MODULE_OBJS := \
 	puzzles/tarot_cards.o \
 	puzzles/tarot_cards_model.o \
 	puzzles/web_grid_shift.o \
-	remote_control.o \
 	resources.o \
 	ripper.o \
 	saveload.o \
@@ -76,7 +73,10 @@ MODULE_OBJS := \
 	scenes/tube_scene.o \
 	scenes/wofford_scene.o \
 	settings.o \
-	toolbar.o \
+	ui/menu.o \
+	ui/options_panel.o \
+	ui/remote_control.o \
+	ui/toolbar.o \
 	wac/broken_mug.o \
 	wac/database.o \
 	wac/database_catalog.o \

@@ -38,7 +38,7 @@
 #include "ripper/ripper.h"
 #include "ripper/scenes/ending_sequence.h"
 #include "ripper/settings.h"
-#include "ripper/toolbar.h"
+#include "ripper/ui/toolbar.h"
 
 namespace Ripper {
 

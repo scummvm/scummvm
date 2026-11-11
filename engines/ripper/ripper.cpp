@@ -39,7 +39,7 @@
 #include "ripper/input.h"
 #include "ripper/inventory.h"
 #include "ripper/media/media.h"
-#include "ripper/menu.h"
+#include "ripper/ui/menu.h"
 #include "ripper/milestones.h"
 #include "ripper/modal/modal_dialog.h"
 #include "ripper/puzzles/state.h"
@@ -47,7 +47,7 @@
 #include "ripper/media/scene_audio.h"
 #include "ripper/script/script.h"
 #include "ripper/settings.h"
-#include "ripper/toolbar.h"
+#include "ripper/ui/toolbar.h"
 #include "ripper/wac/wac.h"
 #include "ripper/world_map.h"
 

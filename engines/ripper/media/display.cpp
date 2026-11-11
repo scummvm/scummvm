@@ -33,7 +33,7 @@
 #include "ripper/ripper.h"
 #include "ripper/resources.h"
 #include "ripper/settings.h"
-#include "ripper/toolbar.h"
+#include "ripper/ui/toolbar.h"
 
 namespace Ripper {
 

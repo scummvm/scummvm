@@ -42,7 +42,7 @@
 #include "ripper/media/scene_audio.h"
 #include "ripper/script/scene_dispatcher.h"
 #include "ripper/settings.h"
-#include "ripper/toolbar.h"
+#include "ripper/ui/toolbar.h"
 #include "ripper/world_map.h"
 
 namespace Ripper {

@@ -34,7 +34,7 @@
 #include "ripper/media/scene_audio.h"
 #include "ripper/script/scene_dispatcher.h"
 #include "ripper/script/script.h"
-#include "ripper/toolbar.h"
+#include "ripper/ui/toolbar.h"
 
 namespace Ripper {
 

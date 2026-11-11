@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/options_panel.h"
+#include "ripper/ui/options_panel.h"
 
 #include "common/debug.h"
 #include "common/ptr.h"
@@ -33,7 +33,7 @@
 #include "ripper/media/media.h"
 #include "ripper/modal/modal_dialog.h"
 #include "ripper/ripper.h"
-#include "ripper/toolbar.h"
+#include "ripper/ui/toolbar.h"
 
 namespace Ripper {
 

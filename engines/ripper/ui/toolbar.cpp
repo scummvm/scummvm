@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/toolbar.h"
+#include "ripper/ui/toolbar.h"
 
 #include "common/debug.h"
 #include "common/system.h"
@@ -30,8 +30,8 @@
 #include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/modal/modal_dialog.h"
-#include "ripper/options_panel.h"
-#include "ripper/remote_control.h"
+#include "ripper/ui/options_panel.h"
+#include "ripper/ui/remote_control.h"
 #include "ripper/ripper.h"
 #include "ripper/script/script.h"
 #include "ripper/settings.h"

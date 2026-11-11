@@ -33,7 +33,7 @@
 #include "ripper/modal/modal_dialog.h"
 #include "ripper/puzzles/state.h"
 #include "ripper/ripper.h"
-#include "ripper/toolbar.h"
+#include "ripper/ui/toolbar.h"
 
 namespace Ripper {
 
