@@ -87,9 +87,7 @@ struct TimedAnimationChannel {
  */
 class RealtimeAnimationTracks {
 public:
-	enum {
-		kInvalidTrack = 0xffffffff
-	};
+	static constexpr uint kInvalidTrack = 0xffffffff;
 
 	explicit RealtimeAnimationTracks(SceneLayerStack &layers) :
 			_layers(layers) {

@@ -108,9 +108,7 @@ struct SceneLayerSpec {
  */
 class SceneLayerStack {
 public:
-	enum {
-		kInvalidLayer = 0xffffffff
-	};
+	static constexpr uint kInvalidLayer = 0xffffffff;
 
 	void clear() {
 		_layers.clear();
