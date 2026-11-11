@@ -27,6 +27,8 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
+#include "tesoro/core/streamutil.h"
+
 namespace Tesoro {
 
 static const uint32 kHeaderSize = 0xc;
@@ -38,10 +40,6 @@ static const uint32 kMaxExtra = 0x1000;
 Level::~Level() {
 	for (uint i = 0; i < _owned.size(); ++i)
 		delete _owned[i];
-}
-
-static bool readExactly(Common::SeekableReadStream &s, byte *buf, uint32 size) {
-	return size == 0 || s.read(buf, size) == size;
 }
 
 bool Level::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, int32 now) {

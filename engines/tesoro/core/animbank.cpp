@@ -24,6 +24,8 @@
 #include "common/endian.h"
 #include "common/textconsole.h"
 
+#include "tesoro/core/streamutil.h"
+
 namespace Tesoro {
 
 static const uint32 kFileHeaderSize = 0x18;
@@ -33,13 +35,6 @@ enum {
 	kStepDwords = 2, // step contains raw 32-bit dwords
 	kStepPoints = 4  // step contains points (x | y << 16) and a scale
 };
-
-/**
- * Returns true if read size bytes successfully, false otherwise.
- */
-static bool readExactly(Common::SeekableReadStream &s, byte *buf, uint32 size) {
-	return size == 0 || s.read(buf, size) == size;
-}
 
 bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode) {
 	*this = AnimBank();
