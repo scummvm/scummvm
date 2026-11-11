@@ -48,6 +48,19 @@ class ZmbReleaseInfo;
 /** Provide release-specific strings, credits, fonts, text encoding, and Zoombini names. */
 class ZoombiniText : private Common::NonCopyable {
 public:
+	/** Available methods for assigning newly generated Zoombini names. */
+	enum class NameGenMode {
+		/** Generate Latin names procedurally from syllable tables. */
+		kLatin,
+		/** Draw Korean names from STRL resources without repeating IDs within a cycle. */
+		kKorean,
+		/**
+		 * Generate halfwidth katakana names procedurally from syllable tables.
+		 * Can return a fixed Kanji or fullwidth katakana name as a debug feature.
+		 */
+		kJapanese
+	};
+
 	/** Load localized text sources and fonts for the engine's release. */
 	explicit ZoombiniText(MohawkEngine_Zoombini *vm);
 	/** Release loaded fonts, strings, and name caches. */
@@ -290,6 +303,13 @@ public:
 		kSvmDialogBodyCannotLoadSave,
 		kSvmDialogBodyCannotSaveNameEncoding,
 		kSvmDialogBodyAskRegenerateZoombiniNames,
+		/**
+		 * Some releases support language switching in binary, but does not have required archives.
+		 * In that case, this message should be shown.
+		 */
+		kSvmDialogBodyLangSwitchUnsupported,
+		/** Report missing or unreadable MHK archives required for the selected language. */
+		kSvmDialogBodyLangSwitchMissingArchives,
 	};
 
 	/** One paragraph of localized credit text. */
@@ -405,14 +425,20 @@ public:
 	 * Korean: draws each of the 625 STRL name IDs once per cycle, then clears the draw history.
 	 * Japanese: generates halfwidth katakana or returns the requested fixed name.
 	 *
-	 * Ctrl+M selects Latin generation instead; fixed-name requests then have no effect.
+	 * In v1.0JP, Ctrl+M toggles Japanese or Latin generation for future names.
 	 */
 	Common::U32String pickNextZoombiniName(JPFixedNameKind requestedFixedName);
-	/** Toggle Japanese versus Latin procedural names and return the selected Japanese-name state. */
-	bool toggleJapaneseNames() {
-		_useJapaneseNames = !_useJapaneseNames;
-		return _useJapaneseNames;
-	}
+	/** Select the release's default mode after its system archive has been loaded. */
+	void initNameGenMode();
+	/** Return the selected mode retained across language changes, independently of the active language. */
+	NameGenMode getNameGenMode() const { return _nameGenMode; }
+	/**
+	 * Select a supported mode for future names, retaining the previous selection if unsupported.
+	 * Existing names and the game language remain unchanged; the system archive must be loaded.
+	 */
+	void setNameGenMode(NameGenMode mode);
+	/** Resolve the selected mode for the active language and loaded resources, falling back to Latin generation. */
+	NameGenMode resolveNameGenMode() const;
 
 	/** Generate a Latin Zoombini name procedurally from syllable tables. */
 	Common::U32String generateLatinZoombiniName();
@@ -455,6 +481,8 @@ private:
 	static bool isKanaInJapaneseNameTable(char32_t character, const char32_t *table);
 	/** Recognize any possible Japanese generator output, including fixed names, pair extension and early termination. */
 	static bool isGeneratedJapaneseZoombiniName(const Common::U32String &name);
+	/** Return whether the loaded system resources contain the Korean STRL name pool. */
+	bool hasKoreanNamePool() const;
 	/** Read one Korean name by ID, reusing the same resource cache as random name generation. */
 	Common::U32String getKoreanZoombiniNameById(uint16 nameId);
 
@@ -496,6 +524,38 @@ private:
 	};
 	/** Return the configured rendering mode for original Macintosh fonts. */
 	Graphics::TTFRenderMode getConfiguredMacFontRenderMode() const;
+
+	/** STRL resource IDs in the TEXTSTR.MHK archive for v1.xEU family. */
+	enum TextStrResourceId : int16 {
+		/** Version information. */
+		kStrl1040_VersionInfo = 1040,
+		/** Page names. */
+		kStrl2000_PageNames = 2000,
+		/** Journey stats and practice instructions. */
+		kStrl2002_JourneyStats = 2002,
+		/** Level related strings. */
+		kStrl2004_Levels = 2004,
+		/** Names of the four journey routes. */
+		kStrl2006_RouteNames = 2006,
+		/** Town population in XFER. */
+		kStrl2008_TownPopulation = 2008,
+		/** Month names used by memorial cards. */
+		kStrl2010_MemorialMonthNames = 2010,
+		/** Achieved level and date in memorial cards */
+		kStrl2012_MemorialMilestones = 2012,
+		/** Honor message in memorial cards, indexed by each buildings. */
+		kStrl2014_MemorialHonors = 2014,
+		/** Achievement descriptions in memorial cards, indexed by route and levels. */
+		kStrl2016_MemorialBodies = 2016,
+		/** Dialog texts. */
+		kStrl2018_Dialog = 2018,
+		/** First part of the ordered credit paragraphs. */
+		kStrl2020_CreditsPart1 = 2020,
+		/** Second part of the ordered credit paragraphs. */
+		kStrl2021_CreditsPart2 = 2021,
+		/** Notifications texts. */
+		kStrl2023_Noti = 2023
+	};
 
 	/** Internal STRL text-table metadata. */
 	struct ResTextEntry {
@@ -724,19 +784,8 @@ private:
 		bool decodeMacRomanUmlautByte9F = false;
 	};
 
-	/** One localized replacement and its release applicability. */
-	struct StringOverride {
-		/** Replacement text; null only in a default-constructed map value. */
-		const char32_t *text;
-		/** Keep the executable's text when running v2.0US, v2.0PL, or v2.0US Demo. */
-		bool preserveTlcText;
-
-		/** Create a replacement, or an empty value for HashMap initialization. */
-		constexpr StringOverride(const char32_t *replacementText = nullptr, bool keepTlcText = false)
-			: text(replacementText), preserveTlcText(keepTlcText) {}
-	};
-	/** Available translations for one text key, indexed by language. */
-	typedef Common::HashMap<Common::Language, StringOverride, Common::Hash<int>> LanguageStringOverrides;
+	/** UTF-32 replacements for one text key, indexed by language. */
+	typedef Common::HashMap<Common::Language, const char32_t *, Common::Hash<int>> LanguageStringOverrides;
 	/** Localized replacements indexed first by text key, then by language. */
 	typedef Common::HashMap<Key, LanguageStringOverrides, Common::Hash<uint32>> StringOverrideMap;
 
@@ -766,12 +815,12 @@ private:
 	static constexpr uint32 kEuropeGECreditEntryCount = 291;
 	/** Anchor for flat v1.x executable credit string sequences. */
 	static constexpr const char *const kExeCreditParagraphsAnchor = "PRODUCT CONCEPT AND DESIGN";
-	/** Anchor for the Spanish v1.0 executable credit string sequence. */
+	/** Anchor for the v1.0ES executable credit string sequence. */
 	static constexpr const char *const kExeSpanishCreditParagraphsAnchor = "CONCEPTO Y DISE\xD1O";
-	/** Anchor for the Portuguese v1.0 executable credit string sequence. */
+	/** Anchor for the v1.0PT executable credit string sequence. */
 	static constexpr const char *const kExePortugueseCreditParagraphsAnchor = "CRIA\xC7\xC3O E DESIGN DO PRODUTO";
-	/** Europe TEXTSTR.MHK STRL key-resource-index map. */
-	static const ResTextEntry kV10EU_ResTextEntries[];
+	/** STRL key-resource-index map shared by all releases using TEXTSTR.MHK. */
+	static const ResTextEntry kV1xEUFamily_ResTextEntries[];
 	/** v1.0BR NE Key-address-size map. */
 	static const ExeTextEntry kV10BR_NETextEntries[];
 	/** v1.0BR Win16 demo Key-address-size map. */
@@ -792,6 +841,12 @@ private:
 	static const ExeTextEntry kV10IT_NETextEntries[];
 	/** v1.0JP PE32 default-game name and name-mode notifications. */
 	static const ExeTextEntry kV10JP_PETextEntries[];
+	/** English default-game name in the Japanese retail PE32 executable. */
+	static const ExeTextEntry kV10JP_PEEnglishTextTable[];
+	/** French default-game name in the Japanese retail PE32 executable. */
+	static const ExeTextEntry kV10JP_PEFrenchTextTable[];
+	/** German default-game name in the Japanese retail PE32 executable. */
+	static const ExeTextEntry kV10JP_PEGermanTextTable[];
 	/** Japanese Windows v1.0 demo default-game name and name-mode notifications. */
 	static const ExeTextEntry kV10JPDemo_PETextEntries[];
 	/** Japanese Macintosh v1.0 demo strings in the original MacBinary executable. */
@@ -828,6 +883,12 @@ private:
 	static const ExeTextEntry kV11GEMacTextEntries[];
 	/** v1.0 Japanese Macintosh 68K retail text at A5-relative offsets in expanded DATA 0. */
 	static const ExeTextEntry kV10JPMacTextEntries[];
+	/** English default-game name in the Japanese retail Macintosh expanded A5 globals. */
+	static const ExeTextEntry kV10JPMacEnglishTextTable[];
+	/** French default-game name in the Japanese retail Macintosh expanded A5 globals. */
+	static const ExeTextEntry kV10JPMacFrenchTextTable[];
+	/** German default-game name in the Japanese retail Macintosh expanded A5 globals. */
+	static const ExeTextEntry kV10JPMacGermanTextTable[];
 	/** USv2.0 Macintosh PPC PEF text in the expanded data section. */
 	static const ExeTextEntry kV20USMacTextEntries[];
 	/** USv2.0 Macintosh PPC code literals at raw executable-file offsets. */
@@ -881,8 +942,8 @@ private:
 	 * Look up the selected language, falling back to English when no applicable translation exists.
 	 */
 	void applyStringOverrides(const ZmbReleaseInfo &relInfo);
-	/** Build the key-to-language replacement map used by @ref ZoombiniText::applyStringOverrides. */
-	static StringOverrideMap createStringOverrides();
+	/** Build replacements applicable to this release for @ref ZoombiniText::applyStringOverrides. */
+	static StringOverrideMap createStringOverrides(const ZmbReleaseInfo &relInfo);
 	/** Consume detector layout/package distinctions once to select text and font sources without reading files. */
 	static SourceSettings createSourceSettings(const ZmbReleaseInfo &relInfo, uint32 detectedFeatures);
 	/** Load mapped TEXTSTR.MHK strings and archive credits using the selected source settings. */
@@ -1030,8 +1091,8 @@ private:
 	MohawkEngine_Zoombini *_vm;
 	/** Engine-owned immutable release identity, which outlives this text service. */
 	const ZmbReleaseInfo &_relInfo;
-	/** Session-wide Japanese procedural-name selection, toggled with Ctrl+M. */
-	bool _useJapaneseNames = true;
+	/** Selected name-generation mode. */
+	NameGenMode _nameGenMode = NameGenMode::kLatin;
 	/** Cached code page used to decode Zoombini executable strings (EXE). */
 	Common::CodePage _exeCodePage;
 	/** Cached code page used to decode Zoombini string resources (STRL). */

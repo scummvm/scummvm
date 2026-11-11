@@ -3628,6 +3628,7 @@ bool ZoombiniConsole::Cmd_ManShortcuts(int argc, const char **argv) {
 
 	debugPrintf("Zoombinis keyboard shortcut help manual\n");
 	debugPrintf("Modifier note: ScummVM currently recognizes Ctrl for the original Ctrl/Command shortcuts.\n");
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
 
 	debugPrintf("\n[General Commands]\n");
 	debugPrintf("  '/' or '?'  Open the Options dialog\n");
@@ -3643,12 +3644,14 @@ bool ZoombiniConsole::Cmd_ManShortcuts(int argc, const char **argv) {
 	debugPrintf("  Ctrl+Q      Quit\n");
 	printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionQuit);
 
-	debugPrintf("\n[Options Toggles]\n");
-	debugPrintf("  Ctrl+D      Toggle dialog, sound effects, and Zoombini voices\n");
+	debugPrintf("\n[Options Dialog Toggles]\n");
+	debugPrintf("  %-11s Toggle dialog, sound effects, and Zoombini voices\n", formatShortcutKeys(ZmbReleaseInfo::ShortcutKind::kOptionsSound).c_str());
 	printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleDialogAndSfx);
-	debugPrintf("  Ctrl+B      Toggle background music\n");
+	debugPrintf("  %-11s Toggle background music\n", formatShortcutKeys(ZmbReleaseInfo::ShortcutKind::kOptionsMusic).c_str());
 	printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleMusic);
-	debugPrintf("  Ctrl+J      Toggle Sticky Mouse\n");
+	if (relInfo.getShortcutLayout() == ZmbReleaseInfo::ShortcutLayout::kEurope && !ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixSwappedSoundMusicShortcuts))
+		debugPrintf("      Sound and music assignments are swapped during gameplay.\n");
+	debugPrintf("  %-11s Toggle Sticky Mouse\n", formatShortcutKeys(ZmbReleaseInfo::ShortcutKind::kStickyMouse).c_str());
 	printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleStickyMouse);
 	debugPrintf("  Ctrl+U      Toggle Auto Sticky Mouse\n");
 	printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleAutoStickyMouse);
@@ -3658,9 +3661,28 @@ bool ZoombiniConsole::Cmd_ManShortcuts(int argc, const char **argv) {
 	printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleLessMoreAction);
 	debugPrintf("  Ctrl+H      Hide or show the cursor\n");
 	printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleCursor);
-	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
-		debugPrintf("  Ctrl+M      Toggle Japanese/Latin Zoombini name generation\n");
+	if (relInfo.isJapaneseRelease()) {
+		debugPrintf("  Ctrl+M      Toggle Japanese/Latin generation for new Zoombini names\n");
 		printShortcutRemapping(MohawkMetaEngine_Zoombini::kActionToggleJapaneseNames);
+		debugPrintf("      Active only in Japanese; existing names and the game language are unchanged.\n");
+	}
+
+	if (relInfo.hasLangSwitch()) {
+		debugPrintf("\n[Language Switching]\n");
+		const char *langStr;
+		if (relInfo.isJapaneseRelease())
+			langStr = "Request German/English/French/Japanese, respectively";
+		else
+			langStr = "Request German/English/French, respectively";
+		debugPrintf("  %-11s %s\n", formatShortcutKeys(ZmbReleaseInfo::ShortcutKind::kLangSwitch).c_str(), langStr);
+		debugPrintf("      A successful switch starts a new journey; switching is unavailable in Practice Mode.\n");
+		if (!relInfo.hasMultipleLangResources())
+			debugPrintf("      This package lacks other language resources; confirming shows an unavailable-language notice.\n");
+		if (relInfo.isJapaneseRelease())
+			debugPrintf("      The next launch starts in Japanese; these keys do not select a name-generation mode.\n");
+	} else if (relInfo.getShortcutLayout() == ZmbReleaseInfo::ShortcutLayout::kItalian) {
+		debugPrintf("\n[Language Switching]\n");
+		debugPrintf("  %-11s Reserved keys; the Italian release performs no language change\n", formatShortcutKeys(ZmbReleaseInfo::ShortcutKind::kLangSwitch).c_str());
 	}
 
 	debugPrintf("\n[Help Shortcuts]\n");
@@ -3890,6 +3912,17 @@ bool ZoombiniConsole::hasHelpOption(int argc, const char **argv) {
 void ZoombiniConsole::printHelpOption() {
 	debugPrintf("  -h, --help  Show this help text and exit.\n");
 	debugPrintf("\n");
+}
+
+Common::String ZoombiniConsole::formatShortcutKeys(ZmbReleaseInfo::ShortcutKind kind) const {
+	const Common::Array<Common::KeyCode> &keys = ZmbReleaseInfo::getShortcutKeys(kind, _vm->getRelInfo().getShortcutLayout());
+	Common::String keyNames;
+	for (Common::KeyCode key : keys) {
+		if (!keyNames.empty())
+			keyNames += ", ";
+		keyNames += Common::String::format("Ctrl+%c", static_cast<char>('A' + key - Common::KEYCODE_a));
+	}
+	return keyNames;
 }
 
 void ZoombiniConsole::printShortcutRemapping(const char *actionId) {

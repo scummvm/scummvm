@@ -177,13 +177,16 @@ bool MohawkEngine_Zoombini::tryAddZoombiniIsoRootSearchPath(const Common::FSNode
 
 MohawkEngine_Zoombini::MohawkEngine_Zoombini(OSystem *syst, const MohawkGameDescription *gameDesc)
 	: MohawkEngine(syst, gameDesc), _relInfo(*gameDesc) {
-	// Multilingual EU releases have UNK_LANG in the detector.
-	if (_relInfo.isMultilingualRelease()) {
-		Common::Language language = Common::parseLanguage(ConfMan.get("language"));
-		// Convert EN_ANY to EN_GRB, as English for this release is specific to the British (v1.xBR).
+	// Japanese packages always start in their detected language; their switches are session-only.
+	// Other multilingual EU releases use the target's language setting.
+	if (_relInfo.hasLauncherLangSelection()) {
+		Common::Language language = Common::UNK_LANG;
+		if (ConfMan.hasKey("language"))
+			language = Common::parseLanguage(ConfMan.get("language"));
+		// Convert EN_ANY to EN_GRB, as English for these releases is specific to the British (v1.xBR).
 		if (language == Common::EN_ANY)
 			language = Common::EN_GRB;
-		if (!ZmbReleaseInfo::isMultilingualReleaseLanguage(language))
+		if (!_relInfo.isMultilingualReleaseLang(language))
 			language = Common::EN_GRB;
 		_relInfo.setLanguage(language);
 	}
@@ -253,6 +256,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 
 	// Load system MHK archives.
 	_sysMhk = loadSystemArchive();
+	_text->initNameGenMode();
 	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) { // v2.0TLC
 		_helpMhk = loadHelpArchive();
 		if (!_relInfo.isDemo())
@@ -323,30 +327,21 @@ Common::Error MohawkEngine_Zoombini::run() {
 }
 
 void MohawkEngine_Zoombini::selectArchiveRoot() {
-	const Common::Language lang = _relInfo.getLanguage();
-	_mhkArchiveRoot = ZMB_MHK_ROOT_GENERIC;
-	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x)) {
-		switch (lang) {
-		case Common::EN_GRB:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_GB;
-			break;
-		case Common::FR_FRA:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_FR;
-			break;
-		case Common::DE_DEU:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_GE;
-			break;
-		case Common::IT_ITA:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_IT;
-			break;
-		case Common::JA_JPN:
-			_mhkArchiveRoot = ZMB_MHK_ROOT_LANG_JP;
-			break;
-		default:
-			error("engine: unsupported language for v1.x Europe variant: %s", Common::getLanguageLocale(lang));
-			break;
-		}
+	_mhkArchiveRoot = _relInfo.getArchiveRoot(_relInfo.getLanguage());
+}
+
+bool MohawkEngine_Zoombini::hasLanguageArchives(Common::Language lang) const {
+	const Common::Path root(_relInfo.getArchiveRoot(lang));
+	const char *const archiveNames[] = {
+		MohawkMetaEngine_Zoombini::getMidiArchiveName(_midiSoundtrackKind),
+		ZMB_MHK_ZOOMBINI,
+		ZMB_MHK_TEXTSTR};
+	for (const char *archiveName : archiveNames) {
+		MohawkArchive archive;
+		if (!archive.openFile(root.append(archiveName)))
+			return false;
 	}
+	return true;
 }
 
 void MohawkEngine_Zoombini::loadSystemShapeOffsets() {
@@ -996,13 +991,12 @@ Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	// We cannot use _vm instance here, as this function is called from MetaEngine.
 	const String guiOptions = ConfMan.get("guioptions", target);
 	const String extra = ConfMan.get("extra", target);
-	const Language lang = parseLanguage(ConfMan.get("language", target));
-	const bool isV1xEurope = ZmbReleaseInfo::isExtraFamily(extra, ZmbReleaseInfo::Family::kEuropeV1x);
+	const ZmbReleaseInfo::ShortcutLayout layout = ZmbReleaseInfo::getShortcutLayout(extra);
 
 	// Remapping actions keep Options semantics even when the original gameplay shortcuts are selected.
-	const Array<KeyCode> &keysSound = ZmbReleaseInfo::getShortcutKeys(ZmbReleaseInfo::ShortcutKind::kOptionsSound, isV1xEurope, lang);
-	const Array<KeyCode> &keysMusic = ZmbReleaseInfo::getShortcutKeys(ZmbReleaseInfo::ShortcutKind::kOptionsMusic, isV1xEurope, lang);
-	const Array<KeyCode> &keysStickyMouse = ZmbReleaseInfo::getShortcutKeys(ZmbReleaseInfo::ShortcutKind::kStickyMouse, isV1xEurope, lang);
+	const Array<KeyCode> &keysSound = ZmbReleaseInfo::getShortcutKeys(ZmbReleaseInfo::ShortcutKind::kOptionsSound, layout);
+	const Array<KeyCode> &keysMusic = ZmbReleaseInfo::getShortcutKeys(ZmbReleaseInfo::ShortcutKind::kOptionsMusic, layout);
+	const Array<KeyCode> &keysStickyMouse = ZmbReleaseInfo::getShortcutKeys(ZmbReleaseInfo::ShortcutKind::kStickyMouse, layout);
 
 	Keymap *defaultKeymap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymappings"));
 	defaultKeymap->setPartialMatchAllowed(false);
@@ -1132,8 +1126,9 @@ Common::KeymapArray MohawkEngine_Zoombini::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("C+h");
 	shortcutKeymap->addAction(act);
 
-	if (guiOptions.contains(getGameGUIOptionsDescriptionLanguage(JA_JPN))) {
-		act = new Action(MohawkMetaEngine_Zoombini::kActionToggleJapaneseNames, _c("Toggle Japanese names", "zoombini-keymap"));
+	if (guiOptions.contains(getGameGUIOptionsDescriptionLanguage(JA_JPN))) { // v1.0JP only
+		// Ctrl+M toggles future name generation language (Japanese vs Latin); Ctrl+D/E/F/J changes the game language.
+		act = new Action(MohawkMetaEngine_Zoombini::kActionToggleJapaneseNames, _c("Toggle Japanese/Latin name generation", "zoombini-keymap"));
 		act->setKeyEvent(KeyState(KEYCODE_m, 'm', KBD_CTRL));
 		act->addDefaultInputMapping("C+m");
 		shortcutKeymap->addAction(act);
@@ -1326,16 +1321,7 @@ MohawkArchive *MohawkEngine_Zoombini::loadMidiArchive() {
 		_midiMhk = nullptr;
 	}
 
-	const char *archiveName;
-	switch (midiSoundtrack) {
-	case MohawkMetaEngine_Zoombini::MidiSoundtrack::kMacintosh:
-		archiveName = ZMB_MHK_MIDIMAC;
-		break;
-	case MohawkMetaEngine_Zoombini::MidiSoundtrack::kWindowsMPC:
-	default:
-		archiveName = ZMB_MHK_MIDIMPC;
-		break;
-	}
+	const char *archiveName = MohawkMetaEngine_Zoombini::getMidiArchiveName(midiSoundtrack);
 	const Common::Path archivePath = Common::Path(_mhkArchiveRoot).append(archiveName);
 
 	MohawkArchive *mhkArchive = new MohawkArchive();
@@ -1395,7 +1381,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		updateImeCompositionState();
 	}
 	_gfx->clearScreens();
-	
+
 	// GraphicsManager's page-image caches are keyed only by the 16-bit resource id.
 	// Page archives reuse those ids, so invalidate both page tBMP caches between page replacement.
 	// @ref ZoombiniGraphics keeps system-archive images in separate caches.
@@ -1578,7 +1564,7 @@ Common::Language MohawkEngine_Zoombini::getLanguage() const {
 }
 
 void MohawkEngine_Zoombini::requestLanguageSwitch(Common::Language destLang) {
-	if (!_relInfo.isMultilingualRelease() || destLang == getLanguage())
+	if (!_relInfo.hasLangSwitch() || destLang == getLanguage())
 		return;
 	if (hasDialogOpened() || !_pageQueue.empty() || shouldQuit())
 		return;
@@ -1600,6 +1586,17 @@ void MohawkEngine_Zoombini::requestLanguageSwitch(Common::Language destLang) {
 	if (result != ZoombiniDialogResult::kYes || shouldQuit())
 		return;
 
+	ZoombiniText::Key failureKey = ZoombiniText::kNone;
+	if (!_relInfo.hasMultipleLangResources())
+		failureKey = ZoombiniText::kSvmDialogBodyLangSwitchUnsupported;
+	else if (!hasLanguageArchives(destLang))
+		failureKey = ZoombiniText::kSvmDialogBodyLangSwitchMissingArchives;
+	if (failureKey != ZoombiniText::kNone) {
+		const Common::U32String msgStr = _text->getLocalizedString(failureKey);
+		loadModalDialog(new ZoombiniDialogMsgBox(this, msgStr));
+		return;
+	}
+
 	_pendingLangSwitch = destLang;
 	// The EU release replays the title movie before opening a fresh Picker.
 	setNextPage(ZoombiniPageType::kLogo);
@@ -1611,6 +1608,7 @@ void MohawkEngine_Zoombini::applyPendingLanguageSwitch() {
 	assert(!_activePage && _dialogPageStack.empty());
 	const Common::Language language = _pendingLangSwitch;
 	_pendingLangSwitch = Common::UNK_LANG;
+	const ZoombiniText::NameGenMode nameGenerationMode = _text->getNameGenMode();
 
 	// Stop playback and release the previous language's MIDI archive and text/font state.
 	_video->stopVideos();
@@ -1628,14 +1626,18 @@ void MohawkEngine_Zoombini::applyPendingLanguageSwitch() {
 	delete _sysMhk;
 	_sysMhk = nullptr;
 
-	// Select the new resource directory and rebuild archives, shape offsets, text and fonts.
+	// Select the new resource directory and reload archives, shape offsets, text and fonts.
 	if (!_relInfo.setLanguage(language))
 		error("engine: invalid pending language change");
 	selectArchiveRoot();
-	_sysMhk = loadSystemArchive();
+
+	// Reload MIDI first, preserving the behavior of original releases.
 	loadMidiArchive();
+	_sysMhk = loadSystemArchive();
 	loadSystemShapeOffsets();
 	_text = new ZoombiniText(this);
+	_text->initNameGenMode();
+	_text->setNameGenMode(nameGenerationMode);
 
 	// Reload cursor resources from the new system archive.
 	delete _cursor;
@@ -1650,13 +1652,14 @@ void MohawkEngine_Zoombini::applyPendingLanguageSwitch() {
 	_builtinMidiTestMode = false;
 	_state->resetForNewGame();
 
-	// (v1.xEU only)
-	// Persist the selection in the active game target for subsequent launches.
-	Common::Language configLanguage = language;
-	if (configLanguage == Common::EN_GRB) // Normalize EN_GRB into EN_ANY.
-		configLanguage = Common::EN_ANY;
-	ConfMan.set("language", Common::getLanguageCode(configLanguage));
-	ConfMan.flushToDisk();
+	// Japanese packages return to Japanese on the next launch without changing the target setting.
+	if (_relInfo.hasLauncherLangSelection()) {
+		Common::Language configLanguage = language;
+		if (configLanguage == Common::EN_GRB) // Normalize EN_GRB into EN_ANY.
+			configLanguage = Common::EN_ANY;
+		ConfMan.set("language", Common::getLanguageCode(configLanguage));
+		ConfMan.flushToDisk();
+	}
 	debugC(1, kDebugPage02, "engine: changed language to %s", Common::getLanguageCode(language));
 }
 

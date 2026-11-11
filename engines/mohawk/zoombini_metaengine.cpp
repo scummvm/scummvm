@@ -21,6 +21,7 @@
 
 #include "mohawk/zoombini_metaengine.h"
 #include "mohawk/detection.h"
+#include "mohawk/zoombini_resource.h"
 
 #include "common/config-manager.h"
 #include "common/keyboard.h"
@@ -30,27 +31,58 @@
 
 Mohawk::ZmbReleaseInfo::ZmbReleaseInfo(const MohawkGameDescription &gameDesc)
 	: _features(gameDesc.features), _lang(gameDesc.desc.language), _platform(gameDesc.desc.platform), _isDemo((gameDesc.desc.flags & ADGF_DEMO) != 0),
-	  _isMultilingual(_lang == Common::UNK_LANG && !_isDemo && (_features & (GF_ZMB_10_EU | GF_ZMB_11_EU)) != 0) {
-	if (_lang == Common::UNK_LANG && !_isMultilingual)
+	  _hasMultipleLangResources(!_isDemo && (isJapaneseRelease() || (_lang == Common::UNK_LANG && (_features & (GF_ZMB_10_EU | GF_ZMB_11_EU)) != 0))),
+	  _shortcutLayout(getShortcutLayout(gameDesc.desc.extra ? gameDesc.desc.extra : "")) {
+	if (_lang == Common::UNK_LANG && !_hasMultipleLangResources)
 		error("ZmbReleaseInfo: single-language release cannot have a value of UNK_LANG");
 }
 
-bool Mohawk::ZmbReleaseInfo::isMultilingualReleaseLanguage(Common::Language lang) {
+bool Mohawk::ZmbReleaseInfo::hasLangSwitch() const {
+	// Japanese demos and French 2002 retain the commands, but does not have other language archives.
+	return isJapaneseRelease() || (!_isDemo && (_hasMultipleLangResources || (_features & GF_ZMB_11_FR_2002) != 0));
+}
+
+bool Mohawk::ZmbReleaseInfo::isJapaneseRelease() const {
+	return (_features & GF_ZMB_10_JP) != 0;
+}
+
+bool Mohawk::ZmbReleaseInfo::isMultilingualReleaseLang(Common::Language lang) const {
 	switch (lang) {
 	case Common::EN_GRB:
 	case Common::FR_FRA:
 	case Common::DE_DEU:
 		return true;
+	case Common::JA_JPN:
+		return isJapaneseRelease();
 	default:
 		return false;
 	}
 }
 
 bool Mohawk::ZmbReleaseInfo::setLanguage(Common::Language lang) {
-	if (!isMultilingualRelease() || !isMultilingualReleaseLanguage(lang))
+	if (!hasMultipleLangResources() || !isMultilingualReleaseLang(lang))
 		return false;
 	_lang = lang;
 	return true;
+}
+
+const char *Mohawk::ZmbReleaseInfo::getArchiveRoot(Common::Language lang) const {
+	if (!isFamily(Family::kEuropeV1x))
+		return ZMB_MHK_ROOT_GENERIC;
+	switch (lang) {
+	case Common::EN_GRB:
+		return ZMB_MHK_ROOT_LANG_GB;
+	case Common::FR_FRA:
+		return ZMB_MHK_ROOT_LANG_FR;
+	case Common::DE_DEU:
+		return ZMB_MHK_ROOT_LANG_GE;
+	case Common::IT_ITA:
+		return ZMB_MHK_ROOT_LANG_IT;
+	case Common::JA_JPN:
+		return ZMB_MHK_ROOT_LANG_JP;
+	default:
+		error("ZmbReleaseInfo: unsupported language for v1.x Europe variant: %s", Common::getLanguageLocale(lang));
+	}
 }
 
 Common::CodePage Mohawk::ZmbReleaseInfo::getExeCodePage(Common::Language lang, Common::Platform platform) {
@@ -153,6 +185,17 @@ Mohawk::MohawkMetaEngine_Zoombini::MidiSoundtrack Mohawk::MohawkMetaEngine_Zoomb
 	}
 }
 
+const char *Mohawk::MohawkMetaEngine_Zoombini::getMidiArchiveName(MidiSoundtrack soundtrack) {
+	switch (soundtrack) {
+	case MidiSoundtrack::kWindowsMPC:
+		return ZMB_MHK_MIDIMPC;
+	case MidiSoundtrack::kMacintosh:
+		return ZMB_MHK_MIDIMAC;
+	default:
+		error("Invalid MIDI Soundtrack kind: %d", static_cast<int>(soundtrack));
+	}
+}
+
 bool Mohawk::MohawkMetaEngine_Zoombini::getFixedMidiSoundtrack(Common::Platform platform, Common::Language lang, bool isDemo, bool isUsV10, MidiSoundtrack &soundtrack) {
 	switch (platform) {
 	case Common::kPlatformMacintosh:
@@ -214,7 +257,18 @@ bool Mohawk::ZmbReleaseInfo::isV1() const {
 	return isFamily(Family::kUsV10) || isFamily(Family::kEuropeV1x) || isFamily(Family::kUsV11);
 }
 
-const Common::Array<Common::KeyCode> &Mohawk::ZmbReleaseInfo::getShortcutKeys(ShortcutKind kind, bool isV1xEurope, Common::Language lang, bool fixSwappedSoundMusic) {
+Mohawk::ZmbReleaseInfo::ShortcutLayout Mohawk::ZmbReleaseInfo::getShortcutLayout(const Common::String &extra) {
+	if (!isExtraFamily(extra, Family::kEuropeV1x))
+		return ShortcutLayout::kUs;
+	if (extra.hasPrefix("v1.0JP"))
+		return ShortcutLayout::kJapanese;
+	if (extra.hasPrefix("v1.0IT"))
+		return ShortcutLayout::kItalian;
+	return ShortcutLayout::kEurope;
+}
+
+const Common::Array<Common::KeyCode> &Mohawk::ZmbReleaseInfo::getShortcutKeys(ShortcutKind kind, ShortcutLayout layout, bool fixSwappedSoundMusic) {
+	const bool isV1xEurope = layout != ShortcutLayout::kUs;
 	static const Common::Array<Common::KeyCode> kNone;
 	static const Common::Array<Common::KeyCode> kB = {Common::KEYCODE_b};
 	static const Common::Array<Common::KeyCode> kBAndV = {Common::KEYCODE_b, Common::KEYCODE_v};
@@ -239,41 +293,41 @@ const Common::Array<Common::KeyCode> &Mohawk::ZmbReleaseInfo::getShortcutKeys(Sh
 	case ShortcutKind::kOptionsSound:
 		if (!isV1xEurope)
 			return kD;
-		if (lang == Common::IT_ITA) {
+		if (layout == ShortcutLayout::kItalian) {
 			return kVAndB;
-		} else if (lang == Common::JA_JPN) {
+		} else if (layout == ShortcutLayout::kJapanese) {
 			return kY;
 		} else {
 			return kBAndV;
 		}
 	case ShortcutKind::kOptionsMusic:
 		if (isV1xEurope) {
-			if (lang == Common::JA_JPN)
+			if (layout == ShortcutLayout::kJapanese)
 				return kBAndV;
 			return kY;
 		}
 		return kB;
 	case ShortcutKind::kGameplaySound:
 		// Italian gameplay uses Ctrl+V; its default keymap also maps Ctrl+B to this key.
-		if (isV1xEurope && lang == Common::IT_ITA)
+		if (layout == ShortcutLayout::kItalian)
 			return kV;
-		if (isV1xEurope && lang != Common::JA_JPN && !fixSwappedSoundMusic)
+		if (layout == ShortcutLayout::kEurope && !fixSwappedSoundMusic)
 			return kY;
-		return getShortcutKeys(ShortcutKind::kOptionsSound, isV1xEurope, lang);
+		return getShortcutKeys(ShortcutKind::kOptionsSound, layout);
 	case ShortcutKind::kGameplayMusic:
-		if (isV1xEurope && lang != Common::IT_ITA && lang != Common::JA_JPN && !fixSwappedSoundMusic)
+		if (layout == ShortcutLayout::kEurope && !fixSwappedSoundMusic)
 			return kBAndV;
-		return getShortcutKeys(ShortcutKind::kOptionsMusic, isV1xEurope, lang);
+		return getShortcutKeys(ShortcutKind::kOptionsMusic, layout);
 	case ShortcutKind::kStickyMouse:
-		if (isV1xEurope && lang == Common::JA_JPN)
+		if (layout == ShortcutLayout::kJapanese)
 			return kK;
 		return kJ;
-	case ShortcutKind::kLanguageSelection:
+	case ShortcutKind::kLangSwitch:
 		if (!isV1xEurope)
 			return kNone;
-		if (lang == Common::JA_JPN)
+		if (layout == ShortcutLayout::kJapanese)
 			return kDAndEAndFAndJ;
-		else if (lang == Common::IT_ITA)
+		else if (layout == ShortcutLayout::kItalian)
 			return kDAndEAndFAndK;
 		return kDAndEAndF;
 	case ShortcutKind::kLoadGame:
@@ -285,17 +339,17 @@ const Common::Array<Common::KeyCode> &Mohawk::ZmbReleaseInfo::getShortcutKeys(Sh
 }
 
 bool Mohawk::ZmbReleaseInfo::isShortcut(ShortcutKind kind, const Common::KeyState &kbd, bool fixSwappedSoundMusic) const {
-	const bool isV1xEurope = isFamily(Family::kEuropeV1x);
+	const ShortcutLayout layout = getShortcutLayout();
 
 	// On some releases, version dialog can be spawned by Tab.
-	if (kind == ShortcutKind::kVersionDialog && isV1xEurope && kbd.hasFlags(0) && kbd.keycode == Common::KEYCODE_TAB)
+	if (kind == ShortcutKind::kVersionDialog && layout != ShortcutLayout::kUs && kbd.hasFlags(0) && kbd.keycode == Common::KEYCODE_TAB)
 		return true;
 
 	// The other Keycodes requires Ctrl.
 	if (!kbd.hasFlags(Common::KBD_CTRL))
 		return false;
 
-	const Common::Array<Common::KeyCode> &keys = getShortcutKeys(kind, isV1xEurope, _lang, fixSwappedSoundMusic);
+	const Common::Array<Common::KeyCode> &keys = getShortcutKeys(kind, layout, fixSwappedSoundMusic);
 	for (Common::KeyCode key : keys) {
 		if (kbd.keycode == key)
 			return true;

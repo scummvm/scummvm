@@ -21,16 +21,15 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "engines/advancedDetector.h"
 
 #include "mohawk/detection.h"
 
-#include "mohawk/riven_metaengine.h"
 #include "mohawk/myst_metaengine.h"
-
+#include "mohawk/riven_metaengine.h"
 
 static const PlainGameDescriptor mohawkGames[] = {
 	{"myst", "Myst"},
@@ -68,20 +67,19 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"arthurcomp", "Arthur's Computer Adventure"},
 	{"create", "The Story of Creation"},
 	{"daniel", "Daniel in the Lions' Den"},
-	{"harryhh","Harry and the Haunted House"},
+	{"harryhh", "Harry and the Haunted House"},
 	{"noah", "Noah's Ark"},
 	{"stellaluna", "Stellaluna"},
 	{"sheila", "Sheila Rae, the Brave"},
-	{"rugratsps", "Rugrats Print Shop" },
+	{"rugratsps", "Rugrats Print Shop"},
 	{"drseussreading", "Dr. Seuss Reading Games"},
 	{"arthurreading", "Arthur's Reading Games"},
-	{"wsg", "Williams-Sonoma Guide to Good Cooking" },
-	{"mathsworkshop", "Maths Workshop" },
-	{"mathsworkshopdx", "Maths Workshop Deluxe" },
+	{"wsg", "Williams-Sonoma Guide to Good Cooking"},
+	{"mathsworkshop", "Maths Workshop"},
+	{"mathsworkshopdx", "Maths Workshop Deluxe"},
 	{"wricamact", "Write, Camera, Action!"},
 	{"amazingwriting", "The Amazing Writing Machine"},
-	{nullptr, nullptr}
-};
+	{nullptr, nullptr}};
 
 #include "mohawk/detection_tables.h"
 
@@ -99,8 +97,7 @@ static const char *const directoryGlobs[] = {
 	"setup32",
 	"95instal",
 	"Rugrats Adventure Game",
-	nullptr
-};
+	nullptr};
 
 class MohawkMetaEngineDetection : public AdvancedMetaEngineDetection<Mohawk::MohawkGameDescription> {
 public:
@@ -135,9 +132,7 @@ DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adG
 	// The AdvancedDetector model only allows specifying a single supported
 	// game language. The 25th anniversary edition Myst games are multilanguage.
 	// Here we amend the detected games to set the list of supported languages.
-	if (game.gameId == "myst"
-			&& Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())
-			&& Common::checkGameGUIOption(GAMEOPTION_ME, game.getGUIOptions())) {
+	if (game.gameId == "myst" && Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions()) && Common::checkGameGUIOption(GAMEOPTION_ME, game.getGUIOptions())) {
 		const Mohawk::MystLanguage *languages = Mohawk::MohawkMetaEngine_Myst::listLanguages();
 		while (languages->language != Common::UNK_LANG) {
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(languages->language));
@@ -145,8 +140,7 @@ DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adG
 		}
 	}
 
-	if (game.gameId == "riven"
-			&& Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())) {
+	if (game.gameId == "riven" && Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())) {
 		const Mohawk::RivenLanguage *languages = Mohawk::MohawkMetaEngine_Riven::listLanguages();
 		while (languages->language != Common::UNK_LANG) {
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(languages->language));
@@ -157,7 +151,7 @@ DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adG
 	if (game.gameId == "zoombini") {
 		// Expose three languages on v1.xEU release targets.
 		if (adGame.desc->language == Common::UNK_LANG) {
-			// Do not use EN_GRB here. ScummVM will add EN_ANY, duplicating English entries!
+			// Do not use EN_GRB here. ScummVM will add EN_ANY if not found, duplicating English entries!
 			// Use EN_ANY instead, and then convert it to EN_GRB inside the engine.
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));

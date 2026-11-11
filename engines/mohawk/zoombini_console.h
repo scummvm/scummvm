@@ -28,6 +28,7 @@
 
 #include "common/noncopyable.h"
 
+#include "mohawk/zoombini_metaengine.h"
 #include "mohawk/zoombini_page.h"
 #include "mohawk/zoombini_resource.h"
 
@@ -386,6 +387,8 @@ private:
 	static bool hasHelpOption(int argc, const char **argv);
 	/** Print the standard help-option usage line. */
 	void printHelpOption();
+	/** Format release-specific default Ctrl shortcuts as a comma-separated list. */
+	Common::String formatShortcutKeys(ZmbReleaseInfo::ShortcutKind kind) const;
 	/** Print the active saved override for one shortcut action. */
 	void printShortcutRemapping(const char *actionId);
 	/** Print the serialized debug flag and runtime-only MIDI test state. */
