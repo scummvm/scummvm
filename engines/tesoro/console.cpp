@@ -28,6 +28,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("testCmd", WRAP_METHOD(Console, testCmd));
 	registerCmd("fade", WRAP_METHOD(Console, fade));
 	registerCmd("level", WRAP_METHOD(Console, level));
+	registerCmd("hover", WRAP_METHOD(Console, hover));
 }
 
 Console::~Console() {
@@ -58,6 +59,15 @@ bool Console::level(int argc, const char **argv) {
 		debugPrintf("Cannot load %s\n", argv[1]);
 		return true;
 	}
+	return false;
+}
+
+bool Console::hover(int argc, const char **argv) {
+	if (argc < 2) {
+		g_engine->setHoverText(nullptr);
+		return false;
+	}
+	g_engine->setHoverText(argv[1]);
 	return false;
 }
 

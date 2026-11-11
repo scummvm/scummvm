@@ -149,6 +149,13 @@ void AnimBank::clearStepMovement(uint i) {
 	_steps[i].y = 0;
 }
 
+void AnimBank::clearStepHitRect(uint i) {
+	if (i >= _steps.size())
+		return;
+	_steps[i].hitX = _steps[i].hitY = 0;
+	_steps[i].hitW = _steps[i].hitH = 0;
+}
+
 bool AnimPlayer::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode) {
 	Common::SharedPtr<AnimBank> bank(new AnimBank());
 	if (!bank->load(dat, entryOffset, mode))

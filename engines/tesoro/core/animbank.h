@@ -70,6 +70,9 @@ public:
 	/** Zeroes the movement of one step. */
 	void clearStepMovement(uint i);
 
+	/** Turns the hit rectangle of one step into a point at (0, 0). */
+	void clearStepHitRect(uint i);
+
 private:
 	int _mode = kLoadNow;
 	bool _headerFlag = false;

@@ -32,6 +32,7 @@
 #include "tesoro/console.h"
 #include "tesoro/tesoro.h"
 #include "tesoro/detection.h"
+#include "tesoro/core/cursor.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/spriteobject.h"
 
@@ -45,6 +46,7 @@ TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 }
 
 TesoroEngine::~TesoroEngine() {
+	delete _interface;
 	delete _level;
 	delete _screen;
 }
@@ -77,6 +79,18 @@ Common::Error TesoroEngine::run() {
 		(void)loadGameState(saveSlot);
 
 	Graphics::FrameLimiter limiter(g_system, 60);
+
+	// The interface level holds the pointer (its other kinds are not ported yet and are skipped with warnings).
+	_interface = loadLevel("INTERFACE.LVL");
+	if (_interface) {
+		ObjectList &objects = _interface->objects();
+		for (uint i = 0; i < objects.size(); ++i) {
+			if (objects[i]->kindId() == 10)
+				_cursor = static_cast<Cursor *>(objects[i]);
+		}
+	}
+	if (_cursor)
+		_cursor->setSurroundings(&_pointer, _level);
 
 	const uint32 fontOffset = _archive.findEntry("FUENTES.ANM");
 	if (!fontOffset || !_font.load(*_archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
@@ -152,9 +166,12 @@ bool TesoroEngine::runFrame() {
 	const int32 now = gameTime();
 	_display.startFrame();
 	_display.fillBackground(0x4208);	// dark grey
+	if (_cursor)
+		_cursor->update();
+	if (_interface)
+		_interface->drawRooms(now, _display);
 	if (_level)
 		_level->drawRooms(now, _display);
-	_display.queueText((const byte *)"Hello, world!", 0xFFFF, Display::kWidth / 2, 50, Display::kWidth, 0, true, 16);
 
 	_display.compose();
 	_screen->copyRectToSurface(_display.frame(), Display::kWidth * 2, 0, 0, Display::kWidth, Display::kHeight);
@@ -177,27 +194,41 @@ Camera &TesoroEngine::camera() {
 	return _level ? _level->camera() : _camera;
 }
 
-bool TesoroEngine::level(const char *name) {
+Level *TesoroEngine::loadLevel(const char *name) {
 	Common::String upper(name);
 	upper.toUppercase(); // archive names are upper case
 	const uint32 offset = _archive.findEntry(upper.c_str());
 	if (!offset) {
 		warning("Tesoro: level %s is not in the archive", upper.c_str());
-		return false;
+		return nullptr;
 	}
 
 	Level *level = new Level();
 	if (!level->load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow, gameTime())) {
 		warning("Tesoro: level %s cannot be read", upper.c_str());
 		delete level;
-		return false;
+		return nullptr;
 	}
 	level->attachObjects();
+	return level;
+}
+
+bool TesoroEngine::level(const char *name) {
+	Level *level = loadLevel(name);
+	if (!level)
+		return false;
 
 	// The level replaces whatever was shown before.
 	delete _level;
 	_level = level;
+	if (_cursor)
+		_cursor->setSurroundings(&_pointer, _level);
 	return true;
+}
+
+void TesoroEngine::setHoverText(const char *text) {
+	if (_cursor)
+		_cursor->label().set(text, text ? 0xffff : 0);	// names are shown in white
 }
 
 } // End of namespace Tesoro

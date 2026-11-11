@@ -34,6 +34,7 @@ private:
 	bool testCmd(int argc, const char **argv);
 	bool fade(int argc, const char **argv);
 	bool level(int argc, const char **argv);
+	bool hover(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

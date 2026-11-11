@@ -89,6 +89,9 @@ public:
 	/** Advances the animation */
 	virtual void updateAnimation(int32 now);
 
+	/** Per-frame step of the object list. Returns 1 to go on (the pointer asks for nothing else yet). */
+	virtual int update() { return 0; }
+
 	/** Ticks the animation and works out the hit rectangle and the area the object moved through. */
 	virtual void updateBounds(int32 now);
 
@@ -111,7 +114,7 @@ public:
 	const ObjectRect &movedArea() const { return _movedArea; }
 
 	/** The animation player the object is shown by, or null if it has none. */
-	AnimPlayer *currentPlayer() { return _anim.bankCount() ? &_anim.current() : nullptr; }
+	virtual AnimPlayer *currentPlayer() { return _anim.bankCount() ? &_anim.current() : nullptr; }
 
 	AnimSet &animation() { return _anim; }
 	const AnimSet &animation() const { return _anim; }

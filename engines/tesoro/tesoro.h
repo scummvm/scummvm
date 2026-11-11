@@ -48,6 +48,7 @@ namespace Tesoro {
 struct TesoroGameDescription;
 
 class Level;
+class Cursor;
 
 class TesoroEngine : public Engine {
 private:
@@ -57,7 +58,9 @@ private:
 	Archive _archive;
 	Camera _camera;
 	Common::Array<AnimPlayer> _testPlayers;	// the "level" of the test object
-	Level *_level = nullptr;
+	Level *_level = nullptr;		// the level shown
+	Level *_interface = nullptr;	// INTERFACE.LVL, which holds the pointer
+	Cursor *_cursor = nullptr;
 	Display _display;
 	PointerState _pointer;
 	bool _buttonsDown[3] = { false, false, false };
@@ -132,6 +135,10 @@ public:
 	Camera &camera();
 	/** Loads a level from the archive and shows it. */
 	bool level(const char *name);
+	/** Loads a level file from the archive; null if it is missing or cannot be read. */
+	Level *loadLevel(const char *name);
+	/** Sets the label next to the pointer (null clears it). */
+	void setHoverText(const char *text);
 };
 
 extern TesoroEngine *g_engine;
