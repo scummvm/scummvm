@@ -67,6 +67,7 @@ private:
 	AnimPlayer _font;
 	MainList _main;
 	byte _escape = 0;
+	bool _showOutlines = false;
 	/** One frame: events, then drawing. False when the game should end. */
 	bool runFrame();
 
@@ -138,6 +139,9 @@ public:
 	/** Second step of a level: draws it and, unless it is the interface level, composes the frame onto the screen. */
 	int levelSecondStep(Level &level);
 	void presentFrame();
+	/** Draws the hit rectangle and outline of every object of a level over the finished frame. */
+	void drawOutlines(Level &level);
+	uint16 screenColour(byte r, byte g, byte b) const;
 	/** Loads a level file from the archive; null if it is missing or cannot be read. */
 	Level *loadLevel(const char *name);
 	/** Sets the label next to the pointer (null clears it). */
@@ -145,6 +149,8 @@ public:
 	/** Flags an object of the level as collidable and a hitter, so the pointer can touch it. False if there is no such object. */
 	bool makeHitter(const char *name);
 	Cursor *cursor() { return _cursor; }
+	/** Shows or hides the hit rectangles and outlines of the objects over the picture. Returns the new state. */
+	bool toggleOutlines() { return _showOutlines = !_showOutlines; }
 };
 
 extern TesoroEngine *g_engine;

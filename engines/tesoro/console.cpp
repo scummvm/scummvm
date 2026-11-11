@@ -32,6 +32,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("hover", WRAP_METHOD(Console, hover));
 	registerCmd("hitter", WRAP_METHOD(Console, hitter));
 	registerCmd("touching", WRAP_METHOD(Console, touching));
+	registerCmd("outlines", WRAP_METHOD(Console, outlines));
 }
 
 Console::~Console() {
@@ -81,6 +82,11 @@ bool Console::hitter(int argc, const char **argv) {
 	}
 	if (!g_engine->makeHitter(argv[1]))
 		debugPrintf("No object %s in the level\n", argv[1]);
+	return true;
+}
+
+bool Console::outlines(int argc, const char **argv) {
+	debugPrintf("Outlines %s\n", g_engine->toggleOutlines() ? "on: red = pointer can touch, yellow = collidable, grey = other, cyan = outline" : "off");
 	return true;
 }
 

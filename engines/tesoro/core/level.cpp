@@ -240,14 +240,18 @@ void Level::resolveOverlap(Object *a, Object *b) {
 	const int32 dy = (am.y2 - bm.y2) - am.y1 + bm.y1;
 	const int32 offsetX = am.x1 - bm.x1;
 	const int32 offsetY = am.y1 - bm.y1;
-	// at what moment in time the two rectangles touch during the movement
 	const int32 time = sweepRects(ah.x1 + offsetX, ah.y1 + offsetY, ah.x2 + offsetX, ah.y2 + offsetY,
 	                              bh.x1, bh.y1, bh.x2, bh.y2, dx, dy);
 	if (time < 0)
 		return;
 
-	const int32 touchTime = time;
-	const uint16 depth = MAX<uint16>((uint16)a->sortValue(), (uint16)b->sortValue());
+	// Objects with an outline refine the rectangle result; the touch is dropped when this gives -1.
+	const AnimStep *aShape = shapeOf(a), *bShape = shapeOf(b);
+	int32 touchTime = time;
+	if (aShape && bShape && !aShape->entries.empty() && !bShape->entries.empty())
+		touchTime = shapedContactTime(a, b, aShape, bShape, time, dx, dy);
+	if (touchTime == -1)
+		return;
 
 	// Touches are ordered by time, then by depth, a later one going behind an equal one.
 	uint at = 0;

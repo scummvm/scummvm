@@ -199,8 +199,79 @@ bool TesoroEngine::runFrame() {
 	// Without a level nothing composes the frame, so the pointer is shown on its own.
 	if (!_level)
 		presentFrame();
+	if (_showOutlines) {
+		if (_interface)
+			drawOutlines(*_interface);
+		if (_level)
+			drawOutlines(*_level);
+		_screen->addDirtyRect(Common::Rect(Display::kWidth, Display::kHeight));
+	}
 	_clock.unfreeze();
 	return !shouldQuit();
+}
+
+uint16 TesoroEngine::screenColour(byte r, byte g, byte b) const {
+	return (uint16)_screen->format.RGBToColor(r, g, b);
+}
+
+static void screenLine(Graphics::Screen &screen, int x0, int y0, int x1, int y1, uint16 colour) {
+	// Bresenham, clipped to the screen.
+	const int dx = ABS(x1 - x0), dy = -ABS(y1 - y0);
+	const int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+	int err = dx + dy;
+	for (;;) {
+		if (x0 >= 0 && x0 < screen.w && y0 >= 0 && y0 < screen.h)
+			*(uint16 *)screen.getBasePtr(x0, y0) = colour;
+		if (x0 == x1 && y0 == y1)
+			break;
+		const int e2 = 2 * err;
+		if (e2 >= dy) {
+			err += dy;
+			x0 += sx;
+		}
+		if (e2 <= dx) {
+			err += dx;
+			y0 += sy;
+		}
+	}
+}
+
+void TesoroEngine::drawOutlines(Level &level) {
+	const Camera &camera = level.camera();
+	const uint16 hitter = screenColour(0xff, 0x40, 0x40), collidable = screenColour(0xff, 0xe0, 0x40);
+	const uint16 plain = screenColour(0x90, 0x90, 0x90), outline = screenColour(0x40, 0xff, 0xff);
+
+	ObjectList &objects = level.objects();
+	for (uint i = 0; i < objects.size(); ++i) {
+		const Object *object = objects[i];
+		if (!(object->flags() & Object::kActive))
+			continue;
+
+		// World coordinates point up and are relative to the object; the screen is centred on the camera.
+		const int32 ox = object->x() - camera.scaledX() + 0x140;
+		const int32 oy = camera.scaledY() - object->y() + 0xf0;
+
+		const ObjectRect &r = object->hitRect();
+		const uint16 colour = (object->flags() & Object::kHitter) ? hitter : (object->flags() & Object::kCollidable) ? collidable : plain;
+		if (r.x1 != r.x2 || r.y1 != r.y2) {
+			screenLine(*_screen, ox + r.x1, oy - r.y1, ox + r.x2, oy - r.y1, colour);
+			screenLine(*_screen, ox + r.x2, oy - r.y1, ox + r.x2, oy - r.y2, colour);
+			screenLine(*_screen, ox + r.x2, oy - r.y2, ox + r.x1, oy - r.y2, colour);
+			screenLine(*_screen, ox + r.x1, oy - r.y2, ox + r.x1, oy - r.y1, colour);
+		}
+
+		// The outline of the current step: points, with the last joined back to the first.
+		const AnimPlayer *player = const_cast<Object *>(object)->currentPlayer();
+		if (!player || !player->bank())
+			continue;
+		const AnimStep &step = player->bank()->step(player->current());
+		if (step.type != 4 || step.entries.size() < 2)
+			continue;
+		for (uint p = 0; p < step.entries.size(); ++p) {
+			const uint32 a = step.entries[p], b = step.entries[(p + 1) % step.entries.size()];
+			screenLine(*_screen, ox + (int16)(a & 0xffff), oy - (int16)(a >> 16), ox + (int16)(b & 0xffff), oy - (int16)(b >> 16), outline);
+		}
+	}
 }
 
 void TesoroEngine::presentFrame() {
