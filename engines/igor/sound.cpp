@@ -247,7 +247,10 @@ void IgorEngine::playSound(int num, int type) {
 		if (_mixer->isSoundHandleActive(_sfxHandle)) {
 			return;
 		}
-		assert(num >= 0 && num < _soundOffsetsCount);
+		if (num < 0 || num >= _soundOffsetsCount) {
+			warning("playSound: invalid sound id %d", num + 1);
+			return;
+		}
 		soundOffset = _soundOffsets[num];
 		soundType = Audio::Mixer::kSFXSoundType;
 		soundHandle = &_sfxHandle;
@@ -260,7 +263,10 @@ void IgorEngine::playSound(int num, int type) {
 			return;
 		}
 		num += 101;
-		assert(num >= 0 && num < _soundOffsetsCount);
+		if (num < 0 || num >= _soundOffsetsCount) {
+			warning("playSound: invalid speech id %d", num - 101);
+			return;
+		}
 		soundOffset = _soundOffsets[num];
 		soundType = Audio::Mixer::kSpeechSoundType;
 		soundHandle = &_speechHandle;
