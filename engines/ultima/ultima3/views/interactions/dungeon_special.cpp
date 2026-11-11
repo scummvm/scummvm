@@ -108,7 +108,7 @@ void DungeonSpecial::drink(int slot) {
 	}
 
 	// Which fountain it is depends on where it is
-	switch (_G(savegame)._posY & 3) {
+	switch (_G(savegame)._posX & 3) {
 	case 0:
 		_G(messages).print("Yuck! Horrible!\n");
 		e._status = Data::STATUS_POISONED;
@@ -140,7 +140,7 @@ void DungeonSpecial::touchRod(int slot) {
 	Data::RosterEntry &e = _G(savegame).partyMember(slot);
 
 	// Each rod leaves a different mark, depending on where it is
-	e._marksAndCards |= 1 << ((_G(savegame)._posY & 3) + 4);
+	e._marksAndCards |= 1 << ((_G(savegame)._posX & 3) + 4);
 
 	_G(effects).flashSlot(slot);
 	g_engine->playSoundEffect(0xF7);
