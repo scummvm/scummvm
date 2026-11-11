@@ -29,7 +29,7 @@
 #include "ripper/diagnostics/screen_presenter.h"
 #include "ripper/display.h"
 #include "ripper/input.h"
-#include "ripper/modal_dialog.h"
+#include "ripper/modal/modal_dialog.h"
 #include "ripper/options_panel.h"
 #include "ripper/remote_control.h"
 #include "ripper/ripper.h"

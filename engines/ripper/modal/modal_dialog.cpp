@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/modal_dialog.h"
+#include "ripper/modal/modal_dialog.h"
 
 #include "ripper/modal/constants.h"
 

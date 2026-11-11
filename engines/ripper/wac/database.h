@@ -27,7 +27,7 @@
 #include "ripper/resources.h"
 #include "ripper/controls.h"
 #include "ripper/input.h"
-#include "ripper/modal_dialog.h"
+#include "ripper/modal/modal_dialog.h"
 #include "ripper/wac/database_catalog.h"
 
 namespace Ripper {

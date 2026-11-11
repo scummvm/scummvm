@@ -25,8 +25,8 @@ MODULE_OBJS := \
 	menu.o \
 	metaengine.o \
 	milestones.o \
+	modal/modal_dialog.o \
 	modal/presentation.o \
-	modal_dialog.o \
 	options_panel.o \
 	puzzles/board_arrangement.o \
 	puzzles/board_game.o \
