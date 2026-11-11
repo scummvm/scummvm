@@ -77,6 +77,9 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_currentActor = 0;
 	updateFromScript();
 	_shootsDestroyed.clear();
+	_maxHealth = getHitPoints(getTerritory(_currentLevel)) * 10;
+	if (_currentLevel == firstLevelTerritory(_currentLevel))
+		_previousHealth = _maxHealth;
 	_health = _previousHealth;
 	_selectedCorrectBox = 0;
 }
