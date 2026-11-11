@@ -1810,8 +1810,7 @@ bool ScriptManager::serviceScene() {
 
 	const uint cursorIndex = hoveredInteraction ?
 		(hoveredInteraction->conditionOffset != 0 ? 8 : hoveredInteraction->initialSelection) :
-		(dialoguePending && _dialogue->contains(mouse.position) ? kDialogueCursor :
-			_engine->getCursor()->getSelectionIndex());
+		_engine->getCursor()->getSelectionIndex();
 	_engine->getCursor()->update(cursorIndex);
 	const int hoveredIndex = hoveredInteraction ? (int)hoveredInteractionIndex : -1;
 	if (hoveredIndex != _runtime.hoveredInteraction) {

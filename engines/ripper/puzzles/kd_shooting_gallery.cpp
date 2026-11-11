@@ -121,7 +121,7 @@ KdShootingGallery::KdShootingGallery(RipperEngine *engine) : Puzzle(engine),
 		_activeTargetGroup(0), _targetGroupSerial(0),
 		_lastHitTargetGroupSerial(-1), _hitsInCurrentTargetGroup(0),
 		_weaponEnergyPercent(100), _visibleTargetMask(0),
-		_targetGroupTypeMask(0), _keywordIndex(0), _completionFlag(0),
+		_targetGroupTypeMask(0), _keywordIndex(0),
 		_lastShotMillis(0), _lastRechargeMillis(0), _shotArmed(true),
 		_result(kExited) {
 	for (uint i = 0; i < kTargetClassCount; ++i) {
@@ -773,7 +773,6 @@ bool KdShootingGallery::presentResults() {
 
 Scene::Result KdShootingGallery::run(uint completionFlag) {
 	prepare("kd-shooting-gallery-entry", 19, false);
-	_completionFlag = completionFlag;
 	_result = kExited;
 	_config = Config();
 	_regionTable.frames.clear();

@@ -190,7 +190,6 @@ private:
 	Effect _effects[kEffectCapacity];
 	const SceneData *_activeScene;
 	uint _activeSceneIndex;
-	uint _completionFlag;
 	uint _arcadeKeywordIndex;
 	uint32 _lastWeaponShotMillis;
 	bool _weaponHeld;

@@ -115,7 +115,6 @@ private:
 	byte _visibleTargetMask;
 	byte _targetGroupTypeMask;
 	uint _keywordIndex;
-	uint _completionFlag;
 	uint32 _lastShotMillis;
 	uint32 _lastRechargeMillis;
 	bool _shotArmed;

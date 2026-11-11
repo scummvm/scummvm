@@ -104,7 +104,7 @@ CombatEncounter::CombatEncounter(RipperEngine *engine,
 		const CombatEncounterDefinition &definition) : Scene(engine),
 		_definition(definition), _random("ripperCombat"), _nextCueHandle(0),
 		_weaponRapidFireTicks(0),
-		_activeScene(nullptr), _activeSceneIndex(0), _completionFlag(0),
+		_activeScene(nullptr), _activeSceneIndex(0),
 		_arcadeKeywordIndex(0), _lastWeaponShotMillis(0), _weaponHeld(false),
 		_singleShotReady(true), _shieldHeld(false), _lastShotHit(false),
 		_overlayLogged(false),
@@ -800,7 +800,6 @@ uint CombatEncounter::chooseNextScene() {
 
 Scene::Result CombatEncounter::run(uint completionFlag) {
 	prepare("combat-entry", 14, false);
-	_completionFlag = completionFlag;
 	const uint difficulty = _engine->getSettings()->getCombatLevel();
 	const Common::String configName = selectConfigName(difficulty);
 	debugC(1, kDebugCombat,
