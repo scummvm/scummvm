@@ -57,7 +57,6 @@ namespace {
 
 static const uint32 kDosTickDurationMs = 55;
 static const uint32 kDemoEndingHoldTicks = 0x48;
-static const int kRiperBatBootParam = 1;
 static const char kRiperBatFarewell[] = "Thank you for playing  R I P E R !\n";
 
 } // End of anonymous namespace
@@ -193,8 +192,6 @@ Common::Error RipperEngine::runRiperBatEasterEgg() {
 	// This emulates starting the game through RIPER.BAT.
 	// The batch file runs "player scenes.avi" and then
 	// prints this farewell after the standalone player exits.
-	debugC(1, kDebugVideo,
-		"Ripper: RIPER.BAT route playing standalone media 'scenes.avi'");
 	const bool played = _media->play("scenes.avi", true);
 	g_system->logMessage(LogMessageType::kInfo, kRiperBatFarewell);
 	return played || shouldQuit() ? Common::kNoError : Common::kReadingFailed;
@@ -205,9 +202,9 @@ Common::Error RipperEngine::run() {
 	registerSearchPaths();
 	initGraphics(640, 400);
 	_settings->load();
-	if (ConfMan.getInt("boot_param") == kRiperBatBootParam) {
+	if (ConfMan.hasKey("ripper_easter_egg") && ConfMan.getBool("ripper_easter_egg")) {
 		if (isDemo) {
-			warning("Ripper: RIPER.BAT boot parameter is unavailable for the demo");
+			warning("Ripper: Easter egg video is unavailable for the demo");
 			return Common::kUnsupportedGameidError;
 		}
 		return runRiperBatEasterEgg();
