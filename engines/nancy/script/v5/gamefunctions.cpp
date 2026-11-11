@@ -178,13 +178,11 @@ static int keyIndex(lua_State *L) {
 
 // Game
 
-// What the cheat tools switch on
-static bool s_isCheatMode = false;
-static bool s_isFastConvo = false;
-static bool s_showsDiagnostics = false;	// Nancy27
-
-// How many times a new game began since the game was started
-static uint s_numRestarts = 0;
+static ScriptGameState &getGameState() {
+	ScriptGameState *state = (ScriptGameState *)const_cast<EngineData *>(g_nancy->getEngineData("ScriptGameState"));
+	assert(state);
+	return *state;
+}
 
 // The saved games the scripts made by themselves, the second chances, which
 // the dialog for loading leaves out. ScummVM's saves have no place for that, so
@@ -308,7 +306,7 @@ static int gameAllSaves(lua_State *L) {
 }
 
 static int gameNew(lua_State *L) {
-	++s_numRestarts;
+	++getGameState().numRestarts;
 	getSaveManager(L).requestNewGame();
 	return 0;
 }
@@ -353,15 +351,15 @@ static bool pushGameField(lua_State *L, const Common::String &key) {
 		const ScriptBootData *boot = GetEngineData(ScriptBootData);
 		lua_pushstring(L, boot ? boot->buildNumber.c_str() : "");
 	} else if (key == "fastConvo") {
-		lua_pushboolean(L, s_isFastConvo);
+		lua_pushboolean(L, getGameState().isFastConvo);
 	} else if (key == "cheatMode") {
-		lua_pushboolean(L, s_isCheatMode);
+		lua_pushboolean(L, getGameState().isCheatMode);
 	} else if (key == "diags") {
-		lua_pushboolean(L, s_showsDiagnostics);
+		lua_pushboolean(L, getGameState().showsDiagnostics);
 	} else if (key == "needsSave") {
 		lua_pushboolean(L, true);
 	} else if (key == "restarts") {
-		lua_pushinteger(L, s_numRestarts);
+		lua_pushinteger(L, getGameState().numRestarts);
 	} else {
 		return false;
 	}
@@ -382,11 +380,11 @@ static int gameNewIndex(lua_State *L) {
 	const Common::String key = luaL_checkstring(L, 2);
 
 	if (key == "cheatMode") {
-		s_isCheatMode = lua_toboolean(L, 3) != 0;
+		getGameState().isCheatMode = lua_toboolean(L, 3) != 0;
 	} else if (key == "fastConvo") {
-		s_isFastConvo = lua_toboolean(L, 3) != 0;
+		getGameState().isFastConvo = lua_toboolean(L, 3) != 0;
 	} else if (key == "diags") {
-		s_showsDiagnostics = lua_toboolean(L, 3) != 0;
+		getGameState().showsDiagnostics = lua_toboolean(L, 3) != 0;
 	} else {
 		return luaL_error(L, "Field %s is not settable on Game ", key.c_str());
 	}
@@ -610,13 +608,6 @@ static int soundSetGroupVolume(lua_State *L) {
 // resume the sounds that went on playing after their records were gone, as
 // the UI pops up over the game and goes away again
 
-struct PausedChannel {
-	uint16 channel;
-	uint32 serial;
-};
-
-static Common::Array<PausedChannel> s_pausedAbandonedChannels;
-
 static void addPlayingChannels(const SceneContext *context, Common::Array<bool> &isOwned) {
 	if (!context) {
 		return;
@@ -640,23 +631,24 @@ static int soundPauseAbandoned(lua_State *L) {
 		addPlayingChannels(stream ? stream->getScriptScene() : NancySceneState.getScriptScene(), isOwned);
 	}
 
+	Common::Array<ScriptGameState::PausedChannel> &pausedChannels = getGameState().pausedAbandonedChannels;
 	for (uint16 i = 0; i < isOwned.size(); ++i) {
 		if (isOwned[i] || !g_nancy->_sound->isSoundPlaying(i)) {
 			continue;
 		}
 
 		bool isPaused = false;
-		for (const PausedChannel &paused : s_pausedAbandonedChannels) {
+		for (const ScriptGameState::PausedChannel &paused : pausedChannels) {
 			isPaused = isPaused || paused.channel == i;
 		}
 
 		if (!isPaused) {
 			g_nancy->_sound->pauseSound(i, true);
 
-			PausedChannel paused;
+			ScriptGameState::PausedChannel paused;
 			paused.channel = i;
 			paused.serial = g_nancy->_sound->getChannelSerial(i);
-			s_pausedAbandonedChannels.push_back(paused);
+			pausedChannels.push_back(paused);
 		}
 	}
 
@@ -665,13 +657,14 @@ static int soundPauseAbandoned(lua_State *L) {
 
 // A channel that got another sound in the meantime is left alone
 static int soundUnpauseAbandoned(lua_State *L) {
-	for (const PausedChannel &paused : s_pausedAbandonedChannels) {
+	Common::Array<ScriptGameState::PausedChannel> &pausedChannels = getGameState().pausedAbandonedChannels;
+	for (const ScriptGameState::PausedChannel &paused : pausedChannels) {
 		if (g_nancy->_sound->getChannelSerial(paused.channel) == paused.serial) {
 			g_nancy->_sound->pauseSound(paused.channel, false);
 		}
 	}
 
-	s_pausedAbandonedChannels.clear();
+	pausedChannels.clear();
 	return 0;
 }
 

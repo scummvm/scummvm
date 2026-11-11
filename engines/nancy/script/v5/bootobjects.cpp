@@ -28,6 +28,7 @@
 
 #include "engines/nancy/script/v5/bootobjects.h"
 #include "engines/nancy/script/v5/brain.h"
+#include "engines/nancy/script/v5/gamefunctions.h"
 
 #include "engines/nancy/ui/ndui/button.h"
 
@@ -300,6 +301,8 @@ static void runRequiredScript(const char *name, const Script::BootTables &tables
 // is left over from the earlier games; the exe never runs it. What it set
 // is fixed in the exe instead.
 void NancyEngine::bootNancy26Data(ScriptBootData *boot, EVNT *flags, INVD *inventory, ENVS *environments, VIEW *viewport, CVTX *autotext) {
+	_engineData.setVal("ScriptGameState", new Script::ScriptGameState());
+
 	Script::BootTables flagTables;
 	flagTables.flags = flags;
 	runRequiredScript("Flags", flagTables);
