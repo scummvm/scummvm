@@ -57,7 +57,6 @@
 #include "ripper/scenes/ebz2s_scene.h"
 #include "ripper/scenes/gym_scene.h"
 #include "ripper/scenes/tube_scene.h"
-#include "ripper/script/compiled_script.h"
 #include "ripper/wac/wac.h"
 
 namespace Ripper {
@@ -128,221 +127,225 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case kSceneActionEightButtonSequencePuzzle: return "eight-button sequence puzzle";
 	case kSceneActionCainDialogue: return "Cain dialogue scene";
 	case kSceneActionAppendNotebookText: return "append resource string to RIPPER.TXT";
-	case 200: return "start demo prologue cue";
-	case 201: return "stop demo prologue cue";
+	case kSceneActionStartDemoPrologueCue: return "start demo prologue cue";
+	case kSceneActionStopDemoPrologueCue: return "stop demo prologue cue";
 	case 300: return "arm briefing media trigger";
 	case 9999: return "terminate scene runtime";
 	default: return "unknown";
 	}
 }
 
-bool SceneActionDispatcher::dispatch(RipperEngine *engine, const CompiledScript &script,
-		const ScriptCommand &command) {
-	if (command.arguments.size() < 2)
-		return false;
-
-	const uint action = command.arguments[0].value;
-	const uint argument = command.arguments[1].value;
-
-	if (action == kSceneActionCircuitChipPuzzle) {
+bool SceneActionDispatcher::dispatch(RipperEngine *engine, uint action, uint argument,
+		const char *scriptName, uint32 commandOffset) {
+	const char *program;
+	switch (action) {
+	case kSceneActionCircuitChipPuzzle: {
 		CircuitChipPuzzle puzzle(engine);
 		return puzzle.run(argument) != CircuitChipPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionCalculatorPuzzle) {
+	case kSceneActionCalculatorPuzzle: {
 		CalculatorPuzzle puzzle(engine);
 		return puzzle.run(argument) != CalculatorPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionRolodexPuzzle) {
+	case kSceneActionRolodexPuzzle: {
 		RolodexPuzzle puzzle(engine);
 		return puzzle.run(argument) != RolodexPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionCyberMenu) {
+	case kSceneActionCyberMenu:
 		return engine->getCyber()->run() != CyberManager::kLoadFailed;
-	}
-	if (action == kSceneActionClockPuzzle) {
+	case kSceneActionClockPuzzle: {
 		ClockPuzzle puzzle(engine);
 		return puzzle.run(argument) != ClockPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionKdShootingGallery) {
+	case kSceneActionKdShootingGallery: {
 		KdShootingGallery gallery(engine);
 		return gallery.run(argument) != KdShootingGallery::kLoadFailed;
 	}
-	if (action == kSceneActionGcCshPuzzle) {
+	case kSceneActionGcCshPuzzle: {
 		GcCshPuzzle puzzle(engine);
 		return puzzle.run(argument) != GcCshPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionTableGatePuzzle) {
+	case kSceneActionTableGatePuzzle: {
 		TableGatePuzzle puzzle(engine);
 		return puzzle.run(argument) != TableGatePuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionCdInBookPuzzle) {
+	case kSceneActionCdInBookPuzzle: {
 		CdInBookPuzzle puzzle(engine);
 		return puzzle.run(argument) != CdInBookPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionBoardArrangementPuzzle) {
+	case kSceneActionBoardArrangementPuzzle: {
 		BoardArrangementPuzzle puzzle(engine);
 		return puzzle.run(argument) != BoardArrangementPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionKjBlobShooter) {
+	case kSceneActionKjBlobShooter: {
 		KjBlobShooter shooter(engine);
 		return shooter.run(argument) != KjBlobShooter::kLoadFailed;
 	}
-	if (action == kSceneActionEbz2sMenu) {
+	case kSceneActionEbz2sMenu: {
 		Ebz2sScene scene(engine);
 		return scene.run(argument) != Ebz2sScene::kLoadFailed;
 	}
-	if (action == kSceneActionMechiniCombat) {
+	case kSceneActionMechiniCombat: {
 		CombatEncounter encounter(engine, kMechiniDefinition);
 		return encounter.run(argument) != CombatEncounter::kLoadFailed;
 	}
-	if (action == kSceneActionKeyGroupPuzzle ||
-			action == kSceneActionKeyGroupPuzzleAlias) {
+	case kSceneActionKeyGroupPuzzle:
+	case kSceneActionKeyGroupPuzzleAlias: {
 		KeyGroupPuzzle puzzle(engine);
 		return puzzle.run(argument) != KeyGroupPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionDateSelectionPuzzle) {
+	case kSceneActionDateSelectionPuzzle: {
 		DateSelectionPuzzle puzzle(engine);
 		return puzzle.run(argument) != DateSelectionPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionKiSkullMazePuzzle) {
+	case kSceneActionKiSkullMazePuzzle: {
 		KiSkullMazePuzzle puzzle(engine);
 		return puzzle.run(argument) != KiSkullMazePuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionRatiniCombat) {
+	case kSceneActionRatiniCombat: {
 		CombatEncounter encounter(engine, kRatiniDefinition);
 		return encounter.run(argument) != CombatEncounter::kLoadFailed;
 	}
-	if (action == kSceneActionAtkiniCombat) {
+	case kSceneActionAtkiniCombat: {
 		CombatEncounter encounter(engine, kAtkiniDefinition);
 		return encounter.run(argument) != CombatEncounter::kLoadFailed;
 	}
-	if (action == kSceneActionWebGridShiftPuzzle) {
+	case kSceneActionWebGridShiftPuzzle: {
 		WebGridShiftPuzzle puzzle(engine);
 		return puzzle.run(argument) != WebGridShiftPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionHorusWordPuzzle) {
+	case kSceneActionHorusWordPuzzle: {
 		HorusWordPuzzle puzzle(engine);
 		return puzzle.run(argument) != HorusWordPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionSixDigitCodePuzzle) {
+	case kSceneActionSixDigitCodePuzzle: {
 		SixDigitCodePuzzle puzzle(engine);
 		return puzzle.run(argument) != SixDigitCodePuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionShockLeverPuzzle) {
+	case kSceneActionShockLeverPuzzle: {
 		ShockLeverPuzzle puzzle(engine);
 		return puzzle.run(argument) != ShockLeverPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionTarotCardPuzzle) {
+	case kSceneActionTarotCardPuzzle: {
 		TarotCardsPuzzle puzzle(engine);
 		return puzzle.run(argument) != TarotCardsPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionTubeSwitchScene) {
+	case kSceneActionTubeSwitchScene: {
 		TubeScene scene(engine);
 		return scene.run(argument) != TubeScene::kLoadFailed;
 	}
-	if (action == kSceneActionKkTileMatchPuzzle) {
+	case kSceneActionKkTileMatchPuzzle: {
 		KkTileMatchPuzzle puzzle(engine);
 		return puzzle.run(argument) != KkTileMatchPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionGymSelector) {
+	case kSceneActionGymSelector: {
 		GymScene scene(engine);
 		return scene.run(argument) != GymScene::kLoadFailed;
 	}
-	if (action == kSceneActionCrystalPuzzle) {
+	case kSceneActionCrystalPuzzle: {
 		CrystalPuzzle puzzle(engine);
 		const CrystalPuzzle::Result result = puzzle.run(argument);
 		debugC(1, kDebugPuzzles,
 			"Ripper: crystal puzzle scene action completed result=%d milestone=%u", result, argument);
 		return result != CrystalPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionNoOp) {
+	case kSceneActionNoOp:
+	case 44:
 		return true;
-	}
-	if (action == kSceneActionClearDisplay) {
+	case kSceneActionClearDisplay:
 		g_system->fillScreen(0);
 		presentScreen();
 		debugC(2, kDebugScene, "Ripper: cleared active scene display from scene action 32");
 		return true;
-	}
-	if (action == kSceneActionStainedGlassPuzzle) {
+	case kSceneActionStainedGlassPuzzle: {
 		StainedGlassPuzzle puzzle(engine);
 		return puzzle.run(argument) != StainedGlassPuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionKeypadSequencePuzzle) {
+	case kSceneActionKeypadSequencePuzzle: {
 		KeypadSequencePuzzle puzzle(engine);
 		return puzzle.run(argument) != KeypadSequencePuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionSetUiSelectionIndex) {
+	case kSceneActionSetUiSelectionIndex:
 		engine->getCursor()->setSelectionIndex(argument);
 		debugC(2, kDebugCursor,
 			"Ripper: scene action 35 stored UI selection index=%u script='%s' offset=0x%x",
-			argument, script.getMemberName().c_str(), command.offset);
+			argument, scriptName, commandOffset);
 		return true;
-	}
-	if (action == kSceneActionDispatchUiSelection) {
+	case kSceneActionDispatchUiSelection:
 		engine->getCursor()->dispatchSelectionIndexChange(argument);
 		debugC(2, kDebugCursor,
 			"Ripper: scene action 36 dispatched UI selection index=%u script='%s' offset=0x%x",
-			argument, script.getMemberName().c_str(), command.offset);
+			argument, scriptName, commandOffset);
 		return true;
-	}
-	if (action == kSceneActionBoardGame) {
+	case kSceneActionBoardGame: {
 		BoardGamePuzzle puzzle(engine);
 		return puzzle.run(argument) != BoardGamePuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionKaDialogue) {
-		const CyberManager::Result result = engine->getCyber()->runProgram(action, "ka", argument);
-		return result != CyberManager::kLoadFailed;
-	}
-	if (action >= kSceneActionKbProgram && action <= kSceneActionKrProgram && action != 44) {
-		const char *program = nullptr;
-		const uint chapter = engine->getMilestones()->chapter();
-		switch (action) {
-		case kSceneActionKbProgram: program = "kb"; break;
-		case kSceneActionKcOrWoffordProgram:
-			if (chapter < 3) {
-				program = "wofford-media";
-			} else {
-				program = "kc";
-			}
-			break;
-		case kSceneActionKdProgram: program = "kd"; break;
-		case kSceneActionKfProgram: program = "kf"; break;
-		case kSceneActionKgProgram: program = chapter >= 3 ? "kg3" : "kg"; break;
-		case kSceneActionKhProgram: program = "kh"; break;
-		case kSceneActionKiProgram: program = "ki"; break;
-		case kSceneActionKjProgram: program = chapter >= 3 ? "kj3" : "kj"; break;
-		case kSceneActionKkProgram: program = "kk"; break;
-		case kSceneActionKlProgram: program = "kl"; break;
-		case kSceneActionKmProgram: program = "km"; break;
-		case kSceneActionKnProgram: program = "kn"; break;
-		case kSceneActionKpProgram: program = "kp"; break;
-		case kSceneActionKqProgram: program = "kq"; break;
-		case kSceneActionKrProgram: program = "kr"; break;
-		default: break;
-		}
-		if (!program)
-			return false;
-		const CyberManager::Result result = engine->getCyber()->runProgram(action, program, argument);
-		return result != CyberManager::kLoadFailed;
-	}
-	if (action == 44) {
-		return true;
-	}
-	if (action == kSceneActionEightButtonSequencePuzzle) {
+	case kSceneActionKaDialogue:
+		program = "ka";
+		break;
+	case kSceneActionKbProgram:
+		program = "kb";
+		break;
+	case kSceneActionKcOrWoffordProgram:
+		program = engine->getMilestones()->chapter() < 3 ? "wofford-media" : "kc";
+		break;
+	case kSceneActionKdProgram:
+		program = "kd";
+		break;
+	case kSceneActionKfProgram:
+		program = "kf";
+		break;
+	case kSceneActionKgProgram:
+		program = engine->getMilestones()->chapter() >= 3 ? "kg3" : "kg";
+		break;
+	case kSceneActionKhProgram:
+		program = "kh";
+		break;
+	case kSceneActionKiProgram:
+		program = "ki";
+		break;
+	case kSceneActionKjProgram:
+		program = engine->getMilestones()->chapter() >= 3 ? "kj3" : "kj";
+		break;
+	case kSceneActionKkProgram:
+		program = "kk";
+		break;
+	case kSceneActionKlProgram:
+		program = "kl";
+		break;
+	case kSceneActionKmProgram:
+		program = "km";
+		break;
+	case kSceneActionKnProgram:
+		program = "kn";
+		break;
+	case kSceneActionKpProgram:
+		program = "kp";
+		break;
+	case kSceneActionKqProgram:
+		program = "kq";
+		break;
+	case kSceneActionKrProgram:
+		program = "kr";
+		break;
+	case kSceneActionEightButtonSequencePuzzle: {
 		EightButtonSequencePuzzle puzzle(engine);
 		return puzzle.run(argument) != EightButtonSequencePuzzle::kLoadFailed;
 	}
-	if (action == kSceneActionCainDialogue) {
+	case kSceneActionCainDialogue: {
 		CainScene scene(engine);
 		return scene.run(argument) != CainScene::kLoadFailed;
 	}
-	if (action == kSceneActionAppendNotebookText)
+	case kSceneActionAppendNotebookText:
 		return engine->getWac()->appendNotebookResourceString(argument);
+	default:
+		warning("Ripper: unsupported scene action %u ('%s') in '%s' at 0x%x",
+			action, actionName(action), scriptName, commandOffset);
+		return false;
+	}
 
-	warning("Ripper: unsupported scene action %u ('%s') in '%s' at 0x%x",
-		action, actionName(action), script.getMemberName().c_str(), command.offset);
-	return false;
+	return engine->getCyber()->runProgram(action, program, argument) != CyberManager::kLoadFailed;
 }
 
 } // End of namespace Ripper

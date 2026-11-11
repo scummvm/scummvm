@@ -701,11 +701,9 @@ ScriptManager::CallbackResult ScriptManager::dispatchSceneAction(const CompiledS
 		return kCallbackTerminateRuntime;
 	case kSceneActionBriefing:
 		return _briefing->arm(argument) ? kCallbackContinue : kCallbackFailed;
-	default:
-		break;
-	}
-
-	if (_demoScriptAbi && action == 200) {
+	case kSceneActionStartDemoPrologueCue: {
+		if (!_demoScriptAbi)
+			break;
 		// Keep this one-shot cue playing across scene handoffs until action 201.
 		SceneAudioManager *sceneAudio = _engine->getSceneAudio();
 		if (!sceneAudio->load("r_p_l1.wav", true) ||
@@ -713,11 +711,17 @@ ScriptManager::CallbackResult ScriptManager::dispatchSceneAction(const CompiledS
 			return kCallbackFailed;
 		return kCallbackContinue;
 	}
-	if (_demoScriptAbi && action == 201) {
+	case kSceneActionStopDemoPrologueCue:
+		if (!_demoScriptAbi)
+			break;
 		_engine->getSceneAudio()->stop("r_p_l1");
 		return kCallbackContinue;
+	default:
+		break;
 	}
-	return SceneActionDispatcher::dispatch(_engine, script, command) ? kCallbackContinue : kCallbackFailed;
+
+	return SceneActionDispatcher::dispatch(_engine, action, argument,
+		script.getMemberName().c_str(), command.offset) ? kCallbackContinue : kCallbackFailed;
 }
 
 static bool resolveCallbackBranchTarget(const CompiledScript &script,

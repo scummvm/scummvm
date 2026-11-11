@@ -84,19 +84,19 @@ enum SceneAction {
 	kSceneActionEightButtonSequencePuzzle = 61,
 	kSceneActionCainDialogue = 62,
 	kSceneActionAppendNotebookText = 63,
+	kSceneActionStartDemoPrologueCue = 200,
+	kSceneActionStopDemoPrologueCue = 201,
 	kSceneActionBriefing = 300,
 	kSceneActionTerminateRuntime = 9999
 };
 
-class CompiledScript;
-struct ScriptCommand;
 class RipperEngine;
 
 class SceneActionDispatcher {
 public:
 	static const char *actionName(uint action);
-	static bool dispatch(RipperEngine *engine, const CompiledScript &script,
-		const ScriptCommand &command);
+	static bool dispatch(RipperEngine *engine, uint action, uint argument,
+		const char *scriptName, uint32 commandOffset);
 };
 
 } // End of namespace Ripper
