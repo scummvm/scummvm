@@ -531,8 +531,8 @@ void IgorEngine::handlePause() {
 
 Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 
-	// Walk data (100 entries)
-	for (int i = 0; i < 100; ++i) {
+	// Walk data
+	for (int i = 0; i < ARRAYSIZE(_walkData); ++i) {
 		s.skip(2);
 		s.syncAsSint16LE(_walkData[i].x);
 		s.syncAsSint16LE(_walkData[i].y);
@@ -616,7 +616,7 @@ Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	s.syncAsByte(_gameState.unk11);
 	s.syncAsByte(_gameState.dialogueStarted);
 	s.skip(1);
-	for (int i = 0; i < 500; ++i) {
+	for (int i = 0; i < ARRAYSIZE(_gameState.dialogueData); ++i) {
 		s.syncAsByte(_gameState.dialogueData[i]);
 	}
 	s.syncAsByte(_gameState.dialogueChoiceStart);
