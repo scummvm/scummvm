@@ -378,87 +378,64 @@ bool SceneAudioManager::syncGame(Common::Serializer &serializer) {
 }
 
 bool SceneAudioManager::syncGame(Common::Serializer &serializer, Snapshot &state) {
-	if (serializer.getVersion() <= 2) {
-		Common::String audioPath;
-		byte active = 0;
-		uint32 volumePercent = 100;
-		byte loop = 0;
-		serializer.syncString(audioPath);
+	for (uint i = 0; i < kSlotCount; ++i) {
+		Slot &slot = state.slots[i];
+		if (serializer.isSaving())
+			slot = _slots[i];
+		Common::String path = serializer.isSaving() ? slot.path : Common::String();
+		byte occupied = slot.occupied ? 1 : 0;
+		byte preserve = slot.preserve ? 1 : 0;
+		byte active = slot.occupied && _mixer->isSoundHandleActive(slot.handle) ? 1 : 0;
+		uint32 volumePercent = slot.volumePercent;
+		uint32 targetVolumePercent = slot.targetVolumePercent;
+		uint32 triggerFrame = slot.triggerFrame;
+		uint32 volumeStartFrame = slot.volumeStartFrame;
+		uint32 volumeTiming = slot.volumeTiming;
+		uint32 volumeRampStep = slot.volumeRampStep;
+		uint32 volumeRampProgress = slot.volumeRampProgress;
+		int32 volumeRampDirection = slot.volumeRampDirection;
+		byte control = slot.control;
+		byte volumeRampPending = slot.volumeRampPending ? 1 : 0;
+		byte sparseVolumeRamp = slot.sparseVolumeRamp ? 1 : 0;
+
+		serializer.syncString(path);
+		serializer.syncAsByte(occupied);
+		serializer.syncAsByte(preserve);
 		serializer.syncAsByte(active);
 		serializer.syncAsUint32LE(volumePercent);
-		serializer.syncAsByte(loop);
-		if (serializer.err() || audioPath.size() > 256 || volumePercent > 100)
+		serializer.syncAsUint32LE(targetVolumePercent);
+		serializer.syncAsUint32LE(triggerFrame);
+		serializer.syncAsUint32LE(volumeStartFrame);
+		serializer.syncAsUint32LE(volumeTiming);
+		serializer.syncAsUint32LE(volumeRampStep);
+		serializer.syncAsUint32LE(volumeRampProgress);
+		serializer.syncAsSint32LE(volumeRampDirection);
+		serializer.syncAsByte(control);
+		serializer.syncAsByte(volumeRampPending);
+		serializer.syncAsByte(sparseVolumeRamp);
+		if (serializer.err() || path.size() > 256 || (occupied != 0 && path.empty()) ||
+				occupied > 1 || preserve > 1 || active > 1 || volumePercent > 100 ||
+				targetVolumePercent > 100 || volumeRampDirection < -1 ||
+				volumeRampDirection > 1 || volumeRampPending > 1 || sparseVolumeRamp > 1)
 			return false;
-		if (serializer.isSaving())
-			return true;
-		Slot &slot = state.slots[0];
-		slot.path = audioPath;
-		slot.key = keyFromPath(audioPath);
-		slot.occupied = !audioPath.empty();
+		if (serializer.isSaving() || occupied == 0)
+			continue;
+		slot.path = path;
+		slot.key = keyFromPath(path);
+		slot.occupied = true;
+		slot.preserve = preserve != 0;
 		slot.volumePercent = volumePercent;
-		slot.targetVolumePercent = volumePercent;
-		slot.control = loop != 0 ? 1 : 0;
-		state.active[0] = active != 0;
-	} else {
-		for (uint i = 0; i < kSlotCount; ++i) {
-			Slot &slot = state.slots[i];
-			if (serializer.isSaving())
-				slot = _slots[i];
-			Common::String path = serializer.isSaving() ? slot.path : Common::String();
-			byte occupied = slot.occupied ? 1 : 0;
-			byte preserve = slot.preserve ? 1 : 0;
-			byte active = slot.occupied && _mixer->isSoundHandleActive(slot.handle) ? 1 : 0;
-			uint32 volumePercent = slot.volumePercent;
-			uint32 targetVolumePercent = slot.targetVolumePercent;
-			uint32 triggerFrame = slot.triggerFrame;
-			uint32 volumeStartFrame = slot.volumeStartFrame;
-			uint32 volumeTiming = slot.volumeTiming;
-			uint32 volumeRampStep = slot.volumeRampStep;
-			uint32 volumeRampProgress = slot.volumeRampProgress;
-			int32 volumeRampDirection = slot.volumeRampDirection;
-			byte control = slot.control;
-			byte volumeRampPending = slot.volumeRampPending ? 1 : 0;
-			byte sparseVolumeRamp = slot.sparseVolumeRamp ? 1 : 0;
-
-			serializer.syncString(path);
-			serializer.syncAsByte(occupied);
-			serializer.syncAsByte(preserve);
-			serializer.syncAsByte(active);
-			serializer.syncAsUint32LE(volumePercent);
-			serializer.syncAsUint32LE(targetVolumePercent);
-			serializer.syncAsUint32LE(triggerFrame);
-			serializer.syncAsUint32LE(volumeStartFrame);
-			serializer.syncAsUint32LE(volumeTiming);
-			serializer.syncAsUint32LE(volumeRampStep);
-			serializer.syncAsUint32LE(volumeRampProgress);
-			serializer.syncAsSint32LE(volumeRampDirection);
-			serializer.syncAsByte(control);
-			serializer.syncAsByte(volumeRampPending);
-			serializer.syncAsByte(sparseVolumeRamp);
-			if (serializer.err() || path.size() > 256 || (occupied != 0 && path.empty()) ||
-					occupied > 1 || preserve > 1 || active > 1 || volumePercent > 100 ||
-					targetVolumePercent > 100 || volumeRampDirection < -1 ||
-					volumeRampDirection > 1 || volumeRampPending > 1 || sparseVolumeRamp > 1)
-				return false;
-			if (serializer.isSaving() || occupied == 0)
-				continue;
-			slot.path = path;
-			slot.key = keyFromPath(path);
-			slot.occupied = true;
-			slot.preserve = preserve != 0;
-			slot.volumePercent = volumePercent;
-			slot.targetVolumePercent = targetVolumePercent;
-			slot.triggerFrame = triggerFrame;
-			slot.volumeStartFrame = volumeStartFrame;
-			slot.volumeTiming = volumeTiming;
-			slot.volumeRampStep = volumeRampStep;
-			slot.volumeRampProgress = volumeRampProgress;
-			slot.volumeRampDirection = volumeRampDirection;
-			slot.control = control;
-			slot.volumeRampPending = volumeRampPending != 0;
-			slot.sparseVolumeRamp = sparseVolumeRamp != 0;
-			state.active[i] = active != 0;
-		}
+		slot.targetVolumePercent = targetVolumePercent;
+		slot.triggerFrame = triggerFrame;
+		slot.volumeStartFrame = volumeStartFrame;
+		slot.volumeTiming = volumeTiming;
+		slot.volumeRampStep = volumeRampStep;
+		slot.volumeRampProgress = volumeRampProgress;
+		slot.volumeRampDirection = volumeRampDirection;
+		slot.control = control;
+		slot.volumeRampPending = volumeRampPending != 0;
+		slot.sparseVolumeRamp = sparseVolumeRamp != 0;
+		state.active[i] = active != 0;
 	}
 	if (serializer.err())
 		return false;

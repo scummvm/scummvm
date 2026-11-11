@@ -323,25 +323,16 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 }
 
 bool ScriptManager::syncGame(Common::Serializer &serializer, SaveState &state) const {
-	if (serializer.isLoading())
-		state.announcedSelectors = 0;
-
 	serializer.syncString(state.activeMember);
 	serializer.syncAsUint32LE(state.activeFrame);
-	if (serializer.getVersion() >= 4)
-		serializer.syncAsUint16LE(state.frontEndActionMask);
-	else if (serializer.isLoading())
-		state.frontEndActionMask = 0xffff;
+	serializer.syncAsUint16LE(state.frontEndActionMask);
 	serializer.syncString(state.previousFrameLabel);
 	serializer.syncString(state.concurrentMember);
 	serializer.syncString(state.concurrentEntryLabel);
 	serializer.syncAsByte(state.awaitingInteraction);
 	serializer.syncAsByte(state.briefingArmed);
 	serializer.syncAsUint32LE(state.briefingSelector);
-	serializer.syncAsUint16LE(state.announcedSelectors, 6);
-	if (serializer.isLoading() && serializer.getVersion() < 6 &&
-			state.briefingArmed != 0 && state.briefingSelector < 9)
-		state.announcedSelectors = 1U << state.briefingSelector;
+	serializer.syncAsUint16LE(state.announcedSelectors);
 	if (state.briefingArmed > 1 || state.awaitingInteraction > 1 ||
 			!BriefingManager::isValidRestore(state.briefingArmed != 0, state.briefingSelector, state.announcedSelectors))
 		return false;

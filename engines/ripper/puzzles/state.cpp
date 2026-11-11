@@ -87,31 +87,29 @@ bool syncKeySlots(Common::Serializer &serializer, int *slots, uint count,
 
 bool PuzzleState::syncGame(Common::Serializer &serializer) {
 	PuzzleState state = serializer.isLoading() ? PuzzleState() : *this;
-	if (serializer.getVersion() >= 6) {
-		if (!syncClock(serializer, state.clock))
-			return false;
-		for (uint i = 0; i < ARRAYSIZE(state.boardArrangement.positions); ++i) {
-			Common::Point &point = state.boardArrangement.positions[i];
-			serializer.syncAsSint16LE(point.x);
-			serializer.syncAsSint16LE(point.y);
-			if (point.x < 0 || point.x >= kRipperScreenWidth ||
-					point.y < 0 || point.y >= kRipperScreenHeight)
-				return false;
-		}
-		uint32 seen = 0;
-		const int pieceCount = ARRAYSIZE(state.keyGroup.sourceSlots);
-		if (!syncKeySlots(serializer, state.keyGroup.sourceSlots,
-				pieceCount, pieceCount, seen) ||
-				!syncKeySlots(serializer, state.keyGroup.targetSlots,
-					ARRAYSIZE(state.keyGroup.targetSlots), pieceCount, seen))
+	if (!syncClock(serializer, state.clock))
+		return false;
+	for (uint i = 0; i < ARRAYSIZE(state.boardArrangement.positions); ++i) {
+		Common::Point &point = state.boardArrangement.positions[i];
+		serializer.syncAsSint16LE(point.x);
+		serializer.syncAsSint16LE(point.y);
+		if (point.x < 0 || point.x >= kRipperScreenWidth ||
+				point.y < 0 || point.y >= kRipperScreenHeight)
 			return false;
 	}
+	uint32 seen = 0;
+	const int pieceCount = ARRAYSIZE(state.keyGroup.sourceSlots);
+	if (!syncKeySlots(serializer, state.keyGroup.sourceSlots,
+			pieceCount, pieceCount, seen) ||
+			!syncKeySlots(serializer, state.keyGroup.targetSlots,
+				ARRAYSIZE(state.keyGroup.targetSlots), pieceCount, seen))
+		return false;
 	if (serializer.err())
 		return false;
 	if (serializer.isLoading())
 		*this = state;
-	debugC(2, kDebugSaveLoad, "Ripper: %s retained puzzle state version=%u",
-		serializer.isLoading() ? "restored" : "saved", serializer.getVersion());
+	debugC(2, kDebugSaveLoad, "Ripper: %s retained puzzle state",
+		serializer.isLoading() ? "restored" : "saved");
 	return true;
 }
 

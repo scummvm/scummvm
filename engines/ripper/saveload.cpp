@@ -28,7 +28,6 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
-#include "ripper/milestones.h"
 #include "ripper/puzzles/state.h"
 #include "ripper/media/scene_audio.h"
 #include "ripper/script/script.h"
@@ -38,8 +37,7 @@ namespace Ripper {
 namespace {
 
 static const char kRipperSaveMagic[] = { 'R', 'S', 'A', 'V' };
-static const uint32 kRipperSaveVersion = 6;
-static const uint32 kRipperMinimumSaveVersion = 2;
+static const uint32 kRipperSaveVersion = 1;
 static const uint16 kScreenWidth = 640;
 static const uint16 kScreenHeight = 400;
 static const uint32 kPaletteSize = 256 * 3;
@@ -141,12 +139,10 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	Common::Serializer serializer(stream, nullptr);
 	if (!serializer.matchBytes(kRipperSaveMagic, sizeof(kRipperSaveMagic)) ||
-			!serializer.syncVersion(kRipperSaveVersion) ||
-			serializer.getVersion() < kRipperMinimumSaveVersion) {
+			!serializer.syncVersion(kRipperSaveVersion)) {
 		warning("Ripper: unsupported or invalid save-state header");
 		return Common::kReadingFailed;
 	}
-	const uint32 saveVersion = serializer.getVersion();
 	ScriptManager::SaveState scriptState;
 	SceneAudioManager::Snapshot audioState;
 	PuzzleState puzzleState;
@@ -174,17 +170,6 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	SceneRuntimeState runtime;
 	if (!_scripts->prepareSaveState(scriptState, runtime))
 		return Common::kReadingFailed;
-
-	if (saveVersion < 5 && !scriptState.milestones.hasRipperIdentity()) {
-		debugC(1, kDebugSaveLoad,
-			"Ripper: repairing legacy save version=%u without a Ripper identity",
-			saveVersion);
-		const uint candidateCount =
-			kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
-		if (!scriptState.milestones.selectRipperIdentity(
-				_randomSource.getRandomNumber(candidateCount - 1), "legacy-save-migration"))
-			return Common::kReadingFailed;
-	}
 
 	if (!_scripts->applySaveState(scriptState, runtime))
 		return Common::kReadingFailed;
