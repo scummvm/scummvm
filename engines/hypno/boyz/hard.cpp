@@ -355,6 +355,7 @@ void BoyzEngine::runRetryMenu(Code *code) {
 					playSound(kMenuChoiceSound, 1);
 					// Restore initial health for the team
 					_health = _maxHealth;
+					_previousHealth = _maxHealth;
 					_stats = _globalStats;
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;
@@ -381,6 +382,7 @@ void BoyzEngine::runRetryMenu(Code *code) {
 					playSound(kMenuChoiceSound, 1);
 					// Restore initial health for the team
 					_health = _maxHealth;
+					_previousHealth = _maxHealth;
 					_stats = _globalStats;
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;

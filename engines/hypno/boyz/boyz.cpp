@@ -1149,6 +1149,13 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 Common::String BoyzEngine::findNextLevel(const Transition *trans) {
 	if (trans->nextLevel.empty())
 		error("Invalid transition!");
+
+	for (int t = 1; t <= 5; t++) {
+		if (trans == _levels[Common::String::format("<territory_%d>", t)]) {
+			_maxHealth = getHitPoints(t) * 10;
+			_previousHealth = _maxHealth;
+		}
+	}
 	return trans->nextLevel;
 }
 
