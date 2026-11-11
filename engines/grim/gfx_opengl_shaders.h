@@ -285,6 +285,7 @@ private:
 	GLuint _dimVBO;
 	GLuint _dimRegionVBO;
 	GLuint _blastVBO;
+	int _blastVBOCapacity;
 	GLuint _storedDisplay;
 };
 

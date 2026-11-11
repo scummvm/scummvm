@@ -212,6 +212,8 @@ GfxOpenGLS::GfxOpenGLS() {
 	_backgroundProgram = nullptr;
 	_smushProgram = nullptr;
 	_textProgram = nullptr;
+	_blastVBO = 0;
+	_blastVBOCapacity = 0;
 	_emergProgram = nullptr;
 	_actorProgram = nullptr;
 	_actorLightsProgram = nullptr;
@@ -396,7 +398,8 @@ void GfxOpenGLS::setupShaders() {
 	setupPrimitives();
 
 	if (!isEMI) {
-		_blastVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, 128 * 16 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+		_blastVBOCapacity = 128;
+		_blastVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, _blastVBOCapacity * 16 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
 	}
 }
 
@@ -1751,6 +1754,10 @@ void GfxOpenGLS::createTextObject(TextObject *text) {
 	if (text->isBlastDraw()) {
 		vbo = _blastVBO;
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		if (numCharacters > _blastVBOCapacity) {
+			_blastVBOCapacity = numCharacters;
+			glBufferData(GL_ARRAY_BUFFER, _blastVBOCapacity * 16 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+		}
 		glBufferSubData(GL_ARRAY_BUFFER, 0, numCharacters * 16 * sizeof(float), bufData);
 	} else {
 		vbo = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, numCharacters * 16 * sizeof(float), bufData, GL_STATIC_DRAW);
