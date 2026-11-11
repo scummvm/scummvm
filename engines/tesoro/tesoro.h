@@ -65,6 +65,7 @@ private:
 	PointerState _pointer;
 	bool _buttonsDown[3] = { false, false, false };
 	AnimPlayer _font;
+	MainList _main;
 	byte _escape = 0;
 	/** One frame: events, then drawing. False when the game should end. */
 	bool runFrame();
@@ -72,8 +73,7 @@ private:
 	void handleEvent(const Common::Event &e);
 	void setButton(PointerState::Button button, bool down);
 
-	/** The menu key (Escape) is taken: its input events of this frame are forgotten. */
-	void acknowledgeKeys() { _escape = 0; }
+	void resetKeys() { _escape = 0; }
 
 protected:
 	// Engine APIs
@@ -135,6 +135,9 @@ public:
 	Camera &camera();
 	/** Loads a level from the archive and shows it. */
 	bool level(const char *name);
+	/** Second step of a level: draws it and, unless it is the interface level, composes the frame onto the screen. */
+	int levelSecondStep(Level &level);
+	void presentFrame();
 	/** Loads a level file from the archive; null if it is missing or cannot be read. */
 	Level *loadLevel(const char *name);
 	/** Sets the label next to the pointer (null clears it). */

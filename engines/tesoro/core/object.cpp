@@ -105,11 +105,6 @@ void Object::attachToLevel(Level *level) {
 	onAttach();
 }
 
-void attachAll(ObjectList &list, Level *level) {
-	for (uint i = 0; i < list.size(); ++i)
-		list[i]->attachToLevel(level);
-}
-
 void Object::drawAnimation(const Camera &camera, Display &display, bool skipPastRight) {
 	AnimPlayer &player = _anim.current();
 	const AnimStep &step = player.bank()->step(player.current());

@@ -42,7 +42,7 @@ inline bool removeFromList(ObjectList &list, const Object *object) {
 	return false;
 }
 
-/** The main list: objects in priority order, each taking its turn in runUpdatePass. */
+/** The main list: objects in priority order, each taking its turn in a pass over the list. */
 class MainList {
 public:
 	/** Inserts in front of the first entry of greater priority, so equal priorities keep their order. */
@@ -66,6 +66,15 @@ public:
 		++_edits;
 	}
 
+	/**
+	 * One pass over the list: every active object gets its update() once.
+	 * Objects added or removed during a turn make the walk start over; the objects already done are skipped.
+	 */
+	int runUpdate() { return runPass(false); }
+
+	/** The second pass: the same walk calling update2(). */
+	int runUpdate2() { return runPass(true); }
+
 	uint count() const { return _entries.size(); }
 	Object *at(uint index) const { return _entries[index].object; }
 	int32 priorityAt(uint index) const { return _entries[index].priority; }
@@ -77,6 +86,8 @@ private:
 		Object *object;
 		int32 priority;
 	};
+
+	int runPass(bool second);
 
 	void insert(Object *object, int32 priority, bool beforeEqual) {
 		uint i = 0;

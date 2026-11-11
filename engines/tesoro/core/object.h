@@ -89,8 +89,11 @@ public:
 	/** Advances the animation */
 	virtual void updateAnimation(int32 now);
 
-	/** Per-frame step of the object list. Returns 1 to go on (the pointer asks for nothing else yet). */
+	/** Per-frame step of the first pass over the object list. Returns 2 or 3 to end the pass early, else 0. */
 	virtual int update() { return 0; }
+
+	/** Per-frame step of the second pass. Same results as update(). */
+	virtual int update2() { return 0; }
 
 	/** Ticks the animation and works out the hit rectangle and the area the object moved through. */
 	virtual void updateBounds(int32 now);
@@ -136,7 +139,6 @@ public:
 
 protected:
 	/**
-	 * Draws the image of the step the current player is on, positioned from the camera.
 	 * With skipPastRight an image whose left edge would be further right than the screen
 	 * is not sent at all.
 	 */
@@ -160,9 +162,6 @@ protected:
 	ObjectRect _movedArea;
 	AnimSet _anim;
 };
-
-/** Attaches every object of the list to the level, in list order. */
-void attachAll(ObjectList &list, Level *level);
 
 } // End of namespace Tesoro
 

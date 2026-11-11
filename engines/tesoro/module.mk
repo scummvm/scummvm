@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	core/level.o \
 	core/namekey.o \
 	core/object.o \
+	core/objectlist.o \
 	core/renderqueue.o \
 	core/room.o \
 	core/spriteobject.o \

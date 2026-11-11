@@ -40,12 +40,24 @@ namespace Tesoro {
 
 TesoroEngine *g_engine;
 
+/** The levels the engine shows: their second step draws and composes the frame. */
+class MenuLevel : public Level {
+public:
+	explicit MenuLevel(TesoroEngine &engine) : _engine(engine) {}
+
+	int update2() override { return _engine.levelSecondStep(*this); }
+
+private:
+	TesoroEngine &_engine;
+};
+
 TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																			   _gameDescription(gameDesc), _clock(syst->getMillis()), _randomSource("Tesoro") {
 	g_engine = this;
 }
 
 TesoroEngine::~TesoroEngine() {
+	_main.clear();
 	delete _interface;
 	delete _level;
 	delete _screen;
@@ -91,6 +103,12 @@ Common::Error TesoroEngine::run() {
 	}
 	if (_cursor)
 		_cursor->setSurroundings(&_pointer, _level);
+
+	// The pointer, the interface level and the level the player is in take their turns in this order.
+	if (_cursor)
+		_main.insertByPriority(_cursor, 0xf);
+	if (_interface)
+		_main.insertByPriority(_interface, 0x13);
 
 	const uint32 fontOffset = _archive.findEntry("FUENTES.ANM");
 	if (!fontOffset || !_font.load(*_archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
@@ -163,20 +181,39 @@ bool TesoroEngine::runFrame() {
 	if (_pointer.buttons[0] || _pointer.buttons[1] || _escape)
 		debug("Pointer (%d, %d) left %02x right %02x escape %02x", _pointer.x, _pointer.y, _pointer.buttons[0], _pointer.buttons[1], _escape);
 
+	// The clock is frozen for the rest of the frame, so every object sees the same time.
+	_clock.freeze(_system->getMillis());
 	const int32 now = gameTime();
 	_display.startFrame();
 	_display.fillBackground(0x4208);	// dark grey
-	if (_cursor)
-		_cursor->update();
 	if (_interface)
-		_interface->drawRooms(now, _display);
+		_interface->setFrameTime(now);
 	if (_level)
-		_level->drawRooms(now, _display);
+		_level->setFrameTime(now);
 
+	// The first pass moves things; the second, unless the first asked to stop, draws the picture.
+	if (_main.runUpdate() != 3)
+		_main.runUpdate2();
+
+	// Without a level nothing composes the frame, so the pointer is shown on its own.
+	if (!_level)
+		presentFrame();
+	_clock.unfreeze();
+	return !shouldQuit();
+}
+
+void TesoroEngine::presentFrame() {
 	_display.compose();
 	_screen->copyRectToSurface(_display.frame(), Display::kWidth * 2, 0, 0, Display::kWidth, Display::kHeight);
 	_screen->addDirtyRect(Common::Rect(Display::kWidth, Display::kHeight));
-	return !shouldQuit();
+}
+
+int TesoroEngine::levelSecondStep(Level &level) {
+	level.drawRooms(gameTime(), _display);
+	// The interface level only draws: the level the player is in composes the frame.
+	if (&level != _interface)
+		presentFrame();
+	return 1;
 }
 
 Common::Error TesoroEngine::syncGame(Common::Serializer &s) {
@@ -203,7 +240,7 @@ Level *TesoroEngine::loadLevel(const char *name) {
 		return nullptr;
 	}
 
-	Level *level = new Level();
+	Level *level = new MenuLevel(*this);
 	if (!level->load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow, gameTime())) {
 		warning("Tesoro: level %s cannot be read", upper.c_str());
 		delete level;
@@ -219,8 +256,10 @@ bool TesoroEngine::level(const char *name) {
 		return false;
 
 	// The level replaces whatever was shown before.
+	_main.remove(_level);
 	delete _level;
 	_level = level;
+	_main.insertByPriority(_level, 0x14);
 	if (_cursor)
 		_cursor->setSurroundings(&_pointer, _level);
 	return true;

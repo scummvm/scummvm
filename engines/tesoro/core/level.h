@@ -64,7 +64,12 @@ public:
 	/** Game clock when the level was built. */
 	int32 loadTime() const { return _loadTime; }
 
-	/** Binds every object to this level (see attachAll). */
+	void setFrameTime(int32 now) { _frameTime = now; }
+
+	/** First pass step: the collision pass, or the one-shot verb after a reload of the pictures. */
+	int update() override;
+
+	/** Binds every object to this level in list order. */
 	void attachObjects();
 
 	Object *findObject(uint64 key);
@@ -86,6 +91,7 @@ private:
 	Common::Array<Object *> _owned;
 	Camera _camera;
 	Object *_special = nullptr;
+	int32 _frameTime = 0;
 
 	int32 _loadTime = 0;
 	bool _deferredReloaded = false;

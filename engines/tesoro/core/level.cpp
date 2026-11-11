@@ -156,7 +156,12 @@ Object *Level::createObject(const ObjectRecord &record, Room &room) {
 }
 
 void Level::attachObjects() {
-	attachAll(_objects, this);
+	for (uint i = 0; i < _objects.size(); ++i)
+		_objects[i]->attachToLevel(this);
+}
+
+int Level::update() {
+	return 1;
 }
 
 Object *Level::findObject(uint64 key) {
