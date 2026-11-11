@@ -362,17 +362,20 @@ GLuint GfxOpenGLS::nextPrimitive() {
 
 void GfxOpenGLS::setupShaders() {
 	bool isEMI = g_grim->getGameType() == GType_MONKEY4;
+	const Common::String prefix = isEMI ? "emi_" : "grim_";
 
 	static const char* commonAttributes[] = {"position", "texcoord", nullptr};
-	_backgroundProgram = OpenGL::Shader::fromFiles(isEMI ? "emi_background" : "grim_background", commonAttributes);
+	_backgroundProgram = OpenGL::Shader::fromFiles((prefix + "background").c_str(), commonAttributes);
 	_smushProgram = OpenGL::Shader::fromFiles("grim_smush", commonAttributes);
 	_textProgram = OpenGL::Shader::fromFiles("grim_text", commonAttributes);
 	_emergProgram = OpenGL::Shader::fromFiles("grim_emerg", commonAttributes);
 
 	static const char* actorAttributes[] = {"position", "texcoord", "color", "normal", nullptr};
-	_actorProgram = OpenGL::Shader::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
-	_actorLightsProgram = OpenGL::Shader::fromFiles(isEMI ? "emi_actorlights" : "grim_actorlights", actorAttributes);
-	_spriteProgram = OpenGL::Shader::fromFiles(isEMI ? "emi_sprite" : "grim_actor", actorAttributes);
+	// Actors and sprites share one fragment shader per game.
+	const Common::String objectFragment = prefix + "object";
+	_actorProgram = OpenGL::Shader::fromFiles((prefix + "actor").c_str(), objectFragment.c_str(), actorAttributes);
+	_actorLightsProgram = OpenGL::Shader::fromFiles((prefix + "actorlights").c_str(), objectFragment.c_str(), actorAttributes);
+	_spriteProgram = OpenGL::Shader::fromFiles(isEMI ? "emi_sprite" : "grim_actor", objectFragment.c_str(), actorAttributes);
 
 	static const char* primAttributes[] = { "position", nullptr };
 	_shadowPlaneProgram = OpenGL::Shader::fromFiles("grim_shadowplane", primAttributes);
