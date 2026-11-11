@@ -1325,6 +1325,11 @@ const Common::Rect &ZoombiniInteractive::getNotiBoxRect() const {
 }
 
 void ZoombiniInteractive::showNotiBox(const Common::U32String &ustr, NotiBoxKind kind, bool persistent) {
+	// Reused notifications retain their old draw order.
+	// Move this one after newer overlays so they do not cover the refreshed message.
+	if (_notiBoxFeature)
+		manualLinkAtEnd(_notiBoxFeature);
+
 	_notiBoxKind = kind;
 	_notiBoxText = ustr;
 	if (persistent)
@@ -1335,43 +1340,44 @@ void ZoombiniInteractive::showNotiBox(const Common::U32String &ustr, NotiBoxKind
 	// Only register NotiBox feature if not yet registered.
 	if (!_notiBoxFeature) {
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderShapeFunc(&ZoombiniInteractive::notiBox_preRenderShape);
+		hooks.setPreRenderFunc(&ZoombiniInteractive::notiBox_onPreRender);
+		hooks.setRenderFunc(&ZoombiniInteractive::notiBox_onRender);
 		hooks.setPostRenderFunc(&ZoombiniInteractive::notiBox_onPostRender);
 
-		Common::Array<ZmbHotspot> hotspots;
-		hotspots.push_back(ZmbHotspot(kNotiBox00_Short, kSystemShape3001_01_NotiBoxShort, 0, _notiBoxShortRect));
-		hotspots.push_back(ZmbHotspot(kNotiBox01_Medium, kSystemShape3001_02_NotiBoxLong, 0, _notiBoxMediumRect));
-		if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kEuropeV1x))
-			hotspots.push_back(ZmbHotspot(kNotiBox02_Wide, kSystemShape3001_03_NotiBoxWide, 0, _notiBoxWideRect));
-
-		_notiBoxFeature = loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap3001_NotiBox), 0,
-										  hotspots, 0,
+		_notiBoxFeature = loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap3001_NotiBox), 0, 0,
 										  ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00001000_TOPMOST,
 										  hooks);
-		// The first pre-render pass computes the click rectangle from shape metadata.
-		// Explicitly invalidate the notification rectangle
-		// because the drawn bounds may still be clipped on that first frame.
-		addExternalDirtyRect(getNotiBoxRect());
 	} else {
 		_notiBoxFeature->setNeedsRedraw(true);
-		addExternalDirtyRect(getNotiBoxRect());
 	}
+
+	static constexpr int16 kNotiBoxDirtyBottom = 580;
+	// Restore the screen below the plate when its content changes or expires.
+	Common::Rect dirtyRect = getNotiBoxRect();
+	dirtyRect.bottom = kNotiBoxDirtyBottom;
+	_notiBoxFeature->setClickRect(dirtyRect);
+	_notiBoxFeature->queueVisualRectConstraint(dirtyRect);
+	addExternalDirtyRect(dirtyRect);
 }
 
-void ZoombiniInteractive::notiBox_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
-	(void)hsGroup;
-
-	if (_notiBoxShowUntilFrame < _currentFrameCounter) {
+bool ZoombiniInteractive::notiBox_onPreRender(ZmbFeature *feature) {
+	if (_notiBoxShowUntilFrame <= _currentFrameCounter) {
+		addDirtyRect(feature->getVisualRectConstraint());
 		feature->scheduleClose();
 		_notiBoxFeature = nullptr;
+	} else if (_vm->_builtinDebug._showDragCoordinates) {
+		feature->setNeedsRedraw(true);
 	}
+	return false;
+}
 
-	for (uint32 i = 0; i < hotspots.size(); i++) {
-		if (i == _notiBoxKind)
-			hotspots[i]._shapeIdx = static_cast<int16>(i + 1);
-		else
-			hotspots[i]._shapeIdx = ZmbHotspot::kShapeNone;
-	}
+ZmbRenderResult ZoombiniInteractive::notiBox_onRender(ZmbFeature *feature) {
+	if (feature->isCloseScheduled())
+		return ZmbRenderResult::kSkipped;
+
+	const ZmbHotspot hotspot(0, static_cast<int16>(_notiBoxKind) + 1, 0, getNotiBoxRect());
+	_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap3001_NotiBox), &hotspot);
+	return ZmbRenderResult::kRendered;
 }
 
 void ZoombiniInteractive::notiBox_onPostRender(ZmbFeature *feature) {

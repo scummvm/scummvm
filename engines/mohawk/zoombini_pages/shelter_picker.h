@@ -112,12 +112,18 @@ protected:
 	ZmbRenderResult pickerUI_onRender(ZmbFeature *feature);
 	/** Complete the callback-only Picker UI render pass. */
 	void pickerUI_onPostRender(ZmbFeature *feature);
+	/** Present button press/release writes after the ordinary clipped runner pass. */
+	void onPostRenderFrame() override;
 	/** Dispatch a pointer click to the Picker UI groups under the pointer. */
 	ZmbEventHandleResult pickerUI_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos);
 	/** Blit every prepared hotspot in @p hotspots from @p imgResource. */
 	void pickerUI_drawGroup(const Common::Array<ZmbHotspot> &hotspots, ZmbResource imgResource);
 	/** Draw preview layers back to front: feet, body, eyes, nose, then hair. */
 	void pickerUI_drawPreview();
+	/** Draw the selected normal/pressed hotspots of one prepared button. */
+	void pickerUI_drawButton(const Common::Array<ZmbHotspot> &hotspots, uint16 normalId, uint16 pressedId, ZmbResource resource);
+	/** Draw the current preview name using the release-specific text inset. */
+	void pickerUI_drawNameText();
 
 	/** Select the current trait shapes for the matrix hotspots. */
 	void pickerMatrix_onPreRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
@@ -495,6 +501,24 @@ protected:
 	Common::StableMap<uint32, ButtonState> _pickerButtonStateMap;
 	/** Hit rectangles for right-panel buttons keyed by button ID. */
 	Common::HashMap<uint32, Common::Rect> _pickerButtonRectMap;
+	/**
+	 * Controls to repaint above notifications until the Picker UI finishes refreshing.
+	 * @ref ZoombiniShelterPicker::onPostRenderFrame() clears these requests after the final repaint.
+	 */
+	struct PickerControlRepaintState {
+		/** Right-panel repaints indexed by @ref ZoombiniShelterPicker::PickerButtonsIndex. */
+		bool _pickerButtons[2] = {};
+		/** Trait-selector repaints indexed by matrix button ID, 0-19. */
+		bool _matrixButtons[20] = {};
+		/** Repaint the name-box background and current name text. */
+		bool _nameBox = false;
+		/** Repaint the Map button. */
+		bool _mapButton = false;
+		/** Repaint the Go button. */
+		bool _goButton = false;
+	};
+	/** Repaint requests accumulated by input and action handlers through the pending UI refresh. */
+	PickerControlRepaintState _pickerRepaints;
 	/**
 	 * The single callback-only picker UI runner, covering every Picker control and preview.
 	 * The aliases below keep the shared button helpers bound to that one owner.
