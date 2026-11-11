@@ -523,7 +523,9 @@ void IgorEngine::handlePause() {
 	drawActionSentence(getString(STR_GamePaused), 0xFB);
 	do {
 		waitForTimer();
-	} while (!_inputVars[kInputPause]);
+	} while (!_inputVars[kInputPause] && !_eventQuitGame);
+	if (_eventQuitGame)
+		return; // keep the escape flag set by the quit event
 	memset(_inputVars, 0, sizeof(_inputVars));
 }
 
