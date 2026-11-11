@@ -137,6 +137,7 @@ bool CompiledScript::parseHeader() {
 	}
 
 	_frames.clear();
+	_frames.reserve(frameCount);
 	for (uint i = 0; i < frameCount; ++i) {
 		const uint32 offset = frameOffset + i * kFrameRecordSize;
 		ScriptFrame frame;
@@ -170,6 +171,7 @@ bool CompiledScript::parseHeader() {
 	}
 
 	_interactions.clear();
+	_interactions.reserve(interactionCount);
 	for (uint i = 0; i < interactionCount; ++i) {
 		const uint32 offset = interactionOffset + i * kInteractionRecordSize;
 		ScriptInteraction interaction;

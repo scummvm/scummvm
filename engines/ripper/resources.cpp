@@ -293,6 +293,7 @@ bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 		(uint64)directoryOffset + (uint64)entryCount * 12 > data.size())
 		return false;
 
+	sequence.frames.reserve(entryCount);
 	for (uint i = 0; i < entryCount; ++i) {
 		const uint32 entryOffset = READ_LE_UINT32(data.data() + directoryOffset + i * 12);
 		const uint32 endOffset = i + 1 < entryCount ?
@@ -503,6 +504,7 @@ bool AssetLibrary::loadDirectory(Common::SeekableReadStream &file, uint32 fileSi
 		return false;
 	}
 
+	_entries.reserve(entryCount);
 	file.seek(directoryOffset);
 	for (uint i = 0; i < entryCount; ++i) {
 		Entry entry;
