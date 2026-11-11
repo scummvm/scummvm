@@ -14,11 +14,11 @@ const float offsetY = 0.0;
 OUTPUT
 
 void checkZBuffer() {
-	vec2 zCoord = vec2((gl_FragCoord.x - 0.5) / screenSize.x, 1.0 - (gl_FragCoord.y - offsetY - 0.5) / screenSize.y);
-	vec2 sampled = texture(texZBuf, zCoord * texcropZBuf).ra;
-	float sceneZ = sampled.y + sampled.x / 256.0;
+	vec2 zCoord = vec2(gl_FragCoord.x / screenSize.x, 1.0 - (gl_FragCoord.y - offsetY) / screenSize.y);
+	vec2 sampled = floor(texture(texZBuf, zCoord * texcropZBuf).ra * 255.0 + 0.5);
+	float sceneZ = sampled.y * 256.0 + sampled.x;
 
-	if (gl_FragCoord.z * 1.0039 > sceneZ)
+	if (gl_FragCoord.z * 65535.0 >= sceneZ)
 		discard;
 }
 
