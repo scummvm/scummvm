@@ -73,6 +73,11 @@ public:
 };
 
 
+/**
+ * Public playback methods that accept a stream pointer take ownership of it,
+ * including on failure. Keep borrowed video data alive until the call returns
+ * and borrowed audio data alive until playback finishes or is stopped.
+ */
 class MediaPlayer {
 public:
 	MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer);

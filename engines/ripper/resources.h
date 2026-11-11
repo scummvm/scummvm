@@ -122,9 +122,17 @@ public:
 	AssetLibrary();
 
 	bool open(const Common::Path &filename);
+	/** Copies the library bytes from a caller-owned stream. */
 	bool open(Common::SeekableReadStream &stream, const Common::Path &sourceName);
+	/** Borrows archive for subsequent loose-file lookups. */
 	bool openLooseFiles(const Common::Archive &archive);
 	bool hasMember(const Common::String &memberName) const;
+	/**
+	 * Returns a caller-owned member stream. For a file-backed library, the
+	 * stream owns the reopened archive file. For an in-memory library, the
+	 * stream borrows the library's bytes. Reopening or destroying the library
+	 * invalidates those borrowed streams.
+	 */
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &memberName) const;
 	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadBitmapSequence(const Common::String &memberName,
