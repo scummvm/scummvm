@@ -67,12 +67,12 @@ struct SmackerPalettePolicy {
 	bool patchInterfacePalette;
 	bool patchWacMediaPalette;
 	bool preserveDisplayPalette;
-	Common::Array<byte> *sourcePalette;
 	bool rememberVideoPalette;
+	Common::Array<byte> *sourcePalette;
 
 	SmackerPalettePolicy() : patchInterfacePalette(true),
-		patchWacMediaPalette(false), preserveDisplayPalette(false), sourcePalette(nullptr),
-		rememberVideoPalette(true) {}
+		patchWacMediaPalette(false), preserveDisplayPalette(false), rememberVideoPalette(true),
+		sourcePalette(nullptr) {}
 };
 
 struct SmackerFramePolicy {
