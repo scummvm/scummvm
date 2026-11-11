@@ -261,6 +261,8 @@ Avalanche
      -
    * - Arnaud Boutonné
      -
+   * - Mohit Bankar
+     -
 
 awe
 ^^^
@@ -520,6 +522,8 @@ DM
      -
    * - Bendegúz Nagy
      -
+   * - Mohit Bankar
+     -
 
 Draci
 ^^^^^
@@ -744,6 +748,15 @@ Hades Challenge
    * - Vladimir Serbinenko/Google
      -
 
+Harold
+^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Scorp
+     -
+
 Harvester
 ^^^^^^^^^
 
@@ -763,6 +776,15 @@ HDB
      -
    * - Nipun Garg
      - GSoC student
+
+Hollywood
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Gustavo Grieco
+     -
 
 Hopkins
 ^^^^^^^
@@ -1140,10 +1162,10 @@ PhoenixVR
 
    * - Vladimir Menshakov
      -
-   * - Hermann Noll
-     - Help with 3D VR projections
    * - Scorp
      - Dracula 1/2 and Messenger support, Engine improvements
+   * - Hermann Noll
+     - Help with 3D VR projections
 
 Pink
 ^^^^

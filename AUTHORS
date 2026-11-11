@@ -112,6 +112,7 @@ ScummVM Team
     Avalanche:
        Peter Bozso
        Arnaud Boutonne
+       Mohit Bankar
 
     awe:
        Gregory Montoir
@@ -210,6 +211,7 @@ ScummVM Team
     DM:
        Arnaud Boutonne
        Bendeguz Nagy
+       Mohit Bankar
 
     Draci:
        Denis Kasak
@@ -297,12 +299,18 @@ ScummVM Team
     Hades Challenge:
        Vladimir Serbinenko/Google
 
+    Harold:
+       Scorp
+
     Harvester:
        Alex Bevilacqua
 
     HDB:
        Eugene Sandulenko
        Nipun Garg                     - GSoC student
+
+    Hollywood:
+       Gustavo Grieco
 
     Hopkins:
        Arnaud Boutonne
@@ -442,9 +450,9 @@ ScummVM Team
 
     PhoenixVR:
        Vladimir Menshakov
-       Hermann Noll                   - Help with 3D VR projections
        Scorp                          - Dracula 1/2 and Messenger support,
                                         Engine improvements
+       Hermann Noll                   - Help with 3D VR projections
 
     Pink:
        Andrei Prykhodko
