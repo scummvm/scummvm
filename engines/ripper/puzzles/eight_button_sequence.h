@@ -55,7 +55,6 @@ private:
 	int findButton(const Common::Point &point) const;
 	void drawFeedback(bool visible);
 	void drawSuccessDark();
-	bool waitTicks(uint ticks);
 	uint16 pressButton(uint button);
 	bool playCue(uint cue);
 	void stopAudio();

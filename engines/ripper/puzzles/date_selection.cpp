@@ -44,7 +44,6 @@ static const uint kDefaultCursor = 14;
 static const uint kHelpSelectionTable = 0x1b6;
 static const uint kMaximumDateLength = 0x16;
 static const uint kMediaLoopStartFrame = 10;
-static const uint kDosTickMillis = 55;
 static const uint kFeedbackStepCount = 17;
 static const uint kFirstDateFlag = 339;
 static const uint kSecondDateFlag = 340;
@@ -158,17 +157,6 @@ DateSelectionPuzzle::DateGroup DateSelectionPuzzle::matchDate(
 	}
 	day = 0;
 	return kInvalidDate;
-}
-
-bool DateSelectionPuzzle::waitTicks(uint ticks) {
-	const uint32 target = g_system->getMillis() + ticks * kDosTickMillis;
-	while (!_engine->shouldQuit() &&
-			(int32)(target - g_system->getMillis()) > 0) {
-		if (!serviceEngineEvents())
-			return false;
-		g_system->delayMillis(10);
-	}
-	return !_engine->shouldQuit();
 }
 
 bool DateSelectionPuzzle::drawFeedback() {

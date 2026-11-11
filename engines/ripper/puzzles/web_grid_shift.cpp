@@ -383,17 +383,6 @@ bool WebGridShiftPuzzle::runAutoPlay(uint moveLimit, uint completionFlag,
 	return !_engine->shouldQuit();
 }
 
-bool WebGridShiftPuzzle::waitTicks(uint ticks) {
-	const uint32 end = g_system->getMillis() + ticks * kDosTickMillis;
-	while (!_engine->shouldQuit() &&
-			(int32)(end - g_system->getMillis()) > 0) {
-		if (!serviceEngineEvents())
-			return false;
-		g_system->delayMillis(10);
-	}
-	return !_engine->shouldQuit();
-}
-
 bool WebGridShiftPuzzle::showPreview() {
 	uint previewOrder[kCellCount];
 	for (uint cell = 0; cell < kCellCount; ++cell)

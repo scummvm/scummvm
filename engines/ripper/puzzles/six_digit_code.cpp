@@ -52,7 +52,6 @@ static const uint kHelpSelectionTable = 0x1b7;
 static const uint16 kEscapeCommand = 0x1b;
 static const uint16 kHelpCommand = 0x3b00;
 static const uint16 kClearCommand = 0x1300;
-static const uint kDosTickMillis = 55;
 static const int kSceneOriginY = 50;
 static const int kSceneHeight = 300;
 
@@ -217,17 +216,6 @@ bool SixDigitCodePuzzle::playCue(uint cue) {
 		"Ripper: six-digit code audio cue=%u path='%s' success=%d",
 		cue, path.c_str(), result);
 	return result;
-}
-
-bool SixDigitCodePuzzle::waitTicks(uint ticks) {
-	const uint32 target = g_system->getMillis() + ticks * kDosTickMillis;
-	while (!_engine->shouldQuit() &&
-			(int32)(target - g_system->getMillis()) > 0) {
-		if (!serviceEngineEvents())
-			return false;
-		g_system->delayMillis(10);
-	}
-	return !_engine->shouldQuit();
 }
 
 Common::String SixDigitCodePuzzle::enteredCode() const {

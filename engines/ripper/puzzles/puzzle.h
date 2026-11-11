@@ -23,6 +23,7 @@ public:
 
 protected:
 	bool serviceEngineEvents();
+	bool waitTicks(uint ticks);
 	bool markSolved(uint completionFlag, const char *source);
 	void stopAudioHandles(Audio::SoundHandle *handles, uint count);
 };

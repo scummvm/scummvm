@@ -48,7 +48,6 @@ private:
 	int findControl(const Common::Point &point) const;
 	void updateHover(const Common::Point &point);
 	bool playCue(uint cue);
-	bool waitTicks(uint ticks);
 	bool activateControl(uint control, uint completionFlag, Result &result);
 	bool validateEntry(uint completionFlag, Result &result);
 	void resetEntry(const char *reason);

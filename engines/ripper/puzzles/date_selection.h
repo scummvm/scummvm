@@ -54,7 +54,6 @@ private:
 	DateGroup matchDate(const Common::String &text, uint &day) const;
 	bool processSubmission();
 	bool drawFeedback();
-	bool waitTicks(uint ticks);
 
 	BitmapAssetFrame _waitFrame;
 	Audio::SoundHandle _audioHandles[5];

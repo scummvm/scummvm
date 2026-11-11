@@ -52,7 +52,6 @@ static const uint16 kEscapeCommand = 0x1b;
 static const uint16 kHelpCommand = 0x3b00;
 static const uint16 kSolvedCommand = 1;
 static const uint16 kLoadFailedCommand = 2;
-static const uint kDosTickMillis = 55;
 
 static const char *const kBackgroundMedia = "xarmed.smk";
 static const Common::Point kBackgroundPosition(248, 204);
@@ -319,17 +318,6 @@ void EightButtonSequencePuzzle::drawSuccessDark() {
 		kSuccessDarkPosition.x, kSuccessDarkPosition.y);
 	g_system->unlockScreen();
 	presentScreen();
-}
-
-bool EightButtonSequencePuzzle::waitTicks(uint ticks) {
-	const uint32 target = g_system->getMillis() + ticks * kDosTickMillis;
-	while (!_engine->shouldQuit() &&
-			(int32)(target - g_system->getMillis()) > 0) {
-		if (!serviceEngineEvents())
-			return false;
-		g_system->delayMillis(10);
-	}
-	return !_engine->shouldQuit();
 }
 
 Common::String EightButtonSequencePuzzle::enteredSequence() const {

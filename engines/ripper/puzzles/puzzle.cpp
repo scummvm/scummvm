@@ -12,6 +12,8 @@
 
 #include "ripper/puzzles/puzzle.h"
 
+#include "common/system.h"
+
 #include "ripper/input.h"
 #include "ripper/media/media.h"
 #include "ripper/milestones.h"
@@ -19,11 +21,24 @@
 
 namespace Ripper {
 
+static const uint kDosTickMillis = 55;
+
 Puzzle::Puzzle(RipperEngine *engine) : Scene(engine) {
 }
 
 bool Puzzle::serviceEngineEvents() {
 	return !_engine->getInput()->pollEvents();
+}
+
+bool Puzzle::waitTicks(uint ticks) {
+	const uint32 target = g_system->getMillis() + ticks * kDosTickMillis;
+	while (!_engine->shouldQuit() &&
+			(int32)(target - g_system->getMillis()) > 0) {
+		if (!serviceEngineEvents())
+			return false;
+		g_system->delayMillis(10);
+	}
+	return !_engine->shouldQuit();
 }
 
 bool Puzzle::markSolved(uint completionFlag, const char *source) {

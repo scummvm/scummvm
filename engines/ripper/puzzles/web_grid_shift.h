@@ -53,7 +53,6 @@ private:
 	int targetForDirection(uint direction) const;
 	bool runAutoPlay(uint moveLimit, uint completionFlag, Result &result);
 	bool showPreview();
-	bool waitTicks(uint ticks);
 	bool updateCursor(const Common::Point &point);
 	int findCell(const Common::Point &point) const;
 	bool isSolved() const;
