@@ -64,7 +64,7 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
 		GAMEOPTION_EASTER_EGG,
 		{
-			_s("Play Easter Egg Video Only"),
+			_s("Play easter egg video only"),
 			_s("Only display the video that plays when running the game using RIPER.BAT."),
 			"ripper_easter_egg",
 			false,
