@@ -596,7 +596,46 @@ bool Console::cmdGold(int argc, const char **argv) {
 	return true;
 }
 
+// Readies the best normal weapon and armour that a character's class is allowed to, which
+// leaves out the exotic weapon and armour that anyone can use
+static void readyBest(Data::RosterEntry &e, bool mustOwn) {
+	e._weaponIndex = 0;
+	for (int w = Data::WEAPON_COUNT - 2; w > 0; --w) {
+		if ('A' + w < Data::weaponLimit(e._class) && (!mustOwn || Data::fromBcd(e._weaponOwned[w - 1]) > 0)) {
+			e._weaponIndex = w;
+			break;
+		}
+	}
+
+	e._armourIndex = 0;
+	for (int a = Data::ARMOUR_COUNT - 2; a > 0; --a) {
+		if ('A' + a < Data::armourLimit(e._class) && (!mustOwn || Data::fromBcd(e._armourOwned[a - 1]) > 0)) {
+			e._armourIndex = a;
+			break;
+		}
+	}
+}
+
 bool Console::cmdInventory(int argc, const char **argv) {
+	// Not in the usage text, 'off' takes the special items back from everyone
+	if (argc == 2 && !strcmp(argv[1], "off")) {
+		Data::Savegame &sg = _G(savegame);
+		sg._allWeapons = sg._allArmour = sg._plusTwoWeapons = sg._plusTwoArmour = false;
+
+		for (int i = 0; i < sg._partySize; ++i) {
+			Data::RosterEntry &e = sg.partyMember(i);
+
+			e._marksAndCards = 0;
+			e._weaponOwned[Data::WEAPON_COUNT - 2] = 0;
+			e._armourOwned[Data::ARMOUR_COUNT - 2] = 0;
+			readyBest(e, true);
+		}
+
+		g_engine->focusedView()->redraw();
+		debugPrintf("Marks, cards and exotic weapons and armour removed, and the best of the rest readied\n");
+		return true;
+	}
+
 	int first, last;
 	if (argc > 2 || !getTargets(argc, argv, 1, first, last)) {
 		debugPrintf("inventory [<position>]\n");
@@ -620,23 +659,7 @@ bool Console::cmdInventory(int argc, const char **argv) {
 		e._foodSubCounter = 0;
 		e._status = Data::STATUS_GOOD;
 
-		// Ready the best that the character's class is allowed to, which
-		// leaves out the exotic weapon and armour that anyone can use
-		e._weaponIndex = 0;
-		for (int w = Data::WEAPON_COUNT - 2; w > 0; --w) {
-			if ('A' + w < Data::weaponLimit(e._class)) {
-				e._weaponIndex = w;
-				break;
-			}
-		}
-
-		e._armourIndex = 0;
-		for (int a = Data::ARMOUR_COUNT - 2; a > 0; --a) {
-			if ('A' + a < Data::armourLimit(e._class)) {
-				e._armourIndex = a;
-				break;
-			}
-		}
+		readyBest(e, false);
 
 		debugPrintf("%s: readied %s and %s armour\n", e._name, Data::WEAPON_NAMES[e._weaponIndex],
 			Data::ARMOUR_NAMES[e._armourIndex]);
