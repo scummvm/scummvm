@@ -274,7 +274,7 @@ bool Console::cmdTeleport(int argc, const char **argv) {
 		sg._posY = atoi(argv[2]) & mask;
 
 		if (argc == 4)
-			sg._dungeonLevel = CLIP(atoi(argv[3]), 0, Data::DUNGEON_LEVELS - 1);
+			sg._dungeonLevel = CLIP(atoi(argv[3]) - 1, 0, Data::DUNGEON_LEVELS - 1);
 
 		g_engine->focusedView()->redraw();
 	} else if (argc != 1) {
@@ -283,7 +283,7 @@ bool Console::cmdTeleport(int argc, const char **argv) {
 	}
 
 	if (inDungeon)
-		debugPrintf("Position: (%d,%d) on level %d\n", sg._posX, sg._posY, sg._dungeonLevel);
+		debugPrintf("Position: (%d,%d) on level %d\n", sg._posX, sg._posY, sg._dungeonLevel + 1);
 	else
 		debugPrintf("Position: (%d,%d)\n", sg._posX, sg._posY);
 	return true;
