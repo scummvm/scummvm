@@ -44,7 +44,6 @@ const DebugChannelDef RipperMetaEngineDetection::debugFlagList[] = {
 
 RipperMetaEngineDetection::RipperMetaEngineDetection() : AdvancedMetaEngineDetection(
 	Ripper::gameDescriptions, Ripper::ripperGames) {
-	_maxScanDepth = 2;
 }
 
 REGISTER_PLUGIN_STATIC(RIPPER_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, RipperMetaEngineDetection);
