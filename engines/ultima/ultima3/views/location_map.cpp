@@ -42,7 +42,7 @@ namespace Ultima {
 namespace Ultima3 {
 namespace Views {
 
-constexpr int WHIRLPOOL_FRAMES = 4;
+constexpr int WHIRLPOOL_FRAMES = 8;
 constexpr int BREATH_FRAMES = 2;
 constexpr int BREATH_RANGE = 3;
 constexpr byte TILE_BREATH = 0x3D;
