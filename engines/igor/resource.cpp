@@ -26,66 +26,66 @@
 namespace Igor {
 
 void IgorEngine::readTableFile() {
-	Common::File tblFile;
 	uint32 stringsEntriesOffset = 0, resourcesEntriesOffset = 0, soundEntriesOffset = 0;
 	uint32 tableVersion = 0;
-	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == 'ITBL') {
-		tableVersion = tblFile.readUint32BE();
+	if (_tblFile.open("IGOR.TBL") && _tblFile.readUint32BE() == 'ITBL') {
+		tableVersion = _tblFile.readUint32BE();
 	}
 	// version 5 adds the source of the data of each resource, version 6 data embedded in the table
 	if (tableVersion >= 4 && tableVersion <= 6) {
-		stringsEntriesOffset = tblFile.readUint32BE();
+		stringsEntriesOffset = _tblFile.readUint32BE();
 		uint32 borlandOverlaySize = _ovlFile.size();
-		int gameVersionsCount = tblFile.readByte();
+		int gameVersionsCount = _tblFile.readByte();
 		for (int i = 0; i < gameVersionsCount; ++i) {
-			uint32 size = tblFile.readUint32BE();
+			uint32 size = _tblFile.readUint32BE();
 			if (size == borlandOverlaySize) {
-				resourcesEntriesOffset = tblFile.readUint32BE();
-				soundEntriesOffset = tblFile.readUint32BE();
+				resourcesEntriesOffset = _tblFile.readUint32BE();
+				soundEntriesOffset = _tblFile.readUint32BE();
 				break;
 			}
-			tblFile.skip(8);
+			_tblFile.skip(8);
 		}
 	}
 	if (resourcesEntriesOffset != 0 && soundEntriesOffset != 0) {
-		tblFile.seek(resourcesEntriesOffset);
-		_resourceEntriesCount = tblFile.readUint16BE();
+		_tblFile.seek(resourcesEntriesOffset);
+		_resourceEntriesCount = _tblFile.readUint16BE();
 		_resourceEntries = (ResourceEntry *)malloc(sizeof(ResourceEntry) * _resourceEntriesCount);
 		for (int i = 0; i < _resourceEntriesCount; ++i) {
-			_resourceEntries[i].id = tblFile.readUint16BE();
-			_resourceEntries[i].offs = tblFile.readUint32BE();
-			_resourceEntries[i].size = tblFile.readUint32BE();
+			_resourceEntries[i].id = _tblFile.readUint16BE();
+			_resourceEntries[i].offs = _tblFile.readUint32BE();
+			_resourceEntries[i].size = _tblFile.readUint32BE();
 			_resourceEntries[i].source = kResourceSourceContainer;
 			if (tableVersion >= 5) {
-				const int source = tblFile.readByte();
+				const int source = _tblFile.readByte();
 				if (source != kResourceSourceContainer && !(tableVersion >= 6 && source == kResourceSourceTable)) {
 					error("Invalid resource source in 'IGOR.TBL'");
 				}
 				_resourceEntries[i].source = (ResourceSource)source;
 			}
 		}
-		tblFile.seek(soundEntriesOffset);
-		_soundOffsetsCount = tblFile.readUint16BE();
+		_tblFile.seek(soundEntriesOffset);
+		_soundOffsetsCount = _tblFile.readUint16BE();
 		_soundOffsets = (uint32 *)malloc(sizeof(uint32) * _soundOffsetsCount);
 		for (int i = 0; i < _soundOffsetsCount; ++i) {
-			_soundOffsets[i] = tblFile.readUint32BE();
+			_soundOffsets[i] = _tblFile.readUint32BE();
 		}
-		tblFile.seek(stringsEntriesOffset);
-		int stringsCount = tblFile.readUint16BE();
+		_tblFile.seek(stringsEntriesOffset);
+		int stringsCount = _tblFile.readUint16BE();
 		for (int i = 0; i < stringsCount; ++i) {
-			int id = tblFile.readUint16BE();
-			int lang = tblFile.readByte();
-			int len = tblFile.readByte();
+			int id = _tblFile.readUint16BE();
+			int lang = _tblFile.readByte();
+			int len = _tblFile.readByte();
 			bool skipString = (lang == 1 && _game.language != Common::EN_ANY) || (lang == 2 && _game.language != Common::ES_ESP);
 			if (skipString) {
-				tblFile.skip(len);
+				_tblFile.skip(len);
 			} else {
 				char buf[256];
-				tblFile.read(buf, len);
+				_tblFile.read(buf, len);
 				buf[len] = 0;
 				_stringEntries.push_back(StringEntry(id, buf));
 			}
 		}
+		// the file stays open: resources are read from it on demand
 		return;
 	}
 	error("Unable to read 'IGOR.TBL'");
@@ -356,8 +356,7 @@ uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
 		}
 	}
 	if (re->source == kResourceSourceTable) {
-		Common::File tblFile;
-		if (!tblFile.open("IGOR.TBL") || !tblFile.seek(re->offs) || tblFile.read(dst, re->size) != re->size) {
+		if (!_tblFile.seek(re->offs) || _tblFile.read(dst, re->size) != re->size) {
 			error("Unable to read resource %d from 'IGOR.TBL'", id);
 		}
 	} else {

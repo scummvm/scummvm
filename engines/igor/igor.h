@@ -243,6 +243,7 @@ private:
 	int _previousMusic;
 
 	Common::File _ovlFile;
+	Common::File _tblFile;
 	Common::File _sndFile;
 
 	Audio::SoundHandle _sfxHandle;
