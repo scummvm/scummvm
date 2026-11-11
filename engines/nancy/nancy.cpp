@@ -970,8 +970,13 @@ void NancyEngine::bootScriptedGameEngine() {
 	_staticData.numItems = inventory->items.size();
 	_staticData.numEventFlags = (uint16)(kNumGenericEventFlags + flags->numRecords);
 
-	// Saved games get matched against the name of the game
-	const Common::String &saveName = boot->saveFolderName.empty() ? boot->defaultSaveName : boot->saveFolderName;
+	// The name of the game goes into the header of saved games
+	Common::String saveName = boot->saveFolderName.empty() ? boot->defaultSaveName : boot->saveFolderName;
+	if (saveName.empty()) {
+		// Nancy26 and later give no name, so the ID of the game stands in
+		saveName = getGameId();
+	}
+
 	Common::strlcpy((char *)bootSummary->header, saveName.c_str(), sizeof(bootSummary->header));
 	bootSummary->firstScene.sceneID = 0;
 

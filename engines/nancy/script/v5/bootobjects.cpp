@@ -346,8 +346,6 @@ void NancyEngine::bootNancy26Data(ScriptBootData *boot, EVNT *flags, INVD *inven
 	boot->rightNodeHotspot = Common::Rect(width - 47, 0, width, height - 80);
 	boot->uturnNodeHotspot = Common::Rect(0, height - 80, width, height);
 
-	boot->defaultSaveName = "Tomb";
-
 	// The scripts every scene starts with
 	static const char *const kIncludeFiles[] = { "Math_SC", "Fader_SC", "string_SC", "ScriptingShortcuts_SC" };
 	for (const char *name : kIncludeFiles) {
