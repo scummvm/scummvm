@@ -277,6 +277,7 @@ Common::Error IgorEngine::run() {
 
 	partMain();
 	_ovlFile.close();
+	_tblFile.close();
 	_sndFile.close();
 
 	return Common::kNoError;
