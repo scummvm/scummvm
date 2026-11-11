@@ -1970,7 +1970,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kObjSink:
 		for (int i = 0; i < 3; i++) {
 			_gfx->setDepthRange((2 - i) * 0.002f, 1.0f);
-			draw3DPrism(obj, kSinkParts[i], false, -1, true, false);
+			draw3DPrism(obj, kSinkParts[i], false, -1, true, i == 2);
 		}
 		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
