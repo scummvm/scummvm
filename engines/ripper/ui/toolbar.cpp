@@ -296,52 +296,11 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			_engine->getWac()->run();
 			return;
 		}
-		if (actionIndex == 3 || actionIndex == 4) {
-			const bool saving = actionIndex == 3;
-			debugC(1, kDebugSaveLoad,
-				"Ripper: demo toolbar action=%u id=0x%x label='%s' opening save/restore dialog mode=%s",
-				actionIndex + 1, actionIndex + 0x514,
-				_actions[actionIndex].label.c_str(), saving ? "save" : "restore");
-			leave();
-			_engine->getInput()->discardMouseTransitions();
-			const bool completed = saving ? _engine->saveGameDialog() :
-				_engine->loadGameDialog();
-			_engine->getInput()->discardMouseTransitions();
-			debugC(1, kDebugSaveLoad,
-				"Ripper: demo toolbar save/restore dialog mode=%s completed=%d",
-				saving ? "save" : "restore", completed);
-			return;
-		}
-		if (actionIndex == 5) {
-			debugC(1, kDebugGeneral,
-				"Ripper: demo toolbar action=6 id=0x519 label='%s' opening Options",
-				_actions[actionIndex].label.c_str());
-			leave();
-			_engine->getInput()->discardMouseTransitions();
-			if (!_optionsPanel->run())
-				warning("Ripper: demo Options action failed");
-			_engine->getInput()->discardMouseTransitions();
-			return;
-		}
-		if (actionIndex == 7) {
-			debugC(1, kDebugGeneral,
-				"Ripper: demo toolbar action=8 id=0x51b label='%s' opening quit prompt",
-				_actions[actionIndex].label.c_str());
-			leave();
-			_engine->getInput()->discardMouseTransitions();
-			const bool confirmed = _engine->getModalDialog()->runBinaryPrompt(
-				kToolbarExitPromptResourceId, false);
-			_engine->getInput()->discardMouseTransitions();
-			debugC(1, kDebugGeneral,
-				"Ripper: demo toolbar quit prompt completed confirmed=%d quit=%d",
-				confirmed, _engine->shouldQuit());
-			if (confirmed)
-				_engine->quitGame();
-			return;
-		}
 	}
 
-	if (actionIndex == 0) {
+	const uint retailActionIndex = _demoVariant ? actionIndex + 1 : actionIndex;
+	const char *variant = _demoVariant ? "demo " : "";
+	if (retailActionIndex == 0) {
 		debugC(1, kDebugGeneral,
 			"Ripper: toolbar action=1 id=0x514 label='%s' opening Remote Control",
 			_actions[actionIndex].label.c_str());
@@ -349,14 +308,15 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			warning("Ripper: Remote Control action failed");
 		return;
 	}
-	if (actionIndex == kToolbarExitActionIndex && _engine->getScripts()->isCyberActive()) {
+	if (!_demoVariant && retailActionIndex == kToolbarExitActionIndex &&
+			_engine->getScripts()->isCyberActive()) {
 		debugC(1, kDebugCyber,
 			"Ripper: toolbar action=9 id=0x51c exiting Cyber nested runtime");
 		leave();
 		_engine->getScripts()->requestCyberExit("toolbar-exit");
 		return;
 	}
-	if (actionIndex == 1) {
+	if (retailActionIndex == 1) {
 		debugC(1, kDebugScene,
 			"Ripper: toolbar action=2 id=0x515 label='%s' opening world map",
 			_actions[actionIndex].label.c_str());
@@ -364,7 +324,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			warning("Ripper: toolbar world map action failed");
 		return;
 	}
-	if (actionIndex == 2) {
+	if (retailActionIndex == 2) {
 		debugC(1, kDebugScene,
 			"Ripper: toolbar action=3 id=0x516 label='%s' opening inventory",
 			_actions[actionIndex].label.c_str());
@@ -372,40 +332,40 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			warning("Ripper: toolbar inventory action failed");
 		return;
 	}
-	if (actionIndex == 3) {
+	if (retailActionIndex == 3) {
 		debugC(1, kDebugWac,
 			"Ripper: toolbar action=4 id=0x517 label='%s' opening WAC",
 			_actions[actionIndex].label.c_str());
 		_engine->getWac()->run();
 		return;
 	}
-	if (actionIndex == 4 || actionIndex == 5) {
-		const bool saving = actionIndex == 4;
+	if (retailActionIndex == 4 || retailActionIndex == 5) {
+		const bool saving = retailActionIndex == 4;
 		debugC(1, kDebugSaveLoad,
-			"Ripper: toolbar action=%u id=0x%x label='%s' opening save/restore dialog mode=%s",
-			actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str(),
+			"Ripper: %stoolbar action=%u id=0x%x label='%s' opening save/restore dialog mode=%s",
+			variant, actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str(),
 			saving ? "save" : "restore");
 		leave();
 		_engine->getInput()->discardMouseTransitions();
 		const bool completed = saving ? _engine->saveGameDialog() : _engine->loadGameDialog();
 		_engine->getInput()->discardMouseTransitions();
 		debugC(1, kDebugSaveLoad,
-			"Ripper: toolbar save/restore dialog mode=%s completed=%d",
-			saving ? "save" : "restore", completed);
+			"Ripper: %stoolbar save/restore dialog mode=%s completed=%d",
+			variant, saving ? "save" : "restore", completed);
 		return;
 	}
-	if (actionIndex == 6) {
+	if (retailActionIndex == 6) {
 		debugC(1, kDebugGeneral,
-			"Ripper: toolbar action=7 id=0x51a label='%s' opening Options Panel",
-			_actions[actionIndex].label.c_str());
+			"Ripper: %stoolbar action=%u id=0x%x label='%s' opening Options Panel",
+			variant, actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str());
 		leave();
 		_engine->getInput()->discardMouseTransitions();
 		if (!_optionsPanel->run())
-			warning("Ripper: Options Panel action failed");
+			warning("Ripper: %sOptions Panel action failed", variant);
 		_engine->getInput()->discardMouseTransitions();
 		return;
 	}
-	if (actionIndex == kToolbarHelpActionIndex) {
+	if (retailActionIndex == kToolbarHelpActionIndex) {
 		debugC(1, kDebugScene,
 			"Ripper: toolbar action=8 id=0x51b label='%s' opening help",
 			_actions[actionIndex].label.c_str());
@@ -413,18 +373,18 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			warning("Ripper: toolbar help action failed");
 		return;
 	}
-	if (actionIndex == kToolbarExitActionIndex) {
+	if (retailActionIndex == kToolbarExitActionIndex) {
 		debugC(1, kDebugGeneral,
-			"Ripper: toolbar action=9 id=0x51c label='%s' opening quit prompt",
-			_actions[actionIndex].label.c_str());
+			"Ripper: %stoolbar action=%u id=0x%x label='%s' opening quit prompt",
+			variant, actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str());
 		leave();
 		_engine->getInput()->discardMouseTransitions();
 		const bool confirmed = _engine->getModalDialog()->runBinaryPrompt(
 			kToolbarExitPromptResourceId, false);
 		_engine->getInput()->discardMouseTransitions();
 		debugC(1, kDebugGeneral,
-			"Ripper: toolbar quit prompt completed confirmed=%d quit=%d",
-			confirmed, _engine->shouldQuit());
+			"Ripper: %stoolbar quit prompt completed confirmed=%d quit=%d",
+			variant, confirmed, _engine->shouldQuit());
 		if (confirmed)
 			_engine->quitGame();
 		return;
