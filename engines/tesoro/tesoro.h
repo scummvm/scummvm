@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
+#include "common/events.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
@@ -38,6 +39,7 @@
 #include "tesoro/core/animbank.h"
 #include "tesoro/core/camera.h"
 #include "tesoro/core/clock.h"
+#include "tesoro/core/pointerstate.h"
 #include "tesoro/core/display.h"
 #include "tesoro/core/object.h"
 
@@ -57,8 +59,18 @@ private:
 	Common::Array<AnimPlayer> _testPlayers;	// the "level" of the test object
 	Level *_level = nullptr;
 	Display _display;
-	int32 _scaleX = 0x10000, _scaleY = 0x10000;	// 0x10000 is normal scale
+	PointerState _pointer;
+	bool _buttonsDown[3] = { false, false, false };
 	AnimPlayer _font;
+	byte _escape = 0;
+	/** One frame: events, then drawing. False when the game should end. */
+	bool runFrame();
+
+	void handleEvent(const Common::Event &e);
+	void setButton(PointerState::Button button, bool down);
+
+	/** The menu key (Escape) is taken: its input events of this frame are forgotten. */
+	void acknowledgeKeys() { _escape = 0; }
 
 protected:
 	// Engine APIs
@@ -115,7 +127,6 @@ public:
 	}
 
 	// temp functions
-	void setScale(int32 x, int32 y) { _scaleX = x; _scaleY = y; }
 	void fadeOut(int steps, int delayMs) { _display.fadeOut(steps, delayMs, _screen); }
 	/** The camera of the level being shown, else the test object's. */
 	Camera &camera();

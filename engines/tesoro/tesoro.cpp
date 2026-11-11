@@ -76,9 +76,6 @@ Common::Error TesoroEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	// Simple event handling loop
-	Common::Event e;
-
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	const uint32 fontOffset = _archive.findEntry("FUENTES.ANM");
@@ -87,32 +84,82 @@ Common::Error TesoroEngine::run() {
 	}
 	_display.setFont(_font.bank());
 
-	while (!shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
-
-		}
-
-		const int32 now = gameTime();
-
-		_display.startFrame();
-		_display.fillBackground(0x4208);	// dark grey
-
-		if (_level) {
-			_level->drawRooms(now, _display);
-		}
-
-		_display.queueText((const byte *)"Hello, world!", 0xFFFF, Display::kWidth / 2, 50, Display::kWidth, 0, true, 16);
-
-		_display.compose();
-		_screen->copyRectToSurface(_display.frame(), Display::kWidth * 2, 0, 0, Display::kWidth, Display::kHeight);
-		_screen->addDirtyRect(Common::Rect(Display::kWidth, Display::kHeight));
-
+	while (runFrame()) {
 		limiter.delayBeforeSwap();
 		_screen->update();
 		limiter.startFrame();
 	}
 
 	return Common::kNoError;
+}
+
+
+void TesoroEngine::setButton(PointerState::Button button, bool down) {
+	if (_buttonsDown[button] == down)
+		return;
+	_buttonsDown[button] = down;
+	const uint32 now = _system->getMillis();
+	if (down)
+		_pointer.buttons[button] |= now - _pointer.releasedAt[button] < PointerState::kDoublePressDelay ? PointerState::kDoublePress : PointerState::kPressed;
+	else {
+		_pointer.buttons[button] |= PointerState::kReleased;
+		_pointer.releasedAt[button] = now;
+	}
+}
+
+void TesoroEngine::handleEvent(const Common::Event &e) {
+	switch (e.type) {
+	case Common::EVENT_MOUSEMOVE:
+		// The original's mouse counts from the middle of the window.
+		_pointer.x = e.mouse.x - 320;
+		_pointer.y = e.mouse.y - 240;
+		break;
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+		setButton(PointerState::kLeft, e.type == Common::EVENT_LBUTTONDOWN);
+		break;
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
+		setButton(PointerState::kRight, e.type == Common::EVENT_RBUTTONDOWN);
+		break;
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_MBUTTONUP:
+		_buttonsDown[2] = e.type == Common::EVENT_MBUTTONDOWN;
+		break;
+	case Common::EVENT_KEYDOWN:
+		if (e.kbd.keycode == Common::KEYCODE_ESCAPE && !e.kbdRepeat)
+			_escape |= PointerState::kPressed;
+		break;
+	case Common::EVENT_KEYUP:
+		if (e.kbd.keycode == Common::KEYCODE_ESCAPE)
+			_escape |= PointerState::kReleased;
+		break;
+	default:
+		break;
+	}
+}
+
+bool TesoroEngine::runFrame() {
+	_pointer.buttons[0] = _pointer.buttons[1] = 0;
+	_escape = 0;
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e))
+		handleEvent(e);
+
+	if (_pointer.buttons[0] || _pointer.buttons[1] || _escape)
+		debug("Pointer (%d, %d) left %02x right %02x escape %02x", _pointer.x, _pointer.y, _pointer.buttons[0], _pointer.buttons[1], _escape);
+
+	const int32 now = gameTime();
+	_display.startFrame();
+	_display.fillBackground(0x4208);	// dark grey
+	if (_level)
+		_level->drawRooms(now, _display);
+	_display.queueText((const byte *)"Hello, world!", 0xFFFF, Display::kWidth / 2, 50, Display::kWidth, 0, true, 16);
+
+	_display.compose();
+	_screen->copyRectToSurface(_display.frame(), Display::kWidth * 2, 0, 0, Display::kWidth, Display::kHeight);
+	_screen->addDirtyRect(Common::Rect(Display::kWidth, Display::kHeight));
+	return !shouldQuit();
 }
 
 Common::Error TesoroEngine::syncGame(Common::Serializer &s) {
