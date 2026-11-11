@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	core/display.o \
 	core/hovertext.o \
 	core/level.o \
+	core/menuitem.o \
 	core/namekey.o \
 	core/object.o \
 	core/objectlist.o \

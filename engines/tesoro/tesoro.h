@@ -49,9 +49,14 @@ struct TesoroGameDescription;
 
 class Level;
 class Cursor;
+class MenuItem;
+class Console;
 
 class TesoroEngine : public Engine {
 private:
+	friend class MenuItem;
+	friend class Console;
+
 	const ADGameDescription *_gameDescription;
 	GameClock _clock;
 	Common::RandomSource _randomSource;
@@ -59,6 +64,8 @@ private:
 	Camera _camera;
 	Common::Array<AnimPlayer> _testPlayers;	// the "level" of the test object
 	Level *_level = nullptr;		// the level shown
+	Level *_mainMenu = nullptr;	// PRINCIPAL.LVL and NUEVO.LVL stay loaded while the other is shown
+	Level *_newGameMenu = nullptr;
 	Level *_interface = nullptr;	// INTERFACE.LVL, which holds the pointer
 	Cursor *_cursor = nullptr;
 	Display _display;
@@ -68,11 +75,29 @@ private:
 	MainList _main;
 	byte _escape = 0;
 	bool _showOutlines = false;
-	/** One frame: events, then drawing. False when the game should end. */
-	bool runFrame();
+
+	// What clicks on the menu items ask for.
+	void fadeOut(int steps, int delayMs);
+	void enterMainMenu();
+	void enterNewGameMenu();
+	void startScript(const char *block, const char *label);
+	void startGame();
+	void openSavedGames();
+	int32 now() { return gameTime(); }
+	void clearHoverText();
+	void notPorted(const char *what);
+
+	/** Makes a menu level the one shown, with its camera on the origin. */
+	void showMenu(Level *menu);
+
+	/** Hands the menu items of a level this engine as their host. */
+	void hookMenuItems(Level *level);
 
 	void handleEvent(const Common::Event &e);
 	void setButton(PointerState::Button button, bool down);
+
+	/** One frame: events, then drawing. False when the game should end. */
+	bool runFrame();
 
 	void resetKeys() { _escape = 0; }
 
@@ -130,8 +155,6 @@ public:
 		return syncGame(s);
 	}
 
-	// temp functions
-	void fadeOut(int steps, int delayMs) { _display.fadeOut(steps, delayMs, _screen); }
 	/** The camera of the level being shown, else the test object's. */
 	Camera &camera();
 	/** Loads a level from the archive and shows it. */

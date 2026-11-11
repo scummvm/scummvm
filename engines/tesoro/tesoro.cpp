@@ -34,6 +34,7 @@
 #include "tesoro/detection.h"
 #include "tesoro/core/cursor.h"
 #include "tesoro/core/level.h"
+#include "tesoro/core/menuitem.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/core/spriteobject.h"
 
@@ -60,7 +61,10 @@ TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 TesoroEngine::~TesoroEngine() {
 	_main.clear();
 	delete _interface;
-	delete _level;
+	if (_level != _mainMenu && _level != _newGameMenu)
+		delete _level;
+	delete _mainMenu;
+	delete _newGameMenu;
 	delete _screen;
 }
 
@@ -93,6 +97,15 @@ Common::Error TesoroEngine::run() {
 
 	Graphics::FrameLimiter limiter(g_system, 60);
 
+	_mainMenu = loadLevel("PRINCIPAL.LVL");
+	_newGameMenu = loadLevel("NUEVO.LVL");
+	if (!_mainMenu || !_newGameMenu)
+		return Common::kReadingFailed;
+	hookMenuItems(_mainMenu);
+	hookMenuItems(_newGameMenu);
+	_level = _mainMenu;
+	_level->camera().moveTo(0, 0, 0, gameTime());
+
 	// The interface level holds the pointer (its other kinds are not ported yet and are skipped with warnings).
 	_interface = loadLevel("INTERFACE.LVL");
 	if (_interface) {
@@ -110,6 +123,7 @@ Common::Error TesoroEngine::run() {
 		_main.insertByPriority(_cursor, 0xf);
 	if (_interface)
 		_main.insertByPriority(_interface, 0x13);
+	_main.insertByPriority(_level, 0x14);
 
 	const uint32 fontOffset = _archive.findEntry("FUENTES.ANM");
 	if (!fontOffset || !_font.load(*_archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
@@ -179,14 +193,11 @@ bool TesoroEngine::runFrame() {
 	while (g_system->getEventManager()->pollEvent(e))
 		handleEvent(e);
 
-	if (_pointer.buttons[0] || _pointer.buttons[1] || _escape)
-		debug("Pointer (%d, %d) left %02x right %02x escape %02x", _pointer.x, _pointer.y, _pointer.buttons[0], _pointer.buttons[1], _escape);
-
 	// The clock is frozen for the rest of the frame, so every object sees the same time.
 	_clock.freeze(_system->getMillis());
-	const int32 now = gameTime();
+
 	_display.startFrame();
-	_display.fillBackground(0x4208);	// dark grey
+	const int32 now = gameTime();
 	if (_interface)
 		_interface->setFrameTime(now);
 	if (_level)
@@ -199,6 +210,7 @@ bool TesoroEngine::runFrame() {
 	// Without a level nothing composes the frame, so the pointer is shown on its own.
 	if (!_level)
 		presentFrame();
+
 	if (_showOutlines) {
 		if (_interface)
 			drawOutlines(*_interface);
@@ -208,6 +220,55 @@ bool TesoroEngine::runFrame() {
 	}
 	_clock.unfreeze();
 	return !shouldQuit();
+}
+
+void TesoroEngine::hookMenuItems(Level *level) {
+	ObjectList &objects = level->objects();
+	for (uint i = 0; i < objects.size(); ++i) {
+		if (objects[i]->kindId() == 25)
+			static_cast<MenuItem *>(objects[i])->setHost(this);
+	}
+}
+
+void TesoroEngine::fadeOut(int steps, int delayMs) {
+	_display.fadeOut(steps, delayMs, _screen);
+}
+
+void TesoroEngine::enterMainMenu() {
+	showMenu(_mainMenu);
+}
+
+void TesoroEngine::enterNewGameMenu() {
+	showMenu(_newGameMenu);
+}
+
+void TesoroEngine::showMenu(Level *menu) {
+	_main.remove(_level);
+	_level = menu;
+	_main.insertByPriority(_level, 0x14);
+	_level->camera().moveTo(0, 0, 0, gameTime());
+	if (_cursor)
+		_cursor->setSurroundings(&_pointer, _level);
+}
+
+void TesoroEngine::startScript(const char *block, const char *label) {
+	notPorted("starting a script");
+}
+
+void TesoroEngine::startGame() {
+	notPorted("starting the game");
+}
+
+void TesoroEngine::openSavedGames() {
+	notPorted("the saved games screen");
+}
+
+void TesoroEngine::clearHoverText() {
+	setHoverText(nullptr);
+}
+
+void TesoroEngine::notPorted(const char *what) {
+	warning("Tesoro: %s is not ported yet", what);
 }
 
 uint16 TesoroEngine::screenColour(byte r, byte g, byte b) const {
@@ -327,9 +388,11 @@ bool TesoroEngine::level(const char *name) {
 	if (!level)
 		return false;
 
-	// The level replaces whatever was shown before.
+	// The level replaces whatever was shown before; the two menus stay loaded.
+	hookMenuItems(level);
 	_main.remove(_level);
-	delete _level;
+	if (_level != _mainMenu && _level != _newGameMenu)
+		delete _level;
 	_level = level;
 	_main.insertByPriority(_level, 0x14);
 	if (_cursor)

@@ -23,6 +23,7 @@
 #include "tesoro/core/cameraframe.h"
 #include "tesoro/core/collision.h"
 #include "tesoro/core/cursor.h"
+#include "tesoro/core/menuitem.h"
 #include "tesoro/core/spriteobject.h"
 
 #include "common/endian.h"
@@ -149,6 +150,12 @@ Object *Level::createObject(const ObjectRecord &record, Room &room) {
 	if (record.kind == 10) {
 		Cursor *object = new Cursor();
 		object->initMain(record, room.sortOffset(), _levelPlayers, _loadTime);
+		return object;
+	}
+
+	if (record.kind == 25) {
+		MenuItem *object = new MenuItem();
+		object->init(record, room.sortOffset(), _levelPlayers, _loadTime);
 		return object;
 	}
 
