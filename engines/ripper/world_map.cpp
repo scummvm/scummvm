@@ -354,7 +354,6 @@ bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 	bool selected = false;
 	while (!_engine->shouldQuit() && !cancelled && !selected) {
 		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 		while (_engine->getInput()->hasPendingKey()) {

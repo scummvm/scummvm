@@ -343,7 +343,6 @@ bool BriefingManager::waitForAcknowledgement(uint selector) {
 
 	while (!_engine->shouldQuit()) {
 		if (input->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 		if (input->hasPendingKey()) {

@@ -23,10 +23,7 @@ Puzzle::Puzzle(RipperEngine *engine) : Scene(engine) {
 }
 
 bool Puzzle::serviceEngineEvents() {
-	if (!_engine->getInput()->pollEvents())
-		return true;
-	_engine->quitGame();
-	return false;
+	return !_engine->getInput()->pollEvents();
 }
 
 bool Puzzle::markSolved(uint completionFlag, const char *source) {

@@ -264,13 +264,13 @@ void InputManager::updateMouseButton(const Common::Event &event, uint16 button, 
 
 bool InputManager::pollEvents() {
 	Common::Event event;
-	bool quitRequested = false;
+	bool exitRequested = false;
 
 	while (_eventManager->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
-			quitRequested = true;
+			exitRequested = true;
 			break;
 
 		case Common::EVENT_KEYDOWN: {
@@ -318,7 +318,7 @@ bool InputManager::pollEvents() {
 		}
 	}
 
-	return quitRequested;
+	return exitRequested;
 }
 
 bool InputManager::hasPendingKey() const {

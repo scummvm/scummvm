@@ -86,7 +86,6 @@ bool CyberManager::runScriptLoop(bool active, uint action,
 	ScriptManager *scripts = _engine->getScripts();
 	while (active && !scripts->isCyberExitRequested() && !_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 		if (!scripts->serviceScene()) {

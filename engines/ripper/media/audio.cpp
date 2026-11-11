@@ -91,7 +91,6 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 		if (showCursor)
 			_engine->getCursor()->update(kBlockingAudioCursor);
 		if (_input->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 		if (textControl.isActive()) {

@@ -288,7 +288,6 @@ public:
 
 	uint16 service(uint frame) override {
 		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
 			return kCancelCommand;
 		}
 		while (_engine->getInput()->hasPendingKey()) {

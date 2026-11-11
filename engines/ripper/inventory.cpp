@@ -374,7 +374,6 @@ bool Inventory::runQcsMag2UnlockMediaScreen() {
 	const char *dismissReason = "none";
 	while (result && !_engine->shouldQuit() && !dismissed) {
 		if (input->pollEvents()) {
-			_engine->quitGame();
 			result = false;
 			break;
 		}
@@ -507,7 +506,6 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 	int hoveredControl = kNoControl;
 	while (!_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 		bool useSelection = false;

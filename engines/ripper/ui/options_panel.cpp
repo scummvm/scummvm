@@ -509,7 +509,6 @@ bool OptionsPanelManager::runDemo() {
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 
@@ -697,7 +696,6 @@ bool OptionsPanelManager::runRetail() {
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 

@@ -141,8 +141,7 @@ MainMenuAction MainMenu::run() {
 	decoder.start();
 	while (!_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
-			debugC(1, kDebugGeneral, "Ripper: quit requested from startup menu");
-			_engine->quitGame();
+			debugC(1, kDebugGeneral, "Ripper: engine exit requested from startup menu");
 			break;
 		}
 

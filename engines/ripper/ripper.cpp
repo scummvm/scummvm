@@ -132,10 +132,9 @@ void RipperEngine::registerSearchPaths() {
 }
 
 void RipperEngine::pumpEvents() {
-	if (_input->pollEvents()) {
-		debugC(1, kDebugGeneral, "Ripper: received quit event");
-		quitGame();
-	}
+	if (_input->pollEvents())
+		debugC(1, kDebugGeneral, "Ripper: received engine exit event quit=%d launcher=%d",
+			_eventMan->shouldQuit(), _eventMan->shouldReturnToLauncher());
 }
 
 bool RipperEngine::waitForDemoEndingInput() {
@@ -305,7 +304,8 @@ Common::Error RipperEngine::run() {
 				break;
 			case kMainMenuQuit:
 				debugC(1, kDebugGeneral, "Ripper: startup menu exits the game");
-				quitGame();
+				if (!shouldQuit())
+					quitGame();
 				break;
 			}
 		}
@@ -315,6 +315,8 @@ Common::Error RipperEngine::run() {
 		return Common::kNoError;
 	if (!_gameplayStarted) {
 		if (!_scripts->runStartupPath()) {
+			if (shouldQuit())
+				return Common::kNoError;
 			_scripts->logRuntimeFailure("startup scene path failed");
 			return Common::kUnknownError;
 		}
@@ -323,7 +325,11 @@ Common::Error RipperEngine::run() {
 
 	while (!shouldQuit() && !(isDemo && _scripts->isDemoRuntimeComplete())) {
 		pumpEvents();
+		if (shouldQuit())
+			break;
 		if (!_scripts->serviceScene()) {
+			if (shouldQuit())
+				break;
 			_scripts->logRuntimeFailure("scene service failed");
 			return Common::kUnknownError;
 		}

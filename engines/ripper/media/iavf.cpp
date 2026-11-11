@@ -213,7 +213,6 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		bool skipped = false;
 		while (!_engine->shouldQuit() && _mixer->isSoundHandleActive(audioHandle)) {
 			if (_input->pollEvents()) {
-				_engine->quitGame();
 				result = false;
 				break;
 			}

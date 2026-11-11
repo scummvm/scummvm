@@ -283,7 +283,6 @@ bool RemoteControlManager::run() {
 
 	while (active && !_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 		uint16 command = _engine->getInput()->hasPendingKey() ?

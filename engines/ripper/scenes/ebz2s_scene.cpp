@@ -97,7 +97,6 @@ Ebz2sScene::Result Ebz2sScene::run(uint sceneArgument) {
 					!milestones->isSet(kBugConsumedFlag) &&
 					!milestones->isSet(kEyeballConsumedFlag)) {
 				if (_engine->getInput()->pollEvents()) {
-					_engine->quitGame();
 					break;
 				}
 				while (_engine->getInput()->hasPendingKey()) {

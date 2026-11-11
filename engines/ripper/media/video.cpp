@@ -272,7 +272,6 @@ MediaPlayer::PlaybackInputResult MediaPlayer::servicePlaybackInput(
 	RipperEngine::SaveLoadScope saveLoad(*_engine,
 		policy.serviceSceneUi && _engine->canLoadGameStateCurrently());
 	if (_input->pollEvents()) {
-		_engine->quitGame();
 		return kQuitPlayback;
 	}
 	if (!_engine->isDemo() &&

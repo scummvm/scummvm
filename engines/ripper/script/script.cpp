@@ -624,8 +624,7 @@ uint ScriptManager::resolveFrameIndex(const CompiledScript &script,
 void ScriptManager::beginActiveInteractionWait(const Common::String &frameLabel,
 		uint interactionCount) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
-	if (_engine->getInput()->pollEvents())
-		_engine->quitGame();
+	_engine->getInput()->pollEvents();
 	_engine->getInput()->discardMouseTransitions();
 	_runtime.awaitingInteraction = true;
 	debugC(1, kDebugScene,
@@ -753,6 +752,8 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 	uint commandIndex = commandStart;
 	bool branchTaken = false;
 	while (commandIndex < commands.size()) {
+		if (_engine->shouldQuit())
+			return kCallbackFailed;
 		const ScriptCommand &command = commands[commandIndex];
 		debugC(3, kDebugScripts,
 			"Ripper: execute script='%s' offset=0x%x opcode=0x%02x name='%s' selector=%u arguments=%u",
@@ -1168,7 +1169,7 @@ bool ScriptManager::handleActiveRuntimeExit(CallbackResult result, const Compile
 	} else {
 		debugC(1, kDebugScene,
 			"Ripper: active runtime exited normally script='%s' frame=%u callback='%s' "
-			"result=%d; returning to launcher",
+			"result=%d; requesting engine exit",
 			script.getMemberName().c_str(), _runtime.activeFrame, callbackPhase, result);
 		_runtime.awaitingInteraction = false;
 		_engine->quitGame();

@@ -358,7 +358,6 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 			}
 		} else {
 			if (_engine->getInput()->pollEvents()) {
-				_engine->quitGame();
 				break;
 			}
 			command = serviceInput();

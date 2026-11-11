@@ -401,7 +401,6 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 	if (!_textEntryActive)
 		return kTextEntryFailed;
 	if (_engine->getInput()->pollEvents()) {
-		_engine->quitGame();
 		finishTextEntry(text);
 		return kTextEntryFailed;
 	}
@@ -604,7 +603,6 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 
 	while (active && !_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 		while (_engine->getInput()->hasPendingKey()) {
@@ -775,7 +773,6 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 		bool redraw = false;

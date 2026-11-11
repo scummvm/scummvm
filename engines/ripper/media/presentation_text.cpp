@@ -252,7 +252,6 @@ bool PresentationTextControl::waitForDismissal() {
 		continueBounds.top, continueBounds.width(), continueBounds.height());
 	while (!_engine->shouldQuit() && !_dismissed) {
 		if (_input->pollEvents()) {
-			_engine->quitGame();
 			break;
 		}
 		serviceInput(true);

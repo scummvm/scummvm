@@ -477,7 +477,6 @@ bool WacDatabaseSession::scrollDatabaseTextMouse(TextScrollState &scroll, const 
 WacDatabaseSession::DatabaseInputResult WacDatabaseSession::serviceDatabaseMediaInput(
 		byte activeEntryIndex, DatabaseInputState &input) {
 	if (_wac->_engine->getInput()->pollEvents()) {
-		_wac->_engine->quitGame();
 		return DatabaseInputResult(DatabaseInputOutcome::kExitWac);
 	}
 	bool refreshPalette = false;
@@ -783,7 +782,6 @@ uint16 WacDatabaseSession::run() {
 	bool active = true;
 	while (active && !_wac->_engine->shouldQuit()) {
 		if (_wac->_engine->getInput()->pollEvents()) {
-			_wac->_engine->quitGame();
 			break;
 		}
 		while (_wac->_engine->getInput()->hasPendingKey()) {
