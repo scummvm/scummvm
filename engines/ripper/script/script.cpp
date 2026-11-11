@@ -743,7 +743,7 @@ ScriptManager::CallbackResult ScriptManager::executeCallback(const CompiledScrip
 	Common::Array<ScriptCommand> commands;
 	if (nextFrame)
 		*nextFrame = 0;
-	if (!script.decodeCallback(callbackOffset, true, commands))
+	if (!script.decodeCallback(callbackOffset, commands))
 		return kCallbackFailed;
 	debugC(3, kDebugScripts,
 		"Ripper: decoded callback script='%s' offset=0x%x commands=%u",
@@ -1424,7 +1424,7 @@ ScriptManager::CallbackResult ScriptManager::prepareFramePresentation(
 
 	if (frame.idleCallbackOffset != 0 && !_dialogue->hasChoices()) {
 		Common::Array<ScriptCommand> idleCommands;
-		if (!_runtime.activeScript.decodeCallback(frame.idleCallbackOffset, true, idleCommands))
+		if (!_runtime.activeScript.decodeCallback(frame.idleCallbackOffset, idleCommands))
 			return kCallbackFailed;
 		for (uint commandIndex = 0; commandIndex < idleCommands.size(); ++commandIndex) {
 			const ScriptCommand &command = idleCommands[commandIndex];

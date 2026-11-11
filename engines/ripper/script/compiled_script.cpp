@@ -196,7 +196,7 @@ bool CompiledScript::parseHeader() {
 	return true;
 }
 
-bool CompiledScript::decodeCallback(uint32 offset, bool decodeText, Common::Array<ScriptCommand> &commands) const {
+bool CompiledScript::decodeCallback(uint32 offset, Common::Array<ScriptCommand> &commands) const {
 	commands.clear();
 	if (offset == 0)
 		return true;
@@ -247,7 +247,7 @@ bool CompiledScript::decodeCallback(uint32 offset, bool decodeText, Common::Arra
 				argument.data.resize(length);
 				for (uint dataIndex = 0; dataIndex < length; ++dataIndex) {
 					byte value = _data[cursor + dataIndex];
-					if (decodeText && type == 7 && value != 0 && value != '\n')
+					if (type == 7 && value != 0 && value != '\n')
 						value ^= 0xff;
 					argument.data[dataIndex] = value;
 				}
@@ -295,15 +295,15 @@ bool CompiledScript::decodeCallback(uint32 offset, bool decodeText, Common::Arra
 bool CompiledScript::validateCallbacks() const {
 	Common::Array<ScriptCommand> commands;
 	for (uint i = 0; i < _frames.size(); ++i) {
-		if (!decodeCallback(_frames[i].enterCallbackOffset, true, commands) ||
-			!decodeCallback(_frames[i].idleCallbackOffset, true, commands) ||
-			!decodeCallback(_frames[i].exitCallbackOffset, true, commands)) {
+		if (!decodeCallback(_frames[i].enterCallbackOffset, commands) ||
+			!decodeCallback(_frames[i].idleCallbackOffset, commands) ||
+			!decodeCallback(_frames[i].exitCallbackOffset, commands)) {
 			warning("Ripper: invalid callback in frame %u of '%s'", i, _memberName.c_str());
 			return false;
 		}
 	}
 	for (uint i = 0; i < _interactions.size(); ++i) {
-		if (!decodeCallback(_interactions[i].callbackOffset, true, commands)) {
+		if (!decodeCallback(_interactions[i].callbackOffset, commands)) {
 			warning("Ripper: invalid callback in interaction %u of '%s'", i, _memberName.c_str());
 			return false;
 		}

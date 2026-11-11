@@ -114,7 +114,7 @@ public:
 	CompiledScript();
 
 	bool load(AssetLibrary &library, const Common::String &memberName);
-	bool decodeCallback(uint32 offset, bool decodeText, Common::Array<ScriptCommand> &commands) const;
+	bool decodeCallback(uint32 offset, Common::Array<ScriptCommand> &commands) const;
 
 	const Common::String &getMemberName() const { return _memberName; }
 	const Common::String &getSourceName() const { return _sourceName; }
