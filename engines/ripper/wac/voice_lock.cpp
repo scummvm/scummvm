@@ -53,8 +53,6 @@ static const int kWacVoiceLockClientLeftInset = 5;
 static const int kWacVoiceLockClientTopInset = 20;
 static const int kWacVoiceLockClientRightInset = 20;
 static const int kWacVoiceLockClientBottomInset = 6;
-static const uint16 kNoAction = WacManager::kNoAction;
-static const uint16 kExitAction = WacManager::kExitAction;
 
 static bool loadWacVoiceLockPcm(ResourceManager *resources,
 		const Common::String &path, WacVoiceLockPcm &pcm) {
@@ -106,7 +104,7 @@ static bool loadWacVoiceLockPcm(ResourceManager *resources,
 	return true;
 }
 
-uint16 WacDatabaseSession::runVoiceLock(byte entryIndex,
+DatabaseInputOutcome WacDatabaseSession::runVoiceLock(byte entryIndex,
 		const Common::String &entryLabel) {
 	ResourceManager *resources = engine()->getResources();
 	const Common::Rect sourcePanel(50, 50, 390, 166);
@@ -128,7 +126,7 @@ uint16 WacDatabaseSession::runVoiceLock(byte entryIndex,
 			!loadWacVoiceLockPcm(resources, "voxlok.wav", sourcePcm)) {
 		warning("Ripper: could not load WAC voice-lock assets buttons=%u sourceBytes=%u",
 			buttonAssets.size(), sourcePcm.data.size());
-		return kNoAction;
+		return DatabaseInputOutcome::kContinue;
 	}
 
 	const bool editorAvailable = engine()->getMilestones()->isSet(
@@ -182,7 +180,7 @@ uint16 WacDatabaseSession::runVoiceLock(byte entryIndex,
 		editorAvailable);
 
 	if (!renderer.drawPresentation(sourcePcm, state))
-		return kNoAction;
+		return DatabaseInputOutcome::kContinue;
 	engine()->getInput()->discardMouseTransitions();
 	engine()->getCursor()->setSelectionIndex(kWacDefaultCursor);
 	engine()->getCursor()->dispatchSelectionIndexChange(
@@ -578,11 +576,7 @@ uint16 WacDatabaseSession::runVoiceLock(byte entryIndex,
 		"Ripper: left WAC voice-lock puzzle entry=%u outcome=%d editor=%d quantized=%d selections=%u solved=%d",
 		entryIndex, (int)result, editorAvailable, quantized,
 		selections.size(), solved);
-	if (result == DatabaseInputOutcome::kSelectEntry &&
-			_databaseChooser.selectedIndex() < _databaseEntries.size())
-		return dispatchDatabaseEntry(
-			_databaseEntries[_databaseChooser.selectedIndex()]);
-	return result == DatabaseInputOutcome::kExitWac ? kExitAction : kNoAction;
+	return result;
 }
 
 } // End of namespace Ripper

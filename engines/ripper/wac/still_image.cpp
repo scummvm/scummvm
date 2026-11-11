@@ -56,8 +56,6 @@ static const int kWacMediaScrollStep = 10;
 static const uint kWacMediaPaletteFirst = 10;
 static const uint kWacMediaPaletteCount = 140;
 static const byte kWacDatabaseBackground = 4;
-static const uint16 kNoAction = WacManager::kNoAction;
-static const uint16 kExitAction = WacManager::kExitAction;
 
 WacStillImageViewer::WacStillImageViewer(WacDatabaseSession *database) :
 		_database(database), _scrollOffset(0), _scrollControl(0),
@@ -182,12 +180,12 @@ void WacStillImageViewer::scroll(int delta) {
 	draw();
 }
 
-uint16 WacStillImageViewer::run(byte entryIndex,
+DatabaseInputOutcome WacStillImageViewer::run(byte entryIndex,
 		const Common::String &entryLabel, const Common::String &path) {
 	return runInternal(entryIndex, entryLabel, path, Common::String(), 0, 0);
 }
 
-uint16 WacStillImageViewer::runWithOptionalPresentation(byte entryIndex,
+DatabaseInputOutcome WacStillImageViewer::runWithOptionalPresentation(byte entryIndex,
 		const Common::String &entryLabel, const Common::String &imagePath,
 		const Common::String &mediaPath, uint presentationFlag,
 		uint completionFlag) {
@@ -195,7 +193,7 @@ uint16 WacStillImageViewer::runWithOptionalPresentation(byte entryIndex,
 		presentationFlag, completionFlag);
 }
 
-uint16 WacStillImageViewer::runInternal(byte entryIndex,
+DatabaseInputOutcome WacStillImageViewer::runInternal(byte entryIndex,
 		const Common::String &entryLabel, const Common::String &imagePath,
 		const Common::String &mediaPath, uint presentationFlag,
 		uint completionFlag) {
@@ -206,7 +204,7 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 	if (!load(imagePath)) {
 		warning("Ripper: could not load WAC database still image '%s'",
 			imagePath.c_str());
-		return kNoAction;
+		return DatabaseInputOutcome::kContinue;
 	}
 
 	Common::Array<BitmapAssetFrame> presentationFrames;
@@ -219,7 +217,7 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 					frameNames[frame], sequence) || sequence.frames.empty()) {
 				warning("Ripper: could not load WAC presentation control '%s'",
 					frameNames[frame]);
-				return kNoAction;
+				return DatabaseInputOutcome::kContinue;
 			}
 			presentationFrames[frame] = Common::move(sequence.frames[0]);
 		}
@@ -243,7 +241,7 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 		completionFlag, presentationBounds.left, presentationBounds.top,
 		presentationBounds.width(), presentationBounds.height());
 
-	using Outcome = WacDatabaseSession::DatabaseInputOutcome;
+	using Outcome = DatabaseInputOutcome;
 	WacDatabaseSession::DatabaseInputState input(WacDatabaseSession::DatabaseInputMode::kViewer);
 	Outcome result = Outcome::kContinue;
 	bool presentationPressed = false;
@@ -331,11 +329,7 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 		presentationAvailable, completionFlag,
 		completionFlag != 0 &&
 			_database->engine()->getMilestones()->isSet(completionFlag));
-	if (result == Outcome::kSelectEntry &&
-			_database->_databaseChooser.selectedIndex() < _database->_databaseEntries.size())
-		return _database->dispatchDatabaseEntry(
-			_database->_databaseEntries[_database->_databaseChooser.selectedIndex()]);
-	return result == Outcome::kExitWac ? kExitAction : kNoAction;
+	return result;
 }
 
 } // End of namespace Ripper

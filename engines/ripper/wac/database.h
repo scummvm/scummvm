@@ -38,6 +38,15 @@ class WacStillImageViewer;
 class WacVoiceLockRenderer;
 class RipperEngine;
 
+enum class DatabaseInputOutcome {
+	kContinue,
+	kCloseEntry,
+	kExitWac,
+	kSelectEntry,
+	kRedrawText,
+	kRefreshPalette
+};
+
 class WacDatabaseSession {
 public:
 	explicit WacDatabaseSession(WacManager *wac);
@@ -61,15 +70,6 @@ private:
 		kTextPanel,
 		kViewer
 	};
-	enum class DatabaseInputOutcome {
-		kContinue,
-		kCloseEntry,
-		kExitWac,
-		kSelectEntry,
-		kRedrawText,
-		kRefreshPalette
-	};
-
 	struct TextScrollState {
 		uint firstVisible = 0;
 		uint maximumFirstVisible = 0;
@@ -111,14 +111,15 @@ private:
 	bool scrollDatabaseTextMouse(TextScrollState &scroll, const MouseState &mouse);
 	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		TextScrollState &scroll);
-	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
-	uint16 runJournal(byte entryIndex, const Common::String &entryLabel);
+	DatabaseInputOutcome runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
+	DatabaseInputOutcome runJournal(byte entryIndex, const Common::String &entryLabel);
 	bool drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress,
 		TextScrollState &scroll);
 	bool drawJournalTextPanelLine(const Common::Array<Common::String> &lines,
 		uint firstVisible, uint visibleRows, uint lineIndex);
-	uint16 runVoiceLock(byte entryIndex, const Common::String &entryLabel);
-	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
+	DatabaseInputOutcome runVoiceLock(byte entryIndex, const Common::String &entryLabel);
+	DatabaseInputOutcome dispatchDatabaseEntry(DatabaseEntry &entry);
+	uint16 runSelectedDatabaseEntry();
 	RipperEngine *engine() const;
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;

@@ -69,8 +69,6 @@ static const int kWacJournalTextEntryWidth = 200;
 static const int kWacJournalTextEntryHeight = 42;
 static const int kWacJournalTextEntryTop =
 	kWacMediaTop + kWacTextPanelHeight + 5;
-static const uint16 kNoAction = WacManager::kNoAction;
-static const uint16 kExitAction = WacManager::kExitAction;
 
 static void shuffleJournalLine(Common::String &line,
 		Common::RandomSource &randomSource) {
@@ -127,7 +125,7 @@ bool WacDatabaseSession::drawJournalTextPanelLine(
 		ModalDialogManager::kWacPresentation);
 }
 
-uint16 WacDatabaseSession::runJournal(byte entryIndex,
+DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 		const Common::String &entryLabel) {
 	const Common::String &journalText =
 		resourceString(kWacJournalTextResource);
@@ -141,7 +139,7 @@ uint16 WacDatabaseSession::runJournal(byte entryIndex,
 	if (journalText.empty() || prompt.empty() || expectedPassword.empty()) {
 		warning("Ripper: WAC journal resources are incomplete text=0x%x prompt=0x%x password=0x%x",
 			kWacJournalTextResource, kWacJournalPromptResource, passwordResource);
-		return kNoAction;
+		return DatabaseInputOutcome::kContinue;
 	}
 
 	Common::Array<Common::String> sourceLines;
@@ -183,7 +181,7 @@ uint16 WacDatabaseSession::runJournal(byte entryIndex,
 	uint progress = sourceLines.empty() ? 100 :
 		revealedLines * 100 / sourceLines.size();
 	if (!drawJournalTextPanel(displayLines, progress, scroll))
-		return kNoAction;
+		return DatabaseInputOutcome::kContinue;
 
 	engine()->getInput()->discardMouseTransitions();
 	debugC(1, kDebugWac,
@@ -334,11 +332,7 @@ uint16 WacDatabaseSession::runJournal(byte entryIndex,
 		"Ripper: left WAC journal scene entry=%u outcome=%d unlocked=%d revealed=%u/%u section=%u audioStarted=%d",
 		entryIndex, (int)result, unlocked, revealedLines, sourceLines.size(),
 		revealFlagIndex, audioStarted);
-	if (result == DatabaseInputOutcome::kSelectEntry &&
-			_databaseChooser.selectedIndex() < _databaseEntries.size())
-		return dispatchDatabaseEntry(
-			_databaseEntries[_databaseChooser.selectedIndex()]);
-	return result == DatabaseInputOutcome::kExitWac ? kExitAction : kNoAction;
+	return result;
 }
 
 } // End of namespace Ripper

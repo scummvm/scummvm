@@ -81,7 +81,7 @@ static const uint16 kHelpAction = WacManager::kHelpAction;
 
 class WacDatabaseMediaCallback : public MediaSequenceCallback {
 public:
-	using Outcome = WacDatabaseSession::DatabaseInputOutcome;
+	using Outcome = DatabaseInputOutcome;
 	WacDatabaseMediaCallback(WacDatabaseSession *database, byte activeEntryIndex,
 			Common::SeekableReadStream *voiceoverStream = nullptr,
 			const Common::String &voiceoverName = Common::String()) :
@@ -328,7 +328,7 @@ void WacDatabaseSession::clearDatabaseMediaViewport() {
 	g_system->unlockScreen();
 }
 
-WacDatabaseSession::DatabaseInputOutcome WacDatabaseSession::routeDatabaseAction(uint16 action) {
+DatabaseInputOutcome WacDatabaseSession::routeDatabaseAction(uint16 action) {
 	if (action == 0x1b)
 		return DatabaseInputOutcome::kCloseEntry;
 	if (action == kExitAction || action == kDosF10Command)
@@ -563,13 +563,13 @@ bool WacDatabaseSession::drawDatabaseTextPanel(uint bodyResourceId,
 	return true;
 }
 
-uint16 WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId) {
+DatabaseInputOutcome WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId) {
 	const Common::Rect bounds(kWacMediaLeft, kWacMediaTop,
 		kWacMediaLeft + kWacTextPanelWidth, kWacMediaTop + kWacTextPanelHeight);
 	DatabaseInputState input(DatabaseInputMode::kTextPanel);
 	TextScrollState &scroll = input.text;
 	if (!drawDatabaseTextPanel(bodyResourceId, bounds, scroll))
-		return kNoAction;
+		return DatabaseInputOutcome::kContinue;
 
 	_wac->_engine->getInput()->discardMouseTransitions();
 	debugC(1, kDebugWac,
@@ -604,18 +604,10 @@ uint16 WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyR
 			entry.originalIndex(), bodyResourceId,
 			kMilestoneReadJournalEntry7);
 	}
-	if (result == DatabaseInputOutcome::kSelectEntry &&
-			_databaseChooser.selectedIndex() < _databaseEntries.size()) {
-		debugC(2, kDebugWac,
-			"Ripper: WAC database text panel switching entry=%u to entry=%u label='%s'",
-			entry.originalIndex(), _databaseEntries[_databaseChooser.selectedIndex()].originalIndex(),
-			_databaseEntries[_databaseChooser.selectedIndex()].label.c_str());
-		return dispatchDatabaseEntry(_databaseEntries[_databaseChooser.selectedIndex()]);
-	}
-	return result == DatabaseInputOutcome::kExitWac ? kExitAction : kNoAction;
+	return result;
 }
 
-uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
+DatabaseInputOutcome WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 	clearDatabaseMediaViewport();
 	if (entry.catalog->handler == kWacDatabaseHandlerBrokenMug) {
 		debugC(2, kDebugWac,
@@ -645,7 +637,8 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		}
 		_wac->drawFrontEnd();
 		drawDatabase();
-		return result == BrokenMugPuzzle::kExitWac ? kExitAction : kNoAction;
+		return result == BrokenMugPuzzle::kExitWac ?
+			DatabaseInputOutcome::kExitWac : DatabaseInputOutcome::kContinue;
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerBrokenMugCompletion) {
 		debugC(2, kDebugWac,
@@ -656,7 +649,7 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 			entry.label.c_str(), played);
 		_wac->drawFrontEnd();
 		drawDatabase();
-		return kNoAction;
+		return DatabaseInputOutcome::kContinue;
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerJournal)
 		return runJournal(entry.originalIndex(), entry.label);
@@ -702,18 +695,7 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 			"Ripper: WAC database entry=%u label='%s' media='%s' viewport=50,50,350,282 placement=centered loopStartFrame=1 voiceover=none played=%d command=0x%x",
 			entry.originalIndex(), entry.label.c_str(), path.c_str(), played,
 			command);
-		if (callback.outcome() == DatabaseInputOutcome::kExitWac)
-			return kExitAction;
-		if (callback.outcome() == DatabaseInputOutcome::kSelectEntry &&
-				_databaseChooser.selectedIndex() < _databaseEntries.size()) {
-			debugC(2, kDebugWac,
-				"Ripper: WAC database media switching entry=%u to entry=%u label='%s'",
-				entry.originalIndex(),
-				_databaseEntries[_databaseChooser.selectedIndex()].originalIndex(),
-				_databaseEntries[_databaseChooser.selectedIndex()].label.c_str());
-			return dispatchDatabaseEntry(_databaseEntries[_databaseChooser.selectedIndex()]);
-		}
-		return kNoAction;
+		return callback.outcome();
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerConfiguredMediaWithVoiceover) {
 		// RIP_GAME assets are loose files under PATHS/scene.
@@ -740,12 +722,7 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 			entry.originalIndex(), entry.label.c_str(), entry.catalog->imagePath,
 			entry.catalog->mediaPath, played, command,
 			entry.catalog->completionFlag);
-		if (callback.outcome() == DatabaseInputOutcome::kExitWac)
-			return kExitAction;
-		if (callback.outcome() == DatabaseInputOutcome::kSelectEntry &&
-				_databaseChooser.selectedIndex() < _databaseEntries.size())
-			return dispatchDatabaseEntry(_databaseEntries[_databaseChooser.selectedIndex()]);
-		return kNoAction;
+		return callback.outcome();
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerText) {
 		return runDatabaseTextPanel(entry, entry.catalog->contentResourceId);
@@ -754,10 +731,23 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		debugC(2, kDebugWac,
 			"Ripper: WAC database entry=%u label='%s' completed retail no-op",
 			entry.originalIndex(), entry.label.c_str());
-		return kNoAction;
+		return DatabaseInputOutcome::kContinue;
 	}
 	warning("Ripper: WAC database entry=%u label='%s' has invalid handler=%d",
 		entry.originalIndex(), entry.label.c_str(), entry.catalog->handler);
+	return DatabaseInputOutcome::kContinue;
+}
+
+uint16 WacDatabaseSession::runSelectedDatabaseEntry() {
+	while (_databaseChooser.selectedIndex() < _databaseEntries.size()) {
+		DatabaseEntry &entry = _databaseEntries[_databaseChooser.selectedIndex()];
+		const DatabaseInputOutcome outcome = dispatchDatabaseEntry(entry);
+		if (outcome != DatabaseInputOutcome::kSelectEntry)
+			return outcome == DatabaseInputOutcome::kExitWac ? kExitAction : kNoAction;
+		debugC(2, kDebugWac,
+			"Ripper: WAC database switching entry=%u to selectedRow=%u",
+			entry.originalIndex(), _databaseChooser.selectedIndex());
+	}
 	return kNoAction;
 }
 
@@ -799,7 +789,7 @@ uint16 WacDatabaseSession::run() {
 			} else if (command == 0x4800 || command == 0x5000) {
 				navigateDatabase(command, false);
 			} else if (!_databaseEntries.empty() && command == 0x0d) {
-				returnAction = dispatchDatabaseEntry(_databaseEntries[_databaseChooser.selectedIndex()]);
+				returnAction = runSelectedDatabaseEntry();
 				if (returnAction == kExitAction)
 					active = false;
 			}
@@ -833,7 +823,7 @@ uint16 WacDatabaseSession::run() {
 				drawDatabase();
 			}
 			if ((mouse.released & kMouseButtonLeft) != 0) {
-				returnAction = dispatchDatabaseEntry(_databaseEntries[entryIndex]);
+				returnAction = runSelectedDatabaseEntry();
 				if (returnAction == kExitAction)
 					active = false;
 			}
