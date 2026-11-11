@@ -273,7 +273,7 @@ void Lua_V1::SetSayLineDefaults() {
 }
 
 void Lua_V1::SayLine() {
-	int vol = 127, buffer = 64, paramId = 1;
+	int vol = 127, pan = 64, paramId = 1;
 	float x = -1, y = -1;
 	bool background = true;
 	const char *msgId = nullptr;
@@ -292,7 +292,7 @@ void Lua_V1::SayLine() {
 				if (!lua_isstring(paramObj) && !lua_isnumber(paramObj) && !lua_istable(paramObj))
 					break;
 				if (lua_istable(paramObj))
-					parseSayLineTable(paramObj, &background, &vol, &buffer, &x, &y);
+					parseSayLineTable(paramObj, &background, &vol, &pan, &x, &y);
 				else {
 					if (lua_isnumber(paramObj))
 						background = false;
@@ -303,7 +303,7 @@ void Lua_V1::SayLine() {
 				paramObj = lua_getparam(paramId++);
 			}
 			if (msgId) {
-				actor->sayLine(msgId, background, x, y); // background, vol, pan, x, y
+				actor->sayLine(msgId, background, x, y, vol, pan);
 			}
 		}
 	}

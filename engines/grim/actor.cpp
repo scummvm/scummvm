@@ -1144,7 +1144,7 @@ Math::Angle Actor::getYawTo(const Math::Vector3d &p) const {
 		return Math::Angle::arcTangent2(-dpos.x(), dpos.y());
 }
 
-void Actor::sayLine(const char *msgId, bool background, float x, float y) {
+void Actor::sayLine(const char *msgId, bool background, float x, float y, int volume, int pan) {
 	assert(msgId);
 
 	if (msgId[0] == 0) {
@@ -1193,7 +1193,7 @@ void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 	_talkSoundId = 0;
 
 	if (g_grim->getSpeechMode() != GrimEngine::TextOnly)
-		started = g_sound->startVoice(_talkSoundName.c_str(), 127, 64, background, &_talkSoundId);
+		started = g_sound->startVoice(_talkSoundName.c_str(), volume, pan, background, &_talkSoundId);
 
 	// If the actor is clearly not visible then don't try to play the lip sync
 	if (_visible && (!g_movie->isPlaying() || g_grim->getMode() == GrimEngine::NormalMode)) {

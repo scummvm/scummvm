@@ -436,10 +436,12 @@ public:
 	 *
 	 * @param msgId The id of the message to say.
 	 * @param background ?? actual meaning unknown yet.
+	 * @param volume The voice volume (0-127), the SayLine table's volume.
+	 * @param pan The voice pan (0-127), the SayLine table's pan.
 	 * @see isTalking
 	 * @see shutUp
 	 */
-	void sayLine(const char *msgId, bool background, float x, float y);
+	void sayLine(const char *msgId, bool background, float x, float y, int volume, int pan);
 	// When we clean all text objects we don't want the actors to clean their
 	// objects again since they're already freed
 	void lineCleanup();
