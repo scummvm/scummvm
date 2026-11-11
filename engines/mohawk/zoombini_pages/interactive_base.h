@@ -457,11 +457,13 @@ protected:
 	};
 	/** Show the selected notification layout with the requested lifetime. */
 	void showNotiBox(const Common::U32String &ustr, NotiBoxKind kind, bool persistent);
-	/** Return the active notification's background, text and redraw bounds. */
+	/** Return the active notification's background and text bounds. */
 	const Common::Rect &getNotiBoxRect() const;
 
-	/** Select the active notification-box shape. */
-	void notiBox_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
+	/** Expire the notification and request coordinate-debug redraws without advancing a SCRB timer. */
+	bool notiBox_onPreRender(ZmbFeature *feature);
+	/** Draw the selected notification background through the current dirty clip. */
+	ZmbRenderResult notiBox_onRender(ZmbFeature *feature);
 	/** Draw notification text after the notification-box shape. */
 	void notiBox_onPostRender(ZmbFeature *feature);
 

@@ -342,7 +342,8 @@ bool ZoombiniShelterPicker::pickerUI_onPreRender(ZmbFeature *feature) {
 	zoombiniPreview_onPreRenderShape(feature, nullptr, _previewHotspots);
 	goMapButtons_preRenderShape(feature, nullptr, _goMapHotspots);
 	helpButton_preRenderShape(feature, nullptr, _helpHotspots);
-	return true;
+	// This callback-only runner has no SCRB timer or animation pass.
+	return false;
 }
 
 void ZoombiniShelterPicker::pickerUI_drawGroup(const Common::Array<ZmbHotspot> &hotspots, ZmbResource imgResource) {
@@ -392,6 +393,42 @@ void ZoombiniShelterPicker::pickerUI_onPostRender(ZmbFeature *feature) {
 	helpButton_onPostRender(feature);
 }
 
+void ZoombiniShelterPicker::pickerUI_drawButton(const Common::Array<ZmbHotspot> &hotspots, uint16 normalId, uint16 pressedId, ZmbResource resource) {
+	const ZmbHotspot &normal = hotspots[normalId];
+	const ZmbHotspot &pressed = hotspots[pressedId];
+	if (ZmbHotspot::kShapeNone < normal._shapeIdx)
+		_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, resource, &normal);
+	if (ZmbHotspot::kShapeNone < pressed._shapeIdx)
+		_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, resource, &pressed);
+}
+
+void ZoombiniShelterPicker::onPostRenderFrame() {
+	// Repaint the controls marked by input/action handlers after the clipped runner pass, above notifications.
+	for (Common::StableMap<uint32, ButtonState>::iterator it = _pickerButtonStateMap.begin(); it != _pickerButtonStateMap.end(); it++) {
+		if (_pickerRepaints._pickerButtons[it->first])
+			pickerUI_drawButton(_buttonHotspots, it->second._hsNormalId, it->second._hsPressedId, ZmbResource(ZmbResource::kPage, kResBitmapShapes4200_Buttons));
+	}
+	if (_pickerRepaints._mapButton)
+		pickerUI_drawButton(_goMapHotspots, kHotspotMapButtonNormal, kHotspotMapButtonPressed, ZmbResource(ZmbResource::kPage, kResBitmapShapes4200_Buttons));
+	if (_pickerRepaints._goButton)
+		pickerUI_drawButton(_goMapHotspots, kHotspotGoButtonNormal, kHotspotGoButtonPressed, ZmbResource(ZmbResource::kPage, kResBitmapShapes4200_Buttons));
+	for (Common::StableMap<uint32, StickyButtonState>::iterator it = _matrixButtonStateMap.begin(); it != _matrixButtonStateMap.end(); it++) {
+		if (!_pickerRepaints._matrixButtons[it->first])
+			continue;
+		const int16 shape = static_cast<int16>(2 * it->first + 1 + (it->second.isStuck() ? 1 : 0));
+		const ZmbHotspot hotspot(it->first, shape, 0, _matrixButtonRectMap[it->first]);
+		_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, ZmbResource(ZmbResource::kPage, kResBitmapShapes4400_PickerMatrix), &hotspot);
+	}
+	if (_pickerRepaints._nameBox) {
+		_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, ZmbResource(ZmbResource::kPage, kResBitmapShapes4200_Buttons), &_buttonHotspots[kHotspotNameBox]);
+		pickerUI_drawNameText();
+	}
+	// Pre-render consumes the previous refresh request and may request another animation frame.
+	// Retain all requests until the final repaint leaves no further refresh pending.
+	if (!_pickerUIFeature->hasVisualRematerializationRequest())
+		_pickerRepaints = PickerControlRepaintState();
+}
+
 ZmbEventHandleResult ZoombiniShelterPicker::pickerUI_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos) {
 	// Central dispatch, matching the original's single click handler.
 	ZmbEventHandleResult result = pickerMatrix_onLButtonDown(feature, absPos, relPos);
@@ -417,8 +454,13 @@ ZmbEventHandleResult ZoombiniShelterPicker::pickerUI_onLButtonDown(ZmbFeature *f
 		return result;
 
 	result = goMapButtons_onLButtonDown(feature, absPos, relPos);
-	if (result == ZmbEventHandleResult::kConsumed)
+	if (result == ZmbEventHandleResult::kConsumed) {
+		if (_mapButtonClickRect.contains(absPos))
+			_pickerRepaints._mapButton = true;
+		if (_goButtonClickRect.contains(absPos) && isDepartureReady())
+			_pickerRepaints._goButton = true;
 		return result;
+	}
 
 	return helpButton_onLButtonDown(feature, absPos, relPos);
 }
@@ -436,6 +478,8 @@ void ZoombiniShelterPicker::pickerMatrix_onPostRender(ZmbFeature *feature) {
 void ZoombiniShelterPicker::pickerMatrix_onButtonAction(ZmbFeature *feature, uint32 bsIdx, StickyButtonState &bs) {
 	(void)feature;
 
+	const bool wasGeneratable = isZoombiniTraitGeneratable(_previewSnoid._trait);
+	_pickerRepaints._matrixButtons[bsIdx] = true;
 	uint32 row = bsIdx / kMatrixColumns;
 	uint32 column = bsIdx % kMatrixColumns;
 
@@ -461,8 +505,11 @@ void ZoombiniShelterPicker::pickerMatrix_onButtonAction(ZmbFeature *feature, uin
 
 		for (uint32 colIdx = 0; colIdx < kMatrixColumns; colIdx++) {
 			uint32 sibIdx = row * kMatrixColumns + colIdx;
-			if (sibIdx != bsIdx)
+			if (sibIdx != bsIdx) {
+				if (_matrixButtonStateMap[sibIdx].isStuck())
+					_pickerRepaints._matrixButtons[sibIdx] = true;
 				_matrixButtonStateMap[sibIdx].reset();
+			}
 		}
 	} else {
 		// Clear the trait if the button is unstuck
@@ -488,6 +535,8 @@ void ZoombiniShelterPicker::pickerMatrix_onButtonAction(ZmbFeature *feature, uin
 	// Enable Generate only while the roster has capacity and every row has a usable selection.
 	// The name stays unchanged when the user manually selects traits.
 	_pickerButtonStateMap[kPickerButtons_Generate]._isPressDisabled = isGenerationComplete() || !isZoombiniTraitGeneratable(_previewSnoid._trait);
+	if (wasGeneratable != isZoombiniTraitGeneratable(_previewSnoid._trait))
+		_pickerRepaints._nameBox = true;
 	requestPickerControlRematerialization();
 }
 
@@ -517,7 +566,11 @@ void ZoombiniShelterPicker::pickerButtons_onPreRenderShape(ZmbFeature *feature, 
 
 void ZoombiniShelterPicker::pickerButtons_onPostRender(ZmbFeature *feature) {
 	updatePendingGoTransition();
+	pickerUI_drawNameText();
+	genericButton_action(feature, _pickerButtonStateMap, static_cast<OnButtonActionFunc>(&ZoombiniShelterPicker::pickerButtons_onButtonAction));
+}
 
+void ZoombiniShelterPicker::pickerUI_drawNameText() {
 	// Draw the name only when all four traits form a generatable combination.
 	if (isZoombiniTraitGeneratable(_previewSnoid._trait)) {
 		Common::Rect nameTextRect = _nameBoxRect;
@@ -530,8 +583,6 @@ void ZoombiniShelterPicker::pickerButtons_onPostRender(ZmbFeature *feature) {
 		tc._vAlign = Graphics::TextAlign::kTextAlignCenter;
 		_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, _previewSnoid._name, nameTextRect, tc);
 	}
-
-	genericButton_action(feature, _pickerButtonStateMap, static_cast<OnButtonActionFunc>(&ZoombiniShelterPicker::pickerButtons_onButtonAction));
 }
 
 void ZoombiniShelterPicker::requestPickerControlRematerialization() {
@@ -745,7 +796,14 @@ ZmbEventHandleResult ZoombiniShelterPicker::pickerButtons_onLButtonDown(ZmbFeatu
 		return ZmbEventHandleResult::kConsumed;
 	}
 
-	return genericButton_onLButtonDown(feature, absPos, _pickerButtonStateMap, _pickerButtonRectMap);
+	const ZmbEventHandleResult result = genericButton_onLButtonDown(feature, absPos, _pickerButtonStateMap, _pickerButtonRectMap);
+	if (result == ZmbEventHandleResult::kConsumed) {
+		for (Common::StableMap<uint32, ButtonState>::iterator it = _pickerButtonStateMap.begin(); it != _pickerButtonStateMap.end(); it++) {
+			if (it->second.isAnimating() && _pickerButtonRectMap[it->first].contains(absPos))
+				_pickerRepaints._pickerButtons[it->first] = true;
+		}
+	}
+	return result;
 }
 
 ZmbEventHandleResult ZoombiniShelterPicker::pickerButtons_onKeyDown(ZmbFeature *feature, const Common::KeyState &kbd, bool kbdRepeat) {
@@ -1281,6 +1339,8 @@ bool ZoombiniShelterPicker::isDepartureReady() const {
 
 void ZoombiniShelterPicker::applyDiceReroll(bool fillEmptySeats) {
 	randomizeTraitSelection(fillEmptySeats);
+	for (uint32 i = 0; i < ARRAYSIZE(_pickerMatrixRects); i++)
+		_pickerRepaints._matrixButtons[i] = true;
 	setGoButtonsEnabled(isDepartureReady());
 }
 
@@ -1395,6 +1455,8 @@ void ZoombiniShelterPicker::generateZoombiniName() {
 			requestedFixedName = ZoombiniText::kJPFixedJPNameFumiaki;
 	}
 	_previewSnoid._name = _vm->_text->pickNextZoombiniName(requestedFixedName);
+	if (_pickerUIFeature)
+		_pickerRepaints._nameBox = true;
 }
 
 int16 ZoombiniShelterPicker::loadZoombinisFromPack(ZmbStateActivePack &pack) {

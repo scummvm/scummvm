@@ -1096,6 +1096,8 @@ public:
 		_visualRematerializationRequested = true;
 		_needsRedraw = true;
 	}
+	/** Return whether a semantic-owner refresh is still pending for the next render pass. */
+	bool hasVisualRematerializationRequest() const { return _visualRematerializationRequested; }
 	/** Consume and clear a pending semantic-owner rematerialization request. */
 	bool consumeVisualRematerializationRequest() {
 		const bool requested = _visualRematerializationRequested;
