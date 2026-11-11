@@ -47,6 +47,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("enemy", WRAP_METHOD(Console, cmdEnemy));
 	registerCmd("hp", WRAP_METHOD(Console, cmdHP));
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
+	registerCmd("mp", WRAP_METHOD(Console, cmdMP));
 	registerCmd("level", WRAP_METHOD(Console, cmdLevel));
 	registerCmd("transport", WRAP_METHOD(Console, cmdTransport));
 	registerCmd("enemies", WRAP_METHOD(Console, cmdEnemies));
@@ -579,6 +580,21 @@ bool Console::cmdWin(int argc, const char **argv) {
 
 	combat->win();
 	return false;
+}
+
+bool Console::cmdMP(int argc, const char **argv) {
+	int first, last;
+	if (argc > 2 || !getTargets(argc, argv, 1, first, last)) {
+		debugPrintf("mp [<position>]\n");
+		return true;
+	}
+
+	for (int i = first; i <= last; ++i)
+		_G(savegame).partyMember(i)._magicPoints = Data::toBcd(MAX_ITEMS);
+
+	g_engine->focusedView()->redraw();
+	debugPrintf("MP set to %d\n", MAX_ITEMS);
+	return true;
 }
 
 bool Console::cmdGold(int argc, const char **argv) {

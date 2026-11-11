@@ -56,6 +56,7 @@ private:
 	bool cmdEnemy(int argc, const char **argv);
 	bool cmdHP(int argc, const char **argv);
 	bool cmdFood(int argc, const char **argv);
+	bool cmdMP(int argc, const char **argv);
 	bool cmdLevel(int argc, const char **argv);
 	bool cmdTransport(int argc, const char **argv);
 	bool cmdEnemies(int argc, const char **argv);
