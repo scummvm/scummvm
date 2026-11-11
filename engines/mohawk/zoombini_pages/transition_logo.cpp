@@ -50,7 +50,7 @@ ZoombiniTransitionLogo::ZoombiniTransitionLogo(MohawkEngine_Zoombini *vm)
 ZoombiniTransitionLogo::~ZoombiniTransitionLogo() {
 	if (_cdtoonsVideo) {
 		_vm->_video->removeEntry(_cdtoonsVideo);
-		if (_vm->getRelInfo().isMultilingualRelease())
+		if (_vm->getRelInfo().hasMultipleLangResources())
 			_vm->_cursor->showCursor();
 	}
 
@@ -139,7 +139,7 @@ void ZoombiniTransitionLogo::loadFeatures() {
 
 		_cdtoonsVideo->center();
 		// The multilingual EU title hides the pointer until the movie is closed.
-		if (_vm->getRelInfo().isMultilingualRelease())
+		if (_vm->getRelInfo().hasMultipleLangResources())
 			_vm->_cursor->hideCursor();
 	}
 }

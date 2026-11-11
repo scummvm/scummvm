@@ -86,27 +86,28 @@ ZmbEventHandleResult ZoombiniInteractive::onKeyDown(const Common::KeyState &kbd,
 		return result;
 	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
 	const bool fixSwappedSoundMusic = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixSwappedSoundMusicShortcuts);
-	// Version Dialog (CTRL-V)
+	// Version Dialog (CTRL-V), uses the executable's keyboard layout.
 	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kVersionDialog, kbd)) {
 		_vm->openVersionDialog();
 		return ZmbEventHandleResult::kConsumed;
 	}
-	// Dialog & Sound Effects (CTRL-D)
+	// Dialog & Sound Effects (CTRL-D), use the release-specific gameplay assignment.
 	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kGameplaySound, kbd, fixSwappedSoundMusic)) {
 		_vm->_state->toggleSound();
 		return ZmbEventHandleResult::kConsumed;
 	}
-	// Background Music (CTRL-B)
+	// Background Music (CTRL-B), uses the release-specific gameplay assignment.
 	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kGameplayMusic, kbd, fixSwappedSoundMusic)) {
 		_vm->_state->toggleMusic();
 		return ZmbEventHandleResult::kConsumed;
 	}
 	// Sticky Mouse (CTRL-J)
+	// Is Ctrl+K in v1.0JP, where Ctrl+J switches language into Japanese.
 	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kStickyMouse, kbd)) {
 		_vm->_state->toggleStickyMouse();
 		return ZmbEventHandleResult::kConsumed;
 	}
-	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kLanguageSelection, kbd)) {
+	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kLangSwitch, kbd)) {
 		switch (kbd.keycode) {
 		case Common::KEYCODE_d:
 			_vm->requestLanguageSwitch(Common::DE_DEU);
@@ -117,17 +118,20 @@ ZmbEventHandleResult ZoombiniInteractive::onKeyDown(const Common::KeyState &kbd,
 		case Common::KEYCODE_f:
 			_vm->requestLanguageSwitch(Common::FR_FRA);
 			break;
+		case Common::KEYCODE_j:
+			_vm->requestLanguageSwitch(Common::JA_JPN);
+			break;
 		default:
 			break;
 		}
 		return ZmbEventHandleResult::kConsumed;
 	}
-	// Load Game (CTRL-L)
+	// Load Game (CTRL-L), including release-specific aliases.
 	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kLoadGame, kbd)) {
 		_vm->openLoadDialogWithSavePrompt();
 		return ZmbEventHandleResult::kConsumed;
 	}
-	// Save Game (CTRL-S)
+	// Save Game (CTRL-S), including release-specific aliases.
 	if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kSaveGame, kbd)) {
 		_vm->openSaveDialog();
 		return ZmbEventHandleResult::kConsumed;
@@ -143,8 +147,14 @@ ZmbEventHandleResult ZoombiniInteractive::onKeyDown(const Common::KeyState &kbd,
 			return ZmbEventHandleResult::kConsumed;
 		case Common::KEYCODE_m: // Switch name generation between Japanese/Latin (CTRL-M, v1.0JP only)
 			if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
-				const bool japaneseNames = _vm->_text->toggleJapaneseNames();
-				showNotiBoxLong(japaneseNames ? ZoombiniText::kNotiBoxJapaneseNames : ZoombiniText::kNotiBoxEnglishNames);
+				ZoombiniText::NameGenMode mode = ZoombiniText::NameGenMode::kJapanese;
+				if (_vm->_text->getNameGenMode() == ZoombiniText::NameGenMode::kJapanese)
+					mode = ZoombiniText::NameGenMode::kLatin;
+				_vm->_text->setNameGenMode(mode);
+				if (mode == ZoombiniText::NameGenMode::kJapanese)
+					showNotiBoxLong(ZoombiniText::kNotiBoxJapaneseNames);
+				else
+					showNotiBoxLong(ZoombiniText::kNotiBoxEnglishNames);
 				return ZmbEventHandleResult::kConsumed;
 			}
 			break;

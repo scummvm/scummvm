@@ -410,9 +410,8 @@ void ZoombiniPage::openArchive(const Common::String &mhkName) {
 }
 
 ZmbEventHandleResult ZoombiniPage::handleLButtonDown(const Common::Point &absPos, const Common::Point &relPos) {
-	// Manual sticky mouse (Ctrl+J) and auto-sticky mouse (Ctrl+U) both route a
-	// picked-up item through the click-to-pick / click-to-drop path, so a click
-	// on an active (sticky) drag drops it.
+	// Manual sticky mouse and auto-sticky mouse both route a picked-up item through the click-to-pick / click-to-drop path,
+	// so a click on an active (sticky) drag drops it.
 	if ((_vm->_state->getEnableStickyMouse() || _vm->_state->getEnableAutoStickyMouse()) && hasStickyMouseDrag()) {
 		// A direct touchscreen tap can report its simulated button-down at the
 		// destination without a preceding mouse-move event. Apply the final
@@ -426,7 +425,7 @@ ZmbEventHandleResult ZoombiniPage::handleLButtonDown(const Common::Point &absPos
 
 ZmbEventHandleResult ZoombiniPage::handleLButtonUp(const Common::Point &absPos, const Common::Point &relPos) {
 	if (hasStickyMouseDrag()) {
-		// Manual sticky mouse (Ctrl+J): a picked-up item never drops on release.
+		// Manual sticky mouse: a picked-up item never drops on release.
 		if (_vm->_state->getEnableStickyMouse())
 			return ZmbEventHandleResult::kConsumed;
 

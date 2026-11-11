@@ -239,7 +239,7 @@ public:
 	/** Recreate the active puzzle with the current party, returning false when a transition or dialog prevents it. */
 	bool debugRetryPuzzle();
 	/**
-	 * Confirm a language switch and queue a engine restart.
+	 * Confirm a language switch and queue an engine restart when its archives are available.
 	 * @param destLang A language to switch.
 	 */
 	void requestLanguageSwitch(Common::Language destLang);
@@ -556,6 +556,11 @@ private:
 	Common::Language _pendingLangSwitch = Common::UNK_LANG;
 	/** Select the resource directory for the effective game language. */
 	void selectArchiveRoot();
+	/** 
+	 * Whether the requested language's selected MIDI, system and text archives
+	 * can be opened and parsed before a switch.
+	 */
+	bool hasLanguageArchives(Common::Language lang) const;
 	/** Load global registration tables from the current system archive. */
 	void loadSystemShapeOffsets();
 	/** Replace localized resources and initialize fresh state at the page transition boundary. */

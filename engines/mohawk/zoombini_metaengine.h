@@ -85,6 +85,18 @@ public:
 		kRodMap
 	};
 
+	/** Executable keyboard layouts, independent of the selected resource language. */
+	enum class ShortcutLayout {
+		/** US-family and TLC assignments. */
+		kUs,
+		/** British, French and German EUv1x assignments. */
+		kEurope,
+		/** Italian EUv1x assignments. */
+		kItalian,
+		/** Japanese EUv1x assignments, including Ctrl+J to return to Japanese. */
+		kJapanese
+	};
+
 	/** Shortcuts whose key assignments vary by release. */
 	enum class ShortcutKind {
 		/** Open the version information dialog. */
@@ -105,8 +117,12 @@ public:
 		kGameplayMusic,
 		/** Toggle sticky mouse. */
 		kStickyMouse,
-		/** Select a supported language, or reserve unavailable language keys. */
-		kLanguageSelection,
+		/**
+		 * (v1.xEU) Request German/English/French with Ctrl+D/E/F.
+		 * (v1.0JP) Japanese with Ctrl+J is also available.
+		 * (v1.0IT) Inactive.
+		 */
+		kLangSwitch,
 		/** Open the Load dialog. */
 		kLoadGame,
 		/** Open the Save dialog. */
@@ -182,18 +198,41 @@ public:
 
 	/** Construct an instance with release information. */
 	explicit ZmbReleaseInfo(const MohawkGameDescription &gameDesc);
-	/** Whether this release contains selectable BR/FR/DE resources. */
-	bool isMultilingualRelease() const { return _isMultilingual; }
-	/** Whether @p lang is supported by multilingual Europe releases: BR/FR/DE. */
-	static bool isMultilingualReleaseLanguage(Common::Language lang);
+
+	/**
+	 * Whether the original package ships multiple language resource sets for in-game switching.
+	 * This describes release contents; installed archives are validated separately.
+	 */
+	bool hasMultipleLangResources() const { return _hasMultipleLangResources; }
+	/**
+	 * Whether this package uses the Japanese Europe-v1 executable, regardless of selected language.
+	 * The language-aware @ref Mohawk::ZmbReleaseInfo::isFamily overload stops matching Japanese after an in-game language change.
+	 * The executable layout remains Japanese, so its identity must be checked independently.
+	 */
+	bool isJapaneseRelease() const;
+	/**
+	 * Whether the launcher can select a persistent startup language.
+	 * Japanese packages use session-only in-game language changes.
+	 */
+	bool hasLauncherLangSelection() const { return hasMultipleLangResources() && !isJapaneseRelease(); }
+	/** Whether this release retains in-game language changes, even if other language resources are absent. */
+	bool hasLangSwitch() const;
+	/** Whether @p lang belongs to this release's language set, including Japanese on Japanese packages. */
+	bool isMultilingualReleaseLang(Common::Language lang) const;
 	/** Set a selectable language on a multilingual release; return false for unsupported requests. */
 	bool setLanguage(Common::Language lang);
+	/** Return the relative MHK directory for @p lang using this release's archive layout. */
+	const char *getArchiveRoot(Common::Language lang) const;
 	/** Match a broad implementation lineage. */
 	bool isFamily(Family family) const;
 	/** Match both the implementation family and its language. */
 	bool isFamily(Family family, Common::Language lang) const;
 	/** Match an implementation family from a detector extra label, including variant suffixes. */
 	static bool isExtraFamily(const Common::String &extra, Family family);
+	/** Return this executable's keyboard layout, retained across in-game language changes. */
+	ShortcutLayout getShortcutLayout() const { return _shortcutLayout; }
+	/** Resolve the same executable layout before engine creation, using the detector release label. */
+	static ShortcutLayout getShortcutLayout(const Common::String &extra);
 	/** Match any v1 implementation family. */
 	bool isV1() const;
 	/**
@@ -203,7 +242,7 @@ public:
 	 * @return Ordered keys: the first is the primary key emitted by the keymapper
 	 *         to the in-game input handlers; subsequent keys are alternative inputs.
 	 */
-	static const Common::Array<Common::KeyCode> &getShortcutKeys(ShortcutKind kind, bool isV1xEurope, Common::Language lang, bool fixSwappedSoundMusic = false);
+	static const Common::Array<Common::KeyCode> &getShortcutKeys(ShortcutKind kind, ShortcutLayout layout, bool fixSwappedSoundMusic = false);
 	/**
 	 * Match a Control shortcut key or the version dialog's unmodified Tab shortcut.
 	 * @param fixSwappedSoundMusic Apply the optional gameplay sound/music assignment fix.
@@ -265,8 +304,10 @@ private:
 	const Common::Platform _platform;
 	/** Whether the detector marks this release as a demo. */
 	const bool _isDemo;
-	/** Whether the detector identifies a complete multilingual Europe release. */
-	const bool _isMultilingual;
+	/** Whether the original package ships multiple language resource sets, independent of launcher selection. */
+	const bool _hasMultipleLangResources;
+	/** Immutable executable keyboard layout shared with the pre-engine keymapper. */
+	const ShortcutLayout _shortcutLayout;
 };
 
 class MohawkMetaEngine_Zoombini {
@@ -287,7 +328,7 @@ public:
 	static constexpr const char *kActionToggleLessMoreAction = "TG_ACTN";
 	/** Toggle in-game cursor visibility. */
 	static constexpr const char *kActionToggleCursor = "TG_CURS";
-	/** v1.0JP only: Select Japanese or Latin procedural Zoombini names. */
+	/** v1.0JP only: Ctrl+M switches snoid name generation between Japanese and Latin. */
 	static constexpr const char *kActionToggleJapaneseNames = "TG_JPN_NAMES";
 	/** Replay the puzzle instructions heard before entering the current puzzle. */
 	static constexpr const char *kActionReplayPuzzleInstructions = "REPLAY_PUZ_INST";
@@ -425,6 +466,8 @@ public:
 	static MidiSoundtrack getDefaultMidiSoundtrack(Common::Platform platform);
 	/** Resolve a stored MIDI soundtrack, falling back to the target platform's original. */
 	static MidiSoundtrack normalizeMidiSoundtrack(int soundtrack, Common::Platform platform);
+	/** Return the MIDI archive filename for @p soundtrack, reporting invalid kinds as fatal errors. */
+	static const char *getMidiArchiveName(MidiSoundtrack soundtrack);
 	/** Override the soundtrack for a known single-archive v1 release; otherwise leave it unchanged and return false. */
 	static bool getFixedMidiSoundtrack(Common::Platform platform, Common::Language language, bool isDemo, bool isUsV10, MidiSoundtrack &soundtrack);
 	/** Enable color-blind presentation adjustments. */

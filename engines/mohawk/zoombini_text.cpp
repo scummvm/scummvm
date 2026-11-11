@@ -211,159 +211,164 @@ void ZoombiniText::patchKoreanExeCredits() {
 	_creditParagraphs[pIdx]._lines[lIdx] += U')';
 }
 
-const ZoombiniText::ResTextEntry ZoombiniText::kV10EU_ResTextEntries[] = {
-	{ZoombiniText::kDialogBodyVersionInfo, 1040, 1},
-	{ZoombiniText::kPicker, 2000, 0},
-	{ZoombiniText::kBridge, 2000, 1},
-	{ZoombiniText::kCaves, 2000, 2},
-	{ZoombiniText::kPizza, 2000, 3},
-	{ZoombiniText::kBasecamp1, 2000, 4},
-	{ZoombiniText::kFerry, 2000, 5},
-	{ZoombiniText::kLilly, 2000, 6},
-	{ZoombiniText::kSlides, 2000, 7},
-	{ZoombiniText::kFleens, 2000, 8},
-	{ZoombiniText::kHotel, 2000, 9},
-	{ZoombiniText::kNet, 2000, 10},
-	{ZoombiniText::kBasecamp2, 2000, 11},
-	{ZoombiniText::kTunnels, 2000, 12},
-	{ZoombiniText::kSmoke, 2000, 13},
-	{ZoombiniText::kMaze, 2000, 14},
-	{ZoombiniText::kTown, 2000, 15},
+const ZoombiniText::ResTextEntry ZoombiniText::kV1xEUFamily_ResTextEntries[] = {
+	{ZoombiniText::kDialogBodyVersionInfo, ZoombiniText::kStrl1040_VersionInfo, 1},
+	{ZoombiniText::kPicker, ZoombiniText::kStrl2000_PageNames, 0},
+	{ZoombiniText::kBridge, ZoombiniText::kStrl2000_PageNames, 1},
+	{ZoombiniText::kCaves, ZoombiniText::kStrl2000_PageNames, 2},
+	{ZoombiniText::kPizza, ZoombiniText::kStrl2000_PageNames, 3},
+	{ZoombiniText::kBasecamp1, ZoombiniText::kStrl2000_PageNames, 4},
+	{ZoombiniText::kFerry, ZoombiniText::kStrl2000_PageNames, 5},
+	{ZoombiniText::kLilly, ZoombiniText::kStrl2000_PageNames, 6},
+	{ZoombiniText::kSlides, ZoombiniText::kStrl2000_PageNames, 7},
+	{ZoombiniText::kFleens, ZoombiniText::kStrl2000_PageNames, 8},
+	{ZoombiniText::kHotel, ZoombiniText::kStrl2000_PageNames, 9},
+	{ZoombiniText::kNet, ZoombiniText::kStrl2000_PageNames, 10},
+	{ZoombiniText::kBasecamp2, ZoombiniText::kStrl2000_PageNames, 11},
+	{ZoombiniText::kTunnels, ZoombiniText::kStrl2000_PageNames, 12},
+	{ZoombiniText::kSmoke, ZoombiniText::kStrl2000_PageNames, 13},
+	{ZoombiniText::kMaze, ZoombiniText::kStrl2000_PageNames, 14},
+	{ZoombiniText::kTown, ZoombiniText::kStrl2000_PageNames, 15},
 	// STRL 2002 journey-stat labels are distinct from the full page names in STRL 2000.
-	{ZoombiniText::kJourneyStatZoombiniIsle, 2002, 0},
-	{ZoombiniText::kJourneyStatShelterRock, 2002, 1},
-	{ZoombiniText::kJourneyStatShadeTree, 2002, 2},
-	{ZoombiniText::kJourneyStatZoombiniton, 2002, 3},
-	{ZoombiniText::kPracticeMode, 2002, 4},
+	{ZoombiniText::kJourneyStatZoombiniIsle, ZoombiniText::kStrl2002_JourneyStats, 0},
+	{ZoombiniText::kJourneyStatShelterRock, ZoombiniText::kStrl2002_JourneyStats, 1},
+	{ZoombiniText::kJourneyStatShadeTree, ZoombiniText::kStrl2002_JourneyStats, 2},
+	{ZoombiniText::kJourneyStatZoombiniton, ZoombiniText::kStrl2002_JourneyStats, 3},
+	{ZoombiniText::kPracticeMode, ZoombiniText::kStrl2002_JourneyStats, 4},
 	// Europe-v1 STRL 2002 return-path blocks; USv1.0 supplies these keys from executable tables.
-	{ZoombiniText::kPracticeReturnInitial1, 2002, 5},
-	{ZoombiniText::kPracticeReturnInitial2, 2002, 6},
-	{ZoombiniText::kPracticeReturnInitial3, 2002, 7},
-	{ZoombiniText::kPracticeReturnInitial4, 2002, 8},
-	{ZoombiniText::kPracticeReturnShelterRock1, 2002, 9},
-	{ZoombiniText::kPracticeReturnShelterRock2, 2002, 10},
-	{ZoombiniText::kPracticeReturnShelterRock3, 2002, 11},
-	{ZoombiniText::kPracticeReturnShelterRock4, 2002, 12},
-	{ZoombiniText::kPracticeReturnShadeTree1, 2002, 13},
-	{ZoombiniText::kPracticeReturnShadeTree2, 2002, 14},
-	{ZoombiniText::kPracticeReturnShadeTree3, 2002, 15},
-	{ZoombiniText::kPracticeReturnShadeTree4, 2002, 16},
-	{ZoombiniText::kPracticeReturnZoombiniton1, 2002, 17},
-	{ZoombiniText::kPracticeReturnZoombiniton2, 2002, 18},
-	{ZoombiniText::kPracticeReturnZoombiniton3, 2002, 19},
-	{ZoombiniText::kPracticeReturnZoombiniton4, 2002, 20},
-	{ZoombiniText::kTerrainKey, 2004, 0},
-	{ZoombiniText::kChooseLevel, 2004, 1},
-	{ZoombiniText::kLevel1, 2004, 2},
-	{ZoombiniText::kLevel2, 2004, 3},
-	{ZoombiniText::kLevel3, 2004, 4},
-	{ZoombiniText::kLevel4, 2004, 5},
-	{ZoombiniText::kRoute1, 2006, 0},
-	{ZoombiniText::kRoute2, 2006, 1},
-	{ZoombiniText::kRoute3, 2006, 2},
-	{ZoombiniText::kRoute4, 2006, 3},
-	{ZoombiniText::kXferVillePopulation, 2008, 0},
-	{ZoombiniText::kMemorialJanuary, 2010, 0},
-	{ZoombiniText::kMemorialFebruary, 2010, 1},
-	{ZoombiniText::kMemorialMarch, 2010, 2},
-	{ZoombiniText::kMemorialApril, 2010, 3},
-	{ZoombiniText::kMemorialMay, 2010, 4},
-	{ZoombiniText::kMemorialJune, 2010, 5},
-	{ZoombiniText::kMemorialJuly, 2010, 6},
-	{ZoombiniText::kMemorialAugust, 2010, 7},
-	{ZoombiniText::kMemorialSeptember, 2010, 8},
-	{ZoombiniText::kMemorialOctober, 2010, 9},
-	{ZoombiniText::kMemorialNovember, 2010, 10},
-	{ZoombiniText::kMemorialDecember, 2010, 11},
-	{ZoombiniText::kMemorialWhenLevel, 2012, 0},
-	{ZoombiniText::kMemorialHonorMonument, 2014, 0},
-	{ZoombiniText::kMemorialHonorWindmill, 2014, 1},
-	{ZoombiniText::kMemorialHonorObservatory, 2014, 2},
-	{ZoombiniText::kMemorialHonorBowlingAlley, 2014, 3},
-	{ZoombiniText::kMemorialHonorGeneralStore, 2014, 4},
-	{ZoombiniText::kMemorialHonorSwimmingPool, 2014, 5},
-	{ZoombiniText::kMemorialHonorPlayground, 2014, 6},
-	{ZoombiniText::kMemorialHonorBandShell, 2014, 7},
-	{ZoombiniText::kMemorialHonorSchool, 2014, 8},
-	{ZoombiniText::kMemorialHonorLibrary, 2014, 9},
-	{ZoombiniText::kMemorialHonorFire, 2014, 10},
-	{ZoombiniText::kMemorialHonorOpera, 2014, 11},
-	{ZoombiniText::kMemorialHonorCityHall, 2014, 12},
-	{ZoombiniText::kMemorialHonorClockTower, 2014, 13},
-	{ZoombiniText::kMemorialHonorMuseum, 2014, 14},
-	{ZoombiniText::kMemorialHonorCourt, 2014, 15},
-	{ZoombiniText::kMemorialRoute1Level1, 2016, 0},
-	{ZoombiniText::kMemorialRoute1Level2, 2016, 1},
-	{ZoombiniText::kMemorialRoute1Level3, 2016, 2},
-	{ZoombiniText::kMemorialRoute1Level4, 2016, 3},
-	{ZoombiniText::kMemorialRoute2Level1, 2016, 4},
-	{ZoombiniText::kMemorialRoute2Level2, 2016, 5},
-	{ZoombiniText::kMemorialRoute2Level3, 2016, 6},
-	{ZoombiniText::kMemorialRoute2Level4, 2016, 7},
-	{ZoombiniText::kMemorialRoute3Level1, 2016, 8},
-	{ZoombiniText::kMemorialRoute3Level2, 2016, 9},
-	{ZoombiniText::kMemorialRoute3Level3, 2016, 10},
-	{ZoombiniText::kMemorialRoute3Level4, 2016, 11},
-	{ZoombiniText::kMemorialRoute4Level1, 2016, 12},
-	{ZoombiniText::kMemorialRoute4Level2, 2016, 13},
-	{ZoombiniText::kMemorialRoute4Level3, 2016, 14},
-	{ZoombiniText::kMemorialRoute4Level4, 2016, 15},
-	{ZoombiniText::kDialogBodyGoMapWillLost, 2018, 0},
-	{ZoombiniText::kDialogButtonLoseThem, 2018, 1},
-	{ZoombiniText::kDialogButtonKeepThem, 2018, 2},
-	{ZoombiniText::kDialogButtonOkay, 2018, 3},
-	{ZoombiniText::kDialogButtonCancel, 2018, 4},
-	{ZoombiniText::kDialogButtonLoad, 2018, 5},
-	{ZoombiniText::kDialogButtonSave, 2018, 6},
-	{ZoombiniText::kOptionsTitle, 2018, 7},
-	{ZoombiniText::kOptionsLegendOn, 2018, 8},
-	{ZoombiniText::kOptionsLegendOff, 2018, 9},
-	{ZoombiniText::kOptionsToggle, 2018, 10},
-	{ZoombiniText::kOptionsNewGame, 2018, 11},
-	{ZoombiniText::kOptionsLoadGame, 2018, 12},
-	{ZoombiniText::kOptionsSaveGame, 2018, 13},
-	{ZoombiniText::kOptionsQuit, 2018, 14},
-	{ZoombiniText::kOptionsSound, 2018, 15},
-	{ZoombiniText::kOptionsMusic, 2018, 16},
-	{ZoombiniText::kOptionsStickyMouse, 2018, 17},
-	{ZoombiniText::kOptionsTransitions, 2018, 18},
-	{ZoombiniText::kDialogBodyNoSavedGames, 2018, 19},
-	{ZoombiniText::kDialogBodyCreateAndSaveNewGame, 2018, 21},
-	{ZoombiniText::kNewGame, 2018, 22},
-	{ZoombiniText::kDialogButtonNewGame, 2018, 22},
-	{ZoombiniText::kDialogButtonReplaceTitle, 2018, 23},
-	{ZoombiniText::kDialogButtonReplace, 2018, 23},
-	{ZoombiniText::kDialogTitleSave, 2018, 24},
-	{ZoombiniText::kDialogTitleSaveAs, 2018, 25},
-	{ZoombiniText::kDialogTitleLoad, 2018, 26},
-	{ZoombiniText::kDialogBodyReplaceGame, 2018, 27},
-	{ZoombiniText::kOptionsCredits, 2018, 28},
-	{ZoombiniText::kDialogBodySaveCurrentGame, 2018, 29},
-	{ZoombiniText::kDialogButtonYes, 2018, 30},
-	{ZoombiniText::kDialogButtonQuit, 2018, 31},
-	{ZoombiniText::kDialogBodySaveBeforeQuit, 2018, 32},
-	{ZoombiniText::kDialogButtonNo, 2018, 34},
-	{ZoombiniText::kDialogBodyCannotSaveInPractice, 2018, 35},
-	{ZoombiniText::kDialogBodyCreateNewGame, 2018, 36},
-	{ZoombiniText::kDialogBodyCannotSaveMoreGame, 2018, 37},
-	{ZoombiniText::kDialogBodyCannotLoadInPractice, 2018, 38},
-	{ZoombiniText::kDialogBodyCannotCreateNewInPractice, 2018, 39},
-	{ZoombiniText::kDialogBodyNewGame, 2018, 40},
-	{ZoombiniText::kDialogBodyReallyQuit, 2018, 41},
-	{ZoombiniText::kNotiBoxMusicOn, 2023, 0},
-	{ZoombiniText::kNotiBoxMusicOff, 2023, 1},
-	{ZoombiniText::kNotiBoxSoundOn, 2023, 2},
-	{ZoombiniText::kNotiBoxSoundOff, 2023, 3},
-	{ZoombiniText::kNotiBoxLessAction, 2023, 4},
-	{ZoombiniText::kNotiBoxMoreAction, 2023, 5},
-	{ZoombiniText::kNotiBoxHideCursor, 2023, 6},
-	{ZoombiniText::kNotiBoxShowCursor, 2023, 7},
-	{ZoombiniText::kNotiBoxStickeyMouse, 2023, 8},
-	{ZoombiniText::kNotiBoxNonStickeyMouse, 2023, 9},
-	{ZoombiniText::kNotiBoxTransitionsOn, 2023, 10},
-	{ZoombiniText::kNotiBoxTransitionsOff, 2023, 11},
-	{ZoombiniText::kNotiBoxAutoStickeyOn, 2023, 12},
-	{ZoombiniText::kNotiBoxAutoStickeyOff, 2023, 13},
+	{ZoombiniText::kPracticeReturnInitial1, ZoombiniText::kStrl2002_JourneyStats, 5},
+	{ZoombiniText::kPracticeReturnInitial2, ZoombiniText::kStrl2002_JourneyStats, 6},
+	{ZoombiniText::kPracticeReturnInitial3, ZoombiniText::kStrl2002_JourneyStats, 7},
+	{ZoombiniText::kPracticeReturnInitial4, ZoombiniText::kStrl2002_JourneyStats, 8},
+	{ZoombiniText::kPracticeReturnShelterRock1, ZoombiniText::kStrl2002_JourneyStats, 9},
+	{ZoombiniText::kPracticeReturnShelterRock2, ZoombiniText::kStrl2002_JourneyStats, 10},
+	{ZoombiniText::kPracticeReturnShelterRock3, ZoombiniText::kStrl2002_JourneyStats, 11},
+	{ZoombiniText::kPracticeReturnShelterRock4, ZoombiniText::kStrl2002_JourneyStats, 12},
+	{ZoombiniText::kPracticeReturnShadeTree1, ZoombiniText::kStrl2002_JourneyStats, 13},
+	{ZoombiniText::kPracticeReturnShadeTree2, ZoombiniText::kStrl2002_JourneyStats, 14},
+	{ZoombiniText::kPracticeReturnShadeTree3, ZoombiniText::kStrl2002_JourneyStats, 15},
+	{ZoombiniText::kPracticeReturnShadeTree4, ZoombiniText::kStrl2002_JourneyStats, 16},
+	{ZoombiniText::kPracticeReturnZoombiniton1, ZoombiniText::kStrl2002_JourneyStats, 17},
+	{ZoombiniText::kPracticeReturnZoombiniton2, ZoombiniText::kStrl2002_JourneyStats, 18},
+	{ZoombiniText::kPracticeReturnZoombiniton3, ZoombiniText::kStrl2002_JourneyStats, 19},
+	{ZoombiniText::kPracticeReturnZoombiniton4, ZoombiniText::kStrl2002_JourneyStats, 20},
+	{ZoombiniText::kTerrainKey, ZoombiniText::kStrl2004_Levels, 0},
+	{ZoombiniText::kChooseLevel, ZoombiniText::kStrl2004_Levels, 1},
+	{ZoombiniText::kLevel1, ZoombiniText::kStrl2004_Levels, 2},
+	{ZoombiniText::kLevel2, ZoombiniText::kStrl2004_Levels, 3},
+	{ZoombiniText::kLevel3, ZoombiniText::kStrl2004_Levels, 4},
+	{ZoombiniText::kLevel4, ZoombiniText::kStrl2004_Levels, 5},
+	{ZoombiniText::kRoute1, ZoombiniText::kStrl2006_RouteNames, 0},
+	{ZoombiniText::kRoute2, ZoombiniText::kStrl2006_RouteNames, 1},
+	{ZoombiniText::kRoute3, ZoombiniText::kStrl2006_RouteNames, 2},
+	{ZoombiniText::kRoute4, ZoombiniText::kStrl2006_RouteNames, 3},
+	{ZoombiniText::kXferVillePopulation, ZoombiniText::kStrl2008_TownPopulation, 0},
+	{ZoombiniText::kMemorialJanuary, ZoombiniText::kStrl2010_MemorialMonthNames, 0},
+	{ZoombiniText::kMemorialFebruary, ZoombiniText::kStrl2010_MemorialMonthNames, 1},
+	{ZoombiniText::kMemorialMarch, ZoombiniText::kStrl2010_MemorialMonthNames, 2},
+	{ZoombiniText::kMemorialApril, ZoombiniText::kStrl2010_MemorialMonthNames, 3},
+	{ZoombiniText::kMemorialMay, ZoombiniText::kStrl2010_MemorialMonthNames, 4},
+	{ZoombiniText::kMemorialJune, ZoombiniText::kStrl2010_MemorialMonthNames, 5},
+	{ZoombiniText::kMemorialJuly, ZoombiniText::kStrl2010_MemorialMonthNames, 6},
+	{ZoombiniText::kMemorialAugust, ZoombiniText::kStrl2010_MemorialMonthNames, 7},
+	{ZoombiniText::kMemorialSeptember, ZoombiniText::kStrl2010_MemorialMonthNames, 8},
+	{ZoombiniText::kMemorialOctober, ZoombiniText::kStrl2010_MemorialMonthNames, 9},
+	{ZoombiniText::kMemorialNovember, ZoombiniText::kStrl2010_MemorialMonthNames, 10},
+	{ZoombiniText::kMemorialDecember, ZoombiniText::kStrl2010_MemorialMonthNames, 11},
+	{ZoombiniText::kMemorialWhenLevel, ZoombiniText::kStrl2012_MemorialMilestones, 0},
+	{ZoombiniText::kMemorialHonorMonument, ZoombiniText::kStrl2014_MemorialHonors, 0},
+	{ZoombiniText::kMemorialHonorWindmill, ZoombiniText::kStrl2014_MemorialHonors, 1},
+	{ZoombiniText::kMemorialHonorObservatory, ZoombiniText::kStrl2014_MemorialHonors, 2},
+	{ZoombiniText::kMemorialHonorBowlingAlley, ZoombiniText::kStrl2014_MemorialHonors, 3},
+	{ZoombiniText::kMemorialHonorGeneralStore, ZoombiniText::kStrl2014_MemorialHonors, 4},
+	{ZoombiniText::kMemorialHonorSwimmingPool, ZoombiniText::kStrl2014_MemorialHonors, 5},
+	{ZoombiniText::kMemorialHonorPlayground, ZoombiniText::kStrl2014_MemorialHonors, 6},
+	{ZoombiniText::kMemorialHonorBandShell, ZoombiniText::kStrl2014_MemorialHonors, 7},
+	{ZoombiniText::kMemorialHonorSchool, ZoombiniText::kStrl2014_MemorialHonors, 8},
+	{ZoombiniText::kMemorialHonorLibrary, ZoombiniText::kStrl2014_MemorialHonors, 9},
+	{ZoombiniText::kMemorialHonorFire, ZoombiniText::kStrl2014_MemorialHonors, 10},
+	{ZoombiniText::kMemorialHonorOpera, ZoombiniText::kStrl2014_MemorialHonors, 11},
+	{ZoombiniText::kMemorialHonorCityHall, ZoombiniText::kStrl2014_MemorialHonors, 12},
+	{ZoombiniText::kMemorialHonorClockTower, ZoombiniText::kStrl2014_MemorialHonors, 13},
+	{ZoombiniText::kMemorialHonorMuseum, ZoombiniText::kStrl2014_MemorialHonors, 14},
+	{ZoombiniText::kMemorialHonorCourt, ZoombiniText::kStrl2014_MemorialHonors, 15},
+	{ZoombiniText::kMemorialRoute1Level1, ZoombiniText::kStrl2016_MemorialBodies, 0},
+	{ZoombiniText::kMemorialRoute1Level2, ZoombiniText::kStrl2016_MemorialBodies, 1},
+	{ZoombiniText::kMemorialRoute1Level3, ZoombiniText::kStrl2016_MemorialBodies, 2},
+	{ZoombiniText::kMemorialRoute1Level4, ZoombiniText::kStrl2016_MemorialBodies, 3},
+	{ZoombiniText::kMemorialRoute2Level1, ZoombiniText::kStrl2016_MemorialBodies, 4},
+	{ZoombiniText::kMemorialRoute2Level2, ZoombiniText::kStrl2016_MemorialBodies, 5},
+	{ZoombiniText::kMemorialRoute2Level3, ZoombiniText::kStrl2016_MemorialBodies, 6},
+	{ZoombiniText::kMemorialRoute2Level4, ZoombiniText::kStrl2016_MemorialBodies, 7},
+	{ZoombiniText::kMemorialRoute3Level1, ZoombiniText::kStrl2016_MemorialBodies, 8},
+	{ZoombiniText::kMemorialRoute3Level2, ZoombiniText::kStrl2016_MemorialBodies, 9},
+	{ZoombiniText::kMemorialRoute3Level3, ZoombiniText::kStrl2016_MemorialBodies, 10},
+	{ZoombiniText::kMemorialRoute3Level4, ZoombiniText::kStrl2016_MemorialBodies, 11},
+	{ZoombiniText::kMemorialRoute4Level1, ZoombiniText::kStrl2016_MemorialBodies, 12},
+	{ZoombiniText::kMemorialRoute4Level2, ZoombiniText::kStrl2016_MemorialBodies, 13},
+	{ZoombiniText::kMemorialRoute4Level3, ZoombiniText::kStrl2016_MemorialBodies, 14},
+	{ZoombiniText::kMemorialRoute4Level4, ZoombiniText::kStrl2016_MemorialBodies, 15},
+	{ZoombiniText::kDialogBodyGoMapWillLost, ZoombiniText::kStrl2018_Dialog, 0},
+	{ZoombiniText::kDialogButtonLoseThem, ZoombiniText::kStrl2018_Dialog, 1},
+	{ZoombiniText::kDialogButtonKeepThem, ZoombiniText::kStrl2018_Dialog, 2},
+	{ZoombiniText::kDialogButtonOkay, ZoombiniText::kStrl2018_Dialog, 3},
+	{ZoombiniText::kDialogButtonCancel, ZoombiniText::kStrl2018_Dialog, 4},
+	{ZoombiniText::kDialogButtonLoad, ZoombiniText::kStrl2018_Dialog, 5},
+	{ZoombiniText::kDialogButtonSave, ZoombiniText::kStrl2018_Dialog, 6},
+	{ZoombiniText::kOptionsTitle, ZoombiniText::kStrl2018_Dialog, 7},
+	{ZoombiniText::kOptionsLegendOn, ZoombiniText::kStrl2018_Dialog, 8},
+	{ZoombiniText::kOptionsLegendOff, ZoombiniText::kStrl2018_Dialog, 9},
+	{ZoombiniText::kOptionsToggle, ZoombiniText::kStrl2018_Dialog, 10},
+	{ZoombiniText::kOptionsNewGame, ZoombiniText::kStrl2018_Dialog, 11},
+	{ZoombiniText::kOptionsLoadGame, ZoombiniText::kStrl2018_Dialog, 12},
+	{ZoombiniText::kOptionsSaveGame, ZoombiniText::kStrl2018_Dialog, 13},
+	{ZoombiniText::kOptionsQuit, ZoombiniText::kStrl2018_Dialog, 14},
+	{ZoombiniText::kOptionsSound, ZoombiniText::kStrl2018_Dialog, 15},
+	{ZoombiniText::kOptionsMusic, ZoombiniText::kStrl2018_Dialog, 16},
+	{ZoombiniText::kOptionsStickyMouse, ZoombiniText::kStrl2018_Dialog, 17},
+	{ZoombiniText::kOptionsTransitions, ZoombiniText::kStrl2018_Dialog, 18},
+	{ZoombiniText::kDialogBodyNoSavedGames, ZoombiniText::kStrl2018_Dialog, 19},
+	{ZoombiniText::kDialogBodyCreateAndSaveNewGame, ZoombiniText::kStrl2018_Dialog, 21},
+	{ZoombiniText::kNewGame, ZoombiniText::kStrl2018_Dialog, 22},
+	{ZoombiniText::kDialogButtonNewGame, ZoombiniText::kStrl2018_Dialog, 22},
+	{ZoombiniText::kDialogButtonReplaceTitle, ZoombiniText::kStrl2018_Dialog, 23},
+	{ZoombiniText::kDialogButtonReplace, ZoombiniText::kStrl2018_Dialog, 23},
+	{ZoombiniText::kDialogTitleSave, ZoombiniText::kStrl2018_Dialog, 24},
+	{ZoombiniText::kDialogTitleSaveAs, ZoombiniText::kStrl2018_Dialog, 25},
+	{ZoombiniText::kDialogTitleLoad, ZoombiniText::kStrl2018_Dialog, 26},
+	{ZoombiniText::kDialogBodyReplaceGame, ZoombiniText::kStrl2018_Dialog, 27},
+	{ZoombiniText::kOptionsCredits, ZoombiniText::kStrl2018_Dialog, 28},
+	{ZoombiniText::kDialogBodySaveCurrentGame, ZoombiniText::kStrl2018_Dialog, 29},
+	{ZoombiniText::kDialogButtonYes, ZoombiniText::kStrl2018_Dialog, 30},
+	{ZoombiniText::kDialogButtonQuit, ZoombiniText::kStrl2018_Dialog, 31},
+	{ZoombiniText::kDialogBodySaveBeforeQuit, ZoombiniText::kStrl2018_Dialog, 32},
+	{ZoombiniText::kDialogButtonNo, ZoombiniText::kStrl2018_Dialog, 34},
+	{ZoombiniText::kDialogBodyCannotSaveInPractice, ZoombiniText::kStrl2018_Dialog, 35},
+	{ZoombiniText::kDialogBodyCreateNewGame, ZoombiniText::kStrl2018_Dialog, 36},
+	{ZoombiniText::kDialogBodyCannotSaveMoreGame, ZoombiniText::kStrl2018_Dialog, 37},
+	{ZoombiniText::kDialogBodyCannotLoadInPractice, ZoombiniText::kStrl2018_Dialog, 38},
+	{ZoombiniText::kDialogBodyCannotCreateNewInPractice, ZoombiniText::kStrl2018_Dialog, 39},
+	{ZoombiniText::kDialogBodyNewGame, ZoombiniText::kStrl2018_Dialog, 40},
+	{ZoombiniText::kDialogBodyReallyQuit, ZoombiniText::kStrl2018_Dialog, 41},
+	{ZoombiniText::kDialogBodySwitchLang, ZoombiniText::kStrl2018_Dialog, 42},
+	{ZoombiniText::kDialogBodySwitchLangUnsaved, ZoombiniText::kStrl2018_Dialog, 43},
+	{ZoombiniText::kDialogBodyCannotSwitchLangInPractice, ZoombiniText::kStrl2018_Dialog, 44},
+	{ZoombiniText::kDialogButtonLangSwitchCancel, ZoombiniText::kStrl2018_Dialog, 45},
+	{ZoombiniText::kDialogButtonLangSwitchChange, ZoombiniText::kStrl2018_Dialog, 46},
+	{ZoombiniText::kNotiBoxMusicOn, ZoombiniText::kStrl2023_Noti, 0},
+	{ZoombiniText::kNotiBoxMusicOff, ZoombiniText::kStrl2023_Noti, 1},
+	{ZoombiniText::kNotiBoxSoundOn, ZoombiniText::kStrl2023_Noti, 2},
+	{ZoombiniText::kNotiBoxSoundOff, ZoombiniText::kStrl2023_Noti, 3},
+	{ZoombiniText::kNotiBoxLessAction, ZoombiniText::kStrl2023_Noti, 4},
+	{ZoombiniText::kNotiBoxMoreAction, ZoombiniText::kStrl2023_Noti, 5},
+	{ZoombiniText::kNotiBoxHideCursor, ZoombiniText::kStrl2023_Noti, 6},
+	{ZoombiniText::kNotiBoxShowCursor, ZoombiniText::kStrl2023_Noti, 7},
+	{ZoombiniText::kNotiBoxStickeyMouse, ZoombiniText::kStrl2023_Noti, 8},
+	{ZoombiniText::kNotiBoxNonStickeyMouse, ZoombiniText::kStrl2023_Noti, 9},
+	{ZoombiniText::kNotiBoxTransitionsOn, ZoombiniText::kStrl2023_Noti, 10},
+	{ZoombiniText::kNotiBoxTransitionsOff, ZoombiniText::kStrl2023_Noti, 11},
+	{ZoombiniText::kNotiBoxAutoStickeyOn, ZoombiniText::kStrl2023_Noti, 12},
+	{ZoombiniText::kNotiBoxAutoStickeyOff, ZoombiniText::kStrl2023_Noti, 13},
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10BR_NETextEntries[] = {
@@ -409,6 +414,21 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10JP_PETextEntries[] = {
 	{ZoombiniText::kNewGame, 0x88551, 10},
 	{ZoombiniText::kNotiBoxEnglishNames, 0x8D597, 10},
 	{ZoombiniText::kNotiBoxJapaneseNames, 0x8D5A2, 12},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10JP_PEEnglishTextTable[] = {
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0},
+	{ZoombiniText::kNewGame, 0x8851B, 8},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10JP_PEFrenchTextTable[] = {
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0},
+	{ZoombiniText::kNewGame, 0x88524, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10JP_PEGermanTextTable[] = {
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0},
+	{ZoombiniText::kNewGame, 0x88534, 11},
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV10JPDemo_PETextEntries[] = {
@@ -1657,6 +1677,21 @@ const ZoombiniText::ExeTextEntry ZoombiniText::kV10JPMacTextEntries[] = {
 	{ZoombiniText::kNewGame, 0x85D2, 10},
 	{ZoombiniText::kNotiBoxEnglishNames, 0x723B, 10},
 	{ZoombiniText::kNotiBoxJapaneseNames, 0x722E, 12},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10JPMacEnglishTextTable[] = {
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0},
+	{ZoombiniText::kNewGame, 0x860A, 8},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10JPMacFrenchTextTable[] = {
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0},
+	{ZoombiniText::kNewGame, 0x85FA, 15},
+};
+
+const ZoombiniText::ExeTextEntry ZoombiniText::kV10JPMacGermanTextTable[] = {
+	{ZoombiniText::kDialogHelpPickerUpdateVersion, 0x0, 0},
+	{ZoombiniText::kNewGame, 0x85EE, 11},
 };
 
 const ZoombiniText::ExeTextEntry ZoombiniText::kV20USMacTextEntries[] = {
@@ -2966,7 +3001,15 @@ bool ZoombiniText::readTextStrStrings(MohawkArchive &archive, int16 resourceId, 
 		return false;
 	}
 
-	const byte stringCount = resStream->readByte();
+	byte stringCount = resStream->readByte();
+
+	// The Japanese disc's German STRL 2021 declares 148 strings but ends after 146, including '*'.
+	// Correct only this known header and payload size before the bounded parser checks the complete resource.
+	const bool hasV10JPGermanCreditCountError =
+		_relInfo.isJapaneseRelease() && _relInfo.getLanguage() == Common::DE_DEU &&
+		resourceId == kStrl2021_CreditsPart2 && stringCount == 148 && resStream->size() == 1728;
+	stringCount = hasV10JPGermanCreditCountError ? 146 : stringCount;
+
 	Common::Array<Common::U32String> parsedTexts;
 	if (!readStrlBody(resStream, stringCount, codePage, parsedTexts, decodeMacRomanUmlautByte9F)) {
 		delete resStream;
@@ -3583,8 +3626,8 @@ bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 
 	Common::HashMap<int16, Common::Array<Common::U32String>> resStringCache;
 	Common::Array<Common::U32String> archiveStrings;
-	archiveStrings.reserve(ARRAYSIZE(kV10EU_ResTextEntries));
-	for (const ResTextEntry &entry : kV10EU_ResTextEntries) {
+	archiveStrings.reserve(ARRAYSIZE(kV1xEUFamily_ResTextEntries));
+	for (const ResTextEntry &entry : kV1xEUFamily_ResTextEntries) {
 		uint16 strIdx = entry.stringIndex;
 		if (entry.key == kDialogBodyVersionInfo) {
 			if (_relInfo.isDemo())
@@ -3610,7 +3653,7 @@ bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 
 	Common::Array<CreditParagraph> archiveCredits;
 	if (sources.textStrCreditEntryCount) {
-		static constexpr int16 creditResourceIds[] = {2020, 2021};
+		static constexpr int16 creditResourceIds[] = {kStrl2020_CreditsPart1, kStrl2021_CreditsPart2};
 		Common::Array<Common::U32String> creditStrings;
 		for (uint resourceIndex = 0; resourceIndex < ARRAYSIZE(creditResourceIds); resourceIndex += 1) {
 			Common::Array<Common::U32String> resourceStrings;
@@ -3629,8 +3672,8 @@ bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 		}
 	}
 
-	for (uint entryIdx = 0; entryIdx < ARRAYSIZE(kV10EU_ResTextEntries); entryIdx++) {
-		const ResTextEntry &entry = kV10EU_ResTextEntries[entryIdx];
+	for (uint entryIdx = 0; entryIdx < ARRAYSIZE(kV1xEUFamily_ResTextEntries); entryIdx++) {
+		const ResTextEntry &entry = kV1xEUFamily_ResTextEntries[entryIdx];
 		// The executable's New Game label names an unsaved game; the STRL value
 		// with the same key is the startup dialog button and has its own key.
 		if (entry.key != kNewGame)
@@ -3640,27 +3683,12 @@ bool ZoombiniText::initArchiveStrings(const SourceSettings &sources) {
 	if (sources.textStrCreditEntryCount)
 		_creditParagraphs = archiveCredits;
 
-	if (_relInfo.isMultilingualRelease()) {
-		static constexpr Key kLangSwitchKeys[] = {
-			kDialogBodySwitchLang,
-			kDialogBodySwitchLangUnsaved,
-			kDialogBodyCannotSwitchLangInPractice,
-			kDialogButtonLangSwitchCancel,
-			kDialogButtonLangSwitchChange,
-		};
-		static constexpr uint16 kFirstLanguageTextIndex = 42;
-		const Common::Array<Common::U32String> &dialogStrings = resStringCache[2018];
-		if (dialogStrings.size() < kFirstLanguageTextIndex + ARRAYSIZE(kLangSwitchKeys))
-			return false;
-		for (uint i = 0; i < ARRAYSIZE(kLangSwitchKeys); i++)
-			_strMap[kLangSwitchKeys[i]] = dialogStrings[kFirstLanguageTextIndex + i];
-	}
-
 	return true;
 }
 
 ZoombiniText::ZoombiniText(MohawkEngine_Zoombini *vm)
-	: _vm(vm), _relInfo(vm->getRelInfo()), _exeCodePage(_relInfo.getExeCodePage()), _resCodePage(_relInfo.getResCodePage()) {
+	: _vm(vm), _relInfo(vm->getRelInfo()),
+	  _exeCodePage(_relInfo.getExeCodePage()), _resCodePage(_relInfo.getResCodePage()) {
 	const SourceSettings sources = createSourceSettings(_relInfo, _vm->getFeatures());
 	initFonts(sources);
 	// Load the release-specific strings embedded in the game executable.
@@ -3925,13 +3953,31 @@ ZoombiniText::ExeTextSource ZoombiniText::createMacExecutableSource(const ZmbRel
 			.inMacPpcPefDataFork(application, 682084, 1, 96256);
 	}
 
-	// EUv10 family
-	if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
+	// v1.0JP - EUv1x family
+	if (relInfo.isJapaneseRelease()) {
 		// 68K CODE: text offsets are A5-relative within the expanded resource-fork DATA 0.
-		return ExeTextSource()
-			.withTextTable(codePage, kV10JPMacTextEntries, ARRAYSIZE(kV10JPMacTextEntries), ExeTextDataSource::kExpandedMac68kA5Globals)
-			.withRequiredBytes(0x860A, "New Game")
-			.inMac68kDataResFork(application, 29190);
+		ExeTextSource source;
+		switch (relInfo.getLanguage()) {
+		case Common::EN_GRB:
+			source = source.withTextTable(codePage, kV10JPMacEnglishTextTable, ARRAYSIZE(kV10JPMacEnglishTextTable),
+										  ExeTextDataSource::kExpandedMac68kA5Globals);
+			break;
+		case Common::FR_FRA:
+			source = source.withTextTable(codePage, kV10JPMacFrenchTextTable, ARRAYSIZE(kV10JPMacFrenchTextTable),
+										  ExeTextDataSource::kExpandedMac68kA5Globals);
+			break;
+		case Common::DE_DEU:
+			source = source.withTextTable(codePage, kV10JPMacGermanTextTable, ARRAYSIZE(kV10JPMacGermanTextTable),
+										  ExeTextDataSource::kExpandedMac68kA5Globals);
+			break;
+		case Common::JA_JPN:
+			source = source.withTextTable(codePage, kV10JPMacTextEntries, ARRAYSIZE(kV10JPMacTextEntries),
+										  ExeTextDataSource::kExpandedMac68kA5Globals);
+			break;
+		default:
+			error("ZoombiniText: unsupported Japanese Macintosh language");
+		}
+		return source.withRequiredBytes(0x860A, "New Game").inMac68kDataResFork(application, 29190);
 	}
 
 	// EUv10, EUv11
@@ -4002,7 +4048,7 @@ ZoombiniText::SourceSettings ZoombiniText::createSourceSettings(const ZmbRelease
 
 	// Exact executable revisions and packaging belong to source selection, not gameplay identity.
 	const bool europeV11 = (detectedFeatures & (GF_ZMB_11_EU | GF_ZMB_11_FR_2002)) != 0;
-	const bool cabinetRelease = (detectedFeatures & GF_ZMB_11_FR_2002) != 0;
+	const bool isFr2002Release = (detectedFeatures & GF_ZMB_11_FR_2002) != 0;
 	SourceSettings sources;
 	const Common::Language language = relInfo.getLanguage();
 	const Common::Platform platform = relInfo.getPlatform();
@@ -4030,7 +4076,7 @@ ZoombiniText::SourceSettings ZoombiniText::createSourceSettings(const ZmbRelease
 		default:
 			break;
 		}
-		if (cabinetRelease)
+		if (isFr2002Release)
 			sources.fontCabinet = "data1.cab";
 	}
 	switch (platform) {
@@ -4125,7 +4171,7 @@ ZoombiniText::SourceSettings ZoombiniText::createSourceSettings(const ZmbRelease
 											 .withTextTable(exeCodePage, kV10BRDemo_NETextEntries, ARRAYSIZE(kV10BRDemo_NETextEntries))
 											 .withRequiredBytes(0xD72C8, "New Game");
 			sources.executables = {source.inFile("ZOOMBINI.EXE", kV10BRDemoExeSize)};
-		} else if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN)) {
+		} else if (relInfo.isJapaneseRelease()) {
 			if (relInfo.isDemo() && platform == Common::kPlatformWindows) {
 				const ExeTextSource source = ExeTextSource()
 												 .withTextTable(exeCodePage, kV10JPDemo_PETextEntries, ARRAYSIZE(kV10JPDemo_PETextEntries))
@@ -4139,14 +4185,29 @@ ZoombiniText::SourceSettings ZoombiniText::createSourceSettings(const ZmbRelease
 				sources.executables = {source.inFile("Zoombini", 722944)};
 				return sources;
 			}
-			const ExeTextSource source = ExeTextSource()
-											 .withTextTable(exeCodePage, kV10JP_PETextEntries, ARRAYSIZE(kV10JP_PETextEntries))
-											 .withRequiredBytes(0x88427, "Japanese");
+			ExeTextSource source;
+			switch (language) {
+			case Common::EN_GRB:
+				source = source.withTextTable(exeCodePage, kV10JP_PEEnglishTextTable, ARRAYSIZE(kV10JP_PEEnglishTextTable));
+				break;
+			case Common::FR_FRA:
+				source = source.withTextTable(exeCodePage, kV10JP_PEFrenchTextTable, ARRAYSIZE(kV10JP_PEFrenchTextTable));
+				break;
+			case Common::DE_DEU:
+				source = source.withTextTable(exeCodePage, kV10JP_PEGermanTextTable, ARRAYSIZE(kV10JP_PEGermanTextTable));
+				break;
+			case Common::JA_JPN:
+				source = source.withTextTable(exeCodePage, kV10JP_PETextEntries, ARRAYSIZE(kV10JP_PETextEntries));
+				break;
+			default:
+				return sources;
+			}
+			source = source.withRequiredBytes(0x88427, "Japanese");
 			sources.executables = {
 				source.inArchiveMember("ZBARCHIV.Z", "zoombi32.exe", kV10JPExeSize),
 				source.inFile("zoombi32.exe", kV10JPExeSize),
 			};
-		} else if (cabinetRelease) {
+		} else if (isFr2002Release) {
 			const ExeTextSource source = ExeTextSource()
 											 .withTextTable(exeCodePage, kV11FR_NETextEntries, ARRAYSIZE(kV11FR_NETextEntries))
 											 .withRequiredBytes(0xD7CBD, "Nouvelle Partie");
@@ -4882,20 +4943,60 @@ bool ZoombiniText::isGeneratedJapaneseZoombiniName(const Common::U32String &name
 	return false;
 }
 
+bool ZoombiniText::hasKoreanNamePool() const {
+	// Only v1.11KR has this pool; resource presence keeps the fallback capability-based.
+	return _vm->hasResource(ID_STRL, ZmbResource(ZmbResource::kSystem, ZoombiniPage::kSysResStrl30000_ZoombiniNames));
+}
+
+void ZoombiniText::initNameGenMode() {
+	if (_relInfo.isJapaneseRelease())
+		_nameGenMode = NameGenMode::kJapanese;
+	else if (hasKoreanNamePool())
+		_nameGenMode = NameGenMode::kKorean;
+	else
+		_nameGenMode = NameGenMode::kLatin;
+}
+
+void ZoombiniText::setNameGenMode(NameGenMode mode) {
+	switch (mode) {
+	case NameGenMode::kLatin:
+		break;
+	case NameGenMode::kKorean:
+		if (!hasKoreanNamePool())
+			return;
+		break;
+	case NameGenMode::kJapanese:
+		if (!_relInfo.isJapaneseRelease())
+			return;
+		break;
+	default:
+		return;
+	}
+	_nameGenMode = mode;
+}
+
+ZoombiniText::NameGenMode ZoombiniText::resolveNameGenMode() const {
+	if (_nameGenMode == NameGenMode::kJapanese && _relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN))
+		return NameGenMode::kJapanese;
+	if (_nameGenMode == NameGenMode::kKorean && hasKoreanNamePool())
+		return NameGenMode::kKorean;
+	return NameGenMode::kLatin;
+}
+
 Common::U32String ZoombiniText::pickNextZoombiniName() {
 	return pickNextZoombiniName(kJPFixedNameNone);
 }
 
 Common::U32String ZoombiniText::pickNextZoombiniName(JPFixedNameKind jpFixedName) {
-	if (_relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::JA_JPN) && _useJapaneseNames)
+	switch (resolveNameGenMode()) {
+	case NameGenMode::kJapanese:
 		return generateJapaneseZoombiniName(jpFixedName);
-
-	// Only v1.11KR release has the STRL name pool.
-	// Use resource presence rather than a version check so the fallback remains capability-based.
-	if (_vm->hasResource(ID_STRL, ZmbResource(ZmbResource::kSystem, ZoombiniPage::kSysResStrl30000_ZoombiniNames)))
+	case NameGenMode::kKorean:
 		return getKoreanZoombiniName();
-	else
+	case NameGenMode::kLatin:
+	default:
 		return generateLatinZoombiniName();
+	}
 }
 
 /**
@@ -5175,57 +5276,65 @@ void ZoombiniText::getLocalizedCredits(Common::Array<CreditParagraph> &paragraph
 	paragraphs = _creditParagraphs;
 }
 
-ZoombiniText::StringOverrideMap ZoombiniText::createStringOverrides() {
+ZoombiniText::StringOverrideMap ZoombiniText::createStringOverrides(const ZmbReleaseInfo &relInfo) {
 	StringOverrideMap overrides;
-	overrides[kSvmDialogBodyLoadNewerSaveFormat][Common::EN_USA] = StringOverride(
-		U"loading a savefile created\rfrom a newer version.\rSome progress may be lost.\rContinue?");
-	overrides[kSvmDialogBodyLoadNewerSaveFormat][Common::KO_KOR] = StringOverride(
-		U"더 최신 버전에서 저장한 게임을\r불러오면 일부 진행 상황이\r손실될 수 있습니다.\r계속하시겠습니까?");
+	overrides[kSvmDialogBodyLangSwitchUnsupported][Common::EN_ANY] =
+		U"Language switching is not\rsupported in this release.";
+	overrides[kSvmDialogBodyLangSwitchMissingArchives][Common::EN_ANY] =
+		U"Cannot switch languages.\rThe required files are missing.";
 
-	overrides[kSvmDialogBodyLoadOtherPlatformSave][Common::EN_USA] = StringOverride(
-		U"loading a savefile created\rfrom other platform.\rSome progress may be lost.\rContinue?");
-	overrides[kSvmDialogBodyLoadOtherPlatformSave][Common::KO_KOR] = StringOverride(
-		U"다른 플랫폼에서 저장한 게임을\r불러오면 일부 진행 상황이\r손실될 수 있습니다.\r계속하시겠습니까?");
+	overrides[kSvmDialogBodyLoadNewerSaveFormat][Common::EN_ANY] =
+		U"Loading a savefile created\rfrom a newer version.\rSome progress may be lost.\rContinue?";
+	overrides[kSvmDialogBodyLoadNewerSaveFormat][Common::KO_KOR] =
+		U"더 최신 버전에서 저장한 게임을\r불러오면 일부 진행 상황이\r손실될 수 있습니다.\r계속하시겠습니까?";
 
-	overrides[kSvmDialogBodyCannotLoadSave][Common::EN_USA] = StringOverride(
-		U"cannot load this game:\rthe saved game is damaged\ror incompatible.");
-	overrides[kSvmDialogBodyCannotLoadSave][Common::KO_KOR] = StringOverride(
-		U"저장된 게임이 손상되었거나\r이 버전과 호환되지 않아\r불러올 수 없습니다.");
+	overrides[kSvmDialogBodyLoadOtherPlatformSave][Common::EN_ANY] =
+		U"Loading a savefile created\rfrom other platform.\rSome progress may be lost.\rContinue?";
+	overrides[kSvmDialogBodyLoadOtherPlatformSave][Common::KO_KOR] =
+		U"다른 플랫폼에서 저장한 게임을\r불러오면 일부 진행 상황이\r손실될 수 있습니다.\r계속하시겠습니까?";
 
-	overrides[kSvmDialogBodyAskSaveAfterDebugStateMutation][Common::EN_USA] = StringOverride(
-		U"a debug command modified\rthe game state. Saving\rmay corrupt this savefile.\rDo you want to save anyway?");
-	overrides[kSvmDialogBodyAskSaveAfterDebugStateMutation][Common::KO_KOR] = StringOverride(
-		U"디버그 명령으로 게임 상태를\r수정하여 저장 파일이 손상될\r우려가 있습니다.\r그래도 저장하시겠습니까?");
+	overrides[kSvmDialogBodyCannotLoadSave][Common::EN_ANY] =
+		U"Cannot load this game:\rthe saved game is damaged\ror incompatible.";
+	overrides[kSvmDialogBodyCannotLoadSave][Common::KO_KOR] =
+		U"저장된 게임이 손상되었거나\r이 버전과 호환되지 않아\r불러올 수 없습니다.";
 
-	overrides[kSvmDialogBodyCannotSaveNameEncoding][Common::EN_USA] = StringOverride(
-		U"cannot save this game:\rthe save name contains\rcharacters unsupported\rby the active code page.");
-	overrides[kSvmDialogBodyCannotSaveNameEncoding][Common::KO_KOR] = StringOverride(
-		U"저장파일 이름에 활성 코드\r페이지로 표현할 수 없는 문자가\r있어 게임을 저장할 수 없습니다.");
+	overrides[kSvmDialogBodyAskSaveAfterDebugStateMutation][Common::EN_ANY] =
+		U"A debug command modified\rthe game state. Saving\rmay corrupt this savefile.\rDo you want to save anyway?";
+	overrides[kSvmDialogBodyAskSaveAfterDebugStateMutation][Common::KO_KOR] =
+		U"디버그 명령으로 게임 상태를\r수정하여 저장 파일이 손상될\r우려가 있습니다.\r그래도 저장하시겠습니까?";
 
-	overrides[kSvmDialogBodyAskRegenerateZoombiniNames][Common::EN_USA] = StringOverride(
-		U"some Zoombini names cannot\rbe read in this version.\rGenerate new names for\rall Zoombinis?");
-	overrides[kSvmDialogBodyAskRegenerateZoombiniNames][Common::KO_KOR] = StringOverride(
-		U"일부 줌비니 이름을 이 버전에서\r읽을 수 없습니다.\r모든 줌비니 이름을\r새로 생성하시겠습니까?");
+	overrides[kSvmDialogBodyCannotSaveNameEncoding][Common::EN_ANY] =
+		U"Cannot save this game:\rthe save name contains\rcharacters unsupported\rby the active code page.";
+	overrides[kSvmDialogBodyCannotSaveNameEncoding][Common::KO_KOR] =
+		U"저장파일 이름에 활성 코드\r페이지로 표현할 수 없는 문자가\r있어 게임을 저장할 수 없습니다.";
 
-	overrides[kDialogBodyRemoveGame][Common::EN_USA] = StringOverride(
-		U"are you sure you want to\rremove this game?", true);
-	overrides[kDialogBodyRemoveGame][Common::KO_KOR] = StringOverride(
-		U"이 저장된 게임을\r삭제하시겠습니까?", true);
+	overrides[kSvmDialogBodyAskRegenerateZoombiniNames][Common::EN_ANY] =
+		U"Some Zoombini names cannot\rbe read in this version.\rGenerate new names for\rall Zoombinis?";
+	overrides[kSvmDialogBodyAskRegenerateZoombiniNames][Common::KO_KOR] =
+		U"일부 줌비니 이름을 이 버전에서\r읽을 수 없습니다.\r모든 줌비니 이름을\r새로 생성하시겠습니까?";
+
+	if (!relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
+		// v1.x needs this prompt; TLC already supplies localized executable text.
+		overrides[kDialogBodyRemoveGame][Common::EN_ANY] =
+			U"Are you sure you want to\rremove this game?";
+		overrides[kDialogBodyRemoveGame][Common::KO_KOR] =
+			U"이 저장된 게임을\r삭제하시겠습니까?";
+	}
 	return overrides;
 }
 
 void ZoombiniText::applyStringOverrides(const ZmbReleaseInfo &relInfo) {
-	static const StringOverrideMap overrides = createStringOverrides();
+	const StringOverrideMap overrides = createStringOverrides(relInfo);
 	const Common::Language language = relInfo.getLanguage();
-	const bool tlc = relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20);
 	for (StringOverrideMap::const_iterator entry = overrides.begin(); entry != overrides.end(); entry++) {
 		const LanguageStringOverrides &translations = entry->_value;
 		LanguageStringOverrides::const_iterator text = translations.find(language);
-		if (text == translations.end() || (text->_value.preserveTlcText && tlc))
-			text = translations.find(Common::EN_USA);
-		if (text == translations.end() || (text->_value.preserveTlcText && tlc))
+		// Use generic English when the selected language has no applicable override for this release.
+		if (text == translations.end())
+			text = translations.find(Common::EN_ANY);
+		if (text == translations.end())
 			continue;
-		_strMap[entry->_key] = text->_value.text;
+		_strMap[entry->_key] = text->_value;
 	}
 }
 
