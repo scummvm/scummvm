@@ -71,6 +71,7 @@ shaders/grim_shadowplane.fragment    FILE    "engines/grim/shaders/grim_shadowpl
 shaders/grim_shadowplane.vertex      FILE    "engines/grim/shaders/grim_shadowplane.vertex"
 shaders/grim_smush.fragment          FILE    "engines/grim/shaders/grim_smush.fragment"
 shaders/grim_smush.vertex            FILE    "engines/grim/shaders/grim_smush.vertex"
+shaders/grim_sprite.vertex           FILE    "engines/grim/shaders/grim_sprite.vertex"
 shaders/grim_text.fragment           FILE    "engines/grim/shaders/grim_text.fragment"
 shaders/grim_text.vertex             FILE    "engines/grim/shaders/grim_text.vertex"
 #endif

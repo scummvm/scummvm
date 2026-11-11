@@ -1071,6 +1071,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/grim/shaders/grim_shadowplane.vertex");
 			files.push_back("engines/grim/shaders/grim_smush.fragment");
 			files.push_back("engines/grim/shaders/grim_smush.vertex");
+			files.push_back("engines/grim/shaders/grim_sprite.vertex");
 			files.push_back("engines/grim/shaders/grim_text.fragment");
 			files.push_back("engines/grim/shaders/grim_text.vertex");
 		}
