@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/media.h"
+#include "ripper/media/media.h"
 
 #include "common/array.h"
 #include "common/debug.h"
@@ -35,7 +35,7 @@
 #include "ripper/media/playback_pause.h"
 #include "ripper/media/smacker_decoder.h"
 #include "ripper/ripper.h"
-#include "ripper/scene_audio.h"
+#include "ripper/media/scene_audio.h"
 #include "ripper/settings.h"
 #include "ripper/script.h"
 #include "ripper/toolbar.h"

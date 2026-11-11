@@ -24,7 +24,7 @@
 #include "audio/mixer.h"
 #include "common/rect.h"
 
-#include "ripper/media.h"
+#include "ripper/media/media.h"
 #include "ripper/puzzles/puzzle.h"
 
 namespace Ripper {

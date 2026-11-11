@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/media.h"
+#include "ripper/media/media.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
@@ -29,7 +29,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/display.h"
-#include "ripper/iavf.h"
+#include "ripper/media/iavf_parser.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"

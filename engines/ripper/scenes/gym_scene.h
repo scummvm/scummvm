@@ -22,7 +22,7 @@
 #include "audio/mixer.h"
 #include "common/rect.h"
 
-#include "ripper/media.h"
+#include "ripper/media/media.h"
 #include "ripper/resources.h"
 #include "ripper/scenes/scene.h"
 

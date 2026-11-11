@@ -12,14 +12,15 @@ MODULE_OBJS := \
 	dialogue.o \
 	display.o \
 	ini.o \
-	iavf.o \
 	input.o \
 	inventory.o \
 	media/audio.o \
 	media/display.o \
 	media/iavf.o \
+	media/iavf_parser.o \
 	media/presentation_text.o \
 	media/routes.o \
+	media/scene_audio.o \
 	media/smacker_decoder.o \
 	media/video.o \
 	menu.o \
@@ -64,7 +65,6 @@ MODULE_OBJS := \
 	ripper.o \
 	saveload.o \
 	scene_dispatcher.o \
-	scene_audio.o \
 	script/compiled_script.o \
 	scenes/cain_scene.o \
 	scenes/ebz2s_scene.o \

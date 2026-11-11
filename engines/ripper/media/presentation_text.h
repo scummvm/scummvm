@@ -24,7 +24,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
-#include "ripper/media.h"
+#include "ripper/media/media.h"
 #include "ripper/modal/modal_dialog.h"
 
 namespace Ripper {

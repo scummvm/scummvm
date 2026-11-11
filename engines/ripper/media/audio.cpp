@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/media.h"
+#include "ripper/media/media.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"

@@ -20,7 +20,7 @@
 #include "ripper/detection.h"
 #include "ripper/dialogue.h"
 #include "ripper/input.h"
-#include "ripper/media.h"
+#include "ripper/media/media.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
 #include "ripper/toolbar.h"
