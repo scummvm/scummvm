@@ -363,8 +363,9 @@ MediaPlayer::PlaybackInputResult MediaPlayer::servicePlaybackInput(
 
 SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		const SmackerPlaybackPlan &plan) {
-	debugC(2, kDebugVideo, "Ripper: Smacker playback plan media='%s' %s",
-		name.c_str(), describeSmackerPlaybackPlan(plan).c_str());
+	if (debugChannelSet(2, kDebugVideo))
+		debugC(2, kDebugVideo, "Ripper: Smacker playback plan media='%s' %s",
+			name.c_str(), describeSmackerPlaybackPlan(plan).c_str());
 	const bool allowEscSpace = plan.input.allowEscSpace;
 	int x = plan.placement.x;
 	int y = plan.placement.y;

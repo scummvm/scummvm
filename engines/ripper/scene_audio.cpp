@@ -68,9 +68,10 @@ bool SceneAudioManager::load(const Common::String &path, bool preserve) {
 	while (slotIndex < kSlotCount && _slots[slotIndex].occupied)
 		++slotIndex;
 	if (slotIndex == kSlotCount) {
-		debugC(2, kDebugAudio,
-			"Ripper: audio slot load ignored path='%s' reason=all-20-slots-occupied slots=[%s]",
-			path.c_str(), describeSlots().c_str());
+		if (debugChannelSet(2, kDebugAudio))
+			debugC(2, kDebugAudio,
+				"Ripper: audio slot load ignored path='%s' reason=all-20-slots-occupied slots=[%s]",
+				path.c_str(), describeSlots().c_str());
 		return true;
 	}
 
@@ -80,14 +81,16 @@ bool SceneAudioManager::load(const Common::String &path, bool preserve) {
 	slot.key = keyFromPath(path);
 	slot.occupied = true;
 	slot.preserve = preserve;
-	uint occupiedCount = 0;
-	for (uint i = 0; i < kSlotCount; ++i) {
-		if (_slots[i].occupied)
-			++occupiedCount;
+	if (debugChannelSet(2, kDebugAudio)) {
+		uint occupiedCount = 0;
+		for (uint i = 0; i < kSlotCount; ++i) {
+			if (_slots[i].occupied)
+				++occupiedCount;
+		}
+		debugC(2, kDebugAudio,
+			"Ripper: loaded audio slot=%u key='%s' path='%s' preserve=%d occupied=%u/%u",
+			slotIndex, slot.key.c_str(), slot.path.c_str(), preserve, occupiedCount, kSlotCount);
 	}
-	debugC(2, kDebugAudio,
-		"Ripper: loaded audio slot=%u key='%s' path='%s' preserve=%d occupied=%u/%u",
-		slotIndex, slot.key.c_str(), slot.path.c_str(), preserve, occupiedCount, kSlotCount);
 	return true;
 }
 
@@ -162,9 +165,10 @@ bool SceneAudioManager::configure(const Common::String &key, uint volumePercent,
 		uint triggerFrame, byte control) {
 	Slot *slot = find(key);
 	if (!slot) {
-		debugC(2, kDebugAudio,
-			"Ripper: audio configuration ignored key='%s' volume=%u trigger=%u control=%u reason=slot-not-found slots=[%s]",
-			key.c_str(), volumePercent, triggerFrame, control, describeSlots().c_str());
+		if (debugChannelSet(2, kDebugAudio))
+			debugC(2, kDebugAudio,
+				"Ripper: audio configuration ignored key='%s' volume=%u trigger=%u control=%u reason=slot-not-found slots=[%s]",
+				key.c_str(), volumePercent, triggerFrame, control, describeSlots().c_str());
 		return true;
 	}
 	slot->volumePercent = MIN<uint>(volumePercent == 0 ? 100 : volumePercent, 100);
@@ -188,9 +192,10 @@ void SceneAudioManager::clearSlot(Slot &slot) {
 void SceneAudioManager::clear(const Common::String &key) {
 	Slot *slot = find(key);
 	if (!slot) {
-		debugC(2, kDebugAudio,
-			"Ripper: audio slot clear ignored key='%s' reason=slot-not-found slots=[%s]",
-			key.c_str(), describeSlots().c_str());
+		if (debugChannelSet(2, kDebugAudio))
+			debugC(2, kDebugAudio,
+				"Ripper: audio slot clear ignored key='%s' reason=slot-not-found slots=[%s]",
+				key.c_str(), describeSlots().c_str());
 		return;
 	}
 	debugC(2, kDebugAudio, "Ripper: cleared audio slot key='%s'", key.c_str());
@@ -200,9 +205,10 @@ void SceneAudioManager::clear(const Common::String &key) {
 void SceneAudioManager::stop(const Common::String &key) {
 	Slot *slot = find(key);
 	if (!slot) {
-		debugC(2, kDebugAudio,
-			"Ripper: audio slot stop ignored key='%s' reason=slot-not-found slots=[%s]",
-			key.c_str(), describeSlots().c_str());
+		if (debugChannelSet(2, kDebugAudio))
+			debugC(2, kDebugAudio,
+				"Ripper: audio slot stop ignored key='%s' reason=slot-not-found slots=[%s]",
+				key.c_str(), describeSlots().c_str());
 		return;
 	}
 	const bool active = _mixer->isSoundHandleActive(slot->handle);
@@ -222,9 +228,10 @@ void SceneAudioManager::setVolume(const Common::String &key, uint targetVolumePe
 		uint startFrame, uint timing) {
 	Slot *slot = find(key);
 	if (!slot) {
-		debugC(2, kDebugAudio,
-			"Ripper: audio volume change ignored key='%s' target=%u start=%u timing=%u reason=slot-not-found slots=[%s]",
-			key.c_str(), targetVolumePercent, startFrame, timing, describeSlots().c_str());
+		if (debugChannelSet(2, kDebugAudio))
+			debugC(2, kDebugAudio,
+				"Ripper: audio volume change ignored key='%s' target=%u start=%u timing=%u reason=slot-not-found slots=[%s]",
+				key.c_str(), targetVolumePercent, startFrame, timing, describeSlots().c_str());
 		return;
 	}
 	slot->targetVolumePercent = MIN<uint>(targetVolumePercent, 100);
@@ -306,8 +313,9 @@ void SceneAudioManager::resetTriggers() {
 		_slots[i].volumeStartFrame = 0;
 		_slots[i].volumeRampPending = false;
 	}
-	debugC(3, kDebugAudio, "Ripper: reset per-frame audio triggers slots=[%s]",
-		describeSlots().c_str());
+	if (debugChannelSet(3, kDebugAudio))
+		debugC(3, kDebugAudio, "Ripper: reset per-frame audio triggers slots=[%s]",
+			describeSlots().c_str());
 }
 
 void SceneAudioManager::clearAll(bool includePreserved) {
@@ -318,9 +326,10 @@ void SceneAudioManager::clearAll(bool includePreserved) {
 			++cleared;
 		}
 	}
-	debugC(2, kDebugAudio,
-		"Ripper: scene transition cleared audio slots=%u includePreserved=%d retained=[%s]",
-		cleared, includePreserved, describeSlots().c_str());
+	if (debugChannelSet(2, kDebugAudio))
+		debugC(2, kDebugAudio,
+			"Ripper: scene transition cleared audio slots=%u includePreserved=%d retained=[%s]",
+			cleared, includePreserved, describeSlots().c_str());
 }
 
 bool SceneAudioManager::isActive() const {
@@ -345,8 +354,9 @@ void SceneAudioManager::captureSnapshot(Snapshot &state) const {
 		state.active[i] = _slots[i].occupied && _mixer->isSoundHandleActive(_slots[i].handle);
 		state.slots[i].handle = Audio::SoundHandle();
 	}
-	debugC(2, kDebugAudio, "Ripper: captured scene audio snapshot slots=[%s]",
-		describeSlots().c_str());
+	if (debugChannelSet(2, kDebugAudio))
+		debugC(2, kDebugAudio, "Ripper: captured scene audio snapshot slots=[%s]",
+			describeSlots().c_str());
 }
 
 bool SceneAudioManager::restoreSnapshot(Snapshot &state) {
@@ -486,9 +496,10 @@ void SceneAudioManager::applySnapshot(Snapshot &state) {
 			start(_slots[i], state.streams[i].release());
 		++restoredSlots;
 	}
-	debugC(1, kDebugAudio,
-		"Ripper: restored named audio slots=%u active=%d slots=[%s]",
-		restoredSlots, isActive(), describeSlots().c_str());
+	if (debugChannelSet(1, kDebugAudio))
+		debugC(1, kDebugAudio,
+			"Ripper: restored named audio slots=%u active=%d slots=[%s]",
+			restoredSlots, isActive(), describeSlots().c_str());
 }
 
 } // End of namespace Ripper
