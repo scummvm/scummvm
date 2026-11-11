@@ -95,6 +95,16 @@ public:
 	/** Called on the hitter after an overlap with other was found. */
 	virtual int onTouched(Object *other, int extra) { return 0; }
 
+	/**
+	 * What the cursor asks of the objects under it. The defaults stand in for kinds the cursor never reaches.
+	 * Every call returns 0 to let the cursor go on, 3 to ask the frame to stop, other values end its work on this frame.
+	 */
+	virtual int setVerbAndClick(int verb) { return 0; }
+	virtual int rightClick(int verb) { return 0; }
+	virtual bool acceptsPointer() { return false; }
+	virtual int showHoverText() { return 0; }
+	virtual int clearHoverText() { return 0; }
+
 	/** Per-frame step of the first pass over the object list. Returns 2 or 3 to end the pass early, else 0. */
 	virtual int update() { return 0; }
 

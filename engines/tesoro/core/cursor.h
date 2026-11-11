@@ -56,11 +56,25 @@ public:
 
 	int update() override;
 
+	/** Second pass step: lets both pointers act on the objects they touched. */
+	int update2() override;
+
 	/** The pointer hits whatever is marked as a hitter. */
 	bool isHitter(const Object *other) const override { return (other->flags() & kHitter) != 0; }
 
 	/** Notes an object under the pointer this frame. */
 	int onTouched(Object *other, int extra) override;
+
+	void setActive(bool active) override;
+
+	/**
+	 * Walks through the objects touched this frame, checking for hover and click actions.
+	 * Returns what the last object returned: 0 for none, 3 asks the frame to stop.
+	 */
+	int processCandidates(byte buttons, int verb);
+
+	/** Forgets the objects touched this frame (done once all of them were processed). */
+	void clearTouched() { _touched.clear(); }
 
 	HoverText &label() { return _label; }
 
@@ -70,8 +84,8 @@ public:
 
 private:
 	HoverText _label;
+	ObjectList _hovered;	// objects that keep the label or the click
 	ObjectList _touched;	// objects under the pointer this frame
-
 	Cursor *_companion = nullptr;
 	Cursor *_owner = nullptr;		// for the companion: the main pointer
 	const PointerState *_mouse = nullptr;

@@ -104,9 +104,90 @@ int Cursor::update() {
 	return 1;
 }
 
+int Cursor::update2() {
+	if (!_companion || !_mouse)
+		return 0;
+
+	const byte left = _mouse->buttonState(PointerState::kLeft);
+	// takes the current animation step as the verb for the click
+	const int verb = _anim.current().current();
+
+	int result = processCandidates(left, verb);
+	clearTouched();
+	if (result != 0) {
+		_companion->clearTouched();
+		return result;
+	}
+
+	result = _companion->processCandidates(left, verb);
+	_companion->clearTouched();
+	if (result == 2 || result == 3)
+		return result;
+
+	return 1;
+}
+
 int Cursor::onTouched(Object *other, int extra) {
 	_touched.push_back(other);
 	return 1;
+}
+
+void Cursor::setActive(bool active) {
+	Object::setActive(active);
+	if (active)
+		return;
+
+	for (uint i = 0; i < _hovered.size(); ++i)
+		_hovered[i]->clearHoverText();
+	_hovered.clear();
+	_label.set(nullptr, 0);
+}
+
+int Cursor::processCandidates(byte buttons, int verb) {
+	// What was hovered last time becomes the list to compare with.
+	ObjectList previous = _hovered;
+	_hovered.clear();
+
+	int result = 0;
+	for (uint t = 0; t < _touched.size() && result == 0; ++t) {
+		Object *object = _touched[t];
+
+		bool hoveredBefore = false;
+		for (uint i = 0; i < previous.size(); ++i) {
+			if (previous[i]->nameKey() == object->nameKey()) {
+				hoveredBefore = true;
+				break;
+			}
+		}
+		// goes through all touched objects (detected by collision)
+		// until it finds one that returns != 0
+		if (!hoveredBefore) {
+			// if it wasnt hovered in the previous frame, just displays the text
+			if (object->acceptsPointer()) {
+				_hovered.push_back(object);
+				result = object->showHoverText();
+			}
+		} else { // if it was hovered before, it accepts clicks
+			if (buttons & 8)
+				result = object->setVerbAndClick(verb);
+			else if (buttons & 0x10)
+				result = object->rightClick(verb);
+			else
+				result = object->showHoverText();
+
+			if (result == 3)
+				return 3;
+
+			_hovered.push_back(object);
+			removeFromList(previous, object);
+		}
+	}
+
+	// Whatever was hovered last frame and not seen again loses its label.
+	for (uint i = 0; i < previous.size(); ++i)
+		previous[i]->clearHoverText();
+
+	return result;
 }
 
 } // End of namespace Tesoro
