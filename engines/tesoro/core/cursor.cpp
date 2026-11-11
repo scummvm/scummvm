@@ -88,6 +88,11 @@ int Cursor::update() {
 		return 0;
 	}
 
+	// What was touched is kept until the next frame's step, so it can be looked at in between.
+	_touched.clear();
+	if (_companion)
+		_companion->_touched.clear();
+
 	moveTo(_mouse->x + _level->camera().x(), _level->camera().y() - _mouse->y, true);
 
 	if (_playerLevel && _playerLevel->roomCount() != 0) {
@@ -96,6 +101,11 @@ int Cursor::update() {
 		_companion->_room = &_playerLevel->room(0);
 		_companion->moveTo(_mouse->x + playerCamera.x(), playerCamera.y() - _mouse->y, true);
 	}
+	return 1;
+}
+
+int Cursor::onTouched(Object *other, int extra) {
+	_touched.push_back(other);
 	return 1;
 }
 

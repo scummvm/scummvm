@@ -35,6 +35,8 @@ private:
 	bool fade(int argc, const char **argv);
 	bool level(int argc, const char **argv);
 	bool hover(int argc, const char **argv);
+	bool hitter(int argc, const char **argv);
+	bool touching(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

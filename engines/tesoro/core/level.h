@@ -64,6 +64,15 @@ public:
 	/** Game clock when the level was built. */
 	int32 loadTime() const { return _loadTime; }
 
+	/** Records a collidable object that has moved, once. */
+	void objectMoved(Object *object);
+
+	/**
+	 * The collision pass: updates bounds of moved objects, finds which hitter touches which object
+	 * (nearest in time first), tells each hitter about it and forgets the moves.
+	 */
+	void collisionPass(int32 now);
+
 	void setFrameTime(int32 now) { _frameTime = now; }
 
 	/** First pass step: the collision pass, or the one-shot verb after a reload of the pictures. */
@@ -88,10 +97,22 @@ private:
 	Common::Array<AnimPlayer> _levelPlayers;
 	Common::Array<Room> _rooms;
 	ObjectList _objects;
+	ObjectList _movedObjects;
 	Common::Array<Object *> _owned;
 	Camera _camera;
 	Object *_special = nullptr;
 	int32 _frameTime = 0;
+
+	/** A touch found by the collision pass. */
+	struct Touch {
+		Object *hitter;
+		Object *other;
+		int32 time;		// fraction of the movement, 0x10000 being all of it
+		int16 depth;
+	};
+	Common::Array<Touch> _touches;
+
+	void resolveOverlap(Object *hitter, Object *other);
 
 	int32 _loadTime = 0;
 	bool _deferredReloaded = false;

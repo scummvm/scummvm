@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	core/camera.o \
 	core/cameraframe.o \
 	core/clock.o \
+	core/collision.o \
 	core/cursor.o \
 	core/display.o \
 	core/hovertext.o \

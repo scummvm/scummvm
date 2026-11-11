@@ -89,6 +89,12 @@ public:
 	/** Advances the animation */
 	virtual void updateAnimation(int32 now);
 
+	/** true if this object is the one that hits other when the two overlap. */
+	virtual bool isHitter(const Object *other) const { return false; }
+
+	/** Called on the hitter after an overlap with other was found. */
+	virtual int onTouched(Object *other, int extra) { return 0; }
+
 	/** Per-frame step of the first pass over the object list. Returns 2 or 3 to end the pass early, else 0. */
 	virtual int update() { return 0; }
 

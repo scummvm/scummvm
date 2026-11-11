@@ -142,6 +142,9 @@ public:
 	Level *loadLevel(const char *name);
 	/** Sets the label next to the pointer (null clears it). */
 	void setHoverText(const char *text);
+	/** Flags an object of the level as collidable and a hitter, so the pointer can touch it. False if there is no such object. */
+	bool makeHitter(const char *name);
+	Cursor *cursor() { return _cursor; }
 };
 
 extern TesoroEngine *g_engine;

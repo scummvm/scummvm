@@ -21,6 +21,7 @@
 
 #include "tesoro/console.h"
 #include "tesoro/core/animbank.h"
+#include "tesoro/core/cursor.h"
 
 namespace Tesoro {
 
@@ -29,6 +30,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("fade", WRAP_METHOD(Console, fade));
 	registerCmd("level", WRAP_METHOD(Console, level));
 	registerCmd("hover", WRAP_METHOD(Console, hover));
+	registerCmd("hitter", WRAP_METHOD(Console, hitter));
+	registerCmd("touching", WRAP_METHOD(Console, touching));
 }
 
 Console::~Console() {
@@ -69,6 +72,38 @@ bool Console::hover(int argc, const char **argv) {
 	}
 	g_engine->setHoverText(argv[1]);
 	return false;
+}
+
+bool Console::hitter(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s OBJECT   (makes an object of the level something the pointer can touch)\n", argv[0]);
+		return true;
+	}
+	if (!g_engine->makeHitter(argv[1]))
+		debugPrintf("No object %s in the level\n", argv[1]);
+	return true;
+}
+
+bool Console::touching(int argc, const char **argv) {
+	const Cursor *cursor = g_engine->cursor();
+	if (!cursor) {
+		debugPrintf("No pointer\n");
+		return true;
+	}
+
+	// The pointer in the interface level and its companion in the level the player is in.
+	const ObjectList *lists[2] = {&cursor->touched(), &cursor->companion()->touched()};
+	uint count = 0;
+	for (uint l = 0; l < 2; ++l) {
+		for (uint i = 0; i < lists[l]->size(); ++i) {
+			const Object *object = (*lists[l])[i];
+			debugPrintf("kind %u, name key %016llx\n", object->kindId(), (unsigned long long)object->nameKey());
+			++count;
+		}
+	}
+	if (count == 0)
+		debugPrintf("Nothing under the pointer\n");
+	return true;
 }
 
 } // End of namespace Tesoro

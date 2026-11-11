@@ -21,6 +21,7 @@
 
 #include "tesoro/core/level.h"
 #include "tesoro/core/cameraframe.h"
+#include "tesoro/core/collision.h"
 #include "tesoro/core/cursor.h"
 #include "tesoro/core/spriteobject.h"
 
@@ -62,7 +63,7 @@ bool Level::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, 
 	}
 
 	_objects.clear();
-	// _movedObjects.clear();
+	_movedObjects.clear();
 
 	// The banks follow the header one after the other; back to back
 	_levelPlayers.resize(bankCount);
@@ -160,7 +161,109 @@ void Level::attachObjects() {
 		_objects[i]->attachToLevel(this);
 }
 
+void Level::objectMoved(Object *object) {
+	if (!(object->flags() & kCollidable))
+		return;
+
+	for (uint i = 0; i < _movedObjects.size(); ++i) {
+		if (_movedObjects[i] == object)
+			return;
+	}
+	_movedObjects.push_back(object);
+}
+
+void Level::collisionPass(int32 now) {
+	_touches.clear();
+
+	// The objects that moved get their bounds worked out first.
+	for (uint i = 0; i < _movedObjects.size(); ++i) {
+		Object *object = _movedObjects[i];
+		object->updateBounds(now);
+		object->setFlags(object->flags() | kProcessed);
+	}
+
+	// So do the collidable objects sharing a room with them.
+	for (uint i = 0; i < _movedObjects.size(); ++i) {
+		ObjectList &room = _movedObjects[i]->room()->objects();
+		for (uint j = 0; j < room.size(); ++j) {
+			Object *other = room[j];
+			const uint32 flags = other->flags();
+			if ((flags & kCollidable) && (flags & kActive) && !(flags & kProcessed))
+				other->updateBounds(now);
+		}
+	}
+
+	for (uint i = 0; i < _movedObjects.size(); ++i)
+		_movedObjects[i]->setFlags(_movedObjects[i]->flags() & ~kProcessed);
+
+	// Every moved collidable object against everything collidable and active in its room.
+	for (uint i = 0; i < _movedObjects.size(); ++i) {
+		Object *object = _movedObjects[i];
+		if (!(object->flags() & kCollidable))
+			continue;
+
+		ObjectList &room = object->room()->objects();
+		for (uint j = 0; j < room.size(); ++j) {
+			Object *other = room[j];
+			if (other == object || !(other->flags() & kCollidable) || !(other->flags() & kActive))
+				continue;
+
+			if (object->isHitter(other))
+				resolveOverlap(object, other);
+			else if (other->isHitter(object))
+				resolveOverlap(other, object);
+		}
+	}
+
+	for (uint i = 0; i < _touches.size(); ++i) {
+		const Touch touch = _touches[i];
+		touch.hitter->onTouched(touch.other, touch.time);
+	}
+	_touches.clear();
+
+	// The moved objects go back to where they were before the move.
+	for (uint i = 0; i < _movedObjects.size(); ++i) {
+		Object *object = _movedObjects[i];
+		object->setPosition(object->previousX(), object->previousY());
+	}
+
+	_movedObjects.clear();
+	_loadTime = now;
+}
+
+void Level::resolveOverlap(Object *a, Object *b) {
+	const ObjectRect &am = a->movedArea(), &bm = b->movedArea();
+	const ObjectRect &ah = a->hitRect(), &bh = b->hitRect();
+
+	// How far a moves relative to b, and a's hit rectangle where it stood when b was last drawn.
+	const int32 dx = (am.x2 - am.x1) - (bm.x2 - bm.x1);
+	const int32 dy = (am.y2 - bm.y2) - am.y1 + bm.y1;
+	const int32 offsetX = am.x1 - bm.x1;
+	const int32 offsetY = am.y1 - bm.y1;
+	// at what moment in time the two rectangles touch during the movement
+	const int32 time = sweepRects(ah.x1 + offsetX, ah.y1 + offsetY, ah.x2 + offsetX, ah.y2 + offsetY,
+	                              bh.x1, bh.y1, bh.x2, bh.y2, dx, dy);
+	if (time < 0)
+		return;
+
+	const int32 touchTime = time;
+	const uint16 depth = MAX<uint16>((uint16)a->sortValue(), (uint16)b->sortValue());
+
+	// Touches are ordered by time, then by depth, a later one going behind an equal one.
+	uint at = 0;
+	while (at < _touches.size() && !(touchTime < _touches[at].time || (touchTime == _touches[at].time && (int)depth < (int)_touches[at].depth)))
+		++at;
+
+	Touch touch;
+	touch.hitter = a;
+	touch.other = b;
+	touch.time = touchTime;
+	touch.depth = (int16)depth;
+	_touches.insert_at(at, touch);
+}
+
 int Level::update() {
+	collisionPass(_frameTime);
 	return 1;
 }
 

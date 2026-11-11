@@ -34,6 +34,7 @@
 #include "tesoro/detection.h"
 #include "tesoro/core/cursor.h"
 #include "tesoro/core/level.h"
+#include "tesoro/core/namekey.h"
 #include "tesoro/core/spriteobject.h"
 
 namespace Tesoro {
@@ -268,6 +269,14 @@ bool TesoroEngine::level(const char *name) {
 void TesoroEngine::setHoverText(const char *text) {
 	if (_cursor)
 		_cursor->label().set(text, text ? 0xffff : 0);	// names are shown in white
+}
+
+bool TesoroEngine::makeHitter(const char *name) {
+	Object *object = _level ? _level->findObject(nameKey64(name)) : nullptr;
+	if (!object)
+		return false;
+	object->setFlags(object->flags() | Object::kCollidable | Object::kHitter);
+	return true;
 }
 
 } // End of namespace Tesoro

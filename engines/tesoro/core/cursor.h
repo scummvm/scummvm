@@ -44,7 +44,6 @@ public:
 	/** Builds the main pointer from its level record. */
 	void initMain(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now);
 
-
 	void updateAnimation(int32 now) override;
 	AnimPlayer *currentPlayer() override { return _owner ? _owner->currentPlayer() : SpriteObject::currentPlayer(); }
 
@@ -57,10 +56,22 @@ public:
 
 	int update() override;
 
+	/** The pointer hits whatever is marked as a hitter. */
+	bool isHitter(const Object *other) const override { return (other->flags() & kHitter) != 0; }
+
+	/** Notes an object under the pointer this frame. */
+	int onTouched(Object *other, int extra) override;
+
 	HoverText &label() { return _label; }
+
+	/** The objects under the pointer after the last collision pass. The companion has its own list. */
+	const ObjectList &touched() const { return _touched; }
+	const Cursor *companion() const { return _companion; }
 
 private:
 	HoverText _label;
+	ObjectList _touched;	// objects under the pointer this frame
+
 	Cursor *_companion = nullptr;
 	Cursor *_owner = nullptr;		// for the companion: the main pointer
 	const PointerState *_mouse = nullptr;

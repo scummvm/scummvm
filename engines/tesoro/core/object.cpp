@@ -24,6 +24,7 @@
 #include "common/textconsole.h"
 
 #include "tesoro/core/display.h"
+#include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/core/object.h"
 #include "tesoro/core/room.h"
@@ -93,6 +94,9 @@ void Object::moveTo(int32 x, int32 y, bool setCurrent) {
 	}
 	_previousX = x;
 	_previousY = y;
+
+	if (_level)
+		_level->objectMoved(this);
 }
 
 void Object::attachToLevel(Level *level) {
