@@ -304,6 +304,11 @@ const char *IgorEngine::getString(int id) const {
 	return str;
 }
 
+void IgorEngine::loadInventoryResources() {
+	loadData(IMG_InventoryPanel, _inventoryPanelOriginal, &_inventoryPanelSize);
+	loadData(IMG_Objects, _inventoryImagesBuffer);
+}
+
 void IgorEngine::loadIgorFrames() {
 	loadData(FRM_IgorDirBack, _facingIgorFrames[0]);
 	loadData(FRM_IgorDirRight, _facingIgorFrames[1]);

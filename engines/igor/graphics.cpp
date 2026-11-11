@@ -217,8 +217,7 @@ void IgorEngine::scrollInventory() {
 }
 
 void IgorEngine::drawInventory(int start, int mode) {
-	loadData(IMG_InventoryPanel, _inventoryPanelBuffer);
-	loadData(IMG_Objects, _inventoryImagesBuffer);
+	memcpy(_inventoryPanelBuffer, _inventoryPanelOriginal, _inventoryPanelSize);
 	if (_game.version == kIdSpaFloppy) {
 		for (int slot = 0; slot < 8; ++slot) {
 			const int object = _inventoryInfo[start + slot - 1];

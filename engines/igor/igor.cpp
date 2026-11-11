@@ -50,6 +50,7 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_screenTempLayerSurface.create(100, 100, clut8);
 	_inventoryPanelSurface.create(320, 60, clut8);
 	_inventoryImagesSurface.create(320, 150, clut8);
+	_inventoryPanelOriginalSurface.create(320, 60, clut8);
 	_verbsPanelSurface.create(320, 12, clut8);
 	_screenVGA = (uint8 *)_screenVGASurface.getPixels();
 	_screenLayer1 = (uint8 *)_screenLayer1Surface.getPixels();
@@ -58,6 +59,8 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_screenTempLayer = (uint8 *)_screenTempLayerSurface.getPixels();
 	_inventoryPanelBuffer = (uint8 *)_inventoryPanelSurface.getPixels();
 	_inventoryImagesBuffer = (uint8 *)_inventoryImagesSurface.getPixels();
+	_inventoryPanelOriginal = (uint8 *)_inventoryPanelOriginalSurface.getPixels();
+	_inventoryPanelSize = 0;
 	_verbsPanelBuffer = (uint8 *)_verbsPanelSurface.getPixels();
 	for (int i = 0; i < 4; i++) {
 		_facingIgorFramesSurface[i].create(13500, 1, clut8);
@@ -259,6 +262,7 @@ Common::Error IgorEngine::run() {
 		_midiPlayer = new MidiPlayer(_mixer);
 	loadMainTexts();
 	loadIgorFrames();
+	loadInventoryResources();
 
 	_gameState.talkMode = kTalkModeSpeechAndText;
 	_gameState.talkSpeed = 3;
