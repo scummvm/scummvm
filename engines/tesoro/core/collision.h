@@ -36,6 +36,38 @@ namespace Tesoro {
  */
 int32 sweepRects(int32 ax1, int32 ay1, int32 ax2, int32 ay2, int32 bx1, int32 by1, int32 bx2, int32 by2, int32 dx, int32 dy);
 
+/**
+ * Outlines used for pixel-accurate collision between two objects that move.
+ * Ppoints with x and y in the low and high half of a word. The first chain, points 0 to split,
+ * runs left to right; the second chain, split + 1 to count - 1, comes back right to left,
+ * so together they close the shape.
+ */
+struct Outline {
+	uint16 count = 0;
+	uint16 split = 0;
+	const uint32 *points = nullptr;
+
+	// The original also reads the words next to the array when a walk runs off an end (shapes whose first chain is only
+	// their first point); what it finds there depends on memory it does not own, so those reads give 0 here.
+	int x(int i) const { return i >= 0 && i < (int)count ? (int16)(points[i] & 0xffff) : 0; }
+	int y(int i) const { return i >= 0 && i < (int)count ? (int16)(points[i] >> 16) : 0; }
+
+	/** Whether (px, py) is inside the outline or on it, counting the closing edge from the last point to the first. */
+	bool contains(int px, int py) const;
+
+	/**
+	 * Cuts this outline to the columns cx1 to cx2 into out, whose points need room for count + 4 entries. bx1 and bx2 are the
+	 * columns the outline covers: a side that already lies inside the cut is copied unchanged.
+	 */
+	void clipColumns(int bx1, int bx2, int cx1, int cx2, Outline &out, uint32 *outPoints) const;
+
+	/**
+	 * Whether the two outlines touch, found by walking one chain of each side by side and watching whether they ever
+	 * cross. The test is not symmetric: the game asks it both ways round.
+	 */
+	bool overlaps(const Outline &other) const;
+};
+
 } // End of namespace Tesoro
 
 #endif

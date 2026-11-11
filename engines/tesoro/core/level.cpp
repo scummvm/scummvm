@@ -231,6 +231,87 @@ void Level::collisionPass(int32 now) {
 	_loadTime = now;
 }
 
+const AnimStep *Level::shapeOf(Object *object) {
+	AnimPlayer *player = object->currentPlayer();
+	return player ? &player->bank()->step(player->current()) : nullptr;
+}
+
+static Outline outlineOf(const AnimStep &step) {
+	Outline outline;
+	outline.count = (uint16)step.entries.size();
+	outline.split = step.firstDescent;
+	outline.points = step.entries.begin();
+	return outline;
+}
+
+int32 Level::shapedContactTime(Object *a, Object *b, const AnimStep *aShape, const AnimStep *bShape, int32 time, int32 dx, int32 dy) {
+	const Outline ao = outlineOf(*aShape), bo = outlineOf(*bShape);
+	const ObjectRect &am = a->movedArea(), &bm = b->movedArea();
+	const ObjectRect &ah = a->hitRect(), &bh = b->hitRect();
+
+	if (ao.count < 2 || bo.count < 2) {
+		// One side is a single point: it must start outside the other outline, or finish outside it, to touch.
+		if (ao.count == 1) {
+			if (dx == 0 && dy == 0)
+				return -1;
+			if (!bo.contains(am.x1 - b->x(), am.y1 - b->y()))
+				return 0;
+			return bo.contains(am.x2 - b->x(), am.y2 - b->y()) ? -1 : 0;
+		}
+		if (dx == 0 && dy == 0)
+			return 1;
+		if (!ao.contains(bm.x1 - a->x(), bm.y1 - a->y()))
+			return 0;
+		return ao.contains(bm.x2 - a->x(), bm.y2 - a->y()) ? -1 : 0;
+	}
+
+	// Walk the movement in steps of one pixel along its longer axis, from the step the rectangle sweep reached,
+	// and test the two outlines against each other at each.
+	int32 steps = 0, stepX = 0, stepY = 0;
+	int32 posX = (int32)((uint32)bm.x1 << 16), posY = (int32)((uint32)bm.y1 << 16);
+	if (dx != 0 || dy != 0) {
+		const int32 absX = ABS(dx), absY = ABS(dy);
+		if (absX < absY) {
+			steps = absY;
+			stepX = (int32)((uint32)dx * 0xffff0000u) / steps;
+			stepY = dy >= 0 ? -0x10000 : 0x10000;
+			posX += 0x8000;
+		} else {
+			steps = absX;
+			stepX = dx >= 0 ? -0x10000 : 0x10000;
+			stepY = (int32)((uint32)dy * 0xffff0000u) / steps;
+			posY += 0x8000;
+		}
+	}
+	int32 start = (int32)(((int64)steps * time) >> 16);
+	posX += start * stepX;
+	posY += start * stepY;
+
+	Common::Array<uint32> buffer(ao.count + bo.count + 8);
+	int32 left = steps - start;
+	for (;; --left) {
+		const int32 offsetX = am.x1 - (posX >> 16), offsetY = am.y1 - (posY >> 16);
+		const int32 x1 = ah.x1 + offsetX, x2 = ah.x2 + offsetX;
+		if (x1 <= bh.x2 && bh.x1 <= x2) {
+			Outline clipped;
+			bo.clipColumns(bh.x1, bh.x2, x1, x2, clipped, buffer.begin());
+			for (uint i = 0; i < clipped.count; ++i) {
+				const uint32 p = buffer[i];
+				buffer[i] = (uint32)(uint16)((int16)(p & 0xffff) - (int16)offsetX) | ((uint32)(uint16)((int16)(p >> 16) - (int16)offsetY) << 16);
+			}
+			if (ao.overlaps(clipped) || clipped.overlaps(ao))
+				break;
+		}
+		if (left == 0)
+			return -1;
+		posY += stepY;
+		posX += stepX;
+	}
+	if ((dx != 0 || dy != 0) && steps != left)
+		return (int32)(((int64)(steps - left - 1) * 0x10000) / steps);
+	return -1;
+}
+
 void Level::resolveOverlap(Object *a, Object *b) {
 	const ObjectRect &am = a->movedArea(), &bm = b->movedArea();
 	const ObjectRect &ah = a->hitRect(), &bh = b->hitRect();
@@ -252,6 +333,8 @@ void Level::resolveOverlap(Object *a, Object *b) {
 		touchTime = shapedContactTime(a, b, aShape, bShape, time, dx, dy);
 	if (touchTime == -1)
 		return;
+
+	const uint16 depth = MAX<uint16>((uint16)a->sortValue(), (uint16)b->sortValue());
 
 	// Touches are ordered by time, then by depth, a later one going behind an equal one.
 	uint at = 0;

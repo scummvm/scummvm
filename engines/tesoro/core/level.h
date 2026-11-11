@@ -113,6 +113,10 @@ private:
 	Common::Array<Touch> _touches;
 
 	void resolveOverlap(Object *hitter, Object *other);
+	/** The step the object is showing, null if it has no animation. */
+	static const AnimStep *shapeOf(Object *object);
+	/** The contact time of two objects that both have outlines; -1 for no touch. */
+	static int32 shapedContactTime(Object *a, Object *b, const AnimStep *aShape, const AnimStep *bShape, int32 time, int32 dx, int32 dy);
 
 	int32 _loadTime = 0;
 	bool _deferredReloaded = false;
