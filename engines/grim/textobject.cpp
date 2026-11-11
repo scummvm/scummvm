@@ -144,7 +144,7 @@ int TextObject::getBitmapWidth() const {
 }
 
 int TextObject::getBitmapHeight() const {
-	return _numberLines * _font->getKernedHeight();
+	return MAX(_numberLines, 1) * _font->getKernedHeight();
 }
 
 int TextObject::getTextCharPosition(int pos) {
