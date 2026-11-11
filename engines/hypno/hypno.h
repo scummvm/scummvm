@@ -715,6 +715,7 @@ public:
 	int getTerritory(const Common::String &level);
 	Common::String lastLevelTerritory(const Common::String &level);
 	Common::String firstLevelTerritory(const Common::String &level);
+	int getHitPoints(int territory);
 
 	void loadSceneState(Common::SeekableReadStream *stream);
 	void saveSceneState(Common::WriteStream *stream);

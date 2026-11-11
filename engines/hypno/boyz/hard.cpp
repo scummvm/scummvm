@@ -547,4 +547,28 @@ Common::String BoyzEngine::lastLevelTerritory(const Common::String &level) {
 		error("Invalid territory for level %s", level.c_str());
 }
 
+int BoyzEngine::getHitPoints(int territory) {
+	static const int table[3][5] = {
+		{ 10, 4, 12, 4, 12 },
+		{  8, 3, 10, 4, 10 },
+		{  6, 2,  8, 2,  8 }
+	};
+
+	if (territory < 1 || territory > 5)
+		error("getHitPoints: territory out of range '%d'", territory);
+
+	int difficulty;
+	if (_difficulty == "chump")
+		difficulty = 0;
+	else if (_difficulty == "punk")
+		difficulty = 1;
+	else if (_difficulty == "bad ass")
+		difficulty = 2;
+	else
+		error("getHitPoints: invalid difficulty '%s'", _difficulty.c_str());
+
+	return table[difficulty][territory - 1];
+}
+
+
 } // End of namespace Hypno
