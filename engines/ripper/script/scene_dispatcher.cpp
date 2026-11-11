@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/scene_dispatcher.h"
+#include "ripper/script/scene_dispatcher.h"
 
 #include "common/debug.h"
 #include "common/system.h"

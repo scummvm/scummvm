@@ -22,7 +22,7 @@
 #include "ripper/input.h"
 #include "ripper/media/media.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
+#include "ripper/script/script.h"
 #include "ripper/toolbar.h"
 
 namespace Ripper {

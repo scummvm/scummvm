@@ -31,7 +31,7 @@
 #include "ripper/milestones.h"
 #include "ripper/puzzles/state.h"
 #include "ripper/media/scene_audio.h"
-#include "ripper/script.h"
+#include "ripper/script/script.h"
 
 namespace Ripper {
 

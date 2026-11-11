@@ -45,7 +45,7 @@
 #include "ripper/puzzles/state.h"
 #include "ripper/resources.h"
 #include "ripper/media/scene_audio.h"
-#include "ripper/script.h"
+#include "ripper/script/script.h"
 #include "ripper/settings.h"
 #include "ripper/toolbar.h"
 #include "ripper/wac/wac.h"

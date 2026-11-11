@@ -64,8 +64,9 @@ MODULE_OBJS := \
 	resources.o \
 	ripper.o \
 	saveload.o \
-	scene_dispatcher.o \
 	script/compiled_script.o \
+	script/scene_dispatcher.o \
+	script/script.o \
 	scenes/cain_scene.o \
 	scenes/ebz2s_scene.o \
 	scenes/ending_sequence.o \
@@ -74,7 +75,6 @@ MODULE_OBJS := \
 	scenes/scene.o \
 	scenes/tube_scene.o \
 	scenes/wofford_scene.o \
-	script.o \
 	settings.o \
 	toolbar.o \
 	wac/broken_mug.o \

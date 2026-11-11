@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/script.h"
+#include "ripper/script/script.h"
 
 #include "ripper/briefing.h"
 #include "ripper/dialogue.h"
@@ -40,7 +40,7 @@
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/media/scene_audio.h"
-#include "ripper/scene_dispatcher.h"
+#include "ripper/script/scene_dispatcher.h"
 #include "ripper/settings.h"
 #include "ripper/toolbar.h"
 #include "ripper/world_map.h"

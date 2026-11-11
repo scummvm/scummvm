@@ -25,7 +25,7 @@
 #include "ripper/milestones.h"
 #include "ripper/puzzles/ka_book_code.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
+#include "ripper/script/script.h"
 
 namespace Ripper {
 

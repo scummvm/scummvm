@@ -36,7 +36,7 @@
 #include "ripper/milestones.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
+#include "ripper/script/script.h"
 #include "ripper/wac/wac.h"
 #include "ripper/wac/voice_lock_model.h"
 #include "ripper/wac/voice_lock_renderer.h"

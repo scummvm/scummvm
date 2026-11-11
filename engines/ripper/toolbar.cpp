@@ -33,7 +33,7 @@
 #include "ripper/options_panel.h"
 #include "ripper/remote_control.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
+#include "ripper/script/script.h"
 #include "ripper/settings.h"
 #include "ripper/wac/wac.h"
 

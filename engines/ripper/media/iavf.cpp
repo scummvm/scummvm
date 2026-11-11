@@ -32,7 +32,7 @@
 #include "ripper/media/iavf_parser.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
+#include "ripper/script/script.h"
 
 namespace Ripper {
 
