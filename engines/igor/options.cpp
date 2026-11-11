@@ -1086,7 +1086,9 @@ void IgorEngine::handleOptionsMenu() {
 	memcpy(_paletteBuffer, _currentPalette, 208 * 3);
 	memcpy(_currentPalette + 208 * 3, _paletteBuffer + 208 * 3, 48 * 3);
 	setPaletteRange(208, 255);
-	if (!_gameState.dialogueStarted)
+	// The logo slideshow uses the whole screen, so the dialogue text strip must stay.
+	const bool splashScreen = _currentPart >= 900 && _currentPart <= 904;
+	if (!_gameState.dialogueStarted && !splashScreen)
 		fillScreenRows(144, 11, 0);
 	_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, 200);
 	for (int m = 3; m <= kFadeSteps; m += 3) {
