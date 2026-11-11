@@ -2250,6 +2250,8 @@ void View1::drawSceneFrame(bool fullUpdate) {
 
 	drawAllCharacters(&s, fullUpdate);
 	drawOverlayTextEntries();
+
+#ifdef USE_IMGUI
 	if (shouldDrawPathfindingOverlay()) {
 		drawPathfindingPoints(s);
 	}
@@ -2259,6 +2261,7 @@ void View1::drawSceneFrame(bool fullUpdate) {
 	if (shouldDrawDebugOutputOverlay()) {
 		drawDebugOutput(s);
 	}
+#endif
 
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
