@@ -2464,6 +2464,14 @@ void MovieRecord::readTable(int tableIndex) {
 	readField(L, tableIndex, "volume", volume);
 	_player.setVolume((byte)CLIP<int>((int)(volume * 100.0 + 0.5), 0, 100));
 
+	// Nancy28 plays the movies at 15 frames a second, or what the script asks
+	// for, whatever the frame rate of the movie
+	if (g_nancy->getGameType() >= kGameTypeNancy28) {
+		_frameRate = 15.0;
+		readField(L, tableIndex, "framerate", _frameRate);
+		_player.setFrameRate(_frameRate);
+	}
+
 	// true is forever, false once, and a number that many times
 	lua_getfield(L, tableIndex, "loop");
 	if (lua_isboolean(L, -1)) {
@@ -2723,6 +2731,8 @@ bool MovieRecord::getField(const Common::String &key) {
 		lua_pushinteger(L, _lastFrame);
 	} else if (key == "frames") {
 		lua_pushinteger(L, _player.getFrameCount());
+	} else if (key == "framerate" && _frameRate > 0.0) {
+		lua_pushnumber(L, _frameRate);
 	} else {
 		return false;
 	}
@@ -2757,6 +2767,9 @@ bool MovieRecord::setField(const Common::String &key) {
 		_player.setVolume((byte)CLIP<int>((int)(luaL_checknumber(L, 3) * 100.0 + 0.5), 0, 100));
 	} else if (key == "pauseOnLastFrame") {
 		_pausesOnLastFrame = lua_toboolean(L, 3) != 0;
+	} else if (key == "framerate" && g_nancy->getGameType() >= kGameTypeNancy28) {
+		_frameRate = MAX(luaL_checknumber(L, 3), 0.0);
+		_player.setFrameRate(_frameRate);
 	} else if (key == "paused") {
 		// Nancy24 has no Play and Pause anymore
 		_isPaused = lua_toboolean(L, 3) != 0;

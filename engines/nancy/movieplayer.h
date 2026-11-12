@@ -113,6 +113,9 @@ public:
 	// Advances by the time that went by in the game, which stops while the
 	// movie isn't run. A movie that falls behind skips frames to catch up.
 	bool advance(double elapsedMillis);
+	// The frames per second the frame-range player plays at, instead of the
+	// movie's own; 0 for the movie's own
+	void setFrameRate(double framesPerSecond);
 	bool isRangePlaying() const { return _rangePlaying; }
 	int getCurrentFrame() const { return getCurFrame(); }
 	void drawFrame(Graphics::ManagedSurface &dst, const Common::Point &pos) const;
@@ -161,6 +164,7 @@ private:
 	double _playedMillis = 0.0;		// how long advance() has played the range
 	double _nextPlayedFrame = 0.0;	// when advance() shows the next frame
 	double _frameMillis = 1000.0 / 15.0;
+	double _frameRate = 0.0;
 };
 
 } // End of namespace Nancy

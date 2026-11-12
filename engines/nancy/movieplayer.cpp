@@ -300,11 +300,23 @@ void MoviePlayer::goToFrame(int frameNr) {
 	storeCurrentFrame();
 }
 
-// How long a frame shows, from the length of the movie
+// How long a frame shows, from the length of the movie unless another frame
+// rate was set
 double MoviePlayer::getFrameMillis() const {
+	if (_frameRate > 0.0) {
+		return 1000.0 / _frameRate;
+	}
+
 	const int frameCount = _decoder->getFrameCount();
 	const uint32 durationMs = _decoder->getDuration().msecs();
 	return (frameCount > 0 && durationMs > 0) ? (double)durationMs / frameCount : 1000.0 / 15.0;
+}
+
+void MoviePlayer::setFrameRate(double framesPerSecond) {
+	_frameRate = MAX(framesPerSecond, 0.0);
+	if (_decoder) {
+		_frameMillis = getFrameMillis();
+	}
 }
 
 void MoviePlayer::playRange(int first, int last) {

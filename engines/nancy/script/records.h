@@ -506,6 +506,7 @@ private:
 	ScriptRect _source;
 	ScriptRect _dest;
 	uint32 _modColor = 0xFFFFFFFF;	// what the colors of the frames get multiplied with
+	double _frameRate = 0.0;		// Nancy28, 0 for the movie's own
 
 	// What a turned, resized or colored frame gets drawn from. It is kept while
 	// the movie stays at the frame, for the transform to move it around.
