@@ -1011,12 +1011,18 @@ static int saveGame(lua_State *L) {
 // Save:Screenshot(rect[, name]), Nancy21: keeps a picture of a part of the
 // viewport with the game, for the camera of the cell phone. Overlays show it
 // from the "LOADSAVE" tree. Gives the name of the picture, or an empty one when
-// it couldn't be taken.
+// it couldn't be taken. Nancy26 takes Save:Screenshot(rect[, width, height])
+// instead, and shrinks the picture to that size: the save screen shows the
+// whole scene in a small picture.
 static int saveScreenshot(lua_State *L) {
 	const ScriptRect &rect = checkRect(L, 2);
+	const bool takesSize = g_nancy->getGameType() >= kGameTypeNancy26;
+	const int width = takesSize ? (int)luaL_optinteger(L, 3, 0) : 0;
+	const int height = takesSize ? (int)luaL_optinteger(L, 4, 0) : 0;
+
 	// Nancy22 names the pictures it takes "<time>_SSPIC"
 	const char *suffix = g_nancy->getGameType() >= kGameTypeNancy22 ? "_SSPIC" : "_OVL";
-	const Common::String name = lua_gettop(L) > 2 ? Common::String(luaL_checkstring(L, 3)) : Common::String::format("%u%s", g_system->getMillis(), suffix);
+	const Common::String name = (!takesSize && lua_gettop(L) > 2) ? Common::String(luaL_checkstring(L, 3)) : Common::String::format("%u%s", g_system->getMillis(), suffix);
 
 	// The viewport as it was drawn last, before it got scaled onto the screen,
 	// or from Nancy26 on, as far as it is drawn when a Render function takes it
@@ -1028,7 +1034,15 @@ static int saveScreenshot(lua_State *L) {
 	bool isTaken = false;
 	if (!area.isEmpty()) {
 		const Graphics::Surface part = image.rawSurface().getSubArea(area);
-		Graphics::Surface *picture = part.convertTo(Graphics::PixelFormat::createFormatRGB24());
+		Graphics::Surface *picture = nullptr;
+		if (width > 0 && height > 0 && (width != area.width() || height != area.height())) {
+			Graphics::Surface *scaled = part.scale(width, height, true);
+			picture = scaled->convertTo(Graphics::PixelFormat::createFormatRGB24());
+			scaled->free();
+			delete scaled;
+		} else {
+			picture = part.convertTo(Graphics::PixelFormat::createFormatRGB24());
+		}
 
 		Common::MemoryWriteStreamDynamic png(DisposeAfterUse::YES);
 		if (Image::writePNG(png, *picture)) {
