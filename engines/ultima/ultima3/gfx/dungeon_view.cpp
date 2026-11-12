@@ -19,7 +19,9 @@
  *
  */
 
+#include "common/file.h"
 #include "common/util.h"
+#include "image/png.h"
 #include "ultima/ultima3/gfx/dungeon_view.h"
 #include "ultima/ultima3/ultima3.h"
 
@@ -179,6 +181,59 @@ static bool isEnhanced() {
 	return Data::isEnhancedMode(_G(renderMode));
 }
 
+DungeonView::Picture DungeonView::_faces[FACES];
+DungeonView::Picture DungeonView::_ladders[PLACES];
+DungeonView::Picture DungeonView::_chests[PLACES];
+bool DungeonView::_loaded = false;
+bool DungeonView::_enabled = true;
+
+bool DungeonView::loadPicture(Picture &picture, const Common::String &name) {
+	Common::File f;
+	Image::PNGDecoder decoder;
+	decoder.setKeepTransparencyPaletted(true);
+
+	if (!f.open(Common::Path("dungeons/" + name + ".png")) || !decoder.loadStream(f))
+		return false;
+
+	const Graphics::Surface *surface = decoder.getSurface();
+	if (!surface || surface->format.bytesPerPixel != 1 || surface->w != PICTURE_SIZE ||
+			surface->h != PICTURE_SIZE)
+		return false;
+
+	for (int y = 0; y < PICTURE_SIZE; ++y)
+		memcpy(&picture._pixels[y * PICTURE_SIZE], surface->getBasePtr(0, y), PICTURE_SIZE);
+
+	picture._present = true;
+	return true;
+}
+
+void DungeonView::loadPictures() {
+	_loaded = true;
+
+	for (int i = 0; i < FACES; ++i)
+		loadPicture(_faces[i], Common::String::format("face_%02d", i));
+	for (int i = 0; i < PLACES; ++i) {
+		loadPicture(_ladders[i], Common::String::format("ladder_%02d", i));
+		loadPicture(_chests[i], Common::String::format("chest_%02d", i));
+	}
+}
+
+bool DungeonView::usesPictures() {
+	return _enabled && _G(renderMode) == Data::RENDER_VGA;
+}
+
+void DungeonView::drawPicture(const Picture &picture, bool flip, bool erase) {
+	for (int y = 0; y < PICTURE_SIZE; ++y) {
+		const byte *src = &picture._pixels[(flip ? PICTURE_SIZE - 1 - y : y) * PICTURE_SIZE];
+		byte *dest = &_pixels[(y + OFFSET) * WIDTH + OFFSET];
+
+		for (int x = 0; x < PICTURE_SIZE; ++x) {
+			if (src[x])
+				dest[x] = erase ? 0 : src[x];
+		}
+	}
+}
+
 void DungeonView::plot(int x, int y) {
 	x = (byte)(x + OFFSET);
 	y = (byte)(y + OFFSET);
@@ -236,6 +291,11 @@ void DungeonView::line(int x0, int y0, int x1, int y1) {
 }
 
 void DungeonView::drawWall(int face) {
+	if (_usePictures && _faces[face]._present) {
+		drawPicture(_faces[face], false, face == DOOR_CUTOUT);
+		return;
+	}
+
 	const byte *rec = WALLS[face];
 	int x = rec[0], top = rec[1], bottom = rec[2];
 	const int8 stepX = (int8)rec[3];
@@ -335,12 +395,13 @@ DungeonView::Sight DungeonView::look(const Data::Dungeon &dungeon, int level, in
 	byte tile = dungeon.tile(level, x + dx, y + dy);
 
 	if (!(tile & Data::DTILE_WALL)) {
+		// These are drawn last, since they're in front of any walls drawn after them
 		if (tile & Data::DTILE_LADDER_UP)
-			drawLadder(false, place);
+			_things.push_back({ false, false, place });
 		if (tile & Data::DTILE_LADDER_DOWN)
-			drawLadder(true, place);
+			_things.push_back({ false, true, place });
 		if (tile & Data::DTILE_CHEST)
-			drawChest(place);
+			_things.push_back({ true, false, place });
 		return OPEN;
 	}
 
@@ -361,15 +422,38 @@ void DungeonView::lookAlong(const Data::Dungeon &dungeon, int level, int x, int 
 }
 
 void DungeonView::draw(const Data::Dungeon &dungeon, int level, int x, int y, int facing) {
+	if (!_loaded)
+		loadPictures();
+
+	memset(_pixels, 0, sizeof(_pixels));
+	_facing = facing;
+	_usePictures = usesPictures();
+	_things.clear();
+
+	drawPlaces(dungeon, level, x, y);
+
+	for (int i = (int)_things.size() - 1; i >= 0; --i) {
+		const Thing &thing = _things[i];
+		if (thing._place >= PLACES)
+			continue;
+
+		const Picture &picture = thing._chest ? _chests[thing._place] : _ladders[thing._place];
+		if (_usePictures && picture._present)
+			drawPicture(picture, thing._down, false);
+		else if (thing._chest)
+			drawChest(thing._place);
+		else
+			drawLadder(thing._down, thing._place);
+	}
+}
+
+void DungeonView::drawPlaces(const Data::Dungeon &dungeon, int level, int x, int y) {
 	static const byte LEFT_A[] = { 1, 3, 6, 10, 15, 21 };
 	static const byte RIGHT_A[] = { 2, 5, 9, 14, 20, 27 };
 	static const byte LEFT_B[] = { 7, 11, 16, 22 };
 	static const byte RIGHT_B[] = { 8, 13, 19, 26 };
 	static const byte LEFT_C[] = { 17, 23, 28 };
 	static const byte RIGHT_C[] = { 18, 25, 31 };
-
-	memset(_pixels, 0, sizeof(_pixels));
-	_facing = facing;
 
 	// Working outwards from the party's own square, each line of sight is
 	// followed until it meets a wall

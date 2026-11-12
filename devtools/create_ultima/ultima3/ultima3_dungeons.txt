@@ -1,0 +1,43 @@
+Ultima III textured dungeon pictures
+====================================
+
+With the VGA graphics mode (the default of the enhanced game) and the "Use textured dungeon walls"
+option, the first person view in dungeons is drawn from the pictures in files/ultima3/dungeons
+rather than from lines. Any picture that is missing is drawn the old way, so they can be replaced
+one at a time.
+
+Format
+------
+* 128x128 pixel PNG, paletted with the 256 colors of the VGA mode (files/ultima3/u3vga.pal). The
+  game draws the palette indexes, so it doesn't matter what palette is in the PNG, but keep to the
+  one in the file so that they look right in an editor. Entries that are all the same cyan-green
+  (2dffd2) aren't used for anything and shouldn't be used.
+* Palette entry 0 is transparent (the PNG has a tRNS chunk saying so). Black can be drawn with a
+  near black entry such as 145 (040404).
+* Every picture is a layer the size of the view, so a piece goes where it sits in the view. The
+  view is the area 32 pixels in from the left and top of the game screen.
+
+The pieces
+----------
+The places in view are numbered as in gfx/dungeon_view.cpp. 0 is the square the party is on, 1 and 2
+are the squares to its left and right, 3, 4 and 5 are the squares in the row ahead (left, middle,
+right), and so on, going outwards and away. The shapes of the pieces are the same as the original's
+lines (they are worked out from the same tables), so none of the wall pieces overlap.
+
+* face_00 to face_31: the wall seen from each place, as the stone face of a block that is solid
+  (and also the face of a door, which gets its door from the next set).
+* face_33 to face_63: the door set in the wall of the place that is 32 less. Drawn over the wall.
+* face_32: the opening of the door that the party is standing in. It is only used to rub out the
+  part of face_00 that is in front of the party, so any opaque pixels will do.
+* ladder_00 to ladder_20: a ladder up, in the ceiling of that place. A ladder down is the same
+  picture flipped upside down, so draw the up one.
+* chest_00 to chest_20: a chest in that place.
+
+Ladders and chests are drawn over the walls, farthest first.
+
+Regenerating the stand-ins
+--------------------------
+python gen_ultima3_dungeons.py ../../../engines/ultima/ultima3/gfx/dungeon_view.cpp ../files/ultima3/u3vga.pal ../files/ultima3/dungeons
+
+Adding a dungeon .ULT file and a preview .png name after those arguments also draws a few views
+made of the pictures, to look at.

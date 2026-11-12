@@ -22,6 +22,7 @@
 #ifndef ULTIMA3_GFX_DUNGEON_VIEW_H
 #define ULTIMA3_GFX_DUNGEON_VIEW_H
 
+#include "common/array.h"
 #include "ultima/ultima3/data/dungeon.h"
 
 namespace Ultima {
@@ -31,7 +32,9 @@ namespace Gfx {
 /**
  * The first person view down the corridors of a dungeon: the walls, doors,
  * ladders and chests in sight drawn as lines, which are all white in the
- * original and have colors in the upgrade's EGA and VGA renderers
+ * original and have colors in the upgrade's EGA and VGA renderers. The VGA
+ * renderer can instead use pictures of them, which are layers of the view
+ * that are drawn over each other
  */
 class DungeonView {
 private:
@@ -41,8 +44,42 @@ private:
 	static const int HEIGHT = 200;
 	static const int OFFSET = 0x20;
 
+	// The pictures are layers the size of the view, and 0 in them is clear
+	static const int PICTURE_SIZE = 0x80;
+	static const int FACES = 64;
+	static const int PLACES = 21;
+
+	struct Picture {
+		bool _present = false;
+		byte _pixels[PICTURE_SIZE * PICTURE_SIZE];
+	};
+
+	// Something that is drawn once all the walls have been, so that it's over them
+	struct Thing {
+		bool _chest;
+		bool _down;
+		int _place;
+	};
+
+	static Picture _faces[FACES];
+	static Picture _ladders[PLACES];
+	static Picture _chests[PLACES];
+	static bool _loaded;
+	static bool _enabled;
+
 	byte _pixels[WIDTH * HEIGHT];
 	int _facing = 0;
+	Common::Array<Thing> _things;
+	bool _usePictures = false;
+
+	static bool loadPicture(Picture &picture, const Common::String &name);
+
+	void drawPicture(const Picture &picture, bool flip, bool erase);
+
+	/**
+	 * Draws everything in view that isn't a ladder or a chest
+	 */
+	void drawPlaces(const Data::Dungeon &dungeon, int level, int x, int y);
 
 	enum Sight {
 		OPEN,
@@ -72,6 +109,23 @@ public:
 	DungeonView() {
 		memset(_pixels, 0, sizeof(_pixels));
 	}
+
+	/**
+	 * Reads the pictures that are drawn in place of lines, which any of can be missing
+	 */
+	static void loadPictures();
+
+	/**
+	 * Sets whether the pictures are drawn, if they've been found and it's the VGA renderer
+	 */
+	static void setPicturesEnabled(bool enabled) {
+		_enabled = enabled;
+	}
+
+	/**
+	 * Returns true if the view is made of pictures
+	 */
+	static bool usesPictures();
 
 	/**
 	 * Draws the view from a square in a direction, for later reading back

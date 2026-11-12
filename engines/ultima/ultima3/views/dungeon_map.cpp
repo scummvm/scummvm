@@ -88,6 +88,8 @@ void DungeonMap::drawViewport(GfxSurface &s) {
 		// The view is only redrawn once something has changed it, or the party
 		// has been moved by something other than a command
 		uint32 key = (save._dungeonLevel << 24) | (save._posX << 16) | (save._posY << 8) | save._facing;
+		if (Gfx::DungeonView::usesPictures())
+			key |= 0x10000000;
 		if (!_viewValid || key != _viewKey) {
 			_view.draw(_G(dungeon), save._dungeonLevel, save._posX, save._posY, save._facing);
 			_viewValid = true;

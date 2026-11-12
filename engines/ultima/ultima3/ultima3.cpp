@@ -34,6 +34,7 @@
 #include "ultima/ultima3/sound_effects.h"
 #include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/gfx/charset.h"
+#include "ultima/ultima3/gfx/dungeon_view.h"
 #include "ultima/ultima3/gfx/shapes.h"
 #include "ultima/ultima3/views/views.h"
 
@@ -71,6 +72,7 @@ void Ultima3Engine::loadOptions() {
 	_lessHunger = Shared::configuredOption("less_hunger", enhanced);
 	_moonIcons = Shared::configuredOption("moon_icons", true);
 	_timedSounds = Shared::configuredOption("timed_sounds", enhanced);
+	Gfx::DungeonView::setPicturesEnabled(Shared::configuredOption("picture_dungeons", enhanced));
 	_music.setEnabled(Shared::configuredOption("midi_music", enhanced));
 	_music.syncVolume();
 }

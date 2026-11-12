@@ -252,6 +252,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_ULTIMA3_PICTURE_DUNGEONS,
+		{
+			_s("Use textured dungeon walls"),
+			_s("Draws the view in dungeons using pictures of stone walls, doors, ladders and chests rather than lines. Only used with VGA graphics"),
+			"picture_dungeons",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_ALWAYS_CHRISTMAS,
 		{
 			_s("Always enable Christmas easter-egg"),
