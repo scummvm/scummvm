@@ -52,6 +52,11 @@ public:
 	/** Makes a bank current and starts playing the steps first..last. */
 	void selectBank(byte bank, uint16 first, int last, bool loop, bool sumDurations, int32 now);
 
+
+	void switchTo(uint bank);
+	/** Makes another bank current but leaves the selected bank as it was (Jim's walk does this). */
+	void switchPlayingTo(uint bank);
+
 	void tick(int32 now);
 
 	/** Advances the current player and drops the movement it computed. */

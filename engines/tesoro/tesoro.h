@@ -42,6 +42,7 @@
 #include "tesoro/core/pointerstate.h"
 #include "tesoro/core/display.h"
 #include "tesoro/core/object.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 
@@ -54,6 +55,7 @@ class Console;
 
 class TesoroEngine : public Engine {
 private:
+	friend class World;
 	friend class MenuItem;
 	friend class Console;
 
@@ -73,6 +75,7 @@ private:
 	bool _buttonsDown[3] = { false, false, false };
 	AnimPlayer _font;
 	MainList _main;
+	World _world;
 	byte _escape = 0;
 	bool _showOutlines = false;
 
@@ -171,6 +174,8 @@ public:
 	void setHoverText(const char *text);
 	/** Flags an object of the level as collidable and a hitter, so the pointer can touch it. False if there is no such object. */
 	bool makeHitter(const char *name);
+	/** Puts Jim into the shown level at a place. False if he cannot be built. */
+	bool putJim(int32 x, int32 y);
 	Cursor *cursor() { return _cursor; }
 	/** Shows or hides the hit rectangles and outlines of the objects over the picture. Returns the new state. */
 	bool toggleOutlines() { return _showOutlines = !_showOutlines; }

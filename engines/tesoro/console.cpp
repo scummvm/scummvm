@@ -33,6 +33,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("hitter", WRAP_METHOD(Console, hitter));
 	registerCmd("touching", WRAP_METHOD(Console, touching));
 	registerCmd("outlines", WRAP_METHOD(Console, outlines));
+	registerCmd("jim", WRAP_METHOD(Console, jim));
 }
 
 Console::~Console() {
@@ -87,6 +88,16 @@ bool Console::hitter(int argc, const char **argv) {
 
 bool Console::outlines(int argc, const char **argv) {
 	debugPrintf("Outlines %s\n", g_engine->toggleOutlines() ? "on: red = pointer can touch, yellow = collidable, grey = other, cyan = outline" : "off");
+	return true;
+}
+
+bool Console::jim(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: %s X Y   (puts Jim in the level at world coordinates)\n", argv[0]);
+		return true;
+	}
+	if (!g_engine->putJim(atoi(argv[1]), atoi(argv[2])))
+		debugPrintf("Jim cannot be put there\n");
 	return true;
 }
 

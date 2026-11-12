@@ -53,6 +53,23 @@ void AnimSet::selectBank(byte bank, uint16 first, int last, bool loop, bool sumD
 	_stashed = false;
 }
 
+void AnimSet::switchTo(uint bank) {
+	if (bank >= _players.size()) {
+		warning("AnimSet: no bank %u to switch to", bank);
+		return;
+	}
+	_bankIndex = bank;
+	_selected = (byte)bank;
+}
+
+void AnimSet::switchPlayingTo(uint bank) {
+	if (bank >= _players.size()) {
+		warning("AnimSet: no bank %u to switch to", bank);
+		return;
+	}
+	_bankIndex = bank;
+}
+
 void AnimSet::tick(int32 now) {
 	current().advance(now);
 }

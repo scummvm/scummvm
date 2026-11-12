@@ -3,6 +3,7 @@ MODULE := engines/tesoro
 MODULE_OBJS = \
 	tesoro.o \
 	console.o \
+	world.o \
 	metaengine.o \
 	core/animimage.o \
 	core/animbank.o \
@@ -16,6 +17,7 @@ MODULE_OBJS = \
 	core/cursor.o \
 	core/display.o \
 	core/hovertext.o \
+	core/jim.o \
 	core/level.o \
 	core/menuitem.o \
 	core/namekey.o \

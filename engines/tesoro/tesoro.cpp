@@ -33,6 +33,7 @@
 #include "tesoro/tesoro.h"
 #include "tesoro/detection.h"
 #include "tesoro/core/cursor.h"
+#include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/menuitem.h"
 #include "tesoro/core/namekey.h"
@@ -54,7 +55,7 @@ private:
 };
 
 TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-																			   _gameDescription(gameDesc), _clock(syst->getMillis()), _randomSource("Tesoro") {
+																			   _gameDescription(gameDesc), _clock(syst->getMillis()), _randomSource("Tesoro"), _world(*this) {
 	g_engine = this;
 }
 
@@ -391,6 +392,8 @@ bool TesoroEngine::level(const char *name) {
 	// The level replaces whatever was shown before; the two menus stay loaded.
 	hookMenuItems(level);
 	_main.remove(_level);
+	if (_world.jimLevel() == _level)
+		_world.jim()->leaveLevel();
 	if (_level != _mainMenu && _level != _newGameMenu)
 		delete _level;
 	_level = level;
@@ -403,6 +406,17 @@ bool TesoroEngine::level(const char *name) {
 void TesoroEngine::setHoverText(const char *text) {
 	if (_cursor)
 		_cursor->label().set(text, text ? 0xffff : 0);	// names are shown in white
+}
+
+bool TesoroEngine::putJim(int32 x, int32 y) {
+	Jim *jim = _world.jim();
+	if (!jim || !_level)
+		return false;
+	// enterLevel puts the level in the main list itself.
+	_main.remove(_level);
+	jim->enterLevel(_level, &_level->room(0), x, y);
+	_cursor->setSurroundings(&_pointer, _level);
+	return true;
 }
 
 bool TesoroEngine::makeHitter(const char *name) {

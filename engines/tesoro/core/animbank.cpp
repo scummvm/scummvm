@@ -149,6 +149,15 @@ void AnimBank::clearStepMovement(uint i) {
 	_steps[i].y = 0;
 }
 
+void AnimBank::makeSinglePoints() {
+	for (uint i = 0; i < _steps.size(); ++i) {
+		_steps[i].entries.clear();
+		_steps[i].entries.push_back(0);
+		_steps[i].scales.clear();
+		_steps[i].firstDescent = 0;
+	}
+}
+
 void AnimBank::clearStepHitRect(uint i) {
 	if (i >= _steps.size())
 		return;

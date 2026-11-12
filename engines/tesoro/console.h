@@ -38,6 +38,7 @@ private:
 	bool hitter(int argc, const char **argv);
 	bool touching(int argc, const char **argv);
 	bool outlines(int argc, const char **argv);
+	bool jim(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

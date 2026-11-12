@@ -55,6 +55,7 @@ public:
 	const Common::Array<AnimPlayer> &levelPlayers() const { return _levelPlayers; }
 
 	ObjectList &objects() { return _objects; }
+	ObjectList &movedObjects() { return _movedObjects; }
 
 	Camera &camera() { return _camera; }
 	const Camera &camera() const { return _camera; }
