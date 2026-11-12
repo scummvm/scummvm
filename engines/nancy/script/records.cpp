@@ -1144,9 +1144,19 @@ void OverrideRecord::updateGraphics() {
 
 	_renderSurface.clear(0);
 
+	// From Nancy26 on, a picture the function takes shows what is below it
+	const bool isDrawnInPlace = g_nancy->getGameType() >= kGameTypeNancy26;
+	if (isDrawnInPlace) {
+		g_nancy->_graphics->beginScriptDrawing(_canvas->getZOrder());
+	}
+
 	s_drawTarget = &_renderSurface;
 	callFunction("Render");
 	s_drawTarget = nullptr;
+
+	if (isDrawnInPlace) {
+		g_nancy->_graphics->endScriptDrawing();
+	}
 
 	Graphics::ManagedSurface &shown = _canvas->_drawSurface;
 	const uint32 size = shown.pitch * shown.h;

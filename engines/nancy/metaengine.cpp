@@ -203,6 +203,12 @@ SaveStateDescriptor NancyMetaEngine::querySaveMetaInfos(const char *target, int 
 }
 
 void NancyMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	// A picture a script took for the saved game it asked for
+	Graphics::ManagedSurface savePicture;
+	if (Nancy::g_nancy->_graphics->takeSavePicture(savePicture) && createThumbnail(&thumb, &savePicture)) {
+		return;
+	}
+
 	if (Nancy::g_nancy->getState() == Nancy::NancyState::kLoadSave) {
 		// Do not screenshot the screen if we're in the engine's original menus,
 		// since that would just screenshot the menu itself

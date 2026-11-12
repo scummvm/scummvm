@@ -267,6 +267,10 @@ static int gameSave(lua_State *L) {
 
 	getSaveManager(L).requestSave(name);
 	setContinueSave(name, isContinue);
+
+	// The menus save from a Render function, below themselves, so the picture
+	// of the saved game shows the scene
+	g_nancy->_graphics->keepSavePicture();
 	return 0;
 }
 

@@ -1018,8 +1018,10 @@ static int saveScreenshot(lua_State *L) {
 	const char *suffix = g_nancy->getGameType() >= kGameTypeNancy22 ? "_SSPIC" : "_OVL";
 	const Common::String name = lua_gettop(L) > 2 ? Common::String(luaL_checkstring(L, 3)) : Common::String::format("%u%s", g_system->getMillis(), suffix);
 
-	// The viewport as it was drawn last, before it got scaled onto the screen
-	const Graphics::ManagedSurface &image = g_nancy->_graphics->getGameImage();
+	// The viewport as it was drawn last, before it got scaled onto the screen,
+	// or from Nancy26 on, as far as it is drawn when a Render function takes it
+	Graphics::ManagedSurface image;
+	g_nancy->_graphics->getDrawnGameImage(image);
 	Common::Rect area = NancySceneState.getViewport().convertViewportToScreen(rect.toRect());
 	area.clip(Common::Rect(image.w, image.h));
 

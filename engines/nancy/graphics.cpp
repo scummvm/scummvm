@@ -815,6 +815,47 @@ void GraphicsManager::screenshotScreen(Graphics::ManagedSurface &inSurf) {
 	inSurf.copyFrom(_screen);
 }
 
+void GraphicsManager::getDrawnGameImage(Graphics::ManagedSurface &out) {
+	const Graphics::ManagedSurface &image = getGameImage();
+	if (_scriptDrawingZOrder < 0) {
+		out.copyFrom(image);
+		return;
+	}
+
+	// The objects below the script have been brought up to date for this frame
+	out.create(image.w, image.h, image.format);
+	out.clear(out.format.ARGBToColor(255, 0, 0, 0));
+	for (const RenderObject *object : _objects) {
+		if (object->getZOrder() >= _scriptDrawingZOrder) {
+			break;
+		}
+
+		if (!object->isVisible() || !isInLayer(*object, isGameScaled() ? kLayerGame : kLayerAll)) {
+			continue;
+		}
+
+		Common::Rect position = getDrawnPosition(*object);
+		if (!object->getClipRect().isEmpty()) {
+			position.clip(object->getClipRect());
+		}
+
+		position.clip(Common::Rect(out.w, out.h));
+		if (!position.isEmpty()) {
+			blitObject(out, *object, position);
+		}
+	}
+}
+
+bool GraphicsManager::takeSavePicture(Graphics::ManagedSurface &out) {
+	if (_savePicture.empty()) {
+		return false;
+	}
+
+	out.copyFrom(_savePicture);
+	_savePicture.free();
+	return true;
+}
+
 // Draw a given screen-space rectangle of an object
 void GraphicsManager::blitObject(Graphics::ManagedSurface &target, const RenderObject &src, Common::Rect screenRect) {
 	// An object whose image is missing has nothing to draw

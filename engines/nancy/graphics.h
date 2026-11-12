@@ -119,6 +119,18 @@ public:
 	void grabViewportObjects(Common::Array<RenderObject *> &inArray);
 	void screenshotScreen(Graphics::ManagedSurface &inSurf);
 
+	// Nancy26 has scripts draw while the frame is drawn, and the pictures they
+	// take then hold only what lies below them: the menus take the scene
+	// behind them. Outside of that, the picture is the last frame.
+	void beginScriptDrawing(uint16 zOrder) { _scriptDrawingZOrder = zOrder; }
+	void endScriptDrawing() { _scriptDrawingZOrder = -1; }
+	void getDrawnGameImage(Graphics::ManagedSurface &out);
+
+	// The picture a script took for a saved game it asked for, which gets saved
+	// with it a frame later
+	void keepSavePicture() { getDrawnGameImage(_savePicture); }
+	bool takeSavePicture(Graphics::ManagedSurface &out);
+
 	static void loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::Path &paletteFilename, uint paletteStart = 0, uint paletteSize = 256);
 	static void copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip = false, bool doubleSize = false);
 	static void copyToManaged(void *src, Graphics::ManagedSurface &dst, uint srcW, uint srcH, const Graphics::PixelFormat &format, bool verticalFlip = false, bool doubleSize = false);
@@ -154,6 +166,9 @@ private:
 	static int objectComparator(const void *a, const void *b);
 
 	Common::SortedArray<RenderObject *> _objects;
+
+	int32 _scriptDrawingZOrder = -1;	// of the script drawing now, or -1
+	Graphics::ManagedSurface _savePicture;
 
 	Graphics::PixelFormat _inputPixelFormat16, _inputPixelFormat24, _inputPixelFormat32;
 	Graphics::PixelFormat _screenPixelFormat16, _screenPixelFormat32;
