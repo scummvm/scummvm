@@ -24,7 +24,9 @@
 #include "tesoro/core/collision.h"
 #include "tesoro/core/cursor.h"
 #include "tesoro/core/menuitem.h"
+#include "tesoro/core/pathobject.h"
 #include "tesoro/core/spriteobject.h"
+#include "tesoro/core/walkfloor.h"
 
 #include "common/endian.h"
 #include "common/textconsole.h"
@@ -143,6 +145,18 @@ Object *Level::createObject(const ObjectRecord &record, Room &room) {
 
 	if (record.kind == 3) {
 		SpriteObject *object = new SpriteObject();
+		object->init(record, room.sortOffset(), _levelPlayers, _loadTime);
+		return object;
+	}
+
+	if (record.kind == 7) {
+		WalkFloor *object = new WalkFloor();
+		object->init(record, room.sortOffset(), _levelPlayers, _loadTime);
+		return object;
+	}
+
+	if (record.kind == 8) {
+		PathObject *object = new PathObject();
 		object->init(record, room.sortOffset(), _levelPlayers, _loadTime);
 		return object;
 	}
@@ -359,6 +373,12 @@ void Level::resolveOverlap(Object *a, Object *b) {
 int Level::update() {
 	collisionPass(_frameTime);
 	return 1;
+}
+
+WalkFloor *Level::floor() const {
+	const CameraFrame *frame = static_cast<const CameraFrame *>(_special);
+	Object *target = frame ? frame->target() : nullptr;
+	return target && target->kindId() == 7 ? static_cast<WalkFloor *>(target) : nullptr;
 }
 
 Object *Level::findObject(uint64 key) {

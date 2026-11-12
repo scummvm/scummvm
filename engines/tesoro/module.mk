@@ -21,10 +21,13 @@ MODULE_OBJS = \
 	core/namekey.o \
 	core/object.o \
 	core/objectlist.o \
+	core/pathobject.o \
 	core/renderqueue.o \
 	core/room.o \
 	core/spriteobject.o \
-	core/textqueue.o
+	core/textqueue.o \
+	core/walkarea.o \
+	core/walkfloor.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TESORO), DYNAMIC_PLUGIN)

@@ -32,11 +32,12 @@
 
 namespace Tesoro {
 
+class WalkFloor;
+
 /**
  * One scene file (.LVL).
  * A level is an object itself, so it sits in the game's main object list and takes part in the frame passes.
  */
-
 class Level : public Object {
 public:
 	Level() {}
@@ -58,6 +59,8 @@ public:
 	Camera &camera() { return _camera; }
 	const Camera &camera() const { return _camera; }
 
+	WalkFloor *floor() const;
+
 	/** The level's single kind 1 object, if it has one. */
 	Object *specialObject() const { return _special; }
 
@@ -73,6 +76,7 @@ public:
 	 */
 	void collisionPass(int32 now);
 
+	int32 frameTime() const { return _frameTime; }
 	void setFrameTime(int32 now) { _frameTime = now; }
 
 	/** First pass step: the collision pass, or the one-shot verb after a reload of the pictures. */
