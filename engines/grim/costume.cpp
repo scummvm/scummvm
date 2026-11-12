@@ -359,7 +359,7 @@ void Costume::setColormap(const Common::String &map) {
 	_cmap = g_resourceloader->getColormap(map);
 	for (int i = 0; i < _numComponents; i++)
 		if (_components[i])
-			_components[i]->setColormap(nullptr);
+			_components[i]->refreshColormap();
 }
 
 void Costume::stopChores(bool ignoreLoopingChores, int msecs) {
