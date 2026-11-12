@@ -40,7 +40,7 @@ public:
 	Component(Component *parent, int parentID, const char *name, tag32 tag);
 
 	CMap *getCMap();
-	virtual void setColormap(CMap *c);
+	void setColormap(CMap *c);
 	virtual void refreshColormap();
 	bool isVisible();
 	Component *getParent() { return _parent; }
