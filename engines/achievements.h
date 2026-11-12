@@ -105,7 +105,7 @@ public:
 
 	/**
 	 * Set a game targeted by platform type and application ID as active domain.
-	 * Automaticly loads messages texts from achievements.dat.
+	 * Automatically loads messages texts from achievements.dat.
 	 *
 	 * @param[in] info Achievements platform type and application ID.
 	 */
@@ -184,7 +184,7 @@ public:
 
 	/**
 	 * Get an average rate statistic (float).
-	 * Calcucated by devision the sum of count by the sum of times.
+	 * Calculated by dividing the sum of count by the sum of times.
 	 *
 	 * @param[in] id	Internal ID of the achievement.
 	 */
