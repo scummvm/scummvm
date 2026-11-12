@@ -25,8 +25,6 @@
 #include "common/mutex.h"
 #include "common/util.h"
 
-#include <math.h>
-
 namespace MADS {
 
 namespace {
