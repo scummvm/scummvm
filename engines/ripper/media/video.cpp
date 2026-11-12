@@ -22,6 +22,8 @@
 
 #include "common/array.h"
 #include "common/debug.h"
+#include "common/events.h"
+#include "common/ptr.h"
 #include "common/system.h"
 #include "graphics/blit.h"
 #include "graphics/managed_surface.h"
@@ -66,6 +68,41 @@ Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan) {
 namespace {
 
 static const uint16 kHelpCommand = 0x3b00;
+
+class ScopedPlaybackMenuPause : public Common::EventObserver, private Common::NonCopyable {
+public:
+	ScopedPlaybackMenuPause(Video::VideoDecoder &decoder, Audio::Mixer &mixer,
+			const Audio::SoundHandle *externalAudio) :
+		_decoder(decoder), _mixer(mixer), _externalAudio(externalAudio) {
+		g_system->getEventManager()->getEventDispatcher()->registerObserver(
+			this, Common::EventManager::kEventManPriority + 1, false);
+	}
+
+	~ScopedPlaybackMenuPause() override {
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+		if (_pause) {
+			_pause.reset();
+			debugC(2, kDebugVideo, "Ripper: released global-menu media pause frame=%d",
+				_decoder.getCurFrame());
+		}
+	}
+
+	bool notifyEvent(const Common::Event &event) override {
+		if (event.type == Common::EVENT_MAINMENU && !_pause && !g_engine->isPaused()) {
+			// runDialog() does not pause menu construction or settings restoration.
+			_pause.reset(new ScopedPlaybackPause(_decoder, _mixer, _externalAudio));
+			debugC(2, kDebugVideo, "Ripper: acquired global-menu media pause frame=%d",
+				_decoder.getCurFrame());
+		}
+		return false;
+	}
+
+private:
+	Video::VideoDecoder &_decoder;
+	Audio::Mixer &_mixer;
+	const Audio::SoundHandle *_externalAudio;
+	Common::ScopedPtr<ScopedPlaybackPause> _pause;
+};
 
 class SmackerFrameRenderer : private Common::NonCopyable {
 public:
@@ -271,6 +308,7 @@ MediaPlayer::PlaybackInputResult MediaPlayer::servicePlaybackInput(
 		const Common::String &name) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine,
 		policy.serviceSceneUi && _engine->canLoadGameStateCurrently());
+	ScopedPlaybackMenuPause menuPause(decoder, *_mixer, externalAudio);
 	if (_input->pollEvents()) {
 		return kQuitPlayback;
 	}
@@ -372,7 +410,7 @@ SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *strea
 	Audio::SoundHandle *externalAudio = plan.timeline.externalAudio;
 	const Common::Array<uint32> *frameAudioOffsets = plan.timeline.frameAudioOffsets;
 	const uint32 audioByteRate = plan.timeline.audioByteRate;
-	const uint32 timelineStartMillis = plan.timeline.timelineStartMillis;
+	uint32 *timelineStartMillis = plan.timeline.timelineStartMillis;
 	uint displayScale = plan.placement.displayScale;
 	const uint frameLimit = plan.frames.frameLimit;
 	const int originY = plan.placement.originY;
@@ -460,6 +498,8 @@ SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *strea
 	const bool synchronizeToTimeline = frameAudioOffsets &&
 		frameAudioOffsets->size() == decoder.getFrameCount() && audioByteRate != 0;
 	if (synchronizeToTimeline) {
+		assert(timelineStartMillis);
+		decoder.setTimelineStartMillis(timelineStartMillis);
 		debugC(2, kDebugVideo, "Ripper: Smacker '%s' follows IAVF timeline %u..%u ms clock=%s",
 			name.c_str(),
 			(uint32)((uint64)(*frameAudioOffsets)[0] * 1000 / audioByteRate),
@@ -691,7 +731,7 @@ SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *strea
 			if (externalAudio && _mixer->isSoundHandleActive(*externalAudio))
 				audioElapsedMs = _mixer->getSoundElapsedTime(*externalAudio);
 			else
-				audioElapsedMs = g_system->getMillis(true) - timelineStartMillis;
+				audioElapsedMs = g_system->getMillis(true) - *timelineStartMillis;
 			frameDue = audioElapsedMs >= targetAudioMs;
 		}
 		if (!paused && !toolbarPaused && frameDue) {
@@ -773,7 +813,7 @@ SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *strea
 	}
 	if (synchronizeToTimeline && result.completed) {
 		const uint32 elapsedMs = externalAudio && _mixer->isSoundHandleActive(*externalAudio) ?
-			_mixer->getSoundElapsedTime(*externalAudio) : g_system->getMillis(true) - timelineStartMillis;
+			_mixer->getSoundElapsedTime(*externalAudio) : g_system->getMillis(true) - *timelineStartMillis;
 		debugC(2, kDebugVideo, "Ripper: completed IAVF Smacker '%s' targetMs=%u audioElapsedMs=%u",
 			name.c_str(),
 			(uint32)((uint64)frameAudioOffsets->back() * 1000 / audioByteRate),

@@ -153,7 +153,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		plan.input.stopOnMouse = options.stopOnMouse;
 		plan.timeline.frameAudioOffsets = frameAudioOffsets;
 		plan.timeline.audioByteRate = audioByteRate;
-		plan.timeline.timelineStartMillis = timelineStartMillis;
+		plan.timeline.timelineStartMillis = &timelineStartMillis;
 		plan.placement.displayScale = options.displayScale;
 		plan.palette.patchInterfacePalette = false;
 		plan.placement.originY = segmentOriginY;

@@ -57,10 +57,11 @@ struct SmackerTimelinePolicy {
 	Audio::SoundHandle *externalAudio;
 	const Common::Array<uint32> *frameAudioOffsets;
 	uint32 audioByteRate;
-	uint32 timelineStartMillis;
+	// IAVF branches share this origin so decoder pauses also suspend the fallback clock.
+	uint32 *timelineStartMillis;
 
 	SmackerTimelinePolicy() : externalAudio(nullptr), frameAudioOffsets(nullptr),
-		audioByteRate(0), timelineStartMillis(0) {}
+		audioByteRate(0), timelineStartMillis(nullptr) {}
 };
 
 struct SmackerPalettePolicy {

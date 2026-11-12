@@ -37,6 +37,7 @@ public:
 	bool loadStreamWithDataFixes(Common::SeekableReadStream *stream,
 		const Common::String &name);
 	const Graphics::Surface *restartAtFrame(uint frame);
+	void setTimelineStartMillis(uint32 *timelineStartMillis);
 
 protected:
 	void repairEfw4FrameTable(const Common::String &name);

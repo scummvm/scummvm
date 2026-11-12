@@ -54,12 +54,37 @@ class RipperSmackerDecoder::RipperSmackerVideoTrack : public SmackerVideoTrack {
 public:
 	RipperSmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount,
 			const Common::Rational &frameRate, uint32 flags, uint32 version) :
-		SmackerVideoTrack(width, height, frameCount, frameRate, flags, version) {}
+		SmackerVideoTrack(width, height, frameCount, frameRate, flags, version),
+		_timelineStartMillis(nullptr), _timelinePauseStart(0), _timelinePaused(false) {}
+
+	void setTimelineStartMillis(uint32 *timelineStartMillis) {
+		_timelineStartMillis = timelineStartMillis;
+	}
 
 	void clearSurface() {
 		_surface->fillRect(_surface->getRect(), 0);
 	}
+
+protected:
+	void pauseIntern(bool pause) override {
+		if (!_timelineStartMillis || pause == _timelinePaused)
+			return;
+		if (pause)
+			_timelinePauseStart = g_system->getMillis(true);
+		else
+			*_timelineStartMillis += g_system->getMillis(true) - _timelinePauseStart;
+		_timelinePaused = pause;
+	}
+
+private:
+	uint32 *_timelineStartMillis;
+	uint32 _timelinePauseStart;
+	bool _timelinePaused;
 };
+
+void RipperSmackerDecoder::setTimelineStartMillis(uint32 *timelineStartMillis) {
+	static_cast<RipperSmackerVideoTrack *>(getTrack(0))->setTimelineStartMillis(timelineStartMillis);
+}
 
 bool RipperSmackerDecoder::loadStreamWithDataFixes(Common::SeekableReadStream *stream,
 		const Common::String &name) {
