@@ -19,6 +19,7 @@
  *
  */
 
+#include "engines/grim/colormap.h"
 #include "engines/grim/model.h"
 #include "engines/grim/costume/model_component.h"
 #include "engines/grim/costume/main_model_component.h"
@@ -68,6 +69,13 @@ void MainModelComponent::setColormap(CMap *cmap) {
 	Component::setColormap(cmap);
 	if (_parentModel) {
 		_parentModel->setColormap(cmap);
+	}
+}
+
+void MainModelComponent::refreshColormap() {
+	Component::refreshColormap();
+	if (_parentModel) {
+		_parentModel->refreshColormap();
 	}
 }
 

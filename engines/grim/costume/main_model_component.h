@@ -34,6 +34,7 @@ public:
 	~MainModelComponent();
 	void init() override;
 	void setColormap(CMap *cmap) override;
+	void refreshColormap() override;
 	void reset() override;
 
 private:

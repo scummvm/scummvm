@@ -41,6 +41,7 @@ public:
 
 	CMap *getCMap();
 	virtual void setColormap(CMap *c);
+	virtual void refreshColormap();
 	bool isVisible();
 	Component *getParent() { return _parent; }
 	virtual void setMatrix(const Math::Matrix4 &) { };
