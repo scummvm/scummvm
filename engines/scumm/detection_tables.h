@@ -700,6 +700,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi", "FreddiE", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi", "Freddi Fisk", kGenHEMac, Common::SV_SWE, Common::kPlatformMacintosh, 0 },
 	{ "freddi", "FRITZI", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "freddi", "MALICE", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddi", "Marine Malice", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddi", "MM-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
 
