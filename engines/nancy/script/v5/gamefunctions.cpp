@@ -39,6 +39,7 @@
 #include "engines/nancy/script/v5/brain.h"
 
 #include "engines/nancy/script/v5/gamefunctions.h"
+#include "engines/nancy/script/v5/messaging.h"
 #include "engines/nancy/script/v5/scriptinput.h"
 
 #include "engines/nancy/state/scene.h"
@@ -706,6 +707,16 @@ static int logWarn(lua_State *L) {
 	return 0;
 }
 
+// Message:Send(recipient, action, ...), Nancy28: a message that comes from no
+// record, which returns what the receiver returns. The Message global of the
+// earlier games sends to the UI, and from Nancy26 on none of their scripts that
+// still use it are run.
+static int messageSend(lua_State *L) {
+	const Common::String recipient = luaL_checkstring(L, 2);
+	const Common::String action = luaL_checkstring(L, 3);
+	return sendMessage(L, "", recipient, action, 4, MAX(0, lua_gettop(L) - 3));
+}
+
 void registerNancy26GameAPI(lua_State *L) {
 	replaceFunction(L, "ND.Flags", "__index", flagsIndex);
 	replaceFunction(L, "ND.VarTable", "__index", varTableIndex);
@@ -754,6 +765,15 @@ void registerNancy26GameAPI(lua_State *L) {
 	addFunctions(L, "ND.Sound", kSoundFunctions);
 	addFunctions(L, "ND.Scene", kSceneFunctions);
 	addFunctions(L, "ND.Log", kLogFunctions);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy28) {
+		static const luaL_Reg kMessageFunctions[] = {
+			{ "Send", messageSend },
+			{ nullptr, nullptr }
+		};
+
+		addFunctions(L, "ND.Message", kMessageFunctions);
+	}
 
 	registerBrainAPI(L);
 }
