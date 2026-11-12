@@ -5,10 +5,7 @@ MODULE_OBJS := \
 	shared/conf/xml_node.o \
 	shared/conf/xml_tree.o \
 	shared/engine/events.o \
-	shared/engine/graphics_options.o \
-	shared/gfx/gfx_surface.o \
-	shared/gfx/view.o \
-	shared/engine/view.o
+	shared/engine/graphics_options.o
 
 ifdef ENABLE_AKALABETH
 MODULE_OBJS += \
@@ -45,8 +42,6 @@ ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
 	ultima1/ultima1.o \
 	ultima1/console.o \
-	ultima1/events.o \
-	ultima1/messages.o \
 	ultima1/metaengine.o \
 	ultima1/sound_effects.o \
 	ultima1/core/strings.o \
@@ -86,7 +81,6 @@ MODULE_OBJS += \
 	ultima1/views/interactions/sector_scan.o \
 	ultima1/views/interactions/space_station.o \
 	ultima1/views/interactions/win.o \
-	ultima1/views/view.o \
 	ultima1/views/commands.o \
 	ultima1/views/create_character.o \
 	ultima1/views/dialog.o \
@@ -97,7 +91,6 @@ MODULE_OBJS += \
 	ultima1/views/main_menu.o \
 	ultima1/views/map.o \
 	ultima1/views/mondain_map.o \
-	ultima1/views/overworld.o \
 	ultima1/views/overworld_map.o \
 	ultima1/views/space_cockpit.o \
 	ultima1/views/space_game.o \
