@@ -32,8 +32,6 @@
 #include "scumm/scumm_v7.h"
 #include "scumm/insane/rebel2/psx/psx.h"
 
-#include <math.h>
-
 namespace Scumm {
 
 class RA2PSXADSRStream : public Audio::RewindableAudioStream {

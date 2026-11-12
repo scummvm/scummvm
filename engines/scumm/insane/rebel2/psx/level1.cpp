@@ -33,8 +33,6 @@
 #include "scumm/insane/rebel2/psx/ui.h"
 #include "scumm/insane/rebel2/psx/video.h"
 
-#include <math.h>
-
 namespace Scumm {
 
 #ifdef USE_TINYGL

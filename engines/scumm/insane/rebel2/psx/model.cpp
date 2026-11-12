@@ -17,8 +17,6 @@
 
 #include "scumm/insane/rebel2/psx/psx.h"
 
-#include <math.h>
-
 namespace Scumm {
 
 bool readU16(const Common::Array<byte> &data, uint32 offset, uint16 &value) {
