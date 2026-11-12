@@ -458,6 +458,19 @@ static int inventoryRemove(lua_State *L) {
 	return 0;
 }
 
+// Inventory:Clear(), Nancy28: puts the item in hand away, and takes every item
+// out of the inventory
+static int inventoryClear(lua_State *L) {
+	NancySceneState.setHeldItem(-1);
+
+	const Common::Array<int16> items = NancySceneState.getInventoryOrder();
+	for (int16 id : items) {
+		NancySceneState.removeItemFromInventory(id, false);
+	}
+
+	return 0;
+}
+
 static int inventoryContains(lua_State *L) {
 	lua_pushboolean(L, NancySceneState.hasItem(checkItem(L, 2).id) == g_nancy->_true);
 	return 1;
@@ -495,6 +508,7 @@ static int inventoryAll(lua_State *L) {
 static const luaL_Reg kInventoryFunctions[] = {
 	{ "Add", inventoryAdd },
 	{ "Remove", inventoryRemove },
+	{ "Clear", inventoryClear },
 	{ "Contains", inventoryContains },
 	{ "Exists", inventoryExists },
 	{ "IsViewable", inventoryIsViewable },
