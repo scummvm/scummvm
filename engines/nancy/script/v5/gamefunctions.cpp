@@ -19,10 +19,12 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/tokenizer.h"
 
 #include "audio/mixer.h"
 
@@ -30,6 +32,8 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
+
+#include "engines/nancy/resource/resource.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/luabind.h"
@@ -328,7 +332,85 @@ static int gameSetWindowed(lua_State *L) {
 	return 0;
 }
 
+// Game:SetScriptNameFilter(text), Nancy28: the cheat menu that starts streams
+// lists the scripts whose names have every word of the text in them, and
+// selects the first one that comes after the whole text in alphabetical order
+static int gameSetScriptNameFilter(lua_State *L) {
+	ScriptGameState &state = getGameState();
+	if (state.scriptNames.empty()) {
+		Common::Array<Common::Path> paths;
+		g_nancy->_resource->list("", paths, CifInfo::kResTypeScript);
+		for (const Common::Path &path : paths) {
+			Common::String name = path.toString();
+			name.toUppercase();
+			state.scriptNames.push_back(name);
+		}
+
+		Common::sort(state.scriptNames.begin(), state.scriptNames.end());
+	}
+
+	Common::String filter = luaL_checkstring(L, 2);
+	filter.toUppercase();
+
+	Common::Array<Common::String> words;
+	Common::StringTokenizer tokenizer(filter, " ");
+	while (!tokenizer.empty()) {
+		const Common::String word = tokenizer.nextToken();
+		if (!word.empty()) {
+			words.push_back(word);
+		}
+	}
+
+	state.filteredScriptNames.clear();
+	state.closestFilteredMatch = 0;
+	if (words.empty()) {
+		return 0;
+	}
+
+	bool hasClosest = false;
+	for (const Common::String &name : state.scriptNames) {
+		bool hasAllWords = true;
+		for (const Common::String &word : words) {
+			if (!name.contains(word)) {
+				hasAllWords = false;
+				break;
+			}
+		}
+
+		if (!hasAllWords) {
+			continue;
+		}
+
+		state.filteredScriptNames.push_back(name);
+		if (!hasClosest && name.compareTo(filter) >= 0) {
+			hasClosest = true;
+			state.closestFilteredMatch = state.filteredScriptNames.size() - 1;
+		}
+	}
+
+	return 0;
+}
+
+// Game:GetScriptNameRange(first, last), Nancy28: the scripts the filter let
+// through from first to last, counting from 1, as a table with those numbers
+// for keys
+static int gameGetScriptNameRange(lua_State *L) {
+	const Common::Array<Common::String> &names = getGameState().filteredScriptNames;
+	const int first = MAX(luaL_checkint(L, 2), 1);
+	const int last = MIN(MAX(luaL_checkint(L, 3), first), (int)names.size());
+
+	lua_newtable(L);
+	for (int i = first; i <= last; ++i) {
+		lua_pushstring(L, names[i - 1].c_str());
+		lua_rawseti(L, -2, i);
+	}
+
+	return 1;
+}
+
 static const luaL_Reg kGameFunctions[] = {
+	{ "SetScriptNameFilter", gameSetScriptNameFilter },
+	{ "GetScriptNameRange", gameGetScriptNameRange },
 	{ "Save", gameSave },
 	{ "Load", gameLoad },
 	{ "IsContinue", gameIsContinue },
@@ -365,6 +447,9 @@ static bool pushGameField(lua_State *L, const Common::String &key) {
 		lua_pushboolean(L, true);
 	} else if (key == "restarts") {
 		lua_pushinteger(L, getGameState().numRestarts);
+	} else if (key == "closestFilteredMatch") {
+		// Nancy28, counting from 1
+		lua_pushinteger(L, getGameState().closestFilteredMatch + 1);
 	} else {
 		return false;
 	}

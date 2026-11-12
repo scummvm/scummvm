@@ -49,6 +49,13 @@ struct ScriptGameState : public EngineData {
 	};
 
 	Common::Array<PausedChannel> pausedAbandonedChannels;
+
+	// Nancy28. The scripts of the game, in alphabetical order, the ones the
+	// filter of the cheat menu let through, and the index of the first one of
+	// those that comes after the filter
+	Common::Array<Common::String> scriptNames;
+	Common::Array<Common::String> filteredScriptNames;
+	uint closestFilteredMatch = 0;
 };
 
 // What Nancy26 adds to the objects of the earlier games: the saved games and
