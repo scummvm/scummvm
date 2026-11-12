@@ -30,7 +30,6 @@
 #include "common/textconsole.h"
 #include "common/array.h"
 
-#include <cstring>
 #include "macs2/detection.h"
 
 namespace Macs2 {
