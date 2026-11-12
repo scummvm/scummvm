@@ -32,6 +32,7 @@ constexpr byte MACHINE_CELL = 0x7C;
 constexpr byte FLASH_CELL = 0xF0;
 constexpr byte EMPTY_CELL = 0x20;
 constexpr int FIRST_SLOT_X = 0x1E;
+constexpr int SLOT_Y = 11;
 constexpr int CARD_COUNT = 4;
 constexpr int FLASH_COUNT = 5;
 constexpr int FLASH_STEP_FRAMES = 2;
@@ -52,6 +53,16 @@ static const char *const VICTORY_LINES[10] = {
 	"lies  ahead  in  the", "ULTIMA saga can only", "be pure speculation!",
 	"Onward to ULTIMA IV!"
 };
+
+// How many of the slots have had their card put in. Each is left empty, which means it can be
+// worked out from the map, and so doesn't need saving
+static int slotsFilled() {
+	int count = 0;
+	while (count < CARD_COUNT && _G(map).cell(FIRST_SLOT_X + count, SLOT_Y) != MACHINE_CELL)
+		++count;
+
+	return count;
+}
 
 static void noEffect() {
 	_G(messages).print("No effect!\n");
@@ -84,7 +95,7 @@ bool InsertCard::chooseCell() {
 
 bool InsertCard::tryWord() {
 	Data::RosterEntry &e = _G(savegame).partyMember(_slot);
-	int progress = _G(exodusProgress);
+	int progress = slotsFilled();
 	char key = _menu.key();
 
 	_G(messages).print("\n");
@@ -106,7 +117,7 @@ bool InsertCard::tryWord() {
 		return true;
 	}
 
-	++_G(exodusProgress);
+	_finalCard = (progress == CARD_COUNT - 1);
 	_step = 0;
 	_frames = 0;
 	_stage = FLASH;
@@ -143,6 +154,7 @@ bool InsertCard::keypress(const KeypressMessage &msg) {
 	case DONE:
 		if (!isModifierKey(msg.keycode)) {
 			_G(soundEnabled) = true;
+			_G(music).silence();
 			g_events->replaceView("Title", true);
 		}
 		return false;
@@ -167,7 +179,7 @@ bool InsertCard::timeout() {
 		}
 
 		_G(map).setCell(_targetX, _targetY, EMPTY_CELL);
-		if (_G(exodusProgress) != CARD_COUNT)
+		if (slotsFilled() != CARD_COUNT)
 			return true;
 
 		startVictory();
