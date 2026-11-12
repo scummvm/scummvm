@@ -561,16 +561,14 @@ static int inventoryIndex(lua_State *L) {
 
 // Save, Sound, Scene and Log
 
-// Save:IsNameAcceptable(name): whether a saved game can go by the name
+// Save:IsNameAcceptable(name): whether a saved game can go by the name. The exe
+// makes a file of it, and turns down what a file name can't be. ScummVM keeps
+// the name only as the description of the save, so any name goes, an empty one
+// too: the save screen checks the name after every key, and puts the last one
+// back when it isn't acceptable.
 static int saveIsNameAcceptable(lua_State *L) {
-	const Common::String name = luaL_checkstring(L, 2);
-
-	bool isAcceptable = !name.empty() && !name.hasPrefix(" ") && !name.hasSuffix(" ") && !name.hasSuffix(".");
-	for (uint i = 0; i < name.size() && isAcceptable; ++i) {
-		isAcceptable = (byte)name[i] >= 32 && !strchr("\\/:*?\"<>|", name[i]);
-	}
-
-	lua_pushboolean(L, isAcceptable);
+	luaL_checkstring(L, 2);
+	lua_pushboolean(L, true);
 	return 1;
 }
 
