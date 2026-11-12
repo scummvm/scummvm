@@ -22,8 +22,6 @@
 #ifndef HARVESTER_PARSE_UTILS_H
 #define HARVESTER_PARSE_UTILS_H
 
-#include <climits>
-
 #include "common/str.h"
 #include "common/util.h"
 
