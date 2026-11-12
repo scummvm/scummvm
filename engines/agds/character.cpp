@@ -32,7 +32,6 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "graphics/managed_surface.h"
-#include <math.h>
 
 namespace AGDS {
 
