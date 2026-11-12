@@ -351,7 +351,7 @@ void CreateCharacter::selectClass(int charClass) {
 
 bool CreateCharacter::msgGame(const GameMessage &msg) {
 	if (_state == NAME && msg._name == "INPUT" && !msg._stringValue.empty()) {
-		strcpy_s(_G(savegame)._name, msg._stringValue.c_str());
+		Common::strcpy_s(_G(savegame)._name, msg._stringValue.c_str());
 
 		_nameInput.hide();
 		_state = SAVE;
