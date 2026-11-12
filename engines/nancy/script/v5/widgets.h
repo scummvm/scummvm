@@ -57,6 +57,7 @@ public:
 	bool pressRegion(int button) override;
 	void releaseRegion(int button) override;
 	bool getRegionCursor(uint &cursorType, bool &isHot) const override;
+	void onDie() override;
 
 	bool isMouseOver() const { return _isMouseOver; }
 	bool isDown() const { return _pressedButton >= 0; }
@@ -79,6 +80,7 @@ private:
 	void readCursorField(int valueIndex, Cursor &cursor);
 	void pushCursorField(const Cursor &cursor);
 	void fire();
+	void sendTooltip(bool isShown);
 
 	ScriptRect _onScreen;
 	Common::String _sceneName;
@@ -101,6 +103,11 @@ private:
 	bool _isMouseOver = false;
 	int _pressedButton = -1;	// 0 for the left one, 1 for the right one
 	WidgetRecord *_widget = nullptr;
+
+	// Nancy28. The autotext the record named by the manager shows while the
+	// mouse is over the hotspot
+	Common::String _tooltip;
+	Common::String _tooltipManager = "Tooltip";
 };
 
 // Nancy26: catches the player's input in a part of the screen, so whatever is

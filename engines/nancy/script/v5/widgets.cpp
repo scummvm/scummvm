@@ -34,6 +34,7 @@
 #include "engines/nancy/script/ref.h"
 #include "engines/nancy/script/scenecontext.h"
 
+#include "engines/nancy/script/v5/messaging.h"
 #include "engines/nancy/script/v5/scriptinput.h"
 #include "engines/nancy/script/v5/widgets.h"
 
@@ -101,6 +102,12 @@ void HotspotRecord::readTable(int tableIndex) {
 	readField(L, tableIndex, "stream", _streamName);
 	readField(L, tableIndex, "watchLeft", _watchesLeft);
 	readField(L, tableIndex, "watchRight", _watchesRight);
+	readField(L, tableIndex, "tooltip", _tooltip);
+
+	Common::String tooltipManager;
+	if (readField(L, tableIndex, "tooltipManager", tooltipManager) && !tooltipManager.empty()) {
+		_tooltipManager = tooltipManager;
+	}
 
 	static const char *const kCursorNames[] = { "cursor", "startCursor", "downCursor", "dragOnCursor", "dragOffCursor" };
 	Cursor *const cursors[] = { &_cursor, &_startCursor, &_downCursor, &_dragOnCursor, &_dragOffCursor };
@@ -162,9 +169,38 @@ void HotspotRecord::setMouseOver(bool isOver) {
 	}
 
 	_isMouseOver = isOver;
+	sendTooltip(isOver);
 	callFunction(isOver ? "OnMouseOver" : "OnMouseLeave");
 	if (_widget) {
 		_widget->onHotspotOver(isOver);
+	}
+}
+
+// Nancy28. A hotspot with a tooltip has its manager show it while the mouse is
+// over it: Receive(manager, sender, "Show", tooltip, onScreen, transform), and
+// Receive(manager, sender, "Hide") when the mouse leaves
+void HotspotRecord::sendTooltip(bool isShown) {
+	if (_tooltip.empty() || _tooltipManager.empty()) {
+		return;
+	}
+
+	lua_State *L = getLua();
+	const int top = lua_gettop(L);
+	if (isShown) {
+		lua_pushstring(L, _tooltip.c_str());
+		pushRect(L, _onScreen);
+		pushMatrix(L, getTransform());
+		sendMessage(L, getUniqueAlias(), _tooltipManager, "Show", top + 1, 3);
+	} else {
+		sendMessage(L, getUniqueAlias(), _tooltipManager, "Hide", top + 1, 0);
+	}
+
+	lua_settop(L, top);
+}
+
+void HotspotRecord::onDie() {
+	if (_isMouseOver) {
+		sendTooltip(false);
 	}
 }
 
@@ -275,6 +311,10 @@ bool HotspotRecord::getField(const Common::String &key) {
 		pushColor(L, _refColor);
 	} else if (key == "source") {
 		pushRect(L, _source);
+	} else if (key == "tooltip") {
+		lua_pushstring(L, _tooltip.c_str());
+	} else if (key == "tooltipManager") {
+		lua_pushstring(L, _tooltipManager.c_str());
 	} else {
 		return false;
 	}
@@ -316,6 +356,16 @@ bool HotspotRecord::setField(const Common::String &key) {
 		}
 	} else if (key == "source") {
 		_source = checkRect(L, 3);
+	} else if (key == "tooltip" || key == "tooltipManager") {
+		// A tooltip that is shown goes away, and the new one shows
+		if (_isMouseOver) {
+			sendTooltip(false);
+		}
+
+		(key == "tooltip" ? _tooltip : _tooltipManager) = luaL_checkstring(L, 3);
+		if (_isMouseOver) {
+			sendTooltip(true);
+		}
 	} else {
 		return false;
 	}
