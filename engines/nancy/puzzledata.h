@@ -744,7 +744,8 @@ struct ScriptSavedData : public PuzzleData {
 };
 
 // Nancy27. The results of the conditions of the Brain that are only worked out
-// again when the scripts ask for it
+// again when the scripts ask for it, and from Nancy28 on the flags of the Brain
+// the scripts set
 struct BrainData : public PuzzleData {
 	static constexpr uint32 getTag() { return MKTAG('B', 'R', 'N', 'S'); }
 	virtual void synchronize(Common::Serializer &ser);

@@ -23,6 +23,8 @@
 #define NANCY_SCRIPT_V5_BRAIN_H
 
 #include "common/array.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/str.h"
 
 #include "engines/nancy/enginedata.h"
@@ -37,35 +39,50 @@ class LuaState;
 // Nancy27. The conditions Brain_SC gives names to ("Hum_Ready_BR"), which
 // scripts read as booleans through the Brain global. Each one is a function
 // that keeps running in a Lua state of its own for the whole game. Those that
-// aren't updated automatically keep their last result, which is saved with
-// the game, until a script asks for it to be worked out again.
+// are cached keep their last result, which is saved with the game, until a
+// script asks for it to be worked out again.
+// Nancy28 adds writable ones, which have no function: they are flags the
+// scripts set with Brain.<name> = value, and are saved with the game as well.
 class BrainLogic : public EngineData {
 public:
 	BrainLogic();
 	~BrainLogic() override;
 
-	// Returns false when there is no condition of that name
-	bool getValue(const Common::String &name, bool &value);
-	bool isAutoUpdated(const Common::String &name) const;
+	bool exists(const Common::String &name) const { return findLogic(name) != nullptr; }
+	bool getValue(const Common::String &name);
+	bool isCached(const Common::String &name) const;
+	bool isWritable(const Common::String &name) const;
+	Common::String getDescription(const Common::String &name) const;
+
+	void setValue(const Common::String &name, bool value);
 	void update(const Common::String &name);
 	void overrideValue(const Common::String &name, bool value);
 
-	void getNames(Common::Array<Common::String> &names) const;
+	const Common::Array<Common::String> &getNames() const { return _names; }
 
 private:
 	struct Logic {
 		Common::String name;
-		bool isAutoUpdated = true;
-		int functionRef = 0;
+		Common::String description;	// Nancy28, what the designers wrote down about it
+		bool isWritable = false;
+		bool isCached = false;
+		int functionRef = 0;		// 0 for none
+		bool lastResult = false;		// what a function that fails gives
 	};
 
+	typedef Common::HashMap<Common::String, Logic, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LogicMap;
+
 	static int brainInitCreate(lua_State *L);
+	void readNancy27Entry(lua_State *L, int index);
+	void readNancy28Entry(lua_State *L, int index);
+	void addLogic(const Logic &logic);
 
 	const Logic *findLogic(const Common::String &name) const;
-	bool evaluate(const Logic &logic, bool &value);
+	bool evaluate(Logic &logic);
 
 	LuaState *_lua;
-	Common::Array<Logic> _logic;
+	LogicMap _logic;
+	Common::Array<Common::String> _names;	// in the order Brain_SC gives them
 	bool _isLoading = false;	// BrainInit:Create only works while Brain_SC runs
 };
 
