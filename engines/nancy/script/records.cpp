@@ -19,9 +19,12 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/memstream.h"
 #include "common/random.h"
 #include "common/textconsole.h"
+
+#include "engines/metaengine.h"
 
 #include "image/png.h"
 
@@ -1224,7 +1227,48 @@ bool OverrideRecord::setField(const Common::String &key) {
 // the saved game
 static const char *const kPictureTreeName = "LOADSAVE";
 
+// Nancy26: the "SaveFile" tree holds the pictures of the saved games, by their
+// names. They are the thumbnails of ScummVM's saved games, at the size the save
+// and load screens show them at.
+static const char *const kSaveFileTreeName = "SaveFile";
+static const int kSavePictureWidth = 184;
+static const int kSavePictureHeight = 124;
+
+static bool loadSavePicture(const Common::String &name, Graphics::ManagedSurface &image) {
+	const MetaEngine *metaEngine = g_nancy->getMetaEngine();
+	const Common::String target = ConfMan.getActiveDomainName();
+	const SaveStateList saves = metaEngine->listSaves(target.c_str());
+	for (const SaveStateDescriptor &save : saves) {
+		if (save.getSaveSlot() == metaEngine->getMaximumSaveSlot() || save.getSaveSlot() == g_nancy->getAutosaveSlot() ||
+				!save.getDescription().equalsIgnoreCase(name)) {
+			continue;
+		}
+
+		const SaveStateDescriptor info = metaEngine->querySaveMetaInfos(target.c_str(), save.getSaveSlot());
+		const Graphics::Surface *thumbnail = info.getThumbnail();
+		if (!thumbnail) {
+			return false;
+		}
+
+		Graphics::Surface *scaled = thumbnail->scale(kSavePictureWidth, kSavePictureHeight, true);
+		Graphics::Surface *converted = scaled->convertTo(g_nancy->_graphics->getInputPixelFormat(32));
+		GraphicsManager::copyToManaged(*converted, image);
+		converted->free();
+		delete converted;
+		scaled->free();
+		delete scaled;
+		return true;
+	}
+
+	warning("There is no saved game named %s", name.c_str());
+	return false;
+}
+
 bool loadTreeImage(const Common::String &name, const Common::String &treeName, Graphics::ManagedSurface &image) {
+	if (treeName.equalsIgnoreCase(kSaveFileTreeName)) {
+		return loadSavePicture(name, image);
+	}
+
 	if (!treeName.equalsIgnoreCase(kPictureTreeName)) {
 		return g_nancy->_resource->loadImage(Common::Path(name), image, treeName);
 	}
@@ -1257,7 +1301,7 @@ bool loadTreeImage(const Common::String &name, const Common::String &treeName, G
 // and hold on to the cached picture while they use it. Saved pictures aren't
 // cached: every record has its own.
 static bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image) {
-	if (treeName.equalsIgnoreCase(kPictureTreeName)) {
+	if (treeName.equalsIgnoreCase(kPictureTreeName) || treeName.equalsIgnoreCase(kSaveFileTreeName)) {
 		image.free();
 		cached.reset();
 		return loadTreeImage(name, treeName, image);
