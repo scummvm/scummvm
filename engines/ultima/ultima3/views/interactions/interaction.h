@@ -49,6 +49,14 @@ public:
 	}
 
 	/**
+	 * Returns true once the command has won the game, after which nothing
+	 * more happens in the world and it can't be saved
+	 */
+	virtual bool isEndgame() const {
+		return false;
+	}
+
+	/**
 	 * Handles a keypress
 	 * @returns		True once the command is finished
 	 */

@@ -49,6 +49,7 @@ private:
 	int _frames = 0;
 	int _step = 0;
 	int _targetX = 0, _targetY = 0;
+	bool _finalCard = false;
 
 	DirectionChooser _directions;
 	LogMenu _menu;
@@ -78,6 +79,10 @@ public:
 	 * @param slot		The party member holding the card
 	 */
 	void start(int slot);
+
+	bool isEndgame() const override {
+		return _stage >= SHATTER || (_stage == FLASH && _finalCard);
+	}
 
 	bool keypress(const KeypressMessage &msg) override;
 	bool timeout() override;

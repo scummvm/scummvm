@@ -159,6 +159,13 @@ public:
 	Game(const Common::String &name) : View(name) {}
 	~Game() override {}
 
+	/**
+	 * Returns true once the game has been won, and what's left is the ending
+	 */
+	bool isEndgame() const {
+		return _interaction && _interaction->isEndgame();
+	}
+
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;

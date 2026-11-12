@@ -123,7 +123,8 @@ void Game::timeout() {
 	updateMusic();
 	_G(shapes).animate();
 	_G(effects).tick();
-	updateWind();
+	if (!isEndgame())
+		updateWind();
 	_G(overview).tick();
 	processFrame();
 
