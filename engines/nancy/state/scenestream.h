@@ -276,6 +276,13 @@ public:
 #endif
 
 #ifdef ENABLE_NANCY_V4
+	// While the script of a new scene runs for the first time, the time and
+	// frame of its stream are already the new scene's. The scripts count on
+	// that: Nancy28's area tags keep the time of the stream when they are made,
+	// and get dropped when the stream's time is lower than that.
+	void beginSceneLoad(const Script::SceneContext *scene) { _loadingScenes.push_back(scene); }
+	void endSceneLoad() { _loadingScenes.pop_back(); }
+
 	// Nancy21: what the scripts move and scale everything in a stream with; null
 	// when there is no such stream. Only the scaling and the offset get drawn.
 	const Script::ScriptMatrix *getTransform(const Common::String &name);
@@ -310,6 +317,7 @@ private:
 #ifdef ENABLE_NANCY_V4
 	const Script::SceneContext *findScriptScene(const Common::String &name) const;
 
+	Common::Array<const Script::SceneContext *> _loadingScenes;
 	Script::ScriptMatrix _mainStreamTransform;
 #endif
 #ifdef ENABLE_NANCY_V5

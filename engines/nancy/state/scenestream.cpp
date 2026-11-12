@@ -177,7 +177,11 @@ byte SceneStream::getEventFlag(int16 index) const {
 // Nancy19 scenes are Lua scripts, which make their own records
 bool SceneStream::loadScriptedScene() {
 	Script::SceneContext *scriptScene = new Script::SceneContext(_name, _nextSceneName, _nextFrameID, _zOffset);
-	if (!scriptScene->load()) {
+	NancySceneState.getStreams().beginSceneLoad(scriptScene);
+	const bool isLoaded = scriptScene->load();
+	NancySceneState.getStreams().endSceneLoad();
+
+	if (!isLoaded) {
 		warning("Stream %s: could not load scene %s", _name.c_str(), _nextSceneName.c_str());
 		delete scriptScene;
 		return false;
@@ -614,6 +618,12 @@ Common::String SceneStreamManager::getSceneName(const Common::String &name) cons
 
 #ifdef ENABLE_NANCY_V4
 const Script::SceneContext *SceneStreamManager::findScriptScene(const Common::String &name) const {
+	for (uint i = _loadingScenes.size(); i > 0; --i) {
+		if (!name.empty() && name.equalsIgnoreCase(_loadingScenes[i - 1]->getStreamName())) {
+			return _loadingScenes[i - 1];
+		}
+	}
+
 	if (name.equalsIgnoreCase(getMainStreamName())) {
 		return NancySceneState.getScriptScene();
 	}

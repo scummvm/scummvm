@@ -2331,7 +2331,11 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 		Common::String::format("s%u", _sceneState.nextScene.sceneID) : _nextScriptSceneName;
 
 	Script::SceneContext *scriptScene = new Script::SceneContext(SceneStreamManager::getMainStreamName(), sceneName, _sceneState.nextScene.frameID, 0);
-	if (!scriptScene->load()) {
+	_streams.beginSceneLoad(scriptScene);
+	const bool isLoaded = scriptScene->load();
+	_streams.endSceneLoad();
+
+	if (!isLoaded) {
 		// A scene that can't be loaded leaves the player where they are
 		warning("Failed to load scene %s", sceneName.c_str());
 		delete scriptScene;
