@@ -121,6 +121,10 @@ public:
 private:
 	friend class BinkCacheLoader;
 
+	// How far ahead decodeNextFrame() decodes to a frame instead of seeking: a
+	// second of a 15 frames per second movie
+	static const int kMaxFramesDecodedAhead = 15;
+
 	static byte resolvePlaytype(byte videoPlaytype);	// resolves kVideoPlaytypeAuto
 
 	void storeCurrentFrame();
