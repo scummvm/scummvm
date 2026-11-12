@@ -32,9 +32,9 @@ class MainModelComponent : public ModelComponent {
 public:
 	MainModelComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~MainModelComponent();
-	void init();
-	void setColormap(CMap *cmap);
-	void reset();
+	void init() override;
+	void setColormap(CMap *cmap) override;
+	void reset() override;
 
 private:
 	bool _hierShared;
