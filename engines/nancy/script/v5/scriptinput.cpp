@@ -87,6 +87,20 @@ static bool isFrontmost(const Record *a, const Record *b) {
 	return a->getZ() > b->getZ();
 }
 
+// Sorts the records, keeping equal ones in the order they were added
+static void sortStable(Common::Array<Record *> &records, bool (*isBefore)(const Record *, const Record *)) {
+	for (uint i = 1; i < records.size(); ++i) {
+		Record *record = records[i];
+		uint j = i;
+		while (j > 0 && isBefore(record, records[j - 1])) {
+			records[j] = records[j - 1];
+			--j;
+		}
+
+		records[j] = record;
+	}
+}
+
 // The enabled records of every stream that gets input, the frontmost first
 static void collectRecords(Common::Array<Record *> &records) {
 	records.clear();
@@ -116,7 +130,7 @@ static void collectRecords(Common::Array<Record *> &records) {
 				}
 			}
 
-			Common::sort(streamRecords.begin(), streamRecords.end(), isFrontmost);
+			sortStable(streamRecords, isFrontmost);
 			for (Record *record : streamRecords) {
 				records.push_back(record);
 			}
@@ -333,7 +347,7 @@ static bool isMoveKey(Common::KeyCode key) {
 // the mouse goes by
 static void sendKey(const Common::Array<Record *> &records, Common::KeyCode key, bool isDown, uint16 ascii) {
 	Common::Array<Record *> keyOrder = records;
-	Common::sort(keyOrder.begin(), keyOrder.end(), isKeyFrontmost);
+	sortStable(keyOrder, isKeyFrontmost);
 
 	for (Record *record : keyOrder) {
 		if (record->capturesKeys() || (isDown && record->handleKey(key, ascii))) {
