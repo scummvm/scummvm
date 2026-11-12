@@ -142,7 +142,7 @@ public:
 private:
 	struct Volume {
 		Common::Path path;
-		Common::ScopedPtr<Common::File> file;
+		Common::SharedPtr<Common::File> file;
 		uint32 size = 0;
 	};
 
