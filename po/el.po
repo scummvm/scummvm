@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-11 00:15+0000\n"
+"POT-Creation-Date: 2026-11-12 05:17+0000\n"
 "PO-Revision-Date: 2026-04-23 00:22+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4121,7 +4121,7 @@ msgstr "Αρχικές αντιστοιχίσεις πλήκτρων παιχν�
 #: engines/kyra/engine/lol.cpp:505 engines/lure/metaengine.cpp:177
 #: engines/made/metaengine.cpp:141 engines/mads/metaengine.cpp:270
 #: engines/mm/metaengine.cpp:186 engines/mtropolis/metaengine.cpp:161
-#: engines/nancy/input.cpp:191 engines/parallaction/metaengine.cpp:138
+#: engines/nancy/input.cpp:221 engines/parallaction/metaengine.cpp:138
 #: engines/saga/metaengine.cpp:278 engines/sludge/keymapper_tables.h:564
 #: engines/sludge/keymapper_tables.h:583 engines/stark/metaengine.cpp:189
 #: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
@@ -4155,7 +4155,7 @@ msgstr "Μεσαίο κλικ"
 #: engines/kyra/engine/eobcommon.cpp:378 engines/kyra/engine/lol.cpp:506
 #: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:148
 #: engines/mads/metaengine.cpp:276 engines/mm/metaengine.cpp:192
-#: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:198
+#: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:228
 #: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
 #: engines/sludge/keymapper_tables.h:570 engines/sludge/keymapper_tables.h:589
 #: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
@@ -6698,7 +6698,7 @@ msgstr "Παράκαμψη ταινίας"
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/harvester/metaengine.cpp:89
 #: engines/hdb/metaengine.cpp:213 engines/hypno/metaengine.cpp:363
-#: engines/hypno/metaengine.cpp:411 engines/nancy/input.cpp:205
+#: engines/hypno/metaengine.cpp:411 engines/nancy/input.cpp:235
 #: engines/tinsel/metaengine.cpp:263 engines/titanic/metaengine.cpp:324
 #: engines/ultima/ultima8/metaengine.cpp:52
 msgid "Move up"
@@ -6709,7 +6709,7 @@ msgstr "Κίνηση πάνω"
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/harvester/metaengine.cpp:90
 #: engines/hdb/metaengine.cpp:219 engines/hypno/metaengine.cpp:351
-#: engines/hypno/metaengine.cpp:399 engines/nancy/input.cpp:211
+#: engines/hypno/metaengine.cpp:399 engines/nancy/input.cpp:241
 #: engines/tinsel/metaengine.cpp:269 engines/titanic/metaengine.cpp:330
 #: engines/ultima/ultima8/metaengine.cpp:53
 msgid "Move down"
@@ -6722,7 +6722,7 @@ msgstr "Κίνηση κάτω"
 #: engines/efh/metaengine.cpp:300 engines/harvester/metaengine.cpp:87
 #: engines/hdb/metaengine.cpp:225 engines/hypno/metaengine.cpp:345
 #: engines/hypno/metaengine.cpp:393 engines/kyra/engine/eobcommon.cpp:381
-#: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:217
+#: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:247
 #: engines/tinsel/metaengine.cpp:275 engines/titanic/metaengine.cpp:312
 #: engines/titanic/metaengine.cpp:390 engines/ultima/ultima8/metaengine.cpp:54
 msgid "Move left"
@@ -6735,7 +6735,7 @@ msgstr "Κίνηση αριστερά"
 #: engines/efh/metaengine.cpp:307 engines/harvester/metaengine.cpp:88
 #: engines/hdb/metaengine.cpp:231 engines/hypno/metaengine.cpp:357
 #: engines/hypno/metaengine.cpp:405 engines/kyra/engine/eobcommon.cpp:382
-#: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:223
+#: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:253
 #: engines/tinsel/metaengine.cpp:281 engines/titanic/metaengine.cpp:318
 #: engines/titanic/metaengine.cpp:396 engines/ultima/ultima8/metaengine.cpp:55
 msgid "Move right"
@@ -8319,7 +8319,7 @@ msgstr ""
 "την επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:1275 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1280 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -8998,7 +8998,7 @@ msgstr "Εναλλαγή ταχύτητας βαδίσματος"
 
 #: engines/draci/metaengine.cpp:243 engines/hopkins/metaengine.cpp:327
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:235
+#: engines/nancy/input.cpp:265
 msgid "Open main menu"
 msgstr "Άνοιγμα κεντρικού μενού"
 
@@ -12843,19 +12843,19 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση"
 
-#: engines/nancy/input.cpp:188
+#: engines/nancy/input.cpp:218
 msgid "Nancy Drew"
 msgstr "Nancy Drew"
 
-#: engines/nancy/input.cpp:229
+#: engines/nancy/input.cpp:259
 msgid "Fast move modifier"
 msgstr "Ρύθμιση γρήγορης κίνησης"
 
-#: engines/nancy/input.cpp:244
+#: engines/nancy/input.cpp:274
 msgid "Nancy Drew - Maze"
 msgstr "Nancy Drew - Λαβύρινθος"
 
-#: engines/nancy/input.cpp:246
+#: engines/nancy/input.cpp:276
 msgid "Show / hide maze map"
 msgstr "Προβολή / απόκρυψη χάρτη λαβυρίνθου"
 
