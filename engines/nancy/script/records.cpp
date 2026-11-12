@@ -296,6 +296,9 @@ static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image
 	out.clear(0);
 	graphic.setTransparent(false);
 
+	// A picture with an alpha channel uses only that for transparency, like
+	// when it is shown unchanged. The color key is black from Nancy16 on, and
+	// pictures such as Nancy28's task checkboxes are drawn in black.
 	byte transR, transG, transB;
 	image.format.colorToRGB(g_nancy->_graphics->getTransColor(), transR, transG, transB);
 	const bool hasAlpha = image.format.aBits() != 0;
@@ -347,7 +350,7 @@ static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image
 
 			const uint32 pixel = image.getPixel(source.left + sourceX, source.top + sourceY);
 			if (isCopied) {
-				if ((pixel & colorMask) != transColor) {
+				if (hasAlpha || (pixel & colorMask) != transColor) {
 					outRow[x] = pixel;
 				}
 
@@ -356,7 +359,7 @@ static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image
 
 			byte alpha, red, green, blue;
 			image.format.colorToARGB(pixel, alpha, red, green, blue);
-			if (red == transR && green == transG && blue == transB) {
+			if (!hasAlpha && red == transR && green == transG && blue == transB) {
 				continue;
 			}
 
@@ -387,14 +390,12 @@ static void blendPicture(Graphics::ManagedSurface &target, const RecordGraphic &
 		for (int x = MAX<int>(0, -area.left); x < image.w && area.left + x < target.w; ++x) {
 			byte alpha, red, green, blue;
 			image.format.colorToARGB(image.getPixel(x, y), alpha, red, green, blue);
-			if (isKeyed) {
+			if (isKeyed && !hasAlpha) {
 				if (red == transR && green == transG && blue == transB) {
 					continue;
 				}
 
-				if (!hasAlpha) {
-					alpha = 0xFF;
-				}
+				alpha = 0xFF;
 			}
 
 			if (alpha == 0) {
