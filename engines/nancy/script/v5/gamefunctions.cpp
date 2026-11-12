@@ -28,6 +28,9 @@
 
 #include "audio/mixer.h"
 
+#include "engines/achievements.h"
+#include "engines/metaengine.h"
+
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
@@ -802,6 +805,86 @@ static int messageSend(lua_State *L) {
 	return sendMessage(L, "", recipient, action, 4, MAX(0, lua_gettop(L) - 3));
 }
 
+// Achievements, Nancy28: the achievements of the Steam release, which are
+// kept by ScummVM's achievements manager. Achievements.<id> is whether it is
+// unlocked.
+
+static const char *const kAchievementsType = "ND.Achievements";
+
+static bool isAchievementKnown(const Common::String &id) {
+	for (const Common::String &known : getGameState().achievementIds) {
+		if (known == id) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Achievements:InitIDs({ id, ... }) gives the achievements there are, once
+static int achievementsInitIDs(lua_State *L) {
+	luaL_checktype(L, 2, LUA_TTABLE);
+	ScriptGameState &state = getGameState();
+	if (state.hasAchievementIds) {
+		return luaL_error(L, "Achievements are already loaded");
+	}
+
+	state.hasAchievementIds = true;
+	const int numIds = (int)lua_objlen(L, 2);
+	for (int i = 1; i <= numIds; ++i) {
+		lua_rawgeti(L, 2, i);
+		state.achievementIds.push_back(luaL_checkstring(L, -1));
+		lua_pop(L, 1);
+	}
+
+	AchMan.setActiveDomain(g_engine->getMetaEngine()->getAchievementsInfo(ConfMan.getActiveDomainName()));
+	return 0;
+}
+
+static int achievementsGetIDs(lua_State *L) {
+	const Common::Array<Common::String> &ids = getGameState().achievementIds;
+	lua_createtable(L, ids.size(), 0);
+	for (uint i = 0; i < ids.size(); ++i) {
+		lua_pushstring(L, ids[i].c_str());
+		lua_rawseti(L, -2, i + 1);
+	}
+
+	return 1;
+}
+
+// Achievements:Unlock(id) does nothing for an achievement InitIDs didn't give
+static int achievementsUnlock(lua_State *L) {
+	const Common::String id = luaL_checkstring(L, 2);
+	if (isAchievementKnown(id) && AchMan.isReady()) {
+		AchMan.setAchievement(id);
+	}
+
+	return 0;
+}
+
+// Achievements:ClearAll(), for the cheat menu
+static int achievementsClearAll(lua_State *L) {
+	if (AchMan.isReady()) {
+		for (const Common::String &id : getGameState().achievementIds) {
+			AchMan.clearAchievement(id);
+		}
+	}
+
+	return 0;
+}
+
+static int achievementsIndex(lua_State *L) {
+	const Common::String key = luaL_checkstring(L, 2);
+	indexFunctions(L);
+	if (!lua_isnil(L, -1)) {
+		return 1;
+	}
+
+	lua_pop(L, 1);
+	lua_pushboolean(L, isAchievementKnown(key) && AchMan.isReady() && AchMan.isAchieved(key));
+	return 1;
+}
+
 void registerNancy26GameAPI(lua_State *L) {
 	replaceFunction(L, "ND.Flags", "__index", flagsIndex);
 	replaceFunction(L, "ND.VarTable", "__index", varTableIndex);
@@ -859,6 +942,17 @@ void registerNancy26GameAPI(lua_State *L) {
 
 		addFunctions(L, "ND.Message", kMessageFunctions);
 	}
+
+	static const luaL_Reg kAchievementsFunctions[] = {
+		{ "__index", achievementsIndex },
+		{ "InitIDs", achievementsInitIDs },
+		{ "GetIDs", achievementsGetIDs },
+		{ "Unlock", achievementsUnlock },
+		{ "ClearAll", achievementsClearAll },
+		{ nullptr, nullptr }
+	};
+
+	registerGlobal(L, "Achievements", kAchievementsType, kAchievementsFunctions);
 
 	registerBrainAPI(L);
 }

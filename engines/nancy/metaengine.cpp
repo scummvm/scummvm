@@ -133,6 +133,9 @@ public:
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
+	Common::AchievementsPlatform getAchievementsPlatform(const Common::String &target) const override;
+	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
+
 	Nancy::GameType getGameType(const char *gameId) const;
 };
 
@@ -238,6 +241,20 @@ void NancyMetaEngine::registerDefaultSettings(const Common::String &target) cons
 	ConfMan.registerDefault("character_speech", true);
 	ConfMan.registerDefault("nancy_max_saves", 999);
 	ConfMan.registerDefault("originalsaveload", true);
+}
+
+// Nancy28 has the achievements of its Steam release, the only one there is
+Common::AchievementsPlatform NancyMetaEngine::getAchievementsPlatform(const Common::String &target) const {
+	return Common::STEAM_ACHIEVEMENTS;
+}
+
+const Common::AchievementDescriptionList *NancyMetaEngine::getAchievementDescriptionList() const {
+	static const Common::AchievementDescriptionList achievementDescriptionList[] = {
+		{ "nancy28", Common::STEAM_ACHIEVEMENTS, "226820" },
+		ACHIEVEMENT_DESC_TABLE_END_MARKER
+	};
+
+	return achievementDescriptionList;
 }
 
 const ADExtraGuiOptionsMap *NancyMetaEngine::getAdvancedExtraGuiOptions() const {

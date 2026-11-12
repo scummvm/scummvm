@@ -56,6 +56,11 @@ struct ScriptGameState : public EngineData {
 	Common::Array<Common::String> scriptNames;
 	Common::Array<Common::String> filteredScriptNames;
 	uint closestFilteredMatch = 0;
+
+	// Nancy28. The achievements the game knows of, which Achievements:InitIDs()
+	// gives once
+	Common::Array<Common::String> achievementIds;
+	bool hasAchievementIds = false;
 };
 
 // What Nancy26 adds to the objects of the earlier games: the saved games and
