@@ -159,6 +159,11 @@ void Skeleton::animate() {
 			if (remainingRotWeight <= 0.0f && remainingTransWeight <= 0.0f)
 				break;
 		}
+
+		if (remainingTransWeight > 0.0f && (remainingRotWeight < 1.0f || remainingTransWeight < 1.0f)) {
+			Math::Vector3d pos = _joints[i]._animMatrix.getPosition();
+			_joints[i]._animMatrix.setPosition(pos - _joints[i]._relMatrix.getPosition() * remainingTransWeight);
+		}
 	}
 
 	commitAnim();
