@@ -1244,6 +1244,8 @@ bool loadTreeImage(const Common::String &name, const Common::String &treeName, G
 // cached: every record has its own.
 static bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image) {
 	if (treeName.equalsIgnoreCase(kPictureTreeName)) {
+		image.free();
+		cached.reset();
 		return loadTreeImage(name, treeName, image);
 	}
 
@@ -1272,6 +1274,9 @@ void OverlayRecord::readTable(int tableIndex) {
 	if (!loadCachedImage(imageName, treeName, _cachedImage, _image)) {
 		luaL_error(L, "Could not load overlay %s", imageName.c_str());
 	}
+
+	_imageName = imageName;
+	_treeName = treeName;
 
 	// Both default to the whole image
 	_source = ScriptRect(0, 0, _image.w, _image.h);
@@ -1537,6 +1542,10 @@ bool OverlayRecord::getField(const Common::String &key) {
 		pushRect(L, _source);
 	} else if (key == "modColor") {
 		pushColor(L, _modColor);
+	} else if (key == "ovl") {
+		lua_pushstring(L, _imageName.c_str());
+	} else if (key == "tree") {
+		lua_pushstring(L, _treeName.c_str());
 	} else {
 		return false;
 	}
@@ -1544,11 +1553,38 @@ bool OverlayRecord::getField(const Common::String &key) {
 	return true;
 }
 
+// The scripts change the picture by its name, after naming the tree it is in:
+// the save and load screens show the pictures of the saved games this way. The
+// part of it that shows stays as it was.
+bool OverlayRecord::setPicture(const Common::String &imageName) {
+	Common::SharedPtr<Graphics::ManagedSurface> cached;
+	Graphics::ManagedSurface image;
+	if (!loadCachedImage(imageName, _treeName, cached, image)) {
+		warning("Could not load overlay %s", imageName.c_str());
+		return false;
+	}
+
+	_image = Common::move(image);
+	_cachedImage = cached;
+	_imageName = imageName;
+	return true;
+}
+
 bool OverlayRecord::setField(const Common::String &key) {
 	lua_State *L = getLua();
 
+	if (key == "tree") {
+		_treeName = lua_isnil(L, 3) ? Common::String() : Common::String(luaL_checkstring(L, 3));
+		return true;
+	}
+
 	// Only a change gets the picture drawn anew
-	if (key == "onScreen") {
+	if (key == "ovl") {
+		const Common::String imageName = luaL_checkstring(L, 3);
+		if (!setPicture(imageName)) {
+			return true;
+		}
+	} else if (key == "onScreen") {
 		if (lua_istable(L, 3) || _hasDestTable) {
 			readDest(3);
 		} else {

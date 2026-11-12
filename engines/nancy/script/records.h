@@ -289,9 +289,12 @@ private:
 	void readDest(int index);
 	void readDestTable(Common::Array<ScriptRect> &dests);
 	void applyRects();
+	bool setPicture(const Common::String &imageName);
 
 	Common::SharedPtr<Graphics::ManagedSurface> _cachedImage;	// kept while the record uses it
 	Graphics::ManagedSurface _image;	// the cached picture, or a saved one
+	Common::String _imageName;
+	Common::String _treeName;
 	ScriptRect _source;
 	ScriptRect _dest;
 	bool _hasDestTable = false;					// Nancy24: onScreen is a table of rects
