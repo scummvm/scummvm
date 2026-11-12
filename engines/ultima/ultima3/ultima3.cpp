@@ -149,9 +149,11 @@ bool Ultima3Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// Anything but the title sequence, which isn't a state worth keeping
 	UIElement *view = focusedView();
 
-	return (dynamic_cast<Views::Game *>(view) != nullptr &&
-		dynamic_cast<Views::CombatMap *>(view) == nullptr) ||
-		dynamic_cast<Views::WindowView *>(view) != nullptr;
+	Views::Game *game = dynamic_cast<Views::Game *>(view);
+	if (game)
+		return dynamic_cast<Views::CombatMap *>(view) == nullptr && !game->isEndgame();
+
+	return dynamic_cast<Views::WindowView *>(view) != nullptr;
 }
 
 bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
