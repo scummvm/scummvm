@@ -31,7 +31,7 @@ namespace Data {
 
 constexpr int ROSTER_COUNT = 20;
 constexpr int PARTY_MAX = 4;
-constexpr int NAME_MAX = 9;
+constexpr int PARTY_NAME_MAX = 9;
 
 constexpr byte IN_PARTY = 0xFF;
 constexpr byte STATUS_GOOD = 'G';
@@ -64,7 +64,7 @@ inline int fromBcdWord(uint16 value) {
  * original, so the same digits are shown when they're printed as hex.
  */
 struct RosterEntry {
-	char _name[NAME_MAX + 1] = {};
+	char _name[PARTY_NAME_MAX + 1] = {};
 	byte _marksAndCards = 0;
 	byte _torches = 0;
 	byte _partyMember = 0;

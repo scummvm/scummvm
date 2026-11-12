@@ -42,7 +42,7 @@ static const char *const YES_NO_WORDS[2] = { "Yes", "No" };
 
 CreateCharacter::CreateCharacter() : WindowView("CreateCharacter") {
 	_entry.setup(22, 18);
-	_name.setup(Data::NAME_MAX, FIELD_COL, 13);
+	_name.setup(Data::PARTY_NAME_MAX, FIELD_COL, 13);
 	_sex.setup(Data::SEX_KEYS, Data::SEX_NAMES, Data::SEX_COUNT, FIELD_COL, 14);
 	_race.setup(Data::RACE_KEYS, Data::RACE_NAMES, Data::RACE_COUNT, FIELD_COL, 15);
 	_class.setup(Data::CLASS_KEYS, Data::CLASS_NAMES, Data::CLASS_COUNT, FIELD_COL, 16);
