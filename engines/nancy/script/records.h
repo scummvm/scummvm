@@ -80,6 +80,10 @@ public:
 	// The highest z order of what the records draw
 	static const int kMaxScriptZOrder = 59000;
 
+	// Where the records can draw: the viewport, and from Nancy26 on the whole
+	// screen
+	static Common::Rect getDrawArea();
+
 protected:
 	// Nancy26 has the viewport at the top left of the screen, and lets records
 	// draw on all of it, the UI along the bottom included

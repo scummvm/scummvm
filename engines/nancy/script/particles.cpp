@@ -1096,10 +1096,7 @@ void ParticleRecord::updateGraphics() {
 	}
 
 	if (!_canvas) {
-		const VIEW *viewport = GetEngineData(VIEW);
-		assert(viewport);
-
-		const Common::Rect bounds(viewport->screenPosition.width(), viewport->screenPosition.height());
+		const Common::Rect bounds = RecordGraphic::getDrawArea();
 
 		_canvas = new RecordGraphic();
 		_canvas->init();

@@ -208,6 +208,16 @@ bool RecordGraphic::isViewportRelative() const {
 	return g_nancy->getGameType() < kGameTypeNancy26;
 }
 
+Common::Rect RecordGraphic::getDrawArea() {
+	if (g_nancy->getGameType() >= kGameTypeNancy26) {
+		return g_nancy->_graphics->getScreenBounds();
+	}
+
+	const VIEW *viewport = GetEngineData(VIEW);
+	assert(viewport);
+	return Common::Rect(viewport->screenPosition.width(), viewport->screenPosition.height());
+}
+
 void RecordGraphic::setScriptZ(double z, const SceneContext &context) {
 	setZOrder(getScriptZOrder(z, context.getZOffset()));
 	setViewTransform(context.getViewTransform());
@@ -280,10 +290,7 @@ static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image
 
 	// Nothing shows outside the viewport, so only the part inside it gets drawn.
 	// The map of Nancy25 is far larger than the viewport when zoomed in.
-	const VIEW *viewport = GetEngineData(VIEW);
-	assert(viewport);
-
-	area.clip(Common::Rect(viewport->screenPosition.width(), viewport->screenPosition.height()));
+	area.clip(RecordGraphic::getDrawArea());
 	const bool isOnScreen = !area.isEmpty();
 	if (!isOnScreen) {
 		area = Common::Rect(1, 1);
@@ -1123,10 +1130,7 @@ void OverrideRecord::updateGraphics() {
 	}
 
 	if (!_canvas) {
-		const VIEW *viewport = GetEngineData(VIEW);
-		assert(viewport);
-
-		const Common::Rect bounds(viewport->screenPosition.width(), viewport->screenPosition.height());
+		const Common::Rect bounds = RecordGraphic::getDrawArea();
 
 		_canvas = new RecordGraphic();
 		_canvas->init();
