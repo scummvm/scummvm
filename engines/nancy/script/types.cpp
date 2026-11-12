@@ -109,22 +109,64 @@ static void checkPlaceArguments(lua_State *L, int index, double &x, double &y) {
 	luaL_argerror(L, index, "Single parameter must be a Point or a table with x and y fields");
 }
 
-static int rectNew(lua_State *L) {
+static PointValue &checkPoint(lua_State *L, int index);
+
+// Halves go away from zero
+static double roundCoordinate(float value) {
+	return value > 0.0f ? floor(value + 0.5) : ceil(value - 0.5);
+}
+
+// Rect:LTRB(left, top, right, bottom), and in Nancy28
+// Rect:LTRB(leftTop, rightBottom) with two points, rounded to whole pixels
+static int rectNewLTRB(lua_State *L) {
 	ScriptRect rect;
-	rect.left = luaL_checkint(L, 2);
-	rect.top = luaL_checkint(L, 3);
-	rect.right = luaL_checkint(L, 4);
-	rect.bottom = luaL_checkint(L, 5);
+	if (lua_gettop(L) == 3) {
+		const PointValue &leftTop = checkPoint(L, 2);
+		const PointValue &rightBottom = checkPoint(L, 3);
+		rect.left = (int32)roundCoordinate(leftTop.x);
+		rect.top = (int32)roundCoordinate(leftTop.y);
+		rect.right = (int32)roundCoordinate(rightBottom.x);
+		rect.bottom = (int32)roundCoordinate(rightBottom.y);
+	} else {
+		rect.left = luaL_checkint(L, 2);
+		rect.top = luaL_checkint(L, 3);
+		rect.right = luaL_checkint(L, 4);
+		rect.bottom = luaL_checkint(L, 5);
+	}
+
 	pushRect(L, rect);
 	return 1;
 }
 
+// Rect:New(left, top, right, bottom), and from Nancy27 on Rect:New(rect),
+// which copies it
+static int rectNew(lua_State *L) {
+	if (lua_gettop(L) == 2) {
+		pushRect(L, checkRect(L, 2));
+		return 1;
+	}
+
+	return rectNewLTRB(L);
+}
+
+// Rect:LTWH(left, top, width, height), and in Nancy28
+// Rect:LTWH(leftTop, size) with two points
 static int rectNewLTWH(lua_State *L) {
 	ScriptRect rect;
-	rect.left = luaL_checkint(L, 2);
-	rect.top = luaL_checkint(L, 3);
-	rect.right = rect.left + luaL_checkint(L, 4);
-	rect.bottom = rect.top + luaL_checkint(L, 5);
+	if (lua_gettop(L) == 3) {
+		const PointValue &leftTop = checkPoint(L, 2);
+		const PointValue &size = checkPoint(L, 3);
+		rect.left = (int32)roundCoordinate(leftTop.x);
+		rect.top = (int32)roundCoordinate(leftTop.y);
+		rect.right = (int32)roundCoordinate(leftTop.x + size.x);
+		rect.bottom = (int32)roundCoordinate(leftTop.y + size.y);
+	} else {
+		rect.left = luaL_checkint(L, 2);
+		rect.top = luaL_checkint(L, 3);
+		rect.right = rect.left + luaL_checkint(L, 4);
+		rect.bottom = rect.top + luaL_checkint(L, 5);
+	}
+
 	pushRect(L, rect);
 	return 1;
 }
@@ -350,7 +392,7 @@ static const luaL_Reg kRectFunctions[] = {
 static const luaL_Reg kRectHelperFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "New", rectNew },
-	{ "LTRB", rectNew },
+	{ "LTRB", rectNewLTRB },
 	{ "LTWH", rectNewLTWH },
 	{ nullptr, nullptr }
 };
@@ -536,11 +578,6 @@ static int pointDivide(lua_State *L) {
 	checkPointFactor(L, 2, bx, by);
 	pushPointValue(L, PointValue(ax / bx, ay / by));
 	return 1;
-}
-
-// Halves go away from zero
-static double roundCoordinate(float value) {
-	return value > 0.0f ? floor(value + 0.5) : ceil(value - 0.5);
 }
 
 // Point:Rounded() and Point:Floored(), Nancy27
