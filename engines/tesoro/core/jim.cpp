@@ -234,6 +234,13 @@ void Jim::updateBounds(int32 now) {
 	_hitRect.y2 = (_hitRect.y2 * scale) >> 8;
 }
 
+int Jim::showHoverText() {
+	char name[13];
+	nameFromKey(_nameKey, name);
+	_world.setHoverText(name);
+	return 1;
+}
+
 void Jim::draw(const Camera &camera, Display &display) {
 	AnimPlayer &player = _anim.current();
 	const AnimStep &seq = player.bank()->step(player.current());
@@ -249,5 +256,8 @@ void Jim::draw(const Camera &camera, Display &display) {
 bool Jim::findPath(int32 destX, int32 destY, WalkTarget *target) { return _world.findPath(destX, destY, target); }
 void Jim::removeFromMainList() { _world.removeFromMainList(this); }
 void Jim::tickAnimation() { _anim.tickClearMovement(_world.now()); }
-
+int Jim::clearHoverText() {
+	_world.setHoverText(nullptr);
+	return 1;
+}
 } // End of namespace Tesoro

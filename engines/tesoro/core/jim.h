@@ -63,8 +63,12 @@ public:
 
 	int32 scale() const { return _scale; }
 
-	/** For now only keeps his size up to date. Returns 1 to go on. */
 	int update() override;
+
+	bool acceptsPointer() override { return true; }
+	int showHoverText() override;
+	int clearHoverText() override;
+
 	void updateAnimation(int32 now) override { _anim.tickClearMovement(now); }
 	void updateBounds(int32 now) override;
 	void draw(const Camera &camera, Display &display) override;
