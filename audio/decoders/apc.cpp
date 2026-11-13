@@ -75,15 +75,18 @@ APCStreamImpl::APCStreamImpl(uint32 sampleRate, byte stereo) :
 bool APCStreamImpl::init(Common::SeekableReadStream &header) {
 	// Header size
 	if (header.size() < 32) {
+		warning("Bad header size");
 		return false;
 	}
 
 	// Read magic and version at once
 	byte magicVersion[12];
 	if (header.read(magicVersion, sizeof(magicVersion)) != sizeof(magicVersion)) {
+		warning("Bad magic read");
 		return false;
 	}
 	if (memcmp(magicVersion, "CRYO_APC1.20", sizeof(magicVersion))) {
+		warning("Bad magic version");
 		return false;
 	}
 
