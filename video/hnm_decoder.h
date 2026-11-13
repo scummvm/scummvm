@@ -75,15 +75,12 @@ private:
 		int getFrameCount() const override { return _frameCount; }
 		uint32 getNextFrameStartTime() const override { return _nextFrameStartTime.msecs(); }
 
-		void restart() { _lastFrameDelaySamps = 0; }
-
-		virtual void newFrame(uint32 frameDelay) = 0;
+		void newFrame(uint32 frameDelay);
 		virtual void decodeChunk(byte *data, uint32 size,
 		                         uint16 chunkType, uint16 flags) = 0;
 
 	protected:
 		uint32 _regularFrameDelayMs;
-		uint32 _lastFrameDelaySamps;
 		Audio::Timestamp _nextFrameStartTime;
 
 		uint32 _frameCount;
@@ -99,8 +96,6 @@ private:
 		const Graphics::Surface *decodeNextFrame() override { return &_surface; }
 		const byte *getPalette() const override { _dirtyPalette = false; return _palette.data(); }
 		bool hasDirtyPalette() const override { return _dirtyPalette; }
-
-		void newFrame(uint32 frameDelay) override;
 
 	protected:
 		HNM45VideoTrack(uint32 width, uint32 height, uint32 frameSize, uint32 frameCount,
@@ -170,7 +165,6 @@ private:
 		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override;
 		const Graphics::Surface *decodeNextFrame() override { return _surface; }
 
-		void newFrame(uint32 frameDelay) override;
 		/** Decode a video chunk. */
 		void decodeChunk(byte *data, uint32 size,
 		                 uint16 chunkType, uint16 flags) override;
@@ -188,8 +182,7 @@ private:
 
 	class DPCMAudioTrack : public HNMAudioTrack {
 	public:
-		DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate, bool stereo,
-		               Audio::Mixer::SoundType soundType);
+		DPCMAudioTrack(uint sampleRate, bool stereo, Audio::Mixer::SoundType soundType);
 		~DPCMAudioTrack() override;
 
 		uint32 decodeSound(uint16 chunkType, byte *data, uint32 size) override;
@@ -198,9 +191,9 @@ private:
 	private:
 		Audio::QueuingAudioStream *_audioStream;
 		bool _gotLUT;
-		uint16 _lut[256];
-		uint16 _lastSampleL;
-		uint16 _lastSampleR;
+		int16 _lut[256];
+		int16 _lastSampleL;
+		int16 _lastSampleR;
 		uint _sampleRate;
 		bool _stereo;
 	};
@@ -216,7 +209,15 @@ private:
 		Audio::AudioStream *getAudioStream() const override;
 	private:
 		Audio::APCStream *_audioStream;
+		bool _init;
 	};
+
+	int probeAudio45();
+	void readChunks4(size_t size);
+	void readChunks5(size_t size);
+	void readChunks6(size_t size);
+
+	void (HNMDecoder::*_readChunks)(size_t size);
 
 	Graphics::PixelFormat _format;
 	bool _loop;
@@ -227,8 +228,9 @@ private:
 	HNMVideoTrack *_videoTrack;
 	HNMAudioTrack *_audioTrack;
 
+	uint32 _audioNumSamples[2];
+
 	Common::SeekableReadStream *_stream;
-	bool _alignedChunks;
 	byte *_dataBuffer;
 	uint32 _dataBufferAlloc;
 };
