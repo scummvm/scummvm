@@ -65,6 +65,10 @@ public:
 	/** The level's single kind 1 object, if it has one. */
 	Object *specialObject() const { return _special; }
 
+	/** Position of the level in the game's level table. */
+	int32 index() const { return _index; }
+	void setIndex(int32 index) { _index = index; }
+
 	/** Game clock when the level was built. */
 	int32 loadTime() const { return _loadTime; }
 
@@ -122,7 +126,7 @@ private:
 	static const AnimStep *shapeOf(Object *object);
 	/** The contact time of two objects that both have outlines; -1 for no touch. */
 	static int32 shapedContactTime(Object *a, Object *b, const AnimStep *aShape, const AnimStep *bShape, int32 time, int32 dx, int32 dy);
-
+	int32 _index = 0;
 	int32 _loadTime = 0;
 	bool _deferredReloaded = false;
 };

@@ -25,10 +25,19 @@
 #include "tesoro/world.h"
 #include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
+#include "tesoro/core/namekey.h"
 #include "tesoro/core/walkfloor.h"
 #include "tesoro/core/pathobject.h"
 
 namespace Tesoro {
+
+static const char *const kLevelNames[World::kLevelCount] = {
+	"DESPACHO.LVL", "PUERTO.LVL", "TABERNA.LVL", "CUBIERTA.LVL", "CAMAROTE.LVL", "ALMACEN.LVL", "COCINA.LVL", "PLAYA.LVL",
+	"MAPA.LVL", "POBLADO.LVL", "PANTANO.LVL", "CAMPAMENTO.LVL", "VOLCAN.LVL", "ARMARIO.LVL", "TABLERO.LVL", "TIERRA.LVL",
+	"RISCO.LVL", "CUBIERTA2.LVL", "CAMAROTE2.LVL", "ALMACEN2.LVL", "COCINA2.LVL", "LUCHA.LVL", "TRONO.LVL", "ENTRADA.LVL",
+	"1.LVL", "2.LVL", "3.LVL", "4.LVL", "5.LVL", "6.LVL", "7.LVL", "8.LVL", "9.LVL", "10.LVL", "11.LVL", "12.LVL", "13.LVL",
+	"14.LVL", "15.LVL", "16.LVL", "17.LVL", "18.LVL", "19.LVL", "20.LVL", "RISCOFINAL.LVL", "FINAL.LVL", "CREDITOS.LVL"
+};
 
 // Jim's animations in the order of Jim::Bank.
 static const char *const kJimFiles[Jim::kBanks] = {
@@ -38,6 +47,75 @@ static const char *const kJimFiles[Jim::kBanks] = {
 
 World::~World() {
 	delete _jim;
+	for (int i = 0; i < kLevelCount; ++i)
+		delete _levels[i];
+}
+
+Level *World::loadLevelFile(const char *name, int mode, int index) {
+	const uint32 offset = _engine._archive.findEntry(name);
+	if (!offset) {
+		warning("Tesoro: level %s is not in the archive", name);
+		return nullptr;
+	}
+	Level *level = new Level();
+	if (!level->load(*_engine._archive.seekEntry(offset), offset, mode, now())) {
+		warning("Tesoro: level %s could not be read", name);
+		delete level;
+		return nullptr;
+	}
+	// Objects look at their level's index when they attach, so it is set first.
+	if (index >= 0)
+		level->setIndex(index);
+	level->attachObjects();
+	return level;
+}
+
+int World::levelIndexOf(const char *name) const {
+	for (int i = 0; i < kLevelCount; ++i) {
+		if (!scumm_stricmp(kLevelNames[i], name))
+			return i;
+	}
+	return -1;
+}
+
+Level *World::level(int index) {
+	if (index < 0 || index >= kLevelCount)
+		return nullptr;
+	if (!_levels[index]) {
+		_levels[index] = loadLevelFile(kLevelNames[index], AnimBank::kLoadDeferred, index);
+		if (_levels[index]) {
+			_levels[index]->setIndex(index);
+			applyStartState(*_levels[index], index);
+		}
+	}
+	return _levels[index];
+}
+
+void World::applyStartState(Level &where, int index) {
+	// The game starts with these objects switched off (hidden, or hidden and off); the story switches them on.
+	struct Start {
+		int level;
+		const char *name;
+		bool hide;
+		bool deactivate;
+	};
+	static const Start kStart[] = {
+		{ 0, "PUERTA1", true, false }, { 4, "BAULOPEN", false, true }, { 7, "CANOA", false, true },
+		{ 8, "RISCO", false, true }, { 8, "CUEVA", false, true }, { 10, "DICK", false, true },
+		{ 17, "SOGACORTADA", false, true }, { 17, "CAPIMUERTO", false, true },
+		{ 9, "JIMCUBO", true, true }, { 10, "FERNAN", false, true }
+	};
+	for (const Start &start : kStart) {
+		if (start.level != index)
+			continue;
+		Object *object = where.findObject(nameKey64(start.name));
+		if (!object)
+			continue;
+		if (start.hide)
+			object->setVisible(false);
+		if (start.deactivate)
+			object->setActive(false);
+	}
 }
 
 Jim *World::jim() {

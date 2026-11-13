@@ -62,11 +62,11 @@ bool Console::fade(int argc, const char **argv) {
 
 bool Console::level(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Usage: %s [LEVEL]\n", argv[0]);
+		debugPrintf("Usage: %s INDEX   (0 to 46: the game's list of levels)\n", argv[0]);
 		return true;
 	}
-	if (!g_engine->level(argv[1])) {
-		debugPrintf("Cannot load %s\n", argv[1]);
+	if (!g_engine->level(atoi(argv[1]))) {
+		debugPrintf("Cannot load level %s\n", argv[1]);
 		return true;
 	}
 	return false;

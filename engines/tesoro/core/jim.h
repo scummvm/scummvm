@@ -50,7 +50,7 @@ public:
 	bool walking() const { return _walking; }
 	void stopWalking() { _walking = false; }
 	bool direct() const { return _direct; }
-	int facing() const { return _facing; }
+	int facing() const override { return _facing; }
 	WalkTarget *target() const { return _target; }
 	int32 destX() const { return _destX; }
 	int32 destY() const { return _destY; }

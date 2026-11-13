@@ -38,8 +38,17 @@ class TesoroEngine;
  */
 class World {
 public:
+	enum { kLevelCount = 47 };
+
 	explicit World(TesoroEngine &engine) : _engine(engine) {}
 	~World();
+
+	/** Reads a level file and builds its objects, hosted by this world. */
+	Level *loadLevelFile(const char *name, int mode, int index = -1);
+	/** The level at a place of the game's list, loaded on first use (null when it cannot be read). */
+	Level *level(int index);
+	/** The place of a level file's name in the game's list, -1 if it is not one of them. */
+	int levelIndexOf(const char *name) const;
 
 	/** The protagonist */
 	Jim *jim();
@@ -64,7 +73,11 @@ public:
 	void walkJimToPointer(int32 mouseX, int32 mouseY);
 
 private:
+	/** The objects the game starts with switched off, once a level has been loaded. */
+	void applyStartState(Level &where, int index);
+
 	TesoroEngine &_engine;
+	Level *_levels[kLevelCount] = {};
 	Jim *_jim = nullptr;
 };
 

@@ -62,8 +62,6 @@ TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 TesoroEngine::~TesoroEngine() {
 	_main.clear();
 	delete _interface;
-	if (_level != _mainMenu && _level != _newGameMenu)
-		delete _level;
 	delete _mainMenu;
 	delete _newGameMenu;
 	delete _screen;
@@ -386,18 +384,15 @@ Level *TesoroEngine::loadLevel(const char *name) {
 	return level;
 }
 
-bool TesoroEngine::level(const char *name) {
-	Level *level = loadLevel(name);
+bool TesoroEngine::level(int index) {
+	Level *level = _world.level(index);
 	if (!level)
 		return false;
 
-	// The level replaces whatever was shown before; the two menus stay loaded.
-	hookMenuItems(level);
+	// The world keeps every level it has loaded, so the one being replaced is not deleted.
 	_main.remove(_level);
 	if (_world.jimLevel() == _level)
 		_world.jim()->leaveLevel();
-	if (_level != _mainMenu && _level != _newGameMenu)
-		delete _level;
 	_level = level;
 	_main.insertByPriority(_level, 0x14);
 	if (_cursor)

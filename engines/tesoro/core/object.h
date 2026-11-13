@@ -105,6 +105,8 @@ public:
 	virtual int showHoverText() { return 0; }
 	virtual int clearHoverText() { return 0; }
 
+	virtual int facing() const { return 0; }
+
 	/** Per-frame step of the first pass over the object list. Returns 2 or 3 to end the pass early, else 0. */
 	virtual int update() { return 0; }
 

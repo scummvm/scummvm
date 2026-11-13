@@ -161,7 +161,7 @@ public:
 	/** The camera of the level being shown, else the test object's. */
 	Camera &camera();
 	/** Loads a level from the archive and shows it. */
-	bool level(const char *name);
+	bool level(int index);
 	/** Second step of a level: draws it and, unless it is the interface level, composes the frame onto the screen. */
 	int levelSecondStep(Level &level);
 	void presentFrame();
