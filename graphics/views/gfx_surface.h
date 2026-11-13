@@ -44,7 +44,6 @@ private:
 public:
 	GfxSurface();
 	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds);
-	~GfxSurface();
 
 	/**
 	 * Write some text to the surface

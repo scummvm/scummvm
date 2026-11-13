@@ -33,10 +33,6 @@ GfxSurface::GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bound
 	_font = Common::SharedPtr<Graphics::Font>(g_events->createFont());
 }
 
-GfxSurface::~GfxSurface() {
-	_font.reset();
-}
-
 void GfxSurface::writeString(const Common::Point &pt, const Common::String &str,
 		Graphics::TextAlign align) {
 	_textPos = pt;
