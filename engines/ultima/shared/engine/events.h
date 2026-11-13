@@ -36,7 +36,7 @@ namespace Shared {
  */
 #define ULTIMA_CUSTOM_MESSAGES(BASE)                                            \
 protected:                                                                      \
-	virtual bool msgAttackTile(const AttackTileMessage &msg) {                  \
+	virtual bool msgAttackTile(const AttackTileMessage &) {                  \
 		return false;                                                           \
 	}                                                                           \
 	bool msgCustom(const Graphics::Views::Message &msg) override {              \

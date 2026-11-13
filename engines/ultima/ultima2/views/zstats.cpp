@@ -138,7 +138,7 @@ void ZStats::draw() {
 	_textCursor.show();
 }
 
-bool ZStats::msgKeypress(const KeypressMessage &msg) {
+bool ZStats::msgKeypress(const KeypressMessage &) {
 	close();
 	_G(logic)->resumeTurn();
 	return true;

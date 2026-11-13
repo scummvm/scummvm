@@ -113,7 +113,7 @@ bool SpaceCockpit::msgMouseMove(const MouseMoveMessage &msg) {
 	return true;
 }
 
-bool SpaceCockpit::msgMouseDown(const MouseDownMessage &msg) {
+bool SpaceCockpit::msgMouseDown(const MouseDownMessage &) {
 	if (!cancelHyperjump())
 		_G(logic)->action(KEYBIND_FIRE);
 	return true;

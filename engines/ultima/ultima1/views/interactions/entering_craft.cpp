@@ -96,7 +96,7 @@ static const byte CGA_GEM_COLORS[4] = { 2, 1, 1, 3 };
 // by the Mondain executable's own startup code, which isn't ported)
 static const byte GEM_DIAMOND_HALF_WIDTH[8] = { 0, 1, 2, 3, 3, 2, 1, 0 };
 
-bool EnteringCraft::msgFocus(const FocusMessage &msg) {
+bool EnteringCraft::msgFocus(const FocusMessage &) {
 	setBounds(Common::Rect(DIALOG_X1, DIALOG_Y1, DIALOG_X2, DIALOG_Y2));
 
 	_page = 1;
@@ -168,12 +168,12 @@ void EnteringCraft::drawGem(int cellX, int cellY, byte color) {
 	}
 }
 
-bool EnteringCraft::msgAction(const ActionMessage &msg) {
+bool EnteringCraft::msgAction(const ActionMessage &) {
 	nextPage();
 	return true;
 }
 
-bool EnteringCraft::msgKeypress(const KeypressMessage &msg) {
+bool EnteringCraft::msgKeypress(const KeypressMessage &) {
 	nextPage();
 	return true;
 }

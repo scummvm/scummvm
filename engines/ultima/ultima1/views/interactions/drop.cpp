@@ -43,7 +43,7 @@ static int countOwned(const int16 *items, int maxIndex) {
 Drop::Drop() : Interaction("Drop") {
 }
 
-bool Drop::msgFocus(const FocusMessage &msg) {
+bool Drop::msgFocus(const FocusMessage &) {
 	_mode = DROP_AREA;
 	setBounds(Common::Rect(0, 0, 0, 0));
 	writeString("Drop Pence,Weapon,Armour:");
@@ -51,7 +51,7 @@ bool Drop::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool Drop::msgAction(const ActionMessage &msg) {
+bool Drop::msgAction(const ActionMessage &) {
 	none();
 	return true;
 }

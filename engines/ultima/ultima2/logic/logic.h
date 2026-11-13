@@ -112,7 +112,7 @@ protected:
 	 * that's being deferred - typically because a sub-dialog was opened
 	 * that will only complete the action once it closes ---*/
 
-	virtual bool move(Data::Direction dir) {
+	virtual bool move(Data::Direction) {
 		return false;
 	}
 	virtual bool board();
@@ -175,14 +175,14 @@ public:
 	/**
 	 * Called once a digit has been chosen by the OfferGold interaction
 	 */
-	virtual void completeOffer(int goldHundreds) {
+	virtual void completeOffer(int) {
 	}
 
 	/**
 	 * Called once an attribute has been chosen by the StatBoost interaction
 	 * (1 to 6, anything else being none of them)
 	 */
-	virtual void completeStatBoost(int choice) {
+	virtual void completeStatBoost(int) {
 	}
 
 	/**

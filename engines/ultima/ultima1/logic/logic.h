@@ -126,7 +126,7 @@ protected:
 	/**
 	 * Cast spell direction chosen for overworld spells
 	 */
-	virtual void castSpellAttack(Data::Direction dir) {
+	virtual void castSpellAttack(Data::Direction) {
 	}
 
 	/**
@@ -142,7 +142,7 @@ protected:
 	 * @param hitChance		1-100 threshold a to-hit roll must be under
 	 * @param tileId		Tile Id shown for the weapon/projectile effect
 	 */
-	virtual void damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
+	virtual void damage(Data::Direction /* dir */, int /* effectNum */, int /* maxDistance */, int /* strike */, int /* hitChance */, int /* tileId */) {
 	}
 
 	/*--- Fallback player action handlers. Each returns true if end of
@@ -169,7 +169,7 @@ protected:
 	virtual bool view();
 	virtual bool xit();
 	virtual bool zstats();
-	virtual bool move(Data::Direction dir) {
+	virtual bool move(Data::Direction) {
 		return false;
 	}
 	virtual bool pass();

@@ -90,7 +90,7 @@ bool Console::cmdMap(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdTiles(int argc, const char **argv) {
+bool Console::cmdTiles(int, const char **) {
 	Graphics::Surface tiles[Data::TILE_COUNT];
 	Data::loadTiles(tiles, g_engine->getRenderMode());
 
@@ -189,7 +189,7 @@ bool Console::cmdLocations(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdEnemy(int argc, const char **argv) {
+bool Console::cmdEnemy(int, const char **) {
 	Data::Savegame &sg = _G(savegame);
 	if (sg._mapType != 0) {
 		debugPrintf("Only supported on the overworld map\n");
@@ -261,7 +261,7 @@ bool Console::cmdEnemy(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdIntangible(int argc, const char **argv) {
+bool Console::cmdIntangible(int, const char **) {
 	_G(intangible) = !_G(intangible);
 	debugPrintf("Intangible mode %s\n", _G(intangible) ? "ON" : "OFF");
 	return true;
@@ -275,7 +275,7 @@ bool Console::cmdHP(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdFood(int argc, const char **argv) {
+bool Console::cmdFood(int, const char **) {
 	_G(savegame)._food = 9999;
 	_G(savegame)._foodTurnCtr = 0;
 	g_engine->baseView()->findView("Stats")->draw();
@@ -283,7 +283,7 @@ bool Console::cmdFood(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdGold(int argc, const char **argv) {
+bool Console::cmdGold(int, const char **) {
 	_G(savegame)._gold = 9999;
 	g_engine->baseView()->findView("Stats")->draw();
 	debugPrintf("Gold set to 9999\n");
@@ -380,7 +380,7 @@ bool Console::cmdTransport(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdStats(int argc, const char **argv) {
+bool Console::cmdStats(int, const char **) {
 	Data::Savegame &sg = _G(savegame);
 
 	sg._strength = sg._agility = sg._stamina = Data::MAX_BCD_BYTE;
@@ -389,7 +389,7 @@ bool Console::cmdStats(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdInventory(int argc, const char **argv) {
+bool Console::cmdInventory(int, const char **) {
 	Data::Savegame &sg = _G(savegame);
 
 	for (int i = 1; i < Data::ARMOR_COUNT; ++i)
@@ -432,7 +432,7 @@ bool Console::cmdInventory(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdSpace(int argc, const char **argv) {
+bool Console::cmdSpace(int, const char **) {
 	// The first launch from Earth remembers where to come back to
 	Data::Savegame &sg = _G(savegame);
 	if (sg._orbitTarget == 0 && sg._mapType == 0) {

@@ -28,7 +28,7 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-bool LiftOff::msgFocus(const FocusMessage &msg) {
+bool LiftOff::msgFocus(const FocusMessage &) {
 	setBounds(Common::Rect(0, 0, 0, 0));
 
 	_counter = 10;
@@ -52,12 +52,12 @@ void LiftOff::timeout() {
 	}
 }
 
-bool LiftOff::msgAction(const ActionMessage &msg) {
+bool LiftOff::msgAction(const ActionMessage &) {
 	skip();
 	return true;
 }
 
-bool LiftOff::msgKeypress(const KeypressMessage &msg) {
+bool LiftOff::msgKeypress(const KeypressMessage &) {
 	skip();
 	return true;
 }

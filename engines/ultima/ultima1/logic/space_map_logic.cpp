@@ -181,7 +181,7 @@ bool SpaceMapLogic::move(Data::Direction dir) {
 	return true;
 }
 
-bool SpaceMapLogic::attack(Data::Direction dir) {
+bool SpaceMapLogic::attack(Data::Direction) {
 	if (_G(savegame)._sectorX != Data::SPACE_STATION_X || _G(savegame)._sectorY != Data::SPACE_STATION_Y) {
 		writeString("Autopilot: only in home sector.\n");
 		return true;

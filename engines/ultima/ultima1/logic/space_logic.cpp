@@ -90,7 +90,7 @@ void SpaceLogic::death() {
 	g_engine->addView("SpaceDead");
 }
 
-void SpaceLogic::keypress(Common::KeyCode keycode) {
+void SpaceLogic::keypress(Common::KeyCode) {
 	writeString("Huh?\n");
 	playFX(1);
 	prompt();
@@ -102,7 +102,7 @@ bool SpaceLogic::inform() {
 	return false;
 }
 
-bool SpaceLogic::attack(Data::Direction dir) {
+bool SpaceLogic::attack(Data::Direction) {
 	writeString("Attack?\n");
 	playFX(1);
 	return true;

@@ -445,17 +445,17 @@ void Title::showLogoScreen() {
 	replaceView("LogoScreen");
 }
 
-bool Title::msgKeypress(const KeypressMessage &msg) {
+bool Title::msgKeypress(const KeypressMessage &) {
 	_keyPending = true;
 	return true;
 }
 
-bool Title::msgMouseDown(const MouseDownMessage &msg) {
+bool Title::msgMouseDown(const MouseDownMessage &) {
 	_keyPending = true;
 	return true;
 }
 
-bool Title::msgAction(const ActionMessage &msg) {
+bool Title::msgAction(const ActionMessage &) {
 	_keyPending = true;
 	return true;
 }

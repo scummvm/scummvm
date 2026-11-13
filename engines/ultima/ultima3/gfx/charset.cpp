@@ -91,7 +91,7 @@ void CharSet::load() {
 	loadGlyphs(moons, &_data[CHARSET_TEXT_GLYPHS * CHARSET_GLYPH_PIXELS], CHARSET_MOON_GLYPHS);
 }
 
-void CharSet::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+void CharSet::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32) const {
 	if (chr >= CHARSET_GLYPHS)
 		return;
 

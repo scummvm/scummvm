@@ -279,13 +279,13 @@ bool Logic::trySpendGold(int amount) {
 	return true;
 }
 
-void Logic::keypress(const Graphics::Views::KeypressMessage &msg) {
+void Logic::keypress(const Graphics::Views::KeypressMessage &) {
 	writeString("-Illegal Command!\n");
 	endOfTurn();
 	prompt();
 }
 
-bool Logic::attack(Data::Direction dir) {
+bool Logic::attack(Data::Direction) {
 	writeString("Attack?\n");
 	return true;
 }
@@ -389,7 +389,7 @@ bool Logic::enter() {
 	return true;
 }
 
-bool Logic::fire(Data::Direction dir) {
+bool Logic::fire(Data::Direction) {
 	writeString("Fire what?\n");
 	return true;
 }

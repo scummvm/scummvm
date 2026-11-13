@@ -96,12 +96,12 @@ void Ultima1Engine::returnToMainMenu() {
 	replaceView("MainMenu", true);
 }
 
-bool Ultima1Engine::canSaveGameStateCurrently(Common::U32String *msg) {
+bool Ultima1Engine::canSaveGameStateCurrently(Common::U32String *) {
 	// Only allow saving when any of the different map views are active
 	return dynamic_cast<Views::Map *>(focusedView()) != nullptr;
 }
 
-bool Ultima1Engine::canLoadGameStateCurrently(Common::U32String *msg) {
+bool Ultima1Engine::canLoadGameStateCurrently(Common::U32String *) {
 	// Allow loading savegames anywhere
 	return true;
 }

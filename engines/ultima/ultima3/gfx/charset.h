@@ -80,7 +80,7 @@ public:
 	 *
 	 * @return The width of the character in pixels.
 	 */
-	int getCharWidth(uint32 chr) const override {
+	int getCharWidth(uint32) const override {
 		return 8;
 	}
 

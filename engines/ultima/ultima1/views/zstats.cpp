@@ -134,12 +134,12 @@ Common::String ZStats::getLine(const char *name, int value) {
 	return result + numStr;
 }
 
-bool ZStats::msgAction(const ActionMessage &msg) {
+bool ZStats::msgAction(const ActionMessage &) {
 	keyPressed();
 	return true;
 }
 
-bool ZStats::msgKeypress(const KeypressMessage &msg) {
+bool ZStats::msgKeypress(const KeypressMessage &) {
 	keyPressed();
 	return true;
 }

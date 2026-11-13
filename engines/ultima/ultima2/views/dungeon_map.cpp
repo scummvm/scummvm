@@ -403,7 +403,7 @@ bool DungeonMap::msgUnfocus(const UnfocusMessage &msg) {
 	return Map::msgUnfocus(msg);
 }
 
-bool DungeonMap::msgAttackTile(const Shared::AttackTileMessage &msg) {
+bool DungeonMap::msgAttackTile(const Shared::AttackTileMessage &) {
 	// Being hit inverts the whole view, briefly. It's done by redrawing the
 	// view, rather than inverting the screen, since in the composite
 	// renderer the screen doesn't hold the CGA pixels

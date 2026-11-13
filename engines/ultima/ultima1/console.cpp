@@ -115,7 +115,7 @@ bool Console::cmdCoins(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdFuel(int argc, const char **argv) {
+bool Console::cmdFuel(int, const char **) {
 	if (_G(map)._mapType == Data::MAPTYPE_SPACE) {
 		Data::SpaceMapShip &ship = _G(savegame)._starmap
 			._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]
@@ -131,7 +131,7 @@ bool Console::cmdFuel(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdSpace(int argc, const char **argv) {
+bool Console::cmdSpace(int, const char **) {
 	_G(savegame)._shipFuel = 9999;
 	_G(savegame)._shipShield = 9999;
 
@@ -146,7 +146,7 @@ bool Console::cmdSpace(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdStats(int argc, const char **argv) {
+bool Console::cmdStats(int, const char **) {
 	Data::Savegame &sg = _G(savegame);
 
 	sg._strength = sg._agility = sg._stamina = sg._charisma = sg._wisdom = sg._intelligence = MAX_ATTRIBUTE;
@@ -156,7 +156,7 @@ bool Console::cmdStats(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdInventory(int argc, const char **argv) {
+bool Console::cmdInventory(int, const char **) {
 	Data::Savegame &sg = _G(savegame);
 
 	for (int i = 1; i < Data::ARMOR_COUNT; ++i)

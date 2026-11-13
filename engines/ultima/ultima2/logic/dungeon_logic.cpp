@@ -271,7 +271,7 @@ void DungeonLogic::killMonster(int slot) {
 	sg._experience = MIN(sg._experience + exp, Data::MAX_BCD_WORD);
 }
 
-bool DungeonLogic::attack(Data::Direction dir) {
+bool DungeonLogic::attack(Data::Direction) {
 	Data::Savegame &sg = _G(savegame);
 	Data::MapMonsters &monsters = _G(map)._monsters;
 	playFX(Data::SFX_ATTACK);

@@ -30,7 +30,7 @@ namespace Interactions {
 
 constexpr int DOCKING_FEE = 500;
 
-bool SpaceStation::msgFocus(const FocusMessage &msg) {
+bool SpaceStation::msgFocus(const FocusMessage &) {
 	setBounds(Common::Rect(0, 0, 0, 0));
 
 	// The ship is now docked - stop drifting and drop the exhaust trail
@@ -82,7 +82,7 @@ bool SpaceStation::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool SpaceStation::msgAction(const ActionMessage &msg) {
+bool SpaceStation::msgAction(const ActionMessage &) {
 	// Only a docking-port digit (handled in msgKeypress) does anything here
 	return true;
 }

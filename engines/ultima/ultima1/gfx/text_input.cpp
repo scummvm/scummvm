@@ -61,7 +61,7 @@ void TextInput::draw() {
 	s.writeString(_text);
 }
 
-bool TextInput::msgUnfocus(const UnfocusMessage &msg) {
+bool TextInput::msgUnfocus(const UnfocusMessage &) {
 	hide();
 	return true;
 }

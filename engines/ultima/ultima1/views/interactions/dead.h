@@ -88,10 +88,10 @@ public:
 
 	// The death sequence is automatic - swallow input rather than letting
 	// it reach the (soon to be replaced) logic/view underneath
-	bool msgAction(const ActionMessage &msg) override {
+	bool msgAction(const ActionMessage &) override {
 		return true;
 	}
-	bool msgKeypress(const KeypressMessage &msg) override {
+	bool msgKeypress(const KeypressMessage &) override {
 		return true;
 	}
 

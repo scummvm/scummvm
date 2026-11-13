@@ -32,7 +32,7 @@ namespace Interactions {
 constexpr int DIALOG_X1 = 31, DIALOG_Y1 = 23, DIALOG_X2 = 287, DIALOG_Y2 = 127;
 constexpr int BORDER_X1 = 34, BORDER_Y1 = 26, BORDER_X2 = 284, BORDER_Y2 = 124;
 
-bool Lose::msgFocus(const FocusMessage &msg) {
+bool Lose::msgFocus(const FocusMessage &) {
 	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 
 	g_engine->send("Commands", GameMessage("TEXT", "THOU ART DEAD!"));
@@ -58,13 +58,13 @@ void Lose::drawDialog() {
 	s.writeString(Common::Point(5, 12), "    THE UNIVERSE IS DOOMED!");
 }
 
-bool Lose::msgAction(const ActionMessage &msg) {
+bool Lose::msgAction(const ActionMessage &) {
 	// No resurrection from this one - straight back to the main menu
 	g_engine->replaceView("MainMenu", true);
 	return true;
 }
 
-bool Lose::msgKeypress(const KeypressMessage &msg) {
+bool Lose::msgKeypress(const KeypressMessage &) {
 	g_engine->replaceView("MainMenu", true);
 	return true;
 }

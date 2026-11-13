@@ -40,7 +40,7 @@ static const char *const PRINCESS_NAMES[8] = {
 PrincessSaved::PrincessSaved() : Interaction("PrincessSaved") {
 }
 
-bool PrincessSaved::msgFocus(const FocusMessage &msg) {
+bool PrincessSaved::msgFocus(const FocusMessage &) {
 	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 	auto &sg = _G(savegame);
 
@@ -84,12 +84,12 @@ void PrincessSaved::draw() {
 	}
 }
 
-bool PrincessSaved::msgAction(const ActionMessage &msg) {
+bool PrincessSaved::msgAction(const ActionMessage &) {
 	finish();
 	return true;
 }
 
-bool PrincessSaved::msgKeypress(const KeypressMessage &msg) {
+bool PrincessSaved::msgKeypress(const KeypressMessage &) {
 	finish();
 	return true;
 }

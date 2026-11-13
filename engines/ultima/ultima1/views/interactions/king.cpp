@@ -59,7 +59,7 @@ static const char *const GEM_REWARD_LINES[4][4] = {
 King::King() : Interaction("King") {
 }
 
-bool King::msgFocus(const FocusMessage &msg) {
+bool King::msgFocus(const FocusMessage &) {
 	_mode = KING_PROMPT;
 	setBounds(Common::Rect(0, 0, 0, 0));
 
@@ -72,7 +72,7 @@ bool King::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool King::msgAction(const ActionMessage &msg) {
+bool King::msgAction(const ActionMessage &) {
 	if (_mode == KING_QUEST || _mode == KING_REWARD)
 		return true;
 

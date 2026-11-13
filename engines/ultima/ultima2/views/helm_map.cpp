@@ -100,7 +100,7 @@ void HelmMap::draw() {
 	Gfx::compositeFinish(s);
 }
 
-bool HelmMap::msgKeypress(const KeypressMessage &msg) {
+bool HelmMap::msgKeypress(const KeypressMessage &) {
 	close();
 	_G(logic)->resumeTurn();
 	return true;

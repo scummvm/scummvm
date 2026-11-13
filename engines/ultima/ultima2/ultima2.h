@@ -151,7 +151,7 @@ public:
 	 */
 	Common::Error syncGame(Common::Serializer &s);
 
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
+	Common::Error saveGameStream(Common::WriteStream *stream, bool  = false) override {
 		Common::Serializer s(nullptr, stream);
 		return syncGame(s);
 	}

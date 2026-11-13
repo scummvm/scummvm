@@ -31,7 +31,7 @@ namespace Interactions {
 constexpr int DIALOG_X1 = 31, DIALOG_Y1 = 23, DIALOG_X2 = 287, DIALOG_Y2 = 127;
 constexpr int BORDER_X1 = 34, BORDER_Y1 = 26, BORDER_X2 = 284, BORDER_Y2 = 124;
 
-bool OperateCraft::msgFocus(const FocusMessage &msg) {
+bool OperateCraft::msgFocus(const FocusMessage &) {
 	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 	showCursor();
 	return true;
@@ -48,12 +48,12 @@ void OperateCraft::draw() {
 	s.writeString(Common::Point(6, 9), "           time.");
 }
 
-bool OperateCraft::msgAction(const ActionMessage &msg) {
+bool OperateCraft::msgAction(const ActionMessage &) {
 	finish();
 	return true;
 }
 
-bool OperateCraft::msgKeypress(const KeypressMessage &msg) {
+bool OperateCraft::msgKeypress(const KeypressMessage &) {
 	finish();
 	return true;
 }

@@ -462,7 +462,7 @@ void Title::showMainMenu() {
 	replaceView("MainMenu");
 }
 
-bool Title::msgKeypress(const KeypressMessage &msg) {
+bool Title::msgKeypress(const KeypressMessage &) {
 	if (_state == CREDITS)
 		showMainMenu();
 	else
@@ -470,7 +470,7 @@ bool Title::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
-bool Title::msgMouseDown(const MouseDownMessage &msg) {
+bool Title::msgMouseDown(const MouseDownMessage &) {
 	if (_state == CREDITS)
 		showMainMenu();
 	else
@@ -478,7 +478,7 @@ bool Title::msgMouseDown(const MouseDownMessage &msg) {
 	return true;
 }
 
-bool Title::msgAction(const ActionMessage &msg) {
+bool Title::msgAction(const ActionMessage &) {
 	if (_state == CREDITS)
 		showMainMenu();
 	else

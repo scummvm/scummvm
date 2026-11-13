@@ -131,7 +131,7 @@ bool MondainLogic::move(Data::Direction dir) {
 	return true;
 }
 
-void MondainLogic::damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
+void MondainLogic::damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int) {
 	playFX(effectNum);
 
 	Data::Savegame &sg = _G(savegame);

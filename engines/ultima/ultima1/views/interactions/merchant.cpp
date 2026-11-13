@@ -103,7 +103,7 @@ static const ShopName &shopNameFor(int shopType, int variant) {
 Merchant::Merchant() : Interaction("Merchant") {
 }
 
-bool Merchant::msgFocus(const FocusMessage &msg) {
+bool Merchant::msgFocus(const FocusMessage &) {
 	_mode = SHOP_PROMPT;
 	setBounds(Common::Rect(0, 0, 0, 0));
 
@@ -137,7 +137,7 @@ bool Merchant::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool Merchant::msgAction(const ActionMessage &msg) {
+bool Merchant::msgAction(const ActionMessage &) {
 	if (_mode == SHOP_MESSAGE)
 		nextScreen();
 	else

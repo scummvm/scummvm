@@ -50,8 +50,8 @@ public:
 	 *
 	 * @return the number of members added to list
 	 */
-	int listMatchingMembers(Common::ArchiveMemberList &list,
-		const Common::Path &pattern, bool matchPathComponents = false) const override {
+	int listMatchingMembers(Common::ArchiveMemberList &,
+		const Common::Path &, bool  = false) const override {
 		return 0;
 	}
 
@@ -61,7 +61,7 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	int listMembers(Common::ArchiveMemberList &list) const override {
+	int listMembers(Common::ArchiveMemberList &) const override {
 		return 0;
 	}
 

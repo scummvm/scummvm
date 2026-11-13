@@ -203,7 +203,7 @@ void CityCastleLogic::updateCreatures() {
 	}
 }
 
-void CityCastleLogic::damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
+void CityCastleLogic::damage(Data::Direction dir, int, int maxDistance, int strike, int hitChance, int) {
 	attackPerson(dir, maxDistance, strike, hitChance);
 }
 

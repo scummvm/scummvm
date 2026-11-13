@@ -270,7 +270,7 @@ bool Title::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
-bool Title::msgAction(const ActionMessage &msg) {
+bool Title::msgAction(const ActionMessage &) {
 	if (_state != MENU)
 		showMenu();
 

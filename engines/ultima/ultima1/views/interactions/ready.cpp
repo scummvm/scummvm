@@ -31,7 +31,7 @@ namespace Interactions {
 Ready::Ready() : Interaction("Ready") {
 }
 
-bool Ready::msgFocus(const FocusMessage &msg) {
+bool Ready::msgFocus(const FocusMessage &) {
 	// Start by getting them to select the area
 	_mode = READY_AREA;
 	setBounds(Common::Rect(0, 0, 0, 0));
@@ -40,7 +40,7 @@ bool Ready::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool Ready::msgAction(const ActionMessage &msg) {
+bool Ready::msgAction(const ActionMessage &) {
 	nothing();
 	return true;
 }

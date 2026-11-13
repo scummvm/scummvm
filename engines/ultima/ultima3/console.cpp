@@ -151,7 +151,7 @@ bool Console::cmdMap(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdExodus(int argc, const char **argv) {
+bool Console::cmdExodus(int, const char **) {
 	constexpr byte ALL_CARDS = 0x0F;
 	constexpr int START_X = 30, START_Y = 12;
 
@@ -230,7 +230,7 @@ bool Console::cmdMusic(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdTiles(int argc, const char **argv) {
+bool Console::cmdTiles(int, const char **) {
 	Graphics::ManagedSurface surface(Gfx::SHAPE_SIZE, Gfx::SHAPE_SIZE, Graphics::PixelFormat::createFormatCLUT8());
 
 	_G(shapes).load();
@@ -327,7 +327,7 @@ bool Console::cmdLocations(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdIntangible(int argc, const char **argv) {
+bool Console::cmdIntangible(int, const char **) {
 	_G(intangible) = !_G(intangible);
 	debugPrintf("Intangible mode %s\n", _G(intangible) ? "ON" : "OFF");
 	return true;
@@ -538,7 +538,7 @@ bool Console::cmdTransport(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdEnemies(int argc, const char **argv) {
+bool Console::cmdEnemies(int, const char **) {
 	const Data::Savegame &sg = _G(savegame);
 	int count = 0;
 
@@ -571,7 +571,7 @@ bool Console::cmdEnemies(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdWin(int argc, const char **argv) {
+bool Console::cmdWin(int, const char **) {
 	Views::CombatMap *combat = dynamic_cast<Views::CombatMap *>(g_engine->focusedView());
 	if (!combat) {
 		debugPrintf("Only works in a fight\n");

@@ -250,7 +250,7 @@ void Logic::action(int action) {
 	}
 }
 
-void Logic::keypress(Common::KeyCode keycode) {
+void Logic::keypress(Common::KeyCode) {
 	writeString("Huh?\n");
 	endOfTurn();
 	prompt();

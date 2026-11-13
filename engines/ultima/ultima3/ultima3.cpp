@@ -147,7 +147,7 @@ void Ultima3Engine::applyGameSettings() {
 		focusedView()->redraw();
 }
 
-bool Ultima3Engine::canSaveGameStateCurrently(Common::U32String *msg) {
+bool Ultima3Engine::canSaveGameStateCurrently(Common::U32String *) {
 	// Anything but the title sequence, which isn't a state worth keeping
 	UIElement *view = focusedView();
 
@@ -158,7 +158,7 @@ bool Ultima3Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return dynamic_cast<Views::WindowView *>(view) != nullptr;
 }
 
-bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
+bool Ultima3Engine::canLoadGameStateCurrently(Common::U32String *) {
 	return true;
 }
 

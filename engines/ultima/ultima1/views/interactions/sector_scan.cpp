@@ -43,7 +43,7 @@ static int cellY(int sy) { return sy * 10 + 46; }
 // blinks
 constexpr int BLINK_TICKS = 8;
 
-bool SectorScan::msgFocus(const FocusMessage &msg) {
+bool SectorScan::msgFocus(const FocusMessage &) {
 	setBounds(Common::Rect(0, 0, 320, 200));
 	_blinkCtr = 0;
 	_blipVisible = true;
@@ -137,12 +137,12 @@ bool SectorScan::tick() {
 	return Interaction::tick();
 }
 
-bool SectorScan::msgAction(const ActionMessage &msg) {
+bool SectorScan::msgAction(const ActionMessage &) {
 	close();
 	return true;
 }
 
-bool SectorScan::msgKeypress(const KeypressMessage &msg) {
+bool SectorScan::msgKeypress(const KeypressMessage &) {
 	close();
 	return true;
 }

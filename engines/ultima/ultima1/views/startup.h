@@ -46,15 +46,15 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	void timeout() override;
-	bool msgKeypress(const KeypressMessage &msg) override {
+	bool msgKeypress(const KeypressMessage &) override {
 		showTitle();
 		return true;
 	}
-	bool msgMouseDown(const MouseDownMessage &msg) override {
+	bool msgMouseDown(const MouseDownMessage &) override {
 		showTitle();
 		return true;
 	}
-	bool msgAction(const ActionMessage &msg) override {
+	bool msgAction(const ActionMessage &) override {
 		showTitle();
 		return true;
 	}

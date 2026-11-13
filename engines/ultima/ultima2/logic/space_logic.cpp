@@ -229,7 +229,7 @@ void SpaceLogic::action(int action) {
 	}
 }
 
-void SpaceLogic::keypress(const Graphics::Views::KeypressMessage &msg) {
+void SpaceLogic::keypress(const Graphics::Views::KeypressMessage &) {
 	static_cast<Views::SpaceMap *>(g_engine->findView("SpaceMap"))->setShip(CENTER_X, CENTER_Y);
 }
 

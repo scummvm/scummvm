@@ -221,7 +221,7 @@ bool DungeonLogic::move(Data::Direction dir) {
 	return true;
 }
 
-bool DungeonLogic::attack(Data::Direction dir) {
+bool DungeonLogic::attack(Data::Direction) {
 	writeString("Attack with %s", Data::WEAPON_NAMES_LOWER[_G(savegame)._equippedWeapon]);
 
 	int maxDistance = Data::WEAPONS_DISTANCE[_G(savegame)._equippedWeapon];

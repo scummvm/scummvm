@@ -29,7 +29,7 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
-bool Direction::msgFocus(const FocusMessage &msg) {
+bool Direction::msgFocus(const FocusMessage &) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);	// Need for direction keybindings
 	showCursor();
 	return true;
@@ -68,7 +68,7 @@ bool Direction::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
-bool Direction::msgKeypress(const KeypressMessage &msg) {
+bool Direction::msgKeypress(const KeypressMessage &) {
 	close();
 	_G(logic)->action(KEYBIND_PASS);
 	return true;

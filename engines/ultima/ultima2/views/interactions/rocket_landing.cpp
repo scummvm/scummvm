@@ -65,7 +65,7 @@ bool RocketLanding::tick() {
 	return Interaction::tick();
 }
 
-bool RocketLanding::msgKeypress(const KeypressMessage &msg) {
+bool RocketLanding::msgKeypress(const KeypressMessage &) {
 	Data::Savegame &sg = _G(savegame);
 	close();
 	writeString("\n");

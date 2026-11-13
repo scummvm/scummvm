@@ -27,7 +27,7 @@ namespace Ultima2 {
 namespace Views {
 namespace Interactions {
 
-bool Dead::msgFocus(const FocusMessage &msg) {
+bool Dead::msgFocus(const FocusMessage &) {
 	auto &sg = _G(savegame);
 	sg._hp = 0;
 	sg._food = 0;

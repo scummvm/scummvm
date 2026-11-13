@@ -73,7 +73,7 @@ public:
 	/**
 	 * Draws over the game view
 	 */
-	virtual void draw(GfxSurface &s) {}
+	virtual void draw(GfxSurface &) {}
 };
 
 /**

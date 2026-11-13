@@ -68,7 +68,7 @@ static const char *const ENDING_TEXT[] = {
 	"forth.  So let it be done.\""
 };
 
-bool Win::msgFocus(const FocusMessage &msg) {
+bool Win::msgFocus(const FocusMessage &) {
 	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 	_phase = PHASE_DIALOG;
 	_revealedRows = 0;
@@ -126,12 +126,12 @@ bool Win::tick() {
 	return Interaction::tick();
 }
 
-bool Win::msgAction(const ActionMessage &msg) {
+bool Win::msgAction(const ActionMessage &) {
 	advancePhase();
 	return true;
 }
 
-bool Win::msgKeypress(const KeypressMessage &msg) {
+bool Win::msgKeypress(const KeypressMessage &) {
 	advancePhase();
 	return true;
 }

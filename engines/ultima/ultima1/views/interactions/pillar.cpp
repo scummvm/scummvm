@@ -72,7 +72,7 @@ bool Pillar::msgGame(const GameMessage &msg) {
 	return false;
 }
 
-bool Pillar::msgFocus(const FocusMessage &msg) {
+bool Pillar::msgFocus(const FocusMessage &) {
 	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
 	_borderColor = _G(colors)._border;
 
@@ -220,12 +220,12 @@ bool Pillar::gainAttribute(int attrIndex) {
 	return true;
 }
 
-bool Pillar::msgAction(const ActionMessage &msg) {
+bool Pillar::msgAction(const ActionMessage &) {
 	finish();
 	return true;
 }
 
-bool Pillar::msgKeypress(const KeypressMessage &msg) {
+bool Pillar::msgKeypress(const KeypressMessage &) {
 	finish();
 	return true;
 }

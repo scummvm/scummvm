@@ -123,7 +123,7 @@ static void drawSkullGraphic(Graphics::Views::GfxSurface &s) {
 	}
 }
 
-bool Dead::msgFocus(const FocusMessage &msg) {
+bool Dead::msgFocus(const FocusMessage &) {
 	// Claim the map viewport area (inside the game border, which is left
 	// drawn by whatever view was showing underneath)
 	setBounds(Common::Rect(8, 8, 312, 152));
@@ -263,7 +263,7 @@ void Dead::finish() {
 	_G(map).load(Data::MAP_OVERWORLD);
 }
 
-bool SpaceDead::msgFocus(const FocusMessage &msg) {
+bool SpaceDead::msgFocus(const FocusMessage &) {
 	setBounds(Common::Rect(8, 8, 312, 152));
 	return true;
 }
