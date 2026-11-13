@@ -40,7 +40,6 @@ constexpr int RESURRECTED_AMOUNT = 99;
 // The skull glyph shown while the player is dead - a 64x95 1-bit-per-pixel
 // bitmap, stored as 95 rows of 4 big-endian 16-bit words (bit 15 = leftmost
 // pixel of the word), matching the original's drawDeathGraphic byte table
-constexpr int DEATH_GRAPHIC_WIDTH = 64;
 constexpr int DEATH_GRAPHIC_HEIGHT = 95;
 
 // Absolute screen position the original centers the glyph at within the

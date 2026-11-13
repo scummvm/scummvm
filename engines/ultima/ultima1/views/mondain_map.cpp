@@ -29,7 +29,6 @@ namespace Views {
 
 constexpr int TILE_WIDTH = 16;
 constexpr int TILE_HEIGHT = 16;
-constexpr int ATTACK_TILE_DELAY = 100;	// Delay after flashing an attack tile
 
 
 bool MondainMap::msgFocus(const FocusMessage &msg) {

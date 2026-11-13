@@ -73,8 +73,8 @@ void OverworldMap::timeout() {
 }
 
 void OverworldMap::animateWater() {
-	const Graphics::ManagedSurface *tiles = _G(map).tiles();
-	const Graphics::ManagedSurface &tile = tiles[Data::TILE_OCEAN];
+	Graphics::ManagedSurface *tiles = _G(map).tiles();
+	Graphics::ManagedSurface &tile = tiles[Data::TILE_OCEAN];
 	assert(tile.w == TILE_WIDTH && tile.h == TILE_HEIGHT);
 
 	byte lastRow[TILE_WIDTH];

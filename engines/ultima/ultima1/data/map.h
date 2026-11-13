@@ -194,6 +194,10 @@ public:
 		return _tiles;
 	}
 
+	Graphics::ManagedSurface *tiles() {
+		return _tiles;
+	}
+
 	/**
 	 * Get the outer-space ship glyph tiles, indexed by shipType*4+facing
 	 */
