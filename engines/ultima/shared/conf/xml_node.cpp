@@ -236,6 +236,8 @@ XMLNode *XMLNode::xmlParseDoc(XMLTree *tree, const Common::String &s) {
 	Common::String sbuf(s);
 	size_t nn = 0;
 	bool parsedXmlElement = false, parsedDocType = false;
+	(void)parsedXmlElement;		// Only checked by asserts
+	(void)parsedDocType;
 	XMLNode *node = nullptr, *child = nullptr;
 
 	for (;;) {
