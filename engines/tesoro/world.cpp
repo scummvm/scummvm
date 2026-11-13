@@ -23,6 +23,7 @@
 
 #include "tesoro/tesoro.h"
 #include "tesoro/world.h"
+#include "tesoro/core/cursor.h"
 #include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
@@ -141,12 +142,17 @@ int32 World::now() {
 	return _engine.gameTime();
 }
 
+void World::setPointerActive(bool active) {
+	if (_engine._cursor)
+		_engine._cursor->setActive(active);
+}
+
 void World::insertInMainList(Object *object, int priority) {
-	_engine._main.insertByPriority(object, priority);
+	_main.insertByPriority(object, priority);
 }
 
 void World::insertInMainListFront(Object *object, int priority) {
-	_engine._main.insertByPriorityFront(object, priority);
+	_main.insertByPriorityFront(object, priority);
 }
 
 void World::walkJimToPointer(int32 mouseX, int32 mouseY) {
@@ -163,7 +169,7 @@ void World::setHoverText(const char *text) {
 }
 
 void World::removeFromMainList(Object *object) {
-	_engine._main.remove(object);
+	_main.remove(object);
 }
 
 Level *World::jimLevel() {

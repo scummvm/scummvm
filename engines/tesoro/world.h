@@ -23,6 +23,7 @@
 #define TESORO_WORLD_H
 
 #include "common/scummsys.h"
+#include "tesoro/core/objectlist.h"
 #include "tesoro/core/walkarea.h"
 
 namespace Tesoro {
@@ -50,10 +51,13 @@ public:
 	/** The place of a level file's name in the game's list, -1 if it is not one of them. */
 	int levelIndexOf(const char *name) const;
 
+	MainList &mainList() { return _main; }
+
 	/** The protagonist */
 	Jim *jim();
 
 	int32 now();
+	void setPointerActive(bool active);
 	void setHoverText(const char *text);
 
 	/** The main list takes each object once: never insert the same object twice. */
@@ -79,6 +83,7 @@ private:
 	TesoroEngine &_engine;
 	Level *_levels[kLevelCount] = {};
 	Jim *_jim = nullptr;
+	MainList _main;
 };
 
 } // End of namespace Tesoro

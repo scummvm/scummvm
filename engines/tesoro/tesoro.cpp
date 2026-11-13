@@ -60,7 +60,7 @@ TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 }
 
 TesoroEngine::~TesoroEngine() {
-	_main.clear();
+	_world.mainList().clear();
 	delete _interface;
 	delete _mainMenu;
 	delete _newGameMenu;
@@ -121,10 +121,10 @@ Common::Error TesoroEngine::run() {
 
 	// The pointer, the interface level and the level the player is in take their turns in this order.
 	if (_cursor)
-		_main.insertByPriority(_cursor, 0xf);
+		_world.mainList().insertByPriority(_cursor, 0xf);
 	if (_interface)
-		_main.insertByPriority(_interface, 0x13);
-	_main.insertByPriority(_level, 0x14);
+		_world.mainList().insertByPriority(_interface, 0x13);
+	_world.mainList().insertByPriority(_level, 0x14);
 
 	const uint32 fontOffset = _archive.findEntry("FUENTES.ANM");
 	if (!fontOffset || !_font.load(*_archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
@@ -205,8 +205,8 @@ bool TesoroEngine::runFrame() {
 		_level->setFrameTime(now);
 
 	// The first pass moves things; the second, unless the first asked to stop, draws the picture.
-	if (_main.runUpdate() != 3)
-		_main.runUpdate2();
+	if (_world.mainList().runUpdate() != 3)
+		_world.mainList().runUpdate2();
 
 	// Without a level nothing composes the frame, so the pointer is shown on its own.
 	if (!_level)
@@ -244,9 +244,9 @@ void TesoroEngine::enterNewGameMenu() {
 }
 
 void TesoroEngine::showMenu(Level *menu) {
-	_main.remove(_level);
+	_world.mainList().remove(_level);
 	_level = menu;
-	_main.insertByPriority(_level, 0x14);
+	_world.mainList().insertByPriority(_level, 0x14);
 	_level->camera().moveTo(0, 0, 0, gameTime());
 	if (_cursor)
 		_cursor->setSurroundings(&_pointer, _level);
@@ -390,11 +390,11 @@ bool TesoroEngine::level(int index) {
 		return false;
 
 	// The world keeps every level it has loaded, so the one being replaced is not deleted.
-	_main.remove(_level);
+	_world.mainList().remove(_level);
 	if (_world.jimLevel() == _level)
 		_world.jim()->leaveLevel();
 	_level = level;
-	_main.insertByPriority(_level, 0x14);
+	_world.mainList().insertByPriority(_level, 0x14);
 	if (_cursor)
 		_cursor->setSurroundings(&_pointer, _level);
 	return true;
@@ -410,7 +410,7 @@ bool TesoroEngine::putJim(int32 x, int32 y) {
 	if (!jim || !_level)
 		return false;
 	// enterLevel puts the level in the main list itself.
-	_main.remove(_level);
+	_world.mainList().remove(_level);
 	jim->enterLevel(_level, &_level->room(0), x, y);
 	_cursor->setSurroundings(&_pointer, _level);
 	return true;

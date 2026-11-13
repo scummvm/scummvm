@@ -74,7 +74,6 @@ private:
 	PointerState _pointer;
 	bool _buttonsDown[3] = { false, false, false };
 	AnimPlayer _font;
-	MainList _main;
 	World _world;
 	byte _escape = 0;
 	bool _showOutlines = false;
