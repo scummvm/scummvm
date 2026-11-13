@@ -153,7 +153,7 @@ void CryOmni3DEngine::playHNM(const Common::Path &filepath, Audio::Mixer::SoundT
 			}
 		}
 		g_system->updateScreen();
-		g_system->delayMillis(10);
+		videoDecoder->delayMillis(10);
 
 		if (pollEvents() && checkKeysPressed()) {
 			skipVideo = true;
@@ -458,12 +458,18 @@ void CryOmni3DEngine::fillSurface(byte color) {
 Common::Error CryOmni3DEngine_HNMPlayer::run() {
 	CryOmni3DEngine::run();
 
-	initGraphics(640, 480);
+	if (getFeatures() & GF_HNM_PLAYER_16BITS) {
+		initGraphics(640, 480, nullptr);
+	} else {
+		initGraphics(640, 480);
+	}
 
 	syncSoundSettings();
 
 	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileName; i++) {
+		debug("Playing movie %s", _gameDescription->desc.filesDescriptions[i].fileName);
 		playHNM(_gameDescription->desc.filesDescriptions[i].fileName, Audio::Mixer::kMusicSoundType);
+		fillSurface(0);
 	}
 
 	return Common::kNoError;

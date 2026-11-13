@@ -599,7 +599,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_HNM_PLAYER
 		},
 		GType_HNM_PLAYER,
-		0,
+		GF_HNM_PLAYER_8BITS,
 	},
 
 	// Atlantis: The Lost Tales
@@ -615,7 +615,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_HNM_PLAYER
 		},
 		GType_HNM_PLAYER,
-		0,
+		GF_HNM_PLAYER_8BITS,
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0 }

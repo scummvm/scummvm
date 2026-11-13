@@ -32,6 +32,9 @@ enum CryOmni3DGameType {
 };
 
 enum CryOmni3DGameFeatures {
+	GF_HNM_PLAYER_8BITS                    = (0 << 0), // 8bpp videos
+	GF_HNM_PLAYER_16BITS                   = (1 << 0), // 16bpp videos
+
 	GF_VERSAILLES_FONTS_MASK               = (3 << 0), // Fonts flag mask
 	GF_VERSAILLES_FONTS_NUMERIC            = (0 << 0), // Fonts are font01.crf, ...
 	GF_VERSAILLES_FONTS_SET_A              = (1 << 0), // Fonts are for French Macintosh (development version)
