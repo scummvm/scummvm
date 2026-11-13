@@ -43,17 +43,6 @@ namespace Tesoro {
 
 TesoroEngine *g_engine;
 
-/** The levels the engine shows: their second step draws and composes the frame. */
-class MenuLevel : public Level {
-public:
-	explicit MenuLevel(TesoroEngine &engine) : _engine(engine) {}
-
-	int update2() override { return _engine.levelSecondStep(*this); }
-
-private:
-	TesoroEngine &_engine;
-};
-
 TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																			   _gameDescription(gameDesc), _clock(syst->getMillis()), _randomSource("Tesoro"), _world(*this) {
 	g_engine = this;
@@ -366,22 +355,7 @@ Camera &TesoroEngine::camera() {
 }
 
 Level *TesoroEngine::loadLevel(const char *name) {
-	Common::String upper(name);
-	upper.toUppercase(); // archive names are upper case
-	const uint32 offset = _archive.findEntry(upper.c_str());
-	if (!offset) {
-		warning("Tesoro: level %s is not in the archive", upper.c_str());
-		return nullptr;
-	}
-
-	Level *level = new MenuLevel(*this);
-	if (!level->load(*_archive.seekEntry(offset), offset, AnimBank::kLoadNow, gameTime())) {
-		warning("Tesoro: level %s cannot be read", upper.c_str());
-		delete level;
-		return nullptr;
-	}
-	level->attachObjects();
-	return level;
+	return _world.loadLevelFile(name, AnimBank::kLoadNow);
 }
 
 bool TesoroEngine::level(int index) {

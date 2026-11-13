@@ -52,7 +52,8 @@ public:
 	int levelIndexOf(const char *name) const;
 
 	MainList &mainList() { return _main; }
-
+	/** The second step of a level in the frame (its cameras, and for the player's level the picture shown). */
+	int levelSecondStep(Level &level);
 	/** The protagonist */
 	Jim *jim();
 
@@ -77,6 +78,8 @@ public:
 	void walkJimToPointer(int32 mouseX, int32 mouseY);
 
 private:
+	friend class WorldLevel;
+
 	/** The objects the game starts with switched off, once a level has been loaded. */
 	void applyStartState(Level &where, int index);
 

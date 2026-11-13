@@ -46,6 +46,20 @@ static const char *const kJimFiles[Jim::kBanks] = {
 	"JIMIZQUIERDA.ANM", "JIMDERECHA.ANM", "JIMHABAB.ANM", "JIMHABAR.ANM"
 };
 
+
+/** Level whose objects of the clickable family are built here. */
+class WorldLevel : public Level {
+public:
+	explicit WorldLevel(World &world) : _world(world) {}
+
+protected:
+	int update2() override { return _world.levelSecondStep(*this); }
+
+private:
+	World &_world;
+	byte _variables = 0;
+};
+
 World::~World() {
 	delete _jim;
 	for (int i = 0; i < kLevelCount; ++i)
@@ -58,7 +72,7 @@ Level *World::loadLevelFile(const char *name, int mode, int index) {
 		warning("Tesoro: level %s is not in the archive", name);
 		return nullptr;
 	}
-	Level *level = new Level();
+	Level *level = new WorldLevel(*this);
 	if (!level->load(*_engine._archive.seekEntry(offset), offset, mode, now())) {
 		warning("Tesoro: level %s could not be read", name);
 		delete level;
@@ -146,6 +160,8 @@ void World::setPointerActive(bool active) {
 	if (_engine._cursor)
 		_engine._cursor->setActive(active);
 }
+
+int World::levelSecondStep(Level &level) { return _engine.levelSecondStep(level); }
 
 void World::insertInMainList(Object *object, int priority) {
 	_main.insertByPriority(object, priority);
