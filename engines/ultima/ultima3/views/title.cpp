@@ -436,6 +436,8 @@ void Title::timeout() {
 		draw();
 		showLogoScreen();
 		break;
+	default:
+		break;
 	}
 }
 

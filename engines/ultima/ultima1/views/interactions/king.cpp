@@ -121,6 +121,8 @@ bool King::msgKeypress(const KeypressMessage &msg) {
 	case KING_PENCE:
 		penceKeypress(msg);
 		break;
+	default:
+		break;
 	}
 
 	return true;

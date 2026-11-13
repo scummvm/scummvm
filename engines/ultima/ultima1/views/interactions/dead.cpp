@@ -190,6 +190,8 @@ bool Dead::tick() {
 			else
 				_delayCtr = COUNT_DELAY;
 			break;
+		default:
+			break;
 		}
 	}
 

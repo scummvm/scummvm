@@ -139,6 +139,8 @@ void CreateCharacter::draw() {
 		s.writeString(Common::Point(12, 4), _G(savegame)._name);
 		s.writeString(Common::Point(3, 22), "Use this character? (Y-N) ");
 		break;
+	default:
+		break;
 	}
 }
 
@@ -196,6 +198,8 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 		return View::msgKeypress(msg);
 	case SAVE:
 		return msgSaveKey(msg);
+	default:
+		break;
 	}
 
 	return false;

@@ -156,6 +156,8 @@ void CombatMap::processFrame() {
 		case CombatEvent::SHOW:
 			_G(combat).syncShown();
 			return;
+		default:
+			break;
 		}
 	}
 

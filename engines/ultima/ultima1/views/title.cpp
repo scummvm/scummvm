@@ -346,6 +346,8 @@ void Title::draw() {
 			s.writeString(Common::Point(6, 23), "Conversion by: John Fachini");
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -436,6 +438,8 @@ void Title::timeout() {
 			showMainMenu();
 			return;
 		}
+		break;
+	default:
 		break;
 	}
 

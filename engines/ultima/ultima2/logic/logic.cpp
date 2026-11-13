@@ -260,6 +260,8 @@ void Logic::resolveDirection(Data::Direction dir) {
 	case DirectionPurpose::TRANSACT:
 		doEndOfTurn = transact(dir);
 		break;
+	default:
+		break;
 	}
 
 	if (doEndOfTurn)

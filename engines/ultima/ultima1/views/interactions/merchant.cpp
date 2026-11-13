@@ -195,6 +195,8 @@ bool Merchant::msgKeypress(const KeypressMessage &msg) {
 	case SHOP_QTY:
 		groceryKeypress(msg);
 		break;
+	default:
+		break;
 	}
 
 	return true;
@@ -507,6 +509,8 @@ void Merchant::chooseSell() {
 
 	case SHOP_TRANSPORT:
 		showText(true, false, { { 9, listY() + 2, "Sorry, we don't deal in" }, { 15, listY() + 3, "used stuff." } });
+		break;
+	default:
 		break;
 	}
 }

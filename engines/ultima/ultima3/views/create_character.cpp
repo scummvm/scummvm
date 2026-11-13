@@ -225,6 +225,8 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 		if (isSpaceKey(msg))
 			close();
 		break;
+	default:
+		break;
 	}
 
 	redraw();

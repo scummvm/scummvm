@@ -59,6 +59,8 @@ bool Shop::msgFocus(const FocusMessage &msg) {
 	case SPELL_WIZARD:
 		writeString("%s Muserref Oldum!\n1-Light, 2-L.D., 3-L.U.,\n4-M.M., 5-Blink, 6-Kill,\nBir iki uc...? ", sg._name);
 		break;
+	default:
+		break;
 	}
 
 	return Interaction::msgFocus(msg);
@@ -86,6 +88,8 @@ void Shop::chooseItem(int digit) {
 		case SPELL_WIZARD:
 			finish("\nUgurla olsun!");
 			break;
+		default:
+			break;
 		}
 		return;
 	}
@@ -108,6 +112,8 @@ void Shop::chooseItem(int digit) {
 		_price = sg.computeItemPrice(_item);
 		writeString("Five %ss for %.4d\n%s ", Data::SPELL_NAMES[_item], _price,
 			_kind == SPELL_CLERIC ? "Yes, friend?" : "Lutfen evet?");
+		break;
+	default:
 		break;
 	}
 
@@ -158,6 +164,8 @@ void Shop::confirm(char key) {
 				writeString("Gule gule!\n");
 			}
 		}
+		break;
+	default:
 		break;
 	}
 

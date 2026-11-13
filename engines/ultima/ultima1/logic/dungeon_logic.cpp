@@ -103,6 +103,8 @@ void DungeonLogic::turnLeft() {
 	case Data::DIR_DOWN:
 		_G(savegame)._dungeonDirection = Data::DIR_RIGHT;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -122,6 +124,8 @@ void DungeonLogic::turnRight() {
 	case Data::DIR_DOWN:
 		_G(savegame)._dungeonDirection = Data::DIR_LEFT;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -140,6 +144,8 @@ void DungeonLogic::turnAround() {
 		break;
 	case Data::DIR_DOWN:
 		_G(savegame)._dungeonDirection = Data::DIR_UP;
+		break;
+	default:
 		break;
 	}
 }
@@ -207,6 +213,8 @@ bool DungeonLogic::move(Data::Direction dir) {
 		break;
 	case Data::DIR_DOWN:
 		turnAround();
+		break;
+	default:
 		break;
 	}
 

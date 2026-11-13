@@ -119,6 +119,8 @@ void CreateCharacter::positionCursor() {
 	case CONFIRM:
 		_cursor.setPosition(Common::Point(29, 16));
 		break;
+	default:
+		break;
 	}
 
 	_cursor.show();
@@ -288,6 +290,8 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 			sg._mapType = 0;
 			_G(map).load(sg._mapEra, sg._mapType);
 		}
+		break;
+	default:
 		break;
 	}
 

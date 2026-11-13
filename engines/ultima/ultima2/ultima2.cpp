@@ -282,6 +282,8 @@ void Ultima2Engine::playFX(Data::SoundEffect fx) {
 		queueTone(1216, 60);
 		queueTone(1170, 60);
 		break;
+	default:
+		break;
 	}
 }
 

@@ -266,6 +266,8 @@ bool OverworldLogic::move(Data::Direction dir) {
 	case Data::DIR_DOWN:
 		moveDown();
 		break;
+	default:
+		break;
 	}
 
 	if (_G(map).getContinentAt(_G(savegame)._overworldPos) != continentNum)
