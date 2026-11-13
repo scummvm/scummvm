@@ -211,14 +211,14 @@ MODULE_OBJS += \
 	scaler/edge.o
 endif
 
+endif
+
 ifdef USE_VIEWS
 MODULE_OBJS += \
 	views/events.o \
 	views/gfx_surface.o \
 	views/messages.o \
 	views/view.o
-endif
-
 endif
 
 ifeq ($(BACKEND),atari)
