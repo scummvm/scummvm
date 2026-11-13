@@ -177,6 +177,8 @@ public:
 	/** Puts Jim into the shown level at a place. False if he cannot be built. */
 	bool putJim(int32 x, int32 y);
 	Cursor *cursor() { return _cursor; }
+	Level *shownLevel() { return _level; }
+	World &world() { return _world; }
 	/** Shows or hides the hit rectangles and outlines of the objects over the picture. Returns the new state. */
 	bool toggleOutlines() { return _showOutlines = !_showOutlines; }
 };

@@ -70,8 +70,13 @@ public:
 	void draw(const Camera &camera, Display &display) override;
 	bool isHitter(const Object *other) const override { return other->kindId() == 7; }
 
-private:
+	/** Jim touched the level's walk area edge: a straight walk is replaced by a route round the waypoints. */
+	int onTouched(Object *other, int extra) override;
 
+private:
+	void stopAtCurrentPosition() { _previousX = _x; _previousY = _y; }
+	bool findPath(int32 destX, int32 destY, WalkTarget *target);
+	void removeFromMainList();
 	bool startWalkAnimation(int facing);
 	void advanceAnimation(int16 &moveX, int16 &moveY);
 	void tickAnimation();

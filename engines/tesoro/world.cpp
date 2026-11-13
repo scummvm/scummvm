@@ -111,4 +111,6 @@ bool World::findPath(int32 destX, int32 destY, WalkTarget *target) {
 	return floor->path()->area(*jim()).findPath(destX, destY, jim()->x(), jim()->y(), target);
 }
 
+bool World::hasWalkAreaOf(Object *other) { return other && other->kindId() == 7 && static_cast<WalkFloor *>(other)->path(); }
+
 } // End of namespace Tesoro

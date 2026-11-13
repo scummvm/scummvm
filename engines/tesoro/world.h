@@ -56,6 +56,7 @@ public:
 	/** The size of things at a point (0x100 is life size; 0x100 too without a floor). */
 	int32 scaleAt(int32 x, int32 y);
 	bool findPath(int32 destX, int32 destY, WalkTarget *target);
+	bool hasWalkAreaOf(Object *other);
 
 	/** The level Jim is in, or null. */
 	Level *jimLevel();

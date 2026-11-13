@@ -22,6 +22,9 @@
 #include "tesoro/console.h"
 #include "tesoro/core/animbank.h"
 #include "tesoro/core/cursor.h"
+#include "tesoro/core/level.h"
+#include "tesoro/core/walkfloor.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 
@@ -34,6 +37,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("touching", WRAP_METHOD(Console, touching));
 	registerCmd("outlines", WRAP_METHOD(Console, outlines));
 	registerCmd("jim", WRAP_METHOD(Console, jim));
+	registerCmd("scale", WRAP_METHOD(Console, scale));
+	registerCmd("route", WRAP_METHOD(Console, route));
 }
 
 Console::~Console() {
@@ -98,6 +103,34 @@ bool Console::jim(int argc, const char **argv) {
 	}
 	if (!g_engine->putJim(atoi(argv[1]), atoi(argv[2])))
 		debugPrintf("Jim cannot be put there\n");
+	return true;
+}
+
+bool Console::scale(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: %s X Y   (the size of things at world coordinates; 256 is life size)\n", argv[0]);
+		return true;
+	}
+	Level *level = g_engine->shownLevel();
+	WalkFloor *floor = level ? level->floor() : nullptr;
+	if (!floor)
+		debugPrintf("No floor in this level\n");
+	else
+		debugPrintf("%d\n", (int)floor->scaleAt(atoi(argv[1]), atoi(argv[2])));
+	return true;
+}
+
+bool Console::route(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: %s X Y   (sends Jim to world coordinates round the waypoints)\n", argv[0]);
+		return true;
+	}
+	World &world = g_engine->world();
+	if (!world.jimLevel()) {
+		debugPrintf("Jim is not in a level (use jim X Y)\n");
+		return true;
+	}
+	debugPrintf(world.findPath(atoi(argv[1]), atoi(argv[2]), nullptr) ? "true\n" : "false\n");
 	return true;
 }
 

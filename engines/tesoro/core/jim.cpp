@@ -59,6 +59,27 @@ int Jim::walkTo(int32 x, int32 y, WalkTarget *target, bool direct) {
 	return 0;
 }
 
+int Jim::onTouched(Object *other, int) {
+	const bool otherHasWalkArea = _world.hasWalkAreaOf(other);
+	if (!_walking)
+		return 1;
+	stopAtCurrentPosition();
+	removeFromMainList();
+	if (!_direct && otherHasWalkArea) {
+		if (!_world.findPath(_destX, _destY, _target)) {
+			setFacing(_facing);
+			if (_target) {
+				_target->arrived();
+				return 1;
+			}
+		}
+	} else {
+		_direct = false;
+		setFacing(_facing);
+	}
+	return 1;
+}
+
 void Jim::setFacing(int facing) {
 	_walking = false;
 	_facing = facing;
@@ -225,7 +246,8 @@ void Jim::draw(const Camera &camera, Display &display) {
 	display.queueImageScaled(x, y, _sortValue, player.bank()->image(seq.imageIndex), scale << 8, scale << 8, 0);
 }
 
-
+bool Jim::findPath(int32 destX, int32 destY, WalkTarget *target) { return _world.findPath(destX, destY, target); }
+void Jim::removeFromMainList() { _world.removeFromMainList(this); }
 void Jim::tickAnimation() { _anim.tickClearMovement(_world.now()); }
 
 } // End of namespace Tesoro
