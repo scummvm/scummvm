@@ -163,7 +163,7 @@ void Map::loadGraphics() {
 	// Tile 0 is a blank empty floor tile, followed by 19 tiles, and tile 20 is duplicated from the overworld tiles
 	_mondainTiles[0].create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
 	loadTiles(cga ? "cgamond.bin" : "egamond.bin", &_mondainTiles[1], MONDAIN_TILES_COUNT, 16, cga);
-	_mondainTiles[20] = _overworldTiles[TILE_PLAYER];
+	_mondainTiles[20].copyFrom(_overworldTiles[TILE_PLAYER]);
 
 	loadShipTiles(cga ? "cgaspace.bin" : "egaspace.bin", _spaceShipTiles, SPACE_SHIP_TILES_COUNT,
 		SPACE_SHIP_TILE_WIDTH, cga);
