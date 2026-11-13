@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "tesoro/core/object.h"
+#include "tesoro/core/walkarea.h"
 
 namespace Tesoro {
 
@@ -41,13 +42,25 @@ public:
 	/** Sets Jim up from his nine banks. Stands facing left. */
 	void init(const Common::Array<AnimPlayer> &levelPlayers);
 
+	/** Walks to (x, y). direct: straight there, not round the corners. target is told on arrival. */
+	int walkTo(int32 x, int32 y, WalkTarget *target, bool direct);
+
+	void setFacing(int facing);
+
+	bool walking() const { return _walking; }
+	void stopWalking() { _walking = false; }
+	bool direct() const { return _direct; }
+	int facing() const { return _facing; }
+	WalkTarget *target() const { return _target; }
+	int32 destX() const { return _destX; }
+	int32 destY() const { return _destY; }
+
 	/** Moves Jim into a room of a level and puts him at (x, y), the camera following him. */
 	void enterLevel(Level *level, Room *room, int32 x, int32 y);
 
 	/** Takes Jim out of his level, for when the level is thrown away. */
 	void leaveLevel();
 
-	int facing() const { return _facing; }
 	int32 scale() const { return _scale; }
 
 	/** For now only keeps his size up to date. Returns 1 to go on. */
@@ -58,11 +71,21 @@ public:
 	bool isHitter(const Object *other) const override { return other->kindId() == 7; }
 
 private:
-	/** Shows the standing picture for a direction. */
+
+	bool startWalkAnimation(int facing);
+	void advanceAnimation(int16 &moveX, int16 &moveY);
+	void tickAnimation();
 	void showFacing(int facing);
 
 	World &_world;
-	int32 _scale = 0x100;	// his size, 0x100 is life size
+
+	bool _walking = false;
+	bool _direct = false;
+	WalkTarget *_target = nullptr;
+	int32 _fixedX = 0, _fixedY = 0;	// the position in 24.8 fixed point
+	int32 _moveX = 0, _moveY = 0;	// the animation's movement already consumed
+	int32 _destX = 0, _destY = 0;
+	int32 _scale = 0x100;	// 0x100 is unscaled
 	int _facing = 3;
 };
 

@@ -116,8 +116,10 @@ Common::Error TesoroEngine::run() {
 				_cursor = static_cast<Cursor *>(objects[i]);
 		}
 	}
-	if (_cursor)
+	if (_cursor) {
 		_cursor->setSurroundings(&_pointer, _level);
+		_cursor->setHost(&_world);
+	}
 
 	// The pointer, the interface level and the level the player is in take their turns in this order.
 	if (_cursor)

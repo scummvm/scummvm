@@ -29,8 +29,97 @@
 namespace Tesoro {
 
 static const int kLevelPriority = 0x14;
+static const int kWalkPriority = 5;
+
+int Jim::walkTo(int32 x, int32 y, WalkTarget *target, bool direct) {
+	_world.removeFromMainList(this);
+	if (_world.hasWalkArea()) {
+		_world.insertInMainListFront(this, kWalkPriority);
+		_walking = true;
+		_fixedX = _x * 256;
+		_fixedY = _y * 256;
+		_destX = x;
+		_destY = y;
+		_direct = direct;
+		_target = target;
+
+		const int32 dx = _destX - _x;
+		const int32 dy = _destY - _y;
+		if (ABS(dy) < ABS(dx))
+			_facing = (dx >= 0) + 3;
+		else
+			_facing = (dy < 0) + 1;
+
+		if (startWalkAnimation(_facing))
+			_moveX = _moveY = 0;
+		return 1;
+	}
+	if (target)
+		return target->arrived();
+	return 0;
+}
+
+void Jim::setFacing(int facing) {
+	_walking = false;
+	_facing = facing;
+	showFacing(facing);
+}
 
 int Jim::update() {
+	if (!_walking) {
+		_scale = _world.hasWalkArea() ? _world.scaleAt(_x, _y) : 0x100;
+		return 1;
+	}
+
+	const int32 dx = _destX - (_fixedX >> 8);
+	const int32 dy = _destY - (_fixedY >> 8);
+	// Squares are summed as the original's 32-bit integers do, wrapping when a walk has run far off.
+	const int32 distance = (int32)((uint32)dx * (uint32)dx + (uint32)dy * (uint32)dy);
+
+	int16 moveX, moveY;
+	advanceAnimation(moveX, moveY);
+	int32 stepX = (moveX - _moveX) * _scale;
+	_moveX = moveX;
+	int32 stepY = (moveY - _moveY) * _scale;
+	_moveY = moveY;
+	tickAnimation();
+
+	// Along the line to the destination: the axis the animation does not move on follows from the other.
+	if (_facing < 3) {
+		if (dy != 0)
+			stepX += (stepY * dx) / dy;
+	} else if (dx != 0) {
+		stepY += (stepX * dy) / dx;
+	}
+	_fixedX += stepX;
+	_fixedY += stepY;
+
+	if (distance == 0) {
+		_x = _destX;
+		_y = _destY;
+		_world.removeFromMainList(this);
+		if (!_target) {
+			setFacing(_facing);
+		} else {
+			const int result = _target->arrived();
+			if (result == 2 || result == 3)
+				return result;
+		}
+	} else {
+		int32 x, y;
+		const int32 stepLength = (int32)((uint32)(stepX >> 8) * (uint32)(stepX >> 8) + (uint32)(stepY >> 8) * (uint32)(stepY >> 8));
+		if (distance < stepLength) {
+			x = _destX;
+			y = _destY;
+			_fixedX = x * 256;
+			_fixedY = y * 256;
+		} else {
+			x = _fixedX >> 8;
+			y = _fixedY >> 8;
+		}
+		Object::moveTo(x, y, false);
+	}
+
 	_scale = _world.hasWalkArea() ? _world.scaleAt(_x, _y) : 0x100;
 	return 1;
 }
@@ -84,6 +173,23 @@ void Jim::enterLevel(Level *level, Room *room, int32 x, int32 y) {
 	update();
 }
 
+bool Jim::startWalkAnimation(int facing) {
+	const uint bank = kStanding + facing;
+	if (_anim.bankIndex() != bank || !(_anim.current().flags() & AnimPlayer::kPlaying)) {
+		_anim.switchPlayingTo(bank);
+		_anim.current().setRange(1, -1, true, false, _world.now());
+		return true;
+	}
+	return false;
+}
+
+void Jim::advanceAnimation(int16 &moveX, int16 &moveY) {
+	AnimPlayer &player = _anim.current();
+	player.advance(_world.now());
+	moveX = player.movementX();
+	moveY = player.movementY();
+}
+
 void Jim::leaveLevel() {
 	if (!_level)
 		return;
@@ -118,5 +224,8 @@ void Jim::draw(const Camera &camera, Display &display) {
 	const int32 y = ((camera.scaledY() - ((seq.imageY * scale) >> 8)) - _y) + 0xf0;
 	display.queueImageScaled(x, y, _sortValue, player.bank()->image(seq.imageIndex), scale << 8, scale << 8, 0);
 }
+
+
+void Jim::tickAnimation() { _anim.tickClearMovement(_world.now()); }
 
 } // End of namespace Tesoro

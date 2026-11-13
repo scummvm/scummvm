@@ -28,6 +28,7 @@
 
 namespace Tesoro {
 
+class World;
 class Level;
 
 /**
@@ -53,6 +54,8 @@ public:
 
 	/** The mouse to follow, and the level the player is in (the companion lives there). */
 	void setSurroundings(const PointerState *mouse, Level *playerLevel) { _mouse = mouse; _playerLevel = playerLevel; }
+
+	void setHost(World *host) { _host = host; }
 
 	int update() override;
 
@@ -90,6 +93,7 @@ private:
 	Cursor *_owner = nullptr;		// for the companion: the main pointer
 	const PointerState *_mouse = nullptr;
 	Level *_playerLevel = nullptr;
+	World *_host = nullptr;
 };
 
 } // End of namespace Tesoro

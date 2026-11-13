@@ -62,16 +62,25 @@ int32 World::now() {
 	return _engine.gameTime();
 }
 
-void World::setHoverText(const char *text) {
-	_engine.setHoverText(text);
-}
-
 void World::insertInMainList(Object *object, int priority) {
 	_engine._main.insertByPriority(object, priority);
 }
 
 void World::insertInMainListFront(Object *object, int priority) {
 	_engine._main.insertByPriorityFront(object, priority);
+}
+
+void World::walkJimToPointer(int32 mouseX, int32 mouseY) {
+	// Jim only exists once a game has begun; in the menus a click on bare ground does nothing.
+	Level *where = _jim ? _jim->level() : nullptr;
+	if (!where)
+		return;
+	const Camera &camera = where->camera();
+	_jim->walkTo(mouseX + camera.x(), camera.y() - mouseY, nullptr, false);
+}
+
+void World::setHoverText(const char *text) {
+	_engine.setHoverText(text);
 }
 
 void World::removeFromMainList(Object *object) {

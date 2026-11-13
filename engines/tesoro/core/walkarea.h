@@ -29,6 +29,15 @@ namespace Tesoro {
 struct AnimStep;
 
 /**
+ * Anything that can be a target for Jim's walk, it can be a WalkArea, an InteractiveObject, a PathObject or a ScriptTask */
+class WalkTarget {
+public:
+	virtual ~WalkTarget() {}
+	/** Returns 0 or 1 to go on, 2 or 3 to stop the frame's object pass (as an object update does). */
+	virtual int arrived() = 0;
+};
+
+/**
  * The shape of a place Jim may walk in (object kind 8): the points of its current step. They give the picture its
  * size (a scale for every point) and the corners of the route around an obstacle.
  */

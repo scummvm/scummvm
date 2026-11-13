@@ -26,6 +26,7 @@
 #include "tesoro/core/display.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/room.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 
@@ -123,6 +124,10 @@ int Cursor::update2() {
 	_companion->clearTouched();
 	if (result == 2 || result == 3)
 		return result;
+
+	// A click on bare ground with the walking pointer sends the player there.
+	if ((left & 8) && result == 0 && verb == 0)
+		_host->walkJimToPointer(_mouse->x, _mouse->y);
 
 	return 1;
 }
