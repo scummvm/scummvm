@@ -24,20 +24,31 @@
 #define TESORO_CORE_PATHOBJECT_H
 
 #include "tesoro/core/object.h"
+#include "tesoro/core/walkarea.h"
 
 namespace Tesoro {
 
+class Jim;
+
 /**
  * Object kind 8: PathObject.
- * Its animation points are the corners of the route Jim takes round obstacles.
+ * Its animation points are the waypoints of the route Jim takes round obstacles.
  * */
-class PathObject : public Object {
+class PathObject : public Object, public WalkTarget {
 public:
 	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now);
+
+	WalkArea &area(Jim &jim);
+
+	/** Jim reached a waypoint. */
+	int arrived() override { return _area ? _area->arrived() : 0; }
 
 	void updateAnimation(int32 now) override { _anim.tickClearMovement(now); }
 	void draw(const Camera &camera, Display &display) override { drawAnimation(camera, display, true); }
 	int update() override;
+
+private:
+	Common::ScopedPtr<WalkArea> _area;
 };
 
 } // End of namespace Tesoro

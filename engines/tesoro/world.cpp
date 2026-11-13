@@ -21,11 +21,12 @@
 
 #include "common/textconsole.h"
 
+#include "tesoro/tesoro.h"
 #include "tesoro/world.h"
 #include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/walkfloor.h"
-#include "tesoro/tesoro.h"
+#include "tesoro/core/pathobject.h"
 
 namespace Tesoro {
 
@@ -101,6 +102,13 @@ int32 World::scaleAt(int32 x, int32 y) {
 	Level *level = jimLevel();
 	WalkFloor *floor = level ? level->floor() : nullptr;
 	return floor ? floor->scaleAt(x, y) : 0x100;
+}
+
+bool World::findPath(int32 destX, int32 destY, WalkTarget *target) {
+	WalkFloor *floor = jimLevel()->floor();
+	if (!floor || !floor->path())
+		return false;
+	return floor->path()->area(*jim()).findPath(destX, destY, jim()->x(), jim()->y(), target);
 }
 
 } // End of namespace Tesoro

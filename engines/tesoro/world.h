@@ -23,6 +23,7 @@
 #define TESORO_WORLD_H
 
 #include "common/scummsys.h"
+#include "tesoro/core/walkarea.h"
 
 namespace Tesoro {
 
@@ -54,6 +55,7 @@ public:
 	bool hasWalkArea();
 	/** The size of things at a point (0x100 is life size; 0x100 too without a floor). */
 	int32 scaleAt(int32 x, int32 y);
+	bool findPath(int32 destX, int32 destY, WalkTarget *target);
 
 	/** The level Jim is in, or null. */
 	Level *jimLevel();

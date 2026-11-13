@@ -45,6 +45,15 @@ void PathObject::init(const ObjectRecord &record, int16 roomSortOffset, const Co
 	player.bank()->clearStepMovement(first);
 }
 
+WalkArea &PathObject::area(Jim &jim) {
+	if (!_area)
+		_area.reset(new WalkArea(jim));
+	AnimPlayer &player = _anim.player(0);
+	_area->setShape(&player.bank()->step(player.current()));
+	_area->setPosition(_x, _y);
+	return *_area;
+}
+
 int PathObject::update() {
 	updateAnimation(_level ? _level->frameTime() : 0);
 	return 1;

@@ -42,7 +42,7 @@ public:
 	/** Sets Jim up from his nine banks. Stands facing left. */
 	void init(const Common::Array<AnimPlayer> &levelPlayers);
 
-	/** Walks to (x, y). direct: straight there, not round the corners. target is told on arrival. */
+	/** Walks to (x, y). direct: straight there, not round the waypoints. target is told on arrival. */
 	int walkTo(int32 x, int32 y, WalkTarget *target, bool direct);
 
 	void setFacing(int facing);

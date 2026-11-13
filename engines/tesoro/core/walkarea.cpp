@@ -20,6 +20,7 @@
  */
 
 #include "tesoro/core/walkarea.h"
+#include "tesoro/core/jim.h"
 
 #include "tesoro/core/animbank.h"
 
@@ -71,6 +72,54 @@ int32 WalkArea::scaleAt(int32 x, int32 y) const {
 		return ((dy - segmentY) * (firstScale - scale)) / (firstY - segmentY) + scale;
 	}
 	return found ? firstScale : 0x100;
+}
+
+
+bool WalkArea::findPath(int32 destX, int32 destY, int32 jimX, int32 jimY, WalkTarget *target) {
+	if (!_shape)
+		return false;
+	const AnimStep &seq = *_shape;
+
+	int32 best = (destX - jimX) * (destX - jimX) + (destY - jimY) * (destY - jimY);
+	int32 nearest = -1;
+	for (uint i = 0; i < seq.entries.size(); ++i) {
+		const int32 cx = (destX - _x) - pointX(seq, i);
+		const int32 cy = (destY - _y) - pointY(seq, i);
+		const int32 distance = cx * cx + cy * cy;
+		if (distance < best) {
+			nearest = i;
+			best = distance;
+		}
+	}
+	if (nearest < 0)
+		return false;
+
+	_destX = destX;
+	_destY = destY;
+	_target = target;
+	_lastWaypoint = nearest;
+
+	best = 0xfffffff;
+	int32 nearestToJim = -1;
+	for (uint i = 0; i < seq.entries.size(); ++i) {
+		const int32 cx = (jimX - _x) - pointX(seq, i);
+		const int32 cy = (jimY - _y) - pointY(seq, i);
+		const int32 distance = cx * cx + cy * cy;
+		if (distance < best) {
+			nearestToJim = i;
+			best = distance;
+		}
+	}
+	_waypoint = nearestToJim;
+	_jim->walkTo(pointX(seq, nearestToJim) + _x, pointY(seq, nearestToJim) + _y, this, true);
+	return true;
+}
+
+int WalkArea::arrived() {
+	if (_waypoint == _lastWaypoint)
+		return _jim->walkTo(_destX, _destY, _target, true);
+	_waypoint += _waypoint < _lastWaypoint ? 1 : -1;
+	return _jim->walkTo(_x + pointX(*_shape, _waypoint), _y + pointY(*_shape, _waypoint), this, true);
 }
 
 } // End of namespace Tesoro
