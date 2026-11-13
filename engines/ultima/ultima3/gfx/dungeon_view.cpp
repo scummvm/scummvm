@@ -187,6 +187,15 @@ DungeonView::Picture DungeonView::_chests[PLACES];
 bool DungeonView::_loaded = false;
 bool DungeonView::_enabled = true;
 
+void DungeonView::resetPictures() {
+	for (int i = 0; i < FACES; ++i)
+		_faces[i]._present = false;
+	for (int i = 0; i < PLACES; ++i)
+		_ladders[i]._present = _chests[i]._present = false;
+
+	_loaded = false;
+}
+
 bool DungeonView::loadPicture(Picture &picture, const Common::String &name) {
 	Common::File f;
 	Image::PNGDecoder decoder;

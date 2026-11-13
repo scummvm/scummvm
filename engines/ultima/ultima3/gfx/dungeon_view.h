@@ -50,7 +50,7 @@ private:
 	static const int PLACES = 21;
 
 	struct Picture {
-		bool _present = false;
+		bool _present;
 		byte _pixels[PICTURE_SIZE * PICTURE_SIZE];
 	};
 
@@ -73,6 +73,12 @@ private:
 	bool _usePictures = false;
 
 	static bool loadPicture(Picture &picture, const Common::String &name);
+
+	/**
+	 * Forgets any pictures, which are kept in plain static arrays so that they don't
+	 * need constructing
+	 */
+	static void resetPictures();
 
 	void drawPicture(const Picture &picture, bool flip, bool erase);
 
@@ -108,6 +114,7 @@ private:
 public:
 	DungeonView() {
 		memset(_pixels, 0, sizeof(_pixels));
+		resetPictures();
 	}
 
 	/**
