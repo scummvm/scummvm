@@ -141,8 +141,8 @@ struct Savegame {
 	/**
 	 * Replaces the character with one imported from the original DOS
 	 * game's binary PLAYER file format (its first 256 bytes; real files
-	 * on disk have a 128-byte stale duplicate tail, same as monx??/
-	 * tlkx???, which is ignored here). Returns false if the stream is
+	 * on disk have a 128-byte stale duplicate tail, same as the monx
+	 * and tlkx files, which is ignored here). Returns false if the stream is
 	 * too short to be a real PLAYER file.
 	 *
 	 * Debug/testing use only, via the "load" console command. Fields
