@@ -27,7 +27,6 @@
 #include "common/array.h"
 #include "common/func.h"
 
-#include "scooby/main_menu/exit.h"
 #include "scooby/main_menu/presentation.h"
 #include "scooby/main_menu/object_selection/catalog.h"
 #include "scooby/main_menu/object_selection/controller.h"

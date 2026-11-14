@@ -25,7 +25,7 @@
 
 namespace Scooby {
 void RoomActorInitializer::initializeRoomActors() {
-	// Ghidra 0x00007A8C-0x00007AAF: retain only built-in visibility gates, clear path/loop state, seed ambient
+	// Ghidra 0x00007A8C-0x00007AAF: retain only built-in visibility gates, clear path/loop state, seed wander
 	// movement timing, and clear interaction bit five without disturbing the other seven bits.
 	_state.actorVisibilityBlockFlags &= kShaggyAndScoobyActorMask;
 	_state.actorAnimationLoopExitFlags = 0;

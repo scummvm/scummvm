@@ -53,7 +53,7 @@ public:
 	// scene: logical tile scene updated by nested presentation actions.
 	// state: shared cursor, exclusive bound, and script control flags.
 	// collisionProbe: shared owner of decoded room collision queries.
-	// movement: session-owned movement boundaries shared with ambient movement.
+	// movement: session-owned movement boundaries shared with Scooby wander movement.
 	// random: shared deterministic sequence consumed by randomizing script commands.
 	// presenter: shared retrace and palette-transition owner used by dedicated actions.
 	// actorAnimator: owner of the recovered actor-animation update invoked by nested actions.

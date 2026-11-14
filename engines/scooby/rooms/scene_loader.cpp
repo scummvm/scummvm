@@ -201,7 +201,7 @@ void RoomSceneLoader::loadRoomScene() {
 	_state.roomCoordinateDataOffset = collisionSectionOffset + static_cast<int>(sizeof(uint32)) +
 									  static_cast<int>(_rom.readUInt32(collisionSectionOffset));
 
-	// Ghidra 0x0000786A-0x0000789F: locate the eight initial coordinate pairs and count every ambient entry
+	// Ghidra 0x0000786A-0x0000789F: locate the eight initial coordinate pairs and count every wander entry
 	// through the first all-one sentinel, retaining count eight when no earlier sentinel occurs.
 	_state.roomPositionCoordinateTableOffset =
 		_state.roomCoordinateDataOffset +

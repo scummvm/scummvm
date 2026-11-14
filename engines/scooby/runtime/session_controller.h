@@ -39,7 +39,7 @@
 #include "scooby/main_menu/controller.h"
 #include "scooby/main_menu/presentation.h"
 #include "scooby/main_menu/vblank/handler.h"
-#include "scooby/movement/ambient_controller.h"
+#include "scooby/movement/scooby_wander_controller.h"
 #include "scooby/movement/scripted_room_movement_executor.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/randomness/deterministic_random.h"
@@ -196,7 +196,7 @@ private:
 	MainMenuVBlankHandler _mainMenuVBlank;
 	EpisodeOpeningSequence _episodeOpening;
 	MainMenuController _mainMenu;
-	AmbientMovementController _ambientMovement;
+	ScoobyWanderController _scoobyWander;
 };
 } // namespace Scooby
 

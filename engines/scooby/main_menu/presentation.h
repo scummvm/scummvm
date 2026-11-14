@@ -42,6 +42,17 @@
 
 namespace Scooby {
 
+enum class MainMenuExit {
+	// The selected path hands control to room initialization.
+	ContinueToRoom,
+
+	// The selected path requests a complete restart from the cartridge entry sequence.
+	RestartRequested,
+
+	// The native host requested process shutdown during a recovered wait.
+	HostClosed
+};
+
 class MainMenuPresentation {
 public:
 	// Binds menu assets and composition to the shared logical scene and retrace owner.

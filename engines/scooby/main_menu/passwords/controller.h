@@ -29,7 +29,6 @@
 #include "scooby/main_menu/passwords/display_state.h"
 #include "scooby/common/optional.h"
 #include "scooby/input/controller_buttons.h"
-#include "scooby/main_menu/exit.h"
 #include "scooby/main_menu/presentation.h"
 #include "scooby/main_menu/selection/input_state.h"
 #include "scooby/runtime/episode_initializer.h"

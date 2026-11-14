@@ -647,7 +647,7 @@ public:
 	// The interaction-state flags from Ghidra g_bInteractionFlags at 0xFF09DE. No image-backed value is
 	// consumed; runtime reset clears every flag. Bit zero redirects targeting into SecondaryInteraction;
 	// command 0x01 can set it while clearing that word. Bit seven excludes actor slot one from room
-	// initialization and ambient movement; actions 0x35 and 0x37 also use it to skip waiting for that slot's
+	// initialization and Scooby wander movement; actions 0x35 and 0x37 also use it to skip waiting for that slot's
 	// path and select their alternate actor-slot-two animation. Action 0x09 sets bit seven and action 0x0A
 	// clears it. Bit two suppresses command 0x05 action-prompt publication after a room-object relocation. Bit
 	// six selects an authored foreground override: UpdateScrollingAndStreamTiles derives foreground
@@ -773,28 +773,28 @@ public:
 	// PresentRoom copy SecondaryInteraction here; RefreshInteractionDisplay is the sole reader.
 	int16 previousSecondaryInteraction{};
 
-	// The ambient companion animation base from Ghidra g_wRandomMoveAnimation at 0xFF063E–0xFF063F. Work RAM
-	// starts at zero; ambient movement selects it and the room updater combines it with the chosen direction
+	// The Scooby wander animation base from Ghidra g_wRandomMoveAnimation at 0xFF063E–0xFF063F. Work RAM
+	// starts at zero; Scooby wander movement selects it and the room updater combines it with the chosen direction
 	// after animation completion.
 	int16 randomMoveAnimation{};
 
-	// The ambient-movement entry count from Ghidra g_wRandomMoveCount at 0xFF06A0–0xFF06A1. Work RAM starts at
+	// The Scooby wander entry count from Ghidra g_wRandomMoveCount at 0xFF06A0–0xFF06A1. Work RAM starts at
 	// zero; LoadRoomScene counts entries before the first 0xFFFFFFFF sentinel or retains eight when no earlier
 	// sentinel exists.
 	int16 randomMoveCount{};
 
-	// The ambient companion direction or position from Ghidra g_wRandomMoveDirection at 0xFF0640–0xFF0641.
-	// Work RAM starts at zero; ambient movement selects it and the room updater uses it for animation and
+	// The Scooby wander direction or position from Ghidra g_wRandomMoveDirection at 0xFF0640–0xFF0641.
+	// Work RAM starts at zero; Scooby wander movement selects it and the room updater uses it for animation and
 	// position transitions.
 	int16 randomMoveDirection{};
 
 	// The cartridge offset from Ghidra g_pRoomMovementData at 0xFF069A–0xFF069D. Work RAM starts at zero;
 	// LoadRoomScene points it immediately after the eight initial coordinate pairs. Offsets +0x00–+0x1F hold
-	// up to eight four-byte ambient entries, while +0x20–+0x27 hold two signed waypoint pairs shared by lead
+	// up to eight four-byte wander entries, while +0x20–+0x27 hold two signed waypoint pairs shared by lead
 	// and companion route selection.
 	int32 roomMovementDataOffset{};
 
-	// The ambient actor movement timer from Ghidra g_wRandomMoveTimer at 0xFF0688. No image-backed value is
+	// The Scooby wander timer from Ghidra g_wRandomMoveTimer at 0xFF0688. No image-backed value is
 	// consumed; runtime reset writes zero.
 	int16 randomMoveTimer{};
 
@@ -1027,7 +1027,7 @@ public:
 	// reset clears every flag. Bit zero selects the direct TransferRoomObjectTilePatch path from
 	// ApplyRoomObjectTilePatch; room-script actions 0x33 and 0x34 set and clear it. Bit one bypasses normal
 	// scroll derivation and edge streaming while retaining publication of the current scroll words; action
-	// 0x1E sets it for its direct vertical-scroll sequence. Bit two gates ambient random movement and skips
+	// 0x1E sets it for its direct vertical-scroll sequence. Bit two gates Scooby wander movement and skips
 	// the actor slot-update block; room-script action 0x0B sets it after deriving slot one's animation offset,
 	// and action 0x36 clears it. Bit five independently suppresses RefreshInteractionDisplay; room-script
 	// action 0x3A sets it and action 0x3B clears it. Bit six switches actor slot one from normal movement to

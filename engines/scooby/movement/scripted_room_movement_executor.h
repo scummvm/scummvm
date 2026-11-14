@@ -88,7 +88,7 @@ public:
 	// Returns false when host closure interrupts a callback-aware movement wait.
 	//
 	// Ghidra: moveLeadActorToRoomPosition (0x00005002). The complete body is 0x00005002-0x0000519B. The two
-	// signed waypoint pairs follow the eight-entry ambient section in g_pRoomMovementData. Visibility bits
+	// signed waypoint pairs follow the eight-entry wander section in g_pRoomMovementData. Visibility bits
 	// independently describe clear actor-to-waypoint paths; every clear/blocked waypoint-to-target combination
 	// is preserved before the direct-movement tail.
 	bool moveShaggyActorToRoomPosition(int16 targetX, int16 targetY, int16 movementScale,
@@ -117,7 +117,7 @@ public:
 	// Returns the host-completion state and semantic directional position selected for the first segment.
 	//
 	// Ghidra: movePlayerToRoomPosition (0x000056B0). The complete body is 0x000056B0-0x00005851. Both signed
-	// waypoint pairs follow the eight ambient entries in g_pRoomMovementData. Route points are queued in
+	// waypoint pairs follow the eight wander entries in g_pRoomMovementData. Route points are queued in
 	// reverse consumption order under g_nCompanionActorMovementPointIndex at 0xFF0670. Actual movement paths
 	// return native D6's directional position; the same-coordinate path's incidental incoming D6 is replaced by
 	// the current typed companion position rather than introducing register-state emulation.

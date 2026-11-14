@@ -19,31 +19,31 @@
  *
  */
 
-#ifndef SCOOBY_MOVEMENT_AMBIENT_CONTROLLER_H
-#define SCOOBY_MOVEMENT_AMBIENT_CONTROLLER_H
+#ifndef SCOOBY_MOVEMENT_SCOOBY_WANDER_CONTROLLER_H
+#define SCOOBY_MOVEMENT_SCOOBY_WANDER_CONTROLLER_H
 
 #include "scooby/assets/rom.h"
 #include "scooby/randomness/deterministic_random.h"
 #include "scooby/runtime/runtime_state.h"
 #include "scripted_room_movement_executor.h"
 
-// Owns the ambient actor-movement decision recovered inside Ghidra RunAdventure at 0x00000BF4.
+// Owns Scooby's random wander decision recovered inside Ghidra RunAdventure at 0x00000BF4.
 
 namespace Scooby {
 
-class AmbientMovementController {
+class ScoobyWanderController {
 public:
-	// Binds ambient movement selection to its ROM table and shared actor state.
+	// Binds wander selection to its ROM table and shared actor state.
 	// rom: verified cartridge address space containing movement entries.
 	// random: shared original random-value owner.
 	// state: shared actor, cursor, and room state.
 	// movement: shared owner of companion path selection and movement startup.
-	AmbientMovementController(const ScoobyDooRom &rom, DeterministicRandom &random,
-							  RuntimeState &state, ScriptedRoomMovementExecutor &movement)
+	ScoobyWanderController(const ScoobyDooRom &rom, DeterministicRandom &random,
+						   RuntimeState &state, ScriptedRoomMovementExecutor &movement)
 		: _rom(rom), _random(random), _state(state), _movement(movement) {
 	}
 
-	// Starts one random ambient move when every original movement gate permits it.
+	// Starts one random Scooby wander move when every original movement gate permits it.
 	// Returns false when host closure interrupts movement startup.
 	bool tryStartRandomMove();
 
@@ -55,4 +55,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_MOVEMENT_AMBIENT_CONTROLLER_H
+#endif // SCOOBY_MOVEMENT_SCOOBY_WANDER_CONTROLLER_H

@@ -45,7 +45,7 @@ void RoomActorUpdater::updateRoomActorsAndInterface() {
 		updateShaggyActorAndCamera();
 	}
 
-	// Ghidra 0x00006D24-0x0000707D: update companion copy, path, ambient, and queued movement branches.
+	// Ghidra 0x00006D24-0x0000707D: update companion copy, path, wander, and queued movement branches.
 	updateScoobyActor();
 
 	// Ghidra 0x0000707E-0x00007239: sample companion priority, service the paired transition layout,

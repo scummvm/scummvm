@@ -62,7 +62,7 @@ SessionController::SessionController(const ScoobyDooRom &rom, TileScene &scene, 
 	  _mainMenuPresentation(_rom, scene, _presenter), _mainMenuVBlank(_input, _mainMenuPresentation, random, _state),
 	  _episodeOpening(_rom, scene, _presenter, _mainMenuVBlank, _state),
 	  _mainMenu(_rom, _mainMenuPresentation, _mainMenuVBlank, _input, _state, _presenter, _restartSequence),
-	  _ambientMovement(_rom, random, _state, _scriptedRoomMovement) {
+	  _scoobyWander(_rom, random, _state, _scriptedRoomMovement) {
 	// Several owners above receive references to members declared after them (for example _roomVBlank
 	// receives _actionMenu and _roomActorUpdater, and _dialogue receives _interactions). This is safe
 	// because constructors only store these references; none is called until construction completes.
@@ -463,7 +463,7 @@ SessionExit SessionController::runGame() {
 
 		_interactions.refreshInteractionDisplay();
 		_interactions.snapshotInteractionState();
-		if (!_ambientMovement.tryStartRandomMove()) {
+		if (!_scoobyWander.tryStartRandomMove()) {
 			return SessionExit::HostClosed;
 		}
 

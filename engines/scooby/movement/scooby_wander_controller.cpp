@@ -19,7 +19,7 @@
  *
  */
 
-#include "scooby/movement/ambient_controller.h"
+#include "scooby/movement/scooby_wander_controller.h"
 
 #include "common/array.h"
 
@@ -29,7 +29,7 @@ namespace {
 const Common::Array<int16> kAnimationByPackedIndex = {0x000C, 0x0051, 0x0014, 0x001E};
 } // namespace
 
-bool AmbientMovementController::tryStartRandomMove() {
+bool ScoobyWanderController::tryStartRandomMove() {
 	if ((_state.interactionFlags & 0x80) != 0 || (_state.actorMovementFlags & kScoobyActorMask) != 0 ||
 		(_state.videoFlags & 0x04) != 0 || _state.randomMoveTimer >= 0 ||
 		(_state.actorAnimationHoldFlags & kScoobyActorMask) == 0) {

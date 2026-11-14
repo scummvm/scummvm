@@ -30,7 +30,7 @@ MODULE_OBJS = \
     main_menu/sound_test/catalog.o \
     main_menu/sound_test/controller.o \
     main_menu/vblank/handler.o \
-    movement/ambient_controller.o \
+    movement/scooby_wander_controller.o \
     movement/scripted_room_movement_executor.o \
     presentation/frame_presenter.o \
     randomness/deterministic_random.o \
