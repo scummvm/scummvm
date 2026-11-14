@@ -192,6 +192,8 @@ Level *World::jimLevel() {
 	return _jim ? _jim->level() : nullptr;
 }
 
+Common::SeekableReadStream &World::archiveStream() { return *_engine._archive.seekEntry(0); }
+
 bool World::hasWalkArea() {
 	Level *level = jimLevel();
 	const WalkFloor *floor = level ? level->floor() : nullptr;

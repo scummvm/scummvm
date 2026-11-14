@@ -36,6 +36,12 @@ enum {
 	kStepPoints = 4  // step contains points (x | y << 16) and a scale
 };
 
+void AnimBank::scaleBrightness(uint16 factor) {
+	const BrightnessTable table(factor);
+	for (uint32 k = 0; k < _images.size(); ++k)
+		_images[k].scaleBrightness(table);
+}
+
 bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode) {
 	*this = AnimBank();
 
@@ -111,9 +117,9 @@ bool AnimBank::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mod
 	}
 
 	_images.resize(imageCount);
-	_imagePositions.resize(imageCount);
+	_imageOffsets.resize(imageCount);
 	for (uint32 k = 0; k < imageCount; ++k) {
-		_imagePositions[k] = (uint32)dat.pos();
+		_imageOffsets[k] = (uint32)dat.pos();
 		bool ok;
 		if (mode == kLoadDeferred) {
 			const uint32 size = dat.readUint32LE();
@@ -163,6 +169,17 @@ void AnimBank::clearStepHitRect(uint i) {
 		return;
 	_steps[i].hitX = _steps[i].hitY = 0;
 	_steps[i].hitW = _steps[i].hitH = 0;
+}
+
+bool AnimBank::loadDeferredImages(Common::SeekableReadStream &dat) {
+	if (_mode != kLoadDeferred)
+		return true;
+
+	for (uint32 k = 0; k < _images.size(); ++k) {
+		if (!dat.seek(_imageOffsets[k], SEEK_SET) || !_images[k].load(dat))
+			return false;
+	}
+	return true;
 }
 
 bool AnimPlayer::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode) {

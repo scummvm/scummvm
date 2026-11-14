@@ -30,6 +30,17 @@ static const uint32 kHeaderSize = 0x10;
 static const uint32 kSpanSize = 8;
 static const uint32 kItemSize = 8;
 
+BrightnessTable::BrightnessTable(uint16 factor) {
+	for (uint32 i = 0; i < 32; ++i)
+		low[i] = (i * factor) >> 8;
+
+	for (uint32 j = 0; j < 0x800; ++j) {
+		const uint32 g = MIN<uint32>(((j & 0x3f) * factor) >> 8, 0x3f);
+		const uint32 r = MIN<uint32>(((j >> 6) * factor) >> 8, 0x1f);
+		high[j] = ((r << 6) | g) << 5;
+	}
+}
+
 uint32 AnimImage::pixelOffset() const {
 	return READ_LE_UINT32(&_data[0]);
 }
@@ -97,6 +108,21 @@ bool AnimImage::convert() {
 		}
 	}
 	return true;
+}
+
+void AnimImage::scaleBrightness(const BrightnessTable &table) {
+	if (!isLoaded() || type() != kLiteral) // only literal images are scaled
+		return;
+
+	byte *blob = &_data[0];
+	const uint32 start = pixelOffset();
+	const uint32 count = pixelBytes() / 2;
+
+	for (uint32 k = 0; k < count && start + k * 2 + 2 <= _data.size(); ++k) {
+		byte *px = blob + start + k * 2;
+		const uint16 p = READ_LE_UINT16(px);
+		WRITE_LE_UINT16(px, table.high[p >> 5] | table.low[p & 0x1f]);
+	}
 }
 
 } // End of namespace Tesoro

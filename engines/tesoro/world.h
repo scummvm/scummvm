@@ -66,6 +66,8 @@ public:
 	void insertInMainListFront(Object *object, int priority);
 	void removeFromMainList(Object *object);
 
+	Common::SeekableReadStream &archiveStream();
+
 	bool hasWalkArea();
 	/** The size of things at a point (0x100 is life size; 0x100 too without a floor). */
 	int32 scaleAt(int32 x, int32 y);

@@ -58,6 +58,12 @@ public:
 	/** Reads the animation stored at an archive entry offset. In deferred mode the images are skipped. */
 	bool load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode);
 
+	/** Loads the images skipped by a deferred load. */
+	bool loadDeferredImages(Common::SeekableReadStream &dat);
+
+	/** Multiplies the brightness of all literal images by factor / 256, in place. */
+	void scaleBrightness(uint16 factor);
+
 	bool hasHeaderFlag() const { return _headerFlag; }
 	uint32 headerDword(uint i) const { return _header[i]; }
 	uint32 stepCount() const { return _steps.size(); }
@@ -82,7 +88,7 @@ private:
 	uint32 _header[3] = {};
 	Common::Array<AnimStep> _steps;
 	Common::Array<AnimImage> _images;
-	Common::Array<uint32> _imagePositions;	// stream position of each image
+	Common::Array<uint32> _imageOffsets;	// archive offset of each image
 };
 
 

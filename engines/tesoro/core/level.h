@@ -98,7 +98,11 @@ public:
 	 * */
 	void drawRooms(int32 now, Display &display);
 
+	bool reloadDeferredAnims(Common::SeekableReadStream &dat);
+
 protected:
+	/** The step taken instead of the usual one right after the pictures were reloaded; the game's levels start their music here. */
+	virtual int picturesReloaded();
 
 	virtual Object *createObject(const ObjectRecord &record, Room &room);
 

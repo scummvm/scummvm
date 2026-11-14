@@ -370,7 +370,17 @@ void Level::resolveOverlap(Object *a, Object *b) {
 	_touches.insert_at(at, touch);
 }
 
+int Level::picturesReloaded() {
+	return update();
+}
+
 int Level::update() {
+	if (_deferredReloaded) {
+		_deferredReloaded = false;
+		// after deferred reload, run the picturesReloaded step
+		return picturesReloaded();
+	}
+
 	collisionPass(_frameTime);
 	return 1;
 }
@@ -404,6 +414,16 @@ void Level::drawRooms(int32 now, Display &display) {
 			}
 		}
 	}
+}
+
+bool Level::reloadDeferredAnims(Common::SeekableReadStream &dat) {
+	bool ok = true;
+	for (uint i = 0; i < _levelPlayers.size(); ++i) {
+		if (_levelPlayers[i].bank() && !_levelPlayers[i].bank()->loadDeferredImages(dat))
+			ok = false;
+	}
+	_deferredReloaded = true;
+	return ok;
 }
 
 } // End of namespace Tesoro

@@ -27,6 +27,14 @@
 
 namespace Tesoro {
 
+/** Per channel multipliers for AnimImage::scaleBrightness(), 256 meaning unchanged. */
+struct BrightnessTable {
+	explicit BrightnessTable(uint16 factor);
+
+	uint16 low[32];		// blue (or the low five bits), not clamped
+	uint16 high[2048];	// red and green, clamped
+};
+
 /**
  * Single image of an animation bank, kept as the blob stored in the archive.
  * Layout: pixel data offset, pixel data size, type, a list of spans, each pointing at an array of 8 byte items.
@@ -50,6 +58,8 @@ public:
 	/** The pixels, for the game to draw its own picture into; null when the image is not loaded or its pixels do not fit. */
 	byte *pixelData();
 	uint16 type() const;
+
+	void scaleBrightness(const BrightnessTable &table);
 
 private:
 	bool convert();
