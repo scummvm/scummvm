@@ -606,6 +606,14 @@ static const luaL_Reg kInventoryFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// The original stores inventory item names in capitals, however the scripts
+// defined them, and the scripts look the items up by these names
+static void pushItemName(lua_State *L, const Common::String &name) {
+	Common::String upperName = name;
+	upperName.toUppercase();
+	lua_pushstring(L, upperName.c_str());
+}
+
 static bool pushInventoryField(lua_State *L, const Common::String &key) {
 	for (const luaL_Reg *function = kInventoryFunctions; function->name; ++function) {
 		if (key == function->name) {
@@ -620,12 +628,12 @@ static bool pushInventoryField(lua_State *L, const Common::String &key) {
 		const Common::Array<int16> &order = NancySceneState.getInventoryOrder();
 		lua_createtable(L, order.size(), 0);
 		for (uint i = 0; inventory && i < order.size(); ++i) {
-			lua_pushstring(L, inventory->items[order[i]].name.c_str());
+			pushItemName(L, inventory->items[order[i]].name);
 			lua_rawseti(L, -2, i + 1);
 		}
 	} else if (key == "inHand") {
 		const int16 heldItem = NancySceneState.getHeldItem();
-		lua_pushstring(L, inventory && heldItem >= 0 && (uint)heldItem < inventory->items.size() ? inventory->items[heldItem].name.c_str() : "");
+		pushItemName(L, inventory && heldItem >= 0 && (uint)heldItem < inventory->items.size() ? inventory->items[heldItem].name : Common::String());
 	} else if (key == "currentChangeCount") {
 		lua_pushinteger(L, NancySceneState.getInventoryChangeCount());
 	} else if (key == "inHandChangeCount") {
