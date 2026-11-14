@@ -109,9 +109,11 @@ static const BitmapFont::Face *getFace(const BitmapFont *font, bool isBold, bool
 	return &font->faces[style];
 }
 
+// Tags are matched regardless of case, as in the original: <C0> is <c0>
+
 // Reads the number of a tag like <c12>; returns false when it is something else
 static bool readTagNumber(const Common::String &text, uint &pos, char letter, int &number) {
-	if (pos + 3 > text.size() || text[pos] != '<' || text[pos + 1] != letter || !Common::isDigit(text[pos + 2])) {
+	if (pos + 3 > text.size() || text[pos] != '<' || tolower((byte)text[pos + 1]) != letter || !Common::isDigit(text[pos + 2])) {
 		return false;
 	}
 
@@ -132,7 +134,7 @@ static bool readTagNumber(const Common::String &text, uint &pos, char letter, in
 
 static bool readTag(const Common::String &text, uint &pos, const char *tag) {
 	const uint length = strlen(tag);
-	if (pos + length > text.size() || strncmp(text.c_str() + pos, tag, length) != 0) {
+	if (pos + length > text.size() || scumm_strnicmp(text.c_str() + pos, tag, length) != 0) {
 		return false;
 	}
 
