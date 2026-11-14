@@ -57,7 +57,19 @@ public:
 	/** The protagonist */
 	Jim *jim();
 
+	bool putJimInLevel(int index, int32 x, int32 y);
+	/** Puts Jim into the first room of a level; false if there is no such level. */
+	bool putJimInLevel(Level *level, int32 x, int32 y);
+
+	/** Put Jim in the port and the opening script. */
+	Level *startGame();
+
 	int32 now();
+	bool isJim(const Object *object);
+	int jimFacing();
+	void jimFace(int facing);
+	void jimWalkTo(int32 x, int32 y, WalkTarget *target);
+	void jimUpdate();
 	void setPointerActive(bool active);
 	void setHoverText(const char *text);
 
@@ -76,6 +88,12 @@ public:
 
 	/** The level Jim is in, or null. */
 	Level *jimLevel();
+	void jimShow(bool visible);
+
+	int jimLevelIndex();
+	void jimMoveTo(int32 x, int32 y);
+	void jimRemoveFromMainList();
+
 
 	void walkJimToPointer(int32 mouseX, int32 mouseY);
 

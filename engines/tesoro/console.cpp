@@ -39,6 +39,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("jim", WRAP_METHOD(Console, jim));
 	registerCmd("scale", WRAP_METHOD(Console, scale));
 	registerCmd("route", WRAP_METHOD(Console, route));
+	registerCmd("start", WRAP_METHOD(Console, start));
+
 }
 
 Console::~Console() {
@@ -131,6 +133,11 @@ bool Console::route(int argc, const char **argv) {
 		return true;
 	}
 	debugPrintf(world.findPath(atoi(argv[1]), atoi(argv[2]), nullptr) ? "true\n" : "false\n");
+	return true;
+}
+
+bool Console::start(int argc, const char **argv) {
+	g_engine->startGame();
 	return true;
 }
 

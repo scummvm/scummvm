@@ -23,6 +23,7 @@
 
 #include "tesoro/tesoro.h"
 #include "tesoro/world.h"
+#include "tesoro/core/cameraframe.h"
 #include "tesoro/core/cursor.h"
 #include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
@@ -136,20 +137,44 @@ void World::applyStartState(Level &where, int index) {
 Jim *World::jim() {
 	if (_jim)
 		return _jim;
-
 	Common::Array<AnimPlayer> levelPlayers;
 	levelPlayers.resize(Jim::kBanks);
 	for (int i = 0; i < Jim::kBanks; ++i) {
 		const uint32 offset = _engine._archive.findEntry(kJimFiles[i]);
-		if (!offset || !levelPlayers[i].load(*_engine._archive.seekEntry(offset), offset, AnimBank::kLoadNow)) {
+		if (!offset || !levelPlayers[i].load(*_engine._archive.seekEntry(offset), offset, AnimBank::kLoadDeferred)) {
 			warning("Tesoro: Jim's animation %s cannot be read", kJimFiles[i]);
 			return nullptr;
 		}
 	}
-
 	_jim = new Jim(*this);
 	_jim->init(levelPlayers);
 	return _jim;
+}
+
+bool World::putJimInLevel(int index, int32 x, int32 y) {
+	return putJimInLevel(level(index), x, y);
+}
+
+bool World::putJimInLevel(Level *target, int32 x, int32 y) {
+	Jim *player = jim();
+	if (!target || !player || target->roomCount() == 0)
+		return false;
+	player->enterLevel(target, &target->room(0), x, y);
+	return true;
+}
+
+Level *World::startGame() {
+	Level *port = level(1);
+	if (!port || port->roomCount() == 0 || !jim())
+		return nullptr;
+	// Jim comes in where the level's walk-area object stands.
+	const CameraFrame *frame = static_cast<const CameraFrame *>(port->specialObject());
+	Object *floor = frame ? frame->target() : nullptr;
+	_jim->enterLevel(port, &port->room(0), floor ? floor->x() : 0, floor ? floor->y() : 0);
+	_jim->setActive(true);
+	_jim->setVisible(true);
+
+	return port;
 }
 
 int32 World::now() {
@@ -171,6 +196,12 @@ void World::insertInMainListFront(Object *object, int priority) {
 	_main.insertByPriorityFront(object, priority);
 }
 
+bool World::isJim(const Object *object) { return object == _jim; }
+int World::jimFacing() { return jim()->facing(); }
+void World::jimFace(int facing) { jim()->setFacing(facing); }
+void World::jimWalkTo(int32 x, int32 y, WalkTarget *target) { jim()->walkTo(x, y, target, false); }
+void World::jimUpdate() { jim()->update(); }
+
 void World::walkJimToPointer(int32 mouseX, int32 mouseY) {
 	// Jim only exists once a game has begun; in the menus a click on bare ground does nothing.
 	Level *where = _jim ? _jim->level() : nullptr;
@@ -191,6 +222,13 @@ void World::removeFromMainList(Object *object) {
 Level *World::jimLevel() {
 	return _jim ? _jim->level() : nullptr;
 }
+int World::jimLevelIndex() { return jimLevel() ? jimLevel()->index() : -1; }
+
+void World::jimShow(bool visible) { jim()->setVisible(visible); }
+
+void World::jimMoveTo(int32 x, int32 y) { jim()->setPosition(x, y); }
+void World::jimRemoveFromMainList() { removeFromMainList(jim()); }
+
 
 Common::SeekableReadStream &World::archiveStream() { return *_engine._archive.seekEntry(0); }
 

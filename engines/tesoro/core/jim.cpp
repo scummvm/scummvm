@@ -21,6 +21,7 @@
 
 #include "tesoro/core/jim.h"
 
+#include "tesoro/core/cameraframe.h"
 #include "tesoro/core/display.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
@@ -30,6 +31,7 @@ namespace Tesoro {
 
 static const int kLevelPriority = 0x14;
 static const int kWalkPriority = 5;
+static const int kMapLevel = 8;
 
 int Jim::walkTo(int32 x, int32 y, WalkTarget *target, bool direct) {
 	_world.removeFromMainList(this);
@@ -187,10 +189,24 @@ void Jim::enterLevel(Level *level, Room *room, int32 x, int32 y) {
 	level->camera().moveTo(_x, _y, 0, now);
 	level->camera().setTarget(this);
 	_world.insertInMainList(level, kLevelPriority);
+	level->reloadDeferredAnims(_world.archiveStream());
+
+	// The brightness comes from the level's kind 1 object.
+	const CameraFrame *frame = static_cast<const CameraFrame *>(level->specialObject());
+	for (uint i = 0; i < _anim.bankCount(); ++i) {
+		AnimBank *bank = _anim.player(i).bank();
+		if (!bank)
+			continue;
+		bank->loadDeferredImages(_world.archiveStream());
+		if (frame)
+			bank->scaleBrightness(frame->count());
+	}
 
 	_x = _previousX = x;
 	_y = _previousY = y;
-	level->camera().moveTo(x, y, 0, now);
+	_flags = (_flags & ~kHitter) | (level->index() != kMapLevel ? kHitter : 0);
+
+	level->cameraMoveTo(x, y, 0, now);
 	update();
 }
 

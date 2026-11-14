@@ -41,6 +41,7 @@ private:
 	bool jim(int argc, const char **argv);
 	bool scale(int argc, const char **argv);
 	bool route(int argc, const char **argv);
+	bool start(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

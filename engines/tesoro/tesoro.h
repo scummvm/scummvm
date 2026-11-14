@@ -73,9 +73,11 @@ private:
 	Display _display;
 	PointerState _pointer;
 	bool _buttonsDown[3] = { false, false, false };
+	bool _inMenu = true;
+	byte _escape = 0;
+
 	AnimPlayer _font;
 	World _world;
-	byte _escape = 0;
 	bool _showOutlines = false;
 
 	// What clicks on the menu items ask for.

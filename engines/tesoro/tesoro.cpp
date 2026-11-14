@@ -193,6 +193,12 @@ bool TesoroEngine::runFrame() {
 	if (_level)
 		_level->setFrameTime(now);
 
+	// A script can take Jim into another level: that level is then the one shown.
+	if (!_inMenu && _world.jimLevel() && _world.jimLevel() != _level) {
+	_level = _world.jimLevel();
+	if (_cursor)
+		_cursor->setSurroundings(&_pointer, _level);
+	}
 	// The first pass moves things; the second, unless the first asked to stop, draws the picture.
 	if (_world.mainList().runUpdate() != 3)
 		_world.mainList().runUpdate2();
@@ -246,7 +252,17 @@ void TesoroEngine::startScript(const char *block, const char *label) {
 }
 
 void TesoroEngine::startGame() {
-	notPorted("starting the game");
+	_world.removeFromMainList(_level);
+	Level *port = _world.startGame();
+	if (!port) {
+		warning("Tesoro: the game cannot be started");
+		_world.insertInMainList(_level, 0x14);
+		return;
+	}
+	_inMenu = false;
+	_level = port;
+	if (_cursor)
+		_cursor->setSurroundings(&_pointer, _level);
 }
 
 void TesoroEngine::openSavedGames() {
@@ -368,6 +384,7 @@ bool TesoroEngine::level(int index) {
 	if (_world.jimLevel() == _level)
 		_world.jim()->leaveLevel();
 	_level = level;
+	_level->reloadDeferredAnims(_world.archiveStream());
 	_world.mainList().insertByPriority(_level, 0x14);
 	if (_cursor)
 		_cursor->setSurroundings(&_pointer, _level);

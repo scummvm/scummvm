@@ -385,6 +385,10 @@ int Level::update() {
 	return 1;
 }
 
+void Level::cameraMoveTo(int32 x, int32 y, int32 duration, int32 now) {
+	_camera.moveTo(x, y, duration, now);
+}
+
 WalkFloor *Level::floor() const {
 	const CameraFrame *frame = static_cast<const CameraFrame *>(_special);
 	Object *target = frame ? frame->target() : nullptr;

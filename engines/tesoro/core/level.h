@@ -90,6 +90,8 @@ public:
 	/** Binds every object to this level in list order. */
 	void attachObjects();
 
+	void cameraMoveTo(int32 x, int32 y, int32 duration, int32 now);
+
 	Object *findObject(uint64 key);
 
 	/**
