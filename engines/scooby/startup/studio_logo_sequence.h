@@ -29,7 +29,7 @@
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/input/controller_input.h"
 #include "scooby/presentation/frame_presenter.h"
-#include "scooby/rooms/vblank/room_vblank_handler.h"
+#include "scooby/rooms/vblank/handler.h"
 #include "scooby/types.h"
 
 // Owns the tile, tilemap, palette, and timing sequence that bridges the

@@ -30,10 +30,10 @@
 
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
-#include "scooby/interactions/interaction_action_registry.h"
-#include "scooby/movement/actor_movement_point.h"
+#include "scooby/interactions/action_registry.h"
+#include "scooby/movement/actor_point.h"
 #include "scooby/rooms/room_object.h"
-#include "scooby/rooms/room_scene_data.h"
+#include "scooby/rooms/scene_data.h"
 #include "scooby/runtime/save_game_data.h"
 #include "scooby/input/controller_buttons.h"
 

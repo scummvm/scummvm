@@ -23,7 +23,7 @@
 
 #include "common/scummsys.h"
 
-#include "interaction_controller.h"
+#include "scooby/interactions/controller.h"
 #include "scooby/common/contracts.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_layer.h"

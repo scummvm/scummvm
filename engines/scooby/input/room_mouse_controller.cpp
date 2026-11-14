@@ -19,15 +19,15 @@
  *
  */
 
-// MANAGED-ONLY MOUSE SUPPORT (see mouse_input.h and room_mouse_controller.h).
+// MANAGED-ONLY MOUSE SUPPORT (see mouse.h and room_mouse_controller.h).
 
 #include "room_mouse_controller.h"
 
 #include "common/util.h"
 
-#include "mouse_input.h"
-#include "scooby/interactions/interaction_resolver.h"
-#include "scooby/rooms/room_collision_probe.h"
+#include "scooby/input/mouse.h"
+#include "scooby/interactions/resolver.h"
+#include "scooby/rooms/collision_probe.h"
 #include "scooby/runtime/runtime_state.h"
 #include "scooby/types.h"
 

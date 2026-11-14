@@ -28,7 +28,7 @@ namespace Scooby {
 
 void ControllerInput::pollControllers(RuntimeState &state, InputScreen screen) {
 	state.previousControllerOneInput = state.controllerOneInput;
-	// Managed-only mouse support: merge the controller presses produced by mouse activity (mouse_input.h).
+	// Managed-only mouse support: merge the controller presses produced by mouse activity (mouse.h).
 	_mouse.beginPoll();
 	ControllerButtons buttons = getControllerButtons(_backButton);
 	buttons |= _mouse.sampleControllerButtons(state, screen);
@@ -101,10 +101,10 @@ bool ControllerInput::processEvents(ControllerButtons backButton, bool mapEscape
 		if (e.type == Common::EVENT_MOUSEMOVE || e.type == Common::EVENT_LBUTTONDOWN ||
 				   e.type == Common::EVENT_RBUTTONDOWN || e.type == Common::EVENT_WHEELUP ||
 				   e.type == Common::EVENT_WHEELDOWN) {
-			// Managed-only mouse support (mouse_input.h).
+			// Managed-only mouse support (mouse.h).
 			_mouse.handleEvent(e);
 		} else if (e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
-			// Managed-only mouse support: keyboard or pad use hides the pointer (mouse_input.h).
+			// Managed-only mouse support: keyboard or pad use hides the pointer (mouse.h).
 			_mouse.handleKeyboardOrPadInput();
 			if (e.customType == kScoobyActionSkipCutscene) {
 				if (e.kbdRepeat) {

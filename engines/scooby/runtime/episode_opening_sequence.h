@@ -32,7 +32,7 @@
 #include "scooby/common/span.h"
 #include "scooby/graphics/sprite_instance.h"
 #include "scooby/graphics/tile_scene.h"
-#include "scooby/main_menu/vblank/main_menu_vblank_handler.h"
+#include "scooby/main_menu/vblank/handler.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/sound/gems_audio.h"
 

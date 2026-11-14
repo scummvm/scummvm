@@ -27,8 +27,8 @@
 #include "common/func.h"
 
 #include "scooby/assets/rom.h"
-#include "scooby/rooms/room_actor_animator.h"
-#include "scooby/rooms/room_collision_probe.h"
+#include "scooby/rooms/actor_animator.h"
+#include "scooby/rooms/collision_probe.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns the original actor and room-object movement boundaries shared by room-script opcodes.

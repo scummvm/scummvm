@@ -32,8 +32,8 @@
 #include "scooby/common/optional.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"
-#include "scooby/rooms/room_actor_animator.h"
-#include "scooby/rooms/vblank/room_vblank_handler.h"
+#include "scooby/rooms/actor_animator.h"
+#include "scooby/rooms/vblank/handler.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns shared dialogue and interaction text rendering, dismissal, and cleanup boundaries.

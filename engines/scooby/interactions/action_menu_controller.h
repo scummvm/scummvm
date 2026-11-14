@@ -29,7 +29,7 @@
 #include "common/func.h"
 
 #include "scooby/assets/rom.h"
-#include "scooby/graphics/shared_graphics_workspace.h"
+#include "scooby/graphics/shared_workspace.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/runtime/runtime_state.h"
 

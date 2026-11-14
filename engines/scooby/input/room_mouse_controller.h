@@ -28,7 +28,7 @@
 
 #include "controller_buttons.h"
 
-// MANAGED-ONLY MOUSE SUPPORT (see mouse_input.h). Nothing in this file exists in the original game.
+// MANAGED-ONLY MOUSE SUPPORT (see mouse.h). Nothing in this file exists in the original game.
 //
 // Drives the original room cursor from the mouse while the room loop is idle. It only writes the recovered
 // cursor variables and produces the controller presses a pad player would make, so every selection still

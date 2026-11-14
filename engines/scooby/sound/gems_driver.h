@@ -24,7 +24,7 @@
 
 #include "common/scummsys.h"
 
-#include "scooby/sound/genesis_sound_chip.h"
+#include "scooby/sound/genesis_chip.h"
 
 namespace Audio {
 class Mixer;

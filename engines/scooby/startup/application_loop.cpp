@@ -46,7 +46,7 @@ void ApplicationLoop::run() {
 		Graphics::FrameLimiter limiter(g_system, kFramesPerSecond); // NTSC - 60Hz
 		if (!_state._saveGameData.shouldLoadGameData) {
 			IntroSequence intro(_rom, _scene);
-			// Managed-only mouse support: no pointer during the title intro (mouse_input.h, Mode::Intro).
+			// Managed-only mouse support: no pointer during the title intro (mouse.h, Mode::Intro).
 			MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::Intro);
 			while (!g_engine->shouldQuit() && !intro.isComplete()) {
 				limiter.delayBeforeSwap();

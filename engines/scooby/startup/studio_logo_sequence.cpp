@@ -37,7 +37,7 @@ StudioLogoSequence::StudioLogoSequence(const ScoobyDooRom &rom, TileScene &scene
 
 bool StudioLogoSequence::run() {
 	// Managed-only mouse support: no pointer during the logos, and a left click skips like Escape
-	// (mouse_input.h, MouseInput::Mode::Intro).
+	// (mouse.h, MouseInput::Mode::Intro).
 	MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::Intro);
 	_scene.reset(HorizontalDisplayMode::H32);
 	Common::Array<uint8> initialTiles = decompressRingLz(_rom, 0x287C8);

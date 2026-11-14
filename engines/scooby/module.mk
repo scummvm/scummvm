@@ -5,77 +5,77 @@ MODULE_OBJS = \
 	console.o \
 	assets/rom.o \
     compression/ring_lz_decoder.o \
-    graphics/indexed_frame.o \
     graphics/genesis_asset_decoder.o \
+    graphics/indexed_frame.o \
     graphics/sprite_layer.o \
     graphics/tile_scene.o \
     input/controller_input.o \
-    input/mouse_input.o \
+    input/mouse.o \
     input/room_mouse_controller.o \
     interactions/action_menu_controller.o \
+    interactions/action_menu_executor.o \
+    interactions/controller.o \
     interactions/dialogue_controller.o \
-    interactions/interaction_action_menu_executor.o \
-    interactions/interaction_controller.o \
-    interactions/interaction_resolver.o \
-    main_menu/main_menu_controller.o \
-    main_menu/main_menu_presentation.o \
-    main_menu/object_selection/room_object_selection_catalog.o \
-    main_menu/object_selection/room_object_selection_controller.o \
-    main_menu/passwords/episode_password_menu_controller.o \
-    main_menu/passwords/password_display_state.o \
-    main_menu/reveal/menu_reveal_compositor.o \
-    main_menu/room_selection/room_selection_catalog.o \
-    main_menu/room_selection/room_selection_controller.o \
-    main_menu/selection/debug_menu_unlock_sequence.o \
-    main_menu/sound_test/sound_test_catalog.o \
-    main_menu/sound_test/sound_test_controller.o \
-    main_menu/vblank/main_menu_vblank_handler.o \
-    movement/ambient_movement_controller.o \
+    interactions/resolver.o \
+    main_menu/controller.o \
+    main_menu/object_selection/catalog.o \
+    main_menu/object_selection/controller.o \
+    main_menu/passwords/controller.o \
+    main_menu/passwords/display_state.o \
+    main_menu/presentation.o \
+    main_menu/reveal/compositor.o \
+    main_menu/room_selection/catalog.o \
+    main_menu/room_selection/controller.o \
+    main_menu/selection/debug_unlock_sequence.o \
+    main_menu/sound_test/catalog.o \
+    main_menu/sound_test/controller.o \
+    main_menu/vblank/handler.o \
+    movement/ambient_controller.o \
     movement/scripted_room_movement_executor.o \
     presentation/frame_presenter.o \
     randomness/deterministic_random.o \
     rooms/actor_animation_descriptor_catalog.o \
+    rooms/actor_animator.o \
     rooms/actor_facing_animation.o \
+    rooms/actor_initializer.o \
     rooms/actor_sprite_transformer.o \
-    rooms/duel_room_script_action_executor.o \
-    rooms/room_actor_animator.o \
-    rooms/room_actor_initializer.o \
-    rooms/room_actor_updater.o \
-    rooms/room_collision_probe.o \
-    rooms/room_interface_transition_executor.o \
-    rooms/room_object_tile_patch_renderer.o \
-    rooms/room_scene_loader.o \
-    rooms/room_script_action_05_or_0c_executor.o \
-    rooms/room_script_action_1e_executor.o \
-    rooms/room_script_action_27_executor.o \
-    rooms/room_script_action_executor.o \
-    rooms/room_script_camera_pan_executor.o \
-    rooms/room_script_command_01.o \
-    rooms/room_script_command_02.o \
-    rooms/room_script_command_05.o \
-    rooms/room_script_command_08.o \
-    rooms/room_script_command_09.o \
-    rooms/room_script_command_0b.o \
-    rooms/room_script_command_0e_or_1b.o \
-    rooms/room_script_command_0f.o \
-    rooms/room_script_command_10.o \
-    rooms/room_script_command_19.o \
-    rooms/room_script_command_1a.o \
-    rooms/room_script_command_1c.o \
-    rooms/room_script_command_1d.o \
-    rooms/room_script_command_1e.o \
-    rooms/room_script_command_1f.o \
-    rooms/room_script_command_20.o \
-    rooms/room_script_command_21.o \
-    rooms/room_script_command_executor.o \
-    rooms/room_script_condition_evaluator.o \
-    rooms/room_script_controller.o \
-    rooms/room_script_coordinate_sprite_executor.o \
-    rooms/room_script_foreground_override_executor.o \
-    rooms/room_script_paired_actor_transition_executor.o \
-    rooms/room_sprite_renderer.o \
-    rooms/room_tile_streamer.o \
-    rooms/vblank/room_vblank_handler.o \
+    rooms/actor_updater.o \
+    rooms/collision_probe.o \
+    rooms/interface_transition_executor.o \
+    rooms/object_tile_patch_renderer.o \
+    rooms/scene_loader.o \
+    rooms/script/action_05_or_0c_executor.o \
+    rooms/script/action_1e_executor.o \
+    rooms/script/action_27_executor.o \
+    rooms/script/action_executor.o \
+    rooms/script/camera_pan_executor.o \
+    rooms/script/command_01.o \
+    rooms/script/command_02.o \
+    rooms/script/command_05.o \
+    rooms/script/command_08.o \
+    rooms/script/command_09.o \
+    rooms/script/command_0b.o \
+    rooms/script/command_0e_or_1b.o \
+    rooms/script/command_0f.o \
+    rooms/script/command_10.o \
+    rooms/script/command_19.o \
+    rooms/script/command_1a.o \
+    rooms/script/command_1c.o \
+    rooms/script/command_1d.o \
+    rooms/script/command_1e.o \
+    rooms/script/command_1f.o \
+    rooms/script/command_20.o \
+    rooms/script/command_21.o \
+    rooms/script/command_executor.o \
+    rooms/script/condition_evaluator.o \
+    rooms/script/controller.o \
+    rooms/script/coordinate_sprite_executor.o \
+    rooms/script/duel_action_executor.o \
+    rooms/script/foreground_override_executor.o \
+    rooms/script/paired_actor_transition_executor.o \
+    rooms/sprite_renderer.o \
+    rooms/tile_streamer.o \
+    rooms/vblank/handler.o \
     runtime/episode_initializer.o \
     runtime/episode_opening_sequence.o \
     runtime/runtime_state.o \
@@ -83,7 +83,7 @@ MODULE_OBJS = \
     runtime/session_controller.o \
     sound/gems_audio.o \
     sound/gems_driver.o \
-    sound/genesis_sound_chip.o \
+    sound/genesis_chip.o \
     startup/application_loop.o \
     startup/intro_sequence.o \
     startup/studio_logo_sequence.o \
