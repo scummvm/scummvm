@@ -35,6 +35,7 @@ public:
 	void loadAssets() override;
 	void initGameState() override;
 	void gotoArea(uint16 areaID, int entranceID) override;
+	void changePlayerHeight(int index) override;
 	void checkIfStillInArea() override;
 	bool checkIfGameEnded() override;
 	void borderScreen() override {}
