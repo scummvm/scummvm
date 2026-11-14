@@ -172,6 +172,8 @@ public:
 	int getFontHeight() const override;
 	Common::String getFontName() const override;
 	int getFontAscent() const override;
+	int getFontDescent() const override;
+	int getFontLeading() const override;
 
 	int getMaxCharWidth() const override;
 
@@ -196,6 +198,8 @@ private:
 
 	int _width, _height;
 	int _ascent, _descent;
+	/** Pixel line gap, rounded once from design metrics for scalable fonts. */
+	int _leading = 0;
 
 	struct Glyph {
 		Surface image;
@@ -251,7 +255,7 @@ TTFFont::~TTFFont() {
 
 bool TTFFont::load(Common::SeekableReadStream *ttfFile, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode,
 				   uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening,
-				   int32 faceIndex, bool bold, bool italic) {
+				   int32 faceIndex, bool fakeBold, bool fakeItalic) {
 	_initialized = false;
 
 	if (!g_ttf.isInitialized())
@@ -312,9 +316,9 @@ bool TTFFont::load(Common::SeekableReadStream *ttfFile, DisposeAfterUse::Flag di
 	}
 
 	bool fontBold = ((_face->style_flags & FT_STYLE_FLAG_BOLD) != 0);
-	_fakeBold = bold && !fontBold;
+	_fakeBold = fakeBold && !fontBold;
 	bool fontItalic = ((_face->style_flags & FT_STYLE_FLAG_ITALIC) != 0);
-	_fakeItalic = italic && !fontItalic;
+	_fakeItalic = fakeItalic && !fontItalic;
 
 	switch (renderMode) {
 	case kTTFRenderModeNormal:
@@ -356,6 +360,15 @@ bool TTFFont::load(Common::SeekableReadStream *ttfFile, DisposeAfterUse::Flag di
 	// This would make sure we have enough room for the glyphs
 	_height = ftCeil26_6(FT_MulFix(_face->height, yScale));
 #endif
+
+	FT_Pos leading = _face->size->metrics.height - _face->size->metrics.ascender + _face->size->metrics.descender;
+	if (FT_IS_SCALABLE(_face))
+		leading = FT_MulFix(_face->height - _face->ascender + _face->descender, _face->size->metrics.y_scale);
+	// Round the line gap once to pixels, preserving negative values.
+	if (leading < 0)
+		_leading = -((-leading + 32) / 64);
+	else
+		_leading = (leading + 32) / 64;
 
 #if FAKE_BOLD > 0
 	// Width isn't modified when we can't fake bold
@@ -559,6 +572,14 @@ Common::String TTFFont::getFontName() const {
 
 int TTFFont::getFontAscent() const {
 	return _ascent;
+}
+
+int TTFFont::getFontDescent() const {
+	return -_descent;
+}
+
+int TTFFont::getFontLeading() const {
+	return _leading;
 }
 
 int TTFFont::getMaxCharWidth() const {
@@ -936,10 +957,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
+Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening, int32 faceIndex, bool fakeBold, bool fakeItalic) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, disposeAfterUse, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening)) {
+	if (!font->load(stream, disposeAfterUse, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening, faceIndex, fakeBold, fakeItalic)) {
 		delete font;
 		return 0;
 	}
@@ -947,7 +968,7 @@ Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disp
 	return font;
 }
 
-Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping) {
+Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening, int32 faceIndex, bool fakeBold, bool fakeItalic) {
 	Common::SeekableReadStream *archiveStream = nullptr;
 	if (ConfMan.hasKey("extrapath")) {
 		Common::FSDirectory extrapath(ConfMan.getPath("extrapath"));
@@ -992,7 +1013,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 		}
 	}
 
-	Font *font = loadTTFFont(f, DisposeAfterUse::YES, size, sizeMode, xdpi, ydpi, renderMode, mapping);
+	Font *font = loadTTFFont(f, DisposeAfterUse::YES, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening, faceIndex, fakeBold, fakeItalic);
 	if (!font) {
 		delete archive;
 		delete f;
