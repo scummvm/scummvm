@@ -59,6 +59,10 @@ bool WinResourceID::operator==(const WinResourceID &x) const {
 	return true;
 }
 
+bool WinResourceID::hasString() const {
+	return _idType == kIDTypeString && !_name.empty();
+}
+
 String WinResourceID::getString() const {
 	if (_idType != kIDTypeString)
 		return "";
