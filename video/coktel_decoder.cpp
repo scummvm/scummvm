@@ -66,6 +66,11 @@ CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 CoktelDecoder::~CoktelDecoder() {
 }
 
+bool CoktelDecoder::safeSeekFromPreviousFullFrame(int32 frame, int whence) {
+	// Not supported by this decoder variant: fall back to a plain seek
+	return seek(frame, whence, true);
+}
+
 bool CoktelDecoder::evaluateSeekFrame(int32 &frame, int whence) const {
 	if (!isVideoLoaded())
 		// Nothing to do
@@ -2227,6 +2232,7 @@ void VMDDecoder::close() {
 
 	_files.clear();
 
+	_safeSeekDirtyRect = Common::Rect();
 
 	_stream = 0;
 
@@ -2295,6 +2301,12 @@ void VMDDecoder::processFrame() {
 	_curFrame++;
 
 	_dirtyRects.clear();
+
+	// Area changed by the frames silently decoded while safe seeking
+	if (!_safeSeekDirtyRect.isEmpty()) {
+		_dirtyRects.push_back(_safeSeekDirtyRect);
+		_safeSeekDirtyRect = Common::Rect();
+	}
 
 	_subtitle     = -1;
 
@@ -2428,6 +2440,145 @@ void VMDDecoder::processFrame() {
 	if (((uint32)_curFrame == (_frameCount - 1)) && (_soundStage == 2)) {
 		_audioStream->finish();
 		_soundStage = kSoundFinished;
+	}
+}
+
+bool VMDDecoder::isFullFrame(int32 frame) const {
+	if (frame < 0 || (uint32)frame >= _frameCount)
+		return false;
+
+	// A video part that is neither a sparse block nor a delta
+	for (uint16 i = 0; i < _partsPerFrame; i++) {
+		const Part &part = _frames[frame].parts[i];
+		if (part.type == kPartTypeSeparator)
+			break;
+
+		if (part.type == kPartTypeVideo)
+			return !(part.field_E & 0x01) && !(part.flags & 0x40);
+	}
+
+	return false;
+}
+
+int32 VMDDecoder::findPreviousFullFrame(int32 frame) const {
+	for (int32 i = frame; i > 0; i--) {
+		if (isFullFrame(i))
+			return i;
+	}
+
+	return 0;
+}
+
+bool VMDDecoder::safeSeekFromPreviousFullFrame(int32 frame, int whence) {
+	if (!evaluateSeekFrame(frame, whence))
+		return false;
+
+	int32 nextFrame = frame + 1;
+	if ((uint32)nextFrame >= _frameCount)
+		// Nothing to decode after it: plain seek
+		return seek(nextFrame, SEEK_SET, true);
+
+	int32 curNextFrame = _curFrame + 1;
+	if (nextFrame != curNextFrame) {
+		int32 startFrame = findPreviousFullFrame(nextFrame);
+
+		// If the current position lies in between, continue from there instead
+		if (startFrame < curNextFrame && curNextFrame < nextFrame)
+			startFrame = curNextFrame;
+
+		seek(startFrame, SEEK_SET, true);
+
+		// Decode the frames up to the wanted one, without their sound.
+		bool savedSoundEnabled = _soundEnabled;
+		_soundEnabled = false;
+
+		Common::Rect seekRect;
+		while (_curFrame + 1 < nextFrame) {
+			createSurface();
+			processFrame();
+
+			for (const Common::Rect &rect : _dirtyRects) {
+				if (seekRect.isEmpty())
+					seekRect = rect;
+				else
+					seekRect.extend(rect);
+			}
+		}
+
+		_soundEnabled = savedSoundEnabled;
+		_safeSeekDirtyRect = seekRect;
+	}
+
+	_startTime = g_system->getMillis() - ((nextFrame + 1) * getStaticTimeToNextFrame());
+	restartSoundAt(nextFrame);
+	return true;
+}
+
+VMDDecoder::Part *VMDDecoder::findPartOfFrame(int32 frame, PartType type, uint32 &offset) {
+	if ((uint32)frame >= _frameCount)
+		return nullptr;
+
+	offset = _frames[frame].offset;
+	for (uint16 i = 0; i < _partsPerFrame; i++) {
+		Part &part = _frames[frame].parts[i];
+		if (part.type == type) {
+			return &part;
+		}
+
+		offset += part.size;
+	}
+
+	return nullptr;
+}
+
+void VMDDecoder::restartSoundAt(int32 nextFrame) {
+	if (!_hasSound || _soundStereo == 1 || _mixer->getOutputRate() == 0)
+		return;
+
+	if (_audioStream) {
+		if (_soundStage == kSoundPlaying || _soundStage == kSoundFinished) {
+			_audioStream->finish();
+			_mixer->stopHandle(_audioHandle);
+		}
+
+		delete _audioStream;
+		_audioStream = nullptr;
+	}
+
+	createAudioStream();
+	_soundEnabled = true;
+	_soundStage   = kSoundLoaded;
+
+	if (nextFrame == 0)
+		return; // Nothing more to do for frame 0, which contains the initial sound slices.
+
+	// Otherwise, we need to look for sound slices in the previous frames, as the sound
+	// is stored ahead of the video by _soundSlicesCount - 2 slices.
+	int32 frame = nextFrame - (_soundSlicesCount - 2);
+	if (frame <= 0) {
+		// Some slices must be taken from the initial slices of frame 0.
+		uint32 offset = 0;
+		Part *soundPart = findPartOfFrame(0, kPartTypeAudio, offset);
+		if (soundPart && soundPart->flags == 2 && _soundSlicesCount <= 32) {
+			_stream->seek(offset);
+			uint32 mask = _stream->readUint32LE();
+			filledSoundSlices(soundPart->size - /* mask size */ 4, mask, nextFrame);
+		} else {
+			for (int32 i = nextFrame; i < _soundSlicesCount - 1; i++)
+				emptySoundSlice(_soundDataSize * _soundBytesPerSample);
+		}
+
+		frame = 1;
+	}
+
+	for (; frame < nextFrame; ++frame) {
+		uint32 offset = 0;
+		Part *soundPart = findPartOfFrame(frame, kPartTypeAudio, offset);
+		if (soundPart && soundPart->flags == 1) {
+			_stream->seek(offset);
+			filledSoundSlice(soundPart->size);
+		} else
+			emptySoundSlice(_soundDataSize * _soundBytesPerSample);
 	}
 }
 
@@ -2704,7 +2855,10 @@ void VMDDecoder::filledSoundSlice(uint32 size) {
 		_audioStream->queueAudioStream(sliceStream);
 }
 
-void VMDDecoder::filledSoundSlices(uint32 size, uint32 mask) {
+void VMDDecoder::filledSoundSlices(uint32 size, uint32 mask, uint8 firstSlice) {
+	// The slices past the 32nd are a single block, which cannot be started in its middle
+	assert((firstSlice == 0) || (_soundSlicesCount <= 32));
+
 	bool fillInfo[32];
 
 	uint8 max;
@@ -2726,7 +2880,10 @@ void VMDDecoder::filledSoundSlices(uint32 size, uint32 mask) {
 		extraSize = 0;
 
 	for (uint8 i = 0; i < max; i++)
-		if (fillInfo[i])
+		if (i < firstSlice) {
+			if (fillInfo[i])
+				_stream->skip(_soundDataSize + extraSize);
+		} else if (fillInfo[i])
 			filledSoundSlice(_soundDataSize + extraSize);
 		else
 			emptySoundSlice(_soundDataSize * _soundBytesPerSample);
