@@ -379,7 +379,7 @@ void ScriptInterpreter::cmd_vsize() {
 	int16 size = 0;
 	if (objectIndex > 0) {
 		Object *obj = _vm->_dat->getObject(objectIndex);
-		size = obj->getVectorSize();
+		size = obj->getCount();
 	}
 	_stack.setTop(size);
 }
@@ -645,7 +645,7 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 	debug(1, "Dumping code for object %04X", objectIndex);
 
 	Object *obj = _vm->_dat->getObject(objectIndex);
-	byte *code = obj->getData(), *codeStart = code, *codeEnd = code + obj->getSize();
+	const byte *code = obj->getData(), *codeStart = code, *codeEnd = code + obj->getCount();
 
 	while (code < codeEnd) {
 		byte opcode = *code++;
@@ -723,15 +723,15 @@ void ScriptInterpreter::dumpObject(int16 objectIndex) {
 	debug(1, "Dumping object %04X", objectIndex);
 
 	Object *obj = _vm->_dat->getObject(objectIndex);
-	debug(1, "Flags = %d[%04x], Size = %d[%04x]", obj->getFlags(), obj->getFlags(), obj->getSize(), obj->getSize());
+	debug(1, "Flags = %d[%04x], Size = %d[%04x]", obj->getFlags(), obj->getFlags(), obj->getCount(), obj->getCount());
 	debug(1, "Class = %d[%04x]", obj->getClass(), obj->getClass());
 	if (obj->getClass() == 0x7FFF) {
 		// byte array
 		bool looksLikeAscii = true;
 		Common::String bArray = "byteArray = [";
-		for (int i = 0; i < obj->getVectorSize(); i++) {
+		for (int i = 0; i < obj->getCount(); i++) {
 			int16 c = obj->getVectorItem(i);
-			if (i == obj->getVectorSize() - 1) {
+			if (i == obj->getCount() - 1) {
 				if (c != 0)
 					looksLikeAscii = false;
 			} else {
@@ -748,21 +748,21 @@ void ScriptInterpreter::dumpObject(int16 objectIndex) {
 	} else if (obj->getClass() == 0x7FFE) {
 		// word array
 		Common::String bArray = "wordArray = [";
-		for (int i = 0; i < obj->getVectorSize(); i++)
+		for (int i = 0; i < obj->getCount(); i++)
 			bArray += Common::String::format("%d,", obj->getVectorItem(i));
 		bArray += " ]";
 		debug(1, "%s", bArray.c_str());
 	} else {
-		debug(1, "Raw Data for object %04X (count1 = %d, count2 = %d)", objectIndex, obj->getCount1(), obj->getCount2());
+		debug(1, "Raw Data for object %04X (count1 = %d, count2 = %d)", objectIndex, obj->getKeyCount(), obj->getValueCount());
 		Common::String bArray = "";
 
-		byte *limit;
+		const byte *limit;
 		if (_vm->getVersion() == 3 && _vm->getSubVersion() == 1)
-			limit = obj->getData() + obj->getSize() * 4;
+			limit = obj->getData() + obj->getCount() * 4;
 		else
-			limit = obj->getData() + (obj->getCount1() + obj->getCount2()) * 2;
+			limit = obj->getData() + (obj->getKeyCount() + obj->getValueCount()) * 2;
 
-		for (byte *i = obj->getData(); i < limit; i++)
+		for (const byte *i = obj->getData(); i < limit; i++)
 			bArray += Common::String::format("%02X", *i);
 		debug(1, "%s", bArray.c_str());
 	}
@@ -789,7 +789,7 @@ void ScriptInterpreter::dumpAllScripts() {
 		}
 		// Code objects aren't excplicitly marked as such, we need to check if
 		// the last byte is a cmd_return opcode.
-		byte *retByte = obj->getData() + obj->getSize() - 1;
+		const byte *retByte = obj->getData() + obj->getCount() - 1;
 		if (*retByte == 0x1F) {
 			dumpScript(objectIndex, opcodeStats, externStats);
 		} else {
