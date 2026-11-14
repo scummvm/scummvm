@@ -47,6 +47,8 @@ void HypnoEngine::splitArcadeFile(const Common::String &filename, Common::String
 		if (x == 'X' && p == '\n') {
 			while (!file.eos()) {
 				x = file.readByte();
+				if (file.eos())
+					break;
 				if (x == 'Y' && list.size() > 0 && list[list.size()-1] == '\n')
 					break;
 				list += x;
