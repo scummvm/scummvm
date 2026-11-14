@@ -113,27 +113,22 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfShowMouseCursor);
 	External(sfGetMusicBeat);
 
-	// MANHOLE Floppy has nothing further.
-	if (_vm->getGameID() == GID_MANHOLE && (_vm->getFeatures() & GF_FLOPPY))
+	// MANHOLE ENG Floppy has nothing further.
+	if (_vm->getGameID() == GID_MANHOLE && _vm->getLanguage() == Common::EN_ANY && (_vm->getFeatures() & GF_FLOPPY))
 		return;
 
 	// all others have at least this:
 	External(sfSetScreenLock);
 
-	if (_vm->getGameID() == GID_MANHOLE) {
-		if (_vm->getPlatform() == Common::kPlatformDOS) {
-			// MANHOLE CD has cd playback functions next:
-			External(sfPlayCd);
-			External(sfStopCd);
-			External(sfGetCdStatus);
-			External(sfGetCdTime);
-		} else {
-			// FM TOWNS ver. has its own special funcs here
-			External(sfPlayMusic); // again??
-			External(sfUnknown);   // LoadPCM
-			External(sfUnknown);   // FlushPCM
-			External(sfPlayMusic); // a third one...
-		}
+	if (_vm->getGameID() == GID_MANHOLE && (_vm->getFeatures() & GF_CD)) {
+		// MANHOLE CD versions have cd playback functions next:
+		External(sfPlayCd);
+		External(sfStopCd);
+		External(sfGetCdStatus);
+		External(sfGetCdTime);
+
+		// some versions (e.g. FM Towns) use sfPlayCDSegment for interruptable sounds (?)
+		External(sfPlayCdSegment);
 		return;
 	}
 
@@ -143,8 +138,8 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfDrawSprite);
 	External(sfEraseSprites);
 	External(sfUpdateSprites);
-	// MANHOLE:NE DOS-V exits here.
-	if (_vm->getGameID() == GID_MANHOLE_NE && _vm->getLanguage() == Common::JA_JPN)
+	// MANHOLE DOS-V exits here.  (Should be no other GID_MANHOLE left to handle)
+	if (_vm->getGameID() == GID_MANHOLE)
 		return;
 
 	External(sfGetTimer);
@@ -165,7 +160,7 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfSetSpriteGround);
 	External(sfLoadResText);
 
-	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_MANHOLE_NE || _vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_RODNEY) {
+	if (_vm->getGameID() == GID_MANHOLE_NE || _vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_RODNEY) {
 		External(sfAddScreenMask);
 		External(sfSetSpriteMask);
 	} else if (_vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
@@ -827,9 +822,9 @@ int16 ScriptFunctions::sfGetCdTime(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlayCdSegment(int16 argc, int16 *argv) {
-	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
-	warning("Unimplemented opcode: sfPlayCdSegment");
-	return 0;
+	// Used in (at least) The Manhole for FM Towns
+	//  This seems to also play a CD track, unknown what (if any) other differences exist.
+	return sfPlayCd(argc, argv);
 }
 
 int16 ScriptFunctions::sfPrintf(int16 argc, int16 *argv) {

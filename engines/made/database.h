@@ -40,7 +40,7 @@ class MadeEngine;
 class Object {
 public:
 	Object();
-	~Object();
+	virtual ~Object();
 
 	virtual int load(Common::SeekableReadStream &source) = 0;
 	virtual int save(Common::WriteStream &dest) const;
@@ -121,7 +121,7 @@ class GameDatabase {
 public:
 
 	GameDatabase();
-	virtual ~GameDatabase() = default;
+	virtual ~GameDatabase();
 
 	void open(const char *filename);
 	void openFromRed(const char *redFilename, const char *filename);
