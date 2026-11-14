@@ -29,6 +29,7 @@
 #include "sky/debug.h"
 #include "sky/disk.h"
 #include "sky/grid.h"
+#include "sky/intro.h"
 #include "sky/logic.h"
 #include "sky/mouse.h"
 #include "sky/music/musicbase.h"
@@ -66,7 +67,7 @@ void Logic::setupLogicTable() {
 	_logicTable = logicTable;
 }
 
-Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound)
+Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound, Intro *skyIntro)
 	: _rnd("sky") {
 
 	_skyCompact = skyCompact;
@@ -76,6 +77,7 @@ Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *sky
 	_skyMusic = skyMusic;
 	_skySound = skySound;
 	_skyMouse = skyMouse;
+	_skyIntro = skyIntro;
 	_skyGrid = new Grid(_skyDisk, _skyCompact);
 	_skyAutoRoute = new AutoRoute(_skyGrid, _skyCompact);
 
@@ -1126,6 +1128,7 @@ void Logic::fnExec(uint16 num, uint32 a, uint32 b, uint32 c) {
 }
 
 void Logic::initScriptVariables() {
+	_creditLoopCount = 0;
 	for (int i = 0; i < ARRAYSIZE(_scriptVariables); i++)
 		_scriptVariables[i] = 0;
 
@@ -2449,6 +2452,15 @@ bool Logic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
+	debug(1, "Credit text id = %d", a);
+	if (SkyEngine::isIbass()) {
+		if (a == 82)
+			_creditLoopCount++;
+		if (_creditLoopCount > 1) {
+			_creditLoopCount = 0;
+			return fnQuitToDos(0, 0, 0);
+		}
+	}
 	DisplayedText creditText = _skyText->lowTextManager(a, 240, 0, 248, Graphics::kTextAlignCenter);
 	Compact *credCompact = _skyCompact->fetchCpt(creditText.compactNum);
 	credCompact->xcood = 168;
@@ -2559,6 +2571,8 @@ bool Logic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
+	if (SkyEngine::isIbass())
+		_skyIntro->doIbassIntro("outro.mov");
 	Engine::quitGame();
 	return false;
 }
