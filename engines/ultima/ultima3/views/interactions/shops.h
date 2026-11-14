@@ -130,8 +130,8 @@ private:
 	LogYesNo _list;
 	LogMenu _action;
 	LogMenu _item;
-	char _keys[20];
-	const char *_words[20];
+	char _keys[20] = {};
+	const char *_words[20] = {};
 
 	/**
 	 * Returns true if the shop is the one holding the best equipment

@@ -28,6 +28,7 @@ namespace Ultima3 {
 namespace Views {
 namespace Interactions {
 
+constexpr char ESCAPE_KEY = 0x1B;
 constexpr byte MACHINE_CELL = 0x7C;
 constexpr byte FLASH_CELL = 0xF0;
 constexpr byte EMPTY_CELL = 0x20;
@@ -88,7 +89,7 @@ bool InsertCard::chooseCell() {
 
 	static const char *const WORDS[6] = { "Moons", "Death", "Love", "Sol", "Quit", "Quit" };
 	_G(messages).print("D, S, L, M:\n");
-	_menu.setup("MDLSQ\033", WORDS, 6);
+	_menu.setup("MDLSQ\x1B", WORDS, 6);
 	_stage = CHOOSE_WORD;
 	return false;
 }
@@ -99,7 +100,7 @@ bool InsertCard::tryWord() {
 	char key = _menu.key();
 
 	_G(messages).print("\n");
-	if (key == 'Q' || key == '\033')
+	if (key == 'Q' || key == ESCAPE_KEY)
 		return true;
 
 	// The card for this slot has to be in this person's hands

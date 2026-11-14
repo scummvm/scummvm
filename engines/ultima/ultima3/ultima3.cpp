@@ -228,6 +228,9 @@ void Ultima3Engine::queueEffect(const Common::Array<byte> &samples) {
 		return;
 
 	byte *data = (byte *)malloc(samples.size());
+	if (!data)
+		return;
+
 	memcpy(data, &samples[0], samples.size());
 	_effectStream->queueBuffer(data, samples.size(), DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 }

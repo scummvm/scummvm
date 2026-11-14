@@ -40,7 +40,6 @@ namespace Views {
 constexpr int VIEW_LEFT = 8;
 constexpr int VIEW_TOP = 8;
 constexpr int VIEW_SIZE = 176;
-constexpr int FIRST_SPECIAL = 1;
 constexpr int LAST_SPECIAL = 6;
 
 // What is shown for each way of facing at the bottom of the frame
@@ -163,7 +162,7 @@ void DungeonMap::endTurn() {
 		if (sign)
 			_G(messages).print(sign);
 		_G(messages).print("\n");
-	} else if (tile >= FIRST_SPECIAL && tile <= LAST_SPECIAL) {
+	} else if (tile <= LAST_SPECIAL) {
 		_special = true;
 		startInteraction(new Interactions::DungeonSpecial(tile));
 		return;

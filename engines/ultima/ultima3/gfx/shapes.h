@@ -44,9 +44,9 @@ private:
 	byte _pixels[SHAPE_COUNT * SHAPE_PIXELS] = {};
 
 	// Ticks left before each animation step is next applied
-	byte _scrollCounters[4];
-	byte _flickerCounters[3];
-	byte _swapCounter;
+	byte _scrollCounters[4] = {};
+	byte _flickerCounters[3] = {};
+	byte _swapCounter = 0;
 
 	byte *tile(int index) {
 		return &_pixels[index * SHAPE_PIXELS];

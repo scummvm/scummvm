@@ -40,8 +40,8 @@ private:
 	bool _choosing = true;
 	int _slot = -1;
 	LogMenu _menu;
-	char _keys[20];
-	const char *_words[19];
+	char _keys[20] = {};
+	const char *_words[19] = {};
 
 	/**
 	 * Sets up the menu of what can be picked once a party member is chosen

@@ -193,8 +193,6 @@ void Temple::farewell() {
 
 bool Temple::serve(int slot) {
 	Data::RosterEntry &e = _G(savegame).partyMember(slot);
-	bool restored = false;
-
 	// A flash of light goes over everything
 	auto flash = [&]() {
 		_G(effects).flashViewport();
@@ -216,7 +214,6 @@ bool Temple::serve(int slot) {
 		}
 
 		e._status = Data::STATUS_GOOD;
-		restored = true;
 		break;
 
 	case 1:
@@ -227,7 +224,6 @@ bool Temple::serve(int slot) {
 
 		e._hitPoints = e._maxHitPoints;
 		flash();
-		restored = true;
 		break;
 
 	case 2:
@@ -247,7 +243,6 @@ bool Temple::serve(int slot) {
 		}
 
 		e._status = Data::STATUS_GOOD;
-		restored = true;
 		break;
 
 	default:
@@ -262,19 +257,16 @@ bool Temple::serve(int slot) {
 
 		e._status = Data::STATUS_GOOD;
 		flash();
-		restored = true;
 		break;
 	}
 
-	if (restored) {
-		spend(TEMPLE_COSTS[_service]);
+	spend(TEMPLE_COSTS[_service]);
 
-		// Bringing someone back from the dead is celebrated
-		if (_service >= 2)
-			_G(music).jingle(SONG_ALIVE);
-	}
+	// Bringing someone back from the dead is celebrated
+	if (_service >= 2)
+		_G(music).jingle(SONG_ALIVE);
 
-	return restored;
+	return true;
 }
 
 bool Temple::keypress(const KeypressMessage &msg) {

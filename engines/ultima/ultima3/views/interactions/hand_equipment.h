@@ -65,8 +65,8 @@ private:
 	PlayerChooser _players;
 	LogMenu _menu;
 	LogNumber _number;
-	char _keys[20];
-	const char *_words[19];
+	char _keys[20] = {};
+	const char *_words[19] = {};
 
 	void startAmount(int digits, bool rejectLetters);
 	void startEquipmentMenu();

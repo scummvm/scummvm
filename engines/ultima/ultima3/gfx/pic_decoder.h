@@ -45,7 +45,7 @@ private:
 	Graphics::Surface _surface;
 public:
 	~PicDecoder() {
-		destroy();
+		_surface.free();
 	}
 
 	bool loadStream(Common::SeekableReadStream &stream) override;
