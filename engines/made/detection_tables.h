@@ -83,7 +83,7 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// The Manhole (FM Towns, CD-ROM) 1990
-		//  In fact, this is the NE version, but not labeled as such
+		//  This version was later relabeled "New & Enhanced" and re-released in the US
 		{
 			"manhole",
 			"",
@@ -95,6 +95,24 @@ static const MadeGameDescription gameDescriptions[] = {
 		},
 		GID_MANHOLE,
 		GF_CD,
+		1, 0,
+	},
+
+	{
+		// The Manhole, DOS/V, file dates 2/21/1992
+		// Platform: IBM PS-55, Sega TeraDrive or DOS/V-compatibles
+		// MADE v2.00a JAPAN PC - Copyright (c) 1990, MEDIAGENIC
+		{
+			"manhole",
+			"DOS-V",
+			AD_ENTRY1s("manhole.dat", "14522ee9139ca0823ac0cc15805e1fcc", 112303),
+			Common::JA_JPN,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		GF_FLOPPY,
 		1, 0,
 	},
 
@@ -113,24 +131,6 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_MANHOLE_NE,
 		GF_CD,
 		2, 0,
-	},
-
-	{
-		// The Manhole: NE, DOS/V, file dates 2/21/1992
-		// Platform: IBM PS-55, Sega TeraDrive or DOS/V-compatibles
-		// MADE v2.00a JAPAN PC - Copyright (c) 1990, MEDIAGENIC
-		{
-			"manholene",
-			"DOS-V",
-			AD_ENTRY1s("manhole.dat", "14522ee9139ca0823ac0cc15805e1fcc", 112303),
-			Common::JA_JPN,
-			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_MANHOLE_NE,
-		GF_FLOPPY,
-		1, 0,
 	},
 
 	// The Manhole: Masterpiece Edition is not a MADE engine and cannot be

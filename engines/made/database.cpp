@@ -75,7 +75,7 @@ const char *Object::getString() const {
 		return (const char *)getData();
 	else {
 		warning("getString() called on non-byte-array object (%04X)", getClass());
-		return nullptr;
+		return "";
 	}
 }
 
@@ -292,6 +292,11 @@ uint16 ObjectV3_1::calcSize(const byte *source) {
 
 GameDatabase::GameDatabase() : _mainCodeObjectIndex(0) {}
 
+GameDatabase::~GameDatabase() {
+	for (uint i = 0; i < _objects.size(); ++i)
+		delete _objects[i];
+}
+
 void GameDatabase::open(const char *filename) {
 	debug(1, "GameDatabase::open() Loading from %s", filename);
 	_filename = filename;
@@ -363,7 +368,7 @@ const char *GameDatabase::getObjectString(int16 index) const {
 	if (obj)
 		return obj->getString();
 	else
-		return nullptr;
+		return "";
 }
 
 void GameDatabase::setObjectString(int16 index, const char *str) {
@@ -520,7 +525,7 @@ int16 GameDatabaseV1::savegame(const char *filename, const char *description, in
 
 int16 GameDatabaseV1::loadgame(const char *filename, int16 version) {
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
-	if (in == nullptr) {
+	if (!in) {
 		warning("Can't open file '%s', game not loaded", filename);
 		return 1;
 	}
@@ -632,7 +637,7 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 	textOffs = sourceS.readUint16LE() * 512;
 	objectCount = sourceS.readUint16LE();
 	varObjectCount = sourceS.readUint16LE();
-	uint16 _gameStateSize = sourceS.readUint16LE() * 2;
+	uint16 gameStateSize = sourceS.readUint16LE() * 2;
 	sourceS.readUint16LE(); // unknown
 	objectsOffs = sourceS.readUint16LE() * 512;
 	sourceS.readUint16LE(); // unknown
@@ -642,10 +647,10 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 
 	textSize = objectsOffs - textOffs;
 
-	debug(0, "textOffs = %08X; textSize = %08X; objectCount = %d; varObjectCount = %d; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d; _mainCodeObjectIndex = %04X\n", textOffs, textSize, objectCount, varObjectCount, _gameStateSize, objectsOffs, objectsSize, _mainCodeObjectIndex);
+	debug(0, "textOffs = %08X; textSize = %08X; objectCount = %d; varObjectCount = %d; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d; _mainCodeObjectIndex = %04X\n", textOffs, textSize, objectCount, varObjectCount, gameStateSize, objectsOffs, objectsSize, _mainCodeObjectIndex);
 
 	// V2 gamestate is initialized to all 0, and with a dummy element at idx = 0
-	_gameState.resize(_gameStateSize + 2, 0);
+	_gameState.resize(gameStateSize + 2, 0);
 	setVar(1, objectCount);
 
 	sourceS.seek(textOffs);
@@ -691,14 +696,14 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 	uint32 objectIndexOffs = sourceS.readUint32LE();
 	uint16 objectCount = sourceS.readUint16LE();
 	_gameStateOffs = sourceS.readUint32LE();
-	uint32 _gameStateSize = sourceS.readUint32LE();
+	uint32 gameStateSize = sourceS.readUint32LE();
 	uint32 objectsOffs = sourceS.readUint32LE();
 	uint32 objectsSize = sourceS.readUint32LE();
 	_mainCodeObjectIndex = sourceS.readUint16LE();
 
-	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d; _mainCodeObjectIndex = %04X\n", objectIndexOffs, objectCount, _gameStateOffs, _gameStateSize, objectsOffs, objectsSize, _mainCodeObjectIndex);
+	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d; _mainCodeObjectIndex = %04X\n", objectIndexOffs, objectCount, _gameStateOffs, gameStateSize, objectsOffs, objectsSize, _mainCodeObjectIndex);
 
-	_gameState.resize(_gameStateSize, 0);
+	_gameState.resize(gameStateSize, 0);
 	reloadFromStream(sourceS);
 
 	Common::Array<uint32> objectOffsets;
@@ -735,7 +740,7 @@ void GameDatabaseV3::reloadFromStream(Common::SeekableReadStream &sourceS) {
 bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String &description, int16 version) {
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 
-	if (in == nullptr) {
+	if (!in) {
 		return false;
 	}
 

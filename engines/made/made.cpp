@@ -461,7 +461,7 @@ Common::Error MadeEngine::run() {
 		_dat->open("manhole.dat");
 
 		// the various Manhole versions have different combinations of dependencies
-		if (getPlatform() == Common::kPlatformDOS) {
+		if (getLanguage() == Common::EN_ANY) {
 			if (getFeatures() & GF_FLOPPY) {
 				// English DOS Floppy version
 				_res->openPicsBlock(false);
@@ -472,32 +472,30 @@ Common::Error MadeEngine::run() {
 				_res->openPicsBlock(true);
 				_res->openMusicBlock();
 			}
-		} else if (getPlatform() == Common::kPlatformFMTowns) {
-			// Japanese FM Towns version - music comes from the CD tracks
-			_res->openPicsBlock(true);
-			_res->openSndsBlock();
 		} else {
-			// Japanese PC-98 version - PICS block is split in two with a separate Index
-			//  This file is also packed, and thus unsupported at all.
-			_res->openPicsBlock(false);
-			_res->openMusicBlock();
-			_res->openSndsBlock();
+			if (getPlatform() == Common::kPlatformDOS) {
+				// Japanese DOS-V version
+				_res->openPicsBlock(true);
+				_res->openMusicBlock();
+				_res->openSndsBlock();
+			} else if (getPlatform() == Common::kPlatformFMTowns) {
+				// Japanese FM Towns version - music comes from the CD tracks
+				_res->openPicsBlock(true);
+				_res->openSndsBlock();
+			} else {
+				// Japanese PC-98 version - PICS block is split in two with a separate Index
+				//  This file is also packed, and thus unsupported at all.
+				_res->openPicsBlock(false);
+				_res->openMusicBlock();
+				_res->openSndsBlock();
+			}
 		}
 	} else if (getGameID() == GID_MANHOLE_NE) {
 		_dat->open("manhole.dat");
+		_res->open("manhole.prj");
 
-		if (getLanguage() == Common::JA_JPN) {
-			// Japanese DOS-V version
-			_res->openPicsBlock(true);
-			_res->openMusicBlock();
-			_res->openSndsBlock();
-		} else {
-			// English DOS / Windows / VIS
-			_res->open("manhole.prj");
-
-			if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors"))
-				loadWin16Cursor("manhole");
-		}
+		if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors"))
+			loadWin16Cursor("manhole");
 	} else if (getGameID() == GID_LGOP2) {
 		_dat->open("lgop2.dat");
 		_res->open("lgop2.prj");
@@ -507,7 +505,6 @@ Common::Error MadeEngine::run() {
 
 		if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors"))
 			loadWin16Cursor("rodneys");
-
 	} else if (getGameID() == GID_RSBESTNDE) {
 		if (getFeatures() & GF_DEMO) {
 			_dat->open("bestdemo.dat");
