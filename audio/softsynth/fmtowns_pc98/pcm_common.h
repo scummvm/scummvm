@@ -52,6 +52,7 @@ protected:
 
 private:
 	virtual void stopInternal() = 0;
+	virtual void dataEndHandler() {}
 
 	uint8 _panLeft;
 	uint8 _panRight;

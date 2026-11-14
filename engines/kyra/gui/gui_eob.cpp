@@ -2335,7 +2335,7 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 		simpleMenu_printButton(sd, currentItem, strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], false, false);
 		simpleMenu_printButton(sd, newItem, strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], true, false);
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_screen->sega_getRenderer()->render(0, 6, 20, 26, 5);
+			_screen->sega_getRenderer()->renderToPage(0, 6, 20, 26, 5);
 		}
 		_screen->updateScreen();
 	}
@@ -2439,7 +2439,7 @@ void GUI_EoB::runCampMenu() {
 					prevHighlightButton = 0;
 				}
 			} else if (_vm->gameFlags().platform == Common::kPlatformSegaCD && newMenu == 2) {
-				_screen->sega_getRenderer()->render(0, 0, 0, 22, 21);
+				_screen->sega_getRenderer()->renderToPage(0, 0, 0, 22, 21);
 			}
 
 			lastMenu = newMenu;
@@ -2973,7 +2973,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 					_screen->sega_setTextBuffer(segaCharBuf, 32);
 					_vm->_txt->printShadedText(sufx, 0, 0, textColor1, 0, -1, -1, 0, false);
 					_screen->sega_loadTextBufferToVRAM(0, ((y >> 3) * 40 + x + pos + 1) << 5, 32);
-					_screen->sega_getRenderer()->render(0, x + pos, y >> 3, 1, 1);
+					_screen->sega_getRenderer()->renderToPage(0, x + pos, y >> 3, 1, 1);
 					_screen->sega_setTextBuffer(0, 0);
 				} else if (cursorState) {
 					_screen->copyRegion((pos + 1) << 3, 200 - _textInputHeight, (x + pos) << 3, y, 8, _textInputHeight, 2, 0, Screen::CR_NO_P_CHECK);
@@ -3098,7 +3098,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			_vm->_txt->printShadedText(dest, 0, 0, textColor1, 0, -1, -1, 0, false);
 			_screen->setFontStyles(_screen->_currentFont, cs);
 			_screen->sega_loadTextBufferToVRAM(0, ((y >> 3) * 40 + x + 1) << 5, destMaxLen << 5);
-			_screen->sega_getRenderer()->render(0, x, y >> 3, destMaxLen, 1);
+			_screen->sega_getRenderer()->renderToPage(0, x, y >> 3, destMaxLen, 1);
 			_screen->sega_setTextBuffer(0, 0);
 		} else {
 			_screen->copyRegion(0, 200 - _textInputHeight, (x - 1) << 3, y, (destMaxLen + 2) << 3, _textInputHeight, 2, 0, Screen::CR_NO_P_CHECK);
@@ -3122,7 +3122,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			_screen->sega_setTextBuffer(segaCharBuf, 32);
 			_vm->_txt->printShadedText(sufx, 0, 0, textColor1, 0, -1, -1, 0, false);
 			_screen->sega_loadTextBufferToVRAM(0, ((y >> 3) * 40 + x + pos + 1) << 5, 32);
-			_screen->sega_getRenderer()->render(0, x + pos, y >> 3, 1, 1);
+			_screen->sega_getRenderer()->renderToPage(0, x + pos, y >> 3, 1, 1);
 			_screen->sega_setTextBuffer(0, 0);
 		} else if (cursorState) {
 			_screen->printText(sufx, (x + pos) << 3, y, textColor1, cursorColor);
@@ -3529,7 +3529,7 @@ int GUI_EoB::selectSaveSlotDialog(int x, int y, int id) {
 				_screen->sega_clearTextBuffer(0);
 				_vm->_txt->printShadedText(Common::String::format("%03d/989", sli).c_str(), 0, 0, 0xFF, 0xCC, -1, -1, 0, false);
 				_screen->sega_loadTextBufferToVRAM(0, 64, 224);
-				_screen->sega_getRenderer()->render(0, (_saveSlotX + 8) >> 3, (_saveSlotY + 152) >> 3, 7, 1);
+				_screen->sega_getRenderer()->renderToPage(0, (_saveSlotX + 8) >> 3, (_saveSlotY + 152) >> 3, 7, 1);
 			} else {
 				Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
 				_screen->set16bitShadingLevel(4);
@@ -3701,7 +3701,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 
 			_screen->setCurPage(0);
 			if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
-				_screen->sega_getRenderer()->render(0, 0, 10, 22, 9);
+				_screen->sega_getRenderer()->renderToPage(0, 0, 10, 22, 9);
 			else
 				_screen->copyRegion(0, 50, 0, 50, 176, 72, 2, 0, Screen::CR_NO_P_CHECK);
 			lastHighLightText = -1;
@@ -3713,7 +3713,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 				_screen->sega_clearTextBuffer(0);
 				_vm->_txt->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], (char)(np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton] + 79), (char)(np[lastHighLightButton] + 79)).c_str(), 0, 2, 0x55, 0xCC, 160, 16, 0, false);
 				_screen->sega_loadTextBufferToVRAM(0, 0x5560, 1280);
-				_screen->sega_getRenderer()->render(0, 1, 8, 20, 2);
+				_screen->sega_getRenderer()->renderToPage(0, 1, 8, 20, 2);
 			} else {
 				_screen->set16bitShadingLevel(4);
 				_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), _vm->_flags.lang == Common::Language::ZH_TWN ? 4 : 8, _vm->_flags.lang == Common::Language::ZH_TWN ? 40 : 38, _vm->guiSettings()->colors.guiColorLightBlue, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
@@ -4616,7 +4616,7 @@ Button *GUI_EoB::initMenu(int id) {
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
-		_screen->sega_getRenderer()->render(0, 0, 0, 22, 21);
+		_screen->sega_getRenderer()->renderToPage(0, 0, 0, 22, 21);
 	else
 		_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
 

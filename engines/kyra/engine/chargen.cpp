@@ -313,7 +313,7 @@ void CharacterGenerator::init(bool defaultParty) {
 		_screen->sega_getRenderer()->loadToVRAM(&cgb[0x21E0], 0x1400, 0x8220);
 		for (int i = 0; i < 10; i++)
 			_screen->sega_getRenderer()->fillRectWithTiles(1, i << 2, 0, 4, 4, 0x4411 + (i << 4), true);
-		_screen->sega_getRenderer()->render(2);
+		_screen->sega_getRenderer()->renderToPage(2);
 		_screen->_curPage = 2;
 		_chargenMagicShapes = new uint8*[10];
 		for (int i = 0; i < 10; i++)
@@ -327,7 +327,7 @@ void CharacterGenerator::init(bool defaultParty) {
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0);
 		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 26, 1, true);
-		_screen->sega_getRenderer()->render(0);
+		_screen->sega_getRenderer()->renderToPage(0);
 
 		for (int i = 0; i < 4; ++i)
 			_screen->copyRegion(_chargenBoxX[i], _chargenBoxY[i] + 1, i << 5, 128, 32, 32, 0, 2, Screen::CR_NO_P_CHECK);
@@ -570,7 +570,7 @@ void CharacterGenerator::checkForCompleteParty() {
 
 	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
 		_screen->setFontStyles(_screen->_currentFont, cs);
-		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+		_screen->sega_getRenderer()->renderToPage(0, 18, 8, 20, 16);
 	}
 
 	_screen->updateScreen();
@@ -589,13 +589,13 @@ void CharacterGenerator::drawButton(int index, int buttonState) {
 				// since it seems weird to have the button still there, even when it is dysfunctional.
 				_screen->sega_getRenderer()->fillRectWithTiles(0, 3, 23, 11, 1, 0x39C, true);
 				_screen->sega_getRenderer()->fillRectWithTiles(0, 3, 24, 11, 1, 0x3C4, true);
-				_screen->sega_getRenderer()->render(0, 3, 23, 11, 2);
+				_screen->sega_getRenderer()->renderToPage(0, 3, 23, 11, 2);
 			}
 			return;
 		}
 		const uint8 *bt = &_chargenSegaButtonCoords[index * 5];
 		_screen->sega_getRenderer()->fillRectWithTiles(0, bt[0], bt[1], bt[2], bt[3], (index > 9 ? 0x24BC : 0x2411) + bt[4] + (buttonState ? (bt[2] * bt[3]) : 0), true);
-		_screen->sega_getRenderer()->render(0, bt[0], bt[1], bt[2], bt[3]);
+		_screen->sega_getRenderer()->renderToPage(0, bt[0], bt[1], bt[2], bt[3]);
 		if (buttonState)
 			_screen->updateScreen();
 		return;
@@ -694,7 +694,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 					_characters[_activeBox].faceShape = 0;
 					if (_vm->_flags.platform == Common::kPlatformSegaCD) {
 						_screen->sega_getRenderer()->memsetVRAM((((_chargenBoxY[_activeBox] + 41) >> 3) * 40 + (_chargenBoxX[_activeBox] >> 3)) << 5, 0, 224);
-						_screen->sega_getRenderer()->render(0, (_chargenBoxX[_activeBox] >> 3) - 1, (_chargenBoxY[_activeBox] + 41) >> 3, 7, 1);
+						_screen->sega_getRenderer()->renderToPage(0, (_chargenBoxX[_activeBox] >> 3) - 1, (_chargenBoxY[_activeBox] + 41) >> 3, 7, 1);
 					} else {
 						processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlack);
 					}
@@ -764,7 +764,7 @@ void CharacterGenerator::createPartyMember() {
 			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
 				_screen->sega_loadTextBackground(_wndBackgrnd, 10240);
 				_vm->_txt->printShadedText(_chargenStrings2[11], 0, 0);
-				_screen->sega_getRenderer()->render(0, 18, 8, 20, 2);
+				_screen->sega_getRenderer()->renderToPage(0, 18, 8, 20, 2);
 				if (!_vm->shouldQuit())
 					_vm->_gui->getTextInput(_characters[_activeBox].name, (_chargenBoxX[_activeBox] >> 3) - 1, _chargenBoxY[_activeBox] + 41, 7, 0xFF, 0x00, 0xFF);
 			} else {
@@ -804,7 +804,7 @@ int CharacterGenerator::raceSexMenu() {
 
 	_vm->_gui->simpleMenu_setup(1, 0, _chargenRaceSexStrings, -1, 0, 0, _menuColor1, _menuColor2, _menuColor3);
 	if (_vm->_flags.platform == Common::kPlatformSegaCD)
-		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+		_screen->sega_getRenderer()->renderToPage(0, 18, 8, 20, 16);
 	_screen->updateScreen();
 	int16 res = -1;
 
@@ -812,7 +812,7 @@ int CharacterGenerator::raceSexMenu() {
 		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		res = _vm->_gui->simpleMenu_process(1, _chargenRaceSexStrings, 0, -1, 0);
 		if (_vm->_flags.platform == Common::kPlatformSegaCD)
-			_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+			_screen->sega_getRenderer()->renderToPage(0, 18, 8, 20, 16);
 		_screen->updateScreen();
 		updateMagicShapes();
 		_vm->delayUntil(frameEnd);
@@ -850,7 +850,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 	itemsMask &= _classMenuMasks[raceSex / 2];
 	_vm->_gui->simpleMenu_setup(2, 15, _chargenClassStrings, itemsMask, 0, 0, _menuColor1, _menuColor2, _menuColor3);
 	if (_vm->_flags.platform == Common::kPlatformSegaCD)
-		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+		_screen->sega_getRenderer()->renderToPage(0, 18, 8, 20, 16);
 	_screen->updateScreen();
 
 	_vm->_mouseX = _vm->_mouseY = 0;
@@ -880,7 +880,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 		} else {
 			res = _vm->_gui->simpleMenu_process(2, _chargenClassStrings, 0, itemsMask, 0);
 			if (_vm->_flags.platform == Common::kPlatformSegaCD) {
-				_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+				_screen->sega_getRenderer()->renderToPage(0, 18, 8, 20, 16);
 			} else if (backBtnHiLite) {
 				drawButton(5, 0);
 				backBtnHiLite = false;
@@ -926,7 +926,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 	itemsMask &= _alignmentMenuMasks[cClass];
 	_vm->_gui->simpleMenu_setup(3, 9, _chargenAlignmentStrings, itemsMask, 0, 0, _menuColor1, _menuColor2, _menuColor3);
 	if (_vm->_flags.platform == Common::kPlatformSegaCD)
-		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+		_screen->sega_getRenderer()->renderToPage(0, 18, 8, 20, 16);
 	_screen->updateScreen();
 
 	_vm->_mouseX = _vm->_mouseY = 0;
@@ -956,7 +956,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 		} else {
 			res = _vm->_gui->simpleMenu_process(3, _chargenAlignmentStrings, 0, itemsMask, 0);
 			if (_vm->_flags.platform == Common::kPlatformSegaCD) {
-				_screen->sega_getRenderer()->render(0, 18, 9, 20, 16);
+				_screen->sega_getRenderer()->renderToPage(0, 18, 9, 20, 16);
 			} else if (backBtnHiLite) {
 				drawButton(5, 0);
 				backBtnHiLite = false;
@@ -1344,7 +1344,7 @@ void CharacterGenerator::printStats(int index, int mode) {
 	}
 
 	if (_vm->_flags.platform == Common::kPlatformSegaCD) {
-		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+		_screen->sega_getRenderer()->renderToPage(0, 18, 8, 20, 16);
 		if (mode != 4)
 			_screen->drawShape(0, c->faceShape, 208, 66, 0);
 	} else
@@ -1422,7 +1422,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	if (_vm->_flags.platform == Common::kPlatformSegaCD) {
 		Common::String statStr = index ? Common::String::format("%02d", *s1) : _vm->getCharStrength(*s1, *s2, true);
 		_vm->_txt->printShadedText(statStr.c_str(), b->x - 112, b->y - 64, 0x55);
-		_screen->sega_getRenderer()->render(0, (b->x + 32) >> 3, b->y >> 3, 5, 1);
+		_screen->sega_getRenderer()->renderToPage(0, (b->x + 32) >> 3, b->y >> 3, 5, 1);
 	} else if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
 		_screen->setFont(Screen::FID_8_FNT);
 		Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
@@ -1530,7 +1530,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			Common::String statStr = index ? Common::String::format("%02d", *s1) : _vm->getCharStrength(*s1, *s2, true);
 			printStats(_activeBox, 3);
 			_vm->_txt->printShadedText(statStr.c_str(), b->x - 112, b->y - 64, 0x55);
-			_screen->sega_getRenderer()->render(0, (b->x + 32) >> 3, b->y >> 3, 5, 1);
+			_screen->sega_getRenderer()->renderToPage(0, (b->x + 32) >> 3, b->y >> 3, 5, 1);
 		} else if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
 			Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
 			_screen->copyRegion(b->x - 115, b->y - 63, b->x + 29, b->y + 1, index == 6 ? 20 : 40, 13, 2, 0, Screen::CR_NO_P_CHECK);
