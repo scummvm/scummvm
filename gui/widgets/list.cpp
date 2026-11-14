@@ -1092,8 +1092,9 @@ void ListWidget::reflowLayout() {
 	if ((frac_t)(entriesPerPage & FRAC_LO_MASK) >= threshold)
 		entriesPerPage += FRAC_ONE;
 
-	_entriesPerPage = fracToInt(entriesPerPage);
-	assert(_entriesPerPage > 0);
+	// A tall font (e.g. CJK) at a low resolution can leave the list shorter
+	// than a single line. Keep at least one entry so the list stays usable.
+	_entriesPerPage = MAX<int>(fracToInt(entriesPerPage), 1);
 
 	if (_scrollBar) {
 		_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
