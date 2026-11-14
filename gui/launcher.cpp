@@ -1464,11 +1464,13 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kSearchCmd:
 		// Update the active search filter.
 		_list->setFilter(_searchWidget->getEditString());
+		updateButtons();
 		break;
 	case kSearchClearCmd:
 		// Reset the active search filter, thus showing all games again
 		_searchWidget->setEditString(Common::U32String());
 		_list->setFilter(Common::U32String());
+		updateButtons();
 		break;
 	case kSetGroupMethodCmd: {
 		// Change the grouping criteria
@@ -1709,11 +1711,13 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	case kSearchCmd:
 		// Update the active search filter.
 		_grid->setFilter(_searchWidget->getEditString());
+		updateButtons();
 		break;
 	case kSearchClearCmd:
 		// Reset the active search filter, thus showing all games again
 		_searchWidget->setEditString(Common::U32String());
 		_grid->setFilter(Common::U32String());
+		updateButtons();
 		break;
 	case kSetGroupMethodCmd: {
 		_grid->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
