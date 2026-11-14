@@ -81,6 +81,10 @@ public:
 	void draw() override;
 	void markAsDirty() override;
 
+	void dumpWidget(Graphics::Surface &surf, const Common::String &baseName,
+			const Common::String &lang, int width, int height) override;
+	bool hasDumpableChildren() const override { return true; }
+
 protected:
 	void drawWidget() override;
 

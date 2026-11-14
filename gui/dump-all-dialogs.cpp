@@ -21,190 +21,84 @@
 
 #include "gui/dump-all-dialogs.h"
 
-#include "common/file.h"
-#include "common/fs.h"
-#include "common/language.h"
+#include "common/config-manager.h"
+#include "common/system.h"
+#include "common/tokenizer.h"
 #include "common/translation.h"
 
-#include "gui/ThemeEngine.h"
-#include "gui/about.h"
-#include "gui/gui-manager.h"
-#include "gui/launcher.h"
-#include "gui/message.h"
-#include "gui/browser.h"
-#include "gui/downloaddialog.h"
-#include "gui/remotebrowser.h"
-#include "gui/chooser.h"
-#include "gui/cloudconnectionwizard.h"
-#include "gui/dialog.h"
-#include "gui/downloaddialog.h"
-#include "gui/downloadpacksdialog.h"
-#include "gui/fluidsynth-dialog.h"
-#include "gui/themebrowser.h"
-#include "gui/massadd.h"
-#include "gui/options.h"
-#include "gui/widgets/tab.h"
-#include "gui/launcher.h"
-
-#include "image/png.h"
+#include "gui/dialog-dumper.h"
 
 namespace GUI {
 
-void saveGUISnapshot(Graphics::Surface surf, const Common::String &filename) {
-	Common::DumpFile outFile;
-	Common::String outName = Common::String::format("snapshots/%s", filename.c_str());
-
-	if (outFile.open(Common::Path(outName, '/'))) {
-		Image::writePNG(outFile, surf);
-		outFile.finalize();
-		outFile.close();
-
-		warning("Dumped %s", filename.c_str());
+static Common::Array<Common::String> splitList(const Common::String &list) {
+	Common::Array<Common::String> result;
+	Common::StringTokenizer tok(list, ",");
+	while (!tok.empty()) {
+		Common::String item = tok.nextToken();
+		item.trim();
+		if (!item.empty())
+			result.push_back(item);
 	}
+	return result;
 }
 
-void handleSimpleDialog(GUI::Dialog &dialog, const Common::String &filename,Graphics::Surface surf) {
-	dialog.open();         // For rendering
-	dialog.reflowLayout(); // For updating surface
-	g_gui.redrawFull();
-	g_system->grabOverlay(surf);
-	saveGUISnapshot(surf, filename);
-	dialog.close();
-}
+static DumpConfig buildDumpConfig() {
+	DumpConfig config;
 
-void loopThroughTabs(GUI::Dialog &dialog, const Common::String &lang, Graphics::Surface surf, const Common::String name) {
-	dialog.open();
-	GUI::Widget *widget = nullptr;
-	widget = dialog.findWidget((uint32)kTabWidget);
+	if (ConfMan.hasKey("dump_output_dir"))
+		config.outputDir = ConfMan.get("dump_output_dir");
+	if (ConfMan.hasKey("dump_lang"))
+		config.languages = splitList(ConfMan.get("dump_lang"));
+	if (ConfMan.hasKey("dump_dialog"))
+		config.dialogFilter = splitList(ConfMan.get("dump_dialog"));
+	if (ConfMan.hasKey("dump_list_only"))
+		config.listOnly = ConfMan.getBool("dump_list_only");
 
-	if (widget) {
-		TabWidget *tabWidget = (TabWidget *)widget;
-		for (int tabNo = 0; tabNo < tabWidget->getTabCount(); tabNo++) {
-			Common::String suffix = Common::String::format("-%d-%dx%d-%s.png", tabNo + 1, g_system->getOverlayWidth(), g_system->getOverlayHeight(), lang.c_str());
-			tabWidget->setActiveTab(tabNo);
-			handleSimpleDialog(dialog, name + suffix, surf);
+	// Engine dialogs are only dumped on request: --dump-engine=all or a list of engine IDs
+	if (ConfMan.hasKey("dump_engine")) {
+		config.includeEngines = true;
+		for (const Common::String &engine : splitList(ConfMan.get("dump_engine"))) {
+			if (engine.equalsIgnoreCase("all")) {
+				config.engineFilter.clear();
+				break;
+			}
+			config.engineFilter.push_back(engine);
 		}
 	}
-	dialog.close();
+
+	if (ConfMan.hasKey("dump_res")) {
+		for (const Common::String &res : splitList(ConfMan.get("dump_res"))) {
+			int w = 0, h = 0;
+			if (sscanf(res.c_str(), "%dx%d", &w, &h) != 2 || w <= 0 || h <= 0) {
+				warning("Ignoring invalid resolution '%s', expected WIDTHxHEIGHT", res.c_str());
+				continue;
+			}
+			config.resolutionsW.push_back(w);
+			config.resolutionsH.push_back(h);
+		}
+	}
+
+	return config;
 }
 
-void dumpDialogs(const Common::String &message, const Common::String &lang) {
-#ifdef USE_TRANSLATION
-	// Update GUI language
-	TransMan.setLanguage(lang);
-#endif
-
-	Graphics::Surface surf;
-	surf.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
-
-	Common::String suffix = Common::String::format("-%dx%d-%s.png", g_system->getOverlayWidth(), g_system->getOverlayHeight(), lang.c_str());
-
-	// Skipping Tooltips as not required
-
-	// MessageDialog
-	GUI::MessageDialog messageDialog(message);
-	handleSimpleDialog(messageDialog, "messageDialog" + suffix, surf);
-	// AboutDialog
-	GUI::AboutDialog aboutDialog;
-	handleSimpleDialog(aboutDialog, "aboutDialog" + suffix, surf);
-
-#ifdef USE_CLOUD
-	// CloudConnectingWizard
-	GUI::CloudConnectionWizard cloudConnectingWizard;
-	handleSimpleDialog(cloudConnectingWizard, "cloudConnectingWizard" + suffix, surf);
-
-	// RemoteBrowserDialog
-	GUI::RemoteBrowserDialog remoteBrowserDialog(_("Select directory with game data"));
-	handleSimpleDialog(remoteBrowserDialog, "remoteBrowserDialog" + suffix, surf);
-#endif
-
-#ifdef USE_HTTP
-	// DownloadIconPacksDialog
-	GUI::DownloadPacksDialog downloadIconPacksDialog(_("icon packs"), "LIST", "gui-icons*.dat");
-	handleSimpleDialog(downloadIconPacksDialog, "downloadIconPacksDialog" + suffix, surf);
-
-	// DownloadShaderPacksDialog
-	GUI::DownloadPacksDialog downloadShaderPacksDialog(_("shader packs"), "LIST-SHADERS", "shaders*.dat");
-	handleSimpleDialog(downloadShaderPacksDialog, "downloadShaderPacksDialog" + suffix, surf);
-#endif
-
-#ifdef USE_FLUIDSYNTH
-	// FluidSynthSettingsDialog
-	GUI::FluidSynthSettingsDialog fluidSynthSettingsDialog;
-	handleSimpleDialog(fluidSynthSettingsDialog, "fluidSynthSettings-" + suffix, surf);
-#endif
-
-	// ThemeBrowserDialog
-	GUI::ThemeBrowser themeBrowser;
-	handleSimpleDialog(themeBrowser, "themeBrowser-" + suffix, surf);
-
-	// BrowserDialog
-	GUI::BrowserDialog browserDialog(_("Select directory with game data"), true);
-	handleSimpleDialog(browserDialog, "browserDialog-" + suffix, surf);
-
-	// ChooserDialog
-	GUI::ChooserDialog chooserDialog(_("Pick the game:"));
-	handleSimpleDialog(chooserDialog, "chooserDialog-" + suffix, surf);
-
-	// MassAddDialog
-	GUI::MassAddDialog massAddDialog(Common::FSNode("."));
-	handleSimpleDialog(massAddDialog, "massAddDialog-" + suffix, surf);
-
-	// GlobalOptionsDialog
-	LauncherSimple launcherDialog("Launcher");
-	GUI::GlobalOptionsDialog globalOptionsDialog(&launcherDialog);
-	loopThroughTabs(globalOptionsDialog, lang, surf, "GlobalOptionDialog");
-
-	// LauncherDialog
-#if 0
-	GUI::LauncherChooser chooser;
-	chooser.selectLauncher();
-	chooser.open();
-	g_system->grabOverlay(surf);
-	saveGUISnapshot(surf, "launcher-" + filename);
-	chooser.close();
-#endif
-}
-
-void dumpAllDialogs(const Common::String &message) {
+void dumpAllDialogs() {
 #ifdef USE_TRANSLATION
 	auto originalLang = TransMan.getCurrentLanguage();
 #endif
 	int original_window_width = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
 	int original_window_height = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
-	Common::List<Common::String> list = Common::getLanguageList();
-	const int res[] = {320, 200,
-					   320, 240,
-					   640, 400,
-					   640, 480,
-					   800, 600,
-					   0};
+	// The window size may have never been saved to the configuration
+	if (original_window_width <= 0 || original_window_height <= 0) {
+		original_window_width = g_system->getOverlayWidth();
+		original_window_height = g_system->getOverlayHeight();
+	}
 
 	// HACK: Pass info to backend to force window resize
 	ConfMan.setBool("dumper_force_resize", true, Common::ConfigManager::kApplicationDomain);
-	Common::FSNode dumpDir("snapshots");
 
-	if (!dumpDir.isDirectory())
-		dumpDir.createDirectory();
-
-	// Iterate through all resolutions available
-	for (const int *r = res; *r; r += 2) {
-		int w = r[0];
-		int h = r[1];
-
-		// Update resolution
-		ConfMan.setInt("last_window_width" , w, Common::ConfigManager::kApplicationDomain);
-		ConfMan.setInt("last_window_height", h, Common::ConfigManager::kApplicationDomain);
-		g_system->beginGFXTransaction();
-			g_system->initSize(w, h);
-		g_system->endGFXTransaction();
-
-		// Iterate through all langauges
-		for (Common::String &lang : list) {
-
-			dumpDialogs(message, lang);
-		}
-
+	{
+		DialogDumper dumper(buildDumpConfig());
+		dumper.dumpAll();
 	}
 
 #ifdef USE_TRANSLATION
