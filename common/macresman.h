@@ -202,6 +202,17 @@ public:
 	static void listFiles(Array<Path> &files, const Path &pattern);
 
 	/**
+	 * Compute the base name for use with open() from a possibly decorated
+	 * on-disk file name, stripping the AppleDouble "._" prefix and the
+	 * ".rsrc"/".bin" extensions. Purely name-based, contents are not checked.
+	 *
+	 * @param name The file name as present on disk
+	 * @param isMacDecoratedName Set to true if any decoration was stripped
+	 * @return The potential base name (equal to name if none applies)
+	 */
+	static Path disassembleName(const Path &name, bool *isMacDecoratedName = nullptr);
+
+	/**
 	 * Close the Mac data/resource fork pair.
 	 */
 	void close();
