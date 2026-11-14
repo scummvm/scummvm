@@ -225,7 +225,7 @@ void Room204::pre_parser() {
 		}
 	}
 
-	if (player_been_here(205) && inv_object_is_here("GONG")) {
+	if (player_been_here(205) && player_said("take", "GONG") && inv_object_is_here("GONG")) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -259,7 +259,8 @@ void Room204::parser() {
 	if (!player_been_here(205)) {
 		if (inv_player_has("MALLET") && !_field40 && !_field16C
 			&& !(player_said("MALLET") && player_said_any("GONG", "ACOLYTE")) && !(lookFl && player_said("MALLET"))
-			&& !(takeFl && player_said("GONG")) && !(lookFl && player_said("MEI CHEN"))&&  !(gearFl && player_said("MALLET"))) {
+			&& !(takeFl && player_said("MALLET")) && !(takeFl && player_said("GONG"))
+			&& !(lookFl && player_said("MEI CHEN")) && !(gearFl && player_said("MALLET"))) {
 			_field124 = 2;
 			player_update_info(_G(my_walker), &_G(player_info));
 			_field40 = 1;
@@ -700,6 +701,7 @@ void Room204::parser() {
 			case -1:
 				if (inv_object_is_here("GONG")) {
 					ws_walk(_G(my_walker), 475, 332, nullptr, 1, 11, true);
+					goto done;
 				}
 				break;
 
@@ -708,30 +710,28 @@ void Room204::parser() {
 				_ripTrekMedReachHandPos1Series = series_load("RIP TREK MED REACH HAND POS1", -1, nullptr);
 				setGlobals1(_ripTrekMedReachHandPos1Series, 1, 10, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				sendWSMessage_110000(_G(my_walker), 2);
-				break;
+				goto done;
 
 			case 2:
 				hotspot_set_active(_G(currentSceneDef).hotspots, "GONG", false);
 				inv_give_to_player("GONG");
 				kernel_examine_inventory_object("PING GONG", _G(master_palette), 5, 1, 370, 264, 3, nullptr, -1);
 				terminateMachine(_courtyardGongMach);
-				break;
+				goto done;
 
 			case 3:
-				sendWSMessage_150000(_G(my_walker), 5);
-				break;
+				sendWSMessage_140000(_G(my_walker), 5);
+				goto done;
 
 			case 5:
 				series_unload(_ripTrekMedReachHandPos1Series);
 				player_set_commands_allowed(true);
-				break;
+				goto done;
 
 			default:
 				break;
 			}
-
-			goto done;
-		} // if (talkFl && player_said("GONG"))
+		} // if (takeFl && player_said("GONG"))
 
 		if (takeFl && player_said("MALLET")) {
 			switch (_G(kernel).trigger) {
@@ -740,7 +740,6 @@ void Room204::parser() {
 					hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET", false);
 					inv_give_to_player("MALLET");
 					kernel_examine_inventory_object("PING MALLET", _G(master_palette), 5, 1, 370, 264, 1, nullptr, -1);
-					terminateMachine(_courtyardGongMach);
 					goto done;
 				}
 				break;
@@ -758,7 +757,7 @@ void Room204::parser() {
 	} // player_been_here(205)
 
 	if (gearFl && player_said("MALLET")) {
-		digi_play("COM102", 1, 255, -1, -1);
+		digi_play("COM102", 1, 255, -1, 997);
 		goto done;
 	}
 
@@ -973,7 +972,7 @@ void Room204::parser() {
 			series_unload(_meiTrekTalkerPos4Series);
 			DisposePath(_mcMach->walkPath);
 			_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX, 323, -1);
-			ws_custom_walk(_mcMach, _fieldD8_facing, 10, true);
+			ws_custom_walk(_mcMach, _fieldF8, 10, true);
 			break;
 
 		case 10:
@@ -1231,7 +1230,10 @@ void Room204::daemon() {
 
 	case 538:
 		ws_get_walker_info(_mcMach, &_fieldFC_infoX, &_field100_infoY, &_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
-		kernel_timing_trigger(1, (_fieldFC_infoX == 1642) ? 539 : 538, nullptr);
+		if (_fieldFC_infoX == 1642)
+			kernel_timing_trigger(1, 539, nullptr);
+		else
+			kernel_timing_trigger(60, 538, nullptr);
 		break;
 
 	case 539:
@@ -1297,6 +1299,7 @@ void Room204::daemon() {
 		break;
 
 	case 555:
+		addMovingMeiHotspot();
 		kernel_timing_trigger(1, 630, nullptr);
 		kernel_timing_trigger(1, 578, nullptr);
 		player_set_commands_allowed(true);
@@ -1305,19 +1308,23 @@ void Room204::daemon() {
 	case 556:
 		player_set_commands_allowed(false);
 		ws_walk(_G(my_walker), 1612, 328, nullptr, 558, 9, true);
-		kernel_timing_trigger(140, 557);
+		kernel_timing_trigger(240, 557);
 		break;
 
 	case 557:
 		_fieldE4_walkerDestX = 1663;
+		addMovingMeiHotspot();
 		DisposePath(_mcMach->walkPath);
-		_mcMach->walkPath = CreateCustomPath(1770, 330, _fieldE4_walkerDestX, 323, -1);
+		_mcMach->walkPath = CreateCustomPath(1770, 337, _fieldE4_walkerDestX, 323, -1);
 		ws_custom_walk(_mcMach, 2, -1, true);
 		break;
 
 	case 558:
 		ws_get_walker_info(_mcMach, &_fieldFC_infoX, &_field100_infoY, &_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
-		kernel_timing_trigger(1, (_fieldFC_infoX == _fieldE4_walkerDestX) ? 559 : 558, nullptr);
+		if (_fieldFC_infoX == _fieldE4_walkerDestX)
+			kernel_timing_trigger(1, 559, nullptr);
+		else
+			kernel_timing_trigger(60, 558, nullptr);
 		break;
 
 	case 559:
@@ -1736,8 +1743,7 @@ void Room204::daemon() {
 				break;
 			}
 
-			ws_walk_load_walker_series(S2_MEI_NORMAL_DIRS, S8_SHADOW_NAMES2, false);
-			ws_walk_load_walker_series(S2_MEI_SHADOW_DIRS, S8_SHADOW_NAMES1, false);
+			initWalkerSeries();
 			_mcMach = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS, _field10C_x, _field110_y, _field114_facing, Walker::player_walker_callback, "mc");
 			kernel_timing_trigger(60, 630, nullptr);
 			if (_fieldC8_trigger != -1) {
@@ -1998,7 +2004,7 @@ void Room204::daemon() {
 	case 588:
 		MoveScreenDelta(_G(game_buff_ptr), 0, 0);
 		ws_walk_load_walker_series(ROOM204_NORMAL_DIRS, ROOM204_NORMAL_NAMES, false);
-		ws_walk_load_walker_series(ROOM204_SHADOW_DIRS, ROOM204_SHADOW_NAMES, false);
+		ws_walk_load_shadow_series(ROOM204_SHADOW_DIRS, ROOM204_SHADOW_NAMES);
 		gameSetScale(369, 326, 100, 99);
 		_priestWalkerMach = triggerMachineByHash_3000(8, 14, *ROOM204_NORMAL_DIRS, *ROOM204_SHADOW_DIRS, 1864, 334, 3, triggerMachineByHashCallback3000, "Priest Walker");
 		gameSetScale(369, 326, 47, 38);
@@ -2071,7 +2077,7 @@ void Room204::daemon() {
 
 		case 2: {
 			const int32 rnd = imath_ranged_rand(1, 2);
-			sendWSMessage_10000(1, _priestTurningStateMach, _priestWalkerSeries, 1, rnd, 603, _priestWalkerSeries, rnd, rnd, 0);
+			sendWSMessage_10000(1, _priestTurningStateMach, _priestWalkerSeries, rnd, rnd, 603, _priestWalkerSeries, rnd, rnd, 0);
 			}
 			break;
 
@@ -2145,7 +2151,7 @@ void Room204::daemon() {
 
 	case 613:
 		player_update_info(_G(my_walker), &_G(player_info));
-		if (_G(player_info).x < _fieldE4_walkerDestX + 20)
+		if (_G(player_info).x <= _fieldE4_walkerDestX + 20)
 			kernel_timing_trigger(15, 613, nullptr);
 		else
 			kernel_timing_trigger(1, 612, nullptr);
@@ -2199,7 +2205,7 @@ void Room204::daemon() {
 		_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX + 1, 343, -1);
 		ws_custom_walk(_mcMach, 4, 623, true);
 		player_update_info(_G(my_walker), &_G(player_info));
-		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 4, true);
+		ws_walk(_G(my_walker), _G(player_info).x + 1, _G(player_info).y + 1, nullptr, -1, 4, true);
 		break;
 
 	case 623:
@@ -2293,6 +2299,7 @@ void Room204::daemon() {
 		break;
 
 	case 636:
+		_field40 = 0;
 		sendWSMessage_150000(_G(my_walker), 637);
 		break;
 
@@ -2438,7 +2445,6 @@ void Room204::daemon() {
 
 	case 676: // ripleay adds empty translation table in journal
 		sendWSMessage_120000(_G(my_walker), 677);
-		_G(flags)[V285] = 1;
 		digi_play("950_s34", 2, 200, -1, -1);
 		break;
 
@@ -2546,6 +2552,7 @@ void Room204::daemon() {
 		break;
 
 	case 699:
+		_meiShould = 5;
 		kernel_timing_trigger(1, 700, nullptr);
 		break;
 
@@ -2744,8 +2751,8 @@ void Room204::syncGame(Common::Serializer &s) {
 }
 
 void Room204::initWalkerSeries() {
-	ws_walk_load_walker_series(S2_MEI_NORMAL_DIRS, S8_SHADOW_NAMES2, false);
-	ws_walk_load_walker_series(S2_MEI_SHADOW_DIRS, S8_SHADOW_NAMES1, false);
+	ws_walk_load_walker_series(S2_MEI_NORMAL_DIRS, S2_MEI_NORMAL_NAMES, false);
+	ws_walk_load_shadow_series(S2_MEI_SHADOW_DIRS, S2_MEI_SHADOW_NAMES);
 }
 
 void Room204::addMovingMeiHotspot() {
@@ -2763,7 +2770,7 @@ void Room204::addMovingMeiHotspot() {
 
 void Room204::deleteMalletHotspot() {
 	for (HotSpotRec *spot = _G(currentSceneDef).hotspots; spot != nullptr; spot = spot->next) {
-		if (scumm_stricmp(spot->vocab, "MALLET")) {
+		if (!scumm_stricmp(spot->vocab, "MALLET")) {
 			_G(currentSceneDef).hotspots = hotspot_delete_record(_G(currentSceneDef).hotspots, spot);
 			break;
 		}
@@ -2810,7 +2817,7 @@ void Room204::setWalkerDestX() {
 		return;
 	}
 
-	if (_G(player_info).x > 0 && _G(player_info).x <= 639) {
+	if (_G(player_info).x > 0 && _G(player_info).x < 639) {
 		_fieldE4_walkerDestX = 555;
 		_meiMachineFlag = true;
 	}
@@ -2859,7 +2866,7 @@ void Room204::conv204a() {
 	if (_G(kernel).trigger == 1) {
 		if (who == 1) {
 			_ripleyShould = 16;
-		} else if (who <= 0) {
+		} else if (who == 0) {
 			_field134 = 1;
 			if (node == 10 && entry == 1)
 				_checkNode10NegWhoEntry1Fl = true;
@@ -2872,9 +2879,9 @@ void Room204::conv204a() {
 		return;
 	}
 
-	if (who <= 0)
+	if (who == 0)
 		_field134 = 2;
-	else if (who != 1) {
+	else if (who == 1) {
 		if (node == 5 && entry == 2) {
 			_G(flags)[V285] = 1;
 		}
