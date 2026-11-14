@@ -116,9 +116,17 @@ private:
 	 */
 	Common::Point _drawPosition;
 
+	/**
+	 * Pixel scale applied when drawing glyphs for GK1 high-resolution text.
+	 */
+	int16 _hiresTextScale;
+
+	static void resetTextResolution(const bool useNativeHiresText);
+
 	void drawFrame(const Common::Rect &rect, const int16 size, const uint8 color, const bool doScaling);
 
 	void drawChar(const uint16 charIndex);
+	int16 getDrawFontHeight() const;
 	void drawText(const uint index, uint length);
 
 	/**
