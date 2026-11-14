@@ -133,23 +133,23 @@ const char *const ITEM_NAMES[ITEM_COUNT] = {
 };
 
 const char *raceName(Race race) {
-	return (race >= 0 && race < RACE_COUNT) ? RACE_NAMES[race] : "";
+	return (race < RACE_COUNT) ? RACE_NAMES[race] : "";
 }
 
 const char *className(CharClass charClass) {
-	return (charClass >= 0 && charClass < CLASS_COUNT) ? CLASS_NAMES[charClass] : "";
+	return (charClass < CLASS_COUNT) ? CLASS_NAMES[charClass] : "";
 }
 
 const char *weaponName(WeaponType weapon) {
-	return (weapon >= 0 && weapon < WEAPON_COUNT) ? WEAPON_NAMES[weapon] : "";
+	return (weapon < WEAPON_COUNT) ? WEAPON_NAMES[weapon] : "";
 }
 
 const char *armorName(ArmorType armor) {
-	return (armor >= 0 && armor < ARMOR_COUNT) ? ARMOR_NAMES[armor] : "";
+	return (armor < ARMOR_COUNT) ? ARMOR_NAMES[armor] : "";
 }
 
 const char *spellName(SpellType spell) {
-	return (spell >= 0 && spell < SPELL_COUNT) ? SPELL_NAMES[spell] : "";
+	return (spell < SPELL_COUNT) ? SPELL_NAMES[spell] : "";
 }
 
 const char *itemName(int item) {

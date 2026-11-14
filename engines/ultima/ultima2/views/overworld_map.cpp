@@ -39,7 +39,7 @@ constexpr int PLAYER_VIEWPORT_X = 9;
 constexpr int PLAYER_VIEWPORT_Y = 5;
 
 OverworldMap::OverworldMap() : Map("OverworldMap") {
-	reloadTiles();
+	OverworldMap::reloadTiles();
 }
 
 OverworldMap::~OverworldMap() {

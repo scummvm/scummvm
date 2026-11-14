@@ -81,9 +81,6 @@ static bool loadTileMapPicture(const Common::String &name, Data::RenderMode mode
 	for (int cell = 0; cell < MAP_CELLS; ++cell) {
 		// Tile codes are the same as in the map files: tile id * 4
 		int tileId = codes[cell] / 4;
-		if (tileId >= Data::TILE_COUNT)
-			continue;
-
 		surf.blitFrom(tiles[tileId], Common::Point((cell % MAP_COLUMNS) * Data::TILE_WIDTH,
 			(cell / MAP_COLUMNS) * Data::TILE_HEIGHT));
 	}

@@ -197,7 +197,10 @@ bool Console::cmdEnemy(int, const char **) {
 	}
 
 	Logic::OverworldLogic *logic = dynamic_cast<Logic::OverworldLogic *>(_G(logic).get());
-	assert(logic);
+	if (!logic) {
+		debugPrintf("Only supported when walking about\n");
+		return true;
+	}
 
 	Data::MapMonsters &monsters = _G(map)._monsters;
 
@@ -317,7 +320,10 @@ bool Console::cmdTransport(int argc, const char **argv) {
 	}
 
 	Logic::OverworldLogic *logic = dynamic_cast<Logic::OverworldLogic *>(_G(logic).get());
-	assert(logic);
+	if (!logic) {
+		debugPrintf("Only supported when walking about\n");
+		return true;
+	}
 
 	// Ships need water, and the others are put on grass
 	Data::TileId transport = TRANSPORTS[type];

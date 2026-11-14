@@ -50,7 +50,7 @@ private:
 	int _pointsRemaining = 0;
 	int _digits[2] = { 0, 0 };
 	int _digitCount = 0;
-	Common::String _name;
+	Common::String _charName;
 
 	// Blinking cursor, tracking whichever field is currently being entered
 	Gfx::TextCursor _cursor;

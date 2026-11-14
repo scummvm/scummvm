@@ -38,7 +38,7 @@ constexpr int PLAYER_VIEWPORT_X = 9;
 constexpr int PLAYER_VIEWPORT_Y = 5;
 
 LocationMap::LocationMap() : Map("LocationMap") {
-	reloadTiles();
+	LocationMap::reloadTiles();
 }
 
 LocationMap::~LocationMap() {

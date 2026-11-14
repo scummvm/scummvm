@@ -42,7 +42,7 @@ void CreateCharacter::reset() {
 	_state = STRENGTH;
 	_pointsRemaining = STARTING_POINTS;
 	_digitCount = 0;
-	_name.clear();
+	_charName.clear();
 
 	_G(savegame) = Data::Savegame();
 	_G(map).clearSaved();
@@ -114,7 +114,7 @@ void CreateCharacter::positionCursor() {
 		_cursor.setPosition(Common::Point(20, 13));
 		break;
 	case NAME:
-		_cursor.setPosition(Common::Point((int16)(20 + _name.size()), 14));
+		_cursor.setPosition(Common::Point((int16)(20 + _charName.size()), 14));
 		break;
 	case CONFIRM:
 		_cursor.setPosition(Common::Point(29, 16));
@@ -179,7 +179,7 @@ void CreateCharacter::draw() {
 	if (_state > CLASS)
 		put(20, 13, Gfx::TEXT_HEADING, Data::className(sg._class));
 	if (_state >= NAME)
-		put(20, 14, Gfx::TEXT_LIST, _name);
+		put(20, 14, Gfx::TEXT_LIST, _charName);
 
 	put(10, 16, Gfx::TEXT_NORMAL, "Satisfactory (Y/N)-");
 
@@ -261,16 +261,16 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 
 	case NAME:
 		if (msg.ascii == 8) { // backspace
-			if (!_name.empty())
-				_name.deleteLastChar();
+			if (!_charName.empty())
+				_charName.deleteLastChar();
 			positionCursor();
 			redraw();
 		} else if (msg.ascii == 13) { // enter
 			_state = CONFIRM;
 			positionCursor();
 			redraw();
-		} else if (msg.ascii >= 32 && msg.ascii < 127 && (int)_name.size() < Data::MAX_NAME_LENGTH) {
-			_name += (char)msg.ascii;
+		} else if (msg.ascii >= 32 && msg.ascii < 127 && (int)_charName.size() < Data::MAX_NAME_LENGTH) {
+			_charName += (char)msg.ascii;
 			positionCursor();
 			redraw();
 		}
@@ -280,7 +280,7 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 		if (toupper(msg.ascii) == 'N') {
 			reset();
 		} else if (toupper(msg.ascii) == 'Y') {
-			Common::strlcpy(sg._name, _name.c_str(), sizeof(sg._name));
+			Common::strlcpy(sg._name, _charName.c_str(), sizeof(sg._name));
 			sg._hp = 400;
 			sg._food = 400;
 			sg._gold = 400;

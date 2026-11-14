@@ -30,7 +30,7 @@ namespace Gfx {
 
 TextCursor::TextCursor(const Common::String &name, UIElement *parent, byte color) :
 		UIElement(name, parent), _color(color) {
-	setPosition(Common::Point(0, 0));
+	_bounds = Graphics::Views::TextRect(0, 0, 0, 0);
 	delayFrames(DELAY_FRAMES);
 }
 

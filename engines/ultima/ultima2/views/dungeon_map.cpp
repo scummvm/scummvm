@@ -146,7 +146,7 @@ private:
 
 	void plot(byte x, byte y) {
 		int px = x + VIEW_OFFSET, py = y + VIEW_OFFSET;
-		if (px < 320 && py < 160)
+		if (py < 160)
 			_s.setPixel(px, py, _color);
 	}
 
@@ -524,8 +524,10 @@ int DungeonMap::drawCorridor(Graphics::Views::GfxSurface &s) {
 				break;
 
 			p.frontDoor();
-			if (d != 0 || ++d >= MAX_DEPTH)
+			if (d != 0)
 				break;
+
+			++d;
 			continue;
 		}
 
