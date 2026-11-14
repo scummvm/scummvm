@@ -188,6 +188,11 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 		close();
 		return false;
 	}
+	if (_audioTrack && _loop) {
+		// Looping with audio is not supported
+		close();
+		return false;
+	}
 	addTrack(_videoTrack);
 	if (_audioTrack) {
 		addTrack(_audioTrack);
@@ -215,6 +220,9 @@ void HNMDecoder::close() {
 }
 
 int HNMDecoder::probeAudio45() {
+	// Deviate from original code here: instead of hardcoding if there is audio and
+	// its number of channels, guess it to simplify engine code.
+
 	// In order to determine which kind of audio we've got, read the first chunk header
 	uint32 frameRemaining = _stream->readUint32LE();
 	if (_stream->eos() || (frameRemaining & 0x00ffffff) < 4 + 8) {
@@ -276,10 +284,19 @@ void HNMDecoder::readNextPacket() {
 		error("Not enough data in file");
 	}
 
+	// Call format specific parser
 	(this->*_readChunks)(frameRemaining);
 }
 
 void HNMDecoder::readChunks4(size_t frameRemaining) {
+	/**
+	 * HNM4 codecs decode data as soon as they meets it.
+	 * There is 1 audio chunk per frame except for the first one
+	 * where there are 2 to prime the double buffer.
+	 *
+	 * Tested with Lost Eden (audioless), Versailles 1685 (with and without audio),
+	 * Hardline trailer, Versailles 1685 US demo, Dreams to Reality (demo video and animations).
+	 */
 	bool gotAudio = false;
 
 	byte *data_p = _dataBuffer;
@@ -332,6 +349,18 @@ void HNMDecoder::readChunks4(size_t frameRemaining) {
 }
 
 void HNMDecoder::readChunks5(size_t frameRemaining) {
+	/**
+	 * HNM5 (UBB2) codecs look up chunks and decode afterwards, except for DD and PL chunks.
+	 * DD chunk contains the LUT but is sometimes (Atlantis demo) not present.
+	 * In this case, the first SD chunk contains the LUT.
+	 * These videos only have 1 SD chunk per frame, even for the first frame.
+	 * Because of double buffering, the first frame is never really displayed.
+	 *
+	 * MegaRace II has mono and stereo videos.
+	 *
+	 * Tested with Atlantis Demo and MegaRace II videos.
+	 */
+
 	byte *sd_ptr = nullptr;
 	uint32 sd_size = 0;
 	byte *iv_ptr = nullptr;
@@ -404,6 +433,15 @@ void HNMDecoder::readChunks5(size_t frameRemaining) {
 }
 
 void HNMDecoder::readChunks6(size_t frameRemaining) {
+	/**
+	 * HNM6 codecs look up chunks and decode afterwards.
+	 * AA chunk comes first. It contains the LUT and contains
+	 * 32 buffers. Frame time is calculated based on that.
+	 * Last 30 frames don't have any sound to flush the buffers.
+	 *
+	 * Tested with Chine and Black Moon Chronicles demo.
+	 */
+
 	byte *sd_ptr = nullptr;
 	uint32 sd_size = 0;
 	uint16 sd_type = 0;
@@ -428,21 +466,16 @@ void HNMDecoder::readChunks6(size_t frameRemaining) {
 		}
 
 		if (
-		    chunkType == MKTAG16('B', 'B')) {
-			sd_ptr = data_p;
-			sd_size = chunkSize - 8;
-			sd_type = chunkType;
-		} else if (
 		    chunkType == MKTAG16('I', 'X') ||
 		    chunkType == MKTAG16('I', 'V')) {
 			iv_ptr = data_p;
 			iv_size = chunkSize - 8;
 		} else if (
+		    chunkType == MKTAG16('B', 'B') ||
 		    chunkType == MKTAG16('A', 'A')) {
 			sd_ptr = data_p;
 			sd_size = chunkSize - 8;
 			sd_type = chunkType;
-
 		} else {
 			error("HNM6: Got %d chunk: size %d", chunkType, chunkSize - 8);
 		}
@@ -1351,6 +1384,7 @@ Audio::AudioStream *HNMDecoder::APCAudioTrack::getAudioStream() const {
 uint32 HNMDecoder::APCAudioTrack::decodeSound(uint16 chunkType, byte *data, uint32 size) {
 	if (chunkType == MKTAG16('A', 'A')) {
 		Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, size);
+		// Some files have AA chunk only at start and some have only AA chunks and no BB
 		if (!_init && !_audioStream->init(*stream)) {
 			error("Invalid APC stream");
 		}
