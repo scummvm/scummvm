@@ -152,6 +152,12 @@ public:
 	/** Is the video paletted or true color? */
 	virtual bool isPaletted() const;
 
+	/**
+	 * Load a table of key frames (".KEY" files found alongside some VMDs),
+	 * used for safe seeking.
+	 */
+	virtual bool loadKeyFrames(Common::SeekableReadStream *stream);
+
 	virtual uint32 getVideoBufferSize() const = 0;
 
 	/**
@@ -445,6 +451,8 @@ public:
 	bool hasVideoData() const override;
 	bool isPaletted() const override;
 
+	bool loadKeyFrames(Common::SeekableReadStream *stream) override;
+
 	bool loadStream(Common::SeekableReadStream *stream) override;
 	void close();
 
@@ -567,6 +575,11 @@ private:
 
 	bool _isPaletted;
 
+	// Key frames
+	Common::SeekableReadStream *_externalKeyFrameStream;
+	Common::Array<uint32> _externalKeyFrameOffsets; ///< Offset of the key frame of each frame (0: no key frame).
+	Common::Array<uint32> _externalKeyFrameSizes;
+	int32 _externalKeyFrameToRender; ///< When reaching this frame, render the external key frame instead of the VMD one
 	Common::Rect _safeSeekDirtyRect; ///< Area changed by the frames decoded while safe seeking.
 
 	// Loading helper functions
@@ -582,6 +595,10 @@ private:
 	bool isFullFrame(int32 frame) const;
 	int32 findPreviousFullFrame(int32 frame) const;
 	VMDDecoder::Part *findPartOfFrame(int32 frame, PartType type, uint32 &offset);
+
+	// External key frames
+	bool hasExternalKeyFrame(int32 frame) const;
+	bool renderExternalKeyFrame(int32 frame);
 
 	// Video
 	bool renderFrame(Common::Rect &rect);
