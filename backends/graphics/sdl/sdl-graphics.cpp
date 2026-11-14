@@ -252,6 +252,32 @@ bool SdlGraphicsManager::lockMouse(bool lock) {
 	return _window->lockMouse(lock);
 }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+Common::Rect SdlGraphicsManager::convertOverlayToSdlWindow(const Common::Rect &area) const {
+	if (area.isEmpty() || _overlayDrawRect.isEmpty() || getOverlayWidth() == 0 || getOverlayHeight() == 0 || !_window || !_window->getSDLWindow())
+		return Common::Rect();
+
+	const Common::Point corners[] = {
+		convertOverlayToWindow(area.left, area.top),
+		convertOverlayToWindow(area.right - 1, area.top),
+		convertOverlayToWindow(area.left, area.bottom - 1),
+		convertOverlayToWindow(area.right - 1, area.bottom - 1)
+	};
+	Common::Rect windowArea(corners[0].x, corners[0].y, corners[0].x, corners[0].y);
+	for (uint i = 1; i < ARRAYSIZE(corners); i++)
+		windowArea.extend(corners[i]);
+	windowArea.right += 1;
+	windowArea.bottom += 1;
+
+	const float dpiScale = _window->getSdlDpiScalingFactor();
+	const int16 left = static_cast<int16>(windowArea.left / dpiScale + 0.5f);
+	const int16 top = static_cast<int16>(windowArea.top / dpiScale + 0.5f);
+	const int width = MAX(1, static_cast<int>(windowArea.width() / dpiScale + 0.5f));
+	const int height = MAX(1, static_cast<int>(windowArea.height() / dpiScale + 0.5f));
+	return Common::Rect(left, top, left + width, top + height);
+}
+#endif
+
 bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	bool showCursor = false;
 	// Currently on macOS we need to scale the events for HiDPI screen, but on
