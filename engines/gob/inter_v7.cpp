@@ -753,6 +753,84 @@ void Inter_v7::o7_playVmdOrMusic() {
 			props.x, props.y, props.startFrame, props.lastFrame,
 			props.palCmd, props.palStart, props.palEnd, props.flags);
 
+	if (props.flags & VideoPlayer::kFlagVideoSequence) {
+		// Video split into sequences described in a ".VMS" file alongside the ".VMD"
+		int32 command = props.lastFrame;
+		int32 sequenceId = props.startFrame;
+
+		_vm->_vidPlayer->evaluateFlags(props);
+		props.reuseSlotWitSameFilename = true;
+		int slot = _vm->_vidPlayer->openVideo(true, file, props);
+		if (slot < 0) {
+			WRITE_VAR(11, (uint32) -1);
+			return;
+		}
+
+		_vm->_vidPlayer->loadSequences(slot);
+
+		bool noSound = props.flags & 0x400;
+		if (noSound)
+			_vm->_vidPlayer->stopSound(slot);
+
+		int32 startFrame = 0;
+		int32 endFrame   = 0;
+		if (!_vm->_vidPlayer->findSequence(slot, sequenceId, startFrame, endFrame)) {
+			// Unknown sequence: fall back to frame 0
+			warning("Unknown sequence %d for video \"%s\" (using frame 0)", sequenceId, file.c_str());
+			props.startFrame = 0;
+			props.lastFrame  = 0;
+			WRITE_VAR(11, 0);
+		} else {
+			_vm->_vidPlayer->setAutoUpdate(slot, true);
+
+			if (command == 2) {
+				_vm->_vidPlayer->setAutoUpdate(slot, false);
+				_vm->_vidPlayer->stopSound(slot);
+			}
+
+			if (command == 1) {
+				// Only query the sequence frames
+				WRITE_VAR(11, endFrame - startFrame + 1);
+				WRITE_VAR(10, startFrame);
+			}
+
+			if (command > 0)
+				return;
+
+			if (command >= -1 || command == -3 || command == -5 || command == -6) {
+				_vm->_vidPlayer->seek(slot, startFrame);
+				if (noSound)
+					_vm->_vidPlayer->stopSound(slot); // Stop the sound again, as seek() restarts it
+			}
+
+			if (command == -5)
+				return;
+
+			if (command == -4)
+				props.startFrame = -1; // Continue from the current frame, up to the end of the sequence
+			else
+				props.startFrame = startFrame;
+
+			if (command < 0 && command != -3 && command != -6)
+				props.lastFrame = endFrame;  // Play the whole sequence
+			else
+				props.lastFrame = startFrame; // Only show the first frame
+
+			WRITE_VAR(11, endFrame - startFrame + 1);
+			WRITE_VAR(10, startFrame);
+		}
+
+		props.noBlock = false;
+		_vm->_vidPlayer->play(slot, props);
+
+		if (command > -3 && (command < 0 || noSound)) {
+			_vm->_vidPlayer->stopSound(slot);
+			_vm->_vidPlayer->setAutoUpdate(slot, false);
+		}
+
+		return;
+	}
+
 	bool close = false;
 	if (props.lastFrame == -1) {
 		close = true;

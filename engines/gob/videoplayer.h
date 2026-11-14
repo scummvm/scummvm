@@ -56,6 +56,7 @@ public:
 		kFlagFrontSurface                       = 0x000080, ///< Draw directly into the front surface.
 		kFlagNoVideo                            = 0x000100, ///< Only sound.
 		kFlagOtherSurface                       = 0x000800, ///< Draw into a specific sprite.
+		kFlagVideoSequence                      = 0x008000, ///< Play a video sequence defined in a "VMS" file alongside the VMD.
 		kFlagScreenSurface                      = 0x400000  ///< Draw into a newly created sprite of screen dimensions.
 	};
 
@@ -133,6 +134,12 @@ public:
 
 	bool play(int slot, Properties &properties);
 	void waitEndFrame(int slot, bool onlySound = false);
+
+	// Videos split into sequences (".VMS" file), with key frames (".KEY" file)
+	void loadSequences(int slot);
+	bool findSequence(int slot, int16 id, int32 &startFrame, int32 &endFrame) const;
+	void seek(int slot, int32 frame);
+	void stopSound(int slot);
 	int32 getExpectedFrameFromCurrentTime(int slot);
 
 	bool isPlayingLive() const;
@@ -175,9 +182,18 @@ public:
 			int32 transp = -1, bool yAxisReflexion = false) const;
 
 private:
+	struct Sequence {
+		int16 id;
+		int16 startFrame;
+		int16 endFrame;
+	};
+
 	struct Video {
 		::Video::CoktelDecoder *decoder;
 		Common::String fileName;
+
+		Common::Array<Sequence> sequences; ///< Sequences defined in a ".VMS" file alongside the VMD.
+		bool sequencesLoaded;
 
 		SurfacePtr surface;
 		SurfacePtr tmpSurfDouble; ///< Intermediate 1x surface for video doubling

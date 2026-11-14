@@ -51,7 +51,7 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 }
 
 
-VideoPlayer::Video::Video() : decoder(nullptr),
+VideoPlayer::Video::Video() : decoder(nullptr), sequencesLoaded(false),
 	doubleVideoDestX(0), doubleVideoDestY(0), doubleVideo(false),
 	live(false), useBackSurface(false), autoUpdate(false),
 	highColorMap(nullptr) {
@@ -66,6 +66,8 @@ void VideoPlayer::Video::close() {
 
 	decoder = nullptr;
 	fileName.clear();
+	sequences.clear();
+	sequencesLoaded = false;
 	surface.reset();
 	tmpSurfDouble.reset();
 	doubleVideoDestX = 0;
@@ -547,6 +549,73 @@ void VideoPlayer::waitEndFrame(int slot, bool onlySound) {
 	}
 }
 
+void VideoPlayer::loadSequences(int slot) {
+	Video *video = getVideoBySlot(slot);
+	if (!video || video->sequencesLoaded)
+		return;
+
+	video->sequencesLoaded = true;
+	video->sequences.clear();
+
+	Common::String vmsFilename = Util::setExtension(video->fileName, ".VMS");
+
+	// The ".VMS" file holds three arrays of 16-bit values: the sequence IDs, their start frames and end frames
+	Common::SeekableReadStream *vms = _vm->_dataIO->getFile(vmsFilename);
+	if (vms) {
+		uint32 count = vms->size() / 6;
+		video->sequences.resize(count);
+		for (uint32 i = 0; i < count; i++)
+			video->sequences[i].id = vms->readSint16LE();
+		for (uint32 i = 0; i < count; i++)
+			video->sequences[i].startFrame = vms->readSint16LE();
+		for (uint32 i = 0; i < count; i++)
+			video->sequences[i].endFrame = vms->readSint16LE();
+
+		delete vms;
+	} else
+		warning("VideoPlayer::loadSequences(): No sequences file for video \"%s\"", video->fileName.c_str());
+
+	Common::String keyFilename = Util::setExtension(video->fileName, ".KEY");
+	Common::SeekableReadStream *keyFrames = _vm->_dataIO->getFile(keyFilename);
+	if (keyFrames)
+		video->decoder->loadKeyFrames(keyFrames);
+
+	debugC(1, kDebugVideo, "VideoPlayer::loadSequences(): %u sequences loaded for %s, %s key frames",
+		   video->sequences.size(), video->fileName.c_str(), keyFrames != nullptr ? "with" : "without");
+}
+
+bool VideoPlayer::findSequence(int slot, int16 id, int32 &startFrame, int32 &endFrame) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return false;
+
+	for (const Sequence &sequence : video->sequences) {
+		if (sequence.id == id) {
+			startFrame = sequence.startFrame;
+			endFrame   = sequence.endFrame;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void VideoPlayer::seek(int slot, int32 frame) {
+	Video *video = getVideoBySlot(slot);
+	if (!video || !video->decoder)
+		return;
+
+	video->decoder->safeSeekFromPreviousFullFrame(frame);
+}
+
+void VideoPlayer::stopSound(int slot) {
+	Video *video = getVideoBySlot(slot);
+	if (!video || !video->decoder)
+		return;
+
+	video->decoder->disableSound();
+}
+
 int32 VideoPlayer::getExpectedFrameFromCurrentTime(int slot) {
 	Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -708,14 +777,17 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 		if (properties.startFrame != -1) {
 			// Seek into the middle of the video
 
-			if (video->decoder->hasSound()) {
+			if (_vm->getGameType() == kGameTypeAdi4) {
+				// Always use safe seeking, which ensures the image is complete and
+				// is able to restart sound from anywhere in the video
+				video->decoder->safeSeekFromPreviousFullFrame(properties.startFrame + 1);
+			} else if (video->decoder->hasSound()) {
 				// But there's sound
 
 				if (properties.forceSeek) {
 					// And we force seeking => Seek
-
-					video->decoder->disableSound();
-					video->decoder->seek(properties.startFrame + 1, SEEK_SET, true);
+						video->decoder->disableSound();
+						video->decoder->seek(properties.startFrame + 1, SEEK_SET, true);
 				}
 
 			} else
@@ -763,28 +835,28 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 	}
 
 	const Graphics::Surface *surface = video->decoder->decodeNextFrame();
+	const Common::List<Common::Rect> &dirtyRects = video->decoder->getDirtyRects();
 	if (surface != nullptr && surface->w > 0 && surface->h > 0 && video->decoder->isPaletted() && video->surface && video->surface->getBPP() > 1) {
 		// High color conversion from paletted
-		Surface *bppTarget = (video->doubleVideo && video->tmpSurfDouble) ?
-			video->tmpSurfDouble.get() : video->surface.get();
-		int16 x = 0;
-		int16 y = 0;
-		int16 width = 0;
-		int16 height = 0;
-		if (video->decoder->getFrameCoords(video->decoder->getCurFrame(), x, y, width, height)
-				&& x >= 0 && y >= 0 && width > 0 && height > 0) {
-			Graphics::crossBlitMap(bppTarget->getData(x, y), static_cast<const byte *>(surface->getBasePtr(x, y)),
+		Surface *bppTarget = (video->doubleVideo && video->tmpSurfDouble) ? video->tmpSurfDouble.get() : video->surface.get();
+		for (Common::Rect rect : dirtyRects) {
+			rect.clip(Common::Rect(surface->w, surface->h));
+			rect.clip(Common::Rect(bppTarget->getWidth(), bppTarget->getHeight()));
+			if (rect.isEmpty())
+				continue;
+
+			Graphics::crossBlitMap(bppTarget->getData(rect.left, rect.top),
+								   static_cast<const byte *>(surface->getBasePtr(rect.left, rect.top)),
 								   bppTarget->getWidth() * bppTarget->getBPP(),
 								   surface->pitch,
-								   width, height,
+								   rect.width(), rect.height(),
 								   bppTarget->getBPP(), video->highColorMap);
 		}
 	}
 
 	if (video->doubleVideo && video->tmpSurfDouble && video->surface) {
 		// Double the video
-		const Common::List<Common::Rect> &rects = video->decoder->getDirtyRects();
-		for (Common::List<Common::Rect>::const_iterator rect = rects.begin(); rect != rects.end(); ++rect) {
+		for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect) {
 			video->surface->blitScaled(*video->tmpSurfDouble,
 				rect->left, rect->top, rect->right - 1, rect->bottom - 1,
 				video->doubleVideoDestX + rect->left * 2,
@@ -824,8 +896,6 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			else
 				_vm->_draw->_applyPal = true;
 		}
-
-		const Common::List<Common::Rect> &dirtyRects = video->decoder->getDirtyRects();
 
 		if (modifiedPal && (properties.palCmd == 8) && (video->surface == _vm->_draw->_backSurface))
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
