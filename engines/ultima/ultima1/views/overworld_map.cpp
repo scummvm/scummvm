@@ -113,10 +113,8 @@ void OverworldMap::draw() {
 	for (int oy = 0; oy < Data::OVERWORLD_VISIBLE_HEIGHT; oy++) {
 		for (int ox = 0; ox < Data::OVERWORLD_VISIBLE_WIDTH; ox++) {
 			int tileId = animatedTileId(_mapTilesId[oy][ox]);
-			if (tileId != -1) {
-				const Graphics::ManagedSurface &tileImg = tiles[tileId];
-				s.blitFrom(tileImg, Common::Point(ox * TILE_WIDTH + 8, oy * TILE_HEIGHT + 8));
-			}
+			const Graphics::ManagedSurface &tileImg = tiles[tileId];
+			s.blitFrom(tileImg, Common::Point(ox * TILE_WIDTH + 8, oy * TILE_HEIGHT + 8));
 		}
 	}
 }

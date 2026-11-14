@@ -47,7 +47,7 @@ private:
 	Graphics::Surface _surface;
 public:
 	~PicDecoder() {
-		destroy();
+		_surface.free();
 	}
 
 	/**

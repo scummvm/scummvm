@@ -113,7 +113,7 @@ public:
 	uint16 _shipFuel = 0;
 	uint16 _shipShield = 0;
 
-	OverworldEntity _overworldEntities[OVERWORLD_ENTITY_COUNT];
+	OverworldEntity _overworldEntities[OVERWORLD_ENTITY_COUNT] = {};
 
 	// Extra fields
 	int16 _mapNum = 0;

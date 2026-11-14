@@ -83,7 +83,7 @@ struct Map {
 private:
 	Common::Array<byte> _overworldMap;		// Cached overworld map data
 	Common::Array<byte> _cityMap[10];		// Cached city/castle/town maps
-	byte _mondainMap[MONDAIN_HEIGHT][MONDAIN_WIDTH];	// Cached Mondain encounter map
+	byte _mondainMap[MONDAIN_HEIGHT][MONDAIN_WIDTH] = {};	// Cached Mondain encounter map
 
 	MapTiles _mapTiles;						// Visible on-screen tiles
 	int _mapWidth = 0, _mapHeight = 0;		// Map width/height

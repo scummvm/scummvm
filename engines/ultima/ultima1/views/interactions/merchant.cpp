@@ -586,7 +586,7 @@ void Merchant::weaponsRange(int &minIdx, int &maxIdx) const {
 	// The original takes the savegame _moveCount % 0x7FFF before the /1500, but with the
 	// > 3000 branch forcing tier 3 that modulo never changes the result
 	uint32 moveCtr = _G(savegame)._moveCount;
-	int tier = (moveCtr <= 3000) ? MIN<uint32>((moveCtr % 0x7FFF) / 1500, 3) : 3;
+	int tier = (moveCtr <= 3000) ? MIN<uint32>(moveCtr / 1500, 3) : 3;
 
 	minIdx = base;
 	maxIdx = base + (tier + 1) * 2;

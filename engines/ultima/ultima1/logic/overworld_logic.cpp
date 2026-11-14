@@ -312,11 +312,11 @@ bool OverworldLogic::moveCheck(Data::Direction dir) {
 		impassable(IMP_WOODS);
 		return false;
 
-	} else if (transport == Data::TRANSPORT_FRIGATE && tile != Data::TILE_OCEAN) {
+	} else if (transport == Data::TRANSPORT_FRIGATE) {
 		impassable(IMP_FRIGATES_WATER);
 		return false;
 
-	} else if (transport == Data::TRANSPORT_RAFT && tile != Data::TILE_OCEAN) {
+	} else if (transport == Data::TRANSPORT_RAFT) {
 		impassable(IMP_RAFTS_WATER);
 		return false;
 

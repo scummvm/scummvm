@@ -167,8 +167,8 @@ void SpaceCockpitLogic::alienFiresBack() {
 	int endY = _G(cockpitTargetY) + Data::SPACE_TARGET_HIT_MAX_Y[stage];
 
 	Views::SpaceCockpit *view = dynamic_cast<Views::SpaceCockpit *>(g_engine->findView("SpaceCockpit"));
-	assert(view);
-	view->alienFireFlash(originX, originY, endX, endY);
+	if (view)
+		view->alienFireFlash(originX, originY, endX, endY);
 	playFX(8);
 
 	if (roll < ALIEN_FIRE_HIT_THRESHOLD) {
@@ -235,8 +235,8 @@ bool SpaceCockpitLogic::fire() {
 	// Flash a laser bolt in from each side of the viewport, converging on
 	// the crosshair
 	Views::SpaceCockpit *view = dynamic_cast<Views::SpaceCockpit *>(g_engine->findView("SpaceCockpit"));
-	assert(view);
-	view->fireLaser();
+	if (view)
+		view->fireLaser();
 	playFX(8);
 
 	int stage = _G(cockpitTargetStage);
@@ -300,7 +300,9 @@ bool SpaceCockpitLogic::hyperjump() {
 	int dy = Data::SPACE_FACING_DY[ship._facing];
 
 	Views::SpaceCockpit *view = dynamic_cast<Views::SpaceCockpit *>(g_engine->findView("SpaceCockpit"));
-	assert(view);
+	if (!view)
+		return true;
+
 	_hyperjumping = true;
 	view->startHyperjump(dx, dy);
 
