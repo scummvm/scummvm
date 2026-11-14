@@ -84,6 +84,15 @@ unsigned int CSoundChannel::numQueued() {
 	return _audioStream ? _audioStream->numQueuedStreams() : 0;
 }
 
+void CSoundChannel::setSampleRate(unsigned int sampleRate) {
+	if (sampleRate == _sampleRate)
+		return;
+
+	// The stream carries the rate, so a new one has to stand in its place
+	stop();
+	_sampleRate = sampleRate;
+}
+
 unsigned int CSoundChannel::getVolume() {
 	return (_volumeRight + _volumeLeft) / 2;
 }

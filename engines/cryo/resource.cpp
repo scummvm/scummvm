@@ -21,6 +21,7 @@
 
 #include "cryo/defs.h"
 #include "cryo/cryo.h"
+#include "cryo/detection.h"
 #include "cryo/cryolib.h"
 #include "cryo/eden.h"
 
@@ -53,12 +54,12 @@ void EdenGame::verifh(byte *ptr) {
 	if (sum != 0xAB)
 		return;
 
-	debug("* Begin unpacking resource");
 	head -= 6;
 	uint16 h0 = READ_LE_UINT16(head);
 	// 3 = 2 bytes for the uint16 and 1 byte for an unused char
 	head += 3;
 	uint16 h3 = READ_LE_UINT16(head);
+	debugC(2, kDebugResource, "Unpacking %d bytes into %d", h3, h0);
 	head += 2;
 	byte *data = h0 + head + 26;
 	h3 -= 6;
@@ -71,7 +72,8 @@ void EdenGame::verifh(byte *ptr) {
 }
 
 void EdenGame::openbigfile() {
-	_bigfile.open("EDEN.DAT");
+	if (!_bigfile.open("EDEN.DAT"))
+		error("Could not open EDEN.DAT");
 
 	char buf[16];
 	int count = _bigfile.readUint16LE();
@@ -113,6 +115,7 @@ void EdenGame::loadRawFile(uint16 num, byte *buffer) {
 	PakHeaderItem *file = &_bigfileHeader->_files[num];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
+	debugC(2, kDebugResource, "Loading resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 
 	_bigfile.seek(offs, SEEK_SET);
 	_bigfile.read(buffer, size);
@@ -128,7 +131,7 @@ void EdenGame::loadIconFile(uint16 num, Icon *buffer) {
 	PakHeaderItem *file = &_bigfileHeader->_files[num];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
-	debug("* Loading icon - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
+	debugC(2, kDebugResource, "Loading icons %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
 	int count = size / 18;	// sizeof(Icon)
@@ -164,7 +167,7 @@ void EdenGame::loadRoomFile(uint16 num, Room *buffer) {
 	PakHeaderItem *file = &_bigfileHeader->_files[num];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
-	debug("* Loading room - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
+	debugC(2, kDebugResource, "Loading rooms %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
 	int count = size / 14;	// sizeof(Room)
@@ -193,7 +196,7 @@ Common::SeekableReadStream *EdenGame::loadSubStream(uint16 resNum) {
 	PakHeaderItem *file = &_bigfileHeader->_files[resNum];
 	int size = file->_size;
 	int offs = file->_offs;
-	debug("* Loading file %s at 0x%X, %d bytes", file->_name.c_str(), (uint)offs, size);
+	debugC(2, kDebugResource, "Loading stream %d (%s) at 0x%X, %d bytes", resNum, file->_name.c_str(), (uint)offs, size);
 	return new Common::SafeSeekableSubReadStream(&_bigfile, offs, offs + size, DisposeAfterUse::NO);
 }
 
@@ -204,16 +207,15 @@ int EdenGame::loadSound(uint16 num) {
 	PakHeaderItem *file = &_bigfileHeader->_files[resNum];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
-	debug("* Loading sound %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
-	if (_soundAllocated) {
-		free(_voiceSamplesBuffer);
-		_voiceSamplesBuffer = nullptr;
-		_soundAllocated = false; //TODO: bug??? no alloc
+	// The demo leaves an empty entry for a line it does not carry
+	if (size <= 0) {
+		warning("Sound %d is not in this release of the game", num);
+		return 0;
 	}
-	else {
-		_voiceSamplesBuffer = (byte *)malloc(size);
-		_soundAllocated = true;
-	}
+	debugC(2, kDebugResource, "Loading sound %d as resource %d (%s) at 0x%X, %d bytes", num, resNum, file->_name.c_str(), (uint)offs, size);
+	free(_voiceSamplesBuffer);
+	_voiceSamplesBuffer = (byte *)malloc(size);
+	_soundAllocated = true;
 
 	_bigfile.seek(offs, SEEK_SET);
 	//For PC loaded data is a VOC file, on Mac version this is a raw samples
@@ -224,26 +226,44 @@ int EdenGame::loadSound(uint16 num) {
 		// 1. Standard VOC header
 		_bigfile.read(_voiceSamplesBuffer, 0x1A);
 
-		// 2. Lipsync?
-		unsigned char chunkType = _bigfile.readByte();
+		// 2. The chunks: a lipsync one where there is one, then the samples in
+		// one sound chunk or, for nineteen of the voices, in several
+		int32 samplesRead = 0;
+		int32 bytesLeft = size - 0x1A;
 
-		uint32 val = 0;
-		_bigfile.read(&val, 3);
-		unsigned int chunkLen = FROM_LE_32(val);
-
-		if (chunkType == 5) {
-			_bigfile.read(_gameLipsync + 7260, chunkLen);
-			chunkType = _bigfile.readByte();
+		while (bytesLeft >= 4) {
+			unsigned char chunkType = _bigfile.readByte();
+			uint32 val = 0;
 			_bigfile.read(&val, 3);
-			chunkLen = FROM_LE_32(val);
+			unsigned int chunkLen = FROM_LE_32(val);
+			bytesLeft -= 4;
+
+			// The terminator, and anything the file is too short to hold
+			if (chunkType == 0 || chunkLen > (uint32)bytesLeft)
+				break;
+			bytesLeft -= chunkLen;
+
+			if (chunkType == 5) {
+				if (chunkLen > LIPSYNC_DATA_SIZE) {
+					warning("Lipsync chunk too large (%u bytes), truncating to %d", chunkLen, LIPSYNC_DATA_SIZE);
+					_bigfile.read(_gameLipsync + LIPSYNC_ANIM_TABLE_SIZE, LIPSYNC_DATA_SIZE);
+					_bigfile.skip(chunkLen - LIPSYNC_DATA_SIZE);
+				} else
+					_bigfile.read(_gameLipsync + LIPSYNC_ANIM_TABLE_SIZE, chunkLen);
+			} else if (chunkType == 1 && chunkLen >= 2) {
+				// The rate, as the divisor the DOS driver loaded its timer with,
+				// and the packing
+				byte timeConstant = _bigfile.readByte();
+				_bigfile.readByte();
+				if (!samplesRead)
+					_voiceSampleRate = 1000000 / (256 - timeConstant);
+				_bigfile.read(_voiceSamplesBuffer + samplesRead, chunkLen - 2);
+				samplesRead += chunkLen - 2;
+			} else
+				_bigfile.skip(chunkLen);
 		}
 
-		// 3. Normal sound data
-		if (chunkType == 1) {
-			_bigfile.readUint16LE();
-			size = chunkLen - 2;
-			_bigfile.read(_voiceSamplesBuffer, size);
-		}
+		size = samplesRead;
 	}
 
 	return size;
@@ -351,7 +371,8 @@ void EdenGame::loadpermfiles() {
 		convertMacToPC();
 
 		// Skip the icons and rooms of the DOS version
-		f.skip(kNumIcons * 14 + kNumRooms * 11);
+		f.skip(kNumIcons * 18 +		// sizeof(Icon)
+		       kNumRooms * 14);		// sizeof(Room)
 		break;
 	default:
 		error("Unsupported platform");
@@ -367,8 +388,8 @@ void EdenGame::loadpermfiles() {
 		_followerList[i].ex = f.readSint16LE();
 		_followerList[i].ey = f.readSint16LE();
 		_followerList[i]._spriteBank = f.readSint16LE();
-		_followerList[i].ff_C = f.readSint16LE();
-		_followerList[i].ff_E = f.readSint16LE();
+		_followerList[i]._zoomX = f.readSint16LE();
+		_followerList[i]._zoomY = f.readSint16LE();
 	}
 
 	f.read(_labyrinthPath, kNumLabyrinthPath);
@@ -468,7 +489,11 @@ bool EdenGame::ReadDataSyncVOC(unsigned int num) {
 		loadpartoffile(resNum, &chunkLen, filePos, 3);
 		filePos += 3;
 		chunkLen = FROM_LE_32(chunkLen);
-		loadpartoffile(resNum, _gameLipsync + 7260, filePos, chunkLen);
+		if (chunkLen > LIPSYNC_DATA_SIZE) {
+			warning("Lipsync chunk too large (%u bytes), truncating to %d", chunkLen, LIPSYNC_DATA_SIZE);
+			chunkLen = LIPSYNC_DATA_SIZE;
+		}
+		loadpartoffile(resNum, _gameLipsync + LIPSYNC_ANIM_TABLE_SIZE, filePos, chunkLen);
 		return true;
 	}
 	return false;
@@ -478,8 +503,8 @@ bool EdenGame::ReadDataSync(uint16 num) {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		long pos = READ_LE_UINT32(_gameLipsync + num * 4);
 		if (pos != -1) {
-			long len = 1024;
-			loadpartoffile(1936, _gameLipsync + 7260, pos, len);
+			long len = LIPSYNC_DATA_SIZE;
+			loadpartoffile(1936, _gameLipsync + LIPSYNC_ANIM_TABLE_SIZE, pos, len);
 			return true;
 		}
 	}
@@ -492,7 +517,14 @@ void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
 	assert(num < _bigfileHeader->_count);
 	PakHeaderItem *file = &_bigfileHeader->_files[num];
 	int32 offs = READ_LE_UINT32(&file->_offs);
-	debug("* Loading partial resource %d (%s) at 0x%X(+0x%X), %d bytes", num, file->_name.c_str(), offs, pos, len);
+	// Entries the demo does not ship have neither length nor offset, so a read
+	// used to hand back the head of the resource file itself
+	if (file->_size <= 0 || pos + len > file->_size) {
+		warning("Resource %d holds no %d bytes at %d", num, len, pos);
+		memset(buffer, 0, len);
+		return;
+	}
+	debugC(2, kDebugResource, "Loading resource %d (%s) at 0x%X(+0x%X), %d of %d bytes", num, file->_name.c_str(), (uint)offs, pos, len, file->_size);
 	_bigfile.seek(offs + pos, SEEK_SET);
 	_bigfile.read(buffer, len);
 }

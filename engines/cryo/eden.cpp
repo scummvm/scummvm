@@ -40,8 +40,16 @@
 #include "cryo/eden.h"
 #include "cryo/sound.h"
 #include "cryo/eden_graphics.h"
+#include "cryo/detection.h"
 
 namespace Cryo {
+
+// Panel slots: icons 105-108 list the saves, 109-111 save into them. Sprites
+// 8 to 10 of the panel bank are the slot labels
+static const int16 kFirstLoadIcon = 105;
+static const int16 kFirstSaveIcon = 109;
+static const int16 kNumSaveSlots = 3;
+static const int16 kFirstSlotSprite = 8;
 
 #define Z_RESET -3400
 #define Z_STEP 200
@@ -118,6 +126,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	_normalCursor = false;
 	_specialTextMode = false;
 	_voiceSamplesSize = 0;
+	_voiceSampleRate = 11025;
 	_animateTalking = false;
 	_personTalking = false;
 	_musicFadeFlag = 0;
@@ -128,6 +137,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	byte_31D64 = false;
 	_noPalette = false;
 	_gameLoaded = false;
+	_startupSaveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	memset(_tapes, 0, sizeof(_tapes));
 	_confirmMode = 0;
 	_curSliderValuePtr = nullptr;
@@ -142,6 +152,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	_rotationAngleY = _rotationAngleX = _rotationAngleZ = 0;
 	_translationY = _translationX = 0.0;	//TODO: never changed, make consts?
 	_cursorOldTick = 0;
+	_cubeStepDelay = 0;
 
 	_invIconsBase = 19;
 //	invIconsCount = (_vm->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
@@ -552,7 +563,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 void EdenGame::move(Direction dir) {
 	Room *room = _globals->_roomPtr;
 	int16 roomNum = _globals->_roomNum;
-	debug("move: from room %4X", roomNum);
+	debugC(1, kDebugScript, "Moving out of room 0x%X", roomNum);
 	char newLoc = 0;
 	_graphics->rundcurs();
 	display();
@@ -923,7 +934,7 @@ void EdenGame::actionLookLake() {
 		_globals->_curAreaFlags |= AreaFlags::afFlag8;
 		room->_id = 3;
 	}
-	debug("sea monster: room = %X, d0 = %X\n", _globals->_roomNum, _globals->_roomImgBank);
+	debugC(1, kDebugScript, "Sea monster in room 0x%X, bank %d", _globals->_roomNum, _globals->_roomImgBank);
 	_graphics->hideBars();
 	_graphics->playHNM(vid);
 	updateRoom(_globals->_roomNum);           //TODO: getting memory trashed here?
@@ -1030,10 +1041,16 @@ void EdenGame::display() {
 		}
 		CLBlitter_CopyView2Screen(_graphics->getMainView());
 	} else {
-		if (_globals->_mirrorEffect)
+		if (_globals->_mirrorEffect) {
+			// The number chooses a transition in the DOS release, of which 6, 16
+			// and 20 are used; this follows the Macintosh release and fades
+			debugC(1, kDebugGraphics, "Transition %d into room 0x%X, which the fade stands in for",
+			       _globals->_mirrorEffect, _globals->_roomNum);
 			_graphics->displayEffect3();
-		else
+		} else {
+			debugC(1, kDebugGraphics, "Transition of the mirror, %d", _globals->_var103);
 			_graphics->displayEffect2();
+		}
 
 		_globals->_var103 = 0;
 		_globals->_mirrorEffect = 0;
@@ -1088,6 +1105,7 @@ void EdenGame::useBank(int16 bank) {
 
 	_bankData = _bankDataBuf;
 	if (_curBankNum != bank) {
+		debugC(2, kDebugGraphics, "Bank %d becomes the one in hand", bank);
 		loadRawFile(bank, _bankDataBuf);
 		verifh(_bankDataBuf);
 		_curBankNum = bank;
@@ -1357,7 +1375,9 @@ void EdenGame::newCitadel(char area, int16 level, Room *room) {
 	while (cita->_id < level)
 		cita++;
 
-	uint16 index = ((room->_flags & 0xC0) >> 6);    //TODO: this is very wrong
+	// The two top flag bits choose a pair of entries, of which areas 4 and 6
+	// take the second, so they come down five places and not six
+	uint16 index = ((room->_flags & 0xC0) >> 5);
 	if (area == 4 || area == 6)
 		index++;
 
@@ -1811,7 +1831,7 @@ void EdenGame::animCharacter() {
 	}
 	if (_animateTalking) {
 		if (!_animationTable) {
-			_animationTable = _gameLipsync + 7262;    //TODO: fix me
+			_animationTable = _gameLipsync + LIPSYNC_ANIM_TABLE_SIZE + 2;
 			if (!_backgroundSaved) {
 				_graphics->saveMouthBackground();
 				_backgroundSaved = true;
@@ -1957,8 +1977,9 @@ void EdenGame::loadCharacter(perso_t *perso) {
 		return;
 
 	if (perso->_spriteBank != _globals->_characterImageBank) {
-		_graphics->setCurCharRect(&_characterRects[perso->_id]); //TODO: array of int16?
-		dword_30728 = _characterArray[perso->_id];
+		// Both tables only cover the speaking characters, ids 0 to 18
+		_graphics->setCurCharRect(&_characterRects[MIN<int>(perso->_id, ARRAYSIZE(_characterRects) - 1)]);
+		dword_30728 = _characterArray[MIN<int>(perso->_id, ARRAYSIZE(_characterArray) - 1)];
 		ef_perso();
 		_globals->_characterImageBank = perso->_spriteBank;
 		useBank(_globals->_characterImageBank);
@@ -1980,7 +2001,9 @@ void EdenGame::loadCharacter(perso_t *perso) {
 		ptr += READ_LE_UINT16(ptr) - 2;
 		_globals->_persoSpritePtr = baseptr;
 		_globals->_persoSpritePtr2 = baseptr + READ_LE_UINT16(ptr);
-		debug("load perso: b6 len is %d", (int)(_globals->_persoSpritePtr2 - _globals->_persoSpritePtr));
+		debugC(2, kDebugResource, "Character %d loaded, %d bytes of sprite",
+	      _globals->_characterPtr ? (int)(_globals->_characterPtr - _persons) : -1,
+	      (int)(_globals->_persoSpritePtr2 - _globals->_persoSpritePtr));
 	} else {
 		useBank(_globals->_characterImageBank);
 		_characterBankData = _bankData;
@@ -2065,6 +2088,9 @@ void EdenGame::displayBackgroundFollower() {
 				bank = 327;
 			useBank(bank + _globals->_roomBackgroundBankNum);
 			_graphics->drawSprite(0, 0, 16, true);
+			// One background stands behind several characters, each against a
+			// corner of its own, blown up to fill the picture
+			_graphics->zoomBackground(follower->_zoomX, follower->_zoomY);
 			break;
 		}
 	}
@@ -2241,8 +2267,11 @@ void EdenGame::getDataSync() {
 // Original name: ReadNombreFrames
 int16 EdenGame::readFrameNumber() {
 	int16 num = 0;
-	_animationTable = _gameLipsync + 7260 + 2;    //TODO: fix me
-	while (*_animationTable++ != 0xFF)
+	// Stop one byte short of the end: animCharacter() indexes the table with
+	// frame numbers up to and including the returned count
+	byte *end = _gameLipsync + LIPSYNC_BUFFER_SIZE - 1;
+	_animationTable = _gameLipsync + LIPSYNC_ANIM_TABLE_SIZE + 2;
+	while (_animationTable < end && *_animationTable++ != 0xFF)
 		num++;
 	return num;
 }
@@ -2290,53 +2319,84 @@ void EdenGame::my_bulle() {
 	int16 wordsOnLine = 0;
 	int16 wordWidth = 0;
 	int16 lineWidth = 0;
+	// A phrase can ask for a game variable to be spelled out mid-line
+	char number[8];
+	const char *numberPtr = nullptr;
 	byte c;
-	while ((c = *textPtr++) != 0xFF) {
-		if (c == 0x11 || c == 0x13) {
-			if (_globals->_phaseNum <= 272 || _globals->_phaseNum == 386) {
-				_globals->_eloiHaveNews = c & 0xF;
-				_globals->_var4D = _globals->_worldTyranSighted;
+	for (;;) {
+		if (numberPtr) {
+			c = *numberPtr++;
+			if (!c) {
+				numberPtr = nullptr;
+				continue;
 			}
-		} else if (c >= 0x80 && c < 0x90)
-			SysBeep(1);
-		else if (c >= 0x90 && c < 0xA0) {
-			while (*textPtr++ != 0xFF) {}
-			textPtr--;
-		} else if (c >= 0xA0 && c < 0xC0)
-			_globals->_textToken1 = c & 0xF;
-		else if (c >= 0xC0 && c < 0xD0)
-			_globals->_textToken2 = c & 0xF;
-		else if (c >= 0xD0 && c < 0xE0) {
-			byte c1 = *textPtr++;
-			if (c == 0xD2)
-#ifdef FAKE_DOS_VERSION
-				_globals->_textWidthLimit = c1 + 160;
-#else
-				_globals->_textWidthLimit = c1 + _subtitlesXCenter; // TODO: signed? 160 in pc ver
-#endif
-			else {
-				byte c2 = *textPtr++;
-				switch (_globals->_numGiveObjs) {
-				case 0:
-					_globals->_giveObj1 = c2;
-					break;
-				case 1:
-					_globals->_giveObj2 = c2;
-					break;
-				case 2:
-					_globals->_giveObj3 = c2;
-					break;
-				default:
-					break;
+		} else {
+			c = *textPtr++;
+			if (c == 0xFF)
+				break;
+
+			if (c == 0x11 || c == 0x13) {
+				if (_globals->_phaseNum <= 272 || _globals->_phaseNum == 386) {
+					_globals->_eloiHaveNews = c & 0xF;
+					_globals->_var4D = _globals->_worldTyranSighted;
 				}
-				_globals->_numGiveObjs++;
-				*icons++ = *textPtr++;
-				*icons++ = *textPtr++;
-				*icons++ = c2;
-			}
-		} else if (c >= 0xE0 && c < 0xFF)
-			SysBeep(1);
-		else if (c != '\r') {
+				continue;
+			} else if (c >= 0x80 && c < 0x90) {
+				SysBeep(1);
+				continue;
+			} else if (c == 0x91) {
+				// Spell out the byte variable named by the next byte, which is
+				// how the save and load lines number their slot
+				Common::sprintf_s(number, sizeof(number), "%d", getByteVar(*textPtr++));
+				numberPtr = number;
+				continue;
+			} else if (c >= 0x90 && c < 0xA0) {
+				while (*textPtr++ != 0xFF) {}
+				textPtr--;
+				continue;
+			} else if (c >= 0xA0 && c < 0xC0) {
+				_globals->_textToken1 = c & 0xF;
+				continue;
+			} else if (c >= 0xC0 && c < 0xD0) {
+				_globals->_textToken2 = c & 0xF;
+				continue;
+			} else if (c >= 0xD0 && c < 0xE0) {
+				byte c1 = *textPtr++;
+				if (c == 0xD2)
+#ifdef FAKE_DOS_VERSION
+					_globals->_textWidthLimit = c1 + 160;
+#else
+					_globals->_textWidthLimit = c1 + _subtitlesXCenter; // TODO: signed? 160 in pc ver
+#endif
+				else {
+					byte c2 = *textPtr++;
+					switch (_globals->_numGiveObjs) {
+					case 0:
+						_globals->_giveObj1 = c2;
+						break;
+					case 1:
+						_globals->_giveObj2 = c2;
+						break;
+					case 2:
+						_globals->_giveObj3 = c2;
+						break;
+					default:
+						break;
+					}
+					_globals->_numGiveObjs++;
+					*icons++ = *textPtr++;
+					*icons++ = *textPtr++;
+					*icons++ = c2;
+				}
+				continue;
+			} else if (c >= 0xE0 && c < 0xFF) {
+				SysBeep(1);
+				continue;
+			} else if (c == '\r')
+				continue;
+		}
+
+		{
 			*sentencePtr++ = c;
 			byte width = _gameFont[c];
 #ifdef FAKE_DOS_VERSION
@@ -2347,27 +2407,32 @@ void EdenGame::my_bulle() {
 			lineWidth += width;
 			int16 overrun = lineWidth - _globals->_textWidthLimit;
 			if (overrun > 0) {
-				_numTextLines++;
-				if (c != ' ') {
-					*linesp++ = wordsOnLine;
-					*linesp++ = wordWidth + _spaceWidth - overrun;
+				if (_numTextLines < MAX_SUBTITLE_LINES) {
+					_numTextLines++;
+					if (c != ' ') {
+						*linesp++ = wordsOnLine;
+						*linesp++ = wordWidth + _spaceWidth - overrun;
+						lineWidth = wordWidth;
+					} else {
+						*linesp++ = wordsOnLine + 1;
+						*linesp++ = _spaceWidth - overrun;
+						lineWidth = 0;
+					}
+				} else if (c != ' ')
 					lineWidth = wordWidth;
-				} else {
-					*linesp++ = wordsOnLine + 1;
-					*linesp++ = _spaceWidth - overrun;   //TODO: checkme
+				else
 					lineWidth = 0;
-				}
 				wordWidth = 0;
 				wordsOnLine = 0;
-			} else {
-				if (c == ' ') {
-					wordsOnLine++;
-					wordWidth = 0;
-				}
+			} else if (c == ' ') {
+				wordsOnLine++;
+				wordWidth = 0;
 			}
 		}
 	}
 	_numTextLines++;
+	if (_numTextLines > MAX_SUBTITLE_LINES)
+		_numTextLines = MAX_SUBTITLE_LINES;
 	*linesp++ = wordsOnLine + 1;
 	*linesp++ = wordWidth;
 	*sentencePtr = c;
@@ -2411,7 +2476,7 @@ void EdenGame::my_pr_bulle() {
 	textout = _graphics->getSubtitlesViewBuf();
 	byte *textPtr = _sentenceBuffer;
 	int16 lines = 1;
-	while (!done) {
+	while (!done && lines <= MAX_SUBTITLE_LINES) {
 		int16 numWords = *coo++;       // num words on line
 		int16 padSize = *coo++;        // amount of extra spacing
 		byte *currOut = textout;
@@ -2761,9 +2826,9 @@ void EdenGame::actionDino() {
 	_globals->_roomCharacterPowers = perso->_powers;
 	_globals->_characterPtr = perso;
 	initCharacterPointers(perso);
-	debug("beg dino talk");
+	debugC(1, kDebugScript, "Dinosaur %d begins to talk", _globals->_characterPtr ? (int)(_globals->_characterPtr - _persons) : -1);
 	parle_moi();
-	debug("end dino talk");
+	debugC(1, kDebugScript, "Dinosaur %d has finished talking", _globals->_characterPtr ? (int)(_globals->_characterPtr - _persons) : -1);
 	if (_globals->_areaNum == Areas::arWhiteArch)
 		return;
 	if (_globals->_var60)
@@ -3141,7 +3206,7 @@ void EdenGame::dialautooff() {
 
 void EdenGame::follow() {
 	if (_globals->_roomCharacterType == PersonFlags::pfType12) {
-		debug("follow: hiding person %d", (int)(_globals->_roomCharacterPtr - _persons));
+		debugC(1, kDebugScript, "Hiding character %d, who is following", (int)(_globals->_roomCharacterPtr - _persons));
 		_globals->_roomCharacterPtr->_flags |= PersonFlags::pf80;
 		_globals->_roomCharacterPtr->_roomNum = 0;
 		_globals->_gameFlags |= GameFlags::gfFlag8;
@@ -3380,13 +3445,19 @@ bool EdenGame::dial_scan(Dialog *dial) {
 	}
 
 	if (!skipFl) {
-		perso_t *perso;
-		for (perso = _persons; !(perso->_partyMask == mask && perso->_roomNum == _globals->_roomNum); perso++)
-			; //Find matching
+		perso_t *perso = _persons;
+		perso_t *lastPerso = &_persons[ARRAYSIZE(_persons)];
+		while (perso != lastPerso && !(perso->_partyMask == mask && perso->_roomNum == _globals->_roomNum))
+			perso++; //Find matching
 
-		_globals->_characterPtr = perso;
-		initCharacterPointers(perso);
-		no_perso();
+		// Leave the character in place rather than acting on what follows the
+		// array; the line still has to run, it may carry a phase change
+		if (perso != lastPerso) {
+			_globals->_characterPtr = perso;
+			initCharacterPointers(perso);
+			no_perso();
+		} else
+			warning("dial_scan: no person with mask %04X in room %04X", mask, _globals->_roomNum);
 	}
 
 	hidx = _globals->_dialogPtr->_textCondHiMask;
@@ -3489,7 +3560,10 @@ void EdenGame::chronoEvent() {
 	addTime(5);
 	if (!(_globals->_chronoFlag & 1))
 		return;
-	_globals->_chrono -= 200;
+	if (_globals->_chrono >= 200)
+		_globals->_chrono -= 200;
+	else
+		_globals->_chrono = 0;
 	if (_globals->_chrono == 0)
 		_globals->_chronoFlag |= 2;
 	if (!(_globals->_chronoFlag & 2))
@@ -3915,7 +3989,7 @@ void EdenGame::getdino(Room *room) {
 
 // Original name: getsalle
 Room *EdenGame::getRoom(int16 loc) { //TODO: byte?
-	debug("get room for %X, starting from %d, looking for %X", loc, _globals->_areaPtr->_firstRoomIdx, _globals->_partyOutside);
+	debugC(2, kDebugScript, "Looking for location 0x%X from room %d, party outside 0x%X", loc, _globals->_areaPtr->_firstRoomIdx, _globals->_partyOutside);
 	Room *room = &_gameRooms[_globals->_areaPtr->_firstRoomIdx];
 	loc &= 0xFF;
 	for (;; room++) {
@@ -3926,7 +4000,7 @@ Room *EdenGame::getRoom(int16 loc) { //TODO: byte?
 		if (_globals->_partyOutside == room->_party || room->_party == 0xFFFF)
 			break;
 	}
-	debug("found room: party = %X, bank = %X", room->_party, room->_bank);
+	debugC(2, kDebugScript, "Found room %d: party 0x%X, bank %d, background %d", (int)(room - _gameRooms), room->_party, room->_bank, room->_backgroundBankNum);
 	_globals->_roomImgBank = room->_bank;
 	_globals->_labyrinthRoom = 0;
 	if (_globals->_roomImgBank > 104 && _globals->_roomImgBank <= 112)
@@ -4013,7 +4087,7 @@ void EdenGame::maj2() {
 void EdenGame::updateRoom1(int16 roomNum) {
 	Room *room = getRoom(roomNum & 0xFF);
 	_globals->_roomPtr = room;
-	debug("DrawRoom: room 0x%X, arg = 0x%X", _globals->_roomNum, roomNum);
+	debugC(1, kDebugGraphics, "Updating to room 0x%X, asked for 0x%X", _globals->_roomNum, roomNum);
 	_globals->_curRoomFlags = room->_flags;
 	_globals->_varF1 = room->_flags;
 	animpiece();
@@ -4041,7 +4115,7 @@ void EdenGame::allocateBuffers() {
 	ALLOC(_mainBankBuf, 0x9400, byte);
 	ALLOC(_glowBuffer, 0x2800, byte);
 	ALLOC(_gameFont, 0x900, byte);
-	ALLOC(_gameLipsync, 0x205C, byte);
+	ALLOC(_gameLipsync, LIPSYNC_BUFFER_SIZE, byte);
 	ALLOC(_musicBuf, kMaxMusicSize, byte);
 #undef ALLOC
 }
@@ -4079,6 +4153,31 @@ void EdenGame::stopMusic() {
 	_musicChannel->stop();
 }
 
+void EdenGame::debugPlayVideo(int16 num) {
+	_graphics->playHNM(num);
+}
+
+// DEMO.EXE plays a subset of these and HNM.BAT hands the whole set to an
+// external viewer; together they come to this list. DINOLA1, which DEMO.EXE
+// also names, is not on the disc
+static const char *const kMovieReel[] = {
+	"ANCIBUR2.HNM", "CEMETER2.HNM", "CRYO.HNM",     "CRYO2.HNM",
+	"DINOINT1.HNM", "DINOINT2.HNM", "DINOINT3.HNM", "DINOINT4.HNM",
+	"FORETVOL.HNM", "GEOL2.HNM",    "GRANPRAI.HNM", "MARAIVOL.HNM",
+	"PAYSAGE.HNM",  "PTEROCI2.HNM", "PTEROCIT.HNM", "ROI.HNM",
+	"SOHTIL1.HNM",  "SROI2.HNM",    "TYRACHAS.HNM", "VIL2INT5.HNM",
+	"VILOPTER.HNM", "VIRGIN.HNM"
+};
+
+void EdenGame::playMovieReel() {
+	for (int i = 0; i < ARRAYSIZE(kMovieReel) && !_vm->shouldQuit(); i++) {
+		if (!_graphics->playMovieFile(kMovieReel[i])) {
+			// Many are packed with a scheme the decoder does not cover yet
+			debugC(1, kDebugMovie, "Skipped %s of the reel", kMovieReel[i]);
+		}
+	}
+}
+
 void EdenGame::run() {
 	_invIconsCount = (_vm->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
 	_roomIconsBase = _invIconsBase + _invIconsCount;
@@ -4092,11 +4191,18 @@ void EdenGame::run() {
 	_graphics->setSavedUnderSubtitles(false);
 
 	allocateBuffers();
-	openbigfile();
-	_graphics->openWindow();
-	loadpermfiles();
 
-	if (!_bufferAllocationErrorFl) {
+	// A reel of movies has no resource file to open and no game to set up
+	bool movieReel = _vm->isMovieReel();
+	if (!movieReel)
+		openbigfile();
+	_graphics->openWindow();
+	if (!movieReel)
+		loadpermfiles();
+
+	if (movieReel) {
+		playMovieReel();
+	} else if (!_bufferAllocationErrorFl) {
 		LostEdenMac_InitPrefs();
 		if (_vm->getPlatform() == Common::kPlatformMacintosh)
 			initCubeMac();
@@ -4109,6 +4215,13 @@ void EdenGame::run() {
 			_normalCursor = true;
 			_torchCursor = false;
 			_graphics->setCursKeepPos(-1,-1);
+			// Stands in for the intro, and has to be read after initGlobals()
+			// which wipes what it puts in place. Consumed once, so finishing the
+			// game starts the next one from the beginning
+			if (_startupSaveSlot >= 0) {
+				loadGameFromSlot(_startupSaveSlot);
+				_startupSaveSlot = -1;
+			}
 			if (!_gameLoaded)
 				intro();
 			edmain();
@@ -4166,6 +4279,8 @@ void EdenGame::edmain() {
 			}
 		}
 		_graphics->rundcurs();
+		// A room which keeps its picture in a movie goes on showing it
+		_graphics->stepRoomVideo();
 		musicspy();
 		FRDevents();
 		handleNarrator();
@@ -4297,12 +4412,15 @@ void EdenGame::FRDevents() {
 	if (_globals->_displayFlags & DisplayFlags::dfFrescoes) {
 		if (_frescoTalk)
 			_graphics->restoreUnderSubtitles();
-		if (_currCursor == 9 && !_torchCursor) {
+		// The torch is cursor 9 on the Macintosh but 15 on DOS, where 15 is also
+		// where the flute's icon sits in the main bank
+		const int16 torchCursor = (_vm->getPlatform() == Common::kPlatformMacintosh) ? 9 : 15;
+		if (_currCursor == torchCursor && !_torchCursor) {
 			_graphics->rundcurs();
 			_torchCursor = true;
 			_graphics->setGlowX(-1);
 		}
-		if (_currCursor != 9 && _torchCursor) {
+		if (_currCursor != torchCursor && _torchCursor) {
 			_graphics->unglow();
 			_torchCursor = false;
 			_cursorSaved = false;
@@ -4684,7 +4802,7 @@ void EdenGame::mouse() {
 	                                    _cursorPosY + _cursCenter, _globals->_iconsIndex)))
 		return;
 	_curSpot2 = _currSpot;
-	debug("invoking mouse action %d", _currSpot->_actionId);
+	debugC(1, kDebugScript, "Mouse action %d in room 0x%X", _currSpot->_actionId, _globals->_roomNum);
 	if (mouse_actions[_currSpot->_actionId])
 		(this->*mouse_actions[_currSpot->_actionId])();
 }
@@ -4729,8 +4847,9 @@ void EdenGame::startmusique(byte num) {
 	_musicSamplesPtr = _musicBuf + 32 + 4 + pat_size;
 	int16 freq = READ_LE_UINT16(_musicSamplesPtr - 2);
 
+	// The rate is given as the divisor the DOS driver loaded its timer with
 	delete _musicChannel;
-	_musicChannel = new CSoundChannel(_vm->_mixer, freq == 166 ? 11025 : 22050, false);
+	_musicChannel = new CSoundChannel(_vm->_mixer, 1000000 / (256 - (freq & 0xFF)), false);
 	_musicEnabledFlag = true;
 
 	_musicSequencePos = 0;
@@ -4783,8 +4902,18 @@ void EdenGame::persovox() {
 	} while (_musicChannel->_volumeLeft != volumeLeft || _musicChannel->_volumeRight != volumeRight);
 	volumeLeft = _globals->_prefVoiceVol[0];
 	volumeRight = _globals->_prefVoiceVol[1];
+	debugC(1, kDebugResource, "Voice: phrase %d, %d bytes queued at %d Hz, %d ms",
+	       _globals->_textNum, _voiceSamplesSize, _voiceSampleRate,
+	       _voiceSamplesSize * 1000 / _voiceSampleRate);
 	_voiceChannel->setVolume(volumeLeft, volumeRight);
-	_voiceChannel->queueBuffer(_voiceSamplesBuffer, _voiceSamplesSize, true);
+	// A release which doesn't carry this line leaves nothing to play, but the
+	// line is still on screen to be read and clicked away
+	if (_voiceSamplesSize > 0) {
+		// The voices were not all taken at the one rate: most stand at 11111 Hz
+		// but the dinosaurs speak at 10869
+		_voiceChannel->setSampleRate(_voiceSampleRate);
+		_voiceChannel->queueBuffer(_voiceSamplesBuffer, _voiceSamplesSize, true);
+	}
 	_personTalking = true;
 	_musicFadeFlag = 0;
 	_lastAnimTicks = _vm->_timerTicks;
@@ -4823,6 +4952,7 @@ perso_t *EdenGame::personSubtitles() {
 void EdenGame::endCharacterSpeech() {
 	_graphics->restoreUnderSubtitles();
 	if (_personTalking) {
+		debugC(1, kDebugResource, "Voice stopped with %d buffers still queued", _voiceChannel->numQueued());
 		_voiceChannel->stop();
 		_personTalking = false;
 		_musicFadeFlag = 3;
@@ -4894,7 +5024,6 @@ object_t *EdenGame::getObjectPtr(int16 id) {
 
 void EdenGame::countObjects() {
 	int16 index = 0;
-	byte total = 0;
 	for (int i = 0; i < MAX_OBJECTS; i++) {
 		int16 count = _objects[i]._count;
 		if (count == 0)
@@ -4903,13 +5032,10 @@ void EdenGame::countObjects() {
 		if (_objects[i]._flags & ObjectFlags::ofInHands)
 			count--;
 
-		if (count) {
-			total += count;
-			while (count--)
-				_ownObjects[index++] = _objects[i]._id;
-		}
+		while (count-- > 0 && index < ARRAYSIZE(_ownObjects))
+			_ownObjects[index++] = _objects[i]._id;
 	}
-	_globals->_objCount = total;
+	_globals->_objCount = (byte)index;
 }
 
 void EdenGame::showObjects() {
@@ -5201,14 +5327,22 @@ void EdenGame::noclicpanel() {
 	}
 	byte num;
 	if (_curSpot2 >= &_gameIcons[119]) {
-		debug("noclic: objid = %p, glob3,2 = %2X %2X", (void *)_curSpot2, _globals->_menuItemIdHi, _globals->_menuItemIdLo);
+		debugC(2, kDebugScript, "Panel: spot %p, menu item %02X %02X", (void *)_curSpot2, _globals->_menuItemIdHi, _globals->_menuItemIdLo);
 		if (_curSpot2->_objectId == (uint16)((_globals->_menuItemIdLo + _globals->_menuItemIdHi) << 8)) //TODO: check me
 			return;
 	} else {
-		int idx = _curSpot2 - &_gameIcons[105];
-		if (idx == 0) {
-			_globals->_menuItemIdLo = 1;
-			num = 1;
+		int idx = _curSpot2 - &_gameIcons[kFirstLoadIcon];
+		if (idx >= 0 && idx < kNumSaveSlots) {
+			// The dialog has a line per area and picks between them on the area
+			// number left here, so give it the saved game's, not the running one's
+			byte areaNum = getSaveAreaNum(idx);
+			if (!areaNum)
+				return;
+			num = idx + 1;
+			if (num == _globals->_var43)
+				return;
+			_globals->_var43 = num;
+			_globals->_menuItemIdLo = areaNum;
 			goto skip;
 		}
 		num = (idx & 0x7F) + 1;
@@ -5216,14 +5350,15 @@ void EdenGame::noclicpanel() {
 			num = 1;
 		if (num == _globals->_var43)
 			return;
-		_globals->_var43 = 0;
+		// The panel's save and load lines name their slot by spelling this out
+		_globals->_var43 = num;
 	}
 	num = _globals->_menuItemIdLo;
 	_globals->_menuItemIdLo = _curSpot2->_objectId & 0xFF;
 skip:
 	;
 	_globals->_menuItemIdHi = (_curSpot2->_objectId & 0xFF00) >> 8;
-	debug("noclic: new glob3,2 = %2X %2X", _globals->_menuItemIdHi, _globals->_menuItemIdLo);
+	debugC(2, kDebugScript, "Panel: menu item now %02X %02X", _globals->_menuItemIdHi, _globals->_menuItemIdLo);
 	displayResult();
 	num &= 0xF0;
 	if (num != 0x30)
@@ -5286,17 +5421,17 @@ void EdenGame::testvoice() {
 
 void EdenGame::load() {
 	char name[132];
+	int16 slot = _curSpot2 - &_gameIcons[kFirstLoadIcon];
+	if (slot < 0 || slot >= kNumSaveSlots)
+		return;
+
 	_gameLoaded = false;
 	byte oldMusic = _globals->_currMusicNum;   //TODO: from uint16 to byte?!
 	fademusica0(1);
 	desktopcolors();
 	FlushEvents(-1, 0);
-//	if(OpenDialog(0, 0)) //TODO: write me
-	{
-		// TODO
-		Common::strcpy_s(name, "edsave1.000");
-		loadgame(name);
-	}
+	getSaveStateName(name, sizeof(name), slot);
+	loadgame(name);
 	_vm->hideMouse();
 	CLBlitter_FillScreenView(0xFFFFFFFF);
 	_graphics->fadeToBlack(3);
@@ -5323,6 +5458,10 @@ void EdenGame::load() {
 	drawTopScreen();
 	_globals->_inventoryScrollPos = 0;
 	showObjects();
+	// updateRoom() blacks out the main view and slides the bars back in from
+	// the backup view, so put them there too, as starting a game does
+	saveFriezes();
+	_graphics->setShowBlackBars(true);
 	updateRoom(_globals->_roomNum);
 	if (talk) {
 		_globals->_iconsIndex = 4;
@@ -5358,13 +5497,16 @@ void EdenGame::initafterload() {
 
 void EdenGame::save() {
 	char name[260];
+	int16 slot = _curSpot2 - &_gameIcons[kFirstSaveIcon];
+	if (slot < 0 || slot >= kNumSaveSlots)
+		return;
+
 	fademusica0(1);
 	desktopcolors();
 	FlushEvents(-1, 0);
-	//SaveDialog(byte_37150, byte_37196->ff_A);
-	//TODO
-	Common::strcpy_s(name, "edsave1.000");
+	getSaveStateName(name, sizeof(name), slot);
 	saveGame(name);
+	displaySaveSlots();
 	_vm->hideMouse();
 	CLBlitter_FillScreenView(0xFFFFFFFF);
 	_graphics->fadeToBlack(3);
@@ -5657,6 +5799,7 @@ void EdenGame::clickTapeCursor() {
 void EdenGame::displayPanel() {
 	useBank(65);
 	_graphics->drawSprite(0, 0, 16);
+	displaySaveSlots();
 	_graphics->paneltobuf();
 	displayLanguage();
 	displayCursors();
@@ -5883,7 +6026,7 @@ void EdenGame::perso_ici(int16 action) {
 
 // Original name: setpersohere
 void EdenGame::setCharacterHere() {
-	debug("setCharacterHere, perso is %d", (int)(_globals->_characterPtr - _persons));
+	debugC(2, kDebugScript, "Character %d is now in room 0x%X", _globals->_characterPtr ? (int)(_globals->_characterPtr - _persons) : -1, _globals->_roomNum);
 	_globals->_partyOutside = 0;
 	_globals->_party = 0;
 	_globals->_roomCharacterPtr = nullptr;
@@ -5909,7 +6052,7 @@ void EdenGame::faire_suivre(int16 roomNum) {
 
 // Original name: suis_moi5
 void EdenGame::AddCharacterToParty() {
-	debug("adding person %d to party", (int)(_globals->_characterPtr - _persons));
+	debugC(1, kDebugScript, "Character %d joins the party", (int)(_globals->_characterPtr - _persons));
 	_globals->_characterPtr->_flags |= PersonFlags::pfInParty;
 	_globals->_characterPtr->_roomNum = _globals->_roomNum;
 	_globals->_party |= _globals->_characterPtr->_partyMask;
@@ -5926,7 +6069,7 @@ void EdenGame::addToParty(int16 index) {
 
 // Original name: reste_ici5
 void EdenGame::removeCharacterFromParty() {
-	debug("removing person %d from party", (int)(_globals->_characterPtr - _persons));
+	debugC(1, kDebugScript, "Character %d leaves the party", (int)(_globals->_characterPtr - _persons));
 	_globals->_characterPtr->_flags &= ~PersonFlags::pfInParty;
 	_globals->_partyOutside |= _globals->_characterPtr->_partyMask;
 	_globals->_party &= ~_globals->_characterPtr->_partyMask;
@@ -6007,7 +6150,7 @@ void EdenGame::incPhase() {
 	};
 
 	_globals->_phaseNum++;
-	debug("!!! next phase - %4X , room %4X", _globals->_phaseNum, _globals->_roomNum);
+	debugC(1, kDebugScript, "Phase advances to 0x%X in room 0x%X", _globals->_phaseNum, _globals->_roomNum);
 	_globals->_phaseActionsCount = 0;
 	for (const phase_t *phase = phases; phase->_id != -1; phase++) {
 		if (_globals->_phaseNum == phase->_id) {
@@ -6177,8 +6320,8 @@ void EdenGame::bigphase1() {
 		&EdenGame::phase560
 	};
 
-	int16 phase = (_globals->_phaseNum & ~3) + 0x10;   //TODO: check me
-	debug("!!! big phase - %4X", phase);
+	int16 phase = (_globals->_phaseNum & ~0xF) + 0x10;
+	debugC(1, kDebugScript, "Phase set to 0x%X in room 0x%X", phase, _globals->_roomNum);
 	_globals->_phaseActionsCount = 0;
 	_globals->_phaseNum = phase;
 	if (phase > 560)
@@ -6412,6 +6555,69 @@ void EdenGame::phase560() {
 	_gameRooms[127]._exits[1] = 0;
 }
 
+void EdenGame::getSaveStateName(char *dest, int size, int16 slot) {
+	// Scoped to the target: the releases number their conditions differently,
+	// so a save read by another release picks its dialog lines by the wrong ones
+	Common::sprintf_s(dest, size, "%s.%03d", ConfMan.getActiveDomainName().c_str(), slot);
+}
+
+/**
+ * Read a saved game in by slot, for --save-slot on the command line. The
+ * panel's load line does a good deal more, but only because it has a game
+ * running to fade out of and back into; here there is none yet, and enterGame()
+ * goes on to start the loaded one.
+ */
+bool EdenGame::loadGameFromSlot(int16 slot) {
+	// Bounded by what is on disc, not by the four slots the panel lists
+	if (slot < 0) {
+		warning("There is no saved game %d", slot);
+		return false;
+	}
+
+	char name[132];
+	getSaveStateName(name, sizeof(name), slot);
+	loadgame(name);
+	if (!_gameLoaded)
+		warning("Could not read saved game %s", name);
+
+	return _gameLoaded;
+}
+
+// The area number is the first thing syncGlobalValues() writes, and
+// syncGlobalPointers() puts thirteen indices in front of it.
+static const int32 kSaveAreaNumOffset = 13 * 4;
+
+// Which of the twelve areas a saved game was made in, without loading it
+byte EdenGame::getSaveAreaNum(int16 slot) {
+	char name[32];
+	getSaveStateName(name, sizeof(name), slot);
+
+	Common::InSaveFile *fh = g_system->getSavefileManager()->openForLoading(name);
+	if (!fh)
+		return 0;
+
+	byte areaNum = 0;
+	if (fh->seek(kSaveAreaNumOffset, SEEK_SET))
+		areaNum = fh->readByte();
+	delete fh;
+
+	return areaNum;
+}
+
+// Label the existing saves in the panel's load box, which is empty artwork
+void EdenGame::displaySaveSlots() {
+	char name[32];
+	useBank(65);
+	for (int16 slot = 0; slot < kNumSaveSlots; slot++) {
+		getSaveStateName(name, sizeof(name), slot);
+		if (!g_system->getSavefileManager()->exists(name))
+			continue;
+
+		Icon *icon = &_gameIcons[kFirstLoadIcon + slot];
+		_graphics->drawSprite(kFirstSlotSprite + slot, icon->sx, icon->sy);
+	}
+}
+
 void EdenGame::saveGame(char *name) {
 	Common::OutSaveFile *fh = g_system->getSavefileManager()->openForSaving(name);
 	if (!fh)
@@ -6489,8 +6695,8 @@ void EdenGame::syncGame(Common::Serializer s) {
 	s.syncAsSint16LE(_followerList[13].ex);
 	s.syncAsSint16LE(_followerList[13].ey);
 	s.syncAsSint16LE(_followerList[13]._spriteBank);
-	s.syncAsSint16LE(_followerList[13].ff_C);
-	s.syncAsSint16LE(_followerList[13].ff_E);
+	s.syncAsSint16LE(_followerList[13]._zoomX);
+	s.syncAsSint16LE(_followerList[13]._zoomY);
 
 	// _persons
 	for (int i = 0; i < 58; i++) {
@@ -6877,7 +7083,12 @@ char EdenGame::testCondition(int16 index) {
 				uint16 value2 = fetchValue();
 				value = operation(op, value, value2);
 			} else {
-				assert(sp < stack + 32);
+				// Each pass pushes a value and an operator, and the reduction
+				// below pushes a final value
+				if (sp + 3 > stack + ARRAYSIZE(stack)) {
+					warning("testCondition: condition stack overflow");
+					return false;
+				}
 				*sp++ = value;
 				*sp++ = op;
 				break;
@@ -6896,7 +7107,7 @@ char EdenGame::testCondition(int16 index) {
 		} while (sp2 != sp);
 	}
 //	if (value)
-	debug("cond %d(-1) returns %s", index, value ? "TRUE" : "false");
+	debugC(3, kDebugScript, "Condition %d is %s", index, value ? "TRUE" : "false");
 //	if (index == 402) debug("(glob_61.b == %X) & (glob_12.w == %X) & (glob_4C.b == %X) & (glob_4E.b == %X)", p_global->eventType, p_global->phaseNum, p_global->worldTyrannSighted, p_global->ff_4E);
 	return value != 0;
 }
@@ -7034,14 +7245,16 @@ uint8 EdenGame::getByteVar(uint16 offset) {
 		VAR(0x6E, _labyrinthDirections);
 		VAR(0x6F, _labyrinthRoom);
 	default:
-		error("Undefined byte variable access (0x%X)", offset);
+		warning("Undefined byte variable access (0x%X)", offset);
+		break;
 	}
 	return 0;
 }
 
 uint16 EdenGame::getWordVar(uint16 offset) {
 	switch (offset) {
-		VAR(4, _randomNumber);   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
+	case 4:
+		return _vm->_rnd->getRandomNumber(0xFFFF);
 		VAR(6, _gameTime);
 		VAR(8, _gameDays);
 		VAR(0xA, _chrono);
@@ -7073,7 +7286,8 @@ uint16 EdenGame::getWordVar(uint16 offset) {
 		VAR(0x3E, _morkusSpyVideoNum3); //TODO: pad?
 		VAR(0x40, _morkusSpyVideoNum4); //TODO: pad?
 	default:
-		error("Undefined word variable access (0x%X)", offset);
+		warning("Undefined word variable access (0x%X)", offset);
+		break;
 	}
 	return 0;
 }
@@ -7529,7 +7743,7 @@ void EdenGame::displayMappingLine(int16 r3, int16 r4, byte *target, byte *textur
 }
 
 // PC cursor
-CubeCursor _cursorsPC[9] = {
+CubeCursor _cursorsPC[10] = {
 		{ { 0, 0, 0, 0, 0, 0 }, 3, 2 },
 		{ { 1, 1, 0, 1, 1, 0 }, 2, -2 },
 		{ { 2, 2, 2, 2, 2, 2 }, 1, 2 },
@@ -7539,7 +7753,10 @@ CubeCursor _cursorsPC[9] = {
 		{ { 6, 6, 6, 6, 6, 6 }, 1, 2 },
 		{ { 7, 7, 7, 7, 7, 7 }, 1, -2 },
 //		{ { 0, 8, 0, 0, 8, 8 }, 2, 2 },
-		{ { 0, 8, 0, 0, 8, 8 }, 2, 2 }
+		{ { 0, 8, 0, 0, 8, 8 }, 2, 2 },
+		// The face drDrawFlag20 asks for, which the table stopped short of. Its
+		// texture is pale stone, and it turns at the rate cursor 0 does
+		{ { 9, 9, 9, 9, 9, 9 }, 3, 2 }
 };
 
 XYZ _cubePC[6][3] = {
@@ -7814,6 +8031,7 @@ void EdenGame::initCubePC() {
 }
 
 void EdenGame::selectPCMap(int16 num) {
+	num = CLIP<int16>(num, 0, ARRAYSIZE(_cursorsPC) - 1);
 	if (num != _cursCurPCMap) {
 		_pcCursor = &_cursorsPC[num];
 		unsigned char *bank = _mainBankBuf + READ_LE_UINT16(_mainBankBuf);
@@ -7831,10 +8049,16 @@ void EdenGame::enginePC() {
 	if (_normalCursor && (_globals->_drawFlags & DrawFlags::drDrawFlag20))
 		curs = 9;
 	selectPCMap(curs);
-	_cursorNewTick = g_system->getMillis();
-	if (_cursorNewTick - _cursorOldTick < 1)
+
+	// This cube counts 72 angles to the turn taken two at a time, so a step
+	// covers ten degrees where the Macintosh one covers two. Let three passes
+	// go by between steps, still drawing so it does not blink out
+	if (++_cubeStepDelay < 4) {
+		renderCube();
 		return;
-	_cursorOldTick = _cursorNewTick;
+	}
+	_cubeStepDelay = 0;
+
 	int step = _pcCursor->_speed;
 	switch (_pcCursor->_kind) {
 	case 0:
