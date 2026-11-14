@@ -21,7 +21,8 @@ MODULE_OBJS := \
 
 ifdef USE_BINK
 MODULE_OBJS += \
-	bink_decoder.o
+	bink_decoder.o \
+	bink2_decoder.o
 endif
 
 ifdef USE_COKTEL_DECODER
