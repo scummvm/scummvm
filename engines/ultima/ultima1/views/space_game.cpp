@@ -30,7 +30,7 @@ namespace Views {
 // Colors used
 
 SpaceGame::SpaceGame() : Shared::View("SpaceGame"), _commands(this), _stats(this) {
-	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
+	_bounds = Graphics::Views::TextRect(0, 0, 39, 24);
 	_commands.setBounds(Graphics::Views::TextRect(0, 20, 29, 24));
 	_stats.setBounds(Graphics::Views::TextRect(31, 21, 39, 24));
 }

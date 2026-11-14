@@ -31,7 +31,7 @@ namespace Views {
 constexpr int COLOR_NOTCH = 0;   // black - corner notch pixels
 
 Dialog::Dialog(const Common::String &name) : View(name) {
-	setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
+	_bounds = Graphics::Views::TextRect(0, 0, 39, 19);
 }
 
 void Dialog::draw() {

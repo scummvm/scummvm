@@ -81,7 +81,7 @@ public:
 	virtual void reloadTiles() {}
 
 	Map(const Common::String &name) : View(name) {
-		setBounds(Graphics::Views::TextRect(0, 0, 39, 19));
+		_bounds = Graphics::Views::TextRect(0, 0, 39, 19);
 	}
 	~Map() override {}
 

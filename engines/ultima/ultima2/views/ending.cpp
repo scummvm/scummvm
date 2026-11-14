@@ -46,7 +46,7 @@ constexpr uint32 STEP_DELAY = 90;
 } // namespace
 
 Ending::Ending() : View("Ending") {
-	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
+	_bounds = Graphics::Views::TextRect(0, 0, 39, 24);
 }
 
 Ending::~Ending() {

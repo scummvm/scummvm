@@ -30,7 +30,7 @@ namespace Interactions {
 using namespace Graphics::Views;
 
 Interaction::Interaction(const Common::String &name) : View(name) {
-	setBounds(Common::Rect(0, 0, 0, 0));
+	_bounds = Common::Rect(0, 0, 0, 0);
 }
 
 bool Interaction::tick() {

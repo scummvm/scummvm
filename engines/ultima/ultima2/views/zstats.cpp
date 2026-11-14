@@ -28,7 +28,7 @@ namespace Ultima2 {
 namespace Views {
 
 ZStats::ZStats() : View("ZStats") {
-	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
+	_bounds = Graphics::Views::TextRect(0, 0, 39, 24);
 }
 
 bool ZStats::msgFocus(const FocusMessage &msg) {

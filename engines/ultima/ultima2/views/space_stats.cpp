@@ -29,7 +29,7 @@ namespace Ultima2 {
 namespace Views {
 
 SpaceStats::SpaceStats(UIElement *parent) : Graphics::Views::UIElement("SpaceStats", parent) {
-	setBounds(Graphics::Views::TextRect(30, 20, 39, 23));
+	_bounds = Graphics::Views::TextRect(30, 20, 39, 23);
 }
 
 void SpaceStats::draw() {

@@ -38,7 +38,7 @@ constexpr int COLOR_STAR = 3;
 constexpr int WARP_STEPS_PER_TICK = 2;
 
 SpaceMap::SpaceMap() : View("SpaceMap") {
-	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
+	_bounds = Graphics::Views::TextRect(0, 0, 39, 24);
 	_staging.resize(320 * 200);
 }
 

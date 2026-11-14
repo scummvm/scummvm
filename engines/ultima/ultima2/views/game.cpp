@@ -27,7 +27,7 @@ namespace Ultima2 {
 namespace Views {
 
 Game::Game() : Shared::View("Game"), _commands(this), _stats(this) {
-	setBounds(Graphics::Views::TextRect(0, 0, 39, 24));
+	_bounds = Graphics::Views::TextRect(0, 0, 39, 24);
 }
 
 } // namespace Views
