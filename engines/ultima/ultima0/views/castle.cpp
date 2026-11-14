@@ -68,7 +68,7 @@ void Castle::firstTime() {
 	auto s = getSurface();
 	const auto &player = g_engine->_player;
 
-	if (_mode >= NAMING && _mode <= FIRST_TASK) {
+	if (_mode <= FIRST_TASK) {
 		s.writeString(Common::Point(5, 2), "Welcome Peasant into the halls of\n"
 			"the mighty Lord British.  Herein thou\n"
 			"may choose to dare battle with the\n"

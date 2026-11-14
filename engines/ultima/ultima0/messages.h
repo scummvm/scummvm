@@ -105,7 +105,7 @@ struct GameMessage : public Message {
 		_name(name), _value(value) {
 	}
 	GameMessage(const Common::String &name, const Common::String &value) :
-		Message(), _name(name), _stringValue(value) {
+		Message(), _name(name), _value(-1), _stringValue(value) {
 	}
 };
 

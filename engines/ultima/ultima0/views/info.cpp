@@ -128,7 +128,7 @@ bool Info::msgGame(const GameMessage &msg) {
 Info::InfoObject::InfoObject(Info *parent, const Common::Point &pt, int id,
 		const Common::String &text) :
 		UIElement("InfoObject", parent), _id(id), _text(text) {
-	setBounds(Gfx::TextRect(pt.x, pt.y, pt.x + text.size(), pt.y));
+	_bounds = Gfx::TextRect(pt.x, pt.y, pt.x + text.size(), pt.y);
 }
 
 void Info::InfoObject::draw() {

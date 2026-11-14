@@ -28,7 +28,7 @@ namespace Ultima0 {
 namespace Views {
 
 Attack::Attack() : View("Attack") {
-	setBounds(Gfx::TextRect(1, 22, 26, 24));
+	_bounds = Gfx::TextRect(1, 22, 26, 24);
 }
 
 bool Attack::msgFocus(const FocusMessage &msg) {

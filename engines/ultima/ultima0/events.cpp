@@ -297,7 +297,7 @@ bool UIElement::isFocused() const {
 }
 
 void UIElement::clearSurface() {
-	Graphics::ManagedSurface s = getSurface();
+	auto s = getSurface();
 	s.fillRect(Common::Rect(s.w, s.h), 0);
 }
 

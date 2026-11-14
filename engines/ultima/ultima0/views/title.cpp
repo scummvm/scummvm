@@ -125,7 +125,7 @@ void Title::selectOption() {
 Title::TitleOption::TitleOption(Title *parent, int index, const Common::String &text, int row) :
 		UIElement("TitleOption", parent), _index(index), _text(text) {
 	int xs = 20 - text.size() / 2;
-	setBounds(Gfx::TextRect(xs, row, xs + text.size(), row));
+	_bounds = Gfx::TextRect(xs, row, xs + text.size(), row);
 }
 
 void Title::TitleOption::draw() {
