@@ -180,6 +180,15 @@ protected:
 	int16 sfMovieCall(int16 argc, int16 *argv);
 	int16 sfCursorXY(int16 argc, int16 *argv);
 	int16 sfSoundFile(int16 argc, int16 *argv);
+
+	// Only present in the ReelMagic release of Return to Zork
+	int16 sfPlayMpegMovie(int16 argc, int16 *argv);
+	int16 sfMpegMovieGetState(int16 argc, int16 *argv);
+	int16 sfMpegMovieClose(int16 argc, int16 *argv);
+	int16 sfMpegDriverInit(int16 argc, int16 *argv);
+	int16 sfMpegDriverShutdown(int16 argc, int16 *argv);
+	int16 sfMpegMoviePause(int16 argc, int16 *argv);
+	int16 sfMpegMovieGetUserData(int16 argc, int16 *argv);
 };
 
 } // End of namespace Made

@@ -68,6 +68,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_REELMAGIC_REDUCE,
+		{
+			_s("Reduce ReelMagic video to 200 lines"),
+			_s("If selected, the 240-line MPEG video is reduced to the game's 200-line graphics height. "
+				"Otherwise, the graphics are doubled to preserve the full video frame."),
+			"reelmagic_video_reduce",
+			false,
+			0,
+			0
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
@@ -125,6 +137,11 @@ bool Made::MadeEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const Made::MadeGameDescription *desc) const {
+#if !defined(USE_MPEG2) || !defined(USE_MAD)
+	if (desc->features & Made::GF_REELMAGIC)
+		return Common::Error(Common::kUnsupportedGameidError,
+			_s("The ReelMagic release requires MPEG video and audio support, which is not compiled in"));
+#endif
 	*engine = new Made::MadeEngine(syst,desc);
 	return Common::kNoError;
 }
