@@ -1,0 +1,100 @@
+MODULE := engines/ripper
+
+MODULE_OBJS := \
+	briefing.o \
+	combat/combat.o \
+	console.o \
+	controls.o \
+	cursor.o \
+	cyber.o \
+	diagnostics/milestone_overlay.o \
+	diagnostics/screen_presenter.o \
+	dialogue.o \
+	display.o \
+	ini.o \
+	input.o \
+	inventory.o \
+	media/audio.o \
+	media/display.o \
+	media/iavf.o \
+	media/iavf_parser.o \
+	media/presentation_text.o \
+	media/routes.o \
+	media/scene_audio.o \
+	media/smacker_decoder.o \
+	media/video.o \
+	metaengine.o \
+	milestones.o \
+	modal/modal_dialog.o \
+	modal/presentation.o \
+	puzzles/board_arrangement.o \
+	puzzles/board_game.o \
+	puzzles/board_game_model.o \
+	puzzles/calculator.o \
+	puzzles/cd_in_book.o \
+	puzzles/circuit_chip.o \
+	puzzles/clock.o \
+	puzzles/crystal.o \
+	puzzles/date_selection.o \
+	puzzles/eight_button_sequence.o \
+	puzzles/gc_csh.o \
+	puzzles/horus_word.o \
+	puzzles/ka_book_code.o \
+	puzzles/kd_shooting_gallery.o \
+	puzzles/key_group.o \
+	puzzles/keypad_sequence.o \
+	puzzles/ki_skull_maze.o \
+	puzzles/ki_skull_maze_model.o \
+	puzzles/kj_blob_shooter.o \
+	puzzles/kk_tile_match.o \
+	puzzles/kk_tile_match_model.o \
+	puzzles/puzzle.o \
+	puzzles/rolodex.o \
+	puzzles/shock_lever.o \
+	puzzles/six_digit_code.o \
+	puzzles/stained_glass.o \
+	puzzles/state.o \
+	puzzles/table_gate.o \
+	puzzles/tarot_cards.o \
+	puzzles/tarot_cards_model.o \
+	puzzles/web_grid_shift.o \
+	resources.o \
+	ripper.o \
+	saveload.o \
+	script/compiled_script.o \
+	script/scene_dispatcher.o \
+	script/script.o \
+	scenes/cain_scene.o \
+	scenes/ebz2s_scene.o \
+	scenes/ending_sequence.o \
+	scenes/gym_scene.o \
+	scenes/librarian_scene.o \
+	scenes/scene.o \
+	scenes/tube_scene.o \
+	scenes/wofford_scene.o \
+	settings.o \
+	ui/menu.o \
+	ui/options_panel.o \
+	ui/remote_control.o \
+	ui/toolbar.o \
+	wac/broken_mug.o \
+	wac/database.o \
+	wac/database_catalog.o \
+	wac/journal.o \
+	wac/still_image.o \
+	wac/voice_lock.o \
+	wac/voice_lock_model.o \
+	wac/voice_lock_renderer.o \
+	wac/wac.o \
+	world_map.o
+
+# This module can be built as a plugin
+ifeq ($(ENABLE_RIPPER), DYNAMIC_PLUGIN)
+PLUGIN := 1
+endif
+
+# Include common rules
+include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
