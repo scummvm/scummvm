@@ -1,0 +1,177 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/debug-channels.h"
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+/**
+ * Plays an effect of a room. The Spanish floppy plays its own effect (or none, when spaFloppySound is 0)
+ * where the other versions play "sound".
+ */
+void IgorEngine::playRoomSound(int sound, int spaFloppySound) {
+	if (_game.version == kIdSpaFloppy)
+		sound = spaFloppySound;
+	if (sound > 0)
+		playSound(sound, 1);
+}
+
+void IgorEngine::decodeRoomAreas(const uint8 *p, int count) {
+	for (int i = 0; i < count; ++i) {
+		RoomObjectArea *roa = &_roomObjectAreasTable[i];
+		roa->area = *p++;
+		assert((roa->area & 0x80) == 0);
+		roa->object = *p++;
+		roa->y1Lum = *p++;
+		roa->y2Lum = *p++;
+		roa->deltaLum = *p++;
+	}
+}
+
+void IgorEngine::decodeRoomMask(const uint8 *p) {
+	uint8 *dst = _screenLayer2;
+	int sz = 320 * 144;
+	while (sz != 0) {
+		uint8 b = *p++;
+		int len = READ_LE_UINT16(p);
+		p += 2;
+		if (len > sz) {
+			len = sz;
+		}
+		memset(dst, b, len);
+		dst += len;
+		sz -= len;
+	}
+}
+
+void IgorEngine::handleRoomDialogue() {
+	if (_gameState.dialogueTextRunning) {
+		// Speech completion ends the sentence
+		if (_talkDelay < 0 && !isDialogueSpeechPlaying()) {
+			_talkDelayCounter = _talkDelay;
+		}
+		if (_talkDelayCounter == _talkDelay) {
+			animateIgorTalking(0);
+			memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+			if (_dialogueTextsCount == 0) {
+				// Speech must stop with the last line
+				stopDialogueSpeech();
+				_gameState.dialogueTextRunning = false;
+				showCursor();
+			} else {
+				++_dialogueTextsStart;
+				startIgorDialogue();
+			}
+		} else {
+			animateIgorTalking(getRandomNumber(5));
+			++_talkDelayCounter;
+		}
+	}
+}
+
+void IgorEngine::decodeRoomStrings(const uint8 *p, bool skipObjectNames) {
+	if (!skipObjectNames) {
+		for (int i = 0; i < 20; ++i) {
+			_roomObjectNames[i][0] = '\0';
+		}
+		uint8 code = *p++;
+		int index = -1;
+		while (code != 0xF6) {
+			if (code == 0xF4) {
+				++index;
+			}
+			int len = *p++;
+			// The spanish floppy has two sets of object names, one for each language,
+			// so we only decode the one marked by the current language setting
+			if (len != 0 && code == 0xF4 + _language) {
+				assert(index >= 0);
+				decodeRoomString(p, _roomObjectNames[index], len);
+				_roomObjectNames[index][len] = '\0';
+				debugC(9, kDebugResource, "decodeRoomStrings() _roomObjectNames[%d] '%s'", index, _roomObjectNames[index]);
+			}
+			p += len;
+			code = *p++;
+		}
+	}
+	for (int i = 200; i < 250; ++i) {
+		_globalDialogueTexts[i][0] = '\0';
+	}
+	uint8 code = *p++;
+	int index = 200;
+	while (code != 0xF6) {
+		if (code == 0xF4) {
+			++index;
+		}
+		int len = *p++;
+		if (len != 0 && code == 0xF4 + _language) {
+			decodeRoomString(p, _globalDialogueTexts[index], len);
+			_globalDialogueTexts[index][len] = '\0';
+			debugC(9, kDebugResource, "decodeRoomStrings() _globalDialogueTexts[%d] '%s'", index, _globalDialogueTexts[index]);
+		}
+		p += len;
+		code = *p++;
+	}
+}
+
+void IgorEngine::decodeRoomText(const uint8 *p) {
+	debugC(9, kDebugResource, "decodeRoomText()");
+	memcpy(_walkXScaleRoom, p, 320);
+	p += 320;
+	memcpy(_walkYScaleRoom, p, 432);
+	p += 432;
+	decodeRoomStrings(p);
+}
+
+/**
+ * Loads room palette into _paletteBuffer, pixels into _screenLayer1, boxes into
+ * _roomObjectAreasTable, mask into _screenLayer2, text into (_walkXScaleRoom, _walkYScaleRoom)
+ * _roomObjectNames & _globalDialogueTexts.
+ */
+void IgorEngine::loadRoomData(int pal, int img, int box, int msk, int txt) {
+	if (pal != 0) {
+		loadData(pal, _paletteBuffer);
+	}
+	if (img != 0) {
+		loadData(img, _screenLayer1);
+	}
+	if (box != 0) {
+		int sz;
+		uint8 *p = loadData(box, 0, &sz);
+		memset(_roomObjectAreasTable, 0, sizeof(_roomObjectAreasTable));
+		assert((sz % 5) == 0);
+		decodeRoomAreas(p, sz / 5);
+		free(p);
+	}
+	if (msk != 0) {
+		uint8 *p = loadData(msk);
+		decodeRoomMask(p);
+		free(p);
+	}
+	if (txt != 0) {
+		uint8 *p = loadData(txt);
+		decodeRoomText(p);
+		free(p);
+	}
+}
+
+} // End of namespace Igor

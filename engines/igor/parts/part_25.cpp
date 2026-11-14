@@ -1,0 +1,215 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+
+void IgorEngine::part25ExecuteAction(int action) {
+	switch (action) {
+	case 101: // go to left-side
+		_currentPart = 260;
+		break;
+	case 102: // look at message board
+		switch (getRandomNumber(2) + 1) {
+		case 1:
+			igorSay(204, 2, 1273);
+			break;
+		case 2:
+			igorSay({ { 207, 1, 1274 }, { 208, 1, 1275 }, { 209, 1, 1276 } });
+			break;
+		case 3:
+			igorSay({ { 210, 1, 1277 }, { 211, 1, 1278 } });
+			break;
+		}
+		break;
+	case 103: // use message board
+		igorSay(201, 1, 1271);
+		break;
+	case 104: // walk to board: nothing happens on arrival
+		break;
+	case 105: // enter men's toilet
+		part25EnterMensToilet();
+		break;
+	case 106: // look at door
+		igorSay(203, 1, 1272);
+		break;
+	case 107: // open door
+		part25OpenDoor();
+		break;
+	case 108: // close door
+		part25CloseDoor();
+		break;
+	case 109: // go to corridor
+		_currentPart = 310;
+		break;
+	default:
+		error("part25ExecuteAction unhandled action %d", action);
+		break;
+	}
+}
+
+void IgorEngine::part25EnterMensToilet() {
+	if (_objectsState[kMensRoomDoorStateIndex] != 0) {
+		_roomObjectAreasTable[_screenLayer2[34370]].area = 1;
+		--_walkDataLastIndex;
+		buildWalkPath(133, 123, 130, 107);
+		_walkDataCurrentIndex = 1;
+		_gameState.igorMoving = true;
+		waitForIgorMove();
+		_currentPart = 180;
+	}
+}
+
+void IgorEngine::part25OpenDoor() {
+	if (_objectsState[kMensRoomDoorStateIndex] == 1) {
+		partMainExecuteAction(11);
+		return;
+	}
+	for (int i = 1; i <= 2; ++i) {
+		const int offset = 21881;
+		drawAnimRect(offset, i * 1736 + 0x290, 31, 56);
+		if (i == 2) {
+			playSound(13, 1);
+		}
+		if (i == 1) {
+			waitForTimer(100);
+		}
+	}
+	_objectsState[kMensRoomDoorStateIndex] = 1;
+	part25ApplyObjectState(1);
+}
+
+void IgorEngine::part25CloseDoor() {
+	if (_objectsState[kMensRoomDoorStateIndex] == 0) {
+		partMainExecuteAction(14);
+		return;
+	}
+	for (int i = 3; i <= 4; ++i) {
+		const int offset = 21881;
+		drawAnimRect(offset, i * 1736 + 0x290, 31, 56);
+		if (i == 4) {
+			playSound(14, 1);
+		}
+		if (i == 3) {
+			waitForTimer(100);
+		}
+	}
+	_objectsState[kMensRoomDoorStateIndex] = 0;
+	part25ApplyObjectState(1);
+}
+
+void IgorEngine::part25ApplyObjectState(int num) {
+	if (num == 1 || num == 255) { // door state
+		if (_objectsState[kMensRoomDoorStateIndex] == 0) {
+			part25DrawClosedDoor();
+			_roomActionsTable[31] = 6;
+		} else {
+			part25DrawOpenDoor();
+			_roomActionsTable[31] = 7;
+		}
+	}
+}
+
+void IgorEngine::part25EnterFromLeft() {
+	_walkData[0].setPos(0, 130, 2, 0);
+	_walkData[0].setDefaultScale();
+	_walkData[0].clipSkipX = 15;
+	_walkData[0].clipWidth = 15;
+	_walkDataLastIndex = 0;
+	_walkDataCurrentIndex = 1;
+	buildWalkPath(0, 130, 60, 135);
+	_walkData[_walkDataLastIndex].frameNum = 0;
+	_gameState.igorMoving = true;
+	waitForIgorMove();
+}
+
+void IgorEngine::part25EnterFromRight() {
+	_walkData[0].setPos(319, 138, 4, 0);
+	_walkData[0].setDefaultScale();
+	_walkData[0].clipWidth = 15;
+	_walkDataLastIndex = 0;
+	_walkDataCurrentIndex = 1;
+	buildWalkPath(319, 138, 289, 142);
+	_walkData[_walkDataLastIndex].frameNum = 0;
+	_gameState.igorMoving = true;
+	waitForIgorMove();
+}
+
+void IgorEngine::part25EnterFromMensToilet() {
+	_walkData[0].setPos(130, 107, 3, 0);
+	_walkData[0].setDefaultScale();
+	_walkDataLastIndex = 0;
+	_roomObjectAreasTable[_screenLayer2[34370]].area = 1;
+	buildWalkPath(130, 107, 135, 125);
+	_roomObjectAreasTable[_screenLayer2[34370]].area = 0;
+	_walkData[_walkDataLastIndex].frameNum = 0;
+	_walkDataCurrentIndex = 1;
+	_gameState.igorMoving = true;
+	waitForIgorMove();
+}
+
+void IgorEngine::part25DrawClosedDoor() {
+	const int offset = 22208;
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer, 23, 23, 52);
+}
+
+void IgorEngine::part25DrawOpenDoor() {
+	const int offset = 22208;
+	copyArea(_screenLayer1, offset, 320, _animFramesBuffer + 0x4AC, 23, 23, 52);
+}
+
+void IgorEngine::part25() {
+	if (isCDVersion())
+		playMusic(2);
+	_gameState.enableLight = 2;
+	loadRoomData(PAL_CollegeCorridorAnnouncementBoard, IMG_CollegeCorridorAnnouncementBoard, BOX_CollegeCorridorAnnouncementBoard, MSK_CollegeCorridorAnnouncementBoard, TXT_CollegeCorridorAnnouncementBoard);
+	static const int anm[] = { FRM_CollegeCorridorAnnouncementBoard1, FRM_CollegeCorridorAnnouncementBoard2, 0 };
+	loadAnimData(anm);
+	loadActionData(DAT_CollegeCorridorAnnouncementBoard);
+	_roomDataOffsets = PART_25_ROOM_DATA_OFFSETS;
+	setRoomWalkBounds(0, 0, 319, 143);
+	partMainSetExecuteAction(1, &IgorEngine::part25ExecuteAction);
+	part25ApplyObjectState(255);
+	if (!restoreRoomAfterLoad()) {
+		copyLayerToScreen(_screenLayer1Surface);
+		_currentAction.verb = kVerbWalk;
+		fadeIn(768);
+		if (_currentPart == 250) {
+			part25EnterFromLeft();
+		} else if (_currentPart == 251) {
+			part25EnterFromRight();
+		} else if (_currentPart == 252) {
+			part25EnterFromMensToilet();
+		}
+		enterPartLoop();
+	}
+	while (_currentPart >= 250 && _currentPart <= 252 && !_gameStateLoaded) {
+		runPartLoop();
+	}
+	leavePartLoop();
+	if (!_gameStateLoaded)
+		fadeOut(624);
+}
+
+
+} // End of namespace Igor

@@ -1246,6 +1246,7 @@ const Tool s_tools[] = {
 	{ "create_cryo",         true},
 	{ "create_drascula",     true},
 	{ "create_hugo",         true},
+	{ "create_igor",         true},
 	{ "create_kyradat",      true},
 	{ "create_lure",         true},
 	{ "create_neverhood",    true},
