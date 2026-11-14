@@ -395,7 +395,8 @@ void TextObject::draw() {
 }
 
 void TextObject::update() {
-	if (!_duration || !_created) {
+	if (_duration == 0) {
+		// this object never automatically expires
 		return;
 	}
 
