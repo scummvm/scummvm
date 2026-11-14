@@ -343,13 +343,16 @@ private:
 		void IDCTAdd(DecodeContext &ctx, int32 *block);
 	};
 
+public:
+	/** An audio track, which Bink 2 videos have as well. */
 	class BinkAudioTrack : public AudioTrack {
 	public:
-		BinkAudioTrack(AudioInfo &audio, Audio::Mixer::SoundType soundType);
+		/** The rate and the flags of the track, as the header of the video has them. */
+		BinkAudioTrack(uint16 sampleRate, uint16 flags, Audio::Mixer::SoundType soundType);
 		~BinkAudioTrack();
 
-		/** Decode an audio packet. */
-		void decodePacket();
+		/** Decode the audio packet of size bytes at the position of the stream. */
+		void decodePacket(Common::SeekableReadStream &stream, uint32 size);
 
 		bool seek(const Audio::Timestamp &time) override;
 		bool isSeekable() const override { return true; }
@@ -377,12 +380,13 @@ private:
 		static void floatToInt16Interleave(int16 *dst, const float **src, uint32 length, uint8 channels);
 	};
 
+private:
 	Common::SeekableReadStream *_bink;
 
-	Common::Array<AudioInfo> _audioTracks; ///< All audio tracks.
+	uint32 _audioTrackCount;               ///< The number of audio tracks.
 	Common::Array<VideoFrame> _frames;      ///< All video frames.
 
-	void initAudioTrack(AudioInfo &audio);
+	static void initAudioTrack(AudioInfo &audio);
 };
 
 } // End of namespace Video

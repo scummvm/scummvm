@@ -65,6 +65,7 @@ namespace Video {
 
 BinkDecoder::BinkDecoder() {
 	_bink = 0;
+	_audioTrackCount = 0;
 }
 
 BinkDecoder::~BinkDecoder() {
@@ -111,24 +112,20 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 	addTrack(new BinkVideoTrack(width, height, frameCount,
 			Common::Rational(frameRateNum, frameRateDen), (id == kBIKhID || id == kBIKiID), videoFlags & kVideoFlagAlpha, id));
 
-	uint32 audioTrackCount = _bink->readUint32LE();
+	_audioTrackCount = _bink->readUint32LE();
 
-	if (audioTrackCount > 0) {
-		_audioTracks.resize(audioTrackCount);
-
-		_bink->skip(4 * audioTrackCount);
+	if (_audioTrackCount > 0) {
+		_bink->skip(4 * _audioTrackCount);
 
 		// Reading audio track properties
-		for (uint32 i = 0; i < audioTrackCount; i++) {
-			AudioInfo &track = _audioTracks[i];
+		for (uint32 i = 0; i < _audioTrackCount; i++) {
+			uint16 sampleRate = _bink->readUint16LE();
+			uint16 flags      = _bink->readUint16LE();
 
-			track.sampleRate = _bink->readUint16LE();
-			track.flags      = _bink->readUint16LE();
-
-			initAudioTrack(track);
+			addTrack(new BinkAudioTrack(sampleRate, flags, getSoundType()));
 		}
 
-		_bink->skip(4 * audioTrackCount);
+		_bink->skip(4 * _audioTrackCount);
 	}
 
 	// Reading video frame properties
@@ -156,7 +153,7 @@ void BinkDecoder::close() {
 	delete _bink;
 	_bink = 0;
 
-	_audioTracks.clear();
+	_audioTrackCount = 0;
 	_frames.clear();
 }
 
@@ -173,9 +170,7 @@ void BinkDecoder::readNextPacket() {
 
 	uint32 frameSize = frame.size;
 
-	for (uint32 i = 0; i < _audioTracks.size(); i++) {
-		AudioInfo &audio = _audioTracks[i];
-
+	for (uint32 i = 0; i < _audioTrackCount; i++) {
 		uint32 audioPacketLength = _bink->readUint32LE();
 
 		frameSize -= 4;
@@ -186,19 +181,9 @@ void BinkDecoder::readNextPacket() {
 		if (audioPacketLength >= 4) {
 			// Get our track - audio index plus one as the first track is video
 			BinkAudioTrack *audioTrack = (BinkAudioTrack *)getTrack(i + 1);
-			uint32 audioPacketStart = _bink->pos();
-			uint32 audioPacketEnd   = _bink->pos() + audioPacketLength;
+			uint32 audioPacketEnd = _bink->pos() + audioPacketLength;
 
-			//                  Number of samples in bytes
-			audio.sampleCount = _bink->readUint32LE() / (2 * audio.channels);
-
-			audio.bits = new Common::BitStream32LELSB(new Common::SeekableSubReadStream(_bink,
-					audioPacketStart + 4, audioPacketEnd), DisposeAfterUse::YES);
-
-			audioTrack->decodePacket();
-
-			delete audio.bits;
-			audio.bits = 0;
+			audioTrack->decodePacket(*_bink, audioPacketLength);
 
 			_bink->seek(audioPacketEnd);
 
@@ -350,7 +335,7 @@ bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 	findNextVideoTrack();
 
 	// Seek the audio tracks
-	for (uint32 i = 0; i < _audioTracks.size(); i++) {
+	for (uint32 i = 0; i < _audioTrackCount; i++) {
 		BinkAudioTrack *audioTrack = (BinkAudioTrack *)getTrack(i + 1);
 		audioTrack->seek(videoTrack->getFrameTime(keyFrame));
 	}
@@ -364,7 +349,7 @@ bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 		decodeNextFrame();
 
 	// Skip decoded audio between the keyframe and the target frame
-	for (uint32 i = 0; i < _audioTracks.size(); i++) {
+	for (uint32 i = 0; i < _audioTrackCount; i++) {
 		BinkAudioTrack *audioTrack = (BinkAudioTrack *)getTrack(i + 1);
 		int rate = audioTrack->getRate();
 
@@ -1494,21 +1479,36 @@ void BinkDecoder::BinkVideoTrack::IDCTPut(DecodeContext &ctx, int32 *block) {
 	}
 }
 
-BinkDecoder::BinkAudioTrack::BinkAudioTrack(BinkDecoder::AudioInfo &audio, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType),
-		_audioInfo(&audio) {
+BinkDecoder::BinkAudioTrack::BinkAudioTrack(uint16 sampleRate, uint16 flags, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
+	_audioInfo = new AudioInfo();
+	_audioInfo->sampleRate = sampleRate;
+	_audioInfo->flags      = flags;
+
+	initAudioTrack(*_audioInfo);
+
 	_audioStream = Audio::makeQueuingAudioStream(_audioInfo->outSampleRate, _audioInfo->outChannels == 2);
 }
 
 BinkDecoder::BinkAudioTrack::~BinkAudioTrack() {
 	delete _audioStream;
+	delete _audioInfo;
 }
 
 Audio::AudioStream *BinkDecoder::BinkAudioTrack::getAudioStream() const {
 	return _audioStream;
 }
 
-void BinkDecoder::BinkAudioTrack::decodePacket() {
+void BinkDecoder::BinkAudioTrack::decodePacket(Common::SeekableReadStream &stream, uint32 size) {
+	uint32 audioPacketStart = stream.pos();
+	uint32 audioPacketEnd   = stream.pos() + size;
+
+	//                         Number of samples in bytes
+	_audioInfo->sampleCount = stream.readUint32LE() / (2 * _audioInfo->channels);
+
+	_audioInfo->bits = new Common::BitStream32LELSB(new Common::SeekableSubReadStream(&stream,
+			audioPacketStart + 4, audioPacketEnd), DisposeAfterUse::YES);
+
 	int outSize = _audioInfo->frameLen * _audioInfo->channels;
 
 	while (_audioInfo->bits->pos() < _audioInfo->bits->size()) {
@@ -1530,6 +1530,9 @@ void BinkDecoder::BinkAudioTrack::decodePacket() {
 		if (_audioInfo->bits->pos() & 0x1F) // next data block starts at a 32-byte boundary
 			_audioInfo->bits->skip(32 - (_audioInfo->bits->pos() & 0x1F));
 	}
+
+	delete _audioInfo->bits;
+	_audioInfo->bits = 0;
 }
 
 void BinkDecoder::BinkAudioTrack::audioBlock(int16 *out) {
@@ -1744,8 +1747,6 @@ void BinkDecoder::initAudioTrack(AudioInfo &audio) {
 		audio.rdft = new Math::RDFT(frameLenBits, Math::RDFT::DFT_C2R);
 	else if (audio.codec == kAudioCodecDCT)
 		audio.dct  = new Math::DCT(frameLenBits, Math::DCT::DCT_III);
-
-	addTrack(new BinkAudioTrack(audio, getSoundType()));
 }
 
 } // End of namespace Video
