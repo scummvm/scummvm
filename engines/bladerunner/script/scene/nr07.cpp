@@ -512,6 +512,9 @@ void SceneScriptNR07::talkAboutBlackSedan() {
 	Actor_Says(kActorMcCoy, 3735, 14);
 	Actor_Says(kActorDektora, 830, 31);
 	Actor_Says(kActorMcCoy, 3740, 19);
+	if (_vm->_cutContent) {
+		Actor_Clue_Acquire(kActorMcCoy, kClueDektoraConfession, true, kActorDektora);
+	}
 }
 
 void SceneScriptNR07::talkAboutScorpions() {
