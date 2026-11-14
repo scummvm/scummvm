@@ -31,12 +31,11 @@
 namespace Graphics {
 namespace Views {
 
-#define FRAME_RATE 20
-#define FRAME_DELAY (1000 / FRAME_RATE)
-
 Events *g_events;
 
-Events::Events(const Common::String &engineName) : UIElement("Root", nullptr), _randomSource(engineName) {
+Events::Events(const Common::String &engineName, uint frameRate) : UIElement("Root", nullptr),
+		_randomSource(engineName), _frameRate(frameRate) {
+	assert(frameRate > 0 && frameRate <= 1000);
 	g_events = this;
 }
 
@@ -45,7 +44,8 @@ Events::~Events() {
 }
 
 void Events::runGame() {
-	uint nextFrameTime = 0;
+	const uint frameDelay = 1000 / _frameRate;
+	_nextFrameTime = 0;
 	_screen = new Graphics::Screen();
 
 	// Run the game
@@ -68,7 +68,7 @@ void Events::runGame() {
 			// Any event other than mouse moves is followed by an immediate frame, so a
 			// stream of repeated events can't starve the views of being redrawn
 			if (e.type != Common::EVENT_MOUSEMOVE) {
-				nextFrameTime = 0;
+				_nextFrameTime = 0;
 				break;
 			}
 		}
@@ -79,13 +79,42 @@ void Events::runGame() {
 		g_system->delayMillis(10);
 
 		uint currTime = g_system->getMillis();
-		if (currTime >= nextFrameTime) {
-			nextFrameTime = currTime + FRAME_DELAY;
+		if (currTime >= _nextFrameTime) {
+			_nextFrameTime = currTime + frameDelay;
 			nextFrame();
 		}
 	}
 
 	delete _screen;
+	_screen = nullptr;
+}
+
+bool Events::pumpEvents() {
+	assert(_screen);
+
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e)) {
+		// Leave the views alone, since the caller may be one of them
+		if (e.type == Common::EVENT_QUIT ||
+			e.type == Common::EVENT_RETURN_TO_LAUNCHER)
+			return false;
+
+		processEvent(e);
+
+		// As in runGame, events other than mouse moves force a frame
+		if (e.type != Common::EVENT_MOUSEMOVE) {
+			_nextFrameTime = 0;
+			break;
+		}
+	}
+
+	uint currTime = g_system->getMillis();
+	if (currTime >= _nextFrameTime) {
+		_nextFrameTime = currTime + 1000 / _frameRate;
+		nextFrame();
+	}
+
+	return !shouldQuit();
 }
 
 int Events::getRandomNumber(int minNumber, int maxNumber) {
@@ -361,7 +390,7 @@ int UIElement::getRandomNumber(int maxNumber) {
 }
 
 void UIElement::delaySeconds(uint seconds) {
-	_timeoutCtr = seconds * FRAME_RATE;
+	_timeoutCtr = seconds * g_events->getFrameRate();
 }
 
 void UIElement::delayFrames(uint frames) {

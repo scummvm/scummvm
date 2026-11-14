@@ -326,6 +326,8 @@ private:
 	Graphics::Screen *_screen = nullptr;
 	Common::RandomSource _randomSource;
 	Common::Stack<UIElement *> _views;
+	uint _frameRate;
+	uint _nextFrameTime = 0;
 
 	void nextFrame();
 
@@ -366,13 +368,29 @@ protected:
 	}
 
 public:
-	Events(const Common::String &engineName);
+	/**
+	 * Constructor, with the number of frames per second
+	 */
+	Events(const Common::String &engineName, uint frameRate = 20);
 	virtual ~Events();
+
+	/**
+	 * Returns the frame rate
+	 */
+	uint getFrameRate() const {
+		return _frameRate;
+	}
 
 	/**
 	 * Main game loop
 	 */
 	void runGame();
+
+	/**
+	 * Processes pending events and any due frame, for nested game loops.
+	 * Returns false if the game is quitting
+	 */
+	bool pumpEvents();
 
 	/**
 	 * Returns a random number
