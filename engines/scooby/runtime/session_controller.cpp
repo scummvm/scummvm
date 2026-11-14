@@ -1,0 +1,494 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "session_controller.h"
+
+#include "common/algorithm.h"
+#include "scooby/scooby.h"
+
+namespace Scooby {
+
+SessionController::SessionController(const ScoobyDooRom &rom, TileScene &scene, IndexedFrame &frame,
+									 ControllerInput &input, Graphics::FrameLimiter &limiter, RuntimeState &state,
+									 DeterministicRandom &random)
+	: _rom(rom), _state(state), _input(input), _roomTileStreamer(_rom, scene, _state),
+	  _roomActorInitializer(_rom, _state), _roomObjectTilePatches(_rom, scene, _state),
+	  _roomSprites(_rom, scene, _state),
+	  _roomVBlank(_rom, _input, _roomObjectTilePatches, scene, _roomSprites, _state, _roomTileStreamer,
+				  _actionMenu, _roomActorUpdater),
+	  _presenter(scene, frame, limiter), _restartSequence(_state, _presenter), _graphicsWorkspace(),
+	  _waitForRoomVerticalBlankFunctor(this, &SessionController::waitForRoomVerticalBlank),
+	  _presentRoomFunctor(this, &SessionController::presentRoom),
+	  _resetRoomStateForReloadFunctor(this, &SessionController::resetRoomStateForReload),
+	  _reloadAndPresentRoomFunctor(this, &SessionController::reloadAndPresentRoom),
+	  _restartApplicationFunctor(this, &SessionController::restartApplication),
+	  _actionMenu(_rom, scene, _graphicsWorkspace, _state, _waitForRoomVerticalBlankFunctor),
+	  _roomCollisionProbe(_rom, _state),
+	  _roomActorUpdater(_rom, scene, _state, _roomCollisionProbe, _actionMenu),
+	  _actorAnimations(_rom, _state, _waitForRoomVerticalBlankFunctor),
+	  _scriptedRoomMovement(_rom, _state, _roomCollisionProbe, _actorAnimations, _waitForRoomVerticalBlankFunctor),
+	  _dialogue(_rom, scene, _state, _presenter, _actorAnimations, _roomVBlank, _interactions),
+	  _interactions(_rom, _state, _waitForRoomVerticalBlankFunctor, random, _actionMenu, _dialogue,
+					_interactionActionMenu, _roomScripts),
+	  _roomInterfaceTransitions(_rom, scene, _graphicsWorkspace, _state, _actorAnimations,
+								_waitForRoomVerticalBlankFunctor),
+	  _roomSceneLoader(_rom, scene, _state, _actionMenu, _roomActorInitializer, _roomInterfaceTransitions,
+					   _roomTileStreamer),
+	  _roomScripts(_rom, scene, _state, _roomCollisionProbe, _scriptedRoomMovement, random, _presenter,
+				   _actorAnimations, _roomVBlank, _presentRoomFunctor, _resetRoomStateForReloadFunctor,
+				   _reloadAndPresentRoomFunctor, _interactions, _roomInterfaceTransitions, _dialogue, _actionMenu,
+				   _roomTileStreamer, _restartApplicationFunctor),
+	  _interactionActionMenu(_rom, scene, _graphicsWorkspace, _state, _presenter,
+							 _actorAnimations, _roomVBlank, _interactions, _roomScripts, _dialogue, _actionMenu),
+	  _studioLogos(_rom, scene, _presenter, _input, _roomVBlank),
+	  _mainMenuPresentation(_rom, scene, _presenter), _mainMenuVBlank(_input, _mainMenuPresentation, random, _state),
+	  _episodeOpening(_rom, scene, _presenter, _mainMenuVBlank, _state),
+	  _mainMenu(_rom, _mainMenuPresentation, _mainMenuVBlank, _input, _state, _presenter, _restartSequence),
+	  _scoobyWander(_rom, random, _state, _scriptedRoomMovement) {
+	// Several owners above receive references to members declared after them (for example _roomVBlank
+	// receives _actionMenu and _roomActorUpdater, and _dialogue receives _interactions). This is safe
+	// because constructors only store these references; none is called until construction completes.
+}
+
+Optional<SessionExit> SessionController::runMainMenu() {
+	switch (_mainMenu.runMainMenu(*_roomVBlank.beforeRetraceCallback())) {
+	case MainMenuExit::ContinueToRoom:
+		return Optional<SessionExit>();
+	case MainMenuExit::RestartRequested:
+		return Optional<SessionExit>(SessionExit::RestartRequested);
+	case MainMenuExit::HostClosed:
+		return Optional<SessionExit>(SessionExit::HostClosed);
+	}
+
+	error("Unhandled main-menu exit.");
+	return Optional<SessionExit>(SessionExit::HostClosed); // unreachable, silences -Wreturn-type
+}
+
+bool SessionController::waitForRoomVerticalBlank() {
+	_roomVBlank.handleRoomVBlank();
+	return _presenter.waitForVerticalBlank();
+}
+
+Optional<SessionExit> SessionController::resetRoomStateForReload() {
+	// Ghidra 0x00002138-0x0000213B: preserve all native registers. Managed locals retain the script cursor
+	// and exclusive bound represented by A5/A6; the remaining register preservation is intrinsic to calls.
+	int32 scriptStartOffset = _state.roomScriptCurrentOffset;
+	int32 scriptEndOffset = _state.roomScriptEndOffset;
+
+	// Ghidra 0x0000213C-0x00002167: while native interrupts are masked, reset controller input, clear
+	// display bit three, load the selected room, then set display bits two and six before restoring
+	// service.
+	_state.controllerOneInput = 0xFF;
+	_state.displayFlags &= 0xF7;
+	_roomSceneLoader.loadRoomScene();
+	_state.displayFlags |= 0x04;
+	_state.displayFlags |= 0x40;
+
+	// Ghidra 0x00002164-0x00002167: MOVE #0x2000,SR re-enables interrupts after the masked load. Room
+	// loading spans many frames, so the VDP's latched vertical interrupt is always pending here and the
+	// room VBlank handler runs immediately, with the room-update gate just opened. Among other things it
+	// recomputes the compact actor scales for the new room positions, so the UpdateActorAnimationFrames
+	// call below stages and scales the first frames at the correct size. Service that handler once here
+	// (without presenting a frame); otherwise the actors are first drawn at the previous room's scale.
+	_roomVBlank.handleRoomVBlank();
+
+	// Ghidra 0x00002168-0x00002177: progress byte-zero bit one independently skips prompt refresh.
+	if ((_state.progressStateBytes[0] & 0x02) == 0) {
+		_actionMenu.refreshActionPrompts();
+	}
+
+	// Ghidra 0x00002178-0x0000217D: stage actor animation and tile state exactly once before waiting.
+	_actorAnimations.updateActorAnimationFrames();
+
+	// Ghidra 0x0000217E-0x0000218B: wait at least one retrace, then repeat only while any actor tile
+	// publication remains pending. The installed room callback supplies the original asynchronous work.
+	do {
+		if (!waitForRoomVerticalBlank()) {
+			return Optional<SessionExit>(SessionExit::HostClosed);
+		}
+	} while (_state.actorTileUploadPendingFlags != 0);
+
+	// Ghidra 0x0000218C-0x0000218F: hand the loaded room to its exit-script owner. A managed non-returning
+	// descendant bypasses the native restoration range just as its original target did.
+	Optional<SessionExit> requestedExit = _roomScripts.runRoomExitScript();
+	if (requestedExit.hasValue()) {
+		return requestedExit;
+	}
+
+	// Ghidra 0x00002190-0x00002195: restore every preserved register, including A5/A6, then return.
+	_state.roomScriptCurrentOffset = scriptStartOffset;
+	_state.roomScriptEndOffset = scriptEndOffset;
+	return Optional<SessionExit>();
+}
+
+Optional<SessionExit> SessionController::reloadAndPresentRoom() {
+	// Ghidra 0x00002196-0x00002199: reload through the separate original owner, then reproduce the native
+	// fallthrough into PresentRoom with an explicit managed call. Non-returning handovers bypass
+	// fallthrough.
+	Optional<SessionExit> resetExit = resetRoomStateForReload();
+	if (resetExit.hasValue()) {
+		return resetExit;
+	}
+
+	return presentRoom();
+}
+
+Optional<SessionExit> SessionController::presentRoom() {
+	// Ghidra 0x0000219A-0x0000219D: preserve all native registers. Managed locals retain the script cursor
+	// and exclusive bound represented by A5/A6; the remaining register preservation is intrinsic to calls.
+	int32 scriptStartOffset = _state.roomScriptCurrentOffset;
+	int32 scriptEndOffset = _state.roomScriptEndOffset;
+
+	// Ghidra 0x0000219E-0x000021AB: request the complete interaction refresh, then invoke its distinct
+	// owner.
+	_state.interactionFlags |= kInteractionRefreshPendingMask;
+	_interactions.refreshInteractionDisplay();
+
+	// Ghidra 0x000021AC-0x000021AF: preserve one room VBlank before the palette transition. Host closure
+	// is a managed non-returning handover from the native wait boundary.
+	if (!waitForRoomVerticalBlank()) {
+		return Optional<SessionExit>(SessionExit::HostClosed);
+	}
+
+	// Ghidra 0x000021B0-0x000021C9: g_awSharedPalette and its contiguous room half form the complete
+	// 64-color target. Gate normal room updates while FadePaletteIn services each native retrace.
+	_state.displayFlags &= static_cast<uint8>(~kRoomUpdateEnabledMask);
+	if (!_presenter.fadePaletteIn(makeSpan(_state.targetPalette), _roomVBlank.beforeRetraceCallback())) {
+		return Optional<SessionExit>(SessionExit::HostClosed);
+	}
+
+	_state.displayFlags |= kRoomUpdateEnabledMask;
+
+	// Ghidra 0x000021CA-0x0000220F: copy every current interaction/display field to its previous slot in
+	// exact order, including the second current-interaction write before the final icon and secondary
+	// words.
+	_state.previousInteraction = _state.currentInteraction;
+	_state.previousDisplayFlags = _state.displayFlags;
+	_state.previousInteractionFlags = _state.interactionFlags;
+	_state.previousRoomNameTextOffset = _state.roomNameTextOffset;
+	_state.previousInteraction = _state.currentInteraction;
+	_state.previousActionIcon = _state.activeVerbIcon;
+	_state.previousSecondaryInteraction = _state.secondaryInteraction;
+
+	// Ghidra 0x00002210-0x00002213: preserve the separate room-entry-script call. A managed non-returning
+	// descendant bypasses the native restoration range just as its original target did.
+	Optional<SessionExit> requestedExit = _roomScripts.runRoomEntryScript();
+	if (requestedExit.hasValue()) {
+		return requestedExit;
+	}
+
+	// Ghidra 0x00002214-0x00002219: restore every preserved register, including A5/A6, then return.
+	_state.roomScriptCurrentOffset = scriptStartOffset;
+	_state.roomScriptEndOffset = scriptEndOffset;
+	return Optional<SessionExit>();
+}
+
+bool SessionController::loadRoomObjectTable() {
+	// Ghidra 0x00007F66-0x00007F91: select and publish the immutable descriptor, then reset typed tables.
+	_state.activeEpisodeDescriptorOffset = static_cast<int32>(
+		_rom.readUInt32(
+			kEpisodeDescriptorTableOffset + _state.episodeIndex * static_cast<int>(sizeof(uint32))));
+	int descriptorOffset = _state.activeEpisodeDescriptorOffset;
+	int sourceOffset = static_cast<int>(_rom.readUInt32(descriptorOffset + kDescriptorObjectStartField));
+	int sourceEndOffset = static_cast<int>(_rom.readUInt32(descriptorOffset + kDescriptorObjectEndField));
+	Common::Array<RoomObject> roomObjects;
+	_state.inventoryObjectIndices.clear();
+
+	// Ghidra 0x00007F92-0x00007FEF: decode every variable-size source record and inventory index.
+	while (sourceOffset != sourceEndOffset) {
+		uint16 actionWord = _rom.readUInt16(sourceOffset + 10);
+		uint16 flagsWord = _rom.readUInt16(sourceOffset + 12);
+		bool hasFixedPosition = (flagsWord & kHasFixedPositionMask) != 0;
+
+		RoomObject roomObject;
+		roomObject.tilePatchIndex = _rom.readInt16(sourceOffset);
+		roomObject.shapeIndex = _rom.readInt16(sourceOffset + 2);
+		roomObject.inventoryGraphicIndex = _rom.readInt16(sourceOffset + 4);
+		roomObject.roomId = _rom.readInt16(sourceOffset + 6);
+		roomObject.positionIndex = _rom.readInt16(sourceOffset + 8);
+		roomObject.fixedX = hasFixedPosition
+								? _rom.readInt16(sourceOffset + kSourceRecordSize)
+								: static_cast<int16>(0);
+		roomObject.fixedY = hasFixedPosition
+								? _rom.readInt16(
+									  sourceOffset + kSourceRecordSize + static_cast<int>(sizeof(int16)))
+								: static_cast<int16>(0);
+		roomObject.suggestedVerb = static_cast<int8>(actionWord >> 8);
+		roomObject.actionArgument = static_cast<uint8>(actionWord);
+		roomObject.flags = static_cast<uint8>(flagsWord >> 8);
+		roomObject.fixedPositionIndex = -1;
+
+		roomObjects.push_back(roomObject);
+		if (roomObject.roomId == kInventoryRoomId) {
+			_state.inventoryObjectIndices.push_back(static_cast<int32>(roomObjects.size()) - 1);
+		}
+
+		sourceOffset += hasFixedPosition ? kExtendedSourceRecordSize : kSourceRecordSize;
+	}
+
+	_state.roomObjects = roomObjects;
+
+	// Ghidra 0x00007FF0-0x00008009: publish the initial room, resume-audio command, and A5/A6 script
+	// window.
+	int scriptHeaderOffset = static_cast<int>(_rom.readUInt32(
+		descriptorOffset + kDescriptorInitialRoomScriptField));
+	_state.roomId = _rom.readInt16(scriptHeaderOffset);
+	_state.resumeAudioCommand = _rom.readInt16(scriptHeaderOffset + static_cast<int>(sizeof(int16)));
+	_state.roomScriptCurrentOffset = scriptHeaderOffset + kRoomScriptHeaderSize;
+	_state.roomScriptEndOffset = _state.roomScriptCurrentOffset + _rom.readInt16(scriptHeaderOffset + 4);
+
+	// Ghidra 0x0000800A-0x00008019: run the episode opening, then preserve its explicit audio-stop
+	// boundary.
+	if (!_episodeOpening.runEpisodeOpeningSequence()) {
+		return false;
+	}
+
+	stopAudioPlayback(0x1E);
+	return true;
+}
+
+void SessionController::initializeRoomRuntimeState() {
+	// Ghidra 0x0000801A-0x00008039: bind the first two actor slots to the shape-one and shape-two
+	// animation descriptors, then reset their selected descriptor-relative frame offsets.
+	_state.actorAnimationDescriptorOffsets[kShaggyActorSlot] = 0x32700;
+	_state.actorAnimationDescriptorOffsets[kScoobyActorSlot] = 0x642D0;
+	_state.actorSelectedFrameOffsets[kShaggyActorSlot] = 0;
+	_state.actorSelectedFrameOffsets[kScoobyActorSlot] = 0;
+
+	// Ghidra 0x0000803A-0x0000807B: enable and restart the first two compact-frame actors, clear all
+	// pending frame, movement, priority, and visibility state, and omit write-only byte 0xFF0AC8.
+	_state.activeActorFlags = kShaggyAndScoobyActorMask;
+	_state.actorAnimationRestartFlags = kShaggyAndScoobyActorMask;
+	_state.actorCompactFrameFlags = kShaggyAndScoobyActorMask;
+	_state.actorTileUploadPendingFlags = 0;
+	_state.actorMovementFlags = 0;
+	_state.actorCompactConversionPendingFlags = 0;
+	_state.actorHighPriorityFlags = 0;
+	_state.actorVisibilityBlockFlags = 0;
+	_state.actorPriorityUpdateBlockFlags = 0;
+
+	// Ghidra 0x0000807C-0x000080C7: select animation offset four for slots zero and one, zero the other
+	// four animation offsets, and clear every actor's authored room-position index.
+	Common::fill(_state.actorAnimationOffsets.begin(), _state.actorAnimationOffsets.end(), 0);
+	_state.actorAnimationOffsets[kShaggyActorSlot] = 4;
+	_state.actorAnimationOffsets[kScoobyActorSlot] = 4;
+	Common::fill(_state.actorPositionIndices.begin(), _state.actorPositionIndices.end(), 0);
+
+	// Ghidra 0x000080C8-0x00008157: make every animation delay immediately ready and replace both
+	// six-pointer frame histories' raw 0xFF000000 invalid markers with managed null entries.
+	Common::fill(_state.actorAnimationDelays.begin(), _state.actorAnimationDelays.end(), static_cast<int16>(-1));
+	Common::fill(_state.actorCurrentFrameDataOffsets.begin(), _state.actorCurrentFrameDataOffsets.end(), Optional<int32>());
+	Common::fill(_state.actorPendingFrameDataOffsets.begin(), _state.actorPendingFrameDataOffsets.end(), Optional<int32>());
+
+	// Ghidra 0x00008158-0x0000816F: clear the first two actors' cached horizontal and vertical
+	// interpolation values; later actor slots still carry the process-zeroed values consumed at creation.
+	_state.actorPreviousHorizontalScales[kShaggyActorSlot] = 0;
+	_state.actorPreviousHorizontalScales[kScoobyActorSlot] = 0;
+	_state.actorPreviousVerticalScales[kShaggyActorSlot] = 0;
+	_state.actorPreviousVerticalScales[kScoobyActorSlot] = 0;
+
+	// Ghidra 0x00008170-0x0000818F: visit every decoded object. The fixed-position-bit branch either
+	// executes a literal NOP or converges immediately, so the complete loop has no managed state effect.
+
+	// Ghidra 0x00008190-0x00008194: advance the initialized slots to their first authored frames.
+	_actorAnimations.updateActorAnimationFrames();
+}
+
+SessionExit SessionController::runGame() {
+	bool loadingSavedGame = _state._saveGameData.shouldLoadGameData;
+	if (loadingSavedGame) {
+		// Managed-only save games: resume through the original password path with the password-equivalent
+		// progress bytes; the rest of the saved world is applied before the saved room loads (below).
+		_state.episodeIndex = _state._saveGameData.episodeIdx;
+		Common::copy(_state._saveGameData.progressBytes.begin(),
+					 _state._saveGameData.progressBytes.begin() + SaveGameData::kPasswordProgressByteCount,
+					 _state.progressStateBytes.begin());
+		_state.initialRoomId = _state._saveGameData.roomId;
+		_state.initializationFlags |= 0x01;
+		_state.initializationFlags |= 4; // resume game
+		_state.initialRoomPositionCoordinateOffset = 0;
+
+		_state.videoFlags &= 0xFD;
+		_state._saveGameData.shouldLoadGameData = false;
+	} else {
+		if (!_studioLogos.run()) {
+			return SessionExit::HostClosed;
+		}
+
+		Optional<SessionExit> initialMenuExit = runMainMenu();
+		if (initialMenuExit.hasValue()) {
+			return initialMenuExit.value();
+		}
+	}
+
+	initializeAudioDriver();
+	_state.resetRuntimeState(_rom);
+	if (!loadRoomObjectTable()) {
+		return SessionExit::HostClosed;
+	}
+
+	// Managed-only: after the episode opening, a loaded save runs the password-resume scripts that rebuild the
+	// world from the progress bytes behind a black screen. Skip presenting those retraces so the saved room
+	// appears without the blank pause; presentation resumes before the room fades in. An early exit below
+	// discards this session and its presenter, so no other path needs to restore it.
+	if (loadingSavedGame) {
+		_presenter.setPresentationSuspended(true);
+	}
+
+	initializeRoomRuntimeState();
+	_state.displayFlags |= kInteractionPendingMask;
+	_state.roomScriptFlags &= 0xFC;
+	Optional<SessionExit> initialScriptExit = _roomScripts.runRoomScriptCommands();
+	if (initialScriptExit.hasValue()) {
+		return initialScriptExit.value();
+	}
+
+	_state.roomScriptFlags &= 0xFC;
+	_state.advanceRoomScriptBlock(_rom);
+	Optional<SessionExit> entryScriptExit = _roomScripts.runRoomScriptCommands();
+	if (entryScriptExit.hasValue()) {
+		return entryScriptExit.value();
+	}
+
+	_state.displayFlags &= static_cast<uint8>(~kInteractionPendingMask);
+	if ((_state.initializationFlags & 0x04) != 0) {
+		_state.initialRoomPositionCoordinateOffset = 0;
+		_state.roomId = _state.initialRoomId;
+		// Managed-only save games: replace the world the password resume scripts rebuilt with the saved one
+		// (all progress bytes, room objects, inventory and entry position), so the room loads from it.
+		if (loadingSavedGame) {
+			_state._saveGameData.applyWorldState(_state);
+		}
+
+		Optional<SessionExit> resetExit = resetRoomStateForReload();
+		if (resetExit.hasValue()) {
+			return resetExit.value();
+		}
+	}
+
+	_presenter.setPresentationSuspended(false);
+	Optional<SessionExit> presentationExit = presentRoom();
+	if (presentationExit.hasValue()) {
+		return presentationExit.value();
+	}
+
+	_roomInterfaceTransitions.finishRoomStartup();
+
+	while (!g_engine->shouldQuit()) {
+		if (_state._saveGameData.shouldLoadGameData) {
+			return SessionExit::RestartRequested;
+		}
+
+		// Native VBLANK can preempt every pass through Ghidra 0x00000D38-0x000013B9. The managed loop
+		// services that installed callback and presents one clocked frame before consuming its state.
+		// Managed-only: this is the one point where no script or interaction is mid-flight, so allow ScummVM
+		// saves during this wait unless an interaction is already queued to run.
+		_state.saveAllowed = (_state.displayFlags & kInteractionPendingMask) == 0;
+		bool frameCompleted;
+		{
+			// Managed-only mouse support: this retrace is the idle room loop (input/mouse_input.h).
+			MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::RoomIdle);
+			frameCompleted = waitForRoomVerticalBlank();
+		}
+		_state.saveAllowed = false;
+		if (!frameCompleted) {
+			return SessionExit::HostClosed;
+		}
+
+		Optional<SessionExit> automaticInteractionExit = _interactions.processAutomaticInteractions();
+		if (automaticInteractionExit.hasValue()) {
+			return automaticInteractionExit.value();
+		}
+
+		if ((_state.displayFlags & kInteractionPendingMask) != 0) {
+			Optional<SessionExit> selectedInteractionExit = _interactions.runSelectedInteraction();
+			if (selectedInteractionExit.hasValue()) {
+				return selectedInteractionExit.value();
+			}
+
+			_state.secondaryInteraction = 0;
+			if (!waitForRoomVerticalBlank()) {
+				return SessionExit::HostClosed;
+			}
+
+			_state.displayFlags &= static_cast<uint8>(~kInteractionPendingMask);
+			if (!waitForRoomVerticalBlank()) {
+				return SessionExit::HostClosed;
+			}
+
+			continue;
+		}
+
+		if (_state.isButtonDown(ControllerButtons::Start) && (_state.transitionFlags & 0x10) == 0) {
+			_state.displayFlags &= 0xBF;
+			if (!_presenter.fadePaletteOut(_roomVBlank.beforeRetraceCallback())) {
+				return SessionExit::HostClosed;
+			}
+
+			Optional<SessionExit> menuExit = runMainMenu();
+			if (menuExit.hasValue()) {
+				return menuExit.value();
+			}
+
+			Optional<SessionExit> reloadExit = reloadAndPresentRoom();
+			if (reloadExit.hasValue()) {
+				return reloadExit.value();
+			}
+
+			_state.displayFlags &= static_cast<uint8>(~kInteractionPendingMask);
+			if (!waitForRoomVerticalBlank()) {
+				return SessionExit::HostClosed;
+			}
+
+			continue;
+		}
+
+		_interactions.refreshInteractionDisplay();
+		_interactions.snapshotInteractionState();
+		if (!_scoobyWander.tryStartRandomMove()) {
+			return SessionExit::HostClosed;
+		}
+
+		if ((_state.displayFlags & kInteractionDisplayMask) != 0) {
+			// Managed-only mouse support: the action-bar retrace inside is also the idle room loop.
+			MouseModeScope mouseMode(_input.mouse(), MouseInput::Mode::RoomIdle);
+			if (!_interactions.updateCursorInteraction()) {
+				return SessionExit::HostClosed;
+			}
+		} else {
+			bool restartRoomLoop = false;
+			Optional<SessionExit> automaticUpdateExit = _interactions.updateAutomaticInteraction(
+				restartRoomLoop);
+			if (automaticUpdateExit.hasValue()) {
+				return automaticUpdateExit.value();
+			}
+
+			if (restartRoomLoop) {
+				continue;
+			}
+		}
+
+		_actorAnimations.updateActorAnimationFrames();
+	}
+
+	return SessionExit::HostClosed;
+}
+} // namespace Scooby

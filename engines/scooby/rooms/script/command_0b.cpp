@@ -1,0 +1,90 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "scooby/rooms/script/command_executor.h"
+
+#include "common/scummsys.h"
+
+// Owns command 0x0B's room-object shape and tile-patch publication lifecycle.
+
+namespace Scooby {
+void RoomScriptCommandExecutor::scriptCommand0BSetBackgroundGfx(int mode) {
+	int32 commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002DF2-0x00002DF5: dispatcher mode zero skips every object-state branch.
+	if (mode != 0) {
+		// Ghidra 0x00002DF6-0x00002E13: mask encoded identity bit 15, retain the low-word table calculation,
+		// and preserve both outcomes of fixed-position flag bit one.
+		uint16 encodedObjectId = _rom.readUInt16(commandOffset + 2);
+		uint16 objectId = static_cast<uint16>(encodedObjectId & 0x7FFF);
+		RoomObject &roomObject = _state.roomObjects[objectId - 3];
+		int16 tilePatchIndex = _rom.readInt16(commandOffset + 4);
+		if ((roomObject.flags & kFixedPositionMask) != 0) {
+			// Ghidra 0x00002E14-0x00002E1D: a fixed-position object replaces only its tile-patch word.
+			roomObject.tilePatchIndex = tilePatchIndex;
+		} else {
+			// Ghidra 0x00002E1E-0x00002E2F: snapshot the prior room ID and retain both command-value outcomes;
+			// only a nonzero value replaces the shape word.
+			int16 previousRoomId = roomObject.roomId;
+			if (tilePatchIndex != 0) {
+				roomObject.shapeIndex = tilePatchIndex;
+			}
+
+			// Ghidra 0x00002E30-0x00002E43: a non-active-room object replaces tile-patch and skips every
+			// pending-publication and encoded-identity branch.
+			if (previousRoomId != _state.roomId) {
+				roomObject.tilePatchIndex = tilePatchIndex;
+			} else {
+				bool publishTilePatch = false;
+				if (tilePatchIndex == 0) {
+					// Ghidra 0x00002E44-0x00002E5B: zero preserves an already-zero tile and skips publication;
+					// otherwise set both retirement bits before joining the common path.
+					if (roomObject.tilePatchIndex != 0) {
+						roomObject.tilePatchIndex = static_cast<int16>(
+							static_cast<uint16>(roomObject.tilePatchIndex) | kTilePatchRetirementMask);
+						publishTilePatch = true;
+					}
+				} else {
+					// Ghidra 0x00002E5C-0x00002E61: nonzero replaces the complete tile-patch word.
+					roomObject.tilePatchIndex = tilePatchIndex;
+					publishTilePatch = true;
+				}
+
+				if (publishTilePatch) {
+					// Ghidra 0x00002E62-0x00002E77: queue flag bit zero, preserve both encoded-sign outcomes,
+					// and retain both busy-loop outcomes until asynchronous publication clears it.
+					roomObject.flags |= kTilePatchPendingMask;
+					if (static_cast<int16>(encodedObjectId) < 0) {
+						while ((roomObject.flags & kTilePatchPendingMask) != 0) {
+							if (!waitForRoomVerticalBlank()) {
+								return;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Ghidra 0x00002E78-0x00002E7D: every native branch consumes the six-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 6;
+}
+} // namespace Scooby

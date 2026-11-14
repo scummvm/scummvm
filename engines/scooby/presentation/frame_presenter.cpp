@@ -1,0 +1,93 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "frame_presenter.h"
+
+#include "scooby/scooby.h"
+
+namespace Scooby {
+
+FramePresenter::FramePresenter(TileScene &scene, IndexedFrame &frame,
+							   Graphics::FrameLimiter &limiter)
+	: _limiter(limiter), _frame(frame), _scene(scene) {
+}
+
+bool FramePresenter::fadePaletteOut(const Common::Functor0<void> *beforeRetrace) {
+	if (beforeRetrace) {
+		(*beforeRetrace)();
+	}
+	if (!waitForVerticalBlank()) {
+		return false;
+	}
+
+	for (int step = 0; step < 8; ++step) {
+		_scene.advancePaletteTowardBlack();
+		if (beforeRetrace) {
+			(*beforeRetrace)();
+		}
+		if (!waitForFrames(0)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool FramePresenter::waitForFrames(int frameCounter, const Common::Functor0<void> *beforeRetrace) {
+	for (int frame = 0; frame <= frameCounter; ++frame) {
+		if (beforeRetrace) {
+			(*beforeRetrace)();
+		}
+		if (!waitForVerticalBlank()) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool FramePresenter::waitForVerticalBlank() {
+	if (_presentationSuspended) {
+		return !g_engine->shouldQuit();
+	}
+
+	_limiter.delayBeforeSwap();
+	_scene.render(_frame);
+	_frame.present();
+	_limiter.startFrame();
+	return !g_engine->shouldQuit();
+}
+
+bool FramePresenter::fadePaletteIn(Span<const PaletteColor> targetPalette,
+								   const Common::Functor0<void> *beforeRetrace) {
+	for (int step = 0; step < 8; ++step) {
+		_scene.advancePaletteToward(targetPalette);
+		if (beforeRetrace) {
+			(*beforeRetrace)();
+		}
+		if (!waitForFrames(0)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+} // namespace Scooby

@@ -1,0 +1,63 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "scooby/rooms/script/command_executor.h"
+
+#include "common/scummsys.h"
+
+// Owns command 0x1D's actor-animation hold projection into episode progress state.
+
+namespace Scooby {
+
+void RoomScriptCommandExecutor::executeRoomScriptCommand1D(int mode) {
+	int32 commandOffset = _state.roomScriptCurrentOffset;
+
+	// Ghidra 0x00002510-0x00002513: scan mode skips all progress, identity, and hold-state effects.
+	if (mode != 0) {
+		// Ghidra 0x00002514-0x0000251B: execution clears the projected progress bit before selection.
+		_state.progressStateBytes[0] &= 0xF7;
+
+		// Ghidra 0x0000251C-0x00002545: identities one and two select actor bits zero and one; every other
+		// word retains the wrapped signed object-record offset, zero-extends byte +0x19, adds two, and uses
+		// the low three bits as the actor bit number.
+		uint16 objectId = _rom.readUInt16(commandOffset + 2);
+		int actorSlot;
+		if (objectId == 1) {
+			actorSlot = 0;
+		} else if (objectId == 2) {
+			actorSlot = 1;
+		} else {
+			const RoomObject &roomObject = _state.roomObjects[objectId - 3];
+			actorSlot = (static_cast<uint8>(roomObject.fixedPositionIndex) + 2) & 0x07;
+		}
+
+		// Ghidra 0x00002546-0x00002557: both hold-bit outcomes remain explicit; only an active selected actor
+		// restores progress byte-zero bit three.
+		uint8 actorMask = static_cast<uint8>(1 << actorSlot);
+		if ((_state.actorAnimationHoldFlags & actorMask) != 0) {
+			_state.progressStateBytes[0] |= 0x08;
+		}
+	}
+
+	// Ghidra 0x00002558-0x0000255D: every mode and identity branch consumes the four-byte command.
+	_state.roomScriptCurrentOffset = commandOffset + 4;
+}
+} // namespace Scooby

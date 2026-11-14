@@ -1,0 +1,132 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#include "rom.h"
+
+#include "common/file.h"
+#include "common/util.h"
+
+#include "scooby/common/make_unique.h"
+
+namespace Scooby {
+
+namespace {
+const long kExpectedLength = 0x200000;
+} // namespace
+
+uint16 readUInt16BigEndian(Span<const uint8> bytes, int offset) {
+	size_t o = static_cast<size_t>(offset);
+	return static_cast<uint16>((uint16(bytes[o]) << 8) | uint16(bytes[o + 1]));
+}
+
+uint16 readUInt16BigEndian(const Common::Array<uint8> &bytes, int offset) {
+	return readUInt16BigEndian(makeSpan(bytes), offset);
+}
+
+void writeUInt16BigEndian(Span<uint8> bytes, int offset, uint16 value) {
+	size_t o = static_cast<size_t>(offset);
+	bytes[o] = static_cast<uint8>(value >> 8);
+	bytes[o + 1] = static_cast<uint8>(value);
+}
+
+void writeUInt16BigEndian(Common::Array<uint8> &bytes, int offset, uint16 value) {
+	writeUInt16BigEndian(makeSpan(bytes), offset, value);
+}
+
+void writeUInt32BigEndian(Span<uint8> bytes, int offset, uint32 value) {
+	size_t o = static_cast<size_t>(offset);
+	bytes[o] = static_cast<uint8>(value >> 24);
+	bytes[o + 1] = static_cast<uint8>(value >> 16);
+	bytes[o + 2] = static_cast<uint8>(value >> 8);
+	bytes[o + 3] = static_cast<uint8>(value);
+}
+
+void writeUInt32BigEndian(Common::Array<uint8> &bytes, int offset, uint32 value) {
+	writeUInt32BigEndian(makeSpan(bytes), offset, value);
+}
+
+ScoobyDooRom::ScoobyDooRom(Common::Array<uint8> bytes)
+	: _bytes(Common::move(bytes)) {
+}
+
+Common::ScopedPtr<ScoobyDooRom> ScoobyDooRom::load(const Common::Path &path, Common::String &outError) {
+	Common::File fd;
+	if (!fd.open(path)) {
+		outError = "Could not open the original ROM";
+		return nullptr;
+	}
+	long fileLength = fd.size();
+
+	Common::Array<uint8> bytes;
+	if (fileLength > 0) {
+		bytes.resize(static_cast<size_t>(fileLength));
+		size_t readCount = fd.read(bytes.data(), fileLength);
+		if (readCount != bytes.size()) {
+			fd.close();
+			outError = "Could not open the original ROM: short read";
+			return nullptr;
+		}
+	}
+	fd.close();
+
+	if (static_cast<long>(bytes.size()) != kExpectedLength) {
+		outError = Common::String::format("Unsupported ROM length %u; the analyzed US image is %ld bytes.",
+										  bytes.size(), kExpectedLength);
+		return nullptr;
+	}
+
+	// ScoobyDooRom's constructor is private (this is its only caller), so it
+	// is constructed directly here rather than through MakeUnique,
+	// which as a free function has no access to a private constructor.
+	return Common::ScopedPtr<ScoobyDooRom>(new ScoobyDooRom(Common::move(bytes)));
+}
+
+// Only the header's low word determines output length. A control byte with
+// bit 7 clear copies (control + 1) literals; one with bit 7 set repeats the
+// next byte (257 - control) times.
+Common::Array<uint8> ScoobyDooRom::decompressByteRle(int sourceOffset) const {
+	Common::Array<uint8> output(readUInt16(sourceOffset + static_cast<int>(sizeof(uint16))));
+	sourceOffset += static_cast<int>(sizeof(uint32));
+	size_t outputOffset = 0;
+	while (outputOffset < output.size()) {
+		uint8 control = readByte(sourceOffset++);
+		if (static_cast<int8>(control) >= 0) {
+			int literalCount = static_cast<int>(control) + 1;
+			Span<const uint8> literals = readBytes(sourceOffset, literalCount);
+			for (int i = 0; i < literalCount; ++i) {
+				output[outputOffset + static_cast<size_t>(i)] = literals[static_cast<size_t>(i)];
+			}
+			sourceOffset += literalCount;
+			outputOffset += static_cast<size_t>(literalCount);
+			continue;
+		}
+
+		int repeatCount = 0x101 - static_cast<int>(control);
+		uint8 repeatedByte = readByte(sourceOffset++);
+		for (int i = 0; i < repeatCount; ++i) {
+			output[outputOffset + static_cast<size_t>(i)] = repeatedByte;
+		}
+		outputOffset += static_cast<size_t>(repeatCount);
+	}
+
+	return output;
+}
+
+} // namespace Scooby
