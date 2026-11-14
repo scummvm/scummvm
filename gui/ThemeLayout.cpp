@@ -180,6 +180,10 @@ Graphics::TextAlign ThemeLayoutWidget::getWidgetTextHAlign(const Common::String 
 }
 
 void ThemeLayoutWidget::reflowLayout(Widget *widgetChain) {
+	if (_preserveWidth && _preserveHeight) {
+		return;
+	}
+
 	Widget *guiWidget = getWidget(widgetChain);
 	if (!guiWidget) {
 		return;
@@ -189,11 +193,11 @@ void ThemeLayoutWidget::reflowLayout(Widget *widgetChain) {
 	int minHeight = -1;
 	guiWidget->getMinSize(minWidth, minHeight);
 
-	if (_w != -1 && minWidth != -1 && minWidth > _w) {
+	if (!_preserveWidth && _w != -1 && minWidth != -1 && minWidth > _w) {
 		_w = minWidth;
 	}
 
-	if (_h != -1 && minHeight != -1 && minHeight > _h) {
+	if (!_preserveHeight && _h != -1 && minHeight != -1 && minHeight > _h) {
 		_h = minHeight;
 	}
 }

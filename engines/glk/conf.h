@@ -24,6 +24,7 @@
 
 #include "glk/glk_types.h"
 #include "glk/fonts.h"
+#include "glk/preferences.h"
 #include "glk/windows.h"
 #include "graphics/pixelformat.h"
 #include "common/config-manager.h"
@@ -37,11 +38,13 @@ class Conf {
 	typedef uint Color;
 private:
 	InterpreterType _interpType;
-	bool _isLoading;
+	bool _installedGlobal;
+	bool _zcodeVersion6;
+	const GlkPreferences *_preferences;
 
-	bool exists(const Common::String &key) const {
-		return ConfMan.hasKey(key);
-	}
+	bool exists(const Common::String &key) const;
+	Common::String getString(const Common::String &key) const;
+	int getInt(const Common::String &key) const;
 
 	void syncAsString(const Common::String &name, Common::String &val);
 	void syncAsInt(const Common::String &name, int &val);
@@ -52,7 +55,7 @@ private:
 	void syncAsFont(const Common::String &name, FACES &val);
 
 	/**
-	 * Loads or saves the settings
+	 * Loads the settings
 	 */
 	void synchronize();
 public:
@@ -74,7 +77,10 @@ public:
 	/**
 	 * Encode a color to an 6-character RGB hex string
 	 */
-	Common::String encodeColor(uint color);
+	Common::String encodeColor(uint color) const;
+
+	uint getStyleColorDefault(const GlkPreferences &preferences, bool grid, int style, bool foreground) const;
+
 public:
 	uint _width, _height;
 	Graphics::PixelFormat _screenFormat;
@@ -90,8 +96,6 @@ public:
 	double _gamma;
 	uint _borderColor, _borderSave;
 	uint _windowColor, _windowSave;
-	bool _windowColorOverride;
-	bool _borderColorOverride;
 	int _scrollWidth;
 	uint _scrollBg, _scrollFg;
 	bool _graphics;
@@ -111,19 +115,20 @@ public:
 	/**
 	 * Constructor
 	 */
-	Conf(InterpreterType interpType);
+	Conf(InterpreterType interpType, bool installGlobal = true,
+		const Graphics::PixelFormat &format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+		bool zcodeVersion6 = false);
+
+	// Fresh preferences must retain interpreter defaults, not active game styles.
+	Conf defaults() const;
 
 	/**
 	 * Loads the configuration from the ScummVM configuration
 	 */
-	void load();
+	void load(const Common::String &domain = Common::String());
 
-	/**
-	 * The first time a game is played, flushes all the settings to game's
-	 * entry in scummvm.ini. This will make it easier for users to manually
-	 * modify scummvm.ini later on to see what options are available
-	 */
-	void flush();
+	void load(const GlkPreferences &preferences);
+	void reload();
 
 	/**
 	 * Destructor

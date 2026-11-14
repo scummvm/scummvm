@@ -23,6 +23,7 @@
 #include "glk/zcode/frotz_types.h"
 #include "glk/zcode/screen.h"
 #include "glk/zcode/quetzal.h"
+#include "glk/conf.h"
 #include "engines/util.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -39,6 +40,14 @@ ZCode::ZCode(OSystem *syst, const GlkGameDescription &gameDesc) :
 
 ZCode::~ZCode() {
 	reset_memory();
+}
+
+void ZCode::createConfiguration() {
+	const int64 position = _gameFile.pos();
+	_gameFile.seek(0);
+	const bool version6 = _gameFile.readByte() == V6;
+	_gameFile.seek(position);
+	_conf = new Conf(INTERPRETER_ZCODE, true, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), version6);
 }
 
 void ZCode::initGraphicsMode() {

@@ -447,6 +447,9 @@ uint GlkAPI::glk_get_buffer_stream(strid_t str, char *buf, uint len) {
 }
 
 void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
+	if (style >= style_NUMSTYLES)
+		return;
+
 	WindowStyle *styles;
 	bool p, b, i;
 
@@ -480,7 +483,7 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 		break;
 
 	case stylehint_Proportional:
-		if (wintype == wintype_TextBuffer && !ConfMan.hasKey(Common::String::format("tfont_%u", style))) {
+		if (wintype == wintype_TextBuffer) {
 			p = val > 0;
 			b = styles[style].isBold();
 			i = styles[style].isItalic();
@@ -507,8 +510,7 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 	}
 
 	if (wintype == wintype_TextBuffer && style == style_Normal && hint == stylehint_BackColor) {
-        if (!g_conf->_windowColorOverride)
-            g_conf->_windowColor = styles[style].bg;
+		g_conf->_windowColor = styles[style].bg;
 	}
 
 	if (wintype == wintype_TextBuffer && style == style_Normal && hint == stylehint_TextColor) {
@@ -518,6 +520,9 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 }
 
 void GlkAPI::glk_stylehint_clear(uint wintype, uint style, uint hint) {
+	if (style >= style_NUMSTYLES)
+		return;
+
 	WindowStyle *styles;
 	const WindowStyle *defaults;
 

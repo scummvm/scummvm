@@ -33,6 +33,8 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, bool
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
+	_finishOnFocusLoss = false;
+	_minContentWidth = -1;
 
 	_leftPadding = _rightPadding = 0;
 
@@ -49,6 +51,8 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const Common::String &name, cons
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
+	_finishOnFocusLoss = false;
+	_minContentWidth = -1;
 
 	_leftPadding = _rightPadding = 0;
 	_shiftPressed = _isDragging = false;
@@ -57,14 +61,26 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const Common::String &name, cons
 	setFontStyle(font);
 }
 
+void EditTextWidget::getMinSize(int &minWidth, int &minHeight) {
+	minWidth = minHeight = -1;
+	if (_minContentWidth < 0)
+		return;
+	const ThemeEval::WidgetMetrics &metrics = g_gui.xmlEval()->getWidgetMetrics();
+	_leftPadding = metrics.editTextPaddingLeft;
+	_rightPadding = metrics.editTextPaddingRight;
+	minWidth = _minContentWidth + _leftPadding + _rightPadding + 3;
+	minHeight = g_gui.getFontHeight(_font) + 3;
+}
+
 void EditTextWidget::setEditString(const Common::U32String &str) {
 	EditableWidget::setEditString(str);
 	_backupString = str;
 }
 
 void EditTextWidget::reflowLayout() {
-	_leftPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Left", 0);
-	_rightPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Right", 0);
+	const ThemeEval::WidgetMetrics &metrics = g_gui.xmlEval()->getWidgetMetrics();
+	_leftPadding = metrics.editTextPaddingLeft;
+	_rightPadding = metrics.editTextPaddingRight;
 
 	EditableWidget::reflowLayout();
 }
@@ -154,15 +170,19 @@ void EditTextWidget::lostFocusWidget() {
 	clearSelection();
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	if (_finishOnFocusLoss)
+		sendCommand(_finishCmd, 0);
 }
 
 void EditTextWidget::startEditMode() {
 }
 
 void EditTextWidget::endEditMode() {
+	const bool finishesOnFocusLoss = _finishOnFocusLoss && _hasFocus;
 	releaseFocus();
 
-	sendCommand(_finishCmd, 0);
+	if (!finishesOnFocusLoss)
+		sendCommand(_finishCmd, 0);
 }
 
 void EditTextWidget::abortEditMode() {
