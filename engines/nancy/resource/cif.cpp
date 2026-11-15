@@ -145,6 +145,12 @@ static bool syncCifFileNancy18(Common::Serializer &ser, CifInfo &info) {
 	ser.syncAsUint32LE(hasAlpha);
 	ser.syncAsUint32LE(info.size);
 
+	// Nancy30 marks a part of its images with type 4, and they are images
+	// like any other
+	if (ser.isLoading() && info.type == CifInfo::kResTypeEmpty && info.size && g_nancy->getGameType() >= kGameTypeNancy30) {
+		info.type = CifInfo::kResTypeImage;
+	}
+
 	if (info.type == CifInfo::kResTypeImage) {
 		info.depth = hasAlpha ? 32 : 24;
 	} else {
