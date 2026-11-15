@@ -291,7 +291,7 @@ Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::Gfx
 
 	_sr->setResolution(_screenWidth, _screenHeight);
 	if (enableAspectRatioCorrection)
-		_sr->setAspectRatioCorrection(4.0 / 3.0, 2.0);
+		_sr->setAspectRatioCorrection(4.0 / 3.0, 2.145);
 	_sr->getRealResolution(_realScreenWidth, _realScreenHeight);
 	_sr->setupWindowPlane(0, 0, Graphics::SegaRenderer::kWinToLeft, Graphics::SegaRenderer::kWinToTop);
 	_sr->hINT_setHandler(&_hINTClientProc);

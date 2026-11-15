@@ -129,15 +129,15 @@ void SegaRenderer::setAspectRatioCorrection(double xyAspectRatio, double scaleFa
 
 	_xyAspectRatio = xyAspectRatio;
 	_scaleFactor = scaleFactor;
-	_arcCntX = _arcIncY = 0;
+	_arcCntX = _arcCntY = 0;
 	_arcIncX = _arcIncY = trunc(scaleFactor * 0x10000);
 
 	double screenRatio = (double)_screenW / _screenH;
 
 	if (screenRatio > xyAspectRatio)
-		_arcIncY = trunc((scaleFactor * 0x10000) / xyAspectRatio);
+		_arcIncY = trunc((scaleFactor * screenRatio * 0x10000) / xyAspectRatio);
 	else if (screenRatio < xyAspectRatio)
-		_arcIncX = trunc(xyAspectRatio * scaleFactor * 0x10000);
+		_arcIncX = trunc(xyAspectRatio * scaleFactor * 0x10000 / screenRatio);
 
 	_realW = (_screenW * _arcIncX) >> 16;
 	_realH = (_screenH * _arcIncY) >> 16;
