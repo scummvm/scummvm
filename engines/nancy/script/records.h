@@ -398,12 +398,14 @@ public:
 
 	// Nancy29: plays one of the sounds once, without a channel, so that it can
 	// overlap other sounds. The group of the record selects its volume setting.
+	// Nancy30 calls OnInstanceDone when one of them has ended.
 	void playInstance();
 
 protected:
 	void readTable(int tableIndex) override;
 	void runOnce() override;
 	void run(double sceneTime, double elapsedTime) override;
+	void onFrame() override;
 	bool prepareReset() override;
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
@@ -438,6 +440,7 @@ private:
 	double _playVolume = 1.0;
 	double _playPitch = 1.0;
 	bool _isLooping = false;
+	Common::Array<Audio::SoundHandle> _instances;	// the ones playInstance() started
 	bool _usesCaption = true;
 
 	SoundDescription _sound;

@@ -2064,7 +2064,26 @@ void SoundRecord::playInstance() {
 
 	const Common::String &name = _names[g_nancy->_randomSource->getRandomNumber(_names.size() - 1)];
 	const double volume = CLIP(vary(_volume, _volumeVariance), 0.0, 1.0);
-	g_nancy->_sound->playInstance(name, type, (uint16)(volume * 100.0), MAX(vary(_pitch, _pitchVariance), 0.01));
+	Audio::SoundHandle handle;
+	if (g_nancy->_sound->playInstance(name, type, (uint16)(volume * 100.0), MAX(vary(_pitch, _pitchVariance), 0.01), handle)) {
+		_instances.push_back(handle);
+	}
+}
+
+void SoundRecord::onFrame() {
+	uint numDone = 0;
+	for (uint i = 0; i < _instances.size(); ) {
+		if (g_nancy->_sound->isInstancePlaying(_instances[i])) {
+			++i;
+		} else {
+			_instances.remove_at(i);
+			++numDone;
+		}
+	}
+
+	for (uint i = 0; i < numDone; ++i) {
+		callFunction("OnInstanceDone");
+	}
 }
 
 void SoundRecord::readChannelType(int index) {

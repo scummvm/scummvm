@@ -765,7 +765,7 @@ Audio::Timestamp SoundManager::getLength(const Common::String &chunkName) {
 	return getLength(_commonSounds[chunkName]);
 }
 
-void SoundManager::playInstance(const Common::String &soundName, Audio::Mixer::SoundType type, uint16 volume, double pitch) {
+bool SoundManager::playInstance(const Common::String &soundName, Audio::Mixer::SoundType type, uint16 volume, double pitch, Audio::SoundHandle &handle) {
 	for (uint i = 0; i < _instances.size(); ) {
 		if (_mixer->isSoundHandleActive(_instances[i])) {
 			++i;
@@ -774,22 +774,32 @@ void SoundManager::playInstance(const Common::String &soundName, Audio::Mixer::S
 		}
 	}
 
+	// Silence is played, and over at once
+	if (soundName == "silence") {
+		handle = Audio::SoundHandle();
+		return true;
+	}
+
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(Common::Path(soundName + ".his"));
 	if (!file) {
 		warning("Sound %s file failed to open", soundName.c_str());
-		return;
+		return false;
 	}
 
 	Audio::SeekableAudioStream *stream = makeHISStream(file, DisposeAfterUse::YES);
 	if (!stream) {
-		return;
+		return false;
 	}
 
 	const uint32 rate = stream->getRate();
-	Audio::SoundHandle handle;
 	_mixer->playStream(type, &handle, stream, -1, (int)getAdjustedVolume(volume) * 255 / 100, 0, DisposeAfterUse::YES);
 	_mixer->setChannelRate(handle, (uint32)(rate * pitch));
 	_instances.push_back(handle);
+	return true;
+}
+
+bool SoundManager::isInstancePlaying(const Audio::SoundHandle &handle) const {
+	return _mixer->isSoundHandleActive(handle);
 }
 
 Audio::Timestamp SoundManager::getFileLength(const Common::String &soundName) {

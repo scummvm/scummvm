@@ -235,6 +235,8 @@ void Record::onObjectCollected() {
 }
 
 void Record::update(double sceneTime, double elapsedTime) {
+	onFrame();
+
 #ifdef ENABLE_NANCY_V5
 	if (_nodeState) {
 		updateNode(sceneTime, elapsedTime);

@@ -337,6 +337,9 @@ protected:
 	// What the record does when no script took its place
 	virtual void runOnce() {}
 	virtual void run(double sceneTime, double elapsedTime) {}
+
+	// Called every frame, whether the record is active or not
+	virtual void onFrame() {}
 	virtual void onActivation() {}
 	virtual void onDeactivation() {}
 	virtual void onZChanged() {}

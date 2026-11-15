@@ -131,8 +131,9 @@ public:
 
 	// Nancy29: plays a sound once, without a channel, so that several copies of
 	// it can overlap. The volume goes from 0 to 100, and a pitch of 2 plays the
-	// sound twice as fast.
-	void playInstance(const Common::String &soundName, Audio::Mixer::SoundType type, uint16 volume, double pitch);
+	// sound twice as fast. Returns false when the sound couldn't be played.
+	bool playInstance(const Common::String &soundName, Audio::Mixer::SoundType type, uint16 volume, double pitch, Audio::SoundHandle &handle);
+	bool isInstancePlaying(const Audio::SoundHandle &handle) const;
 
 	Audio::Timestamp getLength(uint16 channelID);
 	Audio::Timestamp getLength(const SoundDescription &description);
