@@ -678,7 +678,7 @@ void VideoPlayer::updateVideos(bool force, int exceptSlot) {
 
 			Video *video = getVideoBySlot(i);
 			if (video) {
-				WRITE_VAR(53 + i, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd());
+				WRITE_VAR(53 + i, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd() + 1);
 			}
 		}
 
@@ -750,7 +750,7 @@ void VideoPlayer::updateVideo(int slot, bool force) {
 
 	if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
 			&& slot < kVideoSlotWithCurFrameVarCount)
-		WRITE_VAR(53 + slot, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd());
+		WRITE_VAR(53 + slot, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd() + 1);
 
 	if (video->properties.fade) {
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
