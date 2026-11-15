@@ -23,6 +23,7 @@
 #include "common/system.h"
 
 #include "video/bink_decoder.h"
+#include "video/bink2_decoder.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource/video.h"
@@ -104,7 +105,12 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 	}
 
 	if (_videoType == kVideoPlaytypeBink) {
-		_decoder.reset(new Video::BinkDecoder());
+		// Nancy29 has movies in both versions of Bink
+		Common::File file;
+		if (file.open(bikPath) && Video::Bink2Decoder::isBink2(file))
+			_decoder.reset(new Video::Bink2Decoder());
+		else
+			_decoder.reset(new Video::BinkDecoder());
 	} else {
 		_decoder.reset(new AVFDecoder(bidirectionalCache ? AVFDecoder::kLoadBidirectional : AVFDecoder::kLoadForward));
 	}
