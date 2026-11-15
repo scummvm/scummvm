@@ -41,6 +41,8 @@ static const char *const kLevelNames[World::kLevelCount] = {
 	"14.LVL", "15.LVL", "16.LVL", "17.LVL", "18.LVL", "19.LVL", "20.LVL", "RISCOFINAL.LVL", "FINAL.LVL", "CREDITOS.LVL"
 };
 
+static const char *const kSpeechFiles[SpeechTables::kCount] = { "OBJETOS.TXT", "ANIMS.TXT", "CONVERS.TXT", "ICONS.TXT" };
+
 // Jim's animations in the order of Jim::Bank.
 static const char *const kJimFiles[Jim::kBanks] = {
 	"JIMHABIZ.ANM", "JIMHABDER.ANM", "JIMQUIETO.ANM", "JIMARRIBA.ANM", "JIMABAJO.ANM",
@@ -76,6 +78,25 @@ World::~World() {
 	delete _jim;
 	for (int i = 0; i < kLevelCount; ++i)
 		delete _levels[i];
+}
+
+bool World::loadSpeech() {
+	for (uint i = 0; i < SpeechTables::kCount; ++i) {
+		const uint32 offset = _engine._archive.findEntry(kSpeechFiles[i]);
+		if (!offset) {
+			warning("Tesoro: %s is not in the archive", kSpeechFiles[i]);
+			return false;
+		}
+
+		Common::SeekableReadStream &dat = *_engine._archive.seekEntry(offset - 4);
+		const uint32 size = dat.readUint32LE();
+		_speechText[i].resize(size);
+		if (dat.read(_speechText[i].data(), size) != size)
+			return false;
+		_speech.table(i).load(_speechText[i].data(), size, _engine._archive);
+	}
+
+	return true;
 }
 
 Level *World::loadLevelFile(const char *name, int mode, int index) {
@@ -158,7 +179,7 @@ Jim *World::jim() {
 		}
 	}
 	_jim = new Jim(*this);
-	_jim->init(levelPlayers);
+	_jim->init(levelPlayers, phrase("JIM"));
 	return _jim;
 }
 
@@ -198,6 +219,15 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 
 int32 World::now() {
 	return _engine.gameTime();
+}
+
+const SpeechTable::Line *World::phrase(const char *name) {
+	const uint32 ref = _speech.find(name);
+	if (!ref) {
+		warning("Tesoro: the line '%s' is not in the text files", name);
+		return nullptr;
+	}
+	return &_speech.lineOf(ref);
 }
 
 void World::setPointerActive(bool active) {

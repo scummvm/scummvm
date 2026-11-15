@@ -40,6 +40,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("scale", WRAP_METHOD(Console, scale));
 	registerCmd("route", WRAP_METHOD(Console, route));
 	registerCmd("start", WRAP_METHOD(Console, start));
+	registerCmd("say", WRAP_METHOD(Console, say));
 
 }
 
@@ -81,6 +82,31 @@ bool Console::hover(int argc, const char **argv) {
 	}
 	g_engine->setHoverText(argv[1]);
 	return false;
+}
+
+bool Console::say(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s ID\n", argv[0]);
+		return true;
+	}
+
+	uint32 ref = g_engine->world().speech().find(argv[1]);
+	if (!ref) {
+		debugPrintf("No line named %s\n", argv[1]);
+		return true;
+	}
+	const SpeechTable::Line line = g_engine->world().speech().lineOf(ref);
+	debugPrintf("Table: %d\n", (ref - 1) >> 24);
+	debugPrintf("Text: %s\n", line.str());
+	if (line.wavOffset)
+		debugPrintf("Voice offset: %d\n", line.wavOffset);
+	else
+		debugPrintf("No voice\n");
+
+	// The text is in an old DOS code page, so accented letters may look odd in the console. That is expected.
+	// Here you would implement the logic to make Jim say something.
+	debugPrintf("Jim says: %s\n", argv[1]);
+	return true;
 }
 
 bool Console::hitter(int argc, const char **argv) {

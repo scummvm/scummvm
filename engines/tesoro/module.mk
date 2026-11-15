@@ -26,7 +26,9 @@ MODULE_OBJS = \
 	core/pathobject.o \
 	core/renderqueue.o \
 	core/room.o \
+	core/speechtable.o \
 	core/spriteobject.o \
+	core/stdiotext.o \
 	core/textqueue.o \
 	core/walkarea.o \
 	core/walkfloor.o

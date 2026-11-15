@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "tesoro/core/object.h"
+#include "tesoro/core/speechtable.h"
 #include "tesoro/core/walkarea.h"
 
 namespace Tesoro {
@@ -39,8 +40,7 @@ public:
 
 	explicit Jim(World &world) : _world(world) {}
 
-	/** Sets Jim up from his nine banks. Stands facing left. */
-	void init(const Common::Array<AnimPlayer> &levelPlayers);
+	void init(const Common::Array<AnimPlayer> &levelPlayers, const SpeechTable::Line *name);
 
 	/** Walks to (x, y). direct: straight there, not round the waypoints. target is told on arrival. */
 	int walkTo(int32 x, int32 y, WalkTarget *target, bool direct);
@@ -62,6 +62,7 @@ public:
 	void leaveLevel();
 
 	int32 scale() const { return _scale; }
+	const SpeechTable::Line *name() const { return _name; }
 
 	int update() override;
 
@@ -96,6 +97,8 @@ private:
 	int32 _destX = 0, _destY = 0;
 	int32 _scale = 0x100;	// 0x100 is unscaled
 	int _facing = 3;
+
+	const SpeechTable::Line *_name = nullptr;
 };
 
 } // End of namespace Tesoro

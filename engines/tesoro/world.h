@@ -23,7 +23,9 @@
 #define TESORO_WORLD_H
 
 #include "common/scummsys.h"
+
 #include "tesoro/core/objectlist.h"
+#include "tesoro/core/speechtable.h"
 #include "tesoro/core/walkarea.h"
 
 namespace Tesoro {
@@ -44,6 +46,8 @@ public:
 	explicit World(TesoroEngine &engine) : _engine(engine) {}
 	~World();
 
+	bool loadSpeech();
+
 	/** Reads a level file and builds its objects, hosted by this world. */
 	Level *loadLevelFile(const char *name, int mode, int index = -1);
 	/** The level at a place of the game's list, loaded on first use (null when it cannot be read). */
@@ -54,6 +58,8 @@ public:
 	MainList &mainList() { return _main; }
 	/** The second step of a level in the frame (its cameras, and for the player's level the picture shown). */
 	int levelSecondStep(Level &level);
+	SpeechTables &speech() { return _speech; }
+
 	/** The protagonist */
 	Jim *jim();
 
@@ -65,6 +71,7 @@ public:
 	Level *startGame();
 
 	int32 now();
+	const SpeechTable::Line *phrase(const char *name);
 	bool isJim(const Object *object);
 	int jimFacing();
 	void jimFace(int facing);
@@ -106,6 +113,8 @@ private:
 	Object *createObject(Level &level, const ObjectRecord &record, Room &room, int32 loadTime);
 
 	TesoroEngine &_engine;
+	SpeechTables _speech;
+	Common::Array<byte> _speechText[SpeechTables::kCount];
 	Level *_levels[kLevelCount] = {};
 	Jim *_jim = nullptr;
 	MainList _main;

@@ -75,6 +75,9 @@ Common::Error TesoroEngine::run() {
 		return Common::kReadingFailed;
 	}
 
+	if (!_world.loadSpeech())
+		return Common::kReadingFailed;
+
 	// Set the engine's debugger console
 	setDebugger(new Console());
 

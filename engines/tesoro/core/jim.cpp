@@ -147,7 +147,7 @@ int Jim::update() {
 	return 1;
 }
 
-void Jim::init(const Common::Array<AnimPlayer> &levelPlayers) {
+void Jim::init(const Common::Array<AnimPlayer> &levelPlayers, const SpeechTable::Line *name) {
 	_flags = kActive | kVisible | kCollidable | kHasAnimation | kHitter;
 	_sortValue = 0x23;
 	_nameKey = nameKey64("JIM");
@@ -155,6 +155,7 @@ void Jim::init(const Common::Array<AnimPlayer> &levelPlayers) {
 	_y = 0x14;
 	_level = nullptr;
 	_room = nullptr;
+	_name = name;
 
 	byte indices[kBanks];
 	for (uint i = 0; i < kBanks; ++i)
@@ -251,9 +252,13 @@ void Jim::updateBounds(int32 now) {
 }
 
 int Jim::showHoverText() {
-	char name[13];
-	nameFromKey(_nameKey, name);
-	_world.setHoverText(name);
+	if (_name) {
+		_world.setHoverText(_name->str());
+	} else {
+		char name[13];
+		nameFromKey(_nameKey, name);
+		_world.setHoverText(name);
+	}
 	return 1;
 }
 
