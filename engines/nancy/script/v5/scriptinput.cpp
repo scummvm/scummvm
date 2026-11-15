@@ -424,6 +424,8 @@ void handleNancy26Input(NancyInput &input) {
 			record->callFunction("OnNewFrame");
 		} else if (hasMoved && record->getType() == kRecordSummary) {
 			record->sendMouseMove(state.mouse, true);
+		} else if (hasMoved && record->getType() == kRecordHotspot) {
+			static_cast<HotspotRecord *>(record)->onMouseMoved(state.mouse);
 		}
 	}
 

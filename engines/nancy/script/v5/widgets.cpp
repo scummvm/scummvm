@@ -133,6 +133,39 @@ void HotspotRecord::readTable(int tableIndex) {
 		_source = checkRect(L, -1);
 		lua_pop(L, 1);
 	}
+
+	if (pushField(L, tableIndex, "tileSize")) {
+		readPointCoordinates(L, -1, _tileSize[0], _tileSize[1]);
+		lua_pop(L, 1);
+	}
+}
+
+void HotspotRecord::onMouseMoved(const Common::Point32 &mouse) {
+	updateCursorTile(&mouse);
+}
+
+// The tile is where the mouse is in the rect of the hotspot, before the
+// hotspot was moved, divided by the tile size. Without a mouse, there is none.
+void HotspotRecord::updateCursorTile(const Common::Point32 *mouse) {
+	bool hasTile = false;
+	Common::Point32 tile;
+	if (mouse && _tileSize[0] > 0.0 && _tileSize[1] > 0.0 && (_isMouseOver || isDown())) {
+		double x = mouse->x;
+		double y = mouse->y;
+		getTransform().inverse().transformPoint(x, y);
+
+		hasTile = true;
+		tile.x = (int32)floor((x - _onScreen.left) / _tileSize[0]) + 1;
+		tile.y = (int32)floor((y - _onScreen.top) / _tileSize[1]) + 1;
+	}
+
+	if (hasTile == _hasCursorTile && (!hasTile || tile == _cursorTile)) {
+		return;
+	}
+
+	_hasCursorTile = hasTile;
+	_cursorTile = tile;
+	callFunction("OnTileChanged");
 }
 
 bool HotspotRecord::hitTest(const Common::Point32 &point) const {
@@ -228,6 +261,7 @@ void HotspotRecord::releaseRegion(int button) {
 	_pressedButton = -1;
 
 	if (!_isMouseOver) {
+		updateCursorTile(nullptr);
 		callFunction("OnLoseMouseFocus");
 		if (_widget) {
 			_widget->onHotspotUp(button, false);
@@ -315,6 +349,14 @@ bool HotspotRecord::getField(const Common::String &key) {
 		lua_pushstring(L, _tooltip.c_str());
 	} else if (key == "tooltipManager") {
 		lua_pushstring(L, _tooltipManager.c_str());
+	} else if (key == "tileSize") {
+		pushPoint(L, Common::Point32((int32)_tileSize[0], (int32)_tileSize[1]));
+	} else if (key == "cursorTile") {
+		if (_hasCursorTile) {
+			pushPoint(L, _cursorTile);
+		} else {
+			lua_pushnil(L);
+		}
 	} else {
 		return false;
 	}
@@ -366,6 +408,11 @@ bool HotspotRecord::setField(const Common::String &key) {
 		if (_isMouseOver) {
 			sendTooltip(true);
 		}
+	} else if (key == "tileSize") {
+		readPointCoordinates(L, 3, _tileSize[0], _tileSize[1]);
+		updateCursorTile(&getScriptMousePoint());
+	} else if (key == "cursorTile") {
+		luaL_error(L, "Cannot set 'cursorTile' field of a hotspot");
 	} else {
 		return false;
 	}

@@ -63,6 +63,9 @@ public:
 	bool isDown() const { return _pressedButton >= 0; }
 	const ScriptRect &getOnScreen() const { return _onScreen; }
 
+	// Nancy30: the mouse moved, which can put it over another tile
+	void onMouseMoved(const Common::Point32 &mouse);
+
 protected:
 	void readTable(int tableIndex) override;
 	bool prepareReset() override;
@@ -81,6 +84,7 @@ private:
 	void pushCursorField(const Cursor &cursor);
 	void fire();
 	void sendTooltip(bool isShown);
+	void updateCursorTile(const Common::Point32 *mouse);
 
 	ScriptRect _onScreen;
 	Common::String _sceneName;
@@ -108,6 +112,13 @@ private:
 	// mouse is over the hotspot
 	Common::String _tooltip;
 	Common::String _tooltipManager = "Tooltip";
+
+	// Nancy30. A hotspot with a tile size splits its rect into tiles, and
+	// knows the one the mouse is over, counting from 1, while the mouse is
+	// over it or holds it down. OnTileChanged is called when that changes.
+	double _tileSize[2] = { 0.0, 0.0 };
+	bool _hasCursorTile = false;
+	Common::Point32 _cursorTile;
 };
 
 // Nancy26: catches the player's input in a part of the screen, so whatever is
