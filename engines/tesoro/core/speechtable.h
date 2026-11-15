@@ -31,7 +31,7 @@ class Archive;
 
 /**
  * One of the four text files of spoken lines (OBJETOS, ANIMS, CONVERS, ICONS). Each line is `ID, "text"`; the
- * voice of a line is the archive entry ID.WAV. Lines are kept sorted by the key of the ID, largest first.
+ * voice of a line is the archive entry ID.WAV.
  */
 class SpeechTable {
 public:
@@ -62,7 +62,6 @@ public:
 	SpeechTable &table(uint i) { return _tables[i]; }
 	const SpeechTable &table(uint i) const { return _tables[i]; }
 
-	/** What a script holds for a spoken line: the table and line numbers plus one, or 0 if no table has the name. */
 	uint32 find(const char *name) const;
 	const SpeechTable::Line &lineOf(uint32 ref) const { return _tables[(ref - 1) >> 24].line((ref - 1) & 0xffffff); }
 

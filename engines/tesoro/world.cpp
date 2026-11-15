@@ -78,6 +78,7 @@ World::~World() {
 	delete _jim;
 	for (int i = 0; i < kLevelCount; ++i)
 		delete _levels[i];
+	delete _voices;
 }
 
 bool World::loadSpeech() {
@@ -95,8 +96,14 @@ bool World::loadSpeech() {
 			return false;
 		_speech.table(i).load(_speechText[i].data(), size, _engine._archive);
 	}
+	_voices = new Voices(_engine._mixer);
 
 	return true;
+}
+
+void World::updateSound() {
+	if (_voices)
+		_voices->_device.update();
 }
 
 Level *World::loadLevelFile(const char *name, int mode, int index) {
@@ -267,6 +274,18 @@ void World::setHoverText(const char *text) {
 void World::removeFromMainList(Object *object) {
 	_main.remove(object);
 }
+
+uint32 World::playVoice(uint32 archiveOffset) {
+	_engine._archive.seekEntry(archiveOffset);
+	return _voices ? _voices->_device.play(archiveStream(), archiveOffset) : 0;
+}
+
+bool World::voiceActive(uint32 id) { return _voices && _voices->_device.active(id); }
+void World::stopVoice(uint32 id) {
+	if (_voices)
+		_voices->_device.stop(id);
+}
+
 
 Level *World::jimLevel() {
 	return _jim ? _jim->level() : nullptr;

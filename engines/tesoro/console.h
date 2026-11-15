@@ -42,7 +42,7 @@ private:
 	bool scale(int argc, const char **argv);
 	bool route(int argc, const char **argv);
 	bool start(int argc, const char **argv);
-	bool say(int argc, const char **argv);
+	bool voice(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

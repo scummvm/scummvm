@@ -26,7 +26,6 @@
 
 namespace Tesoro {
 
-// The original orders keys by the low half first, then the high half.
 static bool keyLess(uint64 a, uint64 b) {
 	if (uint32(a) != uint32(b))
 		return uint32(a) < uint32(b);
@@ -36,9 +35,8 @@ static bool keyLess(uint64 a, uint64 b) {
 void SpeechTable::load(const byte *text, uint32 size, const Archive &archive) {
 	_lines.clear();
 
-	// The first pass only counts the lines; like the original it stops once it has read into the last eight bytes.
+	// The first pass only counts the lines; it stops once it has read into the last eight bytes.
 	StdioText in(text, size);
-	// The original's buffers hold 20 and 1000 characters and overflow on longer lines; these cannot.
 	Common::Array<char> idBuf(size + 1), lineBuf(size + 1);
 	char *id = idBuf.begin();
 	char *line = lineBuf.begin();
@@ -72,7 +70,7 @@ void SpeechTable::load(const byte *text, uint32 size, const Archive &archive) {
 		in.get();
 	}
 
-	// Selection sort, largest key first; equal keys keep whatever order this produces.
+	// Selection sort, largest key first;
 	for (uint32 i = 0; i + 1 < _lines.size(); ++i) {
 		uint32 best = i;
 		for (uint32 j = i + 1; j < _lines.size(); ++j) {

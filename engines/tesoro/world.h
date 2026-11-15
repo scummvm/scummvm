@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 
 #include "tesoro/core/objectlist.h"
+#include "tesoro/core/sounddevice.h"
 #include "tesoro/core/speechtable.h"
 #include "tesoro/core/walkarea.h"
 
@@ -34,6 +35,7 @@ class Jim;
 class Level;
 class Object;
 class TesoroEngine;
+class Voices;
 
 /**
  * The game's world as the objects see it: the table of levels (loaded when first needed), the main object list, the
@@ -47,6 +49,9 @@ public:
 	~World();
 
 	bool loadSpeech();
+
+	/** Once a frame: the sounds that have finished are let go. */
+	void updateSound();
 
 	/** Reads a level file and builds its objects, hosted by this world. */
 	Level *loadLevelFile(const char *name, int mode, int index = -1);
@@ -104,6 +109,10 @@ public:
 
 	void walkJimToPointer(int32 mouseX, int32 mouseY);
 
+	uint32 playVoice(uint32 archiveOffset);
+	bool voiceActive(uint32 id);
+	void stopVoice(uint32 id);
+
 private:
 	friend class WorldLevel;
 
@@ -118,6 +127,14 @@ private:
 	Level *_levels[kLevelCount] = {};
 	Jim *_jim = nullptr;
 	MainList _main;
+	Voices *_voices = nullptr;
+};
+
+/** The voices and music, played on the mixer. */
+class Voices {
+public:
+	explicit Voices(Audio::Mixer *mixer) : _device(mixer) {}
+	SoundDevice _device;
 };
 
 } // End of namespace Tesoro

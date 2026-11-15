@@ -188,6 +188,7 @@ bool TesoroEngine::runFrame() {
 
 	// The clock is frozen for the rest of the frame, so every object sees the same time.
 	_clock.freeze(_system->getMillis());
+	_world.updateSound();
 
 	_display.startFrame();
 	const int32 now = gameTime();
