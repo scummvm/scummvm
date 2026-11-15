@@ -64,8 +64,9 @@ enum RecordType {
 	kRecordRadioButton	= 19,
 	kRecordCheckBox		= 20,
 	kRecordSlider		= 21,
+	kRecordOverlayCombiner	= 22,	// Nancy29
 
-	kNumRecordTypes		= 22
+	kNumRecordTypes		= 23
 };
 
 // What the player does that records get told about

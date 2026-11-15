@@ -92,6 +92,15 @@ protected:
 	bool isViewportRelative() const override;
 };
 
+// Shows a part of an image where the record's transform places it. The part
+// is redrawn when the transform rotates or scales it, or when it is tinted.
+void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image, const Common::Rect &source, const ScriptRect &dest, const ScriptMatrix &transform, uint32 modColor);
+
+// Gets an image from the resource manager's cache, and keeps a reference to it
+// in cached while the record uses it. Images from picture trees that aren't
+// cached are loaded directly.
+bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image);
+
 // The first record of every scene, which names the area the scene belongs to
 // and its background. A background with more than one frame is a node the
 // player can turn around in.

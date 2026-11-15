@@ -53,6 +53,7 @@
 #ifdef ENABLE_NANCY_V5
 #include "engines/nancy/script/v5/cliptransformer.h"
 #include "engines/nancy/script/v5/messaging.h"
+#include "engines/nancy/script/v5/overlaycombiner.h"
 #include "engines/nancy/script/v5/streamtree.h"
 #include "engines/nancy/script/v5/textrecord.h"
 #include "engines/nancy/script/v5/widgets.h"
@@ -93,7 +94,8 @@ static const RecordKindNames kRecordKindNames[kNumRecordTypes] = {
 	{ "EditBox", "ND.EditBoxAR" },
 	{ "RadioButton", "ND.RadioButton" },
 	{ "CheckBox", "ND.CheckBox" },
-	{ "Slider", "ND.Slider" }
+	{ "Slider", "ND.Slider" },
+	{ "OverlayCombiner", "ND.OverlayCombiner" }
 };
 
 const char *getRecordKindName(RecordType type) {
@@ -130,6 +132,8 @@ Record *makeRecord(RecordType type, SceneContext &context) {
 		return new SliderRecord(context);
 	case kRecordEditBox:
 		return new EditBoxRecord(context);
+	case kRecordOverlayCombiner:
+		return new OverlayCombinerRecord(context);
 #endif
 	case kRecordSummary:
 		return new SummaryRecord(context);
@@ -245,7 +249,7 @@ static const uint32 kNoModColor = 0xFFFFFFFF;
 // that turns or resizes the picture has it drawn anew, into the area its corners
 // end up around, and so does a color the picture gets multiplied with, which
 // can darken it or make it see-through.
-static void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image, const Common::Rect &source, const ScriptRect &dest, const ScriptMatrix &transform, uint32 modColor) {
+void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image, const Common::Rect &source, const ScriptRect &dest, const ScriptMatrix &transform, uint32 modColor) {
 	const int kLimit = 16000;
 
 	const bool isMovedOnly = transform.isTranslation();
@@ -1300,7 +1304,7 @@ bool loadTreeImage(const Common::String &name, const Common::String &treeName, G
 // Overlays get their pictures from the image cache of the resource manager,
 // and hold on to the cached picture while they use it. Saved pictures aren't
 // cached: every record has its own.
-static bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image) {
+bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image) {
 	if (treeName.equalsIgnoreCase(kPictureTreeName) || treeName.equalsIgnoreCase(kSaveFileTreeName)) {
 		image.free();
 		cached.reset();
