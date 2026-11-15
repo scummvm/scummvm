@@ -31,6 +31,12 @@
 
 namespace Tesoro {
 
+// Levels from this index on (the island's) borrow the animation of the floor in another level.
+static const int32 kFirstSharedLevel = 23;
+static const int32 kEndSharedLevel = 44;
+static const int32 kOwnFloorLevel = 34;
+static const uint16 kSharedBrightness = 200;
+
 void WalkFloor::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now) {
 	initAnimated(record, roomSortOffset, levelPlayers, 0);
 	for (uint i = 0; i < 12; ++i)
@@ -63,6 +69,20 @@ int32 WalkFloor::scaleAt(int32 x, int32 y) {
 void WalkFloor::onAttach() {
 	if (!_level)
 		return;
+
+	const int32 index = _level->index();
+	if (index > kFirstSharedLevel - 1 && index < kEndSharedLevel && index != kOwnFloorLevel) {
+		// The floor of the shared level supplies the animation, and the level is dimmed.
+		if (Level *source = _level->sharedFloorLevel()) {
+			if (Object *floor = source->findObject(nameKey64("SUELO")))
+				_anim.shareFrom(floor->animation());
+			else
+				warning("WalkFloor: the shared level has no floor");
+		}
+		CameraFrame *frame = _level->cameraFrame();
+		if (frame)
+			frame->setValueCount(kSharedBrightness);
+	}
 
 	// Find the path name object by name, keep it only if it's the right kind
 	Object *path = _pathName[0] ? _level->findObject(nameKey64(_pathName)) : nullptr;

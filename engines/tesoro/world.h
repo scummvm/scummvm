@@ -103,6 +103,8 @@ private:
 	/** The objects the game starts with switched off, once a level has been loaded. */
 	void applyStartState(Level &where, int index);
 
+	Object *createObject(Level &level, const ObjectRecord &record, Room &room, int32 loadTime);
+
 	TesoroEngine &_engine;
 	Level *_levels[kLevelCount] = {};
 	Jim *_jim = nullptr;

@@ -192,7 +192,7 @@ void Jim::enterLevel(Level *level, Room *room, int32 x, int32 y) {
 	level->reloadDeferredAnims(_world.archiveStream());
 
 	// The brightness comes from the level's kind 1 object.
-	const CameraFrame *frame = static_cast<const CameraFrame *>(level->specialObject());
+	const CameraFrame *frame = level->cameraFrame();
 	for (uint i = 0; i < _anim.bankCount(); ++i) {
 		AnimBank *bank = _anim.player(i).bank();
 		if (!bank)

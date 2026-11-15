@@ -32,6 +32,7 @@
 
 namespace Tesoro {
 
+class CameraFrame;
 class WalkFloor;
 
 /**
@@ -62,8 +63,14 @@ public:
 
 	WalkFloor *floor() const;
 
+	int32 frameTime() const { return _frameTime; }
+	void setFrameTime(int32 now) { _frameTime = now; }
+
+	/** First pass step: the collision pass, or the one-shot verb after a reload of the pictures. */
+	int update() override;
+
 	/** The level's single kind 1 object, if it has one. */
-	Object *specialObject() const { return _special; }
+	CameraFrame *cameraFrame() const { return _cameraFrame; }
 
 	/** Position of the level in the game's level table. */
 	int32 index() const { return _index; }
@@ -71,6 +78,12 @@ public:
 
 	/** Game clock when the level was built. */
 	int32 loadTime() const { return _loadTime; }
+
+	/** Binds every object to this level in list order. */
+	void attachObjects();
+
+	/** The level whose floor the labyrinth levels borrow, or null when this level has none to borrow from. */
+	virtual Level *sharedFloorLevel() { return nullptr; }
 
 	/** Records a collidable object that has moved, once. */
 	void objectMoved(Object *object);
@@ -80,15 +93,6 @@ public:
 	 * (nearest in time first), tells each hitter about it and forgets the moves.
 	 */
 	void collisionPass(int32 now);
-
-	int32 frameTime() const { return _frameTime; }
-	void setFrameTime(int32 now) { _frameTime = now; }
-
-	/** First pass step: the collision pass, or the one-shot verb after a reload of the pictures. */
-	int update() override;
-
-	/** Binds every object to this level in list order. */
-	void attachObjects();
 
 	void cameraMoveTo(int32 x, int32 y, int32 duration, int32 now);
 
@@ -115,7 +119,7 @@ private:
 	ObjectList _movedObjects;
 	Common::Array<Object *> _owned;
 	Camera _camera;
-	Object *_special = nullptr;
+	CameraFrame *_cameraFrame = nullptr;
 	int32 _frameTime = 0;
 
 	/** A touch found by the collision pass. */

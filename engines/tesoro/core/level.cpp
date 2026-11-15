@@ -115,7 +115,7 @@ bool Level::load(Common::SeekableReadStream &dat, uint32 entryOffset, int mode, 
 
 			Object *object = createObject(record, _rooms[r]);
 			if (record.kind == 1)
-				_special = object;
+				_cameraFrame = static_cast<CameraFrame *>(object);
 			if (object) {
 				object->setKindId((byte)record.kind);
 				object->setRoom(&_rooms[r]);
@@ -390,8 +390,7 @@ void Level::cameraMoveTo(int32 x, int32 y, int32 duration, int32 now) {
 }
 
 WalkFloor *Level::floor() const {
-	const CameraFrame *frame = static_cast<const CameraFrame *>(_special);
-	Object *target = frame ? frame->target() : nullptr;
+	Object *target = _cameraFrame ? _cameraFrame->target() : nullptr;
 	return target && target->kindId() == 7 ? static_cast<WalkFloor *>(target) : nullptr;
 }
 

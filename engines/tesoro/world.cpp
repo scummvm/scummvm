@@ -54,9 +54,20 @@ public:
 	explicit WorldLevel(World &world) : _world(world) {}
 
 protected:
+	Object *createObject(const ObjectRecord &record, Room &room) override {
+		if (Object *object = _world.createObject(*this, record, room, loadTime()))
+			return object;
+		return Level::createObject(record, room);
+	}
+
 	int update2() override { return _world.levelSecondStep(*this); }
 
+	// The labyrinth levels borrow the floor of level 42; that level has its own, and so is not asked.
+	Level *sharedFloorLevel() override { return index() == kSharedFloorLevel ? nullptr : _world.level(kSharedFloorLevel); }
+
 private:
+	enum { kDeckLevel = 3, kMapLevel = 8, kPlayaLevel = 7, kPoblado = 9, kPantano = 10, kVolcan = 12, kSharedFloorLevel = 42 };
+
 	World &_world;
 	byte _variables = 0;
 };
@@ -168,13 +179,21 @@ Level *World::startGame() {
 	if (!port || port->roomCount() == 0 || !jim())
 		return nullptr;
 	// Jim comes in where the level's walk-area object stands.
-	const CameraFrame *frame = static_cast<const CameraFrame *>(port->specialObject());
+	const CameraFrame *frame = port->cameraFrame();
 	Object *floor = frame ? frame->target() : nullptr;
 	_jim->enterLevel(port, &port->room(0), floor ? floor->x() : 0, floor ? floor->y() : 0);
 	_jim->setActive(true);
 	_jim->setVisible(true);
 
 	return port;
+}
+Object *World::createObject(Level &level, const ObjectRecord &record, Room &room, int32 loadTime) {
+	const int16 sort = room.sortOffset();
+	const Common::Array<AnimPlayer> &levelPlayers = level.levelPlayers();
+	switch (record.kind) {
+		default:
+			return nullptr;
+	}
 }
 
 int32 World::now() {

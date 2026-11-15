@@ -41,6 +41,12 @@ void AnimSet::init(const Common::Array<AnimPlayer> &levelPlayers, const byte *in
 	_stashed = false;
 }
 
+void AnimSet::shareFrom(const AnimSet &other) {
+	_players = other._players;
+	_bankIndex = other._bankIndex;
+	_selected = other._selected;
+}
+
 void AnimSet::selectBank(byte bank, uint16 first, int last, bool loop, bool sumDurations, int32 now) {
 	if (bank >= _players.size()) {
 		warning("AnimSet: no bank %u to select", bank);
