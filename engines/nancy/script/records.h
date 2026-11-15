@@ -26,6 +26,8 @@
 #include "common/ptr.h"
 #include "common/rect.h"
 
+#include "audio/mixer.h"
+
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
 #include "engines/nancy/renderobject.h"
@@ -381,6 +383,10 @@ public:
 	// The channel the sound of the record plays on, while it does
 	bool getPlayingChannel(uint16 &channel) const;
 
+	// Nancy29: plays one of the sounds once, without a channel, so that it can
+	// overlap other sounds. The group of the record selects its volume setting.
+	void playInstance();
+
 protected:
 	void readTable(int tableIndex) override;
 	void runOnce() override;
@@ -400,10 +406,24 @@ private:
 #endif
 	const char *getChannelType() const;
 
+	// The volume setting that the group or the channelType selects. Returns
+	// false when the sound uses the setting of its channel.
+	bool getGroupType(Audio::Mixer::SoundType &type) const;
+
+	// Nancy29: picks the volume and the pitch of the next play, each one changed
+	// at random by up to its variance
+	void pickVariation();
+
 	Common::Array<Common::String> _names;
 	uint16 _channel;	// FX1 unless the table says otherwise
 	Common::String _channelType;	// empty for the one of the channel
+	Common::String _group;			// Nancy29: "Voice", "Music" or "Effects"
 	double _volume = 1.0;
+	double _volumeVariance = 0.0;	// Nancy29
+	double _pitch = 1.0;			// Nancy29: 2 plays twice as fast
+	double _pitchVariance = 0.0;
+	double _playVolume = 1.0;
+	double _playPitch = 1.0;
 	bool _isLooping = false;
 	bool _usesCaption = true;
 

@@ -129,6 +129,11 @@ public:
 	void setRate(const SoundDescription &description, uint32 rate);
 	void setRate(const Common::String &chunkName, uint32 rate);
 
+	// Nancy29: plays a sound once, without a channel, so that several copies of
+	// it can overlap. The volume goes from 0 to 100, and a pitch of 2 plays the
+	// sound twice as fast.
+	void playInstance(const Common::String &soundName, Audio::Mixer::SoundType type, uint16 volume, double pitch);
+
 	Audio::Timestamp getLength(uint16 channelID);
 	Audio::Timestamp getLength(const SoundDescription &description);
 	Audio::Timestamp getLength(const Common::String &chunkName);
@@ -192,6 +197,7 @@ protected:
 
 	Common::Array<Channel> _channels;
 	Common::HashMap<Common::String, SoundDescription> _commonSounds;
+	Common::Array<Audio::SoundHandle> _instances;	// Nancy29: the sounds started by playInstance()
 
 	bool _shouldRecalculate;
 

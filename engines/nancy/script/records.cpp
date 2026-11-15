@@ -1926,7 +1926,8 @@ bool AnimOverlayRecord::setField(const Common::String &key) {
 void SoundRecord::readTable(int tableIndex) {
 	lua_State *L = getLua();
 
-	if (pushField(L, tableIndex, "channel")) {
+	const bool hasChannel = pushField(L, tableIndex, "channel");
+	if (hasChannel) {
 		_channel = checkSoundChannel(L, -1);
 		lua_pop(L, 1);
 	}
@@ -1935,9 +1936,20 @@ void SoundRecord::readTable(int tableIndex) {
 	readField(L, tableIndex, "loop", _isLooping);
 	readField(L, tableIndex, "useCC", _usesCaption);
 
-	lua_getfield(L, tableIndex, "channelType");
-	readChannelType(-1);
-	lua_pop(L, 1);
+	if (g_nancy->getGameType() >= kGameTypeNancy29) {
+		// Nancy29 renames channelType to group. A record that only plays
+		// instances has no channel.
+		readField(L, tableIndex, "volumeVariance", _volumeVariance);
+		readField(L, tableIndex, "pitch", _pitch);
+		readField(L, tableIndex, "pitchVariance", _pitchVariance);
+		if (!readField(L, tableIndex, "group", _group) && !hasChannel) {
+			luaL_error(L, "Sound AR must have either 'channel' or 'group' defined.");
+		}
+	} else {
+		lua_getfield(L, tableIndex, "channelType");
+		readChannelType(-1);
+		lua_pop(L, 1);
+	}
 
 	if (pushField(L, tableIndex, "sounds")) {
 		readStringList(L, -1, _names);
@@ -1947,6 +1959,8 @@ void SoundRecord::readTable(int tableIndex) {
 	if (_names.empty()) {
 		luaL_error(L, "sounds must have one or more fields in its table");
 	}
+
+	pickVariation();
 }
 
 SoundRecord::SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") {
@@ -1961,6 +1975,43 @@ SoundRecord::SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") 
 	} else {
 		_channel = 14;
 	}
+}
+
+// The value, changed at random by up to the variance either way
+static double vary(double value, double variance) {
+	const double random = g_nancy->_randomSource->getRandomNumber(0xFFFF) / (double)0xFFFF;
+	return value + (random * 2.0 - 1.0) * variance;
+}
+
+void SoundRecord::pickVariation() {
+	_playVolume = CLIP(vary(_volume, _volumeVariance), 0.0, 1.0);
+	_playPitch = MAX(vary(_pitch, _pitchVariance), 0.01);
+}
+
+bool SoundRecord::getGroupType(Audio::Mixer::SoundType &type) const {
+	const Common::String &group = g_nancy->getGameType() >= kGameTypeNancy29 ? _group : _channelType;
+	if (group.equalsIgnoreCase("VOICE")) {
+		type = Audio::Mixer::kSpeechSoundType;
+	} else if (group.equalsIgnoreCase("MUSIC")) {
+		type = Audio::Mixer::kMusicSoundType;
+	} else if (group.equalsIgnoreCase("EFFECTS")) {
+		type = Audio::Mixer::kSFXSoundType;
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+void SoundRecord::playInstance() {
+	Audio::Mixer::SoundType type;
+	if (!getGroupType(type)) {
+		luaL_error(getLua(), "Sound AR cannot play an instance because its 'group' field is not a valid group");
+	}
+
+	const Common::String &name = _names[g_nancy->_randomSource->getRandomNumber(_names.size() - 1)];
+	const double volume = CLIP(vary(_volume, _volumeVariance), 0.0, 1.0);
+	g_nancy->_sound->playInstance(name, type, (uint16)(volume * 100.0), MAX(vary(_pitch, _pitchVariance), 0.01));
 }
 
 void SoundRecord::readChannelType(int index) {
@@ -2025,21 +2076,26 @@ void SoundRecord::runOnce() {
 		return;
 	}
 
+	// Nancy29 varies the volume and the pitch from play to play
+	const bool isVaried = g_nancy->getGameType() >= kGameTypeNancy29;
+
 	_sound = SoundDescription();
 	_sound.name = _names[g_nancy->_randomSource->getRandomNumber(_names.size() - 1)];
 	_sound.channelID = _channel;
 	_sound.numLoops = _isLooping ? 0 : 1;
-	_sound.volume = (uint16)CLIP<int>((int)(_volume * 100.0), 0, 100);
+	_sound.volume = (uint16)CLIP<int>((int)((isVaried ? _playVolume : _volume) * 100.0), 0, 100);
 
 	g_nancy->_sound->loadSound(_sound);
-	if (_channelType == "VOICE") {
-		g_nancy->_sound->playSound(_channel, Audio::Mixer::kSpeechSoundType);
-	} else if (_channelType == "MUSIC") {
-		g_nancy->_sound->playSound(_channel, Audio::Mixer::kMusicSoundType);
-	} else if (_channelType == "EFFECTS") {
-		g_nancy->_sound->playSound(_channel, Audio::Mixer::kSFXSoundType);
+	Audio::Mixer::SoundType type;
+	if (getGroupType(type)) {
+		g_nancy->_sound->playSound(_channel, type);
 	} else {
 		g_nancy->_sound->playSound(_sound);
+	}
+
+	const double pitch = isVaried ? _playPitch : 1.0;
+	if (pitch != 1.0) {
+		g_nancy->_sound->setRate(_channel, (uint32)(g_nancy->_sound->getBaseRate(_channel) * pitch));
 	}
 
 	_isPlaying = g_nancy->_sound->isSoundPlaying(_sound);
@@ -2047,7 +2103,7 @@ void SoundRecord::runOnce() {
 	_channelSerial = g_nancy->_sound->getChannelSerial(_channel);
 
 	// The record is done once the sound has played through, whether it loops or not
-	_duration = _isPlaying ? g_nancy->_sound->getLength(_sound).msecs() / 1000.0 : 0.0;
+	_duration = _isPlaying ? g_nancy->_sound->getLength(_sound).msecs() / 1000.0 / pitch : 0.0;
 	_endTime = getContext().getTime() + _duration;
 
 #ifdef ENABLE_NANCY_V5
@@ -2117,6 +2173,7 @@ bool SoundRecord::prepareReset() {
 	_endTime = 0.0;
 	_wasPreempted = false;
 	_isPlaying = false;
+	pickVariation();
 	return true;
 }
 
@@ -2131,8 +2188,18 @@ bool SoundRecord::setField(const Common::String &key) {
 		}
 
 		_channel = checkSoundChannel(L, 3);
-	} else if (key == "channelType") {
+	} else if (key == "channelType" && g_nancy->getGameType() < kGameTypeNancy29) {
 		readChannelType(3);
+	} else if (key == "group") {
+		_group = lua_isnil(L, 3) ? Common::String() : Common::String(luaL_checkstring(L, 3));
+	} else if (key == "volumeVariance") {
+		_volumeVariance = luaL_checknumber(L, 3);
+	} else if (key == "pitch") {
+		_pitch = luaL_checknumber(L, 3);
+	} else if (key == "pitchVariance") {
+		_pitchVariance = luaL_checknumber(L, 3);
+	} else if (key == "PlayInstance") {
+		luaL_error(L, "Field 'PlayInstance' of sound AR is not settable");
 	} else if (key == "volume") {
 		_volume = luaL_checknumber(L, 3);
 	} else if (key == "useCC") {
@@ -2169,6 +2236,12 @@ bool SoundRecord::getPlayingChannel(uint16 &channel) const {
 	return true;
 }
 
+// sound:PlayInstance(), Nancy29
+static int soundPlayInstance(lua_State *L) {
+	((SoundRecord *)checkRecord(L, 1))->playInstance();
+	return 0;
+}
+
 void SoundRecord::stopIfPlaying() {
 	if (_isPlaying && g_nancy->_sound->getChannelSerial(_channel) == _channelSerial) {
 		g_nancy->_sound->stopSound(_sound);
@@ -2182,8 +2255,22 @@ bool SoundRecord::getField(const Common::String &key) {
 		lua_pushcfunction(L, soundStopIfPlaying);
 	} else if (key == "channel") {
 		pushSoundChannel(L, _channel);
-	} else if (key == "channelType") {
+	} else if (key == "channelType" && g_nancy->getGameType() < kGameTypeNancy29) {
 		lua_pushstring(L, getChannelType());
+	} else if (key == "PlayInstance") {
+		lua_pushcfunction(L, soundPlayInstance);
+	} else if (key == "group") {
+		if (_group.empty()) {
+			lua_pushnil(L);
+		} else {
+			lua_pushstring(L, _group.c_str());
+		}
+	} else if (key == "volumeVariance") {
+		lua_pushnumber(L, _volumeVariance);
+	} else if (key == "pitch") {
+		lua_pushnumber(L, _pitch);
+	} else if (key == "pitchVariance") {
+		lua_pushnumber(L, _pitchVariance);
 	} else if (key == "volume") {
 		lua_pushnumber(L, _volume);
 	} else if (key == "loop") {
