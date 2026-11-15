@@ -48,6 +48,8 @@
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
+#include "buried/subtitle_manager.h"
+#include "buried/subtitle_renderer.h"
 #include "buried/video_window.h"
 #include "buried/window.h"
 
@@ -58,6 +60,8 @@ BuriedEngine::BuriedEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_mainEXE = nullptr;
 	_library = nullptr;
 	_sound = nullptr;
+	_subtitles = nullptr;
+	_subtitleRenderer = nullptr;
 	_timerSeed = 0;
 	_mainWindow = nullptr;
 	_focusedWindow = nullptr;
@@ -78,6 +82,8 @@ BuriedEngine::BuriedEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 
 BuriedEngine::~BuriedEngine() {
 	delete _mainWindow;
+	delete _subtitleRenderer;
+	delete _subtitles;
 	delete _gfx;
 	delete _mainEXE;
 	delete _library;
@@ -130,6 +136,8 @@ Common::Error BuriedEngine::run() {
 
 	_gfx = new GraphicsManager(this);
 	_sound = new SoundManager(this);
+	_subtitles = new SubtitleManager();
+	_subtitleRenderer = new SubtitleRenderer(this, _subtitles);
 	_mainWindow = new FrameWindow(this);
 	_mainWindow->showWindow(Window::kWindowShow);
 
@@ -589,6 +597,27 @@ void BuriedEngine::pauseEngineIntern(bool pause) {
 
 		for (auto &timer : _timers)
 			timer._value.nextTrigger += timeDiff;
+	}
+}
+
+void BuriedEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	// ScummVM calls syncSoundSettings() when Audio options (including the Subtitles
+	// toggle) are updated in the Global Main Menu, so mark subtitles dirty to
+	// immediately show or clear any active subtitle on screen.
+	if (_subtitleRenderer) {
+		_subtitleRenderer->markDirty(_mainWindow);
+	}
+}
+
+void BuriedEngine::applyGameSettings() {
+	Engine::applyGameSettings();
+
+	// ScummVM calls applyGameSettings() when Engine options (including Subtitle font
+	// size) are updated in the Global Main Menu.
+	if (_subtitleRenderer) {
+		_subtitleRenderer->updateFont(_mainWindow);
 	}
 }
 
