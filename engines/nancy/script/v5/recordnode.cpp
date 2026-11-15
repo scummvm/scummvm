@@ -455,6 +455,12 @@ static int recordResetInactive(lua_State *L) {
 	return 0;
 }
 
+// ar:Detach(), Nancy31: takes the record away from the Transformer it is attached to
+static int recordDetach(lua_State *L) {
+	checkRecord(L, 1)->setParentNode(nullptr);
+	return 0;
+}
+
 int Record::getNodeScriptField(const Common::String &key) {
 	lua_State *L = getLua();
 
@@ -528,6 +534,8 @@ bool Record::getNodeField(const Common::String &key) {
 		lua_pushcfunction(L, recordDeregisterAlias);
 	} else if (key == "ResetInactive") {
 		lua_pushcfunction(L, recordResetInactive);
+	} else if (key == "Detach") {
+		lua_pushcfunction(L, recordDetach);
 	} else if (key == "animator" && _nodeState->animator) {
 		_nodeState->animator->push(L);
 	} else if (BlendStages::pushFunction(L, key)) {
@@ -584,7 +592,7 @@ bool Record::setNodeField(const Common::String &key) {
 	} else if (key == "enabled" || key == "visible" || key == "paused" || key == "alpha" ||
 			key == "transform" || key == "invTransform" || key == "localInvTransform" ||
 			key == "blendedTransform" || key == "name" || key == "uniqueAlias" || key == "done" ||
-			key == "animator") {
+			key == "animator" || key == "Detach") {
 		luaL_error(L, "Cannot set field '%s' of an AR", key.c_str());
 	} else {
 		return false;
