@@ -753,6 +753,11 @@ void SliderRecord::readTable(int tableIndex) {
 		lua_pop(L, 1);
 	}
 
+	if (pushField(L, tableIndex, "knobStep")) {
+		readPoint(L, -1, _knobStep);
+		lua_pop(L, 1);
+	}
+
 	if (pushField(L, tableIndex, "knobPos")) {
 		readPoint(L, -1, _knobPos);
 		lua_pop(L, 1);
@@ -785,9 +790,19 @@ Common::Point32 SliderRecord::getKnobMax() const {
 	return Common::Point32(MAX<int>(0, _knobArea.width() - knobSize.x), MAX<int>(0, _knobArea.height() - knobSize.y));
 }
 
+// The nearest multiple of the step, halves rounded up
+static int32 snapToStep(int32 value, int32 step) {
+	if (step <= 0) {
+		return value;
+	}
+
+	return (int32)floor((double)value / step + 0.5) * step;
+}
+
 void SliderRecord::setKnobPos(const Common::Point32 &pos, bool callsScripts) {
 	const Common::Point32 knobMax = getKnobMax();
-	const Common::Point32 newPos(CLIP<int>(pos.x, 0, knobMax.x), CLIP<int>(pos.y, 0, knobMax.y));
+	const Common::Point32 newPos(snapToStep(CLIP<int>(pos.x, 0, knobMax.x), _knobStep.x),
+		snapToStep(CLIP<int>(pos.y, 0, knobMax.y), _knobStep.y));
 
 	const bool hasMoved = newPos.x != _knobPos.x || newPos.y != _knobPos.y;
 	_knobPos = newPos;
@@ -891,6 +906,8 @@ bool SliderRecord::getField(const Common::String &key) {
 		pushPoint(L, _knobPos);
 	} else if (key == "knobMax") {
 		pushPoint(L, getKnobMax());
+	} else if (key == "knobStep") {
+		pushPoint(L, _knobStep);
 	} else if (key == "percent") {
 		const Common::Point32 knobMax = getKnobMax();
 		pushVector(L, ScriptVector(knobMax.x > 0 ? (double)_knobPos.x / knobMax.x : 0.0,
@@ -916,6 +933,8 @@ bool SliderRecord::setField(const Common::String &key) {
 	} else if (key == "knobArea") {
 		_knobArea = checkRect(L, 3);
 		setKnobPos(_knobPos, false);
+	} else if (key == "knobStep") {
+		luaL_error(L, "Cannot set field 'knobStep' of a slider AR");
 	} else {
 		return WidgetRecord::setField(key);
 	}

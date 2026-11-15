@@ -231,6 +231,7 @@ private:
 	ScriptRect _scrollArea;
 	Common::Point32 _scrollAmount;
 	Common::Point32 _knobPos;
+	Common::Point32 _knobStep = Common::Point32(1, 1);	// Nancy30: the knob stops at multiples of it
 	Common::Point32 _dragOffset;	// from the knob to the mouse, while dragged
 	bool _isDragging = false;
 };
