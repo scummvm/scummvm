@@ -309,6 +309,12 @@ static int brainAllNames(lua_State *L) {
 	return 1;
 }
 
+// Brain:Contains(name), Nancy29: whether there is a condition by the name
+static int brainContains(lua_State *L) {
+	lua_pushboolean(L, getBrain(L).exists(luaL_checkstring(L, 2)));
+	return 1;
+}
+
 // Nancy27
 static int brainIsAutoUpdated(lua_State *L) {
 	const Common::String name = checkLogicName(L, 2);
@@ -397,6 +403,7 @@ void registerBrainAPI(lua_State *L) {
 		{ "__index", brainIndex },
 		{ "__newindex", brainNewIndex },
 		{ "AllNames", brainAllNames },
+		{ "Contains", brainContains },
 		{ "IsAutoUpdated", brainIsAutoUpdated },
 		{ "IsCached", brainIsCached },
 		{ "IsWritable", brainIsWritable },
