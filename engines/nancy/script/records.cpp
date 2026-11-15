@@ -2598,8 +2598,8 @@ void MovieRecord::readTable(int tableIndex) {
 		luaL_error(L, "MovieAR must be created with a movie parameter");
 	}
 
-	// Nancy30 shows the whole movie at the top left without an onScreen, or
-	// with an empty one
+	// Without an onScreen, or with an empty one, Nancy30 shows a .bk2 movie at
+	// the rect stored in its file, and any other movie whole at the top left
 	const bool hasDest = pushField(L, tableIndex, "onScreen");
 	if (!hasDest && g_nancy->getGameType() < kGameTypeNancy30) {
 		luaL_error(L, "MovieAR must be created with an 'onScreen' parameter");
@@ -2614,8 +2614,14 @@ void MovieRecord::readTable(int tableIndex) {
 		luaL_error(L, "Could not load movie %s", _name.c_str());
 	}
 
+	bool isEmbeddedDest = false;
 	if (g_nancy->getGameType() >= kGameTypeNancy30 && _dest.isEmpty()) {
-		_dest = ScriptRect(0, 0, _player.getWidth(), _player.getHeight());
+		if (_player.hasEmbeddedDest()) {
+			_dest = ScriptRect(_player.getEmbeddedDest());
+			isEmbeddedDest = true;
+		} else {
+			_dest = ScriptRect(0, 0, _player.getWidth(), _player.getHeight());
+		}
 	}
 
 	_firstFrame = 0;
@@ -2628,7 +2634,10 @@ void MovieRecord::readTable(int tableIndex) {
 	// The whole of every frame, unless a part of it is asked for
 	// An empty source, like Nancy26's (-1, -1, -1, -1), shows the whole movie
 	_source = ScriptRect(0, 0, _player.getWidth(), _player.getHeight());
-	if (pushField(L, tableIndex, "source")) {
+	if (isEmbeddedDest) {
+		// The frames can be larger than the stored rect; their top left part shows
+		_source = ScriptRect(0, 0, _dest.width(), _dest.height());
+	} else if (pushField(L, tableIndex, "source")) {
 		if (!checkRect(L, -1).isEmpty()) {
 			_source = checkRect(L, -1);
 		}

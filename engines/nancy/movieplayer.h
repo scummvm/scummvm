@@ -91,6 +91,11 @@ public:
 	uint16 getHeight() const;
 	void addFrameTime(uint16 timeToAdd);	// AVF only, no-op otherwise
 
+	// Nancy30: a .bk2 movie ends with the rect it is shown at when the script
+	// gives none, after the Bink data
+	bool hasEmbeddedDest() const { return _hasEmbeddedDest; }
+	const Common::Rect &getEmbeddedDest() const { return _embeddedDest; }
+
 	// Sets the volume of the movie's audio track, as a percentage (0 - 100).
 	void setVolume(byte percent);
 
@@ -137,6 +142,8 @@ private:
 
 	Common::ScopedPtr<Video::VideoDecoder> _decoder;
 	byte _videoType = kVideoPlaytypeAVF;
+	bool _hasEmbeddedDest = false;
+	Common::Rect _embeddedDest;
 
 	// Name this movie was loaded with; used by findLoadedMovie().
 	Common::Path _loadedName;

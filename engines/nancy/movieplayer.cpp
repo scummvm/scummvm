@@ -109,6 +109,7 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 		return false;
 	}
 
+	_hasEmbeddedDest = false;
 	if (_videoType == kVideoPlaytypeBink) {
 		// Nancy29 has movies in both versions of Bink. Its Bink 2 decoder is
 		// older than the one of the later games.
@@ -117,6 +118,12 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 			_decoder.reset(new Video::Bink2Decoder(g_nancy->getGameType() == kGameTypeNancy29));
 		else
 			_decoder.reset(new Video::BinkDecoder());
+
+		if (file.isOpen() && bikPath.baseName().hasSuffixIgnoreCase(".bk2") && file.size() >= 16) {
+			file.seek(-16, SEEK_END);
+			readExclusiveRect(file, _embeddedDest);
+			_hasEmbeddedDest = !file.err() && !_embeddedDest.isEmpty();
+		}
 	} else {
 		_decoder.reset(new AVFDecoder(bidirectionalCache ? AVFDecoder::kLoadBidirectional : AVFDecoder::kLoadForward));
 	}
