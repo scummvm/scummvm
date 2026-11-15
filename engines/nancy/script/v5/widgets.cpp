@@ -636,6 +636,8 @@ void WidgetRecord::onHotspotDown(int button) {
 		return;
 	}
 
+	_isLeftDown = button == 0;
+
 	switch (_type) {
 	case kRecordCheckBox:
 		setSelected(!_isSelected, true);
@@ -718,6 +720,9 @@ bool WidgetRecord::getField(const Common::String &key) {
 	} else if (key == "groupName") {
 		lua_pushstring(L, _groupName.c_str());
 		return true;
+	} else if (key == "isLeft" && _type == kRecordButton) {
+		lua_pushboolean(L, _isLeftDown);
+		return true;
 	} else {
 		return ClipTransformerRecord::getField(key);
 	}
@@ -740,6 +745,8 @@ bool WidgetRecord::setField(const Common::String &key) {
 	} else if (key == "disabledColor") {
 		_disabledColor = checkColor(L, 3);
 		_wasEnabled = !isNodeEnabled();
+	} else if (key == "isLeft" && _type == kRecordButton) {
+		luaL_error(L, "Cannot set field 'isLeft' of a button AR");
 	} else if (key == "isSelected") {
 		setSelected(lua_toboolean(L, 3) != 0, false);
 	} else {

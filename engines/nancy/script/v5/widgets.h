@@ -206,6 +206,7 @@ protected:
 	bool _isSelected = false;
 	Common::String _groupName;	// of a radio button
 	bool _wasEnabled = true;
+	bool _isLeftDown = true;	// Nancy31: the last press of a button was with the left button
 };
 
 // Nancy26: a knob that the mouse drags around the knob area, or the wheel moves
