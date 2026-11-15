@@ -43,6 +43,7 @@
 namespace Video {
 
 static constexpr uint32 kKB2fID = MKTAG('K', 'B', '2', 'f');
+static constexpr uint32 kKB2gID = MKTAG('K', 'B', '2', 'g');
 
 static constexpr uint32 kVideoFlagAlpha = 0x00100000;
 
@@ -52,6 +53,10 @@ static constexpr uint32 kVideoFlagAlpha = 0x00100000;
 static constexpr uint32 kFrameFlagBlockFlags = 0x10000;
 static constexpr uint32 kFrameFlagNoRowFlags = 0x8000;
 static constexpr uint32 kFrameFlagNoColFlags = 0x4000;
+
+// Revision 'g': a luma CBP without blocks is not followed by the bit that
+// says which set of codes they use
+static constexpr uint32 kFrameFlagNoEmptyCBPFlag = 0x40000;
 
 // Border around the luma planes; half of it around the chroma ones
 static constexpr int kBorder = 32;
@@ -170,14 +175,202 @@ static constexpr byte kLumaBlockPos[16] = {
 	0, 1, 4, 5, 2, 3, 6, 7, 8, 9, 12, 13, 10, 11, 14, 15
 };
 
+// Revision 'g'
+
+static constexpr byte kScanG[64] = {
+	 0,  8,  1,  2,  9, 16, 24, 17,
+	10,  3,  4, 11, 18, 25, 32, 40,
+	33, 26, 19, 12,  5,  6, 13, 20,
+	27, 34, 41, 48, 56, 49, 42, 35,
+	28, 21, 14,  7, 15, 22, 29, 36,
+	43, 50, 57, 58, 51, 44, 37, 30,
+	23, 31, 38, 45, 52, 59, 60, 53,
+	46, 39, 47, 54, 61, 62, 55, 63
+};
+
+static constexpr uint32 kACSkipCodesG[2][14] = {
+	{ 0x01, 0x00, 0x04, 0x2C, 0x6C, 0x0C, 0x4C, 0xAC, 0xEC, 0x12C, 0x16C, 0x1AC, 0x02, 0x1C },
+	{ 0x01, 0x04, 0x00, 0x08, 0x02, 0x32, 0x0A, 0x12, 0x3A, 0x7A, 0xFA, 0x72, 0x06, 0x1A }
+};
+
+static constexpr uint8 kACSkipLengthsG[2][14] = {
+	{ 1, 3, 4, 9, 9, 7, 7, 9, 8, 9, 9, 9, 2, 5 },
+	{ 1, 3, 4, 4, 5, 7, 5, 6, 7, 8, 8, 7, 3, 6 }
+};
+
+static constexpr uint32 kMotionCodesG[16] = {
+	0x01, 0x06, 0x0C, 0x1C, 0x18, 0x38, 0x58, 0x78, 0x68, 0x48, 0x28, 0x08, 0x14, 0x04, 0x02, 0x00
+};
+
+static constexpr uint8 kMotionLengthsG[16] = {
+	1, 3, 5, 5, 7, 7, 7, 7, 7, 7, 7, 7, 5, 5, 3, 4
+};
+
+// How many coefficients a skip symbol jumps over (11: read 6 bits; 64: to the end)
+static constexpr byte kACSkipsG[14] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 64, 0
+};
+
+// The chroma blocks a macroblock codes when it repeats the previous ones, by them
+static constexpr byte kChromaCBPG[16] = {
+	0x00, 0x00, 0x00, 0x0F, 0x00, 0x0F, 0x0F, 0x0F, 0x00, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F
+};
+
+// The step of the DC differences by quantizer, in 1/1024
+static constexpr int kDCStepG[37] = {
+	1024, 1218, 1448, 1722, 2048, 2435, 2896, 3444,
+	4096, 4871, 5793, 6889, 8192, 9742, 11585, 13777,
+	16384, 19484, 23170, 27555, 32768, 38968, 46341, 55109,
+	65536, 77936, 92682, 110218, 131072, 155872, 185364, 220436,
+	262144, 311744, 370728, 440872, 524288
+};
+
+// The dequantization matrices: the weight that each of the 64 coefficients
+// of a block is multiplied by, coarser for the higher frequencies, in fixed
+// point with 7 fractional bits. Quantizer q picks the matrix by q & 3 and
+// doubles the weights every 4 steps (1 << (q >> 2)). The DC doesn't use them.
+static constexpr uint16 kLumaIntraQmatG[4][64] = {
+	{
+		 1024,  1432,  1506,  1181,  1843,  2025,  5271,  8592,
+		 1313,  1669,  1630,  1672,  2625,  3442,  8023, 12794,
+		 1076,  1755,  1808,  1950,  3980,  4875,  8813, 11909,
+		 1350,  1868,  2127,  2016,  4725,  4450,  7712,  9637,
+		 2458,  3103,  4303,  4303,  6963,  6835, 11079, 13365,
+		 3375,  5704,  5052,  6049,  9198,  7232, 10725,  9834,
+		 5486,  7521,  7797,  7091, 11079, 10016, 13559, 12912,
+		 7279,  7649,  7020,  6097,  9189,  9047, 12661, 13768
+	},
+	{
+		 1218,  1703,  1791,  1405,  2192,  2408,  6268, 10218,
+		 1561,  1985,  1938,  1988,  3122,  4093,  9541, 15215,
+		 1279,  2087,  2150,  2319,  4733,  5798, 10481, 14162,
+		 1606,  2222,  2530,  2398,  5619,  5292,  9171, 11460,
+		 2923,  3690,  5117,  5118,  8281,  8128, 13176, 15894,
+		 4014,  6783,  6008,  7194, 10938,  8600, 12755, 11694,
+		 6524,  8944,  9272,  8433, 13176, 11911, 16125, 15354,
+		 8657,  9096,  8348,  7250, 10927, 10759, 15056, 16373
+	},
+	{
+		 1448,  2025,  2130,  1671,  2607,  2864,  7454, 12151,
+		 1856,  2360,  2305,  2364,  3713,  4867, 11346, 18094,
+		 1521,  2482,  2557,  2758,  5628,  6894, 12464, 16841,
+		 1909,  2642,  3008,  2852,  6683,  6293, 10906, 13629,
+		 3476,  4388,  6085,  6086,  9847,  9666, 15668, 18901,
+		 4773,  8066,  7145,  8555, 13007, 10227, 15168, 13907,
+		 7758, 10637, 11026, 10028, 15668, 14165, 19175, 18259,
+		10294, 10817,  9927,  8622, 12995, 12794, 17905, 19470
+	},
+	{
+		 1722,  2408,  2533,  1987,  3100,  3406,  8864, 14450,
+		 2208,  2807,  2741,  2811,  4415,  5788, 13493, 21517,
+		 1809,  2951,  3041,  3280,  6693,  8199, 14822, 20028,
+		 2271,  3142,  3578,  3391,  7947,  7484, 12969, 16207,
+		 4133,  5218,  7236,  7238, 11711, 11495, 18633, 22478,
+		 5677,  9592,  8497, 10174, 15469, 12162, 18038, 16538,
+		 9226, 12649, 13112, 11926, 18633, 16845, 22804, 21715,
+		12242, 12864, 11806, 10254, 15454, 15215, 21293, 23155
+	}
+};
+
+static constexpr uint16 kChromaIntraQmatG[4][64] = {
+	{
+		 1024,  1193,  1434,  2203,  5632,  4641,  5916,  6563,
+		 1193,  1622,  1811,  3606,  6563,  5408,  6894,  7649,
+		 1434,  1811,  3515,  4875,  5916,  4875,  6215,  6894,
+		 2203,  3606,  4875,  3824,  4641,  3824,  4875,  5408,
+		 5632,  6563,  5916,  4641,  5632,  4641,  5916,  6563,
+		 4641,  5408,  4875,  3824,  4641,  3824,  4875,  5408,
+		 5916,  6894,  6215,  4875,  5916,  4875,  6215,  6894,
+		 6563,  7649,  6894,  5408,  6563,  5408,  6894,  7649
+	},
+	{
+		 1218,  1419,  1706,  2620,  6698,  5519,  7035,  7805,
+		 1419,  1929,  2153,  4288,  7805,  6432,  8199,  9096,
+		 1706,  2153,  4180,  5798,  7035,  5798,  7390,  8199,
+		 2620,  4288,  5798,  4548,  5519,  4548,  5798,  6432,
+		 6698,  7805,  7035,  5519,  6698,  5519,  7035,  7805,
+		 5519,  6432,  5798,  4548,  5519,  4548,  5798,  6432,
+		 7035,  8199,  7390,  5798,  7035,  5798,  7390,  8199,
+		 7805,  9096,  8199,  6432,  7805,  6432,  8199,  9096
+	},
+	{
+		 1448,  1688,  2028,  3116,  7965,  6563,  8367,  9282,
+		 1688,  2294,  2561,  5099,  9282,  7649,  9750, 10817,
+		 2028,  2561,  4971,  6894,  8367,  6894,  8789,  9750,
+		 3116,  5099,  6894,  5408,  6563,  5408,  6894,  7649,
+		 7965,  9282,  8367,  6563,  7965,  6563,  8367,  9282,
+		 6563,  7649,  6894,  5408,  6563,  5408,  6894,  7649,
+		 8367,  9750,  8789,  6894,  8367,  6894,  8789,  9750,
+		 9282, 10817,  9750,  7649,  9282,  7649,  9750, 10817
+	},
+	{
+		 1722,  2007,  2412,  3706,  9472,  7805,  9950, 11038,
+		 2007,  2729,  3045,  6064, 11038,  9096, 11595, 12864,
+		 2412,  3045,  5912,  8199,  9950,  8199, 10452, 11595,
+		 3706,  6064,  8199,  6432,  7805,  6432,  8199,  9096,
+		 9472, 11038,  9950,  7805,  9472,  7805,  9950, 11038,
+		 7805,  9096,  8199,  6432,  7805,  6432,  8199,  9096,
+		 9950, 11595, 10452,  8199,  9950,  8199, 10452, 11595,
+		11038, 12864, 11595,  9096, 11038,  9096, 11595, 12864
+	}
+};
+
+static constexpr uint16 kInterQmatG[4][64] = {
+	{
+		 1024,  1193,  1076,   844,  1052,   914,  1225,  1492,
+		 1193,  1391,  1254,   983,  1227,  1065,  1463,  1816,
+		 1076,  1254,  1161,   936,  1195,  1034,  1444,  1741,
+		  844,   983,   936,   811,  1055,   927,  1305,  1584,
+		 1052,  1227,  1195,  1055,  1451,  1336,  1912,  2354,
+		  914,  1065,  1034,   927,  1336,  1313,  1945,  2486,
+		 1225,  1463,  1444,  1305,  1912,  1945,  3044,  4039,
+		 1492,  1816,  1741,  1584,  2354,  2486,  4039,  5679
+	},
+	{
+		 1218,  1419,  1279,  1003,  1252,  1087,  1457,  1774,
+		 1419,  1654,  1491,  1169,  1459,  1267,  1739,  2159,
+		 1279,  1491,  1381,  1113,  1421,  1230,  1717,  2070,
+		 1003,  1169,  1113,   965,  1254,  1103,  1552,  1884,
+		 1252,  1459,  1421,  1254,  1725,  1589,  2274,  2799,
+		 1087,  1267,  1230,  1103,  1589,  1562,  2313,  2956,
+		 1457,  1739,  1717,  1552,  2274,  2313,  3620,  4803,
+		 1774,  2159,  2070,  1884,  2799,  2956,  4803,  6753
+	},
+	{
+		 1448,  1688,  1521,  1193,  1488,  1293,  1732,  2110,
+		 1688,  1967,  1773,  1391,  1735,  1507,  2068,  2568,
+		 1521,  1773,  1642,  1323,  1690,  1462,  2042,  2462,
+		 1193,  1391,  1323,  1147,  1492,  1311,  1845,  2241,
+		 1488,  1735,  1690,  1492,  2052,  1889,  2704,  3328,
+		 1293,  1507,  1462,  1311,  1889,  1857,  2751,  3515,
+		 1732,  2068,  2042,  1845,  2704,  2751,  4306,  5712,
+		 2110,  2568,  2462,  2241,  3328,  3515,  5712,  8031
+	},
+	{
+		 1722,  2007,  1809,  1419,  1770,  1537,  2060,  2509,
+		 2007,  2339,  2108,  1654,  2063,  1792,  2460,  3054,
+		 1809,  2108,  1953,  1574,  2010,  1739,  2428,  2928,
+		 1419,  1654,  1574,  1364,  1774,  1559,  2195,  2664,
+		 1770,  2063,  2010,  1774,  2440,  2247,  3216,  3958,
+		 1537,  1792,  1739,  1559,  2247,  2209,  3271,  4181,
+		 2060,  2460,  2428,  2195,  3216,  3271,  5120,  6793,
+		 2509,  3054,  2928,  2664,  3958,  4181,  6793,  9550
+	}
+};
+
 static inline byte clipPixel(int value) {
 	return (byte)CLIP(value, 0, 255);
 }
 
-// The kind of an intra block, by its number of AC coefficients, and its DC
+// The kind of a block, by its number of AC coefficients: blocks with fewer
+// get more of their pixels changed by the deblocking
+static int getBlockKind(int coefCount) {
+	return coefCount == 0 ? 7 : (coefCount < 4 ? 6 : (coefCount < 8 ? 5 : 4));
+}
+
+// The kind of an intra block and its DC
 static uint16 makeBlockWord(int coefCount, float dc) {
-	const int kind = coefCount == 0 ? 7 : (coefCount < 4 ? 6 : (coefCount < 8 ? 5 : 4));
-	return (uint16)((kind << 13) | ((int)(dc + kAlmostHalf) & 0x1FFF));
+	return (uint16)((getBlockKind(coefCount) << 13) | ((int)(dc + kAlmostHalf) & 0x1FFF));
 }
 
 static inline int countBits4(uint32 value) {
@@ -456,14 +649,15 @@ bool Bink2Decoder::isBink2(Common::SeekableReadStream &stream) {
 	const int64 pos = stream.pos();
 	const uint32 id = stream.readUint32BE();
 	stream.seek(pos);
-	return id == kKB2fID;
+	return id == kKB2fID || id == kKB2gID;
 }
 
 // The container is the one of Bink videos
 bool Bink2Decoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
-	if (stream->readUint32BE() != kKB2fID) {
+	const uint32 id = stream->readUint32BE();
+	if (id != kKB2fID && id != kKB2gID) {
 		delete stream;
 		return false;
 	}
@@ -485,7 +679,7 @@ bool Bink2Decoder::loadStream(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	addTrack(new Bink2VideoTrack(width, height, videoFlags, frameCount, Common::Rational(frameRateNum, frameRateDen)));
+	addTrack(new Bink2VideoTrack((char)(id & 0xFF), width, height, videoFlags, frameCount, Common::Rational(frameRateNum, frameRateDen)));
 
 	// The maximum packet sizes, then the rate and the flags of each track,
 	// then their IDs
@@ -591,8 +785,8 @@ VideoDecoder::AudioTrack *Bink2Decoder::getAudioTrack(int index) {
 	return (AudioTrack *)track;
 }
 
-Bink2Decoder::Bink2VideoTrack::Bink2VideoTrack(uint32 width, uint32 height, uint32 flags, uint32 frameCount, const Common::Rational &frameRate) :
-		_width(width), _height(height), _frameCount(frameCount), _curFrameNumber(-1), _frameRate(frameRate),
+Bink2Decoder::Bink2VideoTrack::Bink2VideoTrack(char revision, uint32 width, uint32 height, uint32 flags, uint32 frameCount, const Common::Rational &frameRate) :
+		_revision(revision), _width(width), _height(height), _frameCount(frameCount), _curFrameNumber(-1), _frameRate(frameRate),
 		_surface(nullptr), _curFrame(0), _comp(0), _mbPos(0) {
 	_pixelFormat = Image::Codec::getDefaultYUVFormat();
 
@@ -629,6 +823,10 @@ Bink2Decoder::Bink2VideoTrack::Bink2VideoTrack(uint32 width, uint32 height, uint
 		memset(_dcRows[i].data(), 0, columns * sizeof(DCPredict));
 		_mvRows[i].resize(columns);
 		memset(_mvRows[i].data(), 0, columns * sizeof(MotionVectors));
+		_intDCRows[i].resize(columns);
+		memset(_intDCRows[i].data(), 0, columns * sizeof(IntDCPredict));
+		_quantRows[i].resize(columns);
+		memset(_quantRows[i].data(), 0, columns * sizeof(QuantPredict));
 	}
 
 	for (int plane = 0; plane < 4; plane++) {
@@ -644,14 +842,21 @@ Bink2Decoder::Bink2VideoTrack::Bink2VideoTrack(uint32 width, uint32 height, uint
 	_prevDC = _dcRows[1].data();
 	_currentMV = _mvRows[0].data();
 	_prevMV = _mvRows[1].data();
+	_currentIntDC = _intDCRows[0].data();
+	_prevIntDC = _intDCRows[1].data();
+	_currentQuant = _quantRows[0].data();
+	_prevQuant = _quantRows[1].data();
 
 	_quantHuffman = new Huffman(0, 16, kQuantCodes, kQuantLengths);
 	for (int i = 0; i < 2; i++) {
 		_acValueHuffman[i] = new Huffman(0, 13, kACValueCodes[i], kACValueLengths[i]);
 		_acSkipHuffman[i] = new Huffman(0, 14, kACSkipCodes[i], kACSkipLengths[i]);
+		_gACSkipHuffman[i] = new Huffman(0, 14, kACSkipCodesG[i], kACSkipLengthsG[i]);
 	}
+	_gMotionHuffman = new Huffman(0, 16, kMotionCodesG, kMotionLengthsG);
 
 	memset(_block, 0, sizeof(_block));
+	memset(_intBlock, 0, sizeof(_intBlock));
 
 	reset();
 }
@@ -670,7 +875,9 @@ Bink2Decoder::Bink2VideoTrack::~Bink2VideoTrack() {
 	for (int i = 0; i < 2; i++) {
 		delete _acValueHuffman[i];
 		delete _acSkipHuffman[i];
+		delete _gACSkipHuffman[i];
 	}
+	delete _gMotionHuffman;
 }
 
 bool Bink2Decoder::Bink2VideoTrack::setOutputPixelFormat(const Graphics::PixelFormat &format) {
@@ -733,23 +940,29 @@ void Bink2Decoder::Bink2VideoTrack::decodeFrame(Common::SeekableReadStream &stre
 		return;
 	}
 
-	// The frame flags, then the offset of the second slice
-	if (size < 8) {
+	// Revision 'f' always has two slices, 'g' one for videos below 128 rows
+	const int numSlices = (_revision == 'g' && _alignedHeight < 128) ? 1 : 2;
+	const uint32 headerSize = 8;
+
+	// The frame flags, then the offset of the second slice, 0 without one
+	if (size < headerSize) {
 		warning("Bink2Decoder: Frame of %u bytes is too small", size);
 		return;
 	}
 
 	const uint32 frameFlags  = READ_LE_UINT32(_packet.data());
-	const uint32 sliceOffset = READ_LE_UINT32(_packet.data() + 4);
-	if (sliceOffset < 8 || sliceOffset > size) {
+	const uint32 sliceOffset = numSlices == 2 ? READ_LE_UINT32(_packet.data() + 4) : size;
+	if (sliceOffset < headerSize || sliceOffset > size) {
 		warning("Bink2Decoder: Bad slice offset %u in a frame of %u bytes", sliceOffset, size);
 		return;
 	}
 
-	// Revision 'f' always has two slices
-	const int sliceHeight = (_height / 2 + 16) & ~31;
+	int sliceHeight = (int)_alignedHeight;
+	if (numSlices == 2)
+		sliceHeight = (int)(_revision == 'g' ? (_height / 2) & ~31 : (_height / 2 + 16) & ~31);
+	_frameFlags = frameFlags;
 
-	Common::BitStreamMemoryStream stream1(_packet.data() + 8, (sliceOffset - 8 + 3) & ~3);
+	Common::BitStreamMemoryStream stream1(_packet.data() + headerSize, (sliceOffset - headerSize + 3) & ~3);
 	BitStream bits1(stream1);
 
 	// Flags of the rows and columns of blocks, which are not needed
@@ -760,14 +973,24 @@ void Bink2Decoder::Bink2VideoTrack::decodeFrame(Common::SeekableReadStream &stre
 			skipBlockFlags(bits1, (((_width + 15) & ~15) >> 3) - 1);
 	}
 
-	decodeSlice(bits1, isKeyFrame, 0, sliceHeight);
+	if (_revision == 'g') {
+		decodeSliceG(bits1, isKeyFrame, 0, sliceHeight);
+		if (numSlices == 2) {
+			Common::BitStreamMemoryStream stream2(_packet.data() + sliceOffset, (size - sliceOffset + 3) & ~3);
+			BitStream bits2(stream2);
+			decodeSliceG(bits2, isKeyFrame, sliceHeight, _alignedHeight);
+		}
 
-	Common::BitStreamMemoryStream stream2(_packet.data() + sliceOffset, (size - sliceOffset + 3) & ~3);
-	BitStream bits2(stream2);
-	decodeSlice(bits2, isKeyFrame, sliceHeight, _alignedHeight);
+		deblock();
+	} else {
+		decodeSlice(bits1, isKeyFrame, 0, sliceHeight);
 
-	_frameFlags = frameFlags;
-	deblock();
+		Common::BitStreamMemoryStream stream2(_packet.data() + sliceOffset, (size - sliceOffset + 3) & ~3);
+		BitStream bits2(stream2);
+		decodeSlice(bits2, isKeyFrame, sliceHeight, _alignedHeight);
+
+		deblock();
+	}
 
 	_curFrame ^= 1;
 }
@@ -923,20 +1146,7 @@ void Bink2Decoder::Bink2VideoTrack::decodeSlice(BitStream &bits, bool isKeyFrame
 				break;
 			}
 
-			if (type != kBlockIntra) {
-				for (int plane = 0; plane < _numPlanes; plane++) {
-					const int size = (plane == 1 || plane == 2) ? 2 : 4;
-					for (int j = 0; j < size; j++)
-						for (int i = 0; i < size; i++)
-							setBlockWord(plane, x / (32 / size) + i, y / (32 / size) + j, 0);
-				}
-			}
-			for (int i = 0; i < 4; i++) {
-				int *vector = &_blockVectors[((y / 16 + (i >> 1)) * (_alignedWidth / 16) + x / 16 + (i & 1)) * 2];
-				const bool isMoved = type == kBlockMotion || type == kBlockResidue;
-				vector[0] = isMoved ? _currentMV[_mbPos].v[i][0] : 0;
-				vector[1] = isMoved ? _currentMV[_mbPos].v[i][1] : 0;
-			}
+			storeDeblockInfo(type);
 
 			if (!isValid) {
 				warning("Bink2Decoder: Bad quantizer at macroblock %d, %d", x, y);
@@ -1357,8 +1567,691 @@ void Bink2Decoder::Bink2VideoTrack::averageNeighbor(int x, int y, byte *const ds
 	}
 }
 
+// Revision 'g'
+
+// Counts the bits that differ from stop, up to len of them
+static int getUnary(Common::BitStreamMemory32LELSB &bits, int stop, int len) {
+	int count = 0;
+	while (count < len && (int)bits.getBit() != stop)
+		count++;
+
+	return count;
+}
+
+static inline int predictMedianInt(int a, int b, int c) {
+	return MIN(MAX(c + b - a, MIN(a, MIN(b, c))), MAX(a, MAX(b, c)));
+}
+
+static inline int predictMedian2Int(int a, int b) {
+	return MIN(MAX(a, b), MAX(MIN(a, b), 2 * a - b));
+}
+
+static void idct1DG(int16 *block, int step, int shift) {
+	const int t00 = block[3 * step] + block[5 * step];
+	const int t01 = block[3 * step] - block[5 * step];
+	const int t02 = block[2 * step] + (block[2 * step] >> 2) + (block[6 * step] >> 1);
+	const int t03 = (block[2 * step] >> 1) - (block[6 * step] + (block[6 * step] >> 2));
+	const int t0 = block[0 * step] + block[4 * step] + t02;
+	const int t1 = block[0 * step] + block[4 * step] - t02;
+	const int t2 = block[0 * step] - block[4 * step];
+	const int t3 = block[1 * step] + t00;
+	const int t4 = block[1 * step] - t00;
+	const int t5 = t01 + block[7 * step];
+	const int t6 = t01 - block[7 * step];
+	const int t7 = t4 + (t6 - (t6 >> 2) - (t6 >> 4));
+	const int t8 = (t4 - (t4 >> 2) - (t4 >> 4)) - t6;
+	const int t9 = (t3 + (t3 >> 2) - (t3 >> 4)) + (t5 >> 2);
+	const int t10 = (t3 >> 2) - (t5 + (t5 >> 2) - (t5 >> 4));
+	const int t11 = t2 + t03;
+	const int t12 = t2 - t03;
+
+	block[0 * step] = (int16)((t0 + t9) >> shift);
+	block[1 * step] = (int16)((t11 + t7) >> shift);
+	block[2 * step] = (int16)((t12 + t8) >> shift);
+	block[3 * step] = (int16)((t1 + t10) >> shift);
+	block[4 * step] = (int16)((t1 - t10) >> shift);
+	block[5 * step] = (int16)((t12 - t8) >> shift);
+	block[6 * step] = (int16)((t11 - t7) >> shift);
+	block[7 * step] = (int16)((t0 - t9) >> shift);
+}
+
+// The DC goes in with a bias of 4, rounding included. The block comes out
+// transposed.
+static void idctG(int16 *block, int dc) {
+	block[0] = (int16)(dc * 8 + 32);
+
+	for (int i = 0; i < 8; i++)
+		idct1DG(block + i, 8, 0);
+	for (int i = 0; i < 8; i++)
+		idct1DG(block + i * 8, 1, 6);
+}
+
+static void putBlockG(byte *dst, int pitch, const int16 *block) {
+	for (int j = 0; j < 8; j++) {
+		for (int i = 0; i < 8; i++)
+			dst[i] = clipPixel(block[i * 8 + j]);
+		dst += pitch;
+	}
+}
+
+static void copyResidueG(int16 *dst, int pitch, const int16 *block) {
+	for (int j = 0; j < 8; j++) {
+		for (int i = 0; i < 8; i++)
+			dst[i] = block[i * 8 + j];
+		dst += pitch;
+	}
+}
+
+// The edges between the blocks of a residue are smoothed before it is added,
+// on the side of each block with few AC coefficients: the nearest of its
+// differences when it has fewer than 8, the two nearest with fewer than 4.
+// Not between two blocks with only DCs that are close.
+static void filterResidueEdgeG(int16 *p, int step, int lineStep, uint16 a, uint16 b) {
+	if ((a | b) < 0x2000)
+		return;
+
+	if ((a & b) >= 0x6000) {
+		const int difference = (int)(a ^ 0x800) - (int)(b ^ 0x800);
+		if ((uint32)(difference + 0x20) <= 0x40)
+			return;
+	}
+
+	const int kindA = a >> 13;
+	const int kindB = b >> 13;
+
+	for (int i = 0; i < 8; i++, p += lineStep) {
+		const int d = asInt16(p[0] - p[-step]);
+		const int outer = asInt16(d + 4) >> 3;
+		const int inner = asInt16(d + 2) >> 2;
+
+		if (kindA >= 2)
+			p[-2 * step] = asInt16(p[-2 * step] + outer);
+		if (kindA >= 1)
+			p[-step] = asInt16(p[-step] + inner);
+		if (kindB >= 1)
+			p[0] = asInt16(p[0] - inner);
+		if (kindB >= 2)
+			p[step] = asInt16(p[step] - outer);
+	}
+}
+
+// For blocks of size x size 8x8 blocks, with their words as x + size * y
+static void filterResidueG(int16 *residue, int size, const uint16 *words, uint32 frameFlags) {
+	const int pitch = size * 8;
+
+	if (!(frameFlags & kFrameFlagNoColFlags))
+		for (int y = 0; y < size; y++)
+			for (int x = 1; x < size; x++)
+				filterResidueEdgeG(residue + y * 8 * pitch + x * 8, 1, pitch, words[y * size + x - 1], words[y * size + x]);
+
+	if (!(frameFlags & kFrameFlagNoRowFlags))
+		for (int y = 1; y < size; y++)
+			for (int x = 0; x < size; x++)
+				filterResidueEdgeG(residue + y * 8 * pitch + x * 8, pitch, 1, words[(y - 1) * size + x], words[y * size + x]);
+}
+
+static void addResidueG(byte *dst, int pitch, const int16 *residue, int size) {
+	for (int j = 0; j < size; j++) {
+		for (int i = 0; i < size; i++)
+			dst[i] = clipPixel(dst[i] + residue[j * size + i]);
+		dst += pitch;
+	}
+}
+
+// The kind of a residue block, as its deblocking sees it, and its DC
+static uint16 makeResidueWordG(int coefCount, int dc) {
+	return (uint16)(((getBlockKind(coefCount) & 3) << 13) | (dc & 0xFFF));
+}
+
+void Bink2Decoder::Bink2VideoTrack::decodeSliceG(BitStream &bits, bool isKeyFrame, int start, int end) {
+	const int dstFrame = _curFrame ^ 1;
+	const uint32 columns = _quantRows[0].size();
+
+	byte *dst[4];
+	const byte *src[4];
+	for (int plane = 0; plane < 4; plane++) {
+		const bool isChroma = plane == 1 || plane == 2;
+
+		if (plane < _numPlanes) {
+			dst[plane] = _planes[dstFrame][plane] + (isChroma ? start / 2 : start) * _pitches[plane];
+			src[plane] = _planes[_curFrame][plane];
+		} else {
+			dst[plane] = nullptr;
+			src[plane] = nullptr;
+		}
+	}
+
+	memset(_prevQuant, 0, columns * sizeof(QuantPredict));
+	memset(_prevMV, 0, _mvRows[0].size() * sizeof(MotionVectors));
+
+	for (int y = start; y < end; y += 32) {
+		// The order in which the kinds of macroblock were last used
+		int typeOrder[4] = { kBlockMotion, kBlockResidue, kBlockSkip, kBlockIntra };
+
+		// Y, the two chroma planes in the order they are coded, A
+		uint32 intraCBP[4] = { 0, 0, 0, 0 };
+		uint32 interCBP[4] = { 0, 0, 0, 0 };
+
+		memset(_currentQuant, 0, columns * sizeof(QuantPredict));
+		memset(_currentMV, 0, _mvRows[0].size() * sizeof(MotionVectors));
+
+		for (int x = 0; x < (int)_width; x += 32) {
+			const int type = isKeyFrame ? (int)kBlockIntra : decodeBlockTypeG(bits, typeOrder);
+			QuantPredict &quant = _currentQuant[x / 32];
+			MotionVectors mv;
+			memset(&mv, 0, sizeof(mv));
+			int mvCount = 0;
+
+			_mbPos = x / 32;
+			_mbX = x;
+			_mbY = y;
+			_currentIntDC[_mbPos].blockType = type;
+
+			int flags = 0;
+			if (y == start)
+				flags |= kFlagTop;
+			if (x == 0)
+				flags |= kFlagLeft;
+
+			switch (type) {
+			case kBlockIntra:
+				// The DCs of the neighbors that were not intra come from their pixels
+				if (!(flags & (kFlagTop | kFlagLeft)) && _prevIntDC[_mbPos - 1].blockType != kBlockIntra)
+					averageNeighborG(x - 32, -32, dst, _prevIntDC[_mbPos - 1]);
+				if (!(flags & kFlagLeft) && _currentIntDC[_mbPos - 1].blockType != kBlockIntra)
+					averageNeighborG(x - 32, 0, dst, _currentIntDC[_mbPos - 1]);
+				if ((flags & kFlagLeft) && !(flags & kFlagTop) && _prevIntDC[_mbPos + 1].blockType != kBlockIntra)
+					averageNeighborG(x + 32, -32, dst, _prevIntDC[_mbPos + 1]);
+				if (!(flags & kFlagTop) && _prevIntDC[_mbPos].blockType != kBlockIntra)
+					averageNeighborG(x, -32, dst, _prevIntDC[_mbPos]);
+
+				predictMotionVectorsG(flags, mv, mvCount);
+				quant.interQ = predictQuant(false, flags);
+				quant.intraQ = predictQuant(true, flags) + decodeDeltaQG(bits);
+				if (quant.intraQ < 0 || quant.intraQ >= 37) {
+					warning("Bink2Decoder: Bad quantizer at macroblock %d, %d", x, y);
+					return;
+				}
+
+				_comp = 0;
+				decodeLumaG(bits, true, intraCBP[0], quant.intraQ, dst[0] + x, _pitches[0], flags);
+				_comp = 1;
+				decodeChromaG(bits, true, intraCBP[1], quant.intraQ, dst[2] + x / 2, _pitches[2], flags);
+				_comp = 2;
+				decodeChromaG(bits, true, intraCBP[2], quant.intraQ, dst[1] + x / 2, _pitches[1], flags);
+				if (_hasAlpha) {
+					_comp = 3;
+					decodeLumaG(bits, true, intraCBP[3], quant.intraQ, dst[3] + x, _pitches[3], flags);
+				}
+				break;
+			case kBlockSkip:
+				quant.interQ = predictQuant(false, flags);
+				quant.intraQ = predictQuant(true, flags);
+				copyBlock(dst[0] + x, src[0] + x + y * _pitches[0], _pitches[0], 32, 32);
+				copyBlock(dst[1] + x / 2, src[1] + x / 2 + y / 2 * _pitches[1], _pitches[1], 16, 16);
+				copyBlock(dst[2] + x / 2, src[2] + x / 2 + y / 2 * _pitches[2], _pitches[2], 16, 16);
+				if (_hasAlpha)
+					copyBlock(dst[3] + x, src[3] + x + y * _pitches[3], _pitches[3], 32, 32);
+				break;
+			default:
+				// Motion, or motion with a residue
+				quant.intraQ = predictQuant(true, flags);
+				if (type == kBlockMotion)
+					quant.interQ = predictQuant(false, flags);
+
+				mvCount = decodeMotionVectorsG(bits, mv);
+				predictMotionVectorsG(flags, mv, mvCount);
+
+				if (type == kBlockResidue) {
+					quant.interQ = predictQuant(false, flags) + decodeDeltaQG(bits);
+					if (quant.interQ < 0 || quant.interQ >= 37) {
+						warning("Bink2Decoder: Bad quantizer at macroblock %d, %d", x, y);
+						return;
+					}
+				}
+
+				compensateLuma(x, y, dst[0], src[0], _pitches[0]);
+				compensateChroma(x / 2, y / 2, dst[2], src[2], _pitches[2]);
+				compensateChroma(x / 2, y / 2, dst[1], src[1], _pitches[1]);
+				if (_hasAlpha)
+					compensateLuma(x, y, dst[3], src[3], _pitches[3]);
+
+				if (type == kBlockResidue) {
+					_comp = 0;
+					decodeLumaG(bits, false, interCBP[0], quant.interQ, dst[0] + x, _pitches[0], flags);
+
+					// The chroma planes can be left out
+					if (bits.getBit()) {
+						_comp = 1;
+						decodeChromaG(bits, false, interCBP[1], quant.interQ, dst[2] + x / 2, _pitches[2], flags);
+						_comp = 2;
+						decodeChromaG(bits, false, interCBP[2], quant.interQ, dst[1] + x / 2, _pitches[1], flags);
+					} else {
+						interCBP[1] = 0;
+						interCBP[2] = 0;
+					}
+
+					if (_hasAlpha) {
+						_comp = 3;
+						decodeLumaG(bits, false, interCBP[3], quant.interQ, dst[3] + x, _pitches[3], flags);
+					}
+				}
+				break;
+			}
+
+			storeDeblockInfo(type);
+		}
+
+		for (int plane = 0; plane < _numPlanes; plane++) {
+			const bool isChroma = plane == 1 || plane == 2;
+			dst[plane] += (isChroma ? 16 : 32) * _pitches[plane];
+		}
+
+		SWAP(_currentMV, _prevMV);
+		SWAP(_currentQuant, _prevQuant);
+		SWAP(_currentIntDC, _prevIntDC);
+	}
+}
+
+// The kinds of macroblock are coded by how recently they were used
+int Bink2Decoder::Bink2VideoTrack::decodeBlockTypeG(BitStream &bits, int lru[4]) {
+	int type = lru[0];
+
+	switch (getUnary(bits, 1, 3)) {
+	case 1:
+		type = lru[1];
+		SWAP(lru[0], lru[1]);
+		break;
+	case 2:
+		type = lru[3];
+		SWAP(lru[2], lru[3]);
+		break;
+	case 3:
+		type = lru[2];
+		SWAP(lru[1], lru[2]);
+		break;
+	default:
+		break;
+	}
+
+	return type;
+}
+
+int Bink2Decoder::Bink2VideoTrack::decodeDeltaQG(BitStream &bits) {
+	int dq = getUnary(bits, 1, 4);
+
+	if (dq == 3)
+		dq += bits.getBit();
+	else if (dq == 4)
+		dq += bits.getBits<5>() + 1;
+
+	if (dq && bits.getBit())
+		dq = -dq;
+
+	return dq;
+}
+
+// From the macroblocks to the left and above; the first one of a slice starts at 16
+int Bink2Decoder::Bink2VideoTrack::predictQuant(bool isIntra, int flags) const {
+	const QuantPredict &top = _prevQuant[_mbPos];
+	const QuantPredict &left = _currentQuant[MAX(_mbPos - 1, 0)];
+	const QuantPredict &leftTop = _prevQuant[MAX(_mbPos - 1, 0)];
+
+	if ((flags & kFlagTop) && (flags & kFlagLeft))
+		return 16;
+	if (flags & kFlagTop)
+		return isIntra ? left.intraQ : left.interQ;
+	if (flags & kFlagLeft)
+		return isIntra ? top.intraQ : top.interQ;
+
+	return isIntra ? median(top.intraQ, left.intraQ, leftTop.intraQ) : median(top.interQ, left.interQ, leftTop.interQ);
+}
+
+// Which 8x8 blocks have coefficients (bits 0-15), and whether they use the
+// second set of skip codes (bits 16-31)
+uint32 Bink2Decoder::Bink2VideoTrack::decodeLumaCBPG(BitStream &bits, uint32 prevCBP) {
+	uint32 ones = 0;
+	for (int i = 0; i < 16; i++) {
+		if (prevCBP & (1 << i))
+			ones++;
+	}
+
+	// Mostly set ones are coded inverted
+	uint32 mask = 0;
+	if (ones > 7) {
+		ones = 16 - ones;
+		mask = 0xFFFF;
+	}
+
+	uint32 cbp = 0;
+	if (!bits.getBit()) {
+		if (ones < 4) {
+			for (int j = 0; j < 16; j += 4) {
+				if (!bits.getBit())
+					cbp |= bits.getBits<4>() << j;
+			}
+		} else {
+			cbp = bits.getBits<16>();
+		}
+	}
+
+	cbp ^= mask;
+	if (!(_frameFlags & kFrameFlagNoEmptyCBPFlag) || cbp) {
+		if (bits.getBit())
+			cbp |= cbp << 16;
+	}
+
+	return cbp;
+}
+
+uint32 Bink2Decoder::Bink2VideoTrack::decodeChromaCBPG(BitStream &bits, uint32 prevCBP) {
+	uint32 cbp = (prevCBP & 0xF0000) | kChromaCBPG[prevCBP & 0xF];
+
+	if (!bits.getBit()) {
+		cbp = bits.getBits<4>();
+		if (bits.getBit())
+			cbp |= cbp << 16;
+	}
+
+	return cbp;
+}
+
+void Bink2Decoder::Bink2VideoTrack::predictDCG(bool isLuma, int minDC, int maxDC, int flags, const int tdc[16]) {
+	const int *leftTop = _prevIntDC[MAX(_mbPos - 1, 0)].dc[_comp];
+	const int *top     = _prevIntDC[_mbPos].dc[_comp];
+	const int *left    = _currentIntDC[MAX(_mbPos - 1, 0)].dc[_comp];
+	int *dc = _currentIntDC[_mbPos].dc[_comp];
+
+	const bool hasTop  = !(flags & kFlagTop);
+	const bool hasLeft = !(flags & kFlagLeft);
+
+	int first;
+	if (hasTop && hasLeft)
+		first = isLuma ? predictMedianInt(leftTop[15], left[5], top[10]) : predictMedianInt(leftTop[3], left[1], top[2]);
+	else if (hasTop)
+		first = isLuma ? predictMedian2Int(top[10], top[11]) : predictMedian2Int(top[2], top[3]);
+	else if (hasLeft)
+		first = isLuma ? predictMedian2Int(left[5], left[7]) : predictMedian2Int(left[1], left[3]);
+	else
+		first = minDC < 0 ? 0 : 1024;
+
+	dc[0] = CLIP(first + tdc[0], minDC, maxDC);
+
+	if (!isLuma) {
+		dc[1] = CLIP((hasTop ? predictMedianInt(top[2], dc[0], top[3]) : dc[0]) + tdc[1], minDC, maxDC);
+		dc[2] = CLIP((hasLeft ? predictMedianInt(left[1], left[3], dc[0]) : predictMedian2Int(dc[0], dc[1])) + tdc[2], minDC, maxDC);
+		dc[3] = CLIP(predictMedianInt(dc[0], dc[2], dc[1]) + tdc[3], minDC, maxDC);
+		return;
+	}
+
+	dc[1]  = CLIP((hasTop ? predictMedianInt(top[10], dc[0], top[11]) : dc[0]) + tdc[1], minDC, maxDC);
+	dc[2]  = CLIP((hasLeft ? predictMedianInt(left[5], left[7], dc[0]) : predictMedian2Int(dc[0], dc[1])) + tdc[2], minDC, maxDC);
+	dc[3]  = CLIP(predictMedianInt(dc[0], dc[2], dc[1]) + tdc[3], minDC, maxDC);
+	dc[4]  = CLIP((hasTop ? predictMedianInt(top[11], dc[1], top[14]) : predictMedian2Int(dc[1], dc[3])) + tdc[4], minDC, maxDC);
+	dc[5]  = CLIP((hasTop ? predictMedianInt(top[14], dc[4], top[15]) : dc[4]) + tdc[5], minDC, maxDC);
+	dc[6]  = CLIP(predictMedianInt(dc[1], dc[3], dc[4]) + tdc[6], minDC, maxDC);
+	dc[7]  = CLIP(predictMedianInt(dc[4], dc[6], dc[5]) + tdc[7], minDC, maxDC);
+	dc[8]  = CLIP((hasLeft ? predictMedianInt(left[7], left[13], dc[2]) : predictMedian2Int(dc[2], dc[3])) + tdc[8], minDC, maxDC);
+	dc[9]  = CLIP(predictMedianInt(dc[2], dc[8], dc[3]) + tdc[9], minDC, maxDC);
+	dc[10] = CLIP((hasLeft ? predictMedianInt(left[13], left[15], dc[8]) : predictMedian2Int(dc[8], dc[9])) + tdc[10], minDC, maxDC);
+	dc[11] = CLIP(predictMedianInt(dc[8], dc[10], dc[9]) + tdc[11], minDC, maxDC);
+	dc[12] = CLIP(predictMedianInt(dc[3], dc[9], dc[6]) + tdc[12], minDC, maxDC);
+	dc[13] = CLIP(predictMedianInt(dc[6], dc[12], dc[7]) + tdc[13], minDC, maxDC);
+	dc[14] = CLIP(predictMedianInt(dc[9], dc[11], dc[12]) + tdc[14], minDC, maxDC);
+	dc[15] = CLIP(predictMedianInt(dc[12], dc[14], dc[13]) + tdc[15], minDC, maxDC);
+}
+
+void Bink2Decoder::Bink2VideoTrack::decodeDCG(BitStream &bits, bool isLuma, int q, int minDC, int maxDC, int flags) {
+	const int count = isLuma ? 16 : 4;
+	const int step = kDCStepG[MAX(q, 8)];
+	int tdc[16] = {};
+
+	if (bits.getBit()) {
+		for (int i = 0; i < count; i++) {
+			int value = getUnary(bits, 0, 12);
+
+			if (value > 3)
+				value = (1 << (value - 3)) + bits.getBits(value - 3) + 2;
+			if (value && bits.getBit())
+				value = -value;
+
+			tdc[i] = (value * step + 0x200) >> 10;
+		}
+	}
+
+	predictDCG(isLuma, minDC, maxDC, flags, tdc);
+}
+
+// The AC coefficients of four 8x8 blocks, for the ones set in the low bits of cbp
+void Bink2Decoder::Bink2VideoTrack::decodeACG(BitStream &bits, uint32 cbp, int q, const uint16 qmat[4][64]) {
+	memset(_intBlock, 0, sizeof(_intBlock));
+	memset(_coefCounts, 0, sizeof(_coefCounts));
+
+	if (!(cbp & 0xF))
+		return;
+
+	Huffman *skipHuffman = _gACSkipHuffman[(cbp & 0xFFFF0000) ? 1 : 0];
+	const int scale = 1 << (q >> 2);
+
+	for (int i = 0; i < 4; i++, cbp >>= 1) {
+		if (!(cbp & 1))
+			continue;
+
+		int next = 0;
+		int index = 1;
+		while (index < 64) {
+			next--;
+			if (next < 1) {
+				const int skip = skipHuffman->getSymbol(bits);
+				int run = kACSkipsG[skip];
+
+				next = kACNextSkips[skip];
+				if (run == 11)
+					run = bits.getBits<6>();
+
+				index += run;
+				if (index >= 64)
+					break;
+			}
+
+			int value = getUnary(bits, 0, 12) + 1;
+			if (value > 3)
+				value = bits.getBits(value - 3) + (1 << (value - 3)) + 2;
+			if (bits.getBit())
+				value = -value;
+
+			const byte pos = kScanG[index];
+			_intBlock[i][pos] = (int16)((value * qmat[q & 3][pos] * scale + 64) >> 7);
+			_coefCounts[i]++;
+			index++;
+		}
+	}
+}
+
+void Bink2Decoder::Bink2VideoTrack::decodeLumaG(BitStream &bits, bool isIntra, uint32 &prevCBP, int q, byte *dst, int pitch, int flags) {
+	const uint32 cbp = prevCBP = decodeLumaCBPG(bits, prevCBP);
+
+	// The differences of a residue are not predicted from the neighbors
+	if (isIntra)
+		decodeDCG(bits, true, q, 0, 2047, flags);
+	else
+		decodeDCG(bits, true, q, -1023, 1023, kFlagTop | kFlagLeft);
+
+	const int *dc = _currentIntDC[_mbPos].dc[_comp];
+	uint16 residueWords[16];
+
+	for (int i = 0; i < 4; i++) {
+		decodeACG(bits, cbp >> (4 * i), q, isIntra ? kLumaIntraQmatG : kInterQmatG);
+
+		for (int j = 0; j < 4; j++) {
+			const int pos = kLumaBlockPos[i * 4 + j];
+			idctG(_intBlock[j], dc[i * 4 + j]);
+
+			if (isIntra) {
+				const int plane = _comp == 0 ? 0 : 3;
+				const int blockIndex = (_mbY / 8 + (pos >> 2)) * _blockColumns[plane] + _mbX / 8 + (pos & 3);
+				_blockWords[plane][blockIndex] = makeBlockWord(_coefCounts[j], (float)dc[i * 4 + j]);
+				putBlockG(dst + (pos & 3) * 8 + (pos >> 2) * 8 * pitch, pitch, _intBlock[j]);
+			} else {
+				residueWords[pos] = makeResidueWordG(_coefCounts[j], dc[i * 4 + j]);
+				copyResidueG(_residue + (pos & 3) * 8 + (pos >> 2) * 8 * 32, 32, _intBlock[j]);
+			}
+		}
+	}
+
+	if (!isIntra) {
+		filterResidueG(_residue, 4, residueWords, _frameFlags);
+		addResidueG(dst, pitch, _residue, 32);
+	}
+}
+
+void Bink2Decoder::Bink2VideoTrack::decodeChromaG(BitStream &bits, bool isIntra, uint32 &prevCBP, int q, byte *dst, int pitch, int flags) {
+	const uint32 cbp = prevCBP = decodeChromaCBPG(bits, prevCBP);
+
+	if (isIntra)
+		decodeDCG(bits, false, q, 0, 2047, flags);
+	else
+		decodeDCG(bits, false, q, -1023, 1023, kFlagTop | kFlagLeft);
+
+	decodeACG(bits, cbp, q, isIntra ? kChromaIntraQmatG : kInterQmatG);
+
+	const int *dc = _currentIntDC[_mbPos].dc[_comp];
+	uint16 residueWords[4];
+
+	for (int j = 0; j < 4; j++) {
+		idctG(_intBlock[j], dc[j]);
+
+		if (isIntra) {
+			const int plane = _comp == 1 ? 2 : 1;
+			const int blockIndex = (_mbY / 16 + (j >> 1)) * _blockColumns[plane] + _mbX / 16 + (j & 1);
+			_blockWords[plane][blockIndex] = makeBlockWord(_coefCounts[j], (float)dc[j]);
+			putBlockG(dst + (j & 1) * 8 + (j >> 1) * 8 * pitch, pitch, _intBlock[j]);
+		} else {
+			residueWords[j] = makeResidueWordG(_coefCounts[j], dc[j]);
+			copyResidueG(_residue + (j & 1) * 8 + (j >> 1) * 8 * 16, 16, _intBlock[j]);
+		}
+	}
+
+	if (!isIntra) {
+		filterResidueG(_residue, 2, residueWords, _frameFlags);
+		addResidueG(dst, pitch, _residue, 16);
+	}
+}
+
+// One motion vector for the whole macroblock, or four. Returns how many.
+int Bink2Decoder::Bink2VideoTrack::decodeMotionVectorsG(BitStream &bits, MotionVectors &mv) {
+	const int count = bits.getBit() ? 1 : 4;
+
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < count; j++) {
+			int value = _gMotionHuffman->getSymbol(bits);
+
+			if (value == 15) {
+				const int valueBits = getUnary(bits, 1, 12) + 4;
+				value = bits.getBits(valueBits) + (1 << valueBits) - 1;
+				value = (value & 1) ? -(value >> 1) - 1 : value >> 1;
+			} else if (value >= 8) {
+				value -= 15;
+			}
+
+			mv.v[j][i] = value;
+		}
+	}
+
+	return count;
+}
+
+void Bink2Decoder::Bink2VideoTrack::predictMotionVectorsG(int flags, const MotionVectors &mv, int count) {
+	MotionVectors &cur = _currentMV[_mbPos];
+	const MotionVectors &left    = _currentMV[MAX(_mbPos - 1, 0)];
+	const MotionVectors &leftTop = _prevMV[MAX(_mbPos - 1, 0)];
+	const MotionVectors &top     = _prevMV[_mbPos];
+
+	for (int i = 0; i < 2; i++) {
+		if (count == 1) {
+			int value = mv.v[0][i];
+			if (!(flags & kFlagTop)) {
+				if (flags & kFlagLeft)
+					value += median(top.v[0][i], top.v[2][i], top.v[3][i]);
+				else
+					value += median(leftTop.v[3][i], top.v[2][i], left.v[1][i]);
+			} else if (!(flags & kFlagLeft)) {
+				value += median(left.v[0][i], left.v[1][i], left.v[3][i]);
+			}
+
+			for (int j = 0; j < 4; j++)
+				cur.v[j][i] = value;
+			continue;
+		}
+
+		if (!(flags & kFlagTop)) {
+			if (flags & kFlagLeft)
+				cur.v[0][i] = mv.v[0][i] + median(top.v[0][i], top.v[2][i], top.v[3][i]);
+			else
+				cur.v[0][i] = mv.v[0][i] + median(top.v[2][i], leftTop.v[3][i], left.v[1][i]);
+
+			cur.v[1][i] = mv.v[1][i] + median(top.v[2][i], top.v[3][i], cur.v[0][i]);
+			if (flags & kFlagLeft)
+				cur.v[2][i] = mv.v[2][i] + median(top.v[2][i], cur.v[0][i], cur.v[1][i]);
+			else
+				cur.v[2][i] = mv.v[2][i] + median(left.v[1][i], left.v[3][i], cur.v[0][i]);
+			cur.v[3][i] = mv.v[3][i] + median(cur.v[0][i], cur.v[1][i], cur.v[2][i]);
+		} else if (flags & kFlagLeft) {
+			cur.v[0][i] = mv.v[0][i];
+			cur.v[1][i] = mv.v[1][i] + mv.v[0][i];
+			cur.v[2][i] = mv.v[2][i] + mv.v[0][i];
+			cur.v[3][i] = mv.v[3][i] + median(cur.v[0][i], cur.v[1][i], cur.v[2][i]);
+		} else {
+			cur.v[0][i] = mv.v[0][i] + median(left.v[0][i], left.v[1][i], left.v[3][i]);
+			cur.v[2][i] = mv.v[2][i] + median(left.v[1][i], left.v[3][i], cur.v[0][i]);
+			cur.v[1][i] = mv.v[1][i] + median(left.v[1][i], cur.v[0][i], cur.v[2][i]);
+			cur.v[3][i] = mv.v[3][i] + median(cur.v[0][i], cur.v[1][i], cur.v[2][i]);
+		}
+	}
+}
+
+void Bink2Decoder::Bink2VideoTrack::averageNeighborG(int x, int y, byte *const dst[4], IntDCPredict &predict) {
+	for (int i = 0; i < 16; i++) {
+		const int pos = kLumaBlockPos[i];
+		const int offset = x + (pos & 3) * 8 + (y + (pos >> 2) * 8) * _pitches[0];
+
+		predict.dc[0][i] = averageBlock(dst[0] + offset, _pitches[0]);
+		if (_hasAlpha)
+			predict.dc[3][i] = averageBlock(dst[3] + offset, _pitches[3]);
+	}
+
+	// The chroma planes in the order they are coded
+	for (int i = 0; i < 4; i++) {
+		const int chromaX = x / 2 + (i & 1) * 8;
+		const int chromaY = y / 2 + (i >> 1) * 8;
+
+		predict.dc[1][i] = averageBlock(dst[2] + chromaX + chromaY * _pitches[2], _pitches[2]);
+		predict.dc[2][i] = averageBlock(dst[1] + chromaX + chromaY * _pitches[1], _pitches[1]);
+	}
+}
+
 void Bink2Decoder::Bink2VideoTrack::setBlockWord(int plane, int x, int y, uint16 word) {
 	_blockWords[plane][y * _blockColumns[plane] + x] = word;
+}
+
+// The blocks of a macroblock that is not intra have a word of 0, and the
+// vectors of the ones that did not move are 0
+void Bink2Decoder::Bink2VideoTrack::storeDeblockInfo(int type) {
+	if (type != kBlockIntra) {
+		for (int plane = 0; plane < _numPlanes; plane++) {
+			const int size = (plane == 1 || plane == 2) ? 2 : 4;
+			for (int j = 0; j < size; j++)
+				for (int i = 0; i < size; i++)
+					setBlockWord(plane, _mbX / (32 / size) + i, _mbY / (32 / size) + j, 0);
+		}
+	}
+
+	for (int i = 0; i < 4; i++) {
+		int *vector = &_blockVectors[((_mbY / 16 + (i >> 1)) * (_alignedWidth / 16) + _mbX / 16 + (i & 1)) * 2];
+		const bool isMoved = type == kBlockMotion || type == kBlockResidue;
+		vector[0] = isMoved ? _currentMV[_mbPos].v[i][0] : 0;
+		vector[1] = isMoved ? _currentMV[_mbPos].v[i][1] : 0;
+	}
 }
 
 // A block with only a DC is drawn from the DCs around it: each neighbor that
@@ -1376,6 +2269,11 @@ void Bink2Decoder::Bink2VideoTrack::blurBlock(int plane, int x, int y, int thres
 			const int ny = y + j - 1;
 			words[j][i] = (nx >= 0 && nx < columns && ny >= 0 && ny < rows) ? _blockWords[plane][ny * columns + nx] : 0;
 		}
+	}
+
+	if (_revision == 'g') {
+		blurBlockG(plane, x, y, words, threshold);
+		return;
 	}
 
 	// Compared as signed 16-bit words, the kinds of block included
@@ -1420,6 +2318,68 @@ void Bink2Decoder::Bink2VideoTrack::blurBlock(int plane, int x, int y, int thres
 			sum += kAlmostHalf;
 			dst[py * pitch + px] = clipPixel((int)sum);
 		}
+	}
+}
+
+// The weights of revision 'g', in 16-bit fixed point: of the side of a pixel
+// toward the edge it is near, and of the other one
+static constexpr int kBlurNearWeightsG[4] = { 0x6800, 0x4800, 0x3000, 0x1C00 };
+static constexpr int kBlurFarShiftsG[4] = { 0, 7, 5, 4 };
+
+static int blurWeightG(int near, int far, int pos) {
+	const int weighted = asInt16((near * kBlurNearWeightsG[pos]) >> 16);
+	return pos == 0 ? weighted : weighted + (far >> kBlurFarShiftsG[pos]);
+}
+
+// Of the differences to the left (or top) and right (or bottom) DCs
+static int blurOffsetG(int first, int second, int pos) {
+	return pos < 4 ? blurWeightG(first, second, pos) : blurWeightG(second, first, 7 - pos);
+}
+
+// Revision 'g' does the same in 16-bit integers: each row of DCs is spread
+// over the 8 columns, then the 3 rows over the 8 rows of pixels, with DCs
+// that are 8 times the pixel values
+void Bink2Decoder::Bink2VideoTrack::blurBlockG(int plane, int x, int y, const uint16 words[3][3], int threshold) {
+	const int16 c = asInt16(words[1][1]);
+
+	int values[3][3];
+	for (int j = 0; j < 3; j++) {
+		for (int i = 0; i < 3; i++) {
+			const int16 difference = MAX(asInt16(c - words[j][i]), asInt16(words[j][i] - c));
+			values[j][i] = (threshold > difference) ? (words[j][i] & 0x1FFF) : -1;
+		}
+	}
+	values[1][1] = c & 0x1FFF;
+
+	for (int j = 0; j < 3; j += 2)
+		if (values[j][1] < 0)
+			values[j][1] = values[1][1];
+	for (int i = 0; i < 3; i += 2)
+		if (values[1][i] < 0)
+			values[1][i] = values[1][1];
+	for (int j = 0; j < 3; j += 2)
+		for (int i = 0; i < 3; i += 2)
+			if (values[j][i] < 0)
+				values[j][i] = values[1][i];
+
+	// Rounded by the 4 added before the 3 bits are shifted out
+	int rows[3][8];
+	for (int j = 0; j < 3; j++) {
+		const int left = asInt16(values[j][0] - values[j][1]);
+		const int right = asInt16(values[j][2] - values[j][1]);
+		for (int i = 0; i < 8; i++)
+			rows[j][i] = asInt16(values[j][1] + 4 + blurOffsetG(left, right, i));
+	}
+
+	const int pitch = _pitches[plane];
+	byte *dst = _planes[_curFrame ^ 1][plane] + y * 8 * pitch + x * 8;
+
+	for (int i = 0; i < 8; i++) {
+		const int middle = rows[1][i];
+		const int top = asInt16(rows[0][i] - middle);
+		const int bottom = asInt16(rows[2][i] - middle);
+		for (int j = 0; j < 8; j++)
+			dst[j * pitch + i] = clipPixel(asInt16(middle + blurOffsetG(top, bottom, j)) >> 3);
 	}
 }
 

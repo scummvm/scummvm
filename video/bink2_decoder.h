@@ -52,7 +52,7 @@ struct Surface;
 namespace Video {
 
 /**
- * Decoder for Bink 2 videos of revision 'f' (KB2f).
+ * Decoder for Bink 2 videos of revisions 'f' and 'g' (KB2f, KB2g).
  *
  * Video decoder used in engines:
  *  - nancy
@@ -90,7 +90,7 @@ private:
 	 */
 	class Bink2VideoTrack : public FixedRateVideoTrack {
 	public:
-		Bink2VideoTrack(uint32 width, uint32 height, uint32 flags, uint32 frameCount, const Common::Rational &frameRate);
+		Bink2VideoTrack(char revision, uint32 width, uint32 height, uint32 flags, uint32 frameCount, const Common::Rational &frameRate);
 		~Bink2VideoTrack() override;
 
 		uint16 getWidth() const override { return _width; }
@@ -137,6 +137,20 @@ private:
 		struct MotionVectors {
 			int v[4][2];
 		};
+
+		// Revision 'g' predicts integer DCs, and the quantizers from the
+		// macroblocks around
+		struct IntDCPredict {
+			int dc[4][16];
+			int blockType;
+		};
+
+		struct QuantPredict {
+			int intraQ;
+			int interQ;
+		};
+
+		char _revision;
 
 		uint32 _width;
 		uint32 _height;
@@ -190,6 +204,18 @@ private:
 		Huffman *_acValueHuffman[2];
 		Huffman *_acSkipHuffman[2];
 
+		// Revision 'g'
+		Common::Array<IntDCPredict> _intDCRows[2];
+		Common::Array<QuantPredict> _quantRows[2];
+		IntDCPredict *_currentIntDC;
+		IntDCPredict *_prevIntDC;
+		QuantPredict *_currentQuant;
+		QuantPredict *_prevQuant;
+		int16 _intBlock[4][64];
+		int16 _residue[32 * 32];
+		Huffman *_gACSkipHuffman[2];
+		Huffman *_gMotionHuffman;
+
 		/** Clear both frames to black. */
 		void reset();
 
@@ -220,10 +246,28 @@ private:
 		void averageNeighbor(int x, int y, byte *const dst[4], DCPredict &predict);
 
 		void setBlockWord(int plane, int x, int y, uint16 word);
+		void storeDeblockInfo(int type);
+
+		// Revision 'g'
+		void decodeSliceG(BitStream &bits, bool isKeyFrame, int start, int end);
+		int decodeBlockTypeG(BitStream &bits, int lru[4]);
+		int decodeDeltaQG(BitStream &bits);
+		uint32 decodeLumaCBPG(BitStream &bits, uint32 prevCBP);
+		uint32 decodeChromaCBPG(BitStream &bits, uint32 prevCBP);
+		void predictDCG(bool isLuma, int minDC, int maxDC, int flags, const int tdc[16]);
+		void decodeDCG(BitStream &bits, bool isLuma, int q, int minDC, int maxDC, int flags);
+		void decodeACG(BitStream &bits, uint32 cbp, int q, const uint16 qmat[4][64]);
+		void decodeLumaG(BitStream &bits, bool isIntra, uint32 &prevCBP, int q, byte *dst, int pitch, int flags);
+		void decodeChromaG(BitStream &bits, bool isIntra, uint32 &prevCBP, int q, byte *dst, int pitch, int flags);
+		int decodeMotionVectorsG(BitStream &bits, MotionVectors &mv);
+		void predictMotionVectorsG(int flags, const MotionVectors &mv, int count);
+		void averageNeighborG(int x, int y, byte *const dst[4], IntDCPredict &predict);
+		int predictQuant(bool isIntra, int flags) const;
 
 		// After a frame is decoded
 		void deblock();
 		void blurBlock(int plane, int x, int y, int threshold);
+		void blurBlockG(int plane, int x, int y, const uint16 words[3][3], int threshold);
 		void filterEdges(int plane, bool isVertical);
 
 		// Into the output surface
