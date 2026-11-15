@@ -749,6 +749,10 @@ bool WidgetRecord::setField(const Common::String &key) {
 		luaL_error(L, "Cannot set field 'isLeft' of a button AR");
 	} else if (key == "isSelected") {
 		setSelected(lua_toboolean(L, 3) != 0, false);
+	} else if (key == "groupName" && _type == kRecordRadioButton) {
+		// Nancy31: a selected radio button gets deselected when it changes groups
+		setSelected(false, true);
+		_groupName = luaL_checkstring(L, 3);
 	} else {
 		return ClipTransformerRecord::setField(key);
 	}
