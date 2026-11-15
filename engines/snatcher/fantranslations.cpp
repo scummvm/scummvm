@@ -63,6 +63,9 @@ FanTranslationHandler::~FanTranslationHandler() {
 }
 
 const uint8 *FanTranslationHandler::process(uint32 addr, const uint8 *data) {
+// The fantranslation.o module is included in the detection plugin, but that only needs the static functions (and not
+// this one here). We add an #ifdef guard here, since the MemMapping dependency isn't included in the detection plugin.
+#ifdef ENABLE_SNATCHER
 	if (_mode == kTranslate && _gameTranslateableData) {
 		for (int i = 0; i < 100; ++i) {
 			if (!_gameTranslateableData[i])
@@ -79,6 +82,7 @@ const uint8 *FanTranslationHandler::process(uint32 addr, const uint8 *data) {
 		int fileNo = (addr < MemMapping::MEM_SCRIPT_LOCATION) ? _scdFileNo : (addr >= MemMapping::MEM_MODULE_LOCATION ? _gfxFileNo : _scriptFileNo);
 		updateDataTable(addr, data, _gameTranslateableData, _mode, 256, fileNo);
 	}
+#endif
 	return data;
 }
 
