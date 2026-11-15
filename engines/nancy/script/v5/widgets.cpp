@@ -606,8 +606,10 @@ void WidgetRecord::onHotspotOver(bool isOver) {
 	updateState();
 }
 
+// A plain button also takes presses of the right button, when its hotspot
+// watches that button
 void WidgetRecord::onHotspotDown(int button) {
-	if (button != 0) {
+	if (button != 0 && _type != kRecordButton) {
 		return;
 	}
 
@@ -627,7 +629,7 @@ void WidgetRecord::onHotspotDown(int button) {
 }
 
 void WidgetRecord::onHotspotUp(int button, bool isOver) {
-	if (button != 0) {
+	if (button != 0 && _type != kRecordButton) {
 		return;
 	}
 
