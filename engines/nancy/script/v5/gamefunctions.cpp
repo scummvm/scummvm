@@ -48,6 +48,7 @@
 #include "engines/nancy/script/v5/gamefunctions.h"
 #include "engines/nancy/script/v5/messaging.h"
 #include "engines/nancy/script/v5/scriptinput.h"
+#include "engines/nancy/script/v5/streamtree.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -411,8 +412,15 @@ static int gameGetScriptNameRange(lua_State *L) {
 	return 1;
 }
 
+// Game:ToClipboard(text), Nancy29: for the cheat tools
+static int gameToClipboard(lua_State *L) {
+	g_system->setTextInClipboard(Common::U32String(luaL_checkstring(L, 2)));
+	return 0;
+}
+
 static const luaL_Reg kGameFunctions[] = {
 	{ "SetScriptNameFilter", gameSetScriptNameFilter },
+	{ "ToClipboard", gameToClipboard },
 	{ "GetScriptNameRange", gameGetScriptNameRange },
 	{ "Save", gameSave },
 	{ "Load", gameLoad },
@@ -435,8 +443,14 @@ static bool pushGameField(lua_State *L, const Common::String &key) {
 
 	if (key == "isWindowed") {
 		lua_pushboolean(L, !g_system->getFeatureState(OSystem::kFeatureFullscreenMode));
-	} else if (key == "time") {
+	} else if (key == "time" || key == "accurateTime") {
+		// Nancy29 adds accurateTime, which includes fractions of a second.
+		// Our time includes them already, so both give the same value
 		lua_pushnumber(L, NancySceneState._timers.lastTotalTime.getTotalMilliseconds() / 1000.0);
+	} else if (key == "debugMode") {
+		// Nancy29: the DebugOutput setting of the game's INI file, which the
+		// release has switched off. The cheat tools need it for the inspector.
+		lua_pushboolean(L, false);
 	} else if (key == "buildNumber") {
 		const ScriptBootData *boot = GetEngineData(ScriptBootData);
 		lua_pushstring(L, boot ? boot->buildNumber.c_str() : "");
@@ -792,6 +806,15 @@ static int sceneIsStreamRunning(lua_State *L) {
 	return 1;
 }
 
+// Scene:GetStreamInVP(stream), Nancy29: whether the stream is drawn inside
+// the viewport rather than on the whole screen. Returns true for a stream
+// that isn't running.
+static int sceneGetStreamInVP(lua_State *L) {
+	const StreamNodeState *state = NancySceneState.getStreams().getNodeState(luaL_checkstring(L, 2));
+	lua_pushboolean(L, !state || state->isInViewport);
+	return 1;
+}
+
 // Log:Warn(text) and Log:Warn(location, text)
 static int logWarn(lua_State *L) {
 	if (lua_gettop(L) >= 3) {
@@ -927,6 +950,7 @@ void registerNancy26GameAPI(lua_State *L) {
 
 	static const luaL_Reg kSceneFunctions[] = {
 		{ "IsStreamRunning", sceneIsStreamRunning },
+		{ "GetStreamInVP", sceneGetStreamInVP },
 		{ nullptr, nullptr }
 	};
 
