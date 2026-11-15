@@ -1267,6 +1267,15 @@ void NancyEngine::populateStaticData() {
 		sci.sfxChannels = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
 		sci.speechChannels = { 26, 27, 28, 29 };
 	}
+
+	if (getGameType() >= kGameTypeNancy29) {
+		// Nancy29 has four music channels, eight for ambience, sixteen for
+		// effects and four for voices
+		sci.numChannels = 32;
+		sci.musicChannels = { 0, 1, 2, 3 };
+		sci.sfxChannels = { 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 };
+		sci.speechChannels = { 28, 29, 30, 31 };
+	}
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {

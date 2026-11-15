@@ -1952,7 +1952,9 @@ void SoundRecord::readTable(int tableIndex) {
 SoundRecord::SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") {
 	// FX1, which moves with the channel tables
 	const GameType gameType = g_nancy->getGameType();
-	if (gameType >= kGameTypeNancy27) {
+	if (gameType >= kGameTypeNancy29) {
+		_channel = 12;
+	} else if (gameType >= kGameTypeNancy27) {
 		_channel = 11;
 	} else if (gameType >= kGameTypeNancy22 && gameType <= kGameTypeNancy23) {
 		_channel = 16;

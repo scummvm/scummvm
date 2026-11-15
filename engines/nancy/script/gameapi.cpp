@@ -1084,6 +1084,7 @@ static const char *const kSoundChannelType = "ND.SoundChannel";
 
 enum SoundChannelID {
 	kNumSoundChannels		= 30,
+	kNancy29NumSoundChannels	= 32,
 
 	// These stand for every channel of a kind
 	kChannelAll				= 0x21,
@@ -1153,8 +1154,22 @@ static const SoundChannelName kNancy27SoundChannelNames[] = {
 	{ "AllFX", kChannelAllFX }, { "AllAmbient", kChannelAllAmbient }, { "AllVoice", kChannelAllVoice }
 };
 
+// Nancy29 adds a channel for music, the medley, which AllExceptTheme leaves
+// alone as well, and a ninth one for effects
+static const SoundChannelName kNancy29SoundChannelNames[] = {
+	{ "Theme", 0 }, { "Medley", 1 }, { "UIMusic", 2 }, { "EngineMusic", 3 },
+	{ "Ambient1", 4 }, { "Ambient2", 5 }, { "Ambient3", 6 }, { "Ambient4", 7 },
+	{ "Ambient5", 8 }, { "Ambient6", 9 }, { "Ambient7", 10 }, { "Ambient8", 11 },
+	{ "FX1", 12 }, { "FX2", 13 }, { "FX3", 14 }, { "FX4", 15 }, { "FX5", 16 }, { "FX6", 17 }, { "FX7", 18 }, { "FX8", 19 }, { "FX9", 20 },
+	{ "InvFX", 21 }, { "PhoneFX", 22 }, { "PhoneFX2", 23 }, { "PhoneFX3", 24 }, { "PhoneFX4", 25 }, { "UIFX", 26 }, { "EngineFX", 27 },
+	{ "NPCVoice", 28 }, { "PlayerVoice", 29 }, { "UIVoice", 30 }, { "EngineVoice", 31 },
+	{ "All", kChannelAll }, { "AllExceptTheme", kChannelAllExceptTheme }, { "AllMusic", kChannelAllMusic },
+	{ "AllFX", kChannelAllFX }, { "AllAmbient", kChannelAllAmbient }, { "AllVoice", kChannelAllVoice }
+};
+
 // Where the channels of each kind begin, and the end of the last kind
 struct SoundChannelLayout {
+	uint16 firstAfterTheme;	// the first one AllExceptTheme stands for
 	uint16 firstMusic;
 	uint16 firstGlobal;
 	uint16 firstAmbient;
@@ -1163,10 +1178,11 @@ struct SoundChannelLayout {
 	uint16 end;
 };
 
-static const SoundChannelLayout kSoundChannelLayout = { 0, 6, 6, 14, 24, kNumSoundChannels };
-static const SoundChannelLayout kNancy22SoundChannelLayout = { 0, 3, 8, 16, 26, kNumSoundChannels };
-static const SoundChannelLayout kNancy24SoundChannelLayout = { 0, 3, 6, 14, 26, kNumSoundChannels };
-static const SoundChannelLayout kNancy27SoundChannelLayout = { 0, 3, 3, 11, 26, kNumSoundChannels };
+static const SoundChannelLayout kSoundChannelLayout = { 1, 0, 6, 6, 14, 24, kNumSoundChannels };
+static const SoundChannelLayout kNancy22SoundChannelLayout = { 1, 0, 3, 8, 16, 26, kNumSoundChannels };
+static const SoundChannelLayout kNancy24SoundChannelLayout = { 1, 0, 3, 6, 14, 26, kNumSoundChannels };
+static const SoundChannelLayout kNancy27SoundChannelLayout = { 1, 0, 3, 3, 11, 26, kNumSoundChannels };
+static const SoundChannelLayout kNancy29SoundChannelLayout = { 2, 0, 4, 4, 12, 28, kNancy29NumSoundChannels };
 
 static const SoundChannelLayout &getSoundChannelLayout() {
 	if (g_nancy->getGameType() <= kGameTypeNancy21) {
@@ -1175,9 +1191,11 @@ static const SoundChannelLayout &getSoundChannelLayout() {
 		return kNancy22SoundChannelLayout;
 	} else if (g_nancy->getGameType() <= kGameTypeNancy26) {
 		return kNancy24SoundChannelLayout;
+	} else if (g_nancy->getGameType() <= kGameTypeNancy28) {
+		return kNancy27SoundChannelLayout;
 	}
 
-	return kNancy27SoundChannelLayout;
+	return kNancy29SoundChannelLayout;
 }
 
 void pushSoundChannel(lua_State *L, uint16 channel) {
@@ -1213,7 +1231,14 @@ bool isVoicePlaying() {
 }
 
 static bool findSoundChannel(const char *name, uint16 &result) {
-	if (g_nancy->getGameType() >= kGameTypeNancy27) {
+	if (g_nancy->getGameType() >= kGameTypeNancy29) {
+		for (const SoundChannelName &channel : kNancy29SoundChannelNames) {
+			if (scumm_stricmp(channel.name, name) == 0) {
+				result = channel.channel;
+				return true;
+			}
+		}
+	} else if (g_nancy->getGameType() >= kGameTypeNancy27) {
 		for (const SoundChannelName &channel : kNancy27SoundChannelNames) {
 			if (scumm_stricmp(channel.name, name) == 0) {
 				result = channel.channel;
@@ -1272,7 +1297,7 @@ static void getChannelRange(uint16 channel, uint16 &first, uint16 &last) {
 		last = layout.end - 1;
 		break;
 	case kChannelAllExceptTheme:
-		first = 1;
+		first = layout.firstAfterTheme;
 		last = layout.end - 1;
 		break;
 	case kChannelAllMusic:
