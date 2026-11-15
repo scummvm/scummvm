@@ -387,6 +387,7 @@ static const KeyName kKeyNames[] = {
 	{ "CTRL", Common::KEYCODE_LCTRL },
 	{ "SHIFT", Common::KEYCODE_LSHIFT },
 	{ "BACKSPACE", Common::KEYCODE_BACKSPACE },	// Nancy20
+	{ "BACKTICK", Common::KEYCODE_BACKQUOTE },	// Nancy30
 	{ "NUMPAD0", Common::KEYCODE_KP0 },
 	{ "NUMPAD1", Common::KEYCODE_KP1 },
 	{ "NUMPAD2", Common::KEYCODE_KP2 },
@@ -448,13 +449,16 @@ static const luaL_Reg kKeyFunctions[] = {
 static const uint kDifficultyJunior = 0;
 static const uint kDifficultySenior = 2;
 
-// Game:ShowLink(key), Nancy25: opens the URL in the autotext entry for the
-// key in a web browser. Returns whether it was opened.
+// Game:ShowLink(key[, isDirect]), Nancy25: opens the URL in the autotext entry
+// for the key in a web browser. Returns whether it was opened. Nancy30 takes
+// the key as the URL itself when isDirect is set.
 static int gameShowLink(lua_State *L) {
 	const char *key = luaL_checkstring(L, 2);
 
 	Common::String url;
-	if (!findText(key, url)) {
+	if (lua_gettop(L) > 2 && lua_toboolean(L, 3)) {
+		url = key;
+	} else if (!findText(key, url)) {
 		return luaL_error(L, "Autotext '%s' not found", key);
 	}
 

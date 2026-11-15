@@ -549,6 +549,9 @@ static int pointIndex(lua_State *L) {
 		lua_pushnumber(L, point.x);
 	} else if (key == "y") {
 		lua_pushnumber(L, point.y);
+	} else if (key == "len") {
+		// Nancy30: the distance from the origin
+		lua_pushnumber(L, sqrt(point.x * point.x + point.y * point.y));
 	} else {
 		return indexFunctions(L);
 	}

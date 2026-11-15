@@ -453,6 +453,14 @@ static bool pushGameField(lua_State *L, const Common::String &key) {
 		// Nancy29: the DebugOutput setting of the game's INI file, which the
 		// release has switched off. The cheat tools need it for the inspector.
 		lua_pushboolean(L, false);
+	} else if (key == "isSidecar" || key == "hasSidecar") {
+		// Nancy30: whether the exe runs as, or next to, the developers' Sidecar
+		// tool, which starts and stops the game. Never in the release.
+		lua_pushboolean(L, false);
+	} else if (key == "exeName") {
+		// Nancy30: the name of the exe file, which only Sidecar_Main_SC uses
+		// to start the game again
+		lua_pushstring(L, "");
 	} else if (key == "buildNumber") {
 		const ScriptBootData *boot = GetEngineData(ScriptBootData);
 		lua_pushstring(L, boot ? boot->buildNumber.c_str() : "");
