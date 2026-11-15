@@ -134,6 +134,11 @@ public:
 	double getTime() const { return _time; }
 	double getElapsedTime() const { return _elapsedTime; }	// of the last frame
 
+	// Nancy31: whether Lua only collects garbage once a frame, as it always
+	// does from Nancy20 on, or whenever it likes
+	bool isGCThrottled() const { return _isGCThrottled; }
+	void setGCThrottled(bool isThrottled);
+
 	// Enhancement: skips the movies that are playing. They are played through
 	// a frame at a time, without their sounds, so that everything the scripts
 	// tie to them still happens. Returns false when there is nothing to skip.
@@ -233,6 +238,7 @@ private:
 
 	double _time = 0.0;
 	double _elapsedTime = 0.0;
+	bool _isGCThrottled = true;
 	bool _hasRunOnce = false;
 	bool _makesUI = false;
 	bool _isSkipping = false;

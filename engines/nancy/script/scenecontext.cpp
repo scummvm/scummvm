@@ -487,6 +487,13 @@ void SceneContext::renderAttachment() {
 	callSceneFunction("RenderAttachment", 1);
 }
 
+void SceneContext::setGCThrottled(bool isThrottled) {
+	if (isThrottled != _isGCThrottled) {
+		_isGCThrottled = isThrottled;
+		lua_gc(getLua(), isThrottled ? LUA_GCSTOP : LUA_GCRESTART, 0);
+	}
+}
+
 void SceneContext::runFrame(double elapsedTime) {
 	lua_State *L = getLua();
 
@@ -500,9 +507,12 @@ void SceneContext::runFrame(double elapsedTime) {
 	// Nancy20 collects what the scripts let go of once a frame, and only then.
 	// That takes out the records that belonged to the scripts.
 	if (g_nancy->getGameType() >= kGameTypeNancy20) {
-		lua_gc(L, LUA_GCRESTART, 0);
-		lua_gc(L, LUA_GCCOLLECT, 0);
-		lua_gc(L, LUA_GCSTOP, 0);
+		if (_isGCThrottled) {
+			lua_gc(L, LUA_GCRESTART, 0);
+			lua_gc(L, LUA_GCCOLLECT, 0);
+			lua_gc(L, LUA_GCSTOP, 0);
+		}
+
 		deleteDroppedRecords();
 	}
 

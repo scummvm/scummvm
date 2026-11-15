@@ -1434,6 +1434,8 @@ static int sceneIndex(lua_State *L) {
 		lua_pushinteger(L, context->getFrame());
 	} else if (key == "streamName") {
 		lua_pushstring(L, context->getStreamName().c_str());
+	} else if (key == "isGCThrottled") {
+		lua_pushboolean(L, context->isGCThrottled());
 	} else {
 		return indexFunctions(L);
 	}
@@ -1449,6 +1451,12 @@ static const char *const kSceneFunctionNames[] = {
 static int sceneNewIndex(lua_State *L) {
 	SceneContext *context = checkContext(L);
 	const char *key = luaL_checkstring(L, 2);
+
+	// Nancy31
+	if (strcmp(key, "isGCThrottled") == 0) {
+		context->setGCThrottled(lua_toboolean(L, 3) != 0);
+		return 0;
+	}
 
 	if (!lua_isfunction(L, 3)) {
 		return luaL_error(L, "Can only set functions to the Scene object");
