@@ -1,0 +1,55 @@
+Ultima II textured dungeon pictures
+===================================
+
+With the Standard, Classic (v1.0) and Alternate (Wiltshire) EGA graphics modes and the "Use textured
+dungeon walls" option, the first person view in the dungeons and towers is drawn from the pictures in
+files/ultima2/dungeons, and the monsters in it from the pictures in files/ultima2/monsters, rather
+than from lines and blocks. Any picture that is missing is drawn the old way, so they can be replaced
+one at a time. (The Commodore 64 mode keeps its own look.)
+
+The colors
+----------
+The EGA modes use 16 colors, in palette entries 16 to 31, and the rest of the 256 are free. A standard
+set of colors fills entries 48 to 255 (ramps of grays, stone, wood, rust, moss, gold, iron, flesh, red,
+green, blue, pale yellow, purple and cyan, each from dark to light). They are defined in the RAMPS in
+gen_ultima2_dungeons.py, which writes them to files/ultima2/dungeons/palette.pal (208 colors, 8 bits
+each of red, green and blue) for the game to load. Every PNG has the whole 256 color palette in it, so
+they look right in an editor, but the game draws the palette indexes. Draw with entries 48 to 255 so
+that the pictures look the same in every EGA mode. Entry 0 is transparent (the PNGs have a tRNS chunk
+saying so).
+
+The dungeon pictures
+--------------------
+256x128 pixel PNGs, which are layers the size of the corridor (it's drawn 16 pixels in from the left
+and top of the game screen). Their shapes are worked out from the same tables as the original wire
+frame view (views/dungeon_map.cpp). Depth 0 is the square the party is on, and each is drawn at the
+depths it can be seen at:
+
+  front_0..7              the wall at the end of the corridor
+  left_0..6, right_0..6   the walls at the sides
+  leftopen_0..6, rightopen_0..6   openings in the sides, which show the far wall of the passage
+  frontdoor_0..7          a door in the wall at the end
+  leftdoor_0..6, rightdoor_0..6   doors in the walls at the sides
+  ladderup_0..6, ladderdown_0..6  a ladder up through the ceiling, and one down through the floor
+  chest_0..6              a chest
+  doorway                 the wall seen from a doorway the party is standing in, with the way through
+                          left open
+
+Ladders and chests are drawn last, farthest first, so that they're over any walls drawn after them.
+
+The monsters
+------------
+monsters/monster_K_D.png, for the 7 kinds of monster K in the order of the game's dungeon monsters
+(1 imp, 2 ghost, 3 jellyfish, 4 serpent, 5 gremlin, 6 horned demon, 7 winged demon) at each depth D from
+1 to 7 squares down the corridor. Each is a 256x128 layer in the same geometry. The monster stands in the
+middle with its feet on the floor of that depth, and is about as tall as the corridor is there (57 pixels
+at depth 1, half that at depth 2, and so on).
+
+Regenerating the stand-ins
+--------------------------
+python gen_ultima2_dungeons.py ../../../engines/ultima/ultima2/views/dungeon_map.cpp ../files/ultima2/dungeons
+python gen_ultima2_monsters.py ../../../engines/ultima/ultima2/views/dungeon_map.cpp ../files/ultima2/monsters
+
+Adding a .png name after those arguments also draws a preview of some views (dungeons) or of the
+monsters at the first depths. The stand-ins are made by programs, written with the help of an AI
+assistant (Claude), and are meant to be replaced by hand drawn art.

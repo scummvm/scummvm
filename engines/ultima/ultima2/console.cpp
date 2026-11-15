@@ -23,6 +23,7 @@
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/data/tiles.h"
+#include "ultima/ultima2/logic/dungeon_logic.h"
 #include "ultima/ultima2/logic/overworld_logic.h"
 #include "ultima/ultima2/logic/space_logic.h"
 
@@ -189,10 +190,14 @@ bool Console::cmdLocations(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdEnemy(int, const char **) {
+bool Console::cmdEnemy(int argc, const char **argv) {
 	Data::Savegame &sg = _G(savegame);
+
+	if (dynamic_cast<Logic::DungeonLogic *>(_G(logic).get()))
+		return spawnDungeonEnemy(argc, argv);
+
 	if (sg._mapType != 0) {
-		debugPrintf("Only supported on the overworld map\n");
+		debugPrintf("Only supported on the overworld map and in dungeons\n");
 		return true;
 	}
 
@@ -261,6 +266,74 @@ bool Console::cmdEnemy(int, const char **) {
 
 	g_engine->focusedView()->redraw();
 	debugPrintf("Spawned enemy in slot %d at (%d,%d)\n", slot, spawnX, spawnY);
+	return true;
+}
+
+bool Console::spawnDungeonEnemy(int argc, const char **argv) {
+	if (argc > 3) {
+		debugPrintf("enemy [<monster number> [<distance>]]\n");
+		return true;
+	}
+
+	Data::Savegame &sg = _G(savegame);
+	Data::MapMonsters &monsters = _G(map)._monsters;
+	const int level = sg._dungeonLevel;
+	const int type = argc > 1 ? atoi(argv[1]) : 1;
+	const int distance = argc > 2 ? atoi(argv[2]) : 1;
+
+	if (type < 1 || type > 7) {
+		debugPrintf("Monster number must be from 1 to 7\n");
+		return true;
+	}
+	if (distance < 1) {
+		debugPrintf("Distance must be at least 1\n");
+		return true;
+	}
+
+	const int x = sg._mapX + sg._facingX * distance;
+	const int y = sg._mapY + sg._facingY * distance;
+	if (x < 0 || y < 0 || x >= Data::DUNGEON_WIDTH || y >= Data::DUNGEON_HEIGHT) {
+		debugPrintf("(%d,%d) is outside the map\n", x, y);
+		return true;
+	}
+
+	byte &cell = _G(dungeon).cell(level, x, y);
+	if (cell & 0x80) {
+		debugPrintf("(%d,%d) is a wall\n", x, y);
+		return true;
+	}
+	if (cell & 7) {
+		debugPrintf("(%d,%d) already has a monster\n", x, y);
+		return true;
+	}
+
+	// The level's own slots are used first, as the game does
+	int slot = -1;
+	for (int i = level * 2; i <= level * 2 + 1 && slot < 0; ++i) {
+		if (i >= 1 && !monsters.isActive(i))
+			slot = i;
+	}
+	for (int i = 31; i >= 1 && slot < 0; --i) {
+		if (!monsters.isActive(i))
+			slot = i;
+	}
+	if (slot < 0) {
+		debugPrintf("No free monster slots\n");
+		return true;
+	}
+
+	monsters._mapX[slot] = x;
+	monsters._mapY[slot] = y;
+	monsters._glyphTile[slot] = level;
+	monsters._type[slot] = type;
+	monsters._spellHP[slot] = (byte)((type * 2 + level) * 8) | 0x10;
+	monsters._offerFlag[slot] = 0;
+	monsters._tempX[slot] = 0;
+	monsters._tempY[slot] = 0;
+	cell |= type;
+
+	g_engine->focusedView()->redraw();
+	debugPrintf("Spawned monster %d in slot %d at (%d,%d)\n", type, slot, x, y);
 	return true;
 }
 

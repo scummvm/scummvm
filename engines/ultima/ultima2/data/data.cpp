@@ -24,6 +24,7 @@
 #include "common/translation.h"
 #include "graphics/paletteman.h"
 #include "ultima/ultima2/data/data.h"
+#include "ultima/ultima2/gfx/dungeon_pictures.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -101,6 +102,7 @@ void setPalette() {
 
 	palette.set(EGA_PALETTE16, EGA_PALETTE_BASE, EGA_PALETTE_SIZE);
 	loadCompositePalette(palette);
+	Gfx::DungeonPictures::loadPalette(palette);
 	g_system->getPaletteManager()->setPalette(palette);
 }
 

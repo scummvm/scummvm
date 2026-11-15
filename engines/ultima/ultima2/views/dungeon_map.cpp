@@ -24,6 +24,7 @@
 #include "graphics/paletteman.h"
 #include "ultima/ultima2/data/data.h"
 #include "ultima/ultima2/gfx/composite.h"
+#include "ultima/ultima2/gfx/dungeon_pictures.h"
 #include "ultima/ultima2/gfx/pic_decoder.h"
 #include "ultima/ultima2/views/dungeon_map.h"
 #include "ultima/ultima2/ultima2.h"
@@ -210,6 +211,22 @@ public:
 		}
 	}
 
+	// The border of the view, which is always drawn
+	void frame() {
+		_depth = 0;
+		frontWall();
+	}
+
+	// A wall with a door in it
+	void frontDoorWall() {
+		frontWall();
+		frontDoor();
+	}
+
+	// What's left to draw once all of it has been walked
+	void finish() {
+	}
+
 	void leftOpen() {
 		_x1 = _x2 = t(LEFT_X);
 		_y1 = t(TOP_Y);
@@ -383,6 +400,180 @@ public:
 	}
 };
 
+/**
+ * Draws the same things as the Painter does, but from pictures, using it to
+ * draw any that there's no picture of. The ladders and chests are drawn last,
+ * since they're in front of anything drawn after them
+ */
+class PicturePainter {
+private:
+	typedef Gfx::DungeonPictures Pictures;
+
+	struct Thing {
+		Pictures::Kind _kind;
+		int _depth;
+	};
+
+	Graphics::Views::GfxSurface &_s;
+	Painter _lines;
+	Common::Array<Thing> _things;
+
+	bool draw(Pictures::Kind kind) {
+		_lines._depth = _depth;
+		return Pictures::draw(_s, kind, _depth, VIEW_OFFSET);
+	}
+
+public:
+	int _depth = 0;
+
+	PicturePainter(Graphics::Views::GfxSurface &s, byte color) : _s(s), _lines(s, color) {
+	}
+
+	void frame() {
+	}
+
+	void frontWall() {
+		if (!draw(Pictures::FRONT))
+			_lines.frontWall();
+	}
+
+	void frontDoor() {
+		if (!draw(Pictures::FRONT_DOOR))
+			_lines.frontDoor();
+	}
+
+	void frontDoorWall() {
+		// Standing in a doorway has the wall round it, and the way through is open
+		if (_depth == 0 && Pictures::drawDoorway(_s, VIEW_OFFSET))
+			return;
+
+		frontWall();
+		frontDoor();
+	}
+
+	void leftWall() {
+		if (!draw(Pictures::LEFT))
+			_lines.leftWall();
+	}
+
+	void rightWall() {
+		if (!draw(Pictures::RIGHT))
+			_lines.rightWall();
+	}
+
+	void leftOpen() {
+		if (!draw(Pictures::LEFT_OPEN))
+			_lines.leftOpen();
+	}
+
+	void rightOpen() {
+		if (!draw(Pictures::RIGHT_OPEN))
+			_lines.rightOpen();
+	}
+
+	void leftDoor() {
+		if (!draw(Pictures::LEFT_DOOR))
+			_lines.leftDoor();
+	}
+
+	void rightDoor() {
+		if (!draw(Pictures::RIGHT_DOOR))
+			_lines.rightDoor();
+	}
+
+	void ladderUp() {
+		_things.push_back({ Pictures::LADDER_UP, _depth });
+	}
+
+	void ladderDown() {
+		_things.push_back({ Pictures::LADDER_DOWN, _depth });
+	}
+
+	void chest() {
+		_things.push_back({ Pictures::CHEST, _depth });
+	}
+
+	void finish() {
+		for (int i = (int)_things.size() - 1; i >= 0; --i) {
+			_depth = _things[i]._depth;
+
+			if (!draw(_things[i]._kind)) {
+				switch (_things[i]._kind) {
+				case Pictures::LADDER_UP:
+					_lines.ladderUp();
+					break;
+				case Pictures::LADDER_DOWN:
+					_lines.ladderDown();
+					break;
+				default:
+					_lines.chest();
+					break;
+				}
+			}
+		}
+	}
+};
+
+/**
+ * Goes down the corridor, drawing what's in view with a painter, and returns the depth
+ * it got to
+ */
+template<class Drawer>
+int walkCorridor(Drawer &p, const byte *left, const byte *center, const byte *right) {
+	p.frame();
+
+	int d = 0;
+	for (;;) {
+		p._depth = d;
+		byte c = center[d];
+
+		if (c & TERRAIN_WALL) {
+			if ((c & TERRAIN_DOOR) == 0 || (c & TERRAIN_SECRET) != 0) {
+				p.frontWall();
+				break;
+			}
+
+			p.frontDoorWall();
+			if (d != 0)
+				break;
+
+			++d;
+			continue;
+		}
+
+		if (c & TERRAIN_LADDER_DOWN)
+			p.ladderDown();
+		if (c & TERRAIN_LADDER_UP)
+			p.ladderUp();
+		else if (c & TERRAIN_CHEST)
+			p.chest();
+
+		byte l = left[d];
+		if (l & TERRAIN_WALL) {
+			p.leftWall();
+			if ((l & TERRAIN_DOOR) && !(l & TERRAIN_SECRET))
+				p.leftDoor();
+		} else {
+			p.leftOpen();
+		}
+
+		byte r = right[d];
+		if (r & TERRAIN_WALL) {
+			p.rightWall();
+			if ((r & TERRAIN_DOOR) && !(r & TERRAIN_SECRET))
+				p.rightDoor();
+		} else {
+			p.rightOpen();
+		}
+
+		if (++d >= MAX_DEPTH - 1)
+			break;
+	}
+
+	p.finish();
+	return d;
+}
+
 } // namespace
 
 DungeonMap::DungeonMap() : Map("DungeonMap") {
@@ -508,56 +699,15 @@ int DungeonMap::drawCorridor(Graphics::Views::GfxSurface &s) {
 		ry = y + fy;
 	}
 
-	Painter p(s, Data::isEgaMode(g_engine->getRenderMode()) ?
-		Data::EGA_PALETTE_BASE + 15 : COLOR_LINE);
-	p._depth = 0;
-	p.frontWall();
+	const byte color = Data::isEgaMode(g_engine->getRenderMode()) ? Data::EGA_PALETTE_BASE + 15 : COLOR_LINE;
+	int d;
 
-	int d = 0;
-	for (;;) {
-		p._depth = d;
-		byte c = center[d];
-
-		if (c & TERRAIN_WALL) {
-			p.frontWall();
-			if ((c & TERRAIN_DOOR) == 0 || (c & TERRAIN_SECRET) != 0)
-				break;
-
-			p.frontDoor();
-			if (d != 0)
-				break;
-
-			++d;
-			continue;
-		}
-
-		if (c & TERRAIN_LADDER_DOWN)
-			p.ladderDown();
-		if (c & TERRAIN_LADDER_UP)
-			p.ladderUp();
-		else if (c & TERRAIN_CHEST)
-			p.chest();
-
-		byte l = left[d];
-		if (l & TERRAIN_WALL) {
-			p.leftWall();
-			if ((l & TERRAIN_DOOR) && !(l & TERRAIN_SECRET))
-				p.leftDoor();
-		} else {
-			p.leftOpen();
-		}
-
-		byte r = right[d];
-		if (r & TERRAIN_WALL) {
-			p.rightWall();
-			if ((r & TERRAIN_DOOR) && !(r & TERRAIN_SECRET))
-				p.rightDoor();
-		} else {
-			p.rightOpen();
-		}
-
-		if (++d >= MAX_DEPTH - 1)
-			break;
+	if (Gfx::DungeonPictures::isActive()) {
+		PicturePainter p(s, color);
+		d = walkCorridor(p, left, center, right);
+	} else {
+		Painter p(s, color);
+		d = walkCorridor(p, left, center, right);
 	}
 
 	drawMonster(s, monsters, d + 1);
@@ -570,6 +720,9 @@ void DungeonMap::drawMonster(Graphics::Views::GfxSurface &s, const byte *monster
 			continue;
 
 		// Only the nearest monster in view is drawn
+		if (Gfx::DungeonPictures::isActive() && Gfx::DungeonPictures::drawMonster(s, monsters[d], d, VIEW_OFFSET))
+			return;
+
 		int offset = (d == 1) ? monsters[d] * 256 : SPRITE_BAND_OFFSETS[d];
 		Data::RenderMode mode = g_engine->getRenderMode();
 		bool ega = Data::isEgaMode(mode);
@@ -609,11 +762,16 @@ void DungeonMap::draw() {
 	if (_inverted) {
 		// Inverts the bits of the color, which for the EGA colors is all four
 		const bool ega = Data::isEgaMode(g_engine->getRenderMode());
+		const bool pictures = Gfx::DungeonPictures::isActive();
 
 		for (int y = 0; y < s.h; ++y) {
 			byte *pixels = (byte *)s.getBasePtr(0, y);
-			for (int x = 0; x < s.w; ++x)
-				pixels[x] = ega ? Data::EGA_PALETTE_BASE + ((pixels[x] ^ 0xF) & 0xF) : pixels[x] ^ 3;
+			for (int x = 0; x < s.w; ++x) {
+				if (pictures && pixels[x] >= Gfx::DungeonPictures::PALETTE_BASE)
+					pixels[x] = Gfx::DungeonPictures::invert(pixels[x]);
+				else
+					pixels[x] = ega ? Data::EGA_PALETTE_BASE + ((pixels[x] ^ 0xF) & 0xF) : pixels[x] ^ 3;
+			}
 		}
 
 		s.markAllDirty();

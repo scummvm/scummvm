@@ -115,6 +115,7 @@ MODULE_OBJS += \
 	ultima2/data/secret_archive.o \
 	ultima2/data/tiles.o \
 	ultima2/gfx/composite.o \
+	ultima2/gfx/dungeon_pictures.o \
 	ultima2/gfx/ega_picture.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/gfx/text.o \

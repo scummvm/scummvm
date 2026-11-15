@@ -30,6 +30,7 @@
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/metaengine.h"
 #include "ultima/ultima2/data/secret_archive.h"
+#include "ultima/ultima2/gfx/dungeon_pictures.h"
 #include "ultima/ultima2/gfx/text.h"
 #include "ultima/ultima2/logic/space_logic.h"
 #include "ultima/ultima2/views/views.h"
@@ -52,6 +53,7 @@ Ultima2Engine::Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 }
 
 Ultima2Engine::~Ultima2Engine() {
+	Gfx::DungeonPictures::unload();
 	delete _pcSpeaker;
 }
 
@@ -71,6 +73,7 @@ void Ultima2Engine::loadOptions() {
 	_statBoostChoice = Shared::configuredOption("stat_boost_choice", isEnhanced());
 	_mixedCaseText = Shared::configuredOption("mixed_case_text", isEnhanced());
 	_lessHunger = Shared::configuredOption("less_hunger", isEnhanced());
+	Gfx::DungeonPictures::setEnabled(Shared::configuredOption("picture_dungeons", isEnhanced()));
 }
 
 Common::String Ultima2Engine::getGameId() const {
@@ -291,6 +294,10 @@ void Ultima2Engine::applyGameSettings() {
 	// The options can be changed from the in-game options dialog
 	loadOptions();
 	setRenderMode(configuredRenderMode(isEnhanced()));
+
+	// The dungeon pictures can be turned on and off without changing the mode
+	if (focusedView())
+		focusedView()->redraw();
 }
 
 void Ultima2Engine::setRenderMode(Data::RenderMode mode) {

@@ -263,6 +263,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_ULTIMA2_PICTURE_DUNGEONS,
+		{
+			_s("Use textured dungeon walls"),
+			_s("Draws the view in dungeons using pictures of stone walls, doors, ladders, chests and monsters rather than lines. Only used with the EGA graphics, other than Commodore 64"),
+			"picture_dungeons",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_ALWAYS_CHRISTMAS,
 		{
 			_s("Always enable Christmas easter-egg"),
