@@ -119,6 +119,14 @@ private:
 	double _tileSize[2] = { 0.0, 0.0 };
 	bool _hasCursorTile = false;
 	Common::Point32 _cursorTile;
+
+	// Nancy31. A hotspot that allows sliding stops being under the mouse once
+	// the mouse moved slideDistance away from where it was pressed, so letting
+	// go of the button doesn't click it, e.g. when the press scrolls a list
+	bool _allowsSlide = false;
+	double _slideDistance = 5.0;
+	Common::Point32 _pressPoint;
+	bool _hasSlid = false;
 };
 
 // Nancy26: catches the player's input in a part of the screen, so whatever is

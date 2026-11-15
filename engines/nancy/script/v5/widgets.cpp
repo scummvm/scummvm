@@ -138,9 +138,18 @@ void HotspotRecord::readTable(int tableIndex) {
 		readPointCoordinates(L, -1, _tileSize[0], _tileSize[1]);
 		lua_pop(L, 1);
 	}
+
+	readField(L, tableIndex, "allowSlide", _allowsSlide);
+	readField(L, tableIndex, "slideDistance", _slideDistance);
 }
 
 void HotspotRecord::onMouseMoved(const Common::Point32 &mouse) {
+	if (_allowsSlide && isDown() && !_hasSlid) {
+		const double dx = (double)mouse.x - _pressPoint.x;
+		const double dy = (double)mouse.y - _pressPoint.y;
+		_hasSlid = sqrt(dx * dx + dy * dy) >= _slideDistance;
+	}
+
 	updateCursorTile(&mouse);
 }
 
@@ -169,6 +178,10 @@ void HotspotRecord::updateCursorTile(const Common::Point32 *mouse) {
 }
 
 bool HotspotRecord::hitTest(const Common::Point32 &point) const {
+	if (_hasSlid && isDown()) {
+		return false;
+	}
+
 	double x = point.x;
 	double y = point.y;
 	getTransform().inverse().transformPoint(x, y);
@@ -243,6 +256,8 @@ bool HotspotRecord::pressRegion(int button) {
 	}
 
 	_pressedButton = button;
+	_pressPoint = getScriptMousePoint();
+	_hasSlid = false;
 	callFunction(button == 0 ? "OnLeftDown" : "OnRightDown");
 	if (_widget) {
 		_widget->onHotspotDown(button);
@@ -357,6 +372,10 @@ bool HotspotRecord::getField(const Common::String &key) {
 		} else {
 			lua_pushnil(L);
 		}
+	} else if (key == "allowSlide") {
+		lua_pushboolean(L, _allowsSlide);
+	} else if (key == "slideDistance") {
+		lua_pushnumber(L, _slideDistance);
 	} else {
 		return false;
 	}
@@ -413,6 +432,10 @@ bool HotspotRecord::setField(const Common::String &key) {
 		updateCursorTile(&getScriptMousePoint());
 	} else if (key == "cursorTile") {
 		luaL_error(L, "Cannot set 'cursorTile' field of a hotspot");
+	} else if (key == "allowSlide") {
+		_allowsSlide = lua_toboolean(L, 3) != 0;
+	} else if (key == "slideDistance") {
+		_slideDistance = luaL_checknumber(L, 3);
 	} else {
 		return false;
 	}
