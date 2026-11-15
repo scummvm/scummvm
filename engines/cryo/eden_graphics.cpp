@@ -24,11 +24,19 @@
 #include "cryo/cryolib.h"
 #include "cryo/eden.h"
 #include "cryo/eden_graphics.h"
+#include "cryo/detection.h"
+
+#include "common/file.h"
 
 #include "graphics/blit.h"
 #include "video/hnm_decoder.h"
 
+#include "cryo/hnm1decoder.h"
+
 namespace Cryo {
+
+// Main view rows: 0-15 top bar, 16-175 picture, 176-199 bottom bar
+static const int16 kPictureBottom = 176;
 
 EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	_glowH = _glowW = _glowY = _glowX = 0;
@@ -46,6 +54,10 @@ EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	_underBarsView = nullptr;
 	_needToFade = false;
 	_eff2pat = 0;
+	_roomVideo = nullptr;
+	_roomVideoNum = 0;
+	_roomVideoIsHNM1 = false;
+	_tracedSpriteIndex = _tracedSpriteBank = _tracedSpriteX = _tracedSpriteY = -1;
 
 	_savedUnderSubtitles = false;
 	_underSubtitlesViewBuf = nullptr;
@@ -63,6 +75,7 @@ EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 }
 
 EdenGraphics::~EdenGraphics() {
+	closeRoomVideo();
 	delete _underBarsView;
 	delete _view2;
 	delete _subtitlesView;
@@ -121,6 +134,17 @@ void EdenGraphics::readPalette(byte *ptr) {
 
 // Original name: noclipax
 void EdenGraphics::drawSprite(int16 index, int16 x, int16 y, bool withBlack, bool onSubtitle) {
+	// Whatever does not change is drawn again every pass round the loop, so
+	// keep to what is new: the same sprite in the same place says nothing twice
+	if (index != _tracedSpriteIndex || x != _tracedSpriteX || y != _tracedSpriteY ||
+	    _game->getCurBankNum() != _tracedSpriteBank) {
+		_tracedSpriteIndex = index;
+		_tracedSpriteBank = _game->getCurBankNum();
+		_tracedSpriteX = x;
+		_tracedSpriteY = y;
+		debugC(4, kDebugGraphics, "Drawing sprite %d of bank %d at %d,%d%s%s", index,
+		       _game->getCurBankNum(), x, y, withBlack ? ", opaque" : "", onSubtitle ? ", on the subtitles" : "");
+	}
 	uint16 width = (!onSubtitle) ? 640 : _subtitlesXWidth;
 	byte *pix = _game->getBankData();
 	byte *buf = (!onSubtitle) ? _mainViewBuf : _subtitlesViewBuf;
@@ -576,6 +600,10 @@ void EdenGraphics::displayImage() {
 		byte mode = *pix++;
 		if (mode != 0xFF && mode != 0xFE)
 			continue;   //TODO: enclosing block?
+		if (y + h > kPictureBottom)
+			h -= (y + h - kPictureBottom);
+		if (h <= 0)
+			continue;
 		if (h1 & 0x80) {
 			// compressed
 			for (; h-- > 0;) {
@@ -669,6 +697,167 @@ void EdenGraphics::displaySubtitles() {
 	}
 }
 
+/**
+ * Blow up a corner of the background just drawn until it fills the picture.
+ * A character is framed against a corner of its own that way, so the one
+ * background stands behind several of them, and it is only the background
+ * which grows: whoever is drawn over it afterwards keeps their own size.
+ */
+void EdenGraphics::zoomBackground(int16 srcX, int16 srcY) {
+	// What fills the picture at twice the size
+	const int16 srcWidth = 320 / 2;
+	const int16 srcHeight = 160 / 2;
+
+	debugC(1, kDebugGraphics, "Blowing up the background from %d,%d (room 0x%X, display flags 0x%02X)",
+	       srcX, srcY, _game->_globals->_roomNum, _game->_globals->_displayFlags);
+
+	srcX = CLIP<int16>(srcX, 0, 320 - srcWidth);
+	srcY = CLIP<int16>(srcY, 0, 160 - srcHeight);
+
+	byte *corner = new byte[srcWidth * srcHeight];
+	for (int16 y = 0; y < srcHeight; y++)
+		memcpy(corner + y * srcWidth, _mainViewBuf + (16 + srcY + y) * 640 + srcX, srcWidth);
+
+	for (int16 y = 0; y < srcHeight * 2; y++) {
+		byte *dst = _mainViewBuf + (16 + y) * 640;
+		const byte *src = corner + (y / 2) * srcWidth;
+		for (int16 x = 0; x < srcWidth * 2; x++)
+			dst[x] = src[x / 2];
+	}
+
+	delete[] corner;
+}
+
+// The picture sits between the two friezes
+static const int16 kPictureTop = 16;
+static const int16 kPictureHeight = 160;
+
+/**
+ * Play the movie a room takes its picture from, into the room's own view, so
+ * that whatever the room draws afterwards lands on top of the frame it leaves.
+ *
+ * A room flagged rf08 has no bank to be drawn from: the number it carries is a
+ * movie, and afsalle plays it here for every such room, whether it scrolls or
+ * not. The Macintosh release has banks in their place and never comes this way.
+ */
+/** Open the movie a room takes its picture from. False when there is none. */
+bool EdenGraphics::openRoomVideo(int16 num) {
+	const uint16 resNum = num - 1 + 485;
+	Common::SeekableReadStream *stream = _game->loadSubStream(resNum);
+	if (!stream)
+		return false;
+
+	_roomVideoIsHNM1 = false;
+	_roomVideo = new Video::HNMDecoder(g_system->getScreenFormat());
+	if (!_roomVideo->loadStream(stream)) {
+		// The valleys are of the older untagged kind. loadStream() takes the
+		// stream over either way, so the second attempt needs one of its own.
+		delete _roomVideo;
+		stream = _game->loadSubStream(resNum);
+		_roomVideoIsHNM1 = true;
+		_roomVideo = new HNM1Decoder();
+		if (!stream || !_roomVideo->loadStream(stream)) {
+			debugC(1, kDebugMovie, "Room movie %d (resource %d) is in no format we decode", num, resNum);
+			delete _roomVideo;
+			_roomVideo = nullptr;
+			return false;
+		}
+	}
+
+	_roomVideoNum = num;
+	_roomVideo->start();
+	return true;
+}
+
+void EdenGraphics::closeRoomVideo() {
+	delete _roomVideo;
+	_roomVideo = nullptr;
+	_roomVideoNum = 0;
+	_roomVideoIsHNM1 = false;
+}
+
+/**
+ * Show one frame of the movie a room takes its picture from, if one is due.
+ * Called every pass round the game's own loop, so the picture goes on moving
+ * for as long as the room is up, and begins again when it runs out.
+ */
+void EdenGraphics::stepRoomVideo() {
+	if (!_roomVideo)
+		return;
+
+	// Only while the room itself is up: whatever else takes the screen over puts
+	// its own flag in place of the one afsalle set
+	if (!(_game->_globals->_displayFlags & DisplayFlags::dfFlag80))
+		return;
+
+	if (_roomVideo->endOfVideo()) {
+		// The water returns to where it started, so it can simply begin again
+		const int16 num = _roomVideoNum;
+		closeRoomVideo();
+		if (!openRoomVideo(num))
+			return;
+	}
+
+	if (!_roomVideo->needsUpdate())
+		return;
+
+	// Two frames to a picture, the even ones its left half and the odd ones its
+	// right. A room which scrolls is both halves, one which does not is the left
+	const int16 dstX = ((_roomVideo->getCurFrame() + 1) & 1) ? 320 : 0;
+
+	const Graphics::Surface *frame = _roomVideo->decodeNextFrame();
+	if (frame) {
+		const int16 w = MIN<int16>(frame->w, 320);
+		const int16 h = MIN<int16>(frame->h, kPictureHeight);
+		for (int16 y = 0; y < h; y++)
+			memcpy(_mainViewBuf + (kPictureTop + y) * 640 + dstX, frame->getBasePtr(0, y), w);
+	}
+
+	if (_roomVideo->hasDirtyPalette()) {
+		// The room has no bank to take a palette from, so this is its palette.
+		// Only the colours the movie names, though: GAAT.HNM names 1 to 128 and
+		// the rest is what everything else, the cursor included, is drawn in
+		uint16 first = 0, last = 255;
+		if (_roomVideoIsHNM1)
+			((HNM1Decoder *)_roomVideo)->getPaletteRange(first, last);
+
+		const byte *framePalette = _roomVideo->getPalette();
+		for (uint16 i = first; i <= last; i++) {
+			color3_t color;
+			color.r = framePalette[i * 3 + 0] << 8;
+			color.g = framePalette[i * 3 + 1] << 8;
+			color.b = framePalette[i * 3 + 2] << 8;
+			CLPalette_SetRGBColor(_globalPalette, i, &color);
+		}
+		debugC(2, kDebugMovie, "Room movie palette: colours %d..%d are its own", first, last);
+		CLBlitter_Send2ScreenNextCopy(_globalPalette, 0, 256);
+	}
+
+	// The loop this is called from ends in display(), which sends the view over
+	// once the cursor is in it; sending it here left a black square behind
+}
+
+/**
+ * Put up the picture of a room which keeps it in a movie, and leave the movie
+ * open so that it goes on moving. Both halves are drawn at once, so the picture
+ * is whole before the room draws anything over it.
+ */
+void EdenGraphics::playRoomVideo(int16 num) {
+	closeRoomVideo();
+	if (!openRoomVideo(num))
+		return;
+
+	debugC(1, kDebugMovie, "Room movie %d, %d frames of %dx%d",
+	       num, _roomVideo->getFrameCount(), _roomVideo->getWidth(), _roomVideo->getHeight());
+
+	// Both halves, so that nothing of the room before this is left showing
+	for (int i = 0; i < 2 && !_roomVideo->endOfVideo(); i++) {
+		while (!_roomVideo->needsUpdate() && !_game->_vm->shouldQuit())
+			_game->_vm->pollEvents(CLIP<uint32>(_roomVideo->getTimeToNextFrame(), 1, 10));
+		stepRoomVideo();
+	}
+}
+
 // Original name afsalle1
 void EdenGraphics::displaySingleRoom(Room *room) {
 	byte *ptr = (byte *)getElem(_game->getPlaceRawBuf(), room->_id - 1);
@@ -704,7 +893,7 @@ void EdenGraphics::displaySingleRoom(Room *room) {
 						addIcon = true;
 				}
 				else if (b0 >= 100) {
-					debug("add object %d", b0 - 100);
+					debugC(3, kDebugGraphics, "Room 0x%X: object %d lies here", _game->_globals->_roomNum, b0 - 100);
 					if (_game->isObjectHere(b0 - 100)) {
 						addIcon = true;
 						_game->_globals->_varF7 = 1;
@@ -726,7 +915,7 @@ void EdenGraphics::displaySingleRoom(Room *room) {
 					ptr += 2;
 					x += _game->_globals->_roomBaseX;
 					ex += _game->_globals->_roomBaseX;
-					debug("add hotspot at %3d:%3d - %3d:%3d, action = %d", x, y, ex, ey, b0);
+					debugC(3, kDebugGraphics, "Room 0x%X: hotspot %3d:%3d - %3d:%3d, action %d", _game->_globals->_roomNum, x, y, ex, ey, b0);
 
 					if (_game->_vm->_showHotspots) {
 						for (int iii = x; iii < ex; iii++)
@@ -780,6 +969,22 @@ void EdenGraphics::displayRoom() {
 	_game->_globals->_displayFlags = DisplayFlags::dfFlag1;
 	_game->_globals->_roomBaseX = 0;
 	_game->_globals->_roomBackgroundBankNum = room->_backgroundBankNum;
+	// afsalle picks up the room image bank before it looks at the flags, so that
+	// is the bank the picture comes from, not the room's own
+	debugC(1, kDebugGraphics, "Room 0x%X: flags 0x%02X, image bank %d, room bank %d, background %d",
+	       _game->_globals->_roomNum, room->_flags, _game->_globals->_roomImgBank,
+	       room->_bank, room->_backgroundBankNum);
+
+	// A room flagged rf08 carries a movie number rather than a bank, and afsalle
+	// plays it whether the room scrolls or not. The six valleys are animations,
+	// GAAT.HNM holding 32 complete 320x160 frames of Chamaar:
+	//
+	//     Chamaar    17 -> GAAT.HNM     Tamara     43 -> TAMA.HNM
+	//     Uluru      41 -> TUNA.HNM     Cantura    44 -> CONT.HNM
+	//     Koto       42 -> KOTO.HNM     Shandovra  45 -> HAND.HNM
+	//
+	// The Macintosh release cut each into a pair of banks and pointed its room
+	// table at those, so following it here loaded two characters for a valley
 	if (room->_flags & RoomFlags::rf08) {
 		_game->_globals->_displayFlags |= DisplayFlags::dfFlag80;
 		if (room->_flags & RoomFlags::rfPanable) {
@@ -788,20 +993,22 @@ void EdenGraphics::displayRoom() {
 			_game->_globals->_varF4 = 0;
 			rundcurs();
 			_game->saveFriezes();
-			_game->useBank(room->_bank - 1);
-			drawSprite(0, 0, 16, true);
-			_game->useBank(room->_bank);
-			drawSprite(0, 320, 16, true);
-			displaySingleRoom(room);
-			_game->_globals->_roomBaseX = 320;
-			displaySingleRoom(room + 1);
 		}
-		else
-			displaySingleRoom(room);
+
+		// Whether it scrolls or not, the picture is the movie
+		playRoomVideo(_game->_globals->_roomImgBank);
+
+		displaySingleRoom(room);
+		if (room->_flags & RoomFlags::rfPanable) {
+			_game->_globals->_roomBaseX = 320;
+			if ((room + 1)->_bank != 65535)
+				displaySingleRoom(room + 1);
+		}
 	}
 	else {
-		//TODO: roomImgBank is garbage here!
-		debug("displayRoom: room 0x%X using bank %d", _game->_globals->_roomNum, _game->_globals->_roomImgBank);
+		closeRoomVideo();
+		// afsalle reads this number and hands it to the player above
+		debugC(1, kDebugGraphics, "Displaying room 0x%X from bank %d", _game->_globals->_roomNum, _game->_globals->_roomImgBank);
 		_game->useBank(_game->_globals->_roomImgBank);
 		displaySingleRoom(room);
 		assert(_game->_vm->_screenView->_pitch == 320);
@@ -894,6 +1101,13 @@ void EdenGraphics::displayEffect2() {
 
 	if (_game->_globals->_var103 == 69) {
 		displayEffect4();
+		return;
+	}
+	// Transition 16 stipples one picture away and the next one in. The DOS
+	// driver orders its dots from a table built as it loads, so these follow
+	// the engine's own order instead
+	if (_game->_globals->_var103 == 16) {
+		effetpix();
 		return;
 	}
 	switch (++_eff2pat) {
@@ -1192,7 +1406,7 @@ void EdenGraphics::effetpix() {
 void EdenGraphics::showMovie(int16 num, char arg1) {
 	Common::SeekableReadStream *stream = _game->loadSubStream(num - 1 + 485);
 	if (!stream) {
-		warning("Could not load movie %d", num);
+		warning("Could not load movie %d (resource %d)", num, num - 1 + 485);
 		return;
 	}
 
@@ -1208,9 +1422,19 @@ void EdenGraphics::showMovie(int16 num, char arg1) {
 
 	Video::VideoDecoder *decoder = new Video::HNMDecoder(g_system->getScreenFormat(), false, palette);
 	if (!decoder->loadStream(stream)) {
-		warning("Could not load movie %d", num);
+		// Some movies use an older, untagged HNM variant that HNMDecoder
+		// doesn't recognize. loadStream() always takes ownership of the
+		// stream, even on failure, so a fresh one is needed for this
+		// second attempt.
 		delete decoder;
-		return;
+		stream = _game->loadSubStream(num - 1 + 485);
+		decoder = new HNM1Decoder();
+		if (!stream || !decoder->loadStream(stream)) {
+			// Some numbers in this range are VOC resources rather than movies
+			debugC(1, kDebugMovie, "Movie %d (resource %d) is in no format we decode", num, num - 1 + 485);
+			delete decoder;
+			return;
+		}
 	}
 
 	if (_game->_globals->_curVideoNum == 92) {
@@ -1232,6 +1456,7 @@ void EdenGraphics::showMovie(int16 num, char arg1) {
 	}
 
 	do {
+		bool newFrame = false;
 		if (decoder->needsUpdate()) {
 			const Graphics::Surface *frame = decoder->decodeNextFrame();
 			if (frame) {
@@ -1246,34 +1471,120 @@ void EdenGraphics::showMovie(int16 num, char arg1) {
 				}
 				CLBlitter_Send2ScreenNextCopy(palette16, 0, 256);
 			}
+			newFrame = true;
 		}
 		_hnmFrameNum = decoder->getCurFrame();
 
-		if (_game->getSpecialTextMode())
-			handleHNMSubtitles();
-		else
+		// The dialog scan that picks a caption marks the line said and steps the
+		// dialog on, so ask only once a frame has been decoded: this loop runs
+		// many times per frame and each pass ate another line
+		if (_game->getSpecialTextMode()) {
+			if (newFrame)
+				handleHNMSubtitles();
+		} else
 			_game->musicspy();
 
-		CLBlitter_CopyView2Screen(_hnmView);
+		// Only blit when there is a new frame; doing it every iteration pushes
+		// the next frame past its due time and starves the movie's sound
+		if (newFrame)
+			CLBlitter_CopyView2Screen(_hnmView);
 		assert(_game->_vm->_screenView->_pitch == 320);
-		_game->_vm->pollEvents();
 
-		if (arg1) {
-			if (_game->_vm->isMouseButtonDown()) {
-				if (!_game->isMouseHeld()) {
-					_game->setMouseHeld();
-					_videoCanceledFlag = true;
-				}
+		// Wait no longer than the time left until the next frame is due
+		bool mouseDown = _game->_vm->isMouseButtonDown(CLIP<uint32>(decoder->getTimeToNextFrame(), 1, 10));
+
+		// Cancelling used to be tied to the letterbox flag, which left the two
+		// logo movies at the very start of the game impossible to click through
+		if (mouseDown) {
+			if (!_game->isMouseHeld()) {
+				_game->setMouseHeld();
+				_videoCanceledFlag = true;
 			}
-			else
-				_game->setMouseNotHeld();
 		}
-
-		g_system->delayMillis(10);
+		else
+			_game->setMouseNotHeld();
 	} while (!_game->_vm->shouldQuit() && !decoder->endOfVideo() && !_videoCanceledFlag);
 
 	delete _hnmView;
 	delete decoder;
+}
+
+// Play a movie loose on the disc rather than inside the resource file. False
+// when the file isn't there or holds nothing we can decode
+bool EdenGraphics::playMovieFile(const Common::String &fileName) {
+	Common::File *stream = new Common::File();
+	if (!stream->open(Common::Path(fileName))) {
+		delete stream;
+		return false;
+	}
+
+	Video::VideoDecoder *decoder = new Video::HNMDecoder(g_system->getScreenFormat());
+	if (!decoder->loadStream(stream)) {
+		// The older, untagged variant. loadStream() takes the stream over
+		// either way, so the second attempt needs one of its own
+		delete decoder;
+		stream = new Common::File();
+		if (!stream->open(Common::Path(fileName))) {
+			delete stream;
+			return false;
+		}
+		decoder = new HNM1Decoder();
+		if (!decoder->loadStream(stream)) {
+			delete decoder;
+			return false;
+		}
+	}
+
+	decoder->start();
+
+	View *view = new View(decoder->getWidth(), decoder->getHeight());
+	view->setSrcZoomValues(0, 0);
+	view->setDisplayZoomValues(decoder->getWidth() * 2, decoder->getHeight() * 2);
+	view->centerIn(_game->_vm->_screenView);
+
+	// These movies differ in height, so blank the screen or the previous one
+	// shows around the edges of a shorter one
+	CLBlitter_FillScreenView(0);
+
+	color_t palette[256];
+	bool canceled = false;
+	do {
+		bool newFrame = false;
+		if (decoder->needsUpdate()) {
+			const Graphics::Surface *frame = decoder->decodeNextFrame();
+			if (frame) {
+				Graphics::copyBlit(view->_bufferPtr, (const byte *)frame->getPixels(),
+				                   view->_pitch, frame->pitch, frame->w, frame->h, 1);
+			}
+			if (decoder->hasDirtyPalette()) {
+				const byte *framePalette = decoder->getPalette();
+				for (int i = 0; i < 256; i++) {
+					palette[i].r = framePalette[(i * 3) + 0] << 8;
+					palette[i].g = framePalette[(i * 3) + 1] << 8;
+					palette[i].b = framePalette[(i * 3) + 2] << 8;
+				}
+				CLBlitter_Send2ScreenNextCopy(palette, 0, 256);
+			}
+			newFrame = true;
+		}
+
+		if (newFrame)
+			CLBlitter_CopyView2Screen(view);
+
+		// A click moves on to the next movie, as pressing a key did with the
+		// viewer the demo's batch file called
+		if (_game->_vm->isMouseButtonDown(CLIP<uint32>(decoder->getTimeToNextFrame(), 1, 10))) {
+			if (!_game->isMouseHeld()) {
+				_game->setMouseHeld();
+				canceled = true;
+			}
+		} else
+			_game->setMouseNotHeld();
+	} while (!_game->_vm->shouldQuit() && !decoder->endOfVideo() && !canceled);
+
+	delete view;
+	delete decoder;
+	return true;
 }
 
 bool EdenGraphics::getShowBlackBars() {
@@ -1336,6 +1647,10 @@ void EdenGraphics::playHNM(int16 num) {
 		_game->_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 	if (_game->_globals->_curVideoNum == 149)
 		_game->_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+
+	// A left over index keeps matching the movie's caption lines, which then
+	// win over whatever else wants to speak, the panel included
+	_game->_globals->_videoSubtitleIndex = 0;
 }
 
 void EdenGraphics::initGlobals() {
