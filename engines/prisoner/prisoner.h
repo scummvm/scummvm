@@ -1340,7 +1340,7 @@ public:
 	Common::Error savegame(const char *filename, const char *description);
 	Common::Error loadgame(const char *filename);
 	void syncGameState(Common::Serializer &s);
-	const char *getSavegameFilename(int num);
+	Common::String getSavegameFilename(int num) const;
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
 

@@ -781,17 +781,15 @@ bool PrisonerEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error PrisonerEngine::loadGameState(int slot) {
-	return loadgame(getSavegameFilename(slot));
+	return loadgame(getSavegameFilename(slot).c_str());
 }
 
 Common::Error PrisonerEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
-	return savegame(getSavegameFilename(slot), description.c_str());
+	return savegame(getSavegameFilename(slot).c_str(), description.c_str());
 }
 
-const char *PrisonerEngine::getSavegameFilename(int num) {
-	static Common::String filename;
-	filename = getSavegameFilename(_targetName, num);
-	return filename.c_str();
+Common::String PrisonerEngine::getSavegameFilename(int num) const {
+	return getSavegameFilename(_targetName, num);
 }
 
 Common::String PrisonerEngine::getSavegameFilename(const Common::String &target, int num) {

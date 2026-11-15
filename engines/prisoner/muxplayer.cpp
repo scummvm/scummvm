@@ -171,13 +171,10 @@ void MuxPlayer::handleFrame() {
 	uint16 chunkType;
 	uint32 chunkSize;
 
-	static int chunkNum = 0;
-
 	do {
 		chunkType = _fd.readUint16LE();
 		chunkSize = _fd.readUint32LE();
 
-		debug(3, "chunkNum = %d; ", chunkNum++);
 		debug(3, "chunkType = %04X; chunkSize = %d (%08X); ofs = %08X", chunkType, chunkSize, chunkSize, _fd.pos());
 
 		switch (chunkType) {
