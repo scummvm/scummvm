@@ -2723,6 +2723,12 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 	// Another time through
 	++_numPlayed;
 	if (_numLoops == 0 || _numPlayed < _numLoops) {
+		// Nancy30 shows still pictures as looping movies of one frame, which would
+		// be decoded again every time through
+		if (_firstFrame == _lastFrame && _player.getCurrentFrame() == _firstFrame) {
+			return;
+		}
+
 		_player.playRange(_firstFrame, _lastFrame);
 		drawFrame();
 		return;
