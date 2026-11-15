@@ -244,9 +244,10 @@ void NancyMetaEngine::registerDefaultSettings(const Common::String &target) cons
 }
 
 // Nancy28 uses the achievements of its Steam release, its only release.
-// Nancy29 keeps its achievements in a file instead of using Steam.
+// Nancy29 and Nancy30 keep their achievements in a file instead of using Steam.
 Common::AchievementsPlatform NancyMetaEngine::getAchievementsPlatform(const Common::String &target) const {
-	if (ConfMan.get("gameid", target) == "nancy29") {
+	const Common::String gameId = ConfMan.get("gameid", target);
+	if (gameId == "nancy29" || gameId == "nancy30") {
 		return Common::UNK_ACHIEVEMENTS;
 	}
 
@@ -257,6 +258,7 @@ const Common::AchievementDescriptionList *NancyMetaEngine::getAchievementDescrip
 	static const Common::AchievementDescriptionList achievementDescriptionList[] = {
 		{ "nancy28", Common::STEAM_ACHIEVEMENTS, "226820" },
 		{ "nancy29", Common::UNK_ACHIEVEMENTS, "nancy29" },
+		{ "nancy30", Common::UNK_ACHIEVEMENTS, "nancy30" },
 		ACHIEVEMENT_DESC_TABLE_END_MARKER
 	};
 
