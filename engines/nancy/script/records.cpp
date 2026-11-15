@@ -1301,6 +1301,31 @@ bool loadTreeImage(const Common::String &name, const Common::String &treeName, G
 #endif
 }
 
+// Nancy30 takes the picture of an overlay from the first frame of a movie
+// when its name says it's one: a background, an animation or a conversation
+static bool isMovieName(const Common::String &name) {
+	if (g_nancy->getGameType() < kGameTypeNancy30) {
+		return false;
+	}
+
+	Common::String upperName = name;
+	upperName.toUppercase();
+	return upperName.hasSuffix("_BG") || upperName.hasSuffix("_ANIM") || upperName.hasSuffix("_CNV");
+}
+
+static bool loadMovieFrame(const Common::String &name, Graphics::ManagedSurface &image) {
+	MoviePlayer player;
+	if (!player.loadFile(Common::Path(name))) {
+		return false;
+	}
+
+	player.goToFrame(0);
+	image.create(player.getWidth(), player.getHeight(), g_nancy->_graphics->getInputPixelFormat(32));
+	image.clear(image.format.ARGBToColor(255, 0, 0, 0));
+	player.drawFrame(image, Common::Point(0, 0));
+	return true;
+}
+
 // Overlays get their pictures from the image cache of the resource manager,
 // and hold on to the cached picture while they use it. Saved pictures aren't
 // cached: every record has its own.
@@ -1309,6 +1334,12 @@ bool loadCachedImage(const Common::String &name, const Common::String &treeName,
 		image.free();
 		cached.reset();
 		return loadTreeImage(name, treeName, image);
+	}
+
+	if (isMovieName(name)) {
+		image.free();
+		cached.reset();
+		return loadMovieFrame(name, image);
 	}
 
 	cached = g_nancy->_resource->loadCachedImage(name, treeName);
