@@ -295,6 +295,14 @@ public:
 	// when neither the source nor onScreen was given
 	void setDefaultRects();
 
+#ifdef ENABLE_NANCY_V5
+	// Nancy31: ar:Copy() keeps showing the picture as it is now, even after the
+	// overlay changes or hides, until ar:DeleteCopy(index) takes it away
+	int addCopy();
+	void deleteCopy(int index);
+	void pushCopies();
+#endif
+
 protected:
 	void readTable(int tableIndex) override;
 	void onZChanged() override;
@@ -309,6 +317,25 @@ private:
 	void readDestTable(Common::Array<ScriptRect> &dests);
 	void applyRects();
 	bool setPicture(const Common::String &imageName);
+
+#ifdef ENABLE_NANCY_V5
+	struct Copy {
+		ScriptRect source;
+		ScriptRect dest;
+		uint32 modColor = 0xFFFFFFFF;
+		double alpha = 1.0;
+		ScriptMatrix transform;
+		bool isUsed = true;
+	};
+
+	void applyCopies();
+
+	Common::Array<Copy> _copies;
+	Common::Array<uint> _freeCopies;	// the slots of deleted copies, reused last one first
+	RecordGraphic _copyGraphic;			// all the copies, drawn into one surface
+	bool _hasCopyGraphic = false;
+	bool _areCopiesStale = false;
+#endif
 
 	Common::SharedPtr<Graphics::ManagedSurface> _cachedImage;	// kept while the record uses it
 	Graphics::ManagedSurface _image;	// the cached picture, or a saved one

@@ -1495,10 +1495,20 @@ void OverlayRecord::applyRects() {
 
 void OverlayRecord::onZChanged() {
 	_graphic.setScriptZ(getZ(), getContext());
+#ifdef ENABLE_NANCY_V5
+	if (_hasCopyGraphic) {
+		_copyGraphic.setScriptZ(getZ(), getContext());
+	}
+#endif
 }
 
 void OverlayRecord::registerGraphics() {
 	_graphic.registerGraphics();
+#ifdef ENABLE_NANCY_V5
+	if (_hasCopyGraphic) {
+		_copyGraphic.registerGraphics();
+	}
+#endif
 }
 
 void OverlayRecord::updateGraphics() {
@@ -1522,6 +1532,18 @@ void OverlayRecord::updateGraphics() {
 		_attachment.setVisible(_isAttachmentDrawn, false);
 		_isAttachmentDrawn = false;
 	}
+
+#ifdef ENABLE_NANCY_V5
+	// The copies show even while the overlay itself is hidden
+	if (_hasCopyGraphic) {
+		if (_areCopiesStale) {
+			applyCopies();
+		}
+
+		_copyGraphic.setClipRect(getScreenClip());
+		_copyGraphic.setVisible(getContext().isStreamVisible() && _freeCopies.size() < _copies.size(), false);
+	}
+#endif
 }
 
 // What a script draws by itself goes over everything else the scene shows
@@ -1645,6 +1667,163 @@ static int overlayDefaultRects(lua_State *L) {
 	return 0;
 }
 
+#ifdef ENABLE_NANCY_V5
+// Returns the index of the copy, counting from 0
+int OverlayRecord::addCopy() {
+	Copy copy;
+	copy.source = _source;
+	copy.dest = _dest;
+	copy.modColor = _modColor;
+	copy.alpha = getAlpha();
+	copy.transform = getTransform();
+
+	uint index;
+	if (_freeCopies.empty()) {
+		index = _copies.size();
+		_copies.push_back(copy);
+	} else {
+		index = _freeCopies.back();
+		_freeCopies.pop_back();
+		_copies[index] = copy;
+	}
+
+	if (!_hasCopyGraphic) {
+		_hasCopyGraphic = true;
+		_copyGraphic.init();
+		_copyGraphic.setVisible(false);
+		_copyGraphic.setScriptZ(getZ(), getContext());
+		_copyGraphic.registerGraphics();
+	}
+
+	_areCopiesStale = true;
+	return index;
+}
+
+void OverlayRecord::deleteCopy(int index) {
+	if (index < 0 || index >= (int)_copies.size() || !_copies[index].isUsed) {
+		return;
+	}
+
+	_copies[index].isUsed = false;
+	_freeCopies.push_back(index);
+	_areCopiesStale = true;
+}
+
+// A table of the copies by their index, each with its source, onScreen,
+// modColor, alpha and transform
+void OverlayRecord::pushCopies() {
+	lua_State *L = getLua();
+
+	lua_newtable(L);
+	for (uint i = 0; i < _copies.size(); ++i) {
+		const Copy &copy = _copies[i];
+		if (!copy.isUsed) {
+			continue;
+		}
+
+		lua_pushinteger(L, i);
+		lua_newtable(L);
+		pushRect(L, copy.source);
+		lua_setfield(L, -2, "source");
+		pushRect(L, copy.dest);
+		lua_setfield(L, -2, "onScreen");
+		pushColor(L, copy.modColor);
+		lua_setfield(L, -2, "modColor");
+		lua_pushnumber(L, copy.alpha);
+		lua_setfield(L, -2, "alpha");
+		pushMatrix(L, copy.transform);
+		lua_setfield(L, -2, "transform");
+		lua_settable(L, -3);
+	}
+}
+
+// The copies are drawn into one surface that covers them all
+void OverlayRecord::applyCopies() {
+	_areCopiesStale = false;
+
+	Common::Array<const Copy *> shown;
+	for (const Copy &copy : _copies) {
+		if (copy.isUsed) {
+			shown.push_back(&copy);
+		}
+	}
+
+	Common::Array<RecordGraphic> pictures(shown.size());
+	Common::Array<bool> areKeyed(shown.size());
+	Common::Rect area;
+	bool hasArea = false;
+	for (uint i = 0; i < shown.size(); ++i) {
+		const Copy &copy = *shown[i];
+		Common::Rect source = copy.source.toRect();
+		source.clip(Common::Rect(_image.w, _image.h));
+		areKeyed[i] = false;
+		if (source.isEmpty()) {
+			continue;
+		}
+
+		uint32 modColor = copy.modColor;
+		if (copy.alpha < 1.0) {
+			const uint32 a = (uint32)CLIP<double>((modColor >> 24) * copy.alpha + 0.5, 0.0, 255.0);
+			modColor = (a << 24) | (modColor & 0xFFFFFF);
+		}
+
+		placePicture(pictures[i], _image, source, copy.dest, copy.transform, modColor);
+		areKeyed[i] = copy.transform.isTranslation() && modColor == kNoModColor;
+		if (!hasArea) {
+			area = pictures[i].getScreenPositionRaw();
+			hasArea = true;
+		} else {
+			area.extend(pictures[i].getScreenPositionRaw());
+		}
+	}
+
+	if (!hasArea) {
+		_copyGraphic._drawSurface.free();
+		return;
+	}
+
+	Graphics::ManagedSurface &out = _copyGraphic._drawSurface;
+	out.create(MAX<int>(area.width(), 1), MAX<int>(area.height(), 1), g_nancy->_graphics->getTransparentPixelFormat());
+	out.clear(0);
+	_copyGraphic.setTransparent(false);
+	for (uint i = 0; i < pictures.size(); ++i) {
+		blendPicture(out, pictures[i], areKeyed[i], Common::Point(area.left, area.top));
+	}
+
+	_copyGraphic.moveTo(area);
+	_copyGraphic.setNeedsRedraw(true);
+}
+
+static int overlayCopy(lua_State *L) {
+	OverlayRecord *record = dynamic_cast<OverlayRecord *>(checkRecord(L, 1));
+	if (!record) {
+		return luaL_typerror(L, 1, "ND.Overlay");
+	}
+
+	lua_pushinteger(L, record->addCopy());
+	return 1;
+}
+
+static int overlayDeleteCopy(lua_State *L) {
+	OverlayRecord *record = dynamic_cast<OverlayRecord *>(checkRecord(L, 1));
+	if (record) {
+		record->deleteCopy(luaL_checkint(L, 2));
+	}
+
+	return 0;
+}
+
+static int overlayGetCopies(lua_State *L) {
+	OverlayRecord *record = dynamic_cast<OverlayRecord *>(checkRecord(L, 1));
+	if (!record) {
+		return luaL_typerror(L, 1, "ND.Overlay");
+	}
+
+	record->pushCopies();
+	return 1;
+}
+#endif
+
 bool OverlayRecord::getField(const Common::String &key) {
 	lua_State *L = getLua();
 
@@ -1664,6 +1843,14 @@ bool OverlayRecord::getField(const Common::String &key) {
 		lua_pushstring(L, _treeName.c_str());
 	} else if (key == "DefaultRects") {
 		lua_pushcfunction(L, overlayDefaultRects);
+#ifdef ENABLE_NANCY_V5
+	} else if (key == "Copy") {
+		lua_pushcfunction(L, overlayCopy);
+	} else if (key == "DeleteCopy") {
+		lua_pushcfunction(L, overlayDeleteCopy);
+	} else if (key == "GetCopies") {
+		lua_pushcfunction(L, overlayGetCopies);
+#endif
 	} else {
 		return false;
 	}
@@ -1685,6 +1872,9 @@ bool OverlayRecord::setPicture(const Common::String &imageName) {
 	_image = Common::move(image);
 	_cachedImage = cached;
 	_imageName = imageName;
+#ifdef ENABLE_NANCY_V5
+	_areCopiesStale = true;
+#endif
 	return true;
 }
 
