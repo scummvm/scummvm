@@ -157,6 +157,8 @@ bool MuxPlayer::play() {
 				break;
 
 			aborted = _vm->handleMuxInput();
+			if (!aborted)
+				_vm->_system->delayMillis(10);
 		}
 	}
 
