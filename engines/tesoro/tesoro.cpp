@@ -397,12 +397,12 @@ void TesoroEngine::setHoverText(const char *text) {
 }
 
 bool TesoroEngine::putJim(int32 x, int32 y) {
-	Jim *jim = _world.jim();
-	if (!jim || !_level)
+	if (!_level)
 		return false;
-	// enterLevel puts the level in the main list itself.
-	_world.mainList().remove(_level);
-	jim->enterLevel(_level, &_level->room(0), x, y);
+	// The level may already be in the main list (shown without Jim), and he inserts it himself.
+	_world.removeFromMainList(_level);
+	if (!_world.putJimInLevel(_level, x, y))
+		return false;
 	_cursor->setSurroundings(&_pointer, _level);
 	return true;
 }
