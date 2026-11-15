@@ -28,7 +28,7 @@
 
 #include "snatcher/detection.h"
 #include "snatcher/detection_tables.h"
-#include "snatcher/fantranslations.h"
+#include "snatcher/fantranslations_detection.h"
 
 namespace Snatcher {
 
@@ -64,7 +64,7 @@ DetectedGames SnatcherMetaEngineDetection::detectGames(const Common::FSList &fsl
 		if (!game.gameId.equals("snatcher"))
 			continue;
 
-		Common::List<Common::Language> langList = FanTranslationHandler::listTranslations(game.platform);
+		Common::List<Common::Language> langList = FanTranslationHandlerDetection::listTranslations(game.platform);
 
 		if (!langList.empty()) {
 			langList.push_back(game.language);
@@ -85,7 +85,7 @@ Common::Error SnatcherMetaEngineDetection::identifyGame(DetectedGame &game, cons
 		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
 
 		if (selectedlang != Common::UNK_LANG && platform != Common::kPlatformUnknown) {
-			Common::List<Common::Language> langList = FanTranslationHandler::listTranslations(platform, &defaultLang);
+			Common::List<Common::Language> langList = FanTranslationHandlerDetection::listTranslations(platform, &defaultLang);
 			for (Common::List<Common::Language>::const_iterator i = langList.begin(); i != langList.end(); ++i) {
 				if (*i == selectedlang)
 					supportedFanLang = true;

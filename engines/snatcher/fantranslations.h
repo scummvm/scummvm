@@ -24,22 +24,14 @@
 #define SNATCHER_FANTRANSLATIONS_H
 
 #include "common/language.h"
-#include "common/list.h"
 #include "common/platform.h"
-#include "common/scummsys.h"
-#include "common/str-enc.h"
-#include "common/str.h"
+
+#include "engines/snatcher/fantranslations_detection.h"
 
 namespace Snatcher {
 
-class FanTranslationHandler {
+class FanTranslationHandler : public FanTranslationHandlerDetection {
 public:
-	enum TranslatorMode {
-		kDetect = 0,
-		kTranslate = 1,
-		kCollect = 2
-	};
-
 	enum ResourceType {
 		kInvalid = -1,
 		kModule = 0,
@@ -53,32 +45,9 @@ public:
 	const uint8 *process(uint32 addr, const uint8 *data);
 	void loadFile(int number, ResourceType rtype);
 
-	struct FontProperties {
-		FontProperties() : codepage(Common::kCodePageInvalid), rtl(false) {}
-		Common::CodePage codepage;
-		Common::String fontfile;
-		bool rtl;
-	};
-
 	const FontProperties &getFontProperties() const;
 
-	static Common::List<Common::Language> listTranslations(Common::Platform platform, Common::Language *defaultLang = nullptr);
-
 private:
-	struct PerFileTranslateableData {
-		PerFileTranslateableData() {}
-		~PerFileTranslateableData() {
-			stringTable.clear();
-			addressTable.clear();
-		}
-
-		Common::List<Common::String> stringTable;
-		Common::List<uint32> addressTable;
-	};
-
-	static void updateDataTable(uint32 addr, const uint8 *data, PerFileTranslateableData **table, TranslatorMode mode, uint dataSize = 256, int file = -1);
-	static void parseTranslations(Common::Platform platform, Common::Language lang, TranslatorMode mode, int fileNumber = -1,
-		PerFileTranslateableData **table = nullptr, Common::List<Common::Language> *langList = nullptr, Common::Language *defaultLang = nullptr, uint32 *fileOffsetList = nullptr, FontProperties *fontProperties = nullptr);
 	void saveFile();
 
 	PerFileTranslateableData **_gameTranslateableData = nullptr;

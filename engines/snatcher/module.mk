@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	action.o \
 	animator_scd.o \
 	fantranslations.o \
+	fantranslations_detection.o \
 	graphics.o \
 	memory.o \
 	mem_mapping.o \
@@ -41,5 +42,5 @@ DETECT_OBJS += $(MODULE)/detection.o
 # module is enabled, because it already has the contents.
 ifneq ($(ENABLE_SNATCHER), STATIC_PLUGIN)
 # External dependencies for detection.
-DETECT_OBJS += $(MODULE)/fantranslations.o
+DETECT_OBJS += $(MODULE)/fantranslations_detection.o
 endif
