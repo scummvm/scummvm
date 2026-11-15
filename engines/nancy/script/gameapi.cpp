@@ -2365,6 +2365,57 @@ static int logAssert(lua_State *L) {
 	return 0;
 }
 
+// Formats the parameters from index 2 on with string.format, and leaves the
+// text, or the error when formatting failed, on the stack
+static bool formatLogText(lua_State *L) {
+	const int top = lua_gettop(L);
+	lua_getglobal(L, "string");
+	lua_getfield(L, -1, "format");
+	lua_remove(L, -2);
+	for (int i = 2; i <= top; ++i) {
+		lua_pushvalue(L, i);
+	}
+
+	return lua_pcall(L, top - 1, 1, 0) == 0;
+}
+
+// Log:Format(format, ...), Nancy31: writes down the text string.format makes
+static int logFormat(lua_State *L) {
+	if (!formatLogText(L)) {
+		debugC(1, kDebugScene, "Script warning: Log:Format: Failed string format: %s", lua_tostring(L, -1));
+		return 0;
+	}
+
+	luaL_where(L, 1);
+	debugC(1, kDebugScene, "Script: %s%s", lua_tostring(L, -1), lua_tostring(L, -2));
+	return 0;
+}
+
+// Log:Stack(format, ...), Nancy31: writes down the formatted text with the
+// stack traceback of the script that called it
+static int logStack(lua_State *L) {
+	if (!formatLogText(L)) {
+		debugC(1, kDebugScene, "Script warning: Log:Stack: Failed string format: %s", lua_tostring(L, -1));
+		return 0;
+	}
+
+	const int textIndex = lua_gettop(L);
+	lua_getglobal(L, "debug");
+	if (lua_istable(L, -1)) {
+		lua_getfield(L, -1, "traceback");
+		lua_remove(L, -2);
+		lua_pushvalue(L, textIndex);
+		lua_pushinteger(L, 2);
+		if (lua_pcall(L, 2, 1, 0) != 0) {
+			debugC(1, kDebugScene, "Script warning: Log:Stack: Failed debug traceback: %s", lua_tostring(L, -1));
+			return 0;
+		}
+	}
+
+	debugC(1, kDebugScene, "Script: %s", lua_isstring(L, -1) ? lua_tostring(L, -1) : lua_tostring(L, textIndex));
+	return 0;
+}
+
 // Log:Watch(function) and Log:Clear() are for the debug console of the original,
 // which isn't there
 static int logWatch(lua_State *L) {
@@ -2408,6 +2459,8 @@ static const luaL_Reg kLogFunctions[] = {
 	{ "Clear", logClear },
 	{ "ShowWarning", logShowWarning },
 	{ "AddManager", logAddManager },
+	{ "Format", logFormat },
+	{ "Stack", logStack },
 	{ nullptr, nullptr }
 };
 
@@ -2498,8 +2551,21 @@ static int autotextShowCC(lua_State *L) {
 	return 1;
 }
 
+// Autotext:SafeGet(key), Nancy31: the text of a key, or a note that it is missing
+static int autotextSafeGet(lua_State *L) {
+	const char *key = luaL_checkstring(L, 2);
+	Common::String text;
+	if (!findText(key, text)) {
+		text = Common::String::format("Missing autotext: '%s'", key);
+	}
+
+	lua_pushstring(L, text.c_str());
+	return 1;
+}
+
 static const luaL_Reg kAutotextFunctions[] = {
 	{ "__index", autotextIndex },
+	{ "SafeGet", autotextSafeGet },
 	{ "ShowCC", autotextShowCC },
 	{ "RemoveCC", autotextRemoveCC },
 	{ nullptr, nullptr }

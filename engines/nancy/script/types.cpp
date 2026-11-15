@@ -639,6 +639,26 @@ static int pointFloored(lua_State *L) {
 	return 1;
 }
 
+// Point:Dot(point) and Point:Normalized(), Nancy31. A point at the origin stays there.
+static int pointDot(lua_State *L) {
+	const PointValue &a = checkPoint(L, 1);
+	const PointValue &b = checkPoint(L, 2);
+	lua_pushnumber(L, a.x * b.x + a.y * b.y);
+	return 1;
+}
+
+static int pointNormalized(lua_State *L) {
+	PointValue point = checkPoint(L, 1);
+	const float length = sqrt(point.x * point.x + point.y * point.y);
+	if (length != 0.0f) {
+		point.x /= length;
+		point.y /= length;
+	}
+
+	pushPointValue(L, point);
+	return 1;
+}
+
 static int pointNegate(lua_State *L) {
 	const PointValue &point = checkPoint(L, 1);
 	pushPointValue(L, PointValue(-point.x, -point.y));
@@ -669,6 +689,8 @@ static const luaL_Reg kPointFunctions[] = {
 	{ "__concat", concatToStrings },
 	{ "Rounded", pointRounded },
 	{ "Floored", pointFloored },
+	{ "Dot", pointDot },
+	{ "Normalized", pointNormalized },
 	{ nullptr, nullptr }
 };
 
