@@ -12,6 +12,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  M4:
    - Missing Animation and journal fixes for Ripley's Riddle of Master Lu
+   - Fix Riddle crash on Mei animation when visiting Peiping temple for the final time
  
  MADS:
    - MT32 crash fixes for Dragonsphere

@@ -136,6 +136,10 @@ void Room204::init() {
 		ws_demand_location(_G(my_walker), 600, 334);
 		ws_demand_facing(_G(my_walker), 9);
 		sendWSMessage_10000(_G(my_walker), 424, 331, 9, 9, true);
+
+		// WORKAROUND: Original didn't properly load sprites for Mei
+		initWalkerSeries();
+
 		_mcMach = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS, 620, 340, 9, Walker::player_walker_callback, "mc");
 		sendWSMessage_10000(_mcMach, 450, 340, 9, -1, true);
 		kernel_timing_trigger(60, 5, nullptr);
