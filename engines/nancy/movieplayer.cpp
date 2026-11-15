@@ -89,7 +89,12 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 	unregisterMovie();
 
 	const Common::Path avfPath = name.append(".avf");
-	const Common::Path bikPath = name.append(".bik");
+	Common::Path bikPath = name.append(".bik");
+
+	// Nancy30 names some of its Bink 2 movies .bk2
+	if (!Common::File::exists(bikPath) && Common::File::exists(name.append(".bk2"))) {
+		bikPath = name.append(".bk2");
+	}
 
 	// Use the requested container, the other one only if its file is missing.
 	const byte preferred = resolvePlaytype(videoPlaytype);
