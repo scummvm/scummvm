@@ -31,10 +31,10 @@ namespace Prisoner {
 
 class Opcode {
 public:
-	Opcode(Common::Functor1<Script*, int16> *call, Common::String name)
+	Opcode(Common::Functor1<Script *, int16> *call, Common::String name)
 		: _call(call), _name(name) {}
 public:
-	Common::Functor1<Script*, int16> *_call;
+	Common::Functor1<Script *, int16> *_call;
 	Common::String _name;
 };
 
@@ -63,7 +63,7 @@ public:
 	int16 execOpcode(Script *script, byte opcode);
 protected:
 	PrisonerEngine *_vm;
-	Common::Array<const Opcode*> _opcodes;
+	Common::Array<const Opcode *> _opcodes;
 
 	int16 evaluate(Script *script);
 	Common::String readPakName(Script *script, bool languageSpecific);

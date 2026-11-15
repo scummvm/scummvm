@@ -35,8 +35,8 @@ int16 PrisonerEngine::addActor(Common::String &pakName, int16 pakSlot, int16 fra
 	actor->resourceCacheSlot = _res->load<AnimationResource>(pakName, pakSlot, 4);
 	actor->pathResultIndex = 0;
 	actor->pathResultCount = 0;
-	actor->pathWalker1 = NULL;
-	actor->pathWalker2 = NULL;
+	actor->pathWalker1 = nullptr;
+	actor->pathWalker2 = nullptr;
 	actor->status = 1;
 	actor->actorSprite = &_actorSprites[actorIndex];
 
@@ -82,7 +82,7 @@ void PrisonerEngine::clearActor(int16 actorIndex) {
 	clearActorZone(actorIndex);
 	if (actor->pathWalker2) {
 		resetPathWalker(actor->pathWalkerIndex);
-		actor->pathWalker2 = NULL;
+		actor->pathWalker2 = nullptr;
 	}
 	actor->pathWalkerIndex = -1;
 	if (actorIndex == _mainActorIndex) {
@@ -125,7 +125,7 @@ void PrisonerEngine::unloadActors() {
 				actor->resourceCacheSlot = -1;
 				if (actor->pathWalker2) {
 					resetPathWalker(actor->pathWalkerIndex);
-					actor->pathWalker2 = NULL;
+					actor->pathWalker2 = nullptr;
 				}
 				actor->pathWalkerIndex = -1;
 			}
@@ -413,14 +413,6 @@ int16 PrisonerEngine::getActorX(int16 actorIndex) {
 
 int16 PrisonerEngine::getActorY(int16 actorIndex) {
 	return _actors[actorIndex].actorSprite->y;
-}
-
-void PrisonerEngine::setActorX(int16 actorIndex, int16 x) {
-	// TODO; Unused?
-}
-
-void PrisonerEngine::setActorY(int16 actorIndex, int16 y) {
-	// TODO; Unused?
 }
 
 void PrisonerEngine::actorPutAtPos(int16 actorIndex, int16 x, int16 y) {

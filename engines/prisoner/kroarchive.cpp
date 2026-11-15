@@ -40,7 +40,7 @@ void decryptBuffer(byte *buf, uint32 size) {
 
 /* KroArchive */
 
-KroArchive::KroArchive() : _fd(NULL), _resourceTypes(NULL) {
+KroArchive::KroArchive() : _fd(nullptr), _resourceTypes(nullptr) {
 }
 
 KroArchive::~KroArchive() {
@@ -77,7 +77,7 @@ void KroArchive::close() {
 }
 
 byte *KroArchive::load(uint index) {
-	byte *data = NULL;
+	byte *data = nullptr;
 	KroArchiveEntry *entry = &_entries[index];
 
 	debug(1, "KroArchive::load(%08X)", index);
@@ -87,13 +87,11 @@ byte *KroArchive::load(uint index) {
 	data = new byte[entry->size];
 
 	switch (entry->compressionType) {
-	case 0: // uncompressed
-	{
+	case 0: { // uncompressed
 		_fd->read(data, entry->size);
 		break;
 	}
-	case 4: // zlib compressed
-	{
+	case 4: { // zlib compressed
 		uint dstLen = entry->size;
 		byte *compressedData = new byte[entry->compressedSize];
 		_fd->read(compressedData, entry->compressedSize);
@@ -115,7 +113,7 @@ uint32 KroArchive::getSize(uint index) {
 }
 
 void KroArchive::loadDirectory(const char *filename, uint32 offset, bool isEncrypted) {
-	Common::ReadStream *stream = NULL;
+	Common::ReadStream *stream = nullptr;
 
 	debug(0, "%s", filename);
 
@@ -131,7 +129,7 @@ void KroArchive::loadDirectory(const char *filename, uint32 offset, bool isEncry
 		fd->seek(offset);
 		dirDataSize = fd->readUint32LE();
 		debug("dirDataSize = %d", dirDataSize);
-		dirData = (byte*)malloc(dirDataSize);
+		dirData = (byte *)malloc(dirDataSize);
 		fd->read(dirData, dirDataSize);
 		decryptBuffer(dirData, dirDataSize);
 		delete fd;

@@ -23,7 +23,7 @@ namespace Prisoner {
 
 const PlainGameDescriptor prisonerGames[] = {
 	{"prisoner", "Prisoner of Ice"},
-	{ 0, 0 }
+	{nullptr, nullptr}
 };
 
 // Every entry is detected by its language file (?_KLANG.BIN), the engine takes the language
@@ -37,7 +37,8 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
-		GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MUSIC, GUIO_MIDIGM, GUIO_MIDIADLIB)},
+		GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MUSIC, GUIO_MIDIGM, GUIO_MIDIADLIB)
+	},
 
 	// Prisoner English version
 	{

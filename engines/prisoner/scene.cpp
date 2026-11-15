@@ -175,17 +175,11 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 	_needToUpdatePalette = true;
 	_updateDirtyRectsFlag = true;
 	_screen->clear();
-	// TODO: resetDirtyRects();
-	addDirtyRect(0, 0, 640, 480, 1);
-	{
-		// The original blacks out the scene colors while the new scene is set up; the scene's own
-		// palette is set when the main loop applies the palette
-		byte blackPalette[240 * 3];
-		memset(blackPalette, 0, sizeof(blackPalette));
-		_screen->setPartialPalette(blackPalette, 0, 240);
-	}
-	// TODO: drawDirtyRects(false);
-	addDirtyRect(0, 0, 640, 480, 1);
+	// The original blacks out the scene colors while the new scene is set up; the scene's own
+	// palette is set when the main loop applies the palette
+	byte blackPalette[240 * 3];
+	memset(blackPalette, 0, sizeof(blackPalette));
+	_screen->setPartialPalette(blackPalette, 0, 240);
 	_pathSystem->buildPathSystem();
 	_pathSystem->setPathSystemBuilt(true);
 	buildActorSpriteDrawQueue();
@@ -193,7 +187,6 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 	_screen->setClipRect(0, 82, 639, 397);
 	drawSprites(_cameraX, _cameraY);
 	_screen->setClipRect(0, 0, 639, 479);
-	// TODO: updateDirtyRects();
 
 	_backgroundFlag = backgroundFlag;
 	_updateDirtyRectsFlag = updateDirtyRectsFlag;

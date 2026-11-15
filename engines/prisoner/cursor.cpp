@@ -94,7 +94,7 @@ Graphics::Surface *PrisonerEngine::decompressAnimationCel(AnimationCel *animatio
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(animationCel->width, animationCel->height, Graphics::PixelFormat::createFormatCLUT8());
 	byte *src = animationCel->data;
-	byte *dst = (byte*)surface->getPixels();
+	byte *dst = (byte *)surface->getPixels();
 	int height = animationCel->height;
 	while (height--) {
 		byte *row = dst;
@@ -191,7 +191,6 @@ void PrisonerEngine::updateMouseCursor() {
 		int16 frameListIndex;
 		if (doClearTextArea) {
 			_screen->fillRect(0, 398, 639, 479, 0);
-			addDirtyRect(0, 398, 640, 82, 1);
 		}
 		if (_currAnimatedMouseCursor != _currMouseCursor) {
 			// The mouse cursor is not animated

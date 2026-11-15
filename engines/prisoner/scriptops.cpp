@@ -26,7 +26,7 @@
 
 namespace Prisoner {
 
-typedef Common::Functor1Mem<Script*, int16, ScriptOpcodes> OpcodeFunc;
+typedef Common::Functor1Mem<Script *, int16, ScriptOpcodes> OpcodeFunc;
 #define Opcode(func) \
 	_opcodes.push_back(new Opcode(new OpcodeFunc(this, &ScriptOpcodes::func), #func));
 ScriptOpcodes::~ScriptOpcodes() {
@@ -888,7 +888,7 @@ int16 ScriptOpcodes::op_addZone(Script *script) {
 	ARG_EVALUATE(y1);
 	ARG_EVALUATE(x2);
 	ARG_EVALUATE(y2);
-	int16 zoneIndex = _vm->addZone(x1, y1, x2, y2, -1, NULL, -1, NULL);
+	int16 zoneIndex = _vm->addZone(x1, y1, x2, y2, -1, nullptr, -1, nullptr);
 	return zoneIndex;
 }
 
@@ -936,7 +936,7 @@ int16 ScriptOpcodes::op_playActorAnimation(Script *script) {
 	ARG_EVALUATE(pakSlot);
 	ARG_EVALUATE(frameListIndex);
 	ARG_EVALUATE(nodeIndex);
- 	_vm->setActorAnimation(actorIndex, pakName, pakSlot, frameListIndex, nodeIndex);
+	_vm->setActorAnimation(actorIndex, pakName, pakSlot, frameListIndex, nodeIndex);
 	script->status = kScriptStatusAnimation;
 	script->actorIndex = actorIndex;
 	script->actorIndex2 = actorIndex;
@@ -1108,7 +1108,7 @@ int16 ScriptOpcodes::op_playActorAnimationAtPos(Script *script) {
 	ARG_EVALUATE(frameListIndex);
 	ARG_EVALUATE(x);
 	ARG_EVALUATE(y);
- 	_vm->setActorAnimationAtPos(actorIndex, pakName, pakSlot, frameListIndex, x, y);
+	_vm->setActorAnimationAtPos(actorIndex, pakName, pakSlot, frameListIndex, x, y);
 	script->status = kScriptStatusAnimation;
 	script->actorIndex = actorIndex;
 	script->actorIndex2 = actorIndex;
@@ -1233,7 +1233,7 @@ int16 ScriptOpcodes::op_actorText21704(Script *script) {
 	actor->lastFrameListIndex = lastFrameListIndex;
 	actor->minTicks = minTicks;
 	actor->maxTicks = maxTicks;
- 	if (!_vm->isScreenTextShowing()) {
+	if (!_vm->isScreenTextShowing()) {
 		int16 textResourceCacheSlot = _vm->loadTextResource(textPakName, textPakSlot);
 		script->screenTextIndex = _vm->addActorScreenText(actorIndex, textResourceCacheSlot, identifier);
 		_vm->restoreActorAnimation(actorIndex);
@@ -1246,7 +1246,7 @@ int16 ScriptOpcodes::op_actorText21704(Script *script) {
 		script->actorIndex = actorIndex;
 		script->actorIndex2 = actorIndex;
 		result = 1;
- 	}
+	}
 	return result;
 }
 
@@ -1285,9 +1285,9 @@ int16 ScriptOpcodes::op_loadModuleSound(Script *script) {
 
 int16 ScriptOpcodes::op_playSoundSync(Script *script) {
 	ARG_EVALUATE(soundIndex);
- 	_vm->playSound(soundIndex);
- 	script->status = kScriptStatusSound;
- 	script->soundIndex = soundIndex;
+	_vm->playSound(soundIndex);
+	script->status = kScriptStatusSound;
+	script->soundIndex = soundIndex;
 	return soundIndex;
 }
 
@@ -1308,7 +1308,7 @@ int16 ScriptOpcodes::op_setTextDisplayColor(Script *script) {
 }
 
 int16 ScriptOpcodes::op_loadInventoryItemsAnimation(Script *script) {
- 	ARG_PAKNAME_S(pakName, false);
+	ARG_PAKNAME_S(pakName, false);
 	ARG_EVALUATE(pakSlot);
 	ARG_EVALUATE(slotBaseIndex);
 	_vm->loadInventoryItemsAnimation(pakName, pakSlot, slotBaseIndex);
@@ -1325,13 +1325,13 @@ int16 ScriptOpcodes::op_playMux(Script *script) {
 
 int16 ScriptOpcodes::op_setCameraFollowsActor(Script *script) {
 	ARG_EVALUATE(actorIndex);
- 	_vm->setCameraFollowsActor(actorIndex);
+	_vm->setCameraFollowsActor(actorIndex);
 	script->actorIndex = actorIndex;
 	return 0;
 }
 
 int16 ScriptOpcodes::op_actor21C78(Script *script) {
- 	_vm->actor21C78();
+	_vm->actor21C78();
 	return 0;
 }
 
@@ -1357,8 +1357,8 @@ int16 ScriptOpcodes::op_addActorAltAnimation(Script *script) {
 
 int16 ScriptOpcodes::op_unloadActorAltAnimation(Script *script) {
 	ARG_EVALUATE(altActorAnimationIndex);
- 	_vm->unloadActorAltAnimation(altActorAnimationIndex);
- 	script->actorIndex = -1;
+	_vm->unloadActorAltAnimation(altActorAnimationIndex);
+	script->actorIndex = -1;
 	return altActorAnimationIndex;
 }
 

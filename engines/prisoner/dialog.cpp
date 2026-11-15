@@ -199,7 +199,7 @@ void PrisonerEngine::updateDialog(int16 x, int16 y) {
 		DialogKeyword *dialogKeyword = &dialog->keywords[_currDialogKeywordIndices[currKeyword]];
 		setFontColors(_textFont, _dialogHoverFontColor.outlineColor, _dialogHoverFontColor.inkColor);
 		setActiveFont(_textFont);
-		drawTextEx(_dialogRectX1 + _dialogXAdd, -1, _dialogRectY1, _dialogRectY2, dialogKeyword->_keyword);//###
+		drawTextEx(_dialogRectX1 + _dialogXAdd, -1, _dialogRectY1, _dialogRectY2, dialogKeyword->_keyword);
 		_selectedDialogKeywordIndex = _currDialogKeywordIndices[currKeyword];
 	}
 

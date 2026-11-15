@@ -229,7 +229,6 @@ void PrisonerEngine::updateScreenTexts() {
 					int16 rx2 = rx1 + screenText->width;
 					int16 ry1 = y1 - screenText->fontHeight - 10;
 					int16 ry2 = ry1 + screenText->height;
-					addDirtyRect(rx1 - 3, ry1 - 3, screenText->width + 18, screenText->height + 26, 1);
 					// The frame uses the outline and ink colors of the inventory text box panel
 					const PakMenuDirectoryEntry &panelData = getMenuPanelData(kForLookInvPanel);
 					_screen->frameRect(rx1 - 2, ry1 - 2, rx2 + 14, ry2 + 22, panelData.outlineColor);
@@ -238,8 +237,6 @@ void PrisonerEngine::updateScreenTexts() {
 					_screen->drawAnimationElement(anim, 1, rx2 + 12, ry1);
 					_screen->drawAnimationElement(anim, 2, rx2 + 12, ry2 + 20);
 					_screen->drawAnimationElement(anim, 3, rx1, ry2 + 20);
-				} else {
-					addDirtyRect(x1 - 6, y1 - screenText->fontHeight - 10, (screenText->width + 6) * 2, (screenText->height + 10) * 2, 1);
 				}
 				_screen->setClipRect(0, 82, 639, 479);
 			}

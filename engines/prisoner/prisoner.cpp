@@ -149,38 +149,10 @@ Common::Error PrisonerEngine::run() {
 
 	initializeMidi();
 
-#if 0
-	initInput();
-	MuxPlayer mux(this);
-	mux.open("Sin1.mux");
-	//mux.open("Vintro.mux");
-	mux.play();
-	mux.close();
-	return Common::kNoError;
-#endif
-
-#if 0
-	//Common::String pakName = "E_TCETXT";
-	//_res->dump(pakName, 1, 3);
-	Common::String pakName = "E_M02R06";
-	_res->dump(pakName, 25, 16);
-#endif
-
-#if 0
-	Common::String pakName = "MUS02";
-	int16 slot = _res->load<MidiResource>(pakName, 0, 13);
-	_midi->playMusic(_res->get<MidiResource>(slot), 200, false);
-#endif
-
-#if 1
-	Common::String n;
-
 	// TODO: Later read font def from config data
-	{
-		Common::String pakName = "S_FONT";
-		_menuFont = addFont(pakName, 0, 2, 2);
-		_textFont = addFont(pakName, 1, 96, 255);
-	}
+	Common::String pakName = "S_FONT";
+	_menuFont = addFont(pakName, 0, 2, 2);
+	_textFont = addFont(pakName, 1, 96, 255);
 
 	setDefaultTextDisplayColors();
 
@@ -218,7 +190,7 @@ Common::Error PrisonerEngine::run() {
 
 	_cameraFollowsActorIndex = -1;
 	_backgroundResourceCacheSlot = -1;
-	_backgroundResource = NULL;
+	_backgroundResource = nullptr;
 	_backgroundWidth = 0;
 	_backgroundHeight = 0;
 	_backgroundNoScrollFlag1 = false;
@@ -331,19 +303,13 @@ Common::Error PrisonerEngine::run() {
 	_newModuleIndex = 2;
 	_newSceneIndex = 33;//radar
 #endif
-
-	{
-		// TODO: Move to init function
-		// TODO: Load pakName/slot from exe etc.
-		Common::String pakName;
-		pakName = "F_ICETXT";
-		_globalTextResourceCacheSlot = loadTextResource(pakName, 0);
-		pakName = "S_PANEL";
-		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, getMenuPanelData(kForLookInvPanel).pakSlot, 11);
-	}
+	// TODO: Move to init function
+	pakName = "F_ICETXT";
+	_globalTextResourceCacheSlot = loadTextResource(pakName, 0);
+	pakName = "S_PANEL";
+	_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, getMenuPanelData(kForLookInvPanel).pakSlot, 11);
 
 	loadMenuPanels();
-
 
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
@@ -359,15 +325,11 @@ Common::Error PrisonerEngine::run() {
 
 	mainLoop();
 
-	{
-		// TODO: Move to shutdown function
-		_res->unload(_globalTextResourceCacheSlot);
-		_globalTextResourceCacheSlot = -1;
-		_res->unload(_inventoryBoxResourceCacheSlot);
-		_inventoryBoxResourceCacheSlot = -1;
-	}
-
-#endif
+	// TODO: Move to shutdown function
+	_res->unload(_globalTextResourceCacheSlot);
+	_globalTextResourceCacheSlot = -1;
+	_res->unload(_inventoryBoxResourceCacheSlot);
+	_inventoryBoxResourceCacheSlot = -1;
 
 	debug("Exit ok");
 	return Common::kNoError;
@@ -488,7 +450,6 @@ void PrisonerEngine::mainLoop() {
 			performAutoSave();
 		}
 
-		// TODO: updateDirtyRects();
 		checkForSceneChange();
 		updateMouseCursor();
 		updateMouseCursorAnimation();
@@ -650,11 +611,6 @@ uint32 PrisonerEngine::getTicks() {
 	return _system->getMillis() / 10;
 }
 
-void PrisonerEngine::addDirtyRect(int16 x1, int16 y1, int16 x2, int16 y2, int16 flag) {
-	// TODO
-	// Just a dummy until the real code is done
-}
-
 void PrisonerEngine::playIntroVideos() {
 	const EasterEggVideo introSequence[] = {
 		{"vintro.mux", Common::KEYCODE_i},
@@ -718,7 +674,6 @@ void PrisonerEngine::death() {
 	_inGame = false;
 	_newModuleIndex = -1;
 	leaveScene();
-	//resetDirtyRects();
 	_screen->clear();
 }
 
@@ -780,8 +735,6 @@ void PrisonerEngine::initInput() {
 	_inpMouseWaitRelease = false;
 	_inpKeybPulseRelease = false;
 	_inpMousePulseRelease = false;
-	_inpMouseDblClickLastClickTime = 0;
-	_inpMouseDblClickTime = 0;
 
 }
 
@@ -792,20 +745,12 @@ void PrisonerEngine::getInputStatus(Common::KeyCode &keyState, uint16 &buttonSta
 		if (buttonState == 0) {
 			_inpMouseWaitRelease = false;
 			_inpMousePulseRelease = false;
-		} else if (_inpMousePulseRelease) {
-			// TODO: Only used in the menu
-		} else {
+		} else if (!_inpMousePulseRelease) {
 			buttonState = 0;
 		}
-	} else if (buttonState != 0) {
-		// TODO: Only used in the menu
-		/* TODO...
-		_inpMouseDblClickTime = getTicks();
-		if (_inpMouseDblClickLastClickTime - _inpMouseDblClickTime < 50)
-			buttonState |= buttonState << 2;
-		_inpMouseDblClickLastClickTime = getTicks();
-		*/
 	}
+	// The original also reports double clicks here, but only its save/load list uses them and
+	// the original save/load screens detect them themselves
 
 	keyState = _keyState;
 	// Insert and Delete act as the left and right mouse buttons. A key press counts as
@@ -852,7 +797,6 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 	if (_optionsTextTicksCounter > 0 && getTicks() >= _optionsTextTicks + _optionsTextTicksCounter) {
 		_optionsTextTicksCounter = -1;
 		_screen->fillRect(0, 0, 639, 81, 0);
-		addDirtyRect(0, 0, 640, 82, 1);
 	}
 
 	getInputStatus(keyState, buttonState);
@@ -1027,8 +971,6 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 			inpMouseSetWaitRelease(true);
 			_screen->fillRect(0, 0, 639, 81, 0);
 			_screen->fillRect(0, 398, 639, 479, 0);
-			addDirtyRect(0, 0, 640, 82, 1);
-			addDirtyRect(0, 398, 640, 82, 1);
 		}
 		break;
 
@@ -1100,11 +1042,8 @@ void PrisonerEngine::playMux(Common::String filename) {
 		setVoicesMuted(true);
 	}
 	CursorMan.showMouse(false);
-	// TODO: resetDirtyRects();
 	if (_muxClearScreenBefore) {
 		_screen->clear();
-		addDirtyRect(0, 0, 640, 480, 1);
-		// TODO: drawDirtyRects(0);
 	}
 	muxPlayer = new MuxPlayer(this);
 	muxPlayer->open(filename.c_str());
@@ -1113,12 +1052,9 @@ void PrisonerEngine::playMux(Common::String filename) {
 	_isPlayingMux = false;
 	muxPlayer->close();
 	delete muxPlayer;
-	// TODO: resetDirtyRects();
 	if (_muxClearScreenAfter) {
 		_backgroundFlag = 0;
 		_screen->clear();
-		addDirtyRect(0, 0, 640, 480, 1);
-		// TODO: drawDirtyRects(0);
 	}
 	if (!_screensaverRunning) {
 		resumeSounds();
@@ -1128,7 +1064,6 @@ void PrisonerEngine::playMux(Common::String filename) {
 	if (_moduleScriptCalled) {
 		_mainMenuRequested = true;
 		_inGame = false;
-		// TODO: resetDirtyRects();
 		_screen->clear();
 	}
 	_screen->setFullPalette(_scenePalette);
@@ -1281,7 +1216,6 @@ void PrisonerEngine::performAutoSave() {
 	setFontColors(_textFont, _zoneFontColor.outlineColor, _zoneFontColor.inkColor);
 	_screen->fillRect(0, 398, 639, 479, 0);
 	drawTextEx(0, 639, 398, 479, waitMessage);
-	addDirtyRect(0, 398, 540, 82, 1);
 	_screen->update();
 
 	saveGameState(getAutosaveSlot(), savegameDescription, true);
@@ -1413,9 +1347,9 @@ void PrisonerEngine::drawSprites(int16 xOffs, int16 yOffs) {
 	do {
 
 		backgroundObject = backgroundObjectIndex < _backgroundObjectsDrawQueue.size() ?
-			_backgroundObjectsDrawQueue[backgroundObjectIndex] : NULL;
+			_backgroundObjectsDrawQueue[backgroundObjectIndex] : nullptr;
 		actorSprite = actorSpriteIndex < _actorSpriteDrawQueue.size() ?
-			_actorSpriteDrawQueue[actorSpriteIndex] : NULL;
+			_actorSpriteDrawQueue[actorSpriteIndex] : nullptr;
 
 		if (actorSprite && (!backgroundObject || actorSprite->y <= backgroundObject->y)) {
 			if (actorSprite->actorIndex != _lipSyncActorIndex)
@@ -1478,7 +1412,6 @@ void PrisonerEngine::restoreScreen(bool ignorePalette) {
 	if (_screenBackedup) {
 		_screenBackedup = ignorePalette;
 		memcpy(_screen->getScreen()->getPixels(), _screenBackupSurface->getPixels(), 640 * 480);
-		addDirtyRect(0, 0, 640, 480, 1);
 		if (!ignorePalette) {
 			_screen->setFullPalette(_effectPalette);
 		}

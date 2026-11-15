@@ -47,10 +47,10 @@ public:
 		for (int16 i = 0; i < N; i++)
 			_objects[i].clear();
 	}
-	T& operator[](int16 index) {
+	T &operator[](int16 index) {
 		return _objects[index];
 	}
-	const T& operator[](int16 index) const {
+	const T &operator[](int16 index) const {
 		return _objects[index];
 	}
 	int16 count() const { return N; }

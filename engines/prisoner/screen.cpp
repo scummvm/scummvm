@@ -48,7 +48,7 @@ Screen::~Screen() {
 }
 
 void Screen::update() {
-	_vm->_system->copyRectToScreen((byte*)_workScreen->getPixels(), _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+	_vm->_system->copyRectToScreen((byte *)_workScreen->getPixels(), _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
 	_vm->_system->updateScreen();
 }
 
@@ -62,13 +62,6 @@ void Screen::setFullPalette(byte *palette) {
 
 void Screen::clear() {
 	memset(_workScreen->getPixels(), 0, _workScreen->pitch * _workScreen->h);
-}
-
-void Screen::putPixel(int x, int y, byte color) {
-#if 0
-	if (x >= _clipX1 && x < _clipX2 && y >= _clipY1 && y < _clipY2)
-		_workScreen[x + y * 320] = color;
-#endif
 }
 
 void Screen::hLine(int x, int y, int x2, byte color) {
@@ -106,7 +99,7 @@ void Screen::drawAnimationCelSprite(AnimationCel &cel, int16 x, int16 y, uint16 
 void Screen::drawAnimationElement(AnimationResource *animation, int16 elementIndex, int16 x, int16 y, uint16 parentFlags) {
 	AnimationElement *element = animation->_elements[elementIndex];
 	uint16 flags = element->flags | (parentFlags & 0xA0);
-	for (Common::Array<AnimationCommand*>::iterator iter = element->commands.begin(); iter != element->commands.end(); iter++) {
+	for (Common::Array<AnimationCommand *>::iterator iter = element->commands.begin(); iter != element->commands.end(); iter++) {
 		drawAnimationCommand(animation, (*iter), x, y, flags);
 	}
 }
@@ -131,15 +124,13 @@ void Screen::drawAnimationCommand(AnimationResource *animation, AnimationCommand
 
 	switch (cmd->cmd) {
 
-	case kActElement:
-	{
+	case kActElement: {
 		int16 subElementIndex = (cmd->arg2 << 8) | cmd->arg1;
 		drawAnimationElement(animation, subElementIndex & 0x0FFF, points[0].x, points[0].y, parentFlags | (cmd->arg2 & 0xA0));
 		break;
 	}
 
-	case kActCelSprite:
-	{
+	case kActCelSprite: {
 		int16 celIndex = ((cmd->arg2 << 8) | cmd->arg1) & 0x0FFF;
 		int16 celX = points[0].x, celY = points[0].y;
 		if (parentFlags & 0x8000)
@@ -201,7 +192,7 @@ void Screen::drawChar(const FontChar *fontChar, const byte *fontCharData, int16 
 		clipHeight = _clipY2 - y;
 	}
 
-	dest = (byte*)_workScreen->getBasePtr(x, y);
+	dest = (byte *)_workScreen->getBasePtr(x, y);
 	fontCharData += startY * fontChar->width;
 
 	for (int16 yc = 0; yc < clipHeight; yc++) {
@@ -237,8 +228,8 @@ void Screen::setClipRect(int clipX1, int clipY1, int clipX2, int clipY2) {
 }
 
 void Screen::copyRectFrom(Graphics::Surface *source, int sourceX, int sourceY, int destX, int destY, int width, int height) {
-	byte *src = (byte*)source->getBasePtr(sourceX, sourceY);
-	byte *dst = (byte*)_workScreen->getBasePtr(destX, destY);
+	byte *src = (byte *)source->getBasePtr(sourceX, sourceY);
+	byte *dst = (byte *)_workScreen->getBasePtr(destX, destY);
 	while (height--) {
 		memcpy(dst, src, width);
 		src += source->pitch;
@@ -310,7 +301,7 @@ void Screen::drawTransparentRect(int16 x1, int16 y1, int16 x2, int16 y2) {
 		return;
 
 	int16 w = x2 - x1 + 1, h = y2 - y1 + 1;
-	byte *pixels = (byte*)_workScreen->getBasePtr(x1, y1);
+	byte *pixels = (byte *)_workScreen->getBasePtr(x1, y1);
 	while (h--) {
 		for (int16 xc = 0; xc < w; xc++)
 			pixels[xc] = _paletteTransTable[pixels[xc]];

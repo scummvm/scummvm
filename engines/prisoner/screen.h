@@ -117,7 +117,7 @@ public:
 	~AnimationCelScalingFilter() {
 	}
 	byte readPixel() {
-    	while (1) {
+		while (1) {
 			switch (_state) {
 			case 0:
 				if (_currHeight == 0)
@@ -220,7 +220,7 @@ public:
 				reader->readPixel();
 		}
 
-		dest = (byte*)destSurface->getBasePtr(x, y);
+		dest = (byte *)destSurface->getBasePtr(x, y);
 
 		if (flip) {
 			skipL = reader->getWidth() - skipX - (width - skipX);
@@ -262,7 +262,6 @@ public:
 
 	void update();
 
-	void putPixel(int x, int y, byte color);
 	void drawLine(int x1, int y1, int x2, int y2, byte color);
 	void hLine(int x, int y, int x2, byte color);
 	void vLine(int x, int y, int y2, byte color);

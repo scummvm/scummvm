@@ -100,7 +100,7 @@ struct Script {
 	Common::String readString();
 	void clear() {
 		status = kScriptStatusPaused;
-		ip = NULL;
+		ip = nullptr;
 		soundIndex = -1;
 		zoneIndex = -1;
 		screenTextIndex = -1;
@@ -115,7 +115,7 @@ struct ScriptProgram {
 	ScriptResource *scriptResource;
 	int16 scriptCount;
 	Script scripts[kMaxScripts];
-	ScriptProgram() : resourceCacheSlot(-1), scriptCount(0), scriptResource(NULL) {}
+	ScriptProgram() : resourceCacheSlot(-1), scriptCount(0), scriptResource(nullptr) {}
 	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
@@ -641,7 +641,6 @@ public:
 	bool _inpMouseWaitRelease, _inpMousePulseRelease;
 	uint32 _inpMousePulseTime;
 	int16 _inpMousePulseTicks;
-	uint32 _inpMouseDblClickTime, _inpMouseDblClickLastClickTime;
 	bool _inpKeybWaitRelease, _inpKeybPulseRelease;
 	uint32 _inpKeybPulseTime;
 	uint16 _inpKeybPulseTicks;
@@ -719,8 +718,8 @@ public:
 	/* BackgroundObject */
 	int16 _backgroundObjectsResourceCacheSlot;
 	ObjectStorage<BackgroundObject, kMaxBackgroundObjects> _backgroundObjects;
-	Common::Array<BackgroundObject*> _backgroundObjectsDrawQueue;
-	Common::Array<ActorSprite*> _actorSpriteDrawQueue;
+	Common::Array<BackgroundObject *> _backgroundObjectsDrawQueue;
+	Common::Array<ActorSprite *> _actorSpriteDrawQueue;
 
 	/* Path */
 	PathSystem *_pathSystem;
@@ -937,7 +936,6 @@ public:
 	/* Input */
 	int16 handleInput(int16 x, int16 y);
 	void setUserInput(bool enabled);
-	void addDirtyRect(int16 x1, int16 y1, int16 x2, int16 y2, int16 flag);
 
 	/* Scene control */
 	void setEnterSceneScript(int16 programIndex, int16 scriptIndex);
@@ -1013,8 +1011,6 @@ public:
 	bool isRightButtonKey(Common::KeyCode keyCode) const;
 	int16 getActorX(int16 actorIndex);
 	int16 getActorY(int16 actorIndex);
-	void setActorX(int16 actorIndex, int16 x);
-	void setActorY(int16 actorIndex, int16 y);
 	void actorPutAtPos(int16 actorIndex, int16 x, int16 y);
 	void actorPutAtPathNode(int16 actorIndex, int16 nodeIndex);
 	void actorAnimation218A1(int16 actorIndex, Common::String &pakName, int16 pakSlot,
@@ -1057,7 +1053,7 @@ public:
 	void drawActorSprite(int16 xOffs, int16 yOffs, ActorSprite *actorSprite);
 
 	/* Path */
- 	int16 calcDirection(int16 x1, int16 y1, int16 x2, int16 y2);
+	int16 calcDirection(int16 x1, int16 y1, int16 x2, int16 y2);
 
 	/* Scene items */
 	int16 addSceneItem(int16 inventoryItemIndex, int16 pathNodeIndex);

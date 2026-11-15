@@ -68,7 +68,7 @@ PrisonerResourceLoader::PrisonerResourceLoader(char languageChar) {
 		{"S_DEBUG", 1316},
 		{"S_FONT", 1317},
 		{"S_PANEL", 1320},
-		{NULL, 0}
+		{nullptr, 0}
 	};
 
 	static const _PakDirectoryEntry kPrisonerDOSKSOUNDDirectory[] = {
@@ -97,7 +97,7 @@ PrisonerResourceLoader::PrisonerResourceLoader(char languageChar) {
 		{"WUS10", 346},
 		{"WUS11", 349},
 		{"WUS12", 350},
-		{NULL, 0}
+		{nullptr, 0}
 	};
 
 	static const int16 kPrisonerKSVGAResourceTypes[] = {0, 1, 2, 4, 6, 7, 8, 9, 10, 11, 14, 17, -1};
@@ -122,7 +122,7 @@ PrisonerResourceLoader::PrisonerResourceLoader(char languageChar) {
 		{"SMP06", 165},
 		{"SMP08", 196},
 		{"SMP09", 222},
-		{NULL, 0}
+		{nullptr, 0}
 	};
 	*/
 
@@ -137,7 +137,7 @@ PrisonerResourceLoader::PrisonerResourceLoader(char languageChar) {
 }
 
 PrisonerResourceLoader::~PrisonerResourceLoader() {
-	for (Common::Array<KroArchive*>::iterator iter = _archives.begin(); iter != _archives.end(); iter++)
+	for (Common::Array<KroArchive *>::iterator iter = _archives.begin(); iter != _archives.end(); iter++)
 		delete *iter;
 }
 
@@ -150,13 +150,13 @@ byte *PrisonerResourceLoader::load(Common::String &pakName, int16 pakSlot, int16
 }
 
 KroArchive *PrisonerResourceLoader::getArchiveForType(int16 type) {
-	for (Common::Array<KroArchive*>::iterator iter = _archives.begin(); iter != _archives.end(); iter++) {
+	for (Common::Array<KroArchive *>::iterator iter = _archives.begin(); iter != _archives.end(); iter++) {
 		KroArchive *archive = *iter;
 		if (archive->hasResourceType(type))
 			return archive;
 	}
 	error("PrisonerResourceLoader::getArchiveForType() Unknown resource type %d", type);
-	return NULL;
+	return nullptr;
 }
 
 void PrisonerResourceLoader::addArchive(const char *filename, const _PakDirectoryEntry directory[], const int16 *resourceTypes) {
@@ -191,7 +191,7 @@ void ResourceManager::purge(bool all) {
 	for (int16 slotIndex = 0; slotIndex < kMaxResourceSlots; slotIndex++) {
 		if (_slots[slotIndex].resource && (all || _slots[slotIndex].refCount == 0)) {
 			delete _slots[slotIndex].resource;
-			_slots[slotIndex].resource = NULL;
+			_slots[slotIndex].resource = nullptr;
 			_slots[slotIndex].type = -1;
 			_slots[slotIndex].refCount = 0;
 			_freeSlotsCount++;

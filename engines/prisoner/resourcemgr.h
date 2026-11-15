@@ -47,7 +47,7 @@ struct ResourceSlot {
 	Common::String pakName;
 	int16 pakSlot;
 	BaseResource *resource;
-	ResourceSlot() : type(-1), refCount(0), resource(NULL), pakSlot(-1) {}
+	ResourceSlot() : type(-1), refCount(0), resource(nullptr), pakSlot(-1) {}
 };
 
 class ResourceLoader {
@@ -65,7 +65,7 @@ public:
 	void addArchive(const char *filename, const _PakDirectoryEntry directory[], const int16 *resourceTypes);
 	void addArchive(const char *filename, const char *directoryFilename, uint32 offset, bool isEncrypted, const int16 *resourceTypes);
 protected:
-	Common::Array<KroArchive*> _archives;
+	Common::Array<KroArchive *> _archives;
 };
 
 class ResourceManager {
@@ -92,10 +92,10 @@ public:
 		return slotIndex;
 	}
 	template<class T>
-	T* get(int16 slotIndex) const { return (T*)_slots[slotIndex].resource; }
+	T *get(int16 slotIndex) const { return (T *)_slots[slotIndex].resource; }
 	void unload(int16 slotIndex);
 	void purge(bool all);
-	void getSlotInfo(int16 slotIndex, Common::String &pakName, int16 &pakSlot, int16 *type = NULL) {
+	void getSlotInfo(int16 slotIndex, Common::String &pakName, int16 &pakSlot, int16 *type = nullptr) {
 		pakName = _slots[slotIndex].pakName;
 		pakSlot = _slots[slotIndex].pakSlot;
 		if (type)

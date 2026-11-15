@@ -35,13 +35,13 @@ namespace Prisoner {
 
 Common::String readString(Common::ReadStream &source) {
 	char tempString[256], *p = tempString;
-	while((*p++ = source.readByte()) != 0);
+	while ((*p++ = source.readByte()) != 0) {}
 	return tempString;
 }
 
 /* PictureResource */
 
-PictureResource::PictureResource() : _picture(NULL) {
+PictureResource::PictureResource() : _picture(nullptr) {
 }
 
 PictureResource::~PictureResource() {
@@ -73,7 +73,7 @@ void PaletteResource::load(Common::MemoryReadStream &stream) {
 
 /* FontResource */
 
-FontResource::FontResource() : _charData(NULL) {
+FontResource::FontResource() : _charData(nullptr) {
 }
 
 FontResource::~FontResource() {
@@ -116,7 +116,7 @@ void FontResource::load(Common::MemoryReadStream &stream) {
 
 /* ScriptResource */
 
-ScriptResource::ScriptResource() : _program(NULL) {
+ScriptResource::ScriptResource() : _program(nullptr) {
 }
 
 ScriptResource::~ScriptResource() {
@@ -215,7 +215,7 @@ int32 TextResource::getIndex(Common::String &identifier) {
 /* AnimationResource */
 
 AnimationElement::~AnimationElement() {
-	for (Common::Array<AnimationCommand*>::iterator iter = commands.begin(); iter != commands.end(); iter++)
+	for (Common::Array<AnimationCommand *>::iterator iter = commands.begin(); iter != commands.end(); iter++)
 		delete (*iter);
 }
 
@@ -224,7 +224,7 @@ AnimationCel::~AnimationCel() {
 }
 
 AnimationFrameList::~AnimationFrameList() {
-	for (Common::Array<AnimationFrame*>::iterator iter = frames.begin(); iter != frames.end(); iter++)
+	for (Common::Array<AnimationFrame *>::iterator iter = frames.begin(); iter != frames.end(); iter++)
 		delete (*iter);
 }
 
@@ -233,13 +233,13 @@ AnimationResource::AnimationResource() {
 
 AnimationResource::~AnimationResource() {
 
-	for (Common::Array<AnimationElement*>::iterator iter = _elements.begin(); iter != _elements.end(); iter++)
+	for (Common::Array<AnimationElement *>::iterator iter = _elements.begin(); iter != _elements.end(); iter++)
 		delete (*iter);
 
-	for (Common::Array<AnimationCel*>::iterator iter = _cels.begin(); iter != _cels.end(); iter++)
+	for (Common::Array<AnimationCel *>::iterator iter = _cels.begin(); iter != _cels.end(); iter++)
 		delete (*iter);
 
-	for (Common::Array<AnimationFrameList*>::iterator iter = _anims.begin(); iter != _anims.end(); iter++)
+	for (Common::Array<AnimationFrameList *>::iterator iter = _anims.begin(); iter != _anims.end(); iter++)
 		delete (*iter);
 
 }
@@ -371,7 +371,7 @@ AnimationFrameList *AnimationResource::loadAnimationFrameList(Common::SeekableRe
 
 /* BaseSoundResource */
 
-BaseSoundResource::BaseSoundResource() : _data(NULL), _size(0), _duration(0) {
+BaseSoundResource::BaseSoundResource() : _data(nullptr), _size(0), _duration(0) {
 }
 
 BaseSoundResource::~BaseSoundResource() {
@@ -405,12 +405,12 @@ void SoundResource::load(Common::MemoryReadStream &stream) {
 
 void LipSyncSoundResource::load(Common::MemoryReadStream &stream) {
 
-	while (stream.readByte() != 0);
+	while (stream.readByte() != 0) {}
 
 	uint32 wavDataSize = stream.readUint32LE();
 	uint32 channelOffset = stream.pos() + wavDataSize - 4;
 
-    loadWaveData(stream, wavDataSize);
+	loadWaveData(stream, wavDataSize);
 
 	stream.seek(channelOffset);
 
@@ -449,7 +449,7 @@ void LipSyncSoundResource::load(Common::MemoryReadStream &stream) {
 
 /* MidiResource */
 
-MidiResource::MidiResource() : _midiData(NULL), _midiSize(0) {
+MidiResource::MidiResource() : _midiData(nullptr), _midiSize(0) {
 }
 
 MidiResource::~MidiResource() {

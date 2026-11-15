@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/algorithm.h"
+
 #include "prisoner/prisoner.h"
 #include "prisoner/path.h"
 #include "prisoner/resource.h"
@@ -249,15 +251,6 @@ int16 PathSystem::findPathNodeAtPos(int16 x, int16 y, bool fuzzy) {
 	return result;
 }
 
-int comparePathHelperByDistance0(const void * a, const void * b) {
-	if (((const PathHelper*)a)->distance0 > ((const PathHelper*)b)->distance0)
-		return 1;
-	else if (((const PathHelper*)a)->distance0 < ((const PathHelper*)b)->distance0)
-		return -1;
-	else
-		return 0;
-}
-
 void PathSystem::findClosestPointOnEdge(int16 x, int16 y, bool flag1, bool flag2, int16 nodeIndex) {
 
 	PathHelper *pathHelper = &_pathHelpers[_pathHelpersCount];
@@ -319,7 +312,7 @@ void PathSystem::findClosestPointOnEdge(int16 x, int16 y, bool flag1, bool flag2
 
 	}
 
-	qsort(_pathHelpers, _pathHelpersCount, sizeof(PathHelper), comparePathHelperByDistance0);
+	Common::sort(_pathHelpers, _pathHelpers + _pathHelpersCount, ComparePathHelperByDistance0());
 
 }
 
@@ -677,8 +670,8 @@ bool PathSystem::findPathCore(int16 sourceNodeIndex, int16 edgeIndex, int16 sour
 
 	bool doLoopFlag = false;
 	int16 destPolyIndex, destNodeIndex, destEdgeIndex, nodeIndex2 = -1;
-	PathPolygon *sourcePolygon, *destPolygon = NULL;
-	PathNode *pathNode = NULL;
+	PathPolygon *sourcePolygon, *destPolygon = nullptr;
+	PathNode *pathNode = nullptr;
 
 	sourcePolygon = &_pathPolygons[sourcePolyIndex];
 
@@ -753,7 +746,7 @@ bool PathSystem::findPathCore(int16 sourceNodeIndex, int16 edgeIndex, int16 sour
 	for (int16 pathHelperIndex = 0; pathHelperIndex < _pathHelpersCount; pathHelperIndex++) {
 		PathHelper *pathHelper = &_pathHelpers[pathHelperIndex];
 		bool destNodeIsTemporary = false;
-		PathEdge *pathEdge = NULL;
+		PathEdge *pathEdge = nullptr;
 
 		destNodeIndex = pathHelper->nodeIndex;
 		destEdgeIndex = pathHelper->edgeIndex;
@@ -1000,7 +993,7 @@ bool PathSystem::findPath(int16 sourceX, int16 sourceY, int16 destX, int16 destY
 	debug(8, "PathSystem::findPath(%d, %d, %d, %d)", sourceX, sourceY, destX, destY);
 
 	bool result, sourceNodeIsTemporary = false;
-	PathPolygon *pathPolygon = NULL;
+	PathPolygon *pathPolygon = nullptr;
 	int16 edgeIndex = -1;
 
 	_pathResultsCount = 0;

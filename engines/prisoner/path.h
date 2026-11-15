@@ -95,8 +95,8 @@ struct PathHelper {
 };
 
 struct ComparePathHelperByDistance0 {
-	bool operator()(const BackgroundObject *left, const BackgroundObject *right) const {
-		return left->y < right->y;
+	bool operator()(const PathHelper &left, const PathHelper &right) const {
+		return left.distance0 < right.distance0;
 	}
 };
 
@@ -148,12 +148,12 @@ public:
 	int16 findPathPolygonByNodeAndEdge(int16 nodeIndex, int16 edgeIndex);
 	void calcPathSegment(int16 nodeIndex1, uint16 distance, int16 nodeIndex2, int16 nodeIndex3);
 	void clearPathNodeHelpers();
- 	void processResultNode(int16 nodeIndex);
- 	bool insertPathEdge(int16 nodeIndex1, int16 nodeIndex2);
- 	void cleanupPathResult();
- 	void deletePathResultItem(int16 resultIndex);
+	void processResultNode(int16 nodeIndex);
+	bool insertPathEdge(int16 nodeIndex1, int16 nodeIndex2);
+	void cleanupPathResult();
+	void deletePathResultItem(int16 resultIndex);
 	int16 calcPathEdgeScale(int16 y, int16 edgeIndex);
- 	int16 calcPathPolygonScale(int16 y, int16 polygonIndex);
+	int16 calcPathPolygonScale(int16 y, int16 polygonIndex);
 	bool findPathCore(int16 sourceNodeIndex, int16 edgeIndex, int16 sourcePolyIndex, int16 destX, int16 destY);
 	void removePathNode(int16 nodeIndex);
 	void removePathEdgeByPathNodeIndex(int16 nodeIndex);

@@ -171,8 +171,6 @@ void PrisonerEngine::updateInventoryItems() {
 	}
 
 	_buildInventoryClickBoxes = false;
-	addDirtyRect(0, 0, 640, 82, 1);
-	addDirtyRect(0, 398, 640, 480, 1);
 
 }
 
@@ -227,7 +225,6 @@ void PrisonerEngine::handleInventoryInput() {
 
 	_inventoryInputRunning = true;
 
-	// TODO: resetDirtyRects();
 	_inventoryWarpMouse = false;
 	_buildInventoryClickBoxes = true;
 
@@ -282,7 +279,6 @@ void PrisonerEngine::handleInventoryInput() {
 		}
 
 		updateInventoryItems();
-		// TODO: drawDirtyRects(NULL);
 
 		if ((buttonState & kLeftButton) && clickBoxIndex != -1) {
 			if (_inventoryItemCursor != _selectedInventoryItemIndex) {
@@ -333,7 +329,6 @@ void PrisonerEngine::handleInventoryInput() {
 						restoreScreen(true);
 						updateInventoryItems();
 					}
-					// TODO: drawDirtyRects(false);
 					_screen->update();
 					_system->delayMillis(10);
 				}

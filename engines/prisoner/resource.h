@@ -104,7 +104,7 @@ public:
 	byte *getScript(int16 index) { return _scripts[index]; }
 	int16 getCount() const { return _scripts.size(); }
 protected:
-	Common::Array<byte*> _scripts;
+	Common::Array<byte *> _scripts;
 	byte *_program;
 };
 
@@ -114,7 +114,7 @@ struct TextItem {
 	Common::String identifier;
 	bool hasSpeech;
 	int16 pakSlot;
-	Common::Array<Common::StringArray*> chunks;
+	Common::Array<Common::StringArray *> chunks;
 	const Common::String &getChunkLineString(uint chunkIndex, uint lineIndex) const {
 		return (*chunks[chunkIndex])[lineIndex];
 	}
@@ -164,7 +164,7 @@ struct AnimationCommand {
 
 struct AnimationElement {
 	byte width, height, flags;
-	Common::Array<AnimationCommand*> commands;
+	Common::Array<AnimationCommand *> commands;
 	~AnimationElement();
 };
 
@@ -185,7 +185,7 @@ struct AnimationFrame {
 
 struct AnimationFrameList {
 	byte priority;
-	Common::Array<AnimationFrame*> frames;
+	Common::Array<AnimationFrame *> frames;
 	~AnimationFrameList();
 };
 
@@ -198,9 +198,9 @@ public:
 	int16 getCelHeight(int16 celIndex) const { return _cels[celIndex]->height; }
 //protected://all public while in progress
 	typedef Common::Array<uint32> OffsetArray;
-	Common::Array<AnimationElement*> _elements;
-	Common::Array<AnimationCel*> _cels;
-	Common::Array<AnimationFrameList*> _anims;
+	Common::Array<AnimationElement *> _elements;
+	Common::Array<AnimationCel *> _cels;
+	Common::Array<AnimationFrameList *> _anims;
 	void loadOffsets(Common::SeekableReadStream &stream, OffsetArray &offsets);
 	AnimationElement *loadAnimationElement(Common::SeekableReadStream &stream);
 	AnimationCommand *loadAnimationCommand(Common::SeekableReadStream &stream);
@@ -249,7 +249,7 @@ class LipSyncSoundResource : public BaseSoundResource {
 public:
 	void load(Common::MemoryReadStream &stream);
 	uint getChannelCount() const { return _channels.size(); }
-	const LipSyncChannel& getChannel(uint index) const { return _channels[index]; }
+	const LipSyncChannel &getChannel(uint index) const { return _channels[index]; }
 	uint32 getTicksScale() const { return _ticksScale; }
 protected:
 	uint32 _ticksScale;

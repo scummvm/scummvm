@@ -26,8 +26,10 @@ namespace Prisoner {
 int16 PrisonerEngine::addClickBox(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag) {
 	int16 clickBoxIndex = _clickBoxes.getFreeSlot();
 	ClickBox *clickBox = &_clickBoxes[clickBoxIndex];
-	if (x1 > x2) SWAP(x1, x2);
-	if (y1 > y2) SWAP(y1, y2);
+	if (x1 > x2)
+		SWAP(x1, x2);
+	if (y1 > y2)
+		SWAP(y1, y2);
 	clickBox->used = 1;
 	clickBox->flag1 = 1;
 	clickBox->flag2 = 1;

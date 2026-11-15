@@ -122,7 +122,6 @@ void PrisonerEngine::updateBackground(bool fullRedraw) {
 
 	if (_backgroundResourceCacheSlot == -1) {
 		if (fullRedraw) {
-			addDirtyRect(_backgroundDrawX, _backgroundDrawY, _backgroundDrawWidth, _backgroundDrawHeight, 1);
 			_screen->clear();
 		}
 	} else {
@@ -133,7 +132,6 @@ void PrisonerEngine::updateBackground(bool fullRedraw) {
 			fullRedraw = true;
 		}
 		if (fullRedraw) {
-			addDirtyRect(_backgroundDrawX, _backgroundDrawY, _backgroundDrawWidth, _backgroundDrawHeight, 1);
 			_screen->copyRectFrom(_backgroundResource->getSurface(), _cameraX, _cameraY,
 				_backgroundDrawX, _backgroundDrawY, _backgroundDrawWidth, _backgroundDrawHeight);
 		}

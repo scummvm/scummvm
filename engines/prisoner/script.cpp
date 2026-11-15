@@ -37,7 +37,7 @@ int16 Script::readInt16() {
 
 Common::String Script::readString() {
 	Common::String value;
-	value = (char*)ip;
+	value = (char *)ip;
 	ip += value.size() + 1;
 	// Strings are aligned on 2-byte-boundaries
 	if (value.size() % 2 == 0)
@@ -67,8 +67,8 @@ void PrisonerEngine::clearScriptProgram(int16 programIndex) {
 		script->actorIndex = -1;
 		script->actorIndex2 = -1;
 		script->soundIndex = -1;
-		script->ip = NULL;
-		script->code = NULL;
+		script->ip = nullptr;
+		script->code = nullptr;
 	}
 }
 
@@ -109,8 +109,8 @@ void PrisonerEngine::stopScript(int16 programIndex, int16 scriptIndex) {
 	if (script->status == kScriptStatusText)
 		unloadScreenText(script->screenTextIndex);
 
-	script->ip = NULL;
-	script->code = NULL;
+	script->ip = nullptr;
+	script->code = nullptr;
 	script->status = kScriptStatusPaused;
 
 	if (script->actorIndex2 != -1) {
@@ -152,8 +152,7 @@ void PrisonerEngine::runCurrentScript() {
 			// Do nothing
 			break;
 
-		case kScriptStatusRunCode:
-		{
+		case kScriptStatusRunCode: {
 			int16 opcode = _currScript->readInt16();
 			_scriptOpcodes->execOpcode(_currScript, opcode);
 			if (_currScriptIndex == _leaveSceneScriptIndex &&
@@ -171,8 +170,7 @@ void PrisonerEngine::runCurrentScript() {
 				_currScript->status = kScriptStatusRunCode;
 			break;
 
-		case kScriptStatusSync:
-		{
+		case kScriptStatusSync: {
 			Script *otherScript = &_scriptPrograms[_currScriptProgramIndex].scripts[_currScript->syncScriptNumber];
 			if (otherScript->status == kScriptStatusSync && otherScript->syncScriptNumber == _currScriptIndex) {
 				otherScript->status = kScriptStatusSyncResume;

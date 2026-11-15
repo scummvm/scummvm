@@ -69,7 +69,7 @@ static const PakMenuDirectoryEntry kPrisonerPanelData[] = {
 	{kOptGfxPanel, "S_PANEL", 11, 156, 156},
 	{kForLookInvPanel, "S_PANEL", 12, 155, 153},
 	{kForIdmPanel, "S_PANEL", 13, 89, 87},
-	{kMenuPanelCount, NULL, 0, 0, 0}};
+	{kMenuPanelCount, nullptr, 0, 0, 0}};
 
 enum MainMenuItem {
 	kMainMenuReturnToGame = 0,

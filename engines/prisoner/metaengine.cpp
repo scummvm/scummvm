@@ -69,7 +69,6 @@ Common::Error PrisonerMetaEngine::createInstance(OSystem *syst, Engine **engine,
 }
 
 bool PrisonerMetaEngine::hasFeature(MetaEngineFeature f) const {
-	//return checkExtendedSaves(f) ||
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||

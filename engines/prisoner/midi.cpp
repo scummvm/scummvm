@@ -41,8 +41,8 @@ MidiPlayer::MidiPlayer(PrisonerEngine *vm, MidiDriver *driver) : _vm(vm), _drive
 }
 
 MidiPlayer::~MidiPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-	_parser->setMidiDriver(NULL);
+	_driver->setTimerCallback(nullptr, nullptr);
+	_parser->setMidiDriver(nullptr);
 	stopMusic();
 	close();
 	delete _parser;

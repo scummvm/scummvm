@@ -142,7 +142,7 @@ int16 PrisonerEngine::addItemZone(int16 sceneItemIndex, int16 mouseCursor, Commo
 
 void PrisonerEngine::drawZoneDescription(int16 zoneIndex) {
 	Zone *zone = &_zones[zoneIndex];
- 	_screen->fillRect(0, 398, 639, 479, 0);
+	_screen->fillRect(0, 398, 639, 479, 0);
 	if (zone->hasText) {
 		TextResource *textResource = _res->get<TextResource>(zone->resourceCacheSlot);
 		setFontColors(_textFont, _zoneFontColor.outlineColor, _zoneFontColor.inkColor);
@@ -150,7 +150,6 @@ void PrisonerEngine::drawZoneDescription(int16 zoneIndex) {
 		drawTextEx(0, 639, 398, 479, textResource->getText(zone->textIndex)->getChunkLineString(0, 0));
 		_zoneTextActive = true;
 	}
-	addDirtyRect(0, 398, 640, 82, 1);
 }
 
 void PrisonerEngine::updateZones(int16 x, int16 y) {
@@ -201,7 +200,6 @@ void PrisonerEngine::updateZones(int16 x, int16 y) {
 	if (_zoneIndexAtMouse == -1 && _zoneTextActive) {
 		_zoneTextActive = false;
 		_screen->fillRect(0, 398, 639, 479, 0);
-		addDirtyRect(0, 398, 640, 82, 1);
 	}
 
 	if (!zoneCursorSet) {
