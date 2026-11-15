@@ -348,6 +348,14 @@ void PrisonerEngine::handleInventoryInput() {
 			inpSetWaitRelease(true);
 		}
 
+		if (keyState == Common::KEYCODE_ESCAPE) {
+			_inventoryItemCursor = oldInventoryItemCursor;
+			_currInventoryItemCursor = -1;
+			inpKeybSetWaitRelease(true);
+			updateMouseCursor();
+			break;
+		}
+
 		updateMouseCursor();
 
 		_screen->update();
