@@ -75,6 +75,14 @@ static const uint8 PALETTE_HERCULES_AMBER[2 * 3] = {
 };
 
 /**
+ * 2 color Macintosh black and white palette. Using 8-bit RGB values.
+ */
+static const uint8 PALETTE_MACINTOSH_BW[2 * 3] = {
+	0x00, 0x00, 0x00, // black
+	0xff, 0xff, 0xff  // white
+};
+
+/**
  * Atari ST AGI palette.
  * Used by all of the tested Atari ST AGI games
  * from Donald Duck's Playground (1986) to Manhunter II (1989).
