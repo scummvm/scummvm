@@ -31,6 +31,7 @@ namespace Nancy {
 
 static const uint kXSheetFrameCountOffset = 0x22;
 static const uint kXSheetNameSize = 33;
+static const uint kNancy29XSheetNameSize = 64;
 static const uint kXSheetCelRecordSize = 140;
 
 bool XSheetFile::load(const Common::String &name) {
@@ -57,12 +58,14 @@ bool XSheetFile::load(const Common::String &name) {
 		// as many trees as there can be
 		numTrees = MIN<uint>(xsheet->readUint16LE(), kMaxTrees);
 
+		// Nancy29 makes room for longer names
+		const uint nameSize = g_nancy->getGameType() >= kGameTypeNancy29 ? kNancy29XSheetNameSize : kXSheetNameSize;
 		treeNames.resize(numTrees);
 		for (Common::String &treeName : treeNames) {
-			readFilename(*xsheet, treeName);
+			treeName = xsheet->readString('\0', nameSize);
 		}
 
-		xsheet->skip((kMaxTrees - numTrees) * kXSheetNameSize);
+		xsheet->skip((kMaxTrees - numTrees) * nameSize);
 
 		if (g_nancy->getGameType() >= kGameTypeNancy15) {
 			// Nancy20 lines the rectangles up on four bytes
