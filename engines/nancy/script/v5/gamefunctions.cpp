@@ -539,10 +539,22 @@ static const INVD::Item &checkItem(lua_State *L, int index) {
 	return *item;
 }
 
+// Inventory:Add(name), and in Nancy29 Inventory:Add(name, "end" or "beginning")
 static int inventoryAdd(lua_State *L) {
 	const INVD::Item &item = checkItem(L, 2);
+
+	bool isAddedToFront = false;
+	if (g_nancy->getGameType() >= kGameTypeNancy29 && lua_gettop(L) >= 3) {
+		const Common::String where = luaL_checkstring(L, 3);
+		if (where == "beginning") {
+			isAddedToFront = true;
+		} else if (where != "end") {
+			return luaL_error(L, "Inventory:Add second parameter, if specified, is expected to be \"end\" or \"beginning\"");
+		}
+	}
+
 	if (!NancySceneState.hasItem(item.id)) {
-		NancySceneState.addItemToInventory(item.id);
+		NancySceneState.addItemToInventory(item.id, isAddedToFront);
 	}
 
 	return 0;

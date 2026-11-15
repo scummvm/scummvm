@@ -208,7 +208,8 @@ public:
 	void requestSleep() { _timers.sleepRequested = true; }
 	void setPlayerDay(int16 day);
 
-	void addItemToInventory(int16 id);
+	// Nancy29 scripts can put an item in front of the others
+	void addItemToInventory(int16 id, bool isAddedToFront = false);
 
 	// Nancy10 and up: the items, in the order the inventory shows them
 	const Common::Array<int16> &getInventoryOrder() { return _inventoryBox.getOrder(); }

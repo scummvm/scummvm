@@ -522,7 +522,7 @@ byte Scene::getPlayerTOD() const {
 	}
 }
 
-void Scene::addItemToInventory(int16 id) {
+void Scene::addItemToInventory(int16 id, bool isAddedToFront) {
 	if (id == -1) {
 		return;
 	}
@@ -564,7 +564,7 @@ void Scene::addItemToInventory(int16 id) {
 					break;
 				}
 			}
-			if (addToBack) {
+			if (addToBack && !isAddedToFront) {
 				order.push_back(id);
 			} else {
 				order.insert_at(0, id);
