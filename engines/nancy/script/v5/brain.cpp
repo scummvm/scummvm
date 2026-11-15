@@ -20,6 +20,7 @@
  */
 
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/puzzledata.h"
@@ -309,6 +310,30 @@ static int brainAllNames(lua_State *L) {
 	return 1;
 }
 
+// Brain:FilteredNames(prefix, suffix), Nancy30: an array of the names, in
+// capitals, that start with the prefix and end with the suffix, in any case.
+// The exe only checks that a name is as long as the longer of the two.
+static int brainFilteredNames(lua_State *L) {
+	Common::String prefix = luaL_checkstring(L, 2);
+	Common::String suffix = luaL_checkstring(L, 3);
+	prefix.toUppercase();
+	suffix.toUppercase();
+	const uint minLength = MAX(prefix.size(), suffix.size());
+
+	lua_newtable(L);
+	int count = 0;
+	for (const Common::String &name : getBrain(L).getNames()) {
+		Common::String upperName = name;
+		upperName.toUppercase();
+		if (upperName.size() >= minLength && upperName.hasPrefix(prefix) && upperName.hasSuffix(suffix)) {
+			lua_pushstring(L, upperName.c_str());
+			lua_rawseti(L, -2, ++count);
+		}
+	}
+
+	return 1;
+}
+
 // Brain:Contains(name), Nancy29: whether there is a condition by the name
 static int brainContains(lua_State *L) {
 	lua_pushboolean(L, getBrain(L).exists(luaL_checkstring(L, 2)));
@@ -404,6 +429,7 @@ void registerBrainAPI(lua_State *L) {
 		{ "__newindex", brainNewIndex },
 		{ "AllNames", brainAllNames },
 		{ "Contains", brainContains },
+		{ "FilteredNames", brainFilteredNames },
 		{ "IsAutoUpdated", brainIsAutoUpdated },
 		{ "IsCached", brainIsCached },
 		{ "IsWritable", brainIsWritable },
