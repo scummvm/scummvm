@@ -916,6 +916,8 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 		if (props.lastFrame <= -20)
 			props.noBlock    = true;
+		else if (props.startFrame >= 0)
+			close = true;
 
 		props.slot = (-props.lastFrame) % 10;
 	}
@@ -937,10 +939,6 @@ void Inter_v7::o7_playVmdOrMusic() {
 	if (slot < 0) {
 		WRITE_VAR(11, (uint32) -1);
 		return;
-	}
-
-	if (_vm->_vidPlayer->getVideoBufferSize(slot) == 0 || !_vm->_vidPlayer->hasVideo(slot)) {
-		props.noBlock = true;
 	}
 
 	if ((props.slot == 1 && !(props.flags & VideoPlayer::kFlagNoVideo) && _vm->_vidPlayer->hasVideo(slot)) ||
