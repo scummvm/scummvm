@@ -35,6 +35,7 @@ struct NancyInput;
 
 namespace Script {
 
+class Animator;
 class BlendStages;
 class GraphNode;
 class SceneContext;
@@ -253,6 +254,13 @@ public:
 
 	// Nancy26: the record's own transform changed, by its stages or a script
 	virtual void onLocalTransformChanged();
+
+	// Nancy29: the animator that moves, rotates, scales and fades the record,
+	// and the transform and the alpha that the record gets from it
+	Animator *getAnimator() const;
+	double getLocalAlpha() const;
+	void setAnimatedTransform(const ScriptMatrix &transform);
+	void setAnimatedAlpha(double alpha);
 
 	// Nancy26: the records the mouse can be over, which take the clicks. The
 	// point is in the coordinates of the screen. A button is 0 for the left one

@@ -27,6 +27,8 @@
 namespace Nancy {
 namespace Script {
 
+class Animator;
+
 // Nancy26 makes every record a node of a tree: it is enabled, visible and
 // paused by its own say and by what the Transformers above it say, and can be
 // see-through. Messages reach it by its names. Records of the other games
@@ -42,6 +44,8 @@ struct RecordNodeState {
 
 	Common::String localName;
 	Common::String uniqueAlias;	// "AR<number>", which no other record has
+
+	Animator *animator = nullptr;	// Nancy29
 
 	// "active" stands for enabled, visible and not paused
 	bool isActive() const { return localEnabled && localVisible && !localPaused; }

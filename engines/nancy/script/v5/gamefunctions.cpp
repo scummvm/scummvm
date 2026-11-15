@@ -44,6 +44,7 @@
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/scenecontext.h"
 #include "engines/nancy/script/types.h"
+#include "engines/nancy/script/v5/animator.h"
 #include "engines/nancy/script/v5/brain.h"
 
 #include "engines/nancy/script/v5/gamefunctions.h"
@@ -1168,6 +1169,7 @@ void registerNancy26GameAPI(lua_State *L) {
 	registerGlobal(L, "Achievements", kAchievementsType, kAchievementsFunctions);
 
 	registerBrainAPI(L);
+	Animator::registerTypes(L);
 }
 
 } // End of namespace Script
