@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/array.h"
 #include "common/random.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -131,6 +132,114 @@ static int tableSort(lua_State *L) {
 	for (int i = 0; i < count; ++i) {
 		lua_pushinteger(L, order[i]);
 		lua_gettable(L, 1);
+		lua_rawseti(L, -2, i + 1);
+	}
+
+	return 1;
+}
+
+// One part of a sort key of table.keysort(). Nils go first, then numbers,
+// then strings; other values count as nil.
+struct KeySortPart {
+	int type = LUA_TNIL;
+	lua_Number number = 0;
+	const char *string = nullptr;
+};
+
+struct KeySortEntry {
+	Common::Array<KeySortPart> parts;
+	int index = 0;
+};
+
+// Reads the value on top of the stack and pops it. The strings stay valid while
+// the table they are in is on the stack.
+static KeySortPart readKeySortPart(lua_State *L) {
+	KeySortPart part;
+	part.type = lua_type(L, -1);
+	if (part.type == LUA_TNUMBER) {
+		part.number = lua_tonumber(L, -1);
+	} else if (part.type == LUA_TSTRING) {
+		part.string = lua_tostring(L, -1);
+	} else {
+		part.type = LUA_TNIL;
+	}
+
+	lua_pop(L, 1);
+	return part;
+}
+
+static int compareKeySortParts(const KeySortPart &a, const KeySortPart &b, bool ignoreCase) {
+	static const int kOrder[] = { 0, 0, 0, 1, 2 };	// by Lua type: nil, -, -, number, string
+	if (kOrder[a.type] != kOrder[b.type]) {
+		return kOrder[a.type] < kOrder[b.type] ? -1 : 1;
+	}
+
+	if (a.type == LUA_TNUMBER) {
+		return a.number < b.number ? -1 : (a.number > b.number ? 1 : 0);
+	}
+
+	if (a.type == LUA_TSTRING) {
+		return ignoreCase ? scumm_stricmp(a.string, b.string) : strcmp(a.string, b.string);
+	}
+
+	return 0;
+}
+
+// Keys compare part by part; a key that runs out of parts first goes first
+static bool keySortsBefore(const KeySortEntry &a, const KeySortEntry &b, bool ignoreCase) {
+	for (uint i = 0; i < a.parts.size(); ++i) {
+		if (i >= b.parts.size()) {
+			return false;
+		}
+
+		const int result = compareKeySortParts(a.parts[i], b.parts[i], ignoreCase);
+		if (result != 0) {
+			return result < 0;
+		}
+	}
+
+	return a.parts.size() < b.parts.size();
+}
+
+// Nancy30's table.keysort(keys, count[, ignoreCase]) sorts the keys 1 to count
+// of the table and gives back their indices in order. A key is a number, a
+// string or an array of them; equal keys keep their order. List:Sort() moves
+// the items of a list with it.
+static int tableKeySort(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TTABLE);
+	const int count = luaL_checkint(L, 2);
+	const bool ignoreCase = lua_gettop(L) > 2 && lua_toboolean(L, 3);
+
+	Common::Array<KeySortEntry> entries;
+	for (int i = 1; i <= count; ++i) {
+		KeySortEntry entry;
+		entry.index = i;
+
+		lua_rawgeti(L, 1, i);
+		if (lua_istable(L, -1)) {
+			const int numParts = lua_objlen(L, -1);
+			for (int j = 1; j <= numParts; ++j) {
+				lua_rawgeti(L, -1, j);
+				entry.parts.push_back(readKeySortPart(L));
+			}
+
+			lua_pop(L, 1);
+		} else {
+			entry.parts.push_back(readKeySortPart(L));
+		}
+
+		// An insertion sort, which keeps equal keys in their order
+		uint position = entries.size();
+		while (position > 0 && keySortsBefore(entry, entries[position - 1], ignoreCase)) {
+			--position;
+		}
+
+		entries.insert_at(position, entry);
+	}
+
+	lua_createtable(L, count > 0 ? count : 0, 0);
+	for (uint i = 0; i < entries.size(); ++i) {
+		lua_pushinteger(L, entries[i].index);
 		lua_rawseti(L, -2, i + 1);
 	}
 
@@ -268,6 +377,18 @@ LuaState::LuaState(SceneContext *context) {
 	if (g_nancy->getGameType() >= kGameTypeNancy21) {
 		setLibraryFunction(_state, LUA_STRLIBNAME, "compare", stringCompare);
 		setLibraryFunction(_state, LUA_STRLIBNAME, "comparenocase", stringCompareNoCase);
+	}
+
+	// Nancy30 has the debug library. Introspection_SC reads the local variables
+	// and upvalues of a calling function with debug.getlocal, debug.getinfo and
+	// debug.getupvalue. Lambda_SC compiles functions from strings that see the
+	// variables of the code that made them, which it gets from
+	// Introspection_SC, and adds debug.traceback to the error when one doesn't
+	// compile. The collection scripts (Dict, List, Set, View) use these
+	// lambdas, e.g. to filter and sort.
+	if (g_nancy->getGameType() >= kGameTypeNancy30) {
+		openLibrary(_state, luaopen_debug, LUA_DBLIBNAME);
+		setLibraryFunction(_state, LUA_TABLIBNAME, "keysort", tableKeySort);
 	}
 
 	removeGlobal(_state, "collectgarbage");
