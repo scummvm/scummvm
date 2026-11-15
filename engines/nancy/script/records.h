@@ -291,6 +291,10 @@ public:
 	// transform and modColor.
 	void drawCopy(int tableIndex);
 
+	// Nancy30: ar:DefaultRects() shows the whole picture at the top left, as
+	// when neither the source nor onScreen was given
+	void setDefaultRects();
+
 protected:
 	void readTable(int tableIndex) override;
 	void onZChanged() override;

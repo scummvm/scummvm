@@ -1622,6 +1622,22 @@ int drawOverlay(lua_State *L) {
 	return 0;
 }
 
+void OverlayRecord::setDefaultRects() {
+	_source = ScriptRect(0, 0, _image.w, _image.h);
+	_dest = _source;
+	_hasDestTable = false;
+	applyRects();
+}
+
+static int overlayDefaultRects(lua_State *L) {
+	OverlayRecord *record = dynamic_cast<OverlayRecord *>(checkRecord(L, 1));
+	if (record) {
+		record->setDefaultRects();
+	}
+
+	return 0;
+}
+
 bool OverlayRecord::getField(const Common::String &key) {
 	lua_State *L = getLua();
 
@@ -1639,6 +1655,8 @@ bool OverlayRecord::getField(const Common::String &key) {
 		lua_pushstring(L, _imageName.c_str());
 	} else if (key == "tree") {
 		lua_pushstring(L, _treeName.c_str());
+	} else if (key == "DefaultRects") {
+		lua_pushcfunction(L, overlayDefaultRects);
 	} else {
 		return false;
 	}
