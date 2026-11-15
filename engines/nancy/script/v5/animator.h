@@ -46,7 +46,8 @@ class AnimatorStage;
 // each one moving it to a target value. A lerp blend moves at a constant
 // speed, while a "slerp" blend starts and ends slowly. When all tracks of a
 // stage have finished blending, the record's "Stage<n>Done" function is
-// called.
+// called. Nancy30 calls the stage's own OnDone function instead, which
+// scripts store in the stage like any other field (ar.animator[1].OnDone).
 //
 // The record's transform is the product of the transforms of the stages, in
 // order, and each stage scales, then rotates, then translates. The record's
@@ -156,6 +157,9 @@ public:
 	void onTrackStopped();
 	void onTrackFinished();
 
+	// Nancy30: pushes the table of what scripts stored in the stage
+	void pushFields(lua_State *L);
+
 private:
 	Animator &_animator;
 	uint _index;
@@ -189,8 +193,8 @@ public:
 	void updateTransform();
 	void updateAlpha();
 
-	// A stage finished its blends. Its "Stage<n>Done" function is called
-	// later, once the stages aren't being iterated, as it can change them.
+	// A stage finished its blends. Its Done function is called later, once
+	// the stages aren't being iterated, as it can change them.
 	void onStageDone(uint index);
 	void callDoneFunctions();
 

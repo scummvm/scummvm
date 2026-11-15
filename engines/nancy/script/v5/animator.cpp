@@ -22,8 +22,12 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
+#include "engines/nancy/nancy.h"
+
 #include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/luastate.h"
 #include "engines/nancy/script/record.h"
+#include "engines/nancy/script/scenecontext.h"
 
 #include "engines/nancy/script/v5/animator.h"
 
@@ -232,6 +236,27 @@ AnimatorStage::~AnimatorStage() {
 	for (AnimatorTrack *track : _tracks) {
 		delete track;
 	}
+
+	// Drops what scripts stored in the stage, the way the exe keeps it: in the
+	// registry, under the stage
+	lua_State *L = _animator.getOwner().getContext().getLua();
+	lua_pushlightuserdata(L, this);
+	lua_pushnil(L);
+	lua_rawset(L, LUA_REGISTRYINDEX);
+}
+
+void AnimatorStage::pushFields(lua_State *L) {
+	lua_pushlightuserdata(L, this);
+	lua_rawget(L, LUA_REGISTRYINDEX);
+	if (lua_istable(L, -1)) {
+		return;
+	}
+
+	lua_pop(L, 1);
+	lua_newtable(L);
+	lua_pushlightuserdata(L, this);
+	lua_pushvalue(L, -2);
+	lua_rawset(L, LUA_REGISTRYINDEX);
 }
 
 bool AnimatorStage::isBlending() const {
@@ -404,12 +429,35 @@ void Animator::onStageDone(uint index) {
 	_doneStages.push_back(index);
 }
 
+static void pushStageRef(lua_State *L, Record &record, uint stage);
+
 void Animator::callDoneFunctions() {
 	const Common::Array<uint> doneStages = _doneStages;
 	_doneStages.clear();
 
 	for (uint index : doneStages) {
-		_owner.callFunction(Common::String::format("Stage%uDone", index).c_str());
+		if (g_nancy->getGameType() < kGameTypeNancy30) {
+			_owner.callFunction(Common::String::format("Stage%uDone", index).c_str());
+			continue;
+		}
+
+		// Nancy30: stage.OnDone(stage)
+		AnimatorStage *stage = getStage(index);
+		if (!stage) {
+			continue;
+		}
+
+		lua_State *L = _owner.getContext().getLua();
+		stage->pushFields(L);
+		lua_getfield(L, -1, "OnDone");
+		lua_remove(L, -2);
+		if (!lua_isfunction(L, -1)) {
+			lua_pop(L, 1);
+			continue;
+		}
+
+		pushStageRef(L, _owner, index);
+		LuaState::call(L, 1, 0, "Error running the OnDone of an animator stage");
 	}
 }
 
@@ -436,6 +484,10 @@ static void pushRef(lua_State *L, Record &record, const char *typeName, uint sta
 	record.push();
 	lua_rawseti(L, -2, 1);
 	lua_setfenv(L, -2);
+}
+
+static void pushStageRef(lua_State *L, Record &record, uint stage) {
+	pushRef(L, record, kAnimatorStageType, stage, -1);
 }
 
 void Animator::push(lua_State *L) {
@@ -575,11 +627,21 @@ static bool findTrackKind(const char *name, AnimatorTrack::Kind &kind) {
 	return false;
 }
 
-// stage.a, stage.s, stage.r and stage.t are its tracks
+// stage.a, stage.s, stage.r and stage.t are its tracks. In Nancy30, other
+// names give what scripts stored in the stage.
 static int stageIndex(lua_State *L) {
 	AnimatorTrack::Kind kind;
 	if (lua_type(L, 2) != LUA_TSTRING || !findTrackKind(lua_tostring(L, 2), kind)) {
-		return indexFunctions(L);
+		indexFunctions(L);
+		if (lua_isnil(L, -1) && g_nancy->getGameType() >= kGameTypeNancy30) {
+			lua_pop(L, 1);
+			checkStage(L).pushFields(L);
+			lua_pushvalue(L, 2);
+			lua_rawget(L, -2);
+			lua_remove(L, -2);
+		}
+
+		return 1;
 	}
 
 	const AnimatorRef &ref = *(AnimatorRef *)checkUserData(L, 1, kAnimatorStageType);
@@ -588,14 +650,23 @@ static int stageIndex(lua_State *L) {
 	return 1;
 }
 
-// stage.t = value sets a track to a value
+// stage.t = value sets a track to a value. Nancy30 stores anything else in
+// the stage, like its OnDone function.
 static int stageNewIndex(lua_State *L) {
 	static const char *const kTrackDescriptions[] = { "Alpha", "Scale", "Rotation", "Translation" };
 
 	AnimatorStage &stage = checkStage(L);
 	AnimatorTrack::Kind kind;
 	if (!findTrackKind(luaL_checkstring(L, 2), kind)) {
-		return luaL_error(L, "Cannot set field '%s' of an animator stage", lua_tostring(L, 2));
+		if (g_nancy->getGameType() < kGameTypeNancy30) {
+			return luaL_error(L, "Cannot set field '%s' of an animator stage", lua_tostring(L, 2));
+		}
+
+		stage.pushFields(L);
+		lua_pushvalue(L, 2);
+		lua_pushvalue(L, 3);
+		lua_rawset(L, -3);
+		return 0;
 	}
 
 	AnimatorTrack &track = stage.getTrack(kind);
