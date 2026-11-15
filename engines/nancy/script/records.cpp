@@ -2579,15 +2579,24 @@ void MovieRecord::readTable(int tableIndex) {
 		luaL_error(L, "MovieAR must be created with a movie parameter");
 	}
 
-	if (!pushField(L, tableIndex, "onScreen")) {
+	// Nancy30 shows the whole movie at the top left without an onScreen, or
+	// with an empty one
+	const bool hasDest = pushField(L, tableIndex, "onScreen");
+	if (!hasDest && g_nancy->getGameType() < kGameTypeNancy30) {
 		luaL_error(L, "MovieAR must be created with an 'onScreen' parameter");
 	}
 
-	_dest = checkRect(L, -1);
-	lua_pop(L, 1);
+	if (hasDest) {
+		_dest = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
 
 	if (!_player.loadFile(Common::Path(_name))) {
 		luaL_error(L, "Could not load movie %s", _name.c_str());
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy30 && _dest.isEmpty()) {
+		_dest = ScriptRect(0, 0, _player.getWidth(), _player.getHeight());
 	}
 
 	_firstFrame = 0;
