@@ -84,6 +84,19 @@ byte MoviePlayer::resolvePlaytype(byte videoPlaytype) {
 	return g_nancy->getGameType() >= kGameTypeNancy10 ? kVideoPlaytypeBink : kVideoPlaytypeAVF;
 }
 
+// The AVF decoder caches frames itself, so only the Bink path needs ours
+void MoviePlayer::enableFrameCache() {
+	if (_useFrameCache || !_decoder || _videoType != kVideoPlaytypeBink) {
+		return;
+	}
+
+	_useFrameCache = true;
+	_frameCache.resize(_decoder->getFrameCount());
+	_cacheFillNext = 0;
+	_cacheLoader.reset(new BinkCacheLoader(*this));
+	g_nancy->addDeferredLoader(_cacheLoader);
+}
+
 bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bidirectionalCache, bool screenFormat) {
 	freeFrameCache();
 	unregisterMovie();
@@ -153,13 +166,8 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 		}
 	}
 
-	// The AVF decoder caches frames itself, so only the Bink path needs ours.
-	_useFrameCache = bidirectionalCache && _videoType == kVideoPlaytypeBink;
-	if (_useFrameCache) {
-		_frameCache.resize(_decoder->getFrameCount());
-		_cacheFillNext = 0;
-		_cacheLoader.reset(new BinkCacheLoader(*this));
-		g_nancy->addDeferredLoader(_cacheLoader);
+	if (bidirectionalCache) {
+		enableFrameCache();
 	}
 
 	_loadedName = name;

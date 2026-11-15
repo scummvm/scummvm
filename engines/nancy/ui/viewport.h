@@ -67,6 +67,8 @@ public:
 	void scrollDown(uint delta);
 
 	uint16 getFrameCount() const { return _decoder.getFrameCount(); }
+	// For a background the player turns around in, from Nancy19 on
+	void enableFrameCache() { _decoder.enableFrameCache(); }
 	uint16 getCurFrame() const { return _currentFrame; }
 	uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y; }
 	uint16 getMaxScroll() const;

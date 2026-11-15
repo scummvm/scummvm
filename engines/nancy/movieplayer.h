@@ -65,6 +65,8 @@ public:
 	// format instead of the input format; only for opaque videos, since the
 	// transparent color is defined in the input format.
 	bool loadFile(const Common::Path &name, byte videoPlaytype = kVideoPlaytypeAuto, bool bidirectionalCache = false, bool screenFormat = false);
+	// Turns on that cache for a movie that is already loaded
+	void enableFrameCache();
 	bool isVideoLoaded() const;
 	void close();
 	Video::VideoDecoder *getDecoder() { return _decoder.get(); }
@@ -150,9 +152,10 @@ private:
 
 	// Decoded-frame cache for the Bink path (AVF caches internally). Bink seeking
 	// re-decodes from the previous keyframe, so caching keeps panorama scrubbing
-	// fast. Enabled only when loadFile() is asked for a bidirectional cache; the
-	// whole cache is then filled forward (the fast direction) in spare time by a
-	// deferred loader, so even the first turn is smooth.
+	// fast. Enabled when loadFile() is asked for a bidirectional cache, or by
+	// enableFrameCache(); the whole cache is then filled forward (the fast
+	// direction) in spare time by a deferred loader, so even the first turn is
+	// smooth.
 	bool _useFrameCache = false;
 	Common::Array<Graphics::Surface> _frameCache;
 	Common::SharedPtr<DeferredLoader> _cacheLoader;

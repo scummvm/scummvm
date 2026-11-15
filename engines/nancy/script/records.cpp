@@ -560,10 +560,17 @@ void SummaryRecord::registerGraphics() {
 	}
 }
 
+// Only turning changes the frame of the background, so a background of several
+// frames is a panorama. Its frames are cached from the start, as in the
+// panorama scenes of the earlier games.
 void SummaryRecord::setBackground(UI::Viewport *background) {
 	_background = background;
 	_numFrames = background ? background->getFrameCount() : 0;
 	_frame = getContext().getFrame();
+
+	if (_numFrames > 1) {
+		_background->enableFrameCache();
+	}
 }
 
 void SummaryRecord::setFrame(uint frame) {
