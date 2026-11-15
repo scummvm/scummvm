@@ -43,9 +43,11 @@ namespace Script {
 void Record::createNodeState() {
 	_nodeState = new RecordNodeState();
 
-	// Every record goes by a name of its own
+	// Every record goes by a name of its own, which messages can be sent to:
+	// a record that sends gives this name, and the receiver can answer it
 	static uint s_numRecords = 0;
 	_nodeState->uniqueAlias = Common::String::format("AR%u", ++s_numRecords);
+	registerAlias(_nodeState->uniqueAlias, this);
 }
 
 void Record::destroyNodeState() {
