@@ -90,6 +90,8 @@ class GraphicsManager;
 struct Location;
 class Message;
 class SoundManager;
+class SubtitleManager;
+class SubtitleRenderer;
 class Window;
 class VideoWindow;
 
@@ -114,6 +116,8 @@ public:
 
 	bool hasFeature(EngineFeature f) const override;
 	void pauseEngineIntern(bool pause) override;
+	void syncSoundSettings() override;
+	void applyGameSettings() override;
 
 	// Resources
 	Common::String getString(uint32 stringID);
@@ -137,6 +141,8 @@ public:
 
 	GraphicsManager *_gfx;
 	SoundManager *_sound;
+	SubtitleManager *_subtitles;
+	SubtitleRenderer *_subtitleRenderer;
 	Window *_mainWindow; // Only one main window is supported.
 	Window *_focusedWindow;
 	Window *_captureWindow;
