@@ -62,6 +62,13 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	}
 
 	_midi = nullptr;
+	_screen = nullptr;
+	_resLoader = nullptr;
+	_res = nullptr;
+	_scriptOpcodes = nullptr;
+	_pathSystem = nullptr;
+	_screenBackupSurface = nullptr;
+	_menuBackgroundSurface = nullptr;
 	_keepSoundsOnPause = false;
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -79,6 +86,21 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 PrisonerEngine::~PrisonerEngine() {
+	// Sounds and music can still be playing from resource data
+	_mixer->stopAll();
+	shutdownMidi();
+
+	if (_menuBackgroundSurface)
+		_menuBackgroundSurface->free();
+	delete _menuBackgroundSurface;
+	if (_screenBackupSurface)
+		_screenBackupSurface->free();
+	delete _screenBackupSurface;
+	delete _pathSystem;
+	delete _scriptOpcodes;
+	delete _res;
+	delete _resLoader;
+	delete _screen;
 	delete _rnd;
 }
 
@@ -346,15 +368,6 @@ Common::Error PrisonerEngine::run() {
 	}
 
 #endif
-
-	shutdownMidi();
-	_menuBackgroundSurface->free();
-	delete _menuBackgroundSurface;
-	delete _screenBackupSurface;
-	delete _pathSystem;
-	delete _scriptOpcodes;
-	delete _res;
-	delete _resLoader;
 
 	debug("Exit ok");
 	return Common::kNoError;

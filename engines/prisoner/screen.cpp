@@ -43,6 +43,7 @@ Screen::Screen(PrisonerEngine *vm) : _vm(vm) {
 }
 
 Screen::~Screen() {
+	_workScreen->free();
 	delete _workScreen;
 }
 

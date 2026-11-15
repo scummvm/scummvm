@@ -58,6 +58,7 @@ public:
 class ScriptOpcodes {
 public:
 	ScriptOpcodes(PrisonerEngine *vm) : _vm(vm) {}
+	~ScriptOpcodes();
 	void setupOpcodes();
 	int16 execOpcode(Script *script, byte opcode);
 protected:

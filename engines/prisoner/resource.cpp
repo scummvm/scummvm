@@ -45,6 +45,8 @@ PictureResource::PictureResource() : _picture(NULL) {
 }
 
 PictureResource::~PictureResource() {
+	if (_picture)
+		_picture->free();
 	delete _picture;
 }
 

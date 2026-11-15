@@ -29,6 +29,13 @@ namespace Prisoner {
 typedef Common::Functor1Mem<Script*, int16, ScriptOpcodes> OpcodeFunc;
 #define Opcode(func) \
 	_opcodes.push_back(new Opcode(new OpcodeFunc(this, &ScriptOpcodes::func), #func));
+ScriptOpcodes::~ScriptOpcodes() {
+	for (uint i = 0; i < _opcodes.size(); i++) {
+		delete _opcodes[i]->_call;
+		delete _opcodes[i];
+	}
+}
+
 void ScriptOpcodes::setupOpcodes() {
 
 	Opcode(op_returnNegOne);
