@@ -105,10 +105,11 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 	}
 
 	if (_videoType == kVideoPlaytypeBink) {
-		// Nancy29 has movies in both versions of Bink
+		// Nancy29 has movies in both versions of Bink. Its Bink 2 decoder is
+		// older than the one of the later games.
 		Common::File file;
 		if (file.open(bikPath) && Video::Bink2Decoder::isBink2(file))
-			_decoder.reset(new Video::Bink2Decoder());
+			_decoder.reset(new Video::Bink2Decoder(g_nancy->getGameType() == kGameTypeNancy29));
 		else
 			_decoder.reset(new Video::BinkDecoder());
 	} else {

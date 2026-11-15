@@ -59,7 +59,13 @@ namespace Video {
  */
 class Bink2Decoder : public VideoDecoder {
 public:
-	Bink2Decoder();
+	/**
+	 * @param skipOutsideBlocks  Play revision 'f' as RAD's older decoders do
+	 *                           (Nancy29): a motion block whose source starts
+	 *                           outside the frame is skipped, where newer ones
+	 *                           move its source back into the frame.
+	 */
+	explicit Bink2Decoder(bool skipOutsideBlocks = false);
 	~Bink2Decoder() override;
 
 	bool loadStream(Common::SeekableReadStream *stream) override;
@@ -90,7 +96,7 @@ private:
 	 */
 	class Bink2VideoTrack : public FixedRateVideoTrack {
 	public:
-		Bink2VideoTrack(char revision, uint32 width, uint32 height, uint32 flags, uint32 frameCount, const Common::Rational &frameRate);
+		Bink2VideoTrack(char revision, bool skipOutsideBlocks, uint32 width, uint32 height, uint32 flags, uint32 frameCount, const Common::Rational &frameRate);
 		~Bink2VideoTrack() override;
 
 		uint16 getWidth() const override { return _width; }
@@ -151,6 +157,7 @@ private:
 		};
 
 		char _revision;
+		bool _skipOutsideBlocks;
 
 		uint32 _width;
 		uint32 _height;
@@ -238,6 +245,7 @@ private:
 		void decodeMotionVectors(BitStream &bits, int flags, MotionVectors &mv);
 		void predictMotionVectors(int flags, const MotionVectors &mv);
 		// x and y are in the plane; dst points at the row of the macroblock
+		void getSourcePosition(int x, int y, int block, int &posX, int &posY) const;
 		void compensateLuma(int x, int y, byte *dst, const byte *src, int pitch);
 		void compensateChroma(int x, int y, byte *dst, const byte *src, int pitch);
 
@@ -277,6 +285,7 @@ private:
 	Common::SeekableReadStream *_stream;
 	Common::Array<Frame> _frames;
 	uint32 _audioTrackCount;
+	bool _skipOutsideBlocks;
 
 	uint32 findKeyFrame(uint32 frame) const;
 };

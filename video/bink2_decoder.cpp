@@ -638,7 +638,7 @@ static constexpr float kBlurCenter[8][8] = {
 };
 
 
-Bink2Decoder::Bink2Decoder() : _stream(nullptr), _audioTrackCount(0) {
+Bink2Decoder::Bink2Decoder(bool skipOutsideBlocks) : _stream(nullptr), _audioTrackCount(0), _skipOutsideBlocks(skipOutsideBlocks) {
 }
 
 Bink2Decoder::~Bink2Decoder() {
@@ -679,7 +679,7 @@ bool Bink2Decoder::loadStream(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	addTrack(new Bink2VideoTrack((char)(id & 0xFF), width, height, videoFlags, frameCount, Common::Rational(frameRateNum, frameRateDen)));
+	addTrack(new Bink2VideoTrack((char)(id & 0xFF), _skipOutsideBlocks, width, height, videoFlags, frameCount, Common::Rational(frameRateNum, frameRateDen)));
 
 	// The maximum packet sizes, then the rate and the flags of each track,
 	// then their IDs
@@ -785,8 +785,8 @@ VideoDecoder::AudioTrack *Bink2Decoder::getAudioTrack(int index) {
 	return (AudioTrack *)track;
 }
 
-Bink2Decoder::Bink2VideoTrack::Bink2VideoTrack(char revision, uint32 width, uint32 height, uint32 flags, uint32 frameCount, const Common::Rational &frameRate) :
-		_revision(revision), _width(width), _height(height), _frameCount(frameCount), _curFrameNumber(-1), _frameRate(frameRate),
+Bink2Decoder::Bink2VideoTrack::Bink2VideoTrack(char revision, bool skipOutsideBlocks, uint32 width, uint32 height, uint32 flags, uint32 frameCount, const Common::Rational &frameRate) :
+		_revision(revision), _skipOutsideBlocks(skipOutsideBlocks && revision == 'f'), _width(width), _height(height), _frameCount(frameCount), _curFrameNumber(-1), _frameRate(frameRate),
 		_surface(nullptr), _curFrame(0), _comp(0), _mbPos(0) {
 	_pixelFormat = Image::Codec::getDefaultYUVFormat();
 
@@ -1511,39 +1511,63 @@ void Bink2Decoder::Bink2VideoTrack::predictMotionVectors(int flags, const Motion
 	}
 }
 
-// Four 16x16 blocks. One that points out of the frame is left as it is.
-void Bink2Decoder::Bink2VideoTrack::compensateLuma(int x, int y, byte *dst, const byte *src, int pitch) {
+// A source position in half pixels, moved back into the frame with room for
+// the filter taps of a half pixel. As in the original, the limits are
+// compared without a sign, so a negative position goes to the far end.
+static int clampSourcePosition(int pos, int limit) {
+	const bool isHalf = (pos & 1) != 0;
+	const uint32 low = isHalf ? 4 : 0;
+	const uint32 high = (uint32)limit - (isHalf ? 42 : 32);
+
+	if ((uint32)pos - low > high)
+		return (uint32)pos < low ? (int)low : (int)high;
+	return pos;
+}
+
+// Where the 16x16 luma block of a macroblock is taken from, in half pixels
+void Bink2Decoder::Bink2VideoTrack::getSourcePosition(int x, int y, int block, int &posX, int &posY) const {
 	const MotionVectors &mv = _currentMV[_mbPos];
 
-	for (int i = 0; i < 4; i++) {
-		const int blockX = x + (i & 1) * 16;
-		const int blockY = y + (i >> 1) * 16;
-		const int srcX = (mv.v[i][0] >> 1) + blockX;
-		const int srcY = (mv.v[i][1] >> 1) + blockY;
+	posX = mv.v[block][0] + (x + (block & 1) * 16) * 2;
+	posY = mv.v[block][1] + (y + (block >> 1) * 16) * 2;
 
-		if (srcX < 0 || srcX >= (int)_width || srcY < 0 || srcY >= (int)_height)
+	if (!_skipOutsideBlocks) {
+		posX = clampSourcePosition(posX, (int)_width * 2);
+		posY = clampSourcePosition(posY, (int)_height * 2);
+	}
+}
+
+// Four 16x16 blocks. With older decoders, one that starts outside the frame
+// is left as it is.
+void Bink2Decoder::Bink2VideoTrack::compensateLuma(int x, int y, byte *dst, const byte *src, int pitch) {
+	for (int i = 0; i < 4; i++) {
+		int posX, posY;
+		getSourcePosition(x, y, i, posX, posY);
+		const int srcX = posX >> 1;
+		const int srcY = posY >> 1;
+
+		if (_skipOutsideBlocks && (srcX < 0 || srcX >= (int)_width || srcY < 0 || srcY >= (int)_height))
 			continue;
 
-		const int mode = (mv.v[i][0] & 1) | ((mv.v[i][1] & 1) << 1);
-		lumaBlock(dst + blockX + (i >> 1) * 16 * pitch, src + srcX + srcY * pitch, pitch, mode);
+		const int mode = (posX & 1) | ((posY & 1) << 1);
+		lumaBlock(dst + x + (i & 1) * 16 + (i >> 1) * 16 * pitch, src + srcX + srcY * pitch, pitch, mode);
 	}
 }
 
 // Four 8x8 blocks, with the luma vectors in quarter chroma pixels
 void Bink2Decoder::Bink2VideoTrack::compensateChroma(int x, int y, byte *dst, const byte *src, int pitch) {
-	const MotionVectors &mv = _currentMV[_mbPos];
-
 	for (int i = 0; i < 4; i++) {
-		const int blockX = x + (i & 1) * 8;
-		const int blockY = y + (i >> 1) * 8;
-		const int srcX = (mv.v[i][0] >> 2) + blockX;
-		const int srcY = (mv.v[i][1] >> 2) + blockY;
+		// The luma position in half pixels is the chroma one in quarters
+		int posX, posY;
+		getSourcePosition(x * 2, y * 2, i, posX, posY);
+		const int srcX = posX >> 2;
+		const int srcY = posY >> 2;
 
-		if (srcX < 0 || srcX >= (int)_width / 2 || srcY < 0 || srcY >= (int)_height / 2)
+		if (_skipOutsideBlocks && (srcX < 0 || srcX >= (int)_width / 2 || srcY < 0 || srcY >= (int)_height / 2))
 			continue;
 
-		const int mode = (mv.v[i][0] & 3) | ((mv.v[i][1] & 3) << 2);
-		chromaBlock(dst + blockX + (i >> 1) * 8 * pitch, src + srcX + srcY * pitch, pitch, mode);
+		const int mode = (posX & 3) | ((posY & 3) << 2);
+		chromaBlock(dst + x + (i & 1) * 8 + (i >> 1) * 8 * pitch, src + srcX + srcY * pitch, pitch, mode);
 	}
 }
 
