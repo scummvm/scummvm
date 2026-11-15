@@ -753,6 +753,15 @@ struct BrainData : public PuzzleData {
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> results;
 };
 
+// Nancy29: the inventory item the player wears on the face, like Nancy's
+// glasses. Empty when there is none.
+struct EquippedItemData : public PuzzleData {
+	static constexpr uint32 getTag() { return MKTAG('E', 'Q', 'I', 'P'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::String faceItem;
+};
+
 // Nancy21. The pictures the camera of the cell phone took, as PNG files, which
 // the scripts show from the "LOADSAVE" tree
 struct ScriptPictureData : public PuzzleData {

@@ -35,6 +35,25 @@
 namespace Nancy {
 namespace Script {
 
+// Nancy29 gives every item a table with where the player uses it ("hand" or
+// "face"), and the Brain flags that force it there or disable it
+static void readNancy29Item(lua_State *L, const Common::String &name, INVD::Item &item) {
+	lua_getfield(L, 2, name.c_str());
+	const int itemTable = lua_gettop(L);
+	luaL_checktype(L, itemTable, LUA_TTABLE);
+
+	readField(L, itemTable, "equipPoint", item.equipPoint);
+	if (item.equipPoint != "hand" && item.equipPoint != "face") {
+		luaL_error(L, "Item %s has unknown equip point %s", name.c_str(), item.equipPoint.c_str());
+	}
+
+	readField(L, itemTable, "forceOnFlag", item.forceOnFlag);
+	readField(L, itemTable, "forceOffFlag", item.forceOffFlag);
+	item.kind = UI::NDUI::InvButton::kItemPickUp;
+
+	lua_pop(L, 1);
+}
+
 // Nancy26 gives every item the scene that shows it, or nothing. The pictures
 // of the items are cursors.
 int createNancy26Inventory(lua_State *L, INVD &inventory) {
@@ -46,10 +65,14 @@ int createNancy26Inventory(lua_State *L, INVD &inventory) {
 		item.id = (int16)inventory.items.size();
 		item.name = name;
 
-		Common::String sceneName;
-		readField(L, 2, name.c_str(), sceneName);
-		item.sceneName = Common::Path(sceneName);
-		item.kind = sceneName.empty() ? UI::NDUI::InvButton::kItemPickUp : UI::NDUI::InvButton::kItemView;
+		if (g_nancy->getGameType() >= kGameTypeNancy29) {
+			readNancy29Item(L, name, item);
+		} else {
+			Common::String sceneName;
+			readField(L, 2, name.c_str(), sceneName);
+			item.sceneName = Common::Path(sceneName);
+			item.kind = sceneName.empty() ? UI::NDUI::InvButton::kItemPickUp : UI::NDUI::InvButton::kItemView;
+		}
 
 		inventory.items.push_back(item);
 	}

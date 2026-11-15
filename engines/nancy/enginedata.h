@@ -973,6 +973,12 @@ struct INVD : public EngineData {
 		int16 valueIndex = 0;
 		Common::String valueName;	// Nancy19+ names the value instead
 		Common::Rect sourceRect;
+
+		// Nancy29: where the player uses the item ("hand" or "face"), and the
+		// Brain flags that force it there or disable it
+		Common::String equipPoint;
+		Common::String forceOnFlag;
+		Common::String forceOffFlag;
 	};
 
 	INVD() {}

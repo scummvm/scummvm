@@ -61,7 +61,18 @@ struct ScriptGameState : public EngineData {
 	// gives once
 	Common::Array<Common::String> achievementIds;
 	bool hasAchievementIds = false;
+
+	// Nancy29, indexed by item id: whether each item is enabled, and whether
+	// its Brain flag forces it in the hand or on the face. The item worn on
+	// the face is stored in the EquippedItemData of the scene.
+	Common::Array<bool> isItemEnabled;
+	Common::Array<bool> isItemForcedOn;
+	uint faceItemChangeCount = 0;
 };
+
+// Nancy29: applies the Brain flags of the inventory items, which equip them
+// in the hand or on the face, or remove them from there. Called every frame.
+void updateEquippedItems();
 
 // What Nancy26 adds to the objects of the earlier games: the saved games and
 // settings in Game, the inventory by the names of the items, Flags:All(),

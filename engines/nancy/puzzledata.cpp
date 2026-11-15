@@ -1112,6 +1112,10 @@ void BrainData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void EquippedItemData::synchronize(Common::Serializer &ser) {
+	ser.syncString(faceItem);
+}
+
 void ScriptPictureData::synchronize(Common::Serializer &ser) {
 	uint16 numPictures = pictures.size();
 	ser.syncAsUint16LE(numPictures);
@@ -1190,6 +1194,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new ScriptJournalData();
 	case BrainData::getTag():
 		return new BrainData();
+	case EquippedItemData::getTag():
+		return new EquippedItemData();
 	case ScriptPictureData::getTag():
 		return new ScriptPictureData();
 	case StreamData::getTag():

@@ -54,6 +54,9 @@
 #include "engines/nancy/script/records.h"
 #include "engines/nancy/script/scenecontext.h"
 #endif
+#ifdef ENABLE_NANCY_V5
+#include "engines/nancy/script/v5/gamefunctions.h"
+#endif
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
@@ -2472,6 +2475,12 @@ void Scene::run() {
 		// Player pressed esc, do not process further
 		return;
 	}
+
+#ifdef ENABLE_NANCY_V5
+	if (g_nancy->getGameType() >= kGameTypeNancy29) {
+		Script::updateEquippedItems();
+	}
+#endif
 
 	_streams.process();
 
