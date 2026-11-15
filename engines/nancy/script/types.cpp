@@ -348,6 +348,48 @@ static int rectRightBottomSet(lua_State *L) {
 	return 1;
 }
 
+// rect:Align(target, horizontal, vertical), Nancy29: moves the rectangle so
+// that a side or the middle of it lines up with the same one of another
+// rectangle, or with a point. The sides are "left", "center" or "right", and
+// "top", "center" or "bottom". Middles and points are rounded to whole pixels.
+static int alignOffset(lua_State *L, int index, const char *const names[3], int32 start, int32 end, double middle,
+		bool isPoint, double point, int32 targetStart, int32 targetEnd, double targetMiddle) {
+	const char *name = luaL_checkstring(L, index);
+	if (strcmp(name, names[0]) == 0) {
+		return (isPoint ? (int32)roundCoordinate(point) : targetStart) - start;
+	} else if (strcmp(name, names[1]) == 0) {
+		return (int32)roundCoordinate(isPoint ? point : targetMiddle) - (int32)roundCoordinate(middle);
+	} else if (strcmp(name, names[2]) == 0) {
+		return (isPoint ? (int32)roundCoordinate(point) : targetEnd) - end;
+	}
+
+	luaL_argerror(L, index, Common::String::format("Expected '%s', '%s' or '%s'", names[0], names[1], names[2]).c_str());
+	return 0;
+}
+
+static int rectAlign(lua_State *L) {
+	static const char *const kHorizontalNames[] = { "left", "center", "right" };
+	static const char *const kVerticalNames[] = { "top", "center", "bottom" };
+
+	ScriptRect rect = checkRect(L, 1);
+	const ScriptRect *target = testRect(L, 2);
+	double x = 0.0;
+	double y = 0.0;
+	if (!target && !readPointCoordinates(L, 2, x, y)) {
+		luaL_argerror(L, 2, "Expected a Rect or a Point");
+	}
+
+	const ScriptRect targetRect = target ? *target : ScriptRect();
+	const int32 dx = alignOffset(L, 3, kHorizontalNames, rect.left, rect.right, rect.left + rect.width() * 0.5f,
+		!target, x, targetRect.left, targetRect.right, targetRect.left + targetRect.width() * 0.5f);
+	const int32 dy = alignOffset(L, 4, kVerticalNames, rect.top, rect.bottom, rect.top + rect.height() * 0.5f,
+		!target, y, targetRect.top, targetRect.bottom, targetRect.top + targetRect.height() * 0.5f);
+
+	rect.translate(dx, dy);
+	pushRect(L, rect);
+	return 1;
+}
+
 static int rectToString(lua_State *L) {
 	const ScriptRect &rect = checkRect(L, 1);
 	lua_pushstring(L, Common::String::format("R(%d, %d, %d, %d)", rect.left, rect.top, rect.right, rect.bottom).c_str());
@@ -386,6 +428,7 @@ static const luaL_Reg kRectFunctions[] = {
 	{ "LeftTopSet", rectLeftTopSet },
 	{ "LeftBottomSet", rectLeftBottomSet },
 	{ "RightBottomSet", rectRightBottomSet },
+	{ "Align", rectAlign },
 	{ nullptr, nullptr }
 };
 
