@@ -25,6 +25,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/resource/cif.h"
 #include "engines/nancy/resource/xsheetfile.h"
 
 namespace Nancy {
@@ -35,7 +36,15 @@ static const uint kNancy29XSheetNameSize = 64;
 static const uint kXSheetCelRecordSize = 140;
 
 bool XSheetFile::load(const Common::String &name) {
-	Common::SeekableReadStream *xsheet = SearchMan.createReadStreamForMember(Common::Path(name));
+	// Nancy32 has no tree, only loose .cif files
+	Common::SeekableReadStream *xsheet = SearchMan.createReadStreamForMember(Common::Path(name + ".cif"));
+	if (xsheet) {
+		CifFile cifFile(xsheet, Common::Path(name)); // takes ownership of the stream
+		xsheet = cifFile.createReadStream();
+	} else {
+		xsheet = SearchMan.createReadStreamForMember(Common::Path(name));
+	}
+
 	if (!xsheet) {
 		warning("Could not open XSheet file %s", name.c_str());
 		return false;
