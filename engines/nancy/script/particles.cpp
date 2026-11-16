@@ -725,6 +725,190 @@ private:
 	double _alpha[2] = { 1.0, 1.0 };
 };
 
+// "rotate", Nancy32: the particles start turning at a speed between "min" and
+// "max" a step. Every step, the speed drops by the factor "drag", and goes up or
+// down by "turbulence".
+class ParticleRotateStage : public ParticleStage {
+public:
+	ParticleRotateStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
+		readField(L, tableIndex, "min", _min);
+		readField(L, tableIndex, "max", _max);
+		readField(L, tableIndex, "drag", _drag);
+		readField(L, tableIndex, "turbulence", _turbulence);
+	}
+
+	void update(uint first, uint count) override {
+		for (uint i = first; i < first + count; ++i) {
+			Particle &particle = _record.getParticle(i);
+			particle.angle += particle.angularSpeed;
+
+			const double push = g_nancy->_randomSource->getRandomBit() ? -_turbulence : _turbulence;
+			particle.angularSpeed = particle.angularSpeed * _drag + push;
+		}
+	}
+
+protected:
+	void initParticles(uint first, uint count) override {
+		for (uint i = first; i < first + count; ++i) {
+			_record.getParticle(i).angularSpeed = lerp(_min, _max, randomFraction());
+		}
+	}
+
+private:
+	double _min = 0.0;
+	double _max = 0.0;
+	double _drag = 0.0;
+	double _turbulence = 0.0;
+};
+
+// Reads a point field of the stage's table
+static void readPointField(lua_State *L, int tableIndex, const char *name, double &x, double &y) {
+	if (pushField(L, tableIndex, name)) {
+		readPointCoordinates(L, -1, x, y);
+		lua_pop(L, 1);
+	}
+}
+
+// "radialPosition", Nancy32: a place around "center", at a distance between
+// min.x and max.x, and at an angle between min.y and max.y
+class ParticleRadialPositionStage : public ParticleStage {
+public:
+	ParticleRadialPositionStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
+		readPicked(L, tableIndex);
+		readPointField(L, tableIndex, "center", _center[0], _center[1]);
+		readPointField(L, tableIndex, "min", _minRadius, _minAngle);
+		readPointField(L, tableIndex, "max", _maxRadius, _maxAngle);
+	}
+
+protected:
+	void initParticles(uint first, uint count) override {
+		const double range = _maxRadius - _minRadius;
+		const double share = range / _maxRadius;
+
+		for (uint i = first; i < first + count; ++i) {
+			const double radius = sqrt(randomFraction() * share) * range + _minRadius;
+			const double angle = lerp(_minAngle, _maxAngle, randomFraction());
+
+			Particle &particle = _record.getParticle(i);
+			particle.position[0] = _center[0] + radius * cos(angle);
+			particle.position[1] = _center[1] + radius * sin(angle);
+			particle.position[2] = 0.0;
+		}
+	}
+
+private:
+	double _center[2] = { 1.0, 1.0 };
+	double _minRadius = 0.0;
+	double _minAngle = 0.0;
+	double _maxRadius = 0.0;
+	double _maxAngle = 0.0;
+};
+
+// The direction from a center to a particle, which is nothing at the center
+static void getDirection(const Particle &particle, const double center[2], double &x, double &y) {
+	x = particle.position[0] - center[0];
+	y = particle.position[1] - center[1];
+
+	const double length = sqrt(x * x + y * y);
+	if (length != 0.0) {
+		x /= length;
+		y /= length;
+	}
+}
+
+// "radialVelocity", Nancy32: the particles move away from "center" at a speed
+// between minSpeed and maxSpeed, in units a second
+class ParticleRadialVelocityStage : public ParticleStage {
+public:
+	ParticleRadialVelocityStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
+		readPicked(L, tableIndex);
+		readPointField(L, tableIndex, "center", _center[0], _center[1]);
+		readField(L, tableIndex, "minSpeed", _minSpeed);
+		readField(L, tableIndex, "maxSpeed", _maxSpeed);
+	}
+
+protected:
+	void initParticles(uint first, uint count) override {
+		for (uint i = first; i < first + count; ++i) {
+			Particle &particle = _record.getParticle(i);
+
+			double x, y;
+			getDirection(particle, _center, x, y);
+
+			const double speed = lerp(_minSpeed, _maxSpeed, randomFraction()) / kStepsPerSecond;
+			particle.velocity[0] = x * speed;
+			particle.velocity[1] = y * speed;
+			particle.velocity[2] = 0.0;
+		}
+	}
+
+private:
+	double _center[2] = { 0.0, 0.0 };
+	double _minSpeed = 0.0;
+	double _maxSpeed = 0.0;
+};
+
+// "radialForce", Nancy32: pushes the particles away from "center" by "factor",
+// in units a second squared; a negative factor pulls them in
+class ParticleRadialForceStage : public ParticleStage {
+public:
+	ParticleRadialForceStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
+		readPointField(L, tableIndex, "center", _center[0], _center[1]);
+		if (readField(L, tableIndex, "factor", _factor)) {
+			_factor /= kStepsPerSecond * kStepsPerSecond;
+		}
+	}
+
+	void update(uint first, uint count) override {
+		for (uint i = first; i < first + count; ++i) {
+			Particle &particle = _record.getParticle(i);
+
+			double x, y;
+			getDirection(particle, _center, x, y);
+			particle.acceleration[0] += x * _factor;
+			particle.acceleration[1] += y * _factor;
+		}
+	}
+
+private:
+	double _center[2] = { 0.0, 0.0 };
+	double _factor = 0.0;
+};
+
+// "scaleFade", Nancy32: the particles grow or shrink from "scale1" to "scale2"
+// once they are "start" into their life, over "duration" of it
+class ParticleScaleFadeStage : public ParticleStage {
+public:
+	ParticleScaleFadeStage(ParticleRecord &record, lua_State *L, int tableIndex) : ParticleStage(record) {
+		readField(L, tableIndex, "start", _start);
+		readField(L, tableIndex, "duration", _duration);
+		readField(L, tableIndex, "scale1", _fromScale);
+		readField(L, tableIndex, "scale2", _toScale);
+	}
+
+	void update(uint first, uint count) override {
+		// The oldest particles come first, so the ones after one that hasn't
+		// started changing haven't either
+		for (uint i = first; i < first + count; ++i) {
+			Particle &particle = _record.getParticle(i);
+			const double fraction = (particle.life - _start) / _duration;
+			if (fraction < 0.0) {
+				break;
+			}
+
+			if (fraction <= 1.0) {
+				particle.scale = lerp(_fromScale, _toScale, fraction);
+			}
+		}
+	}
+
+private:
+	double _start = 0.0;
+	double _duration = 1.0;
+	double _fromScale = 0.0;
+	double _toScale = 1.0;
+};
+
 // TODO: The "script" and "revolve" stages, which no script uses
 static ParticleStage *makeStage(ParticleRecord &record, lua_State *L, int tableIndex, const Common::String &name) {
 	if (name == "positionPerspective") {
@@ -753,6 +937,16 @@ static ParticleStage *makeStage(ParticleRecord &record, lua_State *L, int tableI
 		return new ParticleTurbulenceStage(record, L, tableIndex);
 	} else if (name == "path") {
 		return new ParticlePathStage(record, L, tableIndex);
+	} else if (name == "rotate") {
+		return new ParticleRotateStage(record, L, tableIndex);
+	} else if (name == "radialPosition") {
+		return new ParticleRadialPositionStage(record, L, tableIndex);
+	} else if (name == "radialVelocity") {
+		return new ParticleRadialVelocityStage(record, L, tableIndex);
+	} else if (name == "radialForce") {
+		return new ParticleRadialForceStage(record, L, tableIndex);
+	} else if (name == "scaleFade") {
+		return new ParticleScaleFadeStage(record, L, tableIndex);
 	}
 
 	luaL_error(L, "Stage name '%s' does not match a known stage", name.c_str());
@@ -1005,7 +1199,12 @@ static const char *const kParticleStageKinds[][2] = {
 	{ "AddSources", "sources" },
 	{ "AddTurbulence", "turbulence" },
 	{ "AddVelocity", "velocity" },
-	{ "AddPath", "path" }
+	{ "AddPath", "path" },
+	{ "AddRotate", "rotate" },
+	{ "AddRadialPosition", "radialPosition" },
+	{ "AddRadialVelocity", "radialVelocity" },
+	{ "AddRadialForce", "radialForce" },
+	{ "AddScaleFade", "scaleFade" }
 };
 
 bool ParticleRecord::getField(const Common::String &key) {

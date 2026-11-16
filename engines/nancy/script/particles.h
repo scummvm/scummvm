@@ -44,6 +44,7 @@ struct Particle {
 	double acceleration[3] = { 0.0, 0.0, 0.0 };
 	double life = 0.0;			// from 0 when made to 1 when gone
 	double angle = 0.0;
+	double angularSpeed = 0.0;	// Nancy32, in radians a step
 	double scale = 1.0;
 	double width = 0.0;			// of the part of the image it shows
 	double height = 0.0;
