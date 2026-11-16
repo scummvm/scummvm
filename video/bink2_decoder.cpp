@@ -912,13 +912,15 @@ void Bink2Decoder::Bink2VideoTrack::convertFrame() {
 		_surface->h = _height;
 	}
 
+	// Bink 2 keeps the full range of luminance: the pictures the games draw
+	// over the frames only match them that way
 	const int surfaceWidth = (_width + 1) & ~1;
 	const int surfaceHeight = (_height + 1) & ~1;
 	if (_hasAlpha) {
-		YUVToRGBMan.convert420Alpha(_surface, Graphics::YUVToRGBManager::kScaleITU, _planes[_curFrame][0], _planes[_curFrame][1], _planes[_curFrame][2], _planes[_curFrame][3],
+		YUVToRGBMan.convert420Alpha(_surface, Graphics::YUVToRGBManager::kScaleFull, _planes[_curFrame][0], _planes[_curFrame][1], _planes[_curFrame][2], _planes[_curFrame][3],
 				surfaceWidth, surfaceHeight, _pitches[0], _pitches[1]);
 	} else {
-		YUVToRGBMan.convert420(_surface, Graphics::YUVToRGBManager::kScaleITU, _planes[_curFrame][0], _planes[_curFrame][1], _planes[_curFrame][2],
+		YUVToRGBMan.convert420(_surface, Graphics::YUVToRGBManager::kScaleFull, _planes[_curFrame][0], _planes[_curFrame][1], _planes[_curFrame][2],
 				surfaceWidth, surfaceHeight, _pitches[0], _pitches[1]);
 	}
 }
