@@ -167,6 +167,7 @@ private:
 	// Simple frame-range player state. _currentSurface points at the decoder's
 	// last-decoded frame (owned by it, valid until the next decode).
 	const Graphics::Surface *_currentSurface = nullptr;
+	int _currentFrame = -1;	// the frame it shows
 	int _rangeLast = 0;
 	int _step = 1;
 	bool _rangePlaying = false;

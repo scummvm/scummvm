@@ -142,6 +142,7 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 	}
 
 	_currentSurface = nullptr;
+	_currentFrame = -1;
 
 	if (!_decoder->loadFile(_videoType == kVideoPlaytypeAVF ? avfPath : bikPath)) {
 		_decoder.reset();
@@ -182,6 +183,7 @@ bool MoviePlayer::isVideoLoaded() const {
 
 void MoviePlayer::close() {
 	_currentSurface = nullptr;
+	_currentFrame = -1;
 	freeFrameCache();
 	unregisterMovie();
 	if (_decoder) {
@@ -219,6 +221,9 @@ bool MoviePlayer::fillNextCacheFrame() {
 		_frameCache[_cacheFillNext].copyFrom(*frame);
 	}
 	++_cacheFillNext;
+
+	// The decoder's picture no longer shows the frame goToFrame() went to
+	_currentFrame = -1;
 
 	return _cacheFillNext >= _frameCache.size();
 }
@@ -311,6 +316,7 @@ const Graphics::Surface *MoviePlayer::decodeNextFrame(int frameNr) {
 
 void MoviePlayer::storeCurrentFrame() {
 	_currentSurface = _decoder->decodeNextFrame();
+	_currentFrame = _decoder->getCurFrame();
 }
 
 void MoviePlayer::goToFrame(int frameNr) {
@@ -323,8 +329,23 @@ void MoviePlayer::goToFrame(int frameNr) {
 	}
 	_rangePlaying = false;
 	_decoder->setReverse(false);
-	_decoder->seekToFrame(frameNr);
-	storeCurrentFrame();
+
+	if (_videoType == kVideoPlaytypeAVF) {
+		_decoder->seekToFrame(frameNr);
+		storeCurrentFrame();
+		return;
+	}
+
+	// Nancy32's fidgets set the frame of their movies one frame after the
+	// other, and seeking decodes again from the keyframe before the frame.
+	// The frame that already shows stays, and one a little ahead is decoded
+	// forward to.
+	if (frameNr == _currentFrame && _currentSurface) {
+		return;
+	}
+
+	_currentSurface = decodeNextFrame(frameNr);
+	_currentFrame = frameNr;
 }
 
 // How long a frame shows, from the length of the movie unless another frame
