@@ -94,4 +94,10 @@ void SoundDevice::update() {
 	}
 }
 
+void CdAudio::playTrack(uint8 track) {
+	g_system->getAudioCDManager()->stop();
+	_track = track;
+	g_system->getAudioCDManager()->play(track, -1, 0, 0);
+}
+
 } // End of namespace Tesoro

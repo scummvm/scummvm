@@ -35,7 +35,6 @@ class Jim;
 class Level;
 class Object;
 class TesoroEngine;
-class Voices;
 
 /**
  * The game's world as the objects see it: the table of levels (loaded when first needed), the main object list, the
@@ -45,7 +44,7 @@ class World {
 public:
 	enum { kLevelCount = 47 };
 
-	explicit World(TesoroEngine &engine) : _engine(engine) {}
+	explicit World(TesoroEngine &engine);
 	~World();
 
 	bool loadSpeech();
@@ -100,6 +99,7 @@ public:
 
 	/** The level Jim is in, or null. */
 	Level *jimLevel();
+	void playMusicTrack(byte track);
 	void jimShow(bool visible);
 
 	int jimLevelIndex();
@@ -127,14 +127,8 @@ private:
 	Level *_levels[kLevelCount] = {};
 	Jim *_jim = nullptr;
 	MainList _main;
-	Voices *_voices = nullptr;
-};
-
-/** The voices and music, played on the mixer. */
-class Voices {
-public:
-	explicit Voices(Audio::Mixer *mixer) : _device(mixer) {}
-	SoundDevice _device;
+	SoundDevice _sound;	// speech and sound effects
+	CdAudio _music;
 };
 
 } // End of namespace Tesoro

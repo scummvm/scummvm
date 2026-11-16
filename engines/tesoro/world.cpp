@@ -67,6 +67,17 @@ protected:
 	// The labyrinth levels borrow the floor of level 42; that level has its own, and so is not asked.
 	Level *sharedFloorLevel() override { return index() == kSharedFloorLevel ? nullptr : _world.level(kSharedFloorLevel); }
 
+	int picturesReloaded() override {
+		// The music of the level starts first, then the level's usual step runs.
+		if (Level *where = _world.jimLevel()) {
+			const CameraFrame *frame = where->cameraFrame();
+			if (frame && frame->flag())
+				_world.playMusicTrack(frame->flag());
+		}
+		const int result = update();
+		return result;
+	}
+
 private:
 	enum { kDeckLevel = 3, kMapLevel = 8, kPlayaLevel = 7, kPoblado = 9, kPantano = 10, kVolcan = 12, kSharedFloorLevel = 42 };
 
@@ -74,11 +85,12 @@ private:
 	byte _variables = 0;
 };
 
+World::World(TesoroEngine &engine) : _engine(engine), _sound(engine._mixer) {}
+
 World::~World() {
 	delete _jim;
 	for (int i = 0; i < kLevelCount; ++i)
 		delete _levels[i];
-	delete _voices;
 }
 
 bool World::loadSpeech() {
@@ -96,14 +108,11 @@ bool World::loadSpeech() {
 			return false;
 		_speech.table(i).load(_speechText[i].data(), size, _engine._archive);
 	}
-	_voices = new Voices(_engine._mixer);
-
 	return true;
 }
 
 void World::updateSound() {
-	if (_voices)
-		_voices->_device.update();
+	_sound.update();
 }
 
 Level *World::loadLevelFile(const char *name, int mode, int index) {
@@ -277,15 +286,17 @@ void World::removeFromMainList(Object *object) {
 
 uint32 World::playVoice(uint32 archiveOffset) {
 	_engine._archive.seekEntry(archiveOffset);
-	return _voices ? _voices->_device.play(archiveStream(), archiveOffset) : 0;
+	return _sound.play(archiveStream(), archiveOffset);
 }
 
-bool World::voiceActive(uint32 id) { return _voices && _voices->_device.active(id); }
+bool World::voiceActive(uint32 id) { return _sound.active(id); }
 void World::stopVoice(uint32 id) {
-	if (_voices)
-		_voices->_device.stop(id);
+	_sound.stop(id);
 }
 
+void World::playMusicTrack(byte track) {
+	_music.playTrack(track);
+}
 
 Level *World::jimLevel() {
 	return _jim ? _jim->level() : nullptr;

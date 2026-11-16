@@ -65,6 +65,15 @@ private:
 	uint32 _lastId = 0;
 };
 
+class CdAudio {
+public:
+	void playTrack(uint8 track);
+	int track() const { return _track; }
+
+private:
+	int _track = 0;
+};
+
 } // End of namespace Tesoro
 
 #endif
