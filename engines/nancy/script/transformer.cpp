@@ -82,19 +82,14 @@ ScriptMatrix BlendStages::makeMatrix(StageKind kind, const double value[2]) {
 
 	switch (kind) {
 	case kTranslation:
-		matrix.m[3][0] = value[0];
-		matrix.m[3][1] = value[1];
+		matrix = ScriptMatrix::makeSRT(1.0, 1.0, 0.0, value[0], value[1]);
 		break;
 	case kRotation:
 		// D3DXMatrixRotationZ
-		matrix.m[0][0] = cos(value[0]);
-		matrix.m[0][1] = sin(value[0]);
-		matrix.m[1][0] = -sin(value[0]);
-		matrix.m[1][1] = cos(value[0]);
+		matrix = ScriptMatrix::makeSRT(1.0, 1.0, value[0], 0.0, 0.0);
 		break;
 	case kScale:
-		matrix.m[0][0] = value[0];
-		matrix.m[1][1] = value[1];
+		matrix = ScriptMatrix::makeSRT(value[0], value[1], 0.0, 0.0, 0.0);
 		break;
 	case kAlpha:
 		break;

@@ -47,10 +47,26 @@ struct ScriptVector {
 
 // Four rows of four. Vectors are rows, so the offset a matrix moves things by is
 // its last row, and a product does what its left side does first.
+//
+// Nancy32 replaced the matrices with SRTs (scale, rotation, translation) in two
+// dimensions. An SRT rotates a point, then scales it, then translates it. Two
+// of them combine part by part: the scales multiply, the rotations add up, and
+// the second one moves the translation of the first. That only comes out as the
+// product of their matrices when they scale the same along both axes, so a
+// matrix also keeps the parts it was made from.
 struct ScriptMatrix {
 	double m[4][4];
 
+	// The parts of the matrix as an SRT. The translation is m[3][0] and m[3][1].
+	// A matrix that was filled in some other way isn't an SRT.
+	bool isSRT = true;
+	double scaleX = 1.0;
+	double scaleY = 1.0;
+	double rotation = 0.0;	// in radians
+
 	ScriptMatrix();	// the identity
+
+	static ScriptMatrix makeSRT(double scaleX, double scaleY, double rotation, double x, double y);
 
 	bool operator==(const ScriptMatrix &other) const;
 	bool operator!=(const ScriptMatrix &other) const { return !(*this == other); }

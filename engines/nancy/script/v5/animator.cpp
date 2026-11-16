@@ -72,19 +72,14 @@ void AnimatorTrack::setValue(const double value[2]) {
 	_matrix = ScriptMatrix();
 	switch (_kind) {
 	case kScale:
-		_matrix.m[0][0] = value[0];
-		_matrix.m[1][1] = value[1];
+		_matrix = ScriptMatrix::makeSRT(value[0], value[1], 0.0, 0.0, 0.0);
 		break;
 	case kRotation:
 		// D3DXMatrixRotationZ
-		_matrix.m[0][0] = cos(value[0]);
-		_matrix.m[0][1] = sin(value[0]);
-		_matrix.m[1][0] = -sin(value[0]);
-		_matrix.m[1][1] = cos(value[0]);
+		_matrix = ScriptMatrix::makeSRT(1.0, 1.0, value[0], 0.0, 0.0);
 		break;
 	case kTranslation:
-		_matrix.m[3][0] = value[0];
-		_matrix.m[3][1] = value[1];
+		_matrix = ScriptMatrix::makeSRT(1.0, 1.0, 0.0, value[0], value[1]);
 		break;
 	default:
 		break;

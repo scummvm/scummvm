@@ -1180,6 +1180,7 @@ void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &
 	}
 
 	ScriptMatrix place;
+	place.isSRT = false;
 	const double c = cos(particle.angle);
 	const double s = sin(particle.angle);
 	const double width = particle.width * particle.scale;
