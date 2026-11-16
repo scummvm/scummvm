@@ -161,7 +161,7 @@ void IgorEngine::part30FloppyWalkInFromUpstairs() {
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
 	waitForIgorMove();
-	--_walkDataLastIndex;
+	retreatWalkDataLastIndex();
 	buildWalkPathSimple(141, 67, 124, 125);
 	_roomObjectAreasTable[_screenLayer2[kUpstairsFirstCell]].area = 0;
 	_walkData[_walkDataLastIndex].frameNum = 0;

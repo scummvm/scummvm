@@ -1473,6 +1473,7 @@ private:
 	void lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, uint8 &yScale) const;
 
 	void advanceWalkDataLastIndex();
+	void retreatWalkDataLastIndex();
 	void buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY);
 	void buildWalkPathArea(int srcX, int srcY, int dstX, int dstY);
 	int getVerticalStepsCount(int minX, int minY, int maxX, int maxY);

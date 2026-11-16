@@ -234,7 +234,7 @@ void IgorEngine::part28EnterAndCheckGrades() {
 	igorSayAndWait(209, 2, 1234);
 	waitForTimer(255);
 	igorSayAndWait(231, 1, 1251);
-	--_walkDataLastIndex;
+	retreatWalkDataLastIndex();
 	buildWalkPath(214, 130, 214, 140);
 	_walkDataCurrentIndex = 1;
 	_walkData[_walkDataLastIndex].frameNum = 0;

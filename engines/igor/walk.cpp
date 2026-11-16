@@ -206,6 +206,15 @@ void IgorEngine::advanceWalkDataLastIndex() {
 	++_walkDataLastIndex;
 }
 
+void IgorEngine::retreatWalkDataLastIndex() {
+	// the index is unsigned: never let it wrap below the first walk entry
+	if (_walkDataLastIndex == 0) {
+		warning("Walk path index already at the first entry");
+		return;
+	}
+	--_walkDataLastIndex;
+}
+
 void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
 	debugC(9, kDebugWalk, "IgorEngine::buildWalkPathSimple(%d, %d, %d, %d)", srcX, srcY, dstX, dstY);
 	if (srcX != dstX || srcY != dstY) {

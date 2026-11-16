@@ -60,7 +60,7 @@ void IgorEngine::part17WalkIn(bool lateGame) {
 	_gameState.igorMoving = true;
 	waitForIgorMove(tick);
 	// Added this line compared to the 2009 version to correct the walk path origin.
-	--_walkDataLastIndex;
+	retreatWalkDataLastIndex();
 
 	buildWalkPath(243, 74, 274, 68);
 	_walkDataCurrentIndex = 1;

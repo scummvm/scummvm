@@ -82,7 +82,7 @@ void IgorEngine::part73Cutscene() {
 	cutsceneSayWithCallback(170, 50, 63, 14, 19, { { 206, 2, 931 }, { 208, 2, 932 } }, &IgorEngine::part73UpdateDialogue);
 	igorSayAndWait({ { 210, 1, 933 }, { 211, 1, 934 } });
 
-	--_walkDataLastIndex;
+	retreatWalkDataLastIndex();
 	buildWalkPath(195, 107, 319, 123);
 	_walkDataCurrentIndex = 1;
 	_gameState.igorMoving = true;
