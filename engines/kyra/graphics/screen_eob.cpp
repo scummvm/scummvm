@@ -133,6 +133,13 @@ template void Screen_EoB::drawShapeSetPixel<uint16, false>(uint8 *dst, uint8 col
 template void Screen_EoB::drawShapeSetPixel<uint32, false>(uint8 *dst, uint8 col);
 template void Screen_EoB::drawShapeSetPixel<uint8, true>(uint8 *dst, uint8 col);
 
+const Screen_EoB::DrawShapePlotFunc Screen_EoB::_drawShapePixelFuncs[4] = {
+	&Screen_EoB::drawShapeSetPixel<uint8, false>,
+	&Screen_EoB::drawShapeSetPixel<uint16, false>,
+	&Screen_EoB::drawShapeSetPixel<uint32, false>,
+	&Screen_EoB::drawShapeSetPixel<uint8, true>
+};
+
 bool Screen_EoB::init() {
 	if (Screen::init()) {
 		int temp;
@@ -178,19 +185,6 @@ bool Screen_EoB::init() {
 			sega_setTextBuffer(0, 0);
 		}
 
-		static const DrawShapePlotFunc drawShapePlotFuncs[4] = {
-			&Screen_EoB::drawShapeSetPixel<uint8, false>,
-			&Screen_EoB::drawShapeSetPixel<uint16, false>,
-			&Screen_EoB::drawShapeSetPixel<uint32, false>,
-			&Screen_EoB::drawShapeSetPixel<uint8, true>
-		};
-
-		int index = (_internalBytesPerPixel >> 1);
-		if ((_internalBytesPerPixel == 1 && !_isAmiga && !_isSegaCD && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering)
-			index += 3;
-		_drawShapeSetPixel = drawShapePlotFuncs[index];
-		assert(_drawShapeSetPixel);
-
 		static const char *cpsExt[] = { "CPS", "EGA", "SHP", "BIN" };
 		int ci = 0;
 		if (_vm->game() == GI_EOB1) {
@@ -216,6 +210,15 @@ bool Screen_EoB::init() {
 		return true;
 	}
 	return false;
+}
+
+void Screen_EoB::enableHiColorMode(bool enabled) {
+	Screen::enableHiColorMode(enabled);
+	int index = (_internalBytesPerPixel >> 1);
+	if ((_internalBytesPerPixel == 1 && !_isAmiga && !_isSegaCD && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering)
+		index += 3;
+	_drawShapeSetPixel = _drawShapePixelFuncs[index];
+	assert(_drawShapeSetPixel);
 }
 
 void Screen_EoB::setClearScreenDim(int dim) {

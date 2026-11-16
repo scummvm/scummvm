@@ -150,7 +150,8 @@ template void Screen::scale2x<uint8, uint32>(uint8 *dst, int dstPitch, const uin
 const Screen::MergeOverlayFunc Screen::_mergeOverlayProcs[] = {
 	&Screen::mergeOverlayImpl<uint8>,
 	&Screen::mergeOverlayImpl<uint16>,
-	&Screen::mergeOverlayImpl<uint32>};
+	&Screen::mergeOverlayImpl<uint32>
+};
 
 const Screen::Scale2xFunc Screen::_scale2xProcs[] = {
 	&Screen::scale2x<uint8, uint8>,
