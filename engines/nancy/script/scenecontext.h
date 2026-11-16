@@ -122,7 +122,7 @@ public:
 	void onBandChanged();
 
 	// Nancy26: what the stream of the scene says about all its records
-	bool isStreamEnabled() const { return !_streamState || _streamState->isEnabled; }
+	bool isStreamEnabled() const;
 	bool isStreamVisible() const { return !_streamState || _streamState->isVisible; }
 	bool isStreamPaused() const { return _streamState && _streamState->isPaused; }
 #endif

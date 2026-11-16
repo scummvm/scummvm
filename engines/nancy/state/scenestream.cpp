@@ -765,6 +765,9 @@ void SceneStreamManager::clear() {
 	_streams.clear();
 	_mainStreamChildren.clear();
 	_environment.clear();
+#ifdef ENABLE_NANCY_V5
+	_isViewportLocked = false;
+#endif
 
 	if (g_nancy->getGameType() >= kGameTypeNancy17) {
 		// The main stream

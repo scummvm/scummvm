@@ -260,6 +260,11 @@ public:
 	// Nancy26: what a stream says about its records; null for no such stream
 	Script::StreamNodeState *getNodeState(const Common::String &name);
 
+	// Nancy32: Scene:Lock() disables all the streams of the viewport, until
+	// Scene:Unlock(), while the ones of the UI go on
+	void setViewportLocked(bool isLocked) { _isViewportLocked = isLocked; }
+	bool isViewportLocked() const { return _isViewportLocked; }
+
 	// Nancy26: the streams in the order they get drawn in, the main one as null
 	void getDrawOrder(Common::Array<SceneStream *> &streams) const;
 
@@ -326,6 +331,7 @@ private:
 
 	Script::StreamNodeState _mainNodeState;
 	uint32 _numBegun = 0;
+	bool _isViewportLocked = false;
 #endif
 	ViewTransform _mainStreamViewTransform;
 };

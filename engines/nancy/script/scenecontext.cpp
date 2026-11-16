@@ -61,6 +61,17 @@ SceneContext::SceneContext(const Common::String &streamName, const Common::Strin
 	_lua = new LuaState(this);
 }
 
+#ifdef ENABLE_NANCY_V5
+// Nancy32's Scene:Lock() disables the streams of the viewport
+bool SceneContext::isStreamEnabled() const {
+	if (!_streamState) {
+		return true;
+	}
+
+	return _streamState->isEnabled && !(_streamState->isInViewport && NancySceneState.getStreams().isViewportLocked());
+}
+#endif
+
 // Nancy26 draws whole streams over each other, so the z of a record only counts
 // within the band of its stream
 int32 SceneContext::getZOffset() const {

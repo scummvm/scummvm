@@ -996,6 +996,18 @@ static int sceneIsStreamRunning(lua_State *L) {
 	return 1;
 }
 
+// Scene:Lock() and Scene:Unlock(), Nancy32: keep the player's input from the
+// viewport, e.g. while a puzzle shows that it was solved
+static int sceneLock(lua_State *L) {
+	NancySceneState.getStreams().setViewportLocked(true);
+	return 0;
+}
+
+static int sceneUnlock(lua_State *L) {
+	NancySceneState.getStreams().setViewportLocked(false);
+	return 0;
+}
+
 // Scene:GetStreamInVP(stream), Nancy29: whether the stream is drawn inside
 // the viewport rather than on the whole screen. Returns true for a stream
 // that isn't running.
@@ -1141,6 +1153,8 @@ void registerNancy26GameAPI(lua_State *L) {
 	static const luaL_Reg kSceneFunctions[] = {
 		{ "IsStreamRunning", sceneIsStreamRunning },
 		{ "GetStreamInVP", sceneGetStreamInVP },
+		{ "Lock", sceneLock },
+		{ "Unlock", sceneUnlock },
 		{ nullptr, nullptr }
 	};
 
