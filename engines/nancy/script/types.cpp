@@ -460,6 +460,10 @@ void pushPoint(lua_State *L, const Common::Point32 &point) {
 	pushPointValue(L, PointValue(point.x, point.y));
 }
 
+void pushPointCoordinates(lua_State *L, double x, double y) {
+	pushPointValue(L, hasFractionalPoints() ? PointValue(x, y) : PointValue((int32)x, (int32)y));
+}
+
 static PointValue &checkPoint(lua_State *L, int index) {
 	return *(PointValue *)checkUserData(L, index, kPointType);
 }
@@ -639,7 +643,8 @@ static int pointFloored(lua_State *L) {
 	return 1;
 }
 
-// Point:Dot(point) and Point:Normalized(), Nancy31. A point at the origin stays there.
+// Point:Dot(point) and Point:Normalized(), Nancy31, which Nancy32 also calls
+// Point:Norm(). A point at the origin stays there.
 static int pointDot(lua_State *L) {
 	const PointValue &a = checkPoint(L, 1);
 	const PointValue &b = checkPoint(L, 2);
@@ -691,6 +696,7 @@ static const luaL_Reg kPointFunctions[] = {
 	{ "Floored", pointFloored },
 	{ "Dot", pointDot },
 	{ "Normalized", pointNormalized },
+	{ "Norm", pointNormalized },
 	{ nullptr, nullptr }
 };
 

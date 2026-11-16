@@ -69,6 +69,9 @@ ScriptRect &checkRect(lua_State *L, int index);
 
 void pushPoint(lua_State *L, const Common::Point32 &point);
 
+// A point that keeps the fractions of its coordinates when the game has them
+void pushPointCoordinates(lua_State *L, double x, double y);
+
 // Reads anything that has an x and a y: a point, a vector or a table.
 // Returns false when the value has neither.
 bool readPoint(lua_State *L, int index, Common::Point32 &point);

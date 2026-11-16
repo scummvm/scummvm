@@ -1299,8 +1299,14 @@ static const luaL_Reg kPathHelperFunctions[] = {
 	{ nullptr, nullptr }
 };
 
+// A number rounded half away from zero, as Nancy32 rounds the corners of a rect
+static double roundAwayFromZero(double value) {
+	return value < 0.0 ? ceil(value - 0.5) : floor(value + 0.5);
+}
+
 // rect:Transform(matrix). Nancy22 moves all four corners, and gives the
-// smallest and the largest of them as two vectors.
+// smallest and the largest of them as two vectors. Nancy32 rounds them, and
+// gives them as two points.
 static int rectTransform(lua_State *L) {
 	const ScriptRect &rect = checkRect(L, 1);
 	const ScriptMatrix &matrix = checkMatrix(L, 2);
@@ -1308,6 +1314,28 @@ static int rectTransform(lua_State *L) {
 	if (g_nancy->getGameType() < kGameTypeNancy22) {
 		pushRect(L, transformRect(rect, matrix));
 		return 1;
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy32) {
+		const double corners[4][2] = {
+			{ (double)rect.left, (double)rect.top }, { (double)rect.right, (double)rect.top },
+			{ (double)rect.left, (double)rect.bottom }, { (double)rect.right, (double)rect.bottom }
+		};
+
+		double minimum[2] = { 1e300, 1e300 };
+		double maximum[2] = { -1e300, -1e300 };
+		for (const double *corner : corners) {
+			double point[2] = { corner[0], corner[1] };
+			matrix.transformPoint(point[0], point[1]);
+			for (int i = 0; i < 2; ++i) {
+				minimum[i] = MIN(minimum[i], point[i]);
+				maximum[i] = MAX(maximum[i], point[i]);
+			}
+		}
+
+		pushPointCoordinates(L, roundAwayFromZero(minimum[0]), roundAwayFromZero(minimum[1]));
+		pushPointCoordinates(L, roundAwayFromZero(maximum[0]), roundAwayFromZero(maximum[1]));
+		return 2;
 	}
 
 	const double corners[4][2] = {
@@ -1336,6 +1364,30 @@ static int rectTransform(lua_State *L) {
 	return 2;
 }
 
+// point:TransformCoord(matrix) and point:TransformNormal(matrix), Nancy32: the
+// point moved by the matrix, without the offset for TransformNormal
+static int pointTransformCoord(lua_State *L) {
+	double x, y;
+	if (!readPointCoordinates(L, 1, x, y)) {
+		return luaL_typerror(L, 1, "ND.Point");
+	}
+
+	checkMatrix(L, 2).transformPoint(x, y);
+	pushPointCoordinates(L, x, y);
+	return 1;
+}
+
+static int pointTransformNormal(lua_State *L) {
+	double x, y;
+	if (!readPointCoordinates(L, 1, x, y)) {
+		return luaL_typerror(L, 1, "ND.Point");
+	}
+
+	const ScriptMatrix &matrix = checkMatrix(L, 2);
+	pushPointCoordinates(L, x * matrix.m[0][0] + y * matrix.m[1][0], x * matrix.m[0][1] + y * matrix.m[1][1]);
+	return 1;
+}
+
 void registerMathTypes(lua_State *L) {
 	registerType(L, kVectorType, kVectorFunctions);
 	registerGlobal(L, "Vector", kVectorHelperType, kVectorHelperFunctions);
@@ -1349,10 +1401,17 @@ void registerMathTypes(lua_State *L) {
 	registerType(L, kPathType, kPathFunctions);
 	registerGlobal(L, "Path", kPathHelperType, kPathHelperFunctions);
 
-	// Rectangles can be moved by a matrix as well
+	// Rectangles and points can be moved by a matrix as well
 	luaL_getmetatable(L, "ND.Rect");
 	lua_pushcfunction(L, rectTransform);
 	lua_setfield(L, -2, "Transform");
+	lua_pop(L, 1);
+
+	luaL_getmetatable(L, "ND.Point");
+	lua_pushcfunction(L, pointTransformCoord);
+	lua_setfield(L, -2, "TransformCoord");
+	lua_pushcfunction(L, pointTransformNormal);
+	lua_setfield(L, -2, "TransformNormal");
 	lua_pop(L, 1);
 }
 

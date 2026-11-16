@@ -207,10 +207,13 @@ void AnimatorTrack::readValue(lua_State *L, int index, double value[2]) const {
 	lua_pop(L, 2);
 }
 
-// Scales and translations are returned as vectors
+// Scales and translations are returned as vectors, and as points from
+// Nancy32 on, which has no vectors
 void AnimatorTrack::pushValue(lua_State *L) const {
 	if (_kind == kAlpha || _kind == kRotation) {
 		lua_pushnumber(L, _current[0]);
+	} else if (g_nancy->getGameType() >= kGameTypeNancy32) {
+		pushPointCoordinates(L, _current[0], _current[1]);
 	} else {
 		pushVector(L, ScriptVector(_current[0], _current[1], 0.0));
 	}

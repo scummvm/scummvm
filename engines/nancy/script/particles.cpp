@@ -135,19 +135,38 @@ public:
 	}
 };
 
+// Reads a vector into the given one. Nancy32 has no vectors, and gives points
+// instead, which are at no depth.
+static bool readVectorValue(lua_State *L, int index, double *out, int size) {
+	const ScriptVector *vector = testVector(L, index);
+	if (vector) {
+		for (int i = 0; i < size; ++i) {
+			out[i] = vector->v[i];
+		}
+
+		return true;
+	}
+
+	double x, y;
+	if (!readPointCoordinates(L, index, x, y)) {
+		return false;
+	}
+
+	for (int i = 0; i < size; ++i) {
+		out[i] = i == 0 ? x : (i == 1 ? y : 0.0);
+	}
+
+	return true;
+}
+
 // Reads a vector field of the stage's table into the given one
 static bool readVectorField(lua_State *L, int tableIndex, const char *name, double *out, int size) {
 	if (!pushField(L, tableIndex, name)) {
 		return false;
 	}
 
-	const ScriptVector *vector = testVector(L, -1);
-	if (!vector) {
+	if (!readVectorValue(L, -1, out, size)) {
 		luaL_error(L, "field %s must be a vector", name);
-	}
-
-	for (int i = 0; i < size; ++i) {
-		out[i] = vector->v[i];
 	}
 
 	lua_pop(L, 1);
@@ -525,13 +544,8 @@ public:
 			return false;
 		}
 
-		const ScriptVector *vector = testVector(L, -1);
-		if (!vector) {
+		if (!readVectorValue(L, -1, corner, 3)) {
 			luaL_typerror(L, -1, "Vector");
-		}
-
-		for (int i = 0; i < 3; ++i) {
-			corner[i] = vector->v[i];
 		}
 
 		return true;
@@ -661,15 +675,13 @@ public:
 
 	bool setField(lua_State *L, const Common::String &key) override {
 		if (key == "position") {
-			const ScriptVector *vector = testVector(L, -1);
-			if (!vector) {
+			double position[3];
+			if (!readVectorValue(L, -1, position, 3)) {
 				luaL_typerror(L, -1, "Vector");
 			}
 
 			memcpy(_position[0], _position[1], sizeof(_position[0]));
-			for (int i = 0; i < 3; ++i) {
-				_position[1][i] = vector->v[i];
-			}
+			memcpy(_position[1], position, sizeof(position));
 		} else if (key == "scale") {
 			_scale[0] = _scale[1];
 			_scale[1] = luaL_checknumber(L, -1);
