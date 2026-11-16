@@ -248,10 +248,85 @@ bool Console::cmdLocations(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::spawnDungeonEnemy(int argc, const char **argv) {
+	if (argc > 3) {
+		debugPrintf("enemy [<monster number> [<distance>]], where monster number is:\n");
+		for (int i = 0; i < Data::DUNGEON_MONSTER_COUNT; ++i)
+			debugPrintf("%2d: %s\n", i, Data::UNDERWORLD_MONSTERS[i]);
+		return true;
+	}
+
+	Data::Savegame &sg = _G(savegame);
+	const int type = argc > 1 ? atoi(argv[1]) : 0;
+	const int distance = argc > 2 ? atoi(argv[2]) : 1;
+
+	if (type < 0 || type >= Data::DUNGEON_MONSTER_COUNT) {
+		debugPrintf("Monster number must be from 0 to %d\n", Data::DUNGEON_MONSTER_COUNT - 1);
+		return true;
+	}
+	if (distance < 1) {
+		debugPrintf("Distance must be at least 1\n");
+		return true;
+	}
+
+	int dx = 0, dy = 0;
+	switch (sg._dungeonDirection) {
+	case Data::DIR_LEFT:
+		dx = -1;
+		break;
+	case Data::DIR_RIGHT:
+		dx = 1;
+		break;
+	case Data::DIR_UP:
+		dy = -1;
+		break;
+	default:
+		dy = 1;
+		break;
+	}
+
+	const int x = sg._locationPosition.x + dx * distance;
+	const int y = sg._locationPosition.y + dy * distance;
+	if (x < 0 || y < 0 || x >= Data::DUNGEON_WIDTH || y >= Data::DUNGEON_HEIGHT) {
+		debugPrintf("(%d,%d) is outside the map\n", x, y);
+		return true;
+	}
+
+	Data::DungeonCell &cell = _G(dungeon)._cells[y][x];
+	if (cell._tileNum == Data::DTILE_WALL || cell._tileNum == Data::DTILE_SECRET_DOOR) {
+		debugPrintf("(%d,%d) is a wall\n", x, y);
+		return true;
+	}
+	if (cell._tileNum == Data::DTILE_BEAMS) {
+		debugPrintf("(%d,%d) has support beams\n", x, y);
+		return true;
+	}
+	if (cell._monsterId != Data::DUNGEON_NO_MONSTER) {
+		debugPrintf("(%d,%d) already has a monster\n", x, y);
+		return true;
+	}
+	if (cell._itemId == Data::DITEM_CHEST) {
+		debugPrintf("(%d,%d) has a chest\n", x, y);
+		return true;
+	}
+
+	// As many hit points as it'd be given by the dungeon's own generator
+	const int level = sg._dungeonLevel;
+	cell._monsterId = type;
+	cell._monsterHp = g_engine->getRandomNumber(level * level) + 11 + type;
+
+	g_engine->focusedView()->redraw();
+	debugPrintf("Spawned %s at (%d,%d)\n", Data::UNDERWORLD_MONSTERS[type], x, y);
+	return true;
+}
+
 bool Console::cmdEnemy(int argc, const char **argv) {
 	Data::Savegame &sg = _G(savegame);
+	if (_G(map)._mapType == Data::MAPTYPE_DUNGEON)
+		return spawnDungeonEnemy(argc, argv);
+
 	if (sg._mapNum != Data::MAP_OVERWORLD) {
-		debugPrintf("Only supported on the overworld map\n");
+		debugPrintf("Only supported on the overworld map and in dungeons\n");
 		return true;
 	}
 

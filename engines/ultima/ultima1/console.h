@@ -42,6 +42,7 @@ private:
 	bool cmdTeleport(int argc, const char **argv);
 	bool cmdLocations(int argc, const char **argv);
 	bool cmdEnemy(int argc, const char **argv);
+	bool spawnDungeonEnemy(int argc, const char **argv);
 
 public:
 	Console();

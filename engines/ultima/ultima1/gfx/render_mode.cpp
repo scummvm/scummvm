@@ -23,6 +23,7 @@
 #include "common/translation.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
+#include "ultima/ultima1/gfx/dungeon_pictures.h"
 #include "ultima/ultima1/gfx/render_mode.h"
 
 namespace Ultima {
@@ -85,7 +86,11 @@ static const byte CGA_HIT_FLASH_PALETTE[4 * 3] = {
 
 void setPalette(RenderMode mode) {
 	if (mode == RENDER_EGA) {
-		g_system->getPaletteManager()->setPalette(Graphics::Palette::createEGAPalette());
+		// The colors of the dungeon pictures are in the entries after the EGA ones
+		Graphics::Palette palette = Graphics::Palette::createEGAPalette();
+		Gfx::DungeonPictures::loadPalette(palette);
+
+		g_system->getPaletteManager()->setPalette(palette);
 		return;
 	}
 
@@ -101,11 +106,13 @@ void setPalette(RenderMode mode) {
 void setHitFlashPalette(RenderMode mode) {
 	if (mode == RENDER_EGA) {
 		// The standard EGA palette is read-only static data, so invert a copy of it
-		const Graphics::Palette egaPalette = Graphics::Palette::createEGAPalette();
-		Graphics::Palette palette(16);
+		Graphics::Palette egaPalette = Graphics::Palette::createEGAPalette();
+		Gfx::DungeonPictures::loadPalette(egaPalette);
+
+		Graphics::Palette palette(egaPalette.size());
 		byte r, g, b;
 
-		for (int i = 0; i < 16; ++i) {
+		for (uint i = 0; i < egaPalette.size(); ++i) {
 			egaPalette.get(i, r, g, b);
 			palette.set(i, 255 - r, 255 - g, 255 - b);
 		}

@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima1/views/dungeon_map.h"
+#include "ultima/ultima1/gfx/dungeon_pictures.h"
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/metaengine.h"
 
@@ -96,6 +97,23 @@ static const uint8 COFFIN_DRAW_DATA[] = {
 	0x7E, 0xCE, 0x05, 0x32, 0x05, 0x32, 0xF9, 0xCE, 0xF9, 0xCE, 0x05, 0xBF, 0xFB, 0xBF, 0xEF,
 	0xCE, 0xFB, 0x7E, 0x32, 0x05, 0x39, 0x01, 0x39, 0xF4, 0x32, 0xF9, 0x7E, 0xBF, 0xEF, 0xD3, 0xEA, 0x39, 0xF4, 0x7F
 };
+
+typedef Gfx::DungeonPictures Pictures;
+
+// Draws a picture of a part of the corridor, if they're being used and there's one of it
+static bool drawPicture(Graphics::Views::GfxSurface &s, Pictures::Kind kind, int distance) {
+	return Pictures::isActive() && Pictures::draw(s, kind, distance);
+}
+
+// Draws a picture of something at the size that the shapes of the game give it at a distance
+static bool drawWidgetPicture(Graphics::Views::GfxSurface &s, Pictures::Widget widget, int distance) {
+	// Distance-1, clamped to 0-4 via an unsigned comparison, as dungeonDrawWidget does
+	int tier = distance - 1;
+	if ((uint)tier > 4)
+		tier = 4;
+
+	return Pictures::isActive() && Pictures::drawWidget(s, widget, tier);
+}
 
 bool DungeonMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
@@ -217,6 +235,8 @@ void DungeonMap::drawWall(int distance) {
 
 	int offset = (distance == 0) ? 8 : 0;
 	auto s = getSurface();
+	if (drawPicture(s, Pictures::FRONT, distance))
+		return;
 
 	int x1 = DUNGEON_ARRAY_X[distance] + 16 + offset;
 	int x2 = 303 - DUNGEON_ARRAY_X[distance] - offset;
@@ -231,6 +251,8 @@ void DungeonMap::drawLeftWall(int distance) {
 	if (distance < 1 || distance > 5)
 		return;
 	auto s = getSurface();
+	if (drawPicture(s, Pictures::LEFT, distance))
+		return;
 
 	int x1 = DUNGEON_ARRAY_X[distance - 1] + 16;
 	int x2 = DUNGEON_ARRAY_X[distance] + 16;
@@ -243,6 +265,8 @@ void DungeonMap::drawRightWall(int distance) {
 	if (distance < 1 || distance > 5)
 		return;
 	auto s = getSurface();
+	if (drawPicture(s, Pictures::RIGHT, distance))
+		return;
 
 	int x1 = 303 - DUNGEON_ARRAY_X[distance - 1];
 	int x2 = 303 - DUNGEON_ARRAY_X[distance];
@@ -255,6 +279,8 @@ void DungeonMap::drawLeftBlank(int distance) {
 	if (distance < 1 || distance > 5)
 		return;
 	auto s = getSurface();
+	if (drawPicture(s, Pictures::LEFT_OPEN, distance))
+		return;
 
 	int x1 = DUNGEON_ARRAY_X[distance - 1] + 16;
 	int x2 = DUNGEON_ARRAY_X[distance] + 16;
@@ -269,6 +295,8 @@ void DungeonMap::drawRightBlank(int distance) {
 	if (distance < 1 || distance > 5)
 		return;
 	auto s = getSurface();
+	if (drawPicture(s, Pictures::RIGHT_OPEN, distance))
+		return;
 
 	int x1 = 303 - DUNGEON_ARRAY_X[distance - 1];
 	int x2 = 303 - DUNGEON_ARRAY_X[distance];
@@ -283,6 +311,8 @@ void DungeonMap::drawLeftEdge(int distance) {
 	if (distance > 5)
 		return;
 	auto s = getSurface();
+	if (drawPicture(s, Pictures::LEFT_EDGE, distance))
+		return;
 
 	int x = DUNGEON_ARRAY_X[distance] + 16;
 	s.drawLine(x, DUNGEON_ARRAY_Y[distance] + 8, x, 151 - DUNGEON_ARRAY_Y[distance], _G(colors)._edge);
@@ -292,6 +322,8 @@ void DungeonMap::drawRightEdge(int distance) {
 	if (distance > 5)
 		return;
 	auto s = getSurface();
+	if (drawPicture(s, Pictures::RIGHT_EDGE, distance))
+		return;
 
 	int x = 303 - DUNGEON_ARRAY_X[distance];
 	s.drawLine(x, DUNGEON_ARRAY_Y[distance] + 8, x, 151 - DUNGEON_ARRAY_Y[distance], _G(colors)._edge);
@@ -303,6 +335,10 @@ void DungeonMap::drawLeftDoor(int distance) {
 
 	drawLeftWall(distance);
 
+	auto s = getSurface();
+	if (drawPicture(s, Pictures::LEFT_DOOR, distance))
+		return;
+
 	int diffX = ABS((DUNGEON_ARRAY_X[distance - 1] - DUNGEON_ARRAY_X[distance]) / 9);
 	int diffY = ABS((DUNGEON_ARRAY_Y[distance - 1] - DUNGEON_ARRAY_Y[distance]) / 5);
 
@@ -311,7 +347,6 @@ void DungeonMap::drawLeftDoor(int distance) {
 	int x2 = x1;
 	int y2 = DUNGEON_ARRAY_Y[distance] + 8 - diffY;
 
-	auto s = getSurface();
 	s.drawLine(x1, y1, x2, y2, _G(colors)._edge);
 
 	int xp = diffX * 6 + 16 + DUNGEON_ARRAY_X[distance - 1];
@@ -328,6 +363,10 @@ void DungeonMap::drawRightDoor(int distance) {
 
 	drawRightWall(distance);
 
+	auto s = getSurface();
+	if (drawPicture(s, Pictures::RIGHT_DOOR, distance))
+		return;
+
 	int diffX = ABS((DUNGEON_ARRAY_X[distance - 1] - DUNGEON_ARRAY_X[distance]) / 9);
 	int diffY = ABS((DUNGEON_ARRAY_Y[distance - 1] - DUNGEON_ARRAY_Y[distance]) / 5);
 
@@ -336,7 +375,6 @@ void DungeonMap::drawRightDoor(int distance) {
 	int x2 = x1;
 	int y2 = DUNGEON_ARRAY_Y[distance] + 8 - diffY;
 
-	auto s = getSurface();
 	s.drawLine(x1, y1, x2, y2, _G(colors)._edge);
 
 	int xp = 303 - (diffX * 6 + DUNGEON_ARRAY_X[distance - 1]);
@@ -360,9 +398,14 @@ void DungeonMap::drawDoorway(int distance) {
 	if (distance >= 5)
 		return;
 
-	drawWall(distance);
-
 	auto s = getSurface();
+	if (distance == 0 && drawPicture(s, Pictures::DOORWAY, 0))
+		return;
+
+	drawWall(distance);
+	if (drawPicture(s, Pictures::FRONT_DOOR, distance))
+		return;
+
 	int farLeftX = DUNGEON_ARRAY_X[distance + 1] + 16;
 	int farRightX = 303 - DUNGEON_ARRAY_X[distance + 1];
 	int bottomY = 151 - DUNGEON_ARRAY_Y[distance] - offsetY;
@@ -378,11 +421,14 @@ void DungeonMap::drawBeams(int distance) {
 	if (distance > 5)
 		return;
 
+	auto s = getSurface();
+	if (drawPicture(s, Pictures::BEAMS, distance))
+		return;
+
 	int height = ABS((2 * DUNGEON_ARRAY_Y[distance] - 143) / 4);
 	int x1 = DUNGEON_ARRAY_X[distance] + 16;
 	int x2 = 303 - DUNGEON_ARRAY_X[distance];
 
-	auto s = getSurface();
 	for (int beamNum = 1; beamNum <= 3; ++beamNum) {
 		int y = DUNGEON_ARRAY_Y[distance] + 8 + height * beamNum + distance / 2;
 		s.drawLine(x1, y, x2, y, _G(colors)._highlight);
@@ -392,6 +438,11 @@ void DungeonMap::drawBeams(int distance) {
 void DungeonMap::drawLadderUpFaceOn(int distance) {
 	if (distance > 5)
 		return;
+
+	auto s = getSurface();
+	if (drawWidgetPicture(s, Pictures::LADDER_UP_FACE_ON, distance))
+		return;
+
 	dungeonDrawWidget(LADDER_UP_TOP_DATA, distance, _G(colors)._edge);
 	dungeonDrawWidget(LADDER_SHAFT_FACEON_DATA, distance, _G(colors)._edge);
 }
@@ -399,6 +450,11 @@ void DungeonMap::drawLadderUpFaceOn(int distance) {
 void DungeonMap::drawLadderDownFaceOn(int distance) {
 	if (distance > 5)
 		return;
+
+	auto s = getSurface();
+	if (drawWidgetPicture(s, Pictures::LADDER_DOWN_FACE_ON, distance))
+		return;
+
 	dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance, _G(colors)._edge);
 	dungeonDrawWidget(LADDER_SHAFT_FACEON_DATA, distance, _G(colors)._edge);
 }
@@ -406,6 +462,11 @@ void DungeonMap::drawLadderDownFaceOn(int distance) {
 void DungeonMap::drawLadderUpSideways(int distance) {
 	if (distance > 5)
 		return;
+
+	auto s = getSurface();
+	if (drawWidgetPicture(s, Pictures::LADDER_UP_SIDEWAYS, distance))
+		return;
+
 	dungeonDrawWidget(LADDER_UP_TOP_DATA, distance, _G(colors)._edge);
 	dungeonDrawWidget(LADDER_SHAFT_SIDE_DATA, distance, _G(colors)._edge);
 }
@@ -413,6 +474,11 @@ void DungeonMap::drawLadderUpSideways(int distance) {
 void DungeonMap::drawLadderDownSideways(int distance) {
 	if (distance > 5)
 		return;
+
+	auto s = getSurface();
+	if (drawWidgetPicture(s, Pictures::LADDER_DOWN_SIDEWAYS, distance))
+		return;
+
 	dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance, _G(colors)._edge);
 	dungeonDrawWidget(LADDER_SHAFT_SIDE_DATA, distance, _G(colors)._edge);
 }
@@ -439,16 +505,23 @@ void DungeonMap::dungeonDrawCell(int distance, int x, int y) {
 	const Data::DungeonCell cell = cellAt(x, y);
 
 	if (cell._monsterId != Data::DUNGEON_NO_MONSTER) {
-		if (cell._tileNum == Data::DTILE_DOOR || cell._tileNum == Data::DTILE_SECRET_DOOR ||
+		if (cell._tileNum == Data::DTILE_DOOR && Pictures::isActive())
+			// The monster stands in front of the door, which the pictures draw in the wall
+			drawDoorway(distance);
+		else if (cell._tileNum == Data::DTILE_DOOR || cell._tileNum == Data::DTILE_SECRET_DOOR ||
 				cell._tileNum == Data::DTILE_WALL)
 			drawWall(distance);
 
 		// A monster sharing a ladder's cell only gets the "hole" opening
 		// drawn, not the full shaft - matching the original's dungeonDrawCell2
-		if (cell._tileNum == Data::DTILE_LADDER_DOWN)
-			dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance + 1, _G(colors)._edge);
-		else if (cell._tileNum == Data::DTILE_LADDER_UP)
-			dungeonDrawWidget(LADDER_UP_TOP_DATA, distance + 1, _G(colors)._edge);
+		auto s = getSurface();
+		if (cell._tileNum == Data::DTILE_LADDER_DOWN) {
+			if (!drawWidgetPicture(s, Pictures::LADDER_DOWN_HOLE, distance + 1))
+				dungeonDrawWidget(LADDER_DOWN_TOP_DATA, distance + 1, _G(colors)._edge);
+		} else if (cell._tileNum == Data::DTILE_LADDER_UP) {
+			if (!drawWidgetPicture(s, Pictures::LADDER_UP_HOLE, distance + 1))
+				dungeonDrawWidget(LADDER_UP_TOP_DATA, distance + 1, _G(colors)._edge);
+		}
 
 		dungeonDrawMonster(cell._monsterId, distance);
 		return;
@@ -529,6 +602,10 @@ void DungeonMap::dungeonDrawWidget(const uint8 *data, int distance, int color) {
 void DungeonMap::drawCoffin(int distance) {
 	// The original also shows "Coffin" in the commands area here - that's
 	// handled by DungeonLogic::endOfTurn instead, as with monster names
+	auto s = getSurface();
+	if (drawWidgetPicture(s, Pictures::COFFIN, distance))
+		return;
+
 	dungeonDrawWidget(COFFIN_DRAW_DATA, distance, _G(colors)._edge);
 }
 
@@ -537,6 +614,10 @@ void DungeonMap::drawChest(int distance) {
 	// handled by DungeonLogic::endOfTurn instead, as with monster names.
 	// Reuses the mimic's widget shape, since the original draws chests and
 	// mimics identically
+	auto s = getSurface();
+	if (drawWidgetPicture(s, Pictures::CHEST, distance))
+		return;
+
 	dungeonDrawWidget(UWIDGET_DRAW_TABLE[Data::UMONS_MIMIC], distance, _G(colors)._edge);
 }
 
@@ -547,6 +628,17 @@ void DungeonMap::dungeonDrawMonster(int monsterId, int distance) {
 	// The original also shows the monster's name in the commands area here
 	// (UNDERWORLD_MONSTERS[monsterId]) - that's handled by
 	// DungeonLogic::endOfTurn instead
+
+	auto s = getSurface();
+	if (Pictures::isActive()) {
+		if (monsterId == Data::UMONS_MIMIC) {
+			// It's a chest, which is drawn the size of a monster
+			if (drawWidgetPicture(s, Pictures::CHEST, distance))
+				return;
+		} else if (Pictures::drawMonster(s, monsterId, distance)) {
+			return;
+		}
+	}
 
 	if (monsterId == Data::UMONS_GELATINOUS_CUBE) {
 		// The cube fills the whole passage rather than using a widget shape
@@ -621,6 +713,20 @@ void DungeonMap::drawDungeonView() {
 		if (isDoor)
 			drawDoorway(0);
 
+		// A monster blocking the view just past the last tier drawn has the view capped with
+		// one more tier right behind it. It's drawn first, since the monster is in front of it
+		int capLeftTile = 0, capRightTile = 0;
+		int backTileNum = cellAt(pos.x + backX, pos.y + backY)._tileNum;
+		const bool capped = isMonsterBlocking(pos.x + backX, pos.y + backY) &&
+			backTileNum != Data::DTILE_DOOR && distance < 5;
+		if (capped) {
+			capLeftTile = cellAt(pos.x + leftDeltaX + backX, pos.y + leftDeltaY + backY)._tileNum;
+			capRightTile = cellAt(pos.x + rightDeltaX + backX, pos.y + rightDeltaY + backY)._tileNum;
+
+			drawLeftCell(distance + 1, capLeftTile);
+			drawRightCell(distance + 1, capRightTile);
+		}
+
 		bool endingLeft = false, endingRight = false;
 		bool leftSolid = false, rightSolid = false;
 
@@ -666,19 +772,10 @@ void DungeonMap::drawDungeonView() {
 		if (!isDoor)
 			dungeonDrawCell(0, pos.x, pos.y);
 
-		int backTileNum = cellAt(pos.x + backX, pos.y + backY)._tileNum;
-		if (isMonsterBlocking(pos.x + backX, pos.y + backY) && backTileNum != Data::DTILE_DOOR && distance < 5) {
-			// A monster is blocking the view just past the last drawn
-			// tier, so cap the view with one more tier right behind it
-			int leftTile = cellAt(pos.x + leftDeltaX + backX, pos.y + leftDeltaY + backY)._tileNum;
-			int rightTile = cellAt(pos.x + rightDeltaX + backX, pos.y + rightDeltaY + backY)._tileNum;
-
-			drawLeftCell(distance + 1, leftTile);
-			drawRightCell(distance + 1, rightTile);
-
-			if (!isSolidTile(leftTile))
+		if (capped) {
+			if (!isSolidTile(capLeftTile))
 				drawLeftEdge(distance);
-			if (!isSolidTile(rightTile))
+			if (!isSolidTile(capRightTile))
 				drawRightEdge(distance);
 
 		} else {

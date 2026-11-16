@@ -33,6 +33,9 @@ import sys
 import zlib
 
 WIDTH, HEIGHT = 256, 128
+
+# The column that the corridor recedes to, which other games with the same sort of view change
+CENTER = 128
 PALETTE_BASE = 48
 
 # The EGA palette of the game, which lives at entries 16 to 31
@@ -210,7 +213,7 @@ class Shape:
                 near, far = perspective
 
                 def along(px):
-                    distance = abs(128 - px)
+                    distance = abs(CENTER - px)
                     v = (1 / max(distance, 0.5) - 1 / near) / (1 / far - 1 / near)
                     return max(0.0, min(1.0, v))
 

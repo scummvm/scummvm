@@ -54,6 +54,7 @@ constexpr int UMONS_GREMLIN = 16;
 constexpr int UMONS_MIND_WHIPPER = 21;
 
 // Dungeon monster names, indexed by DungeonCell::_monsterId (0-24)
+constexpr int DUNGEON_MONSTER_COUNT = 25;
 extern const char *UNDERWORLD_MONSTERS[];
 
 enum DungeonTileId {
