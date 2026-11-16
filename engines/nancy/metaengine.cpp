@@ -259,6 +259,7 @@ const Common::AchievementDescriptionList *NancyMetaEngine::getAchievementDescrip
 		{ "nancy29", Common::UNK_ACHIEVEMENTS, "nancy29" },
 		{ "nancy30", Common::UNK_ACHIEVEMENTS, "nancy30" },
 		{ "nancy31", Common::UNK_ACHIEVEMENTS, "nancy31" },
+		{ "nancy32", Common::UNK_ACHIEVEMENTS, "nancy32" },
 		ACHIEVEMENT_DESC_TABLE_END_MARKER
 	};
 
