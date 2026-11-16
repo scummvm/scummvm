@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-12 05:17+0000\n"
+"POT-Creation-Date: 2026-11-16 22:20+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -345,7 +345,7 @@ msgstr "另一存储正工作中。您要中断它吗？"
 #: engines/kyra/gui/saveload_eob.cpp:666 engines/lab/metaengine.cpp:197
 #: engines/mm/mm1/metaengine.cpp:54 engines/mm/mm1/metaengine.cpp:76
 #: engines/parallaction/metaengine.cpp:169
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4526
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4527
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1244
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:328
@@ -366,7 +366,7 @@ msgstr "是"
 #: engines/kyra/gui/saveload_eob.cpp:666 engines/lab/metaengine.cpp:204
 #: engines/mm/mm1/metaengine.cpp:52 engines/mm/mm1/metaengine.cpp:74
 #: engines/parallaction/metaengine.cpp:175
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4526
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4527
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1250
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:329
@@ -393,7 +393,7 @@ msgstr "JSON 代码内容有误。"
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
 #: engines/parallaction/saveload.cpp:270 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:4538
+#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:4539
 #: engines/sword1/control.cpp:2816
 msgid "OK"
 msgstr "确认"
@@ -1107,11 +1107,15 @@ msgstr "互动"
 #: engines/freescape/movement.cpp:36 engines/got/metaengine.cpp:70
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:502
 #: engines/grim/grim.cpp:584 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:1237
+#: engines/igor/metaengine.cpp:122 engines/scumm/metaengine.cpp:1249
 #: engines/scumm/insane/mortimer/mortimer.cpp:94
 #: engines/supernova/metaengine.cpp:273 engines/twine/metaengine.cpp:430
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:153
 #: engines/ultima/ultima0/metaengine.cpp:45
+#: engines/ultima/ultima1/metaengine.cpp:49
+#: engines/ultima/ultima1/metaengine.cpp:84
+#: engines/ultima/ultima2/metaengine.cpp:49
+#: engines/ultima/ultima3/metaengine.cpp:49
 #: engines/ultima/ultima4/metaengine.cpp:44
 #: engines/ultima/ultima4/metaengine.cpp:139
 #: engines/ultima/ultima4/metaengine.cpp:149
@@ -1131,11 +1135,15 @@ msgstr "向上"
 #: engines/freescape/movement.cpp:45 engines/got/metaengine.cpp:71
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:507
 #: engines/grim/grim.cpp:589 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:1204
+#: engines/igor/metaengine.cpp:123 engines/scumm/metaengine.cpp:1216
 #: engines/scumm/insane/mortimer/mortimer.cpp:94
 #: engines/supernova/metaengine.cpp:279 engines/twine/metaengine.cpp:437
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:154
 #: engines/ultima/ultima0/metaengine.cpp:46
+#: engines/ultima/ultima1/metaengine.cpp:50
+#: engines/ultima/ultima1/metaengine.cpp:85
+#: engines/ultima/ultima2/metaengine.cpp:50
+#: engines/ultima/ultima3/metaengine.cpp:50
 #: engines/ultima/ultima4/metaengine.cpp:45
 #: engines/ultima/ultima4/metaengine.cpp:140
 #: engines/ultima/ultima4/metaengine.cpp:150
@@ -1155,10 +1163,14 @@ msgstr "向下"
 #: engines/glk/dialogs.cpp:371 engines/got/metaengine.cpp:72
 #: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:512
 #: engines/grim/grim.cpp:594 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
-#: engines/scumm/metaengine.cpp:1217
+#: engines/igor/metaengine.cpp:124 engines/scumm/metaengine.cpp:1229
 #: engines/scumm/insane/mortimer/mortimer.cpp:94
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
-#: engines/twp/metaengine.cpp:151 engines/ultima/ultima4/metaengine.cpp:46
+#: engines/twp/metaengine.cpp:151 engines/ultima/ultima1/metaengine.cpp:51
+#: engines/ultima/ultima1/metaengine.cpp:86
+#: engines/ultima/ultima2/metaengine.cpp:51
+#: engines/ultima/ultima3/metaengine.cpp:51
+#: engines/ultima/ultima4/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:141
 #: engines/ultima/ultima4/metaengine.cpp:151
 #: engines/wintermute/keymapper_tables.h:357
@@ -1178,10 +1190,14 @@ msgstr "向左"
 #: engines/glk/dialogs.cpp:373 engines/got/metaengine.cpp:73
 #: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:517
 #: engines/grim/grim.cpp:599 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
-#: engines/scumm/metaengine.cpp:1224
+#: engines/igor/metaengine.cpp:125 engines/scumm/metaengine.cpp:1236
 #: engines/scumm/insane/mortimer/mortimer.cpp:94
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
-#: engines/twp/metaengine.cpp:152 engines/ultima/ultima4/metaengine.cpp:47
+#: engines/twp/metaengine.cpp:152 engines/ultima/ultima1/metaengine.cpp:52
+#: engines/ultima/ultima1/metaengine.cpp:87
+#: engines/ultima/ultima2/metaengine.cpp:52
+#: engines/ultima/ultima3/metaengine.cpp:52
+#: engines/ultima/ultima4/metaengine.cpp:47
 #: engines/ultima/ultima4/metaengine.cpp:142
 #: engines/ultima/ultima4/metaengine.cpp:152
 #: engines/wintermute/keymapper_tables.h:363
@@ -1834,6 +1850,7 @@ msgid "Scanning MIDI devices..."
 msgstr "扫描了 %d 目录..."
 
 #: gui/onscreendialog.cpp:95 gui/onscreendialog.cpp:97
+#: engines/comfy/metaengine.cpp:108
 msgid "Stop"
 msgstr "停止"
 
@@ -1987,7 +2004,7 @@ msgstr "剩余 %d 个隐藏成就"
 msgid "Achievements unlocked: %d/%d"
 msgstr "成就解锁：%d/%d"
 
-#: gui/options.cpp:1610
+#: gui/options.cpp:1610 engines/ultima/shared/engine/graphics_options.cpp:51
 msgid "Graphics mode:"
 msgstr "图形模式："
 
@@ -2391,7 +2408,8 @@ msgstr "ScummVM 配置目录： "
 msgid "ScummVM log path: "
 msgstr "ScummVM 日志路径： "
 
-#: gui/options.cpp:2599
+#: gui/options.cpp:2599 engines/ultima/ultima2/metaengine.cpp:74
+#: engines/ultima/ultima3/metaengine.cpp:74
 msgid "View"
 msgstr "视图"
 
@@ -3479,7 +3497,7 @@ msgstr "图形冒险游戏引擎"
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
-#: engines/scumm/scumm.cpp:4538 engines/scumm/insane/mortimer/mortimer.cpp:78
+#: engines/scumm/scumm.cpp:4539 engines/scumm/insane/mortimer/mortimer.cpp:78
 #: engines/scumm/insane/mortimer/mortimer.cpp:1362
 #: engines/sludge/keymapper_tables.h:98 engines/sludge/keymapper_tables.h:147
 #: engines/sludge/keymapper_tables.h:226 engines/sludge/keymapper_tables.h:346
@@ -3489,6 +3507,10 @@ msgstr "图形冒险游戏引擎"
 #: engines/titanic/metaengine.cpp:302 engines/ultima/ultima0/metaengine.cpp:48
 #: engines/ultima/ultima0/metaengine.cpp:71
 #: engines/ultima/ultima0/metaengine.cpp:85
+#: engines/ultima/ultima1/metaengine.cpp:69
+#: engines/ultima/ultima1/metaengine.cpp:100
+#: engines/ultima/ultima2/metaengine.cpp:69
+#: engines/ultima/ultima3/metaengine.cpp:69
 #: engines/ultima/nuvie/metaengine.cpp:93 engines/zvision/metaengine.cpp:292
 #: engines/zvision/metaengine.cpp:310
 msgid "Quit"
@@ -3548,6 +3570,10 @@ msgstr "Shift"
 
 #: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:152
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
+#: engines/ultima/ultima1/metaengine.cpp:61
+#: engines/ultima/ultima1/metaengine.cpp:92
+#: engines/ultima/ultima2/metaengine.cpp:57
+#: engines/ultima/ultima3/metaengine.cpp:57
 #: engines/ultima/ultima4/metaengine.cpp:53
 msgid "Enter"
 msgstr "回车"
@@ -3960,7 +3986,7 @@ msgid "Show/hide hotspots"
 msgstr "显示热点"
 
 #: engines/metaengine.cpp:82 engines/saga/metaengine.cpp:267
-#: engines/scumm/metaengine.cpp:1187
+#: engines/scumm/metaengine.cpp:1199
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default game keymappings"
@@ -3975,17 +4001,21 @@ msgstr "默认游戏按键绑定"
 #: engines/fool/metaengine.cpp:137 engines/groovie/metaengine.cpp:205
 #: engines/harvester/metaengine.cpp:70 engines/hdb/metaengine.cpp:207
 #: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:134
-#: engines/illusions/metaengine.cpp:94 engines/kyra/engine/eobcommon.cpp:377
-#: engines/kyra/engine/lol.cpp:505 engines/lure/metaengine.cpp:177
-#: engines/made/metaengine.cpp:141 engines/mads/metaengine.cpp:270
-#: engines/mm/metaengine.cpp:186 engines/mtropolis/metaengine.cpp:161
-#: engines/nancy/input.cpp:221 engines/parallaction/metaengine.cpp:138
-#: engines/saga/metaengine.cpp:278 engines/sludge/keymapper_tables.h:564
-#: engines/sludge/keymapper_tables.h:583 engines/stark/metaengine.cpp:189
-#: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
-#: engines/toon/metaengine.cpp:86 engines/touche/metaengine.cpp:123
-#: engines/trecision/metaengine.cpp:125 engines/tsage/metaengine.cpp:178
-#: engines/tucker/metaengine.cpp:172 engines/ultima/ultima0/metaengine.cpp:180
+#: engines/igor/metaengine.cpp:86 engines/illusions/metaengine.cpp:94
+#: engines/kyra/engine/eobcommon.cpp:377 engines/kyra/engine/lol.cpp:505
+#: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:141
+#: engines/mads/metaengine.cpp:270 engines/mm/metaengine.cpp:186
+#: engines/mtropolis/metaengine.cpp:161 engines/nancy/input.cpp:239
+#: engines/parallaction/metaengine.cpp:138 engines/saga/metaengine.cpp:278
+#: engines/sludge/keymapper_tables.h:564 engines/sludge/keymapper_tables.h:583
+#: engines/stark/metaengine.cpp:189 engines/sword1/metaengine.cpp:271
+#: engines/tinsel/metaengine.cpp:246 engines/toon/metaengine.cpp:86
+#: engines/touche/metaengine.cpp:123 engines/trecision/metaengine.cpp:125
+#: engines/tsage/metaengine.cpp:178 engines/tucker/metaengine.cpp:172
+#: engines/ultima/ultima0/metaengine.cpp:180
+#: engines/ultima/ultima1/metaengine.cpp:188
+#: engines/ultima/ultima2/metaengine.cpp:151
+#: engines/ultima/ultima3/metaengine.cpp:151
 #: engines/ultima/ultima4/metaengine.cpp:227
 #: engines/ultima/nuvie/metaengine.cpp:238
 #: engines/ultima/ultima8/metaengine.cpp:138 engines/vcruise/metaengine.cpp:158
@@ -4013,18 +4043,21 @@ msgstr "中键点击"
 #: engines/dgds/metaengine.cpp:101 engines/draci/metaengine.cpp:206
 #: engines/fool/metaengine.cpp:148 engines/groovie/metaengine.cpp:211
 #: engines/harvester/metaengine.cpp:75 engines/hopkins/metaengine.cpp:244
-#: engines/hugo/metaengine.cpp:141 engines/illusions/metaengine.cpp:101
-#: engines/kyra/engine/eobcommon.cpp:378 engines/kyra/engine/lol.cpp:506
-#: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:148
-#: engines/mads/metaengine.cpp:276 engines/mm/metaengine.cpp:192
-#: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:228
-#: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
-#: engines/sludge/keymapper_tables.h:570 engines/sludge/keymapper_tables.h:589
-#: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
-#: engines/tinsel/metaengine.cpp:252 engines/toon/metaengine.cpp:92
-#: engines/touche/metaengine.cpp:129 engines/trecision/metaengine.cpp:131
-#: engines/tsage/metaengine.cpp:184 engines/tucker/metaengine.cpp:178
-#: engines/ultima/ultima0/metaengine.cpp:186
+#: engines/hugo/metaengine.cpp:141 engines/igor/metaengine.cpp:92
+#: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:378
+#: engines/kyra/engine/lol.cpp:506 engines/lure/metaengine.cpp:183
+#: engines/made/metaengine.cpp:148 engines/mads/metaengine.cpp:276
+#: engines/mm/metaengine.cpp:192 engines/mtropolis/metaengine.cpp:167
+#: engines/nancy/input.cpp:246 engines/parallaction/metaengine.cpp:144
+#: engines/saga/metaengine.cpp:289 engines/sludge/keymapper_tables.h:570
+#: engines/sludge/keymapper_tables.h:589 engines/stark/metaengine.cpp:195
+#: engines/sword1/metaengine.cpp:277 engines/tinsel/metaengine.cpp:252
+#: engines/toon/metaengine.cpp:92 engines/touche/metaengine.cpp:129
+#: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
+#: engines/tucker/metaengine.cpp:178 engines/ultima/ultima0/metaengine.cpp:186
+#: engines/ultima/ultima1/metaengine.cpp:194
+#: engines/ultima/ultima2/metaengine.cpp:157
+#: engines/ultima/ultima3/metaengine.cpp:157
 #: engines/ultima/ultima4/metaengine.cpp:233
 #: engines/ultima/nuvie/metaengine.cpp:244
 #: engines/ultima/ultima8/metaengine.cpp:144
@@ -4041,20 +4074,21 @@ msgstr "右键点击"
 #: engines/grim/grim.cpp:571 engines/hdb/metaengine.cpp:258
 #: engines/hypno/metaengine.cpp:243 engines/hypno/metaengine.cpp:339
 #: engines/hypno/metaengine.cpp:456 engines/icb/icb.cpp:137
-#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
-#: engines/mohawk/riven.cpp:876 engines/ngi/metaengine.cpp:136
-#: engines/scumm/insane/mortimer/mortimer.cpp:75 engines/sky/metaengine.cpp:126
-#: engines/sludge/keymapper_tables.h:55 engines/sludge/keymapper_tables.h:128
-#: engines/sludge/keymapper_tables.h:190 engines/sludge/keymapper_tables.h:246
-#: engines/sludge/keymapper_tables.h:265 engines/sludge/keymapper_tables.h:462
-#: engines/sludge/keymapper_tables.h:493 engines/supernova/metaengine.cpp:262
-#: engines/sword25/metaengine.cpp:124 engines/tucker/metaengine.cpp:184
-#: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:1646
+#: engines/icb/icb.cpp:203 engines/igor/metaengine.cpp:119
+#: engines/mohawk/myst.cpp:595 engines/mohawk/riven.cpp:876
+#: engines/ngi/metaengine.cpp:136 engines/scumm/insane/mortimer/mortimer.cpp:75
+#: engines/sky/metaengine.cpp:126 engines/sludge/keymapper_tables.h:55
+#: engines/sludge/keymapper_tables.h:128 engines/sludge/keymapper_tables.h:190
+#: engines/sludge/keymapper_tables.h:246 engines/sludge/keymapper_tables.h:265
+#: engines/sludge/keymapper_tables.h:462 engines/sludge/keymapper_tables.h:493
+#: engines/supernova/metaengine.cpp:262 engines/sword25/metaengine.cpp:124
+#: engines/tucker/metaengine.cpp:184 engines/twine/metaengine.cpp:223
+#: engines/wintermute/keymapper_tables.h:1646
 msgid "Pause"
 msgstr "暂停"
 
 #: engines/metaengine.cpp:112 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:592
+#: engines/hollywood/runaway/engine.cpp:592 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4094,8 +4128,8 @@ msgstr "预测输入对话框"
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
 #: engines/metaengine.cpp:138 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:560
-#: engines/grim/grim.cpp:660 engines/sky/metaengine.cpp:101
-#: engines/wintermute/keymapper_tables.h:57
+#: engines/grim/grim.cpp:660 engines/igor/metaengine.cpp:117
+#: engines/sky/metaengine.cpp:101 engines/wintermute/keymapper_tables.h:57
 msgid "Confirm"
 msgstr "确认"
 
@@ -6388,7 +6422,7 @@ msgstr "R2"
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:566
 #: engines/grim/grim.cpp:666 engines/hdb/metaengine.cpp:264
 #: engines/macs2/metaengine.cpp:70 engines/made/metaengine.cpp:190
-#: engines/phoenixvr/metaengine.cpp:110 engines/scumm/metaengine.cpp:1345
+#: engines/phoenixvr/metaengine.cpp:110 engines/scumm/metaengine.cpp:1357
 #: engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr "菜单"
@@ -6589,20 +6623,20 @@ msgstr ""
 #: engines/draci/metaengine.cpp:195 engines/drascula/metaengine.cpp:205
 #: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:229
 #: engines/hugo/metaengine.cpp:129 engines/hypno/metaengine.cpp:128
-#: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
-#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:136
-#: engines/mads/metaengine.cpp:264 engines/neverhood/metaengine.cpp:185
-#: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
-#: engines/prince/metaengine.cpp:227 engines/private/metaengine.cpp:138
-#: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
-#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
-#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
-#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/tot/metaengine.cpp:102 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/igor/metaengine.cpp:80 engines/illusions/metaengine.cpp:89
+#: engines/lab/metaengine.cpp:149 engines/lure/metaengine.cpp:168
+#: engines/made/metaengine.cpp:136 engines/mads/metaengine.cpp:264
+#: engines/neverhood/metaengine.cpp:185 engines/ngi/metaengine.cpp:115
+#: engines/petka/metaengine.cpp:113 engines/prince/metaengine.cpp:227
+#: engines/private/metaengine.cpp:138 engines/queen/metaengine.cpp:146
+#: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
+#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
+#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/tot/metaengine.cpp:102
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "默认按键绑定"
 
@@ -6623,7 +6657,7 @@ msgstr "跳过视频"
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/harvester/metaengine.cpp:89
 #: engines/hdb/metaengine.cpp:213 engines/hypno/metaengine.cpp:363
-#: engines/hypno/metaengine.cpp:411 engines/nancy/input.cpp:235
+#: engines/hypno/metaengine.cpp:411 engines/nancy/input.cpp:253
 #: engines/tinsel/metaengine.cpp:263 engines/titanic/metaengine.cpp:324
 #: engines/ultima/ultima8/metaengine.cpp:52
 msgid "Move up"
@@ -6634,7 +6668,7 @@ msgstr "向上移动"
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/harvester/metaengine.cpp:90
 #: engines/hdb/metaengine.cpp:219 engines/hypno/metaengine.cpp:351
-#: engines/hypno/metaengine.cpp:399 engines/nancy/input.cpp:241
+#: engines/hypno/metaengine.cpp:399 engines/nancy/input.cpp:259
 #: engines/tinsel/metaengine.cpp:269 engines/titanic/metaengine.cpp:330
 #: engines/ultima/ultima8/metaengine.cpp:53
 msgid "Move down"
@@ -6647,7 +6681,7 @@ msgstr "向下移动"
 #: engines/efh/metaengine.cpp:300 engines/harvester/metaengine.cpp:87
 #: engines/hdb/metaengine.cpp:225 engines/hypno/metaengine.cpp:345
 #: engines/hypno/metaengine.cpp:393 engines/kyra/engine/eobcommon.cpp:381
-#: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:247
+#: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:265
 #: engines/tinsel/metaengine.cpp:275 engines/titanic/metaengine.cpp:312
 #: engines/titanic/metaengine.cpp:390 engines/ultima/ultima8/metaengine.cpp:54
 msgid "Move left"
@@ -6660,7 +6694,7 @@ msgstr "向左移动"
 #: engines/efh/metaengine.cpp:307 engines/harvester/metaengine.cpp:88
 #: engines/hdb/metaengine.cpp:231 engines/hypno/metaengine.cpp:357
 #: engines/hypno/metaengine.cpp:405 engines/kyra/engine/eobcommon.cpp:382
-#: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:253
+#: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:271
 #: engines/tinsel/metaengine.cpp:281 engines/titanic/metaengine.cpp:318
 #: engines/titanic/metaengine.cpp:396 engines/ultima/ultima8/metaengine.cpp:55
 msgid "Move right"
@@ -6709,10 +6743,16 @@ msgstr "观察"
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
 #: engines/sherlock/metaengine.cpp:425 engines/supernova/metaengine.cpp:336
 #: engines/tot/metaengine.cpp:144 engines/twp/metaengine.cpp:177
+#: engines/ultima/ultima1/metaengine.cpp:68
+#: engines/ultima/ultima1/metaengine.cpp:99
 msgid "Open"
 msgstr "打开"
 
 #: engines/access/metaengine.cpp:330 engines/scumm/help.cpp:128
+#: engines/ultima/ultima1/metaengine.cpp:63
+#: engines/ultima/ultima1/metaengine.cpp:94
+#: engines/ultima/ultima2/metaengine.cpp:59
+#: engines/ultima/ultima3/metaengine.cpp:59
 #: engines/ultima/nuvie/metaengine.cpp:70
 msgid "Get"
 msgstr "获取"
@@ -6916,14 +6956,14 @@ msgstr ""
 #: engines/crab/metaengine.cpp:34 engines/darkseed/dialogs.cpp:95
 #: engines/drascula/metaengine.cpp:42 engines/dreamweb/metaengine.cpp:48
 #: engines/fool/metaengine.cpp:38 engines/got/metaengine.cpp:35
-#: engines/groovie/metaengine.cpp:53 engines/m4/metaengine.cpp:37
-#: engines/macs2/dialogs.cpp:46 engines/mads/metaengine.cpp:110
-#: engines/nancy/metaengine.cpp:105 engines/neverhood/dialogs.cpp:47
-#: engines/pelrock/metaengine.cpp:35 engines/phoenixvr/metaengine.cpp:47
-#: engines/sci/detection_options.h:118 engines/sherlock/metaengine.cpp:47
-#: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
-#: engines/ultima/metaengine.cpp:56 engines/waynesworld/metaengine.cpp:37
-#: engines/zvision/metaengine.cpp:42
+#: engines/groovie/metaengine.cpp:53 engines/igor/metaengine.cpp:39
+#: engines/m4/metaengine.cpp:37 engines/macs2/dialogs.cpp:46
+#: engines/mads/metaengine.cpp:110 engines/nancy/metaengine.cpp:105
+#: engines/neverhood/dialogs.cpp:47 engines/pelrock/metaengine.cpp:35
+#: engines/phoenixvr/metaengine.cpp:47 engines/sci/detection_options.h:118
+#: engines/sherlock/metaengine.cpp:47 engines/toltecs/metaengine.cpp:44
+#: engines/trecision/metaengine.cpp:41 engines/ultima/metaengine.cpp:69
+#: engines/waynesworld/metaengine.cpp:37 engines/zvision/metaengine.cpp:42
 msgid "Use original save/load screens"
 msgstr "使用原始存档/读档屏幕"
 
@@ -6932,14 +6972,14 @@ msgstr "使用原始存档/读档屏幕"
 #: engines/crab/metaengine.cpp:35 engines/darkseed/dialogs.cpp:96
 #: engines/drascula/metaengine.cpp:43 engines/dreamweb/metaengine.cpp:49
 #: engines/fool/metaengine.cpp:39 engines/got/metaengine.cpp:36
-#: engines/groovie/metaengine.cpp:54 engines/m4/metaengine.cpp:38
-#: engines/macs2/dialogs.cpp:47 engines/mads/metaengine.cpp:111
-#: engines/nancy/metaengine.cpp:106 engines/neverhood/dialogs.cpp:48
-#: engines/pelrock/metaengine.cpp:36 engines/phoenixvr/metaengine.cpp:48
-#: engines/sci/detection_options.h:119 engines/sherlock/metaengine.cpp:48
-#: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
-#: engines/ultima/metaengine.cpp:57 engines/waynesworld/metaengine.cpp:38
-#: engines/zvision/metaengine.cpp:43
+#: engines/groovie/metaengine.cpp:54 engines/igor/metaengine.cpp:40
+#: engines/m4/metaengine.cpp:38 engines/macs2/dialogs.cpp:47
+#: engines/mads/metaengine.cpp:111 engines/nancy/metaengine.cpp:106
+#: engines/neverhood/dialogs.cpp:48 engines/pelrock/metaengine.cpp:36
+#: engines/phoenixvr/metaengine.cpp:48 engines/sci/detection_options.h:119
+#: engines/sherlock/metaengine.cpp:48 engines/toltecs/metaengine.cpp:45
+#: engines/trecision/metaengine.cpp:42 engines/ultima/metaengine.cpp:70
+#: engines/waynesworld/metaengine.cpp:38 engines/zvision/metaengine.cpp:43
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "使用原始的存档/读档屏幕而非 ScummVM 的"
 
@@ -7183,9 +7223,9 @@ msgid "Toggle sound effects"
 msgstr "开关音效"
 
 #. I18N: Speeds up the game to twice its normal speed
-#: engines/agos/metaengine.cpp:204 engines/queen/metaengine.cpp:192
-#: engines/sky/metaengine.cpp:131 engines/teenagent/metaengine.cpp:239
-#: engines/touche/metaengine.cpp:170
+#: engines/agos/metaengine.cpp:204 engines/igor/metaengine.cpp:120
+#: engines/queen/metaengine.cpp:192 engines/sky/metaengine.cpp:131
+#: engines/teenagent/metaengine.cpp:239 engines/touche/metaengine.cpp:170
 msgid "Toggle fast mode"
 msgstr "开关快速模式"
 
@@ -7339,7 +7379,7 @@ msgstr ""
 msgid "Quick load or save game isn't supported in this location"
 msgstr "此位置不支持快速存档或读档"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3477
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3478
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -7350,7 +7390,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3464
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3465
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -7361,7 +7401,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3497
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3498
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7629,7 +7669,8 @@ msgid "Select / Kick / Run"
 msgstr "互动模式"
 
 #: engines/awe/metaengine.cpp:62 engines/harvester/metaengine.cpp:101
-#: engines/hpl1/metaengine.cpp:83
+#: engines/hpl1/metaengine.cpp:83 engines/ultima/ultima2/metaengine.cpp:62
+#: engines/ultima/ultima3/metaengine.cpp:62
 msgid "Jump"
 msgstr "跳跃"
 
@@ -7655,13 +7696,13 @@ msgstr "Soldier 714 Eye 作弊"
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:117 engines/got/metaengine.cpp:78
 #: engines/harold/metaengine.cpp:63 engines/hugo/metaengine.cpp:197
-#: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:282
-#: engines/mm/mm1/metaengine.cpp:42 engines/mm/mm1/metaengine.cpp:48
-#: engines/mm/mm1/metaengine.cpp:70 engines/saga/metaengine.cpp:328
-#: engines/tinsel/metaengine.cpp:258 engines/tsage/metaengine.cpp:190
-#: engines/tucker/metaengine.cpp:221 engines/twine/metaengine.cpp:388
-#: engines/ultima/ultima0/metaengine.cpp:40 engines/vcruise/metaengine.cpp:164
-#: engines/wintermute/keymapper_tables.h:63
+#: engines/igor/metaengine.cpp:116 engines/lure/metaengine.cpp:209
+#: engines/mads/metaengine.cpp:282 engines/mm/mm1/metaengine.cpp:42
+#: engines/mm/mm1/metaengine.cpp:48 engines/mm/mm1/metaengine.cpp:70
+#: engines/saga/metaengine.cpp:328 engines/tinsel/metaengine.cpp:258
+#: engines/tsage/metaengine.cpp:190 engines/tucker/metaengine.cpp:221
+#: engines/twine/metaengine.cpp:388 engines/ultima/ultima0/metaengine.cpp:40
+#: engines/vcruise/metaengine.cpp:164 engines/wintermute/keymapper_tables.h:63
 msgid "Escape"
 msgstr "退出"
 
@@ -7854,7 +7895,7 @@ msgstr "开关战斗"
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
 #: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:210
 #: engines/phoenixvr/metaengine.cpp:94 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1263 engines/supernova/metaengine.cpp:309
+#: engines/scumm/metaengine.cpp:1275 engines/supernova/metaengine.cpp:309
 #: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:161
 #: engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
@@ -7976,8 +8017,11 @@ msgstr "开关线索隐私"
 #: engines/stark/metaengine.cpp:208 engines/tetraedge/metaengine.cpp:110
 #: engines/titanic/metaengine.cpp:199 engines/toltecs/metaengine.cpp:234
 #: engines/toon/metaengine.cpp:112 engines/trecision/metaengine.cpp:169
-#: engines/tsage/metaengine.cpp:242 engines/ultima/ultima8/metaengine.cpp:44
-#: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:957
+#: engines/tsage/metaengine.cpp:242 engines/ultima/ultima1/metaengine.cpp:41
+#: engines/ultima/ultima2/metaengine.cpp:41
+#: engines/ultima/ultima3/metaengine.cpp:41
+#: engines/ultima/ultima8/metaengine.cpp:44 engines/vcruise/metaengine.cpp:175
+#: engines/wintermute/keymapper_tables.h:957
 msgid "Save game"
 msgstr "保存游戏"
 
@@ -8236,7 +8280,7 @@ msgstr ""
 "按下“OK”现在转换，否则在下次启动游戏时将再次询问你。\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:1280 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1289 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "存档使用较高版本的 ScummVM 创建。无法载入。"
@@ -8642,6 +8686,172 @@ msgstr ""
 msgid "Loading is only available in first-person view."
 msgstr ""
 
+#. I18N: Shown at startup, the games were designed for a physical toy keyboard
+#: engines/comfy/comfy.cpp:60
+msgid ""
+"WARNING: this game was originally designed to be played using an external "
+"Comfy Keyboard toy peripheral. This device is emulated via an ImGui window, "
+"or via the keymapper. It is advised to configure the keymapper before "
+"starting the game."
+msgstr ""
+
+#. I18N: Shown at startup, the games were designed for a physical toy keyboard
+#: engines/comfy/comfy.cpp:65
+msgid ""
+"WARNING: this game was originally designed to be played using an external "
+"Comfy Keyboard toy peripheral. This device is emulated via the keymapper. It "
+"is advised to configure the keymapper before starting the game."
+msgstr ""
+
+#: engines/comfy/comfy.cpp:70
+msgid "Understood"
+msgstr ""
+
+#: engines/comfy/comfy.cpp:70
+#, fuzzy
+#| msgid "Read Later"
+msgid "Remind me later"
+msgstr "稍后阅读"
+
+#: engines/comfy/metaengine.cpp:38
+msgid "Force language setup screen on start-up"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:39
+msgid "Show the original language setup screen every time the game starts"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:49 engines/hypno/metaengine.cpp:203
+#: engines/lab/metaengine.cpp:209 engines/ngi/metaengine.cpp:168
+#: engines/sherlock/metaengine.cpp:872 engines/teenagent/metaengine.cpp:232
+#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
+msgid "Skip intro"
+msgstr "跳过入场动画"
+
+#: engines/comfy/metaengine.cpp:50
+msgid "Skip the intro sequence which precedes the interactive movie"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:61
+#, fuzzy
+#| msgid "Toggle virtual keyboard"
+msgid "Use ImGui based virtual keyboard"
+msgstr "切换虚拟键盘"
+
+#: engines/comfy/metaengine.cpp:62
+msgid "Show the interactive virtual Comfy keyboard implemented with ImGui"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:106
+#, fuzzy
+#| msgid "Run"
+msgid "Sun"
+msgstr "跑步"
+
+#: engines/comfy/metaengine.cpp:106
+msgid "Rolling cylinder"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:106
+#, fuzzy
+#| msgid "Read"
+msgid "Red"
+msgstr "阅读"
+
+#: engines/comfy/metaengine.cpp:106
+msgid "Drum"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:106
+msgid "Snaily phone"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:106
+msgid "Purple"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:107
+msgid "Piano"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:107
+#, fuzzy
+#| msgid "Turn off"
+msgid "On / off"
+msgstr "关闭"
+
+#: engines/comfy/metaengine.cpp:107
+msgid "Orange"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:107
+msgid "Moon"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:107
+msgid "Jumpy phone"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:107
+#, fuzzy
+#| msgid "Swallow"
+msgid "Yellow"
+msgstr "吞下"
+
+#: engines/comfy/metaengine.cpp:108
+#, fuzzy
+#| msgid "Landscape"
+msgid "Handset"
+msgstr "横向"
+
+#: engines/comfy/metaengine.cpp:108
+msgid "Blue"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:108
+msgid "Trumpet"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:108
+msgid "Buddy phone"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:108
+msgid "Green"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:109
+msgid "Flute"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:109
+msgid "Keyboard contact 19"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:109
+msgid "Comfy phone"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:109
+msgid "Rainy cloud"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:110
+msgid "Feely phone"
+msgstr ""
+
+#: engines/comfy/metaengine.cpp:110
+#, fuzzy
+#| msgid "No music"
+msgid "Music"
+msgstr "无音乐"
+
+#: engines/comfy/metaengine.cpp:121
+#, fuzzy
+#| msgid "Keyboard"
+msgid "Comfy Keyboard"
+msgstr "键盘"
+
 #: engines/crab/input/input.cpp:119
 #, fuzzy
 #| msgid "Talk/Interact"
@@ -8651,8 +8861,12 @@ msgstr "交流/互动"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
 #: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:97 engines/scumm/metaengine.cpp:1250
+#: engines/mm/mm1/metaengine.cpp:97 engines/scumm/metaengine.cpp:1262
 #: engines/ultima/ultima0/metaengine.cpp:82
+#: engines/ultima/ultima1/metaengine.cpp:57
+#: engines/ultima/ultima1/metaengine.cpp:88
+#: engines/ultima/ultima2/metaengine.cpp:53
+#: engines/ultima/ultima3/metaengine.cpp:53
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
 msgid "Attack"
@@ -8979,7 +9193,7 @@ msgstr "切换行走速度"
 
 #: engines/draci/metaengine.cpp:243 engines/hopkins/metaengine.cpp:327
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:265
+#: engines/nancy/input.cpp:283
 msgid "Open main menu"
 msgstr "打开主菜单"
 
@@ -9085,7 +9299,8 @@ msgstr "开关字幕"
 msgid "Pause speech"
 msgstr "静音语音"
 
-#: engines/drascula/metaengine.cpp:322 engines/tot/metaengine.cpp:169
+#: engines/drascula/metaengine.cpp:322 engines/igor/metaengine.cpp:130
+#: engines/tot/metaengine.cpp:169
 #, fuzzy
 #| msgid "Confirm"
 msgid "Confirm quit"
@@ -9356,7 +9571,9 @@ msgid "Active skills"
 msgstr "激活"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
-#: engines/efh/metaengine.cpp:432 engines/ultima/nuvie/metaengine.cpp:72
+#: engines/efh/metaengine.cpp:432 engines/ultima/ultima1/metaengine.cpp:60
+#: engines/ultima/ultima1/metaengine.cpp:91
+#: engines/ultima/nuvie/metaengine.cpp:72
 #: engines/wintermute/keymapper_tables.h:2073
 msgid "Drop"
 msgstr "丢下"
@@ -10481,11 +10698,16 @@ msgstr "文件删除失败。"
 #. I18N: Action in In Cold Blood
 #: engines/got/metaengine.cpp:74 engines/hopkins/metaengine.cpp:306
 #: engines/icb/icb.cpp:89 engines/scumm/insane/mortimer/mortimer.cpp:74
+#: engines/ultima/ultima1/metaengine.cpp:62
+#: engines/ultima/ultima1/metaengine.cpp:93
+#: engines/ultima/ultima2/metaengine.cpp:58
+#: engines/ultima/ultima3/metaengine.cpp:58
 #: engines/ultima/ultima4/metaengine.cpp:55
 msgid "Fire"
 msgstr "火"
 
-#: engines/got/metaengine.cpp:75
+#: engines/got/metaengine.cpp:75 engines/ultima/ultima2/metaengine.cpp:65
+#: engines/ultima/ultima3/metaengine.cpp:65
 msgid "Magic"
 msgstr ""
 
@@ -11118,8 +11340,8 @@ msgstr ""
 msgid "WBASE enhancements"
 msgstr "增强："
 
-#: engines/hopkins/metaengine.cpp:275 engines/tinsel/metaengine.cpp:307
-#: engines/twine/metaengine.cpp:307
+#: engines/hopkins/metaengine.cpp:275 engines/igor/metaengine.cpp:118
+#: engines/tinsel/metaengine.cpp:307 engines/twine/metaengine.cpp:307
 #, fuzzy
 #| msgid "Options Menu"
 msgid "Options menu"
@@ -11217,6 +11439,9 @@ msgstr "重复上一消息"
 
 #: engines/hugo/metaengine.cpp:172 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:301 engines/tsage/metaengine.cpp:247
+#: engines/ultima/ultima1/metaengine.cpp:42
+#: engines/ultima/ultima2/metaengine.cpp:42
+#: engines/ultima/ultima3/metaengine.cpp:42
 msgid "Restore game"
 msgstr "恢复游戏"
 
@@ -11360,40 +11585,33 @@ msgstr "右上"
 msgid "Aim up"
 msgstr ""
 
-#: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1315
-#: engines/scumm/metaengine.cpp:1393
+#: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1327
+#: engines/scumm/metaengine.cpp:1405
 #, fuzzy
 #| msgid "Slide Left"
 msgid "Stick left"
 msgstr "向左滑行"
 
-#: engines/hypno/metaengine.cpp:182 engines/scumm/metaengine.cpp:1308
-#: engines/scumm/metaengine.cpp:1386
+#: engines/hypno/metaengine.cpp:182 engines/scumm/metaengine.cpp:1320
+#: engines/scumm/metaengine.cpp:1398
 #, fuzzy
 #| msgid "Scroll down"
 msgid "Stick down"
 msgstr "向下滚动"
 
-#: engines/hypno/metaengine.cpp:189 engines/scumm/metaengine.cpp:1322
-#: engines/scumm/metaengine.cpp:1400
+#: engines/hypno/metaengine.cpp:189 engines/scumm/metaengine.cpp:1334
+#: engines/scumm/metaengine.cpp:1412
 #, fuzzy
 #| msgid "Slide Right"
 msgid "Stick right"
 msgstr "向右滑行"
 
-#: engines/hypno/metaengine.cpp:196 engines/scumm/metaengine.cpp:1301
-#: engines/scumm/metaengine.cpp:1379
+#: engines/hypno/metaengine.cpp:196 engines/scumm/metaengine.cpp:1313
+#: engines/scumm/metaengine.cpp:1391
 #, fuzzy
 #| msgid "Pick up"
 msgid "Stick up"
 msgstr "捡起"
-
-#: engines/hypno/metaengine.cpp:203 engines/lab/metaengine.cpp:209
-#: engines/ngi/metaengine.cpp:168 engines/sherlock/metaengine.cpp:872
-#: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
-#: engines/voyeur/metaengine.cpp:235
-msgid "Skip intro"
-msgstr "跳过入场动画"
 
 #: engines/hypno/metaengine.cpp:226
 #, fuzzy
@@ -11518,6 +11736,57 @@ msgstr "Remora"
 #| msgid "Side Step"
 msgid "Side step"
 msgstr "侧身避让"
+
+#: engines/igor/metaengine.cpp:50
+#, fuzzy
+#| msgid "Enable copy protection"
+msgid "Skip copy protection"
+msgstr "启用复制保护"
+
+#: engines/igor/metaengine.cpp:51
+#, fuzzy
+#| msgid "Enable copy protection"
+msgid "Skips original copy protection screen."
+msgstr "启用复制保护"
+
+#: engines/igor/metaengine.cpp:82
+#, fuzzy
+#| msgid "Save/Load keymappings"
+msgid "Keyboard keymappings"
+msgstr "保存/加载按键绑定"
+
+#: engines/igor/metaengine.cpp:121
+msgid "Right click with the keyboard"
+msgstr ""
+
+#: engines/igor/metaengine.cpp:126
+#, fuzzy
+#| msgid "Upper left item"
+msgid "Up and left"
+msgstr "左上角物品"
+
+#: engines/igor/metaengine.cpp:127
+#, fuzzy
+#| msgid "Up Right"
+msgid "Up and right"
+msgstr "右上"
+
+#: engines/igor/metaengine.cpp:128
+#, fuzzy
+#| msgid "Down Left"
+msgid "Down and left"
+msgstr "左下"
+
+#: engines/igor/metaengine.cpp:129
+#, fuzzy
+#| msgid "Down Right"
+msgid "Down and right"
+msgstr "右下"
+
+#: engines/igor/metaengine.cpp:131 engines/saga/metaengine.cpp:454
+#: engines/tot/metaengine.cpp:175
+msgid "Cancel quit"
+msgstr "取消退出"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
 #: engines/illusions/metaengine.cpp:108 engines/sherlock/metaengine.cpp:1142
@@ -12481,7 +12750,11 @@ msgid "Last monster"
 msgstr "快速模式"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:101 engines/ultima/ultima4/metaengine.cpp:50
+#: engines/mm/mm1/metaengine.cpp:101 engines/ultima/ultima1/metaengine.cpp:59
+#: engines/ultima/ultima1/metaengine.cpp:90
+#: engines/ultima/ultima2/metaengine.cpp:55
+#: engines/ultima/ultima3/metaengine.cpp:55
+#: engines/ultima/ultima4/metaengine.cpp:50
 #: engines/ultima/nuvie/metaengine.cpp:194
 msgid "Cast"
 msgstr "投放"
@@ -12585,6 +12858,10 @@ msgstr "重击"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:153 engines/scumm/help.cpp:147
+#: engines/ultima/ultima1/metaengine.cpp:73
+#: engines/ultima/ultima1/metaengine.cpp:104
+#: engines/ultima/ultima2/metaengine.cpp:73
+#: engines/ultima/ultima3/metaengine.cpp:73
 msgid "Unlock"
 msgstr "解锁"
 
@@ -13047,19 +13324,19 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "存档文件名无效"
 
-#: engines/nancy/input.cpp:218
+#: engines/nancy/input.cpp:236
 msgid "Nancy Drew"
 msgstr "Nancy Drew"
 
-#: engines/nancy/input.cpp:259
+#: engines/nancy/input.cpp:277
 msgid "Fast move modifier"
 msgstr "快速移动修饰"
 
-#: engines/nancy/input.cpp:274
+#: engines/nancy/input.cpp:292
 msgid "Nancy Drew - Maze"
 msgstr "Nancy Drew - 迷宫"
 
-#: engines/nancy/input.cpp:276
+#: engines/nancy/input.cpp:294
 #, fuzzy
 #| msgid "Show/hide maze map"
 msgid "Show / hide maze map"
@@ -13119,25 +13396,25 @@ msgid ""
 "patch by HeR Interactive."
 msgstr "在最终谜题结束前多给点时间。这是 HeR Interactive 的官方补丁。"
 
-#: engines/nancy/metaengine.cpp:165
+#: engines/nancy/metaengine.cpp:168
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game description is null"
 msgstr "游戏设置"
 
-#: engines/nancy/metaengine.cpp:172
+#: engines/nancy/metaengine.cpp:175
 #, fuzzy
 #| msgid "AGOS 2 support is not compiled in"
 msgid "Support for Nancy Drew 18 is not compiled in"
 msgstr "未编译入 AGOS 2 支持"
 
-#: engines/nancy/metaengine.cpp:178
+#: engines/nancy/metaengine.cpp:181
 #, fuzzy
 #| msgid "Escape from Monkey Island support is not compiled in"
 msgid "Support for Nancy Drew 19 and newer is not compiled in"
 msgstr "未编译入《逃离猴岛》支持"
 
-#: engines/nancy/metaengine.cpp:185
+#: engines/nancy/metaengine.cpp:188
 #, fuzzy
 #| msgid "Escape from Monkey Island support is not compiled in"
 msgid "Support for Nancy Drew 26 and newer is not compiled in"
@@ -13814,10 +14091,6 @@ msgstr "更改语音"
 msgid "Continue game"
 msgstr "继续游戏"
 
-#: engines/saga/metaengine.cpp:454 engines/tot/metaengine.cpp:175
-msgid "Cancel quit"
-msgstr "取消退出"
-
 #: engines/saga/metaengine.cpp:459
 msgid "Okay"
 msgstr "好的"
@@ -14157,7 +14430,7 @@ msgid "Your Name:"
 msgstr "你的名字："
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4544
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4545
 msgid "Host"
 msgstr "主机"
 
@@ -14167,7 +14440,7 @@ msgid "Querying games..."
 msgstr "读取游戏中..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4544
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4545
 msgid "Join"
 msgstr "加入"
 
@@ -14886,19 +15159,19 @@ msgstr "飞向右侧"
 msgid "Fly to lower right"
 msgstr "飞向右下角"
 
-#: engines/scumm/input.cpp:1421
+#: engines/scumm/input.cpp:1427
 msgid "Snap scroll on"
 msgstr "快速滚动开启"
 
-#: engines/scumm/input.cpp:1423
+#: engines/scumm/input.cpp:1429
 msgid "Snap scroll off"
 msgstr "快速滚动关闭"
 
-#: engines/scumm/input.cpp:1436
+#: engines/scumm/input.cpp:1442
 msgid "Music volume: "
 msgstr "音乐音量： "
 
-#: engines/scumm/input.cpp:1453
+#: engines/scumm/input.cpp:1459
 msgid "Subtitle speed: "
 msgstr "字幕速度： "
 
@@ -15137,7 +15410,7 @@ msgid ""
 "unused crash and repair animations"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:999 engines/ultima/metaengine.cpp:89
+#: engines/scumm/metaengine.cpp:999 engines/ultima/metaengine.cpp:102
 msgid "Enable cheats"
 msgstr "启用作弊"
 
@@ -15156,98 +15429,104 @@ msgid ""
 "Replace the rhinoceros interview text with the hidden programmer dialogue"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1198
+#: engines/scumm/metaengine.cpp:1189
+#, fuzzy
+#| msgid "Show hotspots"
+msgid "Hotspots"
+msgstr "显示热点"
+
+#: engines/scumm/metaengine.cpp:1210
 #, fuzzy
 #| msgid "Down Left"
 msgid "Down left"
 msgstr "左下"
 
-#: engines/scumm/metaengine.cpp:1211
+#: engines/scumm/metaengine.cpp:1223
 #, fuzzy
 #| msgid "Down Right"
 msgid "Down right"
 msgstr "右下"
 
-#: engines/scumm/metaengine.cpp:1231
+#: engines/scumm/metaengine.cpp:1243
 #, fuzzy
 #| msgid "Upper left item"
 msgid "Up left"
 msgstr "左上角物品"
 
-#: engines/scumm/metaengine.cpp:1244
+#: engines/scumm/metaengine.cpp:1256
 #, fuzzy
 #| msgid "Up Right"
 msgid "Up right"
 msgstr "右上"
 
-#: engines/scumm/metaengine.cpp:1256
+#: engines/scumm/metaengine.cpp:1268
 msgid "Switch weapon"
 msgstr "切换武器"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:1270
+#: engines/scumm/metaengine.cpp:1282
 msgid "Win the bike fight cheat"
 msgstr "自行车战争获胜作弊"
 
-#: engines/scumm/metaengine.cpp:1279
+#: engines/scumm/metaengine.cpp:1291
 msgid "Rebel Assault controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1281 engines/scumm/metaengine.cpp:1359
+#: engines/scumm/metaengine.cpp:1293 engines/scumm/metaengine.cpp:1371
 msgid "Aim up / menu up"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1286 engines/scumm/metaengine.cpp:1364
+#: engines/scumm/metaengine.cpp:1298 engines/scumm/metaengine.cpp:1376
 msgid "Aim down / menu down"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1291 engines/scumm/metaengine.cpp:1369
+#: engines/scumm/metaengine.cpp:1303 engines/scumm/metaengine.cpp:1381
 msgid "Aim left / menu left"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1296 engines/scumm/metaengine.cpp:1374
+#: engines/scumm/metaengine.cpp:1308 engines/scumm/metaengine.cpp:1386
 msgid "Aim right / menu right"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1329 engines/scumm/metaengine.cpp:1407
+#: engines/scumm/metaengine.cpp:1341 engines/scumm/metaengine.cpp:1419
 #, fuzzy
 #| msgid "Move left"
 msgid "Fire / select"
 msgstr "向左移动"
 
-#: engines/scumm/metaengine.cpp:1335
+#: engines/scumm/metaengine.cpp:1347
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Walk / menu back"
 msgstr "跳过主菜单"
 
-#: engines/scumm/metaengine.cpp:1340
+#: engines/scumm/metaengine.cpp:1352
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Skip / menu back"
 msgstr "跳过主菜单"
 
-#: engines/scumm/metaengine.cpp:1357
+#: engines/scumm/metaengine.cpp:1369
 msgid "Rebel Assault II controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1412
+#: engines/scumm/metaengine.cpp:1424
 #, fuzzy
 #| msgid "Change voices"
 msgid "Change view"
 msgstr "更改语音"
 
-#: engines/scumm/metaengine.cpp:1412
+#: engines/scumm/metaengine.cpp:1424
 msgid "Cover"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1424
+#: engines/scumm/metaengine.cpp:1436
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Skip / back"
 msgstr "跳过对话"
 
-#: engines/scumm/metaengine.cpp:1431
+#: engines/scumm/metaengine.cpp:1443
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Skip / menu"
@@ -15384,7 +15663,7 @@ msgstr ""
 "已知此版本的 Monkey Island 1 缺失\n"
 "MT-32 所需的一些资源。将转而使用 AdLib。"
 
-#: engines/scumm/scumm.cpp:4420
+#: engines/scumm/scumm.cpp:4421
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -15393,7 +15672,7 @@ msgstr ""
 "Maniac Mansion 此时通常会启动。但要启动，Maniac Mansion 的游戏文件必须放在 "
 "Tentacle 游戏目录下的“Maniac”目录中，同时游戏必须添加到 ScummVM 中。"
 
-#: engines/scumm/scumm.cpp:4544
+#: engines/scumm/scumm.cpp:4545
 msgid "Would you like to host or join a network play session?"
 msgstr "你想启动还是加入网络游玩会话？"
 
@@ -16253,6 +16532,130 @@ msgstr "转到下一对话"
 msgid "Inventory / Skip dialog"
 msgstr "跳过对话"
 
+#: engines/snatcher/metaengine.cpp:205
+msgid "A - Draw Blaster, B - Cancel, C - Select/Shoot"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:206
+msgid "A - Draw Blaster, B - Select/Shoot, C - Cancel"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:207
+msgid "A - Cancel, B - Draw Blaster, C - Select/Shoot"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:208
+msgid "A - Cancel, B - Select/Shoot, C - Draw Blaster"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:209
+msgid "A - Select/Shoot, B - Cancel, C - Draw Blaster"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:210
+msgid "A - Select/Shoot, B - Draw Blaster, C - Cancel"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:213
+msgid "Buttons Config:"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:216
+msgid "Select Controller Buttons Config"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:224
+#, fuzzy
+#| msgid "Enable sound"
+msgid "Enable Lightgun"
+msgstr "启用声音"
+
+#: engines/snatcher/metaengine.cpp:224
+msgid "Enable lightgun emulation via mouse."
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:226
+#, fuzzy
+#| msgid "Color Blind Mode"
+msgid "Mono Sound Mode"
+msgstr "色盲模式"
+
+#: engines/snatcher/metaengine.cpp:226
+#, fuzzy
+#| msgid "Disable demo mode"
+msgid "Disable stereo sound."
+msgstr "禁用演示模式"
+
+#: engines/snatcher/metaengine.cpp:285
+#, fuzzy
+#| msgid "Right Mouse Button"
+msgid "Lightgun Fire Button"
+msgstr "鼠标右键"
+
+#: engines/snatcher/metaengine.cpp:286
+msgid "Lightgun Start Button"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:289
+msgid "Controller Button A"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:290
+msgid "Controller Button B"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:291
+msgid "Controller Button C"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:292
+msgid "Controller Start Button"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:293
+#, fuzzy
+#| msgid "Control"
+msgid "Controller Up"
+msgstr "控制"
+
+#: engines/snatcher/metaengine.cpp:294
+#, fuzzy
+#| msgid "Scroll Down"
+msgid "Controller Down"
+msgstr "向下滚动"
+
+#: engines/snatcher/metaengine.cpp:295
+#, fuzzy
+#| msgid "Control"
+msgid "Controller Left"
+msgstr "控制"
+
+#: engines/snatcher/metaengine.cpp:296
+#, fuzzy
+#| msgid "Rotate Right"
+msgid "Controller Right"
+msgstr "向右转"
+
+#: engines/snatcher/metaengine.cpp:297
+#, fuzzy
+#| msgid "Control"
+msgid "Controller Up Left"
+msgstr "控制"
+
+#: engines/snatcher/metaengine.cpp:298
+msgid "Controller Up Right"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:299
+msgid "Controller Down Left"
+msgstr ""
+
+#: engines/snatcher/metaengine.cpp:300
+#, fuzzy
+#| msgid "Move down-right"
+msgid "Controller Down Right"
+msgstr "向右下方移动"
+
 #: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
 msgstr "加载模组更改的资源"
@@ -16271,11 +16674,11 @@ msgid ""
 "full screen mode, at the cost of some details."
 msgstr "启用线性过滤时，背景图像在全屏模式下会更平滑，但会损失一些细节。"
 
-#: engines/stark/metaengine.cpp:63 engines/ultima/metaengine.cpp:144
+#: engines/stark/metaengine.cpp:63 engines/ultima/metaengine.cpp:157
 msgid "Enable font anti-aliasing"
 msgstr "启用字体抗锯齿"
 
-#: engines/stark/metaengine.cpp:64 engines/ultima/metaengine.cpp:145
+#: engines/stark/metaengine.cpp:64 engines/ultima/metaengine.cpp:158
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "启用时字体更平滑。"
 
@@ -16604,7 +17007,9 @@ msgstr ""
 msgid "Additional options:"
 msgstr "附加设置："
 
-#: engines/sword1/metaengine.cpp:301
+#: engines/sword1/metaengine.cpp:301 engines/ultima/ultima1/metaengine.cpp:44
+#: engines/ultima/ultima2/metaengine.cpp:44
+#: engines/ultima/ultima3/metaengine.cpp:44
 #, fuzzy
 #| msgid "Main Menu"
 msgid "Main menu"
@@ -17119,11 +17524,11 @@ msgstr "使用美版"
 msgid "Enable the USA specific version flags"
 msgstr "启用美版专有的版本标记"
 
-#: engines/twine/metaengine.cpp:132 engines/ultima/metaengine.cpp:100
+#: engines/twine/metaengine.cpp:132 engines/ultima/metaengine.cpp:113
 msgid "Enable high resolution"
 msgstr "启用高分辨率"
 
-#: engines/twine/metaengine.cpp:133 engines/ultima/metaengine.cpp:101
+#: engines/twine/metaengine.cpp:133 engines/ultima/metaengine.cpp:114
 msgid "Enable a higher resolution for the game"
 msgstr "启用游戏更高分辨率"
 
@@ -17424,72 +17829,180 @@ msgid ""
 "your system"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:67
+#: engines/ultima/metaengine.cpp:80
 msgid "Enable frame skipping"
 msgstr "启用跳帧"
 
-#: engines/ultima/metaengine.cpp:68
+#: engines/ultima/metaengine.cpp:81
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr "允许游戏运行太慢时跳过动画帧。"
 
-#: engines/ultima/metaengine.cpp:78
+#: engines/ultima/metaengine.cpp:91
 msgid "Enable frame limiting"
 msgstr "启用帧率限制"
 
-#: engines/ultima/metaengine.cpp:79
+#: engines/ultima/metaengine.cpp:92
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr "限制游戏速度，以防运行过快。"
 
-#: engines/ultima/metaengine.cpp:90
+#: engines/ultima/metaengine.cpp:103
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr "允许使用指令与点击菜单项作弊。"
 
-#: engines/ultima/metaengine.cpp:111
+#: engines/ultima/metaengine.cpp:124
 msgid "Play foot step sounds"
 msgstr "播放脚步声"
 
-#: engines/ultima/metaengine.cpp:112
+#: engines/ultima/metaengine.cpp:125
 msgid "Plays sound when the player moves."
 msgstr "玩家移动时播放音效。"
 
-#: engines/ultima/metaengine.cpp:122
+#: engines/ultima/metaengine.cpp:135
 msgid "Enable jump to mouse position"
 msgstr "启用跳跃到鼠标位置"
 
-#: engines/ultima/metaengine.cpp:123
+#: engines/ultima/metaengine.cpp:136
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr "精准跳跃到鼠标光标所在位置，而非所在方向。"
 
-#: engines/ultima/metaengine.cpp:133
+#: engines/ultima/metaengine.cpp:146
 msgid "Enable font replacement"
 msgstr "启用字体替换"
 
-#: engines/ultima/metaengine.cpp:134
+#: engines/ultima/metaengine.cpp:147
 msgid "Replaces game fonts with rendered fonts"
 msgstr "用已渲染字体替换游戏字体"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/metaengine.cpp:156
+#: engines/ultima/metaengine.cpp:169
 msgid "Camera moves with Silencer"
 msgstr "相机随 Silencer 移动"
 
-#: engines/ultima/metaengine.cpp:157
+#: engines/ultima/metaengine.cpp:170
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr "相机跟踪玩家移动，而不固定在定义位置。"
 
-#: engines/ultima/metaengine.cpp:167
+#: engines/ultima/metaengine.cpp:180
+msgid "Choose the attribute to boost"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:181
+msgid ""
+"Lets you choose which attribute is raised by the \"ALAKAZAM!\" gift from the "
+"Offer command, as the Ultima II Upgrade does, instead of it being random"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:191
+msgid "Mixed case, colored text"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:192
+msgid ""
+"Shows text in mixed case, and in color with the EGA graphics, as the Ultima "
+"II Upgrade does, instead of in capitals"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:202
+#, fuzzy
+#| msgid "Increase Step Size"
+msgid "Increase monster generation"
+msgstr "增大步长大小"
+
+#: engines/ultima/metaengine.cpp:203
+msgid ""
+"Doubles the rate monsters and ships appear in the world, and increases it in "
+"dungeons, as in the Ultima III Upgrade"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:213
+#, fuzzy
+#| msgid "Show memory consumption"
+msgid "Halve food consumption"
+msgstr "显示内存占用"
+
+#: engines/ultima/metaengine.cpp:214
+msgid ""
+"Food is eaten at half the original rate. The Ultima III Upgrade does this"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:224
+#, fuzzy
+#| msgid "Show options"
+msgid "Show moon phase icons"
+msgstr "显示设置"
+
+#: engines/ultima/metaengine.cpp:225
+msgid ""
+"Shows the phases of the moons as pictures rather than numbers, as in the "
+"Ultima III Upgrade"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:235
+#, fuzzy
+#| msgid "Play simplified music"
+msgid "Play MIDI music"
+msgstr "播放简版音乐"
+
+#: engines/ultima/metaengine.cpp:236
+msgid "Plays the music that the Ultima III Upgrade adds to the game"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:246
+#, fuzzy
+#| msgid "Toggle sound effects on/off"
+msgid "Use Upgrade sound effects"
+msgstr "开关音效"
+
+#: engines/ultima/metaengine.cpp:247
+msgid ""
+"Plays the sound effects with the timing of the Ultima III Upgrade, which "
+"doesn't depend on the speed of the computer"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:257 engines/ultima/metaengine.cpp:268
+#: engines/ultima/metaengine.cpp:279
+msgid "Use textured dungeon walls"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:258
+msgid ""
+"Draws the view in dungeons using pictures of stone walls, doors, ladders and "
+"chests rather than lines. Only used with VGA graphics"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:269
+msgid ""
+"Draws the view in dungeons using pictures of stone walls, doors, ladders, "
+"chests, coffins and monsters rather than lines. Only used with the EGA "
+"graphics"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:280
+msgid ""
+"Draws the view in dungeons using pictures of stone walls, doors, ladders, "
+"chests and monsters rather than lines. Only used with the EGA graphics, "
+"other than Commodore 64"
+msgstr ""
+
+#: engines/ultima/metaengine.cpp:290
 msgid "Always enable Christmas easter-egg"
 msgstr "总启用圣诞节彩蛋"
 
-#: engines/ultima/metaengine.cpp:168
+#: engines/ultima/metaengine.cpp:291
 msgid "Enable the Christmas music at any time of year."
 msgstr "在任意时间都启用圣诞节音乐。"
 
-#: engines/ultima/shared/early/ultima_early.cpp:68
-msgid "Could not find correct ultima.dat datafile"
-msgstr "找不到正确的 ultima.dat 数据文件"
+#: engines/ultima/shared/engine/graphics_options.cpp:47
+msgid ""
+"Which of the game's renderers to use. This can also be changed from the "
+"game's title screen."
+msgstr ""
+
+#: engines/ultima/shared/engine/graphics_options.cpp:48
+msgid "Which of the game's renderers to use."
+msgstr ""
 
 #: engines/ultima/ultima0/metaengine.cpp:49
 msgid "Swing"
@@ -17599,6 +18112,16 @@ msgstr "开启"
 #: engines/ultima/ultima0/metaengine.cpp:111
 #: engines/ultima/ultima0/metaengine.cpp:117
 #: engines/ultima/ultima0/metaengine.cpp:123
+#: engines/ultima/ultima1/metaengine.cpp:119
+#: engines/ultima/ultima1/metaengine.cpp:125
+#: engines/ultima/ultima1/metaengine.cpp:130
+#: engines/ultima/ultima1/metaengine.cpp:136
+#: engines/ultima/ultima2/metaengine.cpp:89
+#: engines/ultima/ultima2/metaengine.cpp:95
+#: engines/ultima/ultima2/metaengine.cpp:100
+#: engines/ultima/ultima3/metaengine.cpp:89
+#: engines/ultima/ultima3/metaengine.cpp:95
+#: engines/ultima/ultima3/metaengine.cpp:100
 #, fuzzy
 #| msgid "Game Keys"
 msgid "Basic keys"
@@ -17623,6 +18146,245 @@ msgstr "通用密钥"
 msgid "Dungeon keys"
 msgstr ""
 
+#: engines/ultima/ultima1/gfx/render_mode.cpp:34
+#, fuzzy
+#| msgid "PC-9801 (8 Colors)"
+msgid "CGA (4 colors)"
+msgstr "PC-9801（8 色）"
+
+#: engines/ultima/ultima1/gfx/render_mode.cpp:34
+#, fuzzy
+#| msgid "Windows (16 Colors)"
+msgid "EGA / Tandy (16 colors)"
+msgstr "Windows（16 色）"
+
+#: engines/ultima/ultima1/metaengine.cpp:43
+#: engines/ultima/ultima2/metaengine.cpp:43
+#: engines/ultima/ultima3/metaengine.cpp:43
+#, fuzzy
+#| msgid "Quit game"
+msgid "Exit game"
+msgstr "退出游戏"
+
+#: engines/ultima/ultima1/metaengine.cpp:53
+#, fuzzy
+#| msgid "Attack 1"
+msgid "Attack Up"
+msgstr "攻击 1"
+
+#: engines/ultima/ultima1/metaengine.cpp:54
+#, fuzzy
+#| msgid "Attack 1"
+msgid "Attack Down"
+msgstr "攻击 1"
+
+#: engines/ultima/ultima1/metaengine.cpp:55
+#, fuzzy
+#| msgid "Attack 1"
+msgid "Attack Left"
+msgstr "攻击 1"
+
+#: engines/ultima/ultima1/metaengine.cpp:56
+#, fuzzy
+#| msgid "Attack 1"
+msgid "Attack Right"
+msgstr "攻击 1"
+
+#: engines/ultima/ultima1/metaengine.cpp:58
+#: engines/ultima/ultima1/metaengine.cpp:89
+#: engines/ultima/ultima2/metaengine.cpp:54
+#: engines/ultima/ultima3/metaengine.cpp:54
+#: engines/ultima/ultima4/metaengine.cpp:49
+#, fuzzy
+#| msgid "Keyboard"
+msgid "Board"
+msgstr "键盘"
+
+#: engines/ultima/ultima1/metaengine.cpp:64
+#: engines/ultima/ultima1/metaengine.cpp:95
+msgid "Hyperjump"
+msgstr ""
+
+#: engines/ultima/ultima1/metaengine.cpp:65
+#: engines/ultima/ultima1/metaengine.cpp:96
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Inform"
+msgstr "信息菜单"
+
+#: engines/ultima/ultima1/metaengine.cpp:66
+#: engines/ultima/ultima1/metaengine.cpp:97
+#: engines/ultima/ultima2/metaengine.cpp:63
+#: engines/ultima/ultima3/metaengine.cpp:63
+msgid "Klimb"
+msgstr ""
+
+#: engines/ultima/ultima1/metaengine.cpp:67
+#: engines/ultima/ultima1/metaengine.cpp:98
+msgid "Noise"
+msgstr ""
+
+#: engines/ultima/ultima1/metaengine.cpp:70
+#: engines/ultima/ultima1/metaengine.cpp:101
+#: engines/ultima/ultima2/metaengine.cpp:70
+#: engines/ultima/ultima3/metaengine.cpp:70
+#, fuzzy
+#| msgid "Read"
+msgid "Ready"
+msgstr "阅读"
+
+#: engines/ultima/ultima1/metaengine.cpp:71
+#: engines/ultima/ultima1/metaengine.cpp:102
+#: engines/ultima/ultima2/metaengine.cpp:71
+#: engines/ultima/ultima3/metaengine.cpp:71
+msgid "Steal"
+msgstr ""
+
+#: engines/ultima/ultima1/metaengine.cpp:72
+#: engines/ultima/ultima1/metaengine.cpp:103
+#: engines/ultima/ultima2/metaengine.cpp:72
+#: engines/ultima/ultima3/metaengine.cpp:72
+#, fuzzy
+#| msgid "Transitions:"
+msgid "Transact"
+msgstr "转场："
+
+#: engines/ultima/ultima1/metaengine.cpp:74
+#: engines/ultima/ultima1/metaengine.cpp:105
+#, fuzzy
+#| msgid "Mode change"
+msgid "View change"
+msgstr "模式更改"
+
+#: engines/ultima/ultima1/metaengine.cpp:75
+#: engines/ultima/ultima1/metaengine.cpp:106
+#: engines/ultima/ultima2/metaengine.cpp:76
+#: engines/ultima/ultima3/metaengine.cpp:76
+msgid "eXit"
+msgstr ""
+
+#: engines/ultima/ultima1/metaengine.cpp:76
+#: engines/ultima/ultima1/metaengine.cpp:107
+#: engines/ultima/ultima2/metaengine.cpp:78
+#: engines/ultima/ultima3/metaengine.cpp:78
+#, fuzzy
+#| msgid "Status:"
+msgid "Ztats"
+msgstr "状态："
+
+#. I18N: Going over something carefully
+#: engines/ultima/ultima1/metaengine.cpp:77
+#: engines/ultima/ultima1/metaengine.cpp:108
+#: engines/ultima/ultima2/metaengine.cpp:68
+#: engines/ultima/ultima3/metaengine.cpp:68
+#: engines/ultima/ultima4/metaengine.cpp:66
+#, fuzzy
+#| msgid "Password:"
+msgid "Pass"
+msgstr "密码："
+
+#: engines/ultima/ultima1/metaengine.cpp:120
+#: engines/ultima/ultima1/metaengine.cpp:131
+#: engines/ultima/ultima1/metaengine.cpp:137
+#: engines/ultima/ultima2/metaengine.cpp:90
+#: engines/ultima/ultima2/metaengine.cpp:101
+#: engines/ultima/ultima3/metaengine.cpp:90
+#: engines/ultima/ultima3/metaengine.cpp:101
+#, fuzzy
+#| msgid "Game"
+msgid "Gameplay keys"
+msgstr "游戏"
+
+#: engines/ultima/ultima2/data/data.cpp:45
+#: engines/ultima/ultima3/data/data.cpp:41
+#, fuzzy
+#| msgid "<original>"
+msgid "Original (CGA)"
+msgstr "<原始>"
+
+#: engines/ultima/ultima2/data/data.cpp:45
+#: engines/ultima/ultima3/data/data.cpp:41
+msgid "Composite monitor (CGA)"
+msgstr ""
+
+#: engines/ultima/ultima2/data/data.cpp:45
+#, fuzzy
+#| msgid "Standard"
+msgid "Standard EGA"
+msgstr "标准"
+
+#: engines/ultima/ultima2/data/data.cpp:46
+msgid "Classic EGA (v1.0)"
+msgstr ""
+
+#: engines/ultima/ultima2/data/data.cpp:46
+msgid "Alternate EGA (Wiltshire Dragon)"
+msgstr ""
+
+#: engines/ultima/ultima2/data/data.cpp:46
+msgid "Commodore 64"
+msgstr ""
+
+#: engines/ultima/ultima2/metaengine.cpp:56
+#: engines/ultima/ultima3/metaengine.cpp:56
+#: engines/ultima/ultima4/metaengine.cpp:52
+#: engines/ultima/ultima8/metaengine.cpp:107
+msgid "Descend"
+msgstr ""
+
+#: engines/ultima/ultima2/metaengine.cpp:60
+#: engines/ultima/ultima3/metaengine.cpp:60
+msgid "Hyper"
+msgstr ""
+
+#: engines/ultima/ultima2/metaengine.cpp:61
+#: engines/ultima/ultima3/metaengine.cpp:61
+msgid "Ignite torch"
+msgstr ""
+
+#: engines/ultima/ultima2/metaengine.cpp:64
+#: engines/ultima/ultima3/metaengine.cpp:64
+#, fuzzy
+#| msgid "Launcher"
+msgid "Launch"
+msgstr "启动器"
+
+#: engines/ultima/ultima2/metaengine.cpp:66
+#: engines/ultima/ultima3/metaengine.cpp:66
+#, fuzzy
+#| msgid "Pause game"
+msgid "Negate time"
+msgstr "暂停游戏"
+
+#: engines/ultima/ultima2/metaengine.cpp:67
+#: engines/ultima/ultima3/metaengine.cpp:67
+msgid "Offer"
+msgstr ""
+
+#: engines/ultima/ultima2/metaengine.cpp:75
+#: engines/ultima/ultima3/metaengine.cpp:75
+#: engines/ultima/ultima4/metaengine.cpp:75
+msgid "Wear armor"
+msgstr ""
+
+#: engines/ultima/ultima2/metaengine.cpp:77
+#: engines/ultima/ultima3/metaengine.cpp:77
+#: engines/ultima/ultima4/metaengine.cpp:76
+msgid "Yell"
+msgstr ""
+
+#: engines/ultima/ultima3/data/data.cpp:41
+#, fuzzy
+#| msgid "PC-9801 (16 Colors)"
+msgid "EGA (16 colors)"
+msgstr "PC-9801（16 色）"
+
+#: engines/ultima/ultima3/data/data.cpp:41
+#, fuzzy
+#| msgid "PC-9821 (256 Colors)"
+msgid "VGA (256 colors)"
+msgstr "PC-9821（256 色）"
+
 #: engines/ultima/ultima4/metaengine.cpp:43
 #: engines/ultima/ultima4/metaengine.cpp:133
 #: engines/ultima/ultima4/metaengine.cpp:138
@@ -17631,17 +18393,6 @@ msgstr ""
 #| msgid "Next action"
 msgid "Abort action"
 msgstr "下一个操作"
-
-#: engines/ultima/ultima4/metaengine.cpp:49
-#, fuzzy
-#| msgid "Keyboard"
-msgid "Board"
-msgstr "键盘"
-
-#: engines/ultima/ultima4/metaengine.cpp:52
-#: engines/ultima/ultima8/metaengine.cpp:107
-msgid "Descend"
-msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:56
 msgid "Get chest"
@@ -17680,13 +18431,6 @@ msgstr "新儿童"
 msgid "Open door"
 msgstr "打开 Holomap"
 
-#. I18N: Going over something carefully
-#: engines/ultima/ultima4/metaengine.cpp:66
-#, fuzzy
-#| msgid "Password:"
-msgid "Pass"
-msgstr "密码："
-
 #. I18N: Peer is used to look through keyholes or other small openings
 #: engines/ultima/ultima4/metaengine.cpp:68
 msgid "Peer"
@@ -17709,14 +18453,6 @@ msgstr "下一个操作"
 #| msgid "Status:"
 msgid "Stats"
 msgstr "状态："
-
-#: engines/ultima/ultima4/metaengine.cpp:75
-msgid "Wear armor"
-msgstr ""
-
-#: engines/ultima/ultima4/metaengine.cpp:76
-msgid "Yell"
-msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:83
 #, fuzzy
@@ -19472,6 +20208,9 @@ msgid ""
 "supported. Continue launching game?"
 msgstr ""
 
+#~ msgid "Could not find correct ultima.dat datafile"
+#~ msgstr "找不到正确的 ultima.dat 数据文件"
+
 #~ msgid ""
 #~ "The Poker logic is hardcoded in an external DLL, and is not implemented "
 #~ "yet. There exists some dummy logic for now, where opponent actions are "
@@ -19484,9 +20223,6 @@ msgstr ""
 #~ "Unable to access the globally set save path! Please revert to default "
 #~ "from ScummVM Options"
 #~ msgstr "无法访问全局存档目录！请在 ScummVM 设置中恢复到默认值"
-
-#~ msgid "Toggle virtual keyboard"
-#~ msgstr "切换虚拟键盘"
 
 #~ msgid ""
 #~ "Please select the *root* of your external (physical) SD card. This is "
@@ -19605,9 +20341,6 @@ msgstr ""
 
 #~ msgid "Rotate Left"
 #~ msgstr "向左转"
-
-#~ msgid "Rotate Right"
-#~ msgstr "向右转"
 
 #~ msgid "Face Forward"
 #~ msgstr "面向前"
@@ -19852,9 +20585,6 @@ msgstr ""
 #~ msgid "Scroll Up"
 #~ msgstr "向上滚动"
 
-#~ msgid "Scroll Down"
-#~ msgstr "向下滚动"
-
 #~ msgid "Save Game"
 #~ msgstr "保存游戏"
 
@@ -19887,11 +20617,6 @@ msgstr ""
 #~| msgid "Move down-left"
 #~ msgid "Move down left"
 #~ msgstr "向左下方移动"
-
-#, fuzzy
-#~| msgid "Move down-right"
-#~ msgid "Move down right"
-#~ msgstr "向右下方移动"
 
 #~ msgid "Option dialog"
 #~ msgstr "设置对话框"
@@ -20017,9 +20742,6 @@ msgstr ""
 #~ msgstr ""
 #~ "允许游戏使用引擎内置的界面与原有保存/载入菜单。将其与“退出时确认”一起使"
 #~ "用，以获得更完全的体验。"
-
-#~ msgid "Show memory consumption"
-#~ msgstr "显示内存占用"
 
 #~ msgctxt "Options menu"
 #~ msgid "High resolution off"
