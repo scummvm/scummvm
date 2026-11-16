@@ -122,7 +122,7 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	// Backup the text surface...
 	if (_game.version < 7 && !_mainMenuIsActive && _game.platform != Common::kPlatformFMTowns) {
 		saveSurfacesPreGUI();
-		if (_currentRoom != 0 && _charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM))
+		if (_currentRoom != 0 && _charset->_textScreenID == kMainVirtScreen)
 			restoreCharsetBg();
 	}
 
@@ -1454,12 +1454,11 @@ void ScummEngine::saveSurfacesPreGUI() {
 	if (_tempTextSurface) {
 		memcpy(_tempTextSurface, _textSurface.getBasePtr(0, 0), _textSurface.pitch * _textSurface.h);
 
-		// For each v4-v6 game (except for LOOM VGA which does its own thing), we take the text surface
+		// For each v4-v6 game, we take the text surface
 		// and stamp it on top of the main screen: this is done to ensure that the GUI is drawn on top
 		// of possible subtitle texts instead of having the latters being deleted or being drawn on top
 		// of the GUI...
-		if (!(_game.version == 4 && _game.id == GID_LOOM) &&
-			!(_game.version == 5 && _game.platform == Common::kPlatformFMTowns)) {
+		if (!(_game.version == 5 && _game.platform == Common::kPlatformFMTowns)) {
 			for (int y = 0; y < _screenHeight; y++) {
 				for (int x = 0; x < _screenWidth; x++) {
 					// Only draw non transparent pixels
@@ -2487,8 +2486,7 @@ void ScummEngine::showMainMenu() {
 
 		// V6 games should call for stopTalk() instead, but that's a bit too drastic;
 		// this ensures that we can at least hear the speech after the menu is closed.
-		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM) &&
-			!(_game.version == 5 && _game.platform == Common::kPlatformFMTowns))
+		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 5 && _game.platform == Common::kPlatformFMTowns))
 			restoreCharsetBg();
 	}
 
