@@ -1194,7 +1194,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	if (sprite->_flags2 & Sprite::DepthTest || _currentActor->isInOverworld()) {
+	if (sprite->_flags2 & Sprite::DepthTest) {
 		glEnable(GL_DEPTH_TEST);
 	} else {
 		glDisable(GL_DEPTH_TEST);
