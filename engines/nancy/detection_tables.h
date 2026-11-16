@@ -960,6 +960,14 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		NANCY_GUIOPTIONS
 	},
+	{ // MD5 by bluegr. The game has no ciftree, only loose .cif files
+		"nancy32", nullptr,
+		AD_ENTRY1s("InventoryInit_SC.cif", "387280ac49ad84d0db85440e7bd54353", 6096),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		NANCY_GUIOPTIONS
+	},
 
 	// Do not delete
 	AD_TABLE_END_MARKER
