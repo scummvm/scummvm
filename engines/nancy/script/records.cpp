@@ -1336,7 +1336,11 @@ static bool loadMovieFrame(const Common::String &name, Graphics::ManagedSurface 
 // Overlays get their pictures from the image cache of the resource manager,
 // and hold on to the cached picture while they use it. Saved pictures aren't
 // cached: every record has its own.
-bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image) {
+bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image, Common::Rect *outDest) {
+	if (outDest) {
+		*outDest = Common::Rect();
+	}
+
 	if (treeName.equalsIgnoreCase(kPictureTreeName) || treeName.equalsIgnoreCase(kSaveFileTreeName)) {
 		image.free();
 		cached.reset();
@@ -1349,7 +1353,7 @@ bool loadCachedImage(const Common::String &name, const Common::String &treeName,
 		return loadMovieFrame(name, image);
 	}
 
-	cached = g_nancy->_resource->loadCachedImage(name, treeName);
+	cached = g_nancy->_resource->loadCachedImage(name, treeName, outDest);
 	if (!cached) {
 		return false;
 	}
@@ -1371,21 +1375,24 @@ void OverlayRecord::readTable(int tableIndex) {
 	Common::String treeName;
 	readField(L, tableIndex, "tree", treeName);
 
-	if (!loadCachedImage(imageName, treeName, _cachedImage, _image)) {
+	Common::Rect defaultDest;
+	if (!loadCachedImage(imageName, treeName, _cachedImage, _image, &defaultDest)) {
 		luaL_error(L, "Could not load overlay %s", imageName.c_str());
 	}
 
 	_imageName = imageName;
 	_treeName = treeName;
+	_defaultDest = defaultDest;
 
-	// Both default to the whole image
+	// Both default to the whole image. From Nancy30 on, an image can say
+	// where it goes.
 	_source = ScriptRect(0, 0, _image.w, _image.h);
 	if (pushField(L, tableIndex, "source")) {
 		_source = checkRect(L, -1);
 		lua_pop(L, 1);
 	}
 
-	_dest = _source;
+	_dest = _defaultDest.isEmpty() ? _source : _defaultDest;
 	if (pushField(L, tableIndex, "onScreen")) {
 		readDest(-1);
 		lua_pop(L, 1);
@@ -1653,7 +1660,7 @@ int drawOverlay(lua_State *L) {
 
 void OverlayRecord::setDefaultRects() {
 	_source = ScriptRect(0, 0, _image.w, _image.h);
-	_dest = _source;
+	_dest = _defaultDest.isEmpty() ? _source : _defaultDest;
 	_hasDestTable = false;
 	applyRects();
 }

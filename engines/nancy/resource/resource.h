@@ -52,7 +52,7 @@ public:
 	// the phone, so decoding a picture each time was slow. The cache keeps the
 	// pictures it loaded last decoded, and hands the same one to everyone who
 	// asks for it. Null when there is no such picture.
-	Common::SharedPtr<Graphics::ManagedSurface> loadCachedImage(const Common::String &name, const Common::String &treeName);
+	Common::SharedPtr<Graphics::ManagedSurface> loadCachedImage(const Common::String &name, const Common::String &treeName, Common::Rect *outDest = nullptr);
 
 	// Loads a single IFF file. These can either be inside standalone .cif files, or embedded inside a ciftree
 	IFF *loadIFF(const Common::Path &name);
@@ -94,6 +94,7 @@ private:
 	// longest ago makes room.
 	struct CachedImage {
 		Common::SharedPtr<Graphics::ManagedSurface> image;
+		Common::Rect dest;
 		uint32 lastUse = 0;
 	};
 

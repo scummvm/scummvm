@@ -57,6 +57,10 @@ struct CifInfo {
 	uint32 compressedSize = 0, size = 0;
 	Common::Rect src, dest; // Used when drawing conversation cels
 
+	// Nancy30: the PNG of an image of type 4 is followed by the rect it is
+	// shown at by default
+	bool hasEmbeddedDest = false;
+
 	uint32 dataOffset = 0;
 };
 

@@ -153,6 +153,16 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 		return false;
 	}
 
+	// Nancy30: the 16 bytes after the PNG of some images are where they go
+	if (info.hasEmbeddedDest && stream->size() >= 16) {
+		stream->seek(-16, SEEK_END);
+		info.dest.left = stream->readSint32LE();
+		info.dest.top = stream->readSint32LE();
+		info.dest.right = stream->readSint32LE();
+		info.dest.bottom = stream->readSint32LE();
+		stream->seek(0);
+	}
+
 	// Load the src/dest rects when requested
 	if (outSrc) {
 		*outSrc = info.src;
@@ -251,19 +261,28 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 // How many pictures the image cache keeps decoded
 static const uint kImageCacheSize = 16;
 
-Common::SharedPtr<Graphics::ManagedSurface> ResourceManager::loadCachedImage(const Common::String &name, const Common::String &treeName) {
+Common::SharedPtr<Graphics::ManagedSurface> ResourceManager::loadCachedImage(const Common::String &name, const Common::String &treeName, Common::Rect *outDest) {
 	const Common::String key = treeName + "/" + name;
 	++_imageCacheUses;
 
 	ImageCache::iterator found = _imageCache.find(key);
 	if (found != _imageCache.end()) {
 		found->_value.lastUse = _imageCacheUses;
+		if (outDest) {
+			*outDest = found->_value.dest;
+		}
+
 		return found->_value.image;
 	}
 
 	Common::SharedPtr<Graphics::ManagedSurface> image(new Graphics::ManagedSurface());
-	if (!loadImage(Common::Path(name), *image, treeName)) {
+	Common::Rect dest;
+	if (!loadImage(Common::Path(name), *image, treeName, nullptr, &dest)) {
 		return Common::SharedPtr<Graphics::ManagedSurface>();
+	}
+
+	if (outDest) {
+		*outDest = dest;
 	}
 
 	// The picture used longest ago leaves the cache. Whoever still uses it
@@ -281,6 +300,7 @@ Common::SharedPtr<Graphics::ManagedSurface> ResourceManager::loadCachedImage(con
 
 	CachedImage &cached = _imageCache[key];
 	cached.image = image;
+	cached.dest = dest;
 	cached.lastUse = _imageCacheUses;
 	return image;
 }

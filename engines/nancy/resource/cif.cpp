@@ -149,6 +149,7 @@ static bool syncCifFileNancy18(Common::Serializer &ser, CifInfo &info) {
 	// like any other
 	if (ser.isLoading() && info.type == CifInfo::kResTypeEmpty && info.size && g_nancy->getGameType() >= kGameTypeNancy30) {
 		info.type = CifInfo::kResTypeImage;
+		info.hasEmbeddedDest = true;
 	}
 
 	if (info.type == CifInfo::kResTypeImage) {

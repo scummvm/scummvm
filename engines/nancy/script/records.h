@@ -99,7 +99,8 @@ void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image, const
 // Gets an image from the resource manager's cache, and keeps a reference to it
 // in cached while the record uses it. Images from picture trees that aren't
 // cached are loaded directly.
-bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image);
+// outDest gets the rect a Nancy30 image is shown at by default, or an empty one
+bool loadCachedImage(const Common::String &name, const Common::String &treeName, Common::SharedPtr<Graphics::ManagedSurface> &cached, Graphics::ManagedSurface &image, Common::Rect *outDest = nullptr);
 
 // The first record of every scene, which names the area the scene belongs to
 // and its background. A background with more than one frame is a node the
@@ -291,8 +292,9 @@ public:
 	// transform and modColor.
 	void drawCopy(int tableIndex);
 
-	// Nancy30: ar:DefaultRects() shows the whole picture at the top left, as
-	// when neither the source nor onScreen was given
+	// Nancy30: ar:DefaultRects() shows the whole picture where the image says
+	// it goes (or at the top left), as when neither the source nor onScreen
+	// was given
 	void setDefaultRects();
 
 #ifdef ENABLE_NANCY_V5
@@ -343,6 +345,7 @@ private:
 	Common::String _treeName;
 	ScriptRect _source;
 	ScriptRect _dest;
+	ScriptRect _defaultDest;	// Nancy30: the rect stored in the image; empty if it has none
 	bool _hasDestTable = false;					// Nancy24: onScreen is a table of rects
 	Common::Array<ScriptRect> _tableDests;		// what it had when last drawn
 	uint32 _modColor = 0xFFFFFFFF;	// what the colors of the picture get multiplied with
