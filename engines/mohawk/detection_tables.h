@@ -3165,6 +3165,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Little Monster at School"
 	},
 
+	// Italian De Agostini release ("Little Monster a Scuola", v1.2)
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1s("MONSTER.LB", "2aea862a5969d20ddfb619e74d96cbe2", 3003),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
 	// From afholman in bug#5724
 	{
 		{
