@@ -613,7 +613,9 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				_background->decoder->pauseVideo(true);
 				MVideo video(_shoots[i].additionalVideo, Common::Point(0, 0), false, true, false);
 				disableCursor();
+				_mixer->setChannelVolume(_musicHandle, Audio::Mixer::kMaxChannelVolume / 3);
 				runIntro(video);
+				_mixer->setChannelVolume(_musicHandle, Audio::Mixer::kMaxChannelVolume);
 				defaultCursor();
 
 				if (_shoots[i].waitForClickAfterInteraction > 0) {
