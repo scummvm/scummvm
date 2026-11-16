@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/events.h"
 #include "common/system.h"
 
@@ -301,6 +302,112 @@ void HotspotRecord::fire() {
 	finish();
 }
 
+void HotspotRecord::addKey(Common::KeyCode key) {
+	if (Common::find(_keys.begin(), _keys.end(), key) == _keys.end()) {
+		_keys.push_back(key);
+	}
+}
+
+void HotspotRecord::removeKey(Common::KeyCode key) {
+	Common::Array<Common::KeyCode>::iterator found = Common::find(_keys.begin(), _keys.end(), key);
+	if (found == _keys.end()) {
+		return;
+	}
+
+	_keys.erase(found);
+	if (_keys.empty()) {
+		loseKeyFocus();
+	}
+}
+
+// Any key that makes it this far gives the hotspot the key focus. It doesn't
+// take the key, so the records behind it get it as well.
+bool HotspotRecord::handleKey(Common::KeyCode key, uint16 ascii) {
+	if (!_keys.empty()) {
+		_hasKeyFocus = true;
+	}
+
+	return false;
+}
+
+void HotspotRecord::loseKeyFocus() {
+	_hasKeyFocus = false;
+	if (_isKeyDown) {
+		_isKeyDown = false;
+		callFunction("OnLoseKeyFocus");
+	}
+}
+
+// Every frame, a hotspot with the key focus looks at whether one of its keys
+// is held down, and gets pressed or released when that changes
+void HotspotRecord::onFrame() {
+	if (_keys.empty() || !_hasKeyFocus) {
+		return;
+	}
+
+	if (!isNodeEnabled() || (_pressedButton >= 0 && !_isKeyDown)) {
+		loseKeyFocus();
+		return;
+	}
+
+	bool isHeld = false;
+	for (Common::KeyCode key : _keys) {
+		if (isScriptKeyHeld(key)) {
+			isHeld = true;
+			break;
+		}
+	}
+
+	if (isHeld == _isKeyDown) {
+		return;
+	}
+
+	_isKeyDown = isHeld;
+	if (isHeld) {
+		callFunction("OnKeyDown");
+		if (_widget) {
+			_widget->onHotspotDown(kKeyButton);
+		}
+	} else {
+		callFunction("OnKeyUp");
+		if (_widget) {
+			_widget->onHotspotUp(kKeyButton, true);
+		} else {
+			fire();
+		}
+	}
+}
+
+// hotspot:AddKey(key) and hotspot:RemoveKey(key), Nancy32. A string of one
+// letter or digit stands for its key.
+static Common::KeyCode checkHotspotKey(lua_State *L, int index) {
+	if (lua_type(L, index) == LUA_TSTRING) {
+		const char *name = lua_tostring(L, index);
+		return name[0] != 0 && name[1] == 0 ? (Common::KeyCode)tolower(name[0]) : Common::KEYCODE_INVALID;
+	}
+
+	return checkKey(L, index);
+}
+
+static HotspotRecord *checkHotspot(lua_State *L) {
+	HotspotRecord *record = dynamic_cast<HotspotRecord *>(checkRecord(L, 1));
+	if (!record) {
+		luaL_typerror(L, 1, "ND.Hotspot");
+	}
+
+	return record;
+}
+
+static int hotspotAddKey(lua_State *L) {
+	checkHotspot(L)->addKey(checkHotspotKey(L, 2));
+	return 0;
+}
+
+static int hotspotRemoveKey(lua_State *L) {
+	checkHotspot(L)->removeKey(checkHotspotKey(L, 2));
+	return 0;
+}
+
 bool HotspotRecord::getRegionCursor(uint &cursorType, bool &isHot) const {
 	const Cursor *cursor = &_cursor;
 	if (_pressedButton >= 0) {
@@ -376,6 +483,10 @@ bool HotspotRecord::getField(const Common::String &key) {
 		lua_pushboolean(L, _allowsSlide);
 	} else if (key == "slideDistance") {
 		lua_pushnumber(L, _slideDistance);
+	} else if (key == "AddKey") {
+		lua_pushcfunction(L, hotspotAddKey);
+	} else if (key == "RemoveKey") {
+		lua_pushcfunction(L, hotspotRemoveKey);
 	} else {
 		return false;
 	}
@@ -436,6 +547,8 @@ bool HotspotRecord::setField(const Common::String &key) {
 		_allowsSlide = lua_toboolean(L, 3) != 0;
 	} else if (key == "slideDistance") {
 		_slideDistance = luaL_checknumber(L, 3);
+	} else if (key == "AddKey" || key == "RemoveKey") {
+		luaL_error(L, "Cannot set '%s' field of a hotspot", key.c_str());
 	} else {
 		return false;
 	}
@@ -636,7 +749,10 @@ void WidgetRecord::onHotspotDown(int button) {
 		return;
 	}
 
-	_isLeftDown = button == 0;
+	// A key leaves it at the last mouse button
+	if (button != HotspotRecord::kKeyButton) {
+		_isLeftDown = button == 0;
+	}
 
 	switch (_type) {
 	case kRecordCheckBox:

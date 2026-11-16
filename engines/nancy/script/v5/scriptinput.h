@@ -22,6 +22,8 @@
 #ifndef NANCY_SCRIPT_V5_SCRIPTINPUT_H
 #define NANCY_SCRIPT_V5_SCRIPTINPUT_H
 
+#include "common/keyboard.h"
+
 #include "engines/nancy/script/types.h"
 
 namespace Nancy {
@@ -48,6 +50,9 @@ bool isDoubleClick(int button);
 
 // A record that goes away can't keep the mouse
 void forgetInputRecord(Record *record);
+
+// Nancy32: whether a key is held down
+bool isScriptKeyHeld(Common::KeyCode key);
 
 } // End of namespace Script
 } // End of namespace Nancy

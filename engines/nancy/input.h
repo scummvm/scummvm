@@ -102,6 +102,9 @@ public:
 	void processEvents();
 
 	NancyInput getInput() const;
+
+	// Nancy32: whether a key that isn't bound to an action is held down
+	bool isKeyHeld(Common::KeyCode key) const;
 	void forceCleanInput();
 	// Takes away an esc press that skipped something, so nothing else sees it,
 	// in this frame or later ones, until the key gets pressed again
@@ -117,6 +120,7 @@ public:
 private:
 	uint16 _inputs;
 	Common::Array<Common::KeyState> _otherKbdInput;
+	Common::Array<Common::KeyCode> _heldKeys;
 	bool _mouseEnabled;
 	bool _isEscEaten;
 	NancyState::NancyState _inputBeginState;

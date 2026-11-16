@@ -398,6 +398,21 @@ static const MoveKey kMoveKeys[] = {
 	{ NancyInput::kMoveDown, Common::KEYCODE_DOWN }
 };
 
+bool isScriptKeyHeld(Common::KeyCode key) {
+	const InputState &state = getState();
+	for (const MoveKey &moveKey : kMoveKeys) {
+		if (moveKey.key == key) {
+			return (state.heldMoveKeys & moveKey.input) != 0;
+		}
+	}
+
+	if (key == Common::KEYCODE_ESCAPE) {
+		return state.isEscHeld;
+	}
+
+	return g_nancy->_input->isKeyHeld(key);
+}
+
 void handleNancy26Input(NancyInput &input) {
 	InputState &state = getState();
 

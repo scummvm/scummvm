@@ -40,6 +40,8 @@ class WidgetRecord;
 // A hotspot calls OnLeftDown and OnLeftUp (or the right ones) of its scripts,
 // and OnMouseOver, OnMouseLeave and OnLoseMouseFocus. Once it was clicked, it
 // changes the scene when it has one, and is done.
+// Nancy32 can also press a hotspot with keys, which call OnKeyDown and
+// OnKeyUp; letting go of the key clicks it.
 // The shape is a rect, or the part of a Ref image that isn't see-through or has
 // a color; the rect and the source then lay the image over the screen.
 class HotspotRecord : public Record {
@@ -66,12 +68,22 @@ public:
 	// Nancy30: the mouse moved, which can put it over another tile
 	void onMouseMoved(const Common::Point32 &mouse);
 
+	// Nancy32: the keys that press the hotspot
+	void addKey(Common::KeyCode key);
+	void removeKey(Common::KeyCode key);
+	bool handleKey(Common::KeyCode key, uint16 ascii) override;
+
+	// What the widgets of a hotspot get told about its keys, in place of a
+	// mouse button
+	static const int kKeyButton = 2;
+
 protected:
 	void readTable(int tableIndex) override;
 	bool prepareReset() override;
 	bool hasTransform() const override { return true; }
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
+	void onFrame() override;
 
 private:
 	struct Cursor {
@@ -83,6 +95,7 @@ private:
 	void readCursorField(int valueIndex, Cursor &cursor);
 	void pushCursorField(const Cursor &cursor);
 	void fire();
+	void loseKeyFocus();
 	void sendTooltip(bool isShown);
 	void updateCursorTile(const Common::Point32 *mouse);
 
@@ -127,6 +140,13 @@ private:
 	double _slideDistance = 5.0;
 	Common::Point32 _pressPoint;
 	bool _hasSlid = false;
+
+	// Nancy32. A hotspot with keys gets the key focus when a key press makes
+	// it as far down as the hotspot, by keyZ. From then on, holding one of its
+	// keys presses it, until it is disabled or the mouse holds it down.
+	Common::Array<Common::KeyCode> _keys;
+	bool _hasKeyFocus = false;
+	bool _isKeyDown = false;
 };
 
 // Nancy26: catches the player's input in a part of the screen, so whatever is
