@@ -260,7 +260,7 @@ void TesoroEngine::startGame() {
 	Level *port = _world.startGame();
 	if (!port) {
 		warning("Tesoro: the game cannot be started");
-		_world.insertInMainList(_level, 0x14);
+		_world.insertInMainList(_level, 20);
 		return;
 	}
 	_inMenu = false;
@@ -319,8 +319,8 @@ void TesoroEngine::drawOutlines(Level &level) {
 			continue;
 
 		// World coordinates point up and are relative to the object; the screen is centred on the camera.
-		const int32 ox = object->x() - camera.scaledX() + 0x140;
-		const int32 oy = camera.scaledY() - object->y() + 0xf0;
+		const int32 ox = object->x() - camera.scaledX() + 320;
+		const int32 oy = camera.scaledY() - object->y() + 240;
 
 		const ObjectRect &r = object->hitRect();
 		const uint16 colour = (object->flags() & Object::kHitter) ? hitter : (object->flags() & Object::kCollidable) ? collidable : plain;

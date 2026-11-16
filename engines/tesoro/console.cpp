@@ -22,6 +22,7 @@
 #include "tesoro/console.h"
 #include "tesoro/core/animbank.h"
 #include "tesoro/core/cursor.h"
+#include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/walkfloor.h"
 #include "tesoro/world.h"
@@ -41,6 +42,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("route", WRAP_METHOD(Console, route));
 	registerCmd("start", WRAP_METHOD(Console, start));
 	registerCmd("voice", WRAP_METHOD(Console, voice));
+	registerCmd("jimsay", WRAP_METHOD(Console, jimsay));
 
 }
 
@@ -105,6 +107,32 @@ bool Console::voice(int argc, const char **argv) {
 
 	const uint32 id = world.playVoice(line.wavOffset);
 	debugPrintf("Sound id: %u\n", id);
+	return true;
+}
+
+bool Console::jimsay(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s ID [narration]\n", argv[0]);
+		return true;
+	}
+
+	World &world = g_engine->world();
+	if (!world.jimLevel()) {
+		debugPrintf("Jim is not in a level (use start first)\n");
+		return true;
+	}
+
+	const uint32 ref = world.speech().find(argv[1]);
+	if (!ref) {
+		debugPrintf("No line named %s\n", argv[1]);
+		return true;
+	}
+
+	const SpeechTable::Line &line = world.speech().lineOf(ref);
+	if (argc > 2 && scumm_stricmp(argv[2], "narration") == 0)
+		world.jim()->sayNarrationLine(line);
+	else
+		world.jim()->sayAnswer(line);
 	return true;
 }
 

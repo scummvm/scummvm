@@ -116,6 +116,8 @@ public:
 
 	int32 gameTime() { return _clock.update(_system->getMillis()); }
 
+	int32 randomBetween(int32 min, int32 max) { return max <= min ? min : min + (int32)_randomSource.getRandomNumber((uint32)(max - min)); }
+
 	uint32 getFeatures() const;
 
 	/**

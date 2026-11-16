@@ -116,6 +116,10 @@ public:
 	/** Moves the play head to the step the game time has reached and updates the movement. */
 	void advance(int32 now);
 
+	/** Stops the clock of this player; resume() makes up for the time spent paused. */
+	void pause(int32 now);
+	void resume(int32 now);
+
 	void setFlags(uint32 flags) { _flags = flags; }
 
 	/** Puts the play head on a step without touching anything else. */
@@ -145,6 +149,7 @@ private:
 	int16 _loopY = 0;
 	int16 _movementX = 0;		// where the current step puts the object
 	int16 _movementY = 0;
+	int32 _pausedAt = 0;
 };
 
 } // End of namespace Tesoro

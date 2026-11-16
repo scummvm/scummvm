@@ -64,11 +64,20 @@ public:
 	/** Advances the current player and drops the movement it computed. */
 	void tickClearMovement(int32 now);
 
+	bool isStashed() const { return _stashed; }
+	void setStashed(bool stashed) { _stashed = stashed; }
+
+	/** Remembers the current bank and its play flags. */
+	void stash();
+	void restoreStashed();
+
 private:
 	Common::Array<AnimPlayer> _players;
 	uint _bankIndex = 0;
 	byte _selected = 0;
 	bool _stashed = false;
+	uint32 _stashedBank = 0;
+	uint32 _stashedFlags = 0;
 };
 
 } // End of namespace Tesoro

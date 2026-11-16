@@ -115,11 +115,11 @@ void Object::drawAnimation(const Camera &camera, Display &display, bool skipPast
 	if (!step.hasImage())
 		return;
 
-	const int32 x = (int32)((uint32)(_x - camera.scaledX()) + (uint32)(int32)player.movementX() + 0x140 + (uint32)(int32)step.imageX);
-	if (skipPastRight && x >= 0x281)
+	const int32 x = (int32)((uint32)(_x - camera.scaledX()) + (uint32)(int32)player.movementX() + 320 + (uint32)(int32)step.imageX);
+	if (skipPastRight && x >= 641)
 		return;
 
-	const int32 y = (int32)((uint32)(camera.scaledY() - _y) - (uint32)(int32)step.imageY - (uint32)(int32)player.movementY() + 0xf0);
+	const int32 y = (int32)((uint32)(camera.scaledY() - _y) - (uint32)(int32)step.imageY - (uint32)(int32)player.movementY() + 240);
 	display.queueImage(x, y, (uint16)_sortValue, player.bank()->image(step.imageIndex), 0);
 }
 

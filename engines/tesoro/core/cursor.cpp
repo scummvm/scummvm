@@ -67,14 +67,14 @@ void Cursor::draw(const Camera &camera, Display &display) {
 	AnimPlayer &player = _anim.current();
 	const AnimStep &step = player.bank()->step(player.current());
 	if (step.hasImage()) {
-		const int32 x = (int32)((uint32)player.movementX() + (uint32)(int32)step.imageX + (uint32)_x - (uint32)camera.scaledX() + 0x140);
-		const int32 y = (int32)((uint32)(camera.scaledY() - step.imageY) - (uint32)player.movementY() - (uint32)_y + 0xf0);
+		const int32 x = (int32)((uint32)player.movementX() + (uint32)(int32)step.imageX + (uint32)_x - (uint32)camera.scaledX() + 320);
+		const int32 y = (int32)((uint32)(camera.scaledY() - step.imageY) - (uint32)player.movementY() - (uint32)_y + 240);
 		display.queueImageScaled(x, y, (uint16)_sortValue, player.bank()->image(step.imageIndex), 0x10000, 0x10000, 0);
 	}
 
 	// The name of what is under the pointer, centered above it.
 	if (_label.text()[0]) {
-		const int32 centreX = (int32)((uint32)_x - (uint32)camera.scaledX() + 0x140);
+		const int32 centreX = (int32)((uint32)_x - (uint32)camera.scaledX() + 320);
 		display.queueText((const byte *)_label.text(), _label.colour(), centreX, camera.scaledY() - _y + 0xcb, 200, 0, true, 0);
 	}
 }

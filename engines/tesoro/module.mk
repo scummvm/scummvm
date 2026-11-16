@@ -27,6 +27,7 @@ MODULE_OBJS = \
 	core/renderqueue.o \
 	core/room.o \
 	core/sounddevice.o \
+	core/speaker.o \
 	core/speechtable.o \
 	core/spriteobject.o \
 	core/stdiotext.o \

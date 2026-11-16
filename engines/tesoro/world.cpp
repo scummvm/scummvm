@@ -294,6 +294,36 @@ void World::stopVoice(uint32 id) {
 	_sound.stop(id);
 }
 
+uint32 World::randomNumber(uint32 lo, uint32 hi) { return _engine.randomBetween(lo, hi); }
+
+// Escape or the right button was released this frame (the left button does not skip).
+bool World::skipPressed() {
+	return ((_engine._escape | _engine._pointer.buttonState(PointerState::kRight)) & PointerState::kReleased) != 0;
+}
+
+bool World::subtitlesOn() { return _subtitles; }
+
+void World::queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth) {
+	_engine._display.queueText(text, colour, centreX, y, maxWidth, 0, true, 0);
+}
+
+void World::drawSubtitle(Jim &jim, const SpeechTable::Line &line) {
+	const byte *text = (const byte *)line.str();
+	const int32 colour = jim.speaker().colour();
+	if (colour < 1) {
+		queueText(text, (uint16)-(int16)colour, 320, 240, 640);
+		return;
+	}
+	Camera &camera = jim.level()->camera();
+	camera.updateToward(jim.room()->cameraDivisor(), now());
+	queueText(text, (uint16)colour, jim.anchorX() - camera.scaledX(), jim.anchorY() + camera.scaledY(), jim.textWidth());
+}
+
+int World::interactiveUpdate(Jim &jim) {
+	jim.updateBounds(now());
+	return 1;
+}
+
 void World::playMusicTrack(byte track) {
 	_music.playTrack(track);
 }

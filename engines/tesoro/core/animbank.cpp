@@ -301,4 +301,15 @@ void AnimPlayer::advance(int32 now) {
 	}
 }
 
+void AnimPlayer::pause(int32 now) {
+	_flags = (_flags & ~(uint32)kPlaying) | kPaused;
+	_pausedAt = now;
+}
+
+void AnimPlayer::resume(int32 now) {
+	_startTime = (int32)((uint32)_startTime + (uint32)(now - _pausedAt));
+	_pausedAt = 0;
+	_flags = (_flags & ~(uint32)kPaused) | kPlaying;
+}
+
 } // End of namespace Tesoro

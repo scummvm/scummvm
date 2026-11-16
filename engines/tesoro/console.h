@@ -43,6 +43,7 @@ private:
 	bool route(int argc, const char **argv);
 	bool start(int argc, const char **argv);
 	bool voice(int argc, const char **argv);
+	bool jimsay(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

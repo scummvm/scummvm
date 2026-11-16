@@ -29,9 +29,12 @@
 
 namespace Tesoro {
 
-static const int kLevelPriority = 0x14;
+static const int kLevelPriority = 20;
 static const int kWalkPriority = 5;
 static const int kMapLevel = 8;
+static const int kScreenMiddleX = 320;
+static const int kScreenMiddleY = 240;
+static const int kSubtitleGap = 50;	// above the top of his hit rectangle
 
 int Jim::walkTo(int32 x, int32 y, WalkTarget *target, bool direct) {
 	_world.removeFromMainList(this);
@@ -91,7 +94,7 @@ void Jim::setFacing(int facing) {
 int Jim::update() {
 	if (!_walking) {
 		_scale = _world.hasWalkArea() ? _world.scaleAt(_x, _y) : 0x100;
-		return 1;
+		return _speaker.update();
 	}
 
 	const int32 dx = _destX - (_fixedX >> 8);
@@ -149,10 +152,10 @@ int Jim::update() {
 
 void Jim::init(const Common::Array<AnimPlayer> &levelPlayers, const SpeechTable::Line *name) {
 	_flags = kActive | kVisible | kCollidable | kHasAnimation | kHitter;
-	_sortValue = 0x23;
+	_sortValue = 35;
 	_nameKey = nameKey64("JIM");
-	_x = 0x15e;
-	_y = 0x14;
+	_x = 350;
+	_y = 20;
 	_level = nullptr;
 	_room = nullptr;
 	_name = name;
@@ -228,6 +231,61 @@ void Jim::advanceAnimation(int16 &moveX, int16 &moveY) {
 	moveY = player.movementY();
 }
 
+void Jim::placeSpeech(uint pose) {
+	const int32 cx = _x + kScreenMiddleX;
+	AnimPlayer &player = _anim.current();
+	const AnimStep &seq = player.bank()->step(player.current());
+	if (!seq.hasImage())
+		_anchorX = seq.hitW / 2 + cx + seq.hitX;
+	else
+		_anchorX = seq.imageX + cx + (READ_LE_UINT16(player.bank()->image(seq.imageIndex).data() + 8) >> 1);
+
+	_anim.switchTo(_poses[pose]);
+	_anim.current().setRange(1, 1, false, false, _world.now());
+}
+
+void Jim::setPose(uint32) {
+	// Jim speaks in the pose of the way he faces, whatever the line asks for.
+	switch (_facing) {
+	case 3:
+		placeSpeech(0);
+		break;
+	case 4:
+		placeSpeech(1);
+		break;
+	case 2:
+		placeSpeech(2);
+		break;
+	case 1:
+		placeSpeech(3);
+		break;
+	default:
+		break;
+	}
+	AnimPlayer &player = _anim.current();
+	const AnimStep &seq = player.bank()->step(player.current());
+	_anchorY = kScreenMiddleY - kSubtitleGap - _y - ((seq.hitY * _scale) >> 8);
+}
+
+void Jim::drawScaled(int32 x, int32 y, uint16 depth, int imageIndex) {
+	const int32 scale = _scale;
+	_display->queueImageScaled(x, y, depth, _anim.current().bank()->image(imageIndex), scale << 8, scale << 8, 0);
+}
+
+void Jim::queueFrame() {
+	AnimPlayer &player = _anim.current();
+	player.advance(_world.now());
+	// The speaking banks keep the body in their first step, the mouth frames are what plays.
+	const AnimStep &seq = player.bank()->step(0);
+	if (!seq.hasImage())
+		return;
+	const int32 scale = _scale;
+	const int32 x = (((seq.imageX * scale) >> 8) + _x) - _camera->scaledX() + kScreenMiddleX + player.movementX();
+	const int32 y = (((_camera->scaledY() - ((seq.imageY * scale) >> 8)) - _y) - player.movementY()) + kScreenMiddleY;
+	// drawn 1 deeper than the main character to appear above him
+	drawScaled(x, y, (uint16)(_sortValue + 1), seq.imageIndex);
+}
+
 void Jim::leaveLevel() {
 	if (!_level)
 		return;
@@ -262,20 +320,37 @@ int Jim::showHoverText() {
 	return 1;
 }
 
-void Jim::draw(const Camera &camera, Display &display) {
+void Jim::interactiveDraw() {
 	AnimPlayer &player = _anim.current();
 	const AnimStep &seq = player.bank()->step(player.current());
 	if (!seq.hasImage())
 		return;
-
 	const int32 scale = _scale;
-	const int32 x = ((seq.imageX * scale) >> 8) - camera.scaledX() + 0x140 + _x;
-	const int32 y = ((camera.scaledY() - ((seq.imageY * scale) >> 8)) - _y) + 0xf0;
-	display.queueImageScaled(x, y, _sortValue, player.bank()->image(seq.imageIndex), scale << 8, scale << 8, 0);
+	const int32 x = ((seq.imageX * scale) >> 8) - _camera->scaledX() + 320 + _x;
+	const int32 y = ((_camera->scaledY() - ((seq.imageY * scale) >> 8)) - _y) + 240;
+	drawScaled(x, y, (uint16)_sortValue, seq.imageIndex);
+}
+
+void Jim::draw(const Camera &camera, Display &display) {
+	_camera = &camera;
+	_display = &display;
+	_speaker.drawJim();
 }
 
 bool Jim::findPath(int32 destX, int32 destY, WalkTarget *target) { return _world.findPath(destX, destY, target); }
+int32 Jim::now() { return _world.now(); }
+uint32 Jim::randomNumber(uint32 lo, uint32 hi) { return _world.randomNumber(lo, hi); }
+uint32 Jim::playVoice(uint32 archiveOffset) { return _world.playVoice(archiveOffset); }
+bool Jim::voiceActive(uint32 id) { return _world.voiceActive(id); }
+void Jim::stopVoice(uint32 id) { _world.stopVoice(id); }
+bool Jim::skipPressed() { return _world.skipPressed(); }
+bool Jim::subtitlesOn() { return _world.subtitlesOn(); }
+void Jim::insertInMainList(int priority) { _world.insertInMainList(this, priority); }
 void Jim::removeFromMainList() { _world.removeFromMainList(this); }
+void Jim::pauseAnimation() { _anim.current().pause(_world.now()); }
+void Jim::setFrameRange(uint16 first, int32 last) { _anim.current().setRange(first, last, false, false, _world.now()); }
+int Jim::interactiveUpdate() { return _world.interactiveUpdate(*this); }
+void Jim::drawSubtitle(const SpeechTable::Line &line) { _world.drawSubtitle(*this, line); }
 void Jim::tickAnimation() { _anim.tickClearMovement(_world.now()); }
 int Jim::clearHoverText() {
 	_world.setHoverText(nullptr);

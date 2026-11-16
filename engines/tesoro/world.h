@@ -112,6 +112,12 @@ public:
 	uint32 playVoice(uint32 archiveOffset);
 	bool voiceActive(uint32 id);
 	void stopVoice(uint32 id);
+	uint32 randomNumber(uint32 lo, uint32 hi);
+	bool skipPressed();
+	bool subtitlesOn();
+	void queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth);
+	void drawSubtitle(Jim &jim, const SpeechTable::Line &line);
+	int interactiveUpdate(Jim &jim);
 
 private:
 	friend class WorldLevel;
@@ -127,6 +133,7 @@ private:
 	Level *_levels[kLevelCount] = {};
 	Jim *_jim = nullptr;
 	MainList _main;
+	bool _subtitles = true;
 	SoundDevice _sound;	// speech and sound effects
 	CdAudio _music;
 };

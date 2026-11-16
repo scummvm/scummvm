@@ -85,4 +85,20 @@ void AnimSet::tickClearMovement(int32 now) {
 	current().clearMovement();
 }
 
+void AnimSet::stash() {
+	_stashedBank = _selected;
+	_stashedFlags = current().flags();
+}
+
+void AnimSet::restoreStashed() {
+	if (_stashedBank >= _players.size()) {
+		warning("AnimSet: stashed bank %u does not exist", _stashedBank);
+		return;
+	}
+
+	_bankIndex = (byte)_stashedBank;
+	_selected = (byte)_stashedBank;
+	current().setFlags(_stashedFlags);
+}
+
 } // End of namespace Tesoro
