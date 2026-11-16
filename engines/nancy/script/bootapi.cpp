@@ -340,7 +340,7 @@ static int inventoryCreate(lua_State *L) {
 
 #ifdef ENABLE_NANCY_V5
 	if (g_nancy->getGameType() >= kGameTypeNancy26) {
-		return createNancy26Inventory(L, inventory);
+		return createNancy26Inventory(L, inventory, *s_tables->boot);
 	}
 #endif
 

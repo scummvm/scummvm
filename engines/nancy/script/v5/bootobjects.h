@@ -31,7 +31,7 @@ namespace Script {
 
 // Nancy26's forms of InventoryInit:Create and CursorInit:Create, and the
 // FontsInit:Create the file of a font made of pictures calls
-int createNancy26Inventory(lua_State *L, INVD &inventory);
+int createNancy26Inventory(lua_State *L, INVD &inventory, ScriptBootData &boot);
 int createNancy26Cursors(lua_State *L, ScriptBootData &boot);
 int createBitmapFont(lua_State *L, ScriptBootData::BitmapFont &font);
 
