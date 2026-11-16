@@ -804,6 +804,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		}
 	}
 
+	OpenGL::Shader *actorShaders[] = { _actorProgram, _actorLightsProgram };
 	if (_currentShadowArray) {
 		const Sector *shadowSector = _currentShadowArray->planeList.front().sector;
 		Math::Vector3d color;
@@ -816,13 +817,13 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		if (!_currentShadowArray->dontNegate)
 			normal = -normal;
 
-		for (int i = 0; i < 3; i++) {
-			shaders[i]->use();
-			shaders[i]->setUniform("shadow._active", true);
-			shaders[i]->setUniform("shadow._color", color);
-			shaders[i]->setUniform("shadow._light", _currentShadowArray->pos);
-			shaders[i]->setUniform("shadow._point", shadowSector->getVertices()[0]);
-			shaders[i]->setUniform("shadow._normal", normal);
+		for (int i = 0; i < 2; i++) {
+			actorShaders[i]->use();
+			actorShaders[i]->setUniform("shadow._active", true);
+			actorShaders[i]->setUniform("shadow._color", color);
+			actorShaders[i]->setUniform("shadow._light", _currentShadowArray->pos);
+			actorShaders[i]->setUniform("shadow._point", shadowSector->getVertices()[0]);
+			actorShaders[i]->setUniform("shadow._normal", normal);
 		}
 
 		glDepthMask(GL_FALSE);
@@ -830,9 +831,9 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 	}
 	else {
-		for (int i = 0; i < 3; i++) {
-			shaders[i]->use();
-			shaders[i]->setUniform("shadow._active", false);
+		for (int i = 0; i < 2; i++) {
+			actorShaders[i]->use();
+			actorShaders[i]->setUniform("shadow._active", false);
 		}
 	}
 
