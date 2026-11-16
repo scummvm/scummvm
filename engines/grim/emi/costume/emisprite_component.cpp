@@ -24,6 +24,7 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/sprite.h"
+#include "engines/grim/gfx_base.h"
 
 namespace Grim {
 
@@ -47,7 +48,7 @@ void EMISpriteComponent::reset() {
 }
 
 void EMISpriteComponent::draw() {
-	if (_sprite) {
+	if (_sprite && !g_driver->isShadowModeActive()) {
 		_sprite->draw();
 	}
 }
