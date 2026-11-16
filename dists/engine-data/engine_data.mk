@@ -102,7 +102,9 @@ endif
 ifdef ENABLE_MYST3
 DIST_FILES_LIST += dists/engine-data/myst3.dat
 endif
-
+ifdef ENABLE_IGOR
+DIST_FILES_LIST += dists/engine-data/igor.tbl
+endif
 
 # pred.dic is currently only used for the AGI engine
 ifdef ENABLE_AGI
