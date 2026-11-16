@@ -141,6 +141,10 @@ Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
 	if (_G(logic)->isPersisted())
 		_G(map).synchronize(s);
 
+	// The monsters and the rest of a dungeon level are kept too, rather than being made again
+	if (_G(map)._mapType == Data::MAPTYPE_DUNGEON)
+		_G(dungeon).synchronize(s);
+
 	return Common::kNoError;
 }
 

@@ -26,6 +26,9 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
+// Marks the state of the level in a savegame
+static constexpr uint32 DUNGEON_SAVE_MARKER = MKTAG('U', '1', 'D', 'N');
+
 const char *UNDERWORLD_MONSTERS[] = {
 	"Ranger", "Skeleton", "Thief", "Giant rat", "Bat", "Spider", "Viper", "Orc",
 	"Cyclops", "Gelatinous cube", "Ettin", "Chest", "Lizard man", "Minatour",
@@ -212,6 +215,31 @@ void MapDungeon::spawnMonsterAt(int x, int y) {
 
 	cell._monsterId = monsterId;
 	cell._monsterHp = getRandomNumber(1, dungeonLevel * dungeonLevel + 1) + 10 + monsterId;
+}
+
+void MapDungeon::synchronize(Common::Serializer &s) {
+	// A save made before the level was kept has nothing here, and loads with the level as it
+	// is generated. The marker tells the two apart without needing a new savegame version
+	uint32 marker = DUNGEON_SAVE_MARKER;
+	s.syncAsUint32LE(marker);
+	if (s.isLoading() && marker != DUNGEON_SAVE_MARKER)
+		return;
+
+	s.syncAsUint16LE(_randomSeed);
+	for (int i = 0; i < DUNGEON_MONSTER_SLOTS; ++i)
+		s.syncAsByte(_monsterSlotUsed[i]);
+
+	for (auto &row : _cells) {
+		for (auto &cell : row) {
+			byte tile = (byte)cell._tileNum;
+			s.syncAsByte(tile);
+			cell._tileNum = (DungeonTileId)tile;
+
+			s.syncAsSint16LE(cell._monsterId);
+			s.syncAsSint16LE(cell._monsterHp);
+			s.syncAsSint16LE(cell._itemId);
+		}
+	}
 }
 
 void MapDungeon::killMonster(int x, int y) {
