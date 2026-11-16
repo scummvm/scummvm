@@ -356,8 +356,8 @@ void IgorEngine::startIgorDialogue() {
 	}
 	DialogueText text = *dt;
 	// Empty lines reduce the displayed prefix without changing the queued record.
-	for (int i = dt->count - 1; i >= 0; --i) {
-		if (_globalDialogueTexts[dt->num + i][0] == '\0') {
+	for (int line = dt->num + dt->count - 1; line >= dt->num; --line) {
+		if (_globalDialogueTexts[line][0] == '\0') {
 			--text.count;
 		}
 	}
