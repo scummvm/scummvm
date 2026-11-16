@@ -543,6 +543,12 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				_mask = _masks->decoder->decodeNextFrame();
 			if (_additionalVideo && _additionalVideo->decoder->needsUpdate())
 				_additionalVideo->decoder->decodeNextFrame(); // only audio?
+
+			// Lower the music while the speech video is playing
+			if (_additionalVideo && !_additionalVideo->decoder->endOfVideo())
+				_mixer->setChannelVolume(_musicHandle, Audio::Mixer::kMaxChannelVolume / 3);
+			else
+				_mixer->setChannelVolume(_musicHandle, Audio::Mixer::kMaxChannelVolume);
 		}
 
 		if (_health <= 0) {
@@ -768,6 +774,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		skipVideo(*_additionalVideo);
 		delete _additionalVideo;
 		_additionalVideo = nullptr;
+		_mixer->setChannelVolume(_musicHandle, Audio::Mixer::kMaxChannelVolume);
 	}
 
 	_timerStarted = false;
