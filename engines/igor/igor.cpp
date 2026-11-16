@@ -111,6 +111,19 @@ IgorEngine::IgorEngine(OSystem *syst, const IgorGameDescription *gameDesc) : Eng
 	_part85CurrentTalkingActor = 0;
 	_part85WaterSoundPlaying = false;
 	_partMargaretRoomAnimCounter = 0;
+
+	// members not covered by restart(), which only runs once the engine starts
+	_optionsControlRow = 0;
+	_eventQuitGame = false;
+	_scrollInventoryStartY = _scrollInventoryEndY = _scrollInventoryDy = 0;
+	_part32DeclinationIndex = _part32AscensionIndex = 0;
+	_part32LineRow = _part32Blink = _part32Result = 0;
+	_part32Done = false;
+	memset(&_roomWalkBounds, 0, sizeof(_roomWalkBounds));
+	memset(&_roomDataOffsets, 0, sizeof(_roomDataOffsets));
+
+	// give every remaining member its initial value before the engine runs
+	restart();
 }
 
 IgorEngine::~IgorEngine() {
