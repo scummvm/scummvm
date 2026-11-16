@@ -26,6 +26,7 @@
 #include "engines/nancy/script/convo.h"
 #include "engines/nancy/script/graphnode.h"
 #include "engines/nancy/script/luabind.h"
+#include "engines/nancy/script/luastate.h"
 #include "engines/nancy/script/mathtypes.h"
 #include "engines/nancy/script/particles.h"
 #include "engines/nancy/script/physics.h"
@@ -85,7 +86,13 @@ void registerAPI(lua_State *L) {
 	registerTypes(L);
 	registerMathTypes(L);
 	registerRefAPI(L);
-	registerBootAPI(L);
+
+	// The "Init" objects are only there for the boot scripts. Nancy32's inventory
+	// screen includes the boot script of the items, which checks for them.
+	if (!LuaState::getContext(L)) {
+		registerBootAPI(L);
+	}
+
 	registerInventoryAPI(L);
 	registerGameAPI(L);
 	registerGraphNodeAPI(L);
