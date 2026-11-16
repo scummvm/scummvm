@@ -20,12 +20,6 @@
  */
 
 #include "base/plugins.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/md5.h"
-#include "common/str-array.h"
-#include "common/translation.h"
-#include "common/util.h"
 
 #include "igor/detection.h"
 #include "igor/detection_tables.h"
