@@ -21,7 +21,6 @@
 
 
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 #include "audio/mididrv.h"
@@ -104,6 +103,6 @@ Common::Error SnatcherMetaEngineDetection::identifyGame(DetectedGame &game, cons
 	return err;
 }
 
-} // End of namespace Snatcher	
+} // End of namespace Snatcher
 
 REGISTER_PLUGIN_STATIC(SNATCHER_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Snatcher::SnatcherMetaEngineDetection);
