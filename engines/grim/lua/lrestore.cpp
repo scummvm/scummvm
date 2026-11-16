@@ -445,12 +445,13 @@ void lua_Restore(SaveGame *savedState) {
 	GCthreshold = savedState->readLESint32();
 	nblocks = savedState->readLESint32();
 
-	Mbuffsize = savedState->readLESint32();
-	Mbuffer = (char *)luaM_malloc(Mbuffsize);
-	savedState->read(Mbuffer, Mbuffsize);
-	int32 MbaseOffset = savedState->readLESint32();
-	Mbuffbase = MbaseOffset + Mbuffer;
-	Mbuffnext = savedState->readLESint32();
+	if (savedState->saveMinorVersion() < 31) {
+		int32 oldMbuffsize = savedState->readLESint32();
+		for (int32 b = 0; b < oldMbuffsize; b++)
+			savedState->readByte();
+		savedState->readLESint32();
+		savedState->readLESint32();
+	}
 
 	globalTaskSerialId = savedState->readLESint32();
 
