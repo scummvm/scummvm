@@ -54,6 +54,8 @@ const char *AnimatorTrack::getTypeName(Kind kind) {
 		return "ND.AnimatorScaleTrack";
 	case kRotation:
 		return "ND.AnimatorRotationTrack";
+	case kPolar:
+		return "ND.AnimatorPolarTrack";
 	default:
 		return "ND.AnimatorTranslationTrack";
 	}
@@ -80,6 +82,9 @@ void AnimatorTrack::setValue(const double value[2]) {
 		break;
 	case kTranslation:
 		_matrix = ScriptMatrix::makeSRT(1.0, 1.0, 0.0, value[0], value[1]);
+		break;
+	case kPolar:
+		_matrix = ScriptMatrix::makeSRT(1.0, 1.0, 0.0, value[0] * cos(value[1]), value[0] * sin(value[1]));
 		break;
 	default:
 		break;
@@ -228,6 +233,7 @@ AnimatorStage::AnimatorStage(Animator &animator, uint index, double alpha) :
 	_tracks[AnimatorTrack::kScale] = new AnimatorTrack(*this, AnimatorTrack::kScale, 1.0, 1.0);
 	_tracks[AnimatorTrack::kRotation] = new AnimatorTrack(*this, AnimatorTrack::kRotation, 0.0, 0.0);
 	_tracks[AnimatorTrack::kTranslation] = new AnimatorTrack(*this, AnimatorTrack::kTranslation, 0.0, 0.0);
+	_tracks[AnimatorTrack::kPolar] = new AnimatorTrack(*this, AnimatorTrack::kPolar, 0.0, 0.0);
 }
 
 AnimatorStage::~AnimatorStage() {
@@ -300,7 +306,8 @@ void AnimatorStage::finishBlending() {
 void AnimatorStage::updateMatrix() {
 	_matrix = _tracks[AnimatorTrack::kScale]->getMatrix() *
 		_tracks[AnimatorTrack::kRotation]->getMatrix() *
-		_tracks[AnimatorTrack::kTranslation]->getMatrix();
+		_tracks[AnimatorTrack::kTranslation]->getMatrix() *
+		_tracks[AnimatorTrack::kPolar]->getMatrix();
 }
 
 // The alpha track only changes the record's alpha, the others only its
@@ -522,7 +529,7 @@ static AnimatorStage &checkStage(lua_State *L) {
 
 static AnimatorTrack &checkTrack(lua_State *L) {
 	const AnimatorRef *ref = nullptr;
-	for (int kind = AnimatorTrack::kAlpha; !ref && kind <= AnimatorTrack::kTranslation; ++kind) {
+	for (int kind = AnimatorTrack::kAlpha; !ref && kind < AnimatorTrack::kNumKinds; ++kind) {
 		ref = (const AnimatorRef *)testUserData(L, 1, AnimatorTrack::getTypeName((AnimatorTrack::Kind)kind));
 	}
 
@@ -614,7 +621,7 @@ static int stageFinishBlending(lua_State *L) {
 }
 
 static bool findTrackKind(const char *name, AnimatorTrack::Kind &kind) {
-	static const char *const kTrackNames[] = { "a", "s", "r", "t" };
+	static const char *const kTrackNames[] = { "a", "s", "r", "t", "p" };
 	for (uint i = 0; i < ARRAYSIZE(kTrackNames); ++i) {
 		if (strcmp(name, kTrackNames[i]) == 0) {
 			kind = (AnimatorTrack::Kind)i;
@@ -625,8 +632,8 @@ static bool findTrackKind(const char *name, AnimatorTrack::Kind &kind) {
 	return false;
 }
 
-// stage.a, stage.s, stage.r and stage.t are its tracks. In Nancy30, other
-// names give what scripts stored in the stage.
+// stage.a, stage.s, stage.r and stage.t are its tracks, and in Nancy32 stage.p.
+// In Nancy30, other names give what scripts stored in the stage.
 static int stageIndex(lua_State *L) {
 	AnimatorTrack::Kind kind;
 	if (lua_type(L, 2) != LUA_TSTRING || !findTrackKind(lua_tostring(L, 2), kind)) {
@@ -651,7 +658,7 @@ static int stageIndex(lua_State *L) {
 // stage.t = value sets a track to a value. Nancy30 stores anything else in
 // the stage, like its OnDone function.
 static int stageNewIndex(lua_State *L) {
-	static const char *const kTrackDescriptions[] = { "Alpha", "Scale", "Rotation", "Translation" };
+	static const char *const kTrackDescriptions[] = { "Alpha", "Scale", "Rotation", "Translation", "Polar" };
 
 	AnimatorStage &stage = checkStage(L);
 	AnimatorTrack::Kind kind;
@@ -792,7 +799,7 @@ void Animator::registerTypes(lua_State *L) {
 
 	registerType(L, kAnimatorType, kAnimatorFunctions);
 	registerType(L, kAnimatorStageType, kStageFunctions);
-	for (int kind = AnimatorTrack::kAlpha; kind <= AnimatorTrack::kTranslation; ++kind) {
+	for (int kind = AnimatorTrack::kAlpha; kind < AnimatorTrack::kNumKinds; ++kind) {
 		registerType(L, AnimatorTrack::getTypeName((AnimatorTrack::Kind)kind), kTrackFunctions);
 	}
 }

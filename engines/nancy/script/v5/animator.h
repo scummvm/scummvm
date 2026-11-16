@@ -42,24 +42,27 @@ class AnimatorStage;
 //
 // An animator is a list of stages, numbered from 1, and starts with one stage.
 // Each stage has four tracks: a (alpha), s (scale), r (rotation) and t
-// (translation). A track plays the blends added to it one after the other,
-// each one moving it to a target value. A lerp blend moves at a constant
-// speed, while a "slerp" blend starts and ends slowly. When all tracks of a
-// stage have finished blending, the record's "Stage<n>Done" function is
-// called. Nancy30 calls the stage's own OnDone function instead, which
-// scripts store in the stage like any other field (ar.animator[1].OnDone).
+// (translation). Nancy32 adds p (polar), a translation by a radius and an
+// angle. A track plays the blends added to it one after the other, each one
+// moving it to a target value. A lerp blend moves at a constant speed, while a
+// "slerp" blend starts and ends slowly. When all tracks of a stage have
+// finished blending, the record's "Stage<n>Done" function is called. Nancy30
+// calls the stage's own OnDone function instead, which scripts store in the
+// stage like any other field (ar.animator[1].OnDone).
 //
 // The record's transform is the product of the transforms of the stages, in
-// order, and each stage scales, then rotates, then translates. The record's
-// alpha is the product of the alphas of the stages. Both are updated whenever
-// a stage changes or blends.
+// order, and each stage scales, then rotates, then translates (then moves by
+// its polar track). The record's alpha is the product of the alphas of the
+// stages. Both are updated whenever a stage changes or blends.
 class AnimatorTrack {
 public:
 	enum Kind {
 		kAlpha,
 		kScale,
 		kRotation,
-		kTranslation
+		kTranslation,
+		kPolar,		// Nancy32: the radius in x, the angle in radians in y
+		kNumKinds
 	};
 
 	enum BlendKind {
@@ -148,7 +151,7 @@ public:
 	void stopBlending();
 	void finishBlending();
 
-	// Scales, then rotates, then translates
+	// Scales, then rotates, then translates, then moves by the polar track
 	void updateMatrix();
 
 	// Called when a track was set to a value, when a script stopped or
@@ -163,7 +166,7 @@ public:
 private:
 	Animator &_animator;
 	uint _index;
-	AnimatorTrack *_tracks[4];
+	AnimatorTrack *_tracks[AnimatorTrack::kNumKinds];
 	ScriptMatrix _matrix;
 };
 
