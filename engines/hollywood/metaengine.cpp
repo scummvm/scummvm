@@ -22,7 +22,6 @@
 #include "base/plugins.h"
 #include "backends/keymapper/keymap.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
