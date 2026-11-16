@@ -360,7 +360,7 @@ void MacGuiImpl::addMenu(Graphics::MacMenu *menu, int menuId) {
 		}
 
 		// Floppy version
-		if (_vm->_game.id == GID_INDY4 && !string.contains("Smooth Graphics") && id == 3) {
+		if (_vm->_game.id == GID_INDY4 && !_vm->_isModernMacVersion && !string.contains("Smooth Graphics") && id == 3) {
 			string += ";(-;Smooth Graphics";
 		}
 	}
