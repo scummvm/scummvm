@@ -861,6 +861,7 @@ void ParticleRecord::simulate(double seconds) {
 
 void ParticleRecord::step() {
 	_spawnTime += 1.0 / kStepsPerSecond;
+	_hasStepped = true;
 
 	// A record that makes no particles keeps no time toward the next one
 	int numSpawned = 0;
@@ -1095,6 +1096,14 @@ void ParticleRecord::updateGraphics() {
 		return;
 	}
 
+	const ScriptMatrix transform = getTransform();
+	if (_canvas && _canvas->isVisible() && !_hasStepped && transform == _drawnTransform) {
+		return;
+	}
+
+	_hasStepped = false;
+	_drawnTransform = transform;
+
 	if (!_canvas) {
 		const Common::Rect bounds = RecordGraphic::getDrawArea();
 
@@ -1109,11 +1118,13 @@ void ParticleRecord::updateGraphics() {
 		_image.convertToInPlace(_canvas->_drawSurface.format);
 	}
 
-	_canvas->_drawSurface.clear(0);
+	if (!_drawnArea.isEmpty()) {
+		_canvas->_drawSurface.fillRect(_drawnArea, 0);
+	}
 
-	const ScriptMatrix transform = getTransform();
+	_drawnArea = Common::Rect();
 	for (uint i = 0; i < _count; ++i) {
-		drawParticle(_particles[(_first + i) % _particles.size()], transform);
+		drawParticle(_particles[(_first + i) % _particles.size()], transform, _drawnArea);
 	}
 
 	_canvas->setVisible(true);
@@ -1163,7 +1174,7 @@ static bool narrowSpan(double start, double step, int &first, int &last) {
 
 // A particle is a square of a part of the image, sized, turned and moved into
 // place, then seen through the projection
-void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &transform) {
+void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &transform, Common::Rect &drawnArea) {
 	if (particle.width <= 0.0 || particle.height <= 0.0 || (particle.color >> 24) == 0) {
 		return;
 	}
@@ -1211,6 +1222,13 @@ void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &
 	const int maxY = MIN<int>(target.h - 1, (int)ceil(MAX(MAX(y0, y1), MAX(y2, y3))));
 	if (minX > maxX || minY > maxY) {
 		return;
+	}
+
+	const Common::Rect area(minX, minY, maxX + 1, maxY + 1);
+	if (drawnArea.isEmpty()) {
+		drawnArea = area;
+	} else {
+		drawnArea.extend(area);
 	}
 
 	// Both pictures are in the 32 bit format with alpha, so their pixels are read
