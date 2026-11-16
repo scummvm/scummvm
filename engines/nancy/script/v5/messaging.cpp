@@ -30,21 +30,28 @@
 #include "engines/nancy/script/scenecontext.h"
 #include "engines/nancy/script/types.h"
 
+#include "engines/nancy/script/v5/gamefunctions.h"
 #include "engines/nancy/script/v5/messaging.h"
 
 namespace Nancy {
 namespace Script {
 
-typedef Common::HashMap<Common::String, Record *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AliasMap;
+typedef ScriptGameState::AliasMap AliasMap;
 
-// The names are shared by the scenes of all the streams
-static AliasMap &getAliases() {
-	static AliasMap s_aliases;
-	return s_aliases;
+// The names are shared by the scenes of all the streams, and kept by the game
+// state; null before it is there
+static AliasMap *getAliases() {
+	ScriptGameState *state = (ScriptGameState *)const_cast<EngineData *>(g_nancy->getEngineData("ScriptGameState"));
+	return state ? &state->aliases : nullptr;
 }
 
 bool registerAlias(const Common::String &alias, Record *record) {
-	AliasMap &aliases = getAliases();
+	AliasMap *found = getAliases();
+	if (!found) {
+		return false;
+	}
+
+	AliasMap &aliases = *found;
 	AliasMap::iterator it = aliases.find(alias);
 	if (it != aliases.end() && it->_value != record) {
 		// The scene a stream goes to is loaded while the one it leaves is still
@@ -61,15 +68,24 @@ bool registerAlias(const Common::String &alias, Record *record) {
 }
 
 void deregisterAlias(const Common::String &alias, Record *record) {
-	AliasMap &aliases = getAliases();
-	AliasMap::iterator it = aliases.find(alias);
-	if (it != aliases.end() && it->_value == record) {
-		aliases.erase(it);
+	AliasMap *aliases = getAliases();
+	if (!aliases) {
+		return;
+	}
+
+	AliasMap::iterator it = aliases->find(alias);
+	if (it != aliases->end() && it->_value == record) {
+		aliases->erase(it);
 	}
 }
 
 void deregisterAliases(Record *record) {
-	AliasMap &aliases = getAliases();
+	AliasMap *found = getAliases();
+	if (!found) {
+		return;
+	}
+
+	AliasMap &aliases = *found;
 	Common::Array<Common::String> names;
 	for (AliasMap::iterator it = aliases.begin(); it != aliases.end(); ++it) {
 		if (it->_value == record) {
@@ -83,9 +99,13 @@ void deregisterAliases(Record *record) {
 }
 
 Record *findAlias(const Common::String &alias) {
-	AliasMap &aliases = getAliases();
-	AliasMap::iterator it = aliases.find(alias);
-	return it != aliases.end() ? it->_value : nullptr;
+	AliasMap *aliases = getAliases();
+	if (!aliases) {
+		return nullptr;
+	}
+
+	AliasMap::iterator it = aliases->find(alias);
+	return it != aliases->end() ? it->_value : nullptr;
 }
 
 // What the exe copies: numbers, texts, booleans and nil as they are, tables

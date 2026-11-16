@@ -28,6 +28,7 @@
 #include "engines/nancy/resource/resource.h"
 
 #include "engines/nancy/script/v5/bitmaptext.h"
+#include "engines/nancy/script/v5/gamefunctions.h"
 
 namespace Nancy {
 namespace Script {
@@ -65,13 +66,16 @@ static uint32 findFontColor(int id) {
 	return 0xFFFFFFFF;
 }
 
-// The pictures of the letters, kept once loaded
+// The pictures of the letters, kept by the game state once loaded
 static const Graphics::ManagedSurface *getFaceImage(const Common::Path &name) {
-	typedef Common::HashMap<Common::Path, Common::SharedPtr<Graphics::ManagedSurface>, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> ImageMap;
-	static ImageMap s_images;
+	ScriptGameState *state = (ScriptGameState *)const_cast<EngineData *>(g_nancy->getEngineData("ScriptGameState"));
+	if (!state) {
+		return nullptr;
+	}
 
-	ImageMap::iterator it = s_images.find(name);
-	if (it != s_images.end()) {
+	ScriptGameState::FontImageMap &images = state->fontImages;
+	ScriptGameState::FontImageMap::iterator it = images.find(name);
+	if (it != images.end()) {
 		return it->_value.get();
 	}
 
@@ -82,7 +86,7 @@ static const Graphics::ManagedSurface *getFaceImage(const Common::Path &name) {
 		image->convertToInPlace(g_nancy->_graphics->getTransparentPixelFormat());
 	}
 
-	s_images.setVal(name, image);
+	images.setVal(name, image);
 	return image.get();
 }
 

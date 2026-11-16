@@ -23,6 +23,14 @@
 #define NANCY_SCRIPT_V5_GAMEFUNCTIONS_H
 
 #include "common/array.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/keyboard.h"
+#include "common/path.h"
+#include "common/ptr.h"
+#include "common/rect.h"
+
+#include "graphics/managed_surface.h"
 
 #include "engines/nancy/enginedata.h"
 
@@ -30,6 +38,8 @@ struct lua_State;
 
 namespace Nancy {
 namespace Script {
+
+class Record;
 
 // Nancy26. What the Game and Sound objects of the scripts keep while the game
 // runs, across new games
@@ -68,6 +78,36 @@ struct ScriptGameState : public EngineData {
 	Common::Array<bool> isItemEnabled;
 	Common::Array<bool> isItemForcedOn;
 	uint faceItemChangeCount = 0;
+
+	// The pictures of the letters of the fonts made of pictures, kept once loaded
+	typedef Common::HashMap<Common::Path, Common::SharedPtr<Graphics::ManagedSurface>, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FontImageMap;
+	FontImageMap fontImages;
+
+	// Nancy26: the records by the names they go by for messages, shared by
+	// the scenes of all the streams
+	typedef Common::HashMap<Common::String, Record *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AliasMap;
+	AliasMap aliases;
+
+	// How many records were made, which numbers their own names
+	uint numRecords = 0;
+
+	// Nancy26: where the player's input is, for the records (see scriptinput.h)
+	struct InputState {
+		Common::Point32 mouse;
+		bool hasMouse = false;
+		Record *hovered = nullptr;
+		Record *pressed[2] = { nullptr, nullptr };
+
+		uint32 lastClickTime[2] = { 0, 0 };
+		Common::Point32 lastClickPoint[2];
+		bool isDoubleClick[2] = { false, false };
+
+		uint16 heldMoveKeys = 0;
+		bool isEscHeld = false;
+		Common::Array<Common::KeyCode> keysToRelease;
+	};
+
+	InputState input;
 };
 
 // Nancy29: applies the Brain flags of the inventory items, which equip them

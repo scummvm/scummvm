@@ -33,6 +33,7 @@
 
 #include "engines/nancy/script/v5/animator.h"
 #include "engines/nancy/script/v5/cliptransformer.h"
+#include "engines/nancy/script/v5/gamefunctions.h"
 #include "engines/nancy/script/v5/messaging.h"
 #include "engines/nancy/script/v5/recordnode.h"
 #include "engines/nancy/script/v5/scriptinput.h"
@@ -45,8 +46,9 @@ void Record::createNodeState() {
 
 	// Every record goes by a name of its own, which messages can be sent to:
 	// a record that sends gives this name, and the receiver can answer it
-	static uint s_numRecords = 0;
-	_nodeState->uniqueAlias = Common::String::format("AR%u", ++s_numRecords);
+	ScriptGameState *state = (ScriptGameState *)const_cast<EngineData *>(g_nancy->getEngineData("ScriptGameState"));
+	assert(state);
+	_nodeState->uniqueAlias = Common::String::format("AR%u", ++state->numRecords);
 	registerAlias(_nodeState->uniqueAlias, this);
 }
 
