@@ -31,7 +31,8 @@
 namespace Igor {
 
 MidiParser_CTMF::MidiParser_CTMF()
-	: _instrumentsCount(0) {
+	: _instrumentsCount(0), _instrumentsDataOffset(0), _midiDataOffset(0),
+	_ticksPerQuarter(0), _ticksPerSecond(0), _basicTempo(0) {
 	memset(_instruments, 0, sizeof(_instruments));
 }
 
@@ -117,6 +118,17 @@ void MidiParser_CTMF::parseNextEvent(EventInfo &info) {
 		}
 	}
 	warning("MidiParser_CTMF::parseNextEvent: Unhandled event code %x", info.event);
+}
+
+AdlibMidiDriver::AdlibMidiDriver(Audio::Mixer *mixer)
+	: MidiDriver_Emulated(mixer), _opl(nullptr), _oplStream(nullptr), _oplStereo(false),
+	_adlibRhythmMode(false), _adlibInstruments(nullptr) {
+	memset(_adlibData, 0, sizeof(_adlibData));
+	for (int i = 0; i < kAdlibChannelsCount; ++i) {
+		_adlibChannels[i].ch = -1;
+		_adlibChannels[i].lt = _adlibChannels[i].note = 0;
+	}
+	memset(_adlibInstrumentsMappingTable, 0, sizeof(_adlibInstrumentsMappingTable));
 }
 
 int AdlibMidiDriver::open() {

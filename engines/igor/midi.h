@@ -82,7 +82,7 @@ public:
 		kAdlibChannelsCount = 18
 	};
 
-	AdlibMidiDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _opl(nullptr), _oplStream(nullptr), _oplStereo(false) {}
+	AdlibMidiDriver(Audio::Mixer *mixer);
 	~AdlibMidiDriver() {}
 
 	// MidiDriver
