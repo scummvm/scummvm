@@ -137,6 +137,10 @@ void Manager::requestSave(const Common::String &name) {
 	}
 
 	if (slot != -1) {
+		if (_request.type == kRequestLoad || _request.type == kRequestNewGame || _request.type == kRequestQuit) {
+			_requestAfterSave = _request;
+		}
+
 		_request.type = kRequestSave;
 		_request.slot = slot;
 		_request.name = name;

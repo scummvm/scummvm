@@ -222,6 +222,12 @@ void Manager::restoreState(const Common::Array<UIStateData::Change> &changes) {
 Manager::Request Manager::takeRequest() {
 	Request request = _request;
 	_request = Request();
+
+	if (request.type == kRequestSave && _requestAfterSave.type != kRequestNone) {
+		_request = _requestAfterSave;
+		_requestAfterSave = Request();
+	}
+
 	return request;
 }
 

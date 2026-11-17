@@ -264,6 +264,11 @@ private:
 	bool _isSavingAllowed = true;
 
 	Request _request;
+
+	// Resorting to Danger saves on the spot, so a load, new game or quit asked
+	// for before a save goes on after it: "Save & Exit" asks for a new game,
+	// which goes back to the main menu, and then saves
+	Request _requestAfterSave;
 };
 
 } // End of namespace NDUI
