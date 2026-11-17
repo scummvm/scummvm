@@ -234,9 +234,10 @@ void Element::drawText(Graphics::ManagedSurface &surface, const Common::String &
 	}
 
 	// Text kept on a single line is laid out as wide as it gets, and then aligned
-	// in the rect
+	// in the rect. It isn't cut off by a rect that is too low for it.
 	ElementText layout;
-	const Graphics::ManagedSurface &rendered = layout.render(text, _wordWrap ? dest.width() : kSingleLineWidth, dest.height(), (uint)fontID,
+	const int renderHeight = _wordWrap ? dest.height() : MAX<int>(dest.height(), getFontHeight());
+	const Graphics::ManagedSurface &rendered = layout.render(text, _wordWrap ? dest.width() : kSingleLineWidth, renderHeight, (uint)fontID,
 		colorChannelToByte(color[1]), colorChannelToByte(color[2]), colorChannelToByte(color[3]),
 		_wordWrap ? _horizontalAlignment : (int32)ElementText::kAlignLeft, state);
 
