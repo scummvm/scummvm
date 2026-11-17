@@ -2361,10 +2361,18 @@ static int messageEncodeRect(lua_State *L) {
 	return 1;
 }
 
+// Message:DecodeRect(value), Lights, Camera, Curses: the rect EncodeRect
+// made the value out of
+static int messageDecodeRect(lua_State *L) {
+	pushRect(L, ScriptRect(UI::NDUI::decodeRect(luaL_checknumber(L, 2))));
+	return 1;
+}
+
 static const luaL_Reg kMessageFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Send", messageSend },
 	{ "EncodeRect", messageEncodeRect },
+	{ "DecodeRect", messageDecodeRect },
 	{ nullptr, nullptr }
 };
 
