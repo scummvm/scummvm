@@ -252,7 +252,12 @@ void Panel::addItemButton(const INVD::Item &item) {
 	_kind = kObjectInvPanel;
 	_newItem = &item;
 
-	if (!createObject(item.name, "InvButton")) {
+	// The original's Inventory.<name> makes the name upper case, and the scripts
+	// get it that way: Lights, Camera, Curses compares it with string.upper()
+	Common::String name = item.name;
+	name.toUppercase();
+
+	if (!createObject(name, "InvButton")) {
 		warning("Couldn't create the UI button of item %s", item.name.c_str());
 	}
 
