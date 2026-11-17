@@ -41,6 +41,7 @@ class Set;
 class Material;
 struct SetShadow;
 struct Joint;
+struct ScreenBounds;
 class EMIModel;
 
 struct Plane {
@@ -541,6 +542,7 @@ public:
 	void detach();
 	Math::Quaternion getRotationQuat() const;
 	const Math::Matrix4 getFinalMatrix() const;
+	Math::Matrix4 getGrimModelMatrix() const;
 	Math::Vector3d getHeadPos() const;
 
 	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
@@ -573,6 +575,7 @@ public:
 
 private:
 	void costumeMarkerCallback(int marker);
+	ScreenBounds getScreenBounds() const;
 	void collisionHandlerCallback(Actor *other) const;
 	void updateWalk();
 	void addShadowPlane(const char *n, Set *scene, int shadowId);

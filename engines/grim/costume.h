@@ -33,6 +33,7 @@ namespace Grim {
 typedef uint32 tag32;
 
 class CMap;
+struct ScreenBounds;
 class Model;
 class ModelNode;
 class TextSplitter;
@@ -83,7 +84,7 @@ public:
 	virtual int update(uint frameTime);
 	void animate();
 	virtual void draw();
-	void getBoundingBox(int *x1, int *y1, int *x2, int *y2);
+	void getBoundingBox(const Math::Matrix4 &matrix, ScreenBounds &bounds);
 	void setPosRotate(const Math::Vector3d &pos, const Math::Angle &pitch,
 	                  const Math::Angle &yaw, const Math::Angle &roll);
 	Math::Matrix4 getMatrix() const;

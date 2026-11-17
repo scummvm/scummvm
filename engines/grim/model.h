@@ -40,6 +40,30 @@ class ModelNode;
 class CMap;
 class Sprite;
 
+struct ScreenBounds {
+	void addPoint(const Math::Matrix4 &mvpMatrix, const Math::Vector3d &point);
+	void addBounds(const ScreenBounds &other);
+	bool clipToScreen();
+	bool overlapsScreen() const;
+	bool isEmpty() const { return _empty; }
+
+	int getLeft() const { return toPixel(_left); }
+	int getTop() const { return toPixel(_top); }
+	int getRight() const { return toPixel(_right); }
+	int getBottom() const { return toPixel(_bottom); }
+
+	float _left = 0.0f;
+	float _top = 0.0f;
+	float _right = 0.0f;
+	float _bottom = 0.0f;
+
+private:
+	void extend(float left, float top, float right, float bottom);
+	static int toPixel(float v) { return (int)CLIP(v, -32768.0f, 32767.0f); }
+
+	bool _empty = true;
+};
+
 class Model : public Object {
 public:
 	// Construct a 3D model from the given data.
@@ -128,7 +152,7 @@ public:
 	void loadText(TextSplitter *ts, Material *materials[]);
 	void changeMaterials(Material *materials[]);
 	void draw() const;
-	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
+	void getBoundingBox(const Math::Matrix4 &mvpMatrix, ScreenBounds &bounds) const;
 	void update();
 	Mesh();
 	~Mesh();
@@ -162,7 +186,8 @@ public:
 	~ModelNode();
 	void loadBinary(Common::SeekableReadStream *data, ModelNode *hierNodes, const Model::Geoset *g);
 	void draw() const;
-	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
+	void getBoundingBox(const Math::Matrix4 &matrix, ScreenBounds &bounds) const;
+	Math::Matrix4 getAnimMatrix() const;
 	void addChild(ModelNode *child);
 	void removeChild(ModelNode *child);
 	void setMatrix(const Math::Matrix4 &matrix);
