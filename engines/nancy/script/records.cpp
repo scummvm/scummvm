@@ -303,8 +303,9 @@ void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image, const
 
 	// Nothing shows outside the viewport, so only the part inside it gets drawn.
 	// The map of Nancy25 is far larger than the viewport when zoomed in.
+	// A color without any alpha shows nothing either.
 	area.clip(RecordGraphic::getDrawArea());
-	const bool isOnScreen = !area.isEmpty();
+	const bool isOnScreen = !area.isEmpty() && (modColor >> 24) != 0;
 	if (!isOnScreen) {
 		area = Common::Rect(1, 1);
 	}
@@ -349,6 +350,33 @@ void placePicture(RecordGraphic &graphic, Graphics::ManagedSurface &image, const
 	const bool isCopied = image.format == out.format && modColor == kNoModColor;
 	const uint32 colorMask = ~(uint32)(image.format.aMax() << image.format.aShift);
 	const uint32 transColor = g_nancy->_graphics->getTransColor() & colorMask;
+
+	// A picture that is only moved gets copied with its tint by a faster way,
+	// when its pixel format allows: the intro of Resorting to Danger fades many
+	// large ones at once
+	if (canDraw && isMovedOnly && !isCopied) {
+		// The part of the picture that shows in the area drawn
+		const int offsetLeft = area.left - placed.left;
+		const int offsetTop = area.top - placed.top;
+		const int left = MAX<int>(0, offsetLeft);
+		const int top = MAX<int>(0, offsetTop);
+		const int right = MIN<int>(source.width(), offsetLeft + out.w);
+		const int bottom = MIN<int>(source.height(), offsetTop + out.h);
+
+		// Done when none of it shows, or once it has been copied
+		bool isDone = left >= right || top >= bottom;
+		if (!isDone) {
+			const Common::Rect from(source.left + left, source.top + top, source.left + right, source.top + bottom);
+			const Common::Point to(left - offsetLeft, top - offsetTop);
+			isDone = GraphicsManager::copyTinted(out, to, image, from, modColor, g_nancy->_graphics->getTransColor());
+		}
+
+		if (isDone) {
+			graphic.moveTo(area);
+			graphic.setNeedsRedraw(true);
+			return;
+		}
+	}
 
 	for (int y = 0; canDraw && y < out.h; ++y) {
 		uint32 *outRow = (uint32 *)out.getBasePtr(0, y);
@@ -1452,14 +1480,10 @@ void OverlayRecord::readDestTable(Common::Array<ScriptRect> &dests) {
 	lua_pop(L, 1);
 }
 
-// A hidden picture gets placed once it shows again. The map of Nancy25 moves
-// many hidden ones with its camera.
+// A picture gets placed when the frame is drawn, and a hidden one once it shows
+// again. The map of Nancy25 moves many hidden ones with its camera.
 void OverlayRecord::onTransformChanged() {
-	if (isActive()) {
-		applyRects();
-	} else {
-		_isPlacementStale = true;
-	}
+	_isPlacementStale = true;
 }
 
 void OverlayRecord::applyRects() {
@@ -1934,7 +1958,9 @@ bool OverlayRecord::setField(const Common::String &key) {
 		return false;
 	}
 
-	applyRects();
+	// Drawn anew once a frame at most, and only while it shows: the intro of
+	// Resorting to Danger fades dozens of large overlays every frame
+	_isPlacementStale = true;
 	return true;
 }
 

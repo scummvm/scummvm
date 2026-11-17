@@ -135,6 +135,10 @@ public:
 	static void copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip = false, bool doubleSize = false);
 	static void copyToManaged(void *src, Graphics::ManagedSurface &dst, uint srcW, uint srcH, const Graphics::PixelFormat &format, bool verticalFlip = false, bool doubleSize = false);
 
+	// Copies a part of a 32 bit picture into a 32 bit surface, tinted by an
+	// ARGB color. Returns false for the pixel formats it doesn't handle.
+	static bool copyTinted(Graphics::ManagedSurface &dst, const Common::Point &dstPos, const Graphics::ManagedSurface &src, const Common::Rect &srcRect, uint32 argb, uint32 keyColor);
+
 	static void rotateBlit(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest, byte rotation);
 	static void crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, const Common::Rect &rect, Graphics::ManagedSurface &inResult);
 

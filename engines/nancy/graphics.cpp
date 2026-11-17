@@ -856,6 +856,13 @@ bool GraphicsManager::takeSavePicture(Graphics::ManagedSurface &out) {
 	return true;
 }
 
+// Whether the pixels of a format are 32 bits, with 8 for each channel and for
+// the alpha, if there is one
+static bool hasByteChannels(const Graphics::PixelFormat &format) {
+	return format.bytesPerPixel == 4 && format.rBits() == 8 && format.gBits() == 8 && format.bBits() == 8 &&
+		(format.aBits() == 8 || format.aBits() == 0);
+}
+
 // Blends a 32 bit picture with an alpha channel onto a 32 bit target, giving
 // the same pixels as ManagedSurface::blitFrom. That one turns every pixel into
 // its components and back, which made the canvases of Nancy32's snow, as large
@@ -864,9 +871,7 @@ bool GraphicsManager::takeSavePicture(Graphics::ManagedSurface &out) {
 static bool blitAlpha32(Graphics::ManagedSurface &target, const Graphics::ManagedSurface &src, const Common::Rect &source, const Common::Rect &dest) {
 	const Graphics::PixelFormat &srcFormat = src.format;
 	const Graphics::PixelFormat &destFormat = target.format;
-	if (srcFormat.bytesPerPixel != 4 || destFormat.bytesPerPixel != 4 || srcFormat.aBits() != 8 ||
-			srcFormat.rBits() != 8 || srcFormat.gBits() != 8 || srcFormat.bBits() != 8 ||
-			destFormat.rBits() != 8 || destFormat.gBits() != 8 || destFormat.bBits() != 8 ||
+	if (!hasByteChannels(srcFormat) || srcFormat.aBits() != 8 || !hasByteChannels(destFormat) ||
 			source.width() != dest.width() || source.height() != dest.height() || src.hasTransparentColor()) {
 		return false;
 	}
@@ -927,6 +932,52 @@ static bool blitAlpha32(Graphics::ManagedSurface &target, const Graphics::Manage
 	}
 
 	target.addDirtyRect(clipped);
+	return true;
+}
+
+// The channels of every pixel get multiplied by those of the color, through
+// tables, with no conversions of the pixel formats. A picture without alpha
+// leaves out its pixels of the color key.
+bool GraphicsManager::copyTinted(Graphics::ManagedSurface &dst, const Common::Point &dstPos, const Graphics::ManagedSurface &src, const Common::Rect &srcRect, uint32 argb, uint32 keyColor) {
+	const Graphics::PixelFormat &inFormat = src.format;
+	const Graphics::PixelFormat &outFormat = dst.format;
+	if (!hasByteChannels(inFormat) || !hasByteChannels(outFormat) || outFormat.aBits() != 8) {
+		return false;
+	}
+
+	byte tableA[256], tableR[256], tableG[256], tableB[256];
+	for (uint i = 0; i < 256; ++i) {
+		tableA[i] = (byte)(i * (argb >> 24) / 255);
+		tableR[i] = (byte)(i * ((argb >> 16) & 0xFF) / 255);
+		tableG[i] = (byte)(i * ((argb >> 8) & 0xFF) / 255);
+		tableB[i] = (byte)(i * (argb & 0xFF) / 255);
+	}
+
+	byte keyR, keyG, keyB;
+	inFormat.colorToRGB(keyColor, keyR, keyG, keyB);
+	const bool hasAlpha = inFormat.aBits() != 0;
+
+	for (int y = 0; y < srcRect.height(); ++y) {
+		uint32 *outRow = (uint32 *)dst.getBasePtr(dstPos.x, dstPos.y + y);
+		const uint32 *inRow = (const uint32 *)src.getBasePtr(srcRect.left, srcRect.top + y);
+
+		for (int x = 0; x < srcRect.width(); ++x) {
+			const uint32 pixel = inRow[x];
+			const byte red = (pixel >> inFormat.rShift) & 0xFF;
+			const byte green = (pixel >> inFormat.gShift) & 0xFF;
+			const byte blue = (pixel >> inFormat.bShift) & 0xFF;
+			byte alpha = 0xFF;
+			if (hasAlpha) {
+				alpha = (pixel >> inFormat.aShift) & 0xFF;
+			} else if (red == keyR && green == keyG && blue == keyB) {
+				continue;
+			}
+
+			outRow[x] = ((uint32)tableA[alpha] << outFormat.aShift) | ((uint32)tableR[red] << outFormat.rShift) |
+				((uint32)tableG[green] << outFormat.gShift) | ((uint32)tableB[blue] << outFormat.bShift);
+		}
+	}
+
 	return true;
 }
 
