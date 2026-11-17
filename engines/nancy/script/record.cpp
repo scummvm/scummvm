@@ -22,6 +22,7 @@
 #include "common/algorithm.h"
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/graphnode.h"
@@ -46,7 +47,8 @@ static const char *const kRecordMarker = "__record";
 
 Record::Record(SceneContext &context, const char *typeName) :
 		_context(context),
-		_typeName(typeName) {
+		_typeName(typeName),
+		_creationOrder(NancySceneState.getStreams().takeRecordOrder()) {
 #ifdef ENABLE_NANCY_V5
 	if (g_nancy->getGameType() >= kGameTypeNancy26) {
 		createNodeState();

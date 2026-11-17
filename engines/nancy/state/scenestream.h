@@ -304,6 +304,9 @@ public:
 	int32 getFrontZOffset() const;
 	int32 getRunningZOffset() const { return _running ? _running->getZOffset() : 0; }
 
+	// Numbers the records of every stream in the order they are made
+	uint32 takeRecordOrder() { return ++_numRecordsMade; }
+
 	// Keeps the streams in the saved game, and starts them again after loading
 	void store();
 	void restore();
@@ -317,6 +320,7 @@ private:
 	Common::Array<SceneStream *> _streams;
 	Common::Array<SceneStream::Child> _mainStreamChildren;
 	SceneStream *_running = nullptr;
+	uint32 _numRecordsMade = 0;
 	Common::String _environment;
 
 #ifdef ENABLE_NANCY_V4

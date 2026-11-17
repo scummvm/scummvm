@@ -108,6 +108,9 @@ public:
 
 	const char *getTypeName() const { return _typeName; }
 
+	// Counts up as records are made, for the order of what they draw
+	uint32 getCreationOrder() const { return _creationOrder; }
+
 	// Which of the types above the record is
 	virtual RecordType getType() const = 0;
 
@@ -375,6 +378,7 @@ private:
 
 	SceneContext &_context;
 	const char *_typeName;
+	uint32 _creationOrder;
 
 	double _z = 0.0;
 	ScriptMatrix _transform;

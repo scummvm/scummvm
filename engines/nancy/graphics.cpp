@@ -992,6 +992,10 @@ int GraphicsManager::objectComparator(const void *a, const void *b) {
 		return -1;
 	} else if (((const RenderObject*)a)->getZOrder() > ((const RenderObject*)b)->getZOrder()) {
 		return 1;
+	} else if (((const RenderObject*)a)->getTieOrder() < ((const RenderObject*)b)->getTieOrder()) {
+		return -1;
+	} else if (((const RenderObject*)a)->getTieOrder() > ((const RenderObject*)b)->getTieOrder()) {
+		return 1;
 	} else {
 		return 0;
 	}

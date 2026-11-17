@@ -225,7 +225,13 @@ Common::Rect RecordGraphic::getDrawArea() {
 	return Common::Rect(viewport->screenPosition.width(), viewport->screenPosition.height());
 }
 
-void RecordGraphic::setScriptZ(double z, const SceneContext &context) {
+void RecordGraphic::setScriptZ(double z, const SceneContext &context, uint32 recordOrder) {
+	const uint32 tieOrder = g_nancy->getGameType() < kGameTypeNancy26 ? recordOrder : 0;
+	if (tieOrder != getTieOrder()) {
+		setTieOrder(tieOrder);
+		g_nancy->_graphics->reorderObject(this);
+	}
+
 	setZOrder(getScriptZOrder(z, context.getZOffset()));
 	setViewTransform(context.getViewTransform());
 }
@@ -1119,7 +1125,7 @@ void OverrideRecord::registerGraphics() {
 
 void OverrideRecord::onZChanged() {
 	if (_canvas) {
-		_canvas->setScriptZ(getZ(), getContext());
+		_canvas->setScriptZ(getZ(), getContext(), getCreationOrder());
 	}
 }
 
@@ -1151,7 +1157,7 @@ void OverrideRecord::updateGraphics() {
 		_canvas->_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getTransparentPixelFormat());
 		_canvas->_drawSurface.clear(0);
 		_canvas->moveTo(bounds);
-		_canvas->setScriptZ(getZ(), getContext());
+		_canvas->setScriptZ(getZ(), getContext(), getCreationOrder());
 		_canvas->registerGraphics();
 		_renderSurface.create(bounds.width(), bounds.height(), _canvas->_drawSurface.format);
 	}
@@ -1501,10 +1507,10 @@ void OverlayRecord::applyRects() {
 }
 
 void OverlayRecord::onZChanged() {
-	_graphic.setScriptZ(getZ(), getContext());
+	_graphic.setScriptZ(getZ(), getContext(), getCreationOrder());
 #ifdef ENABLE_NANCY_V5
 	if (_hasCopyGraphic) {
-		_copyGraphic.setScriptZ(getZ(), getContext());
+		_copyGraphic.setScriptZ(getZ(), getContext(), getCreationOrder());
 	}
 #endif
 }
@@ -1698,7 +1704,7 @@ int OverlayRecord::addCopy() {
 		_hasCopyGraphic = true;
 		_copyGraphic.init();
 		_copyGraphic.setVisible(false);
-		_copyGraphic.setScriptZ(getZ(), getContext());
+		_copyGraphic.setScriptZ(getZ(), getContext(), getCreationOrder());
 		_copyGraphic.registerGraphics();
 	}
 
@@ -2076,7 +2082,7 @@ bool AnimOverlayRecord::prepareReset() {
 }
 
 void AnimOverlayRecord::onZChanged() {
-	_graphic.setScriptZ(getZ(), getContext());
+	_graphic.setScriptZ(getZ(), getContext(), getCreationOrder());
 }
 
 void AnimOverlayRecord::registerGraphics() {
@@ -2715,7 +2721,7 @@ void TextRecord::run(double sceneTime, double elapsedTime) {
 }
 
 void TextRecord::onZChanged() {
-	_graphic.setScriptZ(getZ(), getContext());
+	_graphic.setScriptZ(getZ(), getContext(), getCreationOrder());
 }
 
 void TextRecord::registerGraphics() {
@@ -3063,7 +3069,7 @@ void MovieRecord::registerGraphics() {
 }
 
 void MovieRecord::onZChanged() {
-	_graphic.setScriptZ(getZ(), getContext());
+	_graphic.setScriptZ(getZ(), getContext(), getCreationOrder());
 }
 
 void MovieRecord::updateGraphics() {

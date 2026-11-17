@@ -73,7 +73,8 @@ public:
 
 	// Scripts order what they draw with numbers of their own. The scene also
 	// tells which stream it is in, which can zoom into what it draws.
-	void setScriptZ(double z, const SceneContext &context);
+	// Before Nancy26, records of the same z draw in the order they were made
+	void setScriptZ(double z, const SceneContext &context, uint32 recordOrder = 0);
 
 	// The z order of a script z in a stream that is the given steps in front
 	static uint16 getScriptZOrder(double z, int32 zOffset);

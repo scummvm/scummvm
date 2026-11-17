@@ -1157,7 +1157,7 @@ void ParticleRecord::dropOldestBatch() {
 
 void ParticleRecord::onZChanged() {
 	if (_canvas) {
-		_canvas->setScriptZ(getZ(), getContext());
+		_canvas->setScriptZ(getZ(), getContext(), getCreationOrder());
 	}
 }
 
@@ -1322,7 +1322,7 @@ void ParticleRecord::updateGraphics() {
 		_canvas->init();
 		_canvas->_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getTransparentPixelFormat());
 		_canvas->moveTo(bounds);
-		_canvas->setScriptZ(getZ(), getContext());
+		_canvas->setScriptZ(getZ(), getContext(), getCreationOrder());
 		_canvas->registerGraphics();
 
 		// Reading the image is quicker in the format of the picture
