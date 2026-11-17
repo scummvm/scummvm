@@ -463,7 +463,9 @@ int16 ScriptOpcodes::op_sub_2234D(Script *script) {
 
 int16 ScriptOpcodes::op_random(Script *script) {
 	ARG_EVALUATE(maxValue);
-	return _vm->_rnd->getRandomNumber(maxValue);
+	if (maxValue <= 0)
+		return 0;
+	return _vm->_rnd->getRandomNumber(maxValue - 1);
 }
 
 int16 ScriptOpcodes::op_paletteFunc(Script *script) {
