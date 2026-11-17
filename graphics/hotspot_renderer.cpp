@@ -55,6 +55,13 @@ void HotspotRenderer::invalidate() {
 	_dirty = true;
 }
 
+void HotspotRenderer::setLabelBounds(const Common::Rect &bounds) {
+	if (_labelBounds == bounds)
+		return;
+	_labelBounds = bounds;
+	_dirty = true;
+}
+
 void HotspotRenderer::clearLabels() {
 	_labels.clear();
 	_labelBytes = 0;
@@ -192,8 +199,9 @@ void HotspotRenderer::renderOverlay(OSystem &system, MarkerShape markerShape, bo
 	const bool visible = system.isOverlayVisible();
 	if (visible && !_ownsOverlay)
 		return;
+	_alphaOverlay = format.aBits() && system.hasFeature(OSystem::kFeatureOverlaySupportsAlpha);
 	const bool resized = _overlay.w != width || _overlay.h != height || _overlay.format != format;
-	if (!_dirty && !forceRedraw && !resized && visible && format.aBits() &&
+	if (!_dirty && !forceRedraw && !resized && visible && _alphaOverlay &&
 		_gameSize.x == gameWidth && _gameSize.y == gameHeight && _screenChangeID == screenChangeID &&
 		_shape == markerShape && _font == font)
 		return;
@@ -203,7 +211,7 @@ void HotspotRenderer::renderOverlay(OSystem &system, MarkerShape markerShape, bo
 	}
 	if (resized)
 		_overlay.create(width, height, format);
-	if (format.aBits()) {
+	if (_alphaOverlay) {
 		if (!resized)
 			_overlay.fillRect(_previousBounds, 0);
 	} else {
@@ -212,7 +220,7 @@ void HotspotRenderer::renderOverlay(OSystem &system, MarkerShape markerShape, bo
 	}
 	renderFrame(&_overlay, _hotspots, gameWidth, gameHeight, width, height, format, markerShape, font);
 	Common::Rect upload = _drawBounds;
-	if (format.aBits())
+	if (_alphaOverlay)
 		upload = unionRects(upload, _previousBounds);
 	if (resized || !visible || forceRedraw || screenChangeID != _screenChangeID)
 		upload = Common::Rect(width, height);
@@ -235,6 +243,7 @@ void HotspotRenderer::render(Surface *surface,
 		MarkerShape markerShape,
 		bool showText) {
 	const Font *font = showText ? (_style.font ? _style.font : FontMan.getFontByUsage(FontManager::kGUIFont)) : nullptr;
+	_alphaOverlay = format.aBits() != 0;
 	renderFrame(surface, hotspots, gameWidth, gameHeight, overlayWidth, overlayHeight, format, markerShape, font);
 }
 
@@ -256,8 +265,11 @@ void HotspotRenderer::renderFrame(Surface *surface, const Common::Array<HotspotI
 	_markerSize = MAX(2, (int)(_style.markerSize * _sizeScale));
 	_pointRadius = MAX(1, (int)(_style.pointRadius * _sizeScale));
 	_lineThickness = MAX(1, (int)(_style.lineThickness * _sizeScale));
-	_markerBlendColor = format.aBits() ? format.ARGBToColor(_style.markerOpacity,
+	_markerBlendColor = _alphaOverlay ? format.ARGBToColor(_style.markerOpacity,
 		_style.markerColor >> 16, _style.markerColor >> 8, _style.markerColor) : 0;
+
+	_scaledLabelBounds = Common::Rect((int)(_labelBounds.left * rawScaleX), (int)(_labelBounds.top * rawScaleY),
+		(int)(_labelBounds.right * rawScaleX), (int)(_labelBounds.bottom * rawScaleY));
 
 	_drawBounds = Common::Rect();
 	prepareRender(hotspots, gameWidth, gameHeight, overlayWidth, overlayHeight);
@@ -355,6 +367,12 @@ void HotspotRenderer::drawHotspotLabel(Surface *surface, const LabelLayout &layo
 }
 
 bool HotspotRenderer::isLabelSlotFree(const Common::Rect &candidate, int borderGrow) const {
+	if (!_scaledLabelBounds.isEmpty()) {
+		Common::Rect grown(candidate);
+		grown.grow(borderGrow);
+		if (!_scaledLabelBounds.contains(grown))
+			return false;
+	}
 	Common::Rect spaced(candidate);
 	spaced.grow(borderGrow + 2);
 	for (uint i = 0; i < _labelRects.size(); ++i)
@@ -612,7 +630,7 @@ void HotspotRenderer::blendPixel(Surface *surface, int px, int py,
 	if (!_style.markerOpacity || distance > maxSolidDistance)
 		return;
 
-	if (format.aBits()) {
+	if (_alphaOverlay) {
 		surface->setPixel(px, py, _markerBlendColor);
 		return;
 	}
@@ -633,7 +651,7 @@ void HotspotRenderer::fillBlendRect(Surface *surface, Common::Rect rect,
 	if (!opacity)
 		return;
 	rect.clip(Common::Rect(surface->w, surface->h));
-	if (format.aBits()) {
+	if (_alphaOverlay) {
 		surface->fillRect(rect, format.ARGBToColor(opacity, color >> 16, color >> 8, color));
 		return;
 	}

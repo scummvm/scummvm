@@ -102,6 +102,7 @@ public:
 	const HotspotStyle &getStyle() const { return _style; }
 	void setStyle(const HotspotStyle &style);
 	void invalidate();
+	void setLabelBounds(const Common::Rect &bounds);
 	void releaseResources();
 	bool ownsOverlay() const { return _ownsOverlay; }
 	void hideOverlay(OSystem &system);
@@ -189,10 +190,12 @@ private:
 	const LabelMask &getLabelMask(const Common::U32String &text, const Font *font,
 		int width, int height, int baseWidth, int baseHeight, const PixelFormat &format, LabelMask &scratch);
 	Common::Rect _drawBounds, _previousBounds;
+	Common::Rect _labelBounds, _scaledLabelBounds;
 	Surface _overlay;
 	Common::Array<HotspotInfo> _hotspots;
 	bool _dirty = true;
 	bool _ownsOverlay = false;
+	bool _alphaOverlay = true;
 	Common::Point _gameSize;
 	int _screenChangeID = -1;
 	MarkerShape _shape = kMarkerCrosshair;
