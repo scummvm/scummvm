@@ -2597,8 +2597,9 @@ void TextRecord::readTable(int tableIndex) {
 	_initialYOffset = _yOffset;
 	_initialYVelocity = _yVelocity;
 
-	int fontNumber = 0;
-	int colorNumber = 0;
+	// Without a font or a color, the text uses number 4 of each
+	int fontNumber = 4;
+	int colorNumber = 4;
 	bool isBold = false;
 	readField(L, tableIndex, "fontNum", fontNumber);
 	readField(L, tableIndex, "fontColor", colorNumber);
