@@ -856,6 +856,80 @@ bool GraphicsManager::takeSavePicture(Graphics::ManagedSurface &out) {
 	return true;
 }
 
+// Blends a 32 bit picture with an alpha channel onto a 32 bit target, giving
+// the same pixels as ManagedSurface::blitFrom. That one turns every pixel into
+// its components and back, which made the canvases of Nancy32's snow, as large
+// as the viewport and nearly all transparent, slow to draw; this one skips the
+// transparent pixels at once.
+static bool blitAlpha32(Graphics::ManagedSurface &target, const Graphics::ManagedSurface &src, const Common::Rect &source, const Common::Rect &dest) {
+	const Graphics::PixelFormat &srcFormat = src.format;
+	const Graphics::PixelFormat &destFormat = target.format;
+	if (srcFormat.bytesPerPixel != 4 || destFormat.bytesPerPixel != 4 || srcFormat.aBits() != 8 ||
+			srcFormat.rBits() != 8 || srcFormat.gBits() != 8 || srcFormat.bBits() != 8 ||
+			destFormat.rBits() != 8 || destFormat.gBits() != 8 || destFormat.bBits() != 8 ||
+			source.width() != dest.width() || source.height() != dest.height() || src.hasTransparentColor()) {
+		return false;
+	}
+
+	Common::Rect clipped = dest.findIntersectingRect(Common::Rect(target.w, target.h));
+	if (clipped.isEmpty()) {
+		return true;
+	}
+
+	const int offsetX = source.left - dest.left;
+	const int offsetY = source.top - dest.top;
+	const bool isSameFormat = srcFormat == destFormat;
+	const bool hasDestAlpha = destFormat.aBits() == 8;
+
+	for (int y = clipped.top; y < clipped.bottom; ++y) {
+		const uint32 *srcRow = (const uint32 *)src.getBasePtr(clipped.left + offsetX, y + offsetY);
+		uint32 *destRow = (uint32 *)target.getBasePtr(clipped.left, y);
+
+		for (int x = 0; x < clipped.width(); ++x) {
+			const uint32 color = srcRow[x];
+			const uint32 alpha = (color >> srcFormat.aShift) & 0xFF;
+			if (alpha == 0) {
+				continue;
+			}
+
+			const uint32 r = (color >> srcFormat.rShift) & 0xFF;
+			const uint32 g = (color >> srcFormat.gShift) & 0xFF;
+			const uint32 b = (color >> srcFormat.bShift) & 0xFF;
+
+			if (alpha == 0xFF) {
+				destRow[x] = isSameFormat ? color : destFormat.ARGBToColor(0xFF, r, g, b);
+				continue;
+			}
+
+			const uint32 destColor = destRow[x];
+			const uint32 destAlpha = hasDestAlpha ? (destColor >> destFormat.aShift) & 0xFF : 0xFF;
+			uint32 dr = (destColor >> destFormat.rShift) & 0xFF;
+			uint32 dg = (destColor >> destFormat.gShift) & 0xFF;
+			uint32 db = (destColor >> destFormat.bShift) & 0xFF;
+			uint32 da = destAlpha;
+
+			if (destAlpha == 0xFF) {
+				// x * 257 * 257 >> 24 is about x / 255, rounded as ManagedSurface::blitFrom does
+				dr = (((dr * (255U - alpha) + r * alpha) * (257U * 257U)) >> 24) & 0xFF;
+				dg = (((dg * (255U - alpha) + g * alpha) * (257U * 257U)) >> 24) & 0xFF;
+				db = (((db * (255U - alpha) + b * alpha) * (257U * 257U)) >> 24) & 0xFF;
+			} else {
+				const double sAlpha = alpha / 255.0;
+				const double dAlpha = destAlpha / 255.0 * (1.0 - sAlpha);
+				dr = (uint32)((r * sAlpha + dr * dAlpha) / (sAlpha + dAlpha));
+				dg = (uint32)((g * sAlpha + dg * dAlpha) / (sAlpha + dAlpha));
+				db = (uint32)((b * sAlpha + db * dAlpha) / (sAlpha + dAlpha));
+				da = (uint32)(255. * (sAlpha + dAlpha));
+			}
+
+			destRow[x] = destFormat.ARGBToColor(da, dr, dg, db);
+		}
+	}
+
+	target.addDirtyRect(clipped);
+	return true;
+}
+
 // Draw a given screen-space rectangle of an object
 void GraphicsManager::blitObject(Graphics::ManagedSurface &target, const RenderObject &src, Common::Rect screenRect) {
 	// An object whose image is missing has nothing to draw
@@ -864,7 +938,11 @@ void GraphicsManager::blitObject(Graphics::ManagedSurface &target, const RenderO
 	}
 
 	if (!src.isZoomed()) {
-		target.blitFrom(src._drawSurface, src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect)), screenRect);
+		const Common::Rect source = src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect));
+		if (!blitAlpha32(target, src._drawSurface, source, screenRect)) {
+			target.blitFrom(src._drawSurface, source, screenRect);
+		}
+
 		return;
 	}
 
