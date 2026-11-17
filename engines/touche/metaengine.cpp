@@ -132,7 +132,8 @@ Common::KeymapArray ToucheMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	gameKeyMap->addAction(createHotspotAction());
+	if (hotspotsEnabled(target))
+		gameKeyMap->addAction(createHotspotAction());
 
 	{
 		act = new Action("SKIPORQUIT", _("Skip sequence / open quit dialog"));
