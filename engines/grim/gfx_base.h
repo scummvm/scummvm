@@ -105,13 +105,6 @@ public:
 	 */
 	virtual void flipBuffer(bool opportunistic = false) = 0;
 
-	/**
-	 * FIXME: The implementations of these functions (for Grim and EMI, respectively)
-	 * are very similar. Needs refactoring. See issue #789.
-	 */
-	virtual void getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
-	virtual void getScreenBoundingBox(const EMIModel *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
-	virtual void getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) = 0;
 	virtual void startActorDraw(const Actor *act) = 0;
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;

@@ -1779,6 +1779,37 @@ bool Actor::updateTalk() {
 	return false;
 }
 
+ScreenBounds Actor::getScreenBounds() const {
+	Math::Matrix4 viewProjMatrix = g_driver->getProjection() * g_driver->getModelView();
+
+	ScreenBounds bounds;
+	if (g_grim->getGameType() == GType_GRIM) {
+		if (!_costumeStack.empty())
+			_costumeStack.back()->getBoundingBox(viewProjMatrix * getGrimModelMatrix(), bounds);
+	} else {
+		Math::Vector3d bboxPos, bboxSize;
+		getBBoxInfo(bboxPos, bboxSize);
+
+		Math::Matrix4 m = getFinalMatrix();
+		bboxPos = bboxPos + getWorldPos();
+
+		for (int x = 0; x < 2; x++) {
+			for (int y = 0; y < 2; y++) {
+				for (int z = 0; z < 2; z++) {
+					Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
+					m.transform(&added, false);
+					bounds.addPoint(viewProjMatrix, bboxPos + added);
+				}
+			}
+		}
+
+		if (!bounds.overlapsScreen())
+			return {};
+	}
+
+	return bounds;
+}
+
 void Actor::draw() {
 	// FIXME: if isAttached(), factor in the joint rotation as well.
 	const Math::Vector3d &absPos = getWorldPos();
@@ -1796,31 +1827,16 @@ void Actor::draw() {
 	}
 
 	if (_mustPlaceText) {
-		Common::Point p1, p2;
-		if (g_grim->getGameType() == GType_GRIM) {
-			if (!_costumeStack.empty()) {
-				int x1 = 1000, y1 = 1000, x2 = -1000, y2 = -1000;
-				g_driver->startActorDraw(this);
-				_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
-				g_driver->finishActorDraw();
-				p1.x = x1;
-				p1.y = y1;
-				p2.x = x2;
-				p2.y = y2;
-			}
-		} else {
-			g_driver->getActorScreenBBox(this, p1, p2);
-		}
-
 		TextObject *textObject = TextObject::getPool().getObject(_sayLineText);
 		if (textObject) {
-			if (p1.x == 1000 || p2.x == -1000 || p2.x == -1000) {
+			const ScreenBounds bounds = getScreenBounds();
+			if (bounds.isEmpty()) {
 				const Common::Point &pos = g_grim->getOffscreenTextPos();
 				textObject->setX(pos.x);
 				textObject->setY(pos.y);
 			} else {
-				textObject->setX((p1.x + p2.x) / 2);
-				textObject->setY(p1.y);
+				textObject->setX((bounds.getLeft() + bounds.getRight()) / 2);
+				textObject->setY(bounds.getTop());
 			}
 			// Deletes the original text and rebuilds it with the newly placed text
 			textObject->reset();
@@ -2368,6 +2384,15 @@ const Math::Matrix4 Actor::getFinalMatrix() const {
 	Math::Matrix4 rotMat(getRoll(), getYaw(), getPitch(), Math::EO_ZYX);
 	m = m * rotMat;
 	return  m;
+}
+
+Math::Matrix4 Actor::getGrimModelMatrix() const {
+	Math::Matrix4 m = getRotationQuat().toMatrix();
+	m *= getScale();
+	m.setValue(3, 3, 1.0f);
+	m.transpose();
+	m.setPosition(getWorldPos());
+	return m;
 }
 
 Math::Vector3d Actor::getWorldPos() const {

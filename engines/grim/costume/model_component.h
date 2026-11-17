@@ -28,6 +28,7 @@ namespace Grim {
 
 class Model;
 class AnimManager;
+struct ScreenBounds;
 
 class ModelComponent : public Component {
 public:
@@ -49,7 +50,7 @@ public:
 	int getNumNodes();
 	Model *getModel() { return _obj; }
 	void draw() override;
-	void getBoundingBox(int *x1, int *y1, int *x2, int *y2);
+	void getBoundingBox(const Math::Matrix4 &matrix, ScreenBounds &bounds);
 
 protected:
 	Model *_obj;

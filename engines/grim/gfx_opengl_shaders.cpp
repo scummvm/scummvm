@@ -455,9 +455,6 @@ void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d 
 }
 
 void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) {
-	Math::Matrix4 projMatrix = _projMatrix;
-	projMatrix.transpose();
-
 	_currentPos = pos;
 	_currentRot = rot;
 
@@ -473,7 +470,6 @@ void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &
 	camPos(2, 3) = -_currentPos.z();
 
 	_viewMatrix = invertZ * viewMatrix * camPos;
-	_mvpMatrix = projMatrix * _viewMatrix;
 	_viewMatrix.transpose();
 }
 
@@ -494,7 +490,9 @@ Math::Matrix4 GfxOpenGLS::getModelView() {
 		Math::Matrix4 modelView = invertZ * viewMatrix * camPos;
 		return modelView;
 	} else {
-		return _mvpMatrix;
+		Math::Matrix4 modelView = _viewMatrix;
+		modelView.transpose();
+		return modelView;
 	}
 }
 
@@ -527,214 +525,9 @@ void GfxOpenGLS::flipBuffer(bool opportunistic) {
 	g_system->updateScreen();
 }
 
-void GfxOpenGLS::getScreenBoundingBox(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
-	if (_currentShadowArray) {
-		*x1 = -1;
-		*y1 = -1;
-		*x2 = -1;
-		*y2 = -1;
-		return;
-	}
-
-	Math::Matrix4 modelMatrix = _currentActor->getFinalMatrix();
-	Math::Matrix4 mvpMatrix = _mvpMatrix * modelMatrix;
-
-	double top = 1000;
-	double right = -1000;
-	double left = 1000;
-	double bottom = -1000;
-
-	Math::Vector3d obj;
-	float *pVertices = nullptr;
-
-	for (int i = 0; i < model->_numFaces; i++) {
-		for (int j = 0; j < model->_faces[i].getNumVertices(); j++) {
-			pVertices = model->_vertices + 3 * model->_faces[i].getVertex(j);
-
-			obj.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
-
-			Math::Vector4d v = Math::Vector4d(obj.x(), obj.y(), obj.z(), 1.0f);
-			v = mvpMatrix * v;
-			v /= v.w();
-
-			double winX = (1 + v.x()) / 2.0f * _gameWidth;
-			double winY = (1 + v.y()) / 2.0f * _gameHeight;
-
-			if (winX > right)
-				right = winX;
-			if (winX < left)
-				left = winX;
-			if (winY < top)
-				top = winY;
-			if (winY > bottom)
-				bottom = winY;
-		}
-	}
-
-	double t = bottom;
-	bottom = _gameHeight - top;
-	top = _gameHeight - t;
-
-	if (left < 0)
-		left = 0;
-	if (right >= _gameWidth)
-		right = _gameWidth - 1;
-	if (top < 0)
-		top = 0;
-	if (bottom >= _gameHeight)
-		bottom = _gameHeight - 1;
-
-	if (top >= _gameHeight || left >= _gameWidth || bottom < 0 || right < 0) {
-		*x1 = -1;
-		*y1 = -1;
-		*x2 = -1;
-		*y2 = -1;
-		return;
-	}
-
-	*x1 = (int)left;
-	*y1 = (int)(_gameHeight - bottom);
-	*x2 = (int)right;
-	*y2 = (int)(_gameHeight - top);
-}
-
-void GfxOpenGLS::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
-	if (_currentShadowArray) {
-		*x1 = -1;
-		*y1 = -1;
-		*x2 = -1;
-		*y2 = -1;
-		return;
-	}
-
-	Math::Matrix4 modelMatrix = _currentActor->getFinalMatrix();
-	Math::Matrix4 mvpMatrix = _mvpMatrix * modelMatrix;
-
-	double top = 1000;
-	double right = -1000;
-	double left = 1000;
-	double bottom = -1000;
-
-	for (uint i = 0; i < model->_numFaces; i++) {
-		uint16 *indices = (uint16 *)model->_faces[i]._indexes;
-
-		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
-			uint16 index = indices[j];
-			const Math::Vector3d &dv = model->_drawVertices[index];
-
-			Math::Vector4d v = Math::Vector4d(dv.x(), dv.y(), dv.z(), 1.0f);
-			v = mvpMatrix * v;
-			v /= v.w();
-
-			double winX = (1 + v.x()) / 2.0f * _gameWidth;
-			double winY = (1 + v.y()) / 2.0f * _gameHeight;
-
-			if (winX > right)
-				right = winX;
-			if (winX < left)
-				left = winX;
-			if (winY < top)
-				top = winY;
-			if (winY > bottom)
-				bottom = winY;
-		}
-	}
-
-	double t = bottom;
-	bottom = _gameHeight - top;
-	top = _gameHeight - t;
-
-	if (left < 0)
-		left = 0;
-	if (right >= _gameWidth)
-		right = _gameWidth - 1;
-	if (top < 0)
-		top = 0;
-	if (bottom >= _gameHeight)
-		bottom = _gameHeight - 1;
-
-	if (top >= _gameHeight || left >= _gameWidth || bottom < 0 || right < 0) {
-		*x1 = -1;
-		*y1 = -1;
-		*x2 = -1;
-		*y2 = -1;
-		return;
-	}
-
-	*x1 = (int)left;
-	*y1 = (int)(_gameHeight - bottom);
-	*x2 = (int)right;
-	*y2 = (int)(_gameHeight - top);
-}
-
-void GfxOpenGLS::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) {
-	// Get the actor's bounding box information (describes a 3D box)
-	Math::Vector3d bboxPos, bboxSize;
-	actor->getBBoxInfo(bboxPos, bboxSize);
-
-	// Translate the bounding box to the actor's position
-	Math::Matrix4 m = actor->getFinalMatrix();
-	bboxPos = bboxPos + actor->getWorldPos();
-
-	// Set up the camera coordinate system
-	Math::Matrix4 modelView = _currentRot;
-	Math::Matrix4 zScale;
-	zScale.setValue(2, 2, -1.0);
-	modelView = modelView * zScale;
-	modelView.transpose();
-	modelView.translate(-_currentPos);
-	modelView.transpose();
-
-	// Set values outside of the screen range
-	p1.x = 1000;
-	p1.y = 1000;
-	p2.x = -1000;
-	p2.y = -1000;
-
-	// Project all of the points in the 3D bounding box
-	Math::Vector3d p, projected;
-	for (int x = 0; x < 2; x++) {
-		for (int y = 0; y < 2; y++) {
-			for (int z = 0; z < 2; z++) {
-				Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
-				m.transform(&added, false);
-				p = bboxPos + added;
-
-				Math::Vector4d v = Math::Vector4d(p.x(), p.y(), p.z(), 1.0f);
-				v = _projMatrix.transform(modelView.transform(v));
-				if (v.w() == 0.0)
-					return;
-				v /= v.w();
-
-				double winX = (1 + v.x()) / 2.0f * _gameWidth;
-				double winY = (1 + v.y()) / 2.0f * _gameHeight;
-
-				// Find the points
-				if (winX < p1.x)
-					p1.x = winX;
-				if (winY < p1.y)
-					p1.y = winY;
-				if (winX > p2.x)
-					p2.x = winX;
-				if (winY > p2.y)
-					p2.y = winY;
-			}
-		}
-	}
-
-	// Swap the p1/p2 y coorindates
-	int16 tmp = p1.y;
-	p1.y = 480 - p2.y;
-	p2.y = 480 - tmp;
-}
-
 void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	glEnable(GL_DEPTH_TEST);
-
-	const Math::Vector3d &pos = actor->getWorldPos();
-	const Math::Quaternion &quat = actor->getRotationQuat();
-	const float scale = actor->getScale();
 
 	Math::Matrix4 viewMatrix = _viewMatrix;
 	viewMatrix.transpose();
@@ -777,17 +570,12 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 			shaders[i]->setUniform1f("meshAlpha", 1.0f);
 		}
 	} else {
-		Math::Matrix4 modelMatrix = quat.toMatrix();
-		modelMatrix *= scale;
-		modelMatrix.setValue(3, 3, 1.0f);
+		Math::Matrix4 modelMatrix = actor->getGrimModelMatrix();
+		modelMatrix.transpose();
 
 		bool hasZBuffer = g_grim->getCurrSet()->getCurrSetup()->_bkgndZBm;
 		Math::Matrix4 extraMatrix;
 		_matrixStack.top() = extraMatrix;
-
-		modelMatrix.transpose();
-		modelMatrix.setPosition(pos);
-		modelMatrix.transpose();
 
 		for (int i = 0; i < 3; i++) {
 			shaders[i]->use();

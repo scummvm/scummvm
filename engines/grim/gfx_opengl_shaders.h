@@ -67,9 +67,6 @@ public:
 	 */
 	void flipBuffer(bool opportunistic = false) override;
 
-	void getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
-	void getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
-	void getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) override;
 	void startActorDraw(const Actor *actor) override;
 
 	void finishActorDraw() override;
@@ -252,7 +249,6 @@ private:
 	float _fclip;
 	Math::Matrix4 _projMatrix;
 	Math::Matrix4 _viewMatrix;
-	Math::Matrix4 _mvpMatrix;
 	Math::Matrix4 _overworldProjMatrix;
 
 	void setupTexturedCenteredQuad();

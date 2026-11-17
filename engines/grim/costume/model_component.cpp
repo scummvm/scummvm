@@ -191,20 +191,17 @@ void ModelComponent::draw() {
 	translateObject(true);
 }
 
-void ModelComponent::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
-	// If the object was drawn by being a component
-	// of it's parent then don't draw it
+static Math::Matrix4 getNodeChainMatrix(const ModelNode *node) {
+	if (!node)
+		return {};
+	return getNodeChainMatrix(node->_parent) * node->getAnimMatrix();
+}
 
+void ModelComponent::getBoundingBox(const Math::Matrix4 &matrix, ScreenBounds &bounds) {
 	if (_parent && _parent->isVisible())
 		return;
-	// Need to translate object to be in accordance
-	// with the setup of the parent
-	translateObject(false);
 
-	_hier->getBoundingBox(x1, y1, x2, y2);
-
-	// Need to un-translate when done
-	translateObject(true);
+	_hier->getBoundingBox(matrix * getNodeChainMatrix(_hier->_parent), bounds);
 }
 
 } // end of namespace Grim
