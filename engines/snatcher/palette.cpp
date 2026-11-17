@@ -43,10 +43,12 @@ void Palette::block() {
 
 void Palette::unblock() {
 	_blocked = false;
-	if (_restoreAfterUnblock) {
+	_refreshAfterLoad = 50;
+}
+
+void Palette::update() {
+	if (_refreshAfterLoad && !--_refreshAfterLoad)
 		updateSystemPalette();
-		_restoreAfterUnblock = false;
-	}
 }
 
 Palette *Palette::create(const Graphics::PixelFormat *pxf, PaletteManager *pm, Common::Platform platform, GraphicsEngine::GfxState &state) {

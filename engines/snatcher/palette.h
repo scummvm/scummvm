@@ -52,7 +52,7 @@ public:
 	virtual void processEventQueue() {}
 	virtual void clearEvents() {}
 	virtual void setDefaults(int mode) {}
-	virtual void update() {}
+	virtual void update();
 	virtual void hINTCallback(void*) {}
 
 	virtual void selectPalettes(uint32) {}
@@ -70,7 +70,7 @@ protected:
 
 	uint8 *_sysPalette = nullptr;
 	bool _blocked = false;
-	bool _restoreAfterUnblock = false;
+	int _refreshAfterLoad = 0;
 	const Graphics::PixelFormat _pixelFormat = Graphics::PixelFormat();
 	PaletteManager *_palMan = nullptr;
 	GraphicsEngine::GfxState &_gfxState;

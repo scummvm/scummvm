@@ -160,6 +160,11 @@ bool SCDPalette::enqueueEvent(ResourcePointer &res) {
 					_eventQueue[ii].cmd = 0;
 			}
 		}
+
+		// If we have a postload timer set to restore the palette we cancel that if the script sets any relevant palette events first.
+		if (_refreshAfterLoad && (_eventCurPos->cmd == 1 || _eventCurPos->cmd == 2 || _eventCurPos->cmd == 4 || _eventCurPos->cmd == 7 || _eventCurPos->cmd == 9))
+			_refreshAfterLoad = 0;
+
 		return true;
 	}
 
@@ -181,6 +186,10 @@ void SCDPalette::processEventQueue() {
 
 		if (p->cmd > _eventProcs.size())
 			error("SCDPalette::processEventQueue(): Invalid opcode 0x%02x", p->cmd);
+
+		// If we have a postload timer set to restore the palette we cancel that if we encounter any relevant palette events first.
+		if (_refreshAfterLoad && (p->cmd == 1 || p->cmd == 2 || p->cmd == 4 || p->cmd == 7 || p->cmd == 9))
+			_refreshAfterLoad = 0;
 
 		if (_eventProcs[p->cmd]->isValid())
 			(*_eventProcs[p->cmd])(p);
@@ -289,8 +298,6 @@ void SCDPalette::loadState(Common::SeekableReadStream *in) {
 				Common::copy<const uint16*, uint16*>(&_restorePalette[i * 64], &_restorePalette[i * 64 + 64], &_restorePalette[i * 64 + 128]);
 		}
 	}
-
-	_restoreAfterUnblock = true;
 }
 
 void SCDPalette::saveState(Common::SeekableWriteStream *out) {
@@ -362,7 +369,6 @@ void SCDPalette::postLoadProcess() {
 			Common::copy<const uint16 *, uint16 *>(&_restorePalette[i * 64], &_restorePalette[i * 64 + 64], palettes[i]);
 	}
 
-	_restoreAfterUnblock = restorePal;
 	delete[] _restorePalette;
 	_restorePalette = nullptr;	
 }
