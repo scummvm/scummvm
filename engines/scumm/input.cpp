@@ -342,7 +342,7 @@ void ScummEngine::endTextInput() {
 	engineDefault->setEnabled(true);
 	Common::Keymap *hotspots = keymapper->getKeymap("scumm-hotspots");
 	if (hotspots)
-		hotspots->setEnabled(true);
+		hotspots->setEnabled(ConfMan.getBool("enable_hotspots"));
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 

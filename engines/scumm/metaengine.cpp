@@ -1189,6 +1189,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		Keymap *hotspotMap = new Keymap(Keymap::kKeymapTypeGame, "scumm-hotspots", _("Hotspots"));
 		hotspotMap->setPartialMatchAllowed(false);
 		hotspotMap->addAction(createHotspotAction());
+		hotspotMap->setEnabled(ConfMan.getBool("enable_hotspots", target));
 		keymaps.push_back(hotspotMap);
 	}
 
