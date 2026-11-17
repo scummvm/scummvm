@@ -53,6 +53,11 @@ public:
 	/** Once a frame: the sounds that have finished are let go. */
 	void updateSound();
 
+	/** Starts a script block (by its name) at a label for a level; the variables are what the script reads and sets. */
+	int startScriptAt(Level *level, const char *block, const char *label, byte *variables);
+	int startScriptInJimLevel(const char *block, const char *label, byte *variables);
+	int startScriptInLevel(int level, const char *block, const char *label, byte *variables);
+
 	/** Reads a level file and builds its objects, hosted by this world. */
 	Level *loadLevelFile(const char *name, int mode, int index = -1);
 	/** The level at a place of the game's list, loaded on first use (null when it cannot be read). */

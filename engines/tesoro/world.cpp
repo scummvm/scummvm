@@ -341,6 +341,15 @@ void World::jimShow(bool visible) { jim()->setVisible(visible); }
 void World::jimMoveTo(int32 x, int32 y) { jim()->setPosition(x, y); }
 void World::jimRemoveFromMainList() { removeFromMainList(jim()); }
 
+int World::startScriptInJimLevel(const char *block, const char *label, byte *variables) { return startScriptInLevel(jimLevelIndex(), block, label, variables); }
+
+int World::startScriptInLevel(int index, const char *block, const char *label, byte *variables) {
+	return startScriptAt(index < 0 ? _engine._interface : level(index), block, label, variables);
+}
+
+int World::startScriptAt(Level *where, const char *block, const char *label, byte *variables) {
+	return _scripts ? _scripts->start(where, block, label, variables) : 0;
+}
 
 Common::SeekableReadStream &World::archiveStream() { return *_engine._archive.seekEntry(0); }
 
