@@ -1180,7 +1180,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 	}
 #endif
 
-	if (gameId != "rebel1" && gameId != "rebel2" &&
+	if (hotspotsEnabled(target) && gameId != "rebel1" && gameId != "rebel2" &&
 		gameId != "moonbase" &&
 		gameId != "baseball" && gameId != "baseball2001" && gameId != "Baseball2003" &&
 		gameId != "basketball" &&
