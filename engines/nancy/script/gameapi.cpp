@@ -1531,6 +1531,17 @@ static bool readStreamLifetime(const Common::String &lifetime, State::StreamFlag
 	return true;
 }
 
+// A stream that keeps the input goes in front of the frontmost stream, and any
+// other one shares the z of the stream that began it. Nancy19 to Nancy20 keep
+// the streams in an order of their own, where it goes a step in front; from
+// Resorting to Danger on, it goes 10 in front. 10 is more than the z of a
+// record spans, so it covers the scenes behind it, e.g. the journal of Lights,
+// Camera, Curses or the scrapbook of Nancy25.
+static int32 getCapturingStreamZOffset() {
+	const State::SceneStreamManager &streams = NancySceneState.getStreams();
+	return streams.getFrontZOffset() + 10 - streams.getRunningZOffset();
+}
+
 // Scene:BeginStream(name, scene, frame, lifetime, capturesInput, runsFirst), or
 // from Nancy21 on, Scene:BeginStream({stream, scene, frame, ends, captureInput})
 static int sceneBeginStream(lua_State *L) {
@@ -1561,10 +1572,6 @@ static int sceneBeginStream(lua_State *L) {
 		// TODO: "restartParent" and "isUI", which no script sets
 		readField(L, 2, "captureInput", flags.capturesInput);
 
-		// Before Nancy24, a stream is a step closer than the one that began it.
-		// From then on, a stream that keeps the input goes 10 in front of the
-		// frontmost stream, which is more than the z of a record spans, and any
-		// other one shares the z of the stream that began it.
 		if (g_nancy->getGameType() >= kGameTypeNancy26) {
 			// Nancy26 places streams by a z of their own
 #ifdef ENABLE_NANCY_V5
@@ -1575,11 +1582,8 @@ static int sceneBeginStream(lua_State *L) {
 				flags.z = NancySceneState.getStreams().getCapturingZ(flags.z, flags.isInViewport);
 			}
 #endif
-		} else if (g_nancy->getGameType() < kGameTypeNancy24) {
-			flags.zOffset = 1;
 		} else if (flags.capturesInput) {
-			const State::SceneStreamManager &streams = NancySceneState.getStreams();
-			flags.zOffset = streams.getFrontZOffset() + 10 - streams.getRunningZOffset();
+			flags.zOffset = getCapturingStreamZOffset();
 		}
 	} else {
 		name = luaL_checkstring(L, 2);
@@ -1594,6 +1598,10 @@ static int sceneBeginStream(lua_State *L) {
 		luaL_checktype(L, 7, LUA_TBOOLEAN);
 		flags.capturesInput = lua_toboolean(L, 6) != 0;
 		flags.runsFirst = lua_toboolean(L, 7) != 0;
+
+		if (flags.capturesInput && g_nancy->getGameType() < kGameTypeNancy26) {
+			flags.zOffset = getCapturingStreamZOffset();
+		}
 	}
 
 	State::SceneStreamManager &streams = NancySceneState.getStreams();
