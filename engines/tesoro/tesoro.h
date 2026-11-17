@@ -58,6 +58,7 @@ private:
 	friend class World;
 	friend class MenuItem;
 	friend class Console;
+	friend class Scripts;
 
 	const ADGameDescription *_gameDescription;
 	GameClock _clock;

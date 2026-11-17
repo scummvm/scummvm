@@ -24,7 +24,9 @@
 #include "tesoro/core/cursor.h"
 #include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
+#include "tesoro/core/namekey.h"
 #include "tesoro/core/walkfloor.h"
+#include "tesoro/scripts.h"
 #include "tesoro/world.h"
 
 namespace Tesoro {
@@ -43,6 +45,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("start", WRAP_METHOD(Console, start));
 	registerCmd("voice", WRAP_METHOD(Console, voice));
 	registerCmd("jimsay", WRAP_METHOD(Console, jimsay));
+	registerCmd("scripts", WRAP_METHOD(Console, scripts));
 
 }
 
@@ -213,6 +216,35 @@ bool Console::touching(int argc, const char **argv) {
 	}
 	if (count == 0)
 		debugPrintf("Nothing under the pointer\n");
+	return true;
+}
+
+bool Console::scripts(int argc, const char **argv) {
+	Scripts *scripts = g_engine->world().scripts();
+	if (!scripts) {
+		debugPrintf("The scripts are not loaded\n");
+		return true;
+	}
+
+	const ScriptLibrary &library = scripts->library();
+	if (argc < 2) {
+		uint32 labels = 0;
+		for (uint32 i = 0; i < library.blockCount(); ++i)
+			labels += library.block(i).labelCount();
+		debugPrintf("Blocks: %u\nLabels: %u\n", library.blockCount(), labels);
+		return true;
+	}
+
+	const ScriptBlock *block = library.find(nameKey64(argv[1]));
+	if (!block) {
+		debugPrintf("No block named %s\n", argv[1]);
+		return true;
+	}
+
+	debugPrintf("Type: %u\nCharacters: %u\nLabels: %u\nCommands: %u\n", block->type(), block->characterCount(), block->labelCount(), block->entryCount());
+	for (uint32 i = 0; i < block->entryCount(); ++i)
+		debugPrintf("%u ", block->entry(i).op());
+	debugPrintf("\n");
 	return true;
 }
 

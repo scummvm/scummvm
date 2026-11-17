@@ -34,6 +34,7 @@ namespace Tesoro {
 class Jim;
 class Level;
 class Object;
+class Scripts;
 class TesoroEngine;
 
 /**
@@ -47,7 +48,7 @@ public:
 	explicit World(TesoroEngine &engine);
 	~World();
 
-	bool loadSpeech();
+	bool loadGameData();
 
 	/** Once a frame: the sounds that have finished are let go. */
 	void updateSound();
@@ -63,6 +64,7 @@ public:
 	/** The second step of a level in the frame (its cameras, and for the player's level the picture shown). */
 	int levelSecondStep(Level &level);
 	SpeechTables &speech() { return _speech; }
+	Scripts *scripts() { return _scripts; }
 
 	/** The protagonist */
 	Jim *jim();
@@ -121,6 +123,7 @@ public:
 
 private:
 	friend class WorldLevel;
+	friend class Scripts;
 
 	/** The objects the game starts with switched off, once a level has been loaded. */
 	void applyStartState(Level &where, int index);
@@ -136,6 +139,7 @@ private:
 	bool _subtitles = true;
 	SoundDevice _sound;	// speech and sound effects
 	CdAudio _music;
+	Scripts *_scripts = nullptr;
 };
 
 } // End of namespace Tesoro

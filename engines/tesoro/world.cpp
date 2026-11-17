@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 
+#include "tesoro/scripts.h"
 #include "tesoro/tesoro.h"
 #include "tesoro/world.h"
 #include "tesoro/core/cameraframe.h"
@@ -91,9 +92,10 @@ World::~World() {
 	delete _jim;
 	for (int i = 0; i < kLevelCount; ++i)
 		delete _levels[i];
+	delete _scripts;
 }
 
-bool World::loadSpeech() {
+bool World::loadGameData() {
 	for (uint i = 0; i < SpeechTables::kCount; ++i) {
 		const uint32 offset = _engine._archive.findEntry(kSpeechFiles[i]);
 		if (!offset) {
@@ -108,7 +110,8 @@ bool World::loadSpeech() {
 			return false;
 		_speech.table(i).load(_speechText[i].data(), size, _engine._archive);
 	}
-	return true;
+	_scripts = new Scripts(*this);
+	return _scripts->load();
 }
 
 void World::updateSound() {
