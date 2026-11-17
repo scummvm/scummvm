@@ -85,7 +85,8 @@ Common::Array<Common::Keymap *> HollywoodMetaEngine::initKeymaps(const char *tar
 	if (getGameId(target) == "runaway")
 		return RunawayEngine::initKeymaps();
 	Common::KeymapArray keymaps = MetaEngine::initKeymaps(target);
-	keymaps[0]->addAction(createHotspotAction());
+	if (hotspotsEnabled(target))
+		keymaps[0]->addAction(createHotspotAction());
 	return keymaps;
 }
 
