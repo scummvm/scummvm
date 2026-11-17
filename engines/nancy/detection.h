@@ -48,20 +48,22 @@ enum GameType {
 	kGameTypeNancy17 = 18,	// Legend of the Crystal Skull - 2007-10-08
 	kGameTypeNancy18 = 19,	// The Phantom of Venice - 2008-07-11
 	kGameTypeNancy19 = 20,	// The Haunting of Castle Malloy - 2008-10-16
-	kGameTypeNancy20 = 21,	// Ransom of the Seven Ships - 2009-07-14 (discontinued)
-	kGameTypeNancy21 = 22,	// Warnings at Waverly Academy - 2009-10-13
-	kGameTypeNancy22 = 23,	// Trail of the Twister - 2010-06-29
-	kGameTypeNancy1New = 24,// Secrets Can Kill Remastered - 2010-08-24
-	kGameTypeNancy23 = 25,	// Shadow at the Water's Edge - 2010-10-19
-	kGameTypeNancy24 = 26,	// The Captive Curse - 2011-06-28
-	kGameTypeNancy25 = 27,	// Alibi in Ashes - 2011-10-18
-	kGameTypeNancy26 = 28,	// Tomb of the Lost Queen - 2012-05-08
-	kGameTypeNancy27 = 29,	// The Deadly Device - 2012-10-23
-	kGameTypeNancy28 = 30,	// Ghost of Thornton Hall - 2013-05-14
-	kGameTypeNancy29 = 31,	// The Silent Spy - 2013-10-22
-	kGameTypeNancy30 = 32,	// The Shattered Medallion - 2014-05-20
-	kGameTypeNancy31 = 33,	// Labyrinth of Lies - 2014-10-14
-	kGameTypeNancy32 = 34,	// Sea of Darkness - 2015-05-19
+	kGameTypeNancyDossier1 = 21,// Nancy Drew Dossier: Lights, Camera, Curses! - 2008-11-11
+	kGameTypeNancy20 = 22,	// Ransom of the Seven Ships - 2009-07-14 (discontinued)
+	kGameTypeNancyDossier2 = 23,// Nancy Drew Dossier: Resorting to Danger! - 2009-08-25
+	kGameTypeNancy21 = 24,	// Warnings at Waverly Academy - 2009-10-13
+	kGameTypeNancy22 = 25,	// Trail of the Twister - 2010-06-29
+	kGameTypeNancy1New = 26,// Secrets Can Kill Remastered - 2010-08-24
+	kGameTypeNancy23 = 27,	// Shadow at the Water's Edge - 2010-10-19
+	kGameTypeNancy24 = 28,	// The Captive Curse - 2011-06-28
+	kGameTypeNancy25 = 29,	// Alibi in Ashes - 2011-10-18
+	kGameTypeNancy26 = 30,	// Tomb of the Lost Queen - 2012-05-08
+	kGameTypeNancy27 = 31,	// The Deadly Device - 2012-10-23
+	kGameTypeNancy28 = 32,	// Ghost of Thornton Hall - 2013-05-14
+	kGameTypeNancy29 = 33,	// The Silent Spy - 2013-10-22
+	kGameTypeNancy30 = 34,	// The Shattered Medallion - 2014-05-20
+	kGameTypeNancy31 = 35,	// Labyrinth of Lies - 2014-10-14
+	kGameTypeNancy32 = 36,	// Sea of Darkness - 2015-05-19
 	// Midnight in Salem was made with Unity
 	// Mystery of the Seven Keys was made with Unity
 };
@@ -92,7 +94,9 @@ static const GameIdToType gameIdToType[] = {
 	{ "nancy17", kGameTypeNancy17 },
 	{ "nancy18", kGameTypeNancy18 },
 	{ "nancy19", kGameTypeNancy19 },
+	{ "nancydossier1", kGameTypeNancyDossier1 },
 	{ "nancy20", kGameTypeNancy20 },
+	{ "nancydossier2", kGameTypeNancyDossier2 },
 	{ "nancy21", kGameTypeNancy21 },
 	{ "nancy22", kGameTypeNancy22 },
 	{ "nancy1new", kGameTypeNancy1New },
