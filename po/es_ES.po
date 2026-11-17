@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-17 06:06+0000\n"
-"PO-Revision-Date: 2026-11-09 14:53+0000\n"
+"PO-Revision-Date: 2026-11-17 15:50+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8627,6 +8627,10 @@ msgid ""
 "or via the keymapper. It is advised to configure the keymapper before "
 "starting the game."
 msgstr ""
+"AVISO: este juego fue diseñado para usar con el teclado de juguete externo "
+"Comfy Keyboard. Este dispositivo se emulará mediante una ventana de ImGui o "
+"mediante el asignador de teclas. Se recomienda configurar el asignador de "
+"teclas antes de empezar a jugar."
 
 #. I18N: Shown at startup, the games were designed for a physical toy keyboard
 #: engines/comfy/comfy.cpp:65
@@ -8635,24 +8639,27 @@ msgid ""
 "Comfy Keyboard toy peripheral. This device is emulated via the keymapper. It "
 "is advised to configure the keymapper before starting the game."
 msgstr ""
+"AVISO: este juego fue diseñado para usar con el teclado de juguete externo "
+"Comfy Keyboard. Este dispositivo se emulará mediante el asignador de teclas. "
+"Se recomienda configurar el asignador de teclas antes de empezar a jugar."
 
 #: engines/comfy/comfy.cpp:70
 msgid "Understood"
-msgstr ""
+msgstr "Entendido"
 
 #: engines/comfy/comfy.cpp:70
-#, fuzzy
-#| msgid "Read Later"
 msgid "Remind me later"
-msgstr "Leer más tarde"
+msgstr "Recordar más tarde"
 
 #: engines/comfy/metaengine.cpp:38
 msgid "Force language setup screen on start-up"
-msgstr ""
+msgstr "Forzar pantalla de configuración de idioma al empezar"
 
 #: engines/comfy/metaengine.cpp:39
 msgid "Show the original language setup screen every time the game starts"
 msgstr ""
+"Muestra la pantalla original de configuración de idioma cada vez que se "
+"ejecute el juego"
 
 #: engines/comfy/metaengine.cpp:49 engines/hypno/metaengine.cpp:203
 #: engines/lab/metaengine.cpp:209 engines/ngi/metaengine.cpp:168
@@ -8663,129 +8670,111 @@ msgstr "Omitir introducción"
 
 #: engines/comfy/metaengine.cpp:50
 msgid "Skip the intro sequence which precedes the interactive movie"
-msgstr ""
+msgstr "Omite la secuencia de introducción previa a la película interactiva"
 
 #: engines/comfy/metaengine.cpp:61
-#, fuzzy
-#| msgid "Toggle virtual keyboard"
 msgid "Use ImGui based virtual keyboard"
-msgstr "Mostrar/Ocultar teclado virtual"
+msgstr "Usar teclado virtual de ImGui"
 
 #: engines/comfy/metaengine.cpp:62
 msgid "Show the interactive virtual Comfy keyboard implemented with ImGui"
-msgstr ""
+msgstr "Muestra una versión virtual del teclado Comfy implementada con ImGui"
 
 #: engines/comfy/metaengine.cpp:106
-#, fuzzy
-#| msgid "Run"
 msgid "Sun"
-msgstr "Correr"
+msgstr "Sol"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Rolling cylinder"
-msgstr ""
+msgstr "Cilindro rodante"
 
 #: engines/comfy/metaengine.cpp:106
-#, fuzzy
-#| msgid "Read"
 msgid "Red"
-msgstr "Leer"
+msgstr "Rojo"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Drum"
-msgstr ""
+msgstr "Tambor"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Snaily phone"
-msgstr ""
+msgstr "Caracoteléfono"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Purple"
-msgstr ""
+msgstr "Morado"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Piano"
-msgstr ""
+msgstr "Piano"
 
 #: engines/comfy/metaengine.cpp:107
-#, fuzzy
-#| msgid "Turn off"
 msgid "On / off"
-msgstr "Apagar"
+msgstr "Encender/Apagar"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Orange"
-msgstr ""
+msgstr "Naranja"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Moon"
-msgstr ""
+msgstr "Luna"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Jumpy phone"
-msgstr ""
+msgstr "Teléfono saltarín"
 
 #: engines/comfy/metaengine.cpp:107
-#, fuzzy
-#| msgid "Yell"
 msgid "Yellow"
-msgstr "Gritar"
+msgstr "Amarillo"
 
 #: engines/comfy/metaengine.cpp:108
-#, fuzzy
-#| msgid "Landscape"
 msgid "Handset"
-msgstr "Horizontal"
+msgstr "Auricular"
 
 #: engines/comfy/metaengine.cpp:108
 msgid "Blue"
-msgstr ""
+msgstr "Azul"
 
 #: engines/comfy/metaengine.cpp:108
 msgid "Trumpet"
-msgstr ""
+msgstr "Trompeta"
 
 #: engines/comfy/metaengine.cpp:108
 msgid "Buddy phone"
-msgstr ""
+msgstr "Teléfono amigo"
 
 #: engines/comfy/metaengine.cpp:108
-#, fuzzy
-#| msgid "green"
 msgid "Green"
-msgstr "verde"
+msgstr "Verde"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Flute"
-msgstr ""
+msgstr "Flauta"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Keyboard contact 19"
-msgstr ""
+msgstr "Contacto de teclado 19"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Comfy phone"
-msgstr ""
+msgstr "Teléfono Comfy"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Rainy cloud"
-msgstr ""
+msgstr "Nubarrón"
 
 #: engines/comfy/metaengine.cpp:110
 msgid "Feely phone"
-msgstr ""
+msgstr "Teléfono Feely"
 
 #: engines/comfy/metaengine.cpp:110
-#, fuzzy
-#| msgid "Music menu"
 msgid "Music"
-msgstr "Menú de música"
+msgstr "Música"
 
 #: engines/comfy/metaengine.cpp:121
-#, fuzzy
-#| msgid "Keyboard"
 msgid "Comfy Keyboard"
-msgstr "Teclado"
+msgstr "Teclado Comfy"
 
 #: engines/crab/input/input.cpp:119
 msgid "Talk / Interact"
@@ -11330,50 +11319,36 @@ msgid "Side step"
 msgstr "Moverse hacia los lados"
 
 #: engines/igor/metaengine.cpp:50
-#, fuzzy
-#| msgid "Copy protection"
 msgid "Skip copy protection"
-msgstr "Protección anticopia"
+msgstr "Omitir protección anticopia"
 
 #: engines/igor/metaengine.cpp:51
-#, fuzzy
-#| msgid "Enable copy protection"
 msgid "Skips original copy protection screen."
-msgstr "Activar protección anticopia"
+msgstr "Omite la pantalla original de protección anticopia."
 
 #: engines/igor/metaengine.cpp:82
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "Keyboard keymappings"
-msgstr "Asignaciones de guardado/carga"
+msgstr "Asignaciones de teclado"
 
 #: engines/igor/metaengine.cpp:121
 msgid "Right click with the keyboard"
-msgstr ""
+msgstr "Clic derecho con el teclado"
 
 #: engines/igor/metaengine.cpp:126
-#, fuzzy
-#| msgid "Up left"
 msgid "Up and left"
-msgstr "Subir a la izquierda"
+msgstr "Arriba y a la izquierda"
 
 #: engines/igor/metaengine.cpp:127
-#, fuzzy
-#| msgid "Up right"
 msgid "Up and right"
-msgstr "Subir a la derecha"
+msgstr "Arriba y a la derecha"
 
 #: engines/igor/metaengine.cpp:128
-#, fuzzy
-#| msgid "Down left"
 msgid "Down and left"
-msgstr "Bajar a la izquierda"
+msgstr "Abajo y a la izquierda"
 
 #: engines/igor/metaengine.cpp:129
-#, fuzzy
-#| msgid "Down right"
 msgid "Down and right"
-msgstr "Bajar a la derecha"
+msgstr "Abajo y a la derecha"
 
 #: engines/igor/metaengine.cpp:131 engines/saga/metaengine.cpp:454
 #: engines/tot/metaengine.cpp:175
@@ -14936,10 +14911,8 @@ msgstr ""
 "de un programador"
 
 #: engines/scumm/metaengine.cpp:1189
-#, fuzzy
-#| msgid "Show hotspots"
 msgid "Hotspots"
-msgstr "Mostrar zonas interactivas"
+msgstr "Zonas interactivas"
 
 #: engines/scumm/metaengine.cpp:1210
 msgid "Down left"
@@ -15900,131 +15873,107 @@ msgstr "Inventario/Omitir diálogo"
 
 #: engines/snatcher/metaengine.cpp:205
 msgid "A - Draw Blaster, B - Cancel, C - Select/Shoot"
-msgstr ""
+msgstr "A - Desenfundar, B - Cancelar, C - Seleccionar/Disparar"
 
 #: engines/snatcher/metaengine.cpp:206
 msgid "A - Draw Blaster, B - Select/Shoot, C - Cancel"
-msgstr ""
+msgstr "A - Desenfundar, B - Seleccionar/Disparar, C - Cancelar"
 
 #: engines/snatcher/metaengine.cpp:207
 msgid "A - Cancel, B - Draw Blaster, C - Select/Shoot"
-msgstr ""
+msgstr "A - Cancelar, B - Desenfundar, C - Seleccionar/Disparar"
 
 #: engines/snatcher/metaengine.cpp:208
 msgid "A - Cancel, B - Select/Shoot, C - Draw Blaster"
-msgstr ""
+msgstr "A - Cancelar, B - Seleccionar/Disparar, C - Desenfundar"
 
 #: engines/snatcher/metaengine.cpp:209
 msgid "A - Select/Shoot, B - Cancel, C - Draw Blaster"
-msgstr ""
+msgstr "A - Seleccionar/Disparar, B - Cancelar, C - Desenfundar"
 
 #: engines/snatcher/metaengine.cpp:210
 msgid "A - Select/Shoot, B - Draw Blaster, C - Cancel"
-msgstr ""
+msgstr "A - Seleccionar/Disparar, B - Desenfundar, C - Cancelar"
 
 #: engines/snatcher/metaengine.cpp:213
 msgid "Buttons Config:"
-msgstr ""
+msgstr "Configuración de botones:"
 
 #: engines/snatcher/metaengine.cpp:216
 msgid "Select Controller Buttons Config"
-msgstr ""
+msgstr "Seleccionar configuración de botones"
 
 #: engines/snatcher/metaengine.cpp:224
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable Lightgun"
-msgstr "Activar sonido"
+msgstr "Activar pistola de luz"
 
 #: engines/snatcher/metaengine.cpp:224
 msgid "Enable lightgun emulation via mouse."
-msgstr ""
+msgstr "Activa la emulación de pistola de luz usando el ratón."
 
 #: engines/snatcher/metaengine.cpp:226
-#, fuzzy
-#| msgid "Color Blind Mode"
 msgid "Mono Sound Mode"
-msgstr "Modo para daltónicos"
+msgstr "Sonido monofónico"
 
 #: engines/snatcher/metaengine.cpp:226
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Disable stereo sound."
-msgstr "Desactivar demostraciones"
+msgstr "Desactiva el sonido en estéreo."
 
 #: engines/snatcher/metaengine.cpp:285
-#, fuzzy
-#| msgid "Right Mouse Button"
 msgid "Lightgun Fire Button"
-msgstr "Botón derecho del ratón"
+msgstr "Pistola de luz - Disparar"
 
 #: engines/snatcher/metaengine.cpp:286
-#, fuzzy
-#| msgid "Right Mouse Button"
 msgid "Lightgun Start Button"
-msgstr "Botón derecho del ratón"
+msgstr "Pistola de luz - START"
 
 #: engines/snatcher/metaengine.cpp:289
 msgid "Controller Button A"
-msgstr ""
+msgstr "Botón A del mando"
 
 #: engines/snatcher/metaengine.cpp:290
 msgid "Controller Button B"
-msgstr ""
+msgstr "Botón B del mando"
 
 #: engines/snatcher/metaengine.cpp:291
 msgid "Controller Button C"
-msgstr ""
+msgstr "Botón C del mando"
 
 #: engines/snatcher/metaengine.cpp:292
 msgid "Controller Start Button"
-msgstr ""
+msgstr "Botón START del mando"
 
 #: engines/snatcher/metaengine.cpp:293
-#, fuzzy
-#| msgid "Control"
 msgid "Controller Up"
-msgstr "Controles"
+msgstr "Mando - Arriba"
 
 #: engines/snatcher/metaengine.cpp:294
-#, fuzzy
-#| msgid "Scroll Down"
 msgid "Controller Down"
-msgstr "Bajar"
+msgstr "Mando - Abajo"
 
 #: engines/snatcher/metaengine.cpp:295
-#, fuzzy
-#| msgid "Control key"
 msgid "Controller Left"
-msgstr "Tecla Ctrl"
+msgstr "Mando - Izda."
 
 #: engines/snatcher/metaengine.cpp:296
-#, fuzzy
-#| msgid "Control opacity"
 msgid "Controller Right"
-msgstr "Opacidad de controles"
+msgstr "Mando - Dcha."
 
 #: engines/snatcher/metaengine.cpp:297
-#, fuzzy
-#| msgid "Control key"
 msgid "Controller Up Left"
-msgstr "Tecla Ctrl"
+msgstr "Mando - Arriba e izda."
 
 #: engines/snatcher/metaengine.cpp:298
-#, fuzzy
-#| msgid "Control opacity"
 msgid "Controller Up Right"
-msgstr "Opacidad de controles"
+msgstr "Mando - Arriba y dcha."
 
 #: engines/snatcher/metaengine.cpp:299
 msgid "Controller Down Left"
-msgstr ""
+msgstr "Mando - Abajo e izda."
 
 #: engines/snatcher/metaengine.cpp:300
-#, fuzzy
-#| msgid "Control opacity"
 msgid "Controller Down Right"
-msgstr "Opacidad de controles"
+msgstr "Mando - Abajo y dcha."
 
 #: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
@@ -17134,91 +17083,96 @@ msgstr ""
 
 #: engines/ultima/metaengine.cpp:180
 msgid "Choose the attribute to boost"
-msgstr ""
+msgstr "Selecciona atributo a mejorar"
 
 #: engines/ultima/metaengine.cpp:181
 msgid ""
 "Lets you choose which attribute is raised by the \"ALAKAZAM!\" gift from the "
 "Offer command, as the Ultima II Upgrade does, instead of it being random"
 msgstr ""
+"Permite elegir el atributo que mejorarás usando «¡ALAKAZAM!» con el comando "
+"Ofrecer, como hace Ultima II Upgrade, en vez de mejorar un atributo al azar"
 
 #: engines/ultima/metaengine.cpp:191
 msgid "Mixed case, colored text"
-msgstr ""
+msgstr "Texto en mayúsculas/minúsculas y con colores"
 
 #: engines/ultima/metaengine.cpp:192
 msgid ""
 "Shows text in mixed case, and in color with the EGA graphics, as the Ultima "
 "II Upgrade does, instead of in capitals"
 msgstr ""
+"Muestra los textos con colores y con mayúsculas y minúsculas con los "
+"gráficos EGA, como hace Ultima II Upgrade, en vez de mostrar el texto solo "
+"en mayúsculas"
 
 #: engines/ultima/metaengine.cpp:202
-#, fuzzy
-#| msgid "Increase step size"
 msgid "Increase monster generation"
-msgstr "Aumentar longitud de pasos"
+msgstr "Aumentar generación de monstruos"
 
 #: engines/ultima/metaengine.cpp:203
 msgid ""
 "Doubles the rate monsters and ships appear in the world, and increases it in "
 "dungeons, as in the Ultima III Upgrade"
 msgstr ""
+"Duplica la frecuencia con la que aparecerán monstruos y naves en el mundo y "
+"aumenta la frecuencia en mazmorras, como hace Ultima III Upgrade"
 
 #: engines/ultima/metaengine.cpp:213
-#, fuzzy
-#| msgid "Show memory consumption"
 msgid "Halve food consumption"
-msgstr "Mostrar consumo de memoria"
+msgstr "Reducir consumo de comida a la mitad"
 
 #: engines/ultima/metaengine.cpp:214
 msgid ""
 "Food is eaten at half the original rate. The Ultima III Upgrade does this"
 msgstr ""
+"La comida se consumirá a la mitad de la velocidad original, como hace Ultima "
+"III Upgrade"
 
 #: engines/ultima/metaengine.cpp:224
-#, fuzzy
-#| msgid "Show options"
 msgid "Show moon phase icons"
-msgstr "Mostrar opciones"
+msgstr "Mostrar iconos de fases lunares"
 
 #: engines/ultima/metaengine.cpp:225
 msgid ""
 "Shows the phases of the moons as pictures rather than numbers, as in the "
 "Ultima III Upgrade"
 msgstr ""
+"Muestra las fases lunares como imágenes y no como números, como hace Ultima "
+"III Upgrade"
 
 #: engines/ultima/metaengine.cpp:235
-#, fuzzy
-#| msgid "Play simplified music"
 msgid "Play MIDI music"
-msgstr "Música simplificada"
+msgstr "Música en MIDI"
 
 #: engines/ultima/metaengine.cpp:236
 msgid "Plays the music that the Ultima III Upgrade adds to the game"
-msgstr ""
+msgstr "Reproduce la música añadida por Ultima III Upgrade"
 
 #: engines/ultima/metaengine.cpp:246
-#, fuzzy
-#| msgid "Toggle sound effects"
 msgid "Use Upgrade sound effects"
-msgstr "Activar/Desactivar efectos de sonido"
+msgstr "Usar efectos de sonido de Upgrade"
 
 #: engines/ultima/metaengine.cpp:247
 msgid ""
 "Plays the sound effects with the timing of the Ultima III Upgrade, which "
 "doesn't depend on the speed of the computer"
 msgstr ""
+"Reproduce los efectos de sonido con el ritmo de Ultima III Upgrade, que ya "
+"no depende de la velocidad del PC"
 
 #: engines/ultima/metaengine.cpp:257 engines/ultima/metaengine.cpp:268
 #: engines/ultima/metaengine.cpp:279
 msgid "Use textured dungeon walls"
-msgstr ""
+msgstr "Mostrar texturas en paredes de mazmorras"
 
 #: engines/ultima/metaengine.cpp:258
 msgid ""
 "Draws the view in dungeons using pictures of stone walls, doors, ladders and "
 "chests rather than lines. Only used with VGA graphics"
 msgstr ""
+"Dibuja la perspectiva de las mazmorras con imágenes de muros de piedra, "
+"puertas, escaleras y cofres en vez de usar líneas. Solo para gráficos VGA"
 
 #: engines/ultima/metaengine.cpp:269
 msgid ""
@@ -17226,6 +17180,8 @@ msgid ""
 "chests, coffins and monsters rather than lines. Only used with the EGA "
 "graphics"
 msgstr ""
+"Dibuja la perspectiva de las mazmorras con imágenes de muros de piedra, "
+"puertas, escaleras y cofres en vez de usar líneas. Solo para gráficos EGA"
 
 #: engines/ultima/metaengine.cpp:280
 msgid ""
@@ -17233,6 +17189,9 @@ msgid ""
 "chests and monsters rather than lines. Only used with the EGA graphics, "
 "other than Commodore 64"
 msgstr ""
+"Dibuja la perspectiva de las mazmorras con imágenes de muros de piedra, "
+"puertas, escaleras y cofres en vez de usar líneas. Solo para gráficos EGA "
+"ajenos a Commodore 64"
 
 #: engines/ultima/metaengine.cpp:290
 msgid "Always enable Christmas easter-egg"
@@ -17247,10 +17206,12 @@ msgid ""
 "Which of the game's renderers to use. This can also be changed from the "
 "game's title screen."
 msgstr ""
+"Elige el renderizador del juego. También se puede cambiar en la pantalla del "
+"título."
 
 #: engines/ultima/shared/engine/graphics_options.cpp:48
 msgid "Which of the game's renderers to use."
-msgstr ""
+msgstr "Elige el renderizador del juego."
 
 #: engines/ultima/ultima0/metaengine.cpp:49
 msgid "Swing"
@@ -17369,48 +17330,34 @@ msgid "Dungeon keys"
 msgstr "Teclas en mazmorras"
 
 #: engines/ultima/ultima1/gfx/render_mode.cpp:34
-#, fuzzy
-#| msgid "PC-9801 (8 Colors)"
 msgid "CGA (4 colors)"
-msgstr "PC-9801 (8 colores)"
+msgstr "CGA (4 colores)"
 
 #: engines/ultima/ultima1/gfx/render_mode.cpp:34
-#, fuzzy
-#| msgid "Windows (16 Colors)"
 msgid "EGA / Tandy (16 colors)"
-msgstr "Windows (16 colores)"
+msgstr "EGA/Tandy (16 colores)"
 
 #: engines/ultima/ultima1/metaengine.cpp:43
 #: engines/ultima/ultima2/metaengine.cpp:43
 #: engines/ultima/ultima3/metaengine.cpp:43
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "Salir del juego"
 
 #: engines/ultima/ultima1/metaengine.cpp:53
-#, fuzzy
-#| msgid "Attack 1"
 msgid "Attack Up"
-msgstr "Ataque 1"
+msgstr "Atacar hacia arriba"
 
 #: engines/ultima/ultima1/metaengine.cpp:54
-#, fuzzy
-#| msgid "Attack 1"
 msgid "Attack Down"
-msgstr "Ataque 1"
+msgstr "Atacar hacia abajo"
 
 #: engines/ultima/ultima1/metaengine.cpp:55
-#, fuzzy
-#| msgid "Attack 1"
 msgid "Attack Left"
-msgstr "Ataque 1"
+msgstr "Atacar hacia la izquierda"
 
 #: engines/ultima/ultima1/metaengine.cpp:56
-#, fuzzy
-#| msgid "Attack 1"
 msgid "Attack Right"
-msgstr "Ataque 1"
+msgstr "Atacar hacia la derecha"
 
 #: engines/ultima/ultima1/metaengine.cpp:58
 #: engines/ultima/ultima1/metaengine.cpp:89
@@ -17418,81 +17365,69 @@ msgstr "Ataque 1"
 #: engines/ultima/ultima3/metaengine.cpp:54
 #: engines/ultima/ultima4/metaengine.cpp:49
 msgid "Board"
-msgstr "Montar"
+msgstr "Montar (B)"
 
 #: engines/ultima/ultima1/metaengine.cpp:64
 #: engines/ultima/ultima1/metaengine.cpp:95
 msgid "Hyperjump"
-msgstr ""
+msgstr "Hipersalto"
 
 #: engines/ultima/ultima1/metaengine.cpp:65
 #: engines/ultima/ultima1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Info"
 msgid "Inform"
-msgstr "Información"
+msgstr "Informar"
 
 #: engines/ultima/ultima1/metaengine.cpp:66
 #: engines/ultima/ultima1/metaengine.cpp:97
 #: engines/ultima/ultima2/metaengine.cpp:63
 #: engines/ultima/ultima3/metaengine.cpp:63
-#, fuzzy
-#| msgid "Climb"
 msgid "Klimb"
-msgstr "Escalar"
+msgstr "Escalar (K)"
 
 #: engines/ultima/ultima1/metaengine.cpp:67
 #: engines/ultima/ultima1/metaengine.cpp:98
 msgid "Noise"
-msgstr ""
+msgstr "Ruido (N)"
 
 #: engines/ultima/ultima1/metaengine.cpp:70
 #: engines/ultima/ultima1/metaengine.cpp:101
 #: engines/ultima/ultima2/metaengine.cpp:70
 #: engines/ultima/ultima3/metaengine.cpp:70
-#, fuzzy
-#| msgid "Read"
 msgid "Ready"
-msgstr "Leer"
+msgstr "Listo (R)"
 
 #: engines/ultima/ultima1/metaengine.cpp:71
 #: engines/ultima/ultima1/metaengine.cpp:102
 #: engines/ultima/ultima2/metaengine.cpp:71
 #: engines/ultima/ultima3/metaengine.cpp:71
 msgid "Steal"
-msgstr ""
+msgstr "Robar (S)"
 
 #: engines/ultima/ultima1/metaengine.cpp:72
 #: engines/ultima/ultima1/metaengine.cpp:103
 #: engines/ultima/ultima2/metaengine.cpp:72
 #: engines/ultima/ultima3/metaengine.cpp:72
-#, fuzzy
-#| msgid "Translation"
 msgid "Transact"
-msgstr "Traducción"
+msgstr "Negociar (T)"
 
 #: engines/ultima/ultima1/metaengine.cpp:74
 #: engines/ultima/ultima1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Mode change"
 msgid "View change"
-msgstr "Cambiar modo"
+msgstr "Cambiar vista (V)"
 
 #: engines/ultima/ultima1/metaengine.cpp:75
 #: engines/ultima/ultima1/metaengine.cpp:106
 #: engines/ultima/ultima2/metaengine.cpp:76
 #: engines/ultima/ultima3/metaengine.cpp:76
 msgid "eXit"
-msgstr ""
+msgstr "Salir (X)"
 
 #: engines/ultima/ultima1/metaengine.cpp:76
 #: engines/ultima/ultima1/metaengine.cpp:107
 #: engines/ultima/ultima2/metaengine.cpp:78
 #: engines/ultima/ultima3/metaengine.cpp:78
-#, fuzzy
-#| msgid "Stats"
 msgid "Ztats"
-msgstr "Estadísticas"
+msgstr "Estadísticas (Z)"
 
 #. I18N: Going over something carefully
 #: engines/ultima/ultima1/metaengine.cpp:77
@@ -17510,40 +17445,34 @@ msgstr "Pasar"
 #: engines/ultima/ultima2/metaengine.cpp:101
 #: engines/ultima/ultima3/metaengine.cpp:90
 #: engines/ultima/ultima3/metaengine.cpp:101
-#, fuzzy
-#| msgid "Gameplay"
 msgid "Gameplay keys"
-msgstr "Jugabilidad"
+msgstr "Teclas de juego"
 
 #: engines/ultima/ultima2/data/data.cpp:45
 #: engines/ultima/ultima3/data/data.cpp:41
-#, fuzzy
-#| msgid "Original"
 msgid "Original (CGA)"
-msgstr "Original"
+msgstr "Original (CGA)"
 
 #: engines/ultima/ultima2/data/data.cpp:45
 #: engines/ultima/ultima3/data/data.cpp:41
 msgid "Composite monitor (CGA)"
-msgstr ""
+msgstr "Monitor de señal compuesta (CGA)"
 
 #: engines/ultima/ultima2/data/data.cpp:45
-#, fuzzy
-#| msgid "Standard"
 msgid "Standard EGA"
-msgstr "Estándar"
+msgstr "EGA estándar"
 
 #: engines/ultima/ultima2/data/data.cpp:46
 msgid "Classic EGA (v1.0)"
-msgstr ""
+msgstr "EGA clásico (v1.0)"
 
 #: engines/ultima/ultima2/data/data.cpp:46
 msgid "Alternate EGA (Wiltshire Dragon)"
-msgstr ""
+msgstr "EGA alternativo (Wiltshire Dragon)"
 
 #: engines/ultima/ultima2/data/data.cpp:46
 msgid "Commodore 64"
-msgstr ""
+msgstr "Commodore 64"
 
 #: engines/ultima/ultima2/metaengine.cpp:56
 #: engines/ultima/ultima3/metaengine.cpp:56
@@ -17555,33 +17484,27 @@ msgstr "Descender"
 #: engines/ultima/ultima2/metaengine.cpp:60
 #: engines/ultima/ultima3/metaengine.cpp:60
 msgid "Hyper"
-msgstr ""
+msgstr "Hiper"
 
 #: engines/ultima/ultima2/metaengine.cpp:61
 #: engines/ultima/ultima3/metaengine.cpp:61
-#, fuzzy
-#| msgid "Ignite"
 msgid "Ignite torch"
-msgstr "Prender fuego"
+msgstr "Encender antorcha"
 
 #: engines/ultima/ultima2/metaengine.cpp:64
 #: engines/ultima/ultima3/metaengine.cpp:64
-#, fuzzy
-#| msgid "Launcher"
 msgid "Launch"
-msgstr "Iniciador"
+msgstr "Lanzar"
 
 #: engines/ultima/ultima2/metaengine.cpp:66
 #: engines/ultima/ultima3/metaengine.cpp:66
-#, fuzzy
-#| msgid "Pause game anytime"
 msgid "Negate time"
-msgstr "Pausar en cualquier momento"
+msgstr "Parar tiempo"
 
 #: engines/ultima/ultima2/metaengine.cpp:67
 #: engines/ultima/ultima3/metaengine.cpp:67
 msgid "Offer"
-msgstr ""
+msgstr "Ofrecer"
 
 #: engines/ultima/ultima2/metaengine.cpp:75
 #: engines/ultima/ultima3/metaengine.cpp:75
@@ -17596,16 +17519,12 @@ msgid "Yell"
 msgstr "Gritar"
 
 #: engines/ultima/ultima3/data/data.cpp:41
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "EGA (16 colors)"
-msgstr "PC-9801 (16 colores)"
+msgstr "EGA (16 colores)"
 
 #: engines/ultima/ultima3/data/data.cpp:41
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "VGA (256 colors)"
-msgstr "PC-9821 (256 colores)"
+msgstr "VGA (256 colores)"
 
 #: engines/ultima/ultima4/metaengine.cpp:43
 #: engines/ultima/ultima4/metaengine.cpp:133
