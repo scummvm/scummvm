@@ -150,12 +150,12 @@ PhysicsRecord *PhysicsRecord::checkOwner(lua_State *L, int index, const char *ty
 }
 
 static b2Vec2 checkPhysicsVector(lua_State *L, int index) {
-	const ScriptVector *vector = testVector(L, index);
-	if (!vector) {
+	ScriptVector vector;
+	if (!testVector(L, index, vector)) {
 		luaL_typerror(L, index, "Vector");
 	}
 
-	return b2Vec2((float32)vector->v[0], (float32)vector->v[1]);
+	return b2Vec2((float32)vector.v[0], (float32)vector.v[1]);
 }
 
 static bool readPhysicsVector(lua_State *L, int tableIndex, const char *name, b2Vec2 &value) {
@@ -206,14 +206,14 @@ void PhysicsRecord::readTable(int tableIndex) {
 		luaL_error(L, "PhysicsAR must be created with an 'bounds' parameter");
 	}
 
-	const ScriptVector *bounds = testVector(L, -1);
-	if (!bounds) {
+	ScriptVector bounds;
+	if (!testVector(L, -1, bounds)) {
 		luaL_typerror(L, -1, "Vector");
 	}
 
 	b2AABB worldBounds;
-	worldBounds.lowerBound.Set((float32)bounds->v[0], (float32)bounds->v[3]);
-	worldBounds.upperBound.Set((float32)bounds->v[2], (float32)bounds->v[1]);
+	worldBounds.lowerBound.Set((float32)bounds.v[0], (float32)bounds.v[3]);
+	worldBounds.upperBound.Set((float32)bounds.v[2], (float32)bounds.v[1]);
 	lua_pop(L, 1);
 
 	b2Vec2 gravity(0.0f, 0.0f);

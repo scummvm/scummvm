@@ -687,11 +687,11 @@ Common::String describeValue(lua_State *L, int index) {
 		return Common::String::format("Rect(%d, %d, %d, %d)", rect->left, rect->top, rect->right, rect->bottom);
 	}
 
-	const ScriptVector *vector = testVector(L, index);
-	if (vector) {
+	ScriptVector vector;
+	if (testVector(L, index, vector)) {
 		Common::String text = "Vector(";
-		for (int i = 0; i < vector->size; ++i) {
-			text += Common::String::format(i ? ", %g" : "%g", vector->v[i]);
+		for (int i = 0; i < vector.size; ++i) {
+			text += Common::String::format(i ? ", %g" : "%g", vector.v[i]);
 		}
 
 		return text + ")";

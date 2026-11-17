@@ -85,7 +85,7 @@ struct ScriptMatrix {
 void registerMathTypes(lua_State *L);
 
 void pushVector(lua_State *L, const ScriptVector &vector);
-ScriptVector *testVector(lua_State *L, int index);
+bool testVector(lua_State *L, int index, ScriptVector &vector);	// false when it is something else
 
 void pushMatrix(lua_State *L, const ScriptMatrix &matrix);
 ScriptMatrix *testMatrix(lua_State *L, int index);

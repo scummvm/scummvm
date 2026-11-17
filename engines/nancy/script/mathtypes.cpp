@@ -166,16 +166,80 @@ ScriptRect transformRect(const ScriptRect &rect, const ScriptMatrix &matrix) {
 
 // Vector
 
+// Up to Nancy25 a vector is a table of its components, so type() calls it a
+// table and [1] to [4] read it. Nancy26 made it an object of its own.
+static bool areVectorsTables() {
+	return g_nancy->getGameType() < kGameTypeNancy26;
+}
+
 void pushVector(lua_State *L, const ScriptVector &vector) {
-	pushValue(L, kVectorType, vector);
+	if (!areVectorsTables()) {
+		pushValue(L, kVectorType, vector);
+		return;
+	}
+
+	lua_createtable(L, vector.size, 0);
+	for (int i = 0; i < vector.size; ++i) {
+		lua_pushnumber(L, vector.v[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+
+	luaL_getmetatable(L, kVectorType);
+	lua_setmetatable(L, -2);
 }
 
-ScriptVector *testVector(lua_State *L, int index) {
-	return (ScriptVector *)testUserData(L, index, kVectorType);
+static bool isVectorTable(lua_State *L, int index) {
+	if (!lua_istable(L, index) || !lua_getmetatable(L, index)) {
+		return false;
+	}
+
+	luaL_getmetatable(L, kVectorType);
+	const bool isVector = lua_rawequal(L, -1, -2);
+	lua_pop(L, 2);
+	return isVector;
 }
 
-static ScriptVector &checkVector(lua_State *L, int index) {
-	return *(ScriptVector *)checkUserData(L, index, kVectorType);
+bool testVector(lua_State *L, int index, ScriptVector &vector) {
+	if (!areVectorsTables()) {
+		const ScriptVector *data = (const ScriptVector *)testUserData(L, index, kVectorType);
+		if (data) {
+			vector = *data;
+		}
+
+		return data != nullptr;
+	}
+
+	index = absoluteIndex(L, index);
+	if (!isVectorTable(L, index)) {
+		return false;
+	}
+
+	vector = ScriptVector();
+	vector.size = 0;
+	for (int i = 0; i < 4; ++i) {
+		lua_rawgeti(L, index, i + 1);
+		const bool isNumber = lua_isnumber(L, -1);
+		if (isNumber) {
+			vector.v[i] = lua_tonumber(L, -1);
+			vector.size = i + 1;
+		}
+
+		lua_pop(L, 1);
+		if (!isNumber) {
+			break;
+		}
+	}
+
+	return true;
+}
+
+static ScriptVector checkVector(lua_State *L, int index) {
+	ScriptVector vector;
+	if (!testVector(L, index, vector)) {
+		luaL_typerror(L, index, kVectorType);
+	}
+
+	return vector;
 }
 
 // Vector:New(x, y[, z[, w]]), or Vector:New(vector or place) in Nancy20
@@ -184,9 +248,9 @@ static int vectorNew(lua_State *L) {
 	vector.size = lua_gettop(L) - 1;
 	if (vector.size == 1) {
 		// A copy of a vector, or a place made into a 2D vector
-		const ScriptVector *other = testVector(L, 2);
-		if (other) {
-			pushVector(L, *other);
+		ScriptVector other;
+		if (testVector(L, 2, other)) {
+			pushVector(L, other);
 			return 1;
 		}
 
@@ -249,7 +313,7 @@ static double getVectorLength(const ScriptVector &vector) {
 }
 
 static int vectorIndex(lua_State *L) {
-	const ScriptVector &vector = checkVector(L, 1);
+	const ScriptVector vector = checkVector(L, 1);
 
 	if (lua_type(L, 2) == LUA_TSTRING) {
 		const char *key = lua_tostring(L, 2);
@@ -279,14 +343,21 @@ static int vectorIndex(lua_State *L) {
 }
 
 static int vectorNewIndex(lua_State *L) {
-	ScriptVector &vector = checkVector(L, 1);
+	const ScriptVector vector = checkVector(L, 1);
 
 	const int component = getVectorComponent(L, 2);
 	if (component < 0 || component >= vector.size) {
 		return luaL_error(L, "Vector does not have field requested");
 	}
 
-	vector.v[component] = luaL_checknumber(L, 3);
+	const double value = luaL_checknumber(L, 3);
+	if (areVectorsTables()) {
+		lua_pushnumber(L, value);
+		lua_rawseti(L, 1, component + 1);
+	} else {
+		((ScriptVector *)testUserData(L, 1, kVectorType))->v[component] = value;
+	}
+
 	return 0;
 }
 
@@ -303,8 +374,8 @@ static double getComponent(const ScriptVector &vector, int index) {
 }
 
 static int vectorAdd(lua_State *L) {
-	const ScriptVector &left = checkVector(L, 1);
-	const ScriptVector &right = checkVector(L, 2);
+	const ScriptVector left = checkVector(L, 1);
+	const ScriptVector right = checkVector(L, 2);
 	checkSameSize(L, left, right);
 
 	ScriptVector result;
@@ -318,8 +389,8 @@ static int vectorAdd(lua_State *L) {
 }
 
 static int vectorSubtract(lua_State *L) {
-	const ScriptVector &left = checkVector(L, 1);
-	const ScriptVector &right = checkVector(L, 2);
+	const ScriptVector left = checkVector(L, 1);
+	const ScriptVector right = checkVector(L, 2);
 	checkSameSize(L, left, right);
 
 	ScriptVector result;
@@ -334,19 +405,20 @@ static int vectorSubtract(lua_State *L) {
 
 // A vector times a number, either way around, or two vectors part by part
 static int vectorMultiply(lua_State *L) {
-	const ScriptVector *left = testVector(L, 1);
-	const ScriptVector *right = testVector(L, 2);
+	ScriptVector left, right;
+	const bool isLeftVector = testVector(L, 1, left);
+	const bool isRightVector = testVector(L, 2, right);
 
 	ScriptVector result;
-	if (left && right) {
-		checkSameSize(L, *left, *right);
-		result.size = MAX(left->size, right->size);
+	if (isLeftVector && isRightVector) {
+		checkSameSize(L, left, right);
+		result.size = MAX(left.size, right.size);
 		for (int i = 0; i < result.size; ++i) {
-			result.v[i] = getComponent(*left, i) * getComponent(*right, i);
+			result.v[i] = getComponent(left, i) * getComponent(right, i);
 		}
 	} else {
-		result = left ? *left : checkVector(L, 2);
-		const double factor = luaL_checknumber(L, left ? 2 : 1);
+		result = isLeftVector ? left : checkVector(L, 2);
+		const double factor = luaL_checknumber(L, isLeftVector ? 2 : 1);
 		for (int i = 0; i < result.size; ++i) {
 			result.v[i] *= factor;
 		}
@@ -357,19 +429,18 @@ static int vectorMultiply(lua_State *L) {
 }
 
 static int vectorDivide(lua_State *L) {
-	if (!testVector(L, 1)) {
+	ScriptVector result;
+	if (!testVector(L, 1, result)) {
 		return luaL_error(L, "Cannot divide a scalar by a vector");
 	}
 
-	ScriptVector result = checkVector(L, 1);
-	const ScriptVector *right = testVector(L, 2);
-
-	if (right) {
-		checkSameSize(L, result, *right);
+	ScriptVector right;
+	if (testVector(L, 2, right)) {
+		checkSameSize(L, result, right);
 		const ScriptVector left = result;
-		result.size = MAX(left.size, right->size);
+		result.size = MAX(left.size, right.size);
 		for (int i = 0; i < result.size; ++i) {
-			result.v[i] = getComponent(left, i) / getComponent(*right, i);
+			result.v[i] = getComponent(left, i) / getComponent(right, i);
 		}
 	} else {
 		const double divisor = luaL_checknumber(L, 2);
@@ -393,8 +464,8 @@ static int vectorNegate(lua_State *L) {
 }
 
 static int vectorDot(lua_State *L) {
-	const ScriptVector &a = checkVector(L, 1);
-	const ScriptVector &b = checkVector(L, 2);
+	const ScriptVector a = checkVector(L, 1);
+	const ScriptVector b = checkVector(L, 2);
 	checkSameSize(L, a, b);
 
 	double sum = 0.0;
@@ -407,8 +478,8 @@ static int vectorDot(lua_State *L) {
 }
 
 static int vectorCross(lua_State *L) {
-	const ScriptVector &a = checkVector(L, 1);
-	const ScriptVector &b = checkVector(L, 2);
+	const ScriptVector a = checkVector(L, 1);
+	const ScriptVector b = checkVector(L, 2);
 	if (a.size != 3 || b.size != 3) {
 		return luaL_error(L, "Both vectors must be 3D");
 	}
@@ -437,7 +508,7 @@ static int vectorNormalize(lua_State *L) {
 // vector:Lerp(other, amount)
 static int vectorLerp(lua_State *L) {
 	ScriptVector result = checkVector(L, 1);
-	const ScriptVector &other = checkVector(L, 2);
+	const ScriptVector other = checkVector(L, 2);
 	const double amount = luaL_checknumber(L, 3);
 	checkSameSize(L, result, other);
 
@@ -454,7 +525,7 @@ static int vectorLerp(lua_State *L) {
 // vector:Reflect(normal), the vector bounced off a surface facing that way
 static int vectorReflect(lua_State *L) {
 	ScriptVector result = checkVector(L, 1);
-	const ScriptVector &normal = checkVector(L, 2);
+	const ScriptVector normal = checkVector(L, 2);
 	checkSameSize(L, result, normal);
 
 	double dot = 0.0;
@@ -526,7 +597,7 @@ static int vectorTransformNormal(lua_State *L) {
 // vector:Transform(kind, matrix). Nancy22 moves any vector by its x, y and z,
 // with no z for a 2D one, and gives a 3D vector back.
 static int vectorTransform(lua_State *L) {
-	const ScriptVector &vector = checkVector(L, 1);
+	const ScriptVector vector = checkVector(L, 1);
 
 	// Nancy26 leaves out what kind of transform it is
 	if (testMatrix(L, 2)) {
@@ -727,17 +798,17 @@ static ScriptMatrix makeRotation(const double v[3], double outer, double diagona
 
 // Matrix:RotateAxis(axis, angle), a turn by the angle in radians around a 3D vector
 static int matrixRotateAxis(lua_State *L) {
-	const ScriptVector *axis = testVector(L, 2);
-	if (!axis || axis->size != 3) {
+	ScriptVector axis;
+	if (!testVector(L, 2, axis) || axis.size != 3) {
 		return luaL_argerror(L, 2, "Axis must be a 3D vector");
 	}
 
 	const double angle = luaL_checknumber(L, 3);
 
-	const double length = getVectorLength(*axis);
+	const double length = getVectorLength(axis);
 	double n[3];
 	for (int i = 0; i < 3; ++i) {
-		n[i] = length != 0.0 ? axis->v[i] / length : axis->v[i];
+		n[i] = length != 0.0 ? axis.v[i] / length : axis.v[i];
 	}
 
 	pushMatrix(L, makeRotation(n, 1.0 - cos(angle), cos(angle), sin(angle)));
@@ -785,7 +856,7 @@ static int matrixNewIndex(lua_State *L) {
 		return luaL_error(L, "Matrix does not have field %d", row + 1);
 	}
 
-	const ScriptVector &vector = checkVector(L, 3);
+	const ScriptVector vector = checkVector(L, 3);
 	if (vector.size != 4) {
 		return luaL_error(L, "Matrix rows are 4D not %dD", vector.size);
 	}
@@ -898,9 +969,9 @@ static ScriptVector readTransformInput(lua_State *L, int index) {
 		return ScriptVector(luaL_checknumber(L, index), luaL_checknumber(L, index + 1), 0.0);
 	}
 
-	const ScriptVector *vector = testVector(L, index);
-	if (vector) {
-		return getFlatVector(*vector);
+	ScriptVector vector;
+	if (testVector(L, index, vector)) {
+		return getFlatVector(vector);
 	}
 
 	double x, y;

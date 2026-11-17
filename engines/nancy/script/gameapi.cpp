@@ -826,15 +826,16 @@ static bool writeSavedValue(lua_State *L, int index, Common::Array<byte> &out, i
 		return true;
 	}
 	case LUA_TUSERDATA: {
-		// The original's vectors are tables of their components, which get
-		// kept as such: Nancy25's StackingWin_SC reads them back with [1] and [2]
-		const ScriptVector *vector = testVector(L, index);
-		if (vector) {
+		// Up to Nancy25 vectors are tables of their components, which get kept
+		// as such: Nancy25's StackingWin_SC reads them back with [1] and [2].
+		// The vector objects of Nancy26 are kept the same way.
+		ScriptVector vector;
+		if (testVector(L, index, vector)) {
 			out.push_back(kSavedTable);
-			writeSavedUint32(out, (uint32)vector->size);
-			for (int i = 0; i < vector->size; ++i) {
+			writeSavedUint32(out, (uint32)vector.size);
+			for (int i = 0; i < vector.size; ++i) {
 				writeSavedNumber(out, i + 1);
-				writeSavedNumber(out, vector->v[i]);
+				writeSavedNumber(out, vector.v[i]);
 			}
 
 			return true;

@@ -138,10 +138,10 @@ public:
 // Reads a vector into the given one. Nancy32 has no vectors, and gives points
 // instead, which are at no depth.
 static bool readVectorValue(lua_State *L, int index, double *out, int size) {
-	const ScriptVector *vector = testVector(L, index);
-	if (vector) {
+	ScriptVector vector;
+	if (testVector(L, index, vector)) {
 		for (int i = 0; i < size; ++i) {
-			out[i] = vector->v[i];
+			out[i] = vector.v[i];
 		}
 
 		return true;

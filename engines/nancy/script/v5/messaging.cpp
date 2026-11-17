@@ -159,9 +159,9 @@ void copyValue(lua_State *from, int index, lua_State *to) {
 		return;
 	}
 
-	const ScriptVector *vector = testVector(from, index);
-	if (vector) {
-		pushVector(to, *vector);
+	ScriptVector vector;
+	if (testVector(from, index, vector)) {
+		pushVector(to, vector);
 		return;
 	}
 
