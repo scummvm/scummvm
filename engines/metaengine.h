@@ -391,6 +391,7 @@ public:
 
 	/** Create the standard hotspot action; ownership passes to the receiving keymap. */
 	static Common::Action *createHotspotAction();
+	static bool hotspotsEnabled(const char *target);
 
 	/**
 	 * Register the default values for the settings that the engine uses into the

@@ -26,6 +26,7 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -74,6 +75,13 @@ Common::Action *MetaEngine::createHotspotAction() {
 	action->setEvent(Common::EVENT_HOTSPOTS_SHOW);
 	action->addDefaultInputMapping("h");
 	return action;
+}
+
+bool MetaEngine::hotspotsEnabled(const char *target) {
+	if (target && ConfMan.hasKey("enable_hotspots", target))
+		return ConfMan.getBool("enable_hotspots", target);
+	return ConfMan.hasKey("enable_hotspots", Common::ConfigManager::kApplicationDomain) &&
+		ConfMan.getBool("enable_hotspots", Common::ConfigManager::kApplicationDomain);
 }
 
 Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
