@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-17 06:06+0000\n"
-"PO-Revision-Date: 2026-11-17 13:39+0000\n"
+"PO-Revision-Date: 2026-11-17 22:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -15913,131 +15913,107 @@ msgstr "Inventaire / Passer les dialogues"
 
 #: engines/snatcher/metaengine.cpp:205
 msgid "A - Draw Blaster, B - Cancel, C - Select/Shoot"
-msgstr ""
+msgstr "A - Dégainer le Blaster, B - Annuler, C - Sélectionner/Tirer"
 
 #: engines/snatcher/metaengine.cpp:206
 msgid "A - Draw Blaster, B - Select/Shoot, C - Cancel"
-msgstr ""
+msgstr "A - Dégainer le Blaster, B - Sélectionner/Tirer, C - Annuler"
 
 #: engines/snatcher/metaengine.cpp:207
 msgid "A - Cancel, B - Draw Blaster, C - Select/Shoot"
-msgstr ""
+msgstr "A - Annuler, B - Dégainer le Blaster, C - Sélectionner/Tirer"
 
 #: engines/snatcher/metaengine.cpp:208
 msgid "A - Cancel, B - Select/Shoot, C - Draw Blaster"
-msgstr ""
+msgstr "A - Annuler, B - Sélectionner/Tirer, C - Dégainer le Blaster"
 
 #: engines/snatcher/metaengine.cpp:209
 msgid "A - Select/Shoot, B - Cancel, C - Draw Blaster"
-msgstr ""
+msgstr "A - Sélectionner/Tirer, B - Annuler, C - Dégainer le Blaster"
 
 #: engines/snatcher/metaengine.cpp:210
 msgid "A - Select/Shoot, B - Draw Blaster, C - Cancel"
-msgstr ""
+msgstr "A - Sélectionner/Tirer, B - Dégainer le Blaster, C - Annuler"
 
 #: engines/snatcher/metaengine.cpp:213
 msgid "Buttons Config:"
-msgstr ""
+msgstr "Configuration des boutons :"
 
 #: engines/snatcher/metaengine.cpp:216
 msgid "Select Controller Buttons Config"
-msgstr ""
+msgstr "Choix de la configuration des boutons de la manette"
 
 #: engines/snatcher/metaengine.cpp:224
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable Lightgun"
-msgstr "Activer les sons"
+msgstr "Activer le pistolet optique"
 
 #: engines/snatcher/metaengine.cpp:224
 msgid "Enable lightgun emulation via mouse."
-msgstr ""
+msgstr "Active l'émulation du pistolet optique via la souris."
 
 #: engines/snatcher/metaengine.cpp:226
-#, fuzzy
-#| msgid "Color Blind Mode"
 msgid "Mono Sound Mode"
-msgstr "Mode Daltonien"
+msgstr "Mode Son mono"
 
 #: engines/snatcher/metaengine.cpp:226
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Disable stereo sound."
-msgstr "Désactiver le mode démo"
+msgstr "Désactive le son stéréo."
 
 #: engines/snatcher/metaengine.cpp:285
-#, fuzzy
-#| msgid "Right Mouse Button"
 msgid "Lightgun Fire Button"
-msgstr "Souris Bouton droit"
+msgstr "Pistolet optique Bouton de tir"
 
 #: engines/snatcher/metaengine.cpp:286
-#, fuzzy
-#| msgid "Right Mouse Button"
 msgid "Lightgun Start Button"
-msgstr "Souris Bouton droit"
+msgstr "Pistolet optique Bouton Start"
 
 #: engines/snatcher/metaengine.cpp:289
 msgid "Controller Button A"
-msgstr ""
+msgstr "Manette Bouton A"
 
 #: engines/snatcher/metaengine.cpp:290
 msgid "Controller Button B"
-msgstr ""
+msgstr "Manette Bouton B"
 
 #: engines/snatcher/metaengine.cpp:291
 msgid "Controller Button C"
-msgstr ""
+msgstr "Manette Bouton C"
 
 #: engines/snatcher/metaengine.cpp:292
 msgid "Controller Start Button"
-msgstr ""
+msgstr "Manette Bouton Start"
 
 #: engines/snatcher/metaengine.cpp:293
-#, fuzzy
-#| msgid "Control"
 msgid "Controller Up"
-msgstr "Contrôles"
+msgstr "Manette Haut"
 
 #: engines/snatcher/metaengine.cpp:294
-#, fuzzy
-#| msgid "Scroll Down"
 msgid "Controller Down"
-msgstr "Défiler vers le bas"
+msgstr "Manette Bas"
 
 #: engines/snatcher/metaengine.cpp:295
-#, fuzzy
-#| msgid "Control key"
 msgid "Controller Left"
-msgstr "Touche Control"
+msgstr "Manette Gauche"
 
 #: engines/snatcher/metaengine.cpp:296
-#, fuzzy
-#| msgid "Control opacity"
 msgid "Controller Right"
-msgstr "Opacité des contrôles"
+msgstr "Manette Droite"
 
 #: engines/snatcher/metaengine.cpp:297
-#, fuzzy
-#| msgid "Control key"
 msgid "Controller Up Left"
-msgstr "Touche Control"
+msgstr "Manette Haut Gauche"
 
 #: engines/snatcher/metaengine.cpp:298
-#, fuzzy
-#| msgid "Control opacity"
 msgid "Controller Up Right"
-msgstr "Opacité des contrôles"
+msgstr "Manette Haut Droite"
 
 #: engines/snatcher/metaengine.cpp:299
 msgid "Controller Down Left"
-msgstr ""
+msgstr "Manette Bas Gauche"
 
 #: engines/snatcher/metaengine.cpp:300
-#, fuzzy
-#| msgid "Control opacity"
 msgid "Controller Down Right"
-msgstr "Opacité des contrôles"
+msgstr "Manette Bas Droite"
 
 #: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
