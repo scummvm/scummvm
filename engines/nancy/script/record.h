@@ -66,8 +66,9 @@ enum RecordType {
 	kRecordCheckBox		= 20,
 	kRecordSlider		= 21,
 	kRecordOverlayCombiner	= 22,	// Nancy29
+	kRecordFlashlight	= 23,	// Lights, Camera, Curses
 
-	kNumRecordTypes		= 23
+	kNumRecordTypes		= 24
 };
 
 // What the player does that records get told about
@@ -167,6 +168,9 @@ public:
 	void setStreamPaused(bool isPaused);
 	bool isStreamPaused() const { return _isStreamPaused; }
 
+	// Lights, Camera, Curses: a masked record doesn't show where a Flashlight
+	// record drawn before it lights the scene up
+	bool isMasked() const { return _isMasked; }
 	bool hasStarted() const { return _hasStarted; }
 	bool hasRunOnce() const { return _hasRunOnce; }
 	// Counted from the node the record is under, when it is under one
@@ -399,6 +403,7 @@ private:
 	bool _isDone = false;
 	bool _isFinishing = false;	// while OnDone runs
 	bool _isStreamPaused = false;
+	bool _isMasked = false;
 	bool _hasEndedInSkip = false;
 	bool _hasRunOnce = false;
 

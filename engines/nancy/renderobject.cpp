@@ -103,6 +103,20 @@ void RenderObject::setTransparent(bool isTransparent) {
 	}
 }
 
+void RenderObject::setStencil(bool isStencil) {
+	if (isStencil != _isStencil) {
+		_isStencil = isStencil;
+		_needsRedraw = true;
+	}
+}
+
+void RenderObject::setMasked(bool isMasked) {
+	if (isMasked != _isMasked) {
+		_isMasked = isMasked;
+		_needsRedraw = true;
+	}
+}
+
 void RenderObject::setClipRect(const Common::Rect &clip) {
 	if (clip != _clipRect) {
 		_clipRect = clip;

@@ -95,7 +95,8 @@ static const RecordKindNames kRecordKindNames[kNumRecordTypes] = {
 	{ "RadioButton", "ND.RadioButton" },
 	{ "CheckBox", "ND.CheckBox" },
 	{ "Slider", "ND.Slider" },
-	{ "OverlayCombiner", "ND.OverlayCombiner" }
+	{ "OverlayCombiner", "ND.OverlayCombiner" },
+	{ "Flashlight", "ND.FlashlightAR" }
 };
 
 const char *getRecordKindName(RecordType type) {
@@ -161,6 +162,8 @@ Record *makeRecord(RecordType type, SceneContext &context) {
 		return new TextRecord(context);
 	case kRecordParticle:
 		return new ParticleRecord(context);
+	case kRecordFlashlight:
+		return new FlashlightRecord(context);
 	case kRecordPhysics:
 		return new PhysicsRecord(context);
 	case kRecordXsheet:
@@ -1191,6 +1194,7 @@ void OverrideRecord::updateGraphics() {
 	}
 
 	_renderSurface.clear(0);
+	_canvas->setMasked(isMasked());
 
 	// From Nancy26 on, a picture the function takes shows what is below it
 	const bool isDrawnInPlace = g_nancy->getGameType() >= kGameTypeNancy26;
@@ -1530,6 +1534,121 @@ void OverlayRecord::applyRects() {
 	_graphic.setNeedsRedraw(true);
 }
 
+// Flashlight
+
+void FlashlightRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+
+	Common::String imageName;
+	if (!readField(L, tableIndex, "ovl", imageName)) {
+		luaL_error(L, "OverlayAR must be created with a ovl parameter");
+	}
+
+	if (!loadCachedImage(imageName, Common::String(), _cachedImage, _image)) {
+		luaL_error(L, "Could not load flashlight %s", imageName.c_str());
+	}
+
+	if (!pushField(L, tableIndex, "source")) {
+		luaL_error(L, "Flashlight AR requires field 'source' to be a rect");
+	}
+
+	_source = checkRect(L, -1);
+	lua_pop(L, 1);
+
+	_dest = _source;
+	if (pushField(L, tableIndex, "onScreen")) {
+		_dest = checkRect(L, -1);
+		lua_pop(L, 1);
+	}
+
+	readField(L, tableIndex, "on", _isOn);
+	readField(L, tableIndex, "followMouse", _followsMouse);
+
+	_graphic.init();
+	_graphic.setStencil(true);
+	_graphic.setVisible(false);
+	applyRects();
+	onZChanged();
+	_graphic.registerGraphics();
+}
+
+void FlashlightRecord::applyRects() {
+	_isPlacementStale = false;
+
+	Common::Rect source = _source.toRect();
+	source.clip(Common::Rect(_image.w, _image.h));
+	if (!source.isEmpty()) {
+		placePicture(_graphic, _image, source, _dest, _followsMouse ? ScriptMatrix() : getTransform(), kNoModColor);
+	}
+}
+
+void FlashlightRecord::onZChanged() {
+	_graphic.setScriptZ(getZ(), getContext(), getCreationOrder());
+}
+
+void FlashlightRecord::registerGraphics() {
+	_graphic.registerGraphics();
+}
+
+void FlashlightRecord::updateGraphics() {
+	if (_isPlacementStale) {
+		applyRects();
+	}
+
+	_graphic.setClipRect(getScreenClip());
+	_graphic.setVisible(isShown() && _isOn && !_source.isEmpty(), false);
+}
+
+// The light is centered on the mouse, while it is in the viewport
+void FlashlightRecord::onMouseMove(const Common::Point32 &point, bool inViewport) {
+	if (!inViewport || !_followsMouse) {
+		return;
+	}
+
+	const double halfWidth = _source.width() * 0.5;
+	const double halfHeight = _source.height() * 0.5;
+	const ScriptRect dest(point.x - (int32)ceil(halfWidth), point.y - (int32)ceil(halfHeight),
+		point.x + (int32)floor(halfWidth), point.y + (int32)floor(halfHeight));
+
+	if (dest != _dest) {
+		_dest = dest;
+		_isPlacementStale = true;
+	}
+}
+
+bool FlashlightRecord::getField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		pushRect(L, _dest);
+	} else if (key == "on") {
+		lua_pushboolean(L, _isOn);
+	} else if (key == "followMouse") {
+		lua_pushboolean(L, _followsMouse);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+bool FlashlightRecord::setField(const Common::String &key) {
+	lua_State *L = getLua();
+
+	if (key == "onScreen") {
+		_dest = checkRect(L, 3);
+	} else if (key == "on") {
+		_isOn = lua_toboolean(L, 3) != 0;
+	} else if (key == "followMouse") {
+		_followsMouse = lua_toboolean(L, 3) != 0;
+	} else {
+		return false;
+	}
+
+	_isPlacementStale = true;
+	return true;
+}
+
 void OverlayRecord::onZChanged() {
 	_graphic.setScriptZ(getZ(), getContext(), getCreationOrder());
 #ifdef ENABLE_NANCY_V5
@@ -1549,6 +1668,11 @@ void OverlayRecord::registerGraphics() {
 }
 
 void OverlayRecord::updateGraphics() {
+	_graphic.setMasked(isMasked());
+#ifdef ENABLE_NANCY_V5
+	_copyGraphic.setMasked(isMasked());
+#endif
+
 	if (_hasDestTable && isShown()) {
 		Common::Array<ScriptRect> dests;
 		readDestTable(dests);
@@ -2120,6 +2244,7 @@ void AnimOverlayRecord::updateGraphics() {
 		applyFrame();
 	}
 
+	_graphic.setMasked(isMasked());
 	_graphic.setClipRect(getScreenClip());
 	_graphic.setVisible(isShown() && _isVisible && _hasPicture, false);
 }
@@ -2763,6 +2888,7 @@ void TextRecord::registerGraphics() {
 
 void TextRecord::updateGraphics() {
 	_graphic.setVisible(isActive(), false);
+	_graphic.setMasked(isMasked());
 
 	if (_isDirty) {
 		_isDirty = false;
@@ -3117,6 +3243,7 @@ void MovieRecord::updateGraphics() {
 		applyPosition();
 	}
 
+	_graphic.setMasked(isMasked());
 	_graphic.setClipRect(getScreenClip());
 	_graphic.setVisible(isShown() && _isVisible && !isSeeThrough(), false);
 }

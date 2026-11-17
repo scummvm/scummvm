@@ -179,6 +179,7 @@ void Record::create(int tableIndex) {
 	}
 
 	readField(L, tableIndex, "z", _z);
+	readField(L, tableIndex, "masked", _isMasked);
 	readField(L, tableIndex, "scriptOwns", _isScriptOwned);
 
 #ifdef ENABLE_NANCY_V5
@@ -463,6 +464,9 @@ int Record::getScriptField() {
 	} else if (key == "z") {
 		lua_pushnumber(L, _z);
 		return 1;
+	} else if (key == "masked") {
+		lua_pushboolean(L, _isMasked);
+		return 1;
 	} else if (key == "transform" && hasTransform()) {
 		pushMatrix(L, _transform);
 		return 1;
@@ -525,6 +529,8 @@ int Record::setScriptField() {
 			_z = z;
 			onZChanged();
 		}
+	} else if (key == "masked") {
+		_isMasked = lua_toboolean(L, 3) != 0;
 	} else if (key == "transform" && hasTransform()) {
 		// Scripts that move things around set it every frame, whether it changed or not
 		const ScriptMatrix &transform = checkMatrix(L, 3);

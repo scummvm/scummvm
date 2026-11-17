@@ -288,7 +288,9 @@ void GraphicsManager::drawObjects(Graphics::ManagedSurface &target, const Common
 			entry.position.clip(object->getClipRect());
 		}
 
-		entry.isOpaque = !object->_drawSurface.hasTransparentColor() && object->_drawSurface.format != _transparentPixelFormat;
+		// What a stencil leaves out of a masked object shows what is behind it
+		entry.isOpaque = !object->_drawSurface.hasTransparentColor() && object->_drawSurface.format != _transparentPixelFormat &&
+			!object->isStencil() && !object->isMasked();
 		if (!entry.position.isEmpty()) {
 			drawn.push_back(entry);
 		}
@@ -297,7 +299,7 @@ void GraphicsManager::drawObjects(Graphics::ManagedSurface &target, const Common
 	for (const Common::Rect &rect : rects) {
 		for (uint i = 0; i < drawn.size(); ++i) {
 			const Common::Rect intersection = rect.findIntersectingRect(drawn[i].position);
-			if (intersection.isEmpty()) {
+			if (intersection.isEmpty() || drawn[i].object->isStencil()) {
 				continue;
 			}
 
@@ -310,8 +312,22 @@ void GraphicsManager::drawObjects(Graphics::ManagedSurface &target, const Common
 				}
 			}
 
-			if (!isHidden) {
+			if (isHidden) {
+				continue;
+			}
+
+			// Only the stencils drawn before a masked object cut into it
+			Common::Array<const RenderObject *> stencils;
+			for (uint j = 0; j < i && drawn[i].object->isMasked(); ++j) {
+				if (drawn[j].object->isStencil() && !intersection.findIntersectingRect(drawn[j].position).isEmpty()) {
+					stencils.push_back(drawn[j].object);
+				}
+			}
+
+			if (stencils.empty()) {
 				blitObject(target, *drawn[i].object, intersection);
+			} else {
+				blitMaskedObject(target, *drawn[i].object, stencils, intersection);
 			}
 		}
 	}
@@ -1013,6 +1029,60 @@ void GraphicsManager::blitObject(Graphics::ManagedSurface &target, const RenderO
 	const Common::Rect source = src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(unzoomed));
 	if (!source.isEmpty()) {
 		target.blitFrom(src._drawSurface, source, screenRect);
+	}
+}
+
+// Whether a stencil object covers a pixel of the screen: where its picture
+// isn't transparent, as the alpha test of the original lets through. The mask
+// of the flashlight is black where it lights, so its alpha is what counts.
+static bool isStencilPixel(const RenderObject &stencil, int x, int y) {
+	const Common::Rect local = stencil.convertToLocal(Common::Rect(x, y, x + 1, y + 1));
+	const Graphics::ManagedSurface &surface = stencil._drawSurface;
+	if (!surface.getBounds().contains(local.left, local.top)) {
+		return false;
+	}
+
+	const uint32 color = surface.getPixel(local.left, local.top);
+	if (surface.format.aBits() == 0) {
+		return !surface.hasTransparentColor() || color != surface.getTransparentColor();
+	}
+
+	byte a, r, g, b;
+	surface.format.colorToARGB(color, a, r, g, b);
+	return a != 0;
+}
+
+// Draws an object without the pixels the stencils cover, through a transparent
+// copy of the part that gets drawn
+void GraphicsManager::blitMaskedObject(Graphics::ManagedSurface &target, const RenderObject &src, const Common::Array<const RenderObject *> &stencils, const Common::Rect &screenRect) {
+	const Graphics::ManagedSurface &image = src._drawSurface;
+	const Common::Rect source = image.getBounds().findIntersectingRect(src.convertToLocal(screenRect));
+	if (src.isZoomed() || source.isEmpty() || source.width() != screenRect.width() || source.height() != screenRect.height()) {
+		blitObject(target, src, screenRect);
+		return;
+	}
+
+	Graphics::ManagedSurface part(source.width(), source.height(), _transparentPixelFormat);
+	for (int y = 0; y < source.height(); ++y) {
+		for (int x = 0; x < source.width(); ++x) {
+			const uint32 color = image.getPixel(source.left + x, source.top + y);
+			byte a = 0, r = 0, g = 0, b = 0;
+			if (!image.hasTransparentColor() || color != image.getTransparentColor()) {
+				image.format.colorToARGB(color, a, r, g, b);
+			}
+
+			for (uint i = 0; a != 0 && i < stencils.size(); ++i) {
+				if (isStencilPixel(*stencils[i], screenRect.left + x, screenRect.top + y)) {
+					a = 0;
+				}
+			}
+
+			part.setPixel(x, y, _transparentPixelFormat.ARGBToColor(a, r, g, b));
+		}
+	}
+
+	if (!blitAlpha32(target, part, part.getBounds(), screenRect)) {
+		target.blitFrom(part, part.getBounds(), screenRect);
 	}
 }
 

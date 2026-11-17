@@ -360,6 +360,41 @@ private:
 	bool _isAttachmentDrawn = false;
 };
 
+// Lights, Camera, Curses: a light the player shines around with the mouse, or
+// that its transform puts somewhere. The original draws its picture into the
+// stencil buffer only, and the masked records drawn after it leave out where
+// the picture isn't transparent, which shows what is behind them.
+class FlashlightRecord : public Record {
+public:
+	FlashlightRecord(SceneContext &context) : Record(context, "ND.FlashlightAR") {}
+
+	RecordType getType() const override { return kRecordFlashlight; }
+
+	void updateGraphics() override;
+	void registerGraphics() override;
+
+protected:
+	void readTable(int tableIndex) override;
+	void onZChanged() override;
+	void onMouseMove(const Common::Point32 &point, bool inViewport) override;
+	bool hasTransform() const override { return true; }
+	void onTransformChanged() override { _isPlacementStale = true; }
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+
+private:
+	void applyRects();
+
+	Common::SharedPtr<Graphics::ManagedSurface> _cachedImage;	// kept while the record uses it
+	Graphics::ManagedSurface _image;
+	ScriptRect _source;
+	ScriptRect _dest;
+	bool _isOn = true;
+	bool _followsMouse = true;	// centered on the mouse, without the transform
+	bool _isPlacementStale = false;
+	RecordGraphic _graphic;
+};
+
 // Shows the parts of an image one after the other
 class AnimOverlayRecord : public Record {
 public:

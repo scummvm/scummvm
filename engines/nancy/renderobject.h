@@ -65,6 +65,14 @@ public:
 	void setTransparent(bool isTransparent);
 	bool isVisible() const { return _isVisible; }
 
+	// Lights, Camera, Curses draws some things into the stencil buffer only:
+	// a stencil object shows nothing itself, but a masked object drawn after it
+	// leaves out the pixels the stencil object isn't transparent at
+	void setStencil(bool isStencil);
+	bool isStencil() const { return _isStencil; }
+	void setMasked(bool isMasked);
+	bool isMasked() const { return _isMasked; }
+
 	// Nancy26: the part of the screen the object gets drawn in; empty for all of it
 	void setClipRect(const Common::Rect &clip);
 	const Common::Rect &getClipRect() const { return _clipRect; }
@@ -128,6 +136,8 @@ protected:
 	bool _isVisible;
 	bool _hasMoved;
 	bool _isNativeResolution = false;
+	bool _isStencil = false;
+	bool _isMasked = false;
 	uint16 _z;
 	uint32 _tieOrder = 0;
 	Common::Rect _drawnScreenPosition;

@@ -162,6 +162,7 @@ private:
 	static void filterDirtyRects(Common::List<Common::Rect> &rects);
 	void drawObjects(Graphics::ManagedSurface &target, const Common::List<Common::Rect> &rects, Layer layer);
 	void blitObject(Graphics::ManagedSurface &target, const RenderObject &src, Common::Rect dest);
+	void blitMaskedObject(Graphics::ManagedSurface &target, const RenderObject &src, const Common::Array<const RenderObject *> &stencils, const Common::Rect &screenRect);
 
 	// Where an object gets drawn, which is somewhere else for one that is zoomed into
 	Common::Rect getDrawnPosition(const RenderObject &object) const;
