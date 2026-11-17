@@ -161,6 +161,12 @@ public:
 
 	bool isActive() const;
 	bool isDone() const { return _isDone; }
+
+	// Lights, Camera, Curses: the stream of the record was paused. The record
+	// stays where it is and is still drawn, but doesn't run or hear the player.
+	void setStreamPaused(bool isPaused);
+	bool isStreamPaused() const { return _isStreamPaused; }
+
 	bool hasStarted() const { return _hasStarted; }
 	bool hasRunOnce() const { return _hasRunOnce; }
 	// Counted from the node the record is under, when it is under one
@@ -354,6 +360,9 @@ protected:
 	// A paused record doesn't run at all, not even once, until it goes on
 	virtual bool isPaused() const { return false; }
 
+	// What plays on by itself holds still with the stream of the record
+	virtual void onStreamPaused(bool isPaused) {}
+
 	// Whether the functions of the scripts take the place of what the record does
 	// by itself: Run, Render, and everything the player does
 	virtual bool isScripted() const { return false; }
@@ -389,6 +398,7 @@ private:
 	bool _wasActive = false;
 	bool _isDone = false;
 	bool _isFinishing = false;	// while OnDone runs
+	bool _isStreamPaused = false;
 	bool _hasEndedInSkip = false;
 	bool _hasRunOnce = false;
 

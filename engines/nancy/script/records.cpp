@@ -2534,6 +2534,13 @@ static int soundStopIfPlaying(lua_State *L) {
 	return 0;
 }
 
+void SoundRecord::onStreamPaused(bool isPaused) {
+	uint16 channel = 0;
+	if (isActive() && getPlayingChannel(channel)) {
+		g_nancy->_sound->pauseSound(channel, isPaused);
+	}
+}
+
 bool SoundRecord::getPlayingChannel(uint16 &channel) const {
 	if (!_isPlaying || g_nancy->_sound->getChannelSerial(_channel) != _channelSerial ||
 			!g_nancy->_sound->isSoundPlaying(_channel)) {
@@ -2992,6 +2999,13 @@ bool MovieRecord::isSkippable() const {
 #endif
 
 	return !_pausesOnLastFrame || (_player.isRangePlaying() && !_hasCalledOnPause);
+}
+
+// The sound of a movie that a script didn't pause holds still with its stream
+void MovieRecord::onStreamPaused(bool isPaused) {
+	if (isActive() && !_isPaused) {
+		_player.pauseVideo(isPaused);
+	}
 }
 
 void MovieRecord::run(double sceneTime, double elapsedTime) {

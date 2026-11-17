@@ -116,6 +116,10 @@ public:
 	void setFrame(uint frame) { _frame = frame; }
 	int32 getZOffset() const;
 
+	// Scene:PauseStream and Scene:ResumeStream, Lights, Camera, Curses. The
+	// records get paused or go on at the start of the next frame.
+	void requestStreamPause(bool isPaused) { _streamPauseRequest = isPaused ? kRequestPause : kRequestResume; }
+
 #ifdef ENABLE_NANCY_V5
 	// Nancy26: the stream of the scene was put at another place among the
 	// others, so everything it draws goes elsewhere
@@ -200,14 +204,23 @@ private:
 	void updateDrawRanks();	// Nancy26
 #endif
 	void deleteDroppedRecords();
+	void applyStreamPause();
 	void renderAttachment();
 	bool hasSkippableRecord() const;
 	void pushSceneFunctions();
 	void sendMouseEvent(int event, const Common::Point32 &point, bool inViewport);
 	void sendKeyEvent(int event, Common::KeyCode key);
 
+	enum StreamPauseRequest {
+		kRequestNone,
+		kRequestPause,
+		kRequestResume
+	};
+
 	Common::String _streamName;
 	Common::String _sceneName;
+	StreamPauseRequest _streamPauseRequest = kRequestNone;
+	bool _isStreamPausedByScript = false;
 	bool _isEnding = false;
 	bool _isLoading = false;
 	uint _frame;

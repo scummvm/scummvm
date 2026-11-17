@@ -438,6 +438,7 @@ protected:
 	void run(double sceneTime, double elapsedTime) override;
 	void onFrame() override;
 	bool prepareReset() override;
+	void onStreamPaused(bool isPaused) override;
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
 
@@ -556,6 +557,7 @@ protected:
 	void onZChanged() override;
 	bool prepareReset() override;
 	bool isPaused() const override { return _isPaused; }
+	void onStreamPaused(bool isPaused) override;
 	bool hasTransform() const override { return true; }
 	void onTransformChanged() override { applyPosition(); }
 	bool getField(const Common::String &key) override;

@@ -1654,6 +1654,39 @@ static int sceneEndStream(lua_State *L) {
 	return 1;
 }
 
+// Scene:PauseStream(name) and Scene:ResumeStream(name), Lights, Camera, Curses.
+// No name, or the one of the stream of the script, is that stream. Returns
+// whether there is such a stream.
+static int requestStreamPause(lua_State *L, bool isPaused) {
+	SceneContext *context = checkContext(L);
+	const Common::String name = luaL_optstring(L, 2, "");
+
+	SceneContext *scene = context;
+	if (!name.empty() && !name.equalsIgnoreCase(context->getStreamName())) {
+		if (name.equalsIgnoreCase(State::SceneStreamManager::getMainStreamName())) {
+			scene = NancySceneState.getScriptScene();
+		} else {
+			State::SceneStream *stream = NancySceneState.getStreams().find(name);
+			scene = stream ? stream->getScriptScene() : nullptr;
+		}
+	}
+
+	if (scene) {
+		scene->requestStreamPause(isPaused);
+	}
+
+	lua_pushboolean(L, scene != nullptr);
+	return 1;
+}
+
+static int scenePauseStream(lua_State *L) {
+	return requestStreamPause(L, true);
+}
+
+static int sceneResumeStream(lua_State *L) {
+	return requestStreamPause(L, false);
+}
+
 // What "for key, ar in Scene:ARs(direction)" calls for every round: gives the
 // next record, and its place in the order asked for
 static int sceneNextRecord(lua_State *L) {
@@ -1781,6 +1814,8 @@ static const luaL_Reg kSceneFunctions[] = {
 	{ "Include", sceneInclude },
 	{ "BeginStream", sceneBeginStream },
 	{ "EndStream", sceneEndStream },
+	{ "PauseStream", scenePauseStream },
+	{ "ResumeStream", sceneResumeStream },
 	{ "ChangeScene", sceneChangeScene },
 	{ "GraphNode", sceneGraphNode },
 	{ "TransferChild", sceneTransferChild },

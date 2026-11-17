@@ -246,7 +246,7 @@ void Record::update(double sceneTime, double elapsedTime) {
 	}
 #endif
 
-	if (_isDone) {
+	if (_isDone || _isStreamPaused) {
 		return;
 	}
 
@@ -287,6 +287,13 @@ void Record::update(double sceneTime, double elapsedTime) {
 		callFunction("Run", 2);
 	} else {
 		run(sceneTime, elapsedTime);
+	}
+}
+
+void Record::setStreamPaused(bool isPaused) {
+	if (isPaused != _isStreamPaused) {
+		_isStreamPaused = isPaused;
+		onStreamPaused(isPaused);
 	}
 }
 
@@ -534,7 +541,7 @@ int Record::setScriptField() {
 }
 
 void Record::sendMouseMove(const Common::Point32 &point, bool inViewport) {
-	if (!isActive()) {
+	if (!isActive() || _isStreamPaused) {
 		return;
 	}
 
@@ -551,7 +558,7 @@ void Record::sendMouseMove(const Common::Point32 &point, bool inViewport) {
 }
 
 bool Record::sendChangeCursor(const Common::Point32 &point, bool inViewport, uint &cursorType, bool &isHot) {
-	if (!isActive()) {
+	if (!isActive() || _isStreamPaused) {
 		return false;
 	}
 
@@ -575,7 +582,7 @@ bool Record::sendChangeCursor(const Common::Point32 &point, bool inViewport, uin
 }
 
 bool Record::sendMouseEvent(RecordEvent event, const Common::Point32 &point, bool inViewport) {
-	if (!isActive()) {
+	if (!isActive() || _isStreamPaused) {
 		return false;
 	}
 
@@ -599,7 +606,7 @@ bool Record::sendMouseEvent(RecordEvent event, const Common::Point32 &point, boo
 
 // Only the records made of script functions handle mouse wheel events
 void Record::sendMouseScroll(const Common::Point32 &point, bool inViewport, int notches) {
-	if (!isActive() || !isScripted()) {
+	if (!isActive() || _isStreamPaused || !isScripted()) {
 		return;
 	}
 
@@ -614,7 +621,7 @@ void Record::sendMouseScroll(const Common::Point32 &point, bool inViewport, int 
 
 bool Record::sendKeyEvent(RecordEvent event, Common::KeyCode key) {
 	// Only the records made of script functions care about the keyboard
-	if (!isActive() || !isScripted()) {
+	if (!isActive() || _isStreamPaused || !isScripted()) {
 		return false;
 	}
 
