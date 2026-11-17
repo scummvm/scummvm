@@ -19,6 +19,7 @@
  *
  */
 
+#include "engines/nancy/nancy.h"
 #include "engines/nancy/ui/ndui/scrollbar.h"
 #include "engines/nancy/ui/ndui/panel.h"
 
@@ -207,6 +208,19 @@ bool ScrollBar::doAction(const Action &action) {
 		setRange((int32)action.value);
 		return true;
 	case kActionSetValue:
+		// Nancy16 moves up by the value. From Nancy19 on, the value is where
+		// to go: Lights, Camera, Curses asks for a place past the end to show
+		// the newest line of a conversation.
+		if (g_nancy->getGameType() < kGameTypeNancy19) {
+			scroll(-(int32)action.value);
+			return true;
+		}
+
+		_position = (int32)action.value;
+		capPosition();
+		updateThumb();
+		return true;
+	case kActionScrollBy:
 		scroll(-(int32)action.value);
 		return true;
 	default:

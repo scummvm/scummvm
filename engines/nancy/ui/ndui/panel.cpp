@@ -921,7 +921,7 @@ bool Panel::handleInput(NancyInput &input, bool canHover, bool &isOverControl) {
 
 	// The wheel scrolls a scroll panel by one step
 	if (notches && !_scrollBarName.empty()) {
-		_manager->takeAction(kActionSetValue, _scrollBarName, (double)(notches * _scrollStep));
+		_manager->takeAction(kActionScrollBy, _scrollBarName, (double)(notches * _scrollStep));
 	}
 
 	return true;
