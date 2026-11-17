@@ -120,7 +120,7 @@ static int bootCreate(lua_State *L) {
 	requireField(L, readField(L, 2, "playerTimeScale", boot.playerTimeScale), "playerTimeScale");
 	requireField(L, readField(L, 2, "diagFontNum", boot.diagnosticFontID), "diagFontNum");
 
-	if (g_nancy->getGameType() <= kGameTypeNancy19) {
+	if (g_nancy->getGameType() < kGameTypeNancy20) {
 		requireField(L, readField(L, 2, "saveFolderName", boot.saveFolderName), "saveFolderName");
 		return 0;
 	}

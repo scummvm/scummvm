@@ -45,7 +45,7 @@ static const uint16 kConvoVolume = 85;
 // The sound of a video conversation is named after its XSheet. In Nancy20 the
 // two names end differently: GFL01_XS goes with the sound GFL01_SFX.
 static Common::String xsheetToSoundName(const Common::String &xsheetName) {
-	if (g_nancy->getGameType() <= kGameTypeNancy19) {
+	if (g_nancy->getGameType() < kGameTypeNancy20) {
 		return xsheetName;
 	}
 
@@ -56,7 +56,7 @@ static Common::String xsheetToSoundName(const Common::String &xsheetName) {
 }
 
 static Common::String soundToXSheetName(const Common::String &soundName) {
-	if (g_nancy->getGameType() <= kGameTypeNancy19) {
+	if (g_nancy->getGameType() < kGameTypeNancy20) {
 		return soundName;
 	}
 

@@ -1032,7 +1032,7 @@ void NancyEngine::bootScriptedGameData(ScriptBootData *boot, EVNT *flags, INVD *
 	runRequiredBootScript("Cursors", inventoryTables);
 
 	Script::BootTables textTables;
-	if (getGameType() <= kGameTypeNancy19) {
+	if (getGameType() < kGameTypeNancy20) {
 		textTables.texts = autotext;
 		runRequiredBootScript("Autotext", textTables);
 
