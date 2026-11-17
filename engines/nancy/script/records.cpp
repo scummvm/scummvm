@@ -3011,6 +3011,17 @@ void MovieRecord::run(double sceneTime, double elapsedTime) {
 		return;
 	}
 
+	// A movie of one frame shows it for as long as a frame lasts before it is
+	// played, as the original's player waits for the next frame first. The
+	// parallax scenes of the Dossier games pause their layers in the meantime,
+	// which keeps them up.
+	if (_firstFrame == _lastFrame && _singleFrameTime * 1000.0 < _player.getFrameMillis()) {
+		_singleFrameTime += playedTime;
+		return;
+	}
+
+	_singleFrameTime = 0.0;
+
 	// Another time through
 	++_numPlayed;
 	if (_numLoops == 0 || _numPlayed < _numLoops) {
@@ -3039,6 +3050,7 @@ bool MovieRecord::prepareReset() {
 	_endTime = 0.0;
 	_numPlayed = 0;
 	_skipFrame = -1;
+	_singleFrameTime = 0.0;
 	_isPaused = false;
 	_hasCalledOnPause = false;
 	_player.goToFrame(_firstFrame);

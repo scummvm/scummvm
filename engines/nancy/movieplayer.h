@@ -125,6 +125,7 @@ public:
 	void setFrameRate(double framesPerSecond);
 	bool isRangePlaying() const { return _rangePlaying; }
 	int getCurrentFrame() const { return getCurFrame(); }
+	double getFrameMillis() const;	// how long a frame of the range player lasts
 	void drawFrame(Graphics::ManagedSurface &dst, const Common::Point &pos) const;
 	void drawFrame(Graphics::ManagedSurface &dst, const Common::Rect &source, const Common::Point &pos) const;	// a part of it
 
@@ -161,7 +162,6 @@ private:
 	Common::SharedPtr<DeferredLoader> _cacheLoader;
 	uint _cacheFillNext = 0;
 
-	double getFrameMillis() const;
 	bool showNextFrame();
 
 	// Simple frame-range player state. _currentSurface points at the decoder's

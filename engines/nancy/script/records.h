@@ -590,6 +590,7 @@ private:
 	bool _isPaused = false;
 	bool _isVisible = true;
 	bool _hasJustStarted = false;
+	double _singleFrameTime = 0.0;	// in seconds, how long a movie of one frame has shown it
 	double _endTime = 0.0;
 };
 
