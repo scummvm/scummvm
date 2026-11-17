@@ -67,6 +67,7 @@ private:
 
 	uint _roughProgress = 0;
 	bool _roughWarned = false;
+	bool _roughKeymapDisabled = false;
 
 	void runAboutDialogMI1(MacDialogWindow *window);
 	void runAboutDialogMI2(MacDialogWindow *window);

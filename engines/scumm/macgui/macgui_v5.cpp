@@ -23,6 +23,12 @@
 #include "common/config-manager.h"
 #include "common/macresman.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/hardware-input.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "engines/engine.h"
 
 #include "graphics/macgui/macfontmanager.h"
@@ -1104,6 +1110,12 @@ bool MacV5Gui::handleEvent(Common::Event event) {
 
 	if (checkRough && event.type == Common::EVENT_KEYDOWN) {
 		const char *rough = "rough";
+		Common::Keymap *hotspots = _vm->_system->getEventManager()->getKeymapper()->getKeymap("scumm-hotspots");
+
+		if (hotspots && _roughKeymapDisabled) {
+			hotspots->setEnabled(true);
+			_roughKeymapDisabled = false;
+		}
 
 		if (event.kbd.keycode == rough[_roughProgress]) {
 			_roughProgress++;
@@ -1124,6 +1136,24 @@ bool MacV5Gui::handleEvent(Common::Event event) {
 			}
 		} else {
 			_roughProgress = 0;
+		}
+
+		const Common::Action *action = nullptr;
+		if (hotspots) {
+			for (const Common::Action *candidate : hotspots->getActions()) {
+				if (!strcmp(candidate->id, Common::kStandardActionToggleHotspots))
+					action = candidate;
+			}
+		}
+		if (action && _roughProgress > 0 && hotspots->isEnabled()) {
+			for (const Common::HardwareInput &input : hotspots->getActionMapping(action)) {
+				if (input.type == Common::kHardwareInputTypeKeyboard && input.key.keycode == rough[_roughProgress] &&
+					!(input.key.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_SHIFT | Common::KBD_META))) {
+					hotspots->setEnabled(false);
+					_roughKeymapDisabled = true;
+					break;
+				}
+			}
 		}
 	}
 
