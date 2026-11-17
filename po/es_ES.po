@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-17 06:06+0000\n"
-"PO-Revision-Date: 2026-11-17 15:50+0000\n"
+"PO-Revision-Date: 2026-11-17 15:51+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -14403,7 +14403,7 @@ msgstr "Encender"
 
 #: engines/scumm/help.cpp:204
 msgid "turn oFf"
-msgstr "Apagar"
+msgstr "Apagar (F)"
 
 #: engines/scumm/help.cpp:220
 msgid "KeyUp"
