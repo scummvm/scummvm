@@ -133,7 +133,7 @@ bool MuxPlayer::play() {
 		frameRateDen = _header.soundBufSize;
 	}
 
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sound, _stream);
+	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_sound, _stream);
 
 	for (uint curFrame = 0; curFrame < _header.frameCount && !aborted; curFrame++) {
 
