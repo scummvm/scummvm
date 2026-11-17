@@ -132,6 +132,12 @@ void SoundEngine::setSoundEffectVolume(int vol) {
 void SoundEngine::loadState(Common::SeekableReadStream *in, SaveFlags flags) {
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
+
+	if (!(flags & kFlagTempData)) {
+		_dev->pcmSendCommand(0xFF, 0);
+		_dev->fmSendCommand(0xFF, 0);
+	}
+
 	_pcmStatus.resourceId = _pcmStatus.resourceId2 = in->readSint16BE();
 	_pcmStatus.blocked = in->readByte();
 	_fmStatus.music = in->readByte();
