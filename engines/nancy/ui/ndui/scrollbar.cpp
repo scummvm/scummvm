@@ -219,8 +219,9 @@ bool ScrollBar::getValue(int32 eventType, double &value, Common::String &text) c
 		return false;
 	}
 
+	// Only the position: the text stays empty, which scripts pass on to
+	// Message:Send as an autotext key (Lights, Camera, Curses' ConvoScroll)
 	value = _position;
-	text = _name;
 	return true;
 }
 
