@@ -524,6 +524,19 @@ bool Panel::takeAction(const Action &action) {
 	case kActionCycleFocus:
 		cycleFocus();
 		break;
+	case kActionSetLocation: {
+		// The panel goes to the top left corner of the rect; its handlers get
+		// the rect too, even when the panel was there already
+		const Common::Rect location = decodeRect(action.value);
+		if (!_isPlaced) {
+			_background->_bounds.moveTo(location.left, location.top);
+		} else if (location.left != _screenPosition.left || location.top != _screenPosition.top) {
+			moveTo(Common::Point(location.left, location.top));
+		}
+
+		fireEvent(kEventSetLocation, action.value);
+		return true;
+	}
 	default:
 		return false;
 	}
@@ -637,11 +650,11 @@ void Panel::hide() {
 	fireEvent(kEventHide);
 }
 
-void Panel::fireEvent(int32 eventType) {
-	_background->fireEvents(eventType, false, 0, getName());
+void Panel::fireEvent(int32 eventType, double value) {
+	_background->fireEvents(eventType, false, value, getName());
 
 	for (Control *control : _controls) {
-		control->fireEvents(eventType, false, 0, control->getName());
+		control->fireEvents(eventType, false, value, control->getName());
 	}
 }
 

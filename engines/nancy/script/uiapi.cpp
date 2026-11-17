@@ -78,7 +78,8 @@ static const NamedValue kEventNames[] = {
 	{ "hide", UI::NDUI::kEventHide },
 	{ "load", UI::NDUI::kEventUpdate },
 	{ "enable", UI::NDUI::kEventEnable },
-	{ "disable", UI::NDUI::kEventDisable }
+	{ "disable", UI::NDUI::kEventDisable },
+	{ "setLocation", UI::NDUI::kEventSetLocation }
 };
 
 static const NamedValue kInitialStates[] = {

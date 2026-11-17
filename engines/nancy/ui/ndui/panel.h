@@ -146,7 +146,7 @@ private:
 	void show();
 	void hide();
 	void setCollapsed(bool isCollapsed);
-	void fireEvent(int32 eventType);
+	void fireEvent(int32 eventType, double value = 0.0);
 	void redraw();
 	Control *getControlAt(const Common::Point &pos) const;
 	void showItem(int16 itemID, bool show);
