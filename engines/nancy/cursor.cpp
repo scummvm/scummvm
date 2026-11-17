@@ -179,13 +179,6 @@ void CursorManager::addScriptedCursors(const Common::Array<ScriptBootData::Curso
 			slot.bounds = cursor.sources[i];
 			slot.hotspot = cursor.hotspots[i];
 
-			// The rects of the cursor sheet include their last row and column.
-			// Nancy26's are exclusive, like all its other rects.
-			if (!slot.bounds.isEmpty() && cursor.imageName.empty()) {
-				++slot.bounds.right;
-				++slot.bounds.bottom;
-			}
-
 			if (!cursor.imageName.empty()) {
 				slot.image = getScriptedCursorImage(cursor.imageName);
 			}
