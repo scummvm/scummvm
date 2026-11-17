@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-17 06:06+0000\n"
-"PO-Revision-Date: 2026-11-07 07:39+0000\n"
+"PO-Revision-Date: 2026-11-17 13:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8631,6 +8631,10 @@ msgid ""
 "or via the keymapper. It is advised to configure the keymapper before "
 "starting the game."
 msgstr ""
+"AVERTISSEMENT : ce jeu a été initialement conçu pour être joué à l'aide d'un "
+"jouet périphérique externe Comfy Keyboard. Cet appareil est émulé via une "
+"fenêtre ImGui ou via la configuration des touches. Il est recommandé de "
+"configurer les touches avant de lancer le jeu."
 
 #. I18N: Shown at startup, the games were designed for a physical toy keyboard
 #: engines/comfy/comfy.cpp:65
@@ -8639,24 +8643,28 @@ msgid ""
 "Comfy Keyboard toy peripheral. This device is emulated via the keymapper. It "
 "is advised to configure the keymapper before starting the game."
 msgstr ""
+"AVERTISSEMENT : ce jeu a été initialement conçu pour être joué à l'aide d'un "
+"jouet périphérique externe Comfy Keyboard. Cet appareil est émulé via la "
+"configuration des touches. Il est recommandé de configurer les touches avant "
+"de lancer le jeu."
 
 #: engines/comfy/comfy.cpp:70
 msgid "Understood"
-msgstr ""
+msgstr "Compris"
 
 #: engines/comfy/comfy.cpp:70
-#, fuzzy
-#| msgid "Read Later"
 msgid "Remind me later"
-msgstr "Lire plus tard"
+msgstr "Me rappeler plus tard"
 
 #: engines/comfy/metaengine.cpp:38
 msgid "Force language setup screen on start-up"
-msgstr ""
+msgstr "Forcer l'écran de choix de la langue au démarrage"
 
 #: engines/comfy/metaengine.cpp:39
 msgid "Show the original language setup screen every time the game starts"
 msgstr ""
+"Affiche l'écran d'origine de configuration de la langue à chaque lancement "
+"du jeu"
 
 #: engines/comfy/metaengine.cpp:49 engines/hypno/metaengine.cpp:203
 #: engines/lab/metaengine.cpp:209 engines/ngi/metaengine.cpp:168
@@ -8667,129 +8675,111 @@ msgstr "Passer l'intro"
 
 #: engines/comfy/metaengine.cpp:50
 msgid "Skip the intro sequence which precedes the interactive movie"
-msgstr ""
+msgstr "Passer la séquence d'introduction qui précède le film interactif"
 
 #: engines/comfy/metaengine.cpp:61
-#, fuzzy
-#| msgid "Toggle virtual keyboard"
 msgid "Use ImGui based virtual keyboard"
-msgstr "Act. / Désact. clavier virtuel"
+msgstr "Utiliser le clavier virtuel basé sur ImGui"
 
 #: engines/comfy/metaengine.cpp:62
 msgid "Show the interactive virtual Comfy keyboard implemented with ImGui"
-msgstr ""
+msgstr "Affiche le clavier virtuel interactif Comfy implémenté avec ImGui"
 
 #: engines/comfy/metaengine.cpp:106
-#, fuzzy
-#| msgid "Run"
 msgid "Sun"
-msgstr "Courir"
+msgstr "Soleil"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Rolling cylinder"
-msgstr ""
+msgstr "Cylindre roulant"
 
 #: engines/comfy/metaengine.cpp:106
-#, fuzzy
-#| msgid "Read"
 msgid "Red"
-msgstr "Lire"
+msgstr "Rouge"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Drum"
-msgstr ""
+msgstr "Tambour"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Snaily phone"
-msgstr ""
+msgstr "Téléphone Snaily"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Purple"
-msgstr ""
+msgstr "Violet"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Piano"
-msgstr ""
+msgstr "Piano"
 
 #: engines/comfy/metaengine.cpp:107
-#, fuzzy
-#| msgid "Turn off"
 msgid "On / off"
-msgstr "Éteindre"
+msgstr "Marche / arrêt"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Orange"
-msgstr ""
+msgstr "Orange"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Moon"
-msgstr ""
+msgstr "Lune"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Jumpy phone"
-msgstr ""
+msgstr "Téléphone Jumpy"
 
 #: engines/comfy/metaengine.cpp:107
-#, fuzzy
-#| msgid "Yell"
 msgid "Yellow"
-msgstr "Huer"
+msgstr "Jaune"
 
 #: engines/comfy/metaengine.cpp:108
-#, fuzzy
-#| msgid "Landscape"
 msgid "Handset"
-msgstr "Paysage"
+msgstr "Combiné Téléphone"
 
 #: engines/comfy/metaengine.cpp:108
 msgid "Blue"
-msgstr ""
+msgstr "Bleu"
 
 #: engines/comfy/metaengine.cpp:108
 msgid "Trumpet"
-msgstr ""
+msgstr "Trompette"
 
 #: engines/comfy/metaengine.cpp:108
 msgid "Buddy phone"
-msgstr ""
+msgstr "Téléphone Buddy"
 
 #: engines/comfy/metaengine.cpp:108
-#, fuzzy
-#| msgid "green"
 msgid "Green"
-msgstr "vert"
+msgstr "Vert"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Flute"
-msgstr ""
+msgstr "Flûte"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Keyboard contact 19"
-msgstr ""
+msgstr "Contact clavier 19"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Comfy phone"
-msgstr ""
+msgstr "Téléphone Comfy"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Rainy cloud"
-msgstr ""
+msgstr "Nuage de pluie"
 
 #: engines/comfy/metaengine.cpp:110
 msgid "Feely phone"
-msgstr ""
+msgstr "Téléphone Feely"
 
 #: engines/comfy/metaengine.cpp:110
-#, fuzzy
-#| msgid "Music menu"
 msgid "Music"
-msgstr "Menu Musique"
+msgstr "Musique"
 
 #: engines/comfy/metaengine.cpp:121
-#, fuzzy
-#| msgid "Keyboard"
 msgid "Comfy Keyboard"
-msgstr "Clavier"
+msgstr "Clavier Comfy"
 
 #: engines/crab/input/input.cpp:119
 msgid "Talk / Interact"
@@ -11336,50 +11326,36 @@ msgid "Side step"
 msgstr "Pas de côté"
 
 #: engines/igor/metaengine.cpp:50
-#, fuzzy
-#| msgid "Copy protection"
 msgid "Skip copy protection"
-msgstr "Protection anti-copie"
+msgstr "Passer la protection anti-copie"
 
 #: engines/igor/metaengine.cpp:51
-#, fuzzy
-#| msgid "Enable copy protection"
 msgid "Skips original copy protection screen."
-msgstr "Activer la protection anti-copie"
+msgstr "Passe l'écran d'origine de la protection anti-copie."
 
 #: engines/igor/metaengine.cpp:82
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "Keyboard keymappings"
-msgstr "Conf. des touches Sauvegarder/Charger"
+msgstr "Conf. des touches du clavier"
 
 #: engines/igor/metaengine.cpp:121
 msgid "Right click with the keyboard"
-msgstr ""
+msgstr "Clic droit avec le clavier"
 
 #: engines/igor/metaengine.cpp:126
-#, fuzzy
-#| msgid "Up left"
 msgid "Up and left"
-msgstr "Haut gauche"
+msgstr "Haut et gauche"
 
 #: engines/igor/metaengine.cpp:127
-#, fuzzy
-#| msgid "Up right"
 msgid "Up and right"
-msgstr "Haut droite"
+msgstr "Haut et droite"
 
 #: engines/igor/metaengine.cpp:128
-#, fuzzy
-#| msgid "Down left"
 msgid "Down and left"
-msgstr "Bas gauche"
+msgstr "Bas et gauche"
 
 #: engines/igor/metaengine.cpp:129
-#, fuzzy
-#| msgid "Down right"
 msgid "Down and right"
-msgstr "Bas droite"
+msgstr "Bas et droite"
 
 #: engines/igor/metaengine.cpp:131 engines/saga/metaengine.cpp:454
 #: engines/tot/metaengine.cpp:175
@@ -14972,10 +14948,8 @@ msgstr ""
 "programmeur"
 
 #: engines/scumm/metaengine.cpp:1189
-#, fuzzy
-#| msgid "Show hotspots"
 msgid "Hotspots"
-msgstr "Afficher les zones réactives"
+msgstr "Zones réactives"
 
 #: engines/scumm/metaengine.cpp:1210
 msgid "Down left"
