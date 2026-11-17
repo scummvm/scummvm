@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-16 22:20+0000\n"
+"POT-Creation-Date: 2026-11-17 06:06+0000\n"
 "PO-Revision-Date: 2026-10-10 14:55+0000\n"
 "Last-Translator: НеСкажу НеСкажувич Нескажувов <j4rik.228@yandex.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1109,7 +1109,7 @@ msgstr "GUI"
 msgid "Interact"
 msgstr "Взаимодействие"
 
-#: gui/gui-manager.cpp:175 engines/metaengine.cpp:144
+#: gui/gui-manager.cpp:175 engines/metaengine.cpp:152
 #: engines/awe/metaengine.cpp:57 engines/bagel/metaengine.cpp:66
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:158 engines/fool/metaengine.cpp:159
@@ -1137,7 +1137,7 @@ msgstr "Взаимодействие"
 msgid "Up"
 msgstr "Вверх"
 
-#: gui/gui-manager.cpp:181 engines/metaengine.cpp:150
+#: gui/gui-manager.cpp:181 engines/metaengine.cpp:158
 #: engines/awe/metaengine.cpp:58 engines/bagel/metaengine.cpp:67
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:164 engines/fool/metaengine.cpp:165
@@ -1165,7 +1165,7 @@ msgstr "Вверх"
 msgid "Down"
 msgstr "Вниз"
 
-#: gui/gui-manager.cpp:187 engines/metaengine.cpp:156
+#: gui/gui-manager.cpp:187 engines/metaengine.cpp:164
 #: engines/awe/metaengine.cpp:59 engines/bagel/metaengine.cpp:68
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:170 engines/fool/metaengine.cpp:171
@@ -1192,7 +1192,7 @@ msgstr "Вниз"
 msgid "Left"
 msgstr "Влево"
 
-#: gui/gui-manager.cpp:193 engines/metaengine.cpp:162
+#: gui/gui-manager.cpp:193 engines/metaengine.cpp:170
 #: engines/awe/metaengine.cpp:60 engines/bagel/metaengine.cpp:69
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:176 engines/fool/metaengine.cpp:177
@@ -4008,22 +4008,22 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Возможные ID игры для движка %s:"
 
-#: engines/metaengine.cpp:39
+#: engines/metaengine.cpp:40
 msgid "Game not implemented"
 msgstr "Игра не реализована"
 
-#: engines/metaengine.cpp:73
+#: engines/metaengine.cpp:74
 #, fuzzy
 #| msgid "Show hotspots"
 msgid "Show/hide hotspots"
 msgstr "Показать горячие точки"
 
-#: engines/metaengine.cpp:82 engines/saga/metaengine.cpp:267
+#: engines/metaengine.cpp:90 engines/saga/metaengine.cpp:267
 #: engines/scumm/metaengine.cpp:1199
 msgid "Default game keymappings"
 msgstr "Раскладка клавиш игры по умолчанию"
 
-#: engines/metaengine.cpp:89 backends/platform/maemo/maemo.cpp:161
+#: engines/metaengine.cpp:97 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:158 engines/asylum/metaengine.cpp:159
 #: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:277
@@ -4054,7 +4054,7 @@ msgstr "Раскладка клавиш игры по умолчанию"
 msgid "Left click"
 msgstr "Левый щелчок"
 
-#: engines/metaengine.cpp:95 backends/platform/maemo/maemo.cpp:165
+#: engines/metaengine.cpp:103 backends/platform/maemo/maemo.cpp:165
 #: engines/fool/metaengine.cpp:143 engines/mtropolis/metaengine.cpp:173
 #: engines/saga/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:337
@@ -4062,7 +4062,7 @@ msgstr "Левый щелчок"
 msgid "Middle click"
 msgstr "Средний щелчок"
 
-#: engines/metaengine.cpp:100 backends/platform/maemo/maemo.cpp:169
+#: engines/metaengine.cpp:108 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:164 engines/asylum/metaengine.cpp:165
 #: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:283
@@ -4093,7 +4093,7 @@ msgid "Right click"
 msgstr "Правый щелчок"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:106 engines/agos/metaengine.cpp:178
+#: engines/metaengine.cpp:114 engines/agos/metaengine.cpp:178
 #: engines/buried/metaengine.cpp:167 engines/crab/input/input.cpp:261
 #: engines/cruise/metaengine.cpp:217 engines/dm/metaengine.cpp:126
 #: engines/grim/grim.cpp:571 engines/hdb/metaengine.cpp:258
@@ -4112,7 +4112,7 @@ msgstr "Правый щелчок"
 msgid "Pause"
 msgstr "Пауза"
 
-#: engines/metaengine.cpp:112 engines/harvester/metaengine.cpp:93
+#: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
 #: engines/hollywood/runaway/engine.cpp:592 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
@@ -4122,7 +4122,7 @@ msgstr "Меню игры"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:119 engines/access/metaengine.cpp:252
+#: engines/metaengine.cpp:127 engines/access/metaengine.cpp:252
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:94
 #: engines/grim/grim.cpp:554 engines/grim/grim.cpp:654
@@ -4139,30 +4139,30 @@ msgstr "Меню игры"
 msgid "Skip"
 msgstr "Пропустить"
 
-#: engines/metaengine.cpp:126 engines/sky/metaengine.cpp:121
+#: engines/metaengine.cpp:134 engines/sky/metaengine.cpp:121
 #: engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "Пропустить строку"
 
-#: engines/metaengine.cpp:133 engines/fool/metaengine.cpp:154
+#: engines/metaengine.cpp:141 engines/fool/metaengine.cpp:154
 msgid "Predictive input dialog"
 msgstr "Диалог предиктивного ввода"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialog prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:138 engines/bladerunner/metaengine.cpp:273
+#: engines/metaengine.cpp:146 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:560
 #: engines/grim/grim.cpp:660 engines/igor/metaengine.cpp:117
 #: engines/sky/metaengine.cpp:101 engines/wintermute/keymapper_tables.h:57
 msgid "Confirm"
 msgstr "Подтвердить"
 
-#: engines/metaengine.cpp:441
+#: engines/metaengine.cpp:449
 msgid "Autosave on"
 msgstr "Автосохранение включено"
 
-#: engines/metaengine.cpp:441
+#: engines/metaengine.cpp:449
 msgid "Autosave off"
 msgstr "Автосохранение выключено"
 
