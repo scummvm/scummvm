@@ -392,6 +392,10 @@ bool parseSceneName(const Common::String &sceneName, uint16 &sceneID) {
 		}
 	}
 
+	if (sceneName[1] == '0' && sceneName.size() > 2) {
+		return false;
+	}
+
 	sceneID = (uint16)atoi(sceneName.c_str() + 1);
 	return true;
 }

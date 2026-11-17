@@ -66,7 +66,8 @@ void assembleTextLine(char *rawCaption, Common::String &output, uint size);
 
 // Scenes of Nancy19 and up that go by number are named "s" and the number, like
 // "s1002". Returns false for the ones that go by a name of their own, like the
-// "s1002a_SC" of Nancy20.
+// "s1002a_SC" of Nancy20, or the "s0100" of Lights, Camera, Curses, whose
+// script S0100 a number can't name.
 bool parseSceneName(const Common::String &sceneName, uint16 &sceneID);
 
 // Resolves a subtitle/caption string that may be a key into an engine-data CVTX text

@@ -1756,9 +1756,9 @@ void Scene::synchronize(Common::Serializer &ser) {
 	}
 
 #ifdef ENABLE_NANCY_V4
-	// Nancy20 has scenes that go by name, which no saved game of the earlier
-	// games can be in
-	if (g_nancy->getGameType() >= kGameTypeNancy20) {
+	// Scenes can go by name from Lights, Camera, Curses on; no saved game of
+	// the earlier games can be in one
+	if (g_nancy->getGameType() >= kGameTypeNancyDossier1) {
 		ser.syncString(_scriptSceneName);
 
 		// The scene gets loaded again below, from nextScene and this name
