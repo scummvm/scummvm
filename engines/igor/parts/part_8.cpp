@@ -163,6 +163,9 @@ void IgorEngine::part8DeanCallsSecretary() {
 	fadeOut(768);
 	// the room is saved again as it was left, Igor included
 	uint8 *roomScreen = (uint8 *)malloc(46080);
+	if (!roomScreen) {
+		error("Unable to allocate %d bytes", 46080);
+	}
 	memcpy(roomScreen, _screenVGA, 46080);
 	part9();
 
