@@ -128,7 +128,7 @@ public:
 struct b2Color
 {
 	b2Color() {}
-	b2Color(float32 r, float32 g, float32 b) : r(r), g(g), b(b) {}
+	b2Color(float32 r_, float32 g_, float32 b_) : r(r_), g(g_), b(b_) {}
 	float32 r, g, b;
 };
 

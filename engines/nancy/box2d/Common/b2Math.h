@@ -88,7 +88,7 @@ struct b2Vec2
 	constexpr b2Vec2() = default;
 
 	/// Construct using coordinates.
-	constexpr b2Vec2(float32 x, float32 y) : x(x), y(y) {}
+	constexpr b2Vec2(float32 x_, float32 y_) : x(x_), y(y_) {}
 
 	/// Set this vector to all zeros.
 	void SetZero() { x = 0.0f; y = 0.0f; }
@@ -253,7 +253,7 @@ struct b2XForm
 	constexpr b2XForm() = default;
 
 	/// Initialize using a position vector and a rotation matrix.
-	constexpr b2XForm(const b2Vec2& position, const b2Mat22& R) : position(position), R(R) {}
+	constexpr b2XForm(const b2Vec2& position_, const b2Mat22& R_) : position(position_), R(R_) {}
 
 	/// Set this to the identity transform.
 	void SetIdentity()
