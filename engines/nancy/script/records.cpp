@@ -161,8 +161,8 @@ Record *makeRecord(RecordType type, SceneContext &context) {
 
 		return new TextRecord(context);
 	case kRecordParticle:
-		// Lights, Camera, Curses has the older kind
-		if (g_nancy->getGameType() <= kGameTypeNancyDossier1) {
+		// The Dossier games have the older kind
+		if (g_nancy->getGameType() <= kGameTypeNancyDossier2) {
 			return new ParticleEmitterRecord(context);
 		}
 
@@ -2599,8 +2599,8 @@ void SoundRecord::run(double sceneTime, double elapsedTime) {
 		_wasPreempted = true;
 	}
 
-	// From Nancy21 on, a sound that loops keeps the record going
-	const bool hasPlayedThrough = _endTime <= sceneTime && !(_isLooping && g_nancy->getGameType() >= kGameTypeNancy21);
+	// From Resorting to Danger on, a sound that loops keeps the record going
+	const bool hasPlayedThrough = _endTime <= sceneTime && !(_isLooping && g_nancy->getGameType() >= kGameTypeNancyDossier2);
 
 	if (hasPlayedThrough || _wasPreempted) {
 		// The caption goes with the sound, unless another one has replaced it
@@ -3349,7 +3349,7 @@ bool MovieRecord::setField(const Common::String &key) {
 			_dest = dest;
 			applyPosition();
 		}
-	} else if (key == "source" && g_nancy->getGameType() >= kGameTypeNancy21) {
+	} else if (key == "source" && g_nancy->getGameType() >= kGameTypeNancyDossier2) {
 		// Earlier games only take the part of the frames when the movie is made
 		const ScriptRect source = checkRect(L, 3);
 		if (source != _source) {

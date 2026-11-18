@@ -734,10 +734,10 @@ bool SceneStreamManager::handleInput(NancyInput &input, bool beforeMainStream) {
 			continue;
 		}
 
-		// From Nancy21 on, a stream drawn in front of the main one gets the
-		// mouse before it too, like the phone
+		// From Resorting to Danger on, a stream drawn in front of the main one
+		// gets the mouse before it too, like the phone
 		bool isInFront = isBeforeMainStream;
-		if (g_nancy->getGameType() >= kGameTypeNancy21 && stream->getZOffset() > 0) {
+		if (g_nancy->getGameType() >= kGameTypeNancyDossier2 && stream->getZOffset() > 0) {
 			isInFront = true;
 		}
 

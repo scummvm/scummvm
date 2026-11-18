@@ -216,7 +216,7 @@ Common::String SceneContext::findGlobalName(const Record *record) const {
 }
 
 bool SceneContext::include(const Common::String &name) {
-	if (g_nancy->getGameType() >= kGameTypeNancy21) {
+	if (g_nancy->getGameType() >= kGameTypeNancyDossier2) {
 		if (_includedNames.contains(name)) {
 			return true;
 		}
