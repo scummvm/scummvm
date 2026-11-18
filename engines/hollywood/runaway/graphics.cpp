@@ -165,13 +165,23 @@ void RunawayAnimation::draw(Graphics::ManagedSurface &surface, uint frame, int c
 }
 
 static bool readGlobalChunk(Common::File &file, uint chunk, Common::Array<byte> &data) {
-	if (chunk >= 500 || file.size() < 4010 || !file.seek(10 + chunk * 4))
+	if (chunk >= 500 || file.size() < 4010 || !file.seek(10))
+		return false;
+	// The first offset points immediately past both tables, even when the
+	// first chunk is empty. Do not mistake retail configuration bytes for offsets.
+	uint prefix = 10;
+	if (file.readUint32LE() != 4010) {
+		prefix = 20;
+		if (!file.seek(prefix) || file.readUint32LE() != 4020)
+			return false;
+	}
+	if (!file.seek(prefix + chunk * 4))
 		return false;
 	const uint32 offset = file.readUint32LE();
-	if (!file.seek(10 + 500 * 4 + chunk * 4))
+	if (!file.seek(prefix + 500 * 4 + chunk * 4))
 		return false;
 	const uint32 size = file.readUint32LE();
-	if (!size || size > 16 * 1024 * 1024 || offset < 4010 || offset > file.size() || size > file.size() - offset ||
+	if (file.err() || !size || size > 16 * 1024 * 1024 || offset < prefix + 4000 || offset > file.size() || size > file.size() - offset ||
 			!file.seek(offset))
 		return false;
 	data.resize(size);
@@ -183,17 +193,35 @@ bool readRunawayGlobalChunk(uint chunk, Common::Array<byte> &data) {
 	return file.open("RESOURCE.000") && readGlobalChunk(file, chunk, data);
 }
 
+bool RunawayActor::loadChapter(byte chapter, bool alternate) {
+	if (chapter < 1 || chapter > 6)
+		return false;
+	if (chapter <= 2)
+		return load(alternate ? kChapters12Alternate : kChapters12);
+	if (chapter == 3)
+		return load(alternate ? kCabinAlternate : kCabin);
+	return load(alternate ? kChapters456Alternate : kChapters456);
+}
+
 bool RunawayActor::load(Model model) {
 	if (_loadedModel == model)
 		return setFrame(3, 0);
 	_loadedModel = -1;
 	Common::File file;
 	Common::Array<byte> palette;
-	const bool museum = model != kCabin;
+	const bool museum = model == kMuseumInterior || model == kMuseumHall;
 	const bool interior = model == kMuseumInterior;
-	// Native chapter-five actor loader at 0x40b590 selects entry 44. Entry 45
-	// is the palette, 46..53 hold walking cels, 54..59 hold head cels, and
-	// entry 60 describes the six banks of 40 head cels.
+	// Each bank contains descriptors, palette, eight walking banks, six
+	// head banks and head descriptors (retail loader 0x40eac0).
+	uint base = 44;
+	switch (model) {
+	case kChapters12: base = 10; break;
+	case kChapters12Alternate: base = 27; break;
+	case kCabinAlternate: base = 61; break;
+	case kChapters456: base = 78; break;
+	case kChapters456Alternate: base = 95; break;
+	default: break;
+	}
 	_facing = _frame = _headFrame = -1;
 	_museum = museum;
 	_width = museum ? (interior ? 237 : 238) : 345;
@@ -206,8 +234,8 @@ bool RunawayActor::load(Model model) {
 				!readRunawayFile(Common::Path(Common::String::format("br1_%s.PAL", suffix)), palette) ||
 				!readRunawayFile(Common::Path(Common::String::format("ca1_%s.VAL", suffix)), _headDescriptors))
 			return false;
-	} else if (!file.open("RESOURCE.000") || !readGlobalChunk(file, 44, _descriptors) ||
-			!readGlobalChunk(file, 45, palette) || !readGlobalChunk(file, 60, _headDescriptors)) {
+	} else if (!file.open("RESOURCE.000") || !readGlobalChunk(file, base, _descriptors) ||
+			!readGlobalChunk(file, base + 1, palette) || !readGlobalChunk(file, base + 16, _headDescriptors)) {
 		return false;
 	}
 	if (_descriptors.size() != kFacings * kFrames * 32 || palette.size() != 512 ||
@@ -220,7 +248,7 @@ bool RunawayActor::load(Model model) {
 	_shadow.resize(_width * _height);
 	for (uint facing = 0; facing < kFacings; ++facing) {
 		if (museum ? !readRunawayFile(Common::Path(Common::String::format("br1_%s%u.SPR", suffix, facing)), _banks[facing]) :
-				!readGlobalChunk(file, 46 + facing, _banks[facing]))
+				!readGlobalChunk(file, base + 2 + facing, _banks[facing]))
 			return false;
 		for (uint frame = 0; frame < kFrames; ++frame) {
 			if (!setFrame(facing, frame))
@@ -230,7 +258,7 @@ bool RunawayActor::load(Model model) {
 	const byte headFacings[kHeadFacings] = {0, 1, 2, 4, 5, 7};
 	for (uint bank = 0; bank < kHeadFacings; ++bank) {
 		if (museum ? !readRunawayFile(Common::Path(Common::String::format("ca1_%s%u.SPR", suffix, bank)), _headBanks[bank]) :
-				!readGlobalChunk(file, 54 + bank, _headBanks[bank]))
+				!readGlobalChunk(file, base + 10 + bank, _headBanks[bank]))
 			return false;
 		for (uint frame = 0; frame < kHeadFrames; ++frame) {
 			if (!setFrame(headFacings[bank], 0, frame))

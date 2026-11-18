@@ -23,11 +23,12 @@
 #define HOLLYWOOD_RUNAWAY_SAVELOAD_H
 
 #include "common/serializer.h"
+#include "hollywood/runaway/detection.h"
 
 namespace Hollywood {
 
-// Saves are made between actions. Resource data, pointers and transient
-// speech/animation clocks are rebuilt when the persistent state is restored.
+// Persistent state survives scene changes. Saves are made between actions;
+// resources, pointers and animation clocks are rebuilt when restoring it.
 struct RunawaySaveState {
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;
@@ -36,7 +37,12 @@ struct RunawaySaveState {
 	byte itemCount = 0, items[26] = {}, selected = 0, cloth = 0;
 	byte inventoryOpen = 0, verb = 0;
 	uint32 randomSeed = 0, playTime = 0;
+	byte game = kRunawayCabinDemo;
+	uint16 cameraY = 0;
+	byte upperFloor = 1, books = 0, recorder = 0, moneyIdentified = 0, safeOpen = 0;
+	byte varnishTaken = 0, talcTaken = 0, coffeeTaken = 0, keyCount = 0;
 
+	byte chapter() const;
 	bool valid() const;
 	bool read(Common::SeekableReadStream &stream);
 	bool write(Common::WriteStream &stream);

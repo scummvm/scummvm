@@ -19,12 +19,12 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/str-enc.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/navigation.h"
+#include "hollywood/runaway/saveload.h"
 #include "hollywood/runaway/scene.h"
 #include "hollywood/runaway/scene_data.h"
 #include "hollywood/runaway/strings.h"
@@ -70,21 +70,20 @@ const MuseumRoom *findRoom(int number) {
 
 } // End of anonymous namespace
 
-RunawayMuseumScene::RunawayMuseumScene(Audio::Mixer *mixer, RunawayInventory &inventory, const RunawayStrings &strings) :
-	_audio(mixer), _inventory(inventory), _strings(strings) {
-	_audio.setMuseum(true);
+const MuseumRoom *findRunawayMuseumRoom(uint16 number) {
+	return findRoom(number);
 }
 
-bool RunawayMuseumScene::load() {
+RunawayMuseumScene::RunawayMuseumScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings) :
+	_audio(audio), _inventory(inventory), _strings(strings) {}
+
+bool RunawayMuseumScene::load(uint16 entryScene) {
+	const MuseumRoom *room = findRoom(entryScene);
+	if (!room)
+		return false;
+	_entryScene = entryScene;
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_screen.create(kRunawayScreenWidth, kRunawayScreenHeight, format);
-	// The museum intro ends in the restoration laboratory.
-	const MuseumRoom *room = &kRunawayScene4050;
-	if (ConfMan.hasKey("boot_param")) {
-		const MuseumRoom *requested = findRoom(ConfMan.getInt("boot_param"));
-		if (requested)
-			room = requested;
-	}
 	return enterRoom(room->number, room->entry, 3);
 }
 
@@ -94,8 +93,58 @@ void RunawayMuseumScene::start(uint32 now) {
 	for (uint i = 0; i < ARRAYSIZE(initialItems); ++i)
 		_inventory.add(initialItems[i]);
 	_inventory.takeNewItem();
+	resume();
+}
+
+void RunawayMuseumScene::resume() {
 	// The original demo loops M04 cue 11 throughout gameplay (0x4175c0).
-	_audio.playMusic(11);
+	if (!_audio.musicPlaying())
+		_audio.playMusic(11);
+}
+
+void RunawayMuseumScene::captureState(RunawaySaveState &state) const {
+	state.scene = _entryScene;
+	state.x = _position.x;
+	state.y = _position.y;
+	state.camera = _camera.x;
+	state.cameraY = _camera.y;
+	state.facing = _facing;
+	state.upperFloor = _upperFloor;
+	state.books = _books;
+	state.recorder = _recorder;
+	state.moneyIdentified = _moneyIdentified;
+	state.safeOpen = _safeOpen;
+	state.varnishTaken = _varnishTaken;
+	state.talcTaken = _talcTaken;
+	state.coffeeTaken = _coffeeTaken;
+	state.keyCount = _keyCount;
+}
+
+bool RunawayMuseumScene::restoreState(const RunawaySaveState &state, uint32 now, bool entering) {
+	if (!state.valid() || state.game != kRunawayMuseumDemo || state.scene != _entryScene)
+		return false;
+	_upperFloor = state.upperFloor;
+	_books = (ObjectState)state.books;
+	_recorder = (ObjectState)state.recorder;
+	_moneyIdentified = state.moneyIdentified;
+	_safeOpen = state.safeOpen;
+	_varnishTaken = state.varnishTaken;
+	_talcTaken = state.talcTaken;
+	_coffeeTaken = state.coffeeTaken;
+	if (!rebuildBackground() || !_actor.setFrame(state.facing, 0))
+		return false;
+	updateMaps();
+	_position = Common::Point(state.x, state.y);
+	_x = state.x;
+	_y = state.y;
+	_facing = state.facing;
+	_keyCount = entering ? 0 : state.keyCount;
+	_now = _lastUpdate = now;
+	if (entering)
+		updateCamera();
+	else
+		_camera = Common::Point(state.camera, state.cameraY);
+	return true;
 }
 
 bool RunawayMuseumScene::enterRoom(uint16 number, Common::Point position, byte facing) {
@@ -376,16 +425,14 @@ void RunawayMuseumScene::execute(uint16 action) {
 		const MuseumExit &exit = room->exits[i];
 		if (exit.action != action)
 			continue;
-		_pendingDoorClose = exit.door;
-		if (exit.door)
-			_audio.playEffect(3);
 		const Common::Point entry(exit.x, exit.y);
 		if (exit.destination == _room) {
 			changeFloor(exit.upperFloor, entry);
 		} else {
 			_upperFloor = exit.upperFloor;
-			if (!enterRoom(exit.destination, entry, 3))
-				error("Cannot load museum room %u", exit.destination);
+			_transition.scene = exit.destination;
+			_transition.position = entry;
+			_transition.door = exit.door;
 		}
 		return;
 	}
@@ -437,11 +484,8 @@ void RunawayMuseumScene::update(uint32 now, int scrollDirection, bool inventoryO
 	_now = now;
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
 	_lastUpdate = now;
-	// Door entry routines wait for the opening sound before playing the closing sound.
-	if (_pendingDoorClose && !_audio.effectPlaying()) {
-		_pendingDoorClose = false;
-		_audio.playEffect(4);
-	}
+	if (_pressedKey && (int32)(now - _keyUntil) >= 0)
+		_pressedKey = 0;
 	if (speaking() && (int32)(now - _subtitleUntil) >= 0)
 		skipSpeech();
 	if (inventoryOpen || _room == kMuseumKeypad)

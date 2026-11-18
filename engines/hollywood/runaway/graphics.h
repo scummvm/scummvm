@@ -32,7 +32,8 @@ namespace Hollywood {
 class ChunkArchive;
 
 bool readRunawayFile(const Common::Path &path, Common::Array<byte> &data);
-// The cabin demos' RESOURCE.000 has a ten-byte header and two 500-entry tables.
+// RESOURCE.000 has a ten-byte (demo) or twenty-byte (retail) prefix,
+// followed by two 500-entry tables.
 bool readRunawayGlobalChunk(uint chunk, Common::Array<byte> &data);
 bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface);
 bool loadRunawaySurface(const Common::Path &path, int width, int height, Graphics::ManagedSurface &surface);
@@ -66,7 +67,10 @@ private:
 // shadow planes. This differs from the room animation spans.
 class RunawayActor {
 public:
-	enum Model { kCabin, kMuseumInterior, kMuseumHall };
+	enum Model {
+		kCabin, kMuseumInterior, kMuseumHall,
+		kChapters12, kChapters12Alternate, kCabinAlternate, kChapters456, kChapters456Alternate
+	};
 
 	struct RenderParams {
 		Common::Point position, camera;
@@ -78,6 +82,7 @@ public:
 		bool antialias = true;
 	};
 	bool load(Model model = kCabin);
+	bool loadChapter(byte chapter, bool alternate);
 	bool setFrame(uint facing, uint frame, int headFrame = -1);
 	static float perspectiveHeight(Common::Point position);
 	void draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,

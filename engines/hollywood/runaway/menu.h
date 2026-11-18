@@ -24,6 +24,7 @@
 
 #include "common/keyboard.h"
 #include "engines/savestate.h"
+#include "hollywood/runaway/detection.h"
 #include "hollywood/runaway/font.h"
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/presentation.h"
@@ -45,7 +46,7 @@ public:
 
 	RunawayMenu(Audio::Mixer *mixer, const RunawayStrings &strings) : _strings(strings), _audio(mixer) {}
 	~RunawayMenu();
-	bool load(bool museum = false);
+	bool load(RunawayGameType game);
 	void open(const Graphics::ManagedSurface &screen, const Settings &settings, bool canSave = false, bool canLoad = true);
 	void close();
 	Command update(Common::Point mouse);

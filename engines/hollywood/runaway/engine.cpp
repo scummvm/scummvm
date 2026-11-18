@@ -41,6 +41,7 @@
 #include "hollywood/runaway/presentation.h"
 #include "hollywood/runaway/saveload.h"
 #include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene_data.h"
 #include "hollywood/runaway/scene5030.h"
 #include "hollywood/runaway/strings.h"
 #include "hollywood/runaway/ui.h"
@@ -62,8 +63,13 @@ enum RunawayAction {
 
 } // End of anonymous namespace
 
-RunawayEngine::RunawayEngine(OSystem *syst, Common::Language language, bool museum) :
-	Engine(syst), _language(language), _museum(museum), _strings(language) {}
+RunawayEngine::RunawayEngine(OSystem *syst, Common::Language language, RunawayGameType game) :
+	Engine(syst), _language(language), _game(game), _museum(game == kRunawayMuseumDemo), _strings(language), _audio(_mixer) {
+	_state.game = game;
+	_state.scene = _museum ? 4050 : game == kRunawayFullGame ? 2020 : 5030;
+	_audio.setMuseum(_museum);
+	_audio.setChapter(_state.chapter());
+}
 
 RunawayEngine::~RunawayEngine() {}
 
@@ -107,18 +113,19 @@ void RunawayEngine::present(const Graphics::ManagedSurface &screen) {
 }
 
 bool RunawayEngine::canSaveGameStateCurrently(Common::U32String *) {
-	return _gameStarted && !_inPresentation && _scene && _ui && _scene->canSave() && !_ui->busy();
+	return _gameStarted && !_inPresentation && !_pendingDoorClose && _scene && _ui && _scene->canSave() && !_ui->busy();
 }
 
 bool RunawayEngine::canLoadGameStateCurrently(Common::U32String *) {
-	return !_museum && _scene && _ui;
+	return _scene && _ui;
 }
 
 Common::Error RunawayEngine::saveGameStream(Common::WriteStream *stream, bool) {
 	if (!canSaveGameStateCurrently())
 		return Common::kWritingFailed;
-	RunawaySaveState state;
+	RunawaySaveState state = _state;
 	_scene->captureState(state);
+	_inventory->captureState(state);
 	_ui->captureState(state);
 	state.playTime = getTotalPlayTime();
 	return state.write(*stream) ? Common::kNoError : Common::kWritingFailed;
@@ -128,19 +135,75 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	if (!canLoadGameStateCurrently())
 		return Common::kReadingFailed;
 	RunawaySaveState state;
-	if (!state.read(*stream))
+	if (!state.read(*stream) || state.game != _game)
 		return Common::Error(Common::kReadingFailed, "Invalid or unsupported Runaway save");
 	// Build and validate replacement resources before touching the live scene.
 	// Failed reads leave the current puzzle, inventory, audio and UI intact.
-	Common::ScopedPtr<RunawayScene5030> scene(new RunawayScene5030(_mixer, *_inventory, _strings));
-	if (!scene->load() || !scene->restoreState(state, state.playTime))
+	Common::ScopedPtr<RunawayScene> scene(createScene(state.scene));
+	if (!scene || !scene->load(state.scene) || !scene->restoreState(state, state.playTime))
 		return Common::kReadingFailed;
+	if (state.chapter() != _state.chapter() && !_ui->loadChapter(state.chapter()))
+		return Common::kReadingFailed;
+	_audio.stopMusic();
+	_audio.stopSpeech();
+	_audio.stopEffect();
+	_audio.setChapter(state.chapter());
 	_scene.reset(scene.release());
+	_state = state;
+	_inventory->restoreState(state);
 	_ui->restoreState(state, state.playTime);
 	setTotalPlayTime(state.playTime);
+	_pendingDoorClose = false;
 	_loadedGame = _gameStarted = true;
 	syncSoundSettings();
+	_scene->resume();
 	_scene->draw();
+	return Common::kNoError;
+}
+
+RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
+	if (_game == kRunawayMuseumDemo && findRunawayMuseumRoom(entryScene))
+		return new RunawayMuseumScene(_audio, *_inventory, _strings);
+	if (_game == kRunawayCabinDemo && entryScene == 5030)
+		return new RunawayScene5030(_mixer, _audio, *_inventory, _strings);
+	// Retail scene scripts have their own entry substates. Sharing an archive
+	// with a demo does not make its puzzle initialization interchangeable.
+	return nullptr;
+}
+
+bool RunawayEngine::sceneBusy() const {
+	return _pendingDoorClose || _scene->busy();
+}
+
+Common::Error RunawayEngine::changeScene() {
+	const RunawayScene::Transition transition = _scene->transition();
+	RunawaySaveState state = _state;
+	_scene->captureState(state);
+	_inventory->captureState(state);
+	state.scene = transition.scene;
+	state.x = transition.position.x;
+	state.y = transition.position.y;
+	state.facing = transition.facing;
+	state.camera = state.cameraY = 0;
+	Common::ScopedPtr<RunawayScene> scene(createScene(state.scene));
+	if (!scene)
+		return Common::Error(Common::kUnsupportedGameidError,
+			Common::String::format("Runaway scene %u is not implemented", state.scene));
+	if (!scene->load(state.scene) || !scene->restoreState(state, getTotalPlayTime(), true))
+		return Common::Error(Common::kReadingFailed,
+			Common::String::format("Cannot load Runaway scene %u", state.scene));
+	if (state.chapter() != _state.chapter() && !_ui->loadChapter(state.chapter()))
+		return Common::Error(Common::kReadingFailed, "Cannot load Runaway chapter graphics");
+	_audio.stopSpeech();
+	_audio.stopEffect();
+	_audio.setChapter(state.chapter());
+	_state = state;
+	_scene.reset(scene.release());
+	syncSoundSettings();
+	_scene->resume();
+	_pendingDoorClose = transition.door;
+	if (transition.door)
+		_audio.playEffect(3);
 	return Common::kNoError;
 }
 
@@ -170,8 +233,8 @@ void RunawayEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 bool RunawayEngine::hasFeature(EngineFeature feature) const {
-	return feature == kSupportsReturnToLauncher || (!_museum &&
-		(feature == kSupportsSubtitleOptions || feature == kSupportsSavingDuringRuntime || feature == kSupportsLoadingDuringRuntime));
+	return feature == kSupportsReturnToLauncher || (feature == kSupportsSubtitleOptions && !_museum) ||
+		(_game != kRunawayFullGame && (feature == kSupportsSavingDuringRuntime || feature == kSupportsLoadingDuringRuntime));
 }
 
 void RunawayEngine::syncSoundSettings() {
@@ -229,6 +292,13 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu) {
 }
 
 Common::Error RunawayEngine::run() {
+	_inventory.reset(new RunawayInventory(_strings, _museum));
+	if (_museum && ConfMan.hasKey("boot_param") && findRunawayMuseumRoom(ConfMan.getInt("boot_param")))
+		_state.scene = ConfMan.getInt("boot_param");
+	_scene.reset(createScene(_state.scene));
+	if (!_scene)
+		return Common::Error(Common::kUnsupportedGameidError,
+			Common::String::format("Runaway scene %u is not implemented yet", _state.scene));
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(kRunawayScreenWidth, kRunawayScreenHeight, &format);
 	if (_system->getScreenFormat() != format)
@@ -236,22 +306,17 @@ Common::Error RunawayEngine::run() {
 	setDebugger(new GUI::Debugger());
 	syncSoundSettings();
 	RunawayMenu menu(_mixer, _strings);
-	if (!menu.load(_museum))
+	if (!menu.load(_game))
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo menu");
-	_inventory.reset(new RunawayInventory(_strings, _museum));
-	if (_museum)
-		_scene.reset(new RunawayMuseumScene(_mixer, *_inventory, _strings));
-	else
-		_scene.reset(new RunawayScene5030(_mixer, *_inventory, _strings));
 	_ui.reset(new RunawayUI(_mixer, *_inventory, _strings));
-	if (!_scene->load() || !_ui->load(_museum))
+	if (!_scene->load(_state.scene) || !_ui->load(_game, _state.chapter()))
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo resources");
 	syncSoundSettings();
-	if (!_museum && ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0) {
+	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0) {
 		const Common::Error result = loadGameState(ConfMan.getInt("save_slot"));
 		if (result.getCode() != Common::kNoError)
 			return result;
-	} else if (!_museum) {
+	} else if (_game == kRunawayCabinDemo) {
 		const Common::Error result = playIntro(menu);
 		if (result.getCode() != Common::kNoError || shouldQuit())
 			return result;
@@ -267,15 +332,20 @@ Common::Error RunawayEngine::run() {
 	bool leftPressed = false, rightPressed = false;
 	while (!shouldQuit()) {
 		const uint32 now = getTotalPlayTime();
+		// Museum doors close once the opening sound finishes, across the room change.
+		if (_pendingDoorClose && !_audio.effectPlaying()) {
+			_pendingDoorClose = false;
+			_audio.playEffect(4);
+		}
 		Common::Point mouse = _eventMan->getMousePos();
-		_ui->update(now, mouse, _scene->hotspotAt(mouse), _scene->busy(), _scene->speaking(), _scene->inventoryPresentation(), _scene->speechFrame());
+		_ui->update(now, mouse, _scene->hotspotAt(mouse), sceneBusy(), _scene->speaking(), _scene->inventoryPresentation(), _scene->speechFrame());
 		bool openMenu = false;
 		Common::Event event;
 		while (!openMenu && _eventMan->pollEvent(event)) {
 			if (_loadedGame)
 				break;
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
-				_ui->update(now, event.mouse, _scene->hotspotAt(event.mouse), _scene->busy(), _scene->speaking(), _scene->inventoryPresentation(), _scene->speechFrame());
+				_ui->update(now, event.mouse, _scene->hotspotAt(event.mouse), sceneBusy(), _scene->speaking(), _scene->inventoryPresentation(), _scene->speechFrame());
 				const RunawayUI::Command command = _ui->click(event.type == Common::EVENT_RBUTTONDOWN);
 				switch (command.type) {
 				case RunawayUI::Command::kOpenMenu:
@@ -300,7 +370,7 @@ Common::Error RunawayEngine::run() {
 				}
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 				mouse = _eventMan->getMousePos();
-				_ui->update(now, mouse, _scene->hotspotAt(mouse), _scene->busy(), _scene->speaking(), _scene->inventoryPresentation(), _scene->speechFrame());
+				_ui->update(now, mouse, _scene->hotspotAt(mouse), sceneBusy(), _scene->speaking(), _scene->inventoryPresentation(), _scene->speechFrame());
 				const bool pressed = event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START;
 				switch (event.customType) {
 				case kPauseMenu:
@@ -313,11 +383,11 @@ Common::Error RunawayEngine::run() {
 					rightPressed = pressed;
 					break;
 				case kScrollStart:
-					if (pressed && !_ui->inventoryOpen() && !_scene->busy())
+					if (pressed && !_ui->inventoryOpen() && !sceneBusy())
 						_scene->setCameraX(0);
 					break;
 				case kScrollEnd:
-					if (pressed && !_ui->inventoryOpen() && !_scene->busy())
+					if (pressed && !_ui->inventoryOpen() && !sceneBusy())
 						_scene->setCameraX(_scene->roomWidth() - kRunawayScreenWidth);
 					break;
 				case kCancelAction:
@@ -374,7 +444,14 @@ Common::Error RunawayEngine::run() {
 		}
 		// The engine clock excludes time spent in ScummVM dialogs, keeping
 		// animation frames and subtitle deadlines in sync with paused audio.
-		_scene->update(now, _ui->inventoryOpen() || _scene->busy() ? 0 : direction, _ui->inventoryOpen());
+		_scene->update(now, _ui->inventoryOpen() || sceneBusy() ? 0 : direction, _ui->inventoryOpen());
+		if (_scene->transition().scene) {
+			const Common::Error result = changeScene();
+			if (result.getCode() != Common::kNoError)
+				return result;
+			leftPressed = rightPressed = false;
+			continue;
+		}
 		// The extended French demo's later rooms are not implemented yet;
 		// all three releases currently finish at the shared shack escape.
 		if (_scene->escaped()) {
@@ -385,7 +462,7 @@ Common::Error RunawayEngine::run() {
 			leftPressed = rightPressed = false;
 			continue;
 		}
-		_ui->update(now, mouse, _scene->hotspotAt(mouse), _scene->busy(), _scene->speaking(), _scene->inventoryPresentation(), _scene->speechFrame());
+		_ui->update(now, mouse, _scene->hotspotAt(mouse), sceneBusy(), _scene->speaking(), _scene->inventoryPresentation(), _scene->speechFrame());
 		_scene->draw();
 		Graphics::ManagedSurface &screen = _scene->screen();
 		const bool subtitles = _museum || !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute");

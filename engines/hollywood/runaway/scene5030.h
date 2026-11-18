@@ -45,10 +45,11 @@ public:
 		kRoomWidth = 1376, kRoomHeight = kRunawayViewportHeight, kRoomTop = kRunawayViewportTop
 	};
 
-	RunawayScene5030(Audio::Mixer *mixer, RunawayInventory &inventory, const RunawayStrings &strings) :
-		_audio(mixer), _inventory(inventory), _strings(strings), _interrogation(mixer), _random("runawayShack"), _actor() {}
-	bool load() override;
+	RunawayScene5030(Audio::Mixer *mixer, RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings) :
+		_audio(audio), _inventory(inventory), _strings(strings), _interrogation(mixer), _random("runawayShack"), _actor() {}
+	bool load(uint16 entryScene) override;
 	void start(uint32 now) override;
+	void resume() override;
 	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
 	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
 	void draw() override;
@@ -71,7 +72,7 @@ public:
 	bool escaped() const override { return _escaped; }
 	bool canSave() const override { return !busy() && !speaking() && !_escaped && _pathIndex == _path.size(); }
 	void captureState(RunawaySaveState &state) const override;
-	bool restoreState(const RunawaySaveState &state, uint32 now) override;
+	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
 	void setOptions(bool antialias, bool fastScrolling) override { _antialias = antialias; _fastScrolling = fastScrolling; }
 
 private:
@@ -117,7 +118,7 @@ private:
 	Common::Array<byte> _mask, _maps, _unplugPatch, _openLidPatch, _closedLidPatch;
 	Common::Array<byte> _pickupPatches[5];
 	Common::Array<uint16> _voiceSamples, _cueEnds;
-	RunawayAudio _audio;
+	RunawayAudio &_audio;
 	RunawayInventory &_inventory;
 	const RunawayStrings &_strings;
 	RunawayInterrogation _interrogation;

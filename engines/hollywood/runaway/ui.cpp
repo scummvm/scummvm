@@ -56,7 +56,8 @@ RunawayUI::~RunawayUI() {
 		CursorMan.popCursor();
 }
 
-bool RunawayUI::load(bool museum) {
+bool RunawayUI::load(RunawayGameType game, byte chapter) {
+	const bool museum = game == kRunawayMuseumDemo;
 	_museum = museum;
 	_audio.setMuseum(museum);
 	Common::Array<byte> animation;
@@ -74,19 +75,41 @@ bool RunawayUI::load(bool museum) {
 				!readRunawayFile(Common::Path("ovalo1.tct"), animation) || !_portrait.load(animation, 33) ||
 				!readRunawayFile(Common::Path("ov1golpe.tct"), animation) || !_idlePortrait.load(animation, 15))
 			return false;
-	} else if (!loadRunawaySurface(114, 904, 540, _cursors) ||
-			!loadRunawaySurface(118, 48, 48, _demoLogo) || !loadRunawaySurface(121, 80, 42 * 80, _icons) ||
+	} else if (!loadChapter(chapter) ||
+			(game != kRunawayFullGame && !loadRunawaySurface(118, 48, 48, _demoLogo)) ||
 			!loadRunawaySurface(127, 700, 74, _inventoryButton) || !loadRunawaySurface(129, 700, 74, _returnButton) ||
 			!loadRunawaySurface(128, 700, 74, _optionsButton) ||
-			!loadRunawaySurface(131, 1024, 600, _inventoryBackground) || !loadRunawaySurface(133, 768, 576, _inventoryTexture) ||
-			!readRunawayGlobalChunk(137, animation) || !_portrait.load(animation, 104) ||
-			!readRunawayGlobalChunk(141, animation) || !_idlePortrait.load(animation, 32))
+			!loadRunawaySurface(131, 1024, 600, _inventoryBackground) || !loadRunawaySurface(133, 768, 576, _inventoryTexture))
 		return false;
 	_cursor.create(kCursorWidth, kCursorWidth, kUIFormat);
 	const uint16 key = *(const uint16 *)_cursors.getPixels();
 	_cursor.fillRect(Common::Rect(0, 0, kCursorWidth, kCursorWidth), key);
 	CursorMan.pushCursor(_cursor.getPixels(), kCursorWidth, kCursorWidth, 30, 30, key, &kUIFormat);
 	_cursorPushed = true;
+	return true;
+}
+
+bool RunawayUI::loadChapter(byte chapter) {
+	if (_museum || chapter < 1 || chapter > 6)
+		return false;
+	// Native 0x410440 selects one icon strip per chapter; 0x40eea0 selects
+	// four portrait sets, with the last shared by chapters four through six.
+	static const uint16 iconHeights[] = {1840, 2079, 3360, 3760, 1360, 1920};
+	const uint portraitChunk = 135 + MIN<uint>(chapter - 1, 3);
+	Common::Array<byte> animation;
+	Graphics::ManagedSurface cursors, icons;
+	RunawayAnimation portrait, idlePortrait;
+	if (!loadRunawaySurface(111 + chapter, 904, chapter < 5 ? 540 : 480, cursors) ||
+			!loadRunawaySurface(118 + chapter, 80, iconHeights[chapter - 1], icons) ||
+			!readRunawayGlobalChunk(portraitChunk, animation) || !portrait.load(animation, 104) ||
+			!readRunawayGlobalChunk(portraitChunk + 4, animation) || !idlePortrait.load(animation, 32))
+		return false;
+	_cursors = Common::move(cursors);
+	_icons = Common::move(icons);
+	_portrait = Common::move(portrait);
+	_idlePortrait = Common::move(idlePortrait);
+	_audio.setChapter(chapter);
+	_cursorKey = -1;
 	return true;
 }
 
@@ -448,7 +471,8 @@ void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &
 		_font.drawString(screen.surfacePtr(), caption, 20, 684, 984, color, Graphics::kTextAlignCenter);
 	}
 	// Native 0x4020b0 copies the demo logo to the bottom-right corner.
-	screen.copyRectToSurface(_demoLogo, 976, 720, Common::Rect(0, 0, 48, 48));
+	if (_demoLogo.w)
+		screen.copyRectToSurface(_demoLogo, 976, 720, Common::Rect(0, 0, 48, 48));
 }
 
 } // End of namespace Hollywood

@@ -28,6 +28,12 @@ enum RunawayGameFlags {
 	GF_RUNAWAY_MUSEUM_DEMO = 1 << 0
 };
 
+enum RunawayGameType {
+	kRunawayCabinDemo,
+	kRunawayMuseumDemo,
+	kRunawayFullGame
+};
+
 } // End of namespace Hollywood
 
 #endif // HOLLYWOOD_RUNAWAY_DETECTION_H

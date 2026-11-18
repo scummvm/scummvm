@@ -38,8 +38,9 @@ void RunawayMuseumScene::clickScene4140(byte id) {
 	_pressedKey = id;
 	_keyUntil = _now + 180;
 	if (!id) {
-		if (!enterRoom(kMuseumHall, Common::Point(1153, 297), 7))
-			error("Cannot return to the museum hall");
+		_transition.scene = kMuseumHall;
+		_transition.position = Common::Point(1153, 297);
+		_transition.facing = 7;
 	} else if (id == 10) {
 		_keyCount = 0;
 	} else if (id == 12) {

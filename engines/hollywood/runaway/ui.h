@@ -24,6 +24,7 @@
 
 #include "common/random.h"
 #include "hollywood/runaway/audio.h"
+#include "hollywood/runaway/detection.h"
 #include "hollywood/runaway/font.h"
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/inventory.h"
@@ -42,7 +43,8 @@ public:
 	RunawayUI(Audio::Mixer *mixer, RunawayInventory &inventory, const RunawayStrings &strings) :
 		_audio(mixer), _inventory(inventory), _strings(strings), _random("runaway-ui") {}
 	~RunawayUI();
-	bool load(bool museum = false);
+	bool load(RunawayGameType game, byte chapter);
+	bool loadChapter(byte chapter);
 	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
 		bool inventoryPresentation = false, byte speechFrame = 0);
 	Command click(bool right);

@@ -20,6 +20,7 @@
  */
 
 #include "hollywood/runaway/saveload.h"
+#include "hollywood/runaway/scene_data.h"
 
 namespace Hollywood {
 
@@ -47,14 +48,49 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(verb);
 	s.syncAsUint32LE(randomSeed);
 	s.syncAsUint32LE(playTime);
+	s.syncAsByte(game, 2);
+	s.syncAsUint16LE(cameraY, 2);
+	s.syncAsByte(upperFloor, 2);
+	s.syncAsByte(books, 2);
+	s.syncAsByte(recorder, 2);
+	s.syncAsByte(moneyIdentified, 2);
+	s.syncAsByte(safeOpen, 2);
+	s.syncAsByte(varnishTaken, 2);
+	s.syncAsByte(talcTaken, 2);
+	s.syncAsByte(coffeeTaken, 2);
+	s.syncAsByte(keyCount, 2);
+}
+
+byte RunawaySaveState::chapter() const {
+	switch (scene / 1000) {
+	case 1: case 2: return 1;
+	case 4: return 2;
+	case 5: return 3;
+	case 6: return 4;
+	case 7: return 5;
+	case 8: case 9: return 6;
+	default: return 0;
+	}
 }
 
 bool RunawaySaveState::valid() const {
-	if (scene != 5030 || x >= 1376 || y >= 600 || camera > 352 || facing >= 8 ||
+	if (game > kRunawayFullGame || !chapter() || x >= 32768 || y >= 32768 ||
+			camera >= 32768 || cameraY >= 32768 || facing >= 8 ||
 			lidOpen > 1 || unplugged > 1 || windowClean > 1 || coolerMoved > 1 ||
 			coolerInspected > 1 || peeked > 1 || ice > 2 || hatch > 3 ||
 			itemCount > sizeof(items) || selected > sizeof(items) || cloth > 2 || inventoryOpen > 1 || verb > 2)
 		return false;
+	if (game == kRunawayCabinDemo && (scene != 5030 || x >= 1376 || y >= 600 || camera > 352 || cameraY))
+		return false;
+	if (upperFloor > 1 || books > 2 || recorder > 2 || moneyIdentified > 1 || safeOpen > 1 ||
+			varnishTaken > 1 || talcTaken > 1 || coffeeTaken > 1 || keyCount > 4)
+		return false;
+	if (game == kRunawayMuseumDemo) {
+		const MuseumRoom *room = findRunawayMuseumRoom(scene);
+		if (!room || x >= room->width || y >= room->height || camera > room->width - 1024 ||
+				cameraY > room->height - 600)
+			return false;
+	}
 	if ((coolerMoved && ice != 2) || ((hatch != 0) != (coolerMoved != 0)))
 		return false;
 	for (uint i = 0; i < sizeof(pickedUp); ++i) {
@@ -63,7 +99,8 @@ bool RunawaySaveState::valid() const {
 	}
 	bool owned[27] = {};
 	for (uint i = 0; i < itemCount; ++i) {
-		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]])
+		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
+				(game == kRunawayMuseumDemo && items[i] > 19))
 			return false;
 		owned[items[i]] = true;
 	}
@@ -71,9 +108,14 @@ bool RunawaySaveState::valid() const {
 }
 
 bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
-	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A') || stream.readUint16LE() != 1)
+	*this = RunawaySaveState();
+	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
+		return false;
+	const uint16 version = stream.readUint16LE();
+	if (version < 1 || version > 2)
 		return false;
 	Common::Serializer s(&stream, nullptr);
+	s.setVersion(version);
 	sync(s);
 	return !s.err() && !stream.eos() && valid();
 }
@@ -82,8 +124,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(1);
+	stream.writeUint16LE(2);
 	Common::Serializer s(nullptr, &stream);
+	s.setVersion(2);
 	sync(s);
 	return !s.err();
 }

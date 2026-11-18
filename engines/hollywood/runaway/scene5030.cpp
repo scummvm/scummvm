@@ -65,7 +65,10 @@ const SceneHotspot kHotspots[] = {
 
 } // End of anonymous namespace
 
-bool RunawayScene5030::load() {
+bool RunawayScene5030::load(uint16 entryScene) {
+	if (entryScene != 5030)
+		return false;
+	_entryScene = entryScene;
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	if (!_archive.open(Common::Path("RESOURCE.E03"), 50) ||
 			!loadRunawayMask(_archive, kRoomWidth, kRoomHeight, _mask, _maps) ||
@@ -152,11 +155,17 @@ bool RunawayScene5030::loadRoomGraphics() {
 
 void RunawayScene5030::start(uint32 now) {
 	_now = _lastUpdate = now;
-	_audio.playMusic(11);
+	resume();
 	startAction(kIntroVideo);
 }
 
+void RunawayScene5030::resume() {
+	if (!_audio.musicPlaying())
+		_audio.playMusic(11);
+}
+
 void RunawayScene5030::captureState(RunawaySaveState &state) const {
+	state.scene = _entryScene;
 	state.x = _position.x;
 	state.y = _position.y;
 	state.camera = _cameraX;
@@ -174,11 +183,10 @@ void RunawayScene5030::captureState(RunawaySaveState &state) const {
 		state.examined[i] = _examined[i];
 	}
 	state.randomSeed = _random.getSeed();
-	_inventory.captureState(state);
 }
 
-bool RunawayScene5030::restoreState(const RunawaySaveState &state, uint32 now) {
-	if (!state.valid())
+bool RunawayScene5030::restoreState(const RunawaySaveState &state, uint32 now, bool entering) {
+	if (!state.valid() || state.game != kRunawayCabinDemo || state.scene != _entryScene)
 		return false;
 	_lidOpen = state.lidOpen;
 	_unplugged = state.unplugged;
@@ -194,11 +202,8 @@ bool RunawayScene5030::restoreState(const RunawaySaveState &state, uint32 now) {
 	}
 	if (!loadRoomGraphics())
 		return false;
-	stopSpeech();
-	_audio.stopEffect();
 	_interrogation.stop();
 	_video.close();
-	_inventory.restoreState(state);
 	_random.setSeed(state.randomSeed);
 	_now = _lastUpdate = _actionStarted = now;
 	_walkElapsed = _lastFootstep = _step = 0;
@@ -210,11 +215,9 @@ bool RunawayScene5030::restoreState(const RunawaySaveState &state, uint32 now) {
 	_committedCaption.clear();
 	_escaped = false;
 	setPosition(Common::Point(state.x, state.y), state.facing);
-	setCameraX(state.camera);
+	setCameraX(entering ? state.x - kScreenWidth / 2 : state.camera);
 	_idleHead.reset(now);
-	_actor.setFrame(_facing, 0, 0);
-	_audio.playMusic(11);
-	return true;
+	return _actor.setFrame(_facing, 0, 0);
 }
 
 void RunawayScene5030::setCameraX(int x) {

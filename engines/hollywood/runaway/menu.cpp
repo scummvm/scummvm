@@ -54,7 +54,8 @@ bool RunawayMenu::Settings::operator==(const Settings &other) const {
 
 RunawayMenu::~RunawayMenu() { close(); }
 
-bool RunawayMenu::load(bool museum) {
+bool RunawayMenu::load(RunawayGameType game) {
+	const bool museum = game == kRunawayMuseumDemo;
 	_museum = museum;
 	_audio.setMuseum(museum);
 	Graphics::ManagedSurface cursors;
@@ -69,7 +70,8 @@ bool RunawayMenu::load(bool museum) {
 			return false;
 	} else if (!loadRunawaySurface(132, 1024, 600, _background) ||
 			!loadRunawaySurface(130, 700, 74, _returnButton) ||
-			!loadRunawaySurface(118, 48, 48, _logo) || !loadRunawaySurface(114, 904, 540, cursors) ||
+			(game != kRunawayFullGame && !loadRunawaySurface(118, 48, 48, _logo)) ||
+			!loadRunawaySurface(game == kRunawayFullGame ? 112 : 114, 904, 540, cursors) ||
 			!readRunawayGlobalChunk(155, animation) || !_volumeDial.load(animation, 103))
 		return false;
 	_cursor.create(60, 60, kMenuFormat);
@@ -595,7 +597,8 @@ void RunawayMenu::draw(Graphics::ManagedSurface &screen) {
 		}
 		_captionFont.drawString(screen.surfacePtr(), caption, 0, 684, 1024, kNormal, Graphics::kTextAlignCenter);
 	}
-	screen.copyRectToSurface(_logo, 976, 720, Common::Rect(48, 48));
+	if (_logo.w)
+		screen.copyRectToSurface(_logo, 976, 720, Common::Rect(48, 48));
 }
 
 } // End of namespace Hollywood

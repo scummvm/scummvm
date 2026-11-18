@@ -37,13 +37,23 @@ RunawayAudio::~RunawayAudio() {
 	stopEffect();
 }
 
+void RunawayAudio::setChapter(byte chapter) {
+	assert(chapter >= 1 && chapter <= 6);
+	if (_chapter == chapter)
+		return;
+	stopMusic();
+	stopSpeech();
+	stopEffect();
+	_chapter = chapter;
+}
+
 uint32 RunawayAudio::play(const char *archive, uint16 cue, uint tableCount, bool pairedTables,
 		byte flags, Audio::Mixer::SoundType type, Audio::SoundHandle &handle, byte volume, bool loop, uint rate) {
 	_mixer->stopHandle(handle);
 	const uint headerSize = tableCount * (pairedTables ? 8 : 4);
 	Common::File *file = new Common::File();
 	if (cue >= tableCount - (pairedTables ? 0 : 1) || !file->open(archive) || file->size() < headerSize) {
-		warning("Runaway demo: cannot read %s cue %u", archive, cue);
+		warning("Runaway: cannot read %s cue %u", archive, cue);
 		delete file;
 		return 0;
 	}
@@ -60,7 +70,7 @@ uint32 RunawayAudio::play(const char *archive, uint16 cue, uint tableCount, bool
 	const uint frameSize = ((flags & Audio::FLAG_16BITS) ? 2 : 1) * ((flags & Audio::FLAG_STEREO) ? 2 : 1);
 	if (file->err() || start < headerSize || !size || start > file->size() ||
 			size > file->size() - start || size % frameSize) {
-		warning("Runaway demo: invalid %s cue %u range", archive, cue);
+		warning("Runaway: invalid %s cue %u range", archive, cue);
 		delete file;
 		return 0;
 	}
@@ -87,8 +97,9 @@ void RunawayAudio::playIntroMusic() {
 }
 
 uint32 RunawayAudio::playMusic(uint16 cue, bool loop) {
-	// Cabin PCM is 16 kHz; the museum uses 22.05 kHz music/speech and 11.025 kHz effects.
-	return play(_museum ? "RESOURCE.M04" : "RESOURCE.M03", cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
+	// Retail/cabin PCM is 16 kHz; the old museum demo uses 22.05 kHz music.
+	const Common::String archive = Common::String::format("RESOURCE.M%02u", _museum ? 4 : _chapter);
+	return play(archive.c_str(), cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
 		Audio::Mixer::kMusicSoundType, _music, 96, loop, _museum ? 22050 : 16000);
 }
 
@@ -100,10 +111,11 @@ uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
 	if (_museum)
 		return sample ? play("RESOURCE.004", sample, 4000, false, Audio::FLAG_UNSIGNED,
 			Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false, 22050) : 0;
-	// DATAACA3 has independent 6000-entry offset and length tables. Its global
+	// DATAACA archives have independent 6000-entry offset and length tables. Their global
 	// sample IDs include stale offsets for other chapters, so never derive a
 	// length by subtracting adjacent offsets as with the M/S archives.
-	return play(global ? "DATAACA0.000" : "DATAACA3.000", sample, 6000, true, Audio::FLAG_UNSIGNED,
+	const Common::String archive = Common::String::format("DATAACA%u.000", global ? 0 : _chapter);
+	return play(archive.c_str(), sample, 6000, true, Audio::FLAG_UNSIGNED,
 		Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false, 16000);
 }
 
@@ -113,7 +125,8 @@ void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop) 
 	byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 	if (_museum)
 		flags = Audio::FLAG_UNSIGNED;
-	play(_museum ? "RESOURCE.S04" : "RESOURCE.S03", cue, 1000, false, flags,
+	const Common::String archive = Common::String::format("RESOURCE.S%02u", _museum ? 4 : _chapter);
+	play(archive.c_str(), cue, 1000, false, flags,
 		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop, _museum ? 11025 : 16000);
 }
 

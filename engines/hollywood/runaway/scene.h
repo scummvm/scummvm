@@ -32,9 +32,17 @@ namespace Hollywood {
 
 class RunawayScene {
 public:
+	struct Transition {
+		uint16 scene = 0; // Preserve entry substates, e.g. 2020..2023, until dispatch.
+		Common::Point position;
+		byte facing = 3;
+		bool door = false;
+	};
 	virtual ~RunawayScene() {}
-	virtual bool load() = 0;
+	virtual bool load(uint16 entryScene) = 0;
 	virtual void start(uint32 now) = 0;
+	virtual void resume() = 0;
+	const Transition &transition() const { return _transition; }
 	virtual void click(Common::Point mouse, RunawayVerb verb, byte item) = 0;
 	virtual void update(uint32 now, int scrollDirection, bool inventoryOpen) = 0;
 	virtual void draw() = 0;
@@ -56,8 +64,13 @@ public:
 	virtual bool escaped() const { return false; }
 	virtual bool canSave() const { return false; }
 	virtual void captureState(RunawaySaveState &state) const {}
-	virtual bool restoreState(const RunawaySaveState &state, uint32 now) { return false; }
+	// Prepare a replacement scene without changing shared inventory or audio.
+	virtual bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) { return false; }
 	virtual void setOptions(bool antialias, bool fastScrolling) = 0;
+
+protected:
+	uint16 _entryScene = 0;
+	Transition _transition;
 };
 
 class RunawayStrings;
@@ -66,9 +79,10 @@ struct MuseumHotspot;
 // Shared player for the museum demo's numbered scenes.
 class RunawayMuseumScene : public RunawayScene {
 public:
-	RunawayMuseumScene(Audio::Mixer *mixer, RunawayInventory &inventory, const RunawayStrings &strings);
-	bool load() override;
+	RunawayMuseumScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings);
+	bool load(uint16 entryScene) override;
 	void start(uint32 now) override;
+	void resume() override;
 	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
 	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
 	void draw() override;
@@ -79,10 +93,13 @@ public:
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override { return _subtitle; }
-	bool busy() const override { return _pendingHotspot != 0 || _pendingDoorClose || speaking(); }
+	bool busy() const override { return _pendingHotspot != 0 || _transition.scene || speaking(); }
 	bool speaking() const override { return !_subtitle.empty(); }
 	void skipSpeech() override;
 	void sayInventory(const RunawayInventory::Reply &reply) override;
+	bool canSave() const override { return !busy() && _pathIndex == _path.size() && !_pressedKey; }
+	void captureState(RunawaySaveState &state) const override;
+	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
 	void setOptions(bool antialias, bool fastScrolling) override { _antialias = antialias; _fastScrolling = fastScrolling; }
 
 private:
@@ -141,7 +158,7 @@ private:
 	void clickScene4140(byte id);
 	void drawScene4140(Graphics::ManagedSurface &viewport);
 
-	RunawayAudio _audio;
+	RunawayAudio &_audio;
 	RunawayInventory &_inventory;
 	const RunawayStrings &_strings;
 	ChunkArchive _archive;
@@ -162,7 +179,6 @@ private:
 	float _x = 0, _y = 0;
 	uint32 _now = 0, _lastUpdate = 0, _walkElapsed = 0, _subtitleUntil = 0;
 	bool _upperFloor = true, _antialias = true, _fastScrolling = true;
-	bool _pendingDoorClose = false;
 	ObjectState _books = kUnexamined, _recorder = kUnexamined;
 	bool _moneyIdentified = false, _safeOpen = false;
 	bool _varnishTaken = false, _talcTaken = false, _coffeeTaken = false;

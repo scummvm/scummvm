@@ -82,6 +82,8 @@ extern const MuseumRoom kRunawayScene4090;
 extern const MuseumRoom kRunawayScene4100;
 extern const MuseumRoom kRunawayScene4140;
 
+const MuseumRoom *findRunawayMuseumRoom(uint16 number);
+
 } // End of namespace Hollywood
 
 #endif // HOLLYWOOD_RUNAWAY_SCENE_DATA_H
