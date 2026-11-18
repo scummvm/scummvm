@@ -43,7 +43,7 @@ void MidiParser_CTMF::decodeHeader(const uint8 *p) {
 	_ticksPerSecond = READ_LE_UINT16(p); p += 2;
 	p += 22;
 	_instrumentsCount = READ_LE_UINT16(p); p += 2;
-	_basicTempo = READ_LE_UINT16(p); p += 2;
+	_basicTempo = READ_LE_UINT16(p);
 }
 
 void MidiParser_CTMF::decodeAdlibInstrument(struct AdlibInstrument *ins, const uint8 *p) {
