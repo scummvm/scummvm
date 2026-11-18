@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/ustr.h"
+#include "hollywood/runaway/detection.h"
 
 namespace Hollywood {
 
@@ -40,7 +41,7 @@ public:
 		byte variation;
 		Reply(uint16 c = 1, byte v = 0) : cue(c), variation(v) {}
 	};
-	explicit RunawayInventory(const RunawayStrings &strings, bool museum = false) : _strings(strings), _museum(museum) {}
+	RunawayInventory(const RunawayStrings &strings, RunawayGameType game) : _strings(strings), _game(game) {}
 	bool contains(byte item) const;
 	bool add(byte item);
 	void remove(byte item);
@@ -61,7 +62,7 @@ public:
 
 private:
 	const RunawayStrings &_strings;
-	const bool _museum;
+	const RunawayGameType _game;
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
 };

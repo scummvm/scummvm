@@ -30,6 +30,10 @@ namespace Hollywood {
 // Persistent state survives scene changes. Saves are made between actions;
 // resources, pointers and animation clocks are rebuilt when restoring it.
 struct RunawaySaveState {
+	struct Hospital {
+		byte glassTaken = 0, pillsTaken = 0, sheetTaken = 0, bagTaken = 0, exitMapRead = 0;
+	} hospital;
+
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;
 	byte coolerMoved = 0, coolerInspected = 0, peeked = 0, ice = 0, hatch = 0;

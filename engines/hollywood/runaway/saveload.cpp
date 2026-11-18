@@ -59,6 +59,11 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(talcTaken, 2);
 	s.syncAsByte(coffeeTaken, 2);
 	s.syncAsByte(keyCount, 2);
+	s.syncAsByte(hospital.glassTaken, 3);
+	s.syncAsByte(hospital.pillsTaken, 3);
+	s.syncAsByte(hospital.sheetTaken, 3);
+	s.syncAsByte(hospital.bagTaken, 3);
+	s.syncAsByte(hospital.exitMapRead, 3);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -86,11 +91,17 @@ bool RunawaySaveState::valid() const {
 			varnishTaken > 1 || talcTaken > 1 || coffeeTaken > 1 || keyCount > 4)
 		return false;
 	if (game == kRunawayMuseumDemo) {
-		const MuseumRoom *room = findRunawayMuseumRoom(scene);
-		if (!room || x >= room->width || y >= room->height || camera > room->width - 1024 ||
+		const RunawayRoom *room = findRunawayRoom(scene);
+		if (!room || scene < 4000 || x >= room->width || y >= room->height || camera > room->width - 1024 ||
 				cameraY > room->height - 600)
 			return false;
 	}
+	if (hospital.glassTaken > 1 || hospital.pillsTaken > 1 || hospital.sheetTaken > 1 ||
+			hospital.bagTaken > 1 || hospital.exitMapRead > 1)
+		return false;
+	if (game == kRunawayFullGame && (scene != kHospitalBedroom || x >= 1520 || y >= 600 ||
+			camera < 156 || camera > 496 || cameraY))
+		return false;
 	if ((coolerMoved && ice != 2) || ((hatch != 0) != (coolerMoved != 0)))
 		return false;
 	for (uint i = 0; i < sizeof(pickedUp); ++i) {
@@ -100,7 +111,7 @@ bool RunawaySaveState::valid() const {
 	bool owned[27] = {};
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
-				(game == kRunawayMuseumDemo && items[i] > 19))
+				(game != kRunawayCabinDemo && items[i] > 19))
 			return false;
 		owned[items[i]] = true;
 	}
@@ -112,7 +123,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 2)
+	if (version < 1 || version > 3)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -124,9 +135,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(2);
+	stream.writeUint16LE(3);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(2);
+	s.setVersion(3);
 	sync(s);
 	return !s.err();
 }

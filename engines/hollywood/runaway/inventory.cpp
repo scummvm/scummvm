@@ -34,6 +34,12 @@ const char *const kMuseumItemNames[] = {
 	"Pair of books", "Strange key", "Ladle", "Package of coffee"
 };
 
+const char *const kHospitalItemNames[] = {
+	"", "Wallet", "Car keys", "Order form", "Piece of amber", "Gina's bag", "Gina's medical chart",
+	"Sheet", "Package of pills", "Matchbox", "Wig", "Marker pen", "Bottle of alcohol", "Glass",
+	"Pillows", "Syringe", "Blank medical chart", "Head", "Flammable spray can", "Vademecum"
+};
+
 const byte kItemCursors[] = {
 	0, 41, 43, 45, 47, 49, 51, 55, 57, 59, 61, 63, 65, 67, 69,
 	75, 79, 81, 83, 85, 87, 91, 93, 95, 103, 105, 111
@@ -72,7 +78,7 @@ bool RunawayInventory::contains(byte item) const {
 }
 
 bool RunawayInventory::add(byte item) {
-	if (!item || item > kItemCount || (_museum && item >= ARRAYSIZE(kMuseumItemNames)) || contains(item))
+	if (!item || item > kItemCount || (_game != kRunawayCabinDemo && item > 19) || contains(item))
 		return false;
 	_items.push_back(item);
 	_newItem = item;
@@ -93,15 +99,17 @@ void RunawayInventory::remove(byte item) {
 }
 
 Common::U32String RunawayInventory::name(byte item) const {
-	if (_museum)
+	if (_game == kRunawayMuseumDemo)
 		return item < ARRAYSIZE(kMuseumItemNames) ? Common::U32String(kMuseumItemNames[item]) : Common::U32String();
+	if (_game == kRunawayFullGame)
+		return item < ARRAYSIZE(kHospitalItemNames) ? Common::U32String(kHospitalItemNames[item]) : Common::U32String();
 	if (item == 1 && _clothState)
 		return _strings.text(_clothState == 1 ? RunawayStrings::kWetCloth : RunawayStrings::kDirtyCloth);
 	return _strings.itemName(item);
 }
 
 uint RunawayInventory::icon(byte item) const {
-	if (_museum)
+	if (_game != kRunawayCabinDemo)
 		return item;
 	if (item == 1 && _clothState)
 		return _clothState == 1 ? 34 : 35;
@@ -109,24 +117,28 @@ uint RunawayInventory::icon(byte item) const {
 }
 
 uint RunawayInventory::cursor(byte item) const {
-	if (_museum)
+	if (_game == kRunawayMuseumDemo)
 		return item && item < ARRAYSIZE(kMuseumItemNames) ? 11 + item * 2 : 0;
+	if (_game == kRunawayFullGame)
+		return item && item <= 19 ? (item == 16 ? 81 : 39 + item * 2 - (item > 16 ? 2 : 0)) : 0;
 	if (item == 1 && _clothState)
 		return _clothState == 1 ? 107 : 109;
 	return item <= kItemCount ? kItemCursors[item] : 0;
 }
 
 RunawayInventory::Reply RunawayInventory::examine(byte item) const {
-	if (_museum) {
+	if (_game == kRunawayMuseumDemo) {
 		if (!item || item >= ARRAYSIZE(kMuseumItemNames))
 			return Reply();
 		return Reply(item < 5 ? 49 + item : 95 + item, item == 7 ? 1 : 0);
 	}
+	if (_game == kRunawayFullGame)
+		return Reply(item && item <= 19 ? (item == 3 ? 74 : 49 + item) : 1);
 	return Reply(item && item <= kItemCount ? kExamineCues[item] : 1, item == 1 ? _clothState : 0);
 }
 
 RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
-	if (_museum)
+	if (_game != kRunawayCabinDemo)
 		return Reply();
 	if (!contains(first) || !contains(second) || first == second)
 		return Reply();

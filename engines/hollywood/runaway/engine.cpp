@@ -162,8 +162,9 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 }
 
 RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
-	if (_game == kRunawayMuseumDemo && findRunawayMuseumRoom(entryScene))
-		return new RunawayMuseumScene(_audio, *_inventory, _strings);
+	if (findRunawayRoom(entryScene) && ((_museum && entryScene >= 4000) ||
+			(_game == kRunawayFullGame && entryScene == kHospitalBedroom)))
+		return new RunawayRoomScene(_audio, *_inventory, _strings, _game);
 	if (_game == kRunawayCabinDemo && entryScene == 5030)
 		return new RunawayScene5030(_mixer, _audio, *_inventory, _strings);
 	// Retail scene scripts have their own entry substates. Sharing an archive
@@ -234,7 +235,7 @@ void RunawayEngine::initializePath(const Common::FSNode &gamePath) {
 
 bool RunawayEngine::hasFeature(EngineFeature feature) const {
 	return feature == kSupportsReturnToLauncher || (feature == kSupportsSubtitleOptions && !_museum) ||
-		(_game != kRunawayFullGame && (feature == kSupportsSavingDuringRuntime || feature == kSupportsLoadingDuringRuntime));
+		feature == kSupportsSavingDuringRuntime || feature == kSupportsLoadingDuringRuntime;
 }
 
 void RunawayEngine::syncSoundSettings() {
@@ -292,8 +293,9 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu) {
 }
 
 Common::Error RunawayEngine::run() {
-	_inventory.reset(new RunawayInventory(_strings, _museum));
-	if (_museum && ConfMan.hasKey("boot_param") && findRunawayMuseumRoom(ConfMan.getInt("boot_param")))
+	_inventory.reset(new RunawayInventory(_strings, _game));
+	if (_museum && ConfMan.hasKey("boot_param") && ConfMan.getInt("boot_param") >= 4000 &&
+			findRunawayRoom(ConfMan.getInt("boot_param")))
 		_state.scene = ConfMan.getInt("boot_param");
 	_scene.reset(createScene(_state.scene));
 	if (!_scene)
@@ -307,10 +309,10 @@ Common::Error RunawayEngine::run() {
 	syncSoundSettings();
 	RunawayMenu menu(_mixer, _strings);
 	if (!menu.load(_game))
-		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo menu");
+		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway menu");
 	_ui.reset(new RunawayUI(_mixer, *_inventory, _strings));
 	if (!_scene->load(_state.scene) || !_ui->load(_game, _state.chapter()))
-		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo resources");
+		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway resources");
 	syncSoundSettings();
 	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0) {
 		const Common::Error result = loadGameState(ConfMan.getInt("save_slot"));

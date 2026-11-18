@@ -23,9 +23,11 @@
 #define HOLLYWOOD_RUNAWAY_SCENE_H
 
 #include "hollywood/resource.h"
+#include "hollywood/runaway/animation.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/inventory.h"
+#include "hollywood/runaway/saveload.h"
 #include "hollywood/scene_text_store.h"
 
 namespace Hollywood {
@@ -74,12 +76,12 @@ protected:
 };
 
 class RunawayStrings;
-struct MuseumHotspot;
+struct RunawayHotspot;
 
-// Shared player for the museum demo's numbered scenes.
-class RunawayMuseumScene : public RunawayScene {
+// Shared walking, rendering and interaction for the numbered rooms.
+class RunawayRoomScene : public RunawayScene {
 public:
-	RunawayMuseumScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings);
+	RunawayRoomScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 	bool load(uint16 entryScene) override;
 	void start(uint32 now) override;
 	void resume() override;
@@ -93,8 +95,9 @@ public:
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override { return _subtitle; }
-	bool busy() const override { return _pendingHotspot != 0 || _transition.scene || speaking(); }
+	bool busy() const override { return _pendingHotspot != 0 || _transition.scene || _hospitalEntryStep || speaking(); }
 	bool speaking() const override { return !_subtitle.empty(); }
+	byte speechFrame() const override { return _lipSync.frame(_now); }
 	void skipSpeech() override;
 	void sayInventory(const RunawayInventory::Reply &reply) override;
 	bool canSave() const override { return !busy() && _pathIndex == _path.size() && !_pressedKey; }
@@ -107,7 +110,7 @@ private:
 	enum ActionResult { kUnhandled, kHandled, kBackgroundChanged };
 
 	bool enterRoom(uint16 room, Common::Point position, byte facing);
-	bool loadForeground(uint layer, uint chunk);
+	bool loadForeground(uint layer, uint chunk, bool pixels = false);
 	void drawForeground(Graphics::ManagedSurface &viewport, uint layer);
 	bool rebuildBackground();
 	bool applyPatch(uint chunk);
@@ -117,15 +120,24 @@ private:
 	void execute(uint16 action);
 	void useItem(byte item, byte hotspot);
 	void say(uint16 cue, byte variation = 0, bool global = false);
-	void queueLine(const Common::U32String &line);
 	void showLine();
 	void changeFloor(bool upper, Common::Point position);
 	void updateCamera();
 	float actorHeight() const;
-	const MuseumHotspot *hotspot(byte id) const;
+	const RunawayHotspot *hotspot(byte id) const;
 	Common::U32String hotspotName(byte id) const;
 
 	byte walkZone() const { return _originalMaps[_mask[_position.y * _background.w + _position.x]]; }
+
+	bool loadScene2020();
+	bool applyBackground2020();
+	void start2020();
+	void update2020();
+	void updateMaps2020();
+	bool sayInventory2020(const RunawayInventory::Reply &reply);
+	ActionResult execute2020(uint16 action);
+	float actorHeight2020() const;
+	void drawScene2020(Graphics::ManagedSurface &viewport, bool foreground);
 
 	bool loadScene4030();
 	bool applyBackground4030();
@@ -161,6 +173,10 @@ private:
 	RunawayAudio &_audio;
 	RunawayInventory &_inventory;
 	const RunawayStrings &_strings;
+	const RunawayGameType _game;
+	Common::RandomSource _random;
+	RunawayLipSync _lipSync;
+	RunawayIdleHead _idleHead;
 	ChunkArchive _archive;
 	SceneTextStore _text;
 	RunawayActor _actor;
@@ -170,7 +186,12 @@ private:
 	Common::Array<Common::Rect> _foreground[5];
 	Common::Array<byte> _keyPatches[25];
 	Common::Array<Common::Point> _path;
-	Common::Array<Common::U32String> _lines;
+	struct SpeechLine {
+		Common::U32String text;
+		uint16 sample;
+		bool global;
+	};
+	Common::Array<SpeechLine> _lines;
 	Common::U32String _subtitle, _caption;
 	Common::Point _position, _camera;
 	uint _pathIndex = 0, _lineIndex = 0;
@@ -184,6 +205,12 @@ private:
 	bool _varnishTaken = false, _talcTaken = false, _coffeeTaken = false;
 	byte _keyCount = 0, _pressedKey = 0;
 	uint32 _keyUntil = 0;
+	uint32 _lastFootstep = 0;
+	RunawaySaveState::Hospital _hospital;
+	Common::Array<byte> _monitorPatches[2];
+	byte _hospitalEntryStep = 0, _ambientFrame = 0, _musicCue = 11;
+	int _ambientDirection = 1;
+	uint32 _ambientTick = 0, _nextMusic = 0;
 };
 
 } // End of namespace Hollywood

@@ -26,7 +26,8 @@
 
 namespace Hollywood {
 
-enum MuseumRoomId {
+enum RunawayRoomId {
+	kHospitalBedroom = 2020,
 	kMuseumOffice = 4030,
 	kMuseumLaboratory = 4050,
 	kMuseumHall = 4060,
@@ -35,7 +36,7 @@ enum MuseumRoomId {
 	kMuseumKeypad = 4140
 };
 
-struct MuseumHotspot {
+struct RunawayHotspot {
 	const char *name;
 	int16 x, y;
 	byte facing;
@@ -43,46 +44,47 @@ struct MuseumHotspot {
 	byte approach[2];
 };
 
-struct MuseumItemAction {
+struct RunawayItemAction {
 	uint16 room;
 	byte item, hotspot;
 	uint16 action;
 };
 
-struct MuseumResponse {
+struct RunawayResponse {
 	uint16 room, action, cue;
 	byte variation;
 };
 
-struct MuseumExit {
+struct RunawayExit {
 	uint16 room, action, destination;
 	int16 x, y;
 	bool upperFloor;
 	bool door;
 };
 
-struct MuseumRoom {
+struct RunawayRoom {
 	uint16 number, width, height;
-	const MuseumHotspot *hotspots;
+	const RunawayHotspot *hotspots;
 	uint hotspotCount;
 	byte light[10][3];
 	Common::Point entry;
-	const MuseumResponse *responses;
+	const RunawayResponse *responses;
 	uint responseCount;
-	const MuseumItemAction *itemActions;
+	const RunawayItemAction *itemActions;
 	uint itemActionCount;
-	const MuseumExit *exits;
+	const RunawayExit *exits;
 	uint exitCount;
 };
 
-extern const MuseumRoom kRunawayScene4030;
-extern const MuseumRoom kRunawayScene4050;
-extern const MuseumRoom kRunawayScene4060;
-extern const MuseumRoom kRunawayScene4090;
-extern const MuseumRoom kRunawayScene4100;
-extern const MuseumRoom kRunawayScene4140;
+extern const RunawayRoom kRunawayScene2020;
+extern const RunawayRoom kRunawayScene4030;
+extern const RunawayRoom kRunawayScene4050;
+extern const RunawayRoom kRunawayScene4060;
+extern const RunawayRoom kRunawayScene4090;
+extern const RunawayRoom kRunawayScene4100;
+extern const RunawayRoom kRunawayScene4140;
 
-const MuseumRoom *findRunawayMuseumRoom(uint16 number);
+const RunawayRoom *findRunawayRoom(uint16 number);
 
 } // End of namespace Hollywood
 

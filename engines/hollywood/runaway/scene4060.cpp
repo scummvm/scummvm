@@ -26,7 +26,7 @@
 namespace Hollywood {
 namespace {
 
-const MuseumHotspot kHotspots[] = {
+const RunawayHotspot kHotspots[] = {
 	{"", 0, 0, 0, {0, 0}, {0, 0}},
 	{"Stairs", -25, 319, 7, {301, 302}, {0, 1}},
 	{"Coffee machines", 218, 379, 7, {321, 322}, {1, 1}},
@@ -47,7 +47,7 @@ const MuseumHotspot kHotspots[] = {
 	{"Plaque", 1060, 730, 7, {330, 331}, {1, 0}},
 };
 
-const MuseumResponse kResponses[] = {
+const RunawayResponse kResponses[] = {
 	{kMuseumHall, 301, 1, 0},
 	{kMuseumHall, 304, 2, 0},
 	{kMuseumHall, 309, 4, 0},
@@ -76,7 +76,7 @@ const MuseumResponse kResponses[] = {
 	{kMuseumHall, 344, 35, 0},
 };
 
-const MuseumItemAction kItemActions[] = {
+const RunawayItemAction kItemActions[] = {
 	{kMuseumHall, 19, 2, 346},
 	{kMuseumHall, 0, 5, 19},
 	{kMuseumHall, 9, 8, 337},
@@ -102,7 +102,7 @@ const MuseumItemAction kItemActions[] = {
 	{kMuseumHall, 19, 14, 345},
 };
 
-const MuseumExit kExits[] = {
+const RunawayExit kExits[] = {
 	{kMuseumHall, 302, kMuseumHall, 533, 848, false, false},
 	{kMuseumHall, 303, kMuseumHall, 1169, 643, false, false},
 	{kMuseumHall, 305, kMuseumHall, 69, 372, true, false},
@@ -115,7 +115,7 @@ const MuseumExit kExits[] = {
 
 } // End of anonymous namespace
 
-const MuseumRoom kRunawayScene4060 = {
+const RunawayRoom kRunawayScene4060 = {
 	kMuseumHall, 1760, 1200, kHotspots, ARRAYSIZE(kHotspots), {{100, 100, 100}, {40, 40, 40}, {30, 30, 30}, {60, 60, 60}, {30, 30, 30}, {70, 70, 70}, {20, 20, 25}, {50, 50, 50}, {60, 60, 70}, {70, 70, 80}},
 	Common::Point(873, 311),
 	kResponses, ARRAYSIZE(kResponses),
@@ -123,7 +123,7 @@ const MuseumRoom kRunawayScene4060 = {
 	kExits, ARRAYSIZE(kExits)
 };
 
-void RunawayMuseumScene::updateMaps4060() {
+void RunawayRoomScene::updateMaps4060() {
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
 		// Both floors share the image and mask, but have separate walk zones and hotspots.
@@ -135,7 +135,7 @@ void RunawayMuseumScene::updateMaps4060() {
 	}
 }
 
-void RunawayMuseumScene::changeFloor(bool upper, Common::Point position) {
+void RunawayRoomScene::changeFloor(bool upper, Common::Point position) {
 	_upperFloor = upper;
 	_position = position;
 	_x = position.x;
@@ -145,7 +145,7 @@ void RunawayMuseumScene::changeFloor(bool upper, Common::Point position) {
 	updateCamera();
 }
 
-RunawayMuseumScene::ActionResult RunawayMuseumScene::execute4060(uint16 action) {
+RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 	if (action != 313)
 		return kUnhandled;
 	if (_coffeeTaken) {
@@ -159,7 +159,7 @@ RunawayMuseumScene::ActionResult RunawayMuseumScene::execute4060(uint16 action) 
 	return kHandled;
 }
 
-float RunawayMuseumScene::actorHeight4060() const {
+float RunawayRoomScene::actorHeight4060() const {
 	const int x = _position.x, y = _position.y;
 	const byte zone = walkZone();
 	if (_upperFloor) {
@@ -178,7 +178,7 @@ float RunawayMuseumScene::actorHeight4060() const {
 	return (y * 0.4347826f - 118.695656f + x * -0.08982036f + 258.263458f) / 2;
 }
 
-void RunawayMuseumScene::setupDepth4060(RunawayActor::RenderParams &params) const {
+void RunawayRoomScene::setupDepth4060(RunawayActor::RenderParams &params) const {
 	const byte zone = walkZone();
 	params.depthY[1] = 1199;
 	params.depthY[2] = zone == 1 ? 1199 : 0;
@@ -187,7 +187,7 @@ void RunawayMuseumScene::setupDepth4060(RunawayActor::RenderParams &params) cons
 	params.depthY[5] = zone == 17 || zone == 18 ? 1199 : 0;
 }
 
-bool RunawayMuseumScene::loadScene4060() {
+bool RunawayRoomScene::loadScene4060() {
 	return _ambient.load(_archive, 8, 22);
 }
 

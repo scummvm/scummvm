@@ -26,7 +26,7 @@
 namespace Hollywood {
 namespace {
 
-const MuseumHotspot kHotspots[] = {
+const RunawayHotspot kHotspots[] = {
 	{"", 0, 0, 0, {0, 0}, {0, 0}},
 	{"Door", 227, 503, 7, {301, 339}, {0, 1}},
 	{"Shelves", 311, 493, 7, {302, 303}, {0, 0}},
@@ -44,7 +44,7 @@ const MuseumHotspot kHotspots[] = {
 	{"Strange brush", 824, 531, 7, {337, 338}, {1, 1}},
 };
 
-const MuseumResponse kResponses[] = {
+const RunawayResponse kResponses[] = {
 	{kMuseumLaboratory, 301, 1, 0},
 	{kMuseumLaboratory, 306, 6, 0},
 	{kMuseumLaboratory, 307, 7, 0},
@@ -66,7 +66,7 @@ const MuseumResponse kResponses[] = {
 	{kMuseumLaboratory, 337, 31, 0},
 };
 
-const MuseumItemAction kItemActions[] = {
+const RunawayItemAction kItemActions[] = {
 	{kMuseumLaboratory, 7, 2, 326},
 	{kMuseumLaboratory, 0, 2, 15},
 	{kMuseumLaboratory, 5, 3, 328},
@@ -85,13 +85,13 @@ const MuseumItemAction kItemActions[] = {
 	{kMuseumLaboratory, 0, 11, 15},
 };
 
-const MuseumExit kExits[] = {
+const RunawayExit kExits[] = {
 	{kMuseumLaboratory, 339, kMuseumHall, 873, 311, true, true},
 };
 
 } // End of anonymous namespace
 
-const MuseumRoom kRunawayScene4050 = {
+const RunawayRoom kRunawayScene4050 = {
 	kMuseumLaboratory, 1552, 600, kHotspots, ARRAYSIZE(kHotspots), {{100, 100, 100}, {60, 60, 70}, {70, 70, 80}, {60, 60, 70}},
 	Common::Point(382, 529),
 	kResponses, ARRAYSIZE(kResponses),
@@ -99,7 +99,7 @@ const MuseumRoom kRunawayScene4050 = {
 	kExits, ARRAYSIZE(kExits)
 };
 
-void RunawayMuseumScene::updateMaps4050() {
+void RunawayRoomScene::updateMaps4050() {
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
 		if (id == 4 || id == 15 || id == 19 || (_talcTaken && id == 14))
@@ -113,7 +113,7 @@ void RunawayMuseumScene::updateMaps4050() {
 	}
 }
 
-RunawayMuseumScene::ActionResult RunawayMuseumScene::execute4050(uint16 action) {
+RunawayRoomScene::ActionResult RunawayRoomScene::execute4050(uint16 action) {
 	switch (action) {
 	case 323: // Take the varnish from the briefcase.
 		if (_varnishTaken) {
@@ -136,7 +136,7 @@ RunawayMuseumScene::ActionResult RunawayMuseumScene::execute4050(uint16 action) 
 	return kUnhandled;
 }
 
-float RunawayMuseumScene::actorHeight4050() const {
+float RunawayRoomScene::actorHeight4050() const {
 	const int x = _position.x, y = _position.y;
 	const byte zone = walkZone();
 	if (zone == 4)
@@ -154,16 +154,16 @@ float RunawayMuseumScene::actorHeight4050() const {
 	return MIN(y, 587) * 0.8181818f - 82.272728f;
 }
 
-bool RunawayMuseumScene::loadScene4050() {
+bool RunawayRoomScene::loadScene4050() {
 	return _ambient.load(_archive, 8, 75) && _overlay.load(_archive, 22, 1) &&
 		loadForeground(0, 4) && loadForeground(1, 5) && loadForeground(2, 6) && loadForeground(3, 7);
 }
 
-bool RunawayMuseumScene::applyBackground4050() {
+bool RunawayRoomScene::applyBackground4050() {
 	return !_talcTaken || applyPatch(11);
 }
 
-void RunawayMuseumScene::drawForeground4050(Graphics::ManagedSurface &viewport) {
+void RunawayRoomScene::drawForeground4050(Graphics::ManagedSurface &viewport) {
 	if (_position.x > 1200)
 		drawForeground(viewport, 0);
 	if (_position.x > 789 && _position.x < 846 && _position.y < 541)

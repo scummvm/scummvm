@@ -26,7 +26,7 @@
 namespace Hollywood {
 namespace {
 
-const MuseumHotspot kHotspots[] = {
+const RunawayHotspot kHotspots[] = {
 	{"", 0, 0, 0, {0, 0}, {0, 0}},
 	{"Door", 1165, 594, 2, {322, 301}, {0, 0}},
 	{"Pair of books", 355, 595, 1, {302, 303}, {0, 1}},
@@ -40,7 +40,7 @@ const MuseumHotspot kHotspots[] = {
 	{"Window", 369, 499, 7, {317, 318}, {1, 0}},
 };
 
-const MuseumResponse kResponses[] = {
+const RunawayResponse kResponses[] = {
 	{kMuseumOffice, 305, 4, 0},
 	{kMuseumOffice, 306, 5, 0},
 	{kMuseumOffice, 307, 6, 0},
@@ -57,18 +57,18 @@ const MuseumResponse kResponses[] = {
 	{kMuseumOffice, 322, 22, 0},
 };
 
-const MuseumItemAction kItemActions[] = {
+const RunawayItemAction kItemActions[] = {
 	{kMuseumOffice, 17, 3, 321},
 	{kMuseumOffice, 0, 3, 320},
 };
 
-const MuseumExit kExits[] = {
+const RunawayExit kExits[] = {
 	{kMuseumOffice, 301, kMuseumHall, 607, 323, true, true},
 };
 
 } // End of anonymous namespace
 
-const MuseumRoom kRunawayScene4030 = {
+const RunawayRoom kRunawayScene4030 = {
 	kMuseumOffice, 1200, 670, kHotspots, ARRAYSIZE(kHotspots), {{100, 100, 100}, {50, 50, 50}, {80, 80, 60}},
 	Common::Point(934, 563),
 	kResponses, ARRAYSIZE(kResponses),
@@ -76,7 +76,7 @@ const MuseumRoom kRunawayScene4030 = {
 	kExits, ARRAYSIZE(kExits)
 };
 
-void RunawayMuseumScene::updateMaps4030() {
+void RunawayRoomScene::updateMaps4030() {
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
 		if (_books != kTaken && (id == 2 || id == 3))
@@ -92,7 +92,7 @@ void RunawayMuseumScene::updateMaps4030() {
 	}
 }
 
-Common::U32String RunawayMuseumScene::hotspotName4030(byte id) const {
+Common::U32String RunawayRoomScene::hotspotName4030(byte id) const {
 	if (id == 2 && _books != kUnexamined)
 		return _inventory.name(16);
 	if (id == 5)
@@ -102,7 +102,7 @@ Common::U32String RunawayMuseumScene::hotspotName4030(byte id) const {
 	return Common::U32String(hotspot(id)->name);
 }
 
-RunawayMuseumScene::ActionResult RunawayMuseumScene::execute4030(uint16 action) {
+RunawayRoomScene::ActionResult RunawayRoomScene::execute4030(uint16 action) {
 	if (action == 301 && _safeOpen) {
 		say(21);
 		return kHandled;
@@ -150,17 +150,17 @@ RunawayMuseumScene::ActionResult RunawayMuseumScene::execute4030(uint16 action) 
 	return kUnhandled;
 }
 
-float RunawayMuseumScene::actorHeight4030() const {
+float RunawayRoomScene::actorHeight4030() const {
 	const int x = _position.x, y = _position.y;
 	return x < 459 ? y * 0.369863f + 208.301376f : y * 0.516304f + 110.625f;
 }
 
-bool RunawayMuseumScene::loadScene4030() {
+bool RunawayRoomScene::loadScene4030() {
 	return loadForeground(0, 4) && loadForeground(1, 5) && loadForeground(2, 6) &&
 		loadForeground(3, 7) && loadForeground(4, 12);
 }
 
-bool RunawayMuseumScene::applyBackground4030() {
+bool RunawayRoomScene::applyBackground4030() {
 	if (_books == kTaken && !applyPatch(8))
 		return false;
 	if (!_safe.load(_archive, _recorder == kTaken ? 15 : 14, 13))
@@ -169,7 +169,7 @@ bool RunawayMuseumScene::applyBackground4030() {
 	return true;
 }
 
-void RunawayMuseumScene::drawForeground4030(Graphics::ManagedSurface &viewport) {
+void RunawayRoomScene::drawForeground4030(Graphics::ManagedSurface &viewport) {
 	const byte zone = walkZone();
 	if (zone == 3)
 		drawForeground(viewport, 0);

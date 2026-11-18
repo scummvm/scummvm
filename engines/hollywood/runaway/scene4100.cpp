@@ -26,7 +26,7 @@
 namespace Hollywood {
 namespace {
 
-const MuseumHotspot kHotspots[] = {
+const RunawayHotspot kHotspots[] = {
 	{"", 0, 0, 0, {0, 0}, {0, 0}},
 	{"Door", 141, 468, 7, {301, 302}, {0, 1}},
 	{"First aid kit", 196, 451, 1, {303, 304}, {0, 0}},
@@ -40,7 +40,7 @@ const MuseumHotspot kHotspots[] = {
 	{"Ladel", 1329, 409, 1, {328, 329}, {0, 1}},
 };
 
-const MuseumResponse kResponses[] = {
+const RunawayResponse kResponses[] = {
 	{kMuseumSecurity, 301, 1, 0},
 	{kMuseumSecurity, 303, 2, 0},
 	{kMuseumSecurity, 304, 3, 0},
@@ -57,7 +57,7 @@ const MuseumResponse kResponses[] = {
 	{kMuseumSecurity, 328, 26, 0},
 };
 
-const MuseumItemAction kItemActions[] = {
+const RunawayItemAction kItemActions[] = {
 	{kMuseumSecurity, 5, 3, 321},
 	{kMuseumSecurity, 11, 3, 320},
 	{kMuseumSecurity, 0, 3, 319},
@@ -71,13 +71,13 @@ const MuseumItemAction kItemActions[] = {
 	{kMuseumSecurity, 0, 9, 326},
 };
 
-const MuseumExit kExits[] = {
+const RunawayExit kExits[] = {
 	{kMuseumSecurity, 302, kMuseumHall, 1118, 309, true, false}
 };
 
 } // End of anonymous namespace
 
-const MuseumRoom kRunawayScene4100 = {
+const RunawayRoom kRunawayScene4100 = {
 	kMuseumSecurity, 1536, 600, kHotspots, ARRAYSIZE(kHotspots), {{100, 100, 100}, {40, 40, 60}, {30, 30, 50}, {20, 20, 40}},
 	Common::Point(141, 468),
 	kResponses, ARRAYSIZE(kResponses),
@@ -85,7 +85,7 @@ const MuseumRoom kRunawayScene4100 = {
 	kExits, ARRAYSIZE(kExits)
 };
 
-float RunawayMuseumScene::actorHeight4100() const {
+float RunawayRoomScene::actorHeight4100() const {
 	const int x = _position.x, y = _position.y;
 	if (x > 1260)
 		return MIN(y, 545) * 1.2807018f - 242.982452f;
@@ -94,7 +94,7 @@ float RunawayMuseumScene::actorHeight4100() const {
 	return MIN(y, 545) * 0.9381443f - 56.288658f;
 }
 
-void RunawayMuseumScene::setupDepth4100(RunawayActor::RenderParams &params) const {
+void RunawayRoomScene::setupDepth4100(RunawayActor::RenderParams &params) const {
 	params.depthY[1] = 599;
 	params.depthY[2] = 477;
 }

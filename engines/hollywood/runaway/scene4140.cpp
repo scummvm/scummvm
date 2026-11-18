@@ -26,7 +26,7 @@
 
 namespace Hollywood {
 
-const MuseumRoom kRunawayScene4140 = {
+const RunawayRoom kRunawayScene4140 = {
 	kMuseumKeypad, 1024, 600, nullptr, 0, {},
 	Common::Point(382, 529),
 	nullptr, 0,
@@ -34,7 +34,7 @@ const MuseumRoom kRunawayScene4140 = {
 	nullptr, 0
 };
 
-void RunawayMuseumScene::clickScene4140(byte id) {
+void RunawayRoomScene::clickScene4140(byte id) {
 	_pressedKey = id;
 	_keyUntil = _now + 180;
 	if (!id) {
@@ -55,7 +55,7 @@ void RunawayMuseumScene::clickScene4140(byte id) {
 	}
 }
 
-void RunawayMuseumScene::drawScene4140(Graphics::ManagedSurface &viewport) {
+void RunawayRoomScene::drawScene4140(Graphics::ManagedSurface &viewport) {
 	bool valid = applyRunawayPatch(_keyPatches[15], viewport);
 	for (uint i = 0; valid && i < _keyCount; ++i)
 		valid = applyRunawayPatch(_keyPatches[21 + i], viewport);
@@ -65,7 +65,7 @@ void RunawayMuseumScene::drawScene4140(Graphics::ManagedSurface &viewport) {
 		error("Invalid museum keypad image");
 }
 
-bool RunawayMuseumScene::loadScene4140() {
+bool RunawayRoomScene::loadScene4140() {
 	for (uint i = 3; i < ARRAYSIZE(_keyPatches); ++i) {
 		if (!_archive.readVariableChunk(i, _keyPatches[i]))
 			return false;
