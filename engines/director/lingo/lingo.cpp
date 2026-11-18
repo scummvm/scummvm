@@ -1665,6 +1665,10 @@ void Lingo::executePerFrameHook(int frame, int subframe, bool stepFrame) {
 	if (stepFrame && _actorList.u.farr->arr.size() > 0 && _vm->getVersion() >= 400) {
 		for (uint i = 0; i < _actorList.u.farr->arr.size(); i++) {
 			Datum actor = _actorList.u.farr->arr[i];
+			// Games can leave placeholders in the actorList, e.g. Skipper &
+			// Skeeto does setAt(the actorList, pos, 0) and deletes it a frame later
+			if (actor.type != OBJECT)
+				continue;
 			Symbol method = actor.u.obj->getMethod("stepFrame");
 			if (method.type != VOIDSYM) {
 				debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>, frame %d, subframe %d", actor.asString(true).c_str(), frame, subframe);
