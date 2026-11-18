@@ -487,6 +487,8 @@ void ColonyEngine::battleSet() {
 			// Spawn pyramids in this quadrant
 			for (int p = 0; p < kMaxQuad; p++) {
 				int fx, fy;
+				const int shipHalfWidth = 350;
+				const int shipHalfLength = 900;
 				do {
 					fx = 0x2000 * i + kBattleSize + (0x1FFF & _randomSource.getRandomNumber(0x7FFF));
 					while (fx > 0x2000 * (i + 1) - kBattleSize)
@@ -499,10 +501,10 @@ void ColonyEngine::battleSet() {
 						fx < _battleEnter.xloc + 2 * kBattleSize &&
 						fy > _battleEnter.yloc - 2 * kBattleSize &&
 						fy < _battleEnter.yloc + 2 * kBattleSize) ||
-					(fx > _battleShip.xloc - 2 * kBattleSize &&
-						fx < _battleShip.xloc + 2 * kBattleSize &&
-						fy > _battleShip.yloc - 2 * kBattleSize &&
-						fy < _battleShip.yloc + 2 * kBattleSize));
+					(fx > _battleShip.xloc - shipHalfWidth &&
+						fx < _battleShip.xloc + shipHalfWidth &&
+						fy > _battleShip.yloc - shipHalfLength &&
+						fy < _battleShip.yloc + shipHalfLength));
 
 				_pyramids[i][j][p].xloc = fx;
 				_pyramids[i][j][p].yloc = fy;
