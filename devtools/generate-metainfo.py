@@ -7,6 +7,28 @@ import re
 import os
 import xml.sax.saxutils
 
+RELEASES = [
+    ("2026.4.0", "2026-10-11"),
+    ("2026.3.0", "2026-06-20"),
+    ("2026.2.0", "2026-03-28"),
+    ("2026.1.0", "2026-01-31"),
+    ("2.9.1",    "2025-05-25"),
+    ("2.9.0",    "2024-12-22"),
+    ("2.8.1",    "2024-03-31"),
+    ("2.8.0",    "2023-12-30"),
+    ("2.7.1",    "2023-07-31"),
+    ("2.7.0",    "2023-02-26"),
+    ("2.6.1",    "2022-10-31"),
+    ("2.6.0",    "2022-08-01"),
+    ("2.5.1",    "2022-01-02"),
+    ("2.5.0",    "2021-10-09"),
+    ("2.2.0",    "2020-09-13"),
+    ("2.1.2",    "2020-03-30"),
+    ("2.1.1",    "2020-01-17"),
+    ("2.1.0",    "2019-10-04"),
+    ("2.0.0",    "2017-12-08"),
+]
+
 METAINFO_OUTPUT_FILE = 'dists/org.scummvm.scummvm.metainfo.xml'
 METAINFO_XML_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2020-2026 The ScummVM Team -->
@@ -97,6 +119,9 @@ METAINFO_XML_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
     <content_attribute id="money-purchasing">none</content_attribute>
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
+  <releases>
+    RELEASES LIST
+  </releases>
 </component>
 '''
 
@@ -112,6 +137,8 @@ PAR_PATS = [
     r'    <p xml:lang="xy">I18N: 2 of 3 paragraph of ScummVM description in *nix distributions</p>',
     r'    <p xml:lang="xy">I18N: 3 of 3 paragraph of ScummVM description in *nix distributions</p>',
 ]
+RELEASES_PAT = r'    RELEASES LIST'
+RELEASE_TEMPLATE = '    <release version="{0}" date="{1}"/>'
 
 BASE_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -247,6 +274,12 @@ def get_po_files():
 
     return po_langs
 
+def substitute_releases(releases, xml):
+    releases_text = '\n'.join(
+            RELEASE_TEMPLATE.format(*release)
+            for release in releases)
+    return xml.replace(RELEASES_PAT, releases_text)
+
 
 def main():
     po_file_names = get_po_files()
@@ -255,6 +288,7 @@ def main():
         po_file_names, METAINFO_XML_TEMPLATE)
 
     xml = substitute_parx_translations(po_file_names, xml)
+    xml = substitute_releases(RELEASES, xml)
 
     with open(os.path.join(BASE_PATH, METAINFO_OUTPUT_FILE), 'w') as f:
         f.write(xml)

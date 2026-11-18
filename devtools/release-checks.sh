@@ -549,6 +549,16 @@ fi
 
 IFS="$OLDIFS"
 
+echo_n "Checking metainfo.xml for release tag..."
+
+if ! grep -qF "<release version=\"${VERSION}\" date=" dists/org.scummvm.scummvm.metainfo.xml; then
+  echo -e "missing. ${RED}Add new entry (\"${VERSION}\", \"$(date '+%Y-%m-%d')\"), to devtools/generate-metainfo.py and run the script${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
 
 #############################################################################
 #
