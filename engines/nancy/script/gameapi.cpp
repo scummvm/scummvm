@@ -1788,6 +1788,12 @@ static int sceneBeginStream(lua_State *L) {
 	const bool isNew = !streams.isRunning(name);
 	streams.begin(name, sceneName, (uint16)frame, flags);
 
+	// Resorting to Danger loads the scene of the new stream right away: the
+	// scripts send a message to it by the name Streams:GetScene() gives next
+	if (isNew && g_nancy->getGameType() == kGameTypeNancyDossier2) {
+		streams.loadNow(name);
+	}
+
 	lua_pushboolean(L, isNew);
 	return 1;
 }
