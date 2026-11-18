@@ -65,6 +65,20 @@
 		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
+	// Spanish Windows release bundled with Hollywood Monsters 2 and sold on FX Store (bug #17473).
+	{
+		"hollywood",
+		nullptr,
+		AD_ENTRY4s("MONSTERS.EXE", "807fb59c251a47d49e997a675af8a7d5", 2015232,
+			"RESOURCE.000", "b16a8300ca1af75a0322e443a8971159", 3662162,
+			"RESOURCE.003", "352126965c51832ce970faece65cc2f8", 9444153,
+			"RESOURCE.004", "a79d937879665b899c255957c7310d42", 265002432),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_TESTING | kMonstersTranslationFlags,
+		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+	},
+
 	// Italian Windows full game, installed Monsters directory.
 	{
 		"hollywood",
