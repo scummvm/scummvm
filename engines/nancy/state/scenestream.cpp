@@ -33,6 +33,7 @@
 
 #include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/ui/ndui/button.h"
+#include "engines/nancy/ui/ndui/manager.h"
 
 #ifdef ENABLE_NANCY_V4
 #include "engines/nancy/script/records.h"
@@ -227,6 +228,10 @@ void SceneStream::beginScene() {
 	}
 
 	debugC(0, kDebugScene, "Stream %s: loading scene %s, frame %u", _name.c_str(), _sceneName.c_str(), _nextFrameID);
+
+	if (NancySceneState.getNDUI()) {
+		NancySceneState.getNDUI()->requestAutosave();
+	}
 }
 
 void SceneStream::loadBackground(const Common::Path &videoFile) {
@@ -571,6 +576,16 @@ void SceneStreamManager::endChildren(const Common::Array<SceneStream::Child> &ch
 			end(child.name);
 		}
 	}
+}
+
+bool SceneStreamManager::hasSceneChange() const {
+	for (const SceneStream *stream : _streams) {
+		if (stream && !stream->isEnded() && stream->hasNextScene()) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void SceneStreamManager::changeScene(const Common::String &name, const SceneChangeDescription &sceneDescription) {

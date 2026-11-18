@@ -156,6 +156,9 @@ public:
 	// which is the main stream
 	SceneStreamManager &getStreams() { return _streams; }
 
+	// Whether the main stream or another one is about to go to another scene
+	bool isSceneChangePending() const { return _state == kLoad || _streams.hasSceneChange(); }
+
 #ifdef ENABLE_NANCY_V4
 	// Nancy19: the script of the main scene; null while there is none
 	Script::SceneContext *getScriptScene() const { return _scriptScene; }

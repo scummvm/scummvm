@@ -2422,6 +2422,7 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 
 	if (_ndui) {
 		_ndui->onSceneChange(_sceneState.currentScene.sceneID);
+		_ndui->requestAutosave();
 	}
 
 	_streams.changeEnvironment(summary->getEnvironment());

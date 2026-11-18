@@ -110,6 +110,11 @@ public:
 	bool deleteSave(const Common::String &name);
 	bool renameSave(const Common::String &oldName, const Common::String &newName);
 
+	// Resorting to Danger saves the game under the name of the profile whenever
+	// a scene begins, as soon as saving is allowed
+	void setAutosaveName(const Common::String &name) { _autosaveName = name; }
+	void requestAutosave() { _isAutosavePending = true; }
+
 	Panel *findPanel(const Common::String &name) const;
 
 	// The names of the saved games
@@ -284,6 +289,9 @@ private:
 	// Nancy21: the scripts say when the game can't be saved, e.g. during a
 	// cutscene. Leaving the game then asks whether to leave without saving.
 	bool _isSavingAllowed = true;
+
+	Common::String _autosaveName;
+	bool _isAutosavePending = false;
 
 	Request _request;
 

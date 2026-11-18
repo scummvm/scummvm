@@ -1230,6 +1230,14 @@ static int saveRenameGame(lua_State *L) {
 	return 1;
 }
 
+// Save:SetAutosaveName(name[, isKey]), Resorting to Danger: the saved game that
+// the scenes keep saving to, which is the profile being played
+static int saveSetAutosaveName(lua_State *L) {
+	const Common::String name = checkSaveName(L, 2, "Autosave");
+	NancySceneState.getNDUI()->setAutosaveName(name);
+	return 0;
+}
+
 static const luaL_Reg kSaveFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Data", saveData },
@@ -1243,6 +1251,7 @@ static const luaL_Reg kSaveFunctions[] = {
 	{ "CheckSaveExists", saveCheckSaveExists },
 	{ "DeleteGame", saveDeleteGame },
 	{ "RenameGame", saveRenameGame },
+	{ "SetAutosaveName", saveSetAutosaveName },
 	{ nullptr, nullptr }
 };
 

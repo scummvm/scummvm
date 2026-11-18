@@ -116,6 +116,7 @@ public:
 	void changeScene(const Common::String &sceneName, uint16 frameID);
 	void end() { _isEnded = true; }
 	bool isEnded() const { return _isEnded; }
+	bool hasNextScene() const { return _hasNextScene; }
 
 	// Nancy20: lets the records of the scene know that it is being left
 	void endScene();
@@ -222,6 +223,9 @@ public:
 	int getSceneFrame(const Common::String &name) const;
 
 	bool isRunning(const Common::String &name) const { return find(name) != nullptr; }
+
+	// Whether a stream is about to go to another scene
+	bool hasSceneChange() const;
 
 	// The stream whose records are running or getting input; null for the main one
 	SceneStream *getRunning() const { return _running; }

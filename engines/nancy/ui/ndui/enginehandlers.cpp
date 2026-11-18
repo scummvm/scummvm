@@ -407,6 +407,23 @@ void Manager::update() {
 		runProfileLoad();
 	}
 
+	// The original changes scenes before it autosaves, so a scene that asks for
+	// another one is never saved. When "Play" is pressed, the main menu of
+	// Resorting to Danger allows saving and asks for the scene of the new game
+	// at the same time, and the menu must not be saved.
+	if (_isAutosavePending && _isSavingAllowed && _request.type == kRequestNone && !NancySceneState.isSceneChangePending()) {
+		Common::String autosaveName = _autosaveName;
+		const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+		if (autosaveName.empty() && boot && g_nancy->getGameType() == kGameTypeNancyDossier2) {
+			autosaveName = boot->autoSaveName;
+		}
+
+		if (!autosaveName.empty()) {
+			_isAutosavePending = false;
+			requestSave(autosaveName);
+		}
+	}
+
 	if (g_nancy->getGameType() >= kGameTypeNancy19) {
 		ScriptValueData *values = (ScriptValueData *)NancySceneState.getPuzzleData(ScriptValueData::getTag());
 		for (ValueDisplay &display : _valueDisplays) {
