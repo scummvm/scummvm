@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 
 #include "common/hash-str.h"
+#include "common/ptr.h"
 
 #include "common/gui_options.h" // Keep it here, so detection tables can refer to them
 
@@ -554,6 +555,7 @@ private:
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _grayListMap;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _globsMap;
+	Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _fileNamesMap;
 	bool _hashMapsInited;
 
 protected:
@@ -593,7 +595,7 @@ protected:
 	 *
 	 * Removes trailing dots and ignores case in the process.
 	 */
-	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName = Common::Path()) const;
+	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName = Common::Path(), bool subdirsOnly = false) const;
 
 	/** Get the properties (size and MD5) of this file. */
 	bool getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) const;
@@ -785,6 +787,16 @@ public:
 		return archiveHashMap.getValOrDefault(node.getPath(), nullptr);
 	}
 
+	AdvancedMetaEngineBase::FileMap *getFileMap() const {
+		return fileMap.get();
+	}
+
+	AdvancedMetaEngineBase::FileMap &createFileMap() {
+		fileMap.reset(new AdvancedMetaEngineBase::FileMap());
+
+		return *fileMap;
+	}
+
 	AdvancedDetectorCacheManager() {
 		clear();
 	}
@@ -799,6 +811,7 @@ public:
 	void clear() {
 		md5HashMap.clear(true);
 		sizeHashMap.clear(true);
+		fileMap.reset();
 		clearArchives();
 	}
 
@@ -811,6 +824,7 @@ private:
 	FileHashMap md5HashMap;
 	SizeHashMap sizeHashMap;
 	ArchiveHashMap archiveHashMap;
+	Common::ScopedPtr<AdvancedMetaEngineBase::FileMap> fileMap;
 };
 
 /** Convenience shortcut for accessing the MD5CacheManager. */
