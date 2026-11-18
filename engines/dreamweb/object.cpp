@@ -426,67 +426,75 @@ void DreamWebEngine::setPickup() {
 
 void DreamWebEngine::deleteExFrame(uint16 frameNum) {
 	assert(frameNum < 346); // see GraphicsFile::getFrameData
-	Frame *frame = &_exFrames._frames[frameNum];
+	Frame *delFrame = &_exFrames._frames[frameNum];
 
-	uint16 frameSize = frame->width * frame->height;
-	// Note: the original asm didn't subtract frameSize from remainder
-	uint16 remainder = kExframeslen - frame->ptr() - frameSize;
-	uint16 startOff = frame->ptr();
+	uint16 frameSize = delFrame->width * delFrame->height;
+	uint16 startOff = delFrame->ptr();
 	uint16 endOff = startOff + frameSize;
+	uint16 remainder = kExframeslen - endOff;
 
-	// Shift frame data after this one down
-	memmove(&_exFrames._data[startOff], &_exFrames._data[endOff], remainder);
+	if (frameSize > 0) {
+		// Shift frame data after this one down
+		memmove(&_exFrames._data[startOff], &_exFrames._data[endOff], remainder);
 
-	// Combined frame data is now frameSize smaller
-	_vars._exFramePos -= frameSize;
+		// Combined frame data is now frameSize smaller
+		_vars._exFramePos -= frameSize;
 
-	// Adjust all frame pointers pointing into the shifted data
-	for (unsigned int i = 0; i < kNumexobjects; ++i) {
-		if (_exData[i].mapad[0] != 0xff) {
-			frame = &_exFrames._frames[3*i+0];
-			if (frame->ptr() >= startOff) {
-				frame->setPtr(frame->ptr() - frameSize);
-				assert(frame->ptr() + frame->width*frame->height <= _vars._exFramePos);
-			} else {
-				assert(frame->ptr() + frame->width*frame->height <= startOff);
-			}
-			frame = &_exFrames._frames[3*i+1];
-			if (frame->ptr() >= startOff) {
-				frame->setPtr(frame->ptr() - frameSize);
-				assert(frame->ptr() + frame->width*frame->height <= _vars._exFramePos);
-			} else {
-				assert(frame->ptr() + frame->width*frame->height <= startOff);
+		// Adjust all frame pointers pointing into the shifted data
+		for (unsigned int i = 0; i < kNumexobjects; ++i) {
+			if (_exData[i].mapad[0] != 0xff) {
+				for (unsigned int f = 0; f < 2; ++f) {
+					uint16 fn = 3 * i + f;
+					if (fn == frameNum)
+						continue;
+					Frame *frame = &_exFrames._frames[fn];
+					if (frame->width == 0 || frame->height == 0)
+						continue;
+					if (frame->ptr() >= startOff) {
+						frame->setPtr(frame->ptr() - frameSize);
+						assert(frame->ptr() + frame->width * frame->height <= _vars._exFramePos);
+					} else {
+						assert(frame->ptr() + frame->width * frame->height <= startOff);
+					}
+				}
 			}
 		}
 	}
+
+	delFrame->width = 0;
+	delFrame->height = 0;
+	delFrame->setPtr(0);
 }
 
 void DreamWebEngine::deleteExText(uint8 textNum) {
 	uint16 offset = _exText.getOffset(textNum);
+	if (offset == 0xffff)
+		return;
 
 	uint16 startOff = offset;
 	uint16 textSize = strlen(_exText.getString(textNum)) + 1;
 	uint16 endOff = startOff + textSize;
-	uint16 remainder = kExtextlen - offset - textSize;
+	uint16 remainder = kExtextlen - endOff;
 
 	// Shift text data after this one down
 	memmove(&_exText._text[startOff], &_exText._text[endOff], remainder);
 
-	// Combined text data is now frameSize smaller
+	// Combined text data is now textSize smaller
 	_vars._exTextPos -= textSize;
 
 	// Adjust all text pointers pointing into the shifted data
 	for (unsigned int i = 0; i < kNumexobjects; ++i) {
-		uint16 t = _exText.getOffset(i);
-		if (t >= offset + textSize)
-			_exText.setOffset(i, t - textSize);
+		if (_exData[i].mapad[0] != 0xff && i != textNum) {
+			uint16 t = _exText.getOffset(i);
+			if (t != 0xffff && t >= offset + textSize)
+				_exText.setOffset(i, t - textSize);
+		}
 	}
+	_exText.setOffset(textNum, 0xffff);
 }
 
 void DreamWebEngine::deleteExObject(uint8 index) {
 	DynObject *obj = getExAd(index);
-
-	memset(obj, 0xFF, sizeof(DynObject));
 
 	deleteExFrame(3*index);
 	deleteExFrame(3*index + 1);
@@ -499,6 +507,8 @@ void DreamWebEngine::deleteExObject(uint8 index) {
 		if (t->mapad[0] == 4 && t->mapad[1] == index)
 			deleteExObject(i);
 	}
+
+	memset(obj, 0xFF, sizeof(DynObject));
 }
 
 void DreamWebEngine::removeObFromInv() {
@@ -1152,23 +1162,59 @@ void DreamWebEngine::emergencyPurge(uint8 from) {
 	}
 }
 
+static bool isCup(const DynObject &obj) {
+	// Only empty cups (CUPE) can be discarded; full cups (CUPF) are needed
+	// for the electrical-box puzzle.
+	return obj.objId[0] == 'C' - 'A' &&
+		obj.objId[1] == 'U' - 'A' &&
+		obj.objId[2] == 'P' - 'A' &&
+		obj.objId[3] == 'E' - 'A';
+}
+
+static bool isPurgeableClutter(const DynObject &obj) {
+	return obj.objId[0] == 255 || isCup(obj);
+}
+
 void DreamWebEngine::purgeAnItem() {
 	const DynObject *extraObjects = _exData;
 
-
 	for (uint i = 0; i < kNumexobjects; ++i) {
 		if (extraObjects[i].mapad[0] == 0 &&
-		    (extraObjects[i].objId[0] == 255 || extraObjects[i].objId[0] == 2) &&
-			extraObjects[i].initialLocation != _realLocation) {
-			debug(1, "Purging ex object %d", i);
+			extraObjects[i].currentLocation != _realLocation &&
+			isPurgeableClutter(extraObjects[i])) {
+			debug(1, "Purging ex object %d (floor, other room)", i);
 			deleteExObject(i);
 			return;
 		}
 	}
 
 	for (uint i = 0; i < kNumexobjects; ++i) {
-		if (extraObjects[i].mapad[0] == 0 && extraObjects[i].objId[0] == 255) {
-			debug(1, "Purging ex object %d", i);
+		if (extraObjects[i].mapad[0] == 0 &&
+			extraObjects[i].objId[0] == 255) {
+			debug(1, "Purging ex object %d (floor, current room)", i);
+			deleteExObject(i);
+			return;
+		}
+	}
+
+	for (uint i = 0; i < kNumexobjects; ++i) {
+		if (extraObjects[i].mapad[0] == kSetObjectType1 &&
+			extraObjects[i].mapad[3] != _realLocation &&
+			isPurgeableClutter(extraObjects[i])) {
+			debug(1, "Purging ex object %d (container, other room)", i);
+			deleteExObject(i);
+			return;
+		}
+	}
+
+	for (uint i = 0; i < kNumexobjects; ++i) {
+		if (extraObjects[i].mapad[0] == kSetObjectType1 &&
+			extraObjects[i].mapad[3] == _realLocation &&
+			isPurgeableClutter(extraObjects[i])) {
+			if (_openedType == kSetObjectType1 &&
+				extraObjects[i].mapad[1] == _openedOb)
+				continue;
+			debug(1, "Purging ex object %d (container, current room)", i);
 			deleteExObject(i);
 			return;
 		}
