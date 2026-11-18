@@ -94,6 +94,11 @@ public:
 	bool showMouse(bool visible) override;
 	bool lockMouse(bool lock) override;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	/** Convert a GUI overlay rectangle to SDL window coordinates. */
+	Common::Rect convertOverlayToSdlWindow(const Common::Rect &area) const;
+#endif
+
 	virtual bool saveScreenshot(const Common::Path &filename) const { return false; }
 	void saveScreenshot() override;
 
