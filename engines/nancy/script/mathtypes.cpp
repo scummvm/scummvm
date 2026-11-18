@@ -1107,8 +1107,9 @@ static const luaL_Reg kQuaternionHelperFunctions[] = {
 // Path:New{ { x, y, time }, ... } takes them in the order of their times.
 // From Nancy24 on, a path holds waypoints instead: named numbers at a time,
 // which Nancy25 moves the car on its map with.
-// TODO: The curves through the places that path:GetPosition(time, false) gives,
-// and RemovePoint, GetGuides and SetGuides, which no script uses
+// Resorting to Danger moves things along curves through the places: each
+// stretch between two places is bent by two guides, which get worked out again
+// whenever a place is added or taken out, and which the scripts can move.
 static const char *const kPathType = "ND.Path";
 static const char *const kPathHelperType = "ND.PathHelper";
 
@@ -1123,7 +1124,16 @@ struct PathPoint {
 	}
 };
 
-typedef Common::Array<PathPoint> PathPoints;
+// The two guides of the stretch from a place to the next one
+struct PathGuides {
+	ScriptVector first;
+	ScriptVector second;
+};
+
+struct PathPoints : public Common::Array<PathPoint> {
+	Common::Array<PathGuides> guides;
+	bool areGuidesOutdated = true;
+};
 
 // A path object holds the places, which go away with it
 static PathPoints *&getPathPoints(lua_State *L, int index) {
@@ -1207,6 +1217,19 @@ static int pathAddPoint(lua_State *L) {
 	}
 
 	points.insert_at(index, point);
+	points.areGuidesOutdated = true;
+	return 0;
+}
+
+// path:RemovePoint(index), Resorting to Danger: takes out a place, counted from 1
+static int pathRemovePoint(lua_State *L) {
+	PathPoints &points = checkPath(L, 1);
+	const lua_Integer index = luaL_checkinteger(L, 2) - 1;
+	if (index >= 0 && index < (lua_Integer)points.size()) {
+		points.remove_at((uint)index);
+		points.areGuidesOutdated = true;
+	}
+
 	return 0;
 }
 
@@ -1305,13 +1328,117 @@ static int pathGetInterpolants(lua_State *L) {
 	return 1;
 }
 
+// A point between two others, the part of the way along it that is given
+static ScriptVector lerpPathPosition(const ScriptVector &from, const ScriptVector &to, double progress) {
+	progress = CLIP(progress, 0.0, 1.0);
+
+	ScriptVector result;
+	result.size = 2;
+	result.v[0] = from.v[0] + (to.v[0] - from.v[0]) * progress;
+	result.v[1] = from.v[1] + (to.v[1] - from.v[1]) * progress;
+	return result;
+}
+
+static ScriptVector getPathPointPosition(const PathPoint &point) {
+	ScriptVector position;
+	position.size = 2;
+	position.v[0] = point.get("x");
+	position.v[1] = point.get("y");
+	return position;
+}
+
+// The guides of each stretch come from the places around it, as if the path
+// went on from its last place to its second. Paths of fewer than three places
+// keep the guides they had.
+static void updatePathGuides(PathPoints &points) {
+	if (!points.areGuidesOutdated) {
+		return;
+	}
+
+	points.areGuidesOutdated = false;
+	if (points.size() < 3) {
+		return;
+	}
+
+	const uint32 numSegments = points.size() - 1;
+	points.guides.resize(numSegments);
+	for (uint32 from = 0; from < numSegments; ++from) {
+		const ScriptVector start = getPathPointPosition(points[from]);
+		const ScriptVector previous = getPathPointPosition(points[(from + numSegments - 1) % numSegments]);
+		const ScriptVector next = getPathPointPosition(points[(from + 1) % numSegments]);
+		const ScriptVector afterNext = getPathPointPosition(points[(from + 2) % numSegments]);
+
+		PathGuides &guides = points.guides[from];
+		guides.first.size = guides.second.size = 2;
+		for (uint i = 0; i < 2; ++i) {
+			guides.first.v[i] = start.v[i] + (next.v[i] - previous.v[i]) / 2.0;
+			guides.second.v[i] = next.v[i] - (afterNext.v[i] - start.v[i]) / 2.0;
+		}
+	}
+}
+
+// A curve from a place to the next one, bent by the guides in between
+static ScriptVector getPathCurvePosition(PathPoints &points, uint32 from, double progress) {
+	updatePathGuides(points);
+
+	const ScriptVector start = getPathPointPosition(points[from]);
+	const ScriptVector end = getPathPointPosition(points[from + 1]);
+	const PathGuides &guides = points.guides[from];
+
+	const ScriptVector a = lerpPathPosition(start, guides.first, progress);
+	const ScriptVector b = lerpPathPosition(guides.first, guides.second, progress);
+	const ScriptVector c = lerpPathPosition(guides.second, end, progress);
+	return lerpPathPosition(lerpPathPosition(a, b, progress), lerpPathPosition(b, c, progress), progress);
+}
+
+// path:GetGuides(index), Resorting to Danger: the two guides of a stretch,
+// counted from 1
+static int pathGetGuides(lua_State *L) {
+	PathPoints &points = checkPath(L, 1);
+	updatePathGuides(points);
+
+	const lua_Integer index = luaL_checkinteger(L, 2) - 1;
+	if (index < 0 || index >= (lua_Integer)points.guides.size()) {
+		return luaL_error(L, "Invalid index passed to Path:GetGuides()");
+	}
+
+	pushVector(L, points.guides[(uint)index].first);
+	pushVector(L, points.guides[(uint)index].second);
+	return 2;
+}
+
+// path:SetGuides(index, first, second), Resorting to Danger: moves the guides
+// of a stretch; a guide that is nil stays where it is
+static int pathSetGuides(lua_State *L) {
+	PathPoints &points = checkPath(L, 1);
+	updatePathGuides(points);
+
+	const lua_Integer index = luaL_checkinteger(L, 2) - 1;
+	if (index < 0 || index >= (lua_Integer)points.guides.size()) {
+		return luaL_error(L, "Invalid index passed to Path:SetGuides()");
+	}
+
+	PathGuides &guides = points.guides[(uint)index];
+	if (!lua_isnoneornil(L, 3)) {
+		guides.first = checkVector(L, 3);
+	}
+
+	if (!lua_isnoneornil(L, 4)) {
+		guides.second = checkVector(L, 4);
+	}
+
+	return 0;
+}
+
 // path:GetPosition(time[, straight[, loops]]): where the path is at a time, in a
-// straight line between the places around it. A path that loops starts over
-// after its last place; one that doesn't stays at its ends.
+// straight line between the places around it, or along a curve through them
+// when it isn't straight and has three places or more. A path that loops starts
+// over after its last place; one that doesn't stays at its ends.
 static int pathGetPosition(lua_State *L) {
-	const PathPoints &points = checkPath(L, 1);
+	PathPoints &points = checkPath(L, 1);
 	const uint32 numPoints = points.size();
 	double time = luaL_checknumber(L, 2);
+	const bool isStraight = !lua_isboolean(L, 3) || lua_toboolean(L, 3);
 	const bool loops = lua_isboolean(L, 4) && lua_toboolean(L, 4);
 
 	if (numPoints == 0) {
@@ -1348,6 +1475,11 @@ static int pathGetPosition(lua_State *L) {
 	const double span = to.time - from.time;
 	const double progress = span != 0.0 ? (time - from.time) / span : 0.0;
 
+	if (!isStraight && numPoints >= 3) {
+		pushVector(L, getPathCurvePosition(points, next - 1, progress));
+		return 1;
+	}
+
 	position.v[0] = from.get("x") + (to.get("x") - from.get("x")) * progress;
 	position.v[1] = from.get("y") + (to.get("y") - from.get("y")) * progress;
 	pushVector(L, position);
@@ -1359,6 +1491,9 @@ static const luaL_Reg kPathFunctions[] = {
 	{ "__gc", pathCollect },
 	{ "GetPosition", pathGetPosition },
 	{ "AddPoint", pathAddPoint },
+	{ "RemovePoint", pathRemovePoint },
+	{ "GetGuides", pathGetGuides },
+	{ "SetGuides", pathSetGuides },
 	{ "AddWaypoint", pathAddWaypoint },
 	{ "GetInterpolants", pathGetInterpolants },
 	{ nullptr, nullptr }
