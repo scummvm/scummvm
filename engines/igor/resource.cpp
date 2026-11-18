@@ -50,6 +50,9 @@ void IgorEngine::readTableFile() {
 		_tblFile.seek(resourcesEntriesOffset);
 		_resourceEntriesCount = _tblFile.readUint16BE();
 		_resourceEntries = (ResourceEntry *)malloc(sizeof(ResourceEntry) * _resourceEntriesCount);
+		if (!_resourceEntries) {
+			error("Unable to allocate %d bytes", (int)(sizeof(ResourceEntry) * _resourceEntriesCount));
+		}
 		for (int i = 0; i < _resourceEntriesCount; ++i) {
 			_resourceEntries[i].id = _tblFile.readUint16BE();
 			_resourceEntries[i].offs = _tblFile.readUint32BE();
@@ -66,6 +69,9 @@ void IgorEngine::readTableFile() {
 		_tblFile.seek(soundEntriesOffset);
 		_soundOffsetsCount = _tblFile.readUint16BE();
 		_soundOffsets = (uint32 *)malloc(sizeof(uint32) * _soundOffsetsCount);
+		if (!_soundOffsets) {
+			error("Unable to allocate %d bytes", (int)(sizeof(uint32) * _soundOffsetsCount));
+		}
 		for (int i = 0; i < _soundOffsetsCount; ++i) {
 			_soundOffsets[i] = _tblFile.readUint32BE();
 		}
