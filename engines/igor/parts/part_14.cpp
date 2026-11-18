@@ -404,7 +404,7 @@ void IgorEngine::part14ShowPuzzle() {
 		int area = _inputVars[kInputCursorYPos] < 144 ? _screenLayer2[_inputVars[kInputCursorYPos] * 320 + _inputVars[kInputCursorXPos]] : 0;
 		if (area == 0) {
 			_part14NewChurchMosaicStone = 1;
-		} else if (area >= 1 && area <= 8) {
+		} else if (area <= 8) {
 			_part14NewChurchMosaicStone = 2;
 		} else if (area == 9) {
 			_part14NewChurchMosaicStone = 3;

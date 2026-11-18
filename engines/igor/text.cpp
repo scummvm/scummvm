@@ -573,7 +573,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b, bool restoreU
 				dialogueReplyToQuestion(x, y, r, g, b, code);
 			}
 		}
-		if ((code >= 1 && code <= 99) || (getPart() == 15 && code == 1)) {
+		if ((code >= 1 && code <= 99) || (getPart() == 15 && code == 1)) { //-V560
 			_gameState.dialogueData[offset] = 0;
 			if (getPart() == 21 && (code == 60 || code == 70 || code == 80) && _dialogueInfo[0] == 1) {
 				_gameState.dialogueData[offset + 2] = 4;

@@ -76,8 +76,8 @@ bool IgorEngine::part90Hold(uint16 duration, int skipMode, bool optionsMenu) {
 		case kHoldSkipConfirm:
 			return _inputVars[kInputConfirm] != 0;
 		case kHoldSkipAnyKey:
-			return _inputVars[kInputEscape] || _inputVars[kInputConfirm] || _inputVars[kInputClick] ||
-				_inputVars[kInputRightClick] || (!optionsMenu && _inputVars[kInputOptions]);
+			return _inputVars[kInputEscape] || _inputVars[kInputConfirm] || _inputVars[kInputClick] || //-V560
+				_inputVars[kInputRightClick] || (!optionsMenu && _inputVars[kInputOptions]); //-V560
 		default:
 			return false;
 		}

@@ -845,7 +845,7 @@ bool IgorEngine::saveLoadEditName(const SaveLoadLayout &l, const uint8 *button, 
 				_eventQuitGame = true;
 			} else if (ev.type == Common::EVENT_KEYDOWN) {
 				int key = saveLoadKeyToCode(ev.kbd);
-				if (key >= 0 && key < kSaveLoadNameCharsSize * 8 && (allowed[key >> 3] & (1 << (key & 7))) && !full && index <= kSaveLoadNameLength) {
+				if (key >= 0 && key < kSaveLoadNameCharsSize * 8 && (allowed[key >> 3] & (1 << (key & 7))) && !full && index <= kSaveLoadNameLength) { //-V560
 					if (key == 0x27 && l.apostropheGlyph) {
 						key = 0x25;
 					}
@@ -945,7 +945,7 @@ bool IgorEngine::originalSaveLoadPage(bool save) {
 	uint8 *button = loadData(IMG_OptionsButton);
 	bool done = false;
 	int top = 1;
-	while (!done && !_eventQuitGame && _currentPart != kInvalidPart) {
+	while (!_eventQuitGame && _currentPart != kInvalidPart) {
 		saveLoadFillRows(l, button, kSaveLoadCaptionArtRow, l.captionFirstY, l.captionLastY);
 		saveLoadDrawTitle(l, save ? kOptionsSaveTitle : kOptionsLoadTitle, save ? l.saveTitleX : l.loadTitleX, l.captionTextY, l.colorTitle);
 		int row;
