@@ -1254,7 +1254,7 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 		}
 	}
 	// skip areas from top to bottom
-	while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos < _roomWalkBounds.y2) {
+	while (yPos < _roomWalkBounds.y2 && _roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
 		++yPos;
 	}
 	if (getPart() == 17) {
@@ -1265,7 +1265,7 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 		}
 	}
 	// skip areas from bottom to top
-	while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > _roomWalkBounds.y1) {
+	while (yPos > _roomWalkBounds.y1 && _roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0) {
 		--yPos;
 	}
 	*x = xPos;
