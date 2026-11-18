@@ -1968,6 +1968,60 @@ static int playerRemoveInventoryItem(lua_State *L) {
 	return 0;
 }
 
+// The items of a character, in the order the inventory shows them
+static Common::Array<int16> getCharacterItems(uint character) {
+	if (character == g_nancy->getPlayerCharacter()) {
+		return NancySceneState.getInventoryOrder();
+	}
+
+	const PlayerCharacterData *playerChar = (const PlayerCharacterData *)NancySceneState.getPuzzleData(PlayerCharacterData::getTag());
+	if (!playerChar || character >= playerChar->inventories.size() || !playerChar->inventories[character].isValid) {
+		return Common::Array<int16>();
+	}
+
+	return playerChar->inventories[character].order;
+}
+
+// Player:ClearInventory([character]), Resorting to Danger: takes away every item
+static int playerClearInventory(lua_State *L) {
+	const uint character = checkCharacter(L, 2);
+
+	const INVD *inventory = GetEngineData(INVD);
+	if (inventory) {
+		for (const INVD::Item &item : inventory->items) {
+			if (NancySceneState.hasCharacterItem(character, item.id) == g_nancy->_true) {
+				NancySceneState.removeItemFromCharacterInventory(character, item.id);
+			}
+		}
+	}
+
+	return 0;
+}
+
+// Player:GetInventoryIndex(item[, character]), Resorting to Danger: where the
+// item is in the inventory, counted from 1, or 0 when it isn't there
+static int playerGetInventoryIndex(lua_State *L) {
+	const int16 itemID = checkInventoryItem(L, 2);
+	const Common::Array<int16> items = getCharacterItems(checkCharacter(L, 3));
+
+	int index = 0;
+	for (uint i = 0; i < items.size(); ++i) {
+		if (items[i] == itemID) {
+			index = i + 1;
+			break;
+		}
+	}
+
+	lua_pushinteger(L, index);
+	return 1;
+}
+
+// Player:GetInventorySize([character]), Resorting to Danger: how many items there are
+static int playerGetInventorySize(lua_State *L) {
+	lua_pushinteger(L, getCharacterItems(checkCharacter(L, 2)).size());
+	return 1;
+}
+
 // The journal and the task list are filled by scripts, which hand out an entry
 // when its conditions hold. Every entry is handed out once per character; the UI
 // only shows the ones of the character being played.
@@ -2276,6 +2330,9 @@ static const luaL_Reg kPlayerFunctions[] = {
 	{ "HasInventoryItem", playerHasInventoryItem },
 	{ "AddInventoryItem", playerAddInventoryItem },
 	{ "RemoveInventoryItem", playerRemoveInventoryItem },
+	{ "ClearInventory", playerClearInventory },
+	{ "GetInventoryIndex", playerGetInventoryIndex },
+	{ "GetInventorySize", playerGetInventorySize },
 	{ "AddJournalEntry", playerAddJournalEntry },
 	{ "AddTask", playerAddTask },
 	{ "LoadTaskFlag", playerLoadTaskFlag },
@@ -2541,6 +2598,7 @@ static int logAddManager(lua_State *L) {
 static const luaL_Reg kLogFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Write", logWrite },
+	{ "WriteNaked", logWrite },	// Resorting to Danger: without the time in front
 	{ "Assert", logAssert },
 	{ "Watch", logWatch },
 	{ "Clear", logClear },
