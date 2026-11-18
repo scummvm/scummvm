@@ -67,6 +67,8 @@ public:
 
 protected:
 	void setupGraphicsTab() override;
+	bool validate() override;
+	void handleKeyDown(Common::KeyState state) override;
 
 	void addGameControls(GuiObject *boss, const Common::String &prefix, const Common::String &description);
 

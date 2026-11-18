@@ -123,7 +123,7 @@ void TextBufferWindow::refreshStyles() {
 	// copy updated engine styles/font info into the window's private copy
 	Common::copy(&g_conf->_tStyles[0], &g_conf->_tStyles[style_NUMSTYLES], _styles);
 	_font = g_conf->_propInfo;
-	rearrange(_bbox);
+	_width = -1; // Reflow even when only proportional font measurements changed.
 }
 
 void TextBufferWindow::reflow() {
@@ -535,10 +535,10 @@ bool TextBufferWindow::unputCharUni(uint32 ch) {
 void TextBufferWindow::clear() {
 	int i;
 
-	_attr.fgset = Windows::_overrideFgSet;
-	_attr.bgset = Windows::_overrideBgSet;
-	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : 0;
-	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
+	_attr.fgset = Windows::_overrideFgSet || (_attr.fgset && _attr.fgcolor == zcolor_Default);
+	_attr.bgset = Windows::_overrideBgSet || (_attr.bgset && _attr.bgcolor == zcolor_Default);
+	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : (uint)zcolor_Default;
+	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : (uint)zcolor_Default;
 	_attr.reverse = false;
 
 	_ladjw = _radjw = 0;

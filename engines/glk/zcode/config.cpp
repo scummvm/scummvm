@@ -21,12 +21,57 @@
 
 #include "glk/zcode/config.h"
 #include "glk/zcode/detection.h"
+#include "glk/conf.h"
 #include "glk/glk.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
 namespace Glk {
 namespace ZCode {
+
+static void applyDefaultColors(Conf &conf, uint foreground, uint background, bool version6) {
+	conf._windowColor = conf._windowSave = background;
+	if (!version6)
+		conf._borderColor = conf._borderSave = background;
+	conf._propInfo._caretColor = conf._propInfo._caretSave = foreground;
+	conf._propInfo._moreColor = conf._propInfo._moreSave = foreground;
+	for (int i = 0; i < style_NUMSTYLES; ++i) {
+		conf._tStyles[i].fg = conf._gStyles[i].fg = foreground;
+		conf._tStyles[i].bg = conf._gStyles[i].bg = background;
+	}
+}
+
+void initializeAppearanceDefaults(Conf &conf, bool version6) {
+	conf._wMarginX = conf._wMarginY = conf._wMarginSaveX = conf._wMarginSaveY = 0;
+	conf._tStyles[style_Subheader].font = MONOB;
+	conf._tStyles[style_Alert].font = conf._gStyles[style_Alert].font = MONOI;
+	conf._tStyles[style_BlockQuote].font = conf._gStyles[style_BlockQuote].font = MONOZ;
+	conf._tStyles[style_Note].font = PROPZ;
+	conf._gStyles[style_Note].font = MONOZ;
+	applyDefaultColors(conf, version6 ? 0 : conf.parseColor(0xffffffU),
+		conf.parseColor(version6 ? 0xffffffU : 0x000080U), version6);
+}
+
+void loadAppearanceDefaults(Conf &conf, const GlkPreferences &preferences, bool version6) {
+	const uint foreground = getDefaultColor(conf, preferences, version6, true);
+	const uint background = getDefaultColor(conf, preferences, version6, false);
+	applyDefaultColors(conf, foreground, background, version6);
+}
+
+uint getDefaultColor(const Conf &conf, const GlkPreferences &preferences, bool version6, bool foreground) {
+	// Legacy RGB integers are fallbacks, below the editor's independent colors.
+	uint color = foreground ? 0xffffff : (preferences.get("gameid") == "beyondzork" ? 0 : 0x80);
+	if (version6)
+		color = foreground ? 0 : 0xffffff;
+	int value;
+	if (GlkPreferences::parseInteger(preferences.get(foreground ? "foreground" : "background"), value) &&
+			value >= 0 && value <= 0xffffff)
+		color = value;
+	Common::String normalized;
+	if (!foreground && GlkPreferences::parseColor(preferences.get("windowcolor"), normalized))
+		color = strtol(normalized.c_str(), nullptr, 16);
+	return conf._screenFormat.RGBToColor((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+}
 
 const Header::StoryEntry Header::RECORDS[26] = {
 	{       SHERLOCK,  21, "871214" },
@@ -150,7 +195,7 @@ UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true), _quetzal
 	_piracy(false), _script_cols(0), _left_margin(0), _right_margin(0), _defaultBackground(0), _defaultForeground(0) {
 }
 
-void UserOptions::initialize(uint hVersion, uint storyId) {
+void UserOptions::initialize(uint hVersion) {
 	_err_report_mode = getConfigInt("err_report_mode", ERR_REPORT_ONCE, ERR_REPORT_FATAL);
 	_ignore_errors = getConfigBool("ignore_errors");
 	_expand_abbreviations = getConfigBool("expand_abbreviations");
@@ -166,17 +211,10 @@ void UserOptions::initialize(uint hVersion, uint storyId) {
 	_object_locating = getConfigBool("object_locating");
 	_object_movement = getConfigBool("object_movement");
 
-	int defaultFg = hVersion == V6 ? 0 : 0xffffff;
-	int defaultBg = hVersion == V6 ? 0xffffff : 0x80;
-	if (storyId == BEYOND_ZORK)
-		defaultBg = 0;
-
-	defaultFg = getConfigInt("foreground", defaultFg, 0xffffff);
-	defaultBg = getConfigInt("background", defaultBg, 0xffffff);
-
-	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_defaultForeground = format.RGBToColor((defaultFg >> 16) & 0xff, (defaultFg >> 8) & 0xff, defaultFg & 0xff);
-	_defaultBackground = format.RGBToColor((defaultBg >> 16) & 0xff, (defaultBg >> 8) & 0xff, defaultBg & 0xff);
+	if (hVersion != V6) {
+		_defaultForeground = g_conf->_tStylesDefault[style_Normal].fg;
+		_defaultBackground = g_conf->_tStylesDefault[style_Normal].bg;
+	}
 }
 
 bool UserOptions::isInfocom() const {

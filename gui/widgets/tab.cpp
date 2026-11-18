@@ -201,9 +201,34 @@ void TabWidget::setActiveTab(int tabID) {
 }
 
 
+bool TabWidget::requestActiveTab(int tabID) {
+	if (tabID < 0 || tabID >= (int)_tabs.size())
+		return false;
+	if (tabID == _activeTab)
+		return true;
+	if (!canChangeTab(tabID))
+		return false;
+	const int previousTab = _activeTab;
+	setActiveTab(tabID);
+	activeTabChanged(previousTab);
+	return true;
+}
+
 void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	Widget::handleCommand(sender, cmd, data);
+	handleArrowCommand(cmd);
+}
 
+void TabWidget::handleEmbeddedCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	if ((sender == _navLeft && cmd == kCmdLeft) ||
+			(sender == _navRight && cmd == kCmdRight)) {
+		handleArrowCommand(cmd);
+	} else {
+		Widget::handleCommand(sender, cmd, data);
+	}
+}
+
+void TabWidget::handleArrowCommand(uint32 cmd) {
 	switch (cmd) {
 	case kCmdLeft:
 		if (!_navRight->isEnabled()) {
@@ -250,7 +275,7 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	// If a tab was clicked, switch to that pane
 	if (tabID <= _lastVisibleTab)
-		setActiveTab(tabID);
+		requestActiveTab(tabID);
 }
 
 void TabWidget::handleMouseMoved(int x, int y, int button) {
@@ -310,7 +335,8 @@ void TabWidget::adjustTabs(int value) {
 	else if (tabID < 0)
 		tabID = ((int)_tabs.size() - 1);
 
-	setActiveTab(tabID);
+	if (!requestActiveTab(tabID))
+		return;
 
 	if (_navButtonsVisible) {
 		if (lastVis != _lastVisibleTab) {

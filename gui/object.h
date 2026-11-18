@@ -83,6 +83,7 @@ public:
 	virtual int16	getRelY() const		{ return _y; }
 	virtual int16	getAbsX() const		{ return _x; }
 	virtual int16	getAbsY() const		{ return _y; }
+	const Common::String &getName() const	{ return _name; }
 	virtual int16	getChildX() const	{ return getAbsX(); }
 	virtual int16	getChildY() const	{ return getAbsY(); }
 	virtual uint16	getWidth() const	{ return _w; }

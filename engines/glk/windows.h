@@ -141,7 +141,6 @@ public:
 	static bool _forceRedraw;
 	static bool _claimSelect;
 	static bool _moreFocus;
-	static bool _gotBgColor;
 	static uint _overrideFgVal;
 	static uint _overrideBgVal;
 	static uint _zcolor_fg, _zcolor_bg;

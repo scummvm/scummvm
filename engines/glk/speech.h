@@ -66,6 +66,7 @@ private:
 protected:
 	Speech();
 	~Speech();
+	void setSpeechEnabled(bool enabled);
 
 	void gli_initialize_tts(void);
 
