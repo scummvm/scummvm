@@ -32,21 +32,21 @@
 namespace Ripper {
 
 enum RipperDebugChannels {
-	kDebugGeneral = 1 << 0,
-	kDebugResources = 1 << 1,
-	kDebugScripts = 1 << 2,
-	kDebugScene = 1 << 3,
-	kDebugVideo = 1 << 4,
-	kDebugInput = 1 << 5,
-	kDebugCursor = 1 << 6,
-	kDebugAudio = 1 << 7,
-	kDebugDialogue = 1 << 8,
-	kDebugWac = 1 << 9,
-	kDebugSaveLoad = 1 << 10,
-	kDebugMilestones = 1 << 11,
-	kDebugPuzzles = 1 << 12,
-	kDebugCyber = 1 << 13,
-	kDebugCombat = 1 << 14
+	kDebugGeneral = 1,
+	kDebugResources,
+	kDebugScripts,
+	kDebugScene,
+	kDebugVideo,
+	kDebugInput,
+	kDebugCursor,
+	kDebugAudio,
+	kDebugDialogue,
+	kDebugWac,
+	kDebugSaveLoad,
+	kDebugMilestones,
+	kDebugPuzzles,
+	kDebugCyber,
+	kDebugCombat
 };
 
 extern const PlainGameDescriptor ripperGames[];
