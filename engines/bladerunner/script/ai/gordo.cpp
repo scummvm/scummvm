@@ -1844,9 +1844,18 @@ void AIScriptGordo::dialogue1() {
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(760, 2, 5, 6); // ZUBEN
 	DM_Add_To_List_Never_Repeat_Once_Selected(770, 6, 3, 1); // JOB
-	if (Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)
-	 || Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow)
-	) {
+	bool canAskAboutBlondWoman;
+	if (_vm->_cutContent) {
+		canAskAboutBlondWoman = Actor_Clue_Query(kActorMcCoy, kClueIzosFriend)
+			|| Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)
+			|| (Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow)
+				&& Actor_Clue_Query(kActorMcCoy, kClueDektoraConfession));
+	} else {
+		// A bug? The kClueWomanInAnimoidRow by itself is not a suspect worthy photo.
+		canAskAboutBlondWoman = Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow)
+			|| Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom);
+	}
+	if (canAskAboutBlondWoman) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(780, 5, 5, 5); // BLOND WOMAN
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
