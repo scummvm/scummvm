@@ -210,13 +210,11 @@ void IgorEngine::part21FloppyEnterPhysicsClass() {
 void IgorEngine::part21FloppyUpdateMargaretDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
+	case kUpdateDialogueAnimStanding:
 		part21FloppyDrawMargaretHead(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		part21FloppyDrawMargaretHead(getRandomNumber(4) + 1);
-		break;
-	case kUpdateDialogueAnimStanding:
-		part21FloppyDrawMargaretHead(1);
 		break;
 	}
 }

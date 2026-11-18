@@ -325,13 +325,11 @@ void IgorEngine::part12UpdateBackground() {
 void IgorEngine::part12UpdatePriestDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
+	case kUpdateDialogueAnimStanding:
 		part12DrawIdlePriest();
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		part12DrawPriestTalkingFrame(6 + getRandomNumber(5));
-		break;
-	case kUpdateDialogueAnimStanding:
-		part12DrawIdlePriest();
 		break;
 	}
 }

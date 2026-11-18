@@ -136,6 +136,7 @@ void IgorEngine::part11ExecuteAction(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 102: // close window
+	case 114:
 		igorSayAndWait(29, 1, 29);
 		break;
 	case 103: // look at pipe
@@ -170,9 +171,6 @@ void IgorEngine::part11ExecuteAction(int action) {
 		break;
 	case 113:
 		igorSayAndWait(211, 1, 625);
-		break;
-	case 114:
-		igorSayAndWait(29, 1, 29);
 		break;
 	default:
 		warning("part11ExecuteAction unhandled action %d", action);

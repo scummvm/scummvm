@@ -43,16 +43,12 @@ void IgorEngine::part15ExecuteAction(int action) {
 		igorSay(204, 1, 324);
 		break;
 	case 103: // take clock
+	case 105: // open clock
+	case 106: // close clock
 		igorSay(205, 2, 325);
 		break;
 	case 104: // look at clock
 		igorSay(207, 1, 326);
-		break;
-	case 105: // open clock
-		igorSay(205, 2, 325);
-		break;
-	case 106: // close clock
-		igorSay(205, 2, 325);
 		break;
 	case 107:
 		part15TalkToTobias();
@@ -209,13 +205,11 @@ void IgorEngine::part15UpdateBackground() {
 void IgorEngine::part15UpdateTobiasDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
+	case kUpdateDialogueAnimStanding:
 		part15DrawTobiasTalking(0);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		part15DrawTobiasTalking(getRandomNumber(4));
-		break;
-	case kUpdateDialogueAnimStanding:
-		part15DrawTobiasTalking(0);
 		break;
 	}
 }

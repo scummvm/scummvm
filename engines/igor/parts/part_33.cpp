@@ -227,13 +227,11 @@ void IgorEngine::part33UpdateHarrisonHeadDialogue(int action) {
 void IgorEngine::part33UpdateHarrisonHeadDialogueWithStanding(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
+	case kUpdateDialogueAnimStanding:
 		part33DrawHarrisonHeadFrame(4);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		part33DrawHarrisonHeadFrame(4 + getRandomNumber(2));
-		break;
-	case kUpdateDialogueAnimStanding:
-		part33DrawHarrisonHeadFrame(4);
 		break;
 	}
 }

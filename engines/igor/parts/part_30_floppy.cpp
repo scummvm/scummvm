@@ -116,13 +116,11 @@ void IgorEngine::part30FloppyDrawCutsceneFrame(int frame, bool keepTextColors) {
 void IgorEngine::part30FloppyUpdateLauraDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
+	case kUpdateDialogueAnimStanding:
 		part30FloppyDrawCutsceneFrame(33, true);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		part30FloppyDrawCutsceneFrame(getRandomNumber(5) + 33, true);
-		break;
-	case kUpdateDialogueAnimStanding:
-		part30FloppyDrawCutsceneFrame(33, true);
 		break;
 	}
 }

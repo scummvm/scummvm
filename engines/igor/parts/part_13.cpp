@@ -27,13 +27,11 @@ void IgorEngine::part13ExecuteAction(int action) {
 	debugC(9, kDebugGame, "part13ExecuteAction %d", action);
 	switch (action) {
 	case 101: // go to platform
+	case 103: // look at platform
 		part13GoToPlatform();
 		break;
 	case 102: // look at stained glass
 		igorSay(201, 2, 858);
-		break;
-	case 103: // look at platform
-		part13GoToPlatform();
 		break;
 	case 104:
 		part13ExitChurch();

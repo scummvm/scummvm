@@ -122,13 +122,11 @@ void IgorEngine::part6HandlePhotographerDialogue() {
 void IgorEngine::part6UpdatePhotographerDialogue(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
+	case kUpdateDialogueAnimStanding:
 		part6DecodePhotographerTalkingFrame(1);
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		part6DecodePhotographerTalkingFrame(getRandomNumber(5) + 1);
-		break;
-	case kUpdateDialogueAnimStanding:
-		part6DecodePhotographerTalkingFrame(1);
 		break;
 	}
 }
