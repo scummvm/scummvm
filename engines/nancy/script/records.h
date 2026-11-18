@@ -134,6 +134,7 @@ protected:
 	void runOnce() override;
 	void run(double sceneTime, double elapsedTime) override;
 	bool hasTransform() const override { return true; }
+	void onTransformChanged() override;
 	bool getField(const Common::String &key) override;
 	bool setField(const Common::String &key) override;
 

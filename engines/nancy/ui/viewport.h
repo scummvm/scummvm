@@ -49,7 +49,8 @@ public:
 		_videoFormat(kLargeVideoFormat),
 		_stickyCursorPos(-1, -1),
 		_panningType(kPanNone),
-		_autoMove(false) {}
+		_autoMove(false),
+		_horizontalScroll(0) {}
 
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
@@ -63,6 +64,7 @@ public:
 	void setPreviousFrame();
 
 	void setVerticalScroll(uint scroll);
+	void setHorizontalScroll(uint scroll);
 	void scrollUp(uint delta);
 	void scrollDown(uint delta);
 
@@ -100,6 +102,7 @@ protected:
 	MoviePlayer _decoder;
 	uint16 _currentFrame;
 	uint16 _videoFormat;
+	uint _horizontalScroll;	// how far into a background wider than the viewport it shows
 	Graphics::ManagedSurface _fullFrame;
 	FrameAlpha _frameAlpha = kAlphaUnchecked;
 	Common::Rect _format1Bounds;

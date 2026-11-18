@@ -241,6 +241,7 @@ void Viewport::loadVideo(const Common::Path &filename, uint frameNr, uint vertic
 	_panningType = panningType;
 
 	setFrame(frameNr);
+	_horizontalScroll = 0;
 	setVerticalScroll(verticalScroll);
 
 	if (!palette.empty()) {
@@ -310,7 +311,7 @@ void Viewport::setVerticalScroll(uint scroll) {
 	// keeps one of the size of the earlier games, toast_BG, for the scenes
 	// that only play movies.
 	Common::Rect sourceBounds = _screenPosition;
-	sourceBounds.moveTo(0, scroll);
+	sourceBounds.moveTo(_horizontalScroll, scroll);
 	sourceBounds.clip(Common::Rect(_fullFrame.w, _fullFrame.h));
 	assert(!sourceBounds.isEmpty() && sourceBounds.top == (int)scroll);
 
@@ -330,6 +331,11 @@ void Viewport::setVerticalScroll(uint scroll) {
 	} else {
 		disableEdges(kUp | kDown);
 	}
+}
+
+void Viewport::setHorizontalScroll(uint scroll) {
+	_horizontalScroll = MIN<uint>(scroll, _fullFrame.w > 0 ? _fullFrame.w - 1 : 0);
+	setVerticalScroll(getCurVerticalScroll());
 }
 
 void Viewport::scrollUp(uint delta) {

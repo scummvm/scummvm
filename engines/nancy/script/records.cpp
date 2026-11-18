@@ -613,6 +613,19 @@ void SummaryRecord::setBackground(UI::Viewport *background) {
 	if (_numFrames > 1) {
 		_background->enableFrameCache();
 	}
+
+	onTransformChanged();
+}
+
+// The Dossier games scroll a background wider than the viewport by moving the
+// summary to the left, e.g. in the parallax scenes of Lights, Camera, Curses
+void SummaryRecord::onTransformChanged() {
+	if (!_background) {
+		return;
+	}
+
+	const ScriptMatrix transform = getTransform();
+	_background->setHorizontalScroll(MAX<int>(0, (int)-transform.m[3][0]));
 }
 
 void SummaryRecord::setFrame(uint frame) {
