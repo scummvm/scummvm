@@ -182,7 +182,10 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 	t.targetPal = g_director->getPalette();
 	t.targetPalLength = g_director->getPaletteColorCount();
 
-	if (!paletteId.isNull()) {
+	// A puppet palette overrides the score's palette channel until puppetPalette 0, so a
+	// transition must not fade to the frame's palette while one is set.
+	Score *score = g_director->getCurrentMovie()->getScore();
+	if (!paletteId.isNull() && !score->_puppetPalette) {
 		PaletteV4 *target = g_director->getPalette(paletteId);
 		if (target) {
 			t.targetPal = target->palette;
@@ -200,7 +203,6 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 
 	Common::Rect clipRect;
 	Common::Rect innerDims = _window->getInnerDimensions();
-	Score *score = g_director->getCurrentMovie()->getScore();
 	if (t.area) {
 		// Changed area transition
 		score->updateSprites(mode);
