@@ -210,10 +210,9 @@ void IgorEngine::part30LauraCutscene() {
 	if (!resuming) {
 		igorSayAndWait({ { 203, 1, 452 }, { 204, 1, 453 }, { 205, 1, 454 } });
 		cutsceneSay(201, 85, 63, 0, 38, 206, 1, 455);
-	}
-	// igor crosses arms
-	if (!resuming) // when resuming it was drawn before the screen faded in
+		// igor crosses arms (when resuming it was drawn before the screen faded in)
 		part30IgorCrossesArms();
+	}
 	// real dialogue
 
 	part30HandleLauraDialogue();
