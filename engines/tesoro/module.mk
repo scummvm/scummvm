@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	console.o \
 	world.o \
 	metaengine.o \
+	videoplayer.o \
 	core/animimage.o \
 	core/animbank.o \
 	core/animset.o \

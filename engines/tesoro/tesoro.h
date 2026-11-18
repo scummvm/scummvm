@@ -43,6 +43,7 @@
 #include "tesoro/core/display.h"
 #include "tesoro/core/object.h"
 #include "tesoro/world.h"
+#include "tesoro/videoplayer.h"
 
 namespace Tesoro {
 
@@ -59,6 +60,7 @@ private:
 	friend class MenuItem;
 	friend class Console;
 	friend class Scripts;
+	friend class VideoPlayer;
 
 	const ADGameDescription *_gameDescription;
 	GameClock _clock;
@@ -79,6 +81,7 @@ private:
 
 	AnimPlayer _font;
 	World _world;
+	VideoPlayer _video;
 	bool _showOutlines = false;
 
 	// What clicks on the menu items ask for.

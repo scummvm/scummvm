@@ -45,6 +45,7 @@ private:
 	bool voice(int argc, const char **argv);
 	bool jimsay(int argc, const char **argv);
 	bool scripts(int argc, const char **argv);
+	bool movie(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

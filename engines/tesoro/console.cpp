@@ -46,6 +46,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("voice", WRAP_METHOD(Console, voice));
 	registerCmd("jimsay", WRAP_METHOD(Console, jimsay));
 	registerCmd("scripts", WRAP_METHOD(Console, scripts));
+	registerCmd("movie", WRAP_METHOD(Console, movie));
 
 }
 
@@ -245,6 +246,16 @@ bool Console::scripts(int argc, const char **argv) {
 	for (uint32 i = 0; i < block->entryCount(); ++i)
 		debugPrintf("%u ", block->entry(i).op());
 	debugPrintf("\n");
+	return true;
+}
+
+bool Console::movie(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s NUMBER\n", argv[0]);
+		return true;
+	}
+
+	g_engine->_video.playVideo(atoi(argv[1]));
 	return true;
 }
 

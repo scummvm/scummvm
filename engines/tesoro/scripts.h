@@ -214,7 +214,7 @@ public:
 			run.characters[i] = findObject(run.level, b.character(i));
 	}
 
-	void playVideo(uint32 number) { warning("Tesoro: movie %u cannot be played yet", number); }
+	void playVideo(uint32 number) { _w._engine._video.playVideo((int)number); }
 
 	void resumeJim() {
 		_w._jim->stopWalking();
