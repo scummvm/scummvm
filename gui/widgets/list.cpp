@@ -1107,6 +1107,13 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 	// Until we fix that, let's make sure it isn't called while editing takes place
 	assert(!_editMode);
 
+	int selectedDataIndex = getSelected();
+	Common::Array<int> selectedDataIndices;
+	for (uint i = 0; i < _selectedItems.size(); ++i) {
+		if (_selectedItems[i])
+			selectedDataIndices.push_back(i);
+	}
+
 	Common::U32String filt = filter;
 	filt.toLowercase();
 
@@ -1156,8 +1163,16 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 	_currentPos = 0;
 	_scrollPos = 0.0f;
 	_fluidScroller->setPosition(_scrollPos);
-	_selectedItem = -1;
 	_lastSelectionStartItem = -1;
+	clearSelection();
+    for (int dataIdx : selectedDataIndices) {
+		int visualPos = getVisualPos(dataIdx);
+		if (visualPos != -1)
+			markSelectedItem(visualPos, true);
+	}
+
+	int newVisualPos = getVisualPos(selectedDataIndex);
+	_selectedItem = (newVisualPos != -1) ? selectedDataIndex : -1;
 
 	if (redraw) {
 		scrollBarRecalc();
