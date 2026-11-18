@@ -585,7 +585,6 @@ void DirectorPlotData::setApplyColor() {
 
 	switch (ink) {
 	case kInkTypeMatte:
-	case kInkTypeMask:
 	case kInkTypeCopy:
 	case kInkTypeNotCopy:
 		applyColor = (foreColor != colorBlack) || (backColor != colorWhite);
