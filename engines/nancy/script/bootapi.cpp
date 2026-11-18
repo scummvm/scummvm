@@ -278,6 +278,18 @@ static int loadSaveCreate(lua_State *L) {
 	requireField(L, readField(L, 2, "defaultSaveName", boot.defaultSaveName), "defaultSaveName");
 	requireField(L, readField(L, 2, "savePromptFlag", boot.savePromptFlag), "savePromptFlag");
 	requireField(L, readField(L, 2, "savePromptFlagState", boot.savePromptFlagState), "savePromptFlagState");
+
+	// Lights, Camera, Curses: the profiles of the players
+	readField(L, 2, "currentPlayerObject", boot.currentPlayerObject);
+	readField(L, 2, "loadToScene", boot.loadToScene);
+	readField(L, 2, "arcadeSave", boot.arcadeSave);
+	readField(L, 2, "profileButtonPrefix", boot.profileButtonPrefix);
+	readField(L, 2, "newProfileButton", boot.newProfileButton);
+	if (pushField(L, 2, "puzzlesUnlocked")) {
+		readStringList(L, -1, boot.puzzlesUnlocked);
+		lua_pop(L, 1);
+	}
+
 	return 0;
 }
 

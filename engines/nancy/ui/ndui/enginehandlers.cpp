@@ -125,9 +125,17 @@ void Manager::takeEngineAction(const Action &action) {
 	} else if (action.target.equalsIgnoreCase("Engine_Tasklist")) {
 		onTasklistAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_Loader")) {
-		onLoaderAction(action);
+		if (g_nancy->getGameType() == kGameTypeNancyDossier1) {
+			onProfileLoaderAction(action);
+		} else {
+			onLoaderAction(action);
+		}
 	} else if (action.target.equalsIgnoreCase("Engine_Saver")) {
-		onSaverAction(action);
+		if (g_nancy->getGameType() == kGameTypeNancyDossier1) {
+			onProfileSaverAction(action);
+		} else {
+			onSaverAction(action);
+		}
 	} else if (action.target.equalsIgnoreCase("Engine_SaveQuery")) {
 		onSaveQueryAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_SaveOverwrite")) {
@@ -395,6 +403,10 @@ void Manager::registerValueDisplay(const Common::String &valueName, const Common
 
 // Value displays follow the value table, and timer displays what is left of their timer
 void Manager::update() {
+	if (_isProfileLoadRequested) {
+		runProfileLoad();
+	}
+
 	if (g_nancy->getGameType() >= kGameTypeNancy19) {
 		ScriptValueData *values = (ScriptValueData *)NancySceneState.getPuzzleData(ScriptValueData::getTag());
 		for (ValueDisplay &display : _valueDisplays) {

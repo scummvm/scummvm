@@ -1177,6 +1177,15 @@ struct ScriptBootData : public EngineData {
 	Common::String savePromptFlag;
 	bool savePromptFlagState = false;
 
+	// Lights, Camera, Curses keeps a saved game for every player, named after
+	// them: a profile
+	Common::String currentPlayerObject;		// what the name of the player is saved under
+	Common::Array<Common::String> puzzlesUnlocked;	// saved values all the profiles share
+	Common::String loadToScene;				// where a new profile starts
+	Common::String arcadeSave;				// the profile of the arcade mode, never listed
+	Common::String profileButtonPrefix;		// the buttons of the list, numbered from 0
+	Common::String newProfileButton;
+
 	Common::Rect leftNodeHotspot;	// in the viewport
 	Common::Rect rightNodeHotspot;
 	Common::Rect uturnNodeHotspot;

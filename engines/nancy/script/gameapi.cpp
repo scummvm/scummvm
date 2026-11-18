@@ -943,6 +943,18 @@ static int saveData(lua_State *L) {
 	return 0;
 }
 
+void saveDataString(const Common::String &name, const Common::String &text) {
+	Common::Array<byte> packed;
+	packed.push_back(kSavedString);
+	writeSavedUint32(packed, text.size());
+	for (uint i = 0; i < text.size(); ++i) {
+		packed.push_back((byte)text[i]);
+	}
+
+	ScriptSavedData *saved = (ScriptSavedData *)NancySceneState.getPuzzleData(ScriptSavedData::getTag());
+	saved->values.setVal(name, packed);
+}
+
 // Load:Data(name), which gives nil for a name nothing was saved under
 static int loadData(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
@@ -1066,11 +1078,22 @@ static int saveScreenshot(lua_State *L) {
 	return 1;
 }
 
+// Save:Exists(name), Lights, Camera, Curses: whether there is a saved game of
+// that name, in any case. The game keeps a profile of each player that way.
+static int saveExists(lua_State *L) {
+	const char *name = luaL_checkstring(L, 2);
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	lua_pushboolean(L, ui && ui->hasSave(name));
+	return 1;
+}
+
 static const luaL_Reg kSaveFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Data", saveData },
 	{ "Attic", saveAttic },
 	{ "Game", saveGame },
+	{ "Exists", saveExists },
 	{ "Screenshot", saveScreenshot },
 	{ "GetScreenshotNames", saveGetScreenshotNames },
 	{ nullptr, nullptr }
@@ -2302,6 +2325,7 @@ static const MessageActionName kMessageActionNames[] = {
 	{ "collapse", UI::NDUI::kActionCollapse },
 	{ "toggleCollapsed", UI::NDUI::kActionToggleCollapsed },
 	{ "getValue", UI::NDUI::kActionQuery },
+	{ "getText", UI::NDUI::kActionGetText },
 	{ "showItem", UI::NDUI::kActionShowItem },
 	{ "hideItem", UI::NDUI::kActionHideItem },
 	{ "cycleFocus", UI::NDUI::kActionCycleFocus },

@@ -49,6 +49,7 @@
 #include "engines/nancy/misc/specialeffect.h"
 #include "engines/nancy/misc/viewportfader.h"
 #include "engines/nancy/ui/ndui/manager.h"
+#include "engines/nancy/ui/ndui/panel.h"
 #ifdef ENABLE_NANCY_V4
 #include "engines/nancy/script/api.h"
 #include "engines/nancy/script/records.h"
@@ -1956,6 +1957,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 			}
 		}
 
+		if (g_nancy->getGameType() == kGameTypeNancyDossier1) {
+			restoreSharedProfileValues(*(ScriptSavedData *)getPuzzleData(ScriptSavedData::getTag()));
+		}
+
 		auto *bootSummary = GetEngineData(BSUM);
 		if (ser.getVersion() < 11 && bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
 			// Older saves only have the day in the day value
@@ -2067,7 +2072,7 @@ void Scene::init() {
 		changeScene(bootSummary->adScene);
 		ConfMan.removeKey("load_ad", Common::ConfigManager::kTransientDomain);
 		_isRunningAd = true;
-	} else {
+	} else if (!startNewProfileGame()) {
 		changeScene(bootSummary->firstScene);
 	}
 
@@ -2166,6 +2171,10 @@ PuzzleData *Scene::getPuzzleData(const uint32 tag) {
 		PuzzleData *newData = makePuzzleData(tag);
 		if (newData) {
 			_puzzleData.setVal(tag, newData);
+		}
+
+		if (tag == ScriptSavedData::getTag() && newData) {
+			restoreSharedProfileValues(*(ScriptSavedData *)newData);
 		}
 
 		return newData;
@@ -2412,6 +2421,9 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 
 	_streams.changeEnvironment(summary->getEnvironment());
 
+	// The profile that was loaded or made waits for the records of this scene
+	_isProfileChangePending = g_nancy->_profile.isNewProfileGame || g_nancy->_profile.hasPendingPopup;
+
 	_state = kStartSound;
 }
 #endif
@@ -2420,12 +2432,94 @@ void Scene::processMainStream() {
 #ifdef ENABLE_NANCY_V4
 	if (_scriptScene) {
 		_scriptScene->run(_frameSeconds);
+
+		if (_isProfileChangePending && _scriptScene->getTime() > 0.0) {
+			finishProfileChange();
+		}
+
 		return;
 	}
 #endif
 
 	_actionManager.processActionRecords();
 }
+
+#ifdef ENABLE_NANCY_V4
+// The original does this whenever its window loses the focus, which leaving the
+// game does too. The game is being played while the lower matte shows; the
+// main menu starts it again from the scene it was in.
+void Scene::saveProfileOnQuit() {
+	const Common::String &profile = g_nancy->_profile.current;
+	if (g_nancy->getGameType() != kGameTypeNancyDossier1 || !_ndui || !_scriptScene || profile.empty()) {
+		return;
+	}
+
+	const UI::NDUI::Panel *matte = _ndui->findPanel("lowerMatte");
+	if (!matte || !matte->isVisible()) {
+		return;
+	}
+
+	Script::saveDataString("LastSceneIn", getMainSceneName());
+
+	int slot = _ndui->findSaveSlot(profile);
+	for (int i = 1; slot == -1 && i < g_nancy->getMetaEngine()->getMaximumSaveSlot(); ++i) {
+		if (i != g_nancy->getAutosaveSlot() && !g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), i).isValid()) {
+			slot = i;
+		}
+	}
+
+	if (slot != -1) {
+		g_nancy->saveGameState(slot, profile, false);
+	}
+}
+#endif
+
+// Lights, Camera, Curses starts the game of a new profile where the profiles
+// are picked. Returns whether it did.
+bool Scene::startNewProfileGame() {
+#ifdef ENABLE_NANCY_V4
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	if (g_nancy->_profile.isNewProfileGame && boot && !boot->loadToScene.empty()) {
+		changeScene(boot->loadToScene, 0);
+		return true;
+	}
+#endif
+
+	return false;
+}
+
+#ifdef ENABLE_NANCY_V4
+// Lights, Camera, Curses: a new profile gets saved as soon as its game runs.
+// The scene the profiles are picked in then shows them again, unless the arcade
+// mode was picked; its records hear that once they have run.
+void Scene::finishProfileChange() {
+	_isProfileChangePending = false;
+
+	NancyEngine::ProfileState &profile = g_nancy->_profile;
+	if (profile.isNewProfileGame) {
+		profile.isNewProfileGame = false;
+		if (!profile.newProfile.empty() && _ndui) {
+			_ndui->requestSave(profile.newProfile);
+			profile.current = profile.newProfile;
+		}
+
+		profile.newProfile.clear();
+	}
+
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	if (profile.hasPendingPopup && boot) {
+		profile.hasPendingPopup = false;
+
+		Script::Message message;
+		message.action = "show";
+		message.target = boot->currentPlayerObject;
+		message.value = profile.isPopupForArcade ? 0.0 : 1.0;
+
+		bool wasTaken = false;
+		receiveMessage(message, wasTaken);
+	}
+}
+#endif
 
 void Scene::run() {
 	if (_gameStateRequested != NancyState::kNone) {
@@ -3430,11 +3524,45 @@ void Scene::clearSceneData(bool nextIsNoArt) {
 }
 
 void Scene::clearPuzzleData() {
+	keepSharedProfileValues();
+
 	for (auto &pd : _puzzleData) {
 		delete pd._value;
 	}
 
 	_puzzleData.clear();
+}
+
+void Scene::keepSharedProfileValues() {
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	if (g_nancy->getGameType() != kGameTypeNancyDossier1 || !boot || !_puzzleData.contains(ScriptSavedData::getTag())) {
+		return;
+	}
+
+	const ScriptSavedData *saved = (const ScriptSavedData *)_puzzleData[ScriptSavedData::getTag()];
+	NancyEngine::ProfileState &profile = g_nancy->_profile;
+	profile.sharedValues.clear();
+
+	Common::Array<Common::String> names = boot->puzzlesUnlocked;
+	names.push_back(boot->currentPlayerObject);
+	for (const Common::String &name : names) {
+		if (saved->values.contains(name)) {
+			profile.sharedValues.setVal(name, saved->values.getVal(name));
+		}
+	}
+}
+
+// A value the saved game has itself takes the place of the shared one
+void Scene::restoreSharedProfileValues(ScriptSavedData &saved) const {
+	if (g_nancy->getGameType() != kGameTypeNancyDossier1) {
+		return;
+	}
+
+	for (const auto &value : g_nancy->_profile.sharedValues) {
+		if (!saved.values.contains(value._key)) {
+			saved.values.setVal(value._key, value._value);
+		}
+	}
 }
 
 Scene::PlayFlags::LogicCondition::LogicCondition() : flag(g_nancy->_false) {}

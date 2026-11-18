@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/savefile.h"
 
 #include "audio/mixer.h"
 
@@ -31,11 +32,14 @@
 #include "gui/saveload.h"
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/enginedata.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
 
 #include "engines/nancy/state/scene.h"
+
+#include "engines/nancy/script/types.h"
 
 #include "engines/nancy/ui/ndui/manager.h"
 #include "engines/nancy/ui/ndui/panel.h"
@@ -321,9 +325,7 @@ void Manager::onSaverAction(const Action &action) {
 		break;
 	case kActionSetText:
 		// Save names must work as file names; a bad one gets undone
-		if (!action.text.contains('<') && !action.text.contains('>') && !action.text.contains(':') && !action.text.contains('*') &&
-				!action.text.contains('?') && !action.text.contains('"') && !action.text.contains('/') && !action.text.contains('\\') &&
-				!action.text.contains('|') && !action.text.equalsIgnoreCase(kNewGameName)) {
+		if (isValidSaveName(action.text)) {
 			_typedSaveName = action.text;
 		} else {
 			takeAction(kActionSetText, "SaveName", _typedSaveName);
@@ -352,6 +354,211 @@ void Manager::onSaverAction(const Action &action) {
 	}
 	default:
 		break;
+	}
+}
+
+bool Manager::isValidSaveName(const Common::String &name) const {
+	return !name.contains('<') && !name.contains('>') && !name.contains(':') && !name.contains('*') &&
+		!name.contains('?') && !name.contains('"') && !name.contains('/') && !name.contains('\\') &&
+		!name.contains('|') && !name.equalsIgnoreCase(kNewGameName);
+}
+
+// The profiles, the one played last first. The one of the arcade mode isn't
+// one of a player.
+void Manager::getProfileNames(Common::Array<Common::String> &names) const {
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	assert(boot);
+
+	struct Profile {
+		Common::String name;
+		uint64 time = 0;
+	};
+
+	Common::Array<Profile> profiles;
+	SaveStateList saves = g_nancy->getMetaEngine()->listSaves(ConfMan.getActiveDomainName().c_str());
+	for (const SaveStateDescriptor &save : saves) {
+		if (save.getSaveSlot() == g_nancy->getMetaEngine()->getMaximumSaveSlot() || save.getSaveSlot() == g_nancy->getAutosaveSlot() ||
+				(!boot->arcadeSave.empty() && save.getDescription().equalsIgnoreCase(boot->arcadeSave))) {
+			continue;
+		}
+
+		Profile profile;
+		profile.name = save.getDescription();
+
+		Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(g_nancy->getSaveStateName(save.getSaveSlot()));
+		ExtendedSavegameHeader header;
+		if (file && MetaEngine::readSavegameHeader(file, &header)) {
+			uint16 year;
+			uint8 month, day, hour, minute;
+			MetaEngine::decodeSavegameDate(&header, year, month, day);
+			MetaEngine::decodeSavegameTime(&header, hour, minute);
+			profile.time = ((((uint64)year * 13 + month) * 32 + day) * 24 + hour) * 60 + minute;
+		}
+
+		delete file;
+
+		uint i = 0;
+		while (i < profiles.size() && profiles[i].time >= profile.time) {
+			++i;
+		}
+
+		profiles.insert_at(i, profile);
+	}
+
+	for (const Profile &profile : profiles) {
+		names.push_back(profile.name);
+	}
+}
+
+// The name of the player is kept by a record of the scene, which the scripts
+// are compiled in for whenever this game runs
+void Manager::sendToPlayerName(const char *action, const Common::String &text) {
+#ifdef ENABLE_NANCY_V4
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	assert(boot);
+
+	Script::Message message;
+	message.action = action;
+	message.target = boot->currentPlayerObject;
+	message.sender = "Engine_Loader";
+	message.text = text;
+
+	bool wasTaken = false;
+	NancySceneState.receiveMessage(message, wasTaken);
+#endif
+}
+
+// Ten buttons show the profiles, the one being played disabled. The one played
+// last becomes the profile when there is none yet; there being no profile at
+// all lets the scripts ask for the first one.
+void Manager::fillProfileList() {
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	assert(boot);
+
+	const uint kNumProfileButtons = 10;
+
+	_listedProfiles.clear();
+	getProfileNames(_listedProfiles);
+	if (_listedProfiles.empty()) {
+		sendToPlayerName("enable", Common::String());
+		return;
+	}
+
+	if (_listedProfiles.size() > kNumProfileButtons) {
+		_listedProfiles.resize(kNumProfileButtons);
+	}
+
+	ScriptSavedData *saved = (ScriptSavedData *)NancySceneState.getPuzzleData(ScriptSavedData::getTag());
+	for (uint i = 0; i < _listedProfiles.size(); ++i) {
+		const Common::String button = boot->profileButtonPrefix + Common::String::format("%u", i);
+
+		Action setName;
+		setName.type = kActionSetText;
+		setName.target = button;
+		setName.hasValue = true;
+		setName.text = _listedProfiles[i];
+		takeAction(setName);
+
+		if (i == 0 && !saved->values.contains(boot->currentPlayerObject)) {
+			takeAction(kActionDisable, button, 0.0);
+
+			sendToPlayerName("setText", _listedProfiles[i]);
+		} else {
+			takeAction(_listedProfiles[i].equalsIgnoreCase(g_nancy->_profile.current) ? kActionDisable : kActionEnable, button, 0.0);
+		}
+	}
+
+	takeAction(_listedProfiles.size() < kNumProfileButtons ? kActionEnable : kActionDisable, boot->newProfileButton, 0.0);
+	for (uint i = _listedProfiles.size(); i < kNumProfileButtons; ++i) {
+		takeAction(kActionDisable, boot->profileButtonPrefix + Common::String::format("%u", i), 0.0);
+	}
+}
+
+void Manager::onProfileLoaderAction(const Action &action) {
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	assert(boot);
+
+	switch (action.type) {
+	case kActionShow:
+		fillProfileList();
+		break;
+	case kActionHide:
+		_pickedProfile.clear();
+		break;
+	case kActionCollapse: {
+		// Deletes the profile that was named, which the player isn't anymore
+		const int slot = _pickedProfile.empty() ? -1 : findSaveSlot(_pickedProfile);
+		if (slot != -1 && g_nancy->getMetaEngine()->removeSaveState(ConfMan.getActiveDomainName().c_str(), slot)) {
+			_pickedProfile.clear();
+			ScriptSavedData *saved = (ScriptSavedData *)NancySceneState.getPuzzleData(ScriptSavedData::getTag());
+			saved->values.erase(boot->currentPlayerObject);
+		}
+
+		break;
+	}
+	case kActionSetText:
+		_pickedProfile = action.text;
+		break;
+	case kActionSetValue:
+		_isProfileLoadRequested = true;
+		break;
+	case kActionGetText:
+		// A button of the list picks the profile it shows
+		if (action.value >= 0 && action.value < _listedProfiles.size()) {
+			Action setName;
+			setName.type = kActionSetText;
+			setName.target = "Engine_Loader";
+			setName.hasValue = true;
+			setName.text = _listedProfiles[(uint)action.value];
+			takeAction(setName);
+			takeAction(kActionSetValue, "Engine_Loader", 0.0);
+		}
+
+		break;
+	default:
+		break;
+	}
+}
+
+// A profile that has no saved game yet is a new game, which gets saved under
+// its name once it runs. "_StartNewGame_" starts one that isn't saved.
+void Manager::runProfileLoad() {
+	_isProfileLoadRequested = false;
+
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	assert(boot);
+
+	NancyEngine::ProfileState &profile = g_nancy->_profile;
+	const bool isNewGameName = _pickedProfile.equalsIgnoreCase(kNewGameName);
+	const int slot = isNewGameName || _pickedProfile.empty() ? -1 : findSaveSlot(_pickedProfile);
+	if (slot == -1) {
+		profile.isNewProfileGame = true;
+		profile.newProfile = isNewGameName ? Common::String() : _pickedProfile;
+		_request.type = kRequestNewGame;
+	} else {
+		_request.type = kRequestLoad;
+		_request.slot = slot;
+	}
+
+	// Coming from a profile of a player, the profiles show up again
+	if (!profile.current.empty() && !profile.current.equalsIgnoreCase(boot->arcadeSave)) {
+		profile.hasPendingPopup = true;
+		profile.isPopupForArcade = _pickedProfile.equalsIgnoreCase(boot->arcadeSave);
+	}
+
+	profile.current = _pickedProfile;
+	_pickedProfile.clear();
+}
+
+void Manager::onProfileSaverAction(const Action &action) {
+	if (action.type == kActionSetText) {
+		if (isValidSaveName(action.text)) {
+			_profileToSave = action.text;
+		}
+	} else if (action.type == kActionSetValue && !_profileToSave.empty()) {
+		requestSave(_profileToSave);
+		g_nancy->_profile.current = _profileToSave;
+		_profileToSave.clear();
 	}
 }
 

@@ -197,6 +197,23 @@ public:
 	// lasts for as long as the game runs.
 	Common::HashMap<Common::String, Common::Array<byte> > _scriptAttic;
 
+	// Lights, Camera, Curses: the profile being played, which is a saved game
+	// named after the player. What follows outlasts the game a new profile, or
+	// loading another one, takes down.
+	struct ProfileState {
+		Common::String current;		// the saved game of the profile; empty for none
+		Common::String newProfile;	// saved once the new game for it has started
+		bool isNewProfileGame = false;
+		// The profile popup comes back up once the next scene runs, with a value
+		// of 0 when the arcade mode got loaded
+		bool hasPendingPopup = false;
+		bool isPopupForArcade = false;
+		// The saved values every profile shares, packed as Save:Data packs them
+		Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> sharedValues;
+	};
+
+	ProfileState _profile;
+
 protected:
 	Common::Error run() override;
 	void pauseEngineIntern(bool pause) override;

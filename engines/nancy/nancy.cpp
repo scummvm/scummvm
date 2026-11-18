@@ -135,6 +135,11 @@ Common::Error NancyEngine::loadGameState(int slot) {
 	}
 
 	if (result.getCode() == Common::kNoError) {
+		// Lights, Camera, Curses: the saved game is the profile of a player
+		if (getGameType() == kGameTypeNancyDossier1 && save.isValid()) {
+			_profile.current = save.getDescription();
+		}
+
 		if (_gameFlow.curState != NancyState::kScene)
 			destroyState(_gameFlow.curState);
 		g_nancy->setState(NancyState::kScene);
@@ -561,6 +566,12 @@ Common::Error NancyEngine::run() {
 	while (true) {
 		_input->processEvents();
 		if (shouldQuit()) {
+#ifdef ENABLE_NANCY_V4
+			if (State::Scene::hasInstance() && _gameFlow.curState == NancyState::kScene) {
+				NancySceneState.saveProfileOnQuit();
+			}
+#endif
+
 			break;
 		}
 

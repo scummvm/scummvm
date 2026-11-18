@@ -377,6 +377,10 @@ public:
 	// Nancy19: the scripts of the UI stream have made the panels
 	void onScriptedUILoaded();
 
+	// Lights, Camera, Curses saves the profile being played when the game is
+	// left, if the player was playing
+	void saveProfileOnQuit();
+
 	// Nancy19: hands a message a script sent to the scenes it is for, of the main
 	// stream and of the others. Returns false when there is none.
 	bool receiveMessage(const Script::Message &message, bool &wasTaken);
@@ -468,6 +472,12 @@ private:
 
 	void clearSceneData(bool nextIsNoArt = false);
 	void clearPuzzleData();
+
+	// Lights, Camera, Curses: the saved values all the profiles share survive a
+	// new game and loading another profile; the others don't
+	void keepSharedProfileValues();
+	void restoreSharedProfileValues(ScriptSavedData &saved) const;
+	bool startNewProfileGame();
 
 	// Maps an event flag label to its index in the eventFlags array
 	int16 eventFlagToIndex(int16 label) const;
@@ -576,6 +586,11 @@ private:
 	// Nancy19: the script of the scene, which takes the place of the action records
 	Script::SceneContext *_scriptScene = nullptr;
 	bool _isScriptedUIReady = false;
+
+	// Lights, Camera, Curses: what is left to do of a change of profile once
+	// the scene it brought has run
+	void finishProfileChange();
+	bool _isProfileChangePending = false;
 	Common::Array<TaskCompletion> _taskCompletions;
 
 	// Nancy20: the main stream can also be in a scene that has a name instead of

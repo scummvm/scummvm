@@ -123,6 +123,7 @@ enum ActionType {
 	kActionBeginFlash		= 16,	// a control blinks, as many times as the value says or for good...
 	kActionEndFlash			= 17,	// ...until this
 	kActionQuery			= 30,	// asks the engine to send its value back with kActionSetValue
+	kActionGetText			= 31,	// Lights, Camera, Curses: the profile list hands out a name
 	kActionShowItem			= 40,	// inventory panels
 	kActionHideItem			= 41,
 	kActionCycleFocus		= 42,	// gives the next edit box of a panel the keyboard
