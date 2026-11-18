@@ -156,6 +156,81 @@ private:
 	Common::Rect _drawnArea;
 };
 
+// Lights, Camera, Curses has particles of an older kind, which a function of
+// the script makes one at a time, "frequency" times a second:
+//
+//   AR:Particle({ ovl = "CAS_Particles10", frequency = 25,
+//                 stages = { { name = "force", force = Vector:New(0, -100) }, ... },
+//                 Emit = function(this, id) return position, velocity, angle,
+//                        size, color, source, dieTime end })
+//
+// Speeds and forces are in pixels a second. The particles move with their
+// speed and go at the time Emit gave them, and the stages change them on the
+// way: "force" speeds them up, "drag" slows them down, "rotate" turns them,
+// and "fade" and "scale" change their color and size over their life.
+class ParticleEmitterRecord : public Record {
+public:
+	ParticleEmitterRecord(SceneContext &context) : Record(context, "ND.ParticleAR") {}
+	~ParticleEmitterRecord() override;
+
+	RecordType getType() const override { return kRecordParticle; }
+
+	void updateGraphics() override;
+	void registerGraphics() override;
+
+protected:
+	void readTable(int tableIndex) override;
+	void run(double sceneTime, double elapsedTime) override;
+	void onZChanged() override;
+	bool hasTransform() const override { return true; }
+	void onTransformChanged() override { _isDirty = true; }
+	bool getField(const Common::String &key) override;
+	bool setField(const Common::String &key) override;
+
+private:
+	enum StageKind {
+		kStageForce,
+		kStageFade,
+		kStageRotate,
+		kStageScale,
+		kStageDrag
+	};
+
+	struct Stage {
+		StageKind kind;
+		double vector[4] = { 0.0, 0.0, 0.0, 0.0 };	// force, or the change of a color: a, r, g, b
+		double value = 0.0;		// angle a second, size at the end, or c0 of drag
+		double value2 = 0.0;	// c1 of drag
+	};
+
+	struct EmittedParticle {
+		double position[2] = { 0.0, 0.0 };
+		double velocity[2] = { 0.0, 0.0 };
+		double angle = 0.0;
+		double size = 1.0;
+		double startSize = 1.0;
+		uint32 color = 0;		// 0xAARRGGBB
+		uint32 startColor = 0;
+		Common::Rect source;
+		double birthTime = 0.0;
+		double deathTime = 0.0;
+	};
+
+	void readStage(int stageIndex);
+	void emit(double sceneTime);
+	void runStage(const Stage &stage, double sceneTime, double elapsedTime);
+
+	Graphics::ManagedSurface _image;
+	double _frequency = 0.0;	// particles a second
+	double _emitClock = 0.0;	// the time since the last particle, in seconds
+	Common::Array<Stage> _stages;
+	Common::Array<EmittedParticle> _particles;
+
+	RecordGraphic *_canvas = nullptr;
+	Common::Rect _drawnArea;
+	bool _isDirty = false;
+};
+
 // The stages scripts get back from a record by name
 void registerParticleAPI(lua_State *L);
 

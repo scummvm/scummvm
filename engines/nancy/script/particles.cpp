@@ -1385,34 +1385,16 @@ static bool narrowSpan(double start, double step, int &first, int &last) {
 
 // A particle is a square of a part of the image, sized, turned and moved into
 // place, then seen through the projection
-void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &transform, Common::Rect &drawnArea) {
-	if (particle.width <= 0.0 || particle.height <= 0.0 || (particle.color >> 24) == 0) {
-		return;
-	}
-
-	ScriptMatrix place;
-	place.isSRT = false;
-	const double c = cos(particle.angle);
-	const double s = sin(particle.angle);
-	const double width = particle.width * particle.scale;
-	const double height = particle.height * particle.scale;
-	place.m[0][0] = width * c;
-	place.m[0][1] = width * s;
-	place.m[1][0] = -height * s;
-	place.m[1][1] = height * c;
-	place.m[3][0] = particle.position[0];
-	place.m[3][1] = particle.position[1];
-	place.m[3][2] = particle.position[2];
-
-	const ScriptMatrix matrix = place * transform * _perspective;
-
-	Graphics::ManagedSurface &target = _canvas->_drawSurface;
+// Draws a particle where the matrix puts the square from -0.5 to 0.5, onto a
+// target of the same 32 bit format as the image
+static void drawParticleQuad(Graphics::ManagedSurface &target, const Graphics::ManagedSurface &image, const Particle &particle,
+		const ScriptMatrix &matrix, bool isProjected, Common::Rect &drawnArea) {
 
 	// The top left, top right and bottom left corners
 	double x0, y0, x1, y1, x2, y2;
-	if (!projectCorner(-0.5, 0.5, matrix, _hasPerspective, target.w, target.h, x0, y0) ||
-			!projectCorner(0.5, 0.5, matrix, _hasPerspective, target.w, target.h, x1, y1) ||
-			!projectCorner(-0.5, -0.5, matrix, _hasPerspective, target.w, target.h, x2, y2)) {
+	if (!projectCorner(-0.5, 0.5, matrix, isProjected, target.w, target.h, x0, y0) ||
+			!projectCorner(0.5, 0.5, matrix, isProjected, target.w, target.h, x1, y1) ||
+			!projectCorner(-0.5, -0.5, matrix, isProjected, target.w, target.h, x2, y2)) {
 		return;
 	}
 
@@ -1446,7 +1428,7 @@ void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &
 	// Both pictures are in the 32 bit format with alpha, so their pixels are read
 	// directly; that is a lot quicker for the thousands of particles of smoke
 	const Graphics::PixelFormat &format = target.format;
-	assert(format.bytesPerPixel == 4 && _image.format == format);
+	assert(format.bytesPerPixel == 4 && image.format == format);
 
 	const uint32 colorA = particle.color >> 24;
 	const uint32 colorR = (particle.color >> 16) & 0xFF;
@@ -1459,10 +1441,10 @@ void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &
 	const double acrossStepX = by * inverse;
 	const double downStepX = -ay * inverse;
 
-	const double uScale = (particle.right - particle.left) * _image.w;
-	const double vScale = (particle.bottom - particle.top) * _image.h;
-	const double uStart = particle.left * _image.w;
-	const double vStart = particle.top * _image.h;
+	const double uScale = (particle.right - particle.left) * image.w;
+	const double vScale = (particle.bottom - particle.top) * image.h;
+	const double uStart = particle.left * image.w;
+	const double vStart = particle.top * image.h;
 
 	for (int y = minY; y <= maxY; ++y) {
 		const double px = minX + 0.5 - x0;
@@ -1486,9 +1468,9 @@ void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &
 				continue;
 			}
 
-			const int u = CLIP<int>((int)(uStart + uScale * across), 0, _image.w - 1);
-			const int v = CLIP<int>((int)(vStart + vScale * down), 0, _image.h - 1);
-			const uint32 source = *(const uint32 *)_image.getBasePtr(u, v);
+			const int u = CLIP<int>((int)(uStart + uScale * across), 0, image.w - 1);
+			const int v = CLIP<int>((int)(vStart + vScale * down), 0, image.h - 1);
+			const uint32 source = *(const uint32 *)image.getBasePtr(u, v);
 
 			const uint32 alpha = ((source >> format.aShift) & 0xFF) * colorA / 255;
 			if (alpha == 0) {
@@ -1511,6 +1493,354 @@ void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &
 			row[x] = (outA << format.aShift) | (outR << format.rShift) | (outG << format.gShift) | (outB << format.bShift);
 		}
 	}
+}
+
+
+// ParticleEmitterRecord, Lights, Camera, Curses
+
+ParticleEmitterRecord::~ParticleEmitterRecord() {
+	delete _canvas;
+}
+
+void ParticleEmitterRecord::readTable(int tableIndex) {
+	lua_State *L = getLua();
+
+	Common::String imageName;
+	if (!readField(L, tableIndex, "ovl", imageName)) {
+		luaL_error(L, "Particle AR requires field 'ovl' to be a string");
+	}
+
+	if (!g_nancy->_resource->loadImage(Common::Path(imageName), _image)) {
+		luaL_error(L, "Could not load particle image %s", imageName.c_str());
+	}
+
+	if (!readField(L, tableIndex, "frequency", _frequency)) {
+		luaL_error(L, "Particle AR requires field 'frequency' to be a number");
+	}
+
+	if (pushField(L, tableIndex, "stages")) {
+		const int stagesIndex = absoluteIndex(L, -1);
+		for (int i = 1; ; ++i) {
+			lua_rawgeti(L, stagesIndex, i);
+			if (lua_isnil(L, -1)) {
+				lua_pop(L, 1);
+				break;
+			}
+
+			luaL_checktype(L, -1, LUA_TTABLE);
+			readStage(absoluteIndex(L, -1));
+			lua_pop(L, 1);
+		}
+
+		lua_pop(L, 1);
+	}
+}
+
+void ParticleEmitterRecord::readStage(int stageIndex) {
+	lua_State *L = getLua();
+
+	Common::String name;
+	if (!readField(L, stageIndex, "name", name)) {
+		luaL_error(L, "name must be set to a string at each stage");
+	}
+
+	Stage stage;
+	const char *vectorName = nullptr;
+	if (name.equalsIgnoreCase("force")) {
+		stage.kind = kStageForce;
+		vectorName = "force";
+	} else if (name.equalsIgnoreCase("fade")) {
+		stage.kind = kStageFade;
+		vectorName = "color";
+	} else if (name.equalsIgnoreCase("rotate")) {
+		stage.kind = kStageRotate;
+		if (!readField(L, stageIndex, "angle", stage.value)) {
+			luaL_error(L, "Rotate stage must have field 'angle' set to a number");
+		}
+	} else if (name.equalsIgnoreCase("scale")) {
+		stage.kind = kStageScale;
+		if (!readField(L, stageIndex, "size", stage.value)) {
+			luaL_error(L, "Scale stage must have field 'size' set to a number");
+		}
+	} else if (name.equalsIgnoreCase("drag")) {
+		stage.kind = kStageDrag;
+		if (!readField(L, stageIndex, "c0", stage.value) || !readField(L, stageIndex, "c1", stage.value2)) {
+			luaL_error(L, "Drag stage must have fields 'c0' and 'c1' set to numbers");
+		}
+	} else {
+		luaL_error(L, "Stage name '%s' does not match a known stage", name.c_str());
+	}
+
+	if (vectorName) {
+		lua_getfield(L, stageIndex, vectorName);
+		ScriptVector vector;
+		if (!testVector(L, -1, vector)) {
+			luaL_error(L, "%s stage must have field '%s' set to a vector", name.c_str(), vectorName);
+		}
+
+		for (int i = 0; i < vector.size; ++i) {
+			stage.vector[i] = vector.v[i];
+		}
+
+		lua_pop(L, 1);
+	}
+
+	_stages.push_back(stage);
+}
+
+// Emit(this, id) gives the position, speed, angle, size, color, part of the
+// image and time of death of a new particle. The id counts the particles there
+// are with the new one.
+void ParticleEmitterRecord::emit(double sceneTime) {
+	lua_State *L = getLua();
+
+	lua_pushnumber(L, _particles.size() + 1);
+	if (!callFunction("Emit", 1, 7)) {
+		return;
+	}
+
+	ScriptVector position, velocity;
+	const bool hasPosition = testVector(L, -7, position);
+	const bool hasVelocity = testVector(L, -6, velocity);
+	const ScriptRect *source = testRect(L, -2);
+	if (!hasPosition || !hasVelocity || !source || !lua_isnumber(L, -5) || !lua_isnumber(L, -4) || !lua_isnumber(L, -1)) {
+		warning("Particle AR: Emit didn't give a particle");
+		lua_pop(L, 7);
+		return;
+	}
+
+	EmittedParticle particle;
+	particle.position[0] = position.v[0];
+	particle.position[1] = position.v[1];
+	particle.velocity[0] = velocity.v[0];
+	particle.velocity[1] = velocity.v[1];
+	particle.angle = lua_tonumber(L, -5);
+	particle.size = particle.startSize = lua_tonumber(L, -4);
+	const uint32 *color = testColor(L, -3);
+	particle.color = particle.startColor = color ? *color : 0xFFFFFFFF;
+	particle.source = source->toRect();
+	particle.birthTime = sceneTime;
+	particle.deathTime = lua_tonumber(L, -1);
+	lua_pop(L, 7);
+
+	_particles.push_back(particle);
+}
+
+// How far a particle is through its life, from 0 to 1
+static double getLifeProgress(double sceneTime, double birthTime, double deathTime) {
+	const double life = deathTime - birthTime;
+	return life > 0.0 ? CLIP((sceneTime - birthTime) / life, 0.0, 1.0) : 1.0;
+}
+
+void ParticleEmitterRecord::runStage(const Stage &stage, double sceneTime, double elapsedTime) {
+	for (EmittedParticle &particle : _particles) {
+		switch (stage.kind) {
+		case kStageForce:
+			particle.velocity[0] += stage.vector[0] * elapsedTime;
+			particle.velocity[1] += stage.vector[1] * elapsedTime;
+			break;
+		case kStageFade: {
+			// From the color it was made with, by the vector over its life
+			const double progress = getLifeProgress(sceneTime, particle.birthTime, particle.deathTime);
+			uint32 color = 0;
+			for (int i = 0; i < 4; ++i) {
+				const int shift = 24 - i * 8;
+				const double start = (particle.startColor >> shift) & 0xFF;
+				color |= (uint32)CLIP<int>((int)(start + stage.vector[i] * progress), 0, 255) << shift;
+			}
+
+			particle.color = color;
+			break;
+		}
+		case kStageRotate:
+			particle.angle += stage.value * elapsedTime;
+			break;
+		case kStageScale: {
+			// From the size it was made with, to that size times the value
+			const double progress = getLifeProgress(sceneTime, particle.birthTime, particle.deathTime);
+			particle.size = MAX(0.0, (1.0 - progress) * particle.startSize + particle.startSize * stage.value * progress);
+			break;
+		}
+		case kStageDrag: {
+			// Against the speed, by c0 times the speed plus c1 times its square
+			const double speed = sqrt(particle.velocity[0] * particle.velocity[0] + particle.velocity[1] * particle.velocity[1]);
+			if (speed >= 1e-6) {
+				const double drag = (stage.value * speed + stage.value2 * speed * speed) / speed * elapsedTime;
+				particle.velocity[0] -= drag * particle.velocity[0];
+				particle.velocity[1] -= drag * particle.velocity[1];
+			}
+
+			break;
+		}
+		default:
+			break;
+		}
+	}
+}
+
+// What is left over of a particle a frame goes on to the next. A frame makes no
+// more than a tenth of the particles of a second.
+void ParticleEmitterRecord::run(double sceneTime, double elapsedTime) {
+	if (_frequency > 0.0) {
+		const double due = (elapsedTime + _emitClock) * _frequency;
+		const int count = (int)floor(due);
+		_emitClock = (due - count) / _frequency;
+
+		const int limit = MIN<int>(count, (int)ceil(_frequency / 10.0));
+		for (int i = 0; i < limit; ++i) {
+			emit(sceneTime);
+		}
+	}
+
+	for (const Stage &stage : _stages) {
+		runStage(stage, sceneTime, elapsedTime);
+	}
+
+	// The particles move on until their time is up
+	for (uint i = 0; i < _particles.size(); ) {
+		EmittedParticle &particle = _particles[i];
+		if (sceneTime > particle.deathTime) {
+			_particles.remove_at(i);
+			continue;
+		}
+
+		particle.position[0] += particle.velocity[0] * elapsedTime;
+		particle.position[1] += particle.velocity[1] * elapsedTime;
+		++i;
+	}
+
+	_isDirty = true;
+}
+
+void ParticleEmitterRecord::onZChanged() {
+	if (_canvas) {
+		_canvas->setScriptZ(getZ(), getContext(), getCreationOrder());
+	}
+}
+
+void ParticleEmitterRecord::registerGraphics() {
+	if (_canvas) {
+		_canvas->registerGraphics();
+	}
+}
+
+// A particle is its part of the image, turned by its angle and scaled by its
+// size around its position, and then moved by the transform of the record
+void ParticleEmitterRecord::updateGraphics() {
+	if (!isShown() || _particles.empty()) {
+		if (_canvas) {
+			_canvas->setVisible(false);
+		}
+
+		return;
+	}
+
+	if (_canvas && _canvas->isVisible() && !_isDirty) {
+		return;
+	}
+
+	_isDirty = false;
+
+	if (!_canvas) {
+		const Common::Rect bounds = RecordGraphic::getDrawArea();
+
+		_canvas = new RecordGraphic();
+		_canvas->init();
+		_canvas->_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getTransparentPixelFormat());
+		_canvas->_drawSurface.clear(0);
+		_canvas->moveTo(bounds);
+		_canvas->setScriptZ(getZ(), getContext(), getCreationOrder());
+		_canvas->registerGraphics();
+
+		// Reading the image is quicker in the format of the picture
+		_image.convertToInPlace(_canvas->_drawSurface.format);
+	}
+
+	if (!_drawnArea.isEmpty()) {
+		_canvas->_drawSurface.fillRect(_drawnArea, 0);
+	}
+
+	_drawnArea = Common::Rect();
+	_canvas->setMasked(isMasked());
+
+	const ScriptMatrix transform = getTransform();
+	for (const EmittedParticle &emitted : _particles) {
+		const double width = emitted.source.width();
+		const double height = emitted.source.height();
+		if (width <= 0.0 || height <= 0.0 || _image.w == 0 || _image.h == 0 || (emitted.color >> 24) == 0) {
+			continue;
+		}
+
+		Particle particle;
+		particle.left = (double)emitted.source.left / _image.w;
+		particle.right = (double)emitted.source.right / _image.w;
+		particle.top = (double)emitted.source.top / _image.h;
+		particle.bottom = (double)emitted.source.bottom / _image.h;
+		particle.color = emitted.color;
+
+		// The corner (-0.5, 0.5) of the square is the top left of the picture
+		ScriptMatrix place;
+		place.isSRT = false;
+		const double c = cos(emitted.angle) * emitted.size;
+		const double s = sin(emitted.angle) * emitted.size;
+		place.m[0][0] = width * c;
+		place.m[0][1] = width * s;
+		place.m[1][0] = height * s;
+		place.m[1][1] = -height * c;
+		place.m[3][0] = emitted.position[0];
+		place.m[3][1] = emitted.position[1];
+
+		drawParticleQuad(_canvas->_drawSurface, _image, particle, place * transform, false, _drawnArea);
+	}
+
+	_canvas->setVisible(true);
+	_canvas->setNeedsRedraw(true);
+}
+
+bool ParticleEmitterRecord::getField(const Common::String &key) {
+	if (key == "frequency") {
+		lua_pushnumber(getLua(), _frequency);
+		return true;
+	} else if (key == "count") {
+		// The particles that are alive
+		lua_pushinteger(getLua(), _particles.size());
+		return true;
+	}
+
+	return false;
+}
+
+bool ParticleEmitterRecord::setField(const Common::String &key) {
+	if (key == "frequency") {
+		_frequency = luaL_checknumber(getLua(), 3);
+		return true;
+	}
+
+	return false;
+}
+
+void ParticleRecord::drawParticle(const Particle &particle, const ScriptMatrix &transform, Common::Rect &drawnArea) {
+	if (particle.width <= 0.0 || particle.height <= 0.0 || (particle.color >> 24) == 0) {
+		return;
+	}
+
+	ScriptMatrix place;
+	place.isSRT = false;
+	const double c = cos(particle.angle);
+	const double s = sin(particle.angle);
+	const double width = particle.width * particle.scale;
+	const double height = particle.height * particle.scale;
+	place.m[0][0] = width * c;
+	place.m[0][1] = width * s;
+	place.m[1][0] = -height * s;
+	place.m[1][1] = height * c;
+	place.m[3][0] = particle.position[0];
+	place.m[3][1] = particle.position[1];
+	place.m[3][2] = particle.position[2];
+
+	const ScriptMatrix matrix = place * transform * _perspective;
+
+	drawParticleQuad(_canvas->_drawSurface, _image, particle, matrix, _hasPerspective, drawnArea);
 }
 
 } // End of namespace Script

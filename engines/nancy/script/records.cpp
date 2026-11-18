@@ -161,6 +161,11 @@ Record *makeRecord(RecordType type, SceneContext &context) {
 
 		return new TextRecord(context);
 	case kRecordParticle:
+		// Lights, Camera, Curses has the older kind
+		if (g_nancy->getGameType() <= kGameTypeNancyDossier1) {
+			return new ParticleEmitterRecord(context);
+		}
+
 		return new ParticleRecord(context);
 	case kRecordFlashlight:
 		return new FlashlightRecord(context);
