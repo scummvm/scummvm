@@ -153,7 +153,7 @@ void IgorEngine::part19SlugCutscene() { // sub_137_07AD
 		decodeAnimFrame(src, _screenVGA, true);
 		waitForTimer(30);
 	}
-	for (int i = 1; i <= 3; ++i) {
+	for (int i = 1; i <= 3; ++i) { //-V756
 		for (int j = 49; j <= 50; ++j) {
 			src = _animFramesBuffer + 0xE1A + READ_LE_UINT16(_animFramesBuffer + 0x404F + j * 2) - 1;
 			decodeAnimFrame(src, _screenVGA, true);

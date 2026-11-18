@@ -245,7 +245,7 @@ void IgorEngine::part7() {
 		}
 
 		_walkDataLastIndex = 1;
-		_walkDataCurrentIndex = 1;
+		_walkDataCurrentIndex = 1; //-V519
 		fadeIn(768);
 		if (_currentPart == 70) { // enter from outside
 			part7EnterFromOutside();

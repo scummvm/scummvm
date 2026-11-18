@@ -50,7 +50,7 @@ void IgorEngine::syncSoundSettings() {
 	_gameState.talkMode = speechMute ? kTalkModeTextOnly
 		: (ConfMan.getBool("subtitles") ? kTalkModeSpeechAndText : kTalkModeSpeechOnly);
 
-	if (speechMute && (_gameState.talkSpeed < 1 || _gameState.talkSpeed > 5))
+	if (speechMute && (_gameState.talkSpeed < 1 || _gameState.talkSpeed > 5)) //-V1051
 		_gameState.talkSpeed = 3;
 	if (sfxMute)
 		_mixer->stopHandle(_sfxHandle);
