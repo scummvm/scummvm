@@ -26,6 +26,7 @@
 #include "made/database.h"
 #include "made/pmvplayer.h"
 #include "made/script.h"
+#include "made/mpegplayer.h"
 
 #include "audio/sine.h"
 
@@ -200,6 +201,18 @@ void ScriptFunctions::setupExternalsTable() {
 		External(sfSetSoundVolume);
 		External(sfGetSynthType);
 		External(sfIsSlowSystem);
+
+		// The ReelMagic release appends seven MPEG playback functions to the
+		// table; everything below index 100 is shared with the other releases.
+		if (_vm->getFeatures() & GF_REELMAGIC) {
+			External(sfPlayMpegMovie);
+			External(sfMpegMovieGetState);
+			External(sfMpegMovieClose);
+			External(sfMpegDriverInit);
+			External(sfMpegDriverShutdown);
+			External(sfMpegMoviePause);
+			External(sfMpegMovieGetUserData);
+		}
 	}
 
 	if (_vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
@@ -668,7 +681,7 @@ int16 ScriptFunctions::sfLoadMouseCursor(int16 argc, int16 *argv) {
 		PictureResource *flex = _vm->_res->getPicture(argv[2]);
 		if (flex) {
 			Graphics::Surface *surf = flex->getPicture();
-			CursorMan.replaceCursor(*surf, argv[1], argv[0], 0);
+			_vm->_screen->setMouseCursor(*surf, argv[1], argv[0]);
 			_vm->_res->freeResource(flex);
 		}
 	}
@@ -1234,6 +1247,83 @@ int16 ScriptFunctions::sfSoundFile(int16 argc, int16 *argv) {
 	playSound(soundRes, true);
 
 	return 0;
+}
+
+int16 ScriptFunctions::sfPlayMpegMovie(int16 argc, int16 *argv) {
+	if (argc < 3) {
+		warning("sfPlayMpegMovie: expected 3 arguments, got %d", argc);
+		return 0;
+	}
+
+	// ScummVM searches the game directory instead of the interpreter's -P path.
+	const char *movieName = _vm->_dat->getObjectString(argv[2]);
+	if (!movieName || !*movieName) {
+		warning("sfPlayMpegMovie: object %d holds no movie name", argv[2]);
+		return 0;
+	}
+
+	debug(1, "sfPlayMpegMovie(%d, %d, '%s')", argv[0], argv[1], movieName);
+
+	// The script selects once, looping or blocking playback; file type does not.
+	if (!_vm->_mpegPlayer->start(movieName, argv[1]))
+		return 0;
+
+	// Mode 3 must finish before the script can replace the movie.
+	if (argv[1] == MpegPlayer::kPlayBlocking) {
+		// Stop waiting if another caller takes over the player.
+		const uint32 token = _vm->_mpegPlayer->playToken();
+		while (_vm->_mpegPlayer->playToken() == token &&
+			_vm->_mpegPlayer->isPlaying() && !_vm->shouldQuit()) {
+			_vm->handleEvents();
+			_vm->_mpegPlayer->update();
+			_vm->_system->delayMillis(10);
+		}
+	}
+
+	return 1;
+}
+
+int16 ScriptFunctions::sfMpegMovieGetState(int16 argc, int16 *argv) {
+	// Keep playback and Escape handling active while the script polls.
+	_vm->handleEvents();
+	_vm->_mpegPlayer->update();
+
+	return _vm->_mpegPlayer->playState();
+}
+
+// MADERM.EXE wraps the FMPDRV commands below without script arguments.
+
+int16 ScriptFunctions::sfMpegMovieClose(int16 argc, int16 *argv) {
+	// FMPDRV command 02h closes the media handle and stops playback.
+	debug(1, "sfMpegMovieClose: close media handle");
+	_vm->_mpegPlayer->close();
+	return 0;
+}
+
+int16 ScriptFunctions::sfMpegDriverInit(int16 argc, int16 *argv) {
+	// The script disables MPEG playback if driver initialization returns 0.
+	debug(1, "sfMpegDriverInit");
+	return 1;
+}
+
+int16 ScriptFunctions::sfMpegDriverShutdown(int16 argc, int16 *argv) {
+	// Driver shutdown closes the media handle before resetting the card.
+	debug(1, "sfMpegDriverShutdown");
+	_vm->_mpegPlayer->close();
+	return 1;
+}
+
+int16 ScriptFunctions::sfMpegMoviePause(int16 argc, int16 *argv) {
+	// Command 04h holds the current picture; the interpreter returns 1.
+	debug(1, "sfMpegMoviePause");
+	_vm->_mpegPlayer->pause();
+	return 1;
+}
+
+int16 ScriptFunctions::sfMpegMovieGetUserData(int16 argc, int16 *argv) {
+	// No user data is stored; the command 0Ah/0208h wrapper returns 1.
+	debug(1, "sfMpegMovieGetUserData");
+	return 1;
 }
 
 } // End of namespace Made

@@ -1,0 +1,120 @@
+ReelMagic support: provenance and hardware observations
+=====================================================
+
+Scope
+-----
+Video::ReelMagicStream prepares MPEG-1 assets for ScummVM's existing decoder.
+It has no game-engine dependency. Callers choose a magic key and whether the
+video needs unlocking. Script commands, scene addressing, playback policy and
+presentation policy remain responsibilities of the consumer.
+ReelMagicCompositor supplies integer graphics replication, palette keying and
+video scaling; the engine selects the geometry and presents the result.
+
+ReelMagic does not imply protected MPEG. The Crime Patrol and Drug Wars assets
+examined for this work are ordinary MPEG-1 program streams, with legal frame
+rate codes and no scrambled picture fields. They use byte-offset scene ranges
+and the standard decoder rather than the unlock API. These observations apply
+to the examined releases, not every game or every ReelMagic card.
+
+Prior work and attribution
+-------------------------
+Jon Dennis (jrdennisoss) created DOSBox ReelMagic and documented the nonstandard
+"magical MPEG-1" format and its recovery algorithm:
+
+  https://github.com/jrdennisoss/dosboxrm
+  https://github.com/jrdennisoss/dosboxrm/blob/main/NOTES_MPEG.md
+
+His work, also available through DOSBox Staging, was the starting point for
+this implementation. In particular, credit belongs to that work for the
+reserved frame-rate marker, P/B-picture f_code scrambling, the known magic-key
+patterns, and the temporal-sequence delta recovery algorithm. These are not
+new discoveries of the ScummVM investigation. The DOSBox ReelMagic README
+also credits Chris Guthrie and Joseph Whittaker as project contributors.
+
+ScummVM adapts that documented format and algorithm to its stream interfaces
+and existing MPEG decoder. Its buffering, optional per-picture decoding,
+audio-padding repair and engine integration should be described separately
+from the earlier format research. The sequence-header probe scans the first
+16 KB of raw input; it does not
+recognize a header split across program-stream packets. Unlocking itself
+reassembles video payloads and repairs picture headers across those boundaries.
+
+An unknown magic key still falls back to
+the known default after a warning; arbitrary-key recovery is not implemented.
+
+Card and CRT experiments, 2026-08-19
+------------------------------------------
+CALIB and CALIB2 displayed generated 320x240 MPEG patterns alongside 320x200
+VGA artwork on a physical ReelMagic setup. The experiments used line
+combs, numbered staircases, edge markers and adjacent MPEG/VGA vernier bands.
+CRT photographs and scanline counts were compared with emulator
+renders of the same patterns. This section records that investigation; it is
+not a claim of a fresh hardware test for this PR.
+
+The principal observations were:
+
+* VGA features occupied two output scanlines. MPEG features could occupy one
+  or two. MPEG therefore was not first reduced onto the VGA's 200-line logical
+  grid and then doubled alongside it.
+* The MPEG comb retained its cycles across the measured interior window. It
+  did not show the periodic line loss of the examined emulator's 240-to-200
+  path. Four narrow photo strips gave 98 cycles against approximately 97
+  expected for their measured extent, within edge-counting uncertainty.
+* The bottom staircase ended at MPEG source line 237. Its line-238/239 edge
+  marker was absent, while the VGA staircase and bottom marker remained.
+  This supports a two-source-line bottom crop on the tested setup. It does
+  not justify claiming that all 240 source lines were visible.
+* The monitor reported a 400-line VGA timing, labelled 720x400 at 70 Hz.
+  That excludes the proposed 480-line output mode on this setup. The label
+  alone does not establish the card's scaler geometry.
+
+Interpretation and remaining uncertainty
+---------------------------------------
+The differing scanline granularity supports compositing video against the
+already double-scanned VGA raster. It contradicts the earlier assumption that
+the physical card discards every sixth MPEG line. That skipping path exists
+in the examined DOSBox mixer; it is not a hardware measurement. Dennis's
+README already identifies VGA/MPEG mixing architecture as work to revisit.
+
+CALIB2's every-third-source-line vernier predominantly showed runs of thirteen
+two-scanline bars and six one-scanline bars. A model of 32/19 output scanlines
+per source line (19/32 source lines per output scanline) fits those run lengths
+and predicts bottom overshoot. The recorded sequence includes a run counted
+as sixteen rather than thirteen. The research notes treated it as a counting
+error, but that interpretation has not been independently established here.
+Describe 19/32 as the fitted model, not a directly read hardware register.
+
+A five-fractional-bit truncation of the nominal 240/400 source step produces
+19/32. That is a plausible register explanation, inferred from the model;
+no register readback or datasheet measurement establishes it. The initial
+photographs also cannot reliably establish horizontal scaling because of CRT
+curvature and lens distortion.
+
+Consequences for ScummVM
+-----------------------
+Keep the game's VGA artwork on an integer grid and put video resampling on the
+video layer. The RtZ consumer selects a 640x400 destination, replicates
+320x200 graphics by 2 on each axis and scales the complete 320x240 MPEG picture
+into it. The shared compositor supports this geometry without depending on
+MADE. Its ideal 3/5 source step preserves all 240 video lines instead of
+reproducing the fitted model's bottom crop. That is an explicit presentation
+choice. Backend aspect correction applies to the finished composite.
+
+The 1600x1200 scaling experiment, deblocking and loop-skip preferences, and
+restoration of omitted game sound cues remain separate local experiments.
+
+Other findings from this investigation
+--------------------------------------
+Asset analysis found MPEG Layer II frames marked padded without a padding
+byte. Correcting those header bits repaired 245 frames in the Zork intro.
+This is an asset/decoder finding, not a measurement of the card's circuitry.
+Likewise, a program-stream packet can contain several pictures: ScummVM's
+opt-in per-picture decode path exposes each one and flushes delayed pictures
+at EOF. That decoder behavior is useful beyond ReelMagic.
+
+Calibration asset construction also mattered. The working calibration clips
+used the game's ordinary bare MPEG-1 elementary-stream format and comparable
+bitrate/VBV settings. The first high-rate, all-intra pattern was not a reliable
+geometry probe because it produced corruption. File-open calibration differs
+from Zork's callback-fed stream-open path, although it exercises the display
+path; do not treat it as validation of callback/DMA behavior.
