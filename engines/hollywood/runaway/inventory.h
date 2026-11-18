@@ -40,7 +40,7 @@ public:
 		byte variation;
 		Reply(uint16 c = 1, byte v = 0) : cue(c), variation(v) {}
 	};
-	explicit RunawayInventory(const RunawayStrings &strings) : _strings(strings) {}
+	explicit RunawayInventory(const RunawayStrings &strings, bool museum = false) : _strings(strings), _museum(museum) {}
 	bool contains(byte item) const;
 	bool add(byte item);
 	void remove(byte item);
@@ -61,6 +61,7 @@ public:
 
 private:
 	const RunawayStrings &_strings;
+	const bool _museum;
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
 };

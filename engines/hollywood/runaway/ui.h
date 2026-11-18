@@ -42,7 +42,7 @@ public:
 	RunawayUI(Audio::Mixer *mixer, RunawayInventory &inventory, const RunawayStrings &strings) :
 		_audio(mixer), _inventory(inventory), _strings(strings), _random("runaway-ui") {}
 	~RunawayUI();
-	bool load();
+	bool load(bool museum = false);
 	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
 		bool inventoryPresentation = false, byte speechFrame = 0);
 	Command click(bool right);
@@ -73,6 +73,7 @@ private:
 	RunawayAudio _audio;
 	RunawayInventory &_inventory;
 	const RunawayStrings &_strings;
+	bool _museum = false;
 	Common::RandomSource _random;
 	RunawayFont _font;
 	Graphics::ManagedSurface _cursors, _demoLogo, _cursor, _inventoryButton, _returnButton, _optionsButton;

@@ -40,14 +40,14 @@ namespace Hollywood {
 
 class RunawayMenu;
 class RunawayInventory;
-class RunawayScene5030;
+class RunawayScene;
 class RunawayUI;
 
 // Runaway shares the archive and text formats with Hollywood Monsters, but
 // has its own RGB565 renderer, scene state and audio formats.
 class RunawayEngine : public Engine {
 public:
-	RunawayEngine(OSystem *syst, Common::Language language);
+	RunawayEngine(OSystem *syst, Common::Language language, bool museum);
 	~RunawayEngine() override;
 
 	Common::Error run() override;
@@ -71,9 +71,10 @@ private:
 	void applySettings(const RunawayMenu::Settings &settings, bool restoreDefaults = false);
 	void present(const Graphics::ManagedSurface &screen);
 	Common::Language _language;
+	const bool _museum;
 	RunawayStrings _strings;
 	Common::ScopedPtr<RunawayInventory> _inventory;
-	Common::ScopedPtr<RunawayScene5030> _scene;
+	Common::ScopedPtr<RunawayScene> _scene;
 	Common::ScopedPtr<RunawayUI> _ui;
 	bool _inPresentation = false, _gameStarted = false, _loadedGame = false;
 };

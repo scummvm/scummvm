@@ -25,6 +25,7 @@
 
 #include "hollywood/debug.h"
 #include "hollywood/monsters/detection.h"
+#include "hollywood/runaway/detection.h"
 
 namespace Hollywood {
 

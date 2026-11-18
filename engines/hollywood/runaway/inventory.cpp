@@ -27,6 +27,13 @@
 namespace Hollywood {
 namespace {
 
+const char *const kMuseumItemNames[] = {
+	"", "Wallet", "Car keys", "Condom", "Piece of amber", "Tape recorder", "Battery",
+	"Crucifix", "Strange Mayan object", "Colorless varnish", "Talcum powder", "Mayan mask",
+	"Ruby", "Willy's business card", "Bowl with coffee beans", "Cup of coffee",
+	"Pair of books", "Strange key", "Ladle", "Package of coffee"
+};
+
 const byte kItemCursors[] = {
 	0, 41, 43, 45, 47, 49, 51, 55, 57, 59, 61, 63, 65, 67, 69,
 	75, 79, 81, 83, 85, 87, 91, 93, 95, 103, 105, 111
@@ -65,7 +72,7 @@ bool RunawayInventory::contains(byte item) const {
 }
 
 bool RunawayInventory::add(byte item) {
-	if (!item || item > kItemCount || contains(item))
+	if (!item || item > kItemCount || (_museum && item >= ARRAYSIZE(kMuseumItemNames)) || contains(item))
 		return false;
 	_items.push_back(item);
 	_newItem = item;
@@ -86,28 +93,41 @@ void RunawayInventory::remove(byte item) {
 }
 
 Common::U32String RunawayInventory::name(byte item) const {
+	if (_museum)
+		return item < ARRAYSIZE(kMuseumItemNames) ? Common::U32String(kMuseumItemNames[item]) : Common::U32String();
 	if (item == 1 && _clothState)
 		return _strings.text(_clothState == 1 ? RunawayStrings::kWetCloth : RunawayStrings::kDirtyCloth);
 	return _strings.itemName(item);
 }
 
 uint RunawayInventory::icon(byte item) const {
+	if (_museum)
+		return item;
 	if (item == 1 && _clothState)
 		return _clothState == 1 ? 34 : 35;
 	return item == 15 ? 29 : item;
 }
 
 uint RunawayInventory::cursor(byte item) const {
+	if (_museum)
+		return item && item < ARRAYSIZE(kMuseumItemNames) ? 11 + item * 2 : 0;
 	if (item == 1 && _clothState)
 		return _clothState == 1 ? 107 : 109;
 	return item <= kItemCount ? kItemCursors[item] : 0;
 }
 
 RunawayInventory::Reply RunawayInventory::examine(byte item) const {
+	if (_museum) {
+		if (!item || item >= ARRAYSIZE(kMuseumItemNames))
+			return Reply();
+		return Reply(item < 5 ? 49 + item : 95 + item, item == 7 ? 1 : 0);
+	}
 	return Reply(item && item <= kItemCount ? kExamineCues[item] : 1, item == 1 ? _clothState : 0);
 }
 
 RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
+	if (_museum)
+		return Reply();
 	if (!contains(first) || !contains(second) || first == second)
 		return Reply();
 	if (first > second)

@@ -30,6 +30,7 @@ class RunawayAudio {
 public:
 	explicit RunawayAudio(Audio::Mixer *mixer) : _mixer(mixer) {}
 	~RunawayAudio();
+	void setMuseum(bool museum) { _museum = museum; }
 	void playIntroMusic();
 	uint32 playMusic(uint16 cue, bool loop = true);
 	void setMusicVolume(byte volume);
@@ -46,7 +47,8 @@ public:
 
 private:
 	uint32 play(const char *archive, uint16 cue, uint tableCount, bool pairedTables,
-		byte flags, Audio::Mixer::SoundType type, Audio::SoundHandle &handle, byte volume, bool loop);
+		byte flags, Audio::Mixer::SoundType type, Audio::SoundHandle &handle, byte volume, bool loop, uint rate);
+	bool _museum = false;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _music, _speech, _effects[2], _footstep, _pointer;
 };

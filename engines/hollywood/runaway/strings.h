@@ -43,7 +43,7 @@ public:
 		kSaveFailed, kLoadFailed, kDeleteFailed, kNoFreeSlots, kDeleteKey, kCreditsFailed, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) :
-		_languageIndex(language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : 0) {}
+		_languageIndex(language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : language == Common::EN_ANY ? 3 : 0) {}
 	Common::U32String text(TextId id) const;
 	Common::U32String itemName(byte item) const;
 	Common::U32String shackHotspotName(byte hotspot) const;

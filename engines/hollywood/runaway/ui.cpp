@@ -31,6 +31,7 @@ namespace {
 const Graphics::PixelFormat kUIFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 const uint kCursorWidth = 60;
 const uint kButtonX = 312;
+const byte kMuseumPickupFrames[] = {0, 30, 31, 32, 31, 30, 31, 32, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 3};
 
 void shadeBevelPixel(Graphics::ManagedSurface &screen, int x, int y, int amount) {
 	uint16 *pixel = (uint16 *)screen.getBasePtr(x, y);
@@ -55,9 +56,25 @@ RunawayUI::~RunawayUI() {
 		CursorMan.popCursor();
 }
 
-bool RunawayUI::load() {
+bool RunawayUI::load(bool museum) {
+	_museum = museum;
+	_audio.setMuseum(museum);
 	Common::Array<byte> animation;
-	if (!_font.load() || !loadRunawaySurface(114, 904, 540, _cursors) ||
+	if (!_font.load(false, museum))
+		return false;
+	if (museum) {
+		if (!loadRunawaySurface(Common::Path("raton10.spf"), 904, 360, _cursors) ||
+				!loadRunawaySurface(Common::Path("Mosca.spf"), 48, 48, _demoLogo) ||
+				!loadRunawaySurface(Common::Path("RESOURCE.OBD"), 80, 2079, _icons) ||
+				!loadRunawaySurface(Common::Path("bolsa3.fnd"), 700, 74, _inventoryButton) ||
+				!loadRunawaySurface(Common::Path("jugar_izq.fnd"), 700, 74, _returnButton) ||
+				!loadRunawaySurface(Common::Path("opcion2.fnd"), 700, 74, _optionsButton) ||
+				!loadRunawaySurface(Common::Path("invent7.fnd"), 1024, 600, _inventoryBackground) ||
+				!loadRunawaySurface(Common::Path("inv_obt.fnd"), 768, 576, _inventoryTexture) ||
+				!readRunawayFile(Common::Path("ovalo1.tct"), animation) || !_portrait.load(animation, 33) ||
+				!readRunawayFile(Common::Path("ov1golpe.tct"), animation) || !_idlePortrait.load(animation, 15))
+			return false;
+	} else if (!loadRunawaySurface(114, 904, 540, _cursors) ||
 			!loadRunawaySurface(118, 48, 48, _demoLogo) || !loadRunawaySurface(121, 80, 42 * 80, _icons) ||
 			!loadRunawaySurface(127, 700, 74, _inventoryButton) || !loadRunawaySurface(129, 700, 74, _returnButton) ||
 			!loadRunawaySurface(128, 700, 74, _optionsButton) ||
@@ -189,7 +206,8 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		_audio.playEffect(1);
 		_pickupSoundPlayed = true;
 	}
-	if (_pickupItem && now - _pickupStarted >= 18 * 60) {
+	const uint pickupFrames = _museum ? ARRAYSIZE(kMuseumPickupFrames) : 18;
+	if (_pickupItem && now - _pickupStarted >= pickupFrames * 60) {
 		_pickupItem = 0;
 		if (_returnAfterPickup && !_speaking)
 			setInventoryOpen(false);
@@ -238,7 +256,7 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		}
 		if (!busy() && !_speaking && !_idleStarted && now - _lastInteraction >= 30000)
 			_idleStarted = now;
-		if (_idleStarted && now - _idleStarted >= 32 * 60) {
+		if (_idleStarted && now - _idleStarted >= _idlePortrait.frameCount() * 60) {
 			_idleStarted = 0;
 			_lastInteraction = now;
 		}
@@ -307,13 +325,13 @@ void RunawayUI::updateCursor() {
 	if (waiting)
 		return;
 	const byte item = _inventory.selected();
-	uint tile = _verb;
+	uint tile = _museum ? (_verb == kVerbWalk ? 0 : _verb == kVerbLook ? 6 : 7) : (uint)_verb;
 	uint shade = 0;
 	if (item) {
 		tile = _inventory.cursor(item) + (_hovered != 0);
 	} else {
 		const uint phase = (_now - _verbStarted) / 20;
-		if (phase < 10) {
+		if (!_museum && phase < 10) {
 			// Four cels collapse the old verb to a ball; four expand the new one.
 			tile = !phase ? (uint)_previousVerb : phase < 5 ? _previousVerb * 4 + 8 + phase :
 				phase == 5 ? 8 : _verb * 4 + 18 - phase;
@@ -325,11 +343,13 @@ void RunawayUI::updateCursor() {
 	const int key = tile * 10 + shade;
 	if (key == _cursorKey)
 		return;
+	const uint sx = (tile % 15) * 60;
+	const uint sy = (tile / 15) * 60;
+	if (sx + 60 > (uint)_cursors.w || sy + 60 > (uint)_cursors.h)
+		return;
 	_cursorKey = key;
 	const uint16 transparent = *(const uint16 *)_cursors.getPixels();
 	_cursor.fillRect(Common::Rect(0, 0, 60, 60), transparent);
-	const uint sx = (tile % 15) * 60;
-	const uint sy = (tile / 15) * 60;
 	for (uint y = 0; y < 60; ++y) {
 		const uint16 *src = (const uint16 *)_cursors.getBasePtr(sx, sy + y);
 		uint16 *dst = (uint16 *)_cursor.getBasePtr(0, y);
@@ -379,13 +399,19 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 			screen.fillRect(rect, 0);
 		} else {
 			const uint y = (_inventory.icon(item) - 1) * 80;
-			screen.copyRectToSurface(_icons, rect.left, rect.top, Common::Rect(0, y, 80, y + 80));
+			if (y + 80 <= (uint)_icons.h)
+				screen.copyRectToSurface(_icons, rect.left, rect.top, Common::Rect(0, y, 80, y + 80));
 		}
 	}
 	if (_pickupItem) {
-		_portrait.draw(screen, 64 + MIN<uint>(17, (_now - _pickupStarted) / 60), 0, kRunawayViewportTop);
+		if (_museum) {
+			const uint frame = MIN<uint>(ARRAYSIZE(kMuseumPickupFrames) - 1, (_now - _pickupStarted) / 60);
+			_portrait.draw(screen, kMuseumPickupFrames[frame], 0, kRunawayViewportTop);
+		} else {
+			_portrait.draw(screen, 64 + MIN<uint>(17, (_now - _pickupStarted) / 60), 0, kRunawayViewportTop);
+		}
 	} else if (_idleStarted) {
-		_idlePortrait.draw(screen, MIN<uint>(31, (_now - _idleStarted) / 60), 0, kRunawayViewportTop);
+		_idlePortrait.draw(screen, MIN<uint>(_idlePortrait.frameCount() - 1, (_now - _idleStarted) / 60), 0, kRunawayViewportTop);
 	} else {
 		const uint frame = _speaking ? _mouth : (int32)(_blinkUntil - _now) > 0 ? 6 : 0;
 		_portrait.draw(screen, frame, 0, kRunawayViewportTop);

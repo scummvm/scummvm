@@ -23,6 +23,7 @@
 #define HOLLYWOOD_RUNAWAY_GRAPHICS_H
 
 #include "common/array.h"
+#include "common/path.h"
 #include "common/rect.h"
 #include "graphics/managed_surface.h"
 
@@ -30,10 +31,13 @@ namespace Hollywood {
 
 class ChunkArchive;
 
-// RESOURCE.000 has a ten-byte header followed by two 500-entry tables.
+bool readRunawayFile(const Common::Path &path, Common::Array<byte> &data);
+// The cabin demos' RESOURCE.000 has a ten-byte header and two 500-entry tables.
 bool readRunawayGlobalChunk(uint chunk, Common::Array<byte> &data);
 bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface);
+bool loadRunawaySurface(const Common::Path &path, int width, int height, Graphics::ManagedSurface &surface);
 bool loadRunawaySurface(ChunkArchive &archive, uint chunk, int width, int height, Graphics::ManagedSurface &surface);
+bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps);
 bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset = 0);
 
 enum {
@@ -62,16 +66,32 @@ private:
 // shadow planes. This differs from the room animation spans.
 class RunawayActor {
 public:
-	bool load();
+	enum Model { kCabin, kMuseumInterior, kMuseumHall };
+
+	struct RenderParams {
+		Common::Point position, camera;
+		int roomWidth = 0;
+		float height = 455;
+		// A depth layer hides the actor until his feet pass its Y threshold.
+		int16 depthY[7] = {0, 32767, 32767, 32767, 32767, 32767, 32767};
+		byte light[3] = {100, 100, 100};
+		bool antialias = true;
+	};
+	bool load(Model model = kCabin);
 	bool setFrame(uint facing, uint frame, int headFrame = -1);
 	static float perspectiveHeight(Common::Point position);
 	void draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
 		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps,
 		bool sunlit = false, bool antialias = true) const;
+	void draw(Graphics::ManagedSurface &surface, const RenderParams &params,
+		const Common::Array<byte> &mask, const Common::Array<byte> &maps) const;
 
 private:
-	enum { kWidth = 345, kHeight = 518, kHeadHeight = 148, kFacings = 8, kFrames = 19,
+	enum { kHeadHeight = 148, kFacings = 8, kFrames = 19,
 		kHeadFacings = 6, kHeadFrames = 40 };
+	uint _width = 345, _height = 518;
+	int _anchorX = 168, _anchorY = 434;
+	bool _museum = false;
 	bool decodeFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end, bool head);
 	Common::Array<byte> _descriptors, _headDescriptors;
 	Common::Array<byte> _banks[kFacings];
@@ -79,6 +99,7 @@ private:
 	Common::Array<byte> _pixels, _opacity, _shadow;
 	uint16 _palette[256];
 	Common::Rect _bounds;
+	int _loadedModel = -1;
 	int _facing = -1;
 	int _frame = -1;
 	int _headFrame = -1;

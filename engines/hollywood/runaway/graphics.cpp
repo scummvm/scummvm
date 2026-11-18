@@ -40,14 +40,47 @@ static bool decodeSurface(const Common::Array<byte> &pixels, int width, int heig
 	return true;
 }
 
+bool readRunawayFile(const Common::Path &path, Common::Array<byte> &data) {
+	Common::File file;
+	if (!file.open(path) || file.size() <= 0 || file.size() > 32 * 1024 * 1024)
+		return false;
+	data.resize(file.size());
+	return file.read(data.data(), data.size()) == data.size();
+}
+
 bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface) {
 	Common::Array<byte> pixels;
 	return readRunawayGlobalChunk(chunk, pixels) && decodeSurface(pixels, width, height, surface);
 }
 
+bool loadRunawaySurface(const Common::Path &path, int width, int height, Graphics::ManagedSurface &surface) {
+	Common::Array<byte> pixels;
+	return readRunawayFile(path, pixels) && decodeSurface(pixels, width, height, surface);
+}
+
 bool loadRunawaySurface(ChunkArchive &archive, uint chunk, int width, int height, Graphics::ManagedSurface &surface) {
 	Common::Array<byte> pixels;
 	return archive.readVariableChunk(chunk, pixels) && decodeSurface(pixels, width, height, surface);
+}
+
+bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps) {
+	Common::Array<byte> packed;
+	if (width <= 0 || height <= 0 || (uint64)width * height > 16 * 1024 * 1024 ||
+			!archive.readVariableChunk(1, packed) || packed.size() % 3 ||
+			!archive.readVariableChunk(2, maps) || maps.size() != 1536)
+		return false;
+	mask.resize(width * height);
+	// Each run is (byte value, uint16 length). The first four 256-byte tables
+	// map these values to walking zones, hotspots, depth and lighting.
+	uint offset = 0;
+	for (uint i = 0; i < packed.size(); i += 3) {
+		const uint length = READ_LE_UINT16(packed.data() + i + 1);
+		if (!length || length > mask.size() - offset)
+			return false;
+		memset(mask.data() + offset, packed[i], length);
+		offset += length;
+	}
+	return offset == mask.size();
 }
 
 bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset) {
@@ -97,7 +130,7 @@ bool RunawayAnimation::validate(uint frames) {
 			const byte *run = _data.data() + cursor;
 			const uint x = READ_LE_UINT16(run), y = READ_LE_UINT16(run + 2), length = run[4];
 			cursor += 5;
-			if (x + length > 1376 || y >= 600 || !length || length * 2 > _data.size() - cursor)
+			if (x + length > 32767 || y >= 32767 || !length || length * 2 > _data.size() - cursor)
 				return false;
 			cursor += length * 2;
 		}
@@ -150,26 +183,44 @@ bool readRunawayGlobalChunk(uint chunk, Common::Array<byte> &data) {
 	return file.open("RESOURCE.000") && readGlobalChunk(file, chunk, data);
 }
 
-bool RunawayActor::load() {
+bool RunawayActor::load(Model model) {
+	if (_loadedModel == model)
+		return setFrame(3, 0);
+	_loadedModel = -1;
 	Common::File file;
 	Common::Array<byte> palette;
+	const bool museum = model != kCabin;
+	const bool interior = model == kMuseumInterior;
 	// Native chapter-five actor loader at 0x40b590 selects entry 44. Entry 45
 	// is the palette, 46..53 hold walking cels, 54..59 hold head cels, and
 	// entry 60 describes the six banks of 40 head cels.
 	_facing = _frame = _headFrame = -1;
-	if (!file.open("RESOURCE.000") || !readGlobalChunk(file, 44, _descriptors) ||
-			_descriptors.size() != kFacings * kFrames * 32 ||
-			!readGlobalChunk(file, 45, palette) || palette.size() != 512 ||
-			!readGlobalChunk(file, 60, _headDescriptors) ||
+	_museum = museum;
+	_width = museum ? (interior ? 237 : 238) : 345;
+	_height = museum ? 455 : 518;
+	_anchorX = museum ? (interior ? 120 : 119) : 168;
+	_anchorY = museum ? 403 : 434;
+	const char *suffix = interior ? "spi" : "spd";
+	if (museum) {
+		if (!readRunawayFile(Common::Path(Common::String::format("br1_%s.VAL", suffix)), _descriptors) ||
+				!readRunawayFile(Common::Path(Common::String::format("br1_%s.PAL", suffix)), palette) ||
+				!readRunawayFile(Common::Path(Common::String::format("ca1_%s.VAL", suffix)), _headDescriptors))
+			return false;
+	} else if (!file.open("RESOURCE.000") || !readGlobalChunk(file, 44, _descriptors) ||
+			!readGlobalChunk(file, 45, palette) || !readGlobalChunk(file, 60, _headDescriptors)) {
+		return false;
+	}
+	if (_descriptors.size() != kFacings * kFrames * 32 || palette.size() != 512 ||
 			_headDescriptors.size() != kHeadFacings * kHeadFrames * 32)
 		return false;
 	for (uint i = 0; i < 256; ++i)
 		_palette[i] = READ_LE_UINT16(palette.data() + i * 2);
-	_pixels.resize(kWidth * kHeight);
-	_opacity.resize(kWidth * kHeight);
-	_shadow.resize(kWidth * kHeight);
+	_pixels.resize(_width * _height);
+	_opacity.resize(_width * _height);
+	_shadow.resize(_width * _height);
 	for (uint facing = 0; facing < kFacings; ++facing) {
-		if (!readGlobalChunk(file, 46 + facing, _banks[facing]))
+		if (museum ? !readRunawayFile(Common::Path(Common::String::format("br1_%s%u.SPR", suffix, facing)), _banks[facing]) :
+				!readGlobalChunk(file, 46 + facing, _banks[facing]))
 			return false;
 		for (uint frame = 0; frame < kFrames; ++frame) {
 			if (!setFrame(facing, frame))
@@ -178,14 +229,18 @@ bool RunawayActor::load() {
 	}
 	const byte headFacings[kHeadFacings] = {0, 1, 2, 4, 5, 7};
 	for (uint bank = 0; bank < kHeadFacings; ++bank) {
-		if (!readGlobalChunk(file, 54 + bank, _headBanks[bank]))
+		if (museum ? !readRunawayFile(Common::Path(Common::String::format("ca1_%s%u.SPR", suffix, bank)), _headBanks[bank]) :
+				!readGlobalChunk(file, 54 + bank, _headBanks[bank]))
 			return false;
 		for (uint frame = 0; frame < kHeadFrames; ++frame) {
 			if (!setFrame(headFacings[bank], 0, frame))
 				return false;
 		}
 	}
-	return setFrame(3, 0);
+	if (!setFrame(3, 0))
+		return false;
+	_loadedModel = model;
+	return true;
 }
 
 bool RunawayActor::setFrame(uint facing, uint frame, int headFrame) {
@@ -200,11 +255,11 @@ bool RunawayActor::setFrame(uint facing, uint frame, int headFrame) {
 	const byte *descriptor = _descriptors.data() + (facing * kFrames + frame) * 32;
 	const Common::Array<byte> &bank = _banks[facing];
 	const uint end = frame + 1 < kFrames ? READ_LE_UINT32(descriptor + 32) : bank.size();
-	const int left = 168 - (int)READ_LE_UINT32(descriptor + 16);
-	const int top = 434 - (int)READ_LE_UINT32(descriptor + 20);
+	const int left = _anchorX - (int)READ_LE_UINT32(descriptor + 16);
+	const int top = _anchorY - (int)READ_LE_UINT32(descriptor + 20);
 	const uint width = READ_LE_UINT32(descriptor + 24), height = READ_LE_UINT32(descriptor + 28);
-	if (left < 0 || top < 0 || width > kWidth || height > kHeight ||
-			left + width > kWidth || top + height > kHeight)
+	if (left < 0 || top < 0 || width > _width || height > _height ||
+			left + width > _width || top + height > _height)
 		return false;
 	_bounds = Common::Rect(left, top, left + width, top + height);
 	memset(_pixels.data(), 0, _pixels.size());
@@ -222,8 +277,11 @@ bool RunawayActor::setFrame(uint facing, uint frame, int headFrame) {
 		const Common::Array<byte> &headBank = _headBanks[headFacing];
 		const byte *head = _headDescriptors.data() + (headFacing * kHeadFrames + headFrame) * 32;
 		const uint headEnd = headFrame + 1 < kHeadFrames ? READ_LE_UINT32(head + 32) : headBank.size();
-		memset(_pixels.data(), 0, kWidth * kHeadHeight);
-		memset(_opacity.data(), 0, kWidth * kHeadHeight);
+		const uint clearHeight = _museum ? kHeadHeight - head[8] : kHeadHeight;
+		if (clearHeight > kHeadHeight)
+			return false;
+		memset(_pixels.data(), 0, _width * clearHeight);
+		memset(_opacity.data(), 0, _width * clearHeight);
 		if (!decodeFrame(headBank, head, headEnd, true))
 			return false;
 	}
@@ -253,16 +311,16 @@ bool RunawayActor::decodeFrame(const Common::Array<byte> &bank, const byte *desc
 			const bool literal = plane == 0 || run[4] != 0;
 			const uint length = READ_LE_UINT16(run + header - 2);
 			cursor += header;
-			if (!length || x + length > kWidth || y >= (head ? kHeadHeight : kHeight) ||
+			if (!length || x + length > _width || y >= (head ? kHeadHeight : _height) ||
 					(literal && length > end - cursor))
 				return false;
 			if (head)
 				_bounds.extend(Common::Rect(x, y, x + length, y + 1));
 			if (literal) {
-				memcpy(destination + y * kWidth + x, bank.data() + cursor, length);
+				memcpy(destination + y * _width + x, bank.data() + cursor, length);
 				cursor += length;
 			} else {
-				memset(destination + y * kWidth + x, 255, length);
+				memset(destination + y * _width + x, 255, length);
 			}
 		}
 	}
@@ -287,16 +345,6 @@ float RunawayActor::perspectiveHeight(Common::Point position) {
 
 void RunawayActor::draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
 		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps, bool sunlit, bool antialias) const {
-	// Actor coordinates are anchored at (168,434) in a nominal 455-pixel-high image.
-	const int scale = CLIP<int>((int)(perspectiveHeight(position) * 256 / 455), 64, 256);
-	const int originX = position.x - cameraX - 168 * scale / 256;
-	const int originY = position.y + roomTop - 434 * scale / 256;
-	const int x0 = MAX(0, originX + _bounds.left * scale / 256);
-	const int y0 = MAX(roomTop, originY + _bounds.top * scale / 256);
-	const int x1 = MIN<int>(surface.w, originX + _bounds.right * scale / 256);
-	const int y1 = MIN<int>(roomTop + 600, originY + _bounds.bottom * scale / 256);
-	if (x0 >= x1 || y0 >= y1)
-		return;
 	// Scene lighting and occlusion come from the same pixel lookup as hotspots.
 	const byte light = MIN<byte>(5, maps[768 + mask[position.y * 1376 + position.x]]);
 	byte lights[6][3] = { {100,100,100}, {55,50,45}, {55,50,45},
@@ -306,31 +354,57 @@ void RunawayActor::draw(Graphics::ManagedSurface &surface, Common::Point positio
 		memcpy(lights[1], windowLight[0], sizeof(windowLight[0]));
 		memcpy(lights[2], windowLight[1], sizeof(windowLight[1]));
 	}
+	RenderParams params;
+	params.position = position;
+	params.camera = Common::Point(cameraX, kRunawayViewportTop - roomTop);
+	params.roomWidth = 1376;
+	params.height = perspectiveHeight(position);
+	params.antialias = antialias;
+	memcpy(params.light, lights[light], sizeof(params.light));
+	draw(surface, params, mask, maps);
+}
+
+void RunawayActor::draw(Graphics::ManagedSurface &surface, const RenderParams &params,
+		const Common::Array<byte> &mask, const Common::Array<byte> &maps) const {
+	if (params.roomWidth <= 0 || mask.size() % params.roomWidth || maps.size() != 1536)
+		return;
+	const int roomHeight = mask.size() / params.roomWidth;
+	const int scale = CLIP<int>((int)(params.height * 256 / 455), 64, 256);
+	const int roomTop = kRunawayViewportTop - params.camera.y;
+	const int originX = params.position.x - params.camera.x - _anchorX * scale / 256;
+	const int originY = params.position.y + roomTop - _anchorY * scale / 256;
+	Common::Rect bounds(originX + _bounds.left * scale / 256, originY + _bounds.top * scale / 256,
+		originX + _bounds.right * scale / 256, originY + _bounds.bottom * scale / 256);
+	bounds.clip(Common::Rect(0, kRunawayViewportTop, surface.w, MIN<int>(surface.h, kRunawayViewportTop + kRunawayViewportHeight)));
+	bounds.clip(Common::Rect(-params.camera.x, roomTop, params.roomWidth - params.camera.x, roomTop + roomHeight));
+	if (bounds.isEmpty())
+		return;
 	uint16 palette[256];
 	for (uint i = 0; i < 256; ++i) {
 		const uint16 c = _palette[i];
-		palette[i] = (((c >> 11) * lights[light][0] / 100) << 11) |
-			((((c >> 5) & 63) * lights[light][1] / 100) << 5) | ((c & 31) * lights[light][2] / 100);
+		palette[i] = (((c >> 11) * params.light[0] / 100) << 11) |
+			((((c >> 5) & 63) * params.light[1] / 100) << 5) | ((c & 31) * params.light[2] / 100);
 	}
-	for (int y = y0; y < y1; ++y) {
-		uint16 *out = (uint16 *)surface.getBasePtr(x0, y);
+	for (int y = bounds.top; y < bounds.bottom; ++y) {
+		uint16 *out = (uint16 *)surface.getBasePtr(bounds.left, y);
 		const int sourceY = (y - originY) * 256 / scale;
-		for (int x = x0; x < x1; ++x, ++out) {
-			if (maps[512 + mask[(y - roomTop) * 1376 + x + cameraX]])
+		for (int x = bounds.left; x < bounds.right; ++x, ++out) {
+			const byte depth = maps[512 + mask[(y - roomTop) * params.roomWidth + x + params.camera.x]];
+			if (depth && (depth >= ARRAYSIZE(params.depthY) || params.position.y <= params.depthY[depth]))
 				continue;
 			const int sourceX = (x - originX) * 256 / scale;
-			const int source = sourceY * kWidth + sourceX;
+			const int source = sourceY * _width + sourceX;
 			uint color = palette[_pixels[source]], opacity = _opacity[source], shadow = _shadow[source];
-			if (antialias && scale < 256) {
+			if (params.antialias && scale < 256) {
 				// Native 0x426040 averages color, opacity and shadow over
 				// each source footprint; 0x426de0 takes a single sample.
-				const int endX = MIN<int>(kWidth, (x - originX + 1) * 256 / scale);
-				const int endY = MIN<int>(kHeight, (y - originY + 1) * 256 / scale);
+				const int endX = MIN<int>(_width, (x - originX + 1) * 256 / scale);
+				const int endY = MIN<int>(_height, (y - originY + 1) * 256 / scale);
 				uint r = 0, g = 0, b = 0;
 				opacity = shadow = 0;
 				for (int sy = sourceY; sy < endY; ++sy) {
 					for (int sx = sourceX; sx < endX; ++sx) {
-						const uint sample = sy * kWidth + sx;
+						const uint sample = sy * _width + sx;
 						const uint16 c = _opacity[sample] ? palette[_pixels[sample]] : 0;
 						r += c >> 11;
 						g += (c >> 5) & 63;

@@ -25,6 +25,7 @@
 #include "common/util.h"
 
 #include "hollywood/debug.h"
+#include "hollywood/runaway/navigation.h"
 #include "hollywood/runaway/scene5030.h"
 #include "hollywood/runaway/saveload.h"
 #include "hollywood/runaway/strings.h"
@@ -66,28 +67,13 @@ const SceneHotspot kHotspots[] = {
 
 bool RunawayScene5030::load() {
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	Common::Array<byte> packedMask;
 	if (!_archive.open(Common::Path("RESOURCE.E03"), 50) ||
-			!_archive.readVariableChunk(1, packedMask) ||
-			!_archive.readVariableChunk(2, _maps) || _maps.size() != 1536 ||
+			!loadRunawayMask(_archive, kRoomWidth, kRoomHeight, _mask, _maps) ||
 			!_text.load("RESOURCE.003", "Runaway shack", 503, 0, 0x1135))
 		return false;
 	_background.create(kRoomWidth, kRoomHeight, format);
 	_screen.create(kScreenWidth, kScreenHeight, format);
-	// 0x42b380 expands (byte value, uint16 length) runs into one room pixel
-	// lookup. Tables 0..3 map those values to walking, hotspots, depth, lighting.
-	_mask.resize(kRoomWidth * kRoomHeight);
-	uint offset = 0;
-	if (packedMask.size() % 3)
-		return false;
-	for (uint i = 0; i < packedMask.size(); i += 3) {
-		const uint length = READ_LE_UINT16(packedMask.data() + i + 1);
-		if (!length || length > _mask.size() - offset)
-			return false;
-		memset(_mask.data() + offset, packedMask[i], length);
-		offset += length;
-	}
-	if (offset != _mask.size() || !_actor.load() ||
+	if (!_actor.load() ||
 			!_intro.load(_archive, 47, 20) || !_climb.load(_archive, 42, 18) ||
 			!_hatch.load(_archive, 14, 2) || !loadRoomGraphics() ||
 			!_video.load("DATAVE03.001"))
@@ -301,69 +287,10 @@ byte RunawayScene5030::hotspotAt(Common::Point mouse) const {
 	return id < ARRAYSIZE(kHotspots) && !_pickedUp[id] ? id : 0;
 }
 
-bool RunawayScene5030::walkable(int x, int y) const {
-	return x >= 0 && x < kRoomWidth && y >= 0 && y < kRoomHeight && _maps[_mask[y * kRoomWidth + x]] != 0;
-}
-
-bool RunawayScene5030::clearPath(Common::Point start, Common::Point end) const {
-	const int count = MAX(ABS(end.x - start.x), ABS(end.y - start.y));
-	for (int i = 0; i <= count; ++i) {
-		const int x = start.x + (end.x - start.x) * i / MAX(1, count);
-		const int y = start.y + (end.y - start.y) * i / MAX(1, count);
-		if (!walkable(x, y))
-			return false;
-	}
-	return true;
-}
-
 void RunawayScene5030::walkTo(Common::Point target) {
-	_path.clear();
+	RunawayWalkMap(kRoomWidth, kRoomHeight, _mask, _maps).findPath(_position, target, _path);
 	_pathIndex = 0;
-	// Search only the connected floor. Using pixel resolution preserves the
-	// one-pixel-wide approach to the plug, which a coarse navigation grid loses.
-	Common::Array<int32> parent;
-	Common::Array<int> queue;
-	parent.resize(_mask.size());
-	for (uint i = 0; i < parent.size(); ++i)
-		parent[i] = -1;
-	const int start = _position.y * kRoomWidth + _position.x;
-	parent[start] = start;
-	queue.push_back(start);
-	int closest = start, bestDistance = 0x7fffffff;
-	const int dx[] = {1, -1, 0, 0, 1, 1, -1, -1};
-	const int dy[] = {0, 0, 1, -1, 1, -1, 1, -1};
-	for (uint head = 0; head < queue.size(); ++head) {
-		const int pixel = queue[head], x = pixel % kRoomWidth, y = pixel / kRoomWidth;
-		const int distance = (x - target.x) * (x - target.x) + (y - target.y) * (y - target.y);
-		if (distance < bestDistance) {
-			closest = pixel;
-			bestDistance = distance;
-			if (!distance)
-				break;
-		}
-		for (uint direction = 0; direction < 8; ++direction) {
-			const int nx = x + dx[direction], ny = y + dy[direction], next = ny * kRoomWidth + nx;
-			if (walkable(nx, ny) && parent[next] == -1) {
-				parent[next] = pixel;
-				queue.push_back(next);
-			}
-		}
-	}
-	Common::Array<Common::Point> reverse;
-	for (int pixel = closest; pixel != start; pixel = parent[pixel])
-		reverse.push_back(Common::Point(pixel % kRoomWidth, pixel / kRoomWidth));
-	Common::Point previous = _position;
-	for (int i = (int)reverse.size() - 1; i >= 0;) {
-		int next = i;
-		while (next > 0 && clearPath(previous, reverse[next - 1]))
-			--next;
-		previous = reverse[next];
-		_path.push_back(previous);
-		i = next - 1;
-	}
 	_walkElapsed = _lastFootstep = 0;
-	debugC(1, kDebugScene, "Runaway demo: walk to %d,%d, reachable %d,%d, %u waypoints",
-		target.x, target.y, closest % kRoomWidth, closest / kRoomWidth, _path.size());
 	if (_path.empty())
 		arrive();
 }

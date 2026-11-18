@@ -45,7 +45,7 @@ public:
 
 	RunawayMenu(Audio::Mixer *mixer, const RunawayStrings &strings) : _strings(strings), _audio(mixer) {}
 	~RunawayMenu();
-	bool load();
+	bool load(bool museum = false);
 	void open(const Graphics::ManagedSurface &screen, const Settings &settings, bool canSave = false, bool canLoad = true);
 	void close();
 	Command update(Common::Point mouse);
@@ -89,6 +89,7 @@ private:
 
 	const RunawayStrings &_strings;
 	RunawayAudio _audio;
+	bool _museum = false;
 	RunawayFont _font, _captionFont;
 	Graphics::ManagedSurface _background, _returnButton, _logo, _cursor, _thumbnail;
 	RunawayAnimation _volumeDial;

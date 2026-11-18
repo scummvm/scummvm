@@ -23,6 +23,18 @@
 #define HOLLYWOOD_RUNAWAY_DETECTION_TABLES_H
 
 // Included in the shared ADGameDescription array in hollywood/detection.cpp.
+	// English museum demo (2000). Gameplay POC; movies are not supported.
+	{
+		"runaway",
+		"Museum demo",
+		AD_ENTRY3s("RESOURCE.D06", "f1048f161dca69a3be6ffad173c3db43", 10608050,
+			"RESOURCE.003", "a25c71fc759558e81aae49290b0cfdfc", 965642,
+			"RESOURCE.000", "f1690b1de499e0555498173ad7916415", 3662162),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE | GF_RUNAWAY_MUSEUM_DEMO,
+		GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOSPEECH)
+	},
 	// Spanish chapter-three demo (July 2001 build, Micromania 80).
 	{
 		"runaway",

@@ -54,11 +54,20 @@ bool RunawayMenu::Settings::operator==(const Settings &other) const {
 
 RunawayMenu::~RunawayMenu() { close(); }
 
-bool RunawayMenu::load() {
+bool RunawayMenu::load(bool museum) {
+	_museum = museum;
+	_audio.setMuseum(museum);
 	Graphics::ManagedSurface cursors;
 	Common::Array<byte> animation;
-	if (!_font.load(true) || !_captionFont.load() ||
-			!loadRunawaySurface(132, 1024, 600, _background) ||
+	if (!_font.load(true, museum) || !_captionFont.load(false, museum))
+		return false;
+	if (museum) {
+		if (!loadRunawaySurface(Common::Path("panopc2.fnd"), 1024, 600, _background) ||
+				!loadRunawaySurface(Common::Path("jugar_der.fnd"), 700, 74, _returnButton) ||
+				!loadRunawaySurface(Common::Path("Mosca.spf"), 48, 48, _logo) ||
+				!loadRunawaySurface(Common::Path("raton10.spf"), 904, 360, cursors))
+			return false;
+	} else if (!loadRunawaySurface(132, 1024, 600, _background) ||
 			!loadRunawaySurface(130, 700, 74, _returnButton) ||
 			!loadRunawaySurface(118, 48, 48, _logo) || !loadRunawaySurface(114, 904, 540, cursors) ||
 			!readRunawayGlobalChunk(155, animation) || !_volumeDial.load(animation, 103))
@@ -166,9 +175,9 @@ RunawayMenu::Control RunawayMenu::controlAt(Common::Point mouse) const {
 	const Control controls[] = {kLoad, kSave, kDelete, kPlay, kExit};
 	for (uint i = 0; i < ARRAYSIZE(labels); ++i) {
 		if (labelRect(labels[i], 183, 334 + i * 42).contains(mouse))
-			return (i == 0 && !_canLoad) || (i == 1 && !_canSave) ? kNoControl : controls[i];
+			return (i == 0 && !_canLoad) || (i == 1 && !_canSave) || (i == 2 && _museum) ? kNoControl : controls[i];
 	}
-	for (uint i = 0; i < 5; ++i) {
+	for (uint i = 0; i < (_museum ? 3U : 5U); ++i) {
 		const int y = 161 + i * 42;
 		if (Common::Rect(716, y, 846, y + 28).contains(mouse))
 			return (Control)(kMusicOn + i * 2);
@@ -178,7 +187,7 @@ RunawayMenu::Control RunawayMenu::controlAt(Common::Point mouse) const {
 	const int dx = mouse.x - 525, dy = mouse.y - 516;
 	if (dx * dx + dy * dy <= 52 * 52 || labelRect(RunawayStrings::kVolume, 525, 582).contains(mouse))
 		return kVolume;
-	if (labelRect(RunawayStrings::kCredits, 525, 392).contains(mouse))
+	if (!_museum && labelRect(RunawayStrings::kCredits, 525, 392).contains(mouse))
 		return kShowCredits;
 	if (labelRect(RunawayStrings::kSaveSettings, 802, 404).contains(mouse))
 		return kStoreSettings;
@@ -383,7 +392,7 @@ RunawayMenu::Command RunawayMenu::key(uint32 ascii) {
 			return kBrowseLoad;
 		else if (ascii == _strings.text(RunawayStrings::kSave)[0] && _canSave)
 			return kBrowseSave;
-		else if (ascii == _strings.text(RunawayStrings::kDeleteKey)[0])
+		else if (!_museum && ascii == _strings.text(RunawayStrings::kDeleteKey)[0])
 			return kBrowseDelete;
 	}
 	return kNone;
@@ -539,7 +548,7 @@ void RunawayMenu::draw(Graphics::ManagedSurface &screen) {
 	screen.copyRectToSurface(_thumbnail, 85, 169, Common::Rect(204, 120));
 	drawLabel(screen, RunawayStrings::kLoad, 183, 334, _page == kOptions && _canLoad, kLoad);
 	drawLabel(screen, RunawayStrings::kSave, 183, 376, _page == kOptions && _canSave, kSave);
-	drawLabel(screen, RunawayStrings::kDelete, 183, 418, _page == kOptions, kDelete);
+	drawLabel(screen, RunawayStrings::kDelete, 183, 418, _page == kOptions && !_museum, kDelete);
 	drawLabel(screen, RunawayStrings::kPlay, 183, 460, _page == kOptions, kPlay);
 	drawLabel(screen, RunawayStrings::kQuit, 183, 502, _page == kOptions, kExit);
 	if (_page == kSaves || _page == kName) {
@@ -548,13 +557,20 @@ void RunawayMenu::draw(Graphics::ManagedSurface &screen) {
 		drawToggle(screen, RunawayStrings::kMusic, 161, _settings.music, kMusicOn, kMusicOff);
 		drawToggle(screen, RunawayStrings::kAntialias, 203, _settings.antialias, kAntialiasOn, kAntialiasOff);
 		drawToggle(screen, RunawayStrings::kScrolling, 245, _settings.fastScrolling, kScrollFast, kScrollSlow);
-		drawToggle(screen, RunawayStrings::kPointerSound, 287, _settings.pointerSound, kPointerOn, kPointerOff);
-		drawToggle(screen, RunawayStrings::kSubtitles, 329, _settings.subtitles, kSubtitlesOn, kSubtitlesOff);
-		drawLabel(screen, RunawayStrings::kCredits, 525, 392, true, kShowCredits);
+		if (!_museum) {
+			drawToggle(screen, RunawayStrings::kPointerSound, 287, _settings.pointerSound, kPointerOn, kPointerOff);
+			drawToggle(screen, RunawayStrings::kSubtitles, 329, _settings.subtitles, kSubtitlesOn, kSubtitlesOff);
+		}
+		drawLabel(screen, RunawayStrings::kCredits, 525, 392, !_museum, kShowCredits);
 		drawLabel(screen, RunawayStrings::kSaveSettings, 802, 404, true, kStoreSettings);
 		drawLabel(screen, RunawayStrings::kDefaultSettings, 802, 446, true, kDefaults);
-		_volumeDial.draw(screen, _dragging == kVolume ? 102 : 101, 0, kRunawayViewportTop);
-		_volumeDial.draw(screen, (_settings.volume * 100 + 128) / 256, 0, kRunawayViewportTop);
+		if (_museum) {
+			const Common::String volume = Common::String::format("%d%%", (_settings.volume * 100 + 128) / 256);
+			_font.drawString(screen.surfacePtr(), volume, 473, 502, 104, kNormal, Graphics::kTextAlignCenter);
+		} else {
+			_volumeDial.draw(screen, _dragging == kVolume ? 102 : 101, 0, kRunawayViewportTop);
+			_volumeDial.draw(screen, (_settings.volume * 100 + 128) / 256, 0, kRunawayViewportTop);
+		}
 		drawLabel(screen, RunawayStrings::kVolume, 525, 582, true, kVolume);
 		drawLabel(screen, RunawayStrings::kBrightness, 802, 582, false);
 	}

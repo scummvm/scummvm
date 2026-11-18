@@ -38,7 +38,7 @@ RunawayAudio::~RunawayAudio() {
 }
 
 uint32 RunawayAudio::play(const char *archive, uint16 cue, uint tableCount, bool pairedTables,
-		byte flags, Audio::Mixer::SoundType type, Audio::SoundHandle &handle, byte volume, bool loop) {
+		byte flags, Audio::Mixer::SoundType type, Audio::SoundHandle &handle, byte volume, bool loop, uint rate) {
 	_mixer->stopHandle(handle);
 	const uint headerSize = tableCount * (pairedTables ? 8 : 4);
 	Common::File *file = new Common::File();
@@ -64,9 +64,6 @@ uint32 RunawayAudio::play(const char *archive, uint16 cue, uint tableCount, bool
 		delete file;
 		return 0;
 	}
-	// The DirectSound setup at 0x4051f0 uses 16000 Hz for all three formats:
-	// speech: unsigned 8-bit mono; SFX: signed 16-bit mono; music: 16-bit stereo.
-	const uint rate = 16000;
 	Common::SeekableReadStream *stream = new Common::SeekableSubReadStream(file, start, start + size, DisposeAfterUse::YES);
 	Audio::SeekableAudioStream *pcm = Audio::makeRawStream(stream, rate, flags, DisposeAfterUse::YES);
 	if (!pcm) {
@@ -86,12 +83,13 @@ void RunawayAudio::playIntroMusic() {
 	// The Pendulo logo uses RESOURCE.002 cue 2 on native channel 7, which
 	// has the same 16 kHz stereo PCM format as the room music channels.
 	play("RESOURCE.002", 2, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
-		Audio::Mixer::kMusicSoundType, _music, Audio::Mixer::kMaxChannelVolume, false);
+		Audio::Mixer::kMusicSoundType, _music, Audio::Mixer::kMaxChannelVolume, false, 16000);
 }
 
 uint32 RunawayAudio::playMusic(uint16 cue, bool loop) {
-	return play("RESOURCE.M03", cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
-		Audio::Mixer::kMusicSoundType, _music, 96, loop);
+	// Cabin PCM is 16 kHz; the museum uses 22.05 kHz music/speech and 11.025 kHz effects.
+	return play(_museum ? "RESOURCE.M04" : "RESOURCE.M03", cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
+		Audio::Mixer::kMusicSoundType, _music, 96, loop, _museum ? 22050 : 16000);
 }
 
 void RunawayAudio::setMusicVolume(byte volume) {
@@ -99,25 +97,30 @@ void RunawayAudio::setMusicVolume(byte volume) {
 }
 
 uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
+	if (_museum)
+		return sample ? play("RESOURCE.004", sample, 4000, false, Audio::FLAG_UNSIGNED,
+			Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false, 22050) : 0;
 	// DATAACA3 has independent 6000-entry offset and length tables. Its global
 	// sample IDs include stale offsets for other chapters, so never derive a
 	// length by subtracting adjacent offsets as with the M/S archives.
 	return play(global ? "DATAACA0.000" : "DATAACA3.000", sample, 6000, true, Audio::FLAG_UNSIGNED,
-		Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false);
+		Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false, 16000);
 }
 
 void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop) {
 	assert(channel < ARRAYSIZE(_effects));
-	play("RESOURCE.S03", cue, 1000, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN,
-		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop);
+	play(_museum ? "RESOURCE.S04" : "RESOURCE.S03", cue, 1000, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN,
+		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop, _museum ? 11025 : 16000);
 }
 
 void RunawayAudio::playFootstep(byte surface, byte variant, byte volume) {
+	if (_museum)
+		return;
 	assert(surface >= 1 && surface <= 7 && variant < 2);
 	// Native 0x407410 selects one of two mono samples per surface. These
 	// fourteen effects start at cue 21 in the otherwise shared music archive.
 	play("RESOURCE.002", 21 + (surface - 1) * 2 + variant, 100, false,
-		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _footstep, volume, false);
+		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _footstep, volume, false, 16000);
 }
 
 void RunawayAudio::stopMusic() {
@@ -125,6 +128,8 @@ void RunawayAudio::stopMusic() {
 }
 
 void RunawayAudio::playPointer() {
+	if (_museum)
+		return;
 	// Native 0x405d14 / 0x407530: RESOURCE.000 chunk 150, 16 kHz,
 	// signed 16-bit mono. This short effect accompanies a cursor change.
 	Common::Array<byte> data;
@@ -143,9 +148,13 @@ void RunawayAudio::playPointer() {
 }
 
 void RunawayAudio::playMenuMusic() {
+	if (_museum) {
+		playMusic(11);
+		return;
+	}
 	// Options volume preview and credits use shared music cue 1, channel 7.
 	play("RESOURCE.002", 1, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
-		Audio::Mixer::kMusicSoundType, _music, 255, true);
+		Audio::Mixer::kMusicSoundType, _music, 255, true, 16000);
 }
 
 void RunawayAudio::stopSpeech() {

@@ -52,12 +52,17 @@ const byte kGlyphMap[256] = {
 
 } // End of anonymous namespace
 
-bool RunawayFont::load(bool menuFont) {
+bool RunawayFont::load(bool menuFont, bool museum) {
 	Common::Array<byte> metrics;
-	if (!readRunawayGlobalChunk(menuFont ? 148 : 125, _pixels) ||
+	if (museum) {
+		if (!readRunawayFile(Common::Path("TEMP_LET.SVG"), _pixels) ||
+				!readRunawayFile(Common::Path("TEMP_LET.VAL"), metrics) || metrics.size() != 117 * 5)
+			return false;
+	} else if (!readRunawayGlobalChunk(menuFont ? 148 : 125, _pixels) ||
 			!readRunawayGlobalChunk(menuFont ? 149 : 126, metrics) ||
-			(metrics.size() != 119 * 5 && metrics.size() != 150 * 5 && metrics.size() != 156 * 5))
+			(metrics.size() != 119 * 5 && metrics.size() != 150 * 5 && metrics.size() != 156 * 5)) {
 		return false;
+	}
 	_glyphs.resize(metrics.size() / 5);
 	for (uint i = 0; i < _glyphs.size(); ++i) {
 		const byte *data = metrics.data() + i * 5;
@@ -71,10 +76,10 @@ bool RunawayFont::load(bool menuFont) {
 			return false;
 	}
 	memcpy(_glyphMap, kGlyphMap, sizeof(_glyphMap));
-	_missingGlyph = _glyphs.size() == 119 ? 255 : _glyphs.size() - 1;
-	// The Spanish table at 0x4631f0 uses the shared first 119 glyphs and
-	// marks unsupported characters with 255, without a fallback picture.
-	if (_glyphs.size() == 119) {
+	_missingGlyph = _glyphs.size() <= 119 ? 255 : _glyphs.size() - 1;
+	// Museum and Spanish tables use the first 117 and 119 glyphs respectively,
+	// marking unsupported characters with 255, without a fallback picture.
+	if (_glyphs.size() <= 119) {
 		for (uint i = 0; i < ARRAYSIZE(_glyphMap); ++i) {
 			if (_glyphMap[i] >= _glyphs.size() && _glyphMap[i] != 254)
 				_glyphMap[i] = _missingGlyph;

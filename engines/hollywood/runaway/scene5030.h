@@ -30,6 +30,7 @@
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/inventory.h"
 #include "hollywood/runaway/presentation.h"
+#include "hollywood/runaway/scene.h"
 #include "hollywood/runaway/video.h"
 #include "hollywood/scene_text_store.h"
 
@@ -37,7 +38,7 @@ namespace Hollywood {
 
 // The demo starts in the shack. This scene owns its room resources, actor,
 // interactions and audio; RunawayEngine owns the backend and event loop.
-class RunawayScene5030 {
+class RunawayScene5030 : public RunawayScene {
 public:
 	enum {
 		kScreenWidth = kRunawayScreenWidth, kScreenHeight = kRunawayScreenHeight,
@@ -46,31 +47,32 @@ public:
 
 	RunawayScene5030(Audio::Mixer *mixer, RunawayInventory &inventory, const RunawayStrings &strings) :
 		_audio(mixer), _inventory(inventory), _strings(strings), _interrogation(mixer), _random("runawayShack"), _actor() {}
-	bool load();
-	void start(uint32 now);
-	void click(Common::Point mouse, RunawayVerb verb, byte item);
-	void update(uint32 now, int scrollDirection, bool inventoryOpen);
-	void draw();
-	void setCameraX(int x);
-	Graphics::ManagedSurface &screen() { return _screen; }
-	byte hotspotAt(Common::Point mouse) const;
-	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const;
-	const Common::U32String &committedCaption() const { return _committedCaption; }
-	const Common::U32String &subtitle() const { return _action == kPeekConversation ? _interrogation.subtitle() : _subtitle; }
-	bool busy() const { return _action != kNone; }
-	bool speaking() const { return _action == kPeekConversation ? _interrogation.speaking() : _speechRow != 0; }
-	byte speechFrame() const { return _lipSync.frame(_now); }
-	void skipSpeech();
-	bool playingVideo() const { return _action == kIntroVideo || _action == kCleanWindowVideo; }
-	bool inventoryPresentation() const { return _action == kIntroInventory; }
-	void skipVideo();
+	bool load() override;
+	void start(uint32 now) override;
+	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
+	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
+	void draw() override;
+	void setCameraX(int x) override;
+	int roomWidth() const override { return kRoomWidth; }
+	Graphics::ManagedSurface &screen() override { return _screen; }
+	byte hotspotAt(Common::Point mouse) const override;
+	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
+	const Common::U32String &committedCaption() const override { return _committedCaption; }
+	const Common::U32String &subtitle() const override { return _action == kPeekConversation ? _interrogation.subtitle() : _subtitle; }
+	bool busy() const override { return _action != kNone; }
+	bool speaking() const override { return _action == kPeekConversation ? _interrogation.speaking() : _speechRow != 0; }
+	byte speechFrame() const override { return _lipSync.frame(_now); }
+	void skipSpeech() override;
+	bool playingVideo() const override { return _action == kIntroVideo || _action == kCleanWindowVideo; }
+	bool inventoryPresentation() const override { return _action == kIntroInventory; }
+	void skipVideo() override;
 	void cancelWalk();
-	void sayInventory(const RunawayInventory::Reply &reply);
-	bool escaped() const { return _escaped; }
-	bool canSave() const { return !busy() && !speaking() && !_escaped && _pathIndex == _path.size(); }
-	void captureState(RunawaySaveState &state) const;
-	bool restoreState(const RunawaySaveState &state, uint32 now);
-	void setOptions(bool antialias, bool fastScrolling) { _antialias = antialias; _fastScrolling = fastScrolling; }
+	void sayInventory(const RunawayInventory::Reply &reply) override;
+	bool escaped() const override { return _escaped; }
+	bool canSave() const override { return !busy() && !speaking() && !_escaped && _pathIndex == _path.size(); }
+	void captureState(RunawaySaveState &state) const override;
+	bool restoreState(const RunawaySaveState &state, uint32 now) override;
+	void setOptions(bool antialias, bool fastScrolling) override { _antialias = antialias; _fastScrolling = fastScrolling; }
 
 private:
 	enum Action {
@@ -87,8 +89,6 @@ private:
 	enum IceState { kFrozen, kMelted, kDrained };
 	enum HatchState { kHidden, kLocked, kUnlocked, kOpen };
 	bool loadRoomGraphics();
-	bool walkable(int x, int y) const;
-	bool clearPath(Common::Point start, Common::Point end) const;
 	void walkTo(Common::Point target);
 	void arrive();
 	void say(uint16 row);
