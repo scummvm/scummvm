@@ -127,7 +127,7 @@ void IgorEngine::part80() {
 	for (int i = 1; i <= 3; ++i) {
 		waitForTimer(255);
 	}
-	memcpy(_paletteBuffer, _currentPalette, 624);
+	memcpy(_paletteBuffer, _currentPalette, 624); //-V1086
 	fadeOut(768);
 	_canSaveGame = savingWasAllowed;
 }

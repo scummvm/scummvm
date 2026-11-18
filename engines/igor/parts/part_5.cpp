@@ -178,7 +178,7 @@ void IgorEngine::part5() {
 		if (_objectsState[kCameraStateIndex] == 0) {
 			_objectsState[kPhotographerGoneStateIndex] = _objectsState[kTripodStateIndex] = _objectsState[kCameraStateIndex] = 1;
 		}
-		memcpy(_currentPalette, _paletteBuffer, 624);
+		memcpy(_currentPalette, _paletteBuffer, 624); //-V1086
 		fadeOut(624);
 	}
 }

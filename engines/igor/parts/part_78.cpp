@@ -297,7 +297,7 @@ void IgorEngine::part78() {
 	_talkColorIndex = kTalkColor;
 	free(_part78BandFrames);
 	_part78BandFrames = nullptr;
-	memcpy(_paletteBuffer, _currentPalette, 624);
+	memcpy(_paletteBuffer, _currentPalette, 624); //-V1086
 	fadeOut(768);
 	_objectsState[kExamCompletedStateIndex] = 1;
 	if (isCDVersion())

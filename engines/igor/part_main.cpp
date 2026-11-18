@@ -311,7 +311,7 @@ void IgorEngine::partMainWaitForClick() {
 }
 
 void IgorEngine::partMainLookAtNewspaper() {
-	memcpy(_paletteBuffer, _currentPalette, 624);
+	memcpy(_paletteBuffer, _currentPalette, 624); //-V1086
 	fadeOut(624);
 	uint8 *tmp = (uint8 *)malloc(64000 + 768);
 	if (tmp) {
@@ -362,7 +362,7 @@ void IgorEngine::partMainLookAtNewspaper() {
 }
 
 void IgorEngine::partMainLookAtPhoto() {
-	memcpy(_paletteBuffer, _currentPalette, 624);
+	memcpy(_paletteBuffer, _currentPalette, 624); //-V1086
 	fadeOut(624);
 	uint8 *tmp = (uint8 *)malloc(64000 + 768);
 	if (tmp) {
@@ -474,7 +474,7 @@ void IgorEngine::partMain() {
 		memset(_objectsState, 0, 112);
 		_objectsState[kAtticNailHotspotActiveStateIndex] = 1;
 		_objectsState[kCuckooAnimationControlStateIndex] = 1;
-		memset(_inventoryInfo, 0, 36);
+		memset(_inventoryInfo, 0, 36); //-V1086
 		_inventoryInfo[0] = kInventoryObjectBoomerang; // ordering
 		_inventoryInfo[1] = kInventoryObjectWallet;
 		_inventoryInfo[2] = kInventoryObjectTplTickets;
@@ -911,7 +911,7 @@ void IgorEngine::partMainMoveScreenUp(int offset) {
 // Shows the papyrus full screen. With reveal set (dryer) the figures appear
 // slowly and are remembered as seen
 void IgorEngine::partMainLookAtPapyrus(bool reveal) {
-	memcpy(_paletteBuffer, _currentPalette, 624);
+	memcpy(_paletteBuffer, _currentPalette, 624); //-V1086
 	fadeOut(624);
 	// reserve for entire screen + palette, to save current screen
 	uint8 *tmp = (uint8 *)malloc(64000 + 768);

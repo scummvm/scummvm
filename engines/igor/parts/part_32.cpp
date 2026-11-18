@@ -622,7 +622,7 @@ void IgorEngine::part32() {
 		runPartLoop();
 	}
 	// the colors that changed are kept
-	memcpy(_paletteBuffer, _currentPalette, 624);
+	memcpy(_paletteBuffer, _currentPalette, 624); //-V1086
 	leavePartLoop();
 	if (!_gameStateLoaded)
 		fadeOut(624);

@@ -165,7 +165,7 @@ void IgorEngine::part74ShipCutscene() {
 	part74Say(2, { { 210, 1, 944 } });
 
 	// the colors of the room come back and the picture of the room is shown from its top
-	memcpy(_paletteBuffer, _currentPalette, 624);
+	memcpy(_paletteBuffer, _currentPalette, 624); //-V1086
 	fadeOut(624);
 	memcpy(_paletteBuffer, savedPalette, 624);
 	memset(_screenTextLayer, 0, 46080);

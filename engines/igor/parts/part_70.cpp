@@ -96,7 +96,7 @@ void IgorEngine::part70() {
 		runPartLoop();
 	}
 
-	memcpy(_paletteBuffer, _currentPalette, 624);
+	memcpy(_paletteBuffer, _currentPalette, 624); //-V1086
 	leavePartLoop();
 	if (!_gameStateLoaded)
 		fadeOut(624);

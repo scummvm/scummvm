@@ -112,7 +112,7 @@ void IgorEngine::part85DisplayLogo() {
 	waitForLogoHold(1500, 398, true);
 
 	memcpy(_screenVGA, _screenTextLayer, 39040);
-	memcpy(_currentPalette, _paletteBuffer, 765);
+	memcpy(_currentPalette, _paletteBuffer, 765); //-V1086
 	setPaletteRange(0, 255);
 	// Restoring the scene palette also consumes one refresh.
 	waitForTimer(0, true, _system->getMillis() + 1000000 / refreshRate / _fastMode);

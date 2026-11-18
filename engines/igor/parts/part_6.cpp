@@ -317,7 +317,7 @@ void IgorEngine::part6() {
 		drawVerbsPanel();
 		drawInventory(1, 0);
 		_currentAction.verb = kVerbWalk;
-		memcpy(_paletteBuffer, _currentPalette, 624);
+		memcpy(_paletteBuffer, _currentPalette, 624); //-V1086
 		// Part 61 is arriving from intro so it doesnt need to copy the screen buffer
 		fadeIn(768);
 		if (!checkCopyProtection())
