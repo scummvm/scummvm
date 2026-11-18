@@ -948,6 +948,9 @@ void StreamData::synchronize(Common::Serializer &ser) {
 		for (Child &child : stream.children) {
 			ser.syncString(child.name);
 			ser.syncAsByte(child.lifetime);
+			if (g_nancy->getGameType() == kGameTypeNancyDossier2) {
+				ser.syncAsByte(child.restartsParent);
+			}
 		}
 	}
 }

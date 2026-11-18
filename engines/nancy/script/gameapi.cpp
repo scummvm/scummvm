@@ -1748,8 +1748,9 @@ static int sceneBeginStream(lua_State *L) {
 			return luaL_argerror(L, 2, "ends field must be \"manual\", \"withScene\" or \"withStream\"");
 		}
 
-		// TODO: "restartParent" and "isUI", which no script sets
+		// TODO: "isUI", which no script sets
 		readField(L, 2, "captureInput", flags.capturesInput);
+		readField(L, 2, "restartParent", flags.restartsParent);
 
 		if (g_nancy->getGameType() >= kGameTypeNancy26) {
 			// Nancy26 places streams by a z of their own

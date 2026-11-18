@@ -666,6 +666,7 @@ struct StreamData : public PuzzleData {
 	struct Child {
 		Common::String name;
 		byte lifetime = 0;
+		bool restartsParent = false;	// Resorting to Danger: the parent starts its scene over when the child ends
 	};
 
 	struct Stream {

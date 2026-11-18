@@ -74,6 +74,7 @@ struct StreamFlags {
 	byte lifetime = kIndependent;
 	bool capturesInput = false;	// the streams after this one get no input
 	bool runsFirst = false;		// put in front of the running streams
+	bool restartsParent = false;	// Resorting to Danger: the stream that began it starts its scene over when it ends
 	int32 zOffset = 0;			// added to the z order of everything the stream draws
 
 	// Nancy26
@@ -317,6 +318,12 @@ public:
 
 private:
 	void endChildren(const Common::Array<SceneStream::Child> &children);
+
+	// When a stream ends, it is taken off the list of the stream that began it.
+	// If it was begun with restartParent, the scene of that stream starts over.
+	void restartParentOf(const Common::String &name);
+	bool removeChild(Common::Array<SceneStream::Child> &children, const Common::String &name, bool &restartsParent);
+
 	void changeEnvironmentStream(const ENVS &envs, const Common::String &newEnvironment);
 
 	// Every stream in the order they run and get input in. The main stream is

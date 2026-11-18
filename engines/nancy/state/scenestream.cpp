@@ -533,6 +533,7 @@ void SceneStreamManager::begin(const Common::String &name, const Common::String 
 	SceneStream::Child child;
 	child.name = name;
 	child.lifetime = flags.lifetime;
+	child.restartsParent = flags.restartsParent;
 	if (_running) {
 		_running->_children.push_back(child);
 	} else {
@@ -586,6 +587,37 @@ bool SceneStreamManager::hasSceneChange() const {
 	}
 
 	return false;
+}
+
+bool SceneStreamManager::removeChild(Common::Array<SceneStream::Child> &children, const Common::String &name, bool &restartsParent) {
+	for (uint i = 0; i < children.size(); ++i) {
+		if (children[i].name.equalsIgnoreCase(name)) {
+			restartsParent = children[i].restartsParent;
+			children.remove_at(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void SceneStreamManager::restartParentOf(const Common::String &name) {
+	bool restartsParent = false;
+	Common::String parentName;
+	if (removeChild(_mainStreamChildren, name, restartsParent)) {
+		parentName = getMainStreamName();
+	} else {
+		for (SceneStream *stream : _streams) {
+			if (stream && !stream->isEnded() && removeChild(stream->_children, name, restartsParent)) {
+				parentName = stream->getName();
+				break;
+			}
+		}
+	}
+
+	if (restartsParent && !parentName.empty()) {
+		changeScene(parentName, getSceneName(parentName), (uint16)MAX(getSceneFrame(parentName), 0));
+	}
 }
 
 void SceneStreamManager::changeScene(const Common::String &name, const SceneChangeDescription &sceneDescription) {
@@ -722,6 +754,7 @@ void SceneStreamManager::process() {
 
 	for (uint i = 0; i < _streams.size(); ) {
 		if (_streams[i] && _streams[i]->isEnded()) {
+			restartParentOf(_streams[i]->getName());
 			_streams[i]->endScene();
 			returnViewedItem(_streams[i]->getName());
 			delete _streams[i];
