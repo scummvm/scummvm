@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-17 06:06+0000\n"
+"POT-Creation-Date: 2026-11-18 01:31+0000\n"
 "PO-Revision-Date: 2026-11-17 22:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -7258,7 +7258,7 @@ msgstr "Act./Désact. les effets sonores"
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/agos/metaengine.cpp:204 engines/igor/metaengine.cpp:120
 #: engines/queen/metaengine.cpp:192 engines/sky/metaengine.cpp:131
-#: engines/teenagent/metaengine.cpp:239 engines/touche/metaengine.cpp:170
+#: engines/teenagent/metaengine.cpp:239 engines/touche/metaengine.cpp:171
 msgid "Toggle fast mode"
 msgstr "Act. / Désact. mode rapide"
 
@@ -7945,7 +7945,7 @@ msgstr "Passer la cinématique"
 #: engines/sludge/keymapper_tables.h:455 engines/sludge/keymapper_tables.h:487
 #: engines/sludge/keymapper_tables.h:538 engines/teenagent/metaengine.cpp:213
 #: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
-#: engines/touche/metaengine.cpp:144
+#: engines/touche/metaengine.cpp:145
 msgid "Skip dialog"
 msgstr "Passer les dialogues"
 
@@ -8281,7 +8281,7 @@ msgstr ""
 "s'affichera la prochaine fois que vous démarrerez le jeu.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:1289 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1300 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -12019,7 +12019,7 @@ msgid "Cycle game speed"
 msgstr "Modifier la vitesse du jeu"
 
 #: engines/macs2/metaengine.cpp:81 engines/sherlock/metaengine.cpp:846
-#: engines/touche/metaengine.cpp:150
+#: engines/touche/metaengine.cpp:151
 msgid "Open options menu"
 msgstr "Ouvrir le menu Options"
 
@@ -16653,25 +16653,25 @@ msgstr "Sauvegarder et charger une partie"
 msgid "Main menu / Exit"
 msgstr "Menu principal / Sortir"
 
-#: engines/touche/metaengine.cpp:138
+#: engines/touche/metaengine.cpp:139
 msgid "Skip sequence / open quit dialog"
 msgstr "Passer la séquence / ouvrir la fenêtre Quitter"
 
 #. I18N: The actor walking pace is increased
-#: engines/touche/metaengine.cpp:157
+#: engines/touche/metaengine.cpp:158
 msgid "Enable fast walk"
 msgstr "Activer la marche rapide"
 
 #. I18N: The actor walking pace is decreased
-#: engines/touche/metaengine.cpp:164
+#: engines/touche/metaengine.cpp:165
 msgid "Disable fast walk"
 msgstr "Désactiver la marche rapide"
 
-#: engines/touche/metaengine.cpp:176
+#: engines/touche/metaengine.cpp:177
 msgid "Toggle between voice / text / text and voice"
 msgstr "Basculer entre voix / textes / textes et voix"
 
-#: engines/touche/metaengine.cpp:185
+#: engines/touche/metaengine.cpp:186
 msgid "Press \"Yes\" Key"
 msgstr "Appuyer sur la touche \"Oui\""
 

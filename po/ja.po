@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-17 06:06+0000\n"
+"POT-Creation-Date: 2026-11-18 01:31+0000\n"
 "PO-Revision-Date: 2026-08-03 18:22+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -7049,7 +7049,7 @@ msgstr "SEの切替"
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/agos/metaengine.cpp:204 engines/igor/metaengine.cpp:120
 #: engines/queen/metaengine.cpp:192 engines/sky/metaengine.cpp:131
-#: engines/teenagent/metaengine.cpp:239 engines/touche/metaengine.cpp:170
+#: engines/teenagent/metaengine.cpp:239 engines/touche/metaengine.cpp:171
 msgid "Toggle fast mode"
 msgstr "高速モードの切り替え"
 
@@ -7724,7 +7724,7 @@ msgstr "ムービーをスキップ"
 #: engines/sludge/keymapper_tables.h:455 engines/sludge/keymapper_tables.h:487
 #: engines/sludge/keymapper_tables.h:538 engines/teenagent/metaengine.cpp:213
 #: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
-#: engines/touche/metaengine.cpp:144
+#: engines/touche/metaengine.cpp:145
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Skip dialog"
@@ -8065,7 +8065,7 @@ msgstr ""
 "れます。\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:1289 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1300 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -12345,7 +12345,7 @@ msgid "Cycle game speed"
 msgstr "ゲームスピードを低速化"
 
 #: engines/macs2/metaengine.cpp:81 engines/sherlock/metaengine.cpp:846
-#: engines/touche/metaengine.cpp:150
+#: engines/touche/metaengine.cpp:151
 #, fuzzy
 #| msgid "Open main menu"
 msgid "Open options menu"
@@ -17346,31 +17346,31 @@ msgstr "セーブされたゲーム"
 msgid "Main menu / Exit"
 msgstr "メインメニュー(~u~)"
 
-#: engines/touche/metaengine.cpp:138
+#: engines/touche/metaengine.cpp:139
 msgid "Skip sequence / open quit dialog"
 msgstr ""
 
 #. I18N: The actor walking pace is increased
-#: engines/touche/metaengine.cpp:157
+#: engines/touche/metaengine.cpp:158
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Enable fast walk"
 msgstr "高速モードの切り替え"
 
 #. I18N: The actor walking pace is decreased
-#: engines/touche/metaengine.cpp:164
+#: engines/touche/metaengine.cpp:165
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Disable fast walk"
 msgstr "高速モードの切り替え"
 
-#: engines/touche/metaengine.cpp:176
+#: engines/touche/metaengine.cpp:177
 #, fuzzy
 #| msgid "Toggle between voice/text/text and voice"
 msgid "Toggle between voice / text / text and voice"
 msgstr "ボイス/テキスト/両方の切り替え"
 
-#: engines/touche/metaengine.cpp:185
+#: engines/touche/metaengine.cpp:186
 #, fuzzy
 #| msgid "Press \"Yes\" key"
 msgid "Press \"Yes\" Key"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-17 06:06+0000\n"
+"POT-Creation-Date: 2026-11-18 01:31+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7055,7 +7055,7 @@ msgstr "사운드 효과 전환"
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/agos/metaengine.cpp:204 engines/igor/metaengine.cpp:120
 #: engines/queen/metaengine.cpp:192 engines/sky/metaengine.cpp:131
-#: engines/teenagent/metaengine.cpp:239 engines/touche/metaengine.cpp:170
+#: engines/teenagent/metaengine.cpp:239 engines/touche/metaengine.cpp:171
 msgid "Toggle fast mode"
 msgstr "빠른 모드 전환"
 
@@ -7720,7 +7720,7 @@ msgstr "컷씬 건너뛰기"
 #: engines/sludge/keymapper_tables.h:455 engines/sludge/keymapper_tables.h:487
 #: engines/sludge/keymapper_tables.h:538 engines/teenagent/metaengine.cpp:213
 #: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
-#: engines/touche/metaengine.cpp:144
+#: engines/touche/metaengine.cpp:145
 msgid "Skip dialog"
 msgstr "대화 건너뛰기"
 
@@ -8056,7 +8056,7 @@ msgstr ""
 "니다.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:1289 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:1300 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -11855,7 +11855,7 @@ msgid "Cycle game speed"
 msgstr "더 느린 게임 속도"
 
 #: engines/macs2/metaengine.cpp:81 engines/sherlock/metaengine.cpp:846
-#: engines/touche/metaengine.cpp:150
+#: engines/touche/metaengine.cpp:151
 msgid "Open options menu"
 msgstr "옵션 메뉴 열기"
 
@@ -16439,25 +16439,25 @@ msgstr "게임 저장 및 로드"
 msgid "Main menu / Exit"
 msgstr "메인 메뉴 / 나가기"
 
-#: engines/touche/metaengine.cpp:138
+#: engines/touche/metaengine.cpp:139
 msgid "Skip sequence / open quit dialog"
 msgstr "시퀀스 건너뛰기 / 종료 대화 상자 열기"
 
 #. I18N: The actor walking pace is increased
-#: engines/touche/metaengine.cpp:157
+#: engines/touche/metaengine.cpp:158
 msgid "Enable fast walk"
 msgstr "빠른 걷기 활성화"
 
 #. I18N: The actor walking pace is decreased
-#: engines/touche/metaengine.cpp:164
+#: engines/touche/metaengine.cpp:165
 msgid "Disable fast walk"
 msgstr "빠른 걷기 비활성화"
 
-#: engines/touche/metaengine.cpp:176
+#: engines/touche/metaengine.cpp:177
 msgid "Toggle between voice / text / text and voice"
 msgstr "음성 / 텍스트 / 텍스트 및 음성 간 전환"
 
-#: engines/touche/metaengine.cpp:185
+#: engines/touche/metaengine.cpp:186
 msgid "Press \"Yes\" Key"
 msgstr "\"예\" 키를 누름"
 
