@@ -436,6 +436,10 @@ void TextCastMember::setRawText(const Common::String &text) {
 	Common::U32String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
 	_ftext = formatting + _ptext;
 	_modified = true;
+
+	Graphics::MacText *target = getWidget();
+	if (target)
+		target->setText(_ftext);
 }
 
 int TextCastMember::getLineCount() {
