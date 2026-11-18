@@ -30,6 +30,7 @@
 #include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
+#include "tesoro/core/scenes.h"
 #include "tesoro/core/scriptblock.h"
 #include "tesoro/core/scriptrunner.h"
 #include "tesoro/world.h"
@@ -194,6 +195,27 @@ public:
 			_w._engine._cursor->currentPlayer()->setCurrent(_savedStep);
 	}
 
+	void runDo(ScriptRun &run, uint32 ordinal);
+
+	Level *moveToLevel(ScriptRun &run, int index, int32 x, int32 y) {
+		run.level = _w.level(index);
+		_w.putJimInLevel(run.level, x, y);
+		return run.level;
+	}
+	/** Places the level's camera on Jim at once. */
+	void cameraToJim(Level *where) {
+		if (where)
+			where->cameraMoveTo(_w._jim->x(), _w._jim->y(), 0, _w.now());
+	}
+	/** Looks the block's characters up again after a level change: the cached ones belong to the old level. */
+	void rebindCharacters(ScriptRun &run) {
+		const ScriptBlock &b = _library.block(run.blockIndex);
+		for (uint32 i = 0; i < b.characterCount(); ++i)
+			run.characters[i] = findObject(run.level, b.character(i));
+	}
+
+	void playVideo(uint32 number) { warning("Tesoro: movie %u cannot be played yet", number); }
+
 	void resumeJim() {
 		_w._jim->stopWalking();
 		_w._jim->setFacing(_w._jim->facing());
@@ -211,12 +233,7 @@ public:
 	}
 
 	void playTrack(byte track) { _w.playMusicTrack(track); }
-
-
-	void runDo(ScriptRun &run, uint32 ordinal) { warning("Tesoro: DO line %u of block %u is not ported yet", ordinal, run.blockIndex); }
-	void throneScene(ScriptRun &run, int variant) { warning("Tesoro: the throne scene %d of block %u is not ported yet", variant, run.blockIndex); }
-	void playVideo(uint32 number) { warning("Tesoro: movie %u cannot be played yet", number); }
-
+	void throneScene(ScriptRun &run, int variant);
 	// Choice menu
 	void clearLabel() { _w.setHoverText(nullptr); }
 	int32 mouseX() { return _w._engine._pointer.x; }
@@ -233,6 +250,7 @@ public:
 	const ScriptLibrary &library() const { return _library; }
 
 private:
+	friend struct SceneAdapter;
 	World &_w;
 	ScriptLibrary _library;
 	ScriptRunner *_runner = nullptr;
@@ -242,6 +260,82 @@ private:
 	uint16 _savedStep = 0;
 };
 
+
+/** The scene routines' view of the game, for the block that is running. */
+struct SceneAdapter {
+	SceneAdapter(Scripts &scripts, ScriptRun &run) : _s(scripts), _w(scripts._w), _run(run) {}
+	void enterLevel(int level, int32 x, int32 y) { _s.moveToLevel(_run, level, x, y); }
+	void enterLevelAtJim(int level) { _s.moveToLevel(_run, level, _w._jim->x(), _w._jim->y()); }
+	void enterLevelAtFloor(int level) {
+		Level *where = _w.level(level);
+		const CameraFrame *frame = where ? where->cameraFrame() : nullptr;
+		Object *floor = frame ? frame->target() : nullptr;
+		_s.moveToLevel(_run, level, floor ? floor->x() : 0, floor ? floor->y() : 0);
+	}
+	void enterLevelAtObject(int level, const char *name) {
+		Object *object = _w.findObject(level, name);
+		_s.moveToLevel(_run, level, object ? object->x() : 0, object ? object->y() : 0);
+	}
+	void rebindCharacters() { _s.rebindCharacters(_run); }
+
+	void cameraToJim(bool blockLevel) { _s.cameraToJim(blockLevel ? _run.level : _w._jim->level()); }
+	void setJimVisible(bool visible) { _w._jim->setVisible(visible); }
+	void setJimActive(bool active) { _w._jim->setActive(active); }
+	void setJimPosition(int32 x, int32 y) { _w._jim->setPosition(x, y); }
+	void setJimPhase(byte phase) { _w._jimPhase = phase; }
+	void setJimStep(byte step) { _w._jimStep = step; }
+	void setObjectActive(int level, const char *name, bool active) {
+		if (Object *object = _w.findObject(level, name))
+			object->setActive(active);
+	}
+	void setObjectVisible(int level, const char *name, bool visible) {
+		if (Object *object = _w.findObject(level, name))
+			object->setVisible(visible);
+	}
+	void selectBank(int level, const char *name, int bank, int first, int last, bool loop, bool sum) {
+		if (Object *object = _w.findObject(level, name))
+			object->animation().selectBank(bank, first, last, loop, sum, _w.now());
+	}
+	void setSortValue(int level, const char *name, int16 value) {
+		if (Object *object = _w.findObject(level, name))
+			object->setSortValue(value);
+	}
+	void runDoorAction(int level, const char *name) {
+		if (Object *door = _w.findObject(level, name))
+			door->verb(0);
+	}
+	void fadeOut(int effect, int speed) { _w.fadeOut(effect, speed); }
+	void wait(int milliseconds) { _w.wait(milliseconds); }
+	void resetRenderQueue() { _w.resetRenderQueue(); }
+	void clearMainList() { _w._main.clear(); }
+	void releaseHeldItem() { _w.releaseHeldItem(); }
+
+private:
+	Scripts &_s;
+	World &_w;
+	ScriptRun &_run;
+};
+
+inline void Scripts::runDo(ScriptRun &run, uint32 ordinal) {
+	const uint32 type = _library.block(run.blockIndex).type();
+	if (type == 8 || type == 14) {
+		warning("Tesoro: the board game is not ported yet");
+		return;
+	}
+	// The blocks of type 0 have no routine of their own: their DO lines only describe the scene.
+	SceneAdapter scene(*this, run);
+	if (!SceneRoutines::run(scene, type, ordinal) && type)
+		warning("Tesoro: DO line %u of the scene routine of block type %u is not ported yet", ordinal, type);
+}
+
+inline void Scripts::throneScene(ScriptRun &run, int variant) {
+	// To the throne room (variant 0, Jim hidden) or back to the village (variant 1, Jim shown), where he stands now.
+	SceneAdapter scene(*this, run);
+	SceneRoutines::run(scene, 20, (uint32)variant);
+}
+
+
 } // End of namespace Tesoro
+
 
 #endif

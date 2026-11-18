@@ -45,7 +45,7 @@ public:
 
 	/** The narration, in Jim's voice: his mouth stays shut and the subtitle is centred on the screen. */
 	void sayNarrationLine(const SpeechTable::Line &line) { _speaker.say(line, -(int32)_scriptColour, 0); }
-	/** A verb answer: his mouth moves and the subtitle goes above his head. */
+	/** A verb answer: Jim's mouth moves and the subtitle goes above his head. */
 	void sayAnswer(const SpeechTable::Line &line) { _speaker.say(line, _answerColour, 0); }
 
 	Speaker &speaker() { return _speaker; }

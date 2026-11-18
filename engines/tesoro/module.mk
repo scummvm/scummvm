@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	core/pathobject.o \
 	core/renderqueue.o \
 	core/room.o \
+	core/scenes.o \
 	core/scriptblock.o \
 	core/scriptrunner.o \
 	core/sounddevice.o \

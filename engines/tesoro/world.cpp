@@ -76,11 +76,30 @@ protected:
 				_world.playMusicTrack(frame->flag());
 		}
 		const int result = update();
-		return result;
+		return index() == kDeckLevel ? deckEvents(result) : result;
 	}
 
 private:
 	enum { kDeckLevel = 3, kMapLevel = 8, kPlayaLevel = 7, kPoblado = 9, kPantano = 10, kVolcan = 12, kSharedFloorLevel = 42 };
+
+	/** What the ship's deck adds: its music changes once the story moves on, the mutiny scene starts after step 2. */
+	int deckEvents(int result) {
+		CameraFrame *own = cameraFrame();
+		if (_world._jimStep != 0 && own && own->flag() == 8) {
+			own->setFlag(9);
+			_world.playMusicTrack(9);
+		}
+		const byte step = _world._jimStep;
+		if ((int8)step > 2) {
+			// The script's variable bytes are the step it started at.
+			_variables = step;
+			_world.startScriptInJimLevel("FANMOTIN", "main", &_variables);
+			_world._jimStep = step + 1;
+			_world._jimPhase = 1;
+			return 3;
+		}
+		return 1;
+	}
 
 	World &_world;
 	byte _variables = 0;
@@ -224,7 +243,7 @@ Level *World::startGame() {
 	_jim->enterLevel(port, &port->room(0), floor ? floor->x() : 0, floor ? floor->y() : 0);
 	_jim->setActive(true);
 	_jim->setVisible(true);
-
+	startScriptAt(port, "FANPRESENT", "main", nullptr);
 	return port;
 }
 Object *World::createObject(Level &level, const ObjectRecord &record, Room &room, int32 loadTime) {
@@ -297,6 +316,11 @@ void World::stopVoice(uint32 id) {
 	_sound.stop(id);
 }
 
+void World::releaseHeldItem() {
+	if (_engine._cursor)
+		_engine._cursor->animation().selectBank(0, 0, 0, false, false, now());
+}
+
 uint32 World::randomNumber(uint32 lo, uint32 hi) { return _engine.randomBetween(lo, hi); }
 
 // Escape or the right button was released this frame (the left button does not skip).
@@ -335,7 +359,12 @@ Level *World::jimLevel() {
 	return _jim ? _jim->level() : nullptr;
 }
 int World::jimLevelIndex() { return jimLevel() ? jimLevel()->index() : -1; }
+Object *World::findObjectByKey(int index, uint64 key) {
+	Level *where = index < 0 ? _engine._interface : level(index);
+	return where ? where->findObject(key) : nullptr;
+}
 
+Object *World::findObject(int index, const char *name) { return findObjectByKey(index, nameKey64(name)); }
 void World::jimShow(bool visible) { jim()->setVisible(visible); }
 
 void World::jimMoveTo(int32 x, int32 y) { jim()->setPosition(x, y); }
@@ -350,6 +379,9 @@ int World::startScriptInLevel(int index, const char *block, const char *label, b
 int World::startScriptAt(Level *where, const char *block, const char *label, byte *variables) {
 	return _scripts ? _scripts->start(where, block, label, variables) : 0;
 }
+void World::resetRenderQueue() { _engine._display.startFrame(); }
+void World::fadeOut(int effect, int speed) { _engine.fadeOut(effect, speed); }
+void World::wait(int milliseconds) { _engine._system->delayMillis(milliseconds); }
 
 Common::SeekableReadStream &World::archiveStream() { return *_engine._archive.seekEntry(0); }
 

@@ -88,6 +88,9 @@ public:
 	void jimFace(int facing);
 	void jimWalkTo(int32 x, int32 y, WalkTarget *target);
 	void jimUpdate();
+	int jimPhase() { return _jimPhase; }
+	int jimStep() { return _jimStep; }
+	int jimExtra() { return _jimExtra; }
 	void setPointerActive(bool active);
 	void setHoverText(const char *text);
 
@@ -95,6 +98,7 @@ public:
 	void insertInMainList(Object *object, int priority);
 	void insertInMainListFront(Object *object, int priority);
 	void removeFromMainList(Object *object);
+	void clearMainList() { _main.clear(); }
 
 	Common::SeekableReadStream &archiveStream();
 
@@ -104,15 +108,24 @@ public:
 	bool findPath(int32 destX, int32 destY, WalkTarget *target);
 	bool hasWalkAreaOf(Object *other);
 
+	Object *findObject(int level, const char *name);
+	Object *findObjectByKey(int level, uint64 key);
 	/** The level Jim is in, or null. */
 	Level *jimLevel();
 	void playMusicTrack(byte track);
 	void jimShow(bool visible);
+	/**
+	 * releaseHeldItem held item sets the pointer back to normal when holding an item
+	 * dropHeldItem releases the item back into the inventory.
+	 */
+	void releaseHeldItem();
 
 	int jimLevelIndex();
 	void jimMoveTo(int32 x, int32 y);
 	void jimRemoveFromMainList();
-
+	void resetRenderQueue();
+	void fadeOut(int effect, int speed);
+	void wait(int milliseconds);
 
 	void walkJimToPointer(int32 mouseX, int32 mouseY);
 
@@ -129,6 +142,7 @@ public:
 private:
 	friend class WorldLevel;
 	friend class Scripts;
+	friend struct SceneAdapter;
 
 	/** The objects the game starts with switched off, once a level has been loaded. */
 	void applyStartState(Level &where, int index);
@@ -145,6 +159,7 @@ private:
 	SoundDevice _sound;	// speech and sound effects
 	CdAudio _music;
 	Scripts *_scripts = nullptr;
+	byte _jimPhase = 0, _jimStep = 0, _jimExtra = 0;
 };
 
 } // End of namespace Tesoro
