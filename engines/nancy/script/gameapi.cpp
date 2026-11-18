@@ -2409,7 +2409,9 @@ static int viewportIndex(lua_State *L) {
 	if (key == "size") {
 		const VIEW *viewport = GetEngineData(VIEW);
 		assert(viewport);
-		pushRect(L, ScriptRect(0, 0, viewport->screenPosition.width(), viewport->screenPosition.height()));
+		const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+		const int uiHeight = boot ? boot->viewportUIHeight : 0;
+		pushRect(L, ScriptRect(0, 0, viewport->screenPosition.width(), viewport->screenPosition.height() - uiHeight));
 		return 1;
 	} else if (key == "location") {
 		// Where the viewport is on the screen

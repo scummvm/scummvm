@@ -303,6 +303,7 @@ static int viewportCreate(lua_State *L) {
 	// The viewport, and the resolution the game gets drawn at
 	viewport.screenPosition = readRectField(L, 2, "location");
 	viewport.bounds = readRectField(L, 2, "windowRes");
+	readField(L, 2, "uiHeight", boot.viewportUIHeight);
 
 	boot.leftNodeHotspot = readRectField(L, 2, "leftNodeHotspot");
 	boot.rightNodeHotspot = readRectField(L, 2, "rightNodeHotspot");

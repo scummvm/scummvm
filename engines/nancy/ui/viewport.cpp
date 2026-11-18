@@ -39,7 +39,15 @@ void Viewport::init() {
 	auto *viewportData = GetEngineData(VIEW);
 	assert(viewportData);
 
-	moveTo(viewportData->screenPosition);
+	// The Dossier games keep a bar of the UI at the bottom of the viewport, which
+	// the backgrounds leave out: they are drawn as they are, not stretched over it
+	Common::Rect position = viewportData->screenPosition;
+	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	if (boot && boot->viewportUIHeight > 0) {
+		position.bottom -= boot->viewportUIHeight;
+	}
+
+	moveTo(position);
 
 	setEdgesSize(	bootSummary->verticalEdgesSize,
 					bootSummary->verticalEdgesSize,
@@ -346,7 +354,11 @@ uint16 Viewport::getMaxScroll() const {
 Common::Rect Viewport::convertViewportToScreen(const Common::Rect &viewportRect) const {
 	Common::Rect ret = viewportRect;
 	ret.translate(_screenPosition.left, _screenPosition.top - getCurVerticalScroll());
-	ret.clip(_screenPosition);
+
+	// What goes in the viewport can be drawn over the bar of the UI the
+	// background leaves out
+	const VIEW *viewportData = GetEngineData(VIEW);
+	ret.clip(viewportData ? viewportData->screenPosition : _screenPosition);
 	return ret;
 }
 
