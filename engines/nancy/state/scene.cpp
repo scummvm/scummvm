@@ -556,6 +556,11 @@ void Scene::addItemToInventory(int16 id, bool isAddedToFront) {
 			// (appendItemsWhileOpen) an item added while the popup is open goes
 			// to the end. That's how the most recently dropped item ends up last.
 			bool addToBack = g_nancy->getGameType() >= kGameTypeNancy26;
+			const ScriptBootData *scriptBoot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+			if (scriptBoot && !scriptBoot->isInventoryAddedToFront) {
+				addToBack = true;
+			}
+
 			if (_inventoryPopup.isOpen()) {
 				const UIIV *uiivData = GetEngineData(UIIV);
 				addToBack = uiivData && uiivData->appendItemsWhileOpen;

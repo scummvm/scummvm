@@ -545,7 +545,7 @@ bool Panel::takeAction(const Action &action) {
 	return true;
 }
 
-// The newest item goes first
+// The newest item goes first, unless the game puts new items last
 void Panel::showItem(int16 itemID, bool show) {
 	for (uint i = 0; i < _arrangeOrder.size(); ++i) {
 		Control *control = _arrangeOrder[i];
@@ -554,8 +554,13 @@ void Panel::showItem(int16 itemID, bool show) {
 		}
 
 		if (show) {
+			const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
 			_arrangeOrder.remove_at(i);
-			_arrangeOrder.insert_at(0, control);
+			if (boot && !boot->isInventoryAddedToFront) {
+				_arrangeOrder.push_back(control);
+			} else {
+				_arrangeOrder.insert_at(0, control);
+			}
 		}
 
 		control->setVisible(show);

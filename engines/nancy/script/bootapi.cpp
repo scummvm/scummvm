@@ -672,8 +672,7 @@ static const InitObject kInitObjects[] = {
 };
 
 // Nancy20 sets InventoryInit.addToFront before the items get made. It picks
-// where new item buttons go in the inventory, and the only value used is the
-// one the earlier games always had, so it is only taken in.
+// where new items go in the inventory: first, as in the earlier games, or last.
 static int inventorySetField(lua_State *L) {
 	checkUserData(L, 1, "ND.InventoryInit");
 	const char *name = luaL_checkstring(L, 2);
@@ -682,6 +681,10 @@ static int inventorySetField(lua_State *L) {
 	}
 
 	luaL_checktype(L, 3, LUA_TBOOLEAN);
+	if (s_tables && s_tables->boot) {
+		s_tables->boot->isInventoryAddedToFront = lua_toboolean(L, 3) != 0;
+	}
+
 	return 0;
 }
 

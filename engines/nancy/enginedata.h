@@ -1186,6 +1186,10 @@ struct ScriptBootData : public EngineData {
 	Common::String profileButtonPrefix;		// the buttons of the list, numbered from 0
 	Common::String newProfileButton;
 
+	// Nancy20: whether a new item goes first in the inventory, or last, as in
+	// Resorting to Danger
+	bool isInventoryAddedToFront = true;
+
 	// The Dossier games: the height of the UI bar at the bottom of the viewport,
 	// which Viewport.size leaves out
 	int32 viewportUIHeight = 0;
