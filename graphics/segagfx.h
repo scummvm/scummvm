@@ -95,10 +95,10 @@ public:
 	 * interact with and/or impact a scaler or shader setting. So it might make sense not to overdo it with the scale factor (apart from
 	 * the obvious, that the aspect ratio correction will not come anywhere near as cheap any more).
 	 * 
-	 * @param xyAspectRatio:		desired x/y ratio. E. g., for 4 : 3, type '4.0 / 3.0'. To turn it off, use 1.0.
+	 * @param xyAspectRatio:		desired x/y ratio. E. g., for 4 : 3, type '4.0 / 3.0'. To turn it off, use 0.0.
 	 * @param scaleFactor:			scale factor for the aspect ratio correction, e. g. 1.0 for no scaling, 2.0 for double size
 	 */
-	void setAspectRatioCorrection(double xyAspectRatio = 1.0, double scaleFactor = 1.0);
+	void setAspectRatioCorrection(double xyAspectRatio = 0.0, double scaleFactor = 1.0);
 #endif
 
 	/**

@@ -32,7 +32,7 @@ SegaRenderer::SegaRenderer(const PixelFormat *systemPixelFormat) : _pixelFormat(
 	_tempBufferSprites(nullptr), _tempBufferSpritesPrio(nullptr), _tempBufferPlanes(nullptr), _tempBufferPlanesPrio(nullptr), _renderColorTable(nullptr), _rr(kUnspecified),
 	_renderLineFragmentD(0), _renderLineFragmentM(0), _hINTEnable(false), _hINTCounter(0), _hINTCounterNext(0), _hINTHandler(nullptr), _destPitch(0), _displayEnabled(true), _realW(0), _realH(0)
 #if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
-	, _arcIncX(0), _arcCntX(0), _arcIncY(0), _arcCntY(0), _xyAspectRatio(1.0), _scaleFactor(1.0)
+	, _arcIncX(0), _arcCntX(0), _arcIncY(0), _arcCntY(0), _xyAspectRatio(0.0), _scaleFactor(1.0)
 #endif
 {
 	_vram = new uint8[0x10000]();
@@ -132,12 +132,13 @@ void SegaRenderer::setAspectRatioCorrection(double xyAspectRatio, double scaleFa
 	_arcCntX = _arcCntY = 0;
 	_arcIncX = _arcIncY = trunc(scaleFactor * 0x10000);
 
-	double screenRatio = (double)_screenW / _screenH;
-
-	if (screenRatio > xyAspectRatio)
-		_arcIncY = trunc((scaleFactor * screenRatio * 0x10000) / xyAspectRatio);
-	else if (screenRatio < xyAspectRatio)
-		_arcIncX = trunc(xyAspectRatio * scaleFactor * 0x10000 / screenRatio);
+	if (xyAspectRatio != 0.0) {
+		double screenRatio = (double)_screenW / _screenH;
+		if (screenRatio > xyAspectRatio)
+			_arcIncY = trunc((scaleFactor * screenRatio * 0x10000) / xyAspectRatio);
+		else if (screenRatio < xyAspectRatio)
+			_arcIncX = trunc(xyAspectRatio * scaleFactor * 0x10000 / screenRatio);
+	}
 
 	_realW = (_screenW * _arcIncX) >> 16;
 	_realH = (_screenH * _arcIncY) >> 16;
