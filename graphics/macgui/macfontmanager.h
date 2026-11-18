@@ -182,6 +182,7 @@ public:
 
 	Common::Language getFontLanguage(uint16 id);
 	Common::CodePage getFontEncoding(uint16 id);
+	bool isUnicodeFont(const Font *font) const;
 	int getFontAliasForId(uint16 id);
 	Common::String getFontName(uint16 id);
 

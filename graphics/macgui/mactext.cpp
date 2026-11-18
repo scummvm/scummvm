@@ -68,7 +68,11 @@ bool MacFontRun::equals(MacFontRun &to) {
 }
 
 Common::CodePage MacFontRun::getEncoding() {
-	if (wm->_mode & kWMModeWin95)
+	// Resolve the actual font before choosing an encoding. A legacy font
+	// family can fall back to a Unicode TrueType font; encoding its text as
+	// Mac Roman would turn non-ASCII letters into unrelated glyphs.
+	const Font *resolvedFont = getFont();
+	if ((wm->_mode & kWMModeWin95) || wm->_fontMan->isUnicodeFont(resolvedFont))
 		return Common::kUtf8;
 	return wm->_fontMan->getFontEncoding(fontId);
 }
@@ -452,6 +456,8 @@ void MacText::enforceTextFont(uint16 fontId) {
 	for (uint i = 0; i < _canvas._text.size(); i++) {
 		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
 			_canvas._text[i].chunks[j].fontId = fontId;
+			_canvas._text[i].chunks[j].font = nullptr;
+			_canvas._text[i].chunks[j].getFont();
 		}
 	}
 
@@ -580,6 +586,8 @@ void MacText::setTextChunks(int start, int end, int param, void (*callback)(MacF
 
 void setTextFontCallback(MacFontRun &macFontRun, int fontId) {
 	macFontRun.fontId = fontId;
+	macFontRun.font = nullptr;
+	macFontRun.getFont();
 }
 
 void MacText::setTextFont(int fontId, int start, int end) {
@@ -588,6 +596,8 @@ void MacText::setTextFont(int fontId, int start, int end) {
 
 void setTextSlantCallback(MacFontRun &macFontRun, int textSlant) {
 	macFontRun.textSlant = textSlant;
+	macFontRun.font = nullptr;
+	macFontRun.getFont();
 }
 
 void MacText::setTextSlant(int textSlant, int start, int end) {
@@ -598,6 +608,8 @@ void MacText::enforceTextSlant(int textSlant) {
 	for (uint i = 0; i < _canvas._text.size(); i++) {
 		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
 			_canvas._text[i].chunks[j].textSlant = textSlant;
+			_canvas._text[i].chunks[j].font = nullptr;
+			_canvas._text[i].chunks[j].getFont();
 		}
 	}
 

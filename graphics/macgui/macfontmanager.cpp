@@ -824,6 +824,23 @@ Common::Language MacFontManager::getFontLanguage(uint16 id) {
 	return _fontInfo[id]->lang;
 }
 
+bool MacFontManager::isUnicodeFont(const Font *font) const {
+	if (!font)
+		return false;
+
+	// TrueType fonts take Unicode code points, even when the requested
+	// family normally uses a legacy bitmap encoding (e.g. Arial fallback).
+	for (const auto &entry : _uniFontRegistry) {
+		if (entry._value == font)
+			return true;
+	}
+	for (const auto &entry : _fontRegistry) {
+		if (entry._value->getFont() == font && entry._value->isTrueType())
+			return true;
+	}
+	return false;
+}
+
 Common::CodePage MacFontManager::getFontEncoding(uint16 id) {
 	if (!_fontInfo.contains(id)) {
 		warning("MacFontManager::getFontEncoding: No _fontInfo entry for font ID %d", id);
