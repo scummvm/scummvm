@@ -322,7 +322,7 @@ void IgorEngine::part8ExecuteAction(int action) {
 		// With the door closed nothing happens: Igor has to open it first
 		if (_objectsState[kDeanDoorOpenStateIndex] == 0)
 			break;
-		if (_objectsState[kDeanDoorOpenStateIndex] != 0) {
+		if (_objectsState[kDeanDoorOpenStateIndex] != 0) { //-V547
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].area = 4;
 			for (int area = 13; area <= 14; ++area)

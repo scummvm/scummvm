@@ -336,7 +336,7 @@ void IgorEngine::partMainLookAtNewspaper() {
 	startIgorDialogue();
 	waitForEndOfIgorDialogue(false, false);
 	wd->x = 240;
-	wd->y = 130;
+	wd->y = 130; //-V1048
 	ADD_DIALOGUE_TEXT(152, 1, 78);
 	ADD_DIALOGUE_TEXT(153, 3, 79);
 	SET_DIALOGUE_TEXT(1, 2);
