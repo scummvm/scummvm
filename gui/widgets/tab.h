@@ -102,6 +102,7 @@ public:
 	void setActiveTab(int tabID);
 
 	int getTabCount();
+	const Common::U32String &getTabTitle(int tabID) const { return _tabs[tabID].title; }
 
 	void setTabTitle(int tabID, const Common::U32String &title) {
 		assert(0 <= tabID && tabID < (int)_tabs.size());
@@ -123,6 +124,10 @@ public:
 
 	void draw() override;
 	void markAsDirty() override;
+
+	void dumpWidget(Graphics::Surface &surf, const Common::String &baseName,
+			const Common::String &lang, int width, int height) override;
+	bool hasDumpableChildren() const override { return true; }
 
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.

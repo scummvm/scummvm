@@ -35,6 +35,7 @@ struct Event;
 
 namespace GUI {
 
+class Dialog;
 class EventRecorder;
 
 class Widget;
@@ -44,6 +45,16 @@ enum {
 	kCloseWithResultCmd  = 'clsr',
 	kCloseCmd            = 'clos',
 	kOKCmd               = 'ok  '
+};
+
+/**
+ * Receives the states of a dialog from Dialog::iterateDumpStates(), see the
+ * --dump-all-dialogs command line option.
+ */
+class DialogDumpStateCallback {
+public:
+	virtual ~DialogDumpStateCallback() {}
+	virtual void dumpState(Dialog &dialog, const Common::String &stateKey) = 0;
 };
 
 class Dialog : public GuiObject {
@@ -86,6 +97,25 @@ public:
 	virtual void close();
 
 	Widget *findWidget(uint32 type);
+
+	/**
+	 * Iterate over all the states of the dialog which are interesting for
+	 * the dialog dumper (e.g. all the tabs). The default implementation
+	 * calls the callback once. The state key is appended to the generated
+	 * snapshot names and is empty when the dialog has a single state.
+	 */
+	virtual void iterateDumpStates(DialogDumpStateCallback &callback) {
+		callback.dumpState(*this, Common::String());
+	}
+
+	/**
+	 * Dump every state of the widgets of this dialog as a PNG file.
+	 * The dialog must have been opened and rendered before calling this,
+	 * as the state of the overlay is what is captured. Child widget states
+	 * handled by a widget (e.g. the tabs of a TabWidget) are not dumped
+	 * again by the tree walk.
+	 */
+	void dumpWidgetTree(const Common::String &baseName, const Common::String &lang, int width, int height);
 
 protected:
 	/** Recursively mark all the widgets in this dialog as dirty so they are redrawn */

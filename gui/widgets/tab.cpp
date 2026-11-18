@@ -20,6 +20,7 @@
  */
 
 #include "common/util.h"
+#include "common/system.h"
 #include "gui/widgets/tab.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/scrollcontainer.h"
@@ -488,6 +489,29 @@ void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {
 			_firstVisibleTab--;
 		}
 	}
+}
+
+void TabWidget::dumpWidget(Graphics::Surface &surf, const Common::String &baseName,
+		const Common::String &lang, int width, int height) {
+	const int oldActiveTab = _activeTab;
+
+	for (int tabID = 0; tabID < getTabCount(); ++tabID) {
+		setActiveTab(tabID);
+		g_gui.redrawFull();
+		g_system->grabOverlay(surf);
+
+		// The index is used rather than the title, which varies with the language.
+		Common::String tabBase = Common::String::format("%s__tab-%d", baseName.c_str(), tabID + 1);
+		Common::String suffix = Common::String::format("__%dx%d__%s.png", width, height, lang.c_str());
+		saveWidgetSnapshot(surf, tabBase + suffix);
+
+		// Dump the states of the widgets of the active tab.
+		// setActiveTab() made the widgets of this tab our chain.
+		dumpWidgetChain(_firstWidget, surf, tabBase, lang, width, height);
+	}
+
+	if (oldActiveTab >= 0)
+		setActiveTab(oldActiveTab);
 }
 
 } // End of namespace GUI
