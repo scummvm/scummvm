@@ -197,7 +197,7 @@ void IgorEngine::part68SayBoris(const Common::Array<DialogueText> &lines) {
 void IgorEngine::part68SayBorisReplies(const int *replies, const int *sounds, int count) {
 	Common::Array<DialogueText> lines;
 	for (int i = 0; i < count; ++i) {
-		Common::strlcpy(_globalDialogueTexts[250 + i], _dialogueReplies[replies[i] - 1], sizeof(_globalDialogueTexts[250 + i]));
+		Common::strlcpy(_globalDialogueTexts[250 + i], _dialogueReplies[replies[i] - 1], sizeof(_globalDialogueTexts[0]));
 		DialogueText line = { 250 + i, 1, sounds[i] };
 		lines.push_back(line);
 	}
