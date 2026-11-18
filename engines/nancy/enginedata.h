@@ -1186,6 +1186,12 @@ struct ScriptBootData : public EngineData {
 	Common::String profileButtonPrefix;		// the buttons of the list, numbered from 0
 	Common::String newProfileButton;
 
+	// Resorting to Danger: saves that the scripts make under secret names,
+	// which the list of profiles leaves out, and the name the game saves under
+	// when a scene begins, until the scripts name the profile
+	Common::Array<Common::String> specialSaves;
+	Common::String autoSaveName;
+
 	// Nancy20: whether a new item goes first in the inventory, or last, as in
 	// Resorting to Danger
 	bool isInventoryAddedToFront = true;

@@ -117,6 +117,17 @@ void Manager::onExitQueryAction(const Action &action) {
 uint Manager::fillSaveList(const Common::String &listName) {
 	takeAction(kActionSetText, listName, Common::String());
 
+	// Resorting to Danger lists its profiles, the one saved last first
+	if (g_nancy->getGameType() == kGameTypeNancyDossier2) {
+		Common::Array<Common::String> names;
+		getProfileNames(names);
+		for (const Common::String &name : names) {
+			takeAction(kActionAddText, listName, name);
+		}
+
+		return names.size();
+	}
+
 	uint numSaves = 0;
 	SaveStateList saves = g_nancy->getMetaEngine()->listSaves(ConfMan.getActiveDomainName().c_str());
 	for (const SaveStateDescriptor &save : saves) {
@@ -175,6 +186,66 @@ int Manager::findSaveSlot(const Common::String &name) const {
 	return -1;
 }
 
+bool Manager::deleteSave(const Common::String &name) {
+	const int slot = findSaveSlot(name);
+	return slot != -1 && g_nancy->getMetaEngine()->removeSaveState(ConfMan.getActiveDomainName().c_str(), slot);
+}
+
+// Gives a saved game another name, which is the description in the header at
+// the end of the file; the rest stays as it was
+bool Manager::renameSave(const Common::String &oldName, const Common::String &newName) {
+	const int slot = findSaveSlot(oldName);
+	if (slot == -1 || hasSave(newName)) {
+		return false;
+	}
+
+	const Common::String fileName = g_nancy->getSaveStateName(slot);
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
+	if (!in) {
+		return false;
+	}
+
+	Common::Array<byte> data;
+	data.resize(in->size());
+	const bool isRead = in->read(data.data(), data.size()) == data.size();
+	delete in;
+
+	// The header: its id (6 bytes), version (1), date (4), time (2), play time
+	// (4), then the description as a byte of length and its letters. The file
+	// ends with where the header starts.
+	const uint32 kDescriptionOffset = 6 + 1 + 4 + 2 + 4;
+	if (!isRead || data.size() < 4) {
+		return false;
+	}
+
+	const uint32 headerPos = READ_LE_UINT32(data.data() + data.size() - 4);
+	if (headerPos + kDescriptionOffset + 1 > data.size() - 4 || memcmp(data.data() + headerPos, "SVMCR", 6) != 0) {
+		return false;
+	}
+
+	const uint32 lengthPos = headerPos + kDescriptionOffset;
+	const uint32 oldLength = data[lengthPos];
+	if (lengthPos + 1 + oldLength > data.size() - 4) {
+		return false;
+	}
+
+	const Common::String description = newName.substr(0, 0xFF);
+
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(fileName);
+	if (!out) {
+		return false;
+	}
+
+	out->write(data.data(), lengthPos);
+	out->writeByte((byte)description.size());
+	out->writeString(description);
+	out->write(data.data() + lengthPos + 1 + oldLength, data.size() - (lengthPos + 1 + oldLength));
+	out->finalize();
+	const bool isWritten = !out->err();
+	delete out;
+	return isWritten;
+}
+
 void Manager::getSaveNames(Common::Array<Common::String> &names) const {
 	SaveStateList saves = g_nancy->getMetaEngine()->listSaves(ConfMan.getActiveDomainName().c_str());
 	for (const SaveStateDescriptor &save : saves) {
@@ -214,9 +285,10 @@ int Manager::runScummVMSaveLoadDialog(bool isSave, Common::String &saveName) {
 void Manager::onLoaderAction(const Action &action) {
 	switch (action.type) {
 	case kActionShow:
+		// The profile screen of Resorting to Danger is the load dialog
 		if (action.value >= 0) {
 			askToSaveFirst(action);
-		} else if (!ConfMan.getBool("originalsaveload")) {
+		} else if (!ConfMan.getBool("originalsaveload") && g_nancy->getGameType() != kGameTypeNancyDossier2) {
 			Common::String saveName;
 			int slot = runScummVMSaveLoadDialog(false, saveName);
 			if (slot >= 0) {
@@ -255,6 +327,12 @@ void Manager::onLoaderAction(const Action &action) {
 		} else {
 			_request.type = kRequestLoad;
 			_request.slot = findSaveSlot(_selectedSave);
+		}
+
+		// In Resorting to Danger, loading a game or starting a new one allows saving
+		// again, which the main menu turns off
+		if (g_nancy->getGameType() == kGameTypeNancyDossier2) {
+			_isSavingAllowed = true;
 		}
 
 		_lastSaveName = _selectedSave;
@@ -364,7 +442,8 @@ bool Manager::isValidSaveName(const Common::String &name) const {
 }
 
 // The profiles, the one played last first. The one of the arcade mode isn't
-// one of a player.
+// one of a player, and neither are the saves Resorting to Danger makes when a
+// player types a secret name.
 void Manager::getProfileNames(Common::Array<Common::String> &names) const {
 	const ScriptBootData *boot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
 	assert(boot);
@@ -379,6 +458,15 @@ void Manager::getProfileNames(Common::Array<Common::String> &names) const {
 	for (const SaveStateDescriptor &save : saves) {
 		if (save.getSaveSlot() == g_nancy->getMetaEngine()->getMaximumSaveSlot() || save.getSaveSlot() == g_nancy->getAutosaveSlot() ||
 				(!boot->arcadeSave.empty() && save.getDescription().equalsIgnoreCase(boot->arcadeSave))) {
+			continue;
+		}
+
+		bool isSpecialSave = false;
+		for (const Common::String &specialSave : boot->specialSaves) {
+			isSpecialSave |= save.getDescription().equalsIgnoreCase(specialSave);
+		}
+
+		if (isSpecialSave) {
 			continue;
 		}
 

@@ -105,6 +105,11 @@ public:
 	int findSaveSlot(const Common::String &name) const;
 	bool isValidSaveName(const Common::String &name) const;
 
+	// Resorting to Danger manages the saved games of its profiles itself
+	bool isSavingAllowed() const { return _isSavingAllowed; }
+	bool deleteSave(const Common::String &name);
+	bool renameSave(const Common::String &oldName, const Common::String &newName);
+
 	Panel *findPanel(const Common::String &name) const;
 
 	// The names of the saved games

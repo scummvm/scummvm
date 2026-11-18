@@ -290,6 +290,12 @@ static int loadSaveCreate(lua_State *L) {
 		lua_pop(L, 1);
 	}
 
+	readField(L, 2, "autoSaveName", boot.autoSaveName);
+	if (pushField(L, 2, "specialSaves")) {
+		readStringList(L, -1, boot.specialSaves);
+		lua_pop(L, 1);
+	}
+
 	return 0;
 }
 

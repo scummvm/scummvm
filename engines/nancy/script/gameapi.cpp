@@ -1156,6 +1156,80 @@ static int saveExists(lua_State *L) {
 	return 1;
 }
 
+// The name of a saved game for the functions of Resorting to Danger, which is
+// the key of an autotext entry unless the argument after it says otherwise. A
+// name that can't be a file name is an error.
+static Common::String checkSaveName(lua_State *L, int index, const char *functionName) {
+	Common::String name = luaL_checkstring(L, index);
+	if (lua_gettop(L) <= index || lua_toboolean(L, index + 1)) {
+		Common::String text;
+		if (!findText(name, text)) {
+			luaL_error(L, "%s game autotext reference '%s' does not exist", functionName, name.c_str());
+		}
+
+		name = text;
+	}
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	if (!ui || !ui->isValidSaveName(name)) {
+		luaL_error(L, "%s game file name '%s' is an invalid name", functionName, name.c_str());
+	}
+
+	return name;
+}
+
+// Save:CanSave(), Resorting to Danger: whether the scripts allow saving now
+static int saveCanSave(lua_State *L) {
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	lua_pushboolean(L, ui && ui->isSavingAllowed());
+	return 1;
+}
+
+// Save:CheckSaveName(name), Resorting to Danger: whether a game can be saved
+// under that name
+static int saveCheckSaveName(lua_State *L) {
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	lua_pushboolean(L, ui && ui->isValidSaveName(luaL_checkstring(L, 2)));
+	return 1;
+}
+
+// Save:CheckSaveExists(name[, isKey]), Resorting to Danger
+static int saveCheckSaveExists(lua_State *L) {
+	const Common::String name = checkSaveName(L, 2, "CheckSaveExists");
+	lua_pushboolean(L, NancySceneState.getNDUI()->hasSave(name));
+	return 1;
+}
+
+// Save:DeleteGame(name[, isKey]), Resorting to Danger: whether it was deleted
+static int saveDeleteGame(lua_State *L) {
+	const Common::String name = checkSaveName(L, 2, "Delete");
+	lua_pushboolean(L, NancySceneState.getNDUI()->deleteSave(name));
+	return 1;
+}
+
+// Save:RenameGame(oldName, newName[, isKey]), Resorting to Danger: whether it
+// was renamed
+static int saveRenameGame(lua_State *L) {
+	Common::String names[2];
+	for (int i = 0; i < 2; ++i) {
+		const char *name = luaL_checkstring(L, 2 + i);
+		names[i] = name;
+		if ((lua_gettop(L) <= 3 || lua_toboolean(L, 4)) && !findText(name, names[i])) {
+			return luaL_error(L, "Rename game autotext reference '%s' does not exist", name);
+		}
+	}
+
+	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
+	for (int i = 0; i < 2; ++i) {
+		if (!ui || !ui->isValidSaveName(names[i])) {
+			return luaL_error(L, "Rename game file name '%s' is an invalid name", names[i].c_str());
+		}
+	}
+
+	lua_pushboolean(L, ui->renameSave(names[0], names[1]));
+	return 1;
+}
+
 static const luaL_Reg kSaveFunctions[] = {
 	{ "__index", indexFunctions },
 	{ "Data", saveData },
@@ -1164,6 +1238,11 @@ static const luaL_Reg kSaveFunctions[] = {
 	{ "Exists", saveExists },
 	{ "Screenshot", saveScreenshot },
 	{ "GetScreenshotNames", saveGetScreenshotNames },
+	{ "CanSave", saveCanSave },
+	{ "CheckSaveName", saveCheckSaveName },
+	{ "CheckSaveExists", saveCheckSaveExists },
+	{ "DeleteGame", saveDeleteGame },
+	{ "RenameGame", saveRenameGame },
 	{ nullptr, nullptr }
 };
 
