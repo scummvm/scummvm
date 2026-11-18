@@ -200,9 +200,10 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		_pickupStarted = now;
 		_pickupSoundPlayed = false;
 	}
-	// Native 0x40d390 plays S03 cue 1 when the twelfth pickup frame
-	// reveals the item in its inventory slot.
-	if (_pickupItem && !_pickupSoundPlayed && now - _pickupStarted >= 12 * 60) {
+	// Cue 1 accompanies the item reveal: frame 15 in the museum (0x427020),
+	// frame 12 in the cabin (0x40d390).
+	const uint revealFrame = _museum ? 15 : 12;
+	if (_pickupItem && !_pickupSoundPlayed && now - _pickupStarted >= revealFrame * 60) {
 		_audio.playEffect(1);
 		_pickupSoundPlayed = true;
 	}
@@ -395,7 +396,7 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 				shadeBevelPixel(screen, rect.left + 83 - edge, rect.top - 4 + pixel, 2);
 			}
 		}
-		if (item == _inventory.selected() || (item == _pickupItem && _now - _pickupStarted < 12 * 60)) {
+		if (item == _inventory.selected() || (item == _pickupItem && !_pickupSoundPlayed)) {
 			screen.fillRect(rect, 0);
 		} else {
 			const uint y = (_inventory.icon(item) - 1) * 80;

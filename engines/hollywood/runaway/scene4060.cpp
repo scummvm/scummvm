@@ -103,14 +103,14 @@ const MuseumItemAction kItemActions[] = {
 };
 
 const MuseumExit kExits[] = {
-	{kMuseumHall, 302, kMuseumHall, 533, 848, false},
-	{kMuseumHall, 303, kMuseumHall, 1169, 643, false},
-	{kMuseumHall, 305, kMuseumHall, 69, 372, true},
-	{kMuseumHall, 306, kMuseumHall, 1290, 300, true},
-	{kMuseumHall, 310, kMuseumExhibition, 881, 392, false},
-	{kMuseumHall, 312, kMuseumOffice, 934, 563, true},
-	{kMuseumHall, 316, kMuseumLaboratory, 382, 529, true},
-	{kMuseumHall, 320, kMuseumKeypad, 0, 0, true},
+	{kMuseumHall, 302, kMuseumHall, 533, 848, false, false},
+	{kMuseumHall, 303, kMuseumHall, 1169, 643, false, false},
+	{kMuseumHall, 305, kMuseumHall, 69, 372, true, false},
+	{kMuseumHall, 306, kMuseumHall, 1290, 300, true, false},
+	{kMuseumHall, 310, kMuseumExhibition, 881, 392, false, false},
+	{kMuseumHall, 312, kMuseumOffice, 934, 563, true, true},
+	{kMuseumHall, 316, kMuseumLaboratory, 382, 529, true, true},
+	{kMuseumHall, 320, kMuseumKeypad, 0, 0, true, false},
 };
 
 } // End of anonymous namespace

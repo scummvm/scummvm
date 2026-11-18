@@ -79,7 +79,7 @@ public:
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override { return _subtitle; }
-	bool busy() const override { return _pendingHotspot != 0 || speaking(); }
+	bool busy() const override { return _pendingHotspot != 0 || _pendingDoorClose || speaking(); }
 	bool speaking() const override { return !_subtitle.empty(); }
 	void skipSpeech() override;
 	void sayInventory(const RunawayInventory::Reply &reply) override;
@@ -162,6 +162,7 @@ private:
 	float _x = 0, _y = 0;
 	uint32 _now = 0, _lastUpdate = 0, _walkElapsed = 0, _subtitleUntil = 0;
 	bool _upperFloor = true, _antialias = true, _fastScrolling = true;
+	bool _pendingDoorClose = false;
 	ObjectState _books = kUnexamined, _recorder = kUnexamined;
 	bool _moneyIdentified = false, _safeOpen = false;
 	bool _varnishTaken = false, _talcTaken = false, _coffeeTaken = false;

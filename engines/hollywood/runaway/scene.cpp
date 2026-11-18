@@ -94,7 +94,8 @@ void RunawayMuseumScene::start(uint32 now) {
 	for (uint i = 0; i < ARRAYSIZE(initialItems); ++i)
 		_inventory.add(initialItems[i]);
 	_inventory.takeNewItem();
-	_audio.playMusic(4);
+	// The original demo loops M04 cue 11 throughout gameplay (0x4175c0).
+	_audio.playMusic(11);
 }
 
 bool RunawayMuseumScene::enterRoom(uint16 number, Common::Point position, byte facing) {
@@ -375,6 +376,9 @@ void RunawayMuseumScene::execute(uint16 action) {
 		const MuseumExit &exit = room->exits[i];
 		if (exit.action != action)
 			continue;
+		_pendingDoorClose = exit.door;
+		if (exit.door)
+			_audio.playEffect(3);
 		const Common::Point entry(exit.x, exit.y);
 		if (exit.destination == _room) {
 			changeFloor(exit.upperFloor, entry);
@@ -433,6 +437,11 @@ void RunawayMuseumScene::update(uint32 now, int scrollDirection, bool inventoryO
 	_now = now;
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
 	_lastUpdate = now;
+	// Door entry routines wait for the opening sound before playing the closing sound.
+	if (_pendingDoorClose && !_audio.effectPlaying()) {
+		_pendingDoorClose = false;
+		_audio.playEffect(4);
+	}
 	if (speaking() && (int32)(now - _subtitleUntil) >= 0)
 		skipSpeech();
 	if (inventoryOpen || _room == kMuseumKeypad)

@@ -44,6 +44,7 @@ public:
 	void stopEffect();
 	bool musicPlaying() const;
 	bool speechPlaying() const;
+	bool effectPlaying(byte channel = 0) const;
 
 private:
 	uint32 play(const char *archive, uint16 cue, uint tableCount, bool pairedTables,

@@ -109,7 +109,11 @@ uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
 
 void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop) {
 	assert(channel < ARRAYSIZE(_effects));
-	play(_museum ? "RESOURCE.S04" : "RESOURCE.S03", cue, 1000, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN,
+	// Museum effects use unsigned 8-bit PCM (native 0x43ae40).
+	byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+	if (_museum)
+		flags = Audio::FLAG_UNSIGNED;
+	play(_museum ? "RESOURCE.S04" : "RESOURCE.S03", cue, 1000, false, flags,
 		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop, _museum ? 11025 : 16000);
 }
 
@@ -174,6 +178,11 @@ bool RunawayAudio::musicPlaying() const {
 
 bool RunawayAudio::speechPlaying() const {
 	return _mixer->isSoundHandleActive(_speech);
+}
+
+bool RunawayAudio::effectPlaying(byte channel) const {
+	assert(channel < ARRAYSIZE(_effects));
+	return _mixer->isSoundHandleActive(_effects[channel]);
 }
 
 } // End of namespace Hollywood

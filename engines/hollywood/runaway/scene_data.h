@@ -58,6 +58,7 @@ struct MuseumExit {
 	uint16 room, action, destination;
 	int16 x, y;
 	bool upperFloor;
+	bool door;
 };
 
 struct MuseumRoom {

@@ -45,11 +45,12 @@ void RunawayMuseumScene::clickScene4140(byte id) {
 	} else if (id == 12) {
 		_keyCount = 0;
 		warning("Runaway museum: the fingerprint puzzle is not implemented yet");
-	} else if (_keyCount < 4) {
-		++_keyCount;
-		_audio.playEffect(id == 11 ? 11 : 11 + id);
 	} else {
-		say(4);
+		_audio.playEffect(id == 11 ? 11 : 11 + id);
+		if (_keyCount < 4)
+			++_keyCount;
+		else
+			say(4);
 	}
 }
 

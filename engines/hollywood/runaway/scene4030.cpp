@@ -63,7 +63,7 @@ const MuseumItemAction kItemActions[] = {
 };
 
 const MuseumExit kExits[] = {
-	{kMuseumOffice, 301, kMuseumHall, 607, 323, true},
+	{kMuseumOffice, 301, kMuseumHall, 607, 323, true, true},
 };
 
 } // End of anonymous namespace

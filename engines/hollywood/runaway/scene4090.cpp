@@ -59,7 +59,7 @@ const MuseumResponse kResponses[] = {
 };
 
 const MuseumExit kExits[] = {
-	{kMuseumExhibition, 301, kMuseumHall, 1400, 600, false},
+	{kMuseumExhibition, 301, kMuseumHall, 1400, 600, false, false},
 };
 
 } // End of anonymous namespace
