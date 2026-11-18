@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_SCENE_DISPATCHER_H
-#define RIPPER_SCENE_DISPATCHER_H
+#ifndef RIPPER_SCRIPT_SCENE_DISPATCHER_H
+#define RIPPER_SCRIPT_SCENE_DISPATCHER_H
 
 #include "common/scummsys.h"
 
@@ -102,4 +102,4 @@ public:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_SCENE_DISPATCHER_H
+#endif // RIPPER_SCRIPT_SCENE_DISPATCHER_H

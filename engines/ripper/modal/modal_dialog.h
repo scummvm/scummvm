@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_MODAL_DIALOG_H
-#define RIPPER_MODAL_DIALOG_H
+#ifndef RIPPER_MODAL_MODAL_DIALOG_H
+#define RIPPER_MODAL_MODAL_DIALOG_H
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -180,4 +180,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_MODAL_DIALOG_H
+#endif // RIPPER_MODAL_MODAL_DIALOG_H

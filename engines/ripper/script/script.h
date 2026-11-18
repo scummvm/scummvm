@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_SCRIPT_H
-#define RIPPER_SCRIPT_H
+#ifndef RIPPER_SCRIPT_SCRIPT_H
+#define RIPPER_SCRIPT_SCRIPT_H
 
 #include "common/array.h"
 #include "common/ptr.h"
@@ -177,4 +177,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_SCRIPT_H
+#endif // RIPPER_SCRIPT_SCRIPT_H

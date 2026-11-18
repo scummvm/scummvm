@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_TOOLBAR_H
-#define RIPPER_TOOLBAR_H
+#ifndef RIPPER_UI_TOOLBAR_H
+#define RIPPER_UI_TOOLBAR_H
 
 #include "common/array.h"
 #include "common/ptr.h"
@@ -89,4 +89,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_TOOLBAR_H
+#endif // RIPPER_UI_TOOLBAR_H

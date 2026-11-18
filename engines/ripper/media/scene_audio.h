@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_SCENE_AUDIO_H
-#define RIPPER_SCENE_AUDIO_H
+#ifndef RIPPER_MEDIA_SCENE_AUDIO_H
+#define RIPPER_MEDIA_SCENE_AUDIO_H
 
 #include "audio/mixer.h"
 #include "common/noncopyable.h"
@@ -114,4 +114,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_SCENE_AUDIO_H
+#endif // RIPPER_MEDIA_SCENE_AUDIO_H

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_MEDIA_H
-#define RIPPER_MEDIA_H
+#ifndef RIPPER_MEDIA_MEDIA_H
+#define RIPPER_MEDIA_MEDIA_H
 
 #include "audio/mixer.h"
 #include "common/array.h"
@@ -203,4 +203,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_MEDIA_H
+#endif // RIPPER_MEDIA_MEDIA_H

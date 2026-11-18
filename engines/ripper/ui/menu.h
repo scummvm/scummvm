@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_MENU_H
-#define RIPPER_MENU_H
+#ifndef RIPPER_UI_MENU_H
+#define RIPPER_UI_MENU_H
 
 namespace Ripper {
 
@@ -46,4 +46,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_MENU_H
+#endif // RIPPER_UI_MENU_H

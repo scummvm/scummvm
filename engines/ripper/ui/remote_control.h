@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_REMOTE_CONTROL_H
-#define RIPPER_REMOTE_CONTROL_H
+#ifndef RIPPER_UI_REMOTE_CONTROL_H
+#define RIPPER_UI_REMOTE_CONTROL_H
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -69,4 +69,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_REMOTE_CONTROL_H
+#endif // RIPPER_UI_REMOTE_CONTROL_H

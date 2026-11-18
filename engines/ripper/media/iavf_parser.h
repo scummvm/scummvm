@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_IAVF_H
-#define RIPPER_IAVF_H
+#ifndef RIPPER_MEDIA_IAVF_PARSER_H
+#define RIPPER_MEDIA_IAVF_PARSER_H
 
 #include "common/array.h"
 #include "common/str.h"
@@ -68,4 +68,4 @@ Common::SeekableReadStream *rebuildSmackerStream(const IavfSegment &segment);
 
 } // End of namespace Ripper
 
-#endif // RIPPER_IAVF_H
+#endif // RIPPER_MEDIA_IAVF_PARSER_H

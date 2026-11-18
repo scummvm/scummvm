@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_OPTIONS_PANEL_H
-#define RIPPER_OPTIONS_PANEL_H
+#ifndef RIPPER_UI_OPTIONS_PANEL_H
+#define RIPPER_UI_OPTIONS_PANEL_H
 
 #include "audio/mixer.h"
 #include "common/array.h"
@@ -110,4 +110,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_OPTIONS_PANEL_H
+#endif // RIPPER_UI_OPTIONS_PANEL_H
