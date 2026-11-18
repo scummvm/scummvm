@@ -193,9 +193,10 @@ public:
 	MessagingNameMap _messagingNames;
 
 	// Nancy21: what the scripts keep apart from the saved games, packed the way
-	// Save:Data packs it. The original writes it to a file of its own; here it
-	// lasts for as long as the game runs.
+	// Save:Data packs it. Resorting to Danger keeps its profiles there, in a
+	// file of its own.
 	Common::HashMap<Common::String, Common::Array<byte> > _scriptAttic;
+	bool _isScriptAtticLoaded = false;
 
 	// Lights, Camera, Curses: the profile being played, which is a saved game
 	// named after the player. What follows outlasts the game a new profile, or

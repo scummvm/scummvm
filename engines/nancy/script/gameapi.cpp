@@ -19,8 +19,10 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "image/png.h"
@@ -970,9 +972,67 @@ static int loadData(lua_State *L) {
 	return 1;
 }
 
+// The file of the attic, read the first time the scripts ask for it and
+// written whenever they put something in it. Only Resorting to Danger needs
+// its attic to outlast the game; Nancy21 and Nancy22 don't keep anything there.
+static bool isAtticKept() {
+	return g_nancy->getGameType() == kGameTypeNancyDossier2;
+}
+
+static Common::String getAtticFileName() {
+	return ConfMan.getActiveDomainName() + ".attic";
+}
+
+static void loadAtticFile() {
+	if (g_nancy->_isScriptAtticLoaded || !isAtticKept()) {
+		return;
+	}
+
+	g_nancy->_isScriptAtticLoaded = true;
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(getAtticFileName());
+	if (!in) {
+		return;
+	}
+
+	const uint32 numValues = in->readUint32LE();
+	for (uint32 i = 0; i < numValues && !in->eos() && !in->err(); ++i) {
+		const Common::String name = in->readString(0, in->readUint32LE());
+		Common::Array<byte> &value = g_nancy->_scriptAttic[name];
+		value.resize(in->readUint32LE());
+		in->read(value.data(), value.size());
+	}
+
+	delete in;
+}
+
+static void saveAtticFile() {
+	if (!isAtticKept()) {
+		return;
+	}
+
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(getAtticFileName(), false);
+	if (!out) {
+		warning("Could not save the attic");
+		return;
+	}
+
+	out->writeUint32LE(g_nancy->_scriptAttic.size());
+	for (const auto &value : g_nancy->_scriptAttic) {
+		out->writeUint32LE(value._key.size());
+		out->writeString(value._key);
+		out->writeUint32LE(value._value.size());
+		out->write(value._value.data(), value._value.size());
+	}
+
+	out->finalize();
+	delete out;
+}
+
 // Save:Attic(name, value) and Load:Attic(name), Nancy21: values that are kept
-// apart from the saved games. Only the scripts of Nancy22 use them, for playtest
-// statistics that the game logs only when a debug flag is set.
+// apart from the saved games. The scripts of Nancy22 use them for playtest
+// statistics that the game logs only when a debug flag is set, and Resorting to
+// Danger for its profiles and the high scores of its arcade. A nil takes a
+// value out.
 static int saveAttic(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
 	luaL_checkany(L, 3);
@@ -982,12 +1042,20 @@ static int saveAttic(lua_State *L) {
 		return luaL_error(L, "Save:Attic can only save tables, numbers, booleans, strings and nils");
 	}
 
-	g_nancy->_scriptAttic.setVal(name, packed);
+	loadAtticFile();
+	if (lua_isnil(L, 3)) {
+		g_nancy->_scriptAttic.erase(name);
+	} else {
+		g_nancy->_scriptAttic.setVal(name, packed);
+	}
+
+	saveAtticFile();
 	return 0;
 }
 
 static int loadAttic(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
+	loadAtticFile();
 	if (!g_nancy->_scriptAttic.contains(name)) {
 		lua_pushnil(L);
 		return 1;
