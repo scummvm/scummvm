@@ -182,7 +182,14 @@ void SceneScriptHC04::dialogueWithIsabella() {
 	if (Actor_Clue_Query(kActorMcCoy, kClueSpecialIngredient)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(380, -1, 5, 8); // MIA AND MURRAY INFO
 	}
-	DM_Add_To_List_Never_Repeat_Once_Selected(390, 7, 5, -1); // BUY STEW
+	bool canAskForStew = true;
+	if (_vm->_cutContent) {
+		// Can ask for a stew unless Isabella has admitted to using real cheese.
+		canAskForStew = !Actor_Clue_Query(kActorMcCoy, kClueStolenCheese);
+	}
+	if (canAskForStew) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(390, 7, 5, -1); // BUY STEW
+	}
 	Dialogue_Menu_Add_DONE_To_List(400); // DONE
 
 	Dialogue_Menu_Appear(320, 240);
@@ -248,16 +255,55 @@ void SceneScriptHC04::dialogueWithIsabella() {
 		break;
 
 	case 390: // BUY STEW
-		Actor_Says(kActorMcCoy, 1310, kAnimationModeTalk);
-		Actor_Modify_Friendliness_To_Other(kActorIsabella, kActorMcCoy, 2);
-		Actor_Says(kActorIsabella, 340, kAnimationModeTalk);
+		bool mcCoyAsksWhatsInIt;
+		if (_vm->_cutContent) {
+			mcCoyAsksWhatsInIt = Player_Query_Agenda() == kPlayerAgendaSurly
+				|| Actor_Clue_Query(kActorMcCoy, kClueCheese)
+				|| Actor_Clue_Query(kActorMcCoy, kClueSpecialIngredient);
+		} else {
+			mcCoyAsksWhatsInIt = false;
+		}
+		if (mcCoyAsksWhatsInIt) {
+			// McCoy asks whats in the stew and, after hearing the reply, decides to pass.
+			Actor_Says(kActorMcCoy, 1320, kAnimationModeTalk);
+			Actor_Says(kActorIsabella, 30, kAnimationModeTalk);
+			Actor_Says(kActorMcCoy, 1325, kAnimationModeTalk);
+			Actor_Says(kActorMcCoy, 1345, kAnimationModeTalk);
+		} else {
+			// McCoy compliments the stew and buys it if has enough money.
+			Actor_Says(kActorMcCoy, 1310, kAnimationModeTalk);
+			Actor_Modify_Friendliness_To_Other(kActorIsabella, kActorMcCoy, 2);
+			Actor_Says(kActorIsabella, 340, kAnimationModeTalk);
+			if (_vm->_cutContent) {
+				const int stewPrice = 30; // from the Isabella's speech 340
+				const bool isDifficultyEasy = Query_Difficulty_Level() == kGameDifficultyEasy;
+				if (isDifficultyEasy || Global_Variable_Query(kVariableChinyen) >= stewPrice) {
+					if (!isDifficultyEasy) {
+						Global_Variable_Decrement(kVariableChinyen, stewPrice);
+					}
+					Actor_Says(kActorMcCoy, 4940, 13);
+					Delay(1500);
+					// McCoy walks closer and takes the stew.
+					if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -170, 0, -440, 4, false, false, false)) {
+						Actor_Face_Actor(kActorMcCoy, kActorIsabella, true);
+						Actor_Change_Animation_Mode(kActorIsabella, 23);
+						Actor_Change_Animation_Mode(kActorMcCoy, 23);
+						Delay(1500);
+					}
+				} else {
+					Actor_Says(kActorMcCoy, 125, 13);
+					Actor_Modify_Friendliness_To_Other(kActorIsabella, kActorMcCoy, -2);
+				}
+			}
+		}
 		break;
 
 	case 400: // DONE
 		Actor_Says(kActorMcCoy, 1315, kAnimationModeTalk);
 		break;
 
-	default: // never used?
+	default:
+		// A bug? This never happens. Used in Restored Content for the stew dialog.
 		Actor_Says(kActorMcCoy, 1320, kAnimationModeTalk);
 		Actor_Says(kActorIsabella, 30, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 1325, kAnimationModeTalk);
