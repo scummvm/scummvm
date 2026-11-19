@@ -23,7 +23,7 @@
 #define SCOOBY_CONTROLLER_INPUT_H
 
 #include "common/keyboard.h"
-#include "controller_buttons.h"
+#include "scooby/input/controller_buttons.h"
 #include "scooby/input/mouse.h"
 #include "scooby/runtime/runtime_state.h"
 

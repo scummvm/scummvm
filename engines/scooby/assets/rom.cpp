@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "rom.h"
+#include "scooby/assets/rom.h"
 
 #include "common/file.h"
 #include "common/util.h"

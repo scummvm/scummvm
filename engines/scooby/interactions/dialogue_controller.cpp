@@ -19,7 +19,7 @@
  *
  */
 
-#include "dialogue_controller.h"
+#include "scooby/interactions/dialogue_controller.h"
 
 #include "common/scummsys.h"
 

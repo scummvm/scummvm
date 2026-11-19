@@ -19,7 +19,7 @@
  *
  */
 
-#include "frame_presenter.h"
+#include "scooby/presentation/frame_presenter.h"
 
 #include "scooby/scooby.h"
 

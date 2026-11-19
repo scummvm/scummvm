@@ -23,12 +23,12 @@
 
 #include "common/array.h"
 
-#include "dialogue_text_source.h"
-#include "scooby/interactions/action_registry.h"
-#include "scooby/interactions/controller.h"
 #include "scooby/common/span.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_layer.h"
+#include "scooby/interactions/action_registry.h"
+#include "scooby/interactions/controller.h"
+#include "scooby/interactions/dialogue_text_source.h"
 #include "scooby/rooms/script/controller.h"
 #include "scooby/scooby.h"
 

@@ -23,9 +23,9 @@
 #define SCOOBY_MOVEMENT_SCOOBY_WANDER_CONTROLLER_H
 
 #include "scooby/assets/rom.h"
+#include "scooby/movement/scripted_room_movement_executor.h"
 #include "scooby/randomness/deterministic_random.h"
 #include "scooby/runtime/runtime_state.h"
-#include "scripted_room_movement_executor.h"
 
 // Owns Scooby's random wander decision recovered inside Ghidra RunAdventure at 0x00000BF4.
 

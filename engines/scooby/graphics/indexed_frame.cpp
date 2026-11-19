@@ -19,7 +19,7 @@
  *
  */
 
-#include "indexed_frame.h"
+#include "scooby/graphics/indexed_frame.h"
 
 namespace Scooby {
 

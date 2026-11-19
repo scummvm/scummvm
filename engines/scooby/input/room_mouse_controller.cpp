@@ -21,7 +21,7 @@
 
 // MANAGED-ONLY MOUSE SUPPORT (see mouse.h and room_mouse_controller.h).
 
-#include "room_mouse_controller.h"
+#include "scooby/input/room_mouse_controller.h"
 
 #include "common/util.h"
 

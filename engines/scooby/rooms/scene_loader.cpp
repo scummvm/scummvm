@@ -23,12 +23,12 @@
 
 #include "common/array.h"
 
-#include "room_object.h"
-#include "scooby/rooms/scene_data.h"
 #include "scooby/common/make_unique.h"
 #include "scooby/common/span.h"
 #include "scooby/compression/ring_lz_decoder.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
+#include "scooby/rooms/room_object.h"
+#include "scooby/rooms/scene_data.h"
 #include "scooby/types.h"
 
 namespace Scooby {

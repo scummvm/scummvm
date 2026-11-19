@@ -19,7 +19,7 @@
  *
  */
 
-#include "actor_animation_descriptor_catalog.h"
+#include "scooby/rooms/actor_animation_descriptor_catalog.h"
 
 namespace Scooby {
 

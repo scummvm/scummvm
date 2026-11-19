@@ -27,10 +27,10 @@
 #include "common/array.h"
 #include "common/func.h"
 
-#include "dialogue_text_source.h"
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/interactions/dialogue_text_source.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/rooms/actor_animator.h"
 #include "scooby/rooms/vblank/handler.h"

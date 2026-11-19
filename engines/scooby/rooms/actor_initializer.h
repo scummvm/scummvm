@@ -22,8 +22,8 @@
 #ifndef SCOOBY_ROOMS_ACTOR_INITIALIZER_H
 #define SCOOBY_ROOMS_ACTOR_INITIALIZER_H
 
-#include "actor_animation_descriptor_catalog.h"
 #include "scooby/assets/rom.h"
+#include "scooby/rooms/actor_animation_descriptor_catalog.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Initializes the active room's built-in and object-backed actor slots.

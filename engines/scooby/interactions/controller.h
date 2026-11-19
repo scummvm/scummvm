@@ -26,11 +26,11 @@
 
 #include "common/func.h"
 
-#include "action_menu_controller.h"
-#include "dialogue_controller.h"
-#include "scooby/interactions/resolver.h"
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
+#include "scooby/interactions/action_menu_controller.h"
+#include "scooby/interactions/dialogue_controller.h"
+#include "scooby/interactions/resolver.h"
 #include "scooby/randomness/deterministic_random.h"
 #include "scooby/runtime/runtime_state.h"
 

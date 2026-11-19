@@ -19,14 +19,14 @@
  *
  */
 
-#include "application_loop.h"
+#include "scooby/startup/application_loop.h"
 
 #include "graphics/framelimiter.h"
-#include "intro_sequence.h"
+#include "scooby/runtime/save_game_data.h"
 #include "scooby/runtime/session_controller.h"
 #include "scooby/scooby.h"
 #include "scooby/sound/gems_audio.h"
-#include "scooby/runtime/save_game_data.h"
+#include "scooby/startup/intro_sequence.h"
 
 namespace Scooby {
 

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ring_lz_decoder.h"
+#include "scooby/compression/ring_lz_decoder.h"
 
 #include "common/array.h"
 

@@ -19,7 +19,7 @@
  *
  */
 
-#include "actor_facing_animation.h"
+#include "scooby/rooms/actor_facing_animation.h"
 
 #include "common/scummsys.h"
 

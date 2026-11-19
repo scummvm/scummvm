@@ -19,7 +19,7 @@
  *
  */
 
-#include "genesis_asset_decoder.h"
+#include "scooby/graphics/genesis_asset_decoder.h"
 
 namespace Scooby {
 namespace {

@@ -27,13 +27,13 @@
 #include "common/array.h"
 #include "common/func.h"
 
-#include "runtime_state.h"
 #include "scooby/assets/rom.h"
 #include "scooby/common/span.h"
 #include "scooby/graphics/sprite_instance.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/main_menu/vblank/handler.h"
 #include "scooby/presentation/frame_presenter.h"
+#include "scooby/runtime/runtime_state.h"
 #include "scooby/sound/gems_audio.h"
 
 // Owns the selected episode's animated handover from menu state to room startup.

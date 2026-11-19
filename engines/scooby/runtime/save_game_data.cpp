@@ -21,7 +21,7 @@
 
 // MANAGED-ONLY SAVE GAMES (see save_game_data.h).
 
-#include "save_game_data.h"
+#include "scooby/runtime/save_game_data.h"
 
 #include "common/endian.h"
 #include "common/textconsole.h"

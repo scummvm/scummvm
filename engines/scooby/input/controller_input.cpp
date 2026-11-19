@@ -19,7 +19,7 @@
  *
  */
 
-#include "controller_input.h"
+#include "scooby/input/controller_input.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "scooby/scooby.h"

@@ -26,8 +26,8 @@
 
 #include "common/func.h"
 
-#include "actor_sprite_transformer.h"
 #include "scooby/assets/rom.h"
+#include "scooby/rooms/actor_sprite_transformer.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Advances the six recovered actor animation streams and stages their authored frame graphics.

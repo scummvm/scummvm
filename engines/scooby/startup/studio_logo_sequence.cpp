@@ -19,7 +19,7 @@
  *
  */
 
-#include "studio_logo_sequence.h"
+#include "scooby/startup/studio_logo_sequence.h"
 
 #include "common/array.h"
 

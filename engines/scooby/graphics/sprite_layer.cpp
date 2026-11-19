@@ -19,7 +19,7 @@
  *
  */
 
-#include "sprite_layer.h"
+#include "scooby/graphics/sprite_layer.h"
 
 #include "scooby/assets/rom.h"
 

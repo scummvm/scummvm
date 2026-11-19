@@ -23,12 +23,12 @@
 
 #include "common/array.h"
 
-#include "actor_facing_animation.h"
-#include "scooby/rooms/collision_probe_result.h"
-#include "room_object.h"
-#include "scooby/rooms/scene_data.h"
 #include "scooby/common/contracts.h"
 #include "scooby/common/span.h"
+#include "scooby/rooms/actor_facing_animation.h"
+#include "scooby/rooms/collision_probe_result.h"
+#include "scooby/rooms/room_object.h"
+#include "scooby/rooms/scene_data.h"
 
 namespace Scooby {
 void RoomActorUpdater::updateRoomActorsAndInterface() {

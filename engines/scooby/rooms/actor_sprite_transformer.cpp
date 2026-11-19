@@ -19,7 +19,7 @@
  *
  */
 
-#include "actor_sprite_transformer.h"
+#include "scooby/rooms/actor_sprite_transformer.h"
 
 #include "common/array.h"
 

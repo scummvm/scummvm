@@ -24,7 +24,7 @@
 #define SCOOBY_CONSOLE_H
 
 #include "gui/debugger.h"
-#include "startup/application_loop.h"
+#include "scooby/startup/application_loop.h"
 
 namespace Scooby {
 

@@ -22,8 +22,8 @@
 #ifndef SCOOBY_EPISODE_INITIALIZER_H
 #define SCOOBY_EPISODE_INITIALIZER_H
 
-#include "runtime_state.h"
 #include "scooby/assets/rom.h"
+#include "scooby/runtime/runtime_state.h"
 
 // Loads the authored initial progress and room for one of the two selectable episodes.
 

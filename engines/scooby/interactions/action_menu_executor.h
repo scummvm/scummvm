@@ -26,13 +26,13 @@
 
 #include "common/func.h"
 
-#include "action_menu_controller.h"
-#include "dialogue_controller.h"
-#include "scooby/interactions/action.h"
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
 #include "scooby/graphics/shared_workspace.h"
 #include "scooby/graphics/tile_scene.h"
+#include "scooby/interactions/action.h"
+#include "scooby/interactions/action_menu_controller.h"
+#include "scooby/interactions/dialogue_controller.h"
 #include "scooby/presentation/frame_presenter.h"
 #include "scooby/rooms/actor_animator.h"
 #include "scooby/rooms/vblank/handler.h"

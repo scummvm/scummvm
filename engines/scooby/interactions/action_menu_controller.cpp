@@ -19,7 +19,7 @@
  *
  */
 
-#include "action_menu_controller.h"
+#include "scooby/interactions/action_menu_controller.h"
 
 #include "common/scummsys.h"
 

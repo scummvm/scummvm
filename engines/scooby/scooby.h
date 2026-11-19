@@ -35,7 +35,7 @@
 #include "graphics/framelimiter.h"
 
 #include "scooby/detection.h"
-#include "startup/application_loop.h"
+#include "scooby/startup/application_loop.h"
 
 namespace Scooby {
 

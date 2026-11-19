@@ -26,10 +26,10 @@
 
 #include "common/array.h"
 
-#include "scooby/types.h"
 #include "scooby/assets/rom.h"
 #include "scooby/common/span.h"
-#include "tile_cell.h"
+#include "scooby/graphics/tile_cell.h"
+#include "scooby/types.h"
 
 // Converts the original ROM's packed graphics formats into high-level scene
 // assets at load time. Console memory and transfer behavior do not cross

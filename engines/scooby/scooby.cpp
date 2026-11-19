@@ -30,11 +30,11 @@
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
-#include "graphics/tile_scene.h"
 #include "scooby/console.h"
 #include "scooby/detection.h"
+#include "scooby/graphics/tile_scene.h"
 #include "scooby/sound/gems_driver.h"
-#include "startup/application_loop.h"
+#include "scooby/startup/application_loop.h"
 
 namespace Scooby {
 

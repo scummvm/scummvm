@@ -26,7 +26,7 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 
-#include "controller_buttons.h"
+#include "scooby/input/controller_buttons.h"
 
 // MANAGED-ONLY MOUSE SUPPORT (see mouse.h). Nothing in this file exists in the original game.
 //

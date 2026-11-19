@@ -25,13 +25,13 @@
 #include "common/array.h"
 #include "common/scummsys.h"
 
-#include "scooby/types.h"
-#include "indexed_frame.h"
 #include "scooby/common/span.h"
-#include "sprite_instance.h"
-#include "sprite_layer.h"
-#include "tile_cell.h"
-#include "tile_layer.h"
+#include "scooby/graphics/indexed_frame.h"
+#include "scooby/graphics/sprite_instance.h"
+#include "scooby/graphics/sprite_layer.h"
+#include "scooby/graphics/tile_cell.h"
+#include "scooby/graphics/tile_layer.h"
+#include "scooby/types.h"
 
 // Owns the decoded tiles, logical layers, palette, and scrolling needed to
 // render the current scene.

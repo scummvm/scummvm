@@ -26,9 +26,9 @@
 
 #include "common/array.h"
 
-#include "indexed_frame.h"
 #include "scooby/common/span.h"
-#include "sprite_instance.h"
+#include "scooby/graphics/indexed_frame.h"
+#include "scooby/graphics/sprite_instance.h"
 
 // Owns linked sprite state and resolves sprite overlap before the scene
 // applies plane priority.

@@ -19,7 +19,7 @@
  *
  */
 
-#include "intro_sequence.h"
+#include "scooby/startup/intro_sequence.h"
 
 #include "common/algorithm.h"
 

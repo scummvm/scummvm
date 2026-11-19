@@ -19,7 +19,7 @@
  *
  */
 
-#include "scripted_room_movement_executor.h"
+#include "scooby/movement/scripted_room_movement_executor.h"
 
 #include "scooby/rooms/actor_facing_animation.h"
 #include "scooby/common/contracts.h"

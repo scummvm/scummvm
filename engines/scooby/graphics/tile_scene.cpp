@@ -19,9 +19,9 @@
  *
  */
 
-#include "tile_scene.h"
+#include "scooby/graphics/tile_scene.h"
 
-#include "genesis_asset_decoder.h"
+#include "scooby/graphics/genesis_asset_decoder.h"
 #include "common/algorithm.h"
 #include "common/util.h"
 

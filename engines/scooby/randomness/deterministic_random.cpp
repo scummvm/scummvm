@@ -19,7 +19,7 @@
  *
  */
 
-#include "deterministic_random.h"
+#include "scooby/randomness/deterministic_random.h"
 
 namespace Scooby {
 namespace {

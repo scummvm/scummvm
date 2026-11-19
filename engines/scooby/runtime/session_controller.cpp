@@ -19,7 +19,7 @@
  *
  */
 
-#include "session_controller.h"
+#include "scooby/runtime/session_controller.h"
 
 #include "common/algorithm.h"
 #include "scooby/scooby.h"

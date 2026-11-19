@@ -19,7 +19,7 @@
  *
  */
 
-#include "episode_opening_sequence.h"
+#include "scooby/runtime/episode_opening_sequence.h"
 
 #include "common/algorithm.h"
 #include "common/scummsys.h"

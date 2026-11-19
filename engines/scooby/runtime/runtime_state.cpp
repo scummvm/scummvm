@@ -19,7 +19,7 @@
  *
  */
 
-#include "runtime_state.h"
+#include "scooby/runtime/runtime_state.h"
 
 #include "scooby/graphics/genesis_asset_decoder.h"
 
