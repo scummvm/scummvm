@@ -203,13 +203,12 @@ void Dialog::collectKeyboardFocusWidgets(Widget *first, Common::Array<Widget *> 
 
 	for (uint i = 0; i < siblings.size(); ++i) {
 		Widget *w = siblings[i];
-		if (w->wantsKeyboardFocus()) {
-			if (w->isEnabled())
-				widgets.push_back(w);
-		} else {
-			// Containers may hold widgets accepting the focus
-			collectKeyboardFocusWidgets(w->_firstWidget, widgets);
-		}
+		if (w->wantsKeyboardFocus() && w->isEnabled())
+			widgets.push_back(w);
+
+		// Containers may hold widgets accepting the focus, even when they
+		// take it themselves, as tab widgets do
+		collectKeyboardFocusWidgets(w->_firstWidget, widgets);
 	}
 }
 

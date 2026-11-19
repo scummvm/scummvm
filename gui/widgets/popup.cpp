@@ -460,44 +460,75 @@ PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const Comm
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	if (isEnabled()) {
-		PopUpDialog popupDialog(this, "", x + getAbsX(), y + getAbsY());
-		popupDialog.setPosition(getAbsX(), getAbsY() - _selectedItem * kLineHeight);
-		popupDialog.setPadding(_leftPadding, _rightPadding);
-		popupDialog.setWidth(getWidth() - kLineHeight + 2);
+	if (isEnabled())
+		openPopup(x + getAbsX(), y + getAbsY());
+}
+
+void PopUpWidget::openPopup(int clickX, int clickY) {
+	PopUpDialog popupDialog(this, "", clickX, clickY);
+	popupDialog.setPosition(getAbsX(), getAbsY() - _selectedItem * kLineHeight);
+	popupDialog.setPadding(_leftPadding, _rightPadding);
+	popupDialog.setWidth(getWidth() - kLineHeight + 2);
 
 
-		for (uint i = 0; i < _entries.size(); i++) {
-			popupDialog.appendEntry(_entries[i].name);
-		}
-		popupDialog.setSelection(_selectedItem);
+	for (uint i = 0; i < _entries.size(); i++) {
+		popupDialog.appendEntry(_entries[i].name);
+	}
+	popupDialog.setSelection(_selectedItem);
 
-		int newSel = popupDialog.runModal();
-		if (newSel != -1 && _selectedItem != newSel) {
-			_selectedItem = newSel;
-			sendCommand(_cmd, _entries[_selectedItem].tag);
-			markAsDirty();
-		}
+	int newSel = popupDialog.runModal();
+	if (newSel != -1 && _selectedItem != newSel) {
+		_selectedItem = newSel;
+		sendCommand(_cmd, _entries[_selectedItem].tag);
+		markAsDirty();
+	}
+}
+
+bool PopUpWidget::handleKeyDown(Common::KeyState state) {
+	if (!isEnabled() || (state.flags & (Common::KBD_CTRL | Common::KBD_META)))
+		return false;
+
+	// Space and Alt+Up/Down open the list, Up and Down change the selection.
+	// Return is left to the dialog, which usually confirms with it.
+	const bool alt = state.flags & Common::KBD_ALT;
+	switch (state.keycode) {
+	case Common::KEYCODE_SPACE:
+		if (alt)
+			return false;
+		openPopup(-1, -1);
+		return true;
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_UP:
+		if (alt)
+			openPopup(-1, -1);
+		else
+			moveSelection(state.keycode == Common::KEYCODE_DOWN ? 1 : -1);
+		return true;
+	default:
+		return false;
 	}
 }
 
 void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
-	if (isEnabled()) {
-		int newSelection = _selectedItem + direction;
+	if (isEnabled())
+		moveSelection(direction);
+}
 
-		// Skip separator entries
-		while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-		       _entries[newSelection].name.empty()) {
-			newSelection += direction;
-		}
+void PopUpWidget::moveSelection(int direction) {
+	int newSelection = _selectedItem + direction;
 
-		// Just update the selected item when we're in range
-		if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-			(newSelection != _selectedItem)) {
-			_selectedItem = newSelection;
-			sendCommand(_cmd, _entries[_selectedItem].tag);
-			markAsDirty();
-		}
+	// Skip separator entries
+	while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
+	       _entries[newSelection].name.empty()) {
+		newSelection += direction;
+	}
+
+	// Just update the selected item when we're in range
+	if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
+		(newSelection != _selectedItem)) {
+		_selectedItem = newSelection;
+		sendCommand(_cmd, _entries[_selectedItem].tag);
+		markAsDirty();
 	}
 }
 

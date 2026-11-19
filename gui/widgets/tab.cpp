@@ -185,7 +185,11 @@ void TabWidget::setActiveTab(int tabID) {
 		// Exchange the widget lists, and switch to the new tab
 		if (_activeTab != -1) {
 			_tabs[_activeTab].firstWidget = _firstWidget;
-			releaseFocus();
+
+			// Only release the focus if it is on the page being hidden
+			Widget *focused = getFocusWidget();
+			if (focused && containsWidgetInChain(_firstWidget, focused))
+				releaseFocus();
 		}
 		_activeTab = tabID;
 		_firstWidget = _tabs[tabID].firstWidget;
@@ -288,6 +292,30 @@ bool TabWidget::handleKeyDown(Common::KeyState state) {
 	if (state.keycode == Common::KEYCODE_TAB && state.hasFlags(Common::KBD_CTRL)) {
 		adjustTabs(state.hasFlags(Common::KBD_SHIFT) ? kTabBackwards : kTabForwards);
 		return true;
+	}
+
+	// With the focus on the tab bar, the arrows and Home and End switch tabs
+	if (_hasFocus && !_tabs.empty() && !(state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))) {
+		const bool rtl = g_gui.useRTL() && _useRTL;
+
+		switch (state.keycode) {
+		case Common::KEYCODE_LEFT:
+			adjustTabs(rtl ? kTabForwards : kTabBackwards);
+			return true;
+		case Common::KEYCODE_RIGHT:
+			adjustTabs(rtl ? kTabBackwards : kTabForwards);
+			return true;
+		case Common::KEYCODE_HOME:
+			if (_activeTab != 0)
+				adjustTabs(-_activeTab);
+			return true;
+		case Common::KEYCODE_END:
+			if (_activeTab != (int)_tabs.size() - 1)
+				adjustTabs((int)_tabs.size() - 1 - _activeTab);
+			return true;
+		default:
+			break;
+		}
 	}
 
 	return Widget::handleKeyDown(state);
@@ -423,7 +451,7 @@ void TabWidget::drawWidget() {
 			_bodyBackgroundType);
 
 	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x + _w, _y + _h), _tabHeight, widths, tabs,
-				_activeTab - _firstVisibleTab, (g_gui.useRTL() && _useRTL), _alignV);
+				_activeTab - _firstVisibleTab, (g_gui.useRTL() && _useRTL), _alignV, _hasFocus);
 }
 
 void TabWidget::draw() {

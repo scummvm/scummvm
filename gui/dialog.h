@@ -80,7 +80,7 @@ public:
 
 	void	releaseFocus() override;
 	void	setFocusWidget(Widget *widget);
-	Widget *getFocusWidget() { return _focusedWidget; }
+	Widget *getFocusWidget() override { return _focusedWidget; }
 
 	bool isDragging() const { return _dragWidget != nullptr; }
 

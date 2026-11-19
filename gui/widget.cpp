@@ -72,10 +72,28 @@ void Widget::clearFlags(int flags) {
 	_flags &= ~flags;
 }
 
+void Widget::receivedFocus() {
+	_hasFocus = true;
+	if (showsFocusAsHighlight()) {
+		updateState(_flags, _flags);
+		markAsDirty();
+	}
+	receivedFocusWidget();
+}
+
+void Widget::lostFocus() {
+	_hasFocus = false;
+	if (showsFocusAsHighlight()) {
+		updateState(_flags, _flags);
+		markAsDirty();
+	}
+	lostFocusWidget();
+}
+
 void Widget::updateState(int oldFlags, int newFlags) {
 	if (newFlags & WIDGET_ENABLED) {
 		_state = ThemeEngine::kStateEnabled;
-		if (newFlags & WIDGET_HILITED)
+		if ((newFlags & WIDGET_HILITED) || (_hasFocus && showsFocusAsHighlight()))
 			_state = ThemeEngine::kStateHighlight;
 		if (newFlags & WIDGET_PRESSED)
 			_state = ThemeEngine::kStatePressed;
@@ -471,6 +489,23 @@ void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	setPressedState();
 }
 
+static bool isActivationKey(const Common::KeyState &state, bool allowReturn) {
+	if (state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))
+		return false;
+	if (state.keycode == Common::KEYCODE_SPACE)
+		return true;
+	return allowReturn && (state.keycode == Common::KEYCODE_RETURN || state.keycode == Common::KEYCODE_KP_ENTER);
+}
+
+bool ButtonWidget::handleKeyDown(Common::KeyState state) {
+	// The command may close the dialog, so nothing is touched afterwards
+	if (isEnabled() && isActivationKey(state, true)) {
+		sendCommand(_cmd, 0);
+		return true;
+	}
+	return false;
+}
+
 void ButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), getLabel(), _state, getFlags());
 }
@@ -601,26 +636,39 @@ void DropdownButtonWidget::handleMouseMoved(int x, int y, int button) {
 
 void DropdownButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && !_entries.empty() && _duringPress && isInDropDown(x, y)) {
-
-		PopUpDialog popupDialog(this, "DropdownDialog", x + getAbsX(), y + getAbsY());
-		popupDialog.setPosition(getAbsX(), getAbsY() + _h);
-		popupDialog.setLineHeight(_h);
-		popupDialog.setPadding(_dropdownWidth, _dropdownWidth);
-
-		for (uint i = 0; i < _entries.size(); i++) {
-			popupDialog.appendEntry(_entries[i].label);
-		}
-
-		int newSel = popupDialog.runModal();
-		if (newSel != -1) {
-			sendCommand(_entries[newSel].cmd, 0);
-		}
+		openDropdown(x + getAbsX(), y + getAbsY());
 
 		setUnpressedState();
 		_duringPress = false;
 	} else {
 		ButtonWidget::handleMouseUp(x, y, button, clickCount);
 	}
+}
+
+void DropdownButtonWidget::openDropdown(int clickX, int clickY) {
+	PopUpDialog popupDialog(this, "DropdownDialog", clickX, clickY);
+	popupDialog.setPosition(getAbsX(), getAbsY() + _h);
+	popupDialog.setLineHeight(_h);
+	popupDialog.setPadding(_dropdownWidth, _dropdownWidth);
+
+	for (uint i = 0; i < _entries.size(); i++) {
+		popupDialog.appendEntry(_entries[i].label);
+	}
+
+	int newSel = popupDialog.runModal();
+	if (newSel != -1) {
+		sendCommand(_entries[newSel].cmd, 0);
+	}
+}
+
+bool DropdownButtonWidget::handleKeyDown(Common::KeyState state) {
+	// Down opens the list of entries, Space and Return press the button
+	if (isEnabled() && !_entries.empty() && state.keycode == Common::KEYCODE_DOWN &&
+			!(state.flags & (Common::KBD_CTRL | Common::KBD_META))) {
+		openDropdown(-1, -1);
+		return true;
+	}
+	return ButtonWidget::handleKeyDown(state);
 }
 
 void DropdownButtonWidget::reflowLayout() {
@@ -653,8 +701,10 @@ void DropdownButtonWidget::drawWidget() {
 		// Degrade to a regular button
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), getLabel(), _state);
 	} else {
+		// The theme only highlights the part under the mouse
+		const bool inButton = _inButton || (_hasFocus && !_inDropdown);
 		g_gui.theme()->drawDropDownButton(Common::Rect(_x, _y, _x + _w, _y + _h), _dropdownWidth, getLabel(),
-										  _state, _inButton, _inDropdown, (g_gui.useRTL() && _useRTL));
+										  _state, inButton, _inDropdown, (g_gui.useRTL() && _useRTL));
 	}
 }
 
@@ -805,6 +855,15 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_duringPress = false;
 }
 
+bool CheckboxWidget::handleKeyDown(Common::KeyState state) {
+	// Return is left to the dialog, which usually confirms with it
+	if (isEnabled() && isActivationKey(state, false)) {
+		toggleState();
+		return true;
+	}
+	return false;
+}
+
 void CheckboxWidget::setState(bool state) {
 	if (_state != state) {
 		_state = state;
@@ -818,7 +877,7 @@ void CheckboxWidget::setOverride(bool enable) {
 }
 
 void CheckboxWidget::drawWidget() {
-	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, _overrideText, (g_gui.useRTL() && _useRTL));
+	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, _overrideText, (g_gui.useRTL() && _useRTL), _hasFocus);
 }
 
 Common::U32String CheckboxWidget::getSpokenDescription() const {
@@ -887,6 +946,15 @@ void RadiobuttonWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 	_duringPress = false;
 }
 
+bool RadiobuttonWidget::handleKeyDown(Common::KeyState state) {
+	// Space selects the radio button, as a click would
+	if (isEnabled() && isActivationKey(state, false)) {
+		setState(true);
+		return true;
+	}
+	return false;
+}
+
 void RadiobuttonWidget::setState(bool state, bool setGroup) {
 	if (setGroup) {
 		_group->setValue(_value);
@@ -901,7 +969,7 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 }
 
 void RadiobuttonWidget::drawWidget() {
-	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, (g_gui.useRTL() && _useRTL));
+	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, (g_gui.useRTL() && _useRTL), _hasFocus);
 }
 
 Common::U32String RadiobuttonWidget::getSpokenDescription() const {
@@ -983,6 +1051,53 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 			sendCommand(_cmd, _value);	// FIXME - hack to allow for "live update" in sound dialog
 		}
 	}
+}
+
+bool SliderWidget::handleKeyDown(Common::KeyState state) {
+	if (!isEnabled() || _isDragging || (state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META)))
+		return false;
+
+	// Left and Right follow the direction the slider fills in, reversed in RTL
+	const int pageStep = MAX(1, (_valueMax - _valueMin) / 10);
+	const bool rtl = g_gui.useRTL() && _useRTL;
+	int newValue;
+
+	switch (state.keycode) {
+	case Common::KEYCODE_LEFT:
+		newValue = rtl ? _value + 1 : _value - 1;
+		break;
+	case Common::KEYCODE_RIGHT:
+		newValue = rtl ? _value - 1 : _value + 1;
+		break;
+	case Common::KEYCODE_DOWN:
+		newValue = _value - 1;
+		break;
+	case Common::KEYCODE_UP:
+		newValue = _value + 1;
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+		newValue = _value - pageStep;
+		break;
+	case Common::KEYCODE_PAGEUP:
+		newValue = _value + pageStep;
+		break;
+	case Common::KEYCODE_HOME:
+		newValue = _valueMin;
+		break;
+	case Common::KEYCODE_END:
+		newValue = _valueMax;
+		break;
+	default:
+		return false;
+	}
+
+	newValue = CLIP(newValue, _valueMin, _valueMax);
+	if (newValue != _value) {
+		_value = newValue;
+		markAsDirty();
+		sendCommand(_cmd, _value);
+	}
+	return true;
 }
 
 void SliderWidget::drawWidget() {

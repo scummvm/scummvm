@@ -159,8 +159,8 @@ public:
 	/** Redraw the widget if it was marked as dirty, and recursively proceed with its children */
 	virtual void draw();
 
-	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }
-	void lostFocus() { _hasFocus = false; lostFocusWidget(); }
+	void receivedFocus();
+	void lostFocus();
 	virtual bool wantsFocus() { return false; }
 
 	/** Whether Tab and Shift+Tab can move the focus to this widget */
@@ -242,6 +242,9 @@ protected:
 
 	void updateState(int oldFlags, int newFlags);
 
+	/** Widgets only taking the focus from the keyboard show it highlighted */
+	bool showsFocusAsHighlight() { return wantsKeyboardFocus() && !wantsFocus(); }
+
 	virtual void drawWidget() = 0;
 
 	virtual void receivedFocusWidget() {}
@@ -250,6 +253,7 @@ protected:
 	virtual Widget *findWidget(int x, int y) { return this; }
 
 	void releaseFocus() override { assert(_boss); _boss->releaseFocus(); }
+	Widget *getFocusWidget() override { assert(_boss); return _boss->getFocusWidget(); }
 
 	// Tickles are handled in Dialog
 	void registerTickleWidget(Widget *widget) override { assert(_boss); _boss->registerTickleWidget(widget); }
@@ -313,6 +317,8 @@ public:
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	bool handleKeyDown(Common::KeyState state) override;
+	bool wantsKeyboardFocus() override { return true; }
 	void handleMouseEntered(int button) override	{ readLabel(); if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); markAsDirty(); }
 	Common::U32String getSpokenDescription() const override;
@@ -334,6 +340,7 @@ public:
 
 	void handleMouseMoved(int x, int y, int button) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	bool handleKeyDown(Common::KeyState state) override;
 	void reflowLayout() override;
 	void getMinSize(int &minWidth, int &minHeight) override;
 
@@ -353,6 +360,8 @@ protected:
 
 	void reset();
 	bool isInDropDown(int x, int y) const;
+	/** Show the list of entries and send the command of the chosen one */
+	void openDropdown(int clickX, int clickY);
 
 	EntryList _entries;
 
@@ -397,6 +406,7 @@ public:
 	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	bool handleKeyDown(Common::KeyState state) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 	Common::U32String getSpokenDescription() const override;
@@ -448,6 +458,7 @@ public:
 	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	bool handleKeyDown(Common::KeyState state) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 	Common::U32String getSpokenDescription() const override;
@@ -494,6 +505,8 @@ public:
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 	Common::U32String getSpokenDescription() const override;
 	void handleMouseWheel(int x, int y, int direction) override;
+	bool handleKeyDown(Common::KeyState state) override;
+	bool wantsKeyboardFocus() override { return true; }
 
 protected:
 	void drawWidget() override;

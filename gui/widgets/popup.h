@@ -56,6 +56,8 @@ public:
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;
+	bool handleKeyDown(Common::KeyState state) override;
+	bool wantsKeyboardFocus() override { return true; }
 
 	void appendEntry(const Common::U32String &entry, uint32 tag = (uint32)-1);
 	void appendEntry(const Common::String &entry, uint32 tag = (uint32)-1);
@@ -79,6 +81,11 @@ public:
 	void reflowLayout() override;
 protected:
 	void drawWidget() override;
+
+	/** Show the list of entries. clickX and clickY are -1 when opened by keyboard. */
+	void openPopup(int clickX, int clickY);
+	/** Select the next (direction > 0) or previous entry, skipping separators */
+	void moveSelection(int direction);
 };
 
 /**
