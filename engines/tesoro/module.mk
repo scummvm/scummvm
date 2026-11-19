@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	core/archiveindex.o \
 	core/camera.o \
 	core/cameraframe.o \
+	core/character.o \
 	core/clock.o \
 	core/collision.o \
 	core/cursor.o \
@@ -36,6 +37,7 @@ MODULE_OBJS = \
 	core/speechtable.o \
 	core/spriteobject.o \
 	core/stdiotext.o \
+	core/storycharacter.o \
 	core/textqueue.o \
 	core/walkarea.o \
 	core/walkfloor.o

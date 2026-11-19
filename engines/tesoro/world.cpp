@@ -32,6 +32,7 @@
 #include "tesoro/core/namekey.h"
 #include "tesoro/core/walkfloor.h"
 #include "tesoro/core/pathobject.h"
+#include "tesoro/core/storycharacter.h"
 
 namespace Tesoro {
 
@@ -98,6 +99,12 @@ private:
 			_world._jimStep = step + 1;
 			_world._jimPhase = 1;
 			return 3;
+		}
+		if (step == 0) {
+			// The fisherman is told the story has not begun: state 2 becomes 3.
+			Object *fisherman = _world.findObject(kDeckLevel, "PESCADOR");
+			if (fisherman && !fisherman->stateBlob().empty() && fisherman->stateBlob()[0] == 2)
+				fisherman->stateBlob()[0] = 3;
 		}
 		return 1;
 	}
@@ -251,6 +258,11 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 	const int16 sort = room.sortOffset();
 	const Common::Array<AnimPlayer> &levelPlayers = level.levelPlayers();
 	switch (record.kind) {
+		case 5: {
+			StoryCharacter *object = new StoryCharacter();
+			object->init(record.dataByte(5), record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
 		case 9: {
 			InteractiveObject *object = new InteractiveObject();
 			object->init(record, sort, levelPlayers, loadTime, *this, 0);
@@ -349,6 +361,12 @@ bool World::skipPressed() {
 
 bool World::subtitlesOn() { return _subtitles; }
 
+Camera &World::updateCamera(int32 divisor) {
+	Camera &camera = jimLevel()->camera();
+	camera.updateToward(divisor, now());
+	return camera;
+}
+
 void World::queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth) {
 	_engine._display.queueText(text, colour, centreX, y, maxWidth, 0, true, 0);
 }
@@ -396,6 +414,14 @@ void World::jimShow(bool visible) { jim()->setVisible(visible); }
 
 void World::jimMoveTo(int32 x, int32 y) { jim()->setPosition(x, y); }
 void World::jimRemoveFromMainList() { removeFromMainList(jim()); }
+
+int World::startScript(Character &who, const char *block, const char *label, byte *variables) {
+	return startScript(static_cast<InteractiveObject &>(who), block, label, variables);
+}
+
+int World::startScript(InteractiveObject &who, const char *block, const char *label, byte *variables) {
+	return startScriptInLevel(who.level() ? who.level()->index() : -1, block, label, variables);
+}
 
 int World::startScriptInJimLevel(const char *block, const char *label, byte *variables) { return startScriptInLevel(jimLevelIndex(), block, label, variables); }
 

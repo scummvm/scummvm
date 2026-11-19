@@ -244,7 +244,7 @@ void Jim::placeSpeech(uint pose) {
 	_anim.current().setRange(1, 1, false, false, _world.now());
 }
 
-void Jim::setPose(uint32) {
+void Jim::prepareToSpeak(uint32) {
 	// Jim speaks in the pose of the way he faces, whatever the line asks for.
 	switch (_facing) {
 	case 3:

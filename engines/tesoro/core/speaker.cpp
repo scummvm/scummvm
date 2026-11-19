@@ -37,7 +37,7 @@ void Speaker::say(const SpeechTable::Line &line, int32 colour, uint32 pose) {
 	}
 	_voiceId = line.wavOffset ? _object.playVoice(line.wavOffset) : 0;
 	_talkTime = _object.now();
-	_object.setPose(pose);
+	_object.prepareToSpeak(pose);
 	_object.insertInMainList(kSpeakerPriority);
 	_object.objectUpdate();
 }

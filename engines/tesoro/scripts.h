@@ -118,6 +118,8 @@ public:
 		const SpeechTable::Line &line = _w._speech.lineOf(phrase);
 		if (actor == _w._jim)
 			_w._jim->sayAnswer(line);
+		else if (actor && actor->kindId() == 5)
+			static_cast<Character *>(actor)->say(line, static_cast<Character *>(actor)->textColour(), extra);
 		else
 			warning("Tesoro: a script makes something other than Jim speak");
 	}
@@ -126,19 +128,12 @@ public:
 	bool isSpeaking(Object *actor) {
 		if (actor == _w._jim)
 			return _w._jim->speaker().speaking();
-		return actor && actor->kindId() == 5;
+		return actor && actor->kindId() == 5 && static_cast<Character *>(actor)->speaker().speaking();
 	}
 
 	void animate(Object *object, byte first, int16 last, int32 third, bool loop) {
 		if (object)
 			object->animation().selectBank(first, (uint16)last, third, loop, false, _w.now());
-	}
-
-	void look(Object *object, int8 direction) {
-		if (object == _w._jim)
-			_w._jim->setFacing(direction);
-		else if (object)
-			warning("Tesoro: a script turns something other than Jim");
 	}
 
 	void activate(Object *object, bool on) {
@@ -161,16 +156,23 @@ public:
 	void walk(Object *object, int16 x, int16 y, uint32 notifyBlock) {
 		if (object == _w._jim)
 			_w._jim->walkTo(x, y, _tasks[notifyBlock], false);
-		else if (object)
-			warning("Tesoro: a script makes something other than Jim walk");
+		else if (object && object->kindId() == 5)
+			static_cast<Character *>(object)->startWalk();
+	}
+
+	void look(Object *object, int8 direction) {
+		if (object == _w._jim)
+			_w._jim->setFacing(direction);
+		else if (object && object->kindId() == 5)
+			static_cast<Character *>(object)->face(direction);
 	}
 
 	// An object held in a speaking pose goes back to what it was doing.
-	void releaseIfBusy(Object *object) {
-		if (object && object->animation().bankCount() > 0 && object->animation().isStashed()) {
-			object->animation().setStashed(false);
-			object->animation().restoreStashed();
-			object->animation().current().resume(_w.now());
+	void releaseIfBusy(Object *character) {
+		if (character && character->animation().bankCount() > 0 && character->animation().isStashed()) {
+			character->animation().setStashed(false);
+			character->animation().restoreStashed();
+			character->animation().current().resume(_w.now());
 		}
 	}
 

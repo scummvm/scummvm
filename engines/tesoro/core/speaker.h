@@ -50,7 +50,7 @@ public:
 	virtual void pauseAnimation() = 0;
 	virtual void stashAnimation() = 0;
 
-	virtual void setPose(uint32 pose) = 0;
+	virtual void prepareToSpeak(uint32 pose) = 0;
 	virtual void queueFrame() = 0;
 	virtual void setFrameRange(uint16 first, int32 last) = 0;
 	virtual uint32 frameCount() = 0;

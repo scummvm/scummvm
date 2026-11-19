@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 
+#include "tesoro/core/character.h"
 #include "tesoro/core/objectlist.h"
 #include "tesoro/core/sounddevice.h"
 #include "tesoro/core/speechtable.h"
@@ -57,6 +58,8 @@ public:
 	int startScriptAt(Level *level, const char *block, const char *label, byte *variables);
 	int startScriptInJimLevel(const char *block, const char *label, byte *variables);
 	int startScriptInLevel(int level, const char *block, const char *label, byte *variables);
+	int startScript(Character &who, const char *block, const char *label, byte *variables);
+	int startScript(InteractiveObject &who, const char *block, const char *label, byte *variables);
 
 	/** Reads a level file and builds its objects, hosted by this world. */
 	Level *loadLevelFile(const char *name, int mode, int index = -1);
@@ -120,6 +123,7 @@ public:
 
 	Object *findObject(int level, const char *name);
 	Object *findObjectByKey(int level, uint64 key);
+
 	/** The level Jim is in, or null. */
 	Level *jimLevel();
 	void playMusicTrack(byte track);
@@ -143,6 +147,8 @@ public:
 	uint32 randomNumber(uint32 lo, uint32 hi);
 	bool skipPressed();
 	bool subtitlesOn();
+
+	Camera &updateCamera(int32 divisor);
 	void queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth);
 	void drawSubtitle(Jim &jim, const SpeechTable::Line &line);
 	int interactiveUpdate(Jim &jim);

@@ -115,7 +115,7 @@ private:
 	void removeFromMainList() override;
 	void pauseAnimation() override;
 	void stashAnimation() override { _anim.stash(); }
-	void setPose(uint32 pose) override;
+	void prepareToSpeak(uint32 pose) override;
 	void queueFrame() override;
 	void setFrameRange(uint16 first, int32 last) override;
 	uint32 frameCount() override { return _anim.current().bank()->stepCount(); }
