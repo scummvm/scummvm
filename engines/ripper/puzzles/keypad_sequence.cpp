@@ -214,7 +214,7 @@ void KeypadSequencePuzzle::render() const {
 				kKeyPositions[_pressedKey].y);
 	}
 	g_system->unlockScreen();
-	_baseDisplay.restorePalette();
+	setIndexedPaletteIfChanged(_baseDisplay.palette().data());
 	presentScreen();
 }
 
