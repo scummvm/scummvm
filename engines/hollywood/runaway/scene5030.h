@@ -47,7 +47,9 @@ public:
 
 	RunawayScene5030(Audio::Mixer *mixer, RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings,
 			RunawayGameType game = kRunawayCabinDemo) :
-		_audio(audio), _inventory(inventory), _strings(strings), _game(game), _interrogation(mixer), _random("runawayShack"), _actor() {}
+		_audio(audio), _inventory(inventory), _strings(strings), _game(game), _interrogation(mixer), _random("runawayShack"), _actor(),
+		_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync : RunawaySpeech::kTextLipSync),
+		_walkPath(Common::Point(623, 447)) {}
 	bool load(uint16 entryScene) override;
 	void start(uint32 now) override;
 	void resume() override;
@@ -60,10 +62,10 @@ public:
 	byte hotspotAt(Common::Point mouse) const override;
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _committedCaption; }
-	const Common::U32String &subtitle() const override { return _action == kPeekConversation ? _interrogation.subtitle() : _subtitle; }
+	const Common::U32String &subtitle() const override { return _action == kPeekConversation ? _interrogation.subtitle() : _speech.subtitle(); }
 	bool busy() const override { return _action != kNone; }
 	bool speaking() const override { return _action == kPeekConversation ? _interrogation.speaking() : _speechRow != 0; }
-	byte speechFrame() const override { return _lipSync.frame(_now); }
+	byte speechFrame() const override { return _speech.frame(_now); }
 	void skipSpeech() override;
 	bool playingVideo() const override { return _action == kIntroVideo || _action == kCleanWindowVideo; }
 	bool inventoryPresentation() const override { return _action == kIntroInventory; }
@@ -71,7 +73,7 @@ public:
 	void cancelWalk();
 	void sayInventory(const RunawayInventory::Reply &reply) override;
 	bool escaped() const override { return _escaped; }
-	bool canSave() const override { return !busy() && !speaking() && !_escaped && _pathIndex == _path.size(); }
+	bool canSave() const override { return !busy() && !speaking() && !_escaped && !_walkPath.active(); }
 	void captureState(RunawaySaveState &state) const override;
 	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
 	void setOptions(bool antialias, bool fastScrolling) override { _antialias = antialias; _fastScrolling = fastScrolling; }
@@ -128,14 +130,12 @@ private:
 	bool _peeked = false;
 	bool _antialias = true, _fastScrolling = true;
 	RunawayActor _actor;
-	RunawayLipSync _lipSync;
+	RunawaySpeech _speech;
 	RunawayIdleHead _idleHead;
 	RunawayAnimation _intro, _lidActor, _lid, _unplug, _climb, _actionAnimation, _water, _hatch;
 	RunawayVideo _video;
 	Common::Point _position = Common::Point(623, 447);
-	Common::Array<Common::Point> _path;
-	uint _pathIndex = 0;
-	float _x = 623, _y = 447;
+	RunawayWalkPath _walkPath;
 	byte _facing = 3, _pendingHotspot = 0;
 	byte _pendingItem = 0;
 	RunawayVerb _pendingVerb = kVerbWalk;
@@ -150,12 +150,11 @@ private:
 	bool _pickedUp[20] = {};
 	bool _examined[20] = {};
 	bool _globalSpeech = false;
-	uint32 _now = 0, _lastUpdate = 0, _actionStarted = 0, _subtitleUntil = 0;
+	uint32 _now = 0, _lastUpdate = 0, _actionStarted = 0;
 	uint32 _walkElapsed = 0, _lastFootstep = 0;
 	uint _step = 0;
 	uint16 _speechRow = 0, _speechEnd = 0;
 	uint16 _speechSample = 0;
-	Common::U32String _subtitle;
 	Common::U32String _committedCaption;
 };
 

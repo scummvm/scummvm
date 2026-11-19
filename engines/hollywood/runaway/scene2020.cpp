@@ -537,7 +537,7 @@ float RunawayRoomScene::actorHeight2020() const {
 }
 
 void RunawayRoomScene::update2020() {
-	if (_hospitalEntryStep && !speaking() && _pathIndex == _path.size()) {
+	if (_hospitalEntryStep && !speaking() && !_walkPath.active()) {
 		switch (_hospitalEntryStep++) {
 		case 1:
 			_facing = 4;
@@ -568,7 +568,7 @@ void RunawayRoomScene::update2020() {
 			break;
 		}
 	}
-	if (!speaking() && _pathIndex == _path.size()) {
+	if (!speaking() && !_walkPath.active()) {
 		if (_roomAction == 340) {
 			if (!_actionStage) {
 				walkTo(Common::Point(531, 416), 3, true);

@@ -140,7 +140,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2080(uint16 action) {
 }
 
 void RunawayRoomScene::update2080() {
-	if (!_hospital.attacked && _hospital.chartMoved && _hospital.decoy && _pathIndex == _path.size()) {
+	if (!_hospital.attacked && _hospital.chartMoved && _hospital.decoy && !_walkPath.active()) {
 		_hospital.attacked = 1;
 		_transition.scene = 2023;
 		_transition.position = Common::Point(1075, 534);

@@ -164,6 +164,7 @@ MODULE_OBJS = \
 	runaway/scene4140.o \
 	runaway/scene5030.o \
 	runaway/sequence.o \
+	runaway/speech.o \
 	runaway/strings.o \
 	runaway/ui.o \
 	runaway/video.o

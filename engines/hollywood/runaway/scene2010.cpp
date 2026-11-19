@@ -96,9 +96,7 @@ void RunawayOpening::enter(Step step, uint32 now) {
 	_now = _started = now;
 	_events = 0;
 	_row = 0;
-	_subtitle.clear();
-	_lipSync.stop();
-	_audio.stopSpeech();
+	_speech.stop();
 	switch (step) {
 	case kSitDown:      _firstFrame = 0;   _lastFrame = 20;  _headBank = 0; break;
 	case kLeanForward:  _firstFrame = 161; _lastFrame = 177; _headBank = 0; break;
@@ -231,23 +229,18 @@ void RunawayOpening::speak(uint16 cue, byte variation) {
 }
 
 void RunawayOpening::showLine() {
-	_subtitle = Common::U32String(_text.largeTextRecord(_row), Common::kDos850);
 	// The framing narration belongs to DATAACA0, independently of chapter.
-	const uint32 duration = _audio.playSpeech(_sample, _narrating);
-	_lipSync.start(_subtitle, _now, duration, _random, _sample);
-	_deadline = _now + (duration ? MAX<uint>(1000, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
+	_speech.start(Common::U32String(_text.largeTextRecord(_row), Common::kDos850), _sample, _narrating, _now);
 }
 
 void RunawayOpening::nextLine() {
-	_audio.stopSpeech();
-	_lipSync.stop();
+	_speech.stop();
 	if (_row < _lastRow) {
 		++_row;
 		++_sample;
 		showLine();
 	} else {
 		_row = 0;
-		_subtitle.clear();
 	}
 }
 
@@ -274,7 +267,7 @@ void RunawayOpening::update(uint32 now) {
 	_now = now;
 	if (finished())
 		return;
-	if (speaking() && !_audio.speechPlaying() && (int32)(now - _deadline) >= 0)
+	if (speaking() && !_audio.speechPlaying() && _speech.finished(now))
 		nextLine();
 	const uint elapsed = now - _started;
 	switch (_step) {
@@ -422,7 +415,7 @@ void RunawayOpening::drawNarrator(Graphics::ManagedSurface &screen) {
 	screen.blitFrom(_narratorBackground, Common::Point(0, kRunawayViewportTop));
 	_narrator[0].draw(screen, _bodyFrame, 0, kRunawayViewportTop);
 	if (_headBank)
-		_narrator[_headBank].draw(screen, _lipSync.frame(_now) % 6, 0, kRunawayViewportTop);
+		_narrator[_headBank].draw(screen, _speech.frame(_now) % 6, 0, kRunawayViewportTop);
 	if (_step == kMontage)
 		_video.draw(screen, Common::Rect(256, 232, 656, 466));
 	if (_step == kChapter || _step == kChapterGesture)
@@ -489,7 +482,7 @@ void RunawayOpening::drawFilm(Graphics::ManagedSurface &screen) {
 	if (_step == kStayAway || _step == kUnconscious || (_step >= kHospital && _step <= kReply)) {
 		const uint portrait = _step == kStayAway ? 0 : _step == kUnconscious ? 1 : 2;
 		// The other hitman speaks off screen; the visible man only blinks.
-		const uint mouth = _step == kHitman ? ((_now - _started) % 2400 < 160 ? 6 : 0) : _lipSync.frame(_now);
+		const uint mouth = _step == kHitman ? ((_now - _started) % 2400 < 160 ? 6 : 0) : _speech.frame(_now);
 		if (!_portraits.draw(screen, viewport, portrait, mouth))
 			_failed = true;
 	}

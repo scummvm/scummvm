@@ -27,8 +27,10 @@
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/inventory.h"
+#include "hollywood/runaway/navigation.h"
 #include "hollywood/runaway/saveload.h"
 #include "hollywood/runaway/sequence.h"
+#include "hollywood/runaway/speech.h"
 #include "hollywood/scene_text_store.h"
 
 namespace Hollywood {
@@ -98,10 +100,10 @@ public:
 	byte hotspotAt(Common::Point mouse) const override;
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
-	const Common::U32String &subtitle() const override { return _sequence.active() ? _sequence.subtitle() : _subtitle; }
+	const Common::U32String &subtitle() const override { return _sequence.active() ? _sequence.subtitle() : _speech.subtitle(); }
 	bool busy() const override { return _sequence.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _hospitalEntryStep || _roomAction || _conversation || speaking(); }
 	bool speaking() const override { return !subtitle().empty(); }
-	byte speechFrame() const override { return _sequence.active() ? _sequence.speechFrame() : _lipSync.frame(_now); }
+	byte speechFrame() const override { return _sequence.active() ? _sequence.speechFrame() : _speech.frame(_now); }
 	bool playingVideo() const override { return _sequence.active(); }
 	void skipVideo() override { _sequence.skip(); }
 	bool escaped() const override { return _chapterComplete; }
@@ -109,7 +111,7 @@ public:
 	void sayInventory(const RunawayInventory::Reply &reply) override;
 	const Common::Array<Common::U32String> &dialogueChoices() const override { return _choices; }
 	void chooseDialogue(uint choice) override;
-	bool canSave() const override { return !busy() && _pathIndex == _path.size() && !_pressedKey; }
+	bool canSave() const override { return !busy() && !_walkPath.active() && !_pressedKey; }
 	void captureState(RunawaySaveState &state) const override;
 	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
 	void setOptions(bool antialias, bool fastScrolling) override { _antialias = antialias; _fastScrolling = fastScrolling; }
@@ -142,7 +144,7 @@ private:
 	void beginRoomAnimationRange(uint16 action, uint chunk, uint frames, uint first, uint last, bool hideActor = true);
 	void holdRoomAnimation(uint16 action, uint chunk, uint frames, uint frame, bool hideActor = true);
 	void setRoomAnimationOverlay(uint chunk, uint frames, const byte *order, uint count);
-	bool drawingRoomAnimation() const { return _roomAction && !_actionFrames.empty() && (_actionHoldSpeech || !speaking()) && _pathIndex == _path.size(); }
+	bool drawingRoomAnimation() const { return _roomAction && !_actionFrames.empty() && (_actionHoldSpeech || !speaking()) && !_walkPath.active(); }
 	void updateRoomAnimation();
 	void finishHospitalAnimation(uint16 action);
 	float actorHeight() const;
@@ -243,7 +245,7 @@ private:
 	const RunawayStrings &_strings;
 	const RunawayGameType _game;
 	Common::RandomSource _random;
-	RunawayLipSync _lipSync;
+	RunawaySpeech _speech;
 	RunawayIdleHead _idleHead;
 	ChunkArchive _archive;
 	SceneTextStore _text;
@@ -255,7 +257,7 @@ private:
 	Common::Array<byte> _mask, _originalMaps, _maps;
 	Common::Array<Common::Rect> _foreground[5];
 	Common::Array<byte> _keyPatches[25];
-	Common::Array<Common::Point> _path;
+	RunawayWalkPath _walkPath;
 	struct SpeechLine {
 		Common::U32String text;
 		uint16 sample;
@@ -263,14 +265,13 @@ private:
 		byte speaker;
 	};
 	Common::Array<SpeechLine> _lines;
-	Common::U32String _subtitle, _caption;
+	Common::U32String _caption;
 	Common::Point _position, _camera;
-	uint _pathIndex = 0, _lineIndex = 0;
+	uint _lineIndex = 0;
 	uint16 _room = 0, _pendingAction = 0;
 	byte _facing = 3, _pendingHotspot = 0, _pendingItem = 0;
 	byte _arrivalFacing = 0xff;
-	float _x = 0, _y = 0;
-	uint32 _now = 0, _lastUpdate = 0, _walkElapsed = 0, _subtitleUntil = 0;
+	uint32 _now = 0, _lastUpdate = 0, _walkElapsed = 0;
 	bool _upperFloor = true, _antialias = true, _fastScrolling = true;
 	ObjectState _books = kUnexamined, _recorder = kUnexamined;
 	bool _moneyIdentified = false, _safeOpen = false;

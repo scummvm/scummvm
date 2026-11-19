@@ -23,9 +23,9 @@
 #define HOLLYWOOD_RUNAWAY_SCENE2010_H
 
 #include "common/random.h"
-#include "hollywood/runaway/animation.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
+#include "hollywood/runaway/speech.h"
 #include "hollywood/runaway/video.h"
 #include "hollywood/scene_text_store.h"
 
@@ -35,7 +35,7 @@ namespace Hollywood {
 // All timing comes from the engine's pause-aware clock.
 class RunawayOpening {
 public:
-	explicit RunawayOpening(RunawayAudio &audio) : _audio(audio), _random("runawayOpening") {}
+	explicit RunawayOpening(RunawayAudio &audio) : _audio(audio), _random("runawayOpening"), _speech(audio, _random) {}
 	bool load(byte chapter = 0);
 	void start(uint32 now);
 	void update(uint32 now);
@@ -43,7 +43,7 @@ public:
 	void draw(Graphics::ManagedSurface &screen);
 	bool finished() const { return _step == kFinished || _failed; }
 	bool failed() const { return _failed; }
-	const Common::U32String &subtitle() const { return _subtitle; }
+	const Common::U32String &subtitle() const { return _speech.subtitle(); }
 
 private:
 	enum Step {
@@ -69,7 +69,7 @@ private:
 	RunawayAudio &_audio;
 	Common::RandomSource _random;
 	SceneTextStore _text;
-	RunawayLipSync _lipSync;
+	RunawaySpeech _speech;
 	RunawayVideo _video;
 	Graphics::ManagedSurface _narratorBackground, _city, _cityTitle;
 	RunawayFilmPortrait _portraits;
@@ -84,7 +84,6 @@ private:
 	bool _chapterOnly = false;
 	uint16 _row = 0, _lastRow = 0, _sample = 0;
 	bool _narrating = true, _themeStarted = false, _failed = false;
-	Common::U32String _subtitle;
 };
 
 } // End of namespace Hollywood

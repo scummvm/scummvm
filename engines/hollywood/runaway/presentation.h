@@ -25,9 +25,9 @@
 #include "common/random.h"
 #include "common/language.h"
 #include "common/ustr.h"
-#include "hollywood/runaway/animation.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
+#include "hollywood/runaway/speech.h"
 #include "hollywood/scene_text_store.h"
 
 namespace Hollywood {
@@ -49,7 +49,8 @@ private:
 
 class RunawayInterrogation {
 public:
-	explicit RunawayInterrogation(Audio::Mixer *mixer) : _audio(mixer), _random("runawayInterrogation") {}
+	explicit RunawayInterrogation(Audio::Mixer *mixer) :
+		_audio(mixer), _random("runawayInterrogation"), _speech(_audio, _random, RunawaySpeech::kTextLipSync) {}
 	bool load();
 	void start(uint32 now);
 	void update(uint32 now);
@@ -58,14 +59,14 @@ public:
 	void draw(Graphics::ManagedSurface &screen) const;
 	bool finished() const { return _phrase >= _phraseCount; }
 	bool speaking() const { return _row != 0; }
-	const Common::U32String &subtitle() const { return _subtitle; }
+	const Common::U32String &subtitle() const { return _speech.subtitle(); }
 
 private:
 	void nextPhrase();
 	void showSpeechRow();
 	RunawayAudio _audio;
 	Common::RandomSource _random;
-	RunawayLipSync _lipSync;
+	RunawaySpeech _speech;
 	SceneTextStore _text;
 	Graphics::ManagedSurface _background;
 	RunawayAnimation _actors[3];
@@ -73,8 +74,7 @@ private:
 	bool _idle[3] = {};
 	byte _speakers[4] = {}, _phrase = 0, _phraseCount = 0;
 	uint16 _row = 0, _lastRow = 0, _sample = 0;
-	uint32 _now = 0, _deadline = 0, _lastTick[3] = {};
-	Common::U32String _subtitle;
+	uint32 _now = 0, _lastTick[3] = {};
 };
 
 class RunawayEnding {

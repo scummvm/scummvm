@@ -92,4 +92,49 @@ void RunawayWalkMap::findPath(Common::Point position, Common::Point target, Comm
 		target.x, target.y, closest % _width, closest / _width, path.size());
 }
 
+void RunawayWalkPath::reset(Common::Point position) {
+	clear();
+	_x = position.x;
+	_y = position.y;
+}
+
+void RunawayWalkPath::findPath(const RunawayWalkMap &map, Common::Point target) {
+	map.findPath(position(), target, _points);
+	_index = 0;
+}
+
+void RunawayWalkPath::setTarget(Common::Point target) {
+	clear();
+	_points.push_back(target);
+}
+
+bool RunawayWalkPath::advance(float travel, Common::Point &actorPosition, byte &facing) {
+	const float previousX = _x, previousY = _y;
+	while (travel > 0 && active()) {
+		const Common::Point target = _points[_index];
+		const float dx = target.x - _x, dy = target.y - _y;
+		const float distance = sqrtf(dx * dx + dy * dy);
+		if (distance > 0) {
+			if (ABS(dx) > ABS(dy) * 2)
+				facing = dx > 0 ? 2 : 6;
+			else if (ABS(dy) > ABS(dx) * 2)
+				facing = dy > 0 ? 4 : 0;
+			else
+				facing = dy > 0 ? (dx > 0 ? 3 : 5) : (dx > 0 ? 1 : 7);
+		}
+		if (distance <= travel) {
+			_x = target.x;
+			_y = target.y;
+			travel -= distance;
+			++_index;
+		} else {
+			_x += dx * travel / distance;
+			_y += dy * travel / distance;
+			travel = 0;
+		}
+	}
+	actorPosition = position();
+	return _x != previousX || _y != previousY;
+}
+
 } // End of namespace Hollywood

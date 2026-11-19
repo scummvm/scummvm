@@ -24,9 +24,9 @@
 
 #include "common/random.h"
 #include "hollywood/resource.h"
-#include "hollywood/runaway/animation.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
+#include "hollywood/runaway/speech.h"
 #include "hollywood/runaway/video.h"
 #include "hollywood/scene_text_store.h"
 
@@ -58,15 +58,15 @@ public:
 		uint16 a, b;
 		byte c, d;
 	};
-	explicit RunawaySequence(RunawayAudio &audio) : _audio(audio), _random("runawaySequence") {}
+	explicit RunawaySequence(RunawayAudio &audio) : _audio(audio), _random("runawaySequence"), _speech(audio, _random) {}
 	void start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter = 'B');
 	void setBackground(const Graphics::ManagedSurface &background, const Common::Rect &destination);
 	void update(uint32 now);
 	void skip();
 	void draw(Graphics::ManagedSurface &screen);
 	bool active() const { return _commands != nullptr; }
-	const Common::U32String &subtitle() const { return _subtitle; }
-	byte speechFrame() const { return _lipSync.frame(_now); }
+	const Common::U32String &subtitle() const { return _speech.subtitle(); }
+	byte speechFrame() const { return _speech.frame(_now); }
 
 private:
 	void advance();
@@ -75,7 +75,7 @@ private:
 
 	RunawayAudio &_audio;
 	Common::RandomSource _random;
-	RunawayLipSync _lipSync;
+	RunawaySpeech _speech;
 	RunawayVideo _video, _stills;
 	bool _useStill = false;
 	RunawayFilmPortrait _portraits;
@@ -87,7 +87,7 @@ private:
 	const Command *_commands = nullptr;
 	uint _index = 0;
 	uint _movie = 0;
-	uint32 _now = 0, _started = 0, _deadline = 0;
+	uint32 _now = 0, _started = 0;
 	uint32 _repeatAt = 0;
 	bool _entered = false, _showPortrait = false, _silentPortrait = false;
 	bool _skipFilm = false;
@@ -97,7 +97,6 @@ private:
 	};
 	Common::Array<Line> _lines;
 	uint _line = 0;
-	Common::U32String _subtitle;
 };
 
 } // End of namespace Hollywood

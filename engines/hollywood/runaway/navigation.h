@@ -40,6 +40,24 @@ private:
 	const Common::Array<byte> &_mask, &_maps;
 };
 
+class RunawayWalkPath {
+public:
+	explicit RunawayWalkPath(Common::Point position = Common::Point()) : _x(position.x), _y(position.y) {}
+	void reset(Common::Point position);
+	void clear() { _points.clear(); _index = 0; }
+	void findPath(const RunawayWalkMap &map, Common::Point target);
+	void setTarget(Common::Point target);
+	// Returns whether the fractional position changed, for footstep timing.
+	bool advance(float travel, Common::Point &position, byte &facing);
+	bool active() const { return _index < _points.size(); }
+
+private:
+	Common::Point position() const { return Common::Point((int)(_x + 0.5f), (int)(_y + 0.5f)); }
+	Common::Array<Common::Point> _points;
+	uint _index = 0;
+	float _x, _y;
+};
+
 } // End of namespace Hollywood
 
 #endif // HOLLYWOOD_RUNAWAY_NAVIGATION_H

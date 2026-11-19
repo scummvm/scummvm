@@ -127,20 +127,17 @@ void RunawayInterrogation::start(uint32 now) {
 }
 
 void RunawayInterrogation::stop() {
-	_audio.stopSpeech();
+	_speech.stop();
 	_audio.stopEffect();
-	_lipSync.stop();
-	_subtitle.clear();
 	_row = 0;
 	_phrase = _phraseCount;
 }
 
 void RunawayInterrogation::nextPhrase() {
 	_row = 0;
-	_lipSync.stop();
-	_subtitle.clear();
+	_speech.reset();
 	if (finished()) {
-		_audio.stopSpeech();
+		_speech.stop();
 		_audio.stopEffect();
 		return;
 	}
@@ -157,14 +154,11 @@ void RunawayInterrogation::nextPhrase() {
 }
 
 void RunawayInterrogation::showSpeechRow() {
-	_subtitle = Common::U32String(_text.largeTextRecord(_row), Common::kDos850);
-	const uint32 duration = _audio.playSpeech(_sample);
-	_lipSync.start(_subtitle, _now, duration, _random);
+	_speech.start(Common::U32String(_text.largeTextRecord(_row), Common::kDos850), _sample, false, _now);
 	const uint actor = kInterrogationSpeakerActor[_speakers[_phrase]];
-	_frames[actor] = kInterrogationMouthBase[actor] + _lipSync.frame(_now);
+	_frames[actor] = kInterrogationMouthBase[actor] + _speech.frame(_now);
 	_idle[actor] = true;
 	_lastTick[actor] = _now;
-	_deadline = _now + (duration ? MAX<uint>(1000, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
 }
 
 void RunawayInterrogation::skipSpeech() {
@@ -172,7 +166,7 @@ void RunawayInterrogation::skipSpeech() {
 		return;
 	const uint actor = kInterrogationSpeakerActor[_speakers[_phrase]];
 	_frames[actor] = kInterrogationMouthBase[actor];
-	_audio.stopSpeech();
+	_speech.stop();
 	if (_row < _lastRow) {
 		++_row;
 		++_sample;
@@ -185,7 +179,7 @@ void RunawayInterrogation::skipSpeech() {
 
 void RunawayInterrogation::update(uint32 now) {
 	_now = now;
-	if (speaking() && !_audio.speechPlaying() && (int32)(now - _deadline) >= 0)
+	if (speaking() && !_audio.speechPlaying() && _speech.finished(now))
 		skipSpeech();
 	if (finished())
 		return;
@@ -195,7 +189,7 @@ void RunawayInterrogation::update(uint32 now) {
 		if (i == speaker) {
 			// Native 0x43c5a0/0x43c700/0x43c860 share the text-driven
 			// mouth sequence. Gina's table maps virtual 70..81 to 67..78.
-			_frames[i] = kInterrogationMouthBase[i] + _lipSync.frame(now);
+			_frames[i] = kInterrogationMouthBase[i] + _speech.frame(now);
 			_idle[i] = true;
 			_lastTick[i] = now;
 			continue;

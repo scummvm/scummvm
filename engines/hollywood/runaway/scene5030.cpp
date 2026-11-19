@@ -210,8 +210,7 @@ bool RunawayScene5030::restoreState(const RunawaySaveState &state, uint32 now, b
 	_action = _afterSpeech = _afterWalk = kNone;
 	_pendingHotspot = _pendingItem = _pickupHotspot = 0;
 	_pendingVerb = kVerbWalk;
-	_path.clear();
-	_pathIndex = 0;
+	_walkPath.clear();
 	_committedCaption.clear();
 	_escaped = false;
 	setPosition(Common::Point(state.x, state.y), state.facing);
@@ -291,10 +290,9 @@ byte RunawayScene5030::hotspotAt(Common::Point mouse) const {
 }
 
 void RunawayScene5030::walkTo(Common::Point target) {
-	RunawayWalkMap(kRoomWidth, kRoomHeight, _mask, _maps).findPath(_position, target, _path);
-	_pathIndex = 0;
+	_walkPath.findPath(RunawayWalkMap(kRoomWidth, kRoomHeight, _mask, _maps), target);
 	_walkElapsed = _lastFootstep = 0;
-	if (_path.empty())
+	if (!_walkPath.active())
 		arrive();
 }
 
@@ -309,21 +307,16 @@ void RunawayScene5030::say(uint16 row) {
 }
 
 void RunawayScene5030::showSpeechRow() {
-	_subtitle = Common::U32String(_text.largeTextRecord(_speechRow), Common::kDos850);
 	const uint16 sample = _globalSpeech ? _speechSample : _voiceSamples[_speechRow - 500];
-	const uint32 duration = sample ? _audio.playSpeech(sample, _globalSpeech) : 0;
-	_subtitleUntil = _now + (duration ? MAX<uint>(1000, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
+	_speech.start(Common::U32String(_text.largeTextRecord(_speechRow), Common::kDos850), sample, _globalSpeech, _now);
 	_idleHead.reset(_now);
-	_lipSync.start(_subtitle, _now, duration, _random, _game == kRunawayFullGame ? sample : 0);
 	debugC(1, kDebugScene, "Runaway demo: dialogue row %u, voice %u, ends at row %u",
 		_speechRow, sample, _speechEnd);
 }
 
 void RunawayScene5030::stopSpeech() {
-	_audio.stopSpeech();
+	_speech.stop();
 	_speechRow = _speechEnd = 0;
-	_lipSync.stop();
-	_subtitle.clear();
 }
 
 Common::U32String RunawayScene5030::actionCaption(byte id, RunawayVerb verb, byte item) const {
@@ -395,7 +388,7 @@ void RunawayScene5030::skipSpeech() {
 	}
 	if (!_speechRow)
 		return;
-	_audio.stopSpeech();
+	_speech.stop();
 	if (_speechRow < _speechEnd) {
 		++_speechRow;
 		if (_globalSpeech)
@@ -407,8 +400,7 @@ void RunawayScene5030::skipSpeech() {
 }
 
 void RunawayScene5030::cancelWalk() {
-	_path.clear();
-	_pathIndex = 0;
+	_walkPath.clear();
 	_pendingHotspot = _pendingItem = 0;
 	_committedCaption.clear();
 }
@@ -542,11 +534,8 @@ void RunawayScene5030::walkForAction(Common::Point target, byte facing, Action n
 
 void RunawayScene5030::setPosition(Common::Point position, byte facing) {
 	_position = position;
-	_x = position.x;
-	_y = position.y;
+	_walkPath.reset(position);
 	_facing = facing;
-	_path.clear();
-	_pathIndex = 0;
 }
 
 void RunawayScene5030::arrive() {
@@ -850,7 +839,7 @@ void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpe
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
 	const uint32 pausedTime = now - _lastUpdate;
 	_lastUpdate = now;
-	if (_speechRow && !_audio.speechPlaying() && (int32)(now - _subtitleUntil) >= 0)
+	if (_speechRow && !_audio.speechPlaying() && _speech.finished(now))
 		skipSpeech();
 	if (inventoryOpen && !inventoryPresentation()) {
 		_actionStarted += pausedTime;
@@ -858,35 +847,9 @@ void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpe
 		return;
 	}
 	updateAction();
-	if ((_action == kNone || _action == kWalkingAction) && _pathIndex < _path.size()) {
+	if ((_action == kNone || _action == kWalkingAction) && _walkPath.active()) {
 		const uint previousWalkFrame = _walkElapsed / 60;
-		const float previousX = _x, previousY = _y;
-		float travel = elapsed * 0.18f;
-		while (travel > 0 && _pathIndex < _path.size()) {
-			const Common::Point target = _path[_pathIndex];
-			const float dx = target.x - _x, dy = target.y - _y;
-			const float distance = sqrtf(dx * dx + dy * dy);
-			if (distance > 0) {
-				if (ABS(dx) > ABS(dy) * 2)
-					_facing = dx > 0 ? 2 : 6;
-				else if (ABS(dy) > ABS(dx) * 2)
-					_facing = dy > 0 ? 4 : 0;
-				else
-					_facing = dy > 0 ? (dx > 0 ? 3 : 5) : (dx > 0 ? 1 : 7);
-			}
-			if (distance <= travel) {
-				_x = target.x;
-				_y = target.y;
-				travel -= distance;
-				++_pathIndex;
-			} else {
-				_x += dx * travel / distance;
-				_y += dy * travel / distance;
-				travel = 0;
-			}
-		}
-		_position = Common::Point((int)(_x + 0.5f), (int)(_y + 0.5f));
-		if (_x != previousX || _y != previousY) {
+		if (_walkPath.advance(elapsed * 0.18f, _position, _facing)) {
 			_walkElapsed += elapsed;
 			// Native walking repeats cels 1..12 at 60 ms, with contacts at
 			// 6 and 12. Cels 13..18 belong to stopping/turning, not the gait.
@@ -896,20 +859,20 @@ void RunawayScene5030::update(uint32 now, int scrollDirection, bool inventoryOpe
 			}
 			// The final standing cel (0) is also a contact. Suppress a
 			// duplicate when it immediately follows another footfall.
-			if (_pathIndex == _path.size() && (!_lastFootstep || _walkElapsed - _lastFootstep > 60))
+			if (!_walkPath.active() && (!_lastFootstep || _walkElapsed - _lastFootstep > 60))
 				playWalkFootstep();
 		}
-		if (_pathIndex == _path.size()) {
+		if (!_walkPath.active()) {
 			debugC(1, kDebugScene, "Runaway demo: arrived at %d,%d", _position.x, _position.y);
 			arrive();
 		}
 	}
-	if (_action == kNone && !speaking() && _pathIndex == _path.size() &&
+	if (_action == kNone && !speaking() && !_walkPath.active() &&
 			_windowClean && _unplugged && _lidOpen && _ice == kFrozen)
 		walkForAction(Common::Point(900, 473), 2, kMeltIce);
-	const bool walking = _pathIndex < _path.size();
+	const bool walking = _walkPath.active();
 	const bool idle = !walking && !_speechRow && _action == kNone;
-	_idleHead.update(now, idle, _lipSync.frameDuration(), _random);
+	_idleHead.update(now, idle, _speech.frameDuration(), _random);
 	const int headFrame = walking ? -1 : _speechRow ? speechFrame() : idle ? _idleHead.frame() : -1;
 	_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / 60) % 12 : 0, headFrame);
 	if (scrollDirection)

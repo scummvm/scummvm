@@ -157,7 +157,7 @@ void RunawayRoomScene::updateMuseum(uint elapsed, bool inventoryOpen) {
 	if (_sequence.active() || _transition.scene)
 		return;
 	updateConversation();
-	if (_roomAction && _actionFrames.empty() && !speaking() && !_conversation && _pathIndex == _path.size()) {
+	if (_roomAction && _actionFrames.empty() && !speaking() && !_conversation && !_walkPath.active()) {
 		const uint16 action = _roomAction;
 		_roomAction = 0;
 		finishMuseumAnimation(action);

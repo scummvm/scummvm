@@ -32,11 +32,10 @@ void RunawaySequence::start(const Command *commands, const SceneTextStore &text,
 	_destination = Common::Rect(0, kRunawayViewportTop, kRunawayScreenWidth, kRunawayViewportTop + kRunawayViewportHeight);
 	_chapter = chapter;
 	_text = &text;
-	_audio.stopSpeech();
+	_speech.stop();
 	_audio.stopEffect();
 	_lines.clear();
 	_line = 0;
-	_subtitle.clear();
 	_commands = commands;
 	_index = 0;
 	_entered = _showPortrait = false;
@@ -69,29 +68,24 @@ void RunawaySequence::speak(uint cue, uint variation, uint lastVariation) {
 				_lines.push_back(line);
 		}
 	}
-	if (_subtitle.empty())
+	if (subtitle().empty())
 		nextLine();
 }
 
 void RunawaySequence::nextLine() {
-	_audio.stopSpeech();
-	_subtitle.clear();
-	_lipSync.stop();
+	_speech.stop();
 	if (_line >= _lines.size()) {
 		_line = 0;
 		_lines.clear();
 		return;
 	}
 	const Line &line = _lines[_line++];
-	_subtitle = line.text;
-	const uint duration = line.sample ? _audio.playSpeech(line.sample) : 0;
-	_deadline = _now + (duration ? duration + 150 : MAX<uint>(3000, _subtitle.size() * 55));
-	_lipSync.start(_subtitle, _now, duration, _random, line.sample);
+	_speech.start(line.text, line.sample, false, _now, 0);
 }
 
 void RunawaySequence::update(uint32 now) {
 	_now = now;
-	if (!_skipFilm && !_subtitle.empty() && (int32)(now - _deadline) >= 0)
+	if (!_skipFilm && !subtitle().empty() && _speech.finished(now))
 		nextLine();
 	while (active()) {
 		const Command &command = _commands[_index];
@@ -161,11 +155,11 @@ void RunawaySequence::update(uint32 now) {
 			if (!_video.decodeToFrame(frame))
 				error("Cannot decode Runaway film frame %u", frame);
 			if (command.c == kUntilSpeechEnds) {
-				if (elapsedFrames < count && !_subtitle.empty())
+				if (elapsedFrames < count && !subtitle().empty())
 					return;
 				break;
 			}
-			if (command.c == kIdleDuringSpeech && elapsedFrames >= count && !_subtitle.empty()) {
+			if (command.c == kIdleDuringSpeech && elapsedFrames >= count && !subtitle().empty()) {
 				if (!_repeatAt)
 					_repeatAt = now + 80;
 				if ((int32)(now - _repeatAt) >= 0) {
@@ -175,13 +169,13 @@ void RunawaySequence::update(uint32 now) {
 						_started = now;
 				}
 			}
-			if ((command.c != kLoopDuringSpeech && elapsedFrames < count) || (command.c != kOnce && !_subtitle.empty()))
+			if ((command.c != kLoopDuringSpeech && elapsedFrames < count) || (command.c != kOnce && !subtitle().empty()))
 				return;
 			break;
 		}
 		case kTalk:
 		case kWaitSpeech:
-			if (!_subtitle.empty())
+			if (!subtitle().empty())
 				return;
 			break;
 		case kDelay:
@@ -195,11 +189,9 @@ void RunawaySequence::update(uint32 now) {
 		case kEnd:
 			_video.close();
 			_stills.close();
-			_audio.stopSpeech();
+			_speech.stop();
 			_audio.stopEffect();
-			_lipSync.stop();
 			_lines.clear();
-			_subtitle.clear();
 			_commands = nullptr;
 			return;
 		default:
@@ -212,7 +204,7 @@ void RunawaySequence::update(uint32 now) {
 void RunawaySequence::skip() {
 	if (!active())
 		return;
-	if (!_subtitle.empty()) {
+	if (!subtitle().empty()) {
 		nextLine();
 		return;
 	}

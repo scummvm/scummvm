@@ -149,8 +149,7 @@ void RunawayRoomScene::updateMaps4060() {
 void RunawayRoomScene::changeFloor(bool upper, Common::Point position) {
 	_upperFloor = upper;
 	_position = position;
-	_x = position.x;
-	_y = position.y;
+	_walkPath.reset(position);
 	_facing = 3;
 	updateMaps();
 	updateCamera();
