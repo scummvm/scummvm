@@ -143,7 +143,7 @@ void RunawayRoomScene::updateMaps2020() {
 	}
 }
 
-bool RunawayRoomScene::sayInventory2020(const RunawayInventory::Reply &reply) {
+bool RunawayRoomScene::sayHospitalInventory(const RunawayInventory::Reply &reply) {
 	if (reply.cue != 54)
 		return false;
 	// Searching Gina's bag reveals the matches on the first examination.
@@ -204,7 +204,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 		warning("Runaway: hospital ledge scene 2060 is not implemented yet");
 		return kHandled;
 	case 346:
-		warning("Runaway: hospital bathroom scene 2080 is not implemented yet");
+		leaveHospitalRoom(kHospitalBathroom, Common::Point(0, 596), 1);
 		return kHandled;
 	case 349:
 		say(4, 0, true);
@@ -258,6 +258,16 @@ void RunawayRoomScene::update2020() {
 	}
 	// The bedside indicator alternates after 17 and 9 animation ticks.
 	applyRunawayPatch(_monitorPatches[(_now / 80) % 26 >= 17], _background);
+}
+
+void RunawayRoomScene::leaveHospitalRoom(uint16 scene, Common::Point position, byte facing) {
+	_hospitalExit.scene = scene;
+	_hospitalExit.position = position;
+	_hospitalExit.facing = facing;
+	_audio.playEffect(47);
+}
+
+void RunawayRoomScene::updateHospitalAudio() {
 	if (!_audio.musicPlaying()) {
 		if (!_nextMusic) {
 			static const uint16 delays[] = {0, 240, 120, 60};

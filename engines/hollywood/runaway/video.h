@@ -36,6 +36,7 @@ public:
 	void close();
 	bool decodeToFrame(uint frame);
 	uint frameCount() const { return _decoder.getFrameCount(); }
+	uint frameAtTime(uint32 milliseconds) const;
 	void draw(Graphics::ManagedSurface &surface, const Common::Rect &destination) const;
 
 private:

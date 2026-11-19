@@ -32,6 +32,7 @@ namespace Hollywood {
 struct RunawaySaveState {
 	struct Hospital {
 		byte glassTaken = 0, pillsTaken = 0, sheetTaken = 0, bagTaken = 0, exitMapRead = 0;
+		byte markerTaken = 0, alcohol = 0;
 	} hospital;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
@@ -45,6 +46,7 @@ struct RunawaySaveState {
 	uint16 cameraY = 0;
 	byte upperFloor = 1, books = 0, recorder = 0, moneyIdentified = 0, safeOpen = 0;
 	byte varnishTaken = 0, talcTaken = 0, coffeeTaken = 0, keyCount = 0;
+	byte water = 0;
 
 	byte chapter() const;
 	bool valid() const;

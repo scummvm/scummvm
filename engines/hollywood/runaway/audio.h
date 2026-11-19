@@ -32,7 +32,7 @@ public:
 	~RunawayAudio();
 	void setMuseum(bool museum) { _museum = museum; }
 	void setChapter(byte chapter);
-	void playIntroMusic();
+	void playIntroMusic(uint16 cue = 2);
 	uint32 playMusic(uint16 cue, bool loop = true);
 	void setMusicVolume(byte volume);
 	uint32 playSpeech(uint16 sample, bool global = false);

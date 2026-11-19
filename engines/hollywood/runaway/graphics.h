@@ -39,7 +39,7 @@ bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurf
 bool loadRunawaySurface(const Common::Path &path, int width, int height, Graphics::ManagedSurface &surface);
 bool loadRunawaySurface(ChunkArchive &archive, uint chunk, int width, int height, Graphics::ManagedSurface &surface);
 bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps);
-bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset = 0);
+bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset = 0, int xOffset = 0);
 
 enum {
 	kRunawayScreenWidth = 1024,

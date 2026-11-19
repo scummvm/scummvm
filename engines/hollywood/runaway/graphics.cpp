@@ -83,7 +83,7 @@ bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array
 	return offset == mask.size();
 }
 
-bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset) {
+bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset, int xOffset) {
 	if (patch.size() < 2 || surface.format.bytesPerPixel != 2)
 		return false;
 	uint cursor = 2;
@@ -94,11 +94,15 @@ bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurfac
 		const int y = READ_LE_UINT16(patch.data() + cursor + 2) + yOffset;
 		const uint length = READ_LE_UINT16(patch.data() + cursor + 4);
 		cursor += 6;
-		if (!length || x + length > (uint)surface.w || y < 0 || y >= surface.h || length * 2 > patch.size() - cursor)
+		if (!length || x + length > 32767 || length * 2 > patch.size() - cursor)
 			return false;
-		uint16 *out = (uint16 *)surface.getBasePtr(x, y);
-		for (uint pixel = 0; pixel < length; ++pixel)
-			out[pixel] = READ_LE_UINT16(patch.data() + cursor + pixel * 2);
+		const int left = (int)x + xOffset;
+		const int first = MAX(0, -left), last = MIN<int>(length, surface.w - left);
+		if (y >= 0 && y < surface.h && first < last) {
+			uint16 *out = (uint16 *)surface.getBasePtr(left + first, y);
+			for (int pixel = first; pixel < last; ++pixel)
+				*out++ = READ_LE_UINT16(patch.data() + cursor + pixel * 2);
+		}
 		cursor += length * 2;
 	}
 	return cursor == patch.size();

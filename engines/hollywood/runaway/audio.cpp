@@ -89,10 +89,11 @@ uint32 RunawayAudio::play(const char *archive, uint16 cue, uint tableCount, bool
 	return duration;
 }
 
-void RunawayAudio::playIntroMusic() {
+void RunawayAudio::playIntroMusic(uint16 cue) {
 	// The Pendulo logo uses RESOURCE.002 cue 2 on native channel 7, which
 	// has the same 16 kHz stereo PCM format as the room music channels.
-	play("RESOURCE.002", 2, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
+	// Cue 4 accompanies the retail narrator's montage.
+	play("RESOURCE.002", cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
 		Audio::Mixer::kMusicSoundType, _music, Audio::Mixer::kMaxChannelVolume, false, 16000);
 }
 

@@ -150,7 +150,9 @@ MODULE_OBJS = \
 	runaway/presentation.o \
 	runaway/saveload.o \
 	runaway/scene.o \
+	runaway/scene2010.o \
 	runaway/scene2020.o \
+	runaway/scene2080.o \
 	runaway/scene4030.o \
 	runaway/scene4050.o \
 	runaway/scene4060.o \

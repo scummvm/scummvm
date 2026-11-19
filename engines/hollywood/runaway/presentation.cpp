@@ -31,13 +31,15 @@ namespace Hollywood {
 static const uint kInterrogationSpeakerActor[] = {1, 2, 0};
 static const uint kInterrogationMouthBase[] = {67, 40, 20};
 
-static void dimViewport(Graphics::ManagedSurface &screen, uint brightness) {
+void dimRunawayViewport(Graphics::ManagedSurface &screen, uint brightness, uint maximum) {
+	if (brightness >= maximum)
+		return;
 	for (int y = kRunawayViewportTop; y < kRunawayViewportTop + kRunawayViewportHeight; ++y) {
 		uint16 *pixels = (uint16 *)screen.getBasePtr(0, y);
 		for (int x = 0; x < screen.w; ++x) {
 			const uint16 p = pixels[x];
-			pixels[x] = (((p >> 11) * brightness / 1000) << 11) |
-				((((p >> 5) & 63) * brightness / 1000) << 5) | ((p & 31) * brightness / 1000);
+			pixels[x] = (((p >> 11) * brightness / maximum) << 11) |
+				((((p >> 5) & 63) * brightness / maximum) << 5) | ((p & 31) * brightness / maximum);
 		}
 	}
 }
@@ -80,14 +82,14 @@ void RunawayCredits::draw(Graphics::ManagedSurface &screen) const {
 			}
 		}
 		if (elapsed > scrollTime + 4000)
-			dimViewport(screen, 1000 - MIN<uint>(1000, (elapsed - scrollTime - 4000) * 2));
+			dimRunawayViewport(screen, 1000 - MIN<uint>(1000, (elapsed - scrollTime - 4000) * 2));
 	} else {
 		screen.blitFrom(_card, Common::Point(0, kRunawayViewportTop));
 		const uint cardElapsed = elapsed - scrollTime - 4500;
 		if (cardElapsed < 500)
-			dimViewport(screen, cardElapsed * 2);
+			dimRunawayViewport(screen, cardElapsed * 2);
 		else if (cardElapsed > 60500)
-			dimViewport(screen, 1000 - MIN<uint>(1000, (cardElapsed - 60500) * 2));
+			dimRunawayViewport(screen, 1000 - MIN<uint>(1000, (cardElapsed - 60500) * 2));
 	}
 }
 
@@ -378,7 +380,7 @@ void RunawayEnding::draw(Graphics::ManagedSurface &screen) const {
 		}
 		_layers[3].draw(screen, _frames[3], 0, kRunawayViewportTop);
 		_layers[6].draw(screen, _frames[6], 0, kRunawayViewportTop);
-		dimViewport(screen, elapsed < 10000 ? 1000 : (12000 - MIN<uint>(12000, elapsed)) / 2);
+		dimRunawayViewport(screen, elapsed < 10000 ? 1000 : (12000 - MIN<uint>(12000, elapsed)) / 2);
 	} else if (_stage == kSlideshow || _stage == kCard) {
 		screen.blitFrom(_stage == kSlideshow ? _slide : _card, Common::Point(0, kRunawayViewportTop));
 		// The later demos blink different parts of their localized artwork
@@ -392,7 +394,7 @@ void RunawayEnding::draw(Graphics::ManagedSurface &screen) const {
 		}
 		const uint brightness = _fadeDuration ?
 			1000 * (_fadeDuration - MIN<uint>(_fadeDuration, _now - _fadeStarted)) / _fadeDuration : MIN<uint>(1000, elapsed * 2);
-		dimViewport(screen, brightness);
+		dimRunawayViewport(screen, brightness);
 	}
 	if (_stage == kOutside || _stage == kSlideshow)
 		screen.blitFrom(_demoLogo, Common::Point(976, 720));

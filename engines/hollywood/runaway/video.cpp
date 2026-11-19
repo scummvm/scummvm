@@ -80,6 +80,12 @@ void RunawayVideo::close() {
 	_data.clear();
 }
 
+uint RunawayVideo::frameAtTime(uint32 milliseconds) const {
+	const Audio::Timestamp duration = _decoder.getDuration();
+	const uint frames = duration.totalNumberOfFrames();
+	return frames ? (uint64)milliseconds * frameCount() * duration.framerate() / (1000ULL * frames) : 0;
+}
+
 bool RunawayVideo::decodeToFrame(uint frame) {
 	if (frame >= _decoder.getFrameCount())
 		return false;

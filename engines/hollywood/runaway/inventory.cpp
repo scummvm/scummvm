@@ -57,6 +57,7 @@ void RunawayInventory::captureState(RunawaySaveState &state) const {
 		state.items[i] = itemAt(i);
 	state.selected = _selected;
 	state.cloth = _clothState;
+	state.water = _water;
 }
 
 void RunawayInventory::restoreState(const RunawaySaveState &state) {
@@ -66,6 +67,7 @@ void RunawayInventory::restoreState(const RunawaySaveState &state) {
 		_items.push_back(state.items[i]);
 	_selected = state.selected;
 	_clothState = state.cloth;
+	_water = state.water;
 	_newItem = 0;
 }
 
@@ -99,6 +101,8 @@ void RunawayInventory::remove(byte item) {
 }
 
 Common::U32String RunawayInventory::name(byte item) const {
+	if (_game == kRunawayFullGame && item == 13 && _water == 1)
+		return Common::U32String("Glass with water");
 	if (_game == kRunawayMuseumDemo)
 		return item < ARRAYSIZE(kMuseumItemNames) ? Common::U32String(kMuseumItemNames[item]) : Common::U32String();
 	if (_game == kRunawayFullGame)
@@ -109,6 +113,8 @@ Common::U32String RunawayInventory::name(byte item) const {
 }
 
 uint RunawayInventory::icon(byte item) const {
+	if (_game == kRunawayFullGame && item == 13 && _water == 1)
+		return 23;
 	if (_game != kRunawayCabinDemo)
 		return item;
 	if (item == 1 && _clothState)
@@ -117,6 +123,8 @@ uint RunawayInventory::icon(byte item) const {
 }
 
 uint RunawayInventory::cursor(byte item) const {
+	if (_game == kRunawayFullGame && item == 13 && _water == 1)
+		return 85;
 	if (_game == kRunawayMuseumDemo)
 		return item && item < ARRAYSIZE(kMuseumItemNames) ? 11 + item * 2 : 0;
 	if (_game == kRunawayFullGame)
@@ -127,6 +135,8 @@ uint RunawayInventory::cursor(byte item) const {
 }
 
 RunawayInventory::Reply RunawayInventory::examine(byte item) const {
+	if (_game == kRunawayFullGame && item == 13)
+		return Reply(62, _water == 1 ? 1 : 0);
 	if (_game == kRunawayMuseumDemo) {
 		if (!item || item >= ARRAYSIZE(kMuseumItemNames))
 			return Reply();

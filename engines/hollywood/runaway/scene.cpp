@@ -36,7 +36,7 @@ namespace Hollywood {
 namespace {
 
 const RunawayRoom *const kRooms[] = {
-	&kRunawayScene2020,
+	&kRunawayScene2020, &kRunawayScene2080,
 	&kRunawayScene4030, &kRunawayScene4050, &kRunawayScene4060, &kRunawayScene4090, &kRunawayScene4100, &kRunawayScene4140
 };
 
@@ -62,6 +62,8 @@ const RunawayResponse kGlobalResponses[] = {
 };
 
 const RunawayRoom *findRoom(int number) {
+	if (number == 2021)
+		number = kHospitalBedroom;
 	for (uint i = 0; i < ARRAYSIZE(kRooms); ++i) {
 		if (kRooms[i]->number == number)
 			return kRooms[i];
@@ -104,9 +106,21 @@ void RunawayRoomScene::start(uint32 now) {
 }
 
 void RunawayRoomScene::resume() {
-	if (_room == kHospitalBedroom) {
-		_audio.playMusic(11, false);
-		_audio.playEffect(30, 3, 1, true);
+	if (_game == kRunawayFullGame) {
+		if (!_audio.musicPlaying())
+			_audio.playMusic(11, false);
+		if (_room == kHospitalBedroom)
+			_audio.playEffect(30, 3, 1, true);
+		if (_entering) {
+			_audio.playEffect(48);
+			if (_room == kHospitalBathroom) {
+				walkTo(Common::Point(227, 546), 1, true);
+			} else if (_inventory.water() == 1) {
+				// The cracked glass has drained by the time Brian returns.
+				_inventory.setWater(2);
+			}
+			_entering = false;
+		}
 		return;
 	}
 	// The original demo loops M04 cue 11 throughout gameplay (0x4175c0).
@@ -138,6 +152,7 @@ bool RunawayRoomScene::restoreState(const RunawaySaveState &state, uint32 now, b
 	if (!state.valid() || state.game != _game || state.scene != _entryScene)
 		return false;
 	_hospital = state.hospital;
+	_entering = entering;
 	_upperFloor = state.upperFloor;
 	_books = (ObjectState)state.books;
 	_recorder = (ObjectState)state.recorder;
@@ -168,8 +183,7 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	const RunawayRoom *room = findRoom(number);
 	if (!room || position.x < 0 || position.x >= room->width || position.y < 0 || position.y >= room->height)
 		return false;
-	const Common::Path path(_game == kRunawayFullGame ? "RESOURCE.B02" :
-		Common::String::format("RESOURCE.D%02u", number / 10 - 400));
+	const Common::Path path(Common::String::format("RESOURCE.%c%02u", 'A' + number / 1000 - 1, (number % 1000) / 10));
 	if (!_archive.open(path, 40) ||
 			!loadRunawayMask(_archive, room->width, room->height, _mask, _originalMaps) ||
 			!_text.load("RESOURCE.003", "Runaway room", number / 10, 0, 0x1135))
@@ -200,6 +214,9 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	switch (number) {
 	case kHospitalBedroom:
 		loaded = loadScene2020();
+		break;
+	case kHospitalBathroom:
+		loaded = loadScene2080();
 		break;
 	case kMuseumOffice:
 		loaded = loadScene4030();
@@ -258,6 +275,8 @@ bool RunawayRoomScene::rebuildBackground() {
 	switch (_room) {
 	case kHospitalBedroom:
 		return applyBackground2020();
+	case kHospitalBathroom:
+		return applyBackground2080();
 	case kMuseumOffice:
 		return applyBackground4030();
 	case kMuseumLaboratory:
@@ -272,6 +291,9 @@ void RunawayRoomScene::updateMaps() {
 	switch (_room) {
 	case kHospitalBedroom:
 		updateMaps2020();
+		break;
+	case kHospitalBathroom:
+		updateMaps2080();
 		break;
 	case kMuseumOffice:
 		updateMaps4030();
@@ -307,6 +329,8 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 	const RunawayHotspot *spot = hotspot(id);
 	if (!spot)
 		return Common::U32String();
+	if (_room == kHospitalBathroom && id == 4 && _hospital.alcohol == 2)
+		return Common::U32String("Bottle of alcohol");
 	return _room == kMuseumOffice ? hotspotName4030(id) : Common::U32String(spot->name);
 }
 
@@ -322,14 +346,24 @@ Common::U32String RunawayRoomScene::actionCaption(byte id, RunawayVerb verb, byt
 	return _strings.text(verb == kVerbLook ? RunawayStrings::kLook : RunawayStrings::kUse) + name;
 }
 
-void RunawayRoomScene::walkTo(Common::Point target) {
-	RunawayWalkMap(_background.w, _background.h, _mask, _maps).findPath(_position, target, _path);
+void RunawayRoomScene::walkTo(Common::Point target, byte facing, bool scripted) {
+	if (scripted) {
+		_path.clear();
+		_path.push_back(target);
+	} else {
+		RunawayWalkMap(_background.w, _background.h, _mask, _maps).findPath(_position, target, _path);
+	}
+	_arrivalFacing = facing;
 	_pathIndex = _walkElapsed = _lastFootstep = 0;
 	if (_path.empty())
 		arrive();
 }
 
 void RunawayRoomScene::arrive() {
+	if (_arrivalFacing != 0xff) {
+		_facing = _arrivalFacing;
+		_arrivalFacing = 0xff;
+	}
 	const byte id = _pendingHotspot;
 	_pendingHotspot = 0;
 	if (id) {
@@ -358,7 +392,21 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 		const uint index = verb == kVerbLook && !item ? 0 : 1;
 		_pendingHotspot = id;
 		_pendingAction = spot->action[index];
-		if (spot->approach[index] || item)
+		bool approach = spot->approach[index] != 0;
+		if (_room == kHospitalBathroom && id == 4 && !index && _hospital.alcohol == 2)
+			approach = false;
+		if (item) {
+			approach = _game != kRunawayFullGame;
+			const RunawayRoom *room = findRoom(_room);
+			for (uint i = 0; i < room->itemActionCount; ++i) {
+				const RunawayItemAction &action = room->itemActions[i];
+				if (action.hotspot == id && (!action.item || action.item == item)) {
+					approach = action.approach;
+					break;
+				}
+			}
+		}
+		if (approach)
 			walkTo(Common::Point(spot->x, spot->y));
 		else {
 			_path.clear();
@@ -406,7 +454,7 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 	_pathIndex = 0;
 	_pendingHotspot = 0;
 	_caption.clear();
-	if (_room == kHospitalBedroom && sayInventory2020(reply))
+	if (_game == kRunawayFullGame && sayHospitalInventory(reply))
 		return;
 	say(reply.cue, reply.variation, true);
 }
@@ -443,6 +491,9 @@ void RunawayRoomScene::execute(uint16 action) {
 	switch (_room) {
 	case kHospitalBedroom:
 		result = execute2020(action);
+		break;
+	case kHospitalBathroom:
+		result = execute2080(action);
 		break;
 	case kMuseumOffice:
 		result = execute4030(action);
@@ -511,6 +562,8 @@ float RunawayRoomScene::actorHeight() const {
 	switch (_room) {
 	case kHospitalBedroom:
 		return actorHeight2020();
+	case kHospitalBathroom:
+		return _position.y * 0.266272187f + 295.502960f;
 	case kMuseumOffice:
 		return actorHeight4030();
 	case kMuseumLaboratory:
@@ -536,6 +589,15 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 		skipSpeech();
 	if (_room == kHospitalBedroom)
 		update2020();
+	else if (_room == kHospitalBathroom)
+		update2080();
+	if (_game == kRunawayFullGame) {
+		updateHospitalAudio();
+		if (_hospitalExit.scene && !_audio.effectPlaying()) {
+			_transition = _hospitalExit;
+			return;
+		}
+	}
 	if (inventoryOpen || _room == kMuseumKeypad)
 		return;
 	if (_pathIndex < _path.size() && !speaking()) {
@@ -604,6 +666,8 @@ void RunawayRoomScene::draw() {
 	}
 	if (_room == kHospitalBedroom) {
 		drawScene2020(viewport, false);
+	} else if (_room == kHospitalBathroom) {
+		drawScene2080(viewport, false);
 	} else {
 		_ambient.draw(viewport, 0, _camera.x, -_camera.y);
 		_overlay.draw(viewport, 0, _camera.x, -_camera.y);
@@ -630,9 +694,12 @@ void RunawayRoomScene::draw() {
 	params.antialias = _antialias;
 	const byte light = MIN<byte>(9, _maps[768 + _mask[_position.y * _background.w + _position.x]]);
 	memcpy(params.light, findRoom(_room)->light[light], sizeof(params.light));
-	_actor.draw(_screen, params, _mask, _maps);
+	if (_room != kHospitalBathroom || (_roomAction != 302 && _roomAction != 307))
+		_actor.draw(_screen, params, _mask, _maps);
 	if (_room == kHospitalBedroom)
 		drawScene2020(viewport, true);
+	else if (_room == kHospitalBathroom)
+		drawScene2080(viewport, true);
 	else if (_room == kMuseumOffice)
 		drawForeground4030(viewport);
 	else if (_room == kMuseumLaboratory)

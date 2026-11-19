@@ -163,7 +163,7 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
 RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
 	if (findRunawayRoom(entryScene) && ((_museum && entryScene >= 4000) ||
-			(_game == kRunawayFullGame && entryScene == kHospitalBedroom)))
+			(_game == kRunawayFullGame && (entryScene == 2020 || entryScene == 2021 || entryScene == 2080))))
 		return new RunawayRoomScene(_audio, *_inventory, _strings, _game);
 	if (_game == kRunawayCabinDemo && entryScene == 5030)
 		return new RunawayScene5030(_mixer, _audio, *_inventory, _strings);
@@ -185,7 +185,8 @@ Common::Error RunawayEngine::changeScene() {
 	state.x = transition.position.x;
 	state.y = transition.position.y;
 	state.facing = transition.facing;
-	state.camera = state.cameraY = 0;
+	state.camera = state.scene == 2021 ? 156 : 0;
+	state.cameraY = 0;
 	Common::ScopedPtr<RunawayScene> scene(createScene(state.scene));
 	if (!scene)
 		return Common::Error(Common::kUnsupportedGameidError,
@@ -254,8 +255,10 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu) {
 	_inPresentation = true;
 	_loadedGame = false;
 	RunawayIntro intro(_mixer);
-	if (!intro.load())
-		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway demo logo or story card");
+	if (!intro.load(_game == kRunawayFullGame)) {
+		_inPresentation = false;
+		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway opening resources");
+	}
 	const bool cursorWasVisible = CursorMan.showMouse(false);
 	intro.start(getTotalPlayTime());
 	intro.draw();
@@ -283,12 +286,16 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu) {
 		if (skip)
 			intro.skip(now);
 		intro.draw();
+		if (!ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute"))
+			_ui->drawSubtitle(intro.screen(), intro.subtitle());
 		const Graphics::ManagedSurface &screen = intro.screen();
 		present(screen);
 		_system->delayMillis(10);
 	}
 	CursorMan.showMouse(cursorWasVisible);
 	_inPresentation = false;
+	if (intro.failed())
+		return Common::Error(Common::kReadingFailed, "Cannot play the Runaway opening sequence");
 	return Common::kNoError;
 }
 
@@ -318,7 +325,7 @@ Common::Error RunawayEngine::run() {
 		const Common::Error result = loadGameState(ConfMan.getInt("save_slot"));
 		if (result.getCode() != Common::kNoError)
 			return result;
-	} else if (_game == kRunawayCabinDemo) {
+	} else if (_game == kRunawayCabinDemo || _game == kRunawayFullGame) {
 		const Common::Error result = playIntro(menu);
 		if (result.getCode() != Common::kNoError || shouldQuit())
 			return result;

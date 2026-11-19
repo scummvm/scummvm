@@ -57,6 +57,8 @@ public:
 	Reply combine(byte first, byte second);
 	byte clothState() const { return _clothState; }
 	void soilCloth() { _clothState = 2; }
+	byte water() const { return _water; }
+	void setWater(byte water) { _water = water; }
 	void captureState(RunawaySaveState &state) const;
 	void restoreState(const RunawaySaveState &state);
 
@@ -65,6 +67,7 @@ private:
 	const RunawayGameType _game;
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
+	byte _water = 0;
 };
 
 } // End of namespace Hollywood

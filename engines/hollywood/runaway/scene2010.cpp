@@ -1,0 +1,480 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/textconsole.h"
+#include "common/str-enc.h"
+#include "common/util.h"
+#include "hollywood/resource.h"
+#include "hollywood/runaway/presentation.h"
+#include "hollywood/runaway/scene2010.h"
+
+namespace Hollywood {
+namespace {
+
+// Use the surface blitter's alpha support for the original picture dissolves.
+// A 32-bit RGB source leaves 0xffffffff available as a transparent key without
+// losing white pixels from the RGB565 artwork.
+const Graphics::PixelFormat kPictureFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
+
+} // End of anonymous namespace
+
+bool RunawayOpening::load() {
+	ChunkArchive archive;
+	if (!archive.open(Common::Path("RESOURCE.A00")) ||
+			!loadRunawaySurface(archive, 6, 1024, 600, _narratorBackground) ||
+			!archive.readVariableChunk(7, _chapterTitle) ||
+			!_text.loadStage("RESOURCE.003", "Runaway narrator", 100))
+		return false;
+	const uint narratorFrames[] = {178, 35, 7, 35, 35, 35};
+	for (uint i = 0; i < ARRAYSIZE(_narrator); ++i) {
+		if (!_narrator[i].load(archive, i, narratorFrames[i]))
+			return false;
+	}
+
+	if (!archive.open(Common::Path("RESOURCE.B01")) ||
+			!loadRunawaySurface(archive, 0, 1592, 600, _city) ||
+			!_cityActor.load(archive, 1, 213))
+		return false;
+	for (uint i = 0; i < ARRAYSIZE(_parallax); ++i) {
+		if (!archive.readVariableChunk(i + 2, _parallax[i]))
+			return false;
+	}
+	const uint titleChunks[] = {5, 8, 9, 6};
+	for (uint i = 0; i < ARRAYSIZE(_titles); ++i) {
+		if (!_titles[i].load(archive, titleChunks[i], 75))
+			return false;
+	}
+	// B01 chunk 7 is the 400x39 title at room coordinates (879, 548).
+	Graphics::ManagedSurface scratch(400, 39, _city.format);
+	Common::Array<byte> patch;
+	if (!archive.readVariableChunk(7, patch) || !applyRunawayPatch(patch, scratch, -548, -879))
+		return false;
+	_cityTitle.convertFrom(scratch, kPictureFormat);
+	for (uint i = 0; i < ARRAYSIZE(_pictures) - 1; ++i) {
+		if (!loadRunawaySurface(archive, i + 10, 282, 188, scratch))
+			return false;
+		_pictures[i].convertFrom(scratch, kPictureFormat);
+	}
+	_pictures[16].create(282, 188, kPictureFormat);
+	for (uint i = 0; i < ARRAYSIZE(_credits); ++i) {
+		if (!_credits[i].load(archive, i + 26, 12))
+			return false;
+	}
+	if (!archive.open(Common::Path("DATAVB08.002")))
+		return false;
+	_portrait.create(512, 300, _city.format);
+	for (uint i = 0; i < ARRAYSIZE(_heads); ++i) {
+		if (!archive.readVariableChunk(i * 2, _portraits[i]) ||
+				!_heads[i].load(archive, i * 2 + 1, 12))
+			return false;
+	}
+	return true;
+}
+
+void RunawayOpening::start(uint32 now) {
+	_audio.setChapter(1);
+	enter(kSitDown, now);
+}
+
+void RunawayOpening::enter(Step step, uint32 now) {
+	_step = step;
+	_now = _started = now;
+	_events = 0;
+	_row = 0;
+	_subtitle.clear();
+	_lipSync.stop();
+	_audio.stopSpeech();
+	switch (step) {
+	case kSitDown:      _firstFrame = 0;   _lastFrame = 20;  _headBank = 0; break;
+	case kLeanForward:  _firstFrame = 161; _lastFrame = 177; _headBank = 0; break;
+	case kLeanBack:     _firstFrame = 177; _lastFrame = 161; _headBank = 0; break;
+	case kTurnToScreen: _firstFrame = 128; _lastFrame = 160; _headBank = 0; break;
+	case kTurnBack:     _firstFrame = 160; _lastFrame = 128; _headBank = 0; break;
+	case kIntroduction: _bodyFrame = 20;  _headBank = 1; speak(0, 0); break;
+	case kQuestion:     _bodyFrame = 177; _headBank = 5; speak(0, 1); break;
+	case kBackground:   _bodyFrame = 20;  _headBank = 1; speak(0, 2); break;
+	case kJourney:      _bodyFrame = 160; _headBank = 4; speak(0, 3); break;
+	case kLastNarration: _bodyFrame = 20; _headBank = 1; speak(0, 9); break;
+	case kMontage:
+		startMovie("DATAVA02.001", 0, 700);
+		_audio.playIntroMusic(4);
+		break;
+	case kCity:
+		_video.close();
+		_narrating = false;
+		_failed = !_text.loadStage("RESOURCE.003", "Runaway opening", 201);
+		_audio.playMusic(32);
+		_audio.setMusicVolume(204);
+		break;
+	case kAccident:
+		startMovie("DATAVB04.001", 0, 250);
+		_audio.playEffect(27);
+		break;
+	case kAccidentTitle:
+		_audio.playEffect(28, 255, 1);
+		break;
+	case kAccidentEnd:
+		startMovie(nullptr, 261, 312);
+		break;
+	case kCityExit:
+		_audio.stopEffect();
+		_video.close();
+		break;
+	case kFilm:
+		startMovie("DATAVB08.001", 0, 2565);
+		if (!_themeStarted) {
+			_audio.playMusic(17, false);
+			_audio.setMusicVolume(255);
+			_themeStarted = true;
+		}
+		break;
+	case kStayAway:      speak(1, 2); break;
+	case kApproach:      startMovie(nullptr, 2578, 2626); break;
+	case kUnconscious:   speak(1, 3); break;
+	case kTurn:          startMovie(nullptr, 2638, 2653); break;
+	case kHospital:      speak(1, 4); break;
+	case kHitman:        speak(1, 5); break;
+	case kReply:         speak(1, 6); break;
+	case kFilmEnd:
+		startMovie(nullptr, 2668, 2927);
+		_audio.playEffect(42);
+		break;
+	case kChapter:
+		_video.close();
+		_audio.stopMusic();
+		_audio.stopEffect();
+		_narrating = true;
+		_failed = !_text.loadStage("RESOURCE.003", "Runaway narrator", 100);
+		_bodyFrame = 20;
+		_headBank = 1;
+		speak(1, 0);
+		break;
+	case kFinished:
+		_video.close();
+		_audio.stopMusic();
+		_audio.stopEffect();
+		break;
+	default:
+		break;
+	}
+	_frame = _firstFrame;
+	if (!_headBank && _narrating)
+		_bodyFrame = _firstFrame;
+}
+
+void RunawayOpening::advance() {
+	enter((Step)(_step + 1), _now);
+}
+
+void RunawayOpening::speak(uint16 cue, byte variation) {
+	const SceneSpeechCue speech = _text.stageCue(cue, variation);
+	const uint count = MAX<uint>(1, speech.continuationCount);
+	if (!speech.valid() || speech.textRecordId < 500 ||
+			speech.textRecordId - 500 + count > _text._stageLargeRows.size() / 321 ||
+			!speech.voiceSampleId || speech.voiceSampleId + count > 6000) {
+		warning("Runaway: invalid opening speech cue %u/%u", cue, variation);
+		_failed = true;
+		return;
+	}
+	_row = speech.textRecordId;
+	_lastRow = _row + count - 1;
+	_sample = speech.voiceSampleId;
+	showLine();
+}
+
+void RunawayOpening::showLine() {
+	_subtitle = Common::U32String(_text.largeTextRecord(_row), Common::kDos850);
+	// The framing narration belongs to DATAACA0, independently of chapter.
+	const uint32 duration = _audio.playSpeech(_sample, _narrating);
+	_lipSync.start(_subtitle, _now, duration, _random, _sample);
+	_deadline = _now + (duration ? MAX<uint>(1000, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
+}
+
+void RunawayOpening::nextLine() {
+	_audio.stopSpeech();
+	_lipSync.stop();
+	if (_row < _lastRow) {
+		++_row;
+		++_sample;
+		showLine();
+	} else {
+		_row = 0;
+		_subtitle.clear();
+	}
+}
+
+void RunawayOpening::startMovie(const char *name, uint first, uint last) {
+	if ((name && !_video.load(name)) || last >= _video.frameCount() || !_video.decodeToFrame(first)) {
+		warning("Runaway: cannot load opening movie segment %u..%u", first, last);
+		_failed = true;
+		return;
+	}
+	_firstFrame = first;
+	_lastFrame = last;
+}
+
+bool RunawayOpening::updateMovie() {
+	_frame = MIN(_lastFrame, _firstFrame + _video.frameAtTime(_now - _started));
+	if (!_video.decodeToFrame(_frame)) {
+		_failed = true;
+		return false;
+	}
+	return _frame == _lastFrame;
+}
+
+void RunawayOpening::update(uint32 now) {
+	_now = now;
+	if (finished())
+		return;
+	if (speaking() && !_audio.speechPlaying() && (int32)(now - _deadline) >= 0)
+		nextLine();
+	const uint elapsed = now - _started;
+	switch (_step) {
+	case kSitDown:
+	case kLeanForward:
+	case kLeanBack:
+	case kTurnToScreen:
+	case kTurnBack: {
+		const uint distance = ABS((int)_lastFrame - (int)_firstFrame);
+		const uint offset = MIN(distance, elapsed / 80);
+		_bodyFrame = _lastFrame >= _firstFrame ? _firstFrame + offset : _firstFrame - offset;
+		if (elapsed >= (distance + 1) * 80)
+			advance();
+		break;
+	}
+	case kMontage: {
+		const bool ended = updateMovie();
+		const uint cues[] = {73, 215, 357, 499, 642};
+		if (_events < ARRAYSIZE(cues) && _frame >= cues[_events] && !speaking()) {
+			speak(0, 4 + _events);
+			++_events;
+		}
+		if (ended && !speaking() && _events == ARRAYSIZE(cues)) {
+			_video.close();
+			advance();
+		}
+		break;
+	}
+	case kCity:
+		if (elapsed >= 11700)
+			advance();
+		break;
+	case kCityExit:
+		if (elapsed >= 3780)
+			advance();
+		break;
+	case kTitle:
+	case kAccidentTitle: {
+		const uint fadeTime = 74 * (_step == kTitle ? 40 : 20);
+		if (_step == kAccidentTitle) {
+			if (!(_events & 1) && elapsed >= fadeTime * 2 + 500) {
+				_audio.playMusic(17, false);
+				_audio.setMusicVolume(255);
+				_themeStarted = true;
+				_events |= 1;
+			}
+			if (!(_events & 2) && elapsed >= fadeTime * 2 + 2000) {
+				_audio.playEffect(29);
+				_events |= 2;
+			}
+		}
+		if (elapsed >= fadeTime * 2 + 2000 + 1480)
+			advance();
+		break;
+	}
+	case kAccident:
+		if (updateMovie()) {
+			if (!_events) {
+				_deadline = now + 2000;
+				_events = 1;
+			}
+			if (!_audio.effectPlaying() || (int32)(now - _deadline) >= 0)
+				advance();
+		}
+		break;
+	case kAccidentEnd:
+	case kApproach:
+	case kTurn:
+		if (updateMovie())
+			advance();
+		break;
+	case kFilm: {
+		const bool ended = updateMovie();
+		// Original frame callbacks (0x576d40), independent of rendering rate.
+		if (!(_events & 1) && _frame >= 2251) {
+			_audio.playMusic(30);
+			_audio.setMusicVolume(179);
+			_audio.playEffect(41);
+			_events |= 1;
+		}
+		if (!(_events & 2) && _frame >= 2282) {
+			speak(1, 0);
+			_events |= 2;
+		}
+		if (!(_events & 4) && _frame >= 2541) {
+			speak(1, 1);
+			_events |= 4;
+		}
+		if (ended && !speaking())
+			advance();
+		break;
+	}
+	case kFilmEnd:
+		if (updateMovie()) {
+			advance();
+		} else if (!_events && _frame >= 2734) {
+			_audio.playEffect(43, 230);
+			_events = 1;
+		}
+		break;
+	case kLastNarration:
+	case kChapter:
+		if (!speaking()) {
+			if (!_events) {
+				_deadline = now + 500;
+				_events = 1;
+			}
+			if ((int32)(now - _deadline) >= 0)
+				advance();
+		}
+		break;
+	default:
+		if (!speaking())
+			advance();
+		break;
+	}
+}
+
+void RunawayOpening::skip(uint32 now) {
+	_now = now;
+	if (speaking()) {
+		nextLine();
+	} else if (_step == kMontage) {
+		_video.close();
+		enter(kTurnBack, now);
+	} else if (_step >= kCity && _step < kFilm) {
+		_audio.stopEffect();
+		enter(kFilm, now);
+	} else if (_step >= kFilm && _step < kChapter) {
+		enter(kChapter, now);
+	} else if (!finished()) {
+		advance();
+	}
+}
+
+void RunawayOpening::drawNarrator(Graphics::ManagedSurface &screen) {
+	screen.blitFrom(_narratorBackground, Common::Point(0, kRunawayViewportTop));
+	_narrator[0].draw(screen, _bodyFrame, 0, kRunawayViewportTop);
+	if (_headBank)
+		_narrator[_headBank].draw(screen, _lipSync.frame(_now) % 6, 0, kRunawayViewportTop);
+	if (_step == kMontage)
+		_video.draw(screen, Common::Rect(256, 232, 656, 466));
+	if (_step == kChapter)
+		applyRunawayPatch(_chapterTitle, screen, kRunawayViewportTop);
+}
+
+void RunawayOpening::drawCity(Graphics::ManagedSurface &screen) {
+	Graphics::ManagedSurface viewport(screen, Common::Rect(0, kRunawayViewportTop, 1024, kRunawayViewportTop + 600));
+	const uint elapsed = _now - _started;
+	const int camera = _step == kCity ? 568 - MIN<uint>(240, elapsed > 6900 ? (elapsed - 6900) / 20 : 0) :
+		328 - MIN<uint>(328, elapsed / 10);
+	viewport.blitFrom(_city, Common::Rect(camera, 0, camera + 1024, 600), Common::Point(0, 0));
+	const uint frame = _step == kCity ? 0 : MIN<uint>(212, 48 + elapsed / 80);
+	_cityActor.draw(viewport, frame, camera, 0);
+	// Native parallax offsets are applied in the room buffer before the
+	// viewport is cropped, so its camera displacement also applies here.
+	applyRunawayPatch(_parallax[1], viewport, 200, 100 - camera * 2);
+	applyRunawayPatch(_parallax[2], viewport, 0, 1100 - camera * 2);
+	applyRunawayPatch(_parallax[0], viewport, 0, (620 - camera) * 4 - camera);
+	if (_step == kCity && elapsed >= 500 && elapsed < 6900) {
+		const uint tick = (elapsed - 500) / 80;
+		const uint level = tick < 20 ? tick * 5 : tick < 60 ? 100 : (80 - tick) * 5;
+		viewport.transBlitFrom(_cityTitle, Common::Point(879 - camera, 548),
+			0xffffffff, false, level * 255 / 100);
+	}
+}
+
+void RunawayOpening::drawTitles(Graphics::ManagedSurface &screen) {
+	const uint elapsed = _now - _started;
+	const uint delay = _step == kTitle ? 40 : 20;
+	const uint fadeTime = 74 * delay;
+	uint first = MIN<uint>(74, elapsed / delay);
+	uint second = elapsed > fadeTime + 500 ? MIN<uint>(74, (elapsed - fadeTime - 500) / delay) : 0;
+	if (elapsed >= fadeTime * 2 + 2000)
+		first = second = 74 - MIN<uint>(74, (elapsed - fadeTime * 2 - 2000) / 20);
+	const uint bank = _step == kTitle ? 0 : 2;
+	_titles[bank].draw(screen, first, 0, kRunawayViewportTop);
+	_titles[bank + 1].draw(screen, second, 0, kRunawayViewportTop);
+}
+
+void RunawayOpening::drawFilm(Graphics::ManagedSurface &screen) {
+	const Common::Rect viewport(0, kRunawayViewportTop, 1024, kRunawayViewportTop + 600);
+	_video.draw(screen, viewport);
+	if (_step == kFilm && _frame >= 344 && _frame < 2250) {
+		// The original wipes away the right half for the opening credits,
+		// then restores the full movie before the accident.
+		const uint edge = _frame < 408 ? 1024 - (_frame - 343) * 8 :
+			_frame < 2186 ? 512 : MIN<uint>(1024, 512 + (_frame - 2185) * 8);
+		screen.fillRect(Common::Rect(edge, viewport.top, 1024, viewport.bottom), 0);
+		if (_frame >= 420) {
+			const uint elapsed = _frame - 420;
+			const uint credit = elapsed / 147, tick = elapsed % 147;
+			if (credit < ARRAYSIZE(_credits) && tick < 112)
+				_credits[credit].draw(screen, tick < 12 ? tick : tick < 100 ? 11 : 111 - tick, 0, kRunawayViewportTop);
+			const uint picture = elapsed / 108;
+			const uint alpha = MIN<uint>(255, (elapsed % 108 + 2) * 255 / 20);
+			const Common::Point position(627, 140);
+			if (picture && picture <= ARRAYSIZE(_pictures))
+				screen.blitFrom(_pictures[picture - 1], position);
+			if (picture < ARRAYSIZE(_pictures))
+				screen.transBlitFrom(_pictures[picture], position, 0xffffffff, false, alpha);
+		}
+	}
+	if (_step == kStayAway || _step == kUnconscious || (_step >= kHospital && _step <= kReply)) {
+		const uint portrait = _step == kStayAway ? 0 : _step == kUnconscious ? 1 : 2;
+		applyRunawayPatch(_portraits[portrait], _portrait);
+		// The other hitman speaks off screen; the visible man only blinks.
+		const uint mouth = _step == kHitman ? ((_now - _started) % 2400 < 160 ? 6 : 0) : _lipSync.frame(_now);
+		_heads[portrait].draw(_portrait, mouth, 0, 0);
+		screen.blitFrom(_portrait, Common::Rect(512, 300), viewport);
+	}
+}
+
+void RunawayOpening::draw(Graphics::ManagedSurface &screen) {
+	screen.clear();
+	if (_step <= kLastNarration || _step == kChapter)
+		drawNarrator(screen);
+	else if (_step == kCity || _step == kCityExit)
+		drawCity(screen);
+	else if (_step == kTitle || _step == kAccidentTitle)
+		drawTitles(screen);
+	else if (_step < kFinished)
+		drawFilm(screen);
+	const uint elapsed = _now - _started;
+	if ((_step == kSitDown || _step == kCity || _step == kChapter) && elapsed < 500)
+		dimRunawayViewport(screen, elapsed * 2);
+	else if ((_step == kLastNarration || _step == kChapter) && _events)
+		dimRunawayViewport(screen, MIN<uint>(500, _deadline - _now) * 2);
+	else if (_step == kCityExit && elapsed > 3280)
+		dimRunawayViewport(screen, (3780 - MIN<uint>(3780, elapsed)) * 2);
+}
+
+} // End of namespace Hollywood

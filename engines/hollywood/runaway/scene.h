@@ -95,7 +95,7 @@ public:
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override { return _subtitle; }
-	bool busy() const override { return _pendingHotspot != 0 || _transition.scene || _hospitalEntryStep || speaking(); }
+	bool busy() const override { return _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _hospitalEntryStep || _roomAction || speaking(); }
 	bool speaking() const override { return !_subtitle.empty(); }
 	byte speechFrame() const override { return _lipSync.frame(_now); }
 	void skipSpeech() override;
@@ -115,7 +115,7 @@ private:
 	bool rebuildBackground();
 	bool applyPatch(uint chunk);
 	void updateMaps();
-	void walkTo(Common::Point target);
+	void walkTo(Common::Point target, byte facing = 0xff, bool scripted = false);
 	void arrive();
 	void execute(uint16 action);
 	void useItem(byte item, byte hotspot);
@@ -123,6 +123,8 @@ private:
 	void showLine();
 	void changeFloor(bool upper, Common::Point position);
 	void updateCamera();
+	void leaveHospitalRoom(uint16 scene, Common::Point position, byte facing);
+	void updateHospitalAudio();
 	float actorHeight() const;
 	const RunawayHotspot *hotspot(byte id) const;
 	Common::U32String hotspotName(byte id) const;
@@ -134,10 +136,16 @@ private:
 	void start2020();
 	void update2020();
 	void updateMaps2020();
-	bool sayInventory2020(const RunawayInventory::Reply &reply);
+	bool sayHospitalInventory(const RunawayInventory::Reply &reply);
 	ActionResult execute2020(uint16 action);
 	float actorHeight2020() const;
 	void drawScene2020(Graphics::ManagedSurface &viewport, bool foreground);
+	bool loadScene2080();
+	bool applyBackground2080();
+	void updateMaps2080();
+	void update2080();
+	ActionResult execute2080(uint16 action);
+	void drawScene2080(Graphics::ManagedSurface &viewport, bool foreground);
 
 	bool loadScene4030();
 	bool applyBackground4030();
@@ -181,6 +189,7 @@ private:
 	SceneTextStore _text;
 	RunawayActor _actor;
 	RunawayAnimation _ambient, _overlay, _safe;
+	RunawayAnimation _actionAnimation;
 	Graphics::ManagedSurface _background, _screen;
 	Common::Array<byte> _mask, _originalMaps, _maps;
 	Common::Array<Common::Rect> _foreground[5];
@@ -197,6 +206,7 @@ private:
 	uint _pathIndex = 0, _lineIndex = 0;
 	uint16 _room = 0, _pendingAction = 0;
 	byte _facing = 3, _pendingHotspot = 0, _pendingItem = 0;
+	byte _arrivalFacing = 0xff;
 	float _x = 0, _y = 0;
 	uint32 _now = 0, _lastUpdate = 0, _walkElapsed = 0, _subtitleUntil = 0;
 	bool _upperFloor = true, _antialias = true, _fastScrolling = true;
@@ -211,6 +221,12 @@ private:
 	byte _hospitalEntryStep = 0, _ambientFrame = 0, _musicCue = 11;
 	int _ambientDirection = 1;
 	uint32 _ambientTick = 0, _nextMusic = 0;
+	bool _entering = false;
+	uint16 _roomAction = 0;
+	byte _actionStage = 0;
+	uint _actionStep = 0;
+	uint32 _actionStarted = 0;
+	Transition _hospitalExit;
 };
 
 } // End of namespace Hollywood

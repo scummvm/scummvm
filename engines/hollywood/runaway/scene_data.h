@@ -28,6 +28,7 @@ namespace Hollywood {
 
 enum RunawayRoomId {
 	kHospitalBedroom = 2020,
+	kHospitalBathroom = 2080,
 	kMuseumOffice = 4030,
 	kMuseumLaboratory = 4050,
 	kMuseumHall = 4060,
@@ -45,9 +46,12 @@ struct RunawayHotspot {
 };
 
 struct RunawayItemAction {
+	constexpr RunawayItemAction(uint16 roomId, byte itemId, byte hotspotId, uint16 actionId, bool walk = true) :
+		room(roomId), item(itemId), hotspot(hotspotId), action(actionId), approach(walk) {}
 	uint16 room;
 	byte item, hotspot;
 	uint16 action;
+	bool approach;
 };
 
 struct RunawayResponse {
@@ -77,6 +81,7 @@ struct RunawayRoom {
 };
 
 extern const RunawayRoom kRunawayScene2020;
+extern const RunawayRoom kRunawayScene2080;
 extern const RunawayRoom kRunawayScene4030;
 extern const RunawayRoom kRunawayScene4050;
 extern const RunawayRoom kRunawayScene4060;

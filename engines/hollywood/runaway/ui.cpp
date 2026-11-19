@@ -442,6 +442,14 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 	}
 }
 
+void RunawayUI::drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32String &text) const {
+	Common::Array<Common::U32String> lines;
+	_font.wordWrapText(text, 984, lines);
+	for (uint i = 0; i < MIN<uint>(3, lines.size()); ++i)
+		_font.drawString(screen.surfacePtr(), lines[i], 20, 684 + i * 28, 984,
+			kUIFormat.RGBToColor(255, 223, 206), Graphics::kTextAlignCenter);
+}
+
 void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &roomCaption,
 		const Common::U32String &committedCaption, const Common::U32String &subtitle, bool showSubtitles) {
 	if (_inventoryOpen)
@@ -450,13 +458,8 @@ void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &
 	screen.copyRectToSurface(button, kButtonX, 0, Common::Rect(_buttonFrame * 100, 0, (_buttonFrame + 1) * 100, 74));
 	screen.copyRectToSurface(_optionsButton, 612, 0, Common::Rect(_optionsFrame * 100, 0, (_optionsFrame + 1) * 100, 74));
 	if (_speaking) {
-		if (showSubtitles) {
-			Common::Array<Common::U32String> lines;
-			_font.wordWrapText(subtitle, 984, lines);
-			for (uint i = 0; i < MIN<uint>(3, lines.size()); ++i)
-				_font.drawString(screen.surfacePtr(), lines[i], 20, 684 + i * 28, 984,
-					kUIFormat.RGBToColor(255, 223, 206), Graphics::kTextAlignCenter);
-		}
+		if (showSubtitles)
+			drawSubtitle(screen, subtitle);
 	} else {
 		Common::U32String caption;
 		uint16 color = kUIFormat.RGBToColor(189, 166, 148);

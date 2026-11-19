@@ -64,6 +64,9 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(hospital.sheetTaken, 3);
 	s.syncAsByte(hospital.bagTaken, 3);
 	s.syncAsByte(hospital.exitMapRead, 3);
+	s.syncAsByte(hospital.markerTaken, 4);
+	s.syncAsByte(hospital.alcohol, 4);
+	s.syncAsByte(water, 4);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -97,11 +100,15 @@ bool RunawaySaveState::valid() const {
 			return false;
 	}
 	if (hospital.glassTaken > 1 || hospital.pillsTaken > 1 || hospital.sheetTaken > 1 ||
-			hospital.bagTaken > 1 || hospital.exitMapRead > 1)
+			hospital.bagTaken > 1 || hospital.exitMapRead > 1 || hospital.markerTaken > 1 || hospital.alcohol > 2 || water > 2)
 		return false;
-	if (game == kRunawayFullGame && (scene != kHospitalBedroom || x >= 1520 || y >= 600 ||
-			camera < 156 || camera > 496 || cameraY))
-		return false;
+	if (game == kRunawayFullGame) {
+		const RunawayRoom *room = findRunawayRoom(scene);
+		if (!room || (room->number != kHospitalBedroom && room->number != kHospitalBathroom) ||
+				x >= room->width || y >= room->height || cameraY ||
+				camera < (room->number == kHospitalBedroom ? 156 : 0) || camera > room->width - 1024)
+			return false;
+	}
 	if ((coolerMoved && ice != 2) || ((hatch != 0) != (coolerMoved != 0)))
 		return false;
 	for (uint i = 0; i < sizeof(pickedUp); ++i) {
@@ -123,7 +130,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 3)
+	if (version < 1 || version > 4)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -135,9 +142,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(3);
+	stream.writeUint16LE(4);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(3);
+	s.setVersion(4);
 	sync(s);
 	return !s.err();
 }

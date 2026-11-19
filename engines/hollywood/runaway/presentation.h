@@ -32,6 +32,8 @@
 
 namespace Hollywood {
 
+void dimRunawayViewport(Graphics::ManagedSurface &screen, uint brightness, uint maximum = 1000);
+
 class RunawayCredits {
 public:
 	bool load();
