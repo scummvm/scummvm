@@ -68,8 +68,8 @@ const RunawayResponse kResponses[] = {
 };
 
 const RunawayItemAction kItemActions[] = {
-	{5060, 15, 2, 319, false},
-	{5060, 20, 9, 320, true},
+	{5060, 15, 2, 319, false}, // Show the basketball to Lula.
+	{5060, 20, 9, 320, true}, // Exchange Mariola's sunglasses.
 };
 
 const byte kSearchTrunkFrames[] = {
@@ -101,14 +101,13 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 	case 304: // Talk to Lula.
 		if (_desert.guard == 2) {
 			say(20, 12);
-		} else if (_desert.lulaHelped) {
-			return kUnhandled;
 		} else {
 			say(20);
 			deferDesertAction(404);
 		}
 		break;
-	case 404: { // Let Lula finish dancing before talking.
+	case 404: // Let Lula finish dancing before talking.
+	case 419: { // Let Lula notice Brian bouncing the basketball.
 		Common::Array<byte> frames;
 		for (uint i = 120 + (_now / 80) % 75; i < 195; ++i)
 			frames.push_back(i);
@@ -117,11 +116,29 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 			if (i == 94)
 				frames.push_back(i);
 		}
-		beginRoomAnimation(action, 12, 195, frames.data(), frames.size(), false);
+		beginRoomAnimation(action, 12, 195, frames.data(), frames.size(), action == 419);
+		if (action == 419) {
+			Common::Array<byte> brian;
+			for (uint i = 0; i < frames.size(); ++i) {
+				if (i < 29)
+					brian.push_back(i ? i - 1 : 0);
+				else
+					brian.push_back(28 + (i - 29) % 14);
+			}
+			setRoomAnimationOverlay(13, 62, brian.data(), brian.size());
+		}
 		break;
 	}
 	case 1404: // Ask Lula about distracting Stud.
-		if (!_desert.guardWeaknessKnown) {
+		if (_desert.lulaHelped) {
+			say(20, 9);
+			say(21, 6, false, 2);
+			say(20, 10);
+			say(21, 7, false, 2);
+			say(20, 11);
+			deferDesertAction(469);
+			break;
+		} else if (!_desert.guardWeaknessKnown) {
 			if (!_desert.visited[6]) {
 				say(20, 1);
 				say(21, 0, false, 2);
@@ -241,12 +258,55 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 		say(15, !_inventory.contains(20) ? 0 : _desert.mariolaHelped ? 2 : 1);
 		break;
 	case 319: // Give the repaired basketball to Lula.
-		if (!_desert.guardWeaknessKnown)
+		if (!_desert.guardWeaknessKnown) {
 			say(17, 7);
-		else if (_inventory.desert().ball < 2)
+		} else if (_inventory.desert().ball < 2) {
 			say(17, 8);
-		else
-			return kUnhandled;
+		} else {
+			_inventory.select(0);
+			walkTo(Common::Point(490, 457), 7);
+			deferDesertAction(409);
+		}
+		break;
+	case 409: // Call Lula over to see the basketball.
+		say(17);
+		deferDesertAction(419);
+		break;
+	case 1419: // Keep bouncing the ball while Lula asks for it.
+		say(18, 5, false, 2);
+		loopRoomAnimationDuringSpeech(429, 13, 62, 28, 41);
+		break;
+	case 1429: { // Throw the basketball to Lula.
+		_audio.stopEffect();
+		byte lula[20];
+		for (uint i = 0; i < ARRAYSIZE(lula); ++i)
+			lula[i] = i == ARRAYSIZE(lula) - 1 ? 5 : MIN<uint>(i, 4);
+		beginRoomAnimationRange(439, 13, 62, 42, 61);
+		setRoomAnimationOverlay(21, 102, lula, ARRAYSIZE(lula));
+		break;
+	}
+	case 1439: // Watch Lula demonstrate her basketball skills.
+		beginRoomAnimationRange(449, 21, 102, 6, 96, false);
+		break;
+	case 1449: // Approach Lula after she catches the ball.
+		_inventory.remove(15);
+		walkTo(Common::Point(349, 442), 7);
+		deferDesertAction(459);
+		break;
+	case 459: // Reveal Lula's identity and arrange the distraction.
+		say(18, 6, false, 2);
+		for (uint i = 1; i <= 5; ++i) {
+			say(17, i);
+			say(18, i - 1, false, 2);
+		}
+		say(17, 6);
+		deferDesertAction(479);
+		break;
+	case 479: // Finish enlisting Lula's help.
+		_desert.lulaHelped = 1;
+		// Fall through.
+	case 469: // Take Lula to the hangar, including repeat attempts.
+		leaveDesertRoom(5101);
 		break;
 	case 320: // Give the darkened sunglasses to Mariola.
 		if (!_inventory.desert().glasses) {
@@ -277,12 +337,24 @@ void RunawayRoomScene::drawScene5060(Graphics::ManagedSurface &viewport) {
 		_npc.draw(viewport, frame, _camera.x, -_camera.y);
 	}
 	static const byte mouth[] = {5, 0, 1, 2, 3, 4, 11, 6, 7, 8, 9, 10};
-	if (!drawingRoomAnimation() || (_roomAction != 404 && _roomAction != 414)) {
+	if (_roomAction == 459 || _roomAction == 479) {
+		_actionAnimation.draw(viewport, 96 + (speaker() == 2 ? speechFrame() % 6 : 0), _camera.x, -_camera.y);
+	} else if (!drawingRoomAnimation() || (_roomAction != 404 && _roomAction != 414 &&
+			_roomAction != 419 && _roomAction != 439 && _roomAction != 449)) {
 		uint frame = 120 + (_now / 80) % 75;
-		if (_roomAction == 414)
+		if (_roomAction == 414 || _roomAction == 429 || _roomAction == 469)
 			frame = mouth[speaker() == 2 ? speechFrame() : 0];
 		_machine.draw(viewport, frame, _camera.x, -_camera.y);
 	}
+}
+
+void RunawayRoomScene::animationFrame5060() {
+	if (_roomAction == 419 && _actionStep == 28)
+		_audio.playEffect(56, 217, 1, true);
+	if (_roomAction == 449 && (_actionStep == 6 || _actionStep == 11 || _actionStep == 51))
+		_audio.playFootstep(1, _random.getRandomBit(), 153);
+	if (_roomAction == 449 && _actionStep == 57)
+		_audio.playFootstep(1, _random.getRandomBit());
 }
 
 } // End of namespace Hollywood

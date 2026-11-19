@@ -101,9 +101,9 @@ public:
 	byte hotspotAt(Common::Point mouse) const override;
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
-	const Common::U32String &subtitle() const override { return _sequence.active() ? _sequence.subtitle() : _speech.subtitle(); }
+	const Common::U32String &subtitle() const override;
 	bool busy() const override { return _sequence.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _hospitalEntryStep || _roomAction || _conversation || speaking(); }
-	bool speaking() const override { return !subtitle().empty(); }
+	bool speaking() const override { return _sequence.active() ? !_sequence.subtitle().empty() : !_speech.subtitle().empty(); }
 	byte speechFrame() const override { return _sequence.active() ? _sequence.speechFrame() : _speech.frame(_now); }
 	bool playingVideo() const override { return _sequence.active(); }
 	void skipVideo() override { _sequence.skip(); }
@@ -112,7 +112,8 @@ public:
 	void sayInventory(const RunawayInventory::Reply &reply) override;
 	const Common::Array<Common::U32String> &dialogueChoices() const override { return _choices; }
 	void chooseDialogue(uint choice) override;
-	bool canSave() const override { return !busy() && !_walkPath.active() && !_pressedKey; }
+	// The hangar contest's animation progress is transient, like a room action.
+	bool canSave() const override { return !busy() && !_walkPath.active() && !_pressedKey && _desert.guard != 1; }
 	void captureState(RunawaySaveState &state) const override;
 	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
 	void setOptions(bool antialias, bool fastScrolling) override { _antialias = antialias; _fastScrolling = fastScrolling; }
@@ -144,6 +145,7 @@ private:
 	void beginRoomAnimation(uint16 action, uint chunk, uint frames, const byte *order = nullptr, uint count = 0, bool hideActor = true);
 	void beginRoomAnimationRange(uint16 action, uint chunk, uint frames, uint first, uint last, bool hideActor = true);
 	void holdRoomAnimation(uint16 action, uint chunk, uint frames, uint frame, bool hideActor = true);
+	void loopRoomAnimationDuringSpeech(uint16 action, uint chunk, uint frames, uint first, uint last, bool hideActor = true);
 	void setRoomAnimationOverlay(uint chunk, uint frames, const byte *order, uint count);
 	bool drawingRoomAnimation() const { return _roomAction && !_actionFrames.empty() && (_actionHoldSpeech || !speaking()) && !_walkPath.active(); }
 	void updateRoomAnimation();
@@ -252,7 +254,11 @@ private:
 	void drawScene5080(Graphics::ManagedSurface &viewport);
 	void updateScene5080();
 	void drawScene5100(Graphics::ManagedSurface &viewport, bool foreground);
-	void updateScene5100();
+	uint studFrame() const;
+	void updateScene5100(uint elapsed, bool inventoryOpen);
+	void startHangarTaunt();
+	void animationFrame5060();
+	void animationFrame5100();
 	bool applyBackground5100();
 	void updateMaps5100();
 	void walkHangar(Common::Point target, byte facing);
@@ -282,6 +288,7 @@ private:
 	const RunawayGameType _game;
 	Common::RandomSource _random;
 	RunawaySpeech _speech;
+	RunawaySpeech _hangarSpeech;
 	RunawayIdleHead _idleHead;
 	ChunkArchive _archive;
 	SceneTextStore _text;
@@ -320,6 +327,11 @@ private:
 	RunawaySaveState::Desert _desert;
 	Common::Array<RunawayHotspot> _desertHotspots;
 	RunawayAnimation _desertAnimations[6];
+	byte _hangarShot = 0, _hangarShotCount = 0, _hangarShotFrame = 88;
+	uint _hangarShotElapsed = 0;
+	bool _hangarThrowing = false;
+	bool _hangarIntroduction = false;
+	byte _hangarLulaPose = 0;
 	RunawayAnimation _npc, _npcMouth, _machine;
 	RunawayAnimation _computer, _rejectionLight;
 	uint32 _nextLaser = 0;
@@ -346,6 +358,7 @@ private:
 	uint16 _roomAction = 0;
 	bool _actionHidesActor = true;
 	bool _actionHoldSpeech = false;
+	bool _actionLoopSpeech = false;
 	byte _actionStage = 0;
 	uint _actionStep = 0;
 	uint32 _actionStarted = 0;

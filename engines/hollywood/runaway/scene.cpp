@@ -90,7 +90,14 @@ const RunawayRoom *findRunawayRoom(uint16 number) {
 
 RunawayRoomScene::RunawayRoomScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	_audio(audio), _sequence(audio), _inventory(inventory), _strings(strings), _game(game), _random("runaway"),
-	_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync : RunawaySpeech::kNoLipSync) {}
+	_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync : RunawaySpeech::kNoLipSync),
+	_hangarSpeech(audio, _random, RunawaySpeech::kNoLipSync) {}
+
+const Common::U32String &RunawayRoomScene::subtitle() const {
+	if (_sequence.active())
+		return _sequence.subtitle();
+	return speaking() ? _speech.subtitle() : _hangarSpeech.subtitle();
+}
 
 bool RunawayRoomScene::load(uint16 entryScene) {
 	const RunawayRoom *room = findRoom(entryScene);
@@ -242,6 +249,7 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	_lines.clear();
 	_lineIndex = 0;
 	_speech.reset();
+	_hangarSpeech.reset();
 	_caption.clear();
 	_ambient = RunawayAnimation();
 	_overlay = RunawayAnimation();
@@ -515,6 +523,8 @@ void RunawayRoomScene::showLine() {
 }
 
 void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker) {
+	if (!_hangarSpeech.subtitle().empty())
+		_hangarSpeech.stop();
 	SceneSpeechCue speech;
 	if (global)
 		_text.getStaticSpeechCue(cue, variation, speech.textRecordId, speech.continuationCount, speech.voiceSampleId);
@@ -854,6 +864,7 @@ void RunawayRoomScene::beginRoomAnimation(uint16 action, uint chunk, uint frames
 	_actionFrames.clear();
 	_secondaryFrames.clear();
 	_actionHoldSpeech = false;
+	_actionLoopSpeech = false;
 	for (uint i = 0; i < (order ? count : frames); ++i)
 		_actionFrames.push_back(order ? order[i] : i);
 	_roomAction = action;
@@ -879,6 +890,12 @@ void RunawayRoomScene::holdRoomAnimation(uint16 action, uint chunk, uint frames,
 	_actionHoldSpeech = true;
 }
 
+void RunawayRoomScene::loopRoomAnimationDuringSpeech(uint16 action, uint chunk, uint frames, uint first, uint last, bool hideActor) {
+	beginRoomAnimationRange(action, chunk, frames, first, last, hideActor);
+	_actionHoldSpeech = true;
+	_actionLoopSpeech = true;
+}
+
 void RunawayRoomScene::setRoomAnimationOverlay(uint chunk, uint frames, const byte *order, uint count) {
 	if (!_secondaryAnimation.load(_archive, chunk, frames))
 		error("Cannot load Runaway room %u overlay %u", _room, chunk);
@@ -888,13 +905,17 @@ void RunawayRoomScene::setRoomAnimationOverlay(uint chunk, uint frames, const by
 void RunawayRoomScene::updateRoomAnimation() {
 	if (!_roomAction || _actionFrames.empty())
 		return;
-	if (speaking() || _walkPath.active()) {
+	if ((speaking() && !_actionLoopSpeech) || _walkPath.active()) {
 		_actionStarted = _now;
 		return;
 	}
 	while (_now - _actionStarted >= 80) {
 		_actionStarted += 80;
 		if (++_actionStep == _actionFrames.size()) {
+			if (_actionLoopSpeech && speaking()) {
+				_actionStep = 0;
+				continue;
+			}
 			const uint16 action = _roomAction;
 			_roomAction = 0;
 			_actionFrames.clear();

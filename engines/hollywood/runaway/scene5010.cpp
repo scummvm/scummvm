@@ -83,6 +83,10 @@ void RunawayRoomScene::resumeDesert() {
 		_walkPath.reset(_position);
 		walkTo(Common::Point(1000, 451), 5, true);
 	}
+	if (_entryScene == 5101) {
+		execute(400);
+		return;
+	}
 	if (_entryScene == 5100)
 		walkTo(Common::Point(1053, 403), 3);
 	const uint16 rooms[] = {5010, 5020, 5050, 5060, 5070, 5080, 5100, 5110, 5160, 5170};
@@ -104,6 +108,8 @@ void RunawayRoomScene::leaveDesertRoom(uint16 scene) {
 		warning("Runaway: scene %u is not implemented yet", scene);
 		return;
 	}
+	if (!_hangarSpeech.subtitle().empty())
+		_hangarSpeech.stop();
 	_hospitalExit.scene = scene;
 	_hospitalExit.position = room ? room->entry : Common::Point(1167, 468);
 	_hospitalExit.facing = 3;
@@ -119,6 +125,10 @@ void RunawayRoomScene::finishDesertAnimation(uint16 action) {
 }
 
 void RunawayRoomScene::desertAnimationFrame() {
+	if (_room == 5060)
+		animationFrame5060();
+	if (_room == 5100)
+		animationFrame5100();
 	if (_room == 5080 && _roomAction == 326 && _actionStep == 23)
 		_audio.playEffect(72);
 }
@@ -129,7 +139,7 @@ void RunawayRoomScene::updateDesert(uint elapsed, bool inventoryOpen) {
 	if (_room == 5080)
 		updateScene5080();
 	if (_room == 5100)
-		updateScene5100();
+		updateScene5100(elapsed, inventoryOpen);
 	if (_roomAction && _actionFrames.empty() && !speaking() && !_walkPath.active()) {
 		const uint16 action = _roomAction;
 		_roomAction = 0;
@@ -237,7 +247,8 @@ bool RunawayRoomScene::loadDesertRoom() {
 		return loadForeground(0, 11) && loadForeground(1, 12) && loadForeground(2, 13) && loadForeground(3, 14) &&
 			_npc.load(_archive, 9, 47);
 	if (_room == 5100)
-		return _npc.load(_archive, 9, 151) && _npcMouth.load(_archive, 12, 126);
+		return _npc.load(_archive, 9, 151) && _npcMouth.load(_archive, 12, 126) &&
+			_machine.load(_archive, 16, 79);
 	return true;
 }
 
