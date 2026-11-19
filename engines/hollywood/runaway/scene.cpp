@@ -308,10 +308,20 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	for (uint i = 0; i < ARRAYSIZE(_saloonPatches); ++i) {
 		_saloonPatches[i].clear();
 	}
+	if (!loadCustomResources() || !rebuildBackground()) {
+		return false;
+	}
+	_keyCount = _pressedKey = 0;
+	updateMaps();
+	updateCamera();
+	return _actor.setFrame(_facing, 0);
+}
+
+bool RunawayRoomScene::loadCustomResources() {
 	bool loaded = true;
 	if (desertChapter())
 		loaded = loadDesertRoom();
-	switch (number) {
+	switch (_room) {
 	case kHospitalBedroom:
 		loaded = loadScene2020();
 		break;
@@ -368,21 +378,13 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	case 6263:
 		loaded = loadScene6263();
 		break;
-	case 6290:
-		loaded = loadScene6290();
-		break;
 	case 6370:
 		loaded = _npc.load(_archive, 4, 88) && _ambient.load(_archive, 5, 20);
 		break;
 	default:
 		break;
 	}
-	if (!loaded || !rebuildBackground())
-		return false;
-	_keyCount = _pressedKey = 0;
-	updateMaps();
-	updateCamera();
-	return _actor.setFrame(_facing, 0);
+	return loaded;
 }
 
 bool RunawayRoomScene::loadForeground(uint layer, uint chunk, bool pixels) {
@@ -413,12 +415,15 @@ bool RunawayRoomScene::applyPatch(uint chunk) {
 }
 
 bool RunawayRoomScene::rebuildBackground() {
+	return loadBackground() && applyCustomBackgroundPatches();
+}
+
+bool RunawayRoomScene::loadBackground() {
 	const RunawayRoom *room = findRoom(_room);
-	if (_room == 6270) {
-		return loadBackground6270();
-	}
-	if (!loadRunawaySurface(_archive, _room == 6263 ? 20 : 0, room->width, room->height, _background))
-		return false;
+	return loadRunawaySurface(_archive, _room == 6263 ? 20 : 0, room->width, room->height, _background);
+}
+
+bool RunawayRoomScene::applyCustomBackgroundPatches() {
 	if (desertChapter())
 		return applyDesertBackground();
 	switch (_room) {
@@ -450,8 +455,6 @@ bool RunawayRoomScene::rebuildBackground() {
 		return !_town.flowerPotTaken || applyPatch(9);
 	case 6260:
 		return applyBackground6260();
-	case 6290:
-		return (_town.strapDelivered != 1 || applyPatch(13)) && (_town.wrenchDelivered != 1 || applyPatch(14));
 	case 6350:
 		return !_town.arrived || (applyPatch(5) && applyPatch(7));
 	default:
@@ -461,6 +464,10 @@ bool RunawayRoomScene::rebuildBackground() {
 
 void RunawayRoomScene::updateMaps() {
 	_maps = _originalMaps;
+	applyCustomHotspotState();
+}
+
+void RunawayRoomScene::applyCustomHotspotState() {
 	if (_room == 6220) {
 		for (uint i = 0; i < 256; ++i) {
 			// The balcony shares this mask but is reached through Kevin's room.
@@ -523,9 +530,6 @@ void RunawayRoomScene::updateMaps() {
 	case 6260:
 		updateMaps6260();
 		break;
-	case 6290:
-		updateMaps6290();
-		break;
 	case kHospitalBedroom:
 		updateMaps2020();
 		break;
@@ -580,9 +584,6 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 	}
 	if (_room == 6080 && id == 2 && _town.oilCan) {
 		return Common::U32String("Oil can");
-	}
-	if (_room == 6290 && id == 11 && _town.machineKnown) {
-		return Common::U32String("Communication machine");
 	}
 	if (_room == 6090 && id == 4 && _town.oscarTobacco) {
 		return Common::U32String("Oscar");
@@ -645,15 +646,21 @@ void RunawayRoomScene::walkTo(Common::Point target, byte facing, bool scripted, 
 		_walkPath.setTarget(target);
 	} else if (reserved) {
 		_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
-	} else if (_room == 6080 || _room == 6180 || _room == 6240 || _room == 6260 || _room == 6290) {
-		walkTown(target);
 	} else {
-		_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _maps), target);
+		findWalkPath(target);
 	}
 	_arrivalFacing = facing;
 	_walkElapsed = _lastFootstep = 0;
 	if (!_walkPath.active())
 		arrive();
+}
+
+void RunawayRoomScene::findWalkPath(Common::Point target) {
+	if (_room == 6080 || _room == 6180 || _room == 6240 || _room == 6260) {
+		walkTown(target);
+	} else {
+		_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _maps), target);
+	}
 }
 
 void RunawayRoomScene::arrive() {
@@ -819,7 +826,7 @@ void RunawayRoomScene::useItem(byte item, byte id) {
 	say(1, 0, true);
 }
 
-void RunawayRoomScene::execute(uint16 action) {
+RunawayRoomScene::ActionResult RunawayRoomScene::dispatchCustomSceneAction(uint16 action) {
 	ActionResult result = desertChapter() ? executeDesert(action) : kUnhandled;
 	switch (_room) {
 	case kHospitalBedroom:
@@ -882,12 +889,6 @@ void RunawayRoomScene::execute(uint16 action) {
 	case 6263:
 		result = execute6263(action);
 		break;
-	case 6270:
-		result = execute6270(action);
-		break;
-	case 6290:
-		result = execute6290(action);
-		break;
 	case 6350:
 		result = execute6350(action);
 		break;
@@ -897,6 +898,11 @@ void RunawayRoomScene::execute(uint16 action) {
 	default:
 		break;
 	}
+	return result;
+}
+
+void RunawayRoomScene::execute(uint16 action) {
+	const ActionResult result = dispatchCustomSceneAction(action);
 	if (result == kBackgroundChanged) {
 		if (!rebuildBackground())
 			error("Cannot update Runaway room %u", _room);
@@ -948,7 +954,11 @@ void RunawayRoomScene::setCameraX(int x) {
 
 void RunawayRoomScene::updateCamera() {
 	setCameraX(_position.x - kRunawayScreenWidth / 2);
-	_camera.y = _room == 6270 || (_room == kMuseumHall && _upperFloor) ? 0 :
+	_camera.y = sceneViewportYOffset();
+}
+
+int RunawayRoomScene::sceneViewportYOffset() const {
+	return _room == kMuseumHall && _upperFloor ? 0 :
 		CLIP<int>(_position.y - 400, _room == kMuseumHall ? 200 : 0, _background.h - kRunawayViewportHeight);
 }
 
@@ -996,10 +1006,6 @@ float RunawayRoomScene::actorHeight() const {
 		return _position.y * 0.95f - 175;
 	case 6263:
 		return _position.y * 1.04838705f - 175.645157f;
-	case 6270:
-		return _position.y * 0.149253726f + 225.671646f;
-	case 6290:
-		return actorHeight6290();
 	case 6370:
 		return _position.y * 0.634920657f - 221.190475f;
 	default:
@@ -1036,7 +1042,7 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	else if (_room == kHospitalBathroom)
 		update2080();
 	if (townChapter()) {
-		updateTown();
+		updateTown(elapsed);
 		if (_sequence.active() || _transition.scene)
 			return;
 	} else if (desertChapter()) {
@@ -1122,41 +1128,7 @@ void RunawayRoomScene::draw() {
 		drawScene4140(viewport);
 		return;
 	}
-	if (_room == 6080) {
-		drawScene6080(viewport, false);
-	} else if (_room == 6090) {
-		drawScene6090(viewport, false);
-	} else if (_room == 6130) {
-		_npc.draw(viewport, oscarFrame(), _camera.x, -_camera.y);
-	} else if (_room == 6180) {
-		drawScene6180(viewport, false);
-	} else if (_room == 6200) {
-		drawScene6200(viewport);
-	} else if (_room == 6220) {
-		drawScene6220(viewport);
-	} else if (_room == 6263) {
-		drawScene6263(viewport);
-	} else if (_room == 6290) {
-		drawScene6290(viewport, false);
-	} else if (_room == 6370) {
-		drawScene6370(viewport);
-	} else if (desertChapter()) {
-		drawDesertRoom(viewport, false);
-	} else if (_room == kMuseumWilly) {
-		drawScene4070(viewport);
-	} else if (_room == kHospitalBedroom) {
-		drawScene2020(viewport, false);
-	} else if (_room == kHospitalBathroom) {
-		drawScene2080(viewport, false);
-	} else if (_room == kMuseumSecurity && museumChapter()) {
-		drawScene4100(viewport);
-	} else {
-		const bool movingSusan = museumChapter() && _room == kMuseumLaboratory && drawingRoomAnimation() &&
-			(_roomAction == 450 || _roomAction == 451 || _roomAction == 452 || _roomAction == 331 || _roomAction == 454);
-		if (!movingSusan && (!museumChapter() || _room != kMuseumHall || !_museum.willyInLab))
-			_ambient.draw(viewport, museumChapter() ? _ambientFrame : 0, _camera.x, -_camera.y);
-		_overlay.draw(viewport, 0, _camera.x, -_camera.y);
-	}
+	drawCustomBackgroundComposite(viewport);
 	RunawayActor::RenderParams params;
 	// Earlier rooms use six depth layers; Douglasville also uses layers 7..9.
 	for (uint i = 0; i < 7; ++i)
@@ -1230,6 +1202,46 @@ void RunawayRoomScene::draw() {
 		if (!_secondaryFrames.empty())
 			_secondaryAnimation.draw(viewport, _secondaryFrames[MIN<uint>(_actionStep, _secondaryFrames.size() - 1)], _camera.x, -_camera.y);
 	}
+	drawCustomForegroundComposite(viewport);
+}
+
+void RunawayRoomScene::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	if (_room == 6080) {
+		drawScene6080(viewport, false);
+	} else if (_room == 6090) {
+		drawScene6090(viewport, false);
+	} else if (_room == 6130) {
+		_npc.draw(viewport, oscarFrame(), _camera.x, -_camera.y);
+	} else if (_room == 6180) {
+		drawScene6180(viewport, false);
+	} else if (_room == 6200) {
+		drawScene6200(viewport);
+	} else if (_room == 6220) {
+		drawScene6220(viewport);
+	} else if (_room == 6263) {
+		drawScene6263(viewport);
+	} else if (_room == 6370) {
+		drawScene6370(viewport);
+	} else if (desertChapter()) {
+		drawDesertRoom(viewport, false);
+	} else if (_room == kMuseumWilly) {
+		drawScene4070(viewport);
+	} else if (_room == kHospitalBedroom) {
+		drawScene2020(viewport, false);
+	} else if (_room == kHospitalBathroom) {
+		drawScene2080(viewport, false);
+	} else if (_room == kMuseumSecurity && museumChapter()) {
+		drawScene4100(viewport);
+	} else {
+		const bool movingSusan = museumChapter() && _room == kMuseumLaboratory && drawingRoomAnimation() &&
+			(_roomAction == 450 || _roomAction == 451 || _roomAction == 452 || _roomAction == 331 || _roomAction == 454);
+		if (!movingSusan && (!museumChapter() || _room != kMuseumHall || !_museum.willyInLab))
+			_ambient.draw(viewport, museumChapter() ? _ambientFrame : 0, _camera.x, -_camera.y);
+		_overlay.draw(viewport, 0, _camera.x, -_camera.y);
+	}
+}
+
+void RunawayRoomScene::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
 	if (desertChapter())
 		drawDesertRoom(viewport, true);
 	else if (_room == kHospitalBedroom)
@@ -1250,8 +1262,6 @@ void RunawayRoomScene::draw() {
 		drawForeground6240(viewport);
 	} else if (_room == 6260) {
 		drawForeground(viewport, 0);
-	} else if (_room == 6290) {
-		drawScene6290(viewport, true);
 	}
 }
 

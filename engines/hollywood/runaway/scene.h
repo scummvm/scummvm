@@ -118,9 +118,24 @@ public:
 	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
 	void setOptions(bool antialias, bool fastScrolling) override { _antialias = antialias; _fastScrolling = fastScrolling; }
 
-private:
+protected:
 	enum ObjectState { kUnexamined, kIdentified, kTaken };
 	enum ActionResult { kUnhandled, kHandled, kBackgroundChanged };
+
+	virtual bool loadCustomResources();
+	virtual bool loadBackground();
+	virtual bool applyCustomBackgroundPatches();
+	virtual void applyCustomHotspotState();
+	virtual void prepareCustomGameplayLoop();
+	virtual void runCustomEntrySequence();
+	virtual void advanceCustomGameplayLoop(uint32 delta);
+	virtual void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport);
+	virtual void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport);
+	virtual ActionResult dispatchCustomSceneAction(uint16 action);
+	virtual void handleCustomDialogueChoice(byte effect);
+	virtual void resumeAmbientAudio(bool entering);
+	virtual void findWalkPath(Common::Point target);
+	virtual int sceneViewportYOffset() const;
 
 	bool enterRoom(uint16 room, Common::Point position, byte facing);
 	bool loadForeground(uint layer, uint chunk, bool pixels = false);
@@ -150,9 +165,9 @@ private:
 	bool drawingRoomAnimation() const { return _roomAction && !_actionFrames.empty() && (_actionHoldSpeech || !speaking()) && !_walkPath.active(); }
 	void updateRoomAnimation();
 	void finishHospitalAnimation(uint16 action);
-	float actorHeight() const;
+	virtual float actorHeight() const;
 	const RunawayHotspot *hotspot(byte id) const;
-	Common::U32String hotspotName(byte id) const;
+	virtual Common::U32String hotspotName(byte id) const;
 
 	byte walkZone() const { return _originalMaps[_mask[_position.y * _background.w + _position.x]]; }
 
@@ -290,7 +305,7 @@ private:
 
 	bool townChapter() const { return _game == kRunawayFullGame && _room / 1000 == 6; }
 	void resumeTown();
-	void updateTown();
+	void updateTown(uint32 delta);
 	void leaveTownRoom(uint16 scene);
 	void deferTownAction(uint16 action);
 	void walkTown(Common::Point target);
@@ -340,18 +355,6 @@ private:
 	void drawScene6263(Graphics::ManagedSurface &viewport);
 	ActionResult execute6263(uint16 action);
 	void locomotiveAnimationFrame();
-	void start6270();
-	bool loadBackground6270();
-	ActionResult execute6270(uint16 action);
-	void start6290();
-	bool loadScene6290();
-	void update6290();
-	void updateMaps6290();
-	void drawScene6290(Graphics::ManagedSurface &viewport, bool foreground);
-	float actorHeight6290() const;
-	ActionResult execute6290(uint16 action);
-	void startJoshuaConversation(bool introduction);
-	void joshuaDialogueChoice(byte effect);
 	ActionResult execute6350(uint16 action);
 	ActionResult execute6220(uint16 action);
 	void start6220();
@@ -412,10 +415,6 @@ private:
 	byte _oscarIdle = 3;
 	uint32 _oscarTick = 0;
 	bool _oscarTalking = false, _mineOscarPresent = false;
-	byte _joshuaFrame = 0;
-	uint32 _joshuaTick = 0;
-	bool _joshuaTalking = false;
-	RunawayAnimation _machineIndicator;
 	Common::Array<byte> _saloonPatches[3];
 	byte _saloonDoorFrame = 0;
 	uint32 _saloonDoorTick = 0;

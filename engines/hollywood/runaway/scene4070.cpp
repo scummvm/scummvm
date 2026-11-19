@@ -249,14 +249,7 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 		_museum.batteryRequested = 1;
 	if (_conversation == 4 && entry.disable == 2)
 		_desert.ventSeen = 1;
-	if (_conversation == 5)
-		sushiDialogueChoice(entry.disable);
-	if (_conversation == 6) {
-		oscarDialogueChoice(entry.disable);
-	}
-	if (_conversation == 7) {
-		joshuaDialogueChoice(entry.disable);
-	}
+	handleCustomDialogueChoice(entry.disable);
 	if (_conversation == 2 && entry.disable == 10) {
 		_dialogue[10][3].player = 22;
 		_dialogue[10][3].response = 21;
@@ -279,6 +272,14 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 		break;
 	default:
 		break;
+	}
+}
+
+void RunawayRoomScene::handleCustomDialogueChoice(byte effect) {
+	if (_conversation == 5) {
+		sushiDialogueChoice(effect);
+	} else if (_conversation == 6) {
+		oscarDialogueChoice(effect);
 	}
 }
 

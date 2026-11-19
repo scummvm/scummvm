@@ -20,7 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6270.h"
 
 namespace Hollywood {
 
@@ -29,7 +29,12 @@ const RunawayRoom kRunawayScene6270 = {
 	Common::Point(133, 699), nullptr, 0, nullptr, 0, nullptr, 0
 };
 
-bool RunawayRoomScene::loadBackground6270() {
+namespace Runaway {
+
+Scene6270::Scene6270(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6270::loadBackground() {
 	Graphics::ManagedSurface image;
 	if (!loadRunawaySurface(_archive, 0, 1024, 600, image)) {
 		return false;
@@ -41,12 +46,20 @@ bool RunawayRoomScene::loadBackground6270() {
 	return true;
 }
 
-void RunawayRoomScene::start6270() {
+void Scene6270::runCustomEntrySequence() {
 	walkTo(Common::Point(341, 498), 1);
 	deferTownAction(400);
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6270(uint16 action) {
+float Scene6270::actorHeight() const {
+	return _position.y * 0.149253726f + 225.671646f;
+}
+
+int Scene6270::sceneViewportYOffset() const {
+	return 0;
+}
+
+RunawayRoomScene::ActionResult Scene6270::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 400: // Brian looks down into the crater.
 		if (!_town.craterVisited) {
@@ -75,4 +88,5 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6270(uint16 action) {
 	return kHandled;
 }
 
+} // End of namespace Runaway
 } // End of namespace Hollywood

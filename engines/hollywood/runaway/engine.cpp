@@ -43,6 +43,8 @@
 #include "hollywood/runaway/scene.h"
 #include "hollywood/runaway/scene_data.h"
 #include "hollywood/runaway/scene5030.h"
+#include "hollywood/runaway/scene6270.h"
+#include "hollywood/runaway/scene6290.h"
 #include "hollywood/runaway/strings.h"
 #include "hollywood/runaway/ui.h"
 
@@ -162,9 +164,18 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 }
 
 RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
-	if (findRunawayRoom(entryScene) && ((_museum && entryScene >= 4000) ||
-			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5 || entryScene / 1000 == 6))))
-		return new RunawayRoomScene(_audio, *_inventory, _strings, _game);
+	const RunawayRoom *room = findRunawayRoom(entryScene);
+	if (room && ((_museum && entryScene >= 4000) ||
+			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5 || entryScene / 1000 == 6)))) {
+		switch (room->number) {
+		case 6270:
+			return new Runaway::Scene6270(_audio, *_inventory, _strings, _game);
+		case 6290:
+			return new Runaway::Scene6290(_audio, *_inventory, _strings, _game);
+		default:
+			return new RunawayRoomScene(_audio, *_inventory, _strings, _game);
+		}
+	}
 	if ((_game == kRunawayCabinDemo && entryScene == 5030) ||
 			(_game == kRunawayFullGame && entryScene >= 5030 && entryScene <= 5032))
 		return new RunawayScene5030(_mixer, _audio, *_inventory, _strings, _game);

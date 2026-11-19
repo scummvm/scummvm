@@ -20,7 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6290.h"
 
 namespace Hollywood {
 namespace {
@@ -80,13 +80,32 @@ const RunawayRoom kRunawayScene6290 = {
 	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
-bool RunawayRoomScene::loadScene6290() {
-	return _npc.load(_archive, 10, 131) && _machine.load(_archive, 5, 52) &&
-		_ambient.load(_archive, 7, 6) && _overlay.load(_archive, 8, 31) && _machineIndicator.load(_archive, 12, 2) &&
+namespace Runaway {
+
+Scene6290::Scene6290(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6290::loadCustomResources() {
+	return _joshuaAnimation.load(_archive, 10, 131) && _machineAnimation.load(_archive, 5, 52) &&
+		_machineAmbientAnimation.load(_archive, 7, 6) && _machineOverlayAnimation.load(_archive, 8, 31) && _machineIndicator.load(_archive, 12, 2) &&
 		loadForeground(0, 4) && loadForeground(1, 11);
 }
 
-void RunawayRoomScene::start6290() {
+bool Scene6290::applyCustomBackgroundPatches() {
+	return (_town.strapDelivered != 1 || applyPatch(13)) && (_town.wrenchDelivered != 1 || applyPatch(14));
+}
+
+void Scene6290::prepareCustomGameplayLoop() {
+	_joshuaTick = _now;
+}
+
+void Scene6290::resumeAmbientAudio(bool entering) {
+	if (entering || !_audio.musicPlaying()) {
+		_audio.playMusic(19);
+	}
+}
+
+void Scene6290::runCustomEntrySequence() {
 	walkTo(Common::Point(1363, 484), 5);
 	if (!_town.joshuaMet) {
 		deferTownAction(400);
@@ -95,7 +114,7 @@ void RunawayRoomScene::start6290() {
 	}
 }
 
-void RunawayRoomScene::update6290() {
+void Scene6290::advanceCustomGameplayLoop(uint32 delta) {
 	if (drawingRoomAnimation() || _now - _joshuaTick < 80) {
 		return;
 	}
@@ -119,7 +138,7 @@ void RunawayRoomScene::update6290() {
 	}
 }
 
-void RunawayRoomScene::updateMaps6290() {
+void Scene6290::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		if (_maps[i] == 3) {
 			_maps[i] = 0; // Joshua occupies the approach to the machine.
@@ -151,7 +170,7 @@ void RunawayRoomScene::updateMaps6290() {
 	}
 }
 
-float RunawayRoomScene::actorHeight6290() const {
+float Scene6290::actorHeight() const {
 	if (_position.x < 1713 && _position.y < 356) {
 		return _position.y * 1.75757575f - 259.69696f;
 	}
@@ -159,26 +178,37 @@ float RunawayRoomScene::actorHeight6290() const {
 		_position.y * 0.440251559f + 191.289307f) / 2;
 }
 
-void RunawayRoomScene::drawScene6290(Graphics::ManagedSurface &viewport, bool foreground) {
-	if (foreground) {
-		if (_position.x > 1380) {
-			drawForeground(viewport, 0);
-		}
-		if (_position.y < 356) {
-			drawForeground(viewport, 1);
-		}
-		return;
+void Scene6290::findWalkPath(Common::Point target) {
+	walkTown(target);
+}
+
+Common::U32String Scene6290::hotspotName(byte id) const {
+	if (id == 11 && _town.machineKnown) {
+		return Common::U32String("Communication machine");
 	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+void Scene6290::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	if (_position.x > 1380) {
+		drawForeground(viewport, 0);
+	}
+	if (_position.y < 356) {
+		drawForeground(viewport, 1);
+	}
+}
+
+void Scene6290::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
 	if (!drawingRoomAnimation()) {
-		_npc.draw(viewport, _joshuaTalking && speaker() ? 6 + speechFrame() % 6 : _joshuaFrame, _camera.x, 0);
+		_joshuaAnimation.draw(viewport, _joshuaTalking && speaker() ? 6 + speechFrame() % 6 : _joshuaFrame, _camera.x, 0);
 	}
-	_machine.draw(viewport, _town.strapDelivered >= 2 ? 1 : 0, _camera.x, 0);
-	_overlay.draw(viewport, 0, _camera.x, 0);
-	_ambient.draw(viewport, 0, _camera.x, 0);
+	_machineAnimation.draw(viewport, _town.strapDelivered >= 2 ? 1 : 0, _camera.x, 0);
+	_machineOverlayAnimation.draw(viewport, 0, _camera.x, 0);
+	_machineAmbientAnimation.draw(viewport, 0, _camera.x, 0);
 	_machineIndicator.draw(viewport, 0, _camera.x, 0);
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6290(uint16 action) {
+RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 304: // Return to the overview; Joshua works while Brian is away.
 		if (_town.strapDelivered == 1 && _town.wrenchDelivered == 1) {
@@ -202,7 +232,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6290(uint16 action) {
 		if (_town.strapDelivered == 1 && (!_town.wrenchNeeded || _town.wrenchDelivered)) {
 			say(22);
 		} else if (_town.strapDelivered == 1 && _town.wrenchNeeded && _inventory.contains(10)) {
-			execute6290(324);
+			dispatchCustomSceneAction(324);
 		} else {
 			startJoshuaConversation(false);
 		}
@@ -379,7 +409,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6290(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::startJoshuaConversation(bool introduction) {
+void Scene6290::startJoshuaConversation(bool introduction) {
 	_conversation = 7;
 	_dialogueDepth = _dialogueNode = _dialogueIntro = 0;
 	_dialogueEnding = false;
@@ -426,7 +456,7 @@ void RunawayRoomScene::startJoshuaConversation(bool introduction) {
 	_dialogue[20][1].enabled = _town.batteryKnown;
 }
 
-void RunawayRoomScene::joshuaDialogueChoice(byte effect) {
+void Scene6290::handleCustomDialogueChoice(byte effect) {
 	switch (effect) {
 	case 5: // Joshua explains his telepathic helmet.
 		say(90, 7, false, 1);
@@ -451,4 +481,5 @@ void RunawayRoomScene::joshuaDialogueChoice(byte effect) {
 	}
 }
 
+} // End of namespace Runaway
 } // End of namespace Hollywood
