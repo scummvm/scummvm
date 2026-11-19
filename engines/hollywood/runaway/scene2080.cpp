@@ -45,11 +45,9 @@ const RunawayResponse kResponses[] = {
 	{kHospitalBathroom, 308, 2, 0},
 	{kHospitalBathroom, 309, 5, 0},
 	{kHospitalBathroom, 310, 5, 1},
-	{kHospitalBathroom, 312, 7, 0},
 	{kHospitalBathroom, 313, 8, 0},
 	{kHospitalBathroom, 314, 9, 0},
 	{kHospitalBathroom, 315, 10, 0},
-	{kHospitalBathroom, 316, 11, 0},
 	{kHospitalBathroom, 317, 12, 0},
 	{kHospitalBathroom, 318, 13, 0},
 	{kHospitalBathroom, 319, 14, 0},
@@ -96,6 +94,10 @@ void RunawayRoomScene::updateMaps2080() {
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute2080(uint16 action) {
 	switch (action) {
+	case 312:
+	case 316:
+		say(action == 312 ? 7 : 11, _hospital.medicineRead);
+		return kHandled;
 	case 302:
 		_roomAction = action;
 		_actionStage = 0;
@@ -138,6 +140,13 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2080(uint16 action) {
 }
 
 void RunawayRoomScene::update2080() {
+	if (!_hospital.attacked && _hospital.chartMoved && _hospital.decoy && _pathIndex == _path.size()) {
+		_hospital.attacked = 1;
+		_transition.scene = 2023;
+		_transition.position = Common::Point(1075, 534);
+		_transition.facing = 7;
+		return;
+	}
 	if (_roomAction == 302) {
 		if (_actionStage == 1) {
 			if (speaking())

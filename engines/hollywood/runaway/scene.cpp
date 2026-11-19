@@ -36,7 +36,7 @@ namespace Hollywood {
 namespace {
 
 const RunawayRoom *const kRooms[] = {
-	&kRunawayScene2020, &kRunawayScene2080,
+	&kRunawayScene2020, &kRunawayScene2060, &kRunawayScene2080,
 	&kRunawayScene4030, &kRunawayScene4050, &kRunawayScene4060, &kRunawayScene4090, &kRunawayScene4100, &kRunawayScene4140
 };
 
@@ -62,7 +62,7 @@ const RunawayResponse kGlobalResponses[] = {
 };
 
 const RunawayRoom *findRoom(int number) {
-	if (number == 2021)
+	if (number >= 2021 && number <= 2023)
 		number = kHospitalBedroom;
 	for (uint i = 0; i < ARRAYSIZE(kRooms); ++i) {
 		if (kRooms[i]->number == number)
@@ -78,7 +78,7 @@ const RunawayRoom *findRunawayRoom(uint16 number) {
 }
 
 RunawayRoomScene::RunawayRoomScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	_audio(audio), _inventory(inventory), _strings(strings), _game(game), _random("runaway") {}
+	_audio(audio), _sequence(audio), _inventory(inventory), _strings(strings), _game(game), _random("runaway") {}
 
 bool RunawayRoomScene::load(uint16 entryScene) {
 	const RunawayRoom *room = findRoom(entryScene);
@@ -107,17 +107,27 @@ void RunawayRoomScene::start(uint32 now) {
 
 void RunawayRoomScene::resume() {
 	if (_game == kRunawayFullGame) {
+		if (_sequence.active())
+			return;
 		if (!_audio.musicPlaying())
 			_audio.playMusic(11, false);
 		if (_room == kHospitalBedroom)
 			_audio.playEffect(30, 3, 1, true);
 		if (_entering) {
-			_audio.playEffect(48);
 			if (_room == kHospitalBathroom) {
+				_audio.playEffect(48);
 				walkTo(Common::Point(227, 546), 1, true);
-			} else if (_inventory.water() == 1) {
-				// The cracked glass has drained by the time Brian returns.
-				_inventory.setWater(2);
+			} else {
+				if (_inventory.water() == 1)
+					_inventory.setWater(2);
+				if (_room == kHospitalStoreroom || _entryScene == 2022) {
+					static const byte frames[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+					beginHospitalAnimation(_entryScene, _room == kHospitalStoreroom ? 10 : 23, 13, frames, ARRAYSIZE(frames));
+				} else if (_entryScene == 2023) {
+					startHospitalFilm(kAmbushFilm);
+				} else {
+					_audio.playEffect(48);
+				}
 			}
 			_entering = false;
 		}
@@ -275,6 +285,8 @@ bool RunawayRoomScene::rebuildBackground() {
 	switch (_room) {
 	case kHospitalBedroom:
 		return applyBackground2020();
+	case kHospitalStoreroom:
+		return applyBackground2060();
 	case kHospitalBathroom:
 		return applyBackground2080();
 	case kMuseumOffice:
@@ -291,6 +303,9 @@ void RunawayRoomScene::updateMaps() {
 	switch (_room) {
 	case kHospitalBedroom:
 		updateMaps2020();
+		break;
+	case kHospitalStoreroom:
+		updateMaps2060();
 		break;
 	case kHospitalBathroom:
 		updateMaps2080();
@@ -331,6 +346,20 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 		return Common::U32String();
 	if (_room == kHospitalBathroom && id == 4 && _hospital.alcohol == 2)
 		return Common::U32String("Bottle of alcohol");
+	if (_room == kHospitalBedroom) {
+		if (id == 9 && _hospital.chartReplaced)
+			return Common::U32String("Fake medical chart");
+		if (id == 10 && _hospital.chartMoved)
+			return Common::U32String("Gina's medical chart");
+	}
+	if (_room == kHospitalStoreroom) {
+		if (id == 3 && _hospital.syringesSeen)
+			return Common::U32String("Box of syringes");
+		if (id == 5 && _hospital.book)
+			return Common::U32String("Vademecum");
+		if (id == 6 && _hospital.blankChart)
+			return Common::U32String("Medical chart");
+	}
 	return _room == kMuseumOffice ? hotspotName4030(id) : Common::U32String(spot->name);
 }
 
@@ -460,6 +489,10 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 }
 
 void RunawayRoomScene::skipSpeech() {
+	if (_sequence.active()) {
+		_sequence.skip();
+		return;
+	}
 	if (!speaking())
 		return;
 	_audio.stopSpeech();
@@ -491,6 +524,9 @@ void RunawayRoomScene::execute(uint16 action) {
 	switch (_room) {
 	case kHospitalBedroom:
 		result = execute2020(action);
+		break;
+	case kHospitalStoreroom:
+		result = execute2060(action);
 		break;
 	case kHospitalBathroom:
 		result = execute2080(action);
@@ -562,6 +598,8 @@ float RunawayRoomScene::actorHeight() const {
 	switch (_room) {
 	case kHospitalBedroom:
 		return actorHeight2020();
+	case kHospitalStoreroom:
+		return _position.y * 3.55555558f - 1550.33337f;
 	case kHospitalBathroom:
 		return _position.y * 0.266272187f + 295.502960f;
 	case kMuseumOffice:
@@ -583,6 +621,12 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	_now = now;
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
 	_lastUpdate = now;
+	if (_sequence.active()) {
+		_sequence.update(now);
+		if (!_sequence.active())
+			finishHospitalFilm();
+		return;
+	}
 	if (_pressedKey && (int32)(now - _keyUntil) >= 0)
 		_pressedKey = 0;
 	if (speaking() && (int32)(now - _subtitleUntil) >= 0)
@@ -592,6 +636,10 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	else if (_room == kHospitalBathroom)
 		update2080();
 	if (_game == kRunawayFullGame) {
+		if (_room != kHospitalBathroom)
+			updateHospitalAnimation();
+		if (_sequence.active() || _transition.scene)
+			return;
 		updateHospitalAudio();
 		if (_hospitalExit.scene && !_audio.effectPlaying()) {
 			_transition = _hospitalExit;
@@ -656,6 +704,10 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 }
 
 void RunawayRoomScene::draw() {
+	if (_sequence.active()) {
+		_sequence.draw(_screen);
+		return;
+	}
 	_screen.clear();
 	_screen.copyRectToSurface(_background, 0, kRunawayViewportTop,
 		Common::Rect(_camera.x, _camera.y, _camera.x + kRunawayScreenWidth, _camera.y + kRunawayViewportHeight));
@@ -694,8 +746,11 @@ void RunawayRoomScene::draw() {
 	params.antialias = _antialias;
 	const byte light = MIN<byte>(9, _maps[768 + _mask[_position.y * _background.w + _position.x]]);
 	memcpy(params.light, findRoom(_room)->light[light], sizeof(params.light));
-	if (_room != kHospitalBathroom || (_roomAction != 302 && _roomAction != 307))
+	const bool roomAnimation = !_actionFrames.empty() && _roomAction && !speaking() && _pathIndex == _path.size();
+	if (!roomAnimation && (_room != kHospitalBathroom || (_roomAction != 302 && _roomAction != 307)))
 		_actor.draw(_screen, params, _mask, _maps);
+	if (roomAnimation)
+		_actionAnimation.draw(viewport, _actionFrames[MIN<uint>(_actionStep, _actionFrames.size() - 1)], _camera.x, -_camera.y);
 	if (_room == kHospitalBedroom)
 		drawScene2020(viewport, true);
 	else if (_room == kHospitalBathroom)

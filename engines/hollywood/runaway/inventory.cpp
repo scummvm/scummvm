@@ -58,6 +58,10 @@ void RunawayInventory::captureState(RunawaySaveState &state) const {
 	state.selected = _selected;
 	state.cloth = _clothState;
 	state.water = _water;
+	state.markerInk = _markerInk;
+	state.syringeFilled = _syringeFilled;
+	state.chartWritten = _chartWritten;
+	state.headWig = _headWig;
 }
 
 void RunawayInventory::restoreState(const RunawaySaveState &state) {
@@ -68,6 +72,10 @@ void RunawayInventory::restoreState(const RunawaySaveState &state) {
 	_selected = state.selected;
 	_clothState = state.cloth;
 	_water = state.water;
+	_markerInk = state.markerInk;
+	_syringeFilled = state.syringeFilled;
+	_chartWritten = state.chartWritten;
+	_headWig = state.headWig;
 	_newItem = 0;
 }
 
@@ -101,6 +109,16 @@ void RunawayInventory::remove(byte item) {
 }
 
 Common::U32String RunawayInventory::name(byte item) const {
+	if (_game == kRunawayFullGame) {
+		if (item == 11 && _markerInk == 1)
+			return Common::U32String("Dry marker pen");
+		if (item == 15 && _syringeFilled)
+			return Common::U32String("Syringe with alcohol");
+		if (item == 16 && _chartWritten)
+			return Common::U32String("Fake medical chart");
+		if (item == 17 && _headWig)
+			return Common::U32String("Head with wig");
+	}
 	if (_game == kRunawayFullGame && item == 13 && _water == 1)
 		return Common::U32String("Glass with water");
 	if (_game == kRunawayMuseumDemo)
@@ -113,6 +131,14 @@ Common::U32String RunawayInventory::name(byte item) const {
 }
 
 uint RunawayInventory::icon(byte item) const {
+	if (_game == kRunawayFullGame) {
+		if (item == 15 && _syringeFilled)
+			return 20;
+		if (item == 16 && _chartWritten)
+			return 22;
+		if (item == 17 && _headWig)
+			return 21;
+	}
 	if (_game == kRunawayFullGame && item == 13 && _water == 1)
 		return 23;
 	if (_game != kRunawayCabinDemo)
@@ -123,6 +149,14 @@ uint RunawayInventory::icon(byte item) const {
 }
 
 uint RunawayInventory::cursor(byte item) const {
+	if (_game == kRunawayFullGame) {
+		if (item == 15 && _syringeFilled)
+			return 77;
+		if (item == 16 && _chartWritten)
+			return 83;
+		if (item == 17 && _headWig)
+			return 79;
+	}
 	if (_game == kRunawayFullGame && item == 13 && _water == 1)
 		return 85;
 	if (_game == kRunawayMuseumDemo)
@@ -135,6 +169,16 @@ uint RunawayInventory::cursor(byte item) const {
 }
 
 RunawayInventory::Reply RunawayInventory::examine(byte item) const {
+	if (_game == kRunawayFullGame) {
+		if (item == 11)
+			return Reply(60, _markerInk >= 2 ? 2 : _markerInk);
+		if (item == 15)
+			return Reply(64, _syringeFilled);
+		if (item == 16)
+			return Reply(65, _chartWritten);
+		if (item == 17)
+			return Reply(66, _headWig);
+	}
 	if (_game == kRunawayFullGame && item == 13)
 		return Reply(62, _water == 1 ? 1 : 0);
 	if (_game == kRunawayMuseumDemo) {
@@ -148,12 +192,54 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 }
 
 RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
-	if (_game != kRunawayCabinDemo)
-		return Reply();
 	if (!contains(first) || !contains(second) || first == second)
 		return Reply();
 	if (first > second)
 		SWAP(first, second);
+	if (_game == kRunawayFullGame) {
+		if (first == 10 && second == 17) {
+			_headWig = 1;
+			remove(10);
+			return Reply(71);
+		}
+		if (first == 11 && second == 16) {
+			if (_markerInk < 2) {
+				const byte previous = _markerInk;
+				_markerInk = 1;
+				return Reply(72, previous);
+			}
+			if (_chartWritten)
+				return Reply(72, 3);
+			_chartWritten = 1;
+			_markerInk = 3;
+			return Reply(72, 2);
+		}
+		if (first == 12 && second == 15) {
+			const byte previous = _syringeFilled;
+			_syringeFilled = 1;
+			return Reply(69, previous);
+		}
+		if (first == 11 && second == 15) {
+			if (!_syringeFilled)
+				return Reply(73);
+			if (_markerInk >= 2)
+				return Reply(73, 2);
+			_markerInk = 2;
+			_syringeFilled = 0;
+			return Reply(73, 1);
+		}
+		if (first == 11 && second == 12)
+			return Reply(70);
+		if (first == 12 && second == 13)
+			return Reply(70, 2);
+		if (first == 13 && second == 15)
+			return Reply(70, 1);
+		if (first == 6 && second == 11)
+			return Reply(72, 4);
+		return Reply();
+	}
+	if (_game != kRunawayCabinDemo)
+		return Reply();
 	// The combinations available among the shack's items, from 0x4158c0
 	// and 0x415bd0. A failed combination leaves both items in place.
 	if (first == 1 && second == 3) {

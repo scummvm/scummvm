@@ -86,9 +86,22 @@ uint RunawayVideo::frameAtTime(uint32 milliseconds) const {
 	return frames ? (uint64)milliseconds * frameCount() * duration.framerate() / (1000ULL * frames) : 0;
 }
 
+bool RunawayVideo::seekToFrame(uint frame) {
+	if (frame >= _decoder.getFrameCount())
+		return false;
+	if (_decoder.getCurFrame() != (int)frame) {
+		_frame = nullptr;
+		if (!_decoder.seekToFrame(frame))
+			return false;
+	}
+	return decodeToFrame(frame);
+}
+
 bool RunawayVideo::decodeToFrame(uint frame) {
 	if (frame >= _decoder.getFrameCount())
 		return false;
+	if (_decoder.getCurFrame() > (int)frame)
+		return seekToFrame(frame);
 	while (_decoder.getCurFrame() < (int)frame && !_decoder.endOfVideo()) {
 		const Graphics::Surface *decoded = _decoder.decodeNextFrame();
 		if (decoded)

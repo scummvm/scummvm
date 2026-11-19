@@ -163,7 +163,7 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
 RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
 	if (findRunawayRoom(entryScene) && ((_museum && entryScene >= 4000) ||
-			(_game == kRunawayFullGame && (entryScene == 2020 || entryScene == 2021 || entryScene == 2080))))
+			(_game == kRunawayFullGame && entryScene / 1000 == 2)))
 		return new RunawayRoomScene(_audio, *_inventory, _strings, _game);
 	if (_game == kRunawayCabinDemo && entryScene == 5030)
 		return new RunawayScene5030(_mixer, _audio, *_inventory, _strings);
@@ -185,7 +185,7 @@ Common::Error RunawayEngine::changeScene() {
 	state.x = transition.position.x;
 	state.y = transition.position.y;
 	state.facing = transition.facing;
-	state.camera = state.scene == 2021 ? 156 : 0;
+	state.camera = state.scene >= 2020 && state.scene <= 2023 ? 156 : 0;
 	state.cameraY = 0;
 	Common::ScopedPtr<RunawayScene> scene(createScene(state.scene));
 	if (!scene)
@@ -461,9 +461,12 @@ Common::Error RunawayEngine::run() {
 			leftPressed = rightPressed = false;
 			continue;
 		}
-		// The extended French demo's later rooms are not implemented yet;
-		// all three releases currently finish at the shared shack escape.
 		if (_scene->escaped()) {
+			// Retail currently ends after the hospital chapter.
+			if (_game == kRunawayFullGame)
+				return Common::kNoError;
+			// The extended French demo's later rooms are not implemented yet;
+			// all three releases currently finish at the shared shack escape.
 			const Common::Error result = playEnding(menu);
 			if (!_loadedGame || result.getCode() != Common::kNoError || shouldQuit())
 				return result;

@@ -33,6 +33,8 @@ struct RunawaySaveState {
 	struct Hospital {
 		byte glassTaken = 0, pillsTaken = 0, sheetTaken = 0, bagTaken = 0, exitMapRead = 0;
 		byte markerTaken = 0, alcohol = 0;
+		byte window = 0, chartReplaced = 0, chartMoved = 0, decoy = 0, attacked = 0, medicineRead = 0;
+		byte storeroomVisited = 0, syringesSeen = 0, sprayTaken = 0, book = 0, blankChart = 0, headTaken = 0, pillowsTaken = 0;
 	} hospital;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
@@ -47,6 +49,7 @@ struct RunawaySaveState {
 	byte upperFloor = 1, books = 0, recorder = 0, moneyIdentified = 0, safeOpen = 0;
 	byte varnishTaken = 0, talcTaken = 0, coffeeTaken = 0, keyCount = 0;
 	byte water = 0;
+	byte markerInk = 0, syringeFilled = 0, chartWritten = 0, headWig = 0;
 
 	byte chapter() const;
 	bool valid() const;

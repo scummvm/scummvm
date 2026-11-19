@@ -59,6 +59,8 @@ public:
 	void soilCloth() { _clothState = 2; }
 	byte water() const { return _water; }
 	void setWater(byte water) { _water = water; }
+	bool chartWritten() const { return _chartWritten; }
+	bool headWig() const { return _headWig; }
 	void captureState(RunawaySaveState &state) const;
 	void restoreState(const RunawaySaveState &state);
 
@@ -68,6 +70,7 @@ private:
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
 	byte _water = 0;
+	byte _markerInk = 0, _syringeFilled = 0, _chartWritten = 0, _headWig = 0;
 };
 
 } // End of namespace Hollywood

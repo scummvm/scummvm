@@ -67,6 +67,23 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(hospital.markerTaken, 4);
 	s.syncAsByte(hospital.alcohol, 4);
 	s.syncAsByte(water, 4);
+	s.syncAsByte(hospital.window, 5);
+	s.syncAsByte(hospital.chartReplaced, 5);
+	s.syncAsByte(hospital.chartMoved, 5);
+	s.syncAsByte(hospital.decoy, 5);
+	s.syncAsByte(hospital.attacked, 5);
+	s.syncAsByte(hospital.medicineRead, 5);
+	s.syncAsByte(hospital.storeroomVisited, 5);
+	s.syncAsByte(hospital.syringesSeen, 5);
+	s.syncAsByte(hospital.sprayTaken, 5);
+	s.syncAsByte(hospital.book, 5);
+	s.syncAsByte(hospital.blankChart, 5);
+	s.syncAsByte(hospital.headTaken, 5);
+	s.syncAsByte(hospital.pillowsTaken, 5);
+	s.syncAsByte(markerInk, 5);
+	s.syncAsByte(syringeFilled, 5);
+	s.syncAsByte(chartWritten, 5);
+	s.syncAsByte(headWig, 5);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -102,9 +119,15 @@ bool RunawaySaveState::valid() const {
 	if (hospital.glassTaken > 1 || hospital.pillsTaken > 1 || hospital.sheetTaken > 1 ||
 			hospital.bagTaken > 1 || hospital.exitMapRead > 1 || hospital.markerTaken > 1 || hospital.alcohol > 2 || water > 2)
 		return false;
+	if (hospital.window > 2 || hospital.chartReplaced > 1 || hospital.chartMoved > 1 ||
+			hospital.decoy > 1 || hospital.attacked > 1 || hospital.medicineRead > 1 ||
+			hospital.storeroomVisited > 1 || hospital.syringesSeen > 1 || hospital.sprayTaken > 1 ||
+			hospital.book > 2 || hospital.blankChart > 2 || hospital.headTaken > 1 || hospital.pillowsTaken > 1 ||
+			markerInk > 3 || syringeFilled > 1 || chartWritten > 1 || headWig > 1)
+		return false;
 	if (game == kRunawayFullGame) {
 		const RunawayRoom *room = findRunawayRoom(scene);
-		if (!room || (room->number != kHospitalBedroom && room->number != kHospitalBathroom) ||
+		if (!room || (room->number != kHospitalBedroom && room->number != kHospitalStoreroom && room->number != kHospitalBathroom) ||
 				x >= room->width || y >= room->height || cameraY ||
 				camera < (room->number == kHospitalBedroom ? 156 : 0) || camera > room->width - 1024)
 			return false;
@@ -130,7 +153,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 4)
+	if (version < 1 || version > 5)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -142,9 +165,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(4);
+	stream.writeUint16LE(5);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(4);
+	s.setVersion(5);
 	sync(s);
 	return !s.err();
 }

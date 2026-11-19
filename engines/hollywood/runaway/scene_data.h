@@ -28,6 +28,7 @@ namespace Hollywood {
 
 enum RunawayRoomId {
 	kHospitalBedroom = 2020,
+	kHospitalStoreroom = 2060,
 	kHospitalBathroom = 2080,
 	kMuseumOffice = 4030,
 	kMuseumLaboratory = 4050,
@@ -81,6 +82,7 @@ struct RunawayRoom {
 };
 
 extern const RunawayRoom kRunawayScene2020;
+extern const RunawayRoom kRunawayScene2060;
 extern const RunawayRoom kRunawayScene2080;
 extern const RunawayRoom kRunawayScene4030;
 extern const RunawayRoom kRunawayScene4050;

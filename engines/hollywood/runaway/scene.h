@@ -28,6 +28,7 @@
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/inventory.h"
 #include "hollywood/runaway/saveload.h"
+#include "hollywood/runaway/sequence.h"
 #include "hollywood/scene_text_store.h"
 
 namespace Hollywood {
@@ -94,10 +95,13 @@ public:
 	byte hotspotAt(Common::Point mouse) const override;
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
-	const Common::U32String &subtitle() const override { return _subtitle; }
-	bool busy() const override { return _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _hospitalEntryStep || _roomAction || speaking(); }
-	bool speaking() const override { return !_subtitle.empty(); }
-	byte speechFrame() const override { return _lipSync.frame(_now); }
+	const Common::U32String &subtitle() const override { return _sequence.active() ? _sequence.subtitle() : _subtitle; }
+	bool busy() const override { return _sequence.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _hospitalEntryStep || _roomAction || speaking(); }
+	bool speaking() const override { return !subtitle().empty(); }
+	byte speechFrame() const override { return _sequence.active() ? _sequence.speechFrame() : _lipSync.frame(_now); }
+	bool playingVideo() const override { return _sequence.active(); }
+	void skipVideo() override { _sequence.skip(); }
+	bool escaped() const override { return _chapterComplete; }
 	void skipSpeech() override;
 	void sayInventory(const RunawayInventory::Reply &reply) override;
 	bool canSave() const override { return !busy() && _pathIndex == _path.size() && !_pressedKey; }
@@ -125,6 +129,12 @@ private:
 	void updateCamera();
 	void leaveHospitalRoom(uint16 scene, Common::Point position, byte facing);
 	void updateHospitalAudio();
+	enum HospitalFilm { kGinaStoryFilm, kLedgeFilm, kDecoyFilm, kAmbushFilm, kEscapeFilm };
+	void startHospitalFilm(HospitalFilm film);
+	void finishHospitalFilm();
+	void beginHospitalAnimation(uint16 action, uint chunk, uint frames, const byte *order = nullptr, uint count = 0);
+	void updateHospitalAnimation();
+	void finishHospitalAnimation(uint16 action);
 	float actorHeight() const;
 	const RunawayHotspot *hotspot(byte id) const;
 	Common::U32String hotspotName(byte id) const;
@@ -140,6 +150,9 @@ private:
 	ActionResult execute2020(uint16 action);
 	float actorHeight2020() const;
 	void drawScene2020(Graphics::ManagedSurface &viewport, bool foreground);
+	bool applyBackground2060();
+	void updateMaps2060();
+	ActionResult execute2060(uint16 action);
 	bool loadScene2080();
 	bool applyBackground2080();
 	void updateMaps2080();
@@ -179,6 +192,7 @@ private:
 	void drawScene4140(Graphics::ManagedSurface &viewport);
 
 	RunawayAudio &_audio;
+	RunawaySequence _sequence;
 	RunawayInventory &_inventory;
 	const RunawayStrings &_strings;
 	const RunawayGameType _game;
@@ -190,6 +204,7 @@ private:
 	RunawayActor _actor;
 	RunawayAnimation _ambient, _overlay, _safe;
 	RunawayAnimation _actionAnimation;
+	Common::Array<byte> _actionFrames;
 	Graphics::ManagedSurface _background, _screen;
 	Common::Array<byte> _mask, _originalMaps, _maps;
 	Common::Array<Common::Rect> _foreground[5];
@@ -227,6 +242,8 @@ private:
 	uint _actionStep = 0;
 	uint32 _actionStarted = 0;
 	Transition _hospitalExit;
+	HospitalFilm _hospitalFilm = kGinaStoryFilm;
+	bool _chapterComplete = false;
 };
 
 } // End of namespace Hollywood

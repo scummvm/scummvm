@@ -152,6 +152,7 @@ MODULE_OBJS = \
 	runaway/scene.o \
 	runaway/scene2010.o \
 	runaway/scene2020.o \
+	runaway/scene2060.o \
 	runaway/scene2080.o \
 	runaway/scene4030.o \
 	runaway/scene4050.o \
@@ -160,6 +161,7 @@ MODULE_OBJS = \
 	runaway/scene4100.o \
 	runaway/scene4140.o \
 	runaway/scene5030.o \
+	runaway/sequence.o \
 	runaway/strings.o \
 	runaway/ui.o \
 	runaway/video.o
