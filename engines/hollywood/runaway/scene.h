@@ -113,7 +113,7 @@ public:
 	const Common::Array<Common::U32String> &dialogueChoices() const override { return _choices; }
 	void chooseDialogue(uint choice) override;
 	// The hangar contest's animation progress is transient, like a room action.
-	bool canSave() const override { return !busy() && !_walkPath.active() && !_pressedKey && _desert.guard != 1; }
+	bool canSave() const override { return !busy() && !_walkPath.active() && _desert.guard != 1; }
 	void captureState(RunawaySaveState &state) const override;
 	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
 	void setOptions(bool antialias, bool fastScrolling) override { _antialias = antialias; _fastScrolling = fastScrolling; }
@@ -132,25 +132,32 @@ protected:
 	virtual void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport);
 	virtual void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport);
 	virtual ActionResult dispatchCustomSceneAction(uint16 action);
+	// Return true when the scene handles the reply after Brian's dialogue choice.
+	virtual bool handleCustomDialogueReply() { return false; }
 	virtual void handleCustomDialogueChoice(byte effect) {}
+	virtual void runCustomDialogueIntro() {}
+	virtual void finishCustomConversation() {}
 	virtual void resumeAmbientAudio(bool entering);
+	virtual void runExitSideEffectsAfterLoop() {}
+	virtual void updateActor(uint elapsed, int scrollDirection, bool inventoryOpen);
 	virtual void findWalkPath(Common::Point target);
 	virtual int sceneViewportYOffset() const;
 
 	virtual uint sceneResourceNumber() const { return (_room % 1000) / 10; }
-	virtual uint sceneTextNumber() const { return _room == kMuseumWilly ? 406 : _room / 10; }
+	virtual uint sceneTextNumber() const { return _room / 10; }
 	virtual bool loadWalkMap();
-	virtual bool usesAlternateActor() const { return _room != kMuseumHall; }
+	virtual bool usesAlternateActor() const { return true; }
 	virtual void setupActorDepth(RunawayActor::RenderParams &params) const;
 	virtual bool drawCustomComposite(Graphics::ManagedSurface &viewport) { return false; }
 	virtual bool shouldDrawActor() const { return true; }
-	virtual bool shouldUpdateActor() const { return _room != kMuseumKeypad && _room != 5010 && _room != 5140; }
+	virtual bool shouldUpdateActor() const { return _room != 5010 && _room != 5140; }
 	virtual bool shouldPlayGameplayClickPath() const { return _room != 5010; }
 	virtual bool shouldApproachHotspot(byte id, bool use, byte item, bool approach) const { return approach; }
 	// Accept the adjusted target without the shared floor-mask adjustment.
 	virtual bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const { return false; }
 	// Return true when a scene sequence owns this frame's action updates.
 	virtual bool updateCustomSequence() { return false; }
+	virtual void finishCustomAnimation(uint16 action) {}
 	virtual void handleAnimationFrameHook() {}
 	virtual void finishCustomFilm() {}
 	virtual uint16 dialoguePlayerCue() const { return 80; }
@@ -187,6 +194,9 @@ protected:
 	virtual float actorHeight() const;
 	const RunawayHotspot *hotspot(byte id) const;
 	virtual Common::U32String hotspotName(byte id) const;
+	virtual bool isValidHotspot(byte id) const { return hotspot(id) != nullptr; }
+	virtual Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const { return position; }
+	virtual byte customizeSceneActionFacing(byte id, byte facing) const { return facing; }
 
 	byte walkZone() const { return _originalMaps[_mask[_position.y * _background.w + _position.x]]; }
 
@@ -212,13 +222,7 @@ protected:
 	bool museumChapter() const { return _game == kRunawayFullGame && _room / 1000 == 4; }
 	void startMuseum();
 	void resumeMuseum();
-	void updateMuseum(uint elapsed, bool inventoryOpen);
-	void finishMuseumAnimation(uint16 action);
-	void museumAnimationFrame();
-	void finish4050(uint16 action);
-	void finish4060(uint16 action);
-	void finish4070(uint16 action);
-	void finish4100(uint16 action);
+	void updateMuseum(uint elapsed);
 	bool sayMuseumInventory(const RunawayInventory::Reply &reply);
 	void deferMuseumAction(uint16 action);
 	void refreshMuseum();
@@ -226,55 +230,11 @@ protected:
 	enum MuseumFilm { kArrivalFilm, kCliveFilm, kDrillingFilm, kLaserFilm, kRubyFilm,
 		kMobstersFilm, kPhoneFilm, kScannerFilm, kBetrayalFilm, kMuseumExitFilm };
 	void startMuseumFilm(MuseumFilm film);
-	void finishMuseumFilm();
 	void startConversation(byte character);
 	void updateConversation();
 	void buildDialogueChoices();
 	void finishConversation();
 	byte speaker() const { return speaking() && _lineIndex < _lines.size() ? _lines[_lineIndex].speaker : 0; }
-
-	bool loadScene4030();
-	bool applyBackground4030();
-	void updateMaps4030();
-	Common::U32String hotspotName4030(byte id) const;
-	ActionResult execute4030(uint16 action);
-	float actorHeight4030() const;
-	void drawForeground4030(Graphics::ManagedSurface &viewport);
-
-	bool loadScene4050();
-	bool applyBackground4050();
-	void updateMaps4050();
-	ActionResult execute4050(uint16 action);
-	float actorHeight4050() const;
-	void drawForeground4050(Graphics::ManagedSurface &viewport);
-
-	bool loadScene4060();
-	void updateMaps4060();
-	ActionResult execute4060(uint16 action);
-	float actorHeight4060() const;
-	void setupDepth4060(RunawayActor::RenderParams &params) const;
-
-	bool loadScene4070();
-	void start4070();
-	void drawScene4070(Graphics::ManagedSurface &viewport);
-	ActionResult execute4090(uint16 action);
-	bool applyBackground4090();
-	float actorHeight4090() const;
-	void setupDepth4090(RunawayActor::RenderParams &params) const;
-
-	bool loadScene4100();
-	bool applyBackground4100();
-	void updateMaps4100();
-	ActionResult execute4100(uint16 action);
-	void drawScene4100(Graphics::ManagedSurface &viewport);
-	void closeMuseumChamber();
-	float actorHeight4100() const;
-	void setupDepth4100(RunawayActor::RenderParams &params) const;
-
-	void start4140();
-	bool loadScene4140();
-	void clickScene4140(byte id);
-	void drawScene4140(Graphics::ManagedSurface &viewport);
 
 	bool desertChapter() const { return _game == kRunawayFullGame && _room / 1000 == 5; }
 	void startDesert();
@@ -347,7 +307,6 @@ protected:
 	Graphics::ManagedSurface _background, _screen;
 	Common::Array<byte> _mask, _originalMaps, _maps;
 	Common::Array<Common::Rect> _foreground[5];
-	Common::Array<byte> _keyPatches[25];
 	RunawayWalkPath _walkPath;
 	struct SpeechLine {
 		Common::U32String text;
@@ -364,11 +323,11 @@ protected:
 	byte _arrivalFacing = 0xff;
 	uint32 _now = 0, _lastUpdate = 0, _walkElapsed = 0;
 	bool _upperFloor = true, _antialias = true, _fastScrolling = true;
+	bool _inventoryOpen = false;
 	ObjectState _books = kUnexamined, _recorder = kUnexamined;
 	bool _moneyIdentified = false, _safeOpen = false;
 	bool _varnishTaken = false, _talcTaken = false, _coffeeTaken = false;
-	byte _keyCount = 0, _pressedKey = 0, _keyResult = 0;
-	uint32 _keyUntil = 0;
+	byte _keyCount = 0;
 	uint32 _lastFootstep = 0;
 	RunawaySaveState::Hospital _hospital;
 	RunawaySaveState::Museum _museum;
@@ -395,11 +354,6 @@ protected:
 		bool blink = false;
 	} _rescuePlan;
 	RunawayAnimation _npc, _npcMouth, _machine;
-	RunawayAnimation _computer, _rejectionLight;
-	uint32 _nextLaser = 0;
-	byte _willyPose = 54, _computerFrame = 48;
-	bool _cliveVisible = false, _computerReject = false;
-	uint16 _machinePosition[2] = {0, 0};
 	MuseumFilm _museumFilm = kArrivalFilm;
 	SceneTextStore _filmText;
 	Common::Array<RunawaySequence::Command> _filmCommands;

@@ -21,6 +21,13 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene_registry.h"
+#include "hollywood/runaway/scene4030.h"
+#include "hollywood/runaway/scene4050.h"
+#include "hollywood/runaway/scene4060.h"
+#include "hollywood/runaway/scene4070.h"
+#include "hollywood/runaway/scene4090.h"
+#include "hollywood/runaway/scene4100.h"
+#include "hollywood/runaway/scene4140.h"
 #include "hollywood/runaway/scene6014.h"
 #include "hollywood/runaway/scene6080.h"
 #include "hollywood/runaway/scene6090.h"
@@ -57,13 +64,13 @@ const SceneDefinition kSceneDefinitions[] = {
 	{&kRunawayScene2020, createScene<RunawayRoomScene>},
 	{&kRunawayScene2060, createScene<RunawayRoomScene>},
 	{&kRunawayScene2080, createScene<RunawayRoomScene>},
-	{&kRunawayScene4030, createScene<RunawayRoomScene>},
-	{&kRunawayScene4050, createScene<RunawayRoomScene>},
-	{&kRunawayScene4060, createScene<RunawayRoomScene>},
-	{&kRunawayScene4070, createScene<RunawayRoomScene>},
-	{&kRunawayScene4090, createScene<RunawayRoomScene>},
-	{&kRunawayScene4100, createScene<RunawayRoomScene>},
-	{&kRunawayScene4140, createScene<RunawayRoomScene>},
+	{&kRunawayScene4030, createScene<Runaway::Scene4030>},
+	{&kRunawayScene4050, createScene<Runaway::Scene4050>},
+	{&kRunawayScene4060, createScene<Runaway::Scene4060>},
+	{&kRunawayScene4070, createScene<Runaway::Scene4070>},
+	{&kRunawayScene4090, createScene<Runaway::Scene4090>},
+	{&kRunawayScene4100, createScene<Runaway::Scene4100>},
+	{&kRunawayScene4140, createScene<Runaway::Scene4140>},
 	{&kRunawayScene5010, createScene<RunawayRoomScene>},
 	{&kRunawayScene5020, createScene<RunawayRoomScene>},
 	{&kRunawayScene5050, createScene<RunawayRoomScene>},

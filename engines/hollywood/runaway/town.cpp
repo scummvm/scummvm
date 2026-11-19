@@ -37,12 +37,6 @@ void RunawayRoomScene::resumeTown() {
 	runCustomEntrySequence();
 }
 
-void RunawayRoomScene::resumeAmbientAudio(bool entering) {
-	if (!_audio.musicPlaying()) {
-		_audio.playMusic(11);
-	}
-}
-
 void RunawayRoomScene::updateTown(uint32 delta) {
 	advanceCustomGameplayLoop(delta);
 	if (updateCustomSequence()) {

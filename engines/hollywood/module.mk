@@ -140,12 +140,14 @@ MODULE_OBJS = \
 	monsters/scenes/playable/playable_scene_actions.o \
 	runaway/animation.o \
 	runaway/audio.o \
+	runaway/dialogue.o \
 	runaway/engine.o \
 	runaway/font.o \
 	runaway/graphics.o \
 	runaway/intro.o \
 	runaway/inventory.o \
 	runaway/menu.o \
+	runaway/museum.o \
 	runaway/navigation.o \
 	runaway/oscar.o \
 	runaway/presentation.o \
@@ -156,7 +158,6 @@ MODULE_OBJS = \
 	runaway/scene2020.o \
 	runaway/scene2060.o \
 	runaway/scene2080.o \
-	runaway/scene4010.o \
 	runaway/scene4030.o \
 	runaway/scene4050.o \
 	runaway/scene4060.o \

@@ -21,8 +21,7 @@
 
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene4140.h"
 
 namespace Hollywood {
 
@@ -34,24 +33,16 @@ const RunawayRoom kRunawayScene4140 = {
 	nullptr, 0
 };
 
-void RunawayRoomScene::start4140() {
-	_museum.keypadDigits = 0;
-	_keyCount = 0;
-	if (_entryScene == 4141) {
-		say(2);
-		deferMuseumAction(414);
-	} else if (_entryScene == 4142) {
-		say(3);
-		say(3, 1);
-	} else if (_museum.keypad == 1 || _museum.keypad == 2) {
-		say(1);
-		deferMuseumAction(414);
-	} else if (_museum.keypad >= 3) {
-		say(3, _museum.keypad == 4 ? 4 : 2);
-	}
-}
+namespace Runaway {
 
-void RunawayRoomScene::clickScene4140(byte id) {
+Scene4140::Scene4140(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+void Scene4140::click(Common::Point mouse, RunawayVerb verb, byte item) {
+	if (busy()) {
+		return;
+	}
+	const byte id = hotspotAt(mouse);
 	_pressedKey = id;
 	_keyUntil = _now + 180;
 	_keyResult = 0;
@@ -70,8 +61,9 @@ void RunawayRoomScene::clickScene4140(byte id) {
 			deferMuseumAction(414);
 		} else {
 			_keyResult = 1;
-			if (museumChapter())
+			if (museumChapter()) {
 				_audio.playEffect(28);
+			}
 		}
 		_keyUntil = _now + 500;
 		_keyCount = 0;
@@ -88,24 +80,77 @@ void RunawayRoomScene::clickScene4140(byte id) {
 	}
 }
 
-void RunawayRoomScene::drawScene4140(Graphics::ManagedSurface &viewport) {
-	bool valid = applyRunawayPatch(_keyPatches[_museum.keypad >= 3 ? 17 : _museum.keypad ? 16 : 15], viewport);
-	for (uint i = 0; valid && i < _keyCount; ++i)
-		valid = applyRunawayPatch(_keyPatches[21 + i], viewport);
-	if (valid && _pressedKey && (int32)(_now - _keyUntil) < 0)
-		valid = applyRunawayPatch(_keyPatches[2 + _pressedKey], viewport);
-	if (valid && _keyResult && (int32)(_now - _keyUntil) < 0)
-		valid = applyRunawayPatch(_keyPatches[18 + _keyResult], viewport);
-	if (!valid)
-		error("Invalid museum keypad image");
+Common::U32String Scene4140::actionCaption(byte id, RunawayVerb verb, byte item) const {
+	return Common::U32String();
 }
 
-bool RunawayRoomScene::loadScene4140() {
+void Scene4140::update(uint32 now, int scrollDirection, bool inventoryOpen) {
+	if (_pressedKey && (int32)(now - _keyUntil) >= 0) {
+		_pressedKey = 0;
+	}
+	RunawayRoomScene::update(now, scrollDirection, inventoryOpen);
+}
+
+bool Scene4140::canSave() const {
+	return RunawayRoomScene::canSave() && !_pressedKey;
+}
+
+bool Scene4140::loadCustomResources() {
 	for (uint i = 3; i < ARRAYSIZE(_keyPatches); ++i) {
-		if (!_archive.readVariableChunk(i, _keyPatches[i]))
+		if (!_archive.readVariableChunk(i, _keyPatches[i])) {
 			return false;
+		}
 	}
 	return true;
 }
 
+void Scene4140::runCustomEntrySequence() {
+	_museum.keypadDigits = 0;
+	_keyCount = 0;
+	if (_entryScene == 4141) {
+		say(2);
+		deferMuseumAction(414);
+	} else if (_entryScene == 4142) {
+		say(3);
+		say(3, 1);
+	} else if (_museum.keypad == 1 || _museum.keypad == 2) {
+		say(1);
+		deferMuseumAction(414);
+	} else if (_museum.keypad >= 3) {
+		say(3, _museum.keypad == 4 ? 4 : 2);
+	}
+}
+
+bool Scene4140::drawCustomComposite(Graphics::ManagedSurface &viewport) {
+	bool valid = applyRunawayPatch(_keyPatches[_museum.keypad >= 3 ? 17 : _museum.keypad ? 16 : 15], viewport);
+	for (uint i = 0; valid && i < _keyCount; ++i) {
+		valid = applyRunawayPatch(_keyPatches[21 + i], viewport);
+	}
+	if (valid && _pressedKey && (int32)(_now - _keyUntil) < 0) {
+		valid = applyRunawayPatch(_keyPatches[2 + _pressedKey], viewport);
+	}
+	if (valid && _keyResult && (int32)(_now - _keyUntil) < 0) {
+		valid = applyRunawayPatch(_keyPatches[18 + _keyResult], viewport);
+	}
+	if (!valid) {
+		error("Invalid museum keypad image");
+	}
+	return true;
+}
+
+void Scene4140::finishCustomAnimation(uint16 action) {
+	if (action == 414) {
+		leaveMuseumRoom(4063, Common::Point(1153, 297), 7);
+	}
+}
+
+bool Scene4140::shouldUpdateActor() const {
+	return false;
+}
+
+bool Scene4140::isValidHotspot(byte id) const {
+	return id <= 12;
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

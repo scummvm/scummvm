@@ -20,8 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene4060.h"
 
 namespace Hollywood {
 namespace {
@@ -132,30 +131,78 @@ const RunawayRoom kRunawayScene4060 = {
 	kExits, ARRAYSIZE(kExits)
 };
 
-void RunawayRoomScene::updateMaps4060() {
+namespace Runaway {
+
+Scene4060::Scene4060(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene4060::loadCustomResources() {
+	return _willyAnimation.load(_archive, 8, 22);
+}
+
+void Scene4060::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
 		// Both floors share the image and mask, but have separate walk zones and hotspots.
 		const byte zone = _maps[i];
-		if (_upperFloor ? zone < 5 || zone > 6 : zone > 4)
+		if (_upperFloor ? zone < 5 || zone > 6 : zone > 4) {
 			_maps[i] = 0;
-		if (museumChapter() && _museum.willyInLab && id == 14)
+		}
+		if (museumChapter() && _museum.willyInLab && id == 14) {
 			id = 0;
-		if (_upperFloor ? id > 11 : id < 12)
+		}
+		if (_upperFloor ? id > 11 : id < 12) {
 			id = 0;
+		}
 	}
 }
 
-void RunawayRoomScene::changeFloor(bool upper, Common::Point position) {
-	_upperFloor = upper;
-	_position = position;
-	_walkPath.reset(position);
-	_facing = 3;
-	updateMaps();
-	updateCamera();
+void Scene4060::runCustomEntrySequence() {
+	if (_entryScene == 4010) {
+		startMuseumFilm(kArrivalFilm);
+		return;
+	}
+	if (_entryScene != 4063 && _entryScene != 4064) {
+		_museum.willyInLab = 0;
+		updateMaps();
+	} else if (_entryScene == 4064 && _museum.willyInLab) {
+		changeFloor(false, Common::Point(921, 813));
+		if (_museum.willyInLab == 1) {
+			walkTo(Common::Point(1029, 842), 7, true);
+			say(38, 1);
+			deferMuseumAction(460);
+		} else {
+			say(36, 3);
+			deferMuseumAction(462);
+		}
+	}
+	if (_entryScene == 4063) {
+		if (_museum.keypad == 1) {
+			say(26, 2);
+		} else if (_museum.keypad == 4) {
+			leaveMuseumRoom(4100, Common::Point(141, 468), 3);
+		}
+	}
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
+void Scene4060::advanceCustomGameplayLoop(uint32 delta) {
+	_willyFrame = (_now / 80) % 22;
+}
+
+void Scene4060::updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) {
+	RunawayRoomScene::updateActor(elapsed, scrollDirection, inventoryOpen);
+	if (!inventoryOpen && !_upperFloor && (!_roomAction || _roomAction < 461 || _roomAction > 466)) {
+		_camera.y = CLIP<int>(_position.y - 400, 200, 600);
+	}
+}
+
+void Scene4060::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	if (!museumChapter() || !_museum.willyInLab) {
+		_willyAnimation.draw(viewport, museumChapter() ? _willyFrame : 0, _camera.x, -_camera.y);
+	}
+}
+
+RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 action) {
 	if (museumChapter()) {
 		switch (action) {
 		case 307: // Look at Willy.
@@ -174,11 +221,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 			}
 			return kHandled;
 		case 314: // Take the empty coffee package.
-			if (!_museum.basketSeen || _coffeeTaken)
+			if (!_museum.basketSeen || _coffeeTaken) {
 				say(7);
-			else if (!_museum.needsPackage)
+			} else if (!_museum.needsPackage) {
 				say(7, 1);
-			else {
+			} else {
 				_coffeeTaken = true;
 				say(7, 2);
 				_inventory.add(19);
@@ -190,44 +237,47 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 			_museum.analysisDoorSeen = 1;
 			return kHandled;
 		case 318: // Enter the analysis laboratory.
-			if (_museum.keypad != 4)
+			if (_museum.keypad != 4) {
 				say(13);
-			else if (_inventory.museum().restoredCrucifix)
+			} else if (_inventory.museum().restoredCrucifix) {
 				startMuseumFilm(kMuseumExitFilm);
-			else
+			} else {
 				leaveMuseumRoom(4100, Common::Point(141, 468));
+			}
 			return kHandled;
 		case 320: // Examine the keypad close up.
-			if (_museum.willyInLab == 1)
+			if (_museum.willyInLab == 1) {
 				say(15, 5);
-			else
+			} else {
 				leaveMuseumRoom(4140, Common::Point(382, 529));
+			}
 			return kHandled;
 		case 321: // Look at the coffee machine.
-			if (!_museum.coffeeMachine && !_museum.coffeeSeen)
+			if (!_museum.coffeeMachine && !_museum.coffeeSeen) {
 				say(11, 1);
+			}
 			say(11, _museum.coffeeMachine ? 2 : _museum.coffeeSeen ? _random.getRandomBit() : 0);
 			_museum.coffeeSeen = 1;
 			return kHandled;
 		case 322: // Use the coffee machine.
 			_museum.coffeeSeen = 1;
-			if (_museum.coffeeMachine != 1)
+			if (_museum.coffeeMachine != 1) {
 				say(12, _museum.coffeeMachine ? 3 : 0);
-			else {
+			} else {
 				say(12, 1);
 				beginRoomAnimation(322, 9, 49, kCoffeeCupFrames, ARRAYSIZE(kCoffeeCupFrames));
 			}
 			return kHandled;
 		case 325: // Call Willy.
-			if (!_inventory.contains(13))
+			if (!_inventory.contains(13)) {
 				say(15);
-			else if (_museum.willyInLab == 1)
+			} else if (_museum.willyInLab == 1) {
 				say(15, 7);
-			else if (_museum.keypad > 1)
+			} else if (_museum.keypad > 1) {
 				say(15, 6);
-			else if (_museum.phoneUsed && !_museum.keypad)
+			} else if (_museum.phoneUsed && !_museum.keypad) {
 				say(15, 3);
-			else {
+			} else {
 				say(15, _museum.phoneUsed ? 2 : 1);
 				beginRoomAnimation(325, 13, 27);
 			}
@@ -239,42 +289,44 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 			say(24, _inventory.museum().frozenBattery);
 			return kHandled;
 		case 337: // Coat the keypad with varnish.
-			if (_museum.willyInLab == 1)
+			if (_museum.willyInLab == 1) {
 				say(28);
-			else if (!_museum.sawCode)
+			} else if (!_museum.sawCode) {
 				say(26);
-			else if (_museum.keypad)
+			} else if (_museum.keypad) {
 				say(26, 3);
-			else {
+			} else {
 				say(26, 1);
 				deferMuseumAction(337);
 			}
 			return kHandled;
 		case 338: // Dust the keypad with talcum powder.
-			if (_museum.willyInLab == 1)
+			if (_museum.willyInLab == 1) {
 				say(28);
-			else if (!_museum.sawCode)
+			} else if (!_museum.sawCode) {
 				say(26);
-			else if (_museum.keypad < 2)
+			} else if (_museum.keypad < 2) {
 				say(27, _museum.keypad);
-			else if (_museum.keypad > 2)
+			} else if (_museum.keypad > 2) {
 				say(26, 3);
-			else {
+			} else {
 				say(27, 2);
 				deferMuseumAction(338);
 			}
 			return kHandled;
 		case 342: // Give the bowl of coffee to Willy.
-			if (_inventory.museum().coffee == 2)
+			if (_inventory.museum().coffee == 2) {
 				say(32, 2);
-			else
+			} else {
 				leaveMuseumRoom(4072, Common::Point(548, 580), 7);
+			}
 			return kHandled;
 		case 345: // Give the filled coffee package to Willy.
-			if (!_inventory.museum().packageFilled)
+			if (!_inventory.museum().packageFilled) {
 				say(36);
-			else
+			} else {
 				leaveMuseumRoom(4071, Common::Point(548, 580), 7);
+			}
 			return kHandled;
 		case 346: // Use the coffee package with the coffee machine.
 			say(37, _inventory.museum().packageFilled);
@@ -284,8 +336,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 		}
 	}
 
-	if (action != 313)
+	if (action != 313) {
 		return kUnhandled;
+	}
 	if (_coffeeTaken) {
 		say(7);
 		return kHandled;
@@ -297,7 +350,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::finish4060(uint16 action) {
+void Scene4060::finishCustomAnimation(uint16 action) {
 	switch (action) {
 	case 460: // Willy approaches the security door.
 		_camera.y = 0;
@@ -356,26 +409,64 @@ void RunawayRoomScene::finish4060(uint16 action) {
 	}
 }
 
-float RunawayRoomScene::actorHeight4060() const {
+void Scene4060::handleAnimationFrameHook() {
+	if (_roomAction == 461 && _actionStep == 156) {
+		_audio.playEffect(29);
+	}
+}
+
+void Scene4060::finishCustomFilm() {
+	switch (_museumFilm) {
+	case kArrivalFilm:
+		startMuseumFilm(kCliveFilm);
+		return;
+	case kCliveFilm:
+		_entryScene = 4060;
+		changeFloor(true, Common::Point(607, 323));
+		_audio.playMusic(12, false);
+		break;
+	case kPhoneFilm:
+		_museum.phoneUsed = 1;
+		_museum.willyInLab = 1;
+		_museum.sawCode = 2;
+		if (_museum.keypad == 1) {
+			_museum.keypad = 2;
+		}
+		beginRoomAnimationRange(460, 13, 27, 26, 0);
+		break;
+	case kMuseumExitFilm:
+		leaveMuseumRoom(4100, Common::Point(141, 468));
+		break;
+	default:
+		break;
+	}
+}
+
+float Scene4060::actorHeight() const {
 	const int x = _position.x, y = _position.y;
 	const byte zone = walkZone();
 	if (_upperFloor) {
-		if (x < 69)
+		if (x < 69) {
 			return x * 1.289855f + 140;
-		if (x < 1120)
+		}
+		if (x < 1120) {
 			return x * -0.04883463f + 241.64595f;
-		if (x < 1474)
+		}
+		if (x < 1474) {
 			return x * -0.01977401f + 209.127121f;
+		}
 		return x * 0.3125f - 280.3125f;
 	}
-	if (zone == 7 || zone == 8)
+	if (zone == 7 || zone == 8) {
 		return y * 0.4370861f - 140.649f;
-	if (zone == 12 || zone == 13)
+	}
+	if (zone == 12 || zone == 13) {
 		return y * 0.29007635f - 33.519085f;
+	}
 	return (y * 0.4347826f - 118.695656f + x * -0.08982036f + 258.263458f) / 2;
 }
 
-void RunawayRoomScene::setupDepth4060(RunawayActor::RenderParams &params) const {
+void Scene4060::setupActorDepth(RunawayActor::RenderParams &params) const {
 	const byte zone = walkZone();
 	params.depthY[1] = 1199;
 	params.depthY[2] = zone == 1 ? 1199 : 0;
@@ -384,8 +475,13 @@ void RunawayRoomScene::setupDepth4060(RunawayActor::RenderParams &params) const 
 	params.depthY[5] = zone == 17 || zone == 18 ? 1199 : 0;
 }
 
-bool RunawayRoomScene::loadScene4060() {
-	return _ambient.load(_archive, 8, 22);
+bool Scene4060::usesAlternateActor() const {
+	return false;
 }
 
+int Scene4060::sceneViewportYOffset() const {
+	return _upperFloor ? 0 : CLIP<int>(_position.y - 400, 200, _background.h - kRunawayViewportHeight);
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood
