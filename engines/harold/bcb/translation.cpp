@@ -21,6 +21,7 @@
 
 #include "common/archive.h"
 #include "common/compression/unzip.h"
+#include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/language.h"
 #include "common/ptr.h"
@@ -45,6 +46,8 @@ bool getTranslationPackageCode(const Common::String &fileName, Common::String &c
 
 	Common::String lowerFileName = fileName;
 	lowerFileName.toLowercase();
+	if (lowerFileName.hasPrefix("bcb_translation_"))
+		lowerFileName = Common::String(prefix) + lowerFileName.substr(strlen("bcb_translation_"));
 	if (!lowerFileName.hasPrefix(prefix) || !lowerFileName.hasSuffix(suffix))
 		return false;
 
@@ -210,27 +213,66 @@ Common::String makeTextStringKey(TextTranslationType type, uint primaryId, uint 
 	return "";
 }
 
-void listAvailableTranslationPackages(const Common::FSNode &gameDataDir, Common::Array<TranslationPackageDefinition> &packages) {
-	packages.clear();
+static TranslationPackageDefinition &findOrAddTranslation(Common::Array<TranslationPackageDefinition> &packages, const Common::String &code) {
+	for (auto &package : packages)
+		if (package.code.equalsIgnoreCase(code))
+			return package;
+	TranslationPackageDefinition definition;
+	definition.code = code;
+	definition.displayName = getTranslationPackageDisplayName(code);
+	packages.push_back(definition);
+	return packages.back();
+}
 
+static void findLooseTranslations(const Common::FSNode &dir, Common::Array<TranslationPackageDefinition> &packages, const Common::String &directoryCode = Common::String()) {
 	Common::FSList children;
-	if (!gameDataDir.getChildren(children, Common::FSNode::kListFilesOnly))
+	if (!dir.isDirectory() || !dir.getChildren(children, Common::FSNode::kListFilesOnly))
 		return;
-
-	for (Common::FSList::const_iterator it = children.begin(); it != children.end(); ++it) {
-		Common::String code;
-		const Common::String fileName = it->getName();
-		if (!getTranslationPackageCode(fileName, code))
-			continue;
-		if (!packageHasMatchingStrings(*it, code))
-			continue;
-
-		TranslationPackageDefinition definition;
-		definition.code = code;
-		definition.displayName = getTranslationPackageDisplayName(code);
-		definition.fileName = fileName;
-		packages.push_back(definition);
+	for (const auto &child : children) {
+		Common::String name = child.getName();
+		name.toLowercase();
+		if (name.hasPrefix("strings_") && name.hasSuffix(".yml") && name.size() > 12) {
+			const Common::String code = name.substr(8, name.size() - 12);
+			if (directoryCode.empty() || code.equalsIgnoreCase(directoryCode))
+				findOrAddTranslation(packages, code);
+		}
 	}
+}
+
+static Common::FSNode findLanguageDirectory(const Common::FSNode &dir, const Common::String &code) {
+	Common::FSList children;
+	if (dir.isDirectory() && dir.getChildren(children, Common::FSNode::kListDirectoriesOnly))
+		for (const auto &child : children)
+			if (child.getName().equalsIgnoreCase(code))
+				return child;
+	return Common::FSNode();
+}
+
+static void findTranslationSources(const Common::FSNode &root, Common::Array<TranslationPackageDefinition> &packages) {
+	Common::FSList children;
+	if (root.isDirectory() && root.getChildren(children, Common::FSNode::kListFilesOnly)) {
+		for (const auto &child : children) {
+			Common::String code;
+			if (getTranslationPackageCode(child.getName(), code) && packageHasMatchingStrings(child, code)) {
+				TranslationPackageDefinition &package = findOrAddTranslation(packages, code);
+				if (package.archivePath.empty())
+					package.archivePath = child.getPath();
+			}
+		}
+	}
+	const Common::FSNode dir = root.getChild("translation");
+	findLooseTranslations(dir, packages);
+	children.clear();
+	if (dir.isDirectory() && dir.getChildren(children, Common::FSNode::kListDirectoriesOnly))
+		for (const auto &child : children)
+			findLooseTranslations(child, packages, child.getName());
+}
+
+void listAvailableTranslationPackages(const Common::FSNode &gameDataDir, Common::Array<TranslationPackageDefinition> &packages, const Common::String &target) {
+	packages.clear();
+	findTranslationSources(gameDataDir, packages);
+	if (ConfMan.hasKey("extrapath", target))
+		findTranslationSources(Common::FSNode(ConfMan.getPath("extrapath", target)), packages);
 }
 
 bool isTranslationPackageAvailable(const Common::FSNode &gameDataDir, const Common::String &code) {
@@ -247,19 +289,40 @@ bool loadTranslationPackage(const Common::FSNode &gameDataDir, const Common::Str
 
 	Common::Array<TranslationPackageDefinition> packages;
 	listAvailableTranslationPackages(gameDataDir, packages);
-	Common::String fileName;
+	Common::Path archivePath;
+	bool found = false;
 	for (const auto &package : packages) {
 		if (package.code.equalsIgnoreCase(code)) {
-			fileName = package.fileName;
+			archivePath = package.archivePath;
+			found = true;
 			break;
 		}
 	}
-	if (fileName.empty())
+	if (!found)
 		return false;
-	const Common::FSNode packageNode = gameDataDir.getChild(fileName);
-	translation.packageArchive = Common::makeZipArchive(packageNode, false);
-	if (!translation.packageArchive)
-		return false;
+	Common::SearchSet *sources = new Common::SearchSet();
+	translation.packageArchive = sources;
+	if (!archivePath.empty()) {
+		Common::Archive *archive = Common::makeZipArchive(Common::FSNode(archivePath), false);
+		if (archive)
+			sources->add("translation archive", archive, 0);
+	}
+	const Common::FSNode looseDir = gameDataDir.getChild("translation");
+	if (looseDir.isDirectory()) {
+		sources->addDirectory("game translation", looseDir, 1, 3);
+		const Common::FSNode languageDir = findLanguageDirectory(looseDir, code);
+		if (languageDir.isDirectory())
+			sources->addDirectory("game language translation", languageDir, 2, 3);
+	}
+	if (ConfMan.hasKey("extrapath")) {
+		const Common::FSNode extraDir = Common::FSNode(ConfMan.getPath("extrapath")).getChild("translation");
+		if (extraDir.isDirectory()) {
+			sources->addDirectory("extra translation", extraDir, 3, 3);
+			const Common::FSNode languageDir = findLanguageDirectory(extraDir, code);
+			if (languageDir.isDirectory())
+				sources->addDirectory("extra language translation", languageDir, 4, 3);
+		}
+	}
 
 	if (!translation.strings.load(translation.packageArchive->createReadStreamForMember(Common::Path(getTranslationStringFileName(code), '/')))) {
 		translation.clear();

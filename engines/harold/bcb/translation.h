@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/hash-str.h"
+#include "common/path.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -44,7 +45,7 @@ class HighQualityTextRenderer;
 struct TranslationPackageDefinition {
 	Common::String code;
 	Common::String displayName;
-	Common::String fileName;
+	Common::Path archivePath;
 };
 
 enum TextTranslationType {
@@ -74,7 +75,7 @@ public:
 };
 
 Common::String makeTextStringKey(TextTranslationType type, uint primaryId, uint secondaryId);
-void listAvailableTranslationPackages(const Common::FSNode &gameDataDir, Common::Array<TranslationPackageDefinition> &packages);
+void listAvailableTranslationPackages(const Common::FSNode &gameDataDir, Common::Array<TranslationPackageDefinition> &packages, const Common::String &target = Common::String());
 bool isTranslationPackageAvailable(const Common::FSNode &gameDataDir, const Common::String &code);
 bool loadTranslationPackage(const Common::FSNode &gameDataDir, const Common::String &code, TextTranslationData &translation);
 bool applyPatchImage(Graphics::Surface &surface, Common::SeekableReadStream *stream, const char *debugName);

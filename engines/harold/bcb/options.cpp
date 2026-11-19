@@ -69,7 +69,7 @@ BCBOptionsWidget::BCBOptionsWidget(GUI::GuiObject *boss, const Common::String &n
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path", domain));
 	Common::Array<TranslationPackageDefinition> packages;
-	listAvailableTranslationPackages(gameDataDir, packages);
+	listAvailableTranslationPackages(gameDataDir, packages, domain);
 	for (uint i = 0; i < packages.size(); ++i) {
 		const TranslationPackageDefinition &package = packages[i];
 		_languageCodes.push_back(package.code);

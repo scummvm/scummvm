@@ -149,7 +149,7 @@ bool getPillowTextMaskMetrics(FT_Face face, const Common::Array<PillowGlyphInfo>
 			return false;
 
 		FT_BBox bbox;
-		FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_PIXELS, &bbox);
+		Graphics::FreeType::Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_PIXELS, &bbox);
 		Graphics::FreeType::Done_Glyph(glyph);
 
 		bboxXMin = MIN<int>(bboxXMin, bbox.xMin + px);
@@ -229,9 +229,9 @@ bool drawFreeTypeTextPass(Graphics::Surface &surface, FT_Face face, const Common
 
 	FT_Stroker stroker = nullptr;
 	if (strokeOnly) {
-		if (FT_Stroker_New(face->glyph->library, &stroker))
+		if (Graphics::FreeType::Stroker_New(face->glyph->library, &stroker))
 			return false;
-		FT_Stroker_Set(stroker, (FT_Fixed)round(strokeWidth * 64.0), FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
+		Graphics::FreeType::Stroker_Set(stroker, (FT_Fixed)round(strokeWidth * 64.0), FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
 	}
 
 	FT_Pos penX = 0;
@@ -242,20 +242,20 @@ bool drawFreeTypeTextPass(Graphics::Surface &surface, FT_Face face, const Common
 		const int py = ftPixel(originY);
 		if (Graphics::FreeType::Load_Glyph(face, glyphs[i].index, loadFlags)) {
 			if (stroker)
-				FT_Stroker_Done(stroker);
+				Graphics::FreeType::Stroker_Done(stroker);
 			return false;
 		}
 
 		if (strokeOnly) {
 			FT_Glyph glyph;
 			if (Graphics::FreeType::Get_Glyph(face->glyph, &glyph)) {
-				FT_Stroker_Done(stroker);
+				Graphics::FreeType::Stroker_Done(stroker);
 				return false;
 			}
-			if (FT_Glyph_StrokeBorder(&glyph, stroker, 0, 1) ||
+			if (Graphics::FreeType::Glyph_StrokeBorder(&glyph, stroker, 0, 1) ||
 				Graphics::FreeType::Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, nullptr, 1)) {
 				Graphics::FreeType::Done_Glyph(glyph);
-				FT_Stroker_Done(stroker);
+				Graphics::FreeType::Stroker_Done(stroker);
 				return false;
 			}
 			FT_BitmapGlyph bitmapGlyph = (FT_BitmapGlyph)glyph;
@@ -274,7 +274,7 @@ bool drawFreeTypeTextPass(Graphics::Surface &surface, FT_Face face, const Common
 	}
 
 	if (stroker)
-		FT_Stroker_Done(stroker);
+		Graphics::FreeType::Stroker_Done(stroker);
 	return true;
 }
 
@@ -291,7 +291,7 @@ bool drawFreeTypeTextLine(Graphics::Surface &surface, FT_Face face, int size,
 		request.type = FT_SIZE_REQUEST_TYPE_NOMINAL;
 		request.width = size * 64;
 		request.height = size * 64;
-		ok = !FT_Request_Size(face, &request);
+		ok = !Graphics::FreeType::Request_Size(face, &request);
 	}
 
 	Common::Array<PillowGlyphInfo> glyphs;
