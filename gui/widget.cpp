@@ -279,6 +279,58 @@ void Widget::readDescription() {
 		read(description);
 }
 
+Common::U32String Widget::findTextBeside(bool before) const {
+	// Look among the widgets sharing this widget's parent for text on the
+	// same row, that is spanning this widget's vertical centre, and keep the
+	// nearest one on the wanted side. Positions are in the parent's
+	// coordinates, which RTL layouts mirror when drawn, so "before" holds
+	// there too.
+	const int centre = _y + _h / 2;
+	const Widget *best = nullptr;
+	Common::U32String bestText;
+
+	for (const Widget *w = _boss->_firstWidget; w; w = w->_next) {
+		if (w == this || !w->isVisible())
+			continue;
+		if (centre < w->_y || centre >= w->_y + w->_h)
+			continue;
+		if (before ? (w->_x >= _x) : (w->_x <= _x))
+			continue;
+		if (best && (before ? (w->_x <= best->_x) : (w->_x >= best->_x)))
+			continue;
+
+		Common::U32String text;
+		if (w->_type == kStaticTextWidget)
+			text = static_cast<const StaticTextWidget *>(w)->getLabel();
+		else if (w->_type == kGraphicsWidget)
+			text = w->_tooltip;
+		else
+			continue;
+
+		if (text.empty())
+			continue;
+		best = w;
+		bestText = text;
+	}
+
+	return bestText;
+}
+
+Common::U32String Widget::findSpokenLabel() const {
+	return findTextBeside(true);
+}
+
+Common::U32String Widget::findSpokenValue() const {
+	return findTextBeside(false);
+}
+
+Common::U32String Widget::findSpokenName(const Common::U32String &kind) const {
+	const Common::U32String label = findSpokenLabel();
+	if (!label.empty())
+		return label;
+	return _tooltip.empty() ? kind : _tooltip;
+}
+
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, Graphics::TextAlign align, const Common::U32String &tooltip, ThemeEngine::FontStyle font, Common::Language lang, bool useEllipsis)
@@ -421,6 +473,23 @@ void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 void ButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), getLabel(), _state, getFlags());
+}
+
+/**
+ * Name a widget for text-to-speech by its label, as hovering it reads, or by
+ * its tooltip when it has none, as for picture buttons. Name the kind of
+ * control only when there is neither, so that an unlabelled widget is still
+ * audible.
+ */
+static Common::U32String spokenName(const Common::U32String &label, const Common::U32String &tooltip, const Common::U32String &kind) {
+	if (!label.empty())
+		return label;
+	return tooltip.empty() ? kind : tooltip;
+}
+
+Common::U32String ButtonWidget::getSpokenDescription() const {
+	// I18N: Spoken by text-to-speech to name an unlabelled button
+	return spokenName(_label, _tooltip, _("button"));
 }
 
 void ButtonWidget::setLabel(const Common::U32String &label) {
@@ -752,6 +821,14 @@ void CheckboxWidget::drawWidget() {
 	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, _overrideText, (g_gui.useRTL() && _useRTL));
 }
 
+Common::U32String CheckboxWidget::getSpokenDescription() const {
+	// I18N: Spoken by text-to-speech to name an unlabelled checkbox
+	const Common::U32String name = spokenName(_label, _tooltip, _("checkbox"));
+	// I18N: Spoken by text-to-speech for the state of a checkbox
+	const Common::U32String state = _state ? _("checked") : _("not checked");
+	return name + Common::U32String(", ") + state;
+}
+
 #pragma mark -
 RadiobuttonGroup::RadiobuttonGroup(GuiObject *boss, uint32 cmd) : CommandSender(boss) {
 	_value = -1;
@@ -825,6 +902,14 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 
 void RadiobuttonWidget::drawWidget() {
 	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, (g_gui.useRTL() && _useRTL));
+}
+
+Common::U32String RadiobuttonWidget::getSpokenDescription() const {
+	// I18N: Spoken by text-to-speech to name an unlabelled radio button
+	const Common::U32String name = spokenName(_label, _tooltip, _("radio button"));
+	// I18N: Spoken by text-to-speech for the state of a radio button
+	const Common::U32String state = _state ? _("selected") : _("not selected");
+	return name + Common::U32String(", ") + state;
 }
 
 #pragma mark -
@@ -903,6 +988,18 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 void SliderWidget::drawWidget() {
 	Common::Rect r1(_x, _y, _x + _w, _y + _h);
 	g_gui.theme()->drawSlider(r1, valueToBarWidth(_value), _state, (g_gui.useRTL() && _useRTL));
+}
+
+Common::U32String SliderWidget::getSpokenDescription() const {
+	// Sliders are labelled by the text before them. Follow the name with the
+	// value as shown after the slider, such as a percentage, or failing
+	// that, the slider's own value.
+	// I18N: Spoken by text-to-speech to name an unlabelled slider
+	const Common::U32String name = findSpokenName(_("slider"));
+	Common::U32String value = findSpokenValue();
+	if (value.empty())
+		value = Common::U32String(Common::String::format("%d", _value));
+	return name + Common::U32String(", ") + value;
 }
 
 int SliderWidget::valueToBarWidth(int value) {

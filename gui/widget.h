@@ -205,7 +205,35 @@ public:
 	/** Speak this widget's description, if text-to-speech is enabled. */
 	void readDescription();
 
+	/**
+	 * Find the text labelling this widget, for widgets such as popups,
+	 * sliders and text fields, which have no label of their own but a
+	 * separate text widget before them on the same row, as layouts place
+	 * them. A picture with a tooltip serves as a label too.
+	 *
+	 * @return The label, or an empty string if there is none.
+	 */
+	Common::U32String findSpokenLabel() const;
+
+	/**
+	 * Find the text just after this widget on the same row, such as the
+	 * value shown beside a slider.
+	 *
+	 * @return The text, or an empty string if there is none.
+	 */
+	Common::U32String findSpokenValue() const;
+
+	/**
+	 * Name this widget for speech by the text labelling it, or by its
+	 * tooltip when there is none, or else by the given kind of control, so
+	 * that an unlabelled widget is still audible.
+	 */
+	Common::U32String findSpokenName(const Common::U32String &kind) const;
+
 protected:
+	/** The nearest text before (or after) this widget on the same row, as described in findSpokenLabel() */
+	Common::U32String findTextBeside(bool before) const;
+
 	void updateState(int oldFlags, int newFlags);
 
 	virtual void drawWidget() = 0;
@@ -281,6 +309,7 @@ public:
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseEntered(int button) override	{ readLabel(); if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); markAsDirty(); }
+	Common::U32String getSpokenDescription() const override;
 
 	void setHighLighted(bool enable);
 	void setPressedState();
@@ -364,6 +393,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	Common::U32String getSpokenDescription() const override;
 
 	void setState(bool state);
 	void toggleState()			{ setState(!_state); }
@@ -414,6 +444,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	Common::U32String getSpokenDescription() const override;
 
 	void setState(bool state, bool setGroup = true);
 	void toggleState()			{ setState(!_state); }
@@ -455,6 +486,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseEntered(int button) override	{ setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	Common::U32String getSpokenDescription() const override;
 	void handleMouseWheel(int x, int y, int direction) override;
 
 protected:
