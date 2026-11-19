@@ -284,10 +284,11 @@ void TabWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 bool TabWidget::handleKeyDown(Common::KeyState state) {
-	if (state.hasFlags(Common::KBD_SHIFT) && state.keycode == Common::KEYCODE_TAB)
-		adjustTabs(kTabBackwards);
-	else if (state.keycode == Common::KEYCODE_TAB)
-		adjustTabs(kTabForwards);
+	// Plain Tab is left to the dialog, which moves the focus with it
+	if (state.keycode == Common::KEYCODE_TAB && state.hasFlags(Common::KBD_CTRL)) {
+		adjustTabs(state.hasFlags(Common::KBD_SHIFT) ? kTabBackwards : kTabForwards);
+		return true;
+	}
 
 	return Widget::handleKeyDown(state);
 }

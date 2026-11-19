@@ -23,6 +23,7 @@
 #define GUI_DIALOG_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/str.h"
 #include "common/keyboard.h"
 
@@ -63,6 +64,11 @@ protected:
 private:
 	int		_result;
 	bool    _handlingMouseWheel;
+
+	/** Append the widgets of a chain which accept the keyboard focus, in reading order */
+	void collectKeyboardFocusWidgets(Widget *first, Common::Array<Widget *> &widgets) const;
+	/** Scroll the containers holding a widget so that it is visible */
+	void scrollIntoView(Widget *widget);
 
 public:
 	Dialog(int x, int y, int w, int h, bool scale = false);
@@ -115,6 +121,9 @@ protected:
 	void removeWidget(Widget *widget) override;
 
 	void setDefaultFocusedWidget();
+
+	/** Move the focus to the next (direction > 0) or previous widget accepting it */
+	void moveFocus(int direction);
 
 	void registerTickleWidget(Widget *widget) override;
 	void unregisterTickleWidget(Widget *widget) override;

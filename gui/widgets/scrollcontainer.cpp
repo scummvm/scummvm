@@ -279,6 +279,30 @@ bool ScrollContainerWidget::containsWidget(Widget *w) const {
 	return containsWidgetInChain(_firstWidget, w);
 }
 
+void ScrollContainerWidget::scrollChildIntoView(Widget *child) {
+	if (!_verticalScroll->isVisible())
+		return;
+
+	// Position of the child within the scrolled contents
+	const int top = child->getAbsY() - getChildY();
+	const int bottom = top + child->getHeight();
+
+	int scrollY = _scrolledY;
+	if (top < scrollY)
+		scrollY = top;
+	else if (bottom > scrollY + _limitH)
+		scrollY = bottom - _limitH;
+
+	const int maxScroll = MAX(0, _verticalScroll->_numEntries - (int)_limitH);
+	scrollY = CLIP(scrollY, 0, maxScroll);
+	if (scrollY == _scrolledY)
+		return;
+
+	_fluidScroller->stopAnimation();
+	_scrollPos = _fluidScroller->setPosition((float)scrollY, false);
+	applyScrollPos();
+}
+
 Widget *ScrollContainerWidget::findWidget(int x, int y) {
 	if (_verticalScroll->isVisible() && x >= _w)
 		return _verticalScroll;

@@ -163,6 +163,9 @@ public:
 	void lostFocus() { _hasFocus = false; lostFocusWidget(); }
 	virtual bool wantsFocus() { return false; }
 
+	/** Whether Tab and Shift+Tab can move the focus to this widget */
+	virtual bool wantsKeyboardFocus() { return wantsFocus(); }
+
 	uint32 getType() const { return _type; }
 
 	void setFlags(int flags);
@@ -186,6 +189,9 @@ public:
 	void setTooltip(const Common::String &tooltip) { _tooltip = Common::U32String(tooltip); }
 
 	virtual bool containsWidget(Widget *) const { return false; }
+
+	/** Scroll, if needed, so that the given descendant is visible */
+	virtual void scrollChildIntoView(Widget *child) {}
 
 	void read(const Common::U32String &str);
 

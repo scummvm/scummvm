@@ -58,6 +58,7 @@ public:
 	void reflowLayout() override;
 
 	bool containsWidget(Widget *) const override;
+	void scrollChildIntoView(Widget *child) override;
 
 	void setBackgroundType(ThemeEngine::WidgetBackground backgroundType);
 
