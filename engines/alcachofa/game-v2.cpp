@@ -243,7 +243,7 @@ public:
 					hasChanges = true;
 				}
 			}
-			return hasChanges ? u32String.encode() : String();
+			return hasChanges ? u32String.encode() : alternativeAnimationName(path, variant + 1);
 		} else if (variant == 1) {
 			// Some of the Steam releases have wrong characters due to a messed up UTF8 conversion
 			for (uint i = 0; i < u32String.size(); i++) {
@@ -259,7 +259,31 @@ public:
 					hasChanges = true;
 				}
 			}
-			return hasChanges ? u32String.encode() : String();
+			return hasChanges ? u32String.encode() : alternativeAnimationName(path, variant + 1);
+		} else if (variant == 2 || variant == 3) {
+			// For the switch filesystem we have to work even harder to restore UTF8 (both upper- and lowercase)
+			const char or = variant == 3 ? 0x20 : 0;
+			char *tempStart = new char[path.size() * 2];
+			char *tempPtr = tempStart;
+			for (uint i = 0; i < path.size(); i++) {
+				switch(path[i])
+				{
+					case 0xC1:
+					case 0xD3:
+					case 0xCD:
+					case 0xD1:
+					case 0xC9:
+						*tempPtr++ = 0xC3;
+						*tempPtr++ = path[i] & ~0x40 | or;
+						break;
+					default:
+						*tempPtr++ = path[i];
+						break;
+				}
+			}
+			String result(tempStart, tempPtr);
+			delete[] tempStart;
+			return result;
 		} else
 			return String();
 	}
