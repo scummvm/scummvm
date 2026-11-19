@@ -305,7 +305,7 @@ void TableGatePuzzle::render() {
 	}
 
 	g_system->unlockScreen();
-	_backgroundDisplay.restorePalette();
+	setIndexedPaletteIfChanged(_backgroundDisplay.palette().data());
 	presentScreen();
 }
 

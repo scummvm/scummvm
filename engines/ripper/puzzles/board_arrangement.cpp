@@ -188,7 +188,7 @@ void BoardArrangementPuzzle::render() const {
 			_dragPosition.x, _dragPosition.y);
 	}
 	g_system->unlockScreen();
-	_boardDisplay.restorePalette();
+	setIndexedPaletteIfChanged(_boardDisplay.palette().data());
 	presentScreen();
 }
 

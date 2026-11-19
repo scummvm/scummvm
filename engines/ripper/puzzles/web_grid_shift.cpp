@@ -171,7 +171,7 @@ void WebGridShiftPuzzle::renderOrder(const uint *order) const {
 		}
 	}
 	g_system->unlockScreen();
-	_backgroundDisplay.restorePalette();
+	setIndexedPaletteIfChanged(_backgroundDisplay.palette().data());
 	presentScreen();
 }
 
@@ -245,7 +245,7 @@ void WebGridShiftPuzzle::renderShift(uint targetCell, uint progress) const {
 	}
 
 	g_system->unlockScreen();
-	_backgroundDisplay.restorePalette();
+	setIndexedPaletteIfChanged(_backgroundDisplay.palette().data());
 	presentScreen();
 }
 

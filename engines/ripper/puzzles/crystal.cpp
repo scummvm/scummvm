@@ -23,7 +23,6 @@
 
 #include "common/debug.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "ripper/cursor.h"
@@ -182,8 +181,8 @@ void CrystalPuzzle::render() {
 	}
 	g_system->unlockScreen();
 
-	if (_puzzlePalette.size() == 256 * 3)
-		g_system->getPaletteManager()->setPalette(_puzzlePalette.data(), 0, 256);
+	if (_puzzlePalette.size() == kRipperPaletteByteCount)
+		setIndexedPaletteIfChanged(_puzzlePalette.data());
 	presentScreen();
 }
 
