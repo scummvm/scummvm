@@ -166,6 +166,15 @@ public:
 	/** Whether Tab and Shift+Tab can move the focus to this widget */
 	virtual bool wantsKeyboardFocus() { return wantsFocus(); }
 
+	/**
+	 * Called before Tab (direction > 0) or Shift+Tab gives this widget the
+	 * focus, for widgets with several stops of their own
+	 */
+	virtual void enterFromKeyboard(int direction) {}
+
+	/** Whether any visible widget inside this one accepts the keyboard focus */
+	bool hasKeyboardFocusableChild();
+
 	uint32 getType() const { return _type; }
 
 	void setFlags(int flags);

@@ -72,6 +72,16 @@ void Widget::clearFlags(int flags) {
 	_flags &= ~flags;
 }
 
+bool Widget::hasKeyboardFocusableChild() {
+	for (Widget *w = _firstWidget; w; w = w->_next) {
+		if (!w->isVisible())
+			continue;
+		if ((w->wantsKeyboardFocus() && w->isEnabled()) || w->hasKeyboardFocusableChild())
+			return true;
+	}
+	return false;
+}
+
 void Widget::receivedFocus() {
 	_hasFocus = true;
 	if (showsFocusAsHighlight()) {

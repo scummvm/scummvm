@@ -246,6 +246,7 @@ void Dialog::moveFocus(int direction) {
 		next = (current + (direction > 0 ? 1 : -1) + count) % count;
 
 	scrollIntoView(widgets[next]);
+	widgets[next]->enterFromKeyboard(direction);
 	setFocusWidget(widgets[next]);
 }
 

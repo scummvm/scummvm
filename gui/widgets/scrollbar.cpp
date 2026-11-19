@@ -158,6 +158,42 @@ void ScrollBarWidget::handleTickle() {
 	}
 }
 
+bool ScrollBarWidget::scrollPositionForKey(const Common::KeyState &state, int &position) const {
+	if (state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))
+		return false;
+
+	const int maxPos = MAX(0, _numEntries - _entriesPerPage);
+	const int step = MAX(1, _singleStep);
+	// Keep a step of overlap between pages
+	const int page = MAX(step, _entriesPerPage - step);
+
+	switch (state.keycode) {
+	case Common::KEYCODE_UP:
+		position = _currentPos - step;
+		break;
+	case Common::KEYCODE_DOWN:
+		position = _currentPos + step;
+		break;
+	case Common::KEYCODE_PAGEUP:
+		position = _currentPos - page;
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+		position = _currentPos + page;
+		break;
+	case Common::KEYCODE_HOME:
+		position = 0;
+		break;
+	case Common::KEYCODE_END:
+		position = maxPos;
+		break;
+	default:
+		return false;
+	}
+
+	position = CLIP(position, 0, maxPos);
+	return true;
+}
+
 void ScrollBarWidget::checkBounds(int old_pos) {
 	if (_numEntries <= _entriesPerPage || _currentPos < 0)
 		_currentPos = 0;

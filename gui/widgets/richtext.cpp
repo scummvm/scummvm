@@ -211,6 +211,103 @@ void RichTextWidget::handleMouseMoved(int x, int y, int button) {
 	}
 }
 
+bool RichTextWidget::wantsKeyboardFocus() {
+	return _verticalScroll->isVisible() || !_links.empty();
+}
+
+void RichTextWidget::enterFromKeyboard(int direction) {
+	// The stops are the text, then each link. Shift+Tab starts from the end.
+	if (direction < 0 && !_links.empty())
+		focusLink(_links.size() - 1);
+	else
+		focusLink(-1);
+}
+
+void RichTextWidget::lostFocusWidget() {
+	_focusedLink = -1;
+	markAsDirty();
+}
+
+bool RichTextWidget::handleKeyDown(Common::KeyState state) {
+	if (!isEnabled() || !_txtWnd)
+		return false;
+
+	const bool modified = state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META);
+
+	// Past either end, Tab is left to the dialog to move to the next widget
+	if (state.keycode == Common::KEYCODE_TAB && !modified) {
+		const int next = _focusedLink + (state.hasFlags(Common::KBD_SHIFT) ? -1 : 1);
+		if (next < -1 || next >= (int)_links.size())
+			return false;
+		focusLink(next);
+		return true;
+	}
+
+	if (_focusedLink >= 0 && !modified &&
+			(state.keycode == Common::KEYCODE_RETURN || state.keycode == Common::KEYCODE_KP_ENTER ||
+			 state.keycode == Common::KEYCODE_SPACE)) {
+		const Common::String link = _links[_focusedLink].link.encode();
+		if (link.hasPrefixIgnoreCase("http"))
+			g_system->openUrl(link);
+		return true;
+	}
+
+	if (!_verticalScroll->isVisible())
+		return false;
+
+	int position;
+	if (!_verticalScroll->scrollPositionForKey(state, position))
+		return false;
+
+	scrollTo(position);
+	return true;
+}
+
+void RichTextWidget::updateLinks() {
+	_links.clear();
+	_focusedLink = -1;
+	if (!_txtWnd)
+		return;
+
+	const Common::Array<Graphics::MacTextLink> links = _txtWnd->getLinks();
+	for (uint i = 0; i < links.size(); ++i) {
+		Link link;
+		link.link = links[i].link;
+		link.text = links[i].text;
+		link.bounds = links[i].bounds;
+		_links.push_back(link);
+	}
+}
+
+void RichTextWidget::focusLink(int index) {
+	_focusedLink = index;
+	if (index >= 0)
+		scrollToLink(index);
+	markAsDirty();
+}
+
+void RichTextWidget::scrollToLink(int index) {
+	if (!_verticalScroll->isVisible())
+		return;
+
+	const Common::Rect &bounds = _links[index].bounds;
+	int position = _scrolledY;
+	if (bounds.top < position)
+		position = bounds.top;
+	else if (bounds.bottom > position + _textHeight)
+		position = bounds.bottom - _textHeight;
+
+	position = CLIP(position, 0, MAX(0, _verticalScroll->_numEntries - _verticalScroll->_entriesPerPage));
+	if (position != _scrolledY)
+		scrollTo(position);
+}
+
+void RichTextWidget::scrollTo(int position) {
+	_fluidScroller->stopAnimation();
+	_fluidScroller->setPosition((float)position, false);
+	applyScrollPos();
+}
+
 void RichTextWidget::handleTickle() {
 	if (_fluidScroller->update(g_system->getMillis(), _scrollPos)) {
 		applyScrollPos();
@@ -346,6 +443,7 @@ void RichTextWidget::createWidget() {
 		_txtWnd->setImageArchive(_imageArchive);
 
 	_txtWnd->setMarkdownText(_text);
+	updateLinks();
 
 #ifdef USE_FREETYPE2
 	// Restore previous render mode now that all fonts have been loaded
@@ -404,7 +502,9 @@ void RichTextWidget::drawWidget() {
 	if (!_txtWnd)
 		recalc();
 
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
+	// Show the keyboard focus with a frame, as around a list
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
+	                                    _hasFocus ? ThemeEngine::kWidgetBackgroundBorder : ThemeEngine::kWidgetBackgroundPlain);
 
 	uint8 bgR, bgG, bgB;
 	uint32 bg;
@@ -425,6 +525,25 @@ void RichTextWidget::drawWidget() {
 			MIN(srcY + _textHeight - destY, cachedHeight)), Common::Point(0, destY));
 	} else
 		_txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
+
+	// Frame the focused link in the colour of the focused selection
+	if (_hasFocus && _focusedLink >= 0 && _focusedLink < (int)_links.size()) {
+		Common::Rect frame = _links[_focusedLink].bounds;
+		frame.translate(0, -_scrolledY);
+		frame.grow(1);
+		frame.clip(Common::Rect(_surface->w, _surface->h));
+
+		if (!frame.isEmpty()) {
+			uint8 r, g, b;
+			if (!g_gui.theme()->getDrawDataColor(kDDTextSelectionFocusBackground, r, g, b)) {
+				TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
+				r = normal->r;
+				g = normal->g;
+				b = normal->b;
+			}
+			_surface->frameRect(frame, g_gui.getWM()->_pixelformat.RGBToColor(r, g, b));
+		}
+	}
 
 	g_gui.theme()->drawManagedSurface(Common::Point(_x + _innerMargin, _y + _innerMargin), *_surface, Graphics::ALPHA_OPAQUE);
 }

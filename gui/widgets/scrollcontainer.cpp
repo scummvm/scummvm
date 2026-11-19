@@ -84,6 +84,25 @@ void ScrollContainerWidget::handleMouseMoved(int x, int y, int button) {
 	}
 }
 
+bool ScrollContainerWidget::wantsKeyboardFocus() {
+	// Otherwise, the container scrolls to its widgets as they get the focus
+	return _verticalScroll->isVisible() && !hasKeyboardFocusableChild();
+}
+
+bool ScrollContainerWidget::handleKeyDown(Common::KeyState state) {
+	if (!isEnabled() || !_verticalScroll->isVisible())
+		return false;
+
+	int position;
+	if (!_verticalScroll->scrollPositionForKey(state, position))
+		return false;
+
+	_fluidScroller->stopAnimation();
+	_scrollPos = _fluidScroller->setPosition((float)position, false);
+	applyScrollPos();
+	return true;
+}
+
 void ScrollContainerWidget::handleTickle() {
 	if (_fluidScroller->update(g_system->getMillis(), _scrollPos)) {
 		applyScrollPos();
@@ -254,7 +273,9 @@ void ScrollContainerWidget::reflowLayout() {
 }
 
 void ScrollContainerWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight()), _backgroundType);
+	// Show the keyboard focus with a frame, as around a list
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight()),
+	                                    _hasFocus ? ThemeEngine::kWidgetBackgroundBorder : _backgroundType);
 }
 
 void ScrollContainerWidget::draw() {
