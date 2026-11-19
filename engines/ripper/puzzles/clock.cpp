@@ -223,7 +223,7 @@ void ClockPuzzle::render() const {
 		IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _markerButtons[i],
 			kControls[i + 5].x, kControls[i + 5].y + kSceneOriginY, screenBounds);
 	g_system->unlockScreen();
-	_backgroundDisplay.restorePalette();
+	setIndexedPaletteIfChanged(_backgroundDisplay.palette().data());
 	presentScreen();
 }
 

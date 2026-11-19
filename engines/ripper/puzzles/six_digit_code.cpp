@@ -169,7 +169,7 @@ void SixDigitCodePuzzle::render(bool showDigits) const {
 	}
 
 	g_system->unlockScreen();
-	_baseDisplay.restorePalette();
+	setIndexedPaletteIfChanged(_baseDisplay.palette().data());
 	presentScreen();
 }
 

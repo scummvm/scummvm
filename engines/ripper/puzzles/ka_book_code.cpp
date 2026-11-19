@@ -24,7 +24,6 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "ripper/cursor.h"
@@ -106,8 +105,8 @@ void KaBookCodePuzzle::drawPrompt(const Common::String &typedCode) {
 		drawText(pixels, screen->pitch, x, kTextY, character, kTextColor);
 	}
 	g_system->unlockScreen();
-	if (_background.palette.size() >= 256 * 3)
-		g_system->getPaletteManager()->setPalette(_background.palette.data(), 0, 256);
+	if (_background.palette.size() >= kRipperPaletteByteCount)
+		setIndexedPaletteIfChanged(_background.palette.data());
 	presentScreen();
 }
 
