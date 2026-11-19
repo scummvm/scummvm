@@ -176,6 +176,28 @@ DWORD WINAPI startSpeech(LPVOID parameters) {
 	return 0;
 }
 
+// The text is parsed as SAPI markup, to set the pitch, so escape it
+static Common::U32String escapeForSapi(const Common::U32String &str) {
+	Common::U32String escaped;
+	for (uint i = 0; i < str.size(); ++i) {
+		switch (str[i]) {
+		case '&':
+			escaped += Common::U32String("&amp;");
+			break;
+		case '<':
+			escaped += Common::U32String("&lt;");
+			break;
+		case '>':
+			escaped += Common::U32String("&gt;");
+			break;
+		default:
+			escaped += str[i];
+			break;
+		}
+	}
+	return escaped;
+}
+
 bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action) {
 	if (_speechState == BROKEN || _speechState == NO_VOICE) {
 		if (_ttsState->_enabled)
@@ -187,7 +209,7 @@ bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action
 		return true;
 
 	// We have to set the pitch by prepending xml code at the start of the said string;
-	Common::U32String pitch = Common::U32String::format("<pitch absmiddle=\"%d\"/>%S", _ttsState->_pitch / 10, str.c_str());
+	Common::U32String pitch = Common::U32String::format("<pitch absmiddle=\"%d\"/>%S", _ttsState->_pitch / 10, escapeForSapi(str).c_str());
 	WCHAR *strW = (WCHAR *) pitch.encodeUTF16Native();
 	if (strW == nullptr) {
 		warning("Cannot convert from UTF-32 encoding for text to speech");
