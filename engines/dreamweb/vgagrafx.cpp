@@ -426,7 +426,7 @@ void DreamWebEngine::transferFrame(uint8 from, uint8 to, uint8 offset) {
 	exFrame.height = freeFrame.height;
 	exFrame.x = freeFrame.x;
 	exFrame.y = freeFrame.y;
-	uint16 byteCount = freeFrame.width * freeFrame.height;
+	uint16 byteCount = freeFrame.size();
 
 	const uint8 *src = _freeFrames.getFrameData(3*from + offset);
 	uint8 *dst = _exFrames._data + _vars._exFramePos;

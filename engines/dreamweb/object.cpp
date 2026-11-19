@@ -424,28 +424,33 @@ void DreamWebEngine::setPickup() {
 	workToScreenM();
 }
 
-void DreamWebEngine::deleteExFrame(uint16 frameNum) {
-	assert(frameNum < 346); // see GraphicsFile::getFrameData
-	Frame *frame = &_exFrames._frames[frameNum];
-
-	uint16 frameSize = frame->width * frame->height;
-	// Note: the original asm didn't subtract frameSize from remainder
-	uint16 remainder = kExframeslen - frame->ptr() - frameSize;
-	uint16 startOff = frame->ptr();
-	uint16 endOff = startOff + frameSize;
+void DreamWebEngine::deleteExFrameData(uint16 gapOffset, uint16 gapSize) {
+	debug(2, "deleteExFrameData %04x, %u bytes", gapOffset, gapSize);
 
 	// Shift frame data after this one down
-	memmove(&_exFrames._data[startOff], &_exFrames._data[endOff], remainder);
+	auto gapEnd = gapOffset + gapSize;
+	assert(gapEnd <= kExframeslen);
 
-	// Combined frame data is now frameSize smaller
-	_vars._exFramePos -= frameSize;
+	// Unlike the original asm, don't read past the end of the buffer
+	uint16 remainder = kExframeslen - gapEnd;
+	memmove(&_exFrames._data[gapOffset], &_exFrames._data[gapEnd], remainder);
 
 	// Adjust all frame pointers pointing into the shifted data
 	for (unsigned i = 0; i < 3 * kNumexobjects; ++i) {
-		frame = &_exFrames._frames[i];
-		if (frame->ptr() >= startOff)
-			frame->setPtr(frame->ptr() - frameSize);
+		auto *frame = &_exFrames._frames[i];
+		if (frame->ptr() >= gapOffset)
+			frame->setPtr(frame->ptr() - gapSize);
 	}
+
+	// Combined frame data is now gapSize smaller
+	assert(_vars._exFramePos >= gapSize);
+	_vars._exFramePos -= gapSize;
+}
+
+void DreamWebEngine::deleteExFrame(uint16 frameNum) {
+	assert(frameNum < 346); // see GraphicsFile::getFrameData
+	Frame *frame = &_exFrames._frames[frameNum];
+	deleteExFrameData(frame->ptr(), frame->size());
 }
 
 void DreamWebEngine::deleteExText(uint8 textNum) {
@@ -1127,13 +1132,14 @@ void DreamWebEngine::emergencyPurge(uint8 from) {
 	uint16 frameBytesNeeded = 0;
 	for (int offset = 0; offset <= 1; ++offset) {
 		const Frame &freeFrame = _freeFrames._frames[3 * from + offset];
-		frameBytesNeeded += freeFrame.width * freeFrame.height;
+		frameBytesNeeded += freeFrame.size();
 	}
 	const uint16 textBytesNeeded = strlen(_freeDesc.getString(from)) + 1;
 
 	while (_vars._exFramePos + frameBytesNeeded > kExframeslen ||
 		   _vars._exTextPos + textBytesNeeded > kExtextlen)
 	{
+		debug(2, "Ex memory before purging: frames %d/%d, text %d/%d, needed: %u/%u", _vars._exFramePos, kExframeslen, _vars._exTextPos, kExtextlen, frameBytesNeeded, textBytesNeeded);
 		purgeAnItem();
 		debug(2, "Ex memory after purging: frames %d/%d, text %d/%d", _vars._exFramePos, kExframeslen, _vars._exTextPos, kExtextlen);
 	}

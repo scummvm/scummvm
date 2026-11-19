@@ -674,16 +674,10 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 	Common::List<FrameExtent> flist;
 	for (unsigned int i = 0; i < kNumexobjects; ++i) {
 		if (_exData[i].mapad[0] != 0xff) {
-			FrameExtent fe;
-			Frame *frame = &_exFrames._frames[3*i+0];
-			fe.start = frame->ptr();
-			fe.length = frame->width * frame->height;
-			flist.push_back(fe);
-
-			frame = &_exFrames._frames[3*i+1];
-			fe.start = frame->ptr();
-			fe.length = frame->width * frame->height;
-			flist.push_back(fe);
+			Frame *frame = &_exFrames._frames[3 * i + 0];
+			flist.push_back({ frame->ptr(), frame->size() });
+			frame = &_exFrames._frames[3 * i + 1];
+			flist.push_back({ frame->ptr(), frame->size() });
 		}
 	}
 	// ...and check if the frames overlap.
@@ -700,6 +694,30 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 			error("exFrames data corruption in savegame");
 		warning("Fixing up exFramePos");
 		_vars._exFramePos = curEnd;
+	}
+
+	Common::List<FrameExtent> gaps;
+	uint16 prevFrameEnd = 0;
+	for (auto &f : flist) {
+		uint16 curFrameBegin = f.start;
+		if (curFrameBegin < prevFrameEnd) {
+			warning("exframedata overlap at 0x%04x", curFrameBegin);
+		} else if (curFrameBegin > prevFrameEnd) {
+			gaps.push_front({prevFrameEnd, (uint16)(curFrameBegin - prevFrameEnd)});
+		}
+		prevFrameEnd = MAX<uint16>(prevFrameEnd, f.start + f.length);
+	}
+	if (!gaps.empty()) {
+		// These are in reversed order, no offset adjustment needed.
+		for (auto &fex : gaps) {
+			warning("detected exframedata gap at 0x%04x, %u bytes, removing...", fex.start, fex.length);
+			deleteExFrameData(fex.start, fex.length);
+			prevFrameEnd -= fex.length;
+		}
+	}
+	if (_vars._exFramePos != prevFrameEnd) {
+		warning("adjusted exFramePos, 0x%04x -> 0x%04x", _vars._exFramePos, prevFrameEnd);
+		_vars._exFramePos = prevFrameEnd;
 	}
 	// (end of sanity check)
 }

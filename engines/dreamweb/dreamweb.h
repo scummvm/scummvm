@@ -534,6 +534,7 @@ public:
 	void obPicture();
 	void removeObFromInv();
 	void deleteExObject(uint8 index);
+	void deleteExFrameData(uint16 gapOffset, uint16 gapSize);
 	void deleteExFrame(uint16 frameNum);
 	void deleteExText(uint8 textNum);
 	void purgeALocation(uint8 index);
