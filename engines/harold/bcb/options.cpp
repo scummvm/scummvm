@@ -108,7 +108,7 @@ void BCBOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Strin
 	layouts.addDialog(layoutName, overlayedLayout);
 	const bool lowResGui = g_gui.useLowResGUI();
 	const int labelWidth = layouts.getVar("Globals.GameOptionsLabel.Width", layouts.getVar("Globals.OptionsLabel.Width"));
-	const int rowSpacing = lowResGui ? 6 : 10;
+	const int rowSpacing = layouts.getVar("Globals.GameOptions.Spacing", (lowResGui ? 6 : 10) * g_gui.getScaleFactor());
 	const int lineHeight = layouts.getVar("Globals.Line.Height");
 	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 0, 0);
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, rowSpacing, GUI::ThemeLayout::kItemAlignCenter).addPadding(0, 0, 0, 0);
