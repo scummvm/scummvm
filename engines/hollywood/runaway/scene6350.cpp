@@ -47,6 +47,8 @@ const RunawayRoom kRunawayScene6350 = {
 
 void RunawayRoomScene::resumeTown() {
 	_oscarTick = _now;
+	_saloonDoorTick = _now;
+	_saloonDoorFrame = _position.x > 726 ? 7 : 0;
 	if (_room == 6263) {
 		resume6263();
 	}
@@ -83,6 +85,8 @@ void RunawayRoomScene::resumeTown() {
 		start6090();
 	} else if (_room == 6130) {
 		start6130();
+	} else if (_room == 6180) {
+		start6180();
 	} else if (_room == 6190) {
 		start6190();
 	} else if (_room == 6200) {
@@ -91,6 +95,8 @@ void RunawayRoomScene::resumeTown() {
 		start6210();
 	} else if (_room == 6220) {
 		start6220();
+	} else if (_room == 6240) {
+		start6240();
 	} else if (_room == 6260) {
 		start6260();
 	} else if (_room == 6370) {
@@ -100,6 +106,9 @@ void RunawayRoomScene::resumeTown() {
 }
 
 void RunawayRoomScene::updateTown() {
+	if (_room == 6180) {
+		update6180();
+	}
 	if (_room == 6090 || _room == 6130) {
 		updateOscar();
 	}
@@ -127,6 +136,15 @@ void RunawayRoomScene::walkTown(Common::Point target) {
 		// Clicks stay on the ground; hotspot approaches may use the reserved zones.
 		target.x = CLIP<int>(target.x, 0, _room == 6080 ? 1152 : _background.w - 1);
 		target.y = CLIP<int>(target.y, 0, _background.h - 1);
+		if (_room == 6180) {
+			if (_originalMaps[_mask[target.y * _background.w + target.x]] == 3) {
+				_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
+				return;
+			}
+			target.x = CLIP<int>(target.x, 202, 679);
+		} else if (_room == 6240) {
+			target.x = MIN<int>(target.x, 1510);
+		}
 		while (target.y < _background.h - 1 && !_maps[_mask[target.y * _background.w + target.x]]) {
 			++target.y;
 		}
@@ -143,6 +161,11 @@ void RunawayRoomScene::deferTownAction(uint16 action) {
 }
 
 void RunawayRoomScene::townAnimationFrame() {
+	if (_room == 6220 && _roomAction == 417 && _actionStep == 22) {
+		_audio.playEffect(17);
+	} else if (_room == 6240 && _roomAction == 304 && (_actionStep == 11 || _actionStep == 18)) {
+		_audio.playFootstep(3, _random.getRandomBit());
+	}
 	if (_room == 6080) {
 		mineAnimationFrame();
 		return;

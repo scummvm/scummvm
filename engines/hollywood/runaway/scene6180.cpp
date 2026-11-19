@@ -1,0 +1,166 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+#include "common/util.h"
+#include "hollywood/runaway/scene.h"
+
+namespace Hollywood {
+namespace {
+
+const RunawayHotspot kHotspots[] = {
+	{"", 0, 0, 0, {0, 0}, {0, 0}},
+	{"Street", 202, 526, 7, {301, 302}, {0, 3}},
+	{"Inside the saloon", 780, 527, 1, {303, 304}, {0, 0}},
+	{"Trough", 405, 427, 7, {305, 306}, {0, 0}},
+	{"Floor board", 780, 527, 1, {307, 308}, {0, 0}},
+	{"Window", 643, 457, 1, {309, 310}, {0, 0}}
+};
+
+const RunawayResponse kResponses[] = {
+	{6180, 301, 1, 0},  // Look out into the deserted street.
+	{6180, 303, 2, 0},  // Look inside the saloon.
+	{6180, 305, 4, 0},  // Examine the muddy trough.
+	{6180, 306, 5, 0},  // Try to overturn the trough.
+	{6180, 307, 6, 0},  // Examine the doors' pressure plate.
+	{6180, 309, 8, 0},  // Read the broken window.
+	{6180, 310, 9, 0},  // Refuse to break more glass.
+	{6180, 311, 10, 0}  // Refuse to collect mud with an inventory item.
+};
+
+const RunawayItemAction kItemActions[] = {
+	{6180, 8, 3, 311, false}, {6180, 12, 3, 311, false},
+	{6180, 13, 3, 311, false}, {6180, 16, 3, 311, false},
+	{6180, 23, 3, 311, false}, {6180, 24, 3, 311, false},
+	{6180, 25, 3, 311, false}, {6180, 26, 3, 311, false},
+	{6180, 31, 3, 311, false}
+};
+
+} // End of anonymous namespace
+
+const RunawayRoom kRunawayScene6180 = {
+	6180, 1024, 600, kHotspots, ARRAYSIZE(kHotspots),
+	{{100, 100, 100}, {80, 75, 65}, {60, 55, 45}, {50, 45, 35}}, Common::Point(319, 549),
+	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
+};
+
+void RunawayRoomScene::start6180() {
+	if (_entryScene == 6181) {
+		_position = Common::Point(1023, 519);
+		_walkPath.reset(_position);
+		_saloonDoorFrame = 7;
+		walkTo(Common::Point(586, 534), 5, false, true);
+	} else {
+		_facing = 3;
+		if (!_town.saloonEntranceVisited) {
+			_town.saloonEntranceVisited = 1;
+			say(0);
+		}
+	}
+}
+
+void RunawayRoomScene::update6180() {
+	if (_roomAction == 401 && !_actionFrames.empty()) {
+		_actionFrames[0] = 24 + speechFrame();
+	}
+	// Stepping across the floor board opens the doors; stepping off releases them.
+	const bool pressed = _position.x > 726;
+	if (pressed && _saloonDoorFrame > 7) {
+		_saloonDoorFrame = 0;
+	}
+	if ((pressed && _saloonDoorFrame == 7) || (!pressed && !_saloonDoorFrame)) {
+		_saloonDoorTick = _now;
+		return;
+	}
+	if (_now - _saloonDoorTick < 80) {
+		return;
+	}
+	_saloonDoorTick = _now;
+	_saloonDoorFrame = (_saloonDoorFrame + 1) % 71;
+	if (_saloonDoorFrame == 1) {
+		_audio.playEffect(13);
+	} else if (_saloonDoorFrame == 9) {
+		_audio.playEffect(14);
+	}
+}
+
+void RunawayRoomScene::drawScene6180(Graphics::ManagedSurface &viewport, bool foreground) {
+	if (foreground) {
+		if (_position.x < 273) {
+			drawForeground(viewport, 0);
+		}
+		if (_position.x > 714) {
+			drawForeground(viewport, 1);
+		}
+	} else {
+		applyRunawayPatch(_saloonPatches[_position.x > 726], viewport);
+		_ambient.draw(viewport, _saloonDoorFrame, 0, 0);
+	}
+}
+
+RunawayRoomScene::ActionResult RunawayRoomScene::execute6180(uint16 action) {
+	switch (action) {
+	case 302: // Leave the porch and return to Douglasville.
+		leaveTownRoom(6221);
+		break;
+	case 304: // Enter through the automatic saloon doors.
+		if (!_town.saloonDoorKnown) {
+			walkTo(Common::Point(780, 527), 1, false, true);
+			deferTownAction(400);
+		} else {
+			walkTo(Common::Point(1023, 519), 1, false, true);
+			deferTownAction(403);
+		}
+		break;
+	case 308: // Step on the board, or point out that Brian is already on it.
+		if (_position == Common::Point(780, 527)) {
+			say(7);
+		} else {
+			walkTo(Common::Point(780, 527), 1, false, true);
+		}
+		break;
+	case 400: // Notice the doors opening without being pushed.
+		beginRoomAnimationRange(400, 9, 42, 0, 24);
+		break;
+	case 1400:
+		say(3);
+		holdRoomAnimation(401, 9, 42, 24);
+		break;
+	case 1401: {
+		static const byte frames[] = {24, 36, 37, 38, 39, 40};
+		beginRoomAnimation(402, 9, 42, frames, ARRAYSIZE(frames));
+		break;
+	}
+	case 1402:
+		_town.saloonDoorKnown = 1;
+		walkTo(Common::Point(1023, 519), 1, false, true);
+		deferTownAction(403);
+		return kBackgroundChanged;
+	case 403:
+		leaveTownRoom(6240);
+		break;
+	default:
+		return kUnhandled;
+	}
+	return kHandled;
+}
+
+} // End of namespace Hollywood

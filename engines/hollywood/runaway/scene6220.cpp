@@ -51,13 +51,17 @@ const RunawayResponse kResponses[] = {
 	{6220, 318, 1, 1}  // Look toward the cemetery.
 };
 
+const RunawayItemAction kItemActions[] = {
+	{6220, 22, 8, 317} // Cut the wagon strap with the pruning shears.
+};
+
 } // End of anonymous namespace
 
 const RunawayRoom kRunawayScene6220 = {
 	6220, 1024, 600, kHotspots, ARRAYSIZE(kHotspots),
 	{{100, 100, 100}, {95, 90, 70}, {75, 70, 50}, {55, 50, 30}},
 	Common::Point(188, 599),
-	kResponses, ARRAYSIZE(kResponses), nullptr, 0, nullptr, 0
+	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
 void RunawayRoomScene::start6220() {
@@ -105,10 +109,34 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6220(uint16 action) {
 		break;
 	case 315: // Examine the wagon and identify its strap.
 		say(9, _town.strapSeen);
-		_town.strapSeen = 1;
+		if (!_town.strapSeen) {
+			_town.strapSeen = 1;
+		}
 		break;
 	case 316: // Try to take the wagon or its attached strap.
-		say(10, _town.strapSeen ? 0 : 1);
+		say(10, _town.strapSeen == 1 ? 0 : 1);
+		break;
+	case 317: // Cut the strap only after identifying it on the wagon.
+		if (_town.strapSeen != 1) {
+			say(25, 0, true);
+			break;
+		}
+		say(11);
+		deferTownAction(417);
+		break;
+	case 417: {
+		static const byte frames[] = {
+			0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+			20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+		};
+		beginRoomAnimation(417, 10, 22, frames, ARRAYSIZE(frames));
+		break;
+	}
+	case 1417:
+		_town.strapSeen = 2;
+		_inventory.select(0);
+		_inventory.add(11);
+		say(11, 1);
 		break;
 	case 400: // First arrival in Douglasville.
 		say(0);

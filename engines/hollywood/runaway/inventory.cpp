@@ -281,12 +281,18 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 		case 8: // Liniment.
 		case 9: // Cell key.
 			return Reply(194 + item);
+		case 11: // Wagon strap.
+			return Reply(204);
 		case 14: // Firewood.
 			return Reply(207);
 		case 20: // Ancient stapler.
 			return Reply(212);
+		case 22: // Pruning shears.
+			return Reply(213);
 		case 23: // Oil can.
 			return Reply(214);
+		case 27: // Tobacco leaves.
+			return Reply(217);
 		case 29: // Stone with a hole.
 			return Reply(219);
 		case 31: // Clay vessel.

@@ -246,6 +246,14 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(town.oscarMet, 11);
 	s.syncAsByte(town.oscarHelpRefused, 11);
 	s.syncAsByte(town.rawTobaccoRefused, 11);
+	s.syncAsByte(town.saloonEntranceVisited, 12);
+	s.syncAsByte(town.saloonDoorKnown, 12);
+	s.syncAsByte(town.saloonVisited, 12);
+	s.syncAsByte(town.flowerPotTaken, 12);
+	s.syncAsByte(town.gardeningShed, 12);
+	s.syncAsByte(town.tobaccoLeavesTaken, 12);
+	s.syncAsByte(town.artichokeSeen, 12);
+	s.syncAsByte(town.carnivorousPlantSeen, 12);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -347,6 +355,11 @@ bool RunawaySaveState::valid() const {
 			return false;
 	}
 	bool owned[33] = {};
+	if (town.saloonEntranceVisited > 1 || town.saloonDoorKnown > 1 || town.saloonVisited > 1 ||
+			town.flowerPotTaken > 1 || town.gardeningShed > 2 || town.tobaccoLeavesTaken > 1 ||
+			town.artichokeSeen > 1 || town.carnivorousPlantSeen > 1) {
+		return false;
+	}
 	if (town.mineVisited > 1 || town.oilCan > 2 || town.rockMoved > 1 ||
 			town.houseVisited > 1 || town.stone > 2 || town.vessel > 2 ||
 			town.oscarMet > 1 || town.oscarHelpRefused > 1 || town.rawTobaccoRefused > 1) {
@@ -358,8 +371,9 @@ bool RunawaySaveState::valid() const {
 			town.oilCanFull > 1 || town.bottleContents > 2 || town.craterSeen > 1) {
 		return false;
 	}
-	if (town.arrived > 1 || town.streetVisited > 1 || town.strapSeen > 1 || town.sushiMet > 1 || town.mineMapKnown > 1)
+	if (town.arrived > 1 || town.streetVisited > 1 || town.strapSeen > 2 || town.sushiMet > 1 || town.mineMapKnown > 1) {
 		return false;
+	}
 	if (town.bankVisited > 1 || town.bankShelves > 2 || town.bankStampTaken > 1 || town.basementKnown > 1 ||
 			town.bodySeen > 1 || town.doctorKnown > 1 || town.firewoodTaken > 1 || town.cellOpen > 1 ||
 			town.bagSearched > 1 || town.bucketSeen > 1 || town.bottleSeen > 1 || town.cellRefusals > 2 ||
@@ -380,7 +394,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 11)
+	if (version < 1 || version > 12)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -392,9 +406,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(11);
+	stream.writeUint16LE(12);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(11);
+	s.setVersion(12);
 	sync(s);
 	return !s.err();
 }

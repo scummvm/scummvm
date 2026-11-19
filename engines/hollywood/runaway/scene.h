@@ -128,7 +128,7 @@ private:
 	bool rebuildBackground();
 	bool applyPatch(uint chunk);
 	void updateMaps();
-	void walkTo(Common::Point target, byte facing = 0xff, bool scripted = false);
+	void walkTo(Common::Point target, byte facing = 0xff, bool scripted = false, bool reserved = false);
 	void arrive();
 	void execute(uint16 action);
 	void useItem(byte item, byte hotspot);
@@ -312,6 +312,10 @@ private:
 	uint oscarFrame() const;
 	void start6130();
 	ActionResult execute6130(uint16 action);
+	void start6180();
+	void update6180();
+	ActionResult execute6180(uint16 action);
+	void drawScene6180(Graphics::ManagedSurface &viewport, bool foreground);
 	void start6190();
 	ActionResult execute6190(uint16 action);
 	bool applyBackground6190();
@@ -323,6 +327,9 @@ private:
 	void start6210();
 	ActionResult execute6210(uint16 action);
 	void townAnimationFrame();
+	void start6240();
+	ActionResult execute6240(uint16 action);
+	void drawForeground6240(Graphics::ManagedSurface &viewport);
 	void start6260();
 	ActionResult execute6260(uint16 action);
 	bool applyBackground6260();
@@ -393,6 +400,9 @@ private:
 	byte _oscarIdle = 3;
 	uint32 _oscarTick = 0;
 	bool _oscarTalking = false, _mineOscarPresent = false;
+	Common::Array<byte> _saloonPatches[3];
+	byte _saloonDoorFrame = 0;
+	uint32 _saloonDoorTick = 0;
 	RunawayAnimation _locomotiveGauges[4];
 	byte _locomotiveGaugeFrames[4] = {};
 	byte _townFilm = 0;

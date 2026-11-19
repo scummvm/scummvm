@@ -40,8 +40,8 @@ const RunawayRoom *const kRooms[] = {
 	&kRunawayScene5080, &kRunawayScene5100, &kRunawayScene5110, &kRunawayScene5130, &kRunawayScene5140,
 	&kRunawayScene5160, &kRunawayScene5170,
 	&kRunawayScene6014, &kRunawayScene6080, &kRunawayScene6090, &kRunawayScene6130,
-	&kRunawayScene6190, &kRunawayScene6200, &kRunawayScene6210,
-	&kRunawayScene6220, &kRunawayScene6260, &kRunawayScene6263,
+	&kRunawayScene6180, &kRunawayScene6190, &kRunawayScene6200, &kRunawayScene6210,
+	&kRunawayScene6220, &kRunawayScene6240, &kRunawayScene6260, &kRunawayScene6263,
 	&kRunawayScene6350, &kRunawayScene6370
 };
 
@@ -88,6 +88,10 @@ const RunawayRoom *findRoom(int number) {
 		number = 6080;
 	} else if (number == 6131) {
 		number = 6130;
+	} else if (number == 6181) {
+		number = 6180;
+	} else if (number == 6241) {
+		number = 6240;
 	} else if (number == 6201) {
 		number = 6200;
 	} else if (number == 6261 || number == 6262 || number == 6265) {
@@ -276,7 +280,7 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 		return false;
 	}
 	if (_game == kRunawayFullGame ? !_actor.loadChapter(number < 4000 ? 1 : number < 5000 ? 2 : number < 6000 ? 3 : 4,
-			number != kMuseumHall && number != 6190 && number != 6200 && number != 6260 && number != 6263 &&
+			number != kMuseumHall && number != 6190 && number != 6200 && number != 6240 && number != 6260 && number != 6263 &&
 			number != 6350 && number != 6370) :
 			!_actor.load(number == kMuseumHall ? RunawayActor::kMuseumHall : RunawayActor::kMuseumInterior))
 		return false;
@@ -298,6 +302,9 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 		_foreground[i].clear();
 	for (uint i = 0; i < ARRAYSIZE(_keyPatches); ++i)
 		_keyPatches[i].clear();
+	for (uint i = 0; i < ARRAYSIZE(_saloonPatches); ++i) {
+		_saloonPatches[i].clear();
+	}
 	bool loaded = true;
 	if (desertChapter())
 		loaded = loadDesertRoom();
@@ -336,11 +343,21 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	case 6130:
 		loaded = _npc.load(_archive, 6, 106);
 		break;
+	case 6180:
+		loaded = _ambient.load(_archive, 8, 71) && loadForeground(0, 4) && loadForeground(1, 5) &&
+			_archive.readVariableChunk(6, _saloonPatches[0]) && _archive.readVariableChunk(7, _saloonPatches[1]);
+		break;
 	case 6200:
 		loaded = _ambient.load(_archive, 6, 26);
 		break;
 	case 6220:
 		loaded = _npc.load(_archive, 7, 170) && _npcMouth.load(_archive, 8, 45) && _machine.load(_archive, 9, 60);
+		break;
+	case 6240:
+		loaded = _ambient.load(_archive, 4, 36);
+		for (uint i = 0; i < ARRAYSIZE(_saloonPatches) && loaded; ++i) {
+			loaded = _archive.readVariableChunk(6 + i, _saloonPatches[i]);
+		}
 		break;
 	case 6260:
 		loaded = loadForeground(0, 6);
@@ -420,6 +437,8 @@ bool RunawayRoomScene::rebuildBackground() {
 		return applyBackground6190();
 	case 6200:
 		return !_town.firewoodTaken || applyPatch(4);
+	case 6240:
+		return !_town.flowerPotTaken || applyPatch(9);
 	case 6260:
 		return applyBackground6260();
 	case 6350:
@@ -454,6 +473,26 @@ void RunawayRoomScene::updateMaps() {
 	switch (_room) {
 	case 6080:
 		updateMaps6080();
+		break;
+	case 6180:
+		for (uint i = 0; i < 256; ++i) {
+			if (_maps[i] == 3) {
+				_maps[i] = 0;
+			}
+			if (_maps[256 + i] == 4 && !_town.saloonDoorKnown) {
+				_maps[256 + i] = 0;
+			}
+		}
+		break;
+	case 6240:
+		for (uint i = 0; i < 256; ++i) {
+			if (_maps[i] >= 6 && _maps[i] <= 8) {
+				_maps[i] = 0;
+			}
+			if (_maps[256 + i] == 3 && _town.flowerPotTaken) {
+				_maps[256 + i] = 0;
+			}
+		}
 		break;
 	case 6090:
 	case 6130:
@@ -531,8 +570,17 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 	if (_room == 6090 && id == 4 && _town.oscarTobacco) {
 		return Common::U32String("Oscar");
 	}
-	if (_room == 6220 && id == 8 && _town.strapSeen)
+	if (_room == 6240) {
+		if (id == 5 && _town.gardeningShed) {
+			return Common::U32String("Gardening shed");
+		}
+		if (id == 7 && _town.carnivorousPlantSeen) {
+			return Common::U32String("Meat-eating plant");
+		}
+	}
+	if (_room == 6220 && id == 8 && _town.strapSeen == 1) {
 		return Common::U32String("Strap");
+	}
 	if (_room == 6263) {
 		if (id == 3 && _town.steamLever) {
 			return Common::U32String("Steam outlet lever");
@@ -575,10 +623,12 @@ Common::U32String RunawayRoomScene::actionCaption(byte id, RunawayVerb verb, byt
 	return _strings.text(verb == kVerbLook ? RunawayStrings::kLook : RunawayStrings::kUse) + name;
 }
 
-void RunawayRoomScene::walkTo(Common::Point target, byte facing, bool scripted) {
+void RunawayRoomScene::walkTo(Common::Point target, byte facing, bool scripted, bool reserved) {
 	if (scripted) {
 		_walkPath.setTarget(target);
-	} else if (_room == 6080 || _room == 6260) {
+	} else if (reserved) {
+		_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
+	} else if (_room == 6080 || _room == 6180 || _room == 6240 || _room == 6260) {
 		walkTown(target);
 	} else {
 		_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _maps), target);
@@ -630,8 +680,9 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 				approach = false;
 			}
 		}
-		if (_room == 6220 && id == 8 && index && _town.strapSeen)
+		if (_room == 6220 && id == 8 && index && _town.strapSeen == 1) {
 			approach = true;
+		}
 		if (_room == 6260 && id == 5 && !index && _town.locomotiveKey == 2) {
 			approach = false;
 		}
@@ -649,6 +700,9 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 					approach = action.approach;
 					break;
 				}
+			}
+			if (_room == 6220 && id == 8 && _town.strapSeen != 1) {
+				approach = false;
 			}
 		}
 		if (approach) {
@@ -781,6 +835,9 @@ void RunawayRoomScene::execute(uint16 action) {
 	case 6130:
 		result = execute6130(action);
 		break;
+	case 6180:
+		result = execute6180(action);
+		break;
 	case 6190:
 		result = execute6190(action);
 		break;
@@ -792,6 +849,9 @@ void RunawayRoomScene::execute(uint16 action) {
 		break;
 	case 6220:
 		result = execute6220(action);
+		break;
+	case 6240:
+		result = execute6240(action);
 		break;
 	case 6260:
 		result = execute6260(action);
@@ -890,6 +950,10 @@ float RunawayRoomScene::actorHeight() const {
 			_position.y * 0.730337083f + 17.5280895f;
 	case 6130:
 		return _position.y * 1.027668f - 160.57312f;
+	case 6180:
+		return _position.y * 1.3565892f - 249.069763f;
+	case 6240:
+		return _position.y * 1.00515461f - 83.762886f;
 	case 6190:
 		return (_position.y * 0.426829278f + 16.4634151f + _position.x * 0.0980392173f + 41.7647057f) / 2;
 	case 6200:
@@ -1031,6 +1095,8 @@ void RunawayRoomScene::draw() {
 		drawScene6090(viewport, false);
 	} else if (_room == 6130) {
 		_npc.draw(viewport, oscarFrame(), _camera.x, -_camera.y);
+	} else if (_room == 6180) {
+		drawScene6180(viewport, false);
 	} else if (_room == 6200) {
 		drawScene6200(viewport);
 	} else if (_room == 6220) {
@@ -1096,6 +1162,12 @@ void RunawayRoomScene::draw() {
 		params.depthY[8] = 322;
 		params.depthY[9] = 599;
 		break;
+	case 6240:
+		params.depthY[1] = 599;
+		params.depthY[2] = 599;
+		params.depthY[3] = 351;
+		params.depthY[4] = 351;
+		break;
 	case 6370:
 		params.depthY[1] = 800;
 		params.depthY[2] = 646;
@@ -1137,6 +1209,10 @@ void RunawayRoomScene::draw() {
 		drawScene6080(viewport, true);
 	} else if (_room == 6090) {
 		drawScene6090(viewport, true);
+	} else if (_room == 6180) {
+		drawScene6180(viewport, true);
+	} else if (_room == 6240) {
+		drawForeground6240(viewport);
 	} else if (_room == 6260) {
 		drawForeground(viewport, 0);
 	}
