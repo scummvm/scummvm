@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/translation.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/popup.h"
 
@@ -554,6 +555,18 @@ void PopUpWidget::drawWidget() {
 		pad = _rightPadding;
 
 	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, pad, _state, (g_gui.useRTL() && _useRTL));
+}
+
+Common::U32String PopUpWidget::getSpokenDescription() const {
+	// Popups are labelled by the text before them. Follow the name with the
+	// current entry, which hovering reads.
+	// I18N: Spoken by text-to-speech to name an unlabelled drop-down list
+	Common::U32String description = findSpokenName(_("drop-down list"));
+
+	if (_selectedItem >= 0 && _selectedItem < (int)_entries.size())
+		description += Common::U32String(", ") + _entries[_selectedItem].name;
+
+	return description;
 }
 
 } // End of namespace GUI

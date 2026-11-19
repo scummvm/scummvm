@@ -74,6 +74,7 @@ public:
 
 	void handleMouseEntered(int button) override	{ if (_selectedItem != -1) read(_entries[_selectedItem].name); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	Common::U32String getSpokenDescription() const override;
 
 	void reflowLayout() override;
 protected:

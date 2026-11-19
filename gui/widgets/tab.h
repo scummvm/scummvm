@@ -111,6 +111,7 @@ public:
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
 	void handleMouseLeft(int button) override { _lastRead = -1; };
+	Common::U32String getSpokenDescription() const override;
 	bool handleKeyDown(Common::KeyState state) override;
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;

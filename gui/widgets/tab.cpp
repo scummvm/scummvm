@@ -498,4 +498,11 @@ void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {
 	}
 }
 
+Common::U32String TabWidget::getSpokenDescription() const {
+	// The tab bar is named by its active tab, as hovering a tab reads its title
+	if (_activeTab >= 0 && _activeTab < (int)_tabs.size())
+		return _tabs[_activeTab].title;
+	return _tooltip;
+}
+
 } // End of namespace GUI

@@ -856,12 +856,13 @@ bool ListWidget::handleKeyUp(Common::KeyState state) {
 }
 
 Common::U32String ListWidget::getSpokenDescription() const {
-	// Prefer the tooltip, which names the list. Fall back on naming the kind
-	// of control only when there is no label to give, so that an unlabelled
-	// list is still audible rather than silent. Follow it with the current
-	// selection, so that arriving here says what is under the cursor.
+	// Name the list by the text before it, or its tooltip. Fall back on
+	// naming the kind of control only when there is neither, so that an
+	// unlabelled list is still audible rather than silent. Follow it with
+	// the current selection, so that arriving here says what is under the
+	// cursor.
 	// I18N: Spoken by text-to-speech to name an unlabelled list of items
-	Common::U32String description = _tooltip.empty() ? _("list") : _tooltip;
+	Common::U32String description = findSpokenName(_("list"));
 
 	if (_selectedItem >= 0 && _selectedItem < (int)_list.size())
 		description += Common::U32String(", ") + stripGUIformatting(_list[_selectedItem]);
