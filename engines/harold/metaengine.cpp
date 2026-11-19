@@ -41,7 +41,9 @@ public:
 
 	int getMaximumSaveSlot() const override { return 8; }
 	bool hasFeature(MetaEngineFeature f) const override;
+#ifdef ENABLE_BCB
 	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+#endif
 	Common::KeymapArray initKeymaps(const char *target) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const BCB::HaroldGameDescription *gd) const override;
 };
@@ -50,11 +52,13 @@ bool HaroldMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f);
 }
 
+#ifdef ENABLE_BCB
 GUI::OptionsContainerWidget *HaroldMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	if (!ConfMan.get("gameid", target).equalsIgnoreCase("bcb"))
 		return nullptr;
 	return BCB::createTranslationOptionsWidget(boss, name, target);
 }
+#endif
 
 Common::KeymapArray HaroldMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
