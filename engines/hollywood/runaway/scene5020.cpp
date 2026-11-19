@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/file.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene.h"
 #include "hollywood/runaway/scene_data.h"
@@ -106,10 +107,59 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5020(uint16 action) {
 		_inventory.add(25);
 		say(12);
 		return kBackgroundChanged;
+	case 400: // Check that everyone is in position for the rescue.
+		say(50);
+		deferDesertAction(410);
+		break;
+	case 410: // Rescue Gina and escape in the helicopter.
+		startRescueFilm();
+		break;
 	default:
 		return kUnhandled;
 	}
 	return kHandled;
+}
+
+void RunawayRoomScene::startRescueFilm() {
+	typedef RunawaySequence S;
+	_filmCommands = {
+		{S::kOpen, 2}, {S::kPlay, 0, 40},
+		// Check Mariola's position at the oil well.
+		{S::kPlay, 91, 92}, {S::kSpeech, 50, 1}, {S::kPlay, 93, 128}, {S::kWaitSpeech},
+		{S::kTalk, 50, 3, 1}, {S::kTalk, 50, 4, 1, 1},
+		// Check Lula's position at the machine gun.
+		{S::kEffect, 77, 255}, {S::kPlay, 162, 163}, {S::kSpeech, 50, 5},
+		{S::kPlay, 164, 253}, {S::kWaitSpeech}, {S::kTalk, 50, 6, 3}, {S::kTalk, 50, 7, 3, 1},
+		// Check Carla's helicopter, then give the signal.
+		{S::kStill, 254}, {S::kTalk, 50, 8, 5, 1}, {S::kTalk, 50, 9, 5}, {S::kTalk, 50, 10, 5, 1},
+		{S::kStill, 40}, {S::kTalk, 50, 11}, {S::kMusic, 23, 255, 1},
+		// The explosion draws the guards outside.
+		{S::kEffect, 78, 255}, {S::kPlay, 346, 374}, {S::kSpeech, 50, 12},
+		{S::kPlay, 375, 430}, {S::kWaitSpeech}, {S::kStill, 430},
+		{S::kTalk, 50, 13, 7}, {S::kTalk, 50, 14, 9},
+		// Gina escapes while Lula covers the retreat.
+		{S::kEffect, 79, 255}, {S::kPlay, 454, 499}, {S::kSpeech, 50, 17, 19},
+		{S::kPlay, 500, 699}, {S::kSpeech, 50, 20}, {S::kPlay, 700, 1173},
+		{S::kSpeech, 50, 21, 22}, {S::kPlay, 1174, 1379},
+		// Carla narrowly avoids the wrecked airplane during takeoff.
+		{S::kSpeech, 50, 23, 24}, {S::kSpeech, 50, 31}, {S::kPlay, 1380, 1524}, {S::kWaitSpeech},
+		{S::kTalk, 50, 32}, {S::kTalk, 50, 33}, {S::kTalk, 50, 34}, {S::kWaitEffect, 5000}, {S::kEnd}
+	};
+	if (Common::File::exists("DATAVC00.000")) {
+		// GOG removes the CD portrait frames and keeps three separate stills
+		// inside the movie. The remaining action retains its original timing.
+		for (uint i = 0; i < _filmCommands.size(); ++i) {
+			S::Command &command = _filmCommands[i];
+			if (command.operation == S::kStill) {
+				command.a = command.a == 254 ? 172 : command.a == 40 ? 173 : 259;
+			} else if (command.operation == S::kPlay) {
+				const uint offset = command.a >= 454 ? 195 : command.a >= 346 ? 172 : command.a >= 162 ? 82 : command.a >= 91 ? 49 : 0;
+				command.a -= offset;
+				command.b -= offset;
+			}
+		}
+	}
+	_sequence.start(_filmCommands.data(), _text, _now, 'E');
 }
 
 } // End of namespace Hollywood

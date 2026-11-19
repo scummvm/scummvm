@@ -61,6 +61,10 @@ void RunawayRoomScene::resumeDesert() {
 	if (!_entering)
 		return;
 	_entering = false;
+	if (_room == 5130) {
+		startScene5130();
+		return;
+	}
 	if (_room == 5140) {
 		startScene5140();
 		return;
@@ -71,10 +75,19 @@ void RunawayRoomScene::resumeDesert() {
 		leaveDesertRoom(5140);
 		return;
 	}
+	if (_entryScene == 5022) {
+		_audio.playMusic(22);
+		_audio.setMusicVolume(255);
+		walkTo(Common::Point(618, 386), 0);
+		deferDesertAction(400);
+		return;
+	}
 	if (_entryScene == 5062) {
-		for (byte variation = 2; variation <= 11; ++variation)
-			say(0, variation, false, variation == 2 || variation == 4 || variation == 6 || variation == 11 ? 0 : 1);
-		leaveDesertRoom(5130);
+		_position = Common::Point(870, 525);
+		_walkPath.reset(_position);
+		_facing = 7;
+		setCameraX(132);
+		execute(480);
 		return;
 	}
 	if (_entryScene == 5171) {
@@ -138,6 +151,10 @@ void RunawayRoomScene::desertAnimationFrame() {
 }
 
 void RunawayRoomScene::updateDesert(uint elapsed, bool inventoryOpen) {
+	if (_room == 5130) {
+		updateScene5130();
+		return;
+	}
 	if (_room == 5140) {
 		updateScene5140();
 		return;
@@ -214,6 +231,8 @@ float RunawayRoomScene::desertActorHeight() const {
 		return _position.y * 0.668016195f + 87.591095f;
 	case 5110:
 		return _position.y * 1.142857194f - 170.571426f;
+	case 5130:
+		return 360;
 	case 5160:
 		return _position.y * 1.148148179f - 90.370369f;
 	case 5170:
@@ -239,6 +258,7 @@ bool RunawayRoomScene::loadDesertRoom() {
 		{5080, 18, 769}, {5080, 17, 672}, {5080, 16, 455}, {5080, 20, 631}, {5080, 19, 533}, {5080, 15, 24},
 		{5100, 4, 1}, {5100, 7, 27}, {5100, 8, 89},
 		{5110, 8, 1}, {5110, 9, 2},
+		{5130, 4, 71}, {5130, 5, 33},
 		{5140, 1, 130}, {5140, 2, 33}, {5140, 3, 51}, {5140, 4, 32},
 		{5160, 4, 16}, {5160, 5, 24}, {5160, 6, 24}, {5160, 7, 93},
 		{5170, 6, 25}, {5170, 5, 24}, {5170, 4, 50}, {5170, 11, 3}
@@ -397,6 +417,11 @@ Common::U32String RunawayRoomScene::desertHotspotName(byte id) const {
 }
 
 void RunawayRoomScene::drawDesertRoom(Graphics::ManagedSurface &viewport, bool foreground) {
+	if (_room == 5130) {
+		if (!foreground)
+			drawScene5130(viewport);
+		return;
+	}
 	if (_room == 5100) {
 		drawScene5100(viewport, foreground);
 		return;

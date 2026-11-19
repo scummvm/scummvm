@@ -257,6 +257,10 @@ private:
 	uint studFrame() const;
 	void updateScene5100(uint elapsed, bool inventoryOpen);
 	void startHangarTaunt();
+	void startScene5130();
+	void updateScene5130();
+	void drawScene5130(Graphics::ManagedSurface &viewport);
+	void startRescueFilm();
 	void startScene5140();
 	void updateScene5140();
 	void drawScene5140(Graphics::ManagedSurface &viewport);
@@ -343,6 +347,11 @@ private:
 		byte facing = 2, speaker = 6;
 		bool blink = false;
 	} _busIntroduction;
+	struct RescuePlan {
+		uint32 tick = 0, pauseUntil = 0;
+		byte nextLine = 1, groupFrame = 58, carlaFrame = 0;
+		bool blink = false;
+	} _rescuePlan;
 	RunawayAnimation _npc, _npcMouth, _machine;
 	RunawayAnimation _computer, _rejectionLight;
 	uint32 _nextLaser = 0;

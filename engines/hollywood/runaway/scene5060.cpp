@@ -92,6 +92,29 @@ const RunawayRoom kRunawayScene5060 = {
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 	switch (action) {
+	case 480: { // Gather everyone after all three rescue preparations are complete.
+		static const byte speakers[] = {0, 1, 0, 2, 0, 2, 1, 3};
+		for (uint i = 0; i < ARRAYSIZE(speakers); ++i)
+			say(0, i + 2, false, speakers[i]);
+		deferDesertAction(481);
+		break;
+	}
+	case 481: { // Carla comes out of the bus.
+		Common::Array<byte> frames;
+		frames.push_back(0);
+		for (uint i = 0; i <= 45; ++i)
+			frames.push_back(i);
+		beginRoomAnimation(action, 19, 58, frames.data(), frames.size(), false);
+		break;
+	}
+	case 1481: // Carla reports for duty.
+		say(0, 10, false, 3);
+		say(0, 11);
+		deferDesertAction(491);
+		break;
+	case 491: // Move to the rescue briefing.
+		leaveDesertRoom(5130);
+		break;
 	case 302: // Go to the desert overview.
 		leaveDesertRoom(5010);
 		break;
@@ -330,13 +353,20 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 }
 
 void RunawayRoomScene::drawScene5060(Graphics::ManagedSurface &viewport) {
+	static const byte mouth[] = {5, 0, 1, 2, 3, 4, 11, 6, 7, 8, 9, 10};
+	if (_entryScene == 5062) {
+		if (_roomAction == 491)
+			_actionAnimation.draw(viewport, 45 + (speaker() == 3 ? speechFrame() : 0), _camera.x, -_camera.y);
+		_npc.draw(viewport, 83 + (speaker() == 1 ? speechFrame() : 0), _camera.x, -_camera.y);
+		_machine.draw(viewport, mouth[speaker() == 2 ? speechFrame() : 0], _camera.x, -_camera.y);
+		return;
+	}
 	if (!drawingRoomAnimation() || (_roomAction != 412 && _roomAction != 432)) {
 		uint frame = (_now / 80) % 13;
 		if (_roomAction == 422 || _roomAction == 432)
 			frame = 83 + (speaker() == 1 ? speechFrame() : 0);
 		_npc.draw(viewport, frame, _camera.x, -_camera.y);
 	}
-	static const byte mouth[] = {5, 0, 1, 2, 3, 4, 11, 6, 7, 8, 9, 10};
 	if (_roomAction == 459 || _roomAction == 479) {
 		_actionAnimation.draw(viewport, 96 + (speaker() == 2 ? speechFrame() % 6 : 0), _camera.x, -_camera.y);
 	} else if (!drawingRoomAnimation() || (_roomAction != 404 && _roomAction != 414 &&
@@ -349,6 +379,12 @@ void RunawayRoomScene::drawScene5060(Graphics::ManagedSurface &viewport) {
 }
 
 void RunawayRoomScene::animationFrame5060() {
+	if (_roomAction == 481) {
+		if (_actionStep == 3 || _actionStep == 12 || _actionStep == 17 || _actionStep == 25 || _actionStep == 29)
+			_audio.playFootstep(4, _random.getRandomBit(), 153);
+		if (_actionStep == 39)
+			_audio.playFootstep(4, _random.getRandomBit(), 230);
+	}
 	if (_roomAction == 419 && _actionStep == 28)
 		_audio.playEffect(56, 217, 1, true);
 	if (_roomAction == 449 && (_actionStep == 6 || _actionStep == 11 || _actionStep == 51))

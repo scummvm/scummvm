@@ -37,7 +37,8 @@ const RunawayRoom *const kRooms[] = {
 	&kRunawayScene2020, &kRunawayScene2060, &kRunawayScene2080,
 	&kRunawayScene4030, &kRunawayScene4050, &kRunawayScene4060, &kRunawayScene4070, &kRunawayScene4090, &kRunawayScene4100, &kRunawayScene4140,
 	&kRunawayScene5010, &kRunawayScene5020, &kRunawayScene5050, &kRunawayScene5060, &kRunawayScene5070,
-	&kRunawayScene5080, &kRunawayScene5100, &kRunawayScene5110, &kRunawayScene5140, &kRunawayScene5160, &kRunawayScene5170
+	&kRunawayScene5080, &kRunawayScene5100, &kRunawayScene5110, &kRunawayScene5130, &kRunawayScene5140,
+	&kRunawayScene5160, &kRunawayScene5170
 };
 
 const RunawayResponse kGlobalResponses[] = {
@@ -711,6 +712,8 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 				finishMuseumFilm();
 			else if (_room == 5140)
 				updateScene5140();
+			else if (_entryScene == 5022)
+				_chapterComplete = true;
 			else if (!desertChapter())
 				finishHospitalFilm();
 		}
