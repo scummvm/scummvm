@@ -66,9 +66,10 @@ public:
 	~TextTranslationData();
 
 	void clear();
+	HighQualityTextRenderer *getImageFont(const Common::String &name) const;
 
 	TextStringTable strings;
-	Common::HashMap<Common::String, HighQualityTextRenderer *> imageFonts;
+	mutable Common::HashMap<Common::String, HighQualityTextRenderer *> imageFonts;
 	Common::Archive *packageArchive;
 };
 

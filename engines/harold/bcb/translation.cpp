@@ -184,6 +184,17 @@ void TextTranslationData::clear() {
 	packageArchive = nullptr;
 }
 
+HighQualityTextRenderer *TextTranslationData::getImageFont(const Common::String &name) const {
+	HighQualityTextRenderer *renderer = imageFonts.getValOrDefault(name, nullptr);
+	if (!renderer) {
+		renderer = new HighQualityTextRenderer(name);
+		imageFonts[name] = renderer;
+		if (!renderer->isValid())
+			warning("BCB: Could not load translation font '%s'", name.c_str());
+	}
+	return renderer;
+}
+
 Common::String makeTextStringKey(TextTranslationType type, uint primaryId, uint secondaryId) {
 	switch (type) {
 	case kTextTranslationSceneChoice:
@@ -223,13 +234,29 @@ void listAvailableTranslationPackages(const Common::FSNode &gameDataDir, Common:
 }
 
 bool isTranslationPackageAvailable(const Common::FSNode &gameDataDir, const Common::String &code) {
-	return packageHasMatchingStrings(gameDataDir.getChild(Common::String::format("bcb-translation-%s.dat", code.c_str())), code);
+	Common::Array<TranslationPackageDefinition> packages;
+	listAvailableTranslationPackages(gameDataDir, packages);
+	for (const auto &package : packages)
+		if (package.code.equalsIgnoreCase(code))
+			return true;
+	return false;
 }
 
 bool loadTranslationPackage(const Common::FSNode &gameDataDir, const Common::String &code, TextTranslationData &translation) {
 	translation.clear();
 
-	const Common::FSNode packageNode = gameDataDir.getChild(Common::String::format("bcb-translation-%s.dat", code.c_str()));
+	Common::Array<TranslationPackageDefinition> packages;
+	listAvailableTranslationPackages(gameDataDir, packages);
+	Common::String fileName;
+	for (const auto &package : packages) {
+		if (package.code.equalsIgnoreCase(code)) {
+			fileName = package.fileName;
+			break;
+		}
+	}
+	if (fileName.empty())
+		return false;
+	const Common::FSNode packageNode = gameDataDir.getChild(fileName);
 	translation.packageArchive = Common::makeZipArchive(packageNode, false);
 	if (!translation.packageArchive)
 		return false;
@@ -238,11 +265,18 @@ bool loadTranslationPackage(const Common::FSNode &gameDataDir, const Common::Str
 		translation.clear();
 		return false;
 	}
+	static const char *const defaultFonts[] = {
+		"LiberationSerif-BoldItalic.ttf",
+		"LiberationSans-Regular.ttf",
+		"LiberationSans-BoldItalic.ttf",
+		"LiberationSerif-Regular.ttf"
+	};
+	for (const char *font : defaultFonts)
+		translation.getImageFont(font);
 	for (const auto &entry : translation.strings) {
-		if (entry._key.hasSuffix(".font") && !entry._value.empty() && !translation.imageFonts.contains(entry._value))
-			translation.imageFonts[entry._value] = new HighQualityTextRenderer(entry._value);
+		if (entry._key.hasSuffix(".font") && !entry._value.empty())
+			translation.getImageFont(entry._value);
 	}
-
 	return true;
 }
 

@@ -120,13 +120,16 @@ bool parseImageTextLine(const char *definition, Common::U32String &text, int &x,
 	return true;
 }
 
-void drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextTranslationData &translation, const Common::String &prefix,
+bool drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextTranslationData &translation, const Common::String &prefix,
 										const char *defaultFont, uint8 defaultTextR, uint8 defaultTextG, uint8 defaultTextB,
 										uint8 defaultShadowR, uint8 defaultShadowG, uint8 defaultShadowB, bool resampleBackground = false) {
 	const TextStringTable &strings = translation.strings;
 	const char *fontName = strings.getString(prefix + "font");
 	if (!fontName || !fontName[0])
 		fontName = defaultFont;
+	HighQualityTextRenderer *renderer = translation.getImageFont(fontName);
+	if (!renderer->isValid() || !strings.getString(prefix + "line1"))
+		return false;
 
 	const Common::Array<Common::Point> shadowOffsets = getTranslationShadowOffsets(strings, prefix + "shadow_offsets");
 	const bool drawShadowWithoutStroke = getTranslationInt(strings, prefix + "shadow_without_stroke", 0) != 0;
@@ -155,12 +158,7 @@ void drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextTr
 	for (uint i = 0; i < shadowOffsets.size(); ++i)
 		scaledShadowOffsets.push_back(Common::Point(shadowOffsets[i].x * scale, shadowOffsets[i].y * scale));
 
-	HighQualityTextRenderer *renderer = translation.imageFonts.getValOrDefault(fontName, nullptr);
-	Common::ScopedPtr<HighQualityTextRenderer> fallbackRenderer;
-	if (!renderer) {
-		fallbackRenderer.reset(new HighQualityTextRenderer(fontName));
-		renderer = fallbackRenderer.get();
-	}
+	bool valid = true;
 	for (int i = 1; ; ++i) {
 		const char *definition = strings.getString(Common::String::format("%sline%d", prefix.c_str(), i));
 		if (!definition)
@@ -171,45 +169,55 @@ void drawConfiguredHighQualityTextLines(Graphics::Surface &surface, const TextTr
 		int size = 44;
 		int strokeWidth = 0;
 		uint32 textColor = scaledTextColor;
-		if (!parseImageTextLine(definition, text, x, y, size, strokeWidth, textColor, layer.format))
-			continue;
+		if (!parseImageTextLine(definition, text, x, y, size, strokeWidth, textColor, layer.format)) {
+			valid = false;
+			break;
+		}
 		size = CLIP(size, 1, 128);
 		strokeWidth = CLIP(strokeWidth, 0, 16);
 
 		const Common::Array<Common::Point> emptyShadowOffsets;
-		renderer->drawLine(layer, size * scale, (strokeWidth == 0 && !drawShadowWithoutStroke) ? emptyShadowOffsets : scaledShadowOffsets,
-								text, x * scale, y * scale, textColor, scaledShadowColor, strokeWidth * scale);
+		if (!renderer->drawLine(layer, size * scale, (strokeWidth == 0 && !drawShadowWithoutStroke) ? emptyShadowOffsets : scaledShadowOffsets,
+								text, x * scale, y * scale, textColor, scaledShadowColor, strokeWidth * scale)) {
+			valid = false;
+			break;
+		}
+	}
+	if (!valid) {
+		layer.free();
+		return false;
 	}
 
 	Graphics::Surface *downscaledLayer = resampleBackground ? downscaleRgbaLayerLanczos(layer, surface.w, surface.h) : downscaleRgbaLayerBicubic(layer, surface.w, surface.h);
 	layer.free();
 	if (!downscaledLayer)
-		return;
+		return false;
 
 	alphaCompositeRgbaLayer(surface, *downscaledLayer);
 	downscaledLayer->free();
 	delete downscaledLayer;
+	return true;
 }
 
-void drawTranslatedStillHeading(Graphics::Surface &still, int stillIndex, const TextTranslationData &translation) {
+bool drawTranslatedStillHeading(Graphics::Surface &still, int stillIndex, const TextTranslationData &translation) {
 	if (stillIndex < 0 || stillIndex >= 5)
-		return;
+		return false;
 
 	const int stillNumber = stillIndex + 1;
 	const Common::String prefix = Common::String::format("still_headings.%d.", stillNumber);
-	drawConfiguredHighQualityTextLines(still, translation, prefix, "LiberationSerif-BoldItalic.ttf", 255, 255, 255, 0, 0, 0);
+	return drawConfiguredHighQualityTextLines(still, translation, prefix, "LiberationSerif-BoldItalic.ttf", 255, 255, 255, 0, 0, 0);
 }
 
-void drawTranslatedEnding(Graphics::Surface &surface, const TextTranslationData &translation, const Common::String &prefix) {
+bool drawTranslatedEnding(Graphics::Surface &surface, const TextTranslationData &translation, const Common::String &prefix) {
 #ifdef USE_FREETYPE2
 	const TextStringTable &strings = translation.strings;
 	const char *patch = strings.getString(prefix + "patch");
 	const char *font = strings.getString(prefix + "font");
-	HighQualityTextRenderer *renderer = font ? translation.imageFonts.getValOrDefault(font, nullptr) : nullptr;
-	if (!translation.packageArchive || !patch || !renderer || !strings.getString(prefix + "line1"))
-		return;
+	HighQualityTextRenderer *renderer = font ? translation.getImageFont(font) : nullptr;
+	if (!translation.packageArchive || !patch || !renderer || !renderer->isValid() || !strings.getString(prefix + "line1"))
+		return false;
 	if (!applyPatchImage(surface, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "drawTranslatedEnding"))
-		return;
+		return false;
 
 	const int scale = 4;
 	const int widthPercent = CLIP(getTranslationInt(strings, prefix + "width_percent", 100), 1, 100);
@@ -231,10 +239,17 @@ void drawTranslatedEnding(Graphics::Surface &surface, const TextTranslationData 
 		Common::U32String text;
 		int x = 0, y = 0, size = 23, stroke = 0;
 		uint32 color = white;
-		if (!parseImageTextLine(definition, text, x, y, size, stroke, color, format))
-			continue;
+		if (!parseImageTextLine(definition, text, x, y, size, stroke, color, format)) {
+			mask.free();
+			line.free();
+			return false;
+		}
 		line.fillRect(Common::Rect(line.w, line.h), black);
-		renderer->drawLine(line, CLIP(size, 1, 128) * scale, noShadow, text, 0, 40 * scale, white, black, 0, true);
+		if (!renderer->drawLine(line, CLIP(size, 1, 128) * scale, noShadow, text, 0, 40 * scale, white, black, 0, true)) {
+			mask.free();
+			line.free();
+			return false;
+		}
 		Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> narrowed(
 			downscaleRgbaLayerBicubic(line, MAX(1, (line.w * widthPercent + 50) / 100), line.h));
 		for (int row = 0; row < narrowed->h; ++row) {
@@ -278,6 +293,9 @@ void drawTranslatedEnding(Graphics::Surface &surface, const TextTranslationData 
 			surface.setPixel(x, y, surface.format.RGBToColor(blend(r, shadowR, textR), blend(g, shadowG, textG), blend(b, shadowB, textB)));
 		}
 	}
+	return true;
+#else
+	return false;
 #endif
 }
 
@@ -295,6 +313,13 @@ bool applyPatchImage(Graphics::Surface &surface, Common::SeekableReadStream *str
 	}
 
 	const Graphics::Surface *patch = decoder.getSurface();
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> converted;
+	if (patch->format.bytesPerPixel == 1) {
+		converted.reset(patch->convertTo(Graphics::PixelFormat::createFormatRGBA32(), decoder.getPalette().data(), decoder.getPalette().size()));
+		if (!converted)
+			return false;
+		patch = converted.get();
+	}
 	const int width = MIN<int>(surface.w, patch->w);
 	const int height = MIN<int>(surface.h, patch->h);
 	for (int y = 0; y < height; ++y) {
@@ -334,20 +359,31 @@ void applyTranslatedComputerCard(Graphics::Surface &card, const char *path, cons
 	const char *patch = translation.strings.getString(prefix + "patch");
 	if (!patch || !translation.strings.getString(prefix + "line1"))
 		return;
-	if (!applyPatchImage(card, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "applyTranslatedComputerCard"))
-		return;
-	drawConfiguredHighQualityTextLines(card, translation, prefix, "LiberationSans-Regular.ttf", 218, 218, 236, 0, 0, 0, true);
+	Graphics::Surface result;
+	result.copyFrom(card);
+	if (applyPatchImage(result, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "applyTranslatedComputerCard") &&
+		drawConfiguredHighQualityTextLines(result, translation, prefix, "LiberationSans-Regular.ttf", 218, 218, 236, 0, 0, 0, true))
+		card.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));
+	result.free();
 #endif
 }
 
 void applyTranslatedStillImage(Graphics::Surface &still, int stillIndex, const TextTranslationData &translation) {
 	if (translation.packageArchive && stillIndex >= 0 && stillIndex < 5) {
-		applyPatchImage(still, translation.packageArchive->createReadStreamForMember(Common::Path(Common::String::format("patches/pstill_%d_patch.png", stillIndex + 1), '/')), "applyTranslatedStillImage");
+		Graphics::Surface result;
+		result.copyFrom(still);
+		if (applyPatchImage(result, translation.packageArchive->createReadStreamForMember(Common::Path(Common::String::format("patches/pstill_%d_patch.png", stillIndex + 1), '/')), "applyTranslatedStillImage") &&
+			drawTranslatedStillHeading(result, stillIndex, translation))
+			still.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));
+		result.free();
 	}
-
-	drawTranslatedStillHeading(still, stillIndex, translation);
-	if (stillIndex == 5 || stillIndex == 6)
-		drawTranslatedEnding(still, translation, stillIndex == 5 ? "endings.pgood." : "endings.pbad.");
+	if (stillIndex == 5 || stillIndex == 6) {
+		Graphics::Surface result;
+		result.copyFrom(still);
+		if (drawTranslatedEnding(result, translation, stillIndex == 5 ? "endings.pgood." : "endings.pbad."))
+			still.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));
+		result.free();
+	}
 }
 
 void applyTranslatedComputerButtons(Graphics::Surface &computer, const TextTranslationData &translation) {
@@ -393,9 +429,14 @@ bool applyTranslatedCinemaTitleButton(Graphics::Surface &buttons, const TextTran
 #ifdef USE_FREETYPE2
 	if (translation.strings.getString("cinema_title_button.line1") &&
 		translation.strings.getString("cinema_title_button_pressed.line1")) {
-		drawConfiguredHighQualityTextLines(buttons, translation, "cinema_title_button.", "LiberationSans-BoldItalic.ttf", 53, 55, 106, 142, 146, 232);
-		drawConfiguredHighQualityTextLines(buttons, translation, "cinema_title_button_pressed.", "LiberationSans-BoldItalic.ttf", 136, 90, 155, 183, 169, 211);
-		return true;
+		Graphics::Surface result;
+		result.copyFrom(buttons);
+		const bool ok = drawConfiguredHighQualityTextLines(result, translation, "cinema_title_button.", "LiberationSans-BoldItalic.ttf", 53, 55, 106, 142, 146, 232) &&
+			drawConfiguredHighQualityTextLines(result, translation, "cinema_title_button_pressed.", "LiberationSans-BoldItalic.ttf", 136, 90, 155, 183, 169, 211);
+		if (ok)
+			buttons.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));
+		result.free();
+		return ok;
 	}
 #endif
 	return false;
@@ -409,11 +450,13 @@ void applyTranslatedCinemaMenu(Graphics::Surface &menu, const TextTranslationDat
 	if (!patch || !translation.strings.getString("cinema_menu.buttons.line1") ||
 		!translation.strings.getString("cinema_menu.instruction.line1"))
 		return;
-	if (!applyPatchImage(menu, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "applyTranslatedCinemaMenu"))
-		return;
-
-	drawConfiguredHighQualityTextLines(menu, translation, "cinema_menu.buttons.", "LiberationSans-BoldItalic.ttf", 32, 40, 48, 0, 0, 0);
-	drawConfiguredHighQualityTextLines(menu, translation, "cinema_menu.instruction.", "LiberationSerif-Regular.ttf", 216, 176, 32, 0, 0, 0);
+	Graphics::Surface result;
+	result.copyFrom(menu);
+	if (applyPatchImage(result, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "applyTranslatedCinemaMenu") &&
+		drawConfiguredHighQualityTextLines(result, translation, "cinema_menu.buttons.", "LiberationSans-BoldItalic.ttf", 32, 40, 48, 0, 0, 0) &&
+		drawConfiguredHighQualityTextLines(result, translation, "cinema_menu.instruction.", "LiberationSerif-Regular.ttf", 216, 176, 32, 0, 0, 0))
+		menu.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));
+	result.free();
 #endif
 }
 
@@ -421,9 +464,13 @@ void applyTranslatedTitleMenu(Graphics::Surface &title, const TextTranslationDat
 	if (!translation.packageArchive)
 		return;
 
-	applyPatchImage(title, translation.packageArchive->createReadStreamForMember(Common::Path("patches/16mtitle_patch.png", '/')), "applyTranslatedTitleMenu");
-	drawConfiguredHighQualityTextLines(title, translation, "title_menu.", "LiberationSans-BoldItalic.ttf", 53, 55, 106, 142, 146, 232);
-	drawConfiguredHighQualityTextLines(title, translation, "title_menu_pressed.", "LiberationSans-BoldItalic.ttf", 136, 90, 155, 183, 169, 211);
+	Graphics::Surface result;
+	result.copyFrom(title);
+	if (applyPatchImage(result, translation.packageArchive->createReadStreamForMember(Common::Path("patches/16mtitle_patch.png", '/')), "applyTranslatedTitleMenu") &&
+		drawConfiguredHighQualityTextLines(result, translation, "title_menu.", "LiberationSans-BoldItalic.ttf", 53, 55, 106, 142, 146, 232) &&
+		drawConfiguredHighQualityTextLines(result, translation, "title_menu_pressed.", "LiberationSans-BoldItalic.ttf", 136, 90, 155, 183, 169, 211))
+		title.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));
+	result.free();
 }
 
 } // End of namespace BCB

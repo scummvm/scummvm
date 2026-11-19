@@ -38,7 +38,8 @@ class HighQualityTextRenderer {
 public:
 	explicit HighQualityTextRenderer(const Common::String &fontName);
 	~HighQualityTextRenderer();
-	void drawLine(Graphics::Surface &surface, int size,
+	bool isValid() const;
+	bool drawLine(Graphics::Surface &surface, int size,
 							 const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
 							 int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth, bool baseline = false);
 

@@ -41,11 +41,6 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_STROKER_H
-#if __has_include(<hb.h>) && __has_include(<hb-ft.h>)
-#include <hb-ft.h>
-#include <hb.h>
-#define BCB_USE_HARFBUZZ_TEXT_LAYOUT
-#endif
 #endif
 
 namespace BCB {
@@ -104,65 +99,13 @@ struct PillowGlyphInfo {
 	FT_Pos xOffset;
 };
 
-#ifdef BCB_USE_HARFBUZZ_TEXT_LAYOUT
-bool layoutPillowGlyphsWithHarfBuzz(FT_Face face, const Common::U32String &text, Common::Array<PillowGlyphInfo> &glyphs) {
-	glyphs.clear();
-	if (text.empty())
-		return true;
-
-	hb_font_t *font = hb_ft_font_create_referenced(face);
-	if (!font)
-		return false;
-	hb_buffer_t *buffer = hb_buffer_create();
-	if (!buffer) {
-		hb_font_destroy(font);
-		return false;
-	}
-
-	Common::Array<uint32> codepoints;
-	codepoints.resize(text.size());
-	for (uint i = 0; i < text.size(); ++i)
-		codepoints[i] = text[i];
-
-	hb_buffer_add_utf32(buffer, codepoints.data(), codepoints.size(), 0, codepoints.size());
-	hb_buffer_guess_segment_properties(buffer);
-	hb_shape(font, buffer, nullptr, 0);
-
-	uint glyphCount = 0;
-	hb_glyph_info_t *glyphInfo = hb_buffer_get_glyph_infos(buffer, &glyphCount);
-	hb_glyph_position_t *glyphPosition = hb_buffer_get_glyph_positions(buffer, &glyphCount);
-	if (!glyphInfo || !glyphPosition) {
-		hb_buffer_destroy(buffer);
-		hb_font_destroy(font);
-		return false;
-	}
-
-	for (uint i = 0; i < glyphCount; ++i) {
-		PillowGlyphInfo glyph;
-		glyph.index = glyphInfo[i].codepoint;
-		glyph.xOffset = glyphPosition[i].x_offset;
-		glyph.xAdvance = glyphPosition[i].x_advance;
-		glyphs.push_back(glyph);
-	}
-
-	hb_buffer_destroy(buffer);
-	hb_font_destroy(font);
-	return true;
-}
-#endif
-
 bool layoutPillowGlyphs(FT_Face face, const Common::U32String &text, Common::Array<PillowGlyphInfo> &glyphs) {
-#ifdef BCB_USE_HARFBUZZ_TEXT_LAYOUT
-	if (layoutPillowGlyphsWithHarfBuzz(face, text, glyphs))
-		return true;
-#endif
-
 	glyphs.clear();
 	FT_UInt previousIndex = 0;
 	for (uint i = 0; i < text.size(); ++i) {
 		const FT_UInt glyphIndex = Graphics::FreeType::Get_Char_Index(face, text[i]);
 		if (!glyphIndex)
-			continue;
+			return false;
 
 		FT_Vector kerning;
 		FT_Pos xOffset = 0;
@@ -175,7 +118,7 @@ bool layoutPillowGlyphs(FT_Face face, const Common::U32String &text, Common::Arr
 		PillowGlyphInfo glyph;
 		glyph.index = glyphIndex;
 		glyph.xOffset = xOffset;
-		glyph.xAdvance = face->glyph->advance.x;
+		glyph.xAdvance = face->glyph->advance.x + xOffset;
 		glyphs.push_back(glyph);
 		previousIndex = glyphIndex;
 	}
@@ -193,7 +136,7 @@ bool getPillowTextMaskMetrics(FT_Face face, const Common::Array<PillowGlyphInfo>
 
 	for (uint i = 0; i < glyphs.size(); ++i) {
 		const int px = ftPixel(penX + glyphs[i].xOffset);
-		penX += glyphs[i].xOffset + glyphs[i].xAdvance;
+		penX += glyphs[i].xAdvance;
 		const int advanced = ftPixel(penX);
 		if (advanced > bboxXMax)
 			bboxXMax = advanced;
@@ -327,7 +270,7 @@ bool drawFreeTypeTextPass(Graphics::Surface &surface, FT_Face face, const Common
 			renderPillowGlyphBitmapToSurface(surface, slot->bitmap, destX, destY, color);
 		}
 
-		penX += glyphs[i].xOffset + glyphs[i].xAdvance;
+		penX += glyphs[i].xAdvance;
 	}
 
 	if (stroker)
@@ -756,11 +699,21 @@ HighQualityTextRenderer::~HighQualityTextRenderer() {
 	delete _font;
 }
 
-void HighQualityTextRenderer::drawLine(Graphics::Surface &surface, int size,
+bool HighQualityTextRenderer::isValid() const {
+#ifdef USE_FREETYPE2
+	return _font->face != nullptr;
+#else
+	return false;
+#endif
+}
+
+bool HighQualityTextRenderer::drawLine(Graphics::Surface &surface, int size,
 							 const Common::Array<Common::Point> &shadowOffsets, const Common::U32String &text,
 							 int x, int y, uint32 textColor, uint32 shadowColor, int strokeWidth, bool baseline) {
 #ifdef USE_FREETYPE2
-	drawFreeTypeTextLine(surface, _font->face, size, shadowOffsets, text, x, y, textColor, shadowColor, strokeWidth, baseline);
+	return drawFreeTypeTextLine(surface, _font->face, size, shadowOffsets, text, x, y, textColor, shadowColor, strokeWidth, baseline);
+#else
+	return false;
 #endif
 }
 
