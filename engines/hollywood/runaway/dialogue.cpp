@@ -83,9 +83,6 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 	if (entry.disable) {
 		entry.enabled = 0;
 	}
-	if (_conversation == 4 && entry.disable == 2) {
-		_desert.ventSeen = 1;
-	}
 	handleCustomDialogueChoice(entry.disable);
 	switch (entry.transition) {
 	case 0: // End the conversation.

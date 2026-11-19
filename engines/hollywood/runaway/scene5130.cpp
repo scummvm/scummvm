@@ -20,7 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene5130.h"
 
 namespace Hollywood {
 namespace {
@@ -49,14 +49,28 @@ const RunawayRoom kRunawayScene5130 = {
 	nullptr, 0
 };
 
-void RunawayRoomScene::startScene5130() {
+namespace Runaway {
+
+Scene5130::Scene5130(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene5130::loadCustomResources() {
+	return _groupAnimation.load(_archive, 4, 71) &&
+		_carlaAnimation.load(_archive, 5, 33);
+}
+
+float Scene5130::actorHeight() const {
+	return 360;
+}
+
+void Scene5130::runCustomEntrySequence() {
 	_rescuePlan = RescuePlan();
 	_rescuePlan.tick = _now;
 	_facing = 1;
 	_roomAction = 5130;
 }
 
-void RunawayRoomScene::updateScene5130() {
+void Scene5130::updateRescuePlan() {
 	RescuePlan &plan = _rescuePlan;
 	const Speaker next = plan.nextLine <= ARRAYSIZE(kSpeakers) ? kSpeakers[plan.nextLine - 1] : kBrian;
 	if (_now - plan.tick >= 80) {
@@ -79,26 +93,32 @@ void RunawayRoomScene::updateScene5130() {
 		}
 		plan.blink = !_random.getRandomNumber(14);
 	}
-	if (speaking())
+	if (speaking()) {
 		return;
+	}
 	if (plan.nextLine > ARRAYSIZE(kSpeakers)) {
 		_roomAction = 0;
 		leaveDesertRoom(5022);
 		_transition = _hospitalExit;
 		return;
 	}
-	if ((plan.nextLine == 7 || plan.nextLine == 20) && plan.groupFrame < 58)
+	if ((plan.nextLine == 7 || plan.nextLine == 20) && plan.groupFrame < 58) {
 		return;
-	if (plan.nextLine == 14 && plan.carlaFrame < 20)
-		return;
-	if (plan.nextLine == 13) {
-		if (!plan.pauseUntil)
-			plan.pauseUntil = _now + 3000;
-		if ((int32)(_now - plan.pauseUntil) < 0)
-			return;
 	}
-	if (next == kLula || next == kMariola)
+	if (plan.nextLine == 14 && plan.carlaFrame < 20) {
+		return;
+	}
+	if (plan.nextLine == 13) {
+		if (!plan.pauseUntil) {
+			plan.pauseUntil = _now + 3000;
+		}
+		if ((int32)(_now - plan.pauseUntil) < 0) {
+			return;
+		}
+	}
+	if (next == kLula || next == kMariola) {
 		plan.groupFrame = next == kLula ? 64 : 58;
+	}
 	switch (plan.nextLine) {
 	case 6: // Distribute the transmitters.
 	case 19: // Reassure everyone about Carla's flying.
@@ -114,16 +134,24 @@ void RunawayRoomScene::updateScene5130() {
 	say(0, plan.nextLine++, false, next);
 }
 
-void RunawayRoomScene::drawScene5130(Graphics::ManagedSurface &viewport) {
+void Scene5130::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
 	const RescuePlan &plan = _rescuePlan;
 	uint carla = plan.carlaFrame;
-	if (carla == 20)
+	if (carla == 20) {
 		carla += speaking() && speaker() == kCarla ? speechFrame() : plan.blink ? 6 : 0;
+	}
 	uint group = plan.groupFrame;
-	if (speaking() && (speaker() == kLula || speaker() == kMariola))
+	if (speaking() && (speaker() == kLula || speaker() == kMariola)) {
 		group = (speaker() == kLula ? 64 : 58) + speechFrame() % 6;
-	_desertAnimations[1].draw(viewport, carla, 0, 0);
-	_desertAnimations[0].draw(viewport, group, 0, 0);
+	}
+	_carlaAnimation.draw(viewport, carla, 0, 0);
+	_groupAnimation.draw(viewport, group, 0, 0);
 }
 
+bool Scene5130::updateCustomSequence() {
+	updateRescuePlan();
+	return true;
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

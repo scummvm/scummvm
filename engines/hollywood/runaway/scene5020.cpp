@@ -21,8 +21,7 @@
 
 #include "common/file.h"
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene5020.h"
 
 namespace Hollywood {
 namespace {
@@ -90,7 +89,37 @@ const RunawayRoom kRunawayScene5020 = {
 	nullptr, 0
 };
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute5020(uint16 action) {
+namespace Runaway {
+
+Scene5020::Scene5020(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene5020::loadCustomResources() {
+	return _ambientAnimations[0].load(_archive, 7, 947) &&
+		_ambientAnimations[1].load(_archive, 4, 452) &&
+		_ambientAnimations[2].load(_archive, 5, 667) &&
+		_ambientAnimations[3].load(_archive, 6, 47) &&
+		_ambientAnimations[4].load(_archive, 8, 662);
+}
+
+bool Scene5020::applyCustomBackgroundPatches() {
+	return !_desert.bucketTaken || applyPatch(9);
+}
+
+void Scene5020::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		byte &id = _maps[256 + i];
+		if (_desert.bucketTaken && id == 7) {
+			id = 0;
+		}
+	}
+}
+
+float Scene5020::actorHeight() const {
+	return _position.y * -0.140845075f + 264.225342f;
+}
+
+RunawayRoomScene::ActionResult Scene5020::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 301: // Go to the desert overview.
 		leaveDesertRoom(5010);
@@ -120,7 +149,28 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5020(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::startRescueFilm() {
+void Scene5020::runCustomEntrySequence() {
+	if (_entryScene == 5021 && !_desert.escapedCabin) {
+		_desert.escapedCabin = 1;
+		say(0);
+		leaveDesertRoom(5140);
+		return;
+	}
+	if (_entryScene == 5022) {
+		_audio.playMusic(22);
+		_audio.setMusicVolume(255);
+		walkTo(Common::Point(618, 386), 0);
+		deferDesertAction(400);
+		return;
+	}
+	visitDesertRoom(1, 0);
+}
+
+void Scene5020::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	drawAmbientAnimations(viewport, _ambientAnimations, ARRAYSIZE(_ambientAnimations));
+}
+
+void Scene5020::startRescueFilm() {
 	typedef RunawaySequence S;
 	_filmCommands = {
 		{S::kOpen, 2}, {S::kPlay, 0, 40},
@@ -162,4 +212,11 @@ void RunawayRoomScene::startRescueFilm() {
 	_sequence.start(_filmCommands.data(), _text, _now, 'E');
 }
 
+void Scene5020::finishCustomFilm() {
+	if (_entryScene == 5022) {
+		_chapterComplete = true;
+	}
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

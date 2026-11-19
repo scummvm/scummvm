@@ -58,13 +58,12 @@ const RunawayResponse kGlobalResponses[] = {
 
 RunawayRoomScene::RunawayRoomScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	_audio(audio), _sequence(audio), _inventory(inventory), _strings(strings), _game(game), _random("runaway"),
-	_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync : RunawaySpeech::kNoLipSync),
-	_hangarSpeech(audio, _random, RunawaySpeech::kNoLipSync) {}
+	_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync : RunawaySpeech::kNoLipSync) {}
 
 const Common::U32String &RunawayRoomScene::subtitle() const {
 	if (_sequence.active())
 		return _sequence.subtitle();
-	return speaking() ? _speech.subtitle() : _hangarSpeech.subtitle();
+	return _speech.subtitle();
 }
 
 bool RunawayRoomScene::load(uint16 entryScene) {
@@ -127,6 +126,10 @@ void RunawayRoomScene::resumeAmbientAudio(bool entering) {
 	if (museumChapter()) {
 		if (entering || !_audio.musicPlaying()) {
 			_audio.playMusic(12, false);
+		}
+	} else if (desertChapter()) {
+		if (!_audio.musicPlaying()) {
+			_audio.playMusic(12);
 		}
 	} else if (!_audio.musicPlaying()) {
 		_audio.playMusic(11, !hospitalChapter());
@@ -214,9 +217,7 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	_lines.clear();
 	_lineIndex = 0;
 	_speech.reset();
-	_hangarSpeech.reset();
 	_caption.clear();
-	_ambient = RunawayAnimation();
 	for (uint i = 0; i < ARRAYSIZE(_foreground); ++i)
 		_foreground[i].clear();
 	if (!loadCustomResources() || !rebuildBackground()) {
@@ -230,17 +231,7 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 
 bool RunawayRoomScene::loadWalkMap() {
 	const RunawayRoom *room = findRunawayRoom(_room);
-	if (_room == 5140) {
-		// This cutscene contains a background and sprite tracks, without a mask.
-		_mask.resize(room->width * room->height, 0);
-		_originalMaps.resize(1536, 0);
-		return true;
-	}
 	return loadRunawayMask(_archive, room->width, room->height, _mask, _originalMaps);
-}
-
-bool RunawayRoomScene::loadCustomResources() {
-	return !desertChapter() || loadDesertRoom();
 }
 
 bool RunawayRoomScene::loadForeground(uint layer, uint chunk, bool pixels) {
@@ -279,24 +270,12 @@ bool RunawayRoomScene::loadBackground() {
 	return loadRunawaySurface(_archive, 0, room->width, room->height, _background);
 }
 
-bool RunawayRoomScene::applyCustomBackgroundPatches() {
-	return !desertChapter() || applyDesertBackground();
-}
-
 void RunawayRoomScene::updateMaps() {
 	_maps = _originalMaps;
 	applyCustomHotspotState();
 }
 
-void RunawayRoomScene::applyCustomHotspotState() {
-	if (desertChapter()) {
-		updateDesertMaps();
-	}
-}
-
 const RunawayHotspot *RunawayRoomScene::hotspot(byte id) const {
-	if (desertChapter())
-		return id && id < _desertHotspots.size() ? &_desertHotspots[id] : nullptr;
 	const RunawayRoom *room = findRunawayRoom(_room);
 	return room && id && id < room->hotspotCount ? &room->hotspots[id] : nullptr;
 }
@@ -313,8 +292,6 @@ byte RunawayRoomScene::hotspotAt(Common::Point mouse) const {
 }
 
 Common::U32String RunawayRoomScene::hotspotName(byte id) const {
-	if (desertChapter())
-		return desertHotspotName(id);
 	const RunawayHotspot *spot = hotspot(id);
 	if (!spot)
 		return Common::U32String();
@@ -412,8 +389,7 @@ void RunawayRoomScene::showLine() {
 }
 
 void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker) {
-	if (!_hangarSpeech.subtitle().empty())
-		_hangarSpeech.stop();
+	stopAmbientSpeech();
 	SceneSpeechCue speech;
 	if (global)
 		_text.getStaticSpeechCue(cue, variation, speech.textRecordId, speech.continuationCount, speech.voiceSampleId);
@@ -481,10 +457,6 @@ void RunawayRoomScene::useItem(byte item, byte id) {
 		}
 	}
 	say(1, 0, true);
-}
-
-RunawayRoomScene::ActionResult RunawayRoomScene::dispatchCustomSceneAction(uint16 action) {
-	return desertChapter() ? executeDesert(action) : kUnhandled;
 }
 
 void RunawayRoomScene::execute(uint16 action) {
@@ -556,10 +528,6 @@ int RunawayRoomScene::sceneViewportYOffset() const {
 	return CLIP<int>(_position.y - 400, 0, _background.h - kRunawayViewportHeight);
 }
 
-float RunawayRoomScene::actorHeight() const {
-	return desertChapter() ? desertActorHeight() : 455;
-}
-
 void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	_now = now;
 	_inventoryOpen = inventoryOpen;
@@ -568,13 +536,7 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	if (_sequence.active()) {
 		_sequence.update(now);
 		if (!_sequence.active()) {
-			if (_room == 5140) {
-				updateScene5140();
-			} else if (_entryScene == 5022) {
-				_chapterComplete = true;
-			} else if (!desertChapter()) {
-				finishCustomFilm();
-			}
+			finishCustomFilm();
 		}
 		return;
 	}
@@ -585,7 +547,7 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 		if (_sequence.active() || _transition.scene)
 			return;
 	} else if (desertChapter()) {
-		updateDesert(elapsed, inventoryOpen);
+		updateDesert(elapsed);
 		if (_sequence.active() || _transition.scene)
 			return;
 	} else if (museumChapter()) {
@@ -647,15 +609,7 @@ void RunawayRoomScene::draw() {
 	_screen.copyRectToSurface(_background, 0, kRunawayViewportTop,
 		Common::Rect(_camera.x, _camera.y, _camera.x + kRunawayScreenWidth, _camera.y + kRunawayViewportHeight));
 	Graphics::ManagedSurface viewport(_screen, Common::Rect(0, kRunawayViewportTop, kRunawayScreenWidth, kRunawayViewportTop + kRunawayViewportHeight));
-	if (_room == 5140) {
-		drawScene5140(viewport);
-		return;
-	}
 	if (drawCustomComposite(viewport)) {
-		return;
-	}
-	if (_room == 5010) {
-		drawDesertRoom(viewport, false);
 		return;
 	}
 	drawCustomBackgroundComposite(viewport);
@@ -683,22 +637,12 @@ void RunawayRoomScene::draw() {
 	drawCustomForegroundComposite(viewport);
 }
 
-void RunawayRoomScene::setupActorDepth(RunawayActor::RenderParams &params) const {
-	if (desertChapter())
-		setupDesertDepth(params);
-}
-
-void RunawayRoomScene::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
-	if (desertChapter()) {
-		drawDesertRoom(viewport, false);
-	} else {
-		_ambient.draw(viewport, 0, _camera.x, -_camera.y);
-	}
-}
-
-void RunawayRoomScene::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
-	if (desertChapter()) {
-		drawDesertRoom(viewport, true);
+void RunawayRoomScene::drawAmbientAnimations(Graphics::ManagedSurface &viewport, const RunawayAnimation *animations, uint count) {
+	for (uint i = 0; i < count; ++i) {
+		const RunawayAnimation &animation = animations[i];
+		if (animation.frameCount()) {
+			animation.draw(viewport, (_now / 80) % animation.frameCount(), _camera.x, -_camera.y);
+		}
 	}
 }
 
@@ -773,18 +717,12 @@ void RunawayRoomScene::updateRoomAnimation() {
 			const uint16 action = _roomAction;
 			_roomAction = 0;
 			_actionFrames.clear();
-			if (townChapter()) {
+			if (townChapter() || desertChapter()) {
 				execute(action + 1000);
-			} else if (desertChapter()) {
-				finishDesertAnimation(action);
 			} else {
 				finishCustomAnimation(action);
 			}
 			return;
-		}
-		if (desertChapter()) {
-			desertAnimationFrame();
-			continue;
 		}
 		handleAnimationFrameHook();
 	}

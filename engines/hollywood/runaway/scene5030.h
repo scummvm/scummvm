@@ -35,17 +35,18 @@
 #include "hollywood/scene_text_store.h"
 
 namespace Hollywood {
+namespace Runaway {
 
 // The demos and retail chapter three share the shack, its room resources, actor,
 // interactions and audio; RunawayEngine owns the backend and event loop.
-class RunawayScene5030 : public RunawayScene {
+class Scene5030 : public RunawayScene {
 public:
 	enum {
 		kScreenWidth = kRunawayScreenWidth, kScreenHeight = kRunawayScreenHeight,
 		kRoomWidth = 1376, kRoomHeight = kRunawayViewportHeight, kRoomTop = kRunawayViewportTop
 	};
 
-	RunawayScene5030(Audio::Mixer *mixer, RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings,
+	Scene5030(Audio::Mixer *mixer, RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings,
 			RunawayGameType game = kRunawayCabinDemo) :
 		_audio(audio), _inventory(inventory), _strings(strings), _game(game), _interrogation(mixer), _random("runawayShack"), _actor(),
 		_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync : RunawaySpeech::kTextLipSync),
@@ -159,6 +160,7 @@ private:
 	Common::U32String _committedCaption;
 };
 
+} // End of namespace Runaway
 } // End of namespace Hollywood
 
 #endif // HOLLYWOOD_RUNAWAY_SCENE5030_H

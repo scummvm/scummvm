@@ -20,8 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene5060.h"
 
 namespace Hollywood {
 namespace {
@@ -90,20 +89,54 @@ const RunawayRoom kRunawayScene5060 = {
 	nullptr, 0
 };
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
+namespace Runaway {
+
+Scene5060::Scene5060(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene5060::loadCustomResources() {
+	return _ambientAnimations[0].load(_archive, 15, 543) &&
+		_ambientAnimations[1].load(_archive, 16, 411) &&
+		_ambientAnimations[2].load(_archive, 17, 791) &&
+		_ambientAnimations[3].load(_archive, 18, 769) &&
+		loadForeground(0, 8) &&
+		_mariolaAnimation.load(_archive, 7, 201) &&
+		_lulaAnimation.load(_archive, 12, 195);
+}
+
+bool Scene5060::applyCustomBackgroundPatches() {
+	return _desert.tanningOil != 2 || applyPatch(9);
+}
+
+void Scene5060::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		byte &id = _maps[256 + i];
+		if (_desert.tanningOil == 2 && id == 6) {
+			id = 0;
+		}
+	}
+}
+
+float Scene5060::actorHeight() const {
+	return _position.y * 0.107991360f + 207.213821f;
+}
+
+RunawayRoomScene::ActionResult Scene5060::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 480: { // Gather everyone after all three rescue preparations are complete.
 		static const byte speakers[] = {0, 1, 0, 2, 0, 2, 1, 3};
-		for (uint i = 0; i < ARRAYSIZE(speakers); ++i)
+		for (uint i = 0; i < ARRAYSIZE(speakers); ++i) {
 			say(0, i + 2, false, speakers[i]);
+		}
 		deferDesertAction(481);
 		break;
 	}
 	case 481: { // Carla comes out of the bus.
 		Common::Array<byte> frames;
 		frames.push_back(0);
-		for (uint i = 0; i <= 45; ++i)
+		for (uint i = 0; i <= 45; ++i) {
 			frames.push_back(i);
+		}
 		beginRoomAnimation(action, 19, 58, frames.data(), frames.size(), false);
 		break;
 	}
@@ -132,21 +165,24 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 	case 404: // Let Lula finish dancing before talking.
 	case 419: { // Let Lula notice Brian bouncing the basketball.
 		Common::Array<byte> frames;
-		for (uint i = 120 + (_now / 80) % 75; i < 195; ++i)
+		for (uint i = 120 + (_now / 80) % 75; i < 195; ++i) {
 			frames.push_back(i);
+		}
 		for (uint i = 86; i < 120; ++i) {
 			frames.push_back(i);
-			if (i == 94)
+			if (i == 94) {
 				frames.push_back(i);
+			}
 		}
 		beginRoomAnimation(action, 12, 195, frames.data(), frames.size(), action == 419);
 		if (action == 419) {
 			Common::Array<byte> brian;
 			for (uint i = 0; i < frames.size(); ++i) {
-				if (i < 29)
+				if (i < 29) {
 					brian.push_back(i ? i - 1 : 0);
-				else
+				} else {
 					brian.push_back(28 + (i - 29) % 14);
+				}
 			}
 			setRoomAnimationOverlay(13, 62, brian.data(), brian.size());
 		}
@@ -193,10 +229,12 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 		break;
 	case 414: { // Let Lula resume dancing.
 		Common::Array<byte> frames;
-		for (uint i = 95; i < 120; ++i)
+		for (uint i = 95; i < 120; ++i) {
 			frames.push_back(i);
-		for (uint i = 12; i < 85; ++i)
+		}
+		for (uint i = 12; i < 85; ++i) {
 			frames.push_back(i);
+		}
 		beginRoomAnimation(action, 12, 195, frames.data(), frames.size(), false);
 		break;
 	}
@@ -246,8 +284,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 		}
 		break;
 	case 312: // Ask Mariola for the tanning oil.
-		if (!_desert.tanningOil)
-			execute5060(311);
+		if (!_desert.tanningOil) {
+			dispatchCustomSceneAction(311);
+		}
 		say(8);
 		deferDesertAction(412);
 		break;
@@ -256,8 +295,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 		break;
 	case 1412: // Listen to Mariola's answer about the oil.
 		say(9, _desert.mariolaHelped != 0, false, 1);
-		if (_desert.mariolaHelped)
+		if (_desert.mariolaHelped) {
 			say(8, 1);
+		}
 		deferDesertAction(422);
 		break;
 	case 422: // Take the oil if Mariola agrees.
@@ -302,8 +342,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 	case 1429: { // Throw the basketball to Lula.
 		_audio.stopEffect();
 		byte lula[20];
-		for (uint i = 0; i < ARRAYSIZE(lula); ++i)
+		for (uint i = 0; i < ARRAYSIZE(lula); ++i) {
 			lula[i] = i == ARRAYSIZE(lula) - 1 ? 5 : MIN<uint>(i, 4);
+		}
 		beginRoomAnimationRange(439, 13, 62, 42, 61);
 		setRoomAnimationOverlay(21, 102, lula, ARRAYSIZE(lula));
 		break;
@@ -352,45 +393,89 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::drawScene5060(Graphics::ManagedSurface &viewport) {
+void Scene5060::runCustomEntrySequence() {
+	if (_entryScene == 5062) {
+		_position = Common::Point(870, 525);
+		_walkPath.reset(_position);
+		_facing = 7;
+		setCameraX(132);
+		execute(480);
+		return;
+	}
+	visitDesertRoom(3, 2);
+}
+
+Common::U32String Scene5060::hotspotName(byte id) const {
+	if (id == 6 && _desert.tanningOil) {
+		return _inventory.name(12);
+	}
+	if (id == 7 && _desert.busPosterSeen) {
+		return Common::U32String("Lawn chair");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+void Scene5060::resumeAmbientAudio(bool entering) {
+	if (!_audio.musicPlaying()) {
+		_audio.playMusic(21);
+	}
+}
+
+void Scene5060::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	drawAmbientAnimations(viewport, _ambientAnimations, ARRAYSIZE(_ambientAnimations));
 	static const byte mouth[] = {5, 0, 1, 2, 3, 4, 11, 6, 7, 8, 9, 10};
 	if (_entryScene == 5062) {
-		if (_roomAction == 491)
+		if (_roomAction == 491) {
 			_actionAnimation.draw(viewport, 45 + (speaker() == 3 ? speechFrame() : 0), _camera.x, -_camera.y);
-		_npc.draw(viewport, 83 + (speaker() == 1 ? speechFrame() : 0), _camera.x, -_camera.y);
-		_machine.draw(viewport, mouth[speaker() == 2 ? speechFrame() : 0], _camera.x, -_camera.y);
+		}
+		_mariolaAnimation.draw(viewport, 83 + (speaker() == 1 ? speechFrame() : 0), _camera.x, -_camera.y);
+		_lulaAnimation.draw(viewport, mouth[speaker() == 2 ? speechFrame() : 0], _camera.x, -_camera.y);
 		return;
 	}
 	if (!drawingRoomAnimation() || (_roomAction != 412 && _roomAction != 432)) {
 		uint frame = (_now / 80) % 13;
-		if (_roomAction == 422 || _roomAction == 432)
+		if (_roomAction == 422 || _roomAction == 432) {
 			frame = 83 + (speaker() == 1 ? speechFrame() : 0);
-		_npc.draw(viewport, frame, _camera.x, -_camera.y);
+		}
+		_mariolaAnimation.draw(viewport, frame, _camera.x, -_camera.y);
 	}
 	if (_roomAction == 459 || _roomAction == 479) {
 		_actionAnimation.draw(viewport, 96 + (speaker() == 2 ? speechFrame() % 6 : 0), _camera.x, -_camera.y);
 	} else if (!drawingRoomAnimation() || (_roomAction != 404 && _roomAction != 414 &&
 			_roomAction != 419 && _roomAction != 439 && _roomAction != 449)) {
 		uint frame = 120 + (_now / 80) % 75;
-		if (_roomAction == 414 || _roomAction == 429 || _roomAction == 469)
+		if (_roomAction == 414 || _roomAction == 429 || _roomAction == 469) {
 			frame = mouth[speaker() == 2 ? speechFrame() : 0];
-		_machine.draw(viewport, frame, _camera.x, -_camera.y);
+		}
+		_lulaAnimation.draw(viewport, frame, _camera.x, -_camera.y);
 	}
 }
 
-void RunawayRoomScene::animationFrame5060() {
+void Scene5060::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	if (_position.x < 670) {
+		drawForeground(viewport, 0);
+	}
+}
+
+void Scene5060::handleAnimationFrameHook() {
 	if (_roomAction == 481) {
-		if (_actionStep == 3 || _actionStep == 12 || _actionStep == 17 || _actionStep == 25 || _actionStep == 29)
+		if (_actionStep == 3 || _actionStep == 12 || _actionStep == 17 || _actionStep == 25 || _actionStep == 29) {
 			_audio.playFootstep(4, _random.getRandomBit(), 153);
-		if (_actionStep == 39)
+		}
+		if (_actionStep == 39) {
 			_audio.playFootstep(4, _random.getRandomBit(), 230);
+		}
 	}
-	if (_roomAction == 419 && _actionStep == 28)
+	if (_roomAction == 419 && _actionStep == 28) {
 		_audio.playEffect(56, 217, 1, true);
-	if (_roomAction == 449 && (_actionStep == 6 || _actionStep == 11 || _actionStep == 51))
+	}
+	if (_roomAction == 449 && (_actionStep == 6 || _actionStep == 11 || _actionStep == 51)) {
 		_audio.playFootstep(1, _random.getRandomBit(), 153);
-	if (_roomAction == 449 && _actionStep == 57)
+	}
+	if (_roomAction == 449 && _actionStep == 57) {
 		_audio.playFootstep(1, _random.getRandomBit());
+	}
 }
 
+} // End of namespace Runaway
 } // End of namespace Hollywood

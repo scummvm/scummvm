@@ -20,8 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene5050.h"
 
 namespace Hollywood {
 namespace {
@@ -69,7 +68,35 @@ const RunawayRoom kRunawayScene5050 = {
 	nullptr, 0
 };
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute5050(uint16 action) {
+namespace Runaway {
+
+Scene5050::Scene5050(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene5050::loadCustomResources() {
+	return loadForeground(0, 4) &&
+		loadForeground(1, 5);
+}
+
+bool Scene5050::applyCustomBackgroundPatches() {
+	return (!_desert.helmetTaken || applyPatch(6)) && (!_desert.beltTaken || applyPatch(7)) &&
+		(!_desert.gun || applyPatch(8));
+}
+
+void Scene5050::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		byte &id = _maps[256 + i];
+		if ((_desert.helmetTaken && id == 2) || (_desert.beltTaken && id == 3)) {
+			id = 0;
+		}
+	}
+}
+
+float Scene5050::actorHeight() const {
+	return _position.y * 0.128865972f + 197.809280f;
+}
+
+RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 action) {
 	RunawaySaveState::DesertItems &items = _inventory.desert();
 	switch (action) {
 	case 301: // Go to the desert overview.
@@ -98,11 +125,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5050(uint16 action) {
 		_desert.gunSeen = 1;
 		break;
 	case 315: // Use tanning oil with the machine gun.
-		if (_desert.gun)
+		if (_desert.gun) {
 			say(14, 2);
-		else if (!_desert.gunSeen)
+		} else if (!_desert.gunSeen) {
 			say(1, 0, true);
-		else {
+		} else {
 			say(14);
 			beginRoomAnimation(action, 11, 46);
 		}
@@ -119,11 +146,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5050(uint16 action) {
 		say(16, items.lipsticks != 0);
 		break;
 	case 318: // Load the ammunition belt into the machine gun.
-		if (items.belt < 2)
+		if (items.belt < 2) {
 			say(17, items.belt);
-		else if (!_desert.gun)
+		} else if (!_desert.gun) {
 			say(17, 2);
-		else {
+		} else {
 			say(17, 3);
 			beginRoomAnimation(action, 12, 37);
 		}
@@ -147,4 +174,25 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5050(uint16 action) {
 	return kHandled;
 }
 
+void Scene5050::runCustomEntrySequence() {
+	visitDesertRoom(2, 2);
+}
+
+Common::U32String Scene5050::hotspotName(byte id) const {
+	if (id == 3 && _desert.beltSeen) {
+		return _inventory.name(14);
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+void Scene5050::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	if (_position.x < 314) {
+		drawForeground(viewport, 0);
+	}
+	if (_position.x > 195 && _position.y < 465) {
+		drawForeground(viewport, 1);
+	}
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

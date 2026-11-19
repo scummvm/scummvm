@@ -20,8 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene5070.h"
 
 namespace Hollywood {
 namespace {
@@ -60,7 +59,33 @@ const RunawayRoom kRunawayScene5070 = {
 	nullptr, 0
 };
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute5070(uint16 action) {
+namespace Runaway {
+
+Scene5070::Scene5070(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene5070::loadCustomResources() {
+	return _ambientAnimations[0].load(_archive, 5, 896) &&
+		_ambientAnimations[1].load(_archive, 6, 945) &&
+		_ambientAnimations[2].load(_archive, 7, 953) &&
+		_ambientAnimations[3].load(_archive, 8, 551) &&
+		_ambientAnimations[4].load(_archive, 4, 48);
+}
+
+void Scene5070::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		byte &id = _maps[256 + i];
+		if (id == 3 || id == 8) {
+			id = _desert.dynamitePlaced ? 3 : 0;
+		}
+	}
+}
+
+float Scene5070::actorHeight() const {
+	return _position.y * 1.171428561f - 226.085709f;
+}
+
+RunawayRoomScene::ActionResult Scene5070::dispatchCustomSceneAction(uint16 action) {
 	RunawaySaveState::DesertItems &items = _inventory.desert();
 	switch (action) {
 	case 301: // Go to the desert overview.
@@ -72,8 +97,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5070(uint16 action) {
 	case 306: { // Use the detonator.
 		const byte variation = _random.getRandomBit();
 		say(3, variation);
-		if (variation)
+		if (variation) {
 			say(3, 2);
+		}
 		break;
 	}
 	case 310: // Use the tree.
@@ -94,10 +120,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5070(uint16 action) {
 		}
 		return kBackgroundChanged;
 	case 312: // Use the bucket with the oil well.
-		if (items.bucket != 1)
+		if (items.bucket != 1) {
 			say(17, 0, true);
-		else
+		} else {
 			say(8, _desert.dynamitePlaced != 0);
+		}
 		break;
 	case 313: // Look at the rock.
 		say(9, _desert.dynamitePlaced != 0);
@@ -110,14 +137,15 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5070(uint16 action) {
 		_desert.oilSeen = 1;
 		break;
 	case 316: // Take oil from the puddle.
-		if (!_desert.oilSeen)
-			execute5070(315);
+		if (!_desert.oilSeen) {
+			dispatchCustomSceneAction(315);
+		}
 		say(12);
 		break;
 	case 317: // Dip the sunglasses in the oil.
-		if (items.glasses)
+		if (items.glasses) {
 			say(13, items.glasses + 1);
-		else {
+		} else {
 			say(13);
 			beginRoomAnimation(action, 9, 29);
 		}
@@ -133,4 +161,13 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5070(uint16 action) {
 	return kHandled;
 }
 
+void Scene5070::runCustomEntrySequence() {
+	visitDesertRoom(4, 1);
+}
+
+void Scene5070::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	drawAmbientAnimations(viewport, _ambientAnimations, ARRAYSIZE(_ambientAnimations));
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

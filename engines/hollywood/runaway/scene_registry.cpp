@@ -31,6 +31,18 @@
 #include "hollywood/runaway/scene4090.h"
 #include "hollywood/runaway/scene4100.h"
 #include "hollywood/runaway/scene4140.h"
+#include "hollywood/runaway/scene5010.h"
+#include "hollywood/runaway/scene5020.h"
+#include "hollywood/runaway/scene5050.h"
+#include "hollywood/runaway/scene5060.h"
+#include "hollywood/runaway/scene5070.h"
+#include "hollywood/runaway/scene5080.h"
+#include "hollywood/runaway/scene5100.h"
+#include "hollywood/runaway/scene5110.h"
+#include "hollywood/runaway/scene5130.h"
+#include "hollywood/runaway/scene5140.h"
+#include "hollywood/runaway/scene5160.h"
+#include "hollywood/runaway/scene5170.h"
 #include "hollywood/runaway/scene6014.h"
 #include "hollywood/runaway/scene6080.h"
 #include "hollywood/runaway/scene6090.h"
@@ -74,18 +86,18 @@ const SceneDefinition kSceneDefinitions[] = {
 	{&kRunawayScene4090, createScene<Runaway::Scene4090>},
 	{&kRunawayScene4100, createScene<Runaway::Scene4100>},
 	{&kRunawayScene4140, createScene<Runaway::Scene4140>},
-	{&kRunawayScene5010, createScene<RunawayRoomScene>},
-	{&kRunawayScene5020, createScene<RunawayRoomScene>},
-	{&kRunawayScene5050, createScene<RunawayRoomScene>},
-	{&kRunawayScene5060, createScene<RunawayRoomScene>},
-	{&kRunawayScene5070, createScene<RunawayRoomScene>},
-	{&kRunawayScene5080, createScene<RunawayRoomScene>},
-	{&kRunawayScene5100, createScene<RunawayRoomScene>},
-	{&kRunawayScene5110, createScene<RunawayRoomScene>},
-	{&kRunawayScene5130, createScene<RunawayRoomScene>},
-	{&kRunawayScene5140, createScene<RunawayRoomScene>},
-	{&kRunawayScene5160, createScene<RunawayRoomScene>},
-	{&kRunawayScene5170, createScene<RunawayRoomScene>},
+	{&kRunawayScene5010, createScene<Runaway::Scene5010>},
+	{&kRunawayScene5020, createScene<Runaway::Scene5020>},
+	{&kRunawayScene5050, createScene<Runaway::Scene5050>},
+	{&kRunawayScene5060, createScene<Runaway::Scene5060>},
+	{&kRunawayScene5070, createScene<Runaway::Scene5070>},
+	{&kRunawayScene5080, createScene<Runaway::Scene5080>},
+	{&kRunawayScene5100, createScene<Runaway::Scene5100>},
+	{&kRunawayScene5110, createScene<Runaway::Scene5110>},
+	{&kRunawayScene5130, createScene<Runaway::Scene5130>},
+	{&kRunawayScene5140, createScene<Runaway::Scene5140>},
+	{&kRunawayScene5160, createScene<Runaway::Scene5160>},
+	{&kRunawayScene5170, createScene<Runaway::Scene5170>},
 	{&kRunawayScene6014, createScene<Runaway::Scene6014>},
 	{&kRunawayScene6080, createScene<Runaway::Scene6080>},
 	{&kRunawayScene6090, createScene<Runaway::Scene6090>},

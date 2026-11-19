@@ -170,7 +170,7 @@ RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
 	}
 	if ((_game == kRunawayCabinDemo && entryScene == 5030) ||
 			(_game == kRunawayFullGame && entryScene >= 5030 && entryScene <= 5032))
-		return new RunawayScene5030(_mixer, _audio, *_inventory, _strings, _game);
+		return new Runaway::Scene5030(_mixer, _audio, *_inventory, _strings, _game);
 	// Retail scene scripts have their own entry substates. Sharing an archive
 	// with a demo does not make its puzzle initialization interchangeable.
 	return nullptr;

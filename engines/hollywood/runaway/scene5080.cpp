@@ -21,8 +21,7 @@
 
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene5080.h"
 
 namespace Hollywood {
 namespace {
@@ -75,7 +74,48 @@ const RunawayRoom kRunawayScene5080 = {
 	nullptr, 0
 };
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute5080(uint16 action) {
+namespace Runaway {
+
+Scene5080::Scene5080(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene5080::loadCustomResources() {
+	return _ambientAnimations[0].load(_archive, 18, 769) &&
+		_ambientAnimations[1].load(_archive, 17, 672) &&
+		_ambientAnimations[2].load(_archive, 16, 455) &&
+		_ambientAnimations[3].load(_archive, 20, 631) &&
+		_ambientAnimations[4].load(_archive, 19, 533) &&
+		_ambientAnimations[5].load(_archive, 15, 24) &&
+		loadForeground(0, 11) &&
+		loadForeground(1, 12) &&
+		loadForeground(2, 13) &&
+		loadForeground(3, 14) &&
+		_idleAnimation.load(_archive, 9, 47);
+}
+
+bool Scene5080::applyCustomBackgroundPatches() {
+	return loadRunawayMask(_archive, _background.w, _background.h, _mask, _originalMaps, _desert.antsDistracted ? 4 : 1) &&
+		(!_desert.antsDistracted || applyPatch(_desert.dynamite == 1 ? 7 : 8));
+}
+
+void Scene5080::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		byte &id = _maps[256 + i];
+		if (_desert.antsDistracted) {
+			if (id == 12) {
+				id = _desert.dynamite == 1 ? 5 : 0;
+			} else if (id == 5 && _desert.dynamite == 2) {
+				id = 3;
+			}
+		}
+	}
+}
+
+float Scene5080::actorHeight() const {
+	return _position.y * 0.905172408f - 162.241379f;
+}
+
+RunawayRoomScene::ActionResult Scene5080::dispatchCustomSceneAction(uint16 action) {
 	RunawaySaveState::DesertItems &items = _inventory.desert();
 	switch (action) {
 	case 301: // Go to the desert overview.
@@ -136,12 +176,15 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5080(uint16 action) {
 			say(21);
 			walkTo(Common::Point(564, 497), 7, true);
 			byte brian[49] = {}, butter[49] = {};
-			for (uint i = 1; i < 39; ++i)
+			for (uint i = 1; i < 39; ++i) {
 				brian[i] = i - 1;
-			for (uint i = 39; i < ARRAYSIZE(brian); ++i)
+			}
+			for (uint i = 39; i < ARRAYSIZE(brian); ++i) {
 				brian[i] = 48 - i;
-			for (uint i = 27; i < ARRAYSIZE(butter); ++i)
+			}
+			for (uint i = 27; i < ARRAYSIZE(butter); ++i) {
 				butter[i] = MIN<uint>(12, i - 26);
+			}
 			beginRoomAnimation(action, 26, 38, brian, ARRAYSIZE(brian));
 			setRoomAnimationOverlay(27, 13, butter, ARRAYSIZE(butter));
 		}
@@ -152,14 +195,15 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5080(uint16 action) {
 		deferDesertAction(426);
 		break;
 	case 426: // Start the ants approaching the shed.
-		if (!_machine.load(_archive, 22, 133))
+		if (!_antsAnimation.load(_archive, 22, 133)) {
 			error("Cannot load Runaway ants animation");
-		_ambientFrame = 0;
-		_ambientTick = _now;
+		}
+		_antsFrame = 0;
+		_antsTick = _now;
 		deferDesertAction(436);
 		break;
 	case 436: // Wait for the ants to swarm.
-		if (_now - _ambientTick < 4000) {
+		if (_now - _antsTick < 4000) {
 			deferDesertAction(action);
 		} else {
 			say(21, 2);
@@ -171,7 +215,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5080(uint16 action) {
 		deferDesertAction(456);
 		break;
 	case 456: // Watch the ants consume the shed.
-		if (_ambientFrame < 132) {
+		if (_antsFrame < 132) {
 			deferDesertAction(action);
 		} else {
 			say(21, 3);
@@ -198,20 +242,58 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5080(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::updateScene5080() {
-	if (_roomAction < 436 || _roomAction > 466)
+void Scene5080::runCustomEntrySequence() {
+	if (_entryScene == 5081) {
+		_position = Common::Point(987, 379);
+		_walkPath.reset(_position);
+		walkTo(Common::Point(1000, 451), 5, true);
+	}
+	visitDesertRoom(5, 1);
+}
+
+Common::U32String Scene5080::hotspotName(byte id) const {
+	if (id == 3 && _desert.antsDistracted) {
+		return Common::U32String("Sawdust");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+void Scene5080::advanceCustomGameplayLoop(uint32 delta) {
+	if (_roomAction < 436 || _roomAction > 466) {
 		return;
-	const uint frame = MIN<uint>(132, (_now - _ambientTick) / 80);
-	if (_ambientFrame < 36 && frame >= 36)
+	}
+	const uint frame = MIN<uint>(132, (_now - _antsTick) / 80);
+	if (_antsFrame < 36 && frame >= 36) {
 		_audio.playEffect(60);
-	_ambientFrame = frame;
+	}
+	_antsFrame = frame;
 }
 
-void RunawayRoomScene::drawScene5080(Graphics::ManagedSurface &viewport) {
+void Scene5080::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	drawAmbientAnimations(viewport, _ambientAnimations, ARRAYSIZE(_ambientAnimations));
 	const uint frame = (_now / 80) % 92;
-	_npc.draw(viewport, frame <= 46 ? frame : 92 - frame, _camera.x, -_camera.y);
-	if (_roomAction >= 436 && _roomAction <= 466)
-		_machine.draw(viewport, _ambientFrame, _camera.x, -_camera.y);
+	_idleAnimation.draw(viewport, frame <= 46 ? frame : 92 - frame, _camera.x, -_camera.y);
+	if (_roomAction >= 436 && _roomAction <= 466) {
+		_antsAnimation.draw(viewport, _antsFrame, _camera.x, -_camera.y);
+	}
 }
 
+void Scene5080::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	drawForeground(viewport, 0);
+	drawForeground(viewport, 1);
+	if (walkZone() == 15 || walkZone() == 16) {
+		drawForeground(viewport, 2);
+	}
+	if (walkZone() == 15) {
+		drawForeground(viewport, 3);
+	}
+}
+
+void Scene5080::handleAnimationFrameHook() {
+	if (_roomAction == 326 && _actionStep == 23) {
+		_audio.playEffect(72);
+	}
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

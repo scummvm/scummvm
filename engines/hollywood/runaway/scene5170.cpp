@@ -20,8 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene5170.h"
 
 namespace Hollywood {
 namespace {
@@ -71,24 +70,69 @@ const RunawayRoom kRunawayScene5170 = {
 	nullptr, 0
 };
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
+namespace Runaway {
+
+Scene5170::Scene5170(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene5170::loadCustomResources() {
+	return _ambientAnimations[0].load(_archive, 6, 25) &&
+		_ambientAnimations[1].load(_archive, 5, 24) &&
+		_ambientAnimations[2].load(_archive, 4, 50) &&
+		_ambientAnimations[3].load(_archive, 11, 3);
+}
+
+bool Scene5170::applyCustomBackgroundPatches() {
+	return (_desert.vacuum != 2 || applyPatch(7)) && (!_desert.glassesTaken || applyPatch(8)) &&
+		(_desert.lipstickShelf != 2 || applyPatch(9)) && (_desert.lipstickShelf != 3 || applyPatch(10));
+}
+
+void Scene5170::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		byte &id = _maps[256 + i];
+		if (id == 5 && (_desert.busDoor == 0 || _desert.busDoor == 2)) {
+			id = 1;
+		}
+		if ((_desert.glassesTaken && id == 6) || (_desert.vacuum == 2 && id == 7)) {
+			id = 0;
+		}
+		if (id == 11) {
+			id = _desert.crank == 2 && _desert.busDoor != 1 ? 4 : 10;
+		}
+		if (id == 12) {
+			id = _desert.crank == 2 && _desert.busDoor == 1 ? 4 : 2;
+		}
+	}
+}
+
+float Scene5170::actorHeight() const {
+	return _position.y * 0.536585391f + 165.243896f;
+}
+
+void Scene5170::setupActorDepth(RunawayActor::RenderParams &params) const {
+	params.depthY[4] = 599;
+}
+
+RunawayRoomScene::ActionResult Scene5170::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 301: // Look outside the bus.
 		say(1, _desert.busDoor != 0);
 		break;
 	case 302: // Leave the bus.
-		if (_desert.busDoor == 0 || _desert.busDoor == 2)
+		if (_desert.busDoor == 0 || _desert.busDoor == 2) {
 			leaveDesertRoom(5061);
-		else
+		} else {
 			say(2);
+		}
 		break;
 	case 304: // Go to the back of the bus.
 		leaveDesertRoom(5160);
 		break;
 	case 305: // Look at the right-hand shelf.
 		say(4, _desert.lipstickShelf == 0 ? 0 : _desert.lipstickShelf == 3 ? 2 : 1);
-		if (!_desert.lipstickShelf)
+		if (!_desert.lipstickShelf) {
 			_desert.lipstickShelf = 1;
+		}
 		break;
 	case 306: // Take lipstick from the shelf.
 		if (_desert.lipstickShelf < 2) {
@@ -111,8 +155,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 		return kBackgroundChanged;
 	case 307: // Look at the door mechanism.
 		say(6, _desert.crank != 0);
-		if (!_desert.crank)
+		if (!_desert.crank) {
 			_desert.crank = 1;
+		}
 		break;
 	case 308: // Turn the makeshift crank.
 		if (_desert.crank < 2) {
@@ -123,8 +168,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 		}
 		break;
 	case 1308: // Finish opening or closing the bus door.
-		if (!_desert.busDoor)
+		if (!_desert.busDoor) {
 			say(7, 1);
+		}
 		_desert.busDoor = _desert.busDoor == 1 ? 2 : 1;
 		return kBackgroundChanged;
 	case 309: // Look in the pocket.
@@ -138,10 +184,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 			say(9);
 			_inventory.add(26);
 			_desert.keyTaken = 1;
-			if (_desert.fridgeSeen)
+			if (_desert.fridgeSeen) {
 				say(9, 1);
-			else
+			} else {
 				say(18, _random.getRandomNumber(2), true);
+			}
 			walkTo(Common::Point(340, 511), 3, true);
 		}
 		break;
@@ -153,12 +200,14 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 		return kBackgroundChanged;
 	case 313: // Look at the object under the bed.
 		say(12, _desert.vacuum != 0);
-		if (!_desert.vacuum)
+		if (!_desert.vacuum) {
 			_desert.vacuum = 1;
+		}
 		break;
 	case 314: // Take the vacuum cleaner.
-		if (!_desert.vacuum)
+		if (!_desert.vacuum) {
 			say(12);
+		}
 		_inventory.add(22);
 		_desert.vacuum = 2;
 		say(13);
@@ -168,8 +217,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 		_desert.necklacesSeen = 1;
 		break;
 	case 316: // Take the necklaces.
-		if (!_desert.necklacesSeen)
-			execute5170(315);
+		if (!_desert.necklacesSeen) {
+			dispatchCustomSceneAction(315);
+		}
 		say(15);
 		break;
 	case 317: // Look at the rings and earrings.
@@ -177,8 +227,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 		_desert.ringsSeen = 1;
 		break;
 	case 318: // Take the rings and earrings.
-		if (!_desert.ringsSeen)
-			execute5170(317);
+		if (!_desert.ringsSeen) {
+			dispatchCustomSceneAction(317);
+		}
 		say(17);
 		break;
 	case 320: // Attach the footrest to the door mechanism.
@@ -196,4 +247,53 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 	return kHandled;
 }
 
+void Scene5170::runCustomEntrySequence() {
+	if (_entryScene == 5171) {
+		_position = Common::Point(636, 382);
+		_walkPath.reset(_position);
+		_facing = 4;
+	}
+	visitDesertRoom(9, 2);
+}
+
+Common::U32String Scene5170::hotspotName(byte id) const {
+	if (id == 3 && _desert.lipstickShelf && _desert.lipstickShelf < 3) {
+		return _inventory.name(11);
+	}
+	if (id == 4 && _desert.crank == 2) {
+		return Common::U32String("Makeshift crank");
+	}
+	if (id == 7 && _desert.vacuum) {
+		return _inventory.name(22);
+	}
+	if (id == 8 && _desert.necklacesSeen) {
+		return Common::U32String("Necklaces");
+	}
+	if (id == 9 && _desert.ringsSeen) {
+		return Common::U32String("Rings and earrings");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+void Scene5170::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	for (uint i = 0; i < ARRAYSIZE(_ambientAnimations); ++i) {
+		const RunawayAnimation &animation = _ambientAnimations[i];
+		if (!animation.frameCount()) {
+			continue;
+		}
+		uint frame = (_now / 80) % animation.frameCount();
+		if (i == 0) {
+			frame = _desert.busDoor == 0 || _desert.busDoor == 2 ? 24 : 0;
+		}
+		if (i == 2) {
+			frame = 49;
+		}
+		if (i == 3) {
+			frame = _desert.crank == 2 ? (_desert.busDoor == 1 ? 1 : 2) : 0;
+		}
+		animation.draw(viewport, frame, _camera.x, -_camera.y);
+	}
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

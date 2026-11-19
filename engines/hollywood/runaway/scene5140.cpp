@@ -20,7 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene5140.h"
 
 namespace Hollywood {
 namespace {
@@ -108,13 +108,25 @@ const RunawayRoom kRunawayScene5140 = {
 	nullptr, 0
 };
 
-void RunawayRoomScene::startScene5140() {
+namespace Runaway {
+
+Scene5140::Scene5140(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene5140::loadCustomResources() {
+	return _brianAnimation.load(_archive, 1, 130) &&
+		_carlaAnimation.load(_archive, 2, 33) &&
+		_lulaAnimation.load(_archive, 3, 51) &&
+		_mariolaAnimation.load(_archive, 4, 32);
+}
+
+void Scene5140::runCustomEntrySequence() {
 	_busIntroduction = BusIntroduction();
 	_busIntroduction.tick = _now;
 	_roomAction = 5140;
 }
 
-void RunawayRoomScene::updateScene5140() {
+void Scene5140::updateIntroduction() {
 	BusIntroduction &intro = _busIntroduction;
 	if (intro.phase == BusIntroduction::kFilm) {
 		intro.phase = BusIntroduction::kReturn;
@@ -129,20 +141,23 @@ void RunawayRoomScene::updateScene5140() {
 		intro.tick = _now;
 		intro.blink = false;
 		if (intro.frame != intro.lastFrame) {
-			if (intro.frame < intro.lastFrame)
+			if (intro.frame < intro.lastFrame) {
 				++intro.frame;
-			else
+			} else {
 				--intro.frame;
+			}
 			if (intro.phase == BusIntroduction::kArrival &&
 					(intro.frame == 1 || intro.frame == 6 || intro.frame == 11 ||
-					intro.frame == 14 || intro.frame == 15 || intro.frame == 24))
+					intro.frame == 14 || intro.frame == 15 || intro.frame == 24)) {
 				_audio.playFootstep(2, _random.getRandomBit());
+			}
 		} else if (intro.speaker >= kCarla && intro.facing != kBrianLula) {
 			intro.blink = !_random.getRandomNumber(14);
 		}
 	}
-	if (intro.frame != intro.lastFrame || speaking())
+	if (intro.frame != intro.lastFrame || speaking()) {
 		return;
+	}
 	if (arriving) {
 		intro.phase = intro.phase == BusIntroduction::kArrival ? BusIntroduction::kConversation : BusIntroduction::kFarewell;
 		intro.frame = intro.lastFrame = kBrianTalkFrames[kBrianMariola];
@@ -179,11 +194,21 @@ void RunawayRoomScene::updateScene5140() {
 		intro.frame = intro.lastFrame = kBrianTalkFrames[intro.facing];
 	}
 	intro.tick = _now;
-	if (line.variation != kNoLine)
+	if (line.variation != kNoLine) {
 		say(1, line.variation, false, line.speaker + 1);
+	}
 }
 
-void RunawayRoomScene::drawScene5140(Graphics::ManagedSurface &viewport) {
+bool Scene5140::updateCustomSequence() {
+	updateIntroduction();
+	return true;
+}
+
+void Scene5140::finishCustomFilm() {
+	updateIntroduction();
+}
+
+bool Scene5140::drawCustomComposite(Graphics::ManagedSurface &viewport) {
 	const BusIntroduction &intro = _busIntroduction;
 	const bool arriving = intro.phase == BusIntroduction::kArrival || intro.phase == BusIntroduction::kReturn;
 	uint frames[] = {kBrianFrames[intro.frame], 27, 44, 25};
@@ -193,20 +218,37 @@ void RunawayRoomScene::drawScene5140(Graphics::ManagedSurface &viewport) {
 		frames[3] = MIN<uint>(intro.frame, 25);
 	} else {
 		const byte mouth = speaking() ? speechFrame() : 0;
-		if (intro.frame == intro.lastFrame)
+		if (intro.frame == intro.lastFrame) {
 			frames[0] = kBrianFrames[kBrianTalkFrames[intro.facing] +
 				(intro.speaker <= kBrianMariola ? mouth : intro.blink ? 6 : 0)];
-		if (intro.speaker >= kCarla && intro.speaker <= kMariola)
+		}
+		if (intro.speaker >= kCarla && intro.speaker <= kMariola) {
 			frames[intro.speaker - kCarla + 1] += mouth % 6;
+		}
 	}
 	const bool alone = intro.phase == BusIntroduction::kReturn || intro.phase == BusIntroduction::kFarewell;
-	if (!alone)
-		_desertAnimations[2].draw(viewport, frames[2], 0, 0);
-	_desertAnimations[0].draw(viewport, frames[0], 0, 0);
 	if (!alone) {
-		_desertAnimations[1].draw(viewport, frames[1], 0, 0);
-		_desertAnimations[3].draw(viewport, frames[3], 0, 0);
+		_lulaAnimation.draw(viewport, frames[2], 0, 0);
 	}
+	_brianAnimation.draw(viewport, frames[0], 0, 0);
+	if (!alone) {
+		_carlaAnimation.draw(viewport, frames[1], 0, 0);
+		_mariolaAnimation.draw(viewport, frames[3], 0, 0);
+	}
+	return true;
 }
 
+bool Scene5140::shouldUpdateActor() const {
+	return false;
+}
+
+bool Scene5140::loadWalkMap() {
+	const RunawayRoom *room = findRunawayRoom(_room);
+	// This cutscene contains a background and sprite tracks, without a mask.
+	_mask.resize(room->width * room->height, 0);
+	_originalMaps.resize(1536, 0);
+	return true;
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood
