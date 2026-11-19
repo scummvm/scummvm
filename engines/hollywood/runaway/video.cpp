@@ -182,7 +182,10 @@ uint RunawayVideo::frameAtTime(uint32 milliseconds) const {
 bool RunawayVideo::seekToFrame(uint frame) {
 	if (!_decoder || frame >= _decoder->getFrameCount())
 		return false;
-	if (_decoder->getCurFrame() != (int)frame) {
+	// Keep Bink's decoded reference frames for forward seeks. The GOG movies
+	// have only an initial keyframe, so seeking would decode them from scratch.
+	if (_decoder->getCurFrame() != (int)frame &&
+			(_decoder->getCurFrame() > (int)frame || READ_BE_UINT32(_data.data()) == MKTAG('R', 'I', 'F', 'F'))) {
 		_frame = nullptr;
 		if (!_decoder->seekToFrame(frame))
 			return false;

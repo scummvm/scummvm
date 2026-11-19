@@ -90,6 +90,7 @@ private:
 	uint32 _now = 0, _started = 0, _deadline = 0;
 	uint32 _repeatAt = 0;
 	bool _entered = false, _showPortrait = false, _silentPortrait = false;
+	bool _skipFilm = false;
 	struct Line {
 		Common::U32String text;
 		uint16 sample;

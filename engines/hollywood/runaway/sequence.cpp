@@ -40,6 +40,7 @@ void RunawaySequence::start(const Command *commands, const SceneTextStore &text,
 	_commands = commands;
 	_index = 0;
 	_entered = _showPortrait = false;
+	_skipFilm = false;
 	_now = _started = now;
 	update(now);
 }
@@ -90,10 +91,15 @@ void RunawaySequence::nextLine() {
 
 void RunawaySequence::update(uint32 now) {
 	_now = now;
-	if (!_subtitle.empty() && (int32)(now - _deadline) >= 0)
+	if (!_skipFilm && !_subtitle.empty() && (int32)(now - _deadline) >= 0)
 		nextLine();
 	while (active()) {
 		const Command &command = _commands[_index];
+		// Preserve the final music cue and normal cleanup when skipping a film.
+		if (_skipFilm && command.operation != kMusic && command.operation != kEnd) {
+			advance();
+			continue;
+		}
 		if (!_entered) {
 			_entered = true;
 			switch (command.operation) {
@@ -212,9 +218,9 @@ void RunawaySequence::skip() {
 	}
 	const Command &command = _commands[_index];
 	if (command.operation == kPlay) {
-		if (!_video.seekToFrame(command.b))
-			error("Cannot decode Runaway film frame %u", command.b);
-		advance();
+		// Bink movies may have only one keyframe; seeking to the end decodes
+		// the entire movie synchronously, blocking input while it catches up.
+		_skipFilm = true;
 	} else if (command.operation == kDelay || command.operation == kWaitEffect) {
 		advance();
 	}

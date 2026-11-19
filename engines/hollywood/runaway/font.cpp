@@ -60,7 +60,8 @@ bool RunawayFont::load(bool menuFont, bool museum) {
 			return false;
 	} else if (!readRunawayGlobalChunk(menuFont ? 148 : 125, _pixels) ||
 			!readRunawayGlobalChunk(menuFont ? 149 : 126, metrics) ||
-			(metrics.size() != 119 * 5 && metrics.size() != 150 * 5 && metrics.size() != 156 * 5 && metrics.size() != 161 * 5)) {
+			(metrics.size() != 119 * 5 && metrics.size() != 150 * 5 && metrics.size() != 156 * 5 &&
+			 metrics.size() != 161 * 5 && metrics.size() != 181 * 5)) {
 		return false;
 	}
 	_glyphs.resize(metrics.size() / 5);
@@ -77,12 +78,12 @@ bool RunawayFont::load(bool menuFont, bool museum) {
 	}
 	memcpy(_glyphMap, kGlyphMap, sizeof(_glyphMap));
 	_missingGlyph = _glyphs.size() <= 119 ? 255 : _glyphs.size() - 1;
-	// English retail's table at 0x5a51f0 retains the DOS character mapping,
-	// moving only the missing-character box to the end of its larger font.
-	if (_glyphs.size() == 161) {
+	// English CD and GOG releases retain the DOS character mapping, moving
+	// only the missing-character box to the end of their larger fonts.
+	if (_glyphs.size() == 161 || _glyphs.size() == 181) {
 		for (uint i = 0; i < ARRAYSIZE(_glyphMap); ++i) {
 			if (_glyphMap[i] == 149)
-				_glyphMap[i] = 160;
+				_glyphMap[i] = _missingGlyph;
 		}
 	}
 	// Museum and Spanish tables use the first 117 and 119 glyphs respectively,
