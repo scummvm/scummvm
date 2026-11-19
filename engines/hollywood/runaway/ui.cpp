@@ -300,6 +300,18 @@ RunawayUI::Command RunawayUI::click(bool right) {
 		command.type = Command::kSkipSpeech;
 		return command;
 	}
+	if (!_choices.empty()) {
+		if (!right) {
+			for (uint i = 0; i < _choiceRects.size(); ++i) {
+				if (_choiceRects[i].contains(_mouse)) {
+					command.type = Command::kChooseDialogue;
+					command.target = i;
+					break;
+				}
+			}
+		}
+		return command;
+	}
 	if (_blocked || busy())
 		return command;
 	if (right) {
@@ -342,13 +354,13 @@ RunawayUI::Command RunawayUI::click(bool right) {
 }
 
 void RunawayUI::updateCursor() {
-	const bool waiting = _blocked || _speaking || busy();
+	const bool waiting = (_blocked && _choices.empty()) || _speaking || busy();
 	// Native 0x411990 hides the cursor during actions and dialogue.
 	// RESOURCE.000 chunk 118 is the corner logo, not a busy cursor.
 	CursorMan.showMouse(!waiting);
 	if (waiting)
 		return;
-	const byte item = _inventory.selected();
+	const byte item = _choices.empty() ? _inventory.selected() : 0;
 	uint tile = _museum ? (_verb == kVerbWalk ? 0 : _verb == kVerbLook ? 6 : 7) : (uint)_verb;
 	uint shade = 0;
 	if (item) {
@@ -423,8 +435,9 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 			screen.fillRect(rect, 0);
 		} else {
 			const uint y = (_inventory.icon(item) - 1) * 80;
-			if (y + 80 <= (uint)_icons.h)
-				screen.copyRectToSurface(_icons, rect.left, rect.top, Common::Rect(0, y, 80, y + 80));
+			// The museum strip ends with a 79-pixel-high icon.
+			if (y < (uint)_icons.h)
+				screen.copyRectToSurface(_icons, rect.left, rect.top, Common::Rect(0, y, 80, MIN<uint>(y + 80, _icons.h)));
 		}
 	}
 	if (_pickupItem) {
@@ -440,6 +453,22 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 		const uint frame = _speaking ? _mouth : (int32)(_blinkUntil - _now) > 0 ? 6 : 0;
 		_portrait.draw(screen, frame, 0, kRunawayViewportTop);
 	}
+}
+
+void RunawayUI::setDialogueChoices(const Common::Array<Common::U32String> &choices) {
+	_choices.clear();
+	_choiceRects.clear();
+	int height = 0;
+	for (uint i = 0; i < choices.size(); ++i) {
+		Common::Array<Common::U32String> lines;
+		_font.wordWrapText(choices[i], 968, lines);
+		const uint lineHeight = MAX<uint>(1, lines.size()) * 28 + 8;
+		_choiceRects.push_back(Common::Rect(20, height, 1004, height + lineHeight));
+		height += lineHeight;
+		_choices.push_back(lines);
+	}
+	for (uint i = 0; i < _choiceRects.size(); ++i)
+		_choiceRects[i].translate(0, kRunawayScreenHeight - 12 - height);
 }
 
 void RunawayUI::drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32String &text) const {
@@ -472,6 +501,15 @@ void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &
 				_inventoryOpen ? inventoryCaption() : roomCaption;
 		}
 		_font.drawString(screen.surfacePtr(), caption, 20, 684, 984, color, Graphics::kTextAlignCenter);
+	}
+	if (!_choices.empty() && !_speaking) {
+		screen.fillRect(Common::Rect(0, _choiceRects[0].top - 8, kRunawayScreenWidth, kRunawayScreenHeight), 0);
+		for (uint i = 0; i < _choices.size(); ++i) {
+			const uint16 color = _choiceRects[i].contains(_mouse) ?
+				kUIFormat.RGBToColor(255, 223, 206) : kUIFormat.RGBToColor(189, 166, 148);
+			for (uint j = 0; j < _choices[i].size(); ++j)
+				_font.drawString(screen.surfacePtr(), _choices[i][j], 28, _choiceRects[i].top + j * 28, 968, color);
+		}
 	}
 	// Native 0x4020b0 copies the demo logo to the bottom-right corner.
 	if (_demoLogo.w)

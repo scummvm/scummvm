@@ -23,12 +23,14 @@
 #define HOLLYWOOD_RUNAWAY_VIDEO_H
 
 #include "common/array.h"
-#include "graphics/managed_surface.h"
-#include "video/avi_decoder.h"
+#include "common/ptr.h"
+#include "hollywood/resource.h"
+#include "hollywood/runaway/graphics.h"
+#include "video/video_decoder.h"
 
 namespace Hollywood {
 
-// Silent AVI clips are advanced by the engine clock so menu pauses also
+// Silent AVI/Bink clips are advanced by the engine clock so menu pauses also
 // freeze frame callbacks and the separately stored room sound effects.
 class RunawayVideo {
 public:
@@ -36,14 +38,36 @@ public:
 	void close();
 	bool decodeToFrame(uint frame);
 	bool seekToFrame(uint frame);
-	uint frameCount() const { return _decoder.getFrameCount(); }
+	uint width() const { return _frame ? _frame->w : 0; }
+	uint height() const { return _frame ? _frame->h : 0; }
+	uint frameCount() const { return _decoder ? _decoder->getFrameCount() : 0; }
 	uint frameAtTime(uint32 milliseconds) const;
 	void draw(Graphics::ManagedSurface &surface, const Common::Rect &destination) const;
+	void drawRegion(Graphics::ManagedSurface &surface, const Common::Rect &source, const Common::Rect &destination) const;
 
 private:
 	Common::Array<byte> _data;
-	Video::AVIDecoder _decoder;
+	Common::ScopedPtr<Video::VideoDecoder> _decoder;
 	const Graphics::Surface *_frame = nullptr;
+};
+
+// The CD stores patch/mouth pairs; GOG stores the same poses as Bink frames.
+class RunawayFilmPortrait {
+public:
+	bool load(char chapter, uint movie);
+	bool draw(Graphics::ManagedSurface &surface, const Common::Rect &destination, uint portrait, uint mouth);
+
+private:
+	RunawayVideo _video;
+	ChunkArchive _archive;
+	RunawayAnimation _mouth;
+	Graphics::ManagedSurface _portrait, _talking;
+	Common::Array<Graphics::ManagedSurface> _faces;
+	Common::Rect _faceRect;
+	bool _loaded = false;
+	int _loadedPortrait = -1;
+	char _chapter = 'B';
+	uint _movie = 0;
 };
 
 } // namespace Hollywood

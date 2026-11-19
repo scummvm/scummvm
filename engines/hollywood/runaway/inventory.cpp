@@ -62,6 +62,7 @@ void RunawayInventory::captureState(RunawaySaveState &state) const {
 	state.syringeFilled = _syringeFilled;
 	state.chartWritten = _chartWritten;
 	state.headWig = _headWig;
+	state.museumItems = _museum;
 }
 
 void RunawayInventory::restoreState(const RunawaySaveState &state) {
@@ -77,6 +78,20 @@ void RunawayInventory::restoreState(const RunawaySaveState &state) {
 	_syringeFilled = state.syringeFilled;
 	_chartWritten = state.chartWritten;
 	_headWig = state.headWig;
+	_museum = state.museumItems;
+	_newItem = 0;
+}
+
+void RunawayInventory::startChapter(byte chapter) {
+	_chapter = chapter;
+	_items.clear();
+	_selected = _newItem = 0;
+	if (chapter == 2) {
+		_museum = RunawaySaveState::MuseumItems();
+		const byte initial[] = {1, 2, 3, 4, 7};
+		for (uint i = 0; i < ARRAYSIZE(initial); ++i)
+			add(initial[i]);
+	}
 	_newItem = 0;
 }
 
@@ -122,6 +137,16 @@ Common::U32String RunawayInventory::name(byte item) const {
 	}
 	if (_chapter == 1 && item == 13 && _water == 1)
 		return Common::U32String("Glass with water");
+	if (_chapter == 2) {
+		if (item == 6 && _museum.frozenBattery)
+			return Common::U32String("Frozen battery");
+		if (item == 11 && _museum.rubyRemoved)
+			return Common::U32String("Mayan mask without ruby");
+		if (item == 14 && _museum.coffee)
+			return Common::U32String(_museum.coffee == 1 ? "Bowl with ground coffee" : "Empty bowl");
+		if (item == 18 && _museum.batteryInLadle)
+			return Common::U32String("Ladle with battery");
+	}
 	if (_chapter == 2)
 		return item < ARRAYSIZE(kMuseumItemNames) ? Common::U32String(kMuseumItemNames[item]) : Common::U32String();
 	if (_chapter == 1)
@@ -132,6 +157,14 @@ Common::U32String RunawayInventory::name(byte item) const {
 }
 
 uint RunawayInventory::icon(byte item) const {
+	if (_chapter == 2) {
+		if (item == 7 && _museum.restoredCrucifix) return 24;
+		if (item == 14 && _museum.coffee) return 20 + _museum.coffee;
+		if (item == 6 && _museum.frozenBattery) return 25;
+		if (item == 11 && _museum.rubyRemoved) return 20;
+		if (item == 18 && _museum.batteryInLadle) return 23;
+		if (item == 19 && _museum.packageFilled) return 26;
+	}
 	if (_chapter == 1) {
 		if (item == 15 && _syringeFilled)
 			return 20;
@@ -161,7 +194,7 @@ uint RunawayInventory::cursor(byte item) const {
 	if (_chapter == 1 && item == 13 && _water == 1)
 		return 85;
 	if (_chapter == 2)
-		return item && item < ARRAYSIZE(kMuseumItemNames) ? 11 + item * 2 : 0;
+		return item && item < ARRAYSIZE(kMuseumItemNames) ? (_museumDemo ? 11 + item * 2 : 39 + icon(item) * 2) : 0;
 	if (_chapter == 1)
 		return item && item <= 19 ? (item == 16 ? 81 : 39 + item * 2 - (item > 16 ? 2 : 0)) : 0;
 	if (item == 1 && _clothState)
@@ -185,7 +218,18 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 	if (_chapter == 2) {
 		if (!item || item >= ARRAYSIZE(kMuseumItemNames))
 			return Reply();
-		return Reply(item < 5 ? 49 + item : 95 + item, item == 7 ? 1 : 0);
+		byte variation = 0;
+		switch (item) {
+		case 5: variation = _museum.voiceRecorded; break;
+		case 6: variation = _museum.frozenBattery; break;
+		case 7: variation = _museum.restoredCrucifix; break;
+		case 8: case 11: variation = _museum.rubyRemoved; break;
+		case 14: variation = _museum.coffee; break;
+		case 18: variation = _museum.batteryInLadle; break;
+		case 19: variation = _museum.packageFilled; break;
+		default: break;
+		}
+		return Reply(item < 5 ? 49 + item : 95 + item, variation);
 	}
 	if (_chapter == 1)
 		return Reply(item && item <= 19 ? (item == 3 ? 74 : 49 + item) : 1);
@@ -237,6 +281,42 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 			return Reply(70, 1);
 		if (first == 6 && second == 11)
 			return Reply(72, 4);
+		return Reply();
+	}
+	if (_chapter == 2) {
+		if (first == 5 && second == 6) {
+			if (!_museum.frozenBattery)
+				return Reply(115);
+			_museum.recorderBattery = 3;
+			remove(6);
+			return Reply(115, 1);
+		}
+		if (first == 6 && second == 18) {
+			if (_museum.frozenBattery)
+				return Reply(116, 2);
+			_museum.batteryInLadle = 1;
+			remove(6);
+			return Reply(116);
+		}
+		if (first == 8 && second == 11) {
+			if (_museum.rubyRemoved)
+				return Reply(117, 2);
+			_museum.rubyRemoved = 1;
+			add(12);
+			return Reply(117);
+		}
+		if (first == 11 && second == 12)
+			return Reply(120);
+		if (first == 14 && second == 19) {
+			if (_museum.coffee != 1)
+				return Reply(_museum.coffee ? 1 : 121);
+			_museum.coffee = 2;
+			_museum.packageFilled = 1;
+			return Reply(121, 1);
+		}
+		if (first == 9 || second == 9) return Reply(118);
+		if (first == 10 || second == 10) return Reply(119);
+		if (first == 15 || second == 15) return Reply(122);
 		return Reply();
 	}
 	if (_chapter != 3)

@@ -33,7 +33,7 @@ namespace Hollywood {
 class RunawayIntro {
 public:
 	explicit RunawayIntro(Audio::Mixer *mixer) : _audio(mixer), _opening(_audio) {}
-	bool load(bool fullGame = false);
+	bool load(bool fullGame = false, byte chapter = 0);
 	void start(uint32 now);
 	void skip(uint32 now);
 	void update(uint32 now);
@@ -50,6 +50,7 @@ private:
 	RunawayAudio _audio;
 	RunawayOpening _opening;
 	bool _fullGame = false;
+	byte _chapter = 0;
 	RunawayAnimation _logo[3];
 	Graphics::ManagedSurface _story, _screen;
 	Phase _phase = kFinished;

@@ -120,7 +120,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4030(uint16 action) {
 		say(2, 2);
 		return kBackgroundChanged;
 	case 304:
-		say(3, _safeOpen);
+		say(3, museumChapter() ? _museum.safeUsed : _safeOpen);
 		return kHandled;
 	case 308:
 		say(7, _moneyIdentified);
@@ -136,7 +136,25 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4030(uint16 action) {
 		say(10);
 		say(10, 1);
 		return kBackgroundChanged;
+	case 311:
+		say(11, _museum.shelfBooksSeen);
+		_museum.shelfBooksSeen = 1;
+		return kHandled;
 	case 321: // Toggle the safe with the strange key.
+		if (museumChapter()) {
+			byte brian[52], safe[52];
+			for (uint i = 0; i < ARRAYSIZE(brian); ++i) {
+				brian[i] = i <= 26 ? (i ? i - 1 : 0) : 51 - i;
+				const uint frame = MIN<uint>(12, i > 27 ? i - 27 : 0);
+				safe[i] = _safeOpen ? 12 - frame : frame;
+			}
+			if (!_safeOpen && !_museum.safeUsed)
+				say(20);
+			beginRoomAnimation(321, 16, 26, brian, ARRAYSIZE(brian));
+			setRoomAnimationOverlay(_recorder == kTaken ? 15 : 14, 13, safe, ARRAYSIZE(safe));
+			_inventory.select(0);
+			return kHandled;
+		}
 		_safeOpen = !_safeOpen;
 		_inventory.select(0);
 		if (_safeOpen) {

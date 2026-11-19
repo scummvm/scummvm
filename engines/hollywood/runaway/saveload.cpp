@@ -84,6 +84,56 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(syringeFilled, 5);
 	s.syncAsByte(chartWritten, 5);
 	s.syncAsByte(headWig, 5);
+	s.syncAsByte(museum.susan, 6);
+	s.syncAsByte(museum.restoration, 6);
+	s.syncAsByte(museum.laserUpgraded, 6);
+	s.syncAsByte(museum.laserSeen, 6);
+	s.syncAsByte(museum.shelvesSeen, 6);
+	s.syncAsByte(museum.susanMet, 6);
+	s.syncAsByte(museum.labVisited, 6);
+	s.syncAsByte(museum.shelfBooksSeen, 6);
+	s.syncAsByte(museum.safeUsed, 6);
+	s.syncAsByte(museum.willyMet, 6);
+	s.syncAsByte(museum.batteryRequested, 6);
+	s.syncAsByte(museum.coffeeMachine, 6);
+	s.syncAsByte(museum.coffeeSeen, 6);
+	s.syncAsByte(museum.basketSeen, 6);
+	s.syncAsByte(museum.needsPackage, 6);
+	s.syncAsByte(museum.needsGroundCoffee, 6);
+	s.syncAsByte(museum.willyInLab, 6);
+	s.syncAsByte(museum.keypad, 6);
+	s.syncAsByte(museum.sawCode, 6);
+	s.syncAsByte(museum.phoneUsed, 6);
+	s.syncAsByte(museum.voiceLockSeen, 6);
+	s.syncAsByte(museum.chamberOpen, 6);
+	s.syncAsByte(museum.maskTaken, 6);
+	s.syncAsByte(museum.keyTaken, 6);
+	s.syncAsByte(museum.ladleTaken, 6);
+	s.syncAsByte(museum.cabinetSeen, 6);
+	s.syncAsByte(museum.scannerSeen, 6);
+	s.syncAsByte(museum.nitrogenSeen, 6);
+	s.syncAsByte(museum.microscopeSeen, 6);
+	s.syncAsByte(museum.talcSeen, 6);
+	s.syncAsByte(museum.varnishSeen, 6);
+	s.syncAsByte(museum.mayanObjectsSeen, 6);
+	s.syncAsByte(museum.coffeeBeansTaken, 6);
+	s.syncAsByte(museum.buttonSeen, 6);
+	s.syncAsByte(museum.ownVoiceTried, 6);
+	s.syncAsByte(museum.analysisDoorSeen, 6);
+	s.syncAsByte(museum.leftLabOnce, 6);
+	s.syncAsByte(museum.keySeen, 6);
+	s.syncBytes(museum.exhibitSeen, sizeof(museum.exhibitSeen), 6);
+	s.syncAsUint16LE(museum.keypadDigits, 6);
+	s.syncAsUint32LE(museum.chamberTime, 6);
+	s.syncAsByte(museumItems.businessCardExamined, 6);
+	s.syncAsByte(museumItems.restoredCrucifix, 6);
+	s.syncAsByte(museumItems.voiceRecorded, 6);
+	s.syncAsByte(museumItems.coffee, 6);
+	s.syncAsByte(museumItems.frozenBattery, 6);
+	s.syncAsByte(museumItems.rubyRemoved, 6);
+	s.syncAsByte(museumItems.recorderBattery, 6);
+	s.syncAsByte(museumItems.batteryInLadle, 6);
+	s.syncAsByte(museumItems.packageFilled, 6);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -111,7 +161,7 @@ bool RunawaySaveState::valid() const {
 	if (upperFloor > 1 || books > 2 || recorder > 2 || moneyIdentified > 1 || safeOpen > 1 ||
 			varnishTaken > 1 || talcTaken > 1 || coffeeTaken > 1 || keyCount > 4)
 		return false;
-	if (game == kRunawayMuseumDemo) {
+	if (game == kRunawayMuseumDemo || (game == kRunawayFullGame && chapter() == 2)) {
 		const RunawayRoom *room = findRunawayRoom(scene);
 		if (!room || scene < 4000 || x >= room->width || y >= room->height || camera > room->width - 1024 ||
 				cameraY > room->height - 600)
@@ -126,13 +176,31 @@ bool RunawaySaveState::valid() const {
 			hospital.book > 2 || hospital.blankChart > 2 || hospital.headTaken > 1 || hospital.pillowsTaken > 1 ||
 			markerInk > 3 || syringeFilled > 1 || chartWritten > 1 || headWig > 1)
 		return false;
-	if (game == kRunawayFullGame && chapter() != 3) {
+	if (game == kRunawayFullGame && chapter() == 1) {
 		const RunawayRoom *room = findRunawayRoom(scene);
 		if (!room || (room->number != kHospitalBedroom && room->number != kHospitalStoreroom && room->number != kHospitalBathroom) ||
 				x >= room->width || y >= room->height || cameraY ||
 				camera < (room->number == kHospitalBedroom ? 156 : 0) || camera > room->width - 1024)
 			return false;
 	}
+	if (museum.susan > 3 || museum.restoration > 2 || museum.laserUpgraded > 1 ||
+			museum.laserSeen > 1 || museum.shelvesSeen > 1 || museum.susanMet > 1 ||
+			museum.labVisited > 1 || museum.shelfBooksSeen > 1 || museum.safeUsed > 1 ||
+			museum.willyMet > 2 || museum.batteryRequested > 1 || museum.coffeeMachine > 2 ||
+			museum.coffeeSeen > 1 || museum.basketSeen > 1 || museum.needsPackage > 1 ||
+			museum.needsGroundCoffee > 1 || museum.willyInLab > 2 || museum.keypad > 4 ||
+			museum.sawCode > 2 || museum.phoneUsed > 1 || museum.voiceLockSeen > 1 ||
+			museum.chamberOpen > 1 || museum.maskTaken > 1 || museum.keyTaken > 1 ||
+			museum.ladleTaken > 1 || museum.cabinetSeen > 1 || museum.scannerSeen > 1 ||
+			museum.nitrogenSeen > 1 || museum.microscopeSeen > 1 || museum.talcSeen > 1 ||
+			museum.varnishSeen > 1 || museum.mayanObjectsSeen > 1 || museum.coffeeBeansTaken > 1 ||
+			museum.buttonSeen > 1 || museum.ownVoiceTried > 1 || museum.analysisDoorSeen > 1 || museum.leftLabOnce > 1 || museum.keySeen > 1 ||
+			museum.exhibitSeen[0] > 1 || museum.exhibitSeen[1] > 1 || museum.exhibitSeen[2] > 1 ||
+			museum.keypadDigits > 9999 || museum.chamberTime > 30000 || museumItems.businessCardExamined > 1 ||
+			museumItems.restoredCrucifix > 1 || museumItems.voiceRecorded > 1 || museumItems.coffee > 2 ||
+			museumItems.frozenBattery > 1 || museumItems.rubyRemoved > 1 || museumItems.recorderBattery > 4 ||
+			museumItems.batteryInLadle > 1 || museumItems.packageFilled > 1)
+		return false;
 	if ((coolerMoved && ice != 2) || ((hatch != 0) != (coolerMoved != 0)))
 		return false;
 	for (uint i = 0; i < sizeof(pickedUp); ++i) {
@@ -154,7 +222,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 5)
+	if (version < 1 || version > 6)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -166,9 +234,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(5);
+	stream.writeUint16LE(6);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(5);
+	s.setVersion(6);
 	sync(s);
 	return !s.err();
 }

@@ -37,6 +37,27 @@ struct RunawaySaveState {
 		byte storeroomVisited = 0, syringesSeen = 0, sprayTaken = 0, book = 0, blankChart = 0, headTaken = 0, pillowsTaken = 0;
 	} hospital;
 
+	struct Museum {
+		byte susan = 0, restoration = 0, laserUpgraded = 0, laserSeen = 0, shelvesSeen = 0;
+		byte susanMet = 0, labVisited = 0, shelfBooksSeen = 0, safeUsed = 0;
+		byte willyMet = 0, batteryRequested = 0, coffeeMachine = 0, coffeeSeen = 0;
+		byte basketSeen = 0, needsPackage = 0, needsGroundCoffee = 0, willyInLab = 0;
+		byte keypad = 0, sawCode = 0, phoneUsed = 0, voiceLockSeen = 0;
+		byte chamberOpen = 0, maskTaken = 0, keyTaken = 0, ladleTaken = 0;
+		byte cabinetSeen = 0, scannerSeen = 0, nitrogenSeen = 0, microscopeSeen = 0;
+		byte talcSeen = 0, varnishSeen = 0, mayanObjectsSeen = 0, coffeeBeansTaken = 0;
+		byte buttonSeen = 0, ownVoiceTried = 0, analysisDoorSeen = 0, leftLabOnce = 0, keySeen = 0;
+		byte exhibitSeen[3] = {};
+		uint16 keypadDigits = 0;
+		uint32 chamberTime = 0;
+	} museum;
+
+	struct MuseumItems {
+		byte businessCardExamined = 0;
+		byte restoredCrucifix = 0, voiceRecorded = 0, coffee = 0, frozenBattery = 0;
+		byte rubyRemoved = 0, recorderBattery = 0, batteryInLadle = 0, packageFilled = 0;
+	} museumItems;
+
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;
 	byte coolerMoved = 0, coolerInspected = 0, peeked = 0, ice = 0, hatch = 0;

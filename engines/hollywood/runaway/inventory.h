@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/ustr.h"
 #include "hollywood/runaway/detection.h"
+#include "hollywood/runaway/saveload.h"
 
 namespace Hollywood {
 
@@ -42,8 +43,10 @@ public:
 		Reply(uint16 c = 1, byte v = 0) : cue(c), variation(v) {}
 	};
 	RunawayInventory(const RunawayStrings &strings, RunawayGameType game) :
-		_strings(strings), _chapter(game == kRunawayFullGame ? 1 : game == kRunawayMuseumDemo ? 2 : 3) {}
+		_strings(strings), _museumDemo(game == kRunawayMuseumDemo), _chapter(game == kRunawayFullGame ? 1 : game == kRunawayMuseumDemo ? 2 : 3) {}
 	void setChapter(byte chapter) { _chapter = chapter; }
+	void startChapter(byte chapter);
+	RunawaySaveState::MuseumItems &museum() { return _museum; }
 	bool contains(byte item) const;
 	bool add(byte item);
 	void remove(byte item);
@@ -68,7 +71,9 @@ public:
 
 private:
 	const RunawayStrings &_strings;
+	const bool _museumDemo;
 	byte _chapter;
+	RunawaySaveState::MuseumItems _museum;
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
 	byte _water = 0;

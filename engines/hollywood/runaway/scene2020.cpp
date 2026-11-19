@@ -20,6 +20,7 @@
  */
 
 #include "common/textconsole.h"
+#include "common/file.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene.h"
 #include "hollywood/runaway/scene_data.h"
@@ -428,7 +429,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 		if (!_hospital.window)
 			say(28, 1);
 		_hospital.window = MIN<int>(2, _hospital.window + 1);
-		beginHospitalAnimation(action, 4, 42);
+		beginRoomAnimation(action, 4, 42);
 		return kHandled;
 	case 314:
 		say(10, _hospital.window >= 2);
@@ -455,7 +456,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 			say(31);
 			return kHandled;
 		}
-		beginHospitalAnimation(action, 16, 29);
+		beginRoomAnimation(action, 16, 29);
 		return kHandled;
 	case 336:
 		say(32);
@@ -477,7 +478,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 			say(34);
 			return kHandled;
 		}
-		beginHospitalAnimation(action, 19, 35);
+		beginRoomAnimation(action, 19, 35);
 		_actionFrames.push_back(33);
 		for (int frame = 32; frame >= 0; --frame)
 			_actionFrames.push_back(frame);
@@ -591,6 +592,74 @@ void RunawayRoomScene::update2020() {
 	applyRunawayPatch(_monitorPatches[(_now / 80) % 26 >= 17], _background);
 }
 
+void RunawayRoomScene::adaptGogFilm(const RunawaySequence::Command *commands) {
+	typedef RunawaySequence S;
+	_filmCommands.clear();
+	uint movie = 0, part = 1;
+	for (uint i = 0; commands[i].operation != S::kEnd; ++i) {
+		S::Command command = commands[i];
+		if (command.operation == S::kOpen) {
+			movie = command.a;
+			part = 1;
+		}
+		if (movie == 2 && command.operation == S::kPlay) {
+			if (command.a >= 820)
+				continue; // These CD shots are separate stills in the GOG edition.
+			uint targetPart = command.a >= 720 ? 4 : command.a >= 200 ? 3 : 1;
+			if (command.a == 101) {
+				_filmCommands.push_back(S::Command(S::kPlay, 101, 199));
+				targetPart = 3;
+				command.a = 200;
+			}
+			if (part != targetPart) {
+				_filmCommands.push_back(S::Command(S::kOpen, movie, targetPart));
+				part = targetPart;
+			}
+			const uint offset = part == 4 ? 720 : part == 3 ? 200 : 0;
+			command.a -= offset;
+			command.b -= offset;
+		} else if (movie == 2 && command.operation == S::kTalk && command.c) {
+			_filmCommands.push_back(S::Command(S::kStill, command.c == 1 ? 0 : 1, 1));
+			command.c = command.c == 1 ? 3 : 1;
+		} else if (movie == 7 && command.operation == S::kTalk && command.b >= 9) {
+			static const uint16 stills[] = {236, 237, 238, 239, 240, 241, 241, 242};
+			_filmCommands.push_back(S::Command(S::kStill, stills[command.b - 9]));
+		} else if (movie == 9 && command.operation == S::kPlay) {
+			uint targetPart = 1;
+			if (command.a == 1608) {
+				targetPart = 2; command.a = 0; command.b = 23;
+			} else if (command.a == 1632 || command.a == 1633) {
+				targetPart = 3; command.a = 0; command.b = 54;
+			} else if (command.a == 1688) {
+				targetPart = 4; command.a = 0; command.b = 24;
+			} else if (command.a == 65) {
+				command.a = 66;
+			} else if (command.a == 106) {
+				command.b = 215;
+			} else if (command.a >= 222 && command.a <= 1147) {
+				++command.a;
+				++command.b;
+			}
+			if (part != targetPart) {
+				_filmCommands.push_back(S::Command(S::kOpen, movie, targetPart));
+				part = targetPart;
+			}
+		} else if (movie == 9 && command.operation == S::kTalk) {
+			static const uint16 stills[] = {
+				29, 42, 43, 44, 45, 53, 0, 216, 255, 257, 258, 259, 0, 260, 260, 260,
+				0, 302, 325, 0, 0, 0, 0, 991, 1026, 1118, 0, 1209, 1222, 0, 0, 0, 0, 1591, 1598
+			};
+			if (part != 1) {
+				_filmCommands.push_back(S::Command(S::kOpen, movie));
+				part = 1;
+			}
+			_filmCommands.push_back(S::Command(S::kStill, stills[command.b]));
+		}
+		_filmCommands.push_back(command);
+	}
+	_filmCommands.push_back(S::Command(S::kEnd));
+}
+
 void RunawayRoomScene::startHospitalFilm(HospitalFilm film) {
 	const RunawaySequence::Command *commands = nullptr;
 	switch (film) {
@@ -604,6 +673,10 @@ void RunawayRoomScene::startHospitalFilm(HospitalFilm film) {
 	_roomAction = 0;
 	_actionFrames.clear();
 	_caption.clear();
+	if (Common::File::exists("DATAVC00.000")) {
+		adaptGogFilm(commands);
+		commands = _filmCommands.data();
+	}
 	_sequence.start(commands, _text, _now);
 }
 
@@ -641,46 +714,6 @@ void RunawayRoomScene::finishHospitalFilm() {
 	_audio.playMusic(11, false);
 	if (_room == kHospitalBedroom)
 		_audio.playEffect(30, 3, 1, true);
-}
-
-void RunawayRoomScene::beginHospitalAnimation(uint16 action, uint chunk, uint frames, const byte *order, uint count) {
-	if (!_actionAnimation.load(_archive, chunk, frames))
-		error("Cannot load Runaway room %u animation %u", _room, chunk);
-	_actionFrames.clear();
-	for (uint i = 0; i < (order ? count : frames); ++i)
-		_actionFrames.push_back(order ? order[i] : i);
-	_roomAction = action;
-	_actionStage = 0;
-	_actionStep = 0;
-	_actionStarted = _now;
-}
-
-void RunawayRoomScene::updateHospitalAnimation() {
-	if (!_roomAction || _actionFrames.empty())
-		return;
-	if (speaking() || _pathIndex < _path.size()) {
-		_actionStarted = _now;
-		return;
-	}
-	while (_now - _actionStarted >= 80) {
-		_actionStarted += 80;
-		if (++_actionStep == _actionFrames.size()) {
-			const uint16 action = _roomAction;
-			_roomAction = 0;
-			_actionFrames.clear();
-			finishHospitalAnimation(action);
-			return;
-		}
-		if ((_roomAction == 335 && _actionStep == 15) || (_roomAction == 339 && _actionStep == 47))
-			_audio.playEffect(46);
-		if (_roomAction == 339 && _actionStep == 16)
-			_audio.playEffect(45);
-		if (_roomAction == 339 && _actionStep == 1 && !applyPatch(18))
-			error("Cannot clear Runaway hospital chart");
-		if ((_roomAction == 332 && (_actionStep == 21 || _actionStep == 35 || _actionStep == 41)) ||
-				(_room == kHospitalStoreroom && _roomAction == 302 && (_actionStep == 23 || _actionStep == 36)))
-			_audio.playFootstep(1, _random.getRandomBit());
-	}
 }
 
 void RunawayRoomScene::finishHospitalAnimation(uint16 action) {

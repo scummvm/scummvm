@@ -27,7 +27,10 @@
 
 namespace Hollywood {
 
-void RunawaySequence::start(const Command *commands, const SceneTextStore &text, uint32 now) {
+void RunawaySequence::start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter) {
+	_background.free();
+	_destination = Common::Rect(0, kRunawayViewportTop, kRunawayScreenWidth, kRunawayViewportTop + kRunawayViewportHeight);
+	_chapter = chapter;
 	_text = &text;
 	_audio.stopSpeech();
 	_audio.stopEffect();
@@ -39,6 +42,11 @@ void RunawaySequence::start(const Command *commands, const SceneTextStore &text,
 	_entered = _showPortrait = false;
 	_now = _started = now;
 	update(now);
+}
+
+void RunawaySequence::setBackground(const Graphics::ManagedSurface &background, const Common::Rect &destination) {
+	_background.copyFrom(background);
+	_destination = destination;
 }
 
 void RunawaySequence::advance() {
@@ -80,16 +88,6 @@ void RunawaySequence::nextLine() {
 	_lipSync.start(_subtitle, _now, duration, _random, line.sample);
 }
 
-bool RunawaySequence::loadPortrait(uint chunk) {
-	if (!_portraits.open(Common::Path(Common::String::format("DATAVB%02u.002", _movie)), 40))
-		return false;
-	Common::Array<byte> patch;
-	_portrait.create(512, 300, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-	_talking.create(512, 300, _portrait.format);
-	return _portraits.readVariableChunk(chunk, patch) && applyRunawayPatch(patch, _portrait) &&
-		_mouth.load(_portraits, chunk + 1, 12);
-}
-
 void RunawaySequence::update(uint32 now) {
 	_now = now;
 	if (!_subtitle.empty() && (int32)(now - _deadline) >= 0)
@@ -100,23 +98,35 @@ void RunawaySequence::update(uint32 now) {
 			_entered = true;
 			switch (command.operation) {
 			case kOpen: {
-				const Common::String name = Common::String::format("DATAVB%02u.001", command.a);
+				const Common::String name = Common::String::format("DATAV%c%02u.%03u", _chapter, command.a, command.b ? command.b : 1);
 				if (!_video.load(name.c_str()))
 					error("Cannot load Runaway film %s", name.c_str());
 				_movie = command.a;
+				_stills.close();
+				_useStill = false;
 				_showPortrait = false;
 				break;
 			}
 			case kPlay:
+				_useStill = false;
 				_showPortrait = false;
 				_repeatAt = 0;
 				if (!_video.seekToFrame(command.a))
 					error("Cannot seek to Runaway film frame %u", command.a);
 				break;
+			case kStill:
+				_showPortrait = false;
+				_useStill = command.b != 0;
+				if (_useStill && !_stills.frameCount() && !_stills.load(Common::String::format("DATAV%c%02u.002", _chapter, _movie).c_str()))
+					error("Cannot load Runaway film stills");
+				if (!(_useStill ? _stills : _video).seekToFrame(command.a))
+					error("Cannot load Runaway film still %u", command.a);
+				break;
 			case kTalk:
 				_showPortrait = command.c != 0;
 				_silentPortrait = command.d != 0;
-				if (_showPortrait && !loadPortrait(command.c - 1))
+				_portrait = (command.c - 1) / 2;
+				if (_showPortrait && !_portraits.load(_chapter, _movie))
 					error("Cannot load Runaway film portrait %u", command.c - 1);
 				speak(command.a, command.b);
 				break;
@@ -178,6 +188,7 @@ void RunawaySequence::update(uint32 now) {
 			break;
 		case kEnd:
 			_video.close();
+			_stills.close();
 			_audio.stopSpeech();
 			_audio.stopEffect();
 			_lipSync.stop();
@@ -211,13 +222,13 @@ void RunawaySequence::skip() {
 
 void RunawaySequence::draw(Graphics::ManagedSurface &screen) {
 	screen.clear();
-	const Common::Rect viewport(0, kRunawayViewportTop, kRunawayScreenWidth, kRunawayViewportTop + kRunawayViewportHeight);
+	const Common::Rect &viewport = _destination;
+	if (_background.w)
+		screen.blitFrom(_background);
+	(_useStill ? _stills : _video).draw(screen, viewport);
 	if (_showPortrait) {
-		_talking.blitFrom(_portrait);
-		_mouth.draw(_talking, _silentPortrait ? 0 : speechFrame(), 0, 0);
-		screen.blitFrom(_talking, Common::Rect(512, 300), viewport);
-	} else {
-		_video.draw(screen, viewport);
+		if (!_portraits.draw(screen, viewport, _portrait, _silentPortrait ? 0 : speechFrame()))
+			error("Cannot draw Runaway film portrait %u", _portrait);
 	}
 }
 

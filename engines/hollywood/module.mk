@@ -154,9 +154,11 @@ MODULE_OBJS = \
 	runaway/scene2020.o \
 	runaway/scene2060.o \
 	runaway/scene2080.o \
+	runaway/scene4010.o \
 	runaway/scene4030.o \
 	runaway/scene4050.o \
 	runaway/scene4060.o \
+	runaway/scene4070.o \
 	runaway/scene4090.o \
 	runaway/scene4100.o \
 	runaway/scene4140.o \

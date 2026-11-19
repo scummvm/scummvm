@@ -97,7 +97,7 @@ void RunawayRoomScene::updateMaps2060() {
 RunawayRoomScene::ActionResult RunawayRoomScene::execute2060(uint16 action) {
 	switch (action) {
 	case 302:
-		beginHospitalAnimation(action, 4, 44);
+		beginRoomAnimation(action, 4, 44);
 		return kHandled;
 	case 303:
 		_transition.scene = 2022;

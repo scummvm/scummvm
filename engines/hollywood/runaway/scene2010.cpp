@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/file.h"
 #include "common/textconsole.h"
 #include "common/str-enc.h"
 #include "common/util.h"
@@ -36,11 +37,13 @@ const Graphics::PixelFormat kPictureFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
 
 } // End of anonymous namespace
 
-bool RunawayOpening::load() {
+bool RunawayOpening::load(byte chapter) {
+	_chapterOnly = chapter != 0;
+	_chapter = chapter ? chapter : 1;
 	ChunkArchive archive;
 	if (!archive.open(Common::Path("RESOURCE.A00")) ||
 			!loadRunawaySurface(archive, 6, 1024, 600, _narratorBackground) ||
-			!archive.readVariableChunk(7, _chapterTitle) ||
+			!archive.readVariableChunk(6 + _chapter, _chapterTitle) ||
 			!_text.loadStage("RESOURCE.003", "Runaway narrator", 100))
 		return false;
 	const uint narratorFrames[] = {178, 35, 7, 35, 35, 35};
@@ -48,6 +51,8 @@ bool RunawayOpening::load() {
 		if (!_narrator[i].load(archive, i, narratorFrames[i]))
 			return false;
 	}
+	if (_chapterOnly)
+		return true;
 
 	if (!archive.open(Common::Path("RESOURCE.B01")) ||
 			!loadRunawaySurface(archive, 0, 1592, 600, _city) ||
@@ -78,20 +83,12 @@ bool RunawayOpening::load() {
 		if (!_credits[i].load(archive, i + 26, 12))
 			return false;
 	}
-	if (!archive.open(Common::Path("DATAVB08.002")))
-		return false;
-	_portrait.create(512, 300, _city.format);
-	for (uint i = 0; i < ARRAYSIZE(_heads); ++i) {
-		if (!archive.readVariableChunk(i * 2, _portraits[i]) ||
-				!_heads[i].load(archive, i * 2 + 1, 12))
-			return false;
-	}
-	return true;
+	return _portraits.load('B', 8);
 }
 
 void RunawayOpening::start(uint32 now) {
-	_audio.setChapter(1);
-	enter(kSitDown, now);
+	_audio.setChapter(_chapter);
+	enter(_chapterOnly ? kChapter : kSitDown, now);
 }
 
 void RunawayOpening::enter(Step step, uint32 now) {
@@ -146,11 +143,19 @@ void RunawayOpening::enter(Step step, uint32 now) {
 			_themeStarted = true;
 		}
 		break;
-	case kStayAway:      speak(1, 2); break;
+	case kStayAway:
+		if (Common::File::exists("DATAVC00.000"))
+			_failed = !_video.seekToFrame(2566);
+		speak(1, 2);
+		break;
 	case kApproach:      startMovie(nullptr, 2578, 2626); break;
 	case kUnconscious:   speak(1, 3); break;
 	case kTurn:          startMovie(nullptr, 2638, 2653); break;
-	case kHospital:      speak(1, 4); break;
+	case kHospital:
+		if (Common::File::exists("DATAVC00.000"))
+			_failed = !_video.seekToFrame(2655);
+		speak(1, 4);
+		break;
 	case kHitman:        speak(1, 5); break;
 	case kReply:         speak(1, 6); break;
 	case kFilmEnd:
@@ -163,9 +168,24 @@ void RunawayOpening::enter(Step step, uint32 now) {
 		_audio.stopEffect();
 		_narrating = true;
 		_failed = !_text.loadStage("RESOURCE.003", "Runaway narrator", 100);
-		_bodyFrame = 20;
-		_headBank = 1;
-		speak(1, 0);
+		_bodyFrame = _chapter == 2 && _chapterVariation ? 160 : _chapter == 3 && !_chapterVariation ? 177 :
+			_chapter == 3 && _chapterVariation == 2 ? 50 : 20;
+		_headBank = _chapter == 2 && _chapterVariation ? 4 : _chapter == 3 && !_chapterVariation ? 5 :
+			_chapter == 3 && _chapterVariation == 2 ? 2 : 1;
+		speak(_chapter, _chapterVariation);
+		break;
+	case kChapterGesture:
+		_headBank = 0;
+		if (_chapter == 2) {
+			_firstFrame = 128;
+			_lastFrame = 160;
+		} else if (_chapterVariation == 1) {
+			_firstFrame = 177;
+			_lastFrame = 161;
+		} else {
+			_firstFrame = _chapterVariation == 2 ? 21 : 51;
+			_lastFrame = _chapterVariation == 2 ? 50 : 75;
+		}
 		break;
 	case kFinished:
 		_video.close();
@@ -181,7 +201,17 @@ void RunawayOpening::enter(Step step, uint32 now) {
 }
 
 void RunawayOpening::advance() {
-	enter((Step)(_step + 1), _now);
+	if (_step == kChapter) {
+		const uint variations = _chapter == 2 ? 2 : _chapter == 3 ? 5 : 1;
+		if (++_chapterVariation < variations)
+			enter(_chapterVariation < 4 ? kChapterGesture : kChapter, _now);
+		else
+			enter(kFinished, _now);
+	} else if (_step == kChapterGesture) {
+		enter(kChapter, _now);
+	} else {
+		enter((Step)(_step + 1), _now);
+	}
 }
 
 void RunawayOpening::speak(uint16 cue, byte variation) {
@@ -253,6 +283,14 @@ void RunawayOpening::update(uint32 now) {
 	case kLeanBack:
 	case kTurnToScreen:
 	case kTurnBack: {
+		const uint distance = ABS((int)_lastFrame - (int)_firstFrame);
+		const uint offset = MIN(distance, elapsed / 80);
+		_bodyFrame = _lastFrame >= _firstFrame ? _firstFrame + offset : _firstFrame - offset;
+		if (elapsed >= (distance + 1) * 80)
+			advance();
+		break;
+	}
+	case kChapterGesture: {
 		const uint distance = ABS((int)_lastFrame - (int)_firstFrame);
 		const uint offset = MIN(distance, elapsed / 80);
 		_bodyFrame = _lastFrame >= _firstFrame ? _firstFrame + offset : _firstFrame - offset;
@@ -387,7 +425,7 @@ void RunawayOpening::drawNarrator(Graphics::ManagedSurface &screen) {
 		_narrator[_headBank].draw(screen, _lipSync.frame(_now) % 6, 0, kRunawayViewportTop);
 	if (_step == kMontage)
 		_video.draw(screen, Common::Rect(256, 232, 656, 466));
-	if (_step == kChapter)
+	if (_step == kChapter || _step == kChapterGesture)
 		applyRunawayPatch(_chapterTitle, screen, kRunawayViewportTop);
 }
 
@@ -450,17 +488,16 @@ void RunawayOpening::drawFilm(Graphics::ManagedSurface &screen) {
 	}
 	if (_step == kStayAway || _step == kUnconscious || (_step >= kHospital && _step <= kReply)) {
 		const uint portrait = _step == kStayAway ? 0 : _step == kUnconscious ? 1 : 2;
-		applyRunawayPatch(_portraits[portrait], _portrait);
 		// The other hitman speaks off screen; the visible man only blinks.
 		const uint mouth = _step == kHitman ? ((_now - _started) % 2400 < 160 ? 6 : 0) : _lipSync.frame(_now);
-		_heads[portrait].draw(_portrait, mouth, 0, 0);
-		screen.blitFrom(_portrait, Common::Rect(512, 300), viewport);
+		if (!_portraits.draw(screen, viewport, portrait, mouth))
+			_failed = true;
 	}
 }
 
 void RunawayOpening::draw(Graphics::ManagedSurface &screen) {
 	screen.clear();
-	if (_step <= kLastNarration || _step == kChapter)
+	if (_step <= kLastNarration || _step == kChapter || _step == kChapterGesture)
 		drawNarrator(screen);
 	else if (_step == kCity || _step == kCityExit)
 		drawCity(screen);
@@ -469,9 +506,9 @@ void RunawayOpening::draw(Graphics::ManagedSurface &screen) {
 	else if (_step < kFinished)
 		drawFilm(screen);
 	const uint elapsed = _now - _started;
-	if ((_step == kSitDown || _step == kCity || _step == kChapter) && elapsed < 500)
+	if ((_step == kSitDown || _step == kCity || (_step == kChapter && !_chapterVariation)) && elapsed < 500)
 		dimRunawayViewport(screen, elapsed * 2);
-	else if ((_step == kLastNarration || _step == kChapter) && _events)
+	else if ((_step == kLastNarration || (_step == kChapter && _chapterVariation + 1 == (_chapter == 2 ? 2 : _chapter == 3 ? 5 : 1))) && _events)
 		dimRunawayViewport(screen, MIN<uint>(500, _deadline - _now) * 2);
 	else if (_step == kCityExit && elapsed > 3280)
 		dimRunawayViewport(screen, (3780 - MIN<uint>(3780, elapsed)) * 2);

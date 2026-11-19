@@ -69,7 +69,8 @@ private:
 	RunawayScene *createScene(uint16 entryScene);
 	Common::Error changeScene();
 	bool sceneBusy() const;
-	Common::Error playIntro(RunawayMenu &menu);
+	Common::Error playIntro(RunawayMenu &menu, byte chapter = 0);
+	Common::Error startChapter(RunawayMenu &menu, byte chapter);
 	Common::Error playEnding(RunawayMenu &menu);
 	void pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &screen);
 	RunawayMenu::Settings readSettings() const;

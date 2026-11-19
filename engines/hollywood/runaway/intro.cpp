@@ -50,8 +50,13 @@ const uint kStoryHoldDuration = 40000;
 
 } // End of anonymous namespace
 
-bool RunawayIntro::load(bool fullGame) {
+bool RunawayIntro::load(bool fullGame, byte chapter) {
 	_fullGame = fullGame;
+	_chapter = chapter;
+	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	_screen.create(kRunawayScreenWidth, kRunawayScreenHeight, format);
+	if (chapter)
+		return _opening.load(chapter);
 	ChunkArchive archive;
 	if (!archive.open(Common::Path("RESOURCE.A02")))
 		return false;
@@ -59,8 +64,6 @@ bool RunawayIntro::load(bool fullGame) {
 		if (!_logo[i].load(archive, i, kLogoFrameCounts[i]))
 			return false;
 	}
-	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	_screen.create(kRunawayScreenWidth, kRunawayScreenHeight, format);
 	if (_fullGame)
 		return _opening.load();
 
@@ -82,6 +85,10 @@ bool RunawayIntro::load(bool fullGame) {
 }
 
 void RunawayIntro::start(uint32 now) {
+	if (_chapter) {
+		startStory(now);
+		return;
+	}
 	_phase = kLogo;
 	_phaseStarted = now;
 	_audio.playIntroMusic();

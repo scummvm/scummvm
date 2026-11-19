@@ -72,6 +72,38 @@ const RunawayRoom kRunawayScene4090 = {
 	kExits, ARRAYSIZE(kExits)
 };
 
+bool RunawayRoomScene::applyBackground4090() {
+	return !museumChapter() || !_museum.coffeeBeansTaken || applyPatch(4);
+}
+
+RunawayRoomScene::ActionResult RunawayRoomScene::execute4090(uint16 action) {
+	if (!museumChapter())
+		return kUnhandled;
+	switch (action) {
+	case 307: case 308:
+		if (_museum.coffeeBeansTaken) {
+			say(action == 307 ? 5 : 6, action == 307 ? 2 : 3);
+		} else if (_museum.susan == 1 && _museum.coffeeSeen) {
+			say(6, 1);
+			_inventory.add(14);
+			_museum.coffeeBeansTaken = 1;
+			say(6, 2);
+			return kBackgroundChanged;
+		} else {
+			say(action == 307 ? 5 : 6, action == 307 ? _museum.mayanObjectsSeen : 0);
+			_museum.mayanObjectsSeen = 1;
+		}
+		return kHandled;
+	case 313: case 315: case 317: {
+		const uint object = (action - 313) / 2;
+		say(object == 0 ? 10 : object == 1 ? 12 : 13, _museum.exhibitSeen[object]);
+		_museum.exhibitSeen[object] = 1;
+		return kHandled;
+	}
+	default: return kUnhandled;
+	}
+}
+
 float RunawayRoomScene::actorHeight4090() const {
 	const int y = _position.y;
 	return MIN(y, 390) * 0.2f + 122;

@@ -31,12 +31,12 @@
 
 namespace Hollywood {
 
-// The retail opening (2010), followed by chapter one's narration (2000).
+// The retail opening (2010) and the interchapter narration.
 // All timing comes from the engine's pause-aware clock.
 class RunawayOpening {
 public:
 	explicit RunawayOpening(RunawayAudio &audio) : _audio(audio), _random("runawayOpening") {}
-	bool load();
+	bool load(byte chapter = 0);
 	void start(uint32 now);
 	void update(uint32 now);
 	void skip(uint32 now);
@@ -51,7 +51,7 @@ private:
 		kTurnToScreen, kJourney, kMontage, kTurnBack, kLastNarration,
 		kCity, kTitle, kAccident, kAccidentTitle, kAccidentEnd, kCityExit,
 		kFilm, kStayAway, kApproach, kUnconscious, kTurn, kHospital,
-		kHitman, kReply, kFilmEnd, kChapter, kFinished
+		kHitman, kReply, kFilmEnd, kChapter, kChapterGesture, kFinished
 	};
 	void enter(Step step, uint32 now);
 	void advance();
@@ -72,14 +72,16 @@ private:
 	RunawayLipSync _lipSync;
 	RunawayVideo _video;
 	Graphics::ManagedSurface _narratorBackground, _city, _cityTitle;
-	Graphics::ManagedSurface _portrait;
+	RunawayFilmPortrait _portraits;
 	Graphics::ManagedSurface _pictures[17]; // Sixteen pictures, then a dissolve to black.
-	RunawayAnimation _narrator[6], _cityActor, _titles[4], _credits[12], _heads[3];
-	Common::Array<byte> _parallax[3], _chapterTitle, _portraits[3];
+	RunawayAnimation _narrator[6], _cityActor, _titles[4], _credits[12];
+	Common::Array<byte> _parallax[3], _chapterTitle;
 	Step _step = kFinished;
 	uint32 _now = 0, _started = 0, _deadline = 0;
 	uint _frame = 0, _firstFrame = 0, _lastFrame = 0, _events = 0;
 	uint _bodyFrame = 20, _headBank = 1;
+	byte _chapter = 1, _chapterVariation = 0;
+	bool _chapterOnly = false;
 	uint16 _row = 0, _lastRow = 0, _sample = 0;
 	bool _narrating = true, _themeStarted = false, _failed = false;
 	Common::U32String _subtitle;

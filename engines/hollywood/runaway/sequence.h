@@ -32,13 +32,14 @@
 
 namespace Hollywood {
 
-// Retail films interleave AVI ranges, separately stored talking portraits,
+// Retail films interleave movie ranges, separately stored talking portraits,
 // and speech/effects. The scene supplies the original sequence of cues.
 class RunawaySequence {
 public:
 	enum Operation {
-		kOpen,        // Movie number.
+		kOpen,        // Movie number; optional file suffix (defaults to .001).
 		kPlay,        // First/last frame, Playback mode.
+		kStill,       // Frame; second argument selects the separate GOG stills movie.
 		kTalk,        // Cue, variation, portrait chunk + 1 (0 = movie still), offscreen speaker.
 		kSpeech,      // Cue, first/last variation; continues alongside the movie.
 		kWaitSpeech,
@@ -58,7 +59,8 @@ public:
 		byte c, d;
 	};
 	explicit RunawaySequence(RunawayAudio &audio) : _audio(audio), _random("runawaySequence") {}
-	void start(const Command *commands, const SceneTextStore &text, uint32 now);
+	void start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter = 'B');
+	void setBackground(const Graphics::ManagedSurface &background, const Common::Rect &destination);
 	void update(uint32 now);
 	void skip();
 	void draw(Graphics::ManagedSurface &screen);
@@ -70,15 +72,17 @@ private:
 	void advance();
 	void speak(uint cue, uint variation, uint lastVariation = 0);
 	void nextLine();
-	bool loadPortrait(uint chunk);
 
 	RunawayAudio &_audio;
 	Common::RandomSource _random;
 	RunawayLipSync _lipSync;
-	RunawayVideo _video;
-	ChunkArchive _portraits;
-	RunawayAnimation _mouth;
-	Graphics::ManagedSurface _portrait, _talking;
+	RunawayVideo _video, _stills;
+	bool _useStill = false;
+	RunawayFilmPortrait _portraits;
+	Graphics::ManagedSurface _background;
+	Common::Rect _destination;
+	uint _portrait = 0;
+	char _chapter = 'B';
 	const SceneTextStore *_text = nullptr;
 	const Command *_commands = nullptr;
 	uint _index = 0;

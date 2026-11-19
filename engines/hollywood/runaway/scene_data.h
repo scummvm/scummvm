@@ -33,6 +33,7 @@ enum RunawayRoomId {
 	kMuseumOffice = 4030,
 	kMuseumLaboratory = 4050,
 	kMuseumHall = 4060,
+	kMuseumWilly = 4070,
 	kMuseumExhibition = 4090,
 	kMuseumSecurity = 4100,
 	kMuseumKeypad = 4140
@@ -87,6 +88,7 @@ extern const RunawayRoom kRunawayScene2080;
 extern const RunawayRoom kRunawayScene4030;
 extern const RunawayRoom kRunawayScene4050;
 extern const RunawayRoom kRunawayScene4060;
+extern const RunawayRoom kRunawayScene4070;
 extern const RunawayRoom kRunawayScene4090;
 extern const RunawayRoom kRunawayScene4100;
 extern const RunawayRoom kRunawayScene4140;
