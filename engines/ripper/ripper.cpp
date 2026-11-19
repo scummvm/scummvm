@@ -29,7 +29,6 @@
 #include "common/system.h"
 
 #include "engines/util.h"
-#include "graphics/paletteman.h"
 
 #include "ripper/detection.h"
 #include "ripper/console.h"
@@ -178,8 +177,7 @@ void RipperEngine::installScenePalette(const Common::Array<byte> &sourcePalette)
 	Common::Array<byte> palette = sourcePalette;
 	applySharedPalettePatch(palette.data(), kRipperPaletteColorCount);
 	_settings->applyVideoPalette(palette.data(), kRipperPaletteColorCount, true);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0,
-		kRipperPaletteColorCount);
+	setIndexedPaletteIfChanged(palette.data());
 }
 
 bool RipperEngine::selectRandomRipperIdentity(const char *source) {
