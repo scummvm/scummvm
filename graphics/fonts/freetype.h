@@ -28,6 +28,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
+#include FT_STROKER_H
 
 namespace Graphics {
 namespace FreeType {
@@ -39,11 +40,18 @@ extern FT_Error Done_FreeType_With_Mem(FT_Library library, FT_Memory mem);
 extern FT_Error Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags);
 extern FT_Error Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph);
 extern FT_Error Glyph_Copy(FT_Glyph source, FT_Glyph *target);
+extern void Glyph_Get_CBox(FT_Glyph glyph, FT_UInt bbox_mode, FT_BBox *acbox);
 extern FT_Error Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode,
 	FT_Vector *origin, FT_Bool destroy);
+extern FT_Error Glyph_StrokeBorder(FT_Glyph *pglyph, FT_Stroker stroker, FT_Bool inside, FT_Bool destroy);
+extern FT_Error Stroker_New(FT_Library library, FT_Stroker *astroker);
+extern void Stroker_Set(FT_Stroker stroker, FT_Fixed radius, FT_Stroker_LineCap line_cap,
+	FT_Stroker_LineJoin line_join, FT_Fixed miter_limit);
+extern void Stroker_Done(FT_Stroker stroker);
 extern void Done_Glyph(FT_Glyph glyph);
 extern FT_Error Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width,
 	FT_UInt pixel_height);
+extern FT_Error Request_Size(FT_Face face, FT_Size_Request req);
 extern FT_Error New_Face(FT_Library library, const char *pathname,
 	FT_Long face_index, FT_Face *aface);
 extern FT_Error New_Memory_Face(FT_Library library, const FT_Byte *file_base,
@@ -59,4 +67,3 @@ extern FT_Error Get_Kerning(FT_Face face, FT_UInt left_glyph,
 #endif
 
 #endif
-

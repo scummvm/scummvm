@@ -31,6 +31,7 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_MODULE_H
+#include FT_STROKER_H
 
 namespace Graphics {
 namespace FreeType {
@@ -94,6 +95,27 @@ FT_Error Glyph_Copy(FT_Glyph source, FT_Glyph *target) {
 	return FT_Glyph_Copy(source, target);
 }
 
+void Glyph_Get_CBox(FT_Glyph glyph, FT_UInt bbox_mode, FT_BBox *acbox) {
+	FT_Glyph_Get_CBox(glyph, bbox_mode, acbox);
+}
+
+FT_Error Glyph_StrokeBorder(FT_Glyph *pglyph, FT_Stroker stroker, FT_Bool inside, FT_Bool destroy) {
+	return FT_Glyph_StrokeBorder(pglyph, stroker, inside, destroy);
+}
+
+FT_Error Stroker_New(FT_Library library, FT_Stroker *astroker) {
+	return FT_Stroker_New(library, astroker);
+}
+
+void Stroker_Set(FT_Stroker stroker, FT_Fixed radius, FT_Stroker_LineCap line_cap,
+		FT_Stroker_LineJoin line_join, FT_Fixed miter_limit) {
+	FT_Stroker_Set(stroker, radius, line_cap, line_join, miter_limit);
+}
+
+void Stroker_Done(FT_Stroker stroker) {
+	FT_Stroker_Done(stroker);
+}
+
 FT_Error Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode,
 		FT_Vector *origin, FT_Bool destroy) {
 	return FT_Glyph_To_Bitmap(the_glyph, render_mode, origin, destroy);
@@ -106,6 +128,10 @@ void Done_Glyph(FT_Glyph glyph) {
 FT_Error Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width,
 		FT_UInt pixel_height) {
 	return FT_Set_Pixel_Sizes(face, pixel_width, pixel_height);
+}
+
+FT_Error Request_Size(FT_Face face, FT_Size_Request req) {
+	return FT_Request_Size(face, req);
 }
 
 FT_Error New_Face(FT_Library library, const char *pathname,
