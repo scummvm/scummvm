@@ -871,6 +871,10 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 bool CheckboxWidget::handleKeyDown(Common::KeyState state) {
 	// Return is left to the dialog, which usually confirms with it
 	if (isEnabled() && isActivationKey(state, false)) {
+		// Read first, as the command may rebuild the dialog
+		const bool newState = !_state;
+		// I18N: Spoken by text-to-speech for the state of a checkbox
+		read(newState ? _c("checked", "text-to-speech") : _c("not checked", "text-to-speech"));
 		toggleState();
 		return true;
 	}
@@ -961,6 +965,8 @@ void RadiobuttonWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 bool RadiobuttonWidget::handleKeyDown(Common::KeyState state) {
 	// Space selects the radio button, as a click would
 	if (isEnabled() && isActivationKey(state, false)) {
+		// I18N: Spoken by text-to-speech for the state of a radio button
+		read(_c("selected", "text-to-speech"));
 		setState(true);
 		return true;
 	}
@@ -1106,6 +1112,7 @@ bool SliderWidget::handleKeyDown(Common::KeyState state) {
 	if (newValue != _value) {
 		_value = newValue;
 		markAsDirty();
+		read(Common::U32String(Common::String::format("%d", _value)));
 		sendCommand(_cmd, _value);
 	}
 	return true;

@@ -443,6 +443,7 @@ void GroupedListWidget::moveCursorToHeader(int pos) {
 	_cursorGroupID = indexToGroupID(_listIndex[pos]);
 	scrollToItem(pos);
 	markAsDirty();
+	readHeader(pos);
 }
 
 Common::U32String GroupedListWidget::getSpokenDescription() const {
@@ -458,6 +459,12 @@ Common::U32String GroupedListWidget::getSpokenDescription() const {
 	return composeSpokenDescription(findSpokenLabel(), _c("list", "text-to-speech"), header);
 }
 
+void GroupedListWidget::readHeader(int pos) {
+	// I18N: Spoken by text-to-speech for the state of a group of games
+	const Common::U32String state = _groupExpanded[indexToGroupID(_listIndex[pos])] ? _c("expanded", "text-to-speech") : _c("collapsed", "text-to-speech");
+	read(stripGUIformatting(_list[pos]) + Common::U32String(", ") + state);
+}
+
 void GroupedListWidget::selectFromKeyboard(int pos) {
 	_cursorGroupID = -1;
 	clearSelection();
@@ -466,6 +473,7 @@ void GroupedListWidget::selectFromKeyboard(int pos) {
 	markSelectedItem(pos, true);
 	scrollToCurrent();
 	markAsDirty();
+	read(stripGUIformatting(_list[pos]));
 	sendCommand(kListSelectionChangedCmd, _selectedItem);
 }
 
@@ -480,6 +488,10 @@ void GroupedListWidget::toggleGroupKeepingSelection(int groupID) {
 	}
 	applyScrollPos();
 	markAsDirty();
+
+	const int headerPos = findHeaderPos(groupID);
+	if (headerPos >= 0)
+		readHeader(headerPos);
 }
 
 bool GroupedListWidget::handleKeyDown(Common::KeyState state) {

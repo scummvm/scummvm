@@ -342,6 +342,12 @@ void TabWidget::adjustTabs(int value) {
 
 	setActiveTab(tabID);
 
+	// Only reached when switching tabs, not while building the dialog
+	if (tabID != _lastRead) {
+		read(_tabs[tabID].title);
+		_lastRead = tabID;
+	}
+
 	if (_navButtonsVisible) {
 		if (lastVis != _lastVisibleTab) {
 			_navLeft->setEnabled(true);

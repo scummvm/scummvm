@@ -49,6 +49,8 @@ protected:
 	int findHeaderPos(int groupID) const;
 	/** Put the keyboard cursor on the header at the given position */
 	void moveCursorToHeader(int pos);
+	/** Speak the header at the given position and its state */
+	void readHeader(int pos);
 	/** Select the item at the given position, leaving any header */
 	void selectFromKeyboard(int pos);
 	/** Fold or unfold a group, keeping the selection on the same item */

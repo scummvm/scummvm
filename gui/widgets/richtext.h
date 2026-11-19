@@ -69,6 +69,8 @@ protected:
 	Common::Array<Link> _links;
 	/** The link with the keyboard focus, or -1 for the text itself */
 	int _focusedLink = -1;
+	/** The link under the mouse, or -1, so that it is read only once */
+	int _hoveredLink = -1;
 
 	/** List the links of the text afresh, after it has been laid out */
 	void updateLinks();
@@ -76,6 +78,8 @@ protected:
 	void focusLink(int index);
 	/** Scroll so that a link is in view */
 	void scrollToLink(int index);
+	/** Speak a link's text and the kind of control it is */
+	void readLink(int index);
 	/** Scroll the text to the given position */
 	void scrollTo(int position);
 
@@ -94,6 +98,7 @@ public:
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
+	void handleMouseLeft(int button) override;
 	void handleTickle() override;
 	void handleTooltipUpdate(int x, int y) override;
 	bool handleKeyDown(Common::KeyState state) override;

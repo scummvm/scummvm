@@ -328,6 +328,12 @@ void PopUpDialog::setSelection(int item) {
 		// Draw new selection
 		if (item >= 0)
 			drawMenuEntry(item, true);
+
+		// Updating _lastRead keeps handleMouseMoved() from repeating it
+		if (item >= 0 && item < (int)_entries.size() && _lastRead != item) {
+			read(_entries[item]);
+			_lastRead = item;
+		}
 	}
 }
 
@@ -519,6 +525,8 @@ void PopUpWidget::moveSelection(int direction) {
 	if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
 		(newSelection != _selectedItem)) {
 		_selectedItem = newSelection;
+		// Read first, as the command may rebuild the dialog
+		read(_entries[_selectedItem].name);
 		sendCommand(_cmd, _entries[_selectedItem].tag);
 		markAsDirty();
 	}

@@ -197,6 +197,8 @@ protected:
 	int findVerticalNeighbour(int index, int direction) const;
 	/** Move the keyboard cursor to an entry, selecting it if it is a game */
 	void moveCursorTo(int index);
+	/** Speak a game's title, or a header's title and state */
+	void readEntry(const GridItemInfo *entry);
 	/** Scroll so that an entry, game or header, is in view */
 	void scrollToEntryInfo(const GridItemInfo *entry, bool forceToTop);
 

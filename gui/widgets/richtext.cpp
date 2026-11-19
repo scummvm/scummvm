@@ -192,6 +192,21 @@ void RichTextWidget::handleMouseMoved(int x, int y, int button) {
 			g_gui.theme()->setActiveCursor(GUI::ThemeEngine::kCursorIndex);
 		else
 			g_gui.theme()->setActiveCursor(GUI::ThemeEngine::kCursorNormal);
+
+		// Read a link once when the mouse moves onto it
+		const Common::Point pos(x - _innerMargin + _scrolledX, y - _innerMargin + _scrolledY);
+		int hovered = -1;
+		for (uint i = 0; i < _links.size(); ++i) {
+			if (_links[i].bounds.contains(pos)) {
+				hovered = i;
+				break;
+			}
+		}
+		if (hovered != _hoveredLink) {
+			_hoveredLink = hovered;
+			if (hovered >= 0)
+				readLink(hovered);
+		}
 	}
 
 	if (_mouseDownStartY == 0 || _mouseDownY == y || !_txtWnd || !_verticalScroll->isVisible())
@@ -277,9 +292,14 @@ bool RichTextWidget::handleKeyDown(Common::KeyState state) {
 	return true;
 }
 
+void RichTextWidget::handleMouseLeft(int button) {
+	_hoveredLink = -1;
+}
+
 void RichTextWidget::updateLinks() {
 	_links.clear();
 	_focusedLink = -1;
+	_hoveredLink = -1;
 	if (!_txtWnd)
 		return;
 
@@ -295,9 +315,18 @@ void RichTextWidget::updateLinks() {
 
 void RichTextWidget::focusLink(int index) {
 	_focusedLink = index;
-	if (index >= 0)
+	if (index >= 0) {
 		scrollToLink(index);
+		// Arriving on the widget is announced with the focus itself
+		if (_hasFocus)
+			readLink(index);
+	}
 	markAsDirty();
+}
+
+void RichTextWidget::readLink(int index) {
+	// I18N: Spoken by text-to-speech for the kind of control a link is
+	read(_links[index].text + Common::U32String(", ") + _c("link", "text-to-speech"));
 }
 
 void RichTextWidget::scrollToLink(int index) {

@@ -1458,6 +1458,7 @@ void GridWidget::moveCursorTo(int index) {
 
 	scrollToEntryInfo(entry, false);
 	markAsDirty();
+	readEntry(entry);
 }
 
 Common::U32String GridWidget::getSpokenDescription() const {
@@ -1475,6 +1476,17 @@ Common::U32String GridWidget::getSpokenDescription() const {
 
 	// I18N: Spoken by text-to-speech for the kind of control a grid of games is
 	return composeSpokenDescription(findSpokenLabel(), _c("grid", "text-to-speech"), entryText);
+}
+
+void GridWidget::readEntry(const GridItemInfo *entry) {
+	if (!entry->isHeader) {
+		read(Common::U32String(entry->title));
+		return;
+	}
+
+	// I18N: Spoken by text-to-speech for the state of a group of games
+	const Common::U32String state = _groupExpanded[entry->entryID] ? _c("expanded", "text-to-speech") : _c("collapsed", "text-to-speech");
+	read(Common::U32String(entry->title) + Common::U32String(", ") + state);
 }
 
 bool GridWidget::handleKeyDown(Common::KeyState state) {
@@ -1537,7 +1549,12 @@ bool GridWidget::handleKeyDown(Common::KeyState state) {
 		if (current >= 0) {
 			GridItemInfo *entry = _sortedEntryList[current];
 			if (entry->isHeader) {
-				toggleGroup(entry->entryID);
+				const int groupID = entry->entryID;
+				toggleGroup(groupID);
+				// Toggling rebuilds the entries, so find the header again
+				const int index = findCursorIndex();
+				if (index >= 0)
+					readEntry(_sortedEntryList[index]);
 			} else {
 				scrollToEntryInfo(entry, false);
 				draw();
