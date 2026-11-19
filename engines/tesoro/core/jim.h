@@ -71,11 +71,15 @@ public:
 
 	int32 scale() const { return _scale; }
 
+	int useItem(int item);
+
 	int update() override;
 
 	bool acceptsPointer() override { return true; }
 	int showHoverText() override;
 	int clearHoverText() override;
+	int setVerbAndClick(int verb) override;
+	int rightClick(int verb) override;
 
 	void updateAnimation(int32 now) override { _anim.tickClearMovement(now); }
 	void updateBounds(int32 now) override;

@@ -157,7 +157,7 @@ bool SceneRoutines::run(SceneAdapter &h, uint32 type, uint32 ordinal) {
 		return true;
 	case 9:
 		if (ordinal == 1) {
-			h.releaseHeldItem();
+			h.clearPointerItem();
 			h.enterLevel(13, 0, 0);
 			h.setJimVisible(false);
 		}

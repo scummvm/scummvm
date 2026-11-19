@@ -308,7 +308,7 @@ struct SceneAdapter {
 	void wait(int milliseconds) { _w.wait(milliseconds); }
 	void resetRenderQueue() { _w.resetRenderQueue(); }
 	void clearMainList() { _w._main.clear(); }
-	void releaseHeldItem() { _w.releaseHeldItem(); }
+	void clearPointerItem() { _w.clearPointerItem(); }
 
 private:
 	Scripts &_s;

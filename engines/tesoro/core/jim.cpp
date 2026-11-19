@@ -337,6 +337,9 @@ void Jim::draw(const Camera &camera, Display &display) {
 	_speaker.drawJim();
 }
 
+int Jim::useItem(int item) { return 0; }
+int Jim::setVerbAndClick(int verb) { return _world.jimClicked(verb); }
+int Jim::rightClick(int verb) { return _world.jimClicked(verb); }
 bool Jim::findPath(int32 destX, int32 destY, WalkTarget *target) { return _world.findPath(destX, destY, target); }
 int32 Jim::now() { return _world.now(); }
 uint32 Jim::randomNumber(uint32 lo, uint32 hi) { return _world.randomNumber(lo, hi); }

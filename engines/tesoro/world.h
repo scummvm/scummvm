@@ -83,9 +83,13 @@ public:
 
 	int32 now();
 	const SpeechTable::Line *phrase(const char *name);
+	bool jimSpeaking();
 	bool isJim(const Object *object);
 	int jimFacing();
 	void jimFace(int facing);
+	void jimStopTalking();
+	void jimForgetLine();
+	void jimSayAnswer(const SpeechTable::Line &line);
 	void jimWalkTo(int32 x, int32 y, WalkTarget *target);
 	void jimUpdate();
 	int jimPhase() { return _jimPhase; }
@@ -99,6 +103,10 @@ public:
 	void insertInMainListFront(Object *object, int priority);
 	void removeFromMainList(Object *object);
 	void clearMainList() { _main.clear(); }
+	bool pointerHasItem();
+	bool combinationReply(uint64 objectKey, const SpeechTable::Line *&line);
+	/** The item's picture shows in the strip again, then the pointer lets go of it. */
+	void returnPointerItem();
 
 	Common::SeekableReadStream &archiveStream();
 
@@ -107,6 +115,8 @@ public:
 	int32 scaleAt(int32 x, int32 y);
 	bool findPath(int32 destX, int32 destY, WalkTarget *target);
 	bool hasWalkAreaOf(Object *other);
+	int jimClicked(int verb);
+	int jimRunVerb();
 
 	Object *findObject(int level, const char *name);
 	Object *findObjectByKey(int level, uint64 key);
@@ -114,11 +124,9 @@ public:
 	Level *jimLevel();
 	void playMusicTrack(byte track);
 	void jimShow(bool visible);
-	/**
-	 * releaseHeldItem held item sets the pointer back to normal when holding an item
-	 * dropHeldItem releases the item back into the inventory.
-	 */
-	void releaseHeldItem();
+
+	/** The pointer lets go of its item and shows the arrow */
+	void clearPointerItem();
 
 	int jimLevelIndex();
 	void jimMoveTo(int32 x, int32 y);
@@ -154,8 +162,11 @@ private:
 	Common::Array<byte> _speechText[SpeechTables::kCount];
 	Level *_levels[kLevelCount] = {};
 	Jim *_jim = nullptr;
-	MainList _main;
 	bool _subtitles = true;
+	int _jimVerb = 0;					// what the pointer carried when it clicked Jim
+	bool _jimClickPending = false;		// Jim is saying his answer to that click
+	bool _jimClickAnswered = false;
+	MainList _main;
 	SoundDevice _sound;	// speech and sound effects
 	CdAudio _music;
 	Scripts *_scripts = nullptr;

@@ -101,15 +101,19 @@ public:
 	 * 3. verb() is called to determine the object's response.
 	 */
 	virtual int setVerbAndClick(int verb) { return 0; }
-	/** What the object does when the pointer uses verb `verb` on it (0 is the first). Only clickable kinds have an answer. */
 	virtual int verb(int verb) { return 0; }
+
+	/* walk target and facing direction of the hotspot */
+	virtual int32 approachX() const { return 0; }
+	virtual int32 approachY() const { return 0; }
+	virtual int facing() const { return 0; }
+
+	virtual int exitArrival() { return 0; }
 
 	virtual int rightClick(int verb) { return 0; }
 	virtual bool acceptsPointer() { return false; }
 	virtual int showHoverText() { return 0; }
 	virtual int clearHoverText() { return 0; }
-
-	virtual int facing() const { return 0; }
 
 	/** Per-frame step of the first pass over the object list. Returns 2 or 3 to end the pass early, else 0. */
 	virtual int update() { return 0; }
@@ -135,6 +139,9 @@ public:
 	/** Class number from the level file (the factory's switch value, low byte). */
 	byte kindId() const { return _kind; }
 	void setKindId(byte kind) { _kind = kind; }
+	/** Bytes the kind keeps in its saved state; empty when the object has none. */
+	Common::Array<byte> &stateBlob() { return _stateBlob; }
+
 	const ObjectRect &hitRect() const { return _hitRect; }
 	const ObjectRect &movedArea() const { return _movedArea; }
 

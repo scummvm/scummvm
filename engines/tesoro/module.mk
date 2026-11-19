@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	core/cursor.o \
 	core/display.o \
 	core/hovertext.o \
+	core/interactive.o \
 	core/jim.o \
 	core/level.o \
 	core/menuitem.o \

@@ -26,6 +26,7 @@
 #include "tesoro/world.h"
 #include "tesoro/core/cameraframe.h"
 #include "tesoro/core/cursor.h"
+#include "tesoro/core/interactive.h"
 #include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
@@ -250,6 +251,11 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 	const int16 sort = room.sortOffset();
 	const Common::Array<AnimPlayer> &levelPlayers = level.levelPlayers();
 	switch (record.kind) {
+		case 9: {
+			InteractiveObject *object = new InteractiveObject();
+			object->init(record, sort, levelPlayers, loadTime, *this, 0);
+			return object;
+		}
 		default:
 			return nullptr;
 	}
@@ -282,10 +288,19 @@ void World::insertInMainList(Object *object, int priority) {
 void World::insertInMainListFront(Object *object, int priority) {
 	_main.insertByPriorityFront(object, priority);
 }
+bool World::pointerHasItem() { return false; }
 
+bool World::combinationReply(uint64 objectKey, const SpeechTable::Line *&line) {
+	return false;
+}
+
+bool World::jimSpeaking() { return jim() && jim()->speaker().speaking(); }
 bool World::isJim(const Object *object) { return object == _jim; }
 int World::jimFacing() { return jim()->facing(); }
 void World::jimFace(int facing) { jim()->setFacing(facing); }
+void World::jimStopTalking() { jim()->speaker().clearSpeech(); }
+void World::jimForgetLine() { jim()->speaker().forgetLine(); }
+void World::jimSayAnswer(const SpeechTable::Line &line) { jim()->sayAnswer(line); }
 void World::jimWalkTo(int32 x, int32 y, WalkTarget *target) { jim()->walkTo(x, y, target, false); }
 void World::jimUpdate() { jim()->update(); }
 
@@ -316,7 +331,11 @@ void World::stopVoice(uint32 id) {
 	_sound.stop(id);
 }
 
-void World::releaseHeldItem() {
+void World::returnPointerItem() {
+	clearPointerItem();
+}
+
+void World::clearPointerItem() {
 	if (_engine._cursor)
 		_engine._cursor->animation().selectBank(0, 0, 0, false, false, now());
 }
@@ -347,6 +366,14 @@ void World::drawSubtitle(Jim &jim, const SpeechTable::Line &line) {
 }
 
 int World::interactiveUpdate(Jim &jim) {
+	if (_jimClickPending && !jimSpeaking()) {
+		setPointerActive(true);
+		_jimClickPending = false;
+		removeFromMainList(&jim);
+		if (!_jimClickAnswered)
+			return jimRunVerb();
+		_jimClickAnswered = false;
+	}
 	jim.updateBounds(now());
 	return 1;
 }
@@ -405,5 +432,34 @@ bool World::findPath(int32 destX, int32 destY, WalkTarget *target) {
 }
 
 bool World::hasWalkAreaOf(Object *other) { return other && other->kindId() == 7 && static_cast<WalkFloor *>(other)->path(); }
+
+int World::jimClicked(int verb) {
+	_jimVerb = verb;
+	if (jimSpeaking())
+		jimStopTalking();
+	jimFace(jimFacing());
+	jimRunVerb();
+	return 1;
+}
+
+int World::jimRunVerb() {
+	if (_jimVerb >= 7) {
+		returnPointerItem();
+		return jim()->useItem(_jimVerb - 7);
+	}
+	// Verbs 0, 5 and 6 have no default answer for him; the others answer in their usual words.
+	static const char *const kDefaults[5] = { nullptr, "OBJ125T03", "OBJ096T07", "OBJ106T05", "OBJ106T05" };
+	if (_jimVerb < 0 || _jimVerb > 4)
+		return 0;
+	_jimClickAnswered = true;
+	const SpeechTable::Line *line = kDefaults[_jimVerb] ? phrase(kDefaults[_jimVerb]) : nullptr;
+	if (!line)
+		return 0;
+	jimSayAnswer(*line);
+	setPointerActive(false);
+	_jimClickPending = true;
+	insertInMainList(jim(), 5);
+	return 3;
+}
 
 } // End of namespace Tesoro
