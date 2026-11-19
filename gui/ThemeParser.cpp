@@ -896,7 +896,9 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	int spacing = -1;
 
 	if (node->values.contains("spacing")) {
-		if (parseList(node->values["spacing"], 1, &spacing))
+		if (_theme->getEvaluator()->hasVar(node->values["spacing"]))
+			spacing = _theme->getEvaluator()->getVar(node->values["spacing"]);
+		else if (parseList(node->values["spacing"], 1, &spacing))
 			spacing = SCALEVALUE(spacing);
 		else
 			return false;

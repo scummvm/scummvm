@@ -36,6 +36,7 @@
 		<def var = 'RichTextWidget.InnerMargin' value = '10' scalable = 'yes'/>
 
 		<def var = 'Layout.Spacing' value = '4' scalable = 'yes'/>
+		<def var = 'GameOptions.Spacing' value = '10' scalable = 'yes'/>
 
 		<def var = 'ListWidget.hlLeftPadding' value = '0'/>
 		<def var = 'ListWidget.hlRightPadding' value = '0'/>
@@ -91,6 +92,10 @@
 
 		<widget name = 'OptionsLabel'
 				size = '115, Globals.Line.Height'
+				textalign = 'end'
+		/>
+		<widget name = 'GameOptionsLabel'
+				size = 'Globals.OptionsLabel.Width, Globals.Line.Height'
 				textalign = 'end'
 		/>
 		<widget name = 'ShortOptionsLabel'
@@ -1814,17 +1819,17 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = 'Globals.GameOptions.Spacing' align = 'center'>
 				<widget name = 'LangPopupDesc'
-						type = 'OptionsLabel'
+						type = 'GameOptionsLabel'
 				/>
 				<widget name = 'LangPopup'
 						type = 'PopUp'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = 'Globals.GameOptions.Spacing' align = 'center'>
 				<widget name = 'PlatformPopupDesc'
-						type = 'OptionsLabel'
+						type = 'GameOptionsLabel'
 				/>
 				<widget name = 'PlatformPopup'
 						type = 'PopUp'
