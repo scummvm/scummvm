@@ -83,6 +83,8 @@ void RunawayRoomScene::resumeDesert() {
 		_walkPath.reset(_position);
 		walkTo(Common::Point(1000, 451), 5, true);
 	}
+	if (_entryScene == 5100)
+		walkTo(Common::Point(1053, 403), 3);
 	const uint16 rooms[] = {5010, 5020, 5050, 5060, 5070, 5080, 5100, 5110, 5160, 5170};
 	for (uint i = 0; i < ARRAYSIZE(rooms); ++i) {
 		if (_room != rooms[i] || _desert.visited[i])
@@ -119,6 +121,8 @@ void RunawayRoomScene::finishDesertAnimation(uint16 action) {
 void RunawayRoomScene::updateDesert(uint elapsed, bool inventoryOpen) {
 	updateRoomAnimation();
 	updateConversation();
+	if (_room == 5100)
+		updateScene5100();
 	if (_roomAction && _actionFrames.empty() && !speaking() && !_walkPath.active()) {
 		const uint16 action = _roomAction;
 		_roomAction = 0;
@@ -138,32 +142,52 @@ RunawayRoomScene::ActionResult RunawayRoomScene::executeDesert(uint16 action) {
 		}
 		break;
 	}
-	case 5020: return execute5020(action);
-	case 5050: return execute5050(action);
-	case 5060: return execute5060(action);
-	case 5070: return execute5070(action);
-	case 5080: return execute5080(action);
-	case 5100: return execute5100(action);
-	case 5110: return execute5110(action);
-	case 5160: return execute5160(action);
-	case 5170: return execute5170(action);
-	default: break;
+	case 5020:
+		return execute5020(action);
+	case 5050:
+		return execute5050(action);
+	case 5060:
+		return execute5060(action);
+	case 5070:
+		return execute5070(action);
+	case 5080:
+		return execute5080(action);
+	case 5100:
+		return execute5100(action);
+	case 5110:
+		return execute5110(action);
+	case 5160:
+		return execute5160(action);
+	case 5170:
+		return execute5170(action);
+	default:
+		break;
 	}
 	return kUnhandled;
 }
 
 float RunawayRoomScene::desertActorHeight() const {
 	switch (_room) {
-	case 5020: return _position.y * -0.140845075f + 264.225342f;
-	case 5050: return _position.y * 0.128865972f + 197.809280f;
-	case 5060: return _position.y * 0.107991360f + 207.213821f;
-	case 5070: return _position.y * 1.171428561f - 226.085709f;
-	case 5080: return _position.y * 0.905172408f - 162.241379f;
-	case 5100: return _position.y * 0.668016195f + 87.591095f;
-	case 5110: return _position.y * 1.142857194f - 170.571426f;
-	case 5160: return _position.y * 1.148148179f - 90.370369f;
-	case 5170: return _position.y * 0.536585391f + 165.243896f;
-	default: return 455;
+	case 5020:
+		return _position.y * -0.140845075f + 264.225342f;
+	case 5050:
+		return _position.y * 0.128865972f + 197.809280f;
+	case 5060:
+		return _position.y * 0.107991360f + 207.213821f;
+	case 5070:
+		return _position.y * 1.171428561f - 226.085709f;
+	case 5080:
+		return _position.y * 0.905172408f - 162.241379f;
+	case 5100:
+		return _position.y * 0.668016195f + 87.591095f;
+	case 5110:
+		return _position.y * 1.142857194f - 170.571426f;
+	case 5160:
+		return _position.y * 1.148148179f - 90.370369f;
+	case 5170:
+		return _position.y * 0.536585391f + 165.243896f;
+	default:
+		return 455;
 	}
 }
 
@@ -194,9 +218,11 @@ bool RunawayRoomScene::loadDesertRoom() {
 	if (_room == 5050)
 		return loadForeground(0, 4) && loadForeground(1, 5);
 	if (_room == 5060)
-		return loadForeground(0, 8) && _npc.load(_archive, 7, 201);
+		return loadForeground(0, 8) && _npc.load(_archive, 7, 201) && _machine.load(_archive, 12, 195);
 	if (_room == 5080)
 		return loadForeground(0, 11) && loadForeground(1, 12) && loadForeground(2, 13) && loadForeground(3, 14);
+	if (_room == 5100)
+		return _npc.load(_archive, 9, 151) && _npcMouth.load(_archive, 12, 126);
 	return true;
 }
 
@@ -215,7 +241,7 @@ bool RunawayRoomScene::applyDesertBackground() {
 	case 5080:
 		return !_desert.antsDistracted || applyPatch(_desert.dynamite == 1 ? 7 : 8);
 	case 5100:
-		return (_desert.barnDoor != 2 || applyPatch(5)) && (_desert.peanutButter != 2 || applyPatch(6));
+		return applyBackground5100();
 	case 5110:
 		return _desert.barrel != 2 || applyPatch(13);
 	case 5160:
@@ -226,45 +252,63 @@ bool RunawayRoomScene::applyDesertBackground() {
 	case 5170:
 		return (_desert.vacuum != 2 || applyPatch(7)) && (!_desert.glassesTaken || applyPatch(8)) &&
 			(_desert.lipstickShelf != 2 || applyPatch(9)) && (_desert.lipstickShelf != 3 || applyPatch(10));
-	default: return true;
+	default:
+		return true;
 	}
 }
 
 void RunawayRoomScene::updateDesertMaps() {
+	if (_room == 5100) {
+		updateMaps5100();
+		return;
+	}
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
 		switch (_room) {
 		case 5020:
-			if (_desert.bucketTaken && id == 7) id = 0;
+			if (_desert.bucketTaken && id == 7)
+				id = 0;
 			break;
 		case 5050:
-			if ((_desert.helmetTaken && id == 2) || (_desert.beltTaken && id == 3)) id = 0;
+			if ((_desert.helmetTaken && id == 2) || (_desert.beltTaken && id == 3))
+				id = 0;
 			break;
 		case 5060:
-			if (_desert.tanningOil == 2 && id == 6) id = 0;
+			if (_desert.tanningOil == 2 && id == 6)
+				id = 0;
 			break;
 		case 5070:
-			if (id == 3 || id == 8) id = _desert.dynamitePlaced ? 3 : 0;
+			if (id == 3 || id == 8)
+				id = _desert.dynamitePlaced ? 3 : 0;
 			break;
 		case 5080:
 			if (_desert.antsDistracted) {
-				if (id == 12) id = _desert.dynamite == 1 ? 5 : 0;
-				else if (id == 5 && _desert.dynamite == 2) id = 3;
+				if (id == 12)
+					id = _desert.dynamite == 1 ? 5 : 0;
+				else if (id == 5 && _desert.dynamite == 2)
+					id = 3;
 			}
 			break;
 		case 5110:
-			if (id == 8) id = _desert.bucket == 1 || _desert.bucket == 2 ? 8 : 4;
+			if (id == 8)
+				id = _desert.bucket == 1 || _desert.bucket == 2 ? 8 : 4;
 			break;
 		case 5160:
-			if (_desert.needle == 2 && id == 9) id = 0;
+			if (_desert.needle == 2 && id == 9)
+				id = 0;
 			break;
 		case 5170:
-			if (id == 5 && (_desert.busDoor == 0 || _desert.busDoor == 2)) id = 1;
-			if ((_desert.glassesTaken && id == 6) || (_desert.vacuum == 2 && id == 7)) id = 0;
-			if (id == 11) id = _desert.crank == 2 && _desert.busDoor != 1 ? 4 : 10;
-			if (id == 12) id = _desert.crank == 2 && _desert.busDoor == 1 ? 4 : 2;
+			if (id == 5 && (_desert.busDoor == 0 || _desert.busDoor == 2))
+				id = 1;
+			if ((_desert.glassesTaken && id == 6) || (_desert.vacuum == 2 && id == 7))
+				id = 0;
+			if (id == 11)
+				id = _desert.crank == 2 && _desert.busDoor != 1 ? 4 : 10;
+			if (id == 12)
+				id = _desert.crank == 2 && _desert.busDoor == 1 ? 4 : 2;
 			break;
-		default: break;
+		default:
+			break;
 		}
 	}
 }
@@ -274,39 +318,66 @@ Common::U32String RunawayRoomScene::desertHotspotName(byte id) const {
 	if (!spot)
 		return Common::U32String();
 	if (_room == 5010) {
-		if (id == 1 && _desert.visited[4]) return Common::U32String("Oil well");
-		if (id == 3 && _desert.visited[6]) return Common::U32String("Hangar");
-		if (id == 4 && _desert.visited[2]) return Common::U32String("Airplane graveyard");
-		if (id == 5 && _desert.visited[5]) return Common::U32String("Railway yard");
+		if (id == 1 && _desert.visited[4])
+			return Common::U32String("Oil well");
+		if (id == 3 && _desert.visited[6])
+			return Common::U32String("Hangar");
+		if (id == 4 && _desert.visited[2])
+			return Common::U32String("Airplane graveyard");
+		if (id == 5 && _desert.visited[5])
+			return Common::U32String("Railway yard");
 	}
-	if (_room == 5050 && id == 3 && _desert.beltSeen) return _inventory.name(14);
-	if (_room == 5060 && id == 6 && _desert.tanningOil) return _inventory.name(12);
-	if (_room == 5100 && id == 3 && _desert.peanutButter) return _inventory.name(19);
-	if (_room == 5100 && id == 8 && _desert.footrestSeen) return _inventory.name(21);
-	if (_room == 5100 && id == 12) return Common::U32String(_desert.beerSeen ? "Beer can" : "Can");
-	if (_room == 5110 && id == 1) return Common::U32String("Door");
-	if (_room == 5110 && id == 2) return Common::U32String("Door");
-	if (_room == 5110 && id == 5 && _desert.barrel) return Common::U32String("Barrel of gunpowder");
-	if (_room == 5170 && id == 3 && _desert.lipstickShelf && _desert.lipstickShelf < 3) return _inventory.name(11);
-	if (_room == 5170 && id == 4 && _desert.crank == 2) return Common::U32String("Makeshift crank");
-	if (_room == 5170 && id == 7 && _desert.vacuum) return _inventory.name(22);
-	if (_room == 5170 && id == 8 && _desert.necklacesSeen) return Common::U32String("Necklaces");
-	if (_room == 5170 && id == 9 && _desert.ringsSeen) return Common::U32String("Rings and earrings");
+	if (_room == 5050 && id == 3 && _desert.beltSeen)
+		return _inventory.name(14);
+	if (_room == 5060 && id == 6 && _desert.tanningOil)
+		return _inventory.name(12);
+	if (_room == 5060 && id == 7 && _desert.busPosterSeen)
+		return Common::U32String("Lawn chair");
+	if (_room == 5100 && id == 3 && _desert.peanutButter)
+		return _inventory.name(19);
+	if (_room == 5100 && id == 8 && _desert.footrestSeen)
+		return _inventory.name(21);
+	if (_room == 5100 && id == 12)
+		return Common::U32String(_desert.beerSeen ? "Beer can" : "Can");
+	if (_room == 5110 && id == 1)
+		return Common::U32String("Door");
+	if (_room == 5110 && id == 2)
+		return Common::U32String("Door");
+	if (_room == 5110 && id == 5 && _desert.barrel)
+		return Common::U32String("Barrel of gunpowder");
+	if (_room == 5170 && id == 3 && _desert.lipstickShelf && _desert.lipstickShelf < 3)
+		return _inventory.name(11);
+	if (_room == 5170 && id == 4 && _desert.crank == 2)
+		return Common::U32String("Makeshift crank");
+	if (_room == 5170 && id == 7 && _desert.vacuum)
+		return _inventory.name(22);
+	if (_room == 5170 && id == 8 && _desert.necklacesSeen)
+		return Common::U32String("Necklaces");
+	if (_room == 5170 && id == 9 && _desert.ringsSeen)
+		return Common::U32String("Rings and earrings");
 	return Common::U32String(spot->name);
 }
 
 void RunawayRoomScene::drawDesertRoom(Graphics::ManagedSurface &viewport, bool foreground) {
+	if (_room == 5100) {
+		drawScene5100(viewport, foreground);
+		return;
+	}
 	if (foreground) {
 		if (_room == 5050) {
-			if (_position.x < 314) drawForeground(viewport, 0);
-			if (_position.x > 195 && _position.y < 465) drawForeground(viewport, 1);
+			if (_position.x < 314)
+				drawForeground(viewport, 0);
+			if (_position.x > 195 && _position.y < 465)
+				drawForeground(viewport, 1);
 		} else if (_room == 5060 && _position.x < 670) {
 			drawForeground(viewport, 0);
 		} else if (_room == 5080) {
 			drawForeground(viewport, 0);
 			drawForeground(viewport, 1);
-			if (walkZone() == 15 || walkZone() == 16) drawForeground(viewport, 2);
-			if (walkZone() == 15) drawForeground(viewport, 3);
+			if (walkZone() == 15 || walkZone() == 16)
+				drawForeground(viewport, 2);
+			if (walkZone() == 15)
+				drawForeground(viewport, 3);
 		}
 		return;
 	}
@@ -316,21 +387,24 @@ void RunawayRoomScene::drawDesertRoom(Graphics::ManagedSurface &viewport, bool f
 			continue;
 		uint frame = (_now / 80) % animation.frameCount();
 		if (_room == 5110) {
-			if (!i && (_desert.bucket == 0 || _desert.bucket == 3)) continue;
+			if (!i && (_desert.bucket == 0 || _desert.bucket == 3))
+				continue;
 			frame = i ? (_desert.trainDoorOpen != 0) : 0;
 		} else if (_room == 5170) {
-			if (i == 0) frame = _desert.busDoor == 0 || _desert.busDoor == 2 ? 24 : 0;
-			if (i == 2) frame = 49;
-			if (i == 3) frame = _desert.crank == 2 ? (_desert.busDoor == 1 ? 1 : 2) : 0;
+			if (i == 0)
+				frame = _desert.busDoor == 0 || _desert.busDoor == 2 ? 24 : 0;
+			if (i == 2)
+				frame = 49;
+			if (i == 3)
+				frame = _desert.crank == 2 ? (_desert.busDoor == 1 ? 1 : 2) : 0;
 		} else if (_room == 5160) {
-			if (i == 3) frame = 92;
-		} else if (_room == 5100) {
-			frame = 0;
+			if (i == 3)
+				frame = 92;
 		}
 		animation.draw(viewport, frame, _camera.x, -_camera.y);
 	}
 	if (_room == 5060)
-		_npc.draw(viewport, 200, _camera.x, -_camera.y);
+		drawScene5060(viewport);
 }
 
 void RunawayRoomScene::setupDesertDepth(RunawayActor::RenderParams &params) const {

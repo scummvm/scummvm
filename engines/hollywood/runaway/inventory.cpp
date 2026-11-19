@@ -168,12 +168,18 @@ Common::U32String RunawayInventory::name(byte item) const {
 
 uint RunawayInventory::icon(byte item) const {
 	if (_chapter == 2) {
-		if (item == 7 && _museum.restoredCrucifix) return 24;
-		if (item == 14 && _museum.coffee) return 20 + _museum.coffee;
-		if (item == 6 && _museum.frozenBattery) return 25;
-		if (item == 11 && _museum.rubyRemoved) return 20;
-		if (item == 18 && _museum.batteryInLadle) return 23;
-		if (item == 19 && _museum.packageFilled) return 26;
+		if (item == 7 && _museum.restoredCrucifix)
+			return 24;
+		if (item == 14 && _museum.coffee)
+			return 20 + _museum.coffee;
+		if (item == 6 && _museum.frozenBattery)
+			return 25;
+		if (item == 11 && _museum.rubyRemoved)
+			return 20;
+		if (item == 18 && _museum.batteryInLadle)
+			return 23;
+		if (item == 19 && _museum.packageFilled)
+			return 26;
 	}
 	if (_chapter == 1) {
 		if (item == 15 && _syringeFilled)
@@ -230,12 +236,18 @@ uint RunawayInventory::cursor(byte item) const {
 		static const byte helmetCursors[] = {51, 53, 115, 117, 119};
 		return helmetCursors[_desert.helmet];
 	}
-	if (item == 14) return _desert.belt == 1 ? 113 : _desert.belt == 2 ? 71 : 69;
-	if (item == 15) return _desert.ball == 2 ? 73 : 75 + _desert.ball * 2;
-	if (item == 19 && _desert.helmet >= 3) return 121;
-	if (item == 20 && _desert.glasses == 1) return 89;
-	if (item == 23) return 95 + 2 * (_desert.gunReady + _desert.bombReady + _desert.helicopterReady);
-	if (item == 25 && _desert.bucket == 1) return 123;
+	if (item == 14)
+		return _desert.belt == 1 ? 113 : _desert.belt == 2 ? 71 : 69;
+	if (item == 15)
+		return _desert.ball == 2 ? 73 : 75 + _desert.ball * 2;
+	if (item == 19 && _desert.helmet >= 3)
+		return 121;
+	if (item == 20 && _desert.glasses == 1)
+		return 89;
+	if (item == 23)
+		return 95 + 2 * (_desert.gunReady + _desert.bombReady + _desert.helicopterReady);
+	if (item == 25 && _desert.bucket == 1)
+		return 123;
 	return item <= kItemCount ? kItemCursors[item] : 0;
 }
 
@@ -257,14 +269,30 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 			return Reply();
 		byte variation = 0;
 		switch (item) {
-		case 5: variation = _museum.voiceRecorded; break;
-		case 6: variation = _museum.frozenBattery; break;
-		case 7: variation = _museum.restoredCrucifix; break;
-		case 8: case 11: variation = _museum.rubyRemoved; break;
-		case 14: variation = _museum.coffee; break;
-		case 18: variation = _museum.batteryInLadle; break;
-		case 19: variation = _museum.packageFilled; break;
-		default: break;
+		case 5:
+			variation = _museum.voiceRecorded;
+			break;
+		case 6:
+			variation = _museum.frozenBattery;
+			break;
+		case 7:
+			variation = _museum.restoredCrucifix;
+			break;
+		case 8:
+		case 11:
+			variation = _museum.rubyRemoved;
+			break;
+		case 14:
+			variation = _museum.coffee;
+			break;
+		case 18:
+			variation = _museum.batteryInLadle;
+			break;
+		case 19:
+			variation = _museum.packageFilled;
+			break;
+		default:
+			break;
 		}
 		return Reply(item < 5 ? 49 + item : 95 + item, variation);
 	}
@@ -272,15 +300,32 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 		return Reply(item && item <= 19 ? (item == 3 ? 74 : 49 + item) : 1);
 	byte variation = 0;
 	switch (item) {
-	case 1: variation = _clothState; break;
-	case 6: variation = _desert.helmet; break;
-	case 10: variation = _desert.lipstick; break;
-	case 11: variation = _desert.lipsticks; break;
-	case 14: variation = _desert.belt; break;
-	case 15: variation = _desert.ball; break;
-	case 20: variation = _desert.glasses; break;
-	case 25: variation = _desert.bucket == 1; break;
-	default: break;
+	case 1:
+		variation = _clothState;
+		break;
+	case 6:
+		variation = _desert.helmet;
+		break;
+	case 10:
+		variation = _desert.lipstick;
+		break;
+	case 11:
+		variation = _desert.lipsticks;
+		break;
+	case 14:
+		variation = _desert.belt;
+		break;
+	case 15:
+		variation = _desert.ball;
+		break;
+	case 20:
+		variation = _desert.glasses;
+		break;
+	case 25:
+		variation = _desert.bucket == 1;
+		break;
+	default:
+		break;
 	}
 	return Reply(item && item <= kItemCount ? kExamineCues[item] : 1, variation);
 }
@@ -363,9 +408,12 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 			_museum.packageFilled = 1;
 			return Reply(121, 1);
 		}
-		if (first == 9 || second == 9) return Reply(118);
-		if (first == 10 || second == 10) return Reply(119);
-		if (first == 15 || second == 15) return Reply(122);
+		if (first == 9 || second == 9)
+			return Reply(118);
+		if (first == 10 || second == 10)
+			return Reply(119);
+		if (first == 15 || second == 15)
+			return Reply(122);
 		return Reply();
 	}
 	if (_chapter != 3)
@@ -384,26 +432,32 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		return Reply(183, 1);
 	}
 	if (first == 4 && second == 6) {
-		if (!_desert.antTrickKnown) return Reply(14);
+		if (!_desert.antTrickKnown)
+			return Reply(14);
 		_desert.helmet = 1;
 		remove(4);
 		return Reply(178);
 	}
 	if (first == 6 && second == 18) {
-		if (!_desert.antTrickKnown) return Reply(14);
-		if (!_desert.helmet) return Reply(190);
+		if (!_desert.antTrickKnown)
+			return Reply(14);
+		if (!_desert.helmet)
+			return Reply(190);
 		_desert.helmet = 2;
 		remove(18);
 		return Reply(190, 1);
 	}
 	if ((first == 10 || first == 11) && second == 25) {
-		if (_desert.bucket != 1) return Reply(17);
+		if (_desert.bucket != 1)
+			return Reply(17);
 		if (first == 10) {
-			if (_desert.lipstick) return Reply(184, 2);
+			if (_desert.lipstick)
+				return Reply(184, 2);
 			_desert.lipstick = 1;
 			return Reply(184);
 		}
-		if (_desert.lipsticks) return Reply(1, 2);
+		if (_desert.lipsticks)
+			return Reply(1, 2);
 		_desert.lipsticks = 1;
 		_desert.bucket = 2;
 		remove(10);
@@ -417,22 +471,31 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		return Reply(first == 10 ? 186 : 187, 1);
 	}
 	if (first == 15 && second == 16) {
-		if (_desert.ball) return Reply(188, 2);
+		if (_desert.ball)
+			return Reply(188, 2);
 		_desert.ball = 1;
 		return Reply(188);
 	}
 	if (first == 15 && second == 24) {
-		if (_desert.ball != 1) return Reply(189, _desert.ball ? 3 : 0);
+		if (_desert.ball != 1)
+			return Reply(189, _desert.ball ? 3 : 0);
 		_desert.ball = 2;
 		return Reply(189, 1);
 	}
-	if (first == 4 && second == 18) return Reply(_desert.antTrickKnown ? 177 : 14);
-	if (first == 4 && second == 19) return Reply(179);
-	if (first == 4 && second == 25) return Reply(_desert.antTrickKnown ? 180 : 14, _desert.antTrickKnown && _desert.bucket == 1);
-	if (first == 5 && second == 25) return Reply(181);
-	if (first == 6 && second == 19) return Reply(!_desert.helmet ? 23 : _desert.helmet == 3 ? 182 : 14);
-	if (first == 18 && second == 19) return Reply(191);
-	if (first == 18 && second == 25) return Reply(_desert.antTrickKnown ? (_desert.bucket == 1 ? 192 : 180) : 14);
+	if (first == 4 && second == 18)
+		return Reply(_desert.antTrickKnown ? 177 : 14);
+	if (first == 4 && second == 19)
+		return Reply(179);
+	if (first == 4 && second == 25)
+		return Reply(_desert.antTrickKnown ? 180 : 14, _desert.antTrickKnown && _desert.bucket == 1);
+	if (first == 5 && second == 25)
+		return Reply(181);
+	if (first == 6 && second == 19)
+		return Reply(!_desert.helmet ? 23 : _desert.helmet == 3 ? 182 : 14);
+	if (first == 18 && second == 19)
+		return Reply(191);
+	if (first == 18 && second == 25)
+		return Reply(_desert.antTrickKnown ? (_desert.bucket == 1 ? 192 : 180) : 14);
 	return Reply();
 }
 

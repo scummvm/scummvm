@@ -484,29 +484,64 @@ void RunawayScene5030::examine(byte id) {
 	const bool examined = _examined[id];
 	_examined[id] = true;
 	switch (id) {
-	case 1: sayCue(1, _peeked ? 1 : 0); break;
-	case 2: startAction(kPeekDoor); break;
-	case 3: sayCue(5, 0); break;
-	case 4: sayCue(7, _windowClean ? 1 : 0); break;
-	case 5: sayCue(9, examined ? 1 : 0); break;
-	case 6: sayCue(_hatchState == kOpen ? 12 : 10, _hatchState == kUnlocked ? 1 : 0); break;
-	case 7: sayCue(27, examined ? 1 : 0); break;
+	case 1:
+		sayCue(1, _peeked ? 1 : 0);
+		break;
+	case 2:
+		startAction(kPeekDoor);
+		break;
+	case 3:
+		sayCue(5, 0);
+		break;
+	case 4:
+		sayCue(7, _windowClean ? 1 : 0);
+		break;
+	case 5:
+		sayCue(9, examined ? 1 : 0);
+		break;
+	case 6:
+		sayCue(_hatchState == kOpen ? 12 : 10, _hatchState == kUnlocked ? 1 : 0);
+		break;
+	case 7:
+		sayCue(27, examined ? 1 : 0);
+		break;
 	case 8:
 		_coolerInspected |= _lidOpen;
 		sayCue(13, _coolerMoved ? 0 : !_lidOpen ? 1 : _ice == kDrained ? 6 :
 			_ice == kMelted ? 5 : _windowClean ? (_unplugged ? 5 : 4) : (_unplugged ? 3 : 2));
 		break;
-	case 9: sayCue(15, examined ? 1 : 0); break;
-	case 10: sayCue(16, 0); break;
-	case 11: sayCue(18, 0); break;
-	case 12: sayCue(21, 0); break;
-	case 13: sayCue(23, 0); break;
-	case 14: sayCue(25, 0); break;
-	case 15: sayCue(40, 0); break;
-	case 16: sayCue(29, 0); break;
-	case 17: sayCue(30, examined ? 1 : 0); break;
-	case 18: sayCue(32, _lidOpen ? 1 : 0); break;
-	default: break;
+	case 9:
+		sayCue(15, examined ? 1 : 0);
+		break;
+	case 10:
+		sayCue(16, 0);
+		break;
+	case 11:
+		sayCue(18, 0);
+		break;
+	case 12:
+		sayCue(21, 0);
+		break;
+	case 13:
+		sayCue(23, 0);
+		break;
+	case 14:
+		sayCue(25, 0);
+		break;
+	case 15:
+		sayCue(40, 0);
+		break;
+	case 16:
+		sayCue(29, 0);
+		break;
+	case 17:
+		sayCue(30, examined ? 1 : 0);
+		break;
+	case 18:
+		sayCue(32, _lidOpen ? 1 : 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -605,13 +640,19 @@ void RunawayScene5030::startAction(Action action) {
 	stopSpeech();
 	uint chunk = 0, frames = 0;
 	switch (action) {
-	case kIntroLookAround: waitForSpeech(0, 1, kIntroInventory); break;
+	case kIntroLookAround:
+		waitForSpeech(0, 1, kIntroInventory);
+		break;
 	case kIntroInventory:
 		setPosition(_position, 4);
 		sayCue(0, 2);
 		break;
-	case kIntroListen: waitForSpeech(0, 3, kIntroWalkToDoor); break;
-	case kIntroWalkToDoor: walkForAction(Common::Point(101, 507), 7, kIntroExamineDoor); break;
+	case kIntroListen:
+		waitForSpeech(0, 3, kIntroWalkToDoor);
+		break;
+	case kIntroWalkToDoor:
+		walkForAction(Common::Point(101, 507), 7, kIntroExamineDoor);
+		break;
 	case kIntroExamineDoor:
 		_examined[1] = true;
 		waitForSpeech(1, 0, kPeekDoor);
@@ -619,36 +660,92 @@ void RunawayScene5030::startAction(Action action) {
 	case kPickup:
 		_action = kNone;
 		switch (_pickupHotspot) {
-		case 5: pickUp(5, 8, 0); break;
-		case 9: pickUp(9, 1, 1); break;
-		case 14: pickUp(14, 2, 2); break;
-		case 16: pickUp(16, 24, 3); break;
-		case 17: pickUp(17, 3, 4); break;
-		default: break;
+		case 5:
+			pickUp(5, 8, 0);
+			break;
+		case 9:
+			pickUp(9, 1, 1);
+			break;
+		case 14:
+			pickUp(14, 2, 2);
+			break;
+		case 16:
+			pickUp(16, 24, 3);
+			break;
+		case 17:
+			pickUp(17, 3, 4);
+			break;
+		default:
+			break;
 		}
 		break;
-	case kShirt: _action = kNone; sayCue(28, 0); break;
-	case kMeltIce: waitForSpeech(20, 0, kMeltWait); break;
-	case kInspectIce: walkForAction(Common::Point(1062, 473), 1, kFinishMelting); break;
-	case kFinishMelting: _ice = kMelted; _action = kNone; sayCue(13, 5); break;
-	case kTryMoveCooler: chunk = _windowClean ? 37 : 38; frames = 26; break;
-	case kRevealHatch: waitForSpeech(14, 4, kMoveCooler); break;
-	case kMoveCooler: chunk = 41; frames = 83; applyPatch(23); break;
-	case kFinishMoving: walkForAction(Common::Point(1215, 542), 7, kHatchFound); break;
-	case kHatchFound: _action = kNone; sayCue(14, 6); break;
+	case kShirt:
+		_action = kNone;
+		sayCue(28, 0);
+		break;
+	case kMeltIce:
+		waitForSpeech(20, 0, kMeltWait);
+		break;
+	case kInspectIce:
+		walkForAction(Common::Point(1062, 473), 1, kFinishMelting);
+		break;
+	case kFinishMelting:
+		_ice = kMelted;
+		_action = kNone;
+		sayCue(13, 5);
+		break;
+	case kTryMoveCooler:
+		chunk = _windowClean ? 37 : 38;
+		frames = 26;
+		break;
+	case kRevealHatch:
+		waitForSpeech(14, 4, kMoveCooler);
+		break;
+	case kMoveCooler:
+		chunk = 41;
+		frames = 83;
+		applyPatch(23);
+		break;
+	case kFinishMoving:
+		walkForAction(Common::Point(1215, 542), 7, kHatchFound);
+		break;
+	case kHatchFound:
+		_action = kNone;
+		sayCue(14, 6);
+		break;
 	case kDrainCooler:
 		chunk = 39;
 		frames = 59;
 		if (!_water.load(_archive, 33, 97))
 			error("Cannot load Runaway draining animation");
 		break;
-	case kFinishDraining: _action = kNone; sayCue(19, 2); break;
-	case kPryHatch: chunk = 32; frames = 43; break;
-	case kOpenHatch: chunk = 36; frames = 47; applyPatch(24); break;
-	case kEscape: chunk = 35; frames = 37; break;
-	case kPeekDoor: chunk = 22; frames = 19; break;
-	case kReturnFromPeek: chunk = 22; frames = 19; break;
-	default: break;
+	case kFinishDraining:
+		_action = kNone;
+		sayCue(19, 2);
+		break;
+	case kPryHatch:
+		chunk = 32;
+		frames = 43;
+		break;
+	case kOpenHatch:
+		chunk = 36;
+		frames = 47;
+		applyPatch(24);
+		break;
+	case kEscape:
+		chunk = 35;
+		frames = 37;
+		break;
+	case kPeekDoor:
+		chunk = 22;
+		frames = 19;
+		break;
+	case kReturnFromPeek:
+		chunk = 22;
+		frames = 19;
+		break;
+	default:
+		break;
 	}
 	if (frames && !_actionAnimation.load(_archive, chunk, frames))
 		error("Cannot load Runaway action animation %u", chunk);
@@ -831,10 +928,15 @@ void RunawayScene5030::updateAction() {
 			if (previousStep < 25 && _step >= 25)
 				_audio.playEffect(17);
 			break;
-		case kEscape: length = 37; break;
+		case kEscape:
+			length = 37;
+			break;
 		case kPeekDoor:
-		case kReturnFromPeek: length = 20; break;
-		default: break;
+		case kReturnFromPeek:
+			length = 20;
+			break;
+		default:
+			break;
 		}
 		if (length && _step >= length)
 			finishAction();

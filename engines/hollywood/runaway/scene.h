@@ -248,6 +248,12 @@ private:
 	bool applyDesertBackground();
 	void updateDesertMaps();
 	void drawDesertRoom(Graphics::ManagedSurface &viewport, bool foreground);
+	void drawScene5060(Graphics::ManagedSurface &viewport);
+	void drawScene5100(Graphics::ManagedSurface &viewport, bool foreground);
+	void updateScene5100();
+	bool applyBackground5100();
+	void updateMaps5100();
+	void walkHangar(Common::Point target, byte facing);
 	void setupDesertDepth(RunawayActor::RenderParams &params) const;
 	float desertActorHeight() const;
 	Common::U32String desertHotspotName(byte id) const;
