@@ -30,6 +30,7 @@
 #include "harold/bcb/static_data.h"
 #include "image/bmp.h"
 #include "image/pict.h"
+#include "image/png.h"
 
 namespace BCB {
 
@@ -108,7 +109,9 @@ Graphics::Surface *BCBEngine::loadImageFromStream(Common::SeekableReadStream *st
 	Common::String name(fileName);
 	name.toLowercase();
 	Common::ScopedPtr<Image::ImageDecoder> decoder;
-	if (name.hasSuffix(".pic") || name.hasSuffix(".pict"))
+	if (name.hasSuffix(".png"))
+		decoder.reset(new Image::PNGDecoder());
+	else if (name.hasSuffix(".pic") || name.hasSuffix(".pict"))
 		decoder.reset(new Image::PICTDecoder());
 	else
 		decoder.reset(new Image::BitmapDecoder());

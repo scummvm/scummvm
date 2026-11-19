@@ -21,6 +21,7 @@
 
 #include "harold/bcb/bcb.h"
 #include "common/config-manager.h"
+#include "common/engine_data.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
@@ -88,6 +89,8 @@ BCBEngine::BCBEngine(OSystem *syst, const HaroldGameDescription *desc)
 
 BCBEngine::~BCBEngine() {
 	delete _cinemaMenu;
+	if (_engineDataAvailable)
+		SearchMan.remove("data");
 	delete _screen;
 	if (_uiBitmap) {
 		_uiBitmap->free();
@@ -128,6 +131,11 @@ Common::Error BCBEngine::run() {
 
 	if (!initializeSearchPaths())
 		return Common::kPathDoesNotExist;
+
+	Common::U32String engineDataError;
+	_engineDataAvailable = Common::load_engine_data("harold.dat", "bcb", 1, 0, engineDataError, true);
+	if (!_engineDataAvailable)
+		warning("BCB: Engine data unavailable: %s", engineDataError.encode().c_str());
 
 	const Common::String languageCode = ConfMan.get("bcb_text_language");
 	_selectedTextLanguagePackageAvailable = !languageCode.empty() &&

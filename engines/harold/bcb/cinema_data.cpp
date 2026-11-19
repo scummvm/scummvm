@@ -19,7 +19,6 @@
  */
 
 #include "common/archive.h"
-#include "common/compression/unzip.h"
 #include "common/memstream.h"
 #include "common/str-enc.h"
 #include "common/system.h"
@@ -32,14 +31,9 @@
 
 namespace BCB {
 
-Common::SeekableReadStream *CinemaViewer::openPackage(BCBEngine &engine) {
-	Common::SeekableReadStream *stream = engine.createProgramReadStream("bcb-cinema.dat");
-	return stream ? stream : SearchMan.createReadStreamForMember("bcb-cinema.dat");
-}
-
 bool CinemaViewer::loadLabels() {
 	TextStringTable labels;
-	if (!labels.load(_archive->createReadStreamForMember("cinema.yml")))
+	if (!labels.load(SearchMan.createReadStreamForMember("data/cinema/cinema.yml")))
 		return false;
 	for (uint i = 0; i < ARRAYSIZE(kCinemaPlaylists); ++i) {
 		const Common::String key = Common::String::format("cinema.playlist.%u", i + 1);
@@ -65,13 +59,13 @@ bool CinemaViewer::loadPicture(uint index, Graphics::ManagedSurface &surface) {
 	}
 	const char *path = kCinemaPicturePaths[index];
 	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> picture(
-		_engine.loadImageFromStream(_archive->createReadStreamForMember(Common::Path(path)), path));
+		_engine.loadImageFromStream(SearchMan.createReadStreamForMember(Common::Path(path, '/')), path));
 	if (!picture) {
 		warning("BCB Cinema: Missing picture %s", path);
 		return false;
 	}
 	if (index == 0) {
-		if (!applyPatchImage(*picture, _archive->createReadStreamForMember("patches/pcinm_patch.png"), "BCB Cinema")) {
+		if (!applyPatchImage(*picture, SearchMan.createReadStreamForMember("data/cinema/patches/pcinm_patch.png"), "BCB Cinema")) {
 			warning("BCB Cinema: Missing or invalid menu patch");
 			return false;
 		}
@@ -82,11 +76,7 @@ bool CinemaViewer::loadPicture(uint index, Graphics::ManagedSurface &surface) {
 }
 
 bool CinemaViewer::load() {
-	Common::SeekableReadStream *stream = openPackage(_engine);
-	if (!stream)
-		return false;
-	_archive.reset(Common::makeZipArchive(stream));
-	if (!_archive)
+	if (!_engine._engineDataAvailable)
 		return false;
 	if (!loadLabels()) {
 		warning("BCB Cinema: Missing or invalid cinema.yml");

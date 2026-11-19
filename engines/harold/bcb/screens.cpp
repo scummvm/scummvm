@@ -63,7 +63,7 @@ bool BCBEngine::showTitleScreen() {
 
 	const Common::String &target = ConfMan.getActiveDomainName();
 	const bool completed = ConfMan.hasKey("bcb_completed", target) && ConfMan.getBool("bcb_completed", target);
-	if (completed && !_cinemaMenu) {
+	if (completed && _engineDataAvailable && !_cinemaMenu) {
 		_cinemaMenu = new CinemaViewer(*this);
 		if (!_cinemaMenu->load()) {
 			delete _cinemaMenu;

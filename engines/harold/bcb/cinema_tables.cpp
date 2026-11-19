@@ -23,9 +23,9 @@
 namespace BCB {
 
 const char *const kCinemaPicturePaths[3] = {
-	"Cinepict/PCINM.PIC",
-	"Cinepict/PCINM2.pic",
-	"Cinepict/PCINM3.PIC"
+	"data/cinema/pcinm.png",
+	"data/cinema/pcinm2.png",
+	"data/cinema/pcinm3.png"
 };
 
 const CinemaButton kCinemaButtons[26] = {

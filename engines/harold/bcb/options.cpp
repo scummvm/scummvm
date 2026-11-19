@@ -107,11 +107,10 @@ bool BCBOptionsWidget::save() {
 void BCBOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout);
 	const bool lowResGui = g_gui.useLowResGUI();
-	const int labelWidth = lowResGui ? 125 : 115;
-	const int leftInset = 1;
+	const int labelWidth = layouts.getVar("Globals.GameOptionsLabel.Width", layouts.getVar("Globals.OptionsLabel.Width"));
 	const int rowSpacing = lowResGui ? 6 : 10;
 	const int lineHeight = layouts.getVar("Globals.Line.Height");
-	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(leftInset, 0, 0, 0);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 0, 0);
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, rowSpacing, GUI::ThemeLayout::kItemAlignCenter).addPadding(0, 0, 0, 0);
 	layouts.addWidget("text_language_desc", "", labelWidth, lineHeight, Graphics::kTextAlignEnd);
 	layouts.addWidget("text_language", "PopUp").closeLayout();

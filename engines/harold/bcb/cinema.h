@@ -30,10 +30,6 @@
 #include "graphics/managed_surface.h"
 #include "harold/bcb/cinema_tables.h"
 
-namespace Common {
-class Archive;
-class SeekableReadStream;
-}
 namespace Graphics {
 class Font;
 class Screen;
@@ -53,7 +49,6 @@ public:
 	bool load();
 	void run();
 	void pause(bool paused);
-	static Common::SeekableReadStream *openPackage(BCBEngine &engine);
 	static Common::Rect titleButtonRect();
 	static void drawTitleButton(BCBEngine &engine, Graphics::Surface &surface);
 	static void pressTitleButton(BCBEngine &engine);
@@ -105,7 +100,6 @@ private:
 	Common::U32String translate(const Common::String &key, const Common::U32String &original) const;
 
 	BCBEngine &_engine;
-	Common::ScopedPtr<Common::Archive> _archive;
 	Graphics::ManagedSurface _sheets[3];
 	Graphics::ManagedSurface _background;
 	Canvas _canvas;

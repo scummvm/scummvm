@@ -32,6 +32,10 @@
 namespace BCB {
 namespace {
 
+Common::SeekableReadStream *openTranslationPatch(const Common::String &path) {
+	return SearchMan.createReadStreamForMember(Common::Path("data/" + path, '/'));
+}
+
 bool parseTranslationInt(const char *text, int &value) {
 	if (!text || !text[0])
 		return false;
@@ -216,7 +220,7 @@ bool drawTranslatedEnding(Graphics::Surface &surface, const TextTranslationData 
 	HighQualityTextRenderer *renderer = font ? translation.getImageFont(font) : nullptr;
 	if (!translation.packageArchive || !patch || !renderer || !renderer->isValid() || !strings.getString(prefix + "line1"))
 		return false;
-	if (!applyPatchImage(surface, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "drawTranslatedEnding"))
+	if (!applyPatchImage(surface, openTranslationPatch(patch), "drawTranslatedEnding"))
 		return false;
 
 	const int scale = 4;
@@ -361,7 +365,7 @@ void applyTranslatedComputerCard(Graphics::Surface &card, const char *path, cons
 		return;
 	Graphics::Surface result;
 	result.copyFrom(card);
-	if (applyPatchImage(result, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "applyTranslatedComputerCard") &&
+	if (applyPatchImage(result, openTranslationPatch(patch), "applyTranslatedComputerCard") &&
 		drawConfiguredHighQualityTextLines(result, translation, prefix, "LiberationSans-Regular.ttf", 218, 218, 236, 0, 0, 0, true))
 		card.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));
 	result.free();
@@ -372,7 +376,7 @@ void applyTranslatedStillImage(Graphics::Surface &still, int stillIndex, const T
 	if (translation.packageArchive && stillIndex >= 0 && stillIndex < 5) {
 		Graphics::Surface result;
 		result.copyFrom(still);
-		if (applyPatchImage(result, translation.packageArchive->createReadStreamForMember(Common::Path(Common::String::format("patches/pstill_%d_patch.png", stillIndex + 1), '/')), "applyTranslatedStillImage") &&
+		if (applyPatchImage(result, openTranslationPatch(Common::String::format("patches/pstill_%d_patch.png", stillIndex + 1)), "applyTranslatedStillImage") &&
 			drawTranslatedStillHeading(result, stillIndex, translation))
 			still.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));
 		result.free();
@@ -452,7 +456,7 @@ void applyTranslatedCinemaMenu(Graphics::Surface &menu, const TextTranslationDat
 		return;
 	Graphics::Surface result;
 	result.copyFrom(menu);
-	if (applyPatchImage(result, translation.packageArchive->createReadStreamForMember(Common::Path(patch, '/')), "applyTranslatedCinemaMenu") &&
+	if (applyPatchImage(result, openTranslationPatch(patch), "applyTranslatedCinemaMenu") &&
 		drawConfiguredHighQualityTextLines(result, translation, "cinema_menu.buttons.", "LiberationSans-BoldItalic.ttf", 32, 40, 48, 0, 0, 0) &&
 		drawConfiguredHighQualityTextLines(result, translation, "cinema_menu.instruction.", "LiberationSerif-Regular.ttf", 216, 176, 32, 0, 0, 0))
 		menu.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));
@@ -466,7 +470,7 @@ void applyTranslatedTitleMenu(Graphics::Surface &title, const TextTranslationDat
 
 	Graphics::Surface result;
 	result.copyFrom(title);
-	if (applyPatchImage(result, translation.packageArchive->createReadStreamForMember(Common::Path("patches/16mtitle_patch.png", '/')), "applyTranslatedTitleMenu") &&
+	if (applyPatchImage(result, openTranslationPatch("patches/16mtitle_patch.png"), "applyTranslatedTitleMenu") &&
 		drawConfiguredHighQualityTextLines(result, translation, "title_menu.", "LiberationSans-BoldItalic.ttf", 53, 55, 106, 142, 146, 232) &&
 		drawConfiguredHighQualityTextLines(result, translation, "title_menu_pressed.", "LiberationSans-BoldItalic.ttf", 136, 90, 155, 183, 169, 211))
 		title.copyRectToSurface(result, 0, 0, Common::Rect(result.w, result.h));

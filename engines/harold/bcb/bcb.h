@@ -278,6 +278,7 @@ private:
 	Graphics::Surface *_titleBitmap = nullptr;
 	CinemaViewer *_cinemaViewer = nullptr;
 	CinemaViewer *_cinemaMenu = nullptr;
+	bool _engineDataAvailable = false;
 	bool _cinemaAvailable = false;
 	Graphics::Surface *_uiBitmap = nullptr;
 	Common::String _uiBitmapName;

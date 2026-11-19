@@ -86,7 +86,7 @@ void CinemaViewer::pressTitleButton(BCBEngine &engine) {
 
 void BCBEngine::runCinemaViewer() {
 	if (!_cinemaMenu) {
-		warning("BCB: Unable to load bcb-cinema.dat");
+		warning("BCB: Unable to load Cinema resources");
 		restoreTitleScreenRegion(CinemaViewer::titleButtonRect());
 		return;
 	}
