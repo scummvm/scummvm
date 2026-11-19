@@ -36,6 +36,7 @@ private:
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
 	void runCustomEntrySequence() override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
 	float actorHeight() const override;

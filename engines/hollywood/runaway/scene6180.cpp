@@ -37,8 +37,6 @@ const RunawayHotspot kHotspots[] = {
 const RunawayResponse kResponses[] = {
 	{6180, 301, 1, 0},  // Look out into the deserted street.
 	{6180, 303, 2, 0},  // Look inside the saloon.
-	{6180, 305, 4, 0},  // Examine the muddy trough.
-	{6180, 306, 5, 0},  // Try to overturn the trough.
 	{6180, 307, 6, 0},  // Examine the doors' pressure plate.
 	{6180, 309, 8, 0},  // Read the broken window.
 	{6180, 310, 9, 0},  // Refuse to break more glass.
@@ -71,6 +69,10 @@ bool Scene6180::loadCustomResources() {
 		_archive.readVariableChunk(6, _doorPatches[0]) && _archive.readVariableChunk(7, _doorPatches[1]);
 }
 
+bool Scene6180::applyCustomBackgroundPatches() {
+	return !_town.wrenchFound || applyPatch(_town.wrenchFound == 1 ? 10 : 11);
+}
+
 void Scene6180::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		if (_maps[i] == 3) {
@@ -92,7 +94,15 @@ void Scene6180::runCustomEntrySequence() {
 		_position = Common::Point(1023, 519);
 		_walkPath.reset(_position);
 		_saloonDoorFrame = 7;
-		walkTo(Common::Point(586, 534), 5, false, true);
+		if (_town.wrenchFound == 1) {
+			walkTo(Common::Point(434, 433), 7, false, true);
+			deferTownAction(410);
+		} else if (_town.wrenchThrown == 1 && !_town.wrenchInTroughSeen) {
+			walkTo(Common::Point(586, 534), 7, false, true);
+			deferTownAction(412);
+		} else {
+			walkTo(Common::Point(586, 534), 5, false, true);
+		}
 	} else {
 		_facing = 3;
 		if (!_town.saloonEntranceVisited) {
@@ -171,6 +181,12 @@ RunawayRoomScene::ActionResult Scene6180::dispatchCustomSceneAction(uint16 actio
 			deferTownAction(403);
 		}
 		break;
+	case 305: // Examine the trough before or after the wrench lands in it.
+		say(4, _town.wrenchThrown);
+		break;
+	case 306: // The muddy trough is too heavy to overturn.
+		say(5, _town.wrenchThrown);
+		break;
 	case 308: // Step on the board, or point out that Brian is already on it.
 		if (_position == Common::Point(780, 527)) {
 			say(7);
@@ -197,6 +213,26 @@ RunawayRoomScene::ActionResult Scene6180::dispatchCustomSceneAction(uint16 actio
 		return kBackgroundChanged;
 	case 403: // Enter the saloon after crossing the porch.
 		leaveTownRoom(6240);
+		break;
+	case 410: // Notice the wrench knocked out of the trough by the flower pot.
+		say(0, 3);
+		deferTownAction(411);
+		break;
+	case 411: // Pick up the number-ten wrench for Joshua.
+		_facing = 4;
+		_town.wrenchFound = 2;
+		_inventory.add(10);
+		say(0, 4);
+		return kBackgroundChanged;
+	case 412: // Find the wrench buried in the muddy trough.
+		say(0, 1);
+		walkTo(Common::Point(405, 427), 7, false, true);
+		deferTownAction(413);
+		break;
+	case 413: // Brian needs something to dislodge the wrench.
+		_facing = 4;
+		_town.wrenchInTroughSeen = 1;
+		say(0, 2);
 		break;
 	default:
 		return kUnhandled;

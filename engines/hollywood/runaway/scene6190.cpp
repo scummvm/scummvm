@@ -39,8 +39,6 @@ const RunawayHotspot kHotspots[] = {
 
 const RunawayResponse kResponses[] = {
 	{6190, 301, 1, 0},   // Look toward town.
-	{6190, 303, 2, 0},   // Look at the bucket of paint.
-	{6190, 304, 3, 0},   // Try to take the bucket of paint.
 	{6190, 306, 5, 0},   // Look at the hole in the floor.
 	{6190, 310, 9, 0},   // Look at the metal object.
 	{6190, 312, 11, 0},  // Look at Douglas's desk.
@@ -69,7 +67,8 @@ bool Scene6190::usesAlternateActor() const {
 }
 
 bool Scene6190::applyCustomBackgroundPatches() {
-	return (!_town.bankStampTaken || applyPatch(8)) &&
+	return (!_town.catapult || applyPatch(_town.catapult == 3 ? 5 : 4)) &&
+		(!_town.bankStampTaken || applyPatch(8)) &&
 		(_town.bankShelves != 2 || applyPatch(9));
 }
 
@@ -77,7 +76,7 @@ void Scene6190::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
 		// The bucket only appears after the catapult has hit the bank.
-		if (id == 2) {
+		if (id == 2 && !_town.catapult) {
 			id = 0;
 		} else if (id == 5 && _town.bankShelves != 1) {
 			id = 4;
@@ -86,12 +85,34 @@ void Scene6190::applyCustomHotspotState() {
 }
 
 void Scene6190::runCustomEntrySequence() {
-	if (!_town.bankVisited) {
+	if (_entryScene == 6191) {
+		_position = Common::Point(561, 288);
+		_walkPath.reset(_position);
+		_facing = 4;
+		beginRoomAnimation(405, 7, 24);
+	} else if (_town.catapult == 3 && !_town.bankImpactSeen) {
+		walkTo(Common::Point(560, 282), 0);
+		deferTownAction(403);
+	} else if (!_town.bankVisited) {
 		walkTo(Common::Point(1075, 330), 7);
 		deferTownAction(400);
 	} else {
 		walkTo(Common::Point(669, 413), 7);
 	}
+	if (_town.catapult && _town.bankVisited) {
+		_town.bankVisited = 2;
+	}
+}
+
+Common::U32String Scene6190::hotspotName(byte id) const {
+	if (id == 2 && _town.catapult == 3) {
+		return Common::U32String("Entrance to the basement");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+bool Scene6190::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+	return approach || (id == 2 && use && _town.catapult == 3);
 }
 
 float Scene6190::actorHeight() const {
@@ -107,6 +128,30 @@ RunawayRoomScene::ActionResult Scene6190::dispatchCustomSceneAction(uint16 actio
 	switch (action) {
 	case 302: // Return to the street.
 		leaveTownRoom(6224);
+		break;
+	case 303: // Examine the paint bucket or the new entrance to the basement.
+		say(2, _town.catapult == 3);
+		break;
+	case 304: // Leave the paint alone, or climb down through the statue's hole.
+		if (_town.catapult == 3) {
+			if (!_town.basementVisited) {
+				say(4);
+			}
+			beginRoomAnimation(404, 6, 24);
+		} else {
+			say(3);
+		}
+		break;
+	case 1404: // Enter the bank basement.
+		leaveTownRoom(6250);
+		break;
+	case 1405: // Finish climbing back into the bank.
+		_audio.playMusic(12 + _random.getRandomNumber(4), false);
+		break;
+	case 403: // Inspect the hole made by Saturn's statue.
+		_town.bankImpactSeen = 1;
+		_town.bankVisited = 2;
+		say(0, 2);
 		break;
 	case 307: // Try to enter the rubble-filled hole.
 		say(6, _town.basementKnown);
@@ -151,7 +196,7 @@ RunawayRoomScene::ActionResult Scene6190::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 402: // Finish Brian's first inspection of the ruined bank.
 		say(0, 1);
-		_town.bankVisited = 1;
+		_town.bankVisited = _town.catapult ? 2 : 1;
 		break;
 	default:
 		return kUnhandled;

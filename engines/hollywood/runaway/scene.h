@@ -230,6 +230,7 @@ protected:
 
 	bool townChapter() const { return _game == kRunawayFullGame && _room / 1000 == 6; }
 	void resumeTown();
+	bool sayTownInventory(const RunawayInventory::Reply &reply);
 	void updateTown(uint32 delta);
 	void leaveTownRoom(uint16 scene);
 	void deferTownAction(uint16 action);
@@ -237,6 +238,7 @@ protected:
 
 	RunawayAudio &_audio;
 	RunawaySequence _sequence;
+	bool _inventorySequence = false;
 	RunawayInventory &_inventory;
 	const RunawayStrings &_strings;
 	const RunawayGameType _game;
@@ -283,7 +285,7 @@ protected:
 	struct DialogueChoice {
 		byte enabled, node, transition, player, response, disable, selectable;
 	};
-	DialogueChoice _dialogue[21][8] = {};
+	DialogueChoice _dialogue[22][8] = {};
 	Common::Array<Common::U32String> _choices;
 	Common::Array<byte> _choiceIndices;
 	byte _conversation = 0, _dialogueDepth = 0, _dialogueNode = 0, _dialogueIntro = 0;

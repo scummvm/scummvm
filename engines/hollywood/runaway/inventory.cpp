@@ -152,8 +152,21 @@ Common::U32String RunawayInventory::name(byte item) const {
 	if (_chapter == 4 && item == 11 && _town.strap == 2) {
 		return Common::U32String("Strap with joined ends");
 	}
-	if (_chapter == 4)
+	if (_chapter == 4) {
+		if (item == 24 && _town.bottleContents) {
+			return Common::U32String(_town.bottleContents == 1 ? "Bottle with one liter of water" : "Bottle of gasoline");
+		}
+		if ((item == 25 && _town.tube30) || (item == 26 && _town.tube50)) {
+			return Common::U32String(Common::String::format("%u c.c. of concentrated gasoline", 10 * (item == 25 ? _town.tube30 : _town.tube50)));
+		}
+		if (item == 29 && _town.sculpture) {
+			return Common::U32String(_town.sculpture == 1 ? "Polished stone" : "Stone sculpture with amber");
+		}
+		if (item == 31 && _town.mortar) {
+			return Common::U32String("Mortar and pestle");
+		}
 		return item < ARRAYSIZE(kTownItemNames) ? Common::U32String(kTownItemNames[item]) : Common::U32String();
+	}
 	if (_chapter == 1) {
 		if (item == 11 && _markerInk == 1)
 			return Common::U32String("Dry marker pen");
@@ -190,13 +203,29 @@ Common::U32String RunawayInventory::name(byte item) const {
 }
 
 uint RunawayInventory::icon(byte item) const {
-	if (_chapter == 4 && _town.strap == 2) {
-		if (item == 11) {
+	if (_chapter == 4) {
+		if (item == 11 && _town.strap == 2) {
 			return 33;
 		}
-		if (item == 20) {
+		if (item == 20 && _town.strap == 2) {
 			return 47;
 		}
+		if (item == 24 && _town.bottleContents) {
+			return 33 + _town.bottleContents;
+		}
+		if (item == 25 && _town.tube30) {
+			return 35 + _town.tube30;
+		}
+		if (item == 26 && _town.tube50) {
+			return 38 + _town.tube50;
+		}
+		if (item == 29 && _town.sculpture) {
+			return 43 + _town.sculpture;
+		}
+		if (item == 31 && _town.mortar) {
+			return 46;
+		}
+		return item;
 	}
 	if (_chapter == 2) {
 		if (item == 7 && _museum.restoredCrucifix)
@@ -247,16 +276,9 @@ uint RunawayInventory::icon(byte item) const {
 }
 
 uint RunawayInventory::cursor(byte item) const {
-	if (_chapter == 4 && _town.strap == 2) {
-		if (item == 11) {
-			return 105;
-		}
-		if (item == 20) {
-			return 133;
-		}
+	if (_chapter == 4) {
+		return item && item < ARRAYSIZE(kTownItemNames) ? 39 + icon(item) * 2 : 0;
 	}
-	if (_chapter == 4)
-		return item && item < ARRAYSIZE(kTownItemNames) ? 39 + item * 2 : 0;
 	if (_chapter == 1) {
 		if (item == 15 && _syringeFilled)
 			return 77;
@@ -303,22 +325,42 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 		case 8: // Liniment.
 		case 9: // Cell key.
 			return Reply(194 + item);
+		case 10: // Wrench.
+			return Reply(223);
+		case 12: // Concentrated gasoline.
+		case 13: // Telepathic helmet.
+		case 15: // Blowtorch.
+			return Reply(193 + item);
+		case 17: // Map of the mine.
+		case 18: // Miner's light.
+		case 19: // Rope.
+			return Reply(192 + item);
+		case 24: // Empty, water-filled, or fuel-filled bottle.
+			return _town.bottleContents ? Reply(215, _town.bottleContents - 1) : Reply(19, 1);
+		case 25: // The 30 cc measuring tube.
+			return Reply(216, _town.tube30 == 3 ? 5 : _town.tube30);
+		case 26: // The 50 cc measuring tube.
+			return Reply(216, _town.tube50 == 5 ? 6 : _town.tube50);
+		case 28: // Homemade chewing tobacco.
+			return Reply(218);
+		case 30: // Sanding block.
+			return Reply(220);
 		case 11: // Wagon strap.
 			return Reply(204, _town.strap);
 		case 14: // Firewood.
 			return Reply(207);
 		case 20: // Ancient stapler.
-			return Reply(212);
+			return Reply(212, _town.strap == 2);
 		case 22: // Pruning shears.
 			return Reply(213);
 		case 23: // Oil can.
-			return Reply(214);
+			return Reply(214, _town.oilCanFull);
 		case 27: // Tobacco leaves.
 			return Reply(217);
 		case 29: // Stone with a hole.
-			return Reply(219);
+			return Reply(219, _town.sculpture * 2);
 		case 31: // Clay vessel.
-			return Reply(221);
+			return Reply(221, _town.mortar);
 		case 32: // Bank stamp.
 			return Reply(222);
 		default:
@@ -406,17 +448,11 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 	if (!contains(first) || !contains(second) || first == second)
 		return Reply();
+	if (_chapter == 4) {
+		return combineTownItems(first, second);
+	}
 	if (first > second)
 		SWAP(first, second);
-	if (_chapter == 4 && first == 11 && second == 20) { // Staple the strap's ends together.
-		if (_town.strap != 1) {
-			return Reply(227, _town.strap == 2 ? 3 : 0);
-		}
-		_town.strap = 2;
-		_selected = 0;
-		_newItem = 11;
-		return Reply(227, 1);
-	}
 	if (_chapter == 1) {
 		if (first == 10 && second == 17) {
 			_headWig = 1;

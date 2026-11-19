@@ -31,6 +31,12 @@ class Scene6290 : public RunawayRoomScene {
 public:
 	Scene6290(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 
+	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
+	byte hotspotAt(Common::Point mouse) const override;
+	Common::U32String actionCaption(byte id, RunawayVerb verb, byte item) const override;
+	bool canSave() const override;
+	bool busy() const override;
+
 private:
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
@@ -48,12 +54,30 @@ private:
 	Common::U32String hotspotName(byte id) const override;
 
 	void startJoshuaConversation(bool introduction);
+	void startKeyboard();
+	void leaveKeyboard(bool review);
+	void reviewMelody();
+	void setJoshuaAnimation(uint chunk, uint frames);
+	void handleAnimationFrameHook() override;
+	void finishCustomFilm() override;
+	bool shouldDrawActor() const override;
+	bool shouldUpdateActor() const override;
+	void finishCustomConversation() override;
+	uint16 dialoguePlayerCue() const override;
+	uint16 dialogueResponseCue() const override;
 
-	RunawayAnimation _joshuaAnimation, _machineAnimation;
+	RunawayAnimation _joshuaAnimation, _machineAnimation, _lightsAnimation;
+	RunawayAnimation _keyboardBrian, _keyboardButtons, _keyboardPlatform;
+	Common::Array<byte> _keyboardMask, _keyboardMaps;
 	RunawayAnimation _machineAmbientAnimation, _machineOverlayAnimation, _machineIndicator;
 	byte _joshuaFrame = 0;
 	uint32 _joshuaTick = 0;
-	bool _joshuaTalking = false;
+	bool _joshuaTalking = false, _joshuaAnimating = false, _joshuaDown = false;
+	bool _keyboard = false, _reviewingMelody = false;
+	bool _noteSoundPlayed = false;
+	byte _notes[5] = {}, _noteCount = 0, _pressedNote = 0;
+	uint _joshuaChunk = 10;
+	uint32 _noteStarted = 0;
 };
 
 } // End of namespace Runaway

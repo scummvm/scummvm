@@ -414,14 +414,7 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 	_walkPath.clear();
 	_pendingHotspot = 0;
 	_caption.clear();
-	if (townChapter() && reply.cue == 214) {
-		say(214, _town.oilCanFull, true);
-		return;
-	}
-	if (townChapter() && reply.cue == 227 && reply.variation == 1) {
-		say(227, 1, true);
-		_audio.playEffect(30);
-		say(227, 2, true);
+	if (townChapter() && sayTownInventory(reply)) {
 		return;
 	}
 	if (_game == kRunawayFullGame && !desertChapter() && !townChapter() &&
@@ -536,7 +529,12 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	if (_sequence.active()) {
 		_sequence.update(now);
 		if (!_sequence.active()) {
-			finishCustomFilm();
+			if (_inventorySequence) {
+				_inventorySequence = false;
+				resumeAmbientAudio(false);
+			} else {
+				finishCustomFilm();
+			}
 		}
 		return;
 	}

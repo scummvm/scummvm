@@ -94,7 +94,7 @@ struct RunawaySaveState {
 		byte locomotiveVisited = 0, locomotiveKey = 0, waterTank = 0;
 		byte cabVisited = 0, cabExited = 0, boiler = 0;
 		byte steamLever = 0, pressureWheel = 0, drainSeen = 0;
-		byte oilCanFull = 0, bottleContents = 0, craterSeen = 0;
+		byte craterSeen = 0;
 		byte mineVisited = 0, oilCan = 0, rockMoved = 0;
 		byte houseVisited = 0, stone = 0, vessel = 0;
 		byte oscarMet = 0, oscarHelpRefused = 0, rawTobaccoRefused = 0;
@@ -105,10 +105,24 @@ struct RunawaySaveState {
 		byte strapDelivered = 0, wrenchDelivered = 0, wrenchNeeded = 0, fuelNeeded = 0;
 		byte machineKnown = 0, rotorKnown = 0, batteryKnown = 0, helmetKnown = 0, dimensionalDoorKnown = 0;
 		byte strapIdea = 0;
+		byte sandingBlock = 0, wrenchThrown = 0, wrenchFound = 0, wrenchInTroughSeen = 0;
+		byte kevinAway = 0, craterFloorVisited = 0, joshuaGone = 0, helmetTaken = 0;
+		byte kevinMet = 0, catapult = 0, statueLowered = 0, blowtorchTaken = 0;
+		byte sculptureTraded = 0, craneKnown = 0, craneTried = 0, wrenchPermission = 0;
+		byte fuelTradeKnown = 0, waterPermission = 0, waterRequested = 0, hopiDiscussed = 0;
+		byte roughSculptureRefused = 0, polishedSculptureRefused = 0, oscarStrengthKnown = 0;
+		byte basementVisited = 0, bankImpactSeen = 0;
+		byte safeOpened = 0, stethoscopeTried = 0, safeDialVisited = 0;
+		byte safeDial = 69, safeProgress = 0;
+		byte machinePowered = 0, melodyTried = 0, campingGearTaken = 0;
 	} town;
 
 	struct TownItems {
 		byte strap = 0; // Loose, needs joining, joined.
+		byte sculpture = 0; // Rough, sanded, decorated with amber.
+		byte oilCanFull = 0, bottleContents = 0;
+		byte tube30 = 0, tube50 = 0; // Contents in units of ten cubic centimeters.
+		byte mortar = 0, mortarIdea = 0;
 	} townItems;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;

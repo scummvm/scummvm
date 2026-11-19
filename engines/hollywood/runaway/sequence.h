@@ -40,9 +40,11 @@ public:
 		kOpen,        // Movie number; optional file suffix (defaults to .001).
 		kPlay,        // First/last frame, Playback mode.
 		kStill,       // Frame; second argument selects the separate GOG stills movie.
+		kImage,       // A 1024x600 image from RESOURCE.000.
 		kTalk,        // Cue, variation, portrait chunk + 1 (0 = movie still), offscreen speaker.
-		kSpeech,      // Cue, first/last variation; continues alongside the movie.
+		kSpeech,      // Cue, first/last variation, global cue; continues alongside the movie.
 		kWaitSpeech,
+		kWaitInput,
 		kMusic,       // Cue, volume, loop.
 		kEffect,      // Cue, volume, channel, loop.
 		kWaitEffect,  // Maximum wait in milliseconds (channel 0).
@@ -70,7 +72,7 @@ public:
 
 private:
 	void advance();
-	void speak(uint cue, uint variation, uint lastVariation = 0);
+	void speak(uint cue, uint variation, uint lastVariation = 0, bool global = false);
 	void nextLine();
 
 	RunawayAudio &_audio;
@@ -94,6 +96,7 @@ private:
 	struct Line {
 		Common::U32String text;
 		uint16 sample;
+		bool global;
 	};
 	Common::Array<Line> _lines;
 	uint _line = 0;

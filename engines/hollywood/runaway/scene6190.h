@@ -37,6 +37,8 @@ private:
 	void applyCustomHotspotState() override;
 	void runCustomEntrySequence() override;
 	float actorHeight() const override;
+	Common::U32String hotspotName(byte id) const override;
+	bool shouldApproachHotspot(byte id, bool use, byte item, bool approach) const override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 };

@@ -234,8 +234,8 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(town.steamLever, 10);
 	s.syncAsByte(town.pressureWheel, 10);
 	s.syncAsByte(town.drainSeen, 10);
-	s.syncAsByte(town.oilCanFull, 10);
-	s.syncAsByte(town.bottleContents, 10);
+	s.syncAsByte(townItems.oilCanFull, 10);
+	s.syncAsByte(townItems.bottleContents, 10);
 	s.syncAsByte(town.craterSeen, 10);
 	s.syncAsByte(town.mineVisited, 11);
 	s.syncAsByte(town.oilCan, 11);
@@ -268,6 +268,44 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(town.dimensionalDoorKnown, 13);
 	s.syncAsByte(town.strapIdea, 13);
 	s.syncAsByte(townItems.strap, 13);
+	s.syncAsByte(town.sandingBlock, 14);
+	s.syncAsByte(town.wrenchThrown, 14);
+	s.syncAsByte(town.wrenchFound, 14);
+	s.syncAsByte(town.wrenchInTroughSeen, 14);
+	s.syncAsByte(town.kevinAway, 14);
+	s.syncAsByte(town.craterFloorVisited, 14);
+	s.syncAsByte(town.joshuaGone, 14);
+	s.syncAsByte(town.helmetTaken, 14);
+	s.syncAsByte(town.kevinMet, 14);
+	s.syncAsByte(town.catapult, 14);
+	s.syncAsByte(town.statueLowered, 14);
+	s.syncAsByte(town.blowtorchTaken, 14);
+	s.syncAsByte(town.sculptureTraded, 14);
+	s.syncAsByte(town.craneKnown, 14);
+	s.syncAsByte(town.craneTried, 14);
+	s.syncAsByte(town.wrenchPermission, 14);
+	s.syncAsByte(town.fuelTradeKnown, 14);
+	s.syncAsByte(town.waterPermission, 14);
+	s.syncAsByte(town.waterRequested, 14);
+	s.syncAsByte(town.hopiDiscussed, 14);
+	s.syncAsByte(town.roughSculptureRefused, 14);
+	s.syncAsByte(town.polishedSculptureRefused, 14);
+	s.syncAsByte(town.oscarStrengthKnown, 14);
+	s.syncAsByte(town.basementVisited, 14);
+	s.syncAsByte(town.bankImpactSeen, 14);
+	s.syncAsByte(town.safeOpened, 14);
+	s.syncAsByte(town.stethoscopeTried, 14);
+	s.syncAsByte(town.safeDialVisited, 14);
+	s.syncAsByte(town.safeDial, 14);
+	s.syncAsByte(town.safeProgress, 14);
+	s.syncAsByte(town.machinePowered, 14);
+	s.syncAsByte(town.melodyTried, 14);
+	s.syncAsByte(town.campingGearTaken, 14);
+	s.syncAsByte(townItems.sculpture, 14);
+	s.syncAsByte(townItems.tube30, 14);
+	s.syncAsByte(townItems.tube50, 14);
+	s.syncAsByte(townItems.mortar, 14);
+	s.syncAsByte(townItems.mortarIdea, 14);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -369,6 +407,18 @@ bool RunawaySaveState::valid() const {
 			return false;
 	}
 	bool owned[33] = {};
+	if (town.sandingBlock > 2 || town.wrenchThrown > 2 || town.wrenchFound > 2 || town.wrenchInTroughSeen > 1 ||
+			town.kevinAway > 1 || town.craterFloorVisited > 1 || town.joshuaGone > 1 || town.helmetTaken > 1 ||
+			town.kevinMet > 1 || town.catapult > 3 || town.statueLowered > 1 || town.blowtorchTaken > 1 ||
+			town.sculptureTraded > 1 || town.craneKnown > 1 || town.craneTried > 1 || town.wrenchPermission > 2 ||
+			town.fuelTradeKnown > 1 || town.waterPermission > 1 || town.waterRequested > 1 || town.hopiDiscussed > 1 ||
+			town.roughSculptureRefused > 1 || town.polishedSculptureRefused > 1 || town.oscarStrengthKnown > 1 || town.basementVisited > 1 ||
+			town.bankImpactSeen > 1 || town.safeOpened > 1 || town.stethoscopeTried > 1 || town.safeDialVisited > 1 ||
+			town.safeDial > 99 || town.safeProgress > 3 || town.machinePowered > 1 || town.melodyTried > 1 ||
+			town.campingGearTaken > 1 || townItems.sculpture > 2 || townItems.tube30 > 3 || townItems.tube50 > 5 ||
+			townItems.mortar > 1 || townItems.mortarIdea > 1) {
+		return false;
+	}
 	if (town.craterVisited > 1 || town.joshuaMet > 1 || town.campLeft > 1 ||
 			town.strapDelivered > 3 || town.wrenchDelivered > 2 || town.wrenchNeeded > 1 || town.fuelNeeded > 1 ||
 			town.machineKnown > 1 || town.rotorKnown > 1 || town.batteryKnown > 1 || town.helmetKnown > 1 ||
@@ -388,13 +438,13 @@ bool RunawaySaveState::valid() const {
 	if (town.locomotiveVisited > 1 || town.locomotiveKey > 3 || town.waterTank > 5 ||
 			town.cabVisited > 1 || town.cabExited > 1 || town.boiler > 3 ||
 			town.steamLever > 2 || town.pressureWheel > 2 || town.drainSeen > 1 ||
-			town.oilCanFull > 1 || town.bottleContents > 2 || town.craterSeen > 1) {
+			townItems.oilCanFull > 1 || townItems.bottleContents > 2 || town.craterSeen > 1) {
 		return false;
 	}
 	if (town.arrived > 1 || town.streetVisited > 1 || town.strapSeen > 2 || town.sushiMet > 1 || town.mineMapKnown > 1) {
 		return false;
 	}
-	if (town.bankVisited > 1 || town.bankShelves > 2 || town.bankStampTaken > 1 || town.basementKnown > 1 ||
+	if (town.bankVisited > 2 || town.bankShelves > 2 || town.bankStampTaken > 1 || town.basementKnown > 1 ||
 			town.bodySeen > 1 || town.doctorKnown > 1 || town.firewoodTaken > 1 || town.cellOpen > 1 ||
 			town.bagSearched > 1 || town.bucketSeen > 1 || town.bottleSeen > 1 || town.cellRefusals > 2 ||
 			town.safeSeen > 1 || town.oscarTobacco > 2 || town.stethoscopeTaken > 1 || town.linimentTaken > 1) {
@@ -414,7 +464,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 13)
+	if (version < 1 || version > 14)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -426,9 +476,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(13);
+	stream.writeUint16LE(14);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(13);
+	s.setVersion(14);
 	sync(s);
 	return !s.err();
 }

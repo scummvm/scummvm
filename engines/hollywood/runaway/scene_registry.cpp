@@ -43,7 +43,7 @@
 #include "hollywood/runaway/scene5140.h"
 #include "hollywood/runaway/scene5160.h"
 #include "hollywood/runaway/scene5170.h"
-#include "hollywood/runaway/scene6014.h"
+#include "hollywood/runaway/scene6030.h"
 #include "hollywood/runaway/scene6080.h"
 #include "hollywood/runaway/scene6090.h"
 #include "hollywood/runaway/scene6130.h"
@@ -52,13 +52,18 @@
 #include "hollywood/runaway/scene6200.h"
 #include "hollywood/runaway/scene6210.h"
 #include "hollywood/runaway/scene6220.h"
+#include "hollywood/runaway/scene6226.h"
 #include "hollywood/runaway/scene6240.h"
+#include "hollywood/runaway/scene6250.h"
 #include "hollywood/runaway/scene6260.h"
 #include "hollywood/runaway/scene6263.h"
 #include "hollywood/runaway/scene6270.h"
+#include "hollywood/runaway/scene6280.h"
 #include "hollywood/runaway/scene6290.h"
+#include "hollywood/runaway/scene6300.h"
 #include "hollywood/runaway/scene6350.h"
 #include "hollywood/runaway/scene6370.h"
+#include "hollywood/runaway/scene6390.h"
 
 namespace Hollywood {
 namespace {
@@ -98,7 +103,7 @@ const SceneDefinition kSceneDefinitions[] = {
 	{&kRunawayScene5140, createScene<Runaway::Scene5140>},
 	{&kRunawayScene5160, createScene<Runaway::Scene5160>},
 	{&kRunawayScene5170, createScene<Runaway::Scene5170>},
-	{&kRunawayScene6014, createScene<Runaway::Scene6014>},
+	{&kRunawayScene6030, createScene<Runaway::Scene6030>},
 	{&kRunawayScene6080, createScene<Runaway::Scene6080>},
 	{&kRunawayScene6090, createScene<Runaway::Scene6090>},
 	{&kRunawayScene6130, createScene<Runaway::Scene6130>},
@@ -107,13 +112,18 @@ const SceneDefinition kSceneDefinitions[] = {
 	{&kRunawayScene6200, createScene<Runaway::Scene6200>},
 	{&kRunawayScene6210, createScene<Runaway::Scene6210>},
 	{&kRunawayScene6220, createScene<Runaway::Scene6220>},
+	{&kRunawayScene6226, createScene<Runaway::Scene6226>},
 	{&kRunawayScene6240, createScene<Runaway::Scene6240>},
+	{&kRunawayScene6250, createScene<Runaway::Scene6250>},
 	{&kRunawayScene6260, createScene<Runaway::Scene6260>},
 	{&kRunawayScene6263, createScene<Runaway::Scene6263>},
 	{&kRunawayScene6270, createScene<Runaway::Scene6270>},
+	{&kRunawayScene6280, createScene<Runaway::Scene6280>},
 	{&kRunawayScene6290, createScene<Runaway::Scene6290>},
+	{&kRunawayScene6300, createScene<Runaway::Scene6300>},
 	{&kRunawayScene6350, createScene<Runaway::Scene6350>},
-	{&kRunawayScene6370, createScene<Runaway::Scene6370>}
+	{&kRunawayScene6370, createScene<Runaway::Scene6370>},
+	{&kRunawayScene6390, createScene<Runaway::Scene6390>}
 };
 
 } // End of anonymous namespace
@@ -135,8 +145,11 @@ const RunawayRoom *findRunawayRoom(uint16 number) {
 		number -= number % 10;
 	} else if (number >= 6221 && number <= 6225) {
 		number = 6220;
-	} else if (number == 6015) {
-		number = 6014;
+	} else if (number == 6227 || number == 6228) {
+		number = 6226;
+	} else if (number == 6031 || number == 6014 || number == 6015) {
+		// Preserve the shaft scene numbers used by early chapter-four saves.
+		number = 6030;
 	} else if (number == 6081 || number == 6082) {
 		number = 6080;
 	} else if (number == 6131) {
@@ -151,6 +164,14 @@ const RunawayRoom *findRunawayRoom(uint16 number) {
 		number = 6260;
 	} else if (number == 6264) {
 		number = 6263;
+	} else if (number >= 6301 && number <= 6303) {
+		number = 6300;
+	} else if (number == 6191) {
+		number = 6190;
+	} else if (number == 6251 || number == 6252) {
+		number = 6250;
+	} else if (number == 6391) {
+		number = 6390;
 	} else if (number == 6291) {
 		number = 6290;
 	}

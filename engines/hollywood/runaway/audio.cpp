@@ -108,6 +108,14 @@ void RunawayAudio::setMusicVolume(byte volume) {
 	_mixer->setChannelVolume(_music, volume);
 }
 
+void RunawayAudio::playMusicEffect(uint16 cue, byte volume, byte channel, bool loop) {
+	assert(channel < ARRAYSIZE(_effects));
+	// Notes and some ambient effects are stereo samples in the music archive.
+	const Common::String archive = Common::String::format("RESOURCE.M%02u", _chapter);
+	play(archive.c_str(), cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
+		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop, 16000);
+}
+
 uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
 	if (_museum)
 		return sample ? play("RESOURCE.004", sample, 4000, false, Audio::FLAG_UNSIGNED,

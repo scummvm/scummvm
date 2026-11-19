@@ -33,6 +33,7 @@ public:
 
 private:
 	bool loadCustomResources() override;
+	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
 	void prepareCustomGameplayLoop() override;
 	void runCustomEntrySequence() override;

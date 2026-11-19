@@ -286,7 +286,7 @@ void Scene6090::startOscarConversation() {
 	};
 	memcpy(_dialogue[0], topics, sizeof(topics));
 	_dialogue[0][1].enabled = _town.oscarTobacco < 2;
-	_dialogue[0][3].enabled = _town.oscarTobacco && !_town.rockMoved;
+	_dialogue[0][3].enabled = _town.oscarStrengthKnown && !_town.rockMoved;
 	_dialogue[10][0] = {1, 0, 2, 6, (byte)(_town.oscarHelpRefused ? 7 : 6), 3, 255};
 	if (_town.oscarTobacco == 2) {
 		_dialogue[10][0].transition = 0;

@@ -535,7 +535,7 @@ Common::Error RunawayEngine::run() {
 		Graphics::ManagedSurface &screen = _scene->screen();
 		const bool subtitles = _museum || !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute");
 		_ui->draw(screen, _scene->actionCaption(_scene->hotspotAt(mouse), _ui->verb(), _inventory->selected()),
-			_scene->committedCaption(), _scene->subtitle(), subtitles);
+			_scene->committedCaption(), _scene->subtitle(), subtitles, _scene->playingVideo());
 		present(screen);
 		_system->delayMillis(16);
 	}

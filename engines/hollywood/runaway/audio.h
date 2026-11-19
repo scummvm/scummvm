@@ -34,6 +34,7 @@ public:
 	void setChapter(byte chapter);
 	void playIntroMusic(uint16 cue = 2);
 	uint32 playMusic(uint16 cue, bool loop = true);
+	void playMusicEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
 	void setMusicVolume(byte volume);
 	uint32 playSpeech(uint16 sample, bool global = false);
 	void playEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);

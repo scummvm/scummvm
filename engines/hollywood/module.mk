@@ -148,6 +148,7 @@ MODULE_OBJS = \
 	runaway/intro.o \
 	runaway/hospital.o \
 	runaway/inventory.o \
+	runaway/inventory_town.o \
 	runaway/menu.o \
 	runaway/museum.o \
 	runaway/navigation.o \
@@ -180,7 +181,7 @@ MODULE_OBJS = \
 	runaway/scene5140.o \
 	runaway/scene5160.o \
 	runaway/scene5170.o \
-	runaway/scene6014.o \
+	runaway/scene6030.o \
 	runaway/scene6080.o \
 	runaway/scene6090.o \
 	runaway/scene6130.o \
@@ -189,13 +190,18 @@ MODULE_OBJS = \
 	runaway/scene6200.o \
 	runaway/scene6210.o \
 	runaway/scene6220.o \
+	runaway/scene6226.o \
 	runaway/scene6240.o \
+	runaway/scene6250.o \
 	runaway/scene6260.o \
 	runaway/scene6263.o \
 	runaway/scene6270.o \
+	runaway/scene6280.o \
 	runaway/scene6290.o \
+	runaway/scene6300.o \
 	runaway/scene6350.o \
 	runaway/scene6370.o \
+	runaway/scene6390.o \
 	runaway/sequence.o \
 	runaway/speech.o \
 	runaway/strings.o \

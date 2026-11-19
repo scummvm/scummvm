@@ -55,15 +55,21 @@ void RunawaySequence::advance() {
 	_started = _now;
 }
 
-void RunawaySequence::speak(uint cue, uint variation, uint lastVariation) {
+void RunawaySequence::speak(uint cue, uint variation, uint lastVariation, bool global) {
 	for (uint v = variation; v <= MAX(variation, lastVariation); ++v) {
-		const SceneSpeechCue speech = _text->stageCue(cue, v);
+		SceneSpeechCue speech;
+		if (global) {
+			_text->getStaticSpeechCue(cue, v, speech.textRecordId, speech.continuationCount, speech.voiceSampleId);
+		} else {
+			speech = _text->stageCue(cue, v);
+		}
 		if (!speech.valid() || speech.textRecordId == 0xffff)
 			continue;
 		for (uint i = 0; i < MAX<uint>(1, speech.continuationCount); ++i) {
 			Line line;
 			line.text = Common::U32String(_text->largeTextRecord(speech.textRecordId + i), Common::kDos850);
 			line.sample = speech.voiceSampleId ? speech.voiceSampleId + i : 0;
+			line.global = global;
 			if (!line.text.empty())
 				_lines.push_back(line);
 		}
@@ -80,7 +86,7 @@ void RunawaySequence::nextLine() {
 		return;
 	}
 	const Line &line = _lines[_line++];
-	_speech.start(line.text, line.sample, false, _now, 0);
+	_speech.start(line.text, line.sample, line.global, _now, 0);
 }
 
 void RunawaySequence::update(uint32 now) {
@@ -130,8 +136,21 @@ void RunawaySequence::update(uint32 now) {
 					error("Cannot load Runaway film portrait %u", command.c - 1);
 				speak(command.a, command.b);
 				break;
+			case kImage: {
+				Graphics::ManagedSurface image;
+				if (!loadRunawaySurface(command.a, kRunawayScreenWidth, kRunawayViewportHeight, image)) {
+					error("Cannot load Runaway image %u", command.a);
+				}
+				_video.close();
+				_stills.close();
+				_useStill = _showPortrait = false;
+				_background.create(kRunawayScreenWidth, kRunawayScreenHeight, image.format);
+				_background.clear();
+				_background.blitFrom(image, Common::Point(0, kRunawayViewportTop));
+				break;
+			}
 			case kSpeech:
-				speak(command.a, command.b, command.c);
+				speak(command.a, command.b, command.c, command.d != 0);
 				break;
 			case kMusic:
 				_audio.playMusic(command.a, command.c != 0);
@@ -178,6 +197,8 @@ void RunawaySequence::update(uint32 now) {
 			if (!subtitle().empty())
 				return;
 			break;
+		case kWaitInput:
+			return;
 		case kDelay:
 			if (now - _started < command.a)
 				return;
@@ -213,7 +234,7 @@ void RunawaySequence::skip() {
 		// Bink movies may have only one keyframe; seeking to the end decodes
 		// the entire movie synchronously, blocking input while it catches up.
 		_skipFilm = true;
-	} else if (command.operation == kDelay || command.operation == kWaitEffect) {
+	} else if (command.operation == kDelay || command.operation == kWaitEffect || command.operation == kWaitInput) {
 		advance();
 	}
 }

@@ -160,7 +160,7 @@ RunawayRoomScene::ActionResult Scene6080::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 303: // Look down the shaft.
 	case 304: // Try to descend its broken ladder.
-		leaveTownRoom(action == 303 ? 6014 : 6015);
+		leaveTownRoom(action == 303 ? 6030 : 6031);
 		break;
 	case 305: // Identify the oil can.
 		say(4, _town.oilCan != 0);
@@ -196,8 +196,19 @@ RunawayRoomScene::ActionResult Scene6080::dispatchCustomSceneAction(uint16 actio
 		} else if (!_inventory.contains(18) || !_inventory.contains(19)) {
 			say(9, 2);
 		} else {
-			leaveTownRoom(7000);
+			say(9, 3);
+			beginRoomAnimationRange(410, 8, 90, 0, 32);
 		}
+		break;
+	case 1410: // Brian calls to Gina before entering the mine.
+		say(9, 4);
+		holdRoomAnimation(411, 8, 90, 32);
+		break;
+	case 1411: // Brian walks into the mine with the map and climbing equipment.
+		beginRoomAnimationRange(412, 8, 90, 44, 89);
+		break;
+	case 1412: // The search in Douglasville is complete; the next chapter starts in the mine.
+		_chapterComplete = true;
 		break;
 	case 400: // First visit: approach the blocked entrance.
 		walkTo(Common::Point(656, 347), 1);
@@ -234,6 +245,12 @@ RunawayRoomScene::ActionResult Scene6080::dispatchCustomSceneAction(uint16 actio
 	return kHandled;
 }
 
+void Scene6080::advanceCustomGameplayLoop(uint32 delta) {
+	if (_roomAction == 411 && !_actionFrames.empty()) {
+		_actionFrames[0] = 32 + speechFrame();
+	}
+}
+
 void Scene6080::handleAnimationFrameHook() {
 	if (_roomAction == 403) {
 		const uint frame = _actionFrames[_actionStep];
@@ -242,6 +259,11 @@ void Scene6080::handleAnimationFrameHook() {
 		}
 		if (frame == 18 || frame == 26 || frame == 33 || frame == 44 || frame == 53 ||
 				frame == 62 || frame == 82 || frame == 93 || frame == 111 || frame == 118 || frame == 125) {
+			_audio.playFootstep(2, _random.getRandomBit(), 77);
+		}
+	} else if (_roomAction == 412) {
+		if (_actionStep == 8 || _actionStep == 15 || _actionStep == 23 ||
+				_actionStep == 30 || _actionStep == 37 || _actionStep == 44) {
 			_audio.playFootstep(2, _random.getRandomBit(), 77);
 		}
 	} else if (_roomAction == 404) {

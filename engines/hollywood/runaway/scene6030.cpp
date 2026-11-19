@@ -20,40 +20,40 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene6014.h"
+#include "hollywood/runaway/scene6030.h"
 
 namespace Hollywood {
 
 // Both shaft actions use RESOURCE.F03 and the mine entrance's text.
-const RunawayRoom kRunawayScene6014 = {
-	6014, 1024, 600, nullptr, 0, {{100, 100, 100}},
+const RunawayRoom kRunawayScene6030 = {
+	6030, 1024, 600, nullptr, 0, {{100, 100, 100}},
 	Common::Point(512, 500), nullptr, 0, nullptr, 0, nullptr, 0
 };
 
 namespace Runaway {
 
-Scene6014::Scene6014(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+Scene6030::Scene6030(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
-uint Scene6014::sceneResourceNumber() const {
+uint Scene6030::sceneResourceNumber() const {
 	return 3;
 }
 
-uint Scene6014::sceneTextNumber() const {
+uint Scene6030::sceneTextNumber() const {
 	return 608;
 }
 
-bool Scene6014::loadWalkMap() {
+bool Scene6030::loadWalkMap() {
 	_mask.resize(1024 * 600, 0);
 	_originalMaps.resize(1536, 0);
 	return true;
 }
 
-void Scene6014::runCustomEntrySequence() {
+void Scene6030::runCustomEntrySequence() {
 	dispatchCustomSceneAction(400);
 }
 
-bool Scene6014::drawCustomComposite(Graphics::ManagedSurface &viewport) {
+bool Scene6030::drawCustomComposite(Graphics::ManagedSurface &viewport) {
 	if (drawingRoomAnimation()) {
 		const uint frame = _roomAction == 401 ? 29 + speechFrame() :
 			_actionFrames[MIN<uint>(_actionStep, _actionFrames.size() - 1)];
@@ -62,15 +62,17 @@ bool Scene6014::drawCustomComposite(Graphics::ManagedSurface &viewport) {
 	return true;
 }
 
-RunawayRoomScene::ActionResult Scene6014::dispatchCustomSceneAction(uint16 action) {
+RunawayRoomScene::ActionResult Scene6030::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 400: // Lean over the shaft.
 		beginRoomAnimationRange(400, 1, 41, 0, 29, true, 60);
 		break;
-	case 1400: // Look down, or explain why the ladder cannot be used.
-		say(_entryScene == 6015 ? 3 : 2, _entryScene == 6015 ? 0 : _random.getRandomNumber(3));
+	case 1400: { // Look down, or explain why the ladder cannot be used.
+		const bool climb = _entryScene == 6031 || _entryScene == 6015;
+		say(climb ? 3 : 2, climb ? 0 : _random.getRandomNumber(3));
 		holdRoomAnimation(401, 1, 41, 29);
 		break;
+	}
 	case 1401: // Withdraw from the opening.
 		beginRoomAnimationRange(402, 1, 41, 29, 0, true, 60);
 		break;

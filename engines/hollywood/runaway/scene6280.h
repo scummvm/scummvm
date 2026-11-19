@@ -19,28 +19,30 @@
  *
  */
 
-#ifndef HOLLYWOOD_RUNAWAY_SCENE6014_H
-#define HOLLYWOOD_RUNAWAY_SCENE6014_H
+#ifndef HOLLYWOOD_RUNAWAY_SCENE6280_H
+#define HOLLYWOOD_RUNAWAY_SCENE6280_H
 
 #include "hollywood/runaway/scene.h"
 
 namespace Hollywood {
 namespace Runaway {
 
-class Scene6014 : public RunawayRoomScene {
+class Scene6280 : public RunawayRoomScene {
 public:
-	Scene6014(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	Scene6280(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 
 private:
-	uint sceneResourceNumber() const override;
-	uint sceneTextNumber() const override;
-	bool loadWalkMap() override;
+	bool applyCustomBackgroundPatches() override;
+	void applyCustomHotspotState() override;
+	void resumeAmbientAudio(bool entering) override;
 	void runCustomEntrySequence() override;
-	bool drawCustomComposite(Graphics::ManagedSurface &viewport) override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
+	float actorHeight() const override;
+	void findWalkPath(Common::Point target) override;
+	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
 };
 
 } // End of namespace Runaway
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_RUNAWAY_SCENE6014_H
+#endif // HOLLYWOOD_RUNAWAY_SCENE6280_H

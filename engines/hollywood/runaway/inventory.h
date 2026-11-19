@@ -72,6 +72,7 @@ public:
 	void restoreState(const RunawaySaveState &state);
 
 private:
+	Reply combineTownItems(byte first, byte second);
 	const RunawayStrings &_strings;
 	const bool _museumDemo;
 	byte _chapter;

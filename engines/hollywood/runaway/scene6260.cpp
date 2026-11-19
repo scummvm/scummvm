@@ -162,7 +162,7 @@ RunawayRoomScene::ActionResult Scene6260::dispatchCustomSceneAction(uint16 actio
 		say(9);
 		return kBackgroundChanged;
 	case 313: // Fill the tank, one oil can at a time.
-		if (!_town.oilCanFull) {
+		if (!_inventory.town().oilCanFull) {
 			say(12);
 		} else if (_town.waterTank == 5) {
 			say(12, 1);
@@ -186,14 +186,14 @@ RunawayRoomScene::ActionResult Scene6260::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 1313: // Empty the oil can into the locomotive's water tank.
 		++_town.waterTank;
-		_town.oilCanFull = 0;
+		_inventory.town().oilCanFull = 0;
 		break;
 	case 314: // The bottle cannot reach the tank opening.
-		if (_town.bottleContents == 1) {
+		if (_inventory.town().bottleContents == 1) {
 			say(13, 2);
 			deferTownAction(414);
 		} else {
-			say(13, _town.bottleContents == 2 ? 1 : 0);
+			say(13, _inventory.town().bottleContents == 2 ? 1 : 0);
 		}
 		break;
 	case 414: // Comment on using the water bottle at the tank.
