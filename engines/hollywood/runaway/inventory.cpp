@@ -285,6 +285,12 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 			return Reply(207);
 		case 20: // Ancient stapler.
 			return Reply(212);
+		case 23: // Oil can.
+			return Reply(214);
+		case 29: // Stone with a hole.
+			return Reply(219);
+		case 31: // Clay vessel.
+			return Reply(221);
 		case 32: // Bank stamp.
 			return Reply(222);
 		default:

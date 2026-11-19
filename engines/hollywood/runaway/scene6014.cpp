@@ -1,0 +1,63 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+#include "common/util.h"
+#include "hollywood/runaway/scene.h"
+
+namespace Hollywood {
+
+// Both shaft actions use RESOURCE.F03 and the mine entrance's text.
+const RunawayRoom kRunawayScene6014 = {
+	6014, 1024, 600, nullptr, 0, {{100, 100, 100}},
+	Common::Point(512, 500), nullptr, 0, nullptr, 0, nullptr, 0
+};
+
+RunawayRoomScene::ActionResult RunawayRoomScene::execute6014(uint16 action) {
+	switch (action) {
+	case 400: // Lean over the shaft.
+		beginRoomAnimationRange(400, 1, 41, 0, 29, true, 60);
+		break;
+	case 1400: // Look down, or explain why the ladder cannot be used.
+		say(_entryScene == 6015 ? 3 : 2, _entryScene == 6015 ? 0 : _random.getRandomNumber(3));
+		holdRoomAnimation(401, 1, 41, 29);
+		break;
+	case 1401: // Withdraw from the opening.
+		beginRoomAnimationRange(402, 1, 41, 29, 0, true, 60);
+		break;
+	case 1402:
+		leaveTownRoom(6081);
+		break;
+	default:
+		return kUnhandled;
+	}
+	return kHandled;
+}
+
+void RunawayRoomScene::drawScene6014(Graphics::ManagedSurface &viewport) {
+	if (drawingRoomAnimation()) {
+		const uint frame = _roomAction == 401 ? 29 + speechFrame() :
+			_actionFrames[MIN<uint>(_actionStep, _actionFrames.size() - 1)];
+		_actionAnimation.draw(viewport, frame, 0, 0);
+	}
+}
+
+} // End of namespace Hollywood

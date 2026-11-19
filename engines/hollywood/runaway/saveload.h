@@ -95,6 +95,9 @@ struct RunawaySaveState {
 		byte cabVisited = 0, cabExited = 0, boiler = 0;
 		byte steamLever = 0, pressureWheel = 0, drainSeen = 0;
 		byte oilCanFull = 0, bottleContents = 0, craterSeen = 0;
+		byte mineVisited = 0, oilCan = 0, rockMoved = 0;
+		byte houseVisited = 0, stone = 0, vessel = 0;
+		byte oscarMet = 0, oscarHelpRefused = 0, rawTobaccoRefused = 0;
 	} town;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;

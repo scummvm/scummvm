@@ -98,21 +98,6 @@ void RunawayRoomScene::updateMaps6260() {
 	}
 }
 
-void RunawayRoomScene::walk6260(Common::Point target) {
-	if (!_pendingHotspot) {
-		// Ordinary clicks stay on the ground, even when Brian starts above it.
-		target.x = CLIP<int>(target.x, 0, _background.w - 1);
-		target.y = CLIP<int>(target.y, 0, _background.h - 1);
-		while (target.y < _background.h - 1 && !_maps[_mask[target.y * _background.w + target.x]]) {
-			++target.y;
-		}
-		while (target.y > 0 && !_maps[_mask[target.y * _background.w + target.x]]) {
-			--target.y;
-		}
-	}
-	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
-}
-
 RunawayRoomScene::ActionResult RunawayRoomScene::execute6260(uint16 action) {
 	switch (action) {
 	case 302: // Return to the street.

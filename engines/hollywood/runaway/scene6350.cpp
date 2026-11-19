@@ -46,6 +46,7 @@ const RunawayRoom kRunawayScene6350 = {
 };
 
 void RunawayRoomScene::resumeTown() {
+	_oscarTick = _now;
 	if (_room == 6263) {
 		resume6263();
 	}
@@ -74,7 +75,15 @@ void RunawayRoomScene::resumeTown() {
 	} else if (!_audio.musicPlaying()) {
 		_audio.playMusic(11);
 	}
-	if (_room == 6190) {
+	if (_room == 6014) {
+		execute6014(400);
+	} else if (_room == 6080) {
+		start6080();
+	} else if (_room == 6090) {
+		start6090();
+	} else if (_room == 6130) {
+		start6130();
+	} else if (_room == 6190) {
 		start6190();
 	} else if (_room == 6200) {
 		start6200();
@@ -91,6 +100,9 @@ void RunawayRoomScene::resumeTown() {
 }
 
 void RunawayRoomScene::updateTown() {
+	if (_room == 6090 || _room == 6130) {
+		updateOscar();
+	}
 	if (_room == 6263) {
 		update6263();
 	}
@@ -110,12 +122,31 @@ void RunawayRoomScene::updateTown() {
 	}
 }
 
+void RunawayRoomScene::walkTown(Common::Point target) {
+	if (!_pendingHotspot) {
+		// Clicks stay on the ground; hotspot approaches may use the reserved zones.
+		target.x = CLIP<int>(target.x, 0, _room == 6080 ? 1152 : _background.w - 1);
+		target.y = CLIP<int>(target.y, 0, _background.h - 1);
+		while (target.y < _background.h - 1 && !_maps[_mask[target.y * _background.w + target.x]]) {
+			++target.y;
+		}
+		while (target.y > 0 && !_maps[_mask[target.y * _background.w + target.x]]) {
+			--target.y;
+		}
+	}
+	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
+}
+
 void RunawayRoomScene::deferTownAction(uint16 action) {
 	_roomAction = action;
 	_actionFrames.clear();
 }
 
 void RunawayRoomScene::townAnimationFrame() {
+	if (_room == 6080) {
+		mineAnimationFrame();
+		return;
+	}
 	if (_room == 6260 || _room == 6263) {
 		locomotiveAnimationFrame();
 		return;

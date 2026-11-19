@@ -237,6 +237,15 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(town.oilCanFull, 10);
 	s.syncAsByte(town.bottleContents, 10);
 	s.syncAsByte(town.craterSeen, 10);
+	s.syncAsByte(town.mineVisited, 11);
+	s.syncAsByte(town.oilCan, 11);
+	s.syncAsByte(town.rockMoved, 11);
+	s.syncAsByte(town.houseVisited, 11);
+	s.syncAsByte(town.stone, 11);
+	s.syncAsByte(town.vessel, 11);
+	s.syncAsByte(town.oscarMet, 11);
+	s.syncAsByte(town.oscarHelpRefused, 11);
+	s.syncAsByte(town.rawTobaccoRefused, 11);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -338,6 +347,11 @@ bool RunawaySaveState::valid() const {
 			return false;
 	}
 	bool owned[33] = {};
+	if (town.mineVisited > 1 || town.oilCan > 2 || town.rockMoved > 1 ||
+			town.houseVisited > 1 || town.stone > 2 || town.vessel > 2 ||
+			town.oscarMet > 1 || town.oscarHelpRefused > 1 || town.rawTobaccoRefused > 1) {
+		return false;
+	}
 	if (town.locomotiveVisited > 1 || town.locomotiveKey > 3 || town.waterTank > 5 ||
 			town.cabVisited > 1 || town.cabExited > 1 || town.boiler > 3 ||
 			town.steamLever > 2 || town.pressureWheel > 2 || town.drainSeen > 1 ||
@@ -366,7 +380,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 10)
+	if (version < 1 || version > 11)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -378,9 +392,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(10);
+	stream.writeUint16LE(11);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(10);
+	s.setVersion(11);
 	sync(s);
 	return !s.err();
 }
