@@ -410,6 +410,15 @@ Colony
    * - Gustavo Grieco
      -
 
+Comfy
+^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Andrea Boscarino
+     -
+
 Composer
 ^^^^^^^^
 
@@ -840,6 +849,17 @@ ICB
      -
    * - Einar Johan T. Sømåen
      -
+
+Igor
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Gabriel Sanmartín
+     - engine implementation
+   * - Gregory Montoir
+     - original engine foundation & demo support
 
 Illusions
 ^^^^^^^^^
@@ -1647,6 +1667,10 @@ Ultima
      -
    * - Paul Robson
      - (Akalabeth)
+   * - Voyager Dragon
+     - (U2 Patch)
+   * - Voyager Dragon
+     - (U3 Patch)
    * - Daniel c. Würl
      - (Nuvie)
    * - Eric Fry

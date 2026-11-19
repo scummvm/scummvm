@@ -169,6 +169,9 @@ ScummVM Team
     Colony:
        Gustavo Grieco
 
+    Comfy:
+       Andrea Boscarino
+
     Composer:
        Alyssa Milburn
 
@@ -331,6 +334,11 @@ ScummVM Team
        Pawel Kolodziejski
        Joost Peters
        Einar Johan T. Somaaen
+
+    Igor:
+       Gabriel Sanmartín             - engine implementation
+       Gregory Montoir                - original engine foundation & demo
+                                        support
 
     Illusions:
        Benjamin Haisch
@@ -643,6 +651,8 @@ ScummVM Team
        Matthew Duggan
        Matthew Jimenez
        Paul Robson                    - (Akalabeth)
+       Voyager Dragon                 - (U2 Patch)
+       Voyager Dragon                 - (U3 Patch)
        Daniel c. Wuerl                - (Nuvie)
        Eric Fry                       - (Nuvie)
        Jeremy Newman                  - (Nuvie)
