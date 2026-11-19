@@ -98,16 +98,56 @@ void RunawayOpening::enter(Step step, uint32 now) {
 	_row = 0;
 	_speech.stop();
 	switch (step) {
-	case kSitDown:      _firstFrame = 0;   _lastFrame = 20;  _headBank = 0; break;
-	case kLeanForward:  _firstFrame = 161; _lastFrame = 177; _headBank = 0; break;
-	case kLeanBack:     _firstFrame = 177; _lastFrame = 161; _headBank = 0; break;
-	case kTurnToScreen: _firstFrame = 128; _lastFrame = 160; _headBank = 0; break;
-	case kTurnBack:     _firstFrame = 160; _lastFrame = 128; _headBank = 0; break;
-	case kIntroduction: _bodyFrame = 20;  _headBank = 1; speak(0, 0); break;
-	case kQuestion:     _bodyFrame = 177; _headBank = 5; speak(0, 1); break;
-	case kBackground:   _bodyFrame = 20;  _headBank = 1; speak(0, 2); break;
-	case kJourney:      _bodyFrame = 160; _headBank = 4; speak(0, 3); break;
-	case kLastNarration: _bodyFrame = 20; _headBank = 1; speak(0, 9); break;
+	case kSitDown:
+		_firstFrame = 0;
+		_lastFrame = 20;
+		_headBank = 0;
+		break;
+	case kLeanForward:
+		_firstFrame = 161;
+		_lastFrame = 177;
+		_headBank = 0;
+		break;
+	case kLeanBack:
+		_firstFrame = 177;
+		_lastFrame = 161;
+		_headBank = 0;
+		break;
+	case kTurnToScreen:
+		_firstFrame = 128;
+		_lastFrame = 160;
+		_headBank = 0;
+		break;
+	case kTurnBack:
+		_firstFrame = 160;
+		_lastFrame = 128;
+		_headBank = 0;
+		break;
+	case kIntroduction:
+		_bodyFrame = 20;
+		_headBank = 1;
+		speak(0, 0);
+		break;
+	case kQuestion:
+		_bodyFrame = 177;
+		_headBank = 5;
+		speak(0, 1);
+		break;
+	case kBackground:
+		_bodyFrame = 20;
+		_headBank = 1;
+		speak(0, 2);
+		break;
+	case kJourney:
+		_bodyFrame = 160;
+		_headBank = 4;
+		speak(0, 3);
+		break;
+	case kLastNarration:
+		_bodyFrame = 20;
+		_headBank = 1;
+		speak(0, 9);
+		break;
 	case kMontage:
 		startMovie("DATAVA02.001", 0, 700);
 		_audio.playIntroMusic(4);
@@ -146,16 +186,26 @@ void RunawayOpening::enter(Step step, uint32 now) {
 			_failed = !_video.seekToFrame(2566);
 		speak(1, 2);
 		break;
-	case kApproach:      startMovie(nullptr, 2578, 2626); break;
-	case kUnconscious:   speak(1, 3); break;
-	case kTurn:          startMovie(nullptr, 2638, 2653); break;
+	case kApproach:
+		startMovie(nullptr, 2578, 2626);
+		break;
+	case kUnconscious:
+		speak(1, 3);
+		break;
+	case kTurn:
+		startMovie(nullptr, 2638, 2653);
+		break;
 	case kHospital:
 		if (Common::File::exists("DATAVC00.000"))
 			_failed = !_video.seekToFrame(2655);
 		speak(1, 4);
 		break;
-	case kHitman:        speak(1, 5); break;
-	case kReply:         speak(1, 6); break;
+	case kHitman:
+		speak(1, 5);
+		break;
+	case kReply:
+		speak(1, 6);
+		break;
 	case kFilmEnd:
 		startMovie(nullptr, 2668, 2927);
 		_audio.playEffect(42);

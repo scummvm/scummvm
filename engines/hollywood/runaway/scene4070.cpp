@@ -67,10 +67,10 @@ void RunawayRoomScene::start4070() {
 
 void RunawayRoomScene::finish4070(uint16 action) {
 	switch (action) {
-	case 417:
+	case 417: // Offer the coffee package to Willy.
 		beginRoomAnimationRange(427, 5, 53, 19, 33);
 		break;
-	case 427: {
+	case 427: { // Willy takes the coffee package.
 		byte willy[31], brian[31];
 		for (uint i = 0; i < ARRAYSIZE(willy); ++i) {
 			willy[i] = !i || i == 30 ? 54 : 158 + i;
@@ -80,7 +80,7 @@ void RunawayRoomScene::finish4070(uint16 action) {
 		setRoomAnimationOverlay(4, 188, willy, ARRAYSIZE(willy));
 		break;
 	}
-	case 407:
+	case 407: // Willy agrees to refill the coffee machine.
 		_inventory.remove(19);
 		say(33, 4, false, 1);
 		if (_museum.batteryRequested) {
@@ -93,7 +93,7 @@ void RunawayRoomScene::finish4070(uint16 action) {
 		_museum.willyInLab = 2;
 		deferMuseumAction(448);
 		break;
-	case 408: {
+	case 408: { // Willy answers his telephone.
 		byte frames[32];
 		frames[0] = 54;
 		for (uint i = 1; i < ARRAYSIZE(frames); ++i)
@@ -102,13 +102,13 @@ void RunawayRoomScene::finish4070(uint16 action) {
 		beginRoomAnimation(418, 4, 188, frames, ARRAYSIZE(frames), false);
 		break;
 	}
-	case 418:
+	case 418: // Play Willy's telephone conversation.
 		_willyPose = 105;
 		for (uint i = 0; i < 6; ++i)
 			say(91, i, false, 1);
 		deferMuseumAction(428);
 		break;
-	case 428: {
+	case 428: { // Willy puts the telephone away.
 		byte frames[32];
 		for (uint i = 0; i < ARRAYSIZE(frames) - 1; ++i)
 			frames[i] = 105 - i;
@@ -116,7 +116,7 @@ void RunawayRoomScene::finish4070(uint16 action) {
 		beginRoomAnimation(438, 4, 188, frames, ARRAYSIZE(frames), false);
 		break;
 	}
-	case 438:
+	case 438: // Willy decides to visit the analysis laboratory.
 		_willyPose = 54;
 		say(91, 6, false, 1);
 		say(81);
@@ -125,10 +125,10 @@ void RunawayRoomScene::finish4070(uint16 action) {
 		_museum.sawCode = 1;
 		deferMuseumAction(448);
 		break;
-	case 448:
+	case 448: // Willy leaves the close-up.
 		beginRoomAnimation(409, 6, 72, nullptr, 0, false);
 		break;
-	case 409:
+	case 409: // Return to the exhibition hall.
 		_upperFloor = false;
 		leaveMuseumRoom(4064, Common::Point(921, 813), 7);
 		break;
@@ -254,11 +254,23 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 		_dialogue[10][3].response = 21;
 	}
 	switch (entry.transition) {
-	case 0: _dialogueEnding = true; break;
-	case 1: ++_dialogueDepth; _dialogueNode = entry.node; break;
-	case 2: _dialogueDepth -= MIN<byte>(_dialogueDepth, 1); _dialogueNode = entry.node; break;
-	case 4: _dialogueDepth -= MIN<byte>(_dialogueDepth, 2); _dialogueNode = entry.node; break;
-	default: break;
+	case 0: // End the conversation.
+		_dialogueEnding = true;
+		break;
+	case 1: // Enter a topic.
+		++_dialogueDepth;
+		_dialogueNode = entry.node;
+		break;
+	case 2: // Return to the parent topic.
+		_dialogueDepth -= MIN<byte>(_dialogueDepth, 1);
+		_dialogueNode = entry.node;
+		break;
+	case 4: // Return two topic levels.
+		_dialogueDepth -= MIN<byte>(_dialogueDepth, 2);
+		_dialogueNode = entry.node;
+		break;
+	default:
+		break;
 	}
 }
 

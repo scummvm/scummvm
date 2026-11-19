@@ -47,22 +47,22 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{kHospitalStoreroom, 301, 1, 0},
-	{kHospitalStoreroom, 304, 2, 0},
-	{kHospitalStoreroom, 305, 2, 1},
-	{kHospitalStoreroom, 308, 4, 0},
-	{kHospitalStoreroom, 316, 8, 0},
-	{kHospitalStoreroom, 317, 9, 0},
-	{kHospitalStoreroom, 318, 10, 0},
-	{kHospitalStoreroom, 319, 10, 1},
-	{kHospitalStoreroom, 320, 11, 0},
-	{kHospitalStoreroom, 321, 11, 1},
-	{kHospitalStoreroom, 322, 12, 0},
-	{kHospitalStoreroom, 323, 12, 1},
-	{kHospitalStoreroom, 324, 13, 0},
-	{kHospitalStoreroom, 325, 14, 0},
-	{kHospitalStoreroom, 326, 14, 1},
-	{kHospitalStoreroom, 327, 15, 0}
+	{kHospitalStoreroom, 301, 1, 0}, // Look at the window.
+	{kHospitalStoreroom, 304, 2, 0}, // Look at the radiator.
+	{kHospitalStoreroom, 305, 2, 1}, // Use the radiator.
+	{kHospitalStoreroom, 308, 4, 0}, // Look at the spray can.
+	{kHospitalStoreroom, 316, 8, 0}, // Look at the left file cabinet.
+	{kHospitalStoreroom, 317, 9, 0}, // Look at the right file cabinet.
+	{kHospitalStoreroom, 318, 10, 0}, // Look at the bottles.
+	{kHospitalStoreroom, 319, 10, 1}, // Take the bottles.
+	{kHospitalStoreroom, 320, 11, 0}, // Look at the box beneath the book.
+	{kHospitalStoreroom, 321, 11, 1}, // Open the box beneath the book.
+	{kHospitalStoreroom, 322, 12, 0}, // Look at the medicine boxes.
+	{kHospitalStoreroom, 323, 12, 1}, // Take the medicine boxes.
+	{kHospitalStoreroom, 324, 13, 0}, // Look at the serum stand.
+	{kHospitalStoreroom, 325, 14, 0}, // Look at the serum bag.
+	{kHospitalStoreroom, 326, 14, 1}, // Take the serum bag.
+	{kHospitalStoreroom, 327, 15, 0} // Look at the pillows.
 };
 
 } // End of anonymous namespace
@@ -96,19 +96,19 @@ void RunawayRoomScene::updateMaps2060() {
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute2060(uint16 action) {
 	switch (action) {
-	case 302:
+	case 302: // Climb back to Gina's room.
 		beginRoomAnimation(action, 4, 44);
 		return kHandled;
-	case 303:
+	case 303: // Return to Gina's room without the climbing animation.
 		_transition.scene = 2022;
 		_transition.position = Common::Point(265, 456);
 		_transition.facing = 3;
 		return kHandled;
-	case 306:
+	case 306: // Look inside the syringe box.
 		say(3, _hospital.syringesSeen);
 		_hospital.syringesSeen = 1;
 		return kHandled;
-	case 307:
+	case 307: // Take a syringe.
 		if (_inventory.contains(15)) {
 			say(3, 3);
 		} else {
@@ -117,33 +117,33 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2060(uint16 action) {
 			say(64, 0, true);
 		}
 		return kHandled;
-	case 309:
+	case 309: // Take the spray can.
 		_hospital.sprayTaken = 1;
 		_inventory.add(18);
 		say(18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
-	case 310:
+	case 310: // Look at the medical reference book.
 		say(5, _hospital.book != 0);
 		_hospital.book = 1;
 		return kHandled;
-	case 311:
+	case 311: // Take the medical reference book.
 		_hospital.book = 2;
 		_inventory.add(19);
 		say(18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
-	case 312:
+	case 312: // Look at the blank medical chart.
 		say(6, _hospital.blankChart != 0);
 		_hospital.blankChart = 1;
 		return kHandled;
-	case 313:
+	case 313: // Take the blank medical chart.
 		_hospital.blankChart = 2;
 		_inventory.add(16);
 		say(65, 0, true);
 		return kBackgroundChanged;
-	case 314:
+	case 314: // Look at the anatomical model.
 		say(7, _hospital.headTaken ? 2 : _random.getRandomBit());
 		return kHandled;
-	case 315:
+	case 315: // Take the model head.
 		if (_hospital.headTaken) {
 			say(7, 4);
 			return kHandled;
@@ -153,7 +153,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2060(uint16 action) {
 		_inventory.add(17);
 		say(66, 0, true);
 		return kBackgroundChanged;
-	case 328:
+	case 328: // Take the pillows.
 		say(15, 1);
 		_hospital.pillowsTaken = 1;
 		_inventory.add(14);

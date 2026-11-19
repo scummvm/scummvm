@@ -31,7 +31,7 @@ const RunawayHotspot kHotspots[] = {
 	{"Door", 1165, 594, 2, {322, 301}, {0, 0}},
 	{"Pair of books", 355, 595, 1, {302, 303}, {0, 1}},
 	{"Crack", 355, 595, 1, {304, 305}, {1, 0}},
-	{"Money", 550, 647, 7, {306, 307}, {0, 0}},
+	{"Money", 550, 647, 7, {306, 307}, {1, 0}},
 	{"Papers", 550, 647, 7, {308, 319}, {1, 0}},
 	{"Device", 550, 647, 7, {309, 310}, {1, 1}},
 	{"Shelves", 815, 508, 1, {311, 312}, {0, 0}},
@@ -41,29 +41,29 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{kMuseumOffice, 305, 4, 0},
-	{kMuseumOffice, 306, 5, 0},
-	{kMuseumOffice, 307, 6, 0},
-	{kMuseumOffice, 311, 11, 0},
-	{kMuseumOffice, 312, 12, 0},
-	{kMuseumOffice, 313, 13, 0},
-	{kMuseumOffice, 314, 14, 0},
-	{kMuseumOffice, 315, 15, 0},
-	{kMuseumOffice, 316, 16, 0},
-	{kMuseumOffice, 317, 17, 0},
-	{kMuseumOffice, 318, 18, 0},
-	{kMuseumOffice, 319, 8, 0},
-	{kMuseumOffice, 320, 19, 0},
-	{kMuseumOffice, 322, 22, 0},
+	{kMuseumOffice, 305, 4, 0}, // Use the crack.
+	{kMuseumOffice, 306, 5, 0}, // Look at the money.
+	{kMuseumOffice, 307, 6, 0}, // Take the money.
+	{kMuseumOffice, 311, 11, 0}, // Look at the right shelves.
+	{kMuseumOffice, 312, 12, 0}, // Take books from the right shelves.
+	{kMuseumOffice, 313, 13, 0}, // Look at the safe.
+	{kMuseumOffice, 314, 14, 0}, // Use the safe.
+	{kMuseumOffice, 315, 15, 0}, // Look at the left shelves.
+	{kMuseumOffice, 316, 16, 0}, // Take books from the left shelves.
+	{kMuseumOffice, 317, 17, 0}, // Look at the window.
+	{kMuseumOffice, 318, 18, 0}, // Open the window.
+	{kMuseumOffice, 319, 8, 0}, // Take the papers.
+	{kMuseumOffice, 320, 19, 0}, // Use an item with the crack.
+	{kMuseumOffice, 322, 22, 0}, // Look at the office door.
 };
 
 const RunawayItemAction kItemActions[] = {
-	{kMuseumOffice, 17, 3, 321},
-	{kMuseumOffice, 0, 3, 320},
+	{kMuseumOffice, 17, 3, 321}, // Open or close the safe with the strange key.
+	{kMuseumOffice, 0, 3, 320}, // Use an item with the crack.
 };
 
 const RunawayExit kExits[] = {
-	{kMuseumOffice, 301, kMuseumHall, 607, 323, true, true},
+	{kMuseumOffice, 301, kMuseumHall, 607, 323, true, true}, // Leave the office.
 };
 
 } // End of anonymous namespace
@@ -108,39 +108,47 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4030(uint16 action) {
 		return kHandled;
 	}
 	switch (action) {
-	case 302: // Examine the books.
+	case 302: // Look at the books.
 		say(_books != kUnexamined ? 111 : 1, 0, _books != kUnexamined);
 		_books = MAX(_books, kIdentified);
 		return kHandled;
 	case 303: // Take the books, revealing the crack.
+		if (_books == kUnexamined)
+			say(1);
 		_books = kTaken;
 		_inventory.add(16);
 		say(2);
 		say(2, 1);
 		say(2, 2);
 		return kBackgroundChanged;
-	case 304:
+	case 304: // Look at the crack.
 		say(3, museumChapter() ? _museum.safeUsed : _safeOpen);
 		return kHandled;
-	case 308:
+	case 308: // Look at the papers.
 		say(7, _moneyIdentified);
 		_moneyIdentified = true;
 		return kHandled;
-	case 309:
+	case 309: // Look at the tape recorder.
 		say(9, _recorder != kUnexamined);
 		_recorder = MAX(_recorder, kIdentified);
 		return kHandled;
-	case 310: // Take the recorder.
+	case 310: // Take the tape recorder.
+		if (_recorder == kUnexamined)
+			say(9);
 		_recorder = kTaken;
 		_inventory.add(5);
 		say(10);
 		say(10, 1);
 		return kBackgroundChanged;
-	case 311:
-		say(11, _museum.shelfBooksSeen);
+	case 311: // Look at the right shelves.
+		say(11, _museum.shelfBooksSeen ? _random.getRandomBit() : 0);
 		_museum.shelfBooksSeen = 1;
 		return kHandled;
-	case 321: // Toggle the safe with the strange key.
+	case 315: // Look at the left shelves.
+		say(_museum.shelfBooksSeen ? 15 : 11);
+		_museum.shelfBooksSeen = 1;
+		return kHandled;
+	case 321: // Open or close the safe with the strange key.
 		if (museumChapter()) {
 			byte brian[52], safe[52];
 			for (uint i = 0; i < ARRAYSIZE(brian); ++i) {

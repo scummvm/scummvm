@@ -40,26 +40,26 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{kMuseumExhibition, 302, 1, 0},
-	{kMuseumExhibition, 303, 2, 0},
-	{kMuseumExhibition, 304, 3, 0},
-	{kMuseumExhibition, 305, 4, 0},
-	{kMuseumExhibition, 306, 3, 0},
-	{kMuseumExhibition, 307, 5, 0},
-	{kMuseumExhibition, 309, 7, 0},
-	{kMuseumExhibition, 310, 8, 0},
-	{kMuseumExhibition, 311, 9, 0},
-	{kMuseumExhibition, 312, 8, 0},
-	{kMuseumExhibition, 313, 10, 0},
-	{kMuseumExhibition, 314, 11, 0},
-	{kMuseumExhibition, 315, 12, 0},
-	{kMuseumExhibition, 316, 11, 0},
-	{kMuseumExhibition, 317, 13, 0},
-	{kMuseumExhibition, 318, 11, 0},
+	{kMuseumExhibition, 302, 1, 0}, // Look at the exhibition hall exit.
+	{kMuseumExhibition, 303, 2, 0}, // Look at the right statue.
+	{kMuseumExhibition, 304, 3, 0}, // Take the right statue.
+	{kMuseumExhibition, 305, 4, 0}, // Look at the left statue.
+	{kMuseumExhibition, 306, 3, 0}, // Take the left statue.
+	{kMuseumExhibition, 307, 5, 0}, // Look at the Mayan offerings.
+	{kMuseumExhibition, 309, 7, 0}, // Look at the near Mayan arch.
+	{kMuseumExhibition, 310, 8, 0}, // Use the near Mayan arch.
+	{kMuseumExhibition, 311, 9, 0}, // Look at the far Mayan arch.
+	{kMuseumExhibition, 312, 8, 0}, // Use the far Mayan arch.
+	{kMuseumExhibition, 313, 10, 0}, // Look at the first Mayan object.
+	{kMuseumExhibition, 314, 11, 0}, // Take the first Mayan object.
+	{kMuseumExhibition, 315, 12, 0}, // Look at the second Mayan object.
+	{kMuseumExhibition, 316, 11, 0}, // Take the second Mayan object.
+	{kMuseumExhibition, 317, 13, 0}, // Look at the third Mayan object.
+	{kMuseumExhibition, 318, 11, 0}, // Take the third Mayan object.
 };
 
 const RunawayExit kExits[] = {
-	{kMuseumExhibition, 301, kMuseumHall, 1400, 600, false, false},
+	{kMuseumExhibition, 301, kMuseumHall, 1400, 600, false, false}, // Return to the exhibition hall.
 };
 
 } // End of anonymous namespace
@@ -80,7 +80,8 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4090(uint16 action) {
 	if (!museumChapter())
 		return kUnhandled;
 	switch (action) {
-	case 307: case 308:
+	case 307: // Look at the Mayan offerings.
+	case 308: // Take the bowl of coffee beans.
 		if (_museum.coffeeBeansTaken) {
 			say(action == 307 ? 5 : 6, action == 307 ? 2 : 3);
 		} else if (_museum.susan == 1 && _museum.coffeeSeen) {
@@ -91,16 +92,20 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4090(uint16 action) {
 			return kBackgroundChanged;
 		} else {
 			say(action == 307 ? 5 : 6, action == 307 ? _museum.mayanObjectsSeen : 0);
-			_museum.mayanObjectsSeen = 1;
+			if (action == 307)
+				_museum.mayanObjectsSeen = 1;
 		}
 		return kHandled;
-	case 313: case 315: case 317: {
+	case 313: // Look at the first Mayan object.
+	case 315: // Look at the second Mayan object.
+	case 317: { // Look at the third Mayan object.
 		const uint object = (action - 313) / 2;
 		say(object == 0 ? 10 : object == 1 ? 12 : 13, _museum.exhibitSeen[object]);
 		_museum.exhibitSeen[object] = 1;
 		return kHandled;
 	}
-	default: return kUnhandled;
+	default:
+		return kUnhandled;
 	}
 }
 

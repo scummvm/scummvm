@@ -44,7 +44,7 @@ const RunawayHotspot kHotspots[] = {
 	{"Wastepaper basket", 696, 319, 7, {313, 314}, {1, 1}},
 	{"Door to the restoration laboratory", 873, 311, 7, {315, 316}, {0, 1}},
 	{"Security door", 1118, 309, 7, {317, 318}, {1, 1}},
-	{"Panel", 1153, 297, 7, {319, 320}, {0, 1}},
+	{"Panel", 1153, 297, 7, {319, 320}, {1, 1}},
 	{"Stairs", 1220, 280, 7, {301, 303}, {0, 1}},
 	{"Telephone", 1473, 312, 7, {324, 325}, {0, 1}},
 	{"Display case", 1596, 351, 1, {326, 327}, {0, 0}},
@@ -57,69 +57,69 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{kMuseumHall, 301, 1, 0},
-	{kMuseumHall, 304, 2, 0},
-	{kMuseumHall, 309, 4, 0},
-	{kMuseumHall, 311, 5, 0},
-	{kMuseumHall, 314, 7, 0},
-	{kMuseumHall, 315, 8, 0},
-	{kMuseumHall, 317, 9, 0},
-	{kMuseumHall, 318, 13, 0},
-	{kMuseumHall, 319, 10, 0},
-	{kMuseumHall, 321, 11, 0},
-	{kMuseumHall, 323, 13, 0},
-	{kMuseumHall, 324, 14, 0},
-	{kMuseumHall, 326, 16, 0},
-	{kMuseumHall, 327, 17, 0},
-	{kMuseumHall, 328, 18, 0},
-	{kMuseumHall, 329, 19, 0},
-	{kMuseumHall, 330, 20, 0},
-	{kMuseumHall, 331, 19, 0},
-	{kMuseumHall, 332, 21, 0},
-	{kMuseumHall, 333, 22, 0},
-	{kMuseumHall, 336, 25, 0},
-	{kMuseumHall, 339, 29, 0},
-	{kMuseumHall, 340, 30, 0},
-	{kMuseumHall, 341, 31, 0},
-	{kMuseumHall, 343, 34, 0},
-	{kMuseumHall, 344, 35, 0},
+	{kMuseumHall, 301, 1, 0}, // Look at the stairs from the upper floor.
+	{kMuseumHall, 304, 2, 0}, // Look at the stairs from the lower floor.
+	{kMuseumHall, 309, 4, 0}, // Look at the Mayan exhibition entrance.
+	{kMuseumHall, 311, 5, 0}, // Look at Clive's office door.
+	{kMuseumHall, 314, 7, 0}, // Take the empty coffee package.
+	{kMuseumHall, 315, 8, 0}, // Look at the laboratory door.
+	{kMuseumHall, 317, 9, 0}, // Look at the security door.
+	{kMuseumHall, 318, 13, 0}, // Enter the analysis laboratory.
+	{kMuseumHall, 319, 10, 0}, // Look at the keypad.
+	{kMuseumHall, 321, 11, 0}, // Look at the coffee machine.
+	{kMuseumHall, 323, 13, 0}, // Try the locked security door.
+	{kMuseumHall, 324, 14, 0}, // Look at the telephone.
+	{kMuseumHall, 326, 16, 0}, // Look at the display case.
+	{kMuseumHall, 327, 17, 0}, // Open the display case.
+	{kMuseumHall, 328, 18, 0}, // Read the left plaque.
+	{kMuseumHall, 329, 19, 0}, // Use the left plaque.
+	{kMuseumHall, 330, 20, 0}, // Read the right plaque.
+	{kMuseumHall, 331, 19, 0}, // Use the right plaque.
+	{kMuseumHall, 332, 21, 0}, // Look at the fire extinguisher.
+	{kMuseumHall, 333, 22, 0}, // Take the fire extinguisher.
+	{kMuseumHall, 336, 25, 0}, // Show the crucifix to Willy.
+	{kMuseumHall, 339, 29, 0}, // Show the Mayan mask to Willy.
+	{kMuseumHall, 340, 30, 0}, // Show the ruby to Willy.
+	{kMuseumHall, 341, 31, 0}, // Show Willy his business card.
+	{kMuseumHall, 343, 34, 0}, // Give the cup of coffee to Willy.
+	{kMuseumHall, 344, 35, 0}, // Show the strange key to Willy.
 };
 
 const RunawayItemAction kItemActions[] = {
-	{kMuseumHall, 19, 2, 346},
-	{kMuseumHall, 0, 5, 19},
-	{kMuseumHall, 9, 8, 337},
-	{kMuseumHall, 10, 8, 338},
-	{kMuseumHall, 1, 14, 11},
-	{kMuseumHall, 2, 14, 11},
-	{kMuseumHall, 3, 14, 11},
-	{kMuseumHall, 4, 14, 11},
-	{kMuseumHall, 5, 14, 334},
-	{kMuseumHall, 6, 14, 335},
-	{kMuseumHall, 7, 14, 336},
-	{kMuseumHall, 8, 14, 11},
-	{kMuseumHall, 9, 14, 11},
-	{kMuseumHall, 10, 14, 11},
-	{kMuseumHall, 11, 14, 339},
-	{kMuseumHall, 12, 14, 340},
-	{kMuseumHall, 13, 14, 341},
-	{kMuseumHall, 14, 14, 342},
-	{kMuseumHall, 15, 14, 343},
-	{kMuseumHall, 16, 14, 11},
-	{kMuseumHall, 17, 14, 344},
-	{kMuseumHall, 18, 14, 11},
-	{kMuseumHall, 19, 14, 345},
+	{kMuseumHall, 19, 2, 346, false}, // Use the coffee package with the coffee machine.
+	{kMuseumHall, 0, 5, 19}, // Use an item with wastepaper basket.
+	{kMuseumHall, 9, 8, 337}, // Coat the keypad with varnish.
+	{kMuseumHall, 10, 8, 338}, // Dust the keypad with talcum powder.
+	{kMuseumHall, 1, 14, 11, false}, // Use wallet with maintenance worker.
+	{kMuseumHall, 2, 14, 11, false}, // Use car keys with maintenance worker.
+	{kMuseumHall, 3, 14, 11, false}, // Use condom with maintenance worker.
+	{kMuseumHall, 4, 14, 11, false}, // Use piece of amber with maintenance worker.
+	{kMuseumHall, 5, 14, 334, false}, // Show the tape recorder to Willy.
+	{kMuseumHall, 6, 14, 335, false}, // Show the battery to Willy.
+	{kMuseumHall, 7, 14, 336, false}, // Show the crucifix to Willy.
+	{kMuseumHall, 8, 14, 11, false}, // Use strange mayan object with maintenance worker.
+	{kMuseumHall, 9, 14, 11, false}, // Use colorless varnish with maintenance worker.
+	{kMuseumHall, 10, 14, 11, false}, // Use talcum powder with maintenance worker.
+	{kMuseumHall, 11, 14, 339, false}, // Show the Mayan mask to Willy.
+	{kMuseumHall, 12, 14, 340, false}, // Show the ruby to Willy.
+	{kMuseumHall, 13, 14, 341, false}, // Show Willy his business card.
+	{kMuseumHall, 14, 14, 342}, // Give the bowl of coffee to Willy.
+	{kMuseumHall, 15, 14, 343, false}, // Give the cup of coffee to Willy.
+	{kMuseumHall, 16, 14, 11, false}, // Use pair of books with maintenance worker.
+	{kMuseumHall, 17, 14, 344, false}, // Show the strange key to Willy.
+	{kMuseumHall, 18, 14, 11, false}, // Use ladle with maintenance worker.
+	{kMuseumHall, 19, 14, 345}, // Give the filled coffee package to Willy.
 };
 
 const RunawayExit kExits[] = {
-	{kMuseumHall, 302, kMuseumHall, 533, 848, false, false},
-	{kMuseumHall, 303, kMuseumHall, 1169, 643, false, false},
-	{kMuseumHall, 305, kMuseumHall, 69, 372, true, false},
-	{kMuseumHall, 306, kMuseumHall, 1290, 300, true, false},
-	{kMuseumHall, 310, kMuseumExhibition, 881, 392, false, false},
-	{kMuseumHall, 312, kMuseumOffice, 934, 563, true, true},
-	{kMuseumHall, 316, kMuseumLaboratory, 382, 529, true, true},
-	{kMuseumHall, 320, kMuseumKeypad, 0, 0, true, false},
+	{kMuseumHall, 302, kMuseumHall, 533, 848, false, false}, // Go downstairs on the left.
+	{kMuseumHall, 303, kMuseumHall, 1169, 643, false, false}, // Go downstairs on the right.
+	{kMuseumHall, 305, kMuseumHall, 69, 372, true, false}, // Go upstairs on the left.
+	{kMuseumHall, 306, kMuseumHall, 1290, 300, true, false}, // Go upstairs on the right.
+	{kMuseumHall, 310, kMuseumExhibition, 881, 392, false, false}, // Enter the Mayan exhibition.
+	{kMuseumHall, 312, kMuseumOffice, 934, 563, true, true}, // Enter Clive's office.
+	{kMuseumHall, 316, kMuseumLaboratory, 382, 529, true, true}, // Enter the restoration laboratory.
+	{kMuseumHall, 320, kMuseumKeypad, 0, 0, true, false}, // Examine the keypad close up.
 };
 
 } // End of anonymous namespace
@@ -158,13 +158,13 @@ void RunawayRoomScene::changeFloor(bool upper, Common::Point position) {
 RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 	if (museumChapter()) {
 		switch (action) {
-		case 307:
+		case 307: // Look at Willy.
 			say(3, _museum.willyMet != 0);
 			return kHandled;
-		case 308:
+		case 308: // Talk to Willy.
 			leaveMuseumRoom(4070, Common::Point(548, 580), 7);
 			return kHandled;
-		case 313:
+		case 313: // Look in the wastepaper basket.
 			if (!_museum.basketSeen) {
 				say(6);
 				say(6, 1);
@@ -173,7 +173,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 				say(_coffeeTaken ? 7 : 6, _coffeeTaken ? 0 : 2);
 			}
 			return kHandled;
-		case 314:
+		case 314: // Take the empty coffee package.
 			if (!_museum.basketSeen || _coffeeTaken)
 				say(7);
 			else if (!_museum.needsPackage)
@@ -185,11 +185,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 				say(114, 0, true);
 			}
 			return kHandled;
-		case 317:
+		case 317: // Look at the security door.
 			say(9, _museum.analysisDoorSeen);
 			_museum.analysisDoorSeen = 1;
 			return kHandled;
-		case 318:
+		case 318: // Enter the analysis laboratory.
 			if (_museum.keypad != 4)
 				say(13);
 			else if (_inventory.museum().restoredCrucifix)
@@ -197,19 +197,20 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 			else
 				leaveMuseumRoom(4100, Common::Point(141, 468));
 			return kHandled;
-		case 320:
+		case 320: // Examine the keypad close up.
 			if (_museum.willyInLab == 1)
 				say(15, 5);
 			else
 				leaveMuseumRoom(4140, Common::Point(382, 529));
 			return kHandled;
-		case 321:
+		case 321: // Look at the coffee machine.
 			if (!_museum.coffeeMachine && !_museum.coffeeSeen)
 				say(11, 1);
-			say(11, _museum.coffeeMachine ? 2 : 0);
+			say(11, _museum.coffeeMachine ? 2 : _museum.coffeeSeen ? _random.getRandomBit() : 0);
 			_museum.coffeeSeen = 1;
 			return kHandled;
-		case 322:
+		case 322: // Use the coffee machine.
+			_museum.coffeeSeen = 1;
 			if (_museum.coffeeMachine != 1)
 				say(12, _museum.coffeeMachine ? 3 : 0);
 			else {
@@ -217,7 +218,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 				beginRoomAnimation(322, 9, 49, kCoffeeCupFrames, ARRAYSIZE(kCoffeeCupFrames));
 			}
 			return kHandled;
-		case 325:
+		case 325: // Call Willy.
 			if (!_inventory.contains(13))
 				say(15);
 			else if (_museum.willyInLab == 1)
@@ -231,13 +232,13 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 				beginRoomAnimation(325, 13, 27);
 			}
 			return kHandled;
-		case 334:
+		case 334: // Show the tape recorder to Willy.
 			say(23, _inventory.museum().voiceRecorded);
 			return kHandled;
-		case 335:
+		case 335: // Show the battery to Willy.
 			say(24, _inventory.museum().frozenBattery);
 			return kHandled;
-		case 337:
+		case 337: // Coat the keypad with varnish.
 			if (_museum.willyInLab == 1)
 				say(28);
 			else if (!_museum.sawCode)
@@ -249,7 +250,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 				deferMuseumAction(337);
 			}
 			return kHandled;
-		case 338:
+		case 338: // Dust the keypad with talcum powder.
 			if (_museum.willyInLab == 1)
 				say(28);
 			else if (!_museum.sawCode)
@@ -263,22 +264,23 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 				deferMuseumAction(338);
 			}
 			return kHandled;
-		case 342:
+		case 342: // Give the bowl of coffee to Willy.
 			if (_inventory.museum().coffee == 2)
 				say(32, 2);
 			else
 				leaveMuseumRoom(4072, Common::Point(548, 580), 7);
 			return kHandled;
-		case 345:
+		case 345: // Give the filled coffee package to Willy.
 			if (!_inventory.museum().packageFilled)
 				say(36);
 			else
 				leaveMuseumRoom(4071, Common::Point(548, 580), 7);
 			return kHandled;
-		case 346:
+		case 346: // Use the coffee package with the coffee machine.
 			say(37, _inventory.museum().packageFilled);
 			return kHandled;
-		default: return kUnhandled;
+		default:
+			return kUnhandled;
 		}
 	}
 
@@ -297,57 +299,57 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4060(uint16 action) {
 
 void RunawayRoomScene::finish4060(uint16 action) {
 	switch (action) {
-	case 460:
+	case 460: // Willy approaches the security door.
 		_camera.y = 0;
 		beginRoomAnimationRange(461, 16, 216, 0, 178, false);
 		break;
-	case 461: {
+	case 461: { // Open the security door for Willy.
 		beginRoomAnimationRange(464, 4, 13, 0, 12, false);
 		const byte willy[] = {178};
 		setRoomAnimationOverlay(16, 216, willy, ARRAYSIZE(willy));
 		_audio.playEffect(32, 204);
 		break;
 	}
-	case 464: {
+	case 464: { // Willy enters the analysis laboratory.
 		beginRoomAnimationRange(465, 16, 216, 179, 215, false);
 		const byte door[] = {12};
 		setRoomAnimationOverlay(4, 13, door, ARRAYSIZE(door));
 		break;
 	}
-	case 465:
+	case 465: // Close the security door behind Willy.
 		beginRoomAnimationRange(466, 4, 13, 12, 0, false);
 		_audio.playEffect(32, 204);
 		break;
-	case 466:
+	case 466: // React to Willy entering the code.
 		updateCamera();
 		say(_museum.sawCode == 1 ? 38 : 15, _museum.sawCode == 1 ? 2 : 5);
 		updateMaps();
 		break;
-	case 462:
+	case 462: // Follow Willy to the coffee machine.
 		say(36, 4);
 		walkTo(Common::Point(140, 504), 7, true);
 		_camera = Common::Point(0, 0);
 		beginRoomAnimationRange(463, 16, 216, 0, 150, false);
 		break;
-	case 463:
+	case 463: // Finish refilling the coffee machine.
 		_museum.willyInLab = 0;
 		changeFloor(true, Common::Point(218, 379));
 		_facing = 7;
 		say(36, 5);
 		break;
-	case 322:
+	case 322: // Collect the cup of coffee.
 		_museum.coffeeMachine = 2;
 		_inventory.add(15);
 		say(12, 2);
 		break;
-	case 325:
+	case 325: // Start the telephone conversation.
 		startMuseumFilm(kPhoneFilm);
 		break;
-	case 337:
+	case 337: // Show the varnished keypad.
 		_museum.keypad = 1;
 		leaveMuseumRoom(4141, Common::Point(382, 529));
 		break;
-	case 338:
+	case 338: // Show the fingerprints on the keypad.
 		_museum.keypad = 3;
 		leaveMuseumRoom(4142, Common::Point(382, 529));
 		break;

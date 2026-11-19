@@ -55,7 +55,7 @@ const RunawayHotspot kHotspots[] = {
 	{"Wastepaper basket", 703, 575, 1, {312, 313}, {1, 0}},
 	{"Tank", 844, 505, 1, {314, 315}, {0, 0}},
 	{"Machine", 884, 580, 1, {316, 317}, {0, 0}},
-	{"Laser", 992, 556, 1, {318, 319}, {0, 0}},
+	{"Laser", 992, 556, 1, {318, 319}, {1, 0}},
 	{"Shelves", 1327, 521, 1, {320, 321}, {0, 0}},
 	{"Briefcase", 1277, 514, 7, {322, 323}, {1, 1}},
 	{"Skeleton", 1211, 510, 7, {324, 325}, {0, 0}},
@@ -63,48 +63,48 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{kMuseumLaboratory, 301, 1, 0},
-	{kMuseumLaboratory, 306, 6, 0},
-	{kMuseumLaboratory, 307, 7, 0},
-	{kMuseumLaboratory, 308, 8, 0},
-	{kMuseumLaboratory, 309, 9, 0},
-	{kMuseumLaboratory, 310, 10, 0},
-	{kMuseumLaboratory, 311, 11, 0},
-	{kMuseumLaboratory, 314, 12, 0},
-	{kMuseumLaboratory, 316, 13, 0},
-	{kMuseumLaboratory, 319, 15, 0},
-	{kMuseumLaboratory, 320, 16, 0},
-	{kMuseumLaboratory, 321, 17, 0},
-	{kMuseumLaboratory, 322, 18, 0},
-	{kMuseumLaboratory, 324, 20, 0},
-	{kMuseumLaboratory, 325, 21, 0},
-	{kMuseumLaboratory, 326, 22, 2},
-	{kMuseumLaboratory, 332, 27, 0},
-	{kMuseumLaboratory, 334, 29, 0},
-	{kMuseumLaboratory, 337, 31, 0},
+	{kMuseumLaboratory, 301, 1, 0}, // Look at the laboratory door.
+	{kMuseumLaboratory, 306, 6, 0}, // Look at the electric lathe.
+	{kMuseumLaboratory, 307, 7, 0}, // Use the electric lathe.
+	{kMuseumLaboratory, 308, 8, 0}, // Look at the microscope.
+	{kMuseumLaboratory, 309, 9, 0}, // Use the microscope.
+	{kMuseumLaboratory, 310, 10, 0}, // Look at the water dispenser.
+	{kMuseumLaboratory, 311, 11, 0}, // Use the water dispenser.
+	{kMuseumLaboratory, 314, 12, 0}, // Look at the tank.
+	{kMuseumLaboratory, 316, 13, 0}, // Look at the machine.
+	{kMuseumLaboratory, 319, 15, 0}, // Use the laser.
+	{kMuseumLaboratory, 320, 16, 0}, // Look at the right shelves.
+	{kMuseumLaboratory, 321, 17, 0}, // Take objects from the right shelves.
+	{kMuseumLaboratory, 322, 18, 0}, // Look inside the briefcase.
+	{kMuseumLaboratory, 324, 20, 0}, // Look at the skeleton.
+	{kMuseumLaboratory, 325, 21, 0}, // Use the skeleton.
+	{kMuseumLaboratory, 326, 22, 2}, // Leave the crucifix on the restoration shelves.
+	{kMuseumLaboratory, 332, 27, 0}, // Use an item with the electric lathe.
+	{kMuseumLaboratory, 334, 29, 0}, // Use an item with the microscope.
+	{kMuseumLaboratory, 337, 31, 0}, // Look at the talcum powder brush.
 };
 
 const RunawayItemAction kItemActions[] = {
-	{kMuseumLaboratory, 7, 2, 326},
-	{kMuseumLaboratory, 0, 2, 15},
-	{kMuseumLaboratory, 5, 3, 328},
-	{kMuseumLaboratory, 7, 3, 327},
-	{kMuseumLaboratory, 8, 3, 329},
-	{kMuseumLaboratory, 11, 3, 330},
-	{kMuseumLaboratory, 12, 3, 330},
-	{kMuseumLaboratory, 15, 3, 331},
-	{kMuseumLaboratory, 0, 3, 30},
-	{kMuseumLaboratory, 14, 4, 333},
-	{kMuseumLaboratory, 0, 4, 332},
-	{kMuseumLaboratory, 0, 5, 334},
-	{kMuseumLaboratory, 0, 7, 19},
-	{kMuseumLaboratory, 12, 10, 336},
-	{kMuseumLaboratory, 0, 10, 335},
-	{kMuseumLaboratory, 0, 11, 15},
+	{kMuseumLaboratory, 7, 2, 326}, // Leave the crucifix on the restoration shelves.
+	{kMuseumLaboratory, 0, 2, 15}, // Use an item with shelves.
+	{kMuseumLaboratory, 5, 3, 328}, // Record Susan's voice.
+	{kMuseumLaboratory, 7, 3, 327}, // Give the crucifix to Susan.
+	{kMuseumLaboratory, 8, 3, 329, false}, // Show the Mayan object to Susan.
+	{kMuseumLaboratory, 11, 3, 330, false}, // Show the Mayan mask to Susan.
+	{kMuseumLaboratory, 12, 3, 330, false}, // Show the ruby to Susan.
+	{kMuseumLaboratory, 15, 3, 331}, // Give the coffee to Susan.
+	{kMuseumLaboratory, 0, 3, 30}, // Use an item with susan.
+	{kMuseumLaboratory, 14, 4, 333}, // Grind the coffee beans with the lathe.
+	{kMuseumLaboratory, 0, 4, 332}, // Use an item with the electric lathe.
+	{kMuseumLaboratory, 0, 5, 334}, // Use an item with the microscope.
+	{kMuseumLaboratory, 0, 7, 19}, // Use an item with wastepaper basket.
+	{kMuseumLaboratory, 12, 10, 336}, // Fit the ruby to the laser.
+	{kMuseumLaboratory, 0, 10, 335}, // Use an item with the laser.
+	{kMuseumLaboratory, 0, 11, 15}, // Use an item with shelves.
 };
 
 const RunawayExit kExits[] = {
-	{kMuseumLaboratory, 339, kMuseumHall, 873, 311, true, true},
+	{kMuseumLaboratory, 339, kMuseumHall, 873, 311, true, true}, // Leave the laboratory.
 };
 
 } // End of anonymous namespace
@@ -145,17 +145,17 @@ void RunawayRoomScene::updateMaps4050() {
 RunawayRoomScene::ActionResult RunawayRoomScene::execute4050(uint16 action) {
 	if (museumChapter()) {
 		switch (action) {
-		case 302:
+		case 302: // Look at the restoration shelves.
 			say(2, !_museum.restoration ? 0 : _museum.restoration == 2 ? 3 : _museum.susan ? 2 : 1);
 			_museum.shelvesSeen = 1;
 			return kHandled;
-		case 303:
+		case 303: // Take objects from the restoration shelves.
 			say(3, _museum.restoration == 1);
 			return kHandled;
-		case 304:
+		case 304: // Look at Susan.
 			say(4, _museum.susan == 3 ? 2 : _museum.susan == 1 ? 1 : _museum.restoration && _museum.leftLabOnce ? 3 : 0);
 			return kHandled;
-		case 305:
+		case 305: // Talk to Susan.
 			if (_museum.susan == 3)
 				say(5);
 			else if (_museum.susan == 1) {
@@ -165,40 +165,44 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4050(uint16 action) {
 				startConversation(1);
 			}
 			return kHandled;
-		case 312:
+		case 312: // Look in the wastepaper basket.
 			say(19, 1, true);
 			return kHandled;
-		case 313:
+		case 313: // Use the wastepaper basket.
 			say(4, 0, true);
 			return kHandled;
-		case 315:
+		case 315: // Use the tank.
 			say(7, 0, true);
 			return kHandled;
-		case 317: case 335:
+		case 317: // Use the machine.
+		case 335: // Use an item with the laser.
 			say(14, _random.getRandomNumber(2), true);
 			return kHandled;
-		case 318:
+		case 318: // Look at the laser.
 			say(14, _museum.laserUpgraded ? 2 : _museum.laserSeen ? 1 : 0);
 			return kHandled;
-		case 322:
+		case 322: // Look inside the briefcase.
 			say(18, _museum.varnishSeen);
 			_museum.varnishSeen = 1;
 			return kHandled;
-		case 326:
+		case 326: // Leave the crucifix on the restoration shelves.
 			if (_inventory.museum().restoredCrucifix) {
 				say(22, 2);
 			} else {
 				if (!_museum.shelvesSeen)
 					say(2);
+				_museum.shelvesSeen = 1;
 				say(22);
 				beginRoomAnimation(326, 17, 43);
 			}
 			return kHandled;
-		case 327:
-			say(_museum.susan == 3 ? 5 : _inventory.museum().restoredCrucifix ? 22 : 23,
-				_inventory.museum().restoredCrucifix ? 2 : 0);
+		case 327: // Give the crucifix to Susan.
+			if (_museum.susan == 3)
+				say(5);
+			else
+				say(_inventory.museum().restoredCrucifix ? 22 : 23, _inventory.museum().restoredCrucifix ? 2 : 0);
 			return kHandled;
-		case 328:
+		case 328: // Record Susan's voice.
 			if (!_museum.voiceLockSeen)
 				say(1, 0, true);
 			else if (_museum.susan == 3)
@@ -211,10 +215,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4050(uint16 action) {
 				beginRoomAnimation(328, 21, 56, kRecordSusan, 27);
 			}
 			return kHandled;
-		case 329: case 330:
+		case 329: // Show the Mayan object to Susan.
+		case 330: // Show the mask or ruby to Susan.
 			say(_museum.susan == 3 ? 5 : 25);
 			return kHandled;
-		case 331:
+		case 331: // Give the coffee to Susan.
 			if (_museum.susan != 1)
 				say(1, 0, true);
 			else {
@@ -228,7 +233,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4050(uint16 action) {
 				setRoomAnimationOverlay(15, 170, susan, ARRAYSIZE(susan));
 			}
 			return kHandled;
-		case 333:
+		case 333: // Grind the coffee beans with the lathe.
 			if (_inventory.museum().coffee == 2)
 				say(1, 2, true);
 			else if (_inventory.museum().coffee || !_museum.needsGroundCoffee)
@@ -238,7 +243,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4050(uint16 action) {
 				beginRoomAnimation(333, 18, 35, kGrindCoffee, ARRAYSIZE(kGrindCoffee));
 			}
 			return kHandled;
-		case 336:
+		case 336: // Fit the ruby to the laser.
 			if (!_museum.laserSeen)
 				say(1, 0, true);
 			else {
@@ -246,15 +251,16 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4050(uint16 action) {
 				beginRoomAnimation(336, 19, 13);
 			}
 			return kHandled;
-		case 337:
+		case 337: // Look at the talcum powder brush.
 			say(31, _museum.talcSeen);
 			_museum.talcSeen = 1;
 			return kHandled;
-		case 339:
+		case 339: // Leave the laboratory.
 			_museum.leftLabOnce = 1;
 			leaveMuseumRoom(4061, Common::Point(873, 311), 3, true);
 			return kHandled;
-		default: break;
+		default:
+			break;
 		}
 	}
 
@@ -264,15 +270,22 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4050(uint16 action) {
 			say(19, 2);
 			return kHandled;
 		}
+		if (museumChapter() && !_museum.varnishSeen)
+			say(18);
+		_museum.varnishSeen = 1;
 		_varnishTaken = true;
 		_inventory.add(9);
 		say(19);
 		say(19, 1);
 		return kHandled;
 	case 338: // Take the talcum powder.
+		if (!museumChapter() || !_museum.talcSeen)
+			say(31);
+		_museum.talcSeen = 1;
 		_talcTaken = true;
 		_inventory.add(10);
-		say(31);
+		if (museumChapter())
+			say(18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
 	default:
 		break;
@@ -282,70 +295,71 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute4050(uint16 action) {
 
 void RunawayRoomScene::finish4050(uint16 action) {
 	switch (action) {
-	case 326:
+	case 326: // Leave the crucifix and collect the Mayan object.
 		_inventory.remove(7);
 		_inventory.add(8);
 		_museum.restoration = 1;
 		say(22, 1);
 		break;
-	case 328:
+	case 328: // Ask Susan to say her name.
 		say(24);
 		holdRoomAnimation(428, 21, 56, 29);
 		break;
-	case 428:
+	case 428: // Press the recorder button.
 		beginRoomAnimation(438, 21, 56, kRecordSusan + 27, 8);
 		break;
-	case 438:
+	case 438: // Record Susan's reply.
 		say(24, 1, false, 1);
 		holdRoomAnimation(448, 21, 56, 29);
 		break;
-	case 448:
+	case 448: // Put the recorder away.
 		beginRoomAnimation(458, 21, 56, kRecordSusan + 35, 29);
 		break;
-	case 458:
+	case 458: // Remember that Susan's voice was recorded.
 		_inventory.museum().voiceRecorded = 1;
 		break;
-	case 331:
+	case 331: // Susan drinks the coffee.
 		_inventory.remove(15);
 		_audio.playEffect(48, 204);
 		beginRoomAnimationRange(454, 15, 170, 117, 143, false);
 		return;
-	case 454:
+	case 454: // Finish the exchange with Susan.
 		say(26, 1);
 		say(26, 2, false, 1);
 		deferMuseumAction(453);
 		break;
-	case 333:
+	case 333: // Collect the ground coffee.
 		_inventory.museum().coffee = 1;
 		say(28, 1);
 		break;
-	case 336:
+	case 336: // Show the ruby installation film.
 		startMuseumFilm(kRubyFilm);
 		return;
-	case 405:
+	case 405: // Collect the restored crucifix.
 		_inventory.add(7);
 		say(32, 2);
 		say(32, 3);
 		break;
-	case 456:
+	case 456: // Finish installing the ruby and approach Susan.
 		_inventory.remove(12);
 		say(30, 1);
 		walkTo(Common::Point(464, 544), 3, true);
 		beginRoomAnimation(452, 23, 95, nullptr, 0, false);
 		return;
-	case 450:
+	case 450: // Show the drilling film.
 		startMuseumFilm(kDrillingFilm);
 		return;
-	case 451:
+	case 451: // Resume the laboratory after drilling.
 		_nextLaser = _now + 25000 + _random.getRandomNumber(5000);
 		break;
-	case 452:
+	case 452: // Show the upgraded laser film.
 		startMuseumFilm(kLaserFilm);
 		return;
-	case 453:
+	case 453: // Show the mobsters film.
 		startMuseumFilm(kMobstersFilm);
 		return;
-	default: return;
+	default:
+		return;
 	}
 	refreshMuseum();
 }

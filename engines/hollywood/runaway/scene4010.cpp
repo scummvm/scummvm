@@ -217,15 +217,24 @@ void RunawayRoomScene::finishMuseumAnimation(uint16 action) {
 			refreshMuseum();
 		}
 		break;
-	case kMuseumLaboratory: finish4050(action); break;
-	case kMuseumHall: finish4060(action); break;
-	case kMuseumWilly: finish4070(action); break;
-	case kMuseumSecurity: finish4100(action); break;
+	case kMuseumLaboratory:
+		finish4050(action);
+		break;
+	case kMuseumHall:
+		finish4060(action);
+		break;
+	case kMuseumWilly:
+		finish4070(action);
+		break;
+	case kMuseumSecurity:
+		finish4100(action);
+		break;
 	case kMuseumKeypad:
 		if (action == 414)
 			leaveMuseumRoom(4063, Common::Point(1153, 297), 7);
 		break;
-	default: break;
+	default:
+		break;
 	}
 }
 

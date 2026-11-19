@@ -50,44 +50,56 @@ const RunawayHotspot kHotspots[] = {
 	{"Poster", 454, 455, 1, {329, 328}, {0, 0}},
 	{"Emergency exit map", 1265, 546, 1, {330, 331}, {1, 0}},
 	{"Bed", 404, 456, 1, {344, 345}, {0, 0}},
+	// IDs 20-22 hold alternate bed/chart shapes and names in the original.
+	{"", 0, 0, 0, {0, 0}, {0, 0}},
+	{"", 0, 0, 0, {0, 0}, {0, 0}},
+	{"", 0, 0, 0, {0, 0}, {0, 0}},
+	{"Hallway door", 313, 532, 5, {351, 352}, {0, 0}},
 };
 
 const RunawayResponse kResponses[] = {
-	{kHospitalBedroom, 301, 1, 0},
-	{kHospitalBedroom, 304, 4, 0},
-	{kHospitalBedroom, 306, 5, 0},
-	{kHospitalBedroom, 308, 6, 0},
-	{kHospitalBedroom, 310, 7, 0},
-	{kHospitalBedroom, 311, 8, 0},
-	{kHospitalBedroom, 312, 9, 0},
-	{kHospitalBedroom, 320, 16, 0},
-	{kHospitalBedroom, 321, 17, 0},
-	{kHospitalBedroom, 322, 18, 0},
-	{kHospitalBedroom, 323, 19, 0},
-	{kHospitalBedroom, 325, 21, 0},
-	{kHospitalBedroom, 326, 22, 0},
-	{kHospitalBedroom, 327, 23, 0},
-	{kHospitalBedroom, 328, 24, 0},
-	{kHospitalBedroom, 329, 25, 0},
-	{kHospitalBedroom, 331, 27, 0},
-	{kHospitalBedroom, 333, 29, 0},
-	{kHospitalBedroom, 344, 39, 0},
-	{kHospitalBedroom, 345, 40, 0},
+	{kHospitalBedroom, 301, 1, 0}, // Look at the bathroom door.
+	{kHospitalBedroom, 304, 4, 0}, // Look at the glass.
+	{kHospitalBedroom, 306, 5, 0}, // Look at the sleeping pills.
+	{kHospitalBedroom, 308, 6, 0}, // Look at the sheet.
+	{kHospitalBedroom, 310, 7, 0}, // Look at the locker.
+	{kHospitalBedroom, 311, 8, 0}, // Open the locker.
+	{kHospitalBedroom, 312, 9, 0}, // Look at Gina's bag.
+	{kHospitalBedroom, 320, 16, 0}, // Use the fake patient.
+	{kHospitalBedroom, 321, 17, 0}, // Look at the fire sprinkler.
+	{kHospitalBedroom, 322, 18, 0}, // Use the fire sprinkler.
+	{kHospitalBedroom, 323, 19, 0}, // Look at a nurse buzzer.
+	{kHospitalBedroom, 325, 21, 0}, // Look at the radiator.
+	{kHospitalBedroom, 326, 22, 0}, // Use the radiator.
+	{kHospitalBedroom, 327, 23, 0}, // Look at the AIDS poster.
+	{kHospitalBedroom, 328, 24, 0}, // Take a poster.
+	{kHospitalBedroom, 329, 25, 0}, // Look at the organ donor poster.
+	{kHospitalBedroom, 331, 27, 0}, // Take the emergency exit map.
+	{kHospitalBedroom, 333, 29, 0}, // Use Gina's bag with the locker.
+	{kHospitalBedroom, 344, 39, 0}, // Look at the empty bed.
+	{kHospitalBedroom, 345, 40, 0}, // Use the empty bed.
 };
 
 const RunawayItemAction kItemActions[] = {
-	{kHospitalBedroom, 5, 6, 333, false},
-	{kHospitalBedroom, 6, 9, 334, false},
-	{kHospitalBedroom, 6, 10, 335},
-	{kHospitalBedroom, 9, 12, 343},  // Matches at the sprinkler.
-	{kHospitalBedroom, 10, 2, 336, false},
-	{kHospitalBedroom, 13, 2, 349},  // Water for Gina.
-	{kHospitalBedroom, 14, 19, 341, false},
-	{kHospitalBedroom, 15, 2, 337, false},
-	{kHospitalBedroom, 16, 9, 339},
-	{kHospitalBedroom, 16, 10, 338, false},
-	{kHospitalBedroom, 17, 19, 340},
-	{kHospitalBedroom, 18, 12, 342},
+	{kHospitalBedroom, 5, 6, 333, false}, // Use Gina's bag with the locker.
+	{kHospitalBedroom, 6, 9, 334, false}, // Put Gina's chart back on her bed.
+	{kHospitalBedroom, 6, 10, 335}, // Put Gina's chart on the decoy's bed.
+	{kHospitalBedroom, 9, 12, 343}, // Use the matches at the sprinkler.
+	{kHospitalBedroom, 10, 2, 336, false}, // Use the wig with Gina.
+	{kHospitalBedroom, 13, 2, 349}, // Use the glass with Gina.
+	{kHospitalBedroom, 14, 19, 341, false}, // Use the pillows with the empty bed.
+	{kHospitalBedroom, 15, 2, 337, false}, // Use the syringe with Gina.
+	{kHospitalBedroom, 16, 9, 339}, // Replace Gina's medical chart.
+	{kHospitalBedroom, 16, 10, 338, false}, // Put the blank medical chart on the other bed.
+	{kHospitalBedroom, 17, 19, 340}, // Use the head with the empty bed.
+	{kHospitalBedroom, 18, 12, 342}, // Use the flammable spray at the sprinkler.
+};
+
+const byte kPeekHallwayFrames[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+	18, 19, 19, 19, 19, 19, 18, 17, 16, 15, 14, 20, 21, 22, 23, 24,
+	24, 24, 24, 24, 24, 23, 22, 21, 20, 14, 13, 12, 11, 10, 9, 8,
+	7, 6, 5, 4, 3, 2, 1, 0
 };
 
 // Retail chapter-one film scripts, from 0x43c450..0x4403cb.
@@ -385,43 +397,43 @@ bool RunawayRoomScene::sayHospitalInventory(const RunawayInventory::Reply &reply
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 	switch (action) {
-	case 302:
+	case 302: // Look at Gina.
 		say(2, _random.getRandomNumber(2) + (_hospital.attacked ? 3 : 0));
 		return kHandled;
-	case 303:
+	case 303: // Talk to Gina.
 		say(3, _random.getRandomBit() + (_hospital.attacked ? 2 : 0));
 		return kHandled;
-	case 305:
+	case 305: // Take the glass.
 		_hospital.glassTaken = 1;
 		_inventory.add(13);
 		_facing = 4;
 		say(62, 0, true);
 		return kBackgroundChanged;
-	case 307:
+	case 307: // Take the sleeping pills.
 		_hospital.pillsTaken = 1;
 		_inventory.add(8);
 		_facing = 4;
 		say(57, 0, true);
 		return kBackgroundChanged;
-	case 309:
+	case 309: // Take the sheet.
 		_hospital.sheetTaken = 1;
 		_inventory.add(7);
 		_facing = 4;
 		say(18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
-	case 313:
+	case 313: // Take Gina's bag.
 		_hospital.bagTaken = 1;
 		_inventory.add(5);
 		_facing = 6;
 		say(9, 1);
 		return kBackgroundChanged;
-	case 330:
+	case 330: // Read the emergency exit map.
 		if (!_hospital.exitMapRead)
 			say(26);
 		say(26, _hospital.window ? 2 : 1);
 		_hospital.exitMapRead = 1;
 		return kHandled;
-	case 332:
+	case 332: // Climb through the window.
 		if (!_hospital.exitMapRead) {
 			say(28);
 			return kHandled;
@@ -431,49 +443,49 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 		_hospital.window = MIN<int>(2, _hospital.window + 1);
 		beginRoomAnimation(action, 4, 42);
 		return kHandled;
-	case 314:
+	case 314: // Look out of the window.
 		say(10, _hospital.window >= 2);
 		return kHandled;
-	case 315:
-	case 316:
+	case 315: // Look at Gina's medical chart.
+	case 316: // Take Gina's medical chart.
 		say(action == 315 ? 11 : 12, _hospital.chartReplaced);
 		return kHandled;
-	case 317:
-	case 318:
+	case 317: // Look at the other medical chart.
+	case 318: // Take the other medical chart.
 		say(action == 317 ? 13 : 14, _hospital.chartMoved);
 		return kHandled;
-	case 319:
+	case 319: // Look at the fake patient.
 		say(15, _hospital.attacked);
 		return kHandled;
-	case 324:
+	case 324: // Press a nurse buzzer.
 		say(20, _hospital.attacked);
 		return kHandled;
-	case 334:
+	case 334: // Put Gina's chart back on her bed.
 		say(30);
 		return kHandled;
-	case 335:
+	case 335: // Put Gina's chart on the decoy's bed.
 		if (!_hospital.decoy) {
 			say(31);
 			return kHandled;
 		}
 		beginRoomAnimation(action, 16, 29);
 		return kHandled;
-	case 336:
+	case 336: // Use the wig with Gina.
 		say(32);
 		return kHandled;
-	case 337:
+	case 337: // Use the syringe with Gina.
 		if (_hospital.attacked)
 			say(33);
 		else
 			say(4, 0, true);
 		return kHandled;
-	case 338:
+	case 338: // Put the blank medical chart on the other bed.
 		if (_inventory.chartWritten())
-			say(4, 0, true);
+			say(14, _random.getRandomNumber(2), true);
 		else
 			say(34);
 		return kHandled;
-	case 339: {
+	case 339: { // Replace Gina's medical chart.
 		if (!_inventory.chartWritten()) {
 			say(34);
 			return kHandled;
@@ -484,8 +496,8 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 			_actionFrames.push_back(frame);
 		return kHandled;
 	}
-	case 340:
-	case 341:
+	case 340: // Use the head with the empty bed.
+	case 341: // Use the pillows with the empty bed.
 		if (!_inventory.contains(17))
 			say(36, 5);
 		else if (!_inventory.headWig())
@@ -500,7 +512,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 			_actionStage = 0;
 		}
 		return kHandled;
-	case 342:
+	case 342: // Use the flammable spray at the sprinkler.
 		if (!_hospital.attacked || !_hospital.medicineRead) {
 			if (_inventory.contains(9))
 				say(37, 1);
@@ -513,17 +525,25 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 			_roomAction = action;
 		}
 		return kHandled;
-	case 343:
+	case 343: // Use the matches at the sprinkler.
 		say(_hospital.attacked && _hospital.medicineRead ? 38 : 37, _hospital.attacked && _hospital.medicineRead ? 0 : 1);
 		return kHandled;
-	case 346:
+	case 346: // Go to the bathroom.
 		leaveHospitalRoom(kHospitalBathroom, Common::Point(0, 596), 1);
 		return kHandled;
-	case 349:
+	case 349: // Use the glass with Gina.
 		if (_hospital.attacked)
 			say(41, _inventory.water() != 0);
 		else
-			say(4, 0, true);
+			say(14, _random.getRandomNumber(2), true);
+		return kHandled;
+	case 351: // Peek through the hallway door.
+		walkTo(Common::Point(313, 532), 5, true);
+		_roomAction = action;
+		_actionStage = 0;
+		return kHandled;
+	case 352: // Try to leave through the hallway door.
+		say(42, _hospital.attacked ? 2 : _random.getRandomBit());
 		return kHandled;
 	default:
 		return kUnhandled;
@@ -539,28 +559,32 @@ float RunawayRoomScene::actorHeight2020() const {
 void RunawayRoomScene::update2020() {
 	if (_hospitalEntryStep && !speaking() && !_walkPath.active()) {
 		switch (_hospitalEntryStep++) {
-		case 1:
+		case 1: // Reflect on Gina's story.
 			_facing = 4;
 			say(0, 1);
 			break;
-		case 2:
+		case 2: // Approach Gina.
 			walkTo(Common::Point(1075, 599));
 			break;
-		case 3:
+		case 3: // Decide to protect Gina.
 			say(0, 2);
 			break;
-		case 4:
+		case 4: // Finish the hospital introduction.
 			_facing = 3;
 			say(0, 3);
 			_hospitalEntryStep = 0;
 			break;
-		case 5:
+		case 5: // React to the attack on the decoy.
 			_facing = 4;
 			say(81, 6);
 			_hospitalEntryStep = 0;
 			break;
-		case 6:
+		case 6: // Inspect the completed decoy.
 			say(36, 4);
+			_hospitalEntryStep = 0;
+			break;
+		case 7: // Report what Brian saw in the hallway.
+			say(42, _hospital.attacked ? 5 : 4);
 			_hospitalEntryStep = 0;
 			break;
 		default:
@@ -578,6 +602,16 @@ void RunawayRoomScene::update2020() {
 			}
 		} else if (_roomAction == 342) {
 			startHospitalFilm(kEscapeFilm);
+		} else if (_roomAction == 351 && _actionFrames.empty()) {
+			if (!_actionStage) {
+				say(42, 3);
+				_actionStage = 1;
+			} else if (_actionStage == 1) {
+				walkTo(Common::Point(40, 599), 5, true);
+				_actionStage = 2;
+			} else {
+				beginRoomAnimation(351, 10, 25, kPeekHallwayFrames, ARRAYSIZE(kPeekHallwayFrames));
+			}
 		}
 	}
 	if (_now - _ambientTick >= 80) {
@@ -627,11 +661,17 @@ void RunawayRoomScene::adaptGogFilm(const RunawaySequence::Command *commands) {
 		} else if (movie == 9 && command.operation == S::kPlay) {
 			uint targetPart = 1;
 			if (command.a == 1608) {
-				targetPart = 2; command.a = 0; command.b = 23;
+				targetPart = 2;
+				command.a = 0;
+				command.b = 23;
 			} else if (command.a == 1632 || command.a == 1633) {
-				targetPart = 3; command.a = 0; command.b = 54;
+				targetPart = 3;
+				command.a = 0;
+				command.b = 54;
 			} else if (command.a == 1688) {
-				targetPart = 4; command.a = 0; command.b = 24;
+				targetPart = 4;
+				command.a = 0;
+				command.b = 24;
 			} else if (command.a == 65) {
 				command.a = 66;
 			} else if (command.a == 106) {
@@ -663,11 +703,21 @@ void RunawayRoomScene::adaptGogFilm(const RunawaySequence::Command *commands) {
 void RunawayRoomScene::startHospitalFilm(HospitalFilm film) {
 	const RunawaySequence::Command *commands = nullptr;
 	switch (film) {
-	case kGinaStoryFilm: commands = kGinaStory; break;
-	case kLedgeFilm: commands = kLedgeCrossing; break;
-	case kDecoyFilm: commands = kBuildDecoy; break;
-	case kAmbushFilm: commands = kHospitalAmbush; break;
-	case kEscapeFilm: commands = kHospitalEscape; break;
+	case kGinaStoryFilm:
+		commands = kGinaStory;
+		break;
+	case kLedgeFilm:
+		commands = kLedgeCrossing;
+		break;
+	case kDecoyFilm:
+		commands = kBuildDecoy;
+		break;
+	case kAmbushFilm:
+		commands = kHospitalAmbush;
+		break;
+	case kEscapeFilm:
+		commands = kHospitalEscape;
+		break;
 	}
 	_hospitalFilm = film;
 	_roomAction = 0;
@@ -718,10 +768,10 @@ void RunawayRoomScene::finishHospitalFilm() {
 
 void RunawayRoomScene::finishHospitalAnimation(uint16 action) {
 	switch (action) {
-	case 332:
+	case 332: // Start the ledge crossing.
 		startHospitalFilm(kLedgeFilm);
 		return;
-	case 302:
+	case 302: // Return through the storeroom window.
 		_transition.scene = 2022;
 		_transition.position = Common::Point(265, 456);
 		_transition.facing = 3;
@@ -732,20 +782,24 @@ void RunawayRoomScene::finishHospitalAnimation(uint16 action) {
 		_hospital.storeroomVisited = 1;
 		_facing = 3;
 		return;
-	case 2022:
+	case 2022: // Finish climbing into Gina's room.
 		_facing = 3;
 		return;
-	case 335:
+	case 335: // Finish moving Gina's chart to the decoy's bed.
 		_hospital.chartMoved = 1;
 		_inventory.remove(6);
 		say(31, 1);
 		break;
-	case 339:
+	case 339: // Finish replacing Gina's chart.
 		_hospital.chartReplaced = 1;
 		_inventory.remove(16);
 		_inventory.add(6);
 		say(35);
 		break;
+	case 351: // Return from peeking through the hallway door.
+		walkTo(Common::Point(313, 532), 4, true);
+		_hospitalEntryStep = 7;
+		return;
 	default:
 		return;
 	}

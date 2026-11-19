@@ -41,22 +41,21 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{kHospitalBathroom, 301, 1, 0},
-	{kHospitalBathroom, 308, 2, 0},
-	{kHospitalBathroom, 309, 5, 0},
-	{kHospitalBathroom, 310, 5, 1},
-	{kHospitalBathroom, 313, 8, 0},
-	{kHospitalBathroom, 314, 9, 0},
-	{kHospitalBathroom, 315, 10, 0},
-	{kHospitalBathroom, 317, 12, 0},
-	{kHospitalBathroom, 318, 13, 0},
-	{kHospitalBathroom, 319, 14, 0},
-	{kHospitalBathroom, 321, 16, 0}
+	{kHospitalBathroom, 301, 1, 0}, // Look at the wastebasket.
+	{kHospitalBathroom, 309, 5, 0}, // Look at the faucet.
+	{kHospitalBathroom, 310, 5, 1}, // Use the faucet.
+	{kHospitalBathroom, 313, 8, 0}, // Look at the pipe.
+	{kHospitalBathroom, 314, 9, 0}, // Use the pipe.
+	{kHospitalBathroom, 315, 10, 0}, // Look at the shower nozzle.
+	{kHospitalBathroom, 317, 12, 0}, // Look at the medicine cabinet.
+	{kHospitalBathroom, 318, 13, 0}, // Open the medicine cabinet.
+	{kHospitalBathroom, 319, 14, 0}, // Look at the toilet.
+	{kHospitalBathroom, 321, 16, 0} // Use an item with the pipe.
 };
 
 const RunawayItemAction kItemActions[] = {
-	{kHospitalBathroom, 13, 2, 307},
-	{kHospitalBathroom, 0, 7, 321, false}
+	{kHospitalBathroom, 13, 2, 307}, // Fill the glass at the faucet.
+	{kHospitalBathroom, 0, 6, 321, false} // Use an item with the pipe.
 };
 
 // The faucet animation opens with a held frame, then returns from frame 22.
@@ -94,31 +93,31 @@ void RunawayRoomScene::updateMaps2080() {
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute2080(uint16 action) {
 	switch (action) {
-	case 312:
-	case 316:
+	case 312: // Use the sign.
+	case 316: // Use the shower nozzle.
 		say(action == 312 ? 7 : 11, _hospital.medicineRead);
 		return kHandled;
-	case 302:
+	case 302: // Search the wastebasket for the marker.
 		_roomAction = action;
 		_actionStage = 0;
 		_actionStarted = _now;
 		_actionStep = 0;
 		return kHandled;
-	case 303:
-	case 304:
+	case 303: // Return to Gina's room.
+	case 304: // Return to Gina's room without the door sound.
 		leaveHospitalRoom(2021, Common::Point(1265, 546), 5);
 		return kHandled;
-	case 305:
+	case 305: // Look at the alcohol bottle.
 		say(3, _hospital.alcohol == 2 ? 1 : 0);
 		_hospital.alcohol = 2;
 		return kHandled;
-	case 306:
+	case 306: // Take the alcohol bottle.
 		_hospital.alcohol = 1;
 		_inventory.add(12);
 		_facing = 3;
 		say(18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
-	case 307:
+	case 307: // Fill the glass at the faucet.
 		if (_inventory.water() == 1) {
 			say(4, 1);
 			return kHandled;
@@ -129,8 +128,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2080(uint16 action) {
 		_actionStarted = _now;
 		_actionStep = 0;
 		return kHandled;
-	case 311:
-	case 320:
+	case 308: // Look at the bathroom door.
+		say(2, _hospital.attacked);
+		return kHandled;
+	case 311: // Read the sign.
+	case 320: // Use the toilet.
 		say(action == 311 ? 6 : 15);
 		_roomAction = action;
 		return kHandled;
