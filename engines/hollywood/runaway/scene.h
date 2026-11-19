@@ -295,6 +295,17 @@ private:
 	void deferTownAction(uint16 action);
 	void startTownFilm(byte film);
 	void finishTownFilm();
+	void start6190();
+	ActionResult execute6190(uint16 action);
+	bool applyBackground6190();
+	void updateMaps6190();
+	void start6200();
+	ActionResult execute6200(uint16 action);
+	void updateMaps6200();
+	void drawScene6200(Graphics::ManagedSurface &viewport);
+	void start6210();
+	ActionResult execute6210(uint16 action);
+	void townAnimationFrame();
 	ActionResult execute6350(uint16 action);
 	ActionResult execute6220(uint16 action);
 	void start6220();

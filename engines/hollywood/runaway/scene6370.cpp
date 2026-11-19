@@ -113,14 +113,22 @@ void RunawayRoomScene::startSushiConversation(bool introduction) {
 		 {1, 0, 0, 20, 20, 0, 0}},
 		{{1, 1, 3, 21, 21, 1, 255}, {1, 1, 3, 22, 22, 3, 255},
 		 {1, 1, 3, 23, 23, 1, 255}, {1, 0, 2, 24, 24, 0, 0}},
-		{{1, 0, 2, 25, 25, 1, 255}}
+		{{1, 0, 2, 25, 25, 1, 255}},
+		{{1, 0, 2, 26, 26, 4, 0}, {0, 0, 2, 27, 27, 1, 0}},
+		{{1, 3, 3, 28, 28, 1, 255}, {1, 3, 3, 29, 29, 1, 255},
+		 {1, 3, 3, 30, 30, 1, 255}, {1, 0, 2, 31, 31, 0, 0}}
 	};
 	memcpy(_dialogue[0], topics[0], sizeof(topics[0]));
 	memcpy(_dialogue[10], topics[1], sizeof(topics[1]));
 	memcpy(_dialogue[11], topics[2], sizeof(topics[2]));
+	memcpy(_dialogue[12], topics[3], sizeof(topics[3]));
+	memcpy(_dialogue[13], topics[4], sizeof(topics[4]));
 	_dialogue[0][0].enabled = !_town.sushiMet;
 	_dialogue[0][1].enabled = _town.sushiMet;
-	// The safe and the prisoner become topics after visiting those rooms.
+	_dialogue[0][4].enabled = _town.mineMapKnown && _town.bankVisited;
+	_dialogue[0][5].enabled = _town.bodySeen;
+	_dialogue[12][0].enabled = !_town.safeSeen;
+	_dialogue[12][1].enabled = _town.safeSeen;
 }
 
 void RunawayRoomScene::sushiDialogueChoice(byte effect) {
@@ -132,6 +140,10 @@ void RunawayRoomScene::sushiDialogueChoice(byte effect) {
 		say(90, 8, false, 1);
 	} else if (effect == 3) { // Learn where a map of the mine might be kept.
 		_town.mineMapKnown = 1;
+	} else if (effect == 4) { // Learn that the bank's safe is in its basement.
+		_town.basementKnown = 1;
+	} else if (effect == 10) { // Identify the prisoner as Douglasville's doctor.
+		_town.doctorKnown = 1;
 	}
 }
 

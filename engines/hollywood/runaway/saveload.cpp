@@ -41,7 +41,7 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncBytes(pickedUp, sizeof(pickedUp));
 	s.syncBytes(examined, sizeof(examined));
 	s.syncAsByte(itemCount);
-	s.syncBytes(items, sizeof(items));
+	s.syncBytes(items, 26);
 	s.syncAsByte(selected);
 	s.syncAsByte(cloth);
 	s.syncAsByte(inventoryOpen);
@@ -207,6 +207,24 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(town.strapSeen, 8);
 	s.syncAsByte(town.sushiMet, 8);
 	s.syncAsByte(town.mineMapKnown, 8);
+	// Preserve the original inventory layout when reading older saves.
+	s.syncBytes(items + 26, sizeof(items) - 26, 9);
+	s.syncAsByte(town.bankVisited, 9);
+	s.syncAsByte(town.bankShelves, 9);
+	s.syncAsByte(town.bankStampTaken, 9);
+	s.syncAsByte(town.basementKnown, 9);
+	s.syncAsByte(town.bodySeen, 9);
+	s.syncAsByte(town.doctorKnown, 9);
+	s.syncAsByte(town.firewoodTaken, 9);
+	s.syncAsByte(town.cellOpen, 9);
+	s.syncAsByte(town.bagSearched, 9);
+	s.syncAsByte(town.bucketSeen, 9);
+	s.syncAsByte(town.bottleSeen, 9);
+	s.syncAsByte(town.cellRefusals, 9);
+	s.syncAsByte(town.safeSeen, 9);
+	s.syncAsByte(town.oscarTobacco, 9);
+	s.syncAsByte(town.stethoscopeTaken, 9);
+	s.syncAsByte(town.linimentTaken, 9);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -307,12 +325,18 @@ bool RunawaySaveState::valid() const {
 		if (pickedUp[i] > 1 || examined[i] > 1)
 			return false;
 	}
-	bool owned[27] = {};
+	bool owned[33] = {};
 	if (town.arrived > 1 || town.streetVisited > 1 || town.strapSeen > 1 || town.sushiMet > 1 || town.mineMapKnown > 1)
 		return false;
+	if (town.bankVisited > 1 || town.bankShelves > 2 || town.bankStampTaken > 1 || town.basementKnown > 1 ||
+			town.bodySeen > 1 || town.doctorKnown > 1 || town.firewoodTaken > 1 || town.cellOpen > 1 ||
+			town.bagSearched > 1 || town.bucketSeen > 1 || town.bottleSeen > 1 || town.cellRefusals > 2 ||
+			town.safeSeen > 1 || town.oscarTobacco > 2 || town.stethoscopeTaken > 1 || town.linimentTaken > 1) {
+		return false;
+	}
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
-				(chapter() != 3 && items[i] > 19))
+				items[i] > (chapter() == 4 ? 32 : chapter() == 3 ? 26 : 19))
 			return false;
 		owned[items[i]] = true;
 	}
@@ -324,7 +348,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 8)
+	if (version < 1 || version > 9)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -336,9 +360,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(8);
+	stream.writeUint16LE(9);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(8);
+	s.setVersion(9);
 	sync(s);
 	return !s.err();
 }

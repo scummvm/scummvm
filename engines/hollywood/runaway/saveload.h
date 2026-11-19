@@ -87,13 +87,17 @@ struct RunawaySaveState {
 	struct Town {
 		byte arrived = 0, streetVisited = 0, strapSeen = 0;
 		byte sushiMet = 0, mineMapKnown = 0;
+		byte bankVisited = 0, bankShelves = 0, bankStampTaken = 0, basementKnown = 0;
+		byte bodySeen = 0, doctorKnown = 0, firewoodTaken = 0, cellOpen = 0;
+		byte bagSearched = 0, bucketSeen = 0, bottleSeen = 0, cellRefusals = 0;
+		byte safeSeen = 0, oscarTobacco = 0, stethoscopeTaken = 0, linimentTaken = 0;
 	} town;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;
 	byte coolerMoved = 0, coolerInspected = 0, peeked = 0, ice = 0, hatch = 0;
 	byte pickedUp[20] = {}, examined[20] = {};
-	byte itemCount = 0, items[26] = {}, selected = 0, cloth = 0;
+	byte itemCount = 0, items[32] = {}, selected = 0, cloth = 0;
 	byte inventoryOpen = 0, verb = 0;
 	uint32 randomSeed = 0, playTime = 0;
 	byte game = kRunawayCabinDemo;

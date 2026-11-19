@@ -48,7 +48,10 @@ const RunawayRoom kRunawayScene6350 = {
 void RunawayRoomScene::resumeTown() {
 	if (!_entering) {
 		if (!_audio.musicPlaying()) {
-			_audio.playMusic(11);
+			_audio.playMusic(_room == 6200 || _room == 6210 ? 18 : 11);
+			if (_room == 6200 || _room == 6210) {
+				_audio.setMusicVolume(191);
+			}
 		}
 		return;
 	}
@@ -58,10 +61,23 @@ void RunawayRoomScene::resumeTown() {
 		return;
 	}
 	_town.arrived = 1;
-	if (!_audio.musicPlaying()) {
+	if (_room == 6200 || _room == 6210) {
+		if (_entryScene == 6200 || !_audio.musicPlaying()) {
+			_audio.playMusic(18);
+		}
+		_audio.setMusicVolume(191);
+	} else if (_entryScene == 6223) {
+		_audio.playMusic(12 + _random.getRandomNumber(4));
+	} else if (!_audio.musicPlaying()) {
 		_audio.playMusic(11);
 	}
-	if (_room == 6220) {
+	if (_room == 6190) {
+		start6190();
+	} else if (_room == 6200) {
+		start6200();
+	} else if (_room == 6210) {
+		start6210();
+	} else if (_room == 6220) {
 		start6220();
 	} else if (_room == 6370) {
 		_town.streetVisited = 1;
@@ -89,6 +105,20 @@ void RunawayRoomScene::updateTown() {
 void RunawayRoomScene::deferTownAction(uint16 action) {
 	_roomAction = action;
 	_actionFrames.clear();
+}
+
+void RunawayRoomScene::townAnimationFrame() {
+	if (_room == 6200 && _roomAction == 314) {
+		if (_actionStep == 13) {
+			_audio.playEffect(58);
+		} else if (_actionStep == 22) {
+			_audio.playEffect(59);
+		}
+	} else if (_room == 6210 && _roomAction == 410 && _actionStep == 8) {
+		_audio.playEffect(61, 204);
+	} else if (_room == 6370 && _roomAction == 401 && _actionStep == 24) {
+		_audio.playEffect(12);
+	}
 }
 
 void RunawayRoomScene::leaveTownRoom(uint16 scene) {

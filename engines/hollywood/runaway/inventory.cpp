@@ -41,7 +41,12 @@ const char *const kHospitalItemNames[] = {
 };
 
 const char *const kTownItemNames[] = {
-	"", "Wallet", "Car keys", "Receipt", "Piece of amber", "Crucifix"
+	"", "Wallet", "Car keys", "Receipt", "Piece of amber", "Crucifix", "Doctor's bag",
+	"Stethoscope", "Liniment", "Key", "Wrench", "Strap", "Container of concentrated gasoline",
+	"Telepathic helmet", "Firewood", "Blowtorch", "Watering can", "Map of the mine", "Miner's light",
+	"Rope", "Ancient stapler", "Flower pot", "Pruning shears", "Oil can", "One-liter bottle",
+	"Empty 30 c.c. measuring tube", "Empty 50 c.c. measuring tube", "Tobacco leaves", "Chewing tobacco",
+	"Stone", "Sanding block", "Vessel", "Bank stamp"
 };
 
 const byte kItemCursors[] = {
@@ -103,8 +108,9 @@ void RunawayInventory::startChapter(byte chapter) {
 			add(initial[i]);
 	}
 	if (chapter == 4) {
-		for (uint i = 1; i < ARRAYSIZE(kTownItemNames); ++i)
+		for (uint i = 1; i <= 5; ++i) {
 			add(i);
+		}
 	}
 	_newItem = 0;
 }
@@ -118,7 +124,8 @@ bool RunawayInventory::contains(byte item) const {
 }
 
 bool RunawayInventory::add(byte item) {
-	if (!item || item > kItemCount || (_chapter != 3 && item > 19) || contains(item))
+	const uint maxItem = _chapter == 4 ? ARRAYSIZE(kTownItemNames) - 1 : _chapter == 3 ? kItemCount : 19;
+	if (!item || item > maxItem || contains(item))
 		return false;
 	_items.push_back(item);
 	_newItem = item;
@@ -266,7 +273,23 @@ uint RunawayInventory::cursor(byte item) const {
 RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 	if (_chapter == 4) {
 		const uint16 cues[] = {1, 50, 51, 74, 53, 200};
-		return Reply(item < ARRAYSIZE(cues) ? cues[item] : 1);
+		if (item < ARRAYSIZE(cues)) {
+			return Reply(cues[item]);
+		}
+		switch (item) {
+		case 7: // Stethoscope.
+		case 8: // Liniment.
+		case 9: // Cell key.
+			return Reply(194 + item);
+		case 14: // Firewood.
+			return Reply(207);
+		case 20: // Ancient stapler.
+			return Reply(212);
+		case 32: // Bank stamp.
+			return Reply(222);
+		default:
+			return Reply();
+		}
 	}
 	if (_chapter == 1) {
 		if (item == 11)
