@@ -42,6 +42,7 @@ namespace GUI {
 GroupedListWidget::GroupedListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd)
 	: ListWidget(boss, name, tooltip, cmd) {
 	_groupsVisible = true;
+	_cursorGroupID = -1;
 }
 
 void GroupedListWidget::setList(const Common::U32StringArray &list) {
@@ -289,8 +290,11 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 		if (_isMouseDown && !_isDragging && !_wasAnimating) {
 			int newSelectedItem = findItem(x, y);
 			if (newSelectedItem != -1) {
+				// A click moves the keyboard cursor too
+				_cursorGroupID = -1;
 				if (isGroupHeader(_listIndex[newSelectedItem])) {
 					int groupID = indexToGroupID(_listIndex[newSelectedItem]);
+					_cursorGroupID = groupID;
 					int oldSelection = getSelected();
 					_selectedItem = -1;
 					toggleGroup(groupID);
@@ -425,6 +429,132 @@ int GroupedListWidget::getNewSel(int index) {
     return _listIndex[selectable];
 }
 
+int GroupedListWidget::findHeaderPos(int groupID) const {
+	if (groupID < 0 || !_groupsVisible)
+		return -1;
+	for (uint i = 0; i < _listIndex.size(); ++i) {
+		if (isGroupHeader(_listIndex[i]) && indexToGroupID(_listIndex[i]) == groupID)
+			return i;
+	}
+	return -1;
+}
+
+void GroupedListWidget::moveCursorToHeader(int pos) {
+	_cursorGroupID = indexToGroupID(_listIndex[pos]);
+	scrollToItem(pos);
+	markAsDirty();
+}
+
+void GroupedListWidget::selectFromKeyboard(int pos) {
+	_cursorGroupID = -1;
+	clearSelection();
+	_selectedItem = pos;
+	_lastSelectionStartItem = pos;
+	markSelectedItem(pos, true);
+	scrollToCurrent();
+	markAsDirty();
+	sendCommand(kListSelectionChangedCmd, _selectedItem);
+}
+
+void GroupedListWidget::toggleGroupKeepingSelection(int groupID) {
+	// Keep the same item selected, as clicking a header does
+	int oldSelection = getSelected();
+	_selectedItem = -1;
+	toggleGroup(groupID);
+	if (oldSelection != -1) {
+		_selectedItem = findDataIndex(oldSelection);
+		sendCommand(kListSelectionChangedCmd, _selectedItem);
+	}
+	applyScrollPos();
+	markAsDirty();
+}
+
+bool GroupedListWidget::handleKeyDown(Common::KeyState state) {
+	// Only keys involving group headers are handled here
+	if (!_groupsVisible || _editMode || !isEnabled() ||
+			(state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META)))
+		return ListWidget::handleKeyDown(state);
+
+	const int headerPos = findHeaderPos(_cursorGroupID);
+	if (headerPos < 0)
+		_cursorGroupID = -1;
+
+	switch (state.keycode) {
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_DOWN: {
+		// Shift extends the selection, which headers are not part of
+		if (state.flags & Common::KBD_SHIFT)
+			break;
+
+		const int from = headerPos >= 0 ? headerPos : _selectedItem;
+		if (from < 0)
+			break;
+
+		const int next = from + (state.keycode == Common::KEYCODE_UP ? -1 : 1);
+		if (next < 0 || next >= (int)_listIndex.size())
+			return true;
+
+		if (isGroupHeader(_listIndex[next])) {
+			moveCursorToHeader(next);
+			return true;
+		}
+		if (headerPos >= 0) {
+			selectFromKeyboard(next);
+			return true;
+		}
+		// From an item to the next item, the list handles it
+		break;
+	}
+
+	case Common::KEYCODE_LEFT:
+		// As in a tree: fold the group, or move from an item to its header
+		if (headerPos >= 0) {
+			if (_groupExpanded[_cursorGroupID])
+				toggleGroupKeepingSelection(_cursorGroupID);
+			return true;
+		}
+		if (_selectedItem >= 0) {
+			for (int pos = _selectedItem - 1; pos >= 0; --pos) {
+				if (isGroupHeader(_listIndex[pos])) {
+					moveCursorToHeader(pos);
+					break;
+				}
+			}
+			return true;
+		}
+		break;
+
+	case Common::KEYCODE_RIGHT:
+		if (headerPos >= 0) {
+			if (!_groupExpanded[_cursorGroupID])
+				toggleGroupKeepingSelection(_cursorGroupID);
+			return true;
+		}
+		break;
+
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+	case Common::KEYCODE_SPACE:
+		if (headerPos >= 0) {
+			toggleGroupKeepingSelection(_cursorGroupID);
+			return true;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	// Moving the selection takes the cursor off the header
+	const int oldSelected = _selectedItem;
+	const bool handled = ListWidget::handleKeyDown(state);
+	if (_selectedItem != oldSelected) {
+		_cursorGroupID = -1;
+		markAsDirty();
+	}
+	return handled;
+}
+
 void GroupedListWidget::toggleGroup(int groupID) {
 	_groupExpanded[groupID] = !_groupExpanded[groupID];
 	sortGroups();
@@ -447,6 +577,9 @@ void GroupedListWidget::drawWidget() {
 	Common::Rect innerRect(_x, _y + _topPadding, _x + _w - _scrollBarWidth, _y + _h - _bottomPadding);
 	Common::Rect oldClip = g_gui.theme()->swapClipRect(innerRect.findIntersectingRect(g_gui.theme()->getClipRect()));
 
+	// The header under the keyboard cursor is drawn as selected instead
+	const bool headerCursorShown = _hasFocus && findHeaderPos(_cursorGroupID) >= 0;
+
 	for (i = 0, pos = firstItem; i <= _entriesPerPage && pos < len; i++, pos++) {
 		const int y = _y + _topPadding + lineHeight * i - offset;
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
@@ -454,12 +587,15 @@ void GroupedListWidget::drawWidget() {
 		ThemeEngine::FontStyle bold = ThemeEngine::kFontStyleBold;
 #endif
 
-		// For grouped lists, only real items (non-headers) may be highlighted.
+		// For grouped lists, only real items (non-headers) may be highlighted,
+		// apart from the header under the keyboard cursor.
 		int mapped = _listIndex[pos];
 		bool isRealItem = (mapped >= 0);
 		if (isRealItem) {
-			if (isItemSelected(pos))
+			if (isItemSelected(pos) && !headerCursorShown)
 				inverted = _inversion;
+		} else if (headerCursorShown && isGroupHeader(mapped) && indexToGroupID(mapped) == _cursorGroupID) {
+			inverted = _inversion;
 		}
 
 		ThemeEngine::WidgetStateInfo itemState = getItemState(pos);

@@ -1031,14 +1031,14 @@ void ListWidget::checkBounds() {
 		_currentPos = _list.size() - _entriesPerPage;
 }
 
-void ListWidget::scrollToCurrent() {
-	// Only do something if the current item is not in our view port
-	if (_selectedItem != -1 && _selectedItem < _currentPos) {
+void ListWidget::scrollToItem(int item) {
+	// Only do something if the item is not in our view port
+	if (item != -1 && item < _currentPos) {
 		// it's above our view
-		_currentPos = _selectedItem;
-	} else if (_selectedItem >= _currentPos + _entriesPerPage ) {
+		_currentPos = item;
+	} else if (item >= _currentPos + _entriesPerPage ) {
 		// it's below our view
-		_currentPos = _selectedItem - _entriesPerPage + 1;
+		_currentPos = item - _entriesPerPage + 1;
 	}
 
 	checkBounds();

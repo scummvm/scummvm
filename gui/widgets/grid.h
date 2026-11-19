@@ -87,10 +87,15 @@ class GridItemTray: public Dialog, public CommandSender {
 	PicButtonWidget	*_editButton;
 
 	bool _mouseOutside;
+	bool _openedByKeyboard;
 public:
 	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid);
 	void enableLoadButton(bool canLoad) { _loadButton->setEnabled(canLoad); }
 
+	/** A tray opened from the keyboard starts with the Play button focused */
+	void setOpenedByKeyboard(bool byKeyboard) { _openedByKeyboard = byKeyboard; }
+
+	void open() override;
 	void reflowLayout() override;
 
 	void receivedFocus(int x = -1, int y = -1) override;
@@ -183,6 +188,18 @@ protected:
 	bool _wasAnimating;
 	GridItemWidget *_highlightedItem = nullptr;
 
+	/** Group header under the keyboard cursor, or -1 when it is on the selected game */
+	int _cursorHeaderID = -1;
+
+	/** Index in _sortedEntryList of the entry under the keyboard cursor, or -1 */
+	int findCursorIndex() const;
+	/** Index of the nearest entry in the row above (direction < 0) or below, or -1 */
+	int findVerticalNeighbour(int index, int direction) const;
+	/** Move the keyboard cursor to an entry, selecting it if it is a game */
+	void moveCursorTo(int index);
+	/** Scroll so that an entry, game or header, is in view */
+	void scrollToEntryInfo(const GridItemInfo *entry, bool forceToTop);
+
 public:
 	int				_gridItemHeight;
 	int				_gridItemWidth;
@@ -255,8 +272,14 @@ public:
 	void cancelDrag() override;
 	void cancelTickle() override;
 
-	void openTrayAtSelected();
+	/** Open the tray of the selected game */
+	void openTrayAtSelected(bool byKeyboard = false);
 	void scrollBarRecalc();
+
+	bool handleKeyDown(Common::KeyState state) override;
+	bool wantsKeyboardFocus() override { return !_sortedEntryList.empty(); }
+	/** Whether the focused grid's keyboard cursor is on the given group header */
+	bool isKeyboardCursorOnHeader(int groupID) const { return _hasFocus && _cursorHeaderID == groupID; }
 
 	void setSelected(int id);
 	void setFilter(const Common::U32String &filter);
