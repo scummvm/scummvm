@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-18 01:31+0000\n"
-"PO-Revision-Date: 2026-11-17 15:51+0000\n"
+"PO-Revision-Date: 2026-11-19 21:39+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8698,7 +8698,7 @@ msgstr "Tambor"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Snaily phone"
-msgstr "Caracoteléfono"
+msgstr "Llamar a Snaily"
 
 #: engines/comfy/metaengine.cpp:106
 msgid "Purple"
@@ -8722,7 +8722,7 @@ msgstr "Luna"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Jumpy phone"
-msgstr "Teléfono saltarín"
+msgstr "Llamar a Jumpy"
 
 #: engines/comfy/metaengine.cpp:107
 msgid "Yellow"
@@ -8742,7 +8742,7 @@ msgstr "Trompeta"
 
 #: engines/comfy/metaengine.cpp:108
 msgid "Buddy phone"
-msgstr "Teléfono amigo"
+msgstr "Llamar a Buddy"
 
 #: engines/comfy/metaengine.cpp:108
 msgid "Green"
@@ -8758,7 +8758,7 @@ msgstr "Contacto de teclado 19"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Comfy phone"
-msgstr "Teléfono Comfy"
+msgstr "Llamar a Comfy"
 
 #: engines/comfy/metaengine.cpp:109
 msgid "Rainy cloud"
@@ -8766,7 +8766,7 @@ msgstr "Nubarrón"
 
 #: engines/comfy/metaengine.cpp:110
 msgid "Feely phone"
-msgstr "Teléfono Feely"
+msgstr "Llamar a Feely"
 
 #: engines/comfy/metaengine.cpp:110
 msgid "Music"
