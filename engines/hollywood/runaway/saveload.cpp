@@ -105,7 +105,8 @@ bool RunawaySaveState::valid() const {
 			coolerInspected > 1 || peeked > 1 || ice > 2 || hatch > 3 ||
 			itemCount > sizeof(items) || selected > sizeof(items) || cloth > 2 || inventoryOpen > 1 || verb > 2)
 		return false;
-	if (game == kRunawayCabinDemo && (scene != 5030 || x >= 1376 || y >= 600 || camera > 352 || cameraY))
+	if ((game == kRunawayCabinDemo || (game == kRunawayFullGame && chapter() == 3)) &&
+			(scene != 5030 || x >= 1376 || y >= 600 || camera > 352 || cameraY))
 		return false;
 	if (upperFloor > 1 || books > 2 || recorder > 2 || moneyIdentified > 1 || safeOpen > 1 ||
 			varnishTaken > 1 || talcTaken > 1 || coffeeTaken > 1 || keyCount > 4)
@@ -125,7 +126,7 @@ bool RunawaySaveState::valid() const {
 			hospital.book > 2 || hospital.blankChart > 2 || hospital.headTaken > 1 || hospital.pillowsTaken > 1 ||
 			markerInk > 3 || syringeFilled > 1 || chartWritten > 1 || headWig > 1)
 		return false;
-	if (game == kRunawayFullGame) {
+	if (game == kRunawayFullGame && chapter() != 3) {
 		const RunawayRoom *room = findRunawayRoom(scene);
 		if (!room || (room->number != kHospitalBedroom && room->number != kHospitalStoreroom && room->number != kHospitalBathroom) ||
 				x >= room->width || y >= room->height || cameraY ||
@@ -141,7 +142,7 @@ bool RunawaySaveState::valid() const {
 	bool owned[27] = {};
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
-				(game != kRunawayCabinDemo && items[i] > 19))
+				(chapter() != 3 && items[i] > 19))
 			return false;
 		owned[items[i]] = true;
 	}

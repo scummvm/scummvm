@@ -41,7 +41,9 @@ public:
 		byte variation;
 		Reply(uint16 c = 1, byte v = 0) : cue(c), variation(v) {}
 	};
-	RunawayInventory(const RunawayStrings &strings, RunawayGameType game) : _strings(strings), _game(game) {}
+	RunawayInventory(const RunawayStrings &strings, RunawayGameType game) :
+		_strings(strings), _chapter(game == kRunawayFullGame ? 1 : game == kRunawayMuseumDemo ? 2 : 3) {}
+	void setChapter(byte chapter) { _chapter = chapter; }
 	bool contains(byte item) const;
 	bool add(byte item);
 	void remove(byte item);
@@ -66,7 +68,7 @@ public:
 
 private:
 	const RunawayStrings &_strings;
-	const RunawayGameType _game;
+	byte _chapter;
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
 	byte _water = 0;

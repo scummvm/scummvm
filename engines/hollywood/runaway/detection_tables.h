@@ -23,7 +23,7 @@
 #define HOLLYWOOD_RUNAWAY_DETECTION_TABLES_H
 
 // Included in the shared ADGameDescription array in hollywood/detection.cpp.
-	// English retail release. Resource support; chapter scripts are not yet implemented.
+	// English retail release. Hospital chapter and chapter-three shack.
 	{
 		"runaway",
 		nullptr,

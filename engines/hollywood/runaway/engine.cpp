@@ -165,8 +165,8 @@ RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
 	if (findRunawayRoom(entryScene) && ((_museum && entryScene >= 4000) ||
 			(_game == kRunawayFullGame && entryScene / 1000 == 2)))
 		return new RunawayRoomScene(_audio, *_inventory, _strings, _game);
-	if (_game == kRunawayCabinDemo && entryScene == 5030)
-		return new RunawayScene5030(_mixer, _audio, *_inventory, _strings);
+	if ((_game == kRunawayCabinDemo || _game == kRunawayFullGame) && entryScene == 5030)
+		return new RunawayScene5030(_mixer, _audio, *_inventory, _strings, _game);
 	// Retail scene scripts have their own entry substates. Sharing an archive
 	// with a demo does not make its puzzle initialization interchangeable.
 	return nullptr;
@@ -200,6 +200,7 @@ Common::Error RunawayEngine::changeScene() {
 	_audio.stopEffect();
 	_audio.setChapter(state.chapter());
 	_state = state;
+	_inventory->setChapter(state.chapter());
 	_scene.reset(scene.release());
 	syncSoundSettings();
 	_scene->resume();
@@ -304,6 +305,10 @@ Common::Error RunawayEngine::run() {
 	if (_museum && ConfMan.hasKey("boot_param") && ConfMan.getInt("boot_param") >= 4000 &&
 			findRunawayRoom(ConfMan.getInt("boot_param")))
 		_state.scene = ConfMan.getInt("boot_param");
+	if (_game == kRunawayFullGame && ConfMan.hasKey("boot_param") && ConfMan.getInt("boot_param") == 5030)
+		_state.scene = 5030;
+	_inventory->setChapter(_state.chapter());
+	_audio.setChapter(_state.chapter());
 	_scene.reset(createScene(_state.scene));
 	if (!_scene)
 		return Common::Error(Common::kUnsupportedGameidError,
@@ -325,7 +330,7 @@ Common::Error RunawayEngine::run() {
 		const Common::Error result = loadGameState(ConfMan.getInt("save_slot"));
 		if (result.getCode() != Common::kNoError)
 			return result;
-	} else if (_game == kRunawayCabinDemo || _game == kRunawayFullGame) {
+	} else if (_game == kRunawayCabinDemo || (_game == kRunawayFullGame && _state.chapter() == 1)) {
 		const Common::Error result = playIntro(menu);
 		if (result.getCode() != Common::kNoError || shouldQuit())
 			return result;
@@ -462,7 +467,7 @@ Common::Error RunawayEngine::run() {
 			continue;
 		}
 		if (_scene->escaped()) {
-			// Retail currently ends after the hospital chapter.
+			// Retail currently ends after the hospital or the chapter-three shack.
 			if (_game == kRunawayFullGame)
 				return Common::kNoError;
 			// The extended French demo's later rooms are not implemented yet;

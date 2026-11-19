@@ -186,7 +186,7 @@ void RunawayScene5030::captureState(RunawaySaveState &state) const {
 }
 
 bool RunawayScene5030::restoreState(const RunawaySaveState &state, uint32 now, bool entering) {
-	if (!state.valid() || state.game != kRunawayCabinDemo || state.scene != _entryScene)
+	if (!state.valid() || state.game != _game || state.scene != _entryScene)
 		return false;
 	_lidOpen = state.lidOpen;
 	_unplugged = state.unplugged;
@@ -314,7 +314,7 @@ void RunawayScene5030::showSpeechRow() {
 	const uint32 duration = sample ? _audio.playSpeech(sample, _globalSpeech) : 0;
 	_subtitleUntil = _now + (duration ? MAX<uint>(1000, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
 	_idleHead.reset(_now);
-	_lipSync.start(_subtitle, _now, duration, _random);
+	_lipSync.start(_subtitle, _now, duration, _random, _game == kRunawayFullGame ? sample : 0);
 	debugC(1, kDebugScene, "Runaway demo: dialogue row %u, voice %u, ends at row %u",
 		_speechRow, sample, _speechEnd);
 }

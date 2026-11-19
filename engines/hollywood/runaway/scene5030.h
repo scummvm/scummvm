@@ -36,7 +36,7 @@
 
 namespace Hollywood {
 
-// The demo starts in the shack. This scene owns its room resources, actor,
+// The demos and retail chapter three share the shack, its room resources, actor,
 // interactions and audio; RunawayEngine owns the backend and event loop.
 class RunawayScene5030 : public RunawayScene {
 public:
@@ -45,8 +45,9 @@ public:
 		kRoomWidth = 1376, kRoomHeight = kRunawayViewportHeight, kRoomTop = kRunawayViewportTop
 	};
 
-	RunawayScene5030(Audio::Mixer *mixer, RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings) :
-		_audio(audio), _inventory(inventory), _strings(strings), _interrogation(mixer), _random("runawayShack"), _actor() {}
+	RunawayScene5030(Audio::Mixer *mixer, RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings,
+			RunawayGameType game = kRunawayCabinDemo) :
+		_audio(audio), _inventory(inventory), _strings(strings), _game(game), _interrogation(mixer), _random("runawayShack"), _actor() {}
 	bool load(uint16 entryScene) override;
 	void start(uint32 now) override;
 	void resume() override;
@@ -121,6 +122,7 @@ private:
 	RunawayAudio &_audio;
 	RunawayInventory &_inventory;
 	const RunawayStrings &_strings;
+	const RunawayGameType _game;
 	RunawayInterrogation _interrogation;
 	Common::RandomSource _random;
 	bool _peeked = false;
