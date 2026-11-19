@@ -88,7 +88,8 @@ private:
 		kMeltIce, kMeltWait, kInspectIce, kFinishMelting,
 		kTryMoveCooler, kMoveCooler, kRevealHatch, kFinishMoving, kHatchFound,
 		kDrainCooler, kFinishDraining, kPryHatch, kOpenHatch, kEscape,
-		kPeekDoor, kPeekConversation, kReturnFromPeek
+		kPeekDoor, kPeekConversation, kReturnFromPeek,
+		kHeatHelmet, kPrepareStirringHelmet, kStirHelmet
 	};
 	enum IceState { kFrozen, kMelted, kDrained };
 	enum HatchState { kHidden, kLocked, kUnlocked, kOpen };

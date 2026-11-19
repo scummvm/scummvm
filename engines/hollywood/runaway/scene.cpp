@@ -906,8 +906,10 @@ void RunawayRoomScene::updateRoomAnimation() {
 				finishHospitalAnimation(action);
 			return;
 		}
-		if (desertChapter())
+		if (desertChapter()) {
+			desertAnimationFrame();
 			continue;
+		}
 		if (museumChapter()) {
 			museumAnimationFrame();
 			continue;

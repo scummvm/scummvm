@@ -39,12 +39,14 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{5050, 302, 1, 0},
-	{5050, 309, 8, 0},
-	{5050, 310, 9, 0},
-	{5050, 311, 10, 0},
-	{5050, 313, 12, 0},
-	{5050, 314, 13, 0},
+	{5050, 302, 1, 0}, // Look at the path.
+	{5050, 303, 2, 0}, // Look at the helmet.
+	{5050, 309, 8, 0}, // Look at the bullet hole.
+	{5050, 310, 9, 0}, // Use the bullet hole.
+	{5050, 311, 10, 0}, // Look at the pilot's seat.
+	{5050, 312, 11, 0}, // Use the pilot's seat.
+	{5050, 313, 12, 0}, // Look at the gunner's seat.
+	{5050, 314, 13, 0}, // Use the gunner's seat.
 };
 
 const RunawayItemAction kItemActions[] = {
@@ -70,32 +72,32 @@ const RunawayRoom kRunawayScene5050 = {
 RunawayRoomScene::ActionResult RunawayRoomScene::execute5050(uint16 action) {
 	RunawaySaveState::DesertItems &items = _inventory.desert();
 	switch (action) {
-	case 302:
+	case 301: // Go to the desert overview.
 		leaveDesertRoom(5010);
 		break;
-	case 304:
+	case 304: // Take the helmet.
 		_desert.helmetTaken = 1;
 		_inventory.add(6);
 		say(3);
 		return kBackgroundChanged;
-	case 305:
+	case 305: // Look at the ammunition belt.
 		say(4, _desert.beltSeen != 0);
 		_desert.beltSeen = 1;
 		break;
-	case 306:
+	case 306: // Take the ammunition belt.
 		_desert.beltTaken = 1;
 		_inventory.add(14);
 		say(5);
 		return kBackgroundChanged;
-	case 307:
+	case 307: // Look at the machine gun.
 		say(6, _desert.gun);
 		_desert.gunSeen = 1;
 		break;
-	case 308:
+	case 308: // Use the machine gun.
 		say(7, _desert.gun);
 		_desert.gunSeen = 1;
 		break;
-	case 315:
+	case 315: // Use tanning oil with the machine gun.
 		if (_desert.gun)
 			say(14, 2);
 		else if (!_desert.gunSeen)
@@ -105,18 +107,18 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5050(uint16 action) {
 			beginRoomAnimation(action, 11, 46);
 		}
 		break;
-	case 1315:
+	case 1315: // Finish lubricating the machine gun.
 		_desert.gun = 1;
 		say(14, 1);
 		say(14, 3);
 		return kBackgroundChanged;
-	case 316:
+	case 316: // Use the lipstick with the machine gun.
 		say(15, items.lipstick != 0);
 		break;
-	case 317:
+	case 317: // Use the pile of lipstick with the machine gun.
 		say(16, items.lipsticks != 0);
 		break;
-	case 318:
+	case 318: // Load the ammunition belt into the machine gun.
 		if (items.belt < 2)
 			say(17, items.belt);
 		else if (!_desert.gun)
@@ -126,7 +128,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5050(uint16 action) {
 			beginRoomAnimation(action, 12, 37);
 		}
 		break;
-	case 1318:
+	case 1318: // Finish loading the machine gun.
 		_desert.gun = 2;
 		items.gunReady = 1;
 		_inventory.remove(14);
@@ -136,7 +138,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5050(uint16 action) {
 			leaveDesertRoom(5062);
 		}
 		return kBackgroundChanged;
-	case 319:
+	case 319: // Use unsuitable lubricant with the machine gun.
 		say(18, _desert.gun != 0);
 		break;
 	default:

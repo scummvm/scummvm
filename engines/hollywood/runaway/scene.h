@@ -249,6 +249,8 @@ private:
 	void updateDesertMaps();
 	void drawDesertRoom(Graphics::ManagedSurface &viewport, bool foreground);
 	void drawScene5060(Graphics::ManagedSurface &viewport);
+	void drawScene5080(Graphics::ManagedSurface &viewport);
+	void updateScene5080();
 	void drawScene5100(Graphics::ManagedSurface &viewport, bool foreground);
 	void updateScene5100();
 	bool applyBackground5100();
@@ -260,6 +262,7 @@ private:
 	void leaveDesertRoom(uint16 scene);
 	void deferDesertAction(uint16 action);
 	void finishDesertAnimation(uint16 action);
+	void desertAnimationFrame();
 	ActionResult executeDesert(uint16 action);
 	ActionResult execute5020(uint16 action);
 	ActionResult execute5050(uint16 action);

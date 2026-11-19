@@ -69,16 +69,16 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{5100, 301, 2, 0},
-	{5100, 308, 16, 0},
-	{5100, 311, 18, 0},
-	{5100, 312, 19, 0},
-	{5100, 316, 22, 0},
-	{5100, 318, 24, 0},
-	{5100, 319, 25, 0},
-	{5100, 320, 26, 0},
-	{5100, 322, 8, 0},
-	{5100, 324, 28, 0},
+	{5100, 301, 2, 0}, // Look at the path.
+	{5100, 308, 16, 0}, // Use the motorcycle.
+	{5100, 311, 18, 0}, // Look at the ants.
+	{5100, 312, 19, 0}, // Use the ants.
+	{5100, 316, 22, 0}, // Use the left barrel.
+	{5100, 318, 24, 0}, // Use the right barrel.
+	{5100, 319, 25, 0}, // Look at the helicopter.
+	{5100, 320, 26, 0}, // Use the helicopter.
+	{5100, 322, 8, 0}, // Take the beer can.
+	{5100, 324, 28, 0}, // Use the bucket.
 };
 
 const RunawayItemAction kItemActions[] = {
@@ -144,10 +144,10 @@ void RunawayRoomScene::walkHangar(Common::Point target, byte facing) {
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute5100(uint16 action) {
 	switch (action) {
-	case 302:
+	case 302: // Go to the desert overview.
 		leaveDesertRoom(5010);
 		break;
-	case 303:
+	case 303: // Look through the barn doors.
 		if (!_desert.barnDoor) {
 			Common::Array<byte> frames;
 			frames.push_back(1);
@@ -163,17 +163,17 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5100(uint16 action) {
 			say(3, _desert.barnDoor == 1 ? 3 : 4);
 		}
 		break;
-	case 1303:
+	case 1303: // Describe the hangar after peeking inside.
 		_desert.barnDoor = 1;
 		say(3, 1);
 		say(3, 2);
 		break;
-	case 304:
+	case 304: // Enter the hangar.
 		say(4, _desert.barnDoor);
 		if (_desert.barnDoor != 2)
 			deferDesertAction(404);
 		break;
-	case 404:
+	case 404: // Walk behind the barn doors.
 		_desert.barnDoor = 1;
 		_desert.insideBarn = 1;
 		if (!applyBackground5100())
@@ -182,32 +182,32 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5100(uint16 action) {
 		walkHangar(Common::Point(680, 355), 0);
 		deferDesertAction(414);
 		break;
-	case 414:
+	case 414: // Approach Stud from inside the hangar.
 		walkHangar(Common::Point(253, 418), 4);
 		break;
-	case 305:
+	case 305: // Look at the peanut butter jar.
 		say(10, _desert.peanutButter != 0);
 		if (!_desert.peanutButter)
 			_desert.peanutButter = 1;
 		break;
-	case 306:
+	case 306: // Take the peanut butter jar.
 		if (!_desert.peanutButter)
 			execute5100(305);
 		say(11);
 		deferDesertAction(406);
 		break;
-	case 406:
+	case 406: // Collect the jar and attract Stud's attention.
 		_inventory.add(19);
 		_desert.peanutButter = 2;
 		say(11, 1);
 		say(12, 0, false, 1);
 		deferDesertAction(416);
 		return kBackgroundChanged;
-	case 416:
+	case 416: // Approach Stud to ask about the jar.
 		walkTo(Common::Point(_desertHotspots[6].x, _desertHotspots[6].y), 7);
 		deferDesertAction(426);
 		break;
-	case 426:
+	case 426: // Learn about the ants from Stud.
 		say(11, 2);
 		say(12, 1, false, 1);
 		say(11, 3);
@@ -218,20 +218,20 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5100(uint16 action) {
 		say(11, 5);
 		_inventory.desert().antTrickKnown = 1;
 		break;
-	case 307: {
+	case 307: { // Look at the motorcycle.
 		const byte variation = _random.getRandomBit();
 		say(15, variation);
 		if (variation)
 			_desert.motorcycleSeen = 1;
 		break;
 	}
-	case 309:
+	case 309: // Look at Stud.
 		say(5, _desert.insideBarn ? _random.getRandomNumber(3) : 4 + _random.getRandomBit());
 		break;
-	case 310:
+	case 310: // Talk to Stud.
 		say(6, !_desert.insideBarn);
 		break;
-	case 313:
+	case 313: // Look at the loose footrest.
 		if (!_desert.footrestSeen) {
 			say(20);
 			_desert.footrestSeen = 1;
@@ -239,38 +239,38 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5100(uint16 action) {
 			say(172, 0, true);
 		}
 		break;
-	case 314:
+	case 314: // Take the footrest.
 		if (!_desert.footrestSeen)
 			execute5100(313);
 		_inventory.add(21);
 		_desert.footrest = 2;
 		say(18, 0, true);
 		return kBackgroundChanged;
-	case 315:
+	case 315: // Look at the left barrel.
 		say(21, _random.getRandomBit());
 		break;
-	case 317:
+	case 317: // Look at the right barrel.
 		say(23, _random.getRandomNumber(2));
 		break;
-	case 321:
+	case 321: // Look at the beer can.
 		say(7, _desert.beerSeen != 0);
 		_desert.beerSeen = 1;
 		break;
-	case 323:
+	case 323: // Look at the bucket.
 		say(27, _random.getRandomBit());
 		break;
-	case 325:
+	case 325: // Leave the hangar through the side entrance.
 		walkHangar(Common::Point(680, 355), 0);
 		deferDesertAction(425);
 		break;
-	case 425:
+	case 425: // Walk outside the barn doors.
 		walkHangar(Common::Point(1348, 332), 5);
 		deferDesertAction(435);
 		break;
-	case 435:
+	case 435: // Restore the exterior hangar map.
 		_desert.insideBarn = 0;
 		return kBackgroundChanged;
-	case 327:
+	case 327: // Pry the footrest off the motorcycle.
 		if (_desert.footrest) {
 			say(17, 2);
 		} else {
@@ -293,17 +293,17 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5100(uint16 action) {
 			setRoomAnimationOverlay(7, 27, footrest, ARRAYSIZE(footrest));
 		}
 		break;
-	case 1327:
+	case 1327: // Finish loosening the footrest.
 		_desert.footrest = 1;
 		say(17, 1);
 		return kBackgroundChanged;
-	case 328:
+	case 328: // Put the sleeping pill in Stud's beer.
 		if (_desert.guard)
 			return kUnhandled;
 		say(9);
 		_desert.guardWeaknessKnown = 1;
 		break;
-	case 329:
+	case 329: // Try to walk past Stud.
 		say(1, _random.getRandomBit());
 		break;
 	default:

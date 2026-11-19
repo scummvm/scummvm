@@ -41,16 +41,17 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{5160, 301, 1, 0},
-	{5160, 308, 6, 0},
-	{5160, 310, 8, 0},
-	{5160, 311, 9, 0},
-	{5160, 312, 10, 0},
-	{5160, 316, 14, 0},
-	{5160, 318, 16, 0},
-	{5160, 321, 19, 0},
-	{5160, 323, 21, 0},
-	{5160, 324, 22, 0},
+	{5160, 301, 1, 0}, // Look toward the front of the bus.
+	{5160, 308, 6, 0}, // Take the glass.
+	{5160, 310, 8, 0}, // Use the ventilation grating.
+	{5160, 311, 9, 0}, // Look at the boots.
+	{5160, 312, 10, 0}, // Take the boots.
+	{5160, 316, 14, 0}, // Use the bull.
+	{5160, 317, 15, 0}, // Look at the painting.
+	{5160, 318, 16, 0}, // Take the painting.
+	{5160, 321, 19, 0}, // Give the sleeping pill to Carla.
+	{5160, 323, 21, 0}, // Give the butter to Carla.
+	{5160, 324, 22, 0}, // Put the sleeping pill in the glass.
 };
 
 const RunawayItemAction kItemActions[] = {
@@ -95,34 +96,34 @@ void RunawayRoomScene::startCarlaConversation() {
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute5160(uint16 action) {
 	switch (action) {
-	case 302:
+	case 302: // Go to the front of the bus.
 		leaveDesertRoom(5171);
 		break;
-	case 303:
+	case 303: // Look at the refrigerator.
 		say(2, _desert.fridgeOpened);
 		_desert.fridgeSeen = 1;
 		break;
-	case 304:
+	case 304: // Open the refrigerator without the key.
 		say(3, _inventory.contains(26));
 		break;
-	case 305:
+	case 305: // Look at Carla.
 		say(4, _random.getRandomNumber(_desert.carlaStory ? 3 : 2));
 		break;
-	case 306:
+	case 306: // Talk to Carla.
 		startCarlaConversation();
 		break;
-	case 307:
+	case 307: // Look at the glass.
 		say(5, _random.getRandomNumber(1));
 		break;
-	case 309:
+	case 309: // Look at the ventilation grating.
 		say(7, !_desert.ventSeen ? 0 : _desert.ventCleaned ? 2 : 1);
 		break;
-	case 313:
+	case 313: // Look at the needle and thread.
 		say(11, _desert.needle != 0);
 		if (!_desert.needle)
 			_desert.needle = 1;
 		break;
-	case 314:
+	case 314: // Take the needle and thread.
 		if (!_desert.needle)
 			execute5160(313);
 		say(12);
@@ -130,15 +131,15 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5160(uint16 action) {
 		_desert.needle = 2;
 		say(12, 1);
 		return kBackgroundChanged;
-	case 315:
+	case 315: // Look at the bull.
 		say(13, _random.getRandomNumber(1));
 		break;
-	case 319:
+	case 319: // Unlock and search the refrigerator.
 		if (!_desert.fridgeOpened)
 			say(17);
 		beginRoomAnimationRange(action, 15, 73, 0, 54);
 		break;
-	case 1319:
+	case 1319: // Collect the butter from the refrigerator.
 		if (!_desert.fridgeOpened) {
 			say(17, 1);
 			_inventory.add(4);
@@ -148,7 +149,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5160(uint16 action) {
 		}
 		deferDesertAction(419);
 		break;
-	case 419: {
+	case 419: { // Close the refrigerator.
 		static const byte frames[] = {
 			54, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72,
 			26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
@@ -156,13 +157,13 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5160(uint16 action) {
 		beginRoomAnimation(action, 15, 73, frames, ARRAYSIZE(frames));
 		break;
 	}
-	case 1419:
+	case 1419: // Finish searching the refrigerator.
 		if (!_desert.fridgeOpened) {
 			_desert.fridgeOpened = 1;
 			say(17, 3);
 		}
 		break;
-	case 320:
+	case 320: // Vacuum the ventilation grating.
 		if (!_desert.ventSeen)
 			say(18);
 		else if (_desert.ventCleaned)
@@ -172,14 +173,14 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5160(uint16 action) {
 			beginRoomAnimation(action, 16, 40);
 		}
 		break;
-	case 1320:
+	case 1320: // Recover the sleeping pill from the vacuum.
 		say(18, 2);
 		_inventory.add(9);
 		_inventory.desert().pill = 1;
 		_desert.ventCleaned = 1;
 		say(18, 3);
 		break;
-	case 322:
+	case 322: // Give the refrigerator key to Carla.
 		say(20, _desert.fridgeOpened);
 		break;
 	default:

@@ -118,9 +118,16 @@ void RunawayRoomScene::finishDesertAnimation(uint16 action) {
 	execute(action + 1000);
 }
 
+void RunawayRoomScene::desertAnimationFrame() {
+	if (_room == 5080 && _roomAction == 326 && _actionStep == 23)
+		_audio.playEffect(72);
+}
+
 void RunawayRoomScene::updateDesert(uint elapsed, bool inventoryOpen) {
 	updateRoomAnimation();
 	updateConversation();
+	if (_room == 5080)
+		updateScene5080();
 	if (_room == 5100)
 		updateScene5100();
 	if (_roomAction && _actionFrames.empty() && !speaking() && !_walkPath.active()) {
@@ -135,7 +142,14 @@ void RunawayRoomScene::updateDesert(uint elapsed, bool inventoryOpen) {
 RunawayRoomScene::ActionResult RunawayRoomScene::executeDesert(uint16 action) {
 	switch (_room) {
 	case 5010: {
-		const uint16 destinations[] = {5070, 5020, 5100, 5050, 5080, 5060};
+		const uint16 destinations[] = {
+			5070, // 301: Go to the oil well.
+			5020, // 302: Go to the thugs' cabin.
+			5100, // 303: Go to the hangar.
+			5050, // 304: Go to the airplane graveyard.
+			5080, // 305: Go to the railway yard.
+			5060  // 306: Go to the bus.
+		};
 		if (action >= 301 && action <= 306) {
 			leaveDesertRoom(destinations[action - 301]);
 			return kHandled;
@@ -220,7 +234,8 @@ bool RunawayRoomScene::loadDesertRoom() {
 	if (_room == 5060)
 		return loadForeground(0, 8) && _npc.load(_archive, 7, 201) && _machine.load(_archive, 12, 195);
 	if (_room == 5080)
-		return loadForeground(0, 11) && loadForeground(1, 12) && loadForeground(2, 13) && loadForeground(3, 14);
+		return loadForeground(0, 11) && loadForeground(1, 12) && loadForeground(2, 13) && loadForeground(3, 14) &&
+			_npc.load(_archive, 9, 47);
 	if (_room == 5100)
 		return _npc.load(_archive, 9, 151) && _npcMouth.load(_archive, 12, 126);
 	return true;
@@ -239,7 +254,8 @@ bool RunawayRoomScene::applyDesertBackground() {
 	case 5060:
 		return _desert.tanningOil != 2 || applyPatch(9);
 	case 5080:
-		return !_desert.antsDistracted || applyPatch(_desert.dynamite == 1 ? 7 : 8);
+		return loadRunawayMask(_archive, _background.w, _background.h, _mask, _originalMaps, _desert.antsDistracted ? 4 : 1) &&
+			(!_desert.antsDistracted || applyPatch(_desert.dynamite == 1 ? 7 : 8));
 	case 5100:
 		return applyBackground5100();
 	case 5110:
@@ -333,6 +349,8 @@ Common::U32String RunawayRoomScene::desertHotspotName(byte id) const {
 		return _inventory.name(12);
 	if (_room == 5060 && id == 7 && _desert.busPosterSeen)
 		return Common::U32String("Lawn chair");
+	if (_room == 5080 && id == 3 && _desert.antsDistracted)
+		return Common::U32String("Sawdust");
 	if (_room == 5100 && id == 3 && _desert.peanutButter)
 		return _inventory.name(19);
 	if (_room == 5100 && id == 8 && _desert.footrestSeen)
@@ -405,6 +423,8 @@ void RunawayRoomScene::drawDesertRoom(Graphics::ManagedSurface &viewport, bool f
 	}
 	if (_room == 5060)
 		drawScene5060(viewport);
+	else if (_room == 5080)
+		drawScene5080(viewport);
 }
 
 void RunawayRoomScene::setupDesertDepth(RunawayActor::RenderParams &params) const {

@@ -38,13 +38,16 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{5020, 303, 1, 0},
-	{5020, 305, 4, 0},
-	{5020, 306, 5, 0},
-	{5020, 307, 6, 0},
-	{5020, 308, 7, 0},
-	{5020, 310, 9, 0},
-	{5020, 311, 10, 0},
+	{5020, 302, 2, 0}, // Look at the path.
+	{5020, 303, 1, 0}, // Use an item with the cabin.
+	{5020, 304, 3, 0}, // Look at the rocking chair.
+	{5020, 305, 4, 0}, // Use the rocking chair.
+	{5020, 306, 5, 0}, // Look at the door.
+	{5020, 307, 6, 0}, // Open the door.
+	{5020, 308, 7, 0}, // Look at the trap door.
+	{5020, 310, 9, 0}, // Look at the tires.
+	{5020, 311, 10, 0}, // Use the tires.
+	{5020, 312, 11, 0}, // Look at the bucket.
 };
 
 const RunawayItemAction kItemActions[] = {
@@ -88,17 +91,17 @@ const RunawayRoom kRunawayScene5020 = {
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute5020(uint16 action) {
 	switch (action) {
-	case 302:
+	case 301: // Go to the desert overview.
 		leaveDesertRoom(5010);
 		break;
-	case 309:
+	case 309: // Enter the cabin through the trap door.
 		if (!_desert.hatchSeen) {
 			_desert.hatchSeen = 1;
 			say(8);
 		}
 		leaveDesertRoom(5031);
 		break;
-	case 313:
+	case 313: // Take the bucket.
 		_desert.bucketTaken = 1;
 		_inventory.add(25);
 		say(12);

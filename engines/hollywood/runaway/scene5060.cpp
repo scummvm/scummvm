@@ -60,11 +60,11 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{5060, 301, 1, 0},
-	{5060, 309, 5, 0},
-	{5060, 314, 11, 0},
-	{5060, 315, 12, 0},
-	{5060, 316, 13, 0},
+	{5060, 301, 1, 0}, // Look at the path.
+	{5060, 309, 5, 0}, // Look at the trunk.
+	{5060, 314, 11, 0}, // Use the lawn chair.
+	{5060, 315, 12, 0}, // Look at the radio and cassette player.
+	{5060, 316, 13, 0}, // Use the radio and cassette player.
 };
 
 const RunawayItemAction kItemActions[] = {
@@ -92,13 +92,13 @@ const RunawayRoom kRunawayScene5060 = {
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 	switch (action) {
-	case 302:
+	case 302: // Go to the desert overview.
 		leaveDesertRoom(5010);
 		break;
-	case 303:
+	case 303: // Look at Lula.
 		say(2, _random.getRandomBit() * (_desert.lulaHelped ? 2 : 1));
 		break;
-	case 304:
+	case 304: // Talk to Lula.
 		if (_desert.guard == 2) {
 			say(20, 12);
 		} else if (_desert.lulaHelped) {
@@ -108,7 +108,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 			deferDesertAction(404);
 		}
 		break;
-	case 404: {
+	case 404: { // Let Lula finish dancing before talking.
 		Common::Array<byte> frames;
 		for (uint i = 120 + (_now / 80) % 75; i < 195; ++i)
 			frames.push_back(i);
@@ -120,7 +120,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 		beginRoomAnimation(action, 12, 195, frames.data(), frames.size(), false);
 		break;
 	}
-	case 1404:
+	case 1404: // Ask Lula about distracting Stud.
 		if (!_desert.guardWeaknessKnown) {
 			if (!_desert.visited[6]) {
 				say(20, 1);
@@ -151,7 +151,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 		}
 		deferDesertAction(414);
 		break;
-	case 414: {
+	case 414: { // Let Lula resume dancing.
 		Common::Array<byte> frames;
 		for (uint i = 95; i < 120; ++i)
 			frames.push_back(i);
@@ -160,29 +160,29 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 		beginRoomAnimation(action, 12, 195, frames.data(), frames.size(), false);
 		break;
 	}
-	case 1414:
+	case 1414: // Finish the conversation with Lula.
 		break;
-	case 305:
+	case 305: // Look at Mariola.
 		say(3, _desert.mariolaHelped != 0);
 		break;
-	case 306:
+	case 306: // Talk to Mariola.
 		_facing = 4;
 		say(19, _random.getRandomNumber(2));
 		break;
-	case 307:
+	case 307: // Look inside the bus.
 		say(4, _desert.visited[9] != 0);
 		break;
-	case 308:
+	case 308: // Enter the bus.
 		beginRoomAnimation(action, 5, 22);
 		break;
-	case 1308:
+	case 1308: // Finish entering the bus.
 		leaveDesertRoom(5170);
 		break;
-	case 310:
+	case 310: // Search the trunk.
 		say(6, _desert.ballTaken ? 2 : 0);
 		beginRoomAnimation(action, 10, 28, kSearchTrunkFrames, _desert.ballTaken ? ARRAYSIZE(kSearchTrunkFrames) : 57);
 		break;
-	case 1310:
+	case 1310: // Collect the basketball from the trunk.
 		if (_desert.ballTaken) {
 			say(6, 3);
 		} else {
@@ -192,12 +192,12 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 			holdRoomAnimation(410, 10, 28, 14);
 		}
 		break;
-	case 1410:
+	case 1410: // Close the trunk.
 		beginRoomAnimation(420, 10, 28, kSearchTrunkFrames + 57, ARRAYSIZE(kSearchTrunkFrames) - 57);
 		break;
-	case 1420:
+	case 1420: // Finish searching the trunk.
 		break;
-	case 311:
+	case 311: // Look at the tanning oil.
 		if (!_desert.tanningOil) {
 			say(7);
 			_desert.tanningOil = 1;
@@ -205,22 +205,22 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 			say(163, 0, true);
 		}
 		break;
-	case 312:
+	case 312: // Ask Mariola for the tanning oil.
 		if (!_desert.tanningOil)
 			execute5060(311);
 		say(8);
 		deferDesertAction(412);
 		break;
-	case 412:
+	case 412: // Let Mariola turn toward Brian.
 		beginRoomAnimation(action, 7, 201, kMariolaTurnFrames, ARRAYSIZE(kMariolaTurnFrames), false);
 		break;
-	case 1412:
+	case 1412: // Listen to Mariola's answer about the oil.
 		say(9, _desert.mariolaHelped != 0, false, 1);
 		if (_desert.mariolaHelped)
 			say(8, 1);
 		deferDesertAction(422);
 		break;
-	case 422:
+	case 422: // Take the oil if Mariola agrees.
 		beginRoomAnimation(432, 7, 201, kMariolaRestFrames, ARRAYSIZE(kMariolaRestFrames), false);
 		if (_desert.mariolaHelped) {
 			_desert.tanningOil = 2;
@@ -228,19 +228,19 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 			say(8, 2);
 		}
 		return kBackgroundChanged;
-	case 1432:
+	case 1432: // Finish asking for the tanning oil.
 		break;
-	case 313:
+	case 313: // Look at the lawn chair.
 		say(10, _desert.busPosterSeen != 0);
 		_desert.busPosterSeen = 1;
 		break;
-	case 317:
+	case 317: // Look at Mariola's sunglasses.
 		say(14, _desert.mariolaHelped != 0);
 		break;
-	case 318:
+	case 318: // Take Mariola's sunglasses.
 		say(15, !_inventory.contains(20) ? 0 : _desert.mariolaHelped ? 2 : 1);
 		break;
-	case 319:
+	case 319: // Give the repaired basketball to Lula.
 		if (!_desert.guardWeaknessKnown)
 			say(17, 7);
 		else if (_inventory.desert().ball < 2)
@@ -248,7 +248,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 		else
 			return kUnhandled;
 		break;
-	case 320:
+	case 320: // Give the darkened sunglasses to Mariola.
 		if (!_inventory.desert().glasses) {
 			say(16);
 		} else if (_inventory.desert().glasses == 1) {
@@ -258,7 +258,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5060(uint16 action) {
 			say(15, 2);
 		}
 		break;
-	case 1320:
+	case 1320: // Finish replacing Mariola's sunglasses.
 		_desert.mariolaHelped = 1;
 		_inventory.desert().glasses = 2;
 		say(16, 2);

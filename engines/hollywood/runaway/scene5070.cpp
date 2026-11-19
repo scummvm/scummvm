@@ -38,10 +38,10 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{5070, 302, 1, 0},
-	{5070, 307, 4, 0},
-	{5070, 308, 5, 0},
-	{5070, 309, 6, 0},
+	{5070, 302, 1, 0}, // Look at the path.
+	{5070, 307, 4, 0}, // Look at the oil well.
+	{5070, 308, 5, 0}, // Use the oil well.
+	{5070, 309, 6, 0}, // Look at the tree.
 };
 
 const RunawayItemAction kItemActions[] = {
@@ -63,27 +63,27 @@ const RunawayRoom kRunawayScene5070 = {
 RunawayRoomScene::ActionResult RunawayRoomScene::execute5070(uint16 action) {
 	RunawaySaveState::DesertItems &items = _inventory.desert();
 	switch (action) {
-	case 301:
+	case 301: // Go to the desert overview.
 		leaveDesertRoom(5010);
 		break;
-	case 305:
+	case 305: // Look at the detonator.
 		say(2, _random.getRandomBit());
 		break;
-	case 306: {
+	case 306: { // Use the detonator.
 		const byte variation = _random.getRandomBit();
 		say(3, variation);
 		if (variation)
 			say(3, 2);
 		break;
 	}
-	case 310:
+	case 310: // Use the tree.
 		say(5, 0, true);
 		break;
-	case 311:
+	case 311: // Place the dynamite at the oil well.
 		say(7);
 		beginRoomAnimation(action, 11, 40);
 		break;
-	case 1311:
+	case 1311: // Finish setting the explosives.
 		_desert.dynamitePlaced = 1;
 		items.bombReady = 1;
 		_inventory.remove(5);
@@ -93,28 +93,28 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5070(uint16 action) {
 			leaveDesertRoom(5062);
 		}
 		return kBackgroundChanged;
-	case 312:
+	case 312: // Use the bucket with the oil well.
 		if (items.bucket != 1)
 			say(17, 0, true);
 		else
 			say(8, _desert.dynamitePlaced != 0);
 		break;
-	case 313:
+	case 313: // Look at the rock.
 		say(9, _desert.dynamitePlaced != 0);
 		break;
-	case 314:
+	case 314: // Use the rock.
 		say(10);
 		break;
-	case 315:
+	case 315: // Look at the puddle of oil.
 		say(11, _desert.oilSeen != 0);
 		_desert.oilSeen = 1;
 		break;
-	case 316:
+	case 316: // Take oil from the puddle.
 		if (!_desert.oilSeen)
 			execute5070(315);
 		say(12);
 		break;
-	case 317:
+	case 317: // Dip the sunglasses in the oil.
 		if (items.glasses)
 			say(13, items.glasses + 1);
 		else {
@@ -122,7 +122,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5070(uint16 action) {
 			beginRoomAnimation(action, 9, 29);
 		}
 		break;
-	case 1317:
+	case 1317: // Finish darkening the sunglasses.
 		items.glasses = 1;
 		_inventory.select(0);
 		say(13, 1);

@@ -49,8 +49,9 @@ const RunawayHotspot kHotspots[] = {
 };
 
 const RunawayResponse kResponses[] = {
-	{5170, 311, 10, 0},
-	{5170, 319, 18, 0},
+	{5170, 303, 3, 0}, // Look toward the back of the bus.
+	{5170, 311, 10, 0}, // Look at the sunglasses.
+	{5170, 319, 18, 0}, // Return lipstick to the shelf.
 };
 
 const RunawayItemAction kItemActions[] = {
@@ -72,24 +73,24 @@ const RunawayRoom kRunawayScene5170 = {
 
 RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 	switch (action) {
-	case 301:
+	case 301: // Look outside the bus.
 		say(1, _desert.busDoor != 0);
 		break;
-	case 302:
+	case 302: // Leave the bus.
 		if (_desert.busDoor == 0 || _desert.busDoor == 2)
 			leaveDesertRoom(5061);
 		else
 			say(2);
 		break;
-	case 304:
+	case 304: // Go to the back of the bus.
 		leaveDesertRoom(5160);
 		break;
-	case 305:
+	case 305: // Look at the right-hand shelf.
 		say(4, _desert.lipstickShelf == 0 ? 0 : _desert.lipstickShelf == 3 ? 2 : 1);
 		if (!_desert.lipstickShelf)
 			_desert.lipstickShelf = 1;
 		break;
-	case 306:
+	case 306: // Take lipstick from the shelf.
 		if (_desert.lipstickShelf < 2) {
 			say(5);
 			_inventory.add(10);
@@ -108,12 +109,12 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 			say(5, 5);
 		}
 		return kBackgroundChanged;
-	case 307:
+	case 307: // Look at the door mechanism.
 		say(6, _desert.crank != 0);
 		if (!_desert.crank)
 			_desert.crank = 1;
 		break;
-	case 308:
+	case 308: // Turn the makeshift crank.
 		if (_desert.crank < 2) {
 			say(7);
 		} else {
@@ -121,16 +122,16 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 			_audio.playEffect(_desert.busDoor == 1 ? 65 : 64);
 		}
 		break;
-	case 1308:
+	case 1308: // Finish opening or closing the bus door.
 		if (!_desert.busDoor)
 			say(7, 1);
 		_desert.busDoor = _desert.busDoor == 1 ? 2 : 1;
 		return kBackgroundChanged;
-	case 309:
+	case 309: // Look in the pocket.
 		say(8);
 		walkTo(Common::Point(339, 512), 3, true);
 		break;
-	case 310:
+	case 310: // Search the pocket for the refrigerator key.
 		if (_desert.keyTaken) {
 			say(9, 2);
 		} else {
@@ -144,47 +145,47 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute5170(uint16 action) {
 			walkTo(Common::Point(340, 511), 3, true);
 		}
 		break;
-	case 312:
+	case 312: // Take the sunglasses.
 		say(11);
 		_inventory.add(20);
 		_desert.glassesTaken = 1;
 		say(11, 1);
 		return kBackgroundChanged;
-	case 313:
+	case 313: // Look at the object under the bed.
 		say(12, _desert.vacuum != 0);
 		if (!_desert.vacuum)
 			_desert.vacuum = 1;
 		break;
-	case 314:
+	case 314: // Take the vacuum cleaner.
 		if (!_desert.vacuum)
 			say(12);
 		_inventory.add(22);
 		_desert.vacuum = 2;
 		say(13);
 		return kBackgroundChanged;
-	case 315:
+	case 315: // Look at the necklaces.
 		say(14, _desert.necklacesSeen);
 		_desert.necklacesSeen = 1;
 		break;
-	case 316:
+	case 316: // Take the necklaces.
 		if (!_desert.necklacesSeen)
 			execute5170(315);
 		say(15);
 		break;
-	case 317:
+	case 317: // Look at the rings and earrings.
 		say(16, _desert.ringsSeen);
 		_desert.ringsSeen = 1;
 		break;
-	case 318:
+	case 318: // Take the rings and earrings.
 		if (!_desert.ringsSeen)
 			execute5170(317);
 		say(17);
 		break;
-	case 320:
+	case 320: // Attach the footrest to the door mechanism.
 		say(19);
 		beginRoomAnimation(action, 12, 42);
 		break;
-	case 1320:
+	case 1320: // Finish assembling the makeshift crank.
 		_inventory.remove(21);
 		_desert.crank = 2;
 		say(19, 1);

@@ -451,9 +451,10 @@ void RunawayScene5030::useItem(byte item, byte hotspot) {
 	// Dispatch the room's item actions separately from its ordinary verbs.
 	// Original rejected actions use the shared, voiced inventory responses.
 	if (item == 1 && hotspot == 3) {
-		// The large window is never cleaned; cue 33 belongs to the small one.
+		// 339: Use the chamois with the large window.
 		sayCue(35, 0);
 	} else if (item == 1 && hotspot == 4) {
+		// 337: Clean the small window with the damp chamois.
 		if (_windowClean) {
 			sayCue(33, 3);
 		} else if (!_inventory.clothState()) {
@@ -467,14 +468,39 @@ void RunawayScene5030::useItem(byte item, byte hotspot) {
 			sayCue(33, 1);
 		}
 	} else if (item == 3 && hotspot == 4) {
+		// 343: Use the cleaner with the small window.
 		sayCue(39, 0);
 	} else if (item == 2 && hotspot == 4) {
+		// 342: Use the crowbar with the small window.
 		sayCue(38, 0);
 	} else if (item == 2 && hotspot == 6) {
+		// 338: Pry the padlock off the trap door.
 		if (_hatchState == kLocked)
 			waitForSpeech(34, 0, kPryHatch);
 		else
 			sayCue(34, _hatchState == kUnlocked ? 2 : 3);
+	} else if (_game == kRunawayFullGame && item == 4 && hotspot == 8) {
+		// 340: Use butter with the freezer.
+		sayCue(36, 0);
+	} else if (_game == kRunawayFullGame && item == 6 && hotspot == 8) {
+		// 341: Heat the helmet's contents on the sunlit freezer lid.
+		switch (_inventory.desert().helmet) {
+		case 0:
+		case 4:
+			sayCue(37, 0);
+			break;
+		case 1:
+			sayCue(37, 1);
+			break;
+		case 2:
+			waitForSpeech(37, 2, kHeatHelmet);
+			break;
+		case 3:
+			sayCue(37, 4);
+			break;
+		default:
+			break;
+		}
 	} else {
 		sayInventory(RunawayInventory::Reply(1, 0));
 	}
@@ -484,60 +510,60 @@ void RunawayScene5030::examine(byte id) {
 	const bool examined = _examined[id];
 	_examined[id] = true;
 	switch (id) {
-	case 1:
+	case 1: // Look at the door.
 		sayCue(1, _peeked ? 1 : 0);
 		break;
-	case 2:
+	case 2: // Look through the crack in the door.
 		startAction(kPeekDoor);
 		break;
-	case 3:
+	case 3: // Look through the large window.
 		sayCue(5, 0);
 		break;
-	case 4:
+	case 4: // Look through the small window.
 		sayCue(7, _windowClean ? 1 : 0);
 		break;
-	case 5:
+	case 5: // Look at the wooden peg.
 		sayCue(9, examined ? 1 : 0);
 		break;
-	case 6:
+	case 6: // Look at the trap door.
 		sayCue(_hatchState == kOpen ? 12 : 10, _hatchState == kUnlocked ? 1 : 0);
 		break;
-	case 7:
+	case 7: // Look at Brian's torn shirt.
 		sayCue(27, examined ? 1 : 0);
 		break;
-	case 8:
+	case 8: // Look at the freezer and its contents.
 		_coolerInspected |= _lidOpen;
 		sayCue(13, _coolerMoved ? 0 : !_lidOpen ? 1 : _ice == kDrained ? 6 :
 			_ice == kMelted ? 5 : _windowClean ? (_unplugged ? 5 : 4) : (_unplugged ? 3 : 2));
 		break;
-	case 9:
+	case 9: // Look at the chamois.
 		sayCue(15, examined ? 1 : 0);
 		break;
-	case 10:
+	case 10: // Look at the power plug.
 		sayCue(16, 0);
 		break;
-	case 11:
+	case 11: // Look at the freezer drain.
 		sayCue(18, 0);
 		break;
-	case 12:
+	case 12: // Look at the telephone.
 		sayCue(21, 0);
 		break;
-	case 13:
+	case 13: // Look at the shelf.
 		sayCue(23, 0);
 		break;
-	case 14:
+	case 14: // Look at the crowbar.
 		sayCue(25, 0);
 		break;
-	case 15:
+	case 15: // Look at Brian's broken glasses.
 		sayCue(40, 0);
 		break;
-	case 16:
+	case 16: // Look at the bellows.
 		sayCue(29, 0);
 		break;
-	case 17:
+	case 17: // Look at the cleaner.
 		sayCue(30, examined ? 1 : 0);
 		break;
-	case 18:
+	case 18: // Look at the freezer lid.
 		sayCue(32, _lidOpen ? 1 : 0);
 		break;
 	default:
@@ -660,19 +686,19 @@ void RunawayScene5030::startAction(Action action) {
 	case kPickup:
 		_action = kNone;
 		switch (_pickupHotspot) {
-		case 5:
+		case 5: // Take the wooden peg.
 			pickUp(5, 8, 0);
 			break;
-		case 9:
+		case 9: // Take the chamois.
 			pickUp(9, 1, 1);
 			break;
-		case 14:
+		case 14: // Take the crowbar.
 			pickUp(14, 2, 2);
 			break;
-		case 16:
+		case 16: // Take the bellows.
 			pickUp(16, 24, 3);
 			break;
-		case 17:
+		case 17: // Take the cleaner.
 			pickUp(17, 3, 4);
 			break;
 		default:
@@ -743,6 +769,20 @@ void RunawayScene5030::startAction(Action action) {
 	case kReturnFromPeek:
 		chunk = 22;
 		frames = 19;
+		break;
+	case kHeatHelmet:
+		chunk = 31;
+		frames = 69;
+		break;
+	case kPrepareStirringHelmet:
+		_facing = 4;
+		waitForSpeech(37, 6, kStirHelmet);
+		break;
+	case kStirHelmet:
+		if (!loadRoomGraphics())
+			error("Cannot rebuild Runaway room before stirring the helmet");
+		chunk = 31;
+		frames = 69;
 		break;
 	default:
 		break;
@@ -824,6 +864,13 @@ void RunawayScene5030::finishAction() {
 		_facing = 4;
 		sayCue(_peeked ? 3 : 1, _peeked ? _random.getRandomNumber(3) : 1);
 		_peeked = true;
+	} else if (completed == kHeatHelmet) {
+		applyPatch(25);
+		waitForSpeech(37, 5, kPrepareStirringHelmet);
+	} else if (completed == kStirHelmet) {
+		_audio.stopEffect();
+		_inventory.desert().helmet = 3;
+		sayCue(37, 3);
 	}
 	debugC(1, kDebugScene, "Runaway demo: animation %u finished, lid=%u unplugged=%u",
 		(uint)completed, (uint)_lidOpen, (uint)_unplugged);
@@ -935,6 +982,18 @@ void RunawayScene5030::updateAction() {
 		case kReturnFromPeek:
 			length = 20;
 			break;
+		case kHeatHelmet:
+			length = 28;
+			if (previousStep < 22 && _step >= 22)
+				_audio.playEffect(70);
+			break;
+		case kStirHelmet:
+			length = 90;
+			if (previousStep < 5 && _step >= 5)
+				_audio.playEffect(71, 191);
+			if (previousStep < 81 && _step >= 81)
+				_audio.stopEffect();
+			break;
 		default:
 			break;
 		}
@@ -1040,6 +1099,10 @@ void RunawayScene5030::draw() {
 		_actionAnimation.draw(_screen, MAX<uint>(1, _step), _cameraX, kRoomTop);
 	} else if (_action == kPeekDoor || _action == kReturnFromPeek) {
 		const uint frame = _action == kPeekDoor ? MAX<int>(0, (int)_step - 1) : 18 - MAX<int>(0, (int)_step - 1);
+		_actionAnimation.draw(_screen, frame, _cameraX, kRoomTop);
+	} else if (_action == kHeatHelmet || _action == kStirHelmet) {
+		const uint step = _action == kHeatHelmet ? _step : _step + 29;
+		const uint frame = step < 54 ? MAX<int>(0, (int)step - 1) : step < 103 ? 46 + (step - 54) % 7 : step - 50;
 		_actionAnimation.draw(_screen, frame, _cameraX, kRoomTop);
 	} else {
 		_actor.draw(_screen, _position, _cameraX, kRoomTop, _mask, _maps, _windowClean, _antialias);
