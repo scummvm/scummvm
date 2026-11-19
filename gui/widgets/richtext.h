@@ -100,6 +100,7 @@ public:
 	/** Text which scrolls or holds links takes the keyboard focus */
 	bool wantsKeyboardFocus() override;
 	void enterFromKeyboard(int direction) override;
+	Common::U32String getSpokenDescription() const override;
 
 	void cancelDrag() override;
 	void cancelTickle() override;

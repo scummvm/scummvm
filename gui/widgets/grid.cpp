@@ -1460,6 +1460,23 @@ void GridWidget::moveCursorTo(int index) {
 	markAsDirty();
 }
 
+Common::U32String GridWidget::getSpokenDescription() const {
+	Common::U32String entryText;
+	const int index = findCursorIndex();
+	if (index >= 0) {
+		const GridItemInfo *entry = _sortedEntryList[index];
+		entryText = Common::U32String(entry->title);
+		if (entry->isHeader) {
+			// I18N: Spoken by text-to-speech for the state of a group of games
+			const Common::U32String state = _groupExpanded[entry->entryID] ? _c("expanded", "text-to-speech") : _c("collapsed", "text-to-speech");
+			entryText += Common::U32String(", ") + state;
+		}
+	}
+
+	// I18N: Spoken by text-to-speech for the kind of control a grid of games is
+	return composeSpokenDescription(findSpokenLabel(), _c("grid", "text-to-speech"), entryText);
+}
+
 bool GridWidget::handleKeyDown(Common::KeyState state) {
 	if (!isEnabled() || _sortedEntryList.empty() ||
 			(state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META)))

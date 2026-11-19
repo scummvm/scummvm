@@ -308,11 +308,8 @@ void Widget::readDescription() {
 }
 
 Common::U32String Widget::findTextBeside(bool before) const {
-	// Look among the widgets sharing this widget's parent for text on the
-	// same row, that is spanning this widget's vertical centre, and keep the
-	// nearest one on the wanted side. Positions are in the parent's
-	// coordinates, which RTL layouts mirror when drawn, so "before" holds
-	// there too.
+	// Find the nearest sibling text on the wanted side whose height spans
+	// this widget's vertical centre
 	const int centre = _y + _h / 2;
 	const Widget *best = nullptr;
 	Common::U32String bestText;
@@ -352,11 +349,29 @@ Common::U32String Widget::findSpokenValue() const {
 	return findTextBeside(false);
 }
 
-Common::U32String Widget::findSpokenName(const Common::U32String &kind) const {
-	const Common::U32String label = findSpokenLabel();
+Common::U32String Widget::composeSpokenDescription(const Common::U32String &label, const Common::U32String &kind,
+                                                   const Common::U32String &value) const {
+	Common::U32String description;
 	if (!label.empty())
-		return label;
-	return _tooltip.empty() ? kind : _tooltip;
+		description = label;
+	else if (!_tooltip.empty())
+		description = _tooltip;
+
+	// The kind of control alone names a widget without label or tooltip
+	if (!kind.empty()) {
+		if (!description.empty())
+			description += Common::U32String(", ");
+		description += kind;
+	}
+
+	if (!value.empty())
+		description += Common::U32String(", ") + value;
+
+	// The tooltip says what the widget is for, unless it already named it
+	if (!label.empty() && !_tooltip.empty() && _tooltip != label)
+		description += Common::U32String(", ") + _tooltip;
+
+	return description;
 }
 
 #pragma mark -
@@ -520,21 +535,9 @@ void ButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), getLabel(), _state, getFlags());
 }
 
-/**
- * Name a widget for text-to-speech by its label, as hovering it reads, or by
- * its tooltip when it has none, as for picture buttons. Name the kind of
- * control only when there is neither, so that an unlabelled widget is still
- * audible.
- */
-static Common::U32String spokenName(const Common::U32String &label, const Common::U32String &tooltip, const Common::U32String &kind) {
-	if (!label.empty())
-		return label;
-	return tooltip.empty() ? kind : tooltip;
-}
-
 Common::U32String ButtonWidget::getSpokenDescription() const {
-	// I18N: Spoken by text-to-speech to name an unlabelled button
-	return spokenName(_label, _tooltip, _("button"));
+	// I18N: Spoken by text-to-speech for the kind of control a button is
+	return composeSpokenDescription(_label, _c("button", "text-to-speech"));
 }
 
 void ButtonWidget::setLabel(const Common::U32String &label) {
@@ -891,11 +894,10 @@ void CheckboxWidget::drawWidget() {
 }
 
 Common::U32String CheckboxWidget::getSpokenDescription() const {
-	// I18N: Spoken by text-to-speech to name an unlabelled checkbox
-	const Common::U32String name = spokenName(_label, _tooltip, _("checkbox"));
 	// I18N: Spoken by text-to-speech for the state of a checkbox
-	const Common::U32String state = _state ? _("checked") : _("not checked");
-	return name + Common::U32String(", ") + state;
+	const Common::U32String state = _state ? _c("checked", "text-to-speech") : _c("not checked", "text-to-speech");
+	// I18N: Spoken by text-to-speech for the kind of control a checkbox is
+	return composeSpokenDescription(_label, _c("checkbox", "text-to-speech"), state);
 }
 
 #pragma mark -
@@ -983,11 +985,10 @@ void RadiobuttonWidget::drawWidget() {
 }
 
 Common::U32String RadiobuttonWidget::getSpokenDescription() const {
-	// I18N: Spoken by text-to-speech to name an unlabelled radio button
-	const Common::U32String name = spokenName(_label, _tooltip, _("radio button"));
 	// I18N: Spoken by text-to-speech for the state of a radio button
-	const Common::U32String state = _state ? _("selected") : _("not selected");
-	return name + Common::U32String(", ") + state;
+	const Common::U32String state = _state ? _c("selected", "text-to-speech") : _c("not selected", "text-to-speech");
+	// I18N: Spoken by text-to-speech for the kind of control a radio button is
+	return composeSpokenDescription(_label, _c("radio button", "text-to-speech"), state);
 }
 
 #pragma mark -
@@ -1116,15 +1117,12 @@ void SliderWidget::drawWidget() {
 }
 
 Common::U32String SliderWidget::getSpokenDescription() const {
-	// Sliders are labelled by the text before them. Follow the name with the
-	// value as shown after the slider, such as a percentage, or failing
-	// that, the slider's own value.
-	// I18N: Spoken by text-to-speech to name an unlabelled slider
-	const Common::U32String name = findSpokenName(_("slider"));
+	// Prefer the value shown after the slider, such as a percentage
 	Common::U32String value = findSpokenValue();
 	if (value.empty())
 		value = Common::U32String(Common::String::format("%d", _value));
-	return name + Common::U32String(", ") + value;
+	// I18N: Spoken by text-to-speech for the kind of control a slider is
+	return composeSpokenDescription(findSpokenLabel(), _c("slider", "text-to-speech"), value);
 }
 
 int SliderWidget::valueToBarWidth(int value) {

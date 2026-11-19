@@ -70,6 +70,7 @@ public:
 	bool handleDragHook(Widget *origTarget, int state, int x, int y, int button) override;
 	bool handleKeyDown(Common::KeyState state) override;
 	bool wantsKeyboardFocus() override;
+	Common::U32String getSpokenDescription() const override;
 
 	void cancelDrag() override;
 	void cancelTickle() override;

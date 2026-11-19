@@ -35,9 +35,14 @@ gui/ThemeEngine.cpp
 gui/unknown-game-dialog.cpp
 gui/updates-dialog.cpp
 gui/widget.cpp
+gui/widgets/edittext.cpp
 gui/widgets/grid.cpp
 gui/widgets/groupedlist.cpp
+gui/widgets/list.cpp
+gui/widgets/popup.cpp
 gui/widgets/richtext.cpp
+gui/widgets/scrollcontainer.cpp
+gui/widgets/tab.cpp
 
 base/main.cpp
 

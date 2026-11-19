@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/translation.h"
 #include "common/util.h"
 #include "gui/widgets/tab.h"
 #include "gui/gui-manager.h"
@@ -341,14 +342,6 @@ void TabWidget::adjustTabs(int value) {
 
 	setActiveTab(tabID);
 
-	// Announce the tab we moved to. This is only reached when the user cycles
-	// tabs, not while the dialog is being built, so it will not recite every
-	// tab title on open.
-	if (tabID != _lastRead) {
-		read(_tabs[tabID].title);
-		_lastRead = tabID;
-	}
-
 	if (_navButtonsVisible) {
 		if (lastVis != _lastVisibleTab) {
 			_navLeft->setEnabled(true);
@@ -528,10 +521,12 @@ void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {
 }
 
 Common::U32String TabWidget::getSpokenDescription() const {
-	// The tab bar is named by its active tab, as hovering a tab reads its title
+	Common::U32String title;
 	if (_activeTab >= 0 && _activeTab < (int)_tabs.size())
-		return _tabs[_activeTab].title;
-	return _tooltip;
+		title = _tabs[_activeTab].title;
+
+	// I18N: Spoken by text-to-speech for the kind of control a tab is
+	return composeSpokenDescription(title, _c("tab", "text-to-speech"));
 }
 
 } // End of namespace GUI

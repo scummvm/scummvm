@@ -445,6 +445,19 @@ void GroupedListWidget::moveCursorToHeader(int pos) {
 	markAsDirty();
 }
 
+Common::U32String GroupedListWidget::getSpokenDescription() const {
+	// With the cursor on a header, describe the header rather than the selection
+	const int pos = findHeaderPos(_cursorGroupID);
+	if (pos < 0)
+		return ListWidget::getSpokenDescription();
+
+	// I18N: Spoken by text-to-speech for the state of a group of games
+	const Common::U32String state = _groupExpanded[_cursorGroupID] ? _c("expanded", "text-to-speech") : _c("collapsed", "text-to-speech");
+	const Common::U32String header = stripGUIformatting(_list[pos]) + Common::U32String(", ") + state;
+	// I18N: Spoken by text-to-speech for the kind of control a list of items is
+	return composeSpokenDescription(findSpokenLabel(), _c("list", "text-to-speech"), header);
+}
+
 void GroupedListWidget::selectFromKeyboard(int pos) {
 	_cursorGroupID = -1;
 	clearSelection();

@@ -145,16 +145,8 @@ Common::Rect EditTextWidget::getEditRect() const {
 }
 
 Common::U32String EditTextWidget::getSpokenDescription() const {
-	// Name the field by the text before it, or its tooltip. Fall back on
-	// naming the kind of control only when there is neither, so that an
-	// unlabelled field is still audible rather than silent.
-	// I18N: Spoken by text-to-speech to name an unlabelled text entry field
-	Common::U32String description = findSpokenName(_("edit text"));
-
-	if (!_editString.empty())
-		description += Common::U32String(", ") + _editString;
-
-	return description;
+	// I18N: Spoken by text-to-speech for the kind of control a text entry field is
+	return composeSpokenDescription(findSpokenLabel(), _c("edit text", "text-to-speech"), _editString);
 }
 
 void EditTextWidget::receivedFocusWidget() {

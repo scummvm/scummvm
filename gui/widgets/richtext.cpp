@@ -211,6 +211,20 @@ void RichTextWidget::handleMouseMoved(int x, int y, int button) {
 	}
 }
 
+Common::U32String RichTextWidget::getSpokenDescription() const {
+	// Arriving on a link with Shift+Tab describes the link
+	if (_focusedLink >= 0 && _focusedLink < (int)_links.size()) {
+		// I18N: Spoken by text-to-speech for the kind of control a link is
+		return _links[_focusedLink].text + Common::U32String(", ") + _c("link", "text-to-speech");
+	}
+
+	Common::U32String text;
+	if (_txtWnd)
+		text = _txtWnd->getPlainText();
+	// I18N: Spoken by text-to-speech for the kind of control a block of text is
+	return composeSpokenDescription(findSpokenLabel(), _c("text", "text-to-speech"), text);
+}
+
 bool RichTextWidget::wantsKeyboardFocus() {
 	return _verticalScroll->isVisible() || !_links.empty();
 }

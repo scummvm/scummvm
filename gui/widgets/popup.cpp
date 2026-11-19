@@ -328,14 +328,6 @@ void PopUpDialog::setSelection(int item) {
 		// Draw new selection
 		if (item >= 0)
 			drawMenuEntry(item, true);
-
-		// Announce the new selection, so that it is not only the mouse that
-		// speaks. Updating _lastRead keeps handleMouseMoved() from repeating
-		// what was just said.
-		if (item >= 0 && item < (int)_entries.size() && _lastRead != item) {
-			read(_entries[item]);
-			_lastRead = item;
-		}
 	}
 }
 
@@ -589,15 +581,12 @@ void PopUpWidget::drawWidget() {
 }
 
 Common::U32String PopUpWidget::getSpokenDescription() const {
-	// Popups are labelled by the text before them. Follow the name with the
-	// current entry, which hovering reads.
-	// I18N: Spoken by text-to-speech to name an unlabelled drop-down list
-	Common::U32String description = findSpokenName(_("drop-down list"));
-
+	Common::U32String entry;
 	if (_selectedItem >= 0 && _selectedItem < (int)_entries.size())
-		description += Common::U32String(", ") + _entries[_selectedItem].name;
+		entry = _entries[_selectedItem].name;
 
-	return description;
+	// I18N: Spoken by text-to-speech for the kind of control a drop-down list is
+	return composeSpokenDescription(findSpokenLabel(), _c("drop-down list", "text-to-speech"), entry);
 }
 
 } // End of namespace GUI

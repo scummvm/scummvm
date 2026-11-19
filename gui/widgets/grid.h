@@ -278,6 +278,7 @@ public:
 
 	bool handleKeyDown(Common::KeyState state) override;
 	bool wantsKeyboardFocus() override { return !_sortedEntryList.empty(); }
+	Common::U32String getSpokenDescription() const override;
 	/** Whether the focused grid's keyboard cursor is on the given group header */
 	bool isKeyboardCursorOnHeader(int groupID) const { return _hasFocus && _cursorHeaderID == groupID; }
 

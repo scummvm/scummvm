@@ -204,49 +204,31 @@ public:
 
 	void read(const Common::U32String &str);
 
-	/**
-	 * Describe this widget for text-to-speech, for when it gains focus.
-	 *
-	 * The default implementation falls back on the tooltip, so that widgets
-	 * which have not overridden this still say something rather than leaving
-	 * the user with silence. Widgets which carry a label or a value should
-	 * override this to report it.
-	 *
-	 * @return A human readable description, or an empty string if the widget
-	 *         has nothing meaningful to say.
-	 */
+	/** Describe this widget for text-to-speech when it gets the focus. Defaults to the tooltip. */
 	virtual Common::U32String getSpokenDescription() const { return _tooltip; }
 
 	/** Speak this widget's description, if text-to-speech is enabled. */
 	void readDescription();
 
 	/**
-	 * Find the text labelling this widget, for widgets such as popups,
-	 * sliders and text fields, which have no label of their own but a
-	 * separate text widget before them on the same row, as layouts place
-	 * them. A picture with a tooltip serves as a label too.
-	 *
-	 * @return The label, or an empty string if there is none.
+	 * Find the text labelling a widget without a label of its own: the nearest
+	 * text, or picture with a tooltip, before it on the same row
 	 */
 	Common::U32String findSpokenLabel() const;
 
-	/**
-	 * Find the text just after this widget on the same row, such as the
-	 * value shown beside a slider.
-	 *
-	 * @return The text, or an empty string if there is none.
-	 */
+	/** Find the text just after this widget on the same row, such as a slider's value */
 	Common::U32String findSpokenValue() const;
 
-	/**
-	 * Name this widget for speech by the text labelling it, or by its
-	 * tooltip when there is none, or else by the given kind of control, so
-	 * that an unlabelled widget is still audible.
-	 */
-	Common::U32String findSpokenName(const Common::U32String &kind) const;
-
 protected:
-	/** The nearest text before (or after) this widget on the same row, as described in findSpokenLabel() */
+	/**
+	 * Put together a spoken description as screen readers do: the name (the
+	 * label, or else the tooltip), the kind of control, the value or state,
+	 * then the tooltip if it is not the name.
+	 */
+	Common::U32String composeSpokenDescription(const Common::U32String &label, const Common::U32String &kind,
+	                                           const Common::U32String &value = Common::U32String()) const;
+
+	/** The nearest text before (or after) this widget on the same row */
 	Common::U32String findTextBeside(bool before) const;
 
 	void updateState(int oldFlags, int newFlags);

@@ -77,6 +77,7 @@ public:
 	void handleMouseWheel(int x, int y, int direction) override;
 	bool handleKeyDown(Common::KeyState state) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	Common::U32String getSpokenDescription() const override;
 
 	void setGroupsVisibility(bool val) { _groupsVisible = val; }
 
