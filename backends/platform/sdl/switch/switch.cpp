@@ -123,10 +123,6 @@ bool OSystem_Switch::hasFeature(Feature f) {
 		OSystem_SDL::hasFeature(f));
 }
 
-void OSystem_Switch::logMessage(LogMessageType::Type type, const char *message) {
-	printf("%s\n", message);
-}
-
 Common::Path OSystem_Switch::getDefaultLogFileName() {
 	return "scummvm.log";
 }
