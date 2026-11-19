@@ -176,7 +176,7 @@ RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 actio
 		}
 		beginRoomAnimation(302, 25, 29, nullptr, 0, true, 60);
 		break;
-	case 1302:
+	case 1302: // Switch to the exterior view to finish climbing out of the cab.
 		_town.cabExited = 1;
 		leaveTownRoom(6261);
 		break;
@@ -199,7 +199,7 @@ RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 actio
 		beginRoomAnimation(306, 26, 64, kSteamLeverFrames,
 			_town.boiler == 3 && !_town.locomotiveKey ? 41 : ARRAYSIZE(kSteamLeverFrames), true, 60);
 		break;
-	case 1306:
+	case 1306: // Show the steam burst outside, or explain why it did not dislodge the key.
 		if (_town.boiler == 3 && !_town.locomotiveKey) {
 			leaveTownRoom(6262);
 		} else {
@@ -223,7 +223,7 @@ RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 actio
 			say(28, _town.boiler == 3 ? 3 : 0);
 		}
 		break;
-	case 1308:
+	case 1308: // Finish increasing the boiler pressure.
 		_town.pressureWheel = 2;
 		_town.boiler = 3;
 		say(28, 2);
@@ -234,7 +234,7 @@ RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 actio
 		_actionFrames.insert_at(0, 0);
 		_inventory.select(0);
 		break;
-	case 1309:
+	case 1309: // Finish loading the firewood into the boiler.
 		_town.boiler = 1;
 		_inventory.remove(14);
 		break;
@@ -258,7 +258,7 @@ RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 actio
 			_inventory.select(0);
 		}
 		break;
-	case 1313:
+	case 1313: // Comment after lighting the boiler.
 		say(33, 4);
 		break;
 	case 315: // Refuse to drive the derailed locomotive.

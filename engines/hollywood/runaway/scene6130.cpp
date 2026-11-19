@@ -139,7 +139,7 @@ RunawayRoomScene::ActionResult Scene6130::dispatchCustomSceneAction(uint16 actio
 		say(6);
 		deferTownAction(408);
 		break;
-	case 408:
+	case 408: // Collect the stone with the hole.
 		_town.stone = 2;
 		_inventory.add(29);
 		say(6, 1);
@@ -148,7 +148,7 @@ RunawayRoomScene::ActionResult Scene6130::dispatchCustomSceneAction(uint16 actio
 		walkTo(Common::Point(402, 374), 1);
 		deferTownAction(401);
 		break;
-	case 401:
+	case 401: // Arrive at Mama Dorita's doorway for the first meeting.
 		_town.houseVisited = 1;
 		leaveTownRoom(6090);
 		break;

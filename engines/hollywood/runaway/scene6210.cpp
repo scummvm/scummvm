@@ -130,7 +130,7 @@ RunawayRoomScene::ActionResult Scene6210::dispatchCustomSceneAction(uint16 actio
 	case 1412: // Close the bag after an unsuccessful search.
 		beginRoomAnimationRange(413, 4, 28, 16, 27);
 		break;
-	case 1413:
+	case 1413: // Finish closing the doctor's bag.
 		break;
 	case 307: // Discover what the bucket was used for.
 		_facing = 4;
@@ -150,7 +150,7 @@ RunawayRoomScene::ActionResult Scene6210::dispatchCustomSceneAction(uint16 actio
 			dispatchCustomSceneAction(310);
 		}
 		break;
-	case 408:
+	case 408: // Inspect the bucket before refusing to take it.
 		dispatchCustomSceneAction(307);
 		deferTownAction(310);
 		break;

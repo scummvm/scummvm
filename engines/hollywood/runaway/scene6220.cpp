@@ -220,7 +220,7 @@ RunawayRoomScene::ActionResult Scene6220::dispatchCustomSceneAction(uint16 actio
 		say(11);
 		deferTownAction(417);
 		break;
-	case 417: {
+	case 417: { // Cut the wagon strap with the pruning shears.
 		static const byte frames[] = {
 			0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
 			20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
@@ -228,7 +228,7 @@ RunawayRoomScene::ActionResult Scene6220::dispatchCustomSceneAction(uint16 actio
 		beginRoomAnimation(417, 10, 22, frames, ARRAYSIZE(frames));
 		break;
 	}
-	case 1417:
+	case 1417: // Collect the cut strap.
 		_town.strapSeen = 2;
 		_inventory.select(0);
 		_inventory.add(11);

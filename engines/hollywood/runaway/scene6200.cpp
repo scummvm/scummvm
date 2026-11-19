@@ -149,7 +149,7 @@ RunawayRoomScene::ActionResult Scene6200::dispatchCustomSceneAction(uint16 actio
 		say(5);
 		deferTownAction(407);
 		break;
-	case 407:
+	case 407: // Collect the firewood.
 		_town.firewoodTaken = 1;
 		_inventory.add(14);
 		say(5, 1);
@@ -169,7 +169,7 @@ RunawayRoomScene::ActionResult Scene6200::dispatchCustomSceneAction(uint16 actio
 			_inventory.select(0);
 		}
 		break;
-	case 1314:
+	case 1314: // Finish unlocking the cell and remove the key from inventory.
 		_town.cellOpen = 1;
 		_inventory.remove(9);
 		say(12, 1);

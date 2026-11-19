@@ -74,7 +74,7 @@ RunawayRoomScene::ActionResult Scene6014::dispatchCustomSceneAction(uint16 actio
 	case 1401: // Withdraw from the opening.
 		beginRoomAnimationRange(402, 1, 41, 29, 0, true, 60);
 		break;
-	case 1402:
+	case 1402: // Return to the mine entrance after inspecting the shaft.
 		leaveTownRoom(6081);
 		break;
 	default:

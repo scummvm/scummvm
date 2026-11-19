@@ -140,7 +140,7 @@ RunawayRoomScene::ActionResult Scene6260::dispatchCustomSceneAction(uint16 actio
 		}
 		beginRoomAnimation(304, 4, 131, nullptr, 0, true, 60);
 		break;
-	case 1304:
+	case 1304: // Enter the driver's cab after climbing through the window.
 		leaveTownRoom(6263);
 		break;
 	case 309: // Identify the key ejected from the smokestack.
@@ -156,7 +156,7 @@ RunawayRoomScene::ActionResult Scene6260::dispatchCustomSceneAction(uint16 actio
 		}
 		deferTownAction(410);
 		break;
-	case 410:
+	case 410: // Collect the sheriff's key.
 		_town.locomotiveKey = 3;
 		_inventory.add(9);
 		say(9);
@@ -184,7 +184,7 @@ RunawayRoomScene::ActionResult Scene6260::dispatchCustomSceneAction(uint16 actio
 			_inventory.select(0);
 		}
 		break;
-	case 1313:
+	case 1313: // Empty the oil can into the locomotive's water tank.
 		++_town.waterTank;
 		_town.oilCanFull = 0;
 		break;
@@ -196,7 +196,7 @@ RunawayRoomScene::ActionResult Scene6260::dispatchCustomSceneAction(uint16 actio
 			say(13, _town.bottleContents == 2 ? 1 : 0);
 		}
 		break;
-	case 414:
+	case 414: // Comment on using the water bottle at the tank.
 		_facing = 4;
 		say(13, _town.waterTank ? 4 : 3);
 		break;
@@ -211,7 +211,7 @@ RunawayRoomScene::ActionResult Scene6260::dispatchCustomSceneAction(uint16 actio
 			_entryScene == 6265 ? 7 : 1);
 		deferTownAction(403);
 		break;
-	case 403:
+	case 403: // Finish inspecting the locomotive on the first visit.
 		say(0, 1);
 		_town.locomotiveVisited = 1;
 		break;

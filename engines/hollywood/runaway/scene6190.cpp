@@ -127,7 +127,7 @@ RunawayRoomScene::ActionResult Scene6190::dispatchCustomSceneAction(uint16 actio
 		say(10);
 		deferTownAction(411);
 		break;
-	case 411:
+	case 411: // Collect the ancient stapler.
 		_town.bankShelves = 2;
 		_inventory.add(20);
 		say(10, 1);
@@ -145,11 +145,11 @@ RunawayRoomScene::ActionResult Scene6190::dispatchCustomSceneAction(uint16 actio
 		say(0);
 		deferTownAction(401);
 		break;
-	case 401:
+	case 401: // Walk farther into the bank on the first visit.
 		walkTo(Common::Point(669, 413), 7);
 		deferTownAction(402);
 		break;
-	case 402:
+	case 402: // Finish Brian's first inspection of the ruined bank.
 		say(0, 1);
 		_town.bankVisited = 1;
 		break;

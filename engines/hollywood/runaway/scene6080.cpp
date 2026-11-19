@@ -174,7 +174,7 @@ RunawayRoomScene::ActionResult Scene6080::dispatchCustomSceneAction(uint16 actio
 		}
 		deferTownAction(406);
 		break;
-	case 406:
+	case 406: // Collect the oil can.
 		_town.oilCan = 2;
 		_inventory.add(23);
 		say(5);
@@ -203,7 +203,7 @@ RunawayRoomScene::ActionResult Scene6080::dispatchCustomSceneAction(uint16 actio
 		walkTo(Common::Point(656, 347), 1);
 		deferTownAction(401);
 		break;
-	case 401:
+	case 401: // Comment on the blocked mine entrance on the first visit.
 		say(6, 2);
 		_town.mineVisited = 1;
 		break;
@@ -220,12 +220,12 @@ RunawayRoomScene::ActionResult Scene6080::dispatchCustomSceneAction(uint16 actio
 		_facing = 5;
 		beginRoomAnimation(404, 10, 128, nullptr, 0, false, 60);
 		break;
-	case 1404:
+	case 1404: // Step away from the entrance after Oscar leaves.
 		_mineOscarPresent = false;
 		walkTo(Common::Point(734, 402), 5, true);
 		deferTownAction(405);
 		break;
-	case 405:
+	case 405: // Finish Brian's reaction to Oscar moving the rock.
 		say(20, 8);
 		break;
 	default:

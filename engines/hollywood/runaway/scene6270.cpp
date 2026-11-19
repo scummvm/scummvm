@@ -72,7 +72,7 @@ RunawayRoomScene::ActionResult Scene6270::dispatchCustomSceneAction(uint16 actio
 			deferTownAction(402);
 		}
 		break;
-	case 401:
+	case 401: // Finish Brian's first reaction to the crater.
 		_facing = 4;
 		say(0, 1);
 		_town.craterVisited = 1;

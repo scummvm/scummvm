@@ -269,7 +269,7 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		say(20, 4);
 		deferTownAction(424);
 		break;
-	case 424:
+	case 424: // Approach the motorcycle to put down the wrench.
 		_joshuaTalking = false;
 		walkTo(Common::Point(1133, 434), 7, false, true);
 		deferTownAction(425);
@@ -280,7 +280,7 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		walkTo(Common::Point(512, 568), 5, false, true);
 		deferTownAction(426);
 		return kBackgroundChanged;
-	case 426:
+	case 426: // Comment after leaving the wrench for Joshua.
 		say(20, 5);
 		break;
 	case 325: // Explain the drive belt idea and give Joshua the joined strap.
@@ -299,7 +299,7 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 			deferTownAction(430);
 		}
 		break;
-	case 430:
+	case 430: // Approach the motorcycle to put down the joined strap.
 		_joshuaTalking = false;
 		walkTo(Common::Point(1133, 434), 7, false, true);
 		deferTownAction(431);
@@ -311,7 +311,7 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		walkTo(Common::Point(512, 568), 5, false, true);
 		deferTownAction(432);
 		return kBackgroundChanged;
-	case 432:
+	case 432: // Comment after leaving the strap for Joshua.
 		say(21, 7);
 		break;
 	case 328: // Only correctly diluted gasoline can run the motorcycle.
@@ -327,28 +327,28 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		say(0);
 		deferTownAction(401);
 		break;
-	case 401:
+	case 401: // Approach Joshua for the first meeting.
 		walkTo(Common::Point(440, 556), 7, false, true);
 		deferTownAction(402);
 		break;
-	case 402:
+	case 402: // Call to Joshua again after approaching him.
 		say(0, 1);
 		deferTownAction(403);
 		break;
 	case 403: // Joshua finishes receiving a telepathic message.
 		beginRoomAnimationRange(403, 10, 131, 12, 99, false);
 		break;
-	case 1403:
+	case 1403: // Joshua turns to speak to Brian.
 		beginRoomAnimationRange(404, 10, 131, 0, 6, false);
 		break;
-	case 1404:
+	case 1404: // Begin the first exchange with Joshua.
 		_joshuaFrame = 6;
 		_joshuaTalking = true;
 		say(0, 4, false, 1);
 		say(0, 5);
 		deferTownAction(405);
 		break;
-	case 405:
+	case 405: // Play Joshua's gesture during the introduction.
 		beginRoomAnimationRange(405, 10, 131, 100, 130, false);
 		break;
 	case 1405: // Joshua introduces Trantor and the communication machine.
@@ -358,7 +358,7 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		_town.joshuaMet = 1;
 		deferTownAction(406);
 		break;
-	case 406:
+	case 406: // Start the introductory conversation with Joshua.
 		startJoshuaConversation(true);
 		break;
 	case 410: // Joshua resumes his idle animation after a conversation.
@@ -368,11 +368,11 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		say(0, _town.strapDelivered == 1 ? 19 : 26);
 		deferTownAction(421);
 		break;
-	case 421:
+	case 421: // Approach Joshua to ask about the repair.
 		walkTo(Common::Point(440, 556), 7, false, true);
 		deferTownAction(422);
 		break;
-	case 422:
+	case 422: // Learn whether Joshua needs the wrench or gasoline.
 		_joshuaTalking = true;
 		say(20);
 		say(20, 1, false, 1);
@@ -392,12 +392,12 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 			deferTownAction(410);
 		}
 		break;
-	case 427:
+	case 427: // Brian comments on Joshua's request for a wrench.
 		_facing = 4;
 		say(0, 23);
 		deferTownAction(428);
 		break;
-	case 428:
+	case 428: // Finish discussing the wrench with Joshua.
 		_facing = 7;
 		say(0, 24);
 		say(0, 25, false, 1);

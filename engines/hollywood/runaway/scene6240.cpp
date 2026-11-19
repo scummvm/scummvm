@@ -160,14 +160,14 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 	case 304: // Climb the stairs to Kevin's room.
 		beginRoomAnimation(304, 5, 19);
 		break;
-	case 1304:
+	case 1304: // Enter Kevin's room after climbing the stairs.
 		leaveTownRoom(6300);
 		break;
 	case 306: // Take the flower pot.
 		say(4);
 		deferTownAction(406);
 		break;
-	case 406:
+	case 406: // Collect the flower pot.
 		_town.flowerPotTaken = 1;
 		_inventory.add(21);
 		say(4, 1);
@@ -183,19 +183,19 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 		walkTo(Common::Point(742, 332), 5, false, true);
 		deferTownAction(action == 309 ? 409 : 410);
 		break;
-	case 409:
+	case 409: // Identify the gardening shed after approaching it.
 		say(7, 1);
 		deferTownAction(419);
 		break;
-	case 419:
+	case 419: // Step back after inspecting the shed.
 		walkTo(Common::Point(855, 347), 3, false, true);
 		deferTownAction(429);
 		break;
-	case 429:
+	case 429: // Finish identifying the gardening shed.
 		say(7, 2);
 		_town.gardeningShed = 1;
 		break;
-	case 410:
+	case 410: // Identify the shed before searching it.
 		if (!_town.gardeningShed) {
 			say(7, 1);
 			say(7, 2);
@@ -216,7 +216,7 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 			deferTownAction(423);
 		}
 		break;
-	case 421:
+	case 421: // Collect the pruning shears.
 		_town.gardeningShed = 2;
 		_inventory.add(22);
 		say(8, 1);
@@ -227,7 +227,7 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 			deferTownAction(423);
 		}
 		break;
-	case 422:
+	case 422: // Collect the tobacco leaves.
 		_town.tobaccoLeavesTaken = 1;
 		_inventory.add(27);
 		say(8, 3);

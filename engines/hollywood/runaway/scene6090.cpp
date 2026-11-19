@@ -173,7 +173,7 @@ RunawayRoomScene::ActionResult Scene6090::dispatchCustomSceneAction(uint16 actio
 		setRoomAnimationOverlay(8, 24, brian, ARRAYSIZE(brian));
 		break;
 	}
-	case 1411:
+	case 1411: // Complete the tobacco exchange with Oscar.
 		_inventory.remove(28);
 		_inventory.select(0);
 		_town.oscarTobacco = 2;
@@ -182,7 +182,7 @@ RunawayRoomScene::ActionResult Scene6090::dispatchCustomSceneAction(uint16 actio
 		say(9, 5, false, 1);
 		deferTownAction(412);
 		break;
-	case 412:
+	case 412: // Step back after giving Oscar the tobacco.
 		_oscar.setTalking(false);
 		walkTo(Common::Point(718, 543), 4);
 		say(9, 6);
@@ -202,7 +202,7 @@ RunawayRoomScene::ActionResult Scene6090::dispatchCustomSceneAction(uint16 actio
 		}
 		deferTownAction(413);
 		break;
-	case 413:
+	case 413: // Collect the clay vessel.
 		_town.vessel = 2;
 		_inventory.add(31);
 		say(11, 1);

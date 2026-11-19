@@ -181,21 +181,21 @@ RunawayRoomScene::ActionResult Scene6180::dispatchCustomSceneAction(uint16 actio
 	case 400: // Notice the doors opening without being pushed.
 		beginRoomAnimationRange(400, 9, 42, 0, 24);
 		break;
-	case 1400:
+	case 1400: // Comment on the automatic saloon doors.
 		say(3);
 		holdRoomAnimation(401, 9, 42, 24);
 		break;
-	case 1401: {
+	case 1401: { // Finish Brian's reaction to the automatic doors.
 		static const byte frames[] = {24, 36, 37, 38, 39, 40};
 		beginRoomAnimation(402, 9, 42, frames, ARRAYSIZE(frames));
 		break;
 	}
-	case 1402:
+	case 1402: // Reveal the pressure plate and walk through the doors.
 		_town.saloonDoorKnown = 1;
 		walkTo(Common::Point(1023, 519), 1, false, true);
 		deferTownAction(403);
 		return kBackgroundChanged;
-	case 403:
+	case 403: // Enter the saloon after crossing the porch.
 		leaveTownRoom(6240);
 		break;
 	default:
