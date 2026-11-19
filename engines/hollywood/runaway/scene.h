@@ -288,6 +288,24 @@ private:
 	void startCarlaConversation();
 	ActionResult execute5170(uint16 action);
 
+	bool townChapter() const { return _game == kRunawayFullGame && _room / 1000 == 6; }
+	void resumeTown();
+	void updateTown();
+	void leaveTownRoom(uint16 scene);
+	void deferTownAction(uint16 action);
+	void startTownFilm(byte film);
+	void finishTownFilm();
+	ActionResult execute6350(uint16 action);
+	ActionResult execute6220(uint16 action);
+	void start6220();
+	void update6220();
+	void drawScene6220(Graphics::ManagedSurface &viewport);
+	void start6370();
+	ActionResult execute6370(uint16 action);
+	void drawScene6370(Graphics::ManagedSurface &viewport);
+	void startSushiConversation(bool introduction);
+	void sushiDialogueChoice(byte effect);
+
 	RunawayAudio &_audio;
 	RunawaySequence _sequence;
 	RunawayInventory &_inventory;
@@ -332,6 +350,14 @@ private:
 	RunawaySaveState::Hospital _hospital;
 	RunawaySaveState::Museum _museum;
 	RunawaySaveState::Desert _desert;
+	RunawaySaveState::Town _town;
+	byte _townFilm = 0;
+	struct TownEncounter {
+		enum Phase { kInactive, kRifle, kConversation, kDeparture };
+		Phase phase = kInactive;
+		uint32 tick = 0;
+		uint frame = 0;
+	} _townEncounter;
 	Common::Array<RunawayHotspot> _desertHotspots;
 	RunawayAnimation _desertAnimations[6];
 	byte _hangarShot = 0, _hangarShotCount = 0, _hangarShotFrame = 88;

@@ -1,0 +1,191 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+#include "common/util.h"
+#include "hollywood/runaway/scene.h"
+
+namespace Hollywood {
+namespace {
+
+const RunawayHotspot kHotspots[] = {
+	{"", 0, 0, 0, {0, 0}, {0, 0}},
+	{"Path", 188, 599, 5, {301, 302}, {0, 3}},
+	{"Saloon", 778, 512, 3, {303, 304}, {0, 1}},
+	{"Hotel", 125, 441, 7, {305, 306}, {0, 1}},
+	{"Sheriff's office", 388, 284, 7, {307, 308}, {0, 1}},
+	{"Liquor store", 574, 242, 7, {309, 310}, {0, 1}},
+	{"Bank", 647, 198, 0, {311, 312}, {0, 3}},
+	{"Locomotive", 722, 192, 0, {313, 314}, {0, 1}},
+	{"Wagon", 293, 350, 7, {315, 316}, {1, 0}},
+	{"North side of town", 722, 192, 0, {318, 319}, {0, 3}}
+};
+
+const RunawayResponse kResponses[] = {
+	{6220, 301, 1, 0}, // Look at the railroad tracks.
+	{6220, 303, 2, 0}, // Look at the saloon.
+	{6220, 305, 3, 0}, // Look at the hotel.
+	{6220, 307, 4, 0}, // Look at the sheriff's office.
+	{6220, 309, 5, 0}, // Look at the liquor store.
+	{6220, 310, 6, 0}, // Try the boarded-up liquor store.
+	{6220, 311, 7, 0}, // Look at the bank.
+	{6220, 313, 8, 0}, // Look at the locomotive.
+	{6220, 318, 1, 1}  // Look toward the cemetery.
+};
+
+} // End of anonymous namespace
+
+const RunawayRoom kRunawayScene6220 = {
+	6220, 1024, 600, kHotspots, ARRAYSIZE(kHotspots),
+	{{100, 100, 100}, {95, 90, 70}, {75, 70, 50}, {55, 50, 30}},
+	Common::Point(188, 599),
+	kResponses, ARRAYSIZE(kResponses), nullptr, 0, nullptr, 0
+};
+
+void RunawayRoomScene::start6220() {
+	struct Entry {
+		int16 x, y, targetX, targetY;
+		byte facing;
+	};
+	static const Entry entries[] = {
+		{188, 599, 275, 530, 1}, // Arrive from the map.
+		{778, 512, 686, 474, 7}, // Leave the saloon.
+		{147, 460, 209, 527, 3}, // Leave Sushi's hotel.
+		{420, 297, 470, 330, 3}, // Leave the sheriff's office.
+		{647, 197, 652, 209, 3}, // Leave the bank.
+		{718, 194, 718, 194, 5}  // Leave the locomotive.
+	};
+	const Entry &entry = entries[_entryScene - 6220];
+	_position = Common::Point(entry.x, entry.y);
+	_walkPath.reset(_position);
+	walkTo(Common::Point(entry.targetX, entry.targetY), entry.facing, true);
+	if (!_town.streetVisited) {
+		deferTownAction(400);
+	}
+}
+
+RunawayRoomScene::ActionResult RunawayRoomScene::execute6220(uint16 action) {
+	switch (action) {
+	case 302: // Leave town by the railroad tracks.
+	case 319: // Leave town toward the cemetery.
+		leaveTownRoom(6350);
+		break;
+	case 304: // Enter the saloon.
+		leaveTownRoom(6180);
+		break;
+	case 306: // Visit Sushi in the hotel.
+		leaveTownRoom(6370);
+		break;
+	case 308: // Enter the sheriff's office.
+		leaveTownRoom(6200);
+		break;
+	case 312: // Enter the ruined bank.
+		leaveTownRoom(6190);
+		break;
+	case 314: // Approach the locomotive.
+		leaveTownRoom(6260);
+		break;
+	case 315: // Examine the wagon and identify its strap.
+		say(9, _town.strapSeen);
+		_town.strapSeen = 1;
+		break;
+	case 316: // Try to take the wagon or its attached strap.
+		say(10, _town.strapSeen ? 0 : 1);
+		break;
+	case 400: // First arrival in Douglasville.
+		say(0);
+		deferTownAction(401);
+		break;
+	case 401: // Sushi fires from the hotel and Brian raises his hands.
+		_townEncounter.phase = TownEncounter::kRifle;
+		_townEncounter.tick = _now;
+		_townEncounter.frame = 0;
+		_roomAction = 401;
+		break;
+	default:
+		return kUnhandled;
+	}
+	return kHandled;
+}
+
+void RunawayRoomScene::update6220() {
+	if (_townEncounter.phase == TownEncounter::kInactive) {
+		return;
+	}
+	const uint previous = _townEncounter.frame;
+	const uint frame = (_now - _townEncounter.tick) / 80;
+	if (_townEncounter.phase == TownEncounter::kRifle) {
+		_townEncounter.frame = MIN<uint>(112, frame);
+		if (previous < 45 && frame >= 45) {
+			_audio.playEffect(11);
+		}
+		if (previous < 79 && frame >= 79) {
+			say(0, 1);
+		}
+		if (frame >= 112 && !speaking()) {
+			_townEncounter.phase = TownEncounter::kConversation;
+			say(0, 2, false, 1);
+			say(0, 3);
+			say(0, 4, false, 1);
+		}
+	} else if (_townEncounter.phase == TownEncounter::kConversation) {
+		if (!speaking()) {
+			_townEncounter.phase = TownEncounter::kDeparture;
+			_townEncounter.tick = _now;
+			_townEncounter.frame = 0;
+		}
+	} else {
+		_townEncounter.frame = MIN<uint>(44, frame);
+		if (frame >= 45) {
+			_townEncounter.phase = TownEncounter::kInactive;
+			_roomAction = 0;
+			_town.streetVisited = 1;
+			walkTo(Common::Point(125, 441), 7, true);
+			leaveTownRoom(6370);
+		}
+	}
+}
+
+void RunawayRoomScene::drawScene6220(Graphics::ManagedSurface &viewport) {
+	if (_townEncounter.phase == TownEncounter::kInactive) {
+		return;
+	}
+	const uint frame = _townEncounter.frame;
+	uint sushi, brian, shot;
+	if (_townEncounter.phase == TownEncounter::kRifle) {
+		sushi = frame;
+		shot = frame < 45 ? 59 : MIN<uint>(59, frame - 45);
+		brian = frame <= 45 ? 0 : MIN<uint>(33, frame - 45);
+	} else if (_townEncounter.phase == TownEncounter::kConversation) {
+		sushi = 113 + (speaker() ? speechFrame() : 0);
+		shot = 59;
+		brian = 33;
+	} else {
+		sushi = 125 + frame;
+		shot = 59;
+		brian = MIN<uint>(44, 33 + frame);
+	}
+	_npc.draw(viewport, sushi, _camera.x, -_camera.y);
+	_machine.draw(viewport, shot, _camera.x, -_camera.y);
+	_npcMouth.draw(viewport, brian, _camera.x, -_camera.y);
+}
+
+} // End of namespace Hollywood

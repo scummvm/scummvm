@@ -175,6 +175,9 @@ MODULE_OBJS = \
 	runaway/scene5140.o \
 	runaway/scene5160.o \
 	runaway/scene5170.o \
+	runaway/scene6220.o \
+	runaway/scene6350.o \
+	runaway/scene6370.o \
 	runaway/sequence.o \
 	runaway/speech.o \
 	runaway/strings.o \

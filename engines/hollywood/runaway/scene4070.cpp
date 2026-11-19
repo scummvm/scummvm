@@ -249,6 +249,8 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 		_museum.batteryRequested = 1;
 	if (_conversation == 4 && entry.disable == 2)
 		_desert.ventSeen = 1;
+	if (_conversation == 5)
+		sushiDialogueChoice(entry.disable);
 	if (_conversation == 2 && entry.disable == 10) {
 		_dialogue[10][3].player = 22;
 		_dialogue[10][3].response = 21;
@@ -297,7 +299,10 @@ void RunawayRoomScene::finishConversation() {
 	_choices.clear();
 	_choiceIndices.clear();
 	if (_afterConversation) {
-		deferMuseumAction(_afterConversation);
+		if (character == 5)
+			deferTownAction(_afterConversation);
+		else
+			deferMuseumAction(_afterConversation);
 		_afterConversation = 0;
 	} else if (character == 2) {
 		deferMuseumAction(409);

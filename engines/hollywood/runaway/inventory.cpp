@@ -40,6 +40,10 @@ const char *const kHospitalItemNames[] = {
 	"Pillows", "Syringe", "Blank medical chart", "Head", "Flammable spray can", "Vademecum"
 };
 
+const char *const kTownItemNames[] = {
+	"", "Wallet", "Car keys", "Receipt", "Piece of amber", "Crucifix"
+};
+
 const byte kItemCursors[] = {
 	0, 41, 43, 45, 47, 49, 51, 55, 57, 59, 61, 63, 65, 67, 69,
 	75, 79, 81, 83, 85, 87, 91, 93, 95, 103, 105, 111
@@ -98,6 +102,10 @@ void RunawayInventory::startChapter(byte chapter) {
 		for (uint i = 0; i < ARRAYSIZE(initial); ++i)
 			add(initial[i]);
 	}
+	if (chapter == 4) {
+		for (uint i = 1; i < ARRAYSIZE(kTownItemNames); ++i)
+			add(i);
+	}
 	_newItem = 0;
 }
 
@@ -131,6 +139,8 @@ void RunawayInventory::remove(byte item) {
 }
 
 Common::U32String RunawayInventory::name(byte item) const {
+	if (_chapter == 4)
+		return item < ARRAYSIZE(kTownItemNames) ? Common::U32String(kTownItemNames[item]) : Common::U32String();
 	if (_chapter == 1) {
 		if (item == 11 && _markerInk == 1)
 			return Common::U32String("Dry marker pen");
@@ -216,6 +226,8 @@ uint RunawayInventory::icon(byte item) const {
 }
 
 uint RunawayInventory::cursor(byte item) const {
+	if (_chapter == 4)
+		return item && item < ARRAYSIZE(kTownItemNames) ? 39 + item * 2 : 0;
 	if (_chapter == 1) {
 		if (item == 15 && _syringeFilled)
 			return 77;
@@ -252,6 +264,10 @@ uint RunawayInventory::cursor(byte item) const {
 }
 
 RunawayInventory::Reply RunawayInventory::examine(byte item) const {
+	if (_chapter == 4) {
+		const uint16 cues[] = {1, 50, 51, 74, 53, 200};
+		return Reply(item < ARRAYSIZE(cues) ? cues[item] : 1);
+	}
 	if (_chapter == 1) {
 		if (item == 11)
 			return Reply(60, _markerInk >= 2 ? 2 : _markerInk);

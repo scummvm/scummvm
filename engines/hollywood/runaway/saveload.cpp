@@ -202,6 +202,11 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(desertItems.gunReady, 7);
 	s.syncAsByte(desertItems.bombReady, 7);
 	s.syncAsByte(desertItems.helicopterReady, 7);
+	s.syncAsByte(town.arrived, 8);
+	s.syncAsByte(town.streetVisited, 8);
+	s.syncAsByte(town.strapSeen, 8);
+	s.syncAsByte(town.sushiMet, 8);
+	s.syncAsByte(town.mineMapKnown, 8);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -226,7 +231,7 @@ bool RunawaySaveState::valid() const {
 	if ((game == kRunawayCabinDemo || (game == kRunawayFullGame && scene >= 5030 && scene <= 5032)) &&
 			(scene < 5030 || scene > (game == kRunawayCabinDemo ? 5030 : 5032) || x >= 1376 || y >= 600 || camera > 352 || cameraY))
 		return false;
-	if (game == kRunawayFullGame && chapter() == 3 && (scene < 5030 || scene > 5032)) {
+	if (game == kRunawayFullGame && ((chapter() == 3 && (scene < 5030 || scene > 5032)) || chapter() == 4)) {
 		const RunawayRoom *room = findRunawayRoom(scene);
 		if (!room || x >= room->width || y >= room->height || camera > room->width - 1024 || cameraY > room->height - 600)
 			return false;
@@ -303,6 +308,8 @@ bool RunawaySaveState::valid() const {
 			return false;
 	}
 	bool owned[27] = {};
+	if (town.arrived > 1 || town.streetVisited > 1 || town.strapSeen > 1 || town.sushiMet > 1 || town.mineMapKnown > 1)
+		return false;
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
 				(chapter() != 3 && items[i] > 19))
@@ -317,7 +324,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 7)
+	if (version < 1 || version > 8)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -329,9 +336,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(7);
+	stream.writeUint16LE(8);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(7);
+	s.setVersion(8);
 	sync(s);
 	return !s.err();
 }

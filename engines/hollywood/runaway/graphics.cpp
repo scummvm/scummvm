@@ -401,7 +401,8 @@ void RunawayActor::draw(Graphics::ManagedSurface &surface, const RenderParams &p
 	if (params.roomWidth <= 0 || mask.size() % params.roomWidth || maps.size() != 1536)
 		return;
 	const int roomHeight = mask.size() / params.roomWidth;
-	const int scale = CLIP<int>((int)(params.height * 256 / 455), 64, 256);
+	// Douglasville's distant street positions shrink Brian below quarter size.
+	const int scale = CLIP<int>((int)(params.height * 256 / 455), 1, 256);
 	const int roomTop = kRunawayViewportTop - params.camera.y;
 	const int originX = params.position.x - params.camera.x - _anchorX * scale / 256;
 	const int originY = params.position.y + roomTop - _anchorY * scale / 256;

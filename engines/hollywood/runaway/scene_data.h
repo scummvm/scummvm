@@ -104,6 +104,9 @@ extern const RunawayRoom kRunawayScene5130;
 extern const RunawayRoom kRunawayScene5140;
 extern const RunawayRoom kRunawayScene5160;
 extern const RunawayRoom kRunawayScene5170;
+extern const RunawayRoom kRunawayScene6220;
+extern const RunawayRoom kRunawayScene6350;
+extern const RunawayRoom kRunawayScene6370;
 
 const RunawayRoom *findRunawayRoom(uint16 number);
 

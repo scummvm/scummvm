@@ -84,6 +84,11 @@ struct RunawaySaveState {
 		byte gunReady = 0, bombReady = 0, helicopterReady = 0;
 	} desertItems;
 
+	struct Town {
+		byte arrived = 0, streetVisited = 0, strapSeen = 0;
+		byte sushiMet = 0, mineMapKnown = 0;
+	} town;
+
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;
 	byte coolerMoved = 0, coolerInspected = 0, peeked = 0, ice = 0, hatch = 0;

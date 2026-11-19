@@ -77,7 +77,7 @@ public:
 		int roomWidth = 0;
 		float height = 455;
 		// A depth layer hides the actor until his feet pass its Y threshold.
-		int16 depthY[7] = {0, 32767, 32767, 32767, 32767, 32767, 32767};
+		int16 depthY[10] = {0, 32767, 32767, 32767, 32767, 32767, 32767, 32767, 32767, 32767};
 		byte light[3] = {100, 100, 100};
 		bool antialias = true;
 	};

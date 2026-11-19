@@ -38,7 +38,8 @@ const RunawayRoom *const kRooms[] = {
 	&kRunawayScene4030, &kRunawayScene4050, &kRunawayScene4060, &kRunawayScene4070, &kRunawayScene4090, &kRunawayScene4100, &kRunawayScene4140,
 	&kRunawayScene5010, &kRunawayScene5020, &kRunawayScene5050, &kRunawayScene5060, &kRunawayScene5070,
 	&kRunawayScene5080, &kRunawayScene5100, &kRunawayScene5110, &kRunawayScene5130, &kRunawayScene5140,
-	&kRunawayScene5160, &kRunawayScene5170
+	&kRunawayScene5160, &kRunawayScene5170,
+	&kRunawayScene6220, &kRunawayScene6350, &kRunawayScene6370
 };
 
 const RunawayResponse kGlobalResponses[] = {
@@ -76,6 +77,8 @@ const RunawayRoom *findRoom(int number) {
 	else if (number == 5021 || number == 5022 || number == 5061 || number == 5062 ||
 			number == 5081 || number == 5101 || number == 5171)
 		number -= number % 10;
+	else if (number >= 6221 && number <= 6225)
+		number = 6220;
 	for (uint i = 0; i < ARRAYSIZE(kRooms); ++i) {
 		if (kRooms[i]->number == number)
 			return kRooms[i];
@@ -113,6 +116,12 @@ bool RunawayRoomScene::load(uint16 entryScene) {
 void RunawayRoomScene::start(uint32 now) {
 	_now = _lastUpdate = now;
 	_idleHead.reset(now);
+	if (townChapter()) {
+		_inventory.startChapter(4);
+		_entering = true;
+		resumeTown();
+		return;
+	}
 	if (desertChapter()) {
 		startDesert();
 		return;
@@ -134,6 +143,10 @@ void RunawayRoomScene::start(uint32 now) {
 }
 
 void RunawayRoomScene::resume() {
+	if (townChapter()) {
+		resumeTown();
+		return;
+	}
 	if (desertChapter()) {
 		resumeDesert();
 		return;
@@ -193,6 +206,7 @@ void RunawayRoomScene::captureState(RunawaySaveState &state) const {
 	state.hospital = _hospital;
 	state.museum = _museum;
 	state.desert = _desert;
+	state.town = _town;
 	state.randomSeed = _random.getSeed();
 }
 
@@ -202,6 +216,7 @@ bool RunawayRoomScene::restoreState(const RunawaySaveState &state, uint32 now, b
 	_hospital = state.hospital;
 	_museum = state.museum;
 	_desert = state.desert;
+	_town = state.town;
 	_entering = entering;
 	_upperFloor = state.upperFloor;
 	_books = (ObjectState)state.books;
@@ -243,7 +258,8 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	} else if (!loadRunawayMask(_archive, room->width, room->height, _mask, _originalMaps)) {
 		return false;
 	}
-	if (_game == kRunawayFullGame ? !_actor.loadChapter(number < 4000 ? 1 : number < 5000 ? 2 : 3, number != kMuseumHall) :
+	if (_game == kRunawayFullGame ? !_actor.loadChapter(number < 4000 ? 1 : number < 5000 ? 2 : number < 6000 ? 3 : 4,
+			number != kMuseumHall && number != 6350 && number != 6370) :
 			!_actor.load(number == kMuseumHall ? RunawayActor::kMuseumHall : RunawayActor::kMuseumInterior))
 		return false;
 	_room = number;
@@ -291,6 +307,12 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 		break;
 	case kMuseumKeypad:
 		loaded = loadScene4140();
+		break;
+	case 6220:
+		loaded = _npc.load(_archive, 7, 170) && _npcMouth.load(_archive, 8, 45) && _machine.load(_archive, 9, 60);
+		break;
+	case 6370:
+		loaded = _npc.load(_archive, 4, 88) && _ambient.load(_archive, 5, 20);
 		break;
 	default:
 		break;
@@ -351,6 +373,8 @@ bool RunawayRoomScene::rebuildBackground() {
 		return applyBackground4090();
 	case kMuseumSecurity:
 		return applyBackground4100();
+	case 6350:
+		return !_town.arrived || (applyPatch(5) && applyPatch(7));
 	default:
 		return true;
 	}
@@ -358,6 +382,22 @@ bool RunawayRoomScene::rebuildBackground() {
 
 void RunawayRoomScene::updateMaps() {
 	_maps = _originalMaps;
+	if (_room == 6220) {
+		for (uint i = 0; i < 256; ++i) {
+			// The balcony shares this mask but is reached through Kevin's room.
+			if (_maps[i] < 2 || _maps[i] > 4)
+				_maps[i] = 0;
+		}
+		return;
+	}
+	if (_room == 6350) {
+		for (uint i = 0; i < 256; ++i) {
+			// The route to the Hopi village has not been discovered yet.
+			if (_maps[256 + i] == 5)
+				_maps[256 + i] = 0;
+		}
+		return;
+	}
 	if (desertChapter()) {
 		updateDesertMaps();
 		return;
@@ -410,6 +450,10 @@ byte RunawayRoomScene::hotspotAt(Common::Point mouse) const {
 Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 	if (desertChapter())
 		return desertHotspotName(id);
+	if (_room == 6350 && id == 2 && _town.arrived)
+		return Common::U32String("Douglasville");
+	if (_room == 6220 && id == 8 && _town.strapSeen)
+		return Common::U32String("Strap");
 	const RunawayHotspot *spot = hotspot(id);
 	if (!spot)
 		return Common::U32String();
@@ -491,6 +535,8 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 		_pendingHotspot = id;
 		_pendingAction = spot->action[index];
 		bool approach = spot->approach[index] != 0;
+		if (_room == 6220 && id == 8 && index && _town.strapSeen)
+			approach = true;
 		if (_room == kHospitalBathroom && id == 4 && !index && _hospital.alcohol == 2)
 			approach = false;
 		if (item) {
@@ -517,7 +563,7 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 			arrive();
 		}
 	} else {
-		if (_room != 5010)
+		if (_room != 5010 && _room != 6350)
 			walkTo(Common::Point(mouse.x + _camera.x, mouse.y - kRunawayViewportTop + _camera.y));
 	}
 }
@@ -556,7 +602,7 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 	_walkPath.clear();
 	_pendingHotspot = 0;
 	_caption.clear();
-	if (_game == kRunawayFullGame && !desertChapter() &&
+	if (_game == kRunawayFullGame && !desertChapter() && !townChapter() &&
 			(museumChapter() ? sayMuseumInventory(reply) : sayHospitalInventory(reply)))
 		return;
 	say(reply.cue, reply.variation, true);
@@ -617,6 +663,15 @@ void RunawayRoomScene::execute(uint16 action) {
 		break;
 	case kMuseumSecurity:
 		result = execute4100(action);
+		break;
+	case 6220:
+		result = execute6220(action);
+		break;
+	case 6350:
+		result = execute6350(action);
+		break;
+	case 6370:
+		result = execute6370(action);
 		break;
 	default:
 		break;
@@ -696,6 +751,10 @@ float RunawayRoomScene::actorHeight() const {
 		return actorHeight4090();
 	case kMuseumSecurity:
 		return actorHeight4100();
+	case 6220:
+		return _position.y * 0.194835678f - 11.706573f;
+	case 6370:
+		return _position.y * 0.634920657f - 221.190475f;
 	default:
 		return 455;
 	}
@@ -708,7 +767,9 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	if (_sequence.active()) {
 		_sequence.update(now);
 		if (!_sequence.active()) {
-			if (museumChapter())
+			if (townChapter())
+				finishTownFilm();
+			else if (museumChapter())
 				finishMuseumFilm();
 			else if (_room == 5140)
 				updateScene5140();
@@ -727,7 +788,11 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 		update2020();
 	else if (_room == kHospitalBathroom)
 		update2080();
-	if (desertChapter()) {
+	if (townChapter()) {
+		updateTown();
+		if (_sequence.active() || _transition.scene)
+			return;
+	} else if (desertChapter()) {
 		updateDesert(elapsed, inventoryOpen);
 		if (_sequence.active() || _transition.scene)
 			return;
@@ -750,7 +815,7 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 		_actor.setFrame(_facing, 0, speaking() && !speaker() ? speechFrame() : -1);
 		return;
 	}
-	if (inventoryOpen || _room == kMuseumKeypad || _room == 5010 || _room == 5140)
+	if (inventoryOpen || _room == kMuseumKeypad || _room == 5010 || _room == 5140 || _room == 6350)
 		return;
 	if (_walkPath.active() && !speaking()) {
 		_walkPath.advance(elapsed * 0.18f * actorHeight() / 455, _position, _facing);
@@ -796,6 +861,8 @@ void RunawayRoomScene::draw() {
 		drawScene5140(viewport);
 		return;
 	}
+	if (_room == 6350)
+		return;
 	if (_room == 5010) {
 		drawDesertRoom(viewport, false);
 		return;
@@ -804,7 +871,11 @@ void RunawayRoomScene::draw() {
 		drawScene4140(viewport);
 		return;
 	}
-	if (desertChapter()) {
+	if (_room == 6220) {
+		drawScene6220(viewport);
+	} else if (_room == 6370) {
+		drawScene6370(viewport);
+	} else if (desertChapter()) {
 		drawDesertRoom(viewport, false);
 	} else if (_room == kMuseumWilly) {
 		drawScene4070(viewport);
@@ -822,7 +893,9 @@ void RunawayRoomScene::draw() {
 		_overlay.draw(viewport, 0, _camera.x, -_camera.y);
 	}
 	RunawayActor::RenderParams params;
-	memset(params.depthY, 0, sizeof(params.depthY));
+	// Earlier rooms use six depth layers; Douglasville also uses layers 7..9.
+	for (uint i = 0; i < 7; ++i)
+		params.depthY[i] = 0;
 	if (desertChapter())
 		setupDesertDepth(params);
 	switch (_room) {
@@ -835,6 +908,25 @@ void RunawayRoomScene::draw() {
 	case kMuseumSecurity:
 		setupDepth4100(params);
 		break;
+	case 6220:
+		params.depthY[1] = 263;
+		params.depthY[2] = 195;
+		params.depthY[3] = 490;
+		params.depthY[4] = 396;
+		params.depthY[5] = 227;
+		params.depthY[6] = 247;
+		params.depthY[7] = 599;
+		params.depthY[8] = 322;
+		params.depthY[9] = 599;
+		break;
+	case 6370:
+		params.depthY[1] = 800;
+		params.depthY[2] = 646;
+		params.depthY[3] = 400;
+		params.depthY[4] = 800;
+		params.depthY[5] = 645;
+		params.depthY[6] = 684;
+		break;
 	default:
 		break;
 	}
@@ -846,7 +938,8 @@ void RunawayRoomScene::draw() {
 	const byte light = MIN<byte>(9, _maps[768 + _mask[_position.y * _background.w + _position.x]]);
 	memcpy(params.light, findRoom(_room)->light[light], sizeof(params.light));
 	const bool roomAnimation = drawingRoomAnimation();
-	if ((!roomAnimation || !_actionHidesActor) && (_room != kHospitalBathroom || (_roomAction != 302 && _roomAction != 307)))
+	if ((!roomAnimation || !_actionHidesActor) && _townEncounter.phase == TownEncounter::kInactive &&
+			(_room != kHospitalBathroom || (_roomAction != 302 && _roomAction != 307)))
 		_actor.draw(_screen, params, _mask, _maps);
 	if (roomAnimation) {
 		_actionAnimation.draw(viewport, _actionFrames[MIN<uint>(_actionStep, _actionFrames.size() - 1)], _camera.x, -_camera.y);
@@ -934,7 +1027,9 @@ void RunawayRoomScene::updateRoomAnimation() {
 			const uint16 action = _roomAction;
 			_roomAction = 0;
 			_actionFrames.clear();
-			if (desertChapter())
+			if (townChapter())
+				execute(action + 1000);
+			else if (desertChapter())
 				finishDesertAnimation(action);
 			else if (museumChapter())
 				finishMuseumAnimation(action);
@@ -948,6 +1043,11 @@ void RunawayRoomScene::updateRoomAnimation() {
 		}
 		if (museumChapter()) {
 			museumAnimationFrame();
+			continue;
+		}
+		if (townChapter()) {
+			if (_room == 6370 && _roomAction == 401 && _actionStep == 24)
+				_audio.playEffect(12);
 			continue;
 		}
 		if ((_roomAction == 335 && _actionStep == 15) || (_roomAction == 339 && _actionStep == 47))

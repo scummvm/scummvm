@@ -220,11 +220,20 @@ void RunawayOpening::enter(Step step, uint32 now) {
 			_chapter == 3 && _chapterVariation == 2 ? 50 : 20;
 		_headBank = _chapter == 2 && _chapterVariation ? 4 : _chapter == 3 && !_chapterVariation ? 5 :
 			_chapter == 3 && _chapterVariation == 2 ? 2 : 1;
+		if (_chapter == 4) {
+			const byte poses[] = {109, 20, 177, 20};
+			const byte heads[] = {3, 1, 5, 1};
+			_bodyFrame = poses[_chapterVariation];
+			_headBank = heads[_chapterVariation];
+		}
 		speak(_chapter, _chapterVariation);
 		break;
 	case kChapterGesture:
 		_headBank = 0;
-		if (_chapter == 2) {
+		if (_chapter == 4) {
+			_firstFrame = _chapterVariation == 1 ? 110 : _chapterVariation == 2 ? 161 : 177;
+			_lastFrame = _chapterVariation == 1 ? 127 : _chapterVariation == 2 ? 177 : 161;
+		} else if (_chapter == 2) {
 			_firstFrame = 128;
 			_lastFrame = 160;
 		} else if (_chapterVariation == 1) {
@@ -250,7 +259,7 @@ void RunawayOpening::enter(Step step, uint32 now) {
 
 void RunawayOpening::advance() {
 	if (_step == kChapter) {
-		const uint variations = _chapter == 2 ? 2 : _chapter == 3 ? 5 : 1;
+		const uint variations = _chapter == 2 ? 2 : _chapter == 3 ? 5 : _chapter == 4 ? 4 : 1;
 		if (++_chapterVariation < variations)
 			enter(_chapterVariation < 4 ? kChapterGesture : kChapter, _now);
 		else
@@ -551,7 +560,7 @@ void RunawayOpening::draw(Graphics::ManagedSurface &screen) {
 	const uint elapsed = _now - _started;
 	if ((_step == kSitDown || _step == kCity || (_step == kChapter && !_chapterVariation)) && elapsed < 500)
 		dimRunawayViewport(screen, elapsed * 2);
-	else if ((_step == kLastNarration || (_step == kChapter && _chapterVariation + 1 == (_chapter == 2 ? 2 : _chapter == 3 ? 5 : 1))) && _events)
+	else if ((_step == kLastNarration || (_step == kChapter && _chapterVariation + 1 == (_chapter == 2 ? 2 : _chapter == 3 ? 5 : _chapter == 4 ? 4 : 1))) && _events)
 		dimRunawayViewport(screen, MIN<uint>(500, _deadline - _now) * 2);
 	else if (_step == kCityExit && elapsed > 3280)
 		dimRunawayViewport(screen, (3780 - MIN<uint>(3780, elapsed)) * 2);
