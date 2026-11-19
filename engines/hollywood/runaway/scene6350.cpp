@@ -19,11 +19,10 @@
  *
  */
 
-
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6350.h"
 
 namespace Hollywood {
 namespace {
@@ -45,180 +44,75 @@ const RunawayRoom kRunawayScene6350 = {
 	Common::Point(512, 500), nullptr, 0, nullptr, 0, nullptr, 0
 };
 
-void RunawayRoomScene::resumeTown() {
-	prepareCustomGameplayLoop();
-	if (!_entering) {
-		resumeAmbientAudio(false);
-		return;
+namespace Runaway {
+
+Scene6350::Scene6350(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6350::usesAlternateActor() const {
+	return false;
+}
+
+bool Scene6350::applyCustomBackgroundPatches() {
+	return !_town.arrived || (applyPatch(5) && applyPatch(7));
+}
+
+void Scene6350::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		// The route to the Hopi village has not been discovered yet.
+		if (_maps[256 + i] == 5) {
+			_maps[256 + i] = 0;
+		}
 	}
-	_entering = false;
-	if (_room == 6350 && !_town.arrived) {
+}
+
+void Scene6350::resume() {
+	if (_entering && !_town.arrived) {
+		_entering = false;
 		startTownFilm(1);
 		return;
 	}
+	RunawayRoomScene::resume();
+}
+
+void Scene6350::finishCustomFilm() {
+	if (_townFilm == 1) {
+		startTownFilm(2);
+		return;
+	}
+	_townFilm = 0;
 	_town.arrived = 1;
-	resumeAmbientAudio(true);
-	runCustomEntrySequence();
+	if (!rebuildBackground()) {
+		error("Cannot update Runaway chapter 4 map");
+	}
+	_audio.playMusic(11);
+	say(0);
+	leaveTownRoom(6220);
 }
 
-void RunawayRoomScene::prepareCustomGameplayLoop() {
-	_oscarTick = _now;
-	_saloonDoorTick = _now;
-	_saloonDoorFrame = _position.x > 726 ? 7 : 0;
-	if (_room == 6263) {
-		resume6263();
-	}
+bool Scene6350::drawCustomComposite(Graphics::ManagedSurface &viewport) {
+	return true;
 }
 
-void RunawayRoomScene::resumeAmbientAudio(bool entering) {
-	if (!entering) {
-		if (!_audio.musicPlaying()) {
-			_audio.playMusic(_room == 6200 || _room == 6210 ? 18 : 11);
-			if (_room == 6200 || _room == 6210) {
-				_audio.setMusicVolume(191);
-			}
-		}
-		return;
-	}
-	if (_room == 6200 || _room == 6210) {
-		if (_entryScene == 6200 || !_audio.musicPlaying()) {
-			_audio.playMusic(18);
-		}
-		_audio.setMusicVolume(191);
-	} else if (_entryScene == 6223) {
-		_audio.playMusic(12 + _random.getRandomNumber(4));
-	} else if (!_audio.musicPlaying()) {
-		_audio.playMusic(11);
-	}
+bool Scene6350::shouldUpdateActor() const {
+	return false;
 }
 
-void RunawayRoomScene::runCustomEntrySequence() {
-	if (_room == 6014) {
-		execute6014(400);
-	} else if (_room == 6080) {
-		start6080();
-	} else if (_room == 6090) {
-		start6090();
-	} else if (_room == 6130) {
-		start6130();
-	} else if (_room == 6180) {
-		start6180();
-	} else if (_room == 6190) {
-		start6190();
-	} else if (_room == 6200) {
-		start6200();
-	} else if (_room == 6210) {
-		start6210();
-	} else if (_room == 6220) {
-		start6220();
-	} else if (_room == 6240) {
-		start6240();
-	} else if (_room == 6260) {
-		start6260();
-	} else if (_room == 6370) {
-		_town.streetVisited = 1;
-		start6370();
+Common::U32String Scene6350::hotspotName(byte id) const {
+	if (id == 2 && _town.arrived) {
+		return Common::U32String("Douglasville");
 	}
+	if (id == 3 && _town.houseVisited) {
+		return Common::U32String("Mama Dorita's house");
+	}
+	return RunawayRoomScene::hotspotName(id);
 }
 
-void RunawayRoomScene::advanceCustomGameplayLoop(uint32 delta) {
-	if (_room == 6180) {
-		update6180();
-	}
-	if (_room == 6090 || _room == 6130) {
-		updateOscar();
-	}
-	if (_room == 6263) {
-		update6263();
-	}
+bool Scene6350::shouldPlayGameplayClickPath() const {
+	return false;
 }
 
-void RunawayRoomScene::updateTown(uint32 delta) {
-	advanceCustomGameplayLoop(delta);
-	if (_townEncounter.phase != TownEncounter::kInactive) {
-		update6220();
-		return;
-	}
-	updateRoomAnimation();
-	updateConversation();
-	if (_roomAction && _actionFrames.empty() && !speaking() && !_walkPath.active()) {
-		const uint16 action = _roomAction;
-		_roomAction = 0;
-		execute(action);
-	}
-	if (_hospitalExit.scene && !speaking() && !_roomAction && !_walkPath.active()) {
-		_transition = _hospitalExit;
-	}
-}
-
-void RunawayRoomScene::walkTown(Common::Point target) {
-	if (!_pendingHotspot) {
-		// Clicks stay on the ground; hotspot approaches may use the reserved zones.
-		target.x = CLIP<int>(target.x, 0, _room == 6080 ? 1152 : _background.w - 1);
-		target.y = CLIP<int>(target.y, 0, _background.h - 1);
-		if (_room == 6180) {
-			if (_originalMaps[_mask[target.y * _background.w + target.x]] == 3) {
-				_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
-				return;
-			}
-			target.x = CLIP<int>(target.x, 202, 679);
-		} else if (_room == 6240) {
-			target.x = MIN<int>(target.x, 1510);
-		}
-		while (target.y < _background.h - 1 && !_maps[_mask[target.y * _background.w + target.x]]) {
-			++target.y;
-		}
-		while (target.y > 0 && !_maps[_mask[target.y * _background.w + target.x]]) {
-			--target.y;
-		}
-	}
-	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
-}
-
-void RunawayRoomScene::deferTownAction(uint16 action) {
-	_roomAction = action;
-	_actionFrames.clear();
-}
-
-void RunawayRoomScene::townAnimationFrame() {
-	if (_room == 6220 && _roomAction == 417 && _actionStep == 22) {
-		_audio.playEffect(17);
-	} else if (_room == 6240 && _roomAction == 304 && (_actionStep == 11 || _actionStep == 18)) {
-		_audio.playFootstep(3, _random.getRandomBit());
-	}
-	if (_room == 6080) {
-		mineAnimationFrame();
-		return;
-	}
-	if (_room == 6260 || _room == 6263) {
-		locomotiveAnimationFrame();
-		return;
-	}
-	if (_room == 6200 && _roomAction == 314) {
-		if (_actionStep == 13) {
-			_audio.playEffect(58);
-		} else if (_actionStep == 22) {
-			_audio.playEffect(59);
-		}
-	} else if (_room == 6210 && _roomAction == 410 && _actionStep == 8) {
-		_audio.playEffect(61, 204);
-	} else if (_room == 6370 && _roomAction == 401 && _actionStep == 24) {
-		_audio.playEffect(12);
-	}
-}
-
-void RunawayRoomScene::leaveTownRoom(uint16 scene) {
-	const RunawayRoom *room = findRunawayRoom(scene);
-	if (!room) {
-		warning("Runaway: scene %u is not implemented yet", scene);
-		return;
-	}
-	_hospitalExit.scene = scene;
-	_hospitalExit.position = room->entry;
-	_hospitalExit.facing = 3;
-}
-
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6350(uint16 action) {
+RunawayRoomScene::ActionResult Scene6350::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 1: // Looking at the overview does not start a speech.
 		break;
@@ -243,11 +137,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6350(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::startTownFilm(byte film) {
+void Scene6350::startTownFilm(byte film) {
 	typedef RunawaySequence S;
 	_townFilm = film;
 	const bool gog = Common::File::exists("DATAVC00.000");
-	_filmCommands.clear();
+	_townFilmCommands.clear();
 	// GOG moved the animated portraits out of the main films, changing the
 	// frame numbers after each conversation. Keep both releases' cue points.
 	if (film == 1) {
@@ -299,7 +193,7 @@ void RunawayRoomScene::startTownFilm(byte film) {
 			{S::kEnd}
 		};
 		for (uint i = 0; i < ARRAYSIZE(commands); ++i)
-			_filmCommands.push_back(commands[i]);
+			_townFilmCommands.push_back(commands[i]);
 	} else {
 		const S::Command commands[] = {
 			{S::kOpen, 2},
@@ -354,24 +248,10 @@ void RunawayRoomScene::startTownFilm(byte film) {
 			{S::kEnd}
 		};
 		for (uint i = 0; i < ARRAYSIZE(commands); ++i)
-			_filmCommands.push_back(commands[i]);
+			_townFilmCommands.push_back(commands[i]);
 	}
-	_sequence.start(_filmCommands.data(), _text, _now, 'F');
+	_sequence.start(_townFilmCommands.data(), _text, _now, 'F');
 }
 
-void RunawayRoomScene::finishTownFilm() {
-	if (_townFilm == 1) {
-		startTownFilm(2);
-		return;
-	}
-	_townFilm = 0;
-	_town.arrived = 1;
-	if (!rebuildBackground()) {
-		error("Cannot update Runaway chapter 4 map");
-	}
-	_audio.playMusic(11);
-	say(0);
-	leaveTownRoom(6220);
-}
-
+} // End of namespace Runaway
 } // End of namespace Hollywood

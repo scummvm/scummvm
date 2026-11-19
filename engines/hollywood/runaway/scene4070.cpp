@@ -207,7 +207,7 @@ void RunawayRoomScene::buildDialogueChoices() {
 	for (uint i = 0; i < 8; ++i) {
 		if (!_dialogue[page][i].enabled)
 			continue;
-		const SceneSpeechCue cue = _text.stageCue(_conversation == 6 ? 81 : 80, _dialogue[page][i].player);
+		const SceneSpeechCue cue = _text.stageCue(dialoguePlayerCue(), _dialogue[page][i].player);
 		const Common::U32String text(_text.largeTextRecord(cue.textRecordId), Common::kDos850);
 		if (!text.empty()) {
 			_choices.push_back(text);
@@ -233,14 +233,14 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 	DialogueChoice &entry = _dialogue[page][index];
 	_choices.clear();
 	_choiceIndices.clear();
-	say(_conversation == 6 ? 81 : 80, entry.player);
+	say(dialoguePlayerCue(), entry.player);
 	if (_conversation == 2 && _museum.willyMet == 1) {
 		_dialogueEnding = true;
 		_afterConversation = 408;
 		return;
 	}
 	if (entry.response != 255)
-		say(_conversation == 6 ? 91 : 90, entry.response, false, 1);
+		say(dialogueResponseCue(), entry.response, false, 1);
 	if (_conversation == 3)
 		_computerReject = true;
 	if (entry.disable)
@@ -272,14 +272,6 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 		break;
 	default:
 		break;
-	}
-}
-
-void RunawayRoomScene::handleCustomDialogueChoice(byte effect) {
-	if (_conversation == 5) {
-		sushiDialogueChoice(effect);
-	} else if (_conversation == 6) {
-		oscarDialogueChoice(effect);
 	}
 }
 

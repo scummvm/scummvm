@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6210.h"
 
 namespace Hollywood {
 namespace {
@@ -56,13 +55,42 @@ const RunawayRoom kRunawayScene6210 = {
 	kResponses, ARRAYSIZE(kResponses), nullptr, 0, nullptr, 0
 };
 
-void RunawayRoomScene::start6210() {
+namespace Runaway {
+
+Scene6210::Scene6210(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+void Scene6210::resumeAmbientAudio(bool entering) {
+	if (!_audio.musicPlaying()) {
+		_audio.playMusic(18);
+		_audio.setMusicVolume(191);
+	} else if (entering) {
+		_audio.setMusicVolume(191);
+	}
+}
+
+void Scene6210::runCustomEntrySequence() {
 	_facing = 0;
 	_town.cellOpen = _town.bodySeen = 1;
 	_town.cellRefusals = 0;
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6210(uint16 action) {
+float Scene6210::actorHeight() const {
+	return _position.y * 0.413793117f + 229.482758f;
+}
+
+void Scene6210::setupActorDepth(RunawayActor::RenderParams &params) const {
+	params.depthY[1] = 599;
+}
+
+bool Scene6210::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+	if (!item && !use && ((id == 5 && _town.bucketSeen) || (id == 8 && _town.bottleSeen))) {
+		return false;
+	}
+	return approach;
+}
+
+RunawayRoomScene::ActionResult Scene6210::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Return to the sheriff's office.
 		leaveTownRoom(6201);
@@ -88,7 +116,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6210(uint16 action) {
 				deferTownAction(411);
 			}
 		} else if (_town.oscarTobacco && !_town.linimentTaken) {
-			execute6210(411);
+			dispatchCustomSceneAction(411);
 		} else {
 			say(3, 2);
 			holdRoomAnimation(412, 4, 28, 16);
@@ -119,11 +147,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6210(uint16 action) {
 			walkTo(Common::Point(757, 508), 4, true);
 			deferTownAction(408);
 		} else {
-			execute6210(310);
+			dispatchCustomSceneAction(310);
 		}
 		break;
 	case 408:
-		execute6210(307);
+		dispatchCustomSceneAction(307);
 		deferTownAction(310);
 		break;
 	case 310: // Refuse to take the plate.
@@ -146,4 +174,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6210(uint16 action) {
 	return kHandled;
 }
 
+void Scene6210::handleAnimationFrameHook() {
+	if (_roomAction == 410 && _actionStep == 8) {
+		_audio.playEffect(61, 204);
+	}
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

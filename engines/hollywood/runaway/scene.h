@@ -126,16 +126,35 @@ protected:
 	virtual bool loadBackground();
 	virtual bool applyCustomBackgroundPatches();
 	virtual void applyCustomHotspotState();
-	virtual void prepareCustomGameplayLoop();
-	virtual void runCustomEntrySequence();
-	virtual void advanceCustomGameplayLoop(uint32 delta);
+	virtual void prepareCustomGameplayLoop() {}
+	virtual void runCustomEntrySequence() {}
+	virtual void advanceCustomGameplayLoop(uint32 delta) {}
 	virtual void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport);
 	virtual void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport);
 	virtual ActionResult dispatchCustomSceneAction(uint16 action);
-	virtual void handleCustomDialogueChoice(byte effect);
+	virtual void handleCustomDialogueChoice(byte effect) {}
 	virtual void resumeAmbientAudio(bool entering);
 	virtual void findWalkPath(Common::Point target);
 	virtual int sceneViewportYOffset() const;
+
+	virtual uint sceneResourceNumber() const { return (_room % 1000) / 10; }
+	virtual uint sceneTextNumber() const { return _room == kMuseumWilly ? 406 : _room / 10; }
+	virtual bool loadWalkMap();
+	virtual bool usesAlternateActor() const { return _room != kMuseumHall; }
+	virtual void setupActorDepth(RunawayActor::RenderParams &params) const;
+	virtual bool drawCustomComposite(Graphics::ManagedSurface &viewport) { return false; }
+	virtual bool shouldDrawActor() const { return true; }
+	virtual bool shouldUpdateActor() const { return _room != kMuseumKeypad && _room != 5010 && _room != 5140; }
+	virtual bool shouldPlayGameplayClickPath() const { return _room != 5010; }
+	virtual bool shouldApproachHotspot(byte id, bool use, byte item, bool approach) const { return approach; }
+	// Accept the adjusted target without the shared floor-mask adjustment.
+	virtual bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const { return false; }
+	// Return true when a scene sequence owns this frame's action updates.
+	virtual bool updateCustomSequence() { return false; }
+	virtual void handleAnimationFrameHook() {}
+	virtual void finishCustomFilm() {}
+	virtual uint16 dialoguePlayerCue() const { return 80; }
+	virtual uint16 dialogueResponseCue() const { return 90; }
 
 	bool enterRoom(uint16 room, Common::Point position, byte facing);
 	bool loadForeground(uint layer, uint chunk, bool pixels = false);
@@ -309,62 +328,6 @@ protected:
 	void leaveTownRoom(uint16 scene);
 	void deferTownAction(uint16 action);
 	void walkTown(Common::Point target);
-	void startTownFilm(byte film);
-	void finishTownFilm();
-	ActionResult execute6014(uint16 action);
-	void drawScene6014(Graphics::ManagedSurface &viewport);
-	void start6080();
-	ActionResult execute6080(uint16 action);
-	void updateMaps6080();
-	void drawScene6080(Graphics::ManagedSurface &viewport, bool foreground);
-	void mineAnimationFrame();
-	void start6090();
-	ActionResult execute6090(uint16 action);
-	void drawScene6090(Graphics::ManagedSurface &viewport, bool foreground);
-	void startOscarConversation();
-	void oscarDialogueChoice(byte effect);
-	void updateOscar();
-	uint oscarFrame() const;
-	void start6130();
-	ActionResult execute6130(uint16 action);
-	void start6180();
-	void update6180();
-	ActionResult execute6180(uint16 action);
-	void drawScene6180(Graphics::ManagedSurface &viewport, bool foreground);
-	void start6190();
-	ActionResult execute6190(uint16 action);
-	bool applyBackground6190();
-	void updateMaps6190();
-	void start6200();
-	ActionResult execute6200(uint16 action);
-	void updateMaps6200();
-	void drawScene6200(Graphics::ManagedSurface &viewport);
-	void start6210();
-	ActionResult execute6210(uint16 action);
-	void townAnimationFrame();
-	void start6240();
-	ActionResult execute6240(uint16 action);
-	void drawForeground6240(Graphics::ManagedSurface &viewport);
-	void start6260();
-	ActionResult execute6260(uint16 action);
-	bool applyBackground6260();
-	void updateMaps6260();
-	bool loadScene6263();
-	void resume6263();
-	void update6263();
-	void drawScene6263(Graphics::ManagedSurface &viewport);
-	ActionResult execute6263(uint16 action);
-	void locomotiveAnimationFrame();
-	ActionResult execute6350(uint16 action);
-	ActionResult execute6220(uint16 action);
-	void start6220();
-	void update6220();
-	void drawScene6220(Graphics::ManagedSurface &viewport);
-	void start6370();
-	ActionResult execute6370(uint16 action);
-	void drawScene6370(Graphics::ManagedSurface &viewport);
-	void startSushiConversation(bool introduction);
-	void sushiDialogueChoice(byte effect);
 
 	RunawayAudio &_audio;
 	RunawaySequence _sequence;
@@ -411,22 +374,6 @@ protected:
 	RunawaySaveState::Museum _museum;
 	RunawaySaveState::Desert _desert;
 	RunawaySaveState::Town _town;
-	uint16 _oscarStep = 130;
-	byte _oscarIdle = 3;
-	uint32 _oscarTick = 0;
-	bool _oscarTalking = false, _mineOscarPresent = false;
-	Common::Array<byte> _saloonPatches[3];
-	byte _saloonDoorFrame = 0;
-	uint32 _saloonDoorTick = 0;
-	RunawayAnimation _locomotiveGauges[4];
-	byte _locomotiveGaugeFrames[4] = {};
-	byte _townFilm = 0;
-	struct TownEncounter {
-		enum Phase { kInactive, kRifle, kConversation, kDeparture };
-		Phase phase = kInactive;
-		uint32 tick = 0;
-		uint frame = 0;
-	} _townEncounter;
 	Common::Array<RunawayHotspot> _desertHotspots;
 	RunawayAnimation _desertAnimations[6];
 	byte _hangarShot = 0, _hangarShotCount = 0, _hangarShotFrame = 88;

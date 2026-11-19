@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6130.h"
 
 namespace Hollywood {
 namespace {
@@ -50,7 +49,32 @@ const RunawayRoom kRunawayScene6130 = {
 	kResponses, ARRAYSIZE(kResponses), nullptr, 0, nullptr, 0
 };
 
-void RunawayRoomScene::start6130() {
+namespace Runaway {
+
+Scene6130::Scene6130(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game), _oscar(false) {}
+
+bool Scene6130::loadCustomResources() {
+	return _oscarAnimation.load(_archive, 6, 106);
+}
+
+bool Scene6130::applyCustomBackgroundPatches() {
+	return (_town.stone != 2 || applyPatch(4)) && (_town.vessel != 2 || applyPatch(5));
+}
+
+void Scene6130::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		if (_maps[256 + i] == 4 && _town.stone == 2) {
+			_maps[256 + i] = 0;
+		}
+	}
+}
+
+void Scene6130::prepareCustomGameplayLoop() {
+	_oscar.resume(_now);
+}
+
+void Scene6130::runCustomEntrySequence() {
 	if (_entryScene == 6131) {
 		_position = Common::Point(401, 375);
 		_walkPath.reset(_position);
@@ -64,7 +88,31 @@ void RunawayRoomScene::start6130() {
 	}
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6130(uint16 action) {
+void Scene6130::advanceCustomGameplayLoop(uint32 delta) {
+	_oscar.update(_now, _random, _audio);
+}
+
+void Scene6130::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	_oscarAnimation.draw(viewport, _oscar.frame(speaker(), speechFrame()), _camera.x, -_camera.y);
+}
+
+float Scene6130::actorHeight() const {
+	return _position.y * 1.027668f - 160.57312f;
+}
+
+void Scene6130::setupActorDepth(RunawayActor::RenderParams &params) const {
+	params.depthY[1] = 480;
+	params.depthY[2] = 599;
+}
+
+bool Scene6130::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+	if (!item && id == 4 && !use && _town.stone) {
+		return false;
+	}
+	return approach;
+}
+
+RunawayRoomScene::ActionResult Scene6130::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 301: // Look toward Douglasville.
 		say(1, _town.streetVisited);
@@ -86,7 +134,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6130(uint16 action) {
 		break;
 	case 308: // Take the unusually shaped stone.
 		if (!_town.stone) {
-			execute6130(307);
+			dispatchCustomSceneAction(307);
 		}
 		say(6);
 		deferTownAction(408);
@@ -110,4 +158,5 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6130(uint16 action) {
 	return kHandled;
 }
 
+} // End of namespace Runaway
 } // End of namespace Hollywood

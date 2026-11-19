@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6014.h"
 
 namespace Hollywood {
 
@@ -31,7 +30,39 @@ const RunawayRoom kRunawayScene6014 = {
 	Common::Point(512, 500), nullptr, 0, nullptr, 0, nullptr, 0
 };
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6014(uint16 action) {
+namespace Runaway {
+
+Scene6014::Scene6014(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+uint Scene6014::sceneResourceNumber() const {
+	return 3;
+}
+
+uint Scene6014::sceneTextNumber() const {
+	return 608;
+}
+
+bool Scene6014::loadWalkMap() {
+	_mask.resize(1024 * 600, 0);
+	_originalMaps.resize(1536, 0);
+	return true;
+}
+
+void Scene6014::runCustomEntrySequence() {
+	dispatchCustomSceneAction(400);
+}
+
+bool Scene6014::drawCustomComposite(Graphics::ManagedSurface &viewport) {
+	if (drawingRoomAnimation()) {
+		const uint frame = _roomAction == 401 ? 29 + speechFrame() :
+			_actionFrames[MIN<uint>(_actionStep, _actionFrames.size() - 1)];
+		_actionAnimation.draw(viewport, frame, 0, 0);
+	}
+	return true;
+}
+
+RunawayRoomScene::ActionResult Scene6014::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 400: // Lean over the shaft.
 		beginRoomAnimationRange(400, 1, 41, 0, 29, true, 60);
@@ -52,12 +83,5 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6014(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::drawScene6014(Graphics::ManagedSurface &viewport) {
-	if (drawingRoomAnimation()) {
-		const uint frame = _roomAction == 401 ? 29 + speechFrame() :
-			_actionFrames[MIN<uint>(_actionStep, _actionFrames.size() - 1)];
-		_actionAnimation.draw(viewport, frame, 0, 0);
-	}
-}
-
+} // End of namespace Runaway
 } // End of namespace Hollywood

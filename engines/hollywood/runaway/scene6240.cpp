@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6240.h"
 
 namespace Hollywood {
 namespace {
@@ -63,7 +62,43 @@ const RunawayRoom kRunawayScene6240 = {
 	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
-void RunawayRoomScene::start6240() {
+namespace Runaway {
+
+Scene6240::Scene6240(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6240::usesAlternateActor() const {
+	return false;
+}
+
+bool Scene6240::loadCustomResources() {
+	if (!_plantAnimation.load(_archive, 4, 36)) {
+		return false;
+	}
+	for (uint i = 0; i < ARRAYSIZE(_plantPatches); ++i) {
+		if (!_archive.readVariableChunk(6 + i, _plantPatches[i])) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Scene6240::applyCustomBackgroundPatches() {
+	return !_town.flowerPotTaken || applyPatch(9);
+}
+
+void Scene6240::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		if (_maps[i] >= 6 && _maps[i] <= 8) {
+			_maps[i] = 0;
+		}
+		if (_maps[256 + i] == 3 && _town.flowerPotTaken) {
+			_maps[256 + i] = 0;
+		}
+	}
+}
+
+void Scene6240::runCustomEntrySequence() {
 	if (_entryScene == 6241) {
 		_position = Common::Point(782, 408);
 		_walkPath.reset(_position);
@@ -76,14 +111,48 @@ void RunawayRoomScene::start6240() {
 	}
 }
 
-void RunawayRoomScene::drawForeground6240(Graphics::ManagedSurface &viewport) {
-	// The original moves these plants within the room before applying the camera.
-	applyRunawayPatch(_saloonPatches[2], viewport, 0, 440 - _camera.x / 3 - _camera.x);
-	applyRunawayPatch(_saloonPatches[1], viewport, 0, 800 - _camera.x / 4 - _camera.x);
-	applyRunawayPatch(_saloonPatches[0], viewport, 0, 820 - _camera.x / 3 - _camera.x);
+void Scene6240::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	_plantAnimation.draw(viewport, 0, _camera.x, -_camera.y);
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6240(uint16 action) {
+void Scene6240::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	// The original moves these plants within the room before applying the camera.
+	applyRunawayPatch(_plantPatches[2], viewport, 0, 440 - _camera.x / 3 - _camera.x);
+	applyRunawayPatch(_plantPatches[1], viewport, 0, 800 - _camera.x / 4 - _camera.x);
+	applyRunawayPatch(_plantPatches[0], viewport, 0, 820 - _camera.x / 3 - _camera.x);
+}
+
+float Scene6240::actorHeight() const {
+	return _position.y * 1.00515461f - 83.762886f;
+}
+
+void Scene6240::setupActorDepth(RunawayActor::RenderParams &params) const {
+	params.depthY[1] = 599;
+	params.depthY[2] = 599;
+	params.depthY[3] = 351;
+	params.depthY[4] = 351;
+}
+
+Common::U32String Scene6240::hotspotName(byte id) const {
+	if (id == 5 && _town.gardeningShed) {
+		return Common::U32String("Gardening shed");
+	}
+	if (id == 7 && _town.carnivorousPlantSeen) {
+		return Common::U32String("Meat-eating plant");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+void Scene6240::findWalkPath(Common::Point target) {
+	walkTown(target);
+}
+
+bool Scene6240::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
+	target.x = MIN<int>(target.x, 1510);
+	return false;
+}
+
+RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Return to the saloon porch.
 		leaveTownRoom(6181);
@@ -177,7 +246,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6240(uint16 action) {
 		break;
 	case 314: // Refuse to take the carnivorous plant.
 		if (!_town.carnivorousPlantSeen) {
-			execute6240(313);
+			dispatchCustomSceneAction(313);
 		}
 		say(12, _random.getRandomBit());
 		break;
@@ -191,4 +260,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6240(uint16 action) {
 	return kHandled;
 }
 
+void Scene6240::handleAnimationFrameHook() {
+	if (_roomAction == 304 && (_actionStep == 11 || _actionStep == 18)) {
+		_audio.playFootstep(3, _random.getRandomBit());
+	}
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

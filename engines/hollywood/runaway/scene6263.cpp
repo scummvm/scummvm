@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6263.h"
 
 namespace Hollywood {
 namespace {
@@ -75,8 +74,25 @@ const RunawayRoom kRunawayScene6263 = {
 	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
-bool RunawayRoomScene::loadScene6263() {
-	if (!_ambient.load(_archive, 30, 101) || !_overlay.load(_archive, 27, 1)) {
+namespace Runaway {
+
+Scene6263::Scene6263(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6263::usesAlternateActor() const {
+	return false;
+}
+
+bool Scene6263::loadWalkMap() {
+	return loadRunawayMask(_archive, 1024, 600, _mask, _originalMaps, 21);
+}
+
+bool Scene6263::loadBackground() {
+	return loadRunawaySurface(_archive, 20, 1024, 600, _background);
+}
+
+bool Scene6263::loadCustomResources() {
+	if (!_boilerAnimation.load(_archive, 30, 101) || !_leverAnimation.load(_archive, 27, 1)) {
 		return false;
 	}
 	for (uint i = 0; i < ARRAYSIZE(_locomotiveGauges); ++i) {
@@ -87,9 +103,9 @@ bool RunawayRoomScene::loadScene6263() {
 	return true;
 }
 
-void RunawayRoomScene::resume6263() {
-	_ambientFrame = _town.boiler >= 2 ? 41 : 0;
-	_ambientTick = _now;
+void Scene6263::prepareCustomGameplayLoop() {
+	_boilerFrame = _town.boiler >= 2 ? 41 : 0;
+	_boilerTick = _now;
 	if (_town.boiler >= 2) {
 		_audio.playEffect(53, 178, 1, true);
 	}
@@ -103,20 +119,20 @@ void RunawayRoomScene::resume6263() {
 	}
 }
 
-void RunawayRoomScene::update6263() {
-	if (_town.boiler < 2 || _now - _ambientTick < 80) {
+void Scene6263::advanceCustomGameplayLoop(uint32 delta) {
+	if (_town.boiler < 2 || _now - _boilerTick < 80) {
 		return;
 	}
-	_ambientTick = _now;
-	_ambientFrame = _ambientFrame < 40 ? _ambientFrame + 1 : 41 + _random.getRandomNumber(59);
+	_boilerTick = _now;
+	_boilerFrame = _boilerFrame < 40 ? _boilerFrame + 1 : 41 + _random.getRandomNumber(59);
 	for (uint i = 0; i < 4; i += 3) {
 		const int step = _random.getRandomBit() ? 1 : -1;
 		_locomotiveGaugeFrames[i] = CLIP<int>(_locomotiveGaugeFrames[i] + step, 0, 30);
 	}
 }
 
-void RunawayRoomScene::drawScene6263(Graphics::ManagedSurface &viewport) {
-	_ambient.draw(viewport, _ambientFrame, 0, 0);
+void Scene6263::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	_boilerAnimation.draw(viewport, _boilerFrame, 0, 0);
 	_locomotiveGaugeFrames[1] = _town.boiler == 3 ? 30 : _town.boiler == 2 ? 15 : 0;
 	_locomotiveGaugeFrames[2] = _town.waterTank * 6;
 	if (drawingRoomAnimation()) {
@@ -130,11 +146,29 @@ void RunawayRoomScene::drawScene6263(Graphics::ManagedSurface &viewport) {
 		_locomotiveGauges[i].draw(viewport, _locomotiveGaugeFrames[i], 0, 0);
 	}
 	if (!drawingRoomAnimation() || (_roomAction != 306 && _roomAction != 308 && _roomAction != 401)) {
-		_overlay.draw(viewport, 0, 0, 0);
+		_leverAnimation.draw(viewport, 0, 0, 0);
 	}
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6263(uint16 action) {
+float Scene6263::actorHeight() const {
+	return _position.y * 1.04838705f - 175.645157f;
+}
+
+void Scene6263::setupActorDepth(RunawayActor::RenderParams &params) const {
+	params.depthY[1] = 599;
+}
+
+Common::U32String Scene6263::hotspotName(byte id) const {
+	if (id == 3 && _town.steamLever) {
+		return Common::U32String("Steam outlet lever");
+	}
+	if (id == 4 && _town.pressureWheel) {
+		return Common::U32String("Pressure wheel");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Climb back out through the window.
 		if (!_town.cabExited) {
@@ -160,7 +194,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6263(uint16 action) {
 		break;
 	case 306: // Release steam, if the boiler has enough pressure.
 		if (!_town.steamLever) {
-			execute6263(305);
+			dispatchCustomSceneAction(305);
 		}
 		beginRoomAnimation(306, 26, 64, kSteamLeverFrames,
 			_town.boiler == 3 && !_town.locomotiveKey ? 41 : ARRAYSIZE(kSteamLeverFrames), true, 60);
@@ -180,7 +214,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6263(uint16 action) {
 		break;
 	case 308: // Increase the boiler pressure once.
 		if (!_town.pressureWheel) {
-			execute6263(307);
+			dispatchCustomSceneAction(307);
 		}
 		if (_town.boiler == 2) {
 			say(28, 1);
@@ -255,23 +289,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6263(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::locomotiveAnimationFrame() {
-	if (_room == 6260) {
-		if (_roomAction == 304 && _actionStep == 20) {
-			_audio.playEffect(20);
-		} else if (_roomAction == 401 && _actionStep == 32) {
-			_audio.playEffect(22);
-		} else if (_roomAction == 313 && _actionStep == 37) {
-			_audio.playEffect(21, 178);
-		} else if (_roomAction == 402) {
-			if (_actionStep == 3) {
-				_audio.playEffect(56, 230);
-			} else if (_actionStep == 17) {
-				_audio.playEffect(57, 255, 1);
-			}
-		}
-		return;
-	}
+void Scene6263::handleAnimationFrameHook() {
 	if (_roomAction == 400 && _actionStep == 13) {
 		_audio.playEffect(23, 204);
 	} else if (_roomAction == 302 && _actionStep == 10) {
@@ -292,8 +310,8 @@ void RunawayRoomScene::locomotiveAnimationFrame() {
 			_audio.playEffect(52, 255, 0, true);
 		} else if (_actionStep == 35) {
 			_town.boiler = 2;
-			_ambientFrame = 0;
-			_ambientTick = _now;
+			_boilerFrame = 0;
+			_boilerTick = _now;
 			_audio.playEffect(53, 178, 1, true);
 		} else if (_actionStep == 70) {
 			_audio.stopEffect(0);
@@ -301,4 +319,5 @@ void RunawayRoomScene::locomotiveAnimationFrame() {
 	}
 }
 
+} // End of namespace Runaway
 } // End of namespace Hollywood

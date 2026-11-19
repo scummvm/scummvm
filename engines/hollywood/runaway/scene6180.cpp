@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6180.h"
 
 namespace Hollywood {
 namespace {
@@ -62,7 +61,33 @@ const RunawayRoom kRunawayScene6180 = {
 	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
-void RunawayRoomScene::start6180() {
+namespace Runaway {
+
+Scene6180::Scene6180(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6180::loadCustomResources() {
+	return _doorAnimation.load(_archive, 8, 71) && loadForeground(0, 4) && loadForeground(1, 5) &&
+		_archive.readVariableChunk(6, _doorPatches[0]) && _archive.readVariableChunk(7, _doorPatches[1]);
+}
+
+void Scene6180::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		if (_maps[i] == 3) {
+			_maps[i] = 0;
+		}
+		if (_maps[256 + i] == 4 && !_town.saloonDoorKnown) {
+			_maps[256 + i] = 0;
+		}
+	}
+}
+
+void Scene6180::prepareCustomGameplayLoop() {
+	_saloonDoorTick = _now;
+	_saloonDoorFrame = _position.x > 726 ? 7 : 0;
+}
+
+void Scene6180::runCustomEntrySequence() {
 	if (_entryScene == 6181) {
 		_position = Common::Point(1023, 519);
 		_walkPath.reset(_position);
@@ -77,7 +102,7 @@ void RunawayRoomScene::start6180() {
 	}
 }
 
-void RunawayRoomScene::update6180() {
+void Scene6180::advanceCustomGameplayLoop(uint32 delta) {
 	if (_roomAction == 401 && !_actionFrames.empty()) {
 		_actionFrames[0] = 24 + speechFrame();
 	}
@@ -102,21 +127,37 @@ void RunawayRoomScene::update6180() {
 	}
 }
 
-void RunawayRoomScene::drawScene6180(Graphics::ManagedSurface &viewport, bool foreground) {
-	if (foreground) {
-		if (_position.x < 273) {
-			drawForeground(viewport, 0);
-		}
-		if (_position.x > 714) {
-			drawForeground(viewport, 1);
-		}
-	} else {
-		applyRunawayPatch(_saloonPatches[_position.x > 726], viewport);
-		_ambient.draw(viewport, _saloonDoorFrame, 0, 0);
+void Scene6180::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	applyRunawayPatch(_doorPatches[_position.x > 726], viewport);
+	_doorAnimation.draw(viewport, _saloonDoorFrame, 0, 0);
+}
+
+void Scene6180::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	if (_position.x < 273) {
+		drawForeground(viewport, 0);
+	}
+	if (_position.x > 714) {
+		drawForeground(viewport, 1);
 	}
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6180(uint16 action) {
+float Scene6180::actorHeight() const {
+	return _position.y * 1.3565892f - 249.069763f;
+}
+
+void Scene6180::findWalkPath(Common::Point target) {
+	walkTown(target);
+}
+
+bool Scene6180::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
+	if (_originalMaps[_mask[target.y * _background.w + target.x]] == 3) {
+		return true;
+	}
+	target.x = CLIP<int>(target.x, 202, 679);
+	return false;
+}
+
+RunawayRoomScene::ActionResult Scene6180::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Leave the porch and return to Douglasville.
 		leaveTownRoom(6221);
@@ -163,4 +204,5 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6180(uint16 action) {
 	return kHandled;
 }
 
+} // End of namespace Runaway
 } // End of namespace Hollywood

@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6260.h"
 
 namespace Hollywood {
 namespace {
@@ -62,7 +61,37 @@ const RunawayRoom kRunawayScene6260 = {
 	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
-void RunawayRoomScene::start6260() {
+namespace Runaway {
+
+Scene6260::Scene6260(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6260::usesAlternateActor() const {
+	return false;
+}
+
+bool Scene6260::loadCustomResources() {
+	return loadForeground(0, 6);
+}
+
+bool Scene6260::applyCustomBackgroundPatches() {
+	const bool keyVisible = _town.locomotiveKey == 1 || _town.locomotiveKey == 2;
+	return applyPatch(keyVisible ? 8 : 7);
+}
+
+void Scene6260::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		// The upper zone is reserved for approaches to the cab and inlet.
+		if (_maps[i] == 2) {
+			_maps[i] = 0;
+		}
+		if (_maps[256 + i] == 5 && (_town.locomotiveKey == 0 || _town.locomotiveKey == 3)) {
+			_maps[256 + i] = 0;
+		}
+	}
+}
+
+void Scene6260::runCustomEntrySequence() {
 	if (_entryScene == 6261) {
 		beginRoomAnimation(401, 5, 88, nullptr, 0, true, 60);
 	} else if (_entryScene == 6262) {
@@ -81,24 +110,26 @@ void RunawayRoomScene::start6260() {
 	}
 }
 
-bool RunawayRoomScene::applyBackground6260() {
-	const bool keyVisible = _town.locomotiveKey == 1 || _town.locomotiveKey == 2;
-	return applyPatch(keyVisible ? 8 : 7);
+void Scene6260::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	drawForeground(viewport, 0);
 }
 
-void RunawayRoomScene::updateMaps6260() {
-	for (uint i = 0; i < 256; ++i) {
-		// The upper zone is reserved for approaches to the cab and inlet.
-		if (_maps[i] == 2) {
-			_maps[i] = 0;
-		}
-		if (_maps[256 + i] == 5 && (_town.locomotiveKey == 0 || _town.locomotiveKey == 3)) {
-			_maps[256 + i] = 0;
-		}
+float Scene6260::actorHeight() const {
+	return _position.y * 0.95f - 175;
+}
+
+bool Scene6260::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+	if (!item && id == 5 && !use && _town.locomotiveKey == 2) {
+		return false;
 	}
+	return approach;
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6260(uint16 action) {
+void Scene6260::findWalkPath(Common::Point target) {
+	walkTown(target);
+}
+
+RunawayRoomScene::ActionResult Scene6260::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Return to the street.
 		leaveTownRoom(6225);
@@ -121,7 +152,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6260(uint16 action) {
 		break;
 	case 310: // Pick up the cell key.
 		if (_town.locomotiveKey == 1) {
-			execute6260(309);
+			dispatchCustomSceneAction(309);
 		}
 		deferTownAction(410);
 		break;
@@ -199,4 +230,21 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6260(uint16 action) {
 	return kHandled;
 }
 
+void Scene6260::handleAnimationFrameHook() {
+	if (_roomAction == 304 && _actionStep == 20) {
+		_audio.playEffect(20);
+	} else if (_roomAction == 401 && _actionStep == 32) {
+		_audio.playEffect(22);
+	} else if (_roomAction == 313 && _actionStep == 37) {
+		_audio.playEffect(21, 178);
+	} else if (_roomAction == 402) {
+		if (_actionStep == 3) {
+			_audio.playEffect(56, 230);
+		} else if (_actionStep == 17) {
+			_audio.playEffect(57, 255, 1);
+		}
+	}
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

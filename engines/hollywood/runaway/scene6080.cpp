@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6080.h"
 
 namespace Hollywood {
 namespace {
@@ -62,7 +61,36 @@ const RunawayRoom kRunawayScene6080 = {
 	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
-void RunawayRoomScene::start6080() {
+namespace Runaway {
+
+Scene6080::Scene6080(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6080::loadCustomResources() {
+	return _rockAnimation.load(_archive, 6, 2) && loadForeground(0, 4) && loadForeground(1, 7) &&
+		(_entryScene != 6082 || _oscarAnimation.load(_archive, 9, 135));
+}
+
+bool Scene6080::applyCustomBackgroundPatches() {
+	return _town.oilCan != 2 || applyPatch(5);
+}
+
+void Scene6080::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		// Zone 6 is only used by scripted approaches to the mine.
+		if (_maps[i] == 6) {
+			_maps[i] = 0;
+		}
+		byte &id = _maps[256 + i];
+		if (id == 2 && _town.oilCan == 2) {
+			id = 0;
+		} else if (id == 4 && _town.rockMoved) {
+			id = 5;
+		}
+	}
+}
+
+void Scene6080::runCustomEntrySequence() {
 	if (_entryScene == 6081) {
 		_position = Common::Point(483, 318);
 		_walkPath.reset(_position);
@@ -85,42 +113,47 @@ void RunawayRoomScene::start6080() {
 	}
 }
 
-void RunawayRoomScene::updateMaps6080() {
-	for (uint i = 0; i < 256; ++i) {
-		// Zone 6 is only used by scripted approaches to the mine.
-		if (_maps[i] == 6) {
-			_maps[i] = 0;
-		}
-		byte &id = _maps[256 + i];
-		if (id == 2 && _town.oilCan == 2) {
-			id = 0;
-		} else if (id == 4 && _town.rockMoved) {
-			id = 5;
-		}
-	}
-}
-
-void RunawayRoomScene::drawScene6080(Graphics::ManagedSurface &viewport, bool foreground) {
-	if (foreground) {
-		if (_position.x > 737) {
-			drawForeground(viewport, 0);
-		}
-		if (_position.x > 754 && _position.y < 398) {
-			drawForeground(viewport, 1);
-		}
-		return;
-	}
+void Scene6080::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
 	if (!_mineOscarPresent || _town.rockMoved) {
-		_ambient.draw(viewport, _town.rockMoved, _camera.x, -_camera.y);
+		_rockAnimation.draw(viewport, _town.rockMoved, _camera.x, -_camera.y);
 	}
 	if (_mineOscarPresent && !drawingRoomAnimation()) {
 		const byte mouth = speaker() ? speechFrame() % 6 : 0;
 		const uint frame = _town.rockMoved ? (mouth ? 128 + mouth : 134) : mouth;
-		_npc.draw(viewport, frame, _camera.x, -_camera.y);
+		_oscarAnimation.draw(viewport, frame, _camera.x, -_camera.y);
 	}
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6080(uint16 action) {
+void Scene6080::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	if (_position.x > 737) {
+		drawForeground(viewport, 0);
+	}
+	if (_position.x > 754 && _position.y < 398) {
+		drawForeground(viewport, 1);
+	}
+}
+
+float Scene6080::actorHeight() const {
+	return _position.y * 1.12355208f - 218.007721f;
+}
+
+Common::U32String Scene6080::hotspotName(byte id) const {
+	if (id == 2 && _town.oilCan) {
+		return Common::U32String("Oil can");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+void Scene6080::findWalkPath(Common::Point target) {
+	walkTown(target);
+}
+
+bool Scene6080::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
+	target.x = MIN<int>(target.x, 1152);
+	return false;
+}
+
+RunawayRoomScene::ActionResult Scene6080::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Return to the overview.
 		leaveTownRoom(6350);
@@ -137,7 +170,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6080(uint16 action) {
 		break;
 	case 306: // Take the oil can.
 		if (!_town.oilCan) {
-			execute6080(305);
+			dispatchCustomSceneAction(305);
 		}
 		deferTownAction(406);
 		break;
@@ -201,7 +234,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6080(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::mineAnimationFrame() {
+void Scene6080::handleAnimationFrameHook() {
 	if (_roomAction == 403) {
 		const uint frame = _actionFrames[_actionStep];
 		if (frame == 41) {
@@ -222,4 +255,5 @@ void RunawayRoomScene::mineAnimationFrame() {
 	}
 }
 
+} // End of namespace Runaway
 } // End of namespace Hollywood

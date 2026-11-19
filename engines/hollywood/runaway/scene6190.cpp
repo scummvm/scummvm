@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6190.h"
 
 namespace Hollywood {
 namespace {
@@ -60,21 +59,21 @@ const RunawayRoom kRunawayScene6190 = {
 	kResponses, ARRAYSIZE(kResponses), nullptr, 0, nullptr, 0
 };
 
-void RunawayRoomScene::start6190() {
-	if (!_town.bankVisited) {
-		walkTo(Common::Point(1075, 330), 7);
-		deferTownAction(400);
-	} else {
-		walkTo(Common::Point(669, 413), 7);
-	}
+namespace Runaway {
+
+Scene6190::Scene6190(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6190::usesAlternateActor() const {
+	return false;
 }
 
-bool RunawayRoomScene::applyBackground6190() {
+bool Scene6190::applyCustomBackgroundPatches() {
 	return (!_town.bankStampTaken || applyPatch(8)) &&
 		(_town.bankShelves != 2 || applyPatch(9));
 }
 
-void RunawayRoomScene::updateMaps6190() {
+void Scene6190::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
 		// The bucket only appears after the catapult has hit the bank.
@@ -86,7 +85,25 @@ void RunawayRoomScene::updateMaps6190() {
 	}
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6190(uint16 action) {
+void Scene6190::runCustomEntrySequence() {
+	if (!_town.bankVisited) {
+		walkTo(Common::Point(1075, 330), 7);
+		deferTownAction(400);
+	} else {
+		walkTo(Common::Point(669, 413), 7);
+	}
+}
+
+float Scene6190::actorHeight() const {
+	return (_position.y * 0.426829278f + 16.4634151f + _position.x * 0.0980392173f + 41.7647057f) / 2;
+}
+
+void Scene6190::setupActorDepth(RunawayActor::RenderParams &params) const {
+	params.depthY[1] = 599;
+	params.depthY[2] = 388;
+}
+
+RunawayRoomScene::ActionResult Scene6190::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Return to the street.
 		leaveTownRoom(6224);
@@ -142,4 +159,5 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6190(uint16 action) {
 	return kHandled;
 }
 
+} // End of namespace Runaway
 } // End of namespace Hollywood

@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6090.h"
 
 namespace Hollywood {
 namespace {
@@ -50,17 +49,7 @@ const RunawayItemAction kItemActions[] = {
 	{6090, 28, 4, 311}  // Give Oscar chewing tobacco.
 };
 
-// Oscar uses the same idle sequence in the wide view and at the doorway.
-const byte kOscarFrames[] = {
-	106, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-	106, 106, 106, 106, 106, 106, 106, 106,
-	42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
-	53, 54, 55, 56, 57, 58, 59, 60, 53, 54, 55, 56, 57, 58, 59, 60,
-	61, 62, 63, 64, 65, 66, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42,
-	106, 106, 106, 106, 106, 106, 106, 106, 106,
-	71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106
-};
+
 
 } // End of anonymous namespace
 
@@ -70,7 +59,32 @@ const RunawayRoom kRunawayScene6090 = {
 	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
-void RunawayRoomScene::start6090() {
+namespace Runaway {
+
+Scene6090::Scene6090(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game), _oscar(true) {}
+
+bool Scene6090::loadCustomResources() {
+	return _oscarAnimation.load(_archive, 6, 113) && loadForeground(0, 4);
+}
+
+bool Scene6090::applyCustomBackgroundPatches() {
+	return _town.vessel != 2 || applyPatch(5);
+}
+
+void Scene6090::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		if (_maps[256 + i] == 6 && _town.vessel == 2) {
+			_maps[256 + i] = 0;
+		}
+	}
+}
+
+void Scene6090::prepareCustomGameplayLoop() {
+	_oscar.resume(_now);
+}
+
+void Scene6090::runCustomEntrySequence() {
 	if (!_town.oscarMet) {
 		walkTo(Common::Point(676, 510), 7);
 		deferTownAction(400);
@@ -79,51 +93,31 @@ void RunawayRoomScene::start6090() {
 	}
 }
 
-void RunawayRoomScene::updateOscar() {
-	if (_oscarTalking) {
-		_oscarTick = _now;
-		return;
-	}
-	if (_now - _oscarTick < 80) {
-		return;
-	}
-	_oscarTick = _now;
-	const uint last = _oscarIdle == 1 ? 62 : _oscarIdle == 2 ? 121 : _room == 6090 ? 165 : 164;
-	if (_oscarStep < last) {
-		++_oscarStep;
-		if (_room == 6090 && _oscarIdle == 2 && _oscarStep == 80) {
-			_audio.playEffect(80, 26, 1);
-		}
-	} else if (_oscarIdle == 3 && !_random.getRandomNumber(_room == 6090 ? 4 : 9)) {
-		_oscarIdle = 1 + _random.getRandomBit();
-		_oscarStep = _oscarIdle == 1 ? 0 : 70;
-	} else {
-		_oscarIdle = 3;
-		_oscarStep = 130;
-	}
-	if (_room == 6090 && _oscarIdle == 3 && !_audio.effectPlaying(1)) {
-		_audio.playEffect(76, 153, 1, true);
-	}
+void Scene6090::advanceCustomGameplayLoop(uint32 delta) {
+	_oscar.update(_now, _random, _audio);
 }
 
-uint RunawayRoomScene::oscarFrame() const {
-	if (_oscarTalking) {
-		return 107 + (speaker() ? speechFrame() % 6 : 0);
-	}
-	const uint frame = kOscarFrames[_oscarStep];
-	return _room == 6130 && frame == 106 ? 105 : frame;
+void Scene6090::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	drawOscar(viewport, false);
 }
 
-void RunawayRoomScene::drawScene6090(Graphics::ManagedSurface &viewport, bool foreground) {
-	if ((_position.y < 460) == foreground && !drawingRoomAnimation()) {
-		_npc.draw(viewport, oscarFrame(), _camera.x, -_camera.y);
-	}
-	if (foreground) {
-		drawForeground(viewport, 0);
-	}
+void Scene6090::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	drawOscar(viewport, true);
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6090(uint16 action) {
+float Scene6090::actorHeight() const {
+	return _position.y < 510 ? _position.y * 0.840707958f - 38.7610626f :
+		_position.y * 0.730337083f + 17.5280895f;
+}
+
+Common::U32String Scene6090::hotspotName(byte id) const {
+	if (id == 4 && _town.oscarTobacco) {
+		return Common::U32String("Oscar");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+RunawayRoomScene::ActionResult Scene6090::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Return to the wide view of the house.
 		leaveTownRoom(6131);
@@ -162,7 +156,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6090(uint16 action) {
 		}
 		break;
 	case 311: // Offer the prepared chewing tobacco.
-		_oscarTalking = true;
+		_oscar.setTalking(true);
 		_audio.stopEffect(1);
 		say(9);
 		say(9, 1, false, 1);
@@ -189,7 +183,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6090(uint16 action) {
 		deferTownAction(412);
 		break;
 	case 412:
-		_oscarTalking = false;
+		_oscar.setTalking(false);
 		walkTo(Common::Point(718, 543), 4);
 		say(9, 6);
 		break;
@@ -199,7 +193,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6090(uint16 action) {
 		break;
 	case 313: // Take the vessel while Oscar is occupied.
 		if (!_town.vessel) {
-			execute6090(312);
+			dispatchCustomSceneAction(312);
 		}
 		if (_town.oscarTobacco == 1) {
 			say(11);
@@ -214,7 +208,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6090(uint16 action) {
 		say(11, 1);
 		return kBackgroundChanged;
 	case 314: // Oscar chews tobacco; he does not smoke the untreated leaves.
-		_oscarTalking = true;
+		_oscar.setTalking(true);
 		_audio.stopEffect(1);
 		say(12);
 		say(12, 1, false, 1);
@@ -225,7 +219,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6090(uint16 action) {
 		leaveTownRoom(6350);
 		break;
 	case 400: // First meeting at Mama Dorita's door.
-		_oscarTalking = true;
+		_oscar.setTalking(true);
 		_audio.stopEffect(1);
 		for (uint i = 0; i <= 14; ++i) {
 			say(0, i, false, (i % 2) == 0);
@@ -234,9 +228,7 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6090(uint16 action) {
 		deferTownAction(401);
 		break;
 	case 401: // Oscar returns to his idle animation.
-		_oscarTalking = false;
-		_oscarIdle = 3;
-		_oscarStep = 130;
+		_oscar.startIdle();
 		break;
 	case 402: // Oscar has agreed to move the mine's rock.
 		leaveTownRoom(6082);
@@ -247,7 +239,33 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6090(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::startOscarConversation() {
+uint16 Scene6090::dialoguePlayerCue() const {
+	return 81;
+}
+
+uint16 Scene6090::dialogueResponseCue() const {
+	return 91;
+}
+
+void Scene6090::handleCustomDialogueChoice(byte effect) {
+	if (effect == 3) { // Remember that Oscar has already refused the favour.
+		_town.oscarHelpRefused = 1;
+	} else if (effect == 5) { // A gift of chewing tobacco earns his help.
+		say(81, 7);
+		_afterConversation = 402;
+	}
+}
+
+void Scene6090::drawOscar(Graphics::ManagedSurface &viewport, bool foreground) {
+	if ((_position.y < 460) == foreground && !drawingRoomAnimation()) {
+		_oscarAnimation.draw(viewport, _oscar.frame(speaker(), speechFrame()), _camera.x, -_camera.y);
+	}
+	if (foreground) {
+		drawForeground(viewport, 0);
+	}
+}
+
+void Scene6090::startOscarConversation() {
 	_conversation = 6;
 	_dialogueDepth = _dialogueNode = _dialogueIntro = 0;
 	_dialogueEnding = false;
@@ -255,7 +273,7 @@ void RunawayRoomScene::startOscarConversation() {
 	_choiceIndices.clear();
 	memset(_dialogue, 0, sizeof(_dialogue));
 	_afterConversation = 401;
-	_oscarTalking = true;
+	_oscar.setTalking(true);
 	_audio.stopEffect(1);
 	say(81, _town.oscarTobacco == 1 ? 0 : 8);
 	say(91, 0, false, 1);
@@ -277,13 +295,5 @@ void RunawayRoomScene::startOscarConversation() {
 	}
 }
 
-void RunawayRoomScene::oscarDialogueChoice(byte effect) {
-	if (effect == 3) { // Remember that Oscar has already refused the favour.
-		_town.oscarHelpRefused = 1;
-	} else if (effect == 5) { // A gift of chewing tobacco earns his help.
-		say(81, 7);
-		_afterConversation = 402;
-	}
-}
-
+} // End of namespace Runaway
 } // End of namespace Hollywood

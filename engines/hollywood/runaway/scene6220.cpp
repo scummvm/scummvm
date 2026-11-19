@@ -19,9 +19,8 @@
  *
  */
 
-
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene6220.h"
 
 namespace Hollywood {
 namespace {
@@ -64,7 +63,33 @@ const RunawayRoom kRunawayScene6220 = {
 	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
-void RunawayRoomScene::start6220() {
+namespace Runaway {
+
+Scene6220::Scene6220(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene6220::loadCustomResources() {
+	return _sushiAnimation.load(_archive, 7, 170) && _brianAnimation.load(_archive, 8, 45) && _shotAnimation.load(_archive, 9, 60);
+}
+
+void Scene6220::applyCustomHotspotState() {
+	for (uint i = 0; i < 256; ++i) {
+		// The balcony shares this mask but is reached through Kevin's room.
+		if (_maps[i] < 2 || _maps[i] > 4) {
+			_maps[i] = 0;
+		}
+	}
+}
+
+void Scene6220::resumeAmbientAudio(bool entering) {
+	if (entering && _entryScene == 6223) {
+		_audio.playMusic(12 + _random.getRandomNumber(4));
+	} else {
+		RunawayRoomScene::resumeAmbientAudio(entering);
+	}
+}
+
+void Scene6220::runCustomEntrySequence() {
 	struct Entry {
 		int16 x, y, targetX, targetY;
 		byte facing;
@@ -86,7 +111,78 @@ void RunawayRoomScene::start6220() {
 	}
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute6220(uint16 action) {
+bool Scene6220::updateCustomSequence() {
+	if (_townEncounter.phase == TownEncounter::kInactive) {
+		return false;
+	}
+	updateEncounter();
+	return true;
+}
+
+void Scene6220::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	if (_townEncounter.phase == TownEncounter::kInactive) {
+		return;
+	}
+	const uint frame = _townEncounter.frame;
+	uint sushi, brian, shot;
+	if (_townEncounter.phase == TownEncounter::kRifle) {
+		sushi = frame;
+		shot = frame < 45 ? 59 : MIN<uint>(59, frame - 45);
+		brian = frame <= 45 ? 0 : MIN<uint>(33, frame - 45);
+	} else if (_townEncounter.phase == TownEncounter::kConversation) {
+		sushi = 113 + (speaker() ? speechFrame() : 0);
+		shot = 59;
+		brian = 33;
+	} else {
+		sushi = 125 + frame;
+		shot = 59;
+		brian = MIN<uint>(44, 33 + frame);
+	}
+	_sushiAnimation.draw(viewport, sushi, _camera.x, -_camera.y);
+	_shotAnimation.draw(viewport, shot, _camera.x, -_camera.y);
+	_brianAnimation.draw(viewport, brian, _camera.x, -_camera.y);
+}
+
+bool Scene6220::shouldDrawActor() const {
+	return _townEncounter.phase == TownEncounter::kInactive;
+}
+
+float Scene6220::actorHeight() const {
+	return _position.y * 0.194835678f - 11.706573f;
+}
+
+void Scene6220::setupActorDepth(RunawayActor::RenderParams &params) const {
+	params.depthY[1] = 263;
+	params.depthY[2] = 195;
+	params.depthY[3] = 490;
+	params.depthY[4] = 396;
+	params.depthY[5] = 227;
+	params.depthY[6] = 247;
+	params.depthY[7] = 599;
+	params.depthY[8] = 322;
+	params.depthY[9] = 599;
+}
+
+Common::U32String Scene6220::hotspotName(byte id) const {
+	if (id == 8 && _town.strapSeen == 1) {
+		return Common::U32String("Strap");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+bool Scene6220::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+	if (id == 8) {
+		if (item && _town.strapSeen != 1) {
+			return false;
+		}
+		if (!item && use && _town.strapSeen == 1) {
+			return true;
+		}
+	}
+	return approach;
+}
+
+RunawayRoomScene::ActionResult Scene6220::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Leave town by the railroad tracks.
 	case 319: // Leave town toward the cemetery.
@@ -154,7 +250,13 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute6220(uint16 action) {
 	return kHandled;
 }
 
-void RunawayRoomScene::update6220() {
+void Scene6220::handleAnimationFrameHook() {
+	if (_roomAction == 417 && _actionStep == 22) {
+		_audio.playEffect(17);
+	}
+}
+
+void Scene6220::updateEncounter() {
 	if (_townEncounter.phase == TownEncounter::kInactive) {
 		return;
 	}
@@ -192,28 +294,5 @@ void RunawayRoomScene::update6220() {
 	}
 }
 
-void RunawayRoomScene::drawScene6220(Graphics::ManagedSurface &viewport) {
-	if (_townEncounter.phase == TownEncounter::kInactive) {
-		return;
-	}
-	const uint frame = _townEncounter.frame;
-	uint sushi, brian, shot;
-	if (_townEncounter.phase == TownEncounter::kRifle) {
-		sushi = frame;
-		shot = frame < 45 ? 59 : MIN<uint>(59, frame - 45);
-		brian = frame <= 45 ? 0 : MIN<uint>(33, frame - 45);
-	} else if (_townEncounter.phase == TownEncounter::kConversation) {
-		sushi = 113 + (speaker() ? speechFrame() : 0);
-		shot = 59;
-		brian = 33;
-	} else {
-		sushi = 125 + frame;
-		shot = 59;
-		brian = MIN<uint>(44, 33 + frame);
-	}
-	_npc.draw(viewport, sushi, _camera.x, -_camera.y);
-	_machine.draw(viewport, shot, _camera.x, -_camera.y);
-	_npcMouth.draw(viewport, brian, _camera.x, -_camera.y);
-}
-
+} // End of namespace Runaway
 } // End of namespace Hollywood
