@@ -100,6 +100,7 @@ extern const RunawayRoom kRunawayScene5070;
 extern const RunawayRoom kRunawayScene5080;
 extern const RunawayRoom kRunawayScene5100;
 extern const RunawayRoom kRunawayScene5110;
+extern const RunawayRoom kRunawayScene5140;
 extern const RunawayRoom kRunawayScene5160;
 extern const RunawayRoom kRunawayScene5170;
 

@@ -37,7 +37,7 @@ const RunawayRoom *const kRooms[] = {
 	&kRunawayScene2020, &kRunawayScene2060, &kRunawayScene2080,
 	&kRunawayScene4030, &kRunawayScene4050, &kRunawayScene4060, &kRunawayScene4070, &kRunawayScene4090, &kRunawayScene4100, &kRunawayScene4140,
 	&kRunawayScene5010, &kRunawayScene5020, &kRunawayScene5050, &kRunawayScene5060, &kRunawayScene5070,
-	&kRunawayScene5080, &kRunawayScene5100, &kRunawayScene5110, &kRunawayScene5160, &kRunawayScene5170
+	&kRunawayScene5080, &kRunawayScene5100, &kRunawayScene5110, &kRunawayScene5140, &kRunawayScene5160, &kRunawayScene5170
 };
 
 const RunawayResponse kGlobalResponses[] = {
@@ -233,9 +233,15 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 		return false;
 	const Common::Path path(Common::String::format("RESOURCE.%c%02u", 'A' + number / 1000 - 1, (number % 1000) / 10));
 	if (!_archive.open(path, 40) ||
-			!loadRunawayMask(_archive, room->width, room->height, _mask, _originalMaps) ||
 			!_text.load("RESOURCE.003", "Runaway room", number == kMuseumWilly ? 406 : number / 10, 0, 0x1135))
 		return false;
+	if (number == 5140) {
+		// The bus introduction has only a background and four sprite tracks.
+		_mask.resize(room->width * room->height, 0);
+		_originalMaps.resize(1536, 0);
+	} else if (!loadRunawayMask(_archive, room->width, room->height, _mask, _originalMaps)) {
+		return false;
+	}
 	if (_game == kRunawayFullGame ? !_actor.loadChapter(number < 4000 ? 1 : number < 5000 ? 2 : 3, number != kMuseumHall) :
 			!_actor.load(number == kMuseumHall ? RunawayActor::kMuseumHall : RunawayActor::kMuseumInterior))
 		return false;
@@ -703,6 +709,8 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 		if (!_sequence.active()) {
 			if (museumChapter())
 				finishMuseumFilm();
+			else if (_room == 5140)
+				updateScene5140();
 			else if (!desertChapter())
 				finishHospitalFilm();
 		}
@@ -739,7 +747,7 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 		_actor.setFrame(_facing, 0, speaking() && !speaker() ? speechFrame() : -1);
 		return;
 	}
-	if (inventoryOpen || _room == kMuseumKeypad || _room == 5010)
+	if (inventoryOpen || _room == kMuseumKeypad || _room == 5010 || _room == 5140)
 		return;
 	if (_walkPath.active() && !speaking()) {
 		_walkPath.advance(elapsed * 0.18f * actorHeight() / 455, _position, _facing);
@@ -781,6 +789,10 @@ void RunawayRoomScene::draw() {
 	_screen.copyRectToSurface(_background, 0, kRunawayViewportTop,
 		Common::Rect(_camera.x, _camera.y, _camera.x + kRunawayScreenWidth, _camera.y + kRunawayViewportHeight));
 	Graphics::ManagedSurface viewport(_screen, Common::Rect(0, kRunawayViewportTop, kRunawayScreenWidth, kRunawayViewportTop + kRunawayViewportHeight));
+	if (_room == 5140) {
+		drawScene5140(viewport);
+		return;
+	}
 	if (_room == 5010) {
 		drawDesertRoom(viewport, false);
 		return;

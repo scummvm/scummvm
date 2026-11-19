@@ -61,6 +61,10 @@ void RunawayRoomScene::resumeDesert() {
 	if (!_entering)
 		return;
 	_entering = false;
+	if (_room == 5140) {
+		startScene5140();
+		return;
+	}
 	if (_entryScene == 5021 && !_desert.escapedCabin) {
 		_desert.escapedCabin = 1;
 		say(0);
@@ -134,6 +138,10 @@ void RunawayRoomScene::desertAnimationFrame() {
 }
 
 void RunawayRoomScene::updateDesert(uint elapsed, bool inventoryOpen) {
+	if (_room == 5140) {
+		updateScene5140();
+		return;
+	}
 	updateRoomAnimation();
 	updateConversation();
 	if (_room == 5080)
@@ -231,6 +239,7 @@ bool RunawayRoomScene::loadDesertRoom() {
 		{5080, 18, 769}, {5080, 17, 672}, {5080, 16, 455}, {5080, 20, 631}, {5080, 19, 533}, {5080, 15, 24},
 		{5100, 4, 1}, {5100, 7, 27}, {5100, 8, 89},
 		{5110, 8, 1}, {5110, 9, 2},
+		{5140, 1, 130}, {5140, 2, 33}, {5140, 3, 51}, {5140, 4, 32},
 		{5160, 4, 16}, {5160, 5, 24}, {5160, 6, 24}, {5160, 7, 93},
 		{5170, 6, 25}, {5170, 5, 24}, {5170, 4, 50}, {5170, 11, 3}
 	};

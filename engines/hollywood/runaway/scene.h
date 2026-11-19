@@ -257,6 +257,9 @@ private:
 	uint studFrame() const;
 	void updateScene5100(uint elapsed, bool inventoryOpen);
 	void startHangarTaunt();
+	void startScene5140();
+	void updateScene5140();
+	void drawScene5140(Graphics::ManagedSurface &viewport);
 	void animationFrame5060();
 	void animationFrame5100();
 	bool applyBackground5100();
@@ -332,6 +335,14 @@ private:
 	bool _hangarThrowing = false;
 	bool _hangarIntroduction = false;
 	byte _hangarLulaPose = 0;
+	struct BusIntroduction {
+		enum Phase { kArrival, kConversation, kFilm, kReturn, kFarewell };
+		Phase phase = kArrival;
+		uint32 tick = 0;
+		byte nextLine = 0, frame = 0, lastFrame = 51;
+		byte facing = 2, speaker = 6;
+		bool blink = false;
+	} _busIntroduction;
 	RunawayAnimation _npc, _npcMouth, _machine;
 	RunawayAnimation _computer, _rejectionLight;
 	uint32 _nextLaser = 0;
