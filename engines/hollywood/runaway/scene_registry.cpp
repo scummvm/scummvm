@@ -21,6 +21,9 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene_registry.h"
+#include "hollywood/runaway/scene2020.h"
+#include "hollywood/runaway/scene2060.h"
+#include "hollywood/runaway/scene2080.h"
 #include "hollywood/runaway/scene4030.h"
 #include "hollywood/runaway/scene4050.h"
 #include "hollywood/runaway/scene4060.h"
@@ -61,9 +64,9 @@ RunawayScene *createScene(RunawayAudio &audio, RunawayInventory &inventory, cons
 }
 
 const SceneDefinition kSceneDefinitions[] = {
-	{&kRunawayScene2020, createScene<RunawayRoomScene>},
-	{&kRunawayScene2060, createScene<RunawayRoomScene>},
-	{&kRunawayScene2080, createScene<RunawayRoomScene>},
+	{&kRunawayScene2020, createScene<Runaway::Scene2020>},
+	{&kRunawayScene2060, createScene<Runaway::Scene2060>},
+	{&kRunawayScene2080, createScene<Runaway::Scene2080>},
 	{&kRunawayScene4030, createScene<Runaway::Scene4030>},
 	{&kRunawayScene4050, createScene<Runaway::Scene4050>},
 	{&kRunawayScene4060, createScene<Runaway::Scene4060>},

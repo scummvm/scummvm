@@ -74,7 +74,7 @@ bool RunawayRoomScene::load(uint16 entryScene) {
 	_entryScene = entryScene;
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_screen.create(kRunawayScreenWidth, kRunawayScreenHeight, format);
-	return enterRoom(room->number, room->entry, room->number == kHospitalBedroom ? 7 : 3);
+	return enterRoom(room->number, room->entry, initialActorFacing());
 }
 
 void RunawayRoomScene::start(uint32 now) {
@@ -88,11 +88,6 @@ void RunawayRoomScene::start(uint32 now) {
 	}
 	if (desertChapter()) {
 		startDesert();
-		return;
-	}
-	if (_room == kHospitalBedroom) {
-		start2020();
-		resume();
 		return;
 	}
 	if (museumChapter()) {
@@ -120,30 +115,7 @@ void RunawayRoomScene::resume() {
 		return;
 	}
 	if (_game == kRunawayFullGame) {
-		if (_sequence.active())
-			return;
-		if (!_audio.musicPlaying())
-			_audio.playMusic(11, false);
-		if (_room == kHospitalBedroom)
-			_audio.playEffect(30, 3, 1, true);
-		if (_entering) {
-			if (_room == kHospitalBathroom) {
-				_audio.playEffect(48);
-				walkTo(Common::Point(227, 546), 1, true);
-			} else {
-				if (_inventory.water() == 1)
-					_inventory.setWater(2);
-				if (_room == kHospitalStoreroom || _entryScene == 2022) {
-					static const byte frames[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-					beginRoomAnimation(_entryScene, _room == kHospitalStoreroom ? 10 : 23, 13, frames, ARRAYSIZE(frames));
-				} else if (_entryScene == 2023) {
-					startHospitalFilm(kAmbushFilm);
-				} else {
-					_audio.playEffect(48);
-				}
-			}
-			_entering = false;
-		}
+		resumeHospital();
 		return;
 	}
 	// The original demo loops M04 cue 11 throughout gameplay (0x4175c0).
@@ -157,7 +129,7 @@ void RunawayRoomScene::resumeAmbientAudio(bool entering) {
 			_audio.playMusic(12, false);
 		}
 	} else if (!_audio.musicPlaying()) {
-		_audio.playMusic(11);
+		_audio.playMusic(11, !hospitalChapter());
 	}
 }
 
@@ -245,7 +217,6 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	_hangarSpeech.reset();
 	_caption.clear();
 	_ambient = RunawayAnimation();
-	_overlay = RunawayAnimation();
 	for (uint i = 0; i < ARRAYSIZE(_foreground); ++i)
 		_foreground[i].clear();
 	if (!loadCustomResources() || !rebuildBackground()) {
@@ -269,20 +240,7 @@ bool RunawayRoomScene::loadWalkMap() {
 }
 
 bool RunawayRoomScene::loadCustomResources() {
-	bool loaded = true;
-	if (desertChapter())
-		loaded = loadDesertRoom();
-	switch (_room) {
-	case kHospitalBedroom:
-		loaded = loadScene2020();
-		break;
-	case kHospitalBathroom:
-		loaded = loadScene2080();
-		break;
-	default:
-		break;
-	}
-	return loaded;
+	return !desertChapter() || loadDesertRoom();
 }
 
 bool RunawayRoomScene::loadForeground(uint layer, uint chunk, bool pixels) {
@@ -322,18 +280,7 @@ bool RunawayRoomScene::loadBackground() {
 }
 
 bool RunawayRoomScene::applyCustomBackgroundPatches() {
-	if (desertChapter())
-		return applyDesertBackground();
-	switch (_room) {
-	case kHospitalBedroom:
-		return applyBackground2020();
-	case kHospitalStoreroom:
-		return applyBackground2060();
-	case kHospitalBathroom:
-		return applyBackground2080();
-	default:
-		return true;
-	}
+	return !desertChapter() || applyDesertBackground();
 }
 
 void RunawayRoomScene::updateMaps() {
@@ -344,20 +291,6 @@ void RunawayRoomScene::updateMaps() {
 void RunawayRoomScene::applyCustomHotspotState() {
 	if (desertChapter()) {
 		updateDesertMaps();
-		return;
-	}
-	switch (_room) {
-	case kHospitalBedroom:
-		updateMaps2020();
-		break;
-	case kHospitalStoreroom:
-		updateMaps2060();
-		break;
-	case kHospitalBathroom:
-		updateMaps2080();
-		break;
-	default:
-		break;
 	}
 }
 
@@ -385,22 +318,6 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 	const RunawayHotspot *spot = hotspot(id);
 	if (!spot)
 		return Common::U32String();
-	if (_room == kHospitalBathroom && id == 4 && _hospital.alcohol == 2)
-		return Common::U32String("Bottle of alcohol");
-	if (_room == kHospitalBedroom) {
-		if (id == 9 && _hospital.chartReplaced)
-			return Common::U32String("Fake medical chart");
-		if (id == 10 && _hospital.chartMoved)
-			return Common::U32String("Gina's medical chart");
-	}
-	if (_room == kHospitalStoreroom) {
-		if (id == 3 && _hospital.syringesSeen)
-			return Common::U32String("Box of syringes");
-		if (id == 5 && _hospital.book)
-			return Common::U32String("Vademecum");
-		if (id == 6 && _hospital.blankChart)
-			return Common::U32String("Medical chart");
-	}
 	return Common::U32String(spot->name);
 }
 
@@ -462,8 +379,6 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 		_pendingHotspot = id;
 		_pendingAction = spot->action[index];
 		bool approach = spot->approach[index] != 0;
-		if (_room == kHospitalBathroom && id == 4 && !index && _hospital.alcohol == 2)
-			approach = false;
 		if (item) {
 			approach = _game != kRunawayFullGame;
 			const RunawayRoom *room = findRunawayRoom(_room);
@@ -569,21 +484,7 @@ void RunawayRoomScene::useItem(byte item, byte id) {
 }
 
 RunawayRoomScene::ActionResult RunawayRoomScene::dispatchCustomSceneAction(uint16 action) {
-	ActionResult result = desertChapter() ? executeDesert(action) : kUnhandled;
-	switch (_room) {
-	case kHospitalBedroom:
-		result = execute2020(action);
-		break;
-	case kHospitalStoreroom:
-		result = execute2060(action);
-		break;
-	case kHospitalBathroom:
-		result = execute2080(action);
-		break;
-	default:
-		break;
-	}
-	return result;
+	return desertChapter() ? executeDesert(action) : kUnhandled;
 }
 
 void RunawayRoomScene::execute(uint16 action) {
@@ -643,7 +544,7 @@ void RunawayRoomScene::changeFloor(bool upper, Common::Point position) {
 }
 
 void RunawayRoomScene::setCameraX(int x) {
-	_camera.x = CLIP<int>(x, _room == kHospitalBedroom ? 156 : 0, MAX<int>(0, _background.w - kRunawayScreenWidth));
+	_camera.x = CLIP<int>(x, 0, MAX<int>(0, _background.w - kRunawayScreenWidth));
 }
 
 void RunawayRoomScene::updateCamera() {
@@ -656,18 +557,7 @@ int RunawayRoomScene::sceneViewportYOffset() const {
 }
 
 float RunawayRoomScene::actorHeight() const {
-	if (desertChapter())
-		return desertActorHeight();
-	switch (_room) {
-	case kHospitalBedroom:
-		return actorHeight2020();
-	case kHospitalStoreroom:
-		return _position.y * 3.55555558f - 1550.33337f;
-	case kHospitalBathroom:
-		return _position.y * 0.266272187f + 295.502960f;
-	default:
-		return 455;
-	}
+	return desertChapter() ? desertActorHeight() : 455;
 }
 
 void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpen) {
@@ -678,23 +568,18 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	if (_sequence.active()) {
 		_sequence.update(now);
 		if (!_sequence.active()) {
-			if (townChapter() || museumChapter())
-				finishCustomFilm();
-			else if (_room == 5140)
+			if (_room == 5140) {
 				updateScene5140();
-			else if (_entryScene == 5022)
+			} else if (_entryScene == 5022) {
 				_chapterComplete = true;
-			else if (!desertChapter())
-				finishHospitalFilm();
+			} else if (!desertChapter()) {
+				finishCustomFilm();
+			}
 		}
 		return;
 	}
 	if (speaking() && _speech.finished(now))
 		skipSpeech();
-	if (_room == kHospitalBedroom)
-		update2020();
-	else if (_room == kHospitalBathroom)
-		update2080();
 	if (townChapter()) {
 		updateTown(elapsed);
 		if (_sequence.active() || _transition.scene)
@@ -708,13 +593,8 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 		if (_sequence.active() || _transition.scene)
 			return;
 	} else if (_game == kRunawayFullGame) {
-		if (_room != kHospitalBathroom)
-			updateRoomAnimation();
-		if (_sequence.active() || _transition.scene)
-			return;
-		updateHospitalAudio();
-		if (_hospitalExit.scene && !_audio.effectPlaying()) {
-			_transition = _hospitalExit;
+		updateHospital(elapsed);
+		if (_sequence.active() || _transition.scene) {
 			return;
 		}
 	}
@@ -792,9 +672,9 @@ void RunawayRoomScene::draw() {
 	const byte light = MIN<byte>(9, _maps[768 + _mask[_position.y * _background.w + _position.x]]);
 	memcpy(params.light, findRunawayRoom(_room)->light[light], sizeof(params.light));
 	const bool roomAnimation = drawingRoomAnimation();
-	if ((!roomAnimation || !_actionHidesActor) && shouldDrawActor() &&
-			(_room != kHospitalBathroom || (_roomAction != 302 && _roomAction != 307)))
+	if ((!roomAnimation || !_actionHidesActor) && shouldDrawActor()) {
 		_actor.draw(_screen, params, _mask, _maps);
+	}
 	if (roomAnimation) {
 		_actionAnimation.draw(viewport, _actionFrames[MIN<uint>(_actionStep, _actionFrames.size() - 1)], _camera.x, -_camera.y);
 		if (!_secondaryFrames.empty())
@@ -811,23 +691,15 @@ void RunawayRoomScene::setupActorDepth(RunawayActor::RenderParams &params) const
 void RunawayRoomScene::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
 	if (desertChapter()) {
 		drawDesertRoom(viewport, false);
-	} else if (_room == kHospitalBedroom) {
-		drawScene2020(viewport, false);
-	} else if (_room == kHospitalBathroom) {
-		drawScene2080(viewport, false);
 	} else {
 		_ambient.draw(viewport, 0, _camera.x, -_camera.y);
-		_overlay.draw(viewport, 0, _camera.x, -_camera.y);
 	}
 }
 
 void RunawayRoomScene::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
-	if (desertChapter())
+	if (desertChapter()) {
 		drawDesertRoom(viewport, true);
-	else if (_room == kHospitalBedroom)
-		drawScene2020(viewport, true);
-	else if (_room == kHospitalBathroom)
-		drawScene2080(viewport, true);
+	}
 }
 
 void RunawayRoomScene::drawForeground(Graphics::ManagedSurface &viewport, uint layer) {
@@ -901,33 +773,20 @@ void RunawayRoomScene::updateRoomAnimation() {
 			const uint16 action = _roomAction;
 			_roomAction = 0;
 			_actionFrames.clear();
-			if (townChapter())
+			if (townChapter()) {
 				execute(action + 1000);
-			else if (desertChapter())
+			} else if (desertChapter()) {
 				finishDesertAnimation(action);
-			else if (museumChapter())
+			} else {
 				finishCustomAnimation(action);
-			else
-				finishHospitalAnimation(action);
+			}
 			return;
 		}
 		if (desertChapter()) {
 			desertAnimationFrame();
 			continue;
 		}
-		if (museumChapter() || townChapter()) {
-			handleAnimationFrameHook();
-			continue;
-		}
-		if ((_roomAction == 335 && _actionStep == 15) || (_roomAction == 339 && _actionStep == 47))
-			_audio.playEffect(46);
-		if (_roomAction == 339 && _actionStep == 16)
-			_audio.playEffect(45);
-		if (_roomAction == 339 && _actionStep == 1 && !applyPatch(18))
-			error("Cannot clear Runaway hospital chart");
-		if ((_roomAction == 332 && (_actionStep == 21 || _actionStep == 35 || _actionStep == 41)) ||
-				(_room == kHospitalStoreroom && _roomAction == 302 && (_actionStep == 23 || _actionStep == 36)))
-			_audio.playFootstep(1, _random.getRandomBit());
+		handleAnimationFrameHook();
 	}
 }
 

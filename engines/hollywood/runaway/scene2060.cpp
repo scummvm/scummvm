@@ -20,8 +20,7 @@
  */
 
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene2060.h"
 
 namespace Hollywood {
 namespace {
@@ -73,28 +72,34 @@ const RunawayRoom kRunawayScene2060 = {
 	kResponses, ARRAYSIZE(kResponses), nullptr, 0, nullptr, 0
 };
 
-bool RunawayRoomScene::applyBackground2060() {
+namespace Runaway {
+
+Scene2060::Scene2060(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene2060::applyCustomBackgroundPatches() {
 	return (!_hospital.headTaken || applyPatch(5)) && (_hospital.blankChart != 2 || applyPatch(6)) &&
 		(!_hospital.sprayTaken || applyPatch(7)) && (_hospital.book != 2 || applyPatch(8)) &&
 		(!_hospital.pillowsTaken || applyPatch(9));
 }
 
-void RunawayRoomScene::updateMaps2060() {
+void Scene2060::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
 		if ((_hospital.sprayTaken && id == 4) || (_hospital.pillowsTaken && id == 15) ||
-				(_hospital.headTaken && id == 16))
+				(_hospital.headTaken && id == 16)) {
 			id = 0;
-		else if (id == 5 && _hospital.book == 2)
+		} else if (id == 5 && _hospital.book == 2) {
 			id = 11;
-		else if (id == 6 && _hospital.blankChart == 2)
+		} else if (id == 6 && _hospital.blankChart == 2) {
 			id = 8;
-		else if (id == 16)
+		} else if (id == 16) {
 			id = 7;
+		}
 	}
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute2060(uint16 action) {
+RunawayRoomScene::ActionResult Scene2060::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Climb back to Gina's room.
 		beginRoomAnimation(action, 4, 44);
@@ -164,4 +169,55 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2060(uint16 action) {
 	}
 }
 
+void Scene2060::runCustomEntrySequence() {
+	if (_inventory.water() == 1) {
+		_inventory.setWater(2);
+	}
+	static const byte frames[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+	beginRoomAnimation(_entryScene, 10, 13, frames, ARRAYSIZE(frames));
+}
+
+void Scene2060::finishCustomAnimation(uint16 action) {
+	switch (action) {
+	case 302: // Return through the storeroom window.
+		_transition.scene = 2022;
+		_transition.position = Common::Point(265, 456);
+		_transition.facing = 3;
+		return;
+	case kHospitalStoreroom:
+		if (!_hospital.storeroomVisited) {
+			say(0);
+		}
+		_hospital.storeroomVisited = 1;
+		_facing = 3;
+		return;
+	default:
+		return;
+	}
+}
+
+void Scene2060::handleAnimationFrameHook() {
+	if (_roomAction == 302 && (_actionStep == 23 || _actionStep == 36)) {
+		_audio.playFootstep(1, _random.getRandomBit());
+	}
+}
+
+float Scene2060::actorHeight() const {
+	return _position.y * 3.55555558f - 1550.33337f;
+}
+
+Common::U32String Scene2060::hotspotName(byte id) const {
+	if (id == 3 && _hospital.syringesSeen) {
+		return Common::U32String("Box of syringes");
+	}
+	if (id == 5 && _hospital.book) {
+		return Common::U32String("Vademecum");
+	}
+	if (id == 6 && _hospital.blankChart) {
+		return Common::U32String("Medical chart");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood

@@ -19,11 +19,10 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene2020.h"
 
 namespace Hollywood {
 namespace {
@@ -320,82 +319,48 @@ const RunawayRoom kRunawayScene2020 = {
 	nullptr, 0
 };
 
-bool RunawayRoomScene::loadScene2020() {
+namespace Runaway {
+
+Scene2020::Scene2020(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene2020::loadCustomResources() {
 	return loadForeground(0, 12) && loadForeground(1, 14) && loadForeground(2, 11, true) &&
-		loadForeground(3, 15) && _safe.load(_archive, 5, 1) &&
-		_ambient.load(_archive, 22, 19) && _overlay.load(_archive, 17, 1) &&
+		loadForeground(3, 15) && _chartAnimation.load(_archive, 5, 1) &&
+		_ginaAnimation.load(_archive, 22, 19) && _chartOverlay.load(_archive, 17, 1) &&
 		_archive.readVariableChunk(20, _monitorPatches[0]) && _archive.readVariableChunk(21, _monitorPatches[1]);
 }
 
-void RunawayRoomScene::start2020() {
-	for (byte item = 1; item <= 4; ++item)
-		_inventory.add(item);
-	_inventory.takeNewItem();
-	_facing = 7;
-	startHospitalFilm(kGinaStoryFilm);
-}
-
-bool RunawayRoomScene::applyBackground2020() {
+bool Scene2020::applyCustomBackgroundPatches() {
 	if ((_hospital.glassTaken && !applyPatch(8)) || (_hospital.pillsTaken && !applyPatch(9)) ||
-			(_hospital.sheetTaken && !applyPatch(7)) || (_hospital.bagTaken && !applyPatch(6)))
+			(_hospital.sheetTaken && !applyPatch(7)) || (_hospital.bagTaken && !applyPatch(6))) {
 		return false;
+	}
 	return (!_hospital.decoy || applyPatch(13)) && applyPatch(11) && applyRunawayPatch(_monitorPatches[1], _background) &&
 		applyRunawayPatch(_monitorPatches[0], _background);
 }
 
-void RunawayRoomScene::updateMaps2020() {
+void Scene2020::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		// Zones 5/6 are reserved for scripted movement, not normal walking.
-		if (_maps[i] > 4)
+		if (_maps[i] > 4) {
 			_maps[i] = 0;
+		}
 		byte &id = _maps[256 + i];
 		if ((_hospital.glassTaken && id == 3) || (_hospital.pillsTaken && id == 4) ||
-				(_hospital.bagTaken && id == 7) || (id == 11 && !_hospital.decoy))
+				(_hospital.bagTaken && id == 7) || (id == 11 && !_hospital.decoy)) {
 			id = 0;
-		else if (_hospital.decoy && (id == 20 || id == 21))
+		} else if (_hospital.decoy && (id == 20 || id == 21)) {
 			id = 11;
-		else if (id == 5 || id == 21)
+		} else if (id == 5 || id == 21) {
 			id = _hospital.sheetTaken ? 19 : 5;
-		else if (id == 20)
+		} else if (id == 20) {
 			id = 19;
-	}
-}
-
-bool RunawayRoomScene::sayHospitalInventory(const RunawayInventory::Reply &reply) {
-	if (reply.cue == 68) {
-		if (!_hospital.attacked) {
-			say(68, 0, true);
-		} else if (!_inventory.contains(8)) {
-			say(68, 1, true);
-		} else {
-			say(68, 2, true);
-			say(68, 3, true);
-			_hospital.medicineRead = 1;
 		}
-		_audio.playEffect(35, 179);
-		return true;
 	}
-	if ((reply.cue == 69 && reply.variation == 0) || (reply.cue == 73 && reply.variation == 1) ||
-			(reply.cue == 72 && reply.variation == 2)) {
-		_audio.playEffect(reply.cue == 69 ? 36 : reply.cue == 73 ? 37 : 34, 179);
-	}
-	if (reply.cue != 54)
-		return false;
-	// Searching Gina's bag reveals the matches on the first examination.
-	say(54, 1, true);
-	if (_inventory.contains(9) && _inventory.contains(17) && !_inventory.headWig() && !_inventory.contains(10)) {
-		_inventory.add(10);
-		say(54, 4, true);
-	} else if (_inventory.contains(9)) {
-		say(54, _random.getRandomBit() ? 3 : 5, true);
-	} else {
-		_inventory.add(9);
-		say(54, 2, true);
-	}
-	return true;
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
+RunawayRoomScene::ActionResult Scene2020::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Look at Gina.
 		say(2, _random.getRandomNumber(2) + (_hospital.attacked ? 3 : 0));
@@ -428,8 +393,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 		say(9, 1);
 		return kBackgroundChanged;
 	case 330: // Read the emergency exit map.
-		if (!_hospital.exitMapRead)
+		if (!_hospital.exitMapRead) {
 			say(26);
+		}
 		say(26, _hospital.window ? 2 : 1);
 		_hospital.exitMapRead = 1;
 		return kHandled;
@@ -438,8 +404,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 			say(28);
 			return kHandled;
 		}
-		if (!_hospital.window)
+		if (!_hospital.window) {
 			say(28, 1);
+		}
 		_hospital.window = MIN<int>(2, _hospital.window + 1);
 		beginRoomAnimation(action, 4, 42);
 		return kHandled;
@@ -474,16 +441,18 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 		say(32);
 		return kHandled;
 	case 337: // Use the syringe with Gina.
-		if (_hospital.attacked)
+		if (_hospital.attacked) {
 			say(33);
-		else
+		} else {
 			say(4, 0, true);
+		}
 		return kHandled;
 	case 338: // Put the blank medical chart on the other bed.
-		if (_inventory.chartWritten())
+		if (_inventory.chartWritten()) {
 			say(14, _random.getRandomNumber(2), true);
-		else
+		} else {
 			say(34);
+		}
 		return kHandled;
 	case 339: { // Replace Gina's medical chart.
 		if (!_inventory.chartWritten()) {
@@ -492,21 +461,22 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 		}
 		beginRoomAnimation(action, 19, 35);
 		_actionFrames.push_back(33);
-		for (int frame = 32; frame >= 0; --frame)
+		for (int frame = 32; frame >= 0; --frame) {
 			_actionFrames.push_back(frame);
+		}
 		return kHandled;
 	}
 	case 340: // Use the head with the empty bed.
 	case 341: // Use the pillows with the empty bed.
-		if (!_inventory.contains(17))
+		if (!_inventory.contains(17)) {
 			say(36, 5);
-		else if (!_inventory.headWig())
+		} else if (!_inventory.headWig()) {
 			say(36, action == 340 ? 2 : 6);
-		else if (!_inventory.contains(14))
+		} else if (!_inventory.contains(14)) {
 			say(36);
-		else if (!_inventory.contains(7))
+		} else if (!_inventory.contains(7)) {
 			say(36, 1);
-		else {
+		} else {
 			say(36, 3);
 			_roomAction = 340;
 			_actionStage = 0;
@@ -514,10 +484,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 		return kHandled;
 	case 342: // Use the flammable spray at the sprinkler.
 		if (!_hospital.attacked || !_hospital.medicineRead) {
-			if (_inventory.contains(9))
+			if (_inventory.contains(9)) {
 				say(37, 1);
-			else
+			} else {
 				say(1, 2, true);
+			}
 		} else if (!_inventory.contains(9)) {
 			say(37);
 		} else {
@@ -532,10 +503,11 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 		leaveHospitalRoom(kHospitalBathroom, Common::Point(0, 596), 1);
 		return kHandled;
 	case 349: // Use the glass with Gina.
-		if (_hospital.attacked)
+		if (_hospital.attacked) {
 			say(41, _inventory.water() != 0);
-		else
+		} else {
 			say(14, _random.getRandomNumber(2), true);
+		}
 		return kHandled;
 	case 351: // Peek through the hallway door.
 		walkTo(Common::Point(313, 532), 5, true);
@@ -550,15 +522,58 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2020(uint16 action) {
 	}
 }
 
-float RunawayRoomScene::actorHeight2020() const {
+float Scene2020::actorHeight() const {
 	// The original switches perspective planes at x = 864 (0x443be0).
 	return _position.x < 864 ? _position.y * 1.26388884f - 302.069458f :
 		_position.y * 0.44444445f + 188.777771f;
 }
 
-void RunawayRoomScene::update2020() {
-	if (_hospitalEntryStep && !speaking() && !_walkPath.active()) {
-		switch (_hospitalEntryStep++) {
+void Scene2020::start(uint32 now) {
+	_now = _lastUpdate = now;
+	_idleHead.reset(now);
+	for (byte item = 1; item <= 4; ++item) {
+		_inventory.add(item);
+	}
+	_inventory.takeNewItem();
+	_facing = 7;
+	startHospitalFilm(kGinaStoryFilm);
+	resume();
+}
+
+bool Scene2020::busy() const {
+	return RunawayRoomScene::busy() || _entryStep;
+}
+
+void Scene2020::setCameraX(int x) {
+	_camera.x = CLIP<int>(x, 156, MAX<int>(0, _background.w - kRunawayScreenWidth));
+}
+
+byte Scene2020::initialActorFacing() const {
+	return 7;
+}
+
+void Scene2020::resumeAmbientAudio(bool entering) {
+	RunawayRoomScene::resumeAmbientAudio(entering);
+	_audio.playEffect(30, 3, 1, true);
+}
+
+void Scene2020::runCustomEntrySequence() {
+	if (_inventory.water() == 1) {
+		_inventory.setWater(2);
+	}
+	if (_entryScene == 2022) {
+		static const byte frames[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+		beginRoomAnimation(_entryScene, 23, 13, frames, ARRAYSIZE(frames));
+	} else if (_entryScene == 2023) {
+		startHospitalFilm(kAmbushFilm);
+	} else {
+		_audio.playEffect(48);
+	}
+}
+
+void Scene2020::advanceCustomGameplayLoop(uint32 delta) {
+	if (_entryStep && !speaking() && !_walkPath.active()) {
+		switch (_entryStep++) {
 		case 1: // Reflect on Gina's story.
 			_facing = 4;
 			say(0, 1);
@@ -572,23 +587,23 @@ void RunawayRoomScene::update2020() {
 		case 4: // Finish the hospital introduction.
 			_facing = 3;
 			say(0, 3);
-			_hospitalEntryStep = 0;
+			_entryStep = 0;
 			break;
 		case 5: // React to the attack on the decoy.
 			_facing = 4;
 			say(81, 6);
-			_hospitalEntryStep = 0;
+			_entryStep = 0;
 			break;
 		case 6: // Inspect the completed decoy.
 			say(36, 4);
-			_hospitalEntryStep = 0;
+			_entryStep = 0;
 			break;
 		case 7: // Report what Brian saw in the hallway.
 			say(42, _hospital.attacked ? 5 : 4);
-			_hospitalEntryStep = 0;
+			_entryStep = 0;
 			break;
 		default:
-			_hospitalEntryStep = 0;
+			_entryStep = 0;
 			break;
 		}
 	}
@@ -614,21 +629,22 @@ void RunawayRoomScene::update2020() {
 			}
 		}
 	}
-	if (_now - _ambientTick >= 80) {
-		_ambientTick = _now;
-		if ((_ambientFrame > 0 && _ambientFrame < 18) || !_random.getRandomNumber(49)) {
-			_ambientFrame += _ambientDirection;
-			if (_ambientFrame == 18 || _ambientFrame == 0)
-				_ambientDirection = -_ambientDirection;
+	if (_now - _ginaTick >= 80) {
+		_ginaTick = _now;
+		if ((_ginaFrame > 0 && _ginaFrame < 18) || !_random.getRandomNumber(49)) {
+			_ginaFrame += _ginaDirection;
+			if (_ginaFrame == 18 || _ginaFrame == 0) {
+				_ginaDirection = -_ginaDirection;
+			}
 		}
 	}
 	// The bedside indicator alternates after 17 and 9 animation ticks.
 	applyRunawayPatch(_monitorPatches[(_now / 80) % 26 >= 17], _background);
 }
 
-void RunawayRoomScene::adaptGogFilm(const RunawaySequence::Command *commands) {
+void Scene2020::adaptGogFilm(const RunawaySequence::Command *commands) {
 	typedef RunawaySequence S;
-	_filmCommands.clear();
+	_gogFilmCommands.clear();
 	uint movie = 0, part = 1;
 	for (uint i = 0; commands[i].operation != S::kEnd; ++i) {
 		S::Command command = commands[i];
@@ -637,27 +653,28 @@ void RunawayRoomScene::adaptGogFilm(const RunawaySequence::Command *commands) {
 			part = 1;
 		}
 		if (movie == 2 && command.operation == S::kPlay) {
-			if (command.a >= 820)
+			if (command.a >= 820) {
 				continue; // These CD shots are separate stills in the GOG edition.
+			}
 			uint targetPart = command.a >= 720 ? 4 : command.a >= 200 ? 3 : 1;
 			if (command.a == 101) {
-				_filmCommands.push_back(S::Command(S::kPlay, 101, 199));
+				_gogFilmCommands.push_back(S::Command(S::kPlay, 101, 199));
 				targetPart = 3;
 				command.a = 200;
 			}
 			if (part != targetPart) {
-				_filmCommands.push_back(S::Command(S::kOpen, movie, targetPart));
+				_gogFilmCommands.push_back(S::Command(S::kOpen, movie, targetPart));
 				part = targetPart;
 			}
 			const uint offset = part == 4 ? 720 : part == 3 ? 200 : 0;
 			command.a -= offset;
 			command.b -= offset;
 		} else if (movie == 2 && command.operation == S::kTalk && command.c) {
-			_filmCommands.push_back(S::Command(S::kStill, command.c == 1 ? 0 : 1, 1));
+			_gogFilmCommands.push_back(S::Command(S::kStill, command.c == 1 ? 0 : 1, 1));
 			command.c = command.c == 1 ? 3 : 1;
 		} else if (movie == 7 && command.operation == S::kTalk && command.b >= 9) {
 			static const uint16 stills[] = {236, 237, 238, 239, 240, 241, 241, 242};
-			_filmCommands.push_back(S::Command(S::kStill, stills[command.b - 9]));
+			_gogFilmCommands.push_back(S::Command(S::kStill, stills[command.b - 9]));
 		} else if (movie == 9 && command.operation == S::kPlay) {
 			uint targetPart = 1;
 			if (command.a == 1608) {
@@ -681,7 +698,7 @@ void RunawayRoomScene::adaptGogFilm(const RunawaySequence::Command *commands) {
 				++command.b;
 			}
 			if (part != targetPart) {
-				_filmCommands.push_back(S::Command(S::kOpen, movie, targetPart));
+				_gogFilmCommands.push_back(S::Command(S::kOpen, movie, targetPart));
 				part = targetPart;
 			}
 		} else if (movie == 9 && command.operation == S::kTalk) {
@@ -690,17 +707,17 @@ void RunawayRoomScene::adaptGogFilm(const RunawaySequence::Command *commands) {
 				0, 302, 325, 0, 0, 0, 0, 991, 1026, 1118, 0, 1209, 1222, 0, 0, 0, 0, 1591, 1598
 			};
 			if (part != 1) {
-				_filmCommands.push_back(S::Command(S::kOpen, movie));
+				_gogFilmCommands.push_back(S::Command(S::kOpen, movie));
 				part = 1;
 			}
-			_filmCommands.push_back(S::Command(S::kStill, stills[command.b]));
+			_gogFilmCommands.push_back(S::Command(S::kStill, stills[command.b]));
 		}
-		_filmCommands.push_back(command);
+		_gogFilmCommands.push_back(command);
 	}
-	_filmCommands.push_back(S::Command(S::kEnd));
+	_gogFilmCommands.push_back(S::Command(S::kEnd));
 }
 
-void RunawayRoomScene::startHospitalFilm(HospitalFilm film) {
+void Scene2020::startHospitalFilm(HospitalFilm film) {
 	const RunawaySequence::Command *commands = nullptr;
 	switch (film) {
 	case kGinaStoryFilm:
@@ -725,15 +742,15 @@ void RunawayRoomScene::startHospitalFilm(HospitalFilm film) {
 	_caption.clear();
 	if (Common::File::exists("DATAVC00.000")) {
 		adaptGogFilm(commands);
-		commands = _filmCommands.data();
+		commands = _gogFilmCommands.data();
 	}
 	_sequence.start(commands, _text, _now);
 }
 
-void RunawayRoomScene::finishHospitalFilm() {
+void Scene2020::finishCustomFilm() {
 	switch (_hospitalFilm) {
 	case kGinaStoryFilm:
-		_hospitalEntryStep = 1;
+		_entryStep = 1;
 		say(0);
 		break;
 	case kLedgeFilm:
@@ -746,14 +763,15 @@ void RunawayRoomScene::finishHospitalFilm() {
 		_inventory.remove(7);
 		_inventory.remove(14);
 		_inventory.remove(17);
-		if (!rebuildBackground())
+		if (!rebuildBackground()) {
 			error("Cannot build Runaway hospital decoy");
+		}
 		updateMaps();
 		walkTo(Common::Point(404, 456), 1, true);
-		_hospitalEntryStep = 6;
+		_entryStep = 6;
 		break;
 	case kAmbushFilm:
-		_hospitalEntryStep = 5;
+		_entryStep = 5;
 		say(81, 5);
 		break;
 	case kEscapeFilm:
@@ -762,25 +780,13 @@ void RunawayRoomScene::finishHospitalFilm() {
 		return;
 	}
 	_audio.playMusic(11, false);
-	if (_room == kHospitalBedroom)
-		_audio.playEffect(30, 3, 1, true);
+	_audio.playEffect(30, 3, 1, true);
 }
 
-void RunawayRoomScene::finishHospitalAnimation(uint16 action) {
+void Scene2020::finishCustomAnimation(uint16 action) {
 	switch (action) {
 	case 332: // Start the ledge crossing.
 		startHospitalFilm(kLedgeFilm);
-		return;
-	case 302: // Return through the storeroom window.
-		_transition.scene = 2022;
-		_transition.position = Common::Point(265, 456);
-		_transition.facing = 3;
-		return;
-	case kHospitalStoreroom:
-		if (!_hospital.storeroomVisited)
-			say(0);
-		_hospital.storeroomVisited = 1;
-		_facing = 3;
 		return;
 	case 2022: // Finish climbing into Gina's room.
 		_facing = 3;
@@ -798,57 +804,71 @@ void RunawayRoomScene::finishHospitalAnimation(uint16 action) {
 		break;
 	case 351: // Return from peeking through the hallway door.
 		walkTo(Common::Point(313, 532), 4, true);
-		_hospitalEntryStep = 7;
+		_entryStep = 7;
 		return;
 	default:
 		return;
 	}
-	if (!rebuildBackground())
+	if (!rebuildBackground()) {
 		error("Cannot update Runaway hospital chart");
+	}
 	updateMaps();
 }
 
-void RunawayRoomScene::leaveHospitalRoom(uint16 scene, Common::Point position, byte facing) {
-	_hospitalExit.scene = scene;
-	_hospitalExit.position = position;
-	_hospitalExit.facing = facing;
-	_audio.playEffect(47);
-}
-
-void RunawayRoomScene::updateHospitalAudio() {
-	if (!_audio.musicPlaying()) {
-		if (!_nextMusic) {
-			static const uint16 delays[] = {0, 240, 120, 60};
-			_nextMusic = _now + delays[_random.getRandomNumber(3)] * 250;
-		}
-		if ((int32)(_now - _nextMusic) >= 0) {
-			byte cue;
-			do {
-				cue = 12 + _random.getRandomNumber(3);
-			} while (cue == _musicCue);
-			_musicCue = cue;
-			_audio.playMusic(cue, false);
-			_nextMusic = 0;
-		}
+void Scene2020::handleAnimationFrameHook() {
+	if ((_roomAction == 335 && _actionStep == 15) || (_roomAction == 339 && _actionStep == 47)) {
+		_audio.playEffect(46);
+	}
+	if (_roomAction == 339 && _actionStep == 16) {
+		_audio.playEffect(45);
+	}
+	if (_roomAction == 339 && _actionStep == 1 && !applyPatch(18)) {
+		error("Cannot clear Runaway hospital chart");
+	}
+	if (_roomAction == 332 && (_actionStep == 21 || _actionStep == 35 || _actionStep == 41)) {
+		_audio.playFootstep(1, _random.getRandomBit());
 	}
 }
 
-void RunawayRoomScene::drawScene2020(Graphics::ManagedSurface &viewport, bool foreground) {
-	if (!foreground && _hospital.chartMoved)
-		_safe.draw(viewport, 0, _camera.x, 0);
+Common::U32String Scene2020::hotspotName(byte id) const {
+	if (id == 9 && _hospital.chartReplaced) {
+		return Common::U32String("Fake medical chart");
+	}
+	if (id == 10 && _hospital.chartMoved) {
+		return Common::U32String("Gina's medical chart");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+void Scene2020::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	drawRoomComposite(viewport, false);
+}
+
+void Scene2020::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	drawRoomComposite(viewport, true);
+}
+
+void Scene2020::drawRoomComposite(Graphics::ManagedSurface &viewport, bool foreground) {
+	if (!foreground && _hospital.chartMoved) {
+		_chartAnimation.draw(viewport, 0, _camera.x, 0);
+	}
 	// Gina and the near bed occlude Brian only when he is behind them.
 	if (foreground == (_position.y < 503)) {
-		_ambient.draw(viewport, _ambientFrame, _camera.x, 0);
+		_ginaAnimation.draw(viewport, _ginaFrame, _camera.x, 0);
 		drawForeground(viewport, 2);
-		if (_roomAction != 339 || !_actionStep)
-			_overlay.draw(viewport, 0, _camera.x, 0);
+		if (_roomAction != 339 || !_actionStep) {
+			_chartOverlay.draw(viewport, 0, _camera.x, 0);
+		}
 	}
 	if (foreground) {
-		if (_position.x < 600 && _position.y < 434)
+		if (_position.x < 600 && _position.y < 434) {
 			drawForeground(viewport, _hospital.decoy ? 3 : 1);
-		if (_position.x > 1000)
+		}
+		if (_position.x > 1000) {
 			drawForeground(viewport, 0);
+		}
 	}
 }
 
+} // End of namespace Runaway
 } // End of namespace Hollywood

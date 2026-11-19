@@ -19,9 +19,9 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "common/util.h"
-#include "hollywood/runaway/scene.h"
-#include "hollywood/runaway/scene_data.h"
+#include "hollywood/runaway/scene2080.h"
 
 namespace Hollywood {
 namespace {
@@ -74,24 +74,30 @@ const RunawayRoom kRunawayScene2080 = {
 	kResponses, ARRAYSIZE(kResponses), kItemActions, ARRAYSIZE(kItemActions), nullptr, 0
 };
 
-bool RunawayRoomScene::loadScene2080() {
-	return _ambient.load(_archive, 6, 43) && loadForeground(0, 7) && loadForeground(1, 8);
+namespace Runaway {
+
+Scene2080::Scene2080(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
+	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene2080::loadCustomResources() {
+	return _wastebasketAnimation.load(_archive, 6, 43) && loadForeground(0, 7) && loadForeground(1, 8);
 }
 
-bool RunawayRoomScene::applyBackground2080() {
+bool Scene2080::applyCustomBackgroundPatches() {
 	return _hospital.alcohol != 1 || applyPatch(5);
 }
 
-void RunawayRoomScene::updateMaps2080() {
+void Scene2080::applyCustomHotspotState() {
 	if (_hospital.alcohol == 1) {
 		for (uint i = 0; i < 256; ++i) {
-			if (_maps[256 + i] == 4)
+			if (_maps[256 + i] == 4) {
 				_maps[256 + i] = 0;
+			}
 		}
 	}
 }
 
-RunawayRoomScene::ActionResult RunawayRoomScene::execute2080(uint16 action) {
+RunawayRoomScene::ActionResult Scene2080::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 312: // Use the sign.
 	case 316: // Use the shower nozzle.
@@ -122,8 +128,9 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2080(uint16 action) {
 			say(4, 1);
 			return kHandled;
 		}
-		if (!_actionAnimation.load(_archive, 4, 38))
+		if (!_faucetAnimation.load(_archive, 4, 38)) {
 			error("Cannot load Runaway bathroom faucet animation");
+		}
 		_roomAction = action;
 		_actionStarted = _now;
 		_actionStep = 0;
@@ -141,18 +148,24 @@ RunawayRoomScene::ActionResult RunawayRoomScene::execute2080(uint16 action) {
 	}
 }
 
-void RunawayRoomScene::update2080() {
+void Scene2080::runCustomEntrySequence() {
+	_audio.playEffect(48);
+	walkTo(Common::Point(227, 546), 1, true);
+}
+
+bool Scene2080::updateCustomSequence() {
 	if (!_hospital.attacked && _hospital.chartMoved && _hospital.decoy && !_walkPath.active()) {
 		_hospital.attacked = 1;
 		_transition.scene = 2023;
 		_transition.position = Common::Point(1075, 534);
 		_transition.facing = 7;
-		return;
+		return true;
 	}
 	if (_roomAction == 302) {
 		if (_actionStage == 1) {
-			if (speaking())
-				return;
+			if (speaking()) {
+				return true;
+			}
 			_actionStage = 2;
 			_actionStarted = _now;
 			_actionStep = 0;
@@ -160,16 +173,18 @@ void RunawayRoomScene::update2080() {
 		const uint previous = _actionStep;
 		_actionStep = (_now - _actionStarted) / 80;
 		if (!_actionStage) {
-			if (previous < 12 && _actionStep >= 12)
+			if (previous < 12 && _actionStep >= 12) {
 				_audio.playEffect(31);
+			}
 			if (_actionStep >= 19) {
 				_actionStage = 1;
 				_actionStep = 19;
 				say(1, _hospital.markerTaken ? 2 : 3);
 			}
 		} else if (_actionStage == 2) {
-			if (_hospital.markerTaken && previous < 2 && _actionStep >= 2)
+			if (_hospital.markerTaken && previous < 2 && _actionStep >= 2) {
 				_audio.playEffect(30, 204);
+			}
 			const uint duration = _hospital.markerTaken ? 19 : 12;
 			if (_actionStep >= duration) {
 				_roomAction = 0;
@@ -183,8 +198,9 @@ void RunawayRoomScene::update2080() {
 	} else if (_roomAction == 307) {
 		const uint previous = _actionStep;
 		_actionStep = (_now - _actionStarted) / 80;
-		if (previous < 20 && _actionStep >= 20)
+		if (previous < 20 && _actionStep >= 20) {
 			_audio.playEffect(38, 204);
+		}
 		if (_actionStep >= ARRAYSIZE(kFillGlassFrames)) {
 			_roomAction = 0;
 			_inventory.setWater(1);
@@ -198,28 +214,57 @@ void RunawayRoomScene::update2080() {
 		say(_roomAction == 311 ? 6 : 15, 1);
 		_roomAction = 0;
 	}
+	return true;
 }
 
-void RunawayRoomScene::drawScene2080(Graphics::ManagedSurface &viewport, bool foreground) {
-	if (!foreground) {
-		if (_roomAction == 302) {
-			uint frame = MIN<uint>(19, _actionStep);
-			if (_actionStage == 1)
-				frame = 19 + speechFrame();
-			else if (_actionStage == 2)
-				frame = _hospital.markerTaken ? 19 - MIN<uint>(18, _actionStep) : _actionStep ? 30 + _actionStep : 19;
-			_ambient.draw(viewport, frame, 0, 0);
-		} else {
-			_ambient.draw(viewport, 42, 0, 0);
-			if (_roomAction == 307)
-				_actionAnimation.draw(viewport, kFillGlassFrames[MIN<uint>(_actionStep, ARRAYSIZE(kFillGlassFrames) - 1)], 0, 0);
+void Scene2080::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
+	if (_roomAction == 302) {
+		uint frame = MIN<uint>(19, _actionStep);
+		if (_actionStage == 1) {
+			frame = 19 + speechFrame();
+		} else if (_actionStage == 2) {
+			frame = _hospital.markerTaken ? 19 - MIN<uint>(18, _actionStep) : _actionStep ? 30 + _actionStep : 19;
 		}
-	} else if (_roomAction != 302 && _roomAction != 307) {
-		if (_position.x < 300)
-			drawForeground(viewport, 1);
-		else if (_position.x > 350)
-			drawForeground(viewport, 0);
+		_wastebasketAnimation.draw(viewport, frame, 0, 0);
+	} else {
+		_wastebasketAnimation.draw(viewport, 42, 0, 0);
+		if (_roomAction == 307) {
+			_faucetAnimation.draw(viewport, kFillGlassFrames[MIN<uint>(_actionStep, ARRAYSIZE(kFillGlassFrames) - 1)], 0, 0);
+		}
 	}
 }
 
+void Scene2080::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	if (shouldDrawActor()) {
+		if (_position.x < 300) {
+			drawForeground(viewport, 1);
+		} else if (_position.x > 350) {
+			drawForeground(viewport, 0);
+		}
+	}
+}
+
+bool Scene2080::shouldDrawActor() const {
+	return _roomAction != 302 && _roomAction != 307;
+}
+
+bool Scene2080::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+	if (id == 4 && !use && !item && _hospital.alcohol == 2) {
+		return false;
+	}
+	return approach;
+}
+
+float Scene2080::actorHeight() const {
+	return _position.y * 0.266272187f + 295.502960f;
+}
+
+Common::U32String Scene2080::hotspotName(byte id) const {
+	if (id == 4 && _hospital.alcohol == 2) {
+		return Common::U32String("Bottle of alcohol");
+	}
+	return RunawayRoomScene::hotspotName(id);
+}
+
+} // End of namespace Runaway
 } // End of namespace Hollywood
