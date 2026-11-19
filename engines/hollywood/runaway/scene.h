@@ -142,7 +142,7 @@ private:
 	void startHospitalFilm(HospitalFilm film);
 	void finishHospitalFilm();
 	void adaptGogFilm(const RunawaySequence::Command *commands);
-	void beginRoomAnimation(uint16 action, uint chunk, uint frames, const byte *order = nullptr, uint count = 0, bool hideActor = true);
+	void beginRoomAnimation(uint16 action, uint chunk, uint frames, const byte *order = nullptr, uint count = 0, bool hideActor = true, uint frameDuration = 80);
 	void beginRoomAnimationRange(uint16 action, uint chunk, uint frames, uint first, uint last, bool hideActor = true);
 	void holdRoomAnimation(uint16 action, uint chunk, uint frames, uint frame, bool hideActor = true);
 	void loopRoomAnimationDuringSpeech(uint16 action, uint chunk, uint frames, uint first, uint last, bool hideActor = true);
@@ -306,6 +306,17 @@ private:
 	void start6210();
 	ActionResult execute6210(uint16 action);
 	void townAnimationFrame();
+	void start6260();
+	ActionResult execute6260(uint16 action);
+	bool applyBackground6260();
+	void updateMaps6260();
+	void walk6260(Common::Point target);
+	bool loadScene6263();
+	void resume6263();
+	void update6263();
+	void drawScene6263(Graphics::ManagedSurface &viewport);
+	ActionResult execute6263(uint16 action);
+	void locomotiveAnimationFrame();
 	ActionResult execute6350(uint16 action);
 	ActionResult execute6220(uint16 action);
 	void start6220();
@@ -362,6 +373,8 @@ private:
 	RunawaySaveState::Museum _museum;
 	RunawaySaveState::Desert _desert;
 	RunawaySaveState::Town _town;
+	RunawayAnimation _locomotiveGauges[4];
+	byte _locomotiveGaugeFrames[4] = {};
 	byte _townFilm = 0;
 	struct TownEncounter {
 		enum Phase { kInactive, kRifle, kConversation, kDeparture };
@@ -418,6 +431,7 @@ private:
 	bool _actionLoopSpeech = false;
 	byte _actionStage = 0;
 	uint _actionStep = 0;
+	uint _actionFrameDuration = 80;
 	uint32 _actionStarted = 0;
 	Transition _hospitalExit;
 	HospitalFilm _hospitalFilm = kGinaStoryFilm;

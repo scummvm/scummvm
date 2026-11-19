@@ -225,6 +225,18 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(town.oscarTobacco, 9);
 	s.syncAsByte(town.stethoscopeTaken, 9);
 	s.syncAsByte(town.linimentTaken, 9);
+	s.syncAsByte(town.locomotiveVisited, 10);
+	s.syncAsByte(town.locomotiveKey, 10);
+	s.syncAsByte(town.waterTank, 10);
+	s.syncAsByte(town.cabVisited, 10);
+	s.syncAsByte(town.cabExited, 10);
+	s.syncAsByte(town.boiler, 10);
+	s.syncAsByte(town.steamLever, 10);
+	s.syncAsByte(town.pressureWheel, 10);
+	s.syncAsByte(town.drainSeen, 10);
+	s.syncAsByte(town.oilCanFull, 10);
+	s.syncAsByte(town.bottleContents, 10);
+	s.syncAsByte(town.craterSeen, 10);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -326,6 +338,12 @@ bool RunawaySaveState::valid() const {
 			return false;
 	}
 	bool owned[33] = {};
+	if (town.locomotiveVisited > 1 || town.locomotiveKey > 3 || town.waterTank > 5 ||
+			town.cabVisited > 1 || town.cabExited > 1 || town.boiler > 3 ||
+			town.steamLever > 2 || town.pressureWheel > 2 || town.drainSeen > 1 ||
+			town.oilCanFull > 1 || town.bottleContents > 2 || town.craterSeen > 1) {
+		return false;
+	}
 	if (town.arrived > 1 || town.streetVisited > 1 || town.strapSeen > 1 || town.sushiMet > 1 || town.mineMapKnown > 1)
 		return false;
 	if (town.bankVisited > 1 || town.bankShelves > 2 || town.bankStampTaken > 1 || town.basementKnown > 1 ||
@@ -348,7 +366,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 9)
+	if (version < 1 || version > 10)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -360,9 +378,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(9);
+	stream.writeUint16LE(10);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(9);
+	s.setVersion(10);
 	sync(s);
 	return !s.err();
 }

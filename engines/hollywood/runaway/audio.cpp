@@ -186,6 +186,11 @@ void RunawayAudio::stopEffect() {
 		_mixer->stopHandle(_effects[i]);
 }
 
+void RunawayAudio::stopEffect(byte channel) {
+	assert(channel < ARRAYSIZE(_effects));
+	_mixer->stopHandle(_effects[channel]);
+}
+
 bool RunawayAudio::musicPlaying() const {
 	return _mixer->isSoundHandleActive(_music);
 }

@@ -43,6 +43,7 @@ public:
 	void stopMusic();
 	void stopSpeech();
 	void stopEffect();
+	void stopEffect(byte channel);
 	bool musicPlaying() const;
 	bool speechPlaying() const;
 	bool effectPlaying(byte channel = 0) const;

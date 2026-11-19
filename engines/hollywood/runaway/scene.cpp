@@ -40,7 +40,8 @@ const RunawayRoom *const kRooms[] = {
 	&kRunawayScene5080, &kRunawayScene5100, &kRunawayScene5110, &kRunawayScene5130, &kRunawayScene5140,
 	&kRunawayScene5160, &kRunawayScene5170,
 	&kRunawayScene6190, &kRunawayScene6200, &kRunawayScene6210,
-	&kRunawayScene6220, &kRunawayScene6350, &kRunawayScene6370
+	&kRunawayScene6220, &kRunawayScene6260, &kRunawayScene6263,
+	&kRunawayScene6350, &kRunawayScene6370
 };
 
 const RunawayResponse kGlobalResponses[] = {
@@ -82,6 +83,10 @@ const RunawayRoom *findRoom(int number) {
 		number = 6220;
 	else if (number == 6201) {
 		number = 6200;
+	} else if (number == 6261 || number == 6262 || number == 6265) {
+		number = 6260;
+	} else if (number == 6264) {
+		number = 6263;
 	}
 	for (uint i = 0; i < ARRAYSIZE(kRooms); ++i) {
 		if (kRooms[i]->number == number)
@@ -259,11 +264,12 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 		// The bus introduction has only a background and four sprite tracks.
 		_mask.resize(room->width * room->height, 0);
 		_originalMaps.resize(1536, 0);
-	} else if (!loadRunawayMask(_archive, room->width, room->height, _mask, _originalMaps)) {
+	} else if (!loadRunawayMask(_archive, room->width, room->height, _mask, _originalMaps, number == 6263 ? 21 : 1)) {
 		return false;
 	}
 	if (_game == kRunawayFullGame ? !_actor.loadChapter(number < 4000 ? 1 : number < 5000 ? 2 : number < 6000 ? 3 : 4,
-			number != kMuseumHall && number != 6190 && number != 6200 && number != 6350 && number != 6370) :
+			number != kMuseumHall && number != 6190 && number != 6200 && number != 6260 && number != 6263 &&
+			number != 6350 && number != 6370) :
 			!_actor.load(number == kMuseumHall ? RunawayActor::kMuseumHall : RunawayActor::kMuseumInterior))
 		return false;
 	_room = number;
@@ -318,6 +324,12 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	case 6220:
 		loaded = _npc.load(_archive, 7, 170) && _npcMouth.load(_archive, 8, 45) && _machine.load(_archive, 9, 60);
 		break;
+	case 6260:
+		loaded = loadForeground(0, 6);
+		break;
+	case 6263:
+		loaded = loadScene6263();
+		break;
 	case 6370:
 		loaded = _npc.load(_archive, 4, 88) && _ambient.load(_archive, 5, 20);
 		break;
@@ -361,7 +373,7 @@ bool RunawayRoomScene::applyPatch(uint chunk) {
 
 bool RunawayRoomScene::rebuildBackground() {
 	const RunawayRoom *room = findRoom(_room);
-	if (!loadRunawaySurface(_archive, 0, room->width, room->height, _background))
+	if (!loadRunawaySurface(_archive, _room == 6263 ? 20 : 0, room->width, room->height, _background))
 		return false;
 	if (desertChapter())
 		return applyDesertBackground();
@@ -384,6 +396,8 @@ bool RunawayRoomScene::rebuildBackground() {
 		return applyBackground6190();
 	case 6200:
 		return !_town.firewoodTaken || applyPatch(4);
+	case 6260:
+		return applyBackground6260();
 	case 6350:
 		return !_town.arrived || (applyPatch(5) && applyPatch(7));
 	default:
@@ -419,6 +433,9 @@ void RunawayRoomScene::updateMaps() {
 		break;
 	case 6200:
 		updateMaps6200();
+		break;
+	case 6260:
+		updateMaps6260();
 		break;
 	case kHospitalBedroom:
 		updateMaps2020();
@@ -471,6 +488,14 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 		return Common::U32String("Douglasville");
 	if (_room == 6220 && id == 8 && _town.strapSeen)
 		return Common::U32String("Strap");
+	if (_room == 6263) {
+		if (id == 3 && _town.steamLever) {
+			return Common::U32String("Steam outlet lever");
+		}
+		if (id == 4 && _town.pressureWheel) {
+			return Common::U32String("Pressure wheel");
+		}
+	}
 	const RunawayHotspot *spot = hotspot(id);
 	if (!spot)
 		return Common::U32String();
@@ -506,10 +531,13 @@ Common::U32String RunawayRoomScene::actionCaption(byte id, RunawayVerb verb, byt
 }
 
 void RunawayRoomScene::walkTo(Common::Point target, byte facing, bool scripted) {
-	if (scripted)
+	if (scripted) {
 		_walkPath.setTarget(target);
-	else
+	} else if (_room == 6260) {
+		walk6260(target);
+	} else {
 		_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _maps), target);
+	}
 	_arrivalFacing = facing;
 	_walkElapsed = _lastFootstep = 0;
 	if (!_walkPath.active())
@@ -559,6 +587,9 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 		}
 		if (_room == 6220 && id == 8 && index && _town.strapSeen)
 			approach = true;
+		if (_room == 6260 && id == 5 && !index && _town.locomotiveKey == 2) {
+			approach = false;
+		}
 		if (_room == kHospitalBathroom && id == 4 && !index && _hospital.alcohol == 2)
 			approach = false;
 		if (item) {
@@ -698,6 +729,12 @@ void RunawayRoomScene::execute(uint16 action) {
 	case 6220:
 		result = execute6220(action);
 		break;
+	case 6260:
+		result = execute6260(action);
+		break;
+	case 6263:
+		result = execute6263(action);
+		break;
 	case 6350:
 		result = execute6350(action);
 		break;
@@ -791,6 +828,10 @@ float RunawayRoomScene::actorHeight() const {
 		return _position.y * 0.413793117f + 229.482758f;
 	case 6220:
 		return _position.y * 0.194835678f - 11.706573f;
+	case 6260:
+		return _position.y * 0.95f - 175;
+	case 6263:
+		return _position.y * 1.04838705f - 175.645157f;
 	case 6370:
 		return _position.y * 0.634920657f - 221.190475f;
 	default:
@@ -913,6 +954,8 @@ void RunawayRoomScene::draw() {
 		drawScene6200(viewport);
 	} else if (_room == 6220) {
 		drawScene6220(viewport);
+	} else if (_room == 6263) {
+		drawScene6263(viewport);
 	} else if (_room == 6370) {
 		drawScene6370(viewport);
 	} else if (desertChapter()) {
@@ -954,6 +997,7 @@ void RunawayRoomScene::draw() {
 		break;
 	case 6200:
 	case 6210:
+	case 6263:
 		params.depthY[1] = 599;
 		break;
 	case 6220:
@@ -1004,6 +1048,9 @@ void RunawayRoomScene::draw() {
 		drawForeground4030(viewport);
 	else if (_room == kMuseumLaboratory)
 		drawForeground4050(viewport);
+	else if (_room == 6260) {
+		drawForeground(viewport, 0);
+	}
 }
 
 void RunawayRoomScene::drawForeground(Graphics::ManagedSurface &viewport, uint layer) {
@@ -1014,7 +1061,8 @@ void RunawayRoomScene::drawForeground(Graphics::ManagedSurface &viewport, uint l
 	}
 }
 
-void RunawayRoomScene::beginRoomAnimation(uint16 action, uint chunk, uint frames, const byte *order, uint count, bool hideActor) {
+void RunawayRoomScene::beginRoomAnimation(uint16 action, uint chunk, uint frames, const byte *order, uint count, bool hideActor, uint frameDuration) {
+	assert(frameDuration);
 	if (!_actionAnimation.load(_archive, chunk, frames))
 		error("Cannot load Runaway room %u animation %u", _room, chunk);
 	_actionFrames.clear();
@@ -1027,6 +1075,7 @@ void RunawayRoomScene::beginRoomAnimation(uint16 action, uint chunk, uint frames
 	_actionHidesActor = hideActor;
 	_actionStage = 0;
 	_actionStep = 0;
+	_actionFrameDuration = frameDuration;
 	_actionStarted = _now;
 }
 
@@ -1065,8 +1114,8 @@ void RunawayRoomScene::updateRoomAnimation() {
 		_actionStarted = _now;
 		return;
 	}
-	while (_now - _actionStarted >= 80) {
-		_actionStarted += 80;
+	while (_now - _actionStarted >= _actionFrameDuration) {
+		_actionStarted += _actionFrameDuration;
 		if (++_actionStep == _actionFrames.size()) {
 			if (_actionLoopSpeech && speaking()) {
 				_actionStep = 0;

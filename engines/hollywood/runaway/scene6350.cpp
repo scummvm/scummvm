@@ -46,6 +46,9 @@ const RunawayRoom kRunawayScene6350 = {
 };
 
 void RunawayRoomScene::resumeTown() {
+	if (_room == 6263) {
+		resume6263();
+	}
 	if (!_entering) {
 		if (!_audio.musicPlaying()) {
 			_audio.playMusic(_room == 6200 || _room == 6210 ? 18 : 11);
@@ -79,6 +82,8 @@ void RunawayRoomScene::resumeTown() {
 		start6210();
 	} else if (_room == 6220) {
 		start6220();
+	} else if (_room == 6260) {
+		start6260();
 	} else if (_room == 6370) {
 		_town.streetVisited = 1;
 		start6370();
@@ -86,6 +91,9 @@ void RunawayRoomScene::resumeTown() {
 }
 
 void RunawayRoomScene::updateTown() {
+	if (_room == 6263) {
+		update6263();
+	}
 	if (_townEncounter.phase != TownEncounter::kInactive) {
 		update6220();
 		return;
@@ -108,6 +116,10 @@ void RunawayRoomScene::deferTownAction(uint16 action) {
 }
 
 void RunawayRoomScene::townAnimationFrame() {
+	if (_room == 6260 || _room == 6263) {
+		locomotiveAnimationFrame();
+		return;
+	}
 	if (_room == 6200 && _roomAction == 314) {
 		if (_actionStep == 13) {
 			_audio.playEffect(58);
