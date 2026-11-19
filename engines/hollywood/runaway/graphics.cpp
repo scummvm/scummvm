@@ -63,11 +63,11 @@ bool loadRunawaySurface(ChunkArchive &archive, uint chunk, int width, int height
 	return archive.readVariableChunk(chunk, pixels) && decodeSurface(pixels, width, height, surface);
 }
 
-bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps) {
+bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps, uint chunk) {
 	Common::Array<byte> packed;
 	if (width <= 0 || height <= 0 || (uint64)width * height > 16 * 1024 * 1024 ||
-			!archive.readVariableChunk(1, packed) || packed.size() % 3 ||
-			!archive.readVariableChunk(2, maps) || maps.size() != 1536)
+			!archive.readVariableChunk(chunk, packed) || packed.size() % 3 ||
+			!archive.readVariableChunk(chunk + 1, maps) || maps.size() != 1536)
 		return false;
 	mask.resize(width * height);
 	// Each run is (byte value, uint16 length). The first four 256-byte tables

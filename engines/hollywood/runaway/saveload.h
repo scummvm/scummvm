@@ -58,6 +58,32 @@ struct RunawaySaveState {
 		byte rubyRemoved = 0, recorderBattery = 0, batteryInLadle = 0, packageFilled = 0;
 	} museumItems;
 
+	struct Desert {
+		byte visited[10] = {};
+		byte escapedCabin = 0, hatchSeen = 0, bucketTaken = 0;
+		byte helmetTaken = 0, beltTaken = 0, beltSeen = 0, gun = 0, gunSeen = 0;
+		byte mariolaHelped = 0, ballTaken = 0, tanningOil = 0, lulaHelped = 0;
+		byte busPosterSeen = 0, lulaCalled = 0, lulaRefused = 0;
+		byte dynamitePlaced = 0, oilSeen = 0;
+		byte antsDistracted = 0, dynamite = 0, shedTried = 0, trainEntered = 0;
+		byte barrel = 0, screwSeen = 0, screwTaken = 0, bucket = 0, trainDoorOpen = 0, powderNeeded = 0;
+		byte barnDoor = 0, footrest = 0, guard = 0, insideBarn = 0, beerSeen = 0;
+		byte peanutButter = 0, motorcycleSeen = 0, footrestSeen = 0;
+		byte lulaDistractedGuard = 0, guardWeaknessKnown = 0;
+		byte busDoor = 0, lipstickShelf = 0, keyTaken = 0, glassesTaken = 0;
+		byte vacuum = 0, crank = 0, necklacesSeen = 0, ringsSeen = 0;
+		byte fridgeOpened = 0, ventCleaned = 0, ventSeen = 0, needle = 0, fridgeSeen = 0;
+		byte carlaMet = 0, carlaStory = 0, planKnown = 0;
+		uint32 carlaTopics = 0, lulaTopics = 0;
+	} desert;
+
+	struct DesertItems {
+		byte antTrickKnown = 0;
+		byte helmet = 0, lipstick = 0, lipsticks = 0, belt = 0, ball = 0;
+		byte glasses = 0, pill = 0, bucket = 0;
+		byte gunReady = 0, bombReady = 0, helicopterReady = 0;
+	} desertItems;
+
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;
 	byte coolerMoved = 0, coolerInspected = 0, peeked = 0, ice = 0, hatch = 0;

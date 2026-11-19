@@ -162,7 +162,17 @@ MODULE_OBJS = \
 	runaway/scene4090.o \
 	runaway/scene4100.o \
 	runaway/scene4140.o \
+	runaway/scene5010.o \
+	runaway/scene5020.o \
 	runaway/scene5030.o \
+	runaway/scene5050.o \
+	runaway/scene5060.o \
+	runaway/scene5070.o \
+	runaway/scene5080.o \
+	runaway/scene5100.o \
+	runaway/scene5110.o \
+	runaway/scene5160.o \
+	runaway/scene5170.o \
 	runaway/sequence.o \
 	runaway/speech.o \
 	runaway/strings.o \

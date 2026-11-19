@@ -163,9 +163,10 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
 RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
 	if (findRunawayRoom(entryScene) && ((_museum && entryScene >= 4000) ||
-			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4))))
+			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5))))
 		return new RunawayRoomScene(_audio, *_inventory, _strings, _game);
-	if ((_game == kRunawayCabinDemo || _game == kRunawayFullGame) && entryScene == 5030)
+	if ((_game == kRunawayCabinDemo && entryScene == 5030) ||
+			(_game == kRunawayFullGame && entryScene >= 5030 && entryScene <= 5032))
 		return new RunawayScene5030(_mixer, _audio, *_inventory, _strings, _game);
 	// Retail scene scripts have their own entry substates. Sharing an archive
 	// with a demo does not make its puzzle initialization interchangeable.

@@ -247,6 +247,8 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 		entry.enabled = 0;
 	if (_conversation == 2 && entry.disable == 5)
 		_museum.batteryRequested = 1;
+	if (_conversation == 4 && entry.disable == 2)
+		_desert.ventSeen = 1;
 	if (_conversation == 2 && entry.disable == 10) {
 		_dialogue[10][3].player = 22;
 		_dialogue[10][3].response = 21;

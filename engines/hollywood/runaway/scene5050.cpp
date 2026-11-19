@@ -1,0 +1,148 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/util.h"
+#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/scene_data.h"
+
+namespace Hollywood {
+namespace {
+
+const RunawayHotspot kHotspots[] = {
+	{"", 0, 0, 0, {0, 0}, {0, 0}},
+	{"Path", -100, 510, 0, {302, 301}, {0, 1}},
+	{"Helmet", 303, 534, 1, {303, 304}, {0, 1}},
+	{"?", 251, 420, 1, {305, 306}, {0, 1}},
+	{"Machine Gun", 251, 420, 1, {307, 308}, {0, 1}},
+	{"Bullet Hole", 200, 450, 1, {309, 310}, {0, 0}},
+	{"Pilot'S Seat", 200, 450, 7, {311, 312}, {0, 0}},
+	{"Gunner'S Seat", 200, 450, 1, {313, 314}, {0, 0}},
+	{"String Of Bullets", 0, 0, 0, {0, 0}, {0, 0}},
+};
+
+const RunawayResponse kResponses[] = {
+	{5050, 302, 1, 0},
+	{5050, 309, 8, 0},
+	{5050, 310, 9, 0},
+	{5050, 311, 10, 0},
+	{5050, 313, 12, 0},
+	{5050, 314, 13, 0},
+};
+
+const RunawayItemAction kItemActions[] = {
+	{5050, 3, 4, 319, false},
+	{5050, 4, 4, 319, false},
+	{5050, 10, 4, 316, false},
+	{5050, 11, 4, 317, false},
+	{5050, 12, 4, 315, true},
+	{5050, 14, 4, 318, true},
+	{5050, 19, 4, 319, false},
+};
+
+} // End of anonymous namespace
+
+const RunawayRoom kRunawayScene5050 = {
+	5050, 1024, 600, kHotspots, ARRAYSIZE(kHotspots), {{100, 100, 100}, {90, 90, 80}, {100, 100, 100}, {100, 100, 100}, {100, 100, 100}, {100, 100, 100}, {100, 100, 100}, {100, 100, 100}, {100, 100, 100}, {100, 100, 100}},
+	Common::Point(130, 461),
+	kResponses, ARRAYSIZE(kResponses),
+	kItemActions, ARRAYSIZE(kItemActions),
+	nullptr, 0
+};
+
+RunawayRoomScene::ActionResult RunawayRoomScene::execute5050(uint16 action) {
+	RunawaySaveState::DesertItems &items = _inventory.desert();
+	switch (action) {
+	case 302:
+		leaveDesertRoom(5010);
+		break;
+	case 304:
+		_desert.helmetTaken = 1;
+		_inventory.add(6);
+		say(3);
+		return kBackgroundChanged;
+	case 305:
+		say(4, _desert.beltSeen != 0);
+		_desert.beltSeen = 1;
+		break;
+	case 306:
+		_desert.beltTaken = 1;
+		_inventory.add(14);
+		say(5);
+		return kBackgroundChanged;
+	case 307:
+		say(6, _desert.gun);
+		_desert.gunSeen = 1;
+		break;
+	case 308:
+		say(7, _desert.gun);
+		_desert.gunSeen = 1;
+		break;
+	case 315:
+		if (_desert.gun)
+			say(14, 2);
+		else if (!_desert.gunSeen)
+			say(1, 0, true);
+		else {
+			say(14);
+			beginRoomAnimation(action, 11, 46);
+		}
+		break;
+	case 1315:
+		_desert.gun = 1;
+		say(14, 1);
+		say(14, 3);
+		return kBackgroundChanged;
+	case 316:
+		say(15, items.lipstick != 0);
+		break;
+	case 317:
+		say(16, items.lipsticks != 0);
+		break;
+	case 318:
+		if (items.belt < 2)
+			say(17, items.belt);
+		else if (!_desert.gun)
+			say(17, 2);
+		else {
+			say(17, 3);
+			beginRoomAnimation(action, 12, 37);
+		}
+		break;
+	case 1318:
+		_desert.gun = 2;
+		items.gunReady = 1;
+		_inventory.remove(14);
+		say(17, 4);
+		if (items.bombReady && items.helicopterReady) {
+			say(174, 4, true);
+			leaveDesertRoom(5062);
+		}
+		return kBackgroundChanged;
+	case 319:
+		say(18, _desert.gun != 0);
+		break;
+	default:
+		return kUnhandled;
+	}
+	return kHandled;
+}
+
+} // End of namespace Hollywood

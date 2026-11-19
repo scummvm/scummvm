@@ -47,6 +47,7 @@ public:
 	void setChapter(byte chapter) { _chapter = chapter; }
 	void startChapter(byte chapter);
 	RunawaySaveState::MuseumItems &museum() { return _museum; }
+	RunawaySaveState::DesertItems &desert() { return _desert; }
 	bool contains(byte item) const;
 	bool add(byte item);
 	void remove(byte item);
@@ -74,6 +75,7 @@ private:
 	const bool _museumDemo;
 	byte _chapter;
 	RunawaySaveState::MuseumItems _museum;
+	RunawaySaveState::DesertItems _desert;
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
 	byte _water = 0;

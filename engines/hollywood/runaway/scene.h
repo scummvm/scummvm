@@ -29,6 +29,7 @@
 #include "hollywood/runaway/inventory.h"
 #include "hollywood/runaway/navigation.h"
 #include "hollywood/runaway/saveload.h"
+#include "hollywood/runaway/scene_data.h"
 #include "hollywood/runaway/sequence.h"
 #include "hollywood/runaway/speech.h"
 #include "hollywood/scene_text_store.h"
@@ -239,6 +240,32 @@ private:
 	void clickScene4140(byte id);
 	void drawScene4140(Graphics::ManagedSurface &viewport);
 
+	bool desertChapter() const { return _game == kRunawayFullGame && _room / 1000 == 5; }
+	void startDesert();
+	void resumeDesert();
+	void updateDesert(uint elapsed, bool inventoryOpen);
+	bool loadDesertRoom();
+	bool applyDesertBackground();
+	void updateDesertMaps();
+	void drawDesertRoom(Graphics::ManagedSurface &viewport, bool foreground);
+	void setupDesertDepth(RunawayActor::RenderParams &params) const;
+	float desertActorHeight() const;
+	Common::U32String desertHotspotName(byte id) const;
+	void leaveDesertRoom(uint16 scene);
+	void deferDesertAction(uint16 action);
+	void finishDesertAnimation(uint16 action);
+	ActionResult executeDesert(uint16 action);
+	ActionResult execute5020(uint16 action);
+	ActionResult execute5050(uint16 action);
+	ActionResult execute5060(uint16 action);
+	ActionResult execute5070(uint16 action);
+	ActionResult execute5080(uint16 action);
+	ActionResult execute5100(uint16 action);
+	ActionResult execute5110(uint16 action);
+	ActionResult execute5160(uint16 action);
+	void startCarlaConversation();
+	ActionResult execute5170(uint16 action);
+
 	RunawayAudio &_audio;
 	RunawaySequence _sequence;
 	RunawayInventory &_inventory;
@@ -281,6 +308,9 @@ private:
 	uint32 _lastFootstep = 0;
 	RunawaySaveState::Hospital _hospital;
 	RunawaySaveState::Museum _museum;
+	RunawaySaveState::Desert _desert;
+	Common::Array<RunawayHotspot> _desertHotspots;
+	RunawayAnimation _desertAnimations[6];
 	RunawayAnimation _npc, _npcMouth, _machine;
 	RunawayAnimation _computer, _rejectionLight;
 	uint32 _nextLaser = 0;

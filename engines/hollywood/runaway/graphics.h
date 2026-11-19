@@ -38,7 +38,7 @@ bool readRunawayGlobalChunk(uint chunk, Common::Array<byte> &data);
 bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurface &surface);
 bool loadRunawaySurface(const Common::Path &path, int width, int height, Graphics::ManagedSurface &surface);
 bool loadRunawaySurface(ChunkArchive &archive, uint chunk, int width, int height, Graphics::ManagedSurface &surface);
-bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps);
+bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps, uint chunk = 1);
 bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset = 0, int xOffset = 0);
 
 enum {

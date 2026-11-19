@@ -66,7 +66,7 @@ const SceneHotspot kHotspots[] = {
 } // End of anonymous namespace
 
 bool RunawayScene5030::load(uint16 entryScene) {
-	if (entryScene != 5030)
+	if (entryScene != 5030 && !(_game == kRunawayFullGame && entryScene >= 5031 && entryScene <= 5032))
 		return false;
 	_entryScene = entryScene;
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
@@ -156,7 +156,8 @@ bool RunawayScene5030::loadRoomGraphics() {
 void RunawayScene5030::start(uint32 now) {
 	_now = _lastUpdate = now;
 	resume();
-	startAction(kIntroVideo);
+	if (_entryScene == 5030)
+		startAction(kIntroVideo);
 }
 
 void RunawayScene5030::resume() {
@@ -708,7 +709,13 @@ void RunawayScene5030::finishAction() {
 		if (completed == kPryHatch)
 			sayCue(34, 1);
 	} else if (completed == kEscape) {
-		_escaped = true;
+		if (_game == kRunawayFullGame) {
+			_transition.scene = 5021;
+			_transition.position = Common::Point(618, 386);
+			_transition.facing = 3;
+		} else {
+			_escaped = true;
+		}
 		_audio.stopMusic();
 		_audio.stopEffect();
 	} else if (completed == kPeekDoor) {

@@ -134,6 +134,74 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(museumItems.recorderBattery, 6);
 	s.syncAsByte(museumItems.batteryInLadle, 6);
 	s.syncAsByte(museumItems.packageFilled, 6);
+	s.syncBytes(desert.visited, sizeof(desert.visited), 7);
+	s.syncAsByte(desert.escapedCabin, 7);
+	s.syncAsByte(desert.hatchSeen, 7);
+	s.syncAsByte(desert.bucketTaken, 7);
+	s.syncAsByte(desert.helmetTaken, 7);
+	s.syncAsByte(desert.beltTaken, 7);
+	s.syncAsByte(desert.beltSeen, 7);
+	s.syncAsByte(desert.gun, 7);
+	s.syncAsByte(desert.gunSeen, 7);
+	s.syncAsByte(desert.mariolaHelped, 7);
+	s.syncAsByte(desert.ballTaken, 7);
+	s.syncAsByte(desert.tanningOil, 7);
+	s.syncAsByte(desert.lulaHelped, 7);
+	s.syncAsByte(desert.busPosterSeen, 7);
+	s.syncAsByte(desert.lulaCalled, 7);
+	s.syncAsByte(desert.lulaRefused, 7);
+	s.syncAsByte(desert.dynamitePlaced, 7);
+	s.syncAsByte(desert.oilSeen, 7);
+	s.syncAsByte(desert.antsDistracted, 7);
+	s.syncAsByte(desert.dynamite, 7);
+	s.syncAsByte(desert.shedTried, 7);
+	s.syncAsByte(desert.trainEntered, 7);
+	s.syncAsByte(desert.barrel, 7);
+	s.syncAsByte(desert.screwSeen, 7);
+	s.syncAsByte(desert.screwTaken, 7);
+	s.syncAsByte(desert.bucket, 7);
+	s.syncAsByte(desert.trainDoorOpen, 7);
+	s.syncAsByte(desert.powderNeeded, 7);
+	s.syncAsByte(desert.barnDoor, 7);
+	s.syncAsByte(desert.footrest, 7);
+	s.syncAsByte(desert.guard, 7);
+	s.syncAsByte(desert.insideBarn, 7);
+	s.syncAsByte(desert.beerSeen, 7);
+	s.syncAsByte(desert.peanutButter, 7);
+	s.syncAsByte(desert.motorcycleSeen, 7);
+	s.syncAsByte(desert.footrestSeen, 7);
+	s.syncAsByte(desert.lulaDistractedGuard, 7);
+	s.syncAsByte(desert.guardWeaknessKnown, 7);
+	s.syncAsByte(desert.busDoor, 7);
+	s.syncAsByte(desert.lipstickShelf, 7);
+	s.syncAsByte(desert.keyTaken, 7);
+	s.syncAsByte(desert.glassesTaken, 7);
+	s.syncAsByte(desert.vacuum, 7);
+	s.syncAsByte(desert.crank, 7);
+	s.syncAsByte(desert.necklacesSeen, 7);
+	s.syncAsByte(desert.ringsSeen, 7);
+	s.syncAsByte(desert.fridgeOpened, 7);
+	s.syncAsByte(desert.ventCleaned, 7);
+	s.syncAsByte(desert.ventSeen, 7);
+	s.syncAsByte(desert.needle, 7);
+	s.syncAsByte(desert.fridgeSeen, 7);
+	s.syncAsByte(desert.carlaMet, 7);
+	s.syncAsByte(desert.carlaStory, 7);
+	s.syncAsByte(desert.planKnown, 7);
+	s.syncAsUint32LE(desert.carlaTopics, 7);
+	s.syncAsUint32LE(desert.lulaTopics, 7);
+	s.syncAsByte(desertItems.antTrickKnown, 7);
+	s.syncAsByte(desertItems.helmet, 7);
+	s.syncAsByte(desertItems.lipstick, 7);
+	s.syncAsByte(desertItems.lipsticks, 7);
+	s.syncAsByte(desertItems.belt, 7);
+	s.syncAsByte(desertItems.ball, 7);
+	s.syncAsByte(desertItems.glasses, 7);
+	s.syncAsByte(desertItems.pill, 7);
+	s.syncAsByte(desertItems.bucket, 7);
+	s.syncAsByte(desertItems.gunReady, 7);
+	s.syncAsByte(desertItems.bombReady, 7);
+	s.syncAsByte(desertItems.helicopterReady, 7);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -155,9 +223,14 @@ bool RunawaySaveState::valid() const {
 			coolerInspected > 1 || peeked > 1 || ice > 2 || hatch > 3 ||
 			itemCount > sizeof(items) || selected > sizeof(items) || cloth > 2 || inventoryOpen > 1 || verb > 2)
 		return false;
-	if ((game == kRunawayCabinDemo || (game == kRunawayFullGame && chapter() == 3)) &&
-			(scene != 5030 || x >= 1376 || y >= 600 || camera > 352 || cameraY))
+	if ((game == kRunawayCabinDemo || (game == kRunawayFullGame && scene >= 5030 && scene <= 5032)) &&
+			(scene < 5030 || scene > (game == kRunawayCabinDemo ? 5030 : 5032) || x >= 1376 || y >= 600 || camera > 352 || cameraY))
 		return false;
+	if (game == kRunawayFullGame && chapter() == 3 && (scene < 5030 || scene > 5032)) {
+		const RunawayRoom *room = findRunawayRoom(scene);
+		if (!room || x >= room->width || y >= room->height || camera > room->width - 1024 || cameraY > room->height - 600)
+			return false;
+	}
 	if (upperFloor > 1 || books > 2 || recorder > 2 || moneyIdentified > 1 || safeOpen > 1 ||
 			varnishTaken > 1 || talcTaken > 1 || coffeeTaken > 1 || keyCount > 4)
 		return false;
@@ -201,6 +274,28 @@ bool RunawaySaveState::valid() const {
 			museumItems.frozenBattery > 1 || museumItems.rubyRemoved > 1 || museumItems.recorderBattery > 4 ||
 			museumItems.batteryInLadle > 1 || museumItems.packageFilled > 1)
 		return false;
+	if (desert.escapedCabin > 1 || desert.hatchSeen > 1 || desert.bucketTaken > 1 ||
+			desert.helmetTaken > 1 || desert.beltTaken > 1 || desert.beltSeen > 1 || desert.gun > 2 || desert.gunSeen > 1 ||
+			desert.mariolaHelped > 1 || desert.ballTaken > 1 || desert.tanningOil > 2 || desert.lulaHelped > 1 ||
+			desert.busPosterSeen > 1 || desert.lulaCalled > 1 || desert.lulaRefused > 1 ||
+			desert.dynamitePlaced > 1 || desert.oilSeen > 1 || desert.antsDistracted > 1 || desert.dynamite > 2 ||
+			desert.shedTried > 1 || desert.trainEntered > 1 || desert.barrel > 2 || desert.screwSeen > 1 ||
+			desert.screwTaken > 1 || desert.bucket > 3 || desert.trainDoorOpen > 1 || desert.powderNeeded > 1 ||
+			desert.barnDoor > 2 || desert.footrest > 2 || desert.guard > 2 || desert.insideBarn > 1 || desert.beerSeen > 1 ||
+			desert.peanutButter > 2 || desert.motorcycleSeen > 1 || desert.footrestSeen > 1 ||
+			desert.lulaDistractedGuard > 1 || desert.guardWeaknessKnown > 1 ||
+			desert.busDoor > 3 || desert.lipstickShelf > 3 || desert.keyTaken > 1 || desert.glassesTaken > 1 ||
+			desert.vacuum > 2 || desert.crank > 2 || desert.necklacesSeen > 1 || desert.ringsSeen > 1 ||
+			desert.fridgeOpened > 1 || desert.ventCleaned > 1 || desert.ventSeen > 1 || desert.needle > 2 || desert.fridgeSeen > 1 ||
+			desert.carlaMet > 1 || desert.carlaStory > 1 || desert.planKnown > 1 ||
+			desertItems.antTrickKnown > 1 || desertItems.helmet > 4 || desertItems.lipstick > 1 || desertItems.lipsticks > 1 ||
+			desertItems.belt > 2 || desertItems.ball > 2 || desertItems.glasses > 2 || desertItems.pill > 1 ||
+			desertItems.bucket > 2 || desertItems.gunReady > 1 || desertItems.bombReady > 1 || desertItems.helicopterReady > 1)
+		return false;
+	for (uint i = 0; i < sizeof(desert.visited); ++i) {
+		if (desert.visited[i] > 1)
+			return false;
+	}
 	if ((coolerMoved && ice != 2) || ((hatch != 0) != (coolerMoved != 0)))
 		return false;
 	for (uint i = 0; i < sizeof(pickedUp); ++i) {
@@ -222,7 +317,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 6)
+	if (version < 1 || version > 7)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -234,9 +329,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(6);
+	stream.writeUint16LE(7);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(6);
+	s.setVersion(7);
 	sync(s);
 	return !s.err();
 }
