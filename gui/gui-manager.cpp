@@ -923,6 +923,17 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		mouseX = g_system->getOverlayWidth() - mouseX;
 	}
 	Common::Point mouse(mouseX - activeDialog->_x, event.mouse.y - activeDialog->_y);
+
+	// Pressing a key silences any speech in progress, as screen readers do.
+	// This happens before the key is handled, so that whatever the key itself
+	// announces is not cut off, and the key otherwise works as usual.
+	if ((event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat) ||
+			event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+		Common::TextToSpeechManager *ttsMan = _system->getTextToSpeechManager();
+		if (ttsMan && ttsMan->isSpeaking())
+			ttsMan->stop();
+	}
+
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		activeDialog->handleKeyDown(event.kbd);
