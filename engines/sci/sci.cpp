@@ -137,6 +137,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_tts(nullptr),
 	_rng("sci"),
 	_useHiresGraphics(false),
+	_useHiresText(false),
 	_inErrorString(false) {
 
 	assert(g_sci == nullptr);
@@ -322,6 +323,10 @@ Common::Error SciEngine::run() {
 	} else if (hasMacFonts()) {
 		// Default to using hires Mac fonts if GUI option isn't present, as it was added later.
 		_useHiresGraphics = true;
+	}
+
+	if (Common::checkGameGUIOption(GAMEOPTION_HIGH_RESOLUTION_TEXT, ConfMan.get("guioptions"))) {
+		_useHiresText = ConfMan.getBool("enable_high_resolution_text");
 	}
 
 	if (getSciVersion() < SCI_VERSION_2) {
@@ -853,6 +858,10 @@ bool SciEngine::isCD() const {
 
 bool SciEngine::useHiresGraphics() const {
 	return _useHiresGraphics;
+}
+
+bool SciEngine::useHiresText() const {
+	return _useHiresText;
 }
 
 bool SciEngine::isBE() const{

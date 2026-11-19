@@ -65,6 +65,18 @@ const ADExtraGuiOptionsMap optionsList[] = {
 	},
 
 	{
+		GAMEOPTION_HIGH_RESOLUTION_TEXT,
+		{
+			_s("Enable high resolution text"),
+			_s("Draw text at native high resolution instead of stretching it"),
+			"enable_high_resolution_text",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
 		GAMEOPTION_ENABLE_BLACK_LINED_VIDEO,
 		{
 			_s("Enable black-lined video"),
