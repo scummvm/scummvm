@@ -254,6 +254,20 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(town.tobaccoLeavesTaken, 12);
 	s.syncAsByte(town.artichokeSeen, 12);
 	s.syncAsByte(town.carnivorousPlantSeen, 12);
+	s.syncAsByte(town.craterVisited, 13);
+	s.syncAsByte(town.joshuaMet, 13);
+	s.syncAsByte(town.campLeft, 13);
+	s.syncAsByte(town.strapDelivered, 13);
+	s.syncAsByte(town.wrenchDelivered, 13);
+	s.syncAsByte(town.wrenchNeeded, 13);
+	s.syncAsByte(town.fuelNeeded, 13);
+	s.syncAsByte(town.machineKnown, 13);
+	s.syncAsByte(town.rotorKnown, 13);
+	s.syncAsByte(town.batteryKnown, 13);
+	s.syncAsByte(town.helmetKnown, 13);
+	s.syncAsByte(town.dimensionalDoorKnown, 13);
+	s.syncAsByte(town.strapIdea, 13);
+	s.syncAsByte(townItems.strap, 13);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -355,6 +369,12 @@ bool RunawaySaveState::valid() const {
 			return false;
 	}
 	bool owned[33] = {};
+	if (town.craterVisited > 1 || town.joshuaMet > 1 || town.campLeft > 1 ||
+			town.strapDelivered > 3 || town.wrenchDelivered > 2 || town.wrenchNeeded > 1 || town.fuelNeeded > 1 ||
+			town.machineKnown > 1 || town.rotorKnown > 1 || town.batteryKnown > 1 || town.helmetKnown > 1 ||
+			town.dimensionalDoorKnown > 1 || town.strapIdea > 1 || townItems.strap > 2) {
+		return false;
+	}
 	if (town.saloonEntranceVisited > 1 || town.saloonDoorKnown > 1 || town.saloonVisited > 1 ||
 			town.flowerPotTaken > 1 || town.gardeningShed > 2 || town.tobaccoLeavesTaken > 1 ||
 			town.artichokeSeen > 1 || town.carnivorousPlantSeen > 1) {
@@ -394,7 +414,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 12)
+	if (version < 1 || version > 13)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -406,9 +426,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(12);
+	stream.writeUint16LE(13);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(12);
+	s.setVersion(13);
 	sync(s);
 	return !s.err();
 }

@@ -48,13 +48,14 @@ const RunawayRoom kRunawayScene6350 = {
 void RunawayRoomScene::resumeTown() {
 	_oscarTick = _now;
 	_saloonDoorTick = _now;
+	_joshuaTick = _now;
 	_saloonDoorFrame = _position.x > 726 ? 7 : 0;
 	if (_room == 6263) {
 		resume6263();
 	}
 	if (!_entering) {
 		if (!_audio.musicPlaying()) {
-			_audio.playMusic(_room == 6200 || _room == 6210 ? 18 : 11);
+			_audio.playMusic(_room == 6290 ? 19 : _room == 6200 || _room == 6210 ? 18 : 11);
 			if (_room == 6200 || _room == 6210) {
 				_audio.setMusicVolume(191);
 			}
@@ -67,7 +68,9 @@ void RunawayRoomScene::resumeTown() {
 		return;
 	}
 	_town.arrived = 1;
-	if (_room == 6200 || _room == 6210) {
+	if (_room == 6290) {
+		_audio.playMusic(19);
+	} else if (_room == 6200 || _room == 6210) {
 		if (_entryScene == 6200 || !_audio.musicPlaying()) {
 			_audio.playMusic(18);
 		}
@@ -99,6 +102,10 @@ void RunawayRoomScene::resumeTown() {
 		start6240();
 	} else if (_room == 6260) {
 		start6260();
+	} else if (_room == 6270) {
+		start6270();
+	} else if (_room == 6290) {
+		start6290();
 	} else if (_room == 6370) {
 		_town.streetVisited = 1;
 		start6370();
@@ -114,6 +121,9 @@ void RunawayRoomScene::updateTown() {
 	}
 	if (_room == 6263) {
 		update6263();
+	}
+	if (_room == 6290) {
+		update6290();
 	}
 	if (_townEncounter.phase != TownEncounter::kInactive) {
 		update6220();

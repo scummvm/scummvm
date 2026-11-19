@@ -187,6 +187,8 @@ MODULE_OBJS = \
 	runaway/scene6240.o \
 	runaway/scene6260.o \
 	runaway/scene6263.o \
+	runaway/scene6270.o \
+	runaway/scene6290.o \
 	runaway/scene6350.o \
 	runaway/scene6370.o \
 	runaway/sequence.o \

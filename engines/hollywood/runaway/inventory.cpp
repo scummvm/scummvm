@@ -73,6 +73,7 @@ void RunawayInventory::captureState(RunawaySaveState &state) const {
 	state.headWig = _headWig;
 	state.museumItems = _museum;
 	state.desertItems = _desert;
+	state.townItems = _town;
 }
 
 void RunawayInventory::restoreState(const RunawaySaveState &state) {
@@ -90,6 +91,7 @@ void RunawayInventory::restoreState(const RunawaySaveState &state) {
 	_headWig = state.headWig;
 	_museum = state.museumItems;
 	_desert = state.desertItems;
+	_town = state.townItems;
 	_newItem = 0;
 }
 
@@ -108,6 +110,7 @@ void RunawayInventory::startChapter(byte chapter) {
 			add(initial[i]);
 	}
 	if (chapter == 4) {
+		_town = RunawaySaveState::TownItems();
 		for (uint i = 1; i <= 5; ++i) {
 			add(i);
 		}
@@ -146,6 +149,9 @@ void RunawayInventory::remove(byte item) {
 }
 
 Common::U32String RunawayInventory::name(byte item) const {
+	if (_chapter == 4 && item == 11 && _town.strap == 2) {
+		return Common::U32String("Strap with joined ends");
+	}
 	if (_chapter == 4)
 		return item < ARRAYSIZE(kTownItemNames) ? Common::U32String(kTownItemNames[item]) : Common::U32String();
 	if (_chapter == 1) {
@@ -184,6 +190,14 @@ Common::U32String RunawayInventory::name(byte item) const {
 }
 
 uint RunawayInventory::icon(byte item) const {
+	if (_chapter == 4 && _town.strap == 2) {
+		if (item == 11) {
+			return 33;
+		}
+		if (item == 20) {
+			return 47;
+		}
+	}
 	if (_chapter == 2) {
 		if (item == 7 && _museum.restoredCrucifix)
 			return 24;
@@ -233,6 +247,14 @@ uint RunawayInventory::icon(byte item) const {
 }
 
 uint RunawayInventory::cursor(byte item) const {
+	if (_chapter == 4 && _town.strap == 2) {
+		if (item == 11) {
+			return 105;
+		}
+		if (item == 20) {
+			return 133;
+		}
+	}
 	if (_chapter == 4)
 		return item && item < ARRAYSIZE(kTownItemNames) ? 39 + item * 2 : 0;
 	if (_chapter == 1) {
@@ -282,7 +304,7 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 		case 9: // Cell key.
 			return Reply(194 + item);
 		case 11: // Wagon strap.
-			return Reply(204);
+			return Reply(204, _town.strap);
 		case 14: // Firewood.
 			return Reply(207);
 		case 20: // Ancient stapler.
@@ -386,6 +408,15 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		return Reply();
 	if (first > second)
 		SWAP(first, second);
+	if (_chapter == 4 && first == 11 && second == 20) { // Staple the strap's ends together.
+		if (_town.strap != 1) {
+			return Reply(227, _town.strap == 2 ? 3 : 0);
+		}
+		_town.strap = 2;
+		_selected = 0;
+		_newItem = 11;
+		return Reply(227, 1);
+	}
 	if (_chapter == 1) {
 		if (first == 10 && second == 17) {
 			_headWig = 1;

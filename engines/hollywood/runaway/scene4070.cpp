@@ -254,6 +254,9 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 	if (_conversation == 6) {
 		oscarDialogueChoice(entry.disable);
 	}
+	if (_conversation == 7) {
+		joshuaDialogueChoice(entry.disable);
+	}
 	if (_conversation == 2 && entry.disable == 10) {
 		_dialogue[10][3].player = 22;
 		_dialogue[10][3].response = 21;

@@ -101,7 +101,15 @@ struct RunawaySaveState {
 		byte saloonEntranceVisited = 0, saloonDoorKnown = 0, saloonVisited = 0;
 		byte flowerPotTaken = 0, gardeningShed = 0, tobaccoLeavesTaken = 0;
 		byte artichokeSeen = 0, carnivorousPlantSeen = 0;
+		byte craterVisited = 0, joshuaMet = 0, campLeft = 0;
+		byte strapDelivered = 0, wrenchDelivered = 0, wrenchNeeded = 0, fuelNeeded = 0;
+		byte machineKnown = 0, rotorKnown = 0, batteryKnown = 0, helmetKnown = 0, dimensionalDoorKnown = 0;
+		byte strapIdea = 0;
 	} town;
+
+	struct TownItems {
+		byte strap = 0; // Loose, needs joining, joined.
+	} townItems;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;
