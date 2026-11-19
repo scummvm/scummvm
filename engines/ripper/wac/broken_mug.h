@@ -69,7 +69,7 @@ private:
 	void drawPiece(byte *screen, uint pitch, const Piece &piece, const Frame &frame) const;
 	int findPiece(const Common::Point &point) const;
 	void beginDrag(uint pieceIndex, const Common::Point &point);
-	void updateDrag(const Common::Point &point);
+	bool updateDrag(const Common::Point &point);
 	void beginRotation();
 	bool updateRotation(uint32 now);
 	void finishDrag();

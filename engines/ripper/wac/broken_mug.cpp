@@ -24,7 +24,6 @@
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 
@@ -205,7 +204,7 @@ void BrokenMugPuzzle::render() {
 			_activePuzzlePalette.data() + kPalettePatchFirst * 3,
 			kPalettePatchCount * 3);
 	}
-	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);
+	setIndexedPaletteIfChanged(palette.data());
 	presentScreen();
 }
 
@@ -239,11 +238,15 @@ void BrokenMugPuzzle::beginDrag(uint pieceIndex, const Common::Point &point) {
 		pieceIndex, 0x640 + pieceIndex, point.x, point.y, _dragOffset.x, _dragOffset.y);
 }
 
-void BrokenMugPuzzle::updateDrag(const Common::Point &point) {
+bool BrokenMugPuzzle::updateDrag(const Common::Point &point) {
 	const int pointerX = CLIP<int>(point.x, kViewportLeft, kViewportRight - 1);
 	const int pointerY = CLIP<int>(point.y, kViewportTop, kViewportBottom - 1);
-	_pieces[_draggedPiece].position = Common::Point(pointerX - _dragOffset.x,
-		pointerY - _dragOffset.y);
+	const Common::Point position(pointerX - _dragOffset.x, pointerY - _dragOffset.y);
+	Piece &piece = _pieces[_draggedPiece];
+	if (piece.position == position)
+		return false;
+	piece.position = position;
+	return true;
 }
 
 void BrokenMugPuzzle::beginRotation() {
@@ -407,10 +410,11 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 				}
 			}
 		} else {
-			updateDrag(mouse.position);
-			changed = true;
-			if ((mouse.pressed & kMouseButtonRight) != 0 && _rotationStep < 0)
+			changed = updateDrag(mouse.position);
+			if ((mouse.pressed & kMouseButtonRight) != 0 && _rotationStep < 0) {
 				beginRotation();
+				changed = true;
+			}
 			if ((mouse.pressed & kMouseButtonLeft) != 0) {
 				_dropPending = true;
 				debugC(2, kDebugWac,
@@ -422,6 +426,7 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 			if (_dropPending && _rotationStep < 0 &&
 				(mouse.buttons & kMouseButtonLeft) == 0) {
 				finishDrag();
+				changed = true;
 				if (isSolved()) {
 					debugC(1, kDebugWac, "Ripper: broken mug layout solved");
 					result = completePuzzle() ? kSolved : kLoadFailed;

@@ -33,6 +33,14 @@
 
 namespace Ripper {
 
+void setIndexedPaletteIfChanged(const byte *colors) {
+	PaletteManager *paletteManager = g_system->getPaletteManager();
+	byte currentColors[kRipperPaletteByteCount];
+	paletteManager->grabPalette(currentColors, 0, kRipperPaletteColorCount);
+	if (memcmp(currentColors, colors, sizeof(currentColors)) != 0)
+		paletteManager->setPalette(colors, 0, kRipperPaletteColorCount);
+}
+
 IndexedDisplaySnapshot::IndexedDisplaySnapshot() {
 }
 

@@ -38,6 +38,9 @@ enum {
 	kRipperPaletteByteCount = kRipperPaletteColorCount * 3
 };
 
+// Compare a full 256-color RGB palette against the current screen palette.
+void setIndexedPaletteIfChanged(const byte *colors);
+
 class IndexedDisplaySnapshot {
 public:
 	IndexedDisplaySnapshot();
