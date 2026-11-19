@@ -37,7 +37,7 @@ const IgorGameDescription gameDescriptions[] = {
 			),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE | ADGF_DEMO,
+			ADGF_TESTING | ADGF_DEMO,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		kIdEngDemo100,
@@ -55,7 +55,7 @@ const IgorGameDescription gameDescriptions[] = {
 			),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE | ADGF_DEMO,
+			ADGF_TESTING | ADGF_DEMO,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		kIdEngDemo110,
@@ -73,7 +73,7 @@ const IgorGameDescription gameDescriptions[] = {
 			),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE | ADGF_CD,
+			ADGF_TESTING | ADGF_CD,
 			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		kIdSpaCD,
@@ -91,7 +91,7 @@ const IgorGameDescription gameDescriptions[] = {
 			),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO3(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_SKIP_COPY_PROTECTION)
 		},
 		kIdSpaFloppy,
@@ -110,7 +110,7 @@ const IgorGameDescription gameDescriptions[] = {
 			),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		kIdEngFloppy,
