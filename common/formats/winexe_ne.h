@@ -118,7 +118,14 @@ private:
 	List<Resource> _resources;
 
 	typedef HashMap<WinResourceID, Common::String, WinResourceID_Hash, WinResourceID_EqualTo> IDMap;
-	typedef HashMap<WinResourceID, IDMap, WinResourceID_Hash, WinResourceID_EqualTo> TypeMap;
+
+	/** Name-table aliases belonging to one resource type. */
+	struct TypeNames {
+		String typeName;
+		IDMap resourceNames;
+	};
+
+	typedef HashMap<WinResourceID, TypeNames, WinResourceID_Hash, WinResourceID_EqualTo> TypeMap;
 	TypeMap _nameTable;
 
 	/** Read the offset to the resource table. */
@@ -128,6 +135,9 @@ private:
 
 	/** Read the name table. */
 	bool readNameTable(uint32 offset, uint32 size);
+
+	/** Match a resource type by its ID or NameTable alias. */
+	bool matchesType(const WinResourceID &resourceType, const WinResourceID &typeToFind) const;
 
 	/** Find a specific resource. */
 	const Resource *findResource(const WinResourceID &type, const WinResourceID &id) const;

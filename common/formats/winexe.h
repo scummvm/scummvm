@@ -79,6 +79,7 @@ public:
 	bool operator==(const uint32 &x) const;
 	bool operator==(const WinResourceID &x) const;
 
+	bool hasString() const;
 	String getString() const;
 	uint32 getID() const;
 	String toString() const;
