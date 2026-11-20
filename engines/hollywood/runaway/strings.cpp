@@ -143,15 +143,45 @@ Common::U32String RunawayStrings::hotspotName(uint16 scene, byte hotspot) const 
 	return lookup(Common::String::format("hotspot.%u.%u", scene, hotspot));
 }
 
-Common::U32String RunawayStrings::sceneActionCaption(uint16 scene, byte hotspot, byte item, bool look) const {
-	if (item) {
-		Common::U32String caption = lookup(Common::String::format("action.%u.item.%u.%u", scene, item, hotspot));
-		if (caption.empty()) {
-			caption = lookup(Common::String::format("action.%u.item.0.%u", scene, hotspot));
+Common::U32String RunawayStrings::sceneActionCaption(uint16 scene, byte hotspot, byte item, bool look, const char *variant) const {
+	const Common::String key = item ? Common::String::format("action.%u.item.%u.%u", scene, item, hotspot) :
+		Common::String::format("action.%u.%s.%u", scene, look ? "look" : "use", hotspot);
+	if (variant) {
+		const Common::U32String caption = lookup(key + "." + variant);
+		if (!caption.empty()) {
+			return caption;
 		}
-		return caption;
 	}
-	return lookup(Common::String::format("action.%u.%s.%u", scene, look ? "look" : "use", hotspot));
+	Common::U32String caption = lookup(key);
+	if (caption.empty() && item) {
+		caption = lookup(Common::String::format("action.%u.item.0.%u", scene, hotspot));
+	}
+	return caption;
+}
+
+Common::U32String RunawayStrings::combinationCaption(byte chapter, byte item, byte target) const {
+	Common::U32String caption = lookup(Common::String::format("combination.%u.%u.%u", chapter, item, target));
+	if (caption.empty()) {
+		caption = lookup(Common::String::format("combination.%u.%u.0", chapter, item));
+	}
+	if (caption.empty()) {
+		caption = lookup(Common::String::format("combination.%u.0.%u", chapter, target));
+	}
+	return caption;
+}
+
+Common::U32String RunawayStrings::formatActionCaption(const Common::U32String &pattern, const Common::U32String &item, const Common::U32String &target) {
+	Common::U32String caption;
+	for (uint i = 0; i < pattern.size(); ++i) {
+		if (pattern[i] == '#') {
+			caption += item;
+		} else if (pattern[i] == '@') {
+			caption += target;
+		} else {
+			caption += pattern[i];
+		}
+	}
+	return caption;
 }
 
 Common::U32String RunawayStrings::shackHotspotName(byte hotspot) const {

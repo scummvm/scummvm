@@ -75,6 +75,18 @@ namespace Runaway {
 Scene5170::Scene5170(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene5170::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item) {
+		if (id == 1 && _desert.busDoor == 1) {
+			return "closed";
+		}
+		if (id == 3 && _desert.lipstickShelf && _desert.lipstickShelf < 3) {
+			return "lipstick";
+		}
+	}
+	return nullptr;
+}
+
 bool Scene5170::loadCustomResources() {
 	return _ambientAnimations[0].load(_archive, 6, 25) &&
 		_ambientAnimations[1].load(_archive, 5, 24) &&

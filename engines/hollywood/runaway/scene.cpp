@@ -314,20 +314,11 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 
 Common::U32String RunawayRoomScene::actionCaption(byte id, RunawayVerb verb, byte item) const {
 	const Common::U32String name = hotspotName(id);
-	if (hospitalChapter() && id) {
-		const Common::U32String pattern = _strings.sceneActionCaption(_room, id, item, verb == kVerbLook);
+	if (_game == kRunawayFullGame && id) {
+		const bool look = verb == kVerbLook;
+		const Common::U32String pattern = _strings.sceneActionCaption(_room, id, item, look, actionCaptionVariant(id, look, item));
 		if (!pattern.empty()) {
-			Common::U32String caption;
-			for (uint i = 0; i < pattern.size(); ++i) {
-				if (pattern[i] == '#') {
-					caption += _inventory.name(item);
-				} else if (pattern[i] == '@') {
-					caption += name;
-				} else {
-					caption += pattern[i];
-				}
-			}
-			return caption;
+			return RunawayStrings::formatActionCaption(pattern, _inventory.name(item), name);
 		}
 	}
 	if (item)
@@ -489,11 +480,42 @@ void RunawayRoomScene::useItem(byte item, byte id) {
 			return;
 		}
 	}
-	if (hospitalChapter()) {
+	if (hospitalChapter() || museumChapter() || desertChapter()) {
 		executeItemAction(defaultItemAction(item, id));
 	} else {
 		say(1, 0, true);
 	}
+}
+
+void RunawayRoomScene::executeItemAction(uint16 action) {
+	if (hospitalChapter() || museumChapter() || desertChapter()) {
+		if (action == 1 || action == 5) {
+			const RunawayInventory::Reply reply = RunawayInventory::randomReply(_random);
+			say(reply.cue, reply.variation, true);
+			if (reply.nextVariation != 0xff) {
+				say(reply.cue, reply.nextVariation, true);
+			}
+			return;
+		}
+		switch (action) {
+		case 2: // A variation of "That won't work."
+			say(1, _random.getRandomNumber(2), true);
+			return;
+		case 24: // Think before rejecting the combination.
+			say(20, 0, true);
+			say(20, 1 + _random.getRandomNumber(2), true);
+			return;
+		case 29: // Refuse to burn the object.
+			say(_random.getRandomNumber(4) ? 23 : 14, 0, true);
+			return;
+		case 32: // "I don't get it."
+			say(26, 0, true);
+			return;
+		default:
+			break;
+		}
+	}
+	execute(action);
 }
 
 void RunawayRoomScene::execute(uint16 action) {

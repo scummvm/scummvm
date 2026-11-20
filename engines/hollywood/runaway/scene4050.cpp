@@ -86,21 +86,21 @@ const RunawayResponse kResponses[] = {
 
 const RunawayItemAction kItemActions[] = {
 	{kMuseumLaboratory, 7, 2, 326}, // Leave the crucifix on the restoration shelves.
-	{kMuseumLaboratory, 0, 2, 15}, // Use an item with shelves.
+	{kMuseumLaboratory, 0, 2, 15, false}, // Use an item with the shelves.
 	{kMuseumLaboratory, 5, 3, 328}, // Record Susan's voice.
 	{kMuseumLaboratory, 7, 3, 327}, // Give the crucifix to Susan.
 	{kMuseumLaboratory, 8, 3, 329, false}, // Show the Mayan object to Susan.
 	{kMuseumLaboratory, 11, 3, 330, false}, // Show the Mayan mask to Susan.
 	{kMuseumLaboratory, 12, 3, 330, false}, // Show the ruby to Susan.
 	{kMuseumLaboratory, 15, 3, 331}, // Give the coffee to Susan.
-	{kMuseumLaboratory, 0, 3, 30}, // Use an item with susan.
+	{kMuseumLaboratory, 0, 3, 30, false}, // Use an item with Susan.
 	{kMuseumLaboratory, 14, 4, 333}, // Grind the coffee beans with the lathe.
-	{kMuseumLaboratory, 0, 4, 332}, // Use an item with the electric lathe.
-	{kMuseumLaboratory, 0, 5, 334}, // Use an item with the microscope.
-	{kMuseumLaboratory, 0, 7, 19}, // Use an item with wastepaper basket.
+	{kMuseumLaboratory, 0, 4, 332, false}, // Use an item with the electric lathe.
+	{kMuseumLaboratory, 0, 5, 334, false}, // Use an item with the microscope.
+	{kMuseumLaboratory, 0, 7, 19, false}, // Use an item with the wastepaper basket.
 	{kMuseumLaboratory, 12, 10, 336}, // Fit the ruby to the laser.
-	{kMuseumLaboratory, 0, 10, 335}, // Use an item with the laser.
-	{kMuseumLaboratory, 0, 11, 15}, // Use an item with shelves.
+	{kMuseumLaboratory, 0, 10, 335, false}, // Use an item with the laser.
+	{kMuseumLaboratory, 0, 11, 15, false}, // Use an item with the shelves.
 };
 
 const RunawayExit kExits[] = {
@@ -121,6 +121,13 @@ namespace Runaway {
 
 Scene4050::Scene4050(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
+
+const char *Scene4050::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (item == 14 && id == 4) {
+		return _inventory.museum().coffee < 2 ? "coffee" : "empty";
+	}
+	return nullptr;
+}
 
 bool Scene4050::loadCustomResources() {
 	return _susanAnimation.load(_archive, 8, 75) && _laserAnimation.load(_archive, 22, 1) &&
@@ -331,6 +338,14 @@ RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 actio
 				}
 				beginRoomAnimation(331, 20, 24, brian, ARRAYSIZE(brian));
 				setRoomAnimationOverlay(15, 170, susan, ARRAYSIZE(susan));
+			}
+			return kHandled;
+		case 332: // Use an item with the electric lathe.
+			// Only solid objects get this reply in the full game; the demo uses it for every item.
+			if (_pendingItem == 7 || _pendingItem == 8 || _pendingItem == 11 || _pendingItem == 12 || _pendingItem == 17) {
+				say(27);
+			} else {
+				say(14, _random.getRandomNumber(2), true);
 			}
 			return kHandled;
 		case 333: // Grind the coffee beans with the lathe.

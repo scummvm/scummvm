@@ -196,6 +196,7 @@ protected:
 	virtual float actorWalkSpeed() const { return 0.18f * actorHeight() / 455; }
 	virtual const RunawayHotspot *hotspot(byte id) const;
 	virtual Common::U32String hotspotName(byte id) const;
+	virtual const char *actionCaptionVariant(byte id, bool look, byte item) const { return nullptr; }
 	virtual bool isValidHotspot(byte id) const { return hotspot(id) != nullptr; }
 	virtual Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const { return position; }
 	virtual byte customizeSceneActionFacing(byte id, byte facing) const { return facing; }

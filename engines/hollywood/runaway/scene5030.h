@@ -158,6 +158,7 @@ private:
 	uint _step = 0;
 	uint16 _speechRow = 0, _speechEnd = 0;
 	uint16 _speechSample = 0;
+	RunawayInventory::Reply _nextInventoryReply = RunawayInventory::Reply(0);
 	Common::U32String _committedCaption;
 };
 

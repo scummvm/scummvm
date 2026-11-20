@@ -37,31 +37,32 @@ namespace {
 struct SceneHotspot {
 	int x, y;
 	byte facing;
+	bool approach[2];
 };
 
-// Approach points and facings from the scene initializer at 0x439e40. The
-// hit regions themselves are decoded from E03; these are not bounding boxes.
+// Approach points and facings from demo initializer 0x439e40, with approach
+// flags from retail 0x479ea0. The hit regions are decoded from E03.
 const SceneHotspot kHotspots[] = {
-	{0, 0, 0},
-	{101, 507, 7},
-	{101, 507, 7},
-	{406, 383, 0},
-	{1062, 473, 1},
-	{942, 407, 0},
-	{1215, 542, 7},
-	{406, 383, 7},
-	{1062, 473, 7},
-	{1019, 405, 0},
-	{1215, 542, 7},
-	{1215, 542, 7},
-	{495, 381, 7},
-	{873, 409, 1},
-	{974, 406, 7},
-	{262, 426, 0},
-	{262, 426, 7},
-	{609, 379, 1},
-	{1062, 473, 1},
-	{1215, 542, 7}
+	{0, 0, 0, {false, false}},
+	{101, 507, 7, {true, false}},
+	{101, 507, 7, {true, true}},
+	{406, 383, 0, {false, false}},
+	{1062, 473, 1, {false, false}},
+	{942, 407, 0, {true, true}},
+	{1215, 542, 7, {true, true}},
+	{406, 383, 7, {true, false}},
+	{1062, 473, 7, {false, false}},
+	{1019, 405, 0, {true, true}},
+	{1215, 542, 7, {true, true}},
+	{1215, 542, 7, {true, true}},
+	{495, 381, 7, {false, false}},
+	{873, 409, 1, {false, false}},
+	{974, 406, 7, {false, true}},
+	{262, 426, 0, {true, false}},
+	{262, 426, 7, {false, true}},
+	{609, 379, 1, {true, true}},
+	{1062, 473, 1, {false, true}},
+	{1215, 542, 7, {false, false}}
 };
 
 } // End of anonymous namespace
@@ -319,6 +320,7 @@ void Scene5030::showSpeechRow() {
 void Scene5030::stopSpeech() {
 	_speech.stop();
 	_speechRow = _speechEnd = 0;
+	_nextInventoryReply = RunawayInventory::Reply(0);
 }
 
 Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item) const {
@@ -328,6 +330,22 @@ Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item)
 			name = _inventory.name(id == 5 ? 8 : id == 9 ? 1 : 3);
 		else if (id == 7)
 			name = _strings.text(RunawayStrings::kShirt);
+	}
+	if (_game == kRunawayFullGame && id) {
+		const char *variant = nullptr;
+		if (item == 2 && id == 6 && _hatchState >= kUnlocked) {
+			variant = "unlocked";
+		} else if (!item && verb != kVerbLook) {
+			if ((id == 6 && _hatchState == kOpen) || (id == 18 && _lidOpen)) {
+				variant = "open";
+			} else if (id == 11 && _ice == kDrained) {
+				variant = "closed";
+			}
+		}
+		const Common::U32String pattern = _strings.sceneActionCaption(5030, id, item, verb == kVerbLook, variant);
+		if (!pattern.empty()) {
+			return RunawayStrings::formatActionCaption(pattern, _inventory.name(item), name);
+		}
 	}
 	if (item) {
 		Common::U32String caption = _strings.text(RunawayStrings::kUse) + _inventory.name(item);
@@ -362,10 +380,11 @@ Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item)
 }
 
 void Scene5030::sayInventory(const RunawayInventory::Reply &reply) {
+	const RunawayInventory::Reply speech = reply.action == 1 || reply.action == 5 ? RunawayInventory::randomReply(_random) : reply;
 	stopSpeech();
 	uint16 row, sample;
 	byte count;
-	if (!_text.getStaticSpeechCue(reply.cue, reply.variation, row, count, sample))
+	if (!_text.getStaticSpeechCue(speech.cue, speech.variation, row, count, sample))
 		return;
 	if (!row || row + MAX<uint>(1, count) > _text._inventoryOwnerLargeRows.size() / 321 ||
 			sample + MAX<uint>(1, count) > 6000)
@@ -374,6 +393,9 @@ void Scene5030::sayInventory(const RunawayInventory::Reply &reply) {
 	_speechRow = row;
 	_speechEnd = row + MAX<uint>(1, count) - 1;
 	_speechSample = sample;
+	if (speech.nextVariation != 0xff) {
+		_nextInventoryReply = RunawayInventory::Reply(speech.cue, speech.nextVariation);
+	}
 	showSpeechRow();
 }
 
@@ -396,6 +418,9 @@ void Scene5030::skipSpeech() {
 		if (_globalSpeech)
 			++_speechSample;
 		showSpeechRow();
+	} else if (_nextInventoryReply.cue) {
+		const RunawayInventory::Reply next = _nextInventoryReply;
+		sayInventory(next);
 	} else {
 		stopSpeech();
 	}
@@ -429,6 +454,19 @@ void Scene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {
 	_pendingItem = item;
 	_pendingVerb = verb;
 	_committedCaption = actionCaption(id, verb, item);
+	if (_game == kRunawayFullGame && id) {
+		bool approach = kHotspots[id].approach[verb == kVerbLook ? 0 : 1];
+		if (item) {
+			approach = (item == 1 && id == 4) || (item == 2 && id == 6) || (item == 6 && id == 8);
+		} else if (verb == kVerbLook && (id == 5 || id == 7 || id == 9 || id == 15 || id == 17)) {
+			approach = !_examined[id];
+		}
+		if (!approach) {
+			_walkPath.clear();
+			arrive();
+			return;
+		}
+	}
 	const Common::Point target = id == 8 && _coolerMoved ? Common::Point(1054, 448) :
 		id ? Common::Point(kHotspots[id].x, kHotspots[id].y) :
 		Common::Point(mouse.x + _cameraX, mouse.y - kRoomTop);
@@ -504,7 +542,7 @@ void Scene5030::useItem(byte item, byte hotspot) {
 			break;
 		}
 	} else {
-		sayInventory(RunawayInventory::Reply(1, 0));
+		sayInventory(_game == kRunawayFullGame ? RunawayInventory::Reply::fromAction(1) : RunawayInventory::Reply());
 	}
 }
 

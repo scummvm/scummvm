@@ -73,6 +73,13 @@ namespace Runaway {
 Scene5050::Scene5050(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene5050::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (id == 4 && _desert.gunSeen && (item == 3 || item == 4 || item == 12 || item == 19)) {
+		return "grease";
+	}
+	return nullptr;
+}
+
 bool Scene5050::loadCustomResources() {
 	return loadForeground(0, 4) &&
 		loadForeground(1, 5);

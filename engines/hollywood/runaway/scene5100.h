@@ -33,6 +33,7 @@ public:
 	const Common::U32String &subtitle() const override;
 
 private:
+	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	bool loadCustomResources() override;
 	float actorHeight() const override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;

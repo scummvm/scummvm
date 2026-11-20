@@ -59,7 +59,7 @@ const RunawayResponse kResponses[] = {
 
 const RunawayItemAction kItemActions[] = {
 	{kMuseumOffice, 17, 3, 321}, // Open or close the safe with the strange key.
-	{kMuseumOffice, 0, 3, 320}, // Use an item with the crack.
+	{kMuseumOffice, 0, 3, 320, false}, // Use an item with the crack.
 };
 
 const RunawayExit kExits[] = {

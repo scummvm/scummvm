@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/random.h"
 #include "common/util.h"
 #include "hollywood/runaway/inventory.h"
 #include "hollywood/runaway/saveload.h"
@@ -532,6 +533,36 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 	return Reply(item && item <= kItemCount ? kExamineCues[item] : 1, variation);
 }
 
+Common::U32String RunawayInventory::combinationCaption(byte item, byte target) const {
+	if (!_fullGame || !item || !target || item == target) {
+		return Common::U32String();
+	}
+	return RunawayStrings::formatActionCaption(_strings.combinationCaption(_chapter, item, target), name(item), name(target));
+}
+
+RunawayInventory::Reply RunawayInventory::randomReply(Common::RandomSource &random) {
+	// Native 0x410000 selects weighted refusals for unsuitable combinations.
+	const uint roll = random.getRandomNumber(34);
+	if (roll < 10) {
+		return Reply(14, random.getRandomNumber(2));
+	}
+	if (roll < 20) {
+		return Reply(1, 2);
+	}
+	if (roll < 25) {
+		return Reply(2);
+	}
+	if (roll < 28) {
+		Reply reply(20);
+		reply.nextVariation = 1 + random.getRandomNumber(2);
+		return reply;
+	}
+	if (roll < 30) {
+		return Reply(1, random.getRandomNumber(2));
+	}
+	return Reply(roll < 32 ? 25 : roll < 34 ? 26 : 4);
+}
+
 RunawayInventory::Reply RunawayInventory::combineHospitalItems(byte first, byte second) {
 	assert(first && first <= ARRAYSIZE(kHospitalItemActions) && second && second <= ARRAYSIZE(kHospitalItemActions[0]));
 	const byte action = kHospitalItemActions[first - 1][second - 1];
@@ -580,11 +611,66 @@ RunawayInventory::Reply RunawayInventory::combineHospitalItems(byte first, byte 
 	}
 }
 
+RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte second) {
+	// Varnish, talcum powder and coffee have replies only when selected.
+	if (first == 9 || (!_fullGame && second == 9)) {
+		return Reply(118);
+	}
+	if (first == 10 || (!_fullGame && second == 10)) {
+		return Reply(119);
+	}
+	if (first == 15 || (!_fullGame && second == 15)) {
+		return Reply(122);
+	}
+	if ((first == 12 && second == 11) || (!_fullGame && first == 11 && second == 12)) {
+		return Reply(120);
+	}
+	if (first > second) {
+		SWAP(first, second);
+	}
+	if (first == 5 && second == 6) {
+		if (!_museum.frozenBattery) {
+			return Reply(115);
+		}
+		_museum.recorderBattery = 3;
+		remove(6);
+		return Reply(115, 1);
+	}
+	if (first == 6 && second == 18) {
+		if (_museum.frozenBattery) {
+			return Reply(116, 2);
+		}
+		_museum.batteryInLadle = 1;
+		remove(6);
+		return Reply(116);
+	}
+	if (first == 8 && second == 11) {
+		if (_museum.rubyRemoved) {
+			return Reply(117, 2);
+		}
+		_museum.rubyRemoved = 1;
+		add(12);
+		return Reply(117);
+	}
+	if (first == 14 && second == 19) {
+		if (_museum.coffee != 1) {
+			return Reply(_museum.coffee ? 1 : 121);
+		}
+		_museum.coffee = 2;
+		_museum.packageFilled = 1;
+		return Reply(121, 1);
+	}
+	return _fullGame ? Reply::fromAction(1) : Reply();
+}
+
 RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 	if (!contains(first) || !contains(second) || first == second)
 		return Reply();
 	if (_chapter == 1) {
 		return combineHospitalItems(first, second);
+	}
+	if (_chapter == 2) {
+		return combineMuseumItems(first, second);
 	}
 	if (_chapter == 4) {
 		return combineTownItems(first, second);
@@ -611,45 +697,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		}
 		return Reply();
 	}
-	if (_chapter == 2) {
-		if (first == 5 && second == 6) {
-			if (!_museum.frozenBattery)
-				return Reply(115);
-			_museum.recorderBattery = 3;
-			remove(6);
-			return Reply(115, 1);
-		}
-		if (first == 6 && second == 18) {
-			if (_museum.frozenBattery)
-				return Reply(116, 2);
-			_museum.batteryInLadle = 1;
-			remove(6);
-			return Reply(116);
-		}
-		if (first == 8 && second == 11) {
-			if (_museum.rubyRemoved)
-				return Reply(117, 2);
-			_museum.rubyRemoved = 1;
-			add(12);
-			return Reply(117);
-		}
-		if (first == 11 && second == 12)
-			return Reply(120);
-		if (first == 14 && second == 19) {
-			if (_museum.coffee != 1)
-				return Reply(_museum.coffee ? 1 : 121);
-			_museum.coffee = 2;
-			_museum.packageFilled = 1;
-			return Reply(121, 1);
-		}
-		if (first == 9 || second == 9)
-			return Reply(118);
-		if (first == 10 || second == 10)
-			return Reply(119);
-		if (first == 15 || second == 15)
-			return Reply(122);
-		return Reply();
-	}
+
 	if (_chapter != 3)
 		return Reply();
 	// Chapter 3's item-pair table (retail 0x46d400).
@@ -730,7 +778,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		return Reply(191);
 	if (first == 18 && second == 25)
 		return Reply(_desert.antTrickKnown ? (_desert.bucket == 1 ? 192 : 180) : 14);
-	return Reply();
+	return _fullGame ? Reply::fromAction(1) : Reply();
 }
 
 } // End of namespace Hollywood

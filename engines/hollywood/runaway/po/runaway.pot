@@ -654,6 +654,2400 @@ msgctxt "action.2080.item.0.9"
 msgid "THROW # INTO THE TOILET"
 msgstr ""
 
+#. Scene 4030, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4030, look at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.10"
+msgid "LOOK THROUGH THE @"
+msgstr ""
+
+#. Scene 4030, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4030, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4030, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4030, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4030, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4030, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4030, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4030, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.10"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.2"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.3"
+msgid "USE @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.4"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.5"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.6"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.7"
+msgid "GET SOMETHING FROM THE @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.8"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 4030, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4030.cpp
+msgctxt "action.4030.use.9"
+msgid "GET SOMETHING FROM THE @"
+msgstr ""
+
+#. Scene 4050, item any on hotspot 11. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.item.0.11"
+msgid "PLACE # ON THE @"
+msgstr ""
+
+#. Scene 4050, item any on hotspot 2. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.item.0.2"
+msgid "PLACE # IN THE @"
+msgstr ""
+
+#. Scene 4050, item any on hotspot 3. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.item.0.3"
+msgid "GIVE # TO @"
+msgstr ""
+
+#. Scene 4050, item any on hotspot 5. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.item.0.5"
+msgid "EXAMINE # THROUGH THE @"
+msgstr ""
+
+#. Scene 4050, item any on hotspot 7. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.item.0.7"
+msgid "THROW # INTO THE @"
+msgstr ""
+
+#. Scene 4050, item 12 on hotspot 10. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.item.12.10"
+msgid "PLACE # IN @"
+msgstr ""
+
+#. Scene 4050, item 14 on hotspot 4 (coffee). # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.item.14.4.coffee"
+msgid "GRIND \"COFFEE\" WITH @"
+msgstr ""
+
+#. Scene 4050, item 14 on hotspot 4 (empty). # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.item.14.4.empty"
+msgid "USE # WITH @"
+msgstr ""
+
+#. Scene 4050, item 5 on hotspot 3. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.item.5.3"
+msgid "USE # WITH @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.10"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.11"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 12. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.12"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 13. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.13"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 14. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.14"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.10"
+msgid "USE @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.11"
+msgid "GET SOMETHING FROM THE @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 12. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.12"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 13. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.13"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 14. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.14"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.2"
+msgid "GET SOMETHING FROM THE @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.3"
+msgid "TALK TO @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.4"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.5"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.6"
+msgid "USE @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.7"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.8"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4050, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4050.cpp
+msgctxt "action.4050.use.9"
+msgid "TURN ON @"
+msgstr ""
+
+#. Scene 4060, item any on hotspot 14. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.item.0.14"
+msgid "GIVE # TO @"
+msgstr ""
+
+#. Scene 4060, item any on hotspot 5. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.item.0.5"
+msgid "THROW # INTO THE @"
+msgstr ""
+
+#. Scene 4060, item 5 on hotspot 14. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.item.5.14"
+msgid "USE # WITH @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.10"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.11"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 12. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.12"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 13. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.13"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 14. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.14"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 15. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.15"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 16. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.16"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 17. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.17"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 1 (downstairs). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.1.downstairs"
+msgid "GO DOWNSTAIRS"
+msgstr ""
+
+#. Scene 4060, use at hotspot 1 (upstairs). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.1.upstairs"
+msgid "GO UPSTAIRS"
+msgstr ""
+
+#. Scene 4060, use at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.10"
+msgid "USE @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.11"
+msgid "GET BONE FROM THE @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 12. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.12"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 12 (downstairs). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.12.downstairs"
+msgid "GO DOWNSTAIRS"
+msgstr ""
+
+#. Scene 4060, use at hotspot 12 (upstairs). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.12.upstairs"
+msgid "GO UPSTAIRS"
+msgstr ""
+
+#. Scene 4060, use at hotspot 13. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.13"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 13 (downstairs). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.13.downstairs"
+msgid "GO DOWNSTAIRS"
+msgstr ""
+
+#. Scene 4060, use at hotspot 13 (upstairs). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.13.upstairs"
+msgid "GO UPSTAIRS"
+msgstr ""
+
+#. Scene 4060, use at hotspot 14. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.14"
+msgid "TALK TO @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 15. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.15"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 16. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.16"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 17. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.17"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.2"
+msgid "USE @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.3"
+msgid "ENTER CLIVE'S OFFICE"
+msgstr ""
+
+#. Scene 4060, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.4"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.5"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 5 (coffee). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.5.coffee"
+msgid "GET PACKAGE OF COFFEE FROM THE @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.6"
+msgid "ENTER THE RESTORATION LABORATORY"
+msgstr ""
+
+#. Scene 4060, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.7"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 7 (unlocked). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.7.unlocked"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.8"
+msgid "USE @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.9"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 4060, use at hotspot 9 (downstairs). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.9.downstairs"
+msgid "GO DOWNSTAIRS"
+msgstr ""
+
+#. Scene 4060, use at hotspot 9 (upstairs). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4060.cpp
+msgctxt "action.4060.use.9.upstairs"
+msgid "GO UPSTAIRS"
+msgstr ""
+
+#. Scene 4090, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4090, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4090, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4090, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4090, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4090, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4090, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4090, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4090, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4090, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 4090, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.use.2"
+msgid "PUSH @"
+msgstr ""
+
+#. Scene 4090, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.use.3"
+msgid "PUSH @"
+msgstr ""
+
+#. Scene 4090, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.use.4"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4090, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.use.5"
+msgid "USE @"
+msgstr ""
+
+#. Scene 4090, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.use.6"
+msgid "USE @"
+msgstr ""
+
+#. Scene 4090, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.use.7"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4090, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.use.8"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4090, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4090.cpp
+msgctxt "action.4090.use.9"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.10"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 4100, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.1"
+msgid "GO TO HALL"
+msgstr ""
+
+#. Scene 4100, use at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.10"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4100, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.2"
+msgid "OPEN FIRST AID KIT"
+msgstr ""
+
+#. Scene 4100, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.3"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 4100, use at hotspot 3 (open). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.3.open"
+msgid "CLOSE @"
+msgstr ""
+
+#. Scene 4100, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.4"
+msgid "USE BUTTON"
+msgstr ""
+
+#. Scene 4100, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.5"
+msgid "GET MAYAN MASK"
+msgstr ""
+
+#. Scene 4100, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.6"
+msgid "USE SCANNER"
+msgstr ""
+
+#. Scene 4100, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.7"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 4100, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.8"
+msgid "GET @"
+msgstr ""
+
+#. Scene 4100, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene4100.cpp
+msgctxt "action.4100.use.9"
+msgid "USE @"
+msgstr ""
+
+#. Scene 5010, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5010, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5010, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5010, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5010, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5010, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5010, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5010, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.use.2"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5010, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.use.3"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5010, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.use.4"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5010, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.use.5"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5010, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5010.cpp
+msgctxt "action.5010.use.6"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5020, item any on hotspot 2. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.item.0.2"
+msgid "GO TO"
+msgstr ""
+
+#. Scene 5020, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5020, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5020, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5020, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5020, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5020, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5020, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5020, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.use.2"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5020, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.use.3"
+msgid "USE @"
+msgstr ""
+
+#. Scene 5020, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.use.4"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5020, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.use.5"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5020, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.use.6"
+msgid "ENTER CABIN"
+msgstr ""
+
+#. Scene 5020, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5020.cpp
+msgctxt "action.5020.use.7"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5030, item 1 on hotspot 3. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.item.1.3"
+msgid "CLEAN @ WITH #"
+msgstr ""
+
+#. Scene 5030, item 1 on hotspot 4. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.item.1.4"
+msgid "CLEAN @ WITH #"
+msgstr ""
+
+#. Scene 5030, item 2 on hotspot 6. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.item.2.6"
+msgid "BREAK PADLOCK ON THE @ WITH #"
+msgstr ""
+
+#. Scene 5030, item 2 on hotspot 6 (unlocked). # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.item.2.6.unlocked"
+msgid "USE # WITH @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.10"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.11"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 12. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.12"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 13. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.13"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 14. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.14"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 15. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.15"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 16. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.16"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 17. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.17"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 18. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.18"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.2"
+msgid "LOOK THROUGH THE @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.3"
+msgid "LOOK THROUGH THE @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.4"
+msgid "LOOK THROUGH THE @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.1"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.10"
+msgid "UNPLUG THE FREEZER"
+msgstr ""
+
+#. Scene 5030, use at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.11"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 11 (closed). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.11.closed"
+msgid "CLOSE @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 12. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.12"
+msgid "CALL WITH @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 13. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.13"
+msgid "TAKE SOMETHING FROM THE @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 14. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.14"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 15. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.15"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 16. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.16"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 17. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.17"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 18. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.18"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 18 (open). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.18.open"
+msgid "CLOSE @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.2"
+msgid "EXAMINE @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.3"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.4"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.5"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.6"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 6 (open). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.6.open"
+msgid "EXIT THROUGH THE TRAP DOOR"
+msgstr ""
+
+#. Scene 5030, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.7"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.8"
+msgid "MOVE @"
+msgstr ""
+
+#. Scene 5030, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "action.5030.use.9"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5050, item 10 on hotspot 4. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.item.10.4"
+msgid "PLACE # IN THE @"
+msgstr ""
+
+#. Scene 5050, item 11 on hotspot 4. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.item.11.4"
+msgid "PLACE # IN THE @"
+msgstr ""
+
+#. Scene 5050, item 12 on hotspot 4 (grease). # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.item.12.4.grease"
+msgid "GREASE @ WITH #"
+msgstr ""
+
+#. Scene 5050, item 14 on hotspot 4. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.item.14.4"
+msgid "PLACE # IN THE @"
+msgstr ""
+
+#. Scene 5050, item 19 on hotspot 4 (grease). # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.item.19.4.grease"
+msgid "GREASE @ WITH #"
+msgstr ""
+
+#. Scene 5050, item 3 on hotspot 4 (grease). # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.item.3.4.grease"
+msgid "GREASE @ WITH #"
+msgstr ""
+
+#. Scene 5050, item 4 on hotspot 4 (grease). # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.item.4.4.grease"
+msgid "GREASE @ WITH #"
+msgstr ""
+
+#. Scene 5050, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5050, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5050, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5050, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5050, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5050, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5050, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5050, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5050, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.use.2"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5050, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.use.3"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5050, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.use.4"
+msgid "USE @"
+msgstr ""
+
+#. Scene 5050, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.use.5"
+msgid "PLUG @"
+msgstr ""
+
+#. Scene 5050, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.use.6"
+msgid "GET INTO @"
+msgstr ""
+
+#. Scene 5050, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5050.cpp
+msgctxt "action.5050.use.7"
+msgid "GET INTO @"
+msgstr ""
+
+#. Scene 5060, item any on hotspot 2. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.item.0.2"
+msgid "GIVE # TO LULA"
+msgstr ""
+
+#. Scene 5060, item any on hotspot 3. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.item.0.3"
+msgid "GIVE # TO MARIOLA"
+msgstr ""
+
+#. Scene 5060, item 15 on hotspot 2. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.item.15.2"
+msgid "THROW # TO @"
+msgstr ""
+
+#. Scene 5060, item 20 on hotspot 9. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.item.20.9"
+msgid "SWITCH SUNGLASSES"
+msgstr ""
+
+#. Scene 5060, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5060, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5060, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5060, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5060, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5060, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5060, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5060, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5060, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5060, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5060, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.use.2"
+msgid "TALK TO @"
+msgstr ""
+
+#. Scene 5060, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.use.3"
+msgid "TALK TO @"
+msgstr ""
+
+#. Scene 5060, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.use.4"
+msgid "ENTER THE BUS"
+msgstr ""
+
+#. Scene 5060, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.use.5"
+msgid "SEARCH IN THE @"
+msgstr ""
+
+#. Scene 5060, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.use.6"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5060, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.use.7"
+msgid "SIT DOWN IN THE @"
+msgstr ""
+
+#. Scene 5060, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.use.8"
+msgid "TURN OFF @"
+msgstr ""
+
+#. Scene 5060, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5060.cpp
+msgctxt "action.5060.use.9"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5070, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5070, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5070, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5070, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5070, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5070, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5070, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5070, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5070, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.use.2"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5070, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.use.3"
+msgid "ACTIVATE @"
+msgstr ""
+
+#. Scene 5070, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.use.4"
+msgid "STOP OIL WELL"
+msgstr ""
+
+#. Scene 5070, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.use.5"
+msgid "GET ONTO THE @"
+msgstr ""
+
+#. Scene 5070, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.use.6"
+msgid "PUSH @"
+msgstr ""
+
+#. Scene 5070, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5070.cpp
+msgctxt "action.5070.use.7"
+msgid "GET OIL"
+msgstr ""
+
+#. Scene 5080, item any on hotspot 6. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.item.0.6"
+msgid "THROW # AT THE @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.10"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.11"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.10"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.11"
+msgid "GO UP USING THE @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.2"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.3"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 3 (open). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.3.open"
+msgid "LOOK AROUND IN THE @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.4"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.5"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.6"
+msgid "GO UP TO THE @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.7"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5080, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.8"
+msgid "ENTER TRAIN CAR"
+msgstr ""
+
+#. Scene 5080, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5080.cpp
+msgctxt "action.5080.use.9"
+msgid "PUT HAND IN THE @"
+msgstr ""
+
+#. Scene 5100, item any on hotspot 15. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.item.0.15"
+msgid "GO TO"
+msgstr ""
+
+#. Scene 5100, item any on hotspot 6. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.item.0.6"
+msgid "GIVE # TO THE MUSCLE DUDE"
+msgstr ""
+
+#. Scene 5100, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.10"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.11"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 12. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.12"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 13. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.13"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.2"
+msgid "LOOK AT BARN DOORS"
+msgstr ""
+
+#. Scene 5100, look at hotspot 2 (inside). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.2.inside"
+msgid "LOOK AT INSIDE OF BARN"
+msgstr ""
+
+#. Scene 5100, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.10"
+msgid "GET CRUSHED CANS FROM THE @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 11. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.11"
+msgid "GET ONTO THE @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 12. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.12"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 13. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.13"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 14. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.14"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 15. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.15"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.2"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 2 (enter). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.2.enter"
+msgid "ENTER THE HANGAR"
+msgstr ""
+
+#. Scene 5100, use at hotspot 2 (open). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.2.open"
+msgid "CLOSE @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.3"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.4"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.5"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.6"
+msgid "TALK TO @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.7"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.8"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5100, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5100.cpp
+msgctxt "action.5100.use.9"
+msgid "GET BEER CANS FROM THE @"
+msgstr ""
+
+#. Scene 5110, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5110, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5110, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5110, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5110, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5110, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5110, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5110, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5110, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.use.1"
+msgid "LEAVE THE TRAIN CAR"
+msgstr ""
+
+#. Scene 5110, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.use.2"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5110, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.use.3"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5110, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.use.4"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5110, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.use.5"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5110, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.use.6"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5110, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.use.7"
+msgid "CLOSE @"
+msgstr ""
+
+#. Scene 5110, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5110.cpp
+msgctxt "action.5110.use.8"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5160, item any on hotspot 3. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.item.0.3"
+msgid "GIVE # TO CARLA"
+msgstr ""
+
+#. Scene 5160, item 26 on hotspot 2. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.item.26.2"
+msgid "OPEN REFRIGERATOR USING THE KEY"
+msgstr ""
+
+#. Scene 5160, item 9 on hotspot 4. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.item.9.4"
+msgid "THROW PILL INTO THE GLASS"
+msgstr ""
+
+#. Scene 5160, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, look at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.10"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.10"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.2"
+msgid "OPEN @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.3"
+msgid "TALK TO @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.4"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.5"
+msgid "LIFT @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.6"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.7"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.8"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5160, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5160.cpp
+msgctxt "action.5160.use.9"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5170, item 10 on hotspot 3. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.item.10.3"
+msgid "LEAVE # WHERE I FOUND IT"
+msgstr ""
+
+#. Scene 5170, item 11 on hotspot 3. # is the selected item; @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.item.11.3"
+msgid "LEAVE # WHERE I FOUND THEM"
+msgstr ""
+
+#. Scene 5170, look at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.1"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, look at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.10"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, look at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.2"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, look at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.3"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, look at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.4"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, look at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.5"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, look at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.6"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, look at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.7"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, look at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.8"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, look at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.look.9"
+msgid "LOOK AT @"
+msgstr ""
+
+#. Scene 5170, use at hotspot 1. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.1"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5170, use at hotspot 1 (closed). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.1.closed"
+msgid "OPEN DOOR"
+msgstr ""
+
+#. Scene 5170, use at hotspot 10. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.10"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5170, use at hotspot 2. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.2"
+msgid "GO TO @"
+msgstr ""
+
+#. Scene 5170, use at hotspot 3. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.3"
+msgid "GET WHAT'S ON THE RIGHT-HAND SHELF"
+msgstr ""
+
+#. Scene 5170, use at hotspot 3 (lipstick). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.3.lipstick"
+msgid "GET PILE OF LIPSTICK"
+msgstr ""
+
+#. Scene 5170, use at hotspot 4. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.4"
+msgid "TURN THE @"
+msgstr ""
+
+#. Scene 5170, use at hotspot 5. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.5"
+msgid "EXAMINE INSIDE OF POCKET"
+msgstr ""
+
+#. Scene 5170, use at hotspot 6. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.6"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5170, use at hotspot 7. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.7"
+msgid "GET @"
+msgstr ""
+
+#. Scene 5170, use at hotspot 8. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.8"
+msgid "GET WHAT'S ON THE MIDDLE SHELF"
+msgstr ""
+
+#. Scene 5170, use at hotspot 9. @ is the current hotspot name.
+#: engines/hollywood/runaway/scene5170.cpp
+msgctxt "action.5170.use.9"
+msgid "GET WHAT'S ON THE LEFT-HAND SHELF"
+msgstr ""
+
+#. Chapter 2, place an item in the ladle. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.2.0.18"
+msgid "PLACE # IN @"
+msgstr ""
+
+#. Chapter 2, combine item 11 with item 12. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.2.11.12"
+msgid "PUT @ IN #"
+msgstr ""
+
+#. Chapter 2, combine item 12 with item 11. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.2.12.11"
+msgid "PUT # IN @"
+msgstr ""
+
+#. Chapter 2, combine item 14 with item 19. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.2.14.19"
+msgid "FILL @ WITH #"
+msgstr ""
+
+#. Chapter 2, place an item in the ladle. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.2.18.0"
+msgid "PLACE @ IN #"
+msgstr ""
+
+#. Chapter 2, combine item 19 with item 14. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.2.19.14"
+msgid "FILL # WITH @"
+msgstr ""
+
+#. Chapter 2, combine item 5 with item 6. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.2.5.6"
+msgid "PUT @ IN #"
+msgstr ""
+
+#. Chapter 2, combine item 6 with item 5. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.2.6.5"
+msgid "PUT # IN @"
+msgstr ""
+
+#. Chapter 3, combine item 1 with item 3. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.3.1.3"
+msgid "MOISTEN # WITH @"
+msgstr ""
+
+#. Chapter 3, combine item 3 with item 1. # is the selected item; @ is the target item.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "combination.3.3.1"
+msgid "MOISTEN @ WITH #"
+msgstr ""
+
 #. Scene 2020, hotspot 1.
 #: engines/hollywood/runaway/scene2020.cpp
 msgctxt "hotspot.2020.1"

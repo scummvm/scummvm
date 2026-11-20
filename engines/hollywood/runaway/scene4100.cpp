@@ -74,15 +74,15 @@ const RunawayResponse kResponses[] = {
 const RunawayItemAction kItemActions[] = {
 	{kMuseumSecurity, 5, 3, 321, false}, // Play the recording to the voice lock.
 	{kMuseumSecurity, 11, 3, 320, false}, // Put the Mayan mask back in the chamber.
-	{kMuseumSecurity, 0, 3, 319}, // Put an item in the thermal chamber.
+	{kMuseumSecurity, 0, 3, 319, false}, // Put an item in the thermal chamber.
 	{kMuseumSecurity, 5, 4, 321}, // Play the recording to the voice lock.
 	{kMuseumSecurity, 7, 6, 323, false}, // Use the crucifix with the scanner.
-	{kMuseumSecurity, 0, 6, 322}, // Use an item with the scanner.
+	{kMuseumSecurity, 0, 6, 322, false}, // Use an item with the scanner.
 	{kMuseumSecurity, 6, 7, 330, false}, // Put the battery directly in the liquid nitrogen.
 	{kMuseumSecurity, 18, 7, 325}, // Freeze the battery in the ladle.
-	{kMuseumSecurity, 0, 7, 324}, // Put an item in the liquid nitrogen.
+	{kMuseumSecurity, 0, 7, 324, false}, // Put an item in the liquid nitrogen.
 	{kMuseumSecurity, 7, 9, 327, false}, // Examine the crucifix with the electron microscope.
-	{kMuseumSecurity, 0, 9, 326}, // Use an item with the electron microscope.
+	{kMuseumSecurity, 0, 9, 326, false}, // Use an item with the electron microscope.
 };
 
 const RunawayExit kExits[] = {
@@ -103,6 +103,13 @@ namespace Runaway {
 
 Scene4100::Scene4100(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
+
+const char *Scene4100::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item && id == 3) {
+		return _museum.chamberOpen ? "open" : nullptr;
+	}
+	return nullptr;
+}
 
 bool Scene4100::loadCustomResources() {
 	return !museumChapter() || (_ambientAnimation.load(_archive, 4, 121) && _overlayAnimation.load(_archive, 5, 121) &&

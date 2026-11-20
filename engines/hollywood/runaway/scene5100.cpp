@@ -108,6 +108,18 @@ Scene5100::Scene5100(RunawayAudio &audio, RunawayInventory &inventory, const Run
 	RunawayRoomScene(audio, inventory, strings, game),
 	_hangarSpeech(audio, _random, RunawaySpeech::kNoLipSync) {}
 
+const char *Scene5100::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!item && id == 2) {
+		if (look && _desert.barnDoor) {
+			return "inside";
+		}
+		if (!look && _desert.barnDoor) {
+			return _desert.barnDoor == 2 ? "open" : "enter";
+		}
+	}
+	return nullptr;
+}
+
 bool Scene5100::loadCustomResources() {
 	_hangarSpeech.reset();
 	return _beerAnimation.load(_archive, 4, 1) &&

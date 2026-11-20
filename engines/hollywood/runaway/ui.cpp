@@ -405,6 +405,10 @@ Common::U32String RunawayUI::inventoryCaption() const {
 	if (selected) {
 		if (_hovered == selected)
 			return _strings.text(RunawayStrings::kPutAway) + _inventory.name(selected);
+		const Common::U32String combination = _inventory.combinationCaption(selected, _hovered);
+		if (!combination.empty()) {
+			return combination;
+		}
 		Common::U32String caption = _strings.text(RunawayStrings::kUse) + _inventory.name(selected);
 		if (_hovered)
 			caption += _strings.text(RunawayStrings::kWith) + _inventory.name(_hovered);

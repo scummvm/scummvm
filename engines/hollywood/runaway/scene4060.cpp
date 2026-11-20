@@ -87,7 +87,7 @@ const RunawayResponse kResponses[] = {
 
 const RunawayItemAction kItemActions[] = {
 	{kMuseumHall, 19, 2, 346, false}, // Use the coffee package with the coffee machine.
-	{kMuseumHall, 0, 5, 19}, // Use an item with wastepaper basket.
+	{kMuseumHall, 0, 5, 19, false}, // Use an item with the wastepaper basket.
 	{kMuseumHall, 9, 8, 337}, // Coat the keypad with varnish.
 	{kMuseumHall, 10, 8, 338}, // Dust the keypad with talcum powder.
 	{kMuseumHall, 1, 14, 11, false}, // Use wallet with maintenance worker.
@@ -136,6 +136,21 @@ namespace Runaway {
 
 Scene4060::Scene4060(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
+
+const char *Scene4060::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item) {
+		if (id == 1 || id == 9 || id == 12 || id == 13) {
+			return _upperFloor ? "downstairs" : "upstairs";
+		}
+		if (id == 5 && !_coffeeTaken && _museum.needsPackage) {
+			return "coffee";
+		}
+		if (id == 7 && _museum.keypad == 4) {
+			return "unlocked";
+		}
+	}
+	return nullptr;
+}
 
 bool Scene4060::loadCustomResources() {
 	return _willyAnimation.load(_archive, 8, 22);

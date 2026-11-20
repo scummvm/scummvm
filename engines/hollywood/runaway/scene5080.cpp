@@ -79,6 +79,13 @@ namespace Runaway {
 Scene5080::Scene5080(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene5080::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item && id == 3 && _desert.antsDistracted) {
+		return "open";
+	}
+	return nullptr;
+}
+
 bool Scene5080::loadCustomResources() {
 	return _ambientAnimations[0].load(_archive, 18, 769) &&
 		_ambientAnimations[1].load(_archive, 17, 672) &&

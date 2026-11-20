@@ -32,6 +32,7 @@ public:
 	Scene4100(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 
 private:
+	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;

@@ -27,6 +27,10 @@
 #include "hollywood/runaway/detection.h"
 #include "hollywood/runaway/saveload.h"
 
+namespace Common {
+class RandomSource;
+}
+
 namespace Hollywood {
 
 class RunawayStrings;
@@ -40,6 +44,7 @@ public:
 	struct Reply {
 		uint16 cue;
 		byte variation;
+		byte nextVariation = 0xff;
 		uint16 action = 0;
 		Reply(uint16 c = 1, byte v = 0) : cue(c), variation(v) {}
 		static Reply fromAction(uint16 action) {
@@ -49,7 +54,7 @@ public:
 		}
 	};
 	RunawayInventory(const RunawayStrings &strings, RunawayGameType game) :
-		_strings(strings), _museumDemo(game == kRunawayMuseumDemo), _chapter(game == kRunawayFullGame ? 1 : game == kRunawayMuseumDemo ? 2 : 3) {}
+		_strings(strings), _museumDemo(game == kRunawayMuseumDemo), _fullGame(game == kRunawayFullGame), _chapter(game == kRunawayFullGame ? 1 : game == kRunawayMuseumDemo ? 2 : 3) {}
 	void setChapter(byte chapter) { _chapter = chapter; }
 	void startChapter(byte chapter);
 	RunawaySaveState::MuseumItems &museum() { return _museum; }
@@ -66,6 +71,8 @@ public:
 	void select(byte item) { _selected = contains(item) ? item : 0; }
 	byte takeNewItem() { const byte item = _newItem; _newItem = 0; return item; }
 	Common::U32String name(byte item) const;
+	Common::U32String combinationCaption(byte item, byte target) const;
+	static Reply randomReply(Common::RandomSource &random);
 	uint icon(byte item) const;
 	uint cursor(byte item) const;
 	Reply examine(byte item) const;
@@ -81,10 +88,12 @@ public:
 
 private:
 	Reply combineHospitalItems(byte first, byte second);
+	Reply combineMuseumItems(byte first, byte second);
 	Reply combineTownItems(byte first, byte second);
 	Reply combineHopiItems(byte first, byte second);
 	const RunawayStrings &_strings;
 	const bool _museumDemo;
+	const bool _fullGame;
 	byte _chapter;
 	RunawaySaveState::MuseumItems _museum;
 	RunawaySaveState::DesertItems _desert;

@@ -63,7 +63,9 @@ public:
 	Common::U32String text(TextId id) const;
 	Common::U32String itemName(byte chapter, byte item) const;
 	Common::U32String hotspotName(uint16 scene, byte hotspot) const;
-	Common::U32String sceneActionCaption(uint16 scene, byte hotspot, byte item, bool look) const;
+	Common::U32String sceneActionCaption(uint16 scene, byte hotspot, byte item, bool look, const char *variant = nullptr) const;
+	Common::U32String combinationCaption(byte chapter, byte item, byte target) const;
+	static Common::U32String formatActionCaption(const Common::U32String &pattern, const Common::U32String &item, const Common::U32String &target);
 	Common::U32String shackHotspotName(byte hotspot) const;
 
 private:
