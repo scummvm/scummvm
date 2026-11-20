@@ -49,6 +49,16 @@ void RenderObject::setZOrder(uint16 z) {
 	g_nancy->_graphics->reorderObject(this);
 }
 
+void RenderObject::setLayer(int32 layer) {
+	if (_layer == layer) {
+		return;
+	}
+
+	_layer = layer;
+	_needsRedraw = true;
+	g_nancy->_graphics->reorderObject(this);
+}
+
 void RenderObject::init() {
 	_previousScreenPosition = _screenPosition;
 }

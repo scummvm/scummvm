@@ -1710,12 +1710,13 @@ static bool readStreamLifetime(const Common::String &lifetime, State::StreamFlag
 	return true;
 }
 
-// A stream that keeps the input goes in front of the frontmost stream, and any
-// other one shares the z of the stream that began it. Nancy19 to Nancy20 keep
-// the streams in an order of their own, where it goes a step in front; from
-// Resorting to Danger on, it goes 10 in front. 10 is more than the z of a
-// record spans, so it covers the scenes behind it, e.g. the journal of Lights,
-// Camera, Curses or the scrapbook of Nancy25.
+// A stream that keeps the input goes in front of the frontmost stream. Nancy19
+// to Nancy20 keep the streams in an order of their own, where it goes a step in
+// front and any other one goes with the main stream, and draw each place there
+// as a layer, e.g. the journal of Lights, Camera, Curses over the scene behind
+// it. From Resorting to Danger on, it goes 10 in front, which is more than the
+// z of a record spans there, e.g. the scrapbook of Nancy25, and any other
+// stream shares the z of the stream that began it.
 static int32 getCapturingStreamZOffset() {
 	const State::SceneStreamManager &streams = NancySceneState.getStreams();
 	return streams.getFrontZOffset() + 10 - streams.getRunningZOffset();

@@ -44,6 +44,7 @@ namespace NDUI {
 static const int kInvButtonFirstID = 10;
 
 Panel::Panel(Manager *manager, uint16 z, byte kind) : RenderObject(z), _manager(manager), _kind(kind) {
+	_layer = kUILayer;
 	setNativeResolution(true);
 }
 

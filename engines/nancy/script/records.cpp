@@ -194,9 +194,19 @@ Record *makeRecord(RecordType type, SceneContext &context) {
 static const double kBackgroundScriptZ = -5.0;
 static const int kBackgroundZ = 6;
 
-// Scripts tell apart z values as close as 0.001, and every stream is one step
-// closer than the one that began it
+// Scripts tell apart z values as close as 0.001
 static const double kStepsPerScriptZ = 1000.0;
+
+// Nancy19 to Nancy20 keep the streams in an order of their own, and draw the
+// records of each z there together, sorted by their z: the z of a stream is a
+// layer of what is drawn. Later games add it to the z of the records.
+static bool hasStreamLayers() {
+	return g_nancy->getGameType() < kGameTypeNancyDossier2;
+}
+
+int32 RecordGraphic::getScriptLayer(int32 zOffset) {
+	return hasStreamLayers() ? zOffset : 0;
+}
 
 uint16 RecordGraphic::getScriptZOrder(double z, int32 zOffset) {
 #ifdef ENABLE_NANCY_V5
@@ -204,6 +214,10 @@ uint16 RecordGraphic::getScriptZOrder(double z, int32 zOffset) {
 		return getBandZOrder(z, zOffset);
 	}
 #endif
+
+	if (hasStreamLayers()) {
+		zOffset = 0;
+	}
 
 	const double steps = (z - kBackgroundScriptZ + zOffset) * kStepsPerScriptZ;
 	return (uint16)CLIP<int>(kBackgroundZ + (int)floor(steps + 0.5), 0, kMaxScriptZOrder);
@@ -239,6 +253,8 @@ void RecordGraphic::setScriptZ(double z, const SceneContext &context, uint32 rec
 		setTieOrder(tieOrder);
 		g_nancy->_graphics->reorderObject(this);
 	}
+
+	setLayer(getScriptLayer(context.getZOffset()));
 
 	setZOrder(getScriptZOrder(z, context.getZOffset()));
 	setViewTransform(context.getViewTransform());
@@ -1740,6 +1756,7 @@ void OverlayRecord::renderNow() {
 		_hasAttachment = true;
 		_attachment.init();
 		_attachment.setVisible(false);
+		_attachment.setLayer(RenderObject::kUILayer);
 		_attachment.setZOrder(kAttachmentZ);
 		_attachment.registerGraphics();
 	}

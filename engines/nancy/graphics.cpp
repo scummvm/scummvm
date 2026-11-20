@@ -1109,7 +1109,11 @@ Common::Rect GraphicsManager::getDrawnPosition(const RenderObject &object) const
 }
 
 int GraphicsManager::objectComparator(const void *a, const void *b) {
-	if (((const RenderObject*)a)->getZOrder() < ((const RenderObject*)b)->getZOrder()) {
+	if (((const RenderObject*)a)->getLayer() < ((const RenderObject*)b)->getLayer()) {
+		return -1;
+	} else if (((const RenderObject*)a)->getLayer() > ((const RenderObject*)b)->getLayer()) {
+		return 1;
+	} else if (((const RenderObject*)a)->getZOrder() < ((const RenderObject*)b)->getZOrder()) {
 		return -1;
 	} else if (((const RenderObject*)a)->getZOrder() > ((const RenderObject*)b)->getZOrder()) {
 		return 1;

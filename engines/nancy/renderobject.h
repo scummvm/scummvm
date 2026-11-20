@@ -117,6 +117,13 @@ public:
 	// scripts draw in the order they were made. 0 for everything else.
 	uint32 getTieOrder() const { return _tieOrder; }
 	void setTieOrder(uint32 order) { _tieOrder = order; }
+
+	// What comes before the z order: Nancy19 to Nancy20 draw each stream in a
+	// layer of its own. The UI is in front of all of them.
+	static const int32 kUILayer = 0x7FFFFFFF;
+	int32 getLayer() const { return _layer; }
+	void setLayer(int32 layer);
+
 	// Also moves the object in the draw order, so changing the z of a registered
 	// object takes effect without re-registering it
 	void setZOrder(uint16 z);
@@ -140,6 +147,7 @@ protected:
 	bool _isMasked = false;
 	uint16 _z;
 	uint32 _tieOrder = 0;
+	int32 _layer = 0;
 	Common::Rect _drawnScreenPosition;
 	Common::Rect _previousScreenPosition;
 	Common::Rect _screenPosition;

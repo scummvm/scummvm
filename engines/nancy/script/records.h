@@ -79,6 +79,7 @@ public:
 	// The z order of a script z in a stream that is the given steps in front
 	static uint16 getScriptZOrder(double z, int32 zOffset);
 	static uint16 getBackgroundZOrder(int32 zOffset);
+	static int32 getScriptLayer(int32 zOffset);
 
 	// The highest z order of what the records draw
 	static const int kMaxScriptZOrder = 59000;

@@ -240,6 +240,7 @@ void SceneStream::loadBackground(const Common::Path &videoFile) {
 	_background->setZOrder(_background->getZOrder() + _zOffset);
 #ifdef ENABLE_NANCY_V4
 	if (_scriptScene) {
+		_background->setLayer(Script::RecordGraphic::getScriptLayer(_scriptScene->getZOffset()));
 		_background->setZOrder(Script::RecordGraphic::getBackgroundZOrder(_scriptScene->getZOffset()));
 	}
 #endif
@@ -510,7 +511,15 @@ void SceneStreamManager::begin(const Common::String &name, const Common::String 
 		return;
 	}
 
-	int32 zOffset = flags.zOffset + (_running ? _running->getZOffset() : 0);
+	// Nancy19 to Nancy20 put a stream that doesn't take the input with the main
+	// stream, whichever stream began it
+	const GameType gameType = g_nancy->getGameType();
+	const bool isWithMainStream = gameType >= kGameTypeNancy19 && gameType < kGameTypeNancyDossier2 && !flags.capturesInput;
+	int32 zOffset = flags.zOffset;
+	if (_running && !isWithMainStream) {
+		zOffset += _running->getZOffset();
+	}
+
 	SceneStream *stream = new SceneStream(name, flags, zOffset);
 	stream->changeScene(sceneName, frameID);
 
