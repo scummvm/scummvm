@@ -649,10 +649,10 @@ bool SceneContext::getViewportMouse(const NancyInput &input, Common::Point32 &po
 	const UI::Viewport &viewport = NancySceneState.getViewport();
 	const Common::Rect screenPosition = viewport.getScreenPosition();
 
-	const Common::Rect local = viewport.convertScreenToViewport(
-		Common::Rect(input.mousePos.x, input.mousePos.y, input.mousePos.x + 1, input.mousePos.y + 1));
-	point.x = local.left;
-	point.y = local.top;
+	// The scroll of a background higher than the viewport only picks the part
+	// of it that shows; the records are placed by their transforms
+	point.x = input.mousePos.x - viewport.getScreenPositionRaw().left;
+	point.y = input.mousePos.y - viewport.getScreenPositionRaw().top;
 
 	return screenPosition.contains(input.mousePos);
 }

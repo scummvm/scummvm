@@ -140,6 +140,10 @@ public:
 	// Needed for proper handling of objects inside the viewport
 	virtual bool isViewportRelative() const { return false; }
 
+	// Whether an object in the viewport moves with its vertical scroll. The
+	// records of the scripts are placed by their transforms instead.
+	virtual bool isMovedByViewportScroll() const { return true; }
+
 	// The zoom the object gets drawn with, if any. It belongs to whoever set it.
 	const ViewTransform *getViewTransform() const { return _viewTransform; }
 	void setViewTransform(const ViewTransform *viewTransform) { _viewTransform = viewTransform; }
@@ -161,6 +165,9 @@ protected:
 	Common::Rect _screenPosition;
 	Common::Rect _clipRect;
 	const ViewTransform *_viewTransform = nullptr;
+
+private:
+	Common::Rect convertPositionToScreen(const Common::Rect &position) const;
 };
 
 } // End of namespace Nancy

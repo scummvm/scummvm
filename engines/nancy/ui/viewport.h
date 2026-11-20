@@ -73,6 +73,7 @@ public:
 	void enableFrameCache() { _decoder.enableFrameCache(); }
 	uint16 getCurFrame() const { return _currentFrame; }
 	uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y; }
+	uint16 getFullFrameHeight() const { return _fullFrame.h; }
 	uint16 getMaxScroll() const;
 
 	// The currently-visible scene background, in viewport-local coords. Used by

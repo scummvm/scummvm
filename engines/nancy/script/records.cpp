@@ -649,6 +649,14 @@ void SummaryRecord::onTransformChanged() {
 
 	const ScriptMatrix transform = getTransform();
 	_background->setHorizontalScroll(MAX<int>(0, (int)-transform.m[3][0]));
+
+	// A background taller than the viewport, like the one of Dossier1 scene
+	// 2400, scrolls down as far as the transform moves it up
+	const int verticalScroll = (int)-transform.m[3][1];
+	if (verticalScroll > 0 || _background->getCurVerticalScroll() != 0) {
+		const int maxScroll = (int)_background->getFullFrameHeight() - (int)_background->getScreenPositionRaw().height();
+		_background->setVerticalScroll(CLIP<int>(verticalScroll, 0, MAX<int>(maxScroll, 0)));
+	}
 }
 
 void SummaryRecord::setFrame(uint frame) {

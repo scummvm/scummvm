@@ -93,6 +93,7 @@ protected:
 	// Nancy26 has the viewport at the top left of the screen, and lets records
 	// draw on all of it, the UI along the bottom included
 	bool isViewportRelative() const override;
+	bool isMovedByViewportScroll() const override { return false; }
 };
 
 // Shows a part of an image where the record's transform places it. The part
