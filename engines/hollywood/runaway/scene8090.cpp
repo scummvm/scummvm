@@ -86,7 +86,6 @@ void Scene8090::applyCustomHotspotState() {
 
 void Scene8090::prepareCustomGameplayLoop() {
 	_oscar.resume(_now);
-	_ambientTick = _now;
 }
 
 void Scene8090::runCustomEntrySequence() {
@@ -119,30 +118,13 @@ void Scene8090::runCustomEntrySequence() {
 }
 
 void Scene8090::resumeAmbientAudio(bool entering) {
-	if (!_audio.effectPlaying(2)) {
-		_audio.playEffect(40, 26, 2, true);
-	}
-	if (entering || !_audio.musicPlaying()) {
-		_musicCue = 12 + _random.getRandomNumber(4);
-		_audio.playMusic(_musicCue, false);
-	}
+	resumeFinaleOutdoorAudio(entering, 40, 26);
 }
 
 void Scene8090::advanceCustomGameplayLoop(uint32 delta) {
-	updateOutdoorMusic(5);
+	updateFinaleOutdoorAudio(102);
 	if (!_finale.oscarAway && !_animatesOscar && !_oscarPose) {
 		_oscar.update(_now, _random, _audio);
-	}
-	if (_now - _ambientTick >= 250) {
-		_ambientTick = _now;
-		if (!_audio.effectPlaying(0) && !_random.getRandomNumber(49)) {
-			byte cue;
-			do {
-				cue = 74 + _random.getRandomNumber(4);
-			} while (cue == _lastAmbient);
-			_lastAmbient = cue;
-			_audio.playEffect(cue, 26);
-		}
 	}
 }
 

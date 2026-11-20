@@ -23,6 +23,32 @@
 
 namespace Hollywood {
 
+void RunawayRoomScene::resumeFinaleOutdoorAudio(bool entering, uint16 windCue, byte windVolume) {
+	_finaleAmbientTick = _now;
+	if (!_audio.effectPlaying(2)) {
+		_audio.playEffect(windCue, windVolume, 2, true);
+	}
+	if (entering || !_audio.musicPlaying()) {
+		_musicCue = 12 + _random.getRandomNumber(4);
+		_audio.playMusic(_musicCue, false);
+	}
+}
+
+void RunawayRoomScene::updateFinaleOutdoorAudio(byte wildlifeVolume) {
+	updateOutdoorMusic(5);
+	if (wildlifeVolume && _now - _finaleAmbientTick >= 250) {
+		_finaleAmbientTick = _now;
+		if (!_audio.effectPlaying(0) && !_random.getRandomNumber(49)) {
+			byte cue;
+			do {
+				cue = 74 + _random.getRandomNumber(4);
+			} while (cue == _finaleLastAmbient);
+			_finaleLastAmbient = cue;
+			_audio.playEffect(cue, wildlifeVolume);
+		}
+	}
+}
+
 bool RunawayRoomScene::sayFinaleInventory(const RunawayInventory::Reply &reply) {
 	typedef RunawaySequence S;
 	static const S::Command map[] = {

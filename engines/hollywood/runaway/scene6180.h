@@ -22,6 +22,7 @@
 #ifndef HOLLYWOOD_RUNAWAY_SCENE6180_H
 #define HOLLYWOOD_RUNAWAY_SCENE6180_H
 
+#include "hollywood/runaway/saloon.h"
 #include "hollywood/runaway/scene.h"
 
 namespace Hollywood {
@@ -45,10 +46,7 @@ private:
 	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 
-	RunawayAnimation _doorAnimation;
-	Common::Array<byte> _doorPatches[2];
-	byte _saloonDoorFrame = 0;
-	uint32 _saloonDoorTick = 0;
+	SaloonDoors _doors;
 };
 
 } // End of namespace Runaway

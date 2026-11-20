@@ -156,6 +156,7 @@ MODULE_OBJS = \
 	runaway/navigation.o \
 	runaway/oscar.o \
 	runaway/presentation.o \
+	runaway/saloon.o \
 	runaway/saveload.o \
 	runaway/scene.o \
 	runaway/scene_registry.o \
@@ -211,6 +212,8 @@ MODULE_OBJS = \
 	runaway/scene7050.o \
 	runaway/scene8090.o \
 	runaway/scene8100.o \
+	runaway/scene8130.o \
+	runaway/scene8180.o \
 	runaway/sequence.o \
 	runaway/speech.o \
 	runaway/strings.o \

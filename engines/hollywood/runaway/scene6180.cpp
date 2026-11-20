@@ -65,8 +65,7 @@ Scene6180::Scene6180(RunawayAudio &audio, RunawayInventory &inventory, const Run
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
 bool Scene6180::loadCustomResources() {
-	return _doorAnimation.load(_archive, 8, 71) && loadForeground(0, 4) && loadForeground(1, 5) &&
-		_archive.readVariableChunk(6, _doorPatches[0]) && _archive.readVariableChunk(7, _doorPatches[1]);
+	return _doors.load(_archive) && loadForeground(0, 4) && loadForeground(1, 5);
 }
 
 bool Scene6180::applyCustomBackgroundPatches() {
@@ -85,15 +84,14 @@ void Scene6180::applyCustomHotspotState() {
 }
 
 void Scene6180::prepareCustomGameplayLoop() {
-	_saloonDoorTick = _now;
-	_saloonDoorFrame = _position.x > 726 ? 7 : 0;
+	_doors.resume(_now, _position.x > 726);
 }
 
 void Scene6180::runCustomEntrySequence() {
 	if (_entryScene == 6181) {
 		_position = Common::Point(1023, 519);
 		_walkPath.reset(_position);
-		_saloonDoorFrame = 7;
+		_doors.resume(_now, true);
 		if (_town.wrenchFound == 1) {
 			walkTo(Common::Point(434, 433), 7, false, true);
 			deferTownAction(410);
@@ -116,30 +114,11 @@ void Scene6180::advanceCustomGameplayLoop(uint32 delta) {
 	if (_roomAction == 401 && !_actionFrames.empty()) {
 		_actionFrames[0] = 24 + speechFrame();
 	}
-	// Stepping across the floor board opens the doors; stepping off releases them.
-	const bool pressed = _position.x > 726;
-	if (pressed && _saloonDoorFrame > 7) {
-		_saloonDoorFrame = 0;
-	}
-	if ((pressed && _saloonDoorFrame == 7) || (!pressed && !_saloonDoorFrame)) {
-		_saloonDoorTick = _now;
-		return;
-	}
-	if (_now - _saloonDoorTick < 80) {
-		return;
-	}
-	_saloonDoorTick = _now;
-	_saloonDoorFrame = (_saloonDoorFrame + 1) % 71;
-	if (_saloonDoorFrame == 1) {
-		_audio.playEffect(13);
-	} else if (_saloonDoorFrame == 9) {
-		_audio.playEffect(14);
-	}
+	_doors.update(_now, _position.x > 726, _audio, 13);
 }
 
 void Scene6180::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
-	applyRunawayPatch(_doorPatches[_position.x > 726], viewport);
-	_doorAnimation.draw(viewport, _saloonDoorFrame, 0, 0);
+	_doors.draw(viewport, _position.x > 726);
 }
 
 void Scene6180::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {

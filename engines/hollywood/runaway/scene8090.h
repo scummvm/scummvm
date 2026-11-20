@@ -62,8 +62,6 @@ private:
 	byte _oscarPose = 0, _oscarMouth = 0;
 	bool _animatesOscar = false, _curtainOpen = false, _visitingGina = false;
 	uint16 _houseDestination = 8100;
-	uint32 _ambientTick = 0;
-	byte _lastAmbient = 0;
 };
 
 } // End of namespace Runaway

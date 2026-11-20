@@ -241,6 +241,8 @@ protected:
 	bool sayHopiInventory(const RunawayInventory::Reply &reply);
 	bool finaleChapter() const { return _game == kRunawayFullGame && _room / 1000 == 8; }
 	bool sayFinaleInventory(const RunawayInventory::Reply &reply);
+	void resumeFinaleOutdoorAudio(bool entering, uint16 windCue, byte windVolume);
+	void updateFinaleOutdoorAudio(byte wildlifeVolume = 0);
 	void updateOutdoorMusic(byte cueCount = 3);
 	void updateGameplay(uint32 delta);
 	void findGameplayWalkPath(Common::Point target);
@@ -306,6 +308,8 @@ protected:
 	uint16 _afterConversation = 0;
 	byte _musicCue = 11;
 	uint32 _nextMusic = 0;
+	uint32 _finaleAmbientTick = 0;
+	byte _finaleLastAmbient = 0;
 	bool _entering = false;
 	uint16 _roomAction = 0;
 	bool _actionHidesActor = true;
