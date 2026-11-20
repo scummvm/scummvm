@@ -26,17 +26,17 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Unvisited Area", 0, 0, 0, {1, 301}, {0, 0}},
-	{"Thugs' Cabin", 0, 0, 0, {1, 302}, {0, 0}},
-	{"Unvisited Area", 0, 0, 0, {1, 303}, {0, 0}},
-	{"Unvisited Area", 0, 0, 0, {1, 304}, {0, 0}},
-	{"Unvisited Area", 0, 0, 0, {1, 305}, {0, 0}},
-	{"Drag Queen Bus", 0, 0, 0, {1, 306}, {0, 0}},
-	{"Oil Well", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Hangar", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Airplane Graveyard", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Railway Yard", 0, 0, 0, {0, 0}, {0, 0}},
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{0, 0, 0, {1, 301}, {0, 0}}, // 1: Unvisited Area.
+	{0, 0, 0, {1, 302}, {0, 0}}, // 2: Thugs' Cabin.
+	{0, 0, 0, {1, 303}, {0, 0}}, // 3: Unvisited Area.
+	{0, 0, 0, {1, 304}, {0, 0}}, // 4: Unvisited Area.
+	{0, 0, 0, {1, 305}, {0, 0}}, // 5: Unvisited Area.
+	{0, 0, 0, {1, 306}, {0, 0}}, // 6: Drag Queen Bus.
+	{0, 0, 0, {0, 0}, {0, 0}}, // 7: Oil Well.
+	{0, 0, 0, {0, 0}, {0, 0}}, // 8: Hangar.
+	{0, 0, 0, {0, 0}, {0, 0}}, // 9: Airplane Graveyard.
+	{0, 0, 0, {0, 0}, {0, 0}}, // 10: Railway Yard.
 };
 
 } // End of anonymous namespace

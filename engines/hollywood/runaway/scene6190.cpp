@@ -27,15 +27,15 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Town", 1250, 347, 3, {301, 302}, {0, 3}},
-	{"Bucket of paint", 560, 282, 0, {303, 304}, {1, 0}},
-	{"Hole", 757, 446, 5, {306, 307}, {1, 0}},
-	{"Shelves", 778, 314, 7, {308, 309}, {1, 1}},
-	{"Metal object", 778, 314, 7, {310, 311}, {0, 1}},
-	{"Desk", 479, 232, 5, {312, 313}, {1, 1}},
-	{"Cash register", 759, 334, 4, {314, 315}, {0, 1}},
-	{"Couch", 601, 391, 5, {316, 317}, {1, 0}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{1250, 347, 3, {301, 302}, {0, 3}}, // 1: Town.
+	{560, 282, 0, {303, 304}, {1, 0}}, // 2: Bucket of paint.
+	{757, 446, 5, {306, 307}, {1, 0}}, // 3: Hole.
+	{778, 314, 7, {308, 309}, {1, 1}}, // 4: Shelves.
+	{778, 314, 7, {310, 311}, {0, 1}}, // 5: Metal object.
+	{479, 232, 5, {312, 313}, {1, 1}}, // 6: Desk.
+	{759, 334, 4, {314, 315}, {0, 1}}, // 7: Cash register.
+	{601, 391, 5, {316, 317}, {1, 0}} // 8: Couch.
 };
 
 const RunawayResponse kResponses[] = {
@@ -107,7 +107,7 @@ void Scene6190::runCustomEntrySequence() {
 
 Common::U32String Scene6190::hotspotName(byte id) const {
 	if (id == 2 && _town.catapult == 3) {
-		return _strings.hotspotName(_room, 9, "Entrance to the basement");
+		return _strings.hotspotName(_room, 9);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

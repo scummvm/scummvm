@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene8400.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -31,12 +32,12 @@ const Common::Point kTrailEnd(2445, 318);
 const Common::Point kDoor(1104, 377);
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Path to the trailer", 2591, 229, 0, {301, 302}, {0, 0}},
-	{"Trailer", 0, 0, 0, {303, 304}, {0, 0}},
-	{"Door", 1104, 377, 7, {305, 306}, {0, 0}},
-	{"Tray", 1138, 373, 0, {308, 309}, {1, 1}},
-	{"Wooden bridge", 0, 0, 0, {310, 311}, {0, 0}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{2591, 229, 0, {301, 302}, {0, 0}}, // 1: Path to the trailer.
+	{0, 0, 0, {303, 304}, {0, 0}}, // 2: Trailer.
+	{1104, 377, 7, {305, 306}, {0, 0}}, // 3: Door.
+	{1138, 373, 0, {308, 309}, {1, 1}}, // 4: Tray.
+	{0, 0, 0, {310, 311}, {0, 0}} // 5: Wooden bridge.
 };
 
 const RunawayResponse kResponses[] = {
@@ -216,7 +217,7 @@ bool Scene8400::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 
 Common::U32String Scene8400::hotspotName(byte id) const {
 	if (id == 3 && _finale.trailerDoor) {
-		return Common::U32String("Inside the trailer");
+		return _strings.hotspotName(_room, 8);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

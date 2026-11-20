@@ -29,12 +29,12 @@ namespace {
 enum CryptDoorState { kBlocked, kCleared, kOpen, kSealed };
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Monolith", 446, 486, 1, {301, 302}, {0, 0}},
-	{"Monolith's mouth", 446, 486, 1, {303, 304}, {0, 1}},
-	{"Path", 0, 599, 5, {305, 306}, {0, 3}},
-	{"Cave in the rock", 705, 340, 1, {307, 308}, {0, 0}},
-	{"Bush", 109, 491, 0, {309, 310}, {0, 1}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{446, 486, 1, {301, 302}, {0, 0}}, // 1: Monolith.
+	{446, 486, 1, {303, 304}, {0, 1}}, // 2: Monolith's mouth.
+	{0, 599, 5, {305, 306}, {0, 3}}, // 3: Path.
+	{705, 340, 1, {307, 308}, {0, 0}}, // 4: Cave in the rock.
+	{109, 491, 0, {309, 310}, {0, 1}} // 5: Bush.
 };
 
 const RunawayResponse kResponses[] = {

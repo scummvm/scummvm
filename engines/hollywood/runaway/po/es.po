@@ -2229,7 +2229,7 @@ msgstr "CRÁTER"
 #. Scene 6350, hotspot 10.
 #: engines/hollywood/runaway/scene6350.cpp
 msgctxt "hotspot.6350.10"
-msgid "CAMINO HACIA LA CARAVANA"
+msgid "Path to the trailer"
 msgstr "CAMINO HACIA LA CARAVANA"
 
 #. Scene 7010, hotspot 1.
@@ -2289,7 +2289,7 @@ msgstr "OBJETO METÁLICO"
 #. Scene 7010, hotspot 10.
 #: engines/hollywood/runaway/scene7010.cpp
 msgctxt "hotspot.7010.10"
-msgid "HUESO"
+msgid "Bone"
 msgstr "HUESO"
 
 #. Scene 7010, hotspot 15.
@@ -2493,8 +2493,776 @@ msgstr "PUEBLO"
 #. Scene 7050, hotspot 7.
 #: engines/hollywood/runaway/scene7050.cpp
 msgctxt "hotspot.7050.7"
-msgid "HACHA INDIA"
+msgid "Tomahawk"
 msgstr "HACHA INDIA"
+
+#. Scene 8090, hotspot 1.
+#: engines/hollywood/runaway/scene8090.cpp
+msgctxt "hotspot.8090.1"
+msgid "Oil well area"
+msgstr "ZONA DEL POZO"
+
+#. Scene 8090, hotspot 2.
+#: engines/hollywood/runaway/scene8090.cpp
+msgctxt "hotspot.8090.2"
+msgid "Entrance to the house"
+msgstr "ENTRADA A LA CASA"
+
+#. Scene 8090, hotspot 3.
+#: engines/hollywood/runaway/scene8090.cpp
+msgctxt "hotspot.8090.3"
+msgid "Sign"
+msgstr "CARTEL"
+
+#. Scene 8090, hotspot 4.
+#: engines/hollywood/runaway/scene8090.cpp
+msgctxt "hotspot.8090.4"
+msgid "Oscar"
+msgstr "ÓSCAR"
+
+#. Scene 8090, hotspot 5.
+#: engines/hollywood/runaway/scene8090.cpp
+msgctxt "hotspot.8090.5"
+msgid "Ladder"
+msgstr "ESCALERA"
+
+#. Scene 8090, hotspot 6.
+#: engines/hollywood/runaway/scene8090.cpp
+msgctxt "hotspot.8090.6"
+msgid "Entrance to the house"
+msgstr "ENTRADA A LA CASA"
+
+#. Scene 8090, hotspot 8.
+#: engines/hollywood/runaway/scene8090.cpp
+msgctxt "hotspot.8090.8"
+msgid "Path"
+msgstr "CAMINO"
+
+#. Scene 8130, hotspot 1.
+#: engines/hollywood/runaway/scene8130.cpp
+msgctxt "hotspot.8130.1"
+msgid "Path"
+msgstr "CAMINO"
+
+#. Scene 8130, hotspot 2.
+#: engines/hollywood/runaway/scene8130.cpp
+msgctxt "hotspot.8130.2"
+msgid "House"
+msgstr "CASA"
+
+#. Scene 8130, hotspot 3.
+#: engines/hollywood/runaway/scene8130.cpp
+msgctxt "hotspot.8130.3"
+msgid "Well"
+msgstr "POZO"
+
+#. Scene 8130, hotspot 5.
+#: engines/hollywood/runaway/scene8130.cpp
+msgctxt "hotspot.8130.5"
+msgid "Skull"
+msgstr "CALAVERA"
+
+#. Scene 8180, hotspot 1.
+#: engines/hollywood/runaway/scene8180.cpp
+msgctxt "hotspot.8180.1"
+msgid "Street"
+msgstr "CALLE"
+
+#. Scene 8180, hotspot 2.
+#: engines/hollywood/runaway/scene8180.cpp
+msgctxt "hotspot.8180.2"
+msgid "Inside the saloon"
+msgstr "INTERIOR DEL SALOON"
+
+#. Scene 8180, hotspot 3.
+#: engines/hollywood/runaway/scene8180.cpp
+msgctxt "hotspot.8180.3"
+msgid "Trough"
+msgstr "ABREVADERO"
+
+#. Scene 8180, hotspot 4.
+#: engines/hollywood/runaway/scene8180.cpp
+msgctxt "hotspot.8180.4"
+msgid "Floor board"
+msgstr "PLANCHA DEL SUELO"
+
+#. Scene 8180, hotspot 5.
+#: engines/hollywood/runaway/scene8180.cpp
+msgctxt "hotspot.8180.5"
+msgid "Window"
+msgstr "VENTANA"
+
+#. Scene 8190, hotspot 1.
+#: engines/hollywood/runaway/scene8190.cpp
+msgctxt "hotspot.8190.1"
+msgid "Town"
+msgstr "CALLE"
+
+#. Scene 8190, hotspot 2.
+#: engines/hollywood/runaway/scene8190.cpp
+msgctxt "hotspot.8190.2"
+msgid "Entrance to the basement"
+msgstr "AGUJERO"
+
+#. Scene 8190, hotspot 3.
+#: engines/hollywood/runaway/scene8190.cpp
+msgctxt "hotspot.8190.3"
+msgid "Hole"
+msgstr "AGUJERO"
+
+#. Scene 8190, hotspot 4.
+#: engines/hollywood/runaway/scene8190.cpp
+msgctxt "hotspot.8190.4"
+msgid "Shelves"
+msgstr "ESTANTES"
+
+#. Scene 8190, hotspot 6.
+#: engines/hollywood/runaway/scene8190.cpp
+msgctxt "hotspot.8190.6"
+msgid "Desk"
+msgstr "MESA"
+
+#. Scene 8190, hotspot 7.
+#: engines/hollywood/runaway/scene8190.cpp
+msgctxt "hotspot.8190.7"
+msgid "Cash register"
+msgstr "CAJA REGISTRADORA"
+
+#. Scene 8190, hotspot 8.
+#: engines/hollywood/runaway/scene8190.cpp
+msgctxt "hotspot.8190.8"
+msgid "Couch"
+msgstr "SOFÁ"
+
+#. Scene 8200, hotspot 1.
+#: engines/hollywood/runaway/scene8200.cpp
+msgctxt "hotspot.8200.1"
+msgid "Street"
+msgstr "CALLE"
+
+#. Scene 8200, hotspot 2.
+#: engines/hollywood/runaway/scene8200.cpp
+msgctxt "hotspot.8200.2"
+msgid "Cell"
+msgstr "CELDA"
+
+#. Scene 8200, hotspot 3.
+#: engines/hollywood/runaway/scene8200.cpp
+msgctxt "hotspot.8200.3"
+msgid "Bag holding the thugs' stuff"
+msgstr "BOLSA CON LAS COSAS DE LOS MATONES"
+
+#. Scene 8200, hotspot 5.
+#: engines/hollywood/runaway/scene8200.cpp
+msgctxt "hotspot.8200.5"
+msgid "Desk"
+msgstr "MESA"
+
+#. Scene 8200, hotspot 6.
+#: engines/hollywood/runaway/scene8200.cpp
+msgctxt "hotspot.8200.6"
+msgid "Gun cabinet"
+msgstr "ARMARIO DE ARMAS"
+
+#. Scene 8200, hotspot 7.
+#: engines/hollywood/runaway/scene8200.cpp
+msgctxt "hotspot.8200.7"
+msgid "Bulletin board"
+msgstr "TABLÓN DE ANUNCIOS"
+
+#. Scene 8200, hotspot 8.
+#: engines/hollywood/runaway/scene8200.cpp
+msgctxt "hotspot.8200.8"
+msgid "Gustav and Feodor"
+msgstr "GUSTAV Y FEODOR"
+
+#. Scene 8210, hotspot 1.
+#: engines/hollywood/runaway/scene8210.cpp
+msgctxt "hotspot.8210.1"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8210, hotspot 2.
+#: engines/hollywood/runaway/scene8210.cpp
+msgctxt "hotspot.8210.2"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8210, hotspot 3.
+#: engines/hollywood/runaway/scene8210.cpp
+msgctxt "hotspot.8210.3"
+msgid "Doctor's bag"
+msgstr "MALETÍN"
+
+#. Scene 8210, hotspot 4.
+#: engines/hollywood/runaway/scene8210.cpp
+msgctxt "hotspot.8210.4"
+msgid "Dead body"
+msgstr "CADÁVER"
+
+#. Scene 8210, hotspot 5.
+#: engines/hollywood/runaway/scene8210.cpp
+msgctxt "hotspot.8210.5"
+msgid "Bucket"
+msgstr "CUBO"
+
+#. Scene 8210, hotspot 6.
+#: engines/hollywood/runaway/scene8210.cpp
+msgctxt "hotspot.8210.6"
+msgid "Plate"
+msgstr "PLATO"
+
+#. Scene 8210, hotspot 7.
+#: engines/hollywood/runaway/scene8210.cpp
+msgctxt "hotspot.8210.7"
+msgid "Pitcher"
+msgstr "JARRA"
+
+#. Scene 8210, hotspot 8.
+#: engines/hollywood/runaway/scene8210.cpp
+msgctxt "hotspot.8210.8"
+msgid "Bottle"
+msgstr "BOTELLA"
+
+#. Scene 8220, hotspot 1.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.1"
+msgid "Path"
+msgstr "AFUERAS DEL PUEBLO"
+
+#. Scene 8220, hotspot 2.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.2"
+msgid "Saloon"
+msgstr "\"SALOON\""
+
+#. Scene 8220, hotspot 3.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.3"
+msgid "Hotel"
+msgstr "HOTEL"
+
+#. Scene 8220, hotspot 4.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.4"
+msgid "Sheriff's office"
+msgstr "OFICINA DEL SHERIFF"
+
+#. Scene 8220, hotspot 5.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.5"
+msgid "Liquor store"
+msgstr "TIENDA DE LICORES"
+
+#. Scene 8220, hotspot 6.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.6"
+msgid "Bank"
+msgstr "BANCO"
+
+#. Scene 8220, hotspot 7.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.7"
+msgid "Locomotive"
+msgstr "LOCOMOTORA"
+
+#. Scene 8220, hotspot 8.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.8"
+msgid "Wagon"
+msgstr "CARRO"
+
+#. Scene 8220, hotspot 9.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.9"
+msgid "Oscar"
+msgstr "OSCAR"
+
+#. Scene 8220, hotspot 10.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.10"
+msgid "Car"
+msgstr "COCHE"
+
+#. Scene 8220, hotspot 11.
+#: engines/hollywood/runaway/scene8220.cpp
+msgctxt "hotspot.8220.11"
+msgid "North side of town"
+msgstr "NORTE DEL PUEBLO"
+
+#. Scene 8226, hotspot 1.
+#: engines/hollywood/runaway/scene8226.cpp
+msgctxt "hotspot.8226.1"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8226, hotspot 2.
+#: engines/hollywood/runaway/scene8226.cpp
+msgctxt "hotspot.8226.2"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8226, hotspot 3.
+#: engines/hollywood/runaway/scene8226.cpp
+msgctxt "hotspot.8226.3"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8226, hotspot 4.
+#: engines/hollywood/runaway/scene8226.cpp
+msgctxt "hotspot.8226.4"
+msgid "Street"
+msgstr "CALLE"
+
+#. Scene 8240, hotspot 1.
+#: engines/hollywood/runaway/scene8240.cpp
+msgctxt "hotspot.8240.1"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8240, hotspot 2.
+#: engines/hollywood/runaway/scene8240.cpp
+msgctxt "hotspot.8240.2"
+msgid "Stairs"
+msgstr "ESCALERA"
+
+#. Scene 8240, hotspot 3.
+#: engines/hollywood/runaway/scene8240.cpp
+msgctxt "hotspot.8240.3"
+msgid "Rutger"
+msgstr "RUTGER"
+
+#. Scene 8240, hotspot 4.
+#: engines/hollywood/runaway/scene8240.cpp
+msgctxt "hotspot.8240.4"
+msgid "Watering can"
+msgstr "REGADERA"
+
+#. Scene 8240, hotspot 5.
+#: engines/hollywood/runaway/scene8240.cpp
+msgctxt "hotspot.8240.5"
+msgid "Gardening shed"
+msgstr "DESPENSA DE JARDINERÍA"
+
+#. Scene 8240, hotspot 6.
+#: engines/hollywood/runaway/scene8240.cpp
+msgctxt "hotspot.8240.6"
+msgid "Door knob"
+msgstr "POMO"
+
+#. Scene 8240, hotspot 7.
+#: engines/hollywood/runaway/scene8240.cpp
+msgctxt "hotspot.8240.7"
+msgid "Plant"
+msgstr "PLANTA"
+
+#. Scene 8240, hotspot 8.
+#: engines/hollywood/runaway/scene8240.cpp
+msgctxt "hotspot.8240.8"
+msgid "Bonsai tree"
+msgstr "BONSAI"
+
+#. Scene 8240, hotspot 9.
+#: engines/hollywood/runaway/scene8240.cpp
+msgctxt "hotspot.8240.9"
+msgid "Meat-eating plant"
+msgstr "PLANTA CARNÍVORA"
+
+#. Scene 8260, hotspot 1.
+#: engines/hollywood/runaway/scene8260.cpp
+msgctxt "hotspot.8260.1"
+msgid "Town"
+msgstr "PUEBLO"
+
+#. Scene 8260, hotspot 2.
+#: engines/hollywood/runaway/scene8260.cpp
+msgctxt "hotspot.8260.2"
+msgid "Driver's cab"
+msgstr "CABINA"
+
+#. Scene 8260, hotspot 3.
+#: engines/hollywood/runaway/scene8260.cpp
+msgctxt "hotspot.8260.3"
+msgid "Smokestack"
+msgstr "CHIMENEA"
+
+#. Scene 8260, hotspot 4.
+#: engines/hollywood/runaway/scene8260.cpp
+msgctxt "hotspot.8260.4"
+msgid "Water tank opening"
+msgstr "BOCA DEL DEPÓSITO DE AGUA"
+
+#. Scene 8260, hotspot 5.
+#: engines/hollywood/runaway/scene8260.cpp
+msgctxt "hotspot.8260.5"
+msgid "Object"
+msgstr "OBJETO DORADO"
+
+#. Scene 8260, hotspot 6.
+#: engines/hollywood/runaway/scene8260.cpp
+msgctxt "hotspot.8260.6"
+msgid "Whistle"
+msgstr "SILBATO"
+
+#. Scene 8260, hotspot 7.
+#: engines/hollywood/runaway/scene8260.cpp
+msgctxt "hotspot.8260.7"
+msgid "Outskirts of town"
+msgstr "AFUERAS DEL PUEBLO"
+
+#. Scene 8260, hotspot 8.
+#: engines/hollywood/runaway/scene8260.cpp
+msgctxt "hotspot.8260.8"
+msgid "Sheriff's badge"
+msgstr "ESTRELLA DE SHERIFF"
+
+#. Scene 8263, hotspot 1.
+#: engines/hollywood/runaway/scene8263.cpp
+msgctxt "hotspot.8263.1"
+msgid "Window"
+msgstr "EXTERIOR DE LA CABINA"
+
+#. Scene 8263, hotspot 2.
+#: engines/hollywood/runaway/scene8263.cpp
+msgctxt "hotspot.8263.2"
+msgid "Boiler"
+msgstr "CALDERA"
+
+#. Scene 8263, hotspot 3.
+#: engines/hollywood/runaway/scene8263.cpp
+msgctxt "hotspot.8263.3"
+msgid "Steam outlet lever"
+msgstr "PALANCA"
+
+#. Scene 8263, hotspot 4.
+#: engines/hollywood/runaway/scene8263.cpp
+msgctxt "hotspot.8263.4"
+msgid "Pressure wheel"
+msgstr "LLAVE"
+
+#. Scene 8263, hotspot 5.
+#: engines/hollywood/runaway/scene8263.cpp
+msgctxt "hotspot.8263.5"
+msgid "Gauges"
+msgstr "RELOJES"
+
+#. Scene 8263, hotspot 6.
+#: engines/hollywood/runaway/scene8263.cpp
+msgctxt "hotspot.8263.6"
+msgid "Lever"
+msgstr "PALANCA"
+
+#. Scene 8263, hotspot 7.
+#: engines/hollywood/runaway/scene8263.cpp
+msgctxt "hotspot.8263.7"
+msgid "Lever"
+msgstr "PALANCA"
+
+#. Scene 8300, hotspot 1.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.1"
+msgid "Stairs"
+msgstr "ESCALERA"
+
+#. Scene 8300, hotspot 2.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.2"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8300, hotspot 3.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.3"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8300, hotspot 4.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.4"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8300, hotspot 5.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.5"
+msgid "Crane controls"
+msgstr "MANDOS DE LA GRÚA"
+
+#. Scene 8300, hotspot 7.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.7"
+msgid "Catapult"
+msgstr "CATAPULTA"
+
+#. Scene 8300, hotspot 8.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.8"
+msgid "Lever"
+msgstr "PALANCA QUE ACCIONA LA CATAPULTA"
+
+#. Scene 8300, hotspot 10.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.10"
+msgid "Water tank"
+msgstr "MÁQUINA DE AGUA"
+
+#. Scene 8300, hotspot 11.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.11"
+msgid "Tool panel"
+msgstr "PANEL DE HERRAMIENTAS"
+
+#. Scene 8300, hotspot 12.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.12"
+msgid "Bed"
+msgstr "CAMA"
+
+#. Scene 8300, hotspot 13.
+#: engines/hollywood/runaway/scene8300.cpp
+msgctxt "hotspot.8300.13"
+msgid "Saturn"
+msgstr "SATURNO"
+
+#. Scene 8350, hotspot 1.
+#: engines/hollywood/runaway/scene8350.cpp
+msgctxt "hotspot.8350.1"
+msgid "Entrance to the mine"
+msgstr "ENTRADA DE LA MINA"
+
+#. Scene 8350, hotspot 2.
+#: engines/hollywood/runaway/scene8350.cpp
+msgctxt "hotspot.8350.2"
+msgid "Douglasville"
+msgstr "DOUGLASVILLE"
+
+#. Scene 8350, hotspot 3.
+#: engines/hollywood/runaway/scene8350.cpp
+msgctxt "hotspot.8350.3"
+msgid "Mama Dorita's house"
+msgstr "CASA DE MAMÁ DORITA"
+
+#. Scene 8350, hotspot 4.
+#: engines/hollywood/runaway/scene8350.cpp
+msgctxt "hotspot.8350.4"
+msgid "Crater"
+msgstr "CRÁTER"
+
+#. Scene 8350, hotspot 5.
+#: engines/hollywood/runaway/scene8350.cpp
+msgctxt "hotspot.8350.5"
+msgid "Path to the trailer"
+msgstr "CAMINO HACIA LA CARAVANA"
+
+#. Scene 8350, hotspot 6.
+#: engines/hollywood/runaway/scene8350.cpp
+msgctxt "hotspot.8350.6"
+msgid "Locomotive"
+msgstr "LOCOMOTORA"
+
+#. Scene 8370, hotspot 1.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.1"
+msgid "Street"
+msgstr "CALLE"
+
+#. Scene 8370, hotspot 2.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.2"
+msgid "Stairs"
+msgstr "ESCALERA"
+
+#. Scene 8370, hotspot 3.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.3"
+msgid "Front desk"
+msgstr "MOSTRADOR"
+
+#. Scene 8370, hotspot 4.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.4"
+msgid "Fireplace"
+msgstr "CHIMENEA"
+
+#. Scene 8370, hotspot 5.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.5"
+msgid "Rifles"
+msgstr "RIFLES"
+
+#. Scene 8370, hotspot 6.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.6"
+msgid "Poker"
+msgstr "ATIZADOR"
+
+#. Scene 8370, hotspot 7.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.7"
+msgid "Bell"
+msgstr "TIMBRE"
+
+#. Scene 8370, hotspot 8.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.8"
+msgid "Sushi's work area"
+msgstr "ZONA DE TRABAJO DE SUSHIE"
+
+#. Scene 8370, hotspot 9.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.9"
+msgid "Rifle"
+msgstr "RIFLE"
+
+#. Scene 8370, hotspot 10.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.10"
+msgid "Downstairs"
+msgstr "PISO DE ABAJO"
+
+#. Scene 8370, hotspot 11.
+#: engines/hollywood/runaway/scene8370.cpp
+msgctxt "hotspot.8370.11"
+msgid "Check-in book"
+msgstr "LIBRO"
+
+#. Scene 8380, hotspot 1.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.1"
+msgid "Stairs"
+msgstr "ESCALERA"
+
+#. Scene 8380, hotspot 2.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.2"
+msgid "Other side"
+msgstr "ZONA DERECHA"
+
+#. Scene 8380, hotspot 3.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.3"
+msgid "Sushi"
+msgstr "SUSHI"
+
+#. Scene 8380, hotspot 4.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.4"
+msgid "Table"
+msgstr "MESA"
+
+#. Scene 8380, hotspot 5.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.5"
+msgid "Machines"
+msgstr "MÁQUINAS"
+
+#. Scene 8380, hotspot 6.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.6"
+msgid "Satellite antenna"
+msgstr "ANTENA PARABÓLICA"
+
+#. Scene 8380, hotspot 7.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.7"
+msgid "Musical equipment"
+msgstr "EQUIPO DE MÚSICA"
+
+#. Scene 8380, hotspot 8.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.8"
+msgid "Robot"
+msgstr "ROBOT"
+
+#. Scene 8380, hotspot 9.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.9"
+msgid "Fireplace"
+msgstr "CHIMENEA"
+
+#. Scene 8380, hotspot 10.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.10"
+msgid "Sushi's computer"
+msgstr "ORDENADOR DE SUSHI"
+
+#. Scene 8380, hotspot 11.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.11"
+msgid "Machines"
+msgstr "MÁQUINAS"
+
+#. Scene 8380, hotspot 12.
+#: engines/hollywood/runaway/scene8380.cpp
+msgctxt "hotspot.8380.12"
+msgid "Electric guitar"
+msgstr "INSTRUMENTOS"
+
+#. Scene 8400, hotspot 1.
+#: engines/hollywood/runaway/scene8400.cpp
+msgctxt "hotspot.8400.1"
+msgid "Path to the trailer"
+msgstr "CAMINO"
+
+#. Scene 8400, hotspot 2.
+#: engines/hollywood/runaway/scene8400.cpp
+msgctxt "hotspot.8400.2"
+msgid "Trailer"
+msgstr "CARAVANA"
+
+#. Scene 8400, hotspot 3.
+#: engines/hollywood/runaway/scene8400.cpp
+msgctxt "hotspot.8400.3"
+msgid "Door"
+msgstr "PUERTA"
+
+#. Scene 8400, hotspot 4.
+#: engines/hollywood/runaway/scene8400.cpp
+msgctxt "hotspot.8400.4"
+msgid "Tray"
+msgstr "BANDEJA"
+
+#. Scene 8400, hotspot 5.
+#: engines/hollywood/runaway/scene8400.cpp
+msgctxt "hotspot.8400.5"
+msgid "Wooden bridge"
+msgstr "PUENTE DE MADERA"
+
+#. Scene 8400, hotspot 8.
+#: engines/hollywood/runaway/scene8400.cpp
+msgctxt "hotspot.8400.8"
+msgid "Inside the trailer"
+msgstr "INTERIOR DE LA CARAVANA"
+
+#. Scene 8410, hotspot 1.
+#: engines/hollywood/runaway/scene8410.cpp
+msgctxt "hotspot.8410.1"
+msgid "Outside the trailer"
+msgstr "EXTERIOR DE LA CARAVANA"
+
+#. Scene 8410, hotspot 2.
+#: engines/hollywood/runaway/scene8410.cpp
+msgctxt "hotspot.8410.2"
+msgid "Garment to the right"
+msgstr "PRENDA DE LA DERECHA"
+
+#. Scene 8410, hotspot 3.
+#: engines/hollywood/runaway/scene8410.cpp
+msgctxt "hotspot.8410.3"
+msgid "Trunk"
+msgstr "BAÚL"
+
+#. Scene 8410, hotspot 4.
+#: engines/hollywood/runaway/scene8410.cpp
+msgctxt "hotspot.8410.4"
+msgid "Bed"
+msgstr "CAMA"
+
+#. Scene 8410, hotspot 5.
+#: engines/hollywood/runaway/scene8410.cpp
+msgctxt "hotspot.8410.5"
+msgid "Refrigerator"
+msgstr "NEVERA"
 
 #. kAlteredLaser
 #: engines/hollywood/runaway/strings.h
@@ -2696,6 +3464,12 @@ msgctxt "interface.headWithWig"
 msgid "Head with wig"
 msgstr "CABEZA CON PELUCA"
 
+#. kHotScalpel
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.hotScalpel"
+msgid "Hot scalpel"
+msgstr "ESCALPELO CALIENTE"
+
 #. kInventory
 #: engines/hollywood/runaway/strings.h
 msgctxt "interface.inventory"
@@ -2795,6 +3569,12 @@ msgctxt "interface.move"
 msgid "MOVE "
 msgstr "MOVER "
 
+#. kMuseumDemoCondom
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.museumDemoCondom"
+msgid "Condom"
+msgstr "PRESERVATIVO"
+
 #. kMusic
 #: engines/hollywood/runaway/strings.h
 msgctxt "interface.music"
@@ -2849,6 +3629,12 @@ msgstr "ON"
 msgctxt "interface.open"
 msgid "OPEN "
 msgstr "ABRIR "
+
+#. kOpenPods
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.openPods"
+msgid "Open pods"
+msgstr "VAINAS ABIERTAS"
 
 #. kOptions
 #: engines/hollywood/runaway/strings.h
@@ -3744,3 +4530,129 @@ msgstr "CABEZA DE HERRAMIENTA DE MINERO"
 msgctxt "item.5.16"
 msgid "Large nail"
 msgstr "CLAVO GRANDE"
+
+#. Chapter 6, inventory item 1.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.1"
+msgid "Wallet"
+msgstr "CARTERA"
+
+#. Chapter 6, inventory item 2.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.2"
+msgid "Car keys"
+msgstr "LLAVES DEL COCHE"
+
+#. Chapter 6, inventory item 3.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.3"
+msgid "Receipt"
+msgstr "RESGUARDO"
+
+#. Chapter 6, inventory item 4.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.4"
+msgid "Crucifix"
+msgstr "CRUCIFIJO"
+
+#. Chapter 6, inventory item 5.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.5"
+msgid "Flashlight"
+msgstr "LINTERNA "
+
+#. Chapter 6, inventory item 6.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.6"
+msgid "Map of the mine"
+msgstr "PLANO DE LA MINA"
+
+#. Chapter 6, inventory item 7.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.7"
+msgid "Piece of bush"
+msgstr "TROZO DE ARBUSTO"
+
+#. Chapter 6, inventory item 8.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.8"
+msgid "Bottle holding the finger"
+msgstr "FRASCO CON DEDO"
+
+#. Chapter 6, inventory item 9.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.9"
+msgid "Tomahawk"
+msgstr "HACHA INDIA"
+
+#. Chapter 6, inventory item 10.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.10"
+msgid "Seeds"
+msgstr "SEMILLAS"
+
+#. Chapter 6, inventory item 11.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.11"
+msgid "Rifle"
+msgstr "RIFLE"
+
+#. Chapter 6, inventory item 12.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.12"
+msgid "Sheriff's badge"
+msgstr "PLACA DE SHERIFF"
+
+#. Chapter 6, inventory item 13.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.13"
+msgid "Bag holding Gustav and Feodor's stuff"
+msgstr "BOLSA CON LAS COSAS DE GUSTAV Y FEODOR"
+
+#. Chapter 6, inventory item 14.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.14"
+msgid "Bank brochure"
+msgstr "FOLLETO DEL BANCO"
+
+#. Chapter 6, inventory item 15.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.15"
+msgid "Nun's habit"
+msgstr "HÁBITO DE MONJA"
+
+#. Chapter 6, inventory item 16.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.16"
+msgid "MP3 recorder"
+msgstr "GRABADORA DE MP3"
+
+#. Chapter 6, inventory item 17.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.17"
+msgid "List of phrases"
+msgstr "LISTA DE FRASES"
+
+#. Chapter 6, inventory item 18.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.18"
+msgid "Swiss bank internet receipt"
+msgstr "RECIBO DE INTERNET BANCO DE SUIZA"
+
+#. Chapter 6, inventory item 19.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.19"
+msgid "Scalpel"
+msgstr "ESCALPELO"
+
+#. Chapter 6, inventory item 20.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.20"
+msgid "Pods"
+msgstr "VAINAS"
+
+#. Chapter 6, inventory item 21.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.6.21"
+msgid "Poker"
+msgstr "ATIZADOR"

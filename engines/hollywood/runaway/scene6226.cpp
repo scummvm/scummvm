@@ -27,12 +27,12 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Door", 1023, 331, 3, {301, 302}, {0, 1}},
-	{"Door", 1001, 245, 3, {301, 303}, {0, 1}},
-	{"Door", 983, 216, 3, {301, 304}, {0, 1}},
-	{"Street", 834, 370, 7, {305, 306}, {0, 0}},
-	{"Object on the floor", 857, 326, 1, {309, 310}, {0, 1}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{1023, 331, 3, {301, 302}, {0, 1}}, // 1: Door.
+	{1001, 245, 3, {301, 303}, {0, 1}}, // 2: Door.
+	{983, 216, 3, {301, 304}, {0, 1}}, // 3: Door.
+	{834, 370, 7, {305, 306}, {0, 0}}, // 4: Street.
+	{857, 326, 1, {309, 310}, {0, 1}} // 5: Object on the floor.
 };
 
 const RunawayResponse kResponses[] = {
@@ -112,7 +112,7 @@ bool Scene6226::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 
 Common::U32String Scene6226::hotspotName(byte id) const {
 	if (id == 5 && _town.sandingBlock == kIdentified) {
-		return _strings.hotspotName(_room, 6, "Sanding block");
+		return _strings.hotspotName(_room, 6);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

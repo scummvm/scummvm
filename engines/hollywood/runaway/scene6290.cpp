@@ -31,21 +31,21 @@ namespace {
 const Common::Point kMotorcycleSoundPosition(1081, 200);
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Crater", 0, 537, 5, {301, 302}, {0, 3}},
-	{"Trail", 1739, 442, 3, {303, 304}, {0, 3}},
-	{"Panel of buttons", 440, 556, 7, {305, 306}, {0, 1}},
-	{"Switch", 607, 549, 7, {307, 308}, {0, 0}},
-	{"Motorcycle", 1133, 434, 0, {309, 310}, {0, 0}},
-	{"Camping tent", 1396, 293, 3, {311, 312}, {0, 0}},
-	{"Lighting panel", 0, 0, 7, {313, 314}, {0, 0}},
-	{"Joshua", 440, 556, 7, {315, 316}, {0, 1}},
-	{"Strap", 0, 0, 7, {317, 318}, {0, 0}},
-	{"Wrench", 0, 0, 7, {319, 320}, {0, 0}},
-	{"Machine", 0, 0, 0, {321, 322}, {0, 0}},
-	{"", 0, 0, 0, {1, 1}, {0, 0}},
-	{"Rotor", 0, 0, 7, {330, 331}, {0, 0}},
-	{"", 0, 0, 0, {1, 1}, {0, 0}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{0, 537, 5, {301, 302}, {0, 3}}, // 1: Crater.
+	{1739, 442, 3, {303, 304}, {0, 3}}, // 2: Trail.
+	{440, 556, 7, {305, 306}, {0, 1}}, // 3: Panel of buttons.
+	{607, 549, 7, {307, 308}, {0, 0}}, // 4: Switch.
+	{1133, 434, 0, {309, 310}, {0, 0}}, // 5: Motorcycle.
+	{1396, 293, 3, {311, 312}, {0, 0}}, // 6: Camping tent.
+	{0, 0, 7, {313, 314}, {0, 0}}, // 7: Lighting panel.
+	{440, 556, 7, {315, 316}, {0, 1}}, // 8: Joshua.
+	{0, 0, 7, {317, 318}, {0, 0}}, // 9: Strap.
+	{0, 0, 7, {319, 320}, {0, 0}}, // 10: Wrench.
+	{0, 0, 0, {321, 322}, {0, 0}}, // 11: Machine.
+	{0, 0, 0, {1, 1}, {0, 0}},
+	{0, 0, 7, {330, 331}, {0, 0}}, // 13: Rotor.
+	{0, 0, 0, {1, 1}, {0, 0}}
 };
 
 const RunawayResponse kResponses[] = {
@@ -221,7 +221,7 @@ void Scene6290::findWalkPath(Common::Point target) {
 
 Common::U32String Scene6290::hotspotName(byte id) const {
 	if (id == 11 && _town.machineKnown) {
-		return _strings.hotspotName(_room, 14, "Communication machine");
+		return _strings.hotspotName(_room, 14);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

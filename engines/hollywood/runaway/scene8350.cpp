@@ -26,13 +26,13 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Entrance to the mine", 0, 0, 0, {1, 301}, {0, 0}},
-	{"Douglasville", 0, 0, 0, {1, 302}, {0, 0}},
-	{"Mama Dorita's house", 0, 0, 0, {1, 303}, {0, 0}},
-	{"Crater", 0, 0, 0, {1, 304}, {0, 0}},
-	{"Path to the trailer", 0, 0, 0, {1, 305}, {0, 0}},
-	{"Locomotive", 0, 0, 0, {1, 306}, {0, 0}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{0, 0, 0, {1, 301}, {0, 0}}, // 1: Entrance to the mine.
+	{0, 0, 0, {1, 302}, {0, 0}}, // 2: Douglasville.
+	{0, 0, 0, {1, 303}, {0, 0}}, // 3: Mama Dorita's house.
+	{0, 0, 0, {1, 304}, {0, 0}}, // 4: Crater.
+	{0, 0, 0, {1, 305}, {0, 0}}, // 5: Path to the trailer.
+	{0, 0, 0, {1, 306}, {0, 0}} // 6: Locomotive.
 };
 
 } // End of anonymous namespace

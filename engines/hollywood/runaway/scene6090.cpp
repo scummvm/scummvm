@@ -27,14 +27,14 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Oil well area", 910, 599, 3, {301, 302}, {0, 3}},
-	{"Entrance to the house", 686, 510, 0, {303, 304}, {0, 0}},
-	{"Sign", 846, 509, 0, {305, 306}, {0, 0}},
-	{"Big dude", 676, 510, 7, {307, 308}, {0, 1}},
-	{"Ladder", 244, 416, 7, {309, 310}, {0, 0}},
-	{"Vessel", 180, 446, 0, {312, 313}, {0, 1}},
-	{"Path", 50, 599, 5, {315, 316}, {0, 3}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{910, 599, 3, {301, 302}, {0, 3}}, // 1: Oil well area.
+	{686, 510, 0, {303, 304}, {0, 0}}, // 2: Entrance to the house.
+	{846, 509, 0, {305, 306}, {0, 0}}, // 3: Sign.
+	{676, 510, 7, {307, 308}, {0, 1}}, // 4: Big dude.
+	{244, 416, 7, {309, 310}, {0, 0}}, // 5: Ladder.
+	{180, 446, 0, {312, 313}, {0, 1}}, // 6: Vessel.
+	{50, 599, 5, {315, 316}, {0, 3}} // 7: Path.
 };
 
 const RunawayResponse kResponses[] = {
@@ -113,7 +113,7 @@ float Scene6090::actorHeight() const {
 
 Common::U32String Scene6090::hotspotName(byte id) const {
 	if (id == 4 && _town.oscarTobacco) {
-		return _strings.hotspotName(_room, 8, "Oscar");
+		return _strings.hotspotName(_room, 8);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

@@ -27,16 +27,16 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Entrance", 0, 0, 7, {301, 302}, {0, 0}},
-	{"Skeleton", 249, 411, 1, {303, 304}, {0, 1}},
-	{"Drawings", 0, 0, 1, {305, 306}, {0, 0}},
-	{"Rock", 1180, 307, 1, {307, 308}, {0, 0}},
-	{"Edge of the cliff", 1180, 308, 1, {309, 310}, {1, 0}},
-	{"Nail", 189, 505, 7, {311, 312}, {1, 0}},
-	{"Rope", 0, 0, 0, {313, 314}, {0, 0}},
-	{"Long piece of wood", 507, 444, 3, {318, 319}, {1, 1}},
-	{"Metal object", 507, 444, 3, {320, 321}, {1, 1}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{0, 0, 7, {301, 302}, {0, 0}}, // 1: Entrance.
+	{249, 411, 1, {303, 304}, {0, 1}}, // 2: Skeleton.
+	{0, 0, 1, {305, 306}, {0, 0}}, // 3: Drawings.
+	{1180, 307, 1, {307, 308}, {0, 0}}, // 4: Rock.
+	{1180, 308, 1, {309, 310}, {1, 0}}, // 5: Edge of the cliff.
+	{189, 505, 7, {311, 312}, {1, 0}}, // 6: Nail.
+	{0, 0, 0, {313, 314}, {0, 0}}, // 7: Rope.
+	{507, 444, 3, {318, 319}, {1, 1}}, // 8: Long piece of wood.
+	{507, 444, 3, {320, 321}, {1, 1}} // 9: Metal object.
 };
 
 const RunawayResponse kResponses[] = {
@@ -198,7 +198,7 @@ byte Scene7010::customizeSceneActionFacing(byte id, byte facing) const {
 
 Common::U32String Scene7010::hotspotName(byte id) const {
 	if (id == 9 && _hopi.timber == 2) {
-		return _strings.hotspotName(_room, 15, "Head of mining tool");
+		return _strings.hotspotName(_room, 15);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

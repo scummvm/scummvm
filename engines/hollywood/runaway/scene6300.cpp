@@ -28,23 +28,23 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Stairs", 1397, 456, 1, {301, 302}, {0, 3}},
-	{"Door", 40, 436, 7, {303, 304}, {0, 1}},
-	{"Door", 389, 381, 7, {303, 305}, {0, 1}},
-	{"Door", 644, 342, 7, {303, 306}, {0, 1}},
-	{"Crane controls", 741, 518, 7, {307, 308}, {0, 0}},
-	{"Statue", 0, 0, 0, {309, 310}, {0, 0}},
-	{"Apparatus", 862, 438, 7, {311, 312}, {0, 0}},
-	{"Lever", 862, 438, 7, {313, 314}, {0, 1}},
-	{"Bucket of paint", 0, 0, 0, {315, 316}, {0, 0}},
-	{"Water tank", 400, 452, 7, {317, 318}, {0, 0}},
-	{"Tools", 274, 489, 7, {319, 320}, {1, 1}},
-	{"Bed", 0, 0, 1, {321, 322}, {0, 0}},
-	{"Saturn", 687, 525, 5, {323, 324}, {0, 1}},
-	{"Sculpture", 211, 507, 7, {331, 332}, {0, 0}},
-	{"Container", 216, 505, 7, {327, 328}, {0, 1}},
-	{"Blowtorch", 642, 568, 7, {329, 330}, {0, 1}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{1397, 456, 1, {301, 302}, {0, 3}}, // 1: Stairs.
+	{40, 436, 7, {303, 304}, {0, 1}}, // 2: Door.
+	{389, 381, 7, {303, 305}, {0, 1}}, // 3: Door.
+	{644, 342, 7, {303, 306}, {0, 1}}, // 4: Door.
+	{741, 518, 7, {307, 308}, {0, 0}}, // 5: Crane controls.
+	{0, 0, 0, {309, 310}, {0, 0}}, // 6: Statue.
+	{862, 438, 7, {311, 312}, {0, 0}}, // 7: Apparatus.
+	{862, 438, 7, {313, 314}, {0, 1}}, // 8: Lever.
+	{0, 0, 0, {315, 316}, {0, 0}}, // 9: Bucket of paint.
+	{400, 452, 7, {317, 318}, {0, 0}}, // 10: Water tank.
+	{274, 489, 7, {319, 320}, {1, 1}}, // 11: Tools.
+	{0, 0, 1, {321, 322}, {0, 0}}, // 12: Bed.
+	{687, 525, 5, {323, 324}, {0, 1}}, // 13: Saturn.
+	{211, 507, 7, {331, 332}, {0, 0}}, // 14: Sculpture.
+	{216, 505, 7, {327, 328}, {0, 1}}, // 15: Container.
+	{642, 568, 7, {329, 330}, {0, 1}} // 16: Blowtorch.
 };
 
 const RunawayResponse kResponses[] = {
@@ -315,13 +315,13 @@ bool Scene6300::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 
 Common::U32String Scene6300::hotspotName(byte id) const {
 	if (id == 7 && _town.catapult) {
-		return _strings.hotspotName(_room, 17, "Catapult");
+		return _strings.hotspotName(_room, 17);
 	}
 	if (id == 8 && _town.catapult) {
-		return _strings.hotspotName(_room, 18, "Catapult lever");
+		return _strings.hotspotName(_room, 18);
 	}
 	if (id == 15 && _town.fuelTradeKnown) {
-		return _strings.hotspotName(_room, 19, "Concentrated gasoline");
+		return _strings.hotspotName(_room, 19);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

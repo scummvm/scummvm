@@ -26,12 +26,12 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Outside the trailer", 678, 442, 1, {301, 302}, {0, 3}},
-	{"Garment to the right", 655, 445, 3, {303, 304}, {0, 1}},
-	{"Trunk", 417, 433, 1, {305, 306}, {1, 0}},
-	{"Bed", 352, 403, 0, {307, 308}, {0, 0}},
-	{"Refrigerator", 167, 419, 7, {309, 310}, {0, 0}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{678, 442, 1, {301, 302}, {0, 3}}, // 1: Outside the trailer.
+	{655, 445, 3, {303, 304}, {0, 1}}, // 2: Garment to the right.
+	{417, 433, 1, {305, 306}, {1, 0}}, // 3: Trunk.
+	{352, 403, 0, {307, 308}, {0, 0}}, // 4: Bed.
+	{167, 419, 7, {309, 310}, {0, 0}} // 5: Refrigerator.
 };
 
 const RunawayResponse kResponses[] = {

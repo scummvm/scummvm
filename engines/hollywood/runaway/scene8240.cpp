@@ -22,20 +22,21 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene8240.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Door", 0, 453, 5, {301, 302}, {0, 3}},
-	{"Stairs", 782, 408, 7, {303, 304}, {0, 1}},
-	{"Rutger", 395, 402, 7, {305, 306}, {0, 3}},
-	{"Watering can", 1286, 435, 0, {307, 308}, {0, 0}},
-	{"Gardening shed", 742, 332, 5, {309, 310}, {0, 0}},
-	{"Door knob", 610, 467, 1, {311, 312}, {0, 0}},
-	{"Plant", 1393, 427, 0, {313, 314}, {0, 0}},
-	{"Bonsai tree", 955, 396, 1, {315, 316}, {0, 0}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{0, 453, 5, {301, 302}, {0, 3}}, // 1: Door.
+	{782, 408, 7, {303, 304}, {0, 1}}, // 2: Stairs.
+	{395, 402, 7, {305, 306}, {0, 3}}, // 3: Rutger.
+	{1286, 435, 0, {307, 308}, {0, 0}}, // 4: Watering can.
+	{742, 332, 5, {309, 310}, {0, 0}}, // 5: Gardening shed.
+	{610, 467, 1, {311, 312}, {0, 0}}, // 6: Door knob.
+	{1393, 427, 0, {313, 314}, {0, 0}}, // 7: Plant.
+	{955, 396, 1, {315, 316}, {0, 0}} // 8: Bonsai tree.
 };
 
 const RunawayResponse kResponses[] = {
@@ -239,7 +240,7 @@ void Scene8240::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 
 Common::U32String Scene8240::hotspotName(byte id) const {
 	if (id == 7 && _town.carnivorousPlantSeen) {
-		return Common::U32String("Meat-eating plant");
+		return _strings.hotspotName(_room, 9);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

@@ -27,15 +27,15 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Door", 0, 453, 5, {301, 302}, {0, 3}},
-	{"Stairs", 782, 408, 7, {303, 304}, {0, 1}},
-	{"Flower pot", 504, 452, 1, {305, 306}, {1, 1}},
-	{"Watering can", 1286, 435, 0, {307, 308}, {0, 0}},
-	{"Small room", 742, 332, 5, {309, 310}, {0, 0}},
-	{"Door knob", 610, 467, 1, {311, 312}, {0, 0}},
-	{"Plant", 1393, 427, 0, {313, 314}, {0, 0}},
-	{"Bonsai tree", 955, 396, 1, {315, 316}, {0, 0}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{0, 453, 5, {301, 302}, {0, 3}}, // 1: Door.
+	{782, 408, 7, {303, 304}, {0, 1}}, // 2: Stairs.
+	{504, 452, 1, {305, 306}, {1, 1}}, // 3: Flower pot.
+	{1286, 435, 0, {307, 308}, {0, 0}}, // 4: Watering can.
+	{742, 332, 5, {309, 310}, {0, 0}}, // 5: Small room.
+	{610, 467, 1, {311, 312}, {0, 0}}, // 6: Door knob.
+	{1393, 427, 0, {313, 314}, {0, 0}}, // 7: Plant.
+	{955, 396, 1, {315, 316}, {0, 0}} // 8: Bonsai tree.
 };
 
 const RunawayResponse kResponses[] = {
@@ -136,10 +136,10 @@ void Scene6240::setupActorDepth(RunawayActor::RenderParams &params) const {
 
 Common::U32String Scene6240::hotspotName(byte id) const {
 	if (id == 5 && _town.gardeningShed) {
-		return _strings.hotspotName(_room, 10, "Gardening shed");
+		return _strings.hotspotName(_room, 10);
 	}
 	if (id == 7 && _town.carnivorousPlantSeen) {
-		return _strings.hotspotName(_room, 9, "Meat-eating plant");
+		return _strings.hotspotName(_room, 9);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

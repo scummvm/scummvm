@@ -102,7 +102,7 @@ bool RunawayStrings::load() {
 bool RunawayStrings::loadCatalog(const Common::Archive &archive, const char *language) {
 	const Common::Path path(Common::String::format("runaway/%s.dat", language));
 	Common::ScopedPtr<Common::SeekableReadStream> stream(archive.createReadStreamForMember(path));
-	if (!stream || stream->readUint32BE() != MKTAG('R', 'W', 'T', 'X') || stream->readUint16LE() != 1) {
+	if (!stream || stream->readUint32BE() != MKTAG('R', 'W', 'T', 'X') || stream->readUint16LE() != 2) {
 		return false;
 	}
 	const uint16 count = stream->readUint16LE();
@@ -125,9 +125,9 @@ bool RunawayStrings::loadCatalog(const Common::Archive &archive, const char *lan
 	return !stream->err() && stream->pos() == stream->size();
 }
 
-Common::U32String RunawayStrings::lookup(const Common::String &key, const char *fallback) const {
+Common::U32String RunawayStrings::lookup(const Common::String &key) const {
 	Common::HashMap<Common::String, Common::U32String>::const_iterator entry = _text.find(key);
-	return entry != _text.end() ? entry->_value : Common::U32String(fallback);
+	return entry != _text.end() ? entry->_value : Common::U32String();
 }
 
 Common::U32String RunawayStrings::text(TextId id) const {
@@ -139,12 +139,12 @@ Common::U32String RunawayStrings::itemName(byte chapter, byte item) const {
 	return lookup(Common::String::format("item.%u.%u", chapter, item));
 }
 
-Common::U32String RunawayStrings::hotspotName(uint16 scene, byte hotspot, const char *fallback) const {
-	return lookup(Common::String::format("hotspot.%u.%u", scene, hotspot), fallback);
+Common::U32String RunawayStrings::hotspotName(uint16 scene, byte hotspot) const {
+	return lookup(Common::String::format("hotspot.%u.%u", scene, hotspot));
 }
 
 Common::U32String RunawayStrings::shackHotspotName(byte hotspot) const {
-	return hotspotName(5030, hotspot, "");
+	return hotspotName(5030, hotspot);
 }
 
 } // End of namespace Hollywood

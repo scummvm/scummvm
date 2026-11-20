@@ -29,13 +29,13 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Entrance to the mine", 0, 0, 0, {1, 301}, {0, 0}},
-	{"Unknown place", 0, 0, 0, {1, 302}, {0, 0}},
-	{"Unknown place", 0, 0, 0, {1, 303}, {0, 0}},
-	{"Unknown place", 0, 0, 0, {1, 304}, {0, 0}},
-	{"Unknown place", 0, 0, 0, {1, 305}, {0, 0}},
-	{"Locomotive", 0, 0, 0, {1, 306}, {0, 0}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{0, 0, 0, {1, 301}, {0, 0}}, // 1: Entrance to the mine.
+	{0, 0, 0, {1, 302}, {0, 0}}, // 2: Unknown place.
+	{0, 0, 0, {1, 303}, {0, 0}}, // 3: Unknown place.
+	{0, 0, 0, {1, 304}, {0, 0}}, // 4: Unknown place.
+	{0, 0, 0, {1, 305}, {0, 0}}, // 5: Unknown place.
+	{0, 0, 0, {1, 306}, {0, 0}} // 6: Locomotive.
 };
 
 } // End of anonymous namespace
@@ -101,13 +101,13 @@ bool Scene6350::shouldUpdateActor() const {
 
 Common::U32String Scene6350::hotspotName(byte id) const {
 	if (id == 2 && _town.arrived) {
-		return _strings.hotspotName(_room, 7, "Douglasville");
+		return _strings.hotspotName(_room, 7);
 	}
 	if (id == 3 && _town.houseVisited) {
-		return _strings.hotspotName(_room, 8, "Mama Dorita's house");
+		return _strings.hotspotName(_room, 8);
 	}
 	if (id == 4 && (_town.craterSeen || _town.craterVisited)) {
-		return _strings.hotspotName(_room, 9, "Crater");
+		return _strings.hotspotName(_room, 9);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

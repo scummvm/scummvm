@@ -40,7 +40,6 @@ enum RunawayRoomId {
 };
 
 struct RunawayHotspot {
-	const char *name;
 	int16 x, y;
 	byte facing;
 	uint16 action[2]; // Look, use; IDs from the original room's action table.

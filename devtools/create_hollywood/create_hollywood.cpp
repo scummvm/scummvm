@@ -51,7 +51,7 @@ static bool writeCatalog(const char *fileName, const PoMessageEntryList &catalog
 	}
 	// Version, entry count, then length-prefixed UTF-8 key/value pairs.
 	fwrite("RWTX", 4, 1, file);
-	writeUint16LE(file, 1);
+	writeUint16LE(file, 2);
 	writeUint16LE(file, catalog.size());
 	for (int i = 0; i < catalog.size(); ++i) {
 		const PoMessageEntry *entry = catalog.entry(i);

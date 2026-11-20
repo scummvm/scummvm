@@ -21,19 +21,20 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene8260.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"Town", 0, 510, 5, {301, 302}, {0, 3}},
-	{"Driver's cab", 363, 395, 7, {303, 304}, {0, 1}},
-	{"Smokestack", 495, 433, 1, {305, 306}, {0, 1}},
-	{"Water tank opening", 432, 411, 0, {307, 308}, {0, 0}},
-	{"Object", 413, 485, 7, {309, 310}, {1, 1}},
-	{"Whistle", 257, 430, 1, {311, 312}, {0, 0}},
-	{"Outskirts of town", 1023, 437, 0, {315, 316}, {0, 3}}
+	{0, 0, 0, {0, 0}, {0, 0}},
+	{0, 510, 5, {301, 302}, {0, 3}}, // 1: Town.
+	{363, 395, 7, {303, 304}, {0, 1}}, // 2: Driver's cab.
+	{495, 433, 1, {305, 306}, {0, 1}}, // 3: Smokestack.
+	{432, 411, 0, {307, 308}, {0, 0}}, // 4: Water tank opening.
+	{413, 485, 7, {309, 310}, {1, 1}}, // 5: Object.
+	{257, 430, 1, {311, 312}, {0, 0}}, // 6: Whistle.
+	{1023, 437, 0, {315, 316}, {0, 3}} // 7: Outskirts of town.
 };
 
 const RunawayResponse kResponses[] = {
@@ -101,7 +102,7 @@ void Scene8260::advanceCustomGameplayLoop(uint32 delta) {
 
 Common::U32String Scene8260::hotspotName(byte id) const {
 	if (id == 5 && _finale.locomotiveBadge >= 2) {
-		return Common::U32String("Sheriff's badge");
+		return _strings.hotspotName(_room, 8);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

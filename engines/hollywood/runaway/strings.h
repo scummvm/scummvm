@@ -62,12 +62,12 @@ public:
 	bool load();
 	Common::U32String text(TextId id) const;
 	Common::U32String itemName(byte chapter, byte item) const;
-	Common::U32String hotspotName(uint16 scene, byte hotspot, const char *fallback) const;
+	Common::U32String hotspotName(uint16 scene, byte hotspot) const;
 	Common::U32String shackHotspotName(byte hotspot) const;
 
 private:
 	bool loadCatalog(const Common::Archive &archive, const char *language);
-	Common::U32String lookup(const Common::String &key, const char *fallback = "") const;
+	Common::U32String lookup(const Common::String &key) const;
 	Common::Language _language;
 	Common::HashMap<Common::String, Common::U32String> _text;
 };
