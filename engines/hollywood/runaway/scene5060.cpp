@@ -407,10 +407,10 @@ void Scene5060::runCustomEntrySequence() {
 
 Common::U32String Scene5060::hotspotName(byte id) const {
 	if (id == 6 && _desert.tanningOil) {
-		return _inventory.name(12);
+		return RunawayRoomScene::hotspotName(10);
 	}
 	if (id == 7 && _desert.busPosterSeen) {
-		return Common::U32String("Lawn chair");
+		return RunawayRoomScene::hotspotName(11);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

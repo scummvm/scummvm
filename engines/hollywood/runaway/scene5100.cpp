@@ -59,12 +59,12 @@ const RunawayHotspot kHotspots[] = {
 	{"Window", 1279, 267, 4, {1, 302}, {0, 1}},
 	{"Motorcycle", 164, 581, 0, {307, 308}, {1, 0}},
 	{"Stud", 0, 0, 7, {309, 310}, {1, 1}},
-	{"?", 0, 0, 4, {311, 312}, {0, 0}},
+	{"Remains Of Rocking Chair", 0, 0, 4, {311, 312}, {0, 0}},
 	{"Piece Of Metal", 0, 0, 7, {313, 314}, {0, 1}},
 	{"Barrel", 0, 0, 1, {315, 316}, {1, 0}},
 	{"Barrel", 0, 0, 4, {317, 318}, {0, 0}},
 	{"Helicopter", 0, 0, 7, {319, 320}, {0, 0}},
-	{"?", 253, 418, 4, {321, 322}, {0, 0}},
+	{"Can", 253, 418, 4, {321, 322}, {0, 0}},
 	{"Bucket", 0, 0, 1, {323, 324}, {1, 0}},
 	{"Outside", 253, 418, 4, {1, 325}, {0, 0}},
 	{"Stud", 1053, 403, 3, {1, 329}, {0, 1}},
@@ -524,13 +524,13 @@ void Scene5100::runCustomEntrySequence() {
 
 Common::U32String Scene5100::hotspotName(byte id) const {
 	if (id == 3 && _desert.peanutButter) {
-		return _inventory.name(19);
+		return RunawayRoomScene::hotspotName(17);
 	}
 	if (id == 8 && _desert.footrestSeen) {
-		return _inventory.name(21);
+		return RunawayRoomScene::hotspotName(18);
 	}
-	if (id == 12) {
-		return Common::U32String(_desert.beerSeen ? "Beer can" : "Can");
+	if (id == 12 && _desert.beerSeen) {
+		return RunawayRoomScene::hotspotName(16);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

@@ -257,20 +257,23 @@ void Scene5170::runCustomEntrySequence() {
 }
 
 Common::U32String Scene5170::hotspotName(byte id) const {
+	if (id == 1 && _desert.busDoor == 1) {
+		return RunawayRoomScene::hotspotName(11);
+	}
 	if (id == 3 && _desert.lipstickShelf && _desert.lipstickShelf < 3) {
-		return _inventory.name(11);
+		return RunawayRoomScene::hotspotName(12);
 	}
 	if (id == 4 && _desert.crank == 2) {
-		return Common::U32String("Makeshift crank");
+		return RunawayRoomScene::hotspotName(13);
 	}
 	if (id == 7 && _desert.vacuum) {
-		return _inventory.name(22);
+		return RunawayRoomScene::hotspotName(14);
 	}
 	if (id == 8 && _desert.necklacesSeen) {
-		return Common::U32String("Necklaces");
+		return RunawayRoomScene::hotspotName(15);
 	}
 	if (id == 9 && _desert.ringsSeen) {
-		return Common::U32String("Rings and earrings");
+		return RunawayRoomScene::hotspotName(16);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

@@ -241,12 +241,12 @@ Common::U32String RunawayInventory::name(byte item) const {
 		}
 		return _strings.itemName(_chapter, item);
 	}
-	if (item == 1 && _clothState)
+	if (item == 1 && _clothState) {
 		return _strings.text(_clothState == 1 ? RunawayStrings::kWetCloth : RunawayStrings::kDirtyCloth);
-	if ((item == 10 && _desert.lipstick) || (item == 11 && _desert.lipsticks))
-		return Common::U32String(item == 10 ? "Lipstick filled with gunpowder" : "Lipsticks filled with gunpowder");
-	if (item == 25 && _desert.bucket == 1)
-		return Common::U32String("Bucket of gunpowder");
+	}
+	if ((item == 10 && _desert.lipstick) || (item == 11 && _desert.lipsticks)) {
+		return _strings.text(item == 10 ? RunawayStrings::kMakeshiftBullet : RunawayStrings::kPileOfMakeshiftBullets);
+	}
 	return _strings.itemName(_chapter, item);
 }
 

@@ -29,7 +29,7 @@ const RunawayHotspot kHotspots[] = {
 	{"", 0, 0, 0, {0, 0}, {0, 0}},
 	{"Path", -100, 510, 0, {302, 301}, {0, 1}},
 	{"Helmet", 303, 534, 1, {303, 304}, {0, 1}},
-	{"?", 251, 420, 1, {305, 306}, {0, 1}},
+	{"Hanging Bullet Belt", 251, 420, 1, {305, 306}, {0, 1}},
 	{"Machine Gun", 251, 420, 1, {307, 308}, {0, 1}},
 	{"Bullet Hole", 200, 450, 1, {309, 310}, {0, 0}},
 	{"Pilot'S Seat", 200, 450, 7, {311, 312}, {0, 0}},
@@ -180,7 +180,7 @@ void Scene5050::runCustomEntrySequence() {
 
 Common::U32String Scene5050::hotspotName(byte id) const {
 	if (id == 3 && _desert.beltSeen) {
-		return _inventory.name(14);
+		return RunawayRoomScene::hotspotName(8);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

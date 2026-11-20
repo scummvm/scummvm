@@ -36,6 +36,7 @@ const RunawayHotspot kHotspots[] = {
 	{"Oil Well", 0, 0, 0, {0, 0}, {0, 0}},
 	{"Hangar", 0, 0, 0, {0, 0}, {0, 0}},
 	{"Airplane Graveyard", 0, 0, 0, {0, 0}, {0, 0}},
+	{"Railway Yard", 0, 0, 0, {0, 0}, {0, 0}},
 };
 
 } // End of anonymous namespace
@@ -73,16 +74,16 @@ void Scene5010::runCustomEntrySequence() {
 
 Common::U32String Scene5010::hotspotName(byte id) const {
 	if (id == 1 && _desert.visited[4]) {
-		return Common::U32String("Oil well");
+		return RunawayRoomScene::hotspotName(7);
 	}
 	if (id == 3 && _desert.visited[6]) {
-		return Common::U32String("Hangar");
+		return RunawayRoomScene::hotspotName(8);
 	}
 	if (id == 4 && _desert.visited[2]) {
-		return Common::U32String("Airplane graveyard");
+		return RunawayRoomScene::hotspotName(9);
 	}
 	if (id == 5 && _desert.visited[5]) {
-		return Common::U32String("Railway yard");
+		return RunawayRoomScene::hotspotName(10);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

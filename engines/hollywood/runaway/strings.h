@@ -47,7 +47,8 @@ public:
 		kMuseumDemoCondom, kFrozenBattery, kMayanPryingTool, kGroundCoffeeBowl, kEmptyBowl, kLadleWithBattery,
 		kAnthropologyBooks, kDocuments, kAlteredLaser, kVarnishBriefcase, kWilly,
 		kMayanBowlsAndJars, kExhibitBucket, kTeapot, kExhibitBowl,
-		kThermalChamber, kKey, kNitrogenTank, kElectronMicroscope, kTextCount
+		kThermalChamber, kKey, kNitrogenTank, kElectronMicroscope,
+		kMakeshiftBullet, kPileOfMakeshiftBullets, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) :
 		_languageIndex(language == Common::DE_DEU ? 0 : language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : 3) {}

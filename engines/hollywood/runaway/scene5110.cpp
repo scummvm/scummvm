@@ -27,14 +27,15 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{"", 0, 0, 0, {0, 0}, {0, 0}},
-	{"?", 327, 441, 7, {301, 302}, {0, 1}},
-	{"?", 574, 434, 1, {303, 304}, {1, 0}},
+	{"Outside Of Train Car", 327, 441, 7, {301, 302}, {0, 1}},
+	{"Barrels", 574, 434, 1, {303, 304}, {1, 0}},
 	{"Chain", 801, 441, 3, {305, 306}, {0, 0}},
 	{"Contraptions", 517, 374, 0, {307, 308}, {0, 0}},
 	{"Barrel", 510, 377, 0, {309, 310}, {1, 1}},
 	{"Bucket", 365, 485, 5, {311, 312}, {1, 1}},
 	{"Clock", 801, 441, 3, {313, 314}, {0, 0}},
 	{"Bucket", 510, 377, 0, {320, 321}, {0, 1}},
+	{"Barrel Of Gunpowder", 0, 0, 0, {0, 0}, {0, 0}},
 };
 
 const RunawayResponse kResponses[] = {
@@ -224,11 +225,8 @@ void Scene5110::runCustomEntrySequence() {
 }
 
 Common::U32String Scene5110::hotspotName(byte id) const {
-	if (id == 1 || id == 2) {
-		return Common::U32String("Door");
-	}
 	if (id == 5 && _desert.barrel) {
-		return Common::U32String("Barrel of gunpowder");
+		return RunawayRoomScene::hotspotName(9);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

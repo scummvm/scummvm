@@ -253,7 +253,7 @@ void Scene5080::runCustomEntrySequence() {
 
 Common::U32String Scene5080::hotspotName(byte id) const {
 	if (id == 3 && _desert.antsDistracted) {
-		return Common::U32String("Sawdust");
+		return RunawayRoomScene::hotspotName(12);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

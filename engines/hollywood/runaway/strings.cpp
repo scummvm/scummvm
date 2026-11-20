@@ -111,7 +111,9 @@ const char *const kText[RunawayStrings::kTextCount][4] = {
 	{nullptr, nullptr, "C\303\201MARA T\303\211RMICA", "Thermal chamber"},
 	{nullptr, nullptr, "LLAVE", "Key"},
 	{nullptr, nullptr, "BOMBONA DE NITR\303\223GENO", "Liquid nitrogen tank"},
-	{nullptr, nullptr, "MICROSCOPIO ELECTR\303\223NICO", "Electron microscope"}
+	{nullptr, nullptr, "MICROSCOPIO ELECTR\303\223NICO", "Electron microscope"},
+	{nullptr, nullptr, "BALA IMPROVISADA", "Makeshift bullet"},
+	{nullptr, nullptr, "MONT\303\223N DE BALAS IMPROVISADAS", "Pile of makeshift bullets"}
 };
 
 // Hospital names from the Spanish DVD executable at 0x5c2424..0x5c2598.
@@ -259,6 +261,58 @@ const char *const kMuseumSecurityHotspotNamesES[] = {
 	"ESC\303\201NER", "BOMBONA", "OBJETO DORADO", "APARATO", "CAZO"
 };
 
+const char *const kDesertMapHotspotNamesES[] = {
+	"", "LUGAR DESCONOCIDO", "CABA\303\221A", "LUGAR DESCONOCIDO", "LUGAR DESCONOCIDO", "LUGAR DESCONOCIDO",
+	"AUTOB\303\232S", "POZO DE PETR\303\223LEO", "HANGAR", "CEMENTERIO DE AVIONES", "VAG\303\223N ABANDONADO"
+};
+
+const char *const kCabinExteriorHotspotNamesES[] = {
+	"", "CAMINO", "", "MECEDORA", "NEUM\303\201TICOS", "PUERTA", "TRAMPILLA", "CUBO"
+};
+
+const char *const kAirplaneHotspotNamesES[] = {
+	"", "CAMINO", "CASCO", "CINCHA COLGANDO", "AMETRALLADORA", "BALAZO", "PUESTO DEL PILOTO",
+	"PUESTO DEL ARTILLERO", "RISTRA DE BALAS"
+};
+
+const char *const kBusExteriorHotspotNamesES[] = {
+	"", "CAMINO", "LULA", "MARIOLA", "INTERIOR DEL AUTOCAR", "BA\303\232L", "BOTE", "SILLA",
+	"RADIO CASSETTE", "GAFAS DE SOL", "ACEITE BRONCEADOR", "SILLA DE CAMPO"
+};
+
+const char *const kOilWellHotspotNamesES[] = {
+	"", "CAMINO", "MARIOLA", "DETONADOR", "POZO PETROL\303\215FERO", "ARBOL", "ROCA", "CHARCO DE PETR\303\223LEO"
+};
+
+const char *const kRailwayYardHotspotNamesES[] = {
+	"", "CAMINO", "CAJA DE MADERA", "CASETA", "PUERTA", "EXPLOSIVOS", "DEP\303\223SITO DE AGUA",
+	"VAG\303\223N", "INTERIOR DEL VAG\303\223N", "HORMIGUERO", "CARTEL", "ESCALERA", "SERR\303\215N"
+};
+
+const char *const kHangarHotspotNamesES[] = {
+	"", "CAMINO", "PUERTAS DEL GRANERO", "TARRO", "VENTANA", "MOTO", "CHULO", "RESTOS DE MECEDORA",
+	"TROZO DE METAL", "BARRIL", "BARRIL", "HELIC\303\223PTERO", "LATA", "CUBO",
+	// These two hotspots originally used complete action captions instead of names.
+	"EXTERIOR", "CHULO", "LATA DE CERVEZA", "MANTEQUILLA DE CACAHUETE", "ESTRIBO"
+};
+
+const char *const kTrainCarHotspotNamesES[] = {
+	"", "EXTERIOR DEL VAG\303\223N", "BARRILES", "CADENA", "CACHIVACHES", "BARRIL", "CUBO",
+	"RELOJ", "CUBO", "BARRIL DE P\303\223LVORA"
+};
+
+const char *const kBusRearHotspotNamesES[] = {
+	"", "PARTE DELANTERA DEL AUTOCAR", "NEVERA", "CARLA", "COPA", "REJILLA", "BOTAS", "TORO",
+	"CUADRO", "AGUJA E HILO", "PARTE DELANTERA DEL AUTOCAR"
+};
+
+const char *const kBusFrontHotspotNamesES[] = {
+	"", "EXTERIOR DEL AUTOCAR", "PARTE TRASERA DEL AUTOCAR", "ESTANTE DERECHO", "EJE", "BOLSILLO",
+	"GAFAS DE SOL", "OBJETO BAJO LA CAMA", "ESTANTE CENTRAL", "ESTANTE IZQUIERDO", "PARTE TRASERA DEL AUTOCAR",
+	"PUERTA", "MONT\303\223N DE PINTALABIOS", "MANIVELA IMPROVISADA", "MANGO", "COLLARES", "ANILLOS Y PENDIENTES",
+	"EXTERIOR DEL AUTOCAR", "ESTANTE DERECHO"
+};
+
 const struct {
 	uint16 scene;
 	const char *const *names[4];
@@ -271,7 +325,17 @@ const struct {
 	{kMuseumLaboratory, {nullptr, nullptr, kMuseumLaboratoryHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumLaboratoryHotspotNamesES)},
 	{kMuseumHall, {nullptr, nullptr, kMuseumHallHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumHallHotspotNamesES)},
 	{kMuseumExhibition, {nullptr, nullptr, kMuseumExhibitionHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumExhibitionHotspotNamesES)},
-	{kMuseumSecurity, {nullptr, nullptr, kMuseumSecurityHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumSecurityHotspotNamesES)}
+	{kMuseumSecurity, {nullptr, nullptr, kMuseumSecurityHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumSecurityHotspotNamesES)},
+	{5010, {nullptr, nullptr, kDesertMapHotspotNamesES, nullptr}, ARRAYSIZE(kDesertMapHotspotNamesES)},
+	{5020, {nullptr, nullptr, kCabinExteriorHotspotNamesES, nullptr}, ARRAYSIZE(kCabinExteriorHotspotNamesES)},
+	{5050, {nullptr, nullptr, kAirplaneHotspotNamesES, nullptr}, ARRAYSIZE(kAirplaneHotspotNamesES)},
+	{5060, {nullptr, nullptr, kBusExteriorHotspotNamesES, nullptr}, ARRAYSIZE(kBusExteriorHotspotNamesES)},
+	{5070, {nullptr, nullptr, kOilWellHotspotNamesES, nullptr}, ARRAYSIZE(kOilWellHotspotNamesES)},
+	{5080, {nullptr, nullptr, kRailwayYardHotspotNamesES, nullptr}, ARRAYSIZE(kRailwayYardHotspotNamesES)},
+	{5100, {nullptr, nullptr, kHangarHotspotNamesES, nullptr}, ARRAYSIZE(kHangarHotspotNamesES)},
+	{5110, {nullptr, nullptr, kTrainCarHotspotNamesES, nullptr}, ARRAYSIZE(kTrainCarHotspotNamesES)},
+	{5160, {nullptr, nullptr, kBusRearHotspotNamesES, nullptr}, ARRAYSIZE(kBusRearHotspotNamesES)},
+	{5170, {nullptr, nullptr, kBusFrontHotspotNamesES, nullptr}, ARRAYSIZE(kBusFrontHotspotNamesES)}
 };
 
 } // End of anonymous namespace
