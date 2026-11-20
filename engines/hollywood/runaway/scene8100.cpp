@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "hollywood/runaway/presentation.h"
 #include "hollywood/runaway/scene8100.h"
 
 namespace Hollywood {
@@ -82,7 +83,7 @@ void Scene8100::findWalkPath(Common::Point target) {
 }
 
 void Scene8100::prepareCustomGameplayLoop() {
-	_doritaTick = _now;
+	_doritaTick = _ambientTick = _now;
 }
 
 void Scene8100::runCustomEntrySequence() {
@@ -96,14 +97,11 @@ void Scene8100::runCustomEntrySequence() {
 		deferAction(402);
 		break;
 	case 8102: // Retry the medium test after preparing outside.
-		say(80, 18);
-		say(90, 18, false, 1);
-		startMediumTest(2);
-		break;
 	case 8103: // The third medium test leads to the séance.
-		say(80, 21);
-		say(90, 21, false, 1);
-		startMediumTest(3);
+		_mediumTest = _entryScene - 8100;
+		_fade = kMediumTestFade;
+		_fadeStarted = _now;
+		deferAction(409);
 		break;
 	default:
 		if (_finale.doritaMet) {
@@ -135,6 +133,17 @@ void Scene8100::moveDorita(uint first, uint last, uint idle) {
 }
 
 void Scene8100::advanceCustomGameplayLoop(uint32 delta) {
+	if (_now - _ambientTick >= 250) {
+		_ambientTick = _now;
+		if (_fade != kSeanceFade && !_audio.effectPlaying(2) && !_random.getRandomNumber(49)) {
+			byte effect;
+			do {
+				effect = 74 + _random.getRandomNumber(4);
+			} while (effect == _lastAmbientEffect);
+			_lastAmbientEffect = effect;
+			_audio.playEffect(effect, 3, 2);
+		}
+	}
 	if (_now - _doritaTick < 80) {
 		return;
 	}
@@ -156,7 +165,22 @@ void Scene8100::advanceCustomGameplayLoop(uint32 delta) {
 }
 
 bool Scene8100::updateCustomSequence() {
+	if (_fade == kMediumTestFade) {
+		if (_now - _fadeStarted < 500) {
+			return true;
+		}
+		_fade = kNoFade;
+	}
 	return _movingDorita;
+}
+
+void Scene8100::draw() {
+	RunawayRoomScene::draw();
+	if (_fade == kMediumTestFade) {
+		dimRunawayViewport(_screen, MIN<uint>(500, _now - _fadeStarted), 500);
+	} else if (_fade == kSeanceFade) {
+		dimRunawayViewport(_screen, 250 - MIN<uint>(250, _now - _fadeStarted), 250);
+	}
 }
 
 void Scene8100::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
@@ -203,6 +227,11 @@ RunawayRoomScene::ActionResult Scene8100::dispatchCustomSceneAction(uint16 actio
 	case 403: // Leave the conversation through the selected doorway.
 		leaveHouse();
 		break;
+	case 409: // Greet Mama Dorita once the return visit has faded in.
+		say(80, 12 + _mediumTest * 3);
+		say(90, 12 + _mediumTest * 3, false, 1);
+		startMediumTest(_mediumTest);
+		break;
 	case 410: // Brian leans forward for Mama Dorita to examine his eyes.
 		beginRoomAnimationRange(410, 5, 23, 0, 12);
 		break;
@@ -247,6 +276,9 @@ RunawayRoomScene::ActionResult Scene8100::dispatchCustomSceneAction(uint16 actio
 	case 421: // Prepare to kneel at the altar.
 		say(80, 28);
 		say(90, 28, false, 1);
+		deferAction(433);
+		break;
+	case 433: // Kneel after Mama Dorita has finished giving her instructions.
 		beginRoomAnimationRange(421, 6, 21, 0, 20);
 		break;
 	case 1421: // Switch to the prayer close-up.
@@ -297,7 +329,13 @@ RunawayRoomScene::ActionResult Scene8100::dispatchCustomSceneAction(uint16 actio
 		_facing = 0;
 		beginRoomAnimationRange(429, 9, 26, 0, 25);
 		break;
-	case 1429: // Begin the séance with Gina and Mama Dorita.
+	case 1429: // Fade the room after Brian has climbed down the well.
+		_fade = kSeanceFade;
+		_fadeStarted = _now;
+		beginRoomAnimationRange(430, 9, 26, 25, 25, true, 250);
+		break;
+	case 1430: // Begin the séance with Gina and Mama Dorita.
+		_fade = kNoFade;
 		startSeance();
 		break;
 	case 440: // Continue to Gina after learning about her father.
@@ -308,6 +346,12 @@ RunawayRoomScene::ActionResult Scene8100::dispatchCustomSceneAction(uint16 actio
 		return kUnhandled;
 	}
 	return kHandled;
+}
+
+void Scene8100::handleAnimationFrameHook() {
+	if (_roomAction == 429 && _actionStep == 3) {
+		_audio.playEffect(43);
+	}
 }
 
 void Scene8100::startDoritaConversation() {
@@ -406,7 +450,7 @@ void Scene8100::finishCustomFilm() {
 		_audio.stopMusic();
 		deferAction(440);
 	} else {
-		deferAction(411);
+		execute(411);
 	}
 }
 

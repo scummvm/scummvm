@@ -30,8 +30,11 @@ namespace Runaway {
 class Scene8100 : public RunawayRoomScene {
 public:
 	Scene8100(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	void draw() override;
 
 private:
+	enum Fade { kNoFade, kMediumTestFade, kSeanceFade };
+
 	bool loadCustomResources() override;
 	bool usesAlternateActor() const override;
 	byte initialActorFacing() const override;
@@ -46,6 +49,7 @@ private:
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	bool drawCustomComposite(Graphics::ManagedSurface &viewport) override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
+	void handleAnimationFrameHook() override;
 	void handleCustomDialogueChoice(byte effect) override;
 	void finishCustomFilm() override;
 
@@ -58,9 +62,10 @@ private:
 
 	RunawayAnimation _dorita, _prayerAnimation;
 	Graphics::ManagedSurface _altar;
+	Fade _fade = kNoFade;
 	uint _doritaStep = 20, _doritaLast = 20, _doritaIdle = 20;
-	uint32 _doritaTick = 0;
-	byte _blink = 0, _mediumTest = 0, _prayer = 0;
+	uint32 _doritaTick = 0, _ambientTick = 0, _fadeStarted = 0;
+	byte _blink = 0, _mediumTest = 0, _prayer = 0, _lastAmbientEffect = 0;
 	bool _movingDorita = false, _showAltar = false, _visitingGina = false, _seanceFilm = false;
 };
 
