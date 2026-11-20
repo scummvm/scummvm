@@ -24,7 +24,7 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "ripper/combat/combat.h"
+#include "ripper/combat.h"
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
 #include "ripper/detection.h"

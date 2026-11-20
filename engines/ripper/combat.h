@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RIPPER_COMBAT_COMBAT_H
-#define RIPPER_COMBAT_COMBAT_H
+#ifndef RIPPER_COMBAT_H
+#define RIPPER_COMBAT_H
 
 #include "audio/mixer.h"
 #include "common/array.h"
@@ -204,4 +204,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_COMBAT_COMBAT_H
+#endif // RIPPER_COMBAT_H

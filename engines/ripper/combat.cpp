@@ -19,7 +19,7 @@
  *
  */
 
-#include "ripper/combat/combat.h"
+#include "ripper/combat.h"
 
 #include "common/debug.h"
 #include "common/file.h"
