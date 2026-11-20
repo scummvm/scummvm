@@ -773,10 +773,13 @@ void SceneStreamManager::process() {
 
 // Returns whether a stream kept the input to itself
 bool SceneStreamManager::handleInput(NancyInput &input, bool beforeMainStream) {
-	const Common::Array<SceneStream *> streams = _streams;
+	// The frontmost stream gets the input first, so one that takes it keeps it
+	// from the ones behind: the map of Lights, Camera, Curses from the journal
+	// that opens it. Streams at the same z go in the order they began.
+	Common::Array<SceneStream *> streams;
 	bool isBeforeMainStream = true;
 
-	for (SceneStream *stream : streams) {
+	for (SceneStream *stream : _streams) {
 		if (!stream) {
 			isBeforeMainStream = false;
 			continue;
@@ -793,6 +796,15 @@ bool SceneStreamManager::handleInput(NancyInput &input, bool beforeMainStream) {
 			continue;
 		}
 
+		uint i = 0;
+		while (i < streams.size() && streams[i]->getZOffset() >= stream->getZOffset()) {
+			++i;
+		}
+
+		streams.insert_at(i, stream);
+	}
+
+	for (SceneStream *stream : streams) {
 		_running = stream;
 		stream->handleInput(input);
 		_running = nullptr;
