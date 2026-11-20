@@ -28,15 +28,7 @@ namespace Hollywood {
 namespace {
 
 const uint kMuseumItemCount = 19;
-
-const char *const kTownItemNames[] = {
-	"", "Wallet", "Car keys", "Receipt", "Piece of amber", "Crucifix", "Doctor's bag",
-	"Stethoscope", "Liniment", "Key", "Wrench", "Strap", "Container of concentrated gasoline",
-	"Telepathic helmet", "Firewood", "Blowtorch", "Watering can", "Map of the mine", "Miner's light",
-	"Rope", "Ancient stapler", "Flower pot", "Pruning shears", "Oil can", "One-liter bottle",
-	"Empty 30 c.c. measuring tube", "Empty 50 c.c. measuring tube", "Tobacco leaves", "Chewing tobacco",
-	"Stone", "Sanding block", "Vessel", "Bank stamp"
-};
+const uint kTownItemCount = 32;
 
 const char *const kHopiItemNames[] = {
 	"", "Wallet", "Car keys", "Receipt", "Crucifix", "Flashlight", "Rope", "Map of the mine",
@@ -150,7 +142,7 @@ bool RunawayInventory::contains(byte item) const {
 
 bool RunawayInventory::add(byte item) {
 	const uint maxItem = _chapter == 6 ? ARRAYSIZE(kFinaleItemNames) - 1 : _chapter == 5 ? ARRAYSIZE(kHopiItemNames) - 1 :
-		_chapter == 4 ? ARRAYSIZE(kTownItemNames) - 1 : _chapter == 3 ? kItemCount : 19;
+		_chapter == 4 ? kTownItemCount : _chapter == 3 ? kItemCount : 19;
 	if (!item || item > maxItem || contains(item))
 		return false;
 	_items.push_back(item);
@@ -187,23 +179,24 @@ Common::U32String RunawayInventory::name(byte item) const {
 		}
 		return Common::U32String(item < ARRAYSIZE(kHopiItemNames) ? kHopiItemNames[item] : "");
 	}
-	if (_chapter == 4 && item == 11 && _town.strap == 2) {
-		return Common::U32String("Strap with joined ends");
-	}
 	if (_chapter == 4) {
+		if (item == 11 && _town.strap == 2) {
+			return _strings.text(RunawayStrings::kMendedStrap);
+		}
 		if (item == 24 && _town.bottleContents) {
-			return Common::U32String(_town.bottleContents == 1 ? "Bottle with one liter of water" : "Bottle of gasoline");
+			return _strings.text(_town.bottleContents == 1 ? RunawayStrings::kBottleWithWater : RunawayStrings::kBottleWithGasoline);
 		}
 		if ((item == 25 && _town.tube30) || (item == 26 && _town.tube50)) {
-			return Common::U32String(Common::String::format("%u c.c. of concentrated gasoline", 10 * (item == 25 ? _town.tube30 : _town.tube50)));
+			return Common::U32String::format(_strings.text(RunawayStrings::kFilledMeasuringTube),
+				item == 25 ? 30U : 50U, 10U * (item == 25 ? _town.tube30 : _town.tube50));
 		}
 		if (item == 29 && _town.sculpture) {
-			return Common::U32String(_town.sculpture == 1 ? "Polished stone" : "Stone sculpture with amber");
+			return _strings.text(_town.sculpture == 1 ? RunawayStrings::kPolishedStone : RunawayStrings::kStoneOfLight);
 		}
 		if (item == 31 && _town.mortar) {
-			return Common::U32String("Mortar and pestle");
+			return _strings.text(RunawayStrings::kMakeshiftMortar);
 		}
-		return item < ARRAYSIZE(kTownItemNames) ? Common::U32String(kTownItemNames[item]) : Common::U32String();
+		return _strings.itemName(_chapter, item);
 	}
 	if (_chapter == 1) {
 		if (item == 11 && _markerInk == 1) {
@@ -343,7 +336,7 @@ uint RunawayInventory::cursor(byte item) const {
 		return item && item < ARRAYSIZE(kHopiItemNames) ? 39 + icon(item) * 2 : 0;
 	}
 	if (_chapter == 4) {
-		return item && item < ARRAYSIZE(kTownItemNames) ? 39 + icon(item) * 2 : 0;
+		return item && item <= kTownItemCount ? 39 + icon(item) * 2 : 0;
 	}
 	if (_chapter == 1) {
 		if (item == 15 && _syringeFilled)

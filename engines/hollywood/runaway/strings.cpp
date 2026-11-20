@@ -113,7 +113,16 @@ const char *const kText[RunawayStrings::kTextCount][4] = {
 	{nullptr, nullptr, "BOMBONA DE NITR\303\223GENO", "Liquid nitrogen tank"},
 	{nullptr, nullptr, "MICROSCOPIO ELECTR\303\223NICO", "Electron microscope"},
 	{nullptr, nullptr, "BALA IMPROVISADA", "Makeshift bullet"},
-	{nullptr, nullptr, "MONT\303\223N DE BALAS IMPROVISADAS", "Pile of makeshift bullets"}
+	{nullptr, nullptr, "MONT\303\223N DE BALAS IMPROVISADAS", "Pile of makeshift bullets"},
+	{nullptr, nullptr, "CORREA REMENDADA", "Mended strap"},
+	{nullptr, nullptr, "BOTELLA DE UN LITRO LLENA DE AGUA", "One-liter bottle full of water"},
+	{nullptr, nullptr, "BOTELLA DE UN LITRO LLENA DE GASOLINA", "One-liter bottle full of gasoline"},
+	{nullptr, nullptr, "MEDIDOR DE %u C.C. CON %u C.C.", "%u-c.c. measuring tube holding %u c.c."},
+	{nullptr, nullptr, "PIEDRA PULIDA", "Polished stone"},
+	{nullptr, nullptr, "PIEDRA DE LA LUZ", "Stone of light"},
+	{nullptr, nullptr, "MORTERO IMPROVISADO", "Makeshift mortar and pestle"},
+	{nullptr, nullptr, "PALANCA", "Steam outlet lever"},
+	{nullptr, nullptr, "LLAVE", "Pressure wheel"}
 };
 
 // Hospital names from the Spanish DVD executable at 0x5c2424..0x5c2598.
@@ -191,6 +200,42 @@ const char *const kCabinItemNames[][4] = {
 	{"BLASEBALG", "SOUFFLET", "FUELLE", "BELLOWS"},
 	{"EIMER", "SEAU", "CUBO", "BUCKET"},
 	{"SCHL\303\234SSEL", "CLE DU REFRIGERATEUR", "LLAVE", "REFRIGERATOR KEY"}
+};
+
+const char *const kTownItemNames[][4] = {
+	{"", "", "", ""},
+	{nullptr, nullptr, "CARTERA", "Wallet"},
+	{nullptr, nullptr, "LLAVES DEL COCHE", "Car keys"},
+	{nullptr, nullptr, "RESGUARDO", "Receipt"},
+	{nullptr, nullptr, "TROZO DE \303\201MBAR", "Piece of amber"},
+	{nullptr, nullptr, "CRUCIFIJO", "Crucifix"},
+	{nullptr, nullptr, "MALET\303\215N DEL M\303\211DICO", "Doctor's bag"},
+	{nullptr, nullptr, "FONENDOSCOPIO", "Stethoscope"},
+	{nullptr, nullptr, "LINIMENTO", "Liniment"},
+	{nullptr, nullptr, "LLAVE", "Key"},
+	{nullptr, nullptr, "LLAVE FIJA", "Wrench"},
+	{nullptr, nullptr, "CORREA", "Strap"},
+	{nullptr, nullptr, "BOTE DE GASOLINA CONCENTRADA", "Container of concentrated gasoline"},
+	{nullptr, nullptr, "CASCO TELEP\303\201TICO", "Telepathic helmet"},
+	{nullptr, nullptr, "LE\303\221A", "Firewood"},
+	{nullptr, nullptr, "SOPLETE", "Blowtorch"},
+	{nullptr, nullptr, "REGADERA", "Watering can"},
+	{nullptr, nullptr, "PLANO DE LA MINA", "Map of the mine"},
+	{nullptr, nullptr, "LINTERNA PARA LA CABEZA", "Miner's light"},
+	{nullptr, nullptr, "CUERDA", "Rope"},
+	{nullptr, nullptr, "GRAPADORA R\303\232STICA", "Ancient stapler"},
+	{nullptr, nullptr, "TIESTO", "Flower pot"},
+	{nullptr, nullptr, "TIJERAS DE PODAR", "Pruning shears"},
+	{nullptr, nullptr, "ACEITERA", "Oil can"},
+	{nullptr, nullptr, "BOTELLA DE UN LITRO", "One-liter bottle"},
+	{nullptr, nullptr, "MEDIDOR DE 30 C.C. VAC\303\215O", "Empty 30 c.c. measuring tube"},
+	{nullptr, nullptr, "MEDIDOR DE 50 C.C. VAC\303\215O", "Empty 50 c.c. measuring tube"},
+	{nullptr, nullptr, "HOJAS DE TABACO", "Tobacco leaves"},
+	{nullptr, nullptr, "TABACO DE MASCAR", "Chewing tobacco"},
+	{nullptr, nullptr, "PIEDRA", "Stone"},
+	{nullptr, nullptr, "CEPILLO DE LIJA", "Sanding block"},
+	{nullptr, nullptr, "VASIJA", "Vessel"},
+	{nullptr, nullptr, "SELLO DEL BANCO", "Bank stamp"}
 };
 
 const char *const kShackHotspotNames[][4] = {
@@ -313,6 +358,83 @@ const char *const kBusFrontHotspotNamesES[] = {
 	"EXTERIOR DEL AUTOCAR", "ESTANTE DERECHO"
 };
 
+const char *const kMineEntranceHotspotNamesES[] = {
+	"", "CAMINO", "RECIPIENTE", "AGUJERO POR EL QUE CAY\303\223 GINA", "PIEDRA", "ENTRADA A LA MINA",
+	"VAGONETA", "CAJA", "ACEITERA"
+};
+
+const char *const kDoritaHouseHotspotNamesES[] = {
+	"", "ZONA DEL POZO", "ENTRADA A LA CASA", "CARTEL", "T\303\215O ENORME", "ESCALERA", "VASIJA", "CAMINO", "\303\223SCAR"
+};
+
+const char *const kDoritaWellHotspotNamesES[] = {
+	"", "CAMINO", "CASA", "POZO", "PIEDRA", "CALAVERA"
+};
+
+const char *const kSaloonEntranceHotspotNamesES[] = {
+	"", "CALLE", "INTERIOR DEL SALOON", "ABREVADERO", "PLANCHA DEL SUELO", "VENTANA"
+};
+
+const char *const kBankHotspotNamesES[] = {
+	"", "CALLE", "BOTE DE PINTURA", "AGUJERO", "ESTANTES", "OBJETO MET\303\201LICO", "MESA", "CAJA REGISTRADORA",
+	"SOF\303\201", "AGUJERO"
+};
+
+const char *const kSheriffOfficeHotspotNamesES[] = {
+	"", "CALLE", "CELDA", "", "LE\303\221A", "MESA", "ARMARIO DE ARMAS", "TABL\303\223N DE ANUNCIOS"
+};
+
+const char *const kCellHotspotNamesES[] = {
+	"", "PUERTA", "PUERTA", "MALET\303\215N", "CAD\303\201VER", "CUBO", "PLATO", "JARRA", "BOTELLA"
+};
+
+const char *const kTownStreetHotspotNamesES[] = {
+	"", "AFUERAS DEL PUEBLO", "\"SALOON\"", "HOTEL", "OFICINA DEL SHERIFF", "TIENDA DE LICORES", "BANCO",
+	"LOCOMOTORA", "CARRO", "NORTE DEL PUEBLO"
+};
+
+const char *const kTownBalconyHotspotNamesES[] = {
+	"", "PUERTA", "PUERTA", "PUERTA", "CALLE", "OBJETO EN EL SUELO", "CEPILLO DE LIJA"
+};
+
+const char *const kSaloonHotspotNamesES[] = {
+	"", "PUERTA", "ESCALERA", "TIESTO", "REGADERA", "CUARTITO", "POMO", "PLANTA", "BONSAI", "PLANTA CARN\303\215VORA",
+	"DESPENSA DE JARDINER\303\215A"
+};
+
+const char *const kBankBasementHotspotNamesES[] = {
+	// Name the rubble for the engine's generic action captions.
+	"", "ESTATUA", "PISO DE ARRIBA", "CAJA FUERTE", "ESCOMBROS", "RUEDA NUMERADA"
+};
+
+const char *const kLocomotiveHotspotNamesES[] = {
+	"", "PUEBLO", "CABINA", "CHIMENEA", "BOCA DEL DEP\303\223SITO DE AGUA", "LLAVE", "SILBATO", "AFUERAS DEL PUEBLO"
+};
+
+const char *const kLocomotiveCabHotspotNamesES[] = {
+	"", "EXTERIOR DE LA CABINA", "CALDERA", "PALANCA", "LLAVE", "RELOJES", "PALANCA", "PALANCA"
+};
+
+const char *const kCraterFloorHotspotNamesES[] = {
+	"", "EXTERIOR DEL CR\303\201TER", "CASCO DE JOSHUA", "RASTRO NEGRO"
+};
+
+const char *const kJoshuaCampHotspotNamesES[] = {
+	"", "CR\303\201TER", "CAMINO", "PANEL DE BOTONES", "INTERRUPTOR", "MOTO", "TIENDA DE CAMPA\303\221A", "PANEL DE FOCOS",
+	"JOSHUA", "CORREA", "LLAVE FIJA", "M\303\201QUINA", "", "ROTOR", "M\303\201QUINA CONTACTADORA"
+};
+
+const char *const kWorkshopHotspotNamesES[] = {
+	"", "ESCALERA", "PUERTA", "PUERTA", "PUERTA", "MANDOS DE LA GR\303\232A", "ESTATUA", "ARTILUGIO DE MADERA Y METAL",
+	"PALANCA", "BOTE DE PINTURA", "M\303\201QUINA DE AGUA", "PANEL DE HERRAMIENTAS", "CAMA", "SATURNO", "PIEDRA", "BID\303\223N",
+	"SOPLETE", "CATAPULTA", "PALANCA QUE ACCIONA LA CATAPULTA", "BID\303\223N DE GASOLINA"
+};
+
+const char *const kTownMapHotspotNamesES[] = {
+	"", "ENTRADA DE LA MINA", "LUGAR DESCONOCIDO", "LUGAR DESCONOCIDO", "LUGAR DESCONOCIDO", "LUGAR DESCONOCIDO",
+	"LOCOMOTORA", "DOUGLASVILLE", "CASA DE MAM\303\201 DORITA", "CR\303\201TER", "CAMINO HACIA LA CARAVANA"
+};
+
 const struct {
 	uint16 scene;
 	const char *const *names[4];
@@ -335,7 +457,24 @@ const struct {
 	{5100, {nullptr, nullptr, kHangarHotspotNamesES, nullptr}, ARRAYSIZE(kHangarHotspotNamesES)},
 	{5110, {nullptr, nullptr, kTrainCarHotspotNamesES, nullptr}, ARRAYSIZE(kTrainCarHotspotNamesES)},
 	{5160, {nullptr, nullptr, kBusRearHotspotNamesES, nullptr}, ARRAYSIZE(kBusRearHotspotNamesES)},
-	{5170, {nullptr, nullptr, kBusFrontHotspotNamesES, nullptr}, ARRAYSIZE(kBusFrontHotspotNamesES)}
+	{5170, {nullptr, nullptr, kBusFrontHotspotNamesES, nullptr}, ARRAYSIZE(kBusFrontHotspotNamesES)},
+	{6080, {nullptr, nullptr, kMineEntranceHotspotNamesES, nullptr}, ARRAYSIZE(kMineEntranceHotspotNamesES)},
+	{6090, {nullptr, nullptr, kDoritaHouseHotspotNamesES, nullptr}, ARRAYSIZE(kDoritaHouseHotspotNamesES)},
+	{6130, {nullptr, nullptr, kDoritaWellHotspotNamesES, nullptr}, ARRAYSIZE(kDoritaWellHotspotNamesES)},
+	{6180, {nullptr, nullptr, kSaloonEntranceHotspotNamesES, nullptr}, ARRAYSIZE(kSaloonEntranceHotspotNamesES)},
+	{6190, {nullptr, nullptr, kBankHotspotNamesES, nullptr}, ARRAYSIZE(kBankHotspotNamesES)},
+	{6200, {nullptr, nullptr, kSheriffOfficeHotspotNamesES, nullptr}, ARRAYSIZE(kSheriffOfficeHotspotNamesES)},
+	{6210, {nullptr, nullptr, kCellHotspotNamesES, nullptr}, ARRAYSIZE(kCellHotspotNamesES)},
+	{6220, {nullptr, nullptr, kTownStreetHotspotNamesES, nullptr}, ARRAYSIZE(kTownStreetHotspotNamesES)},
+	{6226, {nullptr, nullptr, kTownBalconyHotspotNamesES, nullptr}, ARRAYSIZE(kTownBalconyHotspotNamesES)},
+	{6240, {nullptr, nullptr, kSaloonHotspotNamesES, nullptr}, ARRAYSIZE(kSaloonHotspotNamesES)},
+	{6250, {nullptr, nullptr, kBankBasementHotspotNamesES, nullptr}, ARRAYSIZE(kBankBasementHotspotNamesES)},
+	{6260, {nullptr, nullptr, kLocomotiveHotspotNamesES, nullptr}, ARRAYSIZE(kLocomotiveHotspotNamesES)},
+	{6263, {nullptr, nullptr, kLocomotiveCabHotspotNamesES, nullptr}, ARRAYSIZE(kLocomotiveCabHotspotNamesES)},
+	{6280, {nullptr, nullptr, kCraterFloorHotspotNamesES, nullptr}, ARRAYSIZE(kCraterFloorHotspotNamesES)},
+	{6290, {nullptr, nullptr, kJoshuaCampHotspotNamesES, nullptr}, ARRAYSIZE(kJoshuaCampHotspotNamesES)},
+	{6300, {nullptr, nullptr, kWorkshopHotspotNamesES, nullptr}, ARRAYSIZE(kWorkshopHotspotNamesES)},
+	{6350, {nullptr, nullptr, kTownMapHotspotNamesES, nullptr}, ARRAYSIZE(kTownMapHotspotNamesES)}
 };
 
 } // End of anonymous namespace
@@ -358,6 +497,9 @@ Common::U32String RunawayStrings::itemName(byte chapter, byte item) const {
 	}
 	if (chapter == 3 && item < ARRAYSIZE(kCabinItemNames)) {
 		return localize(kCabinItemNames[item]);
+	}
+	if (chapter == 4 && item < ARRAYSIZE(kTownItemNames)) {
+		return localize(kTownItemNames[item]);
 	}
 	return Common::U32String();
 }

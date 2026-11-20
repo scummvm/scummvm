@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene6240.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -135,10 +136,10 @@ void Scene6240::setupActorDepth(RunawayActor::RenderParams &params) const {
 
 Common::U32String Scene6240::hotspotName(byte id) const {
 	if (id == 5 && _town.gardeningShed) {
-		return Common::U32String("Gardening shed");
+		return _strings.hotspotName(_room, 10, "Gardening shed");
 	}
 	if (id == 7 && _town.carnivorousPlantSeen) {
-		return Common::U32String("Meat-eating plant");
+		return _strings.hotspotName(_room, 9, "Meat-eating plant");
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

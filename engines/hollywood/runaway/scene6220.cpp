@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene6220.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -165,7 +166,7 @@ void Scene6220::setupActorDepth(RunawayActor::RenderParams &params) const {
 
 Common::U32String Scene6220::hotspotName(byte id) const {
 	if (id == 8 && _town.strapSeen == 1) {
-		return Common::U32String("Strap");
+		return _strings.itemName(4, 11);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

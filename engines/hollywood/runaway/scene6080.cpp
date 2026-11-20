@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene6080.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -139,7 +140,7 @@ float Scene6080::actorHeight() const {
 
 Common::U32String Scene6080::hotspotName(byte id) const {
 	if (id == 2 && _town.oilCan) {
-		return Common::U32String("Oil can");
+		return _strings.hotspotName(_room, 8, "Oil can");
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

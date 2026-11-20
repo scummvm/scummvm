@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene6350.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -100,10 +101,13 @@ bool Scene6350::shouldUpdateActor() const {
 
 Common::U32String Scene6350::hotspotName(byte id) const {
 	if (id == 2 && _town.arrived) {
-		return Common::U32String("Douglasville");
+		return _strings.hotspotName(_room, 7, "Douglasville");
 	}
 	if (id == 3 && _town.houseVisited) {
-		return Common::U32String("Mama Dorita's house");
+		return _strings.hotspotName(_room, 8, "Mama Dorita's house");
+	}
+	if (id == 4 && (_town.craterSeen || _town.craterVisited)) {
+		return _strings.hotspotName(_room, 9, "Crater");
 	}
 	return RunawayRoomScene::hotspotName(id);
 }
@@ -126,6 +130,7 @@ RunawayRoomScene::ActionResult Scene6350::dispatchCustomSceneAction(uint16 actio
 		leaveTownRoom(6130);
 		break;
 	case 304: // Go to the crater.
+		_town.craterSeen = 1;
 		leaveTownRoom(6270);
 		break;
 	case 306: // Go to the locomotive.

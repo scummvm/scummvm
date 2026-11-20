@@ -48,7 +48,9 @@ public:
 		kAnthropologyBooks, kDocuments, kAlteredLaser, kVarnishBriefcase, kWilly,
 		kMayanBowlsAndJars, kExhibitBucket, kTeapot, kExhibitBowl,
 		kThermalChamber, kKey, kNitrogenTank, kElectronMicroscope,
-		kMakeshiftBullet, kPileOfMakeshiftBullets, kTextCount
+		kMakeshiftBullet, kPileOfMakeshiftBullets,
+		kMendedStrap, kBottleWithWater, kBottleWithGasoline, kFilledMeasuringTube,
+		kPolishedStone, kStoneOfLight, kMakeshiftMortar, kSteamOutletLever, kPressureWheel, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) :
 		_languageIndex(language == Common::DE_DEU ? 0 : language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : 3) {}

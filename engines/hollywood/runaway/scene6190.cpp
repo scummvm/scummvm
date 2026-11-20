@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene6190.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -106,7 +107,7 @@ void Scene6190::runCustomEntrySequence() {
 
 Common::U32String Scene6190::hotspotName(byte id) const {
 	if (id == 2 && _town.catapult == 3) {
-		return Common::U32String("Entrance to the basement");
+		return _strings.hotspotName(_room, 9, "Entrance to the basement");
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

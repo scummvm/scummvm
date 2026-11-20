@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene6226.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -111,7 +112,7 @@ bool Scene6226::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 
 Common::U32String Scene6226::hotspotName(byte id) const {
 	if (id == 5 && _town.sandingBlock == kIdentified) {
-		return Common::U32String("Sanding block");
+		return _strings.hotspotName(_room, 6, "Sanding block");
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

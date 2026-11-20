@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene6300.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -314,10 +315,13 @@ bool Scene6300::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 
 Common::U32String Scene6300::hotspotName(byte id) const {
 	if (id == 7 && _town.catapult) {
-		return Common::U32String("Catapult");
+		return _strings.hotspotName(_room, 17, "Catapult");
+	}
+	if (id == 8 && _town.catapult) {
+		return _strings.hotspotName(_room, 18, "Catapult lever");
 	}
 	if (id == 15 && _town.fuelTradeKnown) {
-		return Common::U32String("Concentrated gasoline");
+		return _strings.hotspotName(_room, 19, "Concentrated gasoline");
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

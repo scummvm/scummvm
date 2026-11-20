@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene6290.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -220,7 +221,7 @@ void Scene6290::findWalkPath(Common::Point target) {
 
 Common::U32String Scene6290::hotspotName(byte id) const {
 	if (id == 11 && _town.machineKnown) {
-		return Common::U32String("Communication machine");
+		return _strings.hotspotName(_room, 14, "Communication machine");
 	}
 	return RunawayRoomScene::hotspotName(id);
 }
