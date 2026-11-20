@@ -21,7 +21,6 @@
 
 package org.scummvm.scummvm;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -76,9 +75,7 @@ public class MouseHelper implements View.OnHoverListener {
 
 	@Override
 	public boolean onHover(View view, MotionEvent motionEvent) {
-		//Log.d(ScummVM.LOG_TAG, "onHover mouseEvent");
-		return onMouseEvent(motionEvent, true);
-//		return false;
+		return onMouseEvent(motionEvent, true, false, 0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 //	public void attach(SurfaceView main_surface) {
@@ -86,20 +83,20 @@ public class MouseHelper implements View.OnHoverListener {
 //	}
 
 	// isTrackball is a subcase of isMouse (meaning isMouse will also return true)
-	public static boolean isTrackball(KeyEvent e) {
+	private static boolean isTrackball(KeyEvent e) {
 		if (e == null) {
 			return false;
 		}
 
 		int source = e.getSource();
-		return ((source & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) ||
-		       (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && ((source & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE));
+		return ((source & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL)
+		        || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && ((source & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE));
 
 
 	}
 
 	// isTrackball is a subcase of isMouse (meaning isMouse will also return true)
-	public static boolean isTrackball(MotionEvent e) {
+	private static boolean isTrackball(MotionEvent e) {
 		if (e == null) {
 			return false;
 		}
@@ -113,8 +110,8 @@ public class MouseHelper implements View.OnHoverListener {
 
 		int sources = device.getSources();
 
-		return ((sources & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) ||
-		       (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && ((sources & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE));
+		return ((sources & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL)
+		        || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && ((sources & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE));
 
 	}
 
@@ -122,7 +119,7 @@ public class MouseHelper implements View.OnHoverListener {
 	// from a stylus. To determine whether a given touch event was produced by a stylus, examine
 	// the tool type returned by MotionEvent#getToolType(int) for each individual pointer."
 	// https://developer.android.com/reference/android/view/InputDevice#SOURCE_STYLUS
-	public static boolean isStylus(MotionEvent e){
+	private static boolean isStylus(MotionEvent e){
 		if (e == null) {
 			return false;
 		}
@@ -144,12 +141,10 @@ public class MouseHelper implements View.OnHoverListener {
 
 		//Log.d(ScummVM.LOG_TAG, "isMouse keyEvent source: " + source);
 
-		// SOURCE_MOUSE_RELATIVE is sent when mouse is detected as trackball
-		// TODO: why does this happen? Do we need to also check for SOURCE_TRACKBALL here?
 		return ((source & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE)
 		        || ((source & InputDevice.SOURCE_STYLUS) == InputDevice.SOURCE_STYLUS)
 		        || ((source & InputDevice.SOURCE_TOUCHPAD) == InputDevice.SOURCE_TOUCHPAD)
-				||  isTrackball(e);
+		        ||  isTrackball(e);
 	}
 
 	public static boolean isMouse(MotionEvent e) {
@@ -169,103 +164,108 @@ public class MouseHelper implements View.OnHoverListener {
 		// TODO: why does this happen? Do we need to also check for SOURCE_TRACKBALL here?
 		// TODO: should these all be checks against TOOL_TYPEs instead of SOURCEs?
 		return ((sources & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE)
-		       || ((sources & InputDevice.SOURCE_TOUCHPAD) == InputDevice.SOURCE_TOUCHPAD)
-		       ||  isStylus(e)
-		       ||  isTrackball(e);
+		        || ((sources & InputDevice.SOURCE_TOUCHPAD) == InputDevice.SOURCE_TOUCHPAD)
+		        ||  isStylus(e)
+		        ||  isTrackball(e);
 	}
 
-	private boolean handleButton(MotionEvent e, boolean mbPressed, int mask, int downEvent, int upEvent) {
+
+	private static boolean isMbDown(MotionEvent e, int mask, boolean hover) {
 		boolean mbDown = (e.getButtonState() & mask) == mask;
-		if ((e.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE
-		    && (e.getButtonState() & MotionEvent.BUTTON_BACK) == MotionEvent.BUTTON_BACK) {
+
+		if (!hover && e.getActionMasked() != MotionEvent.ACTION_UP && e.getButtonState() == 0) {
+			// On some device types, ButtonState is 0 even when tapping on the touch-pad or using the stylus on the screen etc.
+			mbDown = (mask == MotionEvent.BUTTON_PRIMARY);
+		} else if (isMouse(e) && (e.getButtonState() & MotionEvent.BUTTON_BACK) == MotionEvent.BUTTON_BACK) {
 			mbDown = (mask == MotionEvent.BUTTON_SECONDARY);
 		}
+		return mbDown;
+	}
+
+	private boolean handleButton(MotionEvent e, boolean hover, boolean mbPressed, int mask, int downEvent, int upEvent, int hoverPosX, int hoverPosY) {
+		boolean mbDown = isMbDown(e, mask, hover);
 
 		if (mbDown) {
 			if (!mbPressed) {
 				// mouse button was pressed just now
 				//Log.d(ScummVM.LOG_TAG, "handleButton mbDown, not mbPressed, mask = " + mask);
-				_scummvm.pushEvent(downEvent, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
+				_scummvm.pushEvent(downEvent, hoverPosX, hoverPosY, e.getButtonState(), 0, 0, 0);
 			}
-
 			return true;
 		} else {
 			if (mbPressed) {
 				//Log.d(ScummVM.LOG_TAG, "handleButton not mbDown, mbPressed, mask = " + mask);
 				// mouse button was released just now
-				_scummvm.pushEvent(upEvent, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
+				_scummvm.pushEvent(upEvent, hoverPosX, hoverPosY, e.getButtonState(), 0, 0, 0);
 			}
-
 			return false;
 		}
 	}
 
-	@SuppressLint("InlinedApi")
-	public boolean onMouseEvent(MotionEvent e, boolean hover) {
+	public boolean onMouseEvent(MotionEvent e, boolean hover, boolean capturedPointer, float cPosX, float cPosY, float cOffsetX, float cOffsetY) {
+		//Log.d(ScummVM.LOG_TAG, "onMouseEvent hover: " + hover + " capturedPointer: " + capturedPointer);
+		int hoverPosX = 0;
+		int hoverPosY = 0;
+		int capturedRelPosX = 0;
+		int capturedRelPosY = 0;
+
+		if (e != null) {
+			if (capturedPointer) {
+				hoverPosX = (int) cPosX;
+				hoverPosY = (int) cPosY;
+				capturedRelPosX = (int) cOffsetX;
+				capturedRelPosY = (int) cOffsetY;
+			} else {
+				hoverPosX = (int) e.getX();
+				hoverPosY = (int) e.getY();
+			}
+		}
 
 		_scummvm.pushEvent(ScummVMEvents.JE_MOUSE_MOVE,
-			(int) e.getX(),
-			(int) e.getY(),
-			0,
-			0, 0, 0);
+		                   hoverPosX,
+		                   hoverPosY,
+		                   capturedRelPosX,
+		                   capturedRelPosY,
+		                   0, 0);
 
-		if (e.getActionMasked() == MotionEvent.ACTION_SCROLL) {
-			// The call is coming from ScummVMEvents, from a GenericMotionEvent (scroll wheel movement)
-			// TODO Do we want the JE_MOUSE_MOVE event too in this case?
-			int eventJEWheelUpDown = ScummVMEvents.JE_MOUSE_WHEEL_UP;
-			if (e.getAxisValue(MotionEvent.AXIS_VSCROLL) < 0.0f) {
-				eventJEWheelUpDown = ScummVMEvents.JE_MOUSE_WHEEL_DOWN;
-			}
-			//Log.d(ScummVM.LOG_TAG, "onMouseEvent Wheel Up/Down = " + eventJEWheelUpDown);
-			_scummvm.pushEvent(eventJEWheelUpDown,
-			(int) e.getX(),
-			(int) e.getY(),
-			0,
-			0, 0, 0);
-		} else {
-
-			int buttonState = e.getButtonState();
-
-			//Log.d(ScummVM.LOG_TAG, "onMouseEvent buttonState = " + buttonState);
-
-			boolean lmbDown = (buttonState & MotionEvent.BUTTON_PRIMARY) == MotionEvent.BUTTON_PRIMARY;
-
-			if (!hover && e.getActionMasked() != MotionEvent.ACTION_UP && buttonState == 0) {
-				// On some device types, ButtonState is 0 even when tapping on the touch-pad or using the stylus on the screen etc.
-				lmbDown = true;
-			}
-
-			if (lmbDown) {
-				if (!_lmbPressed) {
-					// left mouse button was pressed just now
-					_scummvm.pushEvent(ScummVMEvents.JE_LMB_DOWN, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
+		if (e != null) {
+			if (e.getActionMasked() == MotionEvent.ACTION_SCROLL) {
+				// The call is coming from ScummVMEvents, from a GenericMotionEvent (scroll wheel movement)
+				float vScroll = e.getAxisValue(MotionEvent.AXIS_VSCROLL);
+				if (vScroll > 0.0f) {
+					//Log.d(ScummVM.LOG_TAG, "onMouseEvent Wheel Up);
+					_scummvm.pushEvent(ScummVMEvents.JE_MOUSE_WHEEL_UP,
+					                   hoverPosX,
+					                   hoverPosY,
+					                   0,
+					                   0, 0, 0);
+				} else if (vScroll < 0.0f) {
+					//Log.d(ScummVM.LOG_TAG, "onMouseEvent Wheel Down);
+					_scummvm.pushEvent(ScummVMEvents.JE_MOUSE_WHEEL_DOWN,
+					                   hoverPosX,
+					                   hoverPosY,
+					                   0,
+					                   0, 0, 0);
 				}
-
-				_lmbPressed = true;
 			} else {
-				if (_lmbPressed) {
-					// left mouse button was released just now
-					_scummvm.pushEvent(ScummVMEvents.JE_LMB_UP, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
+				//Log.d(ScummVM.LOG_TAG, "onMouseEvent buttonState = " + buttonState);
+
+				_lmbPressed = handleButton(e, hover, _lmbPressed, MotionEvent.BUTTON_PRIMARY, ScummVMEvents.JE_LMB_DOWN, ScummVMEvents.JE_LMB_UP, hoverPosX, hoverPosY);
+				_rmbPressed = handleButton(e, hover, _rmbPressed, MotionEvent.BUTTON_SECONDARY, ScummVMEvents.JE_RMB_DOWN, ScummVMEvents.JE_RMB_UP, hoverPosX, hoverPosY);
+				_mmbPressed = handleButton(e, hover, _mmbPressed, MotionEvent.BUTTON_TERTIARY, ScummVMEvents.JE_MMB_DOWN, ScummVMEvents.JE_MMB_UP, hoverPosX, hoverPosY);
+				_bmbPressed = handleButton(e, hover, _bmbPressed, MotionEvent.BUTTON_BACK, ScummVMEvents.JE_BMB_DOWN, ScummVMEvents.JE_BMB_UP, hoverPosX, hoverPosY);
+				_fmbPressed = handleButton(e, hover, _fmbPressed, MotionEvent.BUTTON_FORWARD, ScummVMEvents.JE_FMB_DOWN, ScummVMEvents.JE_FMB_UP, hoverPosX, hoverPosY);
+
+				// Lint warning for BUTTON_STYLUS... "
+				//  Field requires API level 23 (current min is 16): android.view.MotionEvent#BUTTON_STYLUS_PRIMARY"
+				//  Field requires API level 23 (current min is 16): android.view.MotionEvent#BUTTON_STYLUS_SECONDARY"
+				// https://stackoverflow.com/a/48588149
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					_srmbPressed = handleButton(e, hover, _srmbPressed, MotionEvent.BUTTON_STYLUS_PRIMARY, ScummVMEvents.JE_RMB_DOWN, ScummVMEvents.JE_RMB_UP, hoverPosX, hoverPosY);
+					_smmbPressed = handleButton(e, hover, _smmbPressed, MotionEvent.BUTTON_STYLUS_SECONDARY, ScummVMEvents.JE_MMB_DOWN, ScummVMEvents.JE_MMB_UP, hoverPosX, hoverPosY);
 				}
-
-				_lmbPressed = false;
 			}
-
-			_rmbPressed = handleButton(e, _rmbPressed, MotionEvent.BUTTON_SECONDARY, ScummVMEvents.JE_RMB_DOWN, ScummVMEvents.JE_RMB_UP);
-			_mmbPressed = handleButton(e, _mmbPressed, MotionEvent.BUTTON_TERTIARY, ScummVMEvents.JE_MMB_DOWN, ScummVMEvents.JE_MMB_UP);
-			_bmbPressed = handleButton(e, _bmbPressed, MotionEvent.BUTTON_BACK, ScummVMEvents.JE_BMB_DOWN, ScummVMEvents.JE_BMB_UP);
-			_fmbPressed = handleButton(e, _fmbPressed, MotionEvent.BUTTON_FORWARD, ScummVMEvents.JE_FMB_DOWN, ScummVMEvents.JE_FMB_UP);
-			// Lint warning for BUTTON_STYLUS... "
-			//  Field requires API level 23 (current min is 16): android.view.MotionEvent#BUTTON_STYLUS_PRIMARY"
-			//  Field requires API level 23 (current min is 16): android.view.MotionEvent#BUTTON_STYLUS_SECONDARY"
-			// We suppress it:
-			//
-			// https://stackoverflow.com/a/48588149
-			_srmbPressed = handleButton(e, _srmbPressed, MotionEvent.BUTTON_STYLUS_PRIMARY, ScummVMEvents.JE_RMB_DOWN, ScummVMEvents.JE_RMB_UP);
-			_smmbPressed = handleButton(e, _smmbPressed, MotionEvent.BUTTON_STYLUS_SECONDARY, ScummVMEvents.JE_MMB_DOWN, ScummVMEvents.JE_MMB_UP);
 		}
 		return true;
 	}
-
-
 }
