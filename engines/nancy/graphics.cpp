@@ -884,13 +884,22 @@ static bool hasByteChannels(const Graphics::PixelFormat &format) {
 // its components and back, which made the canvases of Nancy32's snow, as large
 // as the viewport and nearly all transparent, slow to draw; this one skips the
 // transparent pixels at once.
+// The pixels of a color key get left out too. blitFrom would treat the black
+// pixels of the target as transparent as well, as black is its color key from
+// Nancy16 on, and draw partly transparent pixels onto them at full strength.
 static bool blitAlpha32(Graphics::ManagedSurface &target, const Graphics::ManagedSurface &src, const Common::Rect &source, const Common::Rect &dest) {
 	const Graphics::PixelFormat &srcFormat = src.format;
 	const Graphics::PixelFormat &destFormat = target.format;
 	if (!hasByteChannels(srcFormat) || srcFormat.aBits() != 8 || !hasByteChannels(destFormat) ||
-			source.width() != dest.width() || source.height() != dest.height() || src.hasTransparentColor()) {
+			source.width() != dest.width() || source.height() != dest.height()) {
 		return false;
 	}
+
+	// The key is matched by its color alone, whatever its alpha, as blitFrom does.
+	// A key of 0 is a black that is fully transparent, which the alpha leaves out.
+	const uint32 colorMask = srcFormat.ARGBToColor(0, 0xFF, 0xFF, 0xFF);
+	const bool hasKey = src.hasTransparentColor() && src.getTransparentColor() != 0;
+	const uint32 key = src.getTransparentColor() & colorMask;
 
 	Common::Rect clipped = dest.findIntersectingRect(Common::Rect(target.w, target.h));
 	if (clipped.isEmpty()) {
@@ -909,7 +918,7 @@ static bool blitAlpha32(Graphics::ManagedSurface &target, const Graphics::Manage
 		for (int x = 0; x < clipped.width(); ++x) {
 			const uint32 color = srcRow[x];
 			const uint32 alpha = (color >> srcFormat.aShift) & 0xFF;
-			if (alpha == 0) {
+			if (alpha == 0 || (hasKey && (color & colorMask) == key)) {
 				continue;
 			}
 
