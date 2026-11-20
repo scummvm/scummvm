@@ -24,8 +24,6 @@
 #include "audio/mixer.h"
 #include "common/util.h"
 
-#include <math.h>
-
 namespace Scooby {
 
 namespace {
