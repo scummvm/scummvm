@@ -305,7 +305,8 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter) {
 }
 
 Common::Error RunawayEngine::startChapter(RunawayMenu &menu, byte chapter) {
-	const uint16 entry = chapter == 2 ? 4010 : chapter == 4 ? 6350 : chapter == 5 ? 7010 : 5030;
+	const uint16 entry = chapter == 2 ? 4010 : chapter == 4 ? 6350 :
+		chapter == 5 ? 7010 : chapter == 6 ? 8100 : 5030;
 	Common::ScopedPtr<RunawayScene> scene(createScene(entry));
 	if (!scene || !scene->load(entry) || !_ui->loadChapter(chapter))
 		return Common::Error(Common::kReadingFailed, "Cannot load Runaway chapter resources");
@@ -335,14 +336,17 @@ Common::Error RunawayEngine::run() {
 		_state.scene = ConfMan.getInt("boot_param");
 	if (_game == kRunawayFullGame && ConfMan.hasKey("boot_param")) {
 		const int scene = ConfMan.getInt("boot_param");
-		if (scene == 4000)
+		if (scene == 4000) {
 			_state.scene = 4010;
-		else if (scene == 6000)
+		} else if (scene == 6000) {
 			_state.scene = 6350;
-		else if (scene == 7000)
+		} else if (scene == 7000) {
 			_state.scene = 7010;
-		else if (scene == 5030 || findRunawayRoom(scene))
+		} else if (scene == 8000) {
+			_state.scene = 8100;
+		} else if (scene == 5030 || findRunawayRoom(scene)) {
 			_state.scene = scene;
+		}
 	}
 	_inventory->setChapter(_state.chapter());
 	_audio.setChapter(_state.chapter());
@@ -371,7 +375,8 @@ Common::Error RunawayEngine::run() {
 		const Common::Error result = playIntro(menu);
 		if (result.getCode() != Common::kNoError || shouldQuit())
 			return result;
-	} else if (_game == kRunawayFullGame && (_state.scene == 4010 || _state.scene == 6350 || _state.scene == 7010)) {
+	} else if (_game == kRunawayFullGame && (_state.scene == 4010 || _state.scene == 6350 ||
+			_state.scene == 7010 || _state.scene == 8100)) {
 		const Common::Error result = playIntro(menu, _state.chapter());
 		if (result.getCode() != Common::kNoError || shouldQuit())
 			return result;
@@ -506,7 +511,8 @@ Common::Error RunawayEngine::run() {
 		// animation frames and subtitle deadlines in sync with paused audio.
 		_scene->update(now, _ui->inventoryOpen() || sceneBusy() ? 0 : direction, _ui->inventoryOpen());
 		if (_scene->transition().scene) {
-			const Common::Error result = changeScene();
+			// Brian brings Gina to Oscar before the chapter-six narration (8000).
+			const Common::Error result = _state.scene == 8092 ? startChapter(menu, 6) : changeScene();
 			if (result.getCode() != Common::kNoError)
 				return result;
 			leftPressed = rightPressed = false;

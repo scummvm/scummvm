@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "hollywood/runaway/presentation.h"
 #include "hollywood/runaway/scene8090.h"
 
 namespace Hollywood {
@@ -64,6 +65,9 @@ Scene8090::Scene8090(RunawayAudio &audio, RunawayInventory &inventory, const Run
 	RunawayRoomScene(audio, inventory, strings, game), _oscar(true, 6) {}
 
 bool Scene8090::loadCustomResources() {
+	if (_entryScene == 8092 && !_carryingGina.load(_archive, 10, 7)) {
+		return false;
+	}
 	return _oscarAnimation.load(_archive, 7, 113) && loadForeground(0, 4);
 }
 
@@ -97,6 +101,10 @@ void Scene8090::runCustomEntrySequence() {
 		_finale.ginaVisitPending = 0;
 		returnFromHouse();
 		break;
+	case 8092: // Bring the injured Gina to Mama Dorita after leaving the village.
+		_arrivalPhase = kArrivalWait;
+		_arrivalStarted = _now;
+		break;
 	case 8093: // Oscar returns armed, ready to confront the gangsters.
 		_position = Common::Point(676, 510);
 		_walkPath.reset(_position);
@@ -118,13 +126,94 @@ void Scene8090::runCustomEntrySequence() {
 }
 
 void Scene8090::resumeAmbientAudio(bool entering) {
+	if (_entryScene == 8092) {
+		// This arrival still uses chapter five's voices and effects.
+		_audio.setChapter(5);
+		_audio.stopMusic();
+		_audio.stopEffect();
+		return;
+	}
 	resumeFinaleOutdoorAudio(entering, 40, 26);
 }
 
 void Scene8090::advanceCustomGameplayLoop(uint32 delta) {
+	if (_entryScene == 8092) {
+		return;
+	}
 	updateFinaleOutdoorAudio(102);
 	if (!_finale.oscarAway && !_animatesOscar && !_oscarPose) {
 		_oscar.update(_now, _random, _audio);
+	}
+}
+
+bool Scene8090::updateCustomSequence() {
+	switch (_arrivalPhase) {
+	case kArrivalWait:
+		if (_now - _arrivalStarted >= 2500) {
+			say(0, 20);
+			say(0, 21, false, 1);
+			_arrivalPhase = kArrivalSpeech;
+		}
+		return true;
+	case kArrivalSpeech: {
+		if (speaking()) {
+			return true;
+		}
+		byte frames[34] = {};
+		for (uint i = 1; i < ARRAYSIZE(frames); ++i) {
+			frames[i] = i - 1;
+		}
+		_curtainOpen = true;
+		if (!rebuildBackground()) {
+			error("Cannot restore Runaway house entrance");
+		}
+		beginRoomAnimation(440, 11, 33, frames, ARRAYSIZE(frames), true, 80);
+		_arrivalPhase = kArrivalCurtain;
+		break;
+	}
+	case kArrivalFadeOut:
+		if (_now - _arrivalStarted < 500) {
+			return true;
+		}
+		leaveRoom(8100);
+		break;
+	default:
+		break;
+	}
+	return false;
+}
+
+bool Scene8090::drawCustomComposite(Graphics::ManagedSurface &viewport) {
+	if (_entryScene != 8092) {
+		return false;
+	}
+	if (drawingRoomAnimation()) {
+		_actionAnimation.draw(viewport, _actionFrames[_actionStep], 0, 0);
+	} else if (_arrivalPhase == kArrivalFadeOut) {
+		_actionAnimation.draw(viewport, 32, 0, 0);
+	} else {
+		_oscarAnimation.draw(viewport, 107 + (speaker() ? speechFrame() % 6 : 0), 0, 0);
+	}
+	_carryingGina.draw(viewport, speaking() && !speaker() ? speechFrame() % 6 : 0, 0, 0);
+	if (_arrivalPhase == kArrivalWait) {
+		dimRunawayViewport(_screen, MIN<uint>(500, _now - _arrivalStarted), 500);
+	} else if (_arrivalPhase == kArrivalFadeOut) {
+		dimRunawayViewport(_screen, 500 - MIN<uint>(500, _now - _arrivalStarted), 500);
+	}
+	return true;
+}
+
+void Scene8090::handleAnimationFrameHook() {
+	if (_roomAction == 440 && _actionStep == 14) {
+		_audio.playEffect(27, 230);
+	}
+}
+
+void Scene8090::skipVideo() {
+	if (_entryScene == 8092) {
+		skipSpeech();
+	} else {
+		RunawayRoomScene::skipVideo();
 	}
 }
 
@@ -317,6 +406,10 @@ RunawayRoomScene::ActionResult Scene8090::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 434: // Meet Sushi after Oscar's instructions.
 		leaveRoom(8374);
+		break;
+	case 1440: // Fade out once Oscar opens the curtain for Gina.
+		_arrivalPhase = kArrivalFadeOut;
+		_arrivalStarted = _now;
 		break;
 	default:
 		return kUnhandled;

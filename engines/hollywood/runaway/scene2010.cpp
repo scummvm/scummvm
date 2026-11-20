@@ -101,7 +101,7 @@ uint RunawayOpening::narrationVariations() const {
 	if (_narrationCue) {
 		return _narrationCue == 8 ? 4 : 2;
 	}
-	return _chapter == 2 ? 2 : _chapter == 3 ? 5 : _chapter == 4 || _chapter == 5 ? 4 : 1;
+	return _chapter == 2 ? 2 : _chapter == 3 ? 5 : _chapter == 4 || _chapter == 5 ? 4 : _chapter == 6 ? 3 : 1;
 }
 
 void RunawayOpening::start(uint32 now) {
@@ -249,6 +249,9 @@ void RunawayOpening::enter(Step step, uint32 now) {
 		} else if (_chapter == 5) {
 			_bodyFrame = _chapterVariation ? 20 : 50;
 			_headBank = _chapterVariation ? 1 : 2;
+		} else if (_chapter == 6) {
+			_bodyFrame = _chapterVariation == 1 ? 177 : 20;
+			_headBank = _chapterVariation == 1 ? 5 : 1;
 		}
 		speak(_narrationCue ? _narrationCue : _chapter, _chapterVariation);
 		break;
@@ -268,6 +271,9 @@ void RunawayOpening::enter(Step step, uint32 now) {
 		} else if (_chapter == 2) {
 			_firstFrame = 128;
 			_lastFrame = 160;
+		} else if (_chapter == 6) {
+			_firstFrame = _chapterVariation == 1 ? 161 : 177;
+			_lastFrame = _chapterVariation == 1 ? 177 : 161;
 		} else if (_chapter == 5) {
 			if (_chapterVariation == 1) {
 				_firstFrame = 51;

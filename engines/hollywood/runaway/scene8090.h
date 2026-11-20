@@ -31,8 +31,13 @@ namespace Runaway {
 class Scene8090 : public RunawayRoomScene {
 public:
 	Scene8090(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	bool busy() const override { return _entryScene == 8092 || RunawayRoomScene::busy(); }
+	bool playingVideo() const override { return _entryScene == 8092 || RunawayRoomScene::playingVideo(); }
+	void skipVideo() override;
 
 private:
+	enum ArrivalPhase { kNoArrival, kArrivalWait, kArrivalSpeech, kArrivalCurtain, kArrivalFadeOut };
+
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
@@ -40,6 +45,9 @@ private:
 	void runCustomEntrySequence() override;
 	void resumeAmbientAudio(bool entering) override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
+	bool updateCustomSequence() override;
+	bool drawCustomComposite(Graphics::ManagedSurface &viewport) override;
+	void handleAnimationFrameHook() override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
 	float actorHeight() const override;
@@ -58,7 +66,9 @@ private:
 	void setOscarPose(uint chunk, uint frames, byte pose);
 
 	OscarAnimation _oscar;
-	RunawayAnimation _oscarAnimation, _oscarPoseAnimation;
+	RunawayAnimation _oscarAnimation, _oscarPoseAnimation, _carryingGina;
+	ArrivalPhase _arrivalPhase = kNoArrival;
+	uint32 _arrivalStarted = 0;
 	byte _oscarPose = 0, _oscarMouth = 0;
 	bool _animatesOscar = false, _curtainOpen = false, _visitingGina = false;
 	uint16 _houseDestination = 8100;

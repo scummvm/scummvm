@@ -236,7 +236,7 @@ const RunawayRoom *findRunawayRoom(uint16 number) {
 		number = 7020;
 	} else if (number == 7031) {
 		number = 7030;
-	} else if (number == 8091 || number == 8093 || number == 8094) {
+	} else if (number >= 8091 && number <= 8094) {
 		number = 8090;
 	} else if (number >= 8101 && number <= 8103) {
 		number = 8100;

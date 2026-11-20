@@ -407,7 +407,7 @@ void Scene7020::handleAnimationFrameHook() {
 
 void Scene7020::finishCustomFilm() {
 	if (_hopi.legSplinted) {
-		_chapterComplete = true;
+		leaveRoom(8092);
 		return;
 	}
 	_hopi.ginaFound = 1;
