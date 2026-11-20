@@ -22,62 +22,11 @@
 #include "scooby/compression/ring_lz_decoder.h"
 
 #include "common/array.h"
+#include "common/bitstream.h"
 
 namespace Scooby {
 namespace {
 const int kWindowSize = 0x1000;
-
-class BitReader {
-public:
-	// Continues after the eagerly loaded first descriptor block.
-	BitReader(const ScoobyDooRom &rom, int sourceOffset, uint32 initialBits,
-			  int initialBitCount)
-		: _rom(rom), _sourceOffset(sourceOffset), _currentBits(initialBits),
-		  _bitsRemaining(initialBitCount) {
-	}
-
-	// Consumes one MSB-first field without imposing byte alignment between
-	// fields.
-	int read(int bitCount) {
-		int value = 0;
-		for (int bit = 0; bit < bitCount; ++bit) {
-			if (_bitsRemaining == 0) {
-				_currentBits = uint32(_rom.readByte(_sourceOffset++)) << 24;
-				_bitsRemaining = 8;
-			}
-
-			value = (value << 1) | static_cast<int>(_currentBits >> 31);
-			_currentBits <<= 1;
-			_bitsRemaining--;
-		}
-
-		return value;
-	}
-
-private:
-	const ScoobyDooRom &_rom;
-	int _sourceOffset;
-	uint32 _currentBits;
-	int _bitsRemaining;
-};
-
-struct InitializedBlock {
-	BitReader reader;
-	int writeOffset;
-};
-
-// Ghidra: InitializeRingLzBlock (0x000098F8). Starts a compressed block with
-// its first descriptor longword and ring cursor.
-InitializedBlock initializeRingLzBlock(const ScoobyDooRom &rom, int sourceOffset) {
-	const int initialBitCount = 32;
-	const int initialWriteOffset = 1;
-	uint32 initialBits = rom.readUInt32(sourceOffset);
-
-	BitReader reader(rom, sourceOffset + static_cast<int>(sizeof(uint32)), initialBits,
-					 initialBitCount);
-	InitializedBlock block = {reader, initialWriteOffset};
-	return block;
-}
 } // namespace
 
 Common::Array<uint8> decompressRingLz(const ScoobyDooRom &rom, int sourceOffset) {
@@ -85,9 +34,14 @@ Common::Array<uint8> decompressRingLz(const ScoobyDooRom &rom, int sourceOffset)
 	Common::fill(window.begin(), window.end(), 0);
 	Common::Array<uint8> output;
 
-	InitializedBlock block = initializeRingLzBlock(rom, sourceOffset);
-	BitReader reader = block.reader;
-	int writeOffset = block.writeOffset;
+	// Ghidra: InitializeRingLzBlock (0x000098F8). The original loads the first descriptor longword eagerly and
+	// then refills one byte at a time; because that longword is big-endian and every field is consumed MSB
+	// first, the block is a single MSB-first bit stream over the bytes starting at sourceOffset. Fields are
+	// not byte-aligned. The ring cursor starts at index one.
+	Span<const uint8> source = rom.readBytes(sourceOffset, rom.size() - sourceOffset);
+	Common::BitStreamMemoryStream sourceStream(source.data(), static_cast<uint32>(source.size()));
+	Common::BitStreamMemory8MSB reader(&sourceStream);
+	int writeOffset = 1;
 
 	auto writeByte = [&](uint8 value) {
 		output.push_back(value);
@@ -96,17 +50,17 @@ Common::Array<uint8> decompressRingLz(const ScoobyDooRom &rom, int sourceOffset)
 	};
 
 	while (true) {
-		if (reader.read(1) != 0) {
-			writeByte(static_cast<uint8>(reader.read(8)));
+		if (reader.getBit() != 0) {
+			writeByte(static_cast<uint8>(reader.getBits<8>()));
 			continue;
 		}
 
-		int copyOffset = reader.read(12);
+		int copyOffset = static_cast<int>(reader.getBits<12>());
 		if (copyOffset == 0) {
 			return output;
 		}
 
-		int copyLength = reader.read(4) + 2;
+		int copyLength = static_cast<int>(reader.getBits<4>()) + 2;
 		for (int index = 0; index < copyLength; ++index) {
 			writeByte(window[static_cast<size_t>((copyOffset + index) & (kWindowSize - 1))]);
 		}
