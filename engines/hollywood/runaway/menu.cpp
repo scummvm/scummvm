@@ -22,6 +22,7 @@
 #include "common/util.h"
 #include "graphics/cursorman.h"
 #include "hollywood/runaway/menu.h"
+#include "hollywood/resource.h"
 
 namespace Hollywood {
 namespace {
@@ -77,19 +78,45 @@ bool RunawayMenu::load(RunawayGameType game) {
 	_cursor.create(60, 60, kMenuFormat);
 	_cursor.copyRectToSurface(cursors, 0, 0, Common::Rect(60, 60));
 	_thumbnail.create(204, 120, kMenuFormat);
+	if (game == kRunawayFullGame) {
+		ChunkArchive archive;
+		if (!archive.open(Common::Path("RESOURCE.A03")) || !loadRunawaySurface(128, 700, 74, _optionsButton)) {
+			return false;
+		}
+		for (uint i = 0; i < ARRAYSIZE(_chapters); ++i) {
+			if (!loadRunawaySurface(archive, i, 204, 120, _chapters[i][1])) {
+				return false;
+			}
+			_chapters[i][0].create(204, 120, kMenuFormat);
+			_chapters[i][0].clear();
+			_chapters[i][0].transBlitFrom(_chapters[i][1], 0, false, 128);
+		}
+	}
 	return true;
 }
 
-void RunawayMenu::open(const Graphics::ManagedSurface &screen, const Settings &settings, bool canSave, bool canLoad) {
+void RunawayMenu::open(const Graphics::ManagedSurface &screen, const Settings &settings, bool canSave, bool canLoad, byte chapters) {
 	close();
+	_chapterCount = MIN<byte>(chapters, 6);
+	_selectedChapter = -1;
+	_optionsFrame = 0;
+	_mouse = Common::Point(-1, -1);
 	_settings = settings;
 	_settings.volume = CLIP(_settings.volume, 0, 256);
-	_canSave = canSave;
+	_canSave = canSave && !_chapterCount;
 	_canLoad = canLoad;
-	_page = kOptions;
+	_page = _chapterCount ? kChapters : kOptions;
 	_confirmation = kNoConfirmation;
 	_notice.clear();
 	_saves.clear();
+	captureThumbnail(screen);
+	const uint16 key = *(const uint16 *)_cursor.getPixels();
+	CursorMan.pushCursor(_cursor.getPixels(), 60, 60, 30, 30, key, &kMenuFormat);
+	_cursorPushed = true;
+	CursorMan.showMouse(true);
+}
+
+void RunawayMenu::captureThumbnail(const Graphics::ManagedSurface &screen) {
 	// The original options screen samples every fifth room pixel.
 	for (int y = 0; y < _thumbnail.h; ++y) {
 		uint16 *dst = (uint16 *)_thumbnail.getBasePtr(0, y);
@@ -97,10 +124,6 @@ void RunawayMenu::open(const Graphics::ManagedSurface &screen, const Settings &s
 		for (int x = 0; x < _thumbnail.w; ++x)
 			dst[x] = src[x * 5];
 	}
-	const uint16 key = *(const uint16 *)_cursor.getPixels();
-	CursorMan.pushCursor(_cursor.getPixels(), 60, 60, 30, 30, key, &kMenuFormat);
-	_cursorPushed = true;
-	CursorMan.showMouse(true);
 }
 
 void RunawayMenu::close() {
@@ -201,6 +224,9 @@ RunawayMenu::Control RunawayMenu::controlAt(Common::Point mouse) const {
 RunawayMenu::Command RunawayMenu::update(Common::Point mouse) {
 	if (mouse != _mouse && _page == kSaves && _confirmation == kNoConfirmation)
 		_focusedSave = saveAt(mouse);
+	if (mouse != _mouse && _page == kChapters) {
+		_selectedChapter = chapterAt(mouse);
+	}
 	_mouse = mouse;
 	if (_dragging == kVolume)
 		return adjustVolume(_dragValue + (mouse.x - _dragX) * 256 / 100 - _settings.volume);
@@ -208,6 +234,16 @@ RunawayMenu::Command RunawayMenu::update(Common::Point mouse) {
 }
 
 void RunawayMenu::tick(uint32 now) {
+	if (_page == kChapters) {
+		const int steps = MIN<uint>(5, now / 20 - _now / 20);
+		if (returnRect().contains(_mouse)) {
+			_optionsFrame = 6;
+		} else if (_mouse.y < kRunawayViewportTop) {
+			_optionsFrame = MIN<uint>(5, MIN<byte>(_optionsFrame, 5) + steps);
+		} else {
+			_optionsFrame = MAX<int>(0, MIN<byte>(_optionsFrame, 5) - steps);
+		}
+	}
 	_now = now;
 	if (_page == kCredits) {
 		_credits.update(now);
@@ -307,12 +343,20 @@ RunawayMenu::Command RunawayMenu::selectSave(int index) {
 RunawayMenu::Command RunawayMenu::click(bool right) {
 	if (right || _page == kCredits)
 		return cancel();
+	if (_page == kChapters) {
+		if (returnRect().contains(_mouse)) {
+			return cancel();
+		}
+		_selectedChapter = chapterAt(_mouse);
+		return _selectedChapter >= 0 ? kStartChapter : kNone;
+	}
 	_notice.clear();
 	if (_page == kSaves && _confirmation == kNoConfirmation && saveAt(_mouse) >= 0)
 		return selectSave(saveAt(_mouse));
 	const Control control = controlAt(_mouse);
 	switch (control) {
-	case kPlay: return _page == kOptions ? kResume : cancel();
+	case kPlay:
+		return cancel();
 	case kLoad: return kBrowseLoad;
 	case kSave: return kBrowseSave;
 	case kDelete: return kBrowseDelete;
@@ -363,10 +407,21 @@ RunawayMenu::Command RunawayMenu::cancel() {
 		_page = kSaves;
 		return kNone;
 	}
+	if (_page == kChapters) {
+		Graphics::ManagedSurface screen(kRunawayScreenWidth, kRunawayScreenHeight, kMenuFormat);
+		drawChapters(screen);
+		captureThumbnail(screen);
+		_page = kOptions;
+		return kNone;
+	}
 	if (_page != kOptions) {
 		_page = kOptions;
 		_audio.stopMusic();
 		CursorMan.showMouse(true);
+		return kNone;
+	}
+	if (_chapterCount) {
+		_page = kChapters;
 		return kNone;
 	}
 	return kResume;
@@ -386,8 +441,9 @@ RunawayMenu::Command RunawayMenu::key(uint32 ascii) {
 		if (ascii == _strings.text(RunawayStrings::kNo)[0])
 			return cancel();
 	} else if (_page == kOptions) {
-		if (ascii == _strings.text(RunawayStrings::kPlay)[0])
-			return kResume;
+		if (ascii == _strings.text(RunawayStrings::kPlay)[0]) {
+			return cancel();
+		}
 		if (ascii == _strings.text(RunawayStrings::kQuitKey)[0])
 			_confirmation = kConfirmExit;
 		else if (ascii == _strings.text(RunawayStrings::kLoad)[0] && _canLoad)
@@ -425,6 +481,33 @@ RunawayMenu::Command RunawayMenu::key(const Common::KeyState &keyState) {
 		return key(keyState.ascii);
 	}
 	if (_confirmation == kNoConfirmation) {
+		if (_page == kChapters) {
+			int next = MAX(0, _selectedChapter);
+			switch (keyState.keycode) {
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_UP:
+				--next;
+				break;
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_DOWN:
+				++next;
+				break;
+			case Common::KEYCODE_HOME:
+				next = 0;
+				break;
+			case Common::KEYCODE_END:
+				next = _chapterCount;
+				break;
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+			case Common::KEYCODE_SPACE:
+				return _selectedChapter >= 0 ? kStartChapter : kNone;
+			default:
+				return kNone;
+			}
+			_selectedChapter = CLIP(next, 0, (int)_chapterCount);
+			return kNone;
+		}
 		if (_page == kSaves && !_saves.empty()) {
 			int next = _focusedSave < 0 ? _firstSave : _focusedSave;
 			switch (keyState.keycode) {
@@ -451,8 +534,9 @@ RunawayMenu::Command RunawayMenu::key(const Common::KeyState &keyState) {
 		if (_page == kOptions) {
 			if (keyState.keycode == Common::KEYCODE_LEFT || keyState.keycode == Common::KEYCODE_RIGHT)
 				return adjust(keyState.keycode == Common::KEYCODE_LEFT ? -4 : 4);
-			if (keyState.keycode == Common::KEYCODE_RETURN || keyState.keycode == Common::KEYCODE_SPACE)
-				return kResume;
+			if (keyState.keycode == Common::KEYCODE_RETURN || keyState.keycode == Common::KEYCODE_SPACE) {
+				return cancel();
+			}
 		}
 	}
 	return key(keyState.ascii);
@@ -540,7 +624,53 @@ void RunawayMenu::drawSaves(Graphics::ManagedSurface &screen) {
 		_captionFont.drawChar(screen.surfacePtr(), 0xf0, 340, 385, controlAt(_mouse) == kNext ? kHighlight : kNormal);
 }
 
+Common::Rect RunawayMenu::chapterRect(uint chapter) const {
+	// Original scene 1000 centers its thumbnails according to the unlocked chapter.
+	static const Common::Point positions[6][7] = {
+		{{410, 150}, {410, 290}},
+		{{410, 150}, {298, 290}, {522, 290}},
+		{{410, 150}, {186, 290}, {410, 290}, {634, 290}},
+		{{410, 80}, {186, 220}, {410, 220}, {634, 220}, {410, 360}},
+		{{410, 80}, {186, 220}, {410, 220}, {634, 220}, {298, 360}, {522, 360}},
+		{{410, 80}, {186, 220}, {410, 220}, {634, 220}, {186, 360}, {410, 360}, {634, 360}}
+	};
+	assert(_chapterCount >= 1 && _chapterCount <= 6 && chapter <= _chapterCount);
+	const Common::Point position = positions[_chapterCount - 1][chapter];
+	return Common::Rect(position.x, position.y + kRunawayViewportTop, position.x + 204, position.y + kRunawayViewportTop + 120);
+}
+
+int RunawayMenu::chapterAt(Common::Point mouse) const {
+	for (uint i = 0; i <= _chapterCount; ++i) {
+		if (chapterRect(i).contains(mouse)) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+void RunawayMenu::drawChapters(Graphics::ManagedSurface &screen) {
+	screen.clear();
+	for (uint i = 0; i <= _chapterCount; ++i) {
+		const Common::Rect rect = chapterRect(i);
+		screen.blitFrom(_chapters[i][i == (uint)_selectedChapter], Common::Point(rect.left, rect.top));
+	}
+	screen.copyRectToSurface(_optionsButton, 612, 0, Common::Rect(_optionsFrame * 100, 0, (_optionsFrame + 1) * 100, 74));
+	Common::U32String caption;
+	if (returnRect().contains(_mouse)) {
+		caption = _strings.text(RunawayStrings::kOptions);
+	} else if (_selectedChapter == 0) {
+		caption = _strings.text(RunawayStrings::kPlayBeginning);
+	} else if (_selectedChapter > 0) {
+		caption = Common::U32String::format(_strings.text(RunawayStrings::kPlayChapter), _selectedChapter);
+	}
+	_captionFont.drawString(screen.surfacePtr(), caption, 0, 684, 1024, kNormal, Graphics::kTextAlignCenter);
+}
+
 void RunawayMenu::draw(Graphics::ManagedSurface &screen) {
+	if (_page == kChapters) {
+		drawChapters(screen);
+		return;
+	}
 	if (_page == kCredits) {
 		_credits.draw(screen);
 		return;

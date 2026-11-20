@@ -52,6 +52,7 @@ const RunawayResponse kGlobalResponses[] = {
 	{0, 23, 19, 1},
 	{0, 29, 23, 0},
 	{0, 30, 24, 0},
+	{0, 31, 25, 0},
 };
 
 } // End of anonymous namespace

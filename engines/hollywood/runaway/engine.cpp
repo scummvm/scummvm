@@ -78,6 +78,7 @@ void RunawayEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("runaway_antialias", true);
 	ConfMan.registerDefault("runaway_fast_scrolling", true);
 	ConfMan.registerDefault("runaway_pointer_sound", true);
+	ConfMan.registerDefault("runaway_last_chapter", 0);
 }
 
 RunawayMenu::Settings RunawayEngine::readSettings() const {
@@ -159,6 +160,7 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	syncSoundSettings();
 	_scene->resume();
 	_scene->draw();
+	unlockChapter(state.chapter());
 	return Common::kNoError;
 }
 
@@ -256,11 +258,11 @@ void RunawayEngine::syncSoundSettings() {
 		_ui->setPointerSound(settings.pointerSound);
 }
 
-Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter) {
+Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter, RunawayIntro::Mode mode) {
 	_inPresentation = true;
 	_loadedGame = false;
 	RunawayIntro intro(_mixer);
-	if (!intro.load(_game == kRunawayFullGame, chapter)) {
+	if (!intro.load(_game == kRunawayFullGame, chapter, mode)) {
 		_inPresentation = false;
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway opening resources");
 	}
@@ -305,8 +307,11 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter) {
 }
 
 Common::Error RunawayEngine::startChapter(RunawayMenu &menu, byte chapter) {
-	const uint16 entry = chapter == 2 ? 4010 : chapter == 4 ? 6350 :
-		chapter == 5 ? 7010 : chapter == 6 ? 8100 : 5030;
+	assert(chapter <= 6);
+	const bool fromBeginning = chapter == 0;
+	chapter = MAX<byte>(1, chapter);
+	const uint16 entries[] = {2020, 4010, 5030, 6350, 7010, 8100};
+	const uint16 entry = entries[chapter - 1];
 	Common::ScopedPtr<RunawayScene> scene(createScene(entry));
 	if (!scene || !scene->load(entry) || !_ui->loadChapter(chapter))
 		return Common::Error(Common::kReadingFailed, "Cannot load Runaway chapter resources");
@@ -322,11 +327,39 @@ Common::Error RunawayEngine::startChapter(RunawayMenu &menu, byte chapter) {
 	_scene.reset(scene.release());
 	_pendingDoorClose = false;
 	syncSoundSettings();
-	const Common::Error result = playIntro(menu, chapter);
-	if (result.getCode() == Common::kNoError && !_loadedGame && !shouldQuit())
+	const Common::Error result = playIntro(menu, fromBeginning ? 0 : chapter, RunawayIntro::kOpeningOnly);
+	if (result.getCode() == Common::kNoError && !_loadedGame && !shouldQuit()) {
 		_scene->start(getTotalPlayTime());
+		_gameStarted = true;
+		unlockChapter(chapter);
+	}
 	_loadedGame = false;
 	return result;
+}
+
+byte RunawayEngine::unlockedChapter() const {
+	return CLIP(ConfMan.getInt("runaway_last_chapter", _targetName), 0, 6);
+}
+
+void RunawayEngine::unlockChapter(byte chapter) {
+	if (_game == kRunawayFullGame && chapter > unlockedChapter() && chapter <= 6) {
+		// The original updates RESOURCE.000; keep progress in the target configuration.
+		ConfMan.setInt("runaway_last_chapter", chapter, _targetName);
+		ConfMan.flushToDisk();
+	}
+}
+
+Common::Error RunawayEngine::selectChapter(RunawayMenu &menu) {
+	_inPresentation = true;
+	_audio.stopMusic();
+	_audio.stopSpeech();
+	_audio.stopEffect();
+	const int chapter = pauseMenu(menu, _scene->screen(), MAX<byte>(1, unlockedChapter()));
+	_inPresentation = false;
+	if (chapter >= 0 && !_loadedGame && !shouldQuit()) {
+		return startChapter(menu, chapter);
+	}
+	return Common::kNoError;
 }
 
 Common::Error RunawayEngine::run() {
@@ -371,6 +404,16 @@ Common::Error RunawayEngine::run() {
 		const Common::Error result = loadGameState(ConfMan.getInt("save_slot"));
 		if (result.getCode() != Common::kNoError)
 			return result;
+	} else if (_game == kRunawayFullGame &&
+			((!ConfMan.hasKey("boot_param") && unlockedChapter()) ||
+			(ConfMan.hasKey("boot_param") && ConfMan.getInt("boot_param") == 1000))) {
+		Common::Error result = playIntro(menu, 0, RunawayIntro::kLogoOnly);
+		if (result.getCode() == Common::kNoError && !_loadedGame && !shouldQuit()) {
+			result = selectChapter(menu);
+		}
+		if (result.getCode() != Common::kNoError || shouldQuit()) {
+			return result;
+		}
 	} else if (_game == kRunawayCabinDemo || (_game == kRunawayFullGame && _state.chapter() == 1)) {
 		const Common::Error result = playIntro(menu);
 		if (result.getCode() != Common::kNoError || shouldQuit())
@@ -381,8 +424,10 @@ Common::Error RunawayEngine::run() {
 		if (result.getCode() != Common::kNoError || shouldQuit())
 			return result;
 	}
-	if (!_loadedGame)
+	if (!_gameStarted) {
 		_scene->start(getTotalPlayTime());
+		unlockChapter(_state.chapter());
+	}
 	_gameStarted = true;
 	_loadedGame = false;
 	_scene->draw();
@@ -520,11 +565,11 @@ Common::Error RunawayEngine::run() {
 		}
 		if (_scene->escaped()) {
 			if (_game == kRunawayFullGame) {
-				if (_state.chapter() >= 5)
-					return Common::kNoError;
-				const Common::Error result = startChapter(menu, _state.chapter() + 1);
+				const Common::Error result = _state.chapter() == 6 ?
+					selectChapter(menu) : startChapter(menu, _state.chapter() + 1);
 				if (result.getCode() != Common::kNoError || shouldQuit())
 					return result;
+				_loadedGame = false;
 				leftPressed = rightPressed = false;
 				continue;
 			}
@@ -592,12 +637,12 @@ Common::Error RunawayEngine::playEnding(RunawayMenu &menu) {
 	return Common::kNoError;
 }
 
-void RunawayEngine::pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &screen) {
+int RunawayEngine::pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &screen, byte chapters) {
 	// Existing gameplay channels and clocks stay paused; new menu preview
 	// music is owned separately and stopped before gameplay resumes.
 	PauseToken pauseToken = pauseEngine();
 	RunawayMenu::Settings settings = readSettings();
-	menu.open(screen, settings, canSaveGameStateCurrently(), canLoadGameStateCurrently());
+	menu.open(screen, settings, canSaveGameStateCurrently(), canLoadGameStateCurrently(), chapters);
 	menu.update(_eventMan->getMousePos());
 	// Never draw options into the scene: its image is also the save thumbnail.
 	Graphics::ManagedSurface menuScreen(screen.w, screen.h, screen.format);
@@ -607,6 +652,7 @@ void RunawayEngine::pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &scree
 		_system->getFeatureState(OSystem::kFeatureVirtualKeyboard);
 	bool enteringName = false;
 	bool finished = false, changed = false;
+	int chapter = -1;
 	while (!shouldQuit() && !finished) {
 		menu.tick(_system->getMillis());
 		Common::Event event;
@@ -676,6 +722,9 @@ void RunawayEngine::pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &scree
 				menu.operationDone(success);
 				if (!success)
 					menu.showMessage(_strings.text(RunawayStrings::kDeleteFailed));
+			} else if (command == RunawayMenu::kStartChapter) {
+				chapter = menu.selectedChapter();
+				finished = true;
 			} else if (command == RunawayMenu::kSaveSettings) {
 				ConfMan.flushToDisk();
 				menu.showMessage(_strings.text(RunawayStrings::kSettingsSaved));
@@ -694,8 +743,9 @@ void RunawayEngine::pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &scree
 					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, enteringName || virtualKeyboard);
 			}
 		}
-		if (finished || shouldQuit())
+		if (finished || shouldQuit() || _loadedGame) {
 			break;
+		}
 		menu.draw(menuScreen);
 		present(menuScreen);
 		_system->delayMillis(16);
@@ -707,6 +757,7 @@ void RunawayEngine::pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &scree
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, virtualKeyboard);
 	if (changed)
 		ConfMan.flushToDisk();
+	return chapter;
 }
 
 Common::Array<Common::Keymap *> RunawayEngine::initKeymaps() {

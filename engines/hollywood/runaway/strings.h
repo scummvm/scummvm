@@ -40,7 +40,8 @@ public:
 		kVolume, kBrightness, kCredits, kSaveSettings, kDefaultSettings,
 		kConfirmQuit, kYes, kNo, kQuitKey, kLeaveHatch,
 		kEnterSaveName, kNoSaves, kNewSave, kGameSaved, kSettingsSaved, kDefaultsRestored,
-		kSaveFailed, kLoadFailed, kDeleteFailed, kNoFreeSlots, kDeleteKey, kCreditsFailed, kTextCount
+		kSaveFailed, kLoadFailed, kDeleteFailed, kNoFreeSlots, kDeleteKey, kCreditsFailed,
+		kPlayBeginning, kPlayChapter, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) :
 		_languageIndex(language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : language == Common::EN_ANY ? 3 : 0) {}

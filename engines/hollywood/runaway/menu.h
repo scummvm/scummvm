@@ -42,12 +42,12 @@ public:
 		bool operator!=(const Settings &other) const { return !(*this == other); }
 	};
 	enum Command { kNone, kResume, kSettingsChanged, kSaveSettings, kRestoreDefaults, kQuit,
-		kBrowseLoad, kBrowseSave, kBrowseDelete, kLoadGame, kSaveGame, kDeleteGame };
+		kBrowseLoad, kBrowseSave, kBrowseDelete, kLoadGame, kSaveGame, kDeleteGame, kStartChapter };
 
 	RunawayMenu(Audio::Mixer *mixer, const RunawayStrings &strings) : _strings(strings), _audio(mixer) {}
 	~RunawayMenu();
 	bool load(RunawayGameType game);
-	void open(const Graphics::ManagedSurface &screen, const Settings &settings, bool canSave = false, bool canLoad = true);
+	void open(const Graphics::ManagedSurface &screen, const Settings &settings, bool canSave = false, bool canLoad = true, byte chapters = 0);
 	void close();
 	Command update(Common::Point mouse);
 	void tick(uint32 now);
@@ -62,13 +62,14 @@ public:
 	void showMessage(const Common::U32String &message) { _notice = message; }
 	void operationDone(bool success);
 	int selectedSlot() const { return _selectedSlot; }
+	int selectedChapter() const { return _selectedChapter; }
 	Common::String saveDescription() const { return _name.encode(); }
 	bool enteringName() const { return _page == kName; }
 	void draw(Graphics::ManagedSurface &screen);
 	const Settings &settings() const { return _settings; }
 
 private:
-	enum Page { kOptions, kSaves, kName, kCredits };
+	enum Page { kOptions, kSaves, kName, kCredits, kChapters };
 	enum Confirmation { kNoConfirmation, kConfirmExit, kConfirmDelete, kConfirmOverwrite, kConfirmSettings, kConfirmDefaults };
 	enum Control { kNoControl, kPlay, kExit, kLoad, kSave, kDelete,
 		kMusicOn, kMusicOff, kAntialiasOn, kAntialiasOff, kScrollFast, kScrollSlow,
@@ -79,10 +80,14 @@ private:
 	Common::U32String confirmation() const;
 	Common::Rect answerRect(bool yes) const;
 	Common::Rect saveRect(uint index) const;
+	Common::Rect chapterRect(uint chapter) const;
+	int chapterAt(Common::Point mouse) const;
 	int saveAt(Common::Point mouse) const;
 	Command selectSave(int index);
 	Command accept();
 	void drawSaves(Graphics::ManagedSurface &screen);
+	void drawChapters(Graphics::ManagedSurface &screen);
+	void captureThumbnail(const Graphics::ManagedSurface &screen);
 	void drawLabel(Graphics::ManagedSurface &screen, RunawayStrings::TextId id, int center, int y,
 		bool enabled, Control control = kNoControl);
 	void drawToggle(Graphics::ManagedSurface &screen, RunawayStrings::TextId id, int y,
@@ -93,6 +98,7 @@ private:
 	bool _museum = false;
 	RunawayFont _font, _captionFont;
 	Graphics::ManagedSurface _background, _returnButton, _logo, _cursor, _thumbnail;
+	Graphics::ManagedSurface _chapters[7][2], _optionsButton;
 	RunawayAnimation _volumeDial;
 	RunawayCredits _credits;
 	SaveStateList _saves;
@@ -105,6 +111,8 @@ private:
 	Control _dragging = kNoControl;
 	int _dragX = 0, _dragValue = 0, _selectedSlot = -1, _firstSave = 0, _newSlot = -1;
 	int _focusedSave = -1;
+	int _selectedChapter = -1;
+	byte _chapterCount = 0, _optionsFrame = 0;
 	uint32 _now = 0;
 	bool _canSave = false, _canLoad = true, _cursorPushed = false;
 };

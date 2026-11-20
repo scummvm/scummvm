@@ -116,6 +116,9 @@ void RunawayInventory::startChapter(byte chapter) {
 	_chapter = chapter;
 	_items.clear();
 	_selected = _newItem = 0;
+	if (chapter == 1) {
+		_water = _markerInk = _syringeFilled = _chartWritten = _headWig = 0;
+	}
 	if (chapter == 3) {
 		_desert = RunawaySaveState::DesertItems();
 		_clothState = 0;

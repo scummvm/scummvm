@@ -32,8 +32,9 @@ namespace Hollywood {
 // The engine supplies its pause-aware clock and handles input/presentation.
 class RunawayIntro {
 public:
+	enum Mode { kCompleteIntro, kLogoOnly, kOpeningOnly };
 	explicit RunawayIntro(Audio::Mixer *mixer) : _audio(mixer), _opening(_audio) {}
-	bool load(bool fullGame = false, byte chapter = 0);
+	bool load(bool fullGame = false, byte chapter = 0, Mode mode = kCompleteIntro);
 	void start(uint32 now);
 	void skip(uint32 now);
 	void update(uint32 now);
@@ -51,6 +52,7 @@ private:
 	RunawayOpening _opening;
 	bool _fullGame = false;
 	byte _chapter = 0;
+	Mode _mode = kCompleteIntro;
 	RunawayAnimation _logo[3];
 	Graphics::ManagedSurface _story, _screen;
 	Phase _phase = kFinished;
