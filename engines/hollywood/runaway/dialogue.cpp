@@ -46,7 +46,7 @@ void RunawayRoomScene::buildDialogueChoices() {
 		if (!_dialogue[page][i].enabled) {
 			continue;
 		}
-		const SceneSpeechCue cue = _text.stageCue(dialoguePlayerCue(), _dialogue[page][i].player);
+		const SceneSpeechCue cue = _text.stageCue(dialogueCue(i, false), _dialogue[page][i].player);
 		const Common::U32String text(_text.largeTextRecord(cue.textRecordId), Common::kDos850);
 		if (!text.empty()) {
 			_choices.push_back(text);
@@ -73,12 +73,12 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 	DialogueChoice &entry = _dialogue[page][index];
 	_choices.clear();
 	_choiceIndices.clear();
-	say(dialoguePlayerCue(), entry.player);
+	say(dialogueCue(index, false), entry.player);
 	if (handleCustomDialogueReply()) {
 		return;
 	}
 	if (entry.response != 255) {
-		say(dialogueResponseCue(), entry.response, false, 1);
+		say(dialogueCue(index, true), entry.response, false, 1);
 	}
 	if (entry.disable) {
 		entry.enabled = 0;

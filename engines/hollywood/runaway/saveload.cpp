@@ -327,6 +327,19 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(hopi.tomahawk, 17);
 	s.syncAsByte(hopi.leftCrossSeen, 17);
 	s.syncAsByte(hopi.rightCrossSeen, 17);
+	s.syncAsByte(finale.doritaMet, 18);
+	s.syncAsByte(finale.mediumDiscussed, 18);
+	s.syncAsByte(finale.mediumTests, 18);
+	s.syncAsByte(finale.seanceComplete, 18);
+	s.syncAsByte(finale.oscarAway, 18);
+	s.syncAsByte(finale.gangsters, 18);
+	s.syncAsByte(finale.trailerFound, 18);
+	s.syncAsByte(finale.moneyFound, 18);
+	s.syncAsByte(finale.nunsHabit, 18);
+	s.syncAsByte(finale.recordingPlan, 18);
+	s.syncAsByte(finale.recordings, 18);
+	s.syncAsByte(finale.ginaUpdates, 18);
+	s.syncAsByte(finale.ginaVisitPending, 18);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -351,7 +364,7 @@ bool RunawaySaveState::valid() const {
 	if ((game == kRunawayCabinDemo || (game == kRunawayFullGame && scene >= 5030 && scene <= 5032)) &&
 			(scene < 5030 || scene > (game == kRunawayCabinDemo ? 5030 : 5032) || x >= 1376 || y >= 600 || camera > 352 || cameraY))
 		return false;
-	if (game == kRunawayFullGame && ((chapter() == 3 && (scene < 5030 || scene > 5032)) || chapter() == 4 || chapter() == 5)) {
+	if (game == kRunawayFullGame && ((chapter() == 3 && (scene < 5030 || scene > 5032)) || chapter() >= 4)) {
 		const RunawayRoom *room = findRunawayRoom(scene);
 		if (!room || x >= room->width || y >= room->height || camera > room->width - 1024 || cameraY > room->height - 600)
 			return false;
@@ -483,9 +496,15 @@ bool RunawaySaveState::valid() const {
 	if (hopi.statueVisited > 1 || hopi.tomahawk > 2 || hopi.leftCrossSeen > 1 || hopi.rightCrossSeen > 1) {
 		return false;
 	}
+	if (finale.doritaMet > 1 || finale.mediumDiscussed > 1 || finale.mediumTests > 3 || finale.seanceComplete > 1 ||
+			finale.oscarAway > 1 || finale.gangsters > 2 || finale.trailerFound > 1 || finale.moneyFound > 3 ||
+			finale.nunsHabit > 2 || finale.recordingPlan > 1 || finale.recordings > 3 || finale.ginaUpdates > 7 ||
+			finale.ginaVisitPending > 1) {
+		return false;
+	}
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
-				items[i] > (chapter() == 5 ? 16 : chapter() == 4 ? 32 : chapter() == 3 ? 26 : 19))
+				items[i] > (chapter() == 6 ? 21 : chapter() == 5 ? 16 : chapter() == 4 ? 32 : chapter() == 3 ? 26 : 19))
 			return false;
 		owned[items[i]] = true;
 	}
@@ -497,7 +516,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 17)
+	if (version < 1 || version > 18)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -509,9 +528,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(17);
+	stream.writeUint16LE(18);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(17);
+	s.setVersion(18);
 	sync(s);
 	return !s.err();
 }

@@ -35,7 +35,7 @@ namespace Runaway {
 
 class OscarAnimation {
 public:
-	explicit OscarAnimation(bool closeup) : _closeup(closeup) {}
+	explicit OscarAnimation(bool closeup, byte chapter = 4) : _closeup(closeup), _chapter(chapter) {}
 	void resume(uint32 now) { _tick = now; }
 	void update(uint32 now, Common::RandomSource &random, RunawayAudio &audio);
 	uint frame(bool speaking, byte speechFrame) const;
@@ -44,6 +44,7 @@ public:
 
 private:
 	const bool _closeup;
+	const byte _chapter;
 	bool _talking = false;
 	uint16 _step = 130;
 	byte _idle = 3;

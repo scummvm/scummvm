@@ -55,7 +55,7 @@ private:
 	bool _museum = false;
 	byte _chapter = 3;
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _music, _speech, _effects[2], _footstep, _pointer;
+	Audio::SoundHandle _music, _speech, _effects[3], _footstep, _pointer;
 };
 
 } // End of namespace Hollywood

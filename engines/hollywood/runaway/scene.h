@@ -145,7 +145,7 @@ protected:
 	virtual int sceneViewportYOffset() const;
 
 	virtual uint sceneResourceNumber() const { return (_room % 1000) / 10; }
-	virtual uint sceneTextNumber() const { return _room / 10; }
+	virtual uint sceneTextNumber() const { return finaleChapter() ? (_room - 2000) / 10 : _room / 10; }
 	virtual bool loadWalkMap();
 	virtual bool usesAlternateActor() const { return true; }
 	virtual byte initialActorFacing() const { return 3; }
@@ -164,6 +164,7 @@ protected:
 	virtual void finishCustomFilm() {}
 	virtual uint16 dialoguePlayerCue() const { return 80; }
 	virtual uint16 dialogueResponseCue() const { return 90; }
+	virtual uint16 dialogueCue(byte choice, bool response) const { return response ? dialogueResponseCue() : dialoguePlayerCue(); }
 
 	bool enterRoom(uint16 room, Common::Point position, byte facing);
 	bool loadForeground(uint layer, uint chunk, bool pixels = false);
@@ -238,7 +239,9 @@ protected:
 
 	bool hopiChapter() const { return _game == kRunawayFullGame && _room / 1000 == 7; }
 	bool sayHopiInventory(const RunawayInventory::Reply &reply);
-	void updateHopiMusic();
+	bool finaleChapter() const { return _game == kRunawayFullGame && _room / 1000 == 8; }
+	bool sayFinaleInventory(const RunawayInventory::Reply &reply);
+	void updateOutdoorMusic(byte cueCount = 3);
 	void updateGameplay(uint32 delta);
 	void findGameplayWalkPath(Common::Point target);
 	void deferAction(uint16 action);
@@ -288,6 +291,7 @@ protected:
 	RunawaySaveState::Desert _desert;
 	RunawaySaveState::Town _town;
 	RunawaySaveState::Hopi _hopi;
+	RunawaySaveState::Finale _finale;
 	MuseumFilm _museumFilm = kArrivalFilm;
 	SceneTextStore _filmText;
 	Common::Array<RunawaySequence::Command> _filmCommands;

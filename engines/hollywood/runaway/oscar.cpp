@@ -54,7 +54,7 @@ void OscarAnimation::update(uint32 now, Common::RandomSource &random, RunawayAud
 	if (_step < last) {
 		++_step;
 		if (_closeup && _idle == 2 && _step == 80) {
-			audio.playEffect(80, 26, 1);
+			audio.playEffect(_chapter == 6 ? 64 : 80, 26, 1);
 		}
 	} else if (_idle == 3 && !random.getRandomNumber(_closeup ? 4 : 9)) {
 		_idle = 1 + random.getRandomBit();
@@ -64,7 +64,7 @@ void OscarAnimation::update(uint32 now, Common::RandomSource &random, RunawayAud
 		_step = 130;
 	}
 	if (_closeup && _idle == 3 && !audio.effectPlaying(1)) {
-		audio.playEffect(76, 153, 1, true);
+		audio.playEffect(_chapter == 6 ? 63 : 76, 153, 1, true);
 	}
 }
 

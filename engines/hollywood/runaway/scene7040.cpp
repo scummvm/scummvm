@@ -155,7 +155,7 @@ void Scene7040::resumeAmbientAudio(bool entering) {
 }
 
 void Scene7040::advanceCustomGameplayLoop(uint32 delta) {
-	updateHopiMusic();
+	updateOutdoorMusic();
 	if (!_doorDirection) {
 		return;
 	}

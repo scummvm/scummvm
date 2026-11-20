@@ -139,6 +139,12 @@ struct RunawaySaveState {
 		byte toolHandle = 0;
 	} hopiItems;
 
+	struct Finale {
+		byte doritaMet = 0, mediumDiscussed = 0, mediumTests = 0, seanceComplete = 0;
+		byte oscarAway = 0, gangsters = 0, trailerFound = 0, moneyFound = 0, nunsHabit = 0;
+		byte recordingPlan = 0, recordings = 0, ginaUpdates = 0, ginaVisitPending = 0;
+	} finale;
+
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;
 	byte coolerMoved = 0, coolerInspected = 0, peeked = 0, ice = 0, hatch = 0;

@@ -118,7 +118,7 @@ void Scene7010::resumeAmbientAudio(bool entering) {
 }
 
 void Scene7010::advanceCustomGameplayLoop(uint32 delta) {
-	updateHopiMusic();
+	updateOutdoorMusic();
 	if (_roomAction == 420 && !_actionFrames.empty()) {
 		_actionFrames[0] = 80 + speechFrame();
 	}

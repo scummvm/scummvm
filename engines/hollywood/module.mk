@@ -143,6 +143,7 @@ MODULE_OBJS = \
 	runaway/desert.o \
 	runaway/dialogue.o \
 	runaway/engine.o \
+	runaway/finale.o \
 	runaway/font.o \
 	runaway/graphics.o \
 	runaway/intro.o \
@@ -208,6 +209,8 @@ MODULE_OBJS = \
 	runaway/scene7030.o \
 	runaway/scene7040.o \
 	runaway/scene7050.o \
+	runaway/scene8090.o \
+	runaway/scene8100.o \
 	runaway/sequence.o \
 	runaway/speech.o \
 	runaway/strings.o \

@@ -353,7 +353,7 @@ void Scene7020::updateGina() {
 }
 
 void Scene7020::advanceCustomGameplayLoop(uint32 delta) {
-	updateHopiMusic();
+	updateOutdoorMusic();
 	updateGina();
 	if ((_roomAction == 410 || _roomAction == 435) && !_actionFrames.empty()) {
 		_actionFrames[0] = 11 + (speaking() && !speaker() ? speechFrame() % 6 : 0);

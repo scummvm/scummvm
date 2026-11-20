@@ -92,7 +92,7 @@ void Scene7050::resumeAmbientAudio(bool entering) {
 }
 
 void Scene7050::advanceCustomGameplayLoop(uint32 delta) {
-	updateHopiMusic();
+	updateOutdoorMusic();
 }
 
 bool Scene7050::drawCustomComposite(Graphics::ManagedSurface &viewport) {

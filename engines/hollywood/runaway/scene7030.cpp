@@ -91,7 +91,7 @@ void Scene7030::runCustomEntrySequence() {
 }
 
 void Scene7030::advanceCustomGameplayLoop(uint32 delta) {
-	updateHopiMusic();
+	updateOutdoorMusic();
 }
 
 void Scene7030::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {

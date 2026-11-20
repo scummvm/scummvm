@@ -23,26 +23,6 @@
 
 namespace Hollywood {
 
-void RunawayRoomScene::updateHopiMusic() {
-	if (_audio.musicPlaying()) {
-		_nextMusic = 0;
-		return;
-	}
-	if (!_nextMusic) {
-		static const uint16 pauses[] = {0, 240, 120, 60};
-		_nextMusic = _now + pauses[_random.getRandomNumber(3)] * 250;
-	}
-	if ((int32)(_now - _nextMusic) >= 0) {
-		byte cue;
-		do {
-			cue = 12 + _random.getRandomNumber(2);
-		} while (cue == _musicCue);
-		_musicCue = cue;
-		_audio.playMusic(cue, false);
-		_nextMusic = 0;
-	}
-}
-
 RunawayInventory::Reply RunawayInventory::combineHopiItems(byte first, byte second) {
 	if (first == 10 && second == 11) {
 		remove(10);

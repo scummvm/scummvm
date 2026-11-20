@@ -55,6 +55,13 @@ const char *const kHopiItemNames[] = {
 	"Piece of rope", "Two small pieces of wood", "Femur", "Head of mining tool", "Large nail"
 };
 
+const char *const kFinaleItemNames[] = {
+	"", "Wallet", "Car keys", "Receipt", "Crucifix", "Flashlight", "Map of the mine",
+	"Piece of bush", "Bottle holding the finger", "Tomahawk", "Seeds", "Rifle", "Sheriff's badge",
+	"Bag holding Gustav and Feodor's stuff", "Bank brochure", "Nun's habit", "MP3 recorder",
+	"List of phrases", "Swiss bank internet receipt", "Scalpel", "Pods", "Poker"
+};
+
 const byte kItemCursors[] = {
 	0, 41, 43, 45, 47, 49, 51, 55, 57, 59, 61, 63, 65, 67, 69,
 	75, 79, 81, 83, 85, 87, 91, 93, 95, 103, 105, 111
@@ -129,6 +136,12 @@ void RunawayInventory::startChapter(byte chapter) {
 			add(i);
 		}
 	}
+	if (chapter == 6) {
+		const byte initial[] = {1, 2, 3, 5, 6, 7, 8, 9};
+		for (uint i = 0; i < ARRAYSIZE(initial); ++i) {
+			add(initial[i]);
+		}
+	}
 	_newItem = 0;
 }
 
@@ -141,7 +154,7 @@ bool RunawayInventory::contains(byte item) const {
 }
 
 bool RunawayInventory::add(byte item) {
-	const uint maxItem = _chapter == 5 ? ARRAYSIZE(kHopiItemNames) - 1 :
+	const uint maxItem = _chapter == 6 ? ARRAYSIZE(kFinaleItemNames) - 1 : _chapter == 5 ? ARRAYSIZE(kHopiItemNames) - 1 :
 		_chapter == 4 ? ARRAYSIZE(kTownItemNames) - 1 : _chapter == 3 ? kItemCount : 19;
 	if (!item || item > maxItem || contains(item))
 		return false;
@@ -164,6 +177,9 @@ void RunawayInventory::remove(byte item) {
 }
 
 Common::U32String RunawayInventory::name(byte item) const {
+	if (_chapter == 6) {
+		return Common::U32String(item < ARRAYSIZE(kFinaleItemNames) ? kFinaleItemNames[item] : "");
+	}
 	if (_chapter == 5) {
 		if (item == 15 && _hopi.toolHandle) {
 			return Common::U32String("Makeshift mining tool");
@@ -300,6 +316,9 @@ uint RunawayInventory::icon(byte item) const {
 }
 
 uint RunawayInventory::cursor(byte item) const {
+	if (_chapter == 6) {
+		return item && item < ARRAYSIZE(kFinaleItemNames) ? 39 + icon(item) * 2 : 0;
+	}
 	if (_chapter == 5) {
 		return item && item < ARRAYSIZE(kHopiItemNames) ? 39 + icon(item) * 2 : 0;
 	}
@@ -342,6 +361,10 @@ uint RunawayInventory::cursor(byte item) const {
 }
 
 RunawayInventory::Reply RunawayInventory::examine(byte item) const {
+	if (_chapter == 6) {
+		static const uint16 cues[] = {1, 50, 51, 74, 200, 300, 301, 253, 303, 256, 304, 1, 305, 306, 307, 308, 309, 1, 1, 310, 311, 312};
+		return Reply(item < ARRAYSIZE(cues) ? cues[item] : 1);
+	}
 	if (_chapter == 5) {
 		static const uint16 cues[] = {1, 50, 51, 74, 200, 250, 251, 252, 253, 254, 255, 256, 251, 257, 258, 259, 260};
 		return Reply(item < ARRAYSIZE(cues) ? cues[item] : 1, item == 12 ? 1 : item == 15 ? _hopi.toolHandle : 0);
@@ -486,6 +509,9 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		SWAP(first, second);
 	if (_chapter == 5) {
 		return combineHopiItems(first, second);
+	}
+	if (_chapter == 6) {
+		return Reply();
 	}
 	if (_chapter == 1) {
 		if (first == 10 && second == 17) {

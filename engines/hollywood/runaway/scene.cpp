@@ -79,8 +79,8 @@ bool RunawayRoomScene::load(uint16 entryScene) {
 void RunawayRoomScene::start(uint32 now) {
 	_now = _lastUpdate = now;
 	_idleHead.reset(now);
-	if (townChapter() || hopiChapter()) {
-		_inventory.startChapter(hopiChapter() ? 5 : 4);
+	if (townChapter() || hopiChapter() || finaleChapter()) {
+		_inventory.startChapter(finaleChapter() ? 6 : hopiChapter() ? 5 : 4);
 		_entering = true;
 		resume();
 		return;
@@ -101,7 +101,7 @@ void RunawayRoomScene::start(uint32 now) {
 }
 
 void RunawayRoomScene::resume() {
-	if (hopiChapter()) {
+	if (hopiChapter() || finaleChapter()) {
 		prepareCustomGameplayLoop();
 		resumeAmbientAudio(_entering);
 		if (_entering) {
@@ -166,6 +166,7 @@ void RunawayRoomScene::captureState(RunawaySaveState &state) const {
 	state.desert = _desert;
 	state.town = _town;
 	state.hopi = _hopi;
+	state.finale = _finale;
 	state.randomSeed = _random.getSeed();
 }
 
@@ -177,6 +178,7 @@ bool RunawayRoomScene::restoreState(const RunawaySaveState &state, uint32 now, b
 	_desert = state.desert;
 	_town = state.town;
 	_hopi = state.hopi;
+	_finale = state.finale;
 	_entering = entering;
 	_upperFloor = state.upperFloor;
 	_books = (ObjectState)state.books;
@@ -431,7 +433,10 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 	if (hopiChapter() && sayHopiInventory(reply)) {
 		return;
 	}
-	if (_game == kRunawayFullGame && !desertChapter() && !townChapter() && !hopiChapter() &&
+	if (finaleChapter() && sayFinaleInventory(reply)) {
+		return;
+	}
+	if (_game == kRunawayFullGame && !desertChapter() && !townChapter() && !hopiChapter() && !finaleChapter() &&
 			(museumChapter() ? sayMuseumInventory(reply) : sayHospitalInventory(reply)))
 		return;
 	say(reply.cue, reply.variation, true);
@@ -554,7 +559,7 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	}
 	if (speaking() && _speech.finished(now))
 		skipSpeech();
-	if (townChapter() || hopiChapter()) {
+	if (townChapter() || hopiChapter() || finaleChapter()) {
 		updateGameplay(elapsed);
 		if (_sequence.active() || _transition.scene)
 			return;
@@ -581,6 +586,9 @@ void RunawayRoomScene::updateGameplay(uint32 delta) {
 		return;
 	}
 	updateRoomAnimation();
+	if (_sequence.active() || _transition.scene) {
+		return;
+	}
 	updateConversation();
 	if (_roomAction && _actionFrames.empty() && !speaking() && !_walkPath.active()) {
 		const uint16 action = _roomAction;
@@ -607,6 +615,26 @@ void RunawayRoomScene::findGameplayWalkPath(Common::Point target) {
 		}
 	}
 	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
+}
+
+void RunawayRoomScene::updateOutdoorMusic(byte cueCount) {
+	if (_audio.musicPlaying()) {
+		_nextMusic = 0;
+		return;
+	}
+	if (!_nextMusic) {
+		static const uint16 pauses[] = {0, 240, 120, 60};
+		_nextMusic = _now + pauses[_random.getRandomNumber(3)] * 250;
+	}
+	if ((int32)(_now - _nextMusic) >= 0) {
+		byte cue;
+		do {
+			cue = 12 + _random.getRandomNumber(cueCount - 1);
+		} while (cue == _musicCue);
+		_musicCue = cue;
+		_audio.playMusic(cue, false);
+		_nextMusic = 0;
+	}
 }
 
 void RunawayRoomScene::deferAction(uint16 action) {
@@ -779,7 +807,7 @@ void RunawayRoomScene::updateRoomAnimation() {
 			const uint16 action = _roomAction;
 			_roomAction = 0;
 			_actionFrames.clear();
-			if (townChapter() || desertChapter() || hopiChapter()) {
+			if (townChapter() || desertChapter() || hopiChapter() || finaleChapter()) {
 				execute(action + 1000);
 			} else {
 				finishCustomAnimation(action);
