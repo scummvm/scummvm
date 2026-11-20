@@ -543,9 +543,12 @@ void SummaryRecord::readTable(int tableIndex) {
 static const uint16 kThemeChannel = 0;
 static const uint16 kThemeVolume = 85;
 
-// Starts one of the themes of the area, unless one is playing
+// Starts one of the themes of the area. Nancy19 plays it once, unless a theme
+// is playing. Lights, Camera, Curses plays it over and over, in place of the
+// theme playing, unless that is the same.
 void SummaryRecord::playTheme() {
-	if (g_nancy->_sound->isSoundPlaying(kThemeChannel)) {
+	const bool isLooped = g_nancy->getGameType() == kGameTypeNancyDossier1;
+	if (!isLooped && g_nancy->_sound->isSoundPlaying(kThemeChannel)) {
 		return;
 	}
 
@@ -561,8 +564,13 @@ void SummaryRecord::playTheme() {
 
 		SoundDescription sound;
 		sound.name = environment.musicNames[g_nancy->_randomSource->getRandomNumber(environment.musicNames.size() - 1)];
+		if (isLooped && g_nancy->_sound->isSoundPlaying(kThemeChannel) &&
+				g_nancy->_sound->getSoundName(kThemeChannel).equalsIgnoreCase(sound.name)) {
+			return;
+		}
+
 		sound.channelID = kThemeChannel;
-		sound.numLoops = 1;
+		sound.numLoops = isLooped ? 0 : 1;
 		sound.volume = kThemeVolume;
 
 		g_nancy->_sound->loadSound(sound);

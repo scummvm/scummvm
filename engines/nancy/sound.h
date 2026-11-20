@@ -83,6 +83,9 @@ public:
 	bool isSoundPlaying(const SoundDescription &description) const;
 	bool isSoundPlaying(const Common::String &chunkName) const;
 
+	// The name of the sound last loaded into a channel
+	const Common::String &getSoundName(uint16 channelID) const { return _channels[channelID].name; }
+
 	// Goes up whenever a sound starts on the channel or the channel is stopped,
 	// but not when a sound ends by itself. Nancy19 records tell from it whether
 	// their sound was cut off.
