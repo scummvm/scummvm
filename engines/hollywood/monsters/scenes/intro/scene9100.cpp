@@ -357,7 +357,7 @@ void Scene9100::runRonEntryConversation() {
 	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
 		const uint16 sampleId = popup.voiceSampleId + segmentIndex;
 		beginSubtitle(popup, segmentIndex, kDeskPrimaryBlueSpeech);
-		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, kDeskPrimaryBlueSpeech.centerX);
 		const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
 		uint32 elapsed = 0;
 		uint32 continuationDelayElapsed = 0;
@@ -553,7 +553,7 @@ void Scene9100::playActorFootstepIfDue(int worldX, int worldY, byte cel) {
 	const uint offset = worldY * HollywoodEngine::kSceneBufferWidth + worldX;
 	const byte floorColor = _savedFramebuffer[offset];
 	const byte soundEffectId = _scenePaletteMask[kSceneColorToFootstepSoundMap + floorColor];
-	_residentSoundEffects.playSample(soundEffectId);
+	_residentSoundEffects.playSampleAt(soundEffectId, worldX);
 }
 
 void Scene9100::runForegroundIdleBeat() {
@@ -789,7 +789,7 @@ void Scene9100::runConversationStep(uint16 textBankIndex, byte descriptorIndex, 
 		const uint16 sampleId = popup.voiceSampleId + segmentIndex;
 		beginSubtitle(popup, segmentIndex, speechTextStyle);
 		presentFrame();
-		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, speechTextStyle.centerX);
 		const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
 		waitForSpeechOrDelay(fallbackMillis, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor, animateClock, animateInsetActor, insetTalkBaseFrame);
 		_speech.stop();

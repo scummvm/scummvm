@@ -237,7 +237,7 @@ void Scene9140::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 			kSpeechOverlayFixedEdgeWrap);
 
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
-		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, centerX);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, _subtitle.lines.size() * 1100);
 		uint32 animationElapsed = 0;

@@ -245,7 +245,7 @@ bool Scene9130::startCurrentSpeechSegment() {
 	const uint16 sampleId = _activeVoiceSampleId == 0 ? 0 : _activeVoiceSampleId + _activeContinuationIndex;
 	++_activeContinuationIndex;
 	_speech.stop();
-	const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+	const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, style.centerX);
 	_speechFallbackMillis = started ? 0 : MAX<uint32>(1200, _subtitle.lines.size() * 1100);
 	return true;
 }

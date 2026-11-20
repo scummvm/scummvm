@@ -2515,7 +2515,7 @@ bool PlayableScene::playActiveActorFootstep() {
 		(uint)_activeActorWorldX;
 	const byte floorColor = savedFramebufferPixelAt(framebufferOffset);
 	const byte soundEffectId = _paletteMask[kSceneColorToFootstepSoundMap + floorColor];
-	return playResidentSoundEffect(soundEffectId);
+	return _residentSoundEffects.playSampleAt(soundEffectId, _activeActorWorldX, viewportXOffset());
 }
 
 void PlayableScene::handleActorPathFootstep(bool terminalFrame, bool &footstepPlayed) {
@@ -3110,8 +3110,8 @@ void PlayableScene::startRealtimeSpeechPart() {
 			_realtimeSpeechPrimary, _activeActorWorldY);
 		const uint16 sampleId = _realtimeSpeechVoiceSampleId == 0 ? 0 :
 			_realtimeSpeechVoiceSampleId + _realtimeSpeechContinuationPart;
-		const bool started = sampleId != 0 && _realtimeSpeechPlayer.playSample(sampleId,
-			_realtimeSpeechVolumePercent);
+		const bool started = sampleId != 0 && _realtimeSpeechPlayer.playSampleAt(sampleId,
+			_realtimeSpeechCenterX, viewportXOffset(), _realtimeSpeechVolumePercent);
 		_realtimeSpeechElapsed = 0;
 		_realtimeSpeechDuration = started ?
 			MAX<uint32>(_realtimeSpeechPlayer.lastSampleDurationMillis(), 750) :
@@ -3208,7 +3208,7 @@ void PlayableScene::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 		kDefaultSecondarySpeechTextColor, false, false, false);
 }
 
-bool PlayableScene::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
+bool PlayableScene::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex, bool positional) {
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
 	uint16 voiceSampleId = 0;
@@ -3226,7 +3226,11 @@ bool PlayableScene::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	calculateSecondarySpeechBounds(_activeActorWorldX, _activeActorWorldY);
 	_speechController.prepareSecondaryActorSpeech();
 
-	return voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
+	if (voiceSampleId == 0) {
+		return false;
+	}
+	return positional ? _speech.playSampleAt(voiceSampleId, _activeActorWorldX, viewportXOffset()) :
+		_speech.playSample(voiceSampleId, 100);
 }
 
 void PlayableScene::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
@@ -3304,7 +3308,8 @@ void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, by
 		const byte volumePercent = animationGroup == kInvalidPrimarySpeechAnimationGroup ?
 			100 : primarySpeechVolumePercent(animationGroup);
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
-		const bool started = sampleId != 0 && _speech.playSample(sampleId, volumePercent);
+		const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, centerX,
+			viewportXOffset(), volumePercent);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, overlay.lines.size() * 1100);
 		if (animatePrimaryLeft) {
@@ -3468,6 +3473,9 @@ void PlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const Ga
 	if ((panelState && panelState->visible()) || (dialogueMenuState && dialogueMenuState->visible()))
 		applyGameplayPanelPalette();
 	const uint16 xOffset = viewportXOffset();
+	_speech.setViewportPosition(xOffset);
+	_realtimeSpeechPlayer.setViewportPosition(xOffset);
+	_residentSoundEffects.setViewportPosition(xOffset);
 	const bool paletteChanged = _displayPalette.uploadFrom6Bit(_paletteCurrent);
 	_screen.copyRectToSurface(_sceneFramebuffer.rawSurface(), 0, 0,
 		Common::Rect(xOffset, 0, xOffset + HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight));

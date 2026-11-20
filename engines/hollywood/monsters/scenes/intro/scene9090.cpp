@@ -604,7 +604,7 @@ void Scene9090::runSpeechSteps(const byte *stepIndices, uint stepCount) {
 			SpeechPlayer &player = step.speaker == kScene9090SecondarySpeaker ?
 				_secondarySpeech : _primarySpeech;
 			const uint16 sampleId = voiceSampleIds[i] == 0 ? 0 : voiceSampleIds[i] + segment;
-			const bool started = sampleId != 0 && player.playSample(sampleId, 100);
+			const bool started = sampleId != 0 && player.playSampleAt(sampleId, step.anchorX);
 			durations[i] = started ? MAX<uint32>(player.lastSampleDurationMillis(), 750) :
 				MAX<uint32>(1200, subtitle.lines.size() * 1100);
 			activeStep[i] = true;

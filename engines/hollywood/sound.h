@@ -31,13 +31,19 @@ namespace Hollywood {
 // sound plane: Point::y is distance in front of the listener, not screen y.
 class SoundChannel {
 public:
+	enum PositionMode {
+		kSpatial,
+		kStereoPan
+	};
+
 	SoundChannel() = default;
 	~SoundChannel();
 	SoundChannel(const SoundChannel &) = delete;
 	SoundChannel &operator=(const SoundChannel &) = delete;
 
 	void play(Audio::Mixer *mixer, Audio::Mixer::SoundType type, Audio::AudioStream *stream,
-		byte volume, const Common::Point *position = nullptr, int listenerX = 0, float rolloff = 1.0f);
+		byte volume, const Common::Point *position = nullptr, int listenerX = 0, float rolloff = 1.0f,
+		PositionMode mode = kSpatial);
 	void stop();
 	bool isPlaying() const;
 	void setVolume(byte volume);
@@ -54,6 +60,7 @@ private:
 	Common::Point _position;
 	int _listenerX = 0;
 	float _rolloff = 1.0f;
+	PositionMode _positionMode = kSpatial;
 };
 
 } // End of namespace Hollywood

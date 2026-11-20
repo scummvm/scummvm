@@ -763,7 +763,7 @@ void Scene6090::runInterruptionClips() {
 		if (frame == 4) {
 			if (showRestoredSubtitle) {
 				subtitleStartMillis = g_system->getMillis();
-				const bool started = startSecondarySpeechLine(15, 24);
+				const bool started = startSecondarySpeechLine(15, 24, false);
 				calculateSpeechOverlayBounds(_speechOverlay, 0x140, 0x64, true,
 					_activeActorWorldY);
 				subtitleDurationMillis = started ?

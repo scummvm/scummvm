@@ -1076,7 +1076,7 @@ bool Scene5030::startConcurrentPrimarySpeechCue(uint16 textRecordId, uint16 voic
 	calculateSpeechOverlayBounds(_primarySpeechOverlay, centerX, topY, true, _activeActorWorldY);
 
 	const bool started = voiceSampleId != 0 &&
-		_speech.playSample(voiceSampleId, primarySpeechVolumePercent(animationGroup));
+		_speech.playSampleAt(voiceSampleId, centerX, viewportXOffset(), primarySpeechVolumePercent(animationGroup));
 	_concurrentPrimarySpeechDuration = started ?
 		MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 		MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);

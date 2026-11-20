@@ -810,11 +810,11 @@ uint16 Scene8010::fishermanQuizFragmentVoiceSampleId(const FishermanQuizEntry &e
 }
 
 bool Scene8010::waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry, byte firstFragment,
-		uint32 fallbackMillis) {
+		uint16 centerX, uint32 fallbackMillis) {
 	bool playedAny = false;
 	for (byte fragment = firstFragment; fragment < 4 && !Engine::shouldQuit(); ++fragment) {
 		const uint16 voiceSampleId = fishermanQuizFragmentVoiceSampleId(entry, fragment);
-		const bool started = voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
+		const bool started = voiceSampleId != 0 && _speech.playSampleAt(voiceSampleId, centerX, viewportXOffset());
 		if (!started)
 			continue;
 
@@ -855,7 +855,7 @@ bool Scene8010::runFishermanGeneratedPrimarySpeechLine(byte promptLineIndex) {
 
 	const uint32 duration = MAX<uint32>(kScene8010GeneratedSpeechMinMillis,
 		_primarySpeechOverlay.lines.size() * kScene8010GeneratedSpeechLineMillis);
-	const bool interrupted = waitFishermanQuizFragmentVoices(entry, 0, duration);
+	const bool interrupted = waitFishermanQuizFragmentVoices(entry, 0, kScene8010FishermanSpeechCenterX, duration);
 
 	_speech.stop();
 	setPrimarySpeechAnimationFrame(0, baseFrame);
@@ -899,7 +899,7 @@ void Scene8010::runFishermanSelectedAnswerSpeech(byte selectedLine) {
 		FishermanQuizEntry answerVoiceEntry = _fishermanQuizEntries[entryIndex];
 		answerVoiceEntry.menuStage = kScene8010SelectedAnswerFirstNameSpeechRow;
 		answerVoiceEntry.menuSuffixStage = kScene8010SelectedAnswerSurnameSpeechRow;
-		waitFishermanQuizFragmentVoices(answerVoiceEntry, 2, duration);
+		waitFishermanQuizFragmentVoices(answerVoiceEntry, 2, _activeActorWorldX, duration);
 	} else {
 		waitForSpeechOrDelay(duration, false);
 	}

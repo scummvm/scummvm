@@ -80,7 +80,8 @@ private:
 	Common::String composeFishermanQuizChoice(byte firstStage, byte firstRow, byte secondStage, byte secondRow) const;
 	void composeFishermanGeneratedPromptLines(byte promptLineIndex, Common::Array<Common::String> &lines) const;
 	uint16 fishermanQuizFragmentVoiceSampleId(const FishermanQuizEntry &entry, byte fragmentIndex) const;
-	bool waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry, byte firstFragment, uint32 fallbackMillis);
+	bool waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry, byte firstFragment,
+		uint16 centerX, uint32 fallbackMillis);
 	bool runFishermanGeneratedPrimarySpeechLine(byte promptLineIndex);
 	void runFishermanGeneratedPromptSpeech();
 	void runFishermanSelectedAnswerSpeech(byte selectedLine);

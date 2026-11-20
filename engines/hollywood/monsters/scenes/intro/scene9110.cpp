@@ -174,7 +174,7 @@ void Scene9110::runSpeechStep(const SpeechStep &step) {
 	beginSubtitle(popup, step.speechTextStyle);
 	presentComposite();
 
-	const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+	const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, step.speechTextStyle.centerX);
 	const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
 	waitForSpeechOrDelay(fallbackMillis, step.waitMode);
 	_speech.stop();

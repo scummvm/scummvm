@@ -34,7 +34,7 @@
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_DEMO | ADGF_TESTING,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 	},
 
 	// Italian Windows demo distributed with the Italian release.
@@ -48,7 +48,7 @@
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_DEMO | ADGF_TESTING,
-		GUIO3(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI, GUIO_NOSPEECH)
+		GUIO4(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI, GUIO_NOSPEECH)
 	},
 
 	// Spanish Windows first edition full game, installed MONSTERS directory.
@@ -62,7 +62,7 @@
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_TESTING | kMonstersTranslationFlags,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 	},
 
 	// Spanish Windows release bundled with the Hollywood Monsters 2 DVD (bug #17473).
@@ -76,7 +76,7 @@
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_TESTING | kMonstersTranslationFlags,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 	},
 
 	// Spanish Windows FX Store release (bug #17478).
@@ -90,7 +90,7 @@
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_TESTING | kMonstersTranslationFlags,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 	},
 
 	// Italian Windows full game, installed Monsters directory.
@@ -104,7 +104,7 @@
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_TESTING,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 	},
 
 	// Spanish Windows full game, installed MONSTERS directory.
@@ -117,7 +117,7 @@
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_TESTING | kMonstersTranslationFlags,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 	},
 
 	// English fan translation v1.0.0 by ShinjiGR, patched by A.P.$lasH for the Spanish Windows release.
@@ -132,7 +132,7 @@
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_TESTING,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 	},
 
 	// Spanish DOS CD full game, MONSTERS directory from the CD.
@@ -145,7 +145,7 @@
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_TESTING | kMonstersTranslationFlags,
-		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 	},
 
 #endif // HOLLYWOOD_MONSTERS_DETECTION_TABLES_H

@@ -25,6 +25,7 @@
 #include "engines/advancedDetector.h"
 
 #define GAMEOPTION_RESTORED_CONTENT GUIO_GAMEOPTIONS1
+#define GAMEOPTION_POSITIONAL_AUDIO GUIO_GAMEOPTIONS2
 
 namespace Hollywood {
 

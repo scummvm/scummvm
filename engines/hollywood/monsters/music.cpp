@@ -21,6 +21,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/substream.h"
@@ -28,6 +29,7 @@
 #include "common/util.h"
 
 #include "hollywood/debug.h"
+#include "hollywood/monsters/hollywood.h"
 #include "hollywood/monsters/music.h"
 
 namespace Hollywood {
@@ -202,7 +204,19 @@ SpeechPlayer::~SpeechPlayer() {
 	stop();
 }
 
-bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop) {
+bool SpeechPlayer::playSampleAt(uint16 sampleId, int worldX, int viewportX, byte volumePercent) {
+	const Common::Point position(worldX, HollywoodEngine::kScreenWidth / 2);
+	return playSample(sampleId, volumePercent, false,
+		ConfMan.getBool("positional_audio") ? &position : nullptr,
+		viewportX + HollywoodEngine::kScreenWidth / 2);
+}
+
+void SpeechPlayer::setViewportPosition(int viewportX) {
+	_speechChannel.setListenerPosition(viewportX + HollywoodEngine::kScreenWidth / 2);
+}
+
+bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop,
+		const Common::Point *position, int listenerX) {
 	stop();
 	_lastSampleDurationMillis = 0;
 	if (!_enabled)
@@ -232,7 +246,7 @@ bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop) {
 	_lastSampleDurationMillis = (uint32)(((uint64)size * 1000) / (_sampleRate * _bytesPerSample));
 	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
 	_speechChannel.play(g_system->getMixer(), Audio::Mixer::kSpeechSoundType, playbackStream,
-		percentToMixerVolume(volumePercent));
+		percentToMixerVolume(volumePercent), position, listenerX, 0.0f, SoundChannel::kStereoPan);
 
 	debugC(1, kDebugResources,
 		"Started speech %s sample %u: offset=%u size=%u format=%u-bit/%uHz duration=%u ms loop=%u",
@@ -389,7 +403,21 @@ ResidentSoundEffectPlayer::~ResidentSoundEffectPlayer() {
 	stop();
 }
 
-bool ResidentSoundEffectPlayer::playSample(byte soundEffectId, byte volumePercent) {
+bool ResidentSoundEffectPlayer::playSampleAt(byte soundEffectId, int worldX, int viewportX, byte volumePercent) {
+	const Common::Point position(worldX, HollywoodEngine::kScreenWidth / 2);
+	return playSample(soundEffectId, volumePercent,
+		ConfMan.getBool("positional_audio") ? &position : nullptr,
+		viewportX + HollywoodEngine::kScreenWidth / 2);
+}
+
+void ResidentSoundEffectPlayer::setViewportPosition(int viewportX) {
+	for (uint i = 0; i < ARRAYSIZE(_soundChannels); ++i) {
+		_soundChannels[i].setListenerPosition(viewportX + HollywoodEngine::kScreenWidth / 2);
+	}
+}
+
+bool ResidentSoundEffectPlayer::playSample(byte soundEffectId, byte volumePercent,
+		const Common::Point *position, int listenerX) {
 	uint32 start = 0;
 	uint32 size = 0;
 	if (!readSampleSpan(soundEffectId, start, size))
@@ -416,7 +444,7 @@ bool ResidentSoundEffectPlayer::playSample(byte soundEffectId, byte volumePercen
 
 	stopSample(soundEffectId);
 	_soundChannels[soundEffectId - 1].play(g_system->getMixer(), Audio::Mixer::kSFXSoundType,
-		audioStream, percentToMixerVolume(volumePercent));
+		audioStream, percentToMixerVolume(volumePercent), position, listenerX, 0.0f, SoundChannel::kStereoPan);
 
 	debugC(1, kDebugResources, "Started resident sound %s effect %u: offset=%u size=%u",
 		kResidentSoundArchiveName, soundEffectId, start, size);

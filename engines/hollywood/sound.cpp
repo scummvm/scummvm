@@ -29,7 +29,7 @@ SoundChannel::~SoundChannel() {
 }
 
 void SoundChannel::play(Audio::Mixer *mixer, Audio::Mixer::SoundType type, Audio::AudioStream *stream,
-		byte volume, const Common::Point *position, int listenerX, float rolloff) {
+		byte volume, const Common::Point *position, int listenerX, float rolloff, PositionMode mode) {
 	assert(mixer && stream && rolloff >= 0);
 	stop();
 	_mixer = mixer;
@@ -38,6 +38,7 @@ void SoundChannel::play(Audio::Mixer *mixer, Audio::Mixer::SoundType type, Audio
 	_position = position ? *position : Common::Point();
 	_listenerX = listenerX;
 	_rolloff = rolloff;
+	_positionMode = mode;
 	int8 balance;
 	mixerLevels(volume, balance);
 	_mixer->playStream(type, &_handle, stream, -1, volume, balance, DisposeAfterUse::YES);
@@ -75,9 +76,12 @@ void SoundChannel::mixerLevels(byte &volume, int8 &balance) const {
 	}
 	const float x = _position.x - _listenerX;
 	const float z = _position.y;
-	const float distance = MAX<float>(1.0f, sqrt(x * x + z * z));
-	const float gain = 1.0f / (1.0f + (distance - 1.0f) * _rolloff);
-	volume = CLIP<int>(_volume * gain + 0.5f, 0, Audio::Mixer::kMaxChannelVolume);
+	float gain = 1.0f;
+	if (_positionMode == kSpatial) {
+		const float distance = MAX<float>(1.0f, sqrt(x * x + z * z));
+		gain = 1.0f / (1.0f + (distance - 1.0f) * _rolloff);
+		volume = CLIP<int>(_volume * gain + 0.5f, 0, Audio::Mixer::kMaxChannelVolume);
+	}
 	if (!_mixer->getOutputStereo()) {
 		return;
 	}
@@ -87,7 +91,10 @@ void SoundChannel::mixerLevels(byte &volume, int8 &balance) const {
 	const float left = sqrt(1.0f - pan);
 	const float right = sqrt(pan);
 	const float loudest = MAX(left, right);
-	volume = CLIP<int>(_volume * gain * loudest + 0.5f, 0, Audio::Mixer::kMaxChannelVolume);
+	// Panning alone preserves the authored volume on the louder channel.
+	if (_positionMode == kSpatial) {
+		volume = CLIP<int>(_volume * gain * loudest + 0.5f, 0, Audio::Mixer::kMaxChannelVolume);
+	}
 	balance = CLIP<int>(127.0f * (right - left) / loudest, -127, 127);
 }
 

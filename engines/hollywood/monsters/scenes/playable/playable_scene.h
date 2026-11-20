@@ -630,7 +630,7 @@ protected:
 	// The begin*() helpers block until speech finishes. startSecondarySpeechLine() does not and
 	// returns whether voice playback started.
 	void beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
-	bool startSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
+	bool startSecondarySpeechLine(uint16 rowIndex, byte frameIndex, bool positional = true);
 	void beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
 	void beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue);

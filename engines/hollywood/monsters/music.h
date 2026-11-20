@@ -59,7 +59,10 @@ public:
 	SpeechPlayer(Common::Language language, bool enabled = true);
 	~SpeechPlayer();
 
-	bool playSample(uint16 sampleId, byte volumePercent = 100, bool loop = false);
+	bool playSample(uint16 sampleId, byte volumePercent = 100, bool loop = false,
+		const Common::Point *position = nullptr, int listenerX = 0);
+	bool playSampleAt(uint16 sampleId, int worldX, int viewportX = 0, byte volumePercent = 100);
+	void setViewportPosition(int viewportX);
 	void setVolume(byte volumePercent);
 	void stop();
 	bool isPlaying() const;
@@ -103,7 +106,10 @@ public:
 	ResidentSoundEffectPlayer(bool useSpanishDemoLayout = false);
 	~ResidentSoundEffectPlayer();
 
-	bool playSample(byte soundEffectId, byte volumePercent = 100);
+	bool playSample(byte soundEffectId, byte volumePercent = 100,
+		const Common::Point *position = nullptr, int listenerX = 0);
+	bool playSampleAt(byte soundEffectId, int worldX, int viewportX = 0, byte volumePercent = 100);
+	void setViewportPosition(int viewportX);
 	void stop();
 
 private:

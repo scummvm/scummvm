@@ -252,7 +252,7 @@ bool Scene9010::playSpeechExchange(byte descriptorIndex) {
 		beginSubtitle(popup, segmentIndex);
 		presentFrame();
 
-		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, getCurrentSpeechTextStyle().centerX);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1000;
 		uint32 elapsed = 0;
 

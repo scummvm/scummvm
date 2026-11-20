@@ -470,7 +470,7 @@ uint32 Scene6030::beginStaticHannoverSpeechLine(byte frameIndex, uint16 centerX,
 	wrapActorSpeechText(text, centerX, _primarySpeechOverlay.lines);
 	calculateSpeechOverlayBounds(_primarySpeechOverlay, centerX, topY, true, _activeActorWorldY);
 
-	const bool started = voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
+	const bool started = voiceSampleId != 0 && _speech.playSampleAt(voiceSampleId, centerX, viewportXOffset());
 	return started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 		MAX<uint32>(1200, MAX<byte>(1, continuationCount) * _primarySpeechOverlay.lines.size() * 1100);
 }

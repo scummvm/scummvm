@@ -781,7 +781,8 @@ void Scene4010::beginHeckerSpeechLine(byte frameIndex) {
 			kScene4010HeckerSpeechTopY, true, _activeActorWorldY);
 
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
-		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const bool started = sampleId != 0 && _speech.playSampleAt(sampleId,
+			kScene4010HeckerSpeechCenterX, viewportXOffset());
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
 		const bool interrupted = waitForSpeechOrDelay(duration, false);

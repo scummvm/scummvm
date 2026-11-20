@@ -42,6 +42,17 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_POSITIONAL_AUDIO,
+		{
+			_s("Enable positional audio"),
+			_s("Pan voices and footsteps according to their positions on screen"),
+			"positional_audio",
+			true,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -53,6 +64,7 @@ const ADExtraGuiOptionsMap *getMonstersExtraGuiOptions() {
 
 void registerMonstersDefaultSettings() {
 	ConfMan.registerDefault("restored_content", true);
+	ConfMan.registerDefault("positional_audio", true);
 }
 
 void getMonstersSavegameThumbnail(Graphics::Surface &thumb) {

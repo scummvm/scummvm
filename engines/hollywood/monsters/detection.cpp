@@ -34,7 +34,7 @@ const ADGameDescription fallbackWindowsDescription = {
 	Common::UNK_LANG,
 	Common::kPlatformWindows,
 	ADGF_TESTING,
-	GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+	GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 };
 
 const ADGameDescription fallbackDosDescription = {
@@ -44,7 +44,7 @@ const ADGameDescription fallbackDosDescription = {
 	Common::UNK_LANG,
 	Common::kPlatformDOS,
 	ADGF_TESTING,
-	GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+	GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 };
 
 
