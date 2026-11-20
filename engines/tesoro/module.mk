@@ -39,6 +39,7 @@ MODULE_OBJS = \
 	core/spriteobject.o \
 	core/stdiotext.o \
 	core/storycharacter.o \
+	core/storyprop.o \
 	core/textqueue.o \
 	core/walkarea.o \
 	core/walkfloor.o

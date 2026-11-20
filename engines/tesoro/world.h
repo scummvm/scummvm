@@ -134,6 +134,7 @@ public:
 	/** The level Jim is in, or null. */
 	Level *jimLevel();
 	void playMusicTrack(byte track);
+	void setJimStep(byte step) { _jimPhase = 0; _jimStep = step; }
 	void jimShow(bool visible);
 	/** The pointer lets go of its item and shows the arrow */
 	void clearPointerItem();

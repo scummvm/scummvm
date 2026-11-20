@@ -34,6 +34,7 @@
 #include "tesoro/core/walkfloor.h"
 #include "tesoro/core/pathobject.h"
 #include "tesoro/core/storycharacter.h"
+#include "tesoro/core/storyprop.h"
 
 namespace Tesoro {
 
@@ -272,6 +273,18 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 		case 9: {
 			InteractiveObject *object = new InteractiveObject();
 			object->init(record, sort, levelPlayers, loadTime, *this, 0);
+			return object;
+		}
+		case 12:
+		case 17:
+		case 20: {
+			const uint sub = record.dataByte(1);
+			if (sub >= (record.kind == 12 ? 12u : record.kind == 17 ? 17u : 31u) || (record.kind == 20 && sub == 17)) {
+				warning("Level: object '%s' of kind %u has no subtype %u, skipped", record.name, record.kind, sub);
+				return nullptr;
+			}
+			StoryProp *object = new StoryProp();
+			object->init(record.kind, sub, record, sort, levelPlayers, loadTime, *this);
 			return object;
 		}
 		default:
