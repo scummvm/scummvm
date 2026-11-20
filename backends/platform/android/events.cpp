@@ -1123,6 +1123,8 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		ev0.type = Common::EVENT_MOUSEMOVE;
 		ev0.mouse.x = arg1;
 		ev0.mouse.y = arg2;
+		ev0.relMouse.x = arg3;
+		ev0.relMouse.y = arg4;
 		pushEvent(ev0);
 		break;
 
