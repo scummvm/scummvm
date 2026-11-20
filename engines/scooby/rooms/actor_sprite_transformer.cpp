@@ -22,6 +22,7 @@
 #include "scooby/rooms/actor_sprite_transformer.h"
 
 #include "common/array.h"
+#include "common/endian.h"
 
 namespace Scooby {
 ActorSpriteTransformer::ActorSpriteTransformer(const ScoobyDooRom &rom)
@@ -53,8 +54,8 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite48UsingPrimaryLa
 									: sourceRow < 64
 										? 0x300 + (sourceRow - 32) * 4 + longword * 0x80
 										: 0x600 + (sourceRow - 64) * 4 + longword * 0x40;
-			writeUInt16BigEndian(output, destinationOffset, packedHighWord);
-			writeUInt16BigEndian(output, destinationOffset + 2, packedLowWord);
+			WRITE_BE_UINT16(&output[destinationOffset], packedHighWord);
+			WRITE_BE_UINT16(&output[destinationOffset + 2], packedLowWord);
 		}
 	}
 
@@ -85,8 +86,8 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite80UsingSecondary
 				sourceRow < 32
 					? sourceRow * 4 + longword * 0x80
 					: 0x500 + (sourceRow - 32) * 4 + longword * 0x40;
-			writeUInt16BigEndian(output, destinationOffset, packedHighWord);
-			writeUInt16BigEndian(output, destinationOffset + 2, packedLowWord);
+			WRITE_BE_UINT16(&output[destinationOffset], packedHighWord);
+			WRITE_BE_UINT16(&output[destinationOffset + 2], packedLowWord);
 		}
 	}
 
@@ -136,7 +137,7 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite48(
 									: destinationRow < 64
 										? 0x300 + (destinationRow - 32) * 4 + longword * 0x80
 										: 0x600 + (destinationRow - 64) * 4 + longword * 0x40;
-			writeUInt32BigEndian(output, destinationOffset, packedPixels);
+			WRITE_BE_UINT32(&output[destinationOffset], packedPixels);
 		}
 
 		// Ghidra 0x0000D9F6-0x0000DA37: left-align a partial longword, zero the remaining row, advance the
@@ -190,7 +191,7 @@ Common::Array<uint8> ActorSpriteTransformer::scaleCompactSprite80(
 				destinationRow < 32
 					? destinationRow * 4 + longword * 0x80
 					: 0x500 + (destinationRow - 32) * 4 + longword * 0x40;
-			writeUInt32BigEndian(output, destinationOffset, packedPixels);
+			WRITE_BE_UINT32(&output[destinationOffset], packedPixels);
 		}
 
 		++destinationRow;

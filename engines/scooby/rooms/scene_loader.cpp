@@ -22,6 +22,7 @@
 #include "scooby/rooms/scene_loader.h"
 
 #include "common/array.h"
+#include "common/endian.h"
 
 #include "scooby/common/make_unique.h"
 #include "scooby/common/span.h"
@@ -149,17 +150,13 @@ void RoomSceneLoader::loadRoomScene() {
 																									uint16));
 			uint16 cell =
 				static_cast<uint16>(_rom.readUInt16(sourceOffset) + _state.actionPromptTileAttributes);
-			writeUInt16BigEndian(packedInterfaceCellsSpan,
-								 (row * kInterfaceTemplateColumnCount + column) * static_cast<int>(sizeof(
-																					  uint16)),
-								 cell);
+			WRITE_BE_UINT16(&packedInterfaceCellsSpan[(row * kInterfaceTemplateColumnCount + column) * sizeof(uint16)],
+				cell);
 		}
 
 		for (int column = kInterfaceTemplateExplicitColumnCount; column < kInterfaceTemplateColumnCount; column++) {
-			writeUInt16BigEndian(packedInterfaceCellsSpan,
-								 (row * kInterfaceTemplateColumnCount + column) * static_cast<int>(sizeof(
-																					  uint16)),
-								 repeatedInterfaceCell);
+			WRITE_BE_UINT16(&packedInterfaceCellsSpan[(row * kInterfaceTemplateColumnCount + column) * sizeof(uint16)],
+				repeatedInterfaceCell);
 		}
 	}
 

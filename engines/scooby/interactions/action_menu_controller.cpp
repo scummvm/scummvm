@@ -23,6 +23,8 @@
 
 #include "common/scummsys.h"
 
+#include "common/endian.h"
+
 #include "scooby/common/span.h"
 #include "scooby/graphics/tile_cell.h"
 #include "scooby/graphics/tile_layer.h"
@@ -216,16 +218,12 @@ void ActionMenuController::composeInventoryGrid() {
 						for (int column = 0; column < kInventoryIconColumnCount; column++) {
 							uint16 cell = static_cast<uint16>(
 								firstTileCell + column * kInventoryIconRowCount + row);
-							writeUInt16BigEndian(makeSpan(_inventoryCellWorkspace),
-												 slotByteOffset + row * kInventoryGridRowByteCount +
-													 column * static_cast<int>(sizeof(uint16)),
-												 cell);
+							WRITE_BE_UINT16(&_inventoryCellWorkspace[slotByteOffset + row * kInventoryGridRowByteCount +
+								column * sizeof(uint16)], cell);
 						}
 
-						writeUInt16BigEndian(makeSpan(_inventoryCellWorkspace),
-											 slotByteOffset + row * kInventoryGridRowByteCount +
-												 kInventoryIconColumnCount * static_cast<int>(sizeof(uint16)),
-											 kBlankInventoryCell);
+						WRITE_BE_UINT16(&_inventoryCellWorkspace[slotByteOffset + row * kInventoryGridRowByteCount +
+							kInventoryIconColumnCount * sizeof(uint16)], kBlankInventoryCell);
 					}
 				}
 
@@ -245,10 +243,8 @@ void ActionMenuController::composeInventoryGrid() {
 
 		for (int row = 0; row < kInventoryIconRowCount; row++) {
 			for (int column = 0; column <= kInventoryIconColumnCount; column++) {
-				writeUInt16BigEndian(makeSpan(_inventoryCellWorkspace),
-									 slotByteOffset + row * kInventoryGridRowByteCount +
-										 column * static_cast<int>(sizeof(uint16)),
-									 kBlankInventoryCell);
+				WRITE_BE_UINT16(&_inventoryCellWorkspace[slotByteOffset + row * kInventoryGridRowByteCount +
+					column * sizeof(uint16)], kBlankInventoryCell);
 			}
 		}
 	}
@@ -342,9 +338,7 @@ void ActionMenuController::drawSelectedActionIcon(int mode) {
 				_rom.readUInt16(sourceOffset + row * kInterfaceColumnCount * static_cast<int>(sizeof(uint16)) +
 								column * static_cast<int>(sizeof(uint16))) +
 				_state.actionPromptTileAttributes);
-			writeUInt16BigEndian(packedCellsSpan,
-								 (row * kActionIconCellColumnCount + column) * static_cast<int>(sizeof(uint16)),
-								 packedCell);
+			WRITE_BE_UINT16(&packedCellsSpan[(row * kActionIconCellColumnCount + column) * sizeof(uint16)], packedCell);
 		}
 	}
 

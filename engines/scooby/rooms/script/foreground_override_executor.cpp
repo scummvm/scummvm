@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 
 #include "common/array.h"
+#include "common/endian.h"
 
 #include "scooby/common/span.h"
 #include "scooby/compression/ring_lz_decoder.h"
@@ -64,9 +65,8 @@ void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { //
 												 static_cast<int>(sizeof(uint16)))
 			.toArray();
 	for (size_t byteOffset = 0; byteOffset < packedForeground.size(); byteOffset += sizeof(uint16)) {
-		writeUInt16BigEndian(
-			packedForeground, static_cast<int>(byteOffset),
-			static_cast<uint16>(readUInt16BigEndian(packedForeground, static_cast<int>(byteOffset)) +
+		WRITE_BE_UINT16(&packedForeground[byteOffset],
+			static_cast<uint16>(READ_BE_UINT16(&packedForeground[byteOffset]) +
 								tileBaseAttribute));
 	}
 

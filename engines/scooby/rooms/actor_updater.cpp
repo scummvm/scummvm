@@ -22,6 +22,7 @@
 #include "scooby/rooms/actor_updater.h"
 
 #include "common/array.h"
+#include "common/endian.h"
 
 #include "scooby/common/contracts.h"
 #include "scooby/common/span.h"
@@ -174,7 +175,7 @@ void RoomActorUpdater::publishLowerInterfaceCells(int sourceOffset) {
 				_rom.readUInt16(sourceOffset + row * kLowerInterfaceSourceRowByteStride +
 								column * static_cast<int>(sizeof(uint16))) +
 				_state.actionPromptTileAttributes);
-			writeUInt16BigEndian(packedRowSpan, column * static_cast<int>(sizeof(uint16)), packedCell);
+			WRITE_BE_UINT16(&packedRowSpan[column * sizeof(uint16)], packedCell);
 		}
 
 		_scene.loadLayerRows(packedRowSpan, TileLayer::Interface, kLowerInterfaceStartColumn,
@@ -1307,7 +1308,7 @@ void RoomActorUpdater::updateActorPriority(int actor) {
 		return;
 	}
 
-	int16 collisionCell = static_cast<int16>(readUInt16BigEndian(collisionCells, byteOffset));
+	int16 collisionCell = static_cast<int16>(READ_BE_UINT16(&collisionCells[byteOffset]));
 	uint8 actorMask = this->actorMask(actor);
 	if (collisionCell < 0) {
 		_state.actorHighPriorityFlags |= actorMask;

@@ -22,6 +22,7 @@
 #include "scooby/rooms/collision_probe.h"
 
 #include "common/array.h"
+#include "common/endian.h"
 
 #include "scooby/common/contracts.h"
 
@@ -52,7 +53,7 @@ RoomCollisionProbeResult RoomCollisionProbe::probeShaggyActorCollision(int candi
 		(static_cast<uint16>(x) >> 3) * sizeof(uint16) +
 		(static_cast<uint16>(y) >> 3) * rowByteStride);
 	SCOOBY_ASSERT(_state.activeRoomScene, "ProbeLeadActorCollision requires an active room scene.");
-	uint16 collisionCell = readUInt16BigEndian(_state.activeRoomScene->collisionCells, collisionByteOffset);
+	uint16 collisionCell = READ_BE_UINT16(&_state.activeRoomScene->collisionCells[collisionByteOffset]);
 	uint16 descriptorIndex = collisionCell & kCollisionCellDescriptorIndexMask;
 	if (descriptorIndex == 0) {
 		return RoomCollisionProbeResult(true, 0);
@@ -103,7 +104,7 @@ bool RoomCollisionProbe::probeStagedCollision(int16 x, int16 y) const {
 		return true;
 	}
 
-	uint16 collisionCell = readUInt16BigEndian(collisionCells, collisionByteOffset);
+	uint16 collisionCell = READ_BE_UINT16(&collisionCells[collisionByteOffset]);
 	uint16 descriptorIndex = collisionCell & kCollisionDescriptorShapeIndexMask;
 	if (descriptorIndex == 0) {
 		return false;

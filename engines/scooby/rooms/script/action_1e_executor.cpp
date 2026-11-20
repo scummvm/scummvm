@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 
 #include "common/array.h"
+#include "common/endian.h"
 
 #include "scooby/common/span.h"
 #include "scooby/compression/ring_lz_decoder.h"
@@ -54,9 +55,8 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 		decompressRingLz(_rom, kCellStreamOffset);
 	uint16 tileBaseAttribute = _state.roomDynamicTileBaseAttribute;
 	for (size_t byteOffset = 0; byteOffset < packedRows.size(); byteOffset += sizeof(uint16)) {
-		uint16 cell = readUInt16BigEndian(packedRows, static_cast<int>(byteOffset));
-		writeUInt16BigEndian(packedRows, static_cast<int>(byteOffset),
-							 static_cast<uint16>(cell + tileBaseAttribute));
+		uint16 cell = READ_BE_UINT16(&packedRows[byteOffset]);
+		WRITE_BE_UINT16(&packedRows[byteOffset], static_cast<uint16>(cell + tileBaseAttribute));
 	}
 
 	// Ghidra 0x00004210-0x0000424F: hold every signed vertical-scroll value for two retraces. After each

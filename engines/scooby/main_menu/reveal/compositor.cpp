@@ -23,6 +23,8 @@
 
 #include "common/scummsys.h"
 
+#include "common/endian.h"
+
 namespace Scooby {
 namespace {
 
@@ -59,7 +61,7 @@ void packRow(const ScoobyDooRom &rom, Span<const uint8> selectedPixels,
 		int offsetIndex = destinationRow * longwordsPerRow + group;
 		uint16 destinationOffset = rom.readUInt16(outputOffsetTable + offsetIndex *
 																		  static_cast<int>(sizeof(uint16)));
-		writeUInt32BigEndian(output, destinationOffset, packedPixels);
+		WRITE_BE_UINT32(&output[destinationOffset], packedPixels);
 	}
 }
 

@@ -28,9 +28,6 @@
 
 #include "scooby/assets/rom.h"
 
-// Reproduces Ghidra DecompressRingLz at 0x000097AA, the ROM's MSB-first
-// literal/back-reference stream decoder.
-
 namespace Scooby {
 // Reimplements Ghidra DecompressRingLz at 0x000097AA through its reserved
 // zero back-reference terminator.

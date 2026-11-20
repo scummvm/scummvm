@@ -21,6 +21,8 @@
 
 #include "scooby/graphics/sprite_layer.h"
 
+#include "common/endian.h"
+
 #include "scooby/assets/rom.h"
 
 namespace Scooby {
@@ -32,7 +34,7 @@ const int kVisibleCoordinateBias = 128;
 int getNumberOfSprites(const Span<const uint8> packedEntries) {
 	int numSprites = 0;
 	for (int nextIndex = 0; nextIndex * kEntryByteCount < packedEntries.size(); ) {
-		nextIndex = readUInt16BigEndian(packedEntries, nextIndex * kEntryByteCount + 2) & 0x007F;
+		nextIndex = READ_BE_UINT16(&packedEntries[nextIndex * kEntryByteCount + 2]) & 0x007F;
 		numSprites++;
 		if (nextIndex == 0) {
 			break;
@@ -53,10 +55,10 @@ Common::Array<SpriteInstance> decodePackedSpriteTableData(const Span<const uint8
 			packedEntries.slice(
 				static_cast<size_t>(entryIndex) * static_cast<size_t>(kEntryByteCount),
 				static_cast<size_t>(kEntryByteCount));
-		uint16 packedY = readUInt16BigEndian(entry, 0);
-		uint16 sizeAndLink = readUInt16BigEndian(entry, 2);
-		uint16 attributes = readUInt16BigEndian(entry, 4);
-		uint16 packedX = readUInt16BigEndian(entry, 6);
+		uint16 packedY = READ_BE_UINT16(&entry[0]);
+		uint16 sizeAndLink = READ_BE_UINT16(&entry[2]);
+		uint16 attributes = READ_BE_UINT16(&entry[4]);
+		uint16 packedX = READ_BE_UINT16(&entry[6]);
 
 		sprites.push_back(SpriteInstance(
 			(static_cast<int32>(packedX & 0x01FF)) - kVisibleCoordinateBias,
