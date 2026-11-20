@@ -146,12 +146,12 @@ void CrystalPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
 
-void CrystalPuzzle::render() {
+bool CrystalPuzzle::drawBoard() {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
 			g_system->unlockScreen();
-		return;
+		return false;
 	}
 
 	for (int y = 0; y < screen->h; ++y)
@@ -183,7 +183,7 @@ void CrystalPuzzle::render() {
 
 	if (_puzzlePalette.size() == kRipperPaletteByteCount)
 		setIndexedPaletteIfChanged(_puzzlePalette.data());
-	presentScreen();
+	return true;
 }
 
 int CrystalPuzzle::findTrayPiece(const Common::Point &point) const {
@@ -277,7 +277,8 @@ void CrystalPuzzle::seedInitialPieces(uint puzzleLevel) {
 		playMovementCue();
 		debugC(2, kDebugPuzzles,
 			"Ripper: crystal puzzle seeded piece=0 cell=9 difficulty=1");
-		render();
+		if (drawBoard())
+			presentScreen();
 		g_system->delayMillis(kEasySeedDelayTicks * kDosTimerTickMillis);
 		_pieceCells[1] = 44;
 		_cellPieces[44] = 1;
@@ -362,7 +363,9 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 		_engine->getSettings()->getPuzzleLevel());
 	_engine->getInput()->discardMouseTransitions();
 	seedInitialPieces(_engine->getSettings()->getPuzzleLevel());
-	render();
+	bool redrawPending = !drawBoard();
+	if (!redrawPending)
+		presentScreen();
 
 	Result result = kExited;
 	bool active = true;
@@ -382,7 +385,7 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 					kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: crystal puzzle modal help failed");
-				render();
+				redrawPending = true;
 				continue;
 			}
 			if (advanceKeyword(command & 0xff, kCompletionKeyword, _keywordIndex)) {
@@ -397,15 +400,14 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 			break;
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
-		bool changed = false;
 		if (_draggedPiece >= 0) {
+			redrawPending |= _dragPoint != mouse.position;
 			_dragPoint = mouse.position;
-			changed = true;
 			if ((mouse.pressed & kMouseButtonLeft) != 0) {
 				const int cell = findGridCell(mouse.position);
 				if (cell >= 0 && _cellPieces[cell] < 0) {
 					placeDraggedPiece(cell);
-					changed = true;
+					redrawPending = true;
 					if (isSolved()) {
 						debugC(1, kDebugPuzzles,
 							"Ripper: crystal puzzle solved by grid layout");
@@ -415,7 +417,7 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 				} else if (Common::Rect(kTrayLeft, kTrayTop, kTrayRight,
 						kTrayBottom).contains(mouse.position)) {
 					returnDraggedPieceToTray();
-					changed = true;
+					redrawPending = true;
 				}
 			}
 		} else if ((mouse.pressed & kMouseButtonLeft) != 0) {
@@ -424,12 +426,12 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 				piece = findPlacedPiece(mouse.position);
 			if (piece >= 0) {
 				beginDrag(piece, mouse.position);
-				changed = true;
+				redrawPending = true;
 			}
 		}
 		updateCursor(mouse.position);
-		if (changed && active)
-			render();
+		if (redrawPending && active)
+			redrawPending = !drawBoard();
 		presentScreen();
 		g_system->delayMillis(10);
 	}

@@ -46,7 +46,7 @@ private:
 	void restoreBackground() const;
 	bool loadAssets();
 	bool loadPieceSet(const char *prefix, Common::Array<BitmapAssetFrame> &frames);
-	void render();
+	bool drawBoard();
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;
 	int findTrayPiece(const Common::Point &point) const;
