@@ -30,8 +30,7 @@ namespace Ripper {
 
 class ScopedPlaybackPause : private Common::NonCopyable {
 public:
-	ScopedPlaybackPause(Video::VideoDecoder &decoder, Audio::Mixer &mixer,
-			const Audio::SoundHandle *externalAudio) :
+	ScopedPlaybackPause(Video::VideoDecoder &decoder, Audio::Mixer &mixer, const Audio::SoundHandle *externalAudio) :
 			_decoder(decoder), _mixer(mixer),
 			_hasExternalAudio(externalAudio && mixer.isSoundHandleActive(*externalAudio)) {
 		_decoder.pauseVideo(true);

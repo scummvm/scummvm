@@ -51,8 +51,7 @@ static bool readStream(Common::SeekableReadStream &stream, Common::Array<byte> &
 	return data.empty() || stream.read(data.data(), data.size()) == data.size();
 }
 
-static bool readPackedByte(const Common::Array<byte> &payload, uint32 &offset, byte shift,
-		byte &value) {
+static bool readPackedByte(const Common::Array<byte> &payload, uint32 &offset, byte shift, byte &value) {
 	if (offset >= payload.size() || (shift != 0 && offset + 1 >= payload.size()))
 		return false;
 
@@ -82,6 +81,7 @@ static bool expandCustomBitmap(const Common::Array<byte> &payload, const byte *d
 	while (outputOffset < compressedPixelCount) {
 		if (sourceOffset >= payload.size())
 			return false;
+
 		const byte code = (payload[sourceOffset] >> nibbleShift) & 0xf;
 		nibbleShift ^= 4;
 		if (nibbleShift == 0)
@@ -90,11 +90,13 @@ static bool expandCustomBitmap(const Common::Array<byte> &payload, const byte *d
 		if (code == 0xf) {
 			if (!readPackedByte(payload, sourceOffset, nibbleShift, previousColor))
 				return false;
+
 			pixels[outputOffset++] = colorMap[previousColor];
 		} else if (code == 0xe && repeatCodeEnabled) {
 			byte repeatByte = 0;
 			if (!readPackedByte(payload, sourceOffset, nibbleShift, repeatByte))
 				return false;
+
 			uint32 repeatCount = repeatByte;
 			if (repeatByte == 0xff) {
 				byte high = 0;
@@ -102,11 +104,14 @@ static bool expandCustomBitmap(const Common::Array<byte> &payload, const byte *d
 				if (!readPackedByte(payload, sourceOffset, nibbleShift, high) ||
 					!readPackedByte(payload, sourceOffset, nibbleShift, low))
 					return false;
+
 				repeatCount = ((uint32)high << 8) | low;
 			}
+
 			repeatCount += 2;
 			if (repeatCount > compressedPixelCount - outputOffset)
 				return false;
+
 			memset(pixels.data() + outputOffset, pixels[outputOffset - 1], repeatCount);
 			outputOffset += repeatCount;
 		} else {
@@ -120,6 +125,7 @@ static bool expandCustomBitmap(const Common::Array<byte> &payload, const byte *d
 
 	if (rawTailSize > payload.size() - sourceOffset)
 		return false;
+
 	for (uint32 i = 0; i < rawTailSize; ++i)
 		pixels[outputOffset++] = colorMap[payload[sourceOffset++]];
 	return outputOffset == pixels.size();
@@ -142,6 +148,7 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 		if (stream.read(extendedHeader, sizeof(extendedHeader)) != sizeof(extendedHeader) ||
 			READ_BE_UINT32(extendedHeader) != MKTAG('G', 'C', 'M', 'S'))
 			return false;
+
 		rawTailSize = READ_LE_UINT32(extendedHeader + 4);
 		payloadSize = READ_LE_UINT32(extendedHeader + 8);
 	} else if (compressionMode != 1 && compressionMode != 2) {
@@ -171,9 +178,9 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 		decodedFrame.palette.resize(paletteSize);
 		if (stream.read(decodedFrame.palette.data(), paletteSize) != paletteSize)
 			return false;
+
 		for (uint i = 0; i < decodedFrame.palette.size(); ++i)
-			decodedFrame.palette[i] =
-				(decodedFrame.palette[i] << 2) | (decodedFrame.palette[i] >> 4);
+			decodedFrame.palette[i] = (decodedFrame.palette[i] << 2) | (decodedFrame.palette[i] >> 4);
 	}
 
 	byte colorMap[256];
@@ -188,9 +195,9 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 
 	decodedFrame.transparentColor = colorMap[transparentColor];
 	decodedFrame.pixels.resize(pixelCount);
-	if (!expandCustomBitmap(payload, header + 5, colorCount, rawTailSize, compressionMode,
-			colorMap, decodedFrame.pixels))
+	if (!expandCustomBitmap(payload, header + 5, colorCount, rawTailSize, compressionMode, colorMap, decodedFrame.pixels))
 		return false;
+
 	frame = Common::move(decodedFrame);
 	return true;
 }
@@ -216,8 +223,7 @@ static bool copyIndexedSurface(const Graphics::Surface *surface,
 
 bool decodePcxAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
 	Image::PCXDecoder decoder;
-	return decoder.loadStream(stream) &&
-		copyIndexedSurface(decoder.getSurface(), decoder.getPalette(), 0, frame);
+	return decoder.loadStream(stream) && copyIndexedSurface(decoder.getSurface(), decoder.getPalette(), 0, frame);
 }
 
 namespace {
@@ -251,9 +257,9 @@ static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame
 	if (!decoder.loadStream(stream))
 		return false;
 
-	if (!copyIndexedSurface(decoder.getSurface(), decoder.getPalette(),
-			decoder.getHeader()->transparentColor & 0xff, frame))
+	if (!copyIndexedSurface(decoder.getSurface(), decoder.getPalette(), decoder.getHeader()->transparentColor & 0xff, frame))
 		return false;
+
 	debugC(3, kDebugResources,
 		"Ripper: decoded IFF bitmap width=%u height=%u transparent=%u colors=%u",
 		frame.width, frame.height, frame.transparentColor, decoder.getPalette().size());
@@ -264,14 +270,14 @@ bool decodeBitmapAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &fra
 	byte magic[4];
 	if (stream.read(magic, sizeof(magic)) != sizeof(magic))
 		return false;
+
 	stream.seek(0);
 	if (READ_BE_UINT32(magic) == MKTAG('F', 'O', 'R', 'M'))
 		return decodeIffBitmap(stream, frame);
 	return decodeCustomBitmap(stream, frame);
 }
 
-bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
-		BitmapAssetSequence &sequence) {
+bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream, BitmapAssetSequence &sequence) {
 	Common::Array<byte> data;
 	if (!readStream(stream, data) || data.size() < 4)
 		return false;
@@ -282,16 +288,17 @@ bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 		BitmapAssetFrame frame;
 		if (!decodeIffBitmap(bitmapStream, frame))
 			return false;
+
 		sequence.frames.push_back(Common::move(frame));
 		return true;
 	}
 
 	if (data.size() < 6)
 		return false;
+
 	const uint entryCount = READ_LE_UINT16(data.data());
 	const uint32 directoryOffset = READ_LE_UINT32(data.data() + 2);
-	if (entryCount == 0 || directoryOffset < 6 ||
-		(uint64)directoryOffset + (uint64)entryCount * 12 > data.size())
+	if (entryCount == 0 || directoryOffset < 6 || (uint64)directoryOffset + (uint64)entryCount * 12 > data.size())
 		return false;
 
 	sequence.frames.reserve(entryCount);
@@ -302,8 +309,7 @@ bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 		if (entryOffset < 6 || endOffset <= entryOffset || endOffset > directoryOffset)
 			return false;
 
-		Common::MemoryReadStream bitmapStream(data.data() + entryOffset,
-			endOffset - entryOffset, DisposeAfterUse::NO);
+		Common::MemoryReadStream bitmapStream(data.data() + entryOffset, endOffset - entryOffset, DisposeAfterUse::NO);
 		BitmapAssetFrame frame;
 		if (!decodeBitmapAsset(bitmapStream, frame))
 			return false;
@@ -314,16 +320,14 @@ bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 	return true;
 }
 
-bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
-		PresentationFrameRegionTable &table) {
+bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream, PresentationFrameRegionTable &table) {
 	table.frames.clear();
 	if (stream.size() < 0x68)
 		return false;
 
 	stream.seek(0x64);
 	const uint32 frameCount = stream.readUint32LE();
-	if (frameCount == 0 || frameCount > 10000 ||
-			(uint64)0x68 + (uint64)frameCount * 6 > (uint64)stream.size())
+	if (frameCount == 0 || frameCount > 10000 || (uint64)0x68 + (uint64)frameCount * 6 > (uint64)stream.size())
 		return false;
 
 	Common::Array<byte> frameRecords;
@@ -342,8 +346,7 @@ bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
 
 	Common::Array<byte> regionRecords;
 	regionRecords.resize(regionCount * 9);
-	if (!regionRecords.empty() &&
-			stream.read(regionRecords.data(), regionRecords.size()) != regionRecords.size())
+	if (!regionRecords.empty() && stream.read(regionRecords.data(), regionRecords.size()) != regionRecords.size())
 		return false;
 
 	table.frames.resize(frameCount);
@@ -354,8 +357,7 @@ bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
 		destination.auxiliary = record[2];
 		const uint firstRegion = READ_LE_UINT16(record + 4);
 		for (uint regionIndex = 0; regionIndex < record[1]; ++regionIndex) {
-			const byte *source =
-				regionRecords.data() + (firstRegion + regionIndex) * 9;
+			const byte *source = regionRecords.data() + (firstRegion + regionIndex) * 9;
 			PresentationRegion region;
 			region.type = source[0];
 			region.coordinate1 = (int16)READ_LE_UINT16(source + 1);
@@ -368,8 +370,7 @@ bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
 	return !stream.err();
 }
 
-bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream,
-		uint frameCount, PresentationFrameAudioMap &map) {
+bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream, uint frameCount, PresentationFrameAudioMap &map) {
 	map = PresentationFrameAudioMap();
 	if (stream.size() < 0x6c)
 		return false;
@@ -388,6 +389,7 @@ bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream,
 		char path[60];
 		if (stream.read(path, sizeof(path)) != sizeof(path))
 			return false;
+
 		map.sounds.push_back(Common::String(path, Common::strnlen(path, sizeof(path))));
 	}
 
@@ -446,6 +448,7 @@ bool AssetLibrary::open(const Common::Path &filename) {
 		warning("Ripper: cannot open an asset library with an empty filename");
 		return false;
 	}
+
 	if (!file.open(filename)) {
 		warning("Ripper: could not open asset library '%s'", filename.toString().c_str());
 		return false;
@@ -456,6 +459,7 @@ bool AssetLibrary::open(const Common::Path &filename) {
 		warning("Ripper: invalid asset library size %lld for '%s'", fileSize64, filename.toString().c_str());
 		return false;
 	}
+
 	return loadDirectory(file, (uint32)fileSize64);
 }
 
@@ -522,6 +526,7 @@ bool AssetLibrary::loadDirectory(Common::SeekableReadStream &file, uint32 fileSi
 			char extension[4];
 			if (file.read(extension, sizeof(extension)) != sizeof(extension))
 				return false;
+
 			const Common::String ext = readFixedString(extension, sizeof(extension));
 			if (!ext.empty())
 				name += "." + ext;
@@ -535,10 +540,12 @@ bool AssetLibrary::loadDirectory(Common::SeekableReadStream &file, uint32 fileSi
 				i, entry.key.c_str(), entry.offset, _filename.toString().c_str());
 			return false;
 		}
+
 		if (!_entries.empty() && entry.offset < _entries.back().offset) {
 			warning("Ripper: non-monotonic directory entry %u in '%s'", i, _filename.toString().c_str());
 			return false;
 		}
+
 		if (_entryIndices.contains(entry.key)) {
 			warning("Ripper: duplicate member '%s' in '%s'", entry.key.c_str(), _filename.toString().c_str());
 			return false;
@@ -551,10 +558,10 @@ bool AssetLibrary::loadDirectory(Common::SeekableReadStream &file, uint32 fileSi
 	for (uint i = 0; i < _entries.size(); ++i) {
 		const uint32 end = i + 1 < _entries.size() ? _entries[i + 1].offset : directoryOffset;
 		if (end < _entries[i].offset) {
-			warning("Ripper: invalid member range for '%s' in '%s'",
-				_entries[i].key.c_str(), _filename.toString().c_str());
+			warning("Ripper: invalid member range for '%s' in '%s'", _entries[i].key.c_str(), _filename.toString().c_str());
 			return false;
 		}
+
 		_entries[i].size = end - _entries[i].offset;
 		debugC(3, kDebugResources,
 			"Ripper: archive '%s' member=%u key='%s' offset=%u size=%u timestamp=0x%08x",
@@ -586,14 +593,13 @@ Common::SeekableReadStream *AssetLibrary::createReadStreamForMember(const Common
 			return nullptr;
 		}
 
-		Common::SeekableReadStream *stream =
-			_looseArchive->createReadStreamForMember(Common::Path(memberName));
+		Common::SeekableReadStream *stream = _looseArchive->createReadStreamForMember(Common::Path(memberName));
 		if (!stream) {
 			warning("Ripper: loose resource '%s' was not found", memberName.c_str());
 			return nullptr;
 		}
-		debugC(2, kDebugResources, "Ripper: opening loose resource '%s'",
-			memberName.c_str());
+
+		debugC(2, kDebugResources, "Ripper: opening loose resource '%s'", memberName.c_str());
 		return stream;
 	}
 
@@ -607,8 +613,7 @@ Common::SeekableReadStream *AssetLibrary::createReadStreamForMember(const Common
 		debugC(2, kDebugResources,
 			"Ripper: opening member '%s' from nested '%s' offset=%u size=%u",
 			memberName.c_str(), _filename.toString().c_str(), entry->offset, entry->size);
-		return new Common::MemoryReadStream(_archiveData.data() + entry->offset,
-			entry->size, DisposeAfterUse::NO);
+		return new Common::MemoryReadStream(_archiveData.data() + entry->offset, entry->size, DisposeAfterUse::NO);
 	}
 
 	Common::ScopedPtr<Common::File> file(new Common::File());
@@ -625,15 +630,13 @@ Common::SeekableReadStream *AssetLibrary::createReadStreamForMember(const Common
 		DisposeAfterUse::YES);
 }
 
-bool AssetLibrary::loadBitmap(const Common::String &memberName,
-		BitmapAssetFrame &frame) const {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		createReadStreamForMember(memberName));
+bool AssetLibrary::loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(createReadStreamForMember(memberName));
 	if (!stream || !decodeBitmapAsset(*stream, frame)) {
-		warning("Ripper: could not decode bitmap '%s' from library '%s'",
-			memberName.c_str(), _filename.toString().c_str());
+		warning("Ripper: could not decode bitmap '%s' from library '%s'", memberName.c_str(), _filename.toString().c_str());
 		return false;
 	}
+
 	debugC(2, kDebugResources,
 		"Ripper: decoded bitmap '%s' from library '%s' size=%ux%u colors=%u",
 		memberName.c_str(), _filename.toString().c_str(), frame.width,
@@ -641,30 +644,27 @@ bool AssetLibrary::loadBitmap(const Common::String &memberName,
 	return true;
 }
 
-bool AssetLibrary::loadBitmapSequence(const Common::String &memberName,
-		BitmapAssetSequence &sequence) const {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		createReadStreamForMember(memberName));
+bool AssetLibrary::loadBitmapSequence(const Common::String &memberName, BitmapAssetSequence &sequence) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(createReadStreamForMember(memberName));
 	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
 		warning("Ripper: could not decode bitmap sequence '%s' from library '%s'",
 			memberName.c_str(), _filename.toString().c_str());
 		return false;
 	}
+
 	debugC(2, kDebugResources,
 		"Ripper: decoded bitmap sequence '%s' from library '%s' frames=%u",
 		memberName.c_str(), _filename.toString().c_str(), sequence.frames.size());
 	return true;
 }
 
-bool AssetLibrary::loadPcx(const Common::String &memberName,
-		BitmapAssetFrame &frame) const {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		createReadStreamForMember(memberName));
+bool AssetLibrary::loadPcx(const Common::String &memberName, BitmapAssetFrame &frame) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(createReadStreamForMember(memberName));
 	if (!stream || !decodePcxAsset(*stream, frame)) {
-		warning("Ripper: could not decode PCX '%s' from library '%s'",
-			memberName.c_str(), _filename.toString().c_str());
+		warning("Ripper: could not decode PCX '%s' from library '%s'", memberName.c_str(), _filename.toString().c_str());
 		return false;
 	}
+
 	debugC(2, kDebugResources,
 		"Ripper: decoded PCX '%s' from library '%s' size=%ux%u colors=%u",
 		memberName.c_str(), _filename.toString().c_str(), frame.width,
@@ -672,8 +672,7 @@ bool AssetLibrary::loadPcx(const Common::String &memberName,
 	return true;
 }
 
-void AssetLibrary::listMembersWithPrefix(const Common::String &prefix,
-		Common::Array<Common::String> &members) const {
+void AssetLibrary::listMembersWithPrefix(const Common::String &prefix, Common::Array<Common::String> &members) const {
 	members.clear();
 	const Common::String keyPrefix = normalizeMemberName(prefix, false);
 	for (uint i = 0; i < _entries.size(); ++i) {
@@ -707,6 +706,7 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 		warning("Ripper: RIPPER.INI is missing FILES script, interface, or sound entries");
 		return false;
 	}
+
 	ini.getKey("puzzle", "files", puzzleLibrary);
 
 	debugC(2, kDebugResources,
@@ -728,9 +728,7 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 				_searchDirectories.push_back(directory);
 		}
 	}
-	debugC(2, kDebugResources,
-		"Ripper: configured explicit resource fallback directories=%u",
-		_searchDirectories.size());
+	debugC(2, kDebugResources, "Ripper: configured explicit resource fallback directories=%u", _searchDirectories.size());
 	const bool scriptSourceReady = scriptLibrary.empty() ?
 		_scripts.openLooseFiles(SearchMan) :
 		_scripts.open(Common::Path(scriptLibrary));
@@ -739,27 +737,25 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 	Common::Path puzzleLibraryPath(puzzleLibrary);
 	if (!puzzleLibrary.empty() && !puzzleDirectory.empty())
 		puzzleLibraryPath = Common::Path(puzzleDirectory).appendComponent(puzzleLibrary);
-	const bool puzzleSourceReady = puzzleLibrary.empty() ||
-		_puzzle.open(puzzleLibraryPath);
+	const bool puzzleSourceReady = puzzleLibrary.empty() || _puzzle.open(puzzleLibraryPath);
 	if (puzzleLibrary.empty())
-		debugC(1, kDebugResources,
-			"Ripper: using loose puzzle resources from configured search paths");
+		debugC(1, kDebugResources, "Ripper: using loose puzzle resources from configured search paths");
 	if (!scriptSourceReady ||
 		!_interface.open(Common::Path(interfaceLibrary)) ||
 		!puzzleSourceReady ||
 		!_sound.open(Common::Path(soundLibrary)))
 		return false;
 	if (!loadNestedOptions) {
-		debugC(1, kDebugResources,
-			"Ripper: skipped retail nested OPTIONS.PL for loose-script distribution");
+		debugC(1, kDebugResources, "Ripper: skipped retail nested OPTIONS.PL for loose-script distribution");
 		return true;
 	}
-	Common::ScopedPtr<Common::SeekableReadStream> optionsStream(
-		_interface.createReadStreamForMember("options.pl"));
+
+	Common::ScopedPtr<Common::SeekableReadStream> optionsStream(_interface.createReadStreamForMember("options.pl"));
 	if (!optionsStream || !_options.open(*optionsStream, Common::Path("options.pl"))) {
 		warning("Ripper: could not open nested OPTIONS.PL asset library");
 		return false;
 	}
+
 	return true;
 }
 
@@ -774,25 +770,28 @@ Common::SeekableReadStream *ResourceManager::createReadStream(const Common::Stri
 		if (stream)
 			resolvedSource = "search-member";
 	}
-	if (policy == kSourceDirectFile || policy == kSourceSoundEffect ||
-			policy == kSourceBlockingAudio) {
+
+	if (policy == kSourceDirectFile || policy == kSourceSoundEffect || policy == kSourceBlockingAudio) {
 		Common::ScopedPtr<Common::File> file(new Common::File());
 		if (file->open(Common::Path(path))) {
 			stream = file.release();
 			resolvedSource = "filesystem";
 		}
 	}
+
 	if (!stream && (policy == kSourceConfiguredPath || policy == kSourceBlockingAudio ||
 			policy == kSourceSceneAudio || policy == kSourceScriptConfiguration)) {
 		stream = createReadStreamForPath(path);
 		if (stream)
 			resolvedSource = "search-path";
 	}
+
 	if (policy == kSourceInterfaceLibrary) {
 		stream = _interface.createReadStreamForMember(path);
 		if (stream)
 			resolvedSource = "interface-library";
 	}
+
 	if (policy == kSourcePuzzleMedia || policy == kSourcePuzzlePiece) {
 		const bool hasMember = _puzzle.hasMember(path);
 		if (hasMember) {
@@ -800,39 +799,40 @@ Common::SeekableReadStream *ResourceManager::createReadStream(const Common::Stri
 			if (stream)
 				resolvedSource = "puzzle-library";
 		}
-		// Piece assets treat an existing archive member as authoritative, even
-		// when it cannot be opened. Media may fall back after an open failure.
+
+		// Piece assets treat an existing archive member as authoritative, even when it cannot be opened.
+		// Media may fall back after an open failure.
 		if (!stream && (policy == kSourcePuzzleMedia || !hasMember)) {
 			stream = createReadStreamForPath(path);
 			if (stream)
 				resolvedSource = "search-path";
 		}
 	}
+
 	if (!stream && (policy == kSourceSoundEffect || policy == kSourceBlockingAudio ||
 			policy == kSourceSceneAudio) && _sound.hasMember(path)) {
 		stream = _sound.createReadStreamForMember(path);
 		if (stream) {
 			resolvedSource = "sound-library";
 			if (policy == kSourceSceneAudio)
-				debugC(2, kDebugAudio,
-					"Ripper: resolved scene audio '%s' through the sound library", path.c_str());
+				debugC(2, kDebugAudio, "Ripper: resolved scene audio '%s' through the sound library", path.c_str());
 		}
 	}
+
 	if (!stream && policy == kSourceScriptConfiguration) {
 		stream = _scripts.createReadStreamForMember(path);
 		if (stream) {
 			resolvedSource = "script-library";
-			debugC(2, kDebugResources,
-				"Ripper: resolved configuration '%s' through SCRIPT.PL", path.c_str());
+			debugC(2, kDebugResources, "Ripper: resolved configuration '%s' through SCRIPT.PL", path.c_str());
 		}
 	}
+
 	if (source)
 		*source = resolvedSource;
 	return stream;
 }
 
-Common::SeekableReadStream *ResourceManager::createReadStreamForPath(
-		const Common::String &memberName) const {
+Common::SeekableReadStream *ResourceManager::createReadStreamForPath(const Common::String &memberName) const {
 	const Common::Path directPath(memberName);
 	if (SearchMan.hasFile(directPath))
 		return SearchMan.createReadStreamForMember(directPath);
@@ -840,12 +840,10 @@ Common::SeekableReadStream *ResourceManager::createReadStreamForPath(
 		return nullptr;
 
 	for (uint i = 0; i < _searchDirectories.size(); ++i) {
-		const Common::Path qualifiedPath =
-			Common::Path(_searchDirectories[i]).appendComponent(memberName);
+		const Common::Path qualifiedPath = Common::Path(_searchDirectories[i]).appendComponent(memberName);
 		if (!SearchMan.hasFile(qualifiedPath))
 			continue;
-		Common::SeekableReadStream *stream =
-			SearchMan.createReadStreamForMember(qualifiedPath);
+		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(qualifiedPath);
 		if (stream) {
 			debugC(2, kDebugResources,
 				"Ripper: resolved resource '%s' through configured path '%s'",
@@ -856,20 +854,16 @@ Common::SeekableReadStream *ResourceManager::createReadStreamForPath(
 	return nullptr;
 }
 
-bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberName,
-		BitmapAssetSequence &sequence) const {
+bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberName, BitmapAssetSequence &sequence) const {
 	return _interface.loadBitmapSequence(memberName, sequence);
 }
 
-bool ResourceManager::loadOptionsBitmapSequence(const Common::String &memberName,
-		BitmapAssetSequence &sequence) const {
+bool ResourceManager::loadOptionsBitmapSequence(const Common::String &memberName, BitmapAssetSequence &sequence) const {
 	return _options.loadBitmapSequence(memberName, sequence);
 }
 
-bool ResourceManager::loadBitmap(const Common::String &memberName,
-		BitmapAssetFrame &frame) const {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		SearchMan.createReadStreamForMember(Common::Path(memberName)));
+bool ResourceManager::loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(Common::Path(memberName)));
 	if (!stream || !decodeBitmapAsset(*stream, frame)) {
 		warning("Ripper: could not decode bitmap '%s'", memberName.c_str());
 		return false;
@@ -884,15 +878,13 @@ bool ResourceManager::loadBitmap(const Common::String &memberName,
 
 bool ResourceManager::loadBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence, SourcePolicy policy) const {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		createReadStream(memberName, policy));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(createReadStream(memberName, policy));
 	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
 		warning("Ripper: could not decode bitmap sequence '%s'", memberName.c_str());
 		return false;
 	}
 
-	debugC(2, kDebugResources, "Ripper: decoded bitmap sequence '%s' frames=%u",
-		memberName.c_str(), sequence.frames.size());
+	debugC(2, kDebugResources, "Ripper: decoded bitmap sequence '%s' frames=%u", memberName.c_str(), sequence.frames.size());
 	return true;
 }
 
@@ -901,12 +893,12 @@ bool ResourceManager::loadBitmapSequenceFirstFrame(const Common::String &memberN
 	BitmapAssetSequence sequence;
 	if (!loadBitmapSequence(memberName, sequence, policy) || sequence.frames.empty())
 		return false;
+
 	frame = Common::move(sequence.frames.front());
 	return true;
 }
 
-bool ResourceManager::loadBitmapLibrary(const Common::String &libraryName,
-		Common::Array<BitmapAssetFrame> &frames) const {
+bool ResourceManager::loadBitmapLibrary(const Common::String &libraryName, Common::Array<BitmapAssetFrame> &frames) const {
 	AssetLibrary library;
 	if (!library.open(Common::Path(libraryName)))
 		return false;
@@ -920,6 +912,7 @@ bool ResourceManager::loadBitmapLibrary(const Common::String &libraryName,
 			frames.clear();
 			return false;
 		}
+
 		frames.push_back(Common::move(frame));
 	}
 	debugC(2, kDebugResources,
@@ -928,8 +921,7 @@ bool ResourceManager::loadBitmapLibrary(const Common::String &libraryName,
 	return !frames.empty();
 }
 
-bool ResourceManager::loadInterfaceBitmapSet(const Common::String &prefix,
-		Common::Array<BitmapAssetFrame> &frames) const {
+bool ResourceManager::loadInterfaceBitmapSet(const Common::String &prefix, Common::Array<BitmapAssetFrame> &frames) const {
 	Common::Array<Common::String> members;
 	_interface.listMembersWithPrefix(prefix, members);
 	frames.clear();
@@ -937,6 +929,7 @@ bool ResourceManager::loadInterfaceBitmapSet(const Common::String &prefix,
 		BitmapAssetSequence sequence;
 		if (!loadInterfaceBitmapSequence(members[i], sequence))
 			return false;
+
 		for (uint frame = 0; frame < sequence.frames.size(); ++frame)
 			frames.push_back(Common::move(sequence.frames[frame]));
 	}
@@ -946,30 +939,25 @@ bool ResourceManager::loadInterfaceBitmapSet(const Common::String &prefix,
 	return !frames.empty();
 }
 
-bool ResourceManager::loadInterfacePcx(const Common::String &memberName,
-		BitmapAssetFrame &frame) const {
+bool ResourceManager::loadInterfacePcx(const Common::String &memberName, BitmapAssetFrame &frame) const {
 	return _interface.loadPcx(memberName, frame);
 }
 
-bool ResourceManager::loadOptionsPcx(const Common::String &memberName,
-		BitmapAssetFrame &frame) const {
+bool ResourceManager::loadOptionsPcx(const Common::String &memberName, BitmapAssetFrame &frame) const {
 	return _options.loadPcx(memberName, frame);
 }
 
-bool ResourceManager::loadInterfaceBitmapFont(const Common::String &memberName,
-		BitmapFontAsset &font) const {
+bool ResourceManager::loadInterfaceBitmapFont(const Common::String &memberName, BitmapFontAsset &font) const {
 	Common::String cacheKey = memberName;
 	cacheKey.toLowercase();
-	Common::HashMap<Common::String, BitmapFontAsset>::const_iterator cached =
-		_fontCache.find(cacheKey);
+	Common::HashMap<Common::String, BitmapFontAsset>::const_iterator cached = _fontCache.find(cacheKey);
 	if (cached != _fontCache.end()) {
 		font = cached->_value;
 		debugC(3, kDebugResources, "Ripper: reused cached NF2T font '%s'", memberName.c_str());
 		return true;
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_interface.createReadStreamForMember(memberName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_interface.createReadStreamForMember(memberName));
 	Common::Array<byte> data;
 	if (!stream || !readStream(*stream, data) || data.size() < 12 ||
 		READ_BE_UINT32(data.data()) != MKTAG('N', 'F', '2', 'T')) {
@@ -983,8 +971,7 @@ bool ResourceManager::loadInterfaceBitmapFont(const Common::String &memberName,
 		return false;
 
 	BitmapAssetFrame bitmap;
-	Common::MemoryReadStream bitmapStream(data.data() + bitmapOffset,
-		data.size() - bitmapOffset, DisposeAfterUse::NO);
+	Common::MemoryReadStream bitmapStream(data.data() + bitmapOffset, data.size() - bitmapOffset, DisposeAfterUse::NO);
 	if (!decodeCustomBitmap(bitmapStream, bitmap))
 		return false;
 
@@ -1025,8 +1012,7 @@ bool ResourceManager::loadGameText(Common::Array<Common::String> &strings) const
 		return true;
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_scripts.createReadStreamForMember("gametext.tf"));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_scripts.createReadStreamForMember("gametext.tf"));
 	Common::Array<byte> data;
 	if (!stream || !readStream(*stream, data) || data.size() < 4)
 		return false;
@@ -1039,12 +1025,11 @@ bool ResourceManager::loadGameText(Common::Array<Common::String> &strings) const
 	strings.resize(stringCount);
 	for (uint i = 0; i < stringCount; ++i) {
 		const uint32 offset = READ_LE_UINT32(data.data() + 4 + i * 4);
-		const uint32 end = i + 1 < stringCount ?
-			READ_LE_UINT32(data.data() + 8 + i * 4) : data.size();
+		const uint32 end = i + 1 < stringCount ? READ_LE_UINT32(data.data() + 8 + i * 4) : data.size();
 		if (offset >= end || end > data.size() || data[end - 1] != 0)
 			return false;
-		strings[i] = Common::String((const char *)data.data() + offset,
-			(const char *)data.data() + end - 1);
+
+		strings[i] = Common::String((const char *)data.data() + offset, (const char *)data.data() + end - 1);
 	}
 
 	debugC(2, kDebugResources, "Ripper: decoded GAMETEXT.TF strings=%u", strings.size());

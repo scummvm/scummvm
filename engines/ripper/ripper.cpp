@@ -101,9 +101,8 @@ void RipperEngine::syncSoundSettings() {
 }
 
 void RipperEngine::pauseEngineIntern(bool pause) {
-	// ScummVM's global dialogs suspend this engine while its blocking media loop
-	// is still on the stack. Freeze the decoder before its wall clock can advance
-	// behind the dialog, then resume audio before releasing that clock.
+	// ScummVM's global dialogs suspend this engine while its blocking media loop is still on the stack.
+	// Freeze the decoder before its wall clock can advance behind the dialog, then resume audio before releasing that clock.
 	if (pause && _screenPresenter)
 		_screenPresenter->pause(true);
 	if (pause && _media)
@@ -138,15 +137,14 @@ void RipperEngine::pumpEvents() {
 
 bool RipperEngine::waitForDemoEndingInput() {
 	const uint32 start = g_system->getMillis();
-	while (!shouldQuit() &&
-			g_system->getMillis() - start < kDemoEndingHoldTicks * kDosTickDurationMs) {
+	while (!shouldQuit() && g_system->getMillis() - start < kDemoEndingHoldTicks * kDosTickDurationMs) {
 		pumpEvents();
 		if (_input->hasPendingKey()) {
 			const uint16 command = _input->consumeKey();
-			debugC(2, kDebugInput,
-				"Ripper: demo ending hold dismissed command=0x%04x", command);
+			debugC(2, kDebugInput, "Ripper: demo ending hold dismissed command=0x%04x", command);
 			return true;
 		}
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}
@@ -157,14 +155,14 @@ bool RipperEngine::runDemoEnding() {
 	_cursor->setVisible(false);
 	_toolbar->leave();
 	_sceneAudio->clearAll(true);
-	debugC(1, kDebugGeneral,
-		"Ripper: entering demo ending sequence");
+	debugC(1, kDebugGeneral, "Ripper: entering demo ending sequence");
 	if (!_media->displayInterfacePcx("soon.pcx") || !waitForDemoEndingInput())
 		return false;
 	if (!_media->displayInterfacePcx("ripbox.pcx") ||
 			!_media->playBlockingAudio("ripbox.wav", false) ||
 			!waitForDemoEndingInput())
 		return false;
+
 	debugC(1, kDebugGeneral, "Ripper: completed demo ending sequence");
 	return true;
 }
@@ -181,16 +179,13 @@ void RipperEngine::installScenePalette(const Common::Array<byte> &sourcePalette)
 }
 
 bool RipperEngine::selectRandomRipperIdentity(const char *source) {
-	const uint candidateCount =
-		kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
-	return _milestones->selectRipperIdentity(
-		_randomSource.getRandomNumber(candidateCount - 1), source);
+	const uint candidateCount = kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
+	return _milestones->selectRipperIdentity(_randomSource.getRandomNumber(candidateCount - 1), source);
 }
 
 Common::Error RipperEngine::runRiperBatEasterEgg() {
 	// This emulates starting the game through RIPER.BAT.
-	// The batch file runs "player scenes.avi" and then
-	// prints this farewell after the standalone player exits.
+	// The batch file runs "player scenes.avi" and then prints this farewell after the standalone player exits.
 	const bool played = _media->play("scenes.avi", true);
 	g_system->logMessage(LogMessageType::kInfo, kRiperBatFarewell);
 	return played || shouldQuit() ? Common::kNoError : Common::kReadingFailed;
@@ -206,8 +201,10 @@ Common::Error RipperEngine::run() {
 			warning("Ripper: Easter egg video is unavailable for the demo");
 			return Common::kUnsupportedGameidError;
 		}
+
 		return runRiperBatEasterEgg();
 	}
+
 	if (!_resources->initialize(!isDemo))
 		return Common::kReadingFailed;
 	if (!_milestones->initialize(*_resources))
@@ -234,27 +231,24 @@ Common::Error RipperEngine::run() {
 	_cursor->setVisible(false);
 	bool startGameplay = isDemo;
 	if (isDemo) {
-		debugC(1, kDebugGeneral,
-			"Ripper: demo startup entering loose RIPPER.RUN directly");
+		debugC(1, kDebugGeneral, "Ripper: demo startup entering loose RIPPER.RUN directly");
 	} else {
 		const bool skipIntro = ConfMan.hasKey("skip_intro") && ConfMan.getBool("skip_intro");
 		if (skipIntro) {
-			debugC(1, kDebugVideo,
-				"Ripper: skipping startup presentation logo.avi by game option");
+			debugC(1, kDebugVideo, "Ripper: skipping startup presentation logo.avi by game option");
 		} else {
-			debugC(1, kDebugVideo,
-				"Ripper: startup presentation logo.avi");
+			debugC(1, kDebugVideo, "Ripper: startup presentation logo.avi");
 			if (!_media->play("logo.avi", true))
 				return shouldQuit() ? Common::kNoError : Common::kUnknownError;
 		}
 
 		const int launcherSaveSlot = ConfMan.getInt("save_slot");
 		if (launcherSaveSlot >= 0) {
-			debugC(1, kDebugSaveLoad,
-				"Ripper: launcher requested restore slot=%d", launcherSaveSlot);
+			debugC(1, kDebugSaveLoad, "Ripper: launcher requested restore slot=%d", launcherSaveSlot);
 			const Common::Error loadError = loadGameState(launcherSaveSlot);
 			if (loadError.getCode() != Common::kNoError)
 				return loadError;
+
 			startGameplay = true;
 		}
 
@@ -271,30 +265,26 @@ Common::Error RipperEngine::run() {
 				break;
 			case kMainMenuContinue:
 				if (!_saveFileMan->exists(getSaveStateName(getAutosaveSlot()))) {
-					debugC(1, kDebugSaveLoad,
-						"Ripper: Continue requested without emergency slot=%d",
-						getAutosaveSlot());
+					debugC(1, kDebugSaveLoad, "Ripper: Continue requested without emergency slot=%d", getAutosaveSlot());
 					break;
 				}
+
 				if (loadGameState(getAutosaveSlot()).getCode() == Common::kNoError) {
-					debugC(1, kDebugSaveLoad,
-						"Ripper: startup Continue restored emergency slot=%d",
-						getAutosaveSlot());
+					debugC(1, kDebugSaveLoad, "Ripper: startup Continue restored emergency slot=%d", getAutosaveSlot());
 					startGameplay = true;
 				}
+
 				break;
 			case kMainMenuLoadGame:
-				debugC(1, kDebugSaveLoad,
-					"Ripper: startup Restore Game entering manual slot chooser");
+				debugC(1, kDebugSaveLoad, "Ripper: startup Restore Game entering manual slot chooser");
 				if (loadGameDialog()) {
-					debugC(1, kDebugSaveLoad,
-						"Ripper: startup Restore Game loaded manual slot");
+					debugC(1, kDebugSaveLoad, "Ripper: startup Restore Game loaded manual slot");
 					startGameplay = true;
 				}
+
 				break;
 			case kMainMenuViewIntro:
-				debugC(1, kDebugVideo,
-					"Ripper: startup menu plays proint.avi");
+				debugC(1, kDebugVideo, "Ripper: startup menu plays proint.avi");
 				if (!_media->play("proint.avi", true))
 					return shouldQuit() ? Common::kNoError : Common::kUnknownError;
 				break;
@@ -313,9 +303,11 @@ Common::Error RipperEngine::run() {
 		if (!_scripts->runStartupPath()) {
 			if (shouldQuit())
 				return Common::kNoError;
+
 			_scripts->logRuntimeFailure("startup scene path failed");
 			return Common::kUnknownError;
 		}
+
 		_gameplayStarted = true;
 	}
 
@@ -329,18 +321,15 @@ Common::Error RipperEngine::run() {
 			_scripts->logRuntimeFailure("scene service failed");
 			return Common::kUnknownError;
 		}
+
 		presentScreen();
 		_system->delayMillis(10);
 	}
-	if (isDemo && _scripts->isDemoRuntimeComplete() && !shouldQuit() &&
-			!runDemoEnding())
+	if (isDemo && _scripts->isDemoRuntimeComplete() && !shouldQuit() && !runDemoEnding())
 		return shouldQuit() ? Common::kNoError : Common::kUnknownError;
 	if (!isDemo && _scripts->canSaveGame()) {
-		debugC(1, kDebugSaveLoad,
-			"Ripper: scene loop exit writing emergency Continue slot=%d",
-			getAutosaveSlot());
-		const Common::Error saveError = saveGameState(
-			getAutosaveSlot(), "Continue", true);
+		debugC(1, kDebugSaveLoad, "Ripper: scene loop exit writing emergency Continue slot=%d", getAutosaveSlot());
+		const Common::Error saveError = saveGameState(getAutosaveSlot(), "Continue", true);
 		if (saveError.getCode() != Common::kNoError)
 			warning("Ripper: unable to write emergency Continue save");
 	}

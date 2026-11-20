@@ -58,8 +58,7 @@ private:
 	void restoreLeverBackings(byte *screen, uint pitch) const;
 	void restorePuzzleHelpBackings(byte *screen, uint pitch) const;
 	Common::Point puzzleHelpLabelPosition(uint lever) const;
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y, bool transparent) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y, bool transparent) const;
 	int findLever(const Common::Point &point) const;
 	HoverControl findControl(const Common::Point &point, int &lever) const;
 	void updateCursor(const Common::Point &point);

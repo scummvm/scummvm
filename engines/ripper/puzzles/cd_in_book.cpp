@@ -94,16 +94,14 @@ CdInBookPuzzle::CdInBookPuzzle(RipperEngine *engine) : Puzzle(engine),
 }
 
 bool CdInBookPuzzle::loadBackground() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(kBackgroundName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_library.createReadStreamForMember(kBackgroundName));
 	if (!stream || !decodePcxAsset(*stream, _background)) {
 		warning("Ripper: could not decode CD-in-book background '%s'", kBackgroundName);
 		return false;
 	}
 
 	const uint paletteColors = _background.palette.size() / 3;
-	if (_background.width != 640 || _background.height != kSceneHeight ||
-			paletteColors < 256) {
+	if (_background.width != 640 || _background.height != kSceneHeight || paletteColors < 256) {
 		warning("Ripper: invalid CD-in-book background '%s' size=%dx%d colors=%u",
 			kBackgroundName, _background.width, _background.height, paletteColors);
 		return false;
@@ -114,22 +112,22 @@ bool CdInBookPuzzle::loadBackground() {
 }
 
 bool CdInBookPuzzle::loadAssets() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(kLibraryName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(kLibraryName));
 	if (!stream || !_library.open(*stream, Common::Path(kLibraryName))) {
 		warning("Ripper: could not open CD-in-book library '%s'", kLibraryName);
 		return false;
 	}
+
 	if (!loadBackground())
 		return false;
 
 	for (uint button = 0; button < kButtonCount; ++button) {
-		if (!_library.loadBitmap(Common::String::format("p%02u.bbm", button + 1),
-				_buttonFrames[button]))
+		if (!_library.loadBitmap(Common::String::format("p%02u.bbm", button + 1), _buttonFrames[button]))
 			return false;
 	}
 	if (!_library.loadBitmap("p07.bbm", _feedbackFrame))
 		return false;
+
 	for (uint cue = 0; cue < kAudioCueCount; ++cue) {
 		if (!_library.hasMember(kAudioNames[cue])) {
 			warning("Ripper: CD-in-book audio '%s' is missing", kAudioNames[cue]);
@@ -157,6 +155,7 @@ bool CdInBookPuzzle::drawBackground() {
 			g_system->unlockScreen();
 		return false;
 	}
+
 	for (uint y = 0; y < _background.height; ++y)
 		memcpy(screen->getBasePtr(0, y + kSceneOriginY),
 			_background.pixels.data() + y * _background.width, _background.width);
@@ -226,9 +225,9 @@ void CdInBookPuzzle::drawFeedbackMarkers() {
 void CdInBookPuzzle::removeFeedbackMarker(uint marker) {
 	if (marker >= kFeedbackMarkerCount)
 		return;
+
 	_feedbackBackings[marker].restore(false, true);
-	debugC(3, kDebugPuzzles,
-		"Ripper: CD-in-book removed feedback marker=%u", marker);
+	debugC(3, kDebugPuzzles, "Ripper: CD-in-book removed feedback marker=%u", marker);
 }
 
 void CdInBookPuzzle::setButtonPressed(uint button, bool pressed) {
@@ -255,8 +254,7 @@ int CdInBookPuzzle::findButton(const Common::Point &point) const {
 }
 
 bool CdInBookPuzzle::isExitRegion(const Common::Point &point) const {
-	return point.y >= kSceneOriginY && point.y < kSceneOriginY + kSceneHeight &&
-		(point.x < 140 || point.x >= 500);
+	return point.y >= kSceneOriginY && point.y < kSceneOriginY + kSceneHeight && (point.x < 140 || point.x >= 500);
 }
 
 void CdInBookPuzzle::updateCursor(const Common::Point &point) {
@@ -273,18 +271,19 @@ void CdInBookPuzzle::updateCursor(const Common::Point &point) {
 			hoveredButton, _hoveredButton, point.x, point.y, cursor);
 		_hoveredButton = hoveredButton;
 	}
+
 	_engine->getCursor()->update(cursor);
 }
 
 bool CdInBookPuzzle::playCue(uint cue) {
 	if (cue >= kAudioCueCount)
 		return false;
-	Common::SeekableReadStream *stream =
-		_library.createReadStreamForMember(kAudioNames[cue]);
+
+	Common::SeekableReadStream *stream = _library.createReadStreamForMember(kAudioNames[cue]);
 	if (!stream)
 		return false;
-	Audio::SeekableAudioStream *wavStream =
-		Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+
+	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 	if (!wavStream) {
 		warning("Ripper: could not decode CD-in-book audio '%s'", kAudioNames[cue]);
 		return false;
@@ -293,8 +292,7 @@ bool CdInBookPuzzle::playCue(uint cue) {
 	Audio::Mixer *mixer = g_system->getMixer();
 	mixer->stopHandle(_audioHandles[cue]);
 	mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioHandles[cue], wavStream);
-	debugC(3, kDebugPuzzles,
-		"Ripper: CD-in-book played audio cue=%u path='%s'", cue, kAudioNames[cue]);
+	debugC(3, kDebugPuzzles, "Ripper: CD-in-book played audio cue=%u path='%s'", cue, kAudioNames[cue]);
 	return true;
 }
 
@@ -308,6 +306,7 @@ bool CdInBookPuzzle::waitMillis(uint32 duration) {
 	while (!_engine->shouldQuit() && (int32)(g_system->getMillis() - target) < 0) {
 		if (!serviceEngineEvents())
 			return false;
+
 		g_system->delayMillis(10);
 	}
 	return !_engine->shouldQuit();
@@ -316,10 +315,11 @@ bool CdInBookPuzzle::waitMillis(uint32 duration) {
 bool CdInBookPuzzle::waitForCue(uint cue) {
 	if (cue >= kAudioCueCount)
 		return false;
-	while (!_engine->shouldQuit() &&
-			g_system->getMixer()->isSoundHandleActive(_audioHandles[cue])) {
+
+	while (!_engine->shouldQuit() && g_system->getMixer()->isSoundHandleActive(_audioHandles[cue])) {
 		if (!serviceEngineEvents())
 			return false;
+
 		g_system->delayMillis(10);
 	}
 	return !_engine->shouldQuit();
@@ -330,12 +330,12 @@ bool CdInBookPuzzle::resetFailedAttempt() {
 		return false;
 	if (!playCue(kBuzzerCue))
 		return false;
+
 	drawFeedbackMarkers();
-	debugC(2, kDebugPuzzles,
-		"Ripper: CD-in-book reset failed six-button attempt markers=%u",
-		kFeedbackMarkerCount);
+	debugC(2, kDebugPuzzles, "Ripper: CD-in-book reset failed six-button attempt markers=%u", kFeedbackMarkerCount);
 	if (!waitForCue(kBuzzerCue))
 		return false;
+
 	_exitPressed = false;
 	_engine->getInput()->discardMouseTransitions();
 	return true;
@@ -374,10 +374,9 @@ CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
 				active = false;
 				break;
 			}
+
 			if (command == kHelpCommand) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: CD-in-book puzzle opening modal help table=0x%x",
-					kHelpSelectionTable);
+				debugC(1, kDebugPuzzles, "Ripper: CD-in-book puzzle opening modal help table=0x%x", kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: CD-in-book modal help failed");
 			}
@@ -401,6 +400,7 @@ CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
 				_exitPressed = isExitRegion(mouse.position);
 			}
 		}
+
 		if ((mouse.released & kMouseButtonLeft) != 0) {
 			if (_exitPressed) {
 				if (isExitRegion(mouse.position)) {
@@ -409,8 +409,10 @@ CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
 						mouse.position.x, mouse.position.y);
 					active = false;
 				}
+
 				_exitPressed = false;
 			}
+
 			if (_pressedButton >= 0) {
 				const uint button = _pressedButton;
 				setButtonPressed(button, false);
@@ -426,17 +428,15 @@ CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
 
 					if (attemptLength < kSequenceLength) {
 						// Marker selection allows repeats, including markers already hidden.
-						removeFeedbackMarker(_random.getRandomNumber(
-							kFeedbackMarkerCount - 1));
+						removeFeedbackMarker(_random.getRandomNumber(kFeedbackMarkerCount - 1));
 					} else if (correctEntries == kSequenceLength) {
 						if (!markSolved(completionFlag, "cd-in-book-puzzle")) {
 							result = kLoadFailed;
 						} else {
 							result = kSolved;
-							debugC(1, kDebugPuzzles,
-								"Ripper: solved CD-in-book puzzle milestone=%u",
-								completionFlag);
+							debugC(1, kDebugPuzzles, "Ripper: solved CD-in-book puzzle milestone=%u", completionFlag);
 						}
+
 						active = false;
 					} else {
 						debugC(2, kDebugPuzzles,
@@ -453,6 +453,7 @@ CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
 				}
 			}
 		}
+
 		g_system->delayMillis(10);
 	}
 

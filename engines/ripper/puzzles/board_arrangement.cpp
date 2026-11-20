@@ -82,28 +82,26 @@ BoardArrangementPuzzle::BoardArrangementPuzzle(RipperEngine *engine) :
 	}
 }
 
-bool BoardArrangementPuzzle::loadPcx(const Common::String &path,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(path));
+bool BoardArrangementPuzzle::loadPcx(const Common::String &path, BitmapAssetFrame &frame) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(path));
 	if (!stream || !decodePcxAsset(*stream, frame)) {
 		warning("Ripper: could not decode board arrangement PCX '%s'", path.c_str());
 		return false;
 	}
+
 	return true;
 }
 
-bool BoardArrangementPuzzle::loadPieceSet(const char *prefix,
-		Common::Array<BitmapAssetFrame> &frames) {
+bool BoardArrangementPuzzle::loadPieceSet(const char *prefix, Common::Array<BitmapAssetFrame> &frames) {
 	frames.clear();
 	for (uint piece = 0; piece < kPieceCount; ++piece) {
 		BitmapAssetFrame asset;
 		const Common::String path = Common::String::format("%s%u.bbm", prefix, piece);
 		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, asset)) {
-			warning("Ripper: could not load board arrangement piece '%s'",
-				path.c_str());
+			warning("Ripper: could not load board arrangement piece '%s'", path.c_str());
 			return false;
 		}
+
 		frames.push_back(Common::move(asset));
 	}
 	return true;
@@ -116,10 +114,10 @@ bool BoardArrangementPuzzle::loadAssets() {
 		return false;
 
 	if (_template.width != 640 || _template.height != 300) {
-		warning("Ripper: board arrangement template has invalid size=%ux%u",
-			_template.width, _template.height);
+		warning("Ripper: board arrangement template has invalid size=%ux%u", _template.width, _template.height);
 		return false;
 	}
+
 	for (uint piece = 0; piece < kPieceCount; ++piece) {
 		if (_largePieces[piece].width > 273 ||
 				_largePieces[piece].height > 203 ||
@@ -128,8 +126,7 @@ bool BoardArrangementPuzzle::loadAssets() {
 			return false;
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> effect(
-		_engine->getResources()->createReadStreamForPath("bboard.rtp"));
+	Common::ScopedPtr<Common::SeekableReadStream> effect(_engine->getResources()->createReadStreamForPath("bboard.rtp"));
 	if (!effect) {
 		warning("Ripper: could not open board arrangement effect 'bboard.rtp'");
 		return false;
@@ -154,8 +151,7 @@ void BoardArrangementPuzzle::storePersistentState() const {
 		state.positions[piece] = _positions[piece];
 }
 
-void BoardArrangementPuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void BoardArrangementPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
@@ -170,31 +166,29 @@ bool BoardArrangementPuzzle::render() const {
 			g_system->unlockScreen();
 		return false;
 	}
+
 	byte *pixels = (byte *)screen->getPixels();
 	const int previewPiece = _draggedPiece >= 0 ? _draggedPiece : _hoveredPiece;
 	if (previewPiece >= 0)
-		drawFrame(pixels, screen->pitch, _largePieces[previewPiece],
-			kPreviewLeft, kPreviewTop);
+		drawFrame(pixels, screen->pitch, _largePieces[previewPiece], kPreviewLeft, kPreviewTop);
 
 	for (int zIndex = kPieceCount - 1; zIndex >= 0; --zIndex) {
 		const uint piece = _zOrder[zIndex];
 		if ((int)piece == _draggedPiece)
 			continue;
-		drawFrame(pixels, screen->pitch, _smallPieces[piece],
-			_positions[piece].x, _positions[piece].y);
+		drawFrame(pixels, screen->pitch, _smallPieces[piece], _positions[piece].x, _positions[piece].y);
 	}
 	if (_draggedPiece >= 0) {
-		drawFrame(pixels, screen->pitch, _smallPieces[_draggedPiece],
-			_dragPosition.x, _dragPosition.y);
+		drawFrame(pixels, screen->pitch, _smallPieces[_draggedPiece], _dragPosition.x, _dragPosition.y);
 	}
+
 	g_system->unlockScreen();
 	setIndexedPaletteIfChanged(_boardDisplay.palette().data());
 	presentScreen();
 	return true;
 }
 
-int BoardArrangementPuzzle::findPiece(const Common::Point &point,
-		int *zIndex) const {
+int BoardArrangementPuzzle::findPiece(const Common::Point &point, int *zIndex) const {
 	for (uint index = 0; index < kPieceCount; ++index) {
 		const uint piece = _zOrder[index];
 		const BitmapAssetFrame &frame = _smallPieces[piece];
@@ -229,6 +223,7 @@ bool BoardArrangementPuzzle::updateCursor(const Common::Point &point) {
 		else if (isExitPoint(point))
 			cursor = kExitCursor;
 	}
+
 	const bool changed = hovered != _hoveredPiece;
 	if (changed) {
 		debugC(2, kDebugInput,
@@ -236,6 +231,7 @@ bool BoardArrangementPuzzle::updateCursor(const Common::Point &point) {
 			hovered, _hoveredPiece, point.x, point.y, cursor);
 		_hoveredPiece = hovered;
 	}
+
 	_engine->getCursor()->update(cursor);
 	_engine->getCursor()->setVisible(true);
 	return changed;
@@ -247,11 +243,9 @@ void BoardArrangementPuzzle::beginDrag(uint piece, int zIndex) {
 	_dragPosition = _positions[piece];
 	_hoveredPiece = piece;
 	const BitmapAssetFrame &frame = _smallPieces[piece];
-	const Common::Point center(_positions[piece].x + frame.width / 2,
-		_positions[piece].y + frame.height / 2);
+	const Common::Point center(_positions[piece].x + frame.width / 2, _positions[piece].y + frame.height / 2);
 	_engine->getInput()->warpMousePosition(center);
-	if (zIndex != 0 &&
-			!_engine->getMedia()->playSoundEffect("bb1.wav", _moveAudioHandle))
+	if (zIndex != 0 && !_engine->getMedia()->playSoundEffect("bb1.wav", _moveAudioHandle))
 		warning("Ripper: could not start board arrangement move cue");
 	debugC(2, kDebugPuzzles,
 		"Ripper: board arrangement drag began piece=%u zIndex=%d "
@@ -262,15 +256,12 @@ void BoardArrangementPuzzle::beginDrag(uint piece, int zIndex) {
 bool BoardArrangementPuzzle::updateDrag(const Common::Point &point) {
 	const Common::Point previousPosition = _dragPosition;
 	const BitmapAssetFrame &frame = _smallPieces[_draggedPiece];
-	_dragPosition.x = CLIP<int>(point.x - frame.width / 2,
-		kDragLeft, kDragRight - frame.width);
-	_dragPosition.y = CLIP<int>(point.y - frame.height / 2,
-		kDragTop, kDragBottom - frame.height);
+	_dragPosition.x = CLIP<int>(point.x - frame.width / 2, kDragLeft, kDragRight - frame.width);
+	_dragPosition.y = CLIP<int>(point.y - frame.height / 2, kDragTop, kDragBottom - frame.height);
 	return _dragPosition != previousPosition;
 }
 
-bool BoardArrangementPuzzle::isInvalidDrop(const Common::Point &position,
-		const BitmapAssetFrame &frame) const {
+bool BoardArrangementPuzzle::isInvalidDrop(const Common::Point &position, const BitmapAssetFrame &frame) const {
 	return position.y > kInvalidPreviewTop &&
 		position.x > kInvalidPreviewLeft &&
 		position.y + frame.height < kInvalidPreviewBottom &&
@@ -282,8 +273,7 @@ void BoardArrangementPuzzle::animateInvalidDrop(const Common::Point &target) {
 	const int dx = target.x - start.x;
 	const int dy = target.y - start.y;
 	const uint distance = MAX(ABS(dx), ABS(dy));
-	const uint steps = MAX<uint>(1,
-		(distance + kInvalidDropPixelsPerTick - 1) / kInvalidDropPixelsPerTick);
+	const uint steps = MAX<uint>(1, (distance + kInvalidDropPixelsPerTick - 1) / kInvalidDropPixelsPerTick);
 	for (uint step = 1; step <= steps && !_engine->shouldQuit(); ++step) {
 		_dragPosition.x = start.x + dx * (int)step / (int)steps;
 		_dragPosition.y = start.y + dy * (int)step / (int)steps;
@@ -303,6 +293,7 @@ void BoardArrangementPuzzle::bringPieceToFront(uint piece) {
 		++current;
 	if (current == 0 || current >= kPieceCount)
 		return;
+
 	for (uint index = current; index > 0; --index)
 		_zOrder[index] = _zOrder[index - 1];
 	_zOrder[0] = piece;
@@ -311,6 +302,7 @@ void BoardArrangementPuzzle::bringPieceToFront(uint piece) {
 void BoardArrangementPuzzle::finishDrag() {
 	if (_draggedPiece < 0)
 		return;
+
 	const uint piece = _draggedPiece;
 	const BitmapAssetFrame &frame = _smallPieces[piece];
 	if (isInvalidDrop(_dragPosition, frame))
@@ -331,15 +323,11 @@ bool BoardArrangementPuzzle::isSolved(bool logPairs) const {
 		const uint second = kValidationOrder[order + 1];
 		const BitmapAssetFrame &firstFrame = _smallPieces[first];
 		const BitmapAssetFrame &secondFrame = _smallPieces[second];
-		const int minimumSecondLeft =
-			_positions[first].x + firstFrame.width;
+		const int minimumSecondLeft = _positions[first].x + firstFrame.width;
 		const int firstBottom = _positions[first].y + firstFrame.height;
 		const int secondBottom = _positions[second].y + secondFrame.height;
-		const bool horizontalPass =
-			_positions[second].x >= minimumSecondLeft;
-		const bool verticalPass =
-			firstBottom >= _positions[second].y &&
-			secondBottom >= _positions[first].y;
+		const bool horizontalPass = _positions[second].x >= minimumSecondLeft;
+		const bool verticalPass = firstBottom >= _positions[second].y && secondBottom >= _positions[first].y;
 		if (logPairs) {
 			debugC(2, kDebugPuzzles,
 				"Ripper: board arrangement pair=%u->%u status=%s "
@@ -353,6 +341,7 @@ bool BoardArrangementPuzzle::isSolved(bool logPairs) const {
 				_positions[first].y, firstBottom,
 				_positions[second].y, secondBottom);
 		}
+
 		if (!verticalPass || !horizontalPass)
 			solved = false;
 	}
@@ -364,9 +353,8 @@ bool BoardArrangementPuzzle::complete(uint completionFlag) {
 		return true;
 	if (!markSolved(completionFlag, "board-arrangement-puzzle"))
 		return false;
-	debugC(1, kDebugPuzzles,
-		"Ripper: solved board arrangement puzzle milestone=%u",
-		completionFlag);
+
+	debugC(1, kDebugPuzzles, "Ripper: solved board arrangement puzzle milestone=%u", completionFlag);
 	if (!_engine->getMedia()->playBlockingAudio("q_p_16.wav"))
 		warning("Ripper: board arrangement completion audio failed");
 	return true;
@@ -382,16 +370,14 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
-	if (!_engine->getMedia()->displayScenePcx("bb_bg.pcx") ||
-			!_boardDisplay.capture()) {
+	if (!_engine->getMedia()->displayScenePcx("bb_bg.pcx") || !_boardDisplay.capture()) {
 		_incomingDisplay.restore();
 		return kLoadFailed;
 	}
-	debugC(1, kDebugPuzzles,
-		"Ripper: entered board arrangement puzzle milestone=%u", completionFlag);
 
-	Result result = _engine->getMilestones()->isSet(completionFlag) ?
-		kSolved : kExited;
+	debugC(1, kDebugPuzzles, "Ripper: entered board arrangement puzzle milestone=%u", completionFlag);
+
+	Result result = _engine->getMilestones()->isSet(completionFlag) ? kSolved : kExited;
 	bool redrawPending = !render();
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
@@ -405,19 +391,20 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 					active = false;
 					break;
 				}
+
 				if (command == kHelpCommand) {
-					debugC(1, kDebugPuzzles,
-						"Ripper: board arrangement opening modal help table=0x%x",
-						kHelpSelectionTable);
+					debugC(1, kDebugPuzzles, "Ripper: board arrangement opening modal help table=0x%x", kHelpSelectionTable);
 					if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 						warning("Ripper: board arrangement modal help failed");
 					redrawPending = !render();
 					continue;
 				}
+
 				if (command == kScreenshotCommand || command == 0x10)
 					g_system->saveScreenshot();
 			}
 		}
+
 		if (!active)
 			break;
 
@@ -425,8 +412,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 		redrawPending |= updateCursor(mouse.position);
 		if (_draggedPiece >= 0) {
 			redrawPending |= updateDrag(mouse.position);
-			if ((mouse.released & kMouseButtonLeft) != 0 ||
-					(mouse.buttons & kMouseButtonLeft) == 0) {
+			if ((mouse.released & kMouseButtonLeft) != 0 || (mouse.buttons & kMouseButtonLeft) == 0) {
 				const int droppedPiece = _draggedPiece;
 				finishDrag();
 				const bool arrangementSolved = isSolved(true);
@@ -435,6 +421,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 					if (result == kLoadFailed)
 						active = false;
 				}
+
 				debugC(arrangementSolved ? 1 : 2, kDebugPuzzles,
 					"Ripper: board arrangement validation after drop piece=%d "
 					"outcome=%s milestone=%u milestoneSet=%d",
@@ -453,12 +440,14 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 				active = false;
 			}
 		}
+
 		if (redrawPending)
 			redrawPending = !render();
 		else {
 			// Present unchanged frames too so the software cursor follows idle input ticks.
 			presentScreen();
 		}
+
 		g_system->delayMillis(10);
 	}
 

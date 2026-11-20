@@ -56,10 +56,10 @@ static int sampleAt(const WacVoiceLockPcm &pcm, uint sample) {
 	return (int16)READ_LE_UINT16(pcm.data.data() + offset);
 }
 
-static void clearWaveform(Graphics::Surface &screen,
-		const Common::Rect &bounds) {
+static void clearWaveform(Graphics::Surface &screen, const Common::Rect &bounds) {
 	if (bounds.isEmpty())
 		return;
+
 	screen.fillRect(bounds, kWacDatabaseBackground);
 }
 
@@ -71,48 +71,43 @@ static void drawWaveformSpan(Graphics::Surface &screen,
 		return;
 
 	byteOffset -= byteOffset % pcm.bytesPerSample;
-	byteCount = MIN<uint>(byteCount - byteCount % pcm.bytesPerSample,
-		pcm.data.size() - byteOffset);
+	byteCount = MIN<uint>(byteCount - byteCount % pcm.bytesPerSample, pcm.data.size() - byteOffset);
 	if (byteCount == 0)
 		return;
+
 	const int center = (bounds.top + bounds.bottom) / 2;
 	const uint firstSourceSample = byteOffset / pcm.bytesPerSample;
 	const uint sampleCount = byteCount / pcm.bytesPerSample;
 	const int plotWidth = bounds.width();
 	const int amplitude = MAX<int>(1, bounds.height() / 2);
 	for (int column = 0; column < plotWidth; ++column) {
-		const uint firstSample = firstSourceSample +
-			(uint64)column * sampleCount / plotWidth;
+		const uint firstSample = firstSourceSample + (uint64)column * sampleCount / plotWidth;
 		const uint lastSample = firstSourceSample + MAX<uint>(
 			(uint64)column * sampleCount / plotWidth + 1,
 			(uint64)(column + 1) * sampleCount / plotWidth);
 		int minimum = 0;
 		int maximum = 0;
 		for (uint sample = firstSample;
-				sample < MIN<uint>(lastSample,
-					firstSourceSample + sampleCount); ++sample) {
+				sample < MIN<uint>(lastSample, firstSourceSample + sampleCount); ++sample) {
 			const int value = sampleAt(pcm, sample);
 			minimum = MIN(minimum, value);
 			maximum = MAX(maximum, value);
 		}
-		const int top = CLIP<int>(center - maximum * amplitude / 32768,
-			bounds.top, bounds.bottom - 1);
-		const int bottom = CLIP<int>(center - minimum * amplitude / 32768,
-			bounds.top, bounds.bottom - 1);
+		const int top = CLIP<int>(center - maximum * amplitude / 32768, bounds.top, bounds.bottom - 1);
+		const int bottom = CLIP<int>(center - minimum * amplitude / 32768, bounds.top, bounds.bottom - 1);
 		for (int y = top; y <= bottom; ++y)
-			*((byte *)screen.getBasePtr(bounds.left + column, y)) =
-				kWacVoiceLockWaveformColor;
+			*((byte *)screen.getBasePtr(bounds.left + column, y)) = kWacVoiceLockWaveformColor;
 	}
 }
 
-static void xorRect(Graphics::Surface &screen,
-		const Common::Rect &bounds, byte color) {
+static void xorRect(Graphics::Surface &screen, const Common::Rect &bounds, byte color) {
 	const int left = CLIP<int>(bounds.left, 0, screen.w);
 	const int top = CLIP<int>(bounds.top, 0, screen.h);
 	const int right = CLIP<int>(bounds.right, 0, screen.w);
 	const int bottom = CLIP<int>(bounds.bottom, 0, screen.h);
 	if (left >= right || top >= bottom)
 		return;
+
 	for (int y = top; y < bottom; ++y) {
 		byte *pixel = (byte *)screen.getBasePtr(left, y);
 		for (int x = left; x < right; ++x)
@@ -120,13 +115,10 @@ static void xorRect(Graphics::Surface &screen,
 	}
 }
 
-static void captureRect(const Graphics::Surface &screen,
-		const Common::Rect &bounds, Common::Array<byte> &pixels) {
+static void captureRect(const Graphics::Surface &screen, const Common::Rect &bounds, Common::Array<byte> &pixels) {
 	pixels.resize(bounds.width() * bounds.height());
 	for (int row = 0; row < bounds.height(); ++row) {
-		memcpy(pixels.data() + row * bounds.width(),
-			screen.getBasePtr(bounds.left, bounds.top + row),
-			bounds.width());
+		memcpy(pixels.data() + row * bounds.width(), screen.getBasePtr(bounds.left, bounds.top + row), bounds.width());
 	}
 }
 
@@ -137,6 +129,7 @@ static void capturePixels(const Graphics::Surface &screen,
 		pixels.clear();
 		return;
 	}
+
 	pixels.resize(width * height);
 	memset(pixels.data(), 0, pixels.size());
 	const int firstColumn = MAX<int>(0, -sourceLeft);
@@ -145,6 +138,7 @@ static void capturePixels(const Graphics::Surface &screen,
 	const int lastRow = MIN<int>(height, screen.h - sourceTop);
 	if (firstColumn >= lastColumn || firstRow >= lastRow)
 		return;
+
 	for (int row = firstRow; row < lastRow; ++row) {
 		memcpy(pixels.data() + row * width + firstColumn,
 			screen.getBasePtr(sourceLeft + firstColumn, sourceTop + row),
@@ -157,17 +151,16 @@ static void blitPixels(Graphics::Surface &screen,
 		int destinationLeft, int destinationTop) {
 	if (pixels.size() != (uint)(sourceWidth * sourceHeight))
 		return;
+
 	const int sourceLeft = MAX<int>(0, -destinationLeft);
 	const int sourceTop = MAX<int>(0, -destinationTop);
-	const int sourceRight = MIN<int>(sourceWidth,
-		screen.w - destinationLeft);
-	const int sourceBottom = MIN<int>(sourceHeight,
-		screen.h - destinationTop);
+	const int sourceRight = MIN<int>(sourceWidth, screen.w - destinationLeft);
+	const int sourceBottom = MIN<int>(sourceHeight, screen.h - destinationTop);
 	if (sourceLeft >= sourceRight || sourceTop >= sourceBottom)
 		return;
+
 	for (int sourceY = sourceTop; sourceY < sourceBottom; ++sourceY) {
-		memcpy(screen.getBasePtr(destinationLeft + sourceLeft,
-				destinationTop + sourceY),
+		memcpy(screen.getBasePtr(destinationLeft + sourceLeft, destinationTop + sourceY),
 			pixels.data() + sourceY * sourceWidth + sourceLeft,
 			sourceRight - sourceLeft);
 	}
@@ -181,10 +174,9 @@ static void drawWaveform(Graphics::Surface &screen,
 
 	if (!selection)
 		return;
-	const int start = CLIP<int>(selection->start,
-		bounds.left, bounds.right - 1);
-	const int end = CLIP<int>(selection->end,
-		start + 1, bounds.right);
+
+	const int start = CLIP<int>(selection->start, bounds.left, bounds.right - 1);
+	const int end = CLIP<int>(selection->end, start + 1, bounds.right);
 	// XOR the highlight so the waveform remains visible through it.
 	xorRect(screen, Common::Rect(start, bounds.top, end, bounds.bottom),
 		kWacDatabaseBackground ^ kWacVoiceLockSelectionColor);
@@ -193,8 +185,7 @@ static void drawWaveform(Graphics::Surface &screen,
 static void drawEditorWaveform(Graphics::Surface &screen,
 		const WacVoiceLockPcm &pcm, const Common::Rect &bounds,
 		const Common::Array<WacVoiceLockEditorSegment> &segments) {
-	// Preserve each source span's pixel width as segments accumulate
-	// instead of scaling the assembled audio to fill the editor panel.
+	// Preserve each source span's pixel width as segments accumulate instead of scaling the assembled audio to fill the editor panel.
 	clearWaveform(screen, bounds);
 	int left = bounds.left;
 	for (uint segmentIndex = 0; segmentIndex < segments.size() &&
@@ -226,16 +217,17 @@ WacVoiceLockRenderer::WacVoiceLockRenderer(WacDatabaseSession *database,
 		_buttonBounds[button] = buttonBounds[button];
 }
 
-bool WacVoiceLockRenderer::restoreSourceSelectionDragBacking(
-		WacVoiceLockEditorState &state) const {
+bool WacVoiceLockRenderer::restoreSourceSelectionDragBacking(WacVoiceLockEditorState &state) const {
 	if (state.sourceSelectionDragBackingPixels.empty())
 		return true;
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
 			g_system->unlockScreen();
 		return false;
 	}
+
 	blitPixels(*screen, state.sourceSelectionDragBackingPixels,
 		state.sourceSelectionDragBackingWidth,
 		state.sourceSelectionDragBackingHeight,
@@ -254,9 +246,7 @@ bool WacVoiceLockRenderer::restoreSourceSelectionDragBacking(
 	return true;
 }
 
-bool WacVoiceLockRenderer::drawPresentation(
-		const WacVoiceLockPcm &sourcePcm,
-		WacVoiceLockEditorState &state) const {
+bool WacVoiceLockRenderer::drawPresentation(const WacVoiceLockPcm &sourcePcm, WacVoiceLockEditorState &state) const {
 	// Restore the previous backing before capturing and drawing at the new position.
 	if (!restoreSourceSelectionDragBacking(state))
 		return false;
@@ -278,34 +268,33 @@ bool WacVoiceLockRenderer::drawPresentation(
 			MAX(state.sourceSelection.start, state.sourceSelection.end));
 		displayedSelectionPtr = &displayedSelection;
 	}
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
 			g_system->unlockScreen();
 		return false;
 	}
+
 	drawWaveform(*screen, sourcePcm, _sourceWaveform, displayedSelectionPtr);
-	if (state.draggingSourceSelection && state.sourceSelectionActive &&
-			state.sourceSelectionDragPixels.empty()) {
+	if (state.draggingSourceSelection && state.sourceSelectionActive && state.sourceSelectionDragPixels.empty()) {
 		const Common::Rect capturedSelection(state.sourceSelection.start,
 			_sourceWaveform.top, state.sourceSelection.end,
 			_sourceWaveform.bottom);
 		state.sourceSelectionDragWidth = capturedSelection.width();
 		state.sourceSelectionDragHeight = capturedSelection.height();
-		captureRect(*screen, capturedSelection,
-			state.sourceSelectionDragPixels);
+		captureRect(*screen, capturedSelection, state.sourceSelectionDragPixels);
 		debugC(3, kDebugWac,
 			"Ripper: WAC voice-lock captured XOR-highlighted drag pixels range=%d..%d size=%dx%d opcode=0x18",
 			state.sourceSelection.start, state.sourceSelection.end,
 			state.sourceSelectionDragWidth, state.sourceSelectionDragHeight);
 	}
+
 	if (state.puzzleHelpEnabled && state.quantized) {
 		for (uint range = 0; range < kWacVoiceLockSelectionCount; ++range) {
 			const WacVoiceLockSelection solution = wacVoiceLockSolution(range);
-			const int nominalStart = CLIP<int>(solution.start,
-				_sourceWaveform.left, _sourceWaveform.right - 1);
-			const int nominalEnd = CLIP<int>(solution.end,
-				nominalStart + 1, _sourceWaveform.right - 1);
+			const int nominalStart = CLIP<int>(solution.start, _sourceWaveform.left, _sourceWaveform.right - 1);
+			const int nominalEnd = CLIP<int>(solution.end, nominalStart + 1, _sourceWaveform.right - 1);
 			const int acceptedStartMinimum = CLIP<int>(
 				nominalStart - (int)kWacVoiceLockSelectionTolerance,
 				_sourceWaveform.left, _sourceWaveform.right - 1);
@@ -318,64 +307,53 @@ bool WacVoiceLockRenderer::drawPresentation(
 			const int acceptedEndMaximum = CLIP<int>(
 				nominalEnd + (int)kWacVoiceLockSelectionTolerance,
 				_sourceWaveform.left, _sourceWaveform.right - 1);
-			const int lineY = _sourceWaveform.bottom - 3 -
-				(range % 2) * 4;
+			const int lineY = _sourceWaveform.bottom - 3 - (range % 2) * 4;
 			for (int x = nominalStart; x <= nominalEnd; ++x)
-				*((byte *)screen->getBasePtr(x, lineY)) =
-					kWacVoiceLockPuzzleHelpColor;
+				*((byte *)screen->getBasePtr(x, lineY)) = kWacVoiceLockPuzzleHelpColor;
 			for (int y = lineY - 1; y <= lineY + 1; ++y) {
 				for (int x = acceptedStartMinimum;
 						x <= acceptedStartMaximum; ++x)
-					*((byte *)screen->getBasePtr(x, y)) =
-						kWacVoiceLockPuzzleHelpColor;
+					*((byte *)screen->getBasePtr(x, y)) = kWacVoiceLockPuzzleHelpColor;
 				for (int x = acceptedEndMinimum;
 						x <= acceptedEndMaximum; ++x)
-					*((byte *)screen->getBasePtr(x, y)) =
-						kWacVoiceLockPuzzleHelpColor;
+					*((byte *)screen->getBasePtr(x, y)) = kWacVoiceLockPuzzleHelpColor;
 			}
 			for (int y = lineY - 4; y <= lineY + 2; ++y) {
-				*((byte *)screen->getBasePtr(nominalStart, y)) =
-					kWacVoiceLockPuzzleHelpColor;
-				*((byte *)screen->getBasePtr(nominalEnd, y)) =
-					kWacVoiceLockPuzzleHelpColor;
+				*((byte *)screen->getBasePtr(nominalStart, y)) = kWacVoiceLockPuzzleHelpColor;
+				*((byte *)screen->getBasePtr(nominalEnd, y)) = kWacVoiceLockPuzzleHelpColor;
 			}
-			const Common::String label =
-				Common::String::format("%u", range + 1);
-			const int labelLeft = nominalStart +
-				(nominalEnd - nominalStart -
-					_database->measureText(label)) / 2;
+			const Common::String label = Common::String::format("%u", range + 1);
+			const int labelLeft = nominalStart + (nominalEnd - nominalStart - _database->measureText(label)) / 2;
 			_database->drawText((byte *)screen->getPixels(),
 				screen->pitch, labelLeft, lineY - 12, label,
 				kWacVoiceLockPuzzleHelpColor);
 		}
 	}
+
 	if (_editorAvailable) {
 		WacVoiceLockPcm assembledPcm;
 		assembledPcm.data = state.assembledAudio;
 		assembledPcm.sampleRate = sourcePcm.sampleRate;
 		assembledPcm.flags = sourcePcm.flags;
 		assembledPcm.bytesPerSample = sourcePcm.bytesPerSample;
-		drawEditorWaveform(*screen, assembledPcm, _editorWaveform,
-			state.editorSegments);
+		drawEditorWaveform(*screen, assembledPcm, _editorWaveform, state.editorSegments);
 	}
+
 	if (state.playbackProgressActive && state.playbackProgressColumn >= 0 &&
 			!state.playbackProgressBounds.isEmpty()) {
 		const int x = state.playbackProgressBounds.left +
-			MIN<int>(state.playbackProgressColumn,
-				state.playbackProgressBounds.width() - 1);
+			MIN<int>(state.playbackProgressColumn, state.playbackProgressBounds.width() - 1);
 		for (int y = state.playbackProgressBounds.top;
 				y < state.playbackProgressBounds.bottom; ++y)
-			*((byte *)screen->getBasePtr(x, y)) =
-				kWacVoiceLockMarkerColor;
+			*((byte *)screen->getBasePtr(x, y)) = kWacVoiceLockMarkerColor;
 	}
+
 	g_system->unlockScreen();
 
 	const uint buttonCount = _editorAvailable ? 3 : 1;
 	for (uint button = 0; button < buttonCount; ++button) {
-		const uint frame = button * 2 +
-			((int)button == state.pressedButton ? 1 : 0);
-		_database->drawBitmap(_buttonAssets[frame],
-			_buttonBounds[button].left, _buttonBounds[button].top);
+		const uint frame = button * 2 + ((int)button == state.pressedButton ? 1 : 0);
+		_database->drawBitmap(_buttonAssets[frame], _buttonBounds[button].left, _buttonBounds[button].top);
 	}
 	if (state.draggingSourceSelection && state.sourceSelectionActive) {
 		screen = g_system->lockScreen();
@@ -384,16 +362,12 @@ bool WacVoiceLockRenderer::drawPresentation(
 				g_system->unlockScreen();
 			return false;
 		}
-		const int destinationLeft = state.sourceSelectionDragPosition.x -
-			state.sourceSelectionDragOffsetX;
-		const int destinationTop = state.sourceSelectionDragPosition.y -
-			state.sourceSelectionDragOffsetY;
-		state.sourceSelectionDragBackingWidth =
-			state.sourceSelectionDragWidth;
-		state.sourceSelectionDragBackingHeight =
-			state.sourceSelectionDragHeight;
-		state.sourceSelectionDragBackingPosition =
-			Common::Point(destinationLeft, destinationTop);
+
+		const int destinationLeft = state.sourceSelectionDragPosition.x - state.sourceSelectionDragOffsetX;
+		const int destinationTop = state.sourceSelectionDragPosition.y - state.sourceSelectionDragOffsetY;
+		state.sourceSelectionDragBackingWidth = state.sourceSelectionDragWidth;
+		state.sourceSelectionDragBackingHeight = state.sourceSelectionDragHeight;
+		state.sourceSelectionDragBackingPosition = Common::Point(destinationLeft, destinationTop);
 		capturePixels(*screen, state.sourceSelectionDragBackingPixels,
 			state.sourceSelectionDragBackingWidth,
 			state.sourceSelectionDragBackingHeight,
@@ -408,6 +382,7 @@ bool WacVoiceLockRenderer::drawPresentation(
 			state.sourceSelectionDragBackingWidth,
 			state.sourceSelectionDragBackingHeight);
 	}
+
 	_database->engine()->getCursor()->refresh();
 	presentScreen();
 	return true;

@@ -53,8 +53,7 @@ private:
 	void restoreDisplay();
 	void applyPalette();
 	void drawControls() const;
-	void drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text) const;
+	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text) const;
 	int findControl(const Common::Point &point) const;
 	bool handleCommand(uint16 command, uint &selectedSlider);
 

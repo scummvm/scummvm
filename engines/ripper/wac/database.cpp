@@ -120,22 +120,23 @@ public:
 			if (!_database->engine()->getMedia()->playVoiceClipStream(
 					_voiceoverStream.release(), _voiceoverName,
 					_voiceoverHandle)) {
-				warning("Ripper: could not start WAC database voiceover '%s'",
-					_voiceoverName.c_str());
+				warning("Ripper: could not start WAC database voiceover '%s'", _voiceoverName.c_str());
 				return kVoiceoverComplete;
 			}
+
 			debugC(2, kDebugWac,
 				"Ripper: started WAC database voiceover entry=%u media='%s' after first video frame",
 				_activeEntryIndex, _voiceoverName.c_str());
 			return kNoAction;
 		}
-		if (!_database->engine()->getMedia()->isSoundEffectActive(
-				_voiceoverHandle)) {
+
+		if (!_database->engine()->getMedia()->isSoundEffectActive(_voiceoverHandle)) {
 			debugC(2, kDebugWac,
 				"Ripper: completed WAC database voiceover entry=%u media='%s'; closing media viewer",
 				_activeEntryIndex, _voiceoverName.c_str());
 			return kVoiceoverComplete;
 		}
+
 		return kNoAction;
 	}
 	Outcome outcome() const { return _outcome; }
@@ -169,25 +170,21 @@ uint WacDatabaseSession::measureText(const Common::String &text) const {
 	return _wac->measureText(text);
 }
 
-void WacDatabaseSession::wrapText(const Common::String &text, uint maxWidth,
-		Common::Array<Common::String> &lines) const {
+void WacDatabaseSession::wrapText(const Common::String &text, uint maxWidth, Common::Array<Common::String> &lines) const {
 	BitmapFontRenderer::wrapText(_wac->_font, text, maxWidth, lines);
 }
 
-void WacDatabaseSession::drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const {
+void WacDatabaseSession::drawText(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const {
 	_wac->drawText(screen, pitch, x, y, text, color);
 }
 
-void WacDatabaseSession::drawBitmap(const BitmapAssetFrame &bitmap,
-		int x, int y) const {
+void WacDatabaseSession::drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const {
 	_wac->drawBitmap(bitmap, x, y);
 }
 
 void WacDatabaseSession::drawAnimatedCorner(int x, int y) const {
 	if (_wac->_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
-		_wac->drawBitmap(_wac->_databaseSkin[
-			_databaseCornerAlternate ? 15 : 0], x, y);
+		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0], x, y);
 }
 
 void WacDatabaseSession::serviceIdleEffects() {
@@ -209,11 +206,9 @@ void WacDatabaseSession::serviceDatabaseCornerAnimation(bool textPanelActive) {
 			_wac->_databaseSkin.size() < kWacDatabaseSkinFrameCount)
 		return;
 
-	_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
-		kWacDatabaseLeft, kWacDatabaseTop);
+	_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0], kWacDatabaseLeft, kWacDatabaseTop);
 	if (textPanelActive)
-		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
-			kWacMediaLeft, kWacMediaTop);
+		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0], kWacMediaLeft, kWacMediaTop);
 	_databaseCornerAlternate = !_databaseCornerAlternate;
 	_databaseCornerLastMillis = now;
 	_wac->_engine->getCursor()->refresh();
@@ -223,10 +218,8 @@ void WacDatabaseSession::buildDatabaseEntries() {
 	_databaseEntries.clear();
 	const uint catalogEntryCount = getWacDatabaseCatalogEntryCount();
 	for (uint index = 0; index < catalogEntryCount; ++index) {
-		const WacDatabaseCatalogEntry *catalog =
-			getWacDatabaseCatalogEntry(index);
-		if (!catalog ||
-				!_wac->_engine->getMilestones()->isSet(catalog->milestoneFlag))
+		const WacDatabaseCatalogEntry *catalog = getWacDatabaseCatalogEntry(index);
+		if (!catalog || !_wac->_engine->getMilestones()->isSet(catalog->milestoneFlag))
 			continue;
 		DatabaseEntry entry;
 		entry.catalog = catalog;
@@ -243,8 +236,7 @@ void WacDatabaseSession::buildDatabaseEntries() {
 }
 
 void WacDatabaseSession::drawDatabase() const {
-	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
-		kWacDatabaseRight, kWacDatabaseBottom);
+	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop, kWacDatabaseRight, kWacDatabaseBottom);
 	const Common::Rect client(bounds.left + kWacDatabaseLeftInset,
 		bounds.top + kWacDatabaseHeadingInset,
 		bounds.right - kWacDatabaseRightInset,
@@ -267,20 +259,16 @@ void WacDatabaseSession::drawDatabase() const {
 		const int rows = (bounds.height() + tileHeight - 1) / tileHeight;
 		for (int column = 0; column < columns; ++column) {
 			for (int row = 0; row < rows; ++row) {
-				const uint columnBand = column == 0 ? 0 :
-					(column == columns - 1 ? 2 : 1);
+				const uint columnBand = column == 0 ? 0 : (column == columns - 1 ? 2 : 1);
 				const uint rowBand = row == 0 ? 0 : (row == rows - 1 ? 2 : 1);
 				const BitmapAssetFrame &tile = _wac->_databaseSkin[rowBand * 3 + columnBand];
-				const int x = column == columns - 1 ? bounds.right - tile.width :
-					bounds.left + column * tileWidth;
-				const int y = row == rows - 1 ? bounds.bottom - tile.height :
-					bounds.top + row * tileHeight;
-				IndexedBitmapRenderer::drawBitmap(
-					(byte *)screen->getPixels(), screen->pitch, tile, x, y,
-					screenBounds);
+				const int x = column == columns - 1 ? bounds.right - tile.width : bounds.left + column * tileWidth;
+				const int y = row == rows - 1 ? bounds.bottom - tile.height : bounds.top + row * tileHeight;
+				IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(), screen->pitch, tile, x, y, screenBounds);
 			}
 		}
 	}
+
 	if (_wac->_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
 		IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(),
 			screen->pitch,
@@ -311,6 +299,7 @@ void WacDatabaseSession::drawDatabase() const {
 				selected ? kWacDatabaseSelectedText : kWacDatabaseNormalText);
 		}
 	}
+
 	g_system->unlockScreen();
 	_wac->_engine->getCursor()->refresh();
 	presentScreen();
@@ -323,6 +312,7 @@ void WacDatabaseSession::clearDatabaseMediaViewport() {
 			g_system->unlockScreen();
 		return;
 	}
+
 	screen->fillRect(Common::Rect(kWacMediaLeft, kWacMediaTop,
 		kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight),
 		kWacDatabaseBackground);
@@ -334,6 +324,7 @@ DatabaseInputOutcome WacDatabaseSession::routeDatabaseAction(uint16 action) {
 		return DatabaseInputOutcome::kCloseEntry;
 	if (action == kExitAction || action == kDosF10Command)
 		return DatabaseInputOutcome::kExitWac;
+
 	const uint16 result = _wac->dispatchSubsceneAction(action, kWacDatabaseHelpResource, true);
 	if (result == kExitAction)
 		return DatabaseInputOutcome::kExitWac;
@@ -352,10 +343,10 @@ bool WacDatabaseSession::navigateDatabase(uint16 command, bool allowTab) {
 }
 
 bool WacDatabaseSession::resolveDatabaseRow(const Common::Point &point, uint &index) const {
-	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
-		kWacDatabaseRight, kWacDatabaseBottom);
+	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop, kWacDatabaseRight, kWacDatabaseBottom);
 	if (!bounds.contains(point))
 		return false;
+
 	const int relativeY = point.y - bounds.top - kWacDatabaseHeadingInset - kWacDatabaseRowInset;
 	return relativeY >= 0 && _databaseChooser.resolveVisibleRow(relativeY / kWacDatabaseRowHeight, index);
 }
@@ -372,6 +363,7 @@ bool WacDatabaseSession::scrollDatabaseTextKey(TextScrollState &scroll, uint16 c
 			"Ripper: scrolled WAC database text panel firstLine=%u limit=%u command=0x%x",
 			scroll.firstVisible, scroll.maximumFirstVisible, command);
 	}
+
 	return true;
 }
 
@@ -393,6 +385,7 @@ bool WacDatabaseSession::scrollDatabaseTextMouse(TextScrollState &scroll, const 
 				mouse.wheel, scroll.firstVisible, scroll.maximumFirstVisible);
 		}
 	}
+
 	const Common::Rect textBounds(kWacMediaLeft, kWacMediaTop,
 		kWacMediaLeft + kWacTextPanelWidth,
 		kWacMediaTop + kWacTextPanelHeight);
@@ -428,6 +421,7 @@ bool WacDatabaseSession::scrollDatabaseTextMouse(TextScrollState &scroll, const 
 			"Ripper: began WAC database text scrollbar drag firstLine=%u point=%d,%d",
 			scroll.firstVisible, mouse.position.x, mouse.position.y);
 	}
+
 	if (scroll.dragging && !trackBounds.isEmpty() &&
 			!thumbBounds.isEmpty() && ((mouse.buttons & kMouseButtonLeft) != 0 ||
 			(mouse.released & kMouseButtonLeft) != 0)) {
@@ -436,9 +430,7 @@ bool WacDatabaseSession::scrollDatabaseTextMouse(TextScrollState &scroll, const 
 			const int thumbTop = CLIP<int>(
 				mouse.position.y - scroll.dragOffset,
 				trackBounds.top, trackBounds.bottom - thumbBounds.height());
-			const uint nextFirstVisible =
-				((thumbTop - trackBounds.top) * scroll.maximumFirstVisible +
-					travel / 2) / travel;
+			const uint nextFirstVisible = ((thumbTop - trackBounds.top) * scroll.maximumFirstVisible + travel / 2) / travel;
 			if (nextFirstVisible != scroll.firstVisible) {
 				scroll.firstVisible = nextFirstVisible;
 				redrawText = true;
@@ -449,21 +441,17 @@ bool WacDatabaseSession::scrollDatabaseTextMouse(TextScrollState &scroll, const 
 			}
 		}
 	}
-	const bool endedDrag = scroll.dragging &&
-		(mouse.released & kMouseButtonLeft) != 0;
+
+	const bool endedDrag = scroll.dragging && (mouse.released & kMouseButtonLeft) != 0;
 	if (endedDrag) {
 		scroll.dragging = false;
-		debugC(2, kDebugWac,
-			"Ripper: ended WAC database text scrollbar drag firstLine=%u",
-			scroll.firstVisible);
+		debugC(2, kDebugWac, "Ripper: ended WAC database text scrollbar drag firstLine=%u", scroll.firstVisible);
 	} else if ((mouse.released & kMouseButtonLeft) != 0) {
 		uint nextFirstVisible = scroll.firstVisible;
-		if (scrollControl == ModalDialogManager::kTextPanelScrollUp &&
-				nextFirstVisible > 0)
+		if (scrollControl == ModalDialogManager::kTextPanelScrollUp && nextFirstVisible > 0)
 			--nextFirstVisible;
 		else if (scrollControl == ModalDialogManager::kTextPanelScrollDown)
-			nextFirstVisible = MIN(nextFirstVisible + 1,
-				scroll.maximumFirstVisible);
+			nextFirstVisible = MIN(nextFirstVisible + 1, scroll.maximumFirstVisible);
 		if (nextFirstVisible != scroll.firstVisible) {
 			scroll.firstVisible = nextFirstVisible;
 			redrawText = true;
@@ -472,6 +460,7 @@ bool WacDatabaseSession::scrollDatabaseTextMouse(TextScrollState &scroll, const 
 				scrollControl, scroll.firstVisible, scroll.maximumFirstVisible);
 		}
 	}
+
 	return redrawText;
 }
 
@@ -480,6 +469,7 @@ WacDatabaseSession::DatabaseInputResult WacDatabaseSession::serviceDatabaseMedia
 	if (_wac->_engine->getInput()->pollEvents()) {
 		return DatabaseInputResult(DatabaseInputOutcome::kExitWac);
 	}
+
 	bool refreshPalette = false;
 	bool redrawDatabase = false;
 	bool redrawText = false;
@@ -490,9 +480,11 @@ WacDatabaseSession::DatabaseInputResult WacDatabaseSession::serviceDatabaseMedia
 			const DatabaseInputOutcome outcome = routeDatabaseAction(command);
 			if (outcome != DatabaseInputOutcome::kRefreshPalette)
 				return DatabaseInputResult(outcome);
+
 			refreshPalette = true;
 			continue;
 		}
+
 		if (_databaseEntries.empty())
 			continue;
 		if (input.mode == DatabaseInputMode::kTextPanel && scrollDatabaseTextKey(input.text, command, redrawText))
@@ -516,8 +508,7 @@ WacDatabaseSession::DatabaseInputResult WacDatabaseSession::serviceDatabaseMedia
 	serviceDatabaseCornerAnimation(input.mode == DatabaseInputMode::kTextPanel);
 	const Common::Rect mediaBounds(kWacMediaLeft, kWacMediaTop,
 		kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight);
-	const Common::Rect databaseBounds(kWacDatabaseLeft, kWacDatabaseTop,
-		kWacDatabaseRight, kWacDatabaseBottom);
+	const Common::Rect databaseBounds(kWacDatabaseLeft, kWacDatabaseTop, kWacDatabaseRight, kWacDatabaseBottom);
 	const uint16 controlAction = _wac->serviceFrontEndControls(mouse,
 		(databaseBounds.contains(mouse.position) ||
 			(input.mode == DatabaseInputMode::kTextPanel && mediaBounds.contains(mouse.position))) ?
@@ -529,6 +520,7 @@ WacDatabaseSession::DatabaseInputResult WacDatabaseSession::serviceDatabaseMedia
 		if (result.outcome == DatabaseInputOutcome::kRefreshPalette)
 			refreshPalette = true;
 	}
+
 	uint entryIndex;
 	if (resolveDatabaseRow(mouse.position, entryIndex)) {
 		if (_databaseChooser.select(entryIndex, false)) {
@@ -538,27 +530,27 @@ WacDatabaseSession::DatabaseInputResult WacDatabaseSession::serviceDatabaseMedia
 				entryIndex, _databaseEntries[entryIndex].originalIndex(),
 				activeEntryIndex, mouse.position.x, mouse.position.y);
 		}
+
 		if ((mouse.released & kMouseButtonLeft) != 0 &&
 				_databaseEntries[entryIndex].originalIndex() != activeEntryIndex) {
 			result.outcome = DatabaseInputOutcome::kSelectEntry;
 			return result;
 		}
 	}
+
 	result.outcome = refreshPalette ? DatabaseInputOutcome::kRefreshPalette :
 		(redrawText ? DatabaseInputOutcome::kRedrawText : DatabaseInputOutcome::kContinue);
 	return result;
 }
 
-bool WacDatabaseSession::drawDatabaseTextPanel(uint bodyResourceId,
-		const Common::Rect &bounds, TextScrollState &scroll) {
+bool WacDatabaseSession::drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds, TextScrollState &scroll) {
 	if (!_wac->_engine->getModalDialog()->drawRetainedTextPanel(bodyResourceId,
 			bounds, scroll.firstVisible, scroll.maximumFirstVisible, scroll.visibleRows,
 			ModalDialogManager::kWacPresentation,
 			scroll.control))
 		return false;
 	if (_wac->_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
-		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
-			bounds.left, bounds.top);
+		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0], bounds.left, bounds.top);
 	_wac->_engine->getCursor()->refresh();
 	presentScreen();
 	return true;
@@ -588,6 +580,7 @@ DatabaseInputOutcome WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &ent
 			result = event.outcome;
 			break;
 		}
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}
@@ -598,21 +591,20 @@ DatabaseInputOutcome WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &ent
 		"Ripper: left WAC database text panel entry=%u resource=0x%x outcome=%d firstLine=%u",
 		entry.originalIndex(), bodyResourceId, (int)result, scroll.firstVisible);
 	if (entry.originalIndex() == 5) {
-		_wac->_engine->getMilestones()->set(kMilestoneReadJournalEntry7,
-			true, "wac-database-text");
+		_wac->_engine->getMilestones()->set(kMilestoneReadJournalEntry7, true, "wac-database-text");
 		debugC(2, kDebugWac,
 			"Ripper: completed WAC database text entry=%u resource=0x%x milestone=0x%x",
 			entry.originalIndex(), bodyResourceId,
 			kMilestoneReadJournalEntry7);
 	}
+
 	return result;
 }
 
 DatabaseInputOutcome WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 	clearDatabaseMediaViewport();
 	if (entry.catalog->handler == kWacDatabaseHandlerBrokenMug) {
-		debugC(2, kDebugWac,
-			"Ripper: WAC database retaining chooser while entering Broken Mug viewport=50,50,282,350");
+		debugC(2, kDebugWac, "Ripper: WAC database retaining chooser while entering Broken Mug viewport=50,50,282,350");
 		BrokenMugPuzzle::Result result;
 		if (_wac->_engine->getMilestones()->isSet(kMilestoneCompletedMug)) {
 			result = BrokenMugPuzzle::playCompletionMedia(_wac->_engine) ?
@@ -621,29 +613,26 @@ DatabaseInputOutcome WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &en
 			BrokenMugPuzzle puzzle(_wac->_engine);
 			result = puzzle.run();
 		}
-		debugC(1, kDebugWac,
-			"Ripper: WAC database entry=1 label='%s' broken mug result=%d",
-			entry.label.c_str(), result);
+
+		debugC(1, kDebugWac, "Ripper: WAC database entry=1 label='%s' broken mug result=%d", entry.label.c_str(), result);
 		if (result == BrokenMugPuzzle::kSolved) {
 			// Replace this session's label while keeping the Broken Mug dispatch ID.
-			const WacDatabaseCatalogEntry *completedCatalog =
-				getWacDatabaseCatalogEntry(2);
-			const Common::String &completedLabel =
-				_wac->resourceString(completedCatalog->textResourceId);
+			const WacDatabaseCatalogEntry *completedCatalog = getWacDatabaseCatalogEntry(2);
+			const Common::String &completedLabel = _wac->resourceString(completedCatalog->textResourceId);
 			debugC(1, kDebugWac,
 				"Ripper: WAC database replaced completed cup row entry=1 oldLabel='%s' textId=0x%x newLabel='%s'",
 				entry.label.c_str(), completedCatalog->textResourceId,
 				completedLabel.c_str());
 			entry.label = completedLabel;
 		}
+
 		_wac->drawFrontEnd();
 		drawDatabase();
-		return result == BrokenMugPuzzle::kExitWac ?
-			DatabaseInputOutcome::kExitWac : DatabaseInputOutcome::kContinue;
+		return result == BrokenMugPuzzle::kExitWac ? DatabaseInputOutcome::kExitWac : DatabaseInputOutcome::kContinue;
 	}
+
 	if (entry.catalog->handler == kWacDatabaseHandlerBrokenMugCompletion) {
-		debugC(2, kDebugWac,
-			"Ripper: WAC database retaining chooser while presenting completed Broken Mug");
+		debugC(2, kDebugWac, "Ripper: WAC database retaining chooser while presenting completed Broken Mug");
 		const bool played = BrokenMugPuzzle::playCompletionMedia(_wac->_engine);
 		debugC(1, kDebugWac,
 			"Ripper: WAC database entry=2 label='%s' completion media success=%d",
@@ -652,21 +641,20 @@ DatabaseInputOutcome WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &en
 		drawDatabase();
 		return DatabaseInputOutcome::kContinue;
 	}
+
 	if (entry.catalog->handler == kWacDatabaseHandlerJournal)
 		return runJournal(entry.originalIndex(), entry.label);
 	if (entry.catalog->handler == kWacDatabaseHandlerVoiceLock)
 		return runVoiceLock(entry.originalIndex(), entry.label);
 	if (entry.catalog->handler == kWacDatabaseHandlerStillImage) {
-		const Common::String path = Common::String::format(
-			"wacinv%u.pcx", entry.originalIndex());
+		const Common::String path = Common::String::format("wacinv%u.pcx", entry.originalIndex());
 		WacStillImageViewer viewer(this);
 		return viewer.run(entry.originalIndex(), entry.label, path);
 	}
+
 	if (entry.catalog->handler == kWacDatabaseHandlerConditionalStillImage) {
-		const bool alternate = _wac->_engine->getMilestones()->isSet(
-			entry.catalog->presentationFlag);
-		const Common::String path = alternate ? entry.catalog->imagePath :
-			entry.catalog->mediaPath;
+		const bool alternate = _wac->_engine->getMilestones()->isSet(entry.catalog->presentationFlag);
+		const Common::String path = alternate ? entry.catalog->imagePath : entry.catalog->mediaPath;
 		debugC(2, kDebugWac,
 			"Ripper: WAC database conditional still entry=%u flag=%u value=%d media='%s'",
 			entry.originalIndex(), entry.catalog->presentationFlag, alternate,
@@ -674,22 +662,22 @@ DatabaseInputOutcome WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &en
 		WacStillImageViewer viewer(this);
 		return viewer.run(entry.originalIndex(), entry.label, path);
 	}
+
 	if (entry.catalog->handler == kWacDatabaseHandlerOptionalPresentation) {
 		WacStillImageViewer viewer(this);
 		return viewer.runWithOptionalPresentation(entry.originalIndex(),
 			entry.label, entry.catalog->imagePath, entry.catalog->mediaPath,
 			entry.catalog->presentationFlag, entry.catalog->completionFlag);
 	}
+
 	if (entry.catalog->handler == kWacDatabaseHandlerLoopingMedia) {
-		const Common::String path = Common::String::format(
-			"wacinv%u.smk", entry.originalIndex());
+		const Common::String path = Common::String::format("wacinv%u.smk", entry.originalIndex());
 		WacDatabaseMediaCallback callback(this, entry.originalIndex());
 		uint16 command = kNoAction;
 		const Common::Rect viewport(kWacMediaLeft, kWacMediaTop,
 			kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight);
 		_wac->_engine->getInput()->discardMouseTransitions();
-		const bool played = _wac->_engine->getMedia()->playWacInterfaceSequence(
-			path, viewport, 1, &callback, &command);
+		const bool played = _wac->_engine->getMedia()->playWacInterfaceSequence(path, viewport, 1, &callback, &command);
 		clearDatabaseMediaViewport();
 		drawDatabase();
 		debugC(1, kDebugWac,
@@ -698,6 +686,7 @@ DatabaseInputOutcome WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &en
 			command);
 		return callback.outcome();
 	}
+
 	if (entry.catalog->handler == kWacDatabaseHandlerConfiguredMediaWithVoiceover) {
 		// RIP_GAME assets are loose files under PATHS/scene.
 		ResourceManager *resources = _wac->_engine->getResources();
@@ -705,8 +694,7 @@ DatabaseInputOutcome WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &en
 			resources->createReadStreamForPath(entry.catalog->imagePath) : nullptr;
 		Common::SeekableReadStream *voiceoverStream = resources ?
 			resources->createReadStreamForPath(entry.catalog->mediaPath) : nullptr;
-		WacDatabaseMediaCallback callback(this, entry.originalIndex(),
-			voiceoverStream, entry.catalog->mediaPath);
+		WacDatabaseMediaCallback callback(this, entry.originalIndex(), voiceoverStream, entry.catalog->mediaPath);
 		uint16 command = kNoAction;
 		const Common::Rect viewport(kWacMediaLeft, kWacMediaTop,
 			kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight);
@@ -714,8 +702,7 @@ DatabaseInputOutcome WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &en
 		const bool played = _wac->_engine->getMedia()->
 			playWacInterfaceSequenceStream(mediaStream,
 				entry.catalog->imagePath, viewport, 1, &callback, &command);
-		_wac->_engine->getMilestones()->set(entry.catalog->completionFlag,
-			true, "wac-database-media");
+		_wac->_engine->getMilestones()->set(entry.catalog->completionFlag, true, "wac-database-media");
 		clearDatabaseMediaViewport();
 		drawDatabase();
 		debugC(1, kDebugWac,
@@ -725,15 +712,18 @@ DatabaseInputOutcome WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &en
 			entry.catalog->completionFlag);
 		return callback.outcome();
 	}
+
 	if (entry.catalog->handler == kWacDatabaseHandlerText) {
 		return runDatabaseTextPanel(entry, entry.catalog->contentResourceId);
 	}
+
 	if (entry.catalog->handler == kWacDatabaseHandlerRetailNoOp) {
 		debugC(2, kDebugWac,
 			"Ripper: WAC database entry=%u label='%s' completed retail no-op",
 			entry.originalIndex(), entry.label.c_str());
 		return DatabaseInputOutcome::kContinue;
 	}
+
 	warning("Ripper: WAC database entry=%u label='%s' has invalid handler=%d",
 		entry.originalIndex(), entry.label.c_str(), entry.catalog->handler);
 	return DatabaseInputOutcome::kContinue;
@@ -745,6 +735,7 @@ uint16 WacDatabaseSession::runSelectedDatabaseEntry() {
 		const DatabaseInputOutcome outcome = dispatchDatabaseEntry(entry);
 		if (outcome != DatabaseInputOutcome::kSelectEntry)
 			return outcome == DatabaseInputOutcome::kExitWac ? kExitAction : kNoAction;
+
 		debugC(2, kDebugWac,
 			"Ripper: WAC database switching entry=%u to selectedRow=%u",
 			entry.originalIndex(), _databaseChooser.selectedIndex());
@@ -753,8 +744,7 @@ uint16 WacDatabaseSession::runSelectedDatabaseEntry() {
 }
 
 uint16 WacDatabaseSession::run() {
-	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
-		kWacDatabaseRight, kWacDatabaseBottom);
+	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop, kWacDatabaseRight, kWacDatabaseBottom);
 	buildDatabaseEntries();
 	_databaseChooser.reset(_databaseEntries.size(), kWacDatabaseVisibleRows);
 	_databaseCornerAlternate = true;
@@ -775,6 +765,7 @@ uint16 WacDatabaseSession::run() {
 		if (_wac->_engine->getInput()->pollEvents()) {
 			break;
 		}
+
 		while (_wac->_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _wac->_engine->getInput()->consumeKey();
 			if (command == 0x1b) {
@@ -783,8 +774,7 @@ uint16 WacDatabaseSession::run() {
 				returnAction = kExitAction;
 				active = false;
 			} else if (command == kHelpAction || command == kTextViewerAction) {
-				returnAction = _wac->dispatchSubsceneAction(command,
-					kWacDatabaseHelpResource, true);
+				returnAction = _wac->dispatchSubsceneAction(command, kWacDatabaseHelpResource, true);
 				if (returnAction == kExitAction)
 					active = false;
 			} else if (command == 0x4800 || command == 0x5000) {
@@ -794,6 +784,7 @@ uint16 WacDatabaseSession::run() {
 				if (returnAction == kExitAction)
 					active = false;
 			}
+
 			_databaseChooser.select(_databaseChooser.selectedIndex());
 			drawDatabase();
 		}
@@ -803,15 +794,14 @@ uint16 WacDatabaseSession::run() {
 		const MouseState mouse = _wac->_engine->getInput()->publishMouseState();
 		_wac->serviceIdleWindowAnimations();
 		serviceDatabaseCornerAnimation();
-		const uint fallbackCursor = bounds.contains(mouse.position) ?
-			kWacControlCursor : kWacDefaultCursor;
+		const uint fallbackCursor = bounds.contains(mouse.position) ? kWacControlCursor : kWacDefaultCursor;
 		const uint16 controlAction = _wac->serviceFrontEndControls(mouse, fallbackCursor);
 		if (controlAction != kNoAction) {
-			returnAction = _wac->dispatchSubsceneAction(controlAction,
-				kWacDatabaseHelpResource, true);
+			returnAction = _wac->dispatchSubsceneAction(controlAction, kWacDatabaseHelpResource, true);
 			if (returnAction == kExitAction)
 				active = false;
 		}
+
 		if (!active)
 			break;
 		uint entryIndex;
@@ -823,18 +813,19 @@ uint16 WacDatabaseSession::run() {
 					_databaseEntries[entryIndex].label.c_str(), mouse.position.x, mouse.position.y);
 				drawDatabase();
 			}
+
 			if ((mouse.released & kMouseButtonLeft) != 0) {
 				returnAction = runSelectedDatabaseEntry();
 				if (returnAction == kExitAction)
 					active = false;
 			}
 		}
+
 		// Present idle ticks too so the software cursor follows mouse motion.
 		presentScreen();
 		g_system->delayMillis(10);
 	}
-	debugC(1, kDebugWac,
-		"Ripper: left WAC database chooser returnAction=0x%x", returnAction);
+	debugC(1, kDebugWac, "Ripper: left WAC database chooser returnAction=0x%x", returnAction);
 	return returnAction;
 }
 

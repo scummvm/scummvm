@@ -74,6 +74,7 @@ void ScreenMessageQueue::clear() {
 void ScreenMessageQueue::pause(uint32 now) {
 	if (_paused)
 		return;
+
 	_paused = true;
 	_pausedAt = now;
 }
@@ -103,10 +104,12 @@ bool ScreenMessageQueue::update(uint32 now) {
 		_message.clear();
 		changed = true;
 	}
+
 	if (!_active && !_pending.empty()) {
 		startNext(now);
 		changed = true;
 	}
+
 	return changed;
 }
 
@@ -121,6 +124,7 @@ byte ScreenMessageQueue::opacity(uint32 now) const {
 		return 0;
 	if (elapsed < kFadeMs)
 		return (byte)(elapsed * 255 / kFadeMs);
+
 	const uint32 remaining = kLifetimeMs - elapsed;
 	if (remaining < kFadeMs)
 		return (byte)(remaining * 255 / kFadeMs);
@@ -141,9 +145,7 @@ void ScreenPresenter::showMessage(const Common::String &message) {
 		return;
 
 	_queue.enqueue(message);
-	debugC(2, kDebugGeneral,
-		"Ripper: queued screen message text='%s' pending=%u",
-		message.c_str(), _queue.pendingCount());
+	debugC(2, kDebugGeneral, "Ripper: queued screen message text='%s' pending=%u", message.c_str(), _queue.pendingCount());
 }
 
 void ScreenPresenter::pause(bool paused) {
@@ -162,8 +164,7 @@ void ScreenPresenter::resetMessageSurface() {
 }
 
 bool ScreenPresenter::rebuildMessageSurface() {
-	const Graphics::Font *font =
-		FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	if (!font)
 		return false;
 
@@ -199,10 +200,12 @@ void ScreenPresenter::presentScreen() {
 			debugC(2, kDebugGeneral, "Ripper: screen message queue drained");
 		}
 	}
+
 	if (!_queue.hasActiveMessage()) {
 		g_system->updateScreen();
 		return;
 	}
+
 	if (_renderedMessage != _queue.message() && !rebuildMessageSurface()) {
 		warning("Ripper: could not prepare screen message text");
 		g_system->updateScreen();
@@ -221,8 +224,7 @@ void ScreenPresenter::presentScreen() {
 
 	_backing.resize(_messageWidth * _messageHeight);
 	for (int y = 0; y < _messageHeight; ++y) {
-		memcpy(_backing.data() + y * _messageWidth,
-			screen->getBasePtr(_bounds.left, _bounds.top + y), _messageWidth);
+		memcpy(_backing.data() + y * _messageWidth, screen->getBasePtr(_bounds.left, _bounds.top + y), _messageWidth);
 	}
 
 	const uint coverage = (_queue.opacity(now) * 16 + 254) / 255;
@@ -242,10 +244,10 @@ void ScreenPresenter::presentScreen() {
 	if (screen && screen->format.bytesPerPixel == 1 &&
 			_bounds.right <= screen->w && _bounds.bottom <= screen->h) {
 		for (int y = 0; y < _messageHeight; ++y) {
-			memcpy(screen->getBasePtr(_bounds.left, _bounds.top + y),
-				_backing.data() + y * _messageWidth, _messageWidth);
+			memcpy(screen->getBasePtr(_bounds.left, _bounds.top + y), _backing.data() + y * _messageWidth, _messageWidth);
 		}
 	}
+
 	if (screen)
 		g_system->unlockScreen();
 }

@@ -47,10 +47,8 @@ public:
 
 	bool initialize(ResourceManager &resources);
 	bool grant(uint unlockFlag, const char *source);
-	Result run(const Common::String &sceneLabel, int initialUnlockFlag = -1,
-		uint *usedUnlockFlag = nullptr);
-	Result grantAndRun(uint unlockFlag, const Common::String &sceneLabel,
-		const char *source);
+	Result run(const Common::String &sceneLabel, int initialUnlockFlag = -1, uint *usedUnlockFlag = nullptr);
+	Result grantAndRun(uint unlockFlag, const Common::String &sceneLabel, const char *source);
 	bool isAvailable(uint unlockFlag) const;
 
 private:
@@ -62,18 +60,15 @@ private:
 
 	ChoiceResult executeChoice(uint unlockFlag, const Common::String &sceneLabel);
 	bool runQcsMag2UnlockMediaScreen();
-	bool loadFrameSet(ResourceManager &resources, const char *prefix, uint count,
-		Common::Array<BitmapAssetFrame> &frames);
+	bool loadFrameSet(ResourceManager &resources, const char *prefix, uint count, Common::Array<BitmapAssetFrame> &frames);
 	bool buildEntries(int initialUnlockFlag);
 	bool captureDisplay();
 	void restoreDisplay();
 	void applyPalette();
 	void updateLayout();
 	void draw(bool usePressed = false, bool donePressed = false) const;
-	void drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const;
-	void drawButton(byte *screen, uint pitch, const Common::Rect &bounds,
-		const Common::String &label, bool pressed) const;
+	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const;
+	void drawButton(byte *screen, uint pitch, const Common::Rect &bounds, const Common::String &label, bool pressed) const;
 	uint measureText(const Common::String &text) const;
 	Common::Rect rowBounds(uint visibleRow) const;
 	int findControl(const Common::Point &point) const;

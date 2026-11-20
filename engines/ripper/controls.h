@@ -32,8 +32,7 @@ struct TextScrollResult {
 	bool recognized;
 };
 
-TextScrollResult calculateTextScroll(uint16 command, uint firstVisible,
-	uint visibleRows, uint maximumFirstVisible);
+TextScrollResult calculateTextScroll(uint16 command, uint firstVisible, uint visibleRows, uint maximumFirstVisible);
 
 struct UiControl {
 	Common::Rect bounds;
@@ -65,8 +64,7 @@ public:
 	ChooserModel();
 
 	void reset(uint itemCount, uint maximumVisibleCount, uint selectedIndex = 0);
-	bool restore(uint itemCount, uint maximumVisibleCount,
-		uint selectedIndex, uint firstVisibleIndex);
+	bool restore(uint itemCount, uint maximumVisibleCount, uint selectedIndex, uint firstVisibleIndex);
 	void clear();
 	bool moveSelection(int delta);
 	bool select(uint index, bool ensureVisible = true);

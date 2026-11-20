@@ -76,14 +76,12 @@ int BoardGameModel::pieceAt(int cell) const {
 	return cell >= 0 && cell < kCellCount ? _cells[cell] : 0;
 }
 
-void BoardGameModel::appendDestination(Common::Array<int> &destinations,
-		int destination) const {
+void BoardGameModel::appendDestination(Common::Array<int> &destinations, int destination) const {
 	if (Common::find(destinations.begin(), destinations.end(), destination) == destinations.end())
 		destinations.push_back(destination);
 }
 
-void BoardGameModel::legalDestinations(int source,
-		Common::Array<int> &destinations) const {
+void BoardGameModel::legalDestinations(int source, Common::Array<int> &destinations) const {
 	destinations.clear();
 	if (_result != 0 || source < 0 || source >= kCellCount)
 		return;
@@ -91,6 +89,7 @@ void BoardGameModel::legalDestinations(int source,
 	const int piece = _cells[source];
 	if (piece == 0 || (piece < 0 ? -1 : 1) != _sideToMove)
 		return;
+
 	const int type = ABS(piece);
 	const int sourceRow = source / kColumnCount;
 	const int sourceColumn = source % kColumnCount;
@@ -110,8 +109,7 @@ void BoardGameModel::legalDestinations(int source,
 	for (uint offset = 0; offset < offsetCount; ++offset) {
 		const int row = sourceRow + offsets[offset].row;
 		const int column = sourceColumn + offsets[offset].column;
-		if (row < 0 || row >= kRowCount || column < 0 ||
-				column >= kColumnCount) {
+		if (row < 0 || row >= kRowCount || column < 0 || column >= kColumnCount) {
 			// Runners can leave through a side edge inside their far three rows.
 			// All such exits share the off-board destination; vertical exits are illegal.
 			if ((type == 2 || type == 3) && row == sourceRow &&
@@ -122,8 +120,7 @@ void BoardGameModel::legalDestinations(int source,
 			continue;
 		}
 
-		if (type == 1 && ((piece < 0 && row > 1) ||
-				(piece > 0 && row < kRowCount - 2)))
+		if (type == 1 && ((piece < 0 && row > 1) || (piece > 0 && row < kRowCount - 2)))
 			continue;
 		const int destination = row * kColumnCount + column;
 		const int target = _cells[destination];
@@ -138,15 +135,12 @@ void BoardGameModel::legalDestinations(int source,
 
 	if (type == 5) {
 		for (uint group = 0; group < 2; ++group) {
-			const BoardOffset *groupOffsets = group == 0 ?
-				kAdjacentOffsets : kLeapOffsets;
-			const uint groupCount = group == 0 ?
-				ARRAYSIZE(kAdjacentOffsets) : ARRAYSIZE(kLeapOffsets);
+			const BoardOffset *groupOffsets = group == 0 ? kAdjacentOffsets : kLeapOffsets;
+			const uint groupCount = group == 0 ? ARRAYSIZE(kAdjacentOffsets) : ARRAYSIZE(kLeapOffsets);
 			for (uint offset = 0; offset < groupCount; ++offset) {
 				const int row = sourceRow + groupOffsets[offset].row;
 				const int column = sourceColumn + groupOffsets[offset].column;
-				if (row < 0 || row >= kRowCount || column < 0 ||
-						column >= kColumnCount)
+				if (row < 0 || row >= kRowCount || column < 0 || column >= kColumnCount)
 					continue;
 				const int destination = row * kColumnCount + column;
 				const int target = _cells[destination];
@@ -163,8 +157,7 @@ bool BoardGameModel::isLegalMove(const Move &move) const {
 	return Common::find(destinations.begin(), destinations.end(), move.destination) != destinations.end();
 }
 
-void BoardGameModel::legalMoves(Common::Array<Move> &moves,
-		bool reverseSources) const {
+void BoardGameModel::legalMoves(Common::Array<Move> &moves, bool reverseSources) const {
 	moves.clear();
 	for (int index = 0; index < kCellCount; ++index) {
 		const int source = reverseSources ? kCellCount - index - 1 : index;
@@ -186,6 +179,7 @@ bool BoardGameModel::hasRunner(int side) const {
 void BoardGameModel::upgradeSpecialPieces(int side) {
 	if (hasRunner(side))
 		return;
+
 	for (uint cell = 0; cell < kCellCount; ++cell) {
 		if (_cells[cell] == side * 4)
 			_cells[cell] = side * 5;

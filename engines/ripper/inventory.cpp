@@ -93,11 +93,11 @@ bool Inventory::initialize(ResourceManager &resources) {
 				(kLastUnlockFlag - kFirstUnlockFlag) ||
 			!resources.loadInterfaceBitmapFont("small.fnt", _font) ||
 			!loadFrameSet(resources, "mnu", kMenuSkinFrameCount, _skin) ||
-			!loadFrameSet(resources, "invtry", kInventoryBitmapCount,
-				_itemBitmaps)) {
+			!loadFrameSet(resources, "invtry", kInventoryBitmapCount, _itemBitmaps)) {
 		warning("Ripper: inventory resources are incomplete");
 		return false;
 	}
+
 	_initialized = true;
 	debugC(1, kDebugScene,
 		"Ripper: initialized inventory unlockFlags=%u..%u consumedFlags=%u..%u labels=%u..%u useLabels=%u..%u mnuFrames=%u itemBitmaps=%u font=small.fnt",
@@ -111,15 +111,14 @@ bool Inventory::initialize(ResourceManager &resources) {
 	return true;
 }
 
-bool Inventory::loadFrameSet(ResourceManager &resources, const char *prefix,
-		uint count, Common::Array<BitmapAssetFrame> &frames) {
+bool Inventory::loadFrameSet(ResourceManager &resources, const char *prefix, uint count, Common::Array<BitmapAssetFrame> &frames) {
 	frames.clear();
 	for (uint frameIndex = 0; frameIndex < count; ++frameIndex) {
 		BitmapAssetSequence sequence;
-		if (!resources.loadInterfaceBitmapSequence(
-				Common::String::format("%s%u.bbm", prefix, frameIndex), sequence) ||
+		if (!resources.loadInterfaceBitmapSequence(Common::String::format("%s%u.bbm", prefix, frameIndex), sequence) ||
 				sequence.frames.empty())
 			return false;
+
 		frames.push_back(Common::move(sequence.frames.front()));
 	}
 	return true;
@@ -133,14 +132,14 @@ bool Inventory::isAvailable(uint unlockFlag) const {
 
 bool Inventory::grant(uint unlockFlag, const char *source) {
 	if (unlockFlag < kFirstUnlockFlag || unlockFlag > kLastUnlockFlag) {
-		warning("Ripper: inventory unlock flag %u is outside %u..%u",
-			unlockFlag, kFirstUnlockFlag, kLastUnlockFlag);
+		warning("Ripper: inventory unlock flag %u is outside %u..%u", unlockFlag, kFirstUnlockFlag, kLastUnlockFlag);
 		return false;
 	}
+
 	if (!_engine->getMilestones()->set(unlockFlag, true, source) ||
-			!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset,
-				false, source))
+			!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset, false, source))
 		return false;
+
 	debugC(1, kDebugScene,
 		"Ripper: granted inventory unlockFlag=%u item=%u consumedFlag=%u source=%s",
 		unlockFlag, unlockFlag - kFirstUnlockFlag,
@@ -164,6 +163,7 @@ bool Inventory::buildEntries(int initialUnlockFlag) {
 		debugC(2, kDebugScene, "Ripper: inventory has no available items");
 		return false;
 	}
+
 	uint selectedEntry = 0;
 	if (initialUnlockFlag >= 0) {
 		for (uint entryIndex = 0; entryIndex < _entries.size(); ++entryIndex) {
@@ -173,6 +173,7 @@ bool Inventory::buildEntries(int initialUnlockFlag) {
 			}
 		}
 	}
+
 	_chooser.reset(_entries.size(), kMaximumVisibleEntries, selectedEntry);
 	updateLayout();
 	debugC(1, kDebugScene,
@@ -186,6 +187,7 @@ bool Inventory::buildEntries(int initialUnlockFlag) {
 bool Inventory::captureDisplay() {
 	if (!_savedDisplay.capture())
 		return false;
+
 	_active = true;
 	return true;
 }
@@ -193,6 +195,7 @@ bool Inventory::captureDisplay() {
 void Inventory::restoreDisplay() {
 	if (!_active)
 		return;
+
 	_savedDisplay.restore(true, false);
 	_savedDisplay.clear();
 	_active = false;
@@ -208,31 +211,25 @@ void Inventory::applyPalette() {
 }
 
 void Inventory::updateLayout() {
-	const int menuHeight = kHeadingHeight + _chooser.visibleCount() * kRowHeight +
-		kBottomPadding;
+	const int menuHeight = kHeadingHeight + _chooser.visibleCount() * kRowHeight + kBottomPadding;
 	const int totalHeight = menuHeight + kButtonHeight;
 	const int left = (640 - kMenuWidth) / 2;
 	const int top = (400 - totalHeight) / 2;
 	_menuBounds = Common::Rect(left, top, left + kMenuWidth, top + menuHeight);
 	const int middle = left + kMenuWidth / 2;
-	_useBounds = Common::Rect(left, _menuBounds.bottom, middle,
-		_menuBounds.bottom + kButtonHeight);
-	_doneBounds = Common::Rect(middle, _menuBounds.bottom,
-		left + kMenuWidth, _menuBounds.bottom + kButtonHeight);
+	_useBounds = Common::Rect(left, _menuBounds.bottom, middle, _menuBounds.bottom + kButtonHeight);
+	_doneBounds = Common::Rect(middle, _menuBounds.bottom, left + kMenuWidth, _menuBounds.bottom + kButtonHeight);
 }
 
 uint Inventory::measureText(const Common::String &text) const {
 	return BitmapFontRenderer::measureText(_font, text);
 }
 
-void Inventory::drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const {
+void Inventory::drawText(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const {
 	BitmapFontRenderer::drawText(screen, pitch, _font, x, y, text, color);
 }
 
-void Inventory::drawButton(byte *screen, uint pitch,
-		const Common::Rect &bounds, const Common::String &label,
-		bool pressed) const {
+void Inventory::drawButton(byte *screen, uint pitch, const Common::Rect &bounds, const Common::String &label, bool pressed) const {
 	for (int y = bounds.top; y < bounds.bottom; ++y)
 		memset(screen + y * pitch + bounds.left, kButtonColor, bounds.width());
 	for (int x = bounds.left; x < bounds.right; ++x) {
@@ -259,16 +256,17 @@ Common::Rect Inventory::rowBounds(uint visibleRow) const {
 void Inventory::draw(bool usePressed, bool donePressed) const {
 	if (!_active || !_initialized || _entries.empty())
 		return;
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
 			g_system->unlockScreen();
 		return;
 	}
+
 	byte *pixels = (byte *)screen->getPixels();
 	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
-	IndexedBitmapRenderer::drawNineSlice(pixels, screen->pitch, _skin,
-		_menuBounds, screenBounds);
+	IndexedBitmapRenderer::drawNineSlice(pixels, screen->pitch, _skin, _menuBounds, screenBounds);
 	// Keep the tiled MNU heading visible behind the title.
 	screen->fillRect(Common::Rect(_menuBounds.left + kLeftPadding,
 		_menuBounds.top + kHeadingHeight, _menuBounds.right - kRightPadding,
@@ -294,6 +292,7 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 				bounds.top + (bounds.height() - bitmap.height) / 2,
 				screenBounds);
 		}
+
 		drawText(pixels, screen->pitch, bounds.left + kItemTextInset,
 			bounds.top + (bounds.height() - _font.lineHeight) / 2,
 			entry.label, entryIndex == _chooser.selectedIndex() ?
@@ -311,10 +310,10 @@ int Inventory::findControl(const Common::Point &point) const {
 		return kUseControl;
 	if (_doneBounds.contains(point))
 		return kDoneControl;
+
 	for (uint visibleRow = 0; visibleRow < _chooser.visibleCount(); ++visibleRow) {
 		uint entryIndex = 0;
-		if (rowBounds(visibleRow).contains(point) &&
-				_chooser.resolveVisibleRow(visibleRow, entryIndex))
+		if (rowBounds(visibleRow).contains(point) && _chooser.resolveVisibleRow(visibleRow, entryIndex))
 			return visibleRow;
 	}
 	return kNoControl;
@@ -323,6 +322,7 @@ int Inventory::findControl(const Common::Point &point) const {
 bool Inventory::moveSelection(int delta) {
 	if (!_chooser.moveSelection(delta))
 		return false;
+
 	debugC(2, kDebugScene,
 		"Ripper: inventory selection index=%u unlockFlag=%u item=%u",
 		_chooser.selectedIndex(), _entries[_chooser.selectedIndex()].unlockFlag,
@@ -335,8 +335,7 @@ void Inventory::closePresentation(const char *reason) {
 	_engine->getCursor()->update(0);
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->discardMouseTransitions();
-	debugC(2, kDebugScene, "Ripper: closed inventory presentation reason=%s",
-		reason);
+	debugC(2, kDebugScene, "Ripper: closed inventory presentation reason=%s", reason);
 }
 
 bool Inventory::runQcsMag2UnlockMediaScreen() {
@@ -365,6 +364,7 @@ bool Inventory::runQcsMag2UnlockMediaScreen() {
 		presentScreen();
 		result = _engine->getMedia()->play(kMagnottaMedia, false);
 	}
+
 	if (result && !_engine->shouldQuit()) {
 		cursor->setVisible(true);
 		result = _engine->getMedia()->playBlockingAudio(kMagnottaAudio);
@@ -378,6 +378,7 @@ bool Inventory::runQcsMag2UnlockMediaScreen() {
 			result = false;
 			break;
 		}
+
 		while (input->hasPendingKey()) {
 			if (input->consumeKey() == kEscapeCommand) {
 				dismissed = true;
@@ -388,16 +389,17 @@ bool Inventory::runQcsMag2UnlockMediaScreen() {
 		const MouseState mouse = input->publishMouseState();
 		const bool exitHovered = exitBounds.contains(mouse.position);
 		cursor->update(exitHovered ? 7 : 0);
-		if (exitHovered &&
-				((mouse.pressed | mouse.buttons) & kMouseButtonLeft) != 0)
+		if (exitHovered && ((mouse.pressed | mouse.buttons) & kMouseButtonLeft) != 0)
 			exitPressed = true;
 		if ((mouse.released & kMouseButtonLeft) != 0) {
 			if (exitPressed && exitHovered) {
 				dismissed = true;
 				dismissReason = "exit-control";
 			}
+
 			exitPressed = false;
 		}
+
 		cursor->refresh();
 		presentScreen();
 		g_system->delayMillis(10);
@@ -407,6 +409,7 @@ bool Inventory::runQcsMag2UnlockMediaScreen() {
 		warning("Ripper: could not restore the scene display after inventory item 1");
 		result = false;
 	}
+
 	cursor->update(0);
 	cursor->setVisible(true);
 	input->discardMouseTransitions();
@@ -416,14 +419,12 @@ bool Inventory::runQcsMag2UnlockMediaScreen() {
 	return result && dismissed;
 }
 
-Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
-		const Common::String &sceneLabel) {
-	if (unlockFlag < kFirstUnlockFlag || unlockFlag > kLastUnlockFlag ||
-			!isAvailable(unlockFlag))
+Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag, const Common::String &sceneLabel) {
+	if (unlockFlag < kFirstUnlockFlag || unlockFlag > kLastUnlockFlag || !isAvailable(unlockFlag))
 		return kChoiceRejected;
+
 	const uint choiceId = unlockFlag - kFirstUnlockFlag;
-	const Common::String &requiredSceneLabel =
-		_gameText[kSceneLabelResourceBase + choiceId - 1];
+	const Common::String &requiredSceneLabel = _gameText[kSceneLabelResourceBase + choiceId - 1];
 	if (!sceneLabel.equalsIgnoreCase(requiredSceneLabel)) {
 		debugC(2, kDebugScene,
 			"Ripper: rejected inventory item=%u unlockFlag=%u sceneLabel='%s' requiredLabel='%s'",
@@ -431,21 +432,19 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 		_engine->getModalDialog()->run(kInvalidInventoryResource, true);
 		return kChoiceRejected;
 	}
+
 	if ((choiceId == 5 &&
 			(!_engine->getMilestones()->isSet(58) ||
 			 _engine->getMilestones()->isSet(108))) ||
 			(choiceId == 8 && _engine->getMilestones()->isSet(105))) {
-		debugC(2, kDebugScene,
-			"Ripper: rejected restricted inventory item=%u unlockFlag=%u",
-			choiceId, unlockFlag);
+		debugC(2, kDebugScene, "Ripper: rejected restricted inventory item=%u unlockFlag=%u", choiceId, unlockFlag);
 		_engine->getModalDialog()->run(kInvalidInventoryResource, true);
 		return kChoiceRejected;
 	}
 
 	// Rejected uses keep the chooser open; accepted uses dismiss it before media.
 	restoreDisplay();
-	if (!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset,
-			true, "inventory-use"))
+	if (!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset, true, "inventory-use"))
 		return kChoiceFailed;
 	if (choiceId == 0) {
 		if (!_engine->getMilestones()->set(26, true, "inventory-scan-card") ||
@@ -466,21 +465,20 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 			return kChoiceFailed;
 	} else if (choiceId == 7) {
 		if (!_engine->getMedia()->play("p_shadow.avi", true) ||
-				!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset,
-					false, "inventory-reusable-item"))
+				!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset, false, "inventory-reusable-item"))
 			return kChoiceFailed;
 	} else if (choiceId == 8) {
 		if (!_engine->getMedia()->displayScenePcx(kEbHeadMedia))
 			return kChoiceFailed;
 	}
+
 	debugC(1, kDebugScene,
 		"Ripper: used inventory item=%u unlockFlag=%u consumedFlag=%u sceneLabel='%s'",
 		choiceId, unlockFlag, unlockFlag + kConsumedFlagOffset, sceneLabel.c_str());
 	return kChoiceUsed;
 }
 
-Inventory::Result Inventory::run(const Common::String &sceneLabel,
-		int initialUnlockFlag, uint *usedUnlockFlag) {
+Inventory::Result Inventory::run(const Common::String &sceneLabel, int initialUnlockFlag, uint *usedUnlockFlag) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (usedUnlockFlag)
 		*usedUnlockFlag = 0;
@@ -492,10 +490,12 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 		closePresentation("inventory-empty");
 		return kCancelled;
 	}
+
 	if (!captureDisplay()) {
 		warning("Ripper: could not capture display for inventory chooser");
 		return kLoadFailed;
 	}
+
 	applyPalette();
 	draw();
 	debugC(1, kDebugScene,
@@ -509,6 +509,7 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 		if (_engine->getInput()->pollEvents()) {
 			break;
 		}
+
 		bool useSelection = false;
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
@@ -517,11 +518,13 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 				debugC(1, kDebugScene, "Ripper: exited inventory result=cancelled");
 				return kCancelled;
 			}
+
 			if (command == kHelpCommand) {
 				_engine->getModalDialog()->run(kInventoryHelpResource, true);
 				draw();
 				continue;
 			}
+
 			if (command == kUpCommand) {
 				if (moveSelection(-1))
 					draw();
@@ -538,13 +541,13 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 			const int newHoveredControl = findControl(mouse.position);
 			if (newHoveredControl != hoveredControl) {
 				hoveredControl = newHoveredControl;
-				_engine->getCursor()->update(hoveredControl != kNoControl ?
-					kChoiceCursor : kDefaultCursor);
+				_engine->getCursor()->update(hoveredControl != kNoControl ? kChoiceCursor : kDefaultCursor);
 				debugC(3, kDebugScene,
 					"Ripper: inventory hover control=%d point=%d,%d selected=%u",
 					hoveredControl, mouse.position.x, mouse.position.y,
 					_chooser.selectedIndex());
 			}
+
 			if ((mouse.pressed & kMouseButtonLeft) != 0) {
 				pressedControl = hoveredControl;
 				if (pressedControl >= 0) {
@@ -557,9 +560,10 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 							_entries[entryIndex].bitmapIndex);
 					}
 				}
-				draw(pressedControl == kUseControl,
-					pressedControl == kDoneControl);
+
+				draw(pressedControl == kUseControl, pressedControl == kDoneControl);
 			}
+
 			if ((mouse.released & kMouseButtonLeft) != 0) {
 				const int releasedControl = hoveredControl;
 				draw();
@@ -568,17 +572,17 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 						useSelection = true;
 					else if (releasedControl == kDoneControl) {
 						closePresentation("inventory-done");
-						debugC(1, kDebugScene,
-							"Ripper: exited inventory result=cancelled");
+						debugC(1, kDebugScene, "Ripper: exited inventory result=cancelled");
 						return kCancelled;
 					}
 				}
+
 				pressedControl = kNoControl;
 			}
 		}
+
 		if (useSelection) {
-			const uint selectedUnlockFlag =
-				_entries[_chooser.selectedIndex()].unlockFlag;
+			const uint selectedUnlockFlag = _entries[_chooser.selectedIndex()].unlockFlag;
 			const ChoiceResult choiceResult = executeChoice(selectedUnlockFlag, sceneLabel);
 			if (choiceResult == kChoiceUsed) {
 				if (usedUnlockFlag)
@@ -586,12 +590,15 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 				closePresentation("inventory-used");
 				return kUsed;
 			}
+
 			if (choiceResult == kChoiceFailed) {
 				closePresentation("inventory-failed");
 				return kLoadFailed;
 			}
+
 			draw();
 		}
+
 		_engine->getCursor()->refresh();
 		presentScreen();
 		g_system->delayMillis(10);
@@ -600,8 +607,7 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 	return _engine->shouldQuit() ? kCancelled : kLoadFailed;
 }
 
-Inventory::Result Inventory::grantAndRun(uint unlockFlag,
-		const Common::String &sceneLabel, const char *source) {
+Inventory::Result Inventory::grantAndRun(uint unlockFlag, const Common::String &sceneLabel, const char *source) {
 	if (!grant(unlockFlag, source))
 		return kLoadFailed;
 	return run(sceneLabel, unlockFlag);

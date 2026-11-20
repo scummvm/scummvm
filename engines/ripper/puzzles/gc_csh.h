@@ -47,10 +47,8 @@ private:
 	bool resetSequence(const int enteredChoices[4], uint enteredChoiceCount);
 	bool waitForCue(uint cue);
 	void drawAnimationFrame(uint choice, uint sequenceSlot, uint frameIndex);
-	void drawResetFrame(const int enteredChoices[4], uint enteredChoiceCount,
-		uint frameIndex);
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void drawResetFrame(const int enteredChoices[4], uint enteredChoiceCount, uint frameIndex);
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	void restoreSequenceBacking();
 	void playCue(uint cue);
 	void stopAudio();

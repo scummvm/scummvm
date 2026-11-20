@@ -93,10 +93,10 @@ bool RemoteControlManager::initialize(ResourceManager &resources) {
 	_controls.resize(ARRAYSIZE(kControlLayouts));
 	for (uint i = 0; i < _controls.size(); ++i) {
 		BitmapAssetSequence sequence;
-		if (!resources.loadInterfaceBitmapSequence(
-			Common::String::format("remote%u.bbm", i), sequence) ||
+		if (!resources.loadInterfaceBitmapSequence(Common::String::format("remote%u.bbm", i), sequence) ||
 			sequence.frames.empty())
 			return false;
+
 		_controls[i].frame = sequence.frames.front();
 		uint hitWidth = _controls[i].frame.width;
 		uint hitHeight = _controls[i].frame.height;
@@ -105,6 +105,7 @@ bool RemoteControlManager::initialize(ResourceManager &resources) {
 			hitWidth = MIN<uint>(19, hitWidth);
 			hitHeight = MIN<uint>(27, hitHeight);
 		}
+
 		_controls[i].bounds = Common::Rect(kControlLayouts[i].x, kControlLayouts[i].y,
 			kControlLayouts[i].x + hitWidth,
 			kControlLayouts[i].y + hitHeight);
@@ -125,8 +126,7 @@ bool RemoteControlManager::initialize(ResourceManager &resources) {
 
 bool RemoteControlManager::captureDisplay() {
 	_videoPaletteChanged = false;
-	return _savedDisplay.capture(Common::Rect(kRemoteX, kRemoteY,
-		kRemoteX + kRemoteWidth, kRemoteY + kRemoteHeight));
+	return _savedDisplay.capture(Common::Rect(kRemoteX, kRemoteY, kRemoteX + kRemoteWidth, kRemoteY + kRemoteHeight));
 }
 
 void RemoteControlManager::restoreDisplay() {
@@ -137,10 +137,11 @@ void RemoteControlManager::restoreDisplay() {
 }
 
 void RemoteControlManager::applyPalette() {
-	// REMOTE.SMK uses only the shared interface palette bands. Its unused
-	// chroma-key green entries must not replace the suspended scene palette.
+	// REMOTE.SMK uses only the shared interface palette bands.
+	// Its unused chroma-key green entries must not replace the suspended scene palette.
 	if (_videoPaletteChanged && _engine->getSettings()->restoreVideoPalette())
 		return;
+
 	_savedDisplay.restorePalette();
 }
 
@@ -151,6 +152,7 @@ void RemoteControlManager::drawControls() const {
 			g_system->unlockScreen();
 		return;
 	}
+
 	byte *pixels = (byte *)screen->getPixels();
 	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
 	for (uint i = 0; i < _controls.size(); ++i)
@@ -160,8 +162,7 @@ void RemoteControlManager::drawControls() const {
 	g_system->unlockScreen();
 }
 
-void RemoteControlManager::drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text) const {
+void RemoteControlManager::drawText(byte *screen, uint pitch, int x, int y, const Common::String &text) const {
 	BitmapFontRenderer::drawText(screen, pitch, _font, x, y, text, kTextColor);
 }
 
@@ -173,8 +174,7 @@ int RemoteControlManager::findControl(const Common::Point &point) const {
 			continue;
 		const int x = point.x - control.bounds.left;
 		const int y = point.y - control.bounds.top;
-		if (control.frame.pixels[y * control.frame.width + x] !=
-			control.frame.transparentColor)
+		if (control.frame.pixels[y * control.frame.width + x] != control.frame.transparentColor)
 			return i;
 	}
 	return -1;
@@ -185,11 +185,11 @@ bool RemoteControlManager::handleCommand(uint16 command, uint &selectedSlider) {
 	if (command == 0x001b)
 		return false;
 	if (command == 0x3b00) {
-		debugC(1, kDebugGeneral,
-			"Ripper: Remote Control opening help resource=0x%x", kHelpResource);
+		debugC(1, kDebugGeneral, "Ripper: Remote Control opening help resource=0x%x", kHelpResource);
 		_engine->getModalDialog()->run(kHelpResource);
 		return true;
 	}
+
 	if (command == 0x1300) {
 		bool videoPaletteChanged = false;
 		for (uint i = RipperSettings::kBrightness; i <= RipperSettings::kTint; ++i) {
@@ -202,17 +202,20 @@ bool RemoteControlManager::handleCommand(uint16 command, uint &selectedSlider) {
 			_videoPaletteChanged = true;
 			applyPalette();
 		}
+
 		return true;
 	}
+
 	if (command == 0x4b00) {
-		selectedSlider = selectedSlider == 0 ? RipperSettings::kSliderCount - 1 :
-			selectedSlider - 1;
+		selectedSlider = selectedSlider == 0 ? RipperSettings::kSliderCount - 1 : selectedSlider - 1;
 		return true;
 	}
+
 	if (command == 0x4d00) {
 		selectedSlider = (selectedSlider + 1) % RipperSettings::kSliderCount;
 		return true;
 	}
+
 	if (command != 0x4800 && command != 0x5000 && command != '+' && command != '-')
 		return true;
 
@@ -221,11 +224,11 @@ bool RemoteControlManager::handleCommand(uint16 command, uint &selectedSlider) {
 	const int direction = command == 0x4800 || command == '+' ? 1 : -1;
 	const int oldValue = settings->getValue(slider);
 	settings->setValue(slider, oldValue + descriptor.step * direction);
-	if (selectedSlider >= RipperSettings::kBrightness &&
-		settings->getValue(slider) != oldValue) {
+	if (selectedSlider >= RipperSettings::kBrightness && settings->getValue(slider) != oldValue) {
 		_videoPaletteChanged = true;
 		applyPalette();
 	}
+
 	return true;
 }
 
@@ -233,16 +236,16 @@ bool RemoteControlManager::run() {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (!_initialized || !captureDisplay())
 		return false;
-	debugC(1, kDebugGeneral,
-		"Ripper: entering Remote Control controls=%u", _controls.size());
+
+	debugC(1, kDebugGeneral, "Ripper: entering Remote Control controls=%u", _controls.size());
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->publishMouseState();
 	Common::Array<byte> remotePalette;
-	if (!_engine->getMedia()->playInterfaceSequence(
-		"remote.smk", kRemoteX, kRemoteY, remotePalette)) {
+	if (!_engine->getMedia()->playInterfaceSequence("remote.smk", kRemoteX, kRemoteY, remotePalette)) {
 		restoreDisplay();
 		return false;
 	}
+
 	applyPalette();
 	drawControls();
 
@@ -257,14 +260,12 @@ bool RemoteControlManager::run() {
 				g_system->unlockScreen();
 			return;
 		}
+
 		byte *pixels = (byte *)screen->getPixels();
-		screen->fillRect(Common::Rect(kLabelX, kLabelY,
-			kLabelX + kLabelWidth, kLabelY + kLabelHeight),
+		screen->fillRect(Common::Rect(kLabelX, kLabelY, kLabelX + kLabelWidth, kLabelY + kLabelHeight),
 			kLabelBackgroundColor);
-		drawText(pixels, screen->pitch, kLabelX, kLabelY,
-			_labels[selectedSlider]);
-		const uint filledTicks = _engine->getSettings()->getFilledTickCount(
-			(RipperSettings::Slider)selectedSlider);
+		drawText(pixels, screen->pitch, kLabelX, kLabelY, _labels[selectedSlider]);
+		const uint filledTicks = _engine->getSettings()->getFilledTickCount((RipperSettings::Slider)selectedSlider);
 		for (uint tick = 0; tick < 10; ++tick) {
 			screen->fillRect(Common::Rect(kTickX + tick * kTickSpacing, kTickY,
 				kTickX + tick * kTickSpacing + kTickWidth, kTickY + kTickHeight),
@@ -286,8 +287,8 @@ bool RemoteControlManager::run() {
 		if (_engine->getInput()->pollEvents()) {
 			break;
 		}
-		uint16 command = _engine->getInput()->hasPendingKey() ?
-			_engine->getInput()->consumeKey() : 0;
+
+		uint16 command = _engine->getInput()->hasPendingKey() ? _engine->getInput()->consumeKey() : 0;
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		const int newHoveredControl = findControl(mouse.position);
 		if (newHoveredControl != hoveredControl) {
@@ -297,6 +298,7 @@ bool RemoteControlManager::run() {
 				"Ripper: Remote Control hover control=%d point=%d,%d",
 				hoveredControl, mouse.position.x, mouse.position.y);
 		}
+
 		if ((mouse.pressed & kMouseButtonLeft) != 0)
 			pressedControl = hoveredControl;
 		if ((mouse.released & kMouseButtonLeft) != 0) {
@@ -304,6 +306,7 @@ bool RemoteControlManager::run() {
 				command = _controls[pressedControl].command;
 			pressedControl = -1;
 		}
+
 		if (command != 0) {
 			const uint previousSlider = selectedSlider;
 			active = handleCommand(command, selectedSlider);
@@ -313,6 +316,7 @@ bool RemoteControlManager::run() {
 				command == 0x4800 || command == 0x5000 || command == '+' || command == '-'))
 				redrawSettings();
 		}
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}

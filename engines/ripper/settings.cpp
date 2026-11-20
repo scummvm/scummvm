@@ -91,13 +91,11 @@ const RipperSettings::Descriptor &RipperSettings::getDescriptor(Slider slider) {
 }
 
 int RipperSettings::mixerToPercent(int volume) {
-	return CLIP<int>((volume * 100 + Audio::Mixer::kMaxMixerVolume / 2) /
-		Audio::Mixer::kMaxMixerVolume, 0, 100);
+	return CLIP<int>((volume * 100 + Audio::Mixer::kMaxMixerVolume / 2) / Audio::Mixer::kMaxMixerVolume, 0, 100);
 }
 
 int RipperSettings::percentToMixer(int volume) {
-	return CLIP<int>((volume * Audio::Mixer::kMaxMixerVolume + 50) / 100,
-		0, Audio::Mixer::kMaxMixerVolume);
+	return CLIP<int>((volume * Audio::Mixer::kMaxMixerVolume + 50) / 100, 0, Audio::Mixer::kMaxMixerVolume);
 }
 
 void RipperSettings::load() {
@@ -106,28 +104,21 @@ void RipperSettings::load() {
 		_values[i] = ConfMan.hasKey(key) ? ConfMan.getInt(key) : kSliderDescriptors[i].defaultValue;
 	}
 	for (uint i = kBrightness; i <= kTint; ++i)
-		_values[i] = CLIP<int>(_values[i], kSliderDescriptors[i].minimum,
-			kSliderDescriptors[i].maximum);
+		_values[i] = CLIP<int>(_values[i], kSliderDescriptors[i].minimum, kSliderDescriptors[i].maximum);
 
-	_bufferedVideo = ConfMan.hasKey("ripper_buffered_video") ?
-		ConfMan.getBool("ripper_buffered_video") : false;
-	_subtitles = ConfMan.hasKey("ripper_subtitles") ?
-		ConfMan.getBool("ripper_subtitles") : _demo;
+	_bufferedVideo = ConfMan.hasKey("ripper_buffered_video") ? ConfMan.getBool("ripper_buffered_video") : false;
+	_subtitles = ConfMan.hasKey("ripper_subtitles") ? ConfMan.getBool("ripper_subtitles") : _demo;
 	_subtitleAutoScroll = ConfMan.hasKey("ripper_subtitle_autoscroll") ?
 		ConfMan.getBool("ripper_subtitle_autoscroll") : false;
-	_toolbarHelp = ConfMan.hasKey("ripper_toolbar_help") ?
-		ConfMan.getBool("ripper_toolbar_help") : true;
-	_toolbarPermanent = ConfMan.hasKey("ripper_toolbar_permanent") ?
-		ConfMan.getBool("ripper_toolbar_permanent") : false;
+	_toolbarHelp = ConfMan.hasKey("ripper_toolbar_help") ? ConfMan.getBool("ripper_toolbar_help") : true;
+	_toolbarPermanent = ConfMan.hasKey("ripper_toolbar_permanent") ? ConfMan.getBool("ripper_toolbar_permanent") : false;
 	for (uint i = 0; i < ARRAYSIZE(_demoReservedToggles); ++i)
 		_demoReservedToggles[i] = ConfMan.hasKey(kDemoReservedToggleConfigKeys[i]) ?
 			ConfMan.getBool(kDemoReservedToggleConfigKeys[i]) : true;
 	_mouseSensitivity = CLIP<int>(ConfMan.hasKey("ripper_mouse_sensitivity") ?
 		ConfMan.getInt("ripper_mouse_sensitivity") : 100, 0, 100);
-	_videoMode = CLIP<int>(ConfMan.hasKey("ripper_video_mode") ?
-		ConfMan.getInt("ripper_video_mode") : 1, 0, 3);
-	_combatLevel = CLIP<int>(ConfMan.hasKey("ripper_combat_level") ?
-		ConfMan.getInt("ripper_combat_level") : 2, 1, 3);
+	_videoMode = CLIP<int>(ConfMan.hasKey("ripper_video_mode") ? ConfMan.getInt("ripper_video_mode") : 1, 0, 3);
+	_combatLevel = CLIP<int>(ConfMan.hasKey("ripper_combat_level") ? ConfMan.getInt("ripper_combat_level") : 2, 1, 3);
 	_puzzleLevel = 2;
 	if (ConfMan.hasKey("ripper_puzzle_level")) {
 		_puzzleLevel = CLIP<int>(ConfMan.getInt("ripper_puzzle_level"), 1, 3);
@@ -139,6 +130,7 @@ void RipperSettings::load() {
 				_puzzleLevel = level;
 		}
 	}
+
 	for (uint i = 0; i < kActionKeyCount; ++i) {
 		const int key = ConfMan.hasKey(kActionKeyConfigKeys[i]) ?
 			ConfMan.getInt(kActionKeyConfigKeys[i]) : kDefaultActionKeys[i];
@@ -186,8 +178,7 @@ void RipperSettings::resetDefaults() {
 	for (uint i = 0; i < kSliderCount; ++i)
 		_values[i] = kSliderDescriptors[i].defaultValue;
 	for (uint i = kMasterVolume; i <= kVideoVolume; ++i)
-		ConfMan.setInt(kAudioConfigKeys[i], i == kMasterVolume ?
-			_values[i] : percentToMixer(_values[i]));
+		ConfMan.setInt(kAudioConfigKeys[i], i == kMasterVolume ? _values[i] : percentToMixer(_values[i]));
 	_engine->syncSoundSettings();
 	debugC(2, kDebugGeneral, "Ripper: restored Remote Control defaults");
 }
@@ -197,12 +188,13 @@ void RipperSettings::setValue(Slider slider, int value) {
 	const int clampedValue = CLIP<int>(value, descriptor.minimum, descriptor.maximum);
 	if (_values[slider] == clampedValue)
 		return;
+
 	_values[slider] = clampedValue;
 	if (slider <= kVideoVolume) {
-		ConfMan.setInt(kAudioConfigKeys[slider], slider == kMasterVolume ?
-			clampedValue : percentToMixer(clampedValue));
+		ConfMan.setInt(kAudioConfigKeys[slider], slider == kMasterVolume ? clampedValue : percentToMixer(clampedValue));
 		_engine->syncSoundSettings();
 	}
+
 	debugC(2, slider <= kVideoVolume ? kDebugAudio : kDebugVideo,
 		"Ripper: Remote Control slider=%u value=%d", (uint)slider, clampedValue);
 }
@@ -219,8 +211,7 @@ void RipperSettings::syncSoundSettings() {
 	_values[kAmbientVolume] = mixerToPercent(ambient);
 	_values[kSfxVolume] = mixerToPercent(sfx);
 	_values[kVideoVolume] = mixerToPercent(video);
-	mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-		Audio::Mixer::kMaxMixerVolume * master / 100);
+	mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, Audio::Mixer::kMaxMixerVolume * master / 100);
 	mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ambient * master / 100);
 	mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, sfx * master / 100);
 	mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, video * master / 100);
@@ -235,8 +226,8 @@ uint RipperSettings::getFilledTickCount(Slider slider) const {
 	const int range = descriptor.maximum - descriptor.minimum;
 	if (range <= 0)
 		return 0;
-	const int distance = descriptor.step < 0 ? descriptor.maximum - _values[slider] :
-		_values[slider] - descriptor.minimum;
+
+	const int distance = descriptor.step < 0 ? descriptor.maximum - _values[slider] : _values[slider] - descriptor.minimum;
 	return CLIP<int>(distance * 10 / range, 0, 10);
 }
 
@@ -247,6 +238,7 @@ void RipperSettings::applyVideoPalette(byte *palette, uint colorCount, bool reme
 		_videoPaletteSource.resize(colorCount * 3);
 		memcpy(_videoPaletteSource.data(), palette, colorCount * 3);
 	}
+
 	if (_values[kBrightness] == 100 && _values[kColor] == 100 &&
 		_values[kContrast] == 100 && _values[kTint] == 100)
 		return;
@@ -273,12 +265,9 @@ void RipperSettings::applyVideoPalette(byte *palette, uint colorCount, bool reme
 			blueTint = (sourceGreen * tintDistance - sourceBlue * tintDistance) / 100;
 		}
 
-		int red = 63 - (63 - sourceRed) * contrast / 100 - sourceRed +
-			brightness * sourceRed / 100 + redTint;
-		int green = 63 - (63 - sourceGreen) * contrast / 100 - sourceGreen +
-			brightness * sourceGreen / 100 + greenTint;
-		int blue = 63 - (63 - sourceBlue) * contrast / 100 - sourceBlue +
-			brightness * sourceBlue / 100 + blueTint;
+		int red = 63 - (63 - sourceRed) * contrast / 100 - sourceRed + brightness * sourceRed / 100 + redTint;
+		int green = 63 - (63 - sourceGreen) * contrast / 100 - sourceGreen + brightness * sourceGreen / 100 + greenTint;
+		int blue = 63 - (63 - sourceBlue) * contrast / 100 - sourceBlue + brightness * sourceBlue / 100 + blueTint;
 		const int luma = (blue * 11 + green * 59 + red * 30) / 100;
 		const int lumaContribution = (100 - color) * luma;
 		red = CLIP<int>((color * red + lumaContribution) / 100, 0, 63);
@@ -296,10 +285,10 @@ void RipperSettings::applyVideoPalette(byte *palette, uint colorCount, bool reme
 bool RipperSettings::restoreVideoPalette() {
 	if (_videoPaletteSource.size() != 256 * 3)
 		return false;
+
 	byte palette[256 * 3];
 	memcpy(palette, _videoPaletteSource.data(), sizeof(palette));
-	// The saved source already includes the shared interface palette patch made
-	// immediately before applyVideoPalette installed the scene palette.
+	// The saved source already includes the shared interface palette patch made immediately before applyVideoPalette installed the scene palette.
 	applyVideoPalette(palette, 256, false);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	return true;
@@ -342,35 +331,30 @@ int RipperSettings::getDemoSlider(DemoSlider slider) const {
 
 void RipperSettings::setBufferedVideo(bool enabled) {
 	_bufferedVideo = enabled;
-	debugC(2, kDebugGeneral,
-		"Ripper: Options Panel bufferedVideo=%d", _bufferedVideo);
+	debugC(2, kDebugGeneral, "Ripper: Options Panel bufferedVideo=%d", _bufferedVideo);
 }
 
 void RipperSettings::setSubtitles(bool enabled) {
 	_subtitles = enabled;
-	debugC(2, kDebugInput,
-		"Ripper: retail presentation text enabled=%d", _subtitles);
+	debugC(2, kDebugInput, "Ripper: retail presentation text enabled=%d", _subtitles);
 }
 
 void RipperSettings::setSubtitleAutoScroll(bool enabled) {
 	_subtitleAutoScroll = enabled;
-	debugC(2, kDebugInput,
-		"Ripper: retail presentation text autoScroll=%d", _subtitleAutoScroll);
+	debugC(2, kDebugInput, "Ripper: retail presentation text autoScroll=%d", _subtitleAutoScroll);
 }
 
-bool RipperSettings::handlePresentationTextCommand(uint16 command,
-		const char *source) {
+bool RipperSettings::handlePresentationTextCommand(uint16 command, const char *source) {
 	if (command == 0x14) {
 		setSubtitles(!_subtitles);
-		showScreenMessage(Common::String::format("Subtitles: %s",
-			_subtitles ? "ON" : "OFF"));
+		showScreenMessage(Common::String::format("Subtitles: %s", _subtitles ? "ON" : "OFF"));
 	} else if (command == 0x01) {
 		setSubtitleAutoScroll(!_subtitleAutoScroll);
-		showScreenMessage(Common::String::format("Subtitle autoscroll: %s",
-			_subtitleAutoScroll ? "ON" : "OFF"));
+		showScreenMessage(Common::String::format("Subtitle autoscroll: %s", _subtitleAutoScroll ? "ON" : "OFF"));
 	} else {
 		return false;
 	}
+
 	debugC(1, kDebugInput,
 		"Ripper: retail presentation text shortcut source=%s command=%s "
 		"enabled=%d autoScroll=%d",
@@ -381,28 +365,25 @@ bool RipperSettings::handlePresentationTextCommand(uint16 command,
 
 void RipperSettings::setVideoMode(uint mode) {
 	_videoMode = MIN<uint>(mode, 3);
-	debugC(2, kDebugGeneral,
-		"Ripper: Options Panel videoMode=%u", _videoMode);
+	debugC(2, kDebugGeneral, "Ripper: Options Panel videoMode=%u", _videoMode);
 }
 
 void RipperSettings::setCombatLevel(uint level) {
 	_combatLevel = CLIP<uint>(level, 1, 3);
-	debugC(2, kDebugGeneral,
-		"Ripper: Options Panel combatLevel=%u", _combatLevel);
+	debugC(2, kDebugGeneral, "Ripper: Options Panel combatLevel=%u", _combatLevel);
 }
 
 void RipperSettings::setPuzzleLevel(uint level) {
 	_puzzleLevel = CLIP<uint>(level, 1, 3);
-	debugC(2, kDebugGeneral,
-		"Ripper: Options Panel puzzleLevel=%u", _puzzleLevel);
+	debugC(2, kDebugGeneral, "Ripper: Options Panel puzzleLevel=%u", _puzzleLevel);
 }
 
 void RipperSettings::setActionKey(uint index, uint16 key) {
 	if (index >= kActionKeyCount || key == 0 || _actionKeys[index] == key)
 		return;
+
 	_actionKeys[index] = key;
-	debugC(2, kDebugInput,
-		"Ripper: Options Panel actionKeySlot=%u command=0x%04x", index, key);
+	debugC(2, kDebugInput, "Ripper: Options Panel actionKeySlot=%u command=0x%04x", index, key);
 }
 
 void RipperSettings::setDemoToggle(DemoToggle toggle, bool enabled) {
@@ -426,8 +407,7 @@ void RipperSettings::setDemoToggle(DemoToggle toggle, bool enabled) {
 	default:
 		return;
 	}
-	debugC(2, kDebugGeneral,
-		"Ripper: demo Options toggle=%u enabled=%d", (uint)toggle, enabled);
+	debugC(2, kDebugGeneral, "Ripper: demo Options toggle=%u enabled=%d", (uint)toggle, enabled);
 }
 
 void RipperSettings::setDemoSlider(DemoSlider slider, int value) {

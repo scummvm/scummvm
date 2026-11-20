@@ -64,8 +64,7 @@ private:
 	bool loadAssets();
 	bool loadFrame(const Common::String &name, BitmapAssetFrame &frame);
 	void render();
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	void updateCursor(const Common::Point &point);
 	int findLever(const Common::Point &point) const;
 	bool isExitRegion(const Common::Point &point) const;

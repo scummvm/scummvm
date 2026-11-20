@@ -41,10 +41,10 @@ bool Puzzle::serviceEngineEvents() {
 
 bool Puzzle::waitTicks(uint ticks) {
 	const uint32 target = g_system->getMillis() + ticks * kDosTickMillis;
-	while (!_engine->shouldQuit() &&
-			(int32)(target - g_system->getMillis()) > 0) {
+	while (!_engine->shouldQuit() && (int32)(target - g_system->getMillis()) > 0) {
 		if (!serviceEngineEvents())
 			return false;
+
 		g_system->delayMillis(10);
 	}
 	return !_engine->shouldQuit();

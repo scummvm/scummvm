@@ -97,10 +97,8 @@ private:
 	void logProgress(const char *reason, uint backgroundFrame) const;
 
 	bool drawOverlay();
-	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y, uint scalePercent, bool centered) const;
-	void drawEffects(byte *screen, uint pitch, Common::Array<Effect> &effects,
-		const Common::Array<BitmapAssetFrame> &frames);
+	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y, uint scalePercent, bool centered) const;
+	void drawEffects(byte *screen, uint pitch, Common::Array<Effect> &effects, const Common::Array<BitmapAssetFrame> &frames);
 
 	void applyCursor();
 	void playCue(uint index, uint volumePercent = 100, bool loop = false);

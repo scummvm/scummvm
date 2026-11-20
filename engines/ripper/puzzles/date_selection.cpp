@@ -82,18 +82,15 @@ DateSelectionPuzzle::DateSelectionPuzzle(RipperEngine *engine) :
 }
 
 bool DateSelectionPuzzle::loadAssets() {
-	Common::ScopedPtr<Common::SeekableReadStream> waitStream(
-		_engine->getResources()->createReadStreamForPath(kWaitBitmap));
+	Common::ScopedPtr<Common::SeekableReadStream> waitStream(_engine->getResources()->createReadStreamForPath(kWaitBitmap));
 	if (!waitStream || !decodeBitmapAsset(*waitStream, _waitFrame)) {
-		warning("Ripper: could not decode date-selection feedback bitmap '%s'",
-			kWaitBitmap);
+		warning("Ripper: could not decode date-selection feedback bitmap '%s'", kWaitBitmap);
 		return false;
 	}
 
 	for (uint index = 0; index < 2; ++index) {
 		const Common::String name = mediaName(index);
-		Common::ScopedPtr<Common::SeekableReadStream> stream(
-			_engine->getResources()->createReadStreamForPath(name));
+		Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(name));
 		if (!stream) {
 			warning("Ripper: date-selection media '%s' is missing", name.c_str());
 			return false;
@@ -101,8 +98,7 @@ bool DateSelectionPuzzle::loadAssets() {
 	}
 	for (uint index = 0; index < kAudioCueCount; ++index) {
 		const Common::String name = cueName(index);
-		Common::ScopedPtr<Common::SeekableReadStream> stream(
-			_engine->getResources()->createReadStreamForPath(name));
+		Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(name));
 		if (!stream) {
 			warning("Ripper: date-selection audio '%s' is missing", name.c_str());
 			return false;
@@ -118,14 +114,14 @@ bool DateSelectionPuzzle::loadAssets() {
 bool DateSelectionPuzzle::playCue(uint cue, uint volumePercent, bool loop) {
 	if (cue >= kAudioCueCount)
 		return false;
+
 	const Common::String name = cueName(cue);
-	Common::SeekableReadStream *stream =
-		_engine->getResources()->createReadStreamForPath(name);
-	if (!stream || !_engine->getMedia()->playSoundEffectStream(
-			stream, name, _audioHandles[cue], volumePercent, loop)) {
+	Common::SeekableReadStream *stream = _engine->getResources()->createReadStreamForPath(name);
+	if (!stream || !_engine->getMedia()->playSoundEffectStream(stream, name, _audioHandles[cue], volumePercent, loop)) {
 		warning("Ripper: could not play date-selection audio '%s'", name.c_str());
 		return false;
 	}
+
 	debugC(2, kDebugPuzzles,
 		"Ripper: started date-selection audio cue=%u name='%s' volume=%u loop=%d",
 		cue, name.c_str(), volumePercent, loop);
@@ -136,8 +132,7 @@ void DateSelectionPuzzle::stopAudio() {
 	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
-DateSelectionPuzzle::DateGroup DateSelectionPuzzle::matchDate(
-		const Common::String &text, uint &day) const {
+DateSelectionPuzzle::DateGroup DateSelectionPuzzle::matchDate(const Common::String &text, uint &day) const {
 	for (day = 18; day <= 23; ++day) {
 		const Common::String forms[] = {
 			Common::String::format("11-%u", day),
@@ -168,6 +163,7 @@ bool DateSelectionPuzzle::drawFeedback() {
 		warning("Ripper: could not draw date-selection feedback on active display");
 		return false;
 	}
+
 	IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(), screen->pitch,
 		_waitFrame, kWaitPosition.x, kWaitPosition.y,
 		Common::Rect(0, 0, screen->w, screen->h));
@@ -181,10 +177,9 @@ bool DateSelectionPuzzle::drawFeedback() {
 				g_system->unlockScreen();
 			return false;
 		}
+
 		const int x = kFeedbackStartX + step * kFeedbackAdvance;
-		screen->fillRect(Common::Rect(x, kFeedbackY,
-			x + kFeedbackWidth, kFeedbackY + kFeedbackHeight),
-			kFeedbackColor);
+		screen->fillRect(Common::Rect(x, kFeedbackY, x + kFeedbackWidth, kFeedbackY + kFeedbackHeight), kFeedbackColor);
 		g_system->unlockScreen();
 		presentScreen();
 		debugC(3, kDebugPuzzles,
@@ -214,8 +209,7 @@ bool DateSelectionPuzzle::processSubmission() {
 		flag = kRemainingDatesFlag;
 	}
 
-	if (flag != 0 && !_engine->getMilestones()->set(
-			flag, true, "date-selection-puzzle")) {
+	if (flag != 0 && !_engine->getMilestones()->set(flag, true, "date-selection-puzzle")) {
 		return false;
 	}
 
@@ -234,6 +228,7 @@ bool DateSelectionPuzzle::processSubmission() {
 	} else if (!playCue(0)) {
 		return false;
 	}
+
 	return true;
 }
 
@@ -248,6 +243,7 @@ uint16 DateSelectionPuzzle::service(uint frame) {
 			_result = kLoadFailed;
 			return kLoadFailedCommand;
 		}
+
 		_textEntryActive = true;
 		debugC(2, kDebugPuzzles,
 			"Ripper: date-selection text entry armed frame=%u bounds=%d,%d,%d,%d max=%u help=0x%x",
@@ -256,22 +252,19 @@ uint16 DateSelectionPuzzle::service(uint frame) {
 	}
 
 	Common::String text;
-	const ModalDialogManager::TextEntryResult result =
-		_engine->getModalDialog()->serviceTextEntry(text);
+	const ModalDialogManager::TextEntryResult result = _engine->getModalDialog()->serviceTextEntry(text);
 	if (result == ModalDialogManager::kTextEntryPending)
 		return 0;
 
 	_textEntryActive = false;
 	if (result == ModalDialogManager::kTextEntryAccepted) {
 		_submittedText = text;
-		debugC(2, kDebugPuzzles,
-			"Ripper: date-selection accepted text length=%u frame=%u",
-			_submittedText.size(), frame);
+		debugC(2, kDebugPuzzles, "Ripper: date-selection accepted text length=%u frame=%u", _submittedText.size(), frame);
 		return kSubmitCommand;
 	}
+
 	if (result == ModalDialogManager::kTextEntryCancelled) {
-		debugC(1, kDebugPuzzles,
-			"Ripper: date-selection text entry cancelled frame=%u", frame);
+		debugC(1, kDebugPuzzles, "Ripper: date-selection text entry cancelled frame=%u", frame);
 		return kExitCommand;
 	}
 
@@ -304,14 +297,13 @@ DateSelectionPuzzle::Result DateSelectionPuzzle::run(uint completionFlag) {
 
 	while (_result != kLoadFailed && !_engine->shouldQuit()) {
 		const Common::String name = mediaName(_mediaIndex);
-		Common::SeekableReadStream *stream =
-			_engine->getResources()->createReadStreamForPath(name);
+		Common::SeekableReadStream *stream = _engine->getResources()->createReadStreamForPath(name);
 		uint16 command = 0;
-		if (!_engine->getMedia()->playPuzzleSequenceStream(stream, name,
-				0, 0, kMediaLoopStartFrame, this, &command)) {
+		if (!_engine->getMedia()->playPuzzleSequenceStream(stream, name, 0, 0, kMediaLoopStartFrame, this, &command)) {
 			_result = kLoadFailed;
 			break;
 		}
+
 		debugC(2, kDebugPuzzles,
 			"Ripper: date-selection media completed name='%s' command=0x%04x submittedLength=%u",
 			name.c_str(), command, _submittedText.size());
@@ -321,6 +313,7 @@ DateSelectionPuzzle::Result DateSelectionPuzzle::run(uint completionFlag) {
 			_result = kLoadFailed;
 			break;
 		}
+
 		if (command != kSubmitCommand || !processSubmission()) {
 			_result = kLoadFailed;
 			break;

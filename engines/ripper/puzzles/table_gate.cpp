@@ -174,8 +174,7 @@ bool TableGatePuzzle::loadConfiguration() {
 	if (!readIniUint(ini, "game", "num 2 start", _leverActivationsBeforeStart) ||
 			_leverActivationsBeforeStart == 0 ||
 			_leverActivationsBeforeStart > kLeverCount) {
-		warning("Ripper: table gate puzzle configuration '%s' has an invalid activation threshold",
-			filename.c_str());
+		warning("Ripper: table gate puzzle configuration '%s' has an invalid activation threshold", filename.c_str());
 		return false;
 	}
 
@@ -185,12 +184,11 @@ bool TableGatePuzzle::loadConfiguration() {
 
 	for (uint gate = 0; gate < kGateCount; ++gate) {
 		uint value = 0;
-		if (!readIniUint(ini, "gates", Common::String::format("gate%u", gate + 1), value) ||
-				value > 1) {
-			warning("Ripper: table gate puzzle configuration '%s' has an invalid gate%u",
-				filename.c_str(), gate + 1);
+		if (!readIniUint(ini, "gates", Common::String::format("gate%u", gate + 1), value) || value > 1) {
+			warning("Ripper: table gate puzzle configuration '%s' has an invalid gate%u", filename.c_str(), gate + 1);
 			return false;
 		}
+
 		_gateStates[gate] = value != 0;
 	}
 
@@ -198,13 +196,13 @@ bool TableGatePuzzle::loadConfiguration() {
 		const Common::String section = Common::String::format("switch%u", lever + 1);
 		for (uint target = 0; target < kGatesPerLever; ++target) {
 			uint value = 0;
-			if (!readIniUint(ini, section,
-					Common::String::format("lever%u", target + 1), value) ||
+			if (!readIniUint(ini, section, Common::String::format("lever%u", target + 1), value) ||
 					value == 0 || value > kGateCount) {
 				warning("Ripper: table gate puzzle configuration '%s' has an invalid %s lever%u",
 					filename.c_str(), section.c_str(), target + 1);
 				return false;
 			}
+
 			_leverGates[lever][target] = value - 1;
 		}
 	}
@@ -222,6 +220,7 @@ bool TableGatePuzzle::loadFrame(const Common::String &name, BitmapAssetFrame &fr
 		warning("Ripper: could not load table gate puzzle bitmap '%s'", name.c_str());
 		return false;
 	}
+
 	return true;
 }
 
@@ -233,24 +232,28 @@ bool TableGatePuzzle::loadAssets() {
 		BitmapAssetFrame asset;
 		if (!loadFrame(Common::String::format("gb_tbl%u.bbm", frame), asset))
 			return false;
+
 		_launchFrames.push_back(Common::move(asset));
 	}
 	for (uint gate = 0; gate < kGateCount; ++gate) {
 		BitmapAssetFrame asset;
 		if (!loadFrame(Common::String::format("gb_tbl%u.bbm", gate + 10), asset))
 			return false;
+
 		_gateFrames.push_back(Common::move(asset));
 	}
 	for (uint indicator = 0; indicator < kLeverCount; ++indicator) {
 		BitmapAssetFrame asset;
 		if (!loadFrame(Common::String::format("gb_tbl%u.bbm", indicator + 25), asset))
 			return false;
+
 		_activationFrames.push_back(Common::move(asset));
 	}
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
 		BitmapAssetFrame asset;
 		if (!loadFrame(Common::String::format("gb_tbl%u.bbm", lever + 30), asset))
 			return false;
+
 		_leverFrames.push_back(Common::move(asset));
 	}
 
@@ -262,8 +265,7 @@ bool TableGatePuzzle::loadAssets() {
 	return true;
 }
 
-void TableGatePuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void TableGatePuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
@@ -277,8 +279,7 @@ void TableGatePuzzle::render() {
 	}
 
 	for (int y = 0; y < screen->h; ++y)
-		memcpy(screen->getBasePtr(0, y),
-			_backgroundDisplay.pixels().data() + y * screen->w, screen->w);
+		memcpy(screen->getBasePtr(0, y), _backgroundDisplay.pixels().data() + y * screen->w, screen->w);
 	byte *pixels = (byte *)screen->getPixels();
 
 	for (uint gate = 0; gate < kGateCount; ++gate) {
@@ -292,13 +293,13 @@ void TableGatePuzzle::render() {
 			kActivationPositions[indicator].x, kActivationPositions[indicator].y);
 	}
 	if (_launchFrame < _launchFrames.size()) {
-		drawFrame(pixels, screen->pitch, _launchFrames[_launchFrame],
-			416, 20 + kSceneOriginY);
+		drawFrame(pixels, screen->pitch, _launchFrames[_launchFrame], 416, 20 + kSceneOriginY);
 	}
+
 	if (_markerActive) {
-		drawFrame(pixels, screen->pitch, _markerFrame,
-			_markerLine.x, _markerLine.y);
+		drawFrame(pixels, screen->pitch, _markerFrame, _markerLine.x, _markerLine.y);
 	}
+
 	if (_pressedLever >= 0) {
 		drawFrame(pixels, screen->pitch, _leverFrames[_pressedLever],
 			kLeverPositions[_pressedLever].x, kLeverPositions[_pressedLever].y);
@@ -312,13 +313,13 @@ void TableGatePuzzle::render() {
 int TableGatePuzzle::findLever(const Common::Point &point) const {
 	if (_markerActive)
 		return -1;
+
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
 		if (!_leverEnabled[lever])
 			continue;
 		const BitmapAssetFrame &frame = _leverFrames[lever];
 		const Common::Point &position = kLeverPositions[lever];
-		if (Common::Rect(position.x, position.y,
-				position.x + frame.width, position.y + frame.height).contains(point))
+		if (Common::Rect(position.x, position.y, position.x + frame.width, position.y + frame.height).contains(point))
 			return lever;
 	}
 	return -1;
@@ -343,14 +344,15 @@ void TableGatePuzzle::updateCursor(const Common::Point &point) {
 			hoveredLever, _hoveredLever, point.x, point.y, cursor);
 		_hoveredLever = hoveredLever;
 	}
+
 	_engine->getCursor()->update(cursor);
 }
 
 void TableGatePuzzle::playCue(uint cue) {
 	if (cue >= kAudioCueCount)
 		return;
-	_engine->getMedia()->playSoundEffect(Common::String::format("table%u.wav", cue),
-		_audioHandles[cue]);
+
+	_engine->getMedia()->playSoundEffect(Common::String::format("table%u.wav", cue), _audioHandles[cue]);
 }
 
 void TableGatePuzzle::activateLever(uint lever) {
@@ -392,8 +394,7 @@ void TableGatePuzzle::activateLever(uint lever) {
 int TableGatePuzzle::nextPathNode(uint node) const {
 	for (uint gate = 0; gate < kGateCount; ++gate) {
 		if (kGateDefinitions[gate].sourceNode == (int)node) {
-			return _gateStates[gate] ? kGateDefinitions[gate].route1 :
-				kGateDefinitions[gate].route0;
+			return _gateStates[gate] ? kGateDefinitions[gate].route1 : kGateDefinitions[gate].route0;
 		}
 	}
 	return kPathNodes[node].next;
@@ -427,11 +428,13 @@ bool TableGatePuzzle::advanceMarkerLine() {
 	for (uint step = 0; step < _markerLine.stepsPerAdvance; ++step) {
 		if (_markerLine.x == _markerLine.targetX && _markerLine.y == _markerLine.targetY)
 			return true;
+
 		const int doubledError = _markerLine.error * 2;
 		if (doubledError > -_markerLine.deltaY) {
 			_markerLine.error -= _markerLine.deltaY;
 			_markerLine.x += _markerLine.stepX;
 		}
+
 		if (doubledError < _markerLine.deltaX) {
 			_markerLine.error += _markerLine.deltaX;
 			_markerLine.y += _markerLine.stepY;
@@ -445,9 +448,7 @@ void TableGatePuzzle::startMarkerRun() {
 	for (uint lever = 0; lever < kLeverCount; ++lever)
 		_leverEnabled[lever] = false;
 	playCue(0);
-	debugC(2, kDebugPuzzles,
-		"Ripper: table gate puzzle marker run starting node=0 indicators=%u",
-		_visibleActivationCount);
+	debugC(2, kDebugPuzzles, "Ripper: table gate puzzle marker run starting node=0 indicators=%u", _visibleActivationCount);
 
 	for (uint frame = 0; frame + 1 < _launchFrames.size(); ++frame) {
 		_launchFrame = frame;
@@ -472,15 +473,16 @@ TableGatePuzzle::Result TableGatePuzzle::serviceMarker(uint completionFlag) {
 		playCue(3);
 		_segmentAudioPending = false;
 	}
+
 	if ((int32)(now - (_lastMarkerAdvanceMillis + kDosTimerTickMillis)) < 0)
 		return kExited;
 
 	const bool reachedNode = advanceMarkerLine();
-	if (_markerLine.stepsPerAdvance < kMaximumMarkerSpeed &&
-			++_speedRampFrameCounter > kSpeedRampFrames - 1) {
+	if (_markerLine.stepsPerAdvance < kMaximumMarkerSpeed && ++_speedRampFrameCounter > kSpeedRampFrames - 1) {
 		++_markerLine.stepsPerAdvance;
 		_speedRampFrameCounter = 0;
 	}
+
 	_lastMarkerAdvanceMillis = now;
 	render();
 	if (!reachedNode)
@@ -491,18 +493,18 @@ TableGatePuzzle::Result TableGatePuzzle::serviceMarker(uint completionFlag) {
 	const int nextNode = nextPathNode(_currentPathNode);
 	_currentPathNode = nextNode;
 	const int terminal = kPathNodes[_currentPathNode].next;
-	debugC(3, kDebugPuzzles,
-		"Ripper: table gate puzzle marker reached node=%u terminal=%d",
-		_currentPathNode, terminal);
+	debugC(3, kDebugPuzzles, "Ripper: table gate puzzle marker reached node=%u terminal=%d", _currentPathNode, terminal);
 	if (terminal == -2) {
 		_markerActive = false;
 		if (!markSolved(completionFlag, "table-gate-puzzle"))
 			return kLoadFailed;
+
 		debugC(1, kDebugPuzzles,
 			"Ripper: solved table gate puzzle milestone=%u terminalNode=%u",
 			completionFlag, _currentPathNode);
 		return kSolved;
 	}
+
 	if (terminal < 0) {
 		debugC(2, kDebugPuzzles,
 			"Ripper: table gate puzzle marker reached failure terminal node=%u; preserving gates",
@@ -539,8 +541,7 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 		"Ripper: entered table gate puzzle completionFlag=%u pathNodes=%u gates=%u levers=%u",
 		completionFlag, kPathNodeCount, kGateCount, kLeverCount);
 	_engine->getInput()->discardMouseTransitions();
-	// GBZ1 hides the cursor. Reinstall its frame after presenting the
-	// retained scene and overlay palette.
+	// GBZ1 hides the cursor. Reinstall its frame after presenting the retained scene and overlay palette.
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	playCue(1);
@@ -562,10 +563,9 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 				active = false;
 				break;
 			}
+
 			if (command == kHelpAction && !_markerActive) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: table gate puzzle opening modal help table=0x%x",
-					kHelpSelectionTable);
+				debugC(1, kDebugPuzzles, "Ripper: table gate puzzle opening modal help table=0x%x", kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: table gate puzzle modal help failed");
 				render();
@@ -590,6 +590,7 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 					activateLever(lever);
 			}
 		}
+
 		if (!active)
 			break;
 
@@ -598,6 +599,7 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 			result = markerResult;
 			active = false;
 		}
+
 		g_system->delayMillis(10);
 	}
 
@@ -605,9 +607,7 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 	_engine->getCursor()->update(0);
 	restoreBackground();
 	_engine->getInput()->discardMouseTransitions();
-	debugC(1, kDebugPuzzles,
-		"Ripper: left table gate puzzle result=%d milestone=%u",
-		result, completionFlag);
+	debugC(1, kDebugPuzzles, "Ripper: left table gate puzzle result=%d milestone=%u", result, completionFlag);
 	return result;
 }
 

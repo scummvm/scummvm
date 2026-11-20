@@ -93,8 +93,7 @@ bool WebGridShiftPuzzle::loadResources() {
 		Common::ScopedPtr<Common::SeekableReadStream> stream(
 			_engine->getResources()->createReadStreamForPath(kAudioNames[cue]));
 		if (!stream) {
-			warning("Ripper: web grid shift audio '%s' is missing",
-				kAudioNames[cue]);
+			warning("Ripper: web grid shift audio '%s' is missing", kAudioNames[cue]);
 			return false;
 		}
 	}
@@ -134,19 +133,16 @@ bool WebGridShiftPuzzle::captureGrid() {
 	return true;
 }
 
-void WebGridShiftPuzzle::drawTileClipped(Graphics::Surface &screen, uint tile,
-		int x, int y, const Common::Rect &clip) const {
+void WebGridShiftPuzzle::drawTileClipped(Graphics::Surface &screen, uint tile, int x, int y, const Common::Rect &clip) const {
 	if (tile >= kCellCount || _tiles[tile].size() != kCellWidth * kCellHeight)
 		return;
 
-	const Common::Rect visible = Common::Rect(x, y, x + kCellWidth, y + kCellHeight)
-		.findIntersectingRect(clip);
+	const Common::Rect visible = Common::Rect(x, y, x + kCellWidth, y + kCellHeight) .findIntersectingRect(clip);
 	if (visible.isEmpty())
 		return;
 
 	for (int destinationY = visible.top; destinationY < visible.bottom; ++destinationY) {
-		const byte *source = _tiles[tile].data() +
-			(destinationY - y) * kCellWidth + visible.left - x;
+		const byte *source = _tiles[tile].data() + (destinationY - y) * kCellWidth + visible.left - x;
 		memcpy(screen.getBasePtr(visible.left, destinationY), source, visible.width());
 	}
 }
@@ -166,8 +162,7 @@ void WebGridShiftPuzzle::renderOrder(const uint *order) const {
 	for (uint row = 0; row < kGridSize; ++row) {
 		for (uint column = 0; column < kGridSize; ++column) {
 			const uint position = cellIndex(row, column);
-			drawTileClipped(*screen, order[position], kColumnX[column],
-				kRowY[row], screenBounds);
+			drawTileClipped(*screen, order[position], kColumnX[column], kRowY[row], screenBounds);
 		}
 	}
 	g_system->unlockScreen();
@@ -187,6 +182,7 @@ void WebGridShiftPuzzle::renderShift(uint targetCell, uint progress) const {
 
 	if (!_backgroundDisplay.restorePixels())
 		return;
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -203,8 +199,7 @@ void WebGridShiftPuzzle::renderShift(uint targetCell, uint progress) const {
 			if (inShift)
 				continue;
 			const uint position = cellIndex(row, column);
-			drawTileClipped(*screen, _tileOrder[position],
-				kColumnX[column], kRowY[row], screenBounds);
+			drawTileClipped(*screen, _tileOrder[position], kColumnX[column], kRowY[row], screenBounds);
 		}
 	}
 
@@ -216,13 +211,13 @@ void WebGridShiftPuzzle::renderShift(uint targetCell, uint progress) const {
 		clip = Common::Rect(kColumnX[_currentCol], kRowY[first],
 			kColumnX[_currentCol] + kCellWidth, kRowY[last] + kCellHeight);
 	}
+
 	screen->fillRect(clip, 0);
 
 	if (horizontal) {
 		for (uint column = first; column <= last; ++column) {
 			const uint position = cellIndex(_currentRow, column);
-			drawTileClipped(*screen, _tileOrder[position],
-				kColumnX[column] + delta, kRowY[_currentRow], clip);
+			drawTileClipped(*screen, _tileOrder[position], kColumnX[column] + delta, kRowY[_currentRow], clip);
 		}
 		const int span = (last - first + 1) * kCellWidth;
 		const int wrapOffset = _currentCol < targetColumn ? span : -span;
@@ -233,8 +228,7 @@ void WebGridShiftPuzzle::renderShift(uint targetCell, uint progress) const {
 	} else {
 		for (uint row = first; row <= last; ++row) {
 			const uint position = cellIndex(row, _currentCol);
-			drawTileClipped(*screen, _tileOrder[position],
-				kColumnX[_currentCol], kRowY[row] + delta, clip);
+			drawTileClipped(*screen, _tileOrder[position], kColumnX[_currentCol], kRowY[row] + delta, clip);
 		}
 		const int span = (last - first + 1) * kCellHeight;
 		const int wrapOffset = _currentRow < targetRow ? span : -span;
@@ -257,6 +251,7 @@ bool WebGridShiftPuzzle::animateShift(uint targetCell, bool autoPlay) {
 			progress += kAnimationStep) {
 		if (!serviceEngineEvents())
 			return false;
+
 		renderShift(targetCell, MIN<uint>(progress, extent));
 		g_system->delayMillis(kAnimationFrameMillis);
 	}
@@ -268,6 +263,7 @@ bool WebGridShiftPuzzle::animateShift(uint targetCell, bool autoPlay) {
 bool WebGridShiftPuzzle::shiftToCell(uint targetCell, bool autoPlay) {
 	if (targetCell >= kCellCount)
 		return false;
+
 	const uint targetRow = targetCell / kGridSize;
 	const uint targetColumn = targetCell % kGridSize;
 	if ((targetRow != _currentRow && targetColumn != _currentCol) ||
@@ -288,33 +284,32 @@ bool WebGridShiftPuzzle::shiftToCell(uint targetCell, bool autoPlay) {
 		if (_currentCol < targetColumn) {
 			const uint wrapped = _tileOrder[cellIndex(_currentRow, _currentCol)];
 			for (uint column = _currentCol; column < targetColumn; ++column)
-				_tileOrder[cellIndex(_currentRow, column)] =
-					_tileOrder[cellIndex(_currentRow, column + 1)];
+				_tileOrder[cellIndex(_currentRow, column)] = _tileOrder[cellIndex(_currentRow, column + 1)];
 			_tileOrder[cellIndex(_currentRow, targetColumn)] = wrapped;
 		} else {
 			const uint wrapped = _tileOrder[cellIndex(_currentRow, _currentCol)];
 			for (uint column = _currentCol; column > targetColumn; --column)
-				_tileOrder[cellIndex(_currentRow, column)] =
-					_tileOrder[cellIndex(_currentRow, column - 1)];
+				_tileOrder[cellIndex(_currentRow, column)] = _tileOrder[cellIndex(_currentRow, column - 1)];
 			_tileOrder[cellIndex(_currentRow, targetColumn)] = wrapped;
 		}
+
 		_currentCol = targetColumn;
 	} else {
 		if (_currentRow < targetRow) {
 			const uint wrapped = _tileOrder[cellIndex(_currentRow, _currentCol)];
 			for (uint row = _currentRow; row < targetRow; ++row)
-				_tileOrder[cellIndex(row, _currentCol)] =
-					_tileOrder[cellIndex(row + 1, _currentCol)];
+				_tileOrder[cellIndex(row, _currentCol)] = _tileOrder[cellIndex(row + 1, _currentCol)];
 			_tileOrder[cellIndex(targetRow, _currentCol)] = wrapped;
 		} else {
 			const uint wrapped = _tileOrder[cellIndex(_currentRow, _currentCol)];
 			for (uint row = _currentRow; row > targetRow; --row)
-				_tileOrder[cellIndex(row, _currentCol)] =
-					_tileOrder[cellIndex(row - 1, _currentCol)];
+				_tileOrder[cellIndex(row, _currentCol)] = _tileOrder[cellIndex(row - 1, _currentCol)];
 			_tileOrder[cellIndex(targetRow, _currentCol)] = wrapped;
 		}
+
 		_currentRow = targetRow;
 	}
+
 	renderOrder(_tileOrder);
 	debugC(3, kDebugPuzzles,
 		"Ripper: web grid shift order current=%u,%u tiles=[%s]",
@@ -323,31 +318,24 @@ bool WebGridShiftPuzzle::shiftToCell(uint targetCell, bool autoPlay) {
 }
 
 int WebGridShiftPuzzle::targetForDirection(uint direction) const {
-	// Arrow commands move opposite their physical direction: Up grows the
-	// row, Down shrinks it, Left grows the column, and Right shrinks it.
+	// Arrow commands move opposite their physical direction: Up grows the row, Down shrinks it, Left grows the column, and Right shrinks it.
 	// Autoplay direction IDs 1..4 use the same mapping.
 	switch (direction) {
 	case 1:
-		return _currentRow < kGridSize - 1 ?
-			cellIndex(_currentRow + 1, _currentCol) : -1;
+		return _currentRow < kGridSize - 1 ? cellIndex(_currentRow + 1, _currentCol) : -1;
 	case 2:
-		return _currentRow > 0 ?
-			cellIndex(_currentRow - 1, _currentCol) : -1;
+		return _currentRow > 0 ? cellIndex(_currentRow - 1, _currentCol) : -1;
 	case 3:
-		return _currentCol < kGridSize - 1 ?
-			cellIndex(_currentRow, _currentCol + 1) : -1;
+		return _currentCol < kGridSize - 1 ? cellIndex(_currentRow, _currentCol + 1) : -1;
 	case 4:
-		return _currentCol > 0 ?
-			cellIndex(_currentRow, _currentCol - 1) : -1;
+		return _currentCol > 0 ? cellIndex(_currentRow, _currentCol - 1) : -1;
 	default:
 		return -1;
 	}
 }
 
-bool WebGridShiftPuzzle::runAutoPlay(uint moveLimit, uint completionFlag,
-		Result &result) {
-	if (!_engine->getMedia()->playSoundEffect(kAudioNames[0],
-			_audioHandles[0], 100, true))
+bool WebGridShiftPuzzle::runAutoPlay(uint moveLimit, uint completionFlag, Result &result) {
+	if (!_engine->getMedia()->playSoundEffect(kAudioNames[0], _audioHandles[0], 100, true))
 		warning("Ripper: could not start web grid shift autoplay audio");
 
 	uint lastDirection = 0;
@@ -407,10 +395,8 @@ bool WebGridShiftPuzzle::showPreview() {
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	const uint32 end = g_system->getMillis() +
-		kPreviewHoldTicks * kDosTickMillis;
-	while (!_engine->shouldQuit() &&
-			(int32)(end - g_system->getMillis()) > 0) {
+	const uint32 end = g_system->getMillis() + kPreviewHoldTicks * kDosTickMillis;
+	while (!_engine->shouldQuit() && (int32)(end - g_system->getMillis()) > 0) {
 		if (!serviceEngineEvents())
 			return false;
 		if (_engine->getInput()->hasPendingKey())
@@ -432,9 +418,7 @@ bool WebGridShiftPuzzle::showPreview() {
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setVisible(true);
-	debugC(1, kDebugPuzzles,
-		"Ripper: web grid shift preview completed restoredTiles=[%s]",
-		orderString().c_str());
+	debugC(1, kDebugPuzzles, "Ripper: web grid shift preview completed restoredTiles=[%s]", orderString().c_str());
 	return true;
 }
 
@@ -461,9 +445,8 @@ bool WebGridShiftPuzzle::updateCursor(const Common::Point &point) {
 			cellIndex(_currentRow, _currentCol));
 		_hoveredCell = cell;
 	}
-	const uint cursor = cell >= 0 &&
-		cell != (int)cellIndex(_currentRow, _currentCol) ?
-		kSelectionCursor : kDefaultCursor;
+
+	const uint cursor = cell >= 0 && cell != (int)cellIndex(_currentRow, _currentCol) ? kSelectionCursor : kDefaultCursor;
 	_engine->getCursor()->update(cursor);
 	_engine->getCursor()->setVisible(true);
 	return changed;
@@ -480,6 +463,7 @@ bool WebGridShiftPuzzle::isSolved() const {
 bool WebGridShiftPuzzle::complete(uint completionFlag) {
 	if (!markSolved(completionFlag, "web-grid-shift-puzzle"))
 		return false;
+
 	debugC(1, kDebugPuzzles,
 		"Ripper: solved web grid shift puzzle milestone=%u "
 		"current=%u,%u tiles=[%s]",
@@ -487,20 +471,18 @@ bool WebGridShiftPuzzle::complete(uint completionFlag) {
 	return true;
 }
 
-bool WebGridShiftPuzzle::handleKeyword(uint16 command, uint completionFlag,
-		Result &result) {
+bool WebGridShiftPuzzle::handleKeyword(uint16 command, uint completionFlag, Result &result) {
 	if (command == 0)
 		return false;
 	if (command > 0xff) {
 		_keywordProgress = 0;
 		return false;
 	}
+
 	if (!advanceKeyword(command, kCompletionKeyword, _keywordProgress))
 		return false;
 
-	debugC(1, kDebugPuzzles,
-		"Ripper: web grid shift solved by hidden keyword '%s'",
-		kCompletionKeyword);
+	debugC(1, kDebugPuzzles, "Ripper: web grid shift solved by hidden keyword '%s'", kCompletionKeyword);
 	result = complete(completionFlag) ? kSolved : kLoadFailed;
 	return true;
 }
@@ -531,8 +513,7 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 	CursorManager *cursor = _engine->getCursor();
 	const uint savedSelectionIndex = cursor->getSelectionIndex();
 	const bool savedCursorVisible = cursor->isVisible();
-	const uint puzzleLevel =
-		CLIP<uint>(_engine->getSettings()->getPuzzleLevel(), 1, 3);
+	const uint puzzleLevel = CLIP<uint>(_engine->getSettings()->getPuzzleLevel(), 1, 3);
 	const uint autoMoveLimit = puzzleLevel * kAutoMovesPerLevel;
 
 	_engine->getInput()->drainKeys();
@@ -559,15 +540,13 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 		if (_engine->getInput()->hasPendingKey())
 			command = _engine->getInput()->consumeKey();
 		if (command == kEscapeCommand) {
-			debugC(1, kDebugPuzzles,
-				"Ripper: web grid shift exited by Escape");
+			debugC(1, kDebugPuzzles, "Ripper: web grid shift exited by Escape");
 			break;
 		}
+
 		if (command == kHelpCommand) {
 			_keywordProgress = 0;
-			debugC(1, kDebugPuzzles,
-				"Ripper: web grid shift opening modal help table=0x%x",
-				kHelpSelectionTable);
+			debugC(1, kDebugPuzzles, "Ripper: web grid shift opening modal help table=0x%x", kHelpSelectionTable);
 			if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 				warning("Ripper: web grid shift modal help failed");
 			renderOrder(_tileOrder);
@@ -586,17 +565,16 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 		} else if (handleKeyword(command, completionFlag, result)) {
 			active = false;
 		}
+
 		if (!active)
 			break;
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		const bool cursorChanged = updateCursor(mouse.position);
-		if (targetCell < 0 &&
-				(mouse.pressed & kMouseButtonLeft) != 0)
+		if (targetCell < 0 && (mouse.pressed & kMouseButtonLeft) != 0)
 			targetCell = findCell(mouse.position);
 
-		if (targetCell >= 0 &&
-				shiftToCell(targetCell, false)) {
+		if (targetCell >= 0 && shiftToCell(targetCell, false)) {
 			const bool solved = isSolved();
 			debugC(solved ? 1 : 2, kDebugPuzzles,
 				"Ripper: web grid shift validation after move "
@@ -614,6 +592,7 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 			// Present unchanged frames so CursorMan flushes per-tick cursor updates.
 			presentScreen();
 		}
+
 		g_system->delayMillis(10);
 	}
 
@@ -624,6 +603,7 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 		g_system->fillScreen(0);
 		presentScreen();
 	}
+
 	cursor->setSelectionIndex(savedSelectionIndex);
 	cursor->dispatchSelectionIndexChange(savedSelectionIndex);
 	cursor->refresh();

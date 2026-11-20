@@ -79,8 +79,7 @@ static const Common::Point kFeedbackPositions[kSequenceLength] = {
 };
 
 static Common::Rect feedbackBounds() {
-	return Common::Rect(233, 36 + kSceneOriginY,
-		233 + 180, 36 + kSceneOriginY + 30);
+	return Common::Rect(233, 36 + kSceneOriginY, 233 + 180, 36 + kSceneOriginY + 30);
 }
 
 static const byte kSolution[kSequenceLength] = {2, 2, 6, 4, 8, 1};
@@ -91,8 +90,7 @@ static const char *const kFeedbackNames[kSequenceLength] = {
 };
 
 static bool isExitPoint(const Common::Point &point) {
-	return Common::Rect(0, kSceneOriginY, 100,
-		kSceneOriginY + kSceneHeight).contains(point);
+	return Common::Rect(0, kSceneOriginY, 100, kSceneOriginY + kSceneHeight).contains(point);
 }
 
 } // End of anonymous namespace
@@ -102,13 +100,12 @@ EightButtonSequencePuzzle::EightButtonSequencePuzzle(RipperEngine *engine) :
 		_result(kExited) {
 }
 
-bool EightButtonSequencePuzzle::loadFrame(const Common::String &path,
-		BitmapAssetFrame &frame) {
+bool EightButtonSequencePuzzle::loadFrame(const Common::String &path, BitmapAssetFrame &frame) {
 	if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, frame)) {
-		warning("Ripper: could not decode eight-button bitmap '%s'",
-			path.c_str());
+		warning("Ripper: could not decode eight-button bitmap '%s'", path.c_str());
 		return false;
 	}
+
 	return true;
 }
 
@@ -116,8 +113,7 @@ bool EightButtonSequencePuzzle::loadAssets() {
 	Common::ScopedPtr<Common::SeekableReadStream> background(
 		_engine->getResources()->createReadStreamForPath(kBackgroundMedia));
 	if (!background) {
-		warning("Ripper: eight-button background media '%s' is missing",
-			kBackgroundMedia);
+		warning("Ripper: eight-button background media '%s' is missing", kBackgroundMedia);
 		return false;
 	}
 
@@ -129,6 +125,7 @@ bool EightButtonSequencePuzzle::loadAssets() {
 		BitmapAssetFrame frame;
 		if (!loadFrame(kFeedbackNames[slot], frame))
 			return false;
+
 		_feedbackFrames.push_back(Common::move(frame));
 	}
 
@@ -137,14 +134,13 @@ bool EightButtonSequencePuzzle::loadAssets() {
 		BitmapAssetFrame frame;
 		if (!loadFrame(Common::String::format("xkp%u.bbm", button), frame))
 			return false;
+
 		_buttonFrames.push_back(Common::move(frame));
 	}
 
 	for (uint cue = 0; cue < kAudioCueCount; ++cue) {
-		const Common::String path =
-			Common::String::format("bnkwav%u.wav", cue);
-		Common::ScopedPtr<Common::SeekableReadStream> stream(
-			_engine->getResources()->createReadStreamForPath(path));
+		const Common::String path = Common::String::format("bnkwav%u.wav", cue);
+		Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(path));
 		if (!stream) {
 			warning("Ripper: eight-button audio '%s' is missing", path.c_str());
 			return false;
@@ -159,8 +155,7 @@ bool EightButtonSequencePuzzle::loadAssets() {
 	return true;
 }
 
-bool EightButtonSequencePuzzle::captureRegion(const Common::Rect &bounds,
-		Common::Array<byte> &pixels) {
+bool EightButtonSequencePuzzle::captureRegion(const Common::Rect &bounds, Common::Array<byte> &pixels) {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1 || bounds.left < 0 ||
 			bounds.top < 0 || bounds.right > screen->w ||
@@ -172,8 +167,7 @@ bool EightButtonSequencePuzzle::captureRegion(const Common::Rect &bounds,
 
 	pixels.resize(bounds.width() * bounds.height());
 	for (int y = 0; y < bounds.height(); ++y) {
-		memcpy(pixels.data() + y * bounds.width(),
-			screen->getBasePtr(bounds.left, bounds.top + y), bounds.width());
+		memcpy(pixels.data() + y * bounds.width(), screen->getBasePtr(bounds.left, bounds.top + y), bounds.width());
 	}
 	g_system->unlockScreen();
 	return true;
@@ -185,8 +179,7 @@ bool EightButtonSequencePuzzle::captureBackings() {
 	for (uint button = 0; button < kButtonCount; ++button) {
 		const BitmapAssetFrame &frame = _buttonFrames[button];
 		const Common::Point &position = kButtonPositions[button];
-		const Common::Rect bounds(position.x, position.y,
-			position.x + frame.width, position.y + frame.height);
+		const Common::Rect bounds(position.x, position.y, position.x + frame.width, position.y + frame.height);
 		if (!captureRegion(bounds, _buttonBackings[button]))
 			return false;
 	}
@@ -197,14 +190,13 @@ void EightButtonSequencePuzzle::restoreRegion(byte *screen, uint pitch,
 		const Common::Rect &bounds, const Common::Array<byte> &pixels) const {
 	if (pixels.size() != (uint)(bounds.width() * bounds.height()))
 		return;
+
 	for (int y = 0; y < bounds.height(); ++y) {
-		memcpy(screen + (bounds.top + y) * pitch + bounds.left,
-			pixels.data() + y * bounds.width(), bounds.width());
+		memcpy(screen + (bounds.top + y) * pitch + bounds.left, pixels.data() + y * bounds.width(), bounds.width());
 	}
 }
 
-void EightButtonSequencePuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void EightButtonSequencePuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
@@ -213,9 +205,7 @@ int EightButtonSequencePuzzle::findButton(const Common::Point &point) const {
 	for (uint button = 0; button < _buttonFrames.size(); ++button) {
 		const BitmapAssetFrame &frame = _buttonFrames[button];
 		const Common::Point &position = kButtonPositions[button];
-		if (Common::Rect(position.x, position.y,
-				position.x + frame.width,
-				position.y + frame.height).contains(point))
+		if (Common::Rect(position.x, position.y, position.x + frame.width, position.y + frame.height).contains(point))
 			return button;
 	}
 	return -1;
@@ -224,9 +214,9 @@ int EightButtonSequencePuzzle::findButton(const Common::Point &point) const {
 bool EightButtonSequencePuzzle::playCue(uint cue) {
 	if (cue >= kAudioCueCount)
 		return false;
+
 	const Common::String path = Common::String::format("bnkwav%u.wav", cue);
-	const bool result = _engine->getMedia()->playSoundEffect(
-		path, _audioHandles[cue]);
+	const bool result = _engine->getMedia()->playSoundEffect(path, _audioHandles[cue]);
 	debugC(result ? 3 : 1, kDebugPuzzles,
 		"Ripper: eight-button sequence audio cue=%u path='%s' success=%d",
 		cue, path.c_str(), result);
@@ -252,16 +242,15 @@ void EightButtonSequencePuzzle::updateHover(const Common::Point &point) {
 			const BitmapAssetFrame &oldFrame = _buttonFrames[_hoveredButton];
 			const Common::Point &oldPosition = kButtonPositions[_hoveredButton];
 			restoreRegion(pixels, screen->pitch,
-				Common::Rect(oldPosition.x, oldPosition.y,
-					oldPosition.x + oldFrame.width,
-					oldPosition.y + oldFrame.height),
+				Common::Rect(oldPosition.x, oldPosition.y, oldPosition.x + oldFrame.width, oldPosition.y + oldFrame.height),
 				_buttonBackings[_hoveredButton]);
 		}
+
 		if (button >= 0) {
 			const Common::Point &position = kButtonPositions[button];
-			drawFrame(pixels, screen->pitch, _buttonFrames[button],
-				position.x, position.y);
+			drawFrame(pixels, screen->pitch, _buttonFrames[button], position.x, position.y);
 		}
+
 		g_system->unlockScreen();
 		presentScreen();
 	} else if (screen) {
@@ -300,10 +289,10 @@ void EightButtonSequencePuzzle::drawFeedback(bool visible) {
 	if (visible) {
 		for (uint slot = 0; slot < _enteredButtons.size() &&
 				slot < _feedbackFrames.size(); ++slot) {
-			drawFrame(pixels, screen->pitch, _feedbackFrames[slot],
-				kFeedbackPositions[slot].x, kFeedbackPositions[slot].y);
+			drawFrame(pixels, screen->pitch, _feedbackFrames[slot], kFeedbackPositions[slot].x, kFeedbackPositions[slot].y);
 		}
 	}
+
 	g_system->unlockScreen();
 	presentScreen();
 }
@@ -315,8 +304,8 @@ void EightButtonSequencePuzzle::drawSuccessDark() {
 			g_system->unlockScreen();
 		return;
 	}
-	drawFrame((byte *)screen->getPixels(), screen->pitch, _successDark,
-		kSuccessDarkPosition.x, kSuccessDarkPosition.y);
+
+	drawFrame((byte *)screen->getPixels(), screen->pitch, _successDark, kSuccessDarkPosition.x, kSuccessDarkPosition.y);
 	g_system->unlockScreen();
 	presentScreen();
 }
@@ -365,15 +354,15 @@ uint16 EightButtonSequencePuzzle::pressButton(uint button) {
 	for (uint phase = 0; phase < 5; ++phase) {
 		if (!waitTicks(5))
 			return kEscapeCommand;
+
 		drawFeedback((phase & 1) != 0);
-		debugC(3, kDebugPuzzles,
-			"Ripper: eight-button sequence success flash phase=%u visible=%d",
-			phase, (phase & 1) != 0);
+		debugC(3, kDebugPuzzles, "Ripper: eight-button sequence success flash phase=%u visible=%d", phase, (phase & 1) != 0);
 	}
 	if (!markSolved(_completionFlag, "eight-button-sequence-puzzle")) {
 		_result = kLoadFailed;
 		return kLoadFailedCommand;
 	}
+
 	_result = kSolved;
 	return kSolvedCommand;
 }
@@ -387,9 +376,7 @@ uint16 EightButtonSequencePuzzle::service(uint frame) {
 		if (command == kEscapeCommand)
 			return kEscapeCommand;
 		if (command == kHelpCommand) {
-			debugC(1, kDebugPuzzles,
-				"Ripper: eight-button sequence opening modal help table=0x%x",
-				kHelpSelectionTable);
+			debugC(1, kDebugPuzzles, "Ripper: eight-button sequence opening modal help table=0x%x", kHelpSelectionTable);
 			if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 				warning("Ripper: eight-button sequence modal help failed");
 			updateHover(_engine->getInput()->peekMouseState().position);
@@ -421,8 +408,7 @@ void EightButtonSequencePuzzle::stopAudio() {
 	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
-EightButtonSequencePuzzle::Result EightButtonSequencePuzzle::run(
-		uint completionFlag) {
+EightButtonSequencePuzzle::Result EightButtonSequencePuzzle::run(uint completionFlag) {
 	if (!loadAssets() || !captureBackings())
 		return kLoadFailed;
 
@@ -444,8 +430,7 @@ EightButtonSequencePuzzle::Result EightButtonSequencePuzzle::run(
 		kBackgroundPosition.y + kSceneOriginY);
 
 	uint16 command = 0;
-	Common::SeekableReadStream *stream =
-		_engine->getResources()->createReadStreamForPath(kBackgroundMedia);
+	Common::SeekableReadStream *stream = _engine->getResources()->createReadStreamForPath(kBackgroundMedia);
 	if (!_engine->getMedia()->playPuzzleSequenceStream(stream,
 			kBackgroundMedia, kBackgroundPosition.x, kBackgroundPosition.y,
 			0, this, &command)) {

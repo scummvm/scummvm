@@ -73,6 +73,7 @@ bool KiSkullMazeModel::isOpen(uint cell) const {
 bool KiSkullMazeModel::isAdjacent(uint cell) const {
 	if (cell >= kCellCount)
 		return false;
+
 	const int row = cell / kBoardSize;
 	const int column = cell % kBoardSize;
 	const int currentRow = _currentCell / kBoardSize;
@@ -87,6 +88,7 @@ bool KiSkullMazeModel::canMoveTo(uint cell) const {
 bool KiSkullMazeModel::applyMoveAndToggle(uint cell) {
 	if (!canMoveTo(cell))
 		return false;
+
 	setCurrentCell(cell);
 	for (uint step = 1; step <= 4; ++step)
 		toggleNeighbor(step);
@@ -100,8 +102,7 @@ bool KiSkullMazeModel::reachedExit() const {
 int KiSkullMazeModel::neighborCell(int rowDelta, int columnDelta) const {
 	const int row = _currentCell / kBoardSize + rowDelta;
 	const int column = _currentCell % kBoardSize + columnDelta;
-	if (row < 0 || row >= (int)kBoardSize ||
-			column < 0 || column >= (int)kBoardSize)
+	if (row < 0 || row >= (int)kBoardSize || column < 0 || column >= (int)kBoardSize)
 		return -1;
 	return row * kBoardSize + column;
 }
@@ -123,8 +124,7 @@ int KiSkullMazeModel::toggleNeighbor(uint step) {
 	static const int diagonalDeltas[4][2] = {
 		{-1, -1}, {-1, 1}, {1, -1}, {1, 1}
 	};
-	const int (*deltas)[2] = _cells[_currentCell] == kCardinalOpen ?
-		cardinalDeltas : diagonalDeltas;
+	const int (*deltas)[2] = _cells[_currentCell] == kCardinalOpen ? cardinalDeltas : diagonalDeltas;
 	const int cell = neighborCell(deltas[step - 1][0], deltas[step - 1][1]);
 	if (cell < 0 || _cells[cell] == kSkull)
 		return -1;

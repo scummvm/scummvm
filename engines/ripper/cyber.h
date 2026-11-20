@@ -45,8 +45,7 @@ private:
 
 	bool suspendSession(Session &session) const;
 	void prepareSession(int selectionIndex = -1) const;
-	bool runScriptLoop(bool active, uint action = 0,
-		const Common::String &programName = Common::String()) const;
+	bool runScriptLoop(bool active, uint action = 0, const Common::String &programName = Common::String()) const;
 	Result restoreSession(Session &session, uint selectionIndex, Result result) const;
 
 	RipperEngine *_engine;

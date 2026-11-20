@@ -110,24 +110,19 @@ private:
 	bool resolveDatabaseRow(const Common::Point &point, uint &index) const;
 	bool scrollDatabaseTextKey(TextScrollState &scroll, uint16 command, bool &redraw);
 	bool scrollDatabaseTextMouse(TextScrollState &scroll, const MouseState &mouse);
-	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
-		TextScrollState &scroll);
+	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds, TextScrollState &scroll);
 	DatabaseInputOutcome runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
 	DatabaseInputOutcome runJournal(byte entryIndex, const Common::String &entryLabel);
-	bool drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress,
-		TextScrollState &scroll);
-	bool drawJournalTextPanelLine(const Common::Array<Common::String> &lines,
-		uint firstVisible, uint visibleRows, uint lineIndex);
+	bool drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress, TextScrollState &scroll);
+	bool drawJournalTextPanelLine(const Common::Array<Common::String> &lines, uint firstVisible, uint visibleRows, uint lineIndex);
 	DatabaseInputOutcome runVoiceLock(byte entryIndex, const Common::String &entryLabel);
 	DatabaseInputOutcome dispatchDatabaseEntry(DatabaseEntry &entry);
 	uint16 runSelectedDatabaseEntry();
 	RipperEngine *engine() const;
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;
-	void wrapText(const Common::String &text, uint maxWidth,
-		Common::Array<Common::String> &lines) const;
-	void drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const;
+	void wrapText(const Common::String &text, uint maxWidth, Common::Array<Common::String> &lines) const;
+	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const;
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
 	void drawAnimatedCorner(int x, int y) const;
 	void serviceIdleEffects();

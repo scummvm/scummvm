@@ -89,8 +89,7 @@ static const char *const kSuccessAudio = "jb_loc3.wav";
 static const char *const kRejectAudio = "jb_loc4.wav";
 
 static bool isExitRegion(const Common::Point &point) {
-	return Common::Rect(0, kSceneOriginY, 100,
-		kSceneOriginY + kSceneHeight).contains(point);
+	return Common::Rect(0, kSceneOriginY, 100, kSceneOriginY + kSceneHeight).contains(point);
 }
 
 } // End of anonymous namespace
@@ -101,13 +100,12 @@ KeypadSequencePuzzle::KeypadSequencePuzzle(RipperEngine *engine) :
 		_keypadOpen(false), _blinkLit(false) {
 }
 
-bool KeypadSequencePuzzle::loadFrame(const Common::String &path,
-		BitmapAssetFrame &frame) {
-	if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, frame,
-			ResourceManager::kSourceConfiguredPath)) {
+bool KeypadSequencePuzzle::loadFrame(const Common::String &path, BitmapAssetFrame &frame) {
+	if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, frame, ResourceManager::kSourceConfiguredPath)) {
 		warning("Ripper: could not decode keypad bitmap '%s'", path.c_str());
 		return false;
 	}
+
 	return true;
 }
 
@@ -115,20 +113,20 @@ bool KeypadSequencePuzzle::loadAssets() {
 	_extraFrames.clear();
 	for (uint frame = 0; frame < kExtraFrameCount; ++frame) {
 		BitmapAssetFrame bitmap;
-		const Common::String path =
-			Common::String::format("kpextra%u.bbm", frame);
+		const Common::String path = Common::String::format("kpextra%u.bbm", frame);
 		if (!loadFrame(path, bitmap))
 			return false;
+
 		_extraFrames.push_back(Common::move(bitmap));
 	}
 
 	_keyFrames.clear();
 	for (uint key = 0; key < kKeyCount; ++key) {
 		BitmapAssetFrame bitmap;
-		const Common::String path =
-			Common::String::format("jb_key%u.bbm", key);
+		const Common::String path = Common::String::format("jb_key%u.bbm", key);
 		if (!loadFrame(path, bitmap))
 			return false;
+
 		_keyFrames.push_back(Common::move(bitmap));
 	}
 
@@ -163,9 +161,7 @@ bool KeypadSequencePuzzle::openKeypad() {
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setVisible(true);
 	render();
-	debugC(1, kDebugPuzzles,
-		"Ripper: opened keypad sequence presentation media='%s'",
-		kOpenMedia);
+	debugC(1, kDebugPuzzles, "Ripper: opened keypad sequence presentation media='%s'", kOpenMedia);
 	return true;
 }
 
@@ -176,14 +172,11 @@ bool KeypadSequencePuzzle::closeKeypad() {
 	options.y = 0;
 	const bool result = _engine->getMedia()->playScene(kCloseMedia, options);
 	_engine->getInput()->discardMouseTransitions();
-	debugC(1, kDebugPuzzles,
-		"Ripper: closed keypad sequence presentation media='%s' success=%d",
-		kCloseMedia, result);
+	debugC(1, kDebugPuzzles, "Ripper: closed keypad sequence presentation media='%s' success=%d", kCloseMedia, result);
 	return result;
 }
 
-void KeypadSequencePuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void KeypadSequencePuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
@@ -198,21 +191,21 @@ void KeypadSequencePuzzle::render() const {
 			g_system->unlockScreen();
 		return;
 	}
+
 	byte *pixels = (byte *)screen->getPixels();
 	drawFrame(pixels, screen->pitch, _extraFrames[2], kCodeX, kCodeY);
-	drawFrame(pixels, screen->pitch, _extraFrames[_blinkLit ? 1 : 3],
-		kBlinkX, kBlinkY);
+	drawFrame(pixels, screen->pitch, _extraFrames[_blinkLit ? 1 : 3], kBlinkX, kBlinkY);
 	if (_keypadOpen) {
 		for (uint slot = 0; slot < kSequenceLength; ++slot) {
 			if ((_slotMask & (1 << slot)) != 0)
-				drawFrame(pixels, screen->pitch, _extraFrames[0],
-					kSlotX[slot], kSlotY);
+				drawFrame(pixels, screen->pitch, _extraFrames[0], kSlotX[slot], kSlotY);
 		}
 		if (_pressedKey >= 0)
 			drawFrame(pixels, screen->pitch, _keyFrames[_pressedKey],
 				kKeyPositions[_pressedKey].x,
 				kKeyPositions[_pressedKey].y);
 	}
+
 	g_system->unlockScreen();
 	setIndexedPaletteIfChanged(_baseDisplay.palette().data());
 	presentScreen();
@@ -221,25 +214,21 @@ void KeypadSequencePuzzle::render() const {
 int KeypadSequencePuzzle::findKey(const Common::Point &point) const {
 	if (!_keypadOpen)
 		return -1;
+
 	for (uint key = 0; key < _keyFrames.size(); ++key) {
 		const BitmapAssetFrame &frame = _keyFrames[key];
 		const Common::Point &position = kKeyPositions[key];
-		if (Common::Rect(position.x, position.y,
-				position.x + frame.width,
-				position.y + frame.height).contains(point))
+		if (Common::Rect(position.x, position.y, position.x + frame.width, position.y + frame.height).contains(point))
 			return key;
 	}
 	return -1;
 }
 
-KeypadSequencePuzzle::HoverControl KeypadSequencePuzzle::findControl(
-		const Common::Point &point, int &key) const {
+KeypadSequencePuzzle::HoverControl KeypadSequencePuzzle::findControl(const Common::Point &point, int &key) const {
 	key = findKey(point);
 	if (key >= 0)
 		return kHoverKey;
-	if (Common::Rect(kCodeX, kCodeY,
-			kCodeX + _extraFrames[2].width,
-			kCodeY + _extraFrames[2].height).contains(point))
+	if (Common::Rect(kCodeX, kCodeY, kCodeX + _extraFrames[2].width, kCodeY + _extraFrames[2].height).contains(point))
 		return kHoverCode;
 	if (isExitRegion(point))
 		return kHoverExit;
@@ -251,9 +240,7 @@ bool KeypadSequencePuzzle::updateCursor(const Common::Point &point) {
 	const HoverControl control = findControl(point, key);
 	const bool changed = control != _hoveredControl || key != _hoveredKey;
 	if (changed) {
-		debugC(2, kDebugInput,
-			"Ripper: keypad sequence hover control=%d key=%d point=%d,%d",
-			control, key, point.x, point.y);
+		debugC(2, kDebugInput, "Ripper: keypad sequence hover control=%d key=%d point=%d,%d", control, key, point.x, point.y);
 		_hoveredControl = control;
 		_hoveredKey = key;
 	}
@@ -270,25 +257,23 @@ bool KeypadSequencePuzzle::updateCursor(const Common::Point &point) {
 
 bool KeypadSequencePuzzle::serviceBlink() {
 	const uint32 now = g_system->getMillis();
-	const uint32 interval =
-		(_blinkLit ? 3 : 2) * kDosTickMillis;
+	const uint32 interval = (_blinkLit ? 3 : 2) * kDosTickMillis;
 	if (now - _lastBlinkMillis < interval)
 		return false;
+
 	_blinkLit = !_blinkLit;
 	_lastBlinkMillis = now;
 	render();
-	debugC(3, kDebugPuzzles,
-		"Ripper: keypad sequence blink phase=%d intervalMs=%u",
-		_blinkLit, interval);
+	debugC(3, kDebugPuzzles, "Ripper: keypad sequence blink phase=%d intervalMs=%u", _blinkLit, interval);
 	return true;
 }
 
 bool KeypadSequencePuzzle::waitFeedbackTicks(uint ticks) {
 	const uint32 target = g_system->getMillis() + ticks * kDosTickMillis;
-	while (!_engine->shouldQuit() &&
-			(int32)(target - g_system->getMillis()) > 0) {
+	while (!_engine->shouldQuit() && (int32)(target - g_system->getMillis()) > 0) {
 		if (!serviceEngineEvents())
 			return false;
+
 		serviceBlink();
 		g_system->delayMillis(10);
 	}
@@ -296,8 +281,7 @@ bool KeypadSequencePuzzle::waitFeedbackTicks(uint ticks) {
 }
 
 void KeypadSequencePuzzle::animateClear(bool success) {
-	_engine->getMedia()->playSoundEffect(
-		success ? kSuccessAudio : kRejectAudio, _feedbackAudioHandle);
+	_engine->getMedia()->playSoundEffect(success ? kSuccessAudio : kRejectAudio, _feedbackAudioHandle);
 	if (success) {
 		for (uint slot = 0; slot < kSequenceLength; ++slot) {
 			_slotMask &= ~(1 << slot);
@@ -315,16 +299,14 @@ void KeypadSequencePuzzle::animateClear(bool success) {
 				break;
 		}
 	}
+
 	_enteredDigits.clear();
 	_slotMask = 0;
 	render();
-	debugC(2, kDebugPuzzles,
-		"Ripper: keypad sequence feedback completed outcome=%s",
-		success ? "success" : "reject");
+	debugC(2, kDebugPuzzles, "Ripper: keypad sequence feedback completed outcome=%s", success ? "success" : "reject");
 }
 
-bool KeypadSequencePuzzle::pressKey(uint key, uint completionFlag,
-		Result &result) {
+bool KeypadSequencePuzzle::pressKey(uint key, uint completionFlag, Result &result) {
 	if (key >= kKeyCount)
 		return false;
 
@@ -337,9 +319,7 @@ bool KeypadSequencePuzzle::pressKey(uint key, uint completionFlag,
 
 		// Controls 0x67d (EX) and 0x67f (RV) share the reject/clear sweep.
 	if (key == 9 || key == 11) {
-		debugC(2, kDebugPuzzles,
-			"Ripper: keypad sequence clear key=%u entered=%u",
-			key, _enteredDigits.size());
+		debugC(2, kDebugPuzzles, "Ripper: keypad sequence clear key=%u entered=%u", key, _enteredDigits.size());
 		animateClear(false);
 		return true;
 	}
@@ -347,6 +327,7 @@ bool KeypadSequencePuzzle::pressKey(uint key, uint completionFlag,
 	const byte digit = key == 10 ? 0 : key + 1;
 	if (_enteredDigits.size() >= kSequenceLength)
 		return true;
+
 	_enteredDigits.push_back(digit);
 	_slotMask |= 1 << (_enteredDigits.size() - 1);
 	render();
@@ -377,6 +358,7 @@ bool KeypadSequencePuzzle::pressKey(uint key, uint completionFlag,
 		result = kLoadFailed;
 		return false;
 	}
+
 	result = kSolved;
 	return false;
 }
@@ -432,10 +414,9 @@ KeypadSequencePuzzle::Result KeypadSequencePuzzle::run(uint completionFlag) {
 				active = false;
 				break;
 			}
+
 			if (command == kHelpCommand) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: keypad sequence opening modal help table=0x%x",
-					kHelpSelectionTable);
+				debugC(1, kDebugPuzzles, "Ripper: keypad sequence opening modal help table=0x%x", kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: keypad sequence modal help failed");
 				render();
@@ -459,13 +440,13 @@ KeypadSequencePuzzle::Result KeypadSequencePuzzle::run(uint completionFlag) {
 						result = kLoadFailed;
 					active = false;
 				} else {
-					_engine->getMedia()->playSoundEffect(
-						kEntryAudio, _feedbackAudioHandle);
+					_engine->getMedia()->playSoundEffect(kEntryAudio, _feedbackAudioHandle);
 					if (!openKeypad()) {
 						result = kLoadFailed;
 						active = false;
 					}
 				}
+
 				redraw = true;
 			} else if (control == kHoverExit) {
 				if (_keypadOpen && !closeKeypad())
@@ -473,6 +454,7 @@ KeypadSequencePuzzle::Result KeypadSequencePuzzle::run(uint completionFlag) {
 				active = false;
 			}
 		}
+
 		if (!active)
 			break;
 		if (!serviceBlink() && redraw)

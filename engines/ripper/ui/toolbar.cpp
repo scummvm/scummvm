@@ -66,12 +66,10 @@ ToolbarManager::~ToolbarManager() {
 
 bool ToolbarManager::initialize(ResourceManager &resources, bool demoVariant) {
 	_demoVariant = demoVariant;
-	const uint actionCount = _demoVariant ? kDemoToolbarActionCount :
-		kRetailToolbarActionCount;
+	const uint actionCount = _demoVariant ? kDemoToolbarActionCount : kRetailToolbarActionCount;
 	Common::Array<Common::String> gameText;
 	if (!resources.loadGameText(gameText) || gameText.size() < actionCount ||
-		!resources.loadInterfaceBitmapFont(
-			_demoVariant ? "small.fnt" : "7pt_font.fnt", _font) ||
+		!resources.loadInterfaceBitmapFont(_demoVariant ? "small.fnt" : "7pt_font.fnt", _font) ||
 		(!_demoVariant && !_remoteControl->initialize(resources)) ||
 		!_optionsPanel->initialize(resources, _demoVariant))
 		return false;
@@ -79,12 +77,12 @@ bool ToolbarManager::initialize(ResourceManager &resources, bool demoVariant) {
 	_actions.clear();
 	_actions.resize(actionCount);
 	for (uint i = 0; i < actionCount; ++i) {
-		if (!resources.loadInterfaceBitmapSequence(
-			Common::String::format("toolbar%u.pl", i + 1), _actions[i].sequence) ||
+		if (!resources.loadInterfaceBitmapSequence(Common::String::format("toolbar%u.pl", i + 1), _actions[i].sequence) ||
 			_actions[i].sequence.frames.size() != 10) {
 			warning("Ripper: invalid toolbar action asset %u", i + 1);
 			return false;
 		}
+
 		_actions[i].label = gameText[i];
 	}
 	for (uint i = 0; i < actionCount; ++i) {
@@ -110,6 +108,7 @@ void ToolbarManager::layoutActions(uint enabledActionMask) {
 			_actions[i].bounds = Common::Rect();
 			continue;
 		}
+
 		const BitmapAssetFrame &frame = _actions[i].sequence.frames[0];
 		x -= frame.width + kToolbarActionGap;
 		const int y = (kToolbarActivationHeight - frame.height) / 2;
@@ -160,6 +159,7 @@ void ToolbarManager::enter(uint32 now, uint enabledActionMask) {
 void ToolbarManager::leave() {
 	if (!_active)
 		return;
+
 	removeTooltip();
 	if (!_topBacking.empty())
 		g_system->copyRectToScreen(_topBacking.data(), 640, 0, 0, 640, kToolbarActivationHeight);
@@ -203,8 +203,7 @@ void ToolbarManager::drawIcons() {
 
 		const BitmapAssetFrame &frame = action.sequence.frames[action.frameIndex];
 		for (uint y = 0; y < frame.height; ++y) {
-			byte *destination = (byte *)screen->getBasePtr(action.bounds.left,
-				action.bounds.top + y);
+			byte *destination = (byte *)screen->getBasePtr(action.bounds.left, action.bounds.top + y);
 			const byte *source = frame.pixels.data() + y * frame.width;
 			for (uint x = 0; x < frame.width; ++x) {
 				if (source[x] != frame.transparentColor)
@@ -219,15 +218,14 @@ uint ToolbarManager::measureText(const Common::String &text) const {
 	return BitmapFontRenderer::measureText(_font, text);
 }
 
-void ToolbarManager::drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text) const {
-	BitmapFontRenderer::drawText(screen, pitch, _font, x, y, text,
-		kToolbarTextColor);
+void ToolbarManager::drawText(byte *screen, uint pitch, int x, int y, const Common::String &text) const {
+	BitmapFontRenderer::drawText(screen, pitch, _font, x, y, text, kToolbarTextColor);
 }
 
 void ToolbarManager::removeTooltip() {
 	if (_tooltipBacking.empty())
 		return;
+
 	g_system->copyRectToScreen(_tooltipBacking.data(), _tooltipBounds.width(),
 		_tooltipBounds.left, _tooltipBounds.top, _tooltipBounds.width(), _tooltipBounds.height());
 	_tooltipBacking.clear();
@@ -255,6 +253,7 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 			g_system->unlockScreen();
 		return;
 	}
+
 	_tooltipBacking.resize(width * height);
 	for (int row = 0; row < height; ++row) {
 		memcpy(_tooltipBacking.data() + row * width, screen->getBasePtr(x, y + row), width);
@@ -283,6 +282,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 				warning("Ripper: demo toolbar scene-selection action failed");
 			return;
 		}
+
 		if (actionIndex == 1 || actionIndex == 6) {
 			debugC(2, kDebugScene,
 				"Ripper: demo toolbar action=%u id=0x%x label='%s' completed as no-op",
@@ -290,6 +290,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 				_actions[actionIndex].label.c_str());
 			return;
 		}
+
 		if (actionIndex == 2) {
 			debugC(1, kDebugWac,
 				"Ripper: demo toolbar action=3 id=0x516 label='%s' opening WAC",
@@ -309,14 +310,14 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			warning("Ripper: Remote Control action failed");
 		return;
 	}
-	if (!_demoVariant && retailActionIndex == kToolbarExitActionIndex &&
-			_engine->getScripts()->isCyberActive()) {
-		debugC(1, kDebugCyber,
-			"Ripper: toolbar action=9 id=0x51c exiting Cyber nested runtime");
+
+	if (!_demoVariant && retailActionIndex == kToolbarExitActionIndex && _engine->getScripts()->isCyberActive()) {
+		debugC(1, kDebugCyber, "Ripper: toolbar action=9 id=0x51c exiting Cyber nested runtime");
 		leave();
 		_engine->getScripts()->requestCyberExit("toolbar-exit");
 		return;
 	}
+
 	if (retailActionIndex == 1) {
 		debugC(1, kDebugScene,
 			"Ripper: toolbar action=2 id=0x515 label='%s' opening world map",
@@ -325,6 +326,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			warning("Ripper: toolbar world map action failed");
 		return;
 	}
+
 	if (retailActionIndex == 2) {
 		debugC(1, kDebugScene,
 			"Ripper: toolbar action=3 id=0x516 label='%s' opening inventory",
@@ -333,13 +335,13 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			warning("Ripper: toolbar inventory action failed");
 		return;
 	}
+
 	if (retailActionIndex == 3) {
-		debugC(1, kDebugWac,
-			"Ripper: toolbar action=4 id=0x517 label='%s' opening WAC",
-			_actions[actionIndex].label.c_str());
+		debugC(1, kDebugWac, "Ripper: toolbar action=4 id=0x517 label='%s' opening WAC", _actions[actionIndex].label.c_str());
 		_engine->getWac()->run();
 		return;
 	}
+
 	if (retailActionIndex == 4 || retailActionIndex == 5) {
 		const bool saving = retailActionIndex == 4;
 		debugC(1, kDebugSaveLoad,
@@ -355,6 +357,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			variant, saving ? "save" : "restore", completed);
 		return;
 	}
+
 	if (retailActionIndex == 6) {
 		debugC(1, kDebugGeneral,
 			"Ripper: %stoolbar action=%u id=0x%x label='%s' opening Options Panel",
@@ -366,6 +369,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		_engine->getInput()->discardMouseTransitions();
 		return;
 	}
+
 	if (retailActionIndex == kToolbarHelpActionIndex) {
 		debugC(1, kDebugScene,
 			"Ripper: toolbar action=8 id=0x51b label='%s' opening help",
@@ -374,14 +378,14 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			warning("Ripper: toolbar help action failed");
 		return;
 	}
+
 	if (retailActionIndex == kToolbarExitActionIndex) {
 		debugC(1, kDebugGeneral,
 			"Ripper: %stoolbar action=%u id=0x%x label='%s' opening quit prompt",
 			variant, actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str());
 		leave();
 		_engine->getInput()->discardMouseTransitions();
-		const bool confirmed = _engine->getModalDialog()->runBinaryPrompt(
-			kToolbarExitPromptResourceId, false);
+		const bool confirmed = _engine->getModalDialog()->runBinaryPrompt(kToolbarExitPromptResourceId, false);
 		_engine->getInput()->discardMouseTransitions();
 		debugC(1, kDebugGeneral,
 			"Ripper: %stoolbar quit prompt completed confirmed=%d quit=%d",
@@ -390,6 +394,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			_engine->quitGame();
 		return;
 	}
+
 	debugC(1, kDebugScene,
 		"Ripper: unhandled toolbar action=%u id=0x%x label='%s'",
 		actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str());
@@ -414,8 +419,7 @@ int ToolbarManager::resolveActionKey(uint16 command, uint enabledActionMask) con
 	return -1;
 }
 
-bool ToolbarManager::dispatchActionKey(uint actionIndex, uint16 command,
-		const char *source) {
+bool ToolbarManager::dispatchActionKey(uint actionIndex, uint16 command, const char *source) {
 	if (actionIndex >= _actions.size())
 		return false;
 
@@ -427,15 +431,13 @@ bool ToolbarManager::dispatchActionKey(uint actionIndex, uint16 command,
 		"id=0x%x label='%s' source=%s",
 		command, keyLabel.c_str(), actionIndex + 1, actionIndex + 0x514,
 		actionLabel.c_str(), source ? source : "unknown");
-	showScreenMessage(Common::String::format("Toolbar hotkey %s: %s",
-		keyLabel.c_str(), actionLabel.c_str()));
+	showScreenMessage(Common::String::format("Toolbar hotkey %s: %s", keyLabel.c_str(), actionLabel.c_str()));
 	presentScreen();
 	dispatchAction(actionIndex);
 	return true;
 }
 
-bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,
-		int *selectedAction) {
+bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask, int *selectedAction) {
 	if (_actions.empty())
 		return false;
 	if (mouse.position.y >= kToolbarActivationHeight) {
@@ -461,10 +463,8 @@ bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,
 			_hoveredAction < 0 ? 0 : _hoveredAction + 1, mouse.position.x, mouse.position.y);
 	}
 
-	const bool previewAllowed = !_demoVariant ||
-		_engine->getSettings()->getDemoToggle(RipperSettings::kDemoToolbarHelp);
-	if (!_previewEnabled && previewAllowed &&
-			now - _sessionStartMillis >= kPreviewDelayMillis) {
+	const bool previewAllowed = !_demoVariant || _engine->getSettings()->getDemoToggle(RipperSettings::kDemoToolbarHelp);
+	if (!_previewEnabled && previewAllowed && now - _sessionStartMillis >= kPreviewDelayMillis) {
 		_previewEnabled = true;
 		debugC(3, kDebugScene, "Ripper: toolbar previews enabled after 27 DOS ticks");
 	}
@@ -475,9 +475,9 @@ bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,
 		action.frameIndex = (action.frameIndex + 1) % action.sequence.frames.size();
 		_lastFrameMillis = now;
 		redraw = true;
-		debugC(11, kDebugScene, "Ripper: toolbar action=%u frame=%u",
-			_hoveredAction + 1, action.frameIndex);
+		debugC(11, kDebugScene, "Ripper: toolbar action=%u frame=%u", _hoveredAction + 1, action.frameIndex);
 	}
+
 	if (redraw)
 		drawIcons();
 	if (_previewEnabled && _hoveredAction >= 0)
@@ -490,6 +490,7 @@ bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,
 		debugC(3, kDebugInput, "Ripper: toolbar primary press action=%u point=%d,%d",
 			_pressedAction + 1, mouse.position.x, mouse.position.y);
 	}
+
 	if ((mouse.released & kMouseButtonLeft) != 0 && _pressedAction >= 0) {
 		const int action = _pressedAction;
 		_pressedAction = -1;
@@ -505,6 +506,7 @@ bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,
 				action + 1, _hoveredAction < 0 ? 0 : _hoveredAction + 1);
 		}
 	}
+
 	return true;
 }
 

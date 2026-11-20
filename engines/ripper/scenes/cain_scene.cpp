@@ -97,12 +97,13 @@ bool CainScene::initialize() {
 		warning("Ripper: could not load Cain dialogue game text");
 		return false;
 	}
+
 	if (_gameText.size() < kFirstChoiceText + 7) {
 		warning("Ripper: Cain dialogue text table has only %u entries", _gameText.size());
 		return false;
 	}
-	_conversationStarted =
-		_engine->getMilestones()->isSet(kConversationStartedFlag);
+
+	_conversationStarted = _engine->getMilestones()->isSet(kConversationStartedFlag);
 	_choiceListRebuildPending = _conversationStarted;
 	debugC(1, kDebugDialogue,
 		"Ripper: initialized Cain dialogue textChoices=%u conversationStarted=%d chooser=shared",
@@ -129,23 +130,23 @@ void CainScene::rebuildChoices() {
 				_choices.push_back(&choices[i]);
 		}
 	}
+
 	if (!milestones->isSet(kChoiceZeroGateFlag)) {
-		if (milestones->isSet(kChoiceZeroExitUnlockFlag) &&
-				!milestones->isSet(kFirstChoiceFlag))
+		if (milestones->isSet(kChoiceZeroExitUnlockFlag) && !milestones->isSet(kFirstChoiceFlag))
 			_choices.push_back(&choices[0]);
 	} else if (!milestones->isSet(kFirstChoiceFlag + 1)) {
 		_choices.push_back(&choices[1]);
 	}
-	if (milestones->isSet(kChoiceThreeGateFlag) &&
-			!milestones->isSet(kFirstChoiceFlag + 3))
+
+	if (milestones->isSet(kChoiceThreeGateFlag) && !milestones->isSet(kFirstChoiceFlag + 3))
 		_choices.push_back(&choices[2]);
 
 	if (_conversationStarted && !_choices.empty()) {
 		for (uint i = 0; i < _choices.size(); ++i)
-			_chooser.appendChoice(_gameText[_choices[i]->textResource - 1],
-				_choices[i]->id);
+			_chooser.appendChoice(_gameText[_choices[i]->textResource - 1], _choices[i]->id);
 		_chooser.activateChoices("cain-dialogue");
 	}
+
 	debugC(2, kDebugDialogue,
 		"Ripper: rebuilt Cain dialogue choices count=%u conversationStarted=%d "
 		"sharedPending=%d flags=159:%d 15a:%d 15d:%d 15e:%d 15f:%d 160:%d 161:%d",
@@ -173,6 +174,7 @@ bool CainScene::startVoice(const char *path, const char *source) {
 		warning("Ripper: could not start Cain dialogue voice '%s'", path);
 		return false;
 	}
+
 	_voicePending = true;
 	if (_chooser.isPending())
 		_chooser.dismissForSceneTransition("cain-voice-start");
@@ -188,36 +190,36 @@ bool CainScene::startVoice(const char *path, const char *source) {
 
 bool CainScene::serviceVoiceCompletion() {
 	Milestones *milestones = _engine->getMilestones();
-	if (milestones->isSet(kFirstChoiceFlag + 6) &&
-			!milestones->isSet(kZapPlayedFlag)) {
+	if (milestones->isSet(kFirstChoiceFlag + 6) && !milestones->isSet(kZapPlayedFlag)) {
 		if (!_engine->getMedia()->play(kZapMedia, true) ||
 				!milestones->set(kZapPlayedFlag, true, "cain-dialogue-zap"))
 			return false;
+
 		debugC(2, kDebugDialogue,
 			"Ripper: completed Cain zap presentation media='%s' triggerFlag=0x%x completionFlag=0x%x",
 			kZapMedia, kFirstChoiceFlag + 6, kZapPlayedFlag);
 	}
+
 	if (milestones->isSet(kFirstChoiceFlag + 5) &&
-			!milestones->set(kChoiceFiveFollowupFlag, true,
-				"cain-dialogue-choice-followup"))
+			!milestones->set(kChoiceFiveFollowupFlag, true, "cain-dialogue-choice-followup"))
 		return false;
 	if (milestones->isSet(kFirstChoiceFlag + 1) &&
-			!milestones->set(kChoiceOneFollowupFlag, true,
-				"cain-dialogue-choice-followup"))
+			!milestones->set(kChoiceOneFollowupFlag, true, "cain-dialogue-choice-followup"))
 		return false;
+
 	rebuildChoices();
 	return true;
 }
 
 bool CainScene::finishConversation() {
 	Milestones *milestones = _engine->getMilestones();
-	return !milestones->isSet(kFirstChoiceFlag + 7) ||
-		milestones->set(kChoiceZeroExitUnlockFlag, true, "cain-dialogue-exit");
+	return !milestones->isSet(kFirstChoiceFlag + 7) || milestones->set(kChoiceZeroExitUnlockFlag, true, "cain-dialogue-exit");
 }
 
 void CainScene::presentDialogueOverlay() {
 	if (!_chooser.isPending())
 		return;
+
 	_chooser.draw(true);
 }
 
@@ -229,22 +231,24 @@ void CainScene::updateCursor(const Common::Point &point) {
 		_engine->getCursor()->setVisible(true);
 		return;
 	}
+
 	_chooser.updateHover(point);
 	const bool talkEnabled = !_conversationStarted || _choices.empty();
 	if (_chooser.contains(point)) {
 		hovered = 1;
 		cursor = kChoiceCursor;
-	} else if (talkEnabled && Common::Rect(kTalkLeft, kTalkTop,
-			kTalkRight, kTalkBottom).contains(point)) {
+	} else if (talkEnabled && Common::Rect(kTalkLeft, kTalkTop, kTalkRight, kTalkBottom).contains(point)) {
 		hovered = 0;
 		cursor = kTalkCursor;
 	}
+
 	if (hovered != _hoveredControl) {
 		debugC(2, kDebugDialogue,
 			"Ripper: Cain dialogue hover control=%d previous=%d point=%d,%d cursor=%u talkEnabled=%d",
 			hovered, _hoveredControl, point.x, point.y, cursor, talkEnabled);
 		_hoveredControl = hovered;
 	}
+
 	_engine->getCursor()->update(cursor);
 	_engine->getCursor()->setVisible(true);
 }
@@ -260,13 +264,15 @@ uint16 CainScene::serviceInput() {
 				_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 				if (!serviceVoiceCompletion())
 					return kFailureCommand;
+
 				updateCursor(_engine->getInput()->peekMouseState().position);
-				debugC(2, kDebugDialogue,
-					"Ripper: Escape stopped active Cain dialogue voice");
+				debugC(2, kDebugDialogue, "Ripper: Escape stopped active Cain dialogue voice");
 				return MediaSequenceCallback::kContinueRefreshPalette;
 			}
+
 			return kEscapeCommand;
 		}
+
 		uint choiceId = 0;
 		if (_chooser.serviceKeyboard(command, choiceId))
 			return kChoiceCommandBase + choiceId;
@@ -289,10 +295,10 @@ uint16 CainScene::service(uint frame) {
 		_voicePending = false;
 		_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 		_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
-		debugC(2, kDebugDialogue,
-			"Ripper: Cain dialogue voice completed frame=%u", frame);
+		debugC(2, kDebugDialogue, "Ripper: Cain dialogue voice completed frame=%u", frame);
 		if (!serviceVoiceCompletion())
 			return kFailureCommand;
+
 		updateCursor(_engine->getInput()->peekMouseState().position);
 		presentDialogueOverlay();
 		return MediaSequenceCallback::kContinueRefreshPalette;
@@ -301,33 +307,33 @@ uint16 CainScene::service(uint frame) {
 	uint16 command = serviceInput();
 	if (command == kTalkCommand) {
 		const bool firstGreeting = !_conversationStarted;
-		if (!startVoice(firstGreeting ? kFirstGreetingAudio : kRepeatGreetingAudio,
-				"talk-control"))
+		if (!startVoice(firstGreeting ? kFirstGreetingAudio : kRepeatGreetingAudio, "talk-control"))
 			return kFailureCommand;
-		if (firstGreeting && !_engine->getMilestones()->set(
-				kConversationStartedFlag, true, "cain-dialogue-start"))
+		if (firstGreeting && !_engine->getMilestones()->set(kConversationStartedFlag, true, "cain-dialogue-start"))
 			return kFailureCommand;
+
 		_conversationStarted = true;
 		command = 0;
-	} else if (command >= kChoiceCommandBase &&
-			command < kChoiceCommandBase + 8) {
+	} else if (command >= kChoiceCommandBase && command < kChoiceCommandBase + 8) {
 		const uint16 choiceId = command - kChoiceCommandBase;
 		const Choice *choice = findAvailableChoice(choiceId);
-		if (!choice || !_engine->getMilestones()->set(
-				choice->flag, true, "cain-dialogue-choice") ||
+		if (!choice || !_engine->getMilestones()->set(choice->flag, true, "cain-dialogue-choice") ||
 				!startVoice(choice->audioPath, "choice"))
 			return kFailureCommand;
+
 		debugC(2, kDebugDialogue,
 			"Ripper: selected Cain dialogue choice id=%u flag=0x%x textResource=0x%x audio='%s'",
 			choiceId, choice->flag, choice->textResource, choice->audioPath);
 		command = 0;
 	}
+
 	presentDialogueOverlay();
 	if (command != 0 && command != MediaSequenceCallback::kContinueRefreshPalette) {
 		debugC(2, kDebugDialogue,
 			"Ripper: Cain dialogue input command=0x%04x frame=%u choices=%u voicePending=%d",
 			command, frame, _choices.size(), _voicePending);
 	}
+
 	return command;
 }
 
@@ -339,22 +345,20 @@ void CainScene::stopAllAudio() {
 CainScene::Result CainScene::run(uint sceneArgument) {
 	if (!initialize())
 		return kLoadFailed;
+
 	prepare("cain-entry", kDefaultCursor, true);
 	debugC(1, kDebugDialogue,
 		"Ripper: entered Cain dialogue scene argument=%u loop='%s' audio='%s' toolbarMask=0x0000",
 		sceneArgument, kLoopMedia, kLoopAudio);
-	if (!_engine->getMedia()->playSoundEffect(kLoopAudio, _loopAudioHandle,
-			kLoopAudioVolume, true)) {
+	if (!_engine->getMedia()->playSoundEffect(kLoopAudio, _loopAudioHandle, kLoopAudioVolume, true)) {
 		stopAllAudio();
 		finish("cain-load-failure", -1, false);
 		return kLoadFailed;
 	}
 
 	uint16 command = 0;
-	const bool played = _engine->getMedia()->playPuzzleSequence(
-		kLoopMedia, kLoopStartFrame, this, &command);
-	Result result = (!played && !_engine->shouldQuit()) || command == kFailureCommand ?
-		kLoadFailed : kExited;
+	const bool played = _engine->getMedia()->playPuzzleSequence(kLoopMedia, kLoopStartFrame, this, &command);
+	Result result = (!played && !_engine->shouldQuit()) || command == kFailureCommand ? kLoadFailed : kExited;
 	if (result == kExited && !finishConversation())
 		result = kLoadFailed;
 

@@ -123,16 +123,17 @@ bool ClockPuzzle::loadFrame(const Common::String &name, BitmapAssetFrame &frame)
 		warning("Ripper: could not load clock puzzle bitmap '%s'", name.c_str());
 		return false;
 	}
+
 	return true;
 }
 
-bool ClockPuzzle::loadFrames(const char *pattern, uint count,
-		Common::Array<BitmapAssetFrame> &frames) {
+bool ClockPuzzle::loadFrames(const char *pattern, uint count, Common::Array<BitmapAssetFrame> &frames) {
 	frames.clear();
 	for (uint i = 0; i < count; ++i) {
 		BitmapAssetFrame frame;
 		if (!loadFrame(Common::String::format(pattern, i), frame))
 			return false;
+
 		frames.push_back(Common::move(frame));
 	}
 	return true;
@@ -149,8 +150,7 @@ bool ClockPuzzle::loadAssets() {
 			!loadFrame("clock_b6.bbm", _markerButtons[1]))
 		return false;
 
-	const Common::String maskName = SearchMan.hasFile(Common::Path("clock_tmp.mcg")) ?
-		"clock_tmp.mcg" : "clock_tm.mcg";
+	const Common::String maskName = SearchMan.hasFile(Common::Path("clock_tmp.mcg")) ? "clock_tmp.mcg" : "clock_tm.mcg";
 	if (!_engine->getResources()->loadBitmap(maskName, _dialHitMask) ||
 			_dialHitMask.width != 640 ||
 			_dialHitMask.height != 300) {
@@ -174,19 +174,19 @@ void ClockPuzzle::render() const {
 			g_system->unlockScreen();
 		return;
 	}
+
 	for (int y = 0; y < screen->h; ++y)
-		memcpy(screen->getBasePtr(0, y),
-			_backgroundDisplay.pixels().data() + y * screen->w, screen->w);
+		memcpy(screen->getBasePtr(0, y), _backgroundDisplay.pixels().data() + y * screen->w, screen->w);
 	byte *pixels = (byte *)screen->getPixels();
 	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
-	IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _clockFace,
-		296, 88 + kSceneOriginY, screenBounds);
+	IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _clockFace, 296, 88 + kSceneOriginY, screenBounds);
 	if (_dialIndices[0] >= 0 && _dialIndices[0] < (int)_minuteFrames.size()) {
 		const Common::Point &position = kDialPositions[_dialIndices[0]];
 		IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch,
 			_minuteFrames[_dialIndices[0]], position.x,
 			position.y + kSceneOriginY, screenBounds);
 	}
+
 	if (_dialIndices[1] >= 0 && _dialIndices[1] < (int)_hourFrames.size()) {
 		const Common::Point &position = kDialPositions[_dialIndices[1]];
 		IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch,
@@ -194,8 +194,7 @@ void ClockPuzzle::render() const {
 			position.y + kSceneOriginY, screenBounds);
 	}
 
-	IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _armyBackdrop,
-		492, 206 + kSceneOriginY, screenBounds);
+	IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _armyBackdrop, 492, 206 + kSceneOriginY, screenBounds);
 	for (uint i = 0; i < 4; ++i) {
 		const int digit = _firstClockDigits[i];
 		if (digit >= 0 && digit < (int)_armyFrames.size())
@@ -230,6 +229,7 @@ void ClockPuzzle::render() const {
 void ClockPuzzle::playCue(uint cue) {
 	if (cue >= kAudioCueCount)
 		return;
+
 	const Common::String path = Common::String::format("gb_clok%u.wav", cue);
 	_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
 	if (!_engine->getMedia()->playSoundEffect(path, _audioHandles[cue]))
@@ -244,9 +244,7 @@ bool ClockPuzzle::playOverlay(uint index) {
 	playCue(index == 0 ? 5 : 3);
 	const Common::String path = Common::String::format("clock%u.smk", index);
 	const bool played = _engine->getMedia()->playTransparentSmackerOverlay(path, 282, 77);
-	debugC(2, kDebugPuzzles,
-		"Ripper: clock puzzle overlay media='%s' index=%u success=%d",
-		path.c_str(), index, played);
+	debugC(2, kDebugPuzzles, "Ripper: clock puzzle overlay media='%s' index=%u success=%d", path.c_str(), index, played);
 	return played;
 }
 
@@ -280,6 +278,7 @@ int ClockPuzzle::dialIndexAt(const Common::Point &point) const {
 	if (point.x < 0 || point.x >= (int)_dialHitMask.width ||
 			maskY < 0 || maskY >= (int)_dialHitMask.height)
 		return -1;
+
 	const byte index = _dialHitMask.pixels[maskY * _dialHitMask.width + point.x];
 	return index < kDialCount ? index : -1;
 }
@@ -298,6 +297,7 @@ void ClockPuzzle::updateCursor(const Common::Point &point) {
 			point.x, point.y, cursor);
 		_hoveredControl = control;
 	}
+
 	_engine->getCursor()->update(cursor);
 }
 
@@ -332,6 +332,7 @@ void ClockPuzzle::applyStepper(uint16 command) {
 		} else {
 			++value;
 		}
+
 		_secondClockDigits[0] = value / 10;
 		_secondClockDigits[1] = value % 10;
 		break;
@@ -348,11 +349,11 @@ void ClockPuzzle::applyStepper(uint16 command) {
 	}
 	if (digits) {
 		int value = digits[0] * 10 + digits[1];
-		value = increment ? (value + 1) % (maximum + 1) :
-			(value == 0 ? maximum : value - 1);
+		value = increment ? (value + 1) % (maximum + 1) : (value == 0 ? maximum : value - 1);
 		digits[0] = value / 10;
 		digits[1] = value % 10;
 	}
+
 	storePersistentState();
 	debugC(2, kDebugPuzzles,
 		"Ripper: clock puzzle stepper command=0x%04x first=%d%d:%d%d second=%d%d:%d%d halfDay=%d",
@@ -368,8 +369,7 @@ bool ClockPuzzle::isSolved() const {
 			return false;
 	}
 	for (uint i = 0; i < 4; ++i) {
-		if (_firstClockDigits[i] != kTargetFirstClock[i] ||
-				_secondClockDigits[i] != kTargetSecondClock[i])
+		if (_firstClockDigits[i] != kTargetFirstClock[i] || _secondClockDigits[i] != kTargetSecondClock[i])
 			return false;
 	}
 	return _halfDay == kTargetHalfDay;
@@ -393,9 +393,7 @@ void ClockPuzzle::storePersistentState() const {
 
 ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 	const uint puzzleLevel = CLIP<uint>(_engine->getSettings()->getPuzzleLevel(), 1, 3);
-	debugC(1, kDebugPuzzles,
-		"Ripper: entered clock puzzle completionFlag=%u level=%u",
-		completionFlag, puzzleLevel);
+	debugC(1, kDebugPuzzles, "Ripper: entered clock puzzle completionFlag=%u level=%u", completionFlag, puzzleLevel);
 	if (!captureBackground() || !loadAssets())
 		return kLoadFailed;
 
@@ -411,6 +409,7 @@ ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 		stopAudio();
 		return kLoadFailed;
 	}
+
 	render();
 	_engine->getCursor()->refresh();
 
@@ -424,10 +423,9 @@ ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 			finished = true;
 			continue;
 		}
+
 		if (keyboardCommand == kHelpCommand) {
-			debugC(1, kDebugPuzzles,
-				"Ripper: clock puzzle opening modal help table=0x%x",
-				kHelpSelectionTable);
+			debugC(1, kDebugPuzzles, "Ripper: clock puzzle opening modal help table=0x%x", kHelpSelectionTable);
 			if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 				warning("Ripper: clock puzzle modal help failed");
 			render();
@@ -443,6 +441,7 @@ ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 				_dragDial = dial;
 				_lastDragIndex = -1;
 			}
+
 			if (dialIndex >= 0 && dialIndex != _lastDragIndex) {
 				_dialIndices[dial] = dialIndex;
 				_lastDragIndex = dialIndex;
@@ -467,13 +466,13 @@ ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 				finished = true;
 			}
 		}
+
 		if ((mouse.buttons & kMouseButtonLeft) == 0 && isSolved()) {
 			result = kSolved;
 			finished = true;
-			debugC(1, kDebugPuzzles,
-				"Ripper: solved clock puzzle milestone=%u state=7,8/14:35/09:35/1",
-				completionFlag);
+			debugC(1, kDebugPuzzles, "Ripper: solved clock puzzle milestone=%u state=7,8/14:35/09:35/1", completionFlag);
 		}
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}
@@ -482,8 +481,7 @@ ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 	render();
 	if (!playOverlay(0) && !_engine->shouldQuit())
 		result = kLoadFailed;
-	if (result == kSolved &&
-			!markSolved(completionFlag, "clock-puzzle"))
+	if (result == kSolved && !markSolved(completionFlag, "clock-puzzle"))
 		result = kLoadFailed;
 	stopAudio();
 	restoreBackground();

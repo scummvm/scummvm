@@ -110,13 +110,10 @@ struct BitmapFontAsset {
 };
 
 bool decodeBitmapAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame);
-bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
-	BitmapAssetSequence &sequence);
+bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream, BitmapAssetSequence &sequence);
 bool decodePcxAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame);
-bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
-	PresentationFrameRegionTable &table);
-bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream,
-	uint frameCount, PresentationFrameAudioMap &map);
+bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream, PresentationFrameRegionTable &table);
+bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream, uint frameCount, PresentationFrameAudioMap &map);
 
 class AssetLibrary {
 public:
@@ -136,11 +133,9 @@ public:
 	 */
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &memberName) const;
 	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;
-	bool loadBitmapSequence(const Common::String &memberName,
-		BitmapAssetSequence &sequence) const;
+	bool loadBitmapSequence(const Common::String &memberName, BitmapAssetSequence &sequence) const;
 	bool loadPcx(const Common::String &memberName, BitmapAssetFrame &frame) const;
-	void listMembersWithPrefix(const Common::String &prefix,
-		Common::Array<Common::String> &members) const;
+	void listMembersWithPrefix(const Common::String &prefix, Common::Array<Common::String> &members) const;
 
 	uint getEntryCount() const { return _entries.size(); }
 	bool isModernFormat() const { return _modernFormat; }
@@ -187,21 +182,16 @@ public:
 	bool initialize(bool loadNestedOptions);
 	Common::SeekableReadStream *createReadStream(const Common::String &path,
 		SourcePolicy policy, Common::String *source = nullptr) const;
-	Common::SeekableReadStream *createReadStreamForPath(
-		const Common::String &memberName) const;
+	Common::SeekableReadStream *createReadStreamForPath(const Common::String &memberName) const;
 	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence, SourcePolicy policy = kSourceSearchMember) const;
 	bool loadBitmapSequenceFirstFrame(const Common::String &memberName,
 		BitmapAssetFrame &frame, SourcePolicy policy = kSourceSearchMember) const;
-	bool loadBitmapLibrary(const Common::String &libraryName,
-		Common::Array<BitmapAssetFrame> &frames) const;
-	bool loadInterfaceBitmapSequence(const Common::String &memberName,
-		BitmapAssetSequence &sequence) const;
-	bool loadOptionsBitmapSequence(const Common::String &memberName,
-		BitmapAssetSequence &sequence) const;
-	bool loadInterfaceBitmapSet(const Common::String &prefix,
-		Common::Array<BitmapAssetFrame> &frames) const;
+	bool loadBitmapLibrary(const Common::String &libraryName, Common::Array<BitmapAssetFrame> &frames) const;
+	bool loadInterfaceBitmapSequence(const Common::String &memberName, BitmapAssetSequence &sequence) const;
+	bool loadOptionsBitmapSequence(const Common::String &memberName, BitmapAssetSequence &sequence) const;
+	bool loadInterfaceBitmapSet(const Common::String &prefix, Common::Array<BitmapAssetFrame> &frames) const;
 	bool loadInterfacePcx(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadOptionsPcx(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadInterfaceBitmapFont(const Common::String &memberName, BitmapFontAsset &font) const;

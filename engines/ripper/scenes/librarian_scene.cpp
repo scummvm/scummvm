@@ -103,12 +103,13 @@ bool LibrarianScene::initialize() {
 		warning("Ripper: could not load Ka dialogue game text");
 		return false;
 	}
+
 	if (_gameText.size() < kFirstChoiceText + 3) {
 		warning("Ripper: Ka dialogue text table has only %u entries", _gameText.size());
 		return false;
 	}
-	debugC(1, kDebugDialogue,
-		"Ripper: initialized Ka dialogue textChoices=4 chooser=shared");
+
+	debugC(1, kDebugDialogue, "Ripper: initialized Ka dialogue textChoices=4 chooser=shared");
 	return true;
 }
 
@@ -142,6 +143,7 @@ void LibrarianScene::rebuildChoices() {
 		}
 		_chooser.activateChoices("ka-dialogue");
 	}
+
 	debugC(2, kDebugDialogue,
 		"Ripper: rebuilt Ka dialogue choices count=%u conversationStarted=%d sharedPending=%d flags=cc:%d e1:%d 54:%d",
 		_choices.size(), _conversationStarted, _chooser.isPending(),
@@ -163,6 +165,7 @@ bool LibrarianScene::startVoice(const char *path, const char *source) {
 		warning("Ripper: could not start Ka dialogue voice '%s'", path);
 		return false;
 	}
+
 	_voicePending = true;
 	if (_chooser.isPending())
 		_chooser.dismissForSceneTransition("ka-voice-start");
@@ -186,17 +189,21 @@ bool LibrarianScene::serviceVoiceCompletion() {
 		if (puzzleResult == KaBookCodePuzzle::kSolved) {
 			if (!_engine->getMedia()->play(kBookMedia, true))
 				return false;
+
 			milestones->set(kBookSolvedFlag, true, "ka-dialogue-book-code");
 			milestones->set(kBookFollowupFlag, true, "ka-dialogue-book-code");
 		} else {
 			milestones->set(kBookChoiceFlag, false, "ka-dialogue-book-code");
 		}
 	}
+
 	if (milestones->isSet(kCdChoiceFlag) && !milestones->isSet(kCdFollowupFlag)) {
 		if (!_engine->getMedia()->play(kCdMedia, true))
 			return false;
+
 		milestones->set(kCdFollowupFlag, true, "ka-dialogue-cd");
 	}
+
 	rebuildChoices();
 	return true;
 }
@@ -205,8 +212,7 @@ void LibrarianScene::serviceLoopAudio(uint frame) {
 	for (uint i = 0; i < ARRAYSIZE(kLoopCueFrames); ++i) {
 		if (frame != kLoopCueFrames[i])
 			continue;
-		_engine->getMedia()->playSoundEffect(kLoopCueAudio[i], _loopCueHandles[i],
-			kLoopCueVolumes[i]);
+		_engine->getMedia()->playSoundEffect(kLoopCueAudio[i], _loopCueHandles[i], kLoopCueVolumes[i]);
 		debugC(3, kDebugDialogue,
 			"Ripper: queued Ka loop cue media='%s' frame=%u volume=%u",
 			kLoopCueAudio[i], frame, kLoopCueVolumes[i]);
@@ -230,29 +236,28 @@ void LibrarianScene::updateCursor(const Common::Point &point) {
 		_engine->getCursor()->setVisible(true);
 		return;
 	}
+
 	_chooser.updateHover(point);
-	const bool startEnabled = !_voicePending &&
-		(!_conversationStarted || _choices.empty());
-	const bool cardEnabled = !_voicePending &&
-		!_engine->getMilestones()->isSet(kCardSeenFlag);
+	const bool startEnabled = !_voicePending && (!_conversationStarted || _choices.empty());
+	const bool cardEnabled = !_voicePending && !_engine->getMilestones()->isSet(kCardSeenFlag);
 	if (_chooser.contains(point)) {
 		hovered = 2;
 		cursor = kChoiceCursor;
-	} else if (startEnabled && Common::Rect(kStartLeft, kStartTop,
-			kStartRight, kStartBottom).contains(point)) {
+	} else if (startEnabled && Common::Rect(kStartLeft, kStartTop, kStartRight, kStartBottom).contains(point)) {
 		hovered = 0;
 		cursor = kStartCursor;
-	} else if (cardEnabled && Common::Rect(kCardLeft, kCardTop,
-			kCardRight, kCardBottom).contains(point)) {
+	} else if (cardEnabled && Common::Rect(kCardLeft, kCardTop, kCardRight, kCardBottom).contains(point)) {
 		hovered = 1;
 		cursor = kCardCursor;
 	}
+
 	if (hovered != _hoveredControl) {
 		debugC(2, kDebugDialogue,
 			"Ripper: Ka dialogue hover control=%d previous=%d point=%d,%d cursor=%u",
 			hovered, _hoveredControl, point.x, point.y, cursor);
 		_hoveredControl = hovered;
 	}
+
 	_engine->getCursor()->update(cursor);
 	_engine->getCursor()->setVisible(true);
 }
@@ -267,12 +272,13 @@ uint16 LibrarianScene::serviceInput() {
 				_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 				_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 				rebuildChoices();
-				debugC(2, kDebugDialogue,
-					"Ripper: Escape stopped active Ka dialogue voice");
+				debugC(2, kDebugDialogue, "Ripper: Escape stopped active Ka dialogue voice");
 				continue;
 			}
+
 			return kEscapeCommand;
 		}
+
 		uint choiceId = 0;
 		if (_chooser.serviceKeyboard(command, choiceId))
 			return kChoiceCommandBase + choiceId;
@@ -298,21 +304,22 @@ uint16 LibrarianScene::service(uint frame) {
 		_voicePending = false;
 		_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 		_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
-		debugC(2, kDebugDialogue,
-			"Ripper: Ka dialogue voice completed frame=%u", frame);
+		debugC(2, kDebugDialogue, "Ripper: Ka dialogue voice completed frame=%u", frame);
 		if (!serviceVoiceCompletion())
 			return kFailureCommand;
+
 		updateCursor(_engine->getInput()->peekMouseState().position);
 		presentDialogueOverlay();
 		return MediaSequenceCallback::kContinueRefreshPalette;
 	}
+
 	uint16 command = serviceInput();
 	if (command == kStartCommand) {
-		const char *voice = !_conversationStarted ? kFirstGreetingAudio :
-			kRepeatGreetingAudio[_random.getRandomNumber(1)];
+		const char *voice = !_conversationStarted ? kFirstGreetingAudio : kRepeatGreetingAudio[_random.getRandomNumber(1)];
 		_conversationStarted = true;
 		if (!startVoice(voice, "start-control"))
 			return kFailureCommand;
+
 		command = 0;
 	} else if (command == kCardCommand) {
 		if (_chooser.isPending())
@@ -326,8 +333,7 @@ uint16 LibrarianScene::service(uint frame) {
 		updateCursor(_engine->getInput()->peekMouseState().position);
 		presentDialogueOverlay();
 		return MediaSequenceCallback::kContinueRefreshPalette;
-	} else if (command >= kChoiceCommandBase &&
-			command < kChoiceCommandBase + kChoiceCount) {
+	} else if (command >= kChoiceCommandBase && command < kChoiceCommandBase + kChoiceCount) {
 		const uint16 choiceId = command - kChoiceCommandBase;
 		const Choice *choice = findAvailableChoice(choiceId);
 		if (!choice)
@@ -335,17 +341,20 @@ uint16 LibrarianScene::service(uint frame) {
 		if (!_engine->getMilestones()->set(choice->flag, true, "ka-dialogue-choice") ||
 				!startVoice(choice->audioPath, "choice"))
 			return kFailureCommand;
+
 		debugC(2, kDebugDialogue,
 			"Ripper: selected Ka dialogue choice id=%u flag=0x%x textResource=0x%x audio='%s'",
 			choiceId, choice->flag, choice->textResource, choice->audioPath);
 		command = 0;
 	}
+
 	presentDialogueOverlay();
 	if (command != 0) {
 		debugC(2, kDebugDialogue,
 			"Ripper: Ka dialogue input command=0x%04x frame=%u choices=%u voicePending=%d",
 			command, frame, _choices.size(), _voicePending);
 	}
+
 	return command;
 }
 
@@ -360,6 +369,7 @@ void LibrarianScene::stopAllAudio() {
 LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 	if (!initialize())
 		return kLoadFailed;
+
 	prepare("ka-entry", kDefaultCursor, false);
 	debugC(1, kDebugDialogue,
 		"Ripper: entered Ka dialogue scene argument=%u deck='%s' loop='%s' toolbarMask=0x0000",
@@ -370,20 +380,16 @@ LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 		finish("ka-load-failure", -1, false);
 		return kLoadFailed;
 	}
-	// Clear the full display so KA_LOOP.SMK's palette cannot recolor
-	// stale pixels in the bands outside its 640x300 viewport.
+
+	// Clear the full display so KA_LOOP.SMK's palette cannot recolor stale pixels in the bands outside its 640x300 viewport.
 	g_system->fillScreen(0);
 	presentScreen();
-	debugC(2, kDebugDialogue,
-		"Ripper: cleared Ka deck display before loop media='%s'",
-		kLoopMedia);
+	debugC(2, kDebugDialogue, "Ripper: cleared Ka deck display before loop media='%s'", kLoopMedia);
 	_engine->getMedia()->playSoundEffect("library3.wav", _ambientHandle, 100, true);
 
 	uint16 command = 0;
-	const bool played = _engine->getMedia()->playPuzzleSequence(
-		kLoopMedia, kLoopStartFrame, this, &command);
-	const Result result = (!played && !_engine->shouldQuit()) || command == kFailureCommand ?
-		kLoadFailed : kExited;
+	const bool played = _engine->getMedia()->playPuzzleSequence(kLoopMedia, kLoopStartFrame, this, &command);
+	const Result result = (!played && !_engine->shouldQuit()) || command == kFailureCommand ? kLoadFailed : kExited;
 
 	stopAllAudio();
 	finish("ka-exit", -1, false);

@@ -53,8 +53,7 @@ private:
 	bool captureEntryDisplay();
 	bool openKeypad();
 	bool closeKeypad();
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	void render() const;
 	int findKey(const Common::Point &point) const;
 	HoverControl findControl(const Common::Point &point, int &key) const;

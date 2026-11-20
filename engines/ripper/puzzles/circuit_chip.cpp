@@ -60,8 +60,7 @@ static const uint kCircuitManualFlag = 0x55;
 static const uint kCircuitManualResource = 0xb6;
 static const char *const kCompletionKeyword = "theory";
 
-// This puzzle fills the 640-by-400 screen, so these physical coordinates
-// do not include a 50-pixel scene origin.
+// This puzzle fills the 640-by-400 screen, so these physical coordinates do not include a 50-pixel scene origin.
 static const Common::Point kSourcePositions[kChipCount] = {
 	Common::Point(460, 22),
 	Common::Point(460, 322),
@@ -152,15 +151,13 @@ CircuitChipPuzzle::CircuitChipPuzzle(RipperEngine *engine) :
 	}
 }
 
-bool CircuitChipPuzzle::loadPcx(const Common::String &path,
-		BitmapAssetFrame &frame) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(path));
+bool CircuitChipPuzzle::loadPcx(const Common::String &path, BitmapAssetFrame &frame) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(path));
 	if (!stream || !decodePcxAsset(*stream, frame)) {
-		warning("Ripper: could not decode circuit puzzle PCX '%s'",
-			path.c_str());
+		warning("Ripper: could not decode circuit puzzle PCX '%s'", path.c_str());
 		return false;
 	}
+
 	return true;
 }
 
@@ -173,30 +170,26 @@ bool CircuitChipPuzzle::loadAssets() {
 	_chips.clear();
 	for (uint chip = 0; chip < kChipCount; ++chip) {
 		BitmapAssetFrame asset;
-		const Common::String path =
-			Common::String::format("chip%u.bbm", chip + 1);
+		const Common::String path = Common::String::format("chip%u.bbm", chip + 1);
 		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, asset)) {
-			warning("Ripper: could not load circuit puzzle chip '%s'",
-				path.c_str());
+			warning("Ripper: could not load circuit puzzle chip '%s'", path.c_str());
 			return false;
 		}
+
 		_chips.push_back(Common::move(asset));
 	}
 
 	BitmapAssetSequence meterSequence;
-	if (!_engine->getResources()->loadBitmapSequence(
-			"meter.pl", meterSequence) ||
-			meterSequence.frames.empty())
+	if (!_engine->getResources()->loadBitmapSequence("meter.pl", meterSequence) || meterSequence.frames.empty())
 		return false;
+
 	_idleMeterFrames = Common::move(meterSequence.frames);
 
 	for (uint cue = 0; cue < ARRAYSIZE(kAudioNames); ++cue) {
 		Common::ScopedPtr<Common::SeekableReadStream> stream(
-			_engine->getResources()->createReadStreamForPath(
-				kAudioNames[cue]));
+			_engine->getResources()->createReadStreamForPath(kAudioNames[cue]));
 		if (!stream) {
-			warning("Ripper: circuit puzzle audio '%s' is missing",
-				kAudioNames[cue]);
+			warning("Ripper: circuit puzzle audio '%s' is missing", kAudioNames[cue]);
 			return false;
 		}
 	}
@@ -230,8 +223,7 @@ bool CircuitChipPuzzle::captureManualBacking() {
 	g_system->unlockScreen();
 
 	_background.palette.resize(256 * 3);
-	g_system->getPaletteManager()->grabPalette(
-		_background.palette.data(), 0, 256);
+	g_system->getPaletteManager()->grabPalette(_background.palette.data(), 0, 256);
 	debugC(2, kDebugPuzzles,
 		"Ripper: captured circuit puzzle manual backing "
 		"bounds=%d,%d,%dx%d paletteEntries=256",
@@ -239,8 +231,7 @@ bool CircuitChipPuzzle::captureManualBacking() {
 	return true;
 }
 
-void CircuitChipPuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void CircuitChipPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
@@ -261,27 +252,23 @@ void CircuitChipPuzzle::render() {
 
 	if (_meterPixels.size() == kMeterWidth * kMeterHeight) {
 		for (int y = 0; y < kMeterHeight; ++y)
-			memcpy(screen->getBasePtr(kMeterX, kMeterY + y),
-				_meterPixels.data() + y * kMeterWidth, kMeterWidth);
+			memcpy(screen->getBasePtr(kMeterX, kMeterY + y), _meterPixels.data() + y * kMeterWidth, kMeterWidth);
 	}
+
 	if (!_idleMeterFrames.empty())
-		drawFrame(pixels, screen->pitch,
-			_idleMeterFrames[_idleMeterFrame], kMeterX, kMeterY);
+		drawFrame(pixels, screen->pitch, _idleMeterFrames[_idleMeterFrame], kMeterX, kMeterY);
 
 	for (uint slot = 0; slot < kChipCount; ++slot) {
 		if (_sourceChips[slot] >= 0)
-			drawFrame(pixels, screen->pitch, _chips[_sourceChips[slot]],
-				kSourcePositions[slot].x, kSourcePositions[slot].y);
+			drawFrame(pixels, screen->pitch, _chips[_sourceChips[slot]], kSourcePositions[slot].x, kSourcePositions[slot].y);
 		if (_targetChips[slot] >= 0)
-			drawFrame(pixels, screen->pitch, _chips[_targetChips[slot]],
-				kTargetPositions[slot].x, kTargetPositions[slot].y);
+			drawFrame(pixels, screen->pitch, _chips[_targetChips[slot]], kTargetPositions[slot].x, kTargetPositions[slot].y);
 	}
 	if (_draggedChip >= 0) {
 		const BitmapAssetFrame &chip = _chips[_draggedChip];
-		drawFrame(pixels, screen->pitch, chip,
-			_dragPoint.x - chip.width / 2,
-			_dragPoint.y - chip.height / 2);
+		drawFrame(pixels, screen->pitch, chip, _dragPoint.x - chip.width / 2, _dragPoint.y - chip.height / 2);
 	}
+
 	g_system->unlockScreen();
 
 	if (_background.palette.size() == kRipperPaletteByteCount)
@@ -292,8 +279,7 @@ void CircuitChipPuzzle::render() {
 				_manualFirstVisible, _manualMaximumFirstVisible,
 				_manualVisibleRows,
 				ModalDialogManager::kPrimaryPresentation,
-				static_cast<ModalDialogManager::TextPanelScrollControl>(
-					_manualHoveredControl)))
+				static_cast<ModalDialogManager::TextPanelScrollControl>(_manualHoveredControl)))
 		warning("Ripper: circuit puzzle manual panel failed");
 	presentScreen();
 }
@@ -305,31 +291,25 @@ void CircuitChipPuzzle::captureMeter() {
 			g_system->unlockScreen();
 		return;
 	}
+
 	_meterPixels.resize(kMeterWidth * kMeterHeight);
 	for (int y = 0; y < kMeterHeight; ++y)
-		memcpy(_meterPixels.data() + y * kMeterWidth,
-			screen->getBasePtr(kMeterX, kMeterY + y), kMeterWidth);
+		memcpy(_meterPixels.data() + y * kMeterWidth, screen->getBasePtr(kMeterX, kMeterY + y), kMeterWidth);
 	g_system->unlockScreen();
 }
 
-void CircuitChipPuzzle::animateMeter(uint previousCount,
-		uint correctCount) {
+void CircuitChipPuzzle::animateMeter(uint previousCount, uint correctCount) {
 	if (previousCount == correctCount || correctCount > kGroupCount)
 		return;
 
 	const bool progress = correctCount > previousCount;
 	const uint tableIndex = progress ? correctCount - 1 : correctCount;
-	const uint firstFrame = progress ?
-		kProgressStartFrames[tableIndex] :
-		kRegressStartFrames[tableIndex];
-	const uint frameLimit = progress ?
-		kProgressFrameLimits[tableIndex] :
-		kRegressFrameLimits[tableIndex];
+	const uint firstFrame = progress ? kProgressStartFrames[tableIndex] : kRegressStartFrames[tableIndex];
+	const uint frameLimit = progress ? kProgressFrameLimits[tableIndex] : kRegressFrameLimits[tableIndex];
 	const char *media = progress ? "meter2.smk" : "meter3.smk";
 	const uint cue = progress ? 3 : 2;
 
-	_engine->getMedia()->playSoundEffect(kAudioNames[cue],
-		_audioHandles[cue]);
+	_engine->getMedia()->playSoundEffect(kAudioNames[cue], _audioHandles[cue]);
 	_engine->getCursor()->setVisible(false);
 	debugC(2, kDebugPuzzles,
 		"Ripper: circuit puzzle meter transition direction=%s "
@@ -339,21 +319,17 @@ void CircuitChipPuzzle::animateMeter(uint previousCount,
 	if (!_engine->getMedia()->playPuzzleSequenceSegment(media,
 			firstFrame, frameLimit - 1, kMeterX,
 			kMeterY - kSceneOriginY, nullptr))
-		warning("Ripper: circuit puzzle meter animation '%s' failed",
-			media);
+		warning("Ripper: circuit puzzle meter animation '%s' failed", media);
 	captureMeter();
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setVisible(true);
 }
 
 bool CircuitChipPuzzle::advanceIdleMeter(uint32 now) {
-	if (_idleMeterFrames.empty() ||
-			(int32)(now - _lastMeterTick) <
-				(int32)(kMeterTickCount * kDosTickMillis))
+	if (_idleMeterFrames.empty() || (int32)(now - _lastMeterTick) < (int32)(kMeterTickCount * kDosTickMillis))
 		return false;
 	if (_idleMeterFrame == 0)
-		_engine->getMedia()->playSoundEffect(kAudioNames[0],
-			_audioHandles[0]);
+		_engine->getMedia()->playSoundEffect(kAudioNames[0], _audioHandles[0]);
 	_idleMeterFrame = (_idleMeterFrame + 1) % _idleMeterFrames.size();
 	_lastMeterTick = now;
 	return true;
@@ -362,30 +338,28 @@ bool CircuitChipPuzzle::advanceIdleMeter(uint32 now) {
 bool CircuitChipPuzzle::handleManualClick(const Common::Point &point) {
 	if (!_manualAvailable)
 		return false;
+
 	const ModalDialogManager::TextPanelScrollControl control =
 		_engine->getModalDialog()->findTextPanelScrollControl(
 			circuitManualBounds(), point, _manualFirstVisible,
 			_manualMaximumFirstVisible,
 			ModalDialogManager::kPrimaryPresentation);
-	if (control == ModalDialogManager::kTextPanelScrollUp &&
-			_manualFirstVisible > 0) {
+	if (control == ModalDialogManager::kTextPanelScrollUp && _manualFirstVisible > 0) {
 		--_manualFirstVisible;
 		return true;
 	}
-	if (control == ModalDialogManager::kTextPanelScrollDown &&
-			_manualFirstVisible < _manualMaximumFirstVisible) {
+
+	if (control == ModalDialogManager::kTextPanelScrollDown && _manualFirstVisible < _manualMaximumFirstVisible) {
 		++_manualFirstVisible;
 		return true;
 	}
+
 	return control != ModalDialogManager::kTextPanelScrollNone;
 }
 
-int CircuitChipPuzzle::findSourceSlot(
-		const Common::Point &point) const {
+int CircuitChipPuzzle::findSourceSlot(const Common::Point &point) const {
 	for (uint slot = 0; slot < kChipCount; ++slot) {
-		const BitmapAssetFrame &frame =
-			_chips[_sourceChips[slot] >= 0 ?
-				_sourceChips[slot] : slot];
+		const BitmapAssetFrame &frame = _chips[_sourceChips[slot] >= 0 ? _sourceChips[slot] : slot];
 		if (Common::Rect(kSourcePositions[slot].x,
 				kSourcePositions[slot].y,
 				kSourcePositions[slot].x + frame.width,
@@ -395,12 +369,9 @@ int CircuitChipPuzzle::findSourceSlot(
 	return -1;
 }
 
-int CircuitChipPuzzle::findTargetSlot(
-		const Common::Point &point) const {
+int CircuitChipPuzzle::findTargetSlot(const Common::Point &point) const {
 	for (uint slot = 0; slot < kChipCount; ++slot) {
-		const BitmapAssetFrame &frame =
-			_chips[_targetChips[slot] >= 0 ?
-				_targetChips[slot] : slot];
+		const BitmapAssetFrame &frame = _chips[_targetChips[slot] >= 0 ? _targetChips[slot] : slot];
 		if (Common::Rect(kTargetPositions[slot].x,
 				kTargetPositions[slot].y,
 				kTargetPositions[slot].x + frame.width,
@@ -413,27 +384,20 @@ int CircuitChipPuzzle::findTargetSlot(
 void CircuitChipPuzzle::pickSourceChip(uint slot) {
 	_draggedChip = _sourceChips[slot];
 	_sourceChips[slot] = -1;
-	debugC(2, kDebugPuzzles,
-		"Ripper: circuit puzzle picked chip=%d sourceSlot=%u",
-		_draggedChip, slot);
+	debugC(2, kDebugPuzzles, "Ripper: circuit puzzle picked chip=%d sourceSlot=%u", _draggedChip, slot);
 }
 
 void CircuitChipPuzzle::pickTargetChip(uint slot) {
 	_draggedChip = _targetChips[slot];
 	_targetChips[slot] = -1;
-	debugC(2, kDebugPuzzles,
-		"Ripper: circuit puzzle picked chip=%d targetSlot=%u",
-		_draggedChip, slot);
+	debugC(2, kDebugPuzzles, "Ripper: circuit puzzle picked chip=%d targetSlot=%u", _draggedChip, slot);
 }
 
 void CircuitChipPuzzle::placeSourceChip(uint slot) {
 	_sourceChips[slot] = _draggedChip;
-	debugC(2, kDebugPuzzles,
-		"Ripper: circuit puzzle placed chip=%d sourceSlot=%u",
-		_draggedChip, slot);
+	debugC(2, kDebugPuzzles, "Ripper: circuit puzzle placed chip=%d sourceSlot=%u", _draggedChip, slot);
 	_draggedChip = -1;
-	_engine->getMedia()->playSoundEffect(kAudioNames[4],
-		_audioHandles[4]);
+	_engine->getMedia()->playSoundEffect(kAudioNames[4], _audioHandles[4]);
 }
 
 void CircuitChipPuzzle::placeTargetChip(uint slot) {
@@ -444,8 +408,7 @@ void CircuitChipPuzzle::placeTargetChip(uint slot) {
 		_draggedChip, slot, kSlotConnectorTypes[slot],
 		kExpectedChipBySlot[slot]);
 	_draggedChip = -1;
-	_engine->getMedia()->playSoundEffect(kAudioNames[4],
-		_audioHandles[4]);
+	_engine->getMedia()->playSoundEffect(kAudioNames[4], _audioHandles[4]);
 }
 
 bool CircuitChipPuzzle::handleClick(const Common::Point &point) {
@@ -456,19 +419,21 @@ bool CircuitChipPuzzle::handleClick(const Common::Point &point) {
 			pickTargetChip(targetSlot);
 			return true;
 		}
+
 		if (sourceSlot >= 0 && _sourceChips[sourceSlot] >= 0) {
 			pickSourceChip(sourceSlot);
 			return true;
 		}
+
 		return false;
 	}
 
 	if (targetSlot >= 0 && _targetChips[targetSlot] < 0) {
-		if (kChipConnectorTypes[_draggedChip] ==
-				kSlotConnectorTypes[targetSlot]) {
+		if (kChipConnectorTypes[_draggedChip] == kSlotConnectorTypes[targetSlot]) {
 			placeTargetChip(targetSlot);
 			return true;
 		}
+
 		debugC(2, kDebugPuzzles,
 			"Ripper: circuit puzzle rejected chip=%d targetSlot=%d "
 			"chipConnector=%u slotConnector=%u",
@@ -477,10 +442,12 @@ bool CircuitChipPuzzle::handleClick(const Common::Point &point) {
 			kSlotConnectorTypes[targetSlot]);
 		return false;
 	}
+
 	if (sourceSlot >= 0 && _sourceChips[sourceSlot] < 0) {
 		placeSourceChip(sourceSlot);
 		return true;
 	}
+
 	return false;
 }
 
@@ -489,10 +456,8 @@ uint CircuitChipPuzzle::countCorrectGroups(bool logGroups) const {
 	for (uint group = 0; group < kGroupCount; ++group) {
 		bool correct = true;
 		for (uint member = 0; member < kSlotsPerGroup; ++member) {
-			const uint slot =
-				kMeterSlotGroups[group * kSlotsPerGroup + member];
-			if (_targetChips[slot] !=
-					(int)kExpectedChipBySlot[slot])
+			const uint slot = kMeterSlotGroups[group * kSlotsPerGroup + member];
+			if (_targetChips[slot] != (int)kExpectedChipBySlot[slot])
 				correct = false;
 			if (logGroups) {
 				debugC(3, kDebugPuzzles,
@@ -522,6 +487,7 @@ uint CircuitChipPuzzle::countCorrectGroups(bool logGroups) const {
 bool CircuitChipPuzzle::complete(uint completionFlag) {
 	if (!markSolved(completionFlag, "circuit-chip-puzzle"))
 		return false;
+
 	debugC(1, kDebugPuzzles,
 		"Ripper: solved circuit chip puzzle milestone=%u "
 		"groups=4 placements=[%s]",
@@ -529,27 +495,24 @@ bool CircuitChipPuzzle::complete(uint completionFlag) {
 	return true;
 }
 
-bool CircuitChipPuzzle::handleKeyword(uint16 command,
-		uint completionFlag, Result &result) {
+bool CircuitChipPuzzle::handleKeyword(uint16 command, uint completionFlag, Result &result) {
 	if (command == 0)
 		return false;
 	if (command > 0xff) {
 		_keywordProgress = 0;
 		return false;
 	}
+
 	if (!advanceKeyword(command, kCompletionKeyword, _keywordProgress))
 		return false;
 
-	debugC(1, kDebugPuzzles,
-		"Ripper: circuit chip puzzle solved by hidden keyword '%s'",
-		kCompletionKeyword);
+	debugC(1, kDebugPuzzles, "Ripper: circuit chip puzzle solved by hidden keyword '%s'", kCompletionKeyword);
 	result = complete(completionFlag) ? kSolved : kLoadFailed;
 	return true;
 }
 
 bool CircuitChipPuzzle::updateCursor(const Common::Point &point) {
-	ModalDialogManager::TextPanelScrollControl manualControl =
-		ModalDialogManager::kTextPanelScrollNone;
+	ModalDialogManager::TextPanelScrollControl manualControl = ModalDialogManager::kTextPanelScrollNone;
 	if (_manualAvailable) {
 		manualControl =
 			_engine->getModalDialog()->findTextPanelScrollControl(
@@ -557,6 +520,7 @@ bool CircuitChipPuzzle::updateCursor(const Common::Point &point) {
 				_manualMaximumFirstVisible,
 				ModalDialogManager::kPrimaryPresentation);
 	}
+
 	const int sourceSlot = findSourceSlot(point);
 	const int targetSlot = findTargetSlot(point);
 	int control = -1;
@@ -572,9 +536,9 @@ bool CircuitChipPuzzle::updateCursor(const Common::Point &point) {
 					kSlotConnectorTypes[targetSlot]);
 	} else if (sourceSlot >= 0) {
 		control = sourceSlot;
-		selectable = _sourceChips[sourceSlot] >= 0 ||
-			(_draggedChip >= 0 && _sourceChips[sourceSlot] < 0);
+		selectable = _sourceChips[sourceSlot] >= 0 || (_draggedChip >= 0 && _sourceChips[sourceSlot] < 0);
 	}
+
 	const bool changed = control != _hoveredControl;
 	if (changed) {
 		debugC(2, kDebugInput,
@@ -585,8 +549,8 @@ bool CircuitChipPuzzle::updateCursor(const Common::Point &point) {
 			_draggedChip, selectable, point.x, point.y);
 		_hoveredControl = control;
 	}
-	_engine->getCursor()->update(
-		selectable ? kSelectionCursor : kDefaultCursor);
+
+	_engine->getCursor()->update(selectable ? kSelectionCursor : kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
 	_manualHoveredControl = manualControl;
 	return changed;
@@ -604,8 +568,7 @@ Common::String CircuitChipPuzzle::placementString() const {
 		if (_targetChips[slot] < 0)
 			result += '-';
 		else
-			result += Common::String::format("%d",
-				_targetChips[slot]);
+			result += Common::String::format("%d", _targetChips[slot]);
 	}
 	return result;
 }
@@ -634,11 +597,9 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 		return kLoadFailed;
 	}
 
-	_manualAvailable =
-		_engine->getMilestones()->isSet(kCircuitManualFlag);
+	_manualAvailable = _engine->getMilestones()->isSet(kCircuitManualFlag);
 	if (_manualAvailable) {
-		_engine->getMedia()->playSoundEffect(kAudioNames[5],
-			_audioHandles[5]);
+		_engine->getMedia()->playSoundEffect(kAudioNames[5], _audioHandles[5]);
 		if (!_engine->getMedia()->play("ed_wac.smk", false, 92, 324))
 			warning("Ripper: circuit puzzle WAC presentation failed");
 		else if (!captureManualBacking()) {
@@ -649,8 +610,8 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 			return kLoadFailed;
 		}
 	}
-	if (!_engine->getMedia()->playSoundEffect(kAudioNames[1],
-			_audioHandles[1], 100, true))
+
+	if (!_engine->getMedia()->playSoundEffect(kAudioNames[1], _audioHandles[1], 100, true))
 		warning("Ripper: circuit puzzle ambient audio failed");
 
 	_lastMeterTick = g_system->getMillis();
@@ -682,18 +643,19 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 				active = false;
 				break;
 			}
+
 			if (command == kHelpCommand) {
 				_keywordProgress = 0;
 				debugC(1, kDebugPuzzles,
 					"Ripper: circuit chip puzzle opening modal "
 					"help table=0x%x",
 					kHelpSelectionTable);
-				if (!_engine->getModalDialog()->run(
-						kHelpSelectionTable))
+				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: circuit chip puzzle modal help failed");
 				render();
 				continue;
 			}
+
 			if (handleKeyword(command, completionFlag, result)) {
 				active = false;
 				break;
@@ -702,14 +664,13 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 		if (!active)
 			break;
 
-		const MouseState mouse =
-			_engine->getInput()->publishMouseState();
+		const MouseState mouse = _engine->getInput()->publishMouseState();
 		bool redraw = updateCursor(mouse.position);
-		if (_draggedChip >= 0 &&
-				mouse.position != _dragPoint) {
+		if (_draggedChip >= 0 && mouse.position != _dragPoint) {
 			_dragPoint = mouse.position;
 			redraw = true;
 		}
+
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			if (handleManualClick(mouse.position)) {
 				redraw = true;
@@ -731,16 +692,16 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 					animateMeter(previousCount, _correctGroupCount);
 					render();
 					if (_correctGroupCount == kGroupCount) {
-						result = complete(completionFlag) ?
-							kSolved : kLoadFailed;
+						result = complete(completionFlag) ? kSolved : kLoadFailed;
 						active = false;
 					}
-					// The placed chip and the post-animation meter have
-					// already been presented above.
+
+					// The placed chip and the post-animation meter have already been presented above.
 					redraw = false;
 				}
 			}
 		}
+
 		redraw |= advanceIdleMeter(g_system->getMillis());
 		if (redraw)
 			render();
@@ -754,6 +715,7 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 		g_system->fillScreen(0);
 		presentScreen();
 	}
+
 	cursor->setSelectionIndex(savedSelectionIndex);
 	cursor->dispatchSelectionIndexChange(savedSelectionIndex);
 	cursor->refresh();

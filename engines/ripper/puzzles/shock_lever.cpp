@@ -80,9 +80,7 @@ static const Common::Point kSubmitPosition(222, 252 + kSceneOriginY);
 static const Common::Point kScreenMediaPosition(276, 3);
 
 static bool isExitPoint(const Common::Point &point) {
-	return point.y >= kSceneOriginY &&
-		point.y < kSceneOriginY + kSceneHeight &&
-		(point.x < 175 || point.x >= 460);
+	return point.y >= kSceneOriginY && point.y < kSceneOriginY + kSceneHeight && (point.x < 175 || point.x >= 460);
 }
 
 } // End of anonymous namespace
@@ -99,48 +97,44 @@ ShockLeverPuzzle::ShockLeverPuzzle(RipperEngine *engine) :
 
 bool ShockLeverPuzzle::loadLever(uint lever) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(
-			Common::String::format("lever%un", lever + 1)));
+		_library.createReadStreamForMember(Common::String::format("lever%un", lever + 1)));
 	AssetLibrary leverLibrary;
-	if (!stream || !leverLibrary.open(*stream,
-			Common::Path(Common::String::format("lever%un", lever + 1)))) {
-		warning("Ripper: could not open shock lever bitmap library lever=%u",
-			lever + 1);
+	if (!stream || !leverLibrary.open(*stream, Common::Path(Common::String::format("lever%un", lever + 1)))) {
+		warning("Ripper: could not open shock lever bitmap library lever=%u", lever + 1);
 		return false;
 	}
 
 	_leverFrames[lever].clear();
 	for (uint frameIndex = 0; frameIndex < kLeverFrameCount; ++frameIndex) {
 		BitmapAssetFrame frame;
-		const Common::String member =
-			Common::String::format("%u", frameIndex + 1);
+		const Common::String member = Common::String::format("%u", frameIndex + 1);
 		if (!leverLibrary.loadBitmap(member, frame))
 			return false;
+
 		_leverFrames[lever].push_back(Common::move(frame));
 	}
 	return true;
 }
 
 bool ShockLeverPuzzle::loadAssets() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(kLibraryName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(kLibraryName));
 	if (!stream || !_library.open(*stream, Common::Path(kLibraryName))) {
-		warning("Ripper: could not open shock lever library '%s'",
-			kLibraryName);
+		warning("Ripper: could not open shock lever library '%s'", kLibraryName);
 		return false;
 	}
-	if (!_library.loadBitmap(kBackgroundName, _background) ||
-			!_library.loadBitmap(kSubmitName, _submit))
+
+	if (!_library.loadBitmap(kBackgroundName, _background) || !_library.loadBitmap(kSubmitName, _submit))
 		return false;
+
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
 		if (!loadLever(lever))
 			return false;
 	}
 	if (!_library.hasMember(kScreenMediaName)) {
-		warning("Ripper: shock lever screen media '%s' is missing",
-			kScreenMediaName);
+		warning("Ripper: shock lever screen media '%s' is missing", kScreenMediaName);
 		return false;
 	}
+
 	for (uint cue = 0; cue < kAudioCueCount; ++cue) {
 		const Common::String name = Common::String::format("shock%u", cue);
 		if (!_library.hasMember(name)) {
@@ -150,8 +144,7 @@ bool ShockLeverPuzzle::loadAssets() {
 	}
 	for (uint outcome = 0; outcome < ARRAYSIZE(kOutcomeMediaNames); ++outcome) {
 		if (!_library.hasMember(kOutcomeMediaNames[outcome])) {
-			warning("Ripper: shock lever outcome media '%s' is missing",
-				kOutcomeMediaNames[outcome]);
+			warning("Ripper: shock lever outcome media '%s' is missing", kOutcomeMediaNames[outcome]);
 			return false;
 		}
 	}
@@ -166,8 +159,7 @@ bool ShockLeverPuzzle::loadAssets() {
 	return true;
 }
 
-void ShockLeverPuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y, bool transparent) const {
+void ShockLeverPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y, bool transparent) const {
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
 		const int destinationY = y + sourceY;
 		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
@@ -197,8 +189,8 @@ bool ShockLeverPuzzle::drawBackground() {
 			g_system->unlockScreen();
 		return false;
 	}
-	drawFrame((byte *)screen->getPixels(), screen->pitch, _background,
-		0, kSceneOriginY, false);
+
+	drawFrame((byte *)screen->getPixels(), screen->pitch, _background, 0, kSceneOriginY, false);
 	g_system->unlockScreen();
 
 	_engine->installScenePalette(_background.palette);
@@ -207,8 +199,7 @@ bool ShockLeverPuzzle::drawBackground() {
 }
 
 void ShockLeverPuzzle::restoreLeverBackings(byte *screen, uint pitch) const {
-	// Restore the SCREEN backing before drawing each transparent lever frame
-	// so transparent pixels cannot retain the prior pose.
+	// Restore the SCREEN backing before drawing each transparent lever frame so transparent pixels cannot retain the prior pose.
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
 		if (_leverFrames[lever].empty())
 			continue;
@@ -235,38 +226,29 @@ Common::Point ShockLeverPuzzle::puzzleHelpLabelPosition(uint lever) const {
 
 	const BitmapAssetFrame &frame = _leverFrames[lever].front();
 	const uint frameHeight = MAX<uint>(frame.height / kLeverFrameCount, 1);
-	const int targetY = kLeverPositions[lever].y - 5 +
-		kTargetFrames[lever] * frameHeight + frameHeight / 2;
+	const int targetY = kLeverPositions[lever].y - 5 + kTargetFrames[lever] * frameHeight + frameHeight / 2;
 	const Common::String label = Common::String::format("%u", lever + 1);
-	const int labelWidth = BitmapFontRenderer::measureText(
-		_puzzleHelpFont, label);
-	// The first two controls have room on their left; the third has room on
-	// its right. Keeping the labels outside the lever art makes the exact
-	// target position visible while the player drags through it.
+	const int labelWidth = BitmapFontRenderer::measureText(_puzzleHelpFont, label);
+	// The first two controls have room on their left; the third has room on its right.
+	// Keeping the labels outside the lever art makes the exact target position visible while the player drags through it.
 	const int labelX = lever + 1 == kLeverCount ?
 		kLeverPositions[lever].x + frame.width + 3 :
 		kLeverPositions[lever].x - labelWidth - 3;
-	return Common::Point(labelX,
-		targetY - _puzzleHelpFont.lineHeight / 2);
+	return Common::Point(labelX, targetY - _puzzleHelpFont.lineHeight / 2);
 }
 
-void ShockLeverPuzzle::restorePuzzleHelpBackings(byte *screen,
-		uint pitch) const {
+void ShockLeverPuzzle::restorePuzzleHelpBackings(byte *screen, uint pitch) const {
 	if (_puzzleHelpFont.glyphs.empty())
 		return;
 
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
 		const Common::String label = Common::String::format("%u", lever + 1);
 		const Common::Point position = puzzleHelpLabelPosition(lever);
-		const int labelWidth = BitmapFontRenderer::measureText(
-			_puzzleHelpFont, label);
+		const int labelWidth = BitmapFontRenderer::measureText(_puzzleHelpFont, label);
 		const int left = MAX<int>(position.x - 2, 0);
 		const int top = MAX<int>(position.y - 2, kSceneOriginY);
-		const int right = MIN<int>(position.x + labelWidth + 2,
-			_background.width);
-		const int bottom = MIN<int>(position.y +
-			_puzzleHelpFont.lineHeight + 2,
-			kSceneOriginY + _background.height);
+		const int right = MIN<int>(position.x + labelWidth + 2, _background.width);
+		const int bottom = MIN<int>(position.y + _puzzleHelpFont.lineHeight + 2, kSceneOriginY + _background.height);
 		if (left >= right || top >= bottom)
 			continue;
 		for (int y = top; y < bottom; ++y) {
@@ -282,8 +264,7 @@ void ShockLeverPuzzle::drawPuzzleHelpOverlay(byte *screen, uint pitch) const {
 	if (!_puzzleHelpEnabled || _puzzleHelpFont.glyphs.empty())
 		return;
 
-	const Common::Rect clip(0, kSceneOriginY, kRipperScreenWidth,
-		kSceneOriginY + kSceneHeight);
+	const Common::Rect clip(0, kSceneOriginY, kRipperScreenWidth, kSceneOriginY + kSceneHeight);
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
 		const Common::String label = Common::String::format("%u", lever + 1);
 		const Common::Point position = puzzleHelpLabelPosition(lever);
@@ -296,8 +277,7 @@ void ShockLeverPuzzle::drawPuzzleHelpOverlay(byte *screen, uint pitch) const {
 void ShockLeverPuzzle::drawOverlays() {
 	if (_puzzleHelpEnabled && !_puzzleHelpFontLoadAttempted) {
 		_puzzleHelpFontLoadAttempted = true;
-		if (!_engine->getResources()->loadInterfaceBitmapFont(
-				"small.fnt", _puzzleHelpFont)) {
+		if (!_engine->getResources()->loadInterfaceBitmapFont("small.fnt", _puzzleHelpFont)) {
 			warning("Ripper: could not load shock lever puzzle-help font");
 		} else {
 			debugC(2, kDebugPuzzles,
@@ -316,8 +296,7 @@ void ShockLeverPuzzle::drawOverlays() {
 	byte *pixels = (byte *)screen->getPixels();
 	restoreLeverBackings(pixels, screen->pitch);
 	restorePuzzleHelpBackings(pixels, screen->pitch);
-	drawFrame(pixels, screen->pitch, _submit,
-		kSubmitPosition.x, kSubmitPosition.y, true);
+	drawFrame(pixels, screen->pitch, _submit, kSubmitPosition.x, kSubmitPosition.y, true);
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
 		if (_leverFrame[lever] >= _leverFrames[lever].size())
 			continue;
@@ -345,8 +324,7 @@ int ShockLeverPuzzle::findLever(const Common::Point &point) const {
 	return -1;
 }
 
-ShockLeverPuzzle::HoverControl ShockLeverPuzzle::findControl(
-		const Common::Point &point, int &lever) const {
+ShockLeverPuzzle::HoverControl ShockLeverPuzzle::findControl(const Common::Point &point, int &lever) const {
 	lever = findLever(point);
 	if (lever >= 0)
 		return kHoverLever;
@@ -386,17 +364,15 @@ void ShockLeverPuzzle::updateDraggedLever(const Common::Point &point) {
 
 	const BitmapAssetFrame &frame = _leverFrames[_draggedLever].front();
 	const uint frameHeight = MAX<uint>(frame.height / kLeverFrameCount, 1);
-	const int relativeY =
-		point.y - (kLeverPositions[_draggedLever].y - 5);
-	const uint targetFrame = CLIP<int>(
-		relativeY / (int)frameHeight, 0, kLeverFrameCount - 1);
+	const int relativeY = point.y - (kLeverPositions[_draggedLever].y - 5);
+	const uint targetFrame = CLIP<int>(relativeY / (int)frameHeight, 0, kLeverFrameCount - 1);
 	const uint32 now = g_system->getMillis();
 	if (_leverFrame[_draggedLever] == targetFrame) {
 		g_system->getMixer()->stopHandle(_audioHandles[4]);
 		return;
 	}
-	if ((int32)(now - _lastLeverStepMillis) <
-				(int32)(kLeverStepTicks * kDosTickMillis))
+
+	if ((int32)(now - _lastLeverStepMillis) < (int32)(kLeverStepTicks * kDosTickMillis))
 		return;
 
 	const uint previousFrame = _leverFrame[_draggedLever];
@@ -419,16 +395,15 @@ void ShockLeverPuzzle::updateDraggedLever(const Common::Point &point) {
 bool ShockLeverPuzzle::playCue(uint cue, bool loop, uint volumePercent) {
 	if (cue >= kAudioCueCount)
 		return false;
+
 	const Common::String name = Common::String::format("shock%u", cue);
-	Common::SeekableReadStream *stream =
-		_library.createReadStreamForMember(name);
+	Common::SeekableReadStream *stream = _library.createReadStreamForMember(name);
 	if (!stream)
 		return false;
-	Audio::SeekableAudioStream *wavStream =
-		Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+
+	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 	if (!wavStream) {
-		warning("Ripper: could not decode shock lever audio '%s'",
-			name.c_str());
+		warning("Ripper: could not decode shock lever audio '%s'", name.c_str());
 		return false;
 	}
 
@@ -437,10 +412,8 @@ bool ShockLeverPuzzle::playCue(uint cue, bool loop, uint volumePercent) {
 	Audio::AudioStream *playbackStream = wavStream;
 	if (loop)
 		playbackStream = Audio::makeLoopingAudioStream(wavStream, 0);
-	const byte volume = (byte)(MIN<uint>(volumePercent, 100) *
-		Audio::Mixer::kMaxChannelVolume / 100);
-	mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioHandles[cue],
-		playbackStream, -1, volume);
+	const byte volume = (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
+	mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioHandles[cue], playbackStream, -1, volume);
 	debugC(3, kDebugPuzzles,
 		"Ripper: shock lever played cue=%u path='%s' loop=%d volume=%u",
 		cue, name.c_str(), loop, volumePercent);
@@ -455,10 +428,11 @@ void ShockLeverPuzzle::stopAudio() {
 bool ShockLeverPuzzle::waitForCue(uint cue) {
 	if (cue >= kAudioCueCount)
 		return false;
-	while (!_engine->shouldQuit() &&
-			g_system->getMixer()->isSoundHandleActive(_audioHandles[cue])) {
+
+	while (!_engine->shouldQuit() && g_system->getMixer()->isSoundHandleActive(_audioHandles[cue])) {
 		if (!serviceEngineEvents())
 			return false;
+
 		g_system->delayMillis(10);
 	}
 	return !_engine->shouldQuit();
@@ -467,8 +441,7 @@ bool ShockLeverPuzzle::waitForCue(uint cue) {
 uint ShockLeverPuzzle::countCorrect(bool logState) const {
 	uint correctCount = 0;
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
-		const int difference =
-			(int)_leverFrame[lever] - (int)kTargetFrames[lever];
+		const int difference = (int)_leverFrame[lever] - (int)kTargetFrames[lever];
 		if (ABS(difference) <= 1)
 			++correctCount;
 	}
@@ -480,19 +453,18 @@ uint ShockLeverPuzzle::countCorrect(bool logState) const {
 			kTargetFrames[0], kTargetFrames[1], kTargetFrames[2],
 			correctCount, kLeverCount);
 	}
+
 	return correctCount;
 }
 
 bool ShockLeverPuzzle::playOutcome(uint correctCount) {
 	if (correctCount >= ARRAYSIZE(kOutcomeMediaNames))
 		return false;
+
 	const char *name = kOutcomeMediaNames[correctCount];
-	debugC(1, kDebugPuzzles,
-		"Ripper: shock lever presenting outcome correct=%u media='%s'",
-		correctCount, name);
+	debugC(1, kDebugPuzzles, "Ripper: shock lever presenting outcome correct=%u media='%s'", correctCount, name);
 	_engine->getCursor()->setVisible(false);
-	const bool result = _engine->getMedia()->playSceneStream(
-		_library.createReadStreamForMember(name), name, 0, 0, true);
+	const bool result = _engine->getMedia()->playSceneStream(_library.createReadStreamForMember(name), name, 0, 0, true);
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setVisible(true);
 	return result;
@@ -507,9 +479,7 @@ uint16 ShockLeverPuzzle::serviceKeyboard() {
 			continue;
 
 		if (advanceKeyword(command, kCheatKeyword, _keywordIndex)) {
-			debugC(1, kDebugPuzzles,
-				"Ripper: shock lever completion keyword matched keyword='%s'",
-				kCheatKeyword);
+			debugC(1, kDebugPuzzles, "Ripper: shock lever completion keyword matched keyword='%s'", kCheatKeyword);
 			_keywordIndex = 0;
 			return kCheatCommand;
 		}
@@ -531,6 +501,7 @@ uint16 ShockLeverPuzzle::service(uint frame) {
 			_puzzleHelpEnabled, kTargetFrames[0], kTargetFrames[1],
 			kTargetFrames[2]);
 	}
+
 	updateCursor(mouse.position);
 	if ((mouse.pressed & kMouseButtonLeft) != 0) {
 		int lever = -1;
@@ -542,6 +513,7 @@ uint16 ShockLeverPuzzle::service(uint frame) {
 				mouse.position.x, mouse.position.y);
 			return kEscapeCommand;
 		}
+
 		if (control == kHoverSubmit)
 			return kSubmitCommand;
 		if (control == kHoverLever) {
@@ -554,6 +526,7 @@ uint16 ShockLeverPuzzle::service(uint frame) {
 				mouse.position.x, mouse.position.y);
 		}
 	}
+
 	if ((mouse.released & kMouseButtonLeft) != 0 && _draggedLever >= 0) {
 		debugC(2, kDebugPuzzles,
 			"Ripper: shock lever drag completed lever=%d frame=%u",
@@ -561,6 +534,7 @@ uint16 ShockLeverPuzzle::service(uint frame) {
 		g_system->getMixer()->stopHandle(_audioHandles[4]);
 		_draggedLever = -1;
 	}
+
 	if ((mouse.buttons & kMouseButtonLeft) != 0)
 		updateDraggedLever(mouse.position);
 	else if (_draggedLever >= 0) {
@@ -610,8 +584,7 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
 		uint16 command = 0;
-		Common::SeekableReadStream *screenStream =
-			_library.createReadStreamForMember(kScreenMediaName);
+		Common::SeekableReadStream *screenStream = _library.createReadStreamForMember(kScreenMediaName);
 		if (!_engine->getMedia()->playPuzzleSequenceStream(screenStream,
 				kScreenMediaName, kScreenMediaPosition.x,
 				kScreenMediaPosition.y, 1, this, &command)) {
@@ -624,31 +597,28 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 			active = false;
 			break;
 		case kHelpCommand:
-			debugC(1, kDebugPuzzles,
-				"Ripper: shock lever puzzle opening modal help table=0x%x",
-				kHelpSelectionTable);
+			debugC(1, kDebugPuzzles, "Ripper: shock lever puzzle opening modal help table=0x%x", kHelpSelectionTable);
 			if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 				warning("Ripper: shock lever puzzle modal help failed");
 			if (!drawBackground()) {
 				result = kLoadFailed;
 				active = false;
 			}
+
 			break;
 		case kSubmitCommand: {
 			playCue(3);
 			const uint correctCount = countCorrect(true);
 			playCue(1);
 			playCue(0);
-			g_system->getMixer()->setChannelVolume(_audioHandles[2],
-				Audio::Mixer::kMaxChannelVolume * 40 / 100);
-			if (!waitForCue(1) || !playOutcome(correctCount) ||
-					!drawBackground()) {
+			g_system->getMixer()->setChannelVolume(_audioHandles[2], Audio::Mixer::kMaxChannelVolume * 40 / 100);
+			if (!waitForCue(1) || !playOutcome(correctCount) || !drawBackground()) {
 				result = kLoadFailed;
 				active = false;
 				break;
 			}
-			g_system->getMixer()->setChannelVolume(_audioHandles[2],
-				Audio::Mixer::kMaxChannelVolume);
+
+			g_system->getMixer()->setChannelVolume(_audioHandles[2], Audio::Mixer::kMaxChannelVolume);
 			if (correctCount == kLeverCount) {
 				_solved = true;
 				result = kSolved;
@@ -657,6 +627,7 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 					"milestone deferred until exit milestone=%u",
 					completionFlag);
 			}
+
 			break;
 		}
 		case kCheatCommand:
@@ -667,6 +638,7 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 			} else {
 				_completionRecorded = true;
 			}
+
 			if (result != kLoadFailed && !playOutcome(kLeverCount))
 				result = kLoadFailed;
 			active = false;
@@ -677,6 +649,7 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 					"unexpected command=0x%04x", command);
 				result = kLoadFailed;
 			}
+
 			active = false;
 			break;
 		}
@@ -690,6 +663,7 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 			_completionRecorded = true;
 		}
 	}
+
 	_engine->getCursor()->update(0);
 	_incomingDisplay.restore();
 	_engine->getInput()->discardMouseTransitions();

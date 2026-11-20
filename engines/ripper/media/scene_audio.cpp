@@ -92,6 +92,7 @@ bool SceneAudioManager::load(const Common::String &path, bool preserve) {
 			"Ripper: loaded audio slot=%u key='%s' path='%s' preserve=%d occupied=%u/%u",
 			slotIndex, slot.key.c_str(), slot.path.c_str(), preserve, occupiedCount, kSlotCount);
 	}
+
 	return true;
 }
 
@@ -131,9 +132,11 @@ Audio::AudioStream *SceneAudioManager::prepareStream(const Slot &slot) const {
 			slot.key.c_str(), slot.path.c_str(), describeSlots().c_str());
 		return nullptr;
 	}
+
 	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 	if (!wavStream)
 		return nullptr;
+
 	Audio::AudioStream *stream = wavStream;
 	if ((slot.control & 1) != 0)
 		stream = Audio::makeLoopingAudioStream(wavStream, 0);
@@ -143,9 +146,11 @@ Audio::AudioStream *SceneAudioManager::prepareStream(const Slot &slot) const {
 bool SceneAudioManager::start(Slot &slot) {
 	if (_mixer->isSoundHandleActive(slot.handle))
 		return true;
+
 	Audio::AudioStream *stream = prepareStream(slot);
 	if (!stream)
 		return false;
+
 	start(slot, stream);
 	return true;
 }
@@ -162,8 +167,7 @@ void SceneAudioManager::start(Slot &slot, Audio::AudioStream *stream) {
 		slot.control, (slot.control & 1) != 0, _mixer->isSoundHandleActive(slot.handle));
 }
 
-bool SceneAudioManager::configure(const Common::String &key, uint volumePercent,
-		uint triggerFrame, byte control) {
+bool SceneAudioManager::configure(const Common::String &key, uint volumePercent, uint triggerFrame, byte control) {
 	Slot *slot = find(key);
 	if (!slot) {
 		if (debugChannelSet(2, kDebugAudio))
@@ -172,6 +176,7 @@ bool SceneAudioManager::configure(const Common::String &key, uint volumePercent,
 				key.c_str(), volumePercent, triggerFrame, control, describeSlots().c_str());
 		return true;
 	}
+
 	slot->volumePercent = MIN<uint>(volumePercent == 0 ? 100 : volumePercent, 100);
 	slot->targetVolumePercent = slot->volumePercent;
 	slot->triggerFrame = triggerFrame;
@@ -186,6 +191,7 @@ bool SceneAudioManager::configure(const Common::String &key, uint volumePercent,
 void SceneAudioManager::clearSlot(Slot &slot) {
 	if (!slot.occupied)
 		return;
+
 	_mixer->stopHandle(slot.handle);
 	slot = Slot();
 }
@@ -199,6 +205,7 @@ void SceneAudioManager::clear(const Common::String &key) {
 				key.c_str(), describeSlots().c_str());
 		return;
 	}
+
 	debugC(2, kDebugAudio, "Ripper: cleared audio slot key='%s'", key.c_str());
 	clearSlot(*slot);
 }
@@ -212,10 +219,10 @@ void SceneAudioManager::stop(const Common::String &key) {
 				key.c_str(), describeSlots().c_str());
 		return;
 	}
+
 	const bool active = _mixer->isSoundHandleActive(slot->handle);
 	_mixer->stopHandle(slot->handle);
-	debugC(2, kDebugAudio, "Ripper: stopped audio slot key='%s' active=%d retained=1",
-		key.c_str(), active);
+	debugC(2, kDebugAudio, "Ripper: stopped audio slot key='%s' active=%d retained=1", key.c_str(), active);
 }
 
 void SceneAudioManager::applyVolume(Slot &slot) {
@@ -225,8 +232,7 @@ void SceneAudioManager::applyVolume(Slot &slot) {
 	}
 }
 
-void SceneAudioManager::setVolume(const Common::String &key, uint targetVolumePercent,
-		uint startFrame, uint timing) {
+void SceneAudioManager::setVolume(const Common::String &key, uint targetVolumePercent, uint startFrame, uint timing) {
 	Slot *slot = find(key);
 	if (!slot) {
 		if (debugChannelSet(2, kDebugAudio))
@@ -235,6 +241,7 @@ void SceneAudioManager::setVolume(const Common::String &key, uint targetVolumePe
 				key.c_str(), targetVolumePercent, startFrame, timing, describeSlots().c_str());
 		return;
 	}
+
 	slot->targetVolumePercent = MIN<uint>(targetVolumePercent, 100);
 	slot->volumeStartFrame = startFrame;
 	slot->volumeTiming = timing;
@@ -258,6 +265,7 @@ void SceneAudioManager::setVolume(const Common::String &key, uint targetVolumePe
 		slot->volumeRampStep = timing;
 		slot->volumeTiming = difference;
 	}
+
 	slot->volumeRampPending = difference != 0;
 	debugC(2, kDebugAudio,
 		"Ripper: scheduled audio volume key='%s' current=%u target=%u start=%u timing=%u step=%u sparse=%d",
@@ -272,12 +280,11 @@ void SceneAudioManager::service(uint frame) {
 		if (!slot.occupied)
 			continue;
 		if (slot.triggerFrame == frame && !_mixer->isSoundHandleActive(slot.handle)) {
-			debugC(3, kDebugAudio, "Ripper: audio frame trigger slot=%u key='%s' frame=%u",
-				i, slot.key.c_str(), frame);
+			debugC(3, kDebugAudio, "Ripper: audio frame trigger slot=%u key='%s' frame=%u", i, slot.key.c_str(), frame);
 			if (!start(slot))
-				warning("Ripper: audio frame trigger failed slot=%u key='%s' frame=%u",
-					i, slot.key.c_str(), frame);
+				warning("Ripper: audio frame trigger failed slot=%u key='%s' frame=%u", i, slot.key.c_str(), frame);
 		}
+
 		if (!slot.volumeRampPending || frame < slot.volumeStartFrame)
 			continue;
 		if (slot.volumeTiming == 0) {
@@ -298,6 +305,7 @@ void SceneAudioManager::service(uint frame) {
 			if (slot.volumeRampProgress >= slot.volumeTiming)
 				slot.volumeRampProgress -= slot.volumeTiming;
 		}
+
 		applyVolume(slot);
 		if (slot.volumePercent == slot.targetVolumePercent) {
 			slot.volumeRampPending = false;
@@ -315,8 +323,7 @@ void SceneAudioManager::resetTriggers() {
 		_slots[i].volumeRampPending = false;
 	}
 	if (debugChannelSet(3, kDebugAudio))
-		debugC(3, kDebugAudio, "Ripper: reset per-frame audio triggers slots=[%s]",
-			describeSlots().c_str());
+		debugC(3, kDebugAudio, "Ripper: reset per-frame audio triggers slots=[%s]", describeSlots().c_str());
 }
 
 void SceneAudioManager::clearAll(bool includePreserved) {
@@ -356,8 +363,7 @@ void SceneAudioManager::captureSnapshot(Snapshot &state) const {
 		state.slots[i].handle = Audio::SoundHandle();
 	}
 	if (debugChannelSet(2, kDebugAudio))
-		debugC(2, kDebugAudio, "Ripper: captured scene audio snapshot slots=[%s]",
-			describeSlots().c_str());
+		debugC(2, kDebugAudio, "Ripper: captured scene audio snapshot slots=[%s]", describeSlots().c_str());
 }
 
 bool SceneAudioManager::restoreSnapshot(Snapshot &state) {
@@ -365,6 +371,7 @@ bool SceneAudioManager::restoreSnapshot(Snapshot &state) {
 		debugC(1, kDebugAudio, "Ripper: could not prepare scene audio snapshot");
 		return false;
 	}
+
 	applySnapshot(state);
 	return true;
 }

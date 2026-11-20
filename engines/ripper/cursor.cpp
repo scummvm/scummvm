@@ -53,6 +53,7 @@ CursorManager::~CursorManager() {
 bool CursorManager::initialize(ResourceManager &resources, uint assetCount) {
 	if (assetCount == 0 || assetCount > ARRAYSIZE(kCursorAssetNames))
 		return false;
+
 	for (uint i = 0; i < assetCount; ++i) {
 		if (!resources.loadInterfaceBitmapSequence(kCursorAssetNames[i], _assets[i]))
 			return false;
@@ -74,8 +75,7 @@ void CursorManager::setSelectionIndex(int cursorIndex) {
 	else if ((uint)cursorIndex >= ARRAYSIZE(kCursorAssetNames))
 		cursorIndex = ARRAYSIZE(kCursorAssetNames) - 1;
 	_selectionIndex = cursorIndex;
-	debugC(2, kDebugCursor,
-		"Ripper: stored UI selection index=%u", _selectionIndex);
+	debugC(2, kDebugCursor, "Ripper: stored UI selection index=%u", _selectionIndex);
 }
 
 void CursorManager::dispatchSelectionIndexChange(int cursorIndex) {
@@ -86,11 +86,11 @@ void CursorManager::dispatchSelectionIndexChange(int cursorIndex) {
 			cursorIndex, ARRAYSIZE(kCursorAssetNames));
 		return;
 	}
+
 	update(cursorIndex);
 }
 
-void CursorManager::applyCustomCursor(const BitmapAssetFrame &frame,
-		int hotspotX, int hotspotY, uint scale) {
+void CursorManager::applyCustomCursor(const BitmapAssetFrame &frame, int hotspotX, int hotspotY, uint scale) {
 	if (frame.pixels.empty() || frame.width == 0 || frame.height == 0)
 		return;
 	if (scale == 0)
@@ -130,8 +130,7 @@ void CursorManager::applyFrame() {
 	getHotspot(frame, hotspotX, hotspotY);
 	if (!frame.palette.empty())
 		CursorMan.replaceCursorPalette(frame.palette.data(), 0, frame.palette.size() / 3);
-	CursorMan.replaceCursor(frame.pixels.data(), frame.width, frame.height,
-		hotspotX, hotspotY, frame.transparentColor);
+	CursorMan.replaceCursor(frame.pixels.data(), frame.width, frame.height, hotspotX, hotspotY, frame.transparentColor);
 	debugC(11, kDebugCursor,
 		"Ripper: applied cursor=%u frame=%u size=%ux%u hotspot=%d,%d transparent=%u",
 		_cursorIndex, _frameIndex, frame.width, frame.height, hotspotX, hotspotY,
@@ -145,14 +144,14 @@ void CursorManager::update(uint cursorIndex) {
 		warning("Ripper: invalid cursor index %u; using default", cursorIndex);
 		cursorIndex = 0;
 	}
+
 	const uint32 now = g_system->getMillis(true);
 	if (cursorIndex != _cursorIndex || _nextFrameMillis == 0) {
 		_cursorIndex = cursorIndex;
 		_frameIndex = 0;
 		_nextFrameMillis = now + kCursorFrameDurationMillis;
 		applyFrame();
-		debugC(2, kDebugCursor, "Ripper: selected cursor=%u frames=%u",
-			_cursorIndex, _assets[_cursorIndex].frames.size());
+		debugC(2, kDebugCursor, "Ripper: selected cursor=%u frames=%u", _cursorIndex, _assets[_cursorIndex].frames.size());
 	} else if (_assets[_cursorIndex].frames.size() > 1 && now >= _nextFrameMillis) {
 		_frameIndex = (_frameIndex + 1) % _assets[_cursorIndex].frames.size();
 		_nextFrameMillis = now + kCursorFrameDurationMillis;
@@ -165,13 +164,13 @@ void CursorManager::update(uint cursorIndex) {
 void CursorManager::refresh() {
 	applyFrame();
 	setVisible(true);
-	debugC(11, kDebugCursor, "Ripper: refreshed cursor=%u frame=%u", _cursorIndex,
-		_frameIndex);
+	debugC(11, kDebugCursor, "Ripper: refreshed cursor=%u frame=%u", _cursorIndex, _frameIndex);
 }
 
 void CursorManager::setVisible(bool visible) {
 	if (_visible == visible)
 		return;
+
 	_visible = visible;
 	CursorMan.showMouse(visible);
 	debugC(2, kDebugCursor, "Ripper: cursor %s", visible ? "shown" : "hidden");

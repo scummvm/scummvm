@@ -59,17 +59,16 @@ BriefingManager::~BriefingManager() {
 
 bool BriefingManager::initialize(ResourceManager &resources, bool demoVariant) {
 	const char *assetName = demoVariant ? "toolbar3.pl" : "toolbar4.pl";
-	if (!resources.loadInterfaceBitmapSequence(assetName, _frames) ||
-			_frames.frames.empty())
+	if (!resources.loadInterfaceBitmapSequence(assetName, _frames) || _frames.frames.empty())
 		return false;
 
 	const BitmapAssetFrame &frame = _frames.frames.front();
 	if (frame.width == 0 || frame.height == 0 || frame.width > kBriefingRightEdge ||
 			kBriefingSceneOriginY + kBriefingControlOffsetY + frame.height > 400)
 		return false;
+
 	for (uint i = 1; i < _frames.frames.size(); ++i) {
-		if (_frames.frames[i].width != frame.width ||
-				_frames.frames[i].height != frame.height)
+		if (_frames.frames[i].width != frame.width || _frames.frames[i].height != frame.height)
 			return false;
 	}
 	_bounds = Common::Rect(kBriefingRightEdge - frame.width,
@@ -90,15 +89,17 @@ bool BriefingManager::arm(uint selector, bool playNotification) {
 		warning("Ripper: briefing selector %u requested before initialization", selector);
 		return false;
 	}
+
 	if (!isImplementedBriefingSelector(selector)) {
 		warning("Ripper: unsupported briefing selector %u", selector);
 		return false;
 	}
+
 	if (_announcedSelectors & (1U << selector)) {
-		debugC(2, kDebugScene,
-			"Ripper: briefing selector=%u already announced; trigger not rearmed", selector);
+		debugC(2, kDebugScene, "Ripper: briefing selector=%u already announced; trigger not rearmed", selector);
 		return true;
 	}
+
 	if (_armed)
 		clear();
 
@@ -118,6 +119,7 @@ bool BriefingManager::arm(uint selector, bool playNotification) {
 		clear();
 		return false;
 	}
+
 	return true;
 }
 
@@ -129,10 +131,10 @@ bool BriefingManager::isValidRestore(bool armed, uint selector, uint16 announced
 
 bool BriefingManager::restore(bool armed, uint selector, uint16 announcedSelectors) {
 	if (!isValidRestore(armed, selector, announcedSelectors)) {
-		warning("Ripper: cannot restore briefing selector=%u announced=0x%03x",
-			selector, announcedSelectors);
+		warning("Ripper: cannot restore briefing selector=%u announced=0x%03x", selector, announcedSelectors);
 		return false;
 	}
+
 	_engine->getMedia()->stopSoundEffect(_alertHandle);
 	_backing.clear();
 	_announcedSelectors = announcedSelectors;
@@ -150,13 +152,13 @@ bool BriefingManager::restore(bool armed, uint selector, uint16 announcedSelecto
 void BriefingManager::clear() {
 	if (!_armed)
 		return;
+
 	const bool alertStopped = _engine->getMedia()->stopSoundEffect(_alertHandle);
 	debugC(2, kDebugAudio,
 		"Ripper: briefing trigger stopped alert='wacicon1.wav' selector=%u active=%d",
 		_selector, alertStopped);
 	restoreBacking();
-	debugC(1, kDebugScene,
-		"Ripper: cleared briefing trigger selector=%u control=0x4e1", _selector);
+	debugC(1, kDebugScene, "Ripper: cleared briefing trigger selector=%u control=0x4e1", _selector);
 	_armed = false;
 	_selector = 0;
 	_frameIndex = 0;
@@ -166,18 +168,17 @@ void BriefingManager::clear() {
 void BriefingManager::prepareForSceneTransition() {
 	if (!_armed)
 		return;
+
 	// A briefing armed by WMAP*.RUN survives the following scene handoff.
-	// Discard its map-screen backing so the first destination frame captures
-	// the pixels that should be restored when the player activates the icon.
+	// Discard its map-screen backing so the first destination frame captures the pixels that should be restored when the player activates the icon.
 	_backing.clear();
-	debugC(3, kDebugScene,
-		"Ripper: discarded briefing backing before scene transition selector=%u",
-		_selector);
+	debugC(3, kDebugScene, "Ripper: discarded briefing backing before scene transition selector=%u", _selector);
 }
 
 void BriefingManager::captureBacking() {
 	if (!_backing.empty())
 		return;
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -185,10 +186,10 @@ void BriefingManager::captureBacking() {
 		_backing.clear();
 		return;
 	}
+
 	_backing.resize(_bounds.width() * _bounds.height());
 	for (int row = 0; row < _bounds.height(); ++row) {
-		memcpy(_backing.data() + row * _bounds.width(),
-			screen->getBasePtr(_bounds.left, _bounds.top + row), _bounds.width());
+		memcpy(_backing.data() + row * _bounds.width(), screen->getBasePtr(_bounds.left, _bounds.top + row), _bounds.width());
 	}
 	g_system->unlockScreen();
 }
@@ -196,6 +197,7 @@ void BriefingManager::captureBacking() {
 void BriefingManager::restoreBacking() {
 	if (_backing.size() != (uint)(_bounds.width() * _bounds.height()))
 		return;
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -203,9 +205,9 @@ void BriefingManager::restoreBacking() {
 		_backing.clear();
 		return;
 	}
+
 	for (int row = 0; row < _bounds.height(); ++row) {
-		memcpy(screen->getBasePtr(_bounds.left, _bounds.top + row),
-			_backing.data() + row * _bounds.width(), _bounds.width());
+		memcpy(screen->getBasePtr(_bounds.left, _bounds.top + row), _backing.data() + row * _bounds.width(), _bounds.width());
 	}
 	g_system->unlockScreen();
 	_backing.clear();
@@ -217,40 +219,36 @@ bool BriefingManager::activate() {
 	const uint selector = _selector;
 	clear();
 	_engine->getCursor()->setVisible(false);
-	debugC(1, kDebugScene,
-		"Ripper: activated briefing trigger selector=%u control=0x4e1", selector);
+	debugC(1, kDebugScene, "Ripper: activated briefing trigger selector=%u control=0x4e1", selector);
 
 	bool result = true;
 	switch (selector) {
 	case 1:
 		result = _engine->getMedia()->play("cp0_1_p1.avi", true, 0, 0);
 		if (result) {
-			result = _engine->getMilestones()->set(kMilestoneLastTravelLocation, true,
-				"briefing selector 1");
+			result = _engine->getMilestones()->set(kMilestoneLastTravelLocation, true, "briefing selector 1");
 			debugC(1, kDebugScene,
 				"Ripper: completed briefing selector=1 media='cp0_1_p1.avi' travelFlag=%u",
 				(uint)kMilestoneLastTravelLocation);
 		}
+
 		break;
 	case 2:
-		debugC(1, kDebugScene,
-			"Ripper: completed briefing selector=2 without media or state changes");
+		debugC(1, kDebugScene, "Ripper: completed briefing selector=2 without media or state changes");
 		break;
 	case 3:
 		result = _engine->getMedia()->play("rip_wac2.avi", true, 0, 0);
 		if (result) {
-			debugC(1, kDebugScene,
-				"Ripper: completed briefing selector=3 media='rip_wac2.avi' without state changes");
+			debugC(1, kDebugScene, "Ripper: completed briefing selector=3 media='rip_wac2.avi' without state changes");
 		}
+
 		break;
 	case 4:
 		result = _engine->getMedia()->play("sj_wacm.avi", true, 0, 0);
 		if (result)
-			result = _engine->getMilestones()->set(
-				kMilestoneReceivedJordanWacMessage, true, "briefing selector 4");
+			result = _engine->getMilestones()->set(kMilestoneReceivedJordanWacMessage, true, "briefing selector 4");
 		if (result)
-			result = _engine->getMilestones()->set(
-				kMilestoneWebRunnersLoftOpen, true, "briefing selector 4");
+			result = _engine->getMilestones()->set(kMilestoneWebRunnersLoftOpen, true, "briefing selector 4");
 		if (result) {
 			debugC(1, kDebugScene,
 				"Ripper: completed briefing selector=4 media='sj_wacm.avi' "
@@ -258,15 +256,14 @@ bool BriefingManager::activate() {
 				(uint)kMilestoneReceivedJordanWacMessage,
 				(uint)kMilestoneWebRunnersLoftOpen);
 		}
+
 		break;
 	case 5:
 		result = _engine->getMedia()->play("vf2_2_p1.avi", true, 0, 0);
 		if (result)
-			result = _engine->getMilestones()->set(
-				kMilestoneGotFarleyWacMessage, true, "briefing selector 5");
+			result = _engine->getMilestones()->set(kMilestoneGotFarleyWacMessage, true, "briefing selector 5");
 		if (result)
-			result = _engine->getMilestones()->set(
-				kMilestoneFirstTravelLocation, true, "briefing selector 5");
+			result = _engine->getMilestones()->set(kMilestoneFirstTravelLocation, true, "briefing selector 5");
 		if (result) {
 			debugC(1, kDebugScene,
 				"Ripper: completed briefing selector=5 media='vf2_2_p1.avi' "
@@ -274,24 +271,25 @@ bool BriefingManager::activate() {
 				(uint)kMilestoneGotFarleyWacMessage,
 				(uint)kMilestoneFirstTravelLocation);
 		}
+
 		break;
 	case 6:
 		result = _engine->getMedia()->play("rip_wac3.avi", true, 0, 0);
 		if (result)
-			result = _engine->getMilestones()->set(
-				kMilestonePlayedThirdRipperWacMessage, true, "briefing selector 6");
+			result = _engine->getMilestones()->set(kMilestonePlayedThirdRipperWacMessage, true, "briefing selector 6");
 		if (result) {
 			debugC(1, kDebugScene,
 				"Ripper: completed briefing selector=6 media='rip_wac3.avi' messageFlag=%u",
 				(uint)kMilestonePlayedThirdRipperWacMessage);
 		}
+
 		break;
 	case 7:
 		result = _engine->getMedia()->play("ripwac31.avi", true, 0, 0);
 		if (result) {
-			debugC(1, kDebugScene,
-				"Ripper: completed briefing selector=7 media='ripwac31.avi' without state changes");
+			debugC(1, kDebugScene, "Ripper: completed briefing selector=7 media='ripwac31.avi' without state changes");
 		}
+
 		break;
 	case 8: {
 		IndexedDisplaySnapshot displayContext;
@@ -303,11 +301,9 @@ bool BriefingManager::activate() {
 
 		result = _engine->getMedia()->play("wacgambi.avi", false, 0, 0);
 		if (result)
-			result = _engine->getMilestones()->set(
-				kMilestoneFalconettisWell, true, "briefing selector 8");
+			result = _engine->getMilestones()->set(kMilestoneFalconettisWell, true, "briefing selector 8");
 		if (result)
-			result = _engine->getMilestones()->set(
-				kMilestonePlayedGambitEmail, true, "briefing selector 8");
+			result = _engine->getMilestones()->set(kMilestonePlayedGambitEmail, true, "briefing selector 8");
 		if (result)
 			result = waitForAcknowledgement(selector);
 
@@ -316,6 +312,7 @@ bool BriefingManager::activate() {
 			warning("Ripper: could not restore display after briefing selector 8");
 			result = false;
 		}
+
 		if (result) {
 			debugC(1, kDebugScene,
 				"Ripper: completed briefing selector=8 media='wacgambi.avi' "
@@ -323,6 +320,7 @@ bool BriefingManager::activate() {
 				(uint)kMilestoneFalconettisWell,
 				(uint)kMilestonePlayedGambitEmail);
 		}
+
 		break;
 	}
 	default:
@@ -338,19 +336,16 @@ bool BriefingManager::waitForAcknowledgement(uint selector) {
 	InputManager *input = _engine->getInput();
 	input->drainKeys();
 	input->discardMouseTransitions();
-	debugC(2, kDebugScene,
-		"Ripper: briefing selector=%u waiting for keyboard or left-click acknowledgement",
-		selector);
+	debugC(2, kDebugScene, "Ripper: briefing selector=%u waiting for keyboard or left-click acknowledgement", selector);
 
 	while (!_engine->shouldQuit()) {
 		if (input->pollEvents()) {
 			break;
 		}
+
 		if (input->hasPendingKey()) {
 			const uint16 command = input->consumeKey();
-			debugC(2, kDebugInput,
-				"Ripper: briefing selector=%u acknowledged by keyboard command=0x%04x",
-				selector, command);
+			debugC(2, kDebugInput, "Ripper: briefing selector=%u acknowledged by keyboard command=0x%04x", selector, command);
 			return true;
 		}
 
@@ -361,6 +356,7 @@ bool BriefingManager::waitForAcknowledgement(uint selector) {
 				selector, mouse.position.x, mouse.position.y);
 			return true;
 		}
+
 		g_system->delayMillis(10);
 	}
 	return false;
@@ -373,20 +369,19 @@ void BriefingManager::advanceAnimation(uint32 now) {
 	_frameIndex = (_frameIndex + 1) % _frames.frames.size();
 	_lastFrameMillis = now;
 	if (_frameIndex == 0) {
-		_engine->getMedia()->playSoundEffect("wacicon1.wav", _alertHandle,
-			kBriefingAlertVolume);
+		_engine->getMedia()->playSoundEffect("wacicon1.wav", _alertHandle, kBriefingAlertVolume);
 		debugC(2, kDebugAudio,
 			"Ripper: briefing trigger selector=%u animation wrapped alert='wacicon1.wav' volume=%u",
 			_selector, kBriefingAlertVolume);
 	}
-	debugC(3, kDebugScene,
-		"Ripper: briefing trigger selector=%u frame=%u control=0x4e1",
-		_selector, _frameIndex);
+
+	debugC(3, kDebugScene, "Ripper: briefing trigger selector=%u frame=%u control=0x4e1", _selector, _frameIndex);
 }
 
 BriefingServiceResult BriefingManager::service(const MouseState &mouse) {
 	if (!_armed)
 		return kBriefingIdle;
+
 	advanceAnimation(g_system->getMillis(true));
 	draw();
 	const bool hovered = _bounds.contains(mouse.position);
@@ -396,6 +391,7 @@ BriefingServiceResult BriefingManager::service(const MouseState &mouse) {
 			"Ripper: briefing trigger hover=%d selector=%u point=%d,%d control=0x4e1",
 			_hovered, _selector, mouse.position.x, mouse.position.y);
 	}
+
 	if (!hovered)
 		return kBriefingIdle;
 
@@ -409,6 +405,7 @@ BriefingServiceResult BriefingManager::service(const MouseState &mouse) {
 void BriefingManager::draw() {
 	if (!_armed || _frames.frames.empty())
 		return;
+
 	captureBacking();
 
 	Graphics::Surface *screen = g_system->lockScreen();

@@ -27,8 +27,7 @@
 
 namespace Ripper {
 
-MilestoneOverlay::MilestoneOverlay(Milestones &milestones,
-		ScreenPresenter &presenter) :
+MilestoneOverlay::MilestoneOverlay(Milestones &milestones, ScreenPresenter &presenter) :
 		_milestones(milestones), _presenter(presenter), _enabled(false) {
 	_milestones.setChangeObserver(this);
 }
@@ -42,9 +41,7 @@ void MilestoneOverlay::setEnabled(bool enabled) {
 		return;
 
 	_enabled = enabled;
-	debugC(1, kDebugMilestones,
-		"Ripper: milestone change overlay enabled=%d command=OVERLAY_MILESTONES",
-		enabled);
+	debugC(1, kDebugMilestones, "Ripper: milestone change overlay enabled=%d command=OVERLAY_MILESTONES", enabled);
 }
 
 void MilestoneOverlay::onMilestoneChanged(uint flag, bool value) {

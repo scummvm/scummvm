@@ -53,10 +53,8 @@ public:
 	bool resetNotebook();
 	void run();
 	void serviceIdleEffects();
-	uint16 serviceFrontEndControls(const MouseState &mouse, uint fallbackCursor,
-		bool updateCursor = true);
-	uint16 dispatchSubsceneAction(uint16 action, uint helpResourceId,
-		bool databaseActive);
+	uint16 serviceFrontEndControls(const MouseState &mouse, uint fallbackCursor, bool updateCursor = true);
+	uint16 dispatchSubsceneAction(uint16 action, uint helpResourceId, bool databaseActive);
 
 private:
 	friend class WacDatabaseSession;
@@ -74,8 +72,7 @@ private:
 	Common::String notebookFileName() const;
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;
-	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text,
-		byte color) const;
+	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const;
 
 	RipperEngine *_engine;
 	BitmapAssetFrame _background;

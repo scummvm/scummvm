@@ -115,6 +115,7 @@ public:
 				"Ripper: ending-selection puzzle-help overlay enabled=%d expectedEnding=%u expected='%s' correctColor=green incorrectColor=red command=PUZZLE_HELP",
 				_enabled, _storyEnding, kEndingNames[_storyEnding]);
 		}
+
 		if (!_enabled || !selectionActive) {
 			_lastTarget = -1;
 			return hadOverlay;
@@ -130,6 +131,7 @@ public:
 		_overlayCorrect = selectedEnding == _storyEnding;
 		if (!draw(kThrowTargets[target]))
 			return hadOverlay;
+
 		_overlayActive = true;
 		if (target != _lastTarget) {
 			const ThrowTarget &region = kThrowTargets[target];
@@ -146,6 +148,7 @@ public:
 				region.cursorXMax * kEndingSelectionDisplayScale - 1,
 				region.cursorYMax * kEndingSelectionDisplayScale - 1);
 		}
+
 		_lastTarget = target;
 		return false;
 	}
@@ -155,6 +158,7 @@ public:
 	void transformPalette(byte *palette, uint colorCount) const {
 		if (!_overlayActive || _overlayPaletteIndex >= colorCount)
 			return;
+
 		byte *color = palette + _overlayPaletteIndex * 3;
 		if (_overlayCorrect) {
 			color[0] = 0;
@@ -177,6 +181,7 @@ private:
 				warning("Ripper: ending-selection puzzle-help overlay requires the indexed display");
 				_warningIssued = true;
 			}
+
 			return false;
 		}
 
@@ -187,8 +192,7 @@ private:
 				++paletteUse[row[x]];
 		}
 		_overlayPaletteIndex = 1;
-		// Keep indices 0, 254, and 255 available to the engine's other
-		// diagnostic overlays, which use those established interface colors.
+		// Keep indices 0, 254, and 255 available to the engine's other diagnostic overlays, which use those established interface colors.
 		for (uint index = 2; index < 254; ++index) {
 			if (paletteUse[index] < paletteUse[_overlayPaletteIndex])
 				_overlayPaletteIndex = index;
@@ -240,20 +244,16 @@ public:
 	bool loadCursors() {
 		Common::ScopedPtr<Common::SeekableReadStream> stream(
 			_engine->getResources()->createReadStreamForPath(kCursorLibraryName));
-		if (!stream || !_cursorLibrary.open(*stream,
-				Common::Path(kCursorLibraryName))) {
-			warning("Ripper: could not open ending cursor library '%s'",
-				kCursorLibraryName);
+		if (!stream || !_cursorLibrary.open(*stream, Common::Path(kCursorLibraryName))) {
+			warning("Ripper: could not open ending cursor library '%s'", kCursorLibraryName);
 			return false;
 		}
+
 		for (uint frame = 0; frame < kEndingCursorCount; ++frame) {
 			Common::ScopedPtr<Common::SeekableReadStream> frameStream(
-				_cursorLibrary.createReadStreamForMember(
-					Common::String::format("%u", frame + 1)));
-			if (!frameStream || !decodeBitmapAsset(*frameStream,
-					_cursorFrames[frame])) {
-				warning("Ripper: could not decode ending cursor frame=%u",
-					frame + 1);
+				_cursorLibrary.createReadStreamForMember(Common::String::format("%u", frame + 1)));
+			if (!frameStream || !decodeBitmapAsset(*frameStream, _cursorFrames[frame])) {
+				warning("Ripper: could not decode ending cursor frame=%u", frame + 1);
 				return false;
 			}
 		}
@@ -280,6 +280,7 @@ public:
 				kEndingSelectionCursorX * kEndingSelectionDisplayScale,
 				kEndingSelectionCursorY * kEndingSelectionDisplayScale);
 		}
+
 		debugC(2, kDebugScene,
 			"Ripper: ending-selection packetized branch sequence=%u active=%d cursor=%d position=%d,%d",
 			_sequenceId, _selectionActive, _cursorActive,
@@ -291,6 +292,7 @@ public:
 		if (_engine->getInput()->pollEvents()) {
 			return kCancelCommand;
 		}
+
 		while (_engine->getInput()->hasPendingKey()) {
 			if (_engine->getInput()->consumeKey() == 0x1b) {
 				debugC(1, kDebugScene,
@@ -300,22 +302,19 @@ public:
 			}
 		}
 
-		// Input and spin audio start with packetized sequence 3, independently
-		// of its frame number.
+		// Input and spin audio start with packetized sequence 3, independently of its frame number.
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		if (!_selectionActive)
 			return 0;
 		if (!_spinStarted) {
-			_spinStarted = _engine->getMedia()->playSoundEffect(
-				"spin_1.wav", _spinHandle, 100, true);
+			_spinStarted = _engine->getMedia()->playSoundEffect("spin_1.wav", _spinHandle, 100, true);
 			debugC(_spinStarted ? 2 : 1, kDebugScene,
 				"Ripper: ending-selection spin audio started sequence=%u frame=%u success=%d",
 				_sequenceId, frame, _spinStarted);
 		}
 
 		serviceCursor();
-		const bool refreshPalette =
-			_debugHelper.update(_selectionActive, frame);
+		const bool refreshPalette = _debugHelper.update(_selectionActive, frame);
 
 		// A held primary button remains eligible until a target window accepts it.
 		if ((mouse.buttons & kMouseButtonLeft) == 0) {
@@ -336,8 +335,7 @@ public:
 			if (inside) {
 				const uint selectedEnding = activeTarget % 4;
 				const bool correct = selectedEnding == _storyEnding;
-				_engine->getMedia()->playSoundEffect(
-					"ballthro.wav", _throwHandle, 100, false);
+				_engine->getMedia()->playSoundEffect("ballthro.wav", _throwHandle, 100, false);
 				debugC(1, kDebugScene,
 					"Ripper: ending selection queued throw command=0x%04x target=%u candidateEnding=%u candidate='%s' expectedEnding=%u expected='%s' correct=%d sound='ballthro.wav' initialMedia='%s' sequence=%u frame=%u point=%d,%d logical=%d,%d",
 					activeTarget + 1, (uint)activeTarget, selectedEnding,
@@ -369,8 +367,10 @@ public:
 					frame, mouse.position.x, mouse.position.y,
 					logicalPoint.x, logicalPoint.y);
 			}
+
 			_reportedHeldMiss = true;
 		}
+
 		return refreshPalette ? kContinueRefreshPalette : 0;
 	}
 
@@ -385,11 +385,11 @@ private:
 	void activateCursor() {
 		if (_cursorActive)
 			return;
+
 		_cursorActive = true;
 		_cursorFrame = 0;
 		applyCursorFrame();
-		_nextCursorFrameMillis =
-			g_system->getMillis(true) + kEndingCursorFrameDurationMillis;
+		_nextCursorFrameMillis = g_system->getMillis(true) + kEndingCursorFrameDurationMillis;
 		_engine->getCursor()->setVisible(true);
 		debugC(2, kDebugCursor,
 			"Ripper: activated ending-selection cursor frames=%u durationMs=%u",
@@ -408,14 +408,12 @@ private:
 	void serviceCursor() {
 		const uint32 now = g_system->getMillis(true);
 		if (now >= _nextCursorFrameMillis) {
-			const uint elapsedFrames = 1 +
-				(now - _nextCursorFrameMillis) /
-					kEndingCursorFrameDurationMillis;
+			const uint elapsedFrames = 1 + (now - _nextCursorFrameMillis) / kEndingCursorFrameDurationMillis;
 			_cursorFrame = (_cursorFrame + elapsedFrames) % kEndingCursorCount;
-			_nextCursorFrameMillis +=
-				elapsedFrames * kEndingCursorFrameDurationMillis;
+			_nextCursorFrameMillis += elapsedFrames * kEndingCursorFrameDurationMillis;
 			applyCursorFrame();
 		}
+
 		_engine->getCursor()->setVisible(true);
 	}
 
@@ -458,21 +456,18 @@ bool EndingSequence::run() {
 	Audio::SoundHandle windHandle;
 	Audio::SoundHandle spinHandle;
 	Audio::SoundHandle throwHandle;
-	EndingSelectionCallback callback(
-		_engine, spinHandle, throwHandle, storyEnding);
+	EndingSelectionCallback callback(_engine, spinHandle, throwHandle, storyEnding);
 	if (!callback.loadCursors())
 		return false;
 
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	const bool windStarted = _engine->getMedia()->playSoundEffect(
-		"windfin.wav", windHandle, 100, true);
+	const bool windStarted = _engine->getMedia()->playSoundEffect("windfin.wav", windHandle, 100, true);
 	uint16 command = 0;
 	debugC(1, kDebugScene,
 		"Ripper: entered ending selection storyEnding=%d expected='%s' wind=%d",
 		storyEnding, kEndingNames[storyEnding], windStarted);
-	bool result = _engine->getMedia()->playInteractiveIavf(
-		"ripmid.avi", &callback, &command);
+	bool result = _engine->getMedia()->playInteractiveIavf("ripmid.avi", &callback, &command);
 
 	if (command < 1 || command > kThrowTargetCount) {
 		_engine->getMedia()->stopSoundEffect(windHandle);
@@ -491,23 +486,21 @@ bool EndingSequence::run() {
 			kEndingNames[selectedEnding], storyEnding,
 			kEndingNames[storyEnding], correct,
 			kChosenEndingMedia[selectedEnding]);
-		result = _engine->getMedia()->play(
-			kChosenEndingMedia[selectedEnding], true) && result;
+		result = _engine->getMedia()->play(kChosenEndingMedia[selectedEnding], true) && result;
 		_engine->getMedia()->stopSoundEffect(spinHandle);
 		if (correct) {
 			if (storyEnding != 1) {
-				result = _engine->getMedia()->play(
-					storyEnding == 3 ? "end_him.avi" : "end_her.avi",
-					true) && result;
+				result = _engine->getMedia()->play(storyEnding == 3 ? "end_him.avi" : "end_her.avi", true) && result;
 			}
+
 			_engine->getMedia()->stopSoundEffect(windHandle);
 			result = _engine->getMedia()->play("quin_win.avi", true) && result;
-			result = _engine->getMedia()->play(
-				kCorrectEpilogueMedia[selectedEnding], true) && result;
+			result = _engine->getMedia()->play(kCorrectEpilogueMedia[selectedEnding], true) && result;
 		} else {
 			_engine->getMedia()->stopSoundEffect(windHandle);
 			result = _engine->getMedia()->play("ripfinal.avi", true) && result;
 		}
+
 		debugC(1, kDebugScene,
 			"Ripper: ending selection completed command=0x%04x target=%u selectedEnding=%u selected='%s' storyEnding=%d expected='%s' correct=%d",
 			command, command - 1, selectedEnding,
@@ -528,6 +521,7 @@ bool EndingSequence::run() {
 		g_system->fillScreen(0);
 		presentScreen();
 	}
+
 	debugC(1, kDebugScene,
 		"Ripper: left ending sequence result=%d command=0x%04x quit=%d",
 		result, command, _engine->shouldQuit());

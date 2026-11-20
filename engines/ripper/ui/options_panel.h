@@ -64,8 +64,7 @@ private:
 
 	bool initializeRetail(ResourceManager &resources);
 	bool initializeDemo(ResourceManager &resources);
-	bool loadFrameSet(ResourceManager &resources, const char *prefix, uint count,
-		Common::Array<BitmapAssetFrame> &frames);
+	bool loadFrameSet(ResourceManager &resources, const char *prefix, uint count, Common::Array<BitmapAssetFrame> &frames);
 	bool captureDisplay();
 	void restoreDisplay();
 	void applyPalette();
@@ -74,8 +73,7 @@ private:
 	void drawBitmap(const BitmapAssetFrame &frame, int x, int y) const;
 	void drawKeyLabel(uint16 command);
 	void clearKeyLabel();
-	void drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const;
+	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const;
 	uint measureText(const Common::String &text) const;
 	Common::String formatKeyLabel(uint16 command) const;
 	int findControl(const Common::Point &point) const;

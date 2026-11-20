@@ -128,7 +128,6 @@ bool CompiledScript::parseHeader() {
 	const uint16 frameCount = readUint16(0xe1);
 	const uint32 interactionOffset = readUint32(0xe3);
 	const uint16 interactionCount = readUint16(0xe7);
-
 	if (_argumentLayoutStride == 0 ||
 		!canRead(_argumentLayoutOffset, (uint32)_argumentLayoutStride * _argumentLayoutCount) ||
 		!canRead(frameOffset, (uint32)frameCount * kFrameRecordSize) ||
@@ -191,6 +190,7 @@ bool CompiledScript::parseHeader() {
 			warning("Ripper: script '%s' has invalid interaction callback %u", _memberName.c_str(), i);
 			return false;
 		}
+
 		_interactions.push_back(Common::move(interaction));
 	}
 
@@ -210,10 +210,10 @@ bool CompiledScript::decodeCallback(uint32 offset, Common::Array<ScriptCommand> 
 		if (opcode == kCallbackTerminator)
 			return true;
 		if (opcode >= _argumentLayoutCount || !canRead(cursor, 2)) {
-			warning("Ripper: script '%s' has invalid opcode 0x%02x at 0x%x",
-				_memberName.c_str(), opcode, command.offset);
+			warning("Ripper: script '%s' has invalid opcode 0x%02x at 0x%x", _memberName.c_str(), opcode, command.offset);
 			return false;
 		}
+
 		command.opcode = (ScriptOpcode)opcode;
 
 		command.selector = readUint16(cursor);
@@ -232,6 +232,7 @@ bool CompiledScript::decodeCallback(uint32 offset, Common::Array<ScriptCommand> 
 			case 3:
 				if (!canRead(cursor, 2))
 					return false;
+
 				argument.value = readUint16(cursor);
 				cursor += 2;
 				break;
@@ -241,10 +242,12 @@ bool CompiledScript::decodeCallback(uint32 offset, Common::Array<ScriptCommand> 
 			case 7: {
 				if (!canRead(cursor, 2))
 					return false;
+
 				const uint16 length = readUint16(cursor);
 				cursor += 2;
 				if (!canRead(cursor, length))
 					return false;
+
 				argument.data.resize(length);
 				for (uint dataIndex = 0; dataIndex < length; ++dataIndex) {
 					byte value = _data[cursor + dataIndex];
@@ -259,6 +262,7 @@ bool CompiledScript::decodeCallback(uint32 offset, Common::Array<ScriptCommand> 
 			case 5:
 				if (!canRead(cursor, 4))
 					return false;
+
 				argument.value = readUint32(cursor);
 				cursor += 4;
 				if (argument.value >= _data.size())
@@ -270,6 +274,7 @@ bool CompiledScript::decodeCallback(uint32 offset, Common::Array<ScriptCommand> 
 			case 9:
 				if (!canRead(cursor, 4))
 					return false;
+
 				argument.value = readUint32(cursor);
 				cursor += 4;
 				break;

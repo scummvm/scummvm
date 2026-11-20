@@ -54,15 +54,14 @@ const char *mediaFormatName(MediaFormat format);
 
 class MediaSequenceCallback {
 public:
-	// A nested presentation may replace the active VGA palette while the outer
-	// Smacker stays paused. Resume it after restoring its decoder palette.
+	// A nested presentation may replace the active VGA palette while the outer Smacker stays paused.
+	// Resume it after restoring its decoder palette.
 	static const uint16 kContinueRefreshPalette = 0xffff;
 
 	virtual ~MediaSequenceCallback() {}
 
 	virtual void beginIavfSegment(uint sequenceId) {}
-	virtual void beginIavfSegment(uint sequenceId, uint frameCount,
-		uint width, uint height) {
+	virtual void beginIavfSegment(uint sequenceId, uint frameCount, uint width, uint height) {
 		beginIavfSegment(sequenceId);
 	}
 	virtual uint16 service(uint frame) = 0;
@@ -95,22 +94,19 @@ public:
 	bool playWacInterfaceSequenceStream(Common::SeekableReadStream *stream,
 		const Common::String &name, const Common::Rect &centerBounds,
 		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command);
-	bool playInterfaceSequence(const Common::String &path, int x, int y,
-		Common::Array<byte> &sourcePalette);
+	bool playInterfaceSequence(const Common::String &path, int x, int y, Common::Array<byte> &sourcePalette);
 	bool displayScenePcx(const Common::String &path);
 	bool displayInterfacePcx(const Common::String &path);
 	bool playBlockingAudio(const Common::String &path, bool showCursor = true,
 		const Common::String &presentationText = Common::String(),
 		int displayTop = 0);
-	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
-		uint volumePercent = 100, bool loop = false);
+	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle, uint volumePercent = 100, bool loop = false);
 	bool playSoundEffectStream(Common::SeekableReadStream *stream,
 		const Common::String &name, Audio::SoundHandle &handle,
 		uint volumePercent = 100, bool loop = false);
 	bool playRawSoundEffect(const Common::Array<byte> &data, uint sampleRate,
 		byte flags, Audio::SoundHandle &handle, uint volumePercent = 100);
-	bool playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
-		uint volumePercent = 100);
+	bool playVoiceClip(const Common::String &path, Audio::SoundHandle &handle, uint volumePercent = 100);
 	bool playVoiceClipStream(Common::SeekableReadStream *stream,
 		const Common::String &name, Audio::SoundHandle &handle,
 		uint volumePercent = 100);
@@ -123,20 +119,15 @@ public:
 	bool playPuzzleSequenceStream(Common::SeekableReadStream *stream,
 		const Common::String &name, int x, int y, uint loopStartFrame,
 		MediaSequenceCallback *callback, uint16 *command = nullptr);
-	bool playSceneStream(Common::SeekableReadStream *stream,
-		const Common::String &name, int x, int y, bool allowEscSpace);
+	bool playSceneStream(Common::SeekableReadStream *stream, const Common::String &name, int x, int y, bool allowEscSpace);
 	bool playPuzzleSequenceSegment(const Common::String &path, uint firstFrame,
 		uint lastFrame, int x, int y, MediaSequenceCallback *callback,
 		uint16 *command = nullptr, uint boundedLoopStartFrame = 0xffffffff);
-	bool playCombatSequence(const Common::String &path,
-		MediaSequenceCallback *callback, uint16 *command = nullptr);
-	bool playShootingGallerySequence(const Common::String &path,
-		MediaSequenceCallback *callback, uint16 *command = nullptr);
-	bool playBlobShooterSequence(const Common::String &path,
-		MediaSequenceCallback *callback, uint16 *command = nullptr);
+	bool playCombatSequence(const Common::String &path, MediaSequenceCallback *callback, uint16 *command = nullptr);
+	bool playShootingGallerySequence(const Common::String &path, MediaSequenceCallback *callback, uint16 *command = nullptr);
+	bool playBlobShooterSequence(const Common::String &path, MediaSequenceCallback *callback, uint16 *command = nullptr);
 	bool playTransparentSmackerOverlay(const Common::String &path, int x, int y);
-	bool playInteractiveIavf(const Common::String &path,
-		MediaSequenceCallback *callback, uint16 *command);
+	bool playInteractiveIavf(const Common::String &path, MediaSequenceCallback *callback, uint16 *command);
 	void fadePalette(bool fadeIn, uint stepCount);
 	bool playScene(const Common::String &path, const ScenePlaybackOptions &options);
 	void pauseActiveMedia(bool pause);
@@ -186,8 +177,7 @@ private:
 		uint loopStartFrame = 0);
 	SmackerPlaybackResult playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		const SmackerPlaybackPlan &plan);
-	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
-		const IavfPlaybackOptions &options);
+	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name, const IavfPlaybackOptions &options);
 	PlaybackInputResult servicePlaybackInput(Video::SmackerDecoder &decoder,
 		const SmackerInputPolicy &policy, bool &paused,
 		Audio::SoundHandle *externalAudio, bool toolbarOwnsInput,

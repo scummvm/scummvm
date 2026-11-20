@@ -135,8 +135,7 @@ private:
 	CallbackResult executeCallback(const CompiledScript &script, uint32 callbackOffset,
 		uint *nextFrame = nullptr, uint commandStart = 0,
 		const CallbackContext &context = CallbackContext());
-	bool handleActiveRuntimeExit(CallbackResult result, const CompiledScript &script,
-		const char *callbackPhase);
+	bool handleActiveRuntimeExit(CallbackResult result, const CompiledScript &script, const char *callbackPhase);
 	bool acceptConcurrentRuntimeExit(CallbackResult result, const char *callbackPhase);
 	bool captureCyberKeyboardCommand();
 	bool serviceCyberKeyboardCommand();
@@ -145,8 +144,7 @@ private:
 	void initializeActiveInteractionState(const ScriptFrame &frame);
 	void beginActiveInteractionWait(const Common::String &frameLabel, uint interactionCount);
 	bool advanceActiveScriptToFrame(uint nextFrame);
-	CallbackResult prepareFramePresentation(const ScriptFrame &frame,
-		const Common::String &label, FramePresentationPlan &plan);
+	CallbackResult prepareFramePresentation(const ScriptFrame &frame, const Common::String &label, FramePresentationPlan &plan);
 	FramePresentationResult executeFramePresentation(const ScriptFrame &frame,
 		const Common::String &label, const FramePresentationPlan &plan);
 	bool executeConcurrentFrame();
@@ -154,13 +152,11 @@ private:
 	bool runWorldMapCheckpoint(uint chapter);
 	uint resolveFrameIndex(const CompiledScript &script, const Common::String &label) const;
 	Common::Rect interactionBounds(const ScriptInteraction &interaction) const;
-	const ScriptInteraction *findActiveInteraction(const Common::Point &point,
-		uint *interactionIndex = nullptr) const;
+	const ScriptInteraction *findActiveInteraction(const Common::Point &point, uint *interactionIndex = nullptr) const;
 	bool isScenePlayed(const Common::String &scene) const;
 	void setScenePlayed(const Common::String &scene, bool played);
 	void markScenePlayed(const Common::String &scene);
-	void retainPreviousInteractionScene(const Common::String &mediaPath,
-		const char *source);
+	void retainPreviousInteractionScene(const Common::String &mediaPath, const char *source);
 	static Common::String argumentString(const ScriptArgument &argument);
 
 	RipperEngine *_engine;

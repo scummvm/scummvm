@@ -62,6 +62,7 @@ bool CyberManager::suspendSession(Session &session) const {
 		warning("Ripper: could not capture Cyber transition display");
 		return false;
 	}
+
 	_engine->getSceneAudio()->captureSnapshot(session.audioState);
 	_engine->getScripts()->suspendForCyber(session.runtime);
 	return true;
@@ -74,6 +75,7 @@ void CyberManager::prepareSession(int selectionIndex) const {
 		cursor->setSelectionIndex(selectionIndex);
 		cursor->dispatchSelectionIndexChange(selectionIndex);
 	}
+
 	cursor->setVisible(false);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
@@ -82,13 +84,13 @@ void CyberManager::prepareSession(int selectionIndex) const {
 	presentScreen();
 }
 
-bool CyberManager::runScriptLoop(bool active, uint action,
-		const Common::String &programName) const {
+bool CyberManager::runScriptLoop(bool active, uint action, const Common::String &programName) const {
 	ScriptManager *scripts = _engine->getScripts();
 	while (active && !scripts->isCyberExitRequested() && !_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
 			break;
 		}
+
 		if (!scripts->serviceScene()) {
 			if (!programName.empty()) {
 				const uint frame = scripts->getActiveFrame();
@@ -100,16 +102,17 @@ bool CyberManager::runScriptLoop(bool active, uint action,
 					label.c_str(), scripts->isAwaitingInteraction(),
 					scripts->getPendingSceneMember().c_str(), scripts->getPendingSceneEntryLabel().c_str());
 			}
+
 			return false;
 		}
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}
 	return active;
 }
 
-CyberManager::Result CyberManager::restoreSession(Session &session,
-		uint selectionIndex, Result result) const {
+CyberManager::Result CyberManager::restoreSession(Session &session, uint selectionIndex, Result result) const {
 	const bool restoreVisibleCursor = session.runtime.awaitingInteraction;
 	_engine->getSceneAudio()->clearAll(true);
 	const bool audioRestored = _engine->getSceneAudio()->restoreSnapshot(session.audioState);
@@ -122,8 +125,7 @@ CyberManager::Result CyberManager::restoreSession(Session &session,
 	_engine->getInput()->discardMouseTransitions();
 	cursor->setVisible(restoreVisibleCursor);
 	if (restoreVisibleCursor)
-		_engine->getScripts()->updateInteractiveCursor(
-			_engine->getInput()->peekMouseState().position);
+		_engine->getScripts()->updateInteractiveCursor(_engine->getInput()->peekMouseState().position);
 	return audioRestored ? result : kLoadFailed;
 }
 
@@ -159,8 +161,7 @@ CyberManager::Result CyberManager::run() {
 	return restoreSession(session, kSceneSelectionIndex, result);
 }
 
-CyberManager::Result CyberManager::runProgram(uint action,
-		const char *scriptBaseName, uint argument) {
+CyberManager::Result CyberManager::runProgram(uint action, const char *scriptBaseName, uint argument) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Session session;
 	if (!suspendSession(session))
@@ -169,8 +170,7 @@ CyberManager::Result CyberManager::runProgram(uint action,
 	ScriptManager *scripts = _engine->getScripts();
 	const uint restoreSelectionIndex = _engine->getCursor()->getSelectionIndex();
 	const bool isKaDialogue = action == kSceneActionKaDialogue;
-	const bool isWoffordMedia = action == kSceneActionKcOrWoffordProgram &&
-		Common::String(scriptBaseName) == "wofford-media";
+	const bool isWoffordMedia = action == kSceneActionKcOrWoffordProgram && Common::String(scriptBaseName) == "wofford-media";
 	const bool isSelfContainedScene = isKaDialogue || isWoffordMedia;
 	const Common::String programName = isKaDialogue ? Common::String("ka-dialogue") :
 		(isWoffordMedia ? Common::String(scriptBaseName) :

@@ -72,6 +72,7 @@ uint KkTileMatchModel::matchingActiveTileCount() const {
 			referenceState = _states[tile];
 			haveReference = true;
 		}
+
 		if (_states[tile] == referenceState)
 			++count;
 	}
@@ -92,6 +93,7 @@ KkTileMatchModel::MatchResult KkTileMatchModel::applyClick(uint tile, const int 
 		for (uint activeTile = 0; activeTile < kTileCount; ++activeTile)
 			hide(activeTile);
 	}
+
 	return result;
 }
 

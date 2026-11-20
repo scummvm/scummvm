@@ -63,8 +63,7 @@ void Ebz2sScene::resetSelection() {
 
 bool Ebz2sScene::runInventory(int grantFlag) {
 	const Inventory::Result result = grantFlag >= 0 ?
-		_engine->getInventory()->grantAndRun(grantFlag, kSceneLabel,
-			"ebz2s-scene-action-14") :
+		_engine->getInventory()->grantAndRun(grantFlag, kSceneLabel, "ebz2s-scene-action-14") :
 		_engine->getInventory()->run(kSceneLabel);
 	debugC(result == Inventory::kLoadFailed ? 1 : 2, kDebugScene,
 		"Ripper: EBZ2S inventory completed result=%d grantFlag=%d bugConsumed=%d eyeballConsumed=%d",
@@ -84,8 +83,7 @@ Ebz2sScene::Result Ebz2sScene::run(uint sceneArgument) {
 	} else {
 		Milestones *milestones = _engine->getMilestones();
 		int grantFlag = -1;
-		if (!milestones->isSet(kEyeballUnlockFlag) ||
-				milestones->isSet(kEyeballConsumedFlag))
+		if (!milestones->isSet(kEyeballUnlockFlag) || milestones->isSet(kEyeballConsumedFlag))
 			grantFlag = kEyeballUnlockFlag;
 		else if (milestones->isSet(kBugConsumedFlag))
 			grantFlag = kBugUnlockFlag;
@@ -108,6 +106,7 @@ Ebz2sScene::Result Ebz2sScene::run(uint sceneArgument) {
 				if (_engine->getInput()->pollEvents()) {
 					break;
 				}
+
 				while (_engine->getInput()->hasPendingKey()) {
 					if (_engine->getInput()->consumeKey() == kHelpCommand &&
 							!_engine->getModalDialog()->run(kHelpResource, true)) {
@@ -120,26 +119,26 @@ Ebz2sScene::Result Ebz2sScene::run(uint sceneArgument) {
 
 				const MouseState mouse = _engine->getInput()->publishMouseState();
 				int toolbarAction = -1;
-				if (_engine->getToolbar()->service(mouse, kToolbarMask,
-						&toolbarAction)) {
+				if (_engine->getToolbar()->service(mouse, kToolbarMask, &toolbarAction)) {
 					_engine->getCursor()->update(kDefaultCursor);
 					_engine->getCursor()->setVisible(true);
-					if (toolbarAction == kInventoryAction &&
-							!runInventory(-1)) {
+					if (toolbarAction == kInventoryAction && !runInventory(-1)) {
 						result = kLoadFailed;
 						break;
 					}
-					if (toolbarAction == kHelpAction &&
-							!_engine->getModalDialog()->run(kHelpResource, true)) {
+
+					if (toolbarAction == kHelpAction && !_engine->getModalDialog()->run(kHelpResource, true)) {
 						result = kLoadFailed;
 						break;
 					}
+
 					if (toolbarAction >= 0)
 						resetSelection();
 				} else {
 					_engine->getCursor()->update(kDefaultCursor);
 					_engine->getCursor()->setVisible(true);
 				}
+
 				_engine->getCursor()->refresh();
 				presentScreen();
 				g_system->delayMillis(10);

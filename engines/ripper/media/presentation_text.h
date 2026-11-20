@@ -33,22 +33,17 @@ namespace Ripper {
 class InputManager;
 class RipperEngine;
 
-Common::Rect calculatePresentationTextBounds(uint sequenceId, uint videoMode,
-	bool largeMedia, int displayTop);
-Common::Rect calculatePresentationContinueBounds(
-	const Common::Rect &textBounds);
-uint calculatePresentationTextAutoScrollLine(uint progress, uint total,
-	uint maximumFirstVisible);
+Common::Rect calculatePresentationTextBounds(uint sequenceId, uint videoMode, bool largeMedia, int displayTop);
+Common::Rect calculatePresentationContinueBounds(const Common::Rect &textBounds);
+uint calculatePresentationTextAutoScrollLine(uint progress, uint total, uint maximumFirstVisible);
 
 class PresentationTextControl {
 public:
-	PresentationTextControl(RipperEngine *engine, InputManager *input,
-		const Common::String &text, int displayTop);
+	PresentationTextControl(RipperEngine *engine, InputManager *input, const Common::String &text, int displayTop);
 
 	bool isActive() const { return !_text.empty(); }
 	bool isDismissed() const { return _dismissed; }
-	void configureSegment(uint sequenceId, uint totalFrames,
-		uint mediaWidth, uint mediaHeight, uint videoMode);
+	void configureSegment(uint sequenceId, uint totalFrames, uint mediaWidth, uint mediaHeight, uint videoMode);
 	uint16 service(uint progress);
 	bool waitForDismissal();
 	void applySharedPalettePatch();
@@ -79,8 +74,7 @@ public:
 	PresentationTextMediaCallback(RipperEngine *engine, InputManager *input,
 		const Common::String &text, int displayTop, uint videoMode);
 
-	void beginIavfSegment(uint sequenceId, uint frameCount,
-		uint width, uint height) override;
+	void beginIavfSegment(uint sequenceId, uint frameCount, uint width, uint height) override;
 	uint16 service(uint frame) override;
 	bool ownsInput() const override { return true; }
 	bool waitForDismissal() { return _control.waitForDismissal(); }

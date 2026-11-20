@@ -117,8 +117,7 @@ bool BrokenMugPuzzle::loadPiece(uint pieceIndex) {
 		frame.height = surface->h;
 		frame.pixels.resize(frame.width * frame.height);
 		for (uint y = 0; y < frame.height; ++y)
-			memcpy(frame.pixels.data() + y * frame.width,
-				surface->getBasePtr(0, y), frame.width);
+			memcpy(frame.pixels.data() + y * frame.width, surface->getBasePtr(0, y), frame.width);
 		frame.palette = palette;
 		piece.frames.push_back(Common::move(frame));
 	}
@@ -137,6 +136,7 @@ bool BrokenMugPuzzle::loadPieces() {
 	for (uint pieceIndex = 0; pieceIndex < kPieceCount; ++pieceIndex) {
 		if (!loadPiece(pieceIndex))
 			return false;
+
 		_frontToBack.push_back(pieceIndex);
 	}
 	_activePuzzlePalette = currentFrame(_pieces[kPieceCount - 1]).palette;
@@ -156,13 +156,11 @@ const BrokenMugPuzzle::Frame &BrokenMugPuzzle::currentFrame(const Piece &piece) 
 	if (_rotationStep >= 0 && _draggedPiece >= 0 && &piece == &_pieces[_draggedPiece])
 		frameIndex = (piece.orientation * kFramesPerOrientation + _rotationStep) % kPieceFrameCount;
 	else
-		frameIndex = (piece.orientation * kFramesPerOrientation + kPieceFrameCount - 1) %
-			kPieceFrameCount;
+		frameIndex = (piece.orientation * kFramesPerOrientation + kPieceFrameCount - 1) % kPieceFrameCount;
 	return piece.frames[frameIndex];
 }
 
-void BrokenMugPuzzle::drawPiece(byte *screen, uint pitch, const Piece &piece,
-		const Frame &frame) const {
+void BrokenMugPuzzle::drawPiece(byte *screen, uint pitch, const Piece &piece, const Frame &frame) const {
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
 		const int destinationY = piece.position.y + sourceY;
 		if (destinationY < 0 || destinationY >= 400)
@@ -187,11 +185,8 @@ void BrokenMugPuzzle::render() {
 	}
 
 	for (int y = 0; y < screen->h; ++y)
-		memcpy(screen->getBasePtr(0, y),
-			_backgroundDisplay.pixels().data() + y * screen->w, screen->w);
-	screen->fillRect(Common::Rect(kViewportLeft, kViewportTop,
-		kViewportRight, kViewportBottom),
-		kViewportFillColor);
+		memcpy(screen->getBasePtr(0, y), _backgroundDisplay.pixels().data() + y * screen->w, screen->w);
+	screen->fillRect(Common::Rect(kViewportLeft, kViewportTop, kViewportRight, kViewportBottom), kViewportFillColor);
 	for (int order = (int)_frontToBack.size() - 1; order >= 0; --order) {
 		const Piece &piece = _pieces[_frontToBack[order]];
 		drawPiece((byte *)screen->getPixels(), screen->pitch, piece, currentFrame(piece));
@@ -204,6 +199,7 @@ void BrokenMugPuzzle::render() {
 			_activePuzzlePalette.data() + kPalettePatchFirst * 3,
 			kPalettePatchCount * 3);
 	}
+
 	setIndexedPaletteIfChanged(palette.data());
 	presentScreen();
 }
@@ -245,6 +241,7 @@ bool BrokenMugPuzzle::updateDrag(const Common::Point &point) {
 	Piece &piece = _pieces[_draggedPiece];
 	if (piece.position == position)
 		return false;
+
 	piece.position = position;
 	return true;
 }
@@ -260,6 +257,7 @@ void BrokenMugPuzzle::beginRotation() {
 bool BrokenMugPuzzle::updateRotation(uint32 now) {
 	if (_rotationStep < 0 || now < _nextRotationMillis)
 		return false;
+
 	_activePuzzlePalette = currentFrame(_pieces[_draggedPiece]).palette;
 	++_rotationStep;
 	_nextRotationMillis = now + kRotationFrameMillis;
@@ -272,6 +270,7 @@ bool BrokenMugPuzzle::updateRotation(uint32 now) {
 			"Ripper: broken mug rotation completed piece=%d orientation=%u",
 			_draggedPiece, piece.orientation);
 	}
+
 	return true;
 }
 
@@ -307,9 +306,8 @@ bool BrokenMugPuzzle::playCompletionMedia(RipperEngine *engine) {
 			g_system->unlockScreen();
 		return false;
 	}
-	screen->fillRect(Common::Rect(kViewportLeft, kViewportTop,
-		kViewportRight, kViewportBottom),
-		kViewportFillColor);
+
+	screen->fillRect(Common::Rect(kViewportLeft, kViewportTop, kViewportRight, kViewportBottom), kViewportFillColor);
 	g_system->unlockScreen();
 	presentScreen();
 
@@ -328,6 +326,7 @@ bool BrokenMugPuzzle::completePuzzle() {
 		warning("Ripper: broken mug completion media failed; flags unchanged");
 		return false;
 	}
+
 	_engine->getMilestones()->set(kMilestoneScannedMug, true, "wac-broken-mug");
 	_engine->getMilestones()->set(kMilestoneCompletedMug, true, "wac-broken-mug");
 	debugC(1, kDebugWac,
@@ -352,9 +351,7 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 		warning("Ripper: broken mug introduction audio failed; continuing puzzle input");
 	_engine->getCursor()->update(kPuzzleCursor);
 	presentScreen();
-	debugC(2, kDebugWac,
-		"Ripper: activated broken mug input cursor=%u controls=%u",
-		kPuzzleCursor, kPieceCount);
+	debugC(2, kDebugWac, "Ripper: activated broken mug input cursor=%u controls=%u", kPuzzleCursor, kPieceCount);
 
 	Result result = kExited;
 	bool active = true;
@@ -362,22 +359,20 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 		if (_engine->getInput()->pollEvents()) {
 			break;
 		}
+
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
 			if (command == 0x1b) {
-				debugC(1, kDebugWac,
-					"Ripper: broken mug puzzle exited command=0x%x", command);
+				debugC(1, kDebugWac, "Ripper: broken mug puzzle exited command=0x%x", command);
 				active = false;
 			} else if (command == kDosF10Command) {
-				debugC(1, kDebugWac,
-					"Ripper: broken mug puzzle requested WAC exit command=0x%x", command);
+				debugC(1, kDebugWac, "Ripper: broken mug puzzle requested WAC exit command=0x%x", command);
 				result = kExitWac;
 				active = false;
 			} else if (command == WacManager::kHelpAction ||
 					command == WacManager::kTextViewerAction ||
 					command == WacManager::kDatabaseAction) {
-				const uint16 action = _engine->getWac()->dispatchSubsceneAction(
-					command, kWacMugHelpResource, true);
+				const uint16 action = _engine->getWac()->dispatchSubsceneAction(command, kWacMugHelpResource, true);
 				if (action == WacManager::kExitAction) {
 					result = kExitWac;
 					active = false;
@@ -388,16 +383,15 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 			break;
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
-		const uint16 controlAction = _engine->getWac()->serviceFrontEndControls(
-			mouse, kPuzzleCursor);
+		const uint16 controlAction = _engine->getWac()->serviceFrontEndControls(mouse, kPuzzleCursor);
 		if (controlAction != WacManager::kNoAction) {
-			const uint16 action = _engine->getWac()->dispatchSubsceneAction(
-				controlAction, kWacMugHelpResource, true);
+			const uint16 action = _engine->getWac()->dispatchSubsceneAction(controlAction, kWacMugHelpResource, true);
 			if (action == WacManager::kExitAction) {
 				result = kExitWac;
 				active = false;
 			}
 		}
+
 		if (!active)
 			break;
 		bool changed = false;
@@ -415,16 +409,17 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 				beginRotation();
 				changed = true;
 			}
+
 			if ((mouse.pressed & kMouseButtonLeft) != 0) {
 				_dropPending = true;
 				debugC(2, kDebugWac,
 					"Ripper: broken mug drop requested piece=%d point=%d,%d",
 					_draggedPiece, mouse.position.x, mouse.position.y);
 			}
+
 			if (updateRotation(g_system->getMillis(true)))
 				changed = true;
-			if (_dropPending && _rotationStep < 0 &&
-				(mouse.buttons & kMouseButtonLeft) == 0) {
+			if (_dropPending && _rotationStep < 0 && (mouse.buttons & kMouseButtonLeft) == 0) {
 				finishDrag();
 				changed = true;
 				if (isSolved()) {
@@ -434,6 +429,7 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 				}
 			}
 		}
+
 		if (changed)
 			render();
 		_engine->getWac()->serviceIdleEffects();

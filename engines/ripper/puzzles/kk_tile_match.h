@@ -59,8 +59,7 @@ private:
 		bool sync(const KkTileMatchPuzzle &puzzle);
 		void stateChanging();
 		void stateChanged(const KkTileMatchPuzzle &puzzle);
-		void draw(const KkTileMatchPuzzle &puzzle,
-			byte *screen, uint pitch) const;
+		void draw(const KkTileMatchPuzzle &puzzle, byte *screen, uint pitch) const;
 
 	private:
 		struct SearchNode {
@@ -69,17 +68,13 @@ private:
 			int firstTile;
 		};
 
-		struct SearchStateHash {
-			uint operator()(const KkTileMatchModel &state) const;
-		};
+		struct SearchStateHash { uint operator()(const KkTileMatchModel &state) const; };
 
 		struct SearchStateEqual {
-			bool operator()(const KkTileMatchModel &left,
-				const KkTileMatchModel &right) const;
+			bool operator()(const KkTileMatchModel &left, const KkTileMatchModel &right) const;
 		};
 
-		int findRecommendedTile(const KkTileMatchPuzzle &puzzle,
-			uint &solutionDepth, uint &visitedStates) const;
+		int findRecommendedTile(const KkTileMatchPuzzle &puzzle, uint &solutionDepth, uint &visitedStates) const;
 
 		bool _enabled;
 		int _recommendedTile;
@@ -92,8 +87,7 @@ private:
 	void drawSlot(byte *screen, uint pitch, const KkTileMatchModel &state,
 		uint tile, uint frame, const Common::Point &position) const;
 	void renderBoard() const;
-	void renderMove(const KkTileMatchModel &snapshot, const uint *frames,
-		uint selectedTile, uint step) const;
+	void renderMove(const KkTileMatchModel &snapshot, const uint *frames, uint selectedTile, uint step) const;
 	bool flashTiles();
 	bool applyMove(uint selectedTile);
 	bool openTile(uint tile);

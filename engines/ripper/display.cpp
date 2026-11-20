@@ -64,8 +64,7 @@ bool IndexedDisplaySnapshot::capture(const Common::Rect &bounds) {
 	_bounds = bounds;
 	_pixels.resize((uint32)bounds.width() * bounds.height());
 	for (int y = 0; y < bounds.height(); ++y) {
-		memcpy(_pixels.data() + y * bounds.width(),
-			screen->getBasePtr(bounds.left, bounds.top + y), bounds.width());
+		memcpy(_pixels.data() + y * bounds.width(), screen->getBasePtr(bounds.left, bounds.top + y), bounds.width());
 	}
 	g_system->unlockScreen();
 
@@ -95,14 +94,15 @@ bool IndexedDisplaySnapshot::restore(bool restorePaletteValue, bool updateScreen
 bool IndexedDisplaySnapshot::restorePixels() const {
 	if (!isValid())
 		return false;
-	g_system->copyRectToScreen(_pixels.data(), _bounds.width(), _bounds.left,
-		_bounds.top, _bounds.width(), _bounds.height());
+
+	g_system->copyRectToScreen(_pixels.data(), _bounds.width(), _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
 	return true;
 }
 
 bool IndexedDisplaySnapshot::restorePalette() const {
 	if (_palette.size() != kRipperPaletteByteCount)
 		return false;
+
 	g_system->getPaletteManager()->setPalette(_palette.data(), 0, kRipperPaletteColorCount);
 	return true;
 }
@@ -122,8 +122,7 @@ void IndexedDisplaySnapshot::clear() {
 bool IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
 		const BitmapAssetFrame &bitmap, int x, int y,
 		const Common::Rect &clip) {
-	return drawBitmap(pixels, pitch, bitmap, x, y, clip,
-		bitmap.transparentColor);
+	return drawBitmap(pixels, pitch, bitmap, x, y, clip, bitmap.transparentColor);
 }
 
 bool IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
@@ -137,8 +136,7 @@ bool IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
 
 	const int64 bitmapRight = (int64)x + bitmap.width;
 	const int64 bitmapBottom = (int64)y + bitmap.height;
-	if (bitmapRight <= clip.left || bitmapBottom <= clip.top ||
-			x >= clip.right || y >= clip.bottom)
+	if (bitmapRight <= clip.left || bitmapBottom <= clip.top || x >= clip.right || y >= clip.bottom)
 		return true;
 
 	const int destinationLeft = MAX<int64>(x, clip.left);
@@ -191,6 +189,7 @@ void IndexedBitmapRenderer::drawHintRect(byte *pixels, uint pitch,
 	if (!pixels || clip.isEmpty() || clip.left < 0 || clip.top < 0 ||
 			(uint)clip.right > pitch || !bounds.intersects(clip))
 		return;
+
 	Common::Rect visible = bounds;
 	visible.clip(clip);
 	// The two-pixel border follows the clipped bounds, not the original rectangle.
@@ -207,8 +206,7 @@ void IndexedBitmapRenderer::drawHintRect(byte *pixels, uint pitch,
 bool IndexedBitmapRenderer::drawNineSlice(byte *pixels, uint pitch,
 		const Common::Array<BitmapAssetFrame> &skin,
 		const Common::Rect &bounds, const Common::Rect &clip) {
-	if (skin.size() < 9 || skin[0].width == 0 || skin[0].height == 0 ||
-			bounds.isEmpty())
+	if (skin.size() < 9 || skin[0].width == 0 || skin[0].height == 0 || bounds.isEmpty())
 		return false;
 
 	const int columns = (bounds.width() + skin[0].width - 1) / skin[0].width;
@@ -218,13 +216,12 @@ bool IndexedBitmapRenderer::drawNineSlice(byte *pixels, uint pitch,
 		int x = bounds.left;
 		const BitmapAssetFrame *lastTile = nullptr;
 		for (int column = 0; column < columns; ++column) {
-			const uint columnBand = column == 0 ? 0 :
-				(column == columns - 1 ? 2 : 1);
-			const uint rowBand = row == 0 ? 0 :
-				(row == rows - 1 ? 2 : 1);
+			const uint columnBand = column == 0 ? 0 : (column == columns - 1 ? 2 : 1);
+			const uint rowBand = row == 0 ? 0 : (row == rows - 1 ? 2 : 1);
 			const BitmapAssetFrame &tile = skin[rowBand * 3 + columnBand];
 			if (!drawBitmap(pixels, pitch, tile, x, y, clip))
 				return false;
+
 			lastTile = &tile;
 			// Anchor border tiles to the bounds even when the size is not a tile multiple.
 			if (column == columns - 2)
@@ -242,8 +239,7 @@ bool IndexedBitmapRenderer::drawNineSlice(byte *pixels, uint pitch,
 	return true;
 }
 
-uint BitmapFontRenderer::measureText(const BitmapFontAsset &font,
-		const Common::String &text) {
+uint BitmapFontRenderer::measureText(const BitmapFontAsset &font, const Common::String &text) {
 	uint width = 0;
 	for (uint i = 0; i < text.size(); ++i) {
 		const byte character = (byte)text[i];
@@ -251,8 +247,8 @@ uint BitmapFontRenderer::measureText(const BitmapFontAsset &font,
 			width += font.spaceWidth;
 			continue;
 		}
-		if (character < font.firstCharacter ||
-				character >= font.firstCharacter + font.glyphs.size())
+
+		if (character < font.firstCharacter || character >= font.firstCharacter + font.glyphs.size())
 			continue;
 		const BitmapFontGlyph &glyph = font.glyphs[character - font.firstCharacter];
 		width += glyph.xOffset + glyph.width + font.characterSpacing;
@@ -282,8 +278,10 @@ void BitmapFontRenderer::wrapText(const BitmapFontAsset &font,
 			} else {
 				line = candidate;
 			}
+
 			word.clear();
 		}
+
 		if (character == '\n') {
 			lines.push_back(line);
 			line.clear();
@@ -297,14 +295,13 @@ static int drawBitmapFontChar(byte *pixels, uint pitch, const BitmapFontAsset &f
 		int x, int y, byte character, byte color, const Common::Rect *clip) {
 	if (character == ' ')
 		return font.spaceWidth;
-	if (character < font.firstCharacter ||
-			character >= font.firstCharacter + font.glyphs.size())
+	if (character < font.firstCharacter || character >= font.firstCharacter + font.glyphs.size())
 		return 0;
+
 	const BitmapFontGlyph &glyph = font.glyphs[character - font.firstCharacter];
 	for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
 		for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
-			const byte source = font.pixels[
-				glyph.pixelOffset + glyphY * glyph.width + glyphX];
+			const byte source = font.pixels[glyph.pixelOffset + glyphY * glyph.width + glyphX];
 			const int targetX = x + glyph.xOffset + glyphX;
 			const int targetY = y + glyph.yOffset + glyphY;
 			if (source != font.transparentColor &&
@@ -322,8 +319,7 @@ static void drawBitmapFontText(byte *pixels, uint pitch, const BitmapFontAsset &
 		x += drawBitmapFontChar(pixels, pitch, font, x, y, (byte)text[i], color, clip);
 }
 
-int BitmapFontRenderer::drawChar(byte *pixels, uint pitch, const BitmapFontAsset &font,
-		int x, int y, byte character, byte color) {
+int BitmapFontRenderer::drawChar(byte *pixels, uint pitch, const BitmapFontAsset &font, int x, int y, byte character, byte color) {
 	return drawBitmapFontChar(pixels, pitch, font, x, y, character, color, nullptr);
 }
 

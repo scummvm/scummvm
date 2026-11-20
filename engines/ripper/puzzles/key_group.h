@@ -59,8 +59,7 @@ private:
 	bool loadPiece(uint piece);
 	void loadPersistentState();
 	void storePersistentState() const;
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	bool render() const;
 	Common::Point slotOrigin(SlotBank bank, uint index) const;
 	SlotHit findSlot(const Common::Point &point) const;

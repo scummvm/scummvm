@@ -36,8 +36,7 @@ class WacStillImageViewer {
 public:
 	explicit WacStillImageViewer(WacDatabaseSession *database);
 
-	DatabaseInputOutcome run(byte entryIndex, const Common::String &entryLabel,
-		const Common::String &path);
+	DatabaseInputOutcome run(byte entryIndex, const Common::String &entryLabel, const Common::String &path);
 	DatabaseInputOutcome runWithOptionalPresentation(byte entryIndex,
 		const Common::String &entryLabel, const Common::String &imagePath,
 		const Common::String &mediaPath, uint presentationFlag,

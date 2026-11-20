@@ -77,8 +77,7 @@ private:
 		bool sync(const KiSkullMazePuzzle &puzzle);
 		void stateChanging();
 		void stateChanged(const KiSkullMazePuzzle &puzzle);
-		void draw(const KiSkullMazePuzzle &puzzle,
-			byte *screen, uint pitch) const;
+		void draw(const KiSkullMazePuzzle &puzzle, byte *screen, uint pitch) const;
 
 	private:
 		struct SearchNode {
@@ -88,8 +87,7 @@ private:
 		};
 
 		Common::String searchKey(const KiSkullMazeModel &model) const;
-		int findRecommendedCell(const KiSkullMazePuzzle &puzzle,
-			uint &solutionDepth, uint &visitedStates) const;
+		int findRecommendedCell(const KiSkullMazePuzzle &puzzle, uint &solutionDepth, uint &visitedStates) const;
 
 		bool _enabled;
 		int _recommendedCell;
@@ -98,8 +96,7 @@ private:
 
 	bool loadConfiguration();
 	bool loadAssets();
-	bool loadBitmap(const Common::String &path, BitmapAssetFrame &frame,
-		bool pcx);
+	bool loadBitmap(const Common::String &path, BitmapAssetFrame &frame, bool pcx);
 	bool loadAnimation(const Common::String &path, Animation &animation);
 	void render() const;
 	Common::Point playerPosition(uint direction, uint originCell) const;

@@ -81,13 +81,11 @@ static const uint kUnlockSequence[] = {
 };
 
 static bool isInsideCalculatorControl(const Common::Point &point) {
-	return Common::Rect(160, kSceneOriginY + 20, 490,
-		kSceneOriginY + 190).contains(point);
+	return Common::Rect(160, kSceneOriginY + 20, 490, kSceneOriginY + 190).contains(point);
 }
 
 static bool isInsideExitControl(const Common::Point &point) {
-	return Common::Rect(160, kSceneOriginY + 190, 490,
-		kSceneOriginY + 300).contains(point);
+	return Common::Rect(160, kSceneOriginY + 190, 490, kSceneOriginY + 300).contains(point);
 }
 
 } // End of anonymous namespace
@@ -116,6 +114,7 @@ bool CalculatorPuzzle::loadAssets() {
 			warning("Ripper: failed to load calculator button '%s'", name.c_str());
 			return false;
 		}
+
 		_buttons.push_back(Common::move(asset));
 	}
 
@@ -127,12 +126,11 @@ bool CalculatorPuzzle::loadAssets() {
 			warning("Ripper: failed to load calculator glyph '%s'", name.c_str());
 			return false;
 		}
+
 		_glyphs.push_back(Common::move(asset));
 	}
 
-	debugC(1, kDebugPuzzles,
-		"Ripper: loaded calculator puzzle assets buttons=%u glyphs=%u",
-		_buttons.size(), _glyphs.size());
+	debugC(1, kDebugPuzzles, "Ripper: loaded calculator puzzle assets buttons=%u glyphs=%u", _buttons.size(), _glyphs.size());
 	return true;
 }
 
@@ -149,6 +147,7 @@ void CalculatorPuzzle::drawDisplay(byte *screen, uint pitch) const {
 			warning("Ripper: calculator display cannot map character 0x%02x", (byte)character);
 			continue;
 		}
+
 		const BitmapAssetFrame &glyph = _glyphs[glyphIndex];
 		glyphX -= glyph.width - kGlyphOverlap;
 		IndexedBitmapRenderer::drawBitmap(screen, pitch, glyph, glyphX, kDisplayY,
@@ -166,14 +165,13 @@ void CalculatorPuzzle::render() const {
 	}
 
 	for (int y = 0; y < screen->h; ++y)
-		memcpy(screen->getBasePtr(0, y),
-			_backgroundDisplay.pixels().data() + y * screen->w, screen->w);
+		memcpy(screen->getBasePtr(0, y), _backgroundDisplay.pixels().data() + y * screen->w, screen->w);
 	byte *pixels = (byte *)screen->getPixels();
 	if (_displayCleared) {
 		for (int y = kDisplayY; y < kDisplayY + kDisplayHeight; ++y)
-			memset(screen->getBasePtr(kDisplayX, y), kDisplayBackgroundColor,
-				kDisplayWidth);
+			memset(screen->getBasePtr(kDisplayX, y), kDisplayBackgroundColor, kDisplayWidth);
 	}
+
 	drawDisplay(pixels, screen->pitch);
 	g_system->unlockScreen();
 	presentScreen();
@@ -190,6 +188,7 @@ void CalculatorPuzzle::showButtonFeedback(uint16 command) const {
 				g_system->unlockScreen();
 			return;
 		}
+
 		IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(), screen->pitch,
 			_buttons[i], kButtonLayouts[i].x,
 			kButtonLayouts[i].y + kSceneOriginY,
@@ -236,6 +235,7 @@ void CalculatorPuzzle::updateCursor(const Common::Point &point) {
 			point.x, point.y, cursor);
 		_hoveredButton = hoveredButton;
 	}
+
 	_engine->getCursor()->update(cursor);
 }
 
@@ -248,8 +248,7 @@ double CalculatorPuzzle::parseDisplay() const {
 	}
 
 	double value = 0.0;
-	while (position < _displayText.size() && _displayText[position] >= '0' &&
-			_displayText[position] <= '9') {
+	while (position < _displayText.size() && _displayText[position] >= '0' && _displayText[position] <= '9') {
 		value = value * 10.0 + _displayText[position] - '0';
 		++position;
 	}
@@ -261,6 +260,7 @@ double CalculatorPuzzle::parseDisplay() const {
 			place *= 0.1;
 		}
 	}
+
 	return negative ? -value : value;
 }
 
@@ -318,12 +318,10 @@ void CalculatorPuzzle::applyUnaryOperator(uint command) {
 			_currentOperand = 1.0 / _currentOperand;
 		break;
 	case 'c' + 1000:
-		_currentOperand = _currentOperand <= 1.0 ?
-			Math::rad2deg<double>(acos(_currentOperand)) : 0.0;
+		_currentOperand = _currentOperand <= 1.0 ? Math::rad2deg<double>(acos(_currentOperand)) : 0.0;
 		break;
 	case 's' + 1000:
-		_currentOperand = _currentOperand <= 1.0 ?
-			Math::rad2deg<double>(asin(_currentOperand)) : 0.0;
+		_currentOperand = _currentOperand <= 1.0 ? Math::rad2deg<double>(asin(_currentOperand)) : 0.0;
 		break;
 	case 't' + 1000:
 		_currentOperand = Math::rad2deg<double>(atan(_currentOperand));
@@ -357,8 +355,8 @@ bool CalculatorPuzzle::advanceUnlockSequence(uint command, uint completionFlag, 
 				result = kLoadFailed;
 				return true;
 			}
-			debugC(1, kDebugPuzzles,
-				"Ripper: calculator puzzle completed milestone=%u", completionFlag);
+
+			debugC(1, kDebugPuzzles, "Ripper: calculator puzzle completed milestone=%u", completionFlag);
 			result = kSolved;
 			return true;
 		}
@@ -368,6 +366,7 @@ bool CalculatorPuzzle::advanceUnlockSequence(uint command, uint completionFlag, 
 			_unlockSequenceProgress, kUnlockSequence[_unlockSequenceProgress], command);
 		_unlockSequenceProgress = ARRAYSIZE(kUnlockSequence) + 1;
 	}
+
 	++_unlockSequenceProgress;
 	return false;
 }
@@ -389,14 +388,14 @@ bool CalculatorPuzzle::processCommand(uint16 command, uint completionFlag, Resul
 		result = kExited;
 		return true;
 	}
+
 	if (command == kHelpCommand) {
-		debugC(1, kDebugPuzzles,
-			"Ripper: calculator puzzle opening modal help table=0x%x",
-			kHelpSelectionTable);
+		debugC(1, kDebugPuzzles, "Ripper: calculator puzzle opening modal help table=0x%x", kHelpSelectionTable);
 		if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 			warning("Ripper: calculator puzzle modal help failed");
 		render();
 	}
+
 	if (advanceUnlockSequence(command, completionFlag, result))
 		return true;
 
@@ -411,10 +410,10 @@ bool CalculatorPuzzle::processCommand(uint16 command, uint completionFlag, Resul
 			_currentOperand = 0.0;
 			_displayText = "0";
 		}
+
 		_unlockSequenceProgress = 0;
 		render();
-		debugC(2, kDebugPuzzles, "Ripper: calculator powered on display='%s'",
-			_displayText.c_str());
+		debugC(2, kDebugPuzzles, "Ripper: calculator powered on display='%s'", _displayText.c_str());
 	} else if (command == 'o' || command == 'O') {
 		_poweredOn = false;
 		_displayCleared = true;
@@ -439,6 +438,7 @@ bool CalculatorPuzzle::processCommand(uint16 command, uint completionFlag, Resul
 			render();
 			_entryMode = 1;
 		}
+
 		_pendingOperator = command;
 		if (command == 0x0d)
 			_currentOperand = _accumulator;
@@ -449,8 +449,10 @@ bool CalculatorPuzzle::processCommand(uint16 command, uint completionFlag, Resul
 			if (command == '.') {
 				if (_decimalPointEntered)
 					return false;
+
 				_decimalPointEntered = true;
 			}
+
 			if (_displayText == "0" && command != '.')
 				_displayText.clear();
 			_displayText += (char)command;
@@ -469,6 +471,7 @@ CalculatorPuzzle::Result CalculatorPuzzle::run(uint completionFlag) {
 		warning("Ripper: failed to capture calculator puzzle background");
 		return kLoadFailed;
 	}
+
 	if (!loadAssets()) {
 		restoreBackground();
 		return kLoadFailed;
@@ -517,9 +520,7 @@ CalculatorPuzzle::Result CalculatorPuzzle::run(uint completionFlag) {
 
 	restoreBackground();
 	_engine->getCursor()->update(0);
-	debugC(1, kDebugPuzzles,
-		"Ripper: exited calculator puzzle result=%d milestone=%u",
-		result, completionFlag);
+	debugC(1, kDebugPuzzles, "Ripper: exited calculator puzzle result=%d milestone=%u", result, completionFlag);
 	return result;
 }
 

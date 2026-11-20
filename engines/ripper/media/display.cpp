@@ -67,8 +67,7 @@ void MediaPlayer::fadePalette(bool fadeIn, uint stepCount) {
 
 bool MediaPlayer::displayScenePcx(const Common::String &path) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStream(
-			path, ResourceManager::kSourceConfiguredPath));
+		_engine->getResources()->createReadStream(path, ResourceManager::kSourceConfiguredPath));
 	Image::PCXDecoder decoder;
 	if (!stream || !decoder.loadStream(*stream)) {
 		warning("Ripper: could not decode scene PCX '%s'", path.c_str());
@@ -88,19 +87,16 @@ bool MediaPlayer::displayScenePcx(const Common::String &path) {
 	}
 
 	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 ||
-			screen->w < 640 || screen->h < 400) {
+	if (!screen || screen->format.bytesPerPixel != 1 || screen->w < 640 || screen->h < 400) {
 		if (screen)
 			g_system->unlockScreen();
 		return false;
 	}
-	screen->fillRect(Common::Rect(0, kScenePresentationTop,
-		640, kScenePresentationTop + 300),
-		0);
+
+	screen->fillRect(Common::Rect(0, kScenePresentationTop, 640, kScenePresentationTop + 300), 0);
 	const int x = (640 - surface->w) / 2;
 	for (int y = 0; y < surface->h; ++y)
-		memcpy(screen->getBasePtr(x, kScenePresentationTop + y),
-			surface->getBasePtr(0, y), surface->w);
+		memcpy(screen->getBasePtr(x, kScenePresentationTop + y), surface->getBasePtr(0, y), surface->w);
 	g_system->unlockScreen();
 
 	byte palette[256 * 3];
@@ -120,8 +116,7 @@ bool MediaPlayer::displayInterfacePcx(const Common::String &path) {
 	BitmapAssetFrame frame;
 	if (!_engine->getResources()->loadInterfacePcx(path, frame))
 		return false;
-	if (frame.width == 0 || frame.height == 0 ||
-			frame.palette.size() < Graphics::PALETTE_SIZE) {
+	if (frame.width == 0 || frame.height == 0 || frame.palette.size() < Graphics::PALETTE_SIZE) {
 		warning("Ripper: invalid interface PCX '%s' size=%ux%u colors=%u",
 			path.c_str(), frame.width, frame.height, frame.palette.size() / 3);
 		return false;
@@ -133,12 +128,12 @@ bool MediaPlayer::displayInterfacePcx(const Common::String &path) {
 			g_system->unlockScreen();
 		return false;
 	}
+
 	const int copyWidth = frame.width < screen->w ? frame.width : screen->w;
 	const int copyHeight = frame.height < screen->h ? frame.height : screen->h;
 	screen->fillRect(screen->getRect(), 0);
 	for (int y = 0; y < copyHeight; ++y)
-		memcpy(screen->getBasePtr(0, y), frame.pixels.data() + y * frame.width,
-			copyWidth);
+		memcpy(screen->getBasePtr(0, y), frame.pixels.data() + y * frame.width, copyWidth);
 	g_system->unlockScreen();
 
 	byte palette[Graphics::PALETTE_SIZE];

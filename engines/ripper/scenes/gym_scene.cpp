@@ -82,12 +82,11 @@ GymScene::GymScene(RipperEngine *engine) : Scene(engine),
 
 bool GymScene::initialize() {
 	for (uint button = 0; button < ARRAYSIZE(_buttonFrames); ++button) {
-		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(
-				kButtonBitmaps[button], _buttonFrames[button])) {
-			warning("Ripper: could not load gym selector bitmap '%s'",
-				kButtonBitmaps[button]);
+		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(kButtonBitmaps[button], _buttonFrames[button])) {
+			warning("Ripper: could not load gym selector bitmap '%s'", kButtonBitmaps[button]);
 			return false;
 		}
+
 		if (_buttonFrames[button].width != kButtonWidth[button] ||
 				_buttonFrames[button].height != kButtonHeight[button]) {
 			warning("Ripper: gym selector bitmap '%s' has invalid size=%ux%u",
@@ -106,11 +105,11 @@ bool GymScene::initialize() {
 bool GymScene::playControlCue(uint cue) {
 	if (cue >= ARRAYSIZE(kAudioCues))
 		return false;
-	if (!_engine->getMedia()->playSoundEffect(kAudioCues[cue],
-			_audioHandles[cue])) {
+	if (!_engine->getMedia()->playSoundEffect(kAudioCues[cue], _audioHandles[cue])) {
 		warning("Ripper: could not start gym selector cue '%s'", kAudioCues[cue]);
 		return false;
 	}
+
 	return true;
 }
 
@@ -126,9 +125,9 @@ void GymScene::drawPressedControl() const {
 			g_system->unlockScreen();
 		return;
 	}
+
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
-		byte *destination = (byte *)screen->getBasePtr(
-			kButtonLeft[control], kButtonTop[control] + sourceY);
+		byte *destination = (byte *)screen->getBasePtr(kButtonLeft[control], kButtonTop[control] + sourceY);
 		const byte *source = frame.pixels.data() + sourceY * frame.width;
 		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
 			if (source[sourceX] != frame.transparentColor)
@@ -151,6 +150,7 @@ bool GymScene::pulseKeyboardControl(uint control) {
 			g_system->unlockScreen();
 		return false;
 	}
+
 	for (uint y = 0; y < frame.height; ++y) {
 		memcpy(backing.data() + y * frame.width,
 			screen->getBasePtr(kButtonLeft[control], kButtonTop[control] + y),
@@ -161,6 +161,7 @@ bool GymScene::pulseKeyboardControl(uint control) {
 	_pressedControl = control;
 	if (!playControlCue(0))
 		return false;
+
 	drawPressedControl();
 	presentScreen();
 	g_system->delayMillis(kKeyboardPulseTicks * kDosTickMillis);
@@ -168,16 +169,17 @@ bool GymScene::pulseKeyboardControl(uint control) {
 	screen = g_system->lockScreen();
 	if (screen && screen->format.bytesPerPixel == 1) {
 		for (uint y = 0; y < frame.height; ++y) {
-			memcpy(screen->getBasePtr(kButtonLeft[control],
-				kButtonTop[control] + y), backing.data() + y * frame.width,
+			memcpy(screen->getBasePtr(kButtonLeft[control], kButtonTop[control] + y), backing.data() + y * frame.width,
 				frame.width);
 		}
 	}
+
 	if (screen)
 		g_system->unlockScreen();
 	_pressedControl = -1;
 	if (!playControlCue(1))
 		return false;
+
 	presentScreen();
 	return true;
 }
@@ -196,22 +198,21 @@ void GymScene::updateCursor(const Common::Point &point) {
 		hovered = 2;
 		cursor = kExitCursor;
 	}
+
 	if (hovered != _hoveredControl) {
 		debugC(2, kDebugInput,
 			"Ripper: gym selector hover control=%d previous=%d point=%d,%d cursor=%u",
 			hovered, _hoveredControl, point.x, point.y, cursor);
 		_hoveredControl = hovered;
 	}
+
 	_engine->getCursor()->update(cursor);
 	_engine->getCursor()->setVisible(true);
 }
 
 uint16 GymScene::service(uint frame) {
-	if (frame == kTransitionStopFrame &&
-			_engine->getMedia()->stopSoundEffect(_audioHandles[2])) {
-		debugC(3, kDebugAudio,
-			"Ripper: stopped gym selector transition cue at mediaFrame=%u state=%u",
-			frame, _currentState);
+	if (frame == kTransitionStopFrame && _engine->getMedia()->stopSoundEffect(_audioHandles[2])) {
+		debugC(3, kDebugAudio, "Ripper: stopped gym selector transition cue at mediaFrame=%u state=%u", frame, _currentState);
 	}
 
 	const MouseState mouse = _engine->getInput()->publishMouseState();
@@ -220,6 +221,7 @@ uint16 GymScene::service(uint frame) {
 	if (_pressedControl >= 0 && _hoveredControl != _pressedControl) {
 		if (!playControlCue(1))
 			return kFailureCommand;
+
 		debugC(3, kDebugInput,
 			"Ripper: cancelled gym selector control=%d point=%d,%d frame=%u",
 			_pressedControl, mouse.position.x, mouse.position.y, frame);
@@ -232,6 +234,7 @@ uint16 GymScene::service(uint frame) {
 		_pressedControl = _hoveredControl;
 		if (!playControlCue(0))
 			return kFailureCommand;
+
 		debugC(3, kDebugInput,
 			"Ripper: pressed gym selector control=%d point=%d,%d frame=%u",
 			_pressedControl, mouse.position.x, mouse.position.y, frame);
@@ -242,6 +245,7 @@ uint16 GymScene::service(uint frame) {
 		const int releasedControl = _pressedControl;
 		if (!playControlCue(1))
 			return kFailureCommand;
+
 		_pressedControl = -1;
 		debugC(2, kDebugInput,
 			"Ripper: activated gym selector control=%d command=0x%04x "
@@ -259,21 +263,23 @@ uint16 GymScene::service(uint frame) {
 	while (_engine->getInput()->hasPendingKey()) {
 		const uint16 command = _engine->getInput()->consumeKey();
 		if (command == kHelpCommand) {
-			debugC(1, kDebugPuzzles,
-				"Ripper: gym selector opening modal help resource=0x%x",
-				kHelpResource);
+			debugC(1, kDebugPuzzles, "Ripper: gym selector opening modal help resource=0x%x", kHelpResource);
 			if (!_engine->getModalDialog()->run(kHelpResource))
 				return kFailureCommand;
+
 			updateCursor(_engine->getInput()->peekMouseState().position);
 			continue;
 		}
+
 		if (command == kEscapeCommand)
 			return command;
+
 		for (uint button = 0; button < ARRAYSIZE(kButtonCommand); ++button) {
 			if (command != kButtonCommand[button])
 				continue;
 			if (!pulseKeyboardControl(button))
 				return kFailureCommand;
+
 			debugC(2, kDebugInput,
 				"Ripper: keyboard activated gym selector control=%u "
 				"command=0x%04x frame=%u pulseTicks=%u",
@@ -289,8 +295,7 @@ uint16 GymScene::service(uint frame) {
 bool GymScene::playStateMedia(uint state, uint16 &command) {
 	const Common::String path = Common::String::format("fd_gym%u.smk", state);
 	command = 0;
-	const bool played = _engine->getMedia()->playPuzzleSequenceSegment(
-		path, 0, 0xffffffff, 100, 0, this, &command);
+	const bool played = _engine->getMedia()->playPuzzleSequenceSegment(path, 0, 0xffffffff, 100, 0, this, &command);
 	debugC(played ? 2 : 1, kDebugPuzzles,
 		"Ripper: gym selector media='%s' state=%u command=0x%04x result=%d",
 		path.c_str(), state, command, played);
@@ -323,6 +328,7 @@ GymScene::Result GymScene::run(uint completionFlag) {
 				result = kLoadFailed;
 			break;
 		}
+
 		_currentState = kIntroState;
 		if (command == kFailureCommand) {
 			result = kLoadFailed;
@@ -348,27 +354,28 @@ GymScene::Result GymScene::run(uint completionFlag) {
 			result = kLoadFailed;
 			break;
 		}
+
 		if (!playStateMedia(_currentState, command)) {
 			if (!_engine->shouldQuit())
 				result = kLoadFailed;
 			break;
 		}
+
 		stopAudio(_audioHandles[2]);
 		if (command == kFailureCommand) {
 			result = kLoadFailed;
 			break;
 		}
+
 		if (_currentState == 2) {
-			if (!_engine->getMilestones()->set(
-					completionFlag, true, "gym-selector")) {
+			if (!_engine->getMilestones()->set(completionFlag, true, "gym-selector")) {
 				result = kLoadFailed;
 				break;
 			}
+
 			selectedTarget = true;
 			result = kSolved;
-			debugC(1, kDebugPuzzles,
-				"Ripper: gym selector reached target state=2 milestone=%u",
-				completionFlag);
+			debugC(1, kDebugPuzzles, "Ripper: gym selector reached target state=2 milestone=%u", completionFlag);
 		}
 	}
 

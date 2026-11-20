@@ -61,8 +61,7 @@ static const uint kActiveMenuCursor = 16;
 
 static bool playMenuAudio(RipperEngine *engine, const Common::String &memberName,
 		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle, bool loop) {
-	Common::SeekableReadStream *stream =
-		engine->getResources()->sound().createReadStreamForMember(memberName);
+	Common::SeekableReadStream *stream = engine->getResources()->sound().createReadStreamForMember(memberName);
 	if (!stream)
 		return false;
 
@@ -78,8 +77,7 @@ static bool playMenuAudio(RipperEngine *engine, const Common::String &memberName
 	if (loop)
 		audioStream = Audio::makeLoopingAudioStream(wavStream, 0);
 	mixer->playStream(soundType, &handle, audioStream);
-	debugC(2, kDebugAudio, "Ripper: started startup menu audio '%s' loop=%d",
-		memberName.c_str(), loop);
+	debugC(2, kDebugAudio, "Ripper: started startup menu audio '%s' loop=%d", memberName.c_str(), loop);
 	return true;
 }
 
@@ -99,8 +97,7 @@ MainMenu::MainMenu(RipperEngine *engine) : _engine(engine) {
 
 MainMenuAction MainMenu::run() {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
-	Common::SeekableReadStream *stream =
-		_engine->getResources()->interface().createReadStreamForMember("rip_open.smk");
+	Common::SeekableReadStream *stream = _engine->getResources()->interface().createReadStreamForMember("rip_open.smk");
 	if (!stream) {
 		warning("Ripper: could not open startup menu presentation 'RIP_OPEN.SMK'");
 		return kMainMenuQuit;
@@ -131,12 +128,10 @@ MainMenuAction MainMenu::run() {
 		_engine->getCursor()->setVisible(false);
 		// Clear without presenting so the next controlled AVI captures a blank backing.
 		g_system->fillScreen(0);
-		debugC(2, kDebugVideo,
-			"Ripper: cleared startup menu logical page action=%d", action);
+		debugC(2, kDebugVideo, "Ripper: cleared startup menu logical page action=%d", action);
 		return action;
 	};
-	playMenuAudio(_engine, "title0.wav", Audio::Mixer::kMusicSoundType,
-		titleAudioHandle, true);
+	playMenuAudio(_engine, "title0.wav", Audio::Mixer::kMusicSoundType, titleAudioHandle, true);
 
 	int hoveredControl = -1;
 	decoder.start();
@@ -161,16 +156,15 @@ MainMenuAction MainMenu::run() {
 			debugC(2, kDebugInput, "Ripper: startup menu hover action=%d position=%d,%d",
 				hoveredControl + 1, mouse.position.x, mouse.position.y);
 			if (hoveredControl >= 0)
-				playMenuAudio(_engine, "title1.wav", Audio::Mixer::kSFXSoundType,
-					hoverAudioHandle, false);
+				playMenuAudio(_engine, "title1.wav", Audio::Mixer::kSFXSoundType, hoverAudioHandle, false);
 		}
+
 		_engine->getCursor()->update(hoveredControl >= 0 ? kActiveMenuCursor : kDefaultMenuCursor);
 
 		if (hoveredControl >= 0 && (mouse.pressed & kMouseButtonLeft) != 0) {
 			const MainMenuAction action = (MainMenuAction)(hoveredControl + 1);
 			debugC(1, kDebugInput, "Ripper: startup menu selected action=%d", action);
-			playMenuAudio(_engine, "title2.wav", Audio::Mixer::kSFXSoundType,
-				selectionAudioHandle, false);
+			playMenuAudio(_engine, "title2.wav", Audio::Mixer::kSFXSoundType, selectionAudioHandle, false);
 			return finishMenu(action);
 		}
 
@@ -179,6 +173,7 @@ MainMenuAction MainMenu::run() {
 				warning("Ripper: could not rewind startup menu presentation");
 				break;
 			}
+
 			debugC(2, kDebugVideo, "Ripper: rewound startup menu presentation");
 		}
 
@@ -192,8 +187,8 @@ MainMenuAction MainMenu::run() {
 					_engine->getSettings()->applyVideoPalette(palette, 256);
 					g_system->getPaletteManager()->setPalette(palette, 0, 256);
 				}
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, menuY,
-					frame->w, frame->h);
+
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, menuY, frame->w, frame->h);
 				presentScreen();
 				debugC(11, kDebugVideo, "Ripper: startup menu frame=%d", decoder.getCurFrame());
 			}

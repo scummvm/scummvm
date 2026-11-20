@@ -85,12 +85,12 @@ KeyGroupPuzzle::KeyGroupPuzzle(RipperEngine *engine) :
 }
 
 bool KeyGroupPuzzle::loadBackground() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath("kgp_2.pcx"));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath("kgp_2.pcx"));
 	if (!stream || !decodePcxAsset(*stream, _background)) {
 		warning("Ripper: could not decode key group background 'kgp_2.pcx'");
 		return false;
 	}
+
 	if (_background.width != kRipperScreenWidth ||
 			_background.height != kRipperScreenHeight ||
 			_background.palette.size() != kRipperPaletteByteCount) {
@@ -99,17 +99,18 @@ bool KeyGroupPuzzle::loadBackground() {
 			_background.palette.size() / 3);
 		return false;
 	}
+
 	return true;
 }
 
 bool KeyGroupPuzzle::loadPiece(uint piece) {
 	const Common::String name = Common::String::format("kg_p%u.bbm", piece);
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(name));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(name));
 	if (!stream || !decodeBitmapAsset(*stream, _pieces[piece])) {
 		warning("Ripper: could not decode key group piece '%s'", name.c_str());
 		return false;
 	}
+
 	const BitmapAssetFrame &frame = _pieces[piece];
 	if (frame.width == 0 || frame.height == 0 ||
 			frame.pixels.size() != (uint32)frame.width * frame.height ||
@@ -119,6 +120,7 @@ bool KeyGroupPuzzle::loadPiece(uint piece) {
 			name.c_str(), frame.width, frame.height, frame.pixels.size());
 		return false;
 	}
+
 	_maxPieceWidth = MAX<uint>(_maxPieceWidth, frame.width);
 	_maxPieceHeight = MAX<uint>(_maxPieceHeight, frame.height);
 	return true;
@@ -127,6 +129,7 @@ bool KeyGroupPuzzle::loadPiece(uint piece) {
 bool KeyGroupPuzzle::loadAssets() {
 	if (!loadBackground())
 		return false;
+
 	for (uint piece = 0; piece < kSourceSlotCount; ++piece) {
 		if (!loadPiece(piece))
 			return false;
@@ -155,8 +158,7 @@ void KeyGroupPuzzle::storePersistentState() const {
 		state.targetSlots[index] = _targetSlots[index];
 }
 
-void KeyGroupPuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void KeyGroupPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
@@ -169,29 +171,25 @@ bool KeyGroupPuzzle::render() const {
 			g_system->unlockScreen();
 		return false;
 	}
+
 	for (uint y = 0; y < _background.height; ++y) {
-		memcpy(screen->getBasePtr(0, y),
-			_background.pixels.data() + y * _background.width,
-			_background.width);
+		memcpy(screen->getBasePtr(0, y), _background.pixels.data() + y * _background.width, _background.width);
 	}
 	byte *pixels = (byte *)screen->getPixels();
 	for (uint index = 0; index < kSourceSlotCount; ++index) {
 		if (_sourceSlots[index] < 0)
 			continue;
 		const Common::Point origin = slotOrigin(kSourceSlotBank, index);
-		drawFrame(pixels, screen->pitch, _pieces[_sourceSlots[index]],
-			origin.x, origin.y);
+		drawFrame(pixels, screen->pitch, _pieces[_sourceSlots[index]], origin.x, origin.y);
 	}
 	for (uint index = 0; index < kTargetSlotCount; ++index) {
 		if (_targetSlots[index] < 0)
 			continue;
 		const Common::Point origin = slotOrigin(kTargetSlotBank, index);
-		drawFrame(pixels, screen->pitch, _pieces[_targetSlots[index]],
-			origin.x, origin.y);
+		drawFrame(pixels, screen->pitch, _pieces[_targetSlots[index]], origin.x, origin.y);
 	}
 	if (_heldPiece >= 0)
-		drawFrame(pixels, screen->pitch, _pieces[_heldPiece],
-			_heldPosition.x, _heldPosition.y);
+		drawFrame(pixels, screen->pitch, _pieces[_heldPiece], _heldPosition.x, _heldPosition.y);
 	g_system->unlockScreen();
 	_engine->installScenePalette(_background.palette);
 	presentScreen();
@@ -206,20 +204,15 @@ Common::Point KeyGroupPuzzle::slotOrigin(SlotBank bank, uint index) const {
 	return Common::Point(-1, -1);
 }
 
-KeyGroupPuzzle::SlotHit KeyGroupPuzzle::findSlot(
-		const Common::Point &point) const {
+KeyGroupPuzzle::SlotHit KeyGroupPuzzle::findSlot(const Common::Point &point) const {
 	for (uint index = 0; index < kSourceSlotCount; ++index) {
 		const Common::Point origin = slotOrigin(kSourceSlotBank, index);
-		if (Common::Rect(origin.x, origin.y,
-				origin.x + _maxPieceWidth,
-				origin.y + _maxPieceHeight).contains(point))
+		if (Common::Rect(origin.x, origin.y, origin.x + _maxPieceWidth, origin.y + _maxPieceHeight).contains(point))
 			return SlotHit(kSourceSlotBank, index);
 	}
 	for (uint index = 0; index < kTargetSlotCount; ++index) {
 		const Common::Point origin = slotOrigin(kTargetSlotBank, index);
-		if (Common::Rect(origin.x, origin.y,
-				origin.x + _maxPieceWidth,
-				origin.y + _maxPieceHeight).contains(point))
+		if (Common::Rect(origin.x, origin.y, origin.x + _maxPieceWidth, origin.y + _maxPieceHeight).contains(point))
 			return SlotHit(kTargetSlotBank, index);
 	}
 	return SlotHit();
@@ -237,10 +230,10 @@ int KeyGroupPuzzle::slotValue(const SlotHit &slot) const {
 	return _targetSlots[slot.index];
 }
 
-bool KeyGroupPuzzle::pickUp(const SlotHit &slot,
-		const Common::Point &point) {
+bool KeyGroupPuzzle::pickUp(const SlotHit &slot, const Common::Point &point) {
 	if (slot.bank == kNoSlotBank || slotValue(slot) < 0)
 		return false;
+
 	const Common::Point origin = slotOrigin(slot.bank, slot.index);
 	_heldPiece = slotValue(slot);
 	_heldPosition = origin;
@@ -257,6 +250,7 @@ bool KeyGroupPuzzle::pickUp(const SlotHit &slot,
 bool KeyGroupPuzzle::putDown(const SlotHit &slot) {
 	if (_heldPiece < 0 || slot.bank == kNoSlotBank || slotValue(slot) >= 0)
 		return false;
+
 	const int piece = _heldPiece;
 	slotValue(slot) = piece;
 	_heldPiece = -1;
@@ -274,8 +268,7 @@ void KeyGroupPuzzle::updateHeldPosition(const Common::Point &point) {
 }
 
 void KeyGroupPuzzle::updateCursor(const Common::Point &point) {
-	const bool navigationActive = _heldPiece < 0 &&
-		(point.x < kNavigationWidth || point.x >= kNextNavigationLeft);
+	const bool navigationActive = _heldPiece < 0 && (point.x < kNavigationWidth || point.x >= kNextNavigationLeft);
 	const SlotHit slot = navigationActive ? SlotHit() : findSlot(point);
 	if (slot.bank != _hoveredSlot.bank || slot.index != _hoveredSlot.index) {
 		debugC(3, kDebugPuzzles,
@@ -285,6 +278,7 @@ void KeyGroupPuzzle::updateCursor(const Common::Point &point) {
 			point.x, point.y, _heldPiece);
 		_hoveredSlot = slot;
 	}
+
 	uint cursor = kDefaultCursor;
 	if (navigationActive)
 		cursor = kNavigationCursor;
@@ -305,6 +299,7 @@ bool KeyGroupPuzzle::isSolved() const {
 bool KeyGroupPuzzle::complete(uint completionFlag, const char *source) {
 	if (!markSolved(completionFlag, source))
 		return false;
+
 	debugC(1, kDebugPuzzles,
 		"Ripper: solved key group puzzle milestone=%u target=[%s] source='%s'",
 		completionFlag, targetStateString().c_str(), source);
@@ -316,24 +311,19 @@ bool KeyGroupPuzzle::serviceKeyword(uint16 command) {
 		return false;
 	if (!advanceKeyword(command, kCompletionKeyword, _keywordIndex))
 		return false;
+
 	_keywordIndex = 0;
-	debugC(1, kDebugPuzzles,
-		"Ripper: key group completion keyword matched keyword='%s'",
-		kCompletionKeyword);
+	debugC(1, kDebugPuzzles, "Ripper: key group completion keyword matched keyword='%s'", kCompletionKeyword);
 	return true;
 }
 
-bool KeyGroupPuzzle::setNavigationFlags(bool previous, bool next,
-		bool cancelled) {
+bool KeyGroupPuzzle::setNavigationFlags(bool previous, bool next, bool cancelled) {
 	bool success = true;
-	if (!_engine->getMilestones()->set(kPreviousPageFlag, previous,
-			"key-group-navigation"))
+	if (!_engine->getMilestones()->set(kPreviousPageFlag, previous, "key-group-navigation"))
 		success = false;
-	if (!_engine->getMilestones()->set(kNextPageFlag, next,
-			"key-group-navigation"))
+	if (!_engine->getMilestones()->set(kNextPageFlag, next, "key-group-navigation"))
 		success = false;
-	if (!_engine->getMilestones()->set(kCancelledFlag, cancelled,
-			"key-group-navigation"))
+	if (!_engine->getMilestones()->set(kCancelledFlag, cancelled, "key-group-navigation"))
 		success = false;
 	debugC(success ? 1 : 2, kDebugPuzzles,
 		"Ripper: key group navigation previous=%d next=%d cancelled=%d "
@@ -373,6 +363,7 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 		_incomingDisplay.restore();
 		return kLoadFailed;
 	}
+
 	debugC(1, kDebugPuzzles,
 		"Ripper: entered key group puzzle "
 		"milestone=%u sourceControls=%u targetControls=%u help=0x%x "
@@ -394,22 +385,23 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 				active = false;
 				break;
 			}
+
 			if (command == kPreviousPageCommand) {
 				if (!setNavigationFlags(true, false, false))
 					result = kLoadFailed;
 				active = false;
 				break;
 			}
+
 			if (command == kNextPageCommand) {
 				if (!setNavigationFlags(false, true, false))
 					result = kLoadFailed;
 				active = false;
 				break;
 			}
+
 			if (command == kHelpCommand) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: key group puzzle opening modal help table=0x%x",
-					kHelpSelectionTable);
+				debugC(1, kDebugPuzzles, "Ripper: key group puzzle opening modal help table=0x%x", kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: key group puzzle modal help failed");
 				if (!render()) {
@@ -417,11 +409,12 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 					active = false;
 					break;
 				}
+
 				continue;
 			}
+
 			if (serviceKeyword(command)) {
-				result = complete(completionFlag, "key-group-keyword") ?
-					kSolved : kLoadFailed;
+				result = complete(completionFlag, "key-group-keyword") ? kSolved : kLoadFailed;
 				active = false;
 				break;
 			}
@@ -439,8 +432,7 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 				if (!setNavigationFlags(true, false, false))
 					result = kLoadFailed;
 				active = false;
-			} else if (_heldPiece < 0 &&
-					mouse.position.x >= kNextNavigationLeft) {
+			} else if (_heldPiece < 0 && mouse.position.x >= kNextNavigationLeft) {
 				if (!setNavigationFlags(false, true, false))
 					result = kLoadFailed;
 				active = false;
@@ -455,6 +447,7 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 					changed = putDown(slot);
 					operation = "place";
 				}
+
 				if (changed) {
 					storePersistentState();
 					const bool solved = isSolved();
@@ -465,10 +458,10 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 						_heldPiece, targetStateString().c_str(), completionFlag,
 						_engine->getMilestones()->isSet(completionFlag));
 					if (solved) {
-						result = complete(completionFlag,
-							"key-group-puzzle") ? kSolved : kLoadFailed;
+						result = complete(completionFlag, "key-group-puzzle") ? kSolved : kLoadFailed;
 						active = false;
 					}
+
 					redraw = true;
 				}
 			}
@@ -480,6 +473,7 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 		} else if (!redraw) {
 			presentScreen();
 		}
+
 		g_system->delayMillis(10);
 	}
 

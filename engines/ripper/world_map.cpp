@@ -129,8 +129,7 @@ void WorldMap::refreshLocations() {
 		const bool wasAvailable = location.available;
 		location.available = false;
 		for (uint entry = 0; entry < location.entryIndices.size(); ++entry) {
-			if (_engine->getMilestones()->isSet(
-				kMilestoneFirstTravelLocation + location.entryIndices[entry])) {
+			if (_engine->getMilestones()->isSet(kMilestoneFirstTravelLocation + location.entryIndices[entry])) {
 				location.available = true;
 				break;
 			}
@@ -150,16 +149,14 @@ void WorldMap::refreshLocations() {
 
 void WorldMap::drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text, byte color, const Common::Rect &clip) const {
-	BitmapFontRenderer::drawTextClipped(screen, pitch, _font, x, y, text,
-		color, clip);
+	BitmapFontRenderer::drawTextClipped(screen, pitch, _font, x, y, text, color, clip);
 }
 
 void WorldMap::drawLocationDetails(byte *screen, uint pitch) const {
 	if (_selectedVisible >= _visibleLocations.size())
 		return;
 
-	const Common::Rect viewport(kLocationDetailLeft, kLocationDetailTop,
-		kLocationDetailRight, kLocationDetailBottom);
+	const Common::Rect viewport(kLocationDetailLeft, kLocationDetailTop, kLocationDetailRight, kLocationDetailBottom);
 	const uint locationIndex = _visibleLocations[_selectedVisible];
 	const TravelLocation &location = _locations[locationIndex];
 	const uint rowHeight = _font.lineHeight + 2;
@@ -178,13 +175,14 @@ void WorldMap::drawLocationDetails(byte *screen, uint pitch) const {
 				line += character;
 				continue;
 			}
+
 			if (!line.empty()) {
 				const int top = kLocationDetailTop + row * rowHeight;
-				drawText(screen, pitch, kLocationDetailLeft + 3, top + 1, line,
-					kListTextColor, viewport);
+				drawText(screen, pitch, kLocationDetailLeft + 3, top + 1, line, kListTextColor, viewport);
 				line.clear();
 				++row;
 			}
+
 			if (character == '\r' && i + 1 < detail.size() && detail[i + 1] == '\n')
 				++i;
 		}
@@ -200,11 +198,9 @@ void WorldMap::draw() const {
 	}
 
 	for (uint y = 0; y < kWorldMapHeight; ++y)
-		memcpy(screen->getBasePtr(0, y), _background.pixels.data() + y * kWorldMapWidth,
-			kWorldMapWidth);
+		memcpy(screen->getBasePtr(0, y), _background.pixels.data() + y * kWorldMapWidth, kWorldMapWidth);
 
-	const Common::Rect viewport(kLocationListLeft, kLocationListTop,
-		kLocationListRight, kLocationListBottom);
+	const Common::Rect viewport(kLocationListLeft, kLocationListTop, kLocationListRight, kLocationListBottom);
 	const uint rowHeight = _font.lineHeight + 2;
 	const uint visibleRows = visibleRowCount();
 	byte *pixels = (byte *)screen->getPixels();
@@ -222,13 +218,14 @@ void WorldMap::draw() const {
 }
 
 int WorldMap::findVisibleLocation(const Common::Point &point) const {
-	if (!Common::Rect(kLocationListLeft, kLocationListTop,
-		kLocationListRight, kLocationListBottom).contains(point))
+	if (!Common::Rect(kLocationListLeft, kLocationListTop, kLocationListRight, kLocationListBottom).contains(point))
 		return -1;
+
 	const uint rowHeight = _font.lineHeight + 2;
 	const uint relativeRow = (point.y - kLocationListTop) / rowHeight;
 	if (relativeRow >= visibleRowCount())
 		return -1;
+
 	const uint visibleIndex = _firstVisible + relativeRow;
 	return visibleIndex < _visibleLocations.size() ? (int)visibleIndex : -1;
 }
@@ -252,6 +249,7 @@ uint WorldMap::visibleRowCount() const {
 bool WorldMap::moveSelection(int direction) {
 	if (_visibleLocations.empty())
 		return false;
+
 	const uint previous = _selectedVisible;
 	if (direction < 0 && _selectedVisible != 0)
 		--_selectedVisible;
@@ -268,27 +266,24 @@ bool WorldMap::moveSelection(int direction) {
 bool WorldMap::pageSelection(int direction) {
 	if (_visibleLocations.empty())
 		return false;
+
 	const uint previous = _selectedVisible;
 	const uint visibleRows = visibleRowCount();
 	const uint relativeSelection = _selectedVisible - _firstVisible;
 	if (direction < 0) {
 		if (_firstVisible != 0) {
-			_firstVisible = _firstVisible > visibleRows ?
-				_firstVisible - visibleRows : 0;
-			_selectedVisible = MIN<uint>(_firstVisible + relativeSelection,
-				_visibleLocations.size() - 1);
+			_firstVisible = _firstVisible > visibleRows ? _firstVisible - visibleRows : 0;
+			_selectedVisible = MIN<uint>(_firstVisible + relativeSelection, _visibleLocations.size() - 1);
 		} else {
 			_selectedVisible = 0;
 		}
 	} else if (_firstVisible + visibleRows < _visibleLocations.size()) {
-		_firstVisible = MIN<uint>(_firstVisible + visibleRows,
-			_visibleLocations.size() - visibleRows);
-		_selectedVisible = MIN<uint>(_firstVisible + relativeSelection,
-			_visibleLocations.size() - 1);
+		_firstVisible = MIN<uint>(_firstVisible + visibleRows, _visibleLocations.size() - visibleRows);
+		_selectedVisible = MIN<uint>(_firstVisible + relativeSelection, _visibleLocations.size() - 1);
 	} else {
-		_selectedVisible = MIN<uint>(_firstVisible + visibleRows - 1,
-			_visibleLocations.size() - 1);
+		_selectedVisible = MIN<uint>(_firstVisible + visibleRows - 1, _visibleLocations.size() - 1);
 	}
+
 	if (_selectedVisible != previous)
 		debugC(3, kDebugScene,
 			"Ripper: world map scroll page direction=%d selected=%u firstVisible=%u rows=%u",
@@ -299,16 +294,15 @@ bool WorldMap::pageSelection(int direction) {
 bool WorldMap::selectViewportEdge(bool last) {
 	if (_visibleLocations.empty())
 		return false;
+
 	const uint previous = _selectedVisible;
-	_selectedVisible = last ? MIN<uint>(_firstVisible + visibleRowCount() - 1,
-		_visibleLocations.size() - 1) : _firstVisible;
+	_selectedVisible = last ? MIN<uint>(_firstVisible + visibleRowCount() - 1, _visibleLocations.size() - 1) : _firstVisible;
 	return _selectedVisible != previous;
 }
 
 void WorldMap::updateFirstVisible() {
 	const uint visibleRows = visibleRowCount();
-	const uint maximumFirst = _visibleLocations.size() > visibleRows ?
-		_visibleLocations.size() - visibleRows : 0;
+	const uint maximumFirst = _visibleLocations.size() > visibleRows ? _visibleLocations.size() - visibleRows : 0;
 	if (_firstVisible > maximumFirst)
 		_firstVisible = maximumFirst;
 	if (_selectedVisible < _firstVisible)
@@ -320,8 +314,7 @@ void WorldMap::updateFirstVisible() {
 Common::String WorldMap::resolveTargetScript(uint locationIndex, uint chapter) const {
 	if (locationIndex >= _locations.size())
 		return Common::String();
-	return Common::String::format(_locations[locationIndex].targetPattern.c_str(),
-		(int)chapter);
+	return Common::String::format(_locations[locationIndex].targetPattern.c_str(), (int)chapter);
 }
 
 bool WorldMap::run(Common::String &targetScript, uint &chapter) {
@@ -348,8 +341,7 @@ bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setVisible(true);
 	_engine->getCursor()->update(kWorldMapCursor);
-	debugC(1, kDebugScene, "Ripper: entered world map availableLocations=%u",
-		_visibleLocations.size());
+	debugC(1, kDebugScene, "Ripper: entered world map availableLocations=%u", _visibleLocations.size());
 
 	bool cancelled = false;
 	bool selected = false;
@@ -357,16 +349,19 @@ bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 		if (_engine->getInput()->pollEvents()) {
 			break;
 		}
+
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 key = _engine->getInput()->consumeKey();
 			if (key == 27) {
 				cancelled = true;
 				break;
 			}
+
 			if (key == 13) {
 				selected = true;
 				break;
 			}
+
 			bool changed = false;
 			if (key == 0x4700)
 				changed = selectViewportEdge(false);
@@ -389,24 +384,25 @@ bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		const int hoveredVisible = findVisibleLocation(mouse.position);
 		const int hoveredScrollControl = findScrollControl(mouse.position);
-		_engine->getCursor()->update(
-			hoveredVisible >= 0 || hoveredScrollControl >= 0 ? kWorldMapCursor : 14);
+		_engine->getCursor()->update(hoveredVisible >= 0 || hoveredScrollControl >= 0 ? kWorldMapCursor : 14);
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			_pressedVisible = hoveredVisible;
 			_pressedScrollControl = hoveredScrollControl;
 		}
+
 		if ((mouse.released & kMouseButtonLeft) != 0) {
-			if (_pressedScrollControl >= 0 &&
-					_pressedScrollControl == hoveredScrollControl) {
+			if (_pressedScrollControl >= 0 && _pressedScrollControl == hoveredScrollControl) {
 				if (moveSelection(_pressedScrollControl == kScrollControlUp ? -1 : 1))
 					draw();
 			} else if (_pressedVisible >= 0 && _pressedVisible == hoveredVisible) {
 				_selectedVisible = hoveredVisible;
 				selected = true;
 			}
+
 			_pressedVisible = -1;
 			_pressedScrollControl = -1;
 		}
+
 		if (!selected && hoveredVisible >= 0 && (uint)hoveredVisible != _selectedVisible) {
 			_selectedVisible = hoveredVisible;
 			updateFirstVisible();
@@ -433,6 +429,7 @@ bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 		debugC(1, kDebugScene, "Ripper: world map cancelled");
 		restoreDisplay();
 	}
+
 	return true;
 }
 

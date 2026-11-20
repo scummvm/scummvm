@@ -44,8 +44,7 @@ private:
 	bool loadAssets();
 	bool loadPcx(const Common::String &path, BitmapAssetFrame &frame);
 	bool captureManualBacking();
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	void render();
 	void captureMeter();
 	void animateMeter(uint previousCount, uint correctCount);

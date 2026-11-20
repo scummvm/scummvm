@@ -56,8 +56,7 @@ private:
 	void restoreDisplay();
 	void refreshLocations();
 	void draw() const;
-	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text,
-		byte color, const Common::Rect &clip) const;
+	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color, const Common::Rect &clip) const;
 	void drawLocationDetails(byte *screen, uint pitch) const;
 	int findVisibleLocation(const Common::Point &point) const;
 	int findScrollControl(const Common::Point &point) const;

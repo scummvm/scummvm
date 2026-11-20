@@ -76,8 +76,7 @@ bool syncClock(Common::Serializer &serializer, ClockPuzzleState &clock) {
 		clock.secondClockDigits[2] * 10 + clock.secondClockDigits[3] <= 59;
 }
 
-bool syncKeySlots(Common::Serializer &serializer, int *slots, uint count,
-		int pieceCount, uint32 &seen) {
+bool syncKeySlots(Common::Serializer &serializer, int *slots, uint count, int pieceCount, uint32 &seen) {
 	for (uint i = 0; i < count; ++i) {
 		serializer.syncAsSint32LE(slots[i]);
 		if (slots[i] < -1 || slots[i] >= pieceCount)
@@ -87,6 +86,7 @@ bool syncKeySlots(Common::Serializer &serializer, int *slots, uint count,
 		const uint32 bit = 1U << slots[i];
 		if (seen & bit)
 			return false;
+
 		seen |= bit;
 	}
 	return true;
@@ -98,6 +98,7 @@ bool PuzzleState::syncGame(Common::Serializer &serializer) {
 	PuzzleState state = serializer.isLoading() ? PuzzleState() : *this;
 	if (!syncClock(serializer, state.clock))
 		return false;
+
 	for (uint i = 0; i < ARRAYSIZE(state.boardArrangement.positions); ++i) {
 		Common::Point &point = state.boardArrangement.positions[i];
 		serializer.syncAsSint16LE(point.x);
@@ -108,17 +109,14 @@ bool PuzzleState::syncGame(Common::Serializer &serializer) {
 	}
 	uint32 seen = 0;
 	const int pieceCount = ARRAYSIZE(state.keyGroup.sourceSlots);
-	if (!syncKeySlots(serializer, state.keyGroup.sourceSlots,
-			pieceCount, pieceCount, seen) ||
-			!syncKeySlots(serializer, state.keyGroup.targetSlots,
-				ARRAYSIZE(state.keyGroup.targetSlots), pieceCount, seen))
+	if (!syncKeySlots(serializer, state.keyGroup.sourceSlots, pieceCount, pieceCount, seen) ||
+			!syncKeySlots(serializer, state.keyGroup.targetSlots, ARRAYSIZE(state.keyGroup.targetSlots), pieceCount, seen))
 		return false;
 	if (serializer.err())
 		return false;
 	if (serializer.isLoading())
 		*this = state;
-	debugC(2, kDebugSaveLoad, "Ripper: %s retained puzzle state",
-		serializer.isLoading() ? "restored" : "saved");
+	debugC(2, kDebugSaveLoad, "Ripper: %s retained puzzle state", serializer.isLoading() ? "restored" : "saved");
 	return true;
 }
 

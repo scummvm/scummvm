@@ -66,19 +66,15 @@ private:
 	static Common::String basenameFromPath(const Common::String &path);
 	static Common::String formatScore(int score);
 
-	const PresentationRegion *findHitRegion(
-		const PresentationFrameRegion &frame, const Common::Point &point) const;
+	const PresentationRegion *findHitRegion(const PresentationFrameRegion &frame, const Common::Point &point) const;
 	void updateTargetGroup(const PresentationFrameRegion &frame, uint frameIndex);
-	void updateTargetVisibility(
-		const PresentationFrameRegion &frame, uint frameIndex);
+	void updateTargetVisibility(const PresentationFrameRegion &frame, uint frameIndex);
 	void logProgress(uint frameIndex, const char *reason) const;
 	void serviceFrameCue(uint frameIndex);
 	void serviceFixedCue(uint frameIndex);
 	uint16 serviceKeyboard(uint frameIndex);
-	void serviceWeapon(const PresentationFrameRegion &frame,
-		const Common::Point &point, bool firing, uint32 now, uint frameIndex);
-	void playCue(uint index, const Common::String &path,
-		uint volumePercent = 100, bool loop = false);
+	void serviceWeapon(const PresentationFrameRegion &frame, const Common::Point &point, bool firing, uint32 now, uint frameIndex);
+	void playCue(uint index, const Common::String &path, uint volumePercent = 100, bool loop = false);
 	void playNumberedCue(uint index, uint volumePercent = 100, bool loop = false);
 	void stopCue(uint index);
 	void stopAllAudio();
@@ -90,10 +86,8 @@ private:
 
 	bool presentResults();
 	bool drawResults();
-	void drawBitmapScaled(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const;
-	void drawTextScaled(byte *screen, uint pitch,
-		int x, int y, const Common::String &text, byte color) const;
+	void drawBitmapScaled(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
+	void drawTextScaled(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const;
 	bool animateResultsUntilInput();
 	void applyCursor();
 

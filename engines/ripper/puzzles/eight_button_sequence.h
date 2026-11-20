@@ -48,10 +48,8 @@ private:
 	bool loadFrame(const Common::String &path, BitmapAssetFrame &frame);
 	bool captureBackings();
 	bool captureRegion(const Common::Rect &bounds, Common::Array<byte> &pixels);
-	void restoreRegion(byte *screen, uint pitch, const Common::Rect &bounds,
-		const Common::Array<byte> &pixels) const;
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void restoreRegion(byte *screen, uint pitch, const Common::Rect &bounds, const Common::Array<byte> &pixels) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	void updateHover(const Common::Point &point);
 	int findButton(const Common::Point &point) const;
 	void drawFeedback(bool visible);

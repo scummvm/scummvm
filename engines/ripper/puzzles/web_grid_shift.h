@@ -47,8 +47,7 @@ public:
 private:
 	bool loadResources();
 	bool captureGrid();
-	void drawTileClipped(Graphics::Surface &screen, uint tile, int x, int y,
-		const Common::Rect &clip) const;
+	void drawTileClipped(Graphics::Surface &screen, uint tile, int x, int y, const Common::Rect &clip) const;
 	void renderOrder(const uint *order) const;
 	void renderShift(uint targetCell, uint progress) const;
 	bool animateShift(uint targetCell, bool autoPlay);

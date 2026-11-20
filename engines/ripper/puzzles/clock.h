@@ -44,8 +44,7 @@ private:
 	bool captureBackground();
 	void restoreBackground() const;
 	bool loadAssets();
-	bool loadFrames(const char *pattern, uint count,
-		Common::Array<BitmapAssetFrame> &frames);
+	bool loadFrames(const char *pattern, uint count, Common::Array<BitmapAssetFrame> &frames);
 	bool loadFrame(const Common::String &name, BitmapAssetFrame &frame);
 	void render() const;
 	void playCue(uint cue);

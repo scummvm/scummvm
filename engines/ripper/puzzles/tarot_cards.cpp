@@ -80,18 +80,16 @@ TarotCardsPuzzle::TarotCardsPuzzle(RipperEngine *engine) :
 }
 
 bool TarotCardsPuzzle::loadConfiguration() {
-	const uint puzzleLevel = CLIP<uint>(
-		_engine->getSettings()->getPuzzleLevel(), 1, 3);
-	const Common::String name = Common::String::format("card%u.ini",
-		puzzleLevel);
+	const uint puzzleLevel = CLIP<uint>(_engine->getSettings()->getPuzzleLevel(), 1, 3);
+	const Common::String name = Common::String::format("card%u.ini", puzzleLevel);
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_engine->getResources()->createReadStream(name, ResourceManager::kSourceScriptConfiguration));
 	Common::INIFile ini;
 	if (!stream || !ini.loadFromStream(*stream)) {
-		warning("Ripper: could not load tarot configuration '%s'",
-			name.c_str());
+		warning("Ripper: could not load tarot configuration '%s'", name.c_str());
 		return false;
 	}
+
 	_timeLimitSeconds = 0;
 	readIniUint(ini, "start", "timelimit", _timeLimitSeconds);
 	debugC(2, kDebugPuzzles,
@@ -101,12 +99,12 @@ bool TarotCardsPuzzle::loadConfiguration() {
 }
 
 bool TarotCardsPuzzle::loadAssets() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(kLibraryName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(kLibraryName));
 	if (!stream || !_library.open(*stream, Common::Path(kLibraryName))) {
 		warning("Ripper: could not open tarot library '%s'", kLibraryName);
 		return false;
 	}
+
 	if (!_library.loadPcx(kBackgroundName, _background))
 		return false;
 	if (_background.width != kRipperScreenWidth ||
@@ -119,10 +117,8 @@ bool TarotCardsPuzzle::loadAssets() {
 	}
 
 	for (uint card = 0; card < TarotCardsModel::kCardCount; ++card) {
-		if (!_library.loadBitmap(Common::String::format("si%u", card + 1),
-				_smallCards[card]) ||
-				!_library.loadBitmap(Common::String::format("bi%u", card + 1),
-					_largeCards[card]))
+		if (!_library.loadBitmap(Common::String::format("si%u", card + 1), _smallCards[card]) ||
+				!_library.loadBitmap(Common::String::format("bi%u", card + 1), _largeCards[card]))
 			return false;
 	}
 	if (_smallCards[0].width != 68 || _smallCards[0].height != 112 ||
@@ -132,10 +128,10 @@ bool TarotCardsPuzzle::loadAssets() {
 			_largeCards[0].width, _largeCards[0].height);
 		return false;
 	}
+
 	for (uint cue = 0; cue < ARRAYSIZE(kSceneCueNames); ++cue) {
 		if (!_library.hasMember(kSceneCueNames[cue])) {
-			warning("Ripper: tarot scene audio '%s' is missing",
-				kSceneCueNames[cue]);
+			warning("Ripper: tarot scene audio '%s' is missing", kSceneCueNames[cue]);
 			return false;
 		}
 	}
@@ -160,11 +156,9 @@ bool TarotCardsPuzzle::loadAssets() {
 	return true;
 }
 
-void TarotCardsPuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void TarotCardsPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, frame, x, y,
-		Common::Rect(0, kSceneOriginY, kRipperScreenWidth,
-			kSceneOriginY + kSceneHeight));
+		Common::Rect(0, kSceneOriginY, kRipperScreenWidth, kSceneOriginY + kSceneHeight));
 }
 
 void TarotCardsPuzzle::drawScaledFrame(byte *screen, uint pitch,
@@ -172,12 +166,12 @@ void TarotCardsPuzzle::drawScaledFrame(byte *screen, uint pitch,
 		uint scaleDenominator) const {
 	if (scaleNumerator == 0 || scaleDenominator == 0)
 		return;
+
 	const uint width = frame.width * scaleNumerator / scaleDenominator;
 	const uint height = frame.height * scaleNumerator / scaleDenominator;
 	for (uint destinationY = 0; destinationY < height; ++destinationY) {
 		const int screenY = y + destinationY;
-		if (screenY < kSceneOriginY ||
-				screenY >= kSceneOriginY + kSceneHeight)
+		if (screenY < kSceneOriginY || screenY >= kSceneOriginY + kSceneHeight)
 			continue;
 		const uint sourceY = destinationY * scaleDenominator / scaleNumerator;
 		for (uint destinationX = 0; destinationX < width; ++destinationX) {
@@ -201,6 +195,7 @@ bool TarotCardsPuzzle::drawCards(const Common::Point &mousePosition) const {
 			g_system->unlockScreen();
 		return false;
 	}
+
 	for (int y = 0; y < kSceneHeight; ++y) {
 		memcpy(screen->getBasePtr(0, y + kSceneOriginY),
 			_background.pixels.data() + y * kRipperScreenWidth,
@@ -217,10 +212,9 @@ bool TarotCardsPuzzle::drawCards(const Common::Point &mousePosition) const {
 	}
 	if (_model.heldCard() != 0) {
 		const BitmapAssetFrame &held = _largeCards[_model.heldCard() - 1];
-		drawFrame(pixels, screen->pitch, held,
-			mousePosition.x - held.width / 2,
-			mousePosition.y - held.height / 2);
+		drawFrame(pixels, screen->pitch, held, mousePosition.x - held.width / 2, mousePosition.y - held.height / 2);
 	}
+
 	g_system->unlockScreen();
 	return true;
 }
@@ -232,6 +226,7 @@ void TarotCardsPuzzle::renderDeparture(uint slot, uint step) const {
 			g_system->unlockScreen();
 		return;
 	}
+
 	for (int y = 0; y < kSceneHeight; ++y) {
 		memcpy(screen->getBasePtr(0, y + kSceneOriginY),
 			_background.pixels.data() + y * kRipperScreenWidth,
@@ -250,13 +245,11 @@ void TarotCardsPuzzle::renderDeparture(uint slot, uint step) const {
 	if (card != 0 && step < kDepartureStepCount) {
 		const BitmapAssetFrame &frame = _smallCards[card - 1];
 		const uint scale = kDepartureStepCount - step;
-		const int x = kSlotPositions[slot].x +
-			(frame.width * (int)step) / (2 * (int)kDepartureStepCount);
-		const int y = kSlotPositions[slot].y + kSceneOriginY +
-			(frame.height * (int)step) / (2 * (int)kDepartureStepCount);
-		drawScaledFrame(pixels, screen->pitch, frame, x, y, scale,
-			kDepartureStepCount);
+		const int x = kSlotPositions[slot].x + (frame.width * (int)step) / (2 * (int)kDepartureStepCount);
+		const int y = kSlotPositions[slot].y + kSceneOriginY + (frame.height * (int)step) / (2 * (int)kDepartureStepCount);
+		drawScaledFrame(pixels, screen->pitch, frame, x, y, scale, kDepartureStepCount);
 	}
+
 	g_system->unlockScreen();
 	presentScreen();
 }
@@ -271,6 +264,7 @@ bool TarotCardsPuzzle::animateRemainingCards() {
 			renderDeparture(slot, step);
 			if (!serviceEngineEvents())
 				return false;
+
 			g_system->delayMillis(kDepartureStepMillis);
 		}
 		_departed[slot] = true;
@@ -297,12 +291,10 @@ void TarotCardsPuzzle::updateCursor(const Common::Point &point) {
 	const int hovered = findSlot(point);
 	if (hovered == _hoveredSlot)
 		return;
-	debugC(3, kDebugPuzzles,
-		"Ripper: tarot hover slot=%d previous=%d point=%d,%d",
-		hovered, _hoveredSlot, point.x, point.y);
+
+	debugC(3, kDebugPuzzles, "Ripper: tarot hover slot=%d previous=%d point=%d,%d", hovered, _hoveredSlot, point.x, point.y);
 	_hoveredSlot = hovered;
-	_engine->getCursor()->update(
-		hovered >= 0 ? kSelectionCursor : kDefaultCursor);
+	_engine->getCursor()->update(hovered >= 0 ? kSelectionCursor : kDefaultCursor);
 }
 
 bool TarotCardsPuzzle::playSceneCue(uint cue) {
@@ -316,6 +308,7 @@ bool TarotCardsPuzzle::playSceneCue(uint cue) {
 bool TarotCardsPuzzle::playCardCue(uint card) {
 	if (card == 0 || card > TarotCardsModel::kCardCount)
 		return false;
+
 	const Common::String name = Common::String::format("snd%u", card - 1);
 	return _engine->getMedia()->playSoundEffectStream(
 		_library.createReadStreamForMember(name), name,
@@ -348,8 +341,7 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setSelectionIndex(kLoadingCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kLoadingCursor);
 	_engine->getCursor()->setVisible(true);
-	if (!_engine->getMedia()->play("begin.avi", true) ||
-			!loadConfiguration() || !loadAssets()) {
+	if (!_engine->getMedia()->play("begin.avi", true) || !loadConfiguration() || !loadAssets()) {
 		_incomingDisplay.restore();
 		return kLoadFailed;
 	}
@@ -358,8 +350,7 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
-	Common::Point lastDrawPosition =
-		_engine->getInput()->peekMouseState().position;
+	Common::Point lastDrawPosition = _engine->getInput()->peekMouseState().position;
 	bool redrawPending = !drawCards(lastDrawPosition);
 	if (!redrawPending)
 		presentScreen();
@@ -367,8 +358,7 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 		_library.createReadStreamForMember(kMusicName), kMusicName,
 		_musicHandle, 45, true);
 	const uint32 startTick = g_system->getMillis(true);
-	const uint32 timeLimitMillis =
-		_timeLimitSeconds * 18 * kDosTickMillis;
+	const uint32 timeLimitMillis = _timeLimitSeconds * 18 * kDosTickMillis;
 	debugC(1, kDebugPuzzles,
 		"Ripper: entered tarot puzzle milestone=%u library='%s' controls=0x672..0x680 timeLimitSeconds=%u music=%d",
 		completionFlag, kLibraryName, _timeLimitSeconds, musicStarted);
@@ -389,8 +379,7 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 		}
 		if (!active)
 			break;
-		if (timeLimitMillis != 0 &&
-				g_system->getMillis(true) - startTick > timeLimitMillis) {
+		if (timeLimitMillis != 0 && g_system->getMillis(true) - startTick > timeLimitMillis) {
 			debugC(1, kDebugPuzzles,
 				"Ripper: tarot puzzle timed out elapsedMs=%u limitMs=%u",
 				g_system->getMillis(true) - startTick, timeLimitMillis);
@@ -417,25 +406,26 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 		} else if (!pressed && _model.heldCard() != 0) {
 			redrawPending |= lastDrawPosition != mouse.position;
 		}
+
 		if (redrawPending && drawCards(mouse.position)) {
 			lastDrawPosition = mouse.position;
 			redrawPending = false;
 		}
+
 		if (slot >= 0 && _model.solved()) {
 			debugC(1, kDebugPuzzles,
 				"Ripper: solved tarot puzzle milestone=%u held=%u state=[%s]",
 				completionFlag, _model.heldCard(), stateString().c_str());
-			result = markSolved(completionFlag, "tarot-card-puzzle") ?
-				kSolved : kLoadFailed;
+			result = markSolved(completionFlag, "tarot-card-puzzle") ? kSolved : kLoadFailed;
 			active = false;
 		}
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}
 
 	_engine->getCursor()->setVisible(false);
-	if (result == kSolved && !animateRemainingCards() &&
-			!_engine->shouldQuit())
+	if (result == kSolved && !animateRemainingCards() && !_engine->shouldQuit())
 		result = kLoadFailed;
 	stopAudio();
 	if (result == kSolved && !_engine->shouldQuit()) {

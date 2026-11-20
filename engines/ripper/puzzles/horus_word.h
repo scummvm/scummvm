@@ -48,8 +48,7 @@ private:
 		void reset(bool enabled);
 		bool sync(const HorusWordPuzzle &puzzle);
 		void stateChanged(const HorusWordPuzzle &puzzle);
-		void draw(const HorusWordPuzzle &puzzle,
-			byte *screen, uint pitch) const;
+		void draw(const HorusWordPuzzle &puzzle, byte *screen, uint pitch) const;
 
 	private:
 		int findRecommendedLetter(const HorusWordPuzzle &puzzle) const;
@@ -59,8 +58,7 @@ private:
 	};
 
 	bool loadAssets();
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y, int opacity = -1) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y, int opacity = -1) const;
 	byte blendPixel(byte source, byte destination, uint opacity) const;
 	void render() const;
 	int findLetter(const Common::Point &point) const;

@@ -68,8 +68,7 @@ static const uint kLongMoveTicks = 200;
 static const uint kRemovalLeadTicks = 50;
 static const uint kShadingPaletteBytes = 0x300;
 static const uint kShadingColorCubeBytes = 0x1000;
-static const uint kShadingInfoBytes =
-		kShadingPaletteBytes + kShadingColorCubeBytes;
+static const uint kShadingInfoBytes = kShadingPaletteBytes + kShadingColorCubeBytes;
 static const uint kSelectedPieceEffectStrength = 0xa0;
 static const uint kEffectStrengthRange = 0x100;
 static const uint kPuzzleHelpSearchDepth = 3;
@@ -103,8 +102,7 @@ static const Common::Point kCellAnchors[BoardGameModel::kCellCount] = {
 	Common::Point(545, 266), Common::Point(591, 245)
 };
 
-// The first row is PART_A for positive pieces, followed by PART_B for
-// negative pieces. Each row contains types one through five.
+// The first row is PART_A for positive pieces, followed by PART_B for negative pieces. Each row contains types one through five.
 static const Common::Point kPieceOrigins[2][5] = {
 	{
 		Common::Point(55, 123), Common::Point(76, 132),
@@ -154,11 +152,9 @@ bool BoardGamePuzzle::DebugHelper::sync(const BoardGamePuzzle &puzzle) {
 	return true;
 }
 
-void BoardGamePuzzle::DebugHelper::selectionChanged(
-		const BoardGamePuzzle &puzzle) {
+void BoardGamePuzzle::DebugHelper::selectionChanged(const BoardGamePuzzle &puzzle) {
 	_optimalDestination = -1;
-	if (!_enabled || puzzle._selectedCell < 0 ||
-			puzzle._legalDestinations.empty())
+	if (!_enabled || puzzle._selectedCell < 0 || puzzle._legalDestinations.empty())
 		return;
 
 	_optimalDestination = chooseOptimalDestination(puzzle);
@@ -169,26 +165,23 @@ void BoardGamePuzzle::DebugHelper::selectionChanged(
 		kPuzzleHelpLegalColor, kPuzzleHelpOptimalColor);
 }
 
-int BoardGamePuzzle::DebugHelper::chooseOptimalDestination(
-		const BoardGamePuzzle &puzzle) const {
+int BoardGamePuzzle::DebugHelper::chooseOptimalDestination(const BoardGamePuzzle &puzzle) const {
 	int bestDestination = -1;
 	int bestScore = 0x7fffffff;
 	for (uint destinationIndex = 0;
 			destinationIndex < puzzle._legalDestinations.size();
 			++destinationIndex) {
-		const int destination =
-			puzzle._legalDestinations[destinationIndex];
+		const int destination = puzzle._legalDestinations[destinationIndex];
 		BoardGameModel next = puzzle._model;
 		const BoardGameModel::Move move(puzzle._selectedCell, destination);
 		if (!next.applyMove(move))
 			continue;
-		const int score = puzzle.evaluatePosition(next,
-			kPuzzleHelpSearchDepth - 1, -0x7fffffff, 0x7fffffff);
+		const int score = puzzle.evaluatePosition(next, kPuzzleHelpSearchDepth - 1, -0x7fffffff, 0x7fffffff);
 		debugC(3, kDebugPuzzles,
 			"Ripper: board-game puzzle help candidate move=%s score=%d depth=%u",
 			moveString(move).c_str(), score, kPuzzleHelpSearchDepth);
-		// Positive pieces are the player side. The shared evaluator scores
-		// negative positions positively, so the best player move minimizes.
+		// Positive pieces are the player side.
+		// The shared evaluator scores negative positions positively, so the best player move minimizes.
 		if (bestDestination < 0 || score < bestScore) {
 			bestDestination = destination;
 			bestScore = score;
@@ -197,8 +190,7 @@ int BoardGamePuzzle::DebugHelper::chooseOptimalDestination(
 	return bestDestination;
 }
 
-void BoardGamePuzzle::DebugHelper::draw(const BoardGamePuzzle &puzzle,
-		byte *screen, uint pitch) const {
+void BoardGamePuzzle::DebugHelper::draw(const BoardGamePuzzle &puzzle, byte *screen, uint pitch) const {
 	if (!_enabled || puzzle._selectedCell < 0)
 		return;
 
@@ -206,29 +198,23 @@ void BoardGamePuzzle::DebugHelper::draw(const BoardGamePuzzle &puzzle,
 	for (uint destinationIndex = 0;
 			destinationIndex < puzzle._legalDestinations.size();
 			++destinationIndex) {
-		const int destination =
-			puzzle._legalDestinations[destinationIndex];
-		if (destination >= 0 &&
-				destination <= BoardGameModel::kOffBoardDestination)
+		const int destination = puzzle._legalDestinations[destinationIndex];
+		if (destination >= 0 && destination <= BoardGameModel::kOffBoardDestination)
 			highlighted[destination] = true;
 	}
 
 	for (uint y = 0; y < puzzle._hitMap.height; ++y) {
 		for (uint x = 0; x < puzzle._hitMap.width; ++x) {
-			const byte code =
-				puzzle._hitMap.pixels[y * puzzle._hitMap.width + x];
-			if (code > BoardGameModel::kOffBoardDestination ||
-					!highlighted[code])
+			const byte code = puzzle._hitMap.pixels[y * puzzle._hitMap.width + x];
+			if (code > BoardGameModel::kOffBoardDestination || !highlighted[code])
 				continue;
 			const bool optimal = code == _optimalDestination;
-			const uint ditherMask = optimal ? kPuzzleHelpOptimalDitherMask :
-				kPuzzleHelpLegalDitherMask;
+			const uint ditherMask = optimal ? kPuzzleHelpOptimalDitherMask : kPuzzleHelpLegalDitherMask;
 			if (((x + y) & ditherMask) != 0)
 				continue;
 			// Spatial dithering uses the interface red and yellow entries without
 			// relying on BOARDPAL, whose limited colors collapse arbitrary RGB tints.
-			screen[y * pitch + x] = optimal ? kPuzzleHelpOptimalColor :
-				kPuzzleHelpLegalColor;
+			screen[y * pitch + x] = optimal ? kPuzzleHelpOptimalColor : kPuzzleHelpLegalColor;
 		}
 	}
 }
@@ -241,8 +227,7 @@ BoardGamePuzzle::BoardGamePuzzle(RipperEngine *engine) :
 }
 
 bool BoardGamePuzzle::loadSelectionShading() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_library.createReadStreamForMember(kSelectionShadingName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_library.createReadStreamForMember(kSelectionShadingName));
 	if (!stream || stream->size() != kShadingInfoBytes) {
 		warning("Ripper: board-game shading '%s' has invalid size expected=%u actual=%lld",
 			kSelectionShadingName, kShadingInfoBytes,
@@ -251,23 +236,22 @@ bool BoardGamePuzzle::loadSelectionShading() {
 	}
 
 	_selectionShading.resize(kShadingInfoBytes);
-	if (stream->read(_selectionShading.data(), kShadingInfoBytes) !=
-			kShadingInfoBytes) {
-		warning("Ripper: could not read board-game shading '%s'",
-			kSelectionShadingName);
+	if (stream->read(_selectionShading.data(), kShadingInfoBytes) != kShadingInfoBytes) {
+		warning("Ripper: could not read board-game shading '%s'", kSelectionShadingName);
 		_selectionShading.clear();
 		return false;
 	}
+
 	return true;
 }
 
 bool BoardGamePuzzle::loadAssets() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(kLibraryName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(kLibraryName));
 	if (!stream || !_library.open(*stream, Common::Path(kLibraryName))) {
 		warning("Ripper: could not open board-game library '%s'", kLibraryName);
 		return false;
 	}
+
 	if (!_library.loadBitmap(kBackgroundName, _background) ||
 			!_library.loadBitmap(kHitMapName, _hitMap) ||
 			!loadSelectionShading())
@@ -282,10 +266,10 @@ bool BoardGamePuzzle::loadAssets() {
 			_background.palette.size() / 3);
 		return false;
 	}
+
 	for (uint side = 0; side < 2; ++side) {
 		for (uint type = 0; type < 5; ++type) {
-			const Common::String name = Common::String::format(
-				"part_%c%02u", side == 0 ? 'a' : 'b', type);
+			const Common::String name = Common::String::format("part_%c%02u", side == 0 ? 'a' : 'b', type);
 			if (!_library.loadBitmap(name, _pieces[side][type]))
 				return false;
 		}
@@ -300,9 +284,7 @@ bool BoardGamePuzzle::loadAssets() {
 	return true;
 }
 
-void BoardGamePuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y,
-		bool translucent) const {
+void BoardGamePuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y, bool translucent) const {
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
 		const int destinationY = y + sourceY;
 		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
@@ -314,41 +296,35 @@ void BoardGamePuzzle::drawFrame(byte *screen, uint pitch,
 			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
 			if (pixel != frame.transparentColor) {
 				byte &destination = screen[destinationY * pitch + destinationX];
-				destination = translucent ?
-					blendSelectionPixel(pixel, destination) : pixel;
+				destination = translucent ? blendSelectionPixel(pixel, destination) : pixel;
 			}
 		}
 	}
 }
 
-byte BoardGamePuzzle::blendSelectionPixel(byte source,
-		byte destination) const {
-	// BOARDPAL's 0x1000-byte tail maps 12-bit RGB (rrrrggggbbbb) back
-	// into its 256-color palette.
+byte BoardGamePuzzle::blendSelectionPixel(byte source, byte destination) const {
+	// BOARDPAL's 0x1000-byte tail maps 12-bit RGB (rrrrggggbbbb) back into its 256-color palette.
 	const byte *palette = _selectionShading.data();
 	const byte *colorCube = palette + kShadingPaletteBytes;
-	const uint inverseStrength =
-		kEffectStrengthRange - kSelectedPieceEffectStrength;
+	const uint inverseStrength = kEffectStrengthRange - kSelectedPieceEffectStrength;
 	uint components[3];
 	for (uint component = 0; component < ARRAYSIZE(components); ++component) {
 		components[component] =
 			(palette[source * 3 + component] * kSelectedPieceEffectStrength +
 			 palette[destination * 3 + component] * inverseStrength) >> 8;
 	}
-	const uint colorCubeIndex = ((components[0] >> 2) << 8) |
-		((components[1] >> 2) << 4) | (components[2] >> 2);
+	const uint colorCubeIndex = ((components[0] >> 2) << 8) | ((components[1] >> 2) << 4) | (components[2] >> 2);
 	return colorCube[colorCubeIndex];
 }
 
-void BoardGamePuzzle::drawPiece(byte *screen, uint pitch, int piece,
-		const Common::Point &anchor, bool selected) const {
+void BoardGamePuzzle::drawPiece(byte *screen, uint pitch, int piece, const Common::Point &anchor, bool selected) const {
 	if (piece == 0)
 		return;
+
 	const uint side = piece > 0 ? 0 : 1;
 	const uint type = ABS(piece) - 1;
 	const Common::Point position = anchor - kPieceOrigins[side][type];
-	drawFrame(screen, pitch, _pieces[side][type], position.x, position.y,
-		selected);
+	drawFrame(screen, pitch, _pieces[side][type], position.x, position.y, selected);
 }
 
 void BoardGamePuzzle::render() {
@@ -359,10 +335,9 @@ void BoardGamePuzzle::render() {
 			g_system->unlockScreen();
 		return;
 	}
+
 	for (int y = 0; y < kRipperScreenHeight; ++y) {
-		memcpy(screen->getBasePtr(0, y),
-			_background.pixels.data() + y * kRipperScreenWidth,
-			kRipperScreenWidth);
+		memcpy(screen->getBasePtr(0, y), _background.pixels.data() + y * kRipperScreenWidth, kRipperScreenWidth);
 	}
 	byte *pixels = (byte *)screen->getPixels();
 	_debugHelper.draw(*this, pixels, screen->pitch);
@@ -376,11 +351,11 @@ void BoardGamePuzzle::render() {
 			drawPiece(pixels, screen->pitch, _movingPiece, _movingAnchor);
 			movingPiecePending = false;
 		}
+
 		if (_movingActive && cell == _movingSource)
 			continue;
 		const int piece = _model.pieceAt(cell);
-		drawPiece(pixels, screen->pitch, piece, anchor,
-			cell == _selectedCell);
+		drawPiece(pixels, screen->pitch, piece, anchor, cell == _selectedCell);
 	}
 	if (movingPiecePending)
 		drawPiece(pixels, screen->pitch, _movingPiece, _movingAnchor);
@@ -397,8 +372,7 @@ void BoardGamePuzzle::clearSelectedPiece() {
 }
 
 int BoardGamePuzzle::hitCodeAt(const Common::Point &point) const {
-	if (point.x < 0 || point.x >= _hitMap.width || point.y < 0 ||
-			point.y >= _hitMap.height)
+	if (point.x < 0 || point.x >= _hitMap.width || point.y < 0 || point.y >= _hitMap.height)
 		return -1;
 	return _hitMap.pixels[point.y * _hitMap.width + point.x];
 }
@@ -411,18 +385,19 @@ void BoardGamePuzzle::updateCursor(const Common::Point &point) {
 	} else if (hitCode >= 0 && hitCode <= BoardGameModel::kOffBoardDestination) {
 		if (_selectedCell >= 0 ?
 				(hitCode == _selectedCell ||
-				 Common::find(_legalDestinations.begin(), _legalDestinations.end(),
-					hitCode) != _legalDestinations.end()) :
+				 Common::find(_legalDestinations.begin(), _legalDestinations.end(), hitCode) != _legalDestinations.end()) :
 				(hitCode < BoardGameModel::kCellCount &&
 				 _model.pieceAt(hitCode) > 0))
 			cursor = kSelectionCursor;
 	}
+
 	if (hitCode != _hoveredCode) {
 		debugC(3, kDebugInput,
 			"Ripper: board-game hover code=%d previous=%d point=%d,%d selected=%d cursor=%u",
 			hitCode, _hoveredCode, point.x, point.y, _selectedCell, cursor);
 		_hoveredCode = hitCode;
 	}
+
 	_engine->getCursor()->update(cursor);
 	_engine->getCursor()->setVisible(true);
 }
@@ -432,25 +407,24 @@ bool BoardGamePuzzle::serviceKeyword(uint16 command) {
 		return false;
 	if (advanceKeyword(command, kCompletionKeyword, _keywordIndex, true)) {
 		_keywordIndex = 0;
-		debugC(1, kDebugPuzzles,
-			"Ripper: board-game completion keyword matched keyword='%s'",
-			kCompletionKeyword);
+		debugC(1, kDebugPuzzles, "Ripper: board-game completion keyword matched keyword='%s'", kCompletionKeyword);
 		return true;
 	}
+
 	return false;
 }
 
 bool BoardGamePuzzle::playCue(uint cue) {
 	if (cue >= kAudioCueCount)
 		return false;
+
 	const Common::String name = Common::String::format("chess%u", cue);
-	Common::SeekableReadStream *stream =
-		_library.createReadStreamForMember(name);
-	if (!stream || !_engine->getMedia()->playSoundEffectStream(
-			stream, name, _audioHandles[cue])) {
+	Common::SeekableReadStream *stream = _library.createReadStreamForMember(name);
+	if (!stream || !_engine->getMedia()->playSoundEffectStream(stream, name, _audioHandles[cue])) {
 		warning("Ripper: could not play board-game cue '%s'", name.c_str());
 		return false;
 	}
+
 	return true;
 }
 
@@ -459,8 +433,7 @@ void BoardGamePuzzle::stopCue(uint cue) {
 		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
 }
 
-bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move,
-		int movingPiece, int capturedPiece, bool thinkingCursor) {
+bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move, int movingPiece, int capturedPiece, bool thinkingCursor) {
 	const Common::Point start = kCellAnchors[move.source];
 	Common::Point destination;
 	uint durationTicks = kShortMoveTicks;
@@ -468,8 +441,7 @@ bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move,
 		const int row = move.source / BoardGameModel::kColumnCount;
 		const int column = move.source % BoardGameModel::kColumnCount;
 		const int referenceColumn = column == 0 ? 1 : column - 1;
-		const Common::Point &reference =
-			kCellAnchors[row * BoardGameModel::kColumnCount + referenceColumn];
+		const Common::Point &reference = kCellAnchors[row * BoardGameModel::kColumnCount + referenceColumn];
 		destination = start + (start - reference);
 		debugC(3, kDebugPuzzles,
 			"Ripper: board-game legal side exit source=%d piece=%d "
@@ -483,8 +455,7 @@ bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move,
 			durationTicks = kLongMoveTicks;
 	}
 
-	const uint moveCue = durationTicks == kShortMoveTicks ?
-		kShortMoveCue : kLongMoveCue;
+	const uint moveCue = durationTicks == kShortMoveTicks ? kShortMoveCue : kLongMoveCue;
 	playCue(moveCue);
 	_movingActive = true;
 	_movingSource = move.source;
@@ -506,17 +477,15 @@ bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move,
 	while (!_engine->shouldQuit()) {
 		if (!serviceEngineEvents())
 			break;
-		const uint elapsedMillis = MIN<uint32>(
-			g_system->getMillis(true) - startMillis, durationMillis);
-		_movingAnchor.x = start.x +
-			(destination.x - start.x) * (int)elapsedMillis / (int)durationMillis;
-		_movingAnchor.y = start.y +
-			(destination.y - start.y) * (int)elapsedMillis / (int)durationMillis;
+		const uint elapsedMillis = MIN<uint32>(g_system->getMillis(true) - startMillis, durationMillis);
+		_movingAnchor.x = start.x + (destination.x - start.x) * (int)elapsedMillis / (int)durationMillis;
+		_movingAnchor.y = start.y + (destination.y - start.y) * (int)elapsedMillis / (int)durationMillis;
 		if (capturedPiece != 0 && !removalCueStarted &&
 				elapsedMillis + kRemovalLeadTicks * kAnimationTickMillis >= durationMillis) {
 			playCue(kRemovalCue);
 			removalCueStarted = true;
 		}
+
 		if (thinkingCursor)
 			_engine->getCursor()->update(kDefaultSelectionIndex);
 		render();
@@ -537,8 +506,7 @@ bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move,
 bool BoardGamePuzzle::applyPlayerMove(int destination) {
 	const BoardGameModel::Move move(_selectedCell, destination);
 	const int movingPiece = _model.pieceAt(move.source);
-	const int capturedPiece = destination < BoardGameModel::kCellCount ?
-		_model.pieceAt(destination) : 0;
+	const int capturedPiece = destination < BoardGameModel::kCellCount ? _model.pieceAt(destination) : 0;
 	stopCue(kSelectionCue);
 	clearSelectedPiece();
 	if (!animateMove(move, movingPiece, capturedPiece, false))
@@ -565,15 +533,13 @@ int BoardGamePuzzle::staticScore(const BoardGameModel &model) const {
 		const int type = ABS(piece);
 		const int row = cell / BoardGameModel::kColumnCount;
 		const int progress = piece < 0 ? row : BoardGameModel::kRowCount - row - 1;
-		const int value = kPieceValues[type] +
-			((type == 2 || type == 3) ? progress * 5 : 0);
+		const int value = kPieceValues[type] + ((type == 2 || type == 3) ? progress * 5 : 0);
 		score += piece < 0 ? value : -value;
 	}
 	return score;
 }
 
-int BoardGamePuzzle::evaluatePosition(const BoardGameModel &model, int depth,
-		int alpha, int beta) const {
+int BoardGamePuzzle::evaluatePosition(const BoardGameModel &model, int depth, int alpha, int beta) const {
 	if (model.result() < 0)
 		return 1000000 + depth;
 	if (model.result() > 0)
@@ -588,6 +554,7 @@ int BoardGamePuzzle::evaluatePosition(const BoardGameModel &model, int depth,
 		passed.passTurn();
 		return evaluatePosition(passed, depth - 1, alpha, beta);
 	}
+
 	if (model.sideToMove() < 0) {
 		int best = -0x7fffffff;
 		for (uint move = 0; move < moves.size(); ++move) {
@@ -624,9 +591,7 @@ BoardGameModel::Move BoardGamePuzzle::chooseAiMove() {
 	for (uint move = 0; move < moves.size(); ++move) {
 		BoardGameModel next = _model;
 		next.applyMove(moves[move]);
-		const int score = evaluatePosition(next,
-			_searchDepth > 0 ? _searchDepth - 1 : 0,
-			-0x7fffffff, 0x7fffffff);
+		const int score = evaluatePosition(next, _searchDepth > 0 ? _searchDepth - 1 : 0, -0x7fffffff, 0x7fffffff);
 		if (score > bestScore) {
 			bestScore = score;
 			bestMoves.clear();
@@ -635,8 +600,7 @@ BoardGameModel::Move BoardGamePuzzle::chooseAiMove() {
 			bestMoves.push_back(moves[move]);
 		}
 	}
-	const uint choice = bestMoves.size() > 1 ?
-		_random.getRandomNumber(bestMoves.size() - 1) : 0;
+	const uint choice = bestMoves.size() > 1 ? _random.getRandomNumber(bestMoves.size() - 1) : 0;
 	debugC(2, kDebugPuzzles,
 		"Ripper: board-game AI evaluated moves=%u bestScore=%d ties=%u depth=%u selected=%s",
 		moves.size(), bestScore, bestMoves.size(), _searchDepth,
@@ -650,14 +614,12 @@ bool BoardGamePuzzle::runAiTurn() {
 	const BoardGameModel::Move move = chooseAiMove();
 	if (move.source < 0) {
 		_model.passTurn();
-		debugC(2, kDebugPuzzles,
-			"Ripper: board-game AI passed no legal moves nextSide=%d",
-			_model.sideToMove());
+		debugC(2, kDebugPuzzles, "Ripper: board-game AI passed no legal moves nextSide=%d", _model.sideToMove());
 		return true;
 	}
+
 	const int movingPiece = _model.pieceAt(move.source);
-	const int capturedPiece = move.destination < BoardGameModel::kCellCount ?
-		_model.pieceAt(move.destination) : 0;
+	const int capturedPiece = move.destination < BoardGameModel::kCellCount ? _model.pieceAt(move.destination) : 0;
 	if (!animateMove(move, movingPiece, capturedPiece, true))
 		return false;
 	if (!_model.applyMove(move))
@@ -681,6 +643,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::finishResult(uint completionFlag) {
 		else
 			result = kSolved;
 	}
+
 	debugC(1, kDebugPuzzles,
 		"Ripper: board-game terminal resultCode=%d milestone=%u milestoneSet=%d",
 		_model.result(), completionFlag,
@@ -735,25 +698,26 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 				stopCue(kSelectionCue);
 				render();
 			}
+
 			if (command == kEscapeCommand) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: board-game puzzle exited by Escape resultCode=7");
+				debugC(1, kDebugPuzzles, "Ripper: board-game puzzle exited by Escape resultCode=7");
 				active = false;
 				break;
 			}
+
 			if (command == kHelpCommand) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: board-game puzzle opening modal help table=0x%x",
-					kHelpSelectionTable);
+				debugC(1, kDebugPuzzles, "Ripper: board-game puzzle opening modal help table=0x%x", kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: board-game modal help failed");
 				render();
 				continue;
 			}
+
 			if (command == kScreenshotCommand || command == 0x10) {
 				g_system->saveScreenshot();
 				continue;
 			}
+
 			if (serviceKeyword(command)) {
 				_model.setResult(1);
 				break;
@@ -771,27 +735,23 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 				result = kLoadFailed;
 				break;
 			}
+
 			render();
 			g_system->delayMillis(10);
 		} else {
 			const MouseState mouse = _engine->getInput()->publishMouseState();
 			updateCursor(mouse.position);
-			if ((mouse.pressed & kMouseButtonRight) != 0 &&
-					_selectedCell >= 0) {
-				debugC(2, kDebugPuzzles,
-					"Ripper: board-game selection cancelled source=%d",
-					_selectedCell);
+			if ((mouse.pressed & kMouseButtonRight) != 0 && _selectedCell >= 0) {
+				debugC(2, kDebugPuzzles, "Ripper: board-game selection cancelled source=%d", _selectedCell);
 				clearSelectedPiece();
 				stopCue(kSelectionCue);
 				render();
 			} else if ((mouse.pressed & kMouseButtonLeft) != 0) {
 				const int hitCode = hitCodeAt(mouse.position);
 				if (hitCode == kExitHitCode) {
-					debugC(1, kDebugPuzzles,
-						"Ripper: board-game puzzle exited through control=0x81 resultCode=10");
+					debugC(1, kDebugPuzzles, "Ripper: board-game puzzle exited through control=0x81 resultCode=10");
 					active = false;
-				} else if (_selectedCell >= 0 &&
-						hitCode == _selectedCell) {
+				} else if (_selectedCell >= 0 && hitCode == _selectedCell) {
 					debugC(2, kDebugPuzzles,
 						"Ripper: board-game deselected source=%d piece=%d",
 						_selectedCell, _model.pieceAt(_selectedCell));
@@ -811,8 +771,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 						hitCode < BoardGameModel::kCellCount &&
 						_model.pieceAt(hitCode) > 0) {
 					_selectedCell = hitCode;
-					_model.legalDestinations(_selectedCell,
-						_legalDestinations);
+					_model.legalDestinations(_selectedCell, _legalDestinations);
 					_debugHelper.selectionChanged(*this);
 					playCue(kSelectionCue);
 					debugC(2, kDebugPuzzles,
@@ -831,6 +790,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 			result = finishResult(completionFlag);
 			active = false;
 		}
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}

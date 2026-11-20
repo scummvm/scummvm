@@ -47,26 +47,24 @@ static const uint kPresentationCursor = 14;
 
 } // End of anonymous namespace
 
-Common::Rect calculatePresentationTextBounds(uint sequenceId, uint videoMode,
-		bool largeMedia, int displayTop) {
+Common::Rect calculatePresentationTextBounds(uint sequenceId, uint videoMode, bool largeMedia, int displayTop) {
 	const int left = (640 - kPresentationTextWidth) / 2;
 	int top = displayTop + kPresentationTextInitialTop;
 	if (sequenceId != 1) {
 		// Following unscaled small-media branches place text at the bottom of the page.
 		// Scaled and large branches hide it below the display.
 		if (videoMode >= 2 || largeMedia)
-			return Common::Rect(left, 400,
-				left + kPresentationTextWidth, 400);
+			return Common::Rect(left, 400, left + kPresentationTextWidth, 400);
+
 		top = displayTop + kPresentationTextFollowingTop;
 	}
+
 	if (top >= 400)
-		return Common::Rect(left, 400,
-			left + kPresentationTextWidth, 400);
+		return Common::Rect(left, 400, left + kPresentationTextWidth, 400);
 	return Common::Rect(left, top, left + kPresentationTextWidth, 400);
 }
 
-Common::Rect calculatePresentationContinueBounds(
-		const Common::Rect &textBounds) {
+Common::Rect calculatePresentationContinueBounds(const Common::Rect &textBounds) {
 	return Common::Rect(textBounds.right + kPresentationContinueGap,
 		textBounds.top,
 		textBounds.right + kPresentationContinueGap +
@@ -74,13 +72,12 @@ Common::Rect calculatePresentationContinueBounds(
 		textBounds.top + kPresentationContinueHeight);
 }
 
-uint calculatePresentationTextAutoScrollLine(uint progress, uint total,
-		uint maximumFirstVisible) {
+uint calculatePresentationTextAutoScrollLine(uint progress, uint total, uint maximumFirstVisible) {
 	if (total == 0 || maximumFirstVisible == 0)
 		return 0;
+
 	const uint64 stepCount = maximumFirstVisible + 1;
-	return MIN<uint64>((uint64)progress * stepCount / total,
-		maximumFirstVisible);
+	return MIN<uint64>((uint64)progress * stepCount / total, maximumFirstVisible);
 }
 
 PresentationTextControl::PresentationTextControl(RipperEngine *engine,
@@ -98,8 +95,7 @@ void PresentationTextControl::configureSegment(uint sequenceId,
 	_totalFrames = totalFrames;
 	_textColorPending = true;
 	const bool largeMedia = mediaWidth >= 321 || mediaHeight >= 201;
-	_bounds = calculatePresentationTextBounds(sequenceId, videoMode,
-		largeMedia, _displayTop);
+	_bounds = calculatePresentationTextBounds(sequenceId, videoMode, largeMedia, _displayTop);
 	debugC(2, kDebugVideo,
 		"Ripper: configured retail presentation text sequence=%u frames=%u "
 		"media=%ux%u large=%d videoMode=%u autoScroll=%d bounds=%d,%d,%d,%d",
@@ -118,11 +114,11 @@ void PresentationTextControl::applySharedPalettePatch() {
 	_textColorPending = false;
 }
 
-void PresentationTextControl::scrollTo(uint firstVisible,
-		const char *source) {
+void PresentationTextControl::scrollTo(uint firstVisible, const char *source) {
 	firstVisible = MIN(firstVisible, _maximumFirstVisible);
 	if (firstVisible == _firstVisible)
 		return;
+
 	_firstVisible = firstVisible;
 	debugC(3, kDebugVideo,
 		"Ripper: scrolled retail presentation text source=%s sequence=%u "
@@ -134,8 +130,7 @@ bool PresentationTextControl::serviceInput(bool allowDismissal) {
 	bool stop = false;
 	while (_input->hasPendingKey()) {
 		const uint16 command = _input->consumeKey();
-		if (_engine->getSettings()->handlePresentationTextCommand(
-				command, "presentation-text"))
+		if (_engine->getSettings()->handlePresentationTextCommand(command, "presentation-text"))
 			continue;
 		if (command == 0x1b) {
 			_dismissed = true;
@@ -146,6 +141,7 @@ bool PresentationTextControl::serviceInput(bool allowDismissal) {
 				_sequenceId, allowDismissal);
 			break;
 		}
+
 		const uint nextFirstVisible = calculateTextScroll(command, _firstVisible,
 			_visibleRows, _maximumFirstVisible).firstVisible;
 		scrollTo(nextFirstVisible, "keyboard");
@@ -159,22 +155,20 @@ bool PresentationTextControl::serviceInput(bool allowDismissal) {
 			_maximumFirstVisible,
 			ModalDialogManager::kSceneEntryPresentation);
 		if (_bounds.contains(mouse.position) && mouse.wheel != 0) {
-			const int next = CLIP<int>((int)_firstVisible - mouse.wheel,
-				0, _maximumFirstVisible);
+			const int next = CLIP<int>((int)_firstVisible - mouse.wheel, 0, _maximumFirstVisible);
 			scrollTo(next, "mouse-wheel");
 		}
+
 		if ((mouse.released & kMouseButtonLeft) != 0) {
 			if (_hoveredScrollControl == ModalDialogManager::kTextPanelScrollUp)
-				scrollTo(_firstVisible > 0 ? _firstVisible - 1 : 0,
-					"scroll-up");
+				scrollTo(_firstVisible > 0 ? _firstVisible - 1 : 0, "scroll-up");
 			else if (_hoveredScrollControl == ModalDialogManager::kTextPanelScrollDown)
 				scrollTo(_firstVisible + 1, "scroll-down");
 		}
 	}
 
 	if (allowDismissal) {
-		const Common::Rect continueBounds =
-			calculatePresentationContinueBounds(_bounds);
+		const Common::Rect continueBounds = calculatePresentationContinueBounds(_bounds);
 		if ((mouse.pressed & kMouseButtonLeft) != 0)
 			_continuePressed = continueBounds.contains(mouse.position);
 		if ((mouse.released & kMouseButtonLeft) != 0) {
@@ -186,9 +180,11 @@ bool PresentationTextControl::serviceInput(bool allowDismissal) {
 					"continue control sequence=%u point=%d,%d",
 					_sequenceId, mouse.position.x, mouse.position.y);
 			}
+
 			_continuePressed = false;
 		}
 	}
+
 	return stop;
 }
 
@@ -201,19 +197,20 @@ bool PresentationTextControl::draw(bool includeContinueControl) {
 				_hoveredScrollControl, false))
 			return false;
 	}
+
 	if (includeContinueControl) {
-		const Common::Rect continueBounds =
-			calculatePresentationContinueBounds(_bounds);
-		if (!modal->drawRetainedPlainTextButton(kPresentationContinueResource,
-				continueBounds, false))
+		const Common::Rect continueBounds = calculatePresentationContinueBounds(_bounds);
+		if (!modal->drawRetainedPlainTextButton(kPresentationContinueResource, continueBounds, false))
 			return false;
 	}
+
 	return true;
 }
 
 uint16 PresentationTextControl::service(uint progress) {
 	if (!isActive() || _dismissed)
 		return _dismissed ? 1 : 0;
+
 	serviceInput(false);
 	if (_dismissed)
 		return 1;
@@ -221,6 +218,7 @@ uint16 PresentationTextControl::service(uint progress) {
 		_engine->getModalDialog()->resolveSceneEntryTextColor();
 		_textColorPending = false;
 	}
+
 	if (!draw(false))
 		return 1;
 	if (_engine->getSettings()->getSubtitleAutoScroll()) {
@@ -232,17 +230,18 @@ uint16 PresentationTextControl::service(uint progress) {
 				return 1;
 		}
 	}
+
 	return 0;
 }
 
 bool PresentationTextControl::waitForDismissal() {
 	if (!isActive() || _dismissed)
 		return !_engine->shouldQuit();
+
 	_input->discardMouseTransitions();
 	_engine->getCursor()->update(kPresentationCursor);
 	_engine->getCursor()->setVisible(true);
-	const Common::Rect continueBounds =
-		calculatePresentationContinueBounds(_bounds);
+	const Common::Rect continueBounds = calculatePresentationContinueBounds(_bounds);
 	debugC(1, kDebugVideo,
 		"Ripper: waiting for retail presentation text dismissal "
 		"sequence=%u firstLine=%u limit=%u textBounds=%d,%d,%d,%d "
@@ -255,9 +254,11 @@ bool PresentationTextControl::waitForDismissal() {
 		if (_input->pollEvents()) {
 			break;
 		}
+
 		serviceInput(true);
 		if (!draw(true))
 			return false;
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}
@@ -275,10 +276,8 @@ PresentationTextMediaCallback::PresentationTextMediaCallback(
 		_control(engine, input, text, displayTop), _videoMode(videoMode) {
 }
 
-void PresentationTextMediaCallback::beginIavfSegment(uint sequenceId,
-		uint frameCount, uint width, uint height) {
-	_control.configureSegment(sequenceId, frameCount, width, height,
-		_videoMode);
+void PresentationTextMediaCallback::beginIavfSegment(uint sequenceId, uint frameCount, uint width, uint height) {
+	_control.configureSegment(sequenceId, frameCount, width, height, _videoMode);
 }
 
 uint16 PresentationTextMediaCallback::service(uint frame) {

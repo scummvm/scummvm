@@ -62,8 +62,7 @@ struct IavfMovie {
 		presentationHeight(0), clearDisplayAfter(false) {}
 };
 
-bool parseIavf(Common::SeekableReadStream &stream, const Common::String &name,
-	IavfMovie &movie);
+bool parseIavf(Common::SeekableReadStream &stream, const Common::String &name, IavfMovie &movie);
 Common::SeekableReadStream *rebuildSmackerStream(const IavfSegment &segment);
 
 } // End of namespace Ripper

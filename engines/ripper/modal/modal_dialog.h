@@ -89,8 +89,7 @@ public:
 	bool drawRetainedTitlePanelText(const Common::String &title,
 		const Common::Rect &bounds, PresentationStyle style,
 		bool present = true);
-	bool drawRetainedPlainTextButton(uint titleResourceId,
-		const Common::Rect &bounds, bool present = true);
+	bool drawRetainedPlainTextButton(uint titleResourceId, const Common::Rect &bounds, bool present = true);
 	bool drawRetainedTextPanelLines(const Common::Array<Common::String> &lines,
 		const Common::Rect &bounds, uint firstVisible,
 		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
@@ -118,13 +117,11 @@ private:
 	void wrapText(const Common::String &text, uint maxWidth,
 		Common::Array<Common::String> &lines,
 		PresentationStyle style = kMenubPresentation) const;
-	uint measureText(const Common::String &text,
-		PresentationStyle style = kMenubPresentation) const;
+	uint measureText(const Common::String &text, PresentationStyle style = kMenubPresentation) const;
 	void drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text, byte color,
 		PresentationStyle style = kMenubPresentation) const;
-	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds,
-		PresentationStyle style) const;
+	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds, PresentationStyle style) const;
 	void drawOverflowBar(byte *screen, uint pitch, const Common::Rect &bounds,
 		uint firstVisible, uint maximumFirstVisible,
 		TextPanelScrollControl hoveredScrollControl,
@@ -141,8 +138,7 @@ private:
 	void drawBinaryPrompt(const Common::String &prompt,
 		const Common::String *options, uint selectedIndex,
 		const Common::Rect &bounds) const;
-	uint textEntryCursorFromPoint(const Common::String &text, uint firstVisible,
-		int x, const Common::Rect &bounds) const;
+	uint textEntryCursorFromPoint(const Common::String &text, uint firstVisible, int x, const Common::Rect &bounds) const;
 	void updateTextEntryFirstVisible(const Common::Rect &bounds);
 	void finishTextEntry(Common::String &text);
 	bool runTextInternal(const Common::String &title, const Common::String &body,

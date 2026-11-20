@@ -30,13 +30,11 @@ namespace Ripper {
 
 struct BitmapAssetFrame;
 
-void cacheSmackerFrames(Video::SmackerDecoder &decoder,
-	Common::Array<BitmapAssetFrame> &frames);
+void cacheSmackerFrames(Video::SmackerDecoder &decoder, Common::Array<BitmapAssetFrame> &frames);
 
 class RipperSmackerDecoder : public Video::SmackerDecoder {
 public:
-	bool loadStreamWithDataFixes(Common::SeekableReadStream *stream,
-		const Common::String &name);
+	bool loadStreamWithDataFixes(Common::SeekableReadStream *stream, const Common::String &name);
 	const Graphics::Surface *restartAtFrame(uint frame);
 	void setTimelineStartMillis(uint32 *timelineStartMillis);
 

@@ -74,6 +74,7 @@ char letterForAltScanCode(uint16 scanCode) {
 uint16 functionKeyCommand(Common::KeyCode keycode, byte flags) {
 	if (keycode < Common::KEYCODE_F1 || keycode > Common::KEYCODE_F10)
 		return 0;
+
 	const uint functionIndex = keycode - Common::KEYCODE_F1;
 	if ((flags & Common::KBD_ALT) != 0)
 		return (0x68 + functionIndex) << 8;
@@ -86,8 +87,7 @@ uint16 functionKeyCommand(Common::KeyCode keycode, byte flags) {
 
 } // End of anonymous namespace
 
-bool advanceKeyword(byte character, const char *keyword, uint &progress,
-		bool restartOnFirstCharacter) {
+bool advanceKeyword(byte character, const char *keyword, uint &progress, bool restartOnFirstCharacter) {
 	if (character >= 'A' && character <= 'Z')
 		character += 'a' - 'A';
 	if (character == keyword[progress])
@@ -97,16 +97,13 @@ bool advanceKeyword(byte character, const char *keyword, uint &progress,
 	return keyword[progress] == '\0';
 }
 
-bool textAnswersMatch(const Common::String &entered,
-		const Common::String &expected) {
+bool textAnswersMatch(const Common::String &entered, const Common::String &expected) {
 	uint enteredIndex = 0;
 	uint expectedIndex = 0;
 	while (true) {
-		while (enteredIndex < entered.size() &&
-				!Common::isAlnum((byte)entered[enteredIndex]))
+		while (enteredIndex < entered.size() && !Common::isAlnum((byte)entered[enteredIndex]))
 			++enteredIndex;
-		while (expectedIndex < expected.size() &&
-				!Common::isAlnum((byte)expected[expectedIndex]))
+		while (expectedIndex < expected.size() && !Common::isAlnum((byte)expected[expectedIndex]))
 			++expectedIndex;
 		if (enteredIndex == entered.size() || expectedIndex == expected.size())
 			break;
@@ -119,11 +116,9 @@ bool textAnswersMatch(const Common::String &entered,
 		if (enteredCharacter != expectedCharacter)
 			return false;
 	}
-	while (enteredIndex < entered.size() &&
-			!Common::isAlnum((byte)entered[enteredIndex]))
+	while (enteredIndex < entered.size() && !Common::isAlnum((byte)entered[enteredIndex]))
 		++enteredIndex;
-	while (expectedIndex < expected.size() &&
-			!Common::isAlnum((byte)expected[expectedIndex]))
+	while (expectedIndex < expected.size() && !Common::isAlnum((byte)expected[expectedIndex]))
 		++expectedIndex;
 	return enteredIndex == entered.size() && expectedIndex == expected.size();
 }
@@ -153,8 +148,8 @@ uint16 translateKeyToCommand(const Common::KeyState &key) {
 	if (functionCommand != 0)
 		return functionCommand;
 
-	// Some backends put navigation keys in both keycode and ascii. Resolve
-	// non-printing keys first so Right Arrow does not become ascii 0x0113.
+	// Some backends put navigation keys in both keycode and ascii.
+	// Resolve non-printing keys first so Right Arrow does not become ascii 0x0113.
 	switch (key.keycode) {
 	case Common::KEYCODE_HOME:
 		return 0x4700;
@@ -234,15 +229,13 @@ Common::String formatKeyCommandLabel(uint16 command) {
 
 void InputManager::updateMousePosition(const Common::Event &event) {
 	_mouseState.position = event.mouse;
-	debugC(3, kDebugInput, "Ripper: mouse position x=%d y=%d",
-		_mouseState.position.x, _mouseState.position.y);
+	debugC(3, kDebugInput, "Ripper: mouse position x=%d y=%d", _mouseState.position.x, _mouseState.position.y);
 }
 
 void InputManager::warpMousePosition(const Common::Point &position) {
 	_mouseState.position = position;
 	g_system->warpMouse(position.x, position.y);
-	debugC(3, kDebugInput, "Ripper: warped mouse position x=%d y=%d",
-		position.x, position.y);
+	debugC(3, kDebugInput, "Ripper: warped mouse position x=%d y=%d", position.x, position.y);
 }
 
 void InputManager::updateMouseButton(const Common::Event &event, uint16 button, bool pressed) {
@@ -280,6 +273,7 @@ bool InputManager::pollEvents() {
 				_pendingKeys.push(command);
 				debugC(3, kDebugInput, "Ripper: queued keyboard command 0x%04x", command);
 			}
+
 			break;
 		}
 

@@ -45,11 +45,9 @@ private:
 	bool loadConfiguration();
 	bool loadAssets();
 	bool buildPuzzleBacking();
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	void renderOrder(const uint *order);
-	void renderTransition(const uint *previousOrder, const uint *targetOrder,
-		uint step);
+	void renderTransition(const uint *previousOrder, const uint *targetOrder, uint step);
 	bool animateTo(const uint *targetOrder, const char *reason);
 	bool showInitialPreview();
 	bool showSolvedPreview();

@@ -41,10 +41,8 @@ public:
 		const Common::Rect &sourceWaveform, const Common::Rect &editorWaveform,
 		bool editorAvailable);
 
-	bool drawPresentation(const WacVoiceLockPcm &sourcePcm,
-		WacVoiceLockEditorState &state) const;
-	bool restoreSourceSelectionDragBacking(
-		WacVoiceLockEditorState &state) const;
+	bool drawPresentation(const WacVoiceLockPcm &sourcePcm, WacVoiceLockEditorState &state) const;
+	bool restoreSourceSelectionDragBacking(WacVoiceLockEditorState &state) const;
 
 private:
 	WacDatabaseSession *_database;

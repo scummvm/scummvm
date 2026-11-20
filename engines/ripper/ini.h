@@ -32,10 +32,8 @@ namespace Ripper {
 
 Common::String getIniString(const Common::INIFile &ini, const char *section,
 	const char *key, const Common::String &fallback = Common::String());
-int getIniInt(const Common::INIFile &ini, const char *section,
-	const char *key, int fallback = 0);
-bool readIniUint(const Common::INIFile &ini, const Common::String &section,
-	const Common::String &key, uint &value);
+int getIniInt(const Common::INIFile &ini, const char *section, const char *key, int fallback = 0);
+bool readIniUint(const Common::INIFile &ini, const Common::String &section, const Common::String &key, uint &value);
 
 } // End of namespace Ripper
 

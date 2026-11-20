@@ -69,12 +69,10 @@ public:
 	~SceneAudioManager();
 
 	bool load(const Common::String &path, bool preserve);
-	bool configure(const Common::String &key, uint volumePercent, uint triggerFrame,
-		byte control);
+	bool configure(const Common::String &key, uint volumePercent, uint triggerFrame, byte control);
 	void clear(const Common::String &key);
 	void stop(const Common::String &key);
-	void setVolume(const Common::String &key, uint targetVolumePercent,
-		uint startFrame, uint timing);
+	void setVolume(const Common::String &key, uint targetVolumePercent, uint startFrame, uint timing);
 	void service(uint frame);
 	void resetTriggers();
 	void clearAll(bool includePreserved);

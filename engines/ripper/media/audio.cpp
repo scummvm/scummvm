@@ -50,26 +50,24 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	Common::String source;
 	Common::SeekableReadStream *audioStream =
-		_engine->getResources()->createReadStream(
-			path, ResourceManager::kSourceBlockingAudio, &source);
+		_engine->getResources()->createReadStream(path, ResourceManager::kSourceBlockingAudio, &source);
 	if (!audioStream) {
-		warning("Ripper: could not open blocking audio '%s' from the filesystem or sound library",
-			path.c_str());
+		warning("Ripper: could not open blocking audio '%s' from the filesystem or sound library", path.c_str());
 		return false;
 	}
-	Common::ScopedPtr<Audio::SeekableAudioStream> stream(
-		Audio::makeWAVStream(audioStream, DisposeAfterUse::YES));
+
+	Common::ScopedPtr<Audio::SeekableAudioStream> stream(Audio::makeWAVStream(audioStream, DisposeAfterUse::YES));
 	if (!stream)
 		return false;
+
 	const uint32 durationMs = stream->getLength().msecs();
-	PresentationTextControl textControl(_engine, _input, presentationText,
-		displayTop);
+	PresentationTextControl textControl(_engine, _input, presentationText, displayTop);
 	IndexedDisplaySnapshot textBacking;
 	if (textControl.isActive()) {
 		if (!textBacking.capture())
 			return false;
-		textControl.configureSegment(1, durationMs, 0, 0,
-			_engine->getSettings()->getVideoMode());
+
+		textControl.configureSegment(1, durationMs, 0, 0, _engine->getSettings()->getVideoMode());
 		textControl.applySharedPalettePatch();
 	}
 
@@ -94,9 +92,9 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 		if (_input->pollEvents()) {
 			break;
 		}
+
 		if (textControl.isActive()) {
-			stoppedByEscape = textControl.service(
-				_mixer->getSoundElapsedTime(handle)) != 0;
+			stoppedByEscape = textControl.service(_mixer->getSoundElapsedTime(handle)) != 0;
 		} else {
 			while (_input->hasPendingKey()) {
 				const uint16 command = _input->consumeKey();
@@ -106,6 +104,7 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 				}
 			}
 		}
+
 		if (stoppedByEscape)
 			break;
 		presentScreen();
@@ -126,10 +125,8 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
 	return textCompleted && !_engine->shouldQuit();
 }
 
-bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
-		uint volumePercent, bool loop) {
-	return playAudioClip(path, handle, Audio::Mixer::kSFXSoundType,
-		volumePercent, loop, "sound effect");
+bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle &handle, uint volumePercent, bool loop) {
+	return playAudioClip(path, handle, Audio::Mixer::kSFXSoundType, volumePercent, loop, "sound effect");
 }
 
 bool MediaPlayer::playSoundEffectStream(Common::SeekableReadStream *audioStream,
@@ -146,33 +143,27 @@ bool MediaPlayer::playRawSoundEffect(const Common::Array<byte> &data,
 	if (data.empty() || sampleRate == 0)
 		return false;
 
-	Common::SharedPtr<byte> copy(new byte[data.size()],
-		Common::ArrayDeleter<byte>());
+	Common::SharedPtr<byte> copy(new byte[data.size()], Common::ArrayDeleter<byte>());
 	memcpy(copy.get(), data.data(), data.size());
-	Common::ScopedPtr<Common::SeekableReadStream> source(
-		new Common::MemoryReadStream(copy, data.size()));
+	Common::ScopedPtr<Common::SeekableReadStream> source(new Common::MemoryReadStream(copy, data.size()));
 	Common::ScopedPtr<Audio::SeekableAudioStream> stream(
-		Audio::makeRawStream(source.get(), sampleRate, flags,
-			DisposeAfterUse::YES));
+		Audio::makeRawStream(source.get(), sampleRate, flags, DisposeAfterUse::YES));
 	if (!stream)
 		return false;
+
 	source.release();
 
 	stopSoundEffect(handle);
-	const byte volume = (byte)(MIN<uint>(volumePercent, 100) *
-		Audio::Mixer::kMaxChannelVolume / 100);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle,
-		stream.release(), -1, volume);
+	const byte volume = (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream.release(), -1, volume);
 	debugC(2, kDebugAudio,
 		"Ripper: started raw sound effect bytes=%u rate=%u flags=0x%x volume=%u",
 		data.size(), sampleRate, flags, volumePercent);
 	return true;
 }
 
-bool MediaPlayer::playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
-		uint volumePercent) {
-	return playAudioClip(path, handle, Audio::Mixer::kSpeechSoundType,
-		volumePercent, false, "voice clip");
+bool MediaPlayer::playVoiceClip(const Common::String &path, Audio::SoundHandle &handle, uint volumePercent) {
+	return playAudioClip(path, handle, Audio::Mixer::kSpeechSoundType, volumePercent, false, "voice clip");
 }
 
 bool MediaPlayer::playVoiceClipStream(Common::SeekableReadStream *audioStream,
@@ -188,16 +179,13 @@ bool MediaPlayer::playAudioClip(const Common::String &path, Audio::SoundHandle &
 		const char *description) {
 	Common::String source;
 	Common::SeekableReadStream *audioStream =
-		_engine->getResources()->createReadStream(
-			path, ResourceManager::kSourceSoundEffect, &source);
+		_engine->getResources()->createReadStream(path, ResourceManager::kSourceSoundEffect, &source);
 	if (!audioStream) {
-		warning("Ripper: could not open %s '%s' from the filesystem or sound library",
-			description, path.c_str());
+		warning("Ripper: could not open %s '%s' from the filesystem or sound library", description, path.c_str());
 		return false;
 	}
 
-	return playAudioStream(audioStream, path, source, handle, soundType,
-		volumePercent, loop, description);
+	return playAudioStream(audioStream, path, source, handle, soundType, volumePercent, loop, description);
 }
 
 bool MediaPlayer::playAudioStream(Common::SeekableReadStream *audioStream,
@@ -206,10 +194,11 @@ bool MediaPlayer::playAudioStream(Common::SeekableReadStream *audioStream,
 		uint volumePercent, bool loop, const char *description) {
 	if (!audioStream)
 		return false;
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(
-		audioStream, DisposeAfterUse::YES);
+
+	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(audioStream, DisposeAfterUse::YES);
 	if (!stream)
 		return false;
+
 	stopSoundEffect(handle);
 	const byte volume = (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
 	Audio::AudioStream *playbackStream = stream;
@@ -230,16 +219,14 @@ bool MediaPlayer::stopSoundEffect(Audio::SoundHandle &handle) {
 }
 
 void MediaPlayer::setSoundEffectVolume(Audio::SoundHandle &handle, uint volumePercent) {
-	_mixer->setChannelVolume(handle,
-		(byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100));
+	_mixer->setChannelVolume(handle, (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100));
 }
 
 bool MediaPlayer::isSoundEffectActive(const Audio::SoundHandle &handle) const {
 	return _mixer->isSoundHandleActive(handle);
 }
 
-uint32 MediaPlayer::getSoundEffectElapsedTime(
-		const Audio::SoundHandle &handle) const {
+uint32 MediaPlayer::getSoundEffectElapsedTime(const Audio::SoundHandle &handle) const {
 	return _mixer->getSoundElapsedTime(handle);
 }
 

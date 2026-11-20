@@ -43,8 +43,7 @@ public:
 private:
 	bool loadFrame(const Common::String &path, BitmapAssetFrame &frame);
 	bool loadAssets();
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	void render(bool showDigits = true) const;
 	int findControl(const Common::Point &point) const;
 	void updateHover(const Common::Point &point);

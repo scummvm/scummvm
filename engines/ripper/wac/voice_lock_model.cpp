@@ -71,13 +71,10 @@ WacVoiceLockSelection wacVoiceLockSolution(uint index) {
 	return WacVoiceLockSelection(kSolution[index][0], kSolution[index][1]);
 }
 
-bool validateWacVoiceLockSelections(
-		const Common::Array<WacVoiceLockSelection> &selections,
-		Common::String &diagnostics) {
+bool validateWacVoiceLockSelections(const Common::Array<WacVoiceLockSelection> &selections, Common::String &diagnostics) {
 	diagnostics.clear();
 	if (selections.size() != kWacVoiceLockSelectionCount) {
-		diagnostics = Common::String::format("count=%u expected=%u",
-			selections.size(), kWacVoiceLockSelectionCount);
+		diagnostics = Common::String::format("count=%u expected=%u", selections.size(), kWacVoiceLockSelectionCount);
 		return false;
 	}
 
@@ -85,18 +82,13 @@ bool validateWacVoiceLockSelections(
 	for (uint selection = 0; selection < selections.size(); ++selection) {
 		bool found = false;
 		uint diagnosticCandidate = 0;
-		int diagnosticStartDelta =
-			selections[selection].start - kSolution[0][0];
-		int diagnosticEndDelta =
-			selections[selection].end - kSolution[0][1];
-		int closestDistance = MAX(ABS(diagnosticStartDelta),
-			ABS(diagnosticEndDelta));
+		int diagnosticStartDelta = selections[selection].start - kSolution[0][0];
+		int diagnosticEndDelta = selections[selection].end - kSolution[0][1];
+		int closestDistance = MAX(ABS(diagnosticStartDelta), ABS(diagnosticEndDelta));
 		for (uint candidate = 0; candidate < kWacVoiceLockSelectionCount;
 				++candidate) {
-			const int startDelta =
-				selections[selection].start - kSolution[candidate][0];
-			const int endDelta =
-				selections[selection].end - kSolution[candidate][1];
+			const int startDelta = selections[selection].start - kSolution[candidate][0];
+			const int endDelta = selections[selection].end - kSolution[candidate][1];
 			const int distance = MAX(ABS(startDelta), ABS(endDelta));
 			if (distance < closestDistance) {
 				diagnosticCandidate = candidate;
@@ -104,6 +96,7 @@ bool validateWacVoiceLockSelections(
 				diagnosticEndDelta = endDelta;
 				closestDistance = distance;
 			}
+
 			if (ABS(startDelta) <= (int)kWacVoiceLockSelectionTolerance &&
 					ABS(endDelta) <=
 						(int)kWacVoiceLockSelectionTolerance) {
@@ -132,39 +125,33 @@ void appendWacVoiceLockSelectionAudio(const WacVoiceLockPcm &source,
 		const Common::Rect &waveform, Common::Array<byte> &assembled) {
 	if (source.data.empty() || source.bytesPerSample == 0)
 		return;
-	const int startX = CLIP<int>(MIN(selection.start, selection.end),
-		waveform.left, waveform.right - 1);
-	const int endX = CLIP<int>(MAX(selection.start, selection.end),
-		waveform.left + 1, waveform.right);
-	uint start = (uint64)(startX - waveform.left) * source.data.size() /
-		waveform.width();
-	uint end = (uint64)(endX - waveform.left) * source.data.size() /
-		waveform.width();
+
+	const int startX = CLIP<int>(MIN(selection.start, selection.end), waveform.left, waveform.right - 1);
+	const int endX = CLIP<int>(MAX(selection.start, selection.end), waveform.left + 1, waveform.right);
+	uint start = (uint64)(startX - waveform.left) * source.data.size() / waveform.width();
+	uint end = (uint64)(endX - waveform.left) * source.data.size() / waveform.width();
 	start -= start % source.bytesPerSample;
 	end -= end % source.bytesPerSample;
 	end = MIN<uint>(end, source.data.size());
 	if (end <= start)
 		return;
+
 	const uint oldSize = assembled.size();
 	assembled.resize(oldSize + end - start);
 	memcpy(assembled.data() + oldSize, source.data.data() + start, end - start);
 }
 
-int getWacVoiceLockEditorWaveformWidth(
-		const Common::Array<WacVoiceLockEditorSegment> &segments,
-		const Common::Rect &bounds) {
+int getWacVoiceLockEditorWaveformWidth(const Common::Array<WacVoiceLockEditorSegment> &segments, const Common::Rect &bounds) {
 	uint width = 0;
 	for (uint segment = 0; segment < segments.size(); ++segment)
 		width += segments[segment].width;
 	return MIN<int>(width, bounds.width());
 }
 
-uint32 getWacVoiceLockDuration(uint byteCount,
-		const WacVoiceLockPcm &pcm) {
+uint32 getWacVoiceLockDuration(uint byteCount, const WacVoiceLockPcm &pcm) {
 	if (pcm.sampleRate == 0 || pcm.bytesPerSample == 0)
 		return 0;
-	return MAX<uint32>(1, (uint64)byteCount * 1000 /
-		(pcm.sampleRate * pcm.bytesPerSample));
+	return MAX<uint32>(1, (uint64)byteCount * 1000 / (pcm.sampleRate * pcm.bytesPerSample));
 }
 
 } // End of namespace Ripper

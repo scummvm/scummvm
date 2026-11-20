@@ -67,8 +67,7 @@ static const uint16 kReloadCommand = 0x7ff0;
 static const uint16 kFailureCommand = 0x7ffd;
 
 static bool isSwitchPoint(const Common::Point &point) {
-	return Common::Rect(kSwitchLeft, kSwitchTop,
-		kSwitchLeft + kSwitchWidth, kSwitchTop + kSwitchHeight).contains(point);
+	return Common::Rect(kSwitchLeft, kSwitchTop, kSwitchLeft + kSwitchWidth, kSwitchTop + kSwitchHeight).contains(point);
 }
 
 static bool isExitPoint(const Common::Point &point) {
@@ -82,14 +81,13 @@ TubeScene::TubeScene(RipperEngine *engine) : Scene(engine), _tubeCount(0),
 }
 
 bool TubeScene::initialize() {
-	if (!_engine->getResources()->loadBitmapLibrary("tubesw.pl", _switchFrames) ||
-			_switchFrames.size() != 7) {
+	if (!_engine->getResources()->loadBitmapLibrary("tubesw.pl", _switchFrames) || _switchFrames.size() != 7) {
 		warning("Ripper: tube scene expected seven TUBESW.PL switch frames");
 		return false;
 	}
+
 	for (uint frame = 0; frame < _switchFrames.size(); ++frame) {
-		if (_switchFrames[frame].width != kSwitchWidth ||
-				_switchFrames[frame].height != kSwitchHeight) {
+		if (_switchFrames[frame].width != kSwitchWidth || _switchFrames[frame].height != kSwitchHeight) {
 			warning("Ripper: tube scene switch frame=%u has invalid size=%ux%u",
 				frame, _switchFrames[frame].width, _switchFrames[frame].height);
 			return false;
@@ -101,10 +99,10 @@ bool TubeScene::initialize() {
 			g_system->unlockScreen();
 		return false;
 	}
+
 	_switchBacking.resize(kSwitchWidth * kSwitchHeight);
 	for (int y = 0; y < kSwitchHeight; ++y) {
-		memcpy(_switchBacking.data() + y * kSwitchWidth,
-			screen->getBasePtr(kSwitchLeft, kSwitchTop + y), kSwitchWidth);
+		memcpy(_switchBacking.data() + y * kSwitchWidth, screen->getBasePtr(kSwitchLeft, kSwitchTop + y), kSwitchWidth);
 	}
 	g_system->unlockScreen();
 	debugC(1, kDebugScene,
@@ -114,9 +112,9 @@ bool TubeScene::initialize() {
 }
 
 void TubeScene::drawSwitchFrame(uint frameIndex) const {
-	if (frameIndex >= _switchFrames.size() ||
-			_switchBacking.size() != kSwitchWidth * kSwitchHeight)
+	if (frameIndex >= _switchFrames.size() || _switchBacking.size() != kSwitchWidth * kSwitchHeight)
 		return;
+
 	const BitmapAssetFrame &frame = _switchFrames[frameIndex];
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
@@ -124,9 +122,9 @@ void TubeScene::drawSwitchFrame(uint frameIndex) const {
 			g_system->unlockScreen();
 		return;
 	}
+
 	for (uint y = 0; y < frame.height; ++y) {
-		byte *destination = (byte *)screen->getBasePtr(kSwitchLeft,
-			kSwitchTop + y);
+		byte *destination = (byte *)screen->getBasePtr(kSwitchLeft, kSwitchTop + y);
 		memcpy(destination, _switchBacking.data() + y * kSwitchWidth, kSwitchWidth);
 		const byte *source = frame.pixels.data() + y * frame.width;
 		for (uint x = 0; x < frame.width; ++x) {
@@ -177,12 +175,14 @@ void TubeScene::updateCursor(const Common::Point &point) {
 		hovered = 1;
 		cursor = kExitCursor;
 	}
+
 	if (hovered != _hoveredControl) {
 		debugC(2, kDebugInput,
 			"Ripper: tube scene hover control=%d previous=%d point=%d,%d cursor=%u",
 			hovered, _hoveredControl, point.x, point.y, cursor);
 		_hoveredControl = hovered;
 	}
+
 	_engine->getCursor()->update(cursor);
 	_engine->getCursor()->setVisible(true);
 }
@@ -190,17 +190,16 @@ void TubeScene::updateCursor(const Common::Point &point) {
 uint16 TubeScene::serviceInventory() {
 	uint usedUnlockFlag = 0;
 	// The GAZ2 use label accepts the three tubes in inventory slots 2..4.
-	const Inventory::Result inventoryResult =
-		_engine->getInventory()->run("GAZ2", -1, &usedUnlockFlag);
+	const Inventory::Result inventoryResult = _engine->getInventory()->run("GAZ2", -1, &usedUnlockFlag);
 	if (inventoryResult == Inventory::kLoadFailed)
 		return kFailureCommand;
 	if (inventoryResult == Inventory::kCancelled)
 		return 0;
 	if (usedUnlockFlag < kFirstTubeFlag || usedUnlockFlag > kLastTubeFlag) {
-		warning("Ripper: tube scene inventory returned incompatible flag %u",
-			usedUnlockFlag);
+		warning("Ripper: tube scene inventory returned incompatible flag %u", usedUnlockFlag);
 		return kFailureCommand;
 	}
+
 	debugC(1, kDebugScene,
 		"Ripper: installed tube inventoryFlag=%u consumedFlag=%u",
 		usedUnlockFlag, usedUnlockFlag + kConsumedFlagOffset);
@@ -213,8 +212,7 @@ uint16 TubeScene::serviceInput() {
 		if (command == kEscapeCommand)
 			return kEscapeCommand;
 		if (command == kHelpCommand) {
-			debugC(1, kDebugScene,
-				"Ripper: tube scene opening modal help resource=%u", kSceneHelpResource);
+			debugC(1, kDebugScene, "Ripper: tube scene opening modal help resource=%u", kSceneHelpResource);
 			if (!_engine->getModalDialog()->run(kSceneHelpResource))
 				return kFailureCommand;
 		}
@@ -227,8 +225,7 @@ uint16 TubeScene::serviceInput() {
 		_engine->getCursor()->setVisible(true);
 		if (toolbarAction == kInventoryAction)
 			return serviceInventory();
-		if (toolbarAction == kHelpAction &&
-				!_engine->getModalDialog()->run(kSceneHelpResource))
+		if (toolbarAction == kHelpAction && !_engine->getModalDialog()->run(kSceneHelpResource))
 			return kFailureCommand;
 		return 0;
 	}
@@ -247,17 +244,16 @@ uint16 TubeScene::service(uint frame) {
 	if (_secondaryCuePending && frame == 16) {
 		playCue(1);
 		_secondaryCuePending = false;
-		debugC(3, kDebugScene,
-			"Ripper: tube scene queued running cue at mediaFrame=15");
+		debugC(3, kDebugScene, "Ripper: tube scene queued running cue at mediaFrame=15");
 	}
+
 	const uint16 command = serviceInput();
 	drawSwitch();
 	presentScreen();
 	return command;
 }
 
-bool TubeScene::playSegment(uint firstFrame, uint lastFrame, uint16 &command,
-		uint loopStartFrame) {
+bool TubeScene::playSegment(uint firstFrame, uint lastFrame, uint16 &command, uint loopStartFrame) {
 	command = 0;
 	_secondaryCuePending = firstFrame <= 15 && lastFrame >= 15;
 	const Common::String media = Common::String::format("ga_tube%u.smk", _tubeCount + 1);
@@ -279,6 +275,7 @@ void TubeScene::stopAudio() {
 TubeScene::Result TubeScene::run(uint completionFlag) {
 	if (!initialize())
 		return kLoadFailed;
+
 	prepare("tube-entry", kDefaultCursor, true);
 	_tubeCount = countInstalledTubes();
 	debugC(1, kDebugScene,
@@ -295,6 +292,7 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 			result = kLoadFailed;
 			break;
 		}
+
 		if (command == kEscapeCommand)
 			break;
 		if (command == kReloadCommand) {
@@ -305,18 +303,22 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 					result = kLoadFailed;
 					break;
 				}
+
 				debugC(1, kDebugScene,
 					"Ripper: tube scene reloaded installed tubes previous=%u current=%u",
 					previousCount, _tubeCount);
 			}
+
 			command = 0;
 			if (!playSegment(_switchOn ? 15 : 0, _switchOn ? 45 : 0, command,
 					_switchOn && _tubeCount <= 2 ? 15 : 0xffffffff)) {
 				result = kLoadFailed;
 				break;
 			}
+
 			continue;
 		}
+
 		if (command == kToggleCommand) {
 			if (_switchOn) {
 				_switchOn = false;
@@ -331,44 +333,47 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 				_switchOn = true;
 				playCue(0);
 				animateSwitch(true);
-				if (!playSegment(0, 45, command,
-						_tubeCount <= 2 ? 15 : 0xffffffff)) {
+				if (!playSegment(0, 45, command, _tubeCount <= 2 ? 15 : 0xffffffff)) {
 					result = kLoadFailed;
 					break;
 				}
+
 				if (command == 0 && _tubeCount > 2) {
 					if (!_engine->getMedia()->play("tube_win.avi", true) ||
-							!_engine->getMilestones()->set(completionFlag, true,
-								"tube-switch-scene")) {
+							!_engine->getMilestones()->set(completionFlag, true, "tube-switch-scene")) {
 						result = kLoadFailed;
 					} else {
 						result = kSolved;
 					}
+
 					break;
 				}
 			}
+
 			continue;
 		}
+
 		if (_switchOn) {
-			if (!playSegment(15, 45, command,
-					_tubeCount <= 2 ? 15 : 0xffffffff)) {
+			if (!playSegment(15, 45, command, _tubeCount <= 2 ? 15 : 0xffffffff)) {
 				result = kLoadFailed;
 				break;
 			}
+
 			if (command == 0 && _tubeCount > 2) {
 				if (!_engine->getMedia()->play("tube_win.avi", true) ||
-						!_engine->getMilestones()->set(completionFlag, true,
-							"tube-switch-scene")) {
+						!_engine->getMilestones()->set(completionFlag, true, "tube-switch-scene")) {
 					result = kLoadFailed;
 				} else {
 					result = kSolved;
 				}
+
 				break;
 			}
 		} else {
 			if (_engine->getInput()->pollEvents()) {
 				break;
 			}
+
 			command = serviceInput();
 			drawSwitch();
 			presentScreen();

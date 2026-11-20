@@ -40,6 +40,7 @@ bool parseMilestoneId(const Common::String &text, uint &flag) {
 	for (uint index = 0; index < text.size(); ++index) {
 		if (text[index] < '0' || text[index] > '9')
 			return false;
+
 		flag = flag * 10 + text[index] - '0';
 		if (flag >= Milestones::kFlagCount)
 			return false;
@@ -79,11 +80,11 @@ bool Console::cmdMilestones(int argc, const char **argv) {
 			} else if (milestones->label(flag).empty()) {
 				continue;
 			}
+
 			printMilestone(flag);
 			++count;
 		}
-		debugPrintf("%u %s milestone(s)\n", count,
-			activeOnly ? "active" : "defined");
+		debugPrintf("%u %s milestone(s)\n", count, activeOnly ? "active" : "defined");
 		debugC(2, kDebugMilestones,
 			"Ripper: debugger listed milestones filter=%s count=%u",
 			activeOnly ? "active" : "defined", count);
@@ -94,9 +95,7 @@ bool Console::cmdMilestones(int argc, const char **argv) {
 		uint flag = 0;
 		if (parseMilestoneId(argv[1], flag)) {
 			printMilestone(flag);
-			debugC(2, kDebugMilestones,
-				"Ripper: debugger queried milestone flag=%u value=%d",
-				flag, milestones->isSet(flag));
+			debugC(2, kDebugMilestones, "Ripper: debugger queried milestone flag=%u value=%d", flag, milestones->isSet(flag));
 			return true;
 		}
 	}
@@ -163,9 +162,7 @@ bool Console::cmdPuzzleHelp(int argc, const char **argv) {
 
 	_engine->setPuzzleHelpEnabled(enabled);
 	debugPrintf("Puzzle help overlays %s\n", enabled ? "enabled" : "disabled");
-	debugC(1, kDebugPuzzles,
-		"Ripper: debugger puzzle-help overlays enabled=%d command=PUZZLE_HELP",
-		enabled);
+	debugC(1, kDebugPuzzles, "Ripper: debugger puzzle-help overlays enabled=%d command=PUZZLE_HELP", enabled);
 	return true;
 }
 

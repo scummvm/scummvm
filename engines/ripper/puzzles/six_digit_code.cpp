@@ -83,8 +83,7 @@ static const Common::Point kDigitPositions[kDigitCount] = {
 };
 
 static bool isExitPoint(const Common::Point &point) {
-	return Common::Rect(0, kSceneOriginY, 100,
-		kSceneOriginY + kSceneHeight).contains(point);
+	return Common::Rect(0, kSceneOriginY, 100, kSceneOriginY + kSceneHeight).contains(point);
 }
 
 } // End of anonymous namespace
@@ -93,13 +92,12 @@ SixDigitCodePuzzle::SixDigitCodePuzzle(RipperEngine *engine) :
 		Puzzle(engine), _hoveredControl(-1) {
 }
 
-bool SixDigitCodePuzzle::loadFrame(const Common::String &path,
-		BitmapAssetFrame &frame) {
+bool SixDigitCodePuzzle::loadFrame(const Common::String &path, BitmapAssetFrame &frame) {
 	if (!_engine->getResources()->loadBitmapSequenceFirstFrame(path, frame)) {
-		warning("Ripper: could not decode six-digit code bitmap '%s'",
-			path.c_str());
+		warning("Ripper: could not decode six-digit code bitmap '%s'", path.c_str());
 		return false;
 	}
+
 	return true;
 }
 
@@ -109,6 +107,7 @@ bool SixDigitCodePuzzle::loadAssets() {
 		BitmapAssetFrame frame;
 		if (!loadFrame(Common::String::format("bnknum%u.bbm", digit), frame))
 			return false;
+
 		_numberFrames.push_back(Common::move(frame));
 	}
 
@@ -117,13 +116,13 @@ bool SixDigitCodePuzzle::loadAssets() {
 		BitmapAssetFrame frame;
 		if (!loadFrame(Common::String::format("bnks%u.bbm", control), frame))
 			return false;
+
 		_controlFrames.push_back(Common::move(frame));
 	}
 
 	for (uint cue = 0; cue < kAudioCueCount; ++cue) {
 		const Common::String path = Common::String::format("bnkwav%u.wav", cue);
-		Common::ScopedPtr<Common::SeekableReadStream> stream(
-			_engine->getResources()->createReadStreamForPath(path));
+		Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(path));
 		if (!stream) {
 			warning("Ripper: six-digit code audio '%s' is missing", path.c_str());
 			return false;
@@ -136,8 +135,7 @@ bool SixDigitCodePuzzle::loadAssets() {
 	return true;
 }
 
-void SixDigitCodePuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void SixDigitCodePuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
@@ -158,10 +156,10 @@ void SixDigitCodePuzzle::render(bool showDigits) const {
 		for (uint slot = 0; slot < _enteredDigits.size() &&
 				slot < kDigitCount; ++slot) {
 			const byte digit = _enteredDigits[slot];
-			drawFrame(pixels, screen->pitch, _numberFrames[digit],
-				kDigitPositions[slot].x, kDigitPositions[slot].y);
+			drawFrame(pixels, screen->pitch, _numberFrames[digit], kDigitPositions[slot].x, kDigitPositions[slot].y);
 		}
 	}
+
 	if (_hoveredControl >= 0) {
 		drawFrame(pixels, screen->pitch, _controlFrames[_hoveredControl],
 			kControlPositions[_hoveredControl].x,
@@ -177,9 +175,7 @@ int SixDigitCodePuzzle::findControl(const Common::Point &point) const {
 	for (uint control = 0; control < _controlFrames.size(); ++control) {
 		const BitmapAssetFrame &frame = _controlFrames[control];
 		const Common::Point &position = kControlPositions[control];
-		if (Common::Rect(position.x, position.y,
-				position.x + frame.width,
-				position.y + frame.height).contains(point))
+		if (Common::Rect(position.x, position.y, position.x + frame.width, position.y + frame.height).contains(point))
 			return control;
 	}
 	return -1;
@@ -210,9 +206,9 @@ void SixDigitCodePuzzle::updateHover(const Common::Point &point) {
 bool SixDigitCodePuzzle::playCue(uint cue) {
 	if (cue >= kAudioCueCount)
 		return false;
+
 	const Common::String path = Common::String::format("bnkwav%u.wav", cue);
-	const bool result = _engine->getMedia()->playSoundEffect(
-		path, _audioHandles[cue]);
+	const bool result = _engine->getMedia()->playSoundEffect(path, _audioHandles[cue]);
 	debugC(result ? 3 : 1, kDebugPuzzles,
 		"Ripper: six-digit code audio cue=%u path='%s' success=%d",
 		cue, path.c_str(), result);
@@ -227,9 +223,7 @@ Common::String SixDigitCodePuzzle::enteredCode() const {
 }
 
 void SixDigitCodePuzzle::resetEntry(const char *reason) {
-	debugC(2, kDebugPuzzles,
-		"Ripper: six-digit code reset reason='%s' previous='%s'",
-		reason, enteredCode().c_str());
+	debugC(2, kDebugPuzzles, "Ripper: six-digit code reset reason='%s' previous='%s'", reason, enteredCode().c_str());
 	_enteredDigits.clear();
 	playCue(3);
 	render();
@@ -251,22 +245,21 @@ bool SixDigitCodePuzzle::validateEntry(uint completionFlag, Result &result) {
 	for (uint phase = 0; phase < 5; ++phase) {
 		if (!waitTicks(5))
 			return false;
+
 		const bool visible = (phase & 1) != 0;
 		render(visible);
-		debugC(3, kDebugPuzzles,
-			"Ripper: six-digit code success flash phase=%u visible=%d",
-			phase, visible);
+		debugC(3, kDebugPuzzles, "Ripper: six-digit code success flash phase=%u visible=%d", phase, visible);
 	}
 	if (!markSolved(completionFlag, "six-digit-code-puzzle")) {
 		result = kLoadFailed;
 		return false;
 	}
+
 	result = kSolved;
 	return false;
 }
 
-bool SixDigitCodePuzzle::activateControl(uint control, uint completionFlag,
-		Result &result) {
+bool SixDigitCodePuzzle::activateControl(uint control, uint completionFlag, Result &result) {
 	if (control < kNumberFrameCount) {
 		if (_enteredDigits.size() < kDigitCount) {
 			_enteredDigits.push_back(control);
@@ -275,14 +268,17 @@ bool SixDigitCodePuzzle::activateControl(uint control, uint completionFlag,
 				"Ripper: six-digit code input digit=%u entered='%s' count=%u/%u",
 				control, enteredCode().c_str(), _enteredDigits.size(), kDigitCount);
 		}
+
 		return true;
 	}
+
 	if (control == kEnterControl)
 		return validateEntry(completionFlag, result);
 	if (control == kClearControl) {
 		resetEntry("clear-control");
 		return true;
 	}
+
 	return true;
 }
 
@@ -303,8 +299,7 @@ SixDigitCodePuzzle::Result SixDigitCodePuzzle::run(uint completionFlag) {
 	_enteredDigits.clear();
 	_hoveredControl = -1;
 	render();
-	debugC(1, kDebugPuzzles,
-		"Ripper: entered six-digit code puzzle milestone=%u", completionFlag);
+	debugC(1, kDebugPuzzles, "Ripper: entered six-digit code puzzle milestone=%u", completionFlag);
 
 	Result result = kExited;
 	bool active = true;
@@ -318,15 +313,15 @@ SixDigitCodePuzzle::Result SixDigitCodePuzzle::run(uint completionFlag) {
 				active = false;
 				break;
 			}
+
 			if (command == kHelpCommand) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: six-digit code opening modal help table=0x%x",
-					kHelpSelectionTable);
+				debugC(1, kDebugPuzzles, "Ripper: six-digit code opening modal help table=0x%x", kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: six-digit code modal help failed");
 				render();
 				continue;
 			}
+
 			if (command >= '0' && command <= '9') {
 				active = activateControl(command - '0', completionFlag, result);
 			} else if (command == 0xd) {
@@ -334,6 +329,7 @@ SixDigitCodePuzzle::Result SixDigitCodePuzzle::run(uint completionFlag) {
 			} else if (command == kClearCommand) {
 				active = activateControl(kClearControl, completionFlag, result);
 			}
+
 			if (!active)
 				break;
 		}
@@ -352,6 +348,7 @@ SixDigitCodePuzzle::Result SixDigitCodePuzzle::run(uint completionFlag) {
 				active = false;
 			}
 		}
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}

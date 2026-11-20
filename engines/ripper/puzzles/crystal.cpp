@@ -103,14 +103,14 @@ void CrystalPuzzle::restoreBackground() const {
 	_backgroundDisplay.restore();
 }
 
-bool CrystalPuzzle::loadPieceSet(const char *prefix,
-		Common::Array<BitmapAssetFrame> &frames) {
+bool CrystalPuzzle::loadPieceSet(const char *prefix, Common::Array<BitmapAssetFrame> &frames) {
 	frames.clear();
 	for (uint piece = 0; piece < kPieceCount; ++piece) {
 		BitmapAssetFrame asset;
 		const Common::String name = Common::String::format("%s%u.bbm", prefix, piece);
 		if (!_engine->getResources()->loadBitmapSequenceFirstFrame(name, asset))
 			return false;
+
 		frames.push_back(Common::move(asset));
 	}
 	return true;
@@ -140,8 +140,7 @@ Common::Point CrystalPuzzle::gridPosition(uint cell, const BitmapAssetFrame &fra
 		kGridRowY[row] + kSceneOriginY + (kCellHeight - frame.height) / 2);
 }
 
-void CrystalPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const {
+void CrystalPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
@@ -155,8 +154,7 @@ bool CrystalPuzzle::drawBoard() {
 	}
 
 	for (int y = 0; y < screen->h; ++y)
-		memcpy(screen->getBasePtr(0, y),
-			_backgroundDisplay.pixels().data() + y * screen->w, screen->w);
+		memcpy(screen->getBasePtr(0, y), _backgroundDisplay.pixels().data() + y * screen->w, screen->w);
 	byte *pixels = (byte *)screen->getPixels();
 	for (uint piece = 0; piece < kPieceCount; ++piece) {
 		const Common::Point tray = trayPosition(piece);
@@ -176,9 +174,9 @@ bool CrystalPuzzle::drawBoard() {
 	}
 	if (_draggedPiece >= 0) {
 		const BitmapAssetFrame &frame = _placedFrames[_draggedPiece];
-		drawFrame(pixels, screen->pitch, frame, _dragPoint.x - frame.width / 2,
-			_dragPoint.y - frame.height / 2);
+		drawFrame(pixels, screen->pitch, frame, _dragPoint.x - frame.width / 2, _dragPoint.y - frame.height / 2);
 	}
+
 	g_system->unlockScreen();
 
 	if (_puzzlePalette.size() == kRipperPaletteByteCount)
@@ -220,8 +218,7 @@ int CrystalPuzzle::findPlacedPiece(const Common::Point &point) const {
 
 void CrystalPuzzle::playMovementCue() {
 	const uint cue = _random.getRandomNumber(1);
-	_engine->getMedia()->playSoundEffect(Common::String::format("crystal%u.wav", cue),
-		_audioHandles[cue]);
+	_engine->getMedia()->playSoundEffect(Common::String::format("crystal%u.wav", cue), _audioHandles[cue]);
 }
 
 void CrystalPuzzle::beginDrag(uint piece, const Common::Point &point) {
@@ -229,13 +226,12 @@ void CrystalPuzzle::beginDrag(uint piece, const Common::Point &point) {
 		_cellPieces[_pieceCells[piece]] = -1;
 		_pieceCells[piece] = -1;
 	}
+
 	_draggedPiece = piece;
 	_hoveredPiece = -1;
 	_dragPoint = point;
 	playMovementCue();
-	debugC(2, kDebugPuzzles,
-		"Ripper: crystal puzzle drag began piece=%u point=%d,%d",
-		piece, point.x, point.y);
+	debugC(2, kDebugPuzzles, "Ripper: crystal puzzle drag began piece=%u point=%d,%d", piece, point.x, point.y);
 }
 
 void CrystalPuzzle::placeDraggedPiece(uint cell) {
@@ -249,8 +245,7 @@ void CrystalPuzzle::placeDraggedPiece(uint cell) {
 }
 
 void CrystalPuzzle::returnDraggedPieceToTray() {
-	debugC(2, kDebugPuzzles, "Ripper: crystal puzzle returned piece=%d to tray",
-		_draggedPiece);
+	debugC(2, kDebugPuzzles, "Ripper: crystal puzzle returned piece=%d to tray", _draggedPiece);
 	_draggedPiece = -1;
 	playMovementCue();
 }
@@ -263,6 +258,7 @@ bool CrystalPuzzle::isSolved() const {
 	}
 	if (occupied != kRequiredCellCount)
 		return false;
+
 	for (uint index = 0; index < kRequiredCellCount; ++index) {
 		if (_cellPieces[kSolvedCells[index]] < 0)
 			return false;
@@ -275,28 +271,26 @@ void CrystalPuzzle::seedInitialPieces(uint puzzleLevel) {
 		_pieceCells[0] = 9;
 		_cellPieces[9] = 0;
 		playMovementCue();
-		debugC(2, kDebugPuzzles,
-			"Ripper: crystal puzzle seeded piece=0 cell=9 difficulty=1");
+		debugC(2, kDebugPuzzles, "Ripper: crystal puzzle seeded piece=0 cell=9 difficulty=1");
 		if (drawBoard())
 			presentScreen();
 		g_system->delayMillis(kEasySeedDelayTicks * kDosTimerTickMillis);
 		_pieceCells[1] = 44;
 		_cellPieces[44] = 1;
 		playMovementCue();
-		debugC(2, kDebugPuzzles,
-			"Ripper: crystal puzzle seeded piece=1 cell=44 difficulty=1");
+		debugC(2, kDebugPuzzles, "Ripper: crystal puzzle seeded piece=1 cell=44 difficulty=1");
 	} else if (puzzleLevel == 2) {
 		_pieceCells[0] = 21;
 		_cellPieces[21] = 0;
 		playMovementCue();
-		debugC(2, kDebugPuzzles,
-			"Ripper: crystal puzzle seeded piece=0 cell=21 difficulty=2");
+		debugC(2, kDebugPuzzles, "Ripper: crystal puzzle seeded piece=0 cell=21 difficulty=2");
 	}
 }
 
 bool CrystalPuzzle::complete(uint completionFlag) {
 	if (!markSolved(completionFlag, "crystal-puzzle"))
 		return false;
+
 	_engine->getMedia()->playSoundEffect("crystal2.wav", _audioHandles[2]);
 	_engine->getMedia()->playSoundEffect("crystal3.wav", _audioHandles[3]);
 	_engine->getCursor()->setVisible(false);
@@ -331,6 +325,7 @@ void CrystalPuzzle::updateCursor(const Common::Point &point) {
 			}
 		}
 	}
+
 	if (cursor == kDefaultCursor && point.y >= kEdgeTop && point.y < kEdgeBottom &&
 			((point.x >= 20 && point.x < 150) ||
 			(point.x >= 500 && point.x < 630)))
@@ -346,8 +341,10 @@ void CrystalPuzzle::updateCursor(const Common::Point &point) {
 				"Ripper: crystal puzzle hover cleared piece=%d point=%d,%d cursor=%u",
 				_hoveredPiece, point.x, point.y, cursor);
 		}
+
 		_hoveredPiece = hoveredPiece;
 	}
+
 	_engine->getCursor()->update(cursor);
 }
 
@@ -379,18 +376,17 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 				active = false;
 				break;
 			}
+
 			if (command == kHelpAction) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: crystal puzzle opening modal help table=0x%x",
-					kHelpSelectionTable);
+				debugC(1, kDebugPuzzles, "Ripper: crystal puzzle opening modal help table=0x%x", kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: crystal puzzle modal help failed");
 				redrawPending = true;
 				continue;
 			}
+
 			if (advanceKeyword(command & 0xff, kCompletionKeyword, _keywordIndex)) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: crystal puzzle solved by hidden keyword");
+				debugC(1, kDebugPuzzles, "Ripper: crystal puzzle solved by hidden keyword");
 				result = complete(completionFlag) ? kSolved : kLoadFailed;
 				active = false;
 				break;
@@ -409,13 +405,11 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 					placeDraggedPiece(cell);
 					redrawPending = true;
 					if (isSolved()) {
-						debugC(1, kDebugPuzzles,
-							"Ripper: crystal puzzle solved by grid layout");
+						debugC(1, kDebugPuzzles, "Ripper: crystal puzzle solved by grid layout");
 						result = complete(completionFlag) ? kSolved : kLoadFailed;
 						active = false;
 					}
-				} else if (Common::Rect(kTrayLeft, kTrayTop, kTrayRight,
-						kTrayBottom).contains(mouse.position)) {
+				} else if (Common::Rect(kTrayLeft, kTrayTop, kTrayRight, kTrayBottom).contains(mouse.position)) {
 					returnDraggedPieceToTray();
 					redrawPending = true;
 				}
@@ -429,6 +423,7 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 				redrawPending = true;
 			}
 		}
+
 		updateCursor(mouse.position);
 		if (redrawPending && active)
 			redrawPending = !drawBoard();

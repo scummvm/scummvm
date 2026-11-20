@@ -246,8 +246,7 @@ bool SceneActionDispatcher::dispatch(RipperEngine *engine, uint action, uint arg
 	case kSceneActionCrystalPuzzle: {
 		CrystalPuzzle puzzle(engine);
 		const CrystalPuzzle::Result result = puzzle.run(argument);
-		debugC(1, kDebugPuzzles,
-			"Ripper: crystal puzzle scene action completed result=%d milestone=%u", result, argument);
+		debugC(1, kDebugPuzzles, "Ripper: crystal puzzle scene action completed result=%d milestone=%u", result, argument);
 		return result != CrystalPuzzle::kLoadFailed;
 	}
 	case kSceneActionNoOp:

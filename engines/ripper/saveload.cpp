@@ -66,11 +66,11 @@ bool RipperEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _saveLoadAllowed && (!_gameplayStarted || _scripts->canSaveGame());
 }
 
-Common::Error RipperEngine::saveGameState(int slot, const Common::String &desc,
-		bool isAutosave) {
+Common::Error RipperEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (!canSaveGameStateCurrently() || slot < 0 || slot > getAutosaveSlot() ||
 			(!isAutosave && slot == getAutosaveSlot()))
 		return Common::kWritingFailed;
+
 	const Common::String saveDescription = desc.substr(0, 60);
 	debugC(1, kDebugSaveLoad,
 		"Ripper: writing %s save slot=%d description='%s'",
@@ -85,6 +85,7 @@ Common::Error RipperEngine::saveGameState(int slot, const Common::String &desc,
 Common::Error RipperEngine::loadGameState(int slot) {
 	if (!canLoadGameStateCurrently() || slot < 0 || slot > getAutosaveSlot())
 		return Common::kReadingFailed;
+
 	debugC(1, kDebugSaveLoad, "Ripper: restoring save slot=%d", slot);
 	const Common::Error result = Engine::loadGameState(slot);
 	debugC(result.getCode() == Common::kNoError ? 1 : 2, kDebugSaveLoad,
@@ -116,6 +117,7 @@ Common::Error RipperEngine::saveGameStream(Common::WriteStream *stream, bool isA
 			g_system->unlockScreen();
 		return Common::kWritingFailed;
 	}
+
 	for (uint y = 0; y < kScreenHeight; ++y)
 		memcpy(pixels.data() + y * kScreenWidth, screen->getBasePtr(0, y), kScreenWidth);
 	g_system->unlockScreen();
@@ -144,6 +146,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		warning("Ripper: unsupported or invalid save-state header");
 		return Common::kReadingFailed;
 	}
+
 	ScriptManager::SaveState scriptState;
 	SceneAudioManager::Snapshot audioState;
 	PuzzleState puzzleState;
@@ -174,6 +177,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	if (!_scripts->applySaveState(scriptState, runtime))
 		return Common::kReadingFailed;
+
 	_sceneAudio->applySnapshot(audioState);
 	*_puzzleState = puzzleState;
 	g_system->copyRectToScreen(pixels.data(), kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
@@ -181,9 +185,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	presentScreen();
 	_gameplayStarted = true;
 	_input->discardMouseTransitions();
-	debugC(1, kDebugSaveLoad,
-		"Ripper: applied loaded save state indexedDisplay=%ux%u paletteEntries=256",
-		width, height);
+	debugC(1, kDebugSaveLoad, "Ripper: applied loaded save state indexedDisplay=%ux%u paletteEntries=256", width, height);
 	return Common::kNoError;
 }
 

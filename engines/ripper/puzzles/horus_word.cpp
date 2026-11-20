@@ -54,8 +54,7 @@ static const uint kDosTickMillis = 55;
 static const uint kWordSettleTicks = 0x24;
 static const uint kShadingPaletteBytes = 0x300;
 static const uint kShadingColorCubeBytes = 0x1000;
-static const uint kShadingBytes =
-	kShadingPaletteBytes + kShadingColorCubeBytes;
+static const uint kShadingBytes = kShadingPaletteBytes + kShadingColorCubeBytes;
 static const int kMaximumPhase = 0x19;
 static const int kMinimumPulsePhase = 0x0e;
 static const uint kPhaseOpacityStep = 10;
@@ -108,8 +107,7 @@ void HorusWordPuzzle::DebugHelper::reset(bool enabled) {
 	_recommendedLetter = -1;
 }
 
-bool HorusWordPuzzle::DebugHelper::sync(
-		const HorusWordPuzzle &puzzle) {
+bool HorusWordPuzzle::DebugHelper::sync(const HorusWordPuzzle &puzzle) {
 	const bool enabled = puzzle._engine->isPuzzleHelpEnabled();
 	if (enabled == _enabled)
 		return false;
@@ -124,8 +122,7 @@ bool HorusWordPuzzle::DebugHelper::sync(
 	return true;
 }
 
-int HorusWordPuzzle::DebugHelper::findRecommendedLetter(
-		const HorusWordPuzzle &puzzle) const {
+int HorusWordPuzzle::DebugHelper::findRecommendedLetter(const HorusWordPuzzle &puzzle) const {
 	if (!_enabled || puzzle._exitRequested || puzzle._wordSolved)
 		return -1;
 
@@ -134,11 +131,13 @@ int HorusWordPuzzle::DebugHelper::findRecommendedLetter(
 		slot = 0;
 	if (slot >= kWordLength)
 		return -1;
+
 	const int letter = kTargetWord[slot] - 'A';
 	if (!puzzle.isLetterSelected(letter))
 		return letter;
 	if (puzzle._wordComplete)
 		return -1;
+
 	for (uint targetSlot = 0; targetSlot < kWordLength; ++targetSlot) {
 		const int recoveryLetter = kTargetWord[targetSlot] - 'A';
 		if (!puzzle.isLetterSelected(recoveryLetter))
@@ -147,8 +146,7 @@ int HorusWordPuzzle::DebugHelper::findRecommendedLetter(
 	return -1;
 }
 
-void HorusWordPuzzle::DebugHelper::stateChanged(
-		const HorusWordPuzzle &puzzle) {
+void HorusWordPuzzle::DebugHelper::stateChanged(const HorusWordPuzzle &puzzle) {
 	const int recommendedLetter = findRecommendedLetter(puzzle);
 	if (recommendedLetter == _recommendedLetter)
 		return;
@@ -162,8 +160,7 @@ void HorusWordPuzzle::DebugHelper::stateChanged(
 		kTargetWord);
 }
 
-void HorusWordPuzzle::DebugHelper::draw(
-		const HorusWordPuzzle &puzzle, byte *screen, uint pitch) const {
+void HorusWordPuzzle::DebugHelper::draw(const HorusWordPuzzle &puzzle, byte *screen, uint pitch) const {
 	if (!_enabled || puzzle._exitRequested || puzzle._wordSolved)
 		return;
 
@@ -172,15 +169,12 @@ void HorusWordPuzzle::DebugHelper::draw(
 		if (puzzle.isLetterSelected(letter))
 			continue;
 		const bool recommended = letter == _recommendedLetter;
-		const byte color = recommended ? kPuzzleHelpRecommendedColor :
-			kPuzzleHelpFutureColor;
-		const uint ditherMask = recommended ?
-			kPuzzleHelpRecommendedDitherMask : kPuzzleHelpFutureDitherMask;
+		const byte color = recommended ? kPuzzleHelpRecommendedColor : kPuzzleHelpFutureColor;
+		const uint ditherMask = recommended ? kPuzzleHelpRecommendedDitherMask : kPuzzleHelpFutureDitherMask;
 		const Common::Point &position = kLetterPositions[letter];
 		const BitmapAssetFrame &button = puzzle._buttons[letter];
 		IndexedBitmapRenderer::drawHintRect(screen, pitch,
-			Common::Rect(position.x, position.y, position.x + button.width,
-				position.y + button.height),
+			Common::Rect(position.x, position.y, position.x + button.width, position.y + button.height),
 			Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight),
 			color, ditherMask);
 	}
@@ -193,15 +187,13 @@ HorusWordPuzzle::HorusWordPuzzle(RipperEngine *engine) :
 }
 
 bool HorusWordPuzzle::loadAssets() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(kLibraryName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_engine->getResources()->createReadStreamForPath(kLibraryName));
 	if (!stream || !_library.open(*stream, Common::Path(kLibraryName))) {
-		warning("Ripper: could not open Horus word library '%s'",
-			kLibraryName);
+		warning("Ripper: could not open Horus word library '%s'", kLibraryName);
 		return false;
 	}
-	if (!_library.loadBitmap(kBackgroundName, _background) ||
-			!_library.loadBitmap(kMaskName, _mask))
+
+	if (!_library.loadBitmap(kBackgroundName, _background) || !_library.loadBitmap(kMaskName, _mask))
 		return false;
 	if (_background.width != kRipperScreenWidth ||
 			_background.height != kRipperScreenHeight ||
@@ -215,33 +207,28 @@ bool HorusWordPuzzle::loadAssets() {
 	}
 
 	for (uint letter = 0; letter < kLetterCount; ++letter) {
-		if (!_library.loadBitmap(Common::String::format("but%u", letter + 1),
-				_buttons[letter]) ||
-				!_library.loadPcx(Common::String::format("%c", 'a' + letter),
-				_letters[letter]))
+		if (!_library.loadBitmap(Common::String::format("but%u", letter + 1), _buttons[letter]) ||
+				!_library.loadPcx(Common::String::format("%c", 'a' + letter), _letters[letter]))
 			return false;
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> shadingStream(
-		_library.createReadStreamForMember(kShadingName));
+	Common::ScopedPtr<Common::SeekableReadStream> shadingStream(_library.createReadStreamForMember(kShadingName));
 	if (!shadingStream || shadingStream->size() != kShadingBytes) {
 		warning("Ripper: Horus word shading '%s' has invalid size "
 			"expected=%u actual=%lld", kShadingName, kShadingBytes,
 			shadingStream ? (long long)shadingStream->size() : -1LL);
 		return false;
 	}
+
 	_shading.resize(kShadingBytes);
-	if (shadingStream->read(_shading.data(), _shading.size()) !=
-			_shading.size()) {
-		warning("Ripper: could not read Horus word shading '%s'",
-			kShadingName);
+	if (shadingStream->read(_shading.data(), _shading.size()) != _shading.size()) {
+		warning("Ripper: could not read Horus word shading '%s'", kShadingName);
 		return false;
 	}
 
 	for (uint cue = 0; cue < kAudioCueCount; ++cue) {
 		if (!_library.hasMember(kAudioNames[cue])) {
-			warning("Ripper: Horus word audio '%s' is missing",
-				kAudioNames[cue]);
+			warning("Ripper: Horus word audio '%s' is missing", kAudioNames[cue]);
 			return false;
 		}
 	}
@@ -256,8 +243,7 @@ bool HorusWordPuzzle::loadAssets() {
 	return true;
 }
 
-byte HorusWordPuzzle::blendPixel(byte source, byte destination,
-		uint opacity) const {
+byte HorusWordPuzzle::blendPixel(byte source, byte destination, uint opacity) const {
 	const byte *palette = _shading.data();
 	const byte *colorCube = palette + kShadingPaletteBytes;
 	const uint inverseOpacity = 256 - MIN<uint>(opacity, 255);
@@ -267,15 +253,14 @@ byte HorusWordPuzzle::blendPixel(byte source, byte destination,
 			(palette[source * 3 + component] * opacity +
 			 palette[destination * 3 + component] * inverseOpacity) >> 8;
 	}
-	const uint colorCubeIndex = ((components[0] >> 2) << 8) |
-		((components[1] >> 2) << 4) | (components[2] >> 2);
+	const uint colorCubeIndex = ((components[0] >> 2) << 8) | ((components[1] >> 2) << 4) | (components[2] >> 2);
 	return colorCube[colorCubeIndex];
 }
 
-void HorusWordPuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y, int opacity) const {
+void HorusWordPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y, int opacity) const {
 	if (opacity == 0)
 		return;
+
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
 		const int destinationY = y + sourceY;
 		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
@@ -287,10 +272,8 @@ void HorusWordPuzzle::drawFrame(byte *screen, uint pitch,
 			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
 			if (pixel == frame.transparentColor)
 				continue;
-			byte &destination =
-				screen[destinationY * pitch + destinationX];
-			destination = opacity < 0 ? pixel :
-				blendPixel(pixel, destination, opacity);
+			byte &destination = screen[destinationY * pitch + destinationX];
+			destination = opacity < 0 ? pixel : blendPixel(pixel, destination, opacity);
 		}
 	}
 }
@@ -305,21 +288,18 @@ void HorusWordPuzzle::render() const {
 
 	byte *pixels = (byte *)screen->getPixels();
 	for (uint y = 0; y < _background.height; ++y) {
-		memcpy(screen->getBasePtr(0, y),
-			_background.pixels.data() + y * _background.width,
-			_background.width);
+		memcpy(screen->getBasePtr(0, y), _background.pixels.data() + y * _background.width, _background.width);
 	}
-	if (_hoveredLetter >= 0 &&
-			!isLetterSelected((uint)_hoveredLetter)) {
+	if (_hoveredLetter >= 0 && !isLetterSelected((uint)_hoveredLetter)) {
 		drawFrame(pixels, screen->pitch, _buttons[_hoveredLetter],
 			kLetterPositions[_hoveredLetter].x,
 			kLetterPositions[_hoveredLetter].y);
 	}
+
 	for (uint slot = 0; slot < _selectedLetters.size(); ++slot) {
 		if (_selectedLetters[slot] < 0 || _letterPhases[slot] < 0)
 			continue;
-		const uint opacity = MIN<uint>(
-			_letterPhases[slot] * kPhaseOpacityStep, 255);
+		const uint opacity = MIN<uint>(_letterPhases[slot] * kPhaseOpacityStep, 255);
 		drawFrame(pixels, screen->pitch,
 			_letters[_selectedLetters[slot]], kWordPositions[slot].x,
 			kWordPositions[slot].y, opacity);
@@ -333,8 +313,7 @@ void HorusWordPuzzle::render() const {
 
 bool HorusWordPuzzle::isLetterSelected(uint letter) const {
 	for (uint slot = 0; slot < _selectedLetters.size(); ++slot) {
-		if (_selectedLetters[slot] == (int)letter &&
-				_letterPhases[slot] >= 0)
+		if (_selectedLetters[slot] == (int)letter && _letterPhases[slot] >= 0)
 			return true;
 	}
 	return false;
@@ -346,33 +325,30 @@ int HorusWordPuzzle::findLetter(const Common::Point &point) const {
 			continue;
 		const Common::Point &position = kLetterPositions[letter];
 		const BitmapAssetFrame &button = _buttons[letter];
-		if (Common::Rect(position.x, position.y,
-				position.x + button.width,
-				position.y + button.height).contains(point))
+		if (Common::Rect(position.x, position.y, position.x + button.width, position.y + button.height).contains(point))
 			return letter;
 	}
 	return -1;
 }
 
 void HorusWordPuzzle::updateHover(const Common::Point &point) {
-	const int hovered = _exitRequested || _wordSolved ? -1 :
-		findLetter(point);
+	const int hovered = _exitRequested || _wordSolved ? -1 : findLetter(point);
 	if (hovered == _hoveredLetter)
 		return;
+
 	debugC(2, kDebugPuzzles,
 		"Ripper: Horus word hover letter=%d previous=%d point=%d,%d",
 		hovered, _hoveredLetter, point.x, point.y);
 	_hoveredLetter = hovered;
-	_engine->getCursor()->update(
-		hovered >= 0 ? kSelectionCursor : kDefaultCursor);
+	_engine->getCursor()->update(hovered >= 0 ? kSelectionCursor : kDefaultCursor);
 	render();
 }
 
 bool HorusWordPuzzle::playCue(uint cue, uint volume, bool loop) {
 	if (cue >= kAudioCueCount)
 		return false;
-	Common::SeekableReadStream *stream =
-		_library.createReadStreamForMember(kAudioNames[cue]);
+
+	Common::SeekableReadStream *stream = _library.createReadStreamForMember(kAudioNames[cue]);
 	const bool result = _engine->getMedia()->playSoundEffectStream(
 		stream, kAudioNames[cue], _audioHandles[cue], volume, loop);
 	debugC(result ? 3 : 1, kDebugPuzzles,
@@ -396,9 +372,7 @@ Common::String HorusWordPuzzle::selectedWord() const {
 }
 
 void HorusWordPuzzle::clearWord(const char *reason, bool playResetCue) {
-	debugC(2, kDebugPuzzles,
-		"Ripper: Horus word cleared reason='%s' previous='%s'",
-		reason, selectedWord().c_str());
+	debugC(2, kDebugPuzzles, "Ripper: Horus word cleared reason='%s' previous='%s'", reason, selectedWord().c_str());
 	_selectedLetters.clear();
 	_letterPhases.clear();
 	_letterTargets.clear();
@@ -412,9 +386,7 @@ void HorusWordPuzzle::clearWord(const char *reason, bool playResetCue) {
 }
 
 void HorusWordPuzzle::beginFade(const char *reason) {
-	debugC(2, kDebugPuzzles,
-		"Ripper: Horus word fade started reason='%s' word='%s'",
-		reason, selectedWord().c_str());
+	debugC(2, kDebugPuzzles, "Ripper: Horus word fade started reason='%s' word='%s'", reason, selectedWord().c_str());
 	for (uint slot = 0; slot < _letterTargets.size(); ++slot)
 		_letterTargets[slot] = -1;
 	_settleDeadline = 0;
@@ -422,8 +394,7 @@ void HorusWordPuzzle::beginFade(const char *reason) {
 }
 
 void HorusWordPuzzle::selectLetter(uint letter) {
-	if (letter >= kLetterCount || isLetterSelected(letter) ||
-			_wordSolved || _exitRequested)
+	if (letter >= kLetterCount || isLetterSelected(letter) || _wordSolved || _exitRequested)
 		return;
 	if (_wordComplete)
 		clearWord("new-attempt");
@@ -442,13 +413,13 @@ void HorusWordPuzzle::selectLetter(uint letter) {
 	if (_selectedLetters.size() == kWordLength) {
 		_wordComplete = true;
 		_wordSolved = selectedWord() == kTargetWord;
-		_settleDeadline = g_system->getMillis() +
-			kWordSettleTicks * kDosTickMillis;
+		_settleDeadline = g_system->getMillis() + kWordSettleTicks * kDosTickMillis;
 		debugC(_wordSolved ? 1 : 2, kDebugPuzzles,
 			"Ripper: Horus word validation entered='%s' outcome=%s "
 			"settleTicks=%u", selectedWord().c_str(),
 			_wordSolved ? "SOLVED" : "REJECTED", kWordSettleTicks);
 	}
+
 	_debugHelper.stateChanged(*this);
 	_hoveredLetter = -1;
 	_engine->getCursor()->update(kDefaultCursor);
@@ -485,12 +456,12 @@ bool HorusWordPuzzle::stepAnimation(uint32 now) {
 			} else if (target == kMinimumPulsePhase) {
 				target = kMaximumPhase;
 			}
+
 			changed = true;
 		}
 	}
 
-	if (_settleDeadline != 0 &&
-			(int32)(now - _settleDeadline) >= 0) {
+	if (_settleDeadline != 0 && (int32)(now - _settleDeadline) >= 0) {
 		if (_wordSolved) {
 			_settleDeadline = 0;
 		} else {
@@ -498,11 +469,11 @@ bool HorusWordPuzzle::stepAnimation(uint32 now) {
 		}
 	}
 
-	if (!_wordSolved && !_exitRequested && _wordComplete &&
-			!hasVisibleLetters()) {
+	if (!_wordSolved && !_exitRequested && _wordComplete && !hasVisibleLetters()) {
 		clearWord("rejected-fade-complete", false);
 		changed = true;
 	}
+
 	if (changed) {
 		debugC(3, kDebugPuzzles,
 			"Ripper: Horus word animation word='%s' visible=%d "
@@ -514,6 +485,7 @@ bool HorusWordPuzzle::stepAnimation(uint32 now) {
 			_letterPhases.size() > 3 ? _letterPhases[3] : -1,
 			_letterPhases.size() > 4 ? _letterPhases[4] : -1);
 	}
+
 	return changed;
 }
 
@@ -567,15 +539,12 @@ HorusWordPuzzle::Result HorusWordPuzzle::run(uint completionFlag) {
 				_hoveredLetter = -1;
 				_engine->getCursor()->update(kDefaultCursor);
 				beginFade("escape");
-				debugC(1, kDebugPuzzles,
-					"Ripper: Horus word puzzle exit requested by Escape");
+				debugC(1, kDebugPuzzles, "Ripper: Horus word puzzle exit requested by Escape");
 				break;
 			}
-			if (command == kHelpCommand && !_exitRequested &&
-					!_wordSolved) {
-				debugC(1, kDebugPuzzles,
-					"Ripper: Horus word puzzle opening modal help table=0x%x",
-					kHelpSelectionTable);
+
+			if (command == kHelpCommand && !_exitRequested && !_wordSolved) {
+				debugC(1, kDebugPuzzles, "Ripper: Horus word puzzle opening modal help table=0x%x", kHelpSelectionTable);
 				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 					warning("Ripper: Horus word modal help failed");
 				render();
@@ -593,18 +562,18 @@ HorusWordPuzzle::Result HorusWordPuzzle::run(uint completionFlag) {
 			} else {
 				result = kSolved;
 			}
+
 			active = false;
 			continue;
 		}
+
 		if (_exitRequested) {
 			if (!hasVisibleLetters())
 				active = false;
 		} else if (!_wordSolved) {
-			const MouseState mouse =
-				_engine->getInput()->publishMouseState();
+			const MouseState mouse = _engine->getInput()->publishMouseState();
 			updateHover(mouse.position);
-			if ((mouse.pressed & kMouseButtonLeft) != 0 &&
-					_hoveredLetter >= 0)
+			if ((mouse.pressed & kMouseButtonLeft) != 0 && _hoveredLetter >= 0)
 				selectLetter(_hoveredLetter);
 		}
 

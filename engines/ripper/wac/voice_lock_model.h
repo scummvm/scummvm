@@ -96,15 +96,11 @@ struct WacVoiceLockEditorState {
 };
 
 WacVoiceLockSelection wacVoiceLockSolution(uint index);
-bool validateWacVoiceLockSelections(
-	const Common::Array<WacVoiceLockSelection> &selections,
-	Common::String &diagnostics);
+bool validateWacVoiceLockSelections(const Common::Array<WacVoiceLockSelection> &selections, Common::String &diagnostics);
 void appendWacVoiceLockSelectionAudio(const WacVoiceLockPcm &source,
 	const WacVoiceLockSelection &selection, const Common::Rect &waveform,
 	Common::Array<byte> &assembled);
-int getWacVoiceLockEditorWaveformWidth(
-	const Common::Array<WacVoiceLockEditorSegment> &segments,
-	const Common::Rect &bounds);
+int getWacVoiceLockEditorWaveformWidth(const Common::Array<WacVoiceLockEditorSegment> &segments, const Common::Rect &bounds);
 uint32 getWacVoiceLockDuration(uint byteCount, const WacVoiceLockPcm &pcm);
 
 } // End of namespace Ripper

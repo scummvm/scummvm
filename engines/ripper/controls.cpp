@@ -27,8 +27,7 @@
 
 namespace Ripper {
 
-TextScrollResult calculateTextScroll(uint16 command, uint firstVisible,
-		uint visibleRows, uint maximumFirstVisible) {
+TextScrollResult calculateTextScroll(uint16 command, uint firstVisible, uint visibleRows, uint maximumFirstVisible) {
 	TextScrollResult result = {firstVisible, true};
 	switch (command) {
 	case 0x4700:
@@ -77,8 +76,7 @@ ChooserModel::ChooserModel() : _itemCount(0), _selectedIndex(0),
 		_firstVisibleIndex(0), _visibleCount(0) {
 }
 
-void ChooserModel::reset(uint itemCount, uint maximumVisibleCount,
-		uint selectedIndex) {
+void ChooserModel::reset(uint itemCount, uint maximumVisibleCount, uint selectedIndex) {
 	_itemCount = itemCount;
 	_visibleCount = MIN(itemCount, maximumVisibleCount);
 	_selectedIndex = itemCount == 0 ? 0 : MIN(selectedIndex, itemCount - 1);
@@ -86,17 +84,18 @@ void ChooserModel::reset(uint itemCount, uint maximumVisibleCount,
 	ensureSelectionVisible();
 }
 
-bool ChooserModel::restore(uint itemCount, uint maximumVisibleCount,
-		uint selectedIndex, uint firstVisibleIndex) {
+bool ChooserModel::restore(uint itemCount, uint maximumVisibleCount, uint selectedIndex, uint firstVisibleIndex) {
 	if (itemCount == 0) {
 		if (selectedIndex != 0 || firstVisibleIndex != 0)
 			return false;
+
 		clear();
 		return true;
 	}
-	if (maximumVisibleCount == 0 || selectedIndex >= itemCount ||
-			firstVisibleIndex >= itemCount)
+
+	if (maximumVisibleCount == 0 || selectedIndex >= itemCount || firstVisibleIndex >= itemCount)
 		return false;
+
 	_itemCount = itemCount;
 	_visibleCount = MIN(itemCount, maximumVisibleCount);
 	_selectedIndex = selectedIndex;
@@ -114,6 +113,7 @@ void ChooserModel::clear() {
 bool ChooserModel::moveSelection(int delta) {
 	if (_itemCount == 0 || delta == 0)
 		return false;
+
 	const uint previous = _selectedIndex;
 	if (delta < 0 && _selectedIndex > 0)
 		--_selectedIndex;
@@ -126,6 +126,7 @@ bool ChooserModel::moveSelection(int delta) {
 bool ChooserModel::select(uint index, bool ensureVisible) {
 	if (index >= _itemCount)
 		return false;
+
 	const bool changed = index != _selectedIndex;
 	_selectedIndex = index;
 	if (ensureVisible)
@@ -136,8 +137,8 @@ bool ChooserModel::select(uint index, bool ensureVisible) {
 bool ChooserModel::scrollWindow(int delta) {
 	if (_itemCount == 0 || _visibleCount == 0 || delta == 0)
 		return false;
-	const uint maximumFirst = _itemCount > _visibleCount ?
-		_itemCount - _visibleCount : 0;
+
+	const uint maximumFirst = _itemCount > _visibleCount ? _itemCount - _visibleCount : 0;
 	const uint previous = _firstVisibleIndex;
 	if (delta < 0 && _firstVisibleIndex > 0)
 		--_firstVisibleIndex;
@@ -153,6 +154,7 @@ bool ChooserModel::scrollWindow(int delta) {
 bool ChooserModel::resolveVisibleRow(uint row, uint &index) const {
 	if (row >= _visibleCount || _firstVisibleIndex + row >= _itemCount)
 		return false;
+
 	index = _firstVisibleIndex + row;
 	return true;
 }
@@ -162,6 +164,7 @@ void ChooserModel::ensureSelectionVisible() {
 		_firstVisibleIndex = 0;
 		return;
 	}
+
 	if (_selectedIndex < _firstVisibleIndex)
 		_firstVisibleIndex = _selectedIndex;
 	else if (_selectedIndex >= _firstVisibleIndex + _visibleCount)

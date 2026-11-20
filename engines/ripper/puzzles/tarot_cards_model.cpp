@@ -37,6 +37,7 @@ TarotCardsModel::TarotCardsModel() : _heldCard(0) {
 bool TarotCardsModel::swap(uint slot) {
 	if (slot >= kSlotCount)
 		return false;
+
 	const byte previousCard = _cards[slot];
 	_cards[slot] = _heldCard;
 	_heldCard = previousCard;

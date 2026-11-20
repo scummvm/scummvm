@@ -29,14 +29,12 @@ namespace {
 
 static Common::String stripIniComment(const Common::String &source) {
 	const size_t comment = source.find(';');
-	Common::String value = comment == Common::String::npos ?
-		source : source.substr(0, comment);
+	Common::String value = comment == Common::String::npos ? source : source.substr(0, comment);
 	value.trim();
 	return value;
 }
 
-static bool parseUnsignedDecimal(const Common::String &text, uint64 maximum,
-		uint64 &value) {
+static bool parseUnsignedDecimal(const Common::String &text, uint64 maximum, uint64 &value) {
 	if (text.empty())
 		return false;
 
@@ -44,9 +42,11 @@ static bool parseUnsignedDecimal(const Common::String &text, uint64 maximum,
 	for (uint i = 0; i < text.size(); ++i) {
 		if (text[i] < '0' || text[i] > '9')
 			return false;
+
 		const uint digit = text[i] - '0';
 		if (parsed > (maximum - digit) / 10)
 			return false;
+
 		parsed = parsed * 10 + digit;
 	}
 	value = parsed;
@@ -55,28 +55,27 @@ static bool parseUnsignedDecimal(const Common::String &text, uint64 maximum,
 
 } // End of anonymous namespace
 
-Common::String getIniString(const Common::INIFile &ini, const char *section,
-		const char *key, const Common::String &fallback) {
+Common::String getIniString(const Common::INIFile &ini, const char *section, const char *key, const Common::String &fallback) {
 	Common::String value;
 	if (!ini.getKey(key, section, value))
 		return fallback;
+
 	value = stripIniComment(value);
 	return value.empty() ? fallback : value;
 }
 
-int getIniInt(const Common::INIFile &ini, const char *section,
-		const char *key, int fallback) {
+int getIniInt(const Common::INIFile &ini, const char *section, const char *key, int fallback) {
 	const Common::String text = getIniString(ini, section, key);
 	uint64 value = 0;
 	return parseUnsignedDecimal(text, 0x7fffffffU, value) ? (int)value : fallback;
 }
 
-bool readIniUint(const Common::INIFile &ini, const Common::String &section,
-		const Common::String &key, uint &value) {
+bool readIniUint(const Common::INIFile &ini, const Common::String &section, const Common::String &key, uint &value) {
 	const Common::String text = getIniString(ini, section.c_str(), key.c_str());
 	uint64 parsed = 0;
 	if (!parseUnsignedDecimal(text, 0xffffffffULL, parsed))
 		return false;
+
 	value = (uint)parsed;
 	return true;
 }

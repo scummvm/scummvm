@@ -37,8 +37,7 @@ Milestones::Milestones() : _observer(nullptr) {
 }
 
 bool Milestones::initialize(ResourceManager &resources) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		resources.scripts().createReadStreamForMember("mileston.def"));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(resources.scripts().createReadStreamForMember("mileston.def"));
 	if (!stream)
 		return false;
 
@@ -62,6 +61,7 @@ bool Milestones::initialize(ResourceManager &resources) {
 			warning("Ripper: invalid MILESTON.DEF line '%s'", line.c_str());
 			return false;
 		}
+
 		while (cursor < line.size() && (line[cursor] == ' ' || line[cursor] == '\t'))
 			++cursor;
 		Common::String value = line.substr(cursor);
@@ -70,6 +70,7 @@ bool Milestones::initialize(ResourceManager &resources) {
 			warning("Ripper: empty MILESTON.DEF label for flag %u", flag);
 			return false;
 		}
+
 		if (_labels[flag].empty())
 			++labelCount;
 		_labels[flag] = value;
@@ -137,11 +138,9 @@ bool Milestones::hasRipperIdentity() const {
 }
 
 bool Milestones::selectRipperIdentity(uint candidate, const char *source) {
-	const uint candidateCount =
-		kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
+	const uint candidateCount = kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
 	if (candidate >= candidateCount) {
-		warning("Ripper: Ripper identity candidate %u is outside the %u-candidate set",
-			candidate, candidateCount);
+		warning("Ripper: Ripper identity candidate %u is outside the %u-candidate set", candidate, candidateCount);
 		return false;
 	}
 

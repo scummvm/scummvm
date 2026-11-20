@@ -61,11 +61,9 @@ private:
 
 	bool loadAssets();
 	bool loadSelectionShading();
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y, bool translucent = false) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y, bool translucent = false) const;
 	byte blendSelectionPixel(byte source, byte destination) const;
-	void drawPiece(byte *screen, uint pitch, int piece,
-		const Common::Point &anchor, bool selected = false) const;
+	void drawPiece(byte *screen, uint pitch, int piece, const Common::Point &anchor, bool selected = false) const;
 	void render();
 	void clearSelectedPiece();
 	int hitCodeAt(const Common::Point &point) const;
@@ -73,12 +71,10 @@ private:
 	bool serviceKeyword(uint16 command);
 	bool applyPlayerMove(int destination);
 	bool runAiTurn();
-	bool animateMove(const BoardGameModel::Move &move, int movingPiece,
-		int capturedPiece, bool thinkingCursor);
+	bool animateMove(const BoardGameModel::Move &move, int movingPiece, int capturedPiece, bool thinkingCursor);
 	Result finishResult(uint completionFlag);
 	BoardGameModel::Move chooseAiMove();
-	int evaluatePosition(const BoardGameModel &model, int depth,
-		int alpha, int beta) const;
+	int evaluatePosition(const BoardGameModel &model, int depth, int alpha, int beta) const;
 	int staticScore(const BoardGameModel &model) const;
 	bool playCue(uint cue);
 	void stopCue(uint cue);

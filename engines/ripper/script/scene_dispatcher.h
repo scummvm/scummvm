@@ -96,8 +96,7 @@ class RipperEngine;
 class SceneActionDispatcher {
 public:
 	static const char *actionName(uint action);
-	static bool dispatch(RipperEngine *engine, uint action, uint argument,
-		const char *scriptName, uint32 commandOffset);
+	static bool dispatch(RipperEngine *engine, uint action, uint argument, const char *scriptName, uint32 commandOffset);
 };
 
 } // End of namespace Ripper

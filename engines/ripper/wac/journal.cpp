@@ -68,13 +68,12 @@ static const int kWacJournalProgressLeft = kWacMediaLeft + 50;
 static const int kWacJournalProgressTop = kWacMediaTop + 1;
 static const int kWacJournalTextEntryWidth = 200;
 static const int kWacJournalTextEntryHeight = 42;
-static const int kWacJournalTextEntryTop =
-	kWacMediaTop + kWacTextPanelHeight + 5;
+static const int kWacJournalTextEntryTop = kWacMediaTop + kWacTextPanelHeight + 5;
 
-static void shuffleJournalLine(Common::String &line,
-		Common::RandomSource &randomSource) {
+static void shuffleJournalLine(Common::String &line, Common::RandomSource &randomSource) {
 	if (line.size() < 2)
 		return;
+
 	for (uint iteration = 0; iteration < 20; ++iteration) {
 		const uint first = randomSource.getRandomNumber(line.size() - 1);
 		const uint second = randomSource.getRandomNumber(line.size() - 1);
@@ -84,9 +83,7 @@ static void shuffleJournalLine(Common::String &line,
 	}
 }
 
-bool WacDatabaseSession::drawJournalTextPanel(
-		const Common::Array<Common::String> &lines, uint progress,
-		TextScrollState &scroll) {
+bool WacDatabaseSession::drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress, TextScrollState &scroll) {
 	const Common::Rect bounds(kWacMediaLeft, kWacMediaTop,
 		kWacMediaLeft + kWacTextPanelWidth, kWacMediaTop + kWacTextPanelHeight);
 	if (!engine()->getModalDialog()->drawRetainedTextPanelLines(
@@ -101,6 +98,7 @@ bool WacDatabaseSession::drawJournalTextPanel(
 			g_system->unlockScreen();
 		return false;
 	}
+
 	screen->fillRect(Common::Rect(kWacMediaLeft, bounds.bottom,
 		kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight),
 		kWacDatabaseBackground);
@@ -126,17 +124,12 @@ bool WacDatabaseSession::drawJournalTextPanelLine(
 		ModalDialogManager::kWacPresentation);
 }
 
-DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
-		const Common::String &entryLabel) {
-	const Common::String &journalText =
-		resourceString(kWacJournalTextResource);
-	const Common::String &prompt =
-		resourceString(kWacJournalPromptResource);
-	const uint puzzleLevel = CLIP<uint>(
-		engine()->getSettings()->getPuzzleLevel(), 1, 3);
+DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex, const Common::String &entryLabel) {
+	const Common::String &journalText = resourceString(kWacJournalTextResource);
+	const Common::String &prompt = resourceString(kWacJournalPromptResource);
+	const uint puzzleLevel = CLIP<uint>(engine()->getSettings()->getPuzzleLevel(), 1, 3);
 	const uint passwordResource = kWacJournalPasswordBaseResource + puzzleLevel;
-	const Common::String &expectedPassword =
-		resourceString(passwordResource);
+	const Common::String &expectedPassword = resourceString(passwordResource);
 	if (journalText.empty() || prompt.empty() || expectedPassword.empty()) {
 		warning("Ripper: WAC journal resources are incomplete text=0x%x prompt=0x%x password=0x%x",
 			kWacJournalTextResource, kWacJournalPromptResource, passwordResource);
@@ -144,8 +137,7 @@ DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 	}
 
 	Common::Array<Common::String> sourceLines;
-	// The tertiary WAC text panel reserves five pixels on the left, twenty on
-	// the right, and two more on either side of the actual text rows.
+	// The tertiary WAC text panel reserves five pixels on the left, twenty on the right, and two more on either side of the actual text rows.
 	wrapText(journalText,
 		kWacTextPanelWidth - kWacDatabaseLeftInset -
 			kWacDatabaseRightInset - kWacDatabaseTextInset * 2,
@@ -161,14 +153,13 @@ DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 		while (revealedLines < sourceLines.size() &&
 				revealFlagIndex < kWacJournalSectionCount &&
 				milestones->isSet(kWacJournalRevealFlagBase + revealFlagIndex)) {
-			milestones->set(kWacJournalCompletionFlagBase + revealFlagIndex,
-				true, "wac-journal-resume");
+			milestones->set(kWacJournalCompletionFlagBase + revealFlagIndex, true, "wac-journal-resume");
 			++revealedLines;
-			if (revealedLines < sourceLines.size() &&
-					sourceLines[revealedLines].empty())
+			if (revealedLines < sourceLines.size() && sourceLines[revealedLines].empty())
 				++revealFlagIndex;
 		}
 	}
+
 	bool revealComplete = revealedLines >= sourceLines.size();
 
 	Common::RandomSource randomSource("ripper-wac-journal");
@@ -179,8 +170,7 @@ DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 
 	DatabaseInputState input(DatabaseInputMode::kTextPanel);
 	TextScrollState &scroll = input.text;
-	uint progress = sourceLines.empty() ? 100 :
-		revealedLines * 100 / sourceLines.size();
+	uint progress = sourceLines.empty() ? 100 : revealedLines * 100 / sourceLines.size();
 	if (!drawJournalTextPanel(displayLines, progress, scroll))
 		return DatabaseInputOutcome::kContinue;
 
@@ -211,13 +201,9 @@ DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 		}
 
 		Common::String enteredPassword;
-		ModalDialogManager::TextEntryResult textResult =
-			ModalDialogManager::kTextEntryPending;
-		while (textResult == ModalDialogManager::kTextEntryPending &&
-				!engine()->shouldQuit()) {
-			textResult =
-				engine()->getModalDialog()->serviceTextEntry(
-					enteredPassword);
+		ModalDialogManager::TextEntryResult textResult = ModalDialogManager::kTextEntryPending;
+		while (textResult == ModalDialogManager::kTextEntryPending && !engine()->shouldQuit()) {
+			textResult = engine()->getModalDialog()->serviceTextEntry(enteredPassword);
 			serviceIdleEffects();
 			presentScreen();
 			g_system->delayMillis(10);
@@ -227,6 +213,7 @@ DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 			cancelled = true;
 			break;
 		}
+
 		if (!textAnswersMatch(enteredPassword, expectedPassword)) {
 			debugC(2, kDebugWac,
 				"Ripper: WAC journal rejected decryption key resource=0x%x enteredLength=%u",
@@ -248,8 +235,7 @@ DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 	Audio::SoundHandle journalAudio;
 	bool audioStarted = false;
 	if (unlocked && !revealComplete && !cancelled) {
-		audioStarted = engine()->getMedia()->playVoiceClip(
-			"wacjrnl.wav", journalAudio);
+		audioStarted = engine()->getMedia()->playVoiceClip("wacjrnl.wav", journalAudio);
 		if (!drawJournalTextPanel(displayLines, progress, scroll))
 			cancelled = true;
 	}
@@ -272,23 +258,20 @@ DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 		}
 
 		const uint32 now = g_system->getMillis(true);
-		if (unlocked && !revealComplete &&
-				now - revealStartMillis >= kWacJournalRevealInterval) {
+		if (unlocked && !revealComplete && now - revealStartMillis >= kWacJournalRevealInterval) {
 			displayLines[revealedLines] = sourceLines[revealedLines];
 			const bool sectionEnabled =
 				revealFlagIndex < kWacJournalSectionCount &&
 				milestones->isSet(kWacJournalRevealFlagBase + revealFlagIndex);
 			if (sectionEnabled) {
-				milestones->set(kWacJournalCompletionFlagBase + revealFlagIndex,
-					true, "wac-journal-reveal");
+				milestones->set(kWacJournalCompletionFlagBase + revealFlagIndex, true, "wac-journal-reveal");
 				++revealedLines;
-				if (revealedLines < sourceLines.size() &&
-						sourceLines[revealedLines].empty())
+				if (revealedLines < sourceLines.size() && sourceLines[revealedLines].empty())
 					++revealFlagIndex;
 			}
+
 			revealComplete = revealedLines >= sourceLines.size();
-			progress = sourceLines.empty() ? 100 :
-				revealedLines * 100 / sourceLines.size();
+			progress = sourceLines.empty() ? 100 : revealedLines * 100 / sourceLines.size();
 			revealStartMillis = now;
 			visibleShuffleLine = MAX<uint>(revealedLines, scroll.firstVisible);
 			redraw = true;
@@ -298,13 +281,10 @@ DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 				sectionEnabled, progress, revealComplete);
 		}
 
-		if (unlocked && !revealComplete &&
-				now - lastShuffleMillis >= kWacJournalShuffleInterval) {
+		if (unlocked && !revealComplete && now - lastShuffleMillis >= kWacJournalShuffleInterval) {
 			const uint firstShuffleLine = MAX<uint>(revealedLines, scroll.firstVisible);
-			const uint shuffleLimit = MIN<uint>(displayLines.size(),
-				scroll.firstVisible + scroll.visibleRows);
-			if (visibleShuffleLine < firstShuffleLine ||
-					visibleShuffleLine >= shuffleLimit)
+			const uint shuffleLimit = MIN<uint>(displayLines.size(), scroll.firstVisible + scroll.visibleRows);
+			if (visibleShuffleLine < firstShuffleLine || visibleShuffleLine >= shuffleLimit)
 				visibleShuffleLine = firstShuffleLine;
 			if (visibleShuffleLine < shuffleLimit) {
 				const uint shuffledLine = visibleShuffleLine;
@@ -312,14 +292,14 @@ DatabaseInputOutcome WacDatabaseSession::runJournal(byte entryIndex,
 				++visibleShuffleLine;
 				redrawLine = shuffledLine;
 			}
+
 			lastShuffleMillis = now;
 		}
 
 		if (redraw && !drawJournalTextPanel(displayLines, progress, scroll))
 			break;
 		if (!redraw && redrawLine >= 0 &&
-				!drawJournalTextPanelLine(displayLines, scroll.firstVisible,
-					scroll.visibleRows, redrawLine))
+				!drawJournalTextPanelLine(displayLines, scroll.firstVisible, scroll.visibleRows, redrawLine))
 			break;
 		presentScreen();
 		g_system->delayMillis(10);

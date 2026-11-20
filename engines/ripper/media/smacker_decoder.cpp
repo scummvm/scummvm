@@ -31,8 +31,7 @@
 
 namespace Ripper {
 
-void cacheSmackerFrames(Video::SmackerDecoder &decoder,
-		Common::Array<BitmapAssetFrame> &frames) {
+void cacheSmackerFrames(Video::SmackerDecoder &decoder, Common::Array<BitmapAssetFrame> &frames) {
 	frames.clear();
 	frames.reserve(decoder.getFrameCount());
 	while (!decoder.endOfVideo()) {
@@ -44,8 +43,7 @@ void cacheSmackerFrames(Video::SmackerDecoder &decoder,
 		frame.height = surface->h;
 		frame.pixels.resize((uint32)frame.width * frame.height);
 		for (uint y = 0; y < frame.height; ++y) {
-			memcpy(frame.pixels.data() + y * frame.width,
-				surface->getBasePtr(0, y), frame.width);
+			memcpy(frame.pixels.data() + y * frame.width, surface->getBasePtr(0, y), frame.width);
 		}
 		frames.push_back(Common::move(frame));
 	}
@@ -87,8 +85,7 @@ void RipperSmackerDecoder::setTimelineStartMillis(uint32 *timelineStartMillis) {
 	static_cast<RipperSmackerVideoTrack *>(getTrack(0))->setTimelineStartMillis(timelineStartMillis);
 }
 
-bool RipperSmackerDecoder::loadStreamWithDataFixes(Common::SeekableReadStream *stream,
-		const Common::String &name) {
+bool RipperSmackerDecoder::loadStreamWithDataFixes(Common::SeekableReadStream *stream, const Common::String &name) {
 	if (!Video::SmackerDecoder::loadStream(stream))
 		return false;
 
@@ -101,10 +98,10 @@ const Graphics::Surface *RipperSmackerDecoder::restartAtFrame(uint frame) {
 		return nullptr;
 
 	stopAudio();
-	RipperSmackerVideoTrack *videoTrack =
-		static_cast<RipperSmackerVideoTrack *>(getTrack(0));
+	RipperSmackerVideoTrack *videoTrack = static_cast<RipperSmackerVideoTrack *>(getTrack(0));
 	if (!videoTrack)
 		return nullptr;
+
 	videoTrack->clearSurface();
 
 	const Graphics::Surface *surface = nullptr;
@@ -115,8 +112,7 @@ const Graphics::Surface *RipperSmackerDecoder::restartAtFrame(uint frame) {
 
 	_lastTimeChange = videoTrack->getFrameTime(frame);
 	if (isPlaying())
-		_startTime = g_system->getMillis() -
-			(_lastTimeChange.msecs() / getRate()).toInt();
+		_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
 	resetPauseStartTime();
 	return surface;
 }
@@ -138,8 +134,7 @@ void RipperSmackerDecoder::repairEfw4FrameTable(const Common::String &name) {
 	for (uint i = 0; i < kFrameCount; ++i)
 		repairedEnd += (i == kFrame ? kRepairedSize : _frameSizes[i]) & ~3U;
 	if (repairedEnd != kFileSize) {
-		warning("Ripper: EFW4 Smacker frame-table repair rejected repairedEnd=%u fileSize=%u",
-			(uint)repairedEnd, kFileSize);
+		warning("Ripper: EFW4 Smacker frame-table repair rejected repairedEnd=%u fileSize=%u", (uint)repairedEnd, kFileSize);
 		return;
 	}
 
@@ -151,8 +146,7 @@ void RipperSmackerDecoder::repairEfw4FrameTable(const Common::String &name) {
 
 RipperSmackerDecoder::SmackerVideoTrack *RipperSmackerDecoder::createVideoTrack(uint32 width, uint32 height, uint32 frameCount,
 		const Common::Rational &frameRate, uint32 flags, uint32 version) const {
-	return new RipperSmackerVideoTrack(width, height, frameCount, frameRate,
-		flags, version);
+	return new RipperSmackerVideoTrack(width, height, frameCount, frameRate, flags, version);
 }
 
 } // End of namespace Ripper

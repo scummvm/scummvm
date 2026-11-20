@@ -109,8 +109,7 @@ CombatEncounter::MeterConfig::MeterConfig() : charge(0), discharge(0),
 		damage[i] = 0;
 }
 
-CombatEncounter::CombatEncounter(RipperEngine *engine,
-		const CombatEncounterDefinition &definition) : Scene(engine),
+CombatEncounter::CombatEncounter(RipperEngine *engine, const CombatEncounterDefinition &definition) : Scene(engine),
 		_definition(definition), _random("ripperCombat"), _nextCueHandle(0),
 		_weaponRapidFireTicks(0),
 		_activeScene(nullptr), _activeSceneIndex(0),
@@ -153,16 +152,17 @@ bool CombatEncounter::loadConfig(const Common::String &name, Common::INIFile &in
 		warning("Ripper: could not open combat configuration '%s'", name.c_str());
 		return false;
 	}
+
 	ini.requireKeyValueDelimiter();
 	if (!ini.loadFromStream(file)) {
 		warning("Ripper: could not parse combat configuration '%s'", name.c_str());
 		return false;
 	}
+
 	return true;
 }
 
-void CombatEncounter::loadMeterConfig(const Common::INIFile &ini, const char *section,
-		MeterConfig &config) {
+void CombatEncounter::loadMeterConfig(const Common::INIFile &ini, const char *section, MeterConfig &config) {
 	for (uint i = 0; i < kDamageCount; ++i) {
 		const Common::String key = Common::String::format("damage%u", i + 1);
 		config.damage[i] = getIniInt(ini, section, key.c_str(), 0);
@@ -213,9 +213,7 @@ bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &sc
 	debugC(2, kDebugCombat,
 		"Ripper: loaded combat frame-region table file='%s' frames=%u regions=%u",
 		name.c_str(), table.frames.size(), regionCount);
-	debugC(3, kDebugCombat,
-		"Ripper: decoded combat hit-region records file='%s' layout=type,y,x,height,width",
-		name.c_str());
+	debugC(3, kDebugCombat, "Ripper: decoded combat hit-region records file='%s' layout=type,y,x,height,width", name.c_str());
 	return true;
 }
 
@@ -251,8 +249,7 @@ bool CombatEncounter::loadFrameCues(const Common::String &name, SceneData &scene
 }
 
 bool CombatEncounter::loadSceneData(SceneData &scene) {
-	return loadFrameRegions(scene.basename + "dat.dat", scene) &&
-		loadFrameCues(scene.basename + "prj.prj", scene);
+	return loadFrameRegions(scene.basename + "dat.dat", scene) && loadFrameCues(scene.basename + "prj.prj", scene);
 }
 
 bool CombatEncounter::loadBitmapAssets() {
@@ -264,6 +261,7 @@ bool CombatEncounter::loadBitmapAssets() {
 		const Common::String name = Common::String::format("combat%u.bbm", i);
 		if (!resources->loadBitmapSequenceFirstFrame(name, asset))
 			return false;
+
 		_combatFrames.push_back(Common::move(asset));
 		const BitmapAssetFrame &frame = _combatFrames.back();
 		debugC(3, kDebugCombat,
@@ -273,15 +271,16 @@ bool CombatEncounter::loadBitmapAssets() {
 	}
 	for (uint i = 0; i < 4; ++i) {
 		BitmapAssetFrame asset;
-		const Common::String name = Common::String::format("%s%u.bbm",
-			_definition.crosshairPrefix, i);
+		const Common::String name = Common::String::format("%s%u.bbm", _definition.crosshairPrefix, i);
 		if (!resources->loadBitmapSequenceFirstFrame(name, asset))
 			return false;
+
 		_crosshairFrames.push_back(Common::move(asset));
 	}
 	for (uint i = 0; i < kEffectGroupCount; ++i) {
 		if (!resources->loadBitmapLibrary(_definition.effectLibraries[i], _effectFrames[i]))
 			return false;
+
 		debugC(2, kDebugCombat,
 			"Ripper: loaded combat effect group=%u library='%s' frames=%u transparent=%u",
 			i, _definition.effectLibraries[i], _effectFrames[i].size(),
@@ -291,8 +290,7 @@ bool CombatEncounter::loadBitmapAssets() {
 }
 
 Common::String CombatEncounter::selectConfigName(uint difficulty) const {
-	const Common::String requested = Common::String::format(
-		_definition.iniPattern, difficulty);
+	const Common::String requested = Common::String::format(_definition.iniPattern, difficulty);
 	if (!_definition.fallbackIni || Common::File::exists(Common::Path(requested)))
 		return requested;
 
@@ -300,8 +298,8 @@ Common::String CombatEncounter::selectConfigName(uint difficulty) const {
 	if (!Common::File::exists(Common::Path(fallback)))
 		return requested;
 
-	// Some installations contain only ATKINI1.INI and RATINI1.INI. Try the
-	// configured level first, then fall back to the packaged definition.
+	// Some installations contain only ATKINI1.INI and RATINI1.INI.
+	// Try the configured level first, then fall back to the packaged definition.
 	debugC(2, kDebugCombat,
 		"Ripper: combat configuration fallback type='%s' requested='%s' selected='%s' reason=missing-numbered-config",
 		_definition.name, requested.c_str(), fallback.c_str());
@@ -323,6 +321,7 @@ bool CombatEncounter::loadResources(const Common::String &configName, uint diffi
 		scene.basename = basenameFromPath(basename);
 		if (!loadSceneData(scene))
 			return false;
+
 		_scenes.push_back(Common::move(scene));
 	}
 	if (_scenes.empty()) {
@@ -359,6 +358,7 @@ bool CombatEncounter::loadResources(const Common::String &configName, uint diffi
 
 	if (!loadBitmapAssets())
 		return false;
+
 	debugC(1, kDebugCombat,
 		"Ripper: loaded combat encounter type='%s' config='%s' difficulty=%u scenes=%u",
 		_definition.name, configName.c_str(), difficulty, _scenes.size());
@@ -368,6 +368,7 @@ bool CombatEncounter::loadResources(const Common::String &configName, uint diffi
 void CombatEncounter::queueCue(const Common::String &path, uint volumePercent) {
 	if (path.empty())
 		return;
+
 	Audio::SoundHandle &handle = _cueHandles[_nextCueHandle++ % kCueHandleCount];
 	_engine->getMedia()->stopSoundEffect(handle);
 	_engine->getMedia()->playSoundEffect(normalizeCueName(path), handle, volumePercent, false);
@@ -383,9 +384,9 @@ void CombatEncounter::startEncounterAudio() {
 }
 
 void CombatEncounter::queueAlternateAmbient() {
-	if (!_definition.ambientAlternates[0] ||
-			_engine->getMedia()->isSoundEffectActive(_ambientHandle))
+	if (!_definition.ambientAlternates[0] || _engine->getMedia()->isSoundEffectActive(_ambientHandle))
 		return;
+
 	const uint index = _random.getRandomNumber(1);
 	const char *path = _definition.ambientAlternates[index];
 	if (!path || !*path)
@@ -410,8 +411,7 @@ void CombatEncounter::updateContinuousAudio(const FrameState &frame) {
 	_engine->getMedia()->setSoundEffectVolume(_creatureHandle, frame.creatureVolume);
 	const uint mixVolume = _shieldHeld ? 50 : 100;
 	_engine->getMedia()->setSoundEffectVolume(_ambientHandle, mixVolume);
-	_engine->getMedia()->setSoundEffectVolume(_creatureHandle,
-		frame.creatureVolume * mixVolume / 100);
+	_engine->getMedia()->setSoundEffectVolume(_creatureHandle, frame.creatureVolume * mixVolume / 100);
 }
 
 void CombatEncounter::updateMeter(uint meter, uint32 now, bool recharge, bool drain) {
@@ -428,6 +428,7 @@ void CombatEncounter::updateMeter(uint meter, uint32 now, bool recharge, bool dr
 				_meterPercent[meter], config.chargeTicks);
 		}
 	}
+
 	if (drain && config.discharge > 0 && _meterPercent[meter] > 0) {
 		const uint32 interval = config.dischargeTicks * 1000 / kDosTicksPerSecond;
 		if (interval == 0 || now - _lastDischargeMillis[meter] >= interval) {
@@ -442,18 +443,17 @@ void CombatEncounter::updateMeter(uint meter, uint32 now, bool recharge, bool dr
 	}
 }
 
-void CombatEncounter::applyIncomingAttack(byte attack, bool shieldHeld,
-		uint32 now, uint frameIndex) {
+void CombatEncounter::applyIncomingAttack(byte attack, bool shieldHeld, uint32 now, uint frameIndex) {
 	if (attack == 0 || attack > kDamageCount) {
 		updateMeter(kShieldMeter, now, !shieldHeld, shieldHeld);
 		return;
 	}
+
 	const uint damageIndex = attack - 1;
 	const int healthBefore = _meterPercent[kHealthMeter];
 	const int weaponBefore = _meterPercent[kWeaponMeter];
 	const int shieldBefore = _meterPercent[kShieldMeter];
-	_meterPercent[kWeaponMeter] = MAX<int>(0,
-		_meterPercent[kWeaponMeter] - _meterConfig[kWeaponMeter].damage[damageIndex]);
+	_meterPercent[kWeaponMeter] = MAX<int>(0, _meterPercent[kWeaponMeter] - _meterConfig[kWeaponMeter].damage[damageIndex]);
 	const int weaponDamage = weaponBefore - _meterPercent[kWeaponMeter];
 	int healthDamage = 0;
 	int shieldDamage = 0;
@@ -472,6 +472,7 @@ void CombatEncounter::applyIncomingAttack(byte attack, bool shieldHeld,
 		queueCue(_healthHitSounds[damageIndex]);
 		_paletteEffect = kPalettePlayerHit;
 	}
+
 	debugC(2, kDebugCombat,
 		"Ripper: combat enemy attack scene=%u frame=%u type=%u route='%s' weaponDamage=%d weapon=%d->%d healthDamage=%d health=%d->%d shieldDamage=%d shield=%d->%d shieldAfterTick=%d creature=%d",
 		_activeSceneIndex, frameIndex, attack, shieldHeld ? "shield" : "health",
@@ -481,8 +482,7 @@ void CombatEncounter::applyIncomingAttack(byte attack, bool shieldHeld,
 		_meterPercent[kCreatureMeter]);
 }
 
-const CombatEncounter::HitRegion *CombatEncounter::findHitRegion(
-		const FrameState &frame, const Common::Point &point) const {
+const CombatEncounter::HitRegion *CombatEncounter::findHitRegion(const FrameState &frame, const Common::Point &point) const {
 	for (uint i = 0; i < frame.hitRegions.size(); ++i) {
 		if (frame.hitRegions[i].bounds.contains(point))
 			return &frame.hitRegions[i];
@@ -493,6 +493,7 @@ const CombatEncounter::HitRegion *CombatEncounter::findHitRegion(
 void CombatEncounter::spawnEffect(byte group, const Common::Point &point) {
 	if (group >= kEffectGroupCount || _effectFrames[group].empty())
 		return;
+
 	uint slot = 0;
 	for (; slot < kEffectCapacity && _effects[slot].active; ++slot) {
 	}
@@ -503,11 +504,13 @@ void CombatEncounter::spawnEffect(byte group, const Common::Point &point) {
 				slot = candidate;
 		}
 	}
+
 	if (_effects[slot].active) {
 		debugC(3, kDebugCombat,
 			"Ripper: combat effect capacity reached replacing slot=%u group=%u frame=%u",
 			slot, _effects[slot].group, _effects[slot].frame);
 	}
+
 	_effects[slot].active = true;
 	_effects[slot].group = group;
 	_effects[slot].frame = 0;
@@ -522,10 +525,12 @@ void CombatEncounter::serviceWeapon(const FrameState &frame, const Common::Point
 		_singleShotReady = true;
 		return;
 	}
+
 	if (!_weaponHeld) {
 		_weaponHeld = true;
 		_lastWeaponShotMillis = 0;
 	}
+
 	const uint rapidFireTicks = _weaponRapidFireTicks;
 	const uint32 interval = rapidFireTicks * 1000 / kDosTicksPerSecond;
 	if (_meterPercent[kWeaponMeter] == 0 || !_singleShotReady ||
@@ -534,8 +539,7 @@ void CombatEncounter::serviceWeapon(const FrameState &frame, const Common::Point
 
 	queueCue(_weaponSound);
 	const int weaponBefore = _meterPercent[kWeaponMeter];
-	_meterPercent[kWeaponMeter] = MAX<int>(0,
-		_meterPercent[kWeaponMeter] - _meterConfig[kWeaponMeter].discharge);
+	_meterPercent[kWeaponMeter] = MAX<int>(0, _meterPercent[kWeaponMeter] - _meterConfig[kWeaponMeter].discharge);
 	const HitRegion *region = findHitRegion(frame, point);
 	const int creatureBefore = _meterPercent[kCreatureMeter];
 	int hitType = -1;
@@ -550,6 +554,7 @@ void CombatEncounter::serviceWeapon(const FrameState &frame, const Common::Point
 			_meterPercent[kCreatureMeter] - _meterConfig[kCreatureMeter].damage[type]);
 		_paletteEffect = kPaletteTargetHit;
 	}
+
 	_lastShotHit = region != nullptr;
 	_lastWeaponShotMillis = now;
 	if (rapidFireTicks == 0)
@@ -565,8 +570,7 @@ void CombatEncounter::serviceWeapon(const FrameState &frame, const Common::Point
 		weaponBefore, _meterPercent[kWeaponMeter]);
 }
 
-void CombatEncounter::drawFrameScaled(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void CombatEncounter::drawFrameScaled(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap2x(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()));
 }
@@ -574,39 +578,36 @@ void CombatEncounter::drawFrameScaled(byte *screen, uint pitch,
 void CombatEncounter::drawMeters(byte *screen, uint pitch, int panelX) const {
 	if (_combatFrames.size() < 4)
 		return;
+
 	for (uint meter = 0; meter < kMeterCount; ++meter) {
 		const uint filled = (_meterPercent[meter] * kMeterSegments + 99) / 100;
 		for (uint segment = 0; segment < kMeterSegments; ++segment) {
 			const BitmapAssetFrame &frame = _combatFrames[segment < filled ? 2 : 3];
-			drawFrameScaled(screen, pitch, frame, panelX + kMeterX[meter],
-				kMeterBottomY[meter] - segment * 2);
+			drawFrameScaled(screen, pitch, frame, panelX + kMeterX[meter], kMeterBottomY[meter] - segment * 2);
 		}
 	}
 }
 
-void CombatEncounter::drawIndicators(byte *screen, uint pitch, int panelX,
-		bool enemyAttackActive) const {
+void CombatEncounter::drawIndicators(byte *screen, uint pitch, int panelX, bool enemyAttackActive) const {
 	if (_combatFrames.size() < 5)
 		return;
+
 	const bool active[4] = {
 		enemyAttackActive, _lastShotHit, _weaponHeld, _shieldHeld
 	};
 	for (uint indicator = 0; indicator < ARRAYSIZE(active); ++indicator) {
 		const BitmapAssetFrame &frame = _combatFrames[active[indicator] ? 1 : 4];
-		drawFrameScaled(screen, pitch, frame,
-			panelX + kIndicatorX[indicator], kIndicatorY[indicator]);
+		drawFrameScaled(screen, pitch, frame, panelX + kIndicatorX[indicator], kIndicatorY[indicator]);
 	}
 }
 
-void CombatEncounter::drawCrosshair(byte *screen, uint pitch,
-		const Common::Point &point) const {
+void CombatEncounter::drawCrosshair(byte *screen, uint pitch, const Common::Point &point) const {
 	if (_crosshairFrames.size() < 4)
 		return;
-	drawFrameScaled(screen, pitch, _crosshairFrames[0],
-		point.x - _crosshairFrames[0].width, point.y - 2);
+
+	drawFrameScaled(screen, pitch, _crosshairFrames[0], point.x - _crosshairFrames[0].width, point.y - 2);
 	drawFrameScaled(screen, pitch, _crosshairFrames[1], point.x, point.y - 2);
-	drawFrameScaled(screen, pitch, _crosshairFrames[2],
-		point.x - 2, point.y - _crosshairFrames[2].height);
+	drawFrameScaled(screen, pitch, _crosshairFrames[2], point.x - 2, point.y - _crosshairFrames[2].height);
 	drawFrameScaled(screen, pitch, _crosshairFrames[3], point.x - 2, point.y);
 }
 
@@ -616,8 +617,7 @@ void CombatEncounter::drawEffects(byte *screen, uint pitch) const {
 				_effects[i].frame >= _effectFrames[_effects[i].group].size())
 			continue;
 		const BitmapAssetFrame &frame = _effectFrames[_effects[i].group][_effects[i].frame];
-		drawFrameScaled(screen, pitch, frame,
-			_effects[i].x - frame.width / 2, _effects[i].y - frame.height / 2);
+		drawFrameScaled(screen, pitch, frame, _effects[i].x - frame.width / 2, _effects[i].y - frame.height / 2);
 	}
 }
 
@@ -632,15 +632,14 @@ void CombatEncounter::advanceEffects() {
 	}
 }
 
-void CombatEncounter::drawOverlay(const Common::Point &point,
-		bool enemyAttackActive) {
+void CombatEncounter::drawOverlay(const Common::Point &point, bool enemyAttackActive) {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return;
+
 	byte *pixels = (byte *)screen->getPixels();
 	// Meter anchors are relative to the right-hand status panel.
-	const int panelX = _combatFrames.empty() ? 0 :
-		(int)kLogicalWidth - (int)_combatFrames[0].width;
+	const int panelX = _combatFrames.empty() ? 0 : (int)kLogicalWidth - (int)_combatFrames[0].width;
 	// Draw the status panel over effects and crosshairs so they cannot cover it.
 	drawEffects(pixels, screen->pitch);
 	drawCrosshair(pixels, screen->pitch, point);
@@ -656,6 +655,7 @@ void CombatEncounter::drawOverlay(const Common::Point &point,
 			_combatFrames.empty() ? 0 : _combatFrames[0].height);
 		_overlayLogged = true;
 	}
+
 	g_system->unlockScreen();
 }
 
@@ -668,6 +668,7 @@ uint16 CombatEncounter::serviceKeyboard() {
 			_encounterResult = kExited;
 			return kEncounterExitCommand;
 		}
+
 		if (command == kHelpCommand) {
 			_engine->getModalDialog()->run(_definition.helpResource, true,
 				ModalDialogManager::kMenubPresentation,
@@ -675,10 +676,12 @@ uint16 CombatEncounter::serviceKeyboard() {
 			paletteRefresh = true;
 			continue;
 		}
+
 		if (command == kScreenshotCommand) {
 			g_system->saveScreenshot();
 			continue;
 		}
+
 		if (command <= 0xff) {
 			byte character = command;
 			if (character >= 'A' && character <= 'Z')
@@ -690,9 +693,7 @@ uint16 CombatEncounter::serviceKeyboard() {
 				_arcadeKeywordIndex = 0;
 			if (_arcadeKeywordIndex == sizeof(keyword) - 1) {
 				_encounterResult = kSolved;
-				debugC(1, kDebugCombat,
-					"Ripper: combat encounter completed by arcade keyword type='%s'",
-					_definition.name);
+				debugC(1, kDebugCombat, "Ripper: combat encounter completed by arcade keyword type='%s'", _definition.name);
 				return kEncounterExitCommand;
 			}
 		}
@@ -704,8 +705,8 @@ uint16 CombatEncounter::service(uint frame) {
 	// DAT state precedes the decoded frame; callback frames are one based.
 	if (!_activeScene || _activeScene->frames.empty())
 		return kEncounterFailureCommand;
-	const uint frameIndex = MIN<uint>(frame == 0 ? 0 : frame - 1,
-		_activeScene->frames.size() - 1);
+
+	const uint frameIndex = MIN<uint>(frame == 0 ? 0 : frame - 1, _activeScene->frames.size() - 1);
 	const FrameState &state = _activeScene->frames[frameIndex];
 	if (frameIndex < _activeScene->frameCues.size()) {
 		const FrameCue &cue = _activeScene->frameCues[frameIndex];
@@ -714,17 +715,14 @@ uint16 CombatEncounter::service(uint frame) {
 	}
 
 	const uint16 keyboardCommand = serviceKeyboard();
-	if (keyboardCommand != 0 &&
-			keyboardCommand != MediaSequenceCallback::kContinueRefreshPalette)
+	if (keyboardCommand != 0 && keyboardCommand != MediaSequenceCallback::kContinueRefreshPalette)
 		return keyboardCommand;
 
 	const MouseState &mouse = _engine->getInput()->peekMouseState();
 	Common::Point point(CLIP<int>(mouse.position.x / (int)kDisplayScale, 0,
-		(int)kLogicalWidth - 1), CLIP<int>(mouse.position.y / (int)kDisplayScale, 0,
-		(int)kLogicalHeight - 1));
+		(int)kLogicalWidth - 1), CLIP<int>(mouse.position.y / (int)kDisplayScale, 0, (int)kLogicalHeight - 1));
 	const bool weaponHeld = (mouse.buttons & kMouseButtonLeft) != 0;
-	bool shieldHeld = (mouse.buttons & kMouseButtonRight) != 0 &&
-		_meterPercent[kShieldMeter] > 0;
+	bool shieldHeld = (mouse.buttons & kMouseButtonRight) != 0 && _meterPercent[kShieldMeter] > 0;
 	if (shieldHeld != _shieldHeld) {
 		_shieldHeld = shieldHeld;
 		if (_shieldHeld && !_shieldSound.empty())
@@ -745,6 +743,7 @@ uint16 CombatEncounter::service(uint frame) {
 		_paletteEffect = kPaletteNormal;
 		debugC(2, kDebugCombat, "Ripper: combat shield depleted");
 	}
+
 	if (!weaponHeld)
 		updateMeter(kWeaponMeter, now, true, false);
 	serviceWeapon(state, point, weaponHeld, now, frameIndex);
@@ -759,6 +758,7 @@ uint16 CombatEncounter::service(uint frame) {
 			_definition.name, frameIndex, _activeSceneIndex);
 		return kEncounterExitCommand;
 	}
+
 	if (_meterPercent[kHealthMeter] == 0) {
 		_encounterResult = kExited;
 		debugC(1, kDebugCombat,
@@ -768,12 +768,14 @@ uint16 CombatEncounter::service(uint frame) {
 			_meterPercent[kWeaponMeter], _meterPercent[kShieldMeter]);
 		return kEncounterExitCommand;
 	}
+
 	return keyboardCommand;
 }
 
 void CombatEncounter::transformPalette(byte *palette, uint colorCount) const {
 	if (_paletteEffect == kPaletteNormal || colorCount == 0)
 		return;
+
 	for (uint color = 0; color < MIN<uint>(colorCount, 256); ++color) {
 		if (color == 0 || (color >= 4 && color <= 9) || color >= 240)
 			continue;
@@ -804,6 +806,7 @@ uint CombatEncounter::chooseNextScene() {
 		if (_activeSceneIndex == 5)
 			return sceneGroupTwo[_random.getRandomNumber(2)];
 	}
+
 	return _random.getRandomNumber(_scenes.size() - 2) + 1;
 }
 
@@ -845,11 +848,11 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 		while (!_engine->shouldQuit()) {
 			_activeScene = &_scenes[_activeSceneIndex];
 			uint16 command = 0;
-			if (!_engine->getMedia()->playCombatSequence(
-					_activeScene->basename + ".smk", this, &command)) {
+			if (!_engine->getMedia()->playCombatSequence(_activeScene->basename + ".smk", this, &command)) {
 				_encounterResult = kLoadFailed;
 				break;
 			}
+
 			debugC(2, kDebugCombat,
 				"Ripper: combat media returned scene=%u command=0x%04x result=%d health=%d creature=%d weapon=%d shield=%d",
 				_activeSceneIndex, command, _encounterResult,
@@ -859,8 +862,8 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 				_encounterResult = kLoadFailed;
 				break;
 			}
-			if (command == kEncounterExitCommand ||
-					_encounterResult == kSolved || _engine->shouldQuit())
+
+			if (command == kEncounterExitCommand || _encounterResult == kSolved || _engine->shouldQuit())
 				break;
 			_activeSceneIndex = chooseNextScene();
 			debugC(2, kDebugCombat,
@@ -873,8 +876,7 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 		"Ripper: cleaning up combat encounter result=%d difficulty=%u completionFlag=%u activeScene=%u",
 		_encounterResult, difficulty, completionFlag, _activeSceneIndex);
 	stopEncounterAudio();
-	if (_encounterResult == kSolved &&
-			!_engine->getMilestones()->set(completionFlag, true, "combat-encounter"))
+	if (_encounterResult == kSolved && !_engine->getMilestones()->set(completionFlag, true, "combat-encounter"))
 		_encounterResult = kLoadFailed;
 	finish("combat-exit", 0, true);
 	debugC(1, kDebugCombat,

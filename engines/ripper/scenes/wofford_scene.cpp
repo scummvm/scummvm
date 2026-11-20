@@ -34,8 +34,7 @@ namespace Ripper {
 
 namespace {
 
-// Keep the Cyber directory qualified: loose installations also contain
-// the unrelated SCENE/WOFFORD1.WAV.
+// Keep the Cyber directory qualified: loose installations also contain the unrelated SCENE/WOFFORD1.WAV.
 static const char *const kSceneMedia = "cyber/wofford.smk";
 static const char *const kAudioCues[4] = {
 	"cyber/wofford0.wav", "cyber/wofford1.wav",
@@ -54,8 +53,7 @@ static const uint16 kFirstChoiceCommand = 0x672;
 static const uint16 kSecondChoiceCommand = 0x673;
 static const uint16 kFailureCommand = 0x7ffd;
 
-// The first control must retain priority because it lies inside the
-// second control's full-presentation rectangle.
+// The first control must retain priority because it lies inside the second control's full-presentation rectangle.
 static bool isFirstChoicePoint(const Common::Point &point) {
 	return Common::Rect(205, 203, 416, 296).contains(point);
 }
@@ -77,9 +75,8 @@ bool WoffordScene::startFollowupCue(uint cue, const char *source) {
 		warning("Ripper: could not start Wofford cue '%s'", kAudioCues[cue]);
 		return false;
 	}
-	debugC(2, kDebugAudio,
-		"Ripper: started Wofford cue=%u media='%s' source=%s",
-		cue, kAudioCues[cue], source);
+
+	debugC(2, kDebugAudio, "Ripper: started Wofford cue=%u media='%s' source=%s", cue, kAudioCues[cue], source);
 	return true;
 }
 
@@ -95,6 +92,7 @@ void WoffordScene::updateCursor(const Common::Point &point) {
 		if (hovered >= 0)
 			cursor = kChoiceCursor;
 	}
+
 	if (hovered != _hoveredControl) {
 		debugC(2, kDebugCyber,
 			"Ripper: Wofford media hover control=%d previous=%d point=%d,%d cursor=%u armed=%d busy=%d",
@@ -102,6 +100,7 @@ void WoffordScene::updateCursor(const Common::Point &point) {
 			_choiceCueArmed, busy);
 		_hoveredControl = hovered;
 	}
+
 	_engine->getCursor()->update(cursor);
 	_engine->getCursor()->setVisible(true);
 }
@@ -110,9 +109,7 @@ uint16 WoffordScene::service(uint frame) {
 	uint16 command = 0;
 	if (_engine->getInput()->hasPendingKey()) {
 		command = _engine->getInput()->consumeKey();
-		debugC(3, kDebugInput,
-			"Ripper: Wofford media keyboard command=0x%04x frame=%u",
-			command, frame);
+		debugC(3, kDebugInput, "Ripper: Wofford media keyboard command=0x%04x frame=%u", command, frame);
 	}
 
 	if (frame == kChoiceArmFrame && !_choiceCueArmed) {
@@ -141,11 +138,13 @@ uint16 WoffordScene::service(uint frame) {
 		if (!startFollowupCue(3, "control-0x673"))
 			return kFailureCommand;
 	}
+
 	if (command != 0) {
 		debugC(2, kDebugCyber,
 			"Ripper: Wofford media selected command=0x%04x control=%d point=%d,%d frame=%u",
 			command, _hoveredControl, mouse.position.x, mouse.position.y, frame);
 	}
+
 	return 0;
 }
 
@@ -155,8 +154,7 @@ void WoffordScene::stopAllAudio() {
 }
 
 WoffordScene::Result WoffordScene::run(uint completionFlag) {
-	if (!_engine->getMilestones()->set(completionFlag, true,
-			"cyber-wofford-media"))
+	if (!_engine->getMilestones()->set(completionFlag, true, "cyber-wofford-media"))
 		return kLoadFailed;
 
 	prepare("wofford-media-entry", kDefaultCursor, true);
@@ -165,18 +163,15 @@ WoffordScene::Result WoffordScene::run(uint completionFlag) {
 	debugC(1, kDebugCyber,
 		"Ripper: entered Wofford media scene flag=%u media='%s' loopStart=%u armFrame=%u controls=[205,203,211,93;16,73,602,262]",
 		completionFlag, kSceneMedia, kLoopStartFrame, kChoiceArmFrame);
-	if (!_engine->getMedia()->playVoiceClip(kAudioCues[0],
-			_openingCueHandle, kOpeningCueVolume)) {
+	if (!_engine->getMedia()->playVoiceClip(kAudioCues[0], _openingCueHandle, kOpeningCueVolume)) {
 		stopAllAudio();
 		finish("wofford-media-load-failure", -1, false);
 		return kLoadFailed;
 	}
 
 	uint16 command = 0;
-	const bool played = _engine->getMedia()->playPuzzleSequence(
-		kSceneMedia, kLoopStartFrame, this, &command);
-	const Result result = (!played && !_engine->shouldQuit()) ||
-		command == kFailureCommand ? kLoadFailed : kExited;
+	const bool played = _engine->getMedia()->playPuzzleSequence(kSceneMedia, kLoopStartFrame, this, &command);
+	const Result result = (!played && !_engine->shouldQuit()) || command == kFailureCommand ? kLoadFailed : kExited;
 
 	stopAllAudio();
 	finish("wofford-media-exit", -1, false);

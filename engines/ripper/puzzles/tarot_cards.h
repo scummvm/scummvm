@@ -42,8 +42,7 @@ public:
 private:
 	bool loadConfiguration();
 	bool loadAssets();
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	void drawScaledFrame(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y, uint scaleNumerator,
 		uint scaleDenominator) const;

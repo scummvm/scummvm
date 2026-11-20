@@ -67,13 +67,11 @@ bool WacStillImageViewer::load(const Common::String &path) {
 	BitmapAssetFrame image;
 	if (!_database->engine()->getResources()->loadInterfacePcx(path, image))
 		return false;
-	if (image.palette.size() <
-			(kWacMediaPaletteFirst + kWacMediaPaletteCount) * 3)
+	if (image.palette.size() < (kWacMediaPaletteFirst + kWacMediaPaletteCount) * 3)
 		return false;
 
 	_image = Common::move(image);
-	_scrollOffset = _image.height > kWacMediaHeight ?
-		_image.height - kWacMediaHeight : 0;
+	_scrollOffset = _image.height > kWacMediaHeight ? _image.height - kWacMediaHeight : 0;
 	_scrollControl = 0;
 	g_system->getPaletteManager()->setPalette(
 		_image.palette.data() + kWacMediaPaletteFirst * 3,
@@ -91,20 +89,18 @@ bool WacStillImageViewer::load(const Common::String &path) {
 
 Common::Point WacStillImageViewer::imageOrigin() const {
 	const uint copyWidth = MIN<uint>(_image.width, kWacMediaWidth);
-	const uint copyHeight = MIN<uint>(
-		_image.height - _scrollOffset, kWacMediaHeight);
-	int x = _image.height > kWacMediaHeight ? kWacMediaLeft :
-		kWacMediaLeft + (kWacMediaWidth - copyWidth) / 2;
+	const uint copyHeight = MIN<uint>(_image.height - _scrollOffset, kWacMediaHeight);
+	int x = _image.height > kWacMediaHeight ? kWacMediaLeft : kWacMediaLeft + (kWacMediaWidth - copyWidth) / 2;
 	if (_alignImageOrigin)
 		x -= x % 4;
-	const int y = _image.height > kWacMediaHeight ? kWacMediaTop :
-		kWacMediaTop + (kWacMediaHeight - copyHeight) / 2;
+	const int y = _image.height > kWacMediaHeight ? kWacMediaTop : kWacMediaTop + (kWacMediaHeight - copyHeight) / 2;
 	return Common::Point(x, y);
 }
 
 void WacStillImageViewer::draw() const {
 	if (_image.pixels.empty())
 		return;
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -116,8 +112,7 @@ void WacStillImageViewer::draw() const {
 		kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight),
 		kWacDatabaseBackground);
 	const uint copyWidth = MIN<uint>(_image.width, kWacMediaWidth);
-	const uint copyHeight = MIN<uint>(
-		_image.height - _scrollOffset, kWacMediaHeight);
+	const uint copyHeight = MIN<uint>(_image.height - _scrollOffset, kWacMediaHeight);
 	const Common::Point origin = imageOrigin();
 	for (uint row = 0; row < copyHeight; ++row) {
 		memcpy(screen->getBasePtr(origin.x, origin.y + row),
@@ -132,24 +127,22 @@ void WacStillImageViewer::draw() const {
 }
 
 void WacStillImageViewer::drawScrollControls() const {
-	const Common::Array<BitmapAssetFrame> &arrows =
-		_database->databaseScrollArrows();
+	const Common::Array<BitmapAssetFrame> &arrows = _database->databaseScrollArrows();
 	if (_image.height <= kWacMediaHeight || arrows.size() < 4)
 		return;
+
 	const uint maximumScroll = _image.height - kWacMediaHeight;
-	_database->drawBitmap(arrows[
-		_scrollControl == 1 && _scrollOffset > 0 ? 1 : 0],
-		kWacMediaScrollX, kWacMediaScrollUpY);
+	_database->drawBitmap(arrows[_scrollControl == 1 && _scrollOffset > 0 ? 1 : 0], kWacMediaScrollX, kWacMediaScrollUpY);
 	_database->drawBitmap(arrows[
 		_scrollControl == 2 && _scrollOffset < maximumScroll ? 3 : 2],
 		kWacMediaScrollX, kWacMediaScrollDownY);
 }
 
 int WacStillImageViewer::findScrollControl(const Common::Point &point) const {
-	const Common::Array<BitmapAssetFrame> &arrows =
-		_database->databaseScrollArrows();
+	const Common::Array<BitmapAssetFrame> &arrows = _database->databaseScrollArrows();
 	if (_image.height <= kWacMediaHeight || arrows.size() < 4)
 		return 0;
+
 	const Common::Rect up(kWacMediaScrollX, kWacMediaScrollUpY,
 		kWacMediaScrollX + arrows[0].width,
 		kWacMediaScrollUpY + arrows[0].height);
@@ -166,6 +159,7 @@ int WacStillImageViewer::findScrollControl(const Common::Point &point) const {
 void WacStillImageViewer::scroll(int delta) {
 	if (_image.height <= kWacMediaHeight)
 		return;
+
 	const uint maximumScroll = _image.height - kWacMediaHeight;
 	int nextScroll = (int)_scrollOffset + delta;
 	if (nextScroll < 0)
@@ -174,6 +168,7 @@ void WacStillImageViewer::scroll(int delta) {
 		nextScroll = maximumScroll;
 	if ((uint)nextScroll == _scrollOffset)
 		return;
+
 	_scrollOffset = nextScroll;
 	debugC(2, kDebugWac,
 		"Ripper: scrolled WAC database still image offset=%u limit=%u delta=%d",
@@ -181,8 +176,7 @@ void WacStillImageViewer::scroll(int delta) {
 	draw();
 }
 
-DatabaseInputOutcome WacStillImageViewer::run(byte entryIndex,
-		const Common::String &entryLabel, const Common::String &path) {
+DatabaseInputOutcome WacStillImageViewer::run(byte entryIndex, const Common::String &entryLabel, const Common::String &path) {
 	return runInternal(entryIndex, entryLabel, path, Common::String(), 0, 0);
 }
 
@@ -190,8 +184,7 @@ DatabaseInputOutcome WacStillImageViewer::runWithOptionalPresentation(byte entry
 		const Common::String &entryLabel, const Common::String &imagePath,
 		const Common::String &mediaPath, uint presentationFlag,
 		uint completionFlag) {
-	return runInternal(entryIndex, entryLabel, imagePath, mediaPath,
-		presentationFlag, completionFlag);
+	return runInternal(entryIndex, entryLabel, imagePath, mediaPath, presentationFlag, completionFlag);
 }
 
 DatabaseInputOutcome WacStillImageViewer::runInternal(byte entryIndex,
@@ -203,8 +196,7 @@ DatabaseInputOutcome WacStillImageViewer::runInternal(byte entryIndex,
 		_database->engine()->getMilestones()->isSet(presentationFlag);
 	_alignImageOrigin = hasOptionalPresentation;
 	if (!load(imagePath)) {
-		warning("Ripper: could not load WAC database still image '%s'",
-			imagePath.c_str());
+		warning("Ripper: could not load WAC database still image '%s'", imagePath.c_str());
 		return DatabaseInputOutcome::kContinue;
 	}
 
@@ -216,13 +208,14 @@ DatabaseInputOutcome WacStillImageViewer::runInternal(byte entryIndex,
 			BitmapAssetSequence sequence;
 			if (!_database->engine()->getResources()->loadInterfaceBitmapSequence(
 					frameNames[frame], sequence) || sequence.frames.empty()) {
-				warning("Ripper: could not load WAC presentation control '%s'",
-					frameNames[frame]);
+				warning("Ripper: could not load WAC presentation control '%s'", frameNames[frame]);
 				return DatabaseInputOutcome::kContinue;
 			}
+
 			presentationFrames[frame] = Common::move(sequence.frames[0]);
 		}
 	}
+
 	const Common::Point origin = imageOrigin();
 	const Common::Rect presentationBounds = presentationAvailable ?
 		Common::Rect(origin.x, origin.y + _image.height + 1,
@@ -230,8 +223,7 @@ DatabaseInputOutcome WacStillImageViewer::runInternal(byte entryIndex,
 			origin.y + _image.height + 1 + presentationFrames[0].height) :
 		Common::Rect();
 	if (presentationAvailable)
-		_database->drawBitmap(presentationFrames[0],
-			presentationBounds.left, presentationBounds.top);
+		_database->drawBitmap(presentationFrames[0], presentationBounds.left, presentationBounds.top);
 
 	_database->engine()->getInput()->discardMouseTransitions();
 	debugC(1, kDebugWac,
@@ -252,6 +244,7 @@ DatabaseInputOutcome WacStillImageViewer::runInternal(byte entryIndex,
 			result = event.outcome;
 			break;
 		}
+
 		const MouseState &mouse = event.mouse;
 		if (event.outcome == Outcome::kRefreshPalette) {
 			g_system->getPaletteManager()->setPalette(
@@ -272,10 +265,9 @@ DatabaseInputOutcome WacStillImageViewer::runInternal(byte entryIndex,
 				"Ripper: WAC database still-image scroll hover control=%d point=%d,%d",
 				_scrollControl, mouse.position.x, mouse.position.y);
 		}
-		const Common::Rect databaseBounds(kWacDatabaseLeft, kWacDatabaseTop,
-			kWacDatabaseRight, kWacDatabaseBottom);
-		const bool presentationHover = presentationAvailable &&
-			presentationBounds.contains(mouse.position);
+
+		const Common::Rect databaseBounds(kWacDatabaseLeft, kWacDatabaseTop, kWacDatabaseRight, kWacDatabaseBottom);
+		const bool presentationHover = presentationAvailable && presentationBounds.contains(mouse.position);
 		_database->engine()->getCursor()->update(
 			databaseBounds.contains(mouse.position) ||
 				_database->persistentControlHovered() ||
@@ -283,9 +275,9 @@ DatabaseInputOutcome WacStillImageViewer::runInternal(byte entryIndex,
 				kWacControlCursor : kWacDefaultCursor);
 		if ((mouse.pressed & kMouseButtonLeft) != 0 && presentationHover) {
 			presentationPressed = true;
-			_database->drawBitmap(presentationFrames[1],
-				presentationBounds.left, presentationBounds.top);
+			_database->drawBitmap(presentationFrames[1], presentationBounds.left, presentationBounds.top);
 		}
+
 		if ((mouse.released & kMouseButtonLeft) != 0) {
 			if (scrollControl == 1)
 				scroll(-kWacMediaScrollStep);
@@ -293,30 +285,25 @@ DatabaseInputOutcome WacStillImageViewer::runInternal(byte entryIndex,
 				scroll(kWacMediaScrollStep);
 			if (presentationPressed) {
 				presentationPressed = false;
-				_database->drawBitmap(presentationFrames[0],
-					presentationBounds.left, presentationBounds.top);
+				_database->drawBitmap(presentationFrames[0], presentationBounds.left, presentationBounds.top);
 				if (presentationHover) {
 					// Mode 1 keeps the paired movie at the still image's scale.
-					RipperSettings *settings =
-						_database->engine()->getSettings();
+					RipperSettings *settings = _database->engine()->getSettings();
 					const uint savedVideoMode = settings->getVideoMode();
 					settings->setVideoMode(1);
-					const bool played = _database->engine()->getMedia()->playWacPresentation(
-						mediaPath, origin.x, origin.y);
+					const bool played = _database->engine()->getMedia()->playWacPresentation(mediaPath, origin.x, origin.y);
 					settings->setVideoMode(savedVideoMode);
-					_database->engine()->getMilestones()->set(
-						completionFlag, true,
-						"wac-picture-presentation");
+					_database->engine()->getMilestones()->set(completionFlag, true, "wac-picture-presentation");
 					debugC(1, kDebugWac,
 						"Ripper: WAC picture presentation entry=%u media='%s' played=%d position=%d,%d scale=1 gate=0x%x completion=0x%x value=%d videoMode=%u restoredVideoMode=%u",
 						entryIndex, mediaPath.c_str(), played,
 						origin.x, origin.y,
 						presentationFlag, completionFlag,
-						_database->engine()->getMilestones()->isSet(
-							completionFlag), 1U, savedVideoMode);
+						_database->engine()->getMilestones()->isSet(completionFlag), 1U, savedVideoMode);
 				}
 			}
 		}
+
 		presentScreen();
 		g_system->delayMillis(10);
 	}

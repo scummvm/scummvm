@@ -137,10 +137,10 @@ bool KdShootingGallery::loadConfig(uint difficulty) {
 	Common::File file;
 	Common::INIFile ini;
 	if (!file.open(Common::Path(name))) {
-		warning("Ripper: could not open KD shooting-gallery configuration '%s'",
-			name.c_str());
+		warning("Ripper: could not open KD shooting-gallery configuration '%s'", name.c_str());
 		return false;
 	}
+
 	ini.requireKeyValueDelimiter();
 	if (!ini.loadFromStream(file))
 		return false;
@@ -165,8 +165,7 @@ bool KdShootingGallery::loadConfig(uint difficulty) {
 			_config.rapidFireTicks < 0 ||
 			_config.weaponDischarge < 0 || _config.weaponCharge < 0 ||
 			_config.weaponChargeTicks < 0) {
-		warning("Ripper: KD shooting-gallery configuration '%s' contains negative values",
-			name.c_str());
+		warning("Ripper: KD shooting-gallery configuration '%s' contains negative values", name.c_str());
 		return false;
 	}
 
@@ -200,8 +199,7 @@ bool KdShootingGallery::loadFrameData() {
 
 	Common::File audioFile;
 	if (!audioFile.open(Common::Path("kd.prj")) ||
-			!decodePresentationFrameAudioMap(
-				audioFile, _regionTable.frames.size(), _audioMap)) {
+			!decodePresentationFrameAudioMap(audioFile, _regionTable.frames.size(), _audioMap)) {
 		warning("Ripper: could not load KD shooting-gallery frame audio 'kd.prj'");
 		return false;
 	}
@@ -271,8 +269,7 @@ Common::String KdShootingGallery::formatScore(int score) {
 	return result;
 }
 
-const PresentationRegion *KdShootingGallery::findHitRegion(
-		const PresentationFrameRegion &frame, const Common::Point &point) const {
+const PresentationRegion *KdShootingGallery::findHitRegion(const PresentationFrameRegion &frame, const Common::Point &point) const {
 	for (uint i = 0; i < frame.regions.size(); ++i) {
 		const PresentationRegion &region = frame.regions[i];
 		// KD.DAT region fields are type, y, x, height, width.
@@ -285,8 +282,7 @@ const PresentationRegion *KdShootingGallery::findHitRegion(
 	return nullptr;
 }
 
-void KdShootingGallery::updateTargetGroup(
-		const PresentationFrameRegion &frame, uint frameIndex) {
+void KdShootingGallery::updateTargetGroup(const PresentationFrameRegion &frame, uint frameIndex) {
 	if (frame.state == _activeTargetGroup)
 		return;
 	if (_activeTargetGroup != 0) {
@@ -297,6 +293,7 @@ void KdShootingGallery::updateTargetGroup(
 			targetMaskName(_targetGroupTypeMask), _hitsInCurrentTargetGroup);
 		logProgress(frameIndex, "target-ended");
 	}
+
 	if (frame.state != 0)
 		++_targetGroupSerial;
 	if (frame.state != 0) {
@@ -304,14 +301,14 @@ void KdShootingGallery::updateTargetGroup(
 			"Ripper: KD shooting-gallery target starting frame=%u group=%u serial=%d",
 			frameIndex, frame.state, _targetGroupSerial);
 	}
+
 	_activeTargetGroup = frame.state;
 	_hitsInCurrentTargetGroup = 0;
 	_visibleTargetMask = 0;
 	_targetGroupTypeMask = 0;
 }
 
-void KdShootingGallery::updateTargetVisibility(
-		const PresentationFrameRegion &frame, uint frameIndex) {
+void KdShootingGallery::updateTargetVisibility(const PresentationFrameRegion &frame, uint frameIndex) {
 	uint regionCounts[kTargetClassCount] = { 0, 0 };
 	uint unknownRegions = 0;
 	byte targetMask = 0;
@@ -345,6 +342,7 @@ void KdShootingGallery::updateTargetVisibility(
 			targetMaskName(targetMask), regionCounts[0], regionCounts[1],
 			unknownRegions, _config.points[0], _config.points[1]);
 	}
+
 	_visibleTargetMask = targetMask;
 	_targetGroupTypeMask |= targetMask;
 }
@@ -353,11 +351,9 @@ void KdShootingGallery::logProgress(uint frameIndex, const char *reason) const {
 	const int score = currentScore();
 	const int margin = score - _config.goal;
 	const uint totalFrames = _regionTable.frames.size();
-	const uint percent = totalFrames == 0 ? 0 :
-		MIN<uint>(100, (frameIndex + 1) * 100 / totalFrames);
+	const uint percent = totalFrames == 0 ? 0 : MIN<uint>(100, (frameIndex + 1) * 100 / totalFrames);
 	const int needed = rewardUnitsNeeded();
-	const char *rewardUnit =
-		_config.requiredHits[0] == 0 ? "rewardHits" : "rewardTargets";
+	const char *rewardUnit = _config.requiredHits[0] == 0 ? "rewardHits" : "rewardTargets";
 
 	debugC(2, kDebugPuzzles,
 		"Ripper: KD shooting-gallery progress reason=%s frame=%u/%u (%u%%) "
@@ -373,21 +369,16 @@ void KdShootingGallery::logProgress(uint frameIndex, const char *reason) const {
 		scoringTargetCount(1), scoreForClass(1));
 }
 
-void KdShootingGallery::playCue(uint index, const Common::String &path,
-		uint volumePercent, bool loop) {
+void KdShootingGallery::playCue(uint index, const Common::String &path, uint volumePercent, bool loop) {
 	if (index >= kAudioCueCount || path.empty())
 		return;
-	if (!_engine->getMedia()->playSoundEffect(
-			basenameFromPath(path), _audioHandles[index], volumePercent, loop)) {
-		warning("Ripper: could not play KD shooting-gallery cue index=%u path='%s'",
-			index, path.c_str());
+	if (!_engine->getMedia()->playSoundEffect(basenameFromPath(path), _audioHandles[index], volumePercent, loop)) {
+		warning("Ripper: could not play KD shooting-gallery cue index=%u path='%s'", index, path.c_str());
 	}
 }
 
-void KdShootingGallery::playNumberedCue(uint index,
-		uint volumePercent, bool loop) {
-	playCue(index, Common::String::format("kd%u.wav", index),
-		volumePercent, loop);
+void KdShootingGallery::playNumberedCue(uint index, uint volumePercent, bool loop) {
+	playCue(index, Common::String::format("kd%u.wav", index), volumePercent, loop);
 }
 
 void KdShootingGallery::stopCue(uint index) {
@@ -402,6 +393,7 @@ void KdShootingGallery::stopAllAudio() {
 void KdShootingGallery::serviceFrameCue(uint frameIndex) {
 	if (frameIndex >= _audioMap.cues.size())
 		return;
+
 	const PresentationFrameAudioCue &cue = _audioMap.cues[frameIndex];
 	if (cue.soundIndex >= 0 && (uint)cue.soundIndex < _audioMap.sounds.size() &&
 			(uint)cue.soundIndex < kAudioCueCount) {
@@ -417,8 +409,7 @@ void KdShootingGallery::serviceFixedCue(uint frameIndex) {
 		playNumberedCue(kFrame1005Cue);
 	} else if (frameIndex == kFrame995) {
 		playNumberedCue(kFrame995Cue);
-		_engine->getMedia()->setSoundEffectVolume(
-			_audioHandles[kAmbientCue], 50);
+		_engine->getMedia()->setSoundEffectVolume(_audioHandles[kAmbientCue], 50);
 	} else if (frameIndex == kFrame1952) {
 		stopCue(kFrame118Cue);
 		stopCue(kFrame995Cue);
@@ -439,6 +430,7 @@ uint16 KdShootingGallery::serviceKeyboard(uint frameIndex) {
 			logProgress(frameIndex, "escape");
 			return kExitCommand;
 		}
+
 		if (command == kHelpCommand) {
 			debugC(1, kDebugPuzzles,
 				"Ripper: KD shooting-gallery opening help table=0x%x frame=%u",
@@ -449,22 +441,23 @@ uint16 KdShootingGallery::serviceKeyboard(uint frameIndex) {
 				_result = kLoadFailed;
 				return kFailureCommand;
 			}
+
 			applyCursor();
 			return MediaSequenceCallback::kContinueRefreshPalette;
 		}
+
 		if (command == kScreenshotCommand) {
 			g_system->saveScreenshot();
 			continue;
 		}
+
 		if (command > 0xff)
 			continue;
 
 		static const char keyword[] = "paradise";
 		if (advanceKeyword(command, keyword, _keywordIndex)) {
 			_result = kSolved;
-			debugC(1, kDebugPuzzles,
-				"Ripper: KD shooting-gallery completed by paradise keyword frame=%u",
-				frameIndex);
+			debugC(1, kDebugPuzzles, "Ripper: KD shooting-gallery completed by paradise keyword frame=%u", frameIndex);
 			logProgress(frameIndex, "keyword");
 			return kExitCommand;
 		}
@@ -479,30 +472,27 @@ void KdShootingGallery::serviceWeapon(const PresentationFrameRegion &frame,
 		if (_config.weaponCharge > 0 && _weaponEnergyPercent < 100) {
 			const uint32 interval = _config.weaponChargeTicks * kDosTickMillis;
 			if (interval == 0 || now - _lastRechargeMillis >= interval) {
-				_weaponEnergyPercent = MIN<int>(100,
-					_weaponEnergyPercent + _config.weaponCharge);
+				_weaponEnergyPercent = MIN<int>(100, _weaponEnergyPercent + _config.weaponCharge);
 				_lastRechargeMillis = now;
 			}
 		}
+
 		return;
 	}
 
 	const uint32 interval = _config.rapidFireTicks * kDosTickMillis;
-	if (_weaponEnergyPercent == 0 || !_shotArmed ||
-			now - _lastShotMillis < interval)
+	if (_weaponEnergyPercent == 0 || !_shotArmed || now - _lastShotMillis < interval)
 		return;
 
 	playNumberedCue(kWeaponCue);
 	const int energyBefore = _weaponEnergyPercent;
 	const int scoreBefore = currentScore();
-	_weaponEnergyPercent = MAX<int>(0,
-		_weaponEnergyPercent - _config.weaponDischarge);
+	_weaponEnergyPercent = MAX<int>(0, _weaponEnergyPercent - _config.weaponDischarge);
 	const PresentationRegion *region = findHitRegion(frame, point);
 	int targetClass = -1;
 	if (region && region->type < kTargetClassCount) {
 		targetClass = region->type;
-		playNumberedCue(targetClass == 0 ? kClass0HitCue : kClass1HitCue,
-			targetClass == 0 ? 100 : 50);
+		playNumberedCue(targetClass == 0 ? kClass0HitCue : kClass1HitCue, targetClass == 0 ? 100 : 50);
 		++_rawHits[targetClass];
 		++_hitsInCurrentTargetGroup;
 		if (_hitsInCurrentTargetGroup == _config.requiredHits[targetClass])
@@ -512,6 +502,7 @@ void KdShootingGallery::serviceWeapon(const PresentationFrameRegion &frame,
 			_lastHitTargetGroupSerial = _targetGroupSerial;
 		}
 	}
+
 	_lastShotMillis = now;
 	if (_config.rapidFireTicks == 0)
 		_shotArmed = false;
@@ -541,8 +532,7 @@ void KdShootingGallery::serviceWeapon(const PresentationFrameRegion &frame,
 int KdShootingGallery::scoringTargetCount(uint targetClass) const {
 	if (targetClass >= kTargetClassCount)
 		return 0;
-	return _config.requiredHits[targetClass] == 0 ?
-		_rawHits[targetClass] : _completedTargets[targetClass];
+	return _config.requiredHits[targetClass] == 0 ? _rawHits[targetClass] : _completedTargets[targetClass];
 }
 
 int KdShootingGallery::scoreForClass(uint targetClass) const {
@@ -567,21 +557,19 @@ int KdShootingGallery::rewardUnitsNeeded() const {
 uint KdShootingGallery::displayedTargetCount(uint targetClass) const {
 	if (targetClass >= kTargetClassCount)
 		return 0;
-	return _config.requiredHits[targetClass] == 0 ?
-		_distinctTargetsHit[targetClass] : _completedTargets[targetClass];
+	return _config.requiredHits[targetClass] == 0 ? _distinctTargetsHit[targetClass] : _completedTargets[targetClass];
 }
 
 void KdShootingGallery::applyCursor() {
-	_engine->getCursor()->applyCustomCursor(_cursorFrame,
-		_cursorFrame.width / 2, _cursorFrame.height / 2, kDisplayScale);
+	_engine->getCursor()->applyCustomCursor(_cursorFrame, _cursorFrame.width / 2, _cursorFrame.height / 2, kDisplayScale);
 	_engine->getCursor()->setVisible(true);
 }
 
 uint16 KdShootingGallery::service(uint frame) {
 	if (_regionTable.frames.empty())
 		return kFailureCommand;
-	const uint frameIndex = MIN<uint>(
-		frame == 0 ? 0 : frame - 1, _regionTable.frames.size() - 1);
+
+	const uint frameIndex = MIN<uint>(frame == 0 ? 0 : frame - 1, _regionTable.frames.size() - 1);
 	const PresentationFrameRegion &frameState = _regionTable.frames[frameIndex];
 
 	serviceFrameCue(frameIndex);
@@ -593,29 +581,22 @@ uint16 KdShootingGallery::service(uint frame) {
 
 	const MouseState &mouse = _engine->getInput()->peekMouseState();
 	const Common::Point point(
-		CLIP<int>(mouse.position.x / (int)kDisplayScale, 0,
-			(int)kLogicalWidth - 1),
-		CLIP<int>(mouse.position.y / (int)kDisplayScale, 0,
-			(int)kLogicalHeight - 1));
-	serviceWeapon(frameState, point,
-		(mouse.buttons & kMouseButtonLeft) != 0,
-		g_system->getMillis(true), frameIndex);
-	if (frameIndex == 0 ||
-			(frameIndex + 1) % kProgressIntervalFrames == 0)
+		CLIP<int>(mouse.position.x / (int)kDisplayScale, 0, (int)kLogicalWidth - 1),
+		CLIP<int>(mouse.position.y / (int)kDisplayScale, 0, (int)kLogicalHeight - 1));
+	serviceWeapon(frameState, point, (mouse.buttons & kMouseButtonLeft) != 0, g_system->getMillis(true), frameIndex);
+	if (frameIndex == 0 || (frameIndex + 1) % kProgressIntervalFrames == 0)
 		logProgress(frameIndex, "checkpoint");
 	serviceFixedCue(frameIndex);
 	_engine->getCursor()->setVisible(true);
 	return 0;
 }
 
-void KdShootingGallery::drawBitmapScaled(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+void KdShootingGallery::drawBitmapScaled(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const {
 	IndexedBitmapRenderer::drawBitmap2x(screen, pitch, frame, x, y,
 		Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()));
 }
 
-void KdShootingGallery::drawTextScaled(byte *screen, uint pitch,
-		int x, int y, const Common::String &text, byte color) const {
+void KdShootingGallery::drawTextScaled(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const {
 	int drawX = x;
 	for (uint characterIndex = 0; characterIndex < text.size(); ++characterIndex) {
 		const byte character = text[characterIndex];
@@ -623,30 +604,23 @@ void KdShootingGallery::drawTextScaled(byte *screen, uint pitch,
 			drawX += _font.spaceWidth;
 			continue;
 		}
-		if (character < _font.firstCharacter ||
-				character >= _font.firstCharacter + _font.glyphs.size())
+
+		if (character < _font.firstCharacter || character >= _font.firstCharacter + _font.glyphs.size())
 			continue;
-		const BitmapFontGlyph &glyph =
-			_font.glyphs[character - _font.firstCharacter];
+		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
 		for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
 			for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
-				const byte source = _font.pixels[
-					glyph.pixelOffset + glyphY * glyph.width + glyphX];
+				const byte source = _font.pixels[glyph.pixelOffset + glyphY * glyph.width + glyphX];
 				if (source == _font.transparentColor)
 					continue;
-				const int targetX =
-					(drawX + glyph.xOffset + glyphX) * kDisplayScale;
-				const int targetY =
-					(y + glyph.yOffset + glyphY) * kDisplayScale;
+				const int targetX = (drawX + glyph.xOffset + glyphX) * kDisplayScale;
+				const int targetY = (y + glyph.yOffset + glyphY) * kDisplayScale;
 				for (uint scaleY = 0; scaleY < kDisplayScale; ++scaleY) {
-					if (targetY + (int)scaleY < 0 ||
-							targetY + (int)scaleY >= g_system->getHeight())
+					if (targetY + (int)scaleY < 0 || targetY + (int)scaleY >= g_system->getHeight())
 						continue;
 					for (uint scaleX = 0; scaleX < kDisplayScale; ++scaleX) {
-						if (targetX + (int)scaleX >= 0 &&
-								targetX + (int)scaleX < g_system->getWidth()) {
-							screen[(targetY + scaleY) * pitch +
-								targetX + scaleX] = color;
+						if (targetX + (int)scaleX >= 0 && targetX + (int)scaleX < g_system->getWidth()) {
+							screen[(targetY + scaleY) * pitch + targetX + scaleX] = color;
 						}
 					}
 				}
@@ -666,23 +640,17 @@ bool KdShootingGallery::drawResults() {
 
 	const Common::String goal = formatScore(_config.goal);
 	const Common::String score = formatScore(currentScore());
-	drawTextScaled((byte *)screen->getPixels(), screen->pitch,
-		kGoalTextX + 1, kScoreTextY + 1, goal, kScoreShadowColor);
-	drawTextScaled((byte *)screen->getPixels(), screen->pitch,
-		kGoalTextX, kScoreTextY, goal, kScoreForegroundColor);
-	drawTextScaled((byte *)screen->getPixels(), screen->pitch,
-		kScoreTextX + 1, kScoreTextY + 1, score, kScoreShadowColor);
-	drawTextScaled((byte *)screen->getPixels(), screen->pitch,
-		kScoreTextX, kScoreTextY, score, kScoreForegroundColor);
+	drawTextScaled((byte *)screen->getPixels(), screen->pitch, kGoalTextX + 1, kScoreTextY + 1, goal, kScoreShadowColor);
+	drawTextScaled((byte *)screen->getPixels(), screen->pitch, kGoalTextX, kScoreTextY, goal, kScoreForegroundColor);
+	drawTextScaled((byte *)screen->getPixels(), screen->pitch, kScoreTextX + 1, kScoreTextY + 1, score, kScoreShadowColor);
+	drawTextScaled((byte *)screen->getPixels(), screen->pitch, kScoreTextX, kScoreTextY, score, kScoreForegroundColor);
 
 	for (uint targetClass = 0; targetClass < kTargetClassCount; ++targetClass) {
-		const int y = targetClass == 0 ?
-			kClass0CheckmarkY : kClass1CheckmarkY;
+		const int y = targetClass == 0 ? kClass0CheckmarkY : kClass1CheckmarkY;
 		int x = kCheckmarkStartX;
 		const uint count = displayedTargetCount(targetClass);
 		for (uint checkmark = 0; checkmark < count; ++checkmark) {
-			drawBitmapScaled((byte *)screen->getPixels(), screen->pitch,
-				_checkmarkFrame, x, y);
+			drawBitmapScaled((byte *)screen->getPixels(), screen->pitch, _checkmarkFrame, x, y);
 			x += _checkmarkFrame.width + 1;
 		}
 	}
@@ -712,10 +680,8 @@ bool KdShootingGallery::animateResultsUntilInput() {
 	if (maxWidth != 0 && maxHeight != 0) {
 		const Common::Rect bounds(
 			kFlameX * kDisplayScale, kFlameY * kDisplayScale,
-			MIN<int>((kFlameX + maxWidth) * kDisplayScale,
-				g_system->getWidth()),
-			MIN<int>((kFlameY + maxHeight) * kDisplayScale,
-				g_system->getHeight()));
+			MIN<int>((kFlameX + maxWidth) * kDisplayScale, g_system->getWidth()),
+			MIN<int>((kFlameY + maxHeight) * kDisplayScale, g_system->getHeight()));
 		if (!flameBacking.capture(bounds))
 			return false;
 	}
@@ -731,14 +697,13 @@ bool KdShootingGallery::animateResultsUntilInput() {
 			_engine->getInput()->drainKeys();
 			break;
 		}
+
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		if ((mouse.pressed & (kMouseButtonLeft | kMouseButtonRight)) != 0)
 			break;
 
 		const uint32 now = g_system->getMillis(true);
-		if (!_flameFrames.empty() &&
-				(lastFlameMillis == 0 ||
-					now - lastFlameMillis >= 2 * kDosTickMillis)) {
+		if (!_flameFrames.empty() && (lastFlameMillis == 0 || now - lastFlameMillis >= 2 * kDosTickMillis)) {
 			if (flameBacking.isValid())
 				flameBacking.restorePixels();
 			Graphics::Surface *screen = g_system->lockScreen();
@@ -747,13 +712,14 @@ bool KdShootingGallery::animateResultsUntilInput() {
 					g_system->unlockScreen();
 				return false;
 			}
-			drawBitmapScaled((byte *)screen->getPixels(), screen->pitch,
-				_flameFrames[flameFrame], kFlameX, kFlameY);
+
+			drawBitmapScaled((byte *)screen->getPixels(), screen->pitch, _flameFrames[flameFrame], kFlameX, kFlameY);
 			g_system->unlockScreen();
 			presentScreen();
 			flameFrame = (flameFrame + 1) % _flameFrames.size();
 			lastFlameMillis = now;
 		}
+
 		_engine->getCursor()->setVisible(true);
 		g_system->delayMillis(10);
 	}
@@ -807,23 +773,21 @@ Scene::Result KdShootingGallery::run(uint completionFlag) {
 		applyCursor();
 		playNumberedCue(kAmbientCue, 100, true);
 		uint16 command = 0;
-		if (!_engine->getMedia()->playShootingGallerySequence(
-				"kd.smk", this, &command)) {
+		if (!_engine->getMedia()->playShootingGallerySequence("kd.smk", this, &command)) {
 			_result = kLoadFailed;
 		} else if (command == kFailureCommand) {
 			_result = kLoadFailed;
-		} else if (command == 0 && !_engine->shouldQuit() &&
-				!presentResults()) {
+		} else if (command == 0 && !_engine->shouldQuit() && !presentResults()) {
 			_result = kLoadFailed;
 		}
+
 		debugC(2, kDebugPuzzles,
 			"Ripper: KD shooting-gallery media returned command=0x%04x result=%d score=%d energy=%d",
 			command, _result, currentScore(), _weaponEnergyPercent);
 	}
 
 	stopAllAudio();
-	if (_result == kSolved &&
-			!markSolved(completionFlag, "kd-shooting-gallery"))
+	if (_result == kSolved && !markSolved(completionFlag, "kd-shooting-gallery"))
 		_result = kLoadFailed;
 	finish("kd-shooting-gallery-exit", 0, true);
 	debugC(1, kDebugPuzzles,

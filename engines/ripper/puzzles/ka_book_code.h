@@ -45,8 +45,7 @@ public:
 private:
 	bool loadAssets();
 	uint measureText(const Common::String &text) const;
-	void drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const;
+	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const;
 	void drawPrompt(const Common::String &typedCode);
 
 	RipperEngine *_engine;

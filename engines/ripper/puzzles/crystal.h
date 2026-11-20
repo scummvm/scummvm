@@ -47,8 +47,7 @@ private:
 	bool loadAssets();
 	bool loadPieceSet(const char *prefix, Common::Array<BitmapAssetFrame> &frames);
 	bool drawBoard();
-	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame, int x, int y) const;
 	int findTrayPiece(const Common::Point &point) const;
 	int findGridCell(const Common::Point &point) const;
 	int findPlacedPiece(const Common::Point &point) const;

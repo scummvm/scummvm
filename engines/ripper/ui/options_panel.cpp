@@ -130,10 +130,10 @@ bool OptionsPanelManager::loadFrameSet(ResourceManager &resources,
 	frames.clear();
 	for (uint i = 0; i < count; ++i) {
 		BitmapAssetSequence sequence;
-		if (!resources.loadOptionsBitmapSequence(
-				Common::String::format("%s%u", prefix, i), sequence) ||
+		if (!resources.loadOptionsBitmapSequence(Common::String::format("%s%u", prefix, i), sequence) ||
 				sequence.frames.empty())
 			return false;
+
 		frames.push_back(Common::move(sequence.frames.front()));
 	}
 	return true;
@@ -156,24 +156,22 @@ bool OptionsPanelManager::initializeRetail(ResourceManager &resources) {
 	static const char *const accentNames[] = { "opt_yel", "opt_p1", "opt_bhk" };
 	for (uint i = 0; i < ARRAYSIZE(accentNames); ++i) {
 		BitmapAssetSequence sequence;
-		if (!resources.loadOptionsBitmapSequence(accentNames[i], sequence) ||
-				sequence.frames.empty())
+		if (!resources.loadOptionsBitmapSequence(accentNames[i], sequence) || sequence.frames.empty())
 			return false;
+
 		_accentFrames.push_back(Common::move(sequence.frames.front()));
 	}
 
 	_controls.clear();
 	for (uint i = 0; i < ARRAYSIZE(kControlLayouts); ++i) {
 		const ControlLayout &layout = kControlLayouts[i];
-		_controls.add(Common::Rect(layout.x, layout.y,
-			layout.x + layout.width, layout.y + layout.height), 1000 + i);
+		_controls.add(Common::Rect(layout.x, layout.y, layout.x + layout.width, layout.y + layout.height), 1000 + i);
 		debugC(2, kDebugResources,
 			"Ripper: Options Panel control=%u id=%u rect=%d,%d,%d,%d",
 			i, _controls[i].action, layout.x, layout.y, layout.width, layout.height);
 	}
 
-	_initialized = _background.width == 640 && _background.height == 400 &&
-		_background.palette.size() >= 256 * 3;
+	_initialized = _background.width == 640 && _background.height == 400 && _background.palette.size() >= 256 * 3;
 	if (!_initialized)
 		warning("Ripper: invalid Options Panel background size=%ux%u paletteBytes=%u",
 			_background.width, _background.height, _background.palette.size());
@@ -195,10 +193,10 @@ bool OptionsPanelManager::initializeDemo(ResourceManager &resources) {
 	_demoFrames.clear();
 	for (uint i = 1; i <= 11; ++i) {
 		BitmapAssetSequence sequence;
-		if (!resources.loadInterfaceBitmapSequence(
-				Common::String::format("option%u.bbm", i), sequence) ||
+		if (!resources.loadInterfaceBitmapSequence(Common::String::format("option%u.bbm", i), sequence) ||
 				sequence.frames.empty())
 			return false;
+
 		_demoFrames.push_back(Common::move(sequence.frames.front()));
 	}
 
@@ -218,8 +216,7 @@ bool OptionsPanelManager::initializeDemo(ResourceManager &resources) {
 			action = 0x546 + i;
 		else
 			action = kDemoFixedControlIds[i - 17];
-		_controls.add(Common::Rect(layout.x, layout.y,
-			layout.x + layout.width, layout.y + layout.height), action);
+		_controls.add(Common::Rect(layout.x, layout.y, layout.x + layout.width, layout.y + layout.height), action);
 		debugC(2, kDebugResources,
 			"Ripper: demo Options control=%u id=0x%04x rect=%d,%d,%d,%d",
 			i, action, layout.x, layout.y, layout.width, layout.height);
@@ -236,6 +233,7 @@ bool OptionsPanelManager::initializeDemo(ResourceManager &resources) {
 			"Ripper: initialized demo Options Panel controls=%u frames=%u",
 			_controls.size(), _demoFrames.size());
 	}
+
 	return _initialized;
 }
 
@@ -258,8 +256,7 @@ void OptionsPanelManager::applyPalette() {
 }
 
 void OptionsPanelManager::drawBackground() {
-	g_system->copyRectToScreen(_background.pixels.data(), _background.width,
-		0, 0, _background.width, _background.height);
+	g_system->copyRectToScreen(_background.pixels.data(), _background.width, 0, 0, _background.width, _background.height);
 }
 
 void OptionsPanelManager::drawBitmap(const BitmapAssetFrame &frame, int x, int y) const {
@@ -269,6 +266,7 @@ void OptionsPanelManager::drawBitmap(const BitmapAssetFrame &frame, int x, int y
 			g_system->unlockScreen();
 		return;
 	}
+
 	IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(), screen->pitch,
 		frame, x, y, Common::Rect(0, 0, screen->w, screen->h));
 	g_system->unlockScreen();
@@ -290,8 +288,7 @@ uint OptionsPanelManager::measureText(const Common::String &text) const {
 	return BitmapFontRenderer::measureText(_font, text);
 }
 
-void OptionsPanelManager::drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const {
+void OptionsPanelManager::drawText(byte *screen, uint pitch, int x, int y, const Common::String &text, byte color) const {
 	BitmapFontRenderer::drawText(screen, pitch, _font, x, y, text, color);
 }
 
@@ -306,6 +303,7 @@ void OptionsPanelManager::clearKeyLabel() {
 			g_system->unlockScreen();
 		return;
 	}
+
 	for (int y = 0; y < kKeyLabelHeight; ++y)
 		memcpy(screen->getBasePtr(kKeyLabelLeft, kKeyLabelTop + y),
 			_background.pixels.data() + (kKeyLabelTop + y) * 640 + kKeyLabelLeft,
@@ -322,9 +320,9 @@ void OptionsPanelManager::drawKeyLabel(uint16 command) {
 			g_system->unlockScreen();
 		return;
 	}
+
 	const int x = kKeyLabelCenterX - measureText(label) / 2;
-	drawText((byte *)screen->getPixels(), screen->pitch, x, kKeyLabelY,
-		label, kKeyLabelColor);
+	drawText((byte *)screen->getPixels(), screen->pitch, x, kKeyLabelY, label, kKeyLabelColor);
 	g_system->unlockScreen();
 }
 
@@ -338,16 +336,17 @@ bool OptionsPanelManager::serviceBackground(Video::SmackerDecoder &decoder) {
 			warning("Ripper: could not rewind Options Panel animation 'opt.smk'");
 			return false;
 		}
+
 		debugC(3, kDebugVideo, "Ripper: rewound Options Panel animation 'opt.smk'");
 	}
+
 	if (!decoder.needsUpdate())
 		return true;
+
 	const Graphics::Surface *frame = decoder.decodeNextFrame();
 	if (frame)
-		g_system->copyRectToScreen(frame->getPixels(), frame->pitch,
-			kAnimationX, kAnimationY, frame->w, frame->h);
-	debugC(11, kDebugVideo, "Ripper: Options Panel animation frame=%d",
-		decoder.getCurFrame());
+		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, kAnimationX, kAnimationY, frame->w, frame->h);
+	debugC(11, kDebugVideo, "Ripper: Options Panel animation frame=%d", decoder.getCurFrame());
 	return true;
 }
 
@@ -363,8 +362,7 @@ void OptionsPanelManager::playControlSound(uint controlIndex) {
 		soundIndex = 3;
 	else if (controlIndex <= 17)
 		soundIndex = 4;
-	_engine->getMedia()->playSoundEffect(
-		Common::String::format("opt_%u.wav", soundIndex), _soundHandle);
+	_engine->getMedia()->playSoundEffect(Common::String::format("opt_%u.wav", soundIndex), _soundHandle);
 }
 
 void OptionsPanelManager::commitState(const State &state) {
@@ -410,6 +408,7 @@ void OptionsPanelManager::drawDemoState(const DemoState &state, int captureSlot)
 			g_system->unlockScreen();
 		return;
 	}
+
 	byte *pixels = (byte *)screen->getPixels();
 	for (uint i = 0; i < RipperSettings::kActionKeyCount - 1; ++i) {
 		const ControlLayout &layout = kDemoControlLayouts[9 + i];
@@ -432,6 +431,7 @@ void OptionsPanelManager::drawDemoState(const DemoState &state, int captureSlot)
 		const int x = (640 - measureText(prompt)) / 2;
 		drawText(pixels, screen->pitch, x, 270, prompt, 0);
 	}
+
 	g_system->unlockScreen();
 }
 
@@ -467,10 +467,10 @@ void OptionsPanelManager::resetDemoState(DemoState &state) const {
 int OptionsPanelManager::demoSliderValueFromPoint(uint slider, int x) const {
 	if (slider >= RipperSettings::kDemoSliderCount)
 		return 0;
+
 	const ControlLayout &layout = kDemoControlLayouts[6 + slider];
 	const int travel = layout.width - _demoFrames[1].width;
-	return travel > 0 ? CLIP<int>(((x - layout.x) * 100 + travel / 2) / travel,
-		0, 100) : 0;
+	return travel > 0 ? CLIP<int>(((x - layout.x) * 100 + travel / 2) / travel, 0, 100) : 0;
 }
 
 bool OptionsPanelManager::runDemo() {
@@ -485,8 +485,7 @@ bool OptionsPanelManager::runDemo() {
 		state.sliders[i] = settings->getDemoSlider((RipperSettings::DemoSlider)i);
 	for (uint i = 0; i < RipperSettings::kActionKeyCount - 1; ++i)
 		state.actionKeys[i] = settings->getActionKey(i + 1);
-	const int originalMusicVolume =
-		settings->getDemoSlider(RipperSettings::kDemoMusicVolume);
+	const int originalMusicVolume = settings->getDemoSlider(RipperSettings::kDemoMusicVolume);
 
 	debugC(1, kDebugGeneral,
 		"Ripper: entering demo Options controls=%u sound=%d music=%d mouse=%d",
@@ -513,19 +512,18 @@ bool OptionsPanelManager::runDemo() {
 			break;
 		}
 
-		uint16 command = _engine->getInput()->hasPendingKey() ?
-			_engine->getInput()->consumeKey() : 0;
+		uint16 command = _engine->getInput()->hasPendingKey() ? _engine->getInput()->consumeKey() : 0;
 		bool redraw = false;
 		if (captureSlot >= 0 && command != 0) {
 			if (command == 0x001b) {
-				debugC(2, kDebugInput,
-					"Ripper: demo Options key capture cancelled slot=%d", captureSlot);
+				debugC(2, kDebugInput, "Ripper: demo Options key capture cancelled slot=%d", captureSlot);
 			} else {
 				state.actionKeys[captureSlot] = command;
 				debugC(1, kDebugInput,
 					"Ripper: demo Options captured hotkey=%d command=0x%04x label='%s'",
 					captureSlot, command, formatKeyLabel(command).c_str());
 			}
+
 			captureSlot = -1;
 			command = 0;
 			redraw = true;
@@ -539,14 +537,11 @@ bool OptionsPanelManager::runDemo() {
 				active = false;
 			} else if (command == 0x2000) {
 				resetDemoState(state);
-				settings->setDemoSlider(RipperSettings::kDemoMusicVolume,
-					state.sliders[RipperSettings::kDemoMusicVolume]);
+				settings->setDemoSlider(RipperSettings::kDemoMusicVolume, state.sliders[RipperSettings::kDemoMusicVolume]);
 				redraw = true;
-				debugC(2, kDebugGeneral,
-					"Ripper: demo Options restored staged SETTINGS.DEF defaults");
+				debugC(2, kDebugGeneral, "Ripper: demo Options restored staged SETTINGS.DEF defaults");
 			} else if (command == 0x3b00) {
-				debugC(1, kDebugGeneral,
-					"Ripper: demo Options opening help resource=0x%x", kDemoHelpResource);
+				debugC(1, kDebugGeneral, "Ripper: demo Options opening help resource=0x%x", kDemoHelpResource);
 				_engine->getModalDialog()->run(kDemoHelpResource);
 				redraw = true;
 			} else {
@@ -578,11 +573,11 @@ bool OptionsPanelManager::runDemo() {
 				const uint slider = pressedControl - 6;
 				state.sliders[slider] = demoSliderValueFromPoint(slider, mouse.position.x);
 				if (slider == RipperSettings::kDemoMusicVolume)
-					settings->setDemoSlider(RipperSettings::kDemoMusicVolume,
-						state.sliders[slider]);
+					settings->setDemoSlider(RipperSettings::kDemoMusicVolume, state.sliders[slider]);
 				redraw = true;
 			}
 		}
+
 		if (captureSlot < 0 && pressedControl >= 6 && pressedControl <= 8 &&
 				(mouse.buttons & kMouseButtonLeft) != 0) {
 			const uint slider = pressedControl - 6;
@@ -594,6 +589,7 @@ bool OptionsPanelManager::runDemo() {
 				redraw = true;
 			}
 		}
+
 		if (captureSlot < 0 && (mouse.released & kMouseButtonLeft) != 0) {
 			if (pressedControl >= 0 && pressedControl == hoveredControl) {
 				const uint selected = pressedControl;
@@ -624,6 +620,7 @@ bool OptionsPanelManager::runDemo() {
 					redraw = true;
 				}
 			}
+
 			pressedControl = -1;
 		}
 
@@ -642,9 +639,7 @@ bool OptionsPanelManager::runDemo() {
 	restoreDisplay();
 	_engine->getCursor()->update(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
-	debugC(1, kDebugGeneral,
-		"Ripper: exited demo Options Panel committed=%d quit=%d",
-		committed, _engine->shouldQuit());
+	debugC(1, kDebugGeneral, "Ripper: exited demo Options Panel committed=%d quit=%d", committed, _engine->shouldQuit());
 	return !_engine->shouldQuit();
 }
 
@@ -700,12 +695,10 @@ bool OptionsPanelManager::runRetail() {
 			break;
 		}
 
-		uint16 command = _engine->getInput()->hasPendingKey() ?
-			_engine->getInput()->consumeKey() : 0;
+		uint16 command = _engine->getInput()->hasPendingKey() ? _engine->getInput()->consumeKey() : 0;
 		if (captureSlot >= 0 && command != 0) {
 			if (command == 0x1b) {
-				debugC(2, kDebugInput,
-					"Ripper: Options Panel key capture cancelled slot=%d", captureSlot);
+				debugC(2, kDebugInput, "Ripper: Options Panel key capture cancelled slot=%d", captureSlot);
 			} else {
 				state.actionKeys[captureSlot] = command;
 				drawKeyLabel(command);
@@ -713,13 +706,13 @@ bool OptionsPanelManager::runRetail() {
 					"Ripper: Options Panel captured actionKeySlot=%d command=0x%04x label='%s'",
 					captureSlot, command, formatKeyLabel(command).c_str());
 			}
+
 			captureSlot = -1;
 			command = 0;
 		}
 
 		if (captureSlot < 0 && command == 0x3b00) {
-			debugC(1, kDebugGeneral,
-				"Ripper: Options Panel opening help resource=0x%x", kHelpResource);
+			debugC(1, kDebugGeneral, "Ripper: Options Panel opening help resource=0x%x", kHelpResource);
 			_engine->getModalDialog()->run(kHelpResource);
 		} else if (captureSlot < 0 && command == 0x1b) {
 			active = false;
@@ -736,11 +729,13 @@ bool OptionsPanelManager::runRetail() {
 				else
 					clearKeyLabel();
 			}
+
 			debugC(2, kDebugInput,
 				"Ripper: Options Panel hover control=%d id=%u point=%d,%d captureSlot=%d",
 				hoveredControl, hoveredControl >= 0 ? _controls[hoveredControl].action : 0,
 				mouse.position.x, mouse.position.y, captureSlot);
 		}
+
 		if (captureSlot < 0 && (mouse.pressed & kMouseButtonLeft) != 0)
 			pressedControl = hoveredControl;
 		if (captureSlot < 0 && (mouse.released & kMouseButtonLeft) != 0) {
@@ -773,6 +768,7 @@ bool OptionsPanelManager::runRetail() {
 				} else {
 					active = false;
 				}
+
 				if (selected == 6)
 					debugC(2, kDebugGeneral,
 						"Ripper: Options Panel staged combat difficulty previous=%u new=%u changed=%d commit=on-exit",
@@ -786,6 +782,7 @@ bool OptionsPanelManager::runRetail() {
 				if (selected <= 9)
 					drawState(state);
 			}
+
 			pressedControl = -1;
 		}
 
@@ -803,8 +800,7 @@ bool OptionsPanelManager::runRetail() {
 	restoreDisplay();
 	_engine->getCursor()->update(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
-	debugC(1, kDebugGeneral, "Ripper: exited Options Panel committed=%d",
-		!_engine->shouldQuit());
+	debugC(1, kDebugGeneral, "Ripper: exited Options Panel committed=%d", !_engine->shouldQuit());
 	return !_engine->shouldQuit();
 }
 

@@ -65,8 +65,7 @@ static bool isInsideAdvanceControl(const Common::Point &point) {
 }
 
 static bool isInsideExitControl(const Common::Point &point) {
-	return Common::Rect(kExitLeft, kExitTop,
-		kExitLeft + kExitWidth, kExitTop + kExitHeight).contains(point);
+	return Common::Rect(kExitLeft, kExitTop, kExitLeft + kExitWidth, kExitTop + kExitHeight).contains(point);
 }
 
 } // End of anonymous namespace
@@ -78,11 +77,13 @@ RolodexPuzzle::RolodexPuzzle(RipperEngine *engine) : Puzzle(engine),
 void RolodexPuzzle::startAudio(uint index, uint volumePercent, bool loop) {
 	if (index >= ARRAYSIZE(_audioHandles))
 		return;
+
 	const Common::String path = Common::String::format("rolo%u.wav", index);
 	if (!_engine->getMedia()->playSoundEffect(path, _audioHandles[index], volumePercent, loop)) {
 		warning("Ripper: rolodex puzzle could not start audio '%s'", path.c_str());
 		return;
 	}
+
 	debugC(3, kDebugPuzzles,
 		"Ripper: rolodex audio started index=%u frameSequence=%u volume=%u loop=%d",
 		index, _activeSequence, volumePercent, loop);
@@ -92,9 +93,7 @@ void RolodexPuzzle::stopAudio(uint index) {
 	if (index >= ARRAYSIZE(_audioHandles))
 		return;
 	if (_engine->getMedia()->stopSoundEffect(_audioHandles[index])) {
-		debugC(3, kDebugPuzzles,
-			"Ripper: rolodex audio stopped index=%u frameSequence=%u",
-			index, _activeSequence);
+		debugC(3, kDebugPuzzles, "Ripper: rolodex audio stopped index=%u frameSequence=%u", index, _activeSequence);
 	}
 }
 
@@ -142,6 +141,7 @@ uint16 RolodexPuzzle::serviceInput() {
 			updateCursor(_engine->getInput()->peekMouseState().position);
 			continue;
 		}
+
 		if (command == kAdvanceCommand || command == kExitCommand)
 			return command;
 	}
@@ -161,12 +161,14 @@ uint16 RolodexPuzzle::service(uint frame) {
 	serviceAudio(frame);
 	if (!_acceptInput)
 		return 0;
+
 	const uint16 command = serviceInput();
 	if (command != 0) {
 		debugC(2, kDebugPuzzles,
 			"Ripper: rolodex input command=0x%04x sequence=%u frame=%u",
 			command, _activeSequence, frame);
 	}
+
 	return command;
 }
 
@@ -186,6 +188,7 @@ RolodexPuzzle::Result RolodexPuzzle::run(uint completionFlag) {
 		stopAllAudio();
 		return kLoadFailed;
 	}
+
 	_engine->getInput()->discardMouseTransitions();
 
 	Result result = kExited;
@@ -203,6 +206,7 @@ RolodexPuzzle::Result RolodexPuzzle::run(uint completionFlag) {
 				result = kLoadFailed;
 				break;
 			}
+
 			result = kSolved;
 			debugC(1, kDebugPuzzles,
 				"Ripper: rolodex puzzle completed milestone=%u sequence=%u",
@@ -210,8 +214,7 @@ RolodexPuzzle::Result RolodexPuzzle::run(uint completionFlag) {
 		}
 
 		const Common::String path = Common::String::format("rolodex%u.smk", _activeSequence);
-		const uint loopStartFrame = _activeSequence == 6 ?
-			kSuccessLoopStartFrame : kNormalLoopStartFrame;
+		const uint loopStartFrame = _activeSequence == 6 ? kSuccessLoopStartFrame : kNormalLoopStartFrame;
 		command = 0;
 		if (!_engine->getMedia()->playPuzzleSequence(path, loopStartFrame, this, &command)) {
 			result = kLoadFailed;
@@ -227,6 +230,7 @@ RolodexPuzzle::Result RolodexPuzzle::run(uint completionFlag) {
 		if (!_engine->getMedia()->playPuzzleSequence("rolodex7.smk", 0, nullptr))
 			result = kLoadFailed;
 	}
+
 	stopAllAudio();
 	_engine->getCursor()->update(kDefaultCursor);
 	debugC(1, kDebugPuzzles,

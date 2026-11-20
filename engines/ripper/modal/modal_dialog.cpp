@@ -50,8 +50,7 @@ ModalDialogManager::ModalDialogManager(RipperEngine *engine) :
 }
 
 bool ModalDialogManager::initialize(ResourceManager &resources, bool loadPrimaryPresentation) {
-	if (!resources.loadInterfaceBitmapFont("small.fnt", _font) ||
-			!resources.loadGameText(_gameText))
+	if (!resources.loadInterfaceBitmapFont("small.fnt", _font) || !resources.loadGameText(_gameText))
 		return false;
 	if (loadPrimaryPresentation) {
 		if (!resources.loadInterfaceBitmapFont("7pt_font.fnt", _primaryFont))
@@ -66,31 +65,30 @@ bool ModalDialogManager::initialize(ResourceManager &resources, bool loadPrimary
 	_modalPalette.clear();
 	for (uint frameIndex = 0; frameIndex < kModalSkinFrameCount; ++frameIndex) {
 		BitmapAssetSequence sequence;
-		if (!resources.loadInterfaceBitmapSequence(
-				Common::String::format("menub%u", frameIndex), sequence) ||
+		if (!resources.loadInterfaceBitmapSequence(Common::String::format("menub%u", frameIndex), sequence) ||
 				sequence.frames.empty())
 			return false;
+
 		_skin.push_back(Common::move(sequence.frames.front()));
 		if (_modalPalette.empty() && _skin.back().palette.size() >= 256 * 3)
 			_modalPalette = _skin.back().palette;
 	}
 	for (uint frameIndex = 0; frameIndex < kWacModalSkinFrameCount; ++frameIndex) {
 		BitmapAssetSequence sequence;
-		if (!resources.loadInterfaceBitmapSequence(
-				Common::String::format("wacmnu%u", frameIndex), sequence) ||
+		if (!resources.loadInterfaceBitmapSequence(Common::String::format("wacmnu%u", frameIndex), sequence) ||
 				sequence.frames.empty())
 			return false;
+
 		_wacSkin.push_back(Common::move(sequence.frames.front()));
 	}
 	if (loadPrimaryPresentation) {
 		for (uint frameIndex = 0; frameIndex < kPrimaryScrollSkinFrameCount;
 				++frameIndex) {
 			BitmapAssetSequence sequence;
-			if (!resources.loadInterfaceBitmapSequence(
-					Common::String::format("mnarrow%u.bbm", frameIndex),
-					sequence) ||
+			if (!resources.loadInterfaceBitmapSequence(Common::String::format("mnarrow%u.bbm", frameIndex), sequence) ||
 					sequence.frames.empty())
 				return false;
+
 			_primaryScrollSkin.push_back(Common::move(sequence.frames.front()));
 		}
 	}
@@ -101,9 +99,7 @@ bool ModalDialogManager::initialize(ResourceManager &resources, bool loadPrimary
 		"wacmnuFrames=%u primaryScrollFrames=%u primaryFont=%s strings=%u",
 		_skin.size(), _wacSkin.size(), _primaryScrollSkin.size(),
 		loadPrimaryPresentation ? "7pt_font.fnt" : "small.fnt", _gameText.size());
-	debugC(2, kDebugResources,
-		"Ripper: captured shared display palette from MENUB (%u bytes)",
-		_modalPalette.size());
+	debugC(2, kDebugResources, "Ripper: captured shared display palette from MENUB (%u bytes)", _modalPalette.size());
 	debugC(3, kDebugScene,
 		"Ripper: modal text font first=%u glyphs=%u lineHeight=%u spacing=%u spaceWidth=%u "
 		"transparent=%u paletteBytes=%u",
@@ -170,10 +166,8 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	}
 
 	byte *pixels = (byte *)screen->getPixels();
-	const byte backgroundColor = wacStyle ? kWacModalBackgroundColor :
-		kModalBackgroundColor;
-	const byte textColor = wacStyle ? kWacModalTextColor :
-		(sceneEntryStyle ? _sceneEntryTextColor : kModalTextColor);
+	const byte backgroundColor = wacStyle ? kWacModalBackgroundColor : kModalBackgroundColor;
+	const byte textColor = wacStyle ? kWacModalTextColor : (sceneEntryStyle ? _sceneEntryTextColor : kModalTextColor);
 	if (wacStyle) {
 		screen->fillRect(bounds, backgroundColor);
 		drawFrame(pixels, screen->pitch, bounds, style);
@@ -190,8 +184,7 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	int textRight;
 	if (wacStyle) {
 		const int promptWidth = measureText(prompt);
-		const int contentWidth =
-			bounds.width() - kWacModalLeftPadding - kWacModalRightPadding;
+		const int contentWidth = bounds.width() - kWacModalLeftPadding - kWacModalRightPadding;
 		drawText(pixels, screen->pitch,
 			bounds.left + kWacModalLeftPadding +
 				(contentWidth - promptWidth) / 2,
@@ -212,21 +205,19 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 			textLeft += measureText(prompt) + _font.spaceWidth;
 		}
 	}
+
 	const uint availableWidth = textRight - textLeft;
 	uint endVisible = firstVisible;
 	while (endVisible < text.size()) {
-		const Common::String candidate =
-			text.substr(firstVisible, endVisible - firstVisible + 1);
+		const Common::String candidate = text.substr(firstVisible, endVisible - firstVisible + 1);
 		if (measureText(candidate) > availableWidth)
 			break;
 		++endVisible;
 	}
-	const Common::String visible = text.substr(firstVisible,
-		endVisible - firstVisible);
+	const Common::String visible = text.substr(firstVisible, endVisible - firstVisible);
 	drawText(pixels, screen->pitch, textLeft, textTop, visible, textColor);
 	if (caretVisible && cursorPosition >= firstVisible && cursorPosition <= endVisible) {
-		const int caretLeft = textLeft + measureText(text.substr(firstVisible,
-			cursorPosition - firstVisible));
+		const int caretLeft = textLeft + measureText(text.substr(firstVisible, cursorPosition - firstVisible));
 		drawText(pixels, screen->pitch, caretLeft, textTop, "_", textColor);
 	}
 
@@ -254,8 +245,7 @@ void ModalDialogManager::drawBinaryPrompt(const Common::String &prompt,
 		bounds.top + kModalHeadingTopPadding),
 		kModalHeadingColor);
 
-	const int contentWidth =
-		bounds.width() - kModalLeftPadding - kModalRightPadding;
+	const int contentWidth = bounds.width() - kModalLeftPadding - kModalRightPadding;
 	drawText(pixels, screen->pitch,
 		bounds.left + kModalLeftPadding +
 			(contentWidth - measureText(prompt)) / 2,
@@ -263,13 +253,13 @@ void ModalDialogManager::drawBinaryPrompt(const Common::String &prompt,
 			(kModalHeadingTopPadding - _font.lineHeight) / 2,
 		prompt, kModalTitleColor);
 	for (uint option = 0; option < kBinaryPromptOptionCount; ++option) {
-		const int rowTop = bounds.top + kModalHeadingTopPadding +
-			option * kModalRowHeight;
+		const int rowTop = bounds.top + kModalHeadingTopPadding + option * kModalRowHeight;
 		if (option == selectedIndex) {
 			screen->fillRect(Common::Rect(bounds.left + kModalLeftPadding, rowTop,
 				bounds.right - kModalRightPadding, rowTop + kModalRowHeight),
 				kModalSelectedBackgroundColor);
 		}
+
 		drawText(pixels, screen->pitch,
 			bounds.left + kModalLeftPadding +
 				kModalTextHorizontalInset,
@@ -293,11 +283,10 @@ uint ModalDialogManager::textEntryCursorFromPoint(const Common::String &text,
 	const int relativeX = x - textLeft;
 	if (relativeX <= 0)
 		return firstVisible;
+
 	for (uint position = firstVisible; position < text.size(); ++position) {
-		const uint left = measureText(text.substr(firstVisible,
-			position - firstVisible));
-		const uint right = measureText(text.substr(firstVisible,
-			position - firstVisible + 1));
+		const uint left = measureText(text.substr(firstVisible, position - firstVisible));
+		const uint right = measureText(text.substr(firstVisible, position - firstVisible + 1));
 		if ((uint)relativeX < left + (right - left) / 2)
 			return position;
 		if (right >= (uint)bounds.width() - leftPadding - rightPadding)
@@ -333,10 +322,10 @@ bool ModalDialogManager::beginTextEntry(const Common::String &prompt,
 		uint maximumLength, uint helpResourceId, const char *source,
 		PresentationStyle style, const Common::Rect &bounds) {
 	if (!_initialized || _textEntryActive) {
-		warning("Ripper: could not begin scene text request source='%s' active=%d",
-			source, _textEntryActive);
+		warning("Ripper: could not begin scene text request source='%s' active=%d", source, _textEntryActive);
 		return false;
 	}
+
 	_textEntryPrompt = prompt;
 	_textEntryText.clear();
 	_textEntrySource = source;
@@ -345,12 +334,11 @@ bool ModalDialogManager::beginTextEntry(const Common::String &prompt,
 		kTextEntryTop, kTextEntryLeft + kTextEntryWidth,
 		kTextEntryTop + kTextEntryHeight) : bounds;
 	_textEntryBacking.clear();
-	if (_textEntryStyle == kSceneEntryPresentation &&
-			!_textEntryBacking.capture(_textEntryBounds)) {
-		warning("Ripper: could not capture scene text request backing source='%s'",
-			source);
+	if (_textEntryStyle == kSceneEntryPresentation && !_textEntryBacking.capture(_textEntryBounds)) {
+		warning("Ripper: could not capture scene text request backing source='%s'", source);
 		return false;
 	}
+
 	if (_textEntryBacking.isValid())
 		debugC(2, kDebugScene,
 			"Ripper: captured scene text request backing source='%s' bounds=%d,%d,%d,%d",
@@ -396,8 +384,7 @@ void ModalDialogManager::finishTextEntry(Common::String &text) {
 	}
 }
 
-ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
-		Common::String &text) {
+ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(Common::String &text) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	if (!_textEntryActive)
 		return kTextEntryFailed;
@@ -419,21 +406,22 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 				result = kTextEntryAccepted;
 				break;
 			}
+
 			if (command == 0x1b) {
 				result = kTextEntryCancelled;
 				break;
 			}
+
 			if (command == 0x3b00) {
-				const bool sceneEntryStyle =
-					_textEntryStyle == kSceneEntryPresentation;
-				const PresentationStyle helpStyle = sceneEntryStyle ?
-					kMenubPresentation : _textEntryStyle;
+				const bool sceneEntryStyle = _textEntryStyle == kSceneEntryPresentation;
+				const PresentationStyle helpStyle = sceneEntryStyle ? kMenubPresentation : _textEntryStyle;
 				if (!_engine->getModalDialog()->run(_textEntryHelpResourceId, true,
 						helpStyle, _textEntryStyle == kWacPresentation ?
 						kPreserveActivePalette : kApplyModalPalette)) {
 					result = kTextEntryFailed;
 					break;
 				}
+
 				if (_textEntryStyle == kMenubPresentation)
 					applyModalPalette();
 				continue;
@@ -446,6 +434,7 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 					_textEntryText.deleteChar(--_textEntryCursorPosition);
 					edited = true;
 				}
+
 				break;
 			case 0x4700:
 				_textEntryCursorPosition = 0;
@@ -456,12 +445,14 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 					--_textEntryCursorPosition;
 					edited = true;
 				}
+
 				break;
 			case 0x4d00:
 				if (_textEntryCursorPosition < _textEntryText.size()) {
 					++_textEntryCursorPosition;
 					edited = true;
 				}
+
 				break;
 			case 0x4f00:
 				_textEntryCursorPosition = _textEntryText.size();
@@ -475,22 +466,21 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 					_textEntryText.deleteChar(_textEntryCursorPosition);
 					edited = true;
 				}
+
 				break;
 			default:
 				if (command <= 0xff && (command == ' ' ||
 						(command >= _font.firstCharacter &&
 						command < _font.firstCharacter + _font.glyphs.size()))) {
-					if (_textEntryOverwrite &&
-							_textEntryCursorPosition < _textEntryText.size()) {
-						_textEntryText.setChar((char)command,
-							_textEntryCursorPosition++);
+					if (_textEntryOverwrite && _textEntryCursorPosition < _textEntryText.size()) {
+						_textEntryText.setChar((char)command, _textEntryCursorPosition++);
 						edited = true;
 					} else if (_textEntryText.size() < _textEntryMaximumLength) {
-						_textEntryText.insertChar((char)command,
-							_textEntryCursorPosition++);
+						_textEntryText.insertChar((char)command, _textEntryCursorPosition++);
 						edited = true;
 					}
 				}
+
 				break;
 			}
 			if (_textEntryText.size() != previousLength)
@@ -502,8 +492,7 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	_engine->getCursor()->update(kModalCursor);
 	if ((mouse.pressed & kMouseButtonLeft) != 0 && bounds.contains(mouse.position)) {
-		_textEntryCursorPosition = textEntryCursorFromPoint(_textEntryText,
-			_textEntryFirstVisible, mouse.position.x, bounds);
+		_textEntryCursorPosition = textEntryCursorFromPoint(_textEntryText, _textEntryFirstVisible, mouse.position.x, bounds);
 		edited = true;
 		debugC(3, kDebugInput,
 			"Ripper: scene text request caret point=%d,%d cursor=%u firstVisible=%u",
@@ -516,10 +505,12 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 		_textEntryCaretVisible = !_textEntryCaretVisible;
 		_textEntryNextCaretMillis = now + kTextEntryCaretBlinkMillis;
 	}
+
 	if (edited) {
 		_textEntryCaretVisible = true;
 		_textEntryNextCaretMillis = now + kTextEntryCaretBlinkMillis;
 	}
+
 	updateTextEntryFirstVisible(bounds);
 	if (result == kTextEntryPending) {
 		if (_textEntryStyle == kMenubPresentation)
@@ -547,20 +538,18 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions,
 		warning("Ripper: could not present modal text resource=%u", bodyResourceId);
 		return false;
 	}
-	return runTextInternal(title, body, bodyResourceId, "game text",
-		retainSceneCursorRegions, style, paletteBehavior);
+
+	return runTextInternal(title, body, bodyResourceId, "game text", retainSceneCursorRegions, style, paletteBehavior);
 }
 
 bool ModalDialogManager::runText(const Common::String &title,
 		const Common::String &body, const char *source,
 		bool retainSceneCursorRegions, PresentationStyle style,
 		PaletteBehavior paletteBehavior) {
-	return runTextInternal(title, body, 0, source, retainSceneCursorRegions,
-		style, paletteBehavior);
+	return runTextInternal(title, body, 0, source, retainSceneCursorRegions, style, paletteBehavior);
 }
 
-bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
-		bool defaultFirstOption) {
+bool ModalDialogManager::runBinaryPrompt(uint promptResourceId, bool defaultFirstOption) {
 	RipperEngine::SaveLoadScope saveLoad(*_engine);
 	const Common::String &prompt = resourceString(promptResourceId);
 	Common::String options[kBinaryPromptOptionCount] = {
@@ -569,17 +558,13 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 	};
 	if (!_initialized || prompt.empty() || options[0].empty() ||
 			options[1].empty() || !captureDisplay()) {
-		warning("Ripper: could not present binary prompt resource=%u",
-			promptResourceId);
+		warning("Ripper: could not present binary prompt resource=%u", promptResourceId);
 		return false;
 	}
 
-	const uint contentWidth = MAX<uint>(measureText(prompt),
-		MAX<uint>(measureText(options[0]), measureText(options[1])));
-	const int width = contentWidth + kModalLeftPadding +
-		kModalRightPadding + kModalTextHorizontalInset * 2;
-	const int height = kModalHeadingTopPadding +
-		kBinaryPromptOptionCount * kModalRowHeight + kModalBottomPadding;
+	const uint contentWidth = MAX<uint>(measureText(prompt), MAX<uint>(measureText(options[0]), measureText(options[1])));
+	const int width = contentWidth + kModalLeftPadding + kModalRightPadding + kModalTextHorizontalInset * 2;
+	const int height = kModalHeadingTopPadding + kBinaryPromptOptionCount * kModalRowHeight + kModalBottomPadding;
 	const int left = (640 - width) / 2;
 	const int top = (400 - height) / 2;
 	const Common::Rect bounds(left, top, left + width, top + height);
@@ -589,8 +574,7 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 	bool active = true;
 	bool redraw = true;
 	const bool restoreCursorVisible = _engine->getCursor()->isVisible();
-	Common::Point cursorPoint =
-		_engine->getInput()->peekMouseState().position;
+	Common::Point cursorPoint = _engine->getInput()->peekMouseState().position;
 
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
@@ -606,11 +590,10 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 		if (_engine->getInput()->pollEvents()) {
 			break;
 		}
+
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
-			debugC(3, kDebugInput,
-				"Ripper: binary prompt command=0x%04x selected=%u",
-				command, selectedIndex);
+			debugC(3, kDebugInput, "Ripper: binary prompt command=0x%04x selected=%u", command, selectedIndex);
 			uint nextIndex = selectedIndex;
 			switch (command) {
 			case 0x1b:
@@ -642,6 +625,7 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 					"Ripper: binary prompt keyboard selection=%u text='%s'",
 					selectedIndex, options[selectedIndex].c_str());
 			}
+
 			if (!active)
 				break;
 		}
@@ -673,6 +657,7 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 				selectedIndex, options[selectedIndex].c_str(),
 				mouse.position.x, mouse.position.y);
 		}
+
 		if ((mouse.pressed & kMouseButtonLeft) != 0)
 			pressedIndex = hoveredIndex;
 		if ((mouse.released & kMouseButtonLeft) != 0) {
@@ -686,6 +671,7 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 					selectedIndex, options[selectedIndex].c_str(),
 					mouse.position.x, mouse.position.y);
 			}
+
 			pressedIndex = -1;
 		}
 
@@ -695,6 +681,7 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 		} else {
 			presentScreen();
 		}
+
 		g_system->delayMillis(10);
 	}
 
@@ -723,28 +710,24 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 	}
 
 	const bool wacStyle = style == kWacPresentation;
-	const int headingTopPadding = wacStyle ?
-		kWacModalHeadingTopPadding : kModalHeadingTopPadding;
+	const int headingTopPadding = wacStyle ? kWacModalHeadingTopPadding : kModalHeadingTopPadding;
 	const int bottomPadding = wacStyle ? kWacModalBottomPadding : kModalBottomPadding;
 	const int leftPadding = wacStyle ? kWacModalLeftPadding : kModalLeftPadding;
 	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
-	const Common::Array<BitmapAssetFrame> &skin =
-		wacStyle ? _wacSkin : _skin;
+	const Common::Array<BitmapAssetFrame> &skin = wacStyle ? _wacSkin : _skin;
 	const int scrollEdgeInset = wacStyle ? 0 : kModalScrollEdgeInset;
 	int wrapWidth = kModalWidth - leftPadding - rightPadding;
 	Common::Array<Common::String> lines;
 	wrapText(body, wrapWidth, lines);
-	if (lines.size() > kModalMaximumRows &&
-			skin.size() > kModalScrollTrackFrame) {
-		wrapWidth -= skin[kModalScrollTrackFrame].width +
-			scrollEdgeInset - rightPadding;
+	if (lines.size() > kModalMaximumRows && skin.size() > kModalScrollTrackFrame) {
+		wrapWidth -= skin[kModalScrollTrackFrame].width + scrollEdgeInset - rightPadding;
 		if (wrapWidth > 0)
 			wrapText(body, wrapWidth, lines);
 	}
+
 	const uint visibleRows = MIN<uint>(lines.size(), kModalMaximumRows);
 	const int width = kModalWidth;
-	const int height = headingTopPadding + visibleRows * kModalRowHeight +
-		bottomPadding;
+	const int height = headingTopPadding + visibleRows * kModalRowHeight + bottomPadding;
 	const int left = (640 - width) / 2;
 	const int top = (400 - height) / 2;
 	const Common::Rect bounds(left, top, left + width, top + height);
@@ -776,6 +759,7 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 		if (_engine->getInput()->pollEvents()) {
 			break;
 		}
+
 		bool redraw = false;
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
@@ -783,10 +767,9 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 				active = false;
 				break;
 			}
-			const uint maximumFirst = lines.size() > visibleRows ?
-				lines.size() - visibleRows : 0;
-			const uint nextFirst = calculateTextScroll(command, firstVisible,
-				visibleRows, maximumFirst).firstVisible;
+
+			const uint maximumFirst = lines.size() > visibleRows ? lines.size() - visibleRows : 0;
+			const uint nextFirst = calculateTextScroll(command, firstVisible, visibleRows, maximumFirst).firstVisible;
 			if (nextFirst != firstVisible) {
 				firstVisible = nextFirst;
 				redraw = true;
@@ -797,8 +780,7 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 		}
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		cursorPoint = mouse.position;
-		const bool nextModalCursorActive = !retainSceneCursorRegions ||
-			bounds.contains(mouse.position);
+		const bool nextModalCursorActive = !retainSceneCursorRegions || bounds.contains(mouse.position);
 		if (nextModalCursorActive)
 			_engine->getCursor()->update(kModalCursor);
 		else
@@ -811,9 +793,9 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 				mouse.position.x, mouse.position.y, bounds.left, bounds.top,
 				bounds.width(), bounds.height());
 		}
+
 		if (mouse.wheel != 0) {
-			const uint maximumFirst = lines.size() > visibleRows ?
-				lines.size() - visibleRows : 0;
+			const uint maximumFirst = lines.size() > visibleRows ? lines.size() - visibleRows : 0;
 			int nextFirst = (int)firstVisible - mouse.wheel;
 			if (nextFirst < 0)
 				nextFirst = 0;
@@ -828,6 +810,7 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 					source, bodyResourceId, mouse.wheel, firstVisible, visibleRows);
 			}
 		}
+
 		if (redraw)
 			drawDialog(title, lines, firstVisible, visibleRows, bounds, style);
 		else
@@ -839,9 +822,7 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 	restoreDisplay();
 	if (retainSceneCursorRegions)
 		_engine->getScripts()->updateModalSceneCursor(cursorPoint);
-	debugC(1, kDebugScene,
-		"Ripper: exited modal text dialog source='%s' resource=%u",
-		source, bodyResourceId);
+	debugC(1, kDebugScene, "Ripper: exited modal text dialog source='%s' resource=%u", source, bodyResourceId);
 	return true;
 }
 
