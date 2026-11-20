@@ -37,6 +37,7 @@ class RunawayOpening {
 public:
 	explicit RunawayOpening(RunawayAudio &audio) : _audio(audio), _random("runawayOpening"), _speech(audio, _random) {}
 	bool load(byte chapter = 0);
+	bool loadEndingNarration(byte cue);
 	void start(uint32 now);
 	void update(uint32 now);
 	void skip(uint32 now);
@@ -64,6 +65,7 @@ private:
 	void drawCity(Graphics::ManagedSurface &screen);
 	void drawFilm(Graphics::ManagedSurface &screen);
 	void drawTitles(Graphics::ManagedSurface &screen);
+	uint narrationVariations() const;
 	bool speaking() const { return _row != 0; }
 
 	RunawayAudio &_audio;
@@ -81,6 +83,7 @@ private:
 	uint _frame = 0, _firstFrame = 0, _lastFrame = 0, _events = 0;
 	uint _bodyFrame = 20, _headBank = 1;
 	byte _chapter = 1, _chapterVariation = 0;
+	byte _narrationCue = 0;
 	bool _chapterOnly = false;
 	uint16 _row = 0, _lastRow = 0, _sample = 0;
 	bool _narrating = true, _themeStarted = false, _failed = false;

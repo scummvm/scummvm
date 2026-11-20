@@ -303,15 +303,6 @@ RunawayRoomScene::ActionResult Scene8100::dispatchCustomSceneAction(uint16 actio
 	case 440: // Continue to Gina after learning about her father.
 		_finale.doritaMet = 1;
 		leaveRoom(8421);
-		if (!findRunawayRoom(8421)) {
-			// Keep the conversation usable until the adjoining room is implemented.
-			_position = Common::Point(332, 470);
-			_walkPath.reset(_position);
-			_facing = 1;
-			_doritaStep = _doritaIdle = 20;
-			resumeAmbientAudio(true);
-			startDoritaConversation();
-		}
 		break;
 	default:
 		return kUnhandled;

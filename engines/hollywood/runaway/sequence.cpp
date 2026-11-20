@@ -129,12 +129,18 @@ void RunawaySequence::update(uint32 now) {
 					error("Cannot load Runaway film still %u", command.a);
 				break;
 			case kTalk:
-				_showPortrait = command.c != 0;
-				_silentPortrait = command.d != 0;
-				_portrait = (command.c - 1) / 2;
-				if (_showPortrait && !_portraits.load(_chapter, _movie))
-					error("Cannot load Runaway film portrait %u", command.c - 1);
-				speak(command.a, command.b);
+			case kWaitSpeech:
+				if (command.operation == kTalk || command.c) {
+					_showPortrait = command.c != 0;
+					_silentPortrait = command.d != 0;
+					_portrait = (command.c - 1) / 2;
+					if (_showPortrait && !_portraits.load(_chapter, _movie)) {
+						error("Cannot load Runaway film portrait %u", command.c - 1);
+					}
+				}
+				if (command.operation == kTalk) {
+					speak(command.a, command.b);
+				}
 				break;
 			case kImage: {
 				Graphics::ManagedSurface image;

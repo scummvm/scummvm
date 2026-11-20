@@ -165,7 +165,7 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
 	const RunawayRoom *room = findRunawayRoom(entryScene);
 	if (room && ((_museum && entryScene >= 4000) ||
-			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5 || entryScene / 1000 == 6 || entryScene / 1000 == 7 || entryScene / 1000 == 8)))) {
+			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5 || entryScene / 1000 == 6 || entryScene / 1000 == 7 || entryScene / 1000 == 8 || entryScene / 1000 == 9)))) {
 		return createRunawayRoomScene(*room, _audio, *_inventory, _strings, _game);
 	}
 	if ((_game == kRunawayCabinDemo && entryScene == 5030) ||

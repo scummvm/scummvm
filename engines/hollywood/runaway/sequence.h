@@ -43,7 +43,7 @@ public:
 		kImage,       // A 1024x600 image from RESOURCE.000.
 		kTalk,        // Cue, variation, portrait chunk + 1 (0 = movie still), offscreen speaker.
 		kSpeech,      // Cue, first/last variation, global cue; continues alongside the movie.
-		kWaitSpeech,
+		kWaitSpeech,  // Optional portrait and offscreen speaker, as in kTalk.
 		kWaitInput,
 		kMusic,       // Cue, volume, loop.
 		kEffect,      // Cue, volume, channel, loop.

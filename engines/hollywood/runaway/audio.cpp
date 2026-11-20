@@ -128,6 +128,13 @@ uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
 		Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false, 16000);
 }
 
+void RunawayAudio::playBackgroundSpeech(uint16 sample, byte channel) {
+	assert(channel < ARRAYSIZE(_effects));
+	const Common::String archive = Common::String::format("DATAACA%u.000", _chapter);
+	play(archive.c_str(), sample, 6000, true, Audio::FLAG_UNSIGNED,
+		Audio::Mixer::kSpeechSoundType, _effects[channel], Audio::Mixer::kMaxChannelVolume, false, 16000);
+}
+
 void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop) {
 	assert(channel < ARRAYSIZE(_effects));
 	// Museum effects use unsigned 8-bit PCM (native 0x43ae40).

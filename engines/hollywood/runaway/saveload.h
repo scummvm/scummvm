@@ -159,6 +159,7 @@ struct RunawaySaveState {
 		byte movieFanKnown = 0;
 		byte trailerVisited = 0, trailerDoor = 0, trailerDoorTried = 0, bankBrochureTaken = 0;
 		byte trailerWarnings = 0, trailerInteriorVisited = 0;
+		byte ginaVisited = 0, ginaMediumDiscussed = 0;
 	} finale;
 
 	struct FinaleItems {

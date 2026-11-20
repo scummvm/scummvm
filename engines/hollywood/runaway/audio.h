@@ -37,6 +37,7 @@ public:
 	void playMusicEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
 	void setMusicVolume(byte volume);
 	uint32 playSpeech(uint16 sample, bool global = false);
+	void playBackgroundSpeech(uint16 sample, byte channel);
 	void playEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
 	void playFootstep(byte surface, byte variant, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void playPointer();
