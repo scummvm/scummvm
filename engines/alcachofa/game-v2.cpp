@@ -262,7 +262,7 @@ public:
 			return hasChanges ? u32String.encode() : alternativeAnimationName(path, variant + 1);
 		} else if (variant == 2 || variant == 3) {
 			// For the switch filesystem we have to work even harder to restore UTF8 (both upper- and lowercase)
-			const char or = variant == 3 ? 0x20 : 0;
+			const char orMask = variant == 3 ? 0x20 : 0;
 			char *tempStart = new char[path.size() * 2];
 			char *tempPtr = tempStart;
 			for (uint i = 0; i < path.size(); i++) {
@@ -274,7 +274,7 @@ public:
 					case 0xD1:
 					case 0xC9:
 						*tempPtr++ = 0xC3;
-						*tempPtr++ = path[i] & ~0x40 | or;
+						*tempPtr++ = path[i] & ~0x40 | orMask;
 						break;
 					default:
 						*tempPtr++ = path[i];
