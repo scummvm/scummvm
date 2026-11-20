@@ -342,6 +342,14 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(finale.ginaVisitPending, 18);
 	s.syncAsByte(finale.gangstersMet, 19);
 	s.syncAsByte(finale.gangsterBag, 19);
+	s.syncAsByte(finale.scalpelNeeded, 20);
+	s.syncAsByte(finale.streetVisited, 20);
+	s.syncAsByte(finale.sheriffThanked, 20);
+	s.syncAsByte(finale.sushiVisited, 20);
+	s.syncAsByte(finale.bankResearch, 20);
+	s.syncAsByte(finale.voicePlanPending, 20);
+	s.syncAsByte(finale.voiceEditing, 20);
+	s.syncAsByte(finale.departure, 20);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -504,6 +512,10 @@ bool RunawaySaveState::valid() const {
 			finale.ginaVisitPending > 1 || finale.gangstersMet > 1 || finale.gangsterBag > 3) {
 		return false;
 	}
+	if (finale.scalpelNeeded > 1 || finale.streetVisited > 1 || finale.sheriffThanked > 1 || finale.sushiVisited > 1 ||
+			finale.bankResearch > 3 || finale.voicePlanPending > 1 || finale.voiceEditing > 2 || finale.departure > 2) {
+		return false;
+	}
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
 				items[i] > (chapter() == 6 ? 21 : chapter() == 5 ? 16 : chapter() == 4 ? 32 : chapter() == 3 ? 26 : 19))
@@ -518,7 +530,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 19)
+	if (version < 1 || version > 20)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -530,9 +542,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(19);
+	stream.writeUint16LE(20);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(19);
+	s.setVersion(20);
 	sync(s);
 	return !s.err();
 }

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/util.h"
 #include "hollywood/runaway/scene.h"
 
 namespace Hollywood {
@@ -82,6 +83,29 @@ bool RunawayRoomScene::sayFinaleInventory(const RunawayInventory::Reply &reply) 
 		return true;
 	}
 	return false;
+}
+
+void RunawayRoomScene::resumeFinaleJailAudio(bool entering) {
+	_audio.stopEffect(2);
+	if (entering || !_audio.musicPlaying()) {
+		_audio.playMusic(18, false);
+	}
+	_audio.setMusicVolume(191);
+	_nextMusic = 0;
+}
+
+void RunawayRoomScene::updateFinaleJailAudio() {
+	if (!_audio.musicPlaying()) {
+		if (!_nextMusic) {
+			static const uint delays[] = {0, 60000, 30000, 15000};
+			_nextMusic = _now + delays[_random.getRandomNumber(ARRAYSIZE(delays) - 1)];
+		}
+		if ((int32)(_now - _nextMusic) >= 0) {
+			_audio.playMusic(18, false);
+			_audio.setMusicVolume(191);
+			_nextMusic = 0;
+		}
+	}
 }
 
 } // End of namespace Hollywood

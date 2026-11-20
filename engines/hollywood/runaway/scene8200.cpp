@@ -171,26 +171,11 @@ void Scene8200::runCustomEntrySequence() {
 }
 
 void Scene8200::resumeAmbientAudio(bool entering) {
-	_audio.stopEffect(2);
-	if (entering || !_audio.musicPlaying()) {
-		_audio.playMusic(18, false);
-	}
-	_audio.setMusicVolume(191);
-	_nextMusic = 0;
+	resumeFinaleJailAudio(entering);
 }
 
 void Scene8200::advanceCustomGameplayLoop(uint32 delta) {
-	if (!_audio.musicPlaying()) {
-		if (!_nextMusic) {
-			static const uint delays[] = {0, 60000, 30000, 15000};
-			_nextMusic = _now + delays[_random.getRandomNumber(ARRAYSIZE(delays) - 1)];
-		}
-		if ((int32)(_now - _nextMusic) >= 0) {
-			_audio.playMusic(18, false);
-			_audio.setMusicVolume(191);
-			_nextMusic = 0;
-		}
-	}
+	updateFinaleJailAudio();
 	if (_tauntSpeaker && _tauntSpeech.finished(_now)) {
 		++_tauntLine;
 		if (_tauntLine < MAX<uint>(1, _tauntCue.continuationCount)) {

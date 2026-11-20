@@ -144,6 +144,9 @@ struct RunawaySaveState {
 		byte oscarAway = 0, gangsters = 0, trailerFound = 0, moneyFound = 0, nunsHabit = 0;
 		byte recordingPlan = 0, recordings = 0, ginaUpdates = 0, ginaVisitPending = 0;
 		byte gangstersMet = 0, gangsterBag = 0; // Bag: absent, present, examined, taken.
+		byte scalpelNeeded = 0, streetVisited = 0, sheriffThanked = 0, sushiVisited = 0;
+		byte bankResearch = 0; // Not started, requested, Brian went away, results ready.
+		byte voicePlanPending = 0, voiceEditing = 0, departure = 0;
 	} finale;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
