@@ -188,6 +188,7 @@ protected:
 	bool drawingRoomAnimation() const { return _roomAction && !_actionFrames.empty() && (_actionHoldSpeech || !speaking()) && !_walkPath.active(); }
 	void updateRoomAnimation();
 	virtual float actorHeight() const { return 455; }
+	virtual float actorWalkSpeed() const { return 0.18f * actorHeight() / 455; }
 	virtual const RunawayHotspot *hotspot(byte id) const;
 	virtual Common::U32String hotspotName(byte id) const;
 	virtual bool isValidHotspot(byte id) const { return hotspot(id) != nullptr; }

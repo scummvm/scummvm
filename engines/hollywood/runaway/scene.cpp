@@ -630,7 +630,7 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 		return;
 	}
 	if (_walkPath.active() && !speaking()) {
-		_walkPath.advance(elapsed * 0.18f * actorHeight() / 455, _position, _facing);
+		_walkPath.advance(elapsed * actorWalkSpeed(), _position, _facing);
 		_walkElapsed += elapsed;
 		if (_game == kRunawayFullGame && (!_lastFootstep || _walkElapsed - _lastFootstep >= 360)) {
 			const byte surface = _maps[1280 + _mask[_position.y * _background.w + _position.x]];
