@@ -568,7 +568,7 @@ Common::Error NancyEngine::run() {
 		if (shouldQuit()) {
 #ifdef ENABLE_NANCY_V4
 			if (State::Scene::hasInstance() && _gameFlow.curState == NancyState::kScene) {
-				NancySceneState.saveProfileOnQuit();
+				NancySceneState.runSceneEndScript();
 			}
 #endif
 

@@ -82,9 +82,6 @@ int16 checkInventoryItem(lua_State *L, int index);
 // Player, Scene, Sound, Cursor...
 void registerGameAPI(lua_State *L);
 
-// Lights, Camera, Curses: what Save:Data(name, text) does, for the engine
-void saveDataString(const Common::String &name, const Common::String &text);
-
 // Flags go by name. Both return false when there is no flag of that name.
 bool setFlagByName(const Common::String &name, bool value);
 bool getFlagByName(const Common::String &name, bool &value);

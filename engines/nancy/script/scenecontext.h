@@ -120,6 +120,11 @@ public:
 	// records get paused or go on at the start of the next frame.
 	void requestStreamPause(bool isPaused) { _streamPauseRequest = isPaused ? kRequestPause : kRequestResume; }
 
+	// Whether the stream is paused, or is about to be
+	bool isPausedByScript() const {
+		return _streamPauseRequest == kRequestNone ? _isStreamPausedByScript : _streamPauseRequest == kRequestPause;
+	}
+
 #ifdef ENABLE_NANCY_V5
 	// Nancy26: the stream of the scene was put at another place among the
 	// others, so everything it draws goes elsewhere

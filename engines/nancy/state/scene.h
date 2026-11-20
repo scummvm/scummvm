@@ -380,9 +380,9 @@ public:
 	// Nancy19: the scripts of the UI stream have made the panels
 	void onScriptedUILoaded();
 
-	// Lights, Camera, Curses saves the profile being played when the game is
-	// left, if the player was playing
-	void saveProfileOnQuit();
+	// Lights, Camera, Curses: the script that ends a scene of the main stream,
+	// which saves the profile being played. It also runs when the game is left.
+	void runSceneEndScript();
 
 	// Nancy19: hands a message a script sent to the scenes it is for, of the main
 	// stream and of the others. Returns false when there is none.

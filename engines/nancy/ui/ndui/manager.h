@@ -91,6 +91,7 @@ public:
 	~Manager();
 
 	Request takeRequest();
+	const Request &getRequest() const { return _request; }
 
 	// Nancy18 scenes save and load games by name, which is how it does second chances
 	void requestSave(const Common::String &name);
