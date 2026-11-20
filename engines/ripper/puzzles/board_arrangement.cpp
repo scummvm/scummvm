@@ -160,15 +160,15 @@ void BoardArrangementPuzzle::drawFrame(byte *screen, uint pitch,
 		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
 
-void BoardArrangementPuzzle::render() const {
+bool BoardArrangementPuzzle::render() const {
 	if (!_boardDisplay.restorePixels())
-		return;
+		return false;
 
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
 			g_system->unlockScreen();
-		return;
+		return false;
 	}
 	byte *pixels = (byte *)screen->getPixels();
 	const int previewPiece = _draggedPiece >= 0 ? _draggedPiece : _hoveredPiece;
@@ -190,6 +190,7 @@ void BoardArrangementPuzzle::render() const {
 	g_system->unlockScreen();
 	setIndexedPaletteIfChanged(_boardDisplay.palette().data());
 	presentScreen();
+	return true;
 }
 
 int BoardArrangementPuzzle::findPiece(const Common::Point &point,
@@ -258,14 +259,14 @@ void BoardArrangementPuzzle::beginDrag(uint piece, int zIndex) {
 		piece, zIndex, _dragOrigin.x, _dragOrigin.y, center.x, center.y);
 }
 
-void BoardArrangementPuzzle::updateDrag(const Common::Point &point) {
-	if (_draggedPiece < 0)
-		return;
+bool BoardArrangementPuzzle::updateDrag(const Common::Point &point) {
+	const Common::Point previousPosition = _dragPosition;
 	const BitmapAssetFrame &frame = _smallPieces[_draggedPiece];
 	_dragPosition.x = CLIP<int>(point.x - frame.width / 2,
 		kDragLeft, kDragRight - frame.width);
 	_dragPosition.y = CLIP<int>(point.y - frame.height / 2,
 		kDragTop, kDragBottom - frame.height);
+	return _dragPosition != previousPosition;
 }
 
 bool BoardArrangementPuzzle::isInvalidDrop(const Common::Point &position,
@@ -391,7 +392,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 
 	Result result = _engine->getMilestones()->isSet(completionFlag) ?
 		kSolved : kExited;
-	render();
+	bool redrawPending = !render();
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
 		if (!serviceEngineEvents())
@@ -410,7 +411,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 						kHelpSelectionTable);
 					if (!_engine->getModalDialog()->run(kHelpSelectionTable))
 						warning("Ripper: board arrangement modal help failed");
-					render();
+					redrawPending = !render();
 					continue;
 				}
 				if (command == kScreenshotCommand || command == 0x10)
@@ -421,10 +422,9 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 			break;
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
-		bool redraw = updateCursor(mouse.position);
+		redrawPending |= updateCursor(mouse.position);
 		if (_draggedPiece >= 0) {
-			updateDrag(mouse.position);
-			redraw = true;
+			redrawPending |= updateDrag(mouse.position);
 			if ((mouse.released & kMouseButtonLeft) != 0 ||
 					(mouse.buttons & kMouseButtonLeft) == 0) {
 				const int droppedPiece = _draggedPiece;
@@ -441,20 +441,20 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 					droppedPiece, arrangementSolved ? "SOLVED" : "NOT_SOLVED",
 					completionFlag,
 					_engine->getMilestones()->isSet(completionFlag));
-				redraw = true;
+				redrawPending = true;
 			}
 		} else if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			int zIndex = -1;
 			const int piece = findPiece(mouse.position, &zIndex);
 			if (piece >= 0) {
 				beginDrag(piece, zIndex);
-				redraw = true;
+				redrawPending = true;
 			} else if (isExitPoint(mouse.position)) {
 				active = false;
 			}
 		}
-		if (redraw)
-			render();
+		if (redrawPending)
+			redrawPending = !render();
 		else {
 			// Present unchanged frames too so the software cursor follows idle input ticks.
 			presentScreen();
