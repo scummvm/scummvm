@@ -31,9 +31,12 @@ class Scene6240 : public RunawayRoomScene {
 public:
 	Scene6240(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 
+protected:
+	bool loadCustomResources() override;
+	RunawayAnimation _plantAnimation;
+
 private:
 	bool usesAlternateActor() const override;
-	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
 	void runCustomEntrySequence() override;
@@ -47,7 +50,6 @@ private:
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void handleAnimationFrameHook() override;
 
-	RunawayAnimation _plantAnimation;
 	Common::Array<byte> _plantPatches[3];
 };
 

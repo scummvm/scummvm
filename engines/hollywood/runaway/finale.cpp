@@ -73,6 +73,10 @@ bool RunawayRoomScene::sayFinaleInventory(const RunawayInventory::Reply &reply) 
 	if (reply.cue == 200 || reply.cue == 256) {
 		return sayHopiInventory(reply);
 	}
+	if (reply.cue == 253 && _finale.scalpelNeeded) {
+		say(302, 0, true);
+		return true;
+	}
 	if (reply.cue == 306) {
 		say(306, 0, true);
 		say(306, 1, true);

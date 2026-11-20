@@ -149,6 +149,8 @@ struct RunawaySaveState {
 		byte voicePlanPending = 0, voiceEditing = 0, departure = 0;
 		byte rutgerMet = 0, rutgerTranceDiscussed = 0, rutgerBrewDiscussed = 0, rutgerPlantHint = 0;
 		byte rutgerBrew = 0; // Not started, brewing, consumed, discussed afterward.
+		byte saloonVisited = 0;
+		byte locomotiveBadge = 0; // In the boiler, on the ground, examined, taken.
 	} finale;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;

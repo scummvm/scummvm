@@ -355,6 +355,8 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(finale.rutgerBrewDiscussed, 21);
 	s.syncAsByte(finale.rutgerPlantHint, 21);
 	s.syncAsByte(finale.rutgerBrew, 21);
+	s.syncAsByte(finale.saloonVisited, 22);
+	s.syncAsByte(finale.locomotiveBadge, 22);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -522,7 +524,8 @@ bool RunawaySaveState::valid() const {
 		return false;
 	}
 	if (finale.rutgerMet > 1 || finale.rutgerTranceDiscussed > 1 || finale.rutgerBrewDiscussed > 1 ||
-			finale.rutgerPlantHint > 1 || finale.rutgerBrew > 3) {
+			finale.rutgerPlantHint > 1 || finale.rutgerBrew > 3 || finale.saloonVisited > 1 ||
+			finale.locomotiveBadge > 3) {
 		return false;
 	}
 	for (uint i = 0; i < itemCount; ++i) {
@@ -539,7 +542,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 21)
+	if (version < 1 || version > 22)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -551,9 +554,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(21);
+	stream.writeUint16LE(22);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(21);
+	s.setVersion(22);
 	sync(s);
 	return !s.err();
 }
