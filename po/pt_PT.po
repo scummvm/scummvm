@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-18 01:31+0000\n"
+"POT-Creation-Date: 2026-11-20 01:49+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -1124,7 +1124,7 @@ msgid "GUI"
 msgstr "Interface"
 
 #. I18N: Action in In Cold Blood
-#: gui/gui-manager.cpp:164 engines/harold/metaengine.cpp:57
+#: gui/gui-manager.cpp:164 engines/harold/metaengine.cpp:70
 #: engines/hpl1/metaengine.cpp:91 engines/icb/icb.cpp:95
 #: engines/icb/icb.cpp:173 engines/lab/metaengine.cpp:160
 #: engines/macs2/metaengine.cpp:46 engines/mohawk/myst.cpp:572
@@ -2779,7 +2779,7 @@ msgstr ""
 
 #: gui/options.cpp:2977 engines/engine.cpp:651
 #: engines/access/metaengine.cpp:325 engines/drascula/metaengine.cpp:255
-#: engines/harold/metaengine.cpp:76 engines/queen/metaengine.cpp:269
+#: engines/harold/metaengine.cpp:89 engines/queen/metaengine.cpp:269
 #: engines/sherlock/metaengine.cpp:410 engines/ultima/nuvie/metaengine.cpp:71
 msgid "Move"
 msgstr "Mover"
@@ -3171,9 +3171,53 @@ msgstr ""
 "Pode alterar esta opção mais tarde no separador\n"
 "Vários da janela de Opções."
 
-#: gui/widget.cpp:446 gui/widget.cpp:448 gui/widget.cpp:453 gui/widget.cpp:455
+#. I18N: Spoken by text-to-speech to name an unlabelled button
+#: gui/widget.cpp:492
+#, fuzzy
+msgid "button"
+msgstr "Botão direito do rato"
+
+#: gui/widget.cpp:521 gui/widget.cpp:523 gui/widget.cpp:528 gui/widget.cpp:530
 msgid "Clear value"
 msgstr "Apagar valor"
+
+#. I18N: Spoken by text-to-speech to name an unlabelled checkbox
+#: gui/widget.cpp:826
+msgid "checkbox"
+msgstr ""
+
+#. I18N: Spoken by text-to-speech for the state of a checkbox
+#: gui/widget.cpp:828
+msgid "checked"
+msgstr ""
+
+#: gui/widget.cpp:828
+msgid "not checked"
+msgstr ""
+
+#. I18N: Spoken by text-to-speech to name an unlabelled radio button
+#: gui/widget.cpp:909
+#, fuzzy
+msgid "radio button"
+msgstr "Botão direito do rato"
+
+#. I18N: Spoken by text-to-speech for the state of a radio button
+#: gui/widget.cpp:911
+#, fuzzy
+#| msgid "Select"
+msgid "selected"
+msgstr "Selecionar"
+
+#: gui/widget.cpp:911
+#, fuzzy
+#| msgid "Start selected game"
+msgid "not selected"
+msgstr "Iniciar jogo seleccionado"
+
+#. I18N: Spoken by text-to-speech to name an unlabelled slider
+#: gui/widget.cpp:998
+msgid "slider"
+msgstr ""
 
 #: gui/widgets/grid.cpp:337
 msgid "Play"
@@ -4086,7 +4130,7 @@ msgid "Pause"
 msgstr "Pausa"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:592 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:741 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -6471,7 +6515,7 @@ msgstr ""
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:603
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:752
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -7371,7 +7415,7 @@ msgstr ""
 #: engines/bagel/metaengine.cpp:59 engines/bagel/metaengine.cpp:65
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:117 engines/got/metaengine.cpp:78
-#: engines/harold/metaengine.cpp:63 engines/hugo/metaengine.cpp:197
+#: engines/harold/metaengine.cpp:76 engines/hugo/metaengine.cpp:197
 #: engines/igor/metaengine.cpp:116 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:282 engines/mm/mm1/metaengine.cpp:42
 #: engines/mm/mm1/metaengine.cpp:48 engines/mm/mm1/metaengine.cpp:70
@@ -10629,51 +10673,67 @@ msgstr "ID de jogo não suportado"
 msgid "The Troy minigame is not supported yet. Skipping"
 msgstr "ID de jogo não suportado"
 
-#: engines/harold/metaengine.cpp:54
+#: engines/harold/bcb/options.cpp:58 engines/macs2/dialogs.cpp:36
+#, fuzzy
+#| msgid "Transitions:"
+msgid "Translation:"
+msgstr "Transições:"
+
+#: engines/harold/bcb/options.cpp:59 engines/harold/bcb/options.cpp:65
+msgid ""
+"Select a text translation package. Original language is used when no package "
+"is selected."
+msgstr ""
+
+#: engines/harold/bcb/options.cpp:68 engines/macs2/dialogs.cpp:39
+msgid "Original"
+msgstr ""
+
+#: engines/harold/metaengine.cpp:67
 msgid "J.B. Harold: Blue Chicago Blues"
 msgstr ""
 
-#: engines/harold/metaengine.cpp:70
+#: engines/harold/metaengine.cpp:83
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Skip / Advance"
 msgstr "Ignorar frase"
 
-#: engines/harold/metaengine.cpp:86
+#: engines/harold/metaengine.cpp:99
 #, fuzzy
 msgid "Choice 1"
 msgstr "Selecione um tema"
 
-#: engines/harold/metaengine.cpp:86
+#: engines/harold/metaengine.cpp:99
 #, fuzzy
 msgid "Choice 2"
 msgstr "Selecione um tema"
 
-#: engines/harold/metaengine.cpp:86
+#: engines/harold/metaengine.cpp:99
 #, fuzzy
 msgid "Choice 3"
 msgstr "Selecione um tema"
 
-#: engines/harold/metaengine.cpp:87
+#: engines/harold/metaengine.cpp:100
 #, fuzzy
 msgid "Choice 4"
 msgstr "Selecione um tema"
 
-#: engines/harold/metaengine.cpp:87
+#: engines/harold/metaengine.cpp:100
 #, fuzzy
 msgid "Choice 5"
 msgstr "Selecione um tema"
 
-#: engines/harold/metaengine.cpp:87
+#: engines/harold/metaengine.cpp:100
 #, fuzzy
 msgid "Choice 6"
 msgstr "Selecione um tema"
 
-#: engines/harold/metaengine.cpp:88
+#: engines/harold/metaengine.cpp:101
 msgid "Choice 7"
 msgstr ""
 
-#: engines/harold/metaengine.cpp:88
+#: engines/harold/metaengine.cpp:101
 msgid "Choice 8"
 msgstr ""
 
@@ -10772,48 +10832,48 @@ msgid ""
 "release"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:560
+#: engines/hollywood/runaway/engine.cpp:709
 #, fuzzy
 msgid "Perform action"
 msgstr "Examinar"
 
-#: engines/hollywood/runaway/engine.cpp:566
-#: engines/hollywood/runaway/engine.cpp:609
+#: engines/hollywood/runaway/engine.cpp:715
+#: engines/hollywood/runaway/engine.cpp:758
 #, fuzzy
 #| msgid "Next action"
 msgid "Next action / Cancel"
 msgstr "Ação seguinte"
 
-#: engines/hollywood/runaway/engine.cpp:572 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:721 engines/sherlock/metaengine.cpp:578
 #, fuzzy
 #| msgid "Move left"
 msgid "Scroll left"
 msgstr "Mover para a esquerda"
 
-#: engines/hollywood/runaway/engine.cpp:577 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:726 engines/sherlock/metaengine.cpp:584
 #, fuzzy
 #| msgid "Move right"
 msgid "Scroll right"
 msgstr "Mover para a direita"
 
-#: engines/hollywood/runaway/engine.cpp:582
+#: engines/hollywood/runaway/engine.cpp:731
 #, fuzzy
 msgid "Scroll to the left edge"
 msgstr "Deslizar para cima"
 
-#: engines/hollywood/runaway/engine.cpp:587
+#: engines/hollywood/runaway/engine.cpp:736
 #, fuzzy
 #| msgid "Move left"
 msgid "Scroll to the right edge"
 msgstr "Mover para a esquerda"
 
-#: engines/hollywood/runaway/engine.cpp:598
+#: engines/hollywood/runaway/engine.cpp:747
 #, fuzzy
 #| msgid "Change game options"
 msgid "Cancel action / Menu"
 msgstr "Alterar opções do jogo"
 
-#: engines/hollywood/runaway/engine.cpp:614
+#: engines/hollywood/runaway/engine.cpp:763
 #, fuzzy
 #| msgid "Skip line"
 msgid "Skip intro / Skip line"
@@ -12059,16 +12119,6 @@ msgstr "Selecione um tema"
 msgid "Quit the game?"
 msgstr "Sair do Jogo"
 
-#: engines/macs2/dialogs.cpp:36
-#, fuzzy
-#| msgid "Transitions:"
-msgid "Translation:"
-msgstr "Transições:"
-
-#: engines/macs2/dialogs.cpp:39
-msgid "Original"
-msgstr ""
-
 #: engines/macs2/dialogs.cpp:52
 #, fuzzy
 #| msgid "Use TTS to read the subtitles (if TTS is available)"
@@ -12142,9 +12192,9 @@ msgstr "~M~enu principal"
 msgid "Help / map"
 msgstr ""
 
-#: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
+#: engines/made/detection_tables.h:142
 #, fuzzy
-msgid "The game is using unsupported engine"
+msgid "The game is using an unsupported engine"
 msgstr "ID de jogo não suportado"
 
 #: engines/made/metaengine.cpp:38

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-18 01:31+0000\n"
+"POT-Creation-Date: 2026-11-20 01:49+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -1106,7 +1106,7 @@ msgid "GUI"
 msgstr "Kezelőfelület"
 
 #. I18N: Action in In Cold Blood
-#: gui/gui-manager.cpp:164 engines/harold/metaengine.cpp:57
+#: gui/gui-manager.cpp:164 engines/harold/metaengine.cpp:70
 #: engines/hpl1/metaengine.cpp:91 engines/icb/icb.cpp:95
 #: engines/icb/icb.cpp:173 engines/lab/metaengine.cpp:160
 #: engines/macs2/metaengine.cpp:46 engines/mohawk/myst.cpp:572
@@ -2850,7 +2850,7 @@ msgstr ""
 
 #: gui/options.cpp:2977 engines/engine.cpp:651
 #: engines/access/metaengine.cpp:325 engines/drascula/metaengine.cpp:255
-#: engines/harold/metaengine.cpp:76 engines/queen/metaengine.cpp:269
+#: engines/harold/metaengine.cpp:89 engines/queen/metaengine.cpp:269
 #: engines/sherlock/metaengine.cpp:410 engines/ultima/nuvie/metaengine.cpp:71
 msgid "Move"
 msgstr "Mozgás"
@@ -3239,9 +3239,55 @@ msgstr ""
 "Ezt a beállítást később módosíthatja az Egyéb lapon\n"
 "az Opciók párbeszédablakban."
 
-#: gui/widget.cpp:446 gui/widget.cpp:448 gui/widget.cpp:453 gui/widget.cpp:455
+#. I18N: Spoken by text-to-speech to name an unlabelled button
+#: gui/widget.cpp:492
+#, fuzzy
+#| msgid "Katton"
+msgid "button"
+msgstr "Katton"
+
+#: gui/widget.cpp:521 gui/widget.cpp:523 gui/widget.cpp:528 gui/widget.cpp:530
 msgid "Clear value"
 msgstr "Érték törlése"
+
+#. I18N: Spoken by text-to-speech to name an unlabelled checkbox
+#: gui/widget.cpp:826
+msgid "checkbox"
+msgstr ""
+
+#. I18N: Spoken by text-to-speech for the state of a checkbox
+#: gui/widget.cpp:828
+msgid "checked"
+msgstr ""
+
+#: gui/widget.cpp:828
+msgid "not checked"
+msgstr ""
+
+#. I18N: Spoken by text-to-speech to name an unlabelled radio button
+#: gui/widget.cpp:909
+#, fuzzy
+#| msgid "Directional button:"
+msgid "radio button"
+msgstr "Irányválasztó gomb:"
+
+#. I18N: Spoken by text-to-speech for the state of a radio button
+#: gui/widget.cpp:911
+#, fuzzy
+#| msgid "Select"
+msgid "selected"
+msgstr "Megtekintés gomb"
+
+#: gui/widget.cpp:911
+#, fuzzy
+#| msgid "Start selected game"
+msgid "not selected"
+msgstr "A választott játék indítása"
+
+#. I18N: Spoken by text-to-speech to name an unlabelled slider
+#: gui/widget.cpp:998
+msgid "slider"
+msgstr ""
 
 #: gui/widgets/grid.cpp:337
 msgid "Play"
@@ -4193,7 +4239,7 @@ msgid "Pause"
 msgstr "Szünet"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:592 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:741 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -6974,7 +7020,7 @@ msgstr "Tesz"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:603
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:752
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -7893,7 +7939,7 @@ msgstr "Soldier 714 Szem Csalás"
 #: engines/bagel/metaengine.cpp:59 engines/bagel/metaengine.cpp:65
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:117 engines/got/metaengine.cpp:78
-#: engines/harold/metaengine.cpp:63 engines/hugo/metaengine.cpp:197
+#: engines/harold/metaengine.cpp:76 engines/hugo/metaengine.cpp:197
 #: engines/igor/metaengine.cpp:116 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:282 engines/mm/mm1/metaengine.cpp:42
 #: engines/mm/mm1/metaengine.cpp:48 engines/mm/mm1/metaengine.cpp:70
@@ -11207,57 +11253,75 @@ msgstr "A Medúza minijáték még nem támogatott. Kihagyás"
 msgid "The Troy minigame is not supported yet. Skipping"
 msgstr "A Trója minijáték még nem támogatott. Kihagyás"
 
-#: engines/harold/metaengine.cpp:54
+#: engines/harold/bcb/options.cpp:58 engines/macs2/dialogs.cpp:36
+#, fuzzy
+#| msgid "Transitions:"
+msgid "Translation:"
+msgstr "Átmenetek:"
+
+#: engines/harold/bcb/options.cpp:59 engines/harold/bcb/options.cpp:65
+msgid ""
+"Select a text translation package. Original language is used when no package "
+"is selected."
+msgstr ""
+
+#: engines/harold/bcb/options.cpp:68 engines/macs2/dialogs.cpp:39
+#, fuzzy
+#| msgid "<original>"
+msgid "Original"
+msgstr "<eredeti>"
+
+#: engines/harold/metaengine.cpp:67
 msgid "J.B. Harold: Blue Chicago Blues"
 msgstr ""
 
-#: engines/harold/metaengine.cpp:70
+#: engines/harold/metaengine.cpp:83
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Skip / Advance"
 msgstr "Dialógus átugrása"
 
-#: engines/harold/metaengine.cpp:86
+#: engines/harold/metaengine.cpp:99
 #, fuzzy
 #| msgid "Select Choice 1"
 msgid "Choice 1"
 msgstr "1. döntés kiválasztása"
 
-#: engines/harold/metaengine.cpp:86
+#: engines/harold/metaengine.cpp:99
 #, fuzzy
 #| msgid "Select Choice 2"
 msgid "Choice 2"
 msgstr "2. döntés kiválasztása"
 
-#: engines/harold/metaengine.cpp:86
+#: engines/harold/metaengine.cpp:99
 #, fuzzy
 #| msgid "Select Choice 3"
 msgid "Choice 3"
 msgstr "3. döntés kiválasztása"
 
-#: engines/harold/metaengine.cpp:87
+#: engines/harold/metaengine.cpp:100
 #, fuzzy
 #| msgid "Select Choice 4"
 msgid "Choice 4"
 msgstr "4. döntés kiválasztása"
 
-#: engines/harold/metaengine.cpp:87
+#: engines/harold/metaengine.cpp:100
 #, fuzzy
 #| msgid "Select Choice 5"
 msgid "Choice 5"
 msgstr "5. döntés kiválasztása"
 
-#: engines/harold/metaengine.cpp:87
+#: engines/harold/metaengine.cpp:100
 #, fuzzy
 #| msgid "Select Choice 6"
 msgid "Choice 6"
 msgstr "6. döntés kiválasztása"
 
-#: engines/harold/metaengine.cpp:88
+#: engines/harold/metaengine.cpp:101
 msgid "Choice 7"
 msgstr ""
 
-#: engines/harold/metaengine.cpp:88
+#: engines/harold/metaengine.cpp:101
 msgid "Choice 8"
 msgstr ""
 
@@ -11359,50 +11423,50 @@ msgid ""
 "release"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:560
+#: engines/hollywood/runaway/engine.cpp:709
 #, fuzzy
 #| msgid "Look at"
 msgid "Perform action"
 msgstr "Megnézi"
 
-#: engines/hollywood/runaway/engine.cpp:566
-#: engines/hollywood/runaway/engine.cpp:609
+#: engines/hollywood/runaway/engine.cpp:715
+#: engines/hollywood/runaway/engine.cpp:758
 #, fuzzy
 #| msgid "Next action"
 msgid "Next action / Cancel"
 msgstr "Következő művelet"
 
-#: engines/hollywood/runaway/engine.cpp:572 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:721 engines/sherlock/metaengine.cpp:578
 #, fuzzy
 #| msgid "Move left"
 msgid "Scroll left"
 msgstr "Mozgás balra"
 
-#: engines/hollywood/runaway/engine.cpp:577 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:726 engines/sherlock/metaengine.cpp:584
 #, fuzzy
 #| msgid "Move right"
 msgid "Scroll right"
 msgstr "Mozgás jobbra"
 
-#: engines/hollywood/runaway/engine.cpp:582
+#: engines/hollywood/runaway/engine.cpp:731
 #, fuzzy
 #| msgid "Scroll list up"
 msgid "Scroll to the left edge"
 msgstr "Lista felfelé görgetés"
 
-#: engines/hollywood/runaway/engine.cpp:587
+#: engines/hollywood/runaway/engine.cpp:736
 #, fuzzy
 #| msgid "Move to bottom"
 msgid "Scroll to the right edge"
 msgstr "Ugrás az aljára"
 
-#: engines/hollywood/runaway/engine.cpp:598
+#: engines/hollywood/runaway/engine.cpp:747
 #, fuzzy
 #| msgid "Change game options"
 msgid "Cancel action / Menu"
 msgstr "Játék opciók megváltoztatása"
 
-#: engines/hollywood/runaway/engine.cpp:614
+#: engines/hollywood/runaway/engine.cpp:763
 #, fuzzy
 #| msgid "Skip intro/Exit map or inventory"
 msgid "Skip intro / Skip line"
@@ -12668,18 +12732,6 @@ msgstr "Index kiválasztása"
 msgid "Quit the game?"
 msgstr "Kilépés játékból"
 
-#: engines/macs2/dialogs.cpp:36
-#, fuzzy
-#| msgid "Transitions:"
-msgid "Translation:"
-msgstr "Átmenetek:"
-
-#: engines/macs2/dialogs.cpp:39
-#, fuzzy
-#| msgid "<original>"
-msgid "Original"
-msgstr "<eredeti>"
-
 #: engines/macs2/dialogs.cpp:52
 #, fuzzy
 #| msgid "Use TTS to read the subtitles (if TTS is available)"
@@ -12754,8 +12806,10 @@ msgstr "Opciók menü megnyitása"
 msgid "Help / map"
 msgstr ""
 
-#: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
-msgid "The game is using unsupported engine"
+#: engines/made/detection_tables.h:142
+#, fuzzy
+#| msgid "The game is using unsupported engine"
+msgid "The game is using an unsupported engine"
 msgstr "A játék nem támogatott motort használ"
 
 #: engines/made/metaengine.cpp:38
