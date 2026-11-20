@@ -2349,6 +2349,7 @@ void Scene::load(bool fromSaveFile) {
 // Nancy19 scenes are Lua scripts. A script makes the records of its scene when
 // it is run, the first of which names the background.
 void Scene::loadScriptedScene(bool fromSaveFile) {
+	const bool isUINew = fromSaveFile || !_scriptScene;
 	if (!fromSaveFile) {
 		runSceneEndScript();
 	}
@@ -2435,6 +2436,15 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 	if (_ndui) {
 		_ndui->onSceneChange(_sceneState.currentScene.sceneID);
 		_ndui->requestAutosave();
+
+		// Lights, Camera, Curses keeps its UI when a profile gets loaded or a new
+		// game starts, and the OnSceneEnd script of the main menu sets the score,
+		// which otherwise only shows once it changes. Here the UI is made anew.
+		if (isUINew && g_nancy->getGameType() == kGameTypeNancyDossier1) {
+			ScriptValueData *values = (ScriptValueData *)getPuzzleData(ScriptValueData::getTag());
+			const int32 score = values ? values->values.getValOrDefault("uiScore", 0) : 0;
+			_ndui->takeAction(UI::NDUI::kActionSetText, "TotalScore", Common::String::format("%d", score));
+		}
 	}
 
 	_streams.changeEnvironment(summary->getEnvironment());
