@@ -323,6 +323,10 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(hopi.keyholeBlockedKnown, 16);
 	s.syncAsByte(hopi.bushSeen, 16);
 	s.syncAsByte(hopi.cryptDoor, 16);
+	s.syncAsByte(hopi.statueVisited, 17);
+	s.syncAsByte(hopi.tomahawk, 17);
+	s.syncAsByte(hopi.leftCrossSeen, 17);
+	s.syncAsByte(hopi.rightCrossSeen, 17);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -476,6 +480,9 @@ bool RunawaySaveState::valid() const {
 			hopi.bushSeen > 1 || hopi.cryptDoor > 3) {
 		return false;
 	}
+	if (hopi.statueVisited > 1 || hopi.tomahawk > 2 || hopi.leftCrossSeen > 1 || hopi.rightCrossSeen > 1) {
+		return false;
+	}
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
 				items[i] > (chapter() == 5 ? 16 : chapter() == 4 ? 32 : chapter() == 3 ? 26 : 19))
@@ -490,7 +497,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 16)
+	if (version < 1 || version > 17)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -502,9 +509,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(16);
+	stream.writeUint16LE(17);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(16);
+	s.setVersion(17);
 	sync(s);
 	return !s.err();
 }

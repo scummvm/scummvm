@@ -84,6 +84,8 @@ public:
 	bool load(Model model = kCabin);
 	bool loadChapter(byte chapter, bool alternate);
 	bool setFrame(uint facing, uint frame, int headFrame = -1);
+	bool loadAction(uint chunk, uint frames);
+	bool setActionFrame(uint frame);
 	static float perspectiveHeight(Common::Point position);
 	void draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
 		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps,
@@ -97,8 +99,10 @@ private:
 	uint _width = 345, _height = 518;
 	int _anchorX = 168, _anchorY = 434;
 	bool _museum = false;
+	bool decodeBodyFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end);
 	bool decodeFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end, bool head);
 	Common::Array<byte> _descriptors, _headDescriptors;
+	Common::Array<byte> _actionDescriptors, _actionBank;
 	Common::Array<byte> _banks[kFacings];
 	Common::Array<byte> _headBanks[kHeadFacings];
 	Common::Array<byte> _pixels, _opacity, _shadow;

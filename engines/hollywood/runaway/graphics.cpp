@@ -287,18 +287,7 @@ bool RunawayActor::setFrame(uint facing, uint frame, int headFrame) {
 	const byte *descriptor = _descriptors.data() + (facing * kFrames + frame) * 32;
 	const Common::Array<byte> &bank = _banks[facing];
 	const uint end = frame + 1 < kFrames ? READ_LE_UINT32(descriptor + 32) : bank.size();
-	const int left = _anchorX - (int)READ_LE_UINT32(descriptor + 16);
-	const int top = _anchorY - (int)READ_LE_UINT32(descriptor + 20);
-	const uint width = READ_LE_UINT32(descriptor + 24), height = READ_LE_UINT32(descriptor + 28);
-	if (left < 0 || top < 0 || width > _width || height > _height ||
-			left + width > _width || top + height > _height)
-		return false;
-	_bounds = Common::Rect(left, top, left + width, top + height);
-	memset(_pixels.data(), 0, _pixels.size());
-	memset(_opacity.data(), 0, _opacity.size());
-	memset(_shadow.data(), 0, _shadow.size());
-	_facing = _frame = _headFrame = -1;
-	if (!decodeFrame(bank, descriptor, end, false))
+	if (!decodeBodyFrame(bank, descriptor, end))
 		return false;
 	if (headFrame >= 0) {
 		// Native 0x428560 maps eight body directions onto six head banks and
@@ -321,6 +310,61 @@ bool RunawayActor::setFrame(uint facing, uint frame, int headFrame) {
 	_frame = frame;
 	_headFrame = headFrame;
 	return true;
+}
+
+bool RunawayActor::loadAction(uint chunk, uint frames) {
+	// RESOURCE.001 has 216 banks, each preceded by 100 frame descriptors.
+	// The size table counts only the sprite data after those descriptors.
+	Common::File file;
+	if (_loadedModel < 0 || _museum || chunk >= 216 || !frames || frames > 100 || !file.open("RESOURCE.001")) {
+		return false;
+	}
+	file.seek(chunk * 4);
+	const uint32 offset = file.readUint32LE();
+	file.seek((216 + chunk) * 4);
+	const uint32 size = file.readUint32LE();
+	if (!offset || !size || (uint64)offset + 3200 + size > (uint64)file.size()) {
+		return false;
+	}
+	_actionDescriptors.resize(frames * 32);
+	_actionBank.resize(size);
+	file.seek(offset);
+	if (file.read(_actionDescriptors.data(), _actionDescriptors.size()) != _actionDescriptors.size() ||
+			!file.seek(offset + 3200) || file.read(_actionBank.data(), size) != size) {
+		return false;
+	}
+	const int facing = _facing;
+	for (uint frame = 0; frame < frames; ++frame) {
+		if (!setActionFrame(frame)) {
+			return false;
+		}
+	}
+	return setFrame(facing, 0);
+}
+
+bool RunawayActor::setActionFrame(uint frame) {
+	if (frame >= _actionDescriptors.size() / 32) {
+		return false;
+	}
+	const byte *descriptor = _actionDescriptors.data() + frame * 32;
+	const uint end = (frame + 1) * 32 < _actionDescriptors.size() ? READ_LE_UINT32(descriptor + 32) : _actionBank.size();
+	return decodeBodyFrame(_actionBank, descriptor, end);
+}
+
+bool RunawayActor::decodeBodyFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end) {
+	const int left = _anchorX - (int)READ_LE_UINT32(descriptor + 16);
+	const int top = _anchorY - (int)READ_LE_UINT32(descriptor + 20);
+	const uint width = READ_LE_UINT32(descriptor + 24), height = READ_LE_UINT32(descriptor + 28);
+	if (left < 0 || top < 0 || width > _width || height > _height ||
+			left + width > _width || top + height > _height) {
+		return false;
+	}
+	_bounds = Common::Rect(left, top, left + width, top + height);
+	memset(_pixels.data(), 0, _pixels.size());
+	memset(_opacity.data(), 0, _opacity.size());
+	memset(_shadow.data(), 0, _shadow.size());
+	_facing = _frame = _headFrame = -1;
+	return decodeFrame(bank, descriptor, end, false);
 }
 
 bool RunawayActor::decodeFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end, bool head) {

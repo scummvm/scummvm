@@ -132,6 +132,7 @@ struct RunawaySaveState {
 		byte cryptVisited = 0;
 		byte canyonVisited = 0, cryptEntranceVisited = 0, keyholeBlockedKnown = 0, bushSeen = 0;
 		byte cryptDoor = 0; // Sand-blocked, cleared, open, sealed after visiting Wupuchim.
+		byte statueVisited = 0, tomahawk = 0, leftCrossSeen = 0, rightCrossSeen = 0;
 	} hopi;
 
 	struct HopiItems {

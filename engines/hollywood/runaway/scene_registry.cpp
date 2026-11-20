@@ -68,6 +68,7 @@
 #include "hollywood/runaway/scene7020.h"
 #include "hollywood/runaway/scene7030.h"
 #include "hollywood/runaway/scene7040.h"
+#include "hollywood/runaway/scene7050.h"
 
 namespace Hollywood {
 namespace {
@@ -131,7 +132,8 @@ const SceneDefinition kSceneDefinitions[] = {
 	{&kRunawayScene7010, createScene<Runaway::Scene7010>},
 	{&kRunawayScene7020, createScene<Runaway::Scene7020>},
 	{&kRunawayScene7030, createScene<Runaway::Scene7030>},
-	{&kRunawayScene7040, createScene<Runaway::Scene7040>}
+	{&kRunawayScene7040, createScene<Runaway::Scene7040>},
+	{&kRunawayScene7050, createScene<Runaway::Scene7050>}
 };
 
 } // End of anonymous namespace
