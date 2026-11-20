@@ -124,6 +124,13 @@ public:
 	int32 getLayer() const { return _layer; }
 	void setLayer(int32 layer);
 
+	// Nancy19 to Nancy20: the z of a record of the scripts, which tells apart the
+	// records the z order can't, e.g. the many farther than the background.
+	// Everything else is farther than all records of its z order.
+	static const double kNoExactZ;
+	double getExactZ() const { return _exactZ; }
+	void setExactZ(double z);
+
 	// Also moves the object in the draw order, so changing the z of a registered
 	// object takes effect without re-registering it
 	void setZOrder(uint16 z);
@@ -148,6 +155,7 @@ protected:
 	uint16 _z;
 	uint32 _tieOrder = 0;
 	int32 _layer = 0;
+	double _exactZ = kNoExactZ;
 	Common::Rect _drawnScreenPosition;
 	Common::Rect _previousScreenPosition;
 	Common::Rect _screenPosition;

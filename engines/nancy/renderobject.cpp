@@ -49,6 +49,18 @@ void RenderObject::setZOrder(uint16 z) {
 	g_nancy->_graphics->reorderObject(this);
 }
 
+const double RenderObject::kNoExactZ = -1e300;
+
+void RenderObject::setExactZ(double z) {
+	if (_exactZ == z) {
+		return;
+	}
+
+	_exactZ = z;
+	_needsRedraw = true;
+	g_nancy->_graphics->reorderObject(this);
+}
+
 void RenderObject::setLayer(int32 layer) {
 	if (_layer == layer) {
 		return;

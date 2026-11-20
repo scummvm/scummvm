@@ -241,6 +241,7 @@ void SceneStream::loadBackground(const Common::Path &videoFile) {
 #ifdef ENABLE_NANCY_V4
 	if (_scriptScene) {
 		_background->setLayer(Script::RecordGraphic::getScriptLayer(_scriptScene->getZOffset()));
+		_background->setExactZ(Script::RecordGraphic::getBackgroundExactZ());
 		_background->setZOrder(Script::RecordGraphic::getBackgroundZOrder(_scriptScene->getZOffset()));
 	}
 #endif

@@ -80,6 +80,7 @@ public:
 	static uint16 getScriptZOrder(double z, int32 zOffset);
 	static uint16 getBackgroundZOrder(int32 zOffset);
 	static int32 getScriptLayer(int32 zOffset);
+	static double getBackgroundExactZ();
 
 	// The highest z order of what the records draw
 	static const int kMaxScriptZOrder = 59000;

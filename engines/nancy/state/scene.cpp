@@ -2381,6 +2381,8 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 		_viewport.setZOrder(Script::RecordGraphic::getBackgroundZOrder(_scriptScene->getZOffset()));
 	}
 
+	_viewport.setExactZ(Script::RecordGraphic::getBackgroundExactZ());
+
 	g_nancy->_graphics->suppressNextDraw();
 
 	debugC(0, kDebugScene, "Loading new scene %s, frame %i", sceneName.c_str(), _sceneState.nextScene.frameID);

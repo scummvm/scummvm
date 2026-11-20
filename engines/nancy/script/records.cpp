@@ -208,6 +208,10 @@ int32 RecordGraphic::getScriptLayer(int32 zOffset) {
 	return hasStreamLayers() ? zOffset : 0;
 }
 
+double RecordGraphic::getBackgroundExactZ() {
+	return hasStreamLayers() ? kBackgroundScriptZ : RenderObject::kNoExactZ;
+}
+
 uint16 RecordGraphic::getScriptZOrder(double z, int32 zOffset) {
 #ifdef ENABLE_NANCY_V5
 	if (g_nancy->getGameType() >= kGameTypeNancy26) {
@@ -255,6 +259,9 @@ void RecordGraphic::setScriptZ(double z, const SceneContext &context, uint32 rec
 	}
 
 	setLayer(getScriptLayer(context.getZOffset()));
+	if (hasStreamLayers()) {
+		setExactZ(z);
+	}
 
 	setZOrder(getScriptZOrder(z, context.getZOffset()));
 	setViewTransform(context.getViewTransform());
