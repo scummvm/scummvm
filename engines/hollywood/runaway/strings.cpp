@@ -20,6 +20,7 @@
  */
 
 #include "common/util.h"
+#include "hollywood/runaway/scene_data.h"
 #include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
@@ -83,10 +84,42 @@ const char *const kText[RunawayStrings::kTextCount][4] = {
 	{"H", "E", "B", "D"},
 	{"MITWIRKENDE KONNTEN NICHT GELADEN WERDEN", "IMPOSSIBLE DE CHARGER LE GENERIQUE", "NO SE HAN PODIDO CARGAR LOS CR\303\211DITOS", "COULD NOT LOAD THE CREDITS"},
 	{"RUNAWAY VON ANFANG AN SPIELEN", "JOUER A RUNAWAY DEPUIS LE DEBUT", "JUGAR A RUNAWAY DESDE EL PRINCIPIO", "PLAY RUNAWAY FROM THE VERY BEGINNING"},
-	{"KAPITEL %d SPIELEN", "JOUER AU CHAPITRE %d", "JUGAR AL CAP\303\215TULO %d", "PLAY CHAPTER %d"}
+	{"KAPITEL %d SPIELEN", "JOUER AU CHAPITRE %d", "JUGAR AL CAP\303\215TULO %d", "PLAY CHAPTER %d"},
+	{nullptr, nullptr, "ROTULADOR", "Dry marker pen"},
+	{nullptr, nullptr, "JERINGUILLA CON ALCOHOL", "Syringe with alcohol"},
+	{nullptr, nullptr, "FICHA M\303\211DICA FALSA", "Fake medical chart"},
+	{nullptr, nullptr, "CABEZA CON PELUCA", "Head with wig"},
+	{nullptr, nullptr, "VASO CON AGUA", "Glass with water"},
+	{nullptr, nullptr, "CAJA DE JERINGUILLAS", "Box of syringes"},
+	{nullptr, nullptr, "FICHA M\303\211DICA", "Medical chart"},
+	{nullptr, nullptr, "FICHA FALSA", "Fake medical chart"}
 };
 
-const char *const kItemNames[][4] = {
+// Hospital names from the Spanish DVD executable at 0x5c2424..0x5c2598.
+const char *const kHospitalItemNames[][4] = {
+	{"", "", "", ""},
+	{nullptr, nullptr, "CARTERA", "Wallet"},
+	{nullptr, nullptr, "LLAVES DEL COCHE", "Car keys"},
+	{nullptr, nullptr, "RESGUARDO", "Order form"},
+	{nullptr, nullptr, "TROZO DE \303\201MBAR", "Piece of amber"},
+	{nullptr, nullptr, "BOLSA DE GINA", "Gina's bag"},
+	{nullptr, nullptr, "FICHA M\303\211DICA DE GINA", "Gina's medical chart"},
+	{nullptr, nullptr, "S\303\201BANA", "Sheet"},
+	{nullptr, nullptr, "TABLETA DE PASTILLAS", "Package of pills"},
+	{nullptr, nullptr, "CAJA DE CERILLAS", "Matchbox"},
+	{nullptr, nullptr, "PELUCA", "Wig"},
+	{nullptr, nullptr, "ROTULADOR", "Marker pen"},
+	{nullptr, nullptr, "BOTE DE ALCOHOL", "Bottle of alcohol"},
+	{nullptr, nullptr, "VASO", "Glass"},
+	{nullptr, nullptr, "ALMOHADONES", "Pillows"},
+	{nullptr, nullptr, "JERINGUILLA", "Syringe"},
+	{nullptr, nullptr, "FICHA M\303\211DICA EN BLANCO", "Blank medical chart"},
+	{nullptr, nullptr, "CABEZA DEL MU\303\221ECO", "Head"},
+	{nullptr, nullptr, "SPRAY", "Flammable spray can"},
+	{nullptr, nullptr, "VADEM\303\211CUM", "Vademecum"}
+};
+
+const char *const kCabinItemNames[][4] = {
 	{"", "", "", ""},
 	{"LEDERLAPPEN", "PEAU DE CHAMOIS", "GAMUZA", "CHAMOIS"},
 	{"BRECHSTANGE", "PIED DE BICHE", "PALANCA", "CROWBAR"},
@@ -139,15 +172,66 @@ const char *const kShackHotspotNames[][4] = {
 	{"ABFLUSS", "TUYAU DE VIDANGE DU CONGELATEUR", "DESAG\303\234E DEL CONGELADOR", "FREEZER DRAIN"}
 };
 
+// Indexed by the original room's hotspot IDs. Untranslated rooms retain
+// the English names in their scene tables.
+const char *const kBedroomHotspotNamesES[] = {
+	"", "PUERTA DEL BA\303\221O", "GINA", "VASO", "TABLETA DE PASTILLAS", "S\303\201BANA",
+	"TAQUILLA", "BOLSA DE GINA", "VENTANA", "FICHA M\303\211DICA DE GINA", "PLACA", "PACIENTE FALSO",
+	"ESPITA ANTI-INCENDIOS", "TIMBRE", "TIMBRE", "RADIADOR", "P\303\223STER", "P\303\223STER",
+	"PLANO DE SALIDAS DE EMERGENCIA", "CAMA", "", "", "", "PUERTA DEL PASILLO"
+};
+
+const char *const kStoreroomHotspotNamesES[] = {
+	"", "VENTANA", "RADIADOR", "CAJA", "BOTE DE SPRAY", "LIBRO", "PAPEL QUE ASOMA", "MU\303\221ECO DE ANATOM\303\215A",
+	"ARCHIVADOR", "ARCHIVADOR", "FRASCOS", "CAJA", "CAJAS DE MEDICAMENTOS", "SOPORTE PARA SUERO", "BOTELLA DE SUERO", "ALMOHADONES"
+};
+
+const char *const kBathroomHotspotNamesES[] = {
+	"", "PAPELERA", "GRIFO", "PUERTA", "BOTE", "CARTEL", "TUBER\303\215A", "ALCACHOFA", "ARMARIO", "TAZA DEL WATER"
+};
+
+const struct {
+	uint16 scene;
+	const char *const *names[4];
+	uint count;
+} kHotspotNames[] = {
+	{kHospitalBedroom, {nullptr, nullptr, kBedroomHotspotNamesES, nullptr}, ARRAYSIZE(kBedroomHotspotNamesES)},
+	{kHospitalStoreroom, {nullptr, nullptr, kStoreroomHotspotNamesES, nullptr}, ARRAYSIZE(kStoreroomHotspotNamesES)},
+	{kHospitalBathroom, {nullptr, nullptr, kBathroomHotspotNamesES, nullptr}, ARRAYSIZE(kBathroomHotspotNamesES)}
+};
+
 } // End of anonymous namespace
+
+Common::U32String RunawayStrings::localize(const char *const *strings) const {
+	return Common::U32String(strings[_languageIndex] ? strings[_languageIndex] : strings[3]);
+}
 
 Common::U32String RunawayStrings::text(TextId id) const {
 	assert(id < kTextCount);
-	return Common::U32String(kText[id][_languageIndex]);
+	return localize(kText[id]);
 }
 
-Common::U32String RunawayStrings::itemName(byte item) const {
-	return Common::U32String(item < ARRAYSIZE(kItemNames) ? kItemNames[item][_languageIndex] : "");
+Common::U32String RunawayStrings::itemName(byte chapter, byte item) const {
+	if (chapter == 1 && item < ARRAYSIZE(kHospitalItemNames)) {
+		return localize(kHospitalItemNames[item]);
+	}
+	if (chapter == 3 && item < ARRAYSIZE(kCabinItemNames)) {
+		return localize(kCabinItemNames[item]);
+	}
+	return Common::U32String();
+}
+
+Common::U32String RunawayStrings::hotspotName(uint16 scene, byte hotspot, const char *fallback) const {
+	for (uint i = 0; i < ARRAYSIZE(kHotspotNames); ++i) {
+		if (kHotspotNames[i].scene == scene && hotspot < kHotspotNames[i].count) {
+			const char *const *names = kHotspotNames[i].names[_languageIndex];
+			if (names) {
+				return Common::U32String(names[hotspot]);
+			}
+			break;
+		}
+	}
+	return Common::U32String(fallback);
 }
 
 Common::U32String RunawayStrings::shackHotspotName(byte hotspot) const {

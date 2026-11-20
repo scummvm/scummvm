@@ -309,7 +309,7 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 	const RunawayHotspot *spot = hotspot(id);
 	if (!spot)
 		return Common::U32String();
-	return Common::U32String(spot->name);
+	return _strings.hotspotName(_room, id, spot->name);
 }
 
 Common::U32String RunawayRoomScene::actionCaption(byte id, RunawayVerb verb, byte item) const {

@@ -34,12 +34,6 @@ const char *const kMuseumItemNames[] = {
 	"Pair of books", "Strange key", "Ladle", "Package of coffee"
 };
 
-const char *const kHospitalItemNames[] = {
-	"", "Wallet", "Car keys", "Order form", "Piece of amber", "Gina's bag", "Gina's medical chart",
-	"Sheet", "Package of pills", "Matchbox", "Wig", "Marker pen", "Bottle of alcohol", "Glass",
-	"Pillows", "Syringe", "Blank medical chart", "Head", "Flammable spray can", "Vademecum"
-};
-
 const char *const kTownItemNames[] = {
 	"", "Wallet", "Car keys", "Receipt", "Piece of amber", "Crucifix", "Doctor's bag",
 	"Stethoscope", "Liniment", "Key", "Wrench", "Strap", "Container of concentrated gasoline",
@@ -217,17 +211,23 @@ Common::U32String RunawayInventory::name(byte item) const {
 		return item < ARRAYSIZE(kTownItemNames) ? Common::U32String(kTownItemNames[item]) : Common::U32String();
 	}
 	if (_chapter == 1) {
-		if (item == 11 && _markerInk == 1)
-			return Common::U32String("Dry marker pen");
-		if (item == 15 && _syringeFilled)
-			return Common::U32String("Syringe with alcohol");
-		if (item == 16 && _chartWritten)
-			return Common::U32String("Fake medical chart");
-		if (item == 17 && _headWig)
-			return Common::U32String("Head with wig");
+		if (item == 11 && _markerInk == 1) {
+			return _strings.text(RunawayStrings::kDryMarkerPen);
+		}
+		if (item == 15 && _syringeFilled) {
+			return _strings.text(RunawayStrings::kSyringeWithAlcohol);
+		}
+		if (item == 16 && _chartWritten) {
+			return _strings.text(RunawayStrings::kFakeMedicalChart);
+		}
+		if (item == 17 && _headWig) {
+			return _strings.text(RunawayStrings::kHeadWithWig);
+		}
+		if (item == 13 && _water == 1) {
+			return _strings.text(RunawayStrings::kGlassWithWater);
+		}
+		return _strings.itemName(_chapter, item);
 	}
-	if (_chapter == 1 && item == 13 && _water == 1)
-		return Common::U32String("Glass with water");
 	if (_chapter == 2) {
 		if (item == 6 && _museum.frozenBattery)
 			return Common::U32String("Frozen battery");
@@ -240,15 +240,13 @@ Common::U32String RunawayInventory::name(byte item) const {
 	}
 	if (_chapter == 2)
 		return item < ARRAYSIZE(kMuseumItemNames) ? Common::U32String(kMuseumItemNames[item]) : Common::U32String();
-	if (_chapter == 1)
-		return item < ARRAYSIZE(kHospitalItemNames) ? Common::U32String(kHospitalItemNames[item]) : Common::U32String();
 	if (item == 1 && _clothState)
 		return _strings.text(_clothState == 1 ? RunawayStrings::kWetCloth : RunawayStrings::kDirtyCloth);
 	if ((item == 10 && _desert.lipstick) || (item == 11 && _desert.lipsticks))
 		return Common::U32String(item == 10 ? "Lipstick filled with gunpowder" : "Lipsticks filled with gunpowder");
 	if (item == 25 && _desert.bucket == 1)
 		return Common::U32String("Bucket of gunpowder");
-	return _strings.itemName(item);
+	return _strings.itemName(_chapter, item);
 }
 
 uint RunawayInventory::icon(byte item) const {

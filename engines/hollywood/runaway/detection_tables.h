@@ -47,6 +47,18 @@
 		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
 	},
+	// Spanish DVD release, with Bink movies.
+	{
+		"runaway",
+		"DVD",
+		AD_ENTRY3s("RESOURCE.000", "7484159230d1a921bda9927be4bd54ca", 110312901,
+			"RESOURCE.003", "8aa07584175fc9d28c1aff5fa5f93a5f", 7340291,
+			"RESOURCE.B02", "486eace90c76d8772d751a879466cc39", 8352653),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
+	},
 	// English museum demo (2000). Gameplay POC; movies are not supported.
 	{
 		"runaway",

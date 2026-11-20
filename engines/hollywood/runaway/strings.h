@@ -41,15 +41,19 @@ public:
 		kConfirmQuit, kYes, kNo, kQuitKey, kLeaveHatch,
 		kEnterSaveName, kNoSaves, kNewSave, kGameSaved, kSettingsSaved, kDefaultsRestored,
 		kSaveFailed, kLoadFailed, kDeleteFailed, kNoFreeSlots, kDeleteKey, kCreditsFailed,
-		kPlayBeginning, kPlayChapter, kTextCount
+		kPlayBeginning, kPlayChapter,
+		kDryMarkerPen, kSyringeWithAlcohol, kFakeMedicalChart, kHeadWithWig, kGlassWithWater,
+		kBoxOfSyringes, kMedicalChart, kFakeChart, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) :
-		_languageIndex(language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : language == Common::EN_ANY ? 3 : 0) {}
+		_languageIndex(language == Common::DE_DEU ? 0 : language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : 3) {}
 	Common::U32String text(TextId id) const;
-	Common::U32String itemName(byte item) const;
+	Common::U32String itemName(byte chapter, byte item) const;
+	Common::U32String hotspotName(uint16 scene, byte hotspot, const char *fallback) const;
 	Common::U32String shackHotspotName(byte hotspot) const;
 
 private:
+	Common::U32String localize(const char *const *strings) const;
 	uint _languageIndex;
 };
 

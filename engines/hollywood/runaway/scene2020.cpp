@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene2020.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -832,10 +833,10 @@ void Scene2020::handleAnimationFrameHook() {
 
 Common::U32String Scene2020::hotspotName(byte id) const {
 	if (id == 9 && _hospital.chartReplaced) {
-		return Common::U32String("Fake medical chart");
+		return _strings.text(RunawayStrings::kFakeChart);
 	}
 	if (id == 10 && _hospital.chartMoved) {
-		return Common::U32String("Gina's medical chart");
+		return _strings.itemName(1, 6);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }
