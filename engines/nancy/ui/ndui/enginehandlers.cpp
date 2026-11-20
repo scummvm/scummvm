@@ -332,8 +332,13 @@ void Manager::onSceneChange(uint16 sceneID) {
 void Manager::createItemButtons() {
 	Panel *panel = findPanel("InvDialog");
 
-	// Nancy19 makes them one at a time, with the script of the panel
+	// Nancy19 makes them one at a time, with the script of the panel. Lights,
+	// Camera, Curses makes each one when its item is first shown.
 	if (panel && g_nancy->getGameType() >= kGameTypeNancy19) {
+		if (g_nancy->getGameType() == kGameTypeNancyDossier1) {
+			return;
+		}
+
 		const INVD *items = GetEngineData(INVD);
 		assert(items);
 
@@ -372,6 +377,16 @@ void Manager::createItemButtons() {
 }
 
 void Manager::showInventoryItem(int16 itemID, bool show) {
+	// The scripts of Lights, Camera, Curses number the buttons as they get them,
+	// which is where the items are in the inventory
+	if (show && g_nancy->getGameType() == kGameTypeNancyDossier1 && !findItemButton(itemID)) {
+		Panel *panel = findPanel("InvDialog");
+		const INVD *items = GetEngineData(INVD);
+		if (panel && items && itemID >= 0 && (uint)itemID < items->items.size()) {
+			panel->addItemButton(items->items[itemID]);
+		}
+	}
+
 	takeAction(show ? kActionShowItem : kActionHideItem, "InvDialog", (double)itemID);
 }
 

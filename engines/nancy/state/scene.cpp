@@ -1482,11 +1482,15 @@ bool Scene::changePlayerCharacter(uint characterIndex) {
 }
 
 void Scene::showInventoryButtons() {
-	// The most recent items come first
+	// Each item shown goes first, or last in the games that put new items last,
+	// so the buttons come out in the order of the list
 	const Common::Array<int16> &order = _inventoryBox.getOrder();
-	for (int i = (int)order.size() - 1; i >= 0; --i) {
-		if (order[i] != -1 && _flags.items[order[i]] == g_nancy->_true) {
-			_ndui->showInventoryItem(order[i], true);
+	const ScriptBootData *scriptBoot = (const ScriptBootData *)g_nancy->getEngineData("ScriptBootData");
+	const bool isAddedLast = scriptBoot && !scriptBoot->isInventoryAddedToFront;
+	for (uint i = 0; i < order.size(); ++i) {
+		const int16 id = isAddedLast ? order[i] : order[order.size() - 1 - i];
+		if (id != -1 && _flags.items[id] == g_nancy->_true) {
+			_ndui->showInventoryItem(id, true);
 		}
 	}
 }

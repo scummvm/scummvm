@@ -370,6 +370,11 @@ static int inventoryCreate(lua_State *L) {
 
 	s_tables->boot->inventoryImageName = Common::Path(imageName);
 
+	// Lights, Camera, Curses has no addToFront, and puts new items last
+	if (g_nancy->getGameType() == kGameTypeNancyDossier1) {
+		s_tables->boot->isInventoryAddedToFront = false;
+	}
+
 	Common::Array<Common::String> names;
 	getSortedKeys(L, 2, names);
 
